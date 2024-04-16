@@ -1,36 +1,36 @@
-package com.twitter.search.common.relevance.text;
+package com.tw ter.search.common.relevance.text;
 
-import java.util.regex.Matcher;
+ mport java.ut l.regex.Matc r;
 
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.util.text.regex.Regex;
+ mport com.tw ter.search.common.relevance.ent  es.Tw ter ssage;
+ mport com.tw ter.search.common.ut l.text.regex.Regex;
 
-public final class LocationUtils {
-  private LocationUtils() {
+publ c f nal class Locat onUt ls {
+  pr vate Locat onUt ls() {
   }
 
   /**
-   * Extract lat/lon information from a twitter message.
-   * @param message The twitter message.
-   * @return A two-element double array for the lat/lon information.
+   * Extract lat/lon  nformat on from a tw ter  ssage.
+   * @param  ssage T  tw ter  ssage.
+   * @return A two-ele nt double array for t  lat/lon  nformat on.
    */
-  public static double[] extractLatLon(TwitterMessage message) {
-    // first look in text for L:, then fall back to profile
-    Matcher loc = Regex.LAT_LON_LOC_PATTERN.matcher(message.getText());
-    if (loc.find() || message.getOrigLocation() != null
-        && (loc = Regex.LAT_LON_PATTERN.matcher(message.getOrigLocation())).find()) {
-      final double lat = Double.parseDouble(loc.group(2));
-      final double lon = Double.parseDouble(loc.group(3));
+  publ c stat c double[] extractLatLon(Tw ter ssage  ssage) {
+    // f rst look  n text for L:, t n fall back to prof le
+    Matc r loc = Regex.LAT_LON_LOC_PATTERN.matc r( ssage.getText());
+     f (loc.f nd() ||  ssage.getOr gLocat on() != null
+        && (loc = Regex.LAT_LON_PATTERN.matc r( ssage.getOr gLocat on())).f nd()) {
+      f nal double lat = Double.parseDouble(loc.group(2));
+      f nal double lon = Double.parseDouble(loc.group(3));
 
-      if (Math.abs(lat) > 90.0) {
-        throw new NumberFormatException("Latitude cannot exceed +-90 degrees: " + lat);
+       f (Math.abs(lat) > 90.0) {
+        throw new NumberFormatExcept on("Lat ude cannot exceed +-90 degrees: " + lat);
       }
-      if (Math.abs(lon) > 180.0) {
-        throw new NumberFormatException("Longitude cannot exceed +-180 degrees: " + lon);
+       f (Math.abs(lon) > 180.0) {
+        throw new NumberFormatExcept on("Long ude cannot exceed +-180 degrees: " + lon);
       }
 
-      // Reject these common "bogus" regions.
-      if ((lat == 0 && lon == 0) || lat == -1 || lon == -1) {
+      // Reject t se common "bogus" reg ons.
+       f ((lat == 0 && lon == 0) || lat == -1 || lon == -1) {
         return null;
       }
 

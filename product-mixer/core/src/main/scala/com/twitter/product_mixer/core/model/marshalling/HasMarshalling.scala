@@ -1,3 +1,3 @@
-package com.twitter.product_mixer.core.model.marshalling
+package com.tw ter.product_m xer.core.model.marshall ng
 
-trait HasMarshalling
+tra  HasMarshall ng

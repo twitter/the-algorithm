@@ -1,57 +1,57 @@
-package com.twitter.follow_recommendations.common.clients.geoduck
+package com.tw ter.follow_recom ndat ons.common.cl ents.geoduck
 
-import com.twitter.follow_recommendations.common.models.GeohashAndCountryCode
-import com.twitter.geoduck.common.thriftscala.Location
-import com.twitter.geoduck.common.thriftscala.PlaceQuery
-import com.twitter.geoduck.common.thriftscala.ReverseGeocodeIPRequest
-import com.twitter.geoduck.service.thriftscala.GeoContext
-import com.twitter.geoduck.thriftscala.ReverseGeocoder
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.common.models.GeohashAndCountryCode
+ mport com.tw ter.geoduck.common.thr ftscala.Locat on
+ mport com.tw ter.geoduck.common.thr ftscala.PlaceQuery
+ mport com.tw ter.geoduck.common.thr ftscala.ReverseGeocode PRequest
+ mport com.tw ter.geoduck.serv ce.thr ftscala.GeoContext
+ mport com.tw ter.geoduck.thr ftscala.ReverseGeocoder
+ mport com.tw ter.st ch.St ch
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ReverseGeocodeClient @Inject() (rgcService: ReverseGeocoder.MethodPerEndpoint) {
-  def getGeohashAndCountryCode(ipAddress: String): Stitch[GeohashAndCountryCode] = {
-    Stitch
+@S ngleton
+class ReverseGeocodeCl ent @ nject() (rgcServ ce: ReverseGeocoder. thodPerEndpo nt) {
+  def getGeohashAndCountryCode( pAddress: Str ng): St ch[GeohashAndCountryCode] = {
+    St ch
       .callFuture {
-        rgcService
-          .reverseGeocodeIp(
-            ReverseGeocodeIPRequest(
-              Seq(ipAddress),
+        rgcServ ce
+          .reverseGeocode p(
+            ReverseGeocode PRequest(
+              Seq( pAddress),
               PlaceQuery(None),
-              simpleReverseGeocode = true
-            ) // note: simpleReverseGeocode means that country code will be included in response
+              s mpleReverseGeocode = true
+            ) // note: s mpleReverseGeocode  ans that country code w ll be  ncluded  n response
           ).map { response =>
-            response.found.get(ipAddress) match {
-              case Some(location) => getGeohashAndCountryCodeFromLocation(location)
+            response.found.get( pAddress) match {
+              case So (locat on) => getGeohashAndCountryCodeFromLocat on(locat on)
               case _ => GeohashAndCountryCode(None, None)
             }
           }
       }
   }
 
-  private def getGeohashAndCountryCodeFromLocation(location: Location): GeohashAndCountryCode = {
-    val countryCode: Option[String] = location.simpleRgcResult.flatMap { _.countryCodeAlpha2 }
+  pr vate def getGeohashAndCountryCodeFromLocat on(locat on: Locat on): GeohashAndCountryCode = {
+    val countryCode: Opt on[Str ng] = locat on.s mpleRgcResult.flatMap { _.countryCodeAlpha2 }
 
-    val geohashString: Option[String] = location.geohash.flatMap { hash =>
-      hash.stringGeohash.flatMap { hashString =>
-        Some(ReverseGeocodeClient.truncate(hashString))
+    val geohashStr ng: Opt on[Str ng] = locat on.geohash.flatMap { hash =>
+      hash.str ngGeohash.flatMap { hashStr ng =>
+        So (ReverseGeocodeCl ent.truncate(hashStr ng))
       }
     }
 
-    GeohashAndCountryCode(geohashString, countryCode)
+    GeohashAndCountryCode(geohashStr ng, countryCode)
   }
 
 }
 
-object ReverseGeocodeClient {
+object ReverseGeocodeCl ent {
 
-  val DefaultGeoduckIPRequestContext: GeoContext =
-    GeoContext(allPlaceTypes = true, includeGeohash = true, includeCountryCode = true)
+  val DefaultGeoduck PRequestContext: GeoContext =
+    GeoContext(allPlaceTypes = true,  ncludeGeohash = true,  ncludeCountryCode = true)
 
-  // All these geohashes are guessed by IP (Logical Location Source).
-  // So take the four letters to make sure it is consistent with LocationServiceClient
-  val GeohashLengthAfterTruncation = 4
-  def truncate(geohash: String): String = geohash.take(GeohashLengthAfterTruncation)
+  // All t se geohas s are guessed by  P (Log cal Locat on S ce).
+  // So take t  f  letters to make sure    s cons stent w h Locat onServ ceCl ent
+  val GeohashLengthAfterTruncat on = 4
+  def truncate(geohash: Str ng): Str ng = geohash.take(GeohashLengthAfterTruncat on)
 }

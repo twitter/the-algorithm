@@ -1,146 +1,146 @@
-# The keys in this file correspond to the DeciderValues defined in
-# https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/cr-mixer/server/src/main/scala/com/twitter/cr_mixer/param/decider/DeciderKey.scala
+# T  keys  n t  f le correspond to t  Dec derValues def ned  n
+# https://s cegraph.tw ter.b z/g .tw ter.b z/s ce/-/blob/cr-m xer/server/src/ma n/scala/com/tw ter/cr_m xer/param/dec der/Dec derKey.scala
 
-dark_traffic_filter:
-  comment: Proportion of the requests that are forwarded as dark traffic to the proxy
-  default_availability: 0
+dark_traff c_f lter:
+  com nt: Proport on of t  requests that are forwarded as dark traff c to t  proxy
+  default_ava lab l y: 0
 
-enable_tweet_recommendations_home_product:
-  comment: Proportion of requests where we return an actual response for TweetRecommendations Home product
-  default_availability: 10000
+enable_t et_recom ndat ons_ho _product:
+  com nt: Proport on of requests w re   return an actual response for T etRecom ndat ons Ho  product
+  default_ava lab l y: 10000
 
-enable_tweet_health_score:
-  comment: "Enable the calculation for health scores in tweetInfo. By enabling this decider, we will compute TweetHealthModelScore"
-  default_availability: 10000
+enable_t et_ alth_score:
+  com nt: "Enable t  calculat on for  alth scores  n t et nfo. By enabl ng t  dec der,   w ll compute T et althModelScore"
+  default_ava lab l y: 10000
 
 enable_user_agatha_score:
-  comment: "Enable the calculation for health scores in tweetInfo. By enabling this decider, we will compute UserHealthModelScore"
-  default_availability: 10000
+  com nt: "Enable t  calculat on for  alth scores  n t et nfo. By enabl ng t  dec der,   w ll compute User althModelScore"
+  default_ava lab l y: 10000
 
-enable_user_tweet_entity_graph_traffic:
-  comment: "Enable the traffic to user entity tweet graph to fetch liked-by tweets candidates"
-  default_availability: 10000
+enable_user_t et_ent y_graph_traff c:
+  com nt: "Enable t  traff c to user ent y t et graph to fetch l ked-by t ets cand dates"
+  default_ava lab l y: 10000
 
-enable_user_tweet_graph_traffic:
-  comment: "Enable the traffic to user tweet graph to fetch similar tweets candidates"
-  default_availability: 10000
+enable_user_t et_graph_traff c:
+  com nt: "Enable t  traff c to user t et graph to fetch s m lar t ets cand dates"
+  default_ava lab l y: 10000
 
-enable_user_video_graph_traffic:
-  comment: "Enable the traffic to user video graph to fetch similar tweets candidates"
-  default_availability: 10000
+enable_user_v deo_graph_traff c:
+  com nt: "Enable t  traff c to user v deo graph to fetch s m lar t ets cand dates"
+  default_ava lab l y: 10000
 
-enable_user_ad_graph_traffic:
-  comment: "Enable the traffic to user ad graph to fetch similar tweets candidates"
-  default_availability: 10000
+enable_user_ad_graph_traff c:
+  com nt: "Enable t  traff c to user ad graph to fetch s m lar t ets cand dates"
+  default_ava lab l y: 10000
 
-enable_qig_similar_tweets_traffic:
-  comment: "Enable the traffic to QIG to fetch similar tweet candidates"
-  default_availability: 0
+enable_q g_s m lar_t ets_traff c:
+  com nt: "Enable t  traff c to Q G to fetch s m lar t et cand dates"
+  default_ava lab l y: 0
 
-enable_frs_traffic:
-  comment: "Enable the traffic to FRS to fetch user follow recommendations"
-  default_availability: 0
+enable_frs_traff c:
+  com nt: "Enable t  traff c to FRS to fetch user follow recom ndat ons"
+  default_ava lab l y: 0
 
-enable_hydra_dark_traffic:
-  comment: "Enable dark traffic to hydra"
-  default_availability: 0
+enable_hydra_dark_traff c:
+  com nt: "Enable dark traff c to hydra"
+  default_ava lab l y: 0
 
 enable_real_graph_mh_store:
-  comment: "Enable traffic for the real graph manhattan based store"
-  default_availability: 0
+  com nt: "Enable traff c for t  real graph manhattan based store"
+  default_ava lab l y: 0
 
-enable_simclusters_ann_experimental_dark_traffic:
-  comment: "Enable dark traffic to simclusters-ann-experimental"
-  default_availability: 0
+enable_s mclusters_ann_exper  ntal_dark_traff c:
+  com nt: "Enable dark traff c to s mclusters-ann-exper  ntal"
+  default_ava lab l y: 0
 
-enable_simclusters_ann_2_dark_traffic:
-  comment: "Enable dark traffic to prod SimClustersANN2"
-  default_availability: 0
+enable_s mclusters_ann_2_dark_traff c:
+  com nt: "Enable dark traff c to prod S mClustersANN2"
+  default_ava lab l y: 0
 
 enable_user_state_store:
-  comment: "Enable traffic user state store to hydrate user state"
-  default_availability: 0
+  com nt: "Enable traff c user state store to hydrate user state"
+  default_ava lab l y: 0
 
-upper_funnel_per_step_scribe_rate:
-  comment: "Enable Upper Funnel Event Scribe Sampling (fetch, pre-rank, interleave etc.) for getTweetsRecommendations() endpoint"
-  default_availability: 0
+upper_funnel_per_step_scr be_rate:
+  com nt: "Enable Upper Funnel Event Scr be Sampl ng (fetch, pre-rank,  nterleave etc.) for getT etsRecom ndat ons() endpo nt"
+  default_ava lab l y: 0
 
-kafka_message_scribe_sample_rate:
-  comment: "Gates the production of forked scribe messages to kafka for the async feature hydrator"
-  default_availability: 0
+kafka_ ssage_scr be_sample_rate:
+  com nt: "Gates t  product on of forked scr be  ssages to kafka for t  async feature hydrator"
+  default_ava lab l y: 0
 
-top_level_api_ddg_metrics_scribe_rate:
-  comment: "Enable Top Level API DDG Metrics Scribe Sampling for getTweetsRecommendations() endpoint"
-  default_availability: 0
+top_level_ap _ddg_ tr cs_scr be_rate:
+  com nt: "Enable Top Level AP  DDG  tr cs Scr be Sampl ng for getT etsRecom ndat ons() endpo nt"
+  default_ava lab l y: 0
 
-ads_recommendations_per_experiment_scribe_rate:
-  comment: "Percentage of DDG traffic to Scribe for getAdsRecommendations() endpoint"
-  default_availability: 0
+ads_recom ndat ons_per_exper  nt_scr be_rate:
+  com nt: "Percentage of DDG traff c to Scr be for getAdsRecom ndat ons() endpo nt"
+  default_ava lab l y: 0
 
-enable_loadshedding_getTweetRecommendations:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enable_loads dd ng_getT etRecom ndat ons:
+  com nt: "Enable loads dd ng (from 0% to 100%). Requests that have been s d w ll return an empty response"
+  default_ava lab l y: 0
 
-enable_loadshedding_getTweetRecommendations_Home:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enable_loads dd ng_getT etRecom ndat ons_Ho :
+  com nt: "Enable loads dd ng (from 0% to 100%). Requests that have been s d w ll return an empty response"
+  default_ava lab l y: 0
 
-enable_loadshedding_getTweetRecommendations_Notifications:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enable_loads dd ng_getT etRecom ndat ons_Not f cat ons:
+  com nt: "Enable loads dd ng (from 0% to 100%). Requests that have been s d w ll return an empty response"
+  default_ava lab l y: 0
 
-enable_loadshedding_getTweetRecommendations_Email:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enable_loads dd ng_getT etRecom ndat ons_Ema l:
+  com nt: "Enable loads dd ng (from 0% to 100%). Requests that have been s d w ll return an empty response"
+  default_ava lab l y: 0
 
-enable_loadshedding_getRelatedTweetsForQueryTweet:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enable_loads dd ng_getRelatedT etsForQueryT et:
+  com nt: "Enable loads dd ng (from 0% to 100%). Requests that have been s d w ll return an empty response"
+  default_ava lab l y: 0
 
-enable_loadshedding_getRelatedTweetsForQueryTweet_Home:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enable_loads dd ng_getRelatedT etsForQueryT et_Ho :
+  com nt: "Enable loads dd ng (from 0% to 100%). Requests that have been s d w ll return an empty response"
+  default_ava lab l y: 0
 
-enable_loadshedding_getRelatedTweetsForQueryTweet_MoreTweetsModule:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enable_loads dd ng_getRelatedT etsForQueryT et_MoreT etsModule:
+  com nt: "Enable loads dd ng (from 0% to 100%). Requests that have been s d w ll return an empty response"
+  default_ava lab l y: 0
 
-enable_loadshedding_getRelatedTweetsForQueryAuthor:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enable_loads dd ng_getRelatedT etsForQueryAuthor:
+  com nt: "Enable loads dd ng (from 0% to 100%). Requests that have been s d w ll return an empty response"
+  default_ava lab l y: 0
 
-enable_loadshedding_getRelatedTweetsForQueryAuthor_MoreTweetsModule:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enable_loads dd ng_getRelatedT etsForQueryAuthor_MoreT etsModule:
+  com nt: "Enable loads dd ng (from 0% to 100%). Requests that have been s d w ll return an empty response"
+  default_ava lab l y: 0
 
-enable_loadshedding_getFrsBasedTweetRecommendations_Home:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enable_loads dd ng_getFrsBasedT etRecom ndat ons_Ho :
+  com nt: "Enable loads dd ng (from 0% to 100%). Requests that have been s d w ll return an empty response"
+  default_ava lab l y: 0
 
-enable_loadshedding_getFrsBasedTweetRecommendations_Notifications:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enable_loads dd ng_getFrsBasedT etRecom ndat ons_Not f cat ons:
+  com nt: "Enable loads dd ng (from 0% to 100%). Requests that have been s d w ll return an empty response"
+  default_ava lab l y: 0
 
-enable_user_media_representation_store:
-  comment: "Enable fetching user nudity rate signal from Media Understanding"
-  default_availability: 0
+enable_user_ d a_representat on_store:
+  com nt: "Enable fetch ng user nud y rate s gnal from  d a Understand ng"
+  default_ava lab l y: 0
 
-enable_magic_recs_real_time_aggregates_store:
-  comment: "Enable fetching real time aggregates features from Magic Recs memcache"
-  default_availability: 0
+enable_mag c_recs_real_t  _aggregates_store:
+  com nt: "Enable fetch ng real t   aggregates features from Mag c Recs  mcac "
+  default_ava lab l y: 0
 
-enable_utg_realtime_tweet_engagement_score:
-  comment: "Enable fetching real time tweet engagement score from utg-plus"
-  default_availability: 0
+enable_utg_realt  _t et_engage nt_score:
+  com nt: "Enable fetch ng real t   t et engage nt score from utg-plus"
+  default_ava lab l y: 0
 
-get_tweet_recommendations_cache_rate:
-  comment: "Proportion of users where getTweetRecommendations() request and responses will be cached"
-  default_availability: 1000
+get_t et_recom ndat ons_cac _rate:
+  com nt: "Proport on of users w re getT etRecom ndat ons() request and responses w ll be cac d"
+  default_ava lab l y: 1000
 
-enable_earlybird_traffic:
-  comment: "Enable fetching tweet candidates from Earlybird"
-  default_availability: 0
+enable_earlyb rd_traff c:
+  com nt: "Enable fetch ng t et cand dates from Earlyb rd"
+  default_ava lab l y: 0
 
-enable_scribe_for_blue_verified_tweet_candidates:
-  comment: "Enable scribing for tweet candidates from Blue Verified users"
-  default_availability: 0
+enable_scr be_for_blue_ver f ed_t et_cand dates:
+  com nt: "Enable scr b ng for t et cand dates from Blue Ver f ed users"
+  default_ava lab l y: 0

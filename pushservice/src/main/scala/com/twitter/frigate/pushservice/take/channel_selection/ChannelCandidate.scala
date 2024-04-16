@@ -1,24 +1,24 @@
-package com.twitter.frigate.pushservice.take
+package com.tw ter.fr gate.pushserv ce.take
 
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.thriftscala.ChannelName
-import com.twitter.util.Future
-import java.util.concurrent.ConcurrentHashMap
-import scala.collection.concurrent
-import scala.collection.convert.decorateAsScala._
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.thr ftscala.ChannelNa 
+ mport com.tw ter.ut l.Future
+ mport java.ut l.concurrent.ConcurrentHashMap
+ mport scala.collect on.concurrent
+ mport scala.collect on.convert.decorateAsScala._
 
 /**
- * A class to save all the channel related information
+ * A class to save all t  channel related  nformat on
  */
-trait ChannelForCandidate {
-  self: PushCandidate =>
+tra  ChannelForCand date {
+  self: PushCand date =>
 
-  // Cache of channel selection result
-  private[this] val selectedChannels: concurrent.Map[String, Future[Seq[ChannelName]]] =
-    new ConcurrentHashMap[String, Future[Seq[ChannelName]]]().asScala
+  // Cac  of channel select on result
+  pr vate[t ] val selectedChannels: concurrent.Map[Str ng, Future[Seq[ChannelNa ]]] =
+    new ConcurrentHashMap[Str ng, Future[Seq[ChannelNa ]]]().asScala
 
-  // Returns the channel information from all ChannelSelectors.
-  def getChannels(): Future[Seq[ChannelName]] = {
+  // Returns t  channel  nformat on from all ChannelSelectors.
+  def getChannels(): Future[Seq[ChannelNa ]] = {
     Future.collect(selectedChannels.values.toSeq).map { c => c.flatten }
   }
 }

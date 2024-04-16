@@ -1,76 +1,76 @@
-package com.twitter.search.earlybird.search.facets;
+package com.tw ter.search.earlyb rd.search.facets;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+ mport java.ut l.L nkedHashMap;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.collect. mmutableL st;
+ mport com.google.common.collect. mmutableSet;
 
-import org.apache.lucene.util.BytesRef;
+ mport org.apac .lucene.ut l.BytesRef;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultUrl;
-import com.twitter.service.spiderduck.gen.MediaTypes;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetLabelProv der;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultUrl;
+ mport com.tw ter.serv ce.sp derduck.gen. d aTypes;
 
 /**
- * A collector for collecting expanded urls from facets. Note that the only thing connecting this
- * collector with expanded URLs is the fact that we only store the expanded url in the facet fields.
+ * A collector for collect ng expanded urls from facets. Note that t  only th ng connect ng t 
+ * collector w h expanded URLs  s t  fact that   only store t  expanded url  n t  facet f elds.
  */
-public class ExpandedUrlCollector extends AbstractFacetTermCollector {
-  private static final ImmutableSet<String> FACET_CONTAINS_URL = ImmutableSet.of(
-      EarlybirdFieldConstant.VIDEOS_FACET,
-      EarlybirdFieldConstant.IMAGES_FACET,
-      EarlybirdFieldConstant.NEWS_FACET,
-      EarlybirdFieldConstant.LINKS_FACET,
-      EarlybirdFieldConstant.TWIMG_FACET);
+publ c class ExpandedUrlCollector extends AbstractFacetTermCollector {
+  pr vate stat c f nal  mmutableSet<Str ng> FACET_CONTA NS_URL =  mmutableSet.of(
+      Earlyb rdF eldConstant.V DEOS_FACET,
+      Earlyb rdF eldConstant. MAGES_FACET,
+      Earlyb rdF eldConstant.NEWS_FACET,
+      Earlyb rdF eldConstant.L NKS_FACET,
+      Earlyb rdF eldConstant.TW MG_FACET);
 
-  private final Map<String, ThriftSearchResultUrl> dedupedUrls = new LinkedHashMap<>();
+  pr vate f nal Map<Str ng, Thr ftSearchResultUrl> dedupedUrls = new L nkedHashMap<>();
 
 
-  @Override
-  protected String getTermFromProvider(
-      String facetName,
-      long termID,
-      FacetLabelProvider provider) {
-    String url = null;
-    if (EarlybirdFieldConstant.TWIMG_FACET.equals(facetName)) {
-      // Special case extraction of media url for twimg.
-      FacetLabelProvider.FacetLabelAccessor photoAccessor = provider.getLabelAccessor();
-      BytesRef termPayload = photoAccessor.getTermPayload(termID);
-      if (termPayload != null) {
-        url = termPayload.utf8ToString();
+  @Overr de
+  protected Str ng getTermFromProv der(
+      Str ng facetNa ,
+      long term D,
+      FacetLabelProv der prov der) {
+    Str ng url = null;
+     f (Earlyb rdF eldConstant.TW MG_FACET.equals(facetNa )) {
+      // Spec al case extract on of  d a url for tw mg.
+      FacetLabelProv der.FacetLabelAccessor photoAccessor = prov der.getLabelAccessor();
+      BytesRef termPayload = photoAccessor.getTermPayload(term D);
+       f (termPayload != null) {
+        url = termPayload.utf8ToStr ng();
       }
     } else {
-      url = provider.getLabelAccessor().getTermText(termID);
+      url = prov der.getLabelAccessor().getTermText(term D);
     }
     return url;
   }
 
-  @Override
-  public boolean collect(int docID, long termID, int fieldID) {
+  @Overr de
+  publ c boolean collect( nt doc D, long term D,  nt f eld D) {
 
-    String url = getTermFromFacet(termID, fieldID, FACET_CONTAINS_URL);
-    if (url == null || url.isEmpty()) {
+    Str ng url = getTermFromFacet(term D, f eld D, FACET_CONTA NS_URL);
+     f (url == null || url. sEmpty()) {
       return false;
     }
 
-    ThriftSearchResultUrl resultUrl = new ThriftSearchResultUrl();
-    resultUrl.setOriginalUrl(url);
-    MediaTypes mediaType = getMediaType(findFacetName(fieldID));
-    resultUrl.setMediaType(mediaType);
+    Thr ftSearchResultUrl resultUrl = new Thr ftSearchResultUrl();
+    resultUrl.setOr g nalUrl(url);
+     d aTypes  d aType = get d aType(f ndFacetNa (f eld D));
+    resultUrl.set d aType( d aType);
 
-    // Media links will show up twice:
-    //   - once in image/native_image/video/news facets
-    //   - another time in the links facet
+    //  d a l nks w ll show up tw ce:
+    //   - once  n  mage/nat ve_ mage/v deo/news facets
+    //   - anot r t    n t  l nks facet
     //
-    // For those urls, we only want to return the media version. If it is non-media version, only
-    // write to map if doesn't exist already, if media version, overwrite any previous entries.
-    if (mediaType == MediaTypes.UNKNOWN) {
-      if (!dedupedUrls.containsKey(url)) {
+    // For those urls,   only want to return t   d a vers on.  f    s non- d a vers on, only
+    // wr e to map  f doesn't ex st already,  f  d a vers on, overwr e any prev ous entr es.
+     f ( d aType ==  d aTypes.UNKNOWN) {
+       f (!dedupedUrls.conta nsKey(url)) {
         dedupedUrls.put(url, resultUrl);
       }
     } else {
@@ -80,39 +80,39 @@ public class ExpandedUrlCollector extends AbstractFacetTermCollector {
     return true;
   }
 
-  @Override
-  public void fillResultAndClear(ThriftSearchResult result) {
-    result.getMetadata().setTweetUrls(getExpandedUrls());
+  @Overr de
+  publ c vo d f llResultAndClear(Thr ftSearchResult result) {
+    result.get tadata().setT etUrls(getExpandedUrls());
     dedupedUrls.clear();
   }
 
-  @VisibleForTesting
-  List<ThriftSearchResultUrl> getExpandedUrls() {
-    return ImmutableList.copyOf(dedupedUrls.values());
+  @V s bleForTest ng
+  L st<Thr ftSearchResultUrl> getExpandedUrls() {
+    return  mmutableL st.copyOf(dedupedUrls.values());
   }
 
   /**
-   * Gets the Spiderduck media type for a given facet name.
+   * Gets t  Sp derduck  d a type for a g ven facet na .
    *
-   * @param facetName A given facet name.
-   * @return {@code MediaTypes} enum corresponding to the facet name.
+   * @param facetNa  A g ven facet na .
+   * @return {@code  d aTypes} enum correspond ng to t  facet na .
    */
-  private static MediaTypes getMediaType(String facetName) {
-    if (facetName == null) {
-      return MediaTypes.UNKNOWN;
+  pr vate stat c  d aTypes get d aType(Str ng facetNa ) {
+     f (facetNa  == null) {
+      return  d aTypes.UNKNOWN;
     }
 
-    switch (facetName) {
-      case EarlybirdFieldConstant.TWIMG_FACET:
-        return MediaTypes.NATIVE_IMAGE;
-      case EarlybirdFieldConstant.IMAGES_FACET:
-        return MediaTypes.IMAGE;
-      case EarlybirdFieldConstant.VIDEOS_FACET:
-        return MediaTypes.VIDEO;
-      case EarlybirdFieldConstant.NEWS_FACET:
-        return MediaTypes.NEWS;
+    sw ch (facetNa ) {
+      case Earlyb rdF eldConstant.TW MG_FACET:
+        return  d aTypes.NAT VE_ MAGE;
+      case Earlyb rdF eldConstant. MAGES_FACET:
+        return  d aTypes. MAGE;
+      case Earlyb rdF eldConstant.V DEOS_FACET:
+        return  d aTypes.V DEO;
+      case Earlyb rdF eldConstant.NEWS_FACET:
+        return  d aTypes.NEWS;
       default:
-        return MediaTypes.UNKNOWN;
+        return  d aTypes.UNKNOWN;
     }
   }
 }

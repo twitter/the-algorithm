@@ -1,21 +1,21 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+na space java com.tw ter.cr_m xer.thr ftjava
+#@na space scala com.tw ter.cr_m xer.thr ftscala
+#@na space strato com.tw ter.cr_m xer
 
-struct HomeContext {
-	2: optional i32 maxResults // enabled for QuaityFactor related DDGs only
-} (persisted='true', hasPersonalData='false')
+struct Ho Context {
+	2: opt onal  32 maxResults // enabled for Qua yFactor related DDGs only
+} (pers sted='true', hasPersonalData='false')
 
-struct NotificationsContext {
-	1: optional i32 devNull // not being used. it's a placeholder
-} (persisted='true', hasPersonalData='false')
+struct Not f cat onsContext {
+	1: opt onal  32 devNull // not be ng used.  's a placeholder
+} (pers sted='true', hasPersonalData='false')
 
 struct ExploreContext {
-  1: required bool isVideoOnly
-} (persisted='true', hasPersonalData='false')
+  1: requ red bool  sV deoOnly
+} (pers sted='true', hasPersonalData='false')
 
-union ProductContext {
-	1: HomeContext homeContext
-	2: NotificationsContext notificationsContext
+un on ProductContext {
+	1: Ho Context ho Context
+	2: Not f cat onsContext not f cat onsContext
 	3: ExploreContext exploreContext
-} (persisted='true', hasPersonalData='false')
+} (pers sted='true', hasPersonalData='false')

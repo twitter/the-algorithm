@@ -1,69 +1,69 @@
-package com.twitter.simclusters_v2.scalding.offline_job
+package com.tw ter.s mclusters_v2.scald ng.offl ne_job
 
-import com.twitter.algebird.{DecayedValueMonoid, Monoid, OptionMonoid}
-import com.twitter.algebird_internal.thriftscala.{DecayedValue => ThriftDecayedValue}
-import com.twitter.scalding.{TypedPipe, _}
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.{Timestamp, TweetId, UserId}
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.summingbird.common.{Configs, ThriftDecayedValueMonoid}
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.timelineservice.thriftscala.{ContextualizedFavoriteEvent, FavoriteEventUnion}
-import java.util.TimeZone
-import twadoop_config.configuration.log_categories.group.timeline.TimelineServiceFavoritesScalaDataset
+ mport com.tw ter.algeb rd.{DecayedValueMono d, Mono d, Opt onMono d}
+ mport com.tw ter.algeb rd_ nternal.thr ftscala.{DecayedValue => Thr ftDecayedValue}
+ mport com.tw ter.scald ng.{TypedP pe, _}
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.{Expl c Locat on, ProcAtla}
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.common.{T  stamp, T et d, User d}
+ mport com.tw ter.s mclusters_v2.hdfs_s ces._
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.{Conf gs, Thr ftDecayedValueMono d}
+ mport com.tw ter.s mclusters_v2.thr ftscala._
+ mport com.tw ter.t  l neserv ce.thr ftscala.{Contextual zedFavor eEvent, Favor eEventUn on}
+ mport java.ut l.T  Zone
+ mport twadoop_conf g.conf gurat on.log_categor es.group.t  l ne.T  l neServ ceFavor esScalaDataset
 
-object SimClustersOfflineJobUtil {
+object S mClustersOffl neJobUt l {
 
-  implicit val timeZone: TimeZone = DateOps.UTC
-  implicit val dateParser: DateParser = DateParser.default
+   mpl c  val t  Zone: T  Zone = DateOps.UTC
+   mpl c  val dateParser: DateParser = DateParser.default
 
-  implicit val modelVersionOrdering: Ordering[PersistedModelVersion] =
-    Ordering.by(_.value)
+   mpl c  val modelVers onOrder ng: Order ng[Pers stedModelVers on] =
+    Order ng.by(_.value)
 
-  implicit val scoreTypeOrdering: Ordering[PersistedScoreType] =
-    Ordering.by(_.value)
+   mpl c  val scoreTypeOrder ng: Order ng[Pers stedScoreType] =
+    Order ng.by(_.value)
 
-  implicit val persistedScoresOrdering: Ordering[PersistedScores] = Ordering.by(
+   mpl c  val pers stedScoresOrder ng: Order ng[Pers stedScores] = Order ng.by(
     _.score.map(_.value).getOrElse(0.0)
   )
 
-  implicit val decayedValueMonoid: DecayedValueMonoid = DecayedValueMonoid(0.0)
+   mpl c  val decayedValueMono d: DecayedValueMono d = DecayedValueMono d(0.0)
 
-  implicit val thriftDecayedValueMonoid: ThriftDecayedValueMonoid =
-    new ThriftDecayedValueMonoid(Configs.HalfLifeInMs)(decayedValueMonoid)
+   mpl c  val thr ftDecayedValueMono d: Thr ftDecayedValueMono d =
+    new Thr ftDecayedValueMono d(Conf gs.HalfL fe nMs)(decayedValueMono d)
 
-  implicit val persistedScoresMonoid: PersistedScoresMonoid =
-    new PersistedScoresMonoid()(thriftDecayedValueMonoid)
+   mpl c  val pers stedScoresMono d: Pers stedScoresMono d =
+    new Pers stedScoresMono d()(thr ftDecayedValueMono d)
 
-  def readInterestedInScalaDataset(
-    implicit dateRange: DateRange
-  ): TypedPipe[(Long, ClustersUserIsInterestedIn)] = {
-    //read SimClusters InterestedIn datasets
+  def read nterested nScalaDataset(
+     mpl c  dateRange: DateRange
+  ): TypedP pe[(Long, ClustersUser s nterested n)] = {
+    //read S mClusters  nterested n datasets
     DAL
       .readMostRecentSnapshot(
-        SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
-        dateRange.embiggen(Days(30))
+        S mclustersV2 nterested n20M145KUpdatedScalaDataset,
+        dateRange.emb ggen(Days(30))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+      .toTypedP pe
       .map {
         case KeyVal(key, value) => (key, value)
       }
   }
 
-  def readTimelineFavoriteData(
-    implicit dateRange: DateRange
-  ): TypedPipe[(UserId, TweetId, Timestamp)] = {
+  def readT  l neFavor eData(
+     mpl c  dateRange: DateRange
+  ): TypedP pe[(User d, T et d, T  stamp)] = {
     DAL
-      .read(TimelineServiceFavoritesScalaDataset, dateRange) // Note: this is a hourly source
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
-      .flatMap { cfe: ContextualizedFavoriteEvent =>
+      .read(T  l neServ ceFavor esScalaDataset, dateRange) // Note: t   s a h ly s ce
+      .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+      .toTypedP pe
+      .flatMap { cfe: Contextual zedFavor eEvent =>
         cfe.event match {
-          case FavoriteEventUnion.Favorite(fav) =>
-            Some((fav.userId, fav.tweetId, fav.eventTimeMs))
+          case Favor eEventUn on.Favor e(fav) =>
+            So ((fav.user d, fav.t et d, fav.eventT  Ms))
           case _ =>
             None
         }
@@ -71,26 +71,26 @@ object SimClustersOfflineJobUtil {
       }
   }
 
-  class PersistedScoresMonoid(
-    implicit thriftDecayedValueMonoid: ThriftDecayedValueMonoid)
-      extends Monoid[PersistedScores] {
+  class Pers stedScoresMono d(
+     mpl c  thr ftDecayedValueMono d: Thr ftDecayedValueMono d)
+      extends Mono d[Pers stedScores] {
 
-    private val optionalThriftDecayedValueMonoid =
-      new OptionMonoid[ThriftDecayedValue]()
+    pr vate val opt onalThr ftDecayedValueMono d =
+      new Opt onMono d[Thr ftDecayedValue]()
 
-    override val zero: PersistedScores = PersistedScores()
+    overr de val zero: Pers stedScores = Pers stedScores()
 
-    override def plus(x: PersistedScores, y: PersistedScores): PersistedScores = {
-      PersistedScores(
-        optionalThriftDecayedValueMonoid.plus(
+    overr de def plus(x: Pers stedScores, y: Pers stedScores): Pers stedScores = {
+      Pers stedScores(
+        opt onalThr ftDecayedValueMono d.plus(
           x.score,
           y.score
         )
       )
     }
 
-    def build(value: Double, timeInMs: Double): PersistedScores = {
-      PersistedScores(Some(thriftDecayedValueMonoid.build(value, timeInMs)))
+    def bu ld(value: Double, t   nMs: Double): Pers stedScores = {
+      Pers stedScores(So (thr ftDecayedValueMono d.bu ld(value, t   nMs)))
     }
   }
 

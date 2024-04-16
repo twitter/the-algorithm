@@ -1,13 +1,13 @@
-package com.twitter.recos.user_user_graph
+package com.tw ter.recos.user_user_graph
 
 /**
- * The class holds all the config parameters for kafka queue.
+ * T  class holds all t  conf g para ters for kafka queue.
  */
-object KafkaConfig {
-  // The size of the RecosHoseMessage array that is written to the concurrently linked queue
-  // Buffersize of 64 to keep throughput around 64 / (2K edgesPerSec / 150 kafka threads) = 6 seconds, which is lower
-  // than young gen gc cycle, 20 seconds. So that all the incoming messages will be gced in young gen instead of old gen.
-  val bufferSize = 64
+object KafkaConf g {
+  // T  s ze of t  RecosHose ssage array that  s wr ten to t  concurrently l nked queue
+  // Buffers ze of 64 to keep throughput around 64 / (2K edgesPerSec / 150 kafka threads) = 6 seconds, wh ch  s lo r
+  // than  ng gen gc cycle, 20 seconds. So that all t   ncom ng  ssages w ll be gced  n  ng gen  nstead of old gen.
+  val bufferS ze = 64
 
-  println("KafkaConfig -                 bufferSize " + bufferSize)
+  pr ntln("KafkaConf g -                 bufferS ze " + bufferS ze)
 }

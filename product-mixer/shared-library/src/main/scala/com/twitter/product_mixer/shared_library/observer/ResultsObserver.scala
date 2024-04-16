@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.shared_library.observer
+package com.tw ter.product_m xer.shared_l brary.observer
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.shared_library.observer.Observer.ArrowObserver
-import com.twitter.product_mixer.shared_library.observer.Observer.FunctionObserver
-import com.twitter.product_mixer.shared_library.observer.Observer.FutureObserver
-import com.twitter.product_mixer.shared_library.observer.Observer.Observer
-import com.twitter.product_mixer.shared_library.observer.Observer.StitchObserver
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
-import com.twitter.util.Future
-import com.twitter.util.Try
+ mport com.tw ter.f nagle.stats.Counter
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.shared_l brary.observer.Observer.ArrowObserver
+ mport com.tw ter.product_m xer.shared_l brary.observer.Observer.Funct onObserver
+ mport com.tw ter.product_m xer.shared_l brary.observer.Observer.FutureObserver
+ mport com.tw ter.product_m xer.shared_l brary.observer.Observer.Observer
+ mport com.tw ter.product_m xer.shared_l brary.observer.Observer.St chObserver
+ mport com.tw ter.st ch.Arrow
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Try
 
 /**
- * Helper functions to observe requests, successes, failures, cancellations, exceptions, latency,
- * and result counts. Supports native functions and asynchronous operations.
+ *  lper funct ons to observe requests, successes, fa lures, cancellat ons, except ons, latency,
+ * and result counts. Supports nat ve funct ons and asynchronous operat ons.
  */
 object ResultsObserver {
   val Total = "total"
@@ -22,258 +22,258 @@ object ResultsObserver {
   val NotFound = "not_found"
 
   /**
-   * Helper function to observe a stitch and result counts
+   *  lper funct on to observe a st ch and result counts
    *
-   * @see [[StitchResultsObserver]]
+   * @see [[St chResultsObserver]]
    */
-  def stitchResults[T](
-    size: T => Int,
-    statsReceiver: StatsReceiver,
-    scopes: String*
-  ): StitchResultsObserver[T] = {
-    new StitchResultsObserver[T](size, statsReceiver, scopes)
+  def st chResults[T](
+    s ze: T =>  nt,
+    statsRece ver: StatsRece ver,
+    scopes: Str ng*
+  ): St chResultsObserver[T] = {
+    new St chResultsObserver[T](s ze, statsRece ver, scopes)
   }
 
   /**
-   * Helper function to observe a stitch and traversable (e.g. Seq, Set) result counts
+   *  lper funct on to observe a st ch and traversable (e.g. Seq, Set) result counts
    *
-   * @see [[StitchResultsObserver]]
+   * @see [[St chResultsObserver]]
    */
-  def stitchResults[T <: TraversableOnce[_]](
-    statsReceiver: StatsReceiver,
-    scopes: String*
-  ): StitchResultsObserver[T] = {
-    new StitchResultsObserver[T](_.size, statsReceiver, scopes)
+  def st chResults[T <: TraversableOnce[_]](
+    statsRece ver: StatsRece ver,
+    scopes: Str ng*
+  ): St chResultsObserver[T] = {
+    new St chResultsObserver[T](_.s ze, statsRece ver, scopes)
   }
 
   /**
-   * Helper function to observe an arrow and result counts
+   *  lper funct on to observe an arrow and result counts
    *
    * @see [[ArrowResultsObserver]]
    */
-  def arrowResults[In, Out](
-    size: Out => Int,
-    statsReceiver: StatsReceiver,
-    scopes: String*
-  ): ArrowResultsObserver[In, Out] = {
-    new ArrowResultsObserver[In, Out](size, statsReceiver, scopes)
+  def arrowResults[ n, Out](
+    s ze: Out =>  nt,
+    statsRece ver: StatsRece ver,
+    scopes: Str ng*
+  ): ArrowResultsObserver[ n, Out] = {
+    new ArrowResultsObserver[ n, Out](s ze, statsRece ver, scopes)
   }
 
   /**
-   * Helper function to observe an arrow and traversable (e.g. Seq, Set) result counts
+   *  lper funct on to observe an arrow and traversable (e.g. Seq, Set) result counts
    *
    * @see [[ArrowResultsObserver]]
    */
-  def arrowResults[In, Out <: TraversableOnce[_]](
-    statsReceiver: StatsReceiver,
-    scopes: String*
-  ): ArrowResultsObserver[In, Out] = {
-    new ArrowResultsObserver[In, Out](_.size, statsReceiver, scopes)
+  def arrowResults[ n, Out <: TraversableOnce[_]](
+    statsRece ver: StatsRece ver,
+    scopes: Str ng*
+  ): ArrowResultsObserver[ n, Out] = {
+    new ArrowResultsObserver[ n, Out](_.s ze, statsRece ver, scopes)
   }
 
   /**
-   * Helper function to observe an arrow and result counts
+   *  lper funct on to observe an arrow and result counts
    *
-   * @see [[TransformingArrowResultsObserver]]
+   * @see [[Transform ngArrowResultsObserver]]
    */
-  def transformingArrowResults[In, Out, Transformed](
-    transformer: Out => Try[Transformed],
-    size: Transformed => Int,
-    statsReceiver: StatsReceiver,
-    scopes: String*
-  ): TransformingArrowResultsObserver[In, Out, Transformed] = {
-    new TransformingArrowResultsObserver[In, Out, Transformed](
-      transformer,
-      size,
-      statsReceiver,
+  def transform ngArrowResults[ n, Out, Transfor d](
+    transfor r: Out => Try[Transfor d],
+    s ze: Transfor d =>  nt,
+    statsRece ver: StatsRece ver,
+    scopes: Str ng*
+  ): Transform ngArrowResultsObserver[ n, Out, Transfor d] = {
+    new Transform ngArrowResultsObserver[ n, Out, Transfor d](
+      transfor r,
+      s ze,
+      statsRece ver,
       scopes)
   }
 
   /**
-   * Helper function to observe an arrow and traversable (e.g. Seq, Set) result counts
+   *  lper funct on to observe an arrow and traversable (e.g. Seq, Set) result counts
    *
-   * @see [[TransformingArrowResultsObserver]]
+   * @see [[Transform ngArrowResultsObserver]]
    */
-  def transformingArrowResults[In, Out, Transformed <: TraversableOnce[_]](
-    transformer: Out => Try[Transformed],
-    statsReceiver: StatsReceiver,
-    scopes: String*
-  ): TransformingArrowResultsObserver[In, Out, Transformed] = {
-    new TransformingArrowResultsObserver[In, Out, Transformed](
-      transformer,
-      _.size,
-      statsReceiver,
+  def transform ngArrowResults[ n, Out, Transfor d <: TraversableOnce[_]](
+    transfor r: Out => Try[Transfor d],
+    statsRece ver: StatsRece ver,
+    scopes: Str ng*
+  ): Transform ngArrowResultsObserver[ n, Out, Transfor d] = {
+    new Transform ngArrowResultsObserver[ n, Out, Transfor d](
+      transfor r,
+      _.s ze,
+      statsRece ver,
       scopes)
   }
 
   /**
-   * Helper function to observe a future and result counts
+   *  lper funct on to observe a future and result counts
    *
    * @see [[FutureResultsObserver]]
    */
   def futureResults[T](
-    size: T => Int,
-    statsReceiver: StatsReceiver,
-    scopes: String*
+    s ze: T =>  nt,
+    statsRece ver: StatsRece ver,
+    scopes: Str ng*
   ): FutureResultsObserver[T] = {
-    new FutureResultsObserver[T](size, statsReceiver, scopes)
+    new FutureResultsObserver[T](s ze, statsRece ver, scopes)
   }
 
   /**
-   * Helper function to observe a future and traversable (e.g. Seq, Set) result counts
+   *  lper funct on to observe a future and traversable (e.g. Seq, Set) result counts
    *
    * @see [[FutureResultsObserver]]
    */
   def futureResults[T <: TraversableOnce[_]](
-    statsReceiver: StatsReceiver,
-    scopes: String*
+    statsRece ver: StatsRece ver,
+    scopes: Str ng*
   ): FutureResultsObserver[T] = {
-    new FutureResultsObserver[T](_.size, statsReceiver, scopes)
+    new FutureResultsObserver[T](_.s ze, statsRece ver, scopes)
   }
 
   /**
-   * Helper function to observe a function and result counts
+   *  lper funct on to observe a funct on and result counts
    *
-   * @see [[FunctionResultsObserver]]
+   * @see [[Funct onResultsObserver]]
    */
-  def functionResults[T](
-    size: T => Int,
-    statsReceiver: StatsReceiver,
-    scopes: String*
-  ): FunctionResultsObserver[T] = {
-    new FunctionResultsObserver[T](size, statsReceiver, scopes)
+  def funct onResults[T](
+    s ze: T =>  nt,
+    statsRece ver: StatsRece ver,
+    scopes: Str ng*
+  ): Funct onResultsObserver[T] = {
+    new Funct onResultsObserver[T](s ze, statsRece ver, scopes)
   }
 
   /**
-   * Helper function to observe a function and traversable (e.g. Seq, Set) result counts
+   *  lper funct on to observe a funct on and traversable (e.g. Seq, Set) result counts
    *
-   * @see [[FunctionResultsObserver]]
+   * @see [[Funct onResultsObserver]]
    */
-  def functionResults[T <: TraversableOnce[_]](
-    statsReceiver: StatsReceiver,
-    scopes: String*
-  ): FunctionResultsObserver[T] = {
-    new FunctionResultsObserver[T](_.size, statsReceiver, scopes)
+  def funct onResults[T <: TraversableOnce[_]](
+    statsRece ver: StatsRece ver,
+    scopes: Str ng*
+  ): Funct onResultsObserver[T] = {
+    new Funct onResultsObserver[T](_.s ze, statsRece ver, scopes)
   }
 
-  /** [[StitchObserver]] that also records result size */
-  class StitchResultsObserver[T](
-    override val size: T => Int,
-    override val statsReceiver: StatsReceiver,
-    override val scopes: Seq[String])
-      extends StitchObserver[T](statsReceiver, scopes)
-      with ResultsObserver[T] {
+  /** [[St chObserver]] that also records result s ze */
+  class St chResultsObserver[T](
+    overr de val s ze: T =>  nt,
+    overr de val statsRece ver: StatsRece ver,
+    overr de val scopes: Seq[Str ng])
+      extends St chObserver[T](statsRece ver, scopes)
+      w h ResultsObserver[T] {
 
-    override def apply(stitch: => Stitch[T]): Stitch[T] =
+    overr de def apply(st ch: => St ch[T]): St ch[T] =
       super
-        .apply(stitch)
+        .apply(st ch)
         .onSuccess(observeResults)
   }
 
-  /** [[ArrowObserver]] that also records result size */
-  class ArrowResultsObserver[In, Out](
-    override val size: Out => Int,
-    override val statsReceiver: StatsReceiver,
-    override val scopes: Seq[String])
-      extends ArrowObserver[In, Out](statsReceiver, scopes)
-      with ResultsObserver[Out] {
+  /** [[ArrowObserver]] that also records result s ze */
+  class ArrowResultsObserver[ n, Out](
+    overr de val s ze: Out =>  nt,
+    overr de val statsRece ver: StatsRece ver,
+    overr de val scopes: Seq[Str ng])
+      extends ArrowObserver[ n, Out](statsRece ver, scopes)
+      w h ResultsObserver[Out] {
 
-    override def apply(arrow: Arrow[In, Out]): Arrow[In, Out] =
+    overr de def apply(arrow: Arrow[ n, Out]): Arrow[ n, Out] =
       super
         .apply(arrow)
         .onSuccess(observeResults)
   }
 
   /**
-   * [[TransformingArrowResultsObserver]] functions like an [[ArrowObserver]] except
-   * that it transforms the result using [[transformer]] before recording stats.
+   * [[Transform ngArrowResultsObserver]] funct ons l ke an [[ArrowObserver]] except
+   * that   transforms t  result us ng [[transfor r]] before record ng stats.
    *
-   * The original non-transformed result is then returned.
+   * T  or g nal non-transfor d result  s t n returned.
    */
-  class TransformingArrowResultsObserver[In, Out, Transformed](
-    val transformer: Out => Try[Transformed],
-    override val size: Transformed => Int,
-    override val statsReceiver: StatsReceiver,
-    override val scopes: Seq[String])
-      extends Observer[Transformed]
-      with ResultsObserver[Transformed] {
+  class Transform ngArrowResultsObserver[ n, Out, Transfor d](
+    val transfor r: Out => Try[Transfor d],
+    overr de val s ze: Transfor d =>  nt,
+    overr de val statsRece ver: StatsRece ver,
+    overr de val scopes: Seq[Str ng])
+      extends Observer[Transfor d]
+      w h ResultsObserver[Transfor d] {
 
     /**
-     * Returns a new Arrow that records stats on the result after applying [[transformer]] when it's run.
-     * The original, non-transformed, result of the Arrow is passed through.
+     * Returns a new Arrow that records stats on t  result after apply ng [[transfor r]] w n  's run.
+     * T  or g nal, non-transfor d, result of t  Arrow  s passed through.
      *
-     * @note the provided Arrow must contain the parts that need to be timed.
-     *       Using this on just the result of the computation the latency stat
-     *       will be incorrect.
+     * @note t  prov ded Arrow must conta n t  parts that need to be t  d.
+     *       Us ng t  on just t  result of t  computat on t  latency stat
+     *       w ll be  ncorrect.
      */
-    def apply(arrow: Arrow[In, Out]): Arrow[In, Out] = {
+    def apply(arrow: Arrow[ n, Out]): Arrow[ n, Out] = {
       Arrow
-        .time(arrow)
+        .t  (arrow)
         .map {
-          case (response, stitchRunDuration) =>
-            observe(response.flatMap(transformer), stitchRunDuration)
+          case (response, st chRunDurat on) =>
+            observe(response.flatMap(transfor r), st chRunDurat on)
               .onSuccess(observeResults)
             response
-        }.lowerFromTry
+        }.lo rFromTry
     }
   }
 
-  /** [[FutureObserver]] that also records result size */
+  /** [[FutureObserver]] that also records result s ze */
   class FutureResultsObserver[T](
-    override val size: T => Int,
-    override val statsReceiver: StatsReceiver,
-    override val scopes: Seq[String])
-      extends FutureObserver[T](statsReceiver, scopes)
-      with ResultsObserver[T] {
+    overr de val s ze: T =>  nt,
+    overr de val statsRece ver: StatsRece ver,
+    overr de val scopes: Seq[Str ng])
+      extends FutureObserver[T](statsRece ver, scopes)
+      w h ResultsObserver[T] {
 
-    override def apply(future: => Future[T]): Future[T] =
+    overr de def apply(future: => Future[T]): Future[T] =
       super
         .apply(future)
         .onSuccess(observeResults)
   }
 
-  /** [[FunctionObserver]] that also records result size */
-  class FunctionResultsObserver[T](
-    override val size: T => Int,
-    override val statsReceiver: StatsReceiver,
-    override val scopes: Seq[String])
-      extends FunctionObserver[T](statsReceiver, scopes)
-      with ResultsObserver[T] {
+  /** [[Funct onObserver]] that also records result s ze */
+  class Funct onResultsObserver[T](
+    overr de val s ze: T =>  nt,
+    overr de val statsRece ver: StatsRece ver,
+    overr de val scopes: Seq[Str ng])
+      extends Funct onObserver[T](statsRece ver, scopes)
+      w h ResultsObserver[T] {
 
-    override def apply(f: => T): T = observeResults(super.apply(f))
+    overr de def apply(f: => T): T = observeResults(super.apply(f))
   }
 
-  /** [[ResultsObserver]] provides methods for recording stats for the result size */
-  trait ResultsObserver[T] {
-    protected val statsReceiver: StatsReceiver
+  /** [[ResultsObserver]] prov des  thods for record ng stats for t  result s ze */
+  tra  ResultsObserver[T] {
+    protected val statsRece ver: StatsRece ver
 
-    /** Scopes that prefix all stats */
-    protected val scopes: Seq[String]
+    /** Scopes that pref x all stats */
+    protected val scopes: Seq[Str ng]
 
-    protected val totalCounter: Counter = statsReceiver.counter(scopes :+ Total: _*)
-    protected val foundCounter: Counter = statsReceiver.counter(scopes :+ Found: _*)
-    protected val notFoundCounter: Counter = statsReceiver.counter(scopes :+ NotFound: _*)
+    protected val totalCounter: Counter = statsRece ver.counter(scopes :+ Total: _*)
+    protected val foundCounter: Counter = statsRece ver.counter(scopes :+ Found: _*)
+    protected val notFoundCounter: Counter = statsRece ver.counter(scopes :+ NotFound: _*)
 
-    /** given a [[T]] returns it's size. */
-    protected val size: T => Int
+    /** g ven a [[T]] returns  's s ze. */
+    protected val s ze: T =>  nt
 
-    /** Records the size of the `results` using [[size]] and return the original value. */
+    /** Records t  s ze of t  `results` us ng [[s ze]] and return t  or g nal value. */
     protected def observeResults(results: T): T = {
-      val resultsSize = size(results)
-      observeResultsWithSize(results, resultsSize)
+      val resultsS ze = s ze(results)
+      observeResultsW hS ze(results, resultsS ze)
     }
 
     /**
-     * Records the `resultsSize` and returns the `results`
+     * Records t  `resultsS ze` and returns t  `results`
      *
-     * This is useful if the size is already available and is expensive to calculate.
+     * T   s useful  f t  s ze  s already ava lable and  s expens ve to calculate.
      */
-    protected def observeResultsWithSize(results: T, resultsSize: Int): T = {
-      if (resultsSize > 0) {
-        totalCounter.incr(resultsSize)
-        foundCounter.incr()
+    protected def observeResultsW hS ze(results: T, resultsS ze:  nt): T = {
+       f (resultsS ze > 0) {
+        totalCounter. ncr(resultsS ze)
+        foundCounter. ncr()
       } else {
-        notFoundCounter.incr()
+        notFoundCounter. ncr()
       }
       results
     }

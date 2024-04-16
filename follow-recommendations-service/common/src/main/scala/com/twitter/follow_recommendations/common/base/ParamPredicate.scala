@@ -1,17 +1,17 @@
-package com.twitter.follow_recommendations.common.base
+package com.tw ter.follow_recom ndat ons.common.base
 
-import com.twitter.follow_recommendations.common.models.FilterReason.ParamReason
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.follow_recom ndat ons.common.models.F lterReason.ParamReason
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport com.tw ter.t  l nes.conf gap .Param
 
-case class ParamPredicate[Request <: HasParams](param: Param[Boolean]) extends Predicate[Request] {
+case class ParamPred cate[Request <: HasParams](param: Param[Boolean]) extends Pred cate[Request] {
 
-  def apply(request: Request): Stitch[PredicateResult] = {
-    if (request.params(param)) {
-      Stitch.value(PredicateResult.Valid)
+  def apply(request: Request): St ch[Pred cateResult] = {
+     f (request.params(param)) {
+      St ch.value(Pred cateResult.Val d)
     } else {
-      Stitch.value(PredicateResult.Invalid(Set(ParamReason(param.statName))))
+      St ch.value(Pred cateResult. nval d(Set(ParamReason(param.statNa ))))
     }
   }
 }

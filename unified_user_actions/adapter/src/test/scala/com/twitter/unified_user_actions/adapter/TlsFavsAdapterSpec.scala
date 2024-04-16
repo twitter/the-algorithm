@@ -1,203 +1,203 @@
-package com.twitter.unified_user_actions.adapter
+package com.tw ter.un f ed_user_act ons.adapter
 
-import com.twitter.context.thriftscala.Viewer
-import com.twitter.inject.Test
-import com.twitter.timelineservice.thriftscala._
-import com.twitter.unified_user_actions.adapter.tls_favs_event.TlsFavsAdapter
-import com.twitter.unified_user_actions.thriftscala._
-import com.twitter.util.Time
+ mport com.tw ter.context.thr ftscala.V e r
+ mport com.tw ter. nject.Test
+ mport com.tw ter.t  l neserv ce.thr ftscala._
+ mport com.tw ter.un f ed_user_act ons.adapter.tls_favs_event.TlsFavsAdapter
+ mport com.tw ter.un f ed_user_act ons.thr ftscala._
+ mport com.tw ter.ut l.T  
 
 class TlsFavsAdapterSpec extends Test {
-  trait Fixture {
+  tra  F xture {
 
-    val frozenTime = Time.fromMilliseconds(1658949273000L)
+    val frozenT   = T  .fromM ll seconds(1658949273000L)
 
-    val favEventNoRetweet = ContextualizedFavoriteEvent(
-      event = FavoriteEventUnion.Favorite(
-        FavoriteEvent(
-          userId = 91L,
-          tweetId = 1L,
-          tweetUserId = 101L,
-          eventTimeMs = 1001L
+    val favEventNoRet et = Contextual zedFavor eEvent(
+      event = Favor eEventUn on.Favor e(
+        Favor eEvent(
+          user d = 91L,
+          t et d = 1L,
+          t etUser d = 101L,
+          eventT  Ms = 1001L
         )
       ),
-      context = LogEventContext(hostname = "", traceId = 31L)
+      context = LogEventContext(hostna  = "", trace d = 31L)
     )
-    val favEventRetweet = ContextualizedFavoriteEvent(
-      event = FavoriteEventUnion.Favorite(
-        FavoriteEvent(
-          userId = 92L,
-          tweetId = 2L,
-          tweetUserId = 102L,
-          eventTimeMs = 1002L,
-          retweetId = Some(22L)
+    val favEventRet et = Contextual zedFavor eEvent(
+      event = Favor eEventUn on.Favor e(
+        Favor eEvent(
+          user d = 92L,
+          t et d = 2L,
+          t etUser d = 102L,
+          eventT  Ms = 1002L,
+          ret et d = So (22L)
         )
       ),
-      context = LogEventContext(hostname = "", traceId = 32L)
+      context = LogEventContext(hostna  = "", trace d = 32L)
     )
-    val unfavEventNoRetweet = ContextualizedFavoriteEvent(
-      event = FavoriteEventUnion.Unfavorite(
-        UnfavoriteEvent(
-          userId = 93L,
-          tweetId = 3L,
-          tweetUserId = 103L,
-          eventTimeMs = 1003L
+    val unfavEventNoRet et = Contextual zedFavor eEvent(
+      event = Favor eEventUn on.Unfavor e(
+        Unfavor eEvent(
+          user d = 93L,
+          t et d = 3L,
+          t etUser d = 103L,
+          eventT  Ms = 1003L
         )
       ),
-      context = LogEventContext(hostname = "", traceId = 33L)
+      context = LogEventContext(hostna  = "", trace d = 33L)
     )
-    val unfavEventRetweet = ContextualizedFavoriteEvent(
-      event = FavoriteEventUnion.Unfavorite(
-        UnfavoriteEvent(
-          userId = 94L,
-          tweetId = 4L,
-          tweetUserId = 104L,
-          eventTimeMs = 1004L,
-          retweetId = Some(44L)
+    val unfavEventRet et = Contextual zedFavor eEvent(
+      event = Favor eEventUn on.Unfavor e(
+        Unfavor eEvent(
+          user d = 94L,
+          t et d = 4L,
+          t etUser d = 104L,
+          eventT  Ms = 1004L,
+          ret et d = So (44L)
         )
       ),
-      context = LogEventContext(hostname = "", traceId = 34L)
+      context = LogEventContext(hostna  = "", trace d = 34L)
     )
-    val favEventWithLangAndCountry = ContextualizedFavoriteEvent(
-      event = FavoriteEventUnion.Favorite(
-        FavoriteEvent(
-          userId = 91L,
-          tweetId = 1L,
-          tweetUserId = 101L,
-          eventTimeMs = 1001L,
-          viewerContext =
-            Some(Viewer(requestCountryCode = Some("us"), requestLanguageCode = Some("en")))
+    val favEventW hLangAndCountry = Contextual zedFavor eEvent(
+      event = Favor eEventUn on.Favor e(
+        Favor eEvent(
+          user d = 91L,
+          t et d = 1L,
+          t etUser d = 101L,
+          eventT  Ms = 1001L,
+          v e rContext =
+            So (V e r(requestCountryCode = So ("us"), requestLanguageCode = So ("en")))
         )
       ),
-      context = LogEventContext(hostname = "", traceId = 31L)
+      context = LogEventContext(hostna  = "", trace d = 31L)
     )
 
-    val expectedUua1 = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(91L)),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = 1L,
-          actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(101L))),
+    val expectedUua1 = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (91L)),
+       em =  em.T et nfo(
+        T et nfo(
+          act onT et d = 1L,
+          act onT etAuthor nfo = So (Author nfo(author d = So (101L))),
         )
       ),
-      actionType = ActionType.ServerTweetFav,
-      eventMetadata = EventMetadata(
-        sourceTimestampMs = 1001L,
-        receivedTimestampMs = frozenTime.inMilliseconds,
-        sourceLineage = SourceLineage.ServerTlsFavs,
-        traceId = Some(31L)
+      act onType = Act onType.ServerT etFav,
+      event tadata = Event tadata(
+        s ceT  stampMs = 1001L,
+        rece vedT  stampMs = frozenT  . nM ll seconds,
+        s ceL neage = S ceL neage.ServerTlsFavs,
+        trace d = So (31L)
       )
     )
-    val expectedUua2 = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(92L)),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = 2L,
-          actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(102L))),
-          retweetingTweetId = Some(22L)
+    val expectedUua2 = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (92L)),
+       em =  em.T et nfo(
+        T et nfo(
+          act onT et d = 2L,
+          act onT etAuthor nfo = So (Author nfo(author d = So (102L))),
+          ret et ngT et d = So (22L)
         )
       ),
-      actionType = ActionType.ServerTweetFav,
-      eventMetadata = EventMetadata(
-        sourceTimestampMs = 1002L,
-        receivedTimestampMs = frozenTime.inMilliseconds,
-        sourceLineage = SourceLineage.ServerTlsFavs,
-        traceId = Some(32L)
+      act onType = Act onType.ServerT etFav,
+      event tadata = Event tadata(
+        s ceT  stampMs = 1002L,
+        rece vedT  stampMs = frozenT  . nM ll seconds,
+        s ceL neage = S ceL neage.ServerTlsFavs,
+        trace d = So (32L)
       )
     )
-    val expectedUua3 = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(93L)),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = 3L,
-          actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(103L))),
+    val expectedUua3 = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (93L)),
+       em =  em.T et nfo(
+        T et nfo(
+          act onT et d = 3L,
+          act onT etAuthor nfo = So (Author nfo(author d = So (103L))),
         )
       ),
-      actionType = ActionType.ServerTweetUnfav,
-      eventMetadata = EventMetadata(
-        sourceTimestampMs = 1003L,
-        receivedTimestampMs = frozenTime.inMilliseconds,
-        sourceLineage = SourceLineage.ServerTlsFavs,
-        traceId = Some(33L)
+      act onType = Act onType.ServerT etUnfav,
+      event tadata = Event tadata(
+        s ceT  stampMs = 1003L,
+        rece vedT  stampMs = frozenT  . nM ll seconds,
+        s ceL neage = S ceL neage.ServerTlsFavs,
+        trace d = So (33L)
       )
     )
-    val expectedUua4 = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(94L)),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = 4L,
-          actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(104L))),
-          retweetingTweetId = Some(44L)
+    val expectedUua4 = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (94L)),
+       em =  em.T et nfo(
+        T et nfo(
+          act onT et d = 4L,
+          act onT etAuthor nfo = So (Author nfo(author d = So (104L))),
+          ret et ngT et d = So (44L)
         )
       ),
-      actionType = ActionType.ServerTweetUnfav,
-      eventMetadata = EventMetadata(
-        sourceTimestampMs = 1004L,
-        receivedTimestampMs = frozenTime.inMilliseconds,
-        sourceLineage = SourceLineage.ServerTlsFavs,
-        traceId = Some(34L)
+      act onType = Act onType.ServerT etUnfav,
+      event tadata = Event tadata(
+        s ceT  stampMs = 1004L,
+        rece vedT  stampMs = frozenT  . nM ll seconds,
+        s ceL neage = S ceL neage.ServerTlsFavs,
+        trace d = So (34L)
       )
     )
-    val expectedUua5 = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(91L)),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = 1L,
-          actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(101L))),
+    val expectedUua5 = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (91L)),
+       em =  em.T et nfo(
+        T et nfo(
+          act onT et d = 1L,
+          act onT etAuthor nfo = So (Author nfo(author d = So (101L))),
         )
       ),
-      actionType = ActionType.ServerTweetFav,
-      eventMetadata = EventMetadata(
-        sourceTimestampMs = 1001L,
-        receivedTimestampMs = frozenTime.inMilliseconds,
-        sourceLineage = SourceLineage.ServerTlsFavs,
-        language = Some("EN"),
-        countryCode = Some("US"),
-        traceId = Some(31L)
+      act onType = Act onType.ServerT etFav,
+      event tadata = Event tadata(
+        s ceT  stampMs = 1001L,
+        rece vedT  stampMs = frozenT  . nM ll seconds,
+        s ceL neage = S ceL neage.ServerTlsFavs,
+        language = So ("EN"),
+        countryCode = So ("US"),
+        trace d = So (31L)
       )
     )
   }
 
-  test("fav event with no retweet") {
-    new Fixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actual = TlsFavsAdapter.adaptEvent(favEventNoRetweet)
+  test("fav event w h no ret et") {
+    new F xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val actual = TlsFavsAdapter.adaptEvent(favEventNoRet et)
         assert(Seq(expectedUua1) === actual)
       }
     }
   }
 
-  test("fav event with a retweet") {
-    new Fixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actual = TlsFavsAdapter.adaptEvent(favEventRetweet)
+  test("fav event w h a ret et") {
+    new F xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val actual = TlsFavsAdapter.adaptEvent(favEventRet et)
         assert(Seq(expectedUua2) === actual)
       }
     }
   }
 
-  test("unfav event with no retweet") {
-    new Fixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actual = TlsFavsAdapter.adaptEvent(unfavEventNoRetweet)
+  test("unfav event w h no ret et") {
+    new F xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val actual = TlsFavsAdapter.adaptEvent(unfavEventNoRet et)
         assert(Seq(expectedUua3) === actual)
       }
     }
   }
 
-  test("unfav event with a retweet") {
-    new Fixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actual = TlsFavsAdapter.adaptEvent(unfavEventRetweet)
+  test("unfav event w h a ret et") {
+    new F xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val actual = TlsFavsAdapter.adaptEvent(unfavEventRet et)
         assert(Seq(expectedUua4) === actual)
       }
     }
   }
 
-  test("fav event with language and country") {
-    new Fixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actual = TlsFavsAdapter.adaptEvent(favEventWithLangAndCountry)
+  test("fav event w h language and country") {
+    new F xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val actual = TlsFavsAdapter.adaptEvent(favEventW hLangAndCountry)
         assert(Seq(expectedUua5) === actual)
       }
     }

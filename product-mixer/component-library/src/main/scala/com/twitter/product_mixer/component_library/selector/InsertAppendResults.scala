@@ -1,53 +1,53 @@
-package com.twitter.product_mixer.component_library.selector
+package com.tw ter.product_m xer.component_l brary.selector
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import CandidateScope.PartitionedCandidates
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.SelectorResult
+ mport Cand dateScope.Part  onedCand dates
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Spec f cP pel ne
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Spec f cP pel nes
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object InsertAppendResults {
-  def apply(candidatePipeline: CandidatePipelineIdentifier): InsertAppendResults[PipelineQuery] =
-    new InsertAppendResults(SpecificPipeline(candidatePipeline))
+object  nsertAppendResults {
+  def apply(cand dateP pel ne: Cand dateP pel ne dent f er):  nsertAppendResults[P pel neQuery] =
+    new  nsertAppendResults(Spec f cP pel ne(cand dateP pel ne))
 
   def apply(
-    candidatePipelines: Set[CandidatePipelineIdentifier]
-  ): InsertAppendResults[PipelineQuery] = new InsertAppendResults(
-    SpecificPipelines(candidatePipelines))
+    cand dateP pel nes: Set[Cand dateP pel ne dent f er]
+  ):  nsertAppendResults[P pel neQuery] = new  nsertAppendResults(
+    Spec f cP pel nes(cand dateP pel nes))
 }
 
 /**
- * Select all candidates from candidate pipeline(s) and append to the end of the result.
+ * Select all cand dates from cand date p pel ne(s) and append to t  end of t  result.
  *
- * @note that if multiple candidate pipelines are specified, their candidates will be added
- *       to the result in the order in which they appear in the candidate pool. This ordering often
- *       reflects the order in which the candidate pipelines were listed in the mixer/recommendations
- *       pipeline, unless for example an UpdateSortCandidates selector was run prior to running
- *       this selector which could change this ordering.
+ * @note that  f mult ple cand date p pel nes are spec f ed, t  r cand dates w ll be added
+ *       to t  result  n t  order  n wh ch t y appear  n t  cand date pool. T  order ng often
+ *       reflects t  order  n wh ch t  cand date p pel nes  re l sted  n t  m xer/recom ndat ons
+ *       p pel ne, unless for example an UpdateSortCand dates selector was run pr or to runn ng
+ *       t  selector wh ch could change t  order ng.
  *
- * @note if inserting results from multiple candidate pipelines (see note above related to ordering),
- *       it is more performant to include all (or a subset) of the candidate pipelines in a single
- *       InsertAppendResults, as opposed to calling InsertAppendResults individually for each
- *       candidate pipeline because each selector does an O(n) pass on the candidate pool.
+ * @note  f  nsert ng results from mult ple cand date p pel nes (see note above related to order ng),
+ *          s more performant to  nclude all (or a subset) of t  cand date p pel nes  n a s ngle
+ *        nsertAppendResults, as opposed to call ng  nsertAppendResults  nd v dually for each
+ *       cand date p pel ne because each selector does an O(n) pass on t  cand date pool.
  */
-case class InsertAppendResults[-Query <: PipelineQuery](
-  override val pipelineScope: CandidateScope)
+case class  nsertAppendResults[-Query <: P pel neQuery](
+  overr de val p pel neScope: Cand dateScope)
     extends Selector[Query] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
-    val PartitionedCandidates(selectedCandidates, otherCandidates) =
-      pipelineScope.partition(remainingCandidates)
+    val Part  onedCand dates(selectedCand dates, ot rCand dates) =
+      p pel neScope.part  on(rema n ngCand dates)
 
-    val resultUpdated = result ++ selectedCandidates
+    val resultUpdated = result ++ selectedCand dates
 
-    SelectorResult(remainingCandidates = otherCandidates, result = resultUpdated)
+    SelectorResult(rema n ngCand dates = ot rCand dates, result = resultUpdated)
   }
 }

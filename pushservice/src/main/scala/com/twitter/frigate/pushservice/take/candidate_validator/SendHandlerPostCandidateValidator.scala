@@ -1,26 +1,26 @@
-package com.twitter.frigate.pushservice.take.candidate_validator
+package com.tw ter.fr gate.pushserv ce.take.cand date_val dator
 
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.take.predicates.candidate_map.SendHandlerCandidatePredicatesMap
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.conf g.Conf g
+ mport com.tw ter.fr gate.pushserv ce.take.pred cates.cand date_map.SendHandlerCand datePred catesMap
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter.ut l.Future
 
-class SendHandlerPostCandidateValidator(override val config: Config) extends CandidateValidator {
+class SendHandlerPostCand dateVal dator(overr de val conf g: Conf g) extends Cand dateVal dator {
 
-  override protected val candidatePredicatesMap =
-    SendHandlerCandidatePredicatesMap.postCandidatePredicates(config)
+  overr de protected val cand datePred catesMap =
+    SendHandlerCand datePred catesMap.postCand datePred cates(conf g)
 
-  private val sendHandlerPostCandidateValidatorStats =
-    statsReceiver.counter("sendHandlerPostCandidateValidator_stats")
+  pr vate val sendHandlerPostCand dateVal datorStats =
+    statsRece ver.counter("sendHandlerPostCand dateVal dator_stats")
 
-  override def validateCandidate[C <: PushCandidate](candidate: C): Future[Option[Predicate[C]]] = {
-    val candidatePredicates = getCRTPredicates(candidate.commonRecType)
-    val predicates = candidatePredicates ++ postPredicates
+  overr de def val dateCand date[C <: PushCand date](cand date: C): Future[Opt on[Pred cate[C]]] = {
+    val cand datePred cates = getCRTPred cates(cand date.commonRecType)
+    val pred cates = cand datePred cates ++ postPred cates
 
-    sendHandlerPostCandidateValidatorStats.incr()
+    sendHandlerPostCand dateVal datorStats. ncr()
 
-    executeConcurrentPredicates(candidate, predicates)
-      .map(_.headOption)
+    executeConcurrentPred cates(cand date, pred cates)
+      .map(_. adOpt on)
   }
 }

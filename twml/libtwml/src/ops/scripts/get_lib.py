@@ -1,5 +1,5 @@
-"""Gets the path of headers for the current Tensorflow library"""
+"""Gets t  path of  aders for t  current Tensorflow l brary"""
 
-import tensorflow.compat.v1 as tf
+ mport tensorflow.compat.v1 as tf
 
-print(tf.sysconfig.get_lib(), end='')
+pr nt(tf.sysconf g.get_l b(), end='')

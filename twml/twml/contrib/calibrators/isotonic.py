@@ -1,317 +1,317 @@
-# pylint: disable=arguments-differ, unused-argument
-''' Contains Isotonic Calibration'''
+# pyl nt: d sable=argu nts-d ffer, unused-argu nt
+''' Conta ns  soton c Cal brat on'''
 
-from .calibrator import CalibrationFeature, Calibrator
+from .cal brator  mport Cal brat onFeature, Cal brator
 
-from absl import logging
-import numpy as np
-from sklearn.isotonic import isotonic_regression
-import tensorflow.compat.v1 as tf
-import tensorflow_hub as hub
-import twml
-import twml.layers
-
-
-DEFAULT_SAMPLE_WEIGHT = 1
+from absl  mport logg ng
+ mport numpy as np
+from sklearn. soton c  mport  soton c_regress on
+ mport tensorflow.compat.v1 as tf
+ mport tensorflow_hub as hub
+ mport twml
+ mport twml.layers
 
 
-def sort_values(inputs, target, weight, ascending=True):
+DEFAULT_SAMPLE_WE GHT = 1
+
+
+def sort_values( nputs, target,   ght, ascend ng=True):
   '''
-  Sorts arrays based on the first array.
+  Sorts arrays based on t  f rst array.
 
-  Arguments:
-    inputs:
-      1D array which will dictate the order which the remainder 2 arrays will be sorted
+  Argu nts:
+     nputs:
+      1D array wh ch w ll d ctate t  order wh ch t  rema nder 2 arrays w ll be sorted
     target:
       1D array
-    weight:
+      ght:
       1D array
-    ascending:
-      Boolean. If set to True (the default), sorts values in ascending order.
+    ascend ng:
+      Boolean.  f set to True (t  default), sorts values  n ascend ng order.
 
   Returns:
-    sorted inputs:
-      1D array sorted by the order of `ascending`
+    sorted  nputs:
+      1D array sorted by t  order of `ascend ng`
     sorted targets:
       1D array
-    sorted weight:
+    sorted   ght:
       1D array
   '''
-  # assert that the length of inputs and target are the same
-  if len(inputs) != len(target):
-    raise ValueError('Expecting inputs and target sizes to match')
-   # assert that the length of inputs and weight are the same
-  if len(inputs) != len(weight):
-    raise ValueError('Expecting inputs and weight sizes to match')
-  inds = inputs.argsort()
-  if not ascending:
-    inds = inds[::-1]
-  return inputs[inds], target[inds], weight[inds]
+  # assert that t  length of  nputs and target are t  sa 
+   f len( nputs) != len(target):
+    ra se ValueError('Expect ng  nputs and target s zes to match')
+   # assert that t  length of  nputs and   ght are t  sa 
+   f len( nputs) != len(  ght):
+    ra se ValueError('Expect ng  nputs and   ght s zes to match')
+   nds =  nputs.argsort()
+   f not ascend ng:
+     nds =  nds[::-1]
+  return  nputs[ nds], target[ nds],   ght[ nds]
 
 
-class IsotonicFeature(CalibrationFeature):
+class  soton cFeature(Cal brat onFeature):
   '''
-  IsotonicFeature adds values, weights and targets to each feature and then runs
-  isotonic regression by calling `sklearn.isotonic.isotonic_regression
-  <http://scikit-learn.org/stable/auto_examples/plot_isotonic_regression.html>`_
+   soton cFeature adds values,   ghts and targets to each feature and t n runs
+   soton c regress on by call ng `sklearn. soton c. soton c_regress on
+  <http://sc k -learn.org/stable/auto_examples/plot_ soton c_regress on.html>`_
   '''
 
-  def _get_bin_boundaries(self, n_samples, bins, similar_bins):
+  def _get_b n_boundar es(self, n_samples, b ns, s m lar_b ns):
     """
-    Calculates the sample indices that define bin boundaries
+    Calculates t  sample  nd ces that def ne b n boundar es
 
-    Arguments:
+    Argu nts:
       n_samples:
-        (int) number of samples
-      bins:
-        (int) number of bins. Needs to be smaller or equal than n_samples.
-      similar_bins:
-        (bool) If True, samples will be distributed in bins of equal size (up to one sample).
-        If False bins will be filled with step = N_samples//bins, and last bin will contain all remaining samples.
-        Note that equal_bins=False can create a last bins with a very large number of samples.
+        ( nt) number of samples
+      b ns:
+        ( nt) number of b ns. Needs to be smaller or equal than n_samples.
+      s m lar_b ns:
+        (bool)  f True, samples w ll be d str buted  n b ns of equal s ze (up to one sample).
+         f False b ns w ll be f lled w h step = N_samples//b ns, and last b n w ll conta n all rema n ng samples.
+        Note that equal_b ns=False can create a last b ns w h a very large number of samples.
 
     Returns:
-      (list[int]) List of sample indices defining bin boundaries
+      (l st[ nt]) L st of sample  nd ces def n ng b n boundar es
     """
 
-    if bins > n_samples:
-      raise ValueError(
-        "The number of bins needs to be less than or equal to the number of samples. "
-        "Currently bins={0} and n_samples={1}.".format(bins, n_samples)
+     f b ns > n_samples:
+      ra se ValueError(
+        "T  number of b ns needs to be less than or equal to t  number of samples. "
+        "Currently b ns={0} and n_samples={1}.".format(b ns, n_samples)
       )
 
-    step = n_samples // bins
+    step = n_samples // b ns
 
-    if similar_bins:
-      # dtype=int will floor the linspace
-      bin_boundaries = np.linspace(0, n_samples - step, num=bins, dtype=int)
+     f s m lar_b ns:
+      # dtype= nt w ll floor t  l nspace
+      b n_boundar es = np.l nspace(0, n_samples - step, num=b ns, dtype= nt)
     else:
-      bin_boundaries = range(0, step * bins, step)
+      b n_boundar es = range(0, step * b ns, step)
 
-    bin_boundaries = np.append(bin_boundaries, n_samples)
+    b n_boundar es = np.append(b n_boundar es, n_samples)
 
-    return bin_boundaries
+    return b n_boundar es
 
-  def calibrate(self, bins, similar_bins=False, debug=False):
-    '''Calibrates the IsotonicFeature into calibrated weights and bias.
+  def cal brate(self, b ns, s m lar_b ns=False, debug=False):
+    '''Cal brates t   soton cFeature  nto cal brated   ghts and b as.
 
-    1. Sorts the values of the feature class, based on the order of values
-    2. Performs isotonic regression using sklearn.isotonic.isotonic_regression
-    3. Performs the binning of the samples, in order to obtain the final weight and bias
-      which will be used for inference
+    1. Sorts t  values of t  feature class, based on t  order of values
+    2. Performs  soton c regress on us ng sklearn. soton c. soton c_regress on
+    3. Performs t  b nn ng of t  samples,  n order to obta n t  f nal   ght and b as
+      wh ch w ll be used for  nference
 
-    Note that this method can only be called once.
+    Note that t   thod can only be called once.
 
-    Arguments:
-      bins:
-        number of bins.
-      similar_bins:
-        If True, samples will be distributed in bins of equal size (up to one sample).
-        If False bins will be filled with step = N_samples//bins, and last bin will contain all remaining samples.
-        Note that equal_bins=False can create a last bins with a very large number of samples.
+    Argu nts:
+      b ns:
+        number of b ns.
+      s m lar_b ns:
+         f True, samples w ll be d str buted  n b ns of equal s ze (up to one sample).
+         f False b ns w ll be f lled w h step = N_samples//b ns, and last b n w ll conta n all rema n ng samples.
+        Note that equal_b ns=False can create a last b ns w h a very large number of samples.
       debug:
-        Defaults to False. If debug is set to true, output other parameters useful for debugging.
+        Defaults to False.  f debug  s set to true, output ot r para ters useful for debugg ng.
 
     Returns:
-      [calibrated weight, calibrated bias]
+      [cal brated   ght, cal brated b as]
     '''
-    if self._calibrated:
-      raise RuntimeError("Can only calibrate once")
-    # parse through the dict to obtain the targets, weights and values
+     f self._cal brated:
+      ra se Runt  Error("Can only cal brate once")
+    # parse through t  d ct to obta n t  targets,   ghts and values
     self._concat_arrays()
-    feature_targets = self._features_dict['targets']
-    feature_values = self._features_dict['values']
-    feature_weights = self._features_dict['weights']
-    srtd_feature_values, srtd_feature_targets, srtd_feature_weights = sort_values(
-      inputs=feature_values,
+    feature_targets = self._features_d ct['targets']
+    feature_values = self._features_d ct['values']
+    feature_  ghts = self._features_d ct['  ghts']
+    srtd_feature_values, srtd_feature_targets, srtd_feature_  ghts = sort_values(
+       nputs=feature_values,
       target=feature_targets,
-      weight=feature_weights
+        ght=feature_  ghts
     )
-    calibrated_feature_values = isotonic_regression(
-      srtd_feature_targets, sample_weight=srtd_feature_weights)
-    # create the final outputs for the prediction of each class
+    cal brated_feature_values =  soton c_regress on(
+      srtd_feature_targets, sample_  ght=srtd_feature_  ghts)
+    # create t  f nal outputs for t  pred ct on of each class
     bpreds = []
     btargets = []
-    bweights = []
+    b  ghts = []
     rpreds = []
 
-    # Create bin boundaries
-    bin_boundaries = self._get_bin_boundaries(
-      len(calibrated_feature_values), bins, similar_bins=similar_bins)
+    # Create b n boundar es
+    b n_boundar es = self._get_b n_boundar es(
+      len(cal brated_feature_values), b ns, s m lar_b ns=s m lar_b ns)
 
-    for sidx, eidx in zip(bin_boundaries, bin_boundaries[1:]):
-      # separate each one of the arrays based on their respective bins
-      lpreds = srtd_feature_values[int(sidx):int(eidx)]
-      lrpreds = calibrated_feature_values[int(sidx):int(eidx)]
-      ltargets = srtd_feature_targets[int(sidx):int(eidx)]
-      lweights = srtd_feature_weights[int(sidx):int(eidx)]
+    for s dx, e dx  n z p(b n_boundar es, b n_boundar es[1:]):
+      # separate each one of t  arrays based on t  r respect ve b ns
+      lpreds = srtd_feature_values[ nt(s dx): nt(e dx)]
+      lrpreds = cal brated_feature_values[ nt(s dx): nt(e dx)]
+      ltargets = srtd_feature_targets[ nt(s dx): nt(e dx)]
+      l  ghts = srtd_feature_  ghts[ nt(s dx): nt(e dx)]
 
-      # calculate the outputs (including the bpreds and rpreds)
-      bpreds.append(np.sum(lpreds * lweights) / (np.squeeze(np.sum(lweights))))
-      rpreds.append(np.sum(lrpreds * lweights) / (np.squeeze(np.sum(lweights))))
-      btargets.append(np.sum(ltargets * lweights) / (np.squeeze(np.sum(lweights))))
-      bweights.append(np.squeeze(np.sum(lweights)))
-    # transposing the bpreds and rpreds which will be used as input to the inference step
+      # calculate t  outputs ( nclud ng t  bpreds and rpreds)
+      bpreds.append(np.sum(lpreds * l  ghts) / (np.squeeze(np.sum(l  ghts))))
+      rpreds.append(np.sum(lrpreds * l  ghts) / (np.squeeze(np.sum(l  ghts))))
+      btargets.append(np.sum(ltargets * l  ghts) / (np.squeeze(np.sum(l  ghts))))
+      b  ghts.append(np.squeeze(np.sum(l  ghts)))
+    # transpos ng t  bpreds and rpreds wh ch w ll be used as  nput to t   nference step
     bpreds = np.asarray(bpreds).T
     rpreds = np.asarray(rpreds).T
     btargets = np.asarray(btargets).T
-    bweights = np.asarray(bweights).T
-    # setting _calibrated to be True which is necessary in order to prevent it to re-calibrate
-    self._calibrated = True
-    if debug:
-      return bpreds, rpreds, btargets, bweights
+    b  ghts = np.asarray(b  ghts).T
+    # sett ng _cal brated to be True wh ch  s necessary  n order to prevent   to re-cal brate
+    self._cal brated = True
+     f debug:
+      return bpreds, rpreds, btargets, b  ghts
     return bpreds, rpreds
 
 
-class IsotonicCalibrator(Calibrator):
-  ''' Accumulates features and their respective values for isotonic calibration.
-  Internally, each feature's values is accumulated via its own isotonicFeature object.
-  The steps for calibration are typically as follows:
+class  soton cCal brator(Cal brator):
+  ''' Accumulates features and t  r respect ve values for  soton c cal brat on.
+   nternally, each feature's values  s accumulated v a  s own  soton cFeature object.
+  T  steps for cal brat on are typ cally as follows:
 
-   1. accumulate feature values from batches by calling ``accumulate()``;
-   2. calibrate all feature into Isotonic ``bpreds``, ``rpreds`` by calling ``calibrate()``; and
-   3. convert to a ``twml.layers.Isotonic`` layer by calling ``to_layer()``.
+   1. accumulate feature values from batc s by call ng ``accumulate()``;
+   2. cal brate all feature  nto  soton c ``bpreds``, ``rpreds`` by call ng ``cal brate()``; and
+   3. convert to a ``twml.layers. soton c`` layer by call ng ``to_layer()``.
 
   '''
 
-  def __init__(self, n_bin, similar_bins=False, **kwargs):
-    ''' Constructs an isotonicCalibrator instance.
+  def __ n __(self, n_b n, s m lar_b ns=False, **kwargs):
+    ''' Constructs an  soton cCal brator  nstance.
 
-    Arguments:
-      n_bin:
-        the number of bins per feature to use for isotonic.
-        Note that each feature actually maps to ``n_bin+1`` output IDs.
+    Argu nts:
+      n_b n:
+        t  number of b ns per feature to use for  soton c.
+        Note that each feature actually maps to ``n_b n+1`` output  Ds.
     '''
-    super(IsotonicCalibrator, self).__init__(**kwargs)
-    self._n_bin = n_bin
-    self._similar_bins = similar_bins
-    self._ys_input = []
-    self._xs_input = []
-    self._isotonic_feature_dict = {}
+    super( soton cCal brator, self).__ n __(**kwargs)
+    self._n_b n = n_b n
+    self._s m lar_b ns = s m lar_b ns
+    self._ys_ nput = []
+    self._xs_ nput = []
+    self._ soton c_feature_d ct = {}
 
   def accumulate_feature(self, output):
     '''
-    Wrapper around accumulate for trainer API.
-    Arguments:
-      output: output of prediction of build_graph for calibrator
+    Wrapper around accumulate for tra ner AP .
+    Argu nts:
+      output: output of pred ct on of bu ld_graph for cal brator
     '''
-    weights = output['weights'] if 'weights' in output else None
-    return self.accumulate(output['predictions'], output['targets'], weights)
+      ghts = output['  ghts']  f '  ghts'  n output else None
+    return self.accumulate(output['pred ct ons'], output['targets'],   ghts)
 
-  def accumulate(self, predictions, targets, weights=None):
+  def accumulate(self, pred ct ons, targets,   ghts=None):
     '''
-    Accumulate a single batch of class predictions, class targets and class weights.
-    These are accumulated until calibrate() is called.
+    Accumulate a s ngle batch of class pred ct ons, class targets and class   ghts.
+    T se are accumulated unt l cal brate()  s called.
 
-    Arguments:
-      predictions:
-        float matrix of class values. Each dimension corresponds to a different class.
-        Shape is ``[n, d]``, where d is the number of classes.
+    Argu nts:
+      pred ct ons:
+        float matr x of class values. Each d  ns on corresponds to a d fferent class.
+        Shape  s ``[n, d]``, w re d  s t  number of classes.
       targets:
-        float matrix of class targets. Each dimension corresponds to a different class.
-        Shape ``[n, d]``, where d is the number of classes.
-      weights:
-        Defaults to weights of 1.
-        1D array containing the weights of each prediction.
+        float matr x of class targets. Each d  ns on corresponds to a d fferent class.
+        Shape ``[n, d]``, w re d  s t  number of classes.
+        ghts:
+        Defaults to   ghts of 1.
+        1D array conta n ng t    ghts of each pred ct on.
     '''
-    if predictions.shape != targets.shape:
-      raise ValueError(
-        'Expecting predictions.shape == targets.shape, got %s and %s instead' %
-        (str(predictions.shape), str(targets.shape)))
-    if weights is not None:
-      if weights.ndim != 1:
-        raise ValueError('Expecting 1D weight, got %dD instead' % weights.ndim)
-      elif weights.size != predictions.shape[0]:
-        raise ValueError(
-          'Expecting predictions.shape[0] == weights.size, got %d != %d instead' %
-          (predictions.shape[0], weights.size))
-    # iterate through the rows of predictions and sets one class to each row
-    if weights is None:
-      weights = np.full(predictions.shape[0], fill_value=DEFAULT_SAMPLE_WEIGHT)
-    for class_key in range(predictions.shape[1]):
-      # gets the predictions and targets for that class
-      class_predictions = predictions[:, class_key]
+     f pred ct ons.shape != targets.shape:
+      ra se ValueError(
+        'Expect ng pred ct ons.shape == targets.shape, got %s and %s  nstead' %
+        (str(pred ct ons.shape), str(targets.shape)))
+     f   ghts  s not None:
+       f   ghts.nd m != 1:
+        ra se ValueError('Expect ng 1D   ght, got %dD  nstead' %   ghts.nd m)
+      el f   ghts.s ze != pred ct ons.shape[0]:
+        ra se ValueError(
+          'Expect ng pred ct ons.shape[0] ==   ghts.s ze, got %d != %d  nstead' %
+          (pred ct ons.shape[0],   ghts.s ze))
+    #  erate through t  rows of pred ct ons and sets one class to each row
+     f   ghts  s None:
+        ghts = np.full(pred ct ons.shape[0], f ll_value=DEFAULT_SAMPLE_WE GHT)
+    for class_key  n range(pred ct ons.shape[1]):
+      # gets t  pred ct ons and targets for that class
+      class_pred ct ons = pred ct ons[:, class_key]
       class_targets = targets[:, class_key]
-      if class_key not in self._isotonic_feature_dict:
-        isotonic_feature = IsotonicFeature(class_key)
-        self._isotonic_feature_dict[class_key] = isotonic_feature
+       f class_key not  n self._ soton c_feature_d ct:
+         soton c_feature =  soton cFeature(class_key)
+        self._ soton c_feature_d ct[class_key] =  soton c_feature
       else:
-        isotonic_feature = self._isotonic_feature_dict[class_key]
-      isotonic_feature.add_values({'values': class_predictions, 'weights': weights,
+         soton c_feature = self._ soton c_feature_d ct[class_key]
+       soton c_feature.add_values({'values': class_pred ct ons, '  ghts':   ghts,
                                    'targets': class_targets})
 
-  def calibrate(self, debug=False):
+  def cal brate(self, debug=False):
     '''
-    Calibrates each IsotonicFeature after accumulation is complete.
-    Results are stored in ``self._ys_input`` and ``self._xs_input``
+    Cal brates each  soton cFeature after accumulat on  s complete.
+    Results are stored  n ``self._ys_ nput`` and ``self._xs_ nput``
 
-    Arguments:
+    Argu nts:
       debug:
-        Defaults to False. If set to true, returns the ``xs_input`` and ``ys_input``.
+        Defaults to False.  f set to true, returns t  ``xs_ nput`` and ``ys_ nput``.
     '''
-    super(IsotonicCalibrator, self).calibrate()
-    bias_temp = []
-    weight_temp = []
-    logging.info("Beginning isotonic calibration.")
-    isotonic_features_dict = self._isotonic_feature_dict
-    for class_id in isotonic_features_dict:
-      bpreds, rpreds = isotonic_features_dict[class_id].calibrate(bins=self._n_bin, similar_bins=self._similar_bins)
-      weight_temp.append(bpreds)
-      bias_temp.append(rpreds)
-    # save isotonic results onto a matrix
-    self._xs_input = np.array(weight_temp, dtype=np.float32)
-    self._ys_input = np.array(bias_temp, dtype=np.float32)
-    logging.info("Isotonic calibration finished.")
-    if debug:
-      return np.array(weight_temp), np.array(bias_temp)
+    super( soton cCal brator, self).cal brate()
+    b as_temp = []
+      ght_temp = []
+    logg ng. nfo("Beg nn ng  soton c cal brat on.")
+     soton c_features_d ct = self._ soton c_feature_d ct
+    for class_ d  n  soton c_features_d ct:
+      bpreds, rpreds =  soton c_features_d ct[class_ d].cal brate(b ns=self._n_b n, s m lar_b ns=self._s m lar_b ns)
+        ght_temp.append(bpreds)
+      b as_temp.append(rpreds)
+    # save  soton c results onto a matr x
+    self._xs_ nput = np.array(  ght_temp, dtype=np.float32)
+    self._ys_ nput = np.array(b as_temp, dtype=np.float32)
+    logg ng. nfo(" soton c cal brat on f n s d.")
+     f debug:
+      return np.array(  ght_temp), np.array(b as_temp)
     return None
 
-  def save(self, save_dir, name="default", verbose=False):
-    '''Save the calibrator into the given save_directory.
-    Arguments:
-      save_dir:
-        name of the saving directory. Default (string): "default".
+  def save(self, save_d r, na ="default", verbose=False):
+    '''Save t  cal brator  nto t  g ven save_d rectory.
+    Argu nts:
+      save_d r:
+        na  of t  sav ng d rectory. Default (str ng): "default".
     '''
-    if not self._calibrated:
-      raise RuntimeError("Expecting prior call to calibrate().Cannot save() prior to calibrate()")
+     f not self._cal brated:
+      ra se Runt  Error("Expect ng pr or call to cal brate().Cannot save() pr or to cal brate()")
 
-    # This module allows for the calibrator to save be saved as part of
-    # Tensorflow Hub (this will allow it to be used in further steps)
-    logging.info("You probably do not need to save the isotonic layer. \
-                  So feel free to set save to False in the Trainer. \
-                  Additionally this only saves the layer not the whole graph.")
+    # T  module allows for t  cal brator to save be saved as part of
+    # Tensorflow Hub (t  w ll allow   to be used  n furt r steps)
+    logg ng. nfo("  probably do not need to save t   soton c layer. \
+                  So feel free to set save to False  n t  Tra ner. \
+                  Add  onally t  only saves t  layer not t  whole graph.")
 
-    def calibrator_module():
+    def cal brator_module():
       '''
-      Way to save Isotonic layer
+      Way to save  soton c layer
       '''
-      # The input to isotonic is a dense layer
-      inputs = tf.placeholder(tf.float32)
-      calibrator_layer = self.to_layer()
-      output = calibrator_layer(inputs)
-      # creates the signature to the calibrator module
-      hub.add_signature(inputs=inputs, outputs=output, name=name)
+      # T   nput to  soton c  s a dense layer
+       nputs = tf.placeholder(tf.float32)
+      cal brator_layer = self.to_layer()
+      output = cal brator_layer( nputs)
+      # creates t  s gnature to t  cal brator module
+      hub.add_s gnature( nputs= nputs, outputs=output, na =na )
 
-    # exports the module to the save_dir
-    spec = hub.create_module_spec(calibrator_module)
-    with tf.Graph().as_default():
+    # exports t  module to t  save_d r
+    spec = hub.create_module_spec(cal brator_module)
+    w h tf.Graph().as_default():
       module = hub.Module(spec)
-      with tf.Session() as session:
-        module.export(save_dir, session)
+      w h tf.Sess on() as sess on:
+        module.export(save_d r, sess on)
 
   def to_layer(self):
-    """ Returns a twml.layers.Isotonic Layer that can be used for feature discretization.
+    """ Returns a twml.layers. soton c Layer that can be used for feature d scret zat on.
     """
-    if not self._calibrated:
-      raise RuntimeError("Expecting prior call to calibrate()")
+     f not self._cal brated:
+      ra se Runt  Error("Expect ng pr or call to cal brate()")
 
-    isotonic_layer = twml.layers.Isotonic(
-      n_unit=self._xs_input.shape[0], n_bin=self._xs_input.shape[1],
-      xs_input=self._xs_input, ys_input=self._ys_input,
+     soton c_layer = twml.layers. soton c(
+      n_un =self._xs_ nput.shape[0], n_b n=self._xs_ nput.shape[1],
+      xs_ nput=self._xs_ nput, ys_ nput=self._ys_ nput,
       **self._kwargs)
 
-    return isotonic_layer
+    return  soton c_layer
 
-  def get_layer_args(self, name=None):
-    """ Returns layer args. See ``Calibrator.get_layer_args`` for more detailed documentation """
-    return {'n_unit': self._xs_input.shape[0], 'n_bin': self._xs_input.shape[1]}
+  def get_layer_args(self, na =None):
+    """ Returns layer args. See ``Cal brator.get_layer_args`` for more deta led docu ntat on """
+    return {'n_un ': self._xs_ nput.shape[0], 'n_b n': self._xs_ nput.shape[1]}

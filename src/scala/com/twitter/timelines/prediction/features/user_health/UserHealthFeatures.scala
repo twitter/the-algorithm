@@ -1,23 +1,23 @@
-package com.twitter.timelines.prediction.features.user_health
+package com.tw ter.t  l nes.pred ct on.features.user_ alth
 
-import com.twitter.ml.api.Feature
-import com.twitter.timelines.author_features.user_health.thriftscala.UserState
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType.{UserState => UserStatePDT}
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType._
-import scala.collection.JavaConverters._
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.t  l nes.author_features.user_ alth.thr ftscala.UserState
+ mport com.tw ter.dal.personal_data.thr ftjava.PersonalDataType.{UserState => UserStatePDT}
+ mport com.tw ter.dal.personal_data.thr ftjava.PersonalDataType._
+ mport scala.collect on.JavaConverters._
 
-object UserHealthFeatures {
-  val UserState = new Feature.Discrete("user_health.user_state", Set(UserStatePDT, UserType).asJava)
-  val IsLightMinusUser =
-    new Feature.Binary("user_health.is_light_minus_user", Set(UserStatePDT, UserType).asJava)
+object User althFeatures {
+  val UserState = new Feature.D screte("user_ alth.user_state", Set(UserStatePDT, UserType).asJava)
+  val  sL ghtM nusUser =
+    new Feature.B nary("user_ alth. s_l ght_m nus_user", Set(UserStatePDT, UserType).asJava)
   val AuthorState =
-    new Feature.Discrete("user_health.author_state", Set(UserStatePDT, UserType).asJava)
-  val NumAuthorFollowers =
-    new Feature.Continuous("author_health.num_followers", Set(CountOfFollowersAndFollowees).asJava)
-  val NumAuthorConnectDays = new Feature.Continuous("author_health.num_connect_days")
-  val NumAuthorConnect = new Feature.Continuous("author_health.num_connect")
+    new Feature.D screte("user_ alth.author_state", Set(UserStatePDT, UserType).asJava)
+  val NumAuthorFollo rs =
+    new Feature.Cont nuous("author_ alth.num_follo rs", Set(CountOfFollo rsAndFollo es).asJava)
+  val NumAuthorConnectDays = new Feature.Cont nuous("author_ alth.num_connect_days")
+  val NumAuthorConnect = new Feature.Cont nuous("author_ alth.num_connect")
 
-  val IsUserVerifiedUnion = new Feature.Binary("user_account.is_user_verified_union")
+  val  sUserVer f edUn on = new Feature.B nary("user_account. s_user_ver f ed_un on")
 }
 
-case class UserHealthFeatures(id: Long, userStateOpt: Option[UserState])
+case class User althFeatures( d: Long, userStateOpt: Opt on[UserState])

@@ -1,93 +1,93 @@
-package com.twitter.unified_user_actions.adapter
+package com.tw ter.un f ed_user_act ons.adapter
 
-import com.twitter.clientapp.thriftscala.EventNamespace
-import com.twitter.clientapp.thriftscala.{Item => LogEventItem}
-import com.twitter.clientapp.thriftscala.ItemType
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.clientapp.thriftscala.NotificationTabDetails
-import com.twitter.clientapp.thriftscala.ReportDetails
-import com.twitter.clientapp.thriftscala.SearchDetails
-import com.twitter.clientapp.thriftscala.SuggestionDetails
-import com.twitter.inject.Test
-import com.twitter.logbase.thriftscala.ClientEventReceiver
-import com.twitter.reportflow.thriftscala.ReportType
-import com.twitter.suggests.controller_data.thriftscala.ControllerData
-import com.twitter.unified_user_actions.adapter.client_event.ClientEventAdapter
-import com.twitter.unified_user_actions.thriftscala._
-import com.twitter.util.Time
-import org.scalatest.prop.TableDrivenPropertyChecks
-import org.scalatest.prop.TableFor1
-import org.scalatest.prop.TableFor2
-import scala.language.implicitConversions
+ mport com.tw ter.cl entapp.thr ftscala.EventNa space
+ mport com.tw ter.cl entapp.thr ftscala.{ em => LogEvent em}
+ mport com.tw ter.cl entapp.thr ftscala. emType
+ mport com.tw ter.cl entapp.thr ftscala.LogEvent
+ mport com.tw ter.cl entapp.thr ftscala.Not f cat onTabDeta ls
+ mport com.tw ter.cl entapp.thr ftscala.ReportDeta ls
+ mport com.tw ter.cl entapp.thr ftscala.SearchDeta ls
+ mport com.tw ter.cl entapp.thr ftscala.Suggest onDeta ls
+ mport com.tw ter. nject.Test
+ mport com.tw ter.logbase.thr ftscala.Cl entEventRece ver
+ mport com.tw ter.reportflow.thr ftscala.ReportType
+ mport com.tw ter.suggests.controller_data.thr ftscala.ControllerData
+ mport com.tw ter.un f ed_user_act ons.adapter.cl ent_event.Cl entEventAdapter
+ mport com.tw ter.un f ed_user_act ons.thr ftscala._
+ mport com.tw ter.ut l.T  
+ mport org.scalatest.prop.TableDr venPropertyC cks
+ mport org.scalatest.prop.TableFor1
+ mport org.scalatest.prop.TableFor2
+ mport scala.language. mpl c Convers ons
 
-class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
-  // Tests for invalid client-events
-  test("should ignore events") {
-    new TestFixtures.ClientEventFixture {
-      val eventsToBeIgnored: TableFor2[String, LogEvent] = Table(
-        ("namespace", "event"),
+class Cl entEventAdapterSpec extends Test w h TableDr venPropertyC cks {
+  // Tests for  nval d cl ent-events
+  test("should  gnore events") {
+    new TestF xtures.Cl entEventF xture {
+      val eventsToBe gnored: TableFor2[Str ng, LogEvent] = Table(
+        ("na space", "event"),
         ("ddg", ddgEvent),
-        ("qig_ranker", qigRankerEvent),
-        ("timelnemixer", timelineMixerEvent),
-        ("timelineservice", timelineServiceEvent),
-        ("tweetconvosvc", tweetConcServiceEvent),
-        ("item-type is non-tweet", renderNonTweetItemTypeEvent)
+        ("q g_ranker", q gRankerEvent),
+        ("t  lnem xer", t  l neM xerEvent),
+        ("t  l neserv ce", t  l neServ ceEvent),
+        ("t etconvosvc", t etConcServ ceEvent),
+        (" em-type  s non-t et", renderNonT et emTypeEvent)
       )
 
-      forEvery(eventsToBeIgnored) { (_: String, event: LogEvent) =>
-        val actual = ClientEventAdapter.adaptEvent(event)
-        assert(actual.isEmpty)
+      forEvery(eventsToBe gnored) { (_: Str ng, event: LogEvent) =>
+        val actual = Cl entEventAdapter.adaptEvent(event)
+        assert(actual. sEmpty)
       }
     }
   }
 
-  test("Tests for ItemType filter") {
-    /// Tweet events
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
+  test("Tests for  emType f lter") {
+    /// T et events
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
         val events = Table(
-          ("itemType", "expectedUUA"),
-          (Some(ItemType.Tweet), Seq(expectedTweetRenderDefaultTweetUUA)),
-          (Some(ItemType.QuotedTweet), Seq(expectedTweetRenderDefaultTweetUUA)),
-          (Some(ItemType.Topic), Nil),
-          (None, Nil)
+          (" emType", "expectedUUA"),
+          (So ( emType.T et), Seq(expectedT etRenderDefaultT etUUA)),
+          (So ( emType.QuotedT et), Seq(expectedT etRenderDefaultT etUUA)),
+          (So ( emType.Top c), N l),
+          (None, N l)
         )
 
-        forEvery(events) { (itemTypeOpt: Option[ItemType], expected: Seq[UnifiedUserAction]) =>
-          val actual = ClientEventAdapter.adaptEvent(
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceRenderEventNamespace),
-              itemTypeOpt = itemTypeOpt
+        forEvery(events) { ( emTypeOpt: Opt on[ emType], expected: Seq[Un f edUserAct on]) =>
+          val actual = Cl entEventAdapter.adaptEvent(
+            act onTowardDefaultT etEvent(
+              eventNa space = So (ceRenderEventNa space),
+               emTypeOpt =  emTypeOpt
             ))
           assert(expected === actual)
         }
       }
     }
 
-    /// Topic events
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val expected: UnifiedUserAction = mkExpectedUUAForActionTowardTopicEvent(
-          topicId = topicId,
-          clientEventNamespace = Some(uuaTopicFollowClientEventNamespace1),
-          actionType = ActionType.ClientTopicFollow
+    /// Top c events
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val expected: Un f edUserAct on = mkExpectedUUAForAct onTowardTop cEvent(
+          top c d = top c d,
+          cl entEventNa space = So (uuaTop cFollowCl entEventNa space1),
+          act onType = Act onType.Cl entTop cFollow
         )
         val events = Table(
-          ("itemType", "expectedUUA"),
-          (Some(ItemType.Tweet), Seq(expected)),
-          (Some(ItemType.QuotedTweet), Seq(expected)),
-          (Some(ItemType.Topic), Seq(expected)),
-          (None, Nil)
+          (" emType", "expectedUUA"),
+          (So ( emType.T et), Seq(expected)),
+          (So ( emType.QuotedT et), Seq(expected)),
+          (So ( emType.Top c), Seq(expected)),
+          (None, N l)
         )
 
-        forEvery(events) { (itemTypeOpt: Option[ItemType], expected: Seq[UnifiedUserAction]) =>
-          val actual = ClientEventAdapter.adaptEvent(
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceTopicFollow1),
-              itemId = None,
-              suggestionDetails =
-                Some(SuggestionDetails(decodedControllerData = Some(homeTweetControllerData()))),
-              itemTypeOpt = itemTypeOpt
+        forEvery(events) { ( emTypeOpt: Opt on[ emType], expected: Seq[Un f edUserAct on]) =>
+          val actual = Cl entEventAdapter.adaptEvent(
+            act onTowardDefaultT etEvent(
+              eventNa space = So (ceTop cFollow1),
+               em d = None,
+              suggest onDeta ls =
+                So (Suggest onDeta ls(decodedControllerData = So (ho T etControllerData()))),
+               emTypeOpt =  emTypeOpt
             ))
           assert(expected === actual)
         }
@@ -95,355 +95,355 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
     }
   }
 
-  // Tests for ClientTweetRenderImpression
-  test("ClientTweetRenderImpression") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("actionTweetType", "clientEvent", "expectedUUAEvent"),
+  // Tests for Cl entT etRender mpress on
+  test("Cl entT etRender mpress on") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val cl entEvents = Table(
+          ("act onT etType", "cl entEvent", "expectedUUAEvent"),
           (
             "Default",
-            actionTowardDefaultTweetEvent(eventNamespace = Some(ceRenderEventNamespace)),
-            Seq(expectedTweetRenderDefaultTweetUUA)),
+            act onTowardDefaultT etEvent(eventNa space = So (ceRenderEventNa space)),
+            Seq(expectedT etRenderDefaultT etUUA)),
           (
             "Reply",
-            actionTowardReplyEvent(eventNamespace = Some(ceRenderEventNamespace)),
-            Seq(expectedTweetRenderReplyUUA)),
+            act onTowardReplyEvent(eventNa space = So (ceRenderEventNa space)),
+            Seq(expectedT etRenderReplyUUA)),
           (
-            "Retweet",
-            actionTowardRetweetEvent(eventNamespace = Some(ceRenderEventNamespace)),
-            Seq(expectedTweetRenderRetweetUUA)),
+            "Ret et",
+            act onTowardRet etEvent(eventNa space = So (ceRenderEventNa space)),
+            Seq(expectedT etRenderRet etUUA)),
           (
             "Quote",
-            actionTowardQuoteEvent(
-              eventNamespace = Some(ceRenderEventNamespace),
-              quotedAuthorId = Some(456L)),
-            Seq(expectedTweetRenderQuoteUUA1, expectedTweetRenderQuoteUUA2)),
+            act onTowardQuoteEvent(
+              eventNa space = So (ceRenderEventNa space),
+              quotedAuthor d = So (456L)),
+            Seq(expectedT etRenderQuoteUUA1, expectedT etRenderQuoteUUA2)),
           (
-            "Retweet of a reply that quoted another Tweet",
-            actionTowardRetweetEventWithReplyAndQuote(eventNamespace =
-              Some(ceRenderEventNamespace)),
+            "Ret et of a reply that quoted anot r T et",
+            act onTowardRet etEventW hReplyAndQuote(eventNa space =
+              So (ceRenderEventNa space)),
             Seq(
-              expectedTweetRenderRetweetWithReplyAndQuoteUUA1,
-              expectedTweetRenderRetweetWithReplyAndQuoteUUA2))
+              expectedT etRenderRet etW hReplyAndQuoteUUA1,
+              expectedT etRenderRet etW hReplyAndQuoteUUA2))
         )
-        forEvery(clientEvents) {
-          (_: String, event: LogEvent, expectedUUA: Seq[UnifiedUserAction]) =>
-            val actual = ClientEventAdapter.adaptEvent(event)
-            actual should contain theSameElementsAs expectedUUA
+        forEvery(cl entEvents) {
+          (_: Str ng, event: LogEvent, expectedUUA: Seq[Un f edUserAct on]) =>
+            val actual = Cl entEventAdapter.adaptEvent(event)
+            actual should conta n t Sa Ele ntsAs expectedUUA
         }
       }
     }
   }
 
-  test("ClientTweetGallery/DetailImpression") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("actionTweetType", "clientEvent", "expectedUUAEvent"),
+  test("Cl entT etGallery/Deta l mpress on") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val cl entEvents = Table(
+          ("act onT etType", "cl entEvent", "expectedUUAEvent"),
           (
-            "DetailImpression: tweet::tweet::impression",
-            actionTowardDefaultTweetEvent(eventNamespace = Some(ceTweetDetailsEventNamespace1)),
-            expectedTweetDetailImpressionUUA1),
+            "Deta l mpress on: t et::t et:: mpress on",
+            act onTowardDefaultT etEvent(eventNa space = So (ceT etDeta lsEventNa space1)),
+            expectedT etDeta l mpress onUUA1),
           (
-            "GalleryImpression: gallery:photo:impression",
-            actionTowardDefaultTweetEvent(eventNamespace = Some(ceGalleryEventNamespace)),
-            expectedTweetGalleryImpressionUUA),
+            "Gallery mpress on: gallery:photo: mpress on",
+            act onTowardDefaultT etEvent(eventNa space = So (ceGalleryEventNa space)),
+            expectedT etGallery mpress onUUA),
         )
-        forEvery(clientEvents) { (_: String, event: LogEvent, expectedUUA: UnifiedUserAction) =>
-          val actual = ClientEventAdapter.adaptEvent(event)
+        forEvery(cl entEvents) { (_: Str ng, event: LogEvent, expectedUUA: Un f edUserAct on) =>
+          val actual = Cl entEventAdapter.adaptEvent(event)
           assert(Seq(expectedUUA) === actual)
         }
       }
     }
   }
 
-  // Tests for ClientTweetLingerImpression
-  test("ClientTweetLingerImpression") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("actionTweetType", "clientEvent", "expectedUUAEvent"),
-          ("Default", lingerDefaultTweetEvent, expectedTweetLingerDefaultTweetUUA),
-          ("Reply", lingerReplyEvent, expectedTweetLingerReplyUUA),
-          ("Retweet", lingerRetweetEvent, expectedTweetLingerRetweetUUA),
-          ("Quote", lingerQuoteEvent, expectedTweetLingerQuoteUUA),
+  // Tests for Cl entT etL nger mpress on
+  test("Cl entT etL nger mpress on") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val cl entEvents = Table(
+          ("act onT etType", "cl entEvent", "expectedUUAEvent"),
+          ("Default", l ngerDefaultT etEvent, expectedT etL ngerDefaultT etUUA),
+          ("Reply", l ngerReplyEvent, expectedT etL ngerReplyUUA),
+          ("Ret et", l ngerRet etEvent, expectedT etL ngerRet etUUA),
+          ("Quote", l ngerQuoteEvent, expectedT etL ngerQuoteUUA),
           (
-            "Retweet of a reply that quoted another Tweet",
-            lingerRetweetWithReplyAndQuoteEvent,
-            expectedTweetLingerRetweetWithReplyAndQuoteUUA),
+            "Ret et of a reply that quoted anot r T et",
+            l ngerRet etW hReplyAndQuoteEvent,
+            expectedT etL ngerRet etW hReplyAndQuoteUUA),
         )
-        forEvery(clientEvents) { (_: String, event: LogEvent, expectedUUA: UnifiedUserAction) =>
-          val actual = ClientEventAdapter.adaptEvent(event)
+        forEvery(cl entEvents) { (_: Str ng, event: LogEvent, expectedUUA: Un f edUserAct on) =>
+          val actual = Cl entEventAdapter.adaptEvent(event)
           assert(Seq(expectedUUA) === actual)
         }
       }
     }
   }
 
-  // Tests for ClientTweetClickQuote
+  // Tests for Cl entT etCl ckQuote
   test(
-    "ClickQuote, which is the click on the quote button, results in setting retweeting, inReplyTo, quoted tweet ids") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actual = ClientEventAdapter.adaptEvent(
-          // there shouldn't be any quotingTweetId in CE when it is "quote"
-          actionTowardRetweetEventWithReplyAndQuote(eventNamespace = Some(
-            EventNamespace(
-              action = Some("quote")
+    "Cl ckQuote, wh ch  s t  cl ck on t  quote button, results  n sett ng ret et ng,  nReplyTo, quoted t et  ds") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val actual = Cl entEventAdapter.adaptEvent(
+          // t re shouldn't be any quot ngT et d  n CE w n    s "quote"
+          act onTowardRet etEventW hReplyAndQuote(eventNa space = So (
+            EventNa space(
+              act on = So ("quote")
             ))))
-        assert(Seq(expectedTweetClickQuoteUUA) === actual)
+        assert(Seq(expectedT etCl ckQuoteUUA) === actual)
       }
     }
   }
 
-  // Tests for ClientTweetQuote
+  // Tests for Cl entT etQuote
   test(
-    "Quote, which is sending the quote, results in setting retweeting, inReplyTo, quoted tweet ids") {
-    new TestFixtures.ClientEventFixture {
-      val actions: TableFor1[String] = Table(
-        "action",
-        "send_quote_tweet",
-        "retweet_with_comment"
+    "Quote, wh ch  s send ng t  quote, results  n sett ng ret et ng,  nReplyTo, quoted t et  ds") {
+    new TestF xtures.Cl entEventF xture {
+      val act ons: TableFor1[Str ng] = Table(
+        "act on",
+        "send_quote_t et",
+        "ret et_w h_com nt"
       )
 
-      Time.withTimeAt(frozenTime) { _ =>
-        forEvery(actions) { action =>
-          val actual = ClientEventAdapter.adaptEvent(
-            // there shouldn't be any quotingTweetId in CE when it is "quote"
-            actionTowardRetweetEventWithReplyAndQuote(eventNamespace = Some(
-              EventNamespace(
-                action = Some(action)
+      T  .w hT  At(frozenT  ) { _ =>
+        forEvery(act ons) { act on =>
+          val actual = Cl entEventAdapter.adaptEvent(
+            // t re shouldn't be any quot ngT et d  n CE w n    s "quote"
+            act onTowardRet etEventW hReplyAndQuote(eventNa space = So (
+              EventNa space(
+                act on = So (act on)
               ))))
-          assert(Seq(expectedTweetQuoteUUA(action)) === actual)
+          assert(Seq(expectedT etQuoteUUA(act on)) === actual)
         }
       }
     }
   }
 
-  // Tests for ClientTweetFav and ClientTweetUnfav
-  test("ClientTweetFav and ClientTweetUnfav") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("actionTweetType", "clientEvent", "expectedUUAEvent"),
+  // Tests for Cl entT etFav and Cl entT etUnfav
+  test("Cl entT etFav and Cl entT etUnfav") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val cl entEvents = Table(
+          ("act onT etType", "cl entEvent", "expectedUUAEvent"),
           (
-            "Default Tweet favorite",
-            actionTowardDefaultTweetEvent(eventNamespace = Some(ceFavoriteEventNamespace)),
-            expectedTweetFavoriteDefaultTweetUUA),
+            "Default T et favor e",
+            act onTowardDefaultT etEvent(eventNa space = So (ceFavor eEventNa space)),
+            expectedT etFavor eDefaultT etUUA),
           (
-            "Reply Tweet favorite",
-            actionTowardReplyEvent(eventNamespace = Some(ceFavoriteEventNamespace)),
-            expectedTweetFavoriteReplyUUA),
+            "Reply T et favor e",
+            act onTowardReplyEvent(eventNa space = So (ceFavor eEventNa space)),
+            expectedT etFavor eReplyUUA),
           (
-            "Retweet Tweet favorite",
-            actionTowardRetweetEvent(eventNamespace = Some(ceFavoriteEventNamespace)),
-            expectedTweetFavoriteRetweetUUA),
+            "Ret et T et favor e",
+            act onTowardRet etEvent(eventNa space = So (ceFavor eEventNa space)),
+            expectedT etFavor eRet etUUA),
           (
-            "Quote Tweet favorite",
-            actionTowardQuoteEvent(eventNamespace = Some(ceFavoriteEventNamespace)),
-            expectedTweetFavoriteQuoteUUA),
+            "Quote T et favor e",
+            act onTowardQuoteEvent(eventNa space = So (ceFavor eEventNa space)),
+            expectedT etFavor eQuoteUUA),
           (
-            "Retweet of a reply that quoted another Tweet favorite",
-            actionTowardRetweetEventWithReplyAndQuote(eventNamespace =
-              Some(ceFavoriteEventNamespace)),
-            expectedTweetFavoriteRetweetWithReplyAndQuoteUUA),
+            "Ret et of a reply that quoted anot r T et favor e",
+            act onTowardRet etEventW hReplyAndQuote(eventNa space =
+              So (ceFavor eEventNa space)),
+            expectedT etFavor eRet etW hReplyAndQuoteUUA),
           (
-            "Default Tweet unfavorite",
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(EventNamespace(action = Some("unfavorite"))),
+            "Default T et unfavor e",
+            act onTowardDefaultT etEvent(
+              eventNa space = So (EventNa space(act on = So ("unfavor e"))),
             ),
-            mkExpectedUUAForActionTowardDefaultTweetEvent(
-              clientEventNamespace = Some(ClientEventNamespace(action = Some("unfavorite"))),
-              actionType = ActionType.ClientTweetUnfav
+            mkExpectedUUAForAct onTowardDefaultT etEvent(
+              cl entEventNa space = So (Cl entEventNa space(act on = So ("unfavor e"))),
+              act onType = Act onType.Cl entT etUnfav
             ))
         )
-        forEvery(clientEvents) { (_: String, event: LogEvent, expectedUUA: UnifiedUserAction) =>
-          val actual = ClientEventAdapter.adaptEvent(event)
+        forEvery(cl entEvents) { (_: Str ng, event: LogEvent, expectedUUA: Un f edUserAct on) =>
+          val actual = Cl entEventAdapter.adaptEvent(event)
           assert(Seq(expectedUUA) === actual)
         }
       }
     }
   }
 
-  // Tests for ClientTweetClickReply
-  test("ClientTweetClickReply") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("actionTweetType", "clientEvent", "expectedUUAEvent"),
+  // Tests for Cl entT etCl ckReply
+  test("Cl entT etCl ckReply") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val cl entEvents = Table(
+          ("act onT etType", "cl entEvent", "expectedUUAEvent"),
           (
             "Default",
-            actionTowardDefaultTweetEvent(eventNamespace = Some(ceClickReplyEventNamespace)),
-            expectedTweetClickReplyDefaultTweetUUA),
+            act onTowardDefaultT etEvent(eventNa space = So (ceCl ckReplyEventNa space)),
+            expectedT etCl ckReplyDefaultT etUUA),
           (
             "Reply",
-            actionTowardReplyEvent(eventNamespace = Some(ceClickReplyEventNamespace)),
-            expectedTweetClickReplyReplyUUA),
+            act onTowardReplyEvent(eventNa space = So (ceCl ckReplyEventNa space)),
+            expectedT etCl ckReplyReplyUUA),
           (
-            "Retweet",
-            actionTowardRetweetEvent(eventNamespace = Some(ceClickReplyEventNamespace)),
-            expectedTweetClickReplyRetweetUUA),
+            "Ret et",
+            act onTowardRet etEvent(eventNa space = So (ceCl ckReplyEventNa space)),
+            expectedT etCl ckReplyRet etUUA),
           (
             "Quote",
-            actionTowardQuoteEvent(eventNamespace = Some(ceClickReplyEventNamespace)),
-            expectedTweetClickReplyQuoteUUA),
+            act onTowardQuoteEvent(eventNa space = So (ceCl ckReplyEventNa space)),
+            expectedT etCl ckReplyQuoteUUA),
           (
-            "Retweet of a reply that quoted another Tweet",
-            actionTowardRetweetEventWithReplyAndQuote(eventNamespace =
-              Some(ceClickReplyEventNamespace)),
-            expectedTweetClickReplyRetweetWithReplyAndQuoteUUA)
+            "Ret et of a reply that quoted anot r T et",
+            act onTowardRet etEventW hReplyAndQuote(eventNa space =
+              So (ceCl ckReplyEventNa space)),
+            expectedT etCl ckReplyRet etW hReplyAndQuoteUUA)
         )
-        forEvery(clientEvents) { (_: String, event: LogEvent, expectedUUA: UnifiedUserAction) =>
-          val actual = ClientEventAdapter.adaptEvent(event)
+        forEvery(cl entEvents) { (_: Str ng, event: LogEvent, expectedUUA: Un f edUserAct on) =>
+          val actual = Cl entEventAdapter.adaptEvent(event)
           assert(Seq(expectedUUA) === actual)
         }
       }
     }
   }
 
-  // Tests for ClientTweetReply
-  test("ClientTweetReply") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("actionTweetType", "clientEvent", "expectedUUAEvent"),
-          ("DefaultOrReply", replyToDefaultTweetOrReplyEvent, expectedTweetReplyDefaultTweetUUA),
-          ("Retweet", replyToRetweetEvent, expectedTweetReplyRetweetUUA),
-          ("Quote", replyToQuoteEvent, expectedTweetReplyQuoteUUA),
+  // Tests for Cl entT etReply
+  test("Cl entT etReply") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val cl entEvents = Table(
+          ("act onT etType", "cl entEvent", "expectedUUAEvent"),
+          ("DefaultOrReply", replyToDefaultT etOrReplyEvent, expectedT etReplyDefaultT etUUA),
+          ("Ret et", replyToRet etEvent, expectedT etReplyRet etUUA),
+          ("Quote", replyToQuoteEvent, expectedT etReplyQuoteUUA),
           (
-            "Retweet of a reply that quoted another Tweet",
-            replyToRetweetWithReplyAndQuoteEvent,
-            expectedTweetReplyRetweetWithReplyAndQuoteUUA)
+            "Ret et of a reply that quoted anot r T et",
+            replyToRet etW hReplyAndQuoteEvent,
+            expectedT etReplyRet etW hReplyAndQuoteUUA)
         )
-        forEvery(clientEvents) { (_: String, event: LogEvent, expectedUUA: UnifiedUserAction) =>
-          val actual = ClientEventAdapter.adaptEvent(event)
+        forEvery(cl entEvents) { (_: Str ng, event: LogEvent, expectedUUA: Un f edUserAct on) =>
+          val actual = Cl entEventAdapter.adaptEvent(event)
           assert(Seq(expectedUUA) === actual)
         }
       }
     }
   }
 
-  // Tests for ClientTweetRetweet and ClientTweetUnretweet
-  test("ClientTweetRetweet and ClientTweetUnretweet") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("actionTweetType", "clientEvent", "expectedUUAEvent"),
+  // Tests for Cl entT etRet et and Cl entT etUnret et
+  test("Cl entT etRet et and Cl entT etUnret et") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val cl entEvents = Table(
+          ("act onT etType", "cl entEvent", "expectedUUAEvent"),
           (
-            "Default Tweet retweet",
-            actionTowardDefaultTweetEvent(eventNamespace = Some(ceRetweetEventNamespace)),
-            expectedTweetRetweetDefaultTweetUUA),
+            "Default T et ret et",
+            act onTowardDefaultT etEvent(eventNa space = So (ceRet etEventNa space)),
+            expectedT etRet etDefaultT etUUA),
           (
-            "Reply Tweet retweet",
-            actionTowardReplyEvent(eventNamespace = Some(ceRetweetEventNamespace)),
-            expectedTweetRetweetReplyUUA),
+            "Reply T et ret et",
+            act onTowardReplyEvent(eventNa space = So (ceRet etEventNa space)),
+            expectedT etRet etReplyUUA),
           (
-            "Retweet Tweet retweet",
-            actionTowardRetweetEvent(eventNamespace = Some(ceRetweetEventNamespace)),
-            expectedTweetRetweetRetweetUUA),
+            "Ret et T et ret et",
+            act onTowardRet etEvent(eventNa space = So (ceRet etEventNa space)),
+            expectedT etRet etRet etUUA),
           (
-            "Quote Tweet retweet",
-            actionTowardQuoteEvent(eventNamespace = Some(ceRetweetEventNamespace)),
-            expectedTweetRetweetQuoteUUA),
+            "Quote T et ret et",
+            act onTowardQuoteEvent(eventNa space = So (ceRet etEventNa space)),
+            expectedT etRet etQuoteUUA),
           (
-            "Retweet of a reply that quoted another Tweet retweet",
-            actionTowardRetweetEventWithReplyAndQuote(eventNamespace =
-              Some(ceRetweetEventNamespace)),
-            expectedTweetRetweetRetweetWithReplyAndQuoteUUA),
+            "Ret et of a reply that quoted anot r T et ret et",
+            act onTowardRet etEventW hReplyAndQuote(eventNa space =
+              So (ceRet etEventNa space)),
+            expectedT etRet etRet etW hReplyAndQuoteUUA),
           (
-            "Default Tweet unretweet",
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(EventNamespace(action = Some("unretweet"))),
+            "Default T et unret et",
+            act onTowardDefaultT etEvent(
+              eventNa space = So (EventNa space(act on = So ("unret et"))),
             ),
-            mkExpectedUUAForActionTowardDefaultTweetEvent(
-              clientEventNamespace = Some(ClientEventNamespace(action = Some("unretweet"))),
-              actionType = ActionType.ClientTweetUnretweet
+            mkExpectedUUAForAct onTowardDefaultT etEvent(
+              cl entEventNa space = So (Cl entEventNa space(act on = So ("unret et"))),
+              act onType = Act onType.Cl entT etUnret et
             ))
         )
-        forEvery(clientEvents) { (_: String, event: LogEvent, expectedUUA: UnifiedUserAction) =>
-          val actual = ClientEventAdapter.adaptEvent(event)
+        forEvery(cl entEvents) { (_: Str ng, event: LogEvent, expectedUUA: Un f edUserAct on) =>
+          val actual = Cl entEventAdapter.adaptEvent(event)
           assert(Seq(expectedUUA) === actual)
         }
       }
     }
   }
 
-  test("include Topic Id") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actual = ClientEventAdapter.adaptEvent(renderDefaultTweetWithTopicIdEvent)
-        assert(Seq(expectedTweetRenderDefaultTweetWithTopicIdUUA) === actual)
+  test(" nclude Top c  d") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val actual = Cl entEventAdapter.adaptEvent(renderDefaultT etW hTop c dEvent)
+        assert(Seq(expectedT etRenderDefaultT etW hTop c dUUA) === actual)
       }
     }
   }
 
-  // Tests for ClientTweetVideoPlayback0, 25, 50, 75, 95, 100 PlayFromTap, QualityView,
-  // VideoView, MrcView, ViewThreshold
-  test("ClientTweetVideoPlayback*") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("ceNamespace", "uuaNamespace", "uuaActionType"),
+  // Tests for Cl entT etV deoPlayback0, 25, 50, 75, 95, 100 PlayFromTap, Qual yV ew,
+  // V deoV ew, MrcV ew, V ewThreshold
+  test("Cl entT etV deoPlayback*") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val cl entEvents = Table(
+          ("ceNa space", "uuaNa space", "uuaAct onType"),
           (
-            ceVideoPlayback25,
-            uuaVideoPlayback25ClientEventNamespace,
-            ActionType.ClientTweetVideoPlayback25),
+            ceV deoPlayback25,
+            uuaV deoPlayback25Cl entEventNa space,
+            Act onType.Cl entT etV deoPlayback25),
           (
-            ceVideoPlayback50,
-            uuaVideoPlayback50ClientEventNamespace,
-            ActionType.ClientTweetVideoPlayback50),
+            ceV deoPlayback50,
+            uuaV deoPlayback50Cl entEventNa space,
+            Act onType.Cl entT etV deoPlayback50),
           (
-            ceVideoPlayback75,
-            uuaVideoPlayback75ClientEventNamespace,
-            ActionType.ClientTweetVideoPlayback75),
+            ceV deoPlayback75,
+            uuaV deoPlayback75Cl entEventNa space,
+            Act onType.Cl entT etV deoPlayback75),
           (
-            ceVideoPlayback95,
-            uuaVideoPlayback95ClientEventNamespace,
-            ActionType.ClientTweetVideoPlayback95),
+            ceV deoPlayback95,
+            uuaV deoPlayback95Cl entEventNa space,
+            Act onType.Cl entT etV deoPlayback95),
           (
-            ceVideoPlayFromTap,
-            uuaVideoPlayFromTapClientEventNamespace,
-            ActionType.ClientTweetVideoPlayFromTap),
+            ceV deoPlayFromTap,
+            uuaV deoPlayFromTapCl entEventNa space,
+            Act onType.Cl entT etV deoPlayFromTap),
           (
-            ceVideoQualityView,
-            uuaVideoQualityViewClientEventNamespace,
-            ActionType.ClientTweetVideoQualityView),
-          (ceVideoView, uuaVideoViewClientEventNamespace, ActionType.ClientTweetVideoView),
-          (ceVideoMrcView, uuaVideoMrcViewClientEventNamespace, ActionType.ClientTweetVideoMrcView),
+            ceV deoQual yV ew,
+            uuaV deoQual yV ewCl entEventNa space,
+            Act onType.Cl entT etV deoQual yV ew),
+          (ceV deoV ew, uuaV deoV ewCl entEventNa space, Act onType.Cl entT etV deoV ew),
+          (ceV deoMrcV ew, uuaV deoMrcV ewCl entEventNa space, Act onType.Cl entT etV deoMrcV ew),
           (
-            ceVideoViewThreshold,
-            uuaVideoViewThresholdClientEventNamespace,
-            ActionType.ClientTweetVideoViewThreshold),
+            ceV deoV ewThreshold,
+            uuaV deoV ewThresholdCl entEventNa space,
+            Act onType.Cl entT etV deoV ewThreshold),
           (
-            ceVideoCtaUrlClick,
-            uuaVideoCtaUrlClickClientEventNamespace,
-            ActionType.ClientTweetVideoCtaUrlClick),
+            ceV deoCtaUrlCl ck,
+            uuaV deoCtaUrlCl ckCl entEventNa space,
+            Act onType.Cl entT etV deoCtaUrlCl ck),
           (
-            ceVideoCtaWatchClick,
-            uuaVideoCtaWatchClickClientEventNamespace,
-            ActionType.ClientTweetVideoCtaWatchClick),
+            ceV deoCtaWatchCl ck,
+            uuaV deoCtaWatchCl ckCl entEventNa space,
+            Act onType.Cl entT etV deoCtaWatchCl ck),
         )
 
-        for (element <- videoEventElementValues) {
-          forEvery(clientEvents) {
+        for (ele nt <- v deoEventEle ntValues) {
+          forEvery(cl entEvents) {
             (
-              ceNamespace: EventNamespace,
-              uuaNamespace: ClientEventNamespace,
-              uuaActionType: ActionType
+              ceNa space: EventNa space,
+              uuaNa space: Cl entEventNa space,
+              uuaAct onType: Act onType
             ) =>
-              val event = actionTowardDefaultTweetEvent(
-                eventNamespace = Some(ceNamespace.copy(element = Some(element))),
-                mediaDetailsV2 = Some(mediaDetailsV2),
-                clientMediaEvent = Some(clientMediaEvent),
-                cardDetails = Some(cardDetails)
+              val event = act onTowardDefaultT etEvent(
+                eventNa space = So (ceNa space.copy(ele nt = So (ele nt))),
+                 d aDeta lsV2 = So ( d aDeta lsV2),
+                cl ent d aEvent = So (cl ent d aEvent),
+                cardDeta ls = So (cardDeta ls)
               )
-              val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-                clientEventNamespace = Some(uuaNamespace.copy(element = Some(element))),
-                actionType = uuaActionType,
-                tweetActionInfo = Some(videoMetadata)
+              val expectedUUA = mkExpectedUUAForAct onTowardDefaultT etEvent(
+                cl entEventNa space = So (uuaNa space.copy(ele nt = So (ele nt))),
+                act onType = uuaAct onType,
+                t etAct on nfo = So (v deo tadata)
               )
-              val actual = ClientEventAdapter.adaptEvent(event)
+              val actual = Cl entEventAdapter.adaptEvent(event)
               assert(Seq(expectedUUA) === actual)
           }
         }
@@ -451,317 +451,317 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
     }
   }
 
-  // Tests for ClientTweetPhotoExpand
-  test("Client Tweet Photo Expand") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvent = actionTowardDefaultTweetEvent(eventNamespace = Some(cePhotoExpand))
-        val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-          clientEventNamespace = Some(uuaPhotoExpandClientEventNamespace),
-          actionType = ActionType.ClientTweetPhotoExpand
+  // Tests for Cl entT etPhotoExpand
+  test("Cl ent T et Photo Expand") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val cl entEvent = act onTowardDefaultT etEvent(eventNa space = So (cePhotoExpand))
+        val expectedUUA = mkExpectedUUAForAct onTowardDefaultT etEvent(
+          cl entEventNa space = So (uuaPhotoExpandCl entEventNa space),
+          act onType = Act onType.Cl entT etPhotoExpand
         )
-        assert(Seq(expectedUUA) === ClientEventAdapter.adaptEvent(clientEvent))
+        assert(Seq(expectedUUA) === Cl entEventAdapter.adaptEvent(cl entEvent))
       }
     }
   }
 
-  // Tests for ClientCardClick
-  test("Client Card Related") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("ceNamespace", "ceItemType", "uuaNamespace", "uuaActionType"),
+  // Tests for Cl entCardCl ck
+  test("Cl ent Card Related") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val cl entEvents = Table(
+          ("ceNa space", "ce emType", "uuaNa space", "uuaAct onType"),
           (
-            ceCardClick,
-            ItemType.Tweet,
-            uuaCardClickClientEventNamespace,
-            ActionType.ClientCardClick),
+            ceCardCl ck,
+             emType.T et,
+            uuaCardCl ckCl entEventNa space,
+            Act onType.Cl entCardCl ck),
           (
-            ceCardClick,
-            ItemType.User,
-            uuaCardClickClientEventNamespace,
-            ActionType.ClientCardClick),
+            ceCardCl ck,
+             emType.User,
+            uuaCardCl ckCl entEventNa space,
+            Act onType.Cl entCardCl ck),
           (
             ceCardOpenApp,
-            ItemType.Tweet,
-            uuaCardOpenAppClientEventNamespace,
-            ActionType.ClientCardOpenApp),
+             emType.T et,
+            uuaCardOpenAppCl entEventNa space,
+            Act onType.Cl entCardOpenApp),
           (
-            ceCardAppInstallAttempt,
-            ItemType.Tweet,
-            uuaCardAppInstallAttemptClientEventNamespace,
-            ActionType.ClientCardAppInstallAttempt),
+            ceCardApp nstallAttempt,
+             emType.T et,
+            uuaCardApp nstallAttemptCl entEventNa space,
+            Act onType.Cl entCardApp nstallAttempt),
           (
             cePollCardVote1,
-            ItemType.Tweet,
-            uuaPollCardVote1ClientEventNamespace,
-            ActionType.ClientPollCardVote),
+             emType.T et,
+            uuaPollCardVote1Cl entEventNa space,
+            Act onType.Cl entPollCardVote),
           (
             cePollCardVote2,
-            ItemType.Tweet,
-            uuaPollCardVote2ClientEventNamespace,
-            ActionType.ClientPollCardVote),
+             emType.T et,
+            uuaPollCardVote2Cl entEventNa space,
+            Act onType.Cl entPollCardVote),
         )
-        forEvery(clientEvents) {
+        forEvery(cl entEvents) {
           (
-            ceNamespace: EventNamespace,
-            ceItemType: ItemType,
-            uuaNamespace: ClientEventNamespace,
-            uuaActionType: ActionType
+            ceNa space: EventNa space,
+            ce emType:  emType,
+            uuaNa space: Cl entEventNa space,
+            uuaAct onType: Act onType
           ) =>
-            val event = actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceNamespace),
-              itemTypeOpt = Some(ceItemType),
-              authorId = Some(authorId)
+            val event = act onTowardDefaultT etEvent(
+              eventNa space = So (ceNa space),
+               emTypeOpt = So (ce emType),
+              author d = So (author d)
             )
             val expectedUUA = mkExpectedUUAForCardEvent(
-              id = Some(itemTweetId),
-              clientEventNamespace = Some(uuaNamespace),
-              actionType = uuaActionType,
-              itemType = Some(ceItemType),
-              authorId = Some(authorId)
+               d = So ( emT et d),
+              cl entEventNa space = So (uuaNa space),
+              act onType = uuaAct onType,
+               emType = So (ce emType),
+              author d = So (author d)
             )
-            val actual = ClientEventAdapter.adaptEvent(event)
+            val actual = Cl entEventAdapter.adaptEvent(event)
             assert(Seq(expectedUUA) === actual)
         }
       }
     }
   }
 
-  // Tests for ClientTweetClickMentionScreenName
-  test("ClientTweetClickMentionScreenName") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val userHandle = "someHandle"
-        val clientEvent = actionTowardDefaultTweetEvent(
-          eventNamespace = Some(ceMentionClick),
-          targets = Some(
+  // Tests for Cl entT etCl ck nt onScreenNa 
+  test("Cl entT etCl ck nt onScreenNa ") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val userHandle = "so Handle"
+        val cl entEvent = act onTowardDefaultT etEvent(
+          eventNa space = So (ce nt onCl ck),
+          targets = So (
             Seq(
-              LogEventItem(
-                itemType = Some(ItemType.User),
-                id = Some(userId),
-                name = Some(userHandle)))))
-        val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-          clientEventNamespace = Some(uuaMentionClickClientEventNamespace),
-          actionType = ActionType.ClientTweetClickMentionScreenName,
-          tweetActionInfo = Some(
-            TweetActionInfo.ClientTweetClickMentionScreenName(
-              ClientTweetClickMentionScreenName(actionProfileId = userId, handle = userHandle)))
+              LogEvent em(
+                 emType = So ( emType.User),
+                 d = So (user d),
+                na  = So (userHandle)))))
+        val expectedUUA = mkExpectedUUAForAct onTowardDefaultT etEvent(
+          cl entEventNa space = So (uua nt onCl ckCl entEventNa space),
+          act onType = Act onType.Cl entT etCl ck nt onScreenNa ,
+          t etAct on nfo = So (
+            T etAct on nfo.Cl entT etCl ck nt onScreenNa (
+              Cl entT etCl ck nt onScreenNa (act onProf le d = user d, handle = userHandle)))
         )
-        assert(Seq(expectedUUA) === ClientEventAdapter.adaptEvent(clientEvent))
+        assert(Seq(expectedUUA) === Cl entEventAdapter.adaptEvent(cl entEvent))
       }
     }
   }
 
-  // Tests for Topic Follow/Unfollow actions
-  test("Topic Follow/Unfollow Actions") {
-    // The Topic Id is mostly from TimelineTopic controller data or HomeTweets controller data!
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("clientEventNamesapce", "expectedUUANamespace", "controllerData", "actionType"),
+  // Tests for Top c Follow/Unfollow act ons
+  test("Top c Follow/Unfollow Act ons") {
+    // T  Top c  d  s mostly from T  l neTop c controller data or Ho T ets controller data!
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val cl entEvents = Table(
+          ("cl entEventNa sapce", "expectedUUANa space", "controllerData", "act onType"),
           (
-            ceTopicFollow1,
-            uuaTopicFollowClientEventNamespace1,
-            timelineTopicControllerData(),
-            ActionType.ClientTopicFollow
+            ceTop cFollow1,
+            uuaTop cFollowCl entEventNa space1,
+            t  l neTop cControllerData(),
+            Act onType.Cl entTop cFollow
           ),
           (
-            ceTopicFollow1,
-            uuaTopicFollowClientEventNamespace1,
-            homeTweetControllerData(),
-            ActionType.ClientTopicFollow),
+            ceTop cFollow1,
+            uuaTop cFollowCl entEventNa space1,
+            ho T etControllerData(),
+            Act onType.Cl entTop cFollow),
           (
-            ceTopicFollow2,
-            uuaTopicFollowClientEventNamespace2,
-            timelineTopicControllerData(),
-            ActionType.ClientTopicFollow
+            ceTop cFollow2,
+            uuaTop cFollowCl entEventNa space2,
+            t  l neTop cControllerData(),
+            Act onType.Cl entTop cFollow
           ),
           (
-            ceTopicFollow2,
-            uuaTopicFollowClientEventNamespace2,
-            homeTweetControllerData(),
-            ActionType.ClientTopicFollow),
+            ceTop cFollow2,
+            uuaTop cFollowCl entEventNa space2,
+            ho T etControllerData(),
+            Act onType.Cl entTop cFollow),
           (
-            ceTopicFollow3,
-            uuaTopicFollowClientEventNamespace3,
-            timelineTopicControllerData(),
-            ActionType.ClientTopicFollow
+            ceTop cFollow3,
+            uuaTop cFollowCl entEventNa space3,
+            t  l neTop cControllerData(),
+            Act onType.Cl entTop cFollow
           ),
           (
-            ceTopicFollow3,
-            uuaTopicFollowClientEventNamespace3,
-            homeTweetControllerData(),
-            ActionType.ClientTopicFollow),
+            ceTop cFollow3,
+            uuaTop cFollowCl entEventNa space3,
+            ho T etControllerData(),
+            Act onType.Cl entTop cFollow),
           (
-            ceTopicUnfollow1,
-            uuaTopicUnfollowClientEventNamespace1,
-            timelineTopicControllerData(),
-            ActionType.ClientTopicUnfollow
+            ceTop cUnfollow1,
+            uuaTop cUnfollowCl entEventNa space1,
+            t  l neTop cControllerData(),
+            Act onType.Cl entTop cUnfollow
           ),
           (
-            ceTopicUnfollow1,
-            uuaTopicUnfollowClientEventNamespace1,
-            homeTweetControllerData(),
-            ActionType.ClientTopicUnfollow),
+            ceTop cUnfollow1,
+            uuaTop cUnfollowCl entEventNa space1,
+            ho T etControllerData(),
+            Act onType.Cl entTop cUnfollow),
           (
-            ceTopicUnfollow2,
-            uuaTopicUnfollowClientEventNamespace2,
-            timelineTopicControllerData(),
-            ActionType.ClientTopicUnfollow
+            ceTop cUnfollow2,
+            uuaTop cUnfollowCl entEventNa space2,
+            t  l neTop cControllerData(),
+            Act onType.Cl entTop cUnfollow
           ),
           (
-            ceTopicFollow2,
-            uuaTopicFollowClientEventNamespace2,
-            homeTweetControllerData(),
-            ActionType.ClientTopicFollow),
+            ceTop cFollow2,
+            uuaTop cFollowCl entEventNa space2,
+            ho T etControllerData(),
+            Act onType.Cl entTop cFollow),
           (
-            ceTopicUnfollow3,
-            uuaTopicUnfollowClientEventNamespace3,
-            timelineTopicControllerData(),
-            ActionType.ClientTopicUnfollow
+            ceTop cUnfollow3,
+            uuaTop cUnfollowCl entEventNa space3,
+            t  l neTop cControllerData(),
+            Act onType.Cl entTop cUnfollow
           ),
           (
-            ceTopicUnfollow3,
-            uuaTopicUnfollowClientEventNamespace3,
-            homeTweetControllerData(),
-            ActionType.ClientTopicUnfollow),
+            ceTop cUnfollow3,
+            uuaTop cUnfollowCl entEventNa space3,
+            ho T etControllerData(),
+            Act onType.Cl entTop cUnfollow),
         )
 
-        forEvery(clientEvents) {
+        forEvery(cl entEvents) {
           (
-            eventNamespace: EventNamespace,
-            uuaNs: ClientEventNamespace,
+            eventNa space: EventNa space,
+            uuaNs: Cl entEventNa space,
             controllerData: ControllerData,
-            actionType: ActionType
+            act onType: Act onType
           ) =>
-            val event = actionTowardDefaultTweetEvent(
-              eventNamespace = Some(eventNamespace),
-              itemId = None,
-              suggestionDetails =
-                Some(SuggestionDetails(decodedControllerData = Some(controllerData)))
+            val event = act onTowardDefaultT etEvent(
+              eventNa space = So (eventNa space),
+               em d = None,
+              suggest onDeta ls =
+                So (Suggest onDeta ls(decodedControllerData = So (controllerData)))
             )
-            val expectedUUA = mkExpectedUUAForActionTowardTopicEvent(
-              topicId = topicId,
-              traceId = None,
-              clientEventNamespace = Some(uuaNs),
-              actionType = actionType
+            val expectedUUA = mkExpectedUUAForAct onTowardTop cEvent(
+              top c d = top c d,
+              trace d = None,
+              cl entEventNa space = So (uuaNs),
+              act onType = act onType
             )
-            val actual = ClientEventAdapter.adaptEvent(event)
+            val actual = Cl entEventAdapter.adaptEvent(event)
             assert(Seq(expectedUUA) === actual)
         }
       }
     }
   }
 
-  // Tests for Topic NotInterestedIn & its Undo actions
-  test("Topic NotInterestedIn & its Undo actions") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("clientEventNamesapce", "expectedUUANamespace", "controllerData", "actionType"),
+  // Tests for Top c Not nterested n &  s Undo act ons
+  test("Top c Not nterested n &  s Undo act ons") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val cl entEvents = Table(
+          ("cl entEventNa sapce", "expectedUUANa space", "controllerData", "act onType"),
           (
-            ceTopicNotInterestedIn1,
-            uuaTopicNotInterestedInClientEventNamespace1,
-            timelineTopicControllerData(),
-            ActionType.ClientTopicNotInterestedIn
+            ceTop cNot nterested n1,
+            uuaTop cNot nterested nCl entEventNa space1,
+            t  l neTop cControllerData(),
+            Act onType.Cl entTop cNot nterested n
           ),
           (
-            ceTopicNotInterestedIn1,
-            uuaTopicNotInterestedInClientEventNamespace1,
-            homeTweetControllerData(),
-            ActionType.ClientTopicNotInterestedIn),
+            ceTop cNot nterested n1,
+            uuaTop cNot nterested nCl entEventNa space1,
+            ho T etControllerData(),
+            Act onType.Cl entTop cNot nterested n),
           (
-            ceTopicNotInterestedIn2,
-            uuaTopicNotInterestedInClientEventNamespace2,
-            timelineTopicControllerData(),
-            ActionType.ClientTopicNotInterestedIn
+            ceTop cNot nterested n2,
+            uuaTop cNot nterested nCl entEventNa space2,
+            t  l neTop cControllerData(),
+            Act onType.Cl entTop cNot nterested n
           ),
           (
-            ceTopicNotInterestedIn2,
-            uuaTopicNotInterestedInClientEventNamespace2,
-            homeTweetControllerData(),
-            ActionType.ClientTopicNotInterestedIn),
+            ceTop cNot nterested n2,
+            uuaTop cNot nterested nCl entEventNa space2,
+            ho T etControllerData(),
+            Act onType.Cl entTop cNot nterested n),
           (
-            ceTopicUndoNotInterestedIn1,
-            uuaTopicUndoNotInterestedInClientEventNamespace1,
-            timelineTopicControllerData(),
-            ActionType.ClientTopicUndoNotInterestedIn
+            ceTop cUndoNot nterested n1,
+            uuaTop cUndoNot nterested nCl entEventNa space1,
+            t  l neTop cControllerData(),
+            Act onType.Cl entTop cUndoNot nterested n
           ),
           (
-            ceTopicUndoNotInterestedIn1,
-            uuaTopicUndoNotInterestedInClientEventNamespace1,
-            homeTweetControllerData(),
-            ActionType.ClientTopicUndoNotInterestedIn),
+            ceTop cUndoNot nterested n1,
+            uuaTop cUndoNot nterested nCl entEventNa space1,
+            ho T etControllerData(),
+            Act onType.Cl entTop cUndoNot nterested n),
           (
-            ceTopicUndoNotInterestedIn2,
-            uuaTopicUndoNotInterestedInClientEventNamespace2,
-            timelineTopicControllerData(),
-            ActionType.ClientTopicUndoNotInterestedIn
+            ceTop cUndoNot nterested n2,
+            uuaTop cUndoNot nterested nCl entEventNa space2,
+            t  l neTop cControllerData(),
+            Act onType.Cl entTop cUndoNot nterested n
           ),
           (
-            ceTopicUndoNotInterestedIn2,
-            uuaTopicUndoNotInterestedInClientEventNamespace2,
-            homeTweetControllerData(),
-            ActionType.ClientTopicUndoNotInterestedIn),
+            ceTop cUndoNot nterested n2,
+            uuaTop cUndoNot nterested nCl entEventNa space2,
+            ho T etControllerData(),
+            Act onType.Cl entTop cUndoNot nterested n),
         )
 
-        forEvery(clientEvents) {
+        forEvery(cl entEvents) {
           (
-            eventNamespace: EventNamespace,
-            uuaNs: ClientEventNamespace,
+            eventNa space: EventNa space,
+            uuaNs: Cl entEventNa space,
             controllerData: ControllerData,
-            actionType: ActionType
+            act onType: Act onType
           ) =>
-            val event = actionTowardDefaultTweetEvent(
-              eventNamespace = Some(eventNamespace),
-              itemId = None,
-              suggestionDetails =
-                Some(SuggestionDetails(decodedControllerData = Some(controllerData)))
+            val event = act onTowardDefaultT etEvent(
+              eventNa space = So (eventNa space),
+               em d = None,
+              suggest onDeta ls =
+                So (Suggest onDeta ls(decodedControllerData = So (controllerData)))
             )
-            val expectedUUA = mkExpectedUUAForActionTowardTopicEvent(
-              topicId = topicId,
-              traceId = None,
-              clientEventNamespace = Some(uuaNs),
-              actionType = actionType
+            val expectedUUA = mkExpectedUUAForAct onTowardTop cEvent(
+              top c d = top c d,
+              trace d = None,
+              cl entEventNa space = So (uuaNs),
+              act onType = act onType
             )
-            val actual = ClientEventAdapter.adaptEvent(event)
+            val actual = Cl entEventAdapter.adaptEvent(event)
             assert(Seq(expectedUUA) === actual)
         }
       }
     }
   }
 
-  // Tests for authorInfo
-  test("authorInfo") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("authorIdOpt", "isFollowedByActingUser", "isFollowingActingUser"),
-          (Some(authorId), true, false),
-          (Some(authorId), true, true),
-          (Some(authorId), false, true),
-          (Some(authorId), false, false),
+  // Tests for author nfo
+  test("author nfo") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val cl entEvents = Table(
+          ("author dOpt", " sFollo dByAct ngUser", " sFollow ngAct ngUser"),
+          (So (author d), true, false),
+          (So (author d), true, true),
+          (So (author d), false, true),
+          (So (author d), false, false),
           (None, true, true),
         )
-        forEvery(clientEvents) {
+        forEvery(cl entEvents) {
           (
-            authorIdOpt: Option[Long],
-            isFollowedByActingUser: Boolean,
-            isFollowingActingUser: Boolean
+            author dOpt: Opt on[Long],
+             sFollo dByAct ngUser: Boolean,
+             sFollow ngAct ngUser: Boolean
           ) =>
-            val actual = ClientEventAdapter.adaptEvent(
-              renderDefaultTweetUserFollowStatusEvent(
-                authorId = authorIdOpt,
-                isFollowedByActingUser = isFollowedByActingUser,
-                isFollowingActingUser = isFollowingActingUser
+            val actual = Cl entEventAdapter.adaptEvent(
+              renderDefaultT etUserFollowStatusEvent(
+                author d = author dOpt,
+                 sFollo dByAct ngUser =  sFollo dByAct ngUser,
+                 sFollow ngAct ngUser =  sFollow ngAct ngUser
               ))
             val expected =
-              expectedTweetRenderDefaultTweetWithAuthorInfoUUA(authorInfo = authorIdOpt.map { id =>
-                AuthorInfo(
-                  authorId = Some(id),
-                  isFollowedByActingUser = Some(isFollowedByActingUser),
-                  isFollowingActingUser = Some(isFollowingActingUser)
+              expectedT etRenderDefaultT etW hAuthor nfoUUA(author nfo = author dOpt.map {  d =>
+                Author nfo(
+                  author d = So ( d),
+                   sFollo dByAct ngUser = So ( sFollo dByAct ngUser),
+                   sFollow ngAct ngUser = So ( sFollow ngAct ngUser)
                 )
               })
             assert(Seq(expected) === actual)
@@ -770,73 +770,73 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
     }
   }
 
-  // Tests for ClientTweetReport
-  test("ClientTweetReport") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val ceNTabTweetReport: EventNamespace =
-          ceTweetReport.copy(page = Some("ntab"), section = Some("all"), component = Some("urt"))
+  // Tests for Cl entT etReport
+  test("Cl entT etReport") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val ceNTabT etReport: EventNa space =
+          ceT etReport.copy(page = So ("ntab"), sect on = So ("all"), component = So ("urt"))
 
-        val uuaNTabTweetReport: ClientEventNamespace =
-          uuaTweetReport.copy(page = Some("ntab"), section = Some("all"), component = Some("urt"))
+        val uuaNTabT etReport: Cl entEventNa space =
+          uuaT etReport.copy(page = So ("ntab"), sect on = So ("all"), component = So ("urt"))
 
         val params = Table(
           (
             "eventType",
-            "ceNamespace",
-            "ceNotificationTabDetails",
-            "ceReportDetails",
-            "uuaNamespace",
-            "uuaTweetActionInfo",
+            "ceNa space",
+            "ceNot f cat onTabDeta ls",
+            "ceReportDeta ls",
+            "uuaNa space",
+            "uuaT etAct on nfo",
             "uuaProductSurface",
-            "uuaProductSurfaceInfo"),
+            "uuaProductSurface nfo"),
           (
-            "ntabReportTweetClick",
-            ceNTabTweetReport.copy(action = Some("click")),
-            Some(notificationTabTweetEventDetails),
+            "ntabReportT etCl ck",
+            ceNTabT etReport.copy(act on = So ("cl ck")),
+            So (not f cat onTabT etEventDeta ls),
             None,
-            uuaNTabTweetReport.copy(action = Some("click")),
-            reportTweetClick,
-            Some(ProductSurface.NotificationTab),
-            Some(notificationTabProductSurfaceInfo)
+            uuaNTabT etReport.copy(act on = So ("cl ck")),
+            reportT etCl ck,
+            So (ProductSurface.Not f cat onTab),
+            So (not f cat onTabProductSurface nfo)
           ),
           (
-            "ntabReportTweetDone",
-            ceNTabTweetReport.copy(action = Some("done")),
-            Some(notificationTabTweetEventDetails),
+            "ntabReportT etDone",
+            ceNTabT etReport.copy(act on = So ("done")),
+            So (not f cat onTabT etEventDeta ls),
             None,
-            uuaNTabTweetReport.copy(action = Some("done")),
-            reportTweetDone,
-            Some(ProductSurface.NotificationTab),
-            Some(notificationTabProductSurfaceInfo)
+            uuaNTabT etReport.copy(act on = So ("done")),
+            reportT etDone,
+            So (ProductSurface.Not f cat onTab),
+            So (not f cat onTabProductSurface nfo)
           ),
           (
-            "defaultReportTweetDone",
-            ceTweetReport.copy(page = Some("tweet"), action = Some("done")),
+            "defaultReportT etDone",
+            ceT etReport.copy(page = So ("t et"), act on = So ("done")),
             None,
             None,
-            uuaTweetReport.copy(page = Some("tweet"), action = Some("done")),
-            reportTweetDone,
+            uuaT etReport.copy(page = So ("t et"), act on = So ("done")),
+            reportT etDone,
             None,
             None
           ),
           (
-            "defaultReportTweetWithReportFlowId",
-            ceTweetReport.copy(page = Some("tweet"), action = Some("done")),
+            "defaultReportT etW hReportFlow d",
+            ceT etReport.copy(page = So ("t et"), act on = So ("done")),
             None,
-            Some(ReportDetails(reportFlowId = Some(reportFlowId))),
-            uuaTweetReport.copy(page = Some("tweet"), action = Some("done")),
-            reportTweetWithReportFlowId,
+            So (ReportDeta ls(reportFlow d = So (reportFlow d))),
+            uuaT etReport.copy(page = So ("t et"), act on = So ("done")),
+            reportT etW hReportFlow d,
             None,
             None
           ),
           (
-            "defaultReportTweetWithoutReportFlowId",
-            ceTweetReport.copy(page = Some("tweet"), action = Some("done")),
+            "defaultReportT etW houtReportFlow d",
+            ceT etReport.copy(page = So ("t et"), act on = So ("done")),
             None,
             None,
-            uuaTweetReport.copy(page = Some("tweet"), action = Some("done")),
-            reportTweetWithoutReportFlowId,
+            uuaT etReport.copy(page = So ("t et"), act on = So ("done")),
+            reportT etW houtReportFlow d,
             None,
             None
           ),
@@ -844,27 +844,27 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
         forEvery(params) {
           (
-            _: String,
-            ceNamespace: EventNamespace,
-            ceNotificationTabDetails: Option[NotificationTabDetails],
-            ceReportDetails: Option[ReportDetails],
-            uuaNamespace: ClientEventNamespace,
-            uuaTweetActionInfo: TweetActionInfo,
-            productSurface: Option[ProductSurface],
-            productSurfaceInfo: Option[ProductSurfaceInfo]
+            _: Str ng,
+            ceNa space: EventNa space,
+            ceNot f cat onTabDeta ls: Opt on[Not f cat onTabDeta ls],
+            ceReportDeta ls: Opt on[ReportDeta ls],
+            uuaNa space: Cl entEventNa space,
+            uuaT etAct on nfo: T etAct on nfo,
+            productSurface: Opt on[ProductSurface],
+            productSurface nfo: Opt on[ProductSurface nfo]
           ) =>
-            val actual = ClientEventAdapter.adaptEvent(
-              actionTowardDefaultTweetEvent(
-                eventNamespace = Some(ceNamespace),
-                notificationTabDetails = ceNotificationTabDetails,
-                reportDetails = ceReportDetails))
+            val actual = Cl entEventAdapter.adaptEvent(
+              act onTowardDefaultT etEvent(
+                eventNa space = So (ceNa space),
+                not f cat onTabDeta ls = ceNot f cat onTabDeta ls,
+                reportDeta ls = ceReportDeta ls))
 
-            val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-              clientEventNamespace = Some(uuaNamespace),
-              actionType = ActionType.ClientTweetReport,
-              tweetActionInfo = Some(uuaTweetActionInfo),
+            val expectedUUA = mkExpectedUUAForAct onTowardDefaultT etEvent(
+              cl entEventNa space = So (uuaNa space),
+              act onType = Act onType.Cl entT etReport,
+              t etAct on nfo = So (uuaT etAct on nfo),
               productSurface = productSurface,
-              productSurfaceInfo = productSurfaceInfo
+              productSurface nfo = productSurface nfo
             )
 
             assert(Seq(expectedUUA) === actual)
@@ -873,258 +873,258 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
     }
   }
 
-  // Tests for ClientTweetNotHelpful and ClientTweetUndoNotHelpful
-  test("ClientTweetNotHelpful & UndoNotHelpful") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actions = Table(("action"), "click", "undo")
-        val element = "feedback_givefeedback"
-        forEvery(actions) { action =>
-          val clientEvent =
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceEventNamespace(element, action)),
+  // Tests for Cl entT etNot lpful and Cl entT etUndoNot lpful
+  test("Cl entT etNot lpful & UndoNot lpful") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val act ons = Table(("act on"), "cl ck", "undo")
+        val ele nt = "feedback_g vefeedback"
+        forEvery(act ons) { act on =>
+          val cl entEvent =
+            act onTowardDefaultT etEvent(
+              eventNa space = So (ceEventNa space(ele nt, act on)),
             )
 
-          val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-            clientEventNamespace = Some(uuaClientEventNamespace(element, action)),
-            actionType = action match {
-              case "click" => ActionType.ClientTweetNotHelpful
-              case "undo" => ActionType.ClientTweetUndoNotHelpful
+          val expectedUUA = mkExpectedUUAForAct onTowardDefaultT etEvent(
+            cl entEventNa space = So (uuaCl entEventNa space(ele nt, act on)),
+            act onType = act on match {
+              case "cl ck" => Act onType.Cl entT etNot lpful
+              case "undo" => Act onType.Cl entT etUndoNot lpful
             }
           )
 
-          val actual = ClientEventAdapter.adaptEvent(clientEvent)
+          val actual = Cl entEventAdapter.adaptEvent(cl entEvent)
           assert(Seq(expectedUUA) === actual)
         }
       }
     }
   }
 
-  // Tests for ClientTweetNotInterestedIn and ClientTweetUndoNotInterestedIn
-  test("ClientTweetNotInterestedIn & UndoNotInterestedIn") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actions = Table(("action"), "click", "undo")
-        val element = "feedback_dontlike"
-        forEvery(actions) { action =>
-          val clientEvent =
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceEventNamespace(element, action)),
+  // Tests for Cl entT etNot nterested n and Cl entT etUndoNot nterested n
+  test("Cl entT etNot nterested n & UndoNot nterested n") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val act ons = Table(("act on"), "cl ck", "undo")
+        val ele nt = "feedback_dontl ke"
+        forEvery(act ons) { act on =>
+          val cl entEvent =
+            act onTowardDefaultT etEvent(
+              eventNa space = So (ceEventNa space(ele nt, act on)),
             )
 
-          val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-            clientEventNamespace = Some(uuaClientEventNamespace(element, action)),
-            actionType = action match {
-              case "click" => ActionType.ClientTweetNotInterestedIn
-              case "undo" => ActionType.ClientTweetUndoNotInterestedIn
+          val expectedUUA = mkExpectedUUAForAct onTowardDefaultT etEvent(
+            cl entEventNa space = So (uuaCl entEventNa space(ele nt, act on)),
+            act onType = act on match {
+              case "cl ck" => Act onType.Cl entT etNot nterested n
+              case "undo" => Act onType.Cl entT etUndoNot nterested n
             }
           )
 
-          val actual = ClientEventAdapter.adaptEvent(clientEvent)
+          val actual = Cl entEventAdapter.adaptEvent(cl entEvent)
           assert(Seq(expectedUUA) === actual)
         }
       }
     }
   }
 
-  // Tests for ClientTweetNotAboutTopic & ClientTweetUndoNotAboutTopic
-  test("ClientTweetNotAboutTopic & ClientTweetUndoNotAboutTopic") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actions = Table(("action"), "click", "undo")
-        val element = "feedback_notabouttopic"
-        forEvery(actions) { action =>
-          val clientEvent =
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceEventNamespace(element, action)),
+  // Tests for Cl entT etNotAboutTop c & Cl entT etUndoNotAboutTop c
+  test("Cl entT etNotAboutTop c & Cl entT etUndoNotAboutTop c") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val act ons = Table(("act on"), "cl ck", "undo")
+        val ele nt = "feedback_notabouttop c"
+        forEvery(act ons) { act on =>
+          val cl entEvent =
+            act onTowardDefaultT etEvent(
+              eventNa space = So (ceEventNa space(ele nt, act on)),
             )
 
-          val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-            clientEventNamespace = Some(uuaClientEventNamespace(element, action)),
-            actionType = action match {
-              case "click" => ActionType.ClientTweetNotAboutTopic
-              case "undo" => ActionType.ClientTweetUndoNotAboutTopic
+          val expectedUUA = mkExpectedUUAForAct onTowardDefaultT etEvent(
+            cl entEventNa space = So (uuaCl entEventNa space(ele nt, act on)),
+            act onType = act on match {
+              case "cl ck" => Act onType.Cl entT etNotAboutTop c
+              case "undo" => Act onType.Cl entT etUndoNotAboutTop c
             }
           )
 
-          val actual = ClientEventAdapter.adaptEvent(clientEvent)
+          val actual = Cl entEventAdapter.adaptEvent(cl entEvent)
           assert(Seq(expectedUUA) === actual)
         }
       }
     }
   }
 
-  // Tests for ClientTweetNotRecent and ClientTweetUndoNotRecent
-  test("ClientTweetNotRecent & UndoNotRecent") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actions = Table(("action"), "click", "undo")
-        val element = "feedback_notrecent"
-        forEvery(actions) { action =>
-          val clientEvent =
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceEventNamespace(element, action)),
+  // Tests for Cl entT etNotRecent and Cl entT etUndoNotRecent
+  test("Cl entT etNotRecent & UndoNotRecent") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val act ons = Table(("act on"), "cl ck", "undo")
+        val ele nt = "feedback_notrecent"
+        forEvery(act ons) { act on =>
+          val cl entEvent =
+            act onTowardDefaultT etEvent(
+              eventNa space = So (ceEventNa space(ele nt, act on)),
             )
 
-          val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-            clientEventNamespace = Some(uuaClientEventNamespace(element, action)),
-            actionType = action match {
-              case "click" => ActionType.ClientTweetNotRecent
-              case "undo" => ActionType.ClientTweetUndoNotRecent
+          val expectedUUA = mkExpectedUUAForAct onTowardDefaultT etEvent(
+            cl entEventNa space = So (uuaCl entEventNa space(ele nt, act on)),
+            act onType = act on match {
+              case "cl ck" => Act onType.Cl entT etNotRecent
+              case "undo" => Act onType.Cl entT etUndoNotRecent
             }
           )
 
-          val actual = ClientEventAdapter.adaptEvent(clientEvent)
+          val actual = Cl entEventAdapter.adaptEvent(cl entEvent)
           assert(Seq(expectedUUA) === actual)
         }
       }
     }
   }
 
-  // Tests for ClientTweetSeeFewer and ClientTweetUndoSeeFewer
-  test("ClientTweetSeeFewer & ClientTweetUndoSeeFewer") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actions = Table(("action"), "click", "undo")
-        val element = "feedback_seefewer"
-        forEvery(actions) { action =>
-          val clientEvent =
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceEventNamespace(element, action)),
+  // Tests for Cl entT etSeeFe r and Cl entT etUndoSeeFe r
+  test("Cl entT etSeeFe r & Cl entT etUndoSeeFe r") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val act ons = Table(("act on"), "cl ck", "undo")
+        val ele nt = "feedback_seefe r"
+        forEvery(act ons) { act on =>
+          val cl entEvent =
+            act onTowardDefaultT etEvent(
+              eventNa space = So (ceEventNa space(ele nt, act on)),
             )
 
-          val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-            clientEventNamespace = Some(uuaClientEventNamespace(element, action)),
-            actionType = action match {
-              case "click" => ActionType.ClientTweetSeeFewer
-              case "undo" => ActionType.ClientTweetUndoSeeFewer
+          val expectedUUA = mkExpectedUUAForAct onTowardDefaultT etEvent(
+            cl entEventNa space = So (uuaCl entEventNa space(ele nt, act on)),
+            act onType = act on match {
+              case "cl ck" => Act onType.Cl entT etSeeFe r
+              case "undo" => Act onType.Cl entT etUndoSeeFe r
             }
           )
 
-          val actual = ClientEventAdapter.adaptEvent(clientEvent)
+          val actual = Cl entEventAdapter.adaptEvent(cl entEvent)
           assert(Seq(expectedUUA) === actual)
         }
       }
     }
   }
 
-  // Tests for getEventMetadata
-  test("getEventMetadata") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("clientEventNamesapce", "expectedUUANamespace", "controllerData"),
+  // Tests for getEvent tadata
+  test("getEvent tadata") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val cl entEvents = Table(
+          ("cl entEventNa sapce", "expectedUUANa space", "controllerData"),
           (
-            ceRenderEventNamespace,
-            uuaRenderClientEventNamespace,
-            homeTweetControllerData()
+            ceRenderEventNa space,
+            uuaRenderCl entEventNa space,
+            ho T etControllerData()
           ),
         )
 
-        forEvery(clientEvents) {
+        forEvery(cl entEvents) {
           (
-            eventNamespace: EventNamespace,
-            uuaNs: ClientEventNamespace,
+            eventNa space: EventNa space,
+            uuaNs: Cl entEventNa space,
             controllerData: ControllerData
           ) =>
-            val event = actionTowardDefaultTweetEvent(
-              eventNamespace = Some(eventNamespace),
-              suggestionDetails =
-                Some(SuggestionDetails(decodedControllerData = Some(controllerData)))
+            val event = act onTowardDefaultT etEvent(
+              eventNa space = So (eventNa space),
+              suggest onDeta ls =
+                So (Suggest onDeta ls(decodedControllerData = So (controllerData)))
             )
-            val expectedEventMetaData = mkUUAEventMetadata(
-              clientEventNamespace = Some(uuaNs)
+            val expectedEvent taData = mkUUAEvent tadata(
+              cl entEventNa space = So (uuaNs)
             )
-            val actual = ClientEventAdapter.adaptEvent(event).head.eventMetadata
-            assert(expectedEventMetaData === actual)
+            val actual = Cl entEventAdapter.adaptEvent(event). ad.event tadata
+            assert(expectedEvent taData === actual)
         }
       }
     }
   }
 
-  // Tests for getSourceTimestamp
-  test("getSourceTimestamp") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
+  // Tests for getS ceT  stamp
+  test("getS ceT  stamp") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
         val params = Table(
-          ("testCase", "clientEvent", "expectedUUAEventTimestamp"),
+          ("testCase", "cl entEvent", "expectedUUAEventT  stamp"),
           (
-            "CES event with DriftAdjustedEventCreatedAtMs",
-            actionTowardDefaultTweetEvent(eventNamespace = Some(ceRenderEventNamespace)),
-            logBase.driftAdjustedEventCreatedAtMs),
+            "CES event w h Dr ftAdjustedEventCreatedAtMs",
+            act onTowardDefaultT etEvent(eventNa space = So (ceRenderEventNa space)),
+            logBase.dr ftAdjustedEventCreatedAtMs),
           (
-            "CES event without DriftAdjustedEventCreatedAtMs: ignore",
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceRenderEventNamespace),
-              logBase = logBase.unsetDriftAdjustedEventCreatedAtMs),
+            "CES event w hout Dr ftAdjustedEventCreatedAtMs:  gnore",
+            act onTowardDefaultT etEvent(
+              eventNa space = So (ceRenderEventNa space),
+              logBase = logBase.unsetDr ftAdjustedEventCreatedAtMs),
             None),
           (
-            "Non-CES event without DriftAdjustedEventCreatedAtMs: use logBase.timestamp",
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceRenderEventNamespace),
+            "Non-CES event w hout Dr ftAdjustedEventCreatedAtMs: use logBase.t  stamp",
+            act onTowardDefaultT etEvent(
+              eventNa space = So (ceRenderEventNa space),
               logBase = logBase
                 .copy(
-                  clientEventReceiver =
-                    Some(ClientEventReceiver.Unknown)).unsetDriftAdjustedEventCreatedAtMs
+                  cl entEventRece ver =
+                    So (Cl entEventRece ver.Unknown)).unsetDr ftAdjustedEventCreatedAtMs
             ),
-            Some(logBase.timestamp))
+            So (logBase.t  stamp))
         )
-        forEvery(params) { (_: String, event: LogEvent, expectedUUAEventTimestamp: Option[Long]) =>
+        forEvery(params) { (_: Str ng, event: LogEvent, expectedUUAEventT  stamp: Opt on[Long]) =>
           val actual =
-            ClientEventAdapter.adaptEvent(event).map(_.eventMetadata.sourceTimestampMs).headOption
-          assert(expectedUUAEventTimestamp === actual)
+            Cl entEventAdapter.adaptEvent(event).map(_.event tadata.s ceT  stampMs). adOpt on
+          assert(expectedUUAEventT  stamp === actual)
         }
       }
     }
   }
 
-  // Tests for ServerTweetReport
-  test("ServerTweetReport") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
+  // Tests for ServerT etReport
+  test("ServerT etReport") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
         val params = Table(
-          ("eventType", "ceNamespace", "ceReportDetails", "uuaNamespace", "uuaTweetActionInfo"),
+          ("eventType", "ceNa space", "ceReportDeta ls", "uuaNa space", "uuaT etAct on nfo"),
           (
-            "ReportImpressionIsNotAdapted",
-            ceTweetReportFlow(page = "report_abuse", action = "impression"),
-            Some(ReportDetails(reportFlowId = Some(reportFlowId))),
+            "Report mpress on sNotAdapted",
+            ceT etReportFlow(page = "report_abuse", act on = " mpress on"),
+            So (ReportDeta ls(reportFlow d = So (reportFlow d))),
             None,
             None
           ),
           (
-            "ReportSubmitIsAdapted",
-            ceTweetReportFlow(page = "report_abuse", action = "submit"),
-            Some(
-              ReportDetails(
-                reportFlowId = Some(reportFlowId),
-                reportType = Some(ReportType.Abuse))),
-            Some(uuaTweetReportFlow(page = "report_abuse", action = "submit")),
-            Some(reportTweetSubmit)
+            "ReportSubm  sAdapted",
+            ceT etReportFlow(page = "report_abuse", act on = "subm "),
+            So (
+              ReportDeta ls(
+                reportFlow d = So (reportFlow d),
+                reportType = So (ReportType.Abuse))),
+            So (uuaT etReportFlow(page = "report_abuse", act on = "subm ")),
+            So (reportT etSubm )
           ),
         )
 
         forEvery(params) {
           (
-            _: String,
-            ceNamespace: EventNamespace,
-            ceReportDetails: Option[ReportDetails],
-            uuaNamespace: Option[ClientEventNamespace],
-            uuaTweetActionInfo: Option[TweetActionInfo]
+            _: Str ng,
+            ceNa space: EventNa space,
+            ceReportDeta ls: Opt on[ReportDeta ls],
+            uuaNa space: Opt on[Cl entEventNa space],
+            uuaT etAct on nfo: Opt on[T etAct on nfo]
           ) =>
-            val actual = ClientEventAdapter.adaptEvent(
-              actionTowardDefaultTweetEvent(
-                eventNamespace = Some(ceNamespace),
-                reportDetails = ceReportDetails))
+            val actual = Cl entEventAdapter.adaptEvent(
+              act onTowardDefaultT etEvent(
+                eventNa space = So (ceNa space),
+                reportDeta ls = ceReportDeta ls))
 
             val expectedUUA =
-              if (ceNamespace.action.contains("submit"))
+               f (ceNa space.act on.conta ns("subm "))
                 Seq(
-                  mkExpectedUUAForActionTowardDefaultTweetEvent(
-                    clientEventNamespace = uuaNamespace,
-                    actionType = ActionType.ServerTweetReport,
-                    tweetActionInfo = uuaTweetActionInfo
+                  mkExpectedUUAForAct onTowardDefaultT etEvent(
+                    cl entEventNa space = uuaNa space,
+                    act onType = Act onType.ServerT etReport,
+                    t etAct on nfo = uuaT etAct on nfo
                   ))
-              else Nil
+              else N l
 
             assert(expectedUUA === actual)
         }
@@ -1132,66 +1132,66 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
     }
   }
 
-  // Tests for ClientNotificationOpen
-  test("ClientNotificationOpen") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvent =
-          pushNotificationEvent(
-            eventNamespace = Some(ceNotificationOpen),
-            notificationDetails = Some(notificationDetails))
+  // Tests for Cl entNot f cat onOpen
+  test("Cl entNot f cat onOpen") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val cl entEvent =
+          pushNot f cat onEvent(
+            eventNa space = So (ceNot f cat onOpen),
+            not f cat onDeta ls = So (not f cat onDeta ls))
 
-        val expectedUUA = mkExpectedUUAForNotificationEvent(
-          clientEventNamespace = Some(uuaNotificationOpen),
-          actionType = ActionType.ClientNotificationOpen,
-          notificationContent = tweetNotificationContent,
-          productSurface = Some(ProductSurface.PushNotification),
-          productSurfaceInfo = Some(
-            ProductSurfaceInfo.PushNotificationInfo(
-              PushNotificationInfo(notificationId = notificationId)))
+        val expectedUUA = mkExpectedUUAForNot f cat onEvent(
+          cl entEventNa space = So (uuaNot f cat onOpen),
+          act onType = Act onType.Cl entNot f cat onOpen,
+          not f cat onContent = t etNot f cat onContent,
+          productSurface = So (ProductSurface.PushNot f cat on),
+          productSurface nfo = So (
+            ProductSurface nfo.PushNot f cat on nfo(
+              PushNot f cat on nfo(not f cat on d = not f cat on d)))
         )
 
-        val actual = ClientEventAdapter.adaptEvent(clientEvent)
+        val actual = Cl entEventAdapter.adaptEvent(cl entEvent)
         assert(Seq(expectedUUA) === actual)
       }
     }
   }
 
-  // Tests for ClientNotificationClick
-  test("ClientNotificationClick") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
+  // Tests for Cl entNot f cat onCl ck
+  test("Cl entNot f cat onCl ck") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
         val params = Table(
-          ("notificationType", "ceNotificationTabDetails", "uuaNotificationContent"),
-          ("tweetNotification", notificationTabTweetEventDetails, tweetNotificationContent),
+          ("not f cat onType", "ceNot f cat onTabDeta ls", "uuaNot f cat onContent"),
+          ("t etNot f cat on", not f cat onTabT etEventDeta ls, t etNot f cat onContent),
           (
-            "multiTweetNotification",
-            notificationTabMultiTweetEventDetails,
-            multiTweetNotificationContent),
+            "mult T etNot f cat on",
+            not f cat onTabMult T etEventDeta ls,
+            mult T etNot f cat onContent),
           (
-            "unknownNotification",
-            notificationTabUnknownEventDetails,
-            unknownNotificationContent
+            "unknownNot f cat on",
+            not f cat onTabUnknownEventDeta ls,
+            unknownNot f cat onContent
           ),
         )
 
         forEvery(params) {
           (
-            _: String,
-            ceNotificationTabDetails: NotificationTabDetails,
-            uuaNotificationContent: NotificationContent
+            _: Str ng,
+            ceNot f cat onTabDeta ls: Not f cat onTabDeta ls,
+            uuaNot f cat onContent: Not f cat onContent
           ) =>
-            val actual = ClientEventAdapter.adaptEvent(
-              actionTowardNotificationEvent(
-                eventNamespace = Some(ceNotificationClick),
-                notificationTabDetails = Some(ceNotificationTabDetails)))
+            val actual = Cl entEventAdapter.adaptEvent(
+              act onTowardNot f cat onEvent(
+                eventNa space = So (ceNot f cat onCl ck),
+                not f cat onTabDeta ls = So (ceNot f cat onTabDeta ls)))
 
-            val expectedUUA = mkExpectedUUAForNotificationEvent(
-              clientEventNamespace = Some(uuaNotificationClick),
-              actionType = ActionType.ClientNotificationClick,
-              notificationContent = uuaNotificationContent,
-              productSurface = Some(ProductSurface.NotificationTab),
-              productSurfaceInfo = Some(notificationTabProductSurfaceInfo)
+            val expectedUUA = mkExpectedUUAForNot f cat onEvent(
+              cl entEventNa space = So (uuaNot f cat onCl ck),
+              act onType = Act onType.Cl entNot f cat onCl ck,
+              not f cat onContent = uuaNot f cat onContent,
+              productSurface = So (ProductSurface.Not f cat onTab),
+              productSurface nfo = So (not f cat onTabProductSurface nfo)
             )
 
             assert(Seq(expectedUUA) === actual)
@@ -1200,37 +1200,37 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
     }
   }
 
-  // Tests for ClientNotificationSeeLessOften
-  test("ClientNotificationSeeLessOften") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
+  // Tests for Cl entNot f cat onSeeLessOften
+  test("Cl entNot f cat onSeeLessOften") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
         val params = Table(
-          ("notificationType", "ceNotificationTabDetails", "uuaNotificationContent"),
-          ("tweetNotification", notificationTabTweetEventDetails, tweetNotificationContent),
+          ("not f cat onType", "ceNot f cat onTabDeta ls", "uuaNot f cat onContent"),
+          ("t etNot f cat on", not f cat onTabT etEventDeta ls, t etNot f cat onContent),
           (
-            "multiTweetNotification",
-            notificationTabMultiTweetEventDetails,
-            multiTweetNotificationContent),
-          ("unknownNotification", notificationTabUnknownEventDetails, unknownNotificationContent),
+            "mult T etNot f cat on",
+            not f cat onTabMult T etEventDeta ls,
+            mult T etNot f cat onContent),
+          ("unknownNot f cat on", not f cat onTabUnknownEventDeta ls, unknownNot f cat onContent),
         )
 
         forEvery(params) {
           (
-            _: String,
-            ceNotificationTabDetails: NotificationTabDetails,
-            uuaNotificationContent: NotificationContent
+            _: Str ng,
+            ceNot f cat onTabDeta ls: Not f cat onTabDeta ls,
+            uuaNot f cat onContent: Not f cat onContent
           ) =>
-            val actual = ClientEventAdapter.adaptEvent(
-              actionTowardNotificationEvent(
-                eventNamespace = Some(ceNotificationSeeLessOften),
-                notificationTabDetails = Some(ceNotificationTabDetails)))
+            val actual = Cl entEventAdapter.adaptEvent(
+              act onTowardNot f cat onEvent(
+                eventNa space = So (ceNot f cat onSeeLessOften),
+                not f cat onTabDeta ls = So (ceNot f cat onTabDeta ls)))
 
-            val expectedUUA = mkExpectedUUAForNotificationEvent(
-              clientEventNamespace = Some(uuaNotificationSeeLessOften),
-              actionType = ActionType.ClientNotificationSeeLessOften,
-              notificationContent = uuaNotificationContent,
-              productSurface = Some(ProductSurface.NotificationTab),
-              productSurfaceInfo = Some(notificationTabProductSurfaceInfo)
+            val expectedUUA = mkExpectedUUAForNot f cat onEvent(
+              cl entEventNa space = So (uuaNot f cat onSeeLessOften),
+              act onType = Act onType.Cl entNot f cat onSeeLessOften,
+              not f cat onContent = uuaNot f cat onContent,
+              productSurface = So (ProductSurface.Not f cat onTab),
+              productSurface nfo = So (not f cat onTabProductSurface nfo)
             )
 
             assert(Seq(expectedUUA) === actual)
@@ -1239,39 +1239,39 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
     }
   }
 
-  // Tests for ClientTweetClick
-  test("ClientTweetClick") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
+  // Tests for Cl entT etCl ck
+  test("Cl entT etCl ck") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
         val params = Table(
-          ("eventName", "page", "nTabDetails", "uuaProductSurface", "uuaProductSurfaceInfo"),
-          ("tweetClick", "messages", None, None, None),
+          ("eventNa ", "page", "nTabDeta ls", "uuaProductSurface", "uuaProductSurface nfo"),
+          ("t etCl ck", " ssages", None, None, None),
           (
-            "tweetClickInNTab",
+            "t etCl ck nNTab",
             "ntab",
-            Some(notificationTabTweetEventDetails),
-            Some(ProductSurface.NotificationTab),
-            Some(notificationTabProductSurfaceInfo))
+            So (not f cat onTabT etEventDeta ls),
+            So (ProductSurface.Not f cat onTab),
+            So (not f cat onTabProductSurface nfo))
         )
 
         forEvery(params) {
           (
-            _: String,
-            page: String,
-            notificationTabDetails: Option[NotificationTabDetails],
-            uuaProductSurface: Option[ProductSurface],
-            uuaProductSurfaceInfo: Option[ProductSurfaceInfo]
+            _: Str ng,
+            page: Str ng,
+            not f cat onTabDeta ls: Opt on[Not f cat onTabDeta ls],
+            uuaProductSurface: Opt on[ProductSurface],
+            uuaProductSurface nfo: Opt on[ProductSurface nfo]
           ) =>
-            val actual = ClientEventAdapter.adaptEvent(
-              actionTowardDefaultTweetEvent(
-                eventNamespace = Some(ceTweetClick.copy(page = Some(page))),
-                notificationTabDetails = notificationTabDetails))
+            val actual = Cl entEventAdapter.adaptEvent(
+              act onTowardDefaultT etEvent(
+                eventNa space = So (ceT etCl ck.copy(page = So (page))),
+                not f cat onTabDeta ls = not f cat onTabDeta ls))
 
-            val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-              clientEventNamespace = Some(uuaTweetClick.copy(page = Some(page))),
-              actionType = ActionType.ClientTweetClick,
+            val expectedUUA = mkExpectedUUAForAct onTowardDefaultT etEvent(
+              cl entEventNa space = So (uuaT etCl ck.copy(page = So (page))),
+              act onType = Act onType.Cl entT etCl ck,
               productSurface = uuaProductSurface,
-              productSurfaceInfo = uuaProductSurfaceInfo
+              productSurface nfo = uuaProductSurface nfo
             )
 
             assert(Seq(expectedUUA) === actual)
@@ -1280,82 +1280,82 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
     }
   }
 
-  // Tests for ClientTweetClickProfile
-  test("ClientTweetClickProfile") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
+  // Tests for Cl entT etCl ckProf le
+  test("Cl entT etCl ckProf le") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
         val actual =
-          ClientEventAdapter.adaptEvent(
-            profileClickEvent(eventNamespace = Some(ceTweetClickProfile)))
+          Cl entEventAdapter.adaptEvent(
+            prof leCl ckEvent(eventNa space = So (ceT etCl ckProf le)))
 
-        val expectedUUA = mkExpectedUUAForProfileClick(
-          clientEventNamespace = Some(uuaTweetClickProfile),
-          actionType = ActionType.ClientTweetClickProfile,
-          authorInfo = Some(
-            AuthorInfo(
-              authorId = Some(authorId)
+        val expectedUUA = mkExpectedUUAForProf leCl ck(
+          cl entEventNa space = So (uuaT etCl ckProf le),
+          act onType = Act onType.Cl entT etCl ckProf le,
+          author nfo = So (
+            Author nfo(
+              author d = So (author d)
             )))
         assert(Seq(expectedUUA) === actual)
       }
     }
   }
 
-  // Tests for ClientTweetClickShare
-  test("ClientTweetClickShare") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
+  // Tests for Cl entT etCl ckShare
+  test("Cl entT etCl ckShare") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
         val actual =
-          ClientEventAdapter.adaptEvent(
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(EventNamespace(action = Some("share_menu_click"))),
-              authorId = Some(authorId),
-              tweetPosition = Some(1),
-              promotedId = Some("promted_123")
+          Cl entEventAdapter.adaptEvent(
+            act onTowardDefaultT etEvent(
+              eventNa space = So (EventNa space(act on = So ("share_ nu_cl ck"))),
+              author d = So (author d),
+              t etPos  on = So (1),
+              promoted d = So ("promted_123")
             ))
 
-        val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-          clientEventNamespace = Some(ClientEventNamespace(action = Some("share_menu_click"))),
-          actionType = ActionType.ClientTweetClickShare,
-          authorInfo = Some(
-            AuthorInfo(
-              authorId = Some(authorId)
+        val expectedUUA = mkExpectedUUAForAct onTowardDefaultT etEvent(
+          cl entEventNa space = So (Cl entEventNa space(act on = So ("share_ nu_cl ck"))),
+          act onType = Act onType.Cl entT etCl ckShare,
+          author nfo = So (
+            Author nfo(
+              author d = So (author d)
             )),
-          tweetPosition = Some(1),
-          promotedId = Some("promted_123")
+          t etPos  on = So (1),
+          promoted d = So ("promted_123")
         )
         assert(Seq(expectedUUA) === actual)
       }
     }
   }
 
-  // Tests for ClientTweetShareVia* and ClientTweetUnbookmark
-  test("ClientTweetShareVia and Unbookmark") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val input = Table(
-          ("eventNamespaceAction", "uuaActionTypes"),
-          ("bookmark", Seq(ActionType.ClientTweetShareViaBookmark, ActionType.ClientTweetBookmark)),
-          ("copy_link", Seq(ActionType.ClientTweetShareViaCopyLink)),
-          ("share_via_dm", Seq(ActionType.ClientTweetClickSendViaDirectMessage)),
-          ("unbookmark", Seq(ActionType.ClientTweetUnbookmark))
+  // Tests for Cl entT etShareV a* and Cl entT etUnbookmark
+  test("Cl entT etShareV a and Unbookmark") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val  nput = Table(
+          ("eventNa spaceAct on", "uuaAct onTypes"),
+          ("bookmark", Seq(Act onType.Cl entT etShareV aBookmark, Act onType.Cl entT etBookmark)),
+          ("copy_l nk", Seq(Act onType.Cl entT etShareV aCopyL nk)),
+          ("share_v a_dm", Seq(Act onType.Cl entT etCl ckSendV aD rect ssage)),
+          ("unbookmark", Seq(Act onType.Cl entT etUnbookmark))
         )
 
-        forEvery(input) { (eventNamespaceAction: String, uuaActionTypes: Seq[ActionType]) =>
-          val actual: Seq[UnifiedUserAction] =
-            ClientEventAdapter.adaptEvent(
-              actionTowardDefaultTweetEvent(
-                eventNamespace = Some(EventNamespace(action = Some(eventNamespaceAction))),
-                authorId = Some(authorId)))
+        forEvery( nput) { (eventNa spaceAct on: Str ng, uuaAct onTypes: Seq[Act onType]) =>
+          val actual: Seq[Un f edUserAct on] =
+            Cl entEventAdapter.adaptEvent(
+              act onTowardDefaultT etEvent(
+                eventNa space = So (EventNa space(act on = So (eventNa spaceAct on))),
+                author d = So (author d)))
 
-          implicit def any2iterable[A](a: A): Iterable[A] = Some(a)
-          val expectedUUA: Seq[UnifiedUserAction] = uuaActionTypes.flatMap { uuaActionType =>
-            mkExpectedUUAForActionTowardDefaultTweetEvent(
-              clientEventNamespace =
-                Some(ClientEventNamespace(action = Some(eventNamespaceAction))),
-              actionType = uuaActionType,
-              authorInfo = Some(
-                AuthorInfo(
-                  authorId = Some(authorId)
+           mpl c  def any2 erable[A](a: A):  erable[A] = So (a)
+          val expectedUUA: Seq[Un f edUserAct on] = uuaAct onTypes.flatMap { uuaAct onType =>
+            mkExpectedUUAForAct onTowardDefaultT etEvent(
+              cl entEventNa space =
+                So (Cl entEventNa space(act on = So (eventNa spaceAct on))),
+              act onType = uuaAct onType,
+              author nfo = So (
+                Author nfo(
+                  author d = So (author d)
                 ))
             )
           }
@@ -1365,276 +1365,276 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
     }
   }
 
-  // Test for ClientTweetClickHashtag
-  test("ClientTweetClickHashtag") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
+  // Test for Cl entT etCl ckHashtag
+  test("Cl entT etCl ckHashtag") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
         val events = Table(
-          ("targets", "tweetActionInfo"),
+          ("targets", "t etAct on nfo"),
           (
-            Some(Seq(LogEventItem(name = Some("test_hashtag")))),
-            Some(
-              TweetActionInfo.ClientTweetClickHashtag(
-                ClientTweetClickHashtag(hashtag = Some("test_hashtag"))))),
+            So (Seq(LogEvent em(na  = So ("test_hashtag")))),
+            So (
+              T etAct on nfo.Cl entT etCl ckHashtag(
+                Cl entT etCl ckHashtag(hashtag = So ("test_hashtag"))))),
           (
-            Some(Seq.empty[LogEventItem]),
-            Some(TweetActionInfo.ClientTweetClickHashtag(ClientTweetClickHashtag(hashtag = None)))),
+            So (Seq.empty[LogEvent em]),
+            So (T etAct on nfo.Cl entT etCl ckHashtag(Cl entT etCl ckHashtag(hashtag = None)))),
           (
-            Some(Nil),
-            Some(TweetActionInfo.ClientTweetClickHashtag(ClientTweetClickHashtag(hashtag = None)))),
+            So (N l),
+            So (T etAct on nfo.Cl entT etCl ckHashtag(Cl entT etCl ckHashtag(hashtag = None)))),
           (
             None,
-            Some(TweetActionInfo.ClientTweetClickHashtag(ClientTweetClickHashtag(hashtag = None))))
+            So (T etAct on nfo.Cl entT etCl ckHashtag(Cl entT etCl ckHashtag(hashtag = None))))
         )
         forEvery(events) {
-          (targets: Option[Seq[LogEventItem]], tweetActionInfo: Option[TweetActionInfo]) =>
-            val clientEvent =
-              actionTowardDefaultTweetEvent(
-                eventNamespace = Some(ceClickHashtag),
+          (targets: Opt on[Seq[LogEvent em]], t etAct on nfo: Opt on[T etAct on nfo]) =>
+            val cl entEvent =
+              act onTowardDefaultT etEvent(
+                eventNa space = So (ceCl ckHashtag),
                 targets = targets)
-            val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-              clientEventNamespace = Some(uuaClickHashtagClientEventNamespace),
-              actionType = ActionType.ClientTweetClickHashtag,
-              tweetActionInfo = tweetActionInfo
+            val expectedUUA = mkExpectedUUAForAct onTowardDefaultT etEvent(
+              cl entEventNa space = So (uuaCl ckHashtagCl entEventNa space),
+              act onType = Act onType.Cl entT etCl ckHashtag,
+              t etAct on nfo = t etAct on nfo
             )
-            assert(Seq(expectedUUA) === ClientEventAdapter.adaptEvent(clientEvent))
+            assert(Seq(expectedUUA) === Cl entEventAdapter.adaptEvent(cl entEvent))
         }
 
       }
     }
   }
 
-  // Tests for ClientTweetVideoPlaybackStart and ClientTweetVideoPlaybackComplete
-  test("Client Tweet Video Playback Start and Complete") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val input = Table(
-          ("ceNamespace", "uuaNamespace", "uuaActionType"),
+  // Tests for Cl entT etV deoPlaybackStart and Cl entT etV deoPlaybackComplete
+  test("Cl ent T et V deo Playback Start and Complete") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val  nput = Table(
+          ("ceNa space", "uuaNa space", "uuaAct onType"),
           (
-            ceVideoPlaybackStart,
-            uuaVideoPlaybackStartClientEventNamespace,
-            ActionType.ClientTweetVideoPlaybackStart),
+            ceV deoPlaybackStart,
+            uuaV deoPlaybackStartCl entEventNa space,
+            Act onType.Cl entT etV deoPlaybackStart),
           (
-            ceVideoPlaybackComplete,
-            uuaVideoPlaybackCompleteClientEventNamespace,
-            ActionType.ClientTweetVideoPlaybackComplete),
+            ceV deoPlaybackComplete,
+            uuaV deoPlaybackCompleteCl entEventNa space,
+            Act onType.Cl entT etV deoPlaybackComplete),
         )
-        for (element <- videoEventElementValues) {
-          forEvery(input) {
+        for (ele nt <- v deoEventEle ntValues) {
+          forEvery( nput) {
             (
-              ceNamespace: EventNamespace,
-              uuaNamespace: ClientEventNamespace,
-              uuaActionType: ActionType
+              ceNa space: EventNa space,
+              uuaNa space: Cl entEventNa space,
+              uuaAct onType: Act onType
             ) =>
-              val clientEvent = actionTowardDefaultTweetEvent(
-                eventNamespace = Some(ceNamespace.copy(element = Some(element))),
-                mediaDetailsV2 = Some(mediaDetailsV2),
-                clientMediaEvent = Some(clientMediaEvent),
-                cardDetails = Some(cardDetails)
+              val cl entEvent = act onTowardDefaultT etEvent(
+                eventNa space = So (ceNa space.copy(ele nt = So (ele nt))),
+                 d aDeta lsV2 = So ( d aDeta lsV2),
+                cl ent d aEvent = So (cl ent d aEvent),
+                cardDeta ls = So (cardDeta ls)
               )
-              val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-                clientEventNamespace = Some(uuaNamespace.copy(element = Some(element))),
-                actionType = uuaActionType,
-                tweetActionInfo = Some(videoMetadata)
+              val expectedUUA = mkExpectedUUAForAct onTowardDefaultT etEvent(
+                cl entEventNa space = So (uuaNa space.copy(ele nt = So (ele nt))),
+                act onType = uuaAct onType,
+                t etAct on nfo = So (v deo tadata)
               )
-              assert(ClientEventAdapter.adaptEvent(clientEvent).contains(expectedUUA))
+              assert(Cl entEventAdapter.adaptEvent(cl entEvent).conta ns(expectedUUA))
           }
         }
 
-        for (element <- invalidVideoEventElementValues) {
-          forEvery(input) {
+        for (ele nt <-  nval dV deoEventEle ntValues) {
+          forEvery( nput) {
             (
-              ceNamespace: EventNamespace,
-              uuaNamespace: ClientEventNamespace,
-              uuaActionType: ActionType
+              ceNa space: EventNa space,
+              uuaNa space: Cl entEventNa space,
+              uuaAct onType: Act onType
             ) =>
-              val clientEvent = actionTowardDefaultTweetEvent(
-                eventNamespace = Some(ceNamespace.copy(element = Some(element))),
-                mediaDetailsV2 = Some(mediaDetailsV2),
-                clientMediaEvent = Some(clientMediaEvent)
+              val cl entEvent = act onTowardDefaultT etEvent(
+                eventNa space = So (ceNa space.copy(ele nt = So (ele nt))),
+                 d aDeta lsV2 = So ( d aDeta lsV2),
+                cl ent d aEvent = So (cl ent d aEvent)
               )
-              val unexpectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-                clientEventNamespace = Some(uuaNamespace.copy(element = Some(element))),
-                actionType = uuaActionType,
-                tweetActionInfo = Some(videoMetadata)
+              val unexpectedUUA = mkExpectedUUAForAct onTowardDefaultT etEvent(
+                cl entEventNa space = So (uuaNa space.copy(ele nt = So (ele nt))),
+                act onType = uuaAct onType,
+                t etAct on nfo = So (v deo tadata)
               )
-              assert(!ClientEventAdapter.adaptEvent(clientEvent).contains(unexpectedUUA))
+              assert(!Cl entEventAdapter.adaptEvent(cl entEvent).conta ns(unexpectedUUA))
           }
         }
       }
     }
   }
 
-  // Tests for ClientTweetNotRelevant and ClientTweetUndoNotRelevant
-  test("ClientTweetNotRelevant & UndoNotRelevant") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actions = Table(("action"), "click", "undo")
-        val element = "feedback_notrelevant"
-        forEvery(actions) { action =>
-          val clientEvent =
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceEventNamespace(element, action)),
+  // Tests for Cl entT etNotRelevant and Cl entT etUndoNotRelevant
+  test("Cl entT etNotRelevant & UndoNotRelevant") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val act ons = Table(("act on"), "cl ck", "undo")
+        val ele nt = "feedback_notrelevant"
+        forEvery(act ons) { act on =>
+          val cl entEvent =
+            act onTowardDefaultT etEvent(
+              eventNa space = So (ceEventNa space(ele nt, act on)),
             )
 
-          val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-            clientEventNamespace = Some(uuaClientEventNamespace(element, action)),
-            actionType = action match {
-              case "click" => ActionType.ClientTweetNotRelevant
-              case "undo" => ActionType.ClientTweetUndoNotRelevant
+          val expectedUUA = mkExpectedUUAForAct onTowardDefaultT etEvent(
+            cl entEventNa space = So (uuaCl entEventNa space(ele nt, act on)),
+            act onType = act on match {
+              case "cl ck" => Act onType.Cl entT etNotRelevant
+              case "undo" => Act onType.Cl entT etUndoNotRelevant
             }
           )
 
-          val actual = ClientEventAdapter.adaptEvent(clientEvent)
+          val actual = Cl entEventAdapter.adaptEvent(cl entEvent)
           assert(Seq(expectedUUA) === actual)
         }
       }
     }
   }
 
-  // Tests for ClientNotificationDismiss
-  test("ClientNotificationDismiss") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvent =
-          pushNotificationEvent(
-            eventNamespace = Some(ceNotificationDismiss),
-            notificationDetails = Some(notificationDetails))
+  // Tests for Cl entNot f cat onD sm ss
+  test("Cl entNot f cat onD sm ss") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val cl entEvent =
+          pushNot f cat onEvent(
+            eventNa space = So (ceNot f cat onD sm ss),
+            not f cat onDeta ls = So (not f cat onDeta ls))
 
-        val expectedUUA = mkExpectedUUAForNotificationEvent(
-          clientEventNamespace = Some(uuaNotificationDismiss),
-          actionType = ActionType.ClientNotificationDismiss,
-          notificationContent = tweetNotificationContent,
-          productSurface = Some(ProductSurface.PushNotification),
-          productSurfaceInfo = Some(
-            ProductSurfaceInfo.PushNotificationInfo(
-              PushNotificationInfo(notificationId = notificationId)))
+        val expectedUUA = mkExpectedUUAForNot f cat onEvent(
+          cl entEventNa space = So (uuaNot f cat onD sm ss),
+          act onType = Act onType.Cl entNot f cat onD sm ss,
+          not f cat onContent = t etNot f cat onContent,
+          productSurface = So (ProductSurface.PushNot f cat on),
+          productSurface nfo = So (
+            ProductSurface nfo.PushNot f cat on nfo(
+              PushNot f cat on nfo(not f cat on d = not f cat on d)))
         )
 
-        val actual = ClientEventAdapter.adaptEvent(clientEvent)
+        val actual = Cl entEventAdapter.adaptEvent(cl entEvent)
         assert(Seq(expectedUUA) === actual)
       }
     }
   }
 
-  // Tests for ClientTypeaheadClick
-  test("ClientTypeaheadClick") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
+  // Tests for Cl entTypea adCl ck
+  test("Cl entTypea adCl ck") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
         val searchQuery = "searchQuery"
 
-        val input = Table(
-          ("clientEventTargets", "typeaheadActionInfo"),
+        val  nput = Table(
+          ("cl entEventTargets", "typea adAct on nfo"),
           (
-            Some(Seq(LogEventItem(id = Some(userId), itemType = Some(ItemType.User)))),
-            TypeaheadActionInfo.UserResult(UserResult(profileId = userId))),
+            So (Seq(LogEvent em( d = So (user d),  emType = So ( emType.User)))),
+            Typea adAct on nfo.UserResult(UserResult(prof le d = user d))),
           (
-            Some(Seq(LogEventItem(name = Some(s"$searchQuery"), itemType = Some(ItemType.Search)))),
-            TypeaheadActionInfo.TopicQueryResult(
-              TopicQueryResult(suggestedTopicQuery = s"$searchQuery")))
+            So (Seq(LogEvent em(na  = So (s"$searchQuery"),  emType = So ( emType.Search)))),
+            Typea adAct on nfo.Top cQueryResult(
+              Top cQueryResult(suggestedTop cQuery = s"$searchQuery")))
         )
-        forEvery(input) {
+        forEvery( nput) {
           (
-            clientEventTargets: Option[Seq[LogEventItem]],
-            typeaheadActionInfo: TypeaheadActionInfo,
+            cl entEventTargets: Opt on[Seq[LogEvent em]],
+            typea adAct on nfo: Typea adAct on nfo,
           ) =>
-            val clientEvent =
-              actionTowardsTypeaheadEvent(
-                eventNamespace = Some(ceTypeaheadClick),
-                targets = clientEventTargets,
+            val cl entEvent =
+              act onTowardsTypea adEvent(
+                eventNa space = So (ceTypea adCl ck),
+                targets = cl entEventTargets,
                 searchQuery = searchQuery)
-            val expectedUUA = mkExpectedUUAForTypeaheadAction(
-              clientEventNamespace = Some(uuaTypeaheadClick),
-              actionType = ActionType.ClientTypeaheadClick,
-              typeaheadActionInfo = typeaheadActionInfo,
+            val expectedUUA = mkExpectedUUAForTypea adAct on(
+              cl entEventNa space = So (uuaTypea adCl ck),
+              act onType = Act onType.Cl entTypea adCl ck,
+              typea adAct on nfo = typea adAct on nfo,
               searchQuery = searchQuery
             )
-            val actual = ClientEventAdapter.adaptEvent(clientEvent)
+            val actual = Cl entEventAdapter.adaptEvent(cl entEvent)
             assert(Seq(expectedUUA) === actual)
         }
-        // Testing invalid target item type case
+        // Test ng  nval d target  em type case
         assert(
-          Seq() === ClientEventAdapter.adaptEvent(
-            actionTowardsTypeaheadEvent(
-              eventNamespace = Some(ceTypeaheadClick),
+          Seq() === Cl entEventAdapter.adaptEvent(
+            act onTowardsTypea adEvent(
+              eventNa space = So (ceTypea adCl ck),
               targets =
-                Some(Seq(LogEventItem(id = Some(itemTweetId), itemType = Some(ItemType.Tweet)))),
+                So (Seq(LogEvent em( d = So ( emT et d),  emType = So ( emType.T et)))),
               searchQuery = searchQuery)))
       }
     }
   }
 
-  // Tests for ClientFeedbackPromptSubmit
-  test("ClientFeedbackPromptSubmit") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val searchQuery: String = "searchQuery"
-        val searchDetails = Some(SearchDetails(query = Some(searchQuery)))
-        val input = Table(
-          ("logEvent", "uuaNamespace", "uuaActionType", "FeedbackPromptInfo"),
+  // Tests for Cl entFeedbackPromptSubm 
+  test("Cl entFeedbackPromptSubm ") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val searchQuery: Str ng = "searchQuery"
+        val searchDeta ls = So (SearchDeta ls(query = So (searchQuery)))
+        val  nput = Table(
+          ("logEvent", "uuaNa space", "uuaAct onType", "FeedbackPrompt nfo"),
           (
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceTweetRelevantToSearch),
-              searchDetails = searchDetails
+            act onTowardDefaultT etEvent(
+              eventNa space = So (ceT etRelevantToSearch),
+              searchDeta ls = searchDeta ls
             ),
-            uuaTweetRelevantToSearch,
-            ActionType.ClientFeedbackPromptSubmit,
-            FeedbackPromptInfo(feedbackPromptActionInfo =
-              FeedbackPromptActionInfo.TweetRelevantToSearch(
-                TweetRelevantToSearch(
+            uuaT etRelevantToSearch,
+            Act onType.Cl entFeedbackPromptSubm ,
+            FeedbackPrompt nfo(feedbackPromptAct on nfo =
+              FeedbackPromptAct on nfo.T etRelevantToSearch(
+                T etRelevantToSearch(
                   searchQuery = searchQuery,
-                  tweetId = itemTweetId,
-                  isRelevant = Some(true))))),
+                  t et d =  emT et d,
+                   sRelevant = So (true))))),
           (
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceTweetNotRelevantToSearch),
-              searchDetails = searchDetails
+            act onTowardDefaultT etEvent(
+              eventNa space = So (ceT etNotRelevantToSearch),
+              searchDeta ls = searchDeta ls
             ),
-            uuaTweetNotRelevantToSearch,
-            ActionType.ClientFeedbackPromptSubmit,
-            FeedbackPromptInfo(feedbackPromptActionInfo =
-              FeedbackPromptActionInfo.TweetRelevantToSearch(
-                TweetRelevantToSearch(
+            uuaT etNotRelevantToSearch,
+            Act onType.Cl entFeedbackPromptSubm ,
+            FeedbackPrompt nfo(feedbackPromptAct on nfo =
+              FeedbackPromptAct on nfo.T etRelevantToSearch(
+                T etRelevantToSearch(
                   searchQuery = searchQuery,
-                  tweetId = itemTweetId,
-                  isRelevant = Some(false))))),
+                  t et d =  emT et d,
+                   sRelevant = So (false))))),
           (
-            actionTowardSearchResultPageEvent(
-              eventNamespace = Some(ceSearchResultsRelevant),
-              searchDetails = searchDetails,
-              items = Some(Seq(LogEventItem(itemType = Some(ItemType.RelevancePrompt))))
+            act onTowardSearchResultPageEvent(
+              eventNa space = So (ceSearchResultsRelevant),
+              searchDeta ls = searchDeta ls,
+               ems = So (Seq(LogEvent em( emType = So ( emType.RelevancePrompt))))
             ),
             uuaSearchResultsRelevant,
-            ActionType.ClientFeedbackPromptSubmit,
-            FeedbackPromptInfo(feedbackPromptActionInfo =
-              FeedbackPromptActionInfo.DidYouFindItSearch(
-                DidYouFindItSearch(searchQuery = searchQuery, isRelevant = Some(true))))),
+            Act onType.Cl entFeedbackPromptSubm ,
+            FeedbackPrompt nfo(feedbackPromptAct on nfo =
+              FeedbackPromptAct on nfo.D d F nd Search(
+                D d F nd Search(searchQuery = searchQuery,  sRelevant = So (true))))),
           (
-            actionTowardSearchResultPageEvent(
-              eventNamespace = Some(ceSearchResultsNotRelevant),
-              searchDetails = searchDetails,
-              items = Some(Seq(LogEventItem(itemType = Some(ItemType.RelevancePrompt))))
+            act onTowardSearchResultPageEvent(
+              eventNa space = So (ceSearchResultsNotRelevant),
+              searchDeta ls = searchDeta ls,
+               ems = So (Seq(LogEvent em( emType = So ( emType.RelevancePrompt))))
             ),
             uuaSearchResultsNotRelevant,
-            ActionType.ClientFeedbackPromptSubmit,
-            FeedbackPromptInfo(feedbackPromptActionInfo =
-              FeedbackPromptActionInfo.DidYouFindItSearch(
-                DidYouFindItSearch(searchQuery = searchQuery, isRelevant = Some(false)))))
+            Act onType.Cl entFeedbackPromptSubm ,
+            FeedbackPrompt nfo(feedbackPromptAct on nfo =
+              FeedbackPromptAct on nfo.D d F nd Search(
+                D d F nd Search(searchQuery = searchQuery,  sRelevant = So (false)))))
         )
 
-        forEvery(input) {
+        forEvery( nput) {
           (
             logEvent: LogEvent,
-            uuaNamespace: ClientEventNamespace,
-            uuaActionType: ActionType,
-            feedbackPromptInfo: FeedbackPromptInfo
+            uuaNa space: Cl entEventNa space,
+            uuaAct onType: Act onType,
+            feedbackPrompt nfo: FeedbackPrompt nfo
           ) =>
             val actual =
-              ClientEventAdapter.adaptEvent(logEvent)
-            val expectedUUA = mkExpectedUUAForFeedbackSubmitAction(
-              clientEventNamespace = Some(uuaNamespace),
-              actionType = uuaActionType,
-              feedbackPromptInfo = feedbackPromptInfo,
+              Cl entEventAdapter.adaptEvent(logEvent)
+            val expectedUUA = mkExpectedUUAForFeedbackSubm Act on(
+              cl entEventNa space = So (uuaNa space),
+              act onType = uuaAct onType,
+              feedbackPrompt nfo = feedbackPrompt nfo,
               searchQuery = searchQuery)
             assert(Seq(expectedUUA) === actual)
         }
@@ -1642,131 +1642,131 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
     }
   }
 
-  // Tests for ClientProfile*
-  test("ClientProfile*") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val input = Table(
-          ("eventName", "ceNamespace", "uuaNamespace", "uuaActionType"),
-          ("profile_block", ceProfileBlock, uuaProfileBlock, ActionType.ClientProfileBlock),
-          ("profile_unblock", ceProfileUnblock, uuaProfileUnblock, ActionType.ClientProfileUnblock),
-          ("profile_mute", ceProfileMute, uuaProfileMute, ActionType.ClientProfileMute),
-          ("profile_report", ceProfileReport, uuaProfileReport, ActionType.ClientProfileReport),
-          ("profile_follow", ceProfileFollow, uuaProfileFollow, ActionType.ClientProfileFollow),
-          ("profile_click", ceProfileClick, uuaProfileClick, ActionType.ClientProfileClick),
+  // Tests for Cl entProf le*
+  test("Cl entProf le*") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val  nput = Table(
+          ("eventNa ", "ceNa space", "uuaNa space", "uuaAct onType"),
+          ("prof le_block", ceProf leBlock, uuaProf leBlock, Act onType.Cl entProf leBlock),
+          ("prof le_unblock", ceProf leUnblock, uuaProf leUnblock, Act onType.Cl entProf leUnblock),
+          ("prof le_mute", ceProf leMute, uuaProf leMute, Act onType.Cl entProf leMute),
+          ("prof le_report", ceProf leReport, uuaProf leReport, Act onType.Cl entProf leReport),
+          ("prof le_follow", ceProf leFollow, uuaProf leFollow, Act onType.Cl entProf leFollow),
+          ("prof le_cl ck", ceProf leCl ck, uuaProf leCl ck, Act onType.Cl entProf leCl ck),
           (
-            "profile_follow_attempt",
-            ceProfileFollowAttempt,
-            uuaProfileFollowAttempt,
-            ActionType.ClientProfileFollowAttempt),
-          ("profile_show", ceProfileShow, uuaProfileShow, ActionType.ClientProfileShow),
+            "prof le_follow_attempt",
+            ceProf leFollowAttempt,
+            uuaProf leFollowAttempt,
+            Act onType.Cl entProf leFollowAttempt),
+          ("prof le_show", ceProf leShow, uuaProf leShow, Act onType.Cl entProf leShow),
         )
-        forEvery(input) {
+        forEvery( nput) {
           (
-            eventName: String,
-            ceNamespace: EventNamespace,
-            uuaNamespace: ClientEventNamespace,
-            uuaActionType: ActionType
+            eventNa : Str ng,
+            ceNa space: EventNa space,
+            uuaNa space: Cl entEventNa space,
+            uuaAct onType: Act onType
           ) =>
             val actual =
-              ClientEventAdapter.adaptEvent(
-                actionTowardProfileEvent(
-                  eventName = eventName,
-                  eventNamespace = Some(ceNamespace)
+              Cl entEventAdapter.adaptEvent(
+                act onTowardProf leEvent(
+                  eventNa  = eventNa ,
+                  eventNa space = So (ceNa space)
                 ))
-            val expectedUUA = mkExpectedUUAForProfileAction(
-              clientEventNamespace = Some(uuaNamespace),
-              actionType = uuaActionType,
-              actionProfileId = itemProfileId)
+            val expectedUUA = mkExpectedUUAForProf leAct on(
+              cl entEventNa space = So (uuaNa space),
+              act onType = uuaAct onType,
+              act onProf le d =  emProf le d)
             assert(Seq(expectedUUA) === actual)
         }
       }
     }
   }
-  // Tests for ClientTweetEngagementAttempt
-  test("ClientTweetEngagementAttempt") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("eventName", "ceNamespace", "uuaNamespace", "uuaActionType"),
+  // Tests for Cl entT etEngage ntAttempt
+  test("Cl entT etEngage ntAttempt") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val cl entEvents = Table(
+          ("eventNa ", "ceNa space", "uuaNa space", "uuaAct onType"),
           (
-            "tweet_favourite_attempt",
-            ceTweetFavoriteAttempt,
-            uuaTweetFavoriteAttempt,
-            ActionType.ClientTweetFavoriteAttempt),
+            "t et_fav  e_attempt",
+            ceT etFavor eAttempt,
+            uuaT etFavor eAttempt,
+            Act onType.Cl entT etFavor eAttempt),
           (
-            "tweet_retweet_attempt",
-            ceTweetRetweetAttempt,
-            uuaTweetRetweetAttempt,
-            ActionType.ClientTweetRetweetAttempt),
+            "t et_ret et_attempt",
+            ceT etRet etAttempt,
+            uuaT etRet etAttempt,
+            Act onType.Cl entT etRet etAttempt),
           (
-            "tweet_reply_attempt",
-            ceTweetReplyAttempt,
-            uuaTweetReplyAttempt,
-            ActionType.ClientTweetReplyAttempt),
+            "t et_reply_attempt",
+            ceT etReplyAttempt,
+            uuaT etReplyAttempt,
+            Act onType.Cl entT etReplyAttempt),
         )
-        forEvery(clientEvents) {
+        forEvery(cl entEvents) {
           (
-            eventName: String,
-            ceNamespace: EventNamespace,
-            uuaNamespace: ClientEventNamespace,
-            uuaActionType: ActionType
+            eventNa : Str ng,
+            ceNa space: EventNa space,
+            uuaNa space: Cl entEventNa space,
+            uuaAct onType: Act onType
           ) =>
             val actual =
-              ClientEventAdapter.adaptEvent(actionTowardDefaultTweetEvent(Some(ceNamespace)))
-            val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-              clientEventNamespace = Some(uuaNamespace),
-              actionType = uuaActionType)
+              Cl entEventAdapter.adaptEvent(act onTowardDefaultT etEvent(So (ceNa space)))
+            val expectedUUA = mkExpectedUUAForAct onTowardDefaultT etEvent(
+              cl entEventNa space = So (uuaNa space),
+              act onType = uuaAct onType)
             assert(Seq(expectedUUA) === actual)
         }
       }
     }
   }
 
-  // Tests for LoggedOut for ClientLogin*
-  test("ClientLogin*") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("eventName", "ceNamespace", "uuaNamespace", "uuaActionType"),
+  // Tests for LoggedOut for Cl entLog n*
+  test("Cl entLog n*") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val cl entEvents = Table(
+          ("eventNa ", "ceNa space", "uuaNa space", "uuaAct onType"),
           (
-            "client_click_login",
-            ceClientCTALoginClick,
-            uuaClientCTALoginClick,
-            ActionType.ClientCTALoginClick),
+            "cl ent_cl ck_log n",
+            ceCl entCTALog nCl ck,
+            uuaCl entCTALog nCl ck,
+            Act onType.Cl entCTALog nCl ck),
           (
-            "client_click_show",
-            ceClientCTALoginStart,
-            uuaClientCTALoginStart,
-            ActionType.ClientCTALoginStart),
+            "cl ent_cl ck_show",
+            ceCl entCTALog nStart,
+            uuaCl entCTALog nStart,
+            Act onType.Cl entCTALog nStart),
           (
-            "client_login_success",
-            ceClientCTALoginSuccess,
-            uuaClientCTALoginSuccess,
-            ActionType.ClientCTALoginSuccess),
+            "cl ent_log n_success",
+            ceCl entCTALog nSuccess,
+            uuaCl entCTALog nSuccess,
+            Act onType.Cl entCTALog nSuccess),
         )
 
-        forEvery(clientEvents) {
+        forEvery(cl entEvents) {
           (
-            eventName: String,
-            ceNamespace: EventNamespace,
-            uuaNamespace: ClientEventNamespace,
-            uuaActionType: ActionType
+            eventNa : Str ng,
+            ceNa space: EventNa space,
+            uuaNa space: Cl entEventNa space,
+            uuaAct onType: Act onType
           ) =>
             val actual =
-              ClientEventAdapter.adaptEvent(
+              Cl entEventAdapter.adaptEvent(
                 mkLogEvent(
-                  eventName,
-                  Some(ceNamespace),
-                  logBase = Some(logBase1),
-                  eventDetails = None,
-                  pushNotificationDetails = None,
-                  reportDetails = None,
-                  searchDetails = None))
-            val expectedUUA = mkExpectedUUAForActionTowardCTAEvent(
-              clientEventNamespace = Some(uuaNamespace),
-              actionType = uuaActionType,
-              guestIdMarketingOpt = logBase1.guestIdMarketing
+                  eventNa ,
+                  So (ceNa space),
+                  logBase = So (logBase1),
+                  eventDeta ls = None,
+                  pushNot f cat onDeta ls = None,
+                  reportDeta ls = None,
+                  searchDeta ls = None))
+            val expectedUUA = mkExpectedUUAForAct onTowardCTAEvent(
+              cl entEventNa space = So (uuaNa space),
+              act onType = uuaAct onType,
+              guest dMarket ngOpt = logBase1.guest dMarket ng
             )
 
             assert(Seq(expectedUUA) === actual)
@@ -1775,45 +1775,45 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
     }
   }
 
-  // Tests for LoggedOut for ClientSignup*
-  test("ClientSignup*") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("eventName", "ceNamespace", "uuaNamespace", "uuaActionType"),
+  // Tests for LoggedOut for Cl entS gnup*
+  test("Cl entS gnup*") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val cl entEvents = Table(
+          ("eventNa ", "ceNa space", "uuaNa space", "uuaAct onType"),
           (
-            "client_click_signup",
-            ceClientCTASignupClick,
-            uuaClientCTASignupClick,
-            ActionType.ClientCTASignupClick),
+            "cl ent_cl ck_s gnup",
+            ceCl entCTAS gnupCl ck,
+            uuaCl entCTAS gnupCl ck,
+            Act onType.Cl entCTAS gnupCl ck),
           (
-            "client_signup_success",
-            ceClientCTASignupSuccess,
-            uuaClientCTASignupSuccess,
-            ActionType.ClientCTASignupSuccess),
+            "cl ent_s gnup_success",
+            ceCl entCTAS gnupSuccess,
+            uuaCl entCTAS gnupSuccess,
+            Act onType.Cl entCTAS gnupSuccess),
         )
 
-        forEvery(clientEvents) {
+        forEvery(cl entEvents) {
           (
-            eventName: String,
-            ceNamespace: EventNamespace,
-            uuaNamespace: ClientEventNamespace,
-            uuaActionType: ActionType
+            eventNa : Str ng,
+            ceNa space: EventNa space,
+            uuaNa space: Cl entEventNa space,
+            uuaAct onType: Act onType
           ) =>
             val actual =
-              ClientEventAdapter.adaptEvent(
+              Cl entEventAdapter.adaptEvent(
                 mkLogEvent(
-                  eventName,
-                  Some(ceNamespace),
-                  logBase = Some(logBase1),
-                  eventDetails = None,
-                  pushNotificationDetails = None,
-                  reportDetails = None,
-                  searchDetails = None))
-            val expectedUUA = mkExpectedUUAForActionTowardCTAEvent(
-              clientEventNamespace = Some(uuaNamespace),
-              actionType = uuaActionType,
-              guestIdMarketingOpt = logBase1.guestIdMarketing
+                  eventNa ,
+                  So (ceNa space),
+                  logBase = So (logBase1),
+                  eventDeta ls = None,
+                  pushNot f cat onDeta ls = None,
+                  reportDeta ls = None,
+                  searchDeta ls = None))
+            val expectedUUA = mkExpectedUUAForAct onTowardCTAEvent(
+              cl entEventNa space = So (uuaNa space),
+              act onType = uuaAct onType,
+              guest dMarket ngOpt = logBase1.guest dMarket ng
             )
             assert(Seq(expectedUUA) === actual)
         }
@@ -1821,32 +1821,32 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
     }
   }
 
-  // Tests for ClientTweetFollowAuthor
-  test("ClientTweetFollowAuthor") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val testEventsList = Seq(
-          (ceTweetFollowAuthor1, uuaTweetFollowAuthor1, TweetAuthorFollowClickSource.CaretMenu),
-          (ceTweetFollowAuthor2, uuaTweetFollowAuthor2, TweetAuthorFollowClickSource.ProfileImage)
+  // Tests for Cl entT etFollowAuthor
+  test("Cl entT etFollowAuthor") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val testEventsL st = Seq(
+          (ceT etFollowAuthor1, uuaT etFollowAuthor1, T etAuthorFollowCl ckS ce.Caret nu),
+          (ceT etFollowAuthor2, uuaT etFollowAuthor2, T etAuthorFollowCl ckS ce.Prof le mage)
         )
-        testEventsList.foreach {
-          case (eventNamespace, clientEventNamespace, followClickSource) =>
+        testEventsL st.foreach {
+          case (eventNa space, cl entEventNa space, followCl ckS ce) =>
             val actual =
-              ClientEventAdapter.adaptEvent(
-                tweetActionTowardAuthorEvent(
-                  eventName = "tweet_follow_author",
-                  eventNamespace = Some(eventNamespace)
+              Cl entEventAdapter.adaptEvent(
+                t etAct onTowardAuthorEvent(
+                  eventNa  = "t et_follow_author",
+                  eventNa space = So (eventNa space)
                 ))
-            val expectedUUA = mkExpectedUUAForTweetActionTowardAuthor(
-              clientEventNamespace = Some(clientEventNamespace),
-              actionType = ActionType.ClientTweetFollowAuthor,
-              authorInfo = Some(
-                AuthorInfo(
-                  authorId = Some(authorId)
+            val expectedUUA = mkExpectedUUAForT etAct onTowardAuthor(
+              cl entEventNa space = So (cl entEventNa space),
+              act onType = Act onType.Cl entT etFollowAuthor,
+              author nfo = So (
+                Author nfo(
+                  author d = So (author d)
                 )),
-              tweetActionInfo = Some(
-                TweetActionInfo.ClientTweetFollowAuthor(
-                  ClientTweetFollowAuthor(followClickSource)
+              t etAct on nfo = So (
+                T etAct on nfo.Cl entT etFollowAuthor(
+                  Cl entT etFollowAuthor(followCl ckS ce)
                 ))
             )
             assert(Seq(expectedUUA) === actual)
@@ -1855,38 +1855,38 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
     }
   }
 
-  // Tests for ClientTweetUnfollowAuthor
-  test("ClientTweetUnfollowAuthor") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val testEventsList = Seq(
+  // Tests for Cl entT etUnfollowAuthor
+  test("Cl entT etUnfollowAuthor") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val testEventsL st = Seq(
           (
-            ceTweetUnfollowAuthor1,
-            uuaTweetUnfollowAuthor1,
-            TweetAuthorUnfollowClickSource.CaretMenu),
+            ceT etUnfollowAuthor1,
+            uuaT etUnfollowAuthor1,
+            T etAuthorUnfollowCl ckS ce.Caret nu),
           (
-            ceTweetUnfollowAuthor2,
-            uuaTweetUnfollowAuthor2,
-            TweetAuthorUnfollowClickSource.ProfileImage)
+            ceT etUnfollowAuthor2,
+            uuaT etUnfollowAuthor2,
+            T etAuthorUnfollowCl ckS ce.Prof le mage)
         )
-        testEventsList.foreach {
-          case (eventNamespace, clientEventNamespace, unfollowClickSource) =>
+        testEventsL st.foreach {
+          case (eventNa space, cl entEventNa space, unfollowCl ckS ce) =>
             val actual =
-              ClientEventAdapter.adaptEvent(
-                tweetActionTowardAuthorEvent(
-                  eventName = "tweet_unfollow_author",
-                  eventNamespace = Some(eventNamespace)
+              Cl entEventAdapter.adaptEvent(
+                t etAct onTowardAuthorEvent(
+                  eventNa  = "t et_unfollow_author",
+                  eventNa space = So (eventNa space)
                 ))
-            val expectedUUA = mkExpectedUUAForTweetActionTowardAuthor(
-              clientEventNamespace = Some(clientEventNamespace),
-              actionType = ActionType.ClientTweetUnfollowAuthor,
-              authorInfo = Some(
-                AuthorInfo(
-                  authorId = Some(authorId)
+            val expectedUUA = mkExpectedUUAForT etAct onTowardAuthor(
+              cl entEventNa space = So (cl entEventNa space),
+              act onType = Act onType.Cl entT etUnfollowAuthor,
+              author nfo = So (
+                Author nfo(
+                  author d = So (author d)
                 )),
-              tweetActionInfo = Some(
-                TweetActionInfo.ClientTweetUnfollowAuthor(
-                  ClientTweetUnfollowAuthor(unfollowClickSource)
+              t etAct on nfo = So (
+                T etAct on nfo.Cl entT etUnfollowAuthor(
+                  Cl entT etUnfollowAuthor(unfollowCl ckS ce)
                 ))
             )
             assert(Seq(expectedUUA) === actual)
@@ -1895,260 +1895,260 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
     }
   }
 
-  // Tests for ClientTweetMuteAuthor
-  test("ClientTweetMuteAuthor") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
+  // Tests for Cl entT etMuteAuthor
+  test("Cl entT etMuteAuthor") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
         val actual =
-          ClientEventAdapter.adaptEvent(
-            tweetActionTowardAuthorEvent(
-              eventName = "tweet_mute_author",
-              eventNamespace = Some(ceTweetMuteAuthor)
+          Cl entEventAdapter.adaptEvent(
+            t etAct onTowardAuthorEvent(
+              eventNa  = "t et_mute_author",
+              eventNa space = So (ceT etMuteAuthor)
             ))
 
-        val expectedUUA = mkExpectedUUAForTweetActionTowardAuthor(
-          clientEventNamespace = Some(uuaTweetMuteAuthor),
-          actionType = ActionType.ClientTweetMuteAuthor,
-          authorInfo = Some(
-            AuthorInfo(
-              authorId = Some(authorId)
+        val expectedUUA = mkExpectedUUAForT etAct onTowardAuthor(
+          cl entEventNa space = So (uuaT etMuteAuthor),
+          act onType = Act onType.Cl entT etMuteAuthor,
+          author nfo = So (
+            Author nfo(
+              author d = So (author d)
             )))
         assert(Seq(expectedUUA) === actual)
       }
     }
   }
 
-  // Tests for ClientTweetBlockAuthor
-  test("ClientTweetBlockAuthor") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
+  // Tests for Cl entT etBlockAuthor
+  test("Cl entT etBlockAuthor") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
         val actual =
-          ClientEventAdapter.adaptEvent(
-            tweetActionTowardAuthorEvent(
-              eventName = "tweet_block_author",
-              eventNamespace = Some(ceTweetBlockAuthor)
+          Cl entEventAdapter.adaptEvent(
+            t etAct onTowardAuthorEvent(
+              eventNa  = "t et_block_author",
+              eventNa space = So (ceT etBlockAuthor)
             ))
 
-        val expectedUUA = mkExpectedUUAForTweetActionTowardAuthor(
-          clientEventNamespace = Some(uuaTweetBlockAuthor),
-          actionType = ActionType.ClientTweetBlockAuthor,
-          authorInfo = Some(
-            AuthorInfo(
-              authorId = Some(authorId)
+        val expectedUUA = mkExpectedUUAForT etAct onTowardAuthor(
+          cl entEventNa space = So (uuaT etBlockAuthor),
+          act onType = Act onType.Cl entT etBlockAuthor,
+          author nfo = So (
+            Author nfo(
+              author d = So (author d)
             )))
         assert(Seq(expectedUUA) === actual)
       }
     }
   }
 
-  // Tests for ClientTweetUnblockAuthor
-  test("ClientTweetUnblockAuthor") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
+  // Tests for Cl entT etUnblockAuthor
+  test("Cl entT etUnblockAuthor") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
         val actual =
-          ClientEventAdapter.adaptEvent(
-            tweetActionTowardAuthorEvent(
-              eventName = "tweet_unblock_author",
-              eventNamespace = Some(ceTweetUnblockAuthor)
+          Cl entEventAdapter.adaptEvent(
+            t etAct onTowardAuthorEvent(
+              eventNa  = "t et_unblock_author",
+              eventNa space = So (ceT etUnblockAuthor)
             ))
 
-        val expectedUUA = mkExpectedUUAForTweetActionTowardAuthor(
-          clientEventNamespace = Some(uuaTweetUnblockAuthor),
-          actionType = ActionType.ClientTweetUnblockAuthor,
-          authorInfo = Some(
-            AuthorInfo(
-              authorId = Some(authorId)
+        val expectedUUA = mkExpectedUUAForT etAct onTowardAuthor(
+          cl entEventNa space = So (uuaT etUnblockAuthor),
+          act onType = Act onType.Cl entT etUnblockAuthor,
+          author nfo = So (
+            Author nfo(
+              author d = So (author d)
             )))
         assert(Seq(expectedUUA) === actual)
       }
     }
   }
 
-  // Test for ClientTweetOpenLink
-  test("ClientTweetOpenLink") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val input = Table(
-          ("url", "tweetActionInfo"),
-          (Some("go/url"), clientOpenLinkWithUrl),
-          (None, clientOpenLinkWithoutUrl)
+  // Test for Cl entT etOpenL nk
+  test("Cl entT etOpenL nk") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val  nput = Table(
+          ("url", "t etAct on nfo"),
+          (So ("go/url"), cl entOpenL nkW hUrl),
+          (None, cl entOpenL nkW houtUrl)
         )
 
-        forEvery(input) { (url: Option[String], tweetActionInfo: TweetActionInfo) =>
-          val clientEvent =
-            actionTowardDefaultTweetEvent(eventNamespace = Some(ceOpenLink), url = url)
-          val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-            clientEventNamespace = Some(uuaOpenLinkClientEventNamespace),
-            actionType = ActionType.ClientTweetOpenLink,
-            tweetActionInfo = Some(tweetActionInfo)
+        forEvery( nput) { (url: Opt on[Str ng], t etAct on nfo: T etAct on nfo) =>
+          val cl entEvent =
+            act onTowardDefaultT etEvent(eventNa space = So (ceOpenL nk), url = url)
+          val expectedUUA = mkExpectedUUAForAct onTowardDefaultT etEvent(
+            cl entEventNa space = So (uuaOpenL nkCl entEventNa space),
+            act onType = Act onType.Cl entT etOpenL nk,
+            t etAct on nfo = So (t etAct on nfo)
           )
-          assert(Seq(expectedUUA) === ClientEventAdapter.adaptEvent(clientEvent))
+          assert(Seq(expectedUUA) === Cl entEventAdapter.adaptEvent(cl entEvent))
         }
       }
     }
   }
 
-  // Test for ClientTweetTakeScreenshot
-  test("Client take screenshot") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvent =
-          actionTowardDefaultTweetEvent(
-            eventNamespace = Some(ceTakeScreenshot),
-            percentVisibleHeight100k = Some(100))
-        val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-          clientEventNamespace = Some(uuaTakeScreenshotClientEventNamespace),
-          actionType = ActionType.ClientTweetTakeScreenshot,
-          tweetActionInfo = Some(clientTakeScreenshot)
+  // Test for Cl entT etTakeScreenshot
+  test("Cl ent take screenshot") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val cl entEvent =
+          act onTowardDefaultT etEvent(
+            eventNa space = So (ceTakeScreenshot),
+            percentV s ble  ght100k = So (100))
+        val expectedUUA = mkExpectedUUAForAct onTowardDefaultT etEvent(
+          cl entEventNa space = So (uuaTakeScreenshotCl entEventNa space),
+          act onType = Act onType.Cl entT etTakeScreenshot,
+          t etAct on nfo = So (cl entTakeScreenshot)
         )
-        assert(Seq(expectedUUA) === ClientEventAdapter.adaptEvent(clientEvent))
+        assert(Seq(expectedUUA) === Cl entEventAdapter.adaptEvent(cl entEvent))
       }
     }
   }
 
-  test("Home / Search product surface meta data") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val clientEvents = Table(
-          ("actionTweetType", "clientEvent", "expectedUUAEvent"),
+  test("Ho  / Search product surface  ta data") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val cl entEvents = Table(
+          ("act onT etType", "cl entEvent", "expectedUUAEvent"),
           (
-            "homeTweetEventWithControllerData",
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceHomeFavoriteEventNamespace),
-              suggestionDetails = Some(
-                SuggestionDetails(decodedControllerData = Some(
-                  homeTweetControllerDataV2(
-                    injectedPosition = Some(1),
-                    traceId = Some(traceId),
-                    requestJoinId = Some(requestJoinId)
+            "ho T etEventW hControllerData",
+            act onTowardDefaultT etEvent(
+              eventNa space = So (ceHo Favor eEventNa space),
+              suggest onDeta ls = So (
+                Suggest onDeta ls(decodedControllerData = So (
+                  ho T etControllerDataV2(
+                     njectedPos  on = So (1),
+                    trace d = So (trace d),
+                    requestJo n d = So (requestJo n d)
                   ))))
             ),
-            expectedHomeTweetEventWithControllerData),
+            expectedHo T etEventW hControllerData),
           (
-            "homeTweetEventWithSuggestionType",
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceHomeFavoriteEventNamespace),
-              suggestionDetails = Some(
-                SuggestionDetails(
-                  suggestionType = Some("Test_type")
+            "ho T etEventW hSuggest onType",
+            act onTowardDefaultT etEvent(
+              eventNa space = So (ceHo Favor eEventNa space),
+              suggest onDeta ls = So (
+                Suggest onDeta ls(
+                  suggest onType = So ("Test_type")
                 ))),
-            expectedHomeTweetEventWithSuggestType),
+            expectedHo T etEventW hSuggestType),
           (
-            "homeTweetEventWithControllerDataSuggestionType",
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceHomeFavoriteEventNamespace),
-              suggestionDetails = Some(
-                SuggestionDetails(
-                  suggestionType = Some("Test_type"),
-                  decodedControllerData = Some(
-                    homeTweetControllerDataV2(
-                      injectedPosition = Some(1),
-                      traceId = Some(traceId),
-                      requestJoinId = Some(requestJoinId)))
+            "ho T etEventW hControllerDataSuggest onType",
+            act onTowardDefaultT etEvent(
+              eventNa space = So (ceHo Favor eEventNa space),
+              suggest onDeta ls = So (
+                Suggest onDeta ls(
+                  suggest onType = So ("Test_type"),
+                  decodedControllerData = So (
+                    ho T etControllerDataV2(
+                       njectedPos  on = So (1),
+                      trace d = So (trace d),
+                      requestJo n d = So (requestJo n d)))
                 ))
             ),
-            expectedHomeTweetEventWithControllerDataSuggestType),
+            expectedHo T etEventW hControllerDataSuggestType),
           (
-            "homeLatestTweetEventWithControllerData",
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceHomeLatestFavoriteEventNamespace),
-              suggestionDetails = Some(
-                SuggestionDetails(decodedControllerData = Some(
-                  homeTweetControllerDataV2(
-                    injectedPosition = Some(1),
-                    traceId = Some(traceId),
-                    requestJoinId = Some(requestJoinId)
+            "ho LatestT etEventW hControllerData",
+            act onTowardDefaultT etEvent(
+              eventNa space = So (ceHo LatestFavor eEventNa space),
+              suggest onDeta ls = So (
+                Suggest onDeta ls(decodedControllerData = So (
+                  ho T etControllerDataV2(
+                     njectedPos  on = So (1),
+                    trace d = So (trace d),
+                    requestJo n d = So (requestJo n d)
                   ))))
             ),
-            expectedHomeLatestTweetEventWithControllerData),
+            expectedHo LatestT etEventW hControllerData),
           (
-            "homeLatestTweetEventWithSuggestionType",
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceHomeLatestFavoriteEventNamespace),
-              suggestionDetails = Some(
-                SuggestionDetails(
-                  suggestionType = Some("Test_type")
+            "ho LatestT etEventW hSuggest onType",
+            act onTowardDefaultT etEvent(
+              eventNa space = So (ceHo LatestFavor eEventNa space),
+              suggest onDeta ls = So (
+                Suggest onDeta ls(
+                  suggest onType = So ("Test_type")
                 ))),
-            expectedHomeLatestTweetEventWithSuggestType),
+            expectedHo LatestT etEventW hSuggestType),
           (
-            "homeLatestTweetEventWithControllerDataSuggestionType",
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceHomeLatestFavoriteEventNamespace),
-              suggestionDetails = Some(
-                SuggestionDetails(
-                  suggestionType = Some("Test_type"),
-                  decodedControllerData = Some(
-                    homeTweetControllerDataV2(
-                      injectedPosition = Some(1),
-                      traceId = Some(traceId),
-                      requestJoinId = Some(requestJoinId)))
+            "ho LatestT etEventW hControllerDataSuggest onType",
+            act onTowardDefaultT etEvent(
+              eventNa space = So (ceHo LatestFavor eEventNa space),
+              suggest onDeta ls = So (
+                Suggest onDeta ls(
+                  suggest onType = So ("Test_type"),
+                  decodedControllerData = So (
+                    ho T etControllerDataV2(
+                       njectedPos  on = So (1),
+                      trace d = So (trace d),
+                      requestJo n d = So (requestJo n d)))
                 ))
             ),
-            expectedHomeLatestTweetEventWithControllerDataSuggestType),
+            expectedHo LatestT etEventW hControllerDataSuggestType),
           (
-            "searchTweetEventWithControllerData",
-            actionTowardDefaultTweetEvent(
-              eventNamespace = Some(ceSearchFavoriteEventNamespace),
-              suggestionDetails = Some(
-                SuggestionDetails(decodedControllerData = Some(
+            "searchT etEventW hControllerData",
+            act onTowardDefaultT etEvent(
+              eventNa space = So (ceSearchFavor eEventNa space),
+              suggest onDeta ls = So (
+                Suggest onDeta ls(decodedControllerData = So (
                   mkSearchResultControllerData(
-                    queryOpt = Some("twitter"),
-                    traceId = Some(traceId),
-                    requestJoinId = Some(requestJoinId)
+                    queryOpt = So ("tw ter"),
+                    trace d = So (trace d),
+                    requestJo n d = So (requestJo n d)
                   ))))
             ),
-            expectedSearchTweetEventWithControllerData),
+            expectedSearchT etEventW hControllerData),
         )
-        forEvery(clientEvents) { (_: String, event: LogEvent, expectedUUA: UnifiedUserAction) =>
-          val actual = ClientEventAdapter.adaptEvent(event)
+        forEvery(cl entEvents) { (_: Str ng, event: LogEvent, expectedUUA: Un f edUserAct on) =>
+          val actual = Cl entEventAdapter.adaptEvent(event)
           assert(Seq(expectedUUA) === actual)
         }
       }
     }
   }
 
-  test("ClientAppExit") {
-    new TestFixtures.ClientEventFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val duration: Option[Long] = Some(10000L)
-        val inputTable = Table(
-          ("eventType", "clientAppId", "section", "duration", "isValidEvent"),
-          ("uas-iPhone", Some(129032L), Some("enter_background"), duration, true),
-          ("uas-iPad", Some(191841L), Some("enter_background"), duration, true),
-          ("uas-android", Some(258901L), None, duration, true),
-          ("none-clientId", None, None, duration, false),
-          ("invalid-clientId", Some(1L), None, duration, false),
-          ("none-duration", Some(258901L), None, None, false),
-          ("non-uas-iPhone", Some(129032L), None, duration, false)
+  test("Cl entAppEx ") {
+    new TestF xtures.Cl entEventF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val durat on: Opt on[Long] = So (10000L)
+        val  nputTable = Table(
+          ("eventType", "cl entApp d", "sect on", "durat on", " sVal dEvent"),
+          ("uas- Phone", So (129032L), So ("enter_background"), durat on, true),
+          ("uas- Pad", So (191841L), So ("enter_background"), durat on, true),
+          ("uas-andro d", So (258901L), None, durat on, true),
+          ("none-cl ent d", None, None, durat on, false),
+          (" nval d-cl ent d", So (1L), None, durat on, false),
+          ("none-durat on", So (258901L), None, None, false),
+          ("non-uas- Phone", So (129032L), None, durat on, false)
         )
 
-        forEvery(inputTable) {
+        forEvery( nputTable) {
           (
-            _: String,
-            clientAppId: Option[Long],
-            section: Option[String],
-            duration: Option[Long],
-            isValidEvent: Boolean
+            _: Str ng,
+            cl entApp d: Opt on[Long],
+            sect on: Opt on[Str ng],
+            durat on: Opt on[Long],
+             sVal dEvent: Boolean
           ) =>
-            val actual = ClientEventAdapter.adaptEvent(
-              actionTowardsUasEvent(
-                eventNamespace = Some(ceAppExit.copy(section = section)),
-                clientAppId = clientAppId,
-                duration = duration
+            val actual = Cl entEventAdapter.adaptEvent(
+              act onTowardsUasEvent(
+                eventNa space = So (ceAppEx .copy(sect on = sect on)),
+                cl entApp d = cl entApp d,
+                durat on = durat on
               ))
 
-            if (isValidEvent) {
+             f ( sVal dEvent) {
               // create UUA UAS event
               val expectedUUA = mkExpectedUUAForUasEvent(
-                clientEventNamespace = Some(uuaAppExit.copy(section = section)),
-                actionType = ActionType.ClientAppExit,
-                clientAppId = clientAppId,
-                duration = duration
+                cl entEventNa space = So (uuaAppEx .copy(sect on = sect on)),
+                act onType = Act onType.Cl entAppEx ,
+                cl entApp d = cl entApp d,
+                durat on = durat on
               )
               assert(Seq(expectedUUA) === actual)
             } else {
-              // ignore the event and do not create UUA UAS event
-              assert(actual.isEmpty)
+              //  gnore t  event and do not create UUA UAS event
+              assert(actual. sEmpty)
             }
         }
       }

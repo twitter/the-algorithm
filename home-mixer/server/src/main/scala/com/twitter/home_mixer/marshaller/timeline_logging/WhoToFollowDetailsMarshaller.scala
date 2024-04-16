@@ -1,15 +1,15 @@
-package com.twitter.home_mixer.marshaller.timeline_logging
+package com.tw ter.ho _m xer.marshaller.t  l ne_logg ng
 
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserItem
-import com.twitter.timelines.timeline_logging.{thriftscala => thriftlog}
+ mport com.tw ter.product_m xer.core.model.common.presentat on. emCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.user.User em
+ mport com.tw ter.t  l nes.t  l ne_logg ng.{thr ftscala => thr ftlog}
 
-object WhoToFollowDetailsMarshaller {
+object WhoToFollowDeta lsMarshaller {
 
-  def apply(entry: UserItem, candidate: ItemCandidateWithDetails): thriftlog.WhoToFollowDetails =
-    thriftlog.WhoToFollowDetails(
-      enableReactiveBlending = entry.enableReactiveBlending,
-      impressionId = entry.promotedMetadata.flatMap(_.impressionString),
-      advertiserId = entry.promotedMetadata.map(_.advertiserId)
+  def apply(entry: User em, cand date:  emCand dateW hDeta ls): thr ftlog.WhoToFollowDeta ls =
+    thr ftlog.WhoToFollowDeta ls(
+      enableReact veBlend ng = entry.enableReact veBlend ng,
+       mpress on d = entry.promoted tadata.flatMap(_. mpress onStr ng),
+      advert ser d = entry.promoted tadata.map(_.advert ser d)
     )
 }

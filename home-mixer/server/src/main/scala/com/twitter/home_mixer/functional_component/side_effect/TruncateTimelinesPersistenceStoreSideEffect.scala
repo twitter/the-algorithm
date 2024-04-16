@@ -1,68 +1,68 @@
-package com.twitter.home_mixer.functional_component.side_effect
+package com.tw ter.ho _m xer.funct onal_component.s de_effect
 
-import com.twitter.home_mixer.model.HomeFeatures.PersistenceEntriesFeature
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.param.HomeGlobalParams.TimelinesPersistenceStoreMaxEntriesPerClient
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseBatchesClient
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseV3
-import com.twitter.timelineservice.model.TimelineQuery
-import com.twitter.timelineservice.model.core.TimelineKind
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.model.Ho Features.Pers stenceEntr esFeature
+ mport com.tw ter.ho _m xer.model.request.Follow ngProduct
+ mport com.tw ter.ho _m xer.model.request.For Product
+ mport com.tw ter.ho _m xer.param.Ho GlobalParams.T  l nesPers stenceStoreMaxEntr esPerCl ent
+ mport com.tw ter.ho _m xer.serv ce.Ho M xerAlertConf g
+ mport com.tw ter.product_m xer.core.funct onal_component.s de_effect.P pel neResultS deEffect
+ mport com.tw ter.product_m xer.core.model.common. dent f er.S deEffect dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nem xer.cl ents.pers stence.T  l neResponseBatc sCl ent
+ mport com.tw ter.t  l nem xer.cl ents.pers stence.T  l neResponseV3
+ mport com.tw ter.t  l neserv ce.model.T  l neQuery
+ mport com.tw ter.t  l neserv ce.model.core.T  l neK nd
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * Side effect that truncates entries in the Timelines Persistence store
- * based on the number of entries per client.
+ * S de effect that truncates entr es  n t  T  l nes Pers stence store
+ * based on t  number of entr es per cl ent.
  */
-@Singleton
-class TruncateTimelinesPersistenceStoreSideEffect @Inject() (
-  timelineResponseBatchesClient: TimelineResponseBatchesClient[TimelineResponseV3])
-    extends PipelineResultSideEffect[PipelineQuery, Timeline] {
+@S ngleton
+class TruncateT  l nesPers stenceStoreS deEffect @ nject() (
+  t  l neResponseBatc sCl ent: T  l neResponseBatc sCl ent[T  l neResponseV3])
+    extends P pel neResultS deEffect[P pel neQuery, T  l ne] {
 
-  override val identifier: SideEffectIdentifier =
-    SideEffectIdentifier("TruncateTimelinesPersistenceStore")
+  overr de val  dent f er: S deEffect dent f er =
+    S deEffect dent f er("TruncateT  l nesPers stenceStore")
 
-  def getResponsesToDelete(query: PipelineQuery): Seq[TimelineResponseV3] = {
+  def getResponsesToDelete(query: P pel neQuery): Seq[T  l neResponseV3] = {
     val responses =
-      query.features.map(_.getOrElse(PersistenceEntriesFeature, Seq.empty)).toSeq.flatten
-    val responsesByClient = responses.groupBy(_.clientPlatform).values.toSeq
-    val maxEntriesPerClient = query.params(TimelinesPersistenceStoreMaxEntriesPerClient)
+      query.features.map(_.getOrElse(Pers stenceEntr esFeature, Seq.empty)).toSeq.flatten
+    val responsesByCl ent = responses.groupBy(_.cl entPlatform).values.toSeq
+    val maxEntr esPerCl ent = query.params(T  l nesPers stenceStoreMaxEntr esPerCl ent)
 
-    responsesByClient.flatMap {
-      _.sortBy(_.servedTime.inMilliseconds)
-        .foldRight((Seq.empty[TimelineResponseV3], maxEntriesPerClient)) {
-          case (response, (responsesToDelete, remainingCap)) =>
-            if (remainingCap > 0) (responsesToDelete, remainingCap - response.entries.size)
-            else (response +: responsesToDelete, remainingCap)
+    responsesByCl ent.flatMap {
+      _.sortBy(_.servedT  . nM ll seconds)
+        .foldR ght((Seq.empty[T  l neResponseV3], maxEntr esPerCl ent)) {
+          case (response, (responsesToDelete, rema n ngCap)) =>
+             f (rema n ngCap > 0) (responsesToDelete, rema n ngCap - response.entr es.s ze)
+            else (response +: responsesToDelete, rema n ngCap)
         } match { case (responsesToDelete, _) => responsesToDelete }
     }
   }
 
-  final override def apply(
-    inputs: PipelineResultSideEffect.Inputs[PipelineQuery, Timeline]
-  ): Stitch[Unit] = {
-    val timelineKind = inputs.query.product match {
-      case FollowingProduct => TimelineKind.homeLatest
-      case ForYouProduct => TimelineKind.home
-      case other => throw new UnsupportedOperationException(s"Unknown product: $other")
+  f nal overr de def apply(
+     nputs: P pel neResultS deEffect. nputs[P pel neQuery, T  l ne]
+  ): St ch[Un ] = {
+    val t  l neK nd =  nputs.query.product match {
+      case Follow ngProduct => T  l neK nd.ho Latest
+      case For Product => T  l neK nd.ho 
+      case ot r => throw new UnsupportedOperat onExcept on(s"Unknown product: $ot r")
     }
-    val timelineQuery = TimelineQuery(id = inputs.query.getRequiredUserId, kind = timelineKind)
+    val t  l neQuery = T  l neQuery( d =  nputs.query.getRequ redUser d, k nd = t  l neK nd)
 
-    val responsesToDelete = getResponsesToDelete(inputs.query)
+    val responsesToDelete = getResponsesToDelete( nputs.query)
 
-    if (responsesToDelete.nonEmpty)
-      Stitch.callFuture(timelineResponseBatchesClient.delete(timelineQuery, responsesToDelete))
-    else Stitch.Unit
+     f (responsesToDelete.nonEmpty)
+      St ch.callFuture(t  l neResponseBatc sCl ent.delete(t  l neQuery, responsesToDelete))
+    else St ch.Un 
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.8)
+  overr de val alerts = Seq(
+    Ho M xerAlertConf g.Bus nessH s.defaultSuccessRateAlert(99.8)
   )
 }

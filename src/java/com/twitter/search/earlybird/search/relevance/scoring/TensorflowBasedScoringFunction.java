@@ -1,338 +1,338 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+package com.tw ter.search.earlyb rd.search.relevance.scor ng;
 
-import java.io.IOException;
-import java.nio.FloatBuffer;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+ mport java. o. OExcept on;
+ mport java.n o.FloatBuffer;
+ mport java.ut l.HashMap;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect. mmutableL st;
+ mport com.google.common.collect. mmutableMap;
 
-import org.apache.lucene.search.Explanation;
-import org.tensorflow.Tensor;
+ mport org.apac .lucene.search.Explanat on;
+ mport org.tensorflow.Tensor;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.search.common.constants.thriftjava.ThriftQuerySource;
-import com.twitter.search.common.features.EarlybirdRankingDerivedFeature;
-import com.twitter.search.common.features.FeatureHandler;
-import com.twitter.search.common.features.thrift.ThriftSearchResultFeatures;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.util.ml.tensorflow_engine.TensorflowModelsManager;
-import com.twitter.search.earlybird.EarlybirdSearcher;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.ClientException;
-import com.twitter.search.earlybird.search.AntiGamingFilter;
-import com.twitter.search.earlybird.search.relevance.LinearScoringData;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchRelevanceOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
-import com.twitter.search.modeling.common.TweetFeaturesUtils;
-import com.twitter.tfcompute_java.TFModelRunner;
+ mport com.tw ter.common.collect ons.Pa r;
+ mport com.tw ter.search.common.constants.thr ftjava.Thr ftQueryS ce;
+ mport com.tw ter.search.common.features.Earlyb rdRank ngDer vedFeature;
+ mport com.tw ter.search.common.features.FeatureHandler;
+ mport com.tw ter.search.common.features.thr ft.Thr ftSearchResultFeatures;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.ut l.ml.tensorflow_eng ne.TensorflowModelsManager;
+ mport com.tw ter.search.earlyb rd.Earlyb rdSearc r;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserTable;
+ mport com.tw ter.search.earlyb rd.except on.Cl entExcept on;
+ mport com.tw ter.search.earlyb rd.search.Ant Gam ngF lter;
+ mport com.tw ter.search.earlyb rd.search.relevance.L nearScor ngData;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchQuery;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchRelevanceOpt ons;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultType;
+ mport com.tw ter.search.model ng.common.T etFeaturesUt ls;
+ mport com.tw ter.tfcompute_java.TFModelRunner;
 
 /**
- * TensorflowBasedScoringFunction relies on a TF model for scoring tweets
- * Only the `batchScore` part is implemented
+ * TensorflowBasedScor ngFunct on rel es on a TF model for scor ng t ets
+ * Only t  `batchScore` part  s  mple nted
  */
-public class TensorflowBasedScoringFunction extends FeatureBasedScoringFunction {
-  private final TFModelRunner tfModelRunner;
+publ c class TensorflowBasedScor ngFunct on extends FeatureBasedScor ngFunct on {
+  pr vate f nal TFModelRunner tfModelRunner;
 
-  // https://stackoverflow.com/questions/37849322/how-to-understand-the-term-tensor-in-tensorflow
-  // for more information on this notation - in short, a TF graph is made
-  // of TF operations and doesn't have a first order notion of tensors
-  // The notation <operation>:<index> will maps to the <index> output of the
-  // <operation> contained in the TF graph.
-  private static final String INPUT_VALUES = "input_sparse_tensor_values:0";
-  private static final String INPUT_INDICES = "input_sparse_tensor_indices:0";
-  private static final String INPUT_SHAPE = "input_sparse_tensor_shape:0";
-  private static final String OUTPUT_NODE = "output_scores:0";
+  // https://stackoverflow.com/quest ons/37849322/how-to-understand-t -term-tensor- n-tensorflow
+  // for more  nformat on on t  notat on -  n short, a TF graph  s made
+  // of TF operat ons and doesn't have a f rst order not on of tensors
+  // T  notat on <operat on>:< ndex> w ll maps to t  < ndex> output of t 
+  // <operat on> conta ned  n t  TF graph.
+  pr vate stat c f nal Str ng  NPUT_VALUES = " nput_sparse_tensor_values:0";
+  pr vate stat c f nal Str ng  NPUT_ ND CES = " nput_sparse_tensor_ nd ces:0";
+  pr vate stat c f nal Str ng  NPUT_SHAPE = " nput_sparse_tensor_shape:0";
+  pr vate stat c f nal Str ng OUTPUT_NODE = "output_scores:0";
 
-  private final Map<Integer, Long> featureSchemaIdToMlApiId;
-  private final Map<Long, Float> tweetIdToScoreMap = new HashMap<>();
-  private final EarlybirdRequest request;
+  pr vate f nal Map< nteger, Long> featureSc ma dToMlAp  d;
+  pr vate f nal Map<Long, Float> t et dToScoreMap = new HashMap<>();
+  pr vate f nal Earlyb rdRequest request;
 
-  public TensorflowBasedScoringFunction(
-      EarlybirdRequest request,
-      ImmutableSchemaInterface schema,
-      ThriftSearchQuery searchQuery,
-      AntiGamingFilter antiGamingFilter,
-      ThriftSearchResultType searchResultType,
+  publ c TensorflowBasedScor ngFunct on(
+      Earlyb rdRequest request,
+       mmutableSc ma nterface sc ma,
+      Thr ftSearchQuery searchQuery,
+      Ant Gam ngF lter ant Gam ngF lter,
+      Thr ftSearchResultType searchResultType,
       UserTable userTable,
       TensorflowModelsManager tensorflowModelsManager
-      ) throws IOException, ClientException {
+      ) throws  OExcept on, Cl entExcept on {
     super(
-      "TensorflowBasedScoringFunction",
-      schema,
+      "TensorflowBasedScor ngFunct on",
+      sc ma,
       searchQuery,
-      antiGamingFilter,
+      ant Gam ngF lter,
       searchResultType,
         userTable
     );
-    this.request = request;
-    String modelName = searchQuery.getRelevanceOptions().getRankingParams().selectedTensorflowModel;
-    this.featureSchemaIdToMlApiId = tensorflowModelsManager.getFeatureSchemaIdToMlApiId();
+    t .request = request;
+    Str ng modelNa  = searchQuery.getRelevanceOpt ons().getRank ngParams().selectedTensorflowModel;
+    t .featureSc ma dToMlAp  d = tensorflowModelsManager.getFeatureSc ma dToMlAp  d();
 
-    if (modelName == null) {
-      throw new ClientException("Scoring type is TENSORFLOW_BASED but no model was selected");
-    } else if (!tensorflowModelsManager.getModel(modelName).isPresent()) {
-      throw new ClientException(
-        "Scoring type is TENSORFLOW_BASED. Model "
-        + modelName
-        + " is not present."
+     f (modelNa  == null) {
+      throw new Cl entExcept on("Scor ng type  s TENSORFLOW_BASED but no model was selected");
+    } else  f (!tensorflowModelsManager.getModel(modelNa ). sPresent()) {
+      throw new Cl entExcept on(
+        "Scor ng type  s TENSORFLOW_BASED. Model "
+        + modelNa 
+        + "  s not present."
       );
     }
 
-    if (searchQuery.getRelevanceOptions().getRankingParams().isEnableHitDemotion()) {
-      throw new ClientException(
-          "Hit attribute demotion is not supported with TENSORFLOW_BASED scoring type");
+     f (searchQuery.getRelevanceOpt ons().getRank ngParams(). sEnableH Demot on()) {
+      throw new Cl entExcept on(
+          "H  attr bute demot on  s not supported w h TENSORFLOW_BASED scor ng type");
     }
 
-    tfModelRunner = tensorflowModelsManager.getModel(modelName).get();
+    tfModelRunner = tensorflowModelsManager.getModel(modelNa ).get();
   }
 
   /**
-   * Single item scoring just returns the lucene score to be used during the batching phase.
+   * S ngle  em scor ng just returns t  lucene score to be used dur ng t  batch ng phase.
    */
-  @Override
+  @Overr de
   protected float score(float luceneQueryScore) {
     return luceneQueryScore;
   }
 
-  @Override
-  public Pair<LinearScoringData, ThriftSearchResultFeatures> collectFeatures(
-      float luceneQueryScore) throws IOException {
-    LinearScoringData linearScoringData = updateLinearScoringData(luceneQueryScore);
-    ThriftSearchResultFeatures features =
-        createFeaturesForDocument(linearScoringData, true).getFeatures();
+  @Overr de
+  publ c Pa r<L nearScor ngData, Thr ftSearchResultFeatures> collectFeatures(
+      float luceneQueryScore) throws  OExcept on {
+    L nearScor ngData l nearScor ngData = updateL nearScor ngData(luceneQueryScore);
+    Thr ftSearchResultFeatures features =
+        createFeaturesForDocu nt(l nearScor ngData, true).getFeatures();
 
-    return new Pair<>(linearScoringData, features);
+    return new Pa r<>(l nearScor ngData, features);
   }
 
-  @Override
-  protected FeatureHandler createFeaturesForDocument(
-      LinearScoringData linearScoringData,
-      boolean ignoreDefaultValues) throws IOException {
-    return super.createFeaturesForDocument(linearScoringData,
-            ignoreDefaultValues)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_TREND_CLICK,
-            request.querySource == ThriftQuerySource.TREND_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_TYPED_QUERY,
-            request.querySource == ThriftQuerySource.TYPED_QUERY)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_TYPEAHEAD_CLICK,
-            request.querySource == ThriftQuerySource.TYPEAHEAD_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_HASHTAG_CLICK,
-            request.querySource == ThriftQuerySource.RECENT_SEARCH_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_RECENT_SEARCH_CLICK,
-            request.querySource == ThriftQuerySource.RECENT_SEARCH_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_PROFILE_CLICK,
-            request.querySource == ThriftQuerySource.PROFILE_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_API_CALL,
-            request.querySource == ThriftQuerySource.API_CALL)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_PROMOTED_TREND_CLICK,
-            request.querySource == ThriftQuerySource.PROMOTED_TREND_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_SAVED_SEARCH_CLICK,
-            request.querySource == ThriftQuerySource.SAVED_SEARCH_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_CASHTAG_CLICK,
-            request.querySource == ThriftQuerySource.CASHTAG_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_SPELLING_EXPANSION_REVERT_CLICK,
-            request.querySource == ThriftQuerySource.SPELLING_EXPANSION_REVERT_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_SPELLING_SUGGESTION_CLICK,
-            request.querySource == ThriftQuerySource.SPELLING_SUGGESTION_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_LOGGED_OUT_HOME_TREND_CLICK,
-            request.querySource == ThriftQuerySource.LOGGED_OUT_HOME_TREND_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_RELATED_QUERY_CLICK,
-            request.querySource == ThriftQuerySource.RELATED_QUERY_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_AUTO_SPELL_CORRECT_REVERT_CLICK,
-            request.querySource == ThriftQuerySource.AUTO_SPELL_CORRECT_REVERT_CLICK);
+  @Overr de
+  protected FeatureHandler createFeaturesForDocu nt(
+      L nearScor ngData l nearScor ngData,
+      boolean  gnoreDefaultValues) throws  OExcept on {
+    return super.createFeaturesForDocu nt(l nearScor ngData,
+             gnoreDefaultValues)
+        .addBoolean(Earlyb rdRank ngDer vedFeature.QUERY_SOURCE_TREND_CL CK,
+            request.queryS ce == Thr ftQueryS ce.TREND_CL CK)
+        .addBoolean(Earlyb rdRank ngDer vedFeature.QUERY_SOURCE_TYPED_QUERY,
+            request.queryS ce == Thr ftQueryS ce.TYPED_QUERY)
+        .addBoolean(Earlyb rdRank ngDer vedFeature.QUERY_SOURCE_TYPEAHEAD_CL CK,
+            request.queryS ce == Thr ftQueryS ce.TYPEAHEAD_CL CK)
+        .addBoolean(Earlyb rdRank ngDer vedFeature.QUERY_SOURCE_HASHTAG_CL CK,
+            request.queryS ce == Thr ftQueryS ce.RECENT_SEARCH_CL CK)
+        .addBoolean(Earlyb rdRank ngDer vedFeature.QUERY_SOURCE_RECENT_SEARCH_CL CK,
+            request.queryS ce == Thr ftQueryS ce.RECENT_SEARCH_CL CK)
+        .addBoolean(Earlyb rdRank ngDer vedFeature.QUERY_SOURCE_PROF LE_CL CK,
+            request.queryS ce == Thr ftQueryS ce.PROF LE_CL CK)
+        .addBoolean(Earlyb rdRank ngDer vedFeature.QUERY_SOURCE_AP _CALL,
+            request.queryS ce == Thr ftQueryS ce.AP _CALL)
+        .addBoolean(Earlyb rdRank ngDer vedFeature.QUERY_SOURCE_PROMOTED_TREND_CL CK,
+            request.queryS ce == Thr ftQueryS ce.PROMOTED_TREND_CL CK)
+        .addBoolean(Earlyb rdRank ngDer vedFeature.QUERY_SOURCE_SAVED_SEARCH_CL CK,
+            request.queryS ce == Thr ftQueryS ce.SAVED_SEARCH_CL CK)
+        .addBoolean(Earlyb rdRank ngDer vedFeature.QUERY_SOURCE_CASHTAG_CL CK,
+            request.queryS ce == Thr ftQueryS ce.CASHTAG_CL CK)
+        .addBoolean(Earlyb rdRank ngDer vedFeature.QUERY_SOURCE_SPELL NG_EXPANS ON_REVERT_CL CK,
+            request.queryS ce == Thr ftQueryS ce.SPELL NG_EXPANS ON_REVERT_CL CK)
+        .addBoolean(Earlyb rdRank ngDer vedFeature.QUERY_SOURCE_SPELL NG_SUGGEST ON_CL CK,
+            request.queryS ce == Thr ftQueryS ce.SPELL NG_SUGGEST ON_CL CK)
+        .addBoolean(Earlyb rdRank ngDer vedFeature.QUERY_SOURCE_LOGGED_OUT_HOME_TREND_CL CK,
+            request.queryS ce == Thr ftQueryS ce.LOGGED_OUT_HOME_TREND_CL CK)
+        .addBoolean(Earlyb rdRank ngDer vedFeature.QUERY_SOURCE_RELATED_QUERY_CL CK,
+            request.queryS ce == Thr ftQueryS ce.RELATED_QUERY_CL CK)
+        .addBoolean(Earlyb rdRank ngDer vedFeature.QUERY_SOURCE_AUTO_SPELL_CORRECT_REVERT_CL CK,
+            request.queryS ce == Thr ftQueryS ce.AUTO_SPELL_CORRECT_REVERT_CL CK);
   }
 
   /**
-   * Return scores computed in batchScore() if forExplanation is true.
+   * Return scores computed  n batchScore()  f forExplanat on  s true.
    */
-  @Override
-  protected double computeScore(LinearScoringData data, boolean forExplanation) {
-    Preconditions.checkState(forExplanation,
-        "forExplanation is false. computeScore() should only be used for explanation creation");
-    return tweetIdToScoreMap.get(tweetIDMapper.getTweetID(getCurrentDocID()));
+  @Overr de
+  protected double computeScore(L nearScor ngData data, boolean forExplanat on) {
+    Precond  ons.c ckState(forExplanat on,
+        "forExplanat on  s false. computeScore() should only be used for explanat on creat on");
+    return t et dToScoreMap.get(t et DMapper.getT et D(getCurrentDoc D()));
   }
 
-  @Override
-  protected void generateExplanationForScoring(
-      LinearScoringData scoringData, boolean isHit, List<Explanation> details) {
+  @Overr de
+  protected vo d generateExplanat onForScor ng(
+      L nearScor ngData scor ngData, boolean  sH , L st<Explanat on> deta ls) {
   }
 
-  @VisibleForTesting
-  SparseTensor createInputTensor(ThriftSearchResultFeatures[] featuresForDocs) {
-    // Moving this across outside of the request path
-    // would reduce the allocation cost and make the `ByteBuffer`s
-    // long lived - would need one per thread.
+  @V s bleForTest ng
+  SparseTensor create nputTensor(Thr ftSearchResultFeatures[] featuresForDocs) {
+    // Mov ng t  across outs de of t  request path
+    // would reduce t  allocat on cost and make t  `ByteBuffer`s
+    // long l ved - would need one per thread.
     SparseTensor sparseTensor =
-        new SparseTensor(featuresForDocs.length, featureSchemaIdToMlApiId.size());
-    for (ThriftSearchResultFeatures features : featuresForDocs) {
+        new SparseTensor(featuresForDocs.length, featureSc ma dToMlAp  d.s ze());
+    for (Thr ftSearchResultFeatures features : featuresForDocs) {
       updateSparseTensor(sparseTensor, features);
     }
     return sparseTensor;
   }
 
-  private void addSchemaBooleanFeatures(SparseTensor sparseTensor,
-                                        Map<Integer, Boolean> booleanMap) {
-    if (booleanMap == null || booleanMap.isEmpty()) {
+  pr vate vo d addSc maBooleanFeatures(SparseTensor sparseTensor,
+                                        Map< nteger, Boolean> booleanMap) {
+     f (booleanMap == null || booleanMap. sEmpty()) {
       return;
     }
-    for (Map.Entry<Integer, Boolean> entry : booleanMap.entrySet()) {
-      Preconditions.checkState(featureSchemaIdToMlApiId.containsKey(entry.getKey()));
+    for (Map.Entry< nteger, Boolean> entry : booleanMap.entrySet()) {
+      Precond  ons.c ckState(featureSc ma dToMlAp  d.conta nsKey(entry.getKey()));
       sparseTensor.addValue(
-          featureSchemaIdToMlApiId.get(entry.getKey()), entry.getValue() ? 1f : 0f);
+          featureSc ma dToMlAp  d.get(entry.getKey()), entry.getValue() ? 1f : 0f);
     }
   }
 
-  private void addSchemaContinuousFeatures(SparseTensor sparseTensor,
-                                           Map<Integer, ? extends Number> valueMap) {
-    if (valueMap == null || valueMap.isEmpty()) {
+  pr vate vo d addSc maCont nuousFeatures(SparseTensor sparseTensor,
+                                           Map< nteger, ? extends Number> valueMap) {
+     f (valueMap == null || valueMap. sEmpty()) {
       return;
     }
-    for (Map.Entry<Integer, ? extends Number> entry : valueMap.entrySet()) {
-      Integer id = entry.getKey();
+    for (Map.Entry< nteger, ? extends Number> entry : valueMap.entrySet()) {
+       nteger  d = entry.getKey();
       // SEARCH-26795
-      if (!TweetFeaturesUtils.isFeatureDiscrete(id)) {
-        Preconditions.checkState(featureSchemaIdToMlApiId.containsKey(id));
+       f (!T etFeaturesUt ls. sFeatureD screte( d)) {
+        Precond  ons.c ckState(featureSc ma dToMlAp  d.conta nsKey( d));
         sparseTensor.addValue(
-            featureSchemaIdToMlApiId.get(id), entry.getValue().floatValue());
+            featureSc ma dToMlAp  d.get( d), entry.getValue().floatValue());
       }
     }
   }
 
-  private void updateSparseTensor(SparseTensor sparseTensor, ThriftSearchResultFeatures features) {
-    addSchemaBooleanFeatures(sparseTensor, features.getBoolValues());
-    addSchemaContinuousFeatures(sparseTensor, features.getIntValues());
-    addSchemaContinuousFeatures(sparseTensor, features.getLongValues());
-    addSchemaContinuousFeatures(sparseTensor, features.getDoubleValues());
+  pr vate vo d updateSparseTensor(SparseTensor sparseTensor, Thr ftSearchResultFeatures features) {
+    addSc maBooleanFeatures(sparseTensor, features.getBoolValues());
+    addSc maCont nuousFeatures(sparseTensor, features.get ntValues());
+    addSc maCont nuousFeatures(sparseTensor, features.getLongValues());
+    addSc maCont nuousFeatures(sparseTensor, features.getDoubleValues());
 
-    sparseTensor.incNumRecordsSeen();
+    sparseTensor. ncNumRecordsSeen();
   }
 
-  private float[] batchScoreInternal(ThriftSearchResultFeatures[] featuresForDocs) {
-    int nbDocs = featuresForDocs.length;
-    float[] backingArrayResults = new float[nbDocs];
-    SparseTensor sparseTensor = createInputTensor(featuresForDocs);
+  pr vate float[] batchScore nternal(Thr ftSearchResultFeatures[] featuresForDocs) {
+     nt nbDocs = featuresForDocs.length;
+    float[] back ngArrayResults = new float[nbDocs];
+    SparseTensor sparseTensor = create nputTensor(featuresForDocs);
     Tensor<?> sparseValues =
       Tensor.create(
         Float.class,
         sparseTensor.getSparseValuesShape(),
         sparseTensor.getSparseValues());
-    Tensor<?> sparseIndices =
+    Tensor<?> sparse nd ces =
       Tensor.create(
         Long.class,
-        sparseTensor.getSparseIndicesShape(),
-        sparseTensor.getSparseIndices());
+        sparseTensor.getSparse nd cesShape(),
+        sparseTensor.getSparse nd ces());
     Tensor<?> sparseShape =
       Tensor.create(
         Long.class,
         sparseTensor.getSparseShapeShape(),
         sparseTensor.getSparseShape());
-    Map<String, Tensor<?>> inputMap = ImmutableMap.of(
-      INPUT_VALUES, sparseValues,
-      INPUT_INDICES, sparseIndices,
-      INPUT_SHAPE, sparseShape
+    Map<Str ng, Tensor<?>>  nputMap =  mmutableMap.of(
+       NPUT_VALUES, sparseValues,
+       NPUT_ ND CES, sparse nd ces,
+       NPUT_SHAPE, sparseShape
       );
-    List<String> output = ImmutableList.of(OUTPUT_NODE);
+    L st<Str ng> output =  mmutableL st.of(OUTPUT_NODE);
 
-    Map<String, Tensor<?>> outputs = tfModelRunner.run(
-      inputMap,
+    Map<Str ng, Tensor<?>> outputs = tfModelRunner.run(
+       nputMap,
       output,
-      ImmutableList.of()
+       mmutableL st.of()
     );
     Tensor<?> outputTensor = outputs.get(OUTPUT_NODE);
     try {
-      FloatBuffer finalResultBuffer =
-        FloatBuffer.wrap(backingArrayResults, 0, nbDocs);
+      FloatBuffer f nalResultBuffer =
+        FloatBuffer.wrap(back ngArrayResults, 0, nbDocs);
 
-      outputTensor.writeTo(finalResultBuffer);
-    } finally {
-      // Close tensors to avoid memory leaks
+      outputTensor.wr eTo(f nalResultBuffer);
+    } f nally {
+      // Close tensors to avo d  mory leaks
       sparseValues.close();
-      sparseIndices.close();
+      sparse nd ces.close();
       sparseShape.close();
-      if (outputTensor != null) {
+       f (outputTensor != null) {
         outputTensor.close();
       }
     }
-    return backingArrayResults;
+    return back ngArrayResults;
   }
 
   /**
-   * Compute the score for a list of hits. Not thread safe.
+   * Compute t  score for a l st of h s. Not thread safe.
    * @return Array of scores
    */
-  @Override
-  public float[] batchScore(List<BatchHit> hits) throws IOException {
-    ThriftSearchResultFeatures[] featuresForDocs = new ThriftSearchResultFeatures[hits.size()];
+  @Overr de
+  publ c float[] batchScore(L st<BatchH > h s) throws  OExcept on {
+    Thr ftSearchResultFeatures[] featuresForDocs = new Thr ftSearchResultFeatures[h s.s ze()];
 
-    for (int i = 0; i < hits.size(); i++) {
-      // This is a gigantic allocation, but the models are trained to depend on unset values having
+    for ( nt   = 0;   < h s.s ze();  ++) {
+      // T   s a g gant c allocat on, but t  models are tra ned to depend on unset values hav ng
       // a default.
-      BatchHit hit = hits.get(i);
-      ThriftSearchResultFeatures features = hit.getFeatures().deepCopy();
+      BatchH  h  = h s.get( );
+      Thr ftSearchResultFeatures features = h .getFeatures().deepCopy();
 
-      // Adjust features of a hit based on overrides provided by relevance options. Should mostly
-      // be used for debugging purposes.
-      adjustHitScoringFeatures(hit, features);
+      // Adjust features of a h  based on overr des prov ded by relevance opt ons. Should mostly
+      // be used for debugg ng purposes.
+      adjustH Scor ngFeatures(h , features);
 
       setDefaultFeatureValues(features);
-      featuresForDocs[i] = features;
+      featuresForDocs[ ] = features;
     }
 
-    float[] scores = batchScoreInternal(featuresForDocs);
-    float[] finalScores = new float[hits.size()];
+    float[] scores = batchScore nternal(featuresForDocs);
+    float[] f nalScores = new float[h s.s ze()];
 
-    for (int i = 0; i < hits.size(); i++) {
-      LinearScoringData data = hits.get(i).getScoringData();
-      if (data.skipReason != null && data.skipReason != LinearScoringData.SkipReason.NOT_SKIPPED) {
-        // If the hit should be skipped, overwrite the score with SKIP_HIT
-        scores[i] = SKIP_HIT;
+    for ( nt   = 0;   < h s.s ze();  ++) {
+      L nearScor ngData data = h s.get( ).getScor ngData();
+       f (data.sk pReason != null && data.sk pReason != L nearScor ngData.Sk pReason.NOT_SK PPED) {
+        //  f t  h  should be sk pped, overwr e t  score w h SK P_H T
+        scores[ ] = SK P_H T;
       }
 
-      // If explanations enabled, Add scores to map. Will be used in computeScore()
-      if (EarlybirdSearcher.explanationsEnabled(debugMode)) {
-        tweetIdToScoreMap.put(hits.get(i).getTweetID(), scores[i]);
+      //  f explanat ons enabled, Add scores to map. W ll be used  n computeScore()
+       f (Earlyb rdSearc r.explanat onsEnabled(debugMode)) {
+        t et dToScoreMap.put(h s.get( ).getT et D(), scores[ ]);
       }
 
-      finalScores[i] = postScoreComputation(
+      f nalScores[ ] = postScoreComputat on(
           data,
-          scores[i],
-          false,  // cannot get the hit attribution info for this hit at this point in time
+          scores[ ],
+          false,  // cannot get t  h  attr but on  nfo for t  h  at t  po nt  n t  
           null);
     }
-    return finalScores;
+    return f nalScores;
   }
 
-  private void adjustHitScoringFeatures(BatchHit hit, ThriftSearchResultFeatures features) {
+  pr vate vo d adjustH Scor ngFeatures(BatchH  h , Thr ftSearchResultFeatures features) {
 
-    if (request.isSetSearchQuery() && request.getSearchQuery().isSetRelevanceOptions()) {
-      ThriftSearchRelevanceOptions relevanceOptions =
-          request.getSearchQuery().getRelevanceOptions();
+     f (request. sSetSearchQuery() && request.getSearchQuery(). sSetRelevanceOpt ons()) {
+      Thr ftSearchRelevanceOpt ons relevanceOpt ons =
+          request.getSearchQuery().getRelevanceOpt ons();
 
-      if (relevanceOptions.isSetPerTweetFeaturesOverride()
-          && relevanceOptions.getPerTweetFeaturesOverride().containsKey(hit.getTweetID())) {
-        overrideFeatureValues(
+       f (relevanceOpt ons. sSetPerT etFeaturesOverr de()
+          && relevanceOpt ons.getPerT etFeaturesOverr de().conta nsKey(h .getT et D())) {
+        overr deFeatureValues(
             features,
-            relevanceOptions.getPerTweetFeaturesOverride().get(hit.getTweetID()));
+            relevanceOpt ons.getPerT etFeaturesOverr de().get(h .getT et D()));
       }
 
-      if (relevanceOptions.isSetPerUserFeaturesOverride()
-          && relevanceOptions.getPerUserFeaturesOverride().containsKey(
-              hit.getScoringData().fromUserId)) {
-        overrideFeatureValues(
+       f (relevanceOpt ons. sSetPerUserFeaturesOverr de()
+          && relevanceOpt ons.getPerUserFeaturesOverr de().conta nsKey(
+              h .getScor ngData().fromUser d)) {
+        overr deFeatureValues(
             features,
-            relevanceOptions.getPerUserFeaturesOverride().get(hit.getScoringData().fromUserId));
+            relevanceOpt ons.getPerUserFeaturesOverr de().get(h .getScor ngData().fromUser d));
       }
 
-      if (relevanceOptions.isSetGlobalFeaturesOverride()) {
-        overrideFeatureValues(
-            features, relevanceOptions.getGlobalFeaturesOverride());
+       f (relevanceOpt ons. sSetGlobalFeaturesOverr de()) {
+        overr deFeatureValues(
+            features, relevanceOpt ons.getGlobalFeaturesOverr de());
       }
     }
   }

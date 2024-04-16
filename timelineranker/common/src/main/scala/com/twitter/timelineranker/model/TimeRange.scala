@@ -1,39 +1,39 @@
-package com.twitter.timelineranker.model
+package com.tw ter.t  l neranker.model
 
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.util.Time
+ mport com.tw ter.t  l neranker.{thr ftscala => thr ft}
+ mport com.tw ter.ut l.T  
 
-object TimeRange {
-  val default: TimeRange = TimeRange(None, None)
+object T  Range {
+  val default: T  Range = T  Range(None, None)
 
-  def fromThrift(range: thrift.TimeRange): TimeRange = {
-    TimeRange(
-      from = range.fromMs.map(Time.fromMilliseconds),
-      to = range.toMs.map(Time.fromMilliseconds)
+  def fromThr ft(range: thr ft.T  Range): T  Range = {
+    T  Range(
+      from = range.fromMs.map(T  .fromM ll seconds),
+      to = range.toMs.map(T  .fromM ll seconds)
     )
   }
 }
 
-case class TimeRange(from: Option[Time], to: Option[Time]) extends TimelineRange {
+case class T  Range(from: Opt on[T  ], to: Opt on[T  ]) extends T  l neRange {
 
-  throwIfInvalid()
+  throw f nval d()
 
-  def throwIfInvalid(): Unit = {
+  def throw f nval d(): Un  = {
     (from, to) match {
-      case (Some(fromTime), Some(toTime)) =>
-        require(fromTime <= toTime, "from-time must be less than or equal to-time.")
-      case _ => // valid, do nothing.
+      case (So (fromT  ), So (toT  )) =>
+        requ re(fromT   <= toT  , "from-t   must be less than or equal to-t  .")
+      case _ => // val d, do noth ng.
     }
   }
 
-  def toThrift: thrift.TimeRange = {
-    thrift.TimeRange(
-      fromMs = from.map(_.inMilliseconds),
-      toMs = to.map(_.inMilliseconds)
+  def toThr ft: thr ft.T  Range = {
+    thr ft.T  Range(
+      fromMs = from.map(_. nM ll seconds),
+      toMs = to.map(_. nM ll seconds)
     )
   }
 
-  def toTimelineRangeThrift: thrift.TimelineRange = {
-    thrift.TimelineRange.TimeRange(toThrift)
+  def toT  l neRangeThr ft: thr ft.T  l neRange = {
+    thr ft.T  l neRange.T  Range(toThr ft)
   }
 }

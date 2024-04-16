@@ -1,99 +1,99 @@
-package com.twitter.tsp.stores
+package com.tw ter.tsp.stores
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.ScoreInternalId
-import com.twitter.simclusters_v2.thriftscala.ScoringAlgorithm
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.{
-  SimClustersEmbeddingPairScoreId => ThriftSimClustersEmbeddingPairScoreId
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.tw ter.s mclusters_v2.thr ftscala.Score nternal d
+ mport com.tw ter.s mclusters_v2.thr ftscala.Scor ngAlgor hm
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng d
+ mport com.tw ter.s mclusters_v2.thr ftscala.{
+  S mClustersEmbedd ngPa rScore d => Thr ftS mClustersEmbedd ngPa rScore d
 }
-import com.twitter.simclusters_v2.thriftscala.TopicId
-import com.twitter.simclusters_v2.thriftscala.{Score => ThriftScore}
-import com.twitter.simclusters_v2.thriftscala.{ScoreId => ThriftScoreId}
-import com.twitter.storehaus.ReadableStore
-import com.twitter.topic_recos.common._
-import com.twitter.topic_recos.common.Configs.DefaultModelVersion
-import com.twitter.tsp.stores.TopicTweetsCosineSimilarityAggregateStore.ScoreKey
-import com.twitter.util.Future
+ mport com.tw ter.s mclusters_v2.thr ftscala.Top c d
+ mport com.tw ter.s mclusters_v2.thr ftscala.{Score => Thr ftScore}
+ mport com.tw ter.s mclusters_v2.thr ftscala.{Score d => Thr ftScore d}
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.top c_recos.common._
+ mport com.tw ter.top c_recos.common.Conf gs.DefaultModelVers on
+ mport com.tw ter.tsp.stores.Top cT etsCos neS m lar yAggregateStore.ScoreKey
+ mport com.tw ter.ut l.Future
 
-object TopicTweetsCosineSimilarityAggregateStore {
+object Top cT etsCos neS m lar yAggregateStore {
 
-  val TopicEmbeddingTypes: Seq[EmbeddingType] =
+  val Top cEmbedd ngTypes: Seq[Embedd ngType] =
     Seq(
-      EmbeddingType.FavTfgTopic,
-      EmbeddingType.LogFavBasedKgoApeTopic
+      Embedd ngType.FavTfgTop c,
+      Embedd ngType.LogFavBasedKgoApeTop c
     )
 
-  // Add the new embedding types if want to test the new Tweet embedding performance.
-  val TweetEmbeddingTypes: Seq[EmbeddingType] = Seq(EmbeddingType.LogFavBasedTweet)
+  // Add t  new embedd ng types  f want to test t  new T et embedd ng performance.
+  val T etEmbedd ngTypes: Seq[Embedd ngType] = Seq(Embedd ngType.LogFavBasedT et)
 
-  val ModelVersions: Seq[ModelVersion] =
-    Seq(DefaultModelVersion)
+  val ModelVers ons: Seq[ModelVers on] =
+    Seq(DefaultModelVers on)
 
   val DefaultScoreKeys: Seq[ScoreKey] = {
     for {
-      modelVersion <- ModelVersions
-      topicEmbeddingType <- TopicEmbeddingTypes
-      tweetEmbeddingType <- TweetEmbeddingTypes
-    } yield {
+      modelVers on <- ModelVers ons
+      top cEmbedd ngType <- Top cEmbedd ngTypes
+      t etEmbedd ngType <- T etEmbedd ngTypes
+    } y eld {
       ScoreKey(
-        topicEmbeddingType = topicEmbeddingType,
-        tweetEmbeddingType = tweetEmbeddingType,
-        modelVersion = modelVersion
+        top cEmbedd ngType = top cEmbedd ngType,
+        t etEmbedd ngType = t etEmbedd ngType,
+        modelVers on = modelVers on
       )
     }
   }
 
   case class ScoreKey(
-    topicEmbeddingType: EmbeddingType,
-    tweetEmbeddingType: EmbeddingType,
-    modelVersion: ModelVersion)
+    top cEmbedd ngType: Embedd ngType,
+    t etEmbedd ngType: Embedd ngType,
+    modelVers on: ModelVers on)
 
   def getRawScoresMap(
-    topicId: TopicId,
-    tweetId: TweetId,
+    top c d: Top c d,
+    t et d: T et d,
     scoreKeys: Seq[ScoreKey],
-    representationScorerStore: ReadableStore[ThriftScoreId, ThriftScore]
+    representat onScorerStore: ReadableStore[Thr ftScore d, Thr ftScore]
   ): Future[Map[ScoreKey, Double]] = {
     val scoresMapFut = scoreKeys.map { key =>
-      val scoreInternalId = ScoreInternalId.SimClustersEmbeddingPairScoreId(
-        ThriftSimClustersEmbeddingPairScoreId(
-          buildTopicEmbedding(topicId, key.topicEmbeddingType, key.modelVersion),
-          SimClustersEmbeddingId(
-            key.tweetEmbeddingType,
-            key.modelVersion,
-            InternalId.TweetId(tweetId))
+      val score nternal d = Score nternal d.S mClustersEmbedd ngPa rScore d(
+        Thr ftS mClustersEmbedd ngPa rScore d(
+          bu ldTop cEmbedd ng(top c d, key.top cEmbedd ngType, key.modelVers on),
+          S mClustersEmbedd ng d(
+            key.t etEmbedd ngType,
+            key.modelVers on,
+             nternal d.T et d(t et d))
         ))
-      val scoreFut = representationScorerStore
+      val scoreFut = representat onScorerStore
         .get(
-          ThriftScoreId(
-            algorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity, // Hard code as cosine sim
-            internalId = scoreInternalId
+          Thr ftScore d(
+            algor hm = Scor ngAlgor hm.Pa rEmbedd ngCos neS m lar y, // Hard code as cos ne s m
+             nternal d = score nternal d
           ))
       key -> scoreFut
     }.toMap
 
     Future
       .collect(scoresMapFut).map(_.collect {
-        case (key, Some(ThriftScore(score))) =>
+        case (key, So (Thr ftScore(score))) =>
           (key, score)
       })
   }
 }
 
-case class TopicTweetsCosineSimilarityAggregateStore(
-  representationScorerStore: ReadableStore[ThriftScoreId, ThriftScore]
+case class Top cT etsCos neS m lar yAggregateStore(
+  representat onScorerStore: ReadableStore[Thr ftScore d, Thr ftScore]
 )(
-  statsReceiver: StatsReceiver)
-    extends ReadableStore[(TopicId, TweetId, Seq[ScoreKey]), Map[ScoreKey, Double]] {
-  import TopicTweetsCosineSimilarityAggregateStore._
+  statsRece ver: StatsRece ver)
+    extends ReadableStore[(Top c d, T et d, Seq[ScoreKey]), Map[ScoreKey, Double]] {
+   mport Top cT etsCos neS m lar yAggregateStore._
 
-  override def get(k: (TopicId, TweetId, Seq[ScoreKey])): Future[Option[Map[ScoreKey, Double]]] = {
-    statsReceiver.counter("topicTweetsCosineSimilariltyAggregateStore").incr()
-    getRawScoresMap(k._1, k._2, k._3, representationScorerStore).map(Some(_))
+  overr de def get(k: (Top c d, T et d, Seq[ScoreKey])): Future[Opt on[Map[ScoreKey, Double]]] = {
+    statsRece ver.counter("top cT etsCos neS m lar ltyAggregateStore"). ncr()
+    getRawScoresMap(k._1, k._2, k._3, representat onScorerStore).map(So (_))
   }
 }

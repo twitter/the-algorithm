@@ -1,43 +1,43 @@
-package com.twitter.simclusters_v2.summingbird.stores
+package com.tw ter.s mclusters_v2.summ ngb rd.stores
 
-import com.twitter.frigate.common.store.strato.StratoStore
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.ModelVersions._
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.TopicId
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.Client
+ mport com.tw ter.fr gate.common.store.strato.StratoStore
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons._
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng d
+ mport com.tw ter.s mclusters_v2.thr ftscala.Top c d
+ mport com.tw ter.s mclusters_v2.thr ftscala.{S mClustersEmbedd ng => Thr ftS mClustersEmbedd ng}
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.strato.cl ent.Cl ent
 
-object ApeTopicEmbeddingStore {
+object ApeTop cEmbedd ngStore {
 
-  private val logFavBasedAPEColumn20M145K2020 =
-    "recommendations/simclusters_v2/embeddings/logFavBasedAPE20M145K2020"
+  pr vate val logFavBasedAPEColumn20M145K2020 =
+    "recom ndat ons/s mclusters_v2/embedd ngs/logFavBasedAPE20M145K2020"
 
-  private def getStore(
-    stratoClient: Client,
-    column: String
-  ): ReadableStore[SimClustersEmbeddingId, ThriftSimClustersEmbedding] = {
+  pr vate def getStore(
+    stratoCl ent: Cl ent,
+    column: Str ng
+  ): ReadableStore[S mClustersEmbedd ng d, Thr ftS mClustersEmbedd ng] = {
     StratoStore
-      .withUnitView[SimClustersEmbeddingId, ThriftSimClustersEmbedding](stratoClient, column)
+      .w hUn V ew[S mClustersEmbedd ng d, Thr ftS mClustersEmbedd ng](stratoCl ent, column)
   }
 
-  def getFavBasedLocaleEntityEmbedding2020Store(
-    stratoClient: Client,
-  ): ReadableStore[TopicId, SimClustersEmbedding] = {
+  def getFavBasedLocaleEnt yEmbedd ng2020Store(
+    stratoCl ent: Cl ent,
+  ): ReadableStore[Top c d, S mClustersEmbedd ng] = {
 
-    getStore(stratoClient, logFavBasedAPEColumn20M145K2020)
-      .composeKeyMapping[TopicId] { topicId =>
-        SimClustersEmbeddingId(
-          EmbeddingType.LogFavBasedKgoApeTopic,
-          ModelVersions.Model20M145K2020,
-          InternalId.TopicId(topicId)
+    getStore(stratoCl ent, logFavBasedAPEColumn20M145K2020)
+      .composeKeyMapp ng[Top c d] { top c d =>
+        S mClustersEmbedd ng d(
+          Embedd ngType.LogFavBasedKgoApeTop c,
+          ModelVers ons.Model20M145K2020,
+           nternal d.Top c d(top c d)
         )
       }
-      .mapValues(SimClustersEmbedding(_))
+      .mapValues(S mClustersEmbedd ng(_))
   }
 
 }

@@ -1,361 +1,361 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.flex ble_ nject on_p pel ne
 
-import com.twitter.onboarding.injections.{thriftscala => onboardingthrift}
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CenterCoverHalfCoverDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverBehaviorDismiss
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverBehaviorNavigate
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverCta
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverCtaBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverHalfCoverDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverImage
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.HalfCoverDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon._
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.FollowAllMessageActionType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.LargeUserFacepileDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageActionType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageImage
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageTextAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.UserFacepile
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Bounce
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.ButtonStyle
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Default
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Primary
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Secondary
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Text
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Destructive
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Neutral
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.DestructiveSecondary
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.DestructiveText
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.DeepLink
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Dismiss
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.DismissInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ExternalUrl
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FollowGeneralContextType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageAnimationType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FullWidth
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Icon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.IconSmall
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.UrtEndpoint
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.UrtEndpointOptions
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Center
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Natural
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Plain
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.ReferenceObject
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextAlignment
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextEntity
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextFormat
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextCashtag
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextHashtag
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextList
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextMention
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextUser
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Strong
+ mport com.tw ter.onboard ng. nject ons.{thr ftscala => onboard ngthr ft}
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover.CenterCoverHalfCoverD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover.CoverBehav orD sm ss
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover.CoverBehav orNav gate
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover.CoverCta
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover.CoverCtaBehav or
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover.CoverHalfCoverD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover.Cover mage
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover.HalfCoverD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. con._
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage.FollowAll ssageAct onType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage.LargeUserFacep leD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage. ssageAct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage. ssageAct onType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage. ssage mage
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage. ssageTextAct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage.UserFacep le
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Bounce
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.button.ButtonStyle
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.button.Default
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.button.Pr mary
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.button.Secondary
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.button.Text
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.button.Destruct ve
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.button.Neutral
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.button.Destruct veSecondary
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.button.Destruct veText
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Callback
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEvent nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.DeepL nk
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.D sm ss
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.D sm ss nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.ExternalUrl
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FeedbackAct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FeedbackAct on nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FollowGeneralContextType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.GeneralContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata. mageAn mat onType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata. mageD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata. mageVar ant
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FullW dth
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata. con
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata. conSmall
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Soc alContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Url
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.UrtEndpo nt
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.UrtEndpo ntOpt ons
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.Center
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.Natural
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.Pla n
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.ReferenceObject
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chText
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chTextAl gn nt
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chTextEnt y
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chTextFormat
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chTextCashtag
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chTextHashtag
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chTextL st
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chText nt on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chTextUser
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.Strong
 
 /***
- * Helper class to convert onboarding thrift to product-mixer models
+ *  lper class to convert onboard ng thr ft to product-m xer models
  */
-object OnboardingInjectionConversions {
+object Onboard ng nject onConvers ons {
 
-  def convertFeedbackInfo(
-    feedbackInfo: onboardingthrift.FeedbackInfo
-  ): FeedbackActionInfo = {
-    val actions = feedbackInfo.actions.map {
-      case onboardingthrift.FeedbackAction.DismissAction(dismissAction) =>
-        FeedbackAction(
-          Dismiss,
-          prompt = dismissAction.prompt,
-          confirmation = dismissAction.confirmation,
-          hasUndoAction = dismissAction.hasUndoAction,
-          feedbackUrl = dismissAction.feedbackUrl,
-          childFeedbackActions =
+  def convertFeedback nfo(
+    feedback nfo: onboard ngthr ft.Feedback nfo
+  ): FeedbackAct on nfo = {
+    val act ons = feedback nfo.act ons.map {
+      case onboard ngthr ft.FeedbackAct on.D sm ssAct on(d sm ssAct on) =>
+        FeedbackAct on(
+          D sm ss,
+          prompt = d sm ssAct on.prompt,
+          conf rmat on = d sm ssAct on.conf rmat on,
+          hasUndoAct on = d sm ssAct on.hasUndoAct on,
+          feedbackUrl = d sm ssAct on.feedbackUrl,
+          ch ldFeedbackAct ons =
             None, 
-          confirmationDisplayType = None,
-          clientEventInfo = None,
-          icon = None,
-          richBehavior = None,
+          conf rmat onD splayType = None,
+          cl entEvent nfo = None,
+           con = None,
+          r chBehav or = None,
           subprompt = None,
           encodedFeedbackRequest = None
         )
-      case onboardingthrift.FeedbackAction.UnknownUnionField(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+      case onboard ngthr ft.FeedbackAct on.UnknownUn onF eld(value) =>
+        throw new UnsupportedOperat onExcept on(s"Unknown product: $value")
     }
 
-    FeedbackActionInfo(
-      feedbackActions = actions,
-      feedbackMetadata = None,
-      displayContext = None,
-      clientEventInfo = None)
+    FeedbackAct on nfo(
+      feedbackAct ons = act ons,
+      feedback tadata = None,
+      d splayContext = None,
+      cl entEvent nfo = None)
   }
 
-  def convertClientEventInfo(input: onboardingthrift.ClientEventInfo): ClientEventInfo =
-    ClientEventInfo(
-      component = input.component,
-      element = input.element,
-      details = None,
-      action = input.action,
-      entityToken = None)
+  def convertCl entEvent nfo( nput: onboard ngthr ft.Cl entEvent nfo): Cl entEvent nfo =
+    Cl entEvent nfo(
+      component =  nput.component,
+      ele nt =  nput.ele nt,
+      deta ls = None,
+      act on =  nput.act on,
+      ent yToken = None)
 
-  def convertCallback(callback: onboardingthrift.Callback): Callback =
-    Callback(callback.endpoint)
+  def convertCallback(callback: onboard ngthr ft.Callback): Callback =
+    Callback(callback.endpo nt)
 
-  def convertImage(image: onboardingthrift.Image): MessageImage =
-    MessageImage(
-      Set(convertImageVariant(image.image)),
+  def convert mage( mage: onboard ngthr ft. mage):  ssage mage =
+     ssage mage(
+      Set(convert mageVar ant( mage. mage)),
       backgroundColor =
         None 
     )
 
-  def convertCoverImage(image: onboardingthrift.Image): CoverImage =
-    CoverImage(
-      convertImageVariant(image.image),
-      imageDisplayType = convertImageDisplayType(image.imageDisplayType),
-      imageAnimationType = image.imageAnimationType.map(convertImageAnimationType),
+  def convertCover mage( mage: onboard ngthr ft. mage): Cover mage =
+    Cover mage(
+      convert mageVar ant( mage. mage),
+       mageD splayType = convert mageD splayType( mage. mageD splayType),
+       mageAn mat onType =  mage. mageAn mat onType.map(convert mageAn mat onType),
     )
 
-  def convertImageDisplayType(
-    imageDisplayType: onboardingthrift.ImageDisplayType
-  ): ImageDisplayType =
-    imageDisplayType match {
-      case onboardingthrift.ImageDisplayType.Icon => Icon
-      case onboardingthrift.ImageDisplayType.FullWidth => FullWidth
-      case onboardingthrift.ImageDisplayType.IconSmall => IconSmall
-      case onboardingthrift.ImageDisplayType.EnumUnknownImageDisplayType(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  def convert mageD splayType(
+     mageD splayType: onboard ngthr ft. mageD splayType
+  ):  mageD splayType =
+     mageD splayType match {
+      case onboard ngthr ft. mageD splayType. con =>  con
+      case onboard ngthr ft. mageD splayType.FullW dth => FullW dth
+      case onboard ngthr ft. mageD splayType. conSmall =>  conSmall
+      case onboard ngthr ft. mageD splayType.EnumUnknown mageD splayType(value) =>
+        throw new UnsupportedOperat onExcept on(s"Unknown product: $value")
     }
 
-  private def convertImageAnimationType(
-    imageAnimationType: onboardingthrift.ImageAnimationType
-  ): ImageAnimationType =
-    imageAnimationType match {
-      case onboardingthrift.ImageAnimationType.Bounce => Bounce
-      case onboardingthrift.ImageAnimationType.EnumUnknownImageAnimationType(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  pr vate def convert mageAn mat onType(
+     mageAn mat onType: onboard ngthr ft. mageAn mat onType
+  ):  mageAn mat onType =
+     mageAn mat onType match {
+      case onboard ngthr ft. mageAn mat onType.Bounce => Bounce
+      case onboard ngthr ft. mageAn mat onType.EnumUnknown mageAn mat onType(value) =>
+        throw new UnsupportedOperat onExcept on(s"Unknown product: $value")
     }
 
-  def convertImageVariant(imageVariant: onboardingthrift.ImageVariant): ImageVariant =
-    ImageVariant(
-      url = imageVariant.url,
-      width = imageVariant.width,
-      height = imageVariant.height,
+  def convert mageVar ant( mageVar ant: onboard ngthr ft. mageVar ant):  mageVar ant =
+     mageVar ant(
+      url =  mageVar ant.url,
+      w dth =  mageVar ant.w dth,
+        ght =  mageVar ant.  ght,
       palette = None)
 
-  def convertButtonAction(
-    buttonAction: onboardingthrift.ButtonAction
-  ): MessageTextAction =
-    MessageTextAction(
-      buttonAction.text,
-      MessageAction(
-        dismissOnClick = buttonAction.dismissOnClick.getOrElse(true),
-        url = getActionUrl(buttonAction),
-        clientEventInfo = Some(convertClientEventInfo(buttonAction.clientEventInfo)),
-        onClickCallbacks = buttonAction.callbacks.map(_.map(convertCallback).toList)
+  def convertButtonAct on(
+    buttonAct on: onboard ngthr ft.ButtonAct on
+  ):  ssageTextAct on =
+     ssageTextAct on(
+      buttonAct on.text,
+       ssageAct on(
+        d sm ssOnCl ck = buttonAct on.d sm ssOnCl ck.getOrElse(true),
+        url = getAct onUrl(buttonAct on),
+        cl entEvent nfo = So (convertCl entEvent nfo(buttonAct on.cl entEvent nfo)),
+        onCl ckCallbacks = buttonAct on.callbacks.map(_.map(convertCallback).toL st)
       )
     )
 
-  private def getActionUrl(buttonAction: onboardingthrift.ButtonAction) =
-    buttonAction.buttonBehavior match {
-      case onboardingthrift.ButtonBehavior.Navigate(navigate) => Some(navigate.url.url)
-      case onboardingthrift.ButtonBehavior.Dismiss(_) => None
-      case onboardingthrift.ButtonBehavior.UnknownUnionField(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  pr vate def getAct onUrl(buttonAct on: onboard ngthr ft.ButtonAct on) =
+    buttonAct on.buttonBehav or match {
+      case onboard ngthr ft.ButtonBehav or.Nav gate(nav gate) => So (nav gate.url.url)
+      case onboard ngthr ft.ButtonBehav or.D sm ss(_) => None
+      case onboard ngthr ft.ButtonBehav or.UnknownUn onF eld(value) =>
+        throw new UnsupportedOperat onExcept on(s"Unknown product: $value")
     }
 
-  def convertRichText(
-    richText: com.twitter.onboarding.injections.thriftscala.RichText
-  ): RichText = {
-    val entities = richText.entities.map(entity =>
-      RichTextEntity(
-        entity.fromIndex,
-        entity.toIndex,
-        entity.ref.map(convertRef),
-        entity.format.map(convertFormat)))
-    RichText(
-      text = richText.text,
-      entities = entities.toList,
-      rtl = richText.rtl,
-      alignment = richText.alignment.map(convertAlignment))
+  def convertR chText(
+    r chText: com.tw ter.onboard ng. nject ons.thr ftscala.R chText
+  ): R chText = {
+    val ent  es = r chText.ent  es.map(ent y =>
+      R chTextEnt y(
+        ent y.from ndex,
+        ent y.to ndex,
+        ent y.ref.map(convertRef),
+        ent y.format.map(convertFormat)))
+    R chText(
+      text = r chText.text,
+      ent  es = ent  es.toL st,
+      rtl = r chText.rtl,
+      al gn nt = r chText.al gn nt.map(convertAl gn nt))
   }
 
-  private def convertAlignment(alignment: onboardingthrift.RichTextAlignment): RichTextAlignment =
-    alignment match {
-      case onboardingthrift.RichTextAlignment.Natural => Natural
-      case onboardingthrift.RichTextAlignment.Center => Center
-      case onboardingthrift.RichTextAlignment.EnumUnknownRichTextAlignment(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  pr vate def convertAl gn nt(al gn nt: onboard ngthr ft.R chTextAl gn nt): R chTextAl gn nt =
+    al gn nt match {
+      case onboard ngthr ft.R chTextAl gn nt.Natural => Natural
+      case onboard ngthr ft.R chTextAl gn nt.Center => Center
+      case onboard ngthr ft.R chTextAl gn nt.EnumUnknownR chTextAl gn nt(value) =>
+        throw new UnsupportedOperat onExcept on(s"Unknown product: $value")
     }
 
-  private def convertRef(ref: onboardingthrift.ReferenceObject): ReferenceObject =
+  pr vate def convertRef(ref: onboard ngthr ft.ReferenceObject): ReferenceObject =
     ref match {
-      case onboardingthrift.ReferenceObject.User(user) => RichTextUser(user.id)
-      case onboardingthrift.ReferenceObject.Mention(mention) =>
-        RichTextMention(mention.id, mention.screenName)
-      case onboardingthrift.ReferenceObject.Hashtag(hashtag) => RichTextHashtag(hashtag.text)
+      case onboard ngthr ft.ReferenceObject.User(user) => R chTextUser(user. d)
+      case onboard ngthr ft.ReferenceObject. nt on( nt on) =>
+        R chText nt on( nt on. d,  nt on.screenNa )
+      case onboard ngthr ft.ReferenceObject.Hashtag(hashtag) => R chTextHashtag(hashtag.text)
 
-      case onboardingthrift.ReferenceObject.Cashtag(cashtag) => RichTextCashtag(cashtag.text)
-      case onboardingthrift.ReferenceObject.TwitterList(twList) =>
-        RichTextList(twList.id, twList.url)
-      case onboardingthrift.ReferenceObject.Url(url) => RichTextHashtag(url.url)
-      case onboardingthrift.ReferenceObject.UnknownUnionField(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+      case onboard ngthr ft.ReferenceObject.Cashtag(cashtag) => R chTextCashtag(cashtag.text)
+      case onboard ngthr ft.ReferenceObject.Tw terL st(twL st) =>
+        R chTextL st(twL st. d, twL st.url)
+      case onboard ngthr ft.ReferenceObject.Url(url) => R chTextHashtag(url.url)
+      case onboard ngthr ft.ReferenceObject.UnknownUn onF eld(value) =>
+        throw new UnsupportedOperat onExcept on(s"Unknown product: $value")
     }
 
-  private def convertFormat(format: onboardingthrift.RichTextFormat): RichTextFormat =
+  pr vate def convertFormat(format: onboard ngthr ft.R chTextFormat): R chTextFormat =
     format match {
-      case onboardingthrift.RichTextFormat.Plain => Plain
-      case onboardingthrift.RichTextFormat.Strong => Strong
-      case onboardingthrift.RichTextFormat.EnumUnknownRichTextFormat(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+      case onboard ngthr ft.R chTextFormat.Pla n => Pla n
+      case onboard ngthr ft.R chTextFormat.Strong => Strong
+      case onboard ngthr ft.R chTextFormat.EnumUnknownR chTextFormat(value) =>
+        throw new UnsupportedOperat onExcept on(s"Unknown product: $value")
     }
 
-  // Specific to Message prompt
-  def convertSocialContext(socialContext: onboardingthrift.RichText): SocialContext =
+  // Spec f c to  ssage prompt
+  def convertSoc alContext(soc alContext: onboard ngthr ft.R chText): Soc alContext =
     GeneralContext(
       contextType = FollowGeneralContextType,
-      text = socialContext.text,
+      text = soc alContext.text,
       url = None,
-      contextImageUrls = None,
-      landingUrl = None)
+      context mageUrls = None,
+      land ngUrl = None)
 
-  def convertUserFacePile(
-    userFacepile: onboardingthrift.PromptUserFacepile
-  ): UserFacepile =
-    UserFacepile(
-      userIds = userFacepile.userIds.toList,
-      featuredUserIds = userFacepile.featuredUserIds.toList,
-      action = userFacepile.action.map(convertButtonAction),
-      actionType = userFacepile.actionType.map(convertUserFacePileActionType),
-      displaysFeaturingText = userFacepile.displaysFeaturingText,
-      displayType = Some(LargeUserFacepileDisplayType)
+  def convertUserFaceP le(
+    userFacep le: onboard ngthr ft.PromptUserFacep le
+  ): UserFacep le =
+    UserFacep le(
+      user ds = userFacep le.user ds.toL st,
+      featuredUser ds = userFacep le.featuredUser ds.toL st,
+      act on = userFacep le.act on.map(convertButtonAct on),
+      act onType = userFacep le.act onType.map(convertUserFaceP leAct onType),
+      d splaysFeatur ngText = userFacep le.d splaysFeatur ngText,
+      d splayType = So (LargeUserFacep leD splayType)
     )
 
-  private def convertUserFacePileActionType(
-    actionType: onboardingthrift.FacepileActionType
-  ): MessageActionType =
-    actionType match {
-      case onboardingthrift.FacepileActionType.FollowAll => FollowAllMessageActionType
-      case onboardingthrift.FacepileActionType.EnumUnknownFacepileActionType(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  pr vate def convertUserFaceP leAct onType(
+    act onType: onboard ngthr ft.Facep leAct onType
+  ):  ssageAct onType =
+    act onType match {
+      case onboard ngthr ft.Facep leAct onType.FollowAll => FollowAll ssageAct onType
+      case onboard ngthr ft.Facep leAct onType.EnumUnknownFacep leAct onType(value) =>
+        throw new UnsupportedOperat onExcept on(s"Unknown product: $value")
     }
 
-  // Specific to Cover
+  // Spec f c to Cover
 
-  def convertHalfCoverDisplayType(
-    displayType: onboardingthrift.HalfCoverDisplayType
-  ): HalfCoverDisplayType =
-    displayType match {
-      case onboardingthrift.HalfCoverDisplayType.Cover => CoverHalfCoverDisplayType
-      case onboardingthrift.HalfCoverDisplayType.CenterCover =>
-        CenterCoverHalfCoverDisplayType
-      case onboardingthrift.HalfCoverDisplayType.EnumUnknownHalfCoverDisplayType(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  def convertHalfCoverD splayType(
+    d splayType: onboard ngthr ft.HalfCoverD splayType
+  ): HalfCoverD splayType =
+    d splayType match {
+      case onboard ngthr ft.HalfCoverD splayType.Cover => CoverHalfCoverD splayType
+      case onboard ngthr ft.HalfCoverD splayType.CenterCover =>
+        CenterCoverHalfCoverD splayType
+      case onboard ngthr ft.HalfCoverD splayType.EnumUnknownHalfCoverD splayType(value) =>
+        throw new UnsupportedOperat onExcept on(s"Unknown product: $value")
     }
 
-  def convertDismissInfo(dismissInfo: onboardingthrift.DismissInfo): DismissInfo =
-    DismissInfo(dismissInfo.callbacks.map(_.map(convertCallback)))
+  def convertD sm ss nfo(d sm ss nfo: onboard ngthr ft.D sm ss nfo): D sm ss nfo =
+    D sm ss nfo(d sm ss nfo.callbacks.map(_.map(convertCallback)))
 
   def convertCoverCta(
-    buttonAction: onboardingthrift.ButtonAction
+    buttonAct on: onboard ngthr ft.ButtonAct on
   ): CoverCta =
     CoverCta(
-      buttonAction.text,
-      ctaBehavior = convertCoverCtaBehavior(buttonAction.buttonBehavior),
-      callbacks = buttonAction.callbacks.map(_.map(convertCallback).toList),
-      clientEventInfo = Some(convertClientEventInfo(buttonAction.clientEventInfo)),
-      icon = buttonAction.icon.map(covertHorizonIcon),
-      buttonStyle = buttonAction.buttonStyle.map(covertButtonStyle)
+      buttonAct on.text,
+      ctaBehav or = convertCoverCtaBehav or(buttonAct on.buttonBehav or),
+      callbacks = buttonAct on.callbacks.map(_.map(convertCallback).toL st),
+      cl entEvent nfo = So (convertCl entEvent nfo(buttonAct on.cl entEvent nfo)),
+       con = buttonAct on. con.map(covertHor zon con),
+      buttonStyle = buttonAct on.buttonStyle.map(covertButtonStyle)
     )
 
-  private def convertCoverCtaBehavior(
-    behavior: onboardingthrift.ButtonBehavior
-  ): CoverCtaBehavior =
-    behavior match {
-      case onboardingthrift.ButtonBehavior.Navigate(navigate) =>
-        CoverBehaviorNavigate(convertUrl(navigate.url))
-      case onboardingthrift.ButtonBehavior.Dismiss(dismiss) =>
-        CoverBehaviorDismiss(dismiss.feedbackMessage.map(convertRichText))
-      case onboardingthrift.ButtonBehavior.UnknownUnionField(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  pr vate def convertCoverCtaBehav or(
+    behav or: onboard ngthr ft.ButtonBehav or
+  ): CoverCtaBehav or =
+    behav or match {
+      case onboard ngthr ft.ButtonBehav or.Nav gate(nav gate) =>
+        CoverBehav orNav gate(convertUrl(nav gate.url))
+      case onboard ngthr ft.ButtonBehav or.D sm ss(d sm ss) =>
+        CoverBehav orD sm ss(d sm ss.feedback ssage.map(convertR chText))
+      case onboard ngthr ft.ButtonBehav or.UnknownUn onF eld(value) =>
+        throw new UnsupportedOperat onExcept on(s"Unknown product: $value")
     }
 
-  private def covertButtonStyle(bStyle: onboardingthrift.CtaButtonStyle): ButtonStyle =
+  pr vate def covertButtonStyle(bStyle: onboard ngthr ft.CtaButtonStyle): ButtonStyle =
     bStyle match {
-      case onboardingthrift.CtaButtonStyle.Default => Default
-      case onboardingthrift.CtaButtonStyle.Primary => Primary
-      case onboardingthrift.CtaButtonStyle.Secondary => Secondary
-      case onboardingthrift.CtaButtonStyle.Text => Text
-      case onboardingthrift.CtaButtonStyle.Destructive => Destructive
-      case onboardingthrift.CtaButtonStyle.Neutral => Neutral
-      case onboardingthrift.CtaButtonStyle.DestructiveSecondary => DestructiveSecondary
-      case onboardingthrift.CtaButtonStyle.DestructiveText => DestructiveText
-      case onboardingthrift.CtaButtonStyle.EnumUnknownCtaButtonStyle(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+      case onboard ngthr ft.CtaButtonStyle.Default => Default
+      case onboard ngthr ft.CtaButtonStyle.Pr mary => Pr mary
+      case onboard ngthr ft.CtaButtonStyle.Secondary => Secondary
+      case onboard ngthr ft.CtaButtonStyle.Text => Text
+      case onboard ngthr ft.CtaButtonStyle.Destruct ve => Destruct ve
+      case onboard ngthr ft.CtaButtonStyle.Neutral => Neutral
+      case onboard ngthr ft.CtaButtonStyle.Destruct veSecondary => Destruct veSecondary
+      case onboard ngthr ft.CtaButtonStyle.Destruct veText => Destruct veText
+      case onboard ngthr ft.CtaButtonStyle.EnumUnknownCtaButtonStyle(value) =>
+        throw new UnsupportedOperat onExcept on(s"Unknown product: $value")
     }
 
-  private def covertHorizonIcon(icon: onboardingthrift.HorizonIcon): HorizonIcon =
-    icon match {
-      case onboardingthrift.HorizonIcon.Bookmark => Bookmark
-      case onboardingthrift.HorizonIcon.Moment => Moment
-      case onboardingthrift.HorizonIcon.Debug => Debug
-      case onboardingthrift.HorizonIcon.Error => Error
-      case onboardingthrift.HorizonIcon.Follow => Follow
-      case onboardingthrift.HorizonIcon.Unfollow => Unfollow
-      case onboardingthrift.HorizonIcon.Smile => Smile
-      case onboardingthrift.HorizonIcon.Frown => Frown
-      case onboardingthrift.HorizonIcon.Help => Help
-      case onboardingthrift.HorizonIcon.Link => Link
-      case onboardingthrift.HorizonIcon.Message => Message
-      case onboardingthrift.HorizonIcon.No => No
-      case onboardingthrift.HorizonIcon.Outgoing => Outgoing
-      case onboardingthrift.HorizonIcon.Pin => Pin
-      case onboardingthrift.HorizonIcon.Retweet => Retweet
-      case onboardingthrift.HorizonIcon.Speaker => Speaker
-      case onboardingthrift.HorizonIcon.Trashcan => Trashcan
-      case onboardingthrift.HorizonIcon.Feedback => Feedback
-      case onboardingthrift.HorizonIcon.FeedbackClose => FeedbackClose
-      case onboardingthrift.HorizonIcon.EyeOff => EyeOff
-      case onboardingthrift.HorizonIcon.Moderation => Moderation
-      case onboardingthrift.HorizonIcon.Topic => Topic
-      case onboardingthrift.HorizonIcon.TopicClose => TopicClose
-      case onboardingthrift.HorizonIcon.Flag => Flag
-      case onboardingthrift.HorizonIcon.TopicFilled => TopicFilled
-      case onboardingthrift.HorizonIcon.NotificationsFollow => NotificationsFollow
-      case onboardingthrift.HorizonIcon.Person => Person
-      case onboardingthrift.HorizonIcon.Logo => Logo
-      case onboardingthrift.HorizonIcon.EnumUnknownHorizonIcon(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+  pr vate def covertHor zon con( con: onboard ngthr ft.Hor zon con): Hor zon con =
+     con match {
+      case onboard ngthr ft.Hor zon con.Bookmark => Bookmark
+      case onboard ngthr ft.Hor zon con.Mo nt => Mo nt
+      case onboard ngthr ft.Hor zon con.Debug => Debug
+      case onboard ngthr ft.Hor zon con.Error => Error
+      case onboard ngthr ft.Hor zon con.Follow => Follow
+      case onboard ngthr ft.Hor zon con.Unfollow => Unfollow
+      case onboard ngthr ft.Hor zon con.Sm le => Sm le
+      case onboard ngthr ft.Hor zon con.Frown => Frown
+      case onboard ngthr ft.Hor zon con. lp =>  lp
+      case onboard ngthr ft.Hor zon con.L nk => L nk
+      case onboard ngthr ft.Hor zon con. ssage =>  ssage
+      case onboard ngthr ft.Hor zon con.No => No
+      case onboard ngthr ft.Hor zon con.Outgo ng => Outgo ng
+      case onboard ngthr ft.Hor zon con.P n => P n
+      case onboard ngthr ft.Hor zon con.Ret et => Ret et
+      case onboard ngthr ft.Hor zon con.Speaker => Speaker
+      case onboard ngthr ft.Hor zon con.Trashcan => Trashcan
+      case onboard ngthr ft.Hor zon con.Feedback => Feedback
+      case onboard ngthr ft.Hor zon con.FeedbackClose => FeedbackClose
+      case onboard ngthr ft.Hor zon con.EyeOff => EyeOff
+      case onboard ngthr ft.Hor zon con.Moderat on => Moderat on
+      case onboard ngthr ft.Hor zon con.Top c => Top c
+      case onboard ngthr ft.Hor zon con.Top cClose => Top cClose
+      case onboard ngthr ft.Hor zon con.Flag => Flag
+      case onboard ngthr ft.Hor zon con.Top cF lled => Top cF lled
+      case onboard ngthr ft.Hor zon con.Not f cat onsFollow => Not f cat onsFollow
+      case onboard ngthr ft.Hor zon con.Person => Person
+      case onboard ngthr ft.Hor zon con.Logo => Logo
+      case onboard ngthr ft.Hor zon con.EnumUnknownHor zon con(value) =>
+        throw new UnsupportedOperat onExcept on(s"Unknown product: $value")
 
     }
 
-  def convertUrl(url: onboardingthrift.Url): Url = {
+  def convertUrl(url: onboard ngthr ft.Url): Url = {
     val urlType = url.urlType match {
-      case onboardingthrift.UrlType.ExternalUrl => ExternalUrl
-      case onboardingthrift.UrlType.DeepLink => DeepLink
-      case onboardingthrift.UrlType.UrtEndpoint => UrtEndpoint
-      case onboardingthrift.UrlType.EnumUnknownUrlType(value) =>
-        throw new UnsupportedOperationException(s"Unknown product: $value")
+      case onboard ngthr ft.UrlType.ExternalUrl => ExternalUrl
+      case onboard ngthr ft.UrlType.DeepL nk => DeepL nk
+      case onboard ngthr ft.UrlType.UrtEndpo nt => UrtEndpo nt
+      case onboard ngthr ft.UrlType.EnumUnknownUrlType(value) =>
+        throw new UnsupportedOperat onExcept on(s"Unknown product: $value")
     }
-    Url(urlType, url.url, url.urtEndpointOptions.map(convertUrtEndpointOptions))
+    Url(urlType, url.url, url.urtEndpo ntOpt ons.map(convertUrtEndpo ntOpt ons))
   }
 
-  private def convertUrtEndpointOptions(
-    urtEndpointOptions: onboardingthrift.UrtEndpointOptions
-  ): UrtEndpointOptions =
-    UrtEndpointOptions(
-      requestParams = urtEndpointOptions.requestParams.map(_.toMap),
-      title = urtEndpointOptions.title,
-      cacheId = urtEndpointOptions.cacheId,
-      subtitle = urtEndpointOptions.subtitle
+  pr vate def convertUrtEndpo ntOpt ons(
+    urtEndpo ntOpt ons: onboard ngthr ft.UrtEndpo ntOpt ons
+  ): UrtEndpo ntOpt ons =
+    UrtEndpo ntOpt ons(
+      requestParams = urtEndpo ntOpt ons.requestParams.map(_.toMap),
+      t le = urtEndpo ntOpt ons.t le,
+      cac  d = urtEndpo ntOpt ons.cac  d,
+      subt le = urtEndpo ntOpt ons.subt le
     )
 
 }

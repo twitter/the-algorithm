@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.component_library.candidate_source.cr_mixer
+package com.tw ter.product_m xer.component_l brary.cand date_s ce.cr_m xer
 
-import com.twitter.cr_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.cr_m xer.{thr ftscala => t}
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.st ch.St ch
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class CrMixerTweetRecommendationsCandidateSource @Inject() (
-  crMixerClient: t.CrMixer.MethodPerEndpoint)
-    extends CandidateSource[t.CrMixerTweetRequest, t.TweetRecommendation] {
+@S ngleton
+class CrM xerT etRecom ndat onsCand dateS ce @ nject() (
+  crM xerCl ent: t.CrM xer. thodPerEndpo nt)
+    extends Cand dateS ce[t.CrM xerT etRequest, t.T etRecom ndat on] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier("CrMixerTweetRecommendations")
+  overr de val  dent f er: Cand dateS ce dent f er =
+    Cand dateS ce dent f er("CrM xerT etRecom ndat ons")
 
-  override def apply(request: t.CrMixerTweetRequest): Stitch[Seq[t.TweetRecommendation]] = Stitch
-    .callFuture(crMixerClient.getTweetRecommendations(request))
-    .map(_.tweets)
+  overr de def apply(request: t.CrM xerT etRequest): St ch[Seq[t.T etRecom ndat on]] = St ch
+    .callFuture(crM xerCl ent.getT etRecom ndat ons(request))
+    .map(_.t ets)
 }

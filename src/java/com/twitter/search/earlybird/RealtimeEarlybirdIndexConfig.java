@@ -1,128 +1,128 @@
-package com.twitter.search.earlybird;
+package com.tw ter.search.earlyb rd;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.RAMDirectory;
+ mport org.apac .lucene. ndex. ndexWr erConf g;
+ mport org.apac .lucene.search. ndexSearc r;
+ mport org.apac .lucene.store.D rectory;
+ mport org.apac .lucene.store.RAMD rectory;
 
-import com.twitter.decider.Decider;
-import com.twitter.search.common.schema.DynamicSchema;
-import com.twitter.search.common.schema.SearchWhitespaceAnalyzer;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.util.CloseResourceUtil;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentData;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsFactory;
-import com.twitter.search.core.earlybird.index.inverted.IndexOptimizer;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.index.OptimizedTimeMapper;
-import com.twitter.search.earlybird.index.OptimizedTweetIDMapper;
-import com.twitter.search.earlybird.index.OutOfOrderRealtimeTweetIDMapper;
-import com.twitter.search.earlybird.index.RealtimeTimeMapper;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
-import com.twitter.search.earlybird.partition.SegmentSyncInfo;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.search.common.sc ma.Dynam cSc ma;
+ mport com.tw ter.search.common.sc ma.SearchWh espaceAnalyzer;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.common.ut l.CloseRes ceUt l;
+ mport com.tw ter.search.common.ut l. o.flushable.DataDeser al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntData;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rdRealt   ndexSeg ntData;
+ mport com.tw ter.search.core.earlyb rd. ndex.extens ons.Earlyb rd ndexExtens onsFactory;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted. ndexOpt m zer;
+ mport com.tw ter.search.earlyb rd.except on.Cr  calExcept onHandler;
+ mport com.tw ter.search.earlyb rd. ndex.Opt m zedT  Mapper;
+ mport com.tw ter.search.earlyb rd. ndex.Opt m zedT et DMapper;
+ mport com.tw ter.search.earlyb rd. ndex.OutOfOrderRealt  T et DMapper;
+ mport com.tw ter.search.earlyb rd. ndex.Realt  T  Mapper;
+ mport com.tw ter.search.earlyb rd.part  on.Search ndex ng tr cSet;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntSync nfo;
 
 /**
- * Index config for the Real-Time in-memory Tweet cluster.
+ *  ndex conf g for t  Real-T    n- mory T et cluster.
  */
-public class RealtimeEarlybirdIndexConfig extends EarlybirdIndexConfig {
-  private final CloseResourceUtil resourceCloser = new CloseResourceUtil();
+publ c class Realt  Earlyb rd ndexConf g extends Earlyb rd ndexConf g {
+  pr vate f nal CloseRes ceUt l res ceCloser = new CloseRes ceUt l();
 
-  public RealtimeEarlybirdIndexConfig(
-      EarlybirdCluster cluster, Decider decider, SearchIndexingMetricSet searchIndexingMetricSet,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    super(cluster, decider, searchIndexingMetricSet, criticalExceptionHandler);
+  publ c Realt  Earlyb rd ndexConf g(
+      Earlyb rdCluster cluster, Dec der dec der, Search ndex ng tr cSet search ndex ng tr cSet,
+      Cr  calExcept onHandler cr  calExcept onHandler) {
+    super(cluster, dec der, search ndex ng tr cSet, cr  calExcept onHandler);
   }
 
-  public RealtimeEarlybirdIndexConfig(
-      EarlybirdCluster cluster, DynamicSchema schema, Decider decider,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    super(cluster, schema, decider, searchIndexingMetricSet, criticalExceptionHandler);
+  publ c Realt  Earlyb rd ndexConf g(
+      Earlyb rdCluster cluster, Dynam cSc ma sc ma, Dec der dec der,
+      Search ndex ng tr cSet search ndex ng tr cSet,
+      Cr  calExcept onHandler cr  calExcept onHandler) {
+    super(cluster, sc ma, dec der, search ndex ng tr cSet, cr  calExcept onHandler);
   }
 
-  @Override
-  public Directory newLuceneDirectory(SegmentSyncInfo segmentSyncInfo) {
-    return new RAMDirectory();
+  @Overr de
+  publ c D rectory newLuceneD rectory(Seg ntSync nfo seg ntSync nfo) {
+    return new RAMD rectory();
   }
 
-  @Override
-  public IndexWriterConfig newIndexWriterConfig() {
-    return new IndexWriterConfig(new SearchWhitespaceAnalyzer())
-        .setSimilarity(IndexSearcher.getDefaultSimilarity());
+  @Overr de
+  publ c  ndexWr erConf g new ndexWr erConf g() {
+    return new  ndexWr erConf g(new SearchWh espaceAnalyzer())
+        .setS m lar y( ndexSearc r.getDefaultS m lar y());
   }
 
-  @Override
-  public EarlybirdIndexSegmentData newSegmentData(
-      int maxSegmentSize,
-      long timeSliceID,
-      Directory dir,
-      EarlybirdIndexExtensionsFactory extensionsFactory) {
-    return new EarlybirdRealtimeIndexSegmentData(
-        maxSegmentSize,
-        timeSliceID,
-        getSchema(),
-        new OutOfOrderRealtimeTweetIDMapper(maxSegmentSize, timeSliceID),
-        new RealtimeTimeMapper(maxSegmentSize),
-        extensionsFactory);
+  @Overr de
+  publ c Earlyb rd ndexSeg ntData newSeg ntData(
+       nt maxSeg ntS ze,
+      long t  Sl ce D,
+      D rectory d r,
+      Earlyb rd ndexExtens onsFactory extens onsFactory) {
+    return new Earlyb rdRealt   ndexSeg ntData(
+        maxSeg ntS ze,
+        t  Sl ce D,
+        getSc ma(),
+        new OutOfOrderRealt  T et DMapper(maxSeg ntS ze, t  Sl ce D),
+        new Realt  T  Mapper(maxSeg ntS ze),
+        extens onsFactory);
   }
 
-  @Override
-  public EarlybirdIndexSegmentData loadSegmentData(
-          FlushInfo flushInfo,
-          DataDeserializer dataInputStream,
-          Directory dir,
-          EarlybirdIndexExtensionsFactory extensionsFactory) throws IOException {
-    EarlybirdRealtimeIndexSegmentData.InMemorySegmentDataFlushHandler flushHandler;
-    boolean isOptimized = flushInfo.getBooleanProperty(
-        EarlybirdIndexSegmentData.AbstractSegmentDataFlushHandler.IS_OPTIMIZED_PROP_NAME);
-    if (isOptimized) {
-      flushHandler = new EarlybirdRealtimeIndexSegmentData.InMemorySegmentDataFlushHandler(
-          getSchema(),
-          extensionsFactory,
-          new OptimizedTweetIDMapper.FlushHandler(),
-          new OptimizedTimeMapper.FlushHandler());
+  @Overr de
+  publ c Earlyb rd ndexSeg ntData loadSeg ntData(
+          Flush nfo flush nfo,
+          DataDeser al zer data nputStream,
+          D rectory d r,
+          Earlyb rd ndexExtens onsFactory extens onsFactory) throws  OExcept on {
+    Earlyb rdRealt   ndexSeg ntData. n morySeg ntDataFlushHandler flushHandler;
+    boolean  sOpt m zed = flush nfo.getBooleanProperty(
+        Earlyb rd ndexSeg ntData.AbstractSeg ntDataFlushHandler. S_OPT M ZED_PROP_NAME);
+     f ( sOpt m zed) {
+      flushHandler = new Earlyb rdRealt   ndexSeg ntData. n morySeg ntDataFlushHandler(
+          getSc ma(),
+          extens onsFactory,
+          new Opt m zedT et DMapper.FlushHandler(),
+          new Opt m zedT  Mapper.FlushHandler());
     } else {
-      flushHandler = new EarlybirdRealtimeIndexSegmentData.InMemorySegmentDataFlushHandler(
-          getSchema(),
-          extensionsFactory,
-          new OutOfOrderRealtimeTweetIDMapper.FlushHandler(),
-          new RealtimeTimeMapper.FlushHandler());
+      flushHandler = new Earlyb rdRealt   ndexSeg ntData. n morySeg ntDataFlushHandler(
+          getSc ma(),
+          extens onsFactory,
+          new OutOfOrderRealt  T et DMapper.FlushHandler(),
+          new Realt  T  Mapper.FlushHandler());
     }
 
 
-    return flushHandler.load(flushInfo, dataInputStream);
+    return flushHandler.load(flush nfo, data nputStream);
   }
 
-  @Override
-  public EarlybirdIndexSegmentData optimize(
-      EarlybirdIndexSegmentData earlybirdIndexSegmentData) throws IOException {
-    Preconditions.checkArgument(
-        earlybirdIndexSegmentData instanceof EarlybirdRealtimeIndexSegmentData,
-        "Expected EarlybirdRealtimeIndexSegmentData but got %s",
-        earlybirdIndexSegmentData.getClass());
+  @Overr de
+  publ c Earlyb rd ndexSeg ntData opt m ze(
+      Earlyb rd ndexSeg ntData earlyb rd ndexSeg ntData) throws  OExcept on {
+    Precond  ons.c ckArgu nt(
+        earlyb rd ndexSeg ntData  nstanceof Earlyb rdRealt   ndexSeg ntData,
+        "Expected Earlyb rdRealt   ndexSeg ntData but got %s",
+        earlyb rd ndexSeg ntData.getClass());
 
-    return IndexOptimizer.optimize((EarlybirdRealtimeIndexSegmentData) earlybirdIndexSegmentData);
+    return  ndexOpt m zer.opt m ze((Earlyb rdRealt   ndexSeg ntData) earlyb rd ndexSeg ntData);
   }
 
-  @Override
-  public boolean isIndexStoredOnDisk() {
+  @Overr de
+  publ c boolean  s ndexStoredOnD sk() {
     return false;
   }
 
-  @Override
-  public final CloseResourceUtil getResourceCloser() {
-    return resourceCloser;
+  @Overr de
+  publ c f nal CloseRes ceUt l getRes ceCloser() {
+    return res ceCloser;
   }
 
-  @Override
-  public boolean supportOutOfOrderIndexing() {
+  @Overr de
+  publ c boolean supportOutOfOrder ndex ng() {
     return true;
   }
 }

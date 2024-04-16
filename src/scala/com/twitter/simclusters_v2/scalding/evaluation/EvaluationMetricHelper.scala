@@ -1,538 +1,538 @@
-package com.twitter.simclusters_v2.scalding.evaluation
+package com.tw ter.s mclusters_v2.scald ng.evaluat on
 
-import com.twitter.scalding.{Execution, TypedPipe, UniqueID}
-import com.twitter.simclusters_v2.thriftscala.{
-  CandidateTweet,
-  CandidateTweets,
-  ReferenceTweet,
-  ReferenceTweets,
-  TweetLabels
+ mport com.tw ter.scald ng.{Execut on, TypedP pe, Un que D}
+ mport com.tw ter.s mclusters_v2.thr ftscala.{
+  Cand dateT et,
+  Cand dateT ets,
+  ReferenceT et,
+  ReferenceT ets,
+  T etLabels
 }
-import com.twitter.algebird.Aggregator.size
-import com.twitter.scalding.typed.{CoGrouped, ValuePipe}
-import com.twitter.util.TwitterDateFormat
-import java.util.Calendar
+ mport com.tw ter.algeb rd.Aggregator.s ze
+ mport com.tw ter.scald ng.typed.{CoGrouped, ValueP pe}
+ mport com.tw ter.ut l.Tw terDateFormat
+ mport java.ut l.Calendar
 
 /**
- * Statistics about the number of users who have engaged with tweets
+ * Stat st cs about t  number of users who have engaged w h t ets
  */
 case class UserEngagerCounts(
-  numDistinctTargetUsers: Long,
-  numDistinctLikeEngagers: Long,
-  numDistinctRetweetEngagers: Long)
+  numD st nctTargetUsers: Long,
+  numD st nctL keEngagers: Long,
+  numD st nctRet etEngagers: Long)
 
 /**
- * Tweet side statistics, e.x. number of tweets, authors, etc.
+ * T et s de stat st cs, e.x. number of t ets, authors, etc.
  */
-case class TweetStats(
-  numTweets: Long,
-  numDistinctTweets: Long,
-  numDistinctAuthors: Option[Long],
-  avgScore: Option[Double])
+case class T etStats(
+  numT ets: Long,
+  numD st nctT ets: Long,
+  numD st nctAuthors: Opt on[Long],
+  avgScore: Opt on[Double])
 
 /**
- * Helper data container class for storing engagement counts
+ *  lper data conta ner class for stor ng engage nt counts
  */
-case class TweetEngagementCounts(like: Long, retweet: Long, click: Long, hasEngagement: Long)
+case class T etEngage ntCounts(l ke: Long, ret et: Long, cl ck: Long, hasEngage nt: Long)
 
 /**
- * Helper data container class for storing engagement rates
+ *  lper data conta ner class for stor ng engage nt rates
  */
-case class TweetEngagementRates(like: Double, retweet: Double, click: Double, hasEngagement: Double)
+case class T etEngage ntRates(l ke: Double, ret et: Double, cl ck: Double, hasEngage nt: Double)
 
-case class LabelCorrelations(
-  pearsonCoefficientForLikes: Double,
-  cosineSimilarityGlobal: Double,
-  cosineSimilarityPerUserAvg: Double) {
-  private val f = java.text.NumberFormat.getInstance
-  def format(): String = {
+case class LabelCorrelat ons(
+  pearsonCoeff c entForL kes: Double,
+  cos neS m lar yGlobal: Double,
+  cos neS m lar yPerUserAvg: Double) {
+  pr vate val f = java.text.NumberFormat.get nstance
+  def format(): Str ng = {
     Seq(
-      s"\tPearson Coefficient: ${f.format(pearsonCoefficientForLikes)}",
-      s"\tCosine similarity: ${f.format(cosineSimilarityGlobal)}",
-      s"\tAverage cosine similarity for all users: ${f.format(cosineSimilarityPerUserAvg)}"
-    ).mkString("\n")
+      s"\tPearson Coeff c ent: ${f.format(pearsonCoeff c entForL kes)}",
+      s"\tCos ne s m lar y: ${f.format(cos neS m lar yGlobal)}",
+      s"\tAverage cos ne s m lar y for all users: ${f.format(cos neS m lar yPerUserAvg)}"
+    ).mkStr ng("\n")
   }
 }
 
 /**
- * Helper tweet data container that can hold both the reference label engagements as well as the
- * recommendation algorithm's scores. Helpful for evaluating joint data
+ *  lper t et data conta ner that can hold both t  reference label engage nts as  ll as t 
+ * recom ndat on algor hm's scores.  lpful for evaluat ng jo nt data
  */
-case class LabeledTweet(
-  targetUserId: Long,
-  tweetId: Long,
-  authorId: Long,
-  labels: TweetLabels,
-  algorithmScore: Option[Double])
+case class LabeledT et(
+  targetUser d: Long,
+  t et d: Long,
+  author d: Long,
+  labels: T etLabels,
+  algor hmScore: Opt on[Double])
 
-case class LabeledTweetsResults(
-  tweetStats: TweetStats,
+case class LabeledT etsResults(
+  t etStats: T etStats,
   userEngagerCounts: UserEngagerCounts,
-  tweetEngagementCounts: TweetEngagementCounts,
-  tweetEngagementRates: TweetEngagementRates,
-  labelCorrelations: Option[LabelCorrelations] = None) {
-  private val f = java.text.NumberFormat.getInstance
+  t etEngage ntCounts: T etEngage ntCounts,
+  t etEngage ntRates: T etEngage ntRates,
+  labelCorrelat ons: Opt on[LabelCorrelat ons] = None) {
+  pr vate val f = java.text.NumberFormat.get nstance
 
-  def format(title: String = ""): String = {
+  def format(t le: Str ng = ""): Str ng = {
     val str = Seq(
-      s"Number of tweets: ${f.format(tweetStats.numTweets)}",
-      s"Number of distinct tweets: ${f.format(tweetStats.numDistinctTweets)}",
-      s"Number of distinct users targeted: ${f.format(userEngagerCounts.numDistinctTargetUsers)}",
-      s"Number of distinct authors: ${tweetStats.numDistinctAuthors.map(f.format).getOrElse("N/A")}",
-      s"Average algorithm score of tweets: ${tweetStats.avgScore.map(f.format).getOrElse("N/A")}",
+      s"Number of t ets: ${f.format(t etStats.numT ets)}",
+      s"Number of d st nct t ets: ${f.format(t etStats.numD st nctT ets)}",
+      s"Number of d st nct users targeted: ${f.format(userEngagerCounts.numD st nctTargetUsers)}",
+      s"Number of d st nct authors: ${t etStats.numD st nctAuthors.map(f.format).getOrElse("N/A")}",
+      s"Average algor hm score of t ets: ${t etStats.avgScore.map(f.format).getOrElse("N/A")}",
       s"Engager counts:",
-      s"\tNumber of users who liked tweets: ${f.format(userEngagerCounts.numDistinctLikeEngagers)}",
-      s"\tNumber of users who retweeted tweets: ${f.format(userEngagerCounts.numDistinctRetweetEngagers)}",
-      s"Tweet engagement counts:",
-      s"\tNumber of Likes: ${f.format(tweetEngagementCounts.like)}",
-      s"\tNumber of Retweets: ${f.format(tweetEngagementCounts.retweet)}",
-      s"\tNumber of Clicks: ${f.format(tweetEngagementCounts.click)}",
-      s"\tNumber of tweets with any engagements: ${f.format(tweetEngagementCounts.hasEngagement)}",
-      s"Tweet engagement rates:",
-      s"\tRate of Likes: ${f.format(tweetEngagementRates.like * 100)}%",
-      s"\tRate of Retweets: ${f.format(tweetEngagementRates.retweet * 100)}%",
-      s"\tRate of Clicks: ${f.format(tweetEngagementRates.click * 100)}%",
-      s"\tRate of any engagement: ${f.format(tweetEngagementRates.hasEngagement * 100)}%"
-    ).mkString("\n")
+      s"\tNumber of users who l ked t ets: ${f.format(userEngagerCounts.numD st nctL keEngagers)}",
+      s"\tNumber of users who ret eted t ets: ${f.format(userEngagerCounts.numD st nctRet etEngagers)}",
+      s"T et engage nt counts:",
+      s"\tNumber of L kes: ${f.format(t etEngage ntCounts.l ke)}",
+      s"\tNumber of Ret ets: ${f.format(t etEngage ntCounts.ret et)}",
+      s"\tNumber of Cl cks: ${f.format(t etEngage ntCounts.cl ck)}",
+      s"\tNumber of t ets w h any engage nts: ${f.format(t etEngage ntCounts.hasEngage nt)}",
+      s"T et engage nt rates:",
+      s"\tRate of L kes: ${f.format(t etEngage ntRates.l ke * 100)}%",
+      s"\tRate of Ret ets: ${f.format(t etEngage ntRates.ret et * 100)}%",
+      s"\tRate of Cl cks: ${f.format(t etEngage ntRates.cl ck * 100)}%",
+      s"\tRate of any engage nt: ${f.format(t etEngage ntRates.hasEngage nt * 100)}%"
+    ).mkStr ng("\n")
 
-    val correlations = labelCorrelations.map("\n" + _.format()).getOrElse("")
+    val correlat ons = labelCorrelat ons.map("\n" + _.format()).getOrElse("")
 
-    s"$title\n$str$correlations"
+    s"$t le\n$str$correlat ons"
   }
 }
 
-case class CandidateResults(tweetStats: TweetStats, numDistinctTargetUsers: Long) {
-  private val f = java.text.NumberFormat.getInstance
+case class Cand dateResults(t etStats: T etStats, numD st nctTargetUsers: Long) {
+  pr vate val f = java.text.NumberFormat.get nstance
 
-  def format(title: String = ""): String = {
+  def format(t le: Str ng = ""): Str ng = {
     val str = Seq(
-      s"Number of tweets: ${f.format(tweetStats.numTweets)}",
-      s"Number of distinct tweets: ${f.format(tweetStats.numDistinctTweets)}",
-      s"Number of distinct users targeted: ${f.format(numDistinctTargetUsers)}",
-      s"Number of distinct authors: ${tweetStats.numDistinctAuthors.map(f.format).getOrElse("N/A")}",
-      s"Average algorithm score of tweets: ${tweetStats.avgScore.map(f.format).getOrElse("N/A")}"
-    ).mkString("\n")
-    s"$title\n$str"
+      s"Number of t ets: ${f.format(t etStats.numT ets)}",
+      s"Number of d st nct t ets: ${f.format(t etStats.numD st nctT ets)}",
+      s"Number of d st nct users targeted: ${f.format(numD st nctTargetUsers)}",
+      s"Number of d st nct authors: ${t etStats.numD st nctAuthors.map(f.format).getOrElse("N/A")}",
+      s"Average algor hm score of t ets: ${t etStats.avgScore.map(f.format).getOrElse("N/A")}"
+    ).mkStr ng("\n")
+    s"$t le\n$str"
   }
 }
 
 /**
- * Helper class for evaluating a given candidate tweet set against a reference tweet set.
- * It provides aggregation evaluation metrics such as sum of engagements, rate of engagements, etc.
+ *  lper class for evaluat ng a g ven cand date t et set aga nst a reference t et set.
+ *   prov des aggregat on evaluat on  tr cs such as sum of engage nts, rate of engage nts, etc.
  */
-object EvaluationMetricHelper {
-  private def toLong(bool: Boolean): Long = {
-    if (bool) 1L else 0L
+object Evaluat on tr c lper {
+  pr vate def toLong(bool: Boolean): Long = {
+     f (bool) 1L else 0L
   }
 
   /**
-   * Core engagements are user actions that count towards core metrics, e.x. like, RT, etc
+   * Core engage nts are user act ons that count towards core  tr cs, e.x. l ke, RT, etc
    */
-  private def hasCoreEngagements(labels: TweetLabels): Boolean = {
-    labels.isRetweeted ||
-    labels.isLiked ||
-    labels.isQuoted ||
-    labels.isReplied
+  pr vate def hasCoreEngage nts(labels: T etLabels): Boolean = {
+    labels. sRet eted ||
+    labels. sL ked ||
+    labels. sQuoted ||
+    labels. sRepl ed
   }
 
   /**
-   * Whether there are core engagements or click on the tweet
+   * W t r t re are core engage nts or cl ck on t  t et
    */
-  private def hasCoreEngagementsOrClick(labels: TweetLabels): Boolean = {
-    hasCoreEngagements(labels) || labels.isClicked
+  pr vate def hasCoreEngage ntsOrCl ck(labels: T etLabels): Boolean = {
+    hasCoreEngage nts(labels) || labels. sCl cked
   }
 
   /**
-   * Return outer join of reference tweets and candidate tweets, keyed by (targetUserId, tweetId).
-   * The output of this can then be reused to fetch the inner join / left / right join,
-   * without having to redo the expensive join
+   * Return outer jo n of reference t ets and cand date t ets, keyed by (targetUser d, t et d).
+   * T  output of t  can t n be reused to fetch t   nner jo n / left / r ght jo n,
+   * w hout hav ng to redo t  expens ve jo n
    *
-   * NOTE: Assumes the uniqueness of keys (i.e. (targetId, tweetId)). Make sure to dedup tweetIds
-   * for each targetId, otherwise .join() will yield duplicate results.
+   * NOTE: Assu s t  un queness of keys ( .e. (target d, t et d)). Make sure to dedup t et ds
+   * for each target d, ot rw se .jo n() w ll y eld dupl cate results.
    */
-  def outerJoinReferenceAndCandidate(
-    referencePipe: TypedPipe[ReferenceTweets],
-    candidatePipe: TypedPipe[CandidateTweets]
-  ): CoGrouped[(Long, Long), (Option[ReferenceTweet], Option[CandidateTweet])] = {
+  def outerJo nReferenceAndCand date(
+    referenceP pe: TypedP pe[ReferenceT ets],
+    cand dateP pe: TypedP pe[Cand dateT ets]
+  ): CoGrouped[(Long, Long), (Opt on[ReferenceT et], Opt on[Cand dateT et])] = {
 
-    val references = referencePipe
-      .flatMap { refTweets =>
-        refTweets.impressedTweets.map { refTweet =>
-          ((refTweets.targetUserId, refTweet.tweetId), refTweet)
+    val references = referenceP pe
+      .flatMap { refT ets =>
+        refT ets. mpressedT ets.map { refT et =>
+          ((refT ets.targetUser d, refT et.t et d), refT et)
         }
       }
 
-    val candidates = candidatePipe
-      .flatMap { candTweets =>
-        candTweets.recommendedTweets.map { candTweet =>
-          ((candTweets.targetUserId, candTweet.tweetId), candTweet)
+    val cand dates = cand dateP pe
+      .flatMap { candT ets =>
+        candT ets.recom ndedT ets.map { candT et =>
+          ((candT ets.targetUser d, candT et.t et d), candT et)
         }
       }
 
-    references.outerJoin(candidates).withReducers(50)
+    references.outerJo n(cand dates).w hReducers(50)
   }
 
   /**
-   * Convert reference tweets to labeled tweets. We do this so that we can re-use the common
-   * metric calculations for labeled tweets on reference tweets
+   * Convert reference t ets to labeled t ets.   do t  so that   can re-use t  common
+   *  tr c calculat ons for labeled t ets on reference t ets
    */
-  def getLabeledReference(referencePipe: TypedPipe[ReferenceTweets]): TypedPipe[LabeledTweet] = {
-    referencePipe
-      .flatMap { refTweets =>
-        refTweets.impressedTweets.map { tweet =>
-          // Reference tweets do not have scores
-          LabeledTweet(refTweets.targetUserId, tweet.tweetId, tweet.authorId, tweet.labels, None)
+  def getLabeledReference(referenceP pe: TypedP pe[ReferenceT ets]): TypedP pe[LabeledT et] = {
+    referenceP pe
+      .flatMap { refT ets =>
+        refT ets. mpressedT ets.map { t et =>
+          // Reference t ets do not have scores
+          LabeledT et(refT ets.targetUser d, t et.t et d, t et.author d, t et.labels, None)
         }
       }
   }
 
-  def getUniqueCount[T](pipe: TypedPipe[T])(implicit ord: scala.Ordering[T]): Execution[Long] = {
-    pipe.distinct
-      .aggregate(size)
-      .toOptionExecution
+  def getUn queCount[T](p pe: TypedP pe[T])( mpl c  ord: scala.Order ng[T]): Execut on[Long] = {
+    p pe.d st nct
+      .aggregate(s ze)
+      .toOpt onExecut on
       .map(_.getOrElse(0L))
   }
 
-  def countUniqueEngagedUsersBy(
-    labeledTweetsPipe: TypedPipe[LabeledTweet],
-    f: TweetLabels => Boolean
-  ): Execution[Long] = {
-    getUniqueCount[Long](labeledTweetsPipe.collect { case t if f(t.labels) => t.targetUserId })
+  def countUn queEngagedUsersBy(
+    labeledT etsP pe: TypedP pe[LabeledT et],
+    f: T etLabels => Boolean
+  ): Execut on[Long] = {
+    getUn queCount[Long](labeledT etsP pe.collect { case t  f f(t.labels) => t.targetUser d })
   }
 
-  def countUniqueLabeledTargetUsers(labeledTweetsPipe: TypedPipe[LabeledTweet]): Execution[Long] = {
-    getUniqueCount[Long](labeledTweetsPipe.map(_.targetUserId))
+  def countUn queLabeledTargetUsers(labeledT etsP pe: TypedP pe[LabeledT et]): Execut on[Long] = {
+    getUn queCount[Long](labeledT etsP pe.map(_.targetUser d))
   }
 
-  def countUniqueCandTargetUsers(candidatePipe: TypedPipe[CandidateTweets]): Execution[Long] = {
-    getUniqueCount[Long](candidatePipe.map(_.targetUserId))
+  def countUn queCandTargetUsers(cand dateP pe: TypedP pe[Cand dateT ets]): Execut on[Long] = {
+    getUn queCount[Long](cand dateP pe.map(_.targetUser d))
   }
 
-  def countUniqueLabeledAuthors(labeledTweetPipe: TypedPipe[LabeledTweet]): Execution[Long] = {
-    getUniqueCount[Long](labeledTweetPipe.map(_.authorId))
-  }
-
-  /**
-   * Helper function to calculate the basic engagement rates
-   */
-  def getEngagementRate(
-    basicStats: TweetStats,
-    engagementCount: TweetEngagementCounts
-  ): TweetEngagementRates = {
-    val numTweets = basicStats.numTweets.toDouble
-    if (numTweets <= 0) throw new IllegalArgumentException("Invalid tweet counts")
-    val likeRate = engagementCount.like / numTweets
-    val rtRate = engagementCount.retweet / numTweets
-    val clickRate = engagementCount.click / numTweets
-    val engagementRate = engagementCount.hasEngagement / numTweets
-    TweetEngagementRates(likeRate, rtRate, clickRate, engagementRate)
+  def countUn queLabeledAuthors(labeledT etP pe: TypedP pe[LabeledT et]): Execut on[Long] = {
+    getUn queCount[Long](labeledT etP pe.map(_.author d))
   }
 
   /**
-   * Helper function to calculate the basic stats for a pipe of candidate tweets
+   *  lper funct on to calculate t  bas c engage nt rates
    */
-  def getTweetStatsForCandidateExec(
-    candidatePipe: TypedPipe[CandidateTweets]
-  ): Execution[TweetStats] = {
-    val pipe = candidatePipe.map { candTweets =>
-      (candTweets.targetUserId, candTweets.recommendedTweets)
-    }.sumByKey // Dedup by targetId, in case there exists multiple entries.
+  def getEngage ntRate(
+    bas cStats: T etStats,
+    engage ntCount: T etEngage ntCounts
+  ): T etEngage ntRates = {
+    val numT ets = bas cStats.numT ets.toDouble
+     f (numT ets <= 0) throw new  llegalArgu ntExcept on(" nval d t et counts")
+    val l keRate = engage ntCount.l ke / numT ets
+    val rtRate = engage ntCount.ret et / numT ets
+    val cl ckRate = engage ntCount.cl ck / numT ets
+    val engage ntRate = engage ntCount.hasEngage nt / numT ets
+    T etEngage ntRates(l keRate, rtRate, cl ckRate, engage ntRate)
+  }
 
-    val distinctTweetPipe = pipe.flatMap(_._2.map(_.tweetId)).distinct.aggregate(size)
+  /**
+   *  lper funct on to calculate t  bas c stats for a p pe of cand date t ets
+   */
+  def getT etStatsForCand dateExec(
+    cand dateP pe: TypedP pe[Cand dateT ets]
+  ): Execut on[T etStats] = {
+    val p pe = cand dateP pe.map { candT ets =>
+      (candT ets.targetUser d, candT ets.recom ndedT ets)
+    }.sumByKey // Dedup by target d,  n case t re ex sts mult ple entr es.
 
-    val otherStats = pipe
+    val d st nctT etP pe = p pe.flatMap(_._2.map(_.t et d)).d st nct.aggregate(s ze)
+
+    val ot rStats = p pe
       .map {
-        case (uid, recommendedTweets) =>
-          val scoreSum = recommendedTweets.flatMap(_.score).sum
-          (recommendedTweets.size.toLong, scoreSum)
+        case (u d, recom ndedT ets) =>
+          val scoreSum = recom ndedT ets.flatMap(_.score).sum
+          (recom ndedT ets.s ze.toLong, scoreSum)
       }
       .sum
       .map {
-        case (numTweets, scoreSum) =>
-          if (numTweets <= 0) throw new IllegalArgumentException("Invalid tweet counts")
-          val avgScore = scoreSum / numTweets.toDouble
-          (numTweets, avgScore)
+        case (numT ets, scoreSum) =>
+           f (numT ets <= 0) throw new  llegalArgu ntExcept on(" nval d t et counts")
+          val avgScore = scoreSum / numT ets.toDouble
+          (numT ets, avgScore)
       }
-    ValuePipe
-      .fold(distinctTweetPipe, otherStats) {
-        case (numDistinctTweet, (numTweets, avgScore)) =>
-          // no author side information for candidate tweets yet
-          TweetStats(numTweets, numDistinctTweet, None, Some(avgScore))
-      }.getOrElseExecution(TweetStats(0L, 0L, None, None))
+    ValueP pe
+      .fold(d st nctT etP pe, ot rStats) {
+        case (numD st nctT et, (numT ets, avgScore)) =>
+          // no author s de  nformat on for cand date t ets yet
+          T etStats(numT ets, numD st nctT et, None, So (avgScore))
+      }.getOrElseExecut on(T etStats(0L, 0L, None, None))
   }
 
   /**
-   * Helper function to count the total number of engagements
+   *  lper funct on to count t  total number of engage nts
    */
-  def getLabeledEngagementCountExec(
-    labeledTweets: TypedPipe[LabeledTweet]
-  ): Execution[TweetEngagementCounts] = {
-    labeledTweets
-      .map { labeledTweet =>
-        val like = toLong(labeledTweet.labels.isLiked)
-        val retweet = toLong(labeledTweet.labels.isRetweeted)
-        val click = toLong(labeledTweet.labels.isClicked)
-        val hasEngagement = toLong(hasCoreEngagementsOrClick(labeledTweet.labels))
+  def getLabeledEngage ntCountExec(
+    labeledT ets: TypedP pe[LabeledT et]
+  ): Execut on[T etEngage ntCounts] = {
+    labeledT ets
+      .map { labeledT et =>
+        val l ke = toLong(labeledT et.labels. sL ked)
+        val ret et = toLong(labeledT et.labels. sRet eted)
+        val cl ck = toLong(labeledT et.labels. sCl cked)
+        val hasEngage nt = toLong(hasCoreEngage ntsOrCl ck(labeledT et.labels))
 
-        (like, retweet, click, hasEngagement)
+        (l ke, ret et, cl ck, hasEngage nt)
       }
       .sum
       .map {
-        case (like, retweet, click, hasEngagement) =>
-          TweetEngagementCounts(like, retweet, click, hasEngagement)
+        case (l ke, ret et, cl ck, hasEngage nt) =>
+          T etEngage ntCounts(l ke, ret et, cl ck, hasEngage nt)
       }
-      .getOrElseExecution(TweetEngagementCounts(0L, 0L, 0L, 0L))
+      .getOrElseExecut on(T etEngage ntCounts(0L, 0L, 0L, 0L))
   }
 
   /**
-   * Count the total number of unique users who have engaged with tweets
+   * Count t  total number of un que users who have engaged w h t ets
    */
-  def getTargetUserStatsForLabeledTweetsExec(
-    labeledTweetsPipe: TypedPipe[LabeledTweet]
-  ): Execution[UserEngagerCounts] = {
-    val numUniqueTargetUsersExec = countUniqueLabeledTargetUsers(labeledTweetsPipe)
-    val numUniqueLikeUsersExec =
-      countUniqueEngagedUsersBy(labeledTweetsPipe, labels => labels.isLiked)
-    val numUniqueRetweetUsersExec =
-      countUniqueEngagedUsersBy(labeledTweetsPipe, labels => labels.isRetweeted)
+  def getTargetUserStatsForLabeledT etsExec(
+    labeledT etsP pe: TypedP pe[LabeledT et]
+  ): Execut on[UserEngagerCounts] = {
+    val numUn queTargetUsersExec = countUn queLabeledTargetUsers(labeledT etsP pe)
+    val numUn queL keUsersExec =
+      countUn queEngagedUsersBy(labeledT etsP pe, labels => labels. sL ked)
+    val numUn queRet etUsersExec =
+      countUn queEngagedUsersBy(labeledT etsP pe, labels => labels. sRet eted)
 
-    Execution
-      .zip(
-        numUniqueTargetUsersExec,
-        numUniqueLikeUsersExec,
-        numUniqueRetweetUsersExec
+    Execut on
+      .z p(
+        numUn queTargetUsersExec,
+        numUn queL keUsersExec,
+        numUn queRet etUsersExec
       )
       .map {
-        case (numTarget, like, retweet) =>
+        case (numTarget, l ke, ret et) =>
           UserEngagerCounts(
-            numDistinctTargetUsers = numTarget,
-            numDistinctLikeEngagers = like,
-            numDistinctRetweetEngagers = retweet
+            numD st nctTargetUsers = numTarget,
+            numD st nctL keEngagers = l ke,
+            numD st nctRet etEngagers = ret et
           )
       }
   }
 
   /**
-   * Helper function to calculate the basic stats for a pipe of labeled tweets.
+   *  lper funct on to calculate t  bas c stats for a p pe of labeled t ets.
    */
-  def getTweetStatsForLabeledTweetsExec(
-    labeledTweetPipe: TypedPipe[LabeledTweet]
-  ): Execution[TweetStats] = {
-    val uniqueAuthorsExec = countUniqueLabeledAuthors(labeledTweetPipe)
+  def getT etStatsForLabeledT etsExec(
+    labeledT etP pe: TypedP pe[LabeledT et]
+  ): Execut on[T etStats] = {
+    val un queAuthorsExec = countUn queLabeledAuthors(labeledT etP pe)
 
-    val uniqueTweetExec =
-      labeledTweetPipe.map(_.tweetId).distinct.aggregate(size).getOrElseExecution(0L)
-    val scoresExec = labeledTweetPipe
-      .map { t => (t.targetUserId, (1, t.algorithmScore.getOrElse(0.0))) }
-      .sumByKey // Dedup by targetId, in case there exists multiple entries.
+    val un queT etExec =
+      labeledT etP pe.map(_.t et d).d st nct.aggregate(s ze).getOrElseExecut on(0L)
+    val scoresExec = labeledT etP pe
+      .map { t => (t.targetUser d, (1, t.algor hmScore.getOrElse(0.0))) }
+      .sumByKey // Dedup by target d,  n case t re ex sts mult ple entr es.
       .map {
-        case (uid, (c1, c2)) =>
+        case (u d, (c1, c2)) =>
           (c1.toLong, c2)
       }
       .sum
       .map {
-        case (numTweets, scoreSum) =>
-          if (numTweets <= 0) throw new IllegalArgumentException("Invalid tweet counts")
-          val avgScore = scoreSum / numTweets.toDouble
-          (numTweets, Option(avgScore))
+        case (numT ets, scoreSum) =>
+           f (numT ets <= 0) throw new  llegalArgu ntExcept on(" nval d t et counts")
+          val avgScore = scoreSum / numT ets.toDouble
+          (numT ets, Opt on(avgScore))
       }
-      .getOrElseExecution((0L, None))
+      .getOrElseExecut on((0L, None))
 
-    Execution
-      .zip(uniqueAuthorsExec, uniqueTweetExec, scoresExec)
+    Execut on
+      .z p(un queAuthorsExec, un queT etExec, scoresExec)
       .map {
-        case (numDistinctAuthors, numUniqueTweets, (numTweets, avgScores)) =>
-          TweetStats(numTweets, numUniqueTweets, Some(numDistinctAuthors), avgScores)
+        case (numD st nctAuthors, numUn queT ets, (numT ets, avgScores)) =>
+          T etStats(numT ets, numUn queT ets, So (numD st nctAuthors), avgScores)
       }
   }
 
   /**
-   * Print a update message to the stdout when a step is done.
+   * Pr nt a update  ssage to t  stdout w n a step  s done.
    */
-  private def printOnCompleteMsg(stepDescription: String, startTimeMillis: Long): Unit = {
-    val formatDate = TwitterDateFormat("yyyy-MM-dd hh:mm:ss")
-    val now = Calendar.getInstance().getTime
+  pr vate def pr ntOnCompleteMsg(stepDescr pt on: Str ng, startT  M ll s: Long): Un  = {
+    val formatDate = Tw terDateFormat("yyyy-MM-dd hh:mm:ss")
+    val now = Calendar.get nstance().getT  
 
-    val secondsSpent = (now.getTime - startTimeMillis) / 1000
-    println(
-      s"- ${formatDate.format(now)}\tStep complete: $stepDescription\t " +
-        s"Time spent: ${secondsSpent / 60}m${secondsSpent % 60}s"
+    val secondsSpent = (now.getT   - startT  M ll s) / 1000
+    pr ntln(
+      s"- ${formatDate.format(now)}\tStep complete: $stepDescr pt on\t " +
+        s"T   spent: ${secondsSpent / 60}m${secondsSpent % 60}s"
     )
   }
 
   /**
-   * Calculate the metrics of a pipe of [[CandidateTweets]]
+   * Calculate t   tr cs of a p pe of [[Cand dateT ets]]
    */
-  private def getEvaluationResultsForCandidates(
-    candidatePipe: TypedPipe[CandidateTweets]
-  ): Execution[CandidateResults] = {
-    val tweetStatsExec = getTweetStatsForCandidateExec(candidatePipe)
-    val numDistinctTargetUsersExec = countUniqueCandTargetUsers(candidatePipe)
+  pr vate def getEvaluat onResultsForCand dates(
+    cand dateP pe: TypedP pe[Cand dateT ets]
+  ): Execut on[Cand dateResults] = {
+    val t etStatsExec = getT etStatsForCand dateExec(cand dateP pe)
+    val numD st nctTargetUsersExec = countUn queCandTargetUsers(cand dateP pe)
 
-    Execution
-      .zip(tweetStatsExec, numDistinctTargetUsersExec)
+    Execut on
+      .z p(t etStatsExec, numD st nctTargetUsersExec)
       .map {
-        case (tweetStats, numDistinctTargetUsers) =>
-          CandidateResults(tweetStats, numDistinctTargetUsers)
+        case (t etStats, numD st nctTargetUsers) =>
+          Cand dateResults(t etStats, numD st nctTargetUsers)
       }
   }
 
   /**
-   * Calculate the metrics of a pipe of [[LabeledTweet]]
+   * Calculate t   tr cs of a p pe of [[LabeledT et]]
    */
-  private def getEvaluationResultsForLabeledTweets(
-    labeledTweetPipe: TypedPipe[LabeledTweet],
-    getLabelCorrelations: Boolean = false
-  ): Execution[LabeledTweetsResults] = {
-    val tweetStatsExec = getTweetStatsForLabeledTweetsExec(labeledTweetPipe)
-    val userStatsExec = getTargetUserStatsForLabeledTweetsExec(labeledTweetPipe)
-    val engagementCountExec = getLabeledEngagementCountExec(labeledTweetPipe)
+  pr vate def getEvaluat onResultsForLabeledT ets(
+    labeledT etP pe: TypedP pe[LabeledT et],
+    getLabelCorrelat ons: Boolean = false
+  ): Execut on[LabeledT etsResults] = {
+    val t etStatsExec = getT etStatsForLabeledT etsExec(labeledT etP pe)
+    val userStatsExec = getTargetUserStatsForLabeledT etsExec(labeledT etP pe)
+    val engage ntCountExec = getLabeledEngage ntCountExec(labeledT etP pe)
 
-    val correlationsExec = if (getLabelCorrelations) {
-      Execution
-        .zip(
-          LabelCorrelationsHelper.pearsonCoefficientForLike(labeledTweetPipe),
-          LabelCorrelationsHelper.cosineSimilarityForLike(labeledTweetPipe),
-          LabelCorrelationsHelper.cosineSimilarityForLikePerUser(labeledTweetPipe)
+    val correlat onsExec =  f (getLabelCorrelat ons) {
+      Execut on
+        .z p(
+          LabelCorrelat ons lper.pearsonCoeff c entForL ke(labeledT etP pe),
+          LabelCorrelat ons lper.cos neS m lar yForL ke(labeledT etP pe),
+          LabelCorrelat ons lper.cos neS m lar yForL kePerUser(labeledT etP pe)
         ).map {
           case (pearsonCoeff, globalCos, avgCos) =>
-            Some(LabelCorrelations(pearsonCoeff, globalCos, avgCos))
+            So (LabelCorrelat ons(pearsonCoeff, globalCos, avgCos))
         }
     } else {
-      ValuePipe(None).getOrElseExecution(None) // Empty pipe with a None value
+      ValueP pe(None).getOrElseExecut on(None) // Empty p pe w h a None value
     }
 
-    Execution
-      .zip(tweetStatsExec, engagementCountExec, userStatsExec, correlationsExec)
+    Execut on
+      .z p(t etStatsExec, engage ntCountExec, userStatsExec, correlat onsExec)
       .map {
-        case (tweetStats, engagementCount, engagerCount, correlationsOpt) =>
-          val engagementRate = getEngagementRate(tweetStats, engagementCount)
-          LabeledTweetsResults(
-            tweetStats,
+        case (t etStats, engage ntCount, engagerCount, correlat onsOpt) =>
+          val engage ntRate = getEngage ntRate(t etStats, engage ntCount)
+          LabeledT etsResults(
+            t etStats,
             engagerCount,
-            engagementCount,
-            engagementRate,
-            correlationsOpt)
+            engage ntCount,
+            engage ntRate,
+            correlat onsOpt)
       }
   }
 
-  private def runAllEvalForCandidates(
-    candidatePipe: TypedPipe[CandidateTweets],
-    outerJoinPipe: TypedPipe[((Long, Long), (Option[ReferenceTweet], Option[CandidateTweet]))]
-  ): Execution[(CandidateResults, CandidateResults)] = {
-    val t0 = System.currentTimeMillis()
+  pr vate def runAllEvalForCand dates(
+    cand dateP pe: TypedP pe[Cand dateT ets],
+    outerJo nP pe: TypedP pe[((Long, Long), (Opt on[ReferenceT et], Opt on[Cand dateT et]))]
+  ): Execut on[(Cand dateResults, Cand dateResults)] = {
+    val t0 = System.currentT  M ll s()
 
-    val candidateNotInIntersectionPipe =
-      outerJoinPipe
+    val cand dateNot n ntersect onP pe =
+      outerJo nP pe
         .collect {
-          case ((targetUserId, _), (None, Some(candTweet))) => (targetUserId, Seq(candTweet))
+          case ((targetUser d, _), (None, So (candT et))) => (targetUser d, Seq(candT et))
         }
         .sumByKey
-        .map { case (targetUserId, candTweets) => CandidateTweets(targetUserId, candTweets) }
-        .forceToDisk
+        .map { case (targetUser d, candT ets) => Cand dateT ets(targetUser d, candT ets) }
+        .forceToD sk
 
-    Execution
-      .zip(
-        getEvaluationResultsForCandidates(candidatePipe),
-        getEvaluationResultsForCandidates(candidateNotInIntersectionPipe)
-      ).onComplete(_ => printOnCompleteMsg("runAllEvalForCandidates()", t0))
+    Execut on
+      .z p(
+        getEvaluat onResultsForCand dates(cand dateP pe),
+        getEvaluat onResultsForCand dates(cand dateNot n ntersect onP pe)
+      ).onComplete(_ => pr ntOnCompleteMsg("runAllEvalForCand dates()", t0))
   }
 
-  private def runAllEvalForIntersection(
-    outerJoinPipe: TypedPipe[((Long, Long), (Option[ReferenceTweet], Option[CandidateTweet]))]
+  pr vate def runAllEvalFor ntersect on(
+    outerJo nP pe: TypedP pe[((Long, Long), (Opt on[ReferenceT et], Opt on[Cand dateT et]))]
   )(
-    implicit uniqueID: UniqueID
-  ): Execution[(LabeledTweetsResults, LabeledTweetsResults, LabeledTweetsResults)] = {
-    val t0 = System.currentTimeMillis()
-    val intersectionTweetsPipe = outerJoinPipe.collect {
-      case ((targetUserId, tweetId), (Some(refTweet), Some(candTweet))) =>
-        LabeledTweet(targetUserId, tweetId, refTweet.authorId, refTweet.labels, candTweet.score)
-    }.forceToDisk
+     mpl c  un que D: Un que D
+  ): Execut on[(LabeledT etsResults, LabeledT etsResults, LabeledT etsResults)] = {
+    val t0 = System.currentT  M ll s()
+    val  ntersect onT etsP pe = outerJo nP pe.collect {
+      case ((targetUser d, t et d), (So (refT et), So (candT et))) =>
+        LabeledT et(targetUser d, t et d, refT et.author d, refT et.labels, candT et.score)
+    }.forceToD sk
 
-    val likedTweetsPipe = intersectionTweetsPipe.filter(_.labels.isLiked)
-    val notLikedTweetsPipe = intersectionTweetsPipe.filter(!_.labels.isLiked)
+    val l kedT etsP pe =  ntersect onT etsP pe.f lter(_.labels. sL ked)
+    val notL kedT etsP pe =  ntersect onT etsP pe.f lter(!_.labels. sL ked)
 
-    Execution
-      .zip(
-        getEvaluationResultsForLabeledTweets(intersectionTweetsPipe, getLabelCorrelations = true),
-        getEvaluationResultsForLabeledTweets(likedTweetsPipe),
-        getEvaluationResultsForLabeledTweets(notLikedTweetsPipe)
-      ).onComplete(_ => printOnCompleteMsg("runAllEvalForIntersection()", t0))
+    Execut on
+      .z p(
+        getEvaluat onResultsForLabeledT ets( ntersect onT etsP pe, getLabelCorrelat ons = true),
+        getEvaluat onResultsForLabeledT ets(l kedT etsP pe),
+        getEvaluat onResultsForLabeledT ets(notL kedT etsP pe)
+      ).onComplete(_ => pr ntOnCompleteMsg("runAllEvalFor ntersect on()", t0))
   }
 
-  private def runAllEvalForReferences(
-    referencePipe: TypedPipe[ReferenceTweets],
-    outerJoinPipe: TypedPipe[((Long, Long), (Option[ReferenceTweet], Option[CandidateTweet]))]
-  ): Execution[(LabeledTweetsResults, LabeledTweetsResults)] = {
-    val t0 = System.currentTimeMillis()
-    val labeledReferenceNotInIntersectionPipe =
-      outerJoinPipe.collect {
-        case ((targetUserId, _), (Some(refTweet), None)) =>
-          LabeledTweet(targetUserId, refTweet.tweetId, refTweet.authorId, refTweet.labels, None)
-      }.forceToDisk
+  pr vate def runAllEvalForReferences(
+    referenceP pe: TypedP pe[ReferenceT ets],
+    outerJo nP pe: TypedP pe[((Long, Long), (Opt on[ReferenceT et], Opt on[Cand dateT et]))]
+  ): Execut on[(LabeledT etsResults, LabeledT etsResults)] = {
+    val t0 = System.currentT  M ll s()
+    val labeledReferenceNot n ntersect onP pe =
+      outerJo nP pe.collect {
+        case ((targetUser d, _), (So (refT et), None)) =>
+          LabeledT et(targetUser d, refT et.t et d, refT et.author d, refT et.labels, None)
+      }.forceToD sk
 
-    Execution
-      .zip(
-        getEvaluationResultsForLabeledTweets(getLabeledReference(referencePipe)),
-        getEvaluationResultsForLabeledTweets(labeledReferenceNotInIntersectionPipe)
-      ).onComplete(_ => printOnCompleteMsg("runAllEvalForReferences()", t0))
+    Execut on
+      .z p(
+        getEvaluat onResultsForLabeledT ets(getLabeledReference(referenceP pe)),
+        getEvaluat onResultsForLabeledT ets(labeledReferenceNot n ntersect onP pe)
+      ).onComplete(_ => pr ntOnCompleteMsg("runAllEvalForReferences()", t0))
   }
 
-  def runAllEvaluations(
-    referencePipe: TypedPipe[ReferenceTweets],
-    candidatePipe: TypedPipe[CandidateTweets]
+  def runAllEvaluat ons(
+    referenceP pe: TypedP pe[ReferenceT ets],
+    cand dateP pe: TypedP pe[Cand dateT ets]
   )(
-    implicit uniqueID: UniqueID
-  ): Execution[String] = {
-    val t0 = System.currentTimeMillis()
+     mpl c  un que D: Un que D
+  ): Execut on[Str ng] = {
+    val t0 = System.currentT  M ll s()
 
-    // Force everything to disk to maximize data re-use
-    Execution
-      .zip(
-        referencePipe.forceToDiskExecution,
-        candidatePipe.forceToDiskExecution
+    // Force everyth ng to d sk to max m ze data re-use
+    Execut on
+      .z p(
+        referenceP pe.forceToD skExecut on,
+        cand dateP pe.forceToD skExecut on
       ).flatMap {
-        case (referenceDiskPipe, candidateDiskPipe) =>
-          outerJoinReferenceAndCandidate(referenceDiskPipe, candidateDiskPipe).forceToDiskExecution
-            .flatMap { outerJoinPipe =>
-              val referenceResultsExec = runAllEvalForReferences(referenceDiskPipe, outerJoinPipe)
-              val intersectionResultsExec = runAllEvalForIntersection(outerJoinPipe)
-              val candidateResultsExec = runAllEvalForCandidates(candidateDiskPipe, outerJoinPipe)
+        case (referenceD skP pe, cand dateD skP pe) =>
+          outerJo nReferenceAndCand date(referenceD skP pe, cand dateD skP pe).forceToD skExecut on
+            .flatMap { outerJo nP pe =>
+              val referenceResultsExec = runAllEvalForReferences(referenceD skP pe, outerJo nP pe)
+              val  ntersect onResultsExec = runAllEvalFor ntersect on(outerJo nP pe)
+              val cand dateResultsExec = runAllEvalForCand dates(cand dateD skP pe, outerJo nP pe)
 
-              Execution
-                .zip(
+              Execut on
+                .z p(
                   referenceResultsExec,
-                  intersectionResultsExec,
-                  candidateResultsExec
+                   ntersect onResultsExec,
+                  cand dateResultsExec
                 ).map {
                   case (
-                        (allReference, referenceNotInIntersection),
-                        (allIntersection, intersectionLiked, intersectionNotLiked),
-                        (allCandidate, candidateNotInIntersection)) =>
-                    val timeSpent = (System.currentTimeMillis() - t0) / 1000
+                        (allReference, referenceNot n ntersect on),
+                        (all ntersect on,  ntersect onL ked,  ntersect onNotL ked),
+                        (allCand date, cand dateNot n ntersect on)) =>
+                    val t  Spent = (System.currentT  M ll s() - t0) / 1000
                     val resultStr = Seq(
                       "===================================================",
-                      s"Evaluation complete. Took ${timeSpent / 60}m${timeSpent % 60}s ",
-                      allReference.format("-----Metrics for all Reference Tweets-----"),
-                      referenceNotInIntersection.format(
-                        "-----Metrics for Reference Tweets that are not in the intersection-----"
+                      s"Evaluat on complete. Took ${t  Spent / 60}m${t  Spent % 60}s ",
+                      allReference.format("----- tr cs for all Reference T ets-----"),
+                      referenceNot n ntersect on.format(
+                        "----- tr cs for Reference T ets that are not  n t   ntersect on-----"
                       ),
-                      allIntersection.format("-----Metrics for all Intersection Tweets-----"),
-                      intersectionLiked.format("-----Metrics for Liked Intersection Tweets-----"),
-                      intersectionNotLiked.format(
-                        "-----Metrics for not Liked Intersection Tweets-----"),
-                      allCandidate.format("-----Metrics for all Candidate Tweets-----"),
-                      candidateNotInIntersection.format(
-                        "-----Metrics for Candidate Tweets that are not in the intersection-----"
+                      all ntersect on.format("----- tr cs for all  ntersect on T ets-----"),
+                       ntersect onL ked.format("----- tr cs for L ked  ntersect on T ets-----"),
+                       ntersect onNotL ked.format(
+                        "----- tr cs for not L ked  ntersect on T ets-----"),
+                      allCand date.format("----- tr cs for all Cand date T ets-----"),
+                      cand dateNot n ntersect on.format(
+                        "----- tr cs for Cand date T ets that are not  n t   ntersect on-----"
                       ),
                       "===================================================\n"
-                    ).mkString("\n")
-                    println(resultStr)
+                    ).mkStr ng("\n")
+                    pr ntln(resultStr)
                     resultStr
                 }
                 .onComplete(_ =>
-                  printOnCompleteMsg(
-                    "Evaluation complete. Check stdout or output logs for results.",
+                  pr ntOnCompleteMsg(
+                    "Evaluat on complete. C ck stdout or output logs for results.",
                     t0))
             }
       }

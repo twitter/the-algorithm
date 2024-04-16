@@ -1,309 +1,309 @@
-package com.twitter.search.ingester.pipeline.twitter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.Queue;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import javax.naming.NamingException;
+package com.tw ter.search. ngester.p pel ne.tw ter;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Collect on;
+ mport java.ut l. erator;
+ mport java.ut l.Opt onal;
+ mport java.ut l.Queue;
+ mport java.ut l.concurrent.CompletableFuture;
+ mport java.ut l.concurrent.T  Un ;
+ mport java.ut l.stream.Collectors;
+ mport javax.nam ng.Nam ngExcept on;
 
-import scala.runtime.BoxedUnit;
+ mport scala.runt  .BoxedUn ;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Queues;
+ mport com.google.common.collect.L sts;
+ mport com.google.common.collect.Queues;
 
-import org.apache.commons.pipeline.StageException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons.p pel ne.StageExcept on;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.ingester.pipeline.util.BatchedElement;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+ mport com.tw ter.search.common. tr cs.SearchCustomGauge;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
+ mport com.tw ter.search. ngester.p pel ne.ut l.Batc dEle nt;
+ mport com.tw ter.search. ngester.p pel ne.ut l.P pel neStageExcept on;
+ mport com.tw ter.ut l.Funct on;
+ mport com.tw ter.ut l.Future;
 
-public abstract class TwitterBatchedBaseStage<T, R> extends
-    TwitterBaseStage<T, CompletableFuture<R>> {
-  private static final Logger LOG = LoggerFactory.getLogger(TwitterBatchedBaseStage.class);
+publ c abstract class Tw terBatc dBaseStage<T, R> extends
+    Tw terBaseStage<T, CompletableFuture<R>> {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Tw terBatc dBaseStage.class);
 
-  protected final Queue<BatchedElement<T, R>> queue =
-      Queues.newLinkedBlockingQueue(MAX_BATCHING_QUEUE_SIZE);
+  protected f nal Queue<Batc dEle nt<T, R>> queue =
+      Queues.newL nkedBlock ngQueue(MAX_BATCH NG_QUEUE_S ZE);
 
-  private int batchedStageBatchSize = 100;
-  private int forceProcessAfterMs = 500;
+  pr vate  nt batc dStageBatchS ze = 100;
+  pr vate  nt forceProcessAfterMs = 500;
 
-  private long lastProcessingTime;
+  pr vate long lastProcess ngT  ;
 
-  private SearchRateCounter timeBasedQueueFlush;
-  private SearchRateCounter sizeBasedQueueFlush;
-  private SearchRateCounter eventsFailed;
-  private SearchRateCounter numberOfCallsToNextBatchIfReady;
-  private SearchTimerStats batchExecutionTime;
-  private SearchTimerStats batchFailedExecutionTime;
-  private SearchRateCounter validElements;
-  private SearchRateCounter batchedElements;
-  private SearchRateCounter emittedElements;
-  private static final int MAX_BATCHING_QUEUE_SIZE = 10000;
+  pr vate SearchRateCounter t  BasedQueueFlush;
+  pr vate SearchRateCounter s zeBasedQueueFlush;
+  pr vate SearchRateCounter eventsFa led;
+  pr vate SearchRateCounter numberOfCallsToNextBatch fReady;
+  pr vate SearchT  rStats batchExecut onT  ;
+  pr vate SearchT  rStats batchFa ledExecut onT  ;
+  pr vate SearchRateCounter val dEle nts;
+  pr vate SearchRateCounter batc dEle nts;
+  pr vate SearchRateCounter em tedEle nts;
+  pr vate stat c f nal  nt MAX_BATCH NG_QUEUE_S ZE = 10000;
 
-  // force the implementing class to set type correctly to avoid catching issues at runtime
+  // force t   mple nt ng class to set type correctly to avo d catch ng  ssues at runt  
   protected abstract Class<T> getQueueObjectType();
 
-  // up to the developer on how each batch is processed.
-  protected abstract Future<Collection<R>> innerProcessBatch(Collection<BatchedElement<T, R>>
+  // up to t  developer on how each batch  s processed.
+  protected abstract Future<Collect on<R>>  nnerProcessBatch(Collect on<Batc dEle nt<T, R>>
                                                                  batch);
 
-  // classes that need to update their batch e.g after a decider change
-  // can override this
-  protected void updateBatchSize() {
+  // classes that need to update t  r batch e.g after a dec der change
+  // can overr de t 
+  protected vo d updateBatchS ze() {
   }
 
-  protected Collection<T> extractOnlyElementsFromBatch(Collection<BatchedElement<T, R>> batch) {
-    Collection<T> elementsOnly = new ArrayList<>();
+  protected Collect on<T> extractOnlyEle ntsFromBatch(Collect on<Batc dEle nt<T, R>> batch) {
+    Collect on<T> ele ntsOnly = new ArrayL st<>();
 
-    for (BatchedElement<T, R> batchedElement : batch) {
-      elementsOnly.add(batchedElement.getItem());
+    for (Batc dEle nt<T, R> batc dEle nt : batch) {
+      ele ntsOnly.add(batc dEle nt.get em());
     }
-    return elementsOnly;
+    return ele ntsOnly;
   }
   /**
-   * This function is used to filter the elements that we want to batch.
-   * e.g. if a tweet has urls batch it to resolve the urls, if it doesn't contain urls
+   * T  funct on  s used to f lter t  ele nts that   want to batch.
+   * e.g.  f a t et has urls batch   to resolve t  urls,  f   doesn't conta n urls
    * do not batch.
    *
-   * @param element to be evaluated
+   * @param ele nt to be evaluated
    */
-  protected abstract boolean needsToBeBatched(T element);
+  protected abstract boolean needsToBeBatc d(T ele nt);
 
   /**
-   * Tranform from type T to U element.
-   * T and U might be different types so this function will help with the transformation
-   * if the incoming T element is filtered out and is bypass directly to the next stage
-   * that takes incoming objects of type U
+   * Tranform from type T to U ele nt.
+   * T and U m ght be d fferent types so t  funct on w ll  lp w h t  transformat on
+   *  f t   ncom ng T ele nt  s f ltered out and  s bypass d rectly to t  next stage
+   * that takes  ncom ng objects of type U
    *
-   * @param element incoming element
+   * @param ele nt  ncom ng ele nt
    */
-  protected abstract R transform(T element);
+  protected abstract R transform(T ele nt);
 
-  protected void reEnqueueAndRetry(BatchedElement<T, R> batchedElement) {
-    queue.add(batchedElement);
+  protected vo d reEnqueueAndRetry(Batc dEle nt<T, R> batc dEle nt) {
+    queue.add(batc dEle nt);
   }
 
-  @Override
-  protected void initStats() {
-    super.initStats();
-    commonInnerSetupStats();
+  @Overr de
+  protected vo d  n Stats() {
+    super. n Stats();
+    common nnerSetupStats();
   }
 
-  private void commonInnerSetupStats() {
-    timeBasedQueueFlush = SearchRateCounter.export(getStageNamePrefix()
-        + "_time_based_queue_flush");
-    sizeBasedQueueFlush = SearchRateCounter.export(getStageNamePrefix()
-        + "_size_based_queue_flush");
-    batchExecutionTime = SearchTimerStats.export(getStageNamePrefix()
-        + "_batch_execution_time", TimeUnit.MILLISECONDS, false, true);
-    batchFailedExecutionTime = SearchTimerStats.export(getStageNamePrefix()
-        + "_batch_failed_execution_time", TimeUnit.MILLISECONDS, false, true);
-    eventsFailed = SearchRateCounter.export(getStageNamePrefix() + "_events_dropped");
-    SearchCustomGauge.export(getStageNamePrefix() + "_batched_stage_queue_size", queue::size);
-    numberOfCallsToNextBatchIfReady = SearchRateCounter.export(getStageNamePrefix()
-        + "_calls_to_nextBatchIfReady");
-    validElements = SearchRateCounter.export(getStageNamePrefix() + "_valid_elements");
-    batchedElements = SearchRateCounter.export(getStageNamePrefix() + "_batched_elements");
-    emittedElements = SearchRateCounter.export(getStageNamePrefix() + "_emitted_elements");
+  pr vate vo d common nnerSetupStats() {
+    t  BasedQueueFlush = SearchRateCounter.export(getStageNa Pref x()
+        + "_t  _based_queue_flush");
+    s zeBasedQueueFlush = SearchRateCounter.export(getStageNa Pref x()
+        + "_s ze_based_queue_flush");
+    batchExecut onT   = SearchT  rStats.export(getStageNa Pref x()
+        + "_batch_execut on_t  ", T  Un .M LL SECONDS, false, true);
+    batchFa ledExecut onT   = SearchT  rStats.export(getStageNa Pref x()
+        + "_batch_fa led_execut on_t  ", T  Un .M LL SECONDS, false, true);
+    eventsFa led = SearchRateCounter.export(getStageNa Pref x() + "_events_dropped");
+    SearchCustomGauge.export(getStageNa Pref x() + "_batc d_stage_queue_s ze", queue::s ze);
+    numberOfCallsToNextBatch fReady = SearchRateCounter.export(getStageNa Pref x()
+        + "_calls_to_nextBatch fReady");
+    val dEle nts = SearchRateCounter.export(getStageNa Pref x() + "_val d_ele nts");
+    batc dEle nts = SearchRateCounter.export(getStageNa Pref x() + "_batc d_ele nts");
+    em tedEle nts = SearchRateCounter.export(getStageNa Pref x() + "_em ted_ele nts");
   }
 
-  @Override
-  protected void innerSetupStats() {
-    commonInnerSetupStats();
+  @Overr de
+  protected vo d  nnerSetupStats() {
+    common nnerSetupStats();
   }
 
-  // return a possible batch of elements to process. If we have enough for one batch
-  protected Optional<Collection<BatchedElement<T, R>>> nextBatchIfReady() {
-    numberOfCallsToNextBatchIfReady.increment();
-    Optional<Collection<BatchedElement<T, R>>> batch = Optional.empty();
+  // return a poss ble batch of ele nts to process.  f   have enough for one batch
+  protected Opt onal<Collect on<Batc dEle nt<T, R>>> nextBatch fReady() {
+    numberOfCallsToNextBatch fReady. ncre nt();
+    Opt onal<Collect on<Batc dEle nt<T, R>>> batch = Opt onal.empty();
 
-    if (!queue.isEmpty()) {
-      long elapsed = clock.nowMillis() - lastProcessingTime;
-      if (elapsed > forceProcessAfterMs) {
-        batch = Optional.of(Lists.newArrayList(queue));
-        timeBasedQueueFlush.increment();
+     f (!queue. sEmpty()) {
+      long elapsed = clock.nowM ll s() - lastProcess ngT  ;
+       f (elapsed > forceProcessAfterMs) {
+        batch = Opt onal.of(L sts.newArrayL st(queue));
+        t  BasedQueueFlush. ncre nt();
         queue.clear();
-      } else if (queue.size() >= batchedStageBatchSize) {
-        batch = Optional.of(queue.stream()
-            .limit(batchedStageBatchSize)
-            .map(element -> queue.remove())
-            .collect(Collectors.toList()));
-        sizeBasedQueueFlush.increment();
+      } else  f (queue.s ze() >= batc dStageBatchS ze) {
+        batch = Opt onal.of(queue.stream()
+            .l m (batc dStageBatchS ze)
+            .map(ele nt -> queue.remove())
+            .collect(Collectors.toL st()));
+        s zeBasedQueueFlush. ncre nt();
       }
     }
     return batch;
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    T element;
-    if (getQueueObjectType().isInstance(obj)) {
-      element = getQueueObjectType().cast(obj);
+  @Overr de
+  publ c vo d  nnerProcess(Object obj) throws StageExcept on {
+    T ele nt;
+     f (getQueueObjectType(). s nstance(obj)) {
+      ele nt = getQueueObjectType().cast(obj);
     } else {
-      throw new StageException(this, "Trying to add an object of the wrong type to a queue. "
-          + getQueueObjectType().getSimpleName()
-          + " is the expected type");
+      throw new StageExcept on(t , "Try ng to add an object of t  wrong type to a queue. "
+          + getQueueObjectType().getS mpleNa ()
+          + "  s t  expected type");
     }
 
-   if (!tryToAddElementToBatch(element)) {
-     emitAndCount(transform(element));
+    f (!tryToAddEle ntToBatch(ele nt)) {
+     em AndCount(transform(ele nt));
    }
 
-   tryToSendBatchedRequest();
+   tryToSendBatc dRequest();
   }
 
-  @Override
-  protected CompletableFuture<R> innerRunStageV2(T element) {
+  @Overr de
+  protected CompletableFuture<R>  nnerRunStageV2(T ele nt) {
     CompletableFuture<R> completableFuture = new CompletableFuture<>();
-    if (!tryToAddElementToBatch(element, completableFuture)) {
-      completableFuture.complete(transform(element));
+     f (!tryToAddEle ntToBatch(ele nt, completableFuture)) {
+      completableFuture.complete(transform(ele nt));
     }
 
-    tryToSendBatchedRequestV2();
+    tryToSendBatc dRequestV2();
 
     return completableFuture;
   }
 
-  private boolean tryToAddElementToBatch(T element, CompletableFuture<R> cf) {
-    boolean needsToBeBatched = needsToBeBatched(element);
-    if (needsToBeBatched) {
-      queue.add(new BatchedElement<>(element, cf));
+  pr vate boolean tryToAddEle ntToBatch(T ele nt, CompletableFuture<R> cf) {
+    boolean needsToBeBatc d = needsToBeBatc d(ele nt);
+     f (needsToBeBatc d) {
+      queue.add(new Batc dEle nt<>(ele nt, cf));
     }
 
-    return needsToBeBatched;
+    return needsToBeBatc d;
   }
 
-  private boolean tryToAddElementToBatch(T element) {
-    return tryToAddElementToBatch(element, CompletableFuture.completedFuture(null));
+  pr vate boolean tryToAddEle ntToBatch(T ele nt) {
+    return tryToAddEle ntToBatch(ele nt, CompletableFuture.completedFuture(null));
   }
 
-  private void tryToSendBatchedRequest() {
-    Optional<Collection<BatchedElement<T, R>>> maybeToProcess = nextBatchIfReady();
-    if (maybeToProcess.isPresent()) {
-      Collection<BatchedElement<T, R>> batch = maybeToProcess.get();
-      lastProcessingTime = clock.nowMillis();
-      processBatch(batch, getOnSuccessFunction(lastProcessingTime),
-          getOnFailureFunction(batch, lastProcessingTime));
-    }
-  }
-
-  private void tryToSendBatchedRequestV2() {
-    Optional<Collection<BatchedElement<T, R>>> maybeToProcess = nextBatchIfReady();
-    if (maybeToProcess.isPresent()) {
-      Collection<BatchedElement<T, R>> batch = maybeToProcess.get();
-      lastProcessingTime = clock.nowMillis();
-      processBatch(batch, getOnSuccessFunctionV2(batch, lastProcessingTime),
-          getOnFailureFunctionV2(batch, lastProcessingTime));
+  pr vate vo d tryToSendBatc dRequest() {
+    Opt onal<Collect on<Batc dEle nt<T, R>>> maybeToProcess = nextBatch fReady();
+     f (maybeToProcess. sPresent()) {
+      Collect on<Batc dEle nt<T, R>> batch = maybeToProcess.get();
+      lastProcess ngT   = clock.nowM ll s();
+      processBatch(batch, getOnSuccessFunct on(lastProcess ngT  ),
+          getOnFa lureFunct on(batch, lastProcess ngT  ));
     }
   }
 
-  private void processBatch(Collection<BatchedElement<T, R>> batch,
-                            Function<Collection<R>, BoxedUnit> onSuccess,
-                            Function<Throwable, BoxedUnit> onFailure) {
-    updateBatchSize();
-
-    Future<Collection<R>> futureComputation = innerProcessBatch(batch);
-
-    futureComputation.onSuccess(onSuccess);
-
-    futureComputation.onFailure(onFailure);
+  pr vate vo d tryToSendBatc dRequestV2() {
+    Opt onal<Collect on<Batc dEle nt<T, R>>> maybeToProcess = nextBatch fReady();
+     f (maybeToProcess. sPresent()) {
+      Collect on<Batc dEle nt<T, R>> batch = maybeToProcess.get();
+      lastProcess ngT   = clock.nowM ll s();
+      processBatch(batch, getOnSuccessFunct onV2(batch, lastProcess ngT  ),
+          getOnFa lureFunct onV2(batch, lastProcess ngT  ));
+    }
   }
 
-  private Function<Collection<R>, BoxedUnit> getOnSuccessFunction(long started) {
-    return Function.cons((elements) -> {
-      elements.forEach(this::emitAndCount);
-      batchExecutionTime.timerIncrement(clock.nowMillis() - started);
+  pr vate vo d processBatch(Collect on<Batc dEle nt<T, R>> batch,
+                            Funct on<Collect on<R>, BoxedUn > onSuccess,
+                            Funct on<Throwable, BoxedUn > onFa lure) {
+    updateBatchS ze();
+
+    Future<Collect on<R>> futureComputat on =  nnerProcessBatch(batch);
+
+    futureComputat on.onSuccess(onSuccess);
+
+    futureComputat on.onFa lure(onFa lure);
+  }
+
+  pr vate Funct on<Collect on<R>, BoxedUn > getOnSuccessFunct on(long started) {
+    return Funct on.cons((ele nts) -> {
+      ele nts.forEach(t ::em AndCount);
+      batchExecut onT  .t  r ncre nt(clock.nowM ll s() - started);
     });
   }
 
-  private Function<Collection<R>, BoxedUnit> getOnSuccessFunctionV2(Collection<BatchedElement<T, R>>
+  pr vate Funct on<Collect on<R>, BoxedUn > getOnSuccessFunct onV2(Collect on<Batc dEle nt<T, R>>
                                                                         batch, long started) {
-    return Function.cons((elements) -> {
-      Iterator<BatchedElement<T, R>> iterator = batch.iterator();
-      for (R element : elements) {
-        if (iterator.hasNext()) {
-          iterator.next().getCompletableFuture().complete(element);
+    return Funct on.cons((ele nts) -> {
+       erator<Batc dEle nt<T, R>>  erator = batch. erator();
+      for (R ele nt : ele nts) {
+         f ( erator.hasNext()) {
+           erator.next().getCompletableFuture().complete(ele nt);
         } else {
-          LOG.error("Getting Response from Batched Request, but no CompleteableFuture object"
+          LOG.error("Gett ng Response from Batc d Request, but no CompleteableFuture object"
               + " to complete.");
         }
       }
-      batchExecutionTime.timerIncrement(clock.nowMillis() - started);
+      batchExecut onT  .t  r ncre nt(clock.nowM ll s() - started);
 
     });
   }
 
-  private Function<Throwable, BoxedUnit> getOnFailureFunction(Collection<BatchedElement<T, R>>
+  pr vate Funct on<Throwable, BoxedUn > getOnFa lureFunct on(Collect on<Batc dEle nt<T, R>>
                                                                     batch, long started) {
-    return Function.cons((throwable) -> {
-      batch.forEach(batchedElement -> {
-        eventsFailed.increment();
-        // pass the tweet event down better to index an incomplete event than nothing at all
-        emitAndCount(transform(batchedElement.getItem()));
+    return Funct on.cons((throwable) -> {
+      batch.forEach(batc dEle nt -> {
+        eventsFa led. ncre nt();
+        // pass t  t et event down better to  ndex an  ncomplete event than noth ng at all
+        em AndCount(transform(batc dEle nt.get em()));
       });
-      batchFailedExecutionTime.timerIncrement(clock.nowMillis() - started);
-      LOG.error("Failed processing batch", throwable);
+      batchFa ledExecut onT  .t  r ncre nt(clock.nowM ll s() - started);
+      LOG.error("Fa led process ng batch", throwable);
     });
   }
 
-  private Function<Throwable, BoxedUnit> getOnFailureFunctionV2(Collection<BatchedElement<T, R>>
+  pr vate Funct on<Throwable, BoxedUn > getOnFa lureFunct onV2(Collect on<Batc dEle nt<T, R>>
                                                                   batch, long started) {
-    return Function.cons((throwable) -> {
-      batch.forEach(batchedElement -> {
-        eventsFailed.increment();
-        R itemTransformed = transform(batchedElement.getItem());
-        // complete the future, its better to index an incomplete event than nothing at all
-        batchedElement.getCompletableFuture().complete(itemTransformed);
+    return Funct on.cons((throwable) -> {
+      batch.forEach(batc dEle nt -> {
+        eventsFa led. ncre nt();
+        R  emTransfor d = transform(batc dEle nt.get em());
+        // complete t  future,  s better to  ndex an  ncomplete event than noth ng at all
+        batc dEle nt.getCompletableFuture().complete( emTransfor d);
       });
-      batchFailedExecutionTime.timerIncrement(clock.nowMillis() - started);
-      LOG.error("Failed processing batch", throwable);
+      batchFa ledExecut onT  .t  r ncre nt(clock.nowM ll s() - started);
+      LOG.error("Fa led process ng batch", throwable);
     });
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
+  @Overr de
+  protected vo d do nnerPreprocess() throws StageExcept on, Nam ngExcept on {
     try {
-      commonInnerSetup();
-    } catch (PipelineStageException e) {
-      throw new StageException(this, e);
+      common nnerSetup();
+    } catch (P pel neStageExcept on e) {
+      throw new StageExcept on(t , e);
     }
   }
 
-  private void commonInnerSetup() throws PipelineStageException, NamingException {
-    updateBatchSize();
+  pr vate vo d common nnerSetup() throws P pel neStageExcept on, Nam ngExcept on {
+    updateBatchS ze();
 
-    if (batchedStageBatchSize < 1) {
-      throw new PipelineStageException(this,
-          "Batch size must be set at least to 1 for batched stages but is set to"
-              + batchedStageBatchSize);
+     f (batc dStageBatchS ze < 1) {
+      throw new P pel neStageExcept on(t ,
+          "Batch s ze must be set at least to 1 for batc d stages but  s set to"
+              + batc dStageBatchS ze);
     }
 
-    if (forceProcessAfterMs < 1) {
-      throw new PipelineStageException(this, "forceProcessAfterMs needs to be at least 1 "
-          + "ms but is set to " + forceProcessAfterMs);
+     f (forceProcessAfterMs < 1) {
+      throw new P pel neStageExcept on(t , "forceProcessAfterMs needs to be at least 1 "
+          + "ms but  s set to " + forceProcessAfterMs);
     }
   }
 
-  @Override
-  protected void innerSetup() throws PipelineStageException, NamingException {
-    commonInnerSetup();
+  @Overr de
+  protected vo d  nnerSetup() throws P pel neStageExcept on, Nam ngExcept on {
+    common nnerSetup();
   }
 
-  // Setters for configuration parameters
-  public void setBatchedStageBatchSize(int maxElementsToWaitFor) {
-    this.batchedStageBatchSize = maxElementsToWaitFor;
+  // Setters for conf gurat on para ters
+  publ c vo d setBatc dStageBatchS ze( nt maxEle ntsToWa For) {
+    t .batc dStageBatchS ze = maxEle ntsToWa For;
   }
 
-  public void setForceProcessAfter(int forceProcessAfterMS) {
-    this.forceProcessAfterMs = forceProcessAfterMS;
+  publ c vo d setForceProcessAfter( nt forceProcessAfterMS) {
+    t .forceProcessAfterMs = forceProcessAfterMS;
   }
 }

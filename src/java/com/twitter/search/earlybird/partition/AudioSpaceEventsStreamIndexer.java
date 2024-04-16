@@ -1,75 +1,75 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .kafka.cl ents.consu r.Consu rRecord;
+ mport org.apac .kafka.cl ents.consu r.KafkaConsu r;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.earlybird.exception.MissingKafkaTopicException;
-import com.twitter.ubs.thriftjava.AudioSpaceBaseEvent;
-import com.twitter.ubs.thriftjava.AudioSpaceEvent;
-import com.twitter.util.Duration;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.earlyb rd.except on.M ss ngKafkaTop cExcept on;
+ mport com.tw ter.ubs.thr ftjava.Aud oSpaceBaseEvent;
+ mport com.tw ter.ubs.thr ftjava.Aud oSpaceEvent;
+ mport com.tw ter.ut l.Durat on;
 
 /**
  *
- * An example publish event looks like this:
- *  <AudioBaseSpaceEvent space_publish_event:SpacePublishEvent(
- *    time_stamp_millis:1616430926899,
- *    user_id:123456,
- *    broadcast_id:123456789)>
+ * An example publ sh event looks l ke t :
+ *  <Aud oBaseSpaceEvent space_publ sh_event:SpacePubl shEvent(
+ *    t  _stamp_m ll s:1616430926899,
+ *    user_ d:123456,
+ *    broadcast_ d:123456789)>
  */
-public class AudioSpaceEventsStreamIndexer extends SimpleStreamIndexer<Long, AudioSpaceBaseEvent> {
-  private static final Logger LOG =  LoggerFactory.getLogger(AudioSpaceEventsStreamIndexer.class);
+publ c class Aud oSpaceEventsStream ndexer extends S mpleStream ndexer<Long, Aud oSpaceBaseEvent> {
+  pr vate stat c f nal Logger LOG =  LoggerFactory.getLogger(Aud oSpaceEventsStream ndexer.class);
 
-  private static final String AUDIO_SPACE_EVENTS_TOPIC = "audio_space_events_v1";
+  pr vate stat c f nal Str ng AUD O_SPACE_EVENTS_TOP C = "aud o_space_events_v1";
 
-  @VisibleForTesting
-  // We use this to filter out old space publish events so as to avoid the risk of processing
-  // old space publish events whose corresponding finish events are no longer in the stream.
-  // It's unlikely that spaces would last longer than this constant so it should be safe to assume
-  // that the space whose publish event is older than this age is finished.
-  protected static final long MAX_PUBLISH_EVENTS_AGE_MS =
-      Duration.fromHours(11).inMillis();
+  @V s bleForTest ng
+  //   use t  to f lter out old space publ sh events so as to avo d t  r sk of process ng
+  // old space publ sh events whose correspond ng f n sh events are no longer  n t  stream.
+  //  's unl kely that spaces would last longer than t  constant so   should be safe to assu 
+  // that t  space whose publ sh event  s older than t  age  s f n s d.
+  protected stat c f nal long MAX_PUBL SH_EVENTS_AGE_MS =
+      Durat on.fromH s(11). nM ll s();
 
-  private final AudioSpaceTable audioSpaceTable;
-  private final Clock clock;
+  pr vate f nal Aud oSpaceTable aud oSpaceTable;
+  pr vate f nal Clock clock;
 
-  public AudioSpaceEventsStreamIndexer(
-      KafkaConsumer<Long, AudioSpaceBaseEvent> kafkaConsumer,
-      AudioSpaceTable audioSpaceTable,
-      Clock clock) throws MissingKafkaTopicException {
-    super(kafkaConsumer, AUDIO_SPACE_EVENTS_TOPIC);
-    this.audioSpaceTable = audioSpaceTable;
-    this.clock = clock;
+  publ c Aud oSpaceEventsStream ndexer(
+      KafkaConsu r<Long, Aud oSpaceBaseEvent> kafkaConsu r,
+      Aud oSpaceTable aud oSpaceTable,
+      Clock clock) throws M ss ngKafkaTop cExcept on {
+    super(kafkaConsu r, AUD O_SPACE_EVENTS_TOP C);
+    t .aud oSpaceTable = aud oSpaceTable;
+    t .clock = clock;
   }
 
-  @Override
-  protected void validateAndIndexRecord(ConsumerRecord<Long, AudioSpaceBaseEvent> record) {
-    AudioSpaceBaseEvent baseEvent = record.value();
+  @Overr de
+  protected vo d val dateAnd ndexRecord(Consu rRecord<Long, Aud oSpaceBaseEvent> record) {
+    Aud oSpaceBaseEvent baseEvent = record.value();
 
-    if (baseEvent != null && baseEvent.isSetBroadcast_id() && baseEvent.isSetEvent_metadata()) {
-      AudioSpaceEvent event = baseEvent.getEvent_metadata();
-      String spaceId = baseEvent.getBroadcast_id();
-      if (event != null && event.isSet(AudioSpaceEvent._Fields.SPACE_PUBLISH_EVENT)) {
-        long publishEventAgeMs = clock.nowMillis() - baseEvent.getTime_stamp_millis();
-        if (publishEventAgeMs < MAX_PUBLISH_EVENTS_AGE_MS) {
-          audioSpaceTable.audioSpaceStarts(spaceId);
+     f (baseEvent != null && baseEvent. sSetBroadcast_ d() && baseEvent. sSetEvent_ tadata()) {
+      Aud oSpaceEvent event = baseEvent.getEvent_ tadata();
+      Str ng space d = baseEvent.getBroadcast_ d();
+       f (event != null && event. sSet(Aud oSpaceEvent._F elds.SPACE_PUBL SH_EVENT)) {
+        long publ shEventAgeMs = clock.nowM ll s() - baseEvent.getT  _stamp_m ll s();
+         f (publ shEventAgeMs < MAX_PUBL SH_EVENTS_AGE_MS) {
+          aud oSpaceTable.aud oSpaceStarts(space d);
         }
-      } else if (event != null && event.isSet(AudioSpaceEvent._Fields.SPACE_END_EVENT)) {
-        audioSpaceTable.audioSpaceFinishes(spaceId);
+      } else  f (event != null && event. sSet(Aud oSpaceEvent._F elds.SPACE_END_EVENT)) {
+        aud oSpaceTable.aud oSpaceF n s s(space d);
       }
     }
   }
 
-  @VisibleForTesting
-  public AudioSpaceTable getAudioSpaceTable() {
-    return audioSpaceTable;
+  @V s bleForTest ng
+  publ c Aud oSpaceTable getAud oSpaceTable() {
+    return aud oSpaceTable;
   }
 
-  void printSummary() {
-    LOG.info(audioSpaceTable.toString());
+  vo d pr ntSummary() {
+    LOG. nfo(aud oSpaceTable.toStr ng());
   }
 }

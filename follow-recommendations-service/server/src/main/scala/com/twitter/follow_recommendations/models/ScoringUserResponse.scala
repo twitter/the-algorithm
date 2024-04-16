@@ -1,15 +1,15 @@
-package com.twitter.follow_recommendations.models
+package com.tw ter.follow_recom ndat ons.models
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => t}
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.logg ng.{thr ftscala => offl ne}
+ mport com.tw ter.follow_recom ndat ons.{thr ftscala => t}
 
-case class ScoringUserResponse(candidates: Seq[CandidateUser]) {
-  lazy val toThrift: t.ScoringUserResponse =
-    t.ScoringUserResponse(candidates.map(_.toUserThrift))
+case class Scor ngUserResponse(cand dates: Seq[Cand dateUser]) {
+  lazy val toThr ft: t.Scor ngUserResponse =
+    t.Scor ngUserResponse(cand dates.map(_.toUserThr ft))
 
-  lazy val toRecommendationResponse: RecommendationResponse = RecommendationResponse(candidates)
+  lazy val toRecom ndat onResponse: Recom ndat onResponse = Recom ndat onResponse(cand dates)
 
-  lazy val toOfflineThrift: offline.OfflineScoringUserResponse =
-    offline.OfflineScoringUserResponse(candidates.map(_.toOfflineUserThrift))
+  lazy val toOffl neThr ft: offl ne.Offl neScor ngUserResponse =
+    offl ne.Offl neScor ngUserResponse(cand dates.map(_.toOffl neUserThr ft))
 }

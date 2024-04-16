@@ -1,96 +1,96 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+ mport javax. nject.Na d;
+ mport javax. nject.S ngleton;
 
-import com.google.inject.Provides;
+ mport com.google. nject.Prov des;
 
-import com.twitter.finagle.memcached.JavaClient;
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
-import com.twitter.finagle.stats.StatsReceiver;
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.caching.Cache;
-import com.twitter.search.common.caching.EarlybirdCacheSerializer;
-import com.twitter.search.common.caching.SearchCacheBuilder;
-import com.twitter.search.common.caching.SearchMemcacheClientConfig;
-import com.twitter.search.common.caching.SearchMemcacheClientFactory;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.caching.CacheCommonUtil;
-import com.twitter.search.earlybird_root.caching.CacheStats;
-import com.twitter.search.earlybird_root.caching.DefaultForcedCacheMissDecider;
-import com.twitter.search.earlybird_root.filters.PostCacheRequestTypeCountFilter;
-import com.twitter.util.Duration;
+ mport com.tw ter.f nagle. mcac d.JavaCl ent;
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er;
+ mport com.tw ter.f nagle.stats.StatsRece ver;
+ mport com.tw ter. nject.Tw terModule;
+ mport com.tw ter.search.common.cach ng.Cac ;
+ mport com.tw ter.search.common.cach ng.Earlyb rdCac Ser al zer;
+ mport com.tw ter.search.common.cach ng.SearchCac Bu lder;
+ mport com.tw ter.search.common.cach ng.Search mcac Cl entConf g;
+ mport com.tw ter.search.common.cach ng.Search mcac Cl entFactory;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd_root.cach ng.Cac CommonUt l;
+ mport com.tw ter.search.earlyb rd_root.cach ng.Cac Stats;
+ mport com.tw ter.search.earlyb rd_root.cach ng.DefaultForcedCac M ssDec der;
+ mport com.tw ter.search.earlyb rd_root.f lters.PostCac RequestTypeCountF lter;
+ mport com.tw ter.ut l.Durat on;
 
 /**
- * Provides common bindings for cache related modules.
+ * Prov des common b nd ngs for cac  related modules.
  */
-public class EarlybirdCacheCommonModule extends TwitterModule {
-  private static final String CACHE_VERSION = "1";
+publ c class Earlyb rdCac CommonModule extends Tw terModule {
+  pr vate stat c f nal Str ng CACHE_VERS ON = "1";
 
-  @Override
-  public void configure() {
-    bind(PostCacheRequestTypeCountFilter.class).in(Singleton.class);
-    bind(DefaultForcedCacheMissDecider.class).in(Singleton.class);
+  @Overr de
+  publ c vo d conf gure() {
+    b nd(PostCac RequestTypeCountF lter.class). n(S ngleton.class);
+    b nd(DefaultForcedCac M ssDec der.class). n(S ngleton.class);
   }
 
-  @Provides
-  @Singleton
-  @Named(CacheCommonUtil.NAMED_MAX_CACHE_RESULTS)
-  Integer provideMaxCacheResults() {
+  @Prov des
+  @S ngleton
+  @Na d(Cac CommonUt l.NAMED_MAX_CACHE_RESULTS)
+   nteger prov deMaxCac Results() {
     return 100;
   }
 
-  @Provides
-  @Singleton
-  JavaClient provideMemCacheClient(
-      StatsReceiver statsReceiver, ServiceIdentifier serviceIdentifier) {
-    SearchMemcacheClientConfig config = new SearchMemcacheClientConfig();
-    config.connectTimeoutMs = Duration.fromMilliseconds(100);
-    config.requestTimeoutMs = Duration.fromMilliseconds(100);
-    config.failureAccrualFailuresNumber = 150;
-    config.failureAccrualFailuresDurationMillis = 30000;
-    config.failureAccrualDuration = Duration.fromMilliseconds(60000);
+  @Prov des
+  @S ngleton
+  JavaCl ent prov de mCac Cl ent(
+      StatsRece ver statsRece ver, Serv ce dent f er serv ce dent f er) {
+    Search mcac Cl entConf g conf g = new Search mcac Cl entConf g();
+    conf g.connectT  outMs = Durat on.fromM ll seconds(100);
+    conf g.requestT  outMs = Durat on.fromM ll seconds(100);
+    conf g.fa lureAccrualFa luresNumber = 150;
+    conf g.fa lureAccrualFa luresDurat onM ll s = 30000;
+    conf g.fa lureAccrualDurat on = Durat on.fromM ll seconds(60000);
 
-    return SearchMemcacheClientFactory.createMtlsClient(
+    return Search mcac Cl entFactory.createMtlsCl ent(
         "",
-        "earlybird_root",
-        statsReceiver,
-        config,
-        serviceIdentifier
+        "earlyb rd_root",
+        statsRece ver,
+        conf g,
+        serv ce dent f er
     );
   }
 
   /**
-   * Create a new Earlybird cache.
+   * Create a new Earlyb rd cac .
    *
-   * @param client the memcache client to use.
-   * @param decider the decider to use for the cache.
-   * @param cachePrefix the common cache prefix for the cache type.
-   * @param serializedKeyPrefix the common cache prefix for the cluster.
-   * @param cacheExpiryMillis cache entry ttl in milliseconds.
+   * @param cl ent t   mcac  cl ent to use.
+   * @param dec der t  dec der to use for t  cac .
+   * @param cac Pref x t  common cac  pref x for t  cac  type.
+   * @param ser al zedKeyPref x t  common cac  pref x for t  cluster.
+   * @param cac Exp ryM ll s cac  entry ttl  n m ll seconds.
    */
-  static Cache<EarlybirdRequest, EarlybirdResponse> createCache(
-      JavaClient client,
-      DefaultForcedCacheMissDecider decider,
-      String cachePrefix,
-      String serializedKeyPrefix,
-      long cacheExpiryMillis,
-      int cacheKeyMaxBytes,
-      int cacheValueMaxBytes) {
-    return new SearchCacheBuilder<EarlybirdRequest, EarlybirdResponse>(
-        CACHE_VERSION,
-        client,
-        cachePrefix,
-        serializedKeyPrefix,
-        cacheExpiryMillis)
-        .withMaxKeyBytes(cacheKeyMaxBytes)
-        .withMaxValueBytes(cacheValueMaxBytes)
-        .withRequestTimeoutCounter(CacheStats.REQUEST_TIMEOUT_COUNTER)
-        .withRequestFailedCounter(CacheStats.REQUEST_FAILED_COUNTER)
-        .withCacheSerializer(new EarlybirdCacheSerializer())
-        .withForceCacheMissDecider(decider)
-        .withInProcessCache()
-        .build();
+  stat c Cac <Earlyb rdRequest, Earlyb rdResponse> createCac (
+      JavaCl ent cl ent,
+      DefaultForcedCac M ssDec der dec der,
+      Str ng cac Pref x,
+      Str ng ser al zedKeyPref x,
+      long cac Exp ryM ll s,
+       nt cac KeyMaxBytes,
+       nt cac ValueMaxBytes) {
+    return new SearchCac Bu lder<Earlyb rdRequest, Earlyb rdResponse>(
+        CACHE_VERS ON,
+        cl ent,
+        cac Pref x,
+        ser al zedKeyPref x,
+        cac Exp ryM ll s)
+        .w hMaxKeyBytes(cac KeyMaxBytes)
+        .w hMaxValueBytes(cac ValueMaxBytes)
+        .w hRequestT  outCounter(Cac Stats.REQUEST_T MEOUT_COUNTER)
+        .w hRequestFa ledCounter(Cac Stats.REQUEST_FA LED_COUNTER)
+        .w hCac Ser al zer(new Earlyb rdCac Ser al zer())
+        .w hForceCac M ssDec der(dec der)
+        .w h nProcessCac ()
+        .bu ld();
   }
 }

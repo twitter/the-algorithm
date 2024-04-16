@@ -1,40 +1,40 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package federated
 package promotedcontent
 
-import com.twitter.ads.callback.thriftscala.EngagementRequest
-import com.twitter.ads.internal.pcl.service.CallbackPromotedContentLogger
-import com.twitter.ads.internal.pcl.strato_adaptor.PromotedContentInputProvider
-import com.twitter.ads.internal.pcl.thriftscala.PromotedContentInput
-import com.twitter.adserver.thriftscala.EngagementType
-import com.twitter.util.Future
+ mport com.tw ter.ads.callback.thr ftscala.Engage ntRequest
+ mport com.tw ter.ads. nternal.pcl.serv ce.CallbackPromotedContentLogger
+ mport com.tw ter.ads. nternal.pcl.strato_adaptor.PromotedContent nputProv der
+ mport com.tw ter.ads. nternal.pcl.thr ftscala.PromotedContent nput
+ mport com.tw ter.adserver.thr ftscala.Engage ntType
+ mport com.tw ter.ut l.Future
 
-object TweetPromotedContentLogger {
-  sealed abstract class TweetEngagementType(val engagementType: EngagementType)
-  case object TweetEngagement extends TweetEngagementType(EngagementType.Send)
-  case object ReplyEngagement extends TweetEngagementType(EngagementType.Reply)
-  case object RetweetEngagement extends TweetEngagementType(EngagementType.Retweet)
+object T etPromotedContentLogger {
+  sealed abstract class T etEngage ntType(val engage ntType: Engage ntType)
+  case object T etEngage nt extends T etEngage ntType(Engage ntType.Send)
+  case object ReplyEngage nt extends T etEngage ntType(Engage ntType.Reply)
+  case object Ret etEngage nt extends T etEngage ntType(Engage ntType.Ret et)
 
-  type Type = (EngagementRequest, TweetEngagementType, Boolean) => Future[Unit]
+  type Type = (Engage ntRequest, T etEngage ntType, Boolean) => Future[Un ]
 
-  private[this] val TwitterContext =
-    com.twitter.context.TwitterContext(com.twitter.tweetypie.TwitterContextPermit)
+  pr vate[t ] val Tw terContext =
+    com.tw ter.context.Tw terContext(com.tw ter.t etyp e.Tw terContextPerm )
 
   def apply(callbackPromotedContentLogger: CallbackPromotedContentLogger): Type =
     (
-      engagementRequest: EngagementRequest,
-      tweetEngagementType: TweetEngagementType,
-      isDark: Boolean
+      engage ntRequest: Engage ntRequest,
+      t etEngage ntType: T etEngage ntType,
+       sDark: Boolean
     ) => {
-      val pci: PromotedContentInput =
-        PromotedContentInputProvider(TwitterContext, engagementRequest)
+      val pc : PromotedContent nput =
+        PromotedContent nputProv der(Tw terContext, engage ntRequest)
 
-      // The real logging is fire-and-forget, so we can create the Future and ignore returning it.
-      Future.when(!isDark) {
-        callbackPromotedContentLogger.logNonTrendEngagement(
-          pci,
-          tweetEngagementType.engagementType,
-          pci.impressionId)
+      // T  real logg ng  s f re-and-forget, so   can create t  Future and  gnore return ng  .
+      Future.w n(! sDark) {
+        callbackPromotedContentLogger.logNonTrendEngage nt(
+          pc ,
+          t etEngage ntType.engage ntType,
+          pc . mpress on d)
       }
     }
 }

@@ -1,21 +1,21 @@
-package com.twitter.follow_recommendations.configapi.candidates
+package com.tw ter.follow_recom ndat ons.conf gap .cand dates
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.logging.Logging
+ mport com.google. nject. nject
+ mport com.google. nject.S ngleton
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.HasD splayLocat on
+ mport com.tw ter.follow_recom ndat ons.common.base.Transform
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport com.tw ter.ut l.logg ng.Logg ng
 
-@Singleton
-class HydrateCandidateParamsTransform[Target <: HasParams with HasDisplayLocation] @Inject() (
-  candidateParamsFactory: CandidateUserParamsFactory[Target])
-    extends Transform[Target, CandidateUser]
-    with Logging {
+@S ngleton
+class HydrateCand dateParamsTransform[Target <: HasParams w h HasD splayLocat on] @ nject() (
+  cand dateParamsFactory: Cand dateUserParamsFactory[Target])
+    extends Transform[Target, Cand dateUser]
+    w h Logg ng {
 
-  def transform(target: Target, candidates: Seq[CandidateUser]): Stitch[Seq[CandidateUser]] = {
-    Stitch.value(candidates.map(candidateParamsFactory.apply(_, target)))
+  def transform(target: Target, cand dates: Seq[Cand dateUser]): St ch[Seq[Cand dateUser]] = {
+    St ch.value(cand dates.map(cand dateParamsFactory.apply(_, target)))
   }
 }

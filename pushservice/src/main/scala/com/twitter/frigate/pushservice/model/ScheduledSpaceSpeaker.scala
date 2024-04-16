@@ -1,85 +1,85 @@
-package com.twitter.frigate.pushservice.model
+package com.tw ter.fr gate.pushserv ce.model
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.ScheduledSpaceSpeakerCandidate
-import com.twitter.frigate.common.base.SpaceCandidateFanoutDetails
-import com.twitter.frigate.common.util.FeatureSwitchParams
-import com.twitter.frigate.magic_events.thriftscala.SpaceMetadata
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.frigate.pushservice.model.ibis.ScheduledSpaceSpeakerIbis2Hydrator
-import com.twitter.frigate.pushservice.model.ntab.ScheduledSpaceSpeakerNTabRequestHydrator
-import com.twitter.frigate.pushservice.predicate.PredicatesForCandidate
-import com.twitter.frigate.pushservice.predicate.SpacePredicate
-import com.twitter.frigate.pushservice.take.predicates.BasicSendHandlerPredicates
-import com.twitter.frigate.thriftscala.FrigateNotification
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.storehaus.ReadableStore
-import com.twitter.ubs.thriftscala.AudioSpace
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Sc duledSpaceSpeakerCand date
+ mport com.tw ter.fr gate.common.base.SpaceCand dateFanoutDeta ls
+ mport com.tw ter.fr gate.common.ut l.FeatureSw chParams
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.Space tadata
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.conf g.Conf g
+ mport com.tw ter.fr gate.pushserv ce.ml.PushMLModelScorer
+ mport com.tw ter.fr gate.pushserv ce.model.cand date.Copy ds
+ mport com.tw ter.fr gate.pushserv ce.model. b s.Sc duledSpaceSpeaker b s2Hydrator
+ mport com.tw ter.fr gate.pushserv ce.model.ntab.Sc duledSpaceSpeakerNTabRequestHydrator
+ mport com.tw ter.fr gate.pushserv ce.pred cate.Pred catesForCand date
+ mport com.tw ter.fr gate.pushserv ce.pred cate.SpacePred cate
+ mport com.tw ter.fr gate.pushserv ce.take.pred cates.Bas cSendHandlerPred cates
+ mport com.tw ter.fr gate.thr ftscala.Fr gateNot f cat on
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ubs.thr ftscala.Aud oSpace
+ mport com.tw ter.ut l.Future
 
-class ScheduledSpaceSpeakerPushCandidate(
-  candidate: RawCandidate with ScheduledSpaceSpeakerCandidate,
-  hostUser: Option[User],
-  copyIds: CopyIds,
-  audioSpaceStore: ReadableStore[String, AudioSpace]
+class Sc duledSpaceSpeakerPushCand date(
+  cand date: RawCand date w h Sc duledSpaceSpeakerCand date,
+  hostUser: Opt on[User],
+  copy ds: Copy ds,
+  aud oSpaceStore: ReadableStore[Str ng, Aud oSpace]
 )(
-  implicit val statsScoped: StatsReceiver,
+   mpl c  val statsScoped: StatsRece ver,
   pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
-    with ScheduledSpaceSpeakerCandidate
-    with ScheduledSpaceSpeakerIbis2Hydrator
-    with SpaceCandidateFanoutDetails
-    with ScheduledSpaceSpeakerNTabRequestHydrator {
+    extends PushCand date
+    w h Sc duledSpaceSpeakerCand date
+    w h Sc duledSpaceSpeaker b s2Hydrator
+    w h SpaceCand dateFanoutDeta ls
+    w h Sc duledSpaceSpeakerNTabRequestHydrator {
 
-  override val startTime: Long = candidate.startTime
+  overr de val startT  : Long = cand date.startT  
 
-  override val hydratedHost: Option[User] = hostUser
+  overr de val hydratedHost: Opt on[User] = hostUser
 
-  override val spaceId: String = candidate.spaceId
+  overr de val space d: Str ng = cand date.space d
 
-  override val hostId: Option[Long] = candidate.hostId
+  overr de val host d: Opt on[Long] = cand date.host d
 
-  override val speakerIds: Option[Seq[Long]] = candidate.speakerIds
+  overr de val speaker ds: Opt on[Seq[Long]] = cand date.speaker ds
 
-  override val listenerIds: Option[Seq[Long]] = candidate.listenerIds
+  overr de val l stener ds: Opt on[Seq[Long]] = cand date.l stener ds
 
-  override val frigateNotification: FrigateNotification = candidate.frigateNotification
+  overr de val fr gateNot f cat on: Fr gateNot f cat on = cand date.fr gateNot f cat on
 
-  override val pushCopyId: Option[Int] = copyIds.pushCopyId
+  overr de val pushCopy d: Opt on[ nt] = copy ds.pushCopy d
 
-  override val ntabCopyId: Option[Int] = copyIds.ntabCopyId
+  overr de val ntabCopy d: Opt on[ nt] = copy ds.ntabCopy d
 
-  override val copyAggregationId: Option[String] = copyIds.aggregationId
+  overr de val copyAggregat on d: Opt on[Str ng] = copy ds.aggregat on d
 
-  override val target: Target = candidate.target
+  overr de val target: Target = cand date.target
 
-  override val weightedOpenOrNtabClickModelScorer: PushMLModelScorer = pushModelScorer
+  overr de val   ghtedOpenOrNtabCl ckModelScorer: PushMLModelScorer = pushModelScorer
 
-  override lazy val audioSpaceFut: Future[Option[AudioSpace]] = audioSpaceStore.get(spaceId)
+  overr de lazy val aud oSpaceFut: Future[Opt on[Aud oSpace]] = aud oSpaceStore.get(space d)
 
-  override val spaceFanoutMetadata: Option[SpaceMetadata] = None
+  overr de val spaceFanout tadata: Opt on[Space tadata] = None
 
-  override val statsReceiver: StatsReceiver =
-    statsScoped.scope("ScheduledSpaceSpeakerCandidate")
+  overr de val statsRece ver: StatsRece ver =
+    statsScoped.scope("Sc duledSpaceSpeakerCand date")
 }
 
-case class ScheduledSpaceSpeakerCandidatePredicates(config: Config)
-    extends BasicSendHandlerPredicates[ScheduledSpaceSpeakerPushCandidate] {
+case class Sc duledSpaceSpeakerCand datePred cates(conf g: Conf g)
+    extends Bas cSendHandlerPred cates[Sc duledSpaceSpeakerPushCand date] {
 
-  implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
+   mpl c  val statsRece ver: StatsRece ver = conf g.statsRece ver.scope(getClass.getS mpleNa )
 
-  override val preCandidateSpecificPredicates: List[
-    NamedPredicate[ScheduledSpaceSpeakerPushCandidate]
-  ] = List(
-    SpacePredicate.scheduledSpaceStarted(
-      config.audioSpaceStore
+  overr de val preCand dateSpec f cPred cates: L st[
+    Na dPred cate[Sc duledSpaceSpeakerPushCand date]
+  ] = L st(
+    SpacePred cate.sc duledSpaceStarted(
+      conf g.aud oSpaceStore
     ),
-    PredicatesForCandidate.paramPredicate(FeatureSwitchParams.EnableScheduledSpaceSpeakers)
+    Pred catesForCand date.paramPred cate(FeatureSw chParams.EnableSc duledSpaceSpeakers)
   )
 }

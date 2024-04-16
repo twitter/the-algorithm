@@ -1,17 +1,17 @@
-package com.twitter.frigate.pushservice.send_handler.generator
+package com.tw ter.fr gate.pushserv ce.send_handler.generator
 
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.thriftscala.FrigateNotification
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.thr ftscala.Fr gateNot f cat on
+ mport com.tw ter.ut l.Future
 
-trait CandidateGenerator {
+tra  Cand dateGenerator {
 
   /**
-   * Build RawCandidate from FrigateNotification
+   * Bu ld RawCand date from Fr gateNot f cat on
    * @param target
-   * @param frigateNotification
-   * @return RawCandidate
+   * @param fr gateNot f cat on
+   * @return RawCand date
    */
-  def getCandidate(target: Target, frigateNotification: FrigateNotification): Future[RawCandidate]
+  def getCand date(target: Target, fr gateNot f cat on: Fr gateNot f cat on): Future[RawCand date]
 }

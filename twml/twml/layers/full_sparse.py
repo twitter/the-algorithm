@@ -1,370 +1,370 @@
-# pylint: disable=no-member, arguments-differ, attribute-defined-outside-init, unused-argument
+# pyl nt: d sable=no- mber, argu nts-d ffer, attr bute-def ned-outs de- n , unused-argu nt
 """
-Implementing Full Sparse Layer
+ mple nt ng Full Sparse Layer
 """
 
-import math
+ mport math
 
-from twitter.deepbird.sparse import sparse_dense_matmul
+from tw ter.deepb rd.sparse  mport sparse_dense_matmul
 
-from .layer import Layer
+from .layer  mport Layer
 
-import tensorflow.compat.v1 as tf
-import twml
+ mport tensorflow.compat.v1 as tf
+ mport twml
 
 
 class FullSparse(Layer):
   """Fully-sparse layer class.
-  This layer implements the operation:
+  T  layer  mple nts t  operat on:
 
   .. code-block:: python
 
-    outputs = activation(inputs.weight + bias)
+    outputs = act vat on( nputs.  ght + b as)
 
-  Arguments:
-    output_size:
-      Long or Integer, dimensionality of the output space.
-    input_size:
-      The number of input units. (Deprecated)
-    weight_initializer:
-      Initializer function for the weight matrix.
-      This argument defaults to zeros_initializer().
-      This is valid when the FullSparse is the first layer of
-      parameters but should be changed otherwise.
-    weight_regularizer:
-      Regularizer function for the weight matrix.
-      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
-    bias_regularizer:
-      Regularizer function for the bias.
-      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect
-    activation:
-      Activation function (callable). Set it to None to maintain a linear activation.
-    bias_initializer:
-      Initializer function for the bias.
-      This argument defaults to tf.constant_initializer(1/output_size)
-    trainable:
-      Boolean, if `True` also add variables to the graph collection
-      ``GraphKeys.TRAINABLE_VARIABLES`` (see `tf.Variable
-      <https://www.tensorflow.org/versions/master/api_docs/python/tf/Variable>`_).
-    name:
-      String, the name of the layer. Layers with the same name will
-      share weights, but to avoid mistakes we require ``reuse=True`` in such cases.
+  Argu nts:
+    output_s ze:
+      Long or  nteger, d  ns onal y of t  output space.
+     nput_s ze:
+      T  number of  nput un s. (Deprecated)
+      ght_ n  al zer:
+       n  al zer funct on for t    ght matr x.
+      T  argu nt defaults to zeros_ n  al zer().
+      T   s val d w n t  FullSparse  s t  f rst layer of
+      para ters but should be changed ot rw se.
+      ght_regular zer:
+      Regular zer funct on for t    ght matr x.
+      Ensure to add tf.losses.get_regular zat on_loss() to y  loss for t  to take effect.
+    b as_regular zer:
+      Regular zer funct on for t  b as.
+      Ensure to add tf.losses.get_regular zat on_loss() to y  loss for t  to take effect
+    act vat on:
+      Act vat on funct on (callable). Set   to None to ma nta n a l near act vat on.
+    b as_ n  al zer:
+       n  al zer funct on for t  b as.
+      T  argu nt defaults to tf.constant_ n  al zer(1/output_s ze)
+    tra nable:
+      Boolean,  f `True` also add var ables to t  graph collect on
+      ``GraphKeys.TRA NABLE_VAR ABLES`` (see `tf.Var able
+      <https://www.tensorflow.org/vers ons/master/ap _docs/python/tf/Var able>`_).
+    na :
+      Str ng, t  na  of t  layer. Layers w h t  sa  na  w ll
+      share   ghts, but to avo d m stakes   requ re ``reuse=True``  n such cases.
     use_sparse_grads:
-      Boolean, if `True` do sparse mat mul with `embedding_lookup_sparse`, which will
-      make gradients to weight matrix also sparse in backward pass. This can lead to non-trivial
-      speed up at training time when input_size is large and optimizer handles sparse gradients
-      correctly (eg. with SGD or LazyAdamOptimizer). If weight matrix is small, it's recommended
-      to set this flag to `False`; for most use cases of FullSparse, however, weight matrix will
-      be large, so it's better to set it to `True`
-    num_partitions:
-      Number of partitions to use for the weight variable. Defaults to 1.
-    partition_axis:
-      If num_partitions is specified, the partition axis for the weight variable
-      Defaults to 0 (partition by row).
+      Boolean,  f `True` do sparse mat mul w h `embedd ng_lookup_sparse`, wh ch w ll
+      make grad ents to   ght matr x also sparse  n backward pass. T  can lead to non-tr v al
+      speed up at tra n ng t   w n  nput_s ze  s large and opt m zer handles sparse grad ents
+      correctly (eg. w h SGD or LazyAdamOpt m zer).  f   ght matr x  s small,  's recom nded
+      to set t  flag to `False`; for most use cases of FullSparse, ho ver,   ght matr x w ll
+      be large, so  's better to set   to `True`
+    num_part  ons:
+      Number of part  ons to use for t    ght var able. Defaults to 1.
+    part  on_ax s:
+       f num_part  ons  s spec f ed, t  part  on ax s for t    ght var able
+      Defaults to 0 (part  on by row).
       Must be 0 (row) or 1 (column)
-    use_binary_values:
-      Assume all non zero values are 1. Defaults to False.
-      This can improve training if used in conjunction with MDL.
-      This parameter can also be a list of binary values if `inputs` passed to `call` a list.
-    use_compression:
-      Default False. Set True to enable data compression techniques for
-      optimization of network traffic for distributed training.
-    use_binary_sparse_dense_matmul:
-      If binary sparse dense matmul op is to be used. It will only be enabled if
-      `use_binary_values` is set true. It only should be used for inference, best practice is
-      to set `use_binary_sparse_dense_matmul = not is_training`.
+    use_b nary_values:
+      Assu  all non zero values are 1. Defaults to False.
+      T  can  mprove tra n ng  f used  n conjunct on w h MDL.
+      T  para ter can also be a l st of b nary values  f ` nputs` passed to `call` a l st.
+    use_compress on:
+      Default False. Set True to enable data compress on techn ques for
+      opt m zat on of network traff c for d str buted tra n ng.
+    use_b nary_sparse_dense_matmul:
+       f b nary sparse dense matmul op  s to be used.   w ll only be enabled  f
+      `use_b nary_values`  s set true.   only should be used for  nference, best pract ce  s
+      to set `use_b nary_sparse_dense_matmul = not  s_tra n ng`.
   """
 
-  def __init__(self,
-               output_size,
-               input_size=None,
-               weight_initializer=None,
-               activation=None,
-               bias_initializer=None,
-               trainable=True,
-               name=None,
+  def __ n __(self,
+               output_s ze,
+                nput_s ze=None,
+                 ght_ n  al zer=None,
+               act vat on=None,
+               b as_ n  al zer=None,
+               tra nable=True,
+               na =None,
                use_sparse_grads=True,
-               num_partitions=None,
-               partition_axis=0,
-               use_binary_values=False,
-               bias_regularizer=None,
-               weight_regularizer=None,
-               use_compression=False,
-               use_binary_sparse_dense_matmul=False,
+               num_part  ons=None,
+               part  on_ax s=0,
+               use_b nary_values=False,
+               b as_regular zer=None,
+                 ght_regular zer=None,
+               use_compress on=False,
+               use_b nary_sparse_dense_matmul=False,
                **kwargs):
-    super(FullSparse, self).__init__(trainable=trainable, name=name, **kwargs)
-    # TODO - remove input_size warning.
-    if input_size:
-      raise ValueError('input_size is deprecated - it is now automatically \
-                       inferred from your input.')
+    super(FullSparse, self).__ n __(tra nable=tra nable, na =na , **kwargs)
+    # TODO - remove  nput_s ze warn ng.
+     f  nput_s ze:
+      ra se ValueError(' nput_s ze  s deprecated -    s now automat cally \
+                        nferred from y   nput.')
 
-    # The bias initialization and weights initialization is set to match v1's implementation.
-    if bias_initializer is None:
-      bias_initializer = tf.constant_initializer(1 / output_size)
-    # Weights initialization is set to 0s. This is safe for full sparse layers because
-    # you are supposed to learn your embedding from the label.
-    if weight_initializer is None:
-      weight_initializer = tf.zeros_initializer()
-    self.weight_initializer = weight_initializer
-    self.bias_initializer = bias_initializer
-    self.output_size = output_size
-    self.activation = activation
+    # T  b as  n  al zat on and   ghts  n  al zat on  s set to match v1's  mple ntat on.
+     f b as_ n  al zer  s None:
+      b as_ n  al zer = tf.constant_ n  al zer(1 / output_s ze)
+    #   ghts  n  al zat on  s set to 0s. T   s safe for full sparse layers because
+    #   are supposed to learn y  embedd ng from t  label.
+     f   ght_ n  al zer  s None:
+        ght_ n  al zer = tf.zeros_ n  al zer()
+    self.  ght_ n  al zer =   ght_ n  al zer
+    self.b as_ n  al zer = b as_ n  al zer
+    self.output_s ze = output_s ze
+    self.act vat on = act vat on
     self.use_sparse_grads = use_sparse_grads
-    self.num_partitions = num_partitions
-    if partition_axis != 0 and partition_axis != 1:
-      raise ValueError('partition_axis must be 0 or 1')
-    self.partition_axis = partition_axis
-    self.use_binary_values = use_binary_values
-    self.weight_regularizer = weight_regularizer
-    self.bias_regularizer = bias_regularizer
-    self._use_compression = use_compression
-    self._cast_indices_dtype = tf.int32 if self._use_compression else None
-    self.use_binary_sparse_dense_matmul = use_binary_sparse_dense_matmul
+    self.num_part  ons = num_part  ons
+     f part  on_ax s != 0 and part  on_ax s != 1:
+      ra se ValueError('part  on_ax s must be 0 or 1')
+    self.part  on_ax s = part  on_ax s
+    self.use_b nary_values = use_b nary_values
+    self.  ght_regular zer =   ght_regular zer
+    self.b as_regular zer = b as_regular zer
+    self._use_compress on = use_compress on
+    self._cast_ nd ces_dtype = tf. nt32  f self._use_compress on else None
+    self.use_b nary_sparse_dense_matmul = use_b nary_sparse_dense_matmul
 
-  def _make_weight_var(self, shape, partitioner):
-    self.weight = self.add_variable(
-      'weight',
-      initializer=self.weight_initializer,
-      regularizer=self.weight_regularizer,
+  def _make_  ght_var(self, shape, part  oner):
+    self.  ght = self.add_var able(
+      '  ght',
+       n  al zer=self.  ght_ n  al zer,
+      regular zer=self.  ght_regular zer,
       shape=shape,
       dtype=self.dtype,
-      trainable=True,
-      partitioner=partitioner,
+      tra nable=True,
+      part  oner=part  oner,
     )
 
-  def build(self, input_shapes):
+  def bu ld(self,  nput_shapes):
     """
-    creates the ``bias`` and ``weight`` Variables
-    of shape ``[output_size]`` and ``[input_size, output_size]`` respectively.
+    creates t  ``b as`` and ``  ght`` Var ables
+    of shape ``[output_s ze]`` and ``[ nput_s ze, output_s ze]`` respect vely.
     """
 
-    if isinstance(input_shapes, (list, tuple)):
-      input_shape = input_shapes[0]
-      is_compatible = True
-      for other_shape in input_shapes[1:]:
-        is_compatible &= input_shape.is_compatible_with(other_shape)
-      if not is_compatible:
-        raise ValueError("Input shapes %s are not compatible." % input_shapes)
+     f  s nstance( nput_shapes, (l st, tuple)):
+       nput_shape =  nput_shapes[0]
+       s_compat ble = True
+      for ot r_shape  n  nput_shapes[1:]:
+         s_compat ble &=  nput_shape. s_compat ble_w h(ot r_shape)
+       f not  s_compat ble:
+        ra se ValueError(" nput shapes %s are not compat ble." %  nput_shapes)
     else:
-      input_shape = input_shapes
+       nput_shape =  nput_shapes
 
-    self.bias = self.add_variable(
-      'bias',
-      initializer=self.bias_initializer,
-      regularizer=self.bias_regularizer,
-      shape=[self.output_size, ],
+    self.b as = self.add_var able(
+      'b as',
+       n  al zer=self.b as_ n  al zer,
+      regular zer=self.b as_regular zer,
+      shape=[self.output_s ze, ],
       dtype=self.dtype,
-      trainable=True
+      tra nable=True
     )
 
-    partitioner = None
-    shape = [input_shape[1], self.output_size]
+    part  oner = None
+    shape = [ nput_shape[1], self.output_s ze]
 
-    # There is a 2gb limitation for each tensor because of protobuf.
-    # 2**30 is 1GB. 2 * (2**30) is 2GB.
+    # T re  s a 2gb l m at on for each tensor because of protobuf.
+    # 2**30  s 1GB. 2 * (2**30)  s 2GB.
     dtype = tf.as_dtype(self.dtype)
-    num_partitions = 1 if self.num_partitions is None else self.num_partitions
-    in_shape = input_shape[1]
-    out_shape = self.output_size
+    num_part  ons = 1  f self.num_part  ons  s None else self.num_part  ons
+     n_shape =  nput_shape[1]
+    out_shape = self.output_s ze
 
-    # when v2 behavior is disabled, in_shape is tf.Dimension. otherwise it is int.
-    if isinstance(in_shape, tf.Dimension):
-      in_shape = in_shape.value
+    # w n v2 behav or  s d sabled,  n_shape  s tf.D  ns on. ot rw se    s  nt.
+     f  s nstance( n_shape, tf.D  ns on):
+       n_shape =  n_shape.value
 
-    if in_shape is None:
-      raise ValueError("Input tensor should have shape."
-                       " You can set it using twml.util.limit_sparse_tensor_size")
+     f  n_shape  s None:
+      ra se ValueError(" nput tensor should have shape."
+                       "   can set   us ng twml.ut l.l m _sparse_tensor_s ze")
 
-    (split_dim, other_dim) = (in_shape, out_shape) if self.partition_axis == 0 else (out_shape, in_shape)
-    requested_size = math.ceil(float(split_dim) / num_partitions) * other_dim * dtype.size
-    if (requested_size >= 2**31):
-      raise ValueError("Weight tensor partitions cannot be larger than 2GB.\n"
-                       "Requested Dimensions(%d, %d) of type %s (%d bytes total) over %d partitions.\n"
-                       "Possible solutions:\n"
-                       "- reduce the params.output_size_bits\n"
-                       "- reduce the output_size of the sparse_layer\n"
-                       "- specify a larger num_partitions argument\n"
-                       "- reduce input_size_bits" %
-                       (in_shape, self.output_size, dtype.name, requested_size, num_partitions))
+    (spl _d m, ot r_d m) = ( n_shape, out_shape)  f self.part  on_ax s == 0 else (out_shape,  n_shape)
+    requested_s ze = math.ce l(float(spl _d m) / num_part  ons) * ot r_d m * dtype.s ze
+     f (requested_s ze >= 2**31):
+      ra se ValueError("  ght tensor part  ons cannot be larger than 2GB.\n"
+                       "Requested D  ns ons(%d, %d) of type %s (%d bytes total) over %d part  ons.\n"
+                       "Poss ble solut ons:\n"
+                       "- reduce t  params.output_s ze_b s\n"
+                       "- reduce t  output_s ze of t  sparse_layer\n"
+                       "- spec fy a larger num_part  ons argu nt\n"
+                       "- reduce  nput_s ze_b s" %
+                       ( n_shape, self.output_s ze, dtype.na , requested_s ze, num_part  ons))
 
-    if self.num_partitions:
-      partition_axis = int(self.partition_axis)
-      partitioner = tf.fixed_size_partitioner(self.num_partitions, axis=partition_axis)
+     f self.num_part  ons:
+      part  on_ax s =  nt(self.part  on_ax s)
+      part  oner = tf.f xed_s ze_part  oner(self.num_part  ons, ax s=part  on_ax s)
     else:
-      # Regular variables do not like it when you pass both constant tensors and shape
-      if not callable(self.weight_initializer):
+      # Regular var ables do not l ke   w n   pass both constant tensors and shape
+       f not callable(self.  ght_ n  al zer):
         shape = None
 
-    self._make_weight_var(shape, partitioner)
+    self._make_  ght_var(shape, part  oner)
 
-    self.built = True
+    self.bu lt = True
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  def compute_output_shape(self,  nput_shape):
+    """Computes t  output shape of t  layer g ven t   nput shape.
 
     Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+       nput_shape: A (poss bly nested tuple of) `TensorShape`.    need not
+        be fully def ned (e.g. t  batch s ze may be unknown).
 
-    Raises NotImplementedError.
+    Ra ses Not mple ntedError.
 
     """
-    raise NotImplementedError
+    ra se Not mple ntedError
 
-  def call(self, inputs, **kwargs):  # pylint: disable=unused-argument
-    """The logic of the layer lives here.
+  def call(self,  nputs, **kwargs):  # pyl nt: d sable=unused-argu nt
+    """T  log c of t  layer l ves  re.
 
-    Arguments:
-      inputs:
-        A SparseTensor or a list of SparseTensors.
-        If `inputs` is a list, all tensors must have same `dense_shape`.
+    Argu nts:
+       nputs:
+        A SparseTensor or a l st of SparseTensors.
+         f ` nputs`  s a l st, all tensors must have sa  `dense_shape`.
 
     Returns:
-      - If `inputs` is `SparseTensor`, then returns `bias + inputs * dense_b`.
-      - If `inputs` is a `list[SparseTensor`, then returns
-        `bias + add_n([sp_a * dense_b for sp_a in inputs])`.
+      -  f ` nputs`  s `SparseTensor`, t n returns `b as +  nputs * dense_b`.
+      -  f ` nputs`  s a `l st[SparseTensor`, t n returns
+        `b as + add_n([sp_a * dense_b for sp_a  n  nputs])`.
 
     """
-    if isinstance(inputs, (list, tuple)):
+     f  s nstance( nputs, (l st, tuple)):
 
-      if isinstance(self.use_binary_values, (list, tuple)):
-        use_binary_values = self.use_binary_values
+       f  s nstance(self.use_b nary_values, (l st, tuple)):
+        use_b nary_values = self.use_b nary_values
       else:
-        use_binary_values = [self.use_binary_values] * len(inputs)
+        use_b nary_values = [self.use_b nary_values] * len( nputs)
 
-      num_inputs = len(inputs)
-      if num_inputs != len(use_binary_values):
-        raise ValueError("#inputs is %d while #use_binary_values is %d"
-                         % (num_inputs, len(use_binary_values)))
+      num_ nputs = len( nputs)
+       f num_ nputs != len(use_b nary_values):
+        ra se ValueError("# nputs  s %d wh le #use_b nary_values  s %d"
+                         % (num_ nputs, len(use_b nary_values)))
 
       outputs = []
-      for n in range(num_inputs):
-        outputs.append(sparse_dense_matmul(inputs[n], self.weight,
+      for n  n range(num_ nputs):
+        outputs.append(sparse_dense_matmul( nputs[n], self.  ght,
                                            self.use_sparse_grads,
-                                           use_binary_values[n],
-                                           name='sparse_mm_' + str(n),
-                                           partition_axis=self.partition_axis,
-                                           num_partitions=self.num_partitions,
-                                           compress_ids=self._use_compression,
-                                           cast_indices_dtype=self._cast_indices_dtype,
-                                           use_binary_sparse_dense_matmul=self.use_binary_sparse_dense_matmul))
+                                           use_b nary_values[n],
+                                           na ='sparse_mm_' + str(n),
+                                           part  on_ax s=self.part  on_ax s,
+                                           num_part  ons=self.num_part  ons,
+                                           compress_ ds=self._use_compress on,
+                                           cast_ nd ces_dtype=self._cast_ nd ces_dtype,
+                                           use_b nary_sparse_dense_matmul=self.use_b nary_sparse_dense_matmul))
       outputs = tf.accumulate_n(outputs)
     else:
 
-      if isinstance(self.use_binary_values, (list, tuple)):
-        raise ValueError("use_binary_values can not be %s when inputs is %s" %
-                         (type(self.use_binary_values), type(inputs)))
+       f  s nstance(self.use_b nary_values, (l st, tuple)):
+        ra se ValueError("use_b nary_values can not be %s w n  nputs  s %s" %
+                         (type(self.use_b nary_values), type( nputs)))
 
-      outputs = sparse_dense_matmul(inputs, self.weight,
+      outputs = sparse_dense_matmul( nputs, self.  ght,
                                     self.use_sparse_grads,
-                                    self.use_binary_values,
-                                    name='sparse_mm',
-                                    partition_axis=self.partition_axis,
-                                    num_partitions=self.num_partitions,
-                                    compress_ids=self._use_compression,
-                                    cast_indices_dtype=self._cast_indices_dtype,
-                                    use_binary_sparse_dense_matmul=self.use_binary_sparse_dense_matmul)
+                                    self.use_b nary_values,
+                                    na ='sparse_mm',
+                                    part  on_ax s=self.part  on_ax s,
+                                    num_part  ons=self.num_part  ons,
+                                    compress_ ds=self._use_compress on,
+                                    cast_ nd ces_dtype=self._cast_ nd ces_dtype,
+                                    use_b nary_sparse_dense_matmul=self.use_b nary_sparse_dense_matmul)
 
-    if self.bias is not None:
-      outputs = tf.nn.bias_add(outputs, self.bias)
+     f self.b as  s not None:
+      outputs = tf.nn.b as_add(outputs, self.b as)
 
-    if self.activation is not None:
-      return self.activation(outputs)  # pylint: disable=not-callable
+     f self.act vat on  s not None:
+      return self.act vat on(outputs)  # pyl nt: d sable=not-callable
     return outputs
 
 
 def full_sparse(
-        inputs, output_size,
-        input_size=None,
-        activation=None,
-        bias_regularizer=None,
-        weight_regularizer=None,
-        bias_initializer=None,
-        weight_initializer=None,
-        trainable=True,
-        name=None,
+         nputs, output_s ze,
+         nput_s ze=None,
+        act vat on=None,
+        b as_regular zer=None,
+          ght_regular zer=None,
+        b as_ n  al zer=None,
+          ght_ n  al zer=None,
+        tra nable=True,
+        na =None,
         reuse=None,
         use_sparse_grads=True,
-        num_partitions=None,
-        partition_axis=0,
-        use_binary_values=False,
-        use_compression=False):
-  """Functional interface for the sparsely-connected layer.
+        num_part  ons=None,
+        part  on_ax s=0,
+        use_b nary_values=False,
+        use_compress on=False):
+  """Funct onal  nterface for t  sparsely-connected layer.
 
-  Arguments:
-    inputs:
+  Argu nts:
+     nputs:
       A sparse tensor (can be twml.SparseTensor or tf.SparseTensor)
-    output_size:
-      Long or Integer, dimensionality of the output space.
-    weight_initializer:
-      Initializer function for the weight matrix.
-    activation:
-      Activation function (callable). Set it to None to maintain a linear activation.
-    bias_initializer:
-      Initializer function for the bias.
-    weight_regularizer:
-      Regularizer function for the weight matrix.
-      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
-    bias_regularizer:
-      Regularizer function for the bias.
-      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
-    trainable:
-      Boolean, if `True` also add variables to the graph collection
-      ``GraphKeys.TRAINABLE_VARIABLES`` (see `tf.Variable
-      <https://www.tensorflow.org/versions/master/api_docs/python/tf/Variable>`_).
-    name:
-      String, the name of the layer. Layers with the same name will
-      share weights, but to avoid mistakes we require ``reuse=True`` in such cases.
+    output_s ze:
+      Long or  nteger, d  ns onal y of t  output space.
+      ght_ n  al zer:
+       n  al zer funct on for t    ght matr x.
+    act vat on:
+      Act vat on funct on (callable). Set   to None to ma nta n a l near act vat on.
+    b as_ n  al zer:
+       n  al zer funct on for t  b as.
+      ght_regular zer:
+      Regular zer funct on for t    ght matr x.
+      Ensure to add tf.losses.get_regular zat on_loss() to y  loss for t  to take effect.
+    b as_regular zer:
+      Regular zer funct on for t  b as.
+      Ensure to add tf.losses.get_regular zat on_loss() to y  loss for t  to take effect.
+    tra nable:
+      Boolean,  f `True` also add var ables to t  graph collect on
+      ``GraphKeys.TRA NABLE_VAR ABLES`` (see `tf.Var able
+      <https://www.tensorflow.org/vers ons/master/ap _docs/python/tf/Var able>`_).
+    na :
+      Str ng, t  na  of t  layer. Layers w h t  sa  na  w ll
+      share   ghts, but to avo d m stakes   requ re ``reuse=True``  n such cases.
     use_sparse_grads:
-      Boolean, if `True` do sparse mat mul with `embedding_lookup_sparse`, which will
-      make gradients to weight matrix also sparse in backward pass. This can lead to non-trivial
-      speed up at training time when input_size is large and optimizer handles sparse gradients
-      correctly (eg. with SGD or LazyAdamOptimizer). If weight matrix is small, it's recommended
-      to set this flag to `False`; for most use cases of FullSparse, however, weight matrix will
-      be large, so it's better to set it to `True`
-    num_partitions:
-      Number of partitions to use for the weight variable. Defaults to 1.
-    partition_axis:
-      If num_partitions is specified, the partition axis for the weight variable
-      Defaults to 0 (partition by row).
+      Boolean,  f `True` do sparse mat mul w h `embedd ng_lookup_sparse`, wh ch w ll
+      make grad ents to   ght matr x also sparse  n backward pass. T  can lead to non-tr v al
+      speed up at tra n ng t   w n  nput_s ze  s large and opt m zer handles sparse grad ents
+      correctly (eg. w h SGD or LazyAdamOpt m zer).  f   ght matr x  s small,  's recom nded
+      to set t  flag to `False`; for most use cases of FullSparse, ho ver,   ght matr x w ll
+      be large, so  's better to set   to `True`
+    num_part  ons:
+      Number of part  ons to use for t    ght var able. Defaults to 1.
+    part  on_ax s:
+       f num_part  ons  s spec f ed, t  part  on ax s for t    ght var able
+      Defaults to 0 (part  on by row).
       Must be 0 (row) or 1 (column)
-    use_binary_values:
-      Assume all non zero values are 1. Defaults to False.
-      This can improve training if used in conjunction with MDL.
-    use_compression:
-      Default False. Set True to enable data compression techniques for
-      optimization of network traffic for distributed training.
+    use_b nary_values:
+      Assu  all non zero values are 1. Defaults to False.
+      T  can  mprove tra n ng  f used  n conjunct on w h MDL.
+    use_compress on:
+      Default False. Set True to enable data compress on techn ques for
+      opt m zat on of network traff c for d str buted tra n ng.
   Returns:
-    Outputs a ``tf.Tensor`` of size ``[batch_size x output_size]``.
+    Outputs a ``tf.Tensor`` of s ze ``[batch_s ze x output_s ze]``.
   """
-  # TODO - remove input_size warning.
-  if input_size:
-    raise ValueError('input_size is deprecated - it is now \
-                      automatically inferred from your input.')
+  # TODO - remove  nput_s ze warn ng.
+   f  nput_s ze:
+    ra se ValueError(' nput_s ze  s deprecated -    s now \
+                      automat cally  nferred from y   nput.')
 
   dtype = None
-  if isinstance(inputs, twml.SparseTensor):
-    inputs = inputs.to_tf()
-    dtype = inputs.dtype.base_dtype
+   f  s nstance( nputs, twml.SparseTensor):
+     nputs =  nputs.to_tf()
+    dtype =  nputs.dtype.base_dtype
 
-  if isinstance(inputs, (list, tuple)):
-    inputs = [inp.to_tf() if isinstance(inp, twml.SparseTensor) else inp for inp in inputs]
-    dtype = inputs[0].dtype.base_dtype
+   f  s nstance( nputs, (l st, tuple)):
+     nputs = [ np.to_tf()  f  s nstance( np, twml.SparseTensor) else  np for  np  n  nputs]
+    dtype =  nputs[0].dtype.base_dtype
 
-  layer = FullSparse(output_size=output_size,
-                     activation=activation,
-                     trainable=trainable,
-                     name=name,
-                     weight_initializer=weight_initializer,
-                     bias_initializer=bias_initializer,
-                     weight_regularizer=weight_regularizer,
-                     bias_regularizer=bias_regularizer,
+  layer = FullSparse(output_s ze=output_s ze,
+                     act vat on=act vat on,
+                     tra nable=tra nable,
+                     na =na ,
+                       ght_ n  al zer=  ght_ n  al zer,
+                     b as_ n  al zer=b as_ n  al zer,
+                       ght_regular zer=  ght_regular zer,
+                     b as_regular zer=b as_regular zer,
                      dtype=dtype,
-                     _scope=name,
+                     _scope=na ,
                      _reuse=reuse,
                      use_sparse_grads=use_sparse_grads,
-                     num_partitions=num_partitions,
-                     partition_axis=partition_axis,
-                     use_compression=use_compression,
-                     use_binary_values=use_binary_values)
-  return layer(inputs)
+                     num_part  ons=num_part  ons,
+                     part  on_ax s=part  on_ax s,
+                     use_compress on=use_compress on,
+                     use_b nary_values=use_b nary_values)
+  return layer( nputs)

@@ -1,77 +1,77 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.tw ter.cr_m xer.s m lar y_eng ne
 
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.cr_mixer.param.TweetBasedUserAdGraphParams
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.recos.user_ad_graph.thriftscala.ConsumersBasedRelatedAdRequest
-import com.twitter.recos.user_ad_graph.thriftscala.RelatedAdResponse
-import com.twitter.recos.user_ad_graph.thriftscala.UserAdGraph
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.twistly.thriftscala.TweetRecentEngagedUsers
-import com.twitter.util.Future
-import javax.inject.Singleton
+ mport com.tw ter.cr_m xer.model.S m lar yEng ne nfo
+ mport com.tw ter.cr_m xer.model.T etW hScore
+ mport com.tw ter.cr_m xer.param.GlobalParams
+ mport com.tw ter.cr_m xer.param.T etBasedUserAdGraphParams
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.ut l.StatsUt l
+ mport com.tw ter.recos.user_ad_graph.thr ftscala.Consu rsBasedRelatedAdRequest
+ mport com.tw ter.recos.user_ad_graph.thr ftscala.RelatedAdResponse
+ mport com.tw ter.recos.user_ad_graph.thr ftscala.UserAdGraph
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.conf gap 
+ mport com.tw ter.tw stly.thr ftscala.T etRecentEngagedUsers
+ mport com.tw ter.ut l.Future
+ mport javax. nject.S ngleton
 
 /**
- * This store looks for similar tweets from UserAdGraph for a Source TweetId
- * For a query tweet,User Ad Graph (UAG)
- * lets us find out which other tweets share a lot of the same engagers with the query tweet
+ * T  store looks for s m lar t ets from UserAdGraph for a S ce T et d
+ * For a query t et,User Ad Graph (UAG)
+ * lets us f nd out wh ch ot r t ets share a lot of t  sa  engagers w h t  query t et
  */
-@Singleton
-case class TweetBasedUserAdGraphSimilarityEngine(
-  userAdGraphService: UserAdGraph.MethodPerEndpoint,
-  tweetEngagedUsersStore: ReadableStore[TweetId, TweetRecentEngagedUsers],
-  statsReceiver: StatsReceiver)
+@S ngleton
+case class T etBasedUserAdGraphS m lar yEng ne(
+  userAdGraphServ ce: UserAdGraph. thodPerEndpo nt,
+  t etEngagedUsersStore: ReadableStore[T et d, T etRecentEngagedUsers],
+  statsRece ver: StatsRece ver)
     extends ReadableStore[
-      TweetBasedUserAdGraphSimilarityEngine.Query,
-      Seq[TweetWithScore]
+      T etBasedUserAdGraphS m lar yEng ne.Query,
+      Seq[T etW hScore]
     ] {
 
-  import TweetBasedUserAdGraphSimilarityEngine._
+   mport T etBasedUserAdGraphS m lar yEng ne._
 
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val fetchCoverageExpansionCandidatesStat = stats.scope("fetchCoverageExpansionCandidates")
-  override def get(
-    query: TweetBasedUserAdGraphSimilarityEngine.Query
-  ): Future[Option[Seq[TweetWithScore]]] = {
-    query.sourceId match {
-      case InternalId.TweetId(tweetId) => getCandidates(tweetId, query)
+  pr vate val stats = statsRece ver.scope(t .getClass.getS mpleNa )
+  pr vate val fetchCoverageExpans onCand datesStat = stats.scope("fetchCoverageExpans onCand dates")
+  overr de def get(
+    query: T etBasedUserAdGraphS m lar yEng ne.Query
+  ): Future[Opt on[Seq[T etW hScore]]] = {
+    query.s ce d match {
+      case  nternal d.T et d(t et d) => getCand dates(t et d, query)
       case _ =>
         Future.value(None)
     }
   }
 
-  // We first fetch tweet's recent engaged users as consumeSeedSet from MH store,
-  // then query consumersBasedUTG using the consumerSeedSet
-  private def getCandidates(
-    tweetId: TweetId,
-    query: TweetBasedUserAdGraphSimilarityEngine.Query
-  ): Future[Option[Seq[TweetWithScore]]] = {
-    StatsUtil
-      .trackOptionItemsStats(fetchCoverageExpansionCandidatesStat) {
-        tweetEngagedUsersStore
-          .get(tweetId).flatMap {
-            _.map { tweetRecentEngagedUsers =>
-              val consumerSeedSet =
-                tweetRecentEngagedUsers.recentEngagedUsers
-                  .map { _.userId }.take(query.maxConsumerSeedsNum)
-              val consumersBasedRelatedAdRequest =
-                ConsumersBasedRelatedAdRequest(
-                  consumerSeedSet = consumerSeedSet,
-                  maxResults = Some(query.maxResults),
-                  minCooccurrence = Some(query.minCooccurrence),
-                  excludeTweetIds = Some(Seq(tweetId)),
-                  minScore = Some(query.consumersBasedMinScore),
-                  maxTweetAgeInHours = Some(query.maxTweetAgeInHours)
+  //   f rst fetch t et's recent engaged users as consu SeedSet from MH store,
+  // t n query consu rsBasedUTG us ng t  consu rSeedSet
+  pr vate def getCand dates(
+    t et d: T et d,
+    query: T etBasedUserAdGraphS m lar yEng ne.Query
+  ): Future[Opt on[Seq[T etW hScore]]] = {
+    StatsUt l
+      .trackOpt on emsStats(fetchCoverageExpans onCand datesStat) {
+        t etEngagedUsersStore
+          .get(t et d).flatMap {
+            _.map { t etRecentEngagedUsers =>
+              val consu rSeedSet =
+                t etRecentEngagedUsers.recentEngagedUsers
+                  .map { _.user d }.take(query.maxConsu rSeedsNum)
+              val consu rsBasedRelatedAdRequest =
+                Consu rsBasedRelatedAdRequest(
+                  consu rSeedSet = consu rSeedSet,
+                  maxResults = So (query.maxResults),
+                  m nCooccurrence = So (query.m nCooccurrence),
+                  excludeT et ds = So (Seq(t et d)),
+                  m nScore = So (query.consu rsBasedM nScore),
+                  maxT etAge nH s = So (query.maxT etAge nH s)
                 )
-              toTweetWithScore(userAdGraphService
-                .consumersBasedRelatedAds(consumersBasedRelatedAdRequest).map { Some(_) })
+              toT etW hScore(userAdGraphServ ce
+                .consu rsBasedRelatedAds(consu rsBasedRelatedAdRequest).map { So (_) })
             }.getOrElse(Future.value(None))
           }
       }
@@ -79,48 +79,48 @@ case class TweetBasedUserAdGraphSimilarityEngine(
 
 }
 
-object TweetBasedUserAdGraphSimilarityEngine {
+object T etBasedUserAdGraphS m lar yEng ne {
 
-  def toSimilarityEngineInfo(score: Double): SimilarityEngineInfo = {
-    SimilarityEngineInfo(
-      similarityEngineType = SimilarityEngineType.TweetBasedUserAdGraph,
-      modelId = None,
-      score = Some(score))
+  def toS m lar yEng ne nfo(score: Double): S m lar yEng ne nfo = {
+    S m lar yEng ne nfo(
+      s m lar yEng neType = S m lar yEng neType.T etBasedUserAdGraph,
+      model d = None,
+      score = So (score))
   }
-  private def toTweetWithScore(
-    relatedAdResponseFut: Future[Option[RelatedAdResponse]]
-  ): Future[Option[Seq[TweetWithScore]]] = {
+  pr vate def toT etW hScore(
+    relatedAdResponseFut: Future[Opt on[RelatedAdResponse]]
+  ): Future[Opt on[Seq[T etW hScore]]] = {
     relatedAdResponseFut.map { relatedAdResponseOpt =>
       relatedAdResponseOpt.map { relatedAdResponse =>
-        val candidates =
-          relatedAdResponse.adTweets.map(tweet => TweetWithScore(tweet.adTweetId, tweet.score))
+        val cand dates =
+          relatedAdResponse.adT ets.map(t et => T etW hScore(t et.adT et d, t et.score))
 
-        candidates
+        cand dates
       }
     }
   }
 
   case class Query(
-    sourceId: InternalId,
-    maxResults: Int,
-    minCooccurrence: Int,
-    consumersBasedMinScore: Double,
-    maxTweetAgeInHours: Int,
-    maxConsumerSeedsNum: Int,
+    s ce d:  nternal d,
+    maxResults:  nt,
+    m nCooccurrence:  nt,
+    consu rsBasedM nScore: Double,
+    maxT etAge nH s:  nt,
+    maxConsu rSeedsNum:  nt,
   )
 
   def fromParams(
-    sourceId: InternalId,
-    params: configapi.Params,
-  ): EngineQuery[Query] = {
-    EngineQuery(
+    s ce d:  nternal d,
+    params: conf gap .Params,
+  ): Eng neQuery[Query] = {
+    Eng neQuery(
       Query(
-        sourceId = sourceId,
-        maxResults = params(GlobalParams.MaxCandidateNumPerSourceKeyParam),
-        minCooccurrence = params(TweetBasedUserAdGraphParams.MinCoOccurrenceParam),
-        consumersBasedMinScore = params(TweetBasedUserAdGraphParams.ConsumersBasedMinScoreParam),
-        maxTweetAgeInHours = params(GlobalParams.MaxTweetAgeHoursParam).inHours,
-        maxConsumerSeedsNum = params(TweetBasedUserAdGraphParams.MaxConsumerSeedsNumParam),
+        s ce d = s ce d,
+        maxResults = params(GlobalParams.MaxCand dateNumPerS ceKeyParam),
+        m nCooccurrence = params(T etBasedUserAdGraphParams.M nCoOccurrenceParam),
+        consu rsBasedM nScore = params(T etBasedUserAdGraphParams.Consu rsBasedM nScoreParam),
+        maxT etAge nH s = params(GlobalParams.MaxT etAgeH sParam). nH s,
+        maxConsu rSeedsNum = params(T etBasedUserAdGraphParams.MaxConsu rSeedsNumParam),
       ),
       params
     )

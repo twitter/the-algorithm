@@ -1,75 +1,75 @@
-package com.twitter.search.common.search;
+package com.tw ter.search.common.search;
 
-import java.io.IOException;
-import java.util.List;
+ mport java. o. OExcept on;
+ mport java.ut l.L st;
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.Collector;
-import org.apache.lucene.search.LeafCollector;
-import org.apache.lucene.search.Scorable;
-import org.apache.lucene.search.ScoreMode;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene.search.Collector;
+ mport org.apac .lucene.search.LeafCollector;
+ mport org.apac .lucene.search.Scorable;
+ mport org.apac .lucene.search.ScoreMode;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.query.thriftjava.CollectorParams;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common.query.thr ftjava.CollectorParams;
 
 /**
- * A {@link com.twitter.search.common.search.TwitterEarlyTerminationCollector}
- * that delegates actual hit collection to a sub collector.
+ * A {@l nk com.tw ter.search.common.search.Tw terEarlyTerm nat onCollector}
+ * that delegates actual h  collect on to a sub collector.
  */
-public final class DelegatingEarlyTerminationCollector
-    extends TwitterEarlyTerminationCollector {
-  private final Collector subCollector;
-  private LeafCollector subLeafCollector;
+publ c f nal class Delegat ngEarlyTerm nat onCollector
+    extends Tw terEarlyTerm nat onCollector {
+  pr vate f nal Collector subCollector;
+  pr vate LeafCollector subLeafCollector;
 
-  /** Creates a new DelegatingEarlyTerminationCollector instance. */
-  public DelegatingEarlyTerminationCollector(Collector subCollector,
+  /** Creates a new Delegat ngEarlyTerm nat onCollector  nstance. */
+  publ c Delegat ngEarlyTerm nat onCollector(Collector subCollector,
                                              CollectorParams collectorParams,
-                                             TerminationTracker terminationTracker,
-                                             @Nullable QueryCostProvider queryCostProvider,
-                                             int numDocsBetweenTimeoutChecks,
+                                             Term nat onTracker term nat onTracker,
+                                             @Nullable QueryCostProv der queryCostProv der,
+                                              nt numDocsBet enT  outC cks,
                                              Clock clock) {
     super(
         collectorParams,
-        terminationTracker,
-        queryCostProvider,
-        numDocsBetweenTimeoutChecks,
+        term nat onTracker,
+        queryCostProv der,
+        numDocsBet enT  outC cks,
         clock);
-    this.subCollector = subCollector;
+    t .subCollector = subCollector;
   }
 
-  @Override
-  public void setScorer(Scorable scorer) throws IOException {
+  @Overr de
+  publ c vo d setScorer(Scorable scorer) throws  OExcept on {
     super.setScorer(scorer);
     subLeafCollector.setScorer(scorer);
   }
 
-  @Override
-  protected void doCollect() throws IOException {
-    subLeafCollector.collect(curDocId);
+  @Overr de
+  protected vo d doCollect() throws  OExcept on {
+    subLeafCollector.collect(curDoc d);
   }
 
-  @Override
-  protected void doFinishSegment(int lastSearchedDocID) throws IOException {
-    if (subCollector instanceof TwitterCollector) {
-      ((TwitterCollector) subCollector).finishSegment(lastSearchedDocID);
+  @Overr de
+  protected vo d doF n shSeg nt( nt lastSearc dDoc D) throws  OExcept on {
+     f (subCollector  nstanceof Tw terCollector) {
+      ((Tw terCollector) subCollector).f n shSeg nt(lastSearc dDoc D);
     }
   }
 
-  @Override
-  public void setNextReader(LeafReaderContext context) throws IOException {
+  @Overr de
+  publ c vo d setNextReader(LeafReaderContext context) throws  OExcept on {
     super.setNextReader(context);
     subLeafCollector = subCollector.getLeafCollector(context);
   }
 
-  @Override
-  public ScoreMode scoreMode() {
+  @Overr de
+  publ c ScoreMode scoreMode() {
     return subCollector.scoreMode();
   }
 
-  @Override
-  public List<String> getDebugInfo() {
+  @Overr de
+  publ c L st<Str ng> getDebug nfo() {
     return null;
   }
 }

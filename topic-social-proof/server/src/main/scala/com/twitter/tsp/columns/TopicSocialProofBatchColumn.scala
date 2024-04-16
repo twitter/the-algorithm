@@ -1,84 +1,84 @@
-package com.twitter.tsp.columns
+package com.tw ter.tsp.columns
 
-import com.twitter.stitch.SeqGroup
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.Fetch
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.config._
-import com.twitter.strato.config.AllowAll
-import com.twitter.strato.config.ContactInfo
-import com.twitter.strato.config.Policy
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
-import com.twitter.strato.data.Lifecycle.Production
-import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.tsp.thriftscala.TopicSocialProofRequest
-import com.twitter.tsp.thriftscala.TopicSocialProofOptions
-import com.twitter.tsp.service.TopicSocialProofService
-import com.twitter.tsp.thriftscala.TopicWithScore
-import com.twitter.util.Future
-import com.twitter.util.Try
-import javax.inject.Inject
+ mport com.tw ter.st ch.SeqGroup
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.catalog.Fetch
+ mport com.tw ter.strato.catalog.Op tadata
+ mport com.tw ter.strato.conf g._
+ mport com.tw ter.strato.conf g.AllowAll
+ mport com.tw ter.strato.conf g.Contact nfo
+ mport com.tw ter.strato.conf g.Pol cy
+ mport com.tw ter.strato.data.Conv
+ mport com.tw ter.strato.data.Descr pt on.Pla nText
+ mport com.tw ter.strato.data.L fecycle.Product on
+ mport com.tw ter.strato.fed.StratoFed
+ mport com.tw ter.strato.thr ft.ScroogeConv
+ mport com.tw ter.tsp.thr ftscala.Top cSoc alProofRequest
+ mport com.tw ter.tsp.thr ftscala.Top cSoc alProofOpt ons
+ mport com.tw ter.tsp.serv ce.Top cSoc alProofServ ce
+ mport com.tw ter.tsp.thr ftscala.Top cW hScore
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Try
+ mport javax. nject. nject
 
-class TopicSocialProofBatchColumn @Inject() (
-  topicSocialProofService: TopicSocialProofService)
-    extends StratoFed.Column(TopicSocialProofBatchColumn.Path)
-    with StratoFed.Fetch.Stitch {
+class Top cSoc alProofBatchColumn @ nject() (
+  top cSoc alProofServ ce: Top cSoc alProofServ ce)
+    extends StratoFed.Column(Top cSoc alProofBatchColumn.Path)
+    w h StratoFed.Fetch.St ch {
 
-  override val policy: Policy =
-    ReadWritePolicy(
-      readPolicy = AllowAll,
-      writePolicy = AllowKeyAuthenticatedTwitterUserId
+  overr de val pol cy: Pol cy =
+    ReadWr ePol cy(
+      readPol cy = AllowAll,
+      wr ePol cy = AllowKeyAut nt catedTw terUser d
     )
 
-  override type Key = Long
-  override type View = TopicSocialProofOptions
-  override type Value = Seq[TopicWithScore]
+  overr de type Key = Long
+  overr de type V ew = Top cSoc alProofOpt ons
+  overr de type Value = Seq[Top cW hScore]
 
-  override val keyConv: Conv[Key] = Conv.ofType
-  override val viewConv: Conv[View] = ScroogeConv.fromStruct[TopicSocialProofOptions]
-  override val valueConv: Conv[Value] = Conv.seq(ScroogeConv.fromStruct[TopicWithScore])
-  override val metadata: OpMetadata =
-    OpMetadata(
-      lifecycle = Some(Production),
-      Some(PlainText("Topic Social Proof Batched Federated Column")))
+  overr de val keyConv: Conv[Key] = Conv.ofType
+  overr de val v ewConv: Conv[V ew] = ScroogeConv.fromStruct[Top cSoc alProofOpt ons]
+  overr de val valueConv: Conv[Value] = Conv.seq(ScroogeConv.fromStruct[Top cW hScore])
+  overr de val  tadata: Op tadata =
+    Op tadata(
+      l fecycle = So (Product on),
+      So (Pla nText("Top c Soc al Proof Batc d Federated Column")))
 
-  case class TspsGroup(view: View) extends SeqGroup[Long, Fetch.Result[Value]] {
-    override protected def run(keys: Seq[Long]): Future[Seq[Try[Result[Seq[TopicWithScore]]]]] = {
-      val request = TopicSocialProofRequest(
-        userId = view.userId,
-        tweetIds = keys.toSet,
-        displayLocation = view.displayLocation,
-        topicListingSetting = view.topicListingSetting,
-        context = view.context,
-        bypassModes = view.bypassModes,
-        tags = view.tags
+  case class TspsGroup(v ew: V ew) extends SeqGroup[Long, Fetch.Result[Value]] {
+    overr de protected def run(keys: Seq[Long]): Future[Seq[Try[Result[Seq[Top cW hScore]]]]] = {
+      val request = Top cSoc alProofRequest(
+        user d = v ew.user d,
+        t et ds = keys.toSet,
+        d splayLocat on = v ew.d splayLocat on,
+        top cL st ngSett ng = v ew.top cL st ngSett ng,
+        context = v ew.context,
+        bypassModes = v ew.bypassModes,
+        tags = v ew.tags
       )
 
-      val response = topicSocialProofService
-        .topicSocialProofHandlerStoreStitch(request)
-        .map(_.socialProofs)
-      Stitch
+      val response = top cSoc alProofServ ce
+        .top cSoc alProofHandlerStoreSt ch(request)
+        .map(_.soc alProofs)
+      St ch
         .run(response).map(r =>
           keys.map(key => {
             Try {
               val v = r.get(key)
-              if (v.nonEmpty && v.get.nonEmpty) {
+               f (v.nonEmpty && v.get.nonEmpty) {
                 found(v.get)
               } else {
-                missing
+                m ss ng
               }
             }
           }))
     }
   }
 
-  override def fetch(key: Key, view: View): Stitch[Result[Value]] = {
-    Stitch.call(key, TspsGroup(view))
+  overr de def fetch(key: Key, v ew: V ew): St ch[Result[Value]] = {
+    St ch.call(key, TspsGroup(v ew))
   }
 }
 
-object TopicSocialProofBatchColumn {
-  val Path = "topic-signals/tsp/topic-social-proof-batched"
+object Top cSoc alProofBatchColumn {
+  val Path = "top c-s gnals/tsp/top c-soc al-proof-batc d"
 }

@@ -1,387 +1,387 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.tw ter.search. ngester.p pel ne.tw ter;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import javax.naming.NamingException;
+ mport java.net.UR ;
+ mport java.net.UR SyntaxExcept on;
+ mport java.ut l.Collect on;
+ mport java.ut l.Collect ons;
+ mport java.ut l.HashSet;
+ mport java.ut l.Locale;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
+ mport javax.nam ng.Nam ngExcept on;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.Maps;
+ mport com.google.common.collect.Sets;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
+ mport org.apac .commons.lang.Str ngUt ls;
+ mport org.apac .commons.p pel ne.StageExcept on;
+ mport org.apac .commons.p pel ne.val dat on.Consu dTypes;
+ mport org.apac .commons.p pel ne.val dat on.ProducesConsu d;
 
-import com.twitter.common.text.language.LocaleUtil;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
-import com.twitter.search.common.metrics.Percentile;
-import com.twitter.search.common.metrics.PercentileUtil;
-import com.twitter.search.common.metrics.RelevanceStats;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.util.BatchedElement;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
-import com.twitter.search.ingester.pipeline.wire.WireModule;
-import com.twitter.service.spiderduck.gen.MediaTypes;
-import com.twitter.util.Duration;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+ mport com.tw ter.common.text.language.LocaleUt l;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftExpandedUrl;
+ mport com.tw ter.search.common. tr cs.Percent le;
+ mport com.tw ter.search.common. tr cs.Percent leUt l;
+ mport com.tw ter.search.common. tr cs.RelevanceStats;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search. ngester.model. ngesterTw ter ssage;
+ mport com.tw ter.search. ngester.p pel ne.ut l.Batc dEle nt;
+ mport com.tw ter.search. ngester.p pel ne.ut l.P pel neStageExcept on;
+ mport com.tw ter.search. ngester.p pel ne.w re.W reModule;
+ mport com.tw ter.serv ce.sp derduck.gen. d aTypes;
+ mport com.tw ter.ut l.Durat on;
+ mport com.tw ter.ut l.Funct on;
+ mport com.tw ter.ut l.Future;
 
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducesConsumed
-public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
-    <IngesterTwitterMessage, IngesterTwitterMessage> {
+@Consu dTypes( ngesterTw ter ssage.class)
+@ProducesConsu d
+publ c class ResolveCompressedUrlsBatc dStage extends Tw terBatc dBaseStage
+    < ngesterTw ter ssage,  ngesterTw ter ssage> {
 
-  private static final int PINK_REQUEST_TIMEOUT_MILLIS = 500;
-  private static final int PINK_REQUEST_RETRIES = 2;
-  private static final String PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY = "pink_requests_batch_size";
-  private AsyncPinkUrlsResolver urlResolver;
-  private int resolveUrlPercentage = 100;
-  private String pinkClientId;
-  private SearchDecider searchDecider;
+  pr vate stat c f nal  nt P NK_REQUEST_T MEOUT_M LL S = 500;
+  pr vate stat c f nal  nt P NK_REQUEST_RETR ES = 2;
+  pr vate stat c f nal Str ng P NK_REQUESTS_BATCH_S ZE_DEC DER_KEY = "p nk_requests_batch_s ze";
+  pr vate AsyncP nkUrlsResolver urlResolver;
+  pr vate  nt resolveUrlPercentage = 100;
+  pr vate Str ng p nkCl ent d;
+  pr vate SearchDec der searchDec der;
 
-  // The number of URLs that we attempted to resolve.
-  private SearchRateCounter linksAttempted;
-  // The number of URLs that were successfully resolved.
-  private SearchRateCounter linksSucceeded;
-  // The number of URLs ignored because they are too long.
-  private SearchRateCounter linksTooLong;
-  // The number of URLs truncated because they are too long.
-  private SearchRateCounter linksTruncated;
+  // T  number of URLs that   attempted to resolve.
+  pr vate SearchRateCounter l nksAttempted;
+  // T  number of URLs that  re successfully resolved.
+  pr vate SearchRateCounter l nksSucceeded;
+  // T  number of URLs  gnored because t y are too long.
+  pr vate SearchRateCounter l nksTooLong;
+  // T  number of URLs truncated because t y are too long.
+  pr vate SearchRateCounter l nksTruncated;
 
-  // The number of resolved URLs without a media type.
-  private SearchRateCounter urlsWithoutMediaType;
-  // The number of resolved URLs with a specific media type.
-  private final Map<MediaTypes, SearchRateCounter> urlsWithMediaTypeMap =
-      Maps.newEnumMap(MediaTypes.class);
+  // T  number of resolved URLs w hout a  d a type.
+  pr vate SearchRateCounter urlsW hout d aType;
+  // T  number of resolved URLs w h a spec f c  d a type.
+  pr vate f nal Map< d aTypes, SearchRateCounter> urlsW h d aTypeMap =
+      Maps.newEnumMap( d aTypes.class);
 
-  // The number of tweets for which all URLs were resolved.
-  private SearchRateCounter tweetsWithResolvedURLs;
-  // The number of tweets for which some URLs were not resolved.
-  private SearchRateCounter tweetsWithUnresolvedURLs;
+  // T  number of t ets for wh ch all URLs  re resolved.
+  pr vate SearchRateCounter t etsW hResolvedURLs;
+  // T  number of t ets for wh ch so  URLs  re not resolved.
+  pr vate SearchRateCounter t etsW hUnresolvedURLs;
 
-  // How long it takes to fully resolve all URLs in a tweet.
-  private Percentile<Long> millisToResolveAllTweetURLs;
+  // How long   takes to fully resolve all URLs  n a t et.
+  pr vate Percent le<Long> m ll sToResolveAllT etURLs;
 
-  // max age that a tweet can be before passed down the pipeline
-  private long tweetMaxAgeToResolve;
+  // max age that a t et can be before passed down t  p pel ne
+  pr vate long t etMaxAgeToResolve;
 
-  // number of times an element is within quota.
-  private SearchRateCounter numberOfElementsWithinQuota;
+  // number of t  s an ele nt  s w h n quota.
+  pr vate SearchRateCounter numberOfEle ntsW h nQuota;
 
-  // number of times element is not within quota. If element not within quota, we dont batch.
-  private SearchRateCounter numberOfElementsNotWithinQuota;
+  // number of t  s ele nt  s not w h n quota.  f ele nt not w h n quota,   dont batch.
+  pr vate SearchRateCounter numberOfEle ntsNotW h nQuota;
 
-  // number of times element has urls.
-  private SearchRateCounter numberOfElementsWithUrls;
+  // number of t  s ele nt has urls.
+  pr vate SearchRateCounter numberOfEle ntsW hUrls;
 
-  // number of times element does not have urls. If element does not have URL, we dont batch.
-  private SearchRateCounter numberOfElementsWithoutUrls;
+  // number of t  s ele nt does not have urls.  f ele nt does not have URL,   dont batch.
+  pr vate SearchRateCounter numberOfEle ntsW houtUrls;
 
-  // number of calls to needsToBeBatched method.
-  private SearchRateCounter numberOfCallsToNeedsToBeBatched;
+  // number of calls to needsToBeBatc d  thod.
+  pr vate SearchRateCounter numberOfCallsToNeedsToBeBatc d;
 
 
-  public void setTweetMaxAgeToResolve(long tweetMaxAgeToResolve) {
-    this.tweetMaxAgeToResolve = tweetMaxAgeToResolve;
+  publ c vo d setT etMaxAgeToResolve(long t etMaxAgeToResolve) {
+    t .t etMaxAgeToResolve = t etMaxAgeToResolve;
   }
 
-  @Override
-  protected Class<IngesterTwitterMessage> getQueueObjectType() {
-    return IngesterTwitterMessage.class;
+  @Overr de
+  protected Class< ngesterTw ter ssage> getQueueObjectType() {
+    return  ngesterTw ter ssage.class;
   }
 
-  @Override
-  protected boolean needsToBeBatched(IngesterTwitterMessage element) {
-    numberOfCallsToNeedsToBeBatched.increment();
-    boolean isWithinQuota = (element.getId() % 100) < resolveUrlPercentage;
+  @Overr de
+  protected boolean needsToBeBatc d( ngesterTw ter ssage ele nt) {
+    numberOfCallsToNeedsToBeBatc d. ncre nt();
+    boolean  sW h nQuota = (ele nt.get d() % 100) < resolveUrlPercentage;
 
-    if (isWithinQuota) {
-      this.numberOfElementsWithinQuota.increment();
+     f ( sW h nQuota) {
+      t .numberOfEle ntsW h nQuota. ncre nt();
     } else {
-      this.numberOfElementsNotWithinQuota.increment();
+      t .numberOfEle ntsNotW h nQuota. ncre nt();
     }
 
-    boolean hasUrls = !element.getExpandedUrlMap().isEmpty();
+    boolean hasUrls = !ele nt.getExpandedUrlMap(). sEmpty();
 
-    if (hasUrls) {
-      this.numberOfElementsWithUrls.increment();
+     f (hasUrls) {
+      t .numberOfEle ntsW hUrls. ncre nt();
     } else {
-      this.numberOfElementsWithoutUrls.increment();
+      t .numberOfEle ntsW houtUrls. ncre nt();
     }
 
-    return hasUrls && isWithinQuota;
+    return hasUrls &&  sW h nQuota;
   }
 
-  // Identity transformation. T and U types are the same
-  @Override
-  protected IngesterTwitterMessage transform(IngesterTwitterMessage element) {
-    return element;
+  //  dent y transformat on. T and U types are t  sa 
+  @Overr de
+  protected  ngesterTw ter ssage transform( ngesterTw ter ssage ele nt) {
+    return ele nt;
   }
 
-  @Override
-  public void initStats() {
-    super.initStats();
-    commonInnerSetupStats();
+  @Overr de
+  publ c vo d  n Stats() {
+    super. n Stats();
+    common nnerSetupStats();
   }
 
-  @Override
-  protected void innerSetupStats() {
-    super.innerSetupStats();
-    commonInnerSetupStats();
+  @Overr de
+  protected vo d  nnerSetupStats() {
+    super. nnerSetupStats();
+    common nnerSetupStats();
   }
 
-  private void commonInnerSetupStats() {
-    linksAttempted = RelevanceStats.exportRate(getStageNamePrefix() + "_num_links_attempted");
-    linksSucceeded = RelevanceStats.exportRate(getStageNamePrefix() + "_num_links_succeeded");
-    linksTooLong = RelevanceStats.exportRate(getStageNamePrefix() + "_num_links_toolong");
-    linksTruncated = RelevanceStats.exportRate(getStageNamePrefix() + "_num_links_truncated");
+  pr vate vo d common nnerSetupStats() {
+    l nksAttempted = RelevanceStats.exportRate(getStageNa Pref x() + "_num_l nks_attempted");
+    l nksSucceeded = RelevanceStats.exportRate(getStageNa Pref x() + "_num_l nks_succeeded");
+    l nksTooLong = RelevanceStats.exportRate(getStageNa Pref x() + "_num_l nks_toolong");
+    l nksTruncated = RelevanceStats.exportRate(getStageNa Pref x() + "_num_l nks_truncated");
 
-    urlsWithoutMediaType = RelevanceStats.exportRate(
-        getStageNamePrefix() + "_urls_without_media_type");
+    urlsW hout d aType = RelevanceStats.exportRate(
+        getStageNa Pref x() + "_urls_w hout_ d a_type");
 
-    for (MediaTypes mediaType : MediaTypes.values()) {
-      urlsWithMediaTypeMap.put(
-          mediaType,
+    for ( d aTypes  d aType :  d aTypes.values()) {
+      urlsW h d aTypeMap.put(
+           d aType,
           RelevanceStats.exportRate(
-              getStageNamePrefix() + "_urls_with_media_type_" + mediaType.name().toLowerCase()));
+              getStageNa Pref x() + "_urls_w h_ d a_type_" +  d aType.na ().toLo rCase()));
     }
 
-    tweetsWithResolvedURLs = RelevanceStats.exportRate(
-        getStageNamePrefix() + "_num_tweets_with_resolved_urls");
-    tweetsWithUnresolvedURLs = RelevanceStats.exportRate(
-        getStageNamePrefix() + "_num_tweets_with_unresolved_urls");
+    t etsW hResolvedURLs = RelevanceStats.exportRate(
+        getStageNa Pref x() + "_num_t ets_w h_resolved_urls");
+    t etsW hUnresolvedURLs = RelevanceStats.exportRate(
+        getStageNa Pref x() + "_num_t ets_w h_unresolved_urls");
 
-    millisToResolveAllTweetURLs = PercentileUtil.createPercentile(
-        getStageNamePrefix() + "_millis_to_resolve_all_tweet_urls");
+    m ll sToResolveAllT etURLs = Percent leUt l.createPercent le(
+        getStageNa Pref x() + "_m ll s_to_resolve_all_t et_urls");
 
-    numberOfCallsToNeedsToBeBatched = SearchRateCounter.export(getStageNamePrefix()
-        + "_calls_to_needsToBeBatched");
+    numberOfCallsToNeedsToBeBatc d = SearchRateCounter.export(getStageNa Pref x()
+        + "_calls_to_needsToBeBatc d");
 
-    numberOfElementsWithinQuota = SearchRateCounter.export(getStageNamePrefix()
-        + "_is_within_quota");
+    numberOfEle ntsW h nQuota = SearchRateCounter.export(getStageNa Pref x()
+        + "_ s_w h n_quota");
 
-    numberOfElementsNotWithinQuota = SearchRateCounter.export(getStageNamePrefix()
-        + "_is_not_within_quota");
+    numberOfEle ntsNotW h nQuota = SearchRateCounter.export(getStageNa Pref x()
+        + "_ s_not_w h n_quota");
 
-    numberOfElementsWithUrls = SearchRateCounter.export(getStageNamePrefix()
+    numberOfEle ntsW hUrls = SearchRateCounter.export(getStageNa Pref x()
         + "_has_urls");
 
-    numberOfElementsWithoutUrls = SearchRateCounter.export(getStageNamePrefix()
+    numberOfEle ntsW houtUrls = SearchRateCounter.export(getStageNa Pref x()
         + "_does_not_have_urls");
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    searchDecider = new SearchDecider(decider);
-    // We need to call this after assigning searchDecider because our updateBatchSize function
-    // depends on the searchDecider.
-    super.doInnerPreprocess();
-    commonInnerSetup();
+  @Overr de
+  protected vo d do nnerPreprocess() throws StageExcept on, Nam ngExcept on {
+    searchDec der = new SearchDec der(dec der);
+    //   need to call t  after ass gn ng searchDec der because   updateBatchS ze funct on
+    // depends on t  searchDec der.
+    super.do nnerPreprocess();
+    common nnerSetup();
   }
 
-  @Override
-  protected void innerSetup() throws PipelineStageException, NamingException {
-    searchDecider = new SearchDecider(decider);
-    // We need to call this after assigning searchDecider because our updateBatchSize function
-    // depends on the searchDecider.
-    super.innerSetup();
-    commonInnerSetup();
+  @Overr de
+  protected vo d  nnerSetup() throws P pel neStageExcept on, Nam ngExcept on {
+    searchDec der = new SearchDec der(dec der);
+    //   need to call t  after ass gn ng searchDec der because   updateBatchS ze funct on
+    // depends on t  searchDec der.
+    super. nnerSetup();
+    common nnerSetup();
   }
 
-  private void commonInnerSetup() throws NamingException {
-    Preconditions.checkNotNull(pinkClientId);
-    urlResolver = new AsyncPinkUrlsResolver(
-        WireModule
-            .getWireModule()
-            .getStorer(Duration.fromMilliseconds(PINK_REQUEST_TIMEOUT_MILLIS),
-                PINK_REQUEST_RETRIES),
-        pinkClientId);
+  pr vate vo d common nnerSetup() throws Nam ngExcept on {
+    Precond  ons.c ckNotNull(p nkCl ent d);
+    urlResolver = new AsyncP nkUrlsResolver(
+        W reModule
+            .getW reModule()
+            .getStorer(Durat on.fromM ll seconds(P NK_REQUEST_T MEOUT_M LL S),
+                P NK_REQUEST_RETR ES),
+        p nkCl ent d);
   }
 
-  @Override
-  protected Future<Collection<IngesterTwitterMessage>> innerProcessBatch(Collection<BatchedElement
-      <IngesterTwitterMessage, IngesterTwitterMessage>> batch) {
+  @Overr de
+  protected Future<Collect on< ngesterTw ter ssage>>  nnerProcessBatch(Collect on<Batc dEle nt
+      < ngesterTw ter ssage,  ngesterTw ter ssage>> batch) {
     // Batch urls
-    Map<String, Set<IngesterTwitterMessage>> urlToTweetsMap = createUrlToTweetMap(batch);
+    Map<Str ng, Set< ngesterTw ter ssage>> urlToT etsMap = createUrlToT etMap(batch);
 
-    Set<String> urlsToResolve = urlToTweetsMap.keySet();
+    Set<Str ng> urlsToResolve = urlToT etsMap.keySet();
 
-    updateBatchSize();
+    updateBatchS ze();
 
-    linksAttempted.increment(batch.size());
-    // Do the lookup
-    return urlResolver.resolveUrls(urlsToResolve).map(processResolvedUrlsFunction(batch));
+    l nksAttempted. ncre nt(batch.s ze());
+    // Do t  lookup
+    return urlResolver.resolveUrls(urlsToResolve).map(processResolvedUrlsFunct on(batch));
   }
 
-  @Override
-  protected void updateBatchSize() {
-    // update batch based on decider
-    int decidedBatchSize = searchDecider.featureExists(PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY)
-        ? searchDecider.getAvailability(PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY)
-        : batchSize;
+  @Overr de
+  protected vo d updateBatchS ze() {
+    // update batch based on dec der
+     nt dec dedBatchS ze = searchDec der.featureEx sts(P NK_REQUESTS_BATCH_S ZE_DEC DER_KEY)
+        ? searchDec der.getAva lab l y(P NK_REQUESTS_BATCH_S ZE_DEC DER_KEY)
+        : batchS ze;
 
-    setBatchedStageBatchSize(decidedBatchSize);
+    setBatc dStageBatchS ze(dec dedBatchS ze);
   }
 
-  //if not all urls for a message where resolved re-enqueue until maxAge is reached
-  private Function<Map<String, ResolveCompressedUrlsUtils.UrlInfo>,
-      Collection<IngesterTwitterMessage>>
-  processResolvedUrlsFunction(Collection<BatchedElement<IngesterTwitterMessage,
-      IngesterTwitterMessage>> batch) {
-    return Function.func(resolvedUrls -> {
-      linksSucceeded.increment(resolvedUrls.size());
+  // f not all urls for a  ssage w re resolved re-enqueue unt l maxAge  s reac d
+  pr vate Funct on<Map<Str ng, ResolveCompressedUrlsUt ls.Url nfo>,
+      Collect on< ngesterTw ter ssage>>
+  processResolvedUrlsFunct on(Collect on<Batc dEle nt< ngesterTw ter ssage,
+       ngesterTw ter ssage>> batch) {
+    return Funct on.func(resolvedUrls -> {
+      l nksSucceeded. ncre nt(resolvedUrls.s ze());
 
-      for (ResolveCompressedUrlsUtils.UrlInfo urlInfo : resolvedUrls.values()) {
-        if (urlInfo.mediaType != null) {
-          urlsWithMediaTypeMap.get(urlInfo.mediaType).increment();
+      for (ResolveCompressedUrlsUt ls.Url nfo url nfo : resolvedUrls.values()) {
+         f (url nfo. d aType != null) {
+          urlsW h d aTypeMap.get(url nfo. d aType). ncre nt();
         } else {
-          urlsWithoutMediaType.increment();
+          urlsW hout d aType. ncre nt();
         }
       }
 
-      Set<IngesterTwitterMessage> successfulTweets = Sets.newHashSet();
+      Set< ngesterTw ter ssage> successfulT ets = Sets.newHashSet();
 
-      for (BatchedElement<IngesterTwitterMessage, IngesterTwitterMessage> batchedElement : batch) {
-        IngesterTwitterMessage message = batchedElement.getItem();
-        Set<String> tweetUrls = message.getExpandedUrlMap().keySet();
+      for (Batc dEle nt< ngesterTw ter ssage,  ngesterTw ter ssage> batc dEle nt : batch) {
+         ngesterTw ter ssage  ssage = batc dEle nt.get em();
+        Set<Str ng> t etUrls =  ssage.getExpandedUrlMap().keySet();
 
-        int resolvedUrlCounter = 0;
+         nt resolvedUrlCounter = 0;
 
-        for (String url : tweetUrls) {
-          ResolveCompressedUrlsUtils.UrlInfo urlInfo = resolvedUrls.get(url);
+        for (Str ng url : t etUrls) {
+          ResolveCompressedUrlsUt ls.Url nfo url nfo = resolvedUrls.get(url);
 
-          // if the url didn't resolve move on to the next one, this might trigger a re-enqueue
-          // if the tweet is still kind of new. But we want to process the rest for when that
-          // is not the case and we are going to end up passing it to the next stage
-          if (urlInfo == null) {
-            continue;
+          //  f t  url d dn't resolve move on to t  next one, t  m ght tr gger a re-enqueue
+          //  f t  t et  s st ll k nd of new. But   want to process t  rest for w n that
+          //  s not t  case and   are go ng to end up pass ng   to t  next stage
+           f (url nfo == null) {
+            cont nue;
           }
 
-          String resolvedUrl = urlInfo.resolvedUrl;
-          Locale locale = urlInfo.language == null ? null
-              : LocaleUtil.getLocaleOf(urlInfo.language);
+          Str ng resolvedUrl = url nfo.resolvedUrl;
+          Locale locale = url nfo.language == null ? null
+              : LocaleUt l.getLocaleOf(url nfo.language);
 
-          if (StringUtils.isNotBlank(resolvedUrl)) {
-            ThriftExpandedUrl expandedUrl = message.getExpandedUrlMap().get(url);
+           f (Str ngUt ls. sNotBlank(resolvedUrl)) {
+            Thr ftExpandedUrl expandedUrl =  ssage.getExpandedUrlMap().get(url);
             resolvedUrlCounter += 1;
-            enrichTweetWithUrlInfo(message, expandedUrl, urlInfo, locale);
+            enr chT etW hUrl nfo( ssage, expandedUrl, url nfo, locale);
           }
         }
-        long tweetMessageAge = clock.nowMillis() - message.getDate().getTime();
+        long t et ssageAge = clock.nowM ll s() -  ssage.getDate().getT  ();
 
-        if (resolvedUrlCounter == tweetUrls.size()) {
-          millisToResolveAllTweetURLs.record(tweetMessageAge);
-          tweetsWithResolvedURLs.increment();
-          successfulTweets.add(message);
-        } else if (tweetMessageAge > tweetMaxAgeToResolve) {
-          tweetsWithUnresolvedURLs.increment();
-          successfulTweets.add(message);
+         f (resolvedUrlCounter == t etUrls.s ze()) {
+          m ll sToResolveAllT etURLs.record(t et ssageAge);
+          t etsW hResolvedURLs. ncre nt();
+          successfulT ets.add( ssage);
+        } else  f (t et ssageAge > t etMaxAgeToResolve) {
+          t etsW hUnresolvedURLs. ncre nt();
+          successfulT ets.add( ssage);
         } else {
-          //re-enqueue if all urls weren't resolved and the tweet is younger than maxAge
-          reEnqueueAndRetry(batchedElement);
+          //re-enqueue  f all urls  ren't resolved and t  t et  s  nger than maxAge
+          reEnqueueAndRetry(batc dEle nt);
         }
       }
-      return successfulTweets;
+      return successfulT ets;
     });
   }
 
-  private Map<String, Set<IngesterTwitterMessage>> createUrlToTweetMap(
-      Collection<BatchedElement<IngesterTwitterMessage, IngesterTwitterMessage>> batch) {
-    Map<String, Set<IngesterTwitterMessage>> urlToTweetsMap = Maps.newHashMap();
-    for (BatchedElement<IngesterTwitterMessage, IngesterTwitterMessage> batchedElement : batch) {
-      IngesterTwitterMessage message = batchedElement.getItem();
-      for (String originalUrl : message.getExpandedUrlMap().keySet()) {
-        Set<IngesterTwitterMessage> messages = urlToTweetsMap.get(originalUrl);
-        if (messages == null) {
-          messages = new HashSet<>();
-          urlToTweetsMap.put(originalUrl, messages);
+  pr vate Map<Str ng, Set< ngesterTw ter ssage>> createUrlToT etMap(
+      Collect on<Batc dEle nt< ngesterTw ter ssage,  ngesterTw ter ssage>> batch) {
+    Map<Str ng, Set< ngesterTw ter ssage>> urlToT etsMap = Maps.newHashMap();
+    for (Batc dEle nt< ngesterTw ter ssage,  ngesterTw ter ssage> batc dEle nt : batch) {
+       ngesterTw ter ssage  ssage = batc dEle nt.get em();
+      for (Str ng or g nalUrl :  ssage.getExpandedUrlMap().keySet()) {
+        Set< ngesterTw ter ssage>  ssages = urlToT etsMap.get(or g nalUrl);
+         f ( ssages == null) {
+           ssages = new HashSet<>();
+          urlToT etsMap.put(or g nalUrl,  ssages);
         }
-        messages.add(message);
+         ssages.add( ssage);
       }
     }
-    return Collections.unmodifiableMap(urlToTweetsMap);
+    return Collect ons.unmod f ableMap(urlToT etsMap);
   }
 
-  // enrich the twitterMessage with the resolvedCounter Urls.
-  private void enrichTweetWithUrlInfo(IngesterTwitterMessage message,
-                                      ThriftExpandedUrl expandedUrl,
-                                      ResolveCompressedUrlsUtils.UrlInfo urlInfo,
+  // enr ch t  tw ter ssage w h t  resolvedCounter Urls.
+  pr vate vo d enr chT etW hUrl nfo( ngesterTw ter ssage  ssage,
+                                      Thr ftExpandedUrl expandedUrl,
+                                      ResolveCompressedUrlsUt ls.Url nfo url nfo,
                                       Locale locale) {
-    String truncatedUrl = maybeTruncate(urlInfo.resolvedUrl);
-    if (truncatedUrl == null) {
+    Str ng truncatedUrl = maybeTruncate(url nfo.resolvedUrl);
+     f (truncatedUrl == null) {
       return;
     }
 
-    expandedUrl.setCanonicalLastHopUrl(truncatedUrl);
-    if (urlInfo.mediaType != null) {
-      // Overwrite url media type with media type from resolved url only if the media type from
-      // resolved url is not Unknown
-      if (!expandedUrl.isSetMediaType() || urlInfo.mediaType != MediaTypes.UNKNOWN) {
-        expandedUrl.setMediaType(urlInfo.mediaType);
+    expandedUrl.setCanon calLastHopUrl(truncatedUrl);
+     f (url nfo. d aType != null) {
+      // Overwr e url  d a type w h  d a type from resolved url only  f t   d a type from
+      // resolved url  s not Unknown
+       f (!expandedUrl. sSet d aType() || url nfo. d aType !=  d aTypes.UNKNOWN) {
+        expandedUrl.set d aType(url nfo. d aType);
       }
     }
-    if (urlInfo.linkCategory != null) {
-      expandedUrl.setLinkCategory(urlInfo.linkCategory);
+     f (url nfo.l nkCategory != null) {
+      expandedUrl.setL nkCategory(url nfo.l nkCategory);
     }
-    // Note that if there are multiple links in one tweet message, the language of the
-    // link that got examined later in this for loop will overwrite the values that were
-    // written before. This is not an optimal design but considering most tweets have
-    // only one link, or same-language links, this shouldn't be a big issue.
-    if (locale != null) {
-      message.setLinkLocale(locale);
-    }
-
-    if (urlInfo.description != null) {
-      expandedUrl.setDescription(urlInfo.description);
+    // Note that  f t re are mult ple l nks  n one t et  ssage, t  language of t 
+    // l nk that got exam ned later  n t  for loop w ll overwr e t  values that  re
+    // wr ten before. T   s not an opt mal des gn but cons der ng most t ets have
+    // only one l nk, or sa -language l nks, t  shouldn't be a b g  ssue.
+     f (locale != null) {
+       ssage.setL nkLocale(locale);
     }
 
-    if (urlInfo.title != null) {
-      expandedUrl.setTitle(urlInfo.title);
+     f (url nfo.descr pt on != null) {
+      expandedUrl.setDescr pt on(url nfo.descr pt on);
+    }
+
+     f (url nfo.t le != null) {
+      expandedUrl.setT le(url nfo.t le);
     }
   }
 
-  // test methods
-  public void setResolveUrlPercentage(int percentage) {
-    this.resolveUrlPercentage = percentage;
+  // test  thods
+  publ c vo d setResolveUrlPercentage( nt percentage) {
+    t .resolveUrlPercentage = percentage;
   }
 
-  public void setPinkClientId(String pinkClientId) {
-    this.pinkClientId = pinkClientId;
+  publ c vo d setP nkCl ent d(Str ng p nkCl ent d) {
+    t .p nkCl ent d = p nkCl ent d;
   }
 
-  public static final int MAX_URL_LENGTH = 1000;
+  publ c stat c f nal  nt MAX_URL_LENGTH = 1000;
 
-  private String maybeTruncate(String fullUrl) {
-    if (fullUrl.length() <= MAX_URL_LENGTH) {
+  pr vate Str ng maybeTruncate(Str ng fullUrl) {
+     f (fullUrl.length() <= MAX_URL_LENGTH) {
       return fullUrl;
     }
 
     try {
-      URI parsed = new URI(fullUrl);
+      UR  parsed = new UR (fullUrl);
 
-      // Create a URL with an empty query and fragment.
-      String simplified = new URI(parsed.getScheme(),
-          parsed.getAuthority(),
+      // Create a URL w h an empty query and frag nt.
+      Str ng s mpl f ed = new UR (parsed.getSc  (),
+          parsed.getAuthor y(),
           parsed.getPath(),
           null,
-          null).toString();
-      if (simplified.length() < MAX_URL_LENGTH) {
-        linksTruncated.increment();
-        return simplified;
+          null).toStr ng();
+       f (s mpl f ed.length() < MAX_URL_LENGTH) {
+        l nksTruncated. ncre nt();
+        return s mpl f ed;
       }
-    } catch (URISyntaxException e) {
+    } catch (UR SyntaxExcept on e) {
     }
 
-    linksTooLong.increment();
+    l nksTooLong. ncre nt();
     return null;
   }
 }

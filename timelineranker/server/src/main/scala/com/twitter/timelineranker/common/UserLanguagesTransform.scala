@@ -1,30 +1,30 @@
-package com.twitter.timelineranker.common
+package com.tw ter.t  l neranker.common
 
-import com.twitter.search.common.constants.thriftscala.ThriftLanguage
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelines.clients.manhattan.LanguageUtils
-import com.twitter.timelines.clients.manhattan.UserMetadataClient
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.util.Future
-import com.twitter.service.metastore.gen.thriftscala.UserLanguages
+ mport com.tw ter.search.common.constants.thr ftscala.Thr ftLanguage
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t  l neranker.model.RecapQuery
+ mport com.tw ter.t  l nes.cl ents.manhattan.LanguageUt ls
+ mport com.tw ter.t  l nes.cl ents.manhattan.User tadataCl ent
+ mport com.tw ter.t  l nes.ut l.Fa lOpenHandler
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.serv ce. tastore.gen.thr ftscala.UserLanguages
 
 object UserLanguagesTransform {
   val EmptyUserLanguagesFuture: Future[UserLanguages] =
-    Future.value(UserMetadataClient.EmptyUserLanguages)
+    Future.value(User tadataCl ent.EmptyUserLanguages)
 }
 
 /**
- * FutureArrow which fetches user languages
- * It should be run in parallel with the main pipeline which fetches and hydrates CandidateTweets
+ * FutureArrow wh ch fetc s user languages
+ *   should be run  n parallel w h t  ma n p pel ne wh ch fetc s and hydrates Cand dateT ets
  */
-class UserLanguagesTransform(handler: FailOpenHandler, userMetadataClient: UserMetadataClient)
-    extends FutureArrow[RecapQuery, Seq[ThriftLanguage]] {
-  override def apply(request: RecapQuery): Future[Seq[ThriftLanguage]] = {
-    import UserLanguagesTransform._
+class UserLanguagesTransform(handler: Fa lOpenHandler, user tadataCl ent: User tadataCl ent)
+    extends FutureArrow[RecapQuery, Seq[Thr ftLanguage]] {
+  overr de def apply(request: RecapQuery): Future[Seq[Thr ftLanguage]] = {
+     mport UserLanguagesTransform._
 
     handler {
-      userMetadataClient.getUserLanguages(request.userId)
+      user tadataCl ent.getUserLanguages(request.user d)
     } { _: Throwable => EmptyUserLanguagesFuture }
-  }.map(LanguageUtils.computeLanguages(_))
+  }.map(LanguageUt ls.computeLanguages(_))
 }

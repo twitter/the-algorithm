@@ -1,76 +1,76 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+package com.tw ter.product_m xer.component_l brary.p pel ne.cand date.who_to_follow_module
 
-import com.twitter.account_recommendations_mixer.{thriftscala => t}
-import com.twitter.product_mixer.component_library.candidate_source.account_recommendations_mixer.AccountRecommendationsMixerCandidateSource
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleDisplayTypeBuilder
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.BaseGate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.DependentCandidatePipelineConfig
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
-import com.twitter.timelines.configapi.decider.DeciderParam
+ mport com.tw ter.account_recom ndat ons_m xer.{thr ftscala => t}
+ mport com.tw ter.product_m xer.component_l brary.cand date_s ce.account_recom ndat ons_m xer.AccountRecom ndat onsM xerCand dateS ce
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.UserCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.BaseCand dateS ce
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Cand dateDecorator
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseFeedbackAct on nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.t  l ne_module.BaseModuleD splayTypeBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.BaseGate
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neResultsTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.DependentCand dateP pel neConf g
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.t  l nes.conf gap .dec der.Dec derParam
 
-class WhoToFollowArmDependentCandidatePipelineConfig[Query <: PipelineQuery](
-  override val identifier: CandidatePipelineIdentifier,
-  override val enabledDeciderParam: Option[DeciderParam[Boolean]],
-  override val supportedClientParam: Option[FSParam[Boolean]],
-  override val alerts: Seq[Alert],
-  override val gates: Seq[BaseGate[Query]],
-  accountRecommendationsMixerCandidateSource: AccountRecommendationsMixerCandidateSource,
-  override val filters: Seq[Filter[Query, UserCandidate]],
-  moduleDisplayTypeBuilder: BaseModuleDisplayTypeBuilder[Query, UserCandidate],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[PipelineQuery, UserCandidate]
+class WhoToFollowArmDependentCand dateP pel neConf g[Query <: P pel neQuery](
+  overr de val  dent f er: Cand dateP pel ne dent f er,
+  overr de val enabledDec derParam: Opt on[Dec derParam[Boolean]],
+  overr de val supportedCl entParam: Opt on[FSParam[Boolean]],
+  overr de val alerts: Seq[Alert],
+  overr de val gates: Seq[BaseGate[Query]],
+  accountRecom ndat onsM xerCand dateS ce: AccountRecom ndat onsM xerCand dateS ce,
+  overr de val f lters: Seq[F lter[Query, UserCand date]],
+  moduleD splayTypeBu lder: BaseModuleD splayTypeBu lder[Query, UserCand date],
+  feedbackAct on nfoBu lder: Opt on[
+    BaseFeedbackAct on nfoBu lder[P pel neQuery, UserCand date]
   ],
-  displayLocationParam: Param[String],
-  excludedUserIdsFeature: Option[Feature[PipelineQuery, Seq[Long]]],
-  profileUserIdFeature: Option[Feature[PipelineQuery, Long]])
-    extends DependentCandidatePipelineConfig[
+  d splayLocat onParam: Param[Str ng],
+  excludedUser dsFeature: Opt on[Feature[P pel neQuery, Seq[Long]]],
+  prof leUser dFeature: Opt on[Feature[P pel neQuery, Long]])
+    extends DependentCand dateP pel neConf g[
       Query,
-      t.AccountRecommendationsMixerRequest,
-      t.RecommendedUser,
-      UserCandidate
+      t.AccountRecom ndat onsM xerRequest,
+      t.Recom ndedUser,
+      UserCand date
     ] {
 
-  override val candidateSource: BaseCandidateSource[
-    t.AccountRecommendationsMixerRequest,
-    t.RecommendedUser
+  overr de val cand dateS ce: BaseCand dateS ce[
+    t.AccountRecom ndat onsM xerRequest,
+    t.Recom ndedUser
   ] =
-    accountRecommendationsMixerCandidateSource
+    accountRecom ndat onsM xerCand dateS ce
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    PipelineQuery,
-    t.AccountRecommendationsMixerRequest
-  ] = WhoToFollowArmCandidatePipelineQueryTransformer(
-    displayLocationParam = displayLocationParam,
-    excludedUserIdsFeature = excludedUserIdsFeature,
-    profileUserIdFeature = profileUserIdFeature
+  overr de val queryTransfor r: Cand dateP pel neQueryTransfor r[
+    P pel neQuery,
+    t.AccountRecom ndat onsM xerRequest
+  ] = WhoToFollowArmCand dateP pel neQueryTransfor r(
+    d splayLocat onParam = d splayLocat onParam,
+    excludedUser dsFeature = excludedUser dsFeature,
+    prof leUser dFeature = prof leUser dFeature
   )
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[t.RecommendedUser]
-  ] = Seq(WhoToFollowArmResponseFeatureTransformer)
+  overr de val featuresFromCand dateS ceTransfor rs: Seq[
+    Cand dateFeatureTransfor r[t.Recom ndedUser]
+  ] = Seq(WhoToFollowArmResponseFeatureTransfor r)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    t.RecommendedUser,
-    UserCandidate
-  ] = { user => UserCandidate(user.userId) }
+  overr de val resultTransfor r: Cand dateP pel neResultsTransfor r[
+    t.Recom ndedUser,
+    UserCand date
+  ] = { user => UserCand date(user.user d) }
 
-  override val decorator: Option[CandidateDecorator[Query, UserCandidate]] =
-    Some(
-      WhoToFollowArmCandidateDecorator(
-        moduleDisplayTypeBuilder,
-        feedbackActionInfoBuilder
+  overr de val decorator: Opt on[Cand dateDecorator[Query, UserCand date]] =
+    So (
+      WhoToFollowArmCand dateDecorator(
+        moduleD splayTypeBu lder,
+        feedbackAct on nfoBu lder
       ))
 }

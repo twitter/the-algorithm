@@ -1,125 +1,125 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.offl ne_aggregates
 
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TimelineAggregateMetadataRepository
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TimelineAggregatePartBRepository
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataRecordMerger
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.repository.Repository
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.data_processing.jobs.timeline_ranking_user_features.TimelinesPartBStoreRegister
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateType
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.StoreConfig
-import com.twitter.timelines.prediction.adapters.request_context.RequestContextAdapter
-import com.twitter.timelines.prediction.common.aggregates.TimelinesAggregationConfig
-import com.twitter.timelines.suggests.common.dense_data_record.thriftscala.DenseFeatureMetadata
-import com.twitter.user_session_store.thriftjava.UserSession
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.T  l neAggregate tadataRepos ory
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.T  l neAggregatePartBRepos ory
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .DataRecord rger
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ml.ap .R chDataRecord
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.FeatureW hDefaultOnFa lure
+ mport com.tw ter.product_m xer.core.feature.datarecord.DataRecord nAFeature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.servo.repos ory.Repos ory
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.data_process ng.jobs.t  l ne_rank ng_user_features.T  l nesPartBStoreReg ster
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.AggregateType
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.StoreConf g
+ mport com.tw ter.t  l nes.pred ct on.adapters.request_context.RequestContextAdapter
+ mport com.tw ter.t  l nes.pred ct on.common.aggregates.T  l nesAggregat onConf g
+ mport com.tw ter.t  l nes.suggests.common.dense_data_record.thr ftscala.DenseFeature tadata
+ mport com.tw ter.user_sess on_store.thr ftjava.UserSess on
+ mport com.tw ter.ut l.T  
+ mport javax. nject. nject
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
 object PartBAggregateRootFeature extends BaseAggregateRootFeature {
-  override val aggregateStores: Set[StoreConfig[_]] = TimelinesPartBStoreRegister.allStores
+  overr de val aggregateStores: Set[StoreConf g[_]] = T  l nesPartBStoreReg ster.allStores
 }
 
 object UserAggregateFeature
-    extends DataRecordInAFeature[PipelineQuery]
-    with FeatureWithDefaultOnFailure[PipelineQuery, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+    extends DataRecord nAFeature[P pel neQuery]
+    w h FeatureW hDefaultOnFa lure[P pel neQuery, DataRecord] {
+  overr de def defaultValue: DataRecord = new DataRecord()
 }
 
-@Singleton
-class PartBAggregateQueryFeatureHydrator @Inject() (
-  @Named(TimelineAggregatePartBRepository)
-  repository: Repository[Long, Option[UserSession]],
-  @Named(TimelineAggregateMetadataRepository)
-  metadataRepository: Repository[Int, Option[DenseFeatureMetadata]])
+@S ngleton
+class PartBAggregateQueryFeatureHydrator @ nject() (
+  @Na d(T  l neAggregatePartBRepos ory)
+  repos ory: Repos ory[Long, Opt on[UserSess on]],
+  @Na d(T  l neAggregate tadataRepos ory)
+   tadataRepos ory: Repos ory[ nt, Opt on[DenseFeature tadata]])
     extends BaseAggregateQueryFeatureHydrator(
-      repository,
-      metadataRepository,
+      repos ory,
+       tadataRepos ory,
       PartBAggregateRootFeature
     ) {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("PartBAggregateQuery")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("PartBAggregateQuery")
 
-  override val features: Set[Feature[_, _]] =
+  overr de val features: Set[Feature[_, _]] =
     Set(PartBAggregateRootFeature, UserAggregateFeature)
 
-  private val userAggregateFeatureInfo = new AggregateFeatureInfo(
+  pr vate val userAggregateFeature nfo = new AggregateFeature nfo(
     aggregateGroups = Set(
-      TimelinesAggregationConfig.userAggregatesV2,
-      TimelinesAggregationConfig.userAggregatesV5Continuous,
-      TimelinesAggregationConfig.userAggregatesV6,
-      TimelinesAggregationConfig.twitterWideUserAggregates,
+      T  l nesAggregat onConf g.userAggregatesV2,
+      T  l nesAggregat onConf g.userAggregatesV5Cont nuous,
+      T  l nesAggregat onConf g.userAggregatesV6,
+      T  l nesAggregat onConf g.tw terW deUserAggregates,
     ),
     aggregateType = AggregateType.User
   )
 
-  private val userHourAggregateFeatureInfo = new AggregateFeatureInfo(
+  pr vate val userH AggregateFeature nfo = new AggregateFeature nfo(
     aggregateGroups = Set(
-      TimelinesAggregationConfig.userRequestHourAggregates,
+      T  l nesAggregat onConf g.userRequestH Aggregates,
     ),
-    aggregateType = AggregateType.UserRequestHour
+    aggregateType = AggregateType.UserRequestH 
   )
 
-  private val userDowAggregateFeatureInfo = new AggregateFeatureInfo(
+  pr vate val userDowAggregateFeature nfo = new AggregateFeature nfo(
     aggregateGroups = Set(
-      TimelinesAggregationConfig.userRequestDowAggregates
+      T  l nesAggregat onConf g.userRequestDowAggregates
     ),
     aggregateType = AggregateType.UserRequestDow
   )
 
-  require(
-    userAggregateFeatureInfo.feature == PartBAggregateRootFeature,
-    "UserAggregates feature must be provided by the PartB data source.")
-  require(
-    userHourAggregateFeatureInfo.feature == PartBAggregateRootFeature,
-    "UserRequstHourAggregates feature must be provided by the PartB data source.")
-  require(
-    userDowAggregateFeatureInfo.feature == PartBAggregateRootFeature,
-    "UserRequestDowAggregates feature must be provided by the PartB data source.")
+  requ re(
+    userAggregateFeature nfo.feature == PartBAggregateRootFeature,
+    "UserAggregates feature must be prov ded by t  PartB data s ce.")
+  requ re(
+    userH AggregateFeature nfo.feature == PartBAggregateRootFeature,
+    "UserRequstH Aggregates feature must be prov ded by t  PartB data s ce.")
+  requ re(
+    userDowAggregateFeature nfo.feature == PartBAggregateRootFeature,
+    "UserRequestDowAggregates feature must be prov ded by t  PartB data s ce.")
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    // Hydrate TimelineAggregatePartBFeature and UserAggregateFeature sequentially.
+  overr de def hydrate(query: P pel neQuery): St ch[FeatureMap] = {
+    // Hydrate T  l neAggregatePartBFeature and UserAggregateFeature sequent ally.
     super.hydrate(query).map { featureMap =>
-      val time: Time = Time.now
-      val hourOfDay = RequestContextAdapter.hourFromTimestamp(time.inMilliseconds)
-      val dayOfWeek = RequestContextAdapter.dowFromTimestamp(time.inMilliseconds)
+      val t  : T   = T  .now
+      val h OfDay = RequestContextAdapter.h FromT  stamp(t  . nM ll seconds)
+      val dayOf ek = RequestContextAdapter.dowFromT  stamp(t  . nM ll seconds)
 
       val dr = featureMap
-        .get(PartBAggregateRootFeature).map { featuresWithMetadata =>
+        .get(PartBAggregateRootFeature).map { featuresW h tadata =>
           val userAggregatesDr =
-            featuresWithMetadata.userAggregatesOpt
-              .map(featuresWithMetadata.toDataRecord)
-          val userRequestHourAggregatesDr =
-            Option(featuresWithMetadata.userRequestHourAggregates.get(hourOfDay))
-              .map(featuresWithMetadata.toDataRecord)
+            featuresW h tadata.userAggregatesOpt
+              .map(featuresW h tadata.toDataRecord)
+          val userRequestH AggregatesDr =
+            Opt on(featuresW h tadata.userRequestH Aggregates.get(h OfDay))
+              .map(featuresW h tadata.toDataRecord)
           val userRequestDowAggregatesDr =
-            Option(featuresWithMetadata.userRequestDowAggregates.get(dayOfWeek))
-              .map(featuresWithMetadata.toDataRecord)
+            Opt on(featuresW h tadata.userRequestDowAggregates.get(dayOf ek))
+              .map(featuresW h tadata.toDataRecord)
 
-          dropUnknownFeatures(userAggregatesDr, userAggregateFeatureInfo.featureContext)
+          dropUnknownFeatures(userAggregatesDr, userAggregateFeature nfo.featureContext)
 
           dropUnknownFeatures(
-            userRequestHourAggregatesDr,
-            userHourAggregateFeatureInfo.featureContext)
+            userRequestH AggregatesDr,
+            userH AggregateFeature nfo.featureContext)
 
           dropUnknownFeatures(
             userRequestDowAggregatesDr,
-            userDowAggregateFeatureInfo.featureContext)
+            userDowAggregateFeature nfo.featureContext)
 
-          mergeDataRecordOpts(
+           rgeDataRecordOpts(
             userAggregatesDr,
-            userRequestHourAggregatesDr,
+            userRequestH AggregatesDr,
             userRequestDowAggregatesDr)
 
         }.getOrElse(new DataRecord())
@@ -128,17 +128,17 @@ class PartBAggregateQueryFeatureHydrator @Inject() (
     }
   }
 
-  private val drMerger = new DataRecordMerger
-  private def mergeDataRecordOpts(dataRecordOpts: Option[DataRecord]*): DataRecord =
+  pr vate val dr rger = new DataRecord rger
+  pr vate def  rgeDataRecordOpts(dataRecordOpts: Opt on[DataRecord]*): DataRecord =
     dataRecordOpts.flatten.foldLeft(new DataRecord) { (l, r) =>
-      drMerger.merge(l, r)
+      dr rger. rge(l, r)
       l
     }
 
-  private def dropUnknownFeatures(
-    dataRecordOpt: Option[DataRecord],
+  pr vate def dropUnknownFeatures(
+    dataRecordOpt: Opt on[DataRecord],
     featureContext: FeatureContext
-  ): Unit =
-    dataRecordOpt.foreach(new RichDataRecord(_, featureContext).dropUnknownFeatures())
+  ): Un  =
+    dataRecordOpt.foreach(new R chDataRecord(_, featureContext).dropUnknownFeatures())
 
 }

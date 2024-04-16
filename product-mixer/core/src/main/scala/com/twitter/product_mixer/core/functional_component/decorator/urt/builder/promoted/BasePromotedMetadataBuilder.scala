@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.promoted
+package com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.promoted
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.Promoted tadata
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-trait BasePromotedMetadataBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]] {
+tra  BasePromoted tadataBu lder[-Query <: P pel neQuery, -Cand date <: Un versalNoun[Any]] {
 
   def apply(
     query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): Option[PromotedMetadata]
+    cand date: Cand date,
+    cand dateFeatures: FeatureMap
+  ): Opt on[Promoted tadata]
 }

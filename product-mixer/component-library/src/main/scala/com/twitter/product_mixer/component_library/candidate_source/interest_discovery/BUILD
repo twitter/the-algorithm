@@ -1,18 +1,18 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "finatra/inject/inject-core/src/main/scala/com/twitter/inject",
-        "interests-service/thrift/src/main/thrift:thrift-scala",
-        "interests_discovery/thrift/src/main/thrift:service-thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source",
-        "stitch/stitch-core",
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/javax/ nject:javax. nject",
+        "f natra/ nject/ nject-core/src/ma n/scala/com/tw ter/ nject",
+        " nterests-serv ce/thr ft/src/ma n/thr ft:thr ft-scala",
+        " nterests_d scovery/thr ft/src/ma n/thr ft:serv ce-thr ft-scala",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/cand date_s ce",
+        "st ch/st ch-core",
     ],
     exports = [
-        "interests-service/thrift/src/main/thrift:thrift-scala",
-        "interests_discovery/thrift/src/main/thrift:service-thrift-scala",
+        " nterests-serv ce/thr ft/src/ma n/thr ft:thr ft-scala",
+        " nterests_d scovery/thr ft/src/ma n/thr ft:serv ce-thr ft-scala",
     ],
 )

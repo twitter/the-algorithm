@@ -1,58 +1,58 @@
-package com.twitter.product_mixer.component_library.side_effect
+package com.tw ter.product_m xer.component_l brary.s de_effect
 
-import com.twitter.logpipeline.client.common.EventPublisher
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.stitch.Stitch
+ mport com.tw ter.logp pel ne.cl ent.common.EventPubl s r
+ mport com.tw ter.product_m xer.core.funct onal_component.s de_effect.P pel neResultS deEffect
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.marshall ng.HasMarshall ng
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.scrooge.Thr ftStruct
+ mport com.tw ter.st ch.St ch
 
 /**
- * A [[PipelineResultSideEffect]] that logs [[Thrift]] data that's already available to Scribe
+ * A [[P pel neResultS deEffect]] that logs [[Thr ft]] data that's already ava lable to Scr be
  */
-trait ScribeLogEventSideEffect[
-  Thrift <: ThriftStruct,
-  Query <: PipelineQuery,
-  ResponseType <: HasMarshalling]
-    extends PipelineResultSideEffect[Query, ResponseType] {
+tra  Scr beLogEventS deEffect[
+  Thr ft <: Thr ftStruct,
+  Query <: P pel neQuery,
+  ResponseType <: HasMarshall ng]
+    extends P pel neResultS deEffect[Query, ResponseType] {
 
   /**
-   * Build the log events from query, selections and response
-   * @param query PipelineQuery
-   * @param selectedCandidates Result after Selectors are executed
-   * @param remainingCandidates Candidates which were not selected
-   * @param droppedCandidates Candidates dropped during selection
-   * @param response Result after Unmarshalling
-   * @return LogEvent in thrift
+   * Bu ld t  log events from query, select ons and response
+   * @param query P pel neQuery
+   * @param selectedCand dates Result after Selectors are executed
+   * @param rema n ngCand dates Cand dates wh ch  re not selected
+   * @param droppedCand dates Cand dates dropped dur ng select on
+   * @param response Result after Unmarshall ng
+   * @return LogEvent  n thr ft
    */
-  def buildLogEvents(
+  def bu ldLogEvents(
     query: Query,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
+    selectedCand dates: Seq[Cand dateW hDeta ls],
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    droppedCand dates: Seq[Cand dateW hDeta ls],
     response: ResponseType
-  ): Seq[Thrift]
+  ): Seq[Thr ft]
 
-  val logPipelinePublisher: EventPublisher[Thrift]
+  val logP pel nePubl s r: EventPubl s r[Thr ft]
 
-  final override def apply(
-    inputs: PipelineResultSideEffect.Inputs[Query, ResponseType]
-  ): Stitch[Unit] = {
-    val logEvents = buildLogEvents(
-      query = inputs.query,
-      selectedCandidates = inputs.selectedCandidates,
-      remainingCandidates = inputs.remainingCandidates,
-      droppedCandidates = inputs.droppedCandidates,
-      response = inputs.response
+  f nal overr de def apply(
+     nputs: P pel neResultS deEffect. nputs[Query, ResponseType]
+  ): St ch[Un ] = {
+    val logEvents = bu ldLogEvents(
+      query =  nputs.query,
+      selectedCand dates =  nputs.selectedCand dates,
+      rema n ngCand dates =  nputs.rema n ngCand dates,
+      droppedCand dates =  nputs.droppedCand dates,
+      response =  nputs.response
     )
 
-    Stitch
+    St ch
       .collect(
         logEvents
           .map { logEvent =>
-            Stitch.callFuture(logPipelinePublisher.publish(logEvent))
+            St ch.callFuture(logP pel nePubl s r.publ sh(logEvent))
           }
-      ).unit
+      ).un 
   }
 }

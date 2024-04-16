@@ -1,67 +1,67 @@
-package com.twitter.search.earlybird.search.facets;
+package com.tw ter.search.earlyb rd.search.facets;
 
-import java.util.Map;
-import java.util.Set;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
 
-import com.twitter.search.core.earlybird.facets.FacetIDMap;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.facets.FacetTermCollector;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultExtraMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
+ mport com.tw ter.search.core.earlyb rd.facets.Facet DMap;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetLabelProv der;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetTermCollector;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultExtra tadata;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult tadata;
 
-public abstract class AbstractFacetTermCollector implements FacetTermCollector {
-  private Map<String, FacetLabelProvider> facetLabelProviders;
-  private FacetIDMap facetIdMap;
+publ c abstract class AbstractFacetTermCollector  mple nts FacetTermCollector {
+  pr vate Map<Str ng, FacetLabelProv der> facetLabelProv ders;
+  pr vate Facet DMap facet dMap;
 
   /**
-   * Populates the given ThriftSearchResult instance with the results collected by this collector
-   * and clears all collected results in this collector.
+   * Populates t  g ven Thr ftSearchResult  nstance w h t  results collected by t  collector
+   * and clears all collected results  n t  collector.
    *
-   * @param result The ThriftSearchResult instance to be populated with the results collected in
-   *               this collector.
+   * @param result T  Thr ftSearchResult  nstance to be populated w h t  results collected  n
+   *               t  collector.
    */
-  public abstract void fillResultAndClear(ThriftSearchResult result);
+  publ c abstract vo d f llResultAndClear(Thr ftSearchResult result);
 
-  public void resetFacetLabelProviders(
-      Map<String, FacetLabelProvider> facetLabelProvidersToReset, FacetIDMap facetIdMapToReset) {
-    this.facetLabelProviders = facetLabelProvidersToReset;
-    this.facetIdMap = facetIdMapToReset;
+  publ c vo d resetFacetLabelProv ders(
+      Map<Str ng, FacetLabelProv der> facetLabelProv dersToReset, Facet DMap facet dMapToReset) {
+    t .facetLabelProv ders = facetLabelProv dersToReset;
+    t .facet dMap = facet dMapToReset;
   }
 
-  String findFacetName(int fieldId) {
-    return fieldId < 0 ? null : facetIdMap.getFacetFieldByFacetID(fieldId).getFacetName();
+  Str ng f ndFacetNa ( nt f eld d) {
+    return f eld d < 0 ? null : facet dMap.getFacetF eldByFacet D(f eld d).getFacetNa ();
   }
 
-  protected ThriftSearchResultExtraMetadata getExtraMetadata(ThriftSearchResult result) {
-    ThriftSearchResultMetadata metadata = result.getMetadata();
-    if (!metadata.isSetExtraMetadata()) {
-      metadata.setExtraMetadata(new ThriftSearchResultExtraMetadata());
+  protected Thr ftSearchResultExtra tadata getExtra tadata(Thr ftSearchResult result) {
+    Thr ftSearchResult tadata  tadata = result.get tadata();
+     f (! tadata. sSetExtra tadata()) {
+       tadata.setExtra tadata(new Thr ftSearchResultExtra tadata());
     }
-    return metadata.getExtraMetadata();
+    return  tadata.getExtra tadata();
   }
 
-  protected String getTermFromProvider(
-      String facetName, long termID, FacetLabelProvider provider) {
-    return provider.getLabelAccessor().getTermText(termID);
+  protected Str ng getTermFromProv der(
+      Str ng facetNa , long term D, FacetLabelProv der prov der) {
+    return prov der.getLabelAccessor().getTermText(term D);
   }
 
-  protected String getTermFromFacet(long termID, int fieldID, Set<String> facetsToCollectFrom) {
-    if (termID == EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
+  protected Str ng getTermFromFacet(long term D,  nt f eld D, Set<Str ng> facetsToCollectFrom) {
+     f (term D == Earlyb rd ndexSeg ntAtom cReader.TERM_NOT_FOUND) {
       return null;
     }
 
-    String facetName = findFacetName(fieldID);
-    if (!facetsToCollectFrom.contains(facetName)) {
+    Str ng facetNa  = f ndFacetNa (f eld D);
+     f (!facetsToCollectFrom.conta ns(facetNa )) {
       return null;
     }
 
-    final FacetLabelProvider provider = facetLabelProviders.get(facetName);
-    if (provider == null) {
+    f nal FacetLabelProv der prov der = facetLabelProv ders.get(facetNa );
+     f (prov der == null) {
       return null;
     }
 
-    return getTermFromProvider(facetName, termID, provider);
+    return getTermFromProv der(facetNa , term D, prov der);
   }
 }

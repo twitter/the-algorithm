@@ -1,7 +1,7 @@
-package com.twitter.frigate.pushservice.exception
+package com.tw ter.fr gate.pushserv ce.except on
 
-import scala.util.control.NoStackTrace
+ mport scala.ut l.control.NoStackTrace
 
-class TweetNTabRequestHydratorException(private val message: String)
-    extends Exception(message)
-    with NoStackTrace
+class T etNTabRequestHydratorExcept on(pr vate val  ssage: Str ng)
+    extends Except on( ssage)
+    w h NoStackTrace

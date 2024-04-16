@@ -1,139 +1,139 @@
-package com.twitter.frigate.pushservice.rank
-import com.twitter.contentrecommender.thriftscala.LightRankingCandidate
-import com.twitter.contentrecommender.thriftscala.LightRankingFeatureHydrationContext
-import com.twitter.contentrecommender.thriftscala.MagicRecsFeatureHydrationContext
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.common.base.RandomRanker
-import com.twitter.frigate.common.base.Ranker
-import com.twitter.frigate.common.base.TweetAuthor
-import com.twitter.frigate.common.base.TweetCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushConstants
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.nrel.lightranker.MagicRecsServeDataRecordLightRanker
-import com.twitter.util.Future
+package com.tw ter.fr gate.pushserv ce.rank
+ mport com.tw ter.contentrecom nder.thr ftscala.L ghtRank ngCand date
+ mport com.tw ter.contentrecom nder.thr ftscala.L ghtRank ngFeatureHydrat onContext
+ mport com.tw ter.contentrecom nder.thr ftscala.Mag cRecsFeatureHydrat onContext
+ mport com.tw ter.f nagle.stats.Counter
+ mport com.tw ter.f nagle.stats.Stat
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Cand dateDeta ls
+ mport com.tw ter.fr gate.common.base.RandomRanker
+ mport com.tw ter.fr gate.common.base.Ranker
+ mport com.tw ter.fr gate.common.base.T etAuthor
+ mport com.tw ter.fr gate.common.base.T etCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.params.PushConstants
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.params.PushParams
+ mport com.tw ter.ml.featurestore.l b.User d
+ mport com.tw ter.nrel.l ghtranker.Mag cRecsServeDataRecordL ghtRanker
+ mport com.tw ter.ut l.Future
 
-class RFPHLightRanker(
-  lightRanker: MagicRecsServeDataRecordLightRanker,
-  stats: StatsReceiver)
-    extends Ranker[Target, PushCandidate] {
+class RFPHL ghtRanker(
+  l ghtRanker: Mag cRecsServeDataRecordL ghtRanker,
+  stats: StatsRece ver)
+    extends Ranker[Target, PushCand date] {
 
-  private val statsReceiver = stats.scope(this.getClass.getSimpleName)
+  pr vate val statsRece ver = stats.scope(t .getClass.getS mpleNa )
 
-  private val lightRankerCandidateCounter = statsReceiver.counter("light_ranker_candidate_count")
-  private val lightRankerRequestCounter = statsReceiver.counter("light_ranker_request_count")
-  private val lightRankingStats: StatsReceiver = statsReceiver.scope("light_ranking")
-  private val restrictLightRankingCounter: Counter =
-    lightRankingStats.counter("restrict_light_ranking")
-  private val selectedLightRankerScribedTargetCandidateCountStats: Stat =
-    lightRankingStats.stat("selected_light_ranker_scribed_target_candidate_count")
-  private val selectedLightRankerScribedCandidatesStats: Stat =
-    lightRankingStats.stat("selected_light_ranker_scribed_candidates")
-  private val lightRankingRandomBaselineStats: StatsReceiver =
-    statsReceiver.scope("light_ranking_random_baseline")
+  pr vate val l ghtRankerCand dateCounter = statsRece ver.counter("l ght_ranker_cand date_count")
+  pr vate val l ghtRankerRequestCounter = statsRece ver.counter("l ght_ranker_request_count")
+  pr vate val l ghtRank ngStats: StatsRece ver = statsRece ver.scope("l ght_rank ng")
+  pr vate val restr ctL ghtRank ngCounter: Counter =
+    l ghtRank ngStats.counter("restr ct_l ght_rank ng")
+  pr vate val selectedL ghtRankerScr bedTargetCand dateCountStats: Stat =
+    l ghtRank ngStats.stat("selected_l ght_ranker_scr bed_target_cand date_count")
+  pr vate val selectedL ghtRankerScr bedCand datesStats: Stat =
+    l ghtRank ngStats.stat("selected_l ght_ranker_scr bed_cand dates")
+  pr vate val l ghtRank ngRandomBasel neStats: StatsRece ver =
+    statsRece ver.scope("l ght_rank ng_random_basel ne")
 
-  override def rank(
+  overr de def rank(
     target: Target,
-    candidates: Seq[CandidateDetails[PushCandidate]]
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
-    val enableLightRanker = target.params(PushFeatureSwitchParams.EnableLightRankingParam)
-    val restrictLightRanker = target.params(PushParams.RestrictLightRankingParam)
-    val lightRankerSelectionThreshold =
-      target.params(PushFeatureSwitchParams.LightRankingNumberOfCandidatesParam)
-    val randomRanker = RandomRanker[Target, PushCandidate]()(lightRankingRandomBaselineStats)
+    cand dates: Seq[Cand dateDeta ls[PushCand date]]
+  ): Future[Seq[Cand dateDeta ls[PushCand date]]] = {
+    val enableL ghtRanker = target.params(PushFeatureSw chParams.EnableL ghtRank ngParam)
+    val restr ctL ghtRanker = target.params(PushParams.Restr ctL ghtRank ngParam)
+    val l ghtRankerSelect onThreshold =
+      target.params(PushFeatureSw chParams.L ghtRank ngNumberOfCand datesParam)
+    val randomRanker = RandomRanker[Target, PushCand date]()(l ghtRank ngRandomBasel neStats)
 
-    if (enableLightRanker && candidates.length > lightRankerSelectionThreshold && !target.scribeFeatureForRequestScribe) {
-      val (tweetCandidates, nonTweetCandidates) =
-        candidates.partition {
-          case CandidateDetails(pushCandidate: PushCandidate with TweetCandidate, source) => true
+     f (enableL ghtRanker && cand dates.length > l ghtRankerSelect onThreshold && !target.scr beFeatureForRequestScr be) {
+      val (t etCand dates, nonT etCand dates) =
+        cand dates.part  on {
+          case Cand dateDeta ls(pushCand date: PushCand date w h T etCand date, s ce) => true
           case _ => false
         }
-      val lightRankerSelectedTweetCandidatesFut = {
-        if (restrictLightRanker) {
-          restrictLightRankingCounter.incr()
-          lightRankThenTake(
+      val l ghtRankerSelectedT etCand datesFut = {
+         f (restr ctL ghtRanker) {
+          restr ctL ghtRank ngCounter. ncr()
+          l ghtRankT nTake(
             target,
-            tweetCandidates
-              .asInstanceOf[Seq[CandidateDetails[PushCandidate with TweetCandidate]]],
-            PushConstants.RestrictLightRankingCandidatesThreshold
+            t etCand dates
+              .as nstanceOf[Seq[Cand dateDeta ls[PushCand date w h T etCand date]]],
+            PushConstants.Restr ctL ghtRank ngCand datesThreshold
           )
-        } else if (target.params(PushFeatureSwitchParams.EnableRandomBaselineLightRankingParam)) {
-          randomRanker.rank(target, tweetCandidates).map { randomLightRankerCands =>
-            randomLightRankerCands.take(lightRankerSelectionThreshold)
+        } else  f (target.params(PushFeatureSw chParams.EnableRandomBasel neL ghtRank ngParam)) {
+          randomRanker.rank(target, t etCand dates).map { randomL ghtRankerCands =>
+            randomL ghtRankerCands.take(l ghtRankerSelect onThreshold)
           }
         } else {
-          lightRankThenTake(
+          l ghtRankT nTake(
             target,
-            tweetCandidates
-              .asInstanceOf[Seq[CandidateDetails[PushCandidate with TweetCandidate]]],
-            lightRankerSelectionThreshold
+            t etCand dates
+              .as nstanceOf[Seq[Cand dateDeta ls[PushCand date w h T etCand date]]],
+            l ghtRankerSelect onThreshold
           )
         }
       }
-      lightRankerSelectedTweetCandidatesFut.map { returnedTweetCandidates =>
-        nonTweetCandidates ++ returnedTweetCandidates
+      l ghtRankerSelectedT etCand datesFut.map { returnedT etCand dates =>
+        nonT etCand dates ++ returnedT etCand dates
       }
-    } else if (target.scribeFeatureForRequestScribe) {
+    } else  f (target.scr beFeatureForRequestScr be) {
       val downSampleRate: Double =
-        if (target.params(PushParams.DownSampleLightRankingScribeCandidatesParam))
-          PushConstants.DownSampleLightRankingScribeCandidatesRate
-        else target.params(PushFeatureSwitchParams.LightRankingScribeCandidatesDownSamplingParam)
-      val selectedCandidateCounter: Int = math.ceil(candidates.size * downSampleRate).toInt
-      selectedLightRankerScribedTargetCandidateCountStats.add(selectedCandidateCounter.toFloat)
+         f (target.params(PushParams.DownSampleL ghtRank ngScr beCand datesParam))
+          PushConstants.DownSampleL ghtRank ngScr beCand datesRate
+        else target.params(PushFeatureSw chParams.L ghtRank ngScr beCand datesDownSampl ngParam)
+      val selectedCand dateCounter:  nt = math.ce l(cand dates.s ze * downSampleRate).to nt
+      selectedL ghtRankerScr bedTargetCand dateCountStats.add(selectedCand dateCounter.toFloat)
 
-      randomRanker.rank(target, candidates).map { randomLightRankerCands =>
-        val selectedCandidates = randomLightRankerCands.take(selectedCandidateCounter)
-        selectedLightRankerScribedCandidatesStats.add(selectedCandidates.size.toFloat)
-        selectedCandidates
+      randomRanker.rank(target, cand dates).map { randomL ghtRankerCands =>
+        val selectedCand dates = randomL ghtRankerCands.take(selectedCand dateCounter)
+        selectedL ghtRankerScr bedCand datesStats.add(selectedCand dates.s ze.toFloat)
+        selectedCand dates
       }
-    } else Future.value(candidates)
+    } else Future.value(cand dates)
   }
 
-  private def lightRankThenTake(
+  pr vate def l ghtRankT nTake(
     target: Target,
-    candidates: Seq[CandidateDetails[PushCandidate with TweetCandidate]],
-    numOfCandidates: Int
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
-    lightRankerCandidateCounter.incr(candidates.length)
-    lightRankerRequestCounter.incr()
-    val lightRankerCandidates: Seq[LightRankingCandidate] = candidates.map {
-      case CandidateDetails(tweetCandidate, _) =>
-        val tweetAuthor = tweetCandidate match {
-          case t: TweetCandidate with TweetAuthor => t.authorId
+    cand dates: Seq[Cand dateDeta ls[PushCand date w h T etCand date]],
+    numOfCand dates:  nt
+  ): Future[Seq[Cand dateDeta ls[PushCand date]]] = {
+    l ghtRankerCand dateCounter. ncr(cand dates.length)
+    l ghtRankerRequestCounter. ncr()
+    val l ghtRankerCand dates: Seq[L ghtRank ngCand date] = cand dates.map {
+      case Cand dateDeta ls(t etCand date, _) =>
+        val t etAuthor = t etCand date match {
+          case t: T etCand date w h T etAuthor => t.author d
           case _ => None
         }
-        val hydrationContext: LightRankingFeatureHydrationContext =
-          LightRankingFeatureHydrationContext.MagicRecsHydrationContext(
-            MagicRecsFeatureHydrationContext(
-              tweetAuthor = tweetAuthor,
-              pushString = tweetCandidate.getPushCopy.flatMap(_.pushStringGroup).map(_.toString))
+        val hydrat onContext: L ghtRank ngFeatureHydrat onContext =
+          L ghtRank ngFeatureHydrat onContext.Mag cRecsHydrat onContext(
+            Mag cRecsFeatureHydrat onContext(
+              t etAuthor = t etAuthor,
+              pushStr ng = t etCand date.getPushCopy.flatMap(_.pushStr ngGroup).map(_.toStr ng))
           )
-        LightRankingCandidate(
-          tweetId = tweetCandidate.tweetId,
-          hydrationContext = Some(hydrationContext)
+        L ghtRank ngCand date(
+          t et d = t etCand date.t et d,
+          hydrat onContext = So (hydrat onContext)
         )
     }
-    val modelName = target.params(PushFeatureSwitchParams.LightRankingModelTypeParam)
-    val lightRankedCandidatesFut = {
-      lightRanker
-        .rank(UserId(target.targetId), lightRankerCandidates, modelName)
+    val modelNa  = target.params(PushFeatureSw chParams.L ghtRank ngModelTypeParam)
+    val l ghtRankedCand datesFut = {
+      l ghtRanker
+        .rank(User d(target.target d), l ghtRankerCand dates, modelNa )
     }
 
-    lightRankedCandidatesFut.map { lightRankedCandidates =>
-      val lrScoreMap = lightRankedCandidates.map { lrCand =>
-        lrCand.tweetId -> lrCand.score
+    l ghtRankedCand datesFut.map { l ghtRankedCand dates =>
+      val lrScoreMap = l ghtRankedCand dates.map { lrCand =>
+        lrCand.t et d -> lrCand.score
       }.toMap
-      val candScoreMap: Seq[Option[Double]] = candidates.map { candidateDetails =>
-        lrScoreMap.get(candidateDetails.candidate.tweetId)
+      val candScoreMap: Seq[Opt on[Double]] = cand dates.map { cand dateDeta ls =>
+        lrScoreMap.get(cand dateDeta ls.cand date.t et d)
       }
-      sortCandidatesByScore(candidates, candScoreMap)
-        .take(numOfCandidates)
+      sortCand datesByScore(cand dates, candScoreMap)
+        .take(numOfCand dates)
     }
   }
 }

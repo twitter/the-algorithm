@@ -1,68 +1,68 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import scala.PartialFunction;
-import scala.runtime.AbstractPartialFunction;
+ mport scala.Part alFunct on;
+ mport scala.runt  .AbstractPart alFunct on;
 
-import com.twitter.finagle.service.ReqRep;
-import com.twitter.finagle.service.ResponseClass;
-import com.twitter.finagle.service.ResponseClasses;
-import com.twitter.finagle.service.ResponseClassifier;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.util.Try;
+ mport com.tw ter.f nagle.serv ce.ReqRep;
+ mport com.tw ter.f nagle.serv ce.ResponseClass;
+ mport com.tw ter.f nagle.serv ce.ResponseClasses;
+ mport com.tw ter.f nagle.serv ce.ResponseClass f er;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdServ ce;
+ mport com.tw ter.ut l.Try;
 
-public class RootResponseClassifier extends AbstractPartialFunction<ReqRep, ResponseClass> {
-  private static final PartialFunction<ReqRep, ResponseClass> DEFAULT_CLASSIFIER =
-      ResponseClassifier.Default();
+publ c class RootResponseClass f er extends AbstractPart alFunct on<ReqRep, ResponseClass> {
+  pr vate stat c f nal Part alFunct on<ReqRep, ResponseClass> DEFAULT_CLASS F ER =
+      ResponseClass f er.Default();
 
-  private static final SearchRateCounter NOT_EARLYBIRD_REQUEST_COUNTER =
-      SearchRateCounter.export("response_classifier_not_earlybird_request");
-  private static final SearchRateCounter NOT_EARLYBIRD_RESPONSE_COUNTER =
-      SearchRateCounter.export("response_classifier_not_earlybird_response");
-  private static final SearchRateCounter NON_RETRYABLE_FAILURE_COUNTER =
-      SearchRateCounter.export("response_classifier_non_retryable_failure");
-  private static final SearchRateCounter RETRYABLE_FAILURE_COUNTER =
-      SearchRateCounter.export("response_classifier_retryable_failure");
-  private static final SearchRateCounter SUCCESS_COUNTER =
-      SearchRateCounter.export("response_classifier_success");
+  pr vate stat c f nal SearchRateCounter NOT_EARLYB RD_REQUEST_COUNTER =
+      SearchRateCounter.export("response_class f er_not_earlyb rd_request");
+  pr vate stat c f nal SearchRateCounter NOT_EARLYB RD_RESPONSE_COUNTER =
+      SearchRateCounter.export("response_class f er_not_earlyb rd_response");
+  pr vate stat c f nal SearchRateCounter NON_RETRYABLE_FA LURE_COUNTER =
+      SearchRateCounter.export("response_class f er_non_retryable_fa lure");
+  pr vate stat c f nal SearchRateCounter RETRYABLE_FA LURE_COUNTER =
+      SearchRateCounter.export("response_class f er_retryable_fa lure");
+  pr vate stat c f nal SearchRateCounter SUCCESS_COUNTER =
+      SearchRateCounter.export("response_class f er_success");
 
-  @Override
-  public boolean isDefinedAt(ReqRep reqRep) {
-    if (!(reqRep.request() instanceof EarlybirdService.search_args)) {
-      NOT_EARLYBIRD_REQUEST_COUNTER.increment();
+  @Overr de
+  publ c boolean  sDef nedAt(ReqRep reqRep) {
+     f (!(reqRep.request()  nstanceof Earlyb rdServ ce.search_args)) {
+      NOT_EARLYB RD_REQUEST_COUNTER. ncre nt();
       return false;
     }
 
-    if (!reqRep.response().isThrow() && (!(reqRep.response().get() instanceof EarlybirdResponse))) {
-      NOT_EARLYBIRD_RESPONSE_COUNTER.increment();
+     f (!reqRep.response(). sThrow() && (!(reqRep.response().get()  nstanceof Earlyb rdResponse))) {
+      NOT_EARLYB RD_RESPONSE_COUNTER. ncre nt();
       return false;
     }
 
     return true;
   }
 
-  @Override
-  public ResponseClass apply(ReqRep reqRep) {
+  @Overr de
+  publ c ResponseClass apply(ReqRep reqRep) {
     Try<?> responseTry = reqRep.response();
-    if (responseTry.isThrow()) {
-      return DEFAULT_CLASSIFIER.apply(reqRep);
+     f (responseTry. sThrow()) {
+      return DEFAULT_CLASS F ER.apply(reqRep);
     }
 
-    // isDefinedAt() guarantees that the response is an EarlybirdResponse instance.
-    EarlybirdResponseCode responseCode = ((EarlybirdResponse) responseTry.get()).getResponseCode();
-    switch (responseCode) {
-      case PARTITION_NOT_FOUND:
-      case PARTITION_DISABLED:
-      case PERSISTENT_ERROR:
-        NON_RETRYABLE_FAILURE_COUNTER.increment();
-        return ResponseClasses.NON_RETRYABLE_FAILURE;
-      case TRANSIENT_ERROR:
-        RETRYABLE_FAILURE_COUNTER.increment();
-        return ResponseClasses.RETRYABLE_FAILURE;
+    //  sDef nedAt() guarantees that t  response  s an Earlyb rdResponse  nstance.
+    Earlyb rdResponseCode responseCode = ((Earlyb rdResponse) responseTry.get()).getResponseCode();
+    sw ch (responseCode) {
+      case PART T ON_NOT_FOUND:
+      case PART T ON_D SABLED:
+      case PERS STENT_ERROR:
+        NON_RETRYABLE_FA LURE_COUNTER. ncre nt();
+        return ResponseClasses.NON_RETRYABLE_FA LURE;
+      case TRANS ENT_ERROR:
+        RETRYABLE_FA LURE_COUNTER. ncre nt();
+        return ResponseClasses.RETRYABLE_FA LURE;
       default:
-        SUCCESS_COUNTER.increment();
+        SUCCESS_COUNTER. ncre nt();
         return ResponseClasses.SUCCESS;
     }
   }

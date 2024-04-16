@@ -1,111 +1,111 @@
-package com.twitter.product_mixer.core.model.common.identifier
+package com.tw ter.product_m xer.core.model.common. dent f er
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.twitter.conversions.StringOps
-import scala.util.matching.Regex
+ mport com.fasterxml.jackson.datab nd.annotat on.JsonSer al ze
+ mport com.tw ter.convers ons.Str ngOps
+ mport scala.ut l.match ng.Regex
 
 /**
- * Component Identifiers are a type of identifier used in product mixer to identify
- * unique components - products, pipelines, candidate sources.
+ * Component  dent f ers are a type of  dent f er used  n product m xer to  dent fy
+ * un que components - products, p pel nes, cand date s ces.
  *
- * Each identifier has two parts - a type and a name. Subclasses of [[ComponentIdentifier]]
- * should hardcode the `componentType`, and be declared in this file.
+ * Each  dent f er has two parts - a type and a na . Subclasses of [[Component dent f er]]
+ * should hardcode t  `componentType`, and be declared  n t  f le.
  *
- * For example, a [[ProductPipelineIdentifier]] has the type "ProductPipeline".
+ * For example, a [[ProductP pel ne dent f er]] has t  type "ProductP pel ne".
  *
- * Component identifiers are used in:
+ * Component  dent f ers are used  n:
  *   - Logs
- *   - Tooling
- *   - Metrics
- *   - Feature Switches
+ *   - Tool ng
+ *   -  tr cs
+ *   - Feature Sw c s
  *
-  * A component identifier name is restricted to:
+  * A component  dent f er na   s restr cted to:
  *   - 3 to 80 characters to ensure reasonable length
- *   - A-Z, a-z, and Digits
- *   - Must start with A-Z
- *   - Digits only on the ends of "words"
- *   - Examples include "AlphaSample" and "UsersLikeMe"
- *   - and "SimsV2" or "Test6"
+ *   - A-Z, a-z, and D g s
+ *   - Must start w h A-Z
+ *   - D g s only on t  ends of "words"
+ *   - Examples  nclude "AlphaSample" and "UsersL ke "
+ *   - and "S msV2" or "Test6"
  *
- * Avoid including types like "Pipeline", "MixerPipeline" etc in your identifier. these
- * can be implied by the type itself, and will automatically be used where appropriate (logs etc).
+ * Avo d  nclud ng types l ke "P pel ne", "M xerP pel ne" etc  n y   dent f er. t se
+ * can be  mpl ed by t  type  self, and w ll automat cally be used w re appropr ate (logs etc).
  */
-@JsonSerialize(using = classOf[ComponentIdentifierSerializer])
-abstract class ComponentIdentifier(
-  val componentType: String,
-  val name: String)
+@JsonSer al ze(us ng = classOf[Component dent f erSer al zer])
+abstract class Component dent f er(
+  val componentType: Str ng,
+  val na : Str ng)
     extends Equals {
 
-  val file: sourcecode.File = ""
+  val f le: s cecode.F le = ""
 
-  override val toString: String = s"$name$componentType"
+  overr de val toStr ng: Str ng = s"$na $componentType"
 
-  val snakeCase: String = StringOps.toSnakeCase(toString)
+  val snakeCase: Str ng = Str ngOps.toSnakeCase(toStr ng)
 
-  val toScopes: Seq[String] = Seq(componentType, name)
+  val toScopes: Seq[Str ng] = Seq(componentType, na )
 }
 
-object ComponentIdentifier {
-  // Allows for CamelCase and CamelCaseVer3 styles
-  val AllowedCharacters: Regex = "([A-Z][A-Za-z]*[0-9]*)+".r
-  val MinLength = 3
+object Component dent f er {
+  // Allows for Ca lCase and Ca lCaseVer3 styles
+  val Allo dCharacters: Regex = "([A-Z][A-Za-z]*[0-9]*)+".r
+  val M nLength = 3
   val MaxLength = 80
 
   /**
-   * When a [[ComponentIdentifier.name]] is [[BasedOnParentComponent]]
-   * then when operations that depend on the [[ComponentIdentifier]]
-   * are performed, like registering and stats, we will perform that
-   * operation by substituting the [[ComponentIdentifier.name]] with
-   * the parent component's [[ComponentIdentifier.name]].
+   * W n a [[Component dent f er.na ]]  s [[BasedOnParentComponent]]
+   * t n w n operat ons that depend on t  [[Component dent f er]]
+   * are perfor d, l ke reg ster ng and stats,   w ll perform that
+   * operat on by subst ut ng t  [[Component dent f er.na ]] w h
+   * t  parent component's [[Component dent f er.na ]].
    */
-  private[core] val BasedOnParentComponent = "BasedOnParentComponent"
+  pr vate[core] val BasedOnParentComponent = "BasedOnParentComponent"
 
-  def isValidName(name: String): Boolean = {
-    name match {
-      case n if n.length < MinLength =>
+  def  sVal dNa (na : Str ng): Boolean = {
+    na  match {
+      case n  f n.length < M nLength =>
         false
-      case n if n.length > MaxLength =>
+      case n  f n.length > MaxLength =>
         false
-      case AllowedCharacters(_*) =>
+      case Allo dCharacters(_*) =>
         true
       case _ =>
         false
     }
   }
 
-  implicit val ordering: Ordering[ComponentIdentifier] =
-    Ordering.by { component =>
+   mpl c  val order ng: Order ng[Component dent f er] =
+    Order ng.by { component =>
       val componentTypeRank = component match {
-        case _: ProductIdentifier => 0
-        case _: ProductPipelineIdentifier => 1
-        case _: MixerPipelineIdentifier => 2
-        case _: RecommendationPipelineIdentifier => 3
-        case _: ScoringPipelineIdentifier => 4
-        case _: CandidatePipelineIdentifier => 5
-        case _: PipelineStepIdentifier => 6
-        case _: CandidateSourceIdentifier => 7
-        case _: FeatureHydratorIdentifier => 8
-        case _: GateIdentifier => 9
-        case _: FilterIdentifier => 10
-        case _: TransformerIdentifier => 11
-        case _: ScorerIdentifier => 12
-        case _: DecoratorIdentifier => 13
-        case _: DomainMarshallerIdentifier => 14
-        case _: TransportMarshallerIdentifier => 15
-        case _: SideEffectIdentifier => 16
-        case _: PlatformIdentifier => 17
-        case _: SelectorIdentifier => 18
-        case _ => Int.MaxValue
+        case _: Product dent f er => 0
+        case _: ProductP pel ne dent f er => 1
+        case _: M xerP pel ne dent f er => 2
+        case _: Recom ndat onP pel ne dent f er => 3
+        case _: Scor ngP pel ne dent f er => 4
+        case _: Cand dateP pel ne dent f er => 5
+        case _: P pel neStep dent f er => 6
+        case _: Cand dateS ce dent f er => 7
+        case _: FeatureHydrator dent f er => 8
+        case _: Gate dent f er => 9
+        case _: F lter dent f er => 10
+        case _: Transfor r dent f er => 11
+        case _: Scorer dent f er => 12
+        case _: Decorator dent f er => 13
+        case _: Doma nMarshaller dent f er => 14
+        case _: TransportMarshaller dent f er => 15
+        case _: S deEffect dent f er => 16
+        case _: Platform dent f er => 17
+        case _: Selector dent f er => 18
+        case _ =>  nt.MaxValue
       }
 
-      // First rank by type, then by name for equivalent types for overall order stability
-      (componentTypeRank, component.name)
+      // F rst rank by type, t n by na  for equ valent types for overall order stab l y
+      (componentTypeRank, component.na )
     }
 }
 
 /**
- * HasComponentIdentifier indicates that component has a [[ComponentIdentifier]]
+ * HasComponent dent f er  nd cates that component has a [[Component dent f er]]
  */
-trait HasComponentIdentifier {
-  val identifier: ComponentIdentifier
+tra  HasComponent dent f er {
+  val  dent f er: Component dent f er
 }

@@ -1,92 +1,92 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+# nclude "tensorflow/core/fra work/op.h"
+# nclude "tensorflow/core/fra work/shape_ nference.h"
+# nclude "tensorflow/core/fra work/op_kernel.h"
 
-using namespace tensorflow;
+us ng na space tensorflow;
 
-REGISTER_OP("Add1")
-.Attr("T: {float, double, int32}")
-.Input("input1: T")
+REG STER_OP("Add1")
+.Attr("T: {float, double,  nt32}")
+. nput(" nput1: T")
 .Output("output: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    c->set_output(0, c->input(0));
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
+    c->set_output(0, c-> nput(0));
     return Status::OK();
   });
 
 
-template<typename T>
-class Add1 : public OpKernel {
- public:
-  explicit Add1(OpKernelConstruction* context) : OpKernel(context) {}
+template<typena  T>
+class Add1 : publ c OpKernel {
+ publ c:
+  expl c  Add1(OpKernelConstruct on* context) : OpKernel(context) {}
 
-  void Compute(OpKernelContext* context) override {
-    // Grab the input tensor
-    const Tensor& input_tensor = context->input(0);
-    auto input = input_tensor.flat<T>();
+  vo d Compute(OpKernelContext* context) overr de {
+    // Grab t   nput tensor
+    const Tensor&  nput_tensor = context-> nput(0);
+    auto  nput =  nput_tensor.flat<T>();
 
     // Create an output tensor
     Tensor* output_tensor = nullptr;
-    OP_REQUIRES_OK(context, context->allocate_output(0, input_tensor.shape(),
+    OP_REQU RES_OK(context, context->allocate_output(0,  nput_tensor.shape(),
                              &output_tensor));
     auto output_flat = output_tensor->flat<T>();
 
-    // Add 1 to input and assign to output
-    const int N = input.size();
-    for (int i = 0; i < N; i++) {
-      output_flat(i) = input(i) + 1;
+    // Add 1 to  nput and ass gn to output
+    const  nt N =  nput.s ze();
+    for ( nt   = 0;   < N;  ++) {
+      output_flat( ) =  nput( ) + 1;
     }
   }
 };
 
 
-REGISTER_OP("Add1Grad")
-.Attr("T: {float, double, int32}")
-.Input("grad_output: T")
-.Output("grad_input: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    c->set_output(0, c->input(0));
+REG STER_OP("Add1Grad")
+.Attr("T: {float, double,  nt32}")
+. nput("grad_output: T")
+.Output("grad_ nput: T")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
+    c->set_output(0, c-> nput(0));
     return Status::OK();
   });
 
-template<typename T>
-class Add1Grad : public OpKernel {
- public:
-  explicit Add1Grad(OpKernelConstruction* context) : OpKernel(context) {}
+template<typena  T>
+class Add1Grad : publ c OpKernel {
+ publ c:
+  expl c  Add1Grad(OpKernelConstruct on* context) : OpKernel(context) {}
 
-  void Compute(OpKernelContext* context) override {
-    // Grab the input tensor
-    const Tensor& grad_output_tensor = context->input(0);
+  vo d Compute(OpKernelContext* context) overr de {
+    // Grab t   nput tensor
+    const Tensor& grad_output_tensor = context-> nput(0);
     auto grad_output = grad_output_tensor.flat<T>();
 
-    // Create an grad_input tensor
-    Tensor* grad_input_tensor = nullptr;
-    OP_REQUIRES_OK(context, context->allocate_output(0, grad_output_tensor.shape(),
-                             &grad_input_tensor));
+    // Create an grad_ nput tensor
+    Tensor* grad_ nput_tensor = nullptr;
+    OP_REQU RES_OK(context, context->allocate_output(0, grad_output_tensor.shape(),
+                             &grad_ nput_tensor));
 
-    auto grad_input_flat = grad_input_tensor->flat<T>();
+    auto grad_ nput_flat = grad_ nput_tensor->flat<T>();
 
-    // Copy from grad_output to grad_input
-    const int N = grad_output.size();
-    for (int i = 0; i < N; i++) {
-      grad_input_flat(i) = grad_output(i);
+    // Copy from grad_output to grad_ nput
+    const  nt N = grad_output.s ze();
+    for ( nt   = 0;   < N;  ++) {
+      grad_ nput_flat( ) = grad_output( );
     }
   }
 };
 
-#define REGISTER(Type)              \
+#def ne REG STER(Type)              \
                                     \
-  REGISTER_KERNEL_BUILDER(          \
-    Name("Add1")                    \
-    .Device(DEVICE_CPU)             \
-    .TypeConstraint<Type>("T"),     \
+  REG STER_KERNEL_BU LDER(          \
+    Na ("Add1")                    \
+    .Dev ce(DEV CE_CPU)             \
+    .TypeConstra nt<Type>("T"),     \
     Add1<Type>);                    \
                                     \
-  REGISTER_KERNEL_BUILDER(          \
-    Name("Add1Grad")                \
-    .Device(DEVICE_CPU)             \
-    .TypeConstraint<Type>("T"),     \
+  REG STER_KERNEL_BU LDER(          \
+    Na ("Add1Grad")                \
+    .Dev ce(DEV CE_CPU)             \
+    .TypeConstra nt<Type>("T"),     \
     Add1Grad<Type>);                \
 
-REGISTER(float);
-REGISTER(double);
-REGISTER(int32);
+REG STER(float);
+REG STER(double);
+REG STER( nt32);

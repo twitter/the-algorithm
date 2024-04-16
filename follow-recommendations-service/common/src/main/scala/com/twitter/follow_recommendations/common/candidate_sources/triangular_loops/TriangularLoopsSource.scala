@@ -1,91 +1,91 @@
-package com.twitter.follow_recommendations.common.candidate_sources.triangular_loops
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.tr angular_loops
 
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedByUserIds
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.TriangularLoopsV2OnUserClientColumn
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.wtf.triangular_loop.thriftscala.Candidates
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.common.models.AccountProof
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.FollowProof
+ mport com.tw ter.follow_recom ndat ons.common.models.HasRecentFollo dByUser ds
+ mport com.tw ter.follow_recom ndat ons.common.models.Reason
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.generated.cl ent.onboard ng.userrecs.Tr angularLoopsV2OnUserCl entColumn
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport com.tw ter.wtf.tr angular_loop.thr ftscala.Cand dates
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TriangularLoopsSource @Inject() (
-  triangularLoopsV2Column: TriangularLoopsV2OnUserClientColumn)
-    extends CandidateSource[
-      HasParams with HasClientContext with HasRecentFollowedByUserIds,
-      CandidateUser
+@S ngleton
+class Tr angularLoopsS ce @ nject() (
+  tr angularLoopsV2Column: Tr angularLoopsV2OnUserCl entColumn)
+    extends Cand dateS ce[
+      HasParams w h HasCl entContext w h HasRecentFollo dByUser ds,
+      Cand dateUser
     ] {
 
-  override val identifier: CandidateSourceIdentifier = TriangularLoopsSource.Identifier
+  overr de val  dent f er: Cand dateS ce dent f er = Tr angularLoopsS ce. dent f er
 
-  override def apply(
-    target: HasParams with HasClientContext with HasRecentFollowedByUserIds
-  ): Stitch[Seq[CandidateUser]] = {
-    val candidates = target.getOptionalUserId
-      .map { userId =>
-        val fetcher = triangularLoopsV2Column.fetcher
-        fetcher
-          .fetch(userId)
+  overr de def apply(
+    target: HasParams w h HasCl entContext w h HasRecentFollo dByUser ds
+  ): St ch[Seq[Cand dateUser]] = {
+    val cand dates = target.getOpt onalUser d
+      .map { user d =>
+        val fetc r = tr angularLoopsV2Column.fetc r
+        fetc r
+          .fetch(user d)
           .map { result =>
             result.v
-              .map(TriangularLoopsSource.mapCandidatesToCandidateUsers)
-              .getOrElse(Nil)
+              .map(Tr angularLoopsS ce.mapCand datesToCand dateUsers)
+              .getOrElse(N l)
           }
-      }.getOrElse(Stitch.Nil)
-    // Make sure recentFollowedByUserIds is populated within the RequestBuilder before enable it
-    if (target.params(TriangularLoopsParams.KeepOnlyCandidatesWhoFollowTargetUser))
-      filterOutCandidatesNotFollowingTargetUser(candidates, target.recentFollowedByUserIds)
+      }.getOrElse(St ch.N l)
+    // Make sure recentFollo dByUser ds  s populated w h n t  RequestBu lder before enable  
+     f (target.params(Tr angularLoopsParams.KeepOnlyCand datesWhoFollowTargetUser))
+      f lterOutCand datesNotFollow ngTargetUser(cand dates, target.recentFollo dByUser ds)
     else
-      candidates
+      cand dates
   }
 
-  def filterOutCandidatesNotFollowingTargetUser(
-    candidatesStitch: Stitch[Seq[CandidateUser]],
-    recentFollowings: Option[Seq[Long]]
-  ): Stitch[Seq[CandidateUser]] = {
-    candidatesStitch.map { candidates =>
-      val recentFollowingIdsSet = recentFollowings.getOrElse(Nil).toSet
-      candidates.filter(candidate => recentFollowingIdsSet.contains(candidate.id))
+  def f lterOutCand datesNotFollow ngTargetUser(
+    cand datesSt ch: St ch[Seq[Cand dateUser]],
+    recentFollow ngs: Opt on[Seq[Long]]
+  ): St ch[Seq[Cand dateUser]] = {
+    cand datesSt ch.map { cand dates =>
+      val recentFollow ng dsSet = recentFollow ngs.getOrElse(N l).toSet
+      cand dates.f lter(cand date => recentFollow ng dsSet.conta ns(cand date. d))
     }
   }
 }
 
-object TriangularLoopsSource {
+object Tr angularLoopsS ce {
 
-  val Identifier = CandidateSourceIdentifier(Algorithm.TriangularLoop.toString)
+  val  dent f er = Cand dateS ce dent f er(Algor hm.Tr angularLoop.toStr ng)
   val NumResults = 100
 
-  def mapCandidatesToCandidateUsers(candidates: Candidates): Seq[CandidateUser] = {
-    candidates.candidates
-      .map { candidate =>
-        CandidateUser(
-          id = candidate.incomingUserId,
-          score = Some(1.0 / math
-            .max(1, candidate.numFollowers.getOrElse(0) + candidate.numFollowings.getOrElse(0))),
-          reason = Some(
+  def mapCand datesToCand dateUsers(cand dates: Cand dates): Seq[Cand dateUser] = {
+    cand dates.cand dates
+      .map { cand date =>
+        Cand dateUser(
+           d = cand date. ncom ngUser d,
+          score = So (1.0 / math
+            .max(1, cand date.numFollo rs.getOrElse(0) + cand date.numFollow ngs.getOrElse(0))),
+          reason = So (
             Reason(
-              Some(
+              So (
                 AccountProof(
                   followProof =
-                    if (candidate.socialProofUserIds.isEmpty) None
+                     f (cand date.soc alProofUser ds. sEmpty) None
                     else
-                      Some(
+                      So (
                         FollowProof(
-                          candidate.socialProofUserIds,
-                          candidate.numSocialProof.getOrElse(candidate.socialProofUserIds.size)))
+                          cand date.soc alProofUser ds,
+                          cand date.numSoc alProof.getOrElse(cand date.soc alProofUser ds.s ze)))
                 )
               )
             )
           )
-        ).withCandidateSource(Identifier)
+        ).w hCand dateS ce( dent f er)
       }.sortBy(-_.score.getOrElse(0.0)).take(NumResults)
   }
 }

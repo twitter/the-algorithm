@@ -1,84 +1,84 @@
-package com.twitter.ann.scalding.offline
+package com.tw ter.ann.scald ng.offl ne
 
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.Metric
-import com.twitter.ann.scalding.offline.KnnHelper.nearestNeighborsToString
-import com.twitter.cortex.ml.embeddings.common.EntityKind
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.scalding.source.TypedText
-import com.twitter.scalding.Args
-import com.twitter.scalding.Execution
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding_internal.job.TwitterExecutionApp
+ mport com.tw ter.ann.common.D stance
+ mport com.tw ter.ann.common. tr c
+ mport com.tw ter.ann.scald ng.offl ne.Knn lper.nearestNe ghborsToStr ng
+ mport com.tw ter.cortex.ml.embedd ngs.common.Ent yK nd
+ mport com.tw ter.ml.featurestore.l b.Ent y d
+ mport com.tw ter.scald ng.s ce.TypedText
+ mport com.tw ter.scald ng.Args
+ mport com.tw ter.scald ng.Execut on
+ mport com.tw ter.scald ng.Un que D
+ mport com.tw ter.scald ng_ nternal.job.Tw terExecut onApp
 
 /**
- * This job reads index embedding data, query embeddings data, and split into index set, query set and true nearest neigbor set
- * from query to index.
+ * T  job reads  ndex embedd ng data, query embedd ngs data, and spl   nto  ndex set, query set and true nearest ne gbor set
+ * from query to  ndex.
  */
-object KnnTruthSetGenerator extends TwitterExecutionApp {
-  override def job: Execution[Unit] = Execution.withId { implicit uniqueId =>
-    Execution.getArgs.flatMap { args: Args =>
-      val queryEntityKind = EntityKind.getEntityKind(args("query_entity_kind"))
-      val indexEntityKind = EntityKind.getEntityKind(args("index_entity_kind"))
-      val metric = Metric.fromString(args("metric"))
-      run(queryEntityKind, indexEntityKind, metric, args)
+object KnnTruthSetGenerator extends Tw terExecut onApp {
+  overr de def job: Execut on[Un ] = Execut on.w h d {  mpl c  un que d =>
+    Execut on.getArgs.flatMap { args: Args =>
+      val queryEnt yK nd = Ent yK nd.getEnt yK nd(args("query_ent y_k nd"))
+      val  ndexEnt yK nd = Ent yK nd.getEnt yK nd(args(" ndex_ent y_k nd"))
+      val  tr c =  tr c.fromStr ng(args(" tr c"))
+      run(queryEnt yK nd,  ndexEnt yK nd,  tr c, args)
     }
   }
 
-  private[this] def run[A <: EntityId, B <: EntityId, D <: Distance[D]](
-    uncastQueryEntityKind: EntityKind[_],
-    uncastIndexSpaceEntityKind: EntityKind[_],
-    uncastMetric: Metric[_],
+  pr vate[t ] def run[A <: Ent y d, B <: Ent y d, D <: D stance[D]](
+    uncastQueryEnt yK nd: Ent yK nd[_],
+    uncast ndexSpaceEnt yK nd: Ent yK nd[_],
+    uncast tr c:  tr c[_],
     args: Args
   )(
-    implicit uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val queryEntityKind = uncastQueryEntityKind.asInstanceOf[EntityKind[A]]
-    val indexEntityKind = uncastIndexSpaceEntityKind.asInstanceOf[EntityKind[B]]
-    val metric = uncastMetric.asInstanceOf[Metric[D]]
+     mpl c  un que D: Un que D
+  ): Execut on[Un ] = {
+    val queryEnt yK nd = uncastQueryEnt yK nd.as nstanceOf[Ent yK nd[A]]
+    val  ndexEnt yK nd = uncast ndexSpaceEnt yK nd.as nstanceOf[Ent yK nd[B]]
+    val  tr c = uncast tr c.as nstanceOf[ tr c[D]]
 
-    val reducers = args.int("reducers")
-    val mappers = args.int("mappers")
-    val numNeighbors = args.int("neighbors")
+    val reducers = args. nt("reducers")
+    val mappers = args. nt("mappers")
+    val numNe ghbors = args. nt("ne ghbors")
     val knnOutputPath = args("truth_set_output_path")
     val querySamplePercent = args.double("query_sample_percent", 100) / 100
-    val indexSamplePercent = args.double("index_sample_percent", 100) / 100
+    val  ndexSamplePercent = args.double(" ndex_sample_percent", 100) / 100
 
-    val queryEmbeddings = queryEntityKind.parser
-      .getEmbeddingFormat(args, "query")
-      .getEmbeddings
+    val queryEmbedd ngs = queryEnt yK nd.parser
+      .getEmbedd ngFormat(args, "query")
+      .getEmbedd ngs
       .sample(querySamplePercent)
 
-    val indexEmbeddings = indexEntityKind.parser
-      .getEmbeddingFormat(args, "index")
-      .getEmbeddings
-      .sample(indexSamplePercent)
+    val  ndexEmbedd ngs =  ndexEnt yK nd.parser
+      .getEmbedd ngFormat(args, " ndex")
+      .getEmbedd ngs
+      .sample( ndexSamplePercent)
 
-    // calculate and write knn
-    val knnExecution = KnnHelper
-      .findNearestNeighbours(
-        queryEmbeddings,
-        indexEmbeddings,
-        metric,
-        numNeighbors,
+    // calculate and wr e knn
+    val knnExecut on = Knn lper
+      .f ndNearestNe ghb s(
+        queryEmbedd ngs,
+         ndexEmbedd ngs,
+         tr c,
+        numNe ghbors,
         reducers = reducers,
         mappers = mappers
-      )(queryEntityKind.ordering, uniqueID).map(
-        nearestNeighborsToString(_, queryEntityKind, indexEntityKind)
+      )(queryEnt yK nd.order ng, un que D).map(
+        nearestNe ghborsToStr ng(_, queryEnt yK nd,  ndexEnt yK nd)
       )
       .shard(1)
-      .writeExecution(TypedText.tsv(knnOutputPath))
+      .wr eExecut on(TypedText.tsv(knnOutputPath))
 
-    // write query set embeddings
-    val querySetExecution = queryEntityKind.parser
-      .getEmbeddingFormat(args, "query_set_output")
-      .writeEmbeddings(queryEmbeddings)
+    // wr e query set embedd ngs
+    val querySetExecut on = queryEnt yK nd.parser
+      .getEmbedd ngFormat(args, "query_set_output")
+      .wr eEmbedd ngs(queryEmbedd ngs)
 
-    // write index set embeddings
-    val indexSetExecution = indexEntityKind.parser
-      .getEmbeddingFormat(args, "index_set_output")
-      .writeEmbeddings(indexEmbeddings)
+    // wr e  ndex set embedd ngs
+    val  ndexSetExecut on =  ndexEnt yK nd.parser
+      .getEmbedd ngFormat(args, " ndex_set_output")
+      .wr eEmbedd ngs( ndexEmbedd ngs)
 
-    Execution.zip(knnExecution, querySetExecution, indexSetExecution).unit
+    Execut on.z p(knnExecut on, querySetExecut on,  ndexSetExecut on).un 
   }
 }

@@ -1,21 +1,21 @@
-scala_library(
-    sources = [
-        "UnifiedUserActionsSourceScrooge.scala",
+scala_l brary(
+    s ces = [
+        "Un f edUserAct onsS ceScrooge.scala",
     ],
-    compiler_option_sets = ["fatal_warnings"],
-    # Our runtime is using Java 11, but for compatibility with other internal libraries that
-    # are still on Java 8, we'll make our target platform to be Java 8 as well until everyone can
-    # migrate.
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    #   runt    s us ng Java 11, but for compat b l y w h ot r  nternal l brar es that
+    # are st ll on Java 8,  'll make   target platform to be Java 8 as  ll unt l everyone can
+    # m grate.
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/src/jvm/com/twitter/summingbird:core",
-        "3rdparty/src/jvm/com/twitter/summingbird:storm",
-        "3rdparty/src/jvm/com/twitter/tormenta:core",
-        "src/scala/com/twitter/summingbird_internal/sources/common",
-        "src/scala/com/twitter/tormenta_internal/scheme",
-        "src/scala/com/twitter/tormenta_internal/spout:kafka2",
-        "unified_user_actions/client/src/main/scala/com/twitter/unified_user_actions/client/config",
-        "unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions:unified_user_actions-scala",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/src/jvm/com/tw ter/summ ngb rd:core",
+        "3rdparty/src/jvm/com/tw ter/summ ngb rd:storm",
+        "3rdparty/src/jvm/com/tw ter/tor nta:core",
+        "src/scala/com/tw ter/summ ngb rd_ nternal/s ces/common",
+        "src/scala/com/tw ter/tor nta_ nternal/sc  ",
+        "src/scala/com/tw ter/tor nta_ nternal/spout:kafka2",
+        "un f ed_user_act ons/cl ent/src/ma n/scala/com/tw ter/un f ed_user_act ons/cl ent/conf g",
+        "un f ed_user_act ons/thr ft/src/ma n/thr ft/com/tw ter/un f ed_user_act ons:un f ed_user_act ons-scala",
     ],
 )

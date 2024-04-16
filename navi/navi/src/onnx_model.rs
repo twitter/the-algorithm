@@ -1,275 +1,275 @@
 #[cfg(feature = "onnx")]
 pub mod onnx {
     use crate::TensorReturnEnum;
-    use crate::bootstrap::{TensorInput, TensorInputEnum};
-    use crate::cli_args::{
-        Args, ARGS, INPUTS, MODEL_SPECS, OUTPUTS,
+    use crate::bootstrap::{Tensor nput, Tensor nputEnum};
+    use crate::cl _args::{
+        Args, ARGS,  NPUTS, MODEL_SPECS, OUTPUTS,
     };
-    use crate::metrics::{self, CONVERTER_TIME_COLLECTOR};
-    use crate::predict_service::Model;
-    use crate::{MAX_NUM_INPUTS, MAX_NUM_OUTPUTS, META_INFO, utils};
+    use crate:: tr cs::{self, CONVERTER_T ME_COLLECTOR};
+    use crate::pred ct_serv ce::Model;
+    use crate::{MAX_NUM_ NPUTS, MAX_NUM_OUTPUTS, META_ NFO, ut ls};
     use anyhow::Result;
     use arrayvec::ArrayVec;
-    use dr_transform::converter::{BatchPredictionRequestToTorchTensorConverter, Converter};
-    use itertools::Itertools;
-    use log::{debug, info};
-    use dr_transform::ort::environment::Environment;
-    use dr_transform::ort::session::Session;
-    use dr_transform::ort::tensor::InputTensor;
-    use dr_transform::ort::{ExecutionProvider, GraphOptimizationLevel, SessionBuilder};
-    use dr_transform::ort::LoggingLevel;
+    use dr_transform::converter::{BatchPred ct onRequestToTorchTensorConverter, Converter};
+    use  ertools:: ertools;
+    use log::{debug,  nfo};
+    use dr_transform::ort::env ron nt::Env ron nt;
+    use dr_transform::ort::sess on::Sess on;
+    use dr_transform::ort::tensor:: nputTensor;
+    use dr_transform::ort::{Execut onProv der, GraphOpt m zat onLevel, Sess onBu lder};
+    use dr_transform::ort::Logg ngLevel;
     use serde_json::Value;
-    use std::fmt::{Debug, Display};
+    use std::fmt::{Debug, D splay};
     use std::sync::Arc;
     use std::{fmt, fs};
-    use tokio::time::Instant;
-    lazy_static! {
-        pub static ref ENVIRONMENT: Arc<Environment> = Arc::new(
-            Environment::builder()
-                .with_name("onnx home")
-                .with_log_level(LoggingLevel::Error)
-                .with_global_thread_pool(ARGS.onnx_global_thread_pool_options.clone())
-                .build()
+    use tok o::t  :: nstant;
+    lazy_stat c! {
+        pub stat c ref ENV RONMENT: Arc<Env ron nt> = Arc::new(
+            Env ron nt::bu lder()
+                .w h_na ("onnx ho ")
+                .w h_log_level(Logg ngLevel::Error)
+                .w h_global_thread_pool(ARGS.onnx_global_thread_pool_opt ons.clone())
+                .bu ld()
                 .unwrap()
         );
     }
-    #[derive(Debug)]
+    #[der ve(Debug)]
     pub struct OnnxModel {
-        pub session: Session,
-        pub model_idx: usize,
-        pub version: i64,
-        pub export_dir: String,
-        pub output_filters: ArrayVec<usize, MAX_NUM_OUTPUTS>,
-        pub input_converter: Box<dyn Converter>,
+        pub sess on: Sess on,
+        pub model_ dx: us ze,
+        pub vers on:  64,
+        pub export_d r: Str ng,
+        pub output_f lters: ArrayVec<us ze, MAX_NUM_OUTPUTS>,
+        pub  nput_converter: Box<dyn Converter>,
     }
-    impl Display for OnnxModel {
+     mpl D splay for OnnxModel {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-            write!(
+            wr e!(
                 f,
-                "idx: {}, onnx model_name:{}, version:{}, output_filters:{:?}, converter:{:}",
-                self.model_idx,
-                MODEL_SPECS[self.model_idx],
-                self.version,
-                self.output_filters,
-                self.input_converter
+                " dx: {}, onnx model_na :{}, vers on:{}, output_f lters:{:?}, converter:{:}",
+                self.model_ dx,
+                MODEL_SPECS[self.model_ dx],
+                self.vers on,
+                self.output_f lters,
+                self. nput_converter
             )
         }
     }
-    impl Drop for OnnxModel {
+     mpl Drop for OnnxModel {
         fn drop(&mut self) {
-            if ARGS.profiling != None {
-                self.session.end_profiling().map_or_else(
+             f ARGS.prof l ng != None {
+                self.sess on.end_prof l ng().map_or_else(
                     |e| {
-                        info!("end profiling with some error:{:?}", e);
+                         nfo!("end prof l ng w h so  error:{:?}", e);
                     },
                     |f| {
-                        info!("profiling ended with file:{}", f);
+                         nfo!("prof l ng ended w h f le:{}", f);
                     },
                 );
             }
         }
     }
-    impl OnnxModel {
-        fn get_output_filters(session: &Session, idx: usize) -> ArrayVec<usize, MAX_NUM_OUTPUTS> {
-            OUTPUTS[idx]
-                .iter()
-                .map(|output| session.outputs.iter().position(|o| o.name == *output))
+     mpl OnnxModel {
+        fn get_output_f lters(sess on: &Sess on,  dx: us ze) -> ArrayVec<us ze, MAX_NUM_OUTPUTS> {
+            OUTPUTS[ dx]
+                . er()
+                .map(|output| sess on.outputs. er().pos  on(|o| o.na  == *output))
                 .flatten()
-                .collect::<ArrayVec<usize, MAX_NUM_OUTPUTS>>()
+                .collect::<ArrayVec<us ze, MAX_NUM_OUTPUTS>>()
         }
-        #[cfg(target_os = "linux")]
-        fn ep_choices() -> Vec<ExecutionProvider> {
+        #[cfg(target_os = "l nux")]
+        fn ep_cho ces() -> Vec<Execut onProv der> {
             match ARGS.onnx_gpu_ep.as_ref().map(|e| e.as_str()) {
-                Some("onednn") => vec![Self::ep_with_options(ExecutionProvider::onednn())],
-                Some("tensorrt") => vec![Self::ep_with_options(ExecutionProvider::tensorrt())],
-                Some("cuda") => vec![Self::ep_with_options(ExecutionProvider::cuda())],
-                _ => vec![Self::ep_with_options(ExecutionProvider::cpu())],
+                So ("onednn") => vec![Self::ep_w h_opt ons(Execut onProv der::onednn())],
+                So ("tensorrt") => vec![Self::ep_w h_opt ons(Execut onProv der::tensorrt())],
+                So ("cuda") => vec![Self::ep_w h_opt ons(Execut onProv der::cuda())],
+                _ => vec![Self::ep_w h_opt ons(Execut onProv der::cpu())],
             }
         }
-        fn ep_with_options(mut ep: ExecutionProvider) -> ExecutionProvider {
-            for (ref k, ref v) in ARGS.onnx_ep_options.clone() {
-                ep = ep.with(k, v);
-                info!("setting option:{} -> {} and now ep is:{:?}", k, v, ep);
+        fn ep_w h_opt ons(mut ep: Execut onProv der) -> Execut onProv der {
+            for (ref k, ref v)  n ARGS.onnx_ep_opt ons.clone() {
+                ep = ep.w h(k, v);
+                 nfo!("sett ng opt on:{} -> {} and now ep  s:{:?}", k, v, ep);
             }
             ep
         }
         #[cfg(target_os = "macos")]
-        fn ep_choices() -> Vec<ExecutionProvider> {
-            vec![Self::ep_with_options(ExecutionProvider::cpu())]
+        fn ep_cho ces() -> Vec<Execut onProv der> {
+            vec![Self::ep_w h_opt ons(Execut onProv der::cpu())]
         }
-        pub fn new(idx: usize, version: String, model_config: &Value) -> Result<OnnxModel> {
-            let export_dir = format!("{}/{}/model.onnx", ARGS.model_dir[idx], version);
-            let meta_info = format!("{}/{}/{}", ARGS.model_dir[idx], version, META_INFO);
-            let mut builder = SessionBuilder::new(&ENVIRONMENT)?
-                .with_optimization_level(GraphOptimizationLevel::Level3)?
-                .with_parallel_execution(ARGS.onnx_use_parallel_mode == "true")?;
-            if ARGS.onnx_global_thread_pool_options.is_empty() {
-                builder = builder
-                    .with_inter_threads(
-                        utils::get_config_or(
-                            model_config,
-                            "inter_op_parallelism",
-                            &ARGS.inter_op_parallelism[idx],
+        pub fn new( dx: us ze, vers on: Str ng, model_conf g: &Value) -> Result<OnnxModel> {
+            let export_d r = format!("{}/{}/model.onnx", ARGS.model_d r[ dx], vers on);
+            let  ta_ nfo = format!("{}/{}/{}", ARGS.model_d r[ dx], vers on, META_ NFO);
+            let mut bu lder = Sess onBu lder::new(&ENV RONMENT)?
+                .w h_opt m zat on_level(GraphOpt m zat onLevel::Level3)?
+                .w h_parallel_execut on(ARGS.onnx_use_parallel_mode == "true")?;
+             f ARGS.onnx_global_thread_pool_opt ons. s_empty() {
+                bu lder = bu lder
+                    .w h_ nter_threads(
+                        ut ls::get_conf g_or(
+                            model_conf g,
+                            " nter_op_parallel sm",
+                            &ARGS. nter_op_parallel sm[ dx],
                         )
                             .parse()?,
                     )?
-                    .with_intra_threads(
-                        utils::get_config_or(
-                            model_config,
-                            "intra_op_parallelism",
-                            &ARGS.intra_op_parallelism[idx],
+                    .w h_ ntra_threads(
+                        ut ls::get_conf g_or(
+                            model_conf g,
+                            " ntra_op_parallel sm",
+                            &ARGS. ntra_op_parallel sm[ dx],
                         )
                             .parse()?,
                     )?;
             }
             else {
-                builder = builder.with_disable_per_session_threads()?;
+                bu lder = bu lder.w h_d sable_per_sess on_threads()?;
             }
-            builder = builder
-                .with_memory_pattern(ARGS.onnx_use_memory_pattern == "true")?
-                .with_execution_providers(&OnnxModel::ep_choices())?;
-            match &ARGS.profiling {
-                Some(p) => {
-                    debug!("Enable profiling, writing to {}", *p);
-                    builder = builder.with_profiling(p)?
+            bu lder = bu lder
+                .w h_ mory_pattern(ARGS.onnx_use_ mory_pattern == "true")?
+                .w h_execut on_prov ders(&OnnxModel::ep_cho ces())?;
+            match &ARGS.prof l ng {
+                So (p) => {
+                    debug!("Enable prof l ng, wr  ng to {}", *p);
+                    bu lder = bu lder.w h_prof l ng(p)?
                 }
                 _ => {}
             }
-            let session = builder.with_model_from_file(&export_dir)?;
+            let sess on = bu lder.w h_model_from_f le(&export_d r)?;
 
-            info!(
-                "inputs: {:?}, outputs: {:?}",
-                session.inputs.iter().format(","),
-                session.outputs.iter().format(",")
+             nfo!(
+                " nputs: {:?}, outputs: {:?}",
+                sess on. nputs. er().format(","),
+                sess on.outputs. er().format(",")
             );
 
-            fs::read_to_string(&meta_info)
+            fs::read_to_str ng(& ta_ nfo)
                 .ok()
-                .map(|info| info!("meta info:{}", info));
-            let output_filters = OnnxModel::get_output_filters(&session, idx);
-            let mut reporting_feature_ids: Vec<(i64, &str)> = vec![];
+                .map(| nfo|  nfo!(" ta  nfo:{}",  nfo));
+            let output_f lters = OnnxModel::get_output_f lters(&sess on,  dx);
+            let mut report ng_feature_ ds: Vec<( 64, &str)> = vec![];
 
-            let input_spec_cell = &INPUTS[idx];
-            if input_spec_cell.get().is_none() {
-                let input_spec = session
-                    .inputs
-                    .iter()
-                    .map(|input| input.name.clone())
-                    .collect::<ArrayVec<String, MAX_NUM_INPUTS>>();
-                input_spec_cell.set(input_spec.clone()).map_or_else(
-                    |_| info!("unable to set the input_spec for model {}", idx),
-                    |_| info!("auto detect and set the inputs: {:?}", input_spec),
+            let  nput_spec_cell = & NPUTS[ dx];
+             f  nput_spec_cell.get(). s_none() {
+                let  nput_spec = sess on
+                    . nputs
+                    . er()
+                    .map(| nput|  nput.na .clone())
+                    .collect::<ArrayVec<Str ng, MAX_NUM_ NPUTS>>();
+                 nput_spec_cell.set( nput_spec.clone()).map_or_else(
+                    |_|  nfo!("unable to set t   nput_spec for model {}",  dx),
+                    |_|  nfo!("auto detect and set t   nputs: {:?}",  nput_spec),
                 );
             }
-            ARGS.onnx_report_discrete_feature_ids
-                .iter()
-                .for_each(|ids| {
-                    ids.split(",")
-                        .filter(|s| !s.is_empty())
-                        .map(|s| s.parse::<i64>().unwrap())
-                        .for_each(|id| reporting_feature_ids.push((id, "discrete")))
+            ARGS.onnx_report_d screte_feature_ ds
+                . er()
+                .for_each(| ds| {
+                     ds.spl (",")
+                        .f lter(|s| !s. s_empty())
+                        .map(|s| s.parse::< 64>().unwrap())
+                        .for_each(| d| report ng_feature_ ds.push(( d, "d screte")))
                 });
-            ARGS.onnx_report_continuous_feature_ids
-                .iter()
-                .for_each(|ids| {
-                    ids.split(",")
-                        .filter(|s| !s.is_empty())
-                        .map(|s| s.parse::<i64>().unwrap())
-                        .for_each(|id| reporting_feature_ids.push((id, "continuous")))
+            ARGS.onnx_report_cont nuous_feature_ ds
+                . er()
+                .for_each(| ds| {
+                     ds.spl (",")
+                        .f lter(|s| !s. s_empty())
+                        .map(|s| s.parse::< 64>().unwrap())
+                        .for_each(| d| report ng_feature_ ds.push(( d, "cont nuous")))
                 });
 
             let onnx_model = OnnxModel {
-                session,
-                model_idx: idx,
-                version: Args::version_str_to_epoch(&version)?,
-                export_dir,
-                output_filters,
-                input_converter: Box::new(BatchPredictionRequestToTorchTensorConverter::new(
-                    &ARGS.model_dir[idx],
-                    &version,
-                    reporting_feature_ids,
-                    Some(metrics::register_dynamic_metrics),
+                sess on,
+                model_ dx:  dx,
+                vers on: Args::vers on_str_to_epoch(&vers on)?,
+                export_d r,
+                output_f lters,
+                 nput_converter: Box::new(BatchPred ct onRequestToTorchTensorConverter::new(
+                    &ARGS.model_d r[ dx],
+                    &vers on,
+                    report ng_feature_ ds,
+                    So ( tr cs::reg ster_dynam c_ tr cs),
                 )?),
             };
             onnx_model.warmup()?;
             Ok(onnx_model)
         }
     }
-    ///Currently we only assume the input as just one string tensor.
-    ///The string tensor will be be converted to the actual raw tensors.
-    /// The converter we are using is very specific to home.
-    /// It reads a BatchDataRecord thrift and decode it to a batch of raw input tensors.
-    /// Navi will then do server side batching and feed it to ONNX runtime
-    impl Model for OnnxModel {
-        //TODO: implement a generic online warmup for all runtimes
+    ///Currently   only assu  t   nput as just one str ng tensor.
+    ///T  str ng tensor w ll be be converted to t  actual raw tensors.
+    /// T  converter   are us ng  s very spec f c to ho .
+    ///   reads a BatchDataRecord thr ft and decode   to a batch of raw  nput tensors.
+    /// Nav  w ll t n do server s de batch ng and feed   to ONNX runt  
+     mpl Model for OnnxModel {
+        //TODO:  mple nt a gener c onl ne warmup for all runt  s
         fn warmup(&self) -> Result<()> {
             Ok(())
         }
 
-        #[inline(always)]
-        fn do_predict(
+        #[ nl ne(always)]
+        fn do_pred ct(
             &self,
-            input_tensors: Vec<Vec<TensorInput>>,
+             nput_tensors: Vec<Vec<Tensor nput>>,
             _: u64,
-        ) -> (Vec<TensorReturnEnum>, Vec<Vec<usize>>) {
-            let batched_tensors = TensorInputEnum::merge_batch(input_tensors);
-            let (inputs, batch_ends): (Vec<Vec<InputTensor>>, Vec<Vec<usize>>) = batched_tensors
-                .into_iter()
-                .map(|batched_tensor| {
-                    match batched_tensor.tensor_data {
-                        TensorInputEnum::String(t) if ARGS.onnx_use_converter.is_some() => {
-                            let start = Instant::now();
-                            let (inputs, batch_ends) = self.input_converter.convert(t);
-                            // info!("batch_ends:{:?}", batch_ends);
-                            CONVERTER_TIME_COLLECTOR
-                                .with_label_values(&[&MODEL_SPECS[self.model_idx()]])
+        ) -> (Vec<TensorReturnEnum>, Vec<Vec<us ze>>) {
+            let batc d_tensors = Tensor nputEnum:: rge_batch( nput_tensors);
+            let ( nputs, batch_ends): (Vec<Vec< nputTensor>>, Vec<Vec<us ze>>) = batc d_tensors
+                . nto_ er()
+                .map(|batc d_tensor| {
+                    match batc d_tensor.tensor_data {
+                        Tensor nputEnum::Str ng(t)  f ARGS.onnx_use_converter. s_so () => {
+                            let start =  nstant::now();
+                            let ( nputs, batch_ends) = self. nput_converter.convert(t);
+                            //  nfo!("batch_ends:{:?}", batch_ends);
+                            CONVERTER_T ME_COLLECTOR
+                                .w h_label_values(&[&MODEL_SPECS[self.model_ dx()]])
                                 .observe(
-                                    start.elapsed().as_micros() as f64
+                                    start.elapsed().as_m cros() as f64
                                         / (*batch_ends.last().unwrap() as f64),
                                 );
-                            (inputs, batch_ends)
+                            ( nputs, batch_ends)
                         }
-                        _ => unimplemented!(),
+                        _ => un mple nted!(),
                     }
                 })
-                .unzip();
-            //invariant we only support one input as string. will relax later
-            assert_eq!(inputs.len(), 1);
+                .unz p();
+            // nvar ant   only support one  nput as str ng. w ll relax later
+            assert_eq!( nputs.len(), 1);
             let output_tensors = self
-                .session
-                .run(inputs.into_iter().flatten().collect::<Vec<_>>())
+                .sess on
+                .run( nputs. nto_ er().flatten().collect::<Vec<_>>())
                 .unwrap();
-            self.output_filters
-                .iter()
-                .map(|&idx| {
-                    let mut size = 1usize;
-                    let output = output_tensors[idx].try_extract::<f32>().unwrap();
-                    for &dim in self.session.outputs[idx].dimensions.iter().flatten() {
-                        size *= dim as usize;
+            self.output_f lters
+                . er()
+                .map(|& dx| {
+                    let mut s ze = 1us ze;
+                    let output = output_tensors[ dx].try_extract::<f32>().unwrap();
+                    for &d m  n self.sess on.outputs[ dx].d  ns ons. er().flatten() {
+                        s ze *= d m as us ze;
                     }
                     let tensor_ends = batch_ends[0]
-                        .iter()
-                        .map(|&batch| batch * size)
+                        . er()
+                        .map(|&batch| batch * s ze)
                         .collect::<Vec<_>>();
 
                     (
                         //only works for batch major
-                        //TODO: to_vec() obviously wasteful, especially for large batches(GPU) . Will refactor to
-                        //break up output and return Vec<Vec<TensorScore>> here
-                        TensorReturnEnum::FloatTensorReturn(Box::new(output.view().as_slice().unwrap().to_vec(),
+                        //TODO: to_vec() obv ously wasteful, espec ally for large batc s(GPU) . W ll refactor to
+                        //break up output and return Vec<Vec<TensorScore>>  re
+                        TensorReturnEnum::FloatTensorReturn(Box::new(output.v ew().as_sl ce().unwrap().to_vec(),
                         )),
                         tensor_ends,
                     )
                 })
-                .unzip()
+                .unz p()
         }
-        #[inline(always)]
-        fn model_idx(&self) -> usize {
-            self.model_idx
+        #[ nl ne(always)]
+        fn model_ dx(&self) -> us ze {
+            self.model_ dx
         }
-        #[inline(always)]
-        fn version(&self) -> i64 {
-            self.version
+        #[ nl ne(always)]
+        fn vers on(&self) ->  64 {
+            self.vers on
         }
     }
 }

@@ -1,76 +1,76 @@
-package com.twitter.tweetypie
-package service
+package com.tw ter.t etyp e
+package serv ce
 
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.coreservices.failed_task.writer.FailedTaskWriter
-import com.twitter.scrooge.ThriftException
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.scrooge.ThriftStructCodec
-import com.twitter.tweetypie.serverutil.BoringStackTrace
-import com.twitter.tweetypie.thriftscala._
-import scala.util.control.NoStackTrace
+ mport com.tw ter.b ject on.scrooge.B naryScalaCodec
+ mport com.tw ter.coreserv ces.fa led_task.wr er.Fa ledTaskWr er
+ mport com.tw ter.scrooge.Thr ftExcept on
+ mport com.tw ter.scrooge.Thr ftStruct
+ mport com.tw ter.scrooge.Thr ftStructCodec
+ mport com.tw ter.t etyp e.serverut l.Bor ngStackTrace
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport scala.ut l.control.NoStackTrace
 
-object FailureLoggingTweetService {
+object Fa lureLogg ngT etServ ce {
 
   /**
-   * Defines the universe of exception types for which we should scribe
-   * the failure.
+   * Def nes t  un verse of except on types for wh ch   should scr be
+   * t  fa lure.
    */
-  private def shouldWrite(t: Throwable): Boolean =
+  pr vate def shouldWr e(t: Throwable): Boolean =
     t match {
-      case _: ThriftException => true
-      case _: PostTweetFailure => true
-      case _ => !BoringStackTrace.isBoring(t)
+      case _: Thr ftExcept on => true
+      case _: PostT etFa lure => true
+      case _ => !Bor ngStackTrace. sBor ng(t)
     }
 
   /**
-   * Holds failure information from a failing PostTweetResult.
+   * Holds fa lure  nformat on from a fa l ng PostT etResult.
    *
-   * FailedTaskWriter logs an exception with the failed request, so we
-   * need to package up any failure that we want to log into an
-   * exception.
+   * Fa ledTaskWr er logs an except on w h t  fa led request, so  
+   * need to package up any fa lure that   want to log  nto an
+   * except on.
    */
-  private class PostTweetFailure(state: TweetCreateState, reason: Option[String])
-      extends Exception
-      with NoStackTrace {
-    override def toString: String = s"PostTweetFailure($state, $reason)"
+  pr vate class PostT etFa lure(state: T etCreateState, reason: Opt on[Str ng])
+      extends Except on
+      w h NoStackTrace {
+    overr de def toStr ng: Str ng = s"PostT etFa lure($state, $reason)"
   }
 }
 
 /**
- * Wraps a tweet service with scribing of failed requests in order to
- * enable analysis of failures for diagnosing problems.
+ * Wraps a t et serv ce w h scr b ng of fa led requests  n order to
+ * enable analys s of fa lures for d agnos ng problems.
  */
-class FailureLoggingTweetService(
-  failedTaskWriter: FailedTaskWriter[Array[Byte]],
-  protected val underlying: ThriftTweetService)
-    extends TweetServiceProxy {
-  import FailureLoggingTweetService._
+class Fa lureLogg ngT etServ ce(
+  fa ledTaskWr er: Fa ledTaskWr er[Array[Byte]],
+  protected val underly ng: Thr ftT etServ ce)
+    extends T etServ ceProxy {
+   mport Fa lureLogg ngT etServ ce._
 
-  private[this] object writers {
-    private[this] def writer[T <: ThriftStruct](
-      name: String,
-      codec: ThriftStructCodec[T]
-    ): (T, Throwable) => Future[Unit] = {
-      val taskWriter = failedTaskWriter(name, BinaryScalaCodec(codec).apply)
+  pr vate[t ] object wr ers {
+    pr vate[t ] def wr er[T <: Thr ftStruct](
+      na : Str ng,
+      codec: Thr ftStructCodec[T]
+    ): (T, Throwable) => Future[Un ] = {
+      val taskWr er = fa ledTaskWr er(na , B naryScalaCodec(codec).apply)
 
       (t, exc) =>
-        Future.when(shouldWrite(exc)) {
-          taskWriter.writeFailure(t, exc)
+        Future.w n(shouldWr e(exc)) {
+          taskWr er.wr eFa lure(t, exc)
         }
     }
 
-    val postTweet: (PostTweetRequest, Throwable) => Future[Unit] =
-      writer("post_tweet", PostTweetRequest)
+    val postT et: (PostT etRequest, Throwable) => Future[Un ] =
+      wr er("post_t et", PostT etRequest)
   }
 
-  override def postTweet(request: PostTweetRequest): Future[PostTweetResult] =
-    underlying.postTweet(request).respond {
-      // Log requests for states other than OK to enable debugging creation failures
-      case Return(res) if res.state != TweetCreateState.Ok =>
-        writers.postTweet(request, new PostTweetFailure(res.state, res.failureReason))
+  overr de def postT et(request: PostT etRequest): Future[PostT etResult] =
+    underly ng.postT et(request).respond {
+      // Log requests for states ot r than OK to enable debugg ng creat on fa lures
+      case Return(res)  f res.state != T etCreateState.Ok =>
+        wr ers.postT et(request, new PostT etFa lure(res.state, res.fa lureReason))
       case Throw(exc) =>
-        writers.postTweet(request, exc)
+        wr ers.postT et(request, exc)
       case _ =>
     }
 }

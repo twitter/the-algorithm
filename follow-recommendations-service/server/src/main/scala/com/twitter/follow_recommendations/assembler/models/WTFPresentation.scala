@@ -1,46 +1,46 @@
-package com.twitter.follow_recommendations.assembler.models
+package com.tw ter.follow_recom ndat ons.assembler.models
 
-import com.twitter.follow_recommendations.{thriftscala => t}
+ mport com.tw ter.follow_recom ndat ons.{thr ftscala => t}
 
-trait WTFPresentation {
-  def toThrift: t.WTFPresentation
+tra  WTFPresentat on {
+  def toThr ft: t.WTFPresentat on
 }
 
-case class UserList(
-  userBioEnabled: Boolean,
-  userBioTruncated: Boolean,
-  userBioMaxLines: Option[Long],
-  feedbackAction: Option[FeedbackAction])
-    extends WTFPresentation {
-  def toThrift: t.WTFPresentation = {
-    t.WTFPresentation.UserBioList(
-      t.UserList(userBioEnabled, userBioTruncated, userBioMaxLines, feedbackAction.map(_.toThrift)))
+case class UserL st(
+  userB oEnabled: Boolean,
+  userB oTruncated: Boolean,
+  userB oMaxL nes: Opt on[Long],
+  feedbackAct on: Opt on[FeedbackAct on])
+    extends WTFPresentat on {
+  def toThr ft: t.WTFPresentat on = {
+    t.WTFPresentat on.UserB oL st(
+      t.UserL st(userB oEnabled, userB oTruncated, userB oMaxL nes, feedbackAct on.map(_.toThr ft)))
   }
 }
 
-object UserList {
-  def fromUserListOptions(
-    userListOptions: UserListOptions
-  ): UserList = {
-    UserList(
-      userListOptions.userBioEnabled,
-      userListOptions.userBioTruncated,
-      userListOptions.userBioMaxLines,
+object UserL st {
+  def fromUserL stOpt ons(
+    userL stOpt ons: UserL stOpt ons
+  ): UserL st = {
+    UserL st(
+      userL stOpt ons.userB oEnabled,
+      userL stOpt ons.userB oTruncated,
+      userL stOpt ons.userB oMaxL nes,
       None)
   }
 }
 
 case class Carousel(
-  feedbackAction: Option[FeedbackAction])
-    extends WTFPresentation {
-  def toThrift: t.WTFPresentation = {
-    t.WTFPresentation.Carousel(t.Carousel(feedbackAction.map(_.toThrift)))
+  feedbackAct on: Opt on[FeedbackAct on])
+    extends WTFPresentat on {
+  def toThr ft: t.WTFPresentat on = {
+    t.WTFPresentat on.Carousel(t.Carousel(feedbackAct on.map(_.toThr ft)))
   }
 }
 
 object Carousel {
-  def fromCarouselOptions(
-    carouselOptions: CarouselOptions
+  def fromCarouselOpt ons(
+    carouselOpt ons: CarouselOpt ons
   ): Carousel = {
     Carousel(None)
   }

@@ -1,120 +1,120 @@
-# checkstyle: noqa
-import tensorflow.compat.v1 as tf
-from collections import OrderedDict
-from .constants import EB_SCORE_IDX
-from .lolly.data_helpers import get_lolly_scores
+# c ckstyle: noqa
+ mport tensorflow.compat.v1 as tf
+from collect ons  mport OrderedD ct
+from .constants  mport EB_SCORE_ DX
+from .lolly.data_ lpers  mport get_lolly_scores
 
-import twml
+ mport twml
 
-def get_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1):
+def get_mult _b nary_class_ tr c_fn( tr cs, classes=None, class_d m=1):
   """
-  This function was copied from twml/metrics.py with the following adjustments:
-    - Override example weights with the ones set in graph_output.
-    - Tile labels in order to support per engagement metrics for both TF and Lolly scores.
-    - Add lolly_tf_score_MSE metric.
-  Note: All custom lines have a comment that starts with 'Added'
+  T  funct on was cop ed from twml/ tr cs.py w h t  follow ng adjust nts:
+    - Overr de example   ghts w h t  ones set  n graph_output.
+    - T le labels  n order to support per engage nt  tr cs for both TF and Lolly scores.
+    - Add lolly_tf_score_MSE  tr c.
+  Note: All custom l nes have a com nt that starts w h 'Added'
   """
-  # pylint: disable=invalid-name,dict-keys-not-iterating
-  if metrics is None:
-    # remove expensive metrics by default for faster eval
-    metrics = list(twml.metrics.SUPPORTED_BINARY_CLASS_METRICS.keys())
-    metrics.remove('pr_curve')
+  # pyl nt: d sable= nval d-na ,d ct-keys-not- erat ng
+   f  tr cs  s None:
+    # remove expens ve  tr cs by default for faster eval
+     tr cs = l st(twml. tr cs.SUPPORTED_B NARY_CLASS_METR CS.keys())
+     tr cs.remove('pr_curve')
 
-  def get_eval_metric_ops(graph_output, labels, weights):
+  def get_eval_ tr c_ops(graph_output, labels,   ghts):
     """
     graph_output:
-      dict that is returned by build_graph given input features.
+      d ct that  s returned by bu ld_graph g ven  nput features.
     labels:
-      target labels associated to batch.
-    weights:
-      weights of the samples..
+      target labels assoc ated to batch.
+      ghts:
+        ghts of t  samples..
     """
 
-    # Added to support the example weights overriding.
-    weights = graph_output["weights"]
-    # Added to support per engagement metrics for both TF and Lolly scores.
-    labels = tf.tile(labels, [1, 2])
+    # Added to support t  example   ghts overr d ng.
+      ghts = graph_output["  ghts"]
+    # Added to support per engage nt  tr cs for both TF and Lolly scores.
+    labels = tf.t le(labels, [1, 2])
 
-    eval_metric_ops = OrderedDict()
+    eval_ tr c_ops = OrderedD ct()
 
     preds = graph_output['output']
 
-    threshold = graph_output['threshold'] if 'threshold' in graph_output else 0.5
+    threshold = graph_output['threshold']  f 'threshold'  n graph_output else 0.5
 
     hard_preds = graph_output.get('hard_output')
-    if not hard_preds:
+     f not hard_preds:
       hard_preds = tf.greater_equal(preds, threshold)
 
     shape = labels.get_shape()
 
-    # basic sanity check: multi_metric dimension must exist
-    assert len(shape) > class_dim, "Dimension specified by class_dim does not exist."
+    # bas c san y c ck: mult _ tr c d  ns on must ex st
+    assert len(shape) > class_d m, "D  ns on spec f ed by class_d m does not ex st."
 
-    num_labels = shape[class_dim]
-    # If we are doing multi-class / multi-label metric, the number of classes / labels must
-    # be know at graph construction time.  This dimension cannot have size None.
-    assert num_labels is not None, "The multi-metric dimension cannot be None."
-    assert classes is None or len(classes) == num_labels, (
-      "Number of classes must match the number of labels")
+    num_labels = shape[class_d m]
+    #  f   are do ng mult -class / mult -label  tr c, t  number of classes / labels must
+    # be know at graph construct on t  .  T  d  ns on cannot have s ze None.
+    assert num_labels  s not None, "T  mult - tr c d  ns on cannot be None."
+    assert classes  s None or len(classes) == num_labels, (
+      "Number of classes must match t  number of labels")
 
-    weights_shape = weights.get_shape() if weights is not None else None
-    if weights_shape is None:
-      num_weights = None
-    elif len(weights_shape) > 1:
-      num_weights = weights_shape[class_dim]
+      ghts_shape =   ghts.get_shape()  f   ghts  s not None else None
+     f   ghts_shape  s None:
+      num_  ghts = None
+    el f len(  ghts_shape) > 1:
+      num_  ghts =   ghts_shape[class_d m]
     else:
-      num_weights = 1
+      num_  ghts = 1
 
-    for i in range(num_labels):
+    for    n range(num_labels):
 
-      # add metrics to eval_metric_ops dict
-      for metric_name in metrics:
-        metric_name = metric_name.lower()  # metric name are case insensitive.
+      # add  tr cs to eval_ tr c_ops d ct
+      for  tr c_na   n  tr cs:
+         tr c_na  =  tr c_na .lo r()  #  tr c na  are case  nsens  ve.
 
-        class_metric_name = metric_name + "_" + (classes[i] if classes is not None else str(i))
+        class_ tr c_na  =  tr c_na  + "_" + (classes[ ]  f classes  s not None else str( ))
 
-        if class_metric_name in eval_metric_ops:
-          # avoid adding duplicate metrics.
-          continue
+         f class_ tr c_na   n eval_ tr c_ops:
+          # avo d add ng dupl cate  tr cs.
+          cont nue
 
-        class_labels = tf.gather(labels, indices=[i], axis=class_dim)
-        class_preds = tf.gather(preds, indices=[i], axis=class_dim)
-        class_hard_preds = tf.gather(hard_preds, indices=[i], axis=class_dim)
+        class_labels = tf.gat r(labels,  nd ces=[ ], ax s=class_d m)
+        class_preds = tf.gat r(preds,  nd ces=[ ], ax s=class_d m)
+        class_hard_preds = tf.gat r(hard_preds,  nd ces=[ ], ax s=class_d m)
 
-        if num_weights is None:
-          class_weights = None
-        elif num_weights == num_labels:
-          class_weights = tf.gather(weights, indices=[i], axis=class_dim)
-        elif num_weights == 1:
-          class_weights = weights
+         f num_  ghts  s None:
+          class_  ghts = None
+        el f num_  ghts == num_labels:
+          class_  ghts = tf.gat r(  ghts,  nd ces=[ ], ax s=class_d m)
+        el f num_  ghts == 1:
+          class_  ghts =   ghts
         else:
-          raise ValueError("num_weights (%d) and num_labels (%d) do not match"
-                           % (num_weights, num_labels))
+          ra se ValueError("num_  ghts (%d) and num_labels (%d) do not match"
+                           % (num_  ghts, num_labels))
 
-        metric_factory, requires_threshold = twml.metrics.SUPPORTED_BINARY_CLASS_METRICS.get(metric_name)
-        if metric_factory:
-          value_op, update_op = metric_factory(
+         tr c_factory, requ res_threshold = twml. tr cs.SUPPORTED_B NARY_CLASS_METR CS.get( tr c_na )
+         f  tr c_factory:
+          value_op, update_op =  tr c_factory(
             labels=class_labels,
-            predictions=(class_hard_preds if requires_threshold else class_preds),
-            weights=class_weights, name=class_metric_name)
-          eval_metric_ops[class_metric_name] = (value_op, update_op)
+            pred ct ons=(class_hard_preds  f requ res_threshold else class_preds),
+              ghts=class_  ghts, na =class_ tr c_na )
+          eval_ tr c_ops[class_ tr c_na ] = (value_op, update_op)
         else:
-          raise ValueError('Cannot find the metric named ' + metric_name)
+          ra se ValueError('Cannot f nd t   tr c na d ' +  tr c_na )
 
     # Added to compare TF and Lolly scores.
-    eval_metric_ops["lolly_tf_score_MSE"] = get_mse(graph_output["output"], labels)
+    eval_ tr c_ops["lolly_tf_score_MSE"] = get_mse(graph_output["output"], labels)
 
-    return eval_metric_ops
+    return eval_ tr c_ops
 
-  return get_eval_metric_ops
+  return get_eval_ tr c_ops
 
 
-def get_mse(predictions, labels):
+def get_mse(pred ct ons, labels):
   lolly_scores = get_lolly_scores(labels)
-  tf_scores = predictions[:, EB_SCORE_IDX]
-  squared_lolly_tf_score_diff = tf.square(tf.subtract(tf_scores, lolly_scores))
+  tf_scores = pred ct ons[:, EB_SCORE_ DX]
+  squared_lolly_tf_score_d ff = tf.square(tf.subtract(tf_scores, lolly_scores))
 
-  value_op = tf.reduce_mean(squared_lolly_tf_score_diff, name="value_op")
-  update_op = tf.reduce_mean(squared_lolly_tf_score_diff, name="update_op")
+  value_op = tf.reduce_ an(squared_lolly_tf_score_d ff, na ="value_op")
+  update_op = tf.reduce_ an(squared_lolly_tf_score_d ff, na ="update_op")
 
   return value_op, update_op

@@ -1,20 +1,20 @@
-package com.twitter.ann.service.query_server.common
+package com.tw ter.ann.serv ce.query_server.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.search.common.file.AbstractFile
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.search.common.f le.AbstractF le
 
-case class FaissIndexPathProvider(
-  override val minIndexSizeBytes: Long,
-  override val maxIndexSizeBytes: Long,
-  override val statsReceiver: StatsReceiver)
-    extends BaseIndexPathProvider {
+case class Fa ss ndexPathProv der(
+  overr de val m n ndexS zeBytes: Long,
+  overr de val max ndexS zeBytes: Long,
+  overr de val statsRece ver: StatsRece ver)
+    extends Base ndexPathProv der {
 
-  override val log = Logger.get("FAISSIndexPathProvider")
+  overr de val log = Logger.get("FA SS ndexPathProv der")
 
-  override def isValidIndex(dir: AbstractFile): Boolean = {
-    dir.isDirectory &&
-    dir.hasSuccessFile &&
-    dir.getChild("faiss.index").exists()
+  overr de def  sVal d ndex(d r: AbstractF le): Boolean = {
+    d r. sD rectory &&
+    d r.hasSuccessF le &&
+    d r.getCh ld("fa ss. ndex").ex sts()
   }
 }

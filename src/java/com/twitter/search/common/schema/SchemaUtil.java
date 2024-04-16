@@ -1,99 +1,99 @@
-package com.twitter.search.common.schema;
+package com.tw ter.search.common.sc ma;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.index.DocValuesType;
-import org.apache.lucene.index.IndexOptions;
-import org.apache.lucene.util.BytesRef;
+ mport org.apac .lucene. ndex.DocValuesType;
+ mport org.apac .lucene. ndex. ndexOpt ons;
+ mport org.apac .lucene.ut l.BytesRef;
 
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.IndexedNumericFieldSettings;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.schema.thriftjava.ThriftNumericType;
-import com.twitter.search.common.util.analysis.IntTermAttributeImpl;
-import com.twitter.search.common.util.analysis.LongTermAttributeImpl;
-import com.twitter.search.common.util.analysis.SortableLongTermAttributeImpl;
+ mport com.tw ter.search.common.sc ma.base.Earlyb rdF eldType;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.base. ndexedNu r cF eldSett ngs;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftCSFType;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftNu r cType;
+ mport com.tw ter.search.common.ut l.analys s. ntTermAttr bute mpl;
+ mport com.tw ter.search.common.ut l.analys s.LongTermAttr bute mpl;
+ mport com.tw ter.search.common.ut l.analys s.SortableLongTermAttr bute mpl;
 
-public final class SchemaUtil {
-  private SchemaUtil() {
+publ c f nal class Sc maUt l {
+  pr vate Sc maUt l() {
   }
 
   /**
-   * Get the a fixed CSF field's number of values per doc.
-   * @param schema the Schema for the index
-   * @param fieldId the field id the CSF field - the field must be of binary integer type and
-   *                in fixed size
-   * @return the number of values per doc
+   * Get t  a f xed CSF f eld's number of values per doc.
+   * @param sc ma t  Sc ma for t   ndex
+   * @param f eld d t  f eld  d t  CSF f eld - t  f eld must be of b nary  nteger type and
+   *                 n f xed s ze
+   * @return t  number of values per doc
    */
-  public static int getCSFFieldFixedLength(ImmutableSchemaInterface schema, int fieldId) {
-    final Schema.FieldInfo fieldInfo = Preconditions.checkNotNull(schema.getFieldInfo(fieldId));
-    return getCSFFieldFixedLength(fieldInfo);
+  publ c stat c  nt getCSFF eldF xedLength( mmutableSc ma nterface sc ma,  nt f eld d) {
+    f nal Sc ma.F eld nfo f eld nfo = Precond  ons.c ckNotNull(sc ma.getF eld nfo(f eld d));
+    return getCSFF eldF xedLength(f eld nfo);
   }
 
   /**
-   * Get the a fixed CSF field's number of values per doc.
-   * @param schema the Schema for the index
-   * @param fieldName the field name of the CSF field - the field must be of binary integer type
-   *                  and in fixed size
-   * @return the number of values per doc
+   * Get t  a f xed CSF f eld's number of values per doc.
+   * @param sc ma t  Sc ma for t   ndex
+   * @param f eldNa  t  f eld na  of t  CSF f eld - t  f eld must be of b nary  nteger type
+   *                  and  n f xed s ze
+   * @return t  number of values per doc
    */
-  public static int getCSFFieldFixedLength(ImmutableSchemaInterface schema, String fieldName) {
-    final Schema.FieldInfo fieldInfo = Preconditions.checkNotNull(schema.getFieldInfo(fieldName));
-    return getCSFFieldFixedLength(fieldInfo);
+  publ c stat c  nt getCSFF eldF xedLength( mmutableSc ma nterface sc ma, Str ng f eldNa ) {
+    f nal Sc ma.F eld nfo f eld nfo = Precond  ons.c ckNotNull(sc ma.getF eld nfo(f eldNa ));
+    return getCSFF eldF xedLength(f eld nfo);
   }
 
   /**
-   * Get the a fixed CSF field's number of values per doc.
-   * @param fieldInfo the field of the CSF field - the field must be of binary integer type
-   *                  and in fixed size
-   * @return the number of values per doc
+   * Get t  a f xed CSF f eld's number of values per doc.
+   * @param f eld nfo t  f eld of t  CSF f eld - t  f eld must be of b nary  nteger type
+   *                  and  n f xed s ze
+   * @return t  number of values per doc
    */
-  public static int getCSFFieldFixedLength(Schema.FieldInfo fieldInfo) {
-    final EarlybirdFieldType fieldType = fieldInfo.getFieldType();
-    Preconditions.checkState(fieldType.docValuesType() == DocValuesType.BINARY
-        && fieldType.getCsfType() == ThriftCSFType.INT);
-    return fieldType.getCsfFixedLengthNumValuesPerDoc();
+  publ c stat c  nt getCSFF eldF xedLength(Sc ma.F eld nfo f eld nfo) {
+    f nal Earlyb rdF eldType f eldType = f eld nfo.getF eldType();
+    Precond  ons.c ckState(f eldType.docValuesType() == DocValuesType.B NARY
+        && f eldType.getCsfType() == Thr ftCSFType. NT);
+    return f eldType.getCsfF xedLengthNumValuesPerDoc();
   }
 
-  /** Converts the given value to a BytesRef instance, according to the type of the given field. */
-  public static BytesRef toBytesRef(Schema.FieldInfo fieldInfo, String value) {
-    EarlybirdFieldType fieldType = fieldInfo.getFieldType();
-    Preconditions.checkArgument(fieldType.indexOptions() != IndexOptions.NONE);
-    IndexedNumericFieldSettings numericSetting = fieldType.getNumericFieldSettings();
-    if (numericSetting != null) {
-      if (!numericSetting.isUseTwitterFormat()) {
-        throw new UnsupportedOperationException(
-            "Numeric field not using Twitter format: cannot drill down.");
+  /** Converts t  g ven value to a BytesRef  nstance, accord ng to t  type of t  g ven f eld. */
+  publ c stat c BytesRef toBytesRef(Sc ma.F eld nfo f eld nfo, Str ng value) {
+    Earlyb rdF eldType f eldType = f eld nfo.getF eldType();
+    Precond  ons.c ckArgu nt(f eldType. ndexOpt ons() !=  ndexOpt ons.NONE);
+     ndexedNu r cF eldSett ngs nu r cSett ng = f eldType.getNu r cF eldSett ngs();
+     f (nu r cSett ng != null) {
+       f (!nu r cSett ng. sUseTw terFormat()) {
+        throw new UnsupportedOperat onExcept on(
+            "Nu r c f eld not us ng Tw ter format: cannot dr ll down.");
       }
 
-      ThriftNumericType numericType = numericSetting.getNumericType();
-      switch (numericType) {
-        case INT:
+      Thr ftNu r cType nu r cType = nu r cSett ng.getNu r cType();
+      sw ch (nu r cType) {
+        case  NT:
           try {
-            return IntTermAttributeImpl.copyIntoNewBytesRef(Integer.parseInt(value));
-          } catch (NumberFormatException e) {
-            throw new UnsupportedOperationException(
-                String.format("Cannot parse value for int field %s: %s",
-                              fieldInfo.getName(), value),
+            return  ntTermAttr bute mpl.copy ntoNewBytesRef( nteger.parse nt(value));
+          } catch (NumberFormatExcept on e) {
+            throw new UnsupportedOperat onExcept on(
+                Str ng.format("Cannot parse value for  nt f eld %s: %s",
+                              f eld nfo.getNa (), value),
                 e);
           }
         case LONG:
           try {
-            return numericSetting.isUseSortableEncoding()
-                ? SortableLongTermAttributeImpl.copyIntoNewBytesRef(Long.parseLong(value))
-                : LongTermAttributeImpl.copyIntoNewBytesRef(Long.parseLong(value));
-          } catch (NumberFormatException e) {
-            throw new UnsupportedOperationException(
-                String.format("Cannot parse value for long field %s: %s",
-                              fieldInfo.getName(), value),
+            return nu r cSett ng. sUseSortableEncod ng()
+                ? SortableLongTermAttr bute mpl.copy ntoNewBytesRef(Long.parseLong(value))
+                : LongTermAttr bute mpl.copy ntoNewBytesRef(Long.parseLong(value));
+          } catch (NumberFormatExcept on e) {
+            throw new UnsupportedOperat onExcept on(
+                Str ng.format("Cannot parse value for long f eld %s: %s",
+                              f eld nfo.getNa (), value),
                 e);
           }
         default:
-          throw new UnsupportedOperationException(
-              String.format("Unsupported numeric type for field %s: %s",
-                            fieldInfo.getName(), numericType));
+          throw new UnsupportedOperat onExcept on(
+              Str ng.format("Unsupported nu r c type for f eld %s: %s",
+                            f eld nfo.getNa (), nu r cType));
       }
     }
 

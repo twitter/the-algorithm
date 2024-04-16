@@ -1,16 +1,16 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "finatra/inject/inject-app/src/main/scala",
-        "finatra/inject/inject-core/src/main/scala",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/products/common",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/products/explore_tab",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/products/home_timeline",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/products/home_timeline_tweet_recs",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/products/sidebar",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product/guice",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/org/slf4j:slf4j-ap ",
+        "f natra/ nject/ nject-app/src/ma n/scala",
+        "f natra/ nject/ nject-core/src/ma n/scala",
+        "follow-recom ndat ons-serv ce/server/src/ma n/scala/com/tw ter/follow_recom ndat ons/products/common",
+        "follow-recom ndat ons-serv ce/server/src/ma n/scala/com/tw ter/follow_recom ndat ons/products/explore_tab",
+        "follow-recom ndat ons-serv ce/server/src/ma n/scala/com/tw ter/follow_recom ndat ons/products/ho _t  l ne",
+        "follow-recom ndat ons-serv ce/server/src/ma n/scala/com/tw ter/follow_recom ndat ons/products/ho _t  l ne_t et_recs",
+        "follow-recom ndat ons-serv ce/server/src/ma n/scala/com/tw ter/follow_recom ndat ons/products/s debar",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/product/gu ce",
     ],
 )

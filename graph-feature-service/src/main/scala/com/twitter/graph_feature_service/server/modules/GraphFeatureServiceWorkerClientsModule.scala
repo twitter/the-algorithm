@@ -1,51 +1,51 @@
-package com.twitter.graph_feature_service.server.modules
+package com.tw ter.graph_feature_serv ce.server.modules
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.service.RetryBudget
-import com.twitter.graph_feature_service.thriftscala
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.util.{Await, Duration}
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.mtls.cl ent.MtlsStackCl ent._
+ mport com.tw ter.f nagle.Thr ftMux
+ mport com.tw ter.f nagle.serv ce.RetryBudget
+ mport com.tw ter.graph_feature_serv ce.thr ftscala
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.ut l.{Awa , Durat on}
+ mport javax. nject.S ngleton
 
-case class GraphFeatureServiceWorkerClients(
-  workers: Seq[thriftscala.Worker.MethodPerEndpoint])
+case class GraphFeatureServ ceWorkerCl ents(
+  workers: Seq[thr ftscala.Worker. thodPerEndpo nt])
 
-object GraphFeatureServiceWorkerClientsModule extends TwitterModule {
-  private[this] val closeableGracePeriod: Duration = 1.second
-  private[this] val requestTimeout: Duration = 25.millis
+object GraphFeatureServ ceWorkerCl entsModule extends Tw terModule {
+  pr vate[t ] val closeableGracePer od: Durat on = 1.second
+  pr vate[t ] val requestT  out: Durat on = 25.m ll s
 
-  @Provides
-  @Singleton
-  def provideGraphFeatureServiceWorkerClient(
-    @Flag(ServerFlagNames.NumWorkers) numWorkers: Int,
-    @Flag(ServerFlagNames.ServiceRole) serviceRole: String,
-    @Flag(ServerFlagNames.ServiceEnv) serviceEnv: String,
-    serviceIdentifier: ServiceIdentifier
-  ): GraphFeatureServiceWorkerClients = {
+  @Prov des
+  @S ngleton
+  def prov deGraphFeatureServ ceWorkerCl ent(
+    @Flag(ServerFlagNa s.NumWorkers) numWorkers:  nt,
+    @Flag(ServerFlagNa s.Serv ceRole) serv ceRole: Str ng,
+    @Flag(ServerFlagNa s.Serv ceEnv) serv ceEnv: Str ng,
+    serv ce dent f er: Serv ce dent f er
+  ): GraphFeatureServ ceWorkerCl ents = {
 
-    val workers: Seq[thriftscala.Worker.MethodPerEndpoint] =
-      (0 until numWorkers).map { id =>
-        val dest = s"/srv#/$serviceEnv/local/$serviceRole/graph_feature_service-worker-$id"
+    val workers: Seq[thr ftscala.Worker. thodPerEndpo nt] =
+      (0 unt l numWorkers).map {  d =>
+        val dest = s"/srv#/$serv ceEnv/local/$serv ceRole/graph_feature_serv ce-worker-$ d"
 
-        val client = ThriftMux.client
-          .withRequestTimeout(requestTimeout)
-          .withRetryBudget(RetryBudget.Empty)
-          .withMutualTls(serviceIdentifier)
-          .build[thriftscala.Worker.MethodPerEndpoint](dest, s"worker-$id")
+        val cl ent = Thr ftMux.cl ent
+          .w hRequestT  out(requestT  out)
+          .w hRetryBudget(RetryBudget.Empty)
+          .w hMutualTls(serv ce dent f er)
+          .bu ld[thr ftscala.Worker. thodPerEndpo nt](dest, s"worker-$ d")
 
-        onExit {
-          val closeable = client.asClosable
-          Await.result(closeable.close(closeableGracePeriod), closeableGracePeriod)
+        onEx  {
+          val closeable = cl ent.asClosable
+          Awa .result(closeable.close(closeableGracePer od), closeableGracePer od)
         }
 
-        client
+        cl ent
       }
 
-    GraphFeatureServiceWorkerClients(workers)
+    GraphFeatureServ ceWorkerCl ents(workers)
   }
 }

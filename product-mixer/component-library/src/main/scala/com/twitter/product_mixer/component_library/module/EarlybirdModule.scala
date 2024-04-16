@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.component_library.module
+package com.tw ter.product_m xer.component_l brary.module
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.annotations.Flags
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.search.earlybird.{thriftscala => t}
-import com.twitter.util.Duration
-import org.apache.thrift.protocol.TCompactProtocol
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.convers ons.PercentOps._
+ mport com.tw ter.f nagle.Thr ftMux
+ mport com.tw ter.f nagle.thr ftmux. thodBu lder
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport com.tw ter. nject. njector
+ mport com.tw ter. nject.annotat ons.Flags
+ mport com.tw ter. nject.thr ft.modules.Thr ft thodBu lderCl entModule
+ mport com.tw ter.search.earlyb rd.{thr ftscala => t}
+ mport com.tw ter.ut l.Durat on
+ mport org.apac .thr ft.protocol.TCompactProtocol
 
-object EarlybirdModule
-    extends ThriftMethodBuilderClientModule[
-      t.EarlybirdService.ServicePerEndpoint,
-      t.EarlybirdService.MethodPerEndpoint
+object Earlyb rdModule
+    extends Thr ft thodBu lderCl entModule[
+      t.Earlyb rdServ ce.Serv cePerEndpo nt,
+      t.Earlyb rdServ ce. thodPerEndpo nt
     ]
-    with MtlsClient {
-  final val EarlybirdTimeoutPerRequest = "earlybird.timeout_per_request"
-  final val EarlybirdTimeoutTotal = "earlybird.timeout_total"
+    w h MtlsCl ent {
+  f nal val Earlyb rdT  outPerRequest = "earlyb rd.t  out_per_request"
+  f nal val Earlyb rdT  outTotal = "earlyb rd.t  out_total"
 
-  flag[Duration](
-    name = EarlybirdTimeoutPerRequest,
-    default = 200.milliseconds,
-    help = "Timeout per request for Earlybird")
+  flag[Durat on](
+    na  = Earlyb rdT  outPerRequest,
+    default = 200.m ll seconds,
+     lp = "T  out per request for Earlyb rd")
 
-  flag[Duration](
-    name = EarlybirdTimeoutTotal,
-    default = 400.milliseconds,
-    help = "Timeout total for Earlybird")
+  flag[Durat on](
+    na  = Earlyb rdT  outTotal,
+    default = 400.m ll seconds,
+     lp = "T  out total for Earlyb rd")
 
-  override val dest = "/s/earlybird-root-superroot/root-superroot"
-  override val label = "earlybird"
+  overr de val dest = "/s/earlyb rd-root-superroot/root-superroot"
+  overr de val label = "earlyb rd"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    val timeOutPerRequest: Duration = injector
-      .instance[Duration](Flags.named(EarlybirdTimeoutPerRequest))
-    val timeOutTotal: Duration = injector.instance[Duration](Flags.named(EarlybirdTimeoutTotal))
-    methodBuilder
-    // See TL-14313 for load testing details that led to 200ms being selected as request timeout
-      .withTimeoutPerRequest(timeOutPerRequest)
-      .withTimeoutTotal(timeOutTotal)
-      .idempotent(5.percent)
+  overr de protected def conf gure thodBu lder(
+     njector:  njector,
+     thodBu lder:  thodBu lder
+  ):  thodBu lder = {
+    val t  OutPerRequest: Durat on =  njector
+      . nstance[Durat on](Flags.na d(Earlyb rdT  outPerRequest))
+    val t  OutTotal: Durat on =  njector. nstance[Durat on](Flags.na d(Earlyb rdT  outTotal))
+     thodBu lder
+    // See TL-14313 for load test ng deta ls that led to 200ms be ng selected as request t  out
+      .w hT  outPerRequest(t  OutPerRequest)
+      .w hT  outTotal(t  OutTotal)
+      . dempotent(5.percent)
   }
 
-  override def configureThriftMuxClient(
-    injector: Injector,
-    client: ThriftMux.Client
-  ): ThriftMux.Client =
+  overr de def conf gureThr ftMuxCl ent(
+     njector:  njector,
+    cl ent: Thr ftMux.Cl ent
+  ): Thr ftMux.Cl ent =
     super
-      .configureThriftMuxClient(injector, client)
-      .withProtocolFactory(new TCompactProtocol.Factory())
+      .conf gureThr ftMuxCl ent( njector, cl ent)
+      .w hProtocolFactory(new TCompactProtocol.Factory())
 
-  override protected def sessionAcquisitionTimeout: Duration = 1.seconds
+  overr de protected def sess onAcqu s  onT  out: Durat on = 1.seconds
 }

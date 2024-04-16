@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.BasicTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RecWithEducationTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RecommendationTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TopicContextFunctionalityType
-import com.twitter.timelines.render.{thriftscala => urt}
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Bas cTop cContextFunct onal yType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.RecW hEducat onTop cContextFunct onal yType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Recom ndat onTop cContextFunct onal yType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Top cContextFunct onal yType
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
 
-object TopicContextFunctionalityTypeMarshaller {
+object Top cContextFunct onal yTypeMarshaller {
 
   def apply(
-    topicContextFunctionalityType: TopicContextFunctionalityType
-  ): urt.TopicContextFunctionalityType = topicContextFunctionalityType match {
-    case BasicTopicContextFunctionalityType => urt.TopicContextFunctionalityType.Basic
-    case RecommendationTopicContextFunctionalityType =>
-      urt.TopicContextFunctionalityType.Recommendation
-    case RecWithEducationTopicContextFunctionalityType =>
-      urt.TopicContextFunctionalityType.RecWithEducation
+    top cContextFunct onal yType: Top cContextFunct onal yType
+  ): urt.Top cContextFunct onal yType = top cContextFunct onal yType match {
+    case Bas cTop cContextFunct onal yType => urt.Top cContextFunct onal yType.Bas c
+    case Recom ndat onTop cContextFunct onal yType =>
+      urt.Top cContextFunct onal yType.Recom ndat on
+    case RecW hEducat onTop cContextFunct onal yType =>
+      urt.Top cContextFunct onal yType.RecW hEducat on
   }
 }

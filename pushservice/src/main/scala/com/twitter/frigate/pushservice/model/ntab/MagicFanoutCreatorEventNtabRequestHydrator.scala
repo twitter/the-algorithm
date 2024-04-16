@@ -1,39 +1,39 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.tw ter.fr gate.pushserv ce.model.ntab
 
-import com.twitter.frigate.magic_events.thriftscala.CreatorFanoutType
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.MagicFanoutCreatorEventPushCandidate
-import com.twitter.frigate.pushservice.take.NotificationServiceSender
-import com.twitter.notificationservice.thriftscala.CreateGenericNotificationRequest
-import com.twitter.notificationservice.thriftscala.DisplayText
-import com.twitter.notificationservice.thriftscala.DisplayTextEntity
-import com.twitter.notificationservice.thriftscala.GenericType
-import com.twitter.notificationservice.thriftscala.InlineCard
-import com.twitter.notificationservice.thriftscala.StoryContext
-import com.twitter.notificationservice.thriftscala.TextValue
-import com.twitter.notificationservice.thriftscala.TapThroughAction
-import com.twitter.util.Future
-import com.twitter.util.Time
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.CreatorFanoutType
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.Mag cFanoutCreatorEventPushCand date
+ mport com.tw ter.fr gate.pushserv ce.take.Not f cat onServ ceSender
+ mport com.tw ter.not f cat onserv ce.thr ftscala.CreateGener cNot f cat onRequest
+ mport com.tw ter.not f cat onserv ce.thr ftscala.D splayText
+ mport com.tw ter.not f cat onserv ce.thr ftscala.D splayTextEnt y
+ mport com.tw ter.not f cat onserv ce.thr ftscala.Gener cType
+ mport com.tw ter.not f cat onserv ce.thr ftscala. nl neCard
+ mport com.tw ter.not f cat onserv ce.thr ftscala.StoryContext
+ mport com.tw ter.not f cat onserv ce.thr ftscala.TextValue
+ mport com.tw ter.not f cat onserv ce.thr ftscala.TapThroughAct on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
 
-trait MagicFanoutCreatorEventNtabRequestHydrator extends NTabRequestHydrator {
-  self: PushCandidate with MagicFanoutCreatorEventPushCandidate =>
+tra  Mag cFanoutCreatorEventNtabRequestHydrator extends NTabRequestHydrator {
+  self: PushCand date w h Mag cFanoutCreatorEventPushCand date =>
 
-  override val senderIdFut: Future[Long] = Future.value(creatorId)
+  overr de val sender dFut: Future[Long] = Future.value(creator d)
 
-  override lazy val tapThroughFut: Future[String] =
-    Future.value(s"/${userProfile.screenName}/superfollows/subscribe")
+  overr de lazy val tapThroughFut: Future[Str ng] =
+    Future.value(s"/${userProf le.screenNa }/superfollows/subscr be")
 
-  lazy val optionalTweetCountEntityFut: Future[Option[DisplayTextEntity]] = {
+  lazy val opt onalT etCountEnt yFut: Future[Opt on[D splayTextEnt y]] = {
     creatorFanoutType match {
-      case CreatorFanoutType.UserSubscription =>
-        numberOfTweetsFut.map {
+      case CreatorFanoutType.UserSubscr pt on =>
+        numberOfT etsFut.map {
           _.flatMap {
-            case numberOfTweets if numberOfTweets >= 10 =>
-              Some(
-                DisplayTextEntity(
-                  name = "tweet_count",
-                  emphasis = true,
-                  value = TextValue.Text(numberOfTweets.toString)))
+            case numberOfT ets  f numberOfT ets >= 10 =>
+              So (
+                D splayTextEnt y(
+                  na  = "t et_count",
+                  emphas s = true,
+                  value = TextValue.Text(numberOfT ets.toStr ng)))
             case _ => None
           }
         }
@@ -41,28 +41,28 @@ trait MagicFanoutCreatorEventNtabRequestHydrator extends NTabRequestHydrator {
     }
   }
 
-  override lazy val displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] =
-    optionalTweetCountEntityFut
-      .map { tweetCountOpt =>
+  overr de lazy val d splayTextEnt  esFut: Future[Seq[D splayTextEnt y]] =
+    opt onalT etCountEnt yFut
+      .map { t etCountOpt =>
         Seq(
-          NotificationServiceSender
-            .getDisplayTextEntityFromUser(hydratedCreator, "display_name", isBold = true),
-          tweetCountOpt).flatten
+          Not f cat onServ ceSender
+            .getD splayTextEnt yFromUser(hydratedCreator, "d splay_na ",  sBold = true),
+          t etCountOpt).flatten
       }
 
-  override lazy val facepileUsersFut: Future[Seq[Long]] = Future.value(Seq(creatorId))
+  overr de lazy val facep leUsersFut: Future[Seq[Long]] = Future.value(Seq(creator d))
 
-  override val storyContext: Option[StoryContext] = None
+  overr de val storyContext: Opt on[StoryContext] = None
 
-  override val inlineCard: Option[InlineCard] = None
+  overr de val  nl neCard: Opt on[ nl neCard] = None
 
   lazy val refreshableTypeFut = {
     creatorFanoutType match {
-      case CreatorFanoutType.UserSubscription =>
-        numberOfTweetsFut.map {
+      case CreatorFanoutType.UserSubscr pt on =>
+        numberOfT etsFut.map {
           _.flatMap {
-            case numberOfTweets if numberOfTweets >= 10 =>
-              Some("MagicFanoutCreatorSubscriptionWithTweets")
+            case numberOfT ets  f numberOfT ets >= 10 =>
+              So ("Mag cFanoutCreatorSubscr pt onW hT ets")
             case _ => super.refreshableType
           }
         }
@@ -70,39 +70,39 @@ trait MagicFanoutCreatorEventNtabRequestHydrator extends NTabRequestHydrator {
     }
   }
 
-  override lazy val socialProofDisplayText: Option[DisplayText] = {
+  overr de lazy val soc alProofD splayText: Opt on[D splayText] = {
     creatorFanoutType match {
-      case CreatorFanoutType.UserSubscription =>
-        Some(
-          DisplayText(values = Seq(
-            DisplayTextEntity(name = "handle", value = TextValue.Text(userProfile.screenName)))))
+      case CreatorFanoutType.UserSubscr pt on =>
+        So (
+          D splayText(values = Seq(
+            D splayTextEnt y(na  = "handle", value = TextValue.Text(userProf le.screenNa )))))
       case CreatorFanoutType.NewCreator => None
       case _ => None
     }
   }
 
-  override lazy val ntabRequest = {
+  overr de lazy val ntabRequest = {
     Future
-      .join(
-        senderIdFut,
-        displayTextEntitiesFut,
-        facepileUsersFut,
+      .jo n(
+        sender dFut,
+        d splayTextEnt  esFut,
+        facep leUsersFut,
         tapThroughFut,
         refreshableTypeFut).map {
-        case (senderId, displayTextEntities, facepileUsers, tapThrough, refreshableTypeOpt) =>
-          Some(
-            CreateGenericNotificationRequest(
-              userId = target.targetId,
-              senderId = senderId,
-              genericType = GenericType.RefreshableNotification,
-              displayText = DisplayText(values = displayTextEntities),
-              facepileUsers = facepileUsers,
-              timestampMillis = Time.now.inMillis,
-              tapThroughAction = Some(TapThroughAction(Some(tapThrough))),
-              impressionId = Some(impressionId),
-              socialProofText = socialProofDisplayText,
+        case (sender d, d splayTextEnt  es, facep leUsers, tapThrough, refreshableTypeOpt) =>
+          So (
+            CreateGener cNot f cat onRequest(
+              user d = target.target d,
+              sender d = sender d,
+              gener cType = Gener cType.RefreshableNot f cat on,
+              d splayText = D splayText(values = d splayTextEnt  es),
+              facep leUsers = facep leUsers,
+              t  stampM ll s = T  .now. nM ll s,
+              tapThroughAct on = So (TapThroughAct on(So (tapThrough))),
+               mpress on d = So ( mpress on d),
+              soc alProofText = soc alProofD splayText,
               context = storyContext,
-              inlineCard = inlineCard,
+               nl neCard =  nl neCard,
               refreshableType = refreshableTypeOpt
             ))
       }

@@ -1,302 +1,302 @@
-package com.twitter.search.earlybird.querycache;
+package com.tw ter.search.earlyb rd.querycac ;
 
-import java.util.List;
-import java.util.TreeMap;
+ mport java.ut l.L st;
+ mport java.ut l.TreeMap;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.search.Query;
+ mport org.apac .lucene.search.Query;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.query.thriftjava.CollectorParams;
-import com.twitter.search.common.query.thriftjava.CollectorTerminationParams;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.common.util.text.regex.Regex;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.queryparser.EarlybirdLuceneQueryVisitor;
-import com.twitter.search.earlybird.search.SearchRequestInfo;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.queryparser.parser.SerializedQueryParser;
-import com.twitter.search.queryparser.query.QueryParserException;
+ mport com.tw ter.common.collect ons.Pa r;
+ mport com.tw ter.common.quant y.Amount;
+ mport com.tw ter.common.quant y.T  ;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchStatsRece ver;
+ mport com.tw ter.search.common.query.thr ftjava.CollectorParams;
+ mport com.tw ter.search.common.query.thr ftjava.CollectorTerm nat onParams;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.common.search.Term nat onTracker;
+ mport com.tw ter.search.common.ut l.text.regex.Regex;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserTable;
+ mport com.tw ter.search.earlyb rd.queryparser.Earlyb rdLuceneQueryV s or;
+ mport com.tw ter.search.earlyb rd.search.SearchRequest nfo;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchQuery;
+ mport com.tw ter.search.queryparser.parser.Ser al zedQueryParser;
+ mport com.tw ter.search.queryparser.query.QueryParserExcept on;
 
 /**
- * The definition of a QueryCache filter/entry, like the name of the filter, the query used
- * to populate the cache, update schedule, etc..
+ * T  def n  on of a QueryCac  f lter/entry, l ke t  na  of t  f lter, t  query used
+ * to populate t  cac , update sc dule, etc..
  *
- * Instances of this class are created by the YAML loader when loading the config file. Most
- * members are populated by YAML using setters through reflection.
+ *  nstances of t  class are created by t  YAML loader w n load ng t  conf g f le. Most
+ *  mbers are populated by YAML us ng setters through reflect on.
  */
-public class QueryCacheFilter {
-  // Data structure type supported as cache result holder
-  public enum ResultSetType {
-    FixedBitSet,
-    SparseFixedBitSet
+publ c class QueryCac F lter {
+  // Data structure type supported as cac  result holder
+  publ c enum ResultSetType {
+    F xedB Set,
+    SparseF xedB Set
   }
 
-  // Fields set directly from YML config file.
-  private String filterName;           // unique name for cached filter
-  private String query;                // serialized query string
-  private ResultSetType resultType;
-  private boolean cacheModeOnly;
-  private List<UpdateInterval> schedule;
-  private SearchCounter queries;
+  // F elds set d rectly from YML conf g f le.
+  pr vate Str ng f lterNa ;           // un que na  for cac d f lter
+  pr vate Str ng query;                // ser al zed query str ng
+  pr vate ResultSetType resultType;
+  pr vate boolean cac ModeOnly;
+  pr vate L st<Update nterval> sc dule;
+  pr vate SearchCounter quer es;
 
-  // Fields generated based on config (but not directly).
-  private volatile Pair<ThriftSearchQuery, Query> queryPair;
-  private TreeMap<Integer, UpdateInterval> scheduleMap;  // tree map from index to interval
+  // F elds generated based on conf g (but not d rectly).
+  pr vate volat le Pa r<Thr ftSearchQuery, Query> queryPa r;
+  pr vate TreeMap< nteger, Update nterval> sc duleMap;  // tree map from  ndex to  nterval
 
-  public class InvalidEntryException extends Exception {
-    public InvalidEntryException(String message) {
-      super("Filter [" + filterName + "]: " + message);
+  publ c class  nval dEntryExcept on extends Except on {
+    publ c  nval dEntryExcept on(Str ng  ssage) {
+      super("F lter [" + f lterNa  + "]: " +  ssage);
     }
   }
 
-  public static class UpdateInterval {
-    // Overrides *all* query cache update frequencies to be this value, in seconds.
-    private final int overrideSecondsForTests = EarlybirdConfig.getInt(
-        "override_query_cache_update_frequency", -1);
+  publ c stat c class Update nterval {
+    // Overr des *all* query cac  update frequenc es to be t  value,  n seconds.
+    pr vate f nal  nt overr deSecondsForTests = Earlyb rdConf g.get nt(
+        "overr de_query_cac _update_frequency", -1);
 
-    // Fields set directly from YML config file.
-    private int segment;
-    private long seconds;
+    // F elds set d rectly from YML conf g f le.
+    pr vate  nt seg nt;
+    pr vate long seconds;
 
-    public void setSegment(int segment) {
-      this.segment = segment;
+    publ c vo d setSeg nt( nt seg nt) {
+      t .seg nt = seg nt;
     }
 
     /**
-     * Sets the update period in seconds. If the override_query_cache_update_frequency parameter is
-     * specified in the earlybird configuration, its value is used instead (the value passed to this
-     * method is ignored).
+     * Sets t  update per od  n seconds.  f t  overr de_query_cac _update_frequency para ter  s
+     * spec f ed  n t  earlyb rd conf gurat on,  s value  s used  nstead (t  value passed to t 
+     *  thod  s  gnored).
      */
-    public void setSeconds(long seconds) {
-      if (overrideSecondsForTests != -1) {
-        this.seconds = overrideSecondsForTests;
+    publ c vo d setSeconds(long seconds) {
+       f (overr deSecondsForTests != -1) {
+        t .seconds = overr deSecondsForTests;
       } else {
-        this.seconds = seconds;
+        t .seconds = seconds;
       }
     }
 
-    public int getSegment() {
-      return segment;
+    publ c  nt getSeg nt() {
+      return seg nt;
     }
 
-    public long getSeconds() {
+    publ c long getSeconds() {
       return seconds;
     }
   }
 
-  public void setFilterName(String filterName) throws InvalidEntryException {
-    sanityCheckFilterName(filterName);
-    this.filterName = filterName;
+  publ c vo d setF lterNa (Str ng f lterNa ) throws  nval dEntryExcept on {
+    san yC ckF lterNa (f lterNa );
+    t .f lterNa  = f lterNa ;
   }
 
   /**
-   * Sets the driving query for this query cache filter.
+   * Sets t  dr v ng query for t  query cac  f lter.
    */
-  public void setQuery(String query) throws InvalidEntryException {
-    if (query == null || query.isEmpty()) {
-      throw new InvalidEntryException("Empty query string");
+  publ c vo d setQuery(Str ng query) throws  nval dEntryExcept on {
+     f (query == null || query. sEmpty()) {
+      throw new  nval dEntryExcept on("Empty query str ng");
     }
 
-    this.query = query;
+    t .query = query;
   }
 
   /**
-   * Sets the type of the results that will be generated by this query cache filter.
+   * Sets t  type of t  results that w ll be generated by t  query cac  f lter.
    */
-  public void setResultType(String resultType) throws InvalidEntryException {
-    if (ResultSetType.FixedBitSet.toString().equalsIgnoreCase(resultType)) {
-      this.resultType = ResultSetType.FixedBitSet;
-    } else if (ResultSetType.SparseFixedBitSet.toString().equalsIgnoreCase(resultType)) {
-      this.resultType = ResultSetType.SparseFixedBitSet;
+  publ c vo d setResultType(Str ng resultType) throws  nval dEntryExcept on {
+     f (ResultSetType.F xedB Set.toStr ng().equals gnoreCase(resultType)) {
+      t .resultType = ResultSetType.F xedB Set;
+    } else  f (ResultSetType.SparseF xedB Set.toStr ng().equals gnoreCase(resultType)) {
+      t .resultType = ResultSetType.SparseF xedB Set;
     } else {
-      throw new InvalidEntryException("Unregconized result type [" + resultType + "]");
+      throw new  nval dEntryExcept on("Unregcon zed result type [" + resultType + "]");
     }
   }
 
-  public void setCacheModeOnly(boolean cacheModeOnly) {
-    this.cacheModeOnly = cacheModeOnly;
+  publ c vo d setCac ModeOnly(boolean cac ModeOnly) {
+    t .cac ModeOnly = cac ModeOnly;
   }
 
-  public void setSchedule(List<UpdateInterval> schedule)
-      throws QueryCacheFilter.InvalidEntryException {
-    sanityCheckSchedule(schedule);
-    this.schedule = schedule;
-    this.scheduleMap = createScheduleMap(schedule);
+  publ c vo d setSc dule(L st<Update nterval> sc dule)
+      throws QueryCac F lter. nval dEntryExcept on {
+    san yC ckSc dule(sc dule);
+    t .sc dule = sc dule;
+    t .sc duleMap = createSc duleMap(sc dule);
   }
 
-  public void createQueryCounter(SearchStatsReceiver statsReceiver) {
-    queries = statsReceiver.getCounter("cached_filter_" + filterName + "_queries");
+  publ c vo d createQueryCounter(SearchStatsRece ver statsRece ver) {
+    quer es = statsRece ver.getCounter("cac d_f lter_" + f lterNa  + "_quer es");
   }
 
-  public void incrementUsageStat() {
-    queries.increment();
+  publ c vo d  ncre ntUsageStat() {
+    quer es. ncre nt();
   }
 
-  public String getFilterName() {
-    return filterName;
+  publ c Str ng getF lterNa () {
+    return f lterNa ;
   }
 
-  public String getQueryString() {
+  publ c Str ng getQueryStr ng() {
     return query;
   }
 
-  // snakeyaml does not like a getter named getResultType() that does not return a string
-  public ResultSetType getResultSetType() {
+  // snakeyaml does not l ke a getter na d getResultType() that does not return a str ng
+  publ c ResultSetType getResultSetType() {
     return resultType;
   }
 
-  public boolean getCacheModeOnly() {
-    return cacheModeOnly;
+  publ c boolean getCac ModeOnly() {
+    return cac ModeOnly;
   }
 
-  public Query getLuceneQuery() {
-    return queryPair.getSecond();
+  publ c Query getLuceneQuery() {
+    return queryPa r.getSecond();
   }
 
-  public ThriftSearchQuery getSearchQuery() {
-    return queryPair.getFirst();
+  publ c Thr ftSearchQuery getSearchQuery() {
+    return queryPa r.getF rst();
   }
 
   /**
-   * Create a new {@link SearchRequestInfo} using {@link #queryPair}.
+   * Create a new {@l nk SearchRequest nfo} us ng {@l nk #queryPa r}.
    *
-   * @return a new {@link SearchRequestInfo}
+   * @return a new {@l nk SearchRequest nfo}
    */
-  public SearchRequestInfo createSearchRequestInfo() {
-    ThriftSearchQuery searchQuery = Preconditions.checkNotNull(queryPair.getFirst());
-    Query luceneQuery = Preconditions.checkNotNull(queryPair.getSecond());
+  publ c SearchRequest nfo createSearchRequest nfo() {
+    Thr ftSearchQuery searchQuery = Precond  ons.c ckNotNull(queryPa r.getF rst());
+    Query luceneQuery = Precond  ons.c ckNotNull(queryPa r.getSecond());
 
-    return new SearchRequestInfo(
-        searchQuery, luceneQuery, new TerminationTracker(Clock.SYSTEM_CLOCK));
+    return new SearchRequest nfo(
+        searchQuery, luceneQuery, new Term nat onTracker(Clock.SYSTEM_CLOCK));
   }
 
-  public void setup(
-      QueryCacheManager queryCacheManager,
+  publ c vo d setup(
+      QueryCac Manager queryCac Manager,
       UserTable userTable,
-      EarlybirdCluster earlybirdCluster) throws QueryParserException {
-    createQuery(queryCacheManager, userTable, earlybirdCluster);
+      Earlyb rdCluster earlyb rdCluster) throws QueryParserExcept on {
+    createQuery(queryCac Manager, userTable, earlyb rdCluster);
   }
 
-  // index corresponds to 'segment' from the config file.  this is the index of the
-  // segment, starting with the current segment (0) and counting backwards in time.
-  public Amount<Long, Time> getUpdateInterval(int index) {
-    long seconds = scheduleMap.floorEntry(index).getValue().getSeconds();
-    return Amount.of(seconds, Time.SECONDS);
+  //  ndex corresponds to 'seg nt' from t  conf g f le.  t   s t   ndex of t 
+  // seg nt, start ng w h t  current seg nt (0) and count ng backwards  n t  .
+  publ c Amount<Long, T  > getUpdate nterval( nt  ndex) {
+    long seconds = sc duleMap.floorEntry( ndex).getValue().getSeconds();
+    return Amount.of(seconds, T  .SECONDS);
   }
 
-  private TreeMap<Integer, UpdateInterval> createScheduleMap(List<UpdateInterval> scheduleToUse) {
-    TreeMap<Integer, UpdateInterval> map = new TreeMap<>();
-    for (UpdateInterval interval : scheduleToUse) {
-      map.put(interval.segment, interval);
+  pr vate TreeMap< nteger, Update nterval> createSc duleMap(L st<Update nterval> sc duleToUse) {
+    TreeMap< nteger, Update nterval> map = new TreeMap<>();
+    for (Update nterval  nterval : sc duleToUse) {
+      map.put( nterval.seg nt,  nterval);
     }
     return map;
   }
 
-  private void createQuery(
-      QueryCacheManager queryCacheManager,
+  pr vate vo d createQuery(
+      QueryCac Manager queryCac Manager,
       UserTable userTable,
-      EarlybirdCluster earlybirdCluster) throws QueryParserException {
+      Earlyb rdCluster earlyb rdCluster) throws QueryParserExcept on {
 
-    int maxSegmentSize = EarlybirdConfig.getMaxSegmentSize();
-    CollectorParams collectionParams = new CollectorParams();
-    collectionParams.setNumResultsToReturn(maxSegmentSize);
-    CollectorTerminationParams terminationParams = new CollectorTerminationParams();
-    terminationParams.setMaxHitsToProcess(maxSegmentSize);
-    collectionParams.setTerminationParams(terminationParams);
+     nt maxSeg ntS ze = Earlyb rdConf g.getMaxSeg ntS ze();
+    CollectorParams collect onParams = new CollectorParams();
+    collect onParams.setNumResultsToReturn(maxSeg ntS ze);
+    CollectorTerm nat onParams term nat onParams = new CollectorTerm nat onParams();
+    term nat onParams.setMaxH sToProcess(maxSeg ntS ze);
+    collect onParams.setTerm nat onParams(term nat onParams);
 
-    ThriftSearchQuery searchQuery = new ThriftSearchQuery();
-    searchQuery.setMaxHitsPerUser(maxSegmentSize);
-    searchQuery.setCollectorParams(collectionParams);
-    searchQuery.setSerializedQuery(query);
+    Thr ftSearchQuery searchQuery = new Thr ftSearchQuery();
+    searchQuery.setMaxH sPerUser(maxSeg ntS ze);
+    searchQuery.setCollectorParams(collect onParams);
+    searchQuery.setSer al zedQuery(query);
 
-    final SerializedQueryParser parser = new SerializedQueryParser(
-        EarlybirdConfig.getPenguinVersion());
+    f nal Ser al zedQueryParser parser = new Ser al zedQueryParser(
+        Earlyb rdConf g.getPengu nVers on());
 
-    Query luceneQuery = parser.parse(query).simplify().accept(
-        new EarlybirdLuceneQueryVisitor(
-            queryCacheManager.getIndexConfig().getSchema().getSchemaSnapshot(),
-            queryCacheManager,
+    Query luceneQuery = parser.parse(query).s mpl fy().accept(
+        new Earlyb rdLuceneQueryV s or(
+            queryCac Manager.get ndexConf g().getSc ma().getSc maSnapshot(),
+            queryCac Manager,
             userTable,
-            queryCacheManager.getUserScrubGeoMap(),
-            earlybirdCluster,
-            queryCacheManager.getDecider()));
-    if (luceneQuery == null) {
-      throw new QueryParserException("Unable to create lucene query from " + query);
+            queryCac Manager.getUserScrubGeoMap(),
+            earlyb rdCluster,
+            queryCac Manager.getDec der()));
+     f (luceneQuery == null) {
+      throw new QueryParserExcept on("Unable to create lucene query from " + query);
     }
 
-    queryPair = new Pair<>(searchQuery, luceneQuery);
+    queryPa r = new Pa r<>(searchQuery, luceneQuery);
   }
 
-  private void sanityCheckFilterName(String filter) throws InvalidEntryException {
-    if (filter == null || filter.isEmpty()) {
-      throw new InvalidEntryException("Missing filter name");
+  pr vate vo d san yC ckF lterNa (Str ng f lter) throws  nval dEntryExcept on {
+     f (f lter == null || f lter. sEmpty()) {
+      throw new  nval dEntryExcept on("M ss ng f lter na ");
     }
-    if (Regex.FILTER_NAME_CHECK.matcher(filter).find()) {
-      throw new InvalidEntryException(
-          "Invalid character in filter name. Chars allowed [a-zA-Z_0-9]");
+     f (Regex.F LTER_NAME_CHECK.matc r(f lter).f nd()) {
+      throw new  nval dEntryExcept on(
+          " nval d character  n f lter na . Chars allo d [a-zA-Z_0-9]");
     }
   }
 
-  private void sanityCheckSchedule(List<UpdateInterval> intervals)
-      throws InvalidEntryException {
-    // Make sure there's at least 1 interval defined
-    if (intervals == null || intervals.isEmpty()) {
-      throw new InvalidEntryException("No schedule defined");
+  pr vate vo d san yC ckSc dule(L st<Update nterval>  ntervals)
+      throws  nval dEntryExcept on {
+    // Make sure t re's at least 1  nterval def ned
+     f ( ntervals == null ||  ntervals. sEmpty()) {
+      throw new  nval dEntryExcept on("No sc dule def ned");
     }
 
-    // Make sure the first interval starts with segment 0
-    if (intervals.get(0).getSegment() != 0) {
-      throw new InvalidEntryException(
-          "The first interval in the schedule must start from segment 0");
+    // Make sure t  f rst  nterval starts w h seg nt 0
+     f ( ntervals.get(0).getSeg nt() != 0) {
+      throw new  nval dEntryExcept on(
+          "T  f rst  nterval  n t  sc dule must start from seg nt 0");
     }
 
-    // Make sure segments are defined in order, and no segment is defined more than twice
-    int prevSegment = intervals.get(0).getSegment();
-    for (int i = 1; i < intervals.size(); ++i) {
-      int currentSegment = intervals.get(i).getSegment();
-      if (prevSegment > currentSegment) {
-        throw new InvalidEntryException("Segment intervals out of order. Segment " + prevSegment
-            + " is defined before segment " + currentSegment);
+    // Make sure seg nts are def ned  n order, and no seg nt  s def ned more than tw ce
+     nt prevSeg nt =  ntervals.get(0).getSeg nt();
+    for ( nt   = 1;   <  ntervals.s ze(); ++ ) {
+       nt currentSeg nt =  ntervals.get( ).getSeg nt();
+       f (prevSeg nt > currentSeg nt) {
+        throw new  nval dEntryExcept on("Seg nt  ntervals out of order. Seg nt " + prevSeg nt
+            + "  s def ned before seg nt " + currentSeg nt);
       }
 
-      if (prevSegment == intervals.get(i).getSegment()) {
-        throw new InvalidEntryException("Segment " + prevSegment + " is defined twice");
+       f (prevSeg nt ==  ntervals.get( ).getSeg nt()) {
+        throw new  nval dEntryExcept on("Seg nt " + prevSeg nt + "  s def ned tw ce");
       }
 
-      prevSegment = currentSegment;
+      prevSeg nt = currentSeg nt;
     }
   }
 
-  protected void sanityCheck() throws InvalidEntryException {
-    sanityCheckFilterName(filterName);
-    if (query == null || query.isEmpty()) {
-      throw new InvalidEntryException("Missing query");
+  protected vo d san yC ck() throws  nval dEntryExcept on {
+    san yC ckF lterNa (f lterNa );
+     f (query == null || query. sEmpty()) {
+      throw new  nval dEntryExcept on("M ss ng query");
     }
-    if (resultType == null) {
-      throw new InvalidEntryException("Missing result type");
+     f (resultType == null) {
+      throw new  nval dEntryExcept on("M ss ng result type");
     }
-    if (schedule == null || schedule.size() == 0) {
-      throw new InvalidEntryException("Missing update schedule");
+     f (sc dule == null || sc dule.s ze() == 0) {
+      throw new  nval dEntryExcept on("M ss ng update sc dule");
     }
-    if (scheduleMap == null || scheduleMap.size() == 0) {
-      throw new InvalidEntryException("Missing update schedule map");
+     f (sc duleMap == null || sc duleMap.s ze() == 0) {
+      throw new  nval dEntryExcept on("M ss ng update sc dule map");
     }
   }
 
-  @Override
-  public String toString() {
-    return "filterName: [" + getFilterName()
-        + "] query: [" + getQueryString()
+  @Overr de
+  publ c Str ng toStr ng() {
+    return "f lterNa : [" + getF lterNa ()
+        + "] query: [" + getQueryStr ng()
         + "] result type [" + getResultSetType()
-        + "] schedule: " + schedule;
+        + "] sc dule: " + sc dule;
   }
 }

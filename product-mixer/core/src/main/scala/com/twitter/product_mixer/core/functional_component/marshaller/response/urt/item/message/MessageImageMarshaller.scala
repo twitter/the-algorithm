@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em. ssage
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ImageVariantMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageImage
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata. mageVar antMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage. ssage mage
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class MessageImageMarshaller @Inject() (
-  imageVariantMarshaller: ImageVariantMarshaller) {
+@S ngleton
+class  ssage mageMarshaller @ nject() (
+   mageVar antMarshaller:  mageVar antMarshaller) {
 
-  def apply(messageImage: MessageImage): urt.MessageImage = {
-    urt.MessageImage(
-      imageVariants = messageImage.imageVariants.map(imageVariantMarshaller(_)),
-      backgroundColor = messageImage.backgroundColor
+  def apply( ssage mage:  ssage mage): urt. ssage mage = {
+    urt. ssage mage(
+       mageVar ants =  ssage mage. mageVar ants.map( mageVar antMarshaller(_)),
+      backgroundColor =  ssage mage.backgroundColor
     )
   }
 }

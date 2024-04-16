@@ -1,42 +1,42 @@
-package com.twitter.product_mixer.component_library.filter
+package com.tw ter.product_m xer.component_l brary.f lter
 
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lterResult
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.ut l.Durat on
 
 /**
- * @param maxAgeParam Feature Switch configurable for convenience
- * @tparam Candidate The type of the candidates
+ * @param maxAgeParam Feature Sw ch conf gurable for conven ence
+ * @tparam Cand date T  type of t  cand dates
  */
-case class SnowflakeIdAgeFilter[Candidate <: UniversalNoun[Long]](
-  maxAgeParam: Param[Duration])
-    extends Filter[PipelineQuery, Candidate] {
+case class Snowflake dAgeF lter[Cand date <: Un versalNoun[Long]](
+  maxAgeParam: Param[Durat on])
+    extends F lter[P pel neQuery, Cand date] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("SnowflakeIdAge")
+  overr de val  dent f er: F lter dent f er = F lter dent f er("Snowflake dAge")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): St ch[F lterResult[Cand date]] = {
     val maxAge = query.params(maxAgeParam)
 
-    val (keptCandidates, removedCandidates) = candidates
-      .map(_.candidate)
-      .partition { filterCandidate =>
-        SnowflakeId.timeFromIdOpt(filterCandidate.id) match {
-          case Some(creationTime) =>
-            query.queryTime.since(creationTime) <= maxAge
+    val (keptCand dates, removedCand dates) = cand dates
+      .map(_.cand date)
+      .part  on { f lterCand date =>
+        Snowflake d.t  From dOpt(f lterCand date. d) match {
+          case So (creat onT  ) =>
+            query.queryT  .s nce(creat onT  ) <= maxAge
           case _ => false
         }
       }
 
-    Stitch.value(FilterResult(kept = keptCandidates, removed = removedCandidates))
+    St ch.value(F lterResult(kept = keptCand dates, removed = removedCand dates))
   }
 }

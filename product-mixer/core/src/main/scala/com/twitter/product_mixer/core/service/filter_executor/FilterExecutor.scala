@@ -1,172 +1,172 @@
-package com.twitter.product_mixer.core.service.filter_executor
+package com.tw ter.product_m xer.core.serv ce.f lter_executor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.filter_executor.FilterExecutor.FilterState
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Arrow.Iso
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.immutable.Queue
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Cond  onally
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.product_m xer.core.serv ce.f lter_executor.F lterExecutor.F lterState
+ mport com.tw ter.st ch.Arrow
+ mport com.tw ter.st ch.Arrow. so
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport scala.collect on. mmutable.Queue
 
 /**
- * Applies a `Seq[Filter]` in sequential order.
- * Returns the results and a detailed Seq of each filter's results (for debugging / coherence).
+ * Appl es a `Seq[F lter]`  n sequent al order.
+ * Returns t  results and a deta led Seq of each f lter's results (for debugg ng / co rence).
  *
- * Note that each successive filter is only passed the 'kept' Seq from the previous filter, not the full
- * set of candidates.
+ * Note that each success ve f lter  s only passed t  'kept' Seq from t  prev ous f lter, not t  full
+ * set of cand dates.
  */
-@Singleton
-class FilterExecutor @Inject() (override val statsReceiver: StatsReceiver) extends Executor {
+@S ngleton
+class F lterExecutor @ nject() (overr de val statsRece ver: StatsRece ver) extends Executor {
 
-  private val Kept = "kept"
-  private val Removed = "removed"
+  pr vate val Kept = "kept"
+  pr vate val Removed = "removed"
 
-  def arrow[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-    filters: Seq[Filter[Query, Candidate]],
+  def arrow[Query <: P pel neQuery, Cand date <: Un versalNoun[Any]](
+    f lters: Seq[F lter[Query, Cand date]],
     context: Executor.Context
-  ): Arrow[(Query, Seq[CandidateWithFeatures[Candidate]]), FilterExecutorResult[Candidate]] = {
+  ): Arrow[(Query, Seq[Cand dateW hFeatures[Cand date]]), F lterExecutorResult[Cand date]] = {
 
-    val filterArrows = filters.map(getIsoArrowForFilter(_, context))
-    val combinedArrow = isoArrowsSequentially(filterArrows)
+    val f lterArrows = f lters.map(get soArrowForF lter(_, context))
+    val comb nedArrow =  soArrowsSequent ally(f lterArrows)
 
     Arrow
-      .map[(Query, Seq[CandidateWithFeatures[Candidate]]), FilterState[Query, Candidate]] {
-        case (query, filterCandidates) =>
-          // transform the input to the initial state of a `FilterExecutorResult`
-          val initialFilterExecutorResult =
-            FilterExecutorResult(filterCandidates.map(_.candidate), Queue.empty)
-          val allCandidates: Map[Candidate, CandidateWithFeatures[Candidate]] =
-            filterCandidates.map { fc =>
-              (fc.candidate, fc)
+      .map[(Query, Seq[Cand dateW hFeatures[Cand date]]), F lterState[Query, Cand date]] {
+        case (query, f lterCand dates) =>
+          // transform t   nput to t   n  al state of a `F lterExecutorResult`
+          val  n  alF lterExecutorResult =
+            F lterExecutorResult(f lterCand dates.map(_.cand date), Queue.empty)
+          val allCand dates: Map[Cand date, Cand dateW hFeatures[Cand date]] =
+            f lterCand dates.map { fc =>
+              (fc.cand date, fc)
             }.toMap
 
-          FilterState(query, allCandidates, initialFilterExecutorResult)
+          F lterState(query, allCand dates,  n  alF lterExecutorResult)
       }
-      .flatMapArrow(combinedArrow)
+      .flatMapArrow(comb nedArrow)
       .map {
-        case FilterState(_, _, filterExecutorResult) =>
-          filterExecutorResult.copy(individualFilterResults =
-            // materialize the Queue into a List for faster future iterations
-            filterExecutorResult.individualFilterResults.toList)
+        case F lterState(_, _, f lterExecutorResult) =>
+          f lterExecutorResult.copy( nd v dualF lterResults =
+            // mater al ze t  Queue  nto a L st for faster future  erat ons
+            f lterExecutorResult. nd v dualF lterResults.toL st)
       }
 
   }
 
   /**
-   * Adds filter specific stats, generic [[wrapComponentWithExecutorBookkeeping]] stats, and wraps with failure handling
+   * Adds f lter spec f c stats, gener c [[wrapComponentW hExecutorBookkeep ng]] stats, and wraps w h fa lure handl ng
    *
-   * If the filter is a [[Conditionally]] ensures that we dont record stats if its turned off
+   *  f t  f lter  s a [[Cond  onally]] ensures that   dont record stats  f  s turned off
    *
-   * @note For performance, the [[FilterExecutorResult.individualFilterResults]] is build backwards - the head being the most recent result.
-   * @param filter the filter to make an [[Arrow]] out of
-   * @param context the [[Executor.Context]] for the pipeline this is a part of
+   * @note For performance, t  [[F lterExecutorResult. nd v dualF lterResults]]  s bu ld backwards - t   ad be ng t  most recent result.
+   * @param f lter t  f lter to make an [[Arrow]] out of
+   * @param context t  [[Executor.Context]] for t  p pel ne t   s a part of
    */
-  private def getIsoArrowForFilter[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-    filter: Filter[Query, Candidate],
+  pr vate def get soArrowForF lter[Query <: P pel neQuery, Cand date <: Un versalNoun[Any]](
+    f lter: F lter[Query, Cand date],
     context: Executor.Context
-  ): Iso[FilterState[Query, Candidate]] = {
-    val broadcastStatsReceiver =
-      Executor.broadcastStatsReceiver(context, filter.identifier, statsReceiver)
+  ):  so[F lterState[Query, Cand date]] = {
+    val broadcastStatsRece ver =
+      Executor.broadcastStatsRece ver(context, f lter. dent f er, statsRece ver)
 
-    val keptCounter = broadcastStatsReceiver.counter(Kept)
-    val removedCounter = broadcastStatsReceiver.counter(Removed)
+    val keptCounter = broadcastStatsRece ver.counter(Kept)
+    val removedCounter = broadcastStatsRece ver.counter(Removed)
 
-    val filterArrow = Arrow.flatMap[
-      (Query, Seq[CandidateWithFeatures[Candidate]]),
-      FilterExecutorIndividualResult[Candidate]
+    val f lterArrow = Arrow.flatMap[
+      (Query, Seq[Cand dateW hFeatures[Cand date]]),
+      F lterExecutor nd v dualResult[Cand date]
     ] {
-      case (query, candidates) =>
-        filter.apply(query, candidates).map { result =>
-          FilterExecutorIndividualResult(
-            identifier = filter.identifier,
+      case (query, cand dates) =>
+        f lter.apply(query, cand dates).map { result =>
+          F lterExecutor nd v dualResult(
+             dent f er = f lter. dent f er,
             kept = result.kept,
             removed = result.removed)
         }
     }
 
     val observedArrow: Arrow[
-      (Query, Seq[CandidateWithFeatures[Candidate]]),
-      FilterExecutorIndividualResult[
-        Candidate
+      (Query, Seq[Cand dateW hFeatures[Cand date]]),
+      F lterExecutor nd v dualResult[
+        Cand date
       ]
-    ] = wrapComponentWithExecutorBookkeeping(
+    ] = wrapComponentW hExecutorBookkeep ng(
       context = context,
-      currentComponentIdentifier = filter.identifier,
-      onSuccess = { result: FilterExecutorIndividualResult[Candidate] =>
-        keptCounter.incr(result.kept.size)
-        removedCounter.incr(result.removed.size)
+      currentComponent dent f er = f lter. dent f er,
+      onSuccess = { result: F lterExecutor nd v dualResult[Cand date] =>
+        keptCounter. ncr(result.kept.s ze)
+        removedCounter. ncr(result.removed.s ze)
       }
     )(
-      filterArrow
+      f lterArrow
     )
 
-    val conditionallyRunArrow: Arrow[
-      (Query, Seq[CandidateWithFeatures[Candidate]]),
-      IndividualFilterResults[
-        Candidate
+    val cond  onallyRunArrow: Arrow[
+      (Query, Seq[Cand dateW hFeatures[Cand date]]),
+       nd v dualF lterResults[
+        Cand date
       ]
     ] =
-      filter match {
-        case filter: Filter[Query, Candidate] with Conditionally[
-              Filter.Input[Query, Candidate] @unchecked
+      f lter match {
+        case f lter: F lter[Query, Cand date] w h Cond  onally[
+              F lter. nput[Query, Cand date] @unc cked
             ] =>
-          Arrow.ifelse(
+          Arrow. felse(
             {
-              case (query, candidates) =>
-                filter.onlyIf(Filter.Input(query, candidates))
+              case (query, cand dates) =>
+                f lter.only f(F lter. nput(query, cand dates))
             },
             observedArrow,
-            Arrow.value(ConditionalFilterDisabled(filter.identifier))
+            Arrow.value(Cond  onalF lterD sabled(f lter. dent f er))
           )
         case _ => observedArrow
       }
 
-    // return an `Iso` arrow for easier composition later
+    // return an ` so` arrow for eas er compos  on later
     Arrow
-      .zipWithArg(
+      .z pW hArg(
         Arrow
-          .map[FilterState[Query, Candidate], (Query, Seq[CandidateWithFeatures[Candidate]])] {
-            case FilterState(query, candidateToFeaturesMap, FilterExecutorResult(result, _)) =>
-              (query, result.flatMap(candidateToFeaturesMap.get))
-          }.andThen(conditionallyRunArrow))
+          .map[F lterState[Query, Cand date], (Query, Seq[Cand dateW hFeatures[Cand date]])] {
+            case F lterState(query, cand dateToFeaturesMap, F lterExecutorResult(result, _)) =>
+              (query, result.flatMap(cand dateToFeaturesMap.get))
+          }.andT n(cond  onallyRunArrow))
       .map {
         case (
-              FilterState(query, allCandidates, filterExecutorResult),
-              filterResult: FilterExecutorIndividualResult[Candidate]) =>
-          val resultWithCurrentPrepended =
-            filterExecutorResult.individualFilterResults :+ filterResult
-          val newFilterExecutorResult = FilterExecutorResult(
-            result = filterResult.kept,
-            individualFilterResults = resultWithCurrentPrepended)
-          FilterState(query, allCandidates, newFilterExecutorResult)
+              F lterState(query, allCand dates, f lterExecutorResult),
+              f lterResult: F lterExecutor nd v dualResult[Cand date]) =>
+          val resultW hCurrentPrepended =
+            f lterExecutorResult. nd v dualF lterResults :+ f lterResult
+          val newF lterExecutorResult = F lterExecutorResult(
+            result = f lterResult.kept,
+             nd v dualF lterResults = resultW hCurrentPrepended)
+          F lterState(query, allCand dates, newF lterExecutorResult)
 
-        case (filterState, filterDisabledResult: ConditionalFilterDisabled) =>
-          filterState.copy(
-            executorResult = filterState.executorResult.copy(
-              individualFilterResults =
-                filterState.executorResult.individualFilterResults :+ filterDisabledResult
+        case (f lterState, f lterD sabledResult: Cond  onalF lterD sabled) =>
+          f lterState.copy(
+            executorResult = f lterState.executorResult.copy(
+               nd v dualF lterResults =
+                f lterState.executorResult. nd v dualF lterResults :+ f lterD sabledResult
             ))
       }
   }
 }
 
-object FilterExecutor {
+object F lterExecutor {
 
   /**
-   * FilterState is an internal representation of the state that is passed between each individual filter arrow.
+   * F lterState  s an  nternal representat on of t  state that  s passed bet en each  nd v dual f lter arrow.
    *
-   * @param query: The query
-   * @param candidateToFeaturesMap: A lookup mapping from Candidate -> FilterCandidate, to rebuild the inputs quickly for the next filter
-   * @param executorResult: The in-progress executor result
+   * @param query: T  query
+   * @param cand dateToFeaturesMap: A lookup mapp ng from Cand date -> F lterCand date, to rebu ld t   nputs qu ckly for t  next f lter
+   * @param executorResult: T   n-progress executor result
    */
-  private case class FilterState[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
+  pr vate case class F lterState[Query <: P pel neQuery, Cand date <: Un versalNoun[Any]](
     query: Query,
-    candidateToFeaturesMap: Map[Candidate, CandidateWithFeatures[Candidate]],
-    executorResult: FilterExecutorResult[Candidate])
+    cand dateToFeaturesMap: Map[Cand date, Cand dateW hFeatures[Cand date]],
+    executorResult: F lterExecutorResult[Cand date])
 }

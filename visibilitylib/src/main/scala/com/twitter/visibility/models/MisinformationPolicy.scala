@@ -1,179 +1,179 @@
-package com.twitter.visibility.models
+package com.tw ter.v s b l y.models
 
-import com.twitter.datatools.entityservice.entities.thriftscala.FleetInterstitial
-import com.twitter.datatools.entityservice.entities.{thriftscala => t}
-import com.twitter.escherbird.softintervention.thriftscala.MisinformationLocalizedPolicy
-import com.twitter.escherbird.thriftscala.TweetEntityAnnotation
+ mport com.tw ter.datatools.ent yserv ce.ent  es.thr ftscala.Fleet nterst  al
+ mport com.tw ter.datatools.ent yserv ce.ent  es.{thr ftscala => t}
+ mport com.tw ter.esc rb rd.soft ntervent on.thr ftscala.M s nformat onLocal zedPol cy
+ mport com.tw ter.esc rb rd.thr ftscala.T etEnt yAnnotat on
 
-case class MisinformationPolicy(
-  semanticCoreAnnotation: SemanticCoreAnnotation,
-  priority: Long = MisinformationPolicy.DefaultPriority,
-  filteringLevel: Int = MisinformationPolicy.DefaultFilteringLevel,
-  publishedState: PublishedState = MisinformationPolicy.DefaultPublishedState,
-  engagementNudge: Boolean = MisinformationPolicy.DefaultEngagementNudge,
-  suppressAutoplay: Boolean = MisinformationPolicy.DefaultSuppressAutoplay,
-  warning: Option[String] = None,
-  detailsUrl: Option[String] = None,
-  displayType: Option[MisinfoPolicyDisplayType] = None,
-  applicableCountries: Seq[String] = Seq.empty,
-  fleetInterstitial: Option[FleetInterstitial] = None)
+case class M s nformat onPol cy(
+  semant cCoreAnnotat on: Semant cCoreAnnotat on,
+  pr or y: Long = M s nformat onPol cy.DefaultPr or y,
+  f lter ngLevel:  nt = M s nformat onPol cy.DefaultF lter ngLevel,
+  publ s dState: Publ s dState = M s nformat onPol cy.DefaultPubl s dState,
+  engage ntNudge: Boolean = M s nformat onPol cy.DefaultEngage ntNudge,
+  suppressAutoplay: Boolean = M s nformat onPol cy.DefaultSuppressAutoplay,
+  warn ng: Opt on[Str ng] = None,
+  deta lsUrl: Opt on[Str ng] = None,
+  d splayType: Opt on[M s nfoPol cyD splayType] = None,
+  appl cableCountr es: Seq[Str ng] = Seq.empty,
+  fleet nterst  al: Opt on[Fleet nterst  al] = None)
 
-object MisinformationPolicy {
-  private val DefaultPriority = 0
-  private val DefaultFilteringLevel = 1
-  private val DefaultPublishedState = PublishedState.Published
-  private val DefaultEngagementNudge = true
-  private val DefaultSuppressAutoplay = true
+object M s nformat onPol cy {
+  pr vate val DefaultPr or y = 0
+  pr vate val DefaultF lter ngLevel = 1
+  pr vate val DefaultPubl s dState = Publ s dState.Publ s d
+  pr vate val DefaultEngage ntNudge = true
+  pr vate val DefaultSuppressAutoplay = true
 
   def apply(
-    annotation: TweetEntityAnnotation,
-    misinformation: MisinformationLocalizedPolicy
-  ): MisinformationPolicy = {
-    MisinformationPolicy(
-      semanticCoreAnnotation = SemanticCoreAnnotation(
-        groupId = annotation.groupId,
-        domainId = annotation.domainId,
-        entityId = annotation.entityId
+    annotat on: T etEnt yAnnotat on,
+    m s nformat on: M s nformat onLocal zedPol cy
+  ): M s nformat onPol cy = {
+    M s nformat onPol cy(
+      semant cCoreAnnotat on = Semant cCoreAnnotat on(
+        group d = annotat on.group d,
+        doma n d = annotat on.doma n d,
+        ent y d = annotat on.ent y d
       ),
-      priority = misinformation.priority.getOrElse(DefaultPriority),
-      filteringLevel = misinformation.filteringLevel.getOrElse(DefaultFilteringLevel),
-      publishedState = misinformation.publishedState match {
-        case Some(t.PublishedState.Draft) => PublishedState.Draft
-        case Some(t.PublishedState.Dogfood) => PublishedState.Dogfood
-        case Some(t.PublishedState.Published) => PublishedState.Published
-        case _ => DefaultPublishedState
+      pr or y = m s nformat on.pr or y.getOrElse(DefaultPr or y),
+      f lter ngLevel = m s nformat on.f lter ngLevel.getOrElse(DefaultF lter ngLevel),
+      publ s dState = m s nformat on.publ s dState match {
+        case So (t.Publ s dState.Draft) => Publ s dState.Draft
+        case So (t.Publ s dState.Dogfood) => Publ s dState.Dogfood
+        case So (t.Publ s dState.Publ s d) => Publ s dState.Publ s d
+        case _ => DefaultPubl s dState
       },
-      displayType = misinformation.displayType collect {
-        case t.MisinformationDisplayType.GetTheLatest => MisinfoPolicyDisplayType.GetTheLatest
-        case t.MisinformationDisplayType.StayInformed => MisinfoPolicyDisplayType.StayInformed
-        case t.MisinformationDisplayType.Misleading => MisinfoPolicyDisplayType.Misleading
-        case t.MisinformationDisplayType.GovernmentRequested =>
-          MisinfoPolicyDisplayType.GovernmentRequested
+      d splayType = m s nformat on.d splayType collect {
+        case t.M s nformat onD splayType.GetT Latest => M s nfoPol cyD splayType.GetT Latest
+        case t.M s nformat onD splayType.Stay nfor d => M s nfoPol cyD splayType.Stay nfor d
+        case t.M s nformat onD splayType.M slead ng => M s nfoPol cyD splayType.M slead ng
+        case t.M s nformat onD splayType.Govern ntRequested =>
+          M s nfoPol cyD splayType.Govern ntRequested
       },
-      applicableCountries = misinformation.applicableCountries match {
-        case Some(countries) => countries.map(countryCode => countryCode.toLowerCase)
+      appl cableCountr es = m s nformat on.appl cableCountr es match {
+        case So (countr es) => countr es.map(countryCode => countryCode.toLo rCase)
         case _ => Seq.empty
       },
-      fleetInterstitial = misinformation.fleetInterstitial,
-      engagementNudge = misinformation.engagementNudge.getOrElse(DefaultEngagementNudge),
-      suppressAutoplay = misinformation.suppressAutoplay.getOrElse(DefaultSuppressAutoplay),
-      warning = misinformation.warning,
-      detailsUrl = misinformation.detailsUrl,
+      fleet nterst  al = m s nformat on.fleet nterst  al,
+      engage ntNudge = m s nformat on.engage ntNudge.getOrElse(DefaultEngage ntNudge),
+      suppressAutoplay = m s nformat on.suppressAutoplay.getOrElse(DefaultSuppressAutoplay),
+      warn ng = m s nformat on.warn ng,
+      deta lsUrl = m s nformat on.deta lsUrl,
     )
   }
 }
 
-trait MisinformationPolicyTransform {
-  def apply(policies: Seq[MisinformationPolicy]): Seq[MisinformationPolicy]
-  def andThen(transform: MisinformationPolicyTransform): MisinformationPolicyTransform =
-    (policies: Seq[MisinformationPolicy]) => transform(this.apply(policies))
+tra  M s nformat onPol cyTransform {
+  def apply(pol c es: Seq[M s nformat onPol cy]): Seq[M s nformat onPol cy]
+  def andT n(transform: M s nformat onPol cyTransform): M s nformat onPol cyTransform =
+    (pol c es: Seq[M s nformat onPol cy]) => transform(t .apply(pol c es))
 }
 
-object MisinformationPolicyTransform {
+object M s nformat onPol cyTransform {
 
-  def prioritize: MisinformationPolicyTransform =
-    (policies: Seq[MisinformationPolicy]) =>
-      policies
-        .sortBy(p => p.filteringLevel)(Ordering[Int].reverse)
-        .sortBy(p => p.priority)(Ordering[Long].reverse)
+  def pr or  ze: M s nformat onPol cyTransform =
+    (pol c es: Seq[M s nformat onPol cy]) =>
+      pol c es
+        .sortBy(p => p.f lter ngLevel)(Order ng[ nt].reverse)
+        .sortBy(p => p.pr or y)(Order ng[Long].reverse)
 
-  def filter(filters: Seq[MisinformationPolicy => Boolean]): MisinformationPolicyTransform =
-    (policies: Seq[MisinformationPolicy]) =>
-      policies.filter { policy => filters.forall { filter => filter(policy) } }
+  def f lter(f lters: Seq[M s nformat onPol cy => Boolean]): M s nformat onPol cyTransform =
+    (pol c es: Seq[M s nformat onPol cy]) =>
+      pol c es.f lter { pol cy => f lters.forall { f lter => f lter(pol cy) } }
 
-  def filterLevelAndState(
-    filteringLevel: Int,
-    publishedStates: Seq[PublishedState]
-  ): MisinformationPolicyTransform =
-    filter(
+  def f lterLevelAndState(
+    f lter ngLevel:  nt,
+    publ s dStates: Seq[Publ s dState]
+  ): M s nformat onPol cyTransform =
+    f lter(
       Seq(
-        hasFilteringLevelAtLeast(filteringLevel),
-        hasPublishedStates(publishedStates)
+        hasF lter ngLevelAtLeast(f lter ngLevel),
+        hasPubl s dStates(publ s dStates)
       ))
 
-  def filterLevelAndStateAndLocalized(
-    filteringLevel: Int,
-    publishedStates: Seq[PublishedState]
-  ): MisinformationPolicyTransform =
-    filter(
+  def f lterLevelAndStateAndLocal zed(
+    f lter ngLevel:  nt,
+    publ s dStates: Seq[Publ s dState]
+  ): M s nformat onPol cyTransform =
+    f lter(
       Seq(
-        hasFilteringLevelAtLeast(filteringLevel),
-        hasPublishedStates(publishedStates),
-        hasNonEmptyLocalization,
+        hasF lter ngLevelAtLeast(f lter ngLevel),
+        hasPubl s dStates(publ s dStates),
+        hasNonEmptyLocal zat on,
       ))
 
-  def filterState(
-    publishedStates: Seq[PublishedState]
-  ): MisinformationPolicyTransform =
-    filter(
+  def f lterState(
+    publ s dStates: Seq[Publ s dState]
+  ): M s nformat onPol cyTransform =
+    f lter(
       Seq(
-        hasPublishedStates(publishedStates)
+        hasPubl s dStates(publ s dStates)
       ))
 
-  def filterStateAndLocalized(
-    publishedStates: Seq[PublishedState]
-  ): MisinformationPolicyTransform =
-    filter(
+  def f lterStateAndLocal zed(
+    publ s dStates: Seq[Publ s dState]
+  ): M s nformat onPol cyTransform =
+    f lter(
       Seq(
-        hasPublishedStates(publishedStates),
-        hasNonEmptyLocalization,
+        hasPubl s dStates(publ s dStates),
+        hasNonEmptyLocal zat on,
       ))
 
-  def filterApplicableCountries(
-    countryCode: Option[String],
-  ): MisinformationPolicyTransform =
-    filter(Seq(policyAppliesToCountry(countryCode)))
+  def f lterAppl cableCountr es(
+    countryCode: Opt on[Str ng],
+  ): M s nformat onPol cyTransform =
+    f lter(Seq(pol cyAppl esToCountry(countryCode)))
 
-  def filterOutGeoSpecific(): MisinformationPolicyTransform =
-    filter(Seq(policyIsGlobal()))
+  def f lterOutGeoSpec f c(): M s nformat onPol cyTransform =
+    f lter(Seq(pol cy sGlobal()))
 
-  def filterNonEngagementNudges(): MisinformationPolicyTransform =
-    filter(
+  def f lterNonEngage ntNudges(): M s nformat onPol cyTransform =
+    f lter(
       Seq(
-        hasEngagementNudge,
+        hasEngage ntNudge,
       ))
 
-  def policyAppliesToCountry(countryCode: Option[String]): MisinformationPolicy => Boolean =
-    policy =>
-      policy.applicableCountries.isEmpty ||
-        (countryCode.nonEmpty && policy.applicableCountries.contains(countryCode.get))
+  def pol cyAppl esToCountry(countryCode: Opt on[Str ng]): M s nformat onPol cy => Boolean =
+    pol cy =>
+      pol cy.appl cableCountr es. sEmpty ||
+        (countryCode.nonEmpty && pol cy.appl cableCountr es.conta ns(countryCode.get))
 
-  def policyIsGlobal(): MisinformationPolicy => Boolean =
-    policy => policy.applicableCountries.isEmpty
+  def pol cy sGlobal(): M s nformat onPol cy => Boolean =
+    pol cy => pol cy.appl cableCountr es. sEmpty
 
-  def hasFilteringLevelAtLeast(filteringLevel: Int): MisinformationPolicy => Boolean =
-    _.filteringLevel >= filteringLevel
+  def hasF lter ngLevelAtLeast(f lter ngLevel:  nt): M s nformat onPol cy => Boolean =
+    _.f lter ngLevel >= f lter ngLevel
 
-  def hasPublishedStates(
-    publishedStates: Seq[PublishedState]
-  ): MisinformationPolicy => Boolean =
-    policy => publishedStates.contains(policy.publishedState)
+  def hasPubl s dStates(
+    publ s dStates: Seq[Publ s dState]
+  ): M s nformat onPol cy => Boolean =
+    pol cy => publ s dStates.conta ns(pol cy.publ s dState)
 
-  def hasNonEmptyLocalization: MisinformationPolicy => Boolean =
-    policy => policy.warning.nonEmpty && policy.detailsUrl.nonEmpty
+  def hasNonEmptyLocal zat on: M s nformat onPol cy => Boolean =
+    pol cy => pol cy.warn ng.nonEmpty && pol cy.deta lsUrl.nonEmpty
 
-  def hasEngagementNudge: MisinformationPolicy => Boolean =
-    policy => policy.engagementNudge
+  def hasEngage ntNudge: M s nformat onPol cy => Boolean =
+    pol cy => pol cy.engage ntNudge
 
 }
 
-sealed trait PublishedState
-object PublishedState {
-  case object Draft extends PublishedState
-  case object Dogfood extends PublishedState
-  case object Published extends PublishedState
+sealed tra  Publ s dState
+object Publ s dState {
+  case object Draft extends Publ s dState
+  case object Dogfood extends Publ s dState
+  case object Publ s d extends Publ s dState
 
-  val PublicPublishedStates = Seq(PublishedState.Published)
-  val EmployeePublishedStates = Seq(PublishedState.Published, PublishedState.Dogfood)
+  val Publ cPubl s dStates = Seq(Publ s dState.Publ s d)
+  val EmployeePubl s dStates = Seq(Publ s dState.Publ s d, Publ s dState.Dogfood)
 }
-sealed trait MisinfoPolicyDisplayType
-object MisinfoPolicyDisplayType {
-  case object GetTheLatest extends MisinfoPolicyDisplayType
-  case object StayInformed extends MisinfoPolicyDisplayType
-  case object Misleading extends MisinfoPolicyDisplayType
-  case object GovernmentRequested extends MisinfoPolicyDisplayType
+sealed tra  M s nfoPol cyD splayType
+object M s nfoPol cyD splayType {
+  case object GetT Latest extends M s nfoPol cyD splayType
+  case object Stay nfor d extends M s nfoPol cyD splayType
+  case object M slead ng extends M s nfoPol cyD splayType
+  case object Govern ntRequested extends M s nfoPol cyD splayType
 }
 
-object SemanticCoreMisinformation {
-  val domainId: Long = 148L
+object Semant cCoreM s nformat on {
+  val doma n d: Long = 148L
 }

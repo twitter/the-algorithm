@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.component_library.candidate_source.social_graph
+package com.tw ter.product_m xer.component_l brary.cand date_s ce.soc al_graph
 
-object SocialgraphCursorConstants {
+object Soc algraphCursorConstants {
   val EndCursor: Long = 0L
   val StartCursor: Long = -1L
-  val LastSortIndex: Long = 0L
+  val LastSort ndex: Long = 0L
 }

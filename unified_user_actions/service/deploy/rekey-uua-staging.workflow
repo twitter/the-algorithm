@@ -1,39 +1,39 @@
 {
-  "role": "discode",
-  "name": "rekey-uua-staging",
-  "config-files": [
+  "role": "d scode",
+  "na ": "rekey-uua-stag ng",
+  "conf g-f les": [
     "rekey-uua.aurora"
   ],
-  "build": {
+  "bu ld": {
     "play": true,
-    "dependencies": [
+    "dependenc es": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "na ": "packer-cl ent-no-pex",
+        "vers on": "latest"
       }
     ],
     "steps": [
       {
         "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:rekey-uua"
+        "na ": "bundle",
+        "target": "un f ed_user_act ons/serv ce/src/ma n/scala:rekey-uua"
       },
       {
         "type": "packer",
-        "name": "rekey-uua-staging",
-        "artifact": "./dist/rekey-uua.zip"
+        "na ": "rekey-uua-stag ng",
+        "art fact": "./d st/rekey-uua.z p"
       }
     ]
   },
   "targets": [
     {
       "type": "group",
-      "name": "staging",
+      "na ": "stag ng",
       "targets": [
         {
-          "name": "rekey-uua-staging-pdxa",
-          "key": "pdxa/discode/staging/rekey-uua"
+          "na ": "rekey-uua-stag ng-pdxa",
+          "key": "pdxa/d scode/stag ng/rekey-uua"
         }
       ]
     }

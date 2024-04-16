@@ -1,176 +1,176 @@
-package com.twitter.visibility.builder.users
+package com.tw ter.v s b l y.bu lder.users
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.UserId
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.features._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.common.User d
+ mport com.tw ter.v s b l y.common.UserRelat onsh pS ce
+ mport com.tw ter.v s b l y.features._
 
-class RelationshipFeatures(
-  userRelationshipSource: UserRelationshipSource,
-  statsReceiver: StatsReceiver) {
+class Relat onsh pFeatures(
+  userRelat onsh pS ce: UserRelat onsh pS ce,
+  statsRece ver: StatsRece ver) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("relationship_features")
+  pr vate[t ] val scopedStatsRece ver = statsRece ver.scope("relat onsh p_features")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  pr vate[t ] val requests = scopedStatsRece ver.counter("requests")
 
-  private[this] val authorFollowsViewer =
-    scopedStatsReceiver.scope(AuthorFollowsViewer.name).counter("requests")
-  private[this] val viewerFollowsAuthor =
-    scopedStatsReceiver.scope(ViewerFollowsAuthor.name).counter("requests")
-  private[this] val authorBlocksViewer =
-    scopedStatsReceiver.scope(AuthorBlocksViewer.name).counter("requests")
-  private[this] val viewerBlocksAuthor =
-    scopedStatsReceiver.scope(ViewerBlocksAuthor.name).counter("requests")
-  private[this] val authorMutesViewer =
-    scopedStatsReceiver.scope(AuthorMutesViewer.name).counter("requests")
-  private[this] val viewerMutesAuthor =
-    scopedStatsReceiver.scope(ViewerMutesAuthor.name).counter("requests")
-  private[this] val authorHasReportedViewer =
-    scopedStatsReceiver.scope(AuthorReportsViewerAsSpam.name).counter("requests")
-  private[this] val viewerHasReportedAuthor =
-    scopedStatsReceiver.scope(ViewerReportsAuthorAsSpam.name).counter("requests")
-  private[this] val viewerMutesRetweetsFromAuthor =
-    scopedStatsReceiver.scope(ViewerMutesRetweetsFromAuthor.name).counter("requests")
+  pr vate[t ] val authorFollowsV e r =
+    scopedStatsRece ver.scope(AuthorFollowsV e r.na ).counter("requests")
+  pr vate[t ] val v e rFollowsAuthor =
+    scopedStatsRece ver.scope(V e rFollowsAuthor.na ).counter("requests")
+  pr vate[t ] val authorBlocksV e r =
+    scopedStatsRece ver.scope(AuthorBlocksV e r.na ).counter("requests")
+  pr vate[t ] val v e rBlocksAuthor =
+    scopedStatsRece ver.scope(V e rBlocksAuthor.na ).counter("requests")
+  pr vate[t ] val authorMutesV e r =
+    scopedStatsRece ver.scope(AuthorMutesV e r.na ).counter("requests")
+  pr vate[t ] val v e rMutesAuthor =
+    scopedStatsRece ver.scope(V e rMutesAuthor.na ).counter("requests")
+  pr vate[t ] val authorHasReportedV e r =
+    scopedStatsRece ver.scope(AuthorReportsV e rAsSpam.na ).counter("requests")
+  pr vate[t ] val v e rHasReportedAuthor =
+    scopedStatsRece ver.scope(V e rReportsAuthorAsSpam.na ).counter("requests")
+  pr vate[t ] val v e rMutesRet etsFromAuthor =
+    scopedStatsRece ver.scope(V e rMutesRet etsFromAuthor.na ).counter("requests")
 
-  def forAuthorId(
-    authorId: Long,
-    viewerId: Option[Long]
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
+  def forAuthor d(
+    author d: Long,
+    v e r d: Opt on[Long]
+  ): FeatureMapBu lder => FeatureMapBu lder = {
+    requests. ncr()
 
-    _.withFeature(AuthorFollowsViewer, authorFollowsViewer(authorId, viewerId))
-      .withFeature(ViewerFollowsAuthor, viewerFollowsAuthor(authorId, viewerId))
-      .withFeature(AuthorBlocksViewer, authorBlocksViewer(authorId, viewerId))
-      .withFeature(ViewerBlocksAuthor, viewerBlocksAuthor(authorId, viewerId))
-      .withFeature(AuthorMutesViewer, authorMutesViewer(authorId, viewerId))
-      .withFeature(ViewerMutesAuthor, viewerMutesAuthor(authorId, viewerId))
-      .withFeature(AuthorReportsViewerAsSpam, authorHasReportedViewer(authorId, viewerId))
-      .withFeature(ViewerReportsAuthorAsSpam, viewerHasReportedAuthor(authorId, viewerId))
-      .withFeature(ViewerMutesRetweetsFromAuthor, viewerMutesRetweetsFromAuthor(authorId, viewerId))
+    _.w hFeature(AuthorFollowsV e r, authorFollowsV e r(author d, v e r d))
+      .w hFeature(V e rFollowsAuthor, v e rFollowsAuthor(author d, v e r d))
+      .w hFeature(AuthorBlocksV e r, authorBlocksV e r(author d, v e r d))
+      .w hFeature(V e rBlocksAuthor, v e rBlocksAuthor(author d, v e r d))
+      .w hFeature(AuthorMutesV e r, authorMutesV e r(author d, v e r d))
+      .w hFeature(V e rMutesAuthor, v e rMutesAuthor(author d, v e r d))
+      .w hFeature(AuthorReportsV e rAsSpam, authorHasReportedV e r(author d, v e r d))
+      .w hFeature(V e rReportsAuthorAsSpam, v e rHasReportedAuthor(author d, v e r d))
+      .w hFeature(V e rMutesRet etsFromAuthor, v e rMutesRet etsFromAuthor(author d, v e r d))
   }
 
-  def forNoAuthor(): FeatureMapBuilder => FeatureMapBuilder = {
-    _.withConstantFeature(AuthorFollowsViewer, false)
-      .withConstantFeature(ViewerFollowsAuthor, false)
-      .withConstantFeature(AuthorBlocksViewer, false)
-      .withConstantFeature(ViewerBlocksAuthor, false)
-      .withConstantFeature(AuthorMutesViewer, false)
-      .withConstantFeature(ViewerMutesAuthor, false)
-      .withConstantFeature(AuthorReportsViewerAsSpam, false)
-      .withConstantFeature(ViewerReportsAuthorAsSpam, false)
-      .withConstantFeature(ViewerMutesRetweetsFromAuthor, false)
+  def forNoAuthor(): FeatureMapBu lder => FeatureMapBu lder = {
+    _.w hConstantFeature(AuthorFollowsV e r, false)
+      .w hConstantFeature(V e rFollowsAuthor, false)
+      .w hConstantFeature(AuthorBlocksV e r, false)
+      .w hConstantFeature(V e rBlocksAuthor, false)
+      .w hConstantFeature(AuthorMutesV e r, false)
+      .w hConstantFeature(V e rMutesAuthor, false)
+      .w hConstantFeature(AuthorReportsV e rAsSpam, false)
+      .w hConstantFeature(V e rReportsAuthorAsSpam, false)
+      .w hConstantFeature(V e rMutesRet etsFromAuthor, false)
   }
 
-  def forAuthor(author: User, viewerId: Option[Long]): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
+  def forAuthor(author: User, v e r d: Opt on[Long]): FeatureMapBu lder => FeatureMapBu lder = {
+    requests. ncr()
 
 
-    _.withFeature(AuthorFollowsViewer, authorFollowsViewer(author, viewerId))
-      .withFeature(ViewerFollowsAuthor, viewerFollowsAuthor(author, viewerId))
-      .withFeature(AuthorBlocksViewer, authorBlocksViewer(author, viewerId))
-      .withFeature(ViewerBlocksAuthor, viewerBlocksAuthor(author, viewerId))
-      .withFeature(AuthorMutesViewer, authorMutesViewer(author, viewerId))
-      .withFeature(ViewerMutesAuthor, viewerMutesAuthor(author, viewerId))
-      .withFeature(AuthorReportsViewerAsSpam, authorHasReportedViewer(author.id, viewerId))
-      .withFeature(ViewerReportsAuthorAsSpam, viewerHasReportedAuthor(author.id, viewerId))
-      .withFeature(ViewerMutesRetweetsFromAuthor, viewerMutesRetweetsFromAuthor(author, viewerId))
+    _.w hFeature(AuthorFollowsV e r, authorFollowsV e r(author, v e r d))
+      .w hFeature(V e rFollowsAuthor, v e rFollowsAuthor(author, v e r d))
+      .w hFeature(AuthorBlocksV e r, authorBlocksV e r(author, v e r d))
+      .w hFeature(V e rBlocksAuthor, v e rBlocksAuthor(author, v e r d))
+      .w hFeature(AuthorMutesV e r, authorMutesV e r(author, v e r d))
+      .w hFeature(V e rMutesAuthor, v e rMutesAuthor(author, v e r d))
+      .w hFeature(AuthorReportsV e rAsSpam, authorHasReportedV e r(author. d, v e r d))
+      .w hFeature(V e rReportsAuthorAsSpam, v e rHasReportedAuthor(author. d, v e r d))
+      .w hFeature(V e rMutesRet etsFromAuthor, v e rMutesRet etsFromAuthor(author, v e r d))
   }
 
-  def viewerFollowsAuthor(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(authorId, viewerId, userRelationshipSource.follows, viewerFollowsAuthor)
+  def v e rFollowsAuthor(author d: User d, v e r d: Opt on[User d]): St ch[Boolean] =
+    V e rVerbsAuthor(author d, v e r d, userRelat onsh pS ce.follows, v e rFollowsAuthor)
 
-  def viewerFollowsAuthor(author: User, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
+  def v e rFollowsAuthor(author: User, v e r d: Opt on[User d]): St ch[Boolean] =
+    V e rVerbsAuthor(
       author,
-      viewerId,
-      p => p.following,
-      userRelationshipSource.follows,
-      viewerFollowsAuthor)
+      v e r d,
+      p => p.follow ng,
+      userRelat onsh pS ce.follows,
+      v e rFollowsAuthor)
 
-  def authorFollowsViewer(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    AuthorVerbsViewer(authorId, viewerId, userRelationshipSource.follows, authorFollowsViewer)
+  def authorFollowsV e r(author d: User d, v e r d: Opt on[User d]): St ch[Boolean] =
+    AuthorVerbsV e r(author d, v e r d, userRelat onsh pS ce.follows, authorFollowsV e r)
 
-  def authorFollowsViewer(author: User, viewerId: Option[UserId]): Stitch[Boolean] =
-    AuthorVerbsViewer(
+  def authorFollowsV e r(author: User, v e r d: Opt on[User d]): St ch[Boolean] =
+    AuthorVerbsV e r(
       author,
-      viewerId,
-      p => p.followedBy,
-      userRelationshipSource.follows,
-      authorFollowsViewer)
+      v e r d,
+      p => p.follo dBy,
+      userRelat onsh pS ce.follows,
+      authorFollowsV e r)
 
-  def viewerBlocksAuthor(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(authorId, viewerId, userRelationshipSource.blocks, viewerBlocksAuthor)
+  def v e rBlocksAuthor(author d: User d, v e r d: Opt on[User d]): St ch[Boolean] =
+    V e rVerbsAuthor(author d, v e r d, userRelat onsh pS ce.blocks, v e rBlocksAuthor)
 
-  def viewerBlocksAuthor(author: User, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
+  def v e rBlocksAuthor(author: User, v e r d: Opt on[User d]): St ch[Boolean] =
+    V e rVerbsAuthor(
       author,
-      viewerId,
-      p => p.blocking,
-      userRelationshipSource.blocks,
-      viewerBlocksAuthor)
+      v e r d,
+      p => p.block ng,
+      userRelat onsh pS ce.blocks,
+      v e rBlocksAuthor)
 
-  def authorBlocksViewer(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(authorId, viewerId, userRelationshipSource.blockedBy, authorBlocksViewer)
+  def authorBlocksV e r(author d: User d, v e r d: Opt on[User d]): St ch[Boolean] =
+    V e rVerbsAuthor(author d, v e r d, userRelat onsh pS ce.blockedBy, authorBlocksV e r)
 
-  def authorBlocksViewer(author: User, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
+  def authorBlocksV e r(author: User, v e r d: Opt on[User d]): St ch[Boolean] =
+    V e rVerbsAuthor(
       author,
-      viewerId,
+      v e r d,
       p => p.blockedBy,
-      userRelationshipSource.blockedBy,
-      authorBlocksViewer)
+      userRelat onsh pS ce.blockedBy,
+      authorBlocksV e r)
 
-  def viewerMutesAuthor(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(authorId, viewerId, userRelationshipSource.mutes, viewerMutesAuthor)
+  def v e rMutesAuthor(author d: User d, v e r d: Opt on[User d]): St ch[Boolean] =
+    V e rVerbsAuthor(author d, v e r d, userRelat onsh pS ce.mutes, v e rMutesAuthor)
 
-  def viewerMutesAuthor(author: User, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
+  def v e rMutesAuthor(author: User, v e r d: Opt on[User d]): St ch[Boolean] =
+    V e rVerbsAuthor(
       author,
-      viewerId,
-      p => p.muting,
-      userRelationshipSource.mutes,
-      viewerMutesAuthor)
+      v e r d,
+      p => p.mut ng,
+      userRelat onsh pS ce.mutes,
+      v e rMutesAuthor)
 
-  def authorMutesViewer(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(authorId, viewerId, userRelationshipSource.mutedBy, authorMutesViewer)
+  def authorMutesV e r(author d: User d, v e r d: Opt on[User d]): St ch[Boolean] =
+    V e rVerbsAuthor(author d, v e r d, userRelat onsh pS ce.mutedBy, authorMutesV e r)
 
-  def authorMutesViewer(author: User, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
+  def authorMutesV e r(author: User, v e r d: Opt on[User d]): St ch[Boolean] =
+    V e rVerbsAuthor(
       author,
-      viewerId,
+      v e r d,
       p => p.mutedBy,
-      userRelationshipSource.mutedBy,
-      authorMutesViewer)
+      userRelat onsh pS ce.mutedBy,
+      authorMutesV e r)
 
-  def viewerHasReportedAuthor(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
-      authorId,
-      viewerId,
-      userRelationshipSource.reportsAsSpam,
-      viewerHasReportedAuthor)
+  def v e rHasReportedAuthor(author d: User d, v e r d: Opt on[User d]): St ch[Boolean] =
+    V e rVerbsAuthor(
+      author d,
+      v e r d,
+      userRelat onsh pS ce.reportsAsSpam,
+      v e rHasReportedAuthor)
 
-  def authorHasReportedViewer(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
-      authorId,
-      viewerId,
-      userRelationshipSource.reportedAsSpamBy,
-      authorHasReportedViewer)
+  def authorHasReportedV e r(author d: User d, v e r d: Opt on[User d]): St ch[Boolean] =
+    V e rVerbsAuthor(
+      author d,
+      v e r d,
+      userRelat onsh pS ce.reportedAsSpamBy,
+      authorHasReportedV e r)
 
-  def viewerMutesRetweetsFromAuthor(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
-      authorId,
-      viewerId,
-      userRelationshipSource.noRetweetsFrom,
-      viewerMutesRetweetsFromAuthor)
+  def v e rMutesRet etsFromAuthor(author d: User d, v e r d: Opt on[User d]): St ch[Boolean] =
+    V e rVerbsAuthor(
+      author d,
+      v e r d,
+      userRelat onsh pS ce.noRet etsFrom,
+      v e rMutesRet etsFromAuthor)
 
-  def viewerMutesRetweetsFromAuthor(author: User, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
+  def v e rMutesRet etsFromAuthor(author: User, v e r d: Opt on[User d]): St ch[Boolean] =
+    V e rVerbsAuthor(
       author,
-      viewerId,
-      p => p.noRetweetsFrom,
-      userRelationshipSource.noRetweetsFrom,
-      viewerMutesRetweetsFromAuthor)
+      v e r d,
+      p => p.noRet etsFrom,
+      userRelat onsh pS ce.noRet etsFrom,
+      v e rMutesRet etsFromAuthor)
 }

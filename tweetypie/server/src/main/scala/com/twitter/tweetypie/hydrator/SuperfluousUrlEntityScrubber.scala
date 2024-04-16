@@ -1,37 +1,37 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.t etyp e.thr ftscala._
 
 /**
- * Removes superfluous urls entities when there is a corresponding MediaEntity for the same
+ * Removes superfluous urls ent  es w n t re  s a correspond ng  d aEnt y for t  sa 
  * url.
  */
-object SuperfluousUrlEntityScrubber {
-  case class RawEntity(fromIndex: Short, toIndex: Short, url: String)
+object SuperfluousUrlEnt yScrubber {
+  case class RawEnt y(from ndex: Short, to ndex: Short, url: Str ng)
 
-  object RawEntity {
-    def from(e: UrlEntity): RawEntity = RawEntity(e.fromIndex, e.toIndex, e.url)
-    def fromUrls(es: Seq[UrlEntity]): Set[RawEntity] = es.map(from(_)).toSet
-    def from(e: MediaEntity): RawEntity = RawEntity(e.fromIndex, e.toIndex, e.url)
-    def fromMedia(es: Seq[MediaEntity]): Set[RawEntity] = es.map(from(_)).toSet
+  object RawEnt y {
+    def from(e: UrlEnt y): RawEnt y = RawEnt y(e.from ndex, e.to ndex, e.url)
+    def fromUrls(es: Seq[UrlEnt y]): Set[RawEnt y] = es.map(from(_)).toSet
+    def from(e:  d aEnt y): RawEnt y = RawEnt y(e.from ndex, e.to ndex, e.url)
+    def from d a(es: Seq[ d aEnt y]): Set[RawEnt y] = es.map(from(_)).toSet
   }
 
-  val mutation: Mutation[Tweet] =
-    Mutation[Tweet] { tweet =>
-      val mediaEntities = getMedia(tweet)
-      val urlEntities = getUrls(tweet)
+  val mutat on: Mutat on[T et] =
+    Mutat on[T et] { t et =>
+      val  d aEnt  es = get d a(t et)
+      val urlEnt  es = getUrls(t et)
 
-      if (mediaEntities.isEmpty || urlEntities.isEmpty) {
+       f ( d aEnt  es. sEmpty || urlEnt  es. sEmpty) {
         None
       } else {
-        val mediaUrls = mediaEntities.map(RawEntity.from(_)).toSet
-        val scrubbedUrls = urlEntities.filterNot(e => mediaUrls.contains(RawEntity.from(e)))
+        val  d aUrls =  d aEnt  es.map(RawEnt y.from(_)).toSet
+        val scrubbedUrls = urlEnt  es.f lterNot(e =>  d aUrls.conta ns(RawEnt y.from(e)))
 
-        if (scrubbedUrls.size == urlEntities.size)
+         f (scrubbedUrls.s ze == urlEnt  es.s ze)
           None
         else
-          Some(TweetLenses.urls.set(tweet, scrubbedUrls))
+          So (T etLenses.urls.set(t et, scrubbedUrls))
       }
     }
 }

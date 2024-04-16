@@ -1,68 +1,68 @@
-package com.twitter.servo.util
+package com.tw ter.servo.ut l
 
-import com.twitter.logging.{Level, Logger}
-import com.twitter.util.{Duration, Time}
-import com.twitter.conversions.DurationOps._
-import java.util.concurrent.atomic.AtomicLong
+ mport com.tw ter.logg ng.{Level, Logger}
+ mport com.tw ter.ut l.{Durat on, T  }
+ mport com.tw ter.convers ons.Durat onOps._
+ mport java.ut l.concurrent.atom c.Atom cLong
 
-object RateLimitingLogger {
-  private[util] val DefaultLoggerName = "servo"
-  private[util] val DefaultLogInterval = 500.milliseconds
+object RateL m  ngLogger {
+  pr vate[ut l] val DefaultLoggerNa  = "servo"
+  pr vate[ut l] val DefaultLog nterval = 500.m ll seconds
 }
 
 /**
- * Class that makes it easier to rate-limit log messages, either by call site, or by
- * logical grouping of messages.
- * @param interval the interval in which messages should be rate limited
- * @param logger the logger to use
+ * Class that makes   eas er to rate-l m  log  ssages, e  r by call s e, or by
+ * log cal group ng of  ssages.
+ * @param  nterval t   nterval  n wh ch  ssages should be rate l m ed
+ * @param logger t  logger to use
  */
-class RateLimitingLogger(
-  interval: Duration = RateLimitingLogger.DefaultLogInterval,
-  logger: Logger = Logger(RateLimitingLogger.DefaultLoggerName)) {
-  private[this] val last: AtomicLong = new AtomicLong(0L)
-  private[this] val sinceLast: AtomicLong = new AtomicLong(0L)
+class RateL m  ngLogger(
+   nterval: Durat on = RateL m  ngLogger.DefaultLog nterval,
+  logger: Logger = Logger(RateL m  ngLogger.DefaultLoggerNa )) {
+  pr vate[t ] val last: Atom cLong = new Atom cLong(0L)
+  pr vate[t ] val s nceLast: Atom cLong = new Atom cLong(0L)
 
-  private[this] val intervalNanos = interval.inNanoseconds
-  private[this] val intervalMsString = interval.inMilliseconds.toString
+  pr vate[t ] val  ntervalNanos =  nterval. nNanoseconds
+  pr vate[t ] val  ntervalMsStr ng =  nterval. nM ll seconds.toStr ng
 
-  private[this] def limited(action: Long => Unit): Unit = {
-    val now = Time.now.inNanoseconds
+  pr vate[t ] def l m ed(act on: Long => Un ): Un  = {
+    val now = T  .now. nNanoseconds
     val lastNanos = last.get()
-    if (now - lastNanos > intervalNanos) {
-      if (last.compareAndSet(lastNanos, now)) {
-        val currentSinceLast = sinceLast.getAndSet(0L)
-        action(currentSinceLast)
+     f (now - lastNanos >  ntervalNanos) {
+       f (last.compareAndSet(lastNanos, now)) {
+        val currentS nceLast = s nceLast.getAndSet(0L)
+        act on(currentS nceLast)
       }
     } else {
-      sinceLast.incrementAndGet()
+      s nceLast. ncre ntAndGet()
     }
   }
 
-  def log(msg: => String, level: Level = Level.ERROR): Unit = {
-    limited { currentSinceLast: Long =>
+  def log(msg: => Str ng, level: Level = Level.ERROR): Un  = {
+    l m ed { currentS nceLast: Long =>
       logger(
         level,
-        "%s (group is logged at most once every %s ms%s)".format(
+        "%s (group  s logged at most once every %s ms%s)".format(
           msg,
-          intervalMsString,
-          if (currentSinceLast > 0) {
-            s", ${currentSinceLast} occurrences since last"
+           ntervalMsStr ng,
+           f (currentS nceLast > 0) {
+            s", ${currentS nceLast} occurrences s nce last"
           } else ""
         )
       )
     }
   }
 
-  def logThrowable(t: Throwable, msg: => String, level: Level = Level.ERROR): Unit = {
-    limited { currentSinceLast: Long =>
+  def logThrowable(t: Throwable, msg: => Str ng, level: Level = Level.ERROR): Un  = {
+    l m ed { currentS nceLast: Long =>
       logger(
         level,
         t,
-        "%s (group is logged at most once every %s ms%s)".format(
+        "%s (group  s logged at most once every %s ms%s)".format(
           msg,
-          intervalMsString,
-          if (currentSinceLast > 0) {
-            s", ${currentSinceLast} occurrences since last"
+           ntervalMsStr ng,
+           f (currentS nceLast > 0) {
+            s", ${currentS nceLast} occurrences s nce last"
           } else ""
         )
       )

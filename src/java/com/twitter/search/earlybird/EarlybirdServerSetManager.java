@@ -1,275 +1,275 @@
-package com.twitter.search.earlybird;
+package com.tw ter.search.earlyb rd;
 
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.util.concurrent.atomic.AtomicLong;
+ mport java.net. netAddress;
+ mport java.net. netSocketAddress;
+ mport java.ut l.concurrent.atom c.Atom cLong;
 
-import javax.annotation.concurrent.GuardedBy;
+ mport javax.annotat on.concurrent.GuardedBy;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect. mmutableMap;
+ mport com.google.common.collect.Maps;
 
-import org.apache.zookeeper.KeeperException;
-import org.apache.zookeeper.Watcher;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .zookeeper.KeeperExcept on;
+ mport org.apac .zookeeper.Watc r;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.zookeeper.ServerSet;
-import com.twitter.common.zookeeper.ZooKeeperClient;
-import com.twitter.common_internal.zookeeper.TwitterServerSet;
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.util.zookeeper.ZooKeeperProxy;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.config.TierConfig;
-import com.twitter.search.earlybird.exception.AlreadyInServerSetUpdateException;
-import com.twitter.search.earlybird.exception.NotInServerSetUpdateException;
-import com.twitter.search.earlybird.partition.PartitionConfig;
+ mport com.tw ter.common.zookeeper.ServerSet;
+ mport com.tw ter.common.zookeeper.ZooKeeperCl ent;
+ mport com.tw ter.common_ nternal.zookeeper.Tw terServerSet;
+ mport com.tw ter.search.common.conf g.Conf g;
+ mport com.tw ter.search.common.database.DatabaseConf g;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
+ mport com.tw ter.search.common. tr cs.SearchStatsRece ver;
+ mport com.tw ter.search.common.ut l.zookeeper.ZooKeeperProxy;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdProperty;
+ mport com.tw ter.search.earlyb rd.conf g.T erConf g;
+ mport com.tw ter.search.earlyb rd.except on.Already nServerSetUpdateExcept on;
+ mport com.tw ter.search.earlyb rd.except on.Not nServerSetUpdateExcept on;
+ mport com.tw ter.search.earlyb rd.part  on.Part  onConf g;
 
-public class EarlybirdServerSetManager implements ServerSetMember {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdServerSetManager.class);
+publ c class Earlyb rdServerSetManager  mple nts ServerSet mber {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rdServerSetManager.class);
 
-  // How many times this earlybird joined/left its partition's server set
-  @VisibleForTesting
-  protected final SearchCounter leaveServerSetCounter;
-  @VisibleForTesting
-  protected final SearchCounter joinServerSetCounter;
-  private final ZooKeeperProxy discoveryZKClient;
-  private final SearchLongGauge inServerSetGauge;
-  private final PartitionConfig partitionConfig;
-  private final int port;
-  private final String serverSetNamePrefix;
+  // How many t  s t  earlyb rd jo ned/left  s part  on's server set
+  @V s bleForTest ng
+  protected f nal SearchCounter leaveServerSetCounter;
+  @V s bleForTest ng
+  protected f nal SearchCounter jo nServerSetCounter;
+  pr vate f nal ZooKeeperProxy d scoveryZKCl ent;
+  pr vate f nal SearchLongGauge  nServerSetGauge;
+  pr vate f nal Part  onConf g part  onConf g;
+  pr vate f nal  nt port;
+  pr vate f nal Str ng serverSetNa Pref x;
 
-  @VisibleForTesting
-  protected final SearchLongGauge connectedToZooKeeper;
+  @V s bleForTest ng
+  protected f nal SearchLongGauge connectedToZooKeeper;
 
-  private final Object endpointStatusLock = new Object();
-  @GuardedBy("endpointStatusLock")
-  private ServerSet.EndpointStatus endpointStatus = null;
+  pr vate f nal Object endpo ntStatusLock = new Object();
+  @GuardedBy("endpo ntStatusLock")
+  pr vate ServerSet.Endpo ntStatus endpo ntStatus = null;
 
-  private boolean inServerSetForServiceProxy = false;
+  pr vate boolean  nServerSetForServ ceProxy = false;
 
-  public EarlybirdServerSetManager(
-      SearchStatsReceiver searchStatsReceiver,
-      ZooKeeperProxy discoveryZKClient,
-      final PartitionConfig partitionConfig,
-      int port,
-      String serverSetNamePrefix) {
-    this.discoveryZKClient = discoveryZKClient;
-    this.partitionConfig = partitionConfig;
-    this.port = port;
-    this.serverSetNamePrefix = serverSetNamePrefix;
+  publ c Earlyb rdServerSetManager(
+      SearchStatsRece ver searchStatsRece ver,
+      ZooKeeperProxy d scoveryZKCl ent,
+      f nal Part  onConf g part  onConf g,
+       nt port,
+      Str ng serverSetNa Pref x) {
+    t .d scoveryZKCl ent = d scoveryZKCl ent;
+    t .part  onConf g = part  onConf g;
+    t .port = port;
+    t .serverSetNa Pref x = serverSetNa Pref x;
 
     // Export serverset related stats
-    Preconditions.checkNotNull(searchStatsReceiver);
-    this.joinServerSetCounter = searchStatsReceiver.getCounter(
-        serverSetNamePrefix + "join_server_set_count");
-    this.leaveServerSetCounter = searchStatsReceiver.getCounter(
-        serverSetNamePrefix + "leave_server_set_count");
+    Precond  ons.c ckNotNull(searchStatsRece ver);
+    t .jo nServerSetCounter = searchStatsRece ver.getCounter(
+        serverSetNa Pref x + "jo n_server_set_count");
+    t .leaveServerSetCounter = searchStatsRece ver.getCounter(
+        serverSetNa Pref x + "leave_server_set_count");
 
-    // Create a new stat based on the partition number for hosts-in-partition aggregation.
-    // The value of the stat is dependent on whether the server is in the serverset so that the
-    // aggregate stat reflects the number serving traffic instead of the live process count.
-    AtomicLong sharedInServerSetStatus = new AtomicLong();
-    this.inServerSetGauge = searchStatsReceiver.getLongGauge(
-        serverSetNamePrefix + "is_in_server_set", sharedInServerSetStatus);
-    this.connectedToZooKeeper = searchStatsReceiver.getLongGauge(
-        serverSetNamePrefix + "connected_to_zookeeper");
+    // Create a new stat based on t  part  on number for hosts- n-part  on aggregat on.
+    // T  value of t  stat  s dependent on w t r t  server  s  n t  serverset so that t 
+    // aggregate stat reflects t  number serv ng traff c  nstead of t  l ve process count.
+    Atom cLong shared nServerSetStatus = new Atom cLong();
+    t . nServerSetGauge = searchStatsRece ver.getLongGauge(
+        serverSetNa Pref x + " s_ n_server_set", shared nServerSetStatus);
+    t .connectedToZooKeeper = searchStatsRece ver.getLongGauge(
+        serverSetNa Pref x + "connected_to_zookeeper");
 
-    searchStatsReceiver.getLongGauge(
-        serverSetNamePrefix + "member_of_partition_" + partitionConfig.getIndexingHashPartitionID(),
-        sharedInServerSetStatus);
+    searchStatsRece ver.getLongGauge(
+        serverSetNa Pref x + " mber_of_part  on_" + part  onConf g.get ndex ngHashPart  on D(),
+        shared nServerSetStatus);
 
-    this.discoveryZKClient.registerExpirationHandler(() -> connectedToZooKeeper.set(0));
+    t .d scoveryZKCl ent.reg sterExp rat onHandler(() -> connectedToZooKeeper.set(0));
 
-    this.discoveryZKClient.register(event -> {
-      if (event.getType() == Watcher.Event.EventType.None
-          && event.getState() == Watcher.Event.KeeperState.SyncConnected) {
+    t .d scoveryZKCl ent.reg ster(event -> {
+       f (event.getType() == Watc r.Event.EventType.None
+          && event.getState() == Watc r.Event.KeeperState.SyncConnected) {
         connectedToZooKeeper.set(1);
       }
     });
   }
 
   /**
-   * Join ServerSet and update endpointStatus.
-   * This will allow Earlybird consumers, e.g. Blender, to detect when an
-   * Earlybird goes online and offline.
-   * @param username
+   * Jo n ServerSet and update endpo ntStatus.
+   * T  w ll allow Earlyb rd consu rs, e.g. Blender, to detect w n an
+   * Earlyb rd goes onl ne and offl ne.
+   * @param userna 
    */
-  @Override
-  public void joinServerSet(String username) throws ServerSet.UpdateException {
-    joinServerSetCounter.increment();
+  @Overr de
+  publ c vo d jo nServerSet(Str ng userna ) throws ServerSet.UpdateExcept on {
+    jo nServerSetCounter. ncre nt();
 
-    synchronized (endpointStatusLock) {
-      LOG.info("Joining {} ServerSet (instructed by: {}) ...", serverSetNamePrefix, username);
-      if (endpointStatus != null) {
-        LOG.warn("Already in ServerSet. Nothing done.");
-        throw new AlreadyInServerSetUpdateException("Already in ServerSet. Nothing done.");
+    synchron zed (endpo ntStatusLock) {
+      LOG. nfo("Jo n ng {} ServerSet ( nstructed by: {}) ...", serverSetNa Pref x, userna );
+       f (endpo ntStatus != null) {
+        LOG.warn("Already  n ServerSet. Noth ng done.");
+        throw new Already nServerSetUpdateExcept on("Already  n ServerSet. Noth ng done.");
       }
 
       try {
-        TwitterServerSet.Service service = getServerSetService();
+        Tw terServerSet.Serv ce serv ce = getServerSetServ ce();
 
-        ServerSet serverSet = discoveryZKClient.createServerSet(service);
-        endpointStatus = serverSet.join(
-            new InetSocketAddress(InetAddress.getLocalHost().getHostName(), port),
+        ServerSet serverSet = d scoveryZKCl ent.createServerSet(serv ce);
+        endpo ntStatus = serverSet.jo n(
+            new  netSocketAddress( netAddress.getLocalHost().getHostNa (), port),
             Maps.newHashMap(),
-            partitionConfig.getHostPositionWithinHashPartition());
+            part  onConf g.getHostPos  onW h nHashPart  on());
 
-        inServerSetGauge.set(1);
+         nServerSetGauge.set(1);
 
-        String path = service.getPath();
-        EarlybirdStatus.recordEarlybirdEvent("Joined " + serverSetNamePrefix + " ServerSet " + path
-                                             + " (instructed by: " + username + ")");
-        LOG.info("Successfully joined {} ServerSet {} (instructed by: {})",
-                 serverSetNamePrefix, path, username);
-      } catch (Exception e) {
-        endpointStatus = null;
-        String message = "Failed to join " + serverSetNamePrefix + " ServerSet of partition "
-            + partitionConfig.getIndexingHashPartitionID();
-        LOG.error(message, e);
-        throw new ServerSet.UpdateException(message, e);
+        Str ng path = serv ce.getPath();
+        Earlyb rdStatus.recordEarlyb rdEvent("Jo ned " + serverSetNa Pref x + " ServerSet " + path
+                                             + " ( nstructed by: " + userna  + ")");
+        LOG. nfo("Successfully jo ned {} ServerSet {} ( nstructed by: {})",
+                 serverSetNa Pref x, path, userna );
+      } catch (Except on e) {
+        endpo ntStatus = null;
+        Str ng  ssage = "Fa led to jo n " + serverSetNa Pref x + " ServerSet of part  on "
+            + part  onConf g.get ndex ngHashPart  on D();
+        LOG.error( ssage, e);
+        throw new ServerSet.UpdateExcept on( ssage, e);
       }
     }
   }
 
   /**
-   * Takes this Earlybird out of its registered ServerSet.
+   * Takes t  Earlyb rd out of  s reg stered ServerSet.
    *
-   * @throws ServerSet.UpdateException if there was a problem leaving the ServerSet,
-   * or if this Earlybird is already not in a ServerSet.
-   * @param username
+   * @throws ServerSet.UpdateExcept on  f t re was a problem leav ng t  ServerSet,
+   * or  f t  Earlyb rd  s already not  n a ServerSet.
+   * @param userna 
    */
-  @Override
-  public void leaveServerSet(String username) throws ServerSet.UpdateException {
-    leaveServerSetCounter.increment();
-    synchronized (endpointStatusLock) {
-      LOG.info("Leaving {} ServerSet (instructed by: {}) ...", serverSetNamePrefix, username);
-      if (endpointStatus == null) {
-        String message = "Not in a ServerSet. Nothing done.";
-        LOG.warn(message);
-        throw new NotInServerSetUpdateException(message);
+  @Overr de
+  publ c vo d leaveServerSet(Str ng userna ) throws ServerSet.UpdateExcept on {
+    leaveServerSetCounter. ncre nt();
+    synchron zed (endpo ntStatusLock) {
+      LOG. nfo("Leav ng {} ServerSet ( nstructed by: {}) ...", serverSetNa Pref x, userna );
+       f (endpo ntStatus == null) {
+        Str ng  ssage = "Not  n a ServerSet. Noth ng done.";
+        LOG.warn( ssage);
+        throw new Not nServerSetUpdateExcept on( ssage);
       }
 
-      endpointStatus.leave();
-      endpointStatus = null;
-      inServerSetGauge.set(0);
-      EarlybirdStatus.recordEarlybirdEvent("Left " + serverSetNamePrefix
-                                           + " ServerSet (instructed by: " + username + ")");
-      LOG.info("Successfully left {} ServerSet. (instructed by: {})",
-               serverSetNamePrefix, username);
+      endpo ntStatus.leave();
+      endpo ntStatus = null;
+       nServerSetGauge.set(0);
+      Earlyb rdStatus.recordEarlyb rdEvent("Left " + serverSetNa Pref x
+                                           + " ServerSet ( nstructed by: " + userna  + ")");
+      LOG. nfo("Successfully left {} ServerSet. ( nstructed by: {})",
+               serverSetNa Pref x, userna );
     }
   }
 
-  @Override
-  public int getNumberOfServerSetMembers()
-      throws InterruptedException, ZooKeeperClient.ZooKeeperConnectionException, KeeperException {
-    String path = getServerSetService().getPath();
-    return discoveryZKClient.getNumberOfServerSetMembers(path);
+  @Overr de
+  publ c  nt getNumberOfServerSet mbers()
+      throws  nterruptedExcept on, ZooKeeperCl ent.ZooKeeperConnect onExcept on, KeeperExcept on {
+    Str ng path = getServerSetServ ce().getPath();
+    return d scoveryZKCl ent.getNumberOfServerSet mbers(path);
   }
 
   /**
-   * Determines if this earlybird is in the server set.
+   * Determ nes  f t  earlyb rd  s  n t  server set.
    */
-  @Override
-  public boolean isInServerSet() {
-    synchronized (endpointStatusLock) {
-      return endpointStatus != null;
+  @Overr de
+  publ c boolean  s nServerSet() {
+    synchron zed (endpo ntStatusLock) {
+      return endpo ntStatus != null;
     }
   }
 
   /**
-   * Returns the server set that this earlybird should join.
+   * Returns t  server set that t  earlyb rd should jo n.
    */
-  public String getServerSetIdentifier() {
-    TwitterServerSet.Service service = getServerSetService();
-    return String.format("/cluster/local/%s/%s/%s",
-                         service.getRole(),
-                         service.getEnv(),
-                         service.getName());
+  publ c Str ng getServerSet dent f er() {
+    Tw terServerSet.Serv ce serv ce = getServerSetServ ce();
+    return Str ng.format("/cluster/local/%s/%s/%s",
+                         serv ce.getRole(),
+                         serv ce.getEnv(),
+                         serv ce.getNa ());
   }
 
-  private TwitterServerSet.Service getServerSetService() {
-    // If the tier name is 'all' then it treat it as an untiered EB cluster
-    // and do not add the tier component into the ZK path it registers under.
-    String tierZKPathComponent = "";
-    if (!TierConfig.DEFAULT_TIER_NAME.equalsIgnoreCase(partitionConfig.getTierName())) {
-      tierZKPathComponent = "/" + partitionConfig.getTierName();
+  pr vate Tw terServerSet.Serv ce getServerSetServ ce() {
+    //  f t  t er na   s 'all' t n   treat   as an unt ered EB cluster
+    // and do not add t  t er component  nto t  ZK path   reg sters under.
+    Str ng t erZKPathComponent = "";
+     f (!T erConf g.DEFAULT_T ER_NAME.equals gnoreCase(part  onConf g.getT erNa ())) {
+      t erZKPathComponent = "/" + part  onConf g.getT erNa ();
     }
-    if (EarlybirdConfig.isAurora()) {
-      // ROLE, EARYLBIRD_NAME, and ENV properties are required on Aurora, thus will be set here
-      return new TwitterServerSet.Service(
-          EarlybirdProperty.ROLE.get(),
-          EarlybirdProperty.ENV.get(),
-          getServerSetPath(EarlybirdProperty.EARLYBIRD_NAME.get() + tierZKPathComponent));
+     f (Earlyb rdConf g. sAurora()) {
+      // ROLE, EARYLB RD_NAME, and ENV propert es are requ red on Aurora, thus w ll be set  re
+      return new Tw terServerSet.Serv ce(
+          Earlyb rdProperty.ROLE.get(),
+          Earlyb rdProperty.ENV.get(),
+          getServerSetPath(Earlyb rdProperty.EARLYB RD_NAME.get() + t erZKPathComponent));
     } else {
-      return new TwitterServerSet.Service(
-          DatabaseConfig.getZooKeeperRole(),
-          Config.getEnvironment(),
-          getServerSetPath("earlybird" + tierZKPathComponent));
+      return new Tw terServerSet.Serv ce(
+          DatabaseConf g.getZooKeeperRole(),
+          Conf g.getEnv ron nt(),
+          getServerSetPath("earlyb rd" + t erZKPathComponent));
     }
   }
 
-  private String getServerSetPath(String earlybirdName) {
-    return String.format("%s%s/hash_partition_%d", serverSetNamePrefix, earlybirdName,
-        partitionConfig.getIndexingHashPartitionID());
+  pr vate Str ng getServerSetPath(Str ng earlyb rdNa ) {
+    return Str ng.format("%s%s/hash_part  on_%d", serverSetNa Pref x, earlyb rdNa ,
+        part  onConf g.get ndex ngHashPart  on D());
   }
 
   /**
-   * Join ServerSet for ServiceProxy with a named admin port and with a zookeeper path that Service
-   * Proxy can translate to a domain name label that is less than 64 characters (due to the size
-   * limit for domain name labels described here: https://tools.ietf.org/html/rfc1035)
-   * This will allow us to access Earlybirds that are not on mesos via ServiceProxy.
+   * Jo n ServerSet for Serv ceProxy w h a na d adm n port and w h a zookeeper path that Serv ce
+   * Proxy can translate to a doma n na  label that  s less than 64 characters (due to t  s ze
+   * l m  for doma n na  labels descr bed  re: https://tools. etf.org/html/rfc1035)
+   * T  w ll allow us to access Earlyb rds that are not on  sos v a Serv ceProxy.
    */
-  @Override
-  public void joinServerSetForServiceProxy() {
-    // This additional Zookeeper server set is only necessary for Archive Earlybirds which are
-    // running on bare metal hardware, so ensure that this method is never called for services
+  @Overr de
+  publ c vo d jo nServerSetForServ ceProxy() {
+    // T  add  onal Zookeeper server set  s only necessary for Arch ve Earlyb rds wh ch are
+    // runn ng on bare  tal hardware, so ensure that t   thod  s never called for serv ces
     // on Aurora.
-    Preconditions.checkArgument(!EarlybirdConfig.isAurora(),
-        "Attempting to join server set for ServiceProxy on Earlybird running on Aurora");
+    Precond  ons.c ckArgu nt(!Earlyb rdConf g. sAurora(),
+        "Attempt ng to jo n server set for Serv ceProxy on Earlyb rd runn ng on Aurora");
 
-    LOG.info("Attempting to join ServerSet for ServiceProxy");
+    LOG. nfo("Attempt ng to jo n ServerSet for Serv ceProxy");
     try {
-      TwitterServerSet.Service service = getServerSetForServiceProxyOnArchive();
+      Tw terServerSet.Serv ce serv ce = getServerSetForServ ceProxyOnArch ve();
 
-      ServerSet serverSet = discoveryZKClient.createServerSet(service);
-      String hostName = InetAddress.getLocalHost().getHostName();
-      int adminPort = EarlybirdConfig.getAdminPort();
-      serverSet.join(
-          new InetSocketAddress(hostName, port),
-          ImmutableMap.of("admin", new InetSocketAddress(hostName, adminPort)),
-          partitionConfig.getHostPositionWithinHashPartition());
+      ServerSet serverSet = d scoveryZKCl ent.createServerSet(serv ce);
+      Str ng hostNa  =  netAddress.getLocalHost().getHostNa ();
+       nt adm nPort = Earlyb rdConf g.getAdm nPort();
+      serverSet.jo n(
+          new  netSocketAddress(hostNa , port),
+           mmutableMap.of("adm n", new  netSocketAddress(hostNa , adm nPort)),
+          part  onConf g.getHostPos  onW h nHashPart  on());
 
-      String path = service.getPath();
-      LOG.info("Successfully joined ServerSet for ServiceProxy {}", path);
-      inServerSetForServiceProxy = true;
-    } catch (Exception e) {
-      String message = "Failed to join ServerSet for ServiceProxy of partition "
-          + partitionConfig.getIndexingHashPartitionID();
-      LOG.warn(message, e);
+      Str ng path = serv ce.getPath();
+      LOG. nfo("Successfully jo ned ServerSet for Serv ceProxy {}", path);
+       nServerSetForServ ceProxy = true;
+    } catch (Except on e) {
+      Str ng  ssage = "Fa led to jo n ServerSet for Serv ceProxy of part  on "
+          + part  onConf g.get ndex ngHashPart  on D();
+      LOG.warn( ssage, e);
     }
   }
 
-  @VisibleForTesting
-  protected TwitterServerSet.Service getServerSetForServiceProxyOnArchive() {
-    String serverSetPath = String.format("proxy/%s/p_%d",
-        partitionConfig.getTierName(),
-        partitionConfig.getIndexingHashPartitionID());
-    return new TwitterServerSet.Service(
-        DatabaseConfig.getZooKeeperRole(),
-        Config.getEnvironment(),
+  @V s bleForTest ng
+  protected Tw terServerSet.Serv ce getServerSetForServ ceProxyOnArch ve() {
+    Str ng serverSetPath = Str ng.format("proxy/%s/p_%d",
+        part  onConf g.getT erNa (),
+        part  onConf g.get ndex ngHashPart  on D());
+    return new Tw terServerSet.Serv ce(
+        DatabaseConf g.getZooKeeperRole(),
+        Conf g.getEnv ron nt(),
         serverSetPath);
   }
 
-  @VisibleForTesting
-  protected boolean isInServerSetForServiceProxy() {
-    return inServerSetForServiceProxy;
+  @V s bleForTest ng
+  protected boolean  s nServerSetForServ ceProxy() {
+    return  nServerSetForServ ceProxy;
   }
 }

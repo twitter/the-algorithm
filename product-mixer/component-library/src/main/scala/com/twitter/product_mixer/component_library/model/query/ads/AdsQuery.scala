@@ -1,59 +1,59 @@
-package com.twitter.product_mixer.component_library.model.query.ads
+package com.tw ter.product_m xer.component_l brary.model.query.ads
 
-import com.twitter.adserver.{thriftscala => ads}
-import com.twitter.dspbidder.commons.{thriftscala => dsp}
+ mport com.tw ter.adserver.{thr ftscala => ads}
+ mport com.tw ter.dspb dder.commons.{thr ftscala => dsp}
 
 /**
- * AdsQuery holds request-time fields required by our ads candidate pipelines
+ * AdsQuery holds request-t   f elds requ red by   ads cand date p pel nes
  */
-trait AdsQuery {
+tra  AdsQuery {
 
   /**
-   * Timelines-specific context.
+   * T  l nes-spec f c context.
    *
-   * @note used in Home Timelines
+   * @note used  n Ho  T  l nes
    */
-  def timelineRequestParams: Option[ads.TimelineRequestParams] = None
+  def t  l neRequestParams: Opt on[ads.T  l neRequestParams] = None
 
   /**
-   * Navigation action trigger-type
+   * Nav gat on act on tr gger-type
    *
-   * @note used in Home Timelines
+   * @note used  n Ho  T  l nes
    */
-  def requestTriggerType: Option[ads.RequestTriggerType] = None
+  def requestTr ggerType: Opt on[ads.RequestTr ggerType] = None
 
   /**
-   * Autoplay setting
+   * Autoplay sett ng
    *
-   * @note used in Home Timelines
+   * @note used  n Ho  T  l nes
    */
-  def autoplayEnabled: Option[Boolean] = None
+  def autoplayEnabled: Opt on[Boolean] = None
 
   /**
-   * Disable NSFW avoidance for ads mixing
+   * D sable NSFW avo dance for ads m x ng
    *
-   * @note used in Home Timelines
+   * @note used  n Ho  T  l nes
    */
-  def disableNsfwAvoidance: Option[Boolean] = None
+  def d sableNsfwAvo dance: Opt on[Boolean] = None
 
   /**
    * DSP context for adwords
    *
-   * @note used in Home Timelines
+   * @note used  n Ho  T  l nes
    */
-  def dspClientContext: Option[dsp.DspClientContext] = None
+  def dspCl entContext: Opt on[dsp.DspCl entContext] = None
 
   /**
-   * User ID for the User Profile being viewed.
+   * User  D for t  User Prof le be ng v e d.
    *
-   * @note used in Profile Timelines
+   * @note used  n Prof le T  l nes
    */
-  def userProfileViewedUserId: Option[Long] = None
+  def userProf leV e dUser d: Opt on[Long] = None
 
   /**
-   * Search-specific context.
+   * Search-spec f c context.
    *
-   * @note used in Search Timelines
+   * @note used  n Search T  l nes
    */
-  def searchRequestContext: Option[ads.SearchRequestContext] = None
+  def searchRequestContext: Opt on[ads.SearchRequestContext] = None
 }

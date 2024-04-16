@@ -1,42 +1,42 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
+package com.tw ter.follow_recom ndat ons.common.rankers.ml_ranker.scor ng
 
-import com.twitter.cortex.deepbird.thriftjava.DeepbirdPredictionService
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.tw ter.cortex.deepb rd.thr ftjava.Deepb rdPred ct onServ ce
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.constants.Gu ceNa dConstants
+ mport com.tw ter.follow_recom ndat ons.common.rankers.common.Ranker d
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.ut l.Future
+ mport javax. nject. nject
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
 /**
- * This scorer assigns random values between 0 and 1 to each candidate as scores.
+ * T  scorer ass gns random values bet en 0 and 1 to each cand date as scores.
  */
 
-@Singleton
-class RandomScorer @Inject() (
-  @Named(GuiceNamedConstants.WTF_PROD_DEEPBIRDV2_CLIENT)
-  override val deepbirdClient: DeepbirdPredictionService.ServiceToClient,
-  override val baseStats: StatsReceiver)
-    extends DeepbirdScorer {
-  override val id = RankerId.RandomRanker
-  private val rnd = new scala.util.Random(System.currentTimeMillis())
+@S ngleton
+class RandomScorer @ nject() (
+  @Na d(Gu ceNa dConstants.WTF_PROD_DEEPB RDV2_CL ENT)
+  overr de val deepb rdCl ent: Deepb rdPred ct onServ ce.Serv ceToCl ent,
+  overr de val baseStats: StatsRece ver)
+    extends Deepb rdScorer {
+  overr de val  d = Ranker d.RandomRanker
+  pr vate val rnd = new scala.ut l.Random(System.currentT  M ll s())
 
-  override def predict(dataRecords: Seq[DataRecord]): Future[Seq[Option[Double]]] = {
-    if (dataRecords.isEmpty) {
-      Future.Nil
+  overr de def pred ct(dataRecords: Seq[DataRecord]): Future[Seq[Opt on[Double]]] = {
+     f (dataRecords. sEmpty) {
+      Future.N l
     } else {
-      // All candidates are assigned a random value between 0 and 1 as score.
-      Future.value(dataRecords.map(_ => Option(rnd.nextDouble())))
+      // All cand dates are ass gned a random value bet en 0 and 1 as score.
+      Future.value(dataRecords.map(_ => Opt on(rnd.nextDouble())))
     }
   }
 
-  override val modelName = "PostNuxRandomRanker"
+  overr de val modelNa  = "PostNuxRandomRanker"
 
-  // This is not needed since we are overriding the `predict` function, but we have to override
-  // `predictionFeature` anyway.
-  override val predictionFeature: Feature.Continuous =
-    new Feature.Continuous("prediction.pfollow_pengagement")
+  // T   s not needed s nce   are overr d ng t  `pred ct` funct on, but   have to overr de
+  // `pred ct onFeature` anyway.
+  overr de val pred ct onFeature: Feature.Cont nuous =
+    new Feature.Cont nuous("pred ct on.pfollow_pengage nt")
 }

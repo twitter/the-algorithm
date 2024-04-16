@@ -1,74 +1,74 @@
 """
-Implementing partition Layer
+ mple nt ng part  on Layer
 """
 
 
-from .layer import Layer
+from .layer  mport Layer
 
-import tensorflow.compat.v1 as tf
+ mport tensorflow.compat.v1 as tf
 
 
-class Partition(Layer):
+class Part  on(Layer):
   """
-  This layer implements:
+  T  layer  mple nts:
 
   .. code-block:: python
 
-    tf.dynamic_partition(input_vals, partition_ids, self.partitions)
+    tf.dynam c_part  on( nput_vals, part  on_ ds, self.part  ons)
 
-  Input:
-    partitions:
-      the number of partitions which we will divide the hashmap keys/bvalues
+   nput:
+    part  ons:
+      t  number of part  ons wh ch   w ll d v de t  hashmap keys/bvalues
 
   Output:
-    A layer that performs partitioning
+    A layer that performs part  on ng
    """
 
-  def __init__(self, partitions=2, **kwargs):
-    self.partitions = partitions
-    super(Partition, self).__init__(**kwargs)
+  def __ n __(self, part  ons=2, **kwargs):
+    self.part  ons = part  ons
+    super(Part  on, self).__ n __(**kwargs)
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  def compute_output_shape(self,  nput_shape):
+    """Computes t  output shape of t  layer g ven t   nput shape.
 
     Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+       nput_shape: A (poss bly nested tuple of) `TensorShape`.    need not
+        be fully def ned (e.g. t  batch s ze may be unknown).
 
-    Raises NotImplementedError.
+    Ra ses Not mple ntedError.
 
     """
-    raise NotImplementedError
+    ra se Not mple ntedError
 
-  def call(self, partition_ids, input_vals, input_keys, **kwargs):
-    """This layer is responsible for partitioning the values/keys of a hashmap
+  def call(self, part  on_ ds,  nput_vals,  nput_keys, **kwargs):
+    """T  layer  s respons ble for part  on ng t  values/keys of a hashmap
 
-    Arguments:
-      partition_ids:
-        Tensor that is equivalent to boolean (int32).
-      input_vals:
-        Tensor that represents the values of the hashmap(float).
-      input_keys:
-        Tensor that represents the keys of the hashmap(float)
+    Argu nts:
+      part  on_ ds:
+        Tensor that  s equ valent to boolean ( nt32).
+       nput_vals:
+        Tensor that represents t  values of t  hashmap(float).
+       nput_keys:
+        Tensor that represents t  keys of t  hashmap(float)
 
     Returns:
-      The output of the partition layer, which is a list of lists which looks
-      something like:
+      T  output of t  part  on layer, wh ch  s a l st of l sts wh ch looks
+      so th ng l ke:
 
       .. code-block:: python
 
-        [[vals_0, vals_1], [keys_0, keys_1], [indices_0, indices_1]]
+        [[vals_0, vals_1], [keys_0, keys_1], [ nd ces_0,  nd ces_1]]
 
-      where:
+      w re:
         vals_x:
-          values of the hashmap for partition x
+          values of t  hashmap for part  on x
         keys_x:
-          keys of the hashmap for partition x
-        indices_x:
-          indices of the hashmap for partition x
+          keys of t  hashmap for part  on x
+         nd ces_x:
+           nd ces of t  hashmap for part  on x
     """
-    partioned_val = tf.dynamic_partition(input_vals, partition_ids, self.partitions)
-    partioned_keys = tf.dynamic_partition(input_keys, partition_ids, self.partitions)
-    partioned_indices = tf.dynamic_partition(tf.range(tf.shape(partition_ids)[0]),
-                                             tf.cast(partition_ids, tf.int32), self.partitions)
-    return [partioned_val, partioned_keys, partioned_indices]
+    part oned_val = tf.dynam c_part  on( nput_vals, part  on_ ds, self.part  ons)
+    part oned_keys = tf.dynam c_part  on( nput_keys, part  on_ ds, self.part  ons)
+    part oned_ nd ces = tf.dynam c_part  on(tf.range(tf.shape(part  on_ ds)[0]),
+                                             tf.cast(part  on_ ds, tf. nt32), self.part  ons)
+    return [part oned_val, part oned_keys, part oned_ nd ces]

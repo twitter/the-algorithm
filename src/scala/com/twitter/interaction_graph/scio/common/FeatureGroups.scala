@@ -1,30 +1,30 @@
-package com.twitter.interaction_graph.scio.common
+package com.tw ter. nteract on_graph.sc o.common
 
-import com.twitter.interaction_graph.thriftscala.FeatureName
+ mport com.tw ter. nteract on_graph.thr ftscala.FeatureNa 
 
 object FeatureGroups {
 
-  val HEALTH_FEATURE_LIST: Set[FeatureName] = Set(
-    FeatureName.NumMutes,
-    FeatureName.NumBlocks,
-    FeatureName.NumReportAsSpams,
-    FeatureName.NumReportAsAbuses
+  val HEALTH_FEATURE_L ST: Set[FeatureNa ] = Set(
+    FeatureNa .NumMutes,
+    FeatureNa .NumBlocks,
+    FeatureNa .NumReportAsSpams,
+    FeatureNa .NumReportAsAbuses
   )
 
-  val STATUS_FEATURE_LIST: Set[FeatureName] = Set(
-    FeatureName.AddressBookEmail,
-    FeatureName.AddressBookPhone,
-    FeatureName.AddressBookInBoth,
-    FeatureName.AddressBookMutualEdgeEmail,
-    FeatureName.AddressBookMutualEdgePhone,
-    FeatureName.AddressBookMutualEdgeInBoth,
-    FeatureName.NumFollows,
-    FeatureName.NumUnfollows,
-    FeatureName.NumMutualFollows
-  ) ++ HEALTH_FEATURE_LIST
+  val STATUS_FEATURE_L ST: Set[FeatureNa ] = Set(
+    FeatureNa .AddressBookEma l,
+    FeatureNa .AddressBookPhone,
+    FeatureNa .AddressBook nBoth,
+    FeatureNa .AddressBookMutualEdgeEma l,
+    FeatureNa .AddressBookMutualEdgePhone,
+    FeatureNa .AddressBookMutualEdge nBoth,
+    FeatureNa .NumFollows,
+    FeatureNa .NumUnfollows,
+    FeatureNa .NumMutualFollows
+  ) ++ HEALTH_FEATURE_L ST
 
-  val DWELL_TIME_FEATURE_LIST: Set[FeatureName] = Set(
-    FeatureName.TotalDwellTime,
-    FeatureName.NumInspectedStatuses
+  val DWELL_T ME_FEATURE_L ST: Set[FeatureNa ] = Set(
+    FeatureNa .TotalD llT  ,
+    FeatureNa .Num nspectedStatuses
   )
 }

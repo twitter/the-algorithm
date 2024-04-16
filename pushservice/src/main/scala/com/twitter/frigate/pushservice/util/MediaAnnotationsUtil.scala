@@ -1,50 +1,50 @@
-package com.twitter.frigate.pushservice.util
+package com.tw ter.fr gate.pushserv ce.ut l
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Cand dateDeta ls
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
 
-object MediaAnnotationsUtil {
+object  d aAnnotat onsUt l {
 
-  val mediaIdToCategoryMapping = Map("0" -> "0")
+  val  d a dToCategoryMapp ng = Map("0" -> "0")
 
-  val nudityCategoryId = "0"
-  val beautyCategoryId = "0"
-  val singlePersonCategoryId = "0"
-  val sensitiveMediaCategoryFeatureName =
-    "tweet.mediaunderstanding.tweet_annotations.sensitive_category_probabilities"
+  val nud yCategory d = "0"
+  val beautyCategory d = "0"
+  val s nglePersonCategory d = "0"
+  val sens  ve d aCategoryFeatureNa  =
+    "t et. d aunderstand ng.t et_annotat ons.sens  ve_category_probab l  es"
 
-  def updateMediaCategoryStats(
-    candidates: Seq[CandidateDetails[PushCandidate]]
+  def update d aCategoryStats(
+    cand dates: Seq[Cand dateDeta ls[PushCand date]]
   )(
-    implicit statsReceiver: StatsReceiver
+     mpl c  statsRece ver: StatsRece ver
   ) = {
 
-    val statScope = statsReceiver.scope("mediaStats")
-    val filteredCandidates = candidates.filter { candidate =>
-      !candidate.candidate.sparseContinuousFeatures
-        .getOrElse(sensitiveMediaCategoryFeatureName, Map.empty[String, Double]).contains(
-          nudityCategoryId)
+    val statScope = statsRece ver.scope(" d aStats")
+    val f lteredCand dates = cand dates.f lter { cand date =>
+      !cand date.cand date.sparseCont nuousFeatures
+        .getOrElse(sens  ve d aCategoryFeatureNa , Map.empty[Str ng, Double]).conta ns(
+          nud yCategory d)
     }
 
-    if (filteredCandidates.isEmpty)
-      statScope.counter("emptyCandidateListAfterNudityFilter").incr()
+     f (f lteredCand dates. sEmpty)
+      statScope.counter("emptyCand dateL stAfterNud yF lter"). ncr()
     else
-      statScope.counter("nonEmptyCandidateListAfterNudityFilter").incr()
-    candidates.foreach { candidate =>
-      statScope.counter("totalCandidates").incr()
-      val mediaFeature = candidate.candidate.sparseContinuousFeatures
-        .getOrElse(sensitiveMediaCategoryFeatureName, Map.empty[String, Double])
-      if (mediaFeature.nonEmpty) {
-        val mediaCategoryByMaxScore = mediaFeature.maxBy(_._2)._1
+      statScope.counter("nonEmptyCand dateL stAfterNud yF lter"). ncr()
+    cand dates.foreach { cand date =>
+      statScope.counter("totalCand dates"). ncr()
+      val  d aFeature = cand date.cand date.sparseCont nuousFeatures
+        .getOrElse(sens  ve d aCategoryFeatureNa , Map.empty[Str ng, Double])
+       f ( d aFeature.nonEmpty) {
+        val  d aCategoryByMaxScore =  d aFeature.maxBy(_._2)._1
         statScope
-          .scope("mediaCategoryByMaxScore").counter(mediaIdToCategoryMapping
-            .getOrElse(mediaCategoryByMaxScore, "undefined")).incr()
+          .scope(" d aCategoryByMaxScore").counter( d a dToCategoryMapp ng
+            .getOrElse( d aCategoryByMaxScore, "undef ned")). ncr()
 
-        mediaFeature.keys.map { feature =>
+         d aFeature.keys.map { feature =>
           statScope
-            .scope("mediaCategory").counter(mediaIdToCategoryMapping
-              .getOrElse(feature, "undefined")).incr()
+            .scope(" d aCategory").counter( d a dToCategoryMapp ng
+              .getOrElse(feature, "undef ned")). ncr()
         }
       }
     }

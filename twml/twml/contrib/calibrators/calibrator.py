@@ -1,157 +1,157 @@
-# pylint: disable=missing-docstring, unused-argument
-''' Contains the base classes for CalibrationFeature and Calibrator '''
+# pyl nt: d sable=m ss ng-docstr ng, unused-argu nt
+''' Conta ns t  base classes for Cal brat onFeature and Cal brator '''
 
 
-from collections import defaultdict
+from collect ons  mport defaultd ct
 
-import numpy as np
-import tensorflow.compat.v1 as tf
-import tensorflow_hub as hub
-import twml
-import twml.util
+ mport numpy as np
+ mport tensorflow.compat.v1 as tf
+ mport tensorflow_hub as hub
+ mport twml
+ mport twml.ut l
 
 
-class CalibrationFeature(object):
+class Cal brat onFeature(object):
   '''
-  Accumulates values and weights for individual features.
-  Typically, each unique feature defined in the accumulated SparseTensor or Tensor
-  would have its own CalibrationFeature instance.
+  Accumulates values and   ghts for  nd v dual features.
+  Typ cally, each un que feature def ned  n t  accumulated SparseTensor or Tensor
+  would have  s own Cal brat onFeature  nstance.
   '''
 
-  def __init__(self, feature_id):
-    ''' Constructs a CalibrationFeature
+  def __ n __(self, feature_ d):
+    ''' Constructs a Cal brat onFeature
 
-    Arguments:
-      feature_id:
-        number identifying the feature.
+    Argu nts:
+      feature_ d:
+        number  dent fy ng t  feature.
     '''
-    self.feature_id = feature_id
-    self._calibrated = False
-    self._features_dict = defaultdict(list)
+    self.feature_ d = feature_ d
+    self._cal brated = False
+    self._features_d ct = defaultd ct(l st)
 
   def add_values(self, new_features):
     '''
-    Extends lists to contain the values in this batch
+    Extends l sts to conta n t  values  n t  batch
     '''
-    for key in new_features:
-      self._features_dict[key].append(new_features[key])
+    for key  n new_features:
+      self._features_d ct[key].append(new_features[key])
 
   def _concat_arrays(self):
     '''
-    This class calls this function after you have added all the values.
-    It creates a dictionary with the concatanated arrays
+    T  class calls t  funct on after   have added all t  values.
+      creates a d ct onary w h t  concatanated arrays
     '''
-    self._features_dict.update((k, np.concatenate(v)) for k, v in self._features_dict.items())
+    self._features_d ct.update((k, np.concatenate(v)) for k, v  n self._features_d ct. ems())
 
-  def calibrate(self, *args, **kwargs):
-    raise NotImplementedError
+  def cal brate(self, *args, **kwargs):
+    ra se Not mple ntedError
 
 
-class Calibrator(object):
+class Cal brator(object):
   '''
-  Accumulates features and their respective values for Calibration
-  The steps for calibration are typically as follows:
+  Accumulates features and t  r respect ve values for Cal brat on
+  T  steps for cal brat on are typ cally as follows:
 
-   1. accumulate feature values from batches by calling ``accumulate()`` and;
-   2. calibrate by calling ``calibrate()``;
-   3. convert to a twml.layers layer by calling ``to_layer()``.
+   1. accumulate feature values from batc s by call ng ``accumulate()`` and;
+   2. cal brate by call ng ``cal brate()``;
+   3. convert to a twml.layers layer by call ng ``to_layer()``.
 
-  Note you can only use one calibrator per Trainer.
+  Note   can only use one cal brator per Tra ner.
   '''
 
-  def __init__(self, calibrator_name=None, **kwargs):
+  def __ n __(self, cal brator_na =None, **kwargs):
     '''
-    Arguments:
-      calibrator_name.
-        Default: if set to None it will be the same as the class name.
-        Please be reminded that if in the model there are many calibrators
-        of the same type the calibrator_name should be changed to avoid confusion.
+    Argu nts:
+      cal brator_na .
+        Default:  f set to None   w ll be t  sa  as t  class na .
+        Please be rem nded that  f  n t  model t re are many cal brators
+        of t  sa  type t  cal brator_na  should be changed to avo d confus on.
     '''
-    self._calibrated = False
-    if calibrator_name is None:
-      calibrator_name = twml.util.to_snake_case(self.__class__.__name__)
-    self._calibrator_name = calibrator_name
+    self._cal brated = False
+     f cal brator_na   s None:
+      cal brator_na  = twml.ut l.to_snake_case(self.__class__.__na __)
+    self._cal brator_na  = cal brator_na 
     self._kwargs = kwargs
 
   @property
-  def is_calibrated(self):
-    return self._calibrated
+  def  s_cal brated(self):
+    return self._cal brated
 
   @property
-  def name(self):
-    return self._calibrator_name
+  def na (self):
+    return self._cal brator_na 
 
   def accumulate(self, *args, **kwargs):
-    '''Accumulates features and their respective values for Calibration.'''
-    raise NotImplementedError
+    '''Accumulates features and t  r respect ve values for Cal brat on.'''
+    ra se Not mple ntedError
 
-  def calibrate(self):
-    '''Calibrates after the accumulation has ended.'''
-    self._calibrated = True
+  def cal brate(self):
+    '''Cal brates after t  accumulat on has ended.'''
+    self._cal brated = True
 
-  def to_layer(self, name=None):
+  def to_layer(self, na =None):
     '''
-    Returns a twml.layers.Layer instance with the result of calibrator.
+    Returns a twml.layers.Layer  nstance w h t  result of cal brator.
 
-    Arguments:
-      name:
-        name-scope of the layer
+    Argu nts:
+      na :
+        na -scope of t  layer
     '''
-    raise NotImplementedError
+    ra se Not mple ntedError
 
   def get_layer_args(self):
     '''
-    Returns layer arguments required to implement multi-phase training.
+    Returns layer argu nts requ red to  mple nt mult -phase tra n ng.
 
     Returns:
-      dictionary of Layer constructor arguments to initialize the
-      layer Variables. Typically, this should contain enough information
-      to initialize empty layer Variables of the correct size, which will then
-      be filled with the right data using init_map.
+      d ct onary of Layer constructor argu nts to  n  al ze t 
+      layer Var ables. Typ cally, t  should conta n enough  nformat on
+      to  n  al ze empty layer Var ables of t  correct s ze, wh ch w ll t n
+      be f lled w h t  r ght data us ng  n _map.
     '''
-    raise NotImplementedError
+    ra se Not mple ntedError
 
-  def save(self, save_dir, name="default", verbose=False):
-    '''Save the calibrator into the given save_directory.
-    Arguments:
-      save_dir:
-        name of the saving directory. Default (string): "default".
-      name:
-        name for the calibrator.
+  def save(self, save_d r, na ="default", verbose=False):
+    '''Save t  cal brator  nto t  g ven save_d rectory.
+    Argu nts:
+      save_d r:
+        na  of t  sav ng d rectory. Default (str ng): "default".
+      na :
+        na  for t  cal brator.
     '''
-    if not self._calibrated:
-      raise RuntimeError("Expecting prior call to calibrate().Cannot save() prior to calibrate()")
+     f not self._cal brated:
+      ra se Runt  Error("Expect ng pr or call to cal brate().Cannot save() pr or to cal brate()")
 
-    # This module allows for the calibrator to save be saved as part of
-    # Tensorflow Hub (this will allow it to be used in further steps)
-    def calibrator_module():
-      # Note that this is usually expecting a sparse_placeholder
-      inputs = tf.sparse_placeholder(tf.float32)
-      calibrator_layer = self.to_layer()
-      output = calibrator_layer(inputs)
-      # creates the signature to the calibrator module
-      hub.add_signature(inputs=inputs, outputs=output, name=name)
+    # T  module allows for t  cal brator to save be saved as part of
+    # Tensorflow Hub (t  w ll allow   to be used  n furt r steps)
+    def cal brator_module():
+      # Note that t   s usually expect ng a sparse_placeholder
+       nputs = tf.sparse_placeholder(tf.float32)
+      cal brator_layer = self.to_layer()
+      output = cal brator_layer( nputs)
+      # creates t  s gnature to t  cal brator module
+      hub.add_s gnature( nputs= nputs, outputs=output, na =na )
 
-    # exports the module to the save_dir
-    spec = hub.create_module_spec(calibrator_module)
-    with tf.Graph().as_default():
+    # exports t  module to t  save_d r
+    spec = hub.create_module_spec(cal brator_module)
+    w h tf.Graph().as_default():
       module = hub.Module(spec)
-      with tf.Session() as session:
-        module.export(save_dir, session)
+      w h tf.Sess on() as sess on:
+        module.export(save_d r, sess on)
 
-  def write_summary(self, writer, sess=None):
+  def wr e_summary(self, wr er, sess=None):
     """
-    This method is called by save() to write tensorboard summaries to disk.
-    See MDLCalibrator.write_summary for an example.
-    By default, the method does nothing. It can be overloaded by child-classes.
+    T   thod  s called by save() to wr e tensorboard summar es to d sk.
+    See MDLCal brator.wr e_summary for an example.
+    By default, t   thod does noth ng.   can be overloaded by ch ld-classes.
 
-    Arguments:
-      writer:
-        `tf.summary.FilteWriter
-        <https://www.tensorflow.org/versions/master/api_docs/python/tf/summary/FileWriter>`_
-        instance.
-        The ``writer`` is used to add summaries to event files for inclusion in tensorboard.
-      sess (optional):
-        `tf.Session <https://www.tensorflow.org/versions/master/api_docs/python/tf/Session>`_
-        instance. The ``sess`` is used to produces summaries for the writer.
+    Argu nts:
+      wr er:
+        `tf.summary.F lteWr er
+        <https://www.tensorflow.org/vers ons/master/ap _docs/python/tf/summary/F leWr er>`_
+         nstance.
+        T  ``wr er``  s used to add summar es to event f les for  nclus on  n tensorboard.
+      sess (opt onal):
+        `tf.Sess on <https://www.tensorflow.org/vers ons/master/ap _docs/python/tf/Sess on>`_
+         nstance. T  ``sess``  s used to produces summar es for t  wr er.
     """

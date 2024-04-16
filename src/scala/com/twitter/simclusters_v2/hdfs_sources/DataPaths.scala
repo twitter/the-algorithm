@@ -1,49 +1,49 @@
-package com.twitter.simclusters_v2.hdfs_sources
+package com.tw ter.s mclusters_v2.hdfs_s ces
 
 object DataPaths {
 
-  val InterestedIn2020Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_interested_in_20M_145K_2020"
+  val  nterested n2020Path =
+    "/user/cassowary/manhattan_sequence_f les/s mclusters_v2_ nterested_ n_20M_145K_2020"
 
-  val InterestedIn2020ThriftPath =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_interested_in_20M_145K_2020_thrift"
+  val  nterested n2020Thr ftPath =
+    "/user/cassowary/manhattan_sequence_f les/s mclusters_v2_ nterested_ n_20M_145K_2020_thr ft"
 
-  val InterestedInLite2020Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_interested_in_lite_20M_145K_2020"
+  val  nterested nL e2020Path =
+    "/user/cassowary/manhattan_sequence_f les/s mclusters_v2_ nterested_ n_l e_20M_145K_2020"
 
-  val InterestedInLite2020ThriftPath =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_interested_in_lite_20M_145K_2020_thrift"
+  val  nterested nL e2020Thr ftPath =
+    "/user/cassowary/manhattan_sequence_f les/s mclusters_v2_ nterested_ n_l e_20M_145K_2020_thr ft"
 
   val KnownFor2020Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_known_for_20M_145K_2020"
+    "/user/cassowary/manhattan_sequence_f les/s mclusters_v2_known_for_20M_145K_2020"
 
-  // keep this inside /user/cassowary/manhattan_sequence_files/ to use the latest 3 retention policy
-  val KnownFor2020ThriftDatasetPath =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_known_for_20M_145K_2020_thrift"
+  // keep t   ns de /user/cassowary/manhattan_sequence_f les/ to use t  latest 3 retent on pol cy
+  val KnownFor2020Thr ftDatasetPath =
+    "/user/cassowary/manhattan_sequence_f les/s mclusters_v2_known_for_20M_145K_2020_thr ft"
 
-  val OfflineClusterTopMediaTweets2020DatasetPath =
-    "/user/cassowary/manhattan_sequence_files/cluster_top_media_tweets_20M_145K_2020"
+  val Offl neClusterTop d aT ets2020DatasetPath =
+    "/user/cassowary/manhattan_sequence_f les/cluster_top_ d a_t ets_20M_145K_2020"
 }
 
 /**
- * These should only be accessed from simclusters_v2 data pipeline for intermediate data, these
- * are not opt-out compliant and shouldn't be exposed externally.
+ * T se should only be accessed from s mclusters_v2 data p pel ne for  nter d ate data, t se
+ * are not opt-out compl ant and shouldn't be exposed externally.
  */
-object InternalDataPaths {
-  // Internal versions, not to be read or written outside of simcluster_v2
+object  nternalDataPaths {
+  //  nternal vers ons, not to be read or wr ten outs de of s mcluster_v2
 
-  private[simclusters_v2] val RawInterestedIn2020Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_raw_interested_in_20M_145K_2020"
+  pr vate[s mclusters_v2] val Raw nterested n2020Path =
+    "/user/cassowary/manhattan_sequence_f les/s mclusters_v2_raw_ nterested_ n_20M_145K_2020"
 
-  private[simclusters_v2] val RawInterestedInLite2020Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_raw_interested_in_lite_20M_145K_2020"
+  pr vate[s mclusters_v2] val Raw nterested nL e2020Path =
+    "/user/cassowary/manhattan_sequence_f les/s mclusters_v2_raw_ nterested_ n_l e_20M_145K_2020"
 
-  private[simclusters_v2] val RawKnownForDec11Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_raw_known_for_20M_145K_dec11"
+  pr vate[s mclusters_v2] val RawKnownForDec11Path =
+    "/user/cassowary/manhattan_sequence_f les/s mclusters_v2_raw_known_for_20M_145K_dec11"
 
-  private[simclusters_v2] val RawKnownForUpdatedPath =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_raw_known_for_20M_145K_updated"
+  pr vate[s mclusters_v2] val RawKnownForUpdatedPath =
+    "/user/cassowary/manhattan_sequence_f les/s mclusters_v2_raw_known_for_20M_145K_updated"
 
-  private[simclusters_v2] val RawKnownFor2020Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_raw_known_for_20M_145K_2020"
+  pr vate[s mclusters_v2] val RawKnownFor2020Path =
+    "/user/cassowary/manhattan_sequence_f les/s mclusters_v2_raw_known_for_20M_145K_2020"
 }

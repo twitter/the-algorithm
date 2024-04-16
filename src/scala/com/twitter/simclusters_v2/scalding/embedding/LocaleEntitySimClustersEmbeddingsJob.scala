@@ -1,437 +1,437 @@
-package com.twitter.simclusters_v2.scalding.embedding
+package com.tw ter.s mclusters_v2.scald ng.embedd ng
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.recos.entities.thriftscala.Entity
-import com.twitter.recos.entities.thriftscala.Hashtag
-import com.twitter.recos.entities.thriftscala.SemanticCoreEntity
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.hdfs_sources.presto_hdfs_sources._
-import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
-import com.twitter.simclusters_v2.hdfs_sources.EntityEmbeddingsSources
-import com.twitter.simclusters_v2.hdfs_sources.InterestedInSources
-import com.twitter.simclusters_v2.scalding.embedding.LocaleEntitySimClustersEmbeddingsJob._
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil._
-import com.twitter.simclusters_v2.scalding.embedding.common.EntityEmbeddingUtil._
-import com.twitter.simclusters_v2.scalding.embedding.common.SimClustersEmbeddingJob._
-import com.twitter.simclusters_v2.thriftscala.{
-  SimClustersEmbedding => ThriftSimClustersEmbedding,
+ mport com.tw ter.dal.cl ent.dataset.KeyValDALDataset
+ mport com.tw ter.recos.ent  es.thr ftscala.Ent y
+ mport com.tw ter.recos.ent  es.thr ftscala.Hashtag
+ mport com.tw ter.recos.ent  es.thr ftscala.Semant cCoreEnt y
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e._
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.presto_hdfs_s ces._
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.AdhocKeyValS ces
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.Ent yEmbedd ngsS ces
+ mport com.tw ter.s mclusters_v2.hdfs_s ces. nterested nS ces
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.LocaleEnt yS mClustersEmbedd ngsJob._
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.Embedd ngUt l
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.ExternalDataS ces
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.Embedd ngUt l._
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.Ent yEmbedd ngUt l._
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.S mClustersEmbedd ngJob._
+ mport com.tw ter.s mclusters_v2.thr ftscala.{
+  S mClustersEmbedd ng => Thr ftS mClustersEmbedd ng,
   _
 }
-import com.twitter.wtf.entity_real_graph.common.EntityUtil
-import com.twitter.wtf.entity_real_graph.thriftscala.Edge
-import com.twitter.wtf.entity_real_graph.thriftscala.EntityType
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.DataSources
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+ mport com.tw ter.wtf.ent y_real_graph.common.Ent yUt l
+ mport com.tw ter.wtf.ent y_real_graph.thr ftscala.Edge
+ mport com.tw ter.wtf.ent y_real_graph.thr ftscala.Ent yType
+ mport com.tw ter.wtf.scald ng.jobs.common.AdhocExecut onApp
+ mport com.tw ter.wtf.scald ng.jobs.common.DataS ces
+ mport com.tw ter.wtf.scald ng.jobs.common.Sc duledExecut onApp
+ mport java.ut l.T  Zone
 
 /**
- * $ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:entity_per_language_embeddings_job-adhoc
+ * $ ./bazel bundle src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng:ent y_per_language_embedd ngs_job-adhoc
  *
  * ---------------------- Deploy to atla ----------------------
- * $ scalding remote run \
-  --main-class com.twitter.simclusters_v2.scalding.embedding.LocaleEntitySimClustersEmbeddingAdhocApp \
-  --target src/scala/com/twitter/simclusters_v2/scalding/embedding:entity_per_language_embeddings_job-adhoc \
+ * $ scald ng remote run \
+  --ma n-class com.tw ter.s mclusters_v2.scald ng.embedd ng.LocaleEnt yS mClustersEmbedd ngAdhocApp \
+  --target src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng:ent y_per_language_embedd ngs_job-adhoc \
   --user recos-platform \
-  -- --date 2019-12-17 --model-version 20M_145K_updated --entity-type SemanticCore
+  -- --date 2019-12-17 --model-vers on 20M_145K_updated --ent y-type Semant cCore
  */
-object LocaleEntitySimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
+object LocaleEnt yS mClustersEmbedd ngAdhocApp extends AdhocExecut onApp {
 
-  // Import implicits
+  //  mport  mpl c s
 
-  import EntityUtil._
+   mport Ent yUt l._
 
-  def writeOutput(
-    embeddings: TypedPipe[(SimClustersEmbeddingId, (ClusterId, EmbeddingScore))],
-    topKEmbeddings: TypedPipe[(SimClustersEmbeddingId, Seq[(ClusterId, EmbeddingScore)])],
-    jobConfig: EntityEmbeddingsJobConfig
-  ): Execution[Unit] = {
+  def wr eOutput(
+    embedd ngs: TypedP pe[(S mClustersEmbedd ng d, (Cluster d, Embedd ngScore))],
+    topKEmbedd ngs: TypedP pe[(S mClustersEmbedd ng d, Seq[(Cluster d, Embedd ngScore)])],
+    jobConf g: Ent yEmbedd ngsJobConf g
+  ): Execut on[Un ] = {
 
-    val toSimClusterEmbeddingExec = topKEmbeddings
-      .mapValues(SimClustersEmbedding.apply(_).toThrift)
-      .writeExecution(
-        AdhocKeyValSources.entityToClustersSource(
-          LocaleEntitySimClustersEmbeddingsJob.getHdfsPath(
-            isAdhoc = true,
-            isManhattanKeyVal = true,
-            isReverseIndex = false,
-            isLogFav = false,
-            jobConfig.modelVersion,
-            jobConfig.entityType)))
+    val toS mClusterEmbedd ngExec = topKEmbedd ngs
+      .mapValues(S mClustersEmbedd ng.apply(_).toThr ft)
+      .wr eExecut on(
+        AdhocKeyValS ces.ent yToClustersS ce(
+          LocaleEnt yS mClustersEmbedd ngsJob.getHdfsPath(
+             sAdhoc = true,
+             sManhattanKeyVal = true,
+             sReverse ndex = false,
+             sLogFav = false,
+            jobConf g.modelVers on,
+            jobConf g.ent yType)))
 
-    val fromSimClusterEmbeddingExec =
-      toReverseIndexSimClusterEmbedding(embeddings, jobConfig.topK)
-        .writeExecution(
-          AdhocKeyValSources.clusterToEntitiesSource(
-            LocaleEntitySimClustersEmbeddingsJob.getHdfsPath(
-              isAdhoc = true,
-              isManhattanKeyVal = true,
-              isReverseIndex = true,
-              isLogFav = false,
-              jobConfig.modelVersion,
-              jobConfig.entityType)))
+    val fromS mClusterEmbedd ngExec =
+      toReverse ndexS mClusterEmbedd ng(embedd ngs, jobConf g.topK)
+        .wr eExecut on(
+          AdhocKeyValS ces.clusterToEnt  esS ce(
+            LocaleEnt yS mClustersEmbedd ngsJob.getHdfsPath(
+               sAdhoc = true,
+               sManhattanKeyVal = true,
+               sReverse ndex = true,
+               sLogFav = false,
+              jobConf g.modelVers on,
+              jobConf g.ent yType)))
 
-    Execution.zip(toSimClusterEmbeddingExec, fromSimClusterEmbeddingExec).unit
+    Execut on.z p(toS mClusterEmbedd ngExec, fromS mClusterEmbedd ngExec).un 
   }
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
 
-    val jobConfig = EntityEmbeddingsJobConfig(args, isAdhoc = true)
+    val jobConf g = Ent yEmbedd ngsJobConf g(args,  sAdhoc = true)
 
-    val numReducers = args.getOrElse("m", "2000").toInt
+    val numReducers = args.getOrElse("m", "2000").to nt
 
     /*
-      Can use the ERG daily dataset in the adhoc job for quick prototyping, note that there may be
-      issues with scaling the job when productionizing on ERG aggregated dataset.
+      Can use t  ERG da ly dataset  n t  adhoc job for qu ck prototyp ng, note that t re may be
+       ssues w h scal ng t  job w n product on z ng on ERG aggregated dataset.
      */
-    val userEntityMatrix: TypedPipe[(UserId, (Entity, Double))] =
-      getUserEntityMatrix(
-        jobConfig,
-        DataSources.entityRealGraphAggregationDataSetSource(dateRange.embiggen(Days(7))),
-        Some(ExternalDataSources.uttEntitiesSource())
-      ).forceToDisk
+    val userEnt yMatr x: TypedP pe[(User d, (Ent y, Double))] =
+      getUserEnt yMatr x(
+        jobConf g,
+        DataS ces.ent yRealGraphAggregat onDataSetS ce(dateRange.emb ggen(Days(7))),
+        So (ExternalDataS ces.uttEnt  esS ce())
+      ).forceToD sk
 
-    //determine which data source to use based on model version
-    val simClustersSource = jobConfig.modelVersion match {
-      case ModelVersion.Model20m145kUpdated =>
-        InterestedInSources.simClustersInterestedInUpdatedSource(dateRange, timeZone)
-      case modelVersion =>
-        throw new IllegalArgumentException(
-          s"SimClusters model version not supported ${modelVersion.name}")
+    //determ ne wh ch data s ce to use based on model vers on
+    val s mClustersS ce = jobConf g.modelVers on match {
+      case ModelVers on.Model20m145kUpdated =>
+         nterested nS ces.s mClusters nterested nUpdatedS ce(dateRange, t  Zone)
+      case modelVers on =>
+        throw new  llegalArgu ntExcept on(
+          s"S mClusters model vers on not supported ${modelVers on.na }")
     }
 
-    val entityPerLanguage = userEntityMatrix.join(ExternalDataSources.userSource).map {
-      case (userId, ((entity, score), (_, language))) =>
-        ((entity, language), (userId, score))
+    val ent yPerLanguage = userEnt yMatr x.jo n(ExternalDataS ces.userS ce).map {
+      case (user d, ((ent y, score), (_, language))) =>
+        ((ent y, language), (user d, score))
     }
 
-    val normalizedUserEntityMatrix =
-      getNormalizedTransposeInputMatrix(entityPerLanguage, numReducers = Some(numReducers))
+    val normal zedUserEnt yMatr x =
+      getNormal zedTranspose nputMatr x(ent yPerLanguage, numReducers = So (numReducers))
 
-    val embeddings = computeEmbeddings[(Entity, String)](
-      simClustersSource,
-      normalizedUserEntityMatrix,
+    val embedd ngs = computeEmbedd ngs[(Ent y, Str ng)](
+      s mClustersS ce,
+      normal zedUserEnt yMatr x,
       scoreExtractors,
-      ModelVersion.Model20m145kUpdated,
-      toSimClustersEmbeddingId(jobConfig.modelVersion),
-      numReducers = Some(numReducers * 2)
+      ModelVers on.Model20m145kUpdated,
+      toS mClustersEmbedd ng d(jobConf g.modelVers on),
+      numReducers = So (numReducers * 2)
     )
 
-    val topKEmbeddings =
-      embeddings.group
-        .sortedReverseTake(jobConfig.topK)(Ordering.by(_._2))
-        .withReducers(numReducers)
+    val topKEmbedd ngs =
+      embedd ngs.group
+        .sortedReverseTake(jobConf g.topK)(Order ng.by(_._2))
+        .w hReducers(numReducers)
 
-    writeOutput(embeddings, topKEmbeddings, jobConfig)
+    wr eOutput(embedd ngs, topKEmbedd ngs, jobConf g)
   }
 }
 
 /**
- * $ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:semantic_core_entity_embeddings_per_language_job
+ * $ ./bazel bundle src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng:semant c_core_ent y_embedd ngs_per_language_job
  * $ capesospy-v2 update \
-  --build_locally \
-  --start_cron semantic_core_entity_embeddings_per_language_job src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+  --bu ld_locally \
+  --start_cron semant c_core_ent y_embedd ngs_per_language_job src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc3.yaml
  */
-object LocaleEntitySimClustersEmbeddingScheduledApp extends ScheduledExecutionApp {
+object LocaleEnt yS mClustersEmbedd ngSc duledApp extends Sc duledExecut onApp {
 
-  // Import implicits
+  //  mport  mpl c s
 
-  import EmbeddingUtil._
-  import EntityUtil._
+   mport Embedd ngUt l._
+   mport Ent yUt l._
 
-  override val firstTime: RichDate = RichDate("2019-10-22")
+  overr de val f rstT  : R chDate = R chDate("2019-10-22")
 
-  override val batchIncrement: Duration = Days(7)
+  overr de val batch ncre nt: Durat on = Days(7)
 
-  private def writeOutput(
-    embeddings: TypedPipe[(SimClustersEmbeddingId, (ClusterId, EmbeddingScore))],
-    topKEmbeddings: TypedPipe[(SimClustersEmbeddingId, Seq[(ClusterId, EmbeddingScore)])],
-    jobConfig: EntityEmbeddingsJobConfig,
-    clusterEmbeddingsDataset: KeyValDALDataset[
-      KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]
+  pr vate def wr eOutput(
+    embedd ngs: TypedP pe[(S mClustersEmbedd ng d, (Cluster d, Embedd ngScore))],
+    topKEmbedd ngs: TypedP pe[(S mClustersEmbedd ng d, Seq[(Cluster d, Embedd ngScore)])],
+    jobConf g: Ent yEmbedd ngsJobConf g,
+    clusterEmbedd ngsDataset: KeyValDALDataset[
+      KeyVal[S mClustersEmbedd ng d, Thr ftS mClustersEmbedd ng]
     ],
-    entityEmbeddingsDataset: KeyValDALDataset[KeyVal[SimClustersEmbeddingId, InternalIdEmbedding]]
+    ent yEmbedd ngsDataset: KeyValDALDataset[KeyVal[S mClustersEmbedd ng d,  nternal dEmbedd ng]]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone
+  ): Execut on[Un ] = {
 
-    val thriftSimClustersEmbedding = topKEmbeddings
-      .mapValues(SimClustersEmbedding.apply(_).toThrift)
+    val thr ftS mClustersEmbedd ng = topKEmbedd ngs
+      .mapValues(S mClustersEmbedd ng.apply(_).toThr ft)
 
-    val writeSimClustersEmbeddingKeyValDataset =
-      thriftSimClustersEmbedding
+    val wr eS mClustersEmbedd ngKeyValDataset =
+      thr ftS mClustersEmbedd ng
         .map {
-          case (entityId, topSimClusters) => KeyVal(entityId, topSimClusters)
+          case (ent y d, topS mClusters) => KeyVal(ent y d, topS mClusters)
         }
-        .writeDALVersionedKeyValExecution(
-          clusterEmbeddingsDataset,
-          D.Suffix(
-            LocaleEntitySimClustersEmbeddingsJob.getHdfsPath(
-              isAdhoc = false,
-              isManhattanKeyVal = true,
-              isReverseIndex = false,
-              isLogFav = false,
-              jobConfig.modelVersion,
-              jobConfig.entityType))
+        .wr eDALVers onedKeyValExecut on(
+          clusterEmbedd ngsDataset,
+          D.Suff x(
+            LocaleEnt yS mClustersEmbedd ngsJob.getHdfsPath(
+               sAdhoc = false,
+               sManhattanKeyVal = true,
+               sReverse ndex = false,
+               sLogFav = false,
+              jobConf g.modelVers on,
+              jobConf g.ent yType))
         )
 
-    val writeSimClustersEmbeddingDataset = thriftSimClustersEmbedding
+    val wr eS mClustersEmbedd ngDataset = thr ftS mClustersEmbedd ng
       .map {
-        case (embeddingId, embedding) => SimClustersEmbeddingWithId(embeddingId, embedding)
+        case (embedd ng d, embedd ng) => S mClustersEmbedd ngW h d(embedd ng d, embedd ng)
       }
-      .writeDALSnapshotExecution(
-        SemanticCorePerLanguageSimclustersEmbeddingsPrestoScalaDataset,
-        D.Daily,
-        D.Suffix(
-          LocaleEntitySimClustersEmbeddingsJob.getHdfsPath(
-            isAdhoc = false,
-            isManhattanKeyVal = false,
-            isReverseIndex = false,
-            isLogFav = false,
-            jobConfig.modelVersion,
-            jobConfig.entityType)),
+      .wr eDALSnapshotExecut on(
+        Semant cCorePerLanguageS mclustersEmbedd ngsPrestoScalaDataset,
+        D.Da ly,
+        D.Suff x(
+          LocaleEnt yS mClustersEmbedd ngsJob.getHdfsPath(
+             sAdhoc = false,
+             sManhattanKeyVal = false,
+             sReverse ndex = false,
+             sLogFav = false,
+            jobConf g.modelVers on,
+            jobConf g.ent yType)),
         D.EBLzo(),
         dateRange.end
       )
 
-    val thriftReversedSimclustersEmbeddings =
-      toReverseIndexSimClusterEmbedding(embeddings, jobConfig.topK)
+    val thr ftReversedS mclustersEmbedd ngs =
+      toReverse ndexS mClusterEmbedd ng(embedd ngs, jobConf g.topK)
 
-    val writeReverseSimClustersEmbeddingKeyValDataset =
-      thriftReversedSimclustersEmbeddings
+    val wr eReverseS mClustersEmbedd ngKeyValDataset =
+      thr ftReversedS mclustersEmbedd ngs
         .map {
-          case (embeddingId, internalIdsWithScore) =>
-            KeyVal(embeddingId, internalIdsWithScore)
+          case (embedd ng d,  nternal dsW hScore) =>
+            KeyVal(embedd ng d,  nternal dsW hScore)
         }
-        .writeDALVersionedKeyValExecution(
-          entityEmbeddingsDataset,
-          D.Suffix(
-            LocaleEntitySimClustersEmbeddingsJob.getHdfsPath(
-              isAdhoc = false,
-              isManhattanKeyVal = true,
-              isReverseIndex = true,
-              isLogFav = false,
-              jobConfig.modelVersion,
-              jobConfig.entityType))
+        .wr eDALVers onedKeyValExecut on(
+          ent yEmbedd ngsDataset,
+          D.Suff x(
+            LocaleEnt yS mClustersEmbedd ngsJob.getHdfsPath(
+               sAdhoc = false,
+               sManhattanKeyVal = true,
+               sReverse ndex = true,
+               sLogFav = false,
+              jobConf g.modelVers on,
+              jobConf g.ent yType))
         )
 
-    val writeReverseSimClustersEmbeddingDataset =
-      thriftReversedSimclustersEmbeddings
+    val wr eReverseS mClustersEmbedd ngDataset =
+      thr ftReversedS mclustersEmbedd ngs
         .map {
-          case (embeddingId, embedding) => InternalIdEmbeddingWithId(embeddingId, embedding)
-        }.writeDALSnapshotExecution(
-          ReverseIndexSemanticCorePerLanguageSimclustersEmbeddingsPrestoScalaDataset,
-          D.Daily,
-          D.Suffix(
-            LocaleEntitySimClustersEmbeddingsJob.getHdfsPath(
-              isAdhoc = false,
-              isManhattanKeyVal = false,
-              isReverseIndex = true,
-              isLogFav = false,
-              jobConfig.modelVersion,
-              jobConfig.entityType)),
+          case (embedd ng d, embedd ng) =>  nternal dEmbedd ngW h d(embedd ng d, embedd ng)
+        }.wr eDALSnapshotExecut on(
+          Reverse ndexSemant cCorePerLanguageS mclustersEmbedd ngsPrestoScalaDataset,
+          D.Da ly,
+          D.Suff x(
+            LocaleEnt yS mClustersEmbedd ngsJob.getHdfsPath(
+               sAdhoc = false,
+               sManhattanKeyVal = false,
+               sReverse ndex = true,
+               sLogFav = false,
+              jobConf g.modelVers on,
+              jobConf g.ent yType)),
           D.EBLzo(),
           dateRange.end
         )
 
-    Execution
-      .zip(
-        writeSimClustersEmbeddingDataset,
-        writeSimClustersEmbeddingKeyValDataset,
-        writeReverseSimClustersEmbeddingDataset,
-        writeReverseSimClustersEmbeddingKeyValDataset
-      ).unit
+    Execut on
+      .z p(
+        wr eS mClustersEmbedd ngDataset,
+        wr eS mClustersEmbedd ngKeyValDataset,
+        wr eReverseS mClustersEmbedd ngDataset,
+        wr eReverseS mClustersEmbedd ngKeyValDataset
+      ).un 
   }
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
 
-    val jobConfig = EntityEmbeddingsJobConfig(args, isAdhoc = false)
+    val jobConf g = Ent yEmbedd ngsJobConf g(args,  sAdhoc = false)
 
-    val embeddingsDataset = EntityEmbeddingsSources.getEntityEmbeddingsDataset(
-      jobConfig.entityType,
-      ModelVersions.toKnownForModelVersion(jobConfig.modelVersion),
-      isEmbeddingsPerLocale = true
+    val embedd ngsDataset = Ent yEmbedd ngsS ces.getEnt yEmbedd ngsDataset(
+      jobConf g.ent yType,
+      ModelVers ons.toKnownForModelVers on(jobConf g.modelVers on),
+       sEmbedd ngsPerLocale = true
     )
 
-    val reverseIndexEmbeddingsDataset =
-      EntityEmbeddingsSources.getReverseIndexedEntityEmbeddingsDataset(
-        jobConfig.entityType,
-        ModelVersions.toKnownForModelVersion(jobConfig.modelVersion),
-        isEmbeddingsPerLocale = true
+    val reverse ndexEmbedd ngsDataset =
+      Ent yEmbedd ngsS ces.getReverse ndexedEnt yEmbedd ngsDataset(
+        jobConf g.ent yType,
+        ModelVers ons.toKnownForModelVers on(jobConf g.modelVers on),
+         sEmbedd ngsPerLocale = true
       )
 
-    val userEntityMatrix: TypedPipe[(UserId, (Entity, Double))] =
-      getUserEntityMatrix(
-        jobConfig,
-        DataSources.entityRealGraphAggregationDataSetSource(dateRange.embiggen(Days(7))),
-        Some(ExternalDataSources.uttEntitiesSource())
-      ).forceToDisk
+    val userEnt yMatr x: TypedP pe[(User d, (Ent y, Double))] =
+      getUserEnt yMatr x(
+        jobConf g,
+        DataS ces.ent yRealGraphAggregat onDataSetS ce(dateRange.emb ggen(Days(7))),
+        So (ExternalDataS ces.uttEnt  esS ce())
+      ).forceToD sk
 
-    //determine which data source to use based on model version
-    val simClustersSource = jobConfig.modelVersion match {
-      case ModelVersion.Model20m145kUpdated =>
-        InterestedInSources.simClustersInterestedInUpdatedSource(dateRange, timeZone)
-      case modelVersion =>
-        throw new IllegalArgumentException(
-          s"SimClusters model version not supported ${modelVersion.name}")
+    //determ ne wh ch data s ce to use based on model vers on
+    val s mClustersS ce = jobConf g.modelVers on match {
+      case ModelVers on.Model20m145kUpdated =>
+         nterested nS ces.s mClusters nterested nUpdatedS ce(dateRange, t  Zone)
+      case modelVers on =>
+        throw new  llegalArgu ntExcept on(
+          s"S mClusters model vers on not supported ${modelVers on.na }")
     }
 
-    val entityPerLanguage = userEntityMatrix.join(ExternalDataSources.userSource).map {
-      case (userId, ((entity, score), (_, language))) =>
-        ((entity, language), (userId, score))
+    val ent yPerLanguage = userEnt yMatr x.jo n(ExternalDataS ces.userS ce).map {
+      case (user d, ((ent y, score), (_, language))) =>
+        ((ent y, language), (user d, score))
     }
 
-    val normalizedUserEntityMatrix =
-      getNormalizedTransposeInputMatrix(entityPerLanguage, numReducers = Some(3000))
+    val normal zedUserEnt yMatr x =
+      getNormal zedTranspose nputMatr x(ent yPerLanguage, numReducers = So (3000))
 
-    val simClustersEmbedding = jobConfig.modelVersion match {
-      case ModelVersion.Model20m145kUpdated =>
-        computeEmbeddings(
-          simClustersSource,
-          normalizedUserEntityMatrix,
+    val s mClustersEmbedd ng = jobConf g.modelVers on match {
+      case ModelVers on.Model20m145kUpdated =>
+        computeEmbedd ngs(
+          s mClustersS ce,
+          normal zedUserEnt yMatr x,
           scoreExtractors,
-          ModelVersion.Model20m145kUpdated,
-          toSimClustersEmbeddingId(ModelVersion.Model20m145kUpdated),
-          numReducers = Some(8000)
+          ModelVers on.Model20m145kUpdated,
+          toS mClustersEmbedd ng d(ModelVers on.Model20m145kUpdated),
+          numReducers = So (8000)
         )
-      case modelVersion =>
-        throw new IllegalArgumentException(
-          s"SimClusters model version not supported ${modelVersion.name}")
+      case modelVers on =>
+        throw new  llegalArgu ntExcept on(
+          s"S mClusters model vers on not supported ${modelVers on.na }")
     }
 
-    val topKEmbeddings =
-      simClustersEmbedding.group.sortedReverseTake(jobConfig.topK)(Ordering.by(_._2))
+    val topKEmbedd ngs =
+      s mClustersEmbedd ng.group.sortedReverseTake(jobConf g.topK)(Order ng.by(_._2))
 
-    writeOutput(
-      simClustersEmbedding,
-      topKEmbeddings,
-      jobConfig,
-      embeddingsDataset,
-      reverseIndexEmbeddingsDataset)
+    wr eOutput(
+      s mClustersEmbedd ng,
+      topKEmbedd ngs,
+      jobConf g,
+      embedd ngsDataset,
+      reverse ndexEmbedd ngsDataset)
   }
 }
 
-object LocaleEntitySimClustersEmbeddingsJob {
+object LocaleEnt yS mClustersEmbedd ngsJob {
 
-  def getUserEntityMatrix(
-    jobConfig: EntityEmbeddingsJobConfig,
-    entityRealGraphSource: TypedPipe[Edge],
-    semanticCoreEntityIdsToKeep: Option[TypedPipe[Long]],
+  def getUserEnt yMatr x(
+    jobConf g: Ent yEmbedd ngsJobConf g,
+    ent yRealGraphS ce: TypedP pe[Edge],
+    semant cCoreEnt y dsToKeep: Opt on[TypedP pe[Long]],
     applyLogTransform: Boolean = false
-  ): TypedPipe[(UserId, (Entity, Double))] =
-    jobConfig.entityType match {
-      case EntityType.SemanticCore =>
-        semanticCoreEntityIdsToKeep match {
-          case Some(entityIdsToKeep) =>
-            getEntityUserMatrix(entityRealGraphSource, jobConfig.halfLife, EntityType.SemanticCore)
+  ): TypedP pe[(User d, (Ent y, Double))] =
+    jobConf g.ent yType match {
+      case Ent yType.Semant cCore =>
+        semant cCoreEnt y dsToKeep match {
+          case So (ent y dsToKeep) =>
+            getEnt yUserMatr x(ent yRealGraphS ce, jobConf g.halfL fe, Ent yType.Semant cCore)
               .map {
-                case (entity, (userId, score)) =>
-                  entity match {
-                    case Entity.SemanticCore(SemanticCoreEntity(entityId, _)) =>
-                      if (applyLogTransform) {
-                        (entityId, (userId, (entity, Math.log(score + 1))))
+                case (ent y, (user d, score)) =>
+                  ent y match {
+                    case Ent y.Semant cCore(Semant cCoreEnt y(ent y d, _)) =>
+                       f (applyLogTransform) {
+                        (ent y d, (user d, (ent y, Math.log(score + 1))))
                       } else {
-                        (entityId, (userId, (entity, score)))
+                        (ent y d, (user d, (ent y, score)))
                       }
                     case _ =>
-                      throw new IllegalArgumentException(
-                        "Job config specified EntityType.SemanticCore, but non-semantic core entity was found.")
+                      throw new  llegalArgu ntExcept on(
+                        "Job conf g spec f ed Ent yType.Semant cCore, but non-semant c core ent y was found.")
                   }
-              }.hashJoin(entityIdsToKeep.asKeys).values.map {
-                case ((userId, (entity, score)), _) => (userId, (entity, score))
+              }.hashJo n(ent y dsToKeep.asKeys).values.map {
+                case ((user d, (ent y, score)), _) => (user d, (ent y, score))
               }
           case _ =>
-            getEntityUserMatrix(entityRealGraphSource, jobConfig.halfLife, EntityType.SemanticCore)
-              .map { case (entity, (userId, score)) => (userId, (entity, score)) }
+            getEnt yUserMatr x(ent yRealGraphS ce, jobConf g.halfL fe, Ent yType.Semant cCore)
+              .map { case (ent y, (user d, score)) => (user d, (ent y, score)) }
         }
-      case EntityType.Hashtag =>
-        getEntityUserMatrix(entityRealGraphSource, jobConfig.halfLife, EntityType.Hashtag)
-          .map { case (entity, (userId, score)) => (userId, (entity, score)) }
+      case Ent yType.Hashtag =>
+        getEnt yUserMatr x(ent yRealGraphS ce, jobConf g.halfL fe, Ent yType.Hashtag)
+          .map { case (ent y, (user d, score)) => (user d, (ent y, score)) }
       case _ =>
-        throw new IllegalArgumentException(
-          s"Argument [--entity-type] must be provided. Supported options [${EntityType.SemanticCore.name}, ${EntityType.Hashtag.name}]")
+        throw new  llegalArgu ntExcept on(
+          s"Argu nt [--ent y-type] must be prov ded. Supported opt ons [${Ent yType.Semant cCore.na }, ${Ent yType.Hashtag.na }]")
     }
 
-  def toSimClustersEmbeddingId(
-    modelVersion: ModelVersion
-  ): ((Entity, String), ScoreType.ScoreType) => SimClustersEmbeddingId = {
-    case ((Entity.SemanticCore(SemanticCoreEntity(entityId, _)), lang), ScoreType.FavScore) =>
-      SimClustersEmbeddingId(
-        EmbeddingType.FavBasedSematicCoreEntity,
-        modelVersion,
-        InternalId.LocaleEntityId(LocaleEntityId(entityId, lang)))
-    case ((Entity.SemanticCore(SemanticCoreEntity(entityId, _)), lang), ScoreType.FollowScore) =>
-      SimClustersEmbeddingId(
-        EmbeddingType.FollowBasedSematicCoreEntity,
-        modelVersion,
-        InternalId.LocaleEntityId(LocaleEntityId(entityId, lang)))
-    case ((Entity.SemanticCore(SemanticCoreEntity(entityId, _)), lang), ScoreType.LogFavScore) =>
-      SimClustersEmbeddingId(
-        EmbeddingType.LogFavBasedLocaleSemanticCoreEntity,
-        modelVersion,
-        InternalId.LocaleEntityId(LocaleEntityId(entityId, lang)))
-    case ((Entity.Hashtag(Hashtag(hashtag)), _), ScoreType.FavScore) =>
-      SimClustersEmbeddingId(
-        EmbeddingType.FavBasedHashtagEntity,
-        modelVersion,
-        InternalId.Hashtag(hashtag))
-    case ((Entity.Hashtag(Hashtag(hashtag)), _), ScoreType.FollowScore) =>
-      SimClustersEmbeddingId(
-        EmbeddingType.FollowBasedHashtagEntity,
-        modelVersion,
-        InternalId.Hashtag(hashtag))
-    case (scoreType, entity) =>
-      throw new IllegalArgumentException(
-        s"(ScoreType, Entity) ($scoreType, ${entity.toString}) not supported")
+  def toS mClustersEmbedd ng d(
+    modelVers on: ModelVers on
+  ): ((Ent y, Str ng), ScoreType.ScoreType) => S mClustersEmbedd ng d = {
+    case ((Ent y.Semant cCore(Semant cCoreEnt y(ent y d, _)), lang), ScoreType.FavScore) =>
+      S mClustersEmbedd ng d(
+        Embedd ngType.FavBasedSemat cCoreEnt y,
+        modelVers on,
+         nternal d.LocaleEnt y d(LocaleEnt y d(ent y d, lang)))
+    case ((Ent y.Semant cCore(Semant cCoreEnt y(ent y d, _)), lang), ScoreType.FollowScore) =>
+      S mClustersEmbedd ng d(
+        Embedd ngType.FollowBasedSemat cCoreEnt y,
+        modelVers on,
+         nternal d.LocaleEnt y d(LocaleEnt y d(ent y d, lang)))
+    case ((Ent y.Semant cCore(Semant cCoreEnt y(ent y d, _)), lang), ScoreType.LogFavScore) =>
+      S mClustersEmbedd ng d(
+        Embedd ngType.LogFavBasedLocaleSemant cCoreEnt y,
+        modelVers on,
+         nternal d.LocaleEnt y d(LocaleEnt y d(ent y d, lang)))
+    case ((Ent y.Hashtag(Hashtag(hashtag)), _), ScoreType.FavScore) =>
+      S mClustersEmbedd ng d(
+        Embedd ngType.FavBasedHashtagEnt y,
+        modelVers on,
+         nternal d.Hashtag(hashtag))
+    case ((Ent y.Hashtag(Hashtag(hashtag)), _), ScoreType.FollowScore) =>
+      S mClustersEmbedd ng d(
+        Embedd ngType.FollowBasedHashtagEnt y,
+        modelVers on,
+         nternal d.Hashtag(hashtag))
+    case (scoreType, ent y) =>
+      throw new  llegalArgu ntExcept on(
+        s"(ScoreType, Ent y) ($scoreType, ${ent y.toStr ng}) not supported")
   }
 
   /**
-   * Generates the output path for the Entity Embeddings Job.
+   * Generates t  output path for t  Ent y Embedd ngs Job.
    *
-   * Example Adhoc: /user/recos-platform/processed/adhoc/simclusters_embeddings/hashtag_per_language/model_20m_145k_updated
-   * Example Prod: /atla/proc/user/cassowary/processed/simclusters_embeddings/semantic_core_per_language/model_20m_145k_updated
+   * Example Adhoc: /user/recos-platform/processed/adhoc/s mclusters_embedd ngs/hashtag_per_language/model_20m_145k_updated
+   * Example Prod: /atla/proc/user/cassowary/processed/s mclusters_embedd ngs/semant c_core_per_language/model_20m_145k_updated
    *
    */
   def getHdfsPath(
-    isAdhoc: Boolean,
-    isManhattanKeyVal: Boolean,
-    isReverseIndex: Boolean,
-    isLogFav: Boolean,
-    modelVersion: ModelVersion,
-    entityType: EntityType
-  ): String = {
+     sAdhoc: Boolean,
+     sManhattanKeyVal: Boolean,
+     sReverse ndex: Boolean,
+     sLogFav: Boolean,
+    modelVers on: ModelVers on,
+    ent yType: Ent yType
+  ): Str ng = {
 
-    val reverseIndex = if (isReverseIndex) "reverse_index/" else ""
+    val reverse ndex =  f ( sReverse ndex) "reverse_ ndex/" else ""
 
-    val logFav = if (isLogFav) "log_fav/" else ""
+    val logFav =  f ( sLogFav) "log_fav/" else ""
 
-    val entityTypeSuffix = entityType match {
-      case EntityType.SemanticCore => "semantic_core_per_language"
-      case EntityType.Hashtag => "hashtag_per_language"
+    val ent yTypeSuff x = ent yType match {
+      case Ent yType.Semant cCore => "semant c_core_per_language"
+      case Ent yType.Hashtag => "hashtag_per_language"
       case _ => "unknown_per_language"
     }
 
-    val pathSuffix = s"$logFav$reverseIndex$entityTypeSuffix"
+    val pathSuff x = s"$logFav$reverse ndex$ent yTypeSuff x"
 
-    EmbeddingUtil.getHdfsPath(isAdhoc, isManhattanKeyVal, modelVersion, pathSuffix)
+    Embedd ngUt l.getHdfsPath( sAdhoc,  sManhattanKeyVal, modelVers on, pathSuff x)
   }
 }

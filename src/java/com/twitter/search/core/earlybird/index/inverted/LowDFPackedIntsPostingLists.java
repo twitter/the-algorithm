@@ -1,255 +1,255 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.util.packed.PackedInts;
+ mport org.apac .lucene. ndex.Post ngsEnum;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.ut l.packed.Packed nts;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.ut l. o.flushable.DataDeser al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.DataSer al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.common.ut l. o.flushable.Flushable;
 
 /**
- * A posting list intended for low-df terms, terms that have a small number of postings.
+ * A post ng l st  ntended for low-df terms, terms that have a small number of post ngs.
  *
- * The postings (docs and positions) are stored in PackedInts, packed based on the largest docId
- * and position across all low-df terms in a field.
+ * T  post ngs (docs and pos  ons) are stored  n Packed nts, packed based on t  largest doc d
+ * and pos  on across all low-df terms  n a f eld.
  *
- * All docIds are packed together in their own PackedInts, and all positions are stored together
- * in their own PackedInts.
- *  - A docId is stored for every single posting, that is if a doc has a frequency of N, it will be
- * stored N times.
- * - For fields that omitPositions, positions are not stored at all.
+ * All doc ds are packed toget r  n t  r own Packed nts, and all pos  ons are stored toget r
+ *  n t  r own Packed nts.
+ *  - A doc d  s stored for every s ngle post ng, that  s  f a doc has a frequency of N,   w ll be
+ * stored N t  s.
+ * - For f elds that om Pos  ons, pos  ons are not stored at all.
  *
  * Example:
- * Postings in the form (docId, position):
+ * Post ngs  n t  form (doc d, pos  on):
  *   (1, 0), (1, 1), (2, 1), (2, 3), (2, 5), (4, 0), (5, 0)
- * Will be stored as:
- *   packedDocIds:    [1, 1, 2, 2, 2, 4, 5]
- *   packedPositions: [0, 1, 1, 3, 5, 0, 0]
+ * W ll be stored as:
+ *   packedDoc ds:    [1, 1, 2, 2, 2, 4, 5]
+ *   packedPos  ons: [0, 1, 1, 3, 5, 0, 0]
  */
-public class LowDFPackedIntsPostingLists extends OptimizedPostingLists {
-  private static final SearchCounter GETTING_POSITIONS_WITH_OMIT_POSITIONS =
-      SearchCounter.export("low_df_packed_ints_posting_list_getting_positions_with_omit_positions");
+publ c class LowDFPacked ntsPost ngL sts extends Opt m zedPost ngL sts {
+  pr vate stat c f nal SearchCounter GETT NG_POS T ONS_W TH_OM T_POS T ONS =
+      SearchCounter.export("low_df_packed_ nts_post ng_l st_gett ng_pos  ons_w h_om _pos  ons");
 
   /**
-   * Internal class for hiding PackedInts Readers and Writers. A Mutable instance of PackedInts is
-   * only required when we're optimizing a new index.
-   * For the read side, we only need a PackedInts.Reader.
-   * For loaded indexes, we also only need a PackedInts.Reader.
+   *  nternal class for h d ng Packed nts Readers and Wr ers. A Mutable  nstance of Packed nts  s
+   * only requ red w n  're opt m z ng a new  ndex.
+   * For t  read s de,   only need a Packed nts.Reader.
+   * For loaded  ndexes,   also only need a Packed nts.Reader.
    */
-  private static final class PackedIntsWrapper {
-    // Will be null if we are operating on a loaded in read-only index.
+  pr vate stat c f nal class Packed ntsWrapper {
+    // W ll be null  f   are operat ng on a loaded  n read-only  ndex.
     @Nullable
-    private final PackedInts.Mutable mutablePackedInts;
-    private final PackedInts.Reader readerPackedInts;
+    pr vate f nal Packed nts.Mutable mutablePacked nts;
+    pr vate f nal Packed nts.Reader readerPacked nts;
 
-    private PackedIntsWrapper(PackedInts.Mutable mutablePackedInts) {
-      this.mutablePackedInts = Preconditions.checkNotNull(mutablePackedInts);
-      this.readerPackedInts = mutablePackedInts;
+    pr vate Packed ntsWrapper(Packed nts.Mutable mutablePacked nts) {
+      t .mutablePacked nts = Precond  ons.c ckNotNull(mutablePacked nts);
+      t .readerPacked nts = mutablePacked nts;
     }
 
-    private PackedIntsWrapper(PackedInts.Reader readerPackedInts) {
-      this.mutablePackedInts = null;
-      this.readerPackedInts = readerPackedInts;
+    pr vate Packed ntsWrapper(Packed nts.Reader readerPacked nts) {
+      t .mutablePacked nts = null;
+      t .readerPacked nts = readerPacked nts;
     }
 
-    public int size() {
-      return readerPackedInts.size();
+    publ c  nt s ze() {
+      return readerPacked nts.s ze();
     }
 
-    public PackedInts.Reader getReader() {
-      return readerPackedInts;
+    publ c Packed nts.Reader getReader() {
+      return readerPacked nts;
     }
 
-    public void set(int index, long value) {
-      this.mutablePackedInts.set(index, value);
+    publ c vo d set( nt  ndex, long value) {
+      t .mutablePacked nts.set( ndex, value);
     }
   }
 
-  private final PackedIntsWrapper packedDocIds;
+  pr vate f nal Packed ntsWrapper packedDoc ds;
   /**
-   * Will be null for fields that omitPositions.
+   * W ll be null for f elds that om Pos  ons.
    */
   @Nullable
-  private final PackedIntsWrapper packedPositions;
-  private final boolean omitPositions;
-  private final int totalPostingsAcrossTerms;
-  private final int maxPosition;
-  private int currentPackedIntsPosition;
+  pr vate f nal Packed ntsWrapper packedPos  ons;
+  pr vate f nal boolean om Pos  ons;
+  pr vate f nal  nt totalPost ngsAcrossTerms;
+  pr vate f nal  nt maxPos  on;
+  pr vate  nt currentPacked ntsPos  on;
 
   /**
-   * Creates a new LowDFPackedIntsPostingLists.
-   * @param omitPositions whether positions should be omitted or not.
-   * @param totalPostingsAcrossTerms how many postings across all terms this field has.
-   * @param maxPosition the largest position used in all the postings for this field.
+   * Creates a new LowDFPacked ntsPost ngL sts.
+   * @param om Pos  ons w t r pos  ons should be om ted or not.
+   * @param totalPost ngsAcrossTerms how many post ngs across all terms t  f eld has.
+   * @param maxPos  on t  largest pos  on used  n all t  post ngs for t  f eld.
    */
-  public LowDFPackedIntsPostingLists(
-      boolean omitPositions,
-      int totalPostingsAcrossTerms,
-      int maxPosition) {
-    this(
-        new PackedIntsWrapper(PackedInts.getMutable(
-            totalPostingsAcrossTerms,
-            PackedInts.bitsRequired(MAX_DOC_ID),
-            PackedInts.DEFAULT)),
-        omitPositions
+  publ c LowDFPacked ntsPost ngL sts(
+      boolean om Pos  ons,
+       nt totalPost ngsAcrossTerms,
+       nt maxPos  on) {
+    t (
+        new Packed ntsWrapper(Packed nts.getMutable(
+            totalPost ngsAcrossTerms,
+            Packed nts.b sRequ red(MAX_DOC_ D),
+            Packed nts.DEFAULT)),
+        om Pos  ons
             ? null
-            : new PackedIntsWrapper(PackedInts.getMutable(
-            totalPostingsAcrossTerms,
-            PackedInts.bitsRequired(maxPosition),
-            PackedInts.DEFAULT)),
-        omitPositions,
-        totalPostingsAcrossTerms,
-        maxPosition);
+            : new Packed ntsWrapper(Packed nts.getMutable(
+            totalPost ngsAcrossTerms,
+            Packed nts.b sRequ red(maxPos  on),
+            Packed nts.DEFAULT)),
+        om Pos  ons,
+        totalPost ngsAcrossTerms,
+        maxPos  on);
   }
 
-  private LowDFPackedIntsPostingLists(
-      PackedIntsWrapper packedDocIds,
+  pr vate LowDFPacked ntsPost ngL sts(
+      Packed ntsWrapper packedDoc ds,
       @Nullable
-      PackedIntsWrapper packedPositions,
-      boolean omitPositions,
-      int totalPostingsAcrossTerms,
-      int maxPosition) {
-    this.packedDocIds = packedDocIds;
-    this.packedPositions = packedPositions;
-    this.omitPositions = omitPositions;
-    this.totalPostingsAcrossTerms = totalPostingsAcrossTerms;
-    this.maxPosition = maxPosition;
-    this.currentPackedIntsPosition = 0;
+      Packed ntsWrapper packedPos  ons,
+      boolean om Pos  ons,
+       nt totalPost ngsAcrossTerms,
+       nt maxPos  on) {
+    t .packedDoc ds = packedDoc ds;
+    t .packedPos  ons = packedPos  ons;
+    t .om Pos  ons = om Pos  ons;
+    t .totalPost ngsAcrossTerms = totalPost ngsAcrossTerms;
+    t .maxPos  on = maxPos  on;
+    t .currentPacked ntsPos  on = 0;
   }
 
-  @Override
-  public int copyPostingList(PostingsEnum postingsEnum, int numPostings) throws IOException {
-    int pointer = currentPackedIntsPosition;
+  @Overr de
+  publ c  nt copyPost ngL st(Post ngsEnum post ngsEnum,  nt numPost ngs) throws  OExcept on {
+     nt po nter = currentPacked ntsPos  on;
 
-    int docId;
+     nt doc d;
 
-    while ((docId = postingsEnum.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS) {
-      assert docId <= MAX_DOC_ID;
-      int freq = postingsEnum.freq();
-      assert freq <= numPostings;
+    wh le ((doc d = post ngsEnum.nextDoc()) != Doc dSet erator.NO_MORE_DOCS) {
+      assert doc d <= MAX_DOC_ D;
+       nt freq = post ngsEnum.freq();
+      assert freq <= numPost ngs;
 
-      for (int i = 0; i < freq; i++) {
-        packedDocIds.set(currentPackedIntsPosition, docId);
-        if (packedPositions != null) {
-          int position = postingsEnum.nextPosition();
-          assert position <= maxPosition;
-          packedPositions.set(currentPackedIntsPosition, position);
+      for ( nt   = 0;   < freq;  ++) {
+        packedDoc ds.set(currentPacked ntsPos  on, doc d);
+         f (packedPos  ons != null) {
+           nt pos  on = post ngsEnum.nextPos  on();
+          assert pos  on <= maxPos  on;
+          packedPos  ons.set(currentPacked ntsPos  on, pos  on);
         }
-        currentPackedIntsPosition++;
+        currentPacked ntsPos  on++;
       }
     }
 
-    return pointer;
+    return po nter;
   }
 
-  @Override
-  public EarlybirdPostingsEnum postings(
-      int postingListPointer,
-      int numPostings,
-      int flags) throws IOException {
+  @Overr de
+  publ c Earlyb rdPost ngsEnum post ngs(
+       nt post ngL stPo nter,
+       nt numPost ngs,
+       nt flags) throws  OExcept on {
 
-    if (PostingsEnum.featureRequested(flags, PostingsEnum.POSITIONS) && !omitPositions) {
-      assert packedPositions != null;
-      return new LowDFPackedIntsPostingsEnum(
-          packedDocIds.getReader(),
-          packedPositions.getReader(),
-          postingListPointer,
-          numPostings);
+     f (Post ngsEnum.featureRequested(flags, Post ngsEnum.POS T ONS) && !om Pos  ons) {
+      assert packedPos  ons != null;
+      return new LowDFPacked ntsPost ngsEnum(
+          packedDoc ds.getReader(),
+          packedPos  ons.getReader(),
+          post ngL stPo nter,
+          numPost ngs);
     } else {
-      if (PostingsEnum.featureRequested(flags, PostingsEnum.POSITIONS) && omitPositions) {
-        GETTING_POSITIONS_WITH_OMIT_POSITIONS.increment();
+       f (Post ngsEnum.featureRequested(flags, Post ngsEnum.POS T ONS) && om Pos  ons) {
+        GETT NG_POS T ONS_W TH_OM T_POS T ONS. ncre nt();
       }
 
-      return new LowDFPackedIntsPostingsEnum(
-          packedDocIds.getReader(),
-          null, // no positions
-          postingListPointer,
-          numPostings);
+      return new LowDFPacked ntsPost ngsEnum(
+          packedDoc ds.getReader(),
+          null, // no pos  ons
+          post ngL stPo nter,
+          numPost ngs);
     }
   }
 
-  @VisibleForTesting
-  int getPackedIntsSize() {
-    return packedDocIds.size();
+  @V s bleForTest ng
+   nt getPacked ntsS ze() {
+    return packedDoc ds.s ze();
   }
 
-  @VisibleForTesting
-  int getMaxPosition() {
-    return maxPosition;
+  @V s bleForTest ng
+   nt getMaxPos  on() {
+    return maxPos  on;
   }
 
-  @VisibleForTesting
-  boolean isOmitPositions() {
-    return omitPositions;
+  @V s bleForTest ng
+  boolean  sOm Pos  ons() {
+    return om Pos  ons;
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @SuppressWarn ngs("unc cked")
+  @Overr de
+  publ c FlushHandler getFlushHandler() {
+    return new FlushHandler(t );
   }
 
-  static class FlushHandler extends Flushable.Handler<LowDFPackedIntsPostingLists> {
-    private static final String OMIT_POSITIONS_PROP_NAME = "omitPositions";
-    private static final String TOTAL_POSTINGS_PROP_NAME = "totalPostingsAcrossTerms";
-    private static final String MAX_POSITION_PROP_NAME = "maxPosition";
+  stat c class FlushHandler extends Flushable.Handler<LowDFPacked ntsPost ngL sts> {
+    pr vate stat c f nal Str ng OM T_POS T ONS_PROP_NAME = "om Pos  ons";
+    pr vate stat c f nal Str ng TOTAL_POST NGS_PROP_NAME = "totalPost ngsAcrossTerms";
+    pr vate stat c f nal Str ng MAX_POS T ON_PROP_NAME = "maxPos  on";
 
-    public FlushHandler() {
+    publ c FlushHandler() {
       super();
     }
 
-    public FlushHandler(LowDFPackedIntsPostingLists objectToFlush) {
+    publ c FlushHandler(LowDFPacked ntsPost ngL sts objectToFlush) {
       super(objectToFlush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      LowDFPackedIntsPostingLists objectToFlush = getObjectToFlush();
+    @Overr de
+    protected vo d doFlush(Flush nfo flush nfo, DataSer al zer out) throws  OExcept on {
+      LowDFPacked ntsPost ngL sts objectToFlush = getObjectToFlush();
 
-      flushInfo.addBooleanProperty(OMIT_POSITIONS_PROP_NAME, objectToFlush.omitPositions);
-      flushInfo.addIntProperty(TOTAL_POSTINGS_PROP_NAME, objectToFlush.totalPostingsAcrossTerms);
-      flushInfo.addIntProperty(MAX_POSITION_PROP_NAME, objectToFlush.maxPosition);
+      flush nfo.addBooleanProperty(OM T_POS T ONS_PROP_NAME, objectToFlush.om Pos  ons);
+      flush nfo.add ntProperty(TOTAL_POST NGS_PROP_NAME, objectToFlush.totalPost ngsAcrossTerms);
+      flush nfo.add ntProperty(MAX_POS T ON_PROP_NAME, objectToFlush.maxPos  on);
 
-      out.writePackedInts(objectToFlush.packedDocIds.getReader());
+      out.wr ePacked nts(objectToFlush.packedDoc ds.getReader());
 
-      if (!objectToFlush.omitPositions) {
-        assert objectToFlush.packedPositions != null;
-        out.writePackedInts(objectToFlush.packedPositions.getReader());
+       f (!objectToFlush.om Pos  ons) {
+        assert objectToFlush.packedPos  ons != null;
+        out.wr ePacked nts(objectToFlush.packedPos  ons.getReader());
       }
     }
 
-    @Override
-    protected LowDFPackedIntsPostingLists doLoad(
-        FlushInfo flushInfo,
-        DataDeserializer in) throws IOException {
+    @Overr de
+    protected LowDFPacked ntsPost ngL sts doLoad(
+        Flush nfo flush nfo,
+        DataDeser al zer  n) throws  OExcept on {
 
-      boolean omitPositions = flushInfo.getBooleanProperty(OMIT_POSITIONS_PROP_NAME);
-      int totalPostingsAcrossTerms = flushInfo.getIntProperty(TOTAL_POSTINGS_PROP_NAME);
-      int maxPosition = flushInfo.getIntProperty(MAX_POSITION_PROP_NAME);
+      boolean om Pos  ons = flush nfo.getBooleanProperty(OM T_POS T ONS_PROP_NAME);
+       nt totalPost ngsAcrossTerms = flush nfo.get ntProperty(TOTAL_POST NGS_PROP_NAME);
+       nt maxPos  on = flush nfo.get ntProperty(MAX_POS T ON_PROP_NAME);
 
-      PackedIntsWrapper packedDocIds = new PackedIntsWrapper(in.readPackedInts());
+      Packed ntsWrapper packedDoc ds = new Packed ntsWrapper( n.readPacked nts());
 
-      PackedIntsWrapper packedPositions = null;
-      if (!omitPositions) {
-        packedPositions = new PackedIntsWrapper(in.readPackedInts());
+      Packed ntsWrapper packedPos  ons = null;
+       f (!om Pos  ons) {
+        packedPos  ons = new Packed ntsWrapper( n.readPacked nts());
       }
 
-      return new LowDFPackedIntsPostingLists(
-          packedDocIds,
-          packedPositions,
-          omitPositions,
-          totalPostingsAcrossTerms,
-          maxPosition);
+      return new LowDFPacked ntsPost ngL sts(
+          packedDoc ds,
+          packedPos  ons,
+          om Pos  ons,
+          totalPost ngsAcrossTerms,
+          maxPos  on);
     }
   }
 }

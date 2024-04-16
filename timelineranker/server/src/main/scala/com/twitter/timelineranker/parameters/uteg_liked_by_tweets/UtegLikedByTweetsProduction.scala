@@ -1,87 +1,87 @@
-package com.twitter.timelineranker.parameters.uteg_liked_by_tweets
+package com.tw ter.t  l neranker.para ters.uteg_l ked_by_t ets
 
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.servo.decider.DeciderKeyName
-import com.twitter.timelineranker.decider.DeciderKey
-import com.twitter.timelineranker.parameters.uteg_liked_by_tweets.UtegLikedByTweetsParams._
-import com.twitter.timelineranker.parameters.util.ConfigHelper
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.OptionalOverride
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.servo.dec der.Dec derGateBu lder
+ mport com.tw ter.servo.dec der.Dec derKeyNa 
+ mport com.tw ter.t  l neranker.dec der.Dec derKey
+ mport com.tw ter.t  l neranker.para ters.uteg_l ked_by_t ets.UtegL kedByT etsParams._
+ mport com.tw ter.t  l neranker.para ters.ut l.Conf g lper
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .Opt onalOverr de
+ mport com.tw ter.t  l nes.conf gap .Param
 
-object UtegLikedByTweetsProduction {
-  val deciderByParam: Map[Param[_], DeciderKeyName] = Map[Param[_], DeciderKeyName](
-    EnableContentFeaturesHydrationParam -> DeciderKey.UtegLikedByTweetsEnableContentFeaturesHydration
+object UtegL kedByT etsProduct on {
+  val dec derByParam: Map[Param[_], Dec derKeyNa ] = Map[Param[_], Dec derKeyNa ](
+    EnableContentFeaturesHydrat onParam -> Dec derKey.UtegL kedByT etsEnableContentFeaturesHydrat on
   )
 
-  val booleanDeciderParams: Seq[EnableContentFeaturesHydrationParam.type] = Seq(
-    EnableContentFeaturesHydrationParam
+  val booleanDec derParams: Seq[EnableContentFeaturesHydrat onParam.type] = Seq(
+    EnableContentFeaturesHydrat onParam
   )
 
-  val intParams: Seq[Param[Int]] = Seq(
-    DefaultUTEGInNetworkCount,
-    DefaultMaxTweetCount,
+  val  ntParams: Seq[Param[ nt]] = Seq(
+    DefaultUTEG nNetworkCount,
+    DefaultMaxT etCount,
     DefaultUTEGOutOfNetworkCount,
-    MinNumFavoritedByUserIdsParam
+    M nNumFavor edByUser dsParam
   )
 
-  val booleanFeatureSwitchParams: Seq[FSParam[Boolean]] = Seq(
-    UTEGRecommendationsFilter.EnableParam,
-    UTEGRecommendationsFilter.ExcludeQuoteTweetParam,
-    UTEGRecommendationsFilter.ExcludeReplyParam,
-    UTEGRecommendationsFilter.ExcludeRetweetParam,
-    UTEGRecommendationsFilter.ExcludeTweetParam,
-    EnableTokensInContentFeaturesHydrationParam,
-    EnableConversationControlInContentFeaturesHydrationParam,
-    UTEGRecommendationsFilter.ExcludeRecommendedRepliesToNonFollowedUsersParam,
-    EnableTweetTextInContentFeaturesHydrationParam,
-    EnableTweetMediaHydrationParam,
-    UtegLikedByTweetsParams.IncludeRandomTweetParam,
-    UtegLikedByTweetsParams.IncludeSingleRandomTweetParam,
-    UtegLikedByTweetsParams.EnableRelevanceSearchParam
+  val booleanFeatureSw chParams: Seq[FSParam[Boolean]] = Seq(
+    UTEGRecom ndat onsF lter.EnableParam,
+    UTEGRecom ndat onsF lter.ExcludeQuoteT etParam,
+    UTEGRecom ndat onsF lter.ExcludeReplyParam,
+    UTEGRecom ndat onsF lter.ExcludeRet etParam,
+    UTEGRecom ndat onsF lter.ExcludeT etParam,
+    EnableTokens nContentFeaturesHydrat onParam,
+    EnableConversat onControl nContentFeaturesHydrat onParam,
+    UTEGRecom ndat onsF lter.ExcludeRecom ndedRepl esToNonFollo dUsersParam,
+    EnableT etText nContentFeaturesHydrat onParam,
+    EnableT et d aHydrat onParam,
+    UtegL kedByT etsParams. ncludeRandomT etParam,
+    UtegL kedByT etsParams. ncludeS ngleRandomT etParam,
+    UtegL kedByT etsParams.EnableRelevanceSearchParam
   )
-  val boundedDoubleFeatureSwitchParams: Seq[FSBoundedParam[Double]] = Seq(
-    EarlybirdScoreMultiplierParam,
-    UtegLikedByTweetsParams.ProbabilityRandomTweetParam
+  val boundedDoubleFeatureSw chParams: Seq[FSBoundedParam[Double]] = Seq(
+    Earlyb rdScoreMult pl erParam,
+    UtegL kedByT etsParams.Probab l yRandomT etParam
   )
-  val boundedIntFeatureSwitchParams: Seq[FSBoundedParam[Int]] = Seq(
-    UtegLikedByTweetsParams.NumAdditionalRepliesParam
+  val bounded ntFeatureSw chParams: Seq[FSBoundedParam[ nt]] = Seq(
+    UtegL kedByT etsParams.NumAdd  onalRepl esParam
   )
 
 }
 
-class UtegLikedByTweetsProduction(deciderGateBuilder: DeciderGateBuilder) {
-  val configHelper: ConfigHelper =
-    new ConfigHelper(UtegLikedByTweetsProduction.deciderByParam, deciderGateBuilder)
-  val booleanDeciderOverrides: Seq[OptionalOverride[Boolean]] =
-    configHelper.createDeciderBasedBooleanOverrides(
-      UtegLikedByTweetsProduction.booleanDeciderParams)
-  val boundedDoubleFeatureSwitchOverrides: Seq[OptionalOverride[Double]] =
-    FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(
-      UtegLikedByTweetsProduction.boundedDoubleFeatureSwitchParams: _*)
-  val booleanFeatureSwitchOverrides: Seq[OptionalOverride[Boolean]] =
-    FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      UtegLikedByTweetsProduction.booleanFeatureSwitchParams: _*)
-  val boundedIntFeaturesSwitchOverrides: Seq[OptionalOverride[Int]] =
-    FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-      UtegLikedByTweetsProduction.boundedIntFeatureSwitchParams: _*)
+class UtegL kedByT etsProduct on(dec derGateBu lder: Dec derGateBu lder) {
+  val conf g lper: Conf g lper =
+    new Conf g lper(UtegL kedByT etsProduct on.dec derByParam, dec derGateBu lder)
+  val booleanDec derOverr des: Seq[Opt onalOverr de[Boolean]] =
+    conf g lper.createDec derBasedBooleanOverr des(
+      UtegL kedByT etsProduct on.booleanDec derParams)
+  val boundedDoubleFeatureSw chOverr des: Seq[Opt onalOverr de[Double]] =
+    FeatureSw chOverr deUt l.getBoundedDoubleFSOverr des(
+      UtegL kedByT etsProduct on.boundedDoubleFeatureSw chParams: _*)
+  val booleanFeatureSw chOverr des: Seq[Opt onalOverr de[Boolean]] =
+    FeatureSw chOverr deUt l.getBooleanFSOverr des(
+      UtegL kedByT etsProduct on.booleanFeatureSw chParams: _*)
+  val bounded ntFeaturesSw chOverr des: Seq[Opt onalOverr de[ nt]] =
+    FeatureSw chOverr deUt l.getBounded ntFSOverr des(
+      UtegL kedByT etsProduct on.bounded ntFeatureSw chParams: _*)
 
-  val config: BaseConfig = new BaseConfigBuilder()
+  val conf g: BaseConf g = new BaseConf gBu lder()
     .set(
-      booleanDeciderOverrides: _*
+      booleanDec derOverr des: _*
     )
     .set(
-      boundedDoubleFeatureSwitchOverrides: _*
+      boundedDoubleFeatureSw chOverr des: _*
     )
     .set(
-      booleanFeatureSwitchOverrides: _*
+      booleanFeatureSw chOverr des: _*
     )
     .set(
-      boundedIntFeaturesSwitchOverrides: _*
+      bounded ntFeaturesSw chOverr des: _*
     )
-    .build(UtegLikedByTweetsProduction.getClass.getSimpleName)
+    .bu ld(UtegL kedByT etsProduct on.getClass.getS mpleNa )
 }

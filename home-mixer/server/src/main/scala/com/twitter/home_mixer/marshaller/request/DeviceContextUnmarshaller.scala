@@ -1,19 +1,19 @@
-package com.twitter.home_mixer.marshaller.request
+package com.tw ter.ho _m xer.marshaller.request
 
-import com.twitter.home_mixer.model.request.DeviceContext
-import com.twitter.home_mixer.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.model.request.Dev ceContext
+ mport com.tw ter.ho _m xer.{thr ftscala => t}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class DeviceContextUnmarshaller @Inject() () {
+@S ngleton
+class Dev ceContextUnmarshaller @ nject() () {
 
-  def apply(deviceContext: t.DeviceContext): DeviceContext = {
-    DeviceContext(
-      isPolling = deviceContext.isPolling,
-      requestContext = deviceContext.requestContext,
-      latestControlAvailable = deviceContext.latestControlAvailable,
-      autoplayEnabled = deviceContext.autoplayEnabled
+  def apply(dev ceContext: t.Dev ceContext): Dev ceContext = {
+    Dev ceContext(
+       sPoll ng = dev ceContext. sPoll ng,
+      requestContext = dev ceContext.requestContext,
+      latestControlAva lable = dev ceContext.latestControlAva lable,
+      autoplayEnabled = dev ceContext.autoplayEnabled
     )
   }
 }

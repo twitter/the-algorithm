@@ -1,338 +1,338 @@
-package com.twitter.search.earlybird.util;
+package com.tw ter.search.earlyb rd.ut l;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+ mport java.ut l.Collect ons;
+ mport java.ut l.HashMap;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
+ mport java.ut l.concurrent.T  Un ;
+ mport java.ut l.concurrent.atom c.Atom cLong;
+ mport java.ut l.funct on.Funct on;
+ mport java.ut l.stream.Collectors;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.commons.lang.mutable.MutableLong;
-import org.apache.lucene.index.IndexOptions;
-import org.apache.lucene.index.Terms;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons.lang.mutable.MutableLong;
+ mport org.apac .lucene. ndex. ndexOpt ons;
+ mport org.apac .lucene. ndex.Terms;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentManager;
+ mport com.tw ter.search.common.concurrent.Sc duledExecutorServ ceFactory;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
+ mport com.tw ter.search.common. tr cs.SearchStatsRece ver;
+ mport com.tw ter.search.common. tr cs.SearchT  r;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.except on.Cr  calExcept onHandler;
+ mport com.tw ter.search.earlyb rd. ndex.Earlyb rdS ngleSeg ntSearc r;
+ mport com.tw ter.search.earlyb rd.part  on.Seg nt nfo;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntManager;
 
 /**
- * A background task that periodically gets and exports the number of terms per field that are
- * indexed on this earlybird, averaged over all segments.
- * Specifically used for making sure that we are not missing terms for any fields in the search
- * archives.
- * The task loops though all the segments that are indexed by this earlybird, and for each segment
- * looks at the term counts for all fields in that segment.
+ * A background task that per od cally gets and exports t  number of terms per f eld that are
+ *  ndexed on t  earlyb rd, averaged over all seg nts.
+ * Spec f cally used for mak ng sure that   are not m ss ng terms for any f elds  n t  search
+ * arch ves.
+ * T  task loops though all t  seg nts that are  ndexed by t  earlyb rd, and for each seg nt
+ * looks at t  term counts for all f elds  n that seg nt.
  *
- * Also keeps track of the number of fields that do not have any term counts (or below the specified
- * threshold) in the data that is indexed on this earlybird.
+ * Also keeps track of t  number of f elds that do not have any term counts (or below t  spec f ed
+ * threshold)  n t  data that  s  ndexed on t  earlyb rd.
  */
-public class TermCountMonitor extends OneTaskScheduledExecutorManager {
-  private static final Logger LOG = LoggerFactory.getLogger(TermCountMonitor.class);
+publ c class TermCountMon or extends OneTaskSc duledExecutorManager {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(TermCountMon or.class);
 
-  private static final String THREAD_NAME_FORMAT = "TermCountMonitor-%d";
-  private static final boolean THREAD_IS_DAEMON = true;
+  pr vate stat c f nal Str ng THREAD_NAME_FORMAT = "TermCountMon or-%d";
+  pr vate stat c f nal boolean THREAD_ S_DAEMON = true;
 
-  public static final String RUN_INTERVAL_MINUTES_CONFIG_NAME =
-      "term_count_monitor_run_interval_minutes";
+  publ c stat c f nal Str ng RUN_ NTERVAL_M NUTES_CONF G_NAME =
+      "term_count_mon or_run_ nterval_m nutes";
 
-  private static Function<String, String> termStatNameFunc =
-      field -> "term_count_on_field_" + field;
-  private static Function<String, String> tokenStatNameFunc =
-      field -> "token_count_on_field_" + field;
-  private static Function<String, String> missingFieldStatNameFunc =
-      field -> "term_count_monitor_missing_field_" + field;
+  pr vate stat c Funct on<Str ng, Str ng> termStatNa Func =
+      f eld -> "term_count_on_f eld_" + f eld;
+  pr vate stat c Funct on<Str ng, Str ng> tokenStatNa Func =
+      f eld -> "token_count_on_f eld_" + f eld;
+  pr vate stat c Funct on<Str ng, Str ng> m ss ngF eldStatNa Func =
+      f eld -> "term_count_mon or_m ss ng_f eld_" + f eld;
 
-  private static class RawFieldCounter {
-    private MutableLong numTerms = new MutableLong(0L);
-    private MutableLong numTokens = new MutableLong(0L);
+  pr vate stat c class RawF eldCounter {
+    pr vate MutableLong numTerms = new MutableLong(0L);
+    pr vate MutableLong numTokens = new MutableLong(0L);
   }
 
-  @VisibleForTesting
-  static class ExportedFieldCounter {
-    private final AtomicLong numTerms;
-    private final AtomicLong numTokens;
+  @V s bleForTest ng
+  stat c class ExportedF eldCounter {
+    pr vate f nal Atom cLong numTerms;
+    pr vate f nal Atom cLong numTokens;
 
-    ExportedFieldCounter(RawFieldCounter rawCounter) {
-      this.numTerms = new AtomicLong(rawCounter.numTerms.longValue());
-      this.numTokens = new AtomicLong(rawCounter.numTokens.longValue());
+    ExportedF eldCounter(RawF eldCounter rawCounter) {
+      t .numTerms = new Atom cLong(rawCounter.numTerms.longValue());
+      t .numTokens = new Atom cLong(rawCounter.numTokens.longValue());
     }
 
-    ExportedFieldCounter(long numInitialTerms, long numInitialTokens) {
-      this.numTerms = new AtomicLong(numInitialTerms);
-      this.numTokens = new AtomicLong(numInitialTokens);
+    ExportedF eldCounter(long num n  alTerms, long num n  alTokens) {
+      t .numTerms = new Atom cLong(num n  alTerms);
+      t .numTokens = new Atom cLong(num n  alTokens);
     }
 
-    @VisibleForTesting
+    @V s bleForTest ng
     long getNumTerms() {
       return numTerms.longValue();
     }
 
-    @VisibleForTesting
+    @V s bleForTest ng
     long getNumTokens() {
       return numTokens.longValue();
     }
   }
 
-  private final int fieldMinTermCount =
-      EarlybirdConfig.getInt("term_count_monitor_min_count", 0);
+  pr vate f nal  nt f eldM nTermCount =
+      Earlyb rdConf g.get nt("term_count_mon or_m n_count", 0);
 
-  private final SegmentManager segmentManager;
-  private final Map<String, SearchLongGauge> missingFields;
-  private final Map<String, SearchLongGauge> termStats;
-  private final Map<String, SearchLongGauge> tokenStats;
-  private final Map<String, ExportedFieldCounter> exportedCounts;
-  private final SearchLongGauge termCountOnAllFields;
-  private final SearchLongGauge tokenCountOnAllFields;
-  private final SearchLongGauge fieldsWithNoTermCountStat;
-  private final SearchLongGauge isRunningStat;
-  private final SearchTimerStats checkTimeStat;
+  pr vate f nal Seg ntManager seg ntManager;
+  pr vate f nal Map<Str ng, SearchLongGauge> m ss ngF elds;
+  pr vate f nal Map<Str ng, SearchLongGauge> termStats;
+  pr vate f nal Map<Str ng, SearchLongGauge> tokenStats;
+  pr vate f nal Map<Str ng, ExportedF eldCounter> exportedCounts;
+  pr vate f nal SearchLongGauge termCountOnAllF elds;
+  pr vate f nal SearchLongGauge tokenCountOnAllF elds;
+  pr vate f nal SearchLongGauge f eldsW hNoTermCountStat;
+  pr vate f nal SearchLongGauge  sRunn ngStat;
+  pr vate f nal SearchT  rStats c ckT  Stat;
 
-  @Override
-  protected void runOneIteration() {
-    LOG.info("Starting to get per-field term counts");
-    isRunningStat.set(1);
-    final SearchTimer timer = checkTimeStat.startNewTimer();
+  @Overr de
+  protected vo d runOne erat on() {
+    LOG. nfo("Start ng to get per-f eld term counts");
+     sRunn ngStat.set(1);
+    f nal SearchT  r t  r = c ckT  Stat.startNewT  r();
     try {
-      updateFieldTermCounts();
-    } catch (Exception ex) {
-      LOG.error("Unexpected exception while getting per-field term counts", ex);
-    } finally {
-      LOG.info(
-          "Done getting per-field term counts. Fields with low term counts: {}",
-          getFieldsWithLowTermCount());
-      isRunningStat.set(0);
-      checkTimeStat.stopTimerAndIncrement(timer);
+      updateF eldTermCounts();
+    } catch (Except on ex) {
+      LOG.error("Unexpected except on wh le gett ng per-f eld term counts", ex);
+    } f nally {
+      LOG. nfo(
+          "Done gett ng per-f eld term counts. F elds w h low term counts: {}",
+          getF eldsW hLowTermCount());
+       sRunn ngStat.set(0);
+      c ckT  Stat.stopT  rAnd ncre nt(t  r);
     }
   }
 
   /**
-   * Create a term count monitor which monitors the number of terms in segments
-   * managed by the given segment manager.
+   * Create a term count mon or wh ch mon ors t  number of terms  n seg nts
+   * managed by t  g ven seg nt manager.
    */
-  public TermCountMonitor(
-      SegmentManager segmentManager,
-      ScheduledExecutorServiceFactory executorServiceFactory,
-      long shutdownWaitDuration,
-      TimeUnit shutdownWaitUnit,
-      SearchStatsReceiver searchStatsReceiver,
-      CriticalExceptionHandler criticalExceptionHandler) {
+  publ c TermCountMon or(
+      Seg ntManager seg ntManager,
+      Sc duledExecutorServ ceFactory executorServ ceFactory,
+      long shutdownWa Durat on,
+      T  Un  shutdownWa Un ,
+      SearchStatsRece ver searchStatsRece ver,
+      Cr  calExcept onHandler cr  calExcept onHandler) {
     super(
-      executorServiceFactory,
+      executorServ ceFactory,
       THREAD_NAME_FORMAT,
-      THREAD_IS_DAEMON,
-      PeriodicActionParams.atFixedRate(
-        EarlybirdConfig.getInt(RUN_INTERVAL_MINUTES_CONFIG_NAME, -1),
-        TimeUnit.MINUTES),
-      new ShutdownWaitTimeParams(
-        shutdownWaitDuration,
-        shutdownWaitUnit
+      THREAD_ S_DAEMON,
+      Per od cAct onParams.atF xedRate(
+        Earlyb rdConf g.get nt(RUN_ NTERVAL_M NUTES_CONF G_NAME, -1),
+        T  Un .M NUTES),
+      new ShutdownWa T  Params(
+        shutdownWa Durat on,
+        shutdownWa Un 
       ),
-      searchStatsReceiver,
-        criticalExceptionHandler);
-    this.segmentManager = segmentManager;
-    this.missingFields = new HashMap<>();
-    this.termStats = new HashMap<>();
-    this.tokenStats = new HashMap<>();
-    this.exportedCounts = new HashMap<>();
-    this.termCountOnAllFields = getSearchStatsReceiver().getLongGauge("term_count_on_all_fields");
-    this.tokenCountOnAllFields = getSearchStatsReceiver().getLongGauge("token_count_on_all_fields");
-    this.fieldsWithNoTermCountStat =
-        getSearchStatsReceiver().getLongGauge("fields_with_low_term_counts");
-    this.isRunningStat =
-        getSearchStatsReceiver().getLongGauge("term_count_monitor_is_running");
-    this.checkTimeStat =
-        getSearchStatsReceiver().getTimerStats(
-            "term_count_monitor_check_time", TimeUnit.MILLISECONDS, true, true, false);
+      searchStatsRece ver,
+        cr  calExcept onHandler);
+    t .seg ntManager = seg ntManager;
+    t .m ss ngF elds = new HashMap<>();
+    t .termStats = new HashMap<>();
+    t .tokenStats = new HashMap<>();
+    t .exportedCounts = new HashMap<>();
+    t .termCountOnAllF elds = getSearchStatsRece ver().getLongGauge("term_count_on_all_f elds");
+    t .tokenCountOnAllF elds = getSearchStatsRece ver().getLongGauge("token_count_on_all_f elds");
+    t .f eldsW hNoTermCountStat =
+        getSearchStatsRece ver().getLongGauge("f elds_w h_low_term_counts");
+    t . sRunn ngStat =
+        getSearchStatsRece ver().getLongGauge("term_count_mon or_ s_runn ng");
+    t .c ckT  Stat =
+        getSearchStatsRece ver().getT  rStats(
+            "term_count_mon or_c ck_t  ", T  Un .M LL SECONDS, true, true, false);
   }
 
-  private SearchLongGauge getOrCreateLongGauge(
-      Map<String, SearchLongGauge> gauges, String field, Function<String, String> nameSupplier) {
-    SearchLongGauge stat = gauges.get(field);
+  pr vate SearchLongGauge getOrCreateLongGauge(
+      Map<Str ng, SearchLongGauge> gauges, Str ng f eld, Funct on<Str ng, Str ng> na Suppl er) {
+    SearchLongGauge stat = gauges.get(f eld);
 
-    if (stat == null) {
-      stat = getSearchStatsReceiver().getLongGauge(nameSupplier.apply(field));
-      gauges.put(field, stat);
+     f (stat == null) {
+      stat = getSearchStatsRece ver().getLongGauge(na Suppl er.apply(f eld));
+      gauges.put(f eld, stat);
     }
 
     return stat;
   }
 
-  private void updateFieldTermCounts() {
-    // 0. Get the current per-field term counts
-    Map<String, RawFieldCounter> newCounts = getFieldStats();
-    LOG.info("Computed field stats for all segments");
+  pr vate vo d updateF eldTermCounts() {
+    // 0. Get t  current per-f eld term counts
+    Map<Str ng, RawF eldCounter> newCounts = getF eldStats();
+    LOG. nfo("Computed f eld stats for all seg nts");
 
-    // 1. Update all existing keys
-    for (Map.Entry<String, ExportedFieldCounter> exportedCount : exportedCounts.entrySet()) {
-      String field = exportedCount.getKey();
-      ExportedFieldCounter exportedCountValue = exportedCount.getValue();
+    // 1. Update all ex st ng keys
+    for (Map.Entry<Str ng, ExportedF eldCounter> exportedCount : exportedCounts.entrySet()) {
+      Str ng f eld = exportedCount.getKey();
+      ExportedF eldCounter exportedCountValue = exportedCount.getValue();
 
-      RawFieldCounter newCount = newCounts.get(field);
-      if (newCount == null) {
+      RawF eldCounter newCount = newCounts.get(f eld);
+       f (newCount == null) {
         exportedCountValue.numTerms.set(0L);
         exportedCountValue.numTokens.set(0L);
       } else {
         exportedCountValue.numTerms.set(newCount.numTerms.longValue());
         exportedCountValue.numTokens.set(newCount.numTokens.longValue());
 
-        // clean up so that we don't check this field again when we look for new field
-        newCounts.remove(field);
+        // clean up so that   don't c ck t  f eld aga n w n   look for new f eld
+        newCounts.remove(f eld);
       }
     }
 
-    // 2. Add and export all new fields' term counts
-    for (Map.Entry<String, RawFieldCounter> newCount: newCounts.entrySet()) {
-      String field = newCount.getKey();
-      Preconditions.checkState(!exportedCounts.containsKey(field),
-          "Should have already processed and removed existing fields: " + field);
+    // 2. Add and export all new f elds' term counts
+    for (Map.Entry<Str ng, RawF eldCounter> newCount: newCounts.entrySet()) {
+      Str ng f eld = newCount.getKey();
+      Precond  ons.c ckState(!exportedCounts.conta nsKey(f eld),
+          "Should have already processed and removed ex st ng f elds: " + f eld);
 
-      ExportedFieldCounter newStat = new ExportedFieldCounter(newCount.getValue());
-      exportedCounts.put(field, newStat);
+      ExportedF eldCounter newStat = new ExportedF eldCounter(newCount.getValue());
+      exportedCounts.put(f eld, newStat);
     }
 
-    // 3. Export as a stat the term counts for all the known fields.
-    for (Map.Entry<String, ExportedFieldCounter> exportedCount : exportedCounts.entrySet()) {
-      String field = exportedCount.getKey();
-      ExportedFieldCounter counter = exportedCount.getValue();
+    // 3. Export as a stat t  term counts for all t  known f elds.
+    for (Map.Entry<Str ng, ExportedF eldCounter> exportedCount : exportedCounts.entrySet()) {
+      Str ng f eld = exportedCount.getKey();
+      ExportedF eldCounter counter = exportedCount.getValue();
 
-      getOrCreateLongGauge(termStats, field, termStatNameFunc).set(counter.numTerms.get());
-      getOrCreateLongGauge(tokenStats, field, tokenStatNameFunc).set(counter.numTokens.get());
+      getOrCreateLongGauge(termStats, f eld, termStatNa Func).set(counter.numTerms.get());
+      getOrCreateLongGauge(tokenStats, f eld, tokenStatNa Func).set(counter.numTokens.get());
     }
 
-    // 4. Export as a stat, number of fields not having enough term counts (i.e. <= 0)
-    int fieldsWithNoTermCounts = 0;
-    for (Map.Entry<String, ExportedFieldCounter> fieldTermCount : exportedCounts.entrySet()) {
-      String field = fieldTermCount.getKey();
-      AtomicLong exportedCountValue = fieldTermCount.getValue().numTerms;
-      if (exportedCountValue.get() <= fieldMinTermCount) {
+    // 4. Export as a stat, number of f elds not hav ng enough term counts ( .e. <= 0)
+     nt f eldsW hNoTermCounts = 0;
+    for (Map.Entry<Str ng, ExportedF eldCounter> f eldTermCount : exportedCounts.entrySet()) {
+      Str ng f eld = f eldTermCount.getKey();
+      Atom cLong exportedCountValue = f eldTermCount.getValue().numTerms;
+       f (exportedCountValue.get() <= f eldM nTermCount) {
         LOG.warn(
-            "Found a field with too few term counts. Field: {} count: {}",
-            field, exportedCountValue);
-        fieldsWithNoTermCounts++;
+            "Found a f eld w h too few term counts. F eld: {} count: {}",
+            f eld, exportedCountValue);
+        f eldsW hNoTermCounts++;
       }
     }
-    this.fieldsWithNoTermCountStat.set(fieldsWithNoTermCounts);
+    t .f eldsW hNoTermCountStat.set(f eldsW hNoTermCounts);
   }
 
   /**
-   * Loops through all segments, and for each field gets the average term/token count.
-   * Based on that, returns a map from each field to its term/token count (average per segment).
+   * Loops through all seg nts, and for each f eld gets t  average term/token count.
+   * Based on that, returns a map from each f eld to  s term/token count (average per seg nt).
    */
-  private Map<String, RawFieldCounter> getFieldStats() {
-    Iterable<SegmentInfo> segmentInfos = segmentManager.getSegmentInfos(
-        SegmentManager.Filter.Enabled, SegmentManager.Order.NEW_TO_OLD);
-    Map<String, RawFieldCounter> rawCounts = new HashMap<>();
+  pr vate Map<Str ng, RawF eldCounter> getF eldStats() {
+     erable<Seg nt nfo> seg nt nfos = seg ntManager.getSeg nt nfos(
+        Seg ntManager.F lter.Enabled, Seg ntManager.Order.NEW_TO_OLD);
+    Map<Str ng, RawF eldCounter> rawCounts = new HashMap<>();
 
-    ImmutableSchemaInterface schemaSnapshot =
-        segmentManager.getEarlybirdIndexConfig().getSchema().getSchemaSnapshot();
-    Set<String> missingFieldsCandidates = schemaSnapshot
-        .getFieldInfos()
+     mmutableSc ma nterface sc maSnapshot =
+        seg ntManager.getEarlyb rd ndexConf g().getSc ma().getSc maSnapshot();
+    Set<Str ng> m ss ngF eldsCand dates = sc maSnapshot
+        .getF eld nfos()
         .stream()
-        .filter(fieldInfo -> fieldInfo.getFieldType().indexOptions() != IndexOptions.NONE)
-        .map(Schema.FieldInfo::getName)
+        .f lter(f eld nfo -> f eld nfo.getF eldType(). ndexOpt ons() !=  ndexOpt ons.NONE)
+        .map(Sc ma.F eld nfo::getNa )
         .collect(Collectors.toSet());
-    int segmentCount = 0;
-    for (SegmentInfo segmentInfo : segmentInfos) {
-      segmentCount++;
+     nt seg ntCount = 0;
+    for (Seg nt nfo seg nt nfo : seg nt nfos) {
+      seg ntCount++;
       try {
-        EarlybirdSingleSegmentSearcher searcher = segmentManager.getSearcher(
-            segmentInfo.getTimeSliceID(), schemaSnapshot);
-        if (searcher != null) {
-          EarlybirdIndexSegmentAtomicReader reader = searcher.getTwitterIndexReader();
-          for (Schema.FieldInfo fieldInfo : schemaSnapshot.getFieldInfos()) {
-            if (fieldInfo.getFieldType().indexOptions() == IndexOptions.NONE) {
-              continue;
+        Earlyb rdS ngleSeg ntSearc r searc r = seg ntManager.getSearc r(
+            seg nt nfo.getT  Sl ce D(), sc maSnapshot);
+         f (searc r != null) {
+          Earlyb rd ndexSeg ntAtom cReader reader = searc r.getTw ter ndexReader();
+          for (Sc ma.F eld nfo f eld nfo : sc maSnapshot.getF eld nfos()) {
+             f (f eld nfo.getF eldType(). ndexOpt ons() ==  ndexOpt ons.NONE) {
+              cont nue;
             }
 
-            String fieldName = fieldInfo.getName();
-            RawFieldCounter count = rawCounts.get(fieldName);
-            if (count == null) {
-              count = new RawFieldCounter();
-              rawCounts.put(fieldName, count);
+            Str ng f eldNa  = f eld nfo.getNa ();
+            RawF eldCounter count = rawCounts.get(f eldNa );
+             f (count == null) {
+              count = new RawF eldCounter();
+              rawCounts.put(f eldNa , count);
             }
-            Terms terms = reader.terms(fieldName);
-            if (terms != null) {
-              missingFieldsCandidates.remove(fieldName);
-              count.numTerms.add(terms.size());
+            Terms terms = reader.terms(f eldNa );
+             f (terms != null) {
+              m ss ngF eldsCand dates.remove(f eldNa );
+              count.numTerms.add(terms.s ze());
               long sumTotalTermFreq = terms.getSumTotalTermFreq();
-              if (sumTotalTermFreq != -1) {
+               f (sumTotalTermFreq != -1) {
                 count.numTokens.add(sumTotalTermFreq);
               }
             }
           }
         }
-      } catch (Exception e) {
-        LOG.error("Exception getting average term count per field: " + segmentInfo, e);
+      } catch (Except on e) {
+        LOG.error("Except on gett ng average term count per f eld: " + seg nt nfo, e);
       }
     }
 
-    // Update missing fields stats.
-    missingFieldsCandidates.forEach(
-        field -> getOrCreateLongGauge(missingFields, field, missingFieldStatNameFunc).set(1));
-    missingFields.keySet().stream()
-        .filter(
-            field -> !missingFieldsCandidates.contains(field))
+    // Update m ss ng f elds stats.
+    m ss ngF eldsCand dates.forEach(
+        f eld -> getOrCreateLongGauge(m ss ngF elds, f eld, m ss ngF eldStatNa Func).set(1));
+    m ss ngF elds.keySet().stream()
+        .f lter(
+            f eld -> !m ss ngF eldsCand dates.conta ns(f eld))
         .forEach(
-            field -> getOrCreateLongGauge(missingFields, field, missingFieldStatNameFunc).set(0));
+            f eld -> getOrCreateLongGauge(m ss ngF elds, f eld, m ss ngF eldStatNa Func).set(0));
 
     long totalTermCount = 0;
     long totalTokenCount = 0;
-    if (segmentCount == 0) {
-      LOG.error("No segments are found to calculate per-field term counts.");
+     f (seg ntCount == 0) {
+      LOG.error("No seg nts are found to calculate per-f eld term counts.");
     } else {
-      LOG.debug("TermCountMonitor.getPerFieldTermCount.segmentCount = {}", segmentCount);
-      LOG.debug("  field: term count (average per segment)");
-      for (Map.Entry<String, RawFieldCounter> entry : rawCounts.entrySet()) {
-        String field = entry.getKey();
-        final long averageTermCount = entry.getValue().numTerms.longValue() / segmentCount;
-        final long averageTokenCount = entry.getValue().numTokens.longValue() / segmentCount;
+      LOG.debug("TermCountMon or.getPerF eldTermCount.seg ntCount = {}", seg ntCount);
+      LOG.debug("  f eld: term count (average per seg nt)");
+      for (Map.Entry<Str ng, RawF eldCounter> entry : rawCounts.entrySet()) {
+        Str ng f eld = entry.getKey();
+        f nal long averageTermCount = entry.getValue().numTerms.longValue() / seg ntCount;
+        f nal long averageTokenCount = entry.getValue().numTokens.longValue() / seg ntCount;
         totalTermCount += entry.getValue().numTerms.longValue();
         totalTokenCount += entry.getValue().numTokens.longValue();
 
-        LOG.debug("  '{} term': {}", field, averageTermCount);
-        LOG.debug("  '{} token': {}", field, averageTokenCount);
+        LOG.debug("  '{} term': {}", f eld, averageTermCount);
+        LOG.debug("  '{} token': {}", f eld, averageTokenCount);
 
         entry.getValue().numTerms.setValue(averageTermCount);
         entry.getValue().numTokens.setValue(averageTokenCount);
       }
     }
-    LOG.info("Total term count: {}", totalTermCount);
-    LOG.info("Total token count: {}", totalTokenCount);
-    this.termCountOnAllFields.set(totalTermCount);
-    this.tokenCountOnAllFields.set(totalTokenCount);
+    LOG. nfo("Total term count: {}", totalTermCount);
+    LOG. nfo("Total token count: {}", totalTokenCount);
+    t .termCountOnAllF elds.set(totalTermCount);
+    t .tokenCountOnAllF elds.set(totalTokenCount);
 
     return rawCounts;
   }
 
-  @VisibleForTesting
-  Map<String, ExportedFieldCounter> getExportedCounts() {
-    return Collections.unmodifiableMap(this.exportedCounts);
+  @V s bleForTest ng
+  Map<Str ng, ExportedF eldCounter> getExportedCounts() {
+    return Collect ons.unmod f ableMap(t .exportedCounts);
   }
 
-  @VisibleForTesting
-  long getFieldsWithLowTermCount() {
-    return fieldsWithNoTermCountStat.get();
+  @V s bleForTest ng
+  long getF eldsW hLowTermCount() {
+    return f eldsW hNoTermCountStat.get();
   }
 
-  @VisibleForTesting
-  Map<String, SearchLongGauge> getMissingFields() {
-    return missingFields;
+  @V s bleForTest ng
+  Map<Str ng, SearchLongGauge> getM ss ngF elds() {
+    return m ss ngF elds;
   }
 }

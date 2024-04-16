@@ -1,46 +1,46 @@
-package com.twitter.search.core.earlybird.facets;
+package com.tw ter.search.core.earlyb rd.facets;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
+ mport java. o. OExcept on;
+ mport java.ut l.Collect on;
+ mport java.ut l.L st;
 
-import com.twitter.common.collections.Pair;
+ mport com.tw ter.common.collect ons.Pa r;
 
 /**
- * Calls multiple FacetCountIterators. Currently this is used for calling the
- * default FacetCountingArray iterator and the CSF and retweet iterators
+ * Calls mult ple FacetCount erators. Currently t   s used for call ng t 
+ * default FacetCount ngArray  erator and t  CSF and ret et  erators
  */
-public class CompositeFacetCountIterator extends FacetCountIterator {
-  private final Collection<FacetCountIterator> iterators;
+publ c class Compos eFacetCount erator extends FacetCount erator {
+  pr vate f nal Collect on<FacetCount erator>  erators;
 
   /**
-   * Creates a new composite iterator on the provided collection of iterators.
+   * Creates a new compos e  erator on t  prov ded collect on of  erators.
    */
-  public CompositeFacetCountIterator(Collection<FacetCountIterator> iterators) {
-    this.iterators = iterators;
-    for (FacetCountIterator iterator : iterators) {
-      iterator.setIncrementData(this.incrementData);
+  publ c Compos eFacetCount erator(Collect on<FacetCount erator>  erators) {
+    t . erators =  erators;
+    for (FacetCount erator  erator :  erators) {
+       erator.set ncre ntData(t . ncre ntData);
     }
   }
 
-  @Override
-  public void collect(int docID) throws IOException {
-    for (FacetCountIterator iterator : iterators) {
-      iterator.collect(docID);
+  @Overr de
+  publ c vo d collect( nt doc D) throws  OExcept on {
+    for (FacetCount erator  erator :  erators) {
+       erator.collect(doc D);
     }
   }
 
-  @Override
-  protected void addProof(int docID, long termID, int fieldID) {
-    for (FacetCountIterator iterator : iterators) {
-      iterator.addProof(docID, termID, fieldID);
+  @Overr de
+  protected vo d addProof( nt doc D, long term D,  nt f eld D) {
+    for (FacetCount erator  erator :  erators) {
+       erator.addProof(doc D, term D, f eld D);
     }
   }
 
-  @Override
-  public void setProofs(List<Pair<Integer, Long>> proof) {
-    for (FacetCountIterator iterator : iterators) {
-      iterator.setProofs(proof);
+  @Overr de
+  publ c vo d setProofs(L st<Pa r< nteger, Long>> proof) {
+    for (FacetCount erator  erator :  erators) {
+       erator.setProofs(proof);
     }
   }
 }

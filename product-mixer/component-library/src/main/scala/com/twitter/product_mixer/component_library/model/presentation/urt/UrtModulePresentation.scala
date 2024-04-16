@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.component_library.model.presentation.urt
+package com.tw ter.product_m xer.component_l brary.model.presentat on.urt
 
-import com.twitter.product_mixer.core.model.common.presentation.urt.BaseUrtModulePresentation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
+ mport com.tw ter.product_m xer.core.model.common.presentat on.urt.BaseUrtModulePresentat on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neModule
 
-final case class UrtModulePresentation(
-  override val timelineModule: TimelineModule)
-    extends BaseUrtModulePresentation
+f nal case class UrtModulePresentat on(
+  overr de val t  l neModule: T  l neModule)
+    extends BaseUrtModulePresentat on

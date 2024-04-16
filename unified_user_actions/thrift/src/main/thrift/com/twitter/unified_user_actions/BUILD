@@ -1,20 +1,20 @@
-create_thrift_libraries(
-    org = "com.twitter",
-    base_name = "unified_user_actions",
-    sources = ["*.thrift"],
-    tags = ["bazel-compatible"],
+create_thr ft_l brar es(
+    org = "com.tw ter",
+    base_na  = "un f ed_user_act ons",
+    s ces = ["*.thr ft"],
+    tags = ["bazel-compat ble"],
     dependency_roots = [
-        "src/thrift/com/twitter/clientapp/gen:clientapp",
-        "src/thrift/com/twitter/gizmoduck:thrift",
-        "src/thrift/com/twitter/gizmoduck:user-thrift",
-        "src/thrift/com/twitter/search/common:constants",
-        "src/thrift/com/twitter/socialgraph:thrift",
+        "src/thr ft/com/tw ter/cl entapp/gen:cl entapp",
+        "src/thr ft/com/tw ter/g zmoduck:thr ft",
+        "src/thr ft/com/tw ter/g zmoduck:user-thr ft",
+        "src/thr ft/com/tw ter/search/common:constants",
+        "src/thr ft/com/tw ter/soc algraph:thr ft",
     ],
     generate_languages = [
         "java",
         "scala",
         "strato",
     ],
-    provides_java_name = "unified_user_actions-thrift-java",
-    provides_scala_name = "unified_user_actions-thrift-scala",
+    prov des_java_na  = "un f ed_user_act ons-thr ft-java",
+    prov des_scala_na  = "un f ed_user_act ons-thr ft-scala",
 )

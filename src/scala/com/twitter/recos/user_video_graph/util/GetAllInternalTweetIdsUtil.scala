@@ -1,33 +1,33 @@
-package com.twitter.recos.user_video_graph.util
+package com.tw ter.recos.user_v deo_graph.ut l
 
-import com.twitter.graphjet.algorithms.TweetIDMask
-import com.twitter.graphjet.bipartite.api.BipartiteGraph
+ mport com.tw ter.graphjet.algor hms.T et DMask
+ mport com.tw ter.graphjet.b part e.ap .B part eGraph
 
-object GetAllInternalTweetIdsUtil {
+object GetAll nternalT et dsUt l {
 
-  def getAllInternalTweetIds(tweetId: Long, bipartiteGraph: BipartiteGraph): Seq[Long] = {
-    val internalTweetIds = getAllMasks(tweetId)
-    sortByDegrees(internalTweetIds, bipartiteGraph)
+  def getAll nternalT et ds(t et d: Long, b part eGraph: B part eGraph): Seq[Long] = {
+    val  nternalT et ds = getAllMasks(t et d)
+    sortByDegrees( nternalT et ds, b part eGraph)
   }
 
-  private def getAllMasks(tweetId: Long): Seq[Long] = {
+  pr vate def getAllMasks(t et d: Long): Seq[Long] = {
     Seq(
-      tweetId,
-      TweetIDMask.summary(tweetId),
-      TweetIDMask.photo(tweetId),
-      TweetIDMask.player(tweetId),
-      TweetIDMask.promotion(tweetId)
+      t et d,
+      T et DMask.summary(t et d),
+      T et DMask.photo(t et d),
+      T et DMask.player(t et d),
+      T et DMask.promot on(t et d)
     )
   }
 
-  private def sortByDegrees(
-    encodedTweetIds: Seq[Long],
-    bipartiteGraph: BipartiteGraph
+  pr vate def sortByDegrees(
+    encodedT et ds: Seq[Long],
+    b part eGraph: B part eGraph
   ): Seq[Long] = {
-    encodedTweetIds
-      .map { encodedTweetId => (encodedTweetId, bipartiteGraph.getRightNodeDegree(encodedTweetId)) }
-      .filter { case (_, degree) => degree > 0 } // keep only tweetds with positive degree
-      .sortBy { case (_, degree) => -degree } // sort by degree in descending order
-      .map { case (encodedTweetId, _) => encodedTweetId }
+    encodedT et ds
+      .map { encodedT et d => (encodedT et d, b part eGraph.getR ghtNodeDegree(encodedT et d)) }
+      .f lter { case (_, degree) => degree > 0 } // keep only t etds w h pos  ve degree
+      .sortBy { case (_, degree) => -degree } // sort by degree  n descend ng order
+      .map { case (encodedT et d, _) => encodedT et d }
   }
 }

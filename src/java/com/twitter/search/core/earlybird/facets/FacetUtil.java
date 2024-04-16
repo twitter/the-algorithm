@@ -1,106 +1,106 @@
-package com.twitter.search.core.earlybird.facets;
+package com.tw ter.search.core.earlyb rd.facets;
 
-import java.util.HashMap;
-import java.util.Map;
+ mport java.ut l.HashMap;
+ mport java.ut l.Map;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.base.IndexedNumericFieldSettings;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.thriftjava.ThriftNumericType;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
+ mport com.tw ter.search.common.sc ma.base.Earlyb rdF eldType;
+ mport com.tw ter.search.common.sc ma.base. ndexedNu r cF eldSett ngs;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftNu r cType;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted. nverted ndex;
 
 /**
- * A utility class for selecting iterators and label providers
+ * A ut l y class for select ng  erators and label prov ders
  * for facets.
  *
  */
-public abstract class FacetUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(FacetUtil.class);
+publ c abstract class FacetUt l {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(FacetUt l.class);
 
-  private FacetUtil() {
+  pr vate FacetUt l() {
     // unused
   }
 
   /**
-   * A utility method for choosing the right facet label provider based on the EarlybirdFieldType.
-   * Takes in a InvertedIndex since some facet label providers are or depend on the inverted
-   * index.
+   * A ut l y  thod for choos ng t  r ght facet label prov der based on t  Earlyb rdF eldType.
+   * Takes  n a  nverted ndex s nce so  facet label prov ders are or depend on t   nverted
+   *  ndex.
    * Should never return null.
    *
-   * @param fieldType A FieldType for the facet
-   * @param invertedField The inverted index associated with the facet. May be null.
-   * @return A non-null FacetLabelProvider
+   * @param f eldType A F eldType for t  facet
+   * @param  nvertedF eld T   nverted  ndex assoc ated w h t  facet. May be null.
+   * @return A non-null FacetLabelProv der
    */
-  public static FacetLabelProvider chooseFacetLabelProvider(
-      EarlybirdFieldType fieldType,
-      InvertedIndex invertedField) {
-    Preconditions.checkNotNull(fieldType);
+  publ c stat c FacetLabelProv der chooseFacetLabelProv der(
+      Earlyb rdF eldType f eldType,
+       nverted ndex  nvertedF eld) {
+    Precond  ons.c ckNotNull(f eldType);
 
-    // In the case neither inverted index existing nor using CSF,
-    // return FacetLabelProvider.InaccessibleFacetLabelProvider to throw exception
-    // more meaningfully and explicitly.
-    if (invertedField == null && !fieldType.isUseCSFForFacetCounting()) {
-      return new FacetLabelProvider.InaccessibleFacetLabelProvider(fieldType.getFacetName());
+    //  n t  case ne  r  nverted  ndex ex st ng nor us ng CSF,
+    // return FacetLabelProv der. naccess bleFacetLabelProv der to throw except on
+    // more  an ngfully and expl c ly.
+     f ( nvertedF eld == null && !f eldType. sUseCSFForFacetCount ng()) {
+      return new FacetLabelProv der. naccess bleFacetLabelProv der(f eldType.getFacetNa ());
     }
 
-    if (fieldType.isUseCSFForFacetCounting()) {
-      return new FacetLabelProvider.IdentityFacetLabelProvider();
+     f (f eldType. sUseCSFForFacetCount ng()) {
+      return new FacetLabelProv der. dent yFacetLabelProv der();
     }
-    IndexedNumericFieldSettings numericSettings = fieldType.getNumericFieldSettings();
-    if (numericSettings != null && numericSettings.isUseTwitterFormat()) {
-      if (numericSettings.getNumericType() == ThriftNumericType.INT) {
-        return new FacetLabelProvider.IntTermFacetLabelProvider(invertedField);
-      } else if (numericSettings.getNumericType() == ThriftNumericType.LONG) {
-        return numericSettings.isUseSortableEncoding()
-            ? new FacetLabelProvider.SortedLongTermFacetLabelProvider(invertedField)
-            : new FacetLabelProvider.LongTermFacetLabelProvider(invertedField);
+     ndexedNu r cF eldSett ngs nu r cSett ngs = f eldType.getNu r cF eldSett ngs();
+     f (nu r cSett ngs != null && nu r cSett ngs. sUseTw terFormat()) {
+       f (nu r cSett ngs.getNu r cType() == Thr ftNu r cType. NT) {
+        return new FacetLabelProv der. ntTermFacetLabelProv der( nvertedF eld);
+      } else  f (nu r cSett ngs.getNu r cType() == Thr ftNu r cType.LONG) {
+        return nu r cSett ngs. sUseSortableEncod ng()
+            ? new FacetLabelProv der.SortedLongTermFacetLabelProv der( nvertedF eld)
+            : new FacetLabelProv der.LongTermFacetLabelProv der( nvertedF eld);
       } else {
-        Preconditions.checkState(false,
-            "Should never be reached, indicates incomplete handling of different kinds of facets");
+        Precond  ons.c ckState(false,
+            "Should never be reac d,  nd cates  ncomplete handl ng of d fferent k nds of facets");
         return null;
       }
     } else {
-      return invertedField;
+      return  nvertedF eld;
     }
   }
 
   /**
-   * Get segment-specific facet label providers based on the schema
-   * and on the fieldToInvertedIndexMapping for the segment.
-   * These will be used by facet accumulators to get the text of the termIDs
+   * Get seg nt-spec f c facet label prov ders based on t  sc ma
+   * and on t  f eldTo nverted ndexMapp ng for t  seg nt.
+   * T se w ll be used by facet accumulators to get t  text of t  term Ds
    *
-   * @param schema the schema, for info on fields and facets
-   * @param fieldToInvertedIndexMapping map of fields to their inverted indices
-   * @return facet label provider map
+   * @param sc ma t  sc ma, for  nfo on f elds and facets
+   * @param f eldTo nverted ndexMapp ng map of f elds to t  r  nverted  nd ces
+   * @return facet label prov der map
    */
-  public static Map<String, FacetLabelProvider> getFacetLabelProviders(
-      Schema schema,
-      Map<String, InvertedIndex> fieldToInvertedIndexMapping) {
+  publ c stat c Map<Str ng, FacetLabelProv der> getFacetLabelProv ders(
+      Sc ma sc ma,
+      Map<Str ng,  nverted ndex> f eldTo nverted ndexMapp ng) {
 
-    HashMap<String, FacetLabelProvider> facetLabelProviderBuilder
+    HashMap<Str ng, FacetLabelProv der> facetLabelProv derBu lder
         = new HashMap<>();
 
-    for (Schema.FieldInfo fieldInfo : schema.getFacetFields()) {
-      EarlybirdFieldType fieldType = fieldInfo.getFieldType();
-      Preconditions.checkNotNull(fieldType);
-      String fieldName = fieldInfo.getName();
-      String facetName = fieldType.getFacetName();
-      InvertedIndex invertedIndex = fieldToInvertedIndexMapping.get(fieldName);
-      if (invertedIndex == null && !fieldType.isUseCSFForFacetCounting()) {
-        LOG.warn("No docs in segment had field " + fieldName
-                + " indexed for facet " + facetName
-                + " so InaccessibleFacetLabelProvider will be provided."
+    for (Sc ma.F eld nfo f eld nfo : sc ma.getFacetF elds()) {
+      Earlyb rdF eldType f eldType = f eld nfo.getF eldType();
+      Precond  ons.c ckNotNull(f eldType);
+      Str ng f eldNa  = f eld nfo.getNa ();
+      Str ng facetNa  = f eldType.getFacetNa ();
+       nverted ndex  nverted ndex = f eldTo nverted ndexMapp ng.get(f eldNa );
+       f ( nverted ndex == null && !f eldType. sUseCSFForFacetCount ng()) {
+        LOG.warn("No docs  n seg nt had f eld " + f eldNa 
+                + "  ndexed for facet " + facetNa 
+                + " so  naccess bleFacetLabelProv der w ll be prov ded."
         );
       }
-      facetLabelProviderBuilder.put(facetName, Preconditions.checkNotNull(
-          chooseFacetLabelProvider(fieldType, invertedIndex)));
+      facetLabelProv derBu lder.put(facetNa , Precond  ons.c ckNotNull(
+          chooseFacetLabelProv der(f eldType,  nverted ndex)));
     }
 
-    return facetLabelProviderBuilder;
+    return facetLabelProv derBu lder;
   }
 }

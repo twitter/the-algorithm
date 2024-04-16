@@ -1,9 +1,9 @@
-package com.twitter.search.common.search;
+package com.tw ter.search.common.search;
 
 /**
  * Any class that can track and return query cost.
  */
-public interface QueryCostProvider {
-  /** Returns the total cost. */
+publ c  nterface QueryCostProv der {
+  /** Returns t  total cost. */
   double getTotalCost();
 }

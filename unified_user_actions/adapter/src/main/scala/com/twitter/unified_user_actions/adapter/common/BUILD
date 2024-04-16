@@ -1,10 +1,10 @@
-scala_library(
-    sources = [
+scala_l brary(
+    s ces = [
         "*.scala",
     ],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "snowflake/src/main/scala/com/twitter/snowflake/id",
-        "util/util-core:util-core-util",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "snowflake/src/ma n/scala/com/tw ter/snowflake/ d",
+        "ut l/ut l-core:ut l-core-ut l",
     ],
 )

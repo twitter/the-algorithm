@@ -1,48 +1,48 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.non_ml_features
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.adapters.non_ml_features
 
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.timelines.prediction.common.adapters.TimelinesMutatingAdapterBase
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import java.lang.{Long => JLong}
+ mport com.tw ter.ml.ap .constant.SharedFeatures
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ml.ap .R chDataRecord
+ mport com.tw ter.t  l nes.pred ct on.common.adapters.T  l nesMutat ngAdapterBase
+ mport com.tw ter.t  l nes.pred ct on.features.common.T  l nesSharedFeatures
+ mport java.lang.{Long => JLong}
 
 case class NonMLCommonFeatures(
-  userId: Long,
-  predictionRequestId: Option[Long],
-  servedTimestamp: Long,
+  user d: Long,
+  pred ct onRequest d: Opt on[Long],
+  servedT  stamp: Long,
 )
 
 /**
- * define non ml features adapter to create a data record which includes many non ml features
- * e.g. predictionRequestId, userId, tweetId to be used as joined key in batch pipeline.
+ * def ne non ml features adapter to create a data record wh ch  ncludes many non ml features
+ * e.g. pred ct onRequest d, user d, t et d to be used as jo ned key  n batch p pel ne.
  */
-object NonMLCommonFeaturesAdapter extends TimelinesMutatingAdapterBase[NonMLCommonFeatures] {
+object NonMLCommonFeaturesAdapter extends T  l nesMutat ngAdapterBase[NonMLCommonFeatures] {
 
-  private val featureContext = new FeatureContext(
-    SharedFeatures.USER_ID,
-    TimelinesSharedFeatures.PREDICTION_REQUEST_ID,
-    TimelinesSharedFeatures.SERVED_TIMESTAMP,
+  pr vate val featureContext = new FeatureContext(
+    SharedFeatures.USER_ D,
+    T  l nesSharedFeatures.PRED CT ON_REQUEST_ D,
+    T  l nesSharedFeatures.SERVED_T MESTAMP,
   )
 
-  override def getFeatureContext: FeatureContext = featureContext
+  overr de def getFeatureContext: FeatureContext = featureContext
 
-  override val commonFeatures: Set[Feature[_]] = Set(
-    SharedFeatures.USER_ID,
-    TimelinesSharedFeatures.PREDICTION_REQUEST_ID,
-    TimelinesSharedFeatures.SERVED_TIMESTAMP,
+  overr de val commonFeatures: Set[Feature[_]] = Set(
+    SharedFeatures.USER_ D,
+    T  l nesSharedFeatures.PRED CT ON_REQUEST_ D,
+    T  l nesSharedFeatures.SERVED_T MESTAMP,
   )
 
-  override def setFeatures(
+  overr de def setFeatures(
     nonMLCommonFeatures: NonMLCommonFeatures,
-    richDataRecord: RichDataRecord
-  ): Unit = {
-    richDataRecord.setFeatureValue[JLong](SharedFeatures.USER_ID, nonMLCommonFeatures.userId)
-    nonMLCommonFeatures.predictionRequestId.foreach(
-      richDataRecord.setFeatureValue[JLong](TimelinesSharedFeatures.PREDICTION_REQUEST_ID, _))
-    richDataRecord.setFeatureValue[JLong](
-      TimelinesSharedFeatures.SERVED_TIMESTAMP,
-      nonMLCommonFeatures.servedTimestamp)
+    r chDataRecord: R chDataRecord
+  ): Un  = {
+    r chDataRecord.setFeatureValue[JLong](SharedFeatures.USER_ D, nonMLCommonFeatures.user d)
+    nonMLCommonFeatures.pred ct onRequest d.foreach(
+      r chDataRecord.setFeatureValue[JLong](T  l nesSharedFeatures.PRED CT ON_REQUEST_ D, _))
+    r chDataRecord.setFeatureValue[JLong](
+      T  l nesSharedFeatures.SERVED_T MESTAMP,
+      nonMLCommonFeatures.servedT  stamp)
   }
 }

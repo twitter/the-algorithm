@@ -1,349 +1,349 @@
-package com.twitter.cr_mixer.candidate_generation
+package com.tw ter.cr_m xer.cand date_generat on
 
-import com.twitter.cr_mixer.blender.SwitchBlender
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.filter.PostRankFilterRunner
-import com.twitter.cr_mixer.filter.PreRankFilterRunner
-import com.twitter.cr_mixer.logging.CrMixerScribeLogger
-import com.twitter.cr_mixer.model.BlendedCandidate
-import com.twitter.cr_mixer.model.CrCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.GraphSourceInfo
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.param.RankerParams
-import com.twitter.cr_mixer.param.RecentNegativeSignalParams
-import com.twitter.cr_mixer.ranker.SwitchRanker
-import com.twitter.cr_mixer.source_signal.SourceInfoRouter
-import com.twitter.cr_mixer.source_signal.UssStore.EnabledNegativeSourceTypes
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.util.Future
-import com.twitter.util.JavaTimer
-import com.twitter.util.Timer
+ mport com.tw ter.cr_m xer.blender.Sw chBlender
+ mport com.tw ter.cr_m xer.conf g.T  outConf g
+ mport com.tw ter.cr_m xer.f lter.PostRankF lterRunner
+ mport com.tw ter.cr_m xer.f lter.PreRankF lterRunner
+ mport com.tw ter.cr_m xer.logg ng.CrM xerScr beLogger
+ mport com.tw ter.cr_m xer.model.BlendedCand date
+ mport com.tw ter.cr_m xer.model.CrCand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model.GraphS ce nfo
+ mport com.tw ter.cr_m xer.model. n  alCand date
+ mport com.tw ter.cr_m xer.model.RankedCand date
+ mport com.tw ter.cr_m xer.model.S ce nfo
+ mport com.tw ter.cr_m xer.param.RankerParams
+ mport com.tw ter.cr_m xer.param.RecentNegat veS gnalParams
+ mport com.tw ter.cr_m xer.ranker.Sw chRanker
+ mport com.tw ter.cr_m xer.s ce_s gnal.S ce nfoRouter
+ mport com.tw ter.cr_m xer.s ce_s gnal.UssStore.EnabledNegat veS ceTypes
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.ut l.StatsUt l
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.JavaT  r
+ mport com.tw ter.ut l.T  r
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * For now it performs the main steps as follows:
- * 1. Source signal (via USS, FRS) fetch
- * 2. Candidate generation
- * 3. Filtering
- * 4. Interleave blender
+ * For now   performs t  ma n steps as follows:
+ * 1. S ce s gnal (v a USS, FRS) fetch
+ * 2. Cand date generat on
+ * 3. F lter ng
+ * 4.  nterleave blender
  * 5. Ranker
- * 6. Post-ranker filter
- * 7. Truncation
+ * 6. Post-ranker f lter
+ * 7. Truncat on
  */
-@Singleton
-class CrCandidateGenerator @Inject() (
-  sourceInfoRouter: SourceInfoRouter,
-  candidateSourceRouter: CandidateSourcesRouter,
-  switchBlender: SwitchBlender,
-  preRankFilterRunner: PreRankFilterRunner,
-  postRankFilterRunner: PostRankFilterRunner,
-  switchRanker: SwitchRanker,
-  crMixerScribeLogger: CrMixerScribeLogger,
-  timeoutConfig: TimeoutConfig,
-  globalStats: StatsReceiver) {
-  private val timer: Timer = new JavaTimer(true)
+@S ngleton
+class CrCand dateGenerator @ nject() (
+  s ce nfoRouter: S ce nfoRouter,
+  cand dateS ceRouter: Cand dateS cesRouter,
+  sw chBlender: Sw chBlender,
+  preRankF lterRunner: PreRankF lterRunner,
+  postRankF lterRunner: PostRankF lterRunner,
+  sw chRanker: Sw chRanker,
+  crM xerScr beLogger: CrM xerScr beLogger,
+  t  outConf g: T  outConf g,
+  globalStats: StatsRece ver) {
+  pr vate val t  r: T  r = new JavaT  r(true)
 
-  private val stats: StatsReceiver = globalStats.scope(this.getClass.getCanonicalName)
+  pr vate val stats: StatsRece ver = globalStats.scope(t .getClass.getCanon calNa )
 
-  private val fetchSourcesStats = stats.scope("fetchSources")
-  private val fetchPositiveSourcesStats = stats.scope("fetchPositiveSources")
-  private val fetchNegativeSourcesStats = stats.scope("fetchNegativeSources")
-  private val fetchCandidatesStats = stats.scope("fetchCandidates")
-  private val fetchCandidatesAfterFilterStats = stats.scope("fetchCandidatesAfterFilter")
-  private val preRankFilterStats = stats.scope("preRankFilter")
-  private val interleaveStats = stats.scope("interleave")
-  private val rankStats = stats.scope("rank")
-  private val postRankFilterStats = stats.scope("postRankFilter")
-  private val blueVerifiedTweetStats = stats.scope("blueVerifiedTweetStats")
-  private val blueVerifiedTweetStatsPerSimilarityEngine =
-    stats.scope("blueVerifiedTweetStatsPerSimilarityEngine")
+  pr vate val fetchS cesStats = stats.scope("fetchS ces")
+  pr vate val fetchPos  veS cesStats = stats.scope("fetchPos  veS ces")
+  pr vate val fetchNegat veS cesStats = stats.scope("fetchNegat veS ces")
+  pr vate val fetchCand datesStats = stats.scope("fetchCand dates")
+  pr vate val fetchCand datesAfterF lterStats = stats.scope("fetchCand datesAfterF lter")
+  pr vate val preRankF lterStats = stats.scope("preRankF lter")
+  pr vate val  nterleaveStats = stats.scope(" nterleave")
+  pr vate val rankStats = stats.scope("rank")
+  pr vate val postRankF lterStats = stats.scope("postRankF lter")
+  pr vate val blueVer f edT etStats = stats.scope("blueVer f edT etStats")
+  pr vate val blueVer f edT etStatsPerS m lar yEng ne =
+    stats.scope("blueVer f edT etStatsPerS m lar yEng ne")
 
-  def get(query: CrCandidateGeneratorQuery): Future[Seq[RankedCandidate]] = {
+  def get(query: CrCand dateGeneratorQuery): Future[Seq[RankedCand date]] = {
     val allStats = stats.scope("all")
-    val perProductStats = stats.scope("perProduct", query.product.toString)
-    val perProductBlueVerifiedStats =
-      blueVerifiedTweetStats.scope("perProduct", query.product.toString)
+    val perProductStats = stats.scope("perProduct", query.product.toStr ng)
+    val perProductBlueVer f edStats =
+      blueVer f edT etStats.scope("perProduct", query.product.toStr ng)
 
-    StatsUtil.trackItemsStats(allStats) {
+    StatsUt l.track emsStats(allStats) {
       trackResultStats(perProductStats) {
-        StatsUtil.trackItemsStats(perProductStats) {
+        StatsUt l.track emsStats(perProductStats) {
           val result = for {
-            (sourceSignals, sourceGraphsMap) <- StatsUtil.trackBlockStats(fetchSourcesStats) {
-              fetchSources(query)
+            (s ceS gnals, s ceGraphsMap) <- StatsUt l.trackBlockStats(fetchS cesStats) {
+              fetchS ces(query)
             }
-            initialCandidates <- StatsUtil.trackBlockStats(fetchCandidatesAfterFilterStats) {
-              // find the positive and negative signals
-              val (positiveSignals, negativeSignals) = sourceSignals.partition { signal =>
-                !EnabledNegativeSourceTypes.contains(signal.sourceType)
+             n  alCand dates <- StatsUt l.trackBlockStats(fetchCand datesAfterF lterStats) {
+              // f nd t  pos  ve and negat ve s gnals
+              val (pos  veS gnals, negat veS gnals) = s ceS gnals.part  on { s gnal =>
+                !EnabledNegat veS ceTypes.conta ns(s gnal.s ceType)
               }
-              fetchPositiveSourcesStats.stat("size").add(positiveSignals.size)
-              fetchNegativeSourcesStats.stat("size").add(negativeSignals.size)
+              fetchPos  veS cesStats.stat("s ze").add(pos  veS gnals.s ze)
+              fetchNegat veS cesStats.stat("s ze").add(negat veS gnals.s ze)
 
-              // find the positive signals to keep, removing block and muted users
-              val filteredSourceInfo =
-                if (negativeSignals.nonEmpty && query.params(
-                    RecentNegativeSignalParams.EnableSourceParam)) {
-                  filterSourceInfo(positiveSignals, negativeSignals)
+              // f nd t  pos  ve s gnals to keep, remov ng block and muted users
+              val f lteredS ce nfo =
+                 f (negat veS gnals.nonEmpty && query.params(
+                    RecentNegat veS gnalParams.EnableS ceParam)) {
+                  f lterS ce nfo(pos  veS gnals, negat veS gnals)
                 } else {
-                  positiveSignals
+                  pos  veS gnals
                 }
 
-              // fetch candidates from the positive signals
-              StatsUtil.trackBlockStats(fetchCandidatesStats) {
-                fetchCandidates(query, filteredSourceInfo, sourceGraphsMap)
+              // fetch cand dates from t  pos  ve s gnals
+              StatsUt l.trackBlockStats(fetchCand datesStats) {
+                fetchCand dates(query, f lteredS ce nfo, s ceGraphsMap)
               }
             }
-            filteredCandidates <- StatsUtil.trackBlockStats(preRankFilterStats) {
-              preRankFilter(query, initialCandidates)
+            f lteredCand dates <- StatsUt l.trackBlockStats(preRankF lterStats) {
+              preRankF lter(query,  n  alCand dates)
             }
-            interleavedCandidates <- StatsUtil.trackItemsStats(interleaveStats) {
-              interleave(query, filteredCandidates)
+             nterleavedCand dates <- StatsUt l.track emsStats( nterleaveStats) {
+               nterleave(query, f lteredCand dates)
             }
-            rankedCandidates <- StatsUtil.trackItemsStats(rankStats) {
-              val candidatesToRank =
-                interleavedCandidates.take(query.params(RankerParams.MaxCandidatesToRank))
-              rank(query, candidatesToRank)
+            rankedCand dates <- StatsUt l.track emsStats(rankStats) {
+              val cand datesToRank =
+                 nterleavedCand dates.take(query.params(RankerParams.MaxCand datesToRank))
+              rank(query, cand datesToRank)
             }
-            postRankFilterCandidates <- StatsUtil.trackItemsStats(postRankFilterStats) {
-              postRankFilter(query, rankedCandidates)
+            postRankF lterCand dates <- StatsUt l.track emsStats(postRankF lterStats) {
+              postRankF lter(query, rankedCand dates)
             }
-          } yield {
+          } y eld {
             trackTopKStats(
               800,
-              postRankFilterCandidates,
-              isQueryK = false,
-              perProductBlueVerifiedStats)
+              postRankF lterCand dates,
+               sQueryK = false,
+              perProductBlueVer f edStats)
             trackTopKStats(
               400,
-              postRankFilterCandidates,
-              isQueryK = false,
-              perProductBlueVerifiedStats)
+              postRankF lterCand dates,
+               sQueryK = false,
+              perProductBlueVer f edStats)
             trackTopKStats(
               query.maxNumResults,
-              postRankFilterCandidates,
-              isQueryK = true,
-              perProductBlueVerifiedStats)
+              postRankF lterCand dates,
+               sQueryK = true,
+              perProductBlueVer f edStats)
 
-            val (blueVerifiedTweets, remainingTweets) =
-              postRankFilterCandidates.partition(
-                _.tweetInfo.hasBlueVerifiedAnnotation.contains(true))
-            val topKBlueVerified = blueVerifiedTweets.take(query.maxNumResults)
-            val topKRemaining = remainingTweets.take(query.maxNumResults - topKBlueVerified.size)
+            val (blueVer f edT ets, rema n ngT ets) =
+              postRankF lterCand dates.part  on(
+                _.t et nfo.hasBlueVer f edAnnotat on.conta ns(true))
+            val topKBlueVer f ed = blueVer f edT ets.take(query.maxNumResults)
+            val topKRema n ng = rema n ngT ets.take(query.maxNumResults - topKBlueVer f ed.s ze)
 
-            trackBlueVerifiedTweetStats(topKBlueVerified, perProductBlueVerifiedStats)
+            trackBlueVer f edT etStats(topKBlueVer f ed, perProductBlueVer f edStats)
 
-            if (topKBlueVerified.nonEmpty && query.params(RankerParams.EnableBlueVerifiedTopK)) {
-              topKBlueVerified ++ topKRemaining
+             f (topKBlueVer f ed.nonEmpty && query.params(RankerParams.EnableBlueVer f edTopK)) {
+              topKBlueVer f ed ++ topKRema n ng
             } else {
-              postRankFilterCandidates
+              postRankF lterCand dates
             }
           }
-          result.raiseWithin(timeoutConfig.serviceTimeout)(timer)
+          result.ra seW h n(t  outConf g.serv ceT  out)(t  r)
         }
       }
     }
   }
 
-  private def fetchSources(
-    query: CrCandidateGeneratorQuery
-  ): Future[(Set[SourceInfo], Map[String, Option[GraphSourceInfo]])] = {
-    crMixerScribeLogger.scribeSignalSources(
+  pr vate def fetchS ces(
+    query: CrCand dateGeneratorQuery
+  ): Future[(Set[S ce nfo], Map[Str ng, Opt on[GraphS ce nfo]])] = {
+    crM xerScr beLogger.scr beS gnalS ces(
       query,
-      sourceInfoRouter
-        .get(query.userId, query.product, query.userState, query.params))
+      s ce nfoRouter
+        .get(query.user d, query.product, query.userState, query.params))
   }
 
-  private def filterSourceInfo(
-    positiveSignals: Set[SourceInfo],
-    negativeSignals: Set[SourceInfo]
-  ): Set[SourceInfo] = {
-    val filterUsers: Set[Long] = negativeSignals.flatMap {
-      case SourceInfo(_, InternalId.UserId(userId), _) => Some(userId)
+  pr vate def f lterS ce nfo(
+    pos  veS gnals: Set[S ce nfo],
+    negat veS gnals: Set[S ce nfo]
+  ): Set[S ce nfo] = {
+    val f lterUsers: Set[Long] = negat veS gnals.flatMap {
+      case S ce nfo(_,  nternal d.User d(user d), _) => So (user d)
       case _ => None
     }
 
-    positiveSignals.filter {
-      case SourceInfo(_, InternalId.UserId(userId), _) => !filterUsers.contains(userId)
+    pos  veS gnals.f lter {
+      case S ce nfo(_,  nternal d.User d(user d), _) => !f lterUsers.conta ns(user d)
       case _ => true
     }
   }
 
-  def fetchCandidates(
-    query: CrCandidateGeneratorQuery,
-    sourceSignals: Set[SourceInfo],
-    sourceGraphs: Map[String, Option[GraphSourceInfo]]
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    val initialCandidates = candidateSourceRouter
-      .fetchCandidates(
-        query.userId,
-        sourceSignals,
-        sourceGraphs,
+  def fetchCand dates(
+    query: CrCand dateGeneratorQuery,
+    s ceS gnals: Set[S ce nfo],
+    s ceGraphs: Map[Str ng, Opt on[GraphS ce nfo]]
+  ): Future[Seq[Seq[ n  alCand date]]] = {
+    val  n  alCand dates = cand dateS ceRouter
+      .fetchCand dates(
+        query.user d,
+        s ceS gnals,
+        s ceGraphs,
         query.params
       )
 
-    initialCandidates.map(_.flatten.map { candidate =>
-      if (candidate.tweetInfo.hasBlueVerifiedAnnotation.contains(true)) {
-        blueVerifiedTweetStatsPerSimilarityEngine
-          .scope(query.product.toString).scope(
-            candidate.candidateGenerationInfo.contributingSimilarityEngines.head.similarityEngineType.toString).counter(
-            candidate.tweetInfo.authorId.toString).incr()
+     n  alCand dates.map(_.flatten.map { cand date =>
+       f (cand date.t et nfo.hasBlueVer f edAnnotat on.conta ns(true)) {
+        blueVer f edT etStatsPerS m lar yEng ne
+          .scope(query.product.toStr ng).scope(
+            cand date.cand dateGenerat on nfo.contr but ngS m lar yEng nes. ad.s m lar yEng neType.toStr ng).counter(
+            cand date.t et nfo.author d.toStr ng). ncr()
       }
     })
 
-    crMixerScribeLogger.scribeInitialCandidates(
+    crM xerScr beLogger.scr be n  alCand dates(
       query,
-      initialCandidates
+       n  alCand dates
     )
   }
 
-  private def preRankFilter(
-    query: CrCandidateGeneratorQuery,
-    candidates: Seq[Seq[InitialCandidate]]
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    crMixerScribeLogger.scribePreRankFilterCandidates(
+  pr vate def preRankF lter(
+    query: CrCand dateGeneratorQuery,
+    cand dates: Seq[Seq[ n  alCand date]]
+  ): Future[Seq[Seq[ n  alCand date]]] = {
+    crM xerScr beLogger.scr bePreRankF lterCand dates(
       query,
-      preRankFilterRunner
-        .runSequentialFilters(query, candidates))
+      preRankF lterRunner
+        .runSequent alF lters(query, cand dates))
   }
 
-  private def postRankFilter(
-    query: CrCandidateGeneratorQuery,
-    candidates: Seq[RankedCandidate]
-  ): Future[Seq[RankedCandidate]] = {
-    postRankFilterRunner.run(query, candidates)
+  pr vate def postRankF lter(
+    query: CrCand dateGeneratorQuery,
+    cand dates: Seq[RankedCand date]
+  ): Future[Seq[RankedCand date]] = {
+    postRankF lterRunner.run(query, cand dates)
   }
 
-  private def interleave(
-    query: CrCandidateGeneratorQuery,
-    candidates: Seq[Seq[InitialCandidate]]
-  ): Future[Seq[BlendedCandidate]] = {
-    crMixerScribeLogger.scribeInterleaveCandidates(
+  pr vate def  nterleave(
+    query: CrCand dateGeneratorQuery,
+    cand dates: Seq[Seq[ n  alCand date]]
+  ): Future[Seq[BlendedCand date]] = {
+    crM xerScr beLogger.scr be nterleaveCand dates(
       query,
-      switchBlender
-        .blend(query.params, query.userState, candidates))
+      sw chBlender
+        .blend(query.params, query.userState, cand dates))
   }
 
-  private def rank(
-    query: CrCandidateGeneratorQuery,
-    candidates: Seq[BlendedCandidate],
-  ): Future[Seq[RankedCandidate]] = {
-    crMixerScribeLogger.scribeRankedCandidates(
+  pr vate def rank(
+    query: CrCand dateGeneratorQuery,
+    cand dates: Seq[BlendedCand date],
+  ): Future[Seq[RankedCand date]] = {
+    crM xerScr beLogger.scr beRankedCand dates(
       query,
-      switchRanker.rank(query, candidates)
+      sw chRanker.rank(query, cand dates)
     )
   }
 
-  private def trackResultStats(
-    stats: StatsReceiver
+  pr vate def trackResultStats(
+    stats: StatsRece ver
   )(
-    fn: => Future[Seq[RankedCandidate]]
-  ): Future[Seq[RankedCandidate]] = {
-    fn.onSuccess { candidates =>
-      trackReasonChosenSourceTypeStats(candidates, stats)
-      trackReasonChosenSimilarityEngineStats(candidates, stats)
-      trackPotentialReasonsSourceTypeStats(candidates, stats)
-      trackPotentialReasonsSimilarityEngineStats(candidates, stats)
+    fn: => Future[Seq[RankedCand date]]
+  ): Future[Seq[RankedCand date]] = {
+    fn.onSuccess { cand dates =>
+      trackReasonChosenS ceTypeStats(cand dates, stats)
+      trackReasonChosenS m lar yEng neStats(cand dates, stats)
+      trackPotent alReasonsS ceTypeStats(cand dates, stats)
+      trackPotent alReasonsS m lar yEng neStats(cand dates, stats)
     }
   }
 
-  private def trackReasonChosenSourceTypeStats(
-    candidates: Seq[RankedCandidate],
-    stats: StatsReceiver
-  ): Unit = {
-    candidates
-      .groupBy(_.reasonChosen.sourceInfoOpt.map(_.sourceType))
+  pr vate def trackReasonChosenS ceTypeStats(
+    cand dates: Seq[RankedCand date],
+    stats: StatsRece ver
+  ): Un  = {
+    cand dates
+      .groupBy(_.reasonChosen.s ce nfoOpt.map(_.s ceType))
       .foreach {
-        case (sourceTypeOpt, rankedCands) =>
-          val sourceType = sourceTypeOpt.map(_.toString).getOrElse("RequesterId") // default
-          stats.stat("reasonChosen", "sourceType", sourceType, "size").add(rankedCands.size)
+        case (s ceTypeOpt, rankedCands) =>
+          val s ceType = s ceTypeOpt.map(_.toStr ng).getOrElse("Requester d") // default
+          stats.stat("reasonChosen", "s ceType", s ceType, "s ze").add(rankedCands.s ze)
       }
   }
 
-  private def trackReasonChosenSimilarityEngineStats(
-    candidates: Seq[RankedCandidate],
-    stats: StatsReceiver
-  ): Unit = {
-    candidates
-      .groupBy(_.reasonChosen.similarityEngineInfo.similarityEngineType)
+  pr vate def trackReasonChosenS m lar yEng neStats(
+    cand dates: Seq[RankedCand date],
+    stats: StatsRece ver
+  ): Un  = {
+    cand dates
+      .groupBy(_.reasonChosen.s m lar yEng ne nfo.s m lar yEng neType)
       .foreach {
-        case (seInfoType, rankedCands) =>
+        case (se nfoType, rankedCands) =>
           stats
-            .stat("reasonChosen", "similarityEngine", seInfoType.toString, "size").add(
-              rankedCands.size)
+            .stat("reasonChosen", "s m lar yEng ne", se nfoType.toStr ng, "s ze").add(
+              rankedCands.s ze)
       }
   }
 
-  private def trackPotentialReasonsSourceTypeStats(
-    candidates: Seq[RankedCandidate],
-    stats: StatsReceiver
-  ): Unit = {
-    candidates
-      .flatMap(_.potentialReasons.map(_.sourceInfoOpt.map(_.sourceType)))
-      .groupBy(source => source)
+  pr vate def trackPotent alReasonsS ceTypeStats(
+    cand dates: Seq[RankedCand date],
+    stats: StatsRece ver
+  ): Un  = {
+    cand dates
+      .flatMap(_.potent alReasons.map(_.s ce nfoOpt.map(_.s ceType)))
+      .groupBy(s ce => s ce)
       .foreach {
-        case (sourceInfoOpt, seq) =>
-          val sourceType = sourceInfoOpt.map(_.toString).getOrElse("RequesterId") // default
-          stats.stat("potentialReasons", "sourceType", sourceType, "size").add(seq.size)
+        case (s ce nfoOpt, seq) =>
+          val s ceType = s ce nfoOpt.map(_.toStr ng).getOrElse("Requester d") // default
+          stats.stat("potent alReasons", "s ceType", s ceType, "s ze").add(seq.s ze)
       }
   }
 
-  private def trackPotentialReasonsSimilarityEngineStats(
-    candidates: Seq[RankedCandidate],
-    stats: StatsReceiver
-  ): Unit = {
-    candidates
-      .flatMap(_.potentialReasons.map(_.similarityEngineInfo.similarityEngineType))
+  pr vate def trackPotent alReasonsS m lar yEng neStats(
+    cand dates: Seq[RankedCand date],
+    stats: StatsRece ver
+  ): Un  = {
+    cand dates
+      .flatMap(_.potent alReasons.map(_.s m lar yEng ne nfo.s m lar yEng neType))
       .groupBy(se => se)
       .foreach {
         case (seType, seq) =>
-          stats.stat("potentialReasons", "similarityEngine", seType.toString, "size").add(seq.size)
+          stats.stat("potent alReasons", "s m lar yEng ne", seType.toStr ng, "s ze").add(seq.s ze)
       }
   }
 
-  private def trackBlueVerifiedTweetStats(
-    candidates: Seq[RankedCandidate],
-    statsReceiver: StatsReceiver
-  ): Unit = {
-    candidates.foreach { candidate =>
-      if (candidate.tweetInfo.hasBlueVerifiedAnnotation.contains(true)) {
-        statsReceiver.counter(candidate.tweetInfo.authorId.toString).incr()
-        statsReceiver
-          .scope(candidate.tweetInfo.authorId.toString).counter(candidate.tweetId.toString).incr()
+  pr vate def trackBlueVer f edT etStats(
+    cand dates: Seq[RankedCand date],
+    statsRece ver: StatsRece ver
+  ): Un  = {
+    cand dates.foreach { cand date =>
+       f (cand date.t et nfo.hasBlueVer f edAnnotat on.conta ns(true)) {
+        statsRece ver.counter(cand date.t et nfo.author d.toStr ng). ncr()
+        statsRece ver
+          .scope(cand date.t et nfo.author d.toStr ng).counter(cand date.t et d.toStr ng). ncr()
       }
     }
   }
 
-  private def trackTopKStats(
-    k: Int,
-    tweetCandidates: Seq[RankedCandidate],
-    isQueryK: Boolean,
-    statsReceiver: StatsReceiver
-  ): Unit = {
-    val (topK, beyondK) = tweetCandidates.splitAt(k)
+  pr vate def trackTopKStats(
+    k:  nt,
+    t etCand dates: Seq[RankedCand date],
+     sQueryK: Boolean,
+    statsRece ver: StatsRece ver
+  ): Un  = {
+    val (topK, beyondK) = t etCand dates.spl At(k)
 
-    val blueVerifiedIds = tweetCandidates.collect {
-      case candidate if candidate.tweetInfo.hasBlueVerifiedAnnotation.contains(true) =>
-        candidate.tweetInfo.authorId
+    val blueVer f ed ds = t etCand dates.collect {
+      case cand date  f cand date.t et nfo.hasBlueVer f edAnnotat on.conta ns(true) =>
+        cand date.t et nfo.author d
     }.toSet
 
-    blueVerifiedIds.foreach { blueVerifiedId =>
-      val numTweetsTopK = topK.count(_.tweetInfo.authorId == blueVerifiedId)
-      val numTweetsBeyondK = beyondK.count(_.tweetInfo.authorId == blueVerifiedId)
+    blueVer f ed ds.foreach { blueVer f ed d =>
+      val numT etsTopK = topK.count(_.t et nfo.author d == blueVer f ed d)
+      val numT etsBeyondK = beyondK.count(_.t et nfo.author d == blueVer f ed d)
 
-      if (isQueryK) {
-        statsReceiver.scope(blueVerifiedId.toString).stat(s"topK").add(numTweetsTopK)
-        statsReceiver
-          .scope(blueVerifiedId.toString).stat(s"beyondK").add(numTweetsBeyondK)
+       f ( sQueryK) {
+        statsRece ver.scope(blueVer f ed d.toStr ng).stat(s"topK").add(numT etsTopK)
+        statsRece ver
+          .scope(blueVer f ed d.toStr ng).stat(s"beyondK").add(numT etsBeyondK)
       } else {
-        statsReceiver.scope(blueVerifiedId.toString).stat(s"top$k").add(numTweetsTopK)
-        statsReceiver
-          .scope(blueVerifiedId.toString).stat(s"beyond$k").add(numTweetsBeyondK)
+        statsRece ver.scope(blueVer f ed d.toStr ng).stat(s"top$k").add(numT etsTopK)
+        statsRece ver
+          .scope(blueVer f ed d.toStr ng).stat(s"beyond$k").add(numT etsBeyondK)
       }
     }
   }

@@ -1,295 +1,295 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.twitter.finagle.tracing.Trace
-import com.twitter.servo.cache._
-import com.twitter.servo.repository._
-import com.twitter.servo.util.Transformer
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.core.FilteredState.Unavailable.BounceDeleted
-import com.twitter.tweetypie.core.FilteredState.Unavailable.TweetDeleted
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository.CachedBounceDeleted.isBounceDeleted
-import com.twitter.tweetypie.repository.CachedBounceDeleted.toBounceDeletedTweetResult
-import com.twitter.tweetypie.thriftscala.CachedTweet
-import com.twitter.util.Base64Long
+ mport com.fasterxml.jackson.datab nd.ObjectMapper
+ mport com.fasterxml.jackson.module.scala.DefaultScalaModule
+ mport com.tw ter.f nagle.trac ng.Trace
+ mport com.tw ter.servo.cac ._
+ mport com.tw ter.servo.repos ory._
+ mport com.tw ter.servo.ut l.Transfor r
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.cl ent_ d.Cl ent d lper
+ mport com.tw ter.t etyp e.core.F lteredState.Unava lable.BounceDeleted
+ mport com.tw ter.t etyp e.core.F lteredState.Unava lable.T etDeleted
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.repos ory.Cac dBounceDeleted. sBounceDeleted
+ mport com.tw ter.t etyp e.repos ory.Cac dBounceDeleted.toBounceDeletedT etResult
+ mport com.tw ter.t etyp e.thr ftscala.Cac dT et
+ mport com.tw ter.ut l.Base64Long
 
-case class TweetKey(cacheVersion: Int, id: TweetId)
-    extends ScopedCacheKey("t", "t", cacheVersion, Base64Long.toBase64(id))
+case class T etKey(cac Vers on:  nt,  d: T et d)
+    extends ScopedCac Key("t", "t", cac Vers on, Base64Long.toBase64( d))
 
-case class TweetKeyFactory(cacheVersion: Int) {
-  val fromId: TweetId => TweetKey = (id: TweetId) => TweetKey(cacheVersion, id)
-  val fromTweet: Tweet => TweetKey = (tweet: Tweet) => fromId(tweet.id)
-  val fromCachedTweet: CachedTweet => TweetKey = (ms: CachedTweet) => fromTweet(ms.tweet)
+case class T etKeyFactory(cac Vers on:  nt) {
+  val from d: T et d => T etKey = ( d: T et d) => T etKey(cac Vers on,  d)
+  val fromT et: T et => T etKey = (t et: T et) => from d(t et. d)
+  val fromCac dT et: Cac dT et => T etKey = (ms: Cac dT et) => fromT et(ms.t et)
 }
 
-// Helper methods for working with cached bounce-deleted tweets,
-// grouped together here to keep the definitions of "bounce
-// deleted" in one place.
-object CachedBounceDeleted {
-  // CachedTweet for use in CachingTweetStore
-  def toBounceDeletedCachedTweet(tweetId: TweetId): CachedTweet =
-    CachedTweet(
-      tweet = Tweet(id = tweetId),
-      isBounceDeleted = Some(true)
+//  lper  thods for work ng w h cac d bounce-deleted t ets,
+// grouped toget r  re to keep t  def n  ons of "bounce
+// deleted"  n one place.
+object Cac dBounceDeleted {
+  // Cac dT et for use  n Cach ngT etStore
+  def toBounceDeletedCac dT et(t et d: T et d): Cac dT et =
+    Cac dT et(
+      t et = T et( d = t et d),
+       sBounceDeleted = So (true)
     )
 
-  def isBounceDeleted(cached: Cached[CachedTweet]): Boolean =
-    cached.status == CachedValueStatus.Found &&
-      cached.value.flatMap(_.isBounceDeleted).contains(true)
+  def  sBounceDeleted(cac d: Cac d[Cac dT et]): Boolean =
+    cac d.status == Cac dValueStatus.Found &&
+      cac d.value.flatMap(_. sBounceDeleted).conta ns(true)
 
-  // TweetResult for use in CachingTweetRepository
-  def toBounceDeletedTweetResult(tweetId: TweetId): TweetResult =
-    TweetResult(
-      TweetData(
-        tweet = Tweet(id = tweetId),
-        isBounceDeleted = true
+  // T etResult for use  n Cach ngT etRepos ory
+  def toBounceDeletedT etResult(t et d: T et d): T etResult =
+    T etResult(
+      T etData(
+        t et = T et( d = t et d),
+         sBounceDeleted = true
       )
     )
 
-  def isBounceDeleted(tweetResult: TweetResult): Boolean =
-    tweetResult.value.isBounceDeleted
+  def  sBounceDeleted(t etResult: T etResult): Boolean =
+    t etResult.value. sBounceDeleted
 }
 
-object TweetResultCache {
+object T etResultCac  {
   def apply(
-    tweetDataCache: Cache[TweetId, Cached[TweetData]]
-  ): Cache[TweetId, Cached[TweetResult]] = {
-    val transformer: Transformer[Cached[TweetResult], Cached[TweetData]] =
-      new Transformer[Cached[TweetResult], Cached[TweetData]] {
-        def to(cached: Cached[TweetResult]) =
-          Return(cached.map(_.value))
+    t etDataCac : Cac [T et d, Cac d[T etData]]
+  ): Cac [T et d, Cac d[T etResult]] = {
+    val transfor r: Transfor r[Cac d[T etResult], Cac d[T etData]] =
+      new Transfor r[Cac d[T etResult], Cac d[T etData]] {
+        def to(cac d: Cac d[T etResult]) =
+          Return(cac d.map(_.value))
 
-        def from(cached: Cached[TweetData]) =
-          Return(cached.map(TweetResult(_)))
+        def from(cac d: Cac d[T etData]) =
+          Return(cac d.map(T etResult(_)))
       }
 
-    new KeyValueTransformingCache(
-      tweetDataCache,
-      transformer,
-      identity
+    new KeyValueTransform ngCac (
+      t etDataCac ,
+      transfor r,
+       dent y
     )
   }
 }
 
-object TweetDataCache {
+object T etDataCac  {
   def apply(
-    cachedTweetCache: Cache[TweetKey, Cached[CachedTweet]],
-    tweetKeyFactory: TweetId => TweetKey
-  ): Cache[TweetId, Cached[TweetData]] = {
-    val transformer: Transformer[Cached[TweetData], Cached[CachedTweet]] =
-      new Transformer[Cached[TweetData], Cached[CachedTweet]] {
-        def to(cached: Cached[TweetData]) =
-          Return(cached.map(_.toCachedTweet))
+    cac dT etCac : Cac [T etKey, Cac d[Cac dT et]],
+    t etKeyFactory: T et d => T etKey
+  ): Cac [T et d, Cac d[T etData]] = {
+    val transfor r: Transfor r[Cac d[T etData], Cac d[Cac dT et]] =
+      new Transfor r[Cac d[T etData], Cac d[Cac dT et]] {
+        def to(cac d: Cac d[T etData]) =
+          Return(cac d.map(_.toCac dT et))
 
-        def from(cached: Cached[CachedTweet]) =
-          Return(cached.map(c => TweetData.fromCachedTweet(c, cached.cachedAt)))
+        def from(cac d: Cac d[Cac dT et]) =
+          Return(cac d.map(c => T etData.fromCac dT et(c, cac d.cac dAt)))
       }
 
-    new KeyValueTransformingCache(
-      cachedTweetCache,
-      transformer,
-      tweetKeyFactory
+    new KeyValueTransform ngCac (
+      cac dT etCac ,
+      transfor r,
+      t etKeyFactory
     )
   }
 }
 
 object TombstoneTtl {
-  import CachedResult._
+   mport Cac dResult._
 
-  def fixed(ttl: Duration): CachedNotFound[TweetId] => Duration =
+  def f xed(ttl: Durat on): Cac dNotFound[T et d] => Durat on =
     _ => ttl
 
   /**
-   * A simple ttl calculator that is set to `min` if the age is less than `from`,
-   * then linearly interpolated  between `min` and `max` when the age is between `from` and `to`,
-   * and then equal to `max` if the age is greater than `to`.
+   * A s mple ttl calculator that  s set to `m n`  f t  age  s less than `from`,
+   * t n l nearly  nterpolated  bet en `m n` and `max` w n t  age  s bet en `from` and `to`,
+   * and t n equal to `max`  f t  age  s greater than `to`.
    */
-  def linear(
-    min: Duration,
-    max: Duration,
-    from: Duration,
-    to: Duration
-  ): CachedNotFound[TweetId] => Duration = {
-    val rate = (max - min).inMilliseconds / (to - from).inMilliseconds.toDouble
-    cached => {
-      if (SnowflakeId.isSnowflakeId(cached.key)) {
-        val age = cached.cachedAt - SnowflakeId(cached.key).time
-        if (age <= from) min
-        else if (age >= to) max
-        else min + (age - from) * rate
+  def l near(
+    m n: Durat on,
+    max: Durat on,
+    from: Durat on,
+    to: Durat on
+  ): Cac dNotFound[T et d] => Durat on = {
+    val rate = (max - m n). nM ll seconds / (to - from). nM ll seconds.toDouble
+    cac d => {
+       f (Snowflake d. sSnowflake d(cac d.key)) {
+        val age = cac d.cac dAt - Snowflake d(cac d.key).t  
+         f (age <= from) m n
+        else  f (age >= to) max
+        else m n + (age - from) * rate
       } else {
-        // When it's not a snowflake id, cache it for the maximum time.
+        // W n  's not a snowflake  d, cac    for t  max mum t  .
         max
       }
     }
   }
 
   /**
-   * Checks if the given `cached` value is an expired tombstone
+   * C cks  f t  g ven `cac d` value  s an exp red tombstone
    */
-  def isExpired(
-    tombstoneTtl: CachedNotFound[TweetId] => Duration,
-    cached: CachedNotFound[TweetId]
+  def  sExp red(
+    tombstoneTtl: Cac dNotFound[T et d] => Durat on,
+    cac d: Cac dNotFound[T et d]
   ): Boolean =
-    Time.now - cached.cachedAt > tombstoneTtl(cached)
+    T  .now - cac d.cac dAt > tombstoneTtl(cac d)
 }
 
-object CachingTweetRepository {
-  import CachedResult._
-  import CachedResultAction._
+object Cach ngT etRepos ory {
+   mport Cac dResult._
+   mport Cac dResultAct on._
 
-  val failuresLog: Logger = Logger("com.twitter.tweetypie.repository.CachingTweetRepoFailures")
+  val fa luresLog: Logger = Logger("com.tw ter.t etyp e.repos ory.Cach ngT etRepoFa lures")
 
   def apply(
-    cache: LockingCache[TweetId, Cached[TweetResult]],
-    tombstoneTtl: CachedNotFound[TweetId] => Duration,
-    stats: StatsReceiver,
-    clientIdHelper: ClientIdHelper,
-    logCacheExceptions: Gate[Unit] = Gate.False,
+    cac : Lock ngCac [T et d, Cac d[T etResult]],
+    tombstoneTtl: Cac dNotFound[T et d] => Durat on,
+    stats: StatsRece ver,
+    cl ent d lper: Cl ent d lper,
+    logCac Except ons: Gate[Un ] = Gate.False,
   )(
-    underlying: TweetResultRepository.Type
-  ): TweetResultRepository.Type = {
-    val cachingRepo: ((TweetId, TweetQuery.Options)) => Stitch[TweetResult] =
-      CacheStitch[(TweetId, TweetQuery.Options), TweetId, TweetResult](
-        repo = underlying.tupled,
-        cache = StitchLockingCache(
-          underlying = cache,
-          picker = new TweetRepoCachePicker[TweetResult](_.value.cachedAt)
+    underly ng: T etResultRepos ory.Type
+  ): T etResultRepos ory.Type = {
+    val cach ngRepo: ((T et d, T etQuery.Opt ons)) => St ch[T etResult] =
+      Cac St ch[(T et d, T etQuery.Opt ons), T et d, T etResult](
+        repo = underly ng.tupled,
+        cac  = St chLock ngCac (
+          underly ng = cac ,
+          p cker = new T etRepoCac P cker[T etResult](_.value.cac dAt)
         ),
-        queryToKey = _._1, // extract tweet id from (TweetId, TweetQuery.Options)
-        handler = mkHandler(tombstoneTtl, stats, logCacheExceptions, clientIdHelper),
-        cacheable = cacheable
+        queryToKey = _._1, // extract t et  d from (T et d, T etQuery.Opt ons)
+        handler = mkHandler(tombstoneTtl, stats, logCac Except ons, cl ent d lper),
+        cac able = cac able
       )
 
-    (tweetId, options) =>
-      if (options.cacheControl.readFromCache) {
-        cachingRepo((tweetId, options))
+    (t et d, opt ons) =>
+       f (opt ons.cac Control.readFromCac ) {
+        cach ngRepo((t et d, opt ons))
       } else {
-        underlying(tweetId, options)
+        underly ng(t et d, opt ons)
       }
   }
 
-  val cacheable: CacheStitch.Cacheable[(TweetId, TweetQuery.Options), TweetResult] = {
-    case ((tweetId, options), tweetResult) =>
-      if (!options.cacheControl.writeToCache) {
+  val cac able: Cac St ch.Cac able[(T et d, T etQuery.Opt ons), T etResult] = {
+    case ((t et d, opt ons), t etResult) =>
+       f (!opt ons.cac Control.wr eToCac ) {
         None
       } else {
-        tweetResult match {
-          // Write stitch.NotFound as a NotFound cache entry
-          case Throw(com.twitter.stitch.NotFound) =>
-            Some(StitchLockingCache.Val.NotFound)
+        t etResult match {
+          // Wr e st ch.NotFound as a NotFound cac  entry
+          case Throw(com.tw ter.st ch.NotFound) =>
+            So (St chLock ngCac .Val.NotFound)
 
-          // Write FilteredState.TweetDeleted as a Deleted cache entry
-          case Throw(TweetDeleted) =>
-            Some(StitchLockingCache.Val.Deleted)
+          // Wr e F lteredState.T etDeleted as a Deleted cac  entry
+          case Throw(T etDeleted) =>
+            So (St chLock ngCac .Val.Deleted)
 
-          // Write BounceDeleted as a Found cache entry, with the CachedTweet.isBounceDeleted flag.
-          // servo.cache.thriftscala.CachedValueStatus.Deleted tombstones do not allow for storing
-          // app-defined metadata.
+          // Wr e BounceDeleted as a Found cac  entry, w h t  Cac dT et. sBounceDeleted flag.
+          // servo.cac .thr ftscala.Cac dValueStatus.Deleted tombstones do not allow for stor ng
+          // app-def ned  tadata.
           case Throw(BounceDeleted) =>
-            Some(StitchLockingCache.Val.Found(toBounceDeletedTweetResult(tweetId)))
+            So (St chLock ngCac .Val.Found(toBounceDeletedT etResult(t et d)))
 
-          // Regular found tweets are not written to cache here - instead the cacheable result is
-          // written to cache via TweetHydration.cacheChanges
-          case Return(_: TweetResult) => None
+          // Regular found t ets are not wr ten to cac   re -  nstead t  cac able result  s
+          // wr ten to cac  v a T etHydrat on.cac Changes
+          case Return(_: T etResult) => None
 
-          // Don't write other exceptions back to cache
+          // Don't wr e ot r except ons back to cac 
           case _ => None
         }
       }
   }
 
   object LogLens {
-    private[this] val mapper = new ObjectMapper().registerModule(DefaultScalaModule)
+    pr vate[t ] val mapper = new ObjectMapper().reg sterModule(DefaultScalaModule)
 
-    def logMessage(logger: Logger, clientIdHelper: ClientIdHelper, data: (String, Any)*): Unit = {
-      val allData = data ++ defaultData(clientIdHelper)
-      val msg = mapper.writeValueAsString(Map(allData: _*))
-      logger.info(msg)
+    def log ssage(logger: Logger, cl ent d lper: Cl ent d lper, data: (Str ng, Any)*): Un  = {
+      val allData = data ++ defaultData(cl ent d lper)
+      val msg = mapper.wr eValueAsStr ng(Map(allData: _*))
+      logger. nfo(msg)
     }
 
-    private def defaultData(clientIdHelper: ClientIdHelper): Seq[(String, Any)] = {
-      val viewer = TwitterContext()
+    pr vate def defaultData(cl ent d lper: Cl ent d lper): Seq[(Str ng, Any)] = {
+      val v e r = Tw terContext()
       Seq(
-        "client_id" -> clientIdHelper.effectiveClientId,
-        "trace_id" -> Trace.id.traceId.toString,
-        "audit_ip" -> viewer.flatMap(_.auditIp),
-        "application_id" -> viewer.flatMap(_.clientApplicationId),
-        "user_agent" -> viewer.flatMap(_.userAgent),
-        "authenticated_user_id" -> viewer.flatMap(_.authenticatedUserId)
+        "cl ent_ d" -> cl ent d lper.effect veCl ent d,
+        "trace_ d" -> Trace. d.trace d.toStr ng,
+        "aud _ p" -> v e r.flatMap(_.aud  p),
+        "appl cat on_ d" -> v e r.flatMap(_.cl entAppl cat on d),
+        "user_agent" -> v e r.flatMap(_.userAgent),
+        "aut nt cated_user_ d" -> v e r.flatMap(_.aut nt catedUser d)
       )
     }
   }
 
   def mkHandler(
-    tombstoneTtl: CachedNotFound[TweetId] => Duration,
-    stats: StatsReceiver,
-    logCacheExceptions: Gate[Unit],
-    clientIdHelper: ClientIdHelper,
-  ): Handler[TweetId, TweetResult] = {
-    val baseHandler = defaultHandler[TweetId, TweetResult]
-    val cacheErrorState = HydrationState(modified = false, cacheErrorEncountered = true)
-    val cachedFoundCounter = stats.counter("cached_found")
+    tombstoneTtl: Cac dNotFound[T et d] => Durat on,
+    stats: StatsRece ver,
+    logCac Except ons: Gate[Un ],
+    cl ent d lper: Cl ent d lper,
+  ): Handler[T et d, T etResult] = {
+    val baseHandler = defaultHandler[T et d, T etResult]
+    val cac ErrorState = Hydrat onState(mod f ed = false, cac ErrorEncountered = true)
+    val cac dFoundCounter = stats.counter("cac d_found")
     val notFoundCounter = stats.counter("not_found")
-    val cachedNotFoundAsNotFoundCounter = stats.counter("cached_not_found_as_not_found")
-    val cachedNotFoundAsMissCounter = stats.counter("cached_not_found_as_miss")
-    val cachedDeletedCounter = stats.counter("cached_deleted")
-    val cachedBounceDeletedCounter = stats.counter("cached_bounce_deleted")
-    val failedCounter = stats.counter("failed")
-    val otherCounter = stats.counter("other")
+    val cac dNotFoundAsNotFoundCounter = stats.counter("cac d_not_found_as_not_found")
+    val cac dNotFoundAsM ssCounter = stats.counter("cac d_not_found_as_m ss")
+    val cac dDeletedCounter = stats.counter("cac d_deleted")
+    val cac dBounceDeletedCounter = stats.counter("cac d_bounce_deleted")
+    val fa ledCounter = stats.counter("fa led")
+    val ot rCounter = stats.counter("ot r")
 
     {
-      case res @ CachedFound(_, tweetResult, _, _) =>
-        if (isBounceDeleted(tweetResult)) {
-          cachedBounceDeletedCounter.incr()
-          HandleAsFailed(FilteredState.Unavailable.BounceDeleted)
+      case res @ Cac dFound(_, t etResult, _, _) =>
+         f ( sBounceDeleted(t etResult)) {
+          cac dBounceDeletedCounter. ncr()
+          HandleAsFa led(F lteredState.Unava lable.BounceDeleted)
         } else {
-          cachedFoundCounter.incr()
+          cac dFoundCounter. ncr()
           baseHandler(res)
         }
 
       case res @ NotFound(_) =>
-        notFoundCounter.incr()
+        notFoundCounter. ncr()
         baseHandler(res)
 
-      // expires NotFound tombstones if old enough
-      case cached @ CachedNotFound(_, _, _) =>
-        if (TombstoneTtl.isExpired(tombstoneTtl, cached)) {
-          cachedNotFoundAsMissCounter.incr()
-          HandleAsMiss
+      // exp res NotFound tombstones  f old enough
+      case cac d @ Cac dNotFound(_, _, _) =>
+         f (TombstoneTtl. sExp red(tombstoneTtl, cac d)) {
+          cac dNotFoundAsM ssCounter. ncr()
+          HandleAsM ss
         } else {
-          cachedNotFoundAsNotFoundCounter.incr()
+          cac dNotFoundAsNotFoundCounter. ncr()
           HandleAsNotFound
         }
 
-      case CachedDeleted(_, _, _) =>
-        cachedDeletedCounter.incr()
-        HandleAsFailed(FilteredState.Unavailable.TweetDeleted)
+      case Cac dDeleted(_, _, _) =>
+        cac dDeletedCounter. ncr()
+        HandleAsFa led(F lteredState.Unava lable.T etDeleted)
 
-      // don't attempt to write back to cache on a cache read failure
-      case Failed(k, t) =>
-        // After result is found, mark it with cacheErrorEncountered
-        failedCounter.incr()
+      // don't attempt to wr e back to cac  on a cac  read fa lure
+      case Fa led(k, t) =>
+        // After result  s found, mark   w h cac ErrorEncountered
+        fa ledCounter. ncr()
 
-        if (logCacheExceptions()) {
-          LogLens.logMessage(
-            failuresLog,
-            clientIdHelper,
-            "type" -> "cache_failed",
-            "tweet_id" -> k,
-            "throwable" -> t.getClass.getName
+         f (logCac Except ons()) {
+          LogLens.log ssage(
+            fa luresLog,
+            cl ent d lper,
+            "type" -> "cac _fa led",
+            "t et_ d" -> k,
+            "throwable" -> t.getClass.getNa 
           )
         }
 
-        TransformSubAction[TweetResult](HandleAsDoNotCache, _.mapState(_ ++ cacheErrorState))
+        TransformSubAct on[T etResult](HandleAsDoNotCac , _.mapState(_ ++ cac ErrorState))
 
       case res =>
-        otherCounter.incr()
+        ot rCounter. ncr()
         baseHandler(res)
     }
 
@@ -297,32 +297,32 @@ object CachingTweetRepository {
 }
 
 /**
- * A LockingCache.Picker for use with CachingTweetRepository which prevents overwriting values in
- * cache that are newer than the value previously read from cache.
+ * A Lock ngCac .P cker for use w h Cach ngT etRepos ory wh ch prevents overwr  ng values  n
+ * cac  that are ne r than t  value prev ously read from cac .
  */
-class TweetRepoCachePicker[T](cachedAt: T => Option[Time]) extends LockingCache.Picker[Cached[T]] {
-  private val newestPicker = new PreferNewestCached[T]
+class T etRepoCac P cker[T](cac dAt: T => Opt on[T  ]) extends Lock ngCac .P cker[Cac d[T]] {
+  pr vate val ne stP cker = new PreferNe stCac d[T]
 
-  override def apply(newValue: Cached[T], oldValue: Cached[T]): Option[Cached[T]] = {
+  overr de def apply(newValue: Cac d[T], oldValue: Cac d[T]): Opt on[Cac d[T]] = {
     oldValue.status match {
-      // never overwrite a `Deleted` tombstone via read-through.
-      case CachedValueStatus.Deleted => None
+      // never overwr e a `Deleted` tombstone v a read-through.
+      case Cac dValueStatus.Deleted => None
 
-      // only overwrite a `Found` value with an update based off of that same cache entry.
-      case CachedValueStatus.Found =>
-        newValue.value.flatMap(cachedAt) match {
-          // if prevCacheAt is the same as oldValue.cachedAt, then the value in cache hasn't changed
-          case Some(prevCachedAt) if prevCachedAt == oldValue.cachedAt => Some(newValue)
-          // otherwise, the value in cache has changed since we read it, so don't overwrite
+      // only overwr e a `Found` value w h an update based off of that sa  cac  entry.
+      case Cac dValueStatus.Found =>
+        newValue.value.flatMap(cac dAt) match {
+          //  f prevCac At  s t  sa  as oldValue.cac dAt, t n t  value  n cac  hasn't changed
+          case So (prevCac dAt)  f prevCac dAt == oldValue.cac dAt => So (newValue)
+          // ot rw se, t  value  n cac  has changed s nce   read  , so don't overwr e
           case _ => None
         }
 
-      // we may hit an expired/older tombstone, which should be safe to overwrite with a fresh
+      //   may h  an exp red/older tombstone, wh ch should be safe to overwr e w h a fresh
       // tombstone of a new value returned from Manhattan.
-      case CachedValueStatus.NotFound => newestPicker(newValue, oldValue)
+      case Cac dValueStatus.NotFound => ne stP cker(newValue, oldValue)
 
-      // we shouldn't see any other CachedValueStatus, but if we do, play it safe and don't
-      // overwrite (it will be as if the read that triggered this never happened)
+      //   shouldn't see any ot r Cac dValueStatus, but  f   do, play   safe and don't
+      // overwr e (  w ll be as  f t  read that tr ggered t  never happened)
       case _ => None
     }
   }

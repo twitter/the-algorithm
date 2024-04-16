@@ -1,39 +1,39 @@
-package com.twitter.cr_mixer.filter
+package com.tw ter.cr_m xer.f lter
 
-import com.twitter.contentrecommender.thriftscala.TweetInfo
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.CrCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.HealthThreshold
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.util.Future
-import javax.inject.Singleton
+ mport com.tw ter.contentrecom nder.thr ftscala.T et nfo
+ mport com.tw ter.cr_m xer.model.Cand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model.CrCand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model. althThreshold
+ mport com.tw ter.cr_m xer.model. n  alCand date
+ mport com.tw ter.ut l.Future
+ mport javax. nject.S ngleton
 
-@Singleton
-trait TweetInfoHealthFilterBase extends FilterBase {
-  override def name: String = this.getClass.getCanonicalName
-  override type ConfigType = HealthThreshold.Enum.Value
-  def thresholdToPropertyMap: Map[HealthThreshold.Enum.Value, TweetInfo => Option[Boolean]]
-  def getFilterParamFn: CandidateGeneratorQuery => HealthThreshold.Enum.Value
+@S ngleton
+tra  T et nfo althF lterBase extends F lterBase {
+  overr de def na : Str ng = t .getClass.getCanon calNa 
+  overr de type Conf gType =  althThreshold.Enum.Value
+  def thresholdToPropertyMap: Map[ althThreshold.Enum.Value, T et nfo => Opt on[Boolean]]
+  def getF lterParamFn: Cand dateGeneratorQuery =>  althThreshold.Enum.Value
 
-  override def filter(
-    candidates: Seq[Seq[InitialCandidate]],
-    config: HealthThreshold.Enum.Value
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    Future.value(candidates.map { seq =>
-      seq.filter(p => thresholdToPropertyMap(config)(p.tweetInfo).getOrElse(true))
+  overr de def f lter(
+    cand dates: Seq[Seq[ n  alCand date]],
+    conf g:  althThreshold.Enum.Value
+  ): Future[Seq[Seq[ n  alCand date]]] = {
+    Future.value(cand dates.map { seq =>
+      seq.f lter(p => thresholdToPropertyMap(conf g)(p.t et nfo).getOrElse(true))
     })
   }
 
   /**
-   * Build the config params here. passing in param() into the filter is strongly discouraged
-   * because param() can be slow when called many times
+   * Bu ld t  conf g params  re. pass ng  n param()  nto t  f lter  s strongly d sc aged
+   * because param() can be slow w n called many t  s
    */
-  override def requestToConfig[CGQueryType <: CandidateGeneratorQuery](
+  overr de def requestToConf g[CGQueryType <: Cand dateGeneratorQuery](
     query: CGQueryType
-  ): HealthThreshold.Enum.Value = {
+  ):  althThreshold.Enum.Value = {
     query match {
-      case q: CrCandidateGeneratorQuery => getFilterParamFn(q)
-      case _ => HealthThreshold.Enum.Off
+      case q: CrCand dateGeneratorQuery => getF lterParamFn(q)
+      case _ =>  althThreshold.Enum.Off
     }
   }
 }

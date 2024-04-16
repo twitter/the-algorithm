@@ -1,55 +1,55 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import java.util.List;
+ mport java.ut l.L st;
 
-import javax.inject.Inject;
+ mport javax. nject. nject;
 
-import com.twitter.finagle.Filter;
-import com.twitter.finagle.Service;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.mergers.EarlybirdResponseMerger;
-import com.twitter.search.earlybird_root.mergers.TierResponseAccumulator;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.F lter;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdFeatureSc ma rger;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.earlyb rd_root. rgers.Earlyb rdResponse rger;
+ mport com.tw ter.search.earlyb rd_root. rgers.T erResponseAccumulator;
+ mport com.tw ter.ut l.Funct on;
+ mport com.tw ter.ut l.Future;
 
 /**
- * Filter used to merge results from multiple tiers
+ * F lter used to  rge results from mult ple t ers
  */
-public class MultiTierResultsMergeFilter extends
-    Filter<EarlybirdRequestContext, EarlybirdResponse,
-        EarlybirdRequestContext, List<Future<EarlybirdResponse>>> {
+publ c class Mult T erResults rgeF lter extends
+    F lter<Earlyb rdRequestContext, Earlyb rdResponse,
+        Earlyb rdRequestContext, L st<Future<Earlyb rdResponse>>> {
 
-  private final EarlybirdFeatureSchemaMerger featureSchemaMerger;
+  pr vate f nal Earlyb rdFeatureSc ma rger featureSc ma rger;
 
-  @Inject
-  public MultiTierResultsMergeFilter(EarlybirdFeatureSchemaMerger featureSchemaMerger) {
-    this.featureSchemaMerger = featureSchemaMerger;
+  @ nject
+  publ c Mult T erResults rgeF lter(Earlyb rdFeatureSc ma rger featureSc ma rger) {
+    t .featureSc ma rger = featureSc ma rger;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      final EarlybirdRequestContext request,
-      Service<EarlybirdRequestContext, List<Future<EarlybirdResponse>>> service) {
-    return service.apply(request).flatMap(Function.func(responses -> merge(request, responses)));
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(
+      f nal Earlyb rdRequestContext request,
+      Serv ce<Earlyb rdRequestContext, L st<Future<Earlyb rdResponse>>> serv ce) {
+    return serv ce.apply(request).flatMap(Funct on.func(responses ->  rge(request, responses)));
   }
 
-  private Future<EarlybirdResponse> merge(
-      EarlybirdRequestContext requestContext,
-      List<Future<EarlybirdResponse>> responses) {
+  pr vate Future<Earlyb rdResponse>  rge(
+      Earlyb rdRequestContext requestContext,
+      L st<Future<Earlyb rdResponse>> responses) {
 
-    // For multi-tier response merging, the number of partitions do not have meaning because
-    // the response is not uniformly partitioned anymore.  We pass Integer.MAX_VALUE for stats
-    // counting purpose.
-    EarlybirdResponseMerger merger = EarlybirdResponseMerger.getResponseMerger(
+    // For mult -t er response  rg ng, t  number of part  ons do not have  an ng because
+    // t  response  s not un formly part  oned anymore.    pass  nteger.MAX_VALUE for stats
+    // count ng purpose.
+    Earlyb rdResponse rger  rger = Earlyb rdResponse rger.getResponse rger(
         requestContext,
         responses,
-        new TierResponseAccumulator(),
-        EarlybirdCluster.FULL_ARCHIVE,
-        featureSchemaMerger,
-        Integer.MAX_VALUE);
-    return merger.merge();
+        new T erResponseAccumulator(),
+        Earlyb rdCluster.FULL_ARCH VE,
+        featureSc ma rger,
+         nteger.MAX_VALUE);
+    return  rger. rge();
   }
 }

@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.component_library.filter
+package com.tw ter.product_m xer.component_l brary.f lter
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedExcludeIdsCursor
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.component_l brary.model.cursor.UrtUnorderedExclude dsCursor
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lterResult
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.HasP pel neCursor
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
-case class UrtUnorderedExcludeIdsCursorFilter[
-  Candidate <: UniversalNoun[Long],
-  Query <: PipelineQuery with HasPipelineCursor[UrtUnorderedExcludeIdsCursor]
-]() extends Filter[Query, Candidate] {
+case class UrtUnorderedExclude dsCursorF lter[
+  Cand date <: Un versalNoun[Long],
+  Query <: P pel neQuery w h HasP pel neCursor[UrtUnorderedExclude dsCursor]
+]() extends F lter[Query, Cand date] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("UnorderedExcludeIdsCursor")
+  overr de val  dent f er: F lter dent f er = F lter dent f er("UnorderedExclude dsCursor")
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): St ch[F lterResult[Cand date]] = {
 
-    val excludeIds = query.pipelineCursor.map(_.excludedIds.toSet).getOrElse(Set.empty)
+    val exclude ds = query.p pel neCursor.map(_.excluded ds.toSet).getOrElse(Set.empty)
     val (kept, removed) =
-      candidates.map(_.candidate).partition(candidate => !excludeIds.contains(candidate.id))
+      cand dates.map(_.cand date).part  on(cand date => !exclude ds.conta ns(cand date. d))
 
-    val filterResult = FilterResult(kept = kept, removed = removed)
-    Stitch.value(filterResult)
+    val f lterResult = F lterResult(kept = kept, removed = removed)
+    St ch.value(f lterResult)
   }
 }

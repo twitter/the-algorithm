@@ -1,24 +1,24 @@
-package com.twitter.visibility.rules
+package com.tw ter.v s b l y.rules
 
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams
-import com.twitter.visibility.configapi.params.RuleParams.EnableAuthorBlocksViewerDropRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableInnerQuotedTweetViewerBlocksAuthorInterstitialRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableInnerQuotedTweetViewerMutesAuthorInterstitialRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableTimelineHomePromotedTweetHealthEnforcementRules
-import com.twitter.visibility.configapi.params.RuleParams.EnableViewerIsSoftUserDropRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.PromotedTweetHealthEnforcementHoldback
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.IsQuotedInnerTweet
-import com.twitter.visibility.rules.Condition.NonAuthorViewer
-import com.twitter.visibility.rules.Condition.Not
-import com.twitter.visibility.rules.Condition.Retweet
-import com.twitter.visibility.rules.Condition.SoftViewer
-import com.twitter.visibility.rules.Reason._
+ mport com.tw ter.v s b l y.conf gap .params.RuleParam
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams.EnableAuthorBlocksV e rDropRuleParam
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams.Enable nnerQuotedT etV e rBlocksAuthor nterst  alRuleParam
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams.Enable nnerQuotedT etV e rMutesAuthor nterst  alRuleParam
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams.EnableT  l neHo PromotedT et althEnforce ntRules
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams.EnableV e r sSoftUserDropRuleParam
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams.PromotedT et althEnforce ntHoldback
+ mport com.tw ter.v s b l y.rules.Cond  on.And
+ mport com.tw ter.v s b l y.rules.Cond  on. sQuoted nnerT et
+ mport com.tw ter.v s b l y.rules.Cond  on.NonAuthorV e r
+ mport com.tw ter.v s b l y.rules.Cond  on.Not
+ mport com.tw ter.v s b l y.rules.Cond  on.Ret et
+ mport com.tw ter.v s b l y.rules.Cond  on.SoftV e r
+ mport com.tw ter.v s b l y.rules.Reason._
 
 object DropAllRule
     extends AlwaysActRule(
-      Drop(Unspecified)
+      Drop(Unspec f ed)
     )
 
 object AllowAllRule
@@ -28,288 +28,288 @@ object AllowAllRule
 
 object TestRule
     extends AlwaysActRule(
-      Drop(Unspecified)
+      Drop(Unspec f ed)
     )
 
-object DeactivatedAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(DeactivatedAuthor),
-      Condition.DeactivatedAuthor
+object Deact vatedAuthorRule
+    extends OnlyW nNotAuthorV e rRule(
+      Drop(Deact vatedAuthor),
+      Cond  on.Deact vatedAuthor
     )
 
 object ErasedAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
+    extends OnlyW nNotAuthorV e rRule(
       Drop(ErasedAuthor),
-      Condition.ErasedAuthor
+      Cond  on.ErasedAuthor
     )
 
 object OffboardedAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
+    extends OnlyW nNotAuthorV e rRule(
       Drop(OffboardedAuthor),
-      Condition.OffboardedAuthor
+      Cond  on.OffboardedAuthor
     )
 
 object DropNsfwUserAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
+    extends OnlyW nNotAuthorV e rRule(
       Drop(Nsfw),
-      Condition.NsfwUserAuthor
+      Cond  on.NsfwUserAuthor
     )
 
-object DropNsfwUserAuthorViewerOptInFilteringOnSearchRule
-    extends ViewerOptInFilteringOnSearchRule(
+object DropNsfwUserAuthorV e rOpt nF lter ngOnSearchRule
+    extends V e rOpt nF lter ngOnSearchRule(
       Drop(Nsfw),
-      Condition.NsfwUserAuthor
+      Cond  on.NsfwUserAuthor
     )
 
-object InterstitialNsfwUserAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Nsfw),
-      Condition.NsfwUserAuthor
+object  nterst  alNsfwUserAuthorRule
+    extends OnlyW nNotAuthorV e rRule(
+       nterst  al(Nsfw),
+      Cond  on.NsfwUserAuthor
     )
 
-object DropNsfwAdminAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
+object DropNsfwAdm nAuthorRule
+    extends OnlyW nNotAuthorV e rRule(
       Drop(Nsfw),
-      Condition.NsfwAdminAuthor
+      Cond  on.NsfwAdm nAuthor
     )
 
-object DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule
-    extends ViewerOptInFilteringOnSearchRule(
+object DropNsfwAdm nAuthorV e rOpt nF lter ngOnSearchRule
+    extends V e rOpt nF lter ngOnSearchRule(
       Drop(Nsfw),
-      Condition.NsfwAdminAuthor
+      Cond  on.NsfwAdm nAuthor
     )
 
-object InterstitialNsfwAdminAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Nsfw),
-      Condition.NsfwAdminAuthor
+object  nterst  alNsfwAdm nAuthorRule
+    extends OnlyW nNotAuthorV e rRule(
+       nterst  al(Nsfw),
+      Cond  on.NsfwAdm nAuthor
     )
 
 object ProtectedAuthorDropRule
-    extends RuleWithConstantAction(
+    extends RuleW hConstantAct on(
       Drop(Reason.ProtectedAuthor),
-      And(Condition.LoggedOutOrViewerNotFollowingAuthor, Condition.ProtectedAuthor)
+      And(Cond  on.LoggedOutOrV e rNotFollow ngAuthor, Cond  on.ProtectedAuthor)
     )
 
 object ProtectedAuthorTombstoneRule
-    extends RuleWithConstantAction(
-      Tombstone(Epitaph.Protected),
-      And(Condition.LoggedOutOrViewerNotFollowingAuthor, Condition.ProtectedAuthor)
+    extends RuleW hConstantAct on(
+      Tombstone(Ep aph.Protected),
+      And(Cond  on.LoggedOutOrV e rNotFollow ngAuthor, Cond  on.ProtectedAuthor)
     )
 
 object DropAllProtectedAuthorRule
-    extends RuleWithConstantAction(
+    extends RuleW hConstantAct on(
       Drop(Reason.ProtectedAuthor),
-      Condition.ProtectedAuthor
+      Cond  on.ProtectedAuthor
     ) {
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(RuleParams.True)
+  overr de def enableFa lClosed: Seq[RuleParam[Boolean]] = Seq(RuleParams.True)
 }
 
-object ProtectedQuoteTweetAuthorRule
-    extends RuleWithConstantAction(
+object ProtectedQuoteT etAuthorRule
+    extends RuleW hConstantAct on(
       Drop(Reason.ProtectedAuthor),
-      And(Condition.OuterAuthorNotFollowingAuthor, Condition.ProtectedAuthor)
+      And(Cond  on.OuterAuthorNotFollow ngAuthor, Cond  on.ProtectedAuthor)
     )
 
-object DropProtectedViewerIfPresentRule
-    extends RuleWithConstantAction(
-      Drop(Reason.Unspecified),
-      And(Condition.LoggedInViewer, Condition.ProtectedViewer)
+object DropProtectedV e r fPresentRule
+    extends RuleW hConstantAct on(
+      Drop(Reason.Unspec f ed),
+      And(Cond  on.Logged nV e r, Cond  on.ProtectedV e r)
     ) {
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(RuleParams.True)
+  overr de def enableFa lClosed: Seq[RuleParam[Boolean]] = Seq(RuleParams.True)
 }
 
 object SuspendedAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
+    extends OnlyW nNotAuthorV e rRule(
       Drop(SuspendedAuthor),
-      Condition.SuspendedAuthor
+      Cond  on.SuspendedAuthor
     )
 
-object SuspendedViewerRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Unspecified),
-      Condition.SuspendedViewer
+object SuspendedV e rRule
+    extends OnlyW nNotAuthorV e rRule(
+      Drop(Unspec f ed),
+      Cond  on.SuspendedV e r
     )
 
-object DeactivatedViewerRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Unspecified),
-      Condition.DeactivatedViewer
+object Deact vatedV e rRule
+    extends OnlyW nNotAuthorV e rRule(
+      Drop(Unspec f ed),
+      Cond  on.Deact vatedV e r
     )
 
-object ViewerIsUnmentionedRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.ViewerIsUnmentioned),
-      Condition.ViewerIsUnmentioned
+object V e r sUn nt onedRule
+    extends OnlyW nNotAuthorV e rRule(
+      Drop(Reason.V e r sUn nt oned),
+      Cond  on.V e r sUn nt oned
     )
 
-abstract class AuthorBlocksViewerRule(override val action: Action)
-    extends OnlyWhenNotAuthorViewerRule(
-      action,
-      Condition.AuthorBlocksViewer
+abstract class AuthorBlocksV e rRule(overr de val act on: Act on)
+    extends OnlyW nNotAuthorV e rRule(
+      act on,
+      Cond  on.AuthorBlocksV e r
     )
 
-object AuthorBlocksViewerDropRule
-    extends AuthorBlocksViewerRule(
-      Drop(Reason.AuthorBlocksViewer)
+object AuthorBlocksV e rDropRule
+    extends AuthorBlocksV e rRule(
+      Drop(Reason.AuthorBlocksV e r)
     )
 
-object DeciderableAuthorBlocksViewerDropRule
-    extends AuthorBlocksViewerRule(
-      Drop(Reason.AuthorBlocksViewer)
+object Dec derableAuthorBlocksV e rDropRule
+    extends AuthorBlocksV e rRule(
+      Drop(Reason.AuthorBlocksV e r)
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableAuthorBlocksViewerDropRuleParam)
+  overr de def enabled: Seq[RuleParam[Boolean]] =
+    Seq(EnableAuthorBlocksV e rDropRuleParam)
 }
 
-object AuthorBlocksViewerTombstoneRule
-    extends AuthorBlocksViewerRule(
-      Tombstone(Epitaph.BlockedBy)
+object AuthorBlocksV e rTombstoneRule
+    extends AuthorBlocksV e rRule(
+      Tombstone(Ep aph.BlockedBy)
     )
 
-object ViewerBlocksAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.ViewerBlocksAuthor),
-      Condition.ViewerBlocksAuthor
+object V e rBlocksAuthorRule
+    extends OnlyW nNotAuthorV e rRule(
+      Drop(Reason.V e rBlocksAuthor),
+      Cond  on.V e rBlocksAuthor
     )
 
-object ViewerBlocksAuthorViewerOptInBlockingOnSearchRule
-    extends ViewerOptInBlockingOnSearchRule(
-      Drop(Reason.ViewerBlocksAuthor),
-      Condition.ViewerBlocksAuthor
+object V e rBlocksAuthorV e rOpt nBlock ngOnSearchRule
+    extends V e rOpt nBlock ngOnSearchRule(
+      Drop(Reason.V e rBlocksAuthor),
+      Cond  on.V e rBlocksAuthor
     )
 
-object ViewerMutesAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.ViewerMutesAuthor),
-      Condition.ViewerMutesAuthor
+object V e rMutesAuthorRule
+    extends OnlyW nNotAuthorV e rRule(
+      Drop(Reason.V e rMutesAuthor),
+      Cond  on.V e rMutesAuthor
     )
 
-object ViewerMutesAuthorViewerOptInBlockingOnSearchRule
-    extends ViewerOptInBlockingOnSearchRule(
-      Drop(Reason.ViewerMutesAuthor),
-      Condition.ViewerMutesAuthor
+object V e rMutesAuthorV e rOpt nBlock ngOnSearchRule
+    extends V e rOpt nBlock ngOnSearchRule(
+      Drop(Reason.V e rMutesAuthor),
+      Cond  on.V e rMutesAuthor
     )
 
 object AuthorBlocksOuterAuthorRule
-    extends RuleWithConstantAction(
-      Drop(Reason.AuthorBlocksViewer),
-      And(Not(Condition.IsSelfQuote), Condition.AuthorBlocksOuterAuthor)
+    extends RuleW hConstantAct on(
+      Drop(Reason.AuthorBlocksV e r),
+      And(Not(Cond  on. sSelfQuote), Cond  on.AuthorBlocksOuterAuthor)
     )
 
-object ViewerMutesAndDoesNotFollowAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.ViewerHardMutedAuthor),
-      And(Condition.ViewerMutesAuthor, Not(Condition.ViewerDoesFollowAuthor))
+object V e rMutesAndDoesNotFollowAuthorRule
+    extends OnlyW nNotAuthorV e rRule(
+      Drop(Reason.V e rHardMutedAuthor),
+      And(Cond  on.V e rMutesAuthor, Not(Cond  on.V e rDoesFollowAuthor))
     )
 
-object AuthorBlocksViewerUnspecifiedRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.Unspecified),
-      Condition.AuthorBlocksViewer
+object AuthorBlocksV e rUnspec f edRule
+    extends OnlyW nNotAuthorV e rRule(
+      Drop(Reason.Unspec f ed),
+      Cond  on.AuthorBlocksV e r
     )
 
-object ViewerHasMatchingMutedKeywordForNotificationsRule
-    extends OnlyWhenNotAuthorViewerRule(
+object V e rHasMatch ngMutedKeywordForNot f cat onsRule
+    extends OnlyW nNotAuthorV e rRule(
       Drop(Reason.MutedKeyword),
-      Condition.ViewerHasMatchingKeywordForNotifications
+      Cond  on.V e rHasMatch ngKeywordForNot f cat ons
     )
 
-object ViewerHasMatchingMutedKeywordForHomeTimelineRule
-    extends OnlyWhenNotAuthorViewerRule(
+object V e rHasMatch ngMutedKeywordForHo T  l neRule
+    extends OnlyW nNotAuthorV e rRule(
       Drop(Reason.MutedKeyword),
-      Condition.ViewerHasMatchingKeywordForHomeTimeline
+      Cond  on.V e rHasMatch ngKeywordForHo T  l ne
     )
 
-trait HasPromotedTweetHealthEnforcement extends WithGate {
-  override def holdbacks: Seq[RuleParam[Boolean]] = Seq(PromotedTweetHealthEnforcementHoldback)
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    EnableTimelineHomePromotedTweetHealthEnforcementRules)
+tra  HasPromotedT et althEnforce nt extends W hGate {
+  overr de def holdbacks: Seq[RuleParam[Boolean]] = Seq(PromotedT et althEnforce ntHoldback)
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(
+    EnableT  l neHo PromotedT et althEnforce ntRules)
 }
 
-object ViewerHasMatchingMutedKeywordForHomeTimelinePromotedTweetRule
-    extends OnlyWhenNotAuthorViewerRule(
+object V e rHasMatch ngMutedKeywordForHo T  l nePromotedT etRule
+    extends OnlyW nNotAuthorV e rRule(
       Drop(Reason.MutedKeyword),
-      Condition.ViewerHasMatchingKeywordForHomeTimeline
+      Cond  on.V e rHasMatch ngKeywordForHo T  l ne
     )
-    with HasPromotedTweetHealthEnforcement
+    w h HasPromotedT et althEnforce nt
 
-object ViewerHasMatchingMutedKeywordForTweetRepliesRule
-    extends OnlyWhenNotAuthorViewerRule(
+object V e rHasMatch ngMutedKeywordForT etRepl esRule
+    extends OnlyW nNotAuthorV e rRule(
       Drop(Reason.MutedKeyword),
-      Condition.ViewerHasMatchingKeywordForTweetReplies
+      Cond  on.V e rHasMatch ngKeywordForT etRepl es
     )
 
-object MutedKeywordForTweetRepliesInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Reason.MutedKeyword),
-      Condition.ViewerHasMatchingKeywordForTweetReplies
+object MutedKeywordForT etRepl es nterst  alRule
+    extends OnlyW nNotAuthorV e rRule(
+       nterst  al(Reason.MutedKeyword),
+      Cond  on.V e rHasMatch ngKeywordForT etRepl es
     )
 
-object MutedKeywordForQuotedTweetTweetDetailInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Reason.MutedKeyword),
-      And(Condition.IsQuotedInnerTweet, Condition.ViewerHasMatchingKeywordForTweetReplies)
+object MutedKeywordForQuotedT etT etDeta l nterst  alRule
+    extends OnlyW nNotAuthorV e rRule(
+       nterst  al(Reason.MutedKeyword),
+      And(Cond  on. sQuoted nnerT et, Cond  on.V e rHasMatch ngKeywordForT etRepl es)
     )
 
-object ViewerMutesAuthorInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Reason.ViewerMutesAuthor),
-      Condition.ViewerMutesAuthor
+object V e rMutesAuthor nterst  alRule
+    extends OnlyW nNotAuthorV e rRule(
+       nterst  al(Reason.V e rMutesAuthor),
+      Cond  on.V e rMutesAuthor
     )
 
-object ViewerMutesAuthorInnerQuotedTweetInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Reason.ViewerMutesAuthor),
-      And(Condition.ViewerMutesAuthor, IsQuotedInnerTweet)
+object V e rMutesAuthor nnerQuotedT et nterst  alRule
+    extends OnlyW nNotAuthorV e rRule(
+       nterst  al(Reason.V e rMutesAuthor),
+      And(Cond  on.V e rMutesAuthor,  sQuoted nnerT et)
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableInnerQuotedTweetViewerMutesAuthorInterstitialRuleParam)
+  overr de def enabled: Seq[RuleParam[Boolean]] =
+    Seq(Enable nnerQuotedT etV e rMutesAuthor nterst  alRuleParam)
 }
 
-object ViewerMutesAuthorHomeTimelinePromotedTweetRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.ViewerMutesAuthor),
-      Condition.ViewerMutesAuthor
+object V e rMutesAuthorHo T  l nePromotedT etRule
+    extends OnlyW nNotAuthorV e rRule(
+      Drop(Reason.V e rMutesAuthor),
+      Cond  on.V e rMutesAuthor
     )
-    with HasPromotedTweetHealthEnforcement
+    w h HasPromotedT et althEnforce nt
 
-object ViewerBlocksAuthorInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Reason.ViewerBlocksAuthor),
-      Condition.ViewerBlocksAuthor
+object V e rBlocksAuthor nterst  alRule
+    extends OnlyW nNotAuthorV e rRule(
+       nterst  al(Reason.V e rBlocksAuthor),
+      Cond  on.V e rBlocksAuthor
     )
 
-object ViewerBlocksAuthorInnerQuotedTweetInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Reason.ViewerBlocksAuthor),
-      And(Condition.ViewerBlocksAuthor, IsQuotedInnerTweet)
+object V e rBlocksAuthor nnerQuotedT et nterst  alRule
+    extends OnlyW nNotAuthorV e rRule(
+       nterst  al(Reason.V e rBlocksAuthor),
+      And(Cond  on.V e rBlocksAuthor,  sQuoted nnerT et)
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableInnerQuotedTweetViewerBlocksAuthorInterstitialRuleParam)
+  overr de def enabled: Seq[RuleParam[Boolean]] =
+    Seq(Enable nnerQuotedT etV e rBlocksAuthor nterst  alRuleParam)
 }
 
-object ViewerBlocksAuthorHomeTimelinePromotedTweetRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.ViewerBlocksAuthor),
-      Condition.ViewerBlocksAuthor
+object V e rBlocksAuthorHo T  l nePromotedT etRule
+    extends OnlyW nNotAuthorV e rRule(
+      Drop(Reason.V e rBlocksAuthor),
+      Cond  on.V e rBlocksAuthor
     )
-    with HasPromotedTweetHealthEnforcement
+    w h HasPromotedT et althEnforce nt
 
-object ViewerReportsAuthorInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Reason.ViewerReportedAuthor),
-      Condition.ViewerReportsAuthor
+object V e rReportsAuthor nterst  alRule
+    extends OnlyW nNotAuthorV e rRule(
+       nterst  al(Reason.V e rReportedAuthor),
+      Cond  on.V e rReportsAuthor
     )
 
-object ViewerIsAuthorDropRule
-    extends RuleWithConstantAction(Drop(Unspecified), Not(NonAuthorViewer))
+object V e r sAuthorDropRule
+    extends RuleW hConstantAct on(Drop(Unspec f ed), Not(NonAuthorV e r))
 
-object ViewerIsNotAuthorDropRule extends RuleWithConstantAction(Drop(Unspecified), NonAuthorViewer)
+object V e r sNotAuthorDropRule extends RuleW hConstantAct on(Drop(Unspec f ed), NonAuthorV e r)
 
-object RetweetDropRule extends RuleWithConstantAction(Drop(Unspecified), Retweet)
+object Ret etDropRule extends RuleW hConstantAct on(Drop(Unspec f ed), Ret et)
 
-object ViewerIsSoftUserDropRule extends RuleWithConstantAction(Drop(ViewerIsSoftUser), SoftViewer) {
+object V e r sSoftUserDropRule extends RuleW hConstantAct on(Drop(V e r sSoftUser), SoftV e r) {
 
-  override val enabled: Seq[RuleParam[Boolean]] = Seq(EnableViewerIsSoftUserDropRuleParam)
+  overr de val enabled: Seq[RuleParam[Boolean]] = Seq(EnableV e r sSoftUserDropRuleParam)
 }

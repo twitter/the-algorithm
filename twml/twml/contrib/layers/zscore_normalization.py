@@ -1,247 +1,247 @@
 """
-Contains the twml.layers.ZscoreNormalization layer.
+Conta ns t  twml.layers.ZscoreNormal zat on layer.
 """
-from twml.layers.layer import Layer
-import tensorflow.compat.v1 as tf
+from twml.layers.layer  mport Layer
+ mport tensorflow.compat.v1 as tf
 
-from tensorflow.python.training import moving_averages
+from tensorflow.python.tra n ng  mport mov ng_averages
 
 
-# This is copied from tensorflow.contrib.framework.python.ops.add_model_variable in 1.15
-# Not available in 2.x
-# TODO: Figure out if this is really necessary.
-def _add_model_variable(var):
-  """Adds a variable to the `GraphKeys.MODEL_VARIABLES` collection.
+# T   s cop ed from tensorflow.contr b.fra work.python.ops.add_model_var able  n 1.15
+# Not ava lable  n 2.x
+# TODO: F gure out  f t   s really necessary.
+def _add_model_var able(var):
+  """Adds a var able to t  `GraphKeys.MODEL_VAR ABLES` collect on.
   Args:
-    var: a variable.
+    var: a var able.
   """
-  if var not in tf.get_collection(tf.GraphKeys.MODEL_VARIABLES):
-    tf.add_to_collection(tf.GraphKeys.MODEL_VARIABLES, var)
+   f var not  n tf.get_collect on(tf.GraphKeys.MODEL_VAR ABLES):
+    tf.add_to_collect on(tf.GraphKeys.MODEL_VAR ABLES, var)
 
 
-def update_moving_variable(batch_var, moving_var, decay, zero_debias=True, name=None):
-  update_op = moving_averages.assign_moving_average(
-      moving_var, batch_var, decay, zero_debias=zero_debias, name=None)
-  _add_model_variable(moving_var)
-  with tf.control_dependencies([update_op]):
-    return tf.identity(moving_var)
+def update_mov ng_var able(batch_var, mov ng_var, decay, zero_deb as=True, na =None):
+  update_op = mov ng_averages.ass gn_mov ng_average(
+      mov ng_var, batch_var, decay, zero_deb as=zero_deb as, na =None)
+  _add_model_var able(mov ng_var)
+  w h tf.control_dependenc es([update_op]):
+    return tf. dent y(mov ng_var)
 
 
-class ZscoreNormalization(Layer):
+class ZscoreNormal zat on(Layer):
   """
-  Perform z-score normalization using moving mean and std.
-  Missing values are not included during mean/std calculation
-  This layer should only be used right after input layer.
+  Perform z-score normal zat on us ng mov ng  an and std.
+  M ss ng values are not  ncluded dur ng  an/std calculat on
+  T  layer should only be used r ght after  nput layer.
 
   Args:
     decay:
-      using large decay to include longer moving means.
+      us ng large decay to  nclude longer mov ng  ans.
     data_type:
-      use float64 to prevent overflow during variance calculation.
-    name:
-      Layer name
+      use float64 to prevent overflow dur ng var ance calculat on.
+    na :
+      Layer na 
   Returns:
-    A layer representing the output of the ZscoreNormalization transformation.
+    A layer represent ng t  output of t  ZscoreNormal zat on transformat on.
    """
 
-  def __init__(
+  def __ n __(
     self,
     decay=0.9999,
     data_type=tf.float64,
-    name=None,
+    na =None,
     **kwargs):
-    super(ZscoreNormalization, self).__init__(name=name, **kwargs)
-    self.epsilon = tf.constant(1., data_type)
+    super(ZscoreNormal zat on, self).__ n __(na =na , **kwargs)
+    self.eps lon = tf.constant(1., data_type)
     self.decay = decay
     self.data_type = data_type
 
-  def build(self, input_shape):  # pylint: disable=unused-argument
-    """Creates the moving_mean and moving_var tf.Variables of the layer."""
-    input_dim = input_shape[1]
-    self.moving_mean = self.add_variable(
-      '{}_mean/EMA'.format(self.name),
-      initializer=tf.constant_initializer(),
-      shape=[input_dim],
+  def bu ld(self,  nput_shape):  # pyl nt: d sable=unused-argu nt
+    """Creates t  mov ng_ an and mov ng_var tf.Var ables of t  layer."""
+     nput_d m =  nput_shape[1]
+    self.mov ng_ an = self.add_var able(
+      '{}_ an/EMA'.format(self.na ),
+       n  al zer=tf.constant_ n  al zer(),
+      shape=[ nput_d m],
       dtype=self.data_type,
-      trainable=False
+      tra nable=False
     )
-    self.moving_var = self.add_variable(
-      '{}_variance/EMA'.format(self.name),
-      initializer=tf.constant_initializer(),
-      shape=[input_dim],
+    self.mov ng_var = self.add_var able(
+      '{}_var ance/EMA'.format(self.na ),
+       n  al zer=tf.constant_ n  al zer(),
+      shape=[ nput_d m],
       dtype=self.data_type,
-      trainable=False
+      tra nable=False
     )
-    self.built = True
+    self.bu lt = True
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  def compute_output_shape(self,  nput_shape):
+    """Computes t  output shape of t  layer g ven t   nput shape.
 
     Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+       nput_shape: A (poss bly nested tuple of) `TensorShape`.    need not
+        be fully def ned (e.g. t  batch s ze may be unknown).
 
     """
 
-    return input_shape
+    return  nput_shape
 
-  def _training_pass(self, input, dense_mask, input_dtype, handle_single, zero_debias):
-    epsilon = self.epsilon
-    moving_mean, moving_var = self.moving_mean, self.moving_var
-    # calculate the number of exisiting value for each feature
-    tensor_batch_num = tf.reduce_sum(tf.cast(dense_mask, self.data_type), axis=0)
+  def _tra n ng_pass(self,  nput, dense_mask,  nput_dtype, handle_s ngle, zero_deb as):
+    eps lon = self.eps lon
+    mov ng_ an, mov ng_var = self.mov ng_ an, self.mov ng_var
+    # calculate t  number of ex s  ng value for each feature
+    tensor_batch_num = tf.reduce_sum(tf.cast(dense_mask, self.data_type), ax s=0)
     mask_ones = tf.cast(tensor_batch_num, tf.bool)
-    eps_vector = tf.fill(tf.shape(tensor_batch_num), epsilon)
-    # the following filled 0 with epision
-    tensor_batch_num_eps = tf.where(mask_ones,
+    eps_vector = tf.f ll(tf.shape(tensor_batch_num), eps lon)
+    # t  follow ng f lled 0 w h ep s on
+    tensor_batch_num_eps = tf.w re(mask_ones,
                                     tensor_batch_num,
                                     eps_vector
                                   )
-    tensor_batch_num_eps_broacast = tf.expand_dims(tensor_batch_num_eps, 0)
-    tensor_batch_divided = input / tensor_batch_num_eps_broacast
-    tensor_batch_mean = tf.reduce_sum(tensor_batch_divided, axis=0)
+    tensor_batch_num_eps_broacast = tf.expand_d ms(tensor_batch_num_eps, 0)
+    tensor_batch_d v ded =  nput / tensor_batch_num_eps_broacast
+    tensor_batch_ an = tf.reduce_sum(tensor_batch_d v ded, ax s=0)
 
-    # update moving mean here, and use it to calculate the std.
-    tensor_moving_mean = update_moving_variable(tensor_batch_mean, moving_mean, self.decay,
-                                                zero_debias, name="mean_ema_op")
+    # update mov ng  an  re, and use   to calculate t  std.
+    tensor_mov ng_ an = update_mov ng_var able(tensor_batch_ an, mov ng_ an, self.decay,
+                                                zero_deb as, na =" an_ema_op")
 
-    tensor_batch_sub_mean = input - tf.expand_dims(tensor_moving_mean, 0)
-    tensor_batch_sub_mean = tf.where(dense_mask,
-                                    tensor_batch_sub_mean,
-                                    tf.zeros_like(tensor_batch_sub_mean))
-    # divided by sqrt(n) before square, and then do summation for numeric stability.
-    broad_sqrt_num_eps = tf.expand_dims(tf.sqrt(tensor_batch_num_eps), 0)
-    tensor_batch_sub_mean_div = tensor_batch_sub_mean / broad_sqrt_num_eps
-    tensor_batch_sub_mean_div_square = tf.square(tensor_batch_sub_mean_div)
-    tensor_batch_var = tf.reduce_sum(tensor_batch_sub_mean_div_square, axis=0)
+    tensor_batch_sub_ an =  nput - tf.expand_d ms(tensor_mov ng_ an, 0)
+    tensor_batch_sub_ an = tf.w re(dense_mask,
+                                    tensor_batch_sub_ an,
+                                    tf.zeros_l ke(tensor_batch_sub_ an))
+    # d v ded by sqrt(n) before square, and t n do summat on for nu r c stab l y.
+    broad_sqrt_num_eps = tf.expand_d ms(tf.sqrt(tensor_batch_num_eps), 0)
+    tensor_batch_sub_ an_d v = tensor_batch_sub_ an / broad_sqrt_num_eps
+    tensor_batch_sub_ an_d v_square = tf.square(tensor_batch_sub_ an_d v)
+    tensor_batch_var = tf.reduce_sum(tensor_batch_sub_ an_d v_square, ax s=0)
 
-    # update moving var here, dont replace 0 with eps before updating.
-    tensor_moving_var = update_moving_variable(tensor_batch_var, moving_var, self.decay,
-                                               zero_debias, name="var_ema_op")
+    # update mov ng var  re, dont replace 0 w h eps before updat ng.
+    tensor_mov ng_var = update_mov ng_var able(tensor_batch_var, mov ng_var, self.decay,
+                                               zero_deb as, na ="var_ema_op")
 
-    # if std is 0, replace it with epsilon
-    tensor_moving_std = tf.sqrt(tensor_moving_var)
-    tensor_moving_std_eps = tf.where(tf.equal(tensor_moving_std, 0),
+    #  f std  s 0, replace   w h eps lon
+    tensor_mov ng_std = tf.sqrt(tensor_mov ng_var)
+    tensor_mov ng_std_eps = tf.w re(tf.equal(tensor_mov ng_std, 0),
                                     eps_vector,
-                                    tensor_moving_std)
+                                    tensor_mov ng_std)
 
-    missing_input_norm = tensor_batch_sub_mean / tf.expand_dims(tensor_moving_std_eps, 0)
+    m ss ng_ nput_norm = tensor_batch_sub_ an / tf.expand_d ms(tensor_mov ng_std_eps, 0)
 
-    if handle_single:
-      # if std==0 and value not missing, reset it to 1.
-      moving_var_mask_zero = tf.math.equal(tensor_moving_var, 0)
-      moving_var_mask_zero = tf.expand_dims(moving_var_mask_zero, 0)
-      missing_input_norm = tf.where(
-        tf.math.logical_and(dense_mask, moving_var_mask_zero),
-        tf.ones_like(missing_input_norm),
-        missing_input_norm
+     f handle_s ngle:
+      #  f std==0 and value not m ss ng, reset   to 1.
+      mov ng_var_mask_zero = tf.math.equal(tensor_mov ng_var, 0)
+      mov ng_var_mask_zero = tf.expand_d ms(mov ng_var_mask_zero, 0)
+      m ss ng_ nput_norm = tf.w re(
+        tf.math.log cal_and(dense_mask, mov ng_var_mask_zero),
+        tf.ones_l ke(m ss ng_ nput_norm),
+        m ss ng_ nput_norm
       )
-    if input_dtype != self.data_type:
-      missing_input_norm = tf.cast(missing_input_norm, input_dtype)
-    return missing_input_norm
+     f  nput_dtype != self.data_type:
+      m ss ng_ nput_norm = tf.cast(m ss ng_ nput_norm,  nput_dtype)
+    return m ss ng_ nput_norm
 
-  def _infer_pass(self, input, dense_mask, input_dtype, handle_single):
-    epsilon = tf.cast(self.epsilon, input_dtype)
-    testing_moving_mean = tf.cast(self.moving_mean, input_dtype)
-    tensor_moving_std = tf.cast(tf.sqrt(self.moving_var), input_dtype)
+  def _ nfer_pass(self,  nput, dense_mask,  nput_dtype, handle_s ngle):
+    eps lon = tf.cast(self.eps lon,  nput_dtype)
+    test ng_mov ng_ an = tf.cast(self.mov ng_ an,  nput_dtype)
+    tensor_mov ng_std = tf.cast(tf.sqrt(self.mov ng_var),  nput_dtype)
 
-    broad_mean = tf.expand_dims(testing_moving_mean, 0)
-    tensor_batch_sub_mean = input - broad_mean
+    broad_ an = tf.expand_d ms(test ng_mov ng_ an, 0)
+    tensor_batch_sub_ an =  nput - broad_ an
 
-    tensor_batch_sub_mean = tf.where(dense_mask,
-                                    tensor_batch_sub_mean,
-                                    tf.zeros_like(tensor_batch_sub_mean)
+    tensor_batch_sub_ an = tf.w re(dense_mask,
+                                    tensor_batch_sub_ an,
+                                    tf.zeros_l ke(tensor_batch_sub_ an)
                             )
-    tensor_moving_std_eps = tf.where(tf.equal(tensor_moving_std, 0),
-                                      tf.fill(tf.shape(tensor_moving_std), epsilon),
-                                      tensor_moving_std)
-    missing_input_norm = tensor_batch_sub_mean / tf.expand_dims(tensor_moving_std_eps, 0)
-    if handle_single:
-      # if std==0 and value not missing, reset it to 1.
-      moving_var_broad = tf.expand_dims(tensor_moving_std, 0)
-      moving_var_mask_zero = tf.math.logical_not(tf.cast(moving_var_broad, tf.bool))
+    tensor_mov ng_std_eps = tf.w re(tf.equal(tensor_mov ng_std, 0),
+                                      tf.f ll(tf.shape(tensor_mov ng_std), eps lon),
+                                      tensor_mov ng_std)
+    m ss ng_ nput_norm = tensor_batch_sub_ an / tf.expand_d ms(tensor_mov ng_std_eps, 0)
+     f handle_s ngle:
+      #  f std==0 and value not m ss ng, reset   to 1.
+      mov ng_var_broad = tf.expand_d ms(tensor_mov ng_std, 0)
+      mov ng_var_mask_zero = tf.math.log cal_not(tf.cast(mov ng_var_broad, tf.bool))
 
-      missing_input_norm = tf.where(tf.math.logical_and(dense_mask, moving_var_mask_zero),
-                          tf.ones_like(missing_input_norm),
-                          missing_input_norm
+      m ss ng_ nput_norm = tf.w re(tf.math.log cal_and(dense_mask, mov ng_var_mask_zero),
+                          tf.ones_l ke(m ss ng_ nput_norm),
+                          m ss ng_ nput_norm
                           )
-    return missing_input_norm
+    return m ss ng_ nput_norm
 
   def call(
     self,
-    input,
-    is_training,
+     nput,
+     s_tra n ng,
     dense_mask=None,
-    zero_debias=True,
-    handle_single=False):
+    zero_deb as=True,
+    handle_s ngle=False):
     """
     Args:
     -----------
-    input:  B x D : float32/float64
-      missing value must be set to 0.
-    is_training: bool
-      training phase or testing phase
+     nput:  B x D : float32/float64
+      m ss ng value must be set to 0.
+     s_tra n ng: bool
+      tra n ng phase or test ng phase
     dense_mask: B x D : bool
-      missing value should be marked as 0, non-missing as 1. same shape as input
-    zero_debias: bool
-      bias correction of the moving average. (biased towards 0 in the beginning.
-      see adam paper. https://arxiv.org/abs/1412.6980)
-    handle_single: bool
-      if std==0, and feature is not missing value, set the value to 1, instead of 0.
-      This is super rare if input only consists of continous feature.
-      But if one-hot feature is included,
-      they will all have same values 1, in that case, make sure to set handle_single to true.
+      m ss ng value should be marked as 0, non-m ss ng as 1. sa  shape as  nput
+    zero_deb as: bool
+      b as correct on of t  mov ng average. (b ased towards 0  n t  beg nn ng.
+      see adam paper. https://arx v.org/abs/1412.6980)
+    handle_s ngle: bool
+       f std==0, and feature  s not m ss ng value, set t  value to 1,  nstead of 0.
+      T   s super rare  f  nput only cons sts of cont nous feature.
+      But  f one-hot feature  s  ncluded,
+      t y w ll all have sa  values 1,  n that case, make sure to set handle_s ngle to true.
     """
 
-    if dense_mask is None:
-      dense_mask = tf.math.logical_not(tf.equal(input, 0))
-    input_dtype = input.dtype
+     f dense_mask  s None:
+      dense_mask = tf.math.log cal_not(tf.equal( nput, 0))
+     nput_dtype =  nput.dtype
 
-    if is_training:
-      if input_dtype != self.data_type:
-        input = tf.cast(input, self.data_type)
-      return self._training_pass(input, dense_mask, input_dtype, handle_single, zero_debias)
+     f  s_tra n ng:
+       f  nput_dtype != self.data_type:
+         nput = tf.cast( nput, self.data_type)
+      return self._tra n ng_pass( nput, dense_mask,  nput_dtype, handle_s ngle, zero_deb as)
     else:
-      return self._infer_pass(input, dense_mask, input_dtype, handle_single)
+      return self._ nfer_pass( nput, dense_mask,  nput_dtype, handle_s ngle)
 
 
-def zscore_normalization(
-  input,
-  is_training,
+def zscore_normal zat on(
+   nput,
+   s_tra n ng,
   decay=0.9999,
   data_type=tf.float64,
-  name=None,
+  na =None,
   dense_mask=None,
-  zero_debias=True,
-  handle_single=False, **kwargs):
+  zero_deb as=True,
+  handle_s ngle=False, **kwargs):
   """
   Args:
   ------------
-  input:  B x D : float32/float64
-    missing value must be set to 0.
-  is_training: bool
-    training phase or testing phase
+   nput:  B x D : float32/float64
+    m ss ng value must be set to 0.
+   s_tra n ng: bool
+    tra n ng phase or test ng phase
   decay:
-    using large decay to include longer moving means.
+    us ng large decay to  nclude longer mov ng  ans.
   data_type:
-    use float64 to zprevent overflow during variance calculation.
-  name:
-    Layer name
+    use float64 to zprevent overflow dur ng var ance calculat on.
+  na :
+    Layer na 
   dense_mask: B x D : bool
-    missing value should be marked as 0, non-missing as 1. same shape as input
-  zero_debias: bool
-    bias correction of the moving average. (biased towards 0 in the beginning.
-    see adam paper. https://arxiv.org/abs/1412.6980)
-  handle_single: bool
-    if std==0, and feature is not missing value, set the value to 1, instead of 0.
-    This is super rare if input only consists of continous feature.
-    But if one-hot feature is included,
-    they will all have same values 1, in that case, make sure to set handle_single to true.
+    m ss ng value should be marked as 0, non-m ss ng as 1. sa  shape as  nput
+  zero_deb as: bool
+    b as correct on of t  mov ng average. (b ased towards 0  n t  beg nn ng.
+    see adam paper. https://arx v.org/abs/1412.6980)
+  handle_s ngle: bool
+     f std==0, and feature  s not m ss ng value, set t  value to 1,  nstead of 0.
+    T   s super rare  f  nput only cons sts of cont nous feature.
+    But  f one-hot feature  s  ncluded,
+    t y w ll all have sa  values 1,  n that case, make sure to set handle_s ngle to true.
   """
 
-  norm_layer = ZscoreNormalization(decay=decay, data_type=data_type, name=name, **kwargs)
-  return norm_layer(input,
-                    is_training,
+  norm_layer = ZscoreNormal zat on(decay=decay, data_type=data_type, na =na , **kwargs)
+  return norm_layer( nput,
+                     s_tra n ng,
                     dense_mask=dense_mask,
-                    zero_debias=zero_debias,
-                    handle_single=handle_single)
+                    zero_deb as=zero_deb as,
+                    handle_s ngle=handle_s ngle)

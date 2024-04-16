@@ -1,80 +1,80 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.mediaservices.commons.tweetmedia.thriftscala._
-import com.twitter.tweetypie.media._
-import com.twitter.tweetypie.thriftscala._
-import scala.collection.Set
+ mport com.tw ter. d aserv ces.commons.t et d a.thr ftscala._
+ mport com.tw ter.t etyp e. d a._
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport scala.collect on.Set
 
 /**
- * Removes partial Url, Media, and Mention entities that were not
- * fully hydrated. Rather than returning no value or a value with
- * incomplete entities on an entity hydration failure, we gracefully
- * degrade to just omitting those entities. This step needs to be
- * applied in the post-cache filter, so that we don't cache the value
- * with missing entities.
+ * Removes part al Url,  d a, and  nt on ent  es that  re not
+ * fully hydrated. Rat r than return ng no value or a value w h
+ *  ncomplete ent  es on an ent y hydrat on fa lure,   gracefully
+ * degrade to just om t ng those ent  es. T  step needs to be
+ * appl ed  n t  post-cac  f lter, so that   don't cac  t  value
+ * w h m ss ng ent  es.
  *
- * A MediaEntity will first be converted back to a UrlEntity if it is only
- * partially hydrated.  If the resulting UrlEntity is itself then only partially
- * hydrated, it will get dropped also.
+ * A  d aEnt y w ll f rst be converted back to a UrlEnt y  f    s only
+ * part ally hydrated.   f t  result ng UrlEnt y  s  self t n only part ally
+ * hydrated,   w ll get dropped also.
  */
-object PartialEntityCleaner {
-  def apply(stats: StatsReceiver): Mutation[Tweet] = {
-    val scopedStats = stats.scope("partial_entity_cleaner")
-    Mutation
+object Part alEnt yCleaner {
+  def apply(stats: StatsRece ver): Mutat on[T et] = {
+    val scopedStats = stats.scope("part al_ent y_cleaner")
+    Mutat on
       .all(
         Seq(
-          TweetLenses.urls.mutation(urls.countMutations(scopedStats.counter("urls"))),
-          TweetLenses.media.mutation(media.countMutations(scopedStats.counter("media"))),
-          TweetLenses.mentions.mutation(mentions.countMutations(scopedStats.counter("mentions")))
+          T etLenses.urls.mutat on(urls.countMutat ons(scopedStats.counter("urls"))),
+          T etLenses. d a.mutat on( d a.countMutat ons(scopedStats.counter(" d a"))),
+          T etLenses. nt ons.mutat on( nt ons.countMutat ons(scopedStats.counter(" nt ons")))
         )
       )
-      .onlyIf(!isRetweet(_))
+      .only f(! sRet et(_))
   }
 
-  private[this] def clean[E](isPartial: E => Boolean) =
-    Mutation[Seq[E]] { items =>
-      items.partition(isPartial) match {
-        case (Nil, nonPartial) => None
-        case (partial, nonPartial) => Some(nonPartial)
+  pr vate[t ] def clean[E]( sPart al: E => Boolean) =
+    Mutat on[Seq[E]] {  ems =>
+       ems.part  on( sPart al) match {
+        case (N l, nonPart al) => None
+        case (part al, nonPart al) => So (nonPart al)
       }
     }
 
-  private[this] val mentions =
-    clean[MentionEntity](e => e.userId.isEmpty || e.name.isEmpty)
+  pr vate[t ] val  nt ons =
+    clean[ nt onEnt y](e => e.user d. sEmpty || e.na . sEmpty)
 
-  private[this] val urls =
-    clean[UrlEntity](e =>
-      isNullOrEmpty(e.url) || isNullOrEmpty(e.expanded) || isNullOrEmpty(e.display))
+  pr vate[t ] val urls =
+    clean[UrlEnt y](e =>
+       sNullOrEmpty(e.url) ||  sNullOrEmpty(e.expanded) ||  sNullOrEmpty(e.d splay))
 
-  private[this] val media =
-    Mutation[Seq[MediaEntity]] { mediaEntities =>
-      mediaEntities.partition(isPartialMedia) match {
-        case (Nil, nonPartial) => None
-        case (partial, nonPartial) => Some(nonPartial)
+  pr vate[t ] val  d a =
+    Mutat on[Seq[ d aEnt y]] {  d aEnt  es =>
+       d aEnt  es.part  on( sPart al d a) match {
+        case (N l, nonPart al) => None
+        case (part al, nonPart al) => So (nonPart al)
       }
     }
 
-  def isPartialMedia(e: MediaEntity): Boolean =
-    e.fromIndex < 0 ||
-      e.toIndex <= 0 ||
-      isNullOrEmpty(e.url) ||
-      isNullOrEmpty(e.displayUrl) ||
-      isNullOrEmpty(e.mediaUrl) ||
-      isNullOrEmpty(e.mediaUrlHttps) ||
-      isNullOrEmpty(e.expandedUrl) ||
-      e.mediaInfo.isEmpty ||
-      e.mediaKey.isEmpty ||
-      (MediaKeyClassifier.isImage(MediaKeyUtil.get(e)) && containsInvalidSizeVariant(e.sizes))
+  def  sPart al d a(e:  d aEnt y): Boolean =
+    e.from ndex < 0 ||
+      e.to ndex <= 0 ||
+       sNullOrEmpty(e.url) ||
+       sNullOrEmpty(e.d splayUrl) ||
+       sNullOrEmpty(e. d aUrl) ||
+       sNullOrEmpty(e. d aUrlHttps) ||
+       sNullOrEmpty(e.expandedUrl) ||
+      e. d a nfo. sEmpty ||
+      e. d aKey. sEmpty ||
+      ( d aKeyClass f er. s mage( d aKeyUt l.get(e)) && conta ns nval dS zeVar ant(e.s zes))
 
-  private[this] val userMentions =
-    clean[UserMention](e => e.screenName.isEmpty || e.name.isEmpty)
+  pr vate[t ] val user nt ons =
+    clean[User nt on](e => e.screenNa . sEmpty || e.na . sEmpty)
 
-  def isNullOrEmpty(optString: Option[String]): Boolean =
-    optString.isEmpty || optString.exists(isNullOrEmpty(_))
+  def  sNullOrEmpty(optStr ng: Opt on[Str ng]): Boolean =
+    optStr ng. sEmpty || optStr ng.ex sts( sNullOrEmpty(_))
 
-  def isNullOrEmpty(str: String): Boolean = str == null || str.isEmpty
+  def  sNullOrEmpty(str: Str ng): Boolean = str == null || str. sEmpty
 
-  def containsInvalidSizeVariant(sizes: Set[MediaSize]): Boolean =
-    sizes.exists(size => size.height == 0 || size.width == 0)
+  def conta ns nval dS zeVar ant(s zes: Set[ d aS ze]): Boolean =
+    s zes.ex sts(s ze => s ze.  ght == 0 || s ze.w dth == 0)
 }

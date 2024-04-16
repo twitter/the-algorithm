@@ -1,47 +1,47 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator
 
-import com.google.inject.name.Named
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealTimeInteractionGraphUserVertexCache
-import com.twitter.home_mixer.util.ObservedKeyValueResultHandler
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.cache.ReadCache
-import com.twitter.stitch.Stitch
-import com.twitter.wtf.real_time_interaction_graph.{thriftscala => ig}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.google. nject.na .Na d
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.RealT   nteract onGraphUserVertexCac 
+ mport com.tw ter.ho _m xer.ut l.ObservedKeyValueResultHandler
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.servo.cac .ReadCac 
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.wtf.real_t  _ nteract on_graph.{thr ftscala =>  g}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-object RealTimeInteractionGraphUserVertexQueryFeature
-    extends Feature[PipelineQuery, Option[ig.UserVertex]]
+object RealT   nteract onGraphUserVertexQueryFeature
+    extends Feature[P pel neQuery, Opt on[ g.UserVertex]]
 
-@Singleton
-class RealTimeInteractionGraphUserVertexQueryFeatureHydrator @Inject() (
-  @Named(RealTimeInteractionGraphUserVertexCache) client: ReadCache[Long, ig.UserVertex],
-  override val statsReceiver: StatsReceiver)
-    extends QueryFeatureHydrator[PipelineQuery]
-    with ObservedKeyValueResultHandler {
+@S ngleton
+class RealT   nteract onGraphUserVertexQueryFeatureHydrator @ nject() (
+  @Na d(RealT   nteract onGraphUserVertexCac ) cl ent: ReadCac [Long,  g.UserVertex],
+  overr de val statsRece ver: StatsRece ver)
+    extends QueryFeatureHydrator[P pel neQuery]
+    w h ObservedKeyValueResultHandler {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("RealTimeInteractionGraphUserVertex")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("RealT   nteract onGraphUserVertex")
 
-  override val features: Set[Feature[_, _]] = Set(RealTimeInteractionGraphUserVertexQueryFeature)
+  overr de val features: Set[Feature[_, _]] = Set(RealT   nteract onGraphUserVertexQueryFeature)
 
-  override val statScope: String = identifier.toString
+  overr de val statScope: Str ng =  dent f er.toStr ng
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    val userId = query.getRequiredUserId
+  overr de def hydrate(query: P pel neQuery): St ch[FeatureMap] = {
+    val user d = query.getRequ redUser d
 
-    Stitch.callFuture(
-      client.get(Seq(userId)).map { results =>
-        val feature = observedGet(key = Some(userId), keyValueResult = results)
-        FeatureMapBuilder()
-          .add(RealTimeInteractionGraphUserVertexQueryFeature, feature)
-          .build()
+    St ch.callFuture(
+      cl ent.get(Seq(user d)).map { results =>
+        val feature = observedGet(key = So (user d), keyValueResult = results)
+        FeatureMapBu lder()
+          .add(RealT   nteract onGraphUserVertexQueryFeature, feature)
+          .bu ld()
       }
     )
   }

@@ -1,253 +1,253 @@
-package com.twitter.search.earlybird.search;
+package com.tw ter.search.earlyb rd.search;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+ mport java. o. OExcept on;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Arrays;
+ mport java.ut l.HashSet;
+ mport java.ut l.L nkedHashMap;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
+ mport java.ut l.stream.Collectors;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.MultiReader;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Collector;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene. ndex.Mult Reader;
+ mport org.apac .lucene. ndex.Term;
+ mport org.apac .lucene.search.Collector;
+ mport org.apac .lucene.search.Explanat on;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .lucene.search.Scorer;
+ mport org.apac .lucene.search.ScoreMode;
+ mport org.apac .lucene.search.  ght;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
-import com.twitter.search.earlybird.EarlybirdSearcher;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
-import com.twitter.search.earlybird.index.TweetIDMapper;
-import com.twitter.search.earlybird.search.facets.AbstractFacetTermCollector;
-import com.twitter.search.earlybird.search.facets.TermStatisticsCollector;
-import com.twitter.search.earlybird.search.facets.TermStatisticsCollector.TermStatisticsSearchResults;
-import com.twitter.search.earlybird.search.facets.TermStatisticsRequestInfo;
-import com.twitter.search.earlybird.search.queries.SinceMaxIDFilter;
-import com.twitter.search.earlybird.search.queries.SinceUntilFilter;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.ThriftFacetCount;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsResults;
-import com.twitter.search.queryparser.util.IdTimeRanges;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntData;
+ mport com.tw ter.search.earlyb rd.Earlyb rdSearc r;
+ mport com.tw ter.search.earlyb rd. ndex.Earlyb rdS ngleSeg ntSearc r;
+ mport com.tw ter.search.earlyb rd. ndex.T et DMapper;
+ mport com.tw ter.search.earlyb rd.search.facets.AbstractFacetTermCollector;
+ mport com.tw ter.search.earlyb rd.search.facets.TermStat st csCollector;
+ mport com.tw ter.search.earlyb rd.search.facets.TermStat st csCollector.TermStat st csSearchResults;
+ mport com.tw ter.search.earlyb rd.search.facets.TermStat st csRequest nfo;
+ mport com.tw ter.search.earlyb rd.search.quer es.S nceMax DF lter;
+ mport com.tw ter.search.earlyb rd.search.quer es.S nceUnt lF lter;
+ mport com.tw ter.search.earlyb rd.stats.Earlyb rdSearc rStats;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetCount;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResults;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftTermStat st csResults;
+ mport com.tw ter.search.queryparser.ut l. dT  Ranges;
 
-public class EarlybirdMultiSegmentSearcher extends EarlybirdLuceneSearcher {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdMultiSegmentSearcher.class);
+publ c class Earlyb rdMult Seg ntSearc r extends Earlyb rdLuceneSearc r {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rdMult Seg ntSearc r.class);
 
-  private final ImmutableSchemaInterface schema;
-  private final Map<Long, EarlybirdSingleSegmentSearcher> segmentSearchers;
-  protected final int numSegments;
-  private final Clock clock;
+  pr vate f nal  mmutableSc ma nterface sc ma;
+  pr vate f nal Map<Long, Earlyb rdS ngleSeg ntSearc r> seg ntSearc rs;
+  protected f nal  nt numSeg nts;
+  pr vate f nal Clock clock;
 
-  // This will prevent us from even considering segments that are out of range.
-  // It's an important optimization for a certain class of queries.
-  protected IdTimeRanges idTimeRanges = null;
+  // T  w ll prevent us from even cons der ng seg nts that are out of range.
+  //  's an  mportant opt m zat on for a certa n class of quer es.
+  protected  dT  Ranges  dT  Ranges = null;
 
-  private final EarlybirdSearcherStats searcherStats;
+  pr vate f nal Earlyb rdSearc rStats searc rStats;
 
-  public EarlybirdMultiSegmentSearcher(
-      ImmutableSchemaInterface schema,
-      List<EarlybirdSingleSegmentSearcher> searchers,
-      EarlybirdSearcherStats searcherStats,
-      Clock clock) throws IOException {
-    // NOTE: We pass in an empty MultiReader to super and retain the list of searchers in this
-    // class since MultiReader does not allow an aggregate of more than Integer.MAX_VALUE docs,
-    // which some of our larger archive indexes may have.
-    super(new MultiReader());
-    // segmentSearchers are mapped from time slice IDs to searchers so that we can quickly
-    // find the correct searcher for a given time slice ID (see fillPayload).
-    // make sure we maintain order of segments, hence a LinkedHashMap instead of just a HashMap
-    this.segmentSearchers = new LinkedHashMap<>();
-    this.schema = schema;
-    for (EarlybirdSingleSegmentSearcher searcher : searchers) {
-      if (searcher != null) {
-        long timeSliceID = searcher.getTimeSliceID();
-        this.segmentSearchers.put(timeSliceID, searcher);
+  publ c Earlyb rdMult Seg ntSearc r(
+       mmutableSc ma nterface sc ma,
+      L st<Earlyb rdS ngleSeg ntSearc r> searc rs,
+      Earlyb rdSearc rStats searc rStats,
+      Clock clock) throws  OExcept on {
+    // NOTE:   pass  n an empty Mult Reader to super and reta n t  l st of searc rs  n t 
+    // class s nce Mult Reader does not allow an aggregate of more than  nteger.MAX_VALUE docs,
+    // wh ch so  of   larger arch ve  ndexes may have.
+    super(new Mult Reader());
+    // seg ntSearc rs are mapped from t   sl ce  Ds to searc rs so that   can qu ckly
+    // f nd t  correct searc r for a g ven t   sl ce  D (see f llPayload).
+    // make sure   ma nta n order of seg nts,  nce a L nkedHashMap  nstead of just a HashMap
+    t .seg ntSearc rs = new L nkedHashMap<>();
+    t .sc ma = sc ma;
+    for (Earlyb rdS ngleSeg ntSearc r searc r : searc rs) {
+       f (searc r != null) {
+        long t  Sl ce D = searc r.getT  Sl ce D();
+        t .seg ntSearc rs.put(t  Sl ce D, searc r);
       }
     }
-    // initializing this after populating the list.  previously initialized before, and
-    // this may have lead to a race condition, although this doesn't seem possible given
-    // that segments should be an immutable cloned list.
-    this.numSegments = segmentSearchers.size();
+    //  n  al z ng t  after populat ng t  l st.  prev ously  n  al zed before, and
+    // t  may have lead to a race cond  on, although t  doesn't seem poss ble g ven
+    // that seg nts should be an  mmutable cloned l st.
+    t .numSeg nts = seg ntSearc rs.s ze();
 
-    this.searcherStats = searcherStats;
-    this.clock = clock;
+    t .searc rStats = searc rStats;
+    t .clock = clock;
   }
 
-  public void setIdTimeRanges(IdTimeRanges idTimeRanges) {
-    this.idTimeRanges = idTimeRanges;
+  publ c vo d set dT  Ranges( dT  Ranges  dT  Ranges) {
+    t . dT  Ranges =  dT  Ranges;
   }
 
-  @Override
-  protected void search(List<LeafReaderContext> unusedLeaves, Weight weight, Collector coll)
-      throws IOException {
-    Preconditions.checkState(coll instanceof AbstractResultsCollector);
+  @Overr de
+  protected vo d search(L st<LeafReaderContext> unusedLeaves,   ght   ght, Collector coll)
+      throws  OExcept on {
+    Precond  ons.c ckState(coll  nstanceof AbstractResultsCollector);
     AbstractResultsCollector<?, ?> collector = (AbstractResultsCollector<?, ?>) coll;
 
-    for (EarlybirdSingleSegmentSearcher segmentSearcher : segmentSearchers.values()) {
-      if (shouldSkipSegment(segmentSearcher)) {
-        collector.skipSegment(segmentSearcher);
+    for (Earlyb rdS ngleSeg ntSearc r seg ntSearc r : seg ntSearc rs.values()) {
+       f (shouldSk pSeg nt(seg ntSearc r)) {
+        collector.sk pSeg nt(seg ntSearc r);
       } else {
-        segmentSearcher.search(weight.getQuery(), collector);
-        if (collector.isTerminated()) {
+        seg ntSearc r.search(  ght.getQuery(), collector);
+         f (collector. sTerm nated()) {
           break;
         }
       }
     }
   }
 
-  @VisibleForTesting
-  protected boolean shouldSkipSegment(EarlybirdSingleSegmentSearcher segmentSearcher) {
-    EarlybirdIndexSegmentData segmentData =
-        segmentSearcher.getTwitterIndexReader().getSegmentData();
-    if (idTimeRanges != null) {
-      if (!SinceMaxIDFilter.sinceMaxIDsInRange(
-              (TweetIDMapper) segmentData.getDocIDToTweetIDMapper(),
-              idTimeRanges.getSinceIDExclusive().or(SinceMaxIDFilter.NO_FILTER),
-              idTimeRanges.getMaxIDInclusive().or(SinceMaxIDFilter.NO_FILTER))
-          || !SinceUntilFilter.sinceUntilTimesInRange(
-              segmentData.getTimeMapper(),
-              idTimeRanges.getSinceTimeInclusive().or(SinceUntilFilter.NO_FILTER),
-              idTimeRanges.getUntilTimeExclusive().or(SinceUntilFilter.NO_FILTER))) {
+  @V s bleForTest ng
+  protected boolean shouldSk pSeg nt(Earlyb rdS ngleSeg ntSearc r seg ntSearc r) {
+    Earlyb rd ndexSeg ntData seg ntData =
+        seg ntSearc r.getTw ter ndexReader().getSeg ntData();
+     f ( dT  Ranges != null) {
+       f (!S nceMax DF lter.s nceMax Ds nRange(
+              (T et DMapper) seg ntData.getDoc DToT et DMapper(),
+               dT  Ranges.getS nce DExclus ve().or(S nceMax DF lter.NO_F LTER),
+               dT  Ranges.getMax D nclus ve().or(S nceMax DF lter.NO_F LTER))
+          || !S nceUnt lF lter.s nceUnt lT  s nRange(
+              seg ntData.getT  Mapper(),
+               dT  Ranges.getS nceT   nclus ve().or(S nceUnt lF lter.NO_F LTER),
+               dT  Ranges.getUnt lT  Exclus ve().or(S nceUnt lF lter.NO_F LTER))) {
         return true;
       }
     }
     return false;
   }
 
-  @Override
-  public void fillFacetResults(
-      AbstractFacetTermCollector collector, ThriftSearchResults searchResults) throws IOException {
-    for (EarlybirdSingleSegmentSearcher segmentSearcher : segmentSearchers.values()) {
-      segmentSearcher.fillFacetResults(collector, searchResults);
+  @Overr de
+  publ c vo d f llFacetResults(
+      AbstractFacetTermCollector collector, Thr ftSearchResults searchResults) throws  OExcept on {
+    for (Earlyb rdS ngleSeg ntSearc r seg ntSearc r : seg ntSearc rs.values()) {
+      seg ntSearc r.f llFacetResults(collector, searchResults);
     }
   }
 
-  @Override
-  public TermStatisticsSearchResults collectTermStatistics(
-      TermStatisticsRequestInfo searchRequestInfo,
-      EarlybirdSearcher searcher,
-      int requestDebugMode) throws IOException {
-    TermStatisticsCollector collector = new TermStatisticsCollector(
-        schema, searchRequestInfo, searcherStats, clock, requestDebugMode);
-    search(collector.getSearchRequestInfo().getLuceneQuery(), collector);
-    searcher.maybeSetCollectorDebugInfo(collector);
+  @Overr de
+  publ c TermStat st csSearchResults collectTermStat st cs(
+      TermStat st csRequest nfo searchRequest nfo,
+      Earlyb rdSearc r searc r,
+       nt requestDebugMode) throws  OExcept on {
+    TermStat st csCollector collector = new TermStat st csCollector(
+        sc ma, searchRequest nfo, searc rStats, clock, requestDebugMode);
+    search(collector.getSearchRequest nfo().getLuceneQuery(), collector);
+    searc r.maybeSetCollectorDebug nfo(collector);
     return collector.getResults();
   }
 
-  @Override
-  public void explainSearchResults(SearchRequestInfo searchRequestInfo,
-      SimpleSearchResults hits, ThriftSearchResults searchResults) throws IOException {
-    for (EarlybirdSingleSegmentSearcher segmentSearcher : segmentSearchers.values()) {
-      // the hits that are getting passed into this method are hits across
-      // all searched segments. We need to get the per segment hits and
-      // generate explanations one segment at a time.
-      List<Hit> hitsForCurrentSegment = new ArrayList<>();
-      Set<Long> tweetIdsForCurrentSegment = new HashSet<>();
-      List<ThriftSearchResult> hitResultsForCurrentSegment = new ArrayList<>();
+  @Overr de
+  publ c vo d expla nSearchResults(SearchRequest nfo searchRequest nfo,
+      S mpleSearchResults h s, Thr ftSearchResults searchResults) throws  OExcept on {
+    for (Earlyb rdS ngleSeg ntSearc r seg ntSearc r : seg ntSearc rs.values()) {
+      // t  h s that are gett ng passed  nto t   thod are h s across
+      // all searc d seg nts.   need to get t  per seg nt h s and
+      // generate explanat ons one seg nt at a t  .
+      L st<H > h sForCurrentSeg nt = new ArrayL st<>();
+      Set<Long> t et dsForCurrentSeg nt = new HashSet<>();
+      L st<Thr ftSearchResult> h ResultsForCurrentSeg nt = new ArrayL st<>();
 
-      for (Hit hit : hits.hits) {
-        if (hit.getTimeSliceID() == segmentSearcher.getTimeSliceID()) {
-          hitsForCurrentSegment.add(hit);
-          tweetIdsForCurrentSegment.add(hit.statusID);
+      for (H  h  : h s.h s) {
+         f (h .getT  Sl ce D() == seg ntSearc r.getT  Sl ce D()) {
+          h sForCurrentSeg nt.add(h );
+          t et dsForCurrentSeg nt.add(h .status D);
         }
       }
-      for (ThriftSearchResult result : searchResults.getResults()) {
-        if (tweetIdsForCurrentSegment.contains(result.id)) {
-          hitResultsForCurrentSegment.add(result);
+      for (Thr ftSearchResult result : searchResults.getResults()) {
+         f (t et dsForCurrentSeg nt.conta ns(result. d)) {
+          h ResultsForCurrentSeg nt.add(result);
         }
       }
-      ThriftSearchResults resultsForSegment = new ThriftSearchResults()
-          .setResults(hitResultsForCurrentSegment);
+      Thr ftSearchResults resultsForSeg nt = new Thr ftSearchResults()
+          .setResults(h ResultsForCurrentSeg nt);
 
-      SimpleSearchResults finalHits = new SimpleSearchResults(hitsForCurrentSegment);
-      segmentSearcher.explainSearchResults(searchRequestInfo, finalHits, resultsForSegment);
+      S mpleSearchResults f nalH s = new S mpleSearchResults(h sForCurrentSeg nt);
+      seg ntSearc r.expla nSearchResults(searchRequest nfo, f nalH s, resultsForSeg nt);
     }
-    // We should not see hits that are not associated with an active segment
-    List<Hit> hitsWithUnknownSegment =
-        Arrays.stream(hits.hits()).filter(hit -> !hit.isHasExplanation())
-            .collect(Collectors.toList());
-    for (Hit hit : hitsWithUnknownSegment) {
-      LOG.error("Unable to find segment associated with hit: " + hit.toString());
-    }
-  }
-
-  @Override
-  public void fillFacetResultMetadata(Map<Term, ThriftFacetCount> facetResults,
-                                      ImmutableSchemaInterface documentSchema, byte debugMode)
-      throws IOException {
-    for (EarlybirdSingleSegmentSearcher segmentSearcher : segmentSearchers.values()) {
-      segmentSearcher.fillFacetResultMetadata(facetResults, documentSchema, debugMode);
+    //   should not see h s that are not assoc ated w h an act ve seg nt
+    L st<H > h sW hUnknownSeg nt =
+        Arrays.stream(h s.h s()).f lter(h  -> !h . sHasExplanat on())
+            .collect(Collectors.toL st());
+    for (H  h  : h sW hUnknownSeg nt) {
+      LOG.error("Unable to f nd seg nt assoc ated w h h : " + h .toStr ng());
     }
   }
 
-  @Override
-  public void fillTermStatsMetadata(ThriftTermStatisticsResults termStatsResults,
-                                    ImmutableSchemaInterface documentSchema, byte debugMode)
-      throws IOException {
-    for (EarlybirdSingleSegmentSearcher segmentSearcher : segmentSearchers.values()) {
-      segmentSearcher.fillTermStatsMetadata(termStatsResults, documentSchema, debugMode);
+  @Overr de
+  publ c vo d f llFacetResult tadata(Map<Term, Thr ftFacetCount> facetResults,
+                                       mmutableSc ma nterface docu ntSc ma, byte debugMode)
+      throws  OExcept on {
+    for (Earlyb rdS ngleSeg ntSearc r seg ntSearc r : seg ntSearc rs.values()) {
+      seg ntSearc r.f llFacetResult tadata(facetResults, docu ntSc ma, debugMode);
+    }
+  }
+
+  @Overr de
+  publ c vo d f llTermStats tadata(Thr ftTermStat st csResults termStatsResults,
+                                     mmutableSc ma nterface docu ntSc ma, byte debugMode)
+      throws  OExcept on {
+    for (Earlyb rdS ngleSeg ntSearc r seg ntSearc r : seg ntSearc rs.values()) {
+      seg ntSearc r.f llTermStats tadata(termStatsResults, docu ntSc ma, debugMode);
     }
   }
 
   /**
-   * The searchers for individual segments will rewrite the query as they see fit, so the multi
-   * segment searcher does not need to rewrite it. In fact, not rewriting the query here improves
-   * the request latency by ~5%.
+   * T  searc rs for  nd v dual seg nts w ll rewr e t  query as t y see f , so t  mult 
+   * seg nt searc r does not need to rewr e  .  n fact, not rewr  ng t  query  re  mproves
+   * t  request latency by ~5%.
    */
-  @Override
-  public Query rewrite(Query original) {
-    return original;
+  @Overr de
+  publ c Query rewr e(Query or g nal) {
+    return or g nal;
   }
 
   /**
-   * The searchers for individual segments will create their own weights. This method only creates
-   * a dummy weight to pass the Lucene query to the search() method of these individual segment
-   * searchers.
+   * T  searc rs for  nd v dual seg nts w ll create t  r own   ghts. T   thod only creates
+   * a dum    ght to pass t  Lucene query to t  search()  thod of t se  nd v dual seg nt
+   * searc rs.
    */
-  @Override
-  public Weight createWeight(Query query, ScoreMode scoreMode, float boost) {
-    return new DummyWeight(query);
+  @Overr de
+  publ c   ght create  ght(Query query, ScoreMode scoreMode, float boost) {
+    return new Dum   ght(query);
   }
 
   /**
-   * Dummy weight used solely to pass Lucene Query around.
+   * Dum    ght used solely to pass Lucene Query around.
    */
-  private static final class DummyWeight extends Weight {
-    private DummyWeight(Query luceneQuery) {
+  pr vate stat c f nal class Dum   ght extends   ght {
+    pr vate Dum   ght(Query luceneQuery) {
       super(luceneQuery);
     }
 
-    @Override
-    public Explanation explain(LeafReaderContext context, int doc) {
-      throw new UnsupportedOperationException();
+    @Overr de
+    publ c Explanat on expla n(LeafReaderContext context,  nt doc) {
+      throw new UnsupportedOperat onExcept on();
     }
 
-    @Override
-    public Scorer scorer(LeafReaderContext context) {
-      throw new UnsupportedOperationException();
+    @Overr de
+    publ c Scorer scorer(LeafReaderContext context) {
+      throw new UnsupportedOperat onExcept on();
     }
 
-    @Override
-    public void extractTerms(Set<Term> terms) {
-      throw new UnsupportedOperationException();
+    @Overr de
+    publ c vo d extractTerms(Set<Term> terms) {
+      throw new UnsupportedOperat onExcept on();
     }
 
-    @Override
-    public boolean isCacheable(LeafReaderContext context) {
+    @Overr de
+    publ c boolean  sCac able(LeafReaderContext context) {
       return true;
     }
   }

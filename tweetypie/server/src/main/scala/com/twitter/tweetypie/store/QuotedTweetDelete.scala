@@ -1,45 +1,45 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.t etyp e.thr ftscala._
 
-object QuotedTweetDelete extends TweetStore.SyncModule {
+object QuotedT etDelete extends T etStore.SyncModule {
 
   case class Event(
-    quotingTweetId: TweetId,
-    quotingUserId: UserId,
-    quotedTweetId: TweetId,
-    quotedUserId: UserId,
-    timestamp: Time,
-    optUser: Option[User] = None)
-      extends SyncTweetStoreEvent("quoted_tweet_delete")
-      with TweetStoreTweetEvent {
+    quot ngT et d: T et d,
+    quot ngUser d: User d,
+    quotedT et d: T et d,
+    quotedUser d: User d,
+    t  stamp: T  ,
+    optUser: Opt on[User] = None)
+      extends SyncT etStoreEvent("quoted_t et_delete")
+      w h T etStoreT etEvent {
 
-    override def toTweetEventData: Seq[TweetEventData] =
+    overr de def toT etEventData: Seq[T etEventData] =
       Seq(
-        TweetEventData.QuotedTweetDeleteEvent(
-          QuotedTweetDeleteEvent(
-            quotingTweetId = quotingTweetId,
-            quotingUserId = quotingUserId,
-            quotedTweetId = quotedTweetId,
-            quotedUserId = quotedUserId
+        T etEventData.QuotedT etDeleteEvent(
+          QuotedT etDeleteEvent(
+            quot ngT et d = quot ngT et d,
+            quot ngUser d = quot ngUser d,
+            quotedT et d = quotedT et d,
+            quotedUser d = quotedUser d
           )
         )
       )
   }
 
-  trait Store {
-    val quotedTweetDelete: FutureEffect[Event]
+  tra  Store {
+    val quotedT etDelete: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val quotedTweetDelete: FutureEffect[Event] = wrap(underlying.quotedTweetDelete)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val quotedT etDelete: FutureEffect[Event] = wrap(underly ng.quotedT etDelete)
   }
 
   object Store {
-    def apply(eventBusEnqueueStore: TweetEventBusStore): Store =
+    def apply(eventBusEnqueueStore: T etEventBusStore): Store =
       new Store {
-        override val quotedTweetDelete: FutureEffect[Event] = eventBusEnqueueStore.quotedTweetDelete
+        overr de val quotedT etDelete: FutureEffect[Event] = eventBusEnqueueStore.quotedT etDelete
       }
   }
 }

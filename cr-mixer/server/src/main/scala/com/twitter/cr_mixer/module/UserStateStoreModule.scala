@@ -1,113 +1,113 @@
-package com.twitter.cr_mixer.module
+package com.tw ter.cr_m xer.module
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.bijection.Bufferable
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.ManhattanRO
-import com.twitter.storehaus_internal.manhattan.ManhattanROConfig
-import com.twitter.storehaus_internal.util.HDFSPath
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.core_workflows.user_model.thriftscala.CondensedUserState
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.param.decider.DeciderKey
-import com.twitter.hermit.store.common.DeciderableReadableStore
-import com.twitter.storehaus_internal.manhattan.Apollo
-import com.twitter.storehaus_internal.util.ApplicationID
-import com.twitter.storehaus_internal.util.DatasetName
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.JavaTimer
-import com.twitter.util.Time
-import com.twitter.util.TimeoutException
-import com.twitter.util.Timer
-import javax.inject.Named
+ mport com.google. nject.Prov des
+ mport com.google. nject.S ngleton
+ mport com.tw ter.b ject on.Bufferable
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.b ject on.scrooge.B naryScalaCodec
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle. mcac d.{Cl ent =>  mcac dCl ent}
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. rm .store.common.Observed mcac dReadableStore
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl entMtlsParams
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.storehaus_ nternal.manhattan.ManhattanRO
+ mport com.tw ter.storehaus_ nternal.manhattan.ManhattanROConf g
+ mport com.tw ter.storehaus_ nternal.ut l.HDFSPath
+ mport com.tw ter.core_workflows.user_model.thr ftscala.UserState
+ mport com.tw ter.core_workflows.user_model.thr ftscala.CondensedUserState
+ mport com.tw ter.cr_m xer.conf g.T  outConf g
+ mport com.tw ter.cr_m xer.param.dec der.CrM xerDec der
+ mport com.tw ter.cr_m xer.param.dec der.Dec derKey
+ mport com.tw ter. rm .store.common.Dec derableReadableStore
+ mport com.tw ter.storehaus_ nternal.manhattan.Apollo
+ mport com.tw ter.storehaus_ nternal.ut l.Appl cat on D
+ mport com.tw ter.storehaus_ nternal.ut l.DatasetNa 
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.JavaT  r
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.ut l.T  outExcept on
+ mport com.tw ter.ut l.T  r
+ mport javax. nject.Na d
 
-object UserStateStoreModule extends TwitterModule {
-  implicit val timer: Timer = new JavaTimer(true)
-  final val NewUserCreateDaysThreshold = 7
-  final val DefaultUnknownUserStateValue = 100
+object UserStateStoreModule extends Tw terModule {
+   mpl c  val t  r: T  r = new JavaT  r(true)
+  f nal val NewUserCreateDaysThreshold = 7
+  f nal val DefaultUnknownUserStateValue = 100
 
   // Convert CondensedUserState to UserState Enum
-  // If CondensedUserState is None, back fill by checking whether the user is new user
+  //  f CondensedUserState  s None, back f ll by c ck ng w t r t  user  s new user
   class UserStateStore(
-    userStateStore: ReadableStore[UserId, CondensedUserState],
-    timeout: Duration,
-    statsReceiver: StatsReceiver)
-      extends ReadableStore[UserId, UserState] {
-    override def get(userId: UserId): Future[Option[UserState]] = {
+    userStateStore: ReadableStore[User d, CondensedUserState],
+    t  out: Durat on,
+    statsRece ver: StatsRece ver)
+      extends ReadableStore[User d, UserState] {
+    overr de def get(user d: User d): Future[Opt on[UserState]] = {
       userStateStore
-        .get(userId).map(_.flatMap(_.userState)).map {
-          case Some(userState) => Some(userState)
+        .get(user d).map(_.flatMap(_.userState)).map {
+          case So (userState) => So (userState)
           case None =>
-            val isNewUser = SnowflakeId.timeFromIdOpt(userId).exists { userCreateTime =>
-              Time.now - userCreateTime < Duration.fromDays(NewUserCreateDaysThreshold)
+            val  sNewUser = Snowflake d.t  From dOpt(user d).ex sts { userCreateT   =>
+              T  .now - userCreateT   < Durat on.fromDays(NewUserCreateDaysThreshold)
             }
-            if (isNewUser) Some(UserState.New)
-            else Some(UserState.EnumUnknownUserState(DefaultUnknownUserStateValue))
+             f ( sNewUser) So (UserState.New)
+            else So (UserState.EnumUnknownUserState(DefaultUnknownUserStateValue))
 
-        }.raiseWithin(timeout)(timer).rescue {
-          case _: TimeoutException =>
-            statsReceiver.counter("TimeoutException").incr()
+        }.ra seW h n(t  out)(t  r).rescue {
+          case _: T  outExcept on =>
+            statsRece ver.counter("T  outExcept on"). ncr()
             Future.None
         }
     }
   }
 
-  @Provides
-  @Singleton
-  def providesUserStateStore(
-    crMixerDecider: CrMixerDecider,
-    statsReceiver: StatsReceiver,
-    manhattanKVClientMtlsParams: ManhattanKVClientMtlsParams,
-    @Named(ModuleNames.UnifiedCache) crMixerUnifiedCacheClient: MemcachedClient,
-    timeoutConfig: TimeoutConfig
-  ): ReadableStore[UserId, UserState] = {
+  @Prov des
+  @S ngleton
+  def prov desUserStateStore(
+    crM xerDec der: CrM xerDec der,
+    statsRece ver: StatsRece ver,
+    manhattanKVCl entMtlsParams: ManhattanKVCl entMtlsParams,
+    @Na d(ModuleNa s.Un f edCac ) crM xerUn f edCac Cl ent:  mcac dCl ent,
+    t  outConf g: T  outConf g
+  ): ReadableStore[User d, UserState] = {
 
-    val underlyingStore = new UserStateStore(
+    val underly ngStore = new UserStateStore(
       ManhattanRO
-        .getReadableStoreWithMtls[UserId, CondensedUserState](
-          ManhattanROConfig(
+        .getReadableStoreW hMtls[User d, CondensedUserState](
+          ManhattanROConf g(
             HDFSPath(""),
-            ApplicationID("cr_mixer_apollo"),
-            DatasetName("condensed_user_state"),
+            Appl cat on D("cr_m xer_apollo"),
+            DatasetNa ("condensed_user_state"),
             Apollo),
-          manhattanKVClientMtlsParams
+          manhattanKVCl entMtlsParams
         )(
-          implicitly[Injection[Long, Array[Byte]]],
-          BinaryScalaCodec(CondensedUserState)
+           mpl c ly[ nject on[Long, Array[Byte]]],
+          B naryScalaCodec(CondensedUserState)
         ),
-      timeoutConfig.userStateStoreTimeout,
-      statsReceiver.scope("UserStateStore")
-    ).mapValues(_.value) // Read the value of Enum so that we only caches the Int
+      t  outConf g.userStateStoreT  out,
+      statsRece ver.scope("UserStateStore")
+    ).mapValues(_.value) // Read t  value of Enum so that   only cac s t   nt
 
-    val memCachedStore = ObservedMemcachedReadableStore
-      .fromCacheClient(
-        backingStore = underlyingStore,
-        cacheClient = crMixerUnifiedCacheClient,
-        ttl = 24.hours,
+    val  mCac dStore = Observed mcac dReadableStore
+      .fromCac Cl ent(
+        back ngStore = underly ngStore,
+        cac Cl ent = crM xerUn f edCac Cl ent,
+        ttl = 24.h s,
       )(
-        valueInjection = Bufferable.injectionOf[Int], // Cache Value is Enum Value for UserState
-        statsReceiver = statsReceiver.scope("memCachedUserStateStore"),
-        keyToString = { k: UserId => s"uState/$k" }
+        value nject on = Bufferable. nject onOf[ nt], // Cac  Value  s Enum Value for UserState
+        statsRece ver = statsRece ver.scope(" mCac dUserStateStore"),
+        keyToStr ng = { k: User d => s"uState/$k" }
       ).mapValues(value => UserState.getOrUnknown(value))
 
-    DeciderableReadableStore(
-      memCachedStore,
-      crMixerDecider.deciderGateBuilder.idGate(DeciderKey.enableUserStateStoreDeciderKey),
-      statsReceiver.scope("UserStateStore")
+    Dec derableReadableStore(
+       mCac dStore,
+      crM xerDec der.dec derGateBu lder. dGate(Dec derKey.enableUserStateStoreDec derKey),
+      statsRece ver.scope("UserStateStore")
     )
   }
 }

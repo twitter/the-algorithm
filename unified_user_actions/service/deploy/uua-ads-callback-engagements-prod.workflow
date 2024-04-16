@@ -1,66 +1,66 @@
 {
-  "role": "discode",
-  "name": "uua-ads-callback-engagements-prod",
-  "config-files": [
-    "uua-ads-callback-engagements.aurora"
+  "role": "d scode",
+  "na ": "uua-ads-callback-engage nts-prod",
+  "conf g-f les": [
+    "uua-ads-callback-engage nts.aurora"
   ],
-  "build": {
+  "bu ld": {
     "play": true,
-    "trigger": {
-      "cron-schedule": "0 17 * * 2"
+    "tr gger": {
+      "cron-sc dule": "0 17 * * 2"
     },
-    "dependencies": [
+    "dependenc es": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "na ": "packer-cl ent-no-pex",
+        "vers on": "latest"
       }
     ],
     "steps": [
       {
         "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-ads-callback-engagements"
+        "na ": "bundle",
+        "target": "un f ed_user_act ons/serv ce/src/ma n/scala:uua-ads-callback-engage nts"
       },
       {
         "type": "packer",
-        "name": "uua-ads-callback-engagements",
-        "artifact": "./dist/uua-ads-callback-engagements.zip"
+        "na ": "uua-ads-callback-engage nts",
+        "art fact": "./d st/uua-ads-callback-engage nts.z p"
       }
     ]
   },
   "targets": [
     {
       "type": "group",
-      "name": "prod",
+      "na ": "prod",
       "targets": [
         {
-          "name": "uua-ads-callback-engagements-prod-atla",
-          "key": "atla/discode/prod/uua-ads-callback-engagements"
+          "na ": "uua-ads-callback-engage nts-prod-atla",
+          "key": "atla/d scode/prod/uua-ads-callback-engage nts"
         },
         {
-          "name": "uua-ads-callback-engagements-prod-pdxa",
-          "key": "pdxa/discode/prod/uua-ads-callback-engagements"
+          "na ": "uua-ads-callback-engage nts-prod-pdxa",
+          "key": "pdxa/d scode/prod/uua-ads-callback-engage nts"
         }
       ]
     }
   ],
-  "subscriptions": [
+  "subscr pt ons": [
    {
      "type": "SLACK",
-     "recipients": [
+     "rec p ents": [
        {
-         "to": "discode-oncall"
+         "to": "d scode-oncall"
        }
      ],
      "events": ["WORKFLOW_SUCCESS"]
    },
    {
      "type": "SLACK",
-     "recipients": [{
-       "to": "discode-oncall"
+     "rec p ents": [{
+       "to": "d scode-oncall"
      }],
-     "events": ["*FAILED"]
+     "events": ["*FA LED"]
    }
   ]
 }

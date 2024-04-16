@@ -1,83 +1,83 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.tw ter.search. ngester.p pel ne.tw ter;
 
-import javax.naming.NamingException;
+ mport javax.nam ng.Nam ngExcept on;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducedTypes;
+ mport org.apac .commons.p pel ne.StageExcept on;
+ mport org.apac .commons.p pel ne.val dat on.Consu dTypes;
+ mport org.apac .commons.p pel ne.val dat on.ProducedTypes;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.ingester.model.IngesterThriftVersionedEvents;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftVers onedEvents;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants;
+ mport com.tw ter.search. ngester.model. ngesterThr ftVers onedEvents;
+ mport com.tw ter.search. ngester.model. ngesterTw ter ssage;
+ mport com.tw ter.search. ngester.p pel ne.ut l.P pel neStageRunt  Except on;
 
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducedTypes(ThriftVersionedEvents.class)
-public class ConvertToThriftVersionedEventsStage extends TwitterBaseStage
-    <IngesterTwitterMessage, IngesterThriftVersionedEvents> {
-  private ThriftVersionedEventsConverter converter;
+@Consu dTypes( ngesterTw ter ssage.class)
+@ProducedTypes(Thr ftVers onedEvents.class)
+publ c class ConvertToThr ftVers onedEventsStage extends Tw terBaseStage
+    < ngesterTw ter ssage,  ngesterThr ftVers onedEvents> {
+  pr vate Thr ftVers onedEventsConverter converter;
 
-  @Override
-  public void doInnerPreprocess() throws StageException, NamingException {
-    super.doInnerPreprocess();
-    innerSetup();
+  @Overr de
+  publ c vo d do nnerPreprocess() throws StageExcept on, Nam ngExcept on {
+    super.do nnerPreprocess();
+     nnerSetup();
   }
 
-  @Override
-  protected void innerSetup() throws NamingException {
-    converter = new ThriftVersionedEventsConverter(wireModule.getPenguinVersions());
+  @Overr de
+  protected vo d  nnerSetup() throws Nam ngExcept on {
+    converter = new Thr ftVers onedEventsConverter(w reModule.getPengu nVers ons());
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not an IngesterTwitterMessage: " + obj);
+  @Overr de
+  publ c vo d  nnerProcess(Object obj) throws StageExcept on {
+     f (!(obj  nstanceof  ngesterTw ter ssage)) {
+      throw new StageExcept on(t , "Object  s not an  ngesterTw ter ssage: " + obj);
     }
 
-    IngesterTwitterMessage ingesterTwitterMessage = (IngesterTwitterMessage) obj;
-    IngesterThriftVersionedEvents maybeEvents = tryToConvert(ingesterTwitterMessage);
+     ngesterTw ter ssage  ngesterTw ter ssage = ( ngesterTw ter ssage) obj;
+     ngesterThr ftVers onedEvents maybeEvents = tryToConvert( ngesterTw ter ssage);
 
-    if (maybeEvents == null) {
-      throw new StageException(
-          this, "Object is not a retweet or a reply: " + ingesterTwitterMessage);
+     f (maybeEvents == null) {
+      throw new StageExcept on(
+          t , "Object  s not a ret et or a reply: " +  ngesterTw ter ssage);
     }
 
-    emitAndCount(maybeEvents);
+    em AndCount(maybeEvents);
 
   }
 
-  @Override
-  protected IngesterThriftVersionedEvents innerRunStageV2(IngesterTwitterMessage message) {
-    IngesterThriftVersionedEvents maybeEvents = tryToConvert(message);
+  @Overr de
+  protected  ngesterThr ftVers onedEvents  nnerRunStageV2( ngesterTw ter ssage  ssage) {
+     ngesterThr ftVers onedEvents maybeEvents = tryToConvert( ssage);
 
-    if (maybeEvents == null) {
-      throw new PipelineStageRuntimeException("Object is not a retweet or reply, does not have to"
+     f (maybeEvents == null) {
+      throw new P pel neStageRunt  Except on("Object  s not a ret et or reply, does not have to"
           + " pass to next stage");
     }
 
     return maybeEvents;
   }
 
-  private IngesterThriftVersionedEvents tryToConvert(IngesterTwitterMessage message) {
-    converter.updatePenguinVersions(wireModule.getCurrentlyEnabledPenguinVersions());
+  pr vate  ngesterThr ftVers onedEvents tryToConvert( ngesterTw ter ssage  ssage) {
+    converter.updatePengu nVers ons(w reModule.getCurrentlyEnabledPengu nVers ons());
 
-    if (!message.isRetweet() && !message.isReplyToTweet()) {
+     f (! ssage. sRet et() && ! ssage. sReplyToT et()) {
       return null;
     }
 
-    if (message.isRetweet()) {
+     f ( ssage. sRet et()) {
       return converter.toOutOfOrderAppend(
-          message.getRetweetMessage().getSharedId(),
-          EarlybirdFieldConstants.EarlybirdFieldConstant.RETWEETED_BY_USER_ID,
-          message.getUserId(),
-          message.getDebugEvents().deepCopy());
+           ssage.getRet et ssage().getShared d(),
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.RETWEETED_BY_USER_ D,
+           ssage.getUser d(),
+           ssage.getDebugEvents().deepCopy());
     }
 
     return converter.toOutOfOrderAppend(
-        message.getInReplyToStatusId().get(),
-        EarlybirdFieldConstants.EarlybirdFieldConstant.REPLIED_TO_BY_USER_ID,
-        message.getUserId(),
-        message.getDebugEvents().deepCopy());
+         ssage.get nReplyToStatus d().get(),
+        Earlyb rdF eldConstants.Earlyb rdF eldConstant.REPL ED_TO_BY_USER_ D,
+         ssage.getUser d(),
+         ssage.getDebugEvents().deepCopy());
   }
 }

@@ -1,70 +1,70 @@
-package com.twitter.unified_user_actions.enricher.driver
+package com.tw ter.un f ed_user_act ons.enr c r.dr ver
 
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentPlan
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentStage
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentStageStatus.Completion
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentStageStatus.Initialized
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntPlan
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntStage
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntStageStatus.Complet on
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntStageStatus. n  al zed
 
-object EnrichmentPlanUtils {
-  implicit class EnrichmentPlanStatus(plan: EnrichmentPlan) {
+object Enr ch ntPlanUt ls {
+   mpl c  class Enr ch ntPlanStatus(plan: Enr ch ntPlan) {
 
     /**
-     * Check each stage of the plan to know if we are done
+     * C ck each stage of t  plan to know  f   are done
      */
-    def isEnrichmentComplete: Boolean = {
-      plan.stages.forall(stage => stage.status == Completion)
+    def  sEnr ch ntComplete: Boolean = {
+      plan.stages.forall(stage => stage.status == Complet on)
     }
 
     /**
-     * Get the next stage in the enrichment process. Note, if there is none this will throw
-     * an exception.
+     * Get t  next stage  n t  enr ch nt process. Note,  f t re  s none t  w ll throw
+     * an except on.
      */
-    def getCurrentStage: EnrichmentStage = {
-      val next = plan.stages.find(stage => stage.status == Initialized)
+    def getCurrentStage: Enr ch ntStage = {
+      val next = plan.stages.f nd(stage => stage.status ==  n  al zed)
       next match {
-        case Some(stage) => stage
-        case None => throw new IllegalStateException("check for plan completion first")
+        case So (stage) => stage
+        case None => throw new  llegalStateExcept on("c ck for plan complet on f rst")
       }
     }
-    def getLastCompletedStage: EnrichmentStage = {
-      val completed = plan.stages.reverse.find(stage => stage.status == Completion)
+    def getLastCompletedStage: Enr ch ntStage = {
+      val completed = plan.stages.reverse.f nd(stage => stage.status == Complet on)
       completed match {
-        case Some(stage) => stage
-        case None => throw new IllegalStateException("check for plan completion first")
+        case So (stage) => stage
+        case None => throw new  llegalStateExcept on("c ck for plan complet on f rst")
       }
     }
 
     /**
-     * Copy the current plan with the requested stage marked as complete
+     * Copy t  current plan w h t  requested stage marked as complete
      */
-    def markStageCompletedWithOutputTopic(
-      stage: EnrichmentStage,
-      outputTopic: String
-    ): EnrichmentPlan = {
+    def markStageCompletedW hOutputTop c(
+      stage: Enr ch ntStage,
+      outputTop c: Str ng
+    ): Enr ch ntPlan = {
       plan.copy(
         stages = plan.stages.map(s =>
-          if (s == stage) s.copy(status = Completion, outputTopic = Some(outputTopic)) else s)
+           f (s == stage) s.copy(status = Complet on, outputTop c = So (outputTop c)) else s)
       )
     }
 
     def markStageCompleted(
-      stage: EnrichmentStage
-    ): EnrichmentPlan = {
+      stage: Enr ch ntStage
+    ): Enr ch ntPlan = {
       plan.copy(
-        stages = plan.stages.map(s => if (s == stage) s.copy(status = Completion) else s)
+        stages = plan.stages.map(s =>  f (s == stage) s.copy(status = Complet on) else s)
       )
     }
 
     /**
-     * Copy the current plan with the last stage marked as necessary
+     * Copy t  current plan w h t  last stage marked as necessary
      */
-    def markLastStageCompletedWithOutputTopic(
-      outputTopic: String
-    ): EnrichmentPlan = {
+    def markLastStageCompletedW hOutputTop c(
+      outputTop c: Str ng
+    ): Enr ch ntPlan = {
       val last = plan.stages.last
       plan.copy(
         stages = plan.stages.map(s =>
-          if (s == last) s.copy(status = Completion, outputTopic = Some(outputTopic)) else s)
+           f (s == last) s.copy(status = Complet on, outputTop c = So (outputTop c)) else s)
       )
     }
   }

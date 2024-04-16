@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.label
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.label
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEvent nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FeedbackAct on nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Url
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.EntryNa space
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne em
 
-object LabelItem {
-  val LabelEntryNamespace = EntryNamespace("label")
+object Label em {
+  val LabelEntryNa space = EntryNa space("label")
 }
 
-case class LabelItem(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  text: String,
-  subtext: Option[String],
-  disclosureIndicator: Option[Boolean],
-  url: Option[Url],
-  displayType: Option[LabelDisplayType])
-    extends TimelineItem {
-  override val entryNamespace: EntryNamespace = LabelItem.LabelEntryNamespace
+case class Label em(
+  overr de val  d: Long,
+  overr de val sort ndex: Opt on[Long],
+  overr de val cl entEvent nfo: Opt on[Cl entEvent nfo],
+  overr de val feedbackAct on nfo: Opt on[FeedbackAct on nfo],
+  text: Str ng,
+  subtext: Opt on[Str ng],
+  d sclosure nd cator: Opt on[Boolean],
+  url: Opt on[Url],
+  d splayType: Opt on[LabelD splayType])
+    extends T  l ne em {
+  overr de val entryNa space: EntryNa space = Label em.LabelEntryNa space
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  overr de def w hSort ndex(sort ndex: Long): T  l neEntry = copy(sort ndex = So (sort ndex))
 }

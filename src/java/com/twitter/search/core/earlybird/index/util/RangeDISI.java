@@ -1,50 +1,50 @@
-package com.twitter.search.core.earlybird.index.util;
+package com.tw ter.search.core.earlyb rd. ndex.ut l;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.search.DocIdSetIterator;
+ mport org.apac .lucene. ndex.LeafReader;
+ mport org.apac .lucene.search.Doc dSet erator;
 
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+ mport com.tw ter.search.core.earlyb rd. ndex.Doc DToT et DMapper;
 
-public class RangeDISI extends DocIdSetIterator {
-  private final int start;
-  private final int end;
-  private final AllDocsIterator delegate;
+publ c class RangeD S  extends Doc dSet erator {
+  pr vate f nal  nt start;
+  pr vate f nal  nt end;
+  pr vate f nal AllDocs erator delegate;
 
-  private int currentDocId = -1;
+  pr vate  nt currentDoc d = -1;
 
-  public RangeDISI(LeafReader reader, int start, int end) throws IOException {
-    this.delegate = new AllDocsIterator(reader);
-    this.start = start;
-    if (end == DocIDToTweetIDMapper.ID_NOT_FOUND) {
-      this.end = Integer.MAX_VALUE;
+  publ c RangeD S (LeafReader reader,  nt start,  nt end) throws  OExcept on {
+    t .delegate = new AllDocs erator(reader);
+    t .start = start;
+     f (end == Doc DToT et DMapper. D_NOT_FOUND) {
+      t .end =  nteger.MAX_VALUE;
     } else {
-      this.end = end;
+      t .end = end;
     }
   }
 
-  @Override
-  public int docID() {
-    return currentDocId;
+  @Overr de
+  publ c  nt doc D() {
+    return currentDoc d;
   }
 
-  @Override
-  public int nextDoc() throws IOException {
-    return advance(currentDocId + 1);
+  @Overr de
+  publ c  nt nextDoc() throws  OExcept on {
+    return advance(currentDoc d + 1);
   }
 
-  @Override
-  public int advance(int target) throws IOException {
-    currentDocId = delegate.advance(Math.max(target, start));
-    if (currentDocId > end) {
-      currentDocId = NO_MORE_DOCS;
+  @Overr de
+  publ c  nt advance( nt target) throws  OExcept on {
+    currentDoc d = delegate.advance(Math.max(target, start));
+     f (currentDoc d > end) {
+      currentDoc d = NO_MORE_DOCS;
     }
-    return currentDocId;
+    return currentDoc d;
   }
 
-  @Override
-  public long cost() {
+  @Overr de
+  publ c long cost() {
     return delegate.cost();
   }
 }

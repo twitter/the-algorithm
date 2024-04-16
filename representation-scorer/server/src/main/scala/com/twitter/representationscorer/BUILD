@@ -1,13 +1,13 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finagle-internal/slo/src/main/scala/com/twitter/finagle/slo",
-        "finatra/inject/inject-thrift-client",
-        "representation-scorer/server/src/main/scala/com/twitter/representationscorer/columns",
-        "strato/src/main/scala/com/twitter/strato/fed",
-        "strato/src/main/scala/com/twitter/strato/fed/server",
-        "twitter-server-internal/src/main/scala",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "f nagle- nternal/slo/src/ma n/scala/com/tw ter/f nagle/slo",
+        "f natra/ nject/ nject-thr ft-cl ent",
+        "representat on-scorer/server/src/ma n/scala/com/tw ter/representat onscorer/columns",
+        "strato/src/ma n/scala/com/tw ter/strato/fed",
+        "strato/src/ma n/scala/com/tw ter/strato/fed/server",
+        "tw ter-server- nternal/src/ma n/scala",
     ],
 )

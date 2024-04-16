@@ -1,101 +1,101 @@
-package com.twitter.simclusters_v2.scalding.embedding.abuse
+package com.tw ter.s mclusters_v2.scald ng.embedd ng.abuse
 
-import com.twitter.data.proto.Flock
-import com.twitter.scalding.{DateOps, DateRange, Days, RichDate, UniqueID}
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.simclusters_v2.hdfs_sources.InterestedInSources
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.{ClusterId, UserId}
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import graphstore.common.FlockBlocksJavaDataset
-import java.util.TimeZone
+ mport com.tw ter.data.proto.Flock
+ mport com.tw ter.scald ng.{DateOps, DateRange, Days, R chDate, Un que D}
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.s mclusters_v2.hdfs_s ces. nterested nS ces
+ mport com.tw ter.s mclusters_v2.scald ng.common.matr x.SparseMatr x
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.Embedd ngUt l.{Cluster d, User d}
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.ExternalDataS ces
+ mport graphstore.common.FlockBlocksJavaDataset
+ mport java.ut l.T  Zone
 
-object DataSources {
+object DataS ces {
 
-  private val ValidEdgeStateId = 0
+  pr vate val Val dEdgeState d = 0
   val NumBlocksP95 = 49
 
   /**
-   * Helper function to return Sparse Matrix of user's interestedIn clusters and fav scores
+   *  lper funct on to return Sparse Matr x of user's  nterested n clusters and fav scores
    * @param dateRange
    * @return
    */
-  def getUserInterestedInSparseMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone
-  ): SparseMatrix[UserId, ClusterId, Double] = {
-    val simClusters = ExternalDataSources.simClustersInterestInSource
+  def getUser nterested nSparseMatr x(
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone
+  ): SparseMatr x[User d, Cluster d, Double] = {
+    val s mClusters = ExternalDataS ces.s mClusters nterest nS ce
 
-    val simClusterMatrixEntries = simClusters
+    val s mClusterMatr xEntr es = s mClusters
       .flatMap { keyVal =>
-        keyVal.value.clusterIdToScores.flatMap {
-          case (clusterId, score) =>
+        keyVal.value.cluster dToScores.flatMap {
+          case (cluster d, score) =>
             score.favScore.map { favScore =>
-              (keyVal.key, clusterId, favScore)
+              (keyVal.key, cluster d, favScore)
             }
         }
       }
 
-    SparseMatrix.apply[UserId, ClusterId, Double](simClusterMatrixEntries)
+    SparseMatr x.apply[User d, Cluster d, Double](s mClusterMatr xEntr es)
   }
 
-  def getUserInterestedInTruncatedKMatrix(
-    topK: Int
+  def getUser nterested nTruncatedKMatr x(
+    topK:  nt
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseMatrix[UserId, ClusterId, Double] = {
-    SparseMatrix(
-      InterestedInSources
-        .simClustersInterestedInUpdatedSource(dateRange, timeZone)
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): SparseMatr x[User d, Cluster d, Double] = {
+    SparseMatr x(
+       nterested nS ces
+        .s mClusters nterested nUpdatedS ce(dateRange, t  Zone)
         .flatMap {
-          case (userId, clustersUserIsInterestedIn) =>
-            val sortedAndTruncatedList = clustersUserIsInterestedIn.clusterIdToScores
-              .mapValues(_.favScore.getOrElse(0.0)).filter(_._2 > 0.0).toList.sortBy(-_._2).take(
+          case (user d, clustersUser s nterested n) =>
+            val sortedAndTruncatedL st = clustersUser s nterested n.cluster dToScores
+              .mapValues(_.favScore.getOrElse(0.0)).f lter(_._2 > 0.0).toL st.sortBy(-_._2).take(
                 topK)
-            sortedAndTruncatedList.map {
-              case (clusterId, score) =>
-                (userId, clusterId, score)
+            sortedAndTruncatedL st.map {
+              case (cluster d, score) =>
+                (user d, cluster d, score)
             }
         }
     )
   }
 
   /**
-   * Helper function to return SparseMatrix of user block interactions from the FlockBlocks
-   * dataset. All users with greater than numBlocks are filtered out
+   *  lper funct on to return SparseMatr x of user block  nteract ons from t  FlockBlocks
+   * dataset. All users w h greater than numBlocks are f ltered out
    * @param dateRange
    * @return
    */
-  def getFlockBlocksSparseMatrix(
-    maxNumBlocks: Int,
+  def getFlockBlocksSparseMatr x(
+    maxNumBlocks:  nt,
     rangeForData: DateRange
   )(
-    implicit dateRange: DateRange
-  ): SparseMatrix[UserId, UserId, Double] = {
-    implicit val tz: java.util.TimeZone = DateOps.UTC
-    val userGivingBlocks = SparseMatrix.apply[UserId, UserId, Double](
+     mpl c  dateRange: DateRange
+  ): SparseMatr x[User d, User d, Double] = {
+     mpl c  val tz: java.ut l.T  Zone = DateOps.UTC
+    val userG v ngBlocks = SparseMatr x.apply[User d, User d, Double](
       DAL
         .readMostRecentSnapshotNoOlderThan(FlockBlocksJavaDataset, Days(30))
-        .toTypedPipe
+        .toTypedP pe
         .flatMap { data: Flock.Edge =>
-          // Consider edges that are valid and have been updated in the past 1 year
-          if (data.getStateId == ValidEdgeStateId &&
-            rangeForData.contains(RichDate(data.getUpdatedAt * 1000L))) {
-            Some((data.getSourceId, data.getDestinationId, 1.0))
+          // Cons der edges that are val d and have been updated  n t  past 1 year
+           f (data.getState d == Val dEdgeState d &&
+            rangeForData.conta ns(R chDate(data.getUpdatedAt * 1000L))) {
+            So ((data.getS ce d, data.getDest nat on d, 1.0))
           } else {
             None
           }
         })
-    // Find all users who give less than numBlocksP95 blocks.
-    // This is to remove those who might be responsible for automatically blocking users
-    // on the twitter platform.
-    val usersWithLegitBlocks = userGivingBlocks.rowL1Norms.collect {
-      case (userId, l1Norm) if l1Norm <= maxNumBlocks =>
-        userId
+    // F nd all users who g ve less than numBlocksP95 blocks.
+    // T   s to remove those who m ght be respons ble for automat cally block ng users
+    // on t  tw ter platform.
+    val usersW hLeg Blocks = userG v ngBlocks.rowL1Norms.collect {
+      case (user d, l1Norm)  f l1Norm <= maxNumBlocks =>
+        user d
     }
-    // retain only those users who give legit blocks (i.e those users who give less than numBlocks95)
-    userGivingBlocks.filterRows(usersWithLegitBlocks)
+    // reta n only those users who g ve leg  blocks ( .e those users who g ve less than numBlocks95)
+    userG v ngBlocks.f lterRows(usersW hLeg Blocks)
   }
 }

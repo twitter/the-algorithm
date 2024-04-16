@@ -1,109 +1,109 @@
-package com.twitter.servo.cache
+package com.tw ter.servo.cac 
 
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.memcached.protocol.Value
-import com.twitter.finagle.memcached.GetResult
-import com.twitter.finagle.memcached.ProxyClient
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.tracing.Trace
-import com.twitter.io.Buf
-import com.twitter.logging.Logger
-import com.twitter.util.Future
-import scala.collection.breakOut
+ mport com.tw ter.f nagle. mcac d.Cl ent
+ mport com.tw ter.f nagle. mcac d.protocol.Value
+ mport com.tw ter.f nagle. mcac d.GetResult
+ mport com.tw ter.f nagle. mcac d.ProxyCl ent
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.trac ng.Trace
+ mport com.tw ter. o.Buf
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.ut l.Future
+ mport scala.collect on.breakOut
 
-object HotKeyCachingCache {
-  private[cache] val logger = Logger.get(getClass)
+object HotKeyCach ngCac  {
+  pr vate[cac ] val logger = Logger.get(getClass)
 }
 
 /**
- * Wrapper for a [[com.twitter.finagle.Memcached.Client]] that handles in-process caching for
- * values flagged for promotion ("hot keys") by a twemcache backend.
+ * Wrapper for a [[com.tw ter.f nagle. mcac d.Cl ent]] that handles  n-process cach ng for
+ * values flagged for promot on ("hot keys") by a t mcac  backend.
  *
- * This is similar conceptually to
- * [[com.twitter.servo.repository.HotKeyCachingKeyValueRepository]] but differs because
- *  HotKeyCachingKeyValueRepository detects hot keys in the client, which requires tuning and
- *  becomes less effective as the number of instances in the cluster grows. [[HotKeyMemcacheClient]]
- *  uses detection in the memcache server, which is centralized and has a better view of frequently
- *  accessed keys. This is a custom feature in twemcache, Twitter's memcache fork, that is not
- *  enabled by default. Consult with the cache team if you want to use it.
+ * T   s s m lar conceptually to
+ * [[com.tw ter.servo.repos ory.HotKeyCach ngKeyValueRepos ory]] but d ffers because
+ *  HotKeyCach ngKeyValueRepos ory detects hot keys  n t  cl ent, wh ch requ res tun ng and
+ *  beco s less effect ve as t  number of  nstances  n t  cluster grows. [[HotKey mcac Cl ent]]
+ *  uses detect on  n t   mcac  server, wh ch  s central zed and has a better v ew of frequently
+ *  accessed keys. T   s a custom feature  n t mcac , Tw ter's  mcac  fork, that  s not
+ *  enabled by default. Consult w h t  cac  team  f   want to use  .
  *
  *  Usage:
  *  {{{
- *    new HotKeyMemcacheClient(
- *      underlyingCache = Memcached.client. ... .newRichClient(destination),
- *      inProcessCache = ExpiringLruInProcessCache(ttl = 10.seconds, maximumSize = 100),
- *      statsReceiver = statsReceiver.scope("inprocess")
+ *    new HotKey mcac Cl ent(
+ *      underly ngCac  =  mcac d.cl ent. ... .newR chCl ent(dest nat on),
+ *       nProcessCac  = Exp r ngLru nProcessCac (ttl = 10.seconds, max mumS ze = 100),
+ *      statsRece ver = statsRece ver.scope(" nprocess")
  *    )
  *  }}}
  */
-class HotKeyMemcacheClient(
-  override val proxyClient: Client,
-  inProcessCache: InProcessCache[String, Value],
-  statsReceiver: StatsReceiver,
-  label: Option[String] = None)
-    extends ProxyClient {
-  import HotKeyCachingCache._
+class HotKey mcac Cl ent(
+  overr de val proxyCl ent: Cl ent,
+   nProcessCac :  nProcessCac [Str ng, Value],
+  statsRece ver: StatsRece ver,
+  label: Opt on[Str ng] = None)
+    extends ProxyCl ent {
+   mport HotKeyCach ngCac ._
 
-  private val promotions = statsReceiver.counter("promotions")
-  private val hits = statsReceiver.counter("hits")
-  private val misses = statsReceiver.counter("misses")
+  pr vate val promot ons = statsRece ver.counter("promot ons")
+  pr vate val h s = statsRece ver.counter("h s")
+  pr vate val m sses = statsRece ver.counter("m sses")
 
-  private def cacheIfPromoted(key: String, value: Value): Unit = {
-    if (value.flags.exists(MemcacheFlags.shouldPromote)) {
-      logger.debug(s"Promoting hot-key $key flagged by memcached backend to in-process cache.")
-      Trace.recordBinary("hot_key_cache.hot_key_promoted", s"${label.getOrElse("")},$key")
-      promotions.incr()
-      inProcessCache.set(key, value)
+  pr vate def cac  fPromoted(key: Str ng, value: Value): Un  = {
+     f (value.flags.ex sts( mcac Flags.shouldPromote)) {
+      logger.debug(s"Promot ng hot-key $key flagged by  mcac d backend to  n-process cac .")
+      Trace.recordB nary("hot_key_cac .hot_key_promoted", s"${label.getOrElse("")},$key")
+      promot ons. ncr()
+       nProcessCac .set(key, value)
     }
   }
 
-  override def getResult(keys: Iterable[String]): Future[GetResult] = {
-    val resultsFromInProcessCache: Map[String, Value] =
-      keys.flatMap(k => inProcessCache.get(k).map(v => (k, v)))(breakOut)
-    val foundInProcess = resultsFromInProcessCache.keySet
-    val newKeys = keys.filterNot(foundInProcess.contains)
+  overr de def getResult(keys:  erable[Str ng]): Future[GetResult] = {
+    val resultsFrom nProcessCac : Map[Str ng, Value] =
+      keys.flatMap(k =>  nProcessCac .get(k).map(v => (k, v)))(breakOut)
+    val found nProcess = resultsFrom nProcessCac .keySet
+    val newKeys = keys.f lterNot(found nProcess.conta ns)
 
-    hits.incr(foundInProcess.size)
-    misses.incr(newKeys.size)
+    h s. ncr(found nProcess.s ze)
+    m sses. ncr(newKeys.s ze)
 
-    if (foundInProcess.nonEmpty) {
-      // If there are hot keys found in the cache, record a trace annotation with the format:
-      // hot key cache client label;the number of hits;number of misses;and the set of hot keys found in the cache.
-      Trace.recordBinary(
-        "hot_key_cache",
-        s"${label.getOrElse("")};${foundInProcess.size};${newKeys.size};${foundInProcess.mkString(",")}"
+     f (found nProcess.nonEmpty) {
+      //  f t re are hot keys found  n t  cac , record a trace annotat on w h t  format:
+      // hot key cac  cl ent label;t  number of h s;number of m sses;and t  set of hot keys found  n t  cac .
+      Trace.recordB nary(
+        "hot_key_cac ",
+        s"${label.getOrElse("")};${found nProcess.s ze};${newKeys.s ze};${found nProcess.mkStr ng(",")}"
       )
     }
 
-    proxyClient.getResult(newKeys).map { result =>
-      result.hits.foreach { case (k, v) => cacheIfPromoted(k, v) }
-      result.copy(hits = result.hits ++ resultsFromInProcessCache)
+    proxyCl ent.getResult(newKeys).map { result =>
+      result.h s.foreach { case (k, v) => cac  fPromoted(k, v) }
+      result.copy(h s = result.h s ++ resultsFrom nProcessCac )
     }
   }
 
   /**
-   * Exposes whether or not a key was promoted to the in-process hot key cache. In most cases, users
-   * of [[HotKeyMemcacheClient]] should not need to know this. However, they may if hot key caching
-   * conflicts with other layers of caching they are using.
+   * Exposes w t r or not a key was promoted to t   n-process hot key cac .  n most cases, users
+   * of [[HotKey mcac Cl ent]] should not need to know t . Ho ver, t y may  f hot key cach ng
+   * confl cts w h ot r layers of cach ng t y are us ng.
    */
-  def isHotKey(key: String): Boolean = inProcessCache.get(key).isDefined
+  def  sHotKey(key: Str ng): Boolean =  nProcessCac .get(key). sDef ned
 }
 
-// TOOD: May want to turn flags into a value class in com.twitter.finagle.memcached
-// with methods for these operations
-object MemcacheFlags {
-  val FrequencyBasedPromotion: Int = 1
-  val BandwidthBasedPromotion: Int = 1 << 1
-  val Promotable: Int = FrequencyBasedPromotion | BandwidthBasedPromotion
+// TOOD: May want to turn flags  nto a value class  n com.tw ter.f nagle. mcac d
+// w h  thods for t se operat ons
+object  mcac Flags {
+  val FrequencyBasedPromot on:  nt = 1
+  val Bandw dthBasedPromot on:  nt = 1 << 1
+  val Promotable:  nt = FrequencyBasedPromot on | Bandw dthBasedPromot on
 
   /**
-   * Memcache flags are returned as an unsigned integer, represented as a decimal string.
+   *  mcac  flags are returned as an uns gned  nteger, represented as a dec mal str ng.
    *
-   * Check whether the bit in position 0 ([[FrequencyBasedPromotion]]) or the bit in position 1
-   * ([[BandwidthBasedPromotion]]) is set to 1 (zero-index from least-significant bit).
+   * C ck w t r t  b   n pos  on 0 ([[FrequencyBasedPromot on]]) or t  b   n pos  on 1
+   * ([[Bandw dthBasedPromot on]])  s set to 1 (zero- ndex from least-s gn f cant b ).
    */
   def shouldPromote(flagsBuf: Buf): Boolean = {
-    val flags = flagsBuf match { case Buf.Utf8(s) => s.toInt }
+    val flags = flagsBuf match { case Buf.Utf8(s) => s.to nt }
     (flags & Promotable) != 0
   }
 }

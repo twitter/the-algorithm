@@ -1,107 +1,107 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import org.apache.thrift.TException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .thr ft.TExcept on;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.root.ValidationBehavior;
-import com.twitter.search.earlybird.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdDebugInfo;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.root.Val dat onBehav or;
+ mport com.tw ter.search.earlyb rd.common.Earlyb rdRequestUt l;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdDebug nfo;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchQuery;
 
-public class EarlybirdServiceValidationBehavior
-    extends ValidationBehavior.DefaultValidationBehavior<EarlybirdRequest, EarlybirdResponse> {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(EarlybirdServiceValidationBehavior.class);
+publ c class Earlyb rdServ ceVal dat onBehav or
+    extends Val dat onBehav or.DefaultVal dat onBehav or<Earlyb rdRequest, Earlyb rdResponse> {
+  pr vate stat c f nal Logger LOG =
+      LoggerFactory.getLogger(Earlyb rdServ ceVal dat onBehav or.class);
 
-  private static final EarlybirdDebugInfo EARLYBIRD_DEBUG_INFO =
-          new EarlybirdDebugInfo().setHost("earlybird_root");
+  pr vate stat c f nal Earlyb rdDebug nfo EARLYB RD_DEBUG_ NFO =
+          new Earlyb rdDebug nfo().setHost("earlyb rd_root");
 
-  private static final SearchCounter INVALID_SUCCESS_RESPONSE_THRESHOLD_TOO_LOW =
-      SearchCounter.export("invalid_success_response_threshold_too_low");
-  private static final SearchCounter INVALID_SUCCESS_RESPONSE_THRESHOLD_TOO_HIGH =
-      SearchCounter.export("invalid_success_response_threshold_too_high");
+  pr vate stat c f nal SearchCounter  NVAL D_SUCCESS_RESPONSE_THRESHOLD_TOO_LOW =
+      SearchCounter.export(" nval d_success_response_threshold_too_low");
+  pr vate stat c f nal SearchCounter  NVAL D_SUCCESS_RESPONSE_THRESHOLD_TOO_H GH =
+      SearchCounter.export(" nval d_success_response_threshold_too_h gh");
 
-  protected EarlybirdResponse createErrorResponse(String errorMsg) {
-    EarlybirdResponse response = new EarlybirdResponse(EarlybirdResponseCode.CLIENT_ERROR, 0);
+  protected Earlyb rdResponse createErrorResponse(Str ng errorMsg) {
+    Earlyb rdResponse response = new Earlyb rdResponse(Earlyb rdResponseCode.CL ENT_ERROR, 0);
 
-    // We're changing some ERROR logs to WARN on our side, so we want to ensure
-    // that the response contains the debug information the client needs to
-    // resolve the problem.
-    response.setDebugInfo(EARLYBIRD_DEBUG_INFO);
-    response.setDebugString(errorMsg);
+    //  're chang ng so  ERROR logs to WARN on   s de, so   want to ensure
+    // that t  response conta ns t  debug  nformat on t  cl ent needs to
+    // resolve t  problem.
+    response.setDebug nfo(EARLYB RD_DEBUG_ NFO);
+    response.setDebugStr ng(errorMsg);
 
     return response;
   }
 
-  @Override
-  public EarlybirdResponse getResponseIfInvalidRequest(EarlybirdRequest request) {
-    // First, fix up the query.
-    EarlybirdRequestUtil.checkAndSetCollectorParams(request);
-    EarlybirdRequestUtil.logAndFixExcessiveValues(request);
+  @Overr de
+  publ c Earlyb rdResponse getResponse f nval dRequest(Earlyb rdRequest request) {
+    // F rst, f x up t  query.
+    Earlyb rdRequestUt l.c ckAndSetCollectorParams(request);
+    Earlyb rdRequestUt l.logAndF xExcess veValues(request);
 
     try {
-      request.validate();
-    } catch (TException e) {
-      String errorMsg = "Invalid EarlybirdRequest. " + request;
+      request.val date();
+    } catch (TExcept on e) {
+      Str ng errorMsg = " nval d Earlyb rdRequest. " + request;
       LOG.warn(errorMsg);
       return createErrorResponse(errorMsg);
     }
 
-    if (request.isSetSearchSegmentId() && request.getSearchSegmentId() <= 0) {
-      String errorMsg = "Bad time slice ID: " + request.getSearchSegmentId();
+     f (request. sSetSearchSeg nt d() && request.getSearchSeg nt d() <= 0) {
+      Str ng errorMsg = "Bad t   sl ce  D: " + request.getSearchSeg nt d();
       LOG.warn(errorMsg);
       return createErrorResponse(errorMsg);
     }
 
-    if (request.isSetTermStatisticsRequest()
-        && request.getTermStatisticsRequest().isSetHistogramSettings()
-        && request.getTermStatisticsRequest().getHistogramSettings().getNumBins() == 0) {
+     f (request. sSetTermStat st csRequest()
+        && request.getTermStat st csRequest(). sSet togramSett ngs()
+        && request.getTermStat st csRequest().get togramSett ngs().getNumB ns() == 0) {
 
-      String errorMsg = "numBins for term statistics histograms request cannot be zero: " + request;
+      Str ng errorMsg = "numB ns for term stat st cs  tograms request cannot be zero: " + request;
       LOG.warn(errorMsg);
       return createErrorResponse(errorMsg);
     }
 
-    if (!request.isSetSearchQuery()
+     f (!request. sSetSearchQuery()
         || request.getSearchQuery() == null) {
-      String errorMsg = "Invalid EarlybirdRequest, no ThriftSearchQuery specified. " + request;
+      Str ng errorMsg = " nval d Earlyb rdRequest, no Thr ftSearchQuery spec f ed. " + request;
       LOG.warn(errorMsg);
       return createErrorResponse(errorMsg);
     }
 
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
+    Thr ftSearchQuery searchQuery = request.getSearchQuery();
 
-    if (!searchQuery.getCollectorParams().isSetNumResultsToReturn()) {
-      String errorMsg = "ThriftSearchQuery.numResultsToReturn not set. " + request;
+     f (!searchQuery.getCollectorParams(). sSetNumResultsToReturn()) {
+      Str ng errorMsg = "Thr ftSearchQuery.numResultsToReturn not set. " + request;
       LOG.warn(errorMsg);
       return createErrorResponse(errorMsg);
     }
 
-    if (searchQuery.getCollectorParams().getNumResultsToReturn() < 0) {
-      String errorMsg = "Invalid ThriftSearchQuery.collectorParams.numResultsToReturn: "
+     f (searchQuery.getCollectorParams().getNumResultsToReturn() < 0) {
+      Str ng errorMsg = " nval d Thr ftSearchQuery.collectorParams.numResultsToReturn: "
           + searchQuery.getCollectorParams().getNumResultsToReturn() + ". " + request;
       LOG.warn(errorMsg);
       return createErrorResponse(errorMsg);
     }
 
-    if (request.isSetSuccessfulResponseThreshold()) {
+     f (request. sSetSuccessfulResponseThreshold()) {
       double successfulResponseThreshold = request.getSuccessfulResponseThreshold();
-      if (successfulResponseThreshold <= 0) {
-        String errorMsg = "Success response threshold is below or equal to 0: "
+       f (successfulResponseThreshold <= 0) {
+        Str ng errorMsg = "Success response threshold  s below or equal to 0: "
             + successfulResponseThreshold + " request: " + request;
         LOG.warn(errorMsg);
-        INVALID_SUCCESS_RESPONSE_THRESHOLD_TOO_LOW.increment();
+         NVAL D_SUCCESS_RESPONSE_THRESHOLD_TOO_LOW. ncre nt();
         return createErrorResponse(errorMsg);
-      } else if (successfulResponseThreshold > 1) {
-        String errorMsg = "Success response threshold is above 1: " + successfulResponseThreshold
+      } else  f (successfulResponseThreshold > 1) {
+        Str ng errorMsg = "Success response threshold  s above 1: " + successfulResponseThreshold
             + " request: " + request;
         LOG.warn(errorMsg);
-        INVALID_SUCCESS_RESPONSE_THRESHOLD_TOO_HIGH.increment();
+         NVAL D_SUCCESS_RESPONSE_THRESHOLD_TOO_H GH. ncre nt();
         return createErrorResponse(errorMsg);
       }
     }

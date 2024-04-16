@@ -1,29 +1,29 @@
-from twml.contrib.pruning import apply_mask
-from twml.layers import Layer
+from twml.contr b.prun ng  mport apply_mask
+from twml.layers  mport Layer
 
 
 class MaskLayer(Layer):
   """
-  This layer corresponds to `twml.contrib.pruning.apply_mask`.
+  T  layer corresponds to `twml.contr b.prun ng.apply_mask`.
 
-  It applies a binary mask to mask out channels of a given tensor. The masks can be
-  optimized using `twml.contrib.trainers.PruningDataRecordTrainer`.
+    appl es a b nary mask to mask out channels of a g ven tensor. T  masks can be
+  opt m zed us ng `twml.contr b.tra ners.Prun ngDataRecordTra ner`.
   """
 
-  def call(self, inputs, **kwargs):
+  def call(self,  nputs, **kwargs):
     """
-    Applies a binary mask to the channels of the input.
+    Appl es a b nary mask to t  channels of t   nput.
 
-    Arguments:
-      inputs:
-        input tensor
+    Argu nts:
+       nputs:
+         nput tensor
       **kwargs:
-        additional keyword arguments
+        add  onal keyword argu nts
 
     Returns:
       Masked tensor
     """
-    return apply_mask(inputs)
+    return apply_mask( nputs)
 
-  def compute_output_shape(self, input_shape):
-    return input_shape
+  def compute_output_shape(self,  nput_shape):
+    return  nput_shape

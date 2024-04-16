@@ -1,34 +1,34 @@
 """
-Candidate architectures for each task's.
+Cand date arch ectures for each task's.
 """
 
-from __future__ import annotations
+from __future__  mport annotat ons
 
-from typing import Dict
+from typ ng  mport D ct
 
-from .features import get_features
-from .graph import Graph
-from .lib.model import ClemNet
-from .params import ModelTypeEnum
+from .features  mport get_features
+from .graph  mport Graph
+from .l b.model  mport ClemNet
+from .params  mport ModelTypeEnum
 
-import tensorflow as tf
-
-
-class MagicRecsClemNet(Graph):
-  def get_logits(self, features: Dict[str, tf.Tensor], training: bool) -> tf.Tensor:
-
-    with tf.name_scope("logits"):
-      inputs = get_features(features=features, training=training, params=self.params.model.features)
-
-      with tf.name_scope("OONC_logits"):
-        model = ClemNet(params=self.params.model.architecture)
-        oonc_logit = model(inputs=inputs, training=training)
-
-      with tf.name_scope("EngagementGivenOONC_logits"):
-        model = ClemNet(params=self.params.model.architecture)
-        eng_logits = model(inputs=inputs, training=training)
-
-      return tf.concat([oonc_logit, eng_logits], axis=1)
+ mport tensorflow as tf
 
 
-ALL_MODELS = {ModelTypeEnum.clemnet: MagicRecsClemNet}
+class Mag cRecsClemNet(Graph):
+  def get_log s(self, features: D ct[str, tf.Tensor], tra n ng: bool) -> tf.Tensor:
+
+    w h tf.na _scope("log s"):
+       nputs = get_features(features=features, tra n ng=tra n ng, params=self.params.model.features)
+
+      w h tf.na _scope("OONC_log s"):
+        model = ClemNet(params=self.params.model.arch ecture)
+        oonc_log  = model( nputs= nputs, tra n ng=tra n ng)
+
+      w h tf.na _scope("Engage ntG venOONC_log s"):
+        model = ClemNet(params=self.params.model.arch ecture)
+        eng_log s = model( nputs= nputs, tra n ng=tra n ng)
+
+      return tf.concat([oonc_log , eng_log s], ax s=1)
+
+
+ALL_MODELS = {ModelTypeEnum.clemnet: Mag cRecsClemNet}

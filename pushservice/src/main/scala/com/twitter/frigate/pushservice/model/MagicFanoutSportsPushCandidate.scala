@@ -1,85 +1,85 @@
-package com.twitter.frigate.pushservice.model
+package com.tw ter.fr gate.pushserv ce.model
 
-import com.twitter.escherbird.metadata.thriftscala.EntityMegadata
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.BaseGameScore
-import com.twitter.frigate.common.base.MagicFanoutSportsEventCandidate
-import com.twitter.frigate.common.base.MagicFanoutSportsScoreInformation
-import com.twitter.frigate.common.base.TeamInfo
-import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContext
-import com.twitter.frigate.magic_events.thriftscala.FanoutEvent
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.frigate.pushservice.model.ibis.MagicFanoutSportsEventIbis2Hydrator
-import com.twitter.frigate.pushservice.model.ntab.MagicFanoutSportsEventNTabRequestHydrator
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.predicate.PredicatesForCandidate
-import com.twitter.frigate.pushservice.predicate.magic_fanout.MagicFanoutPredicatesForCandidate
-import com.twitter.frigate.pushservice.predicate.magic_fanout.MagicFanoutTargetingPredicateWrappersForCandidate
-import com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue.MagicFanoutNtabCaretFatiguePredicate
-import com.twitter.frigate.pushservice.store.EventRequest
-import com.twitter.frigate.pushservice.store.UttEntityHydrationStore
-import com.twitter.frigate.pushservice.take.predicates.BasicSendHandlerPredicates
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.store.semantic_core.SemanticEntityForQuery
-import com.twitter.interests.thriftscala.UserInterests
-import com.twitter.livevideo.timeline.domain.v2.Event
-import com.twitter.livevideo.timeline.domain.v2.HydrationOptions
-import com.twitter.livevideo.timeline.domain.v2.LookupContext
-import com.twitter.simclusters_v2.thriftscala.SimClustersInferredEntities
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter.esc rb rd. tadata.thr ftscala.Ent y gadata
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.BaseGa Score
+ mport com.tw ter.fr gate.common.base.Mag cFanoutSportsEventCand date
+ mport com.tw ter.fr gate.common.base.Mag cFanoutSportsScore nformat on
+ mport com.tw ter.fr gate.common.base.Team nfo
+ mport com.tw ter.fr gate.common.store. nterests. nterestsLookupRequestW hContext
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.FanoutEvent
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.conf g.Conf g
+ mport com.tw ter.fr gate.pushserv ce.ml.PushMLModelScorer
+ mport com.tw ter.fr gate.pushserv ce.model.cand date.Copy ds
+ mport com.tw ter.fr gate.pushserv ce.model. b s.Mag cFanoutSportsEvent b s2Hydrator
+ mport com.tw ter.fr gate.pushserv ce.model.ntab.Mag cFanoutSportsEventNTabRequestHydrator
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.pred cate.Pred catesForCand date
+ mport com.tw ter.fr gate.pushserv ce.pred cate.mag c_fanout.Mag cFanoutPred catesForCand date
+ mport com.tw ter.fr gate.pushserv ce.pred cate.mag c_fanout.Mag cFanoutTarget ngPred cateWrappersForCand date
+ mport com.tw ter.fr gate.pushserv ce.pred cate.ntab_caret_fat gue.Mag cFanoutNtabCaretFat guePred cate
+ mport com.tw ter.fr gate.pushserv ce.store.EventRequest
+ mport com.tw ter.fr gate.pushserv ce.store.UttEnt yHydrat onStore
+ mport com.tw ter.fr gate.pushserv ce.take.pred cates.Bas cSendHandlerPred cates
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .store.semant c_core.Semant cEnt yForQuery
+ mport com.tw ter. nterests.thr ftscala.User nterests
+ mport com.tw ter.l vev deo.t  l ne.doma n.v2.Event
+ mport com.tw ter.l vev deo.t  l ne.doma n.v2.Hydrat onOpt ons
+ mport com.tw ter.l vev deo.t  l ne.doma n.v2.LookupContext
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClusters nferredEnt  es
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
-class MagicFanoutSportsPushCandidate(
-  candidate: RawCandidate
-    with MagicFanoutSportsEventCandidate
-    with MagicFanoutSportsScoreInformation,
-  copyIds: CopyIds,
-  override val fanoutEvent: Option[FanoutEvent],
-  override val semanticEntityResults: Map[SemanticEntityForQuery, Option[EntityMegadata]],
-  simClusterToEntities: Map[Int, Option[SimClustersInferredEntities]],
-  lexServiceStore: ReadableStore[EventRequest, Event],
-  interestsLookupStore: ReadableStore[InterestsLookupRequestWithContext, UserInterests],
-  uttEntityHydrationStore: UttEntityHydrationStore
+class Mag cFanoutSportsPushCand date(
+  cand date: RawCand date
+    w h Mag cFanoutSportsEventCand date
+    w h Mag cFanoutSportsScore nformat on,
+  copy ds: Copy ds,
+  overr de val fanoutEvent: Opt on[FanoutEvent],
+  overr de val semant cEnt yResults: Map[Semant cEnt yForQuery, Opt on[Ent y gadata]],
+  s mClusterToEnt  es: Map[ nt, Opt on[S mClusters nferredEnt  es]],
+  lexServ ceStore: ReadableStore[EventRequest, Event],
+   nterestsLookupStore: ReadableStore[ nterestsLookupRequestW hContext, User nterests],
+  uttEnt yHydrat onStore: UttEnt yHydrat onStore
 )(
-  implicit statsScoped: StatsReceiver,
+   mpl c  statsScoped: StatsRece ver,
   pushModelScorer: PushMLModelScorer)
-    extends MagicFanoutEventPushCandidate(
-      candidate,
-      copyIds,
+    extends Mag cFanoutEventPushCand date(
+      cand date,
+      copy ds,
       fanoutEvent,
-      semanticEntityResults,
-      simClusterToEntities,
-      lexServiceStore,
-      interestsLookupStore,
-      uttEntityHydrationStore)(statsScoped, pushModelScorer)
-    with MagicFanoutSportsEventCandidate
-    with MagicFanoutSportsScoreInformation
-    with MagicFanoutSportsEventNTabRequestHydrator
-    with MagicFanoutSportsEventIbis2Hydrator {
+      semant cEnt yResults,
+      s mClusterToEnt  es,
+      lexServ ceStore,
+       nterestsLookupStore,
+      uttEnt yHydrat onStore)(statsScoped, pushModelScorer)
+    w h Mag cFanoutSportsEventCand date
+    w h Mag cFanoutSportsScore nformat on
+    w h Mag cFanoutSportsEventNTabRequestHydrator
+    w h Mag cFanoutSportsEvent b s2Hydrator {
 
-  override val isScoreUpdate: Boolean = candidate.isScoreUpdate
-  override val gameScores: Future[Option[BaseGameScore]] = candidate.gameScores
-  override val homeTeamInfo: Future[Option[TeamInfo]] = candidate.homeTeamInfo
-  override val awayTeamInfo: Future[Option[TeamInfo]] = candidate.awayTeamInfo
+  overr de val  sScoreUpdate: Boolean = cand date. sScoreUpdate
+  overr de val ga Scores: Future[Opt on[BaseGa Score]] = cand date.ga Scores
+  overr de val ho Team nfo: Future[Opt on[Team nfo]] = cand date.ho Team nfo
+  overr de val awayTeam nfo: Future[Opt on[Team nfo]] = cand date.awayTeam nfo
 
-  override lazy val stats: StatsReceiver = statsScoped.scope("MagicFanoutSportsPushCandidate")
-  override val statsReceiver: StatsReceiver = statsScoped.scope("MagicFanoutSportsPushCandidate")
+  overr de lazy val stats: StatsRece ver = statsScoped.scope("Mag cFanoutSportsPushCand date")
+  overr de val statsRece ver: StatsRece ver = statsScoped.scope("Mag cFanoutSportsPushCand date")
 
-  override lazy val eventRequestFut: Future[Option[EventRequest]] = {
-    Future.join(target.inferredUserDeviceLanguage, target.accountCountryCode).map {
-      case (inferredUserDeviceLanguage, accountCountryCode) =>
-        Some(
+  overr de lazy val eventRequestFut: Future[Opt on[EventRequest]] = {
+    Future.jo n(target. nferredUserDev ceLanguage, target.accountCountryCode).map {
+      case ( nferredUserDev ceLanguage, accountCountryCode) =>
+        So (
           EventRequest(
-            eventId,
+            event d,
             lookupContext = LookupContext(
-              hydrationOptions = HydrationOptions(
-                includeSquareImage = true,
-                includePrimaryImage = true
+              hydrat onOpt ons = Hydrat onOpt ons(
+                 ncludeSquare mage = true,
+                 ncludePr mary mage = true
               ),
-              language = inferredUserDeviceLanguage,
+              language =  nferredUserDev ceLanguage,
               countryCode = accountCountryCode
             )
           ))
@@ -87,33 +87,33 @@ class MagicFanoutSportsPushCandidate(
   }
 }
 
-case class MagicFanoutSportsEventCandidatePredicates(config: Config)
-    extends BasicSendHandlerPredicates[MagicFanoutSportsPushCandidate] {
+case class Mag cFanoutSportsEventCand datePred cates(conf g: Conf g)
+    extends Bas cSendHandlerPred cates[Mag cFanoutSportsPushCand date] {
 
-  implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
+   mpl c  val statsRece ver: StatsRece ver = conf g.statsRece ver.scope(getClass.getS mpleNa )
 
-  override val preCandidateSpecificPredicates: List[
-    NamedPredicate[MagicFanoutSportsPushCandidate]
+  overr de val preCand dateSpec f cPred cates: L st[
+    Na dPred cate[Mag cFanoutSportsPushCand date]
   ] =
-    List(
-      PredicatesForCandidate.paramPredicate(PushFeatureSwitchParams.EnableScoreFanoutNotification)
+    L st(
+      Pred catesForCand date.paramPred cate(PushFeatureSw chParams.EnableScoreFanoutNot f cat on)
     )
 
-  override val postCandidateSpecificPredicates: List[
-    NamedPredicate[MagicFanoutSportsPushCandidate]
+  overr de val postCand dateSpec f cPred cates: L st[
+    Na dPred cate[Mag cFanoutSportsPushCand date]
   ] =
-    List(
-      PredicatesForCandidate.isDeviceEligibleForNewsOrSports,
-      MagicFanoutPredicatesForCandidate.inferredUserDeviceLanguagePredicate,
-      MagicFanoutPredicatesForCandidate.highPriorityEventExceptedPredicate(
-        MagicFanoutTargetingPredicateWrappersForCandidate
-          .magicFanoutTargetingPredicate(statsReceiver, config)
-      )(config),
-      PredicatesForCandidate.secondaryDormantAccountPredicate(
-        statsReceiver
+    L st(
+      Pred catesForCand date. sDev ceEl g bleForNewsOrSports,
+      Mag cFanoutPred catesForCand date. nferredUserDev ceLanguagePred cate,
+      Mag cFanoutPred catesForCand date.h ghPr or yEventExceptedPred cate(
+        Mag cFanoutTarget ngPred cateWrappersForCand date
+          .mag cFanoutTarget ngPred cate(statsRece ver, conf g)
+      )(conf g),
+      Pred catesForCand date.secondaryDormantAccountPred cate(
+        statsRece ver
       ),
-      MagicFanoutPredicatesForCandidate.highPriorityEventExceptedPredicate(
-        MagicFanoutNtabCaretFatiguePredicate()
-      )(config),
+      Mag cFanoutPred catesForCand date.h ghPr or yEventExceptedPred cate(
+        Mag cFanoutNtabCaretFat guePred cate()
+      )(conf g),
     )
 }

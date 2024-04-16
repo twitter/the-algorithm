@@ -1,22 +1,22 @@
-package com.twitter.tweetypie.federated.columns
+package com.tw ter.t etyp e.federated.columns
 
-import com.twitter.tweetypie.{thriftscala => thrift}
+ mport com.tw ter.t etyp e.{thr ftscala => thr ft}
 
-object HydrationOptions {
+object Hydrat onOpt ons {
 
-  def writePathHydrationOptions(
-    cardsPlatformKey: Option[String]
+  def wr ePathHydrat onOpt ons(
+    cardsPlatformKey: Opt on[Str ng]
   ) =
-    thrift.WritePathHydrationOptions(
-      // The GraphQL API extracts or "lifts" the ApiTweet.card reference field from the
-      // ApiTweet.card.url returned by Tweetypie. Tweetypie's card hydration business logic
-      // selects the single correct Card URL by first making Expandodo.getCards2 requests for
-      // the Tweet's cardReference, or all of the Tweet's URL entities in cases where Tweet
-      // does not have a stored cardReference, and then selecting the last of the hydrated
+    thr ft.Wr ePathHydrat onOpt ons(
+      // T  GraphQL AP  extracts or "l fts" t  Ap T et.card reference f eld from t 
+      // Ap T et.card.url returned by T etyp e. T etyp e's card hydrat on bus ness log c
+      // selects t  s ngle correct Card URL by f rst mak ng Expandodo.getCards2 requests for
+      // t  T et's cardReference, or all of t  T et's URL ent  es  n cases w re T et
+      // does not have a stored cardReference, and t n select ng t  last of t  hydrated
       // cards returned by Expandodo.
-      includeCards = true,
+       ncludeCards = true,
       cardsPlatformKey = cardsPlatformKey,
-      // The GraphQL API only supports quoted tweet results formatted per go/simplequotedtweet.
-      simpleQuotedTweet = true,
+      // T  GraphQL AP  only supports quoted t et results formatted per go/s mplequotedt et.
+      s mpleQuotedT et = true,
     )
 }

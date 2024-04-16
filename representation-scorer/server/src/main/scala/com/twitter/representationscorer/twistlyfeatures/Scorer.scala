@@ -1,148 +1,148 @@
-package com.twitter.representationscorer.twistlyfeatures
+package com.tw ter.representat onscorer.tw stlyfeatures
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.representationscorer.common.TweetId
-import com.twitter.representationscorer.common.UserId
-import com.twitter.representationscorer.scorestore.ScoreStore
-import com.twitter.representationscorer.thriftscala.SimClustersRecentEngagementSimilarities
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.ScoreId
-import com.twitter.simclusters_v2.thriftscala.ScoreInternalId
-import com.twitter.simclusters_v2.thriftscala.ScoringAlgorithm
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingPairScoreId
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
+ mport com.tw ter.f nagle.stats.Counter
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.representat onscorer.common.T et d
+ mport com.tw ter.representat onscorer.common.User d
+ mport com.tw ter.representat onscorer.scorestore.ScoreStore
+ mport com.tw ter.representat onscorer.thr ftscala.S mClustersRecentEngage ntS m lar  es
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.tw ter.s mclusters_v2.thr ftscala.Score d
+ mport com.tw ter.s mclusters_v2.thr ftscala.Score nternal d
+ mport com.tw ter.s mclusters_v2.thr ftscala.Scor ngAlgor hm
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng d
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ngPa rScore d
+ mport com.tw ter.st ch.St ch
+ mport javax. nject. nject
 
-class Scorer @Inject() (
-  fetchEngagementsFromUSS: Long => Stitch[Engagements],
+class Scorer @ nject() (
+  fetchEngage ntsFromUSS: Long => St ch[Engage nts],
   scoreStore: ScoreStore,
-  stats: StatsReceiver) {
+  stats: StatsRece ver) {
 
-  import Scorer._
+   mport Scorer._
 
-  private val scoreStats = stats.scope("score")
-  private val scoreCalculationStats = scoreStats.scope("calculation")
-  private val scoreResultStats = scoreStats.scope("result")
+  pr vate val scoreStats = stats.scope("score")
+  pr vate val scoreCalculat onStats = scoreStats.scope("calculat on")
+  pr vate val scoreResultStats = scoreStats.scope("result")
 
-  private val scoresNonEmptyCounter = scoreResultStats.scope("all").counter("nonEmpty")
-  private val scoresNonZeroCounter = scoreResultStats.scope("all").counter("nonZero")
+  pr vate val scoresNonEmptyCounter = scoreResultStats.scope("all").counter("nonEmpty")
+  pr vate val scoresNonZeroCounter = scoreResultStats.scope("all").counter("nonZero")
 
-  private val tweetScoreStats = scoreCalculationStats.scope("tweetScore").stat("latency")
-  private val userScoreStats = scoreCalculationStats.scope("userScore").stat("latency")
+  pr vate val t etScoreStats = scoreCalculat onStats.scope("t etScore").stat("latency")
+  pr vate val userScoreStats = scoreCalculat onStats.scope("userScore").stat("latency")
 
-  private val favNonZero = scoreResultStats.scope("favs").counter("nonZero")
-  private val favNonEmpty = scoreResultStats.scope("favs").counter("nonEmpty")
+  pr vate val favNonZero = scoreResultStats.scope("favs").counter("nonZero")
+  pr vate val favNonEmpty = scoreResultStats.scope("favs").counter("nonEmpty")
 
-  private val retweetsNonZero = scoreResultStats.scope("retweets").counter("nonZero")
-  private val retweetsNonEmpty = scoreResultStats.scope("retweets").counter("nonEmpty")
+  pr vate val ret etsNonZero = scoreResultStats.scope("ret ets").counter("nonZero")
+  pr vate val ret etsNonEmpty = scoreResultStats.scope("ret ets").counter("nonEmpty")
 
-  private val followsNonZero = scoreResultStats.scope("follows").counter("nonZero")
-  private val followsNonEmpty = scoreResultStats.scope("follows").counter("nonEmpty")
+  pr vate val followsNonZero = scoreResultStats.scope("follows").counter("nonZero")
+  pr vate val followsNonEmpty = scoreResultStats.scope("follows").counter("nonEmpty")
 
-  private val sharesNonZero = scoreResultStats.scope("shares").counter("nonZero")
-  private val sharesNonEmpty = scoreResultStats.scope("shares").counter("nonEmpty")
+  pr vate val sharesNonZero = scoreResultStats.scope("shares").counter("nonZero")
+  pr vate val sharesNonEmpty = scoreResultStats.scope("shares").counter("nonEmpty")
 
-  private val repliesNonZero = scoreResultStats.scope("replies").counter("nonZero")
-  private val repliesNonEmpty = scoreResultStats.scope("replies").counter("nonEmpty")
+  pr vate val repl esNonZero = scoreResultStats.scope("repl es").counter("nonZero")
+  pr vate val repl esNonEmpty = scoreResultStats.scope("repl es").counter("nonEmpty")
 
-  private val originalTweetsNonZero = scoreResultStats.scope("originalTweets").counter("nonZero")
-  private val originalTweetsNonEmpty = scoreResultStats.scope("originalTweets").counter("nonEmpty")
+  pr vate val or g nalT etsNonZero = scoreResultStats.scope("or g nalT ets").counter("nonZero")
+  pr vate val or g nalT etsNonEmpty = scoreResultStats.scope("or g nalT ets").counter("nonEmpty")
 
-  private val videoViewsNonZero = scoreResultStats.scope("videoViews").counter("nonZero")
-  private val videoViewsNonEmpty = scoreResultStats.scope("videoViews").counter("nonEmpty")
+  pr vate val v deoV ewsNonZero = scoreResultStats.scope("v deoV ews").counter("nonZero")
+  pr vate val v deoV ewsNonEmpty = scoreResultStats.scope("v deoV ews").counter("nonEmpty")
 
-  private val blockNonZero = scoreResultStats.scope("block").counter("nonZero")
-  private val blockNonEmpty = scoreResultStats.scope("block").counter("nonEmpty")
+  pr vate val blockNonZero = scoreResultStats.scope("block").counter("nonZero")
+  pr vate val blockNonEmpty = scoreResultStats.scope("block").counter("nonEmpty")
 
-  private val muteNonZero = scoreResultStats.scope("mute").counter("nonZero")
-  private val muteNonEmpty = scoreResultStats.scope("mute").counter("nonEmpty")
+  pr vate val muteNonZero = scoreResultStats.scope("mute").counter("nonZero")
+  pr vate val muteNonEmpty = scoreResultStats.scope("mute").counter("nonEmpty")
 
-  private val reportNonZero = scoreResultStats.scope("report").counter("nonZero")
-  private val reportNonEmpty = scoreResultStats.scope("report").counter("nonEmpty")
+  pr vate val reportNonZero = scoreResultStats.scope("report").counter("nonZero")
+  pr vate val reportNonEmpty = scoreResultStats.scope("report").counter("nonEmpty")
 
-  private val dontlikeNonZero = scoreResultStats.scope("dontlike").counter("nonZero")
-  private val dontlikeNonEmpty = scoreResultStats.scope("dontlike").counter("nonEmpty")
+  pr vate val dontl keNonZero = scoreResultStats.scope("dontl ke").counter("nonZero")
+  pr vate val dontl keNonEmpty = scoreResultStats.scope("dontl ke").counter("nonEmpty")
 
-  private val seeFewerNonZero = scoreResultStats.scope("seeFewer").counter("nonZero")
-  private val seeFewerNonEmpty = scoreResultStats.scope("seeFewer").counter("nonEmpty")
+  pr vate val seeFe rNonZero = scoreResultStats.scope("seeFe r").counter("nonZero")
+  pr vate val seeFe rNonEmpty = scoreResultStats.scope("seeFe r").counter("nonEmpty")
 
-  private def getTweetScores(
-    candidateTweetId: TweetId,
-    sourceTweetIds: Seq[TweetId]
-  ): Stitch[Seq[ScoreResult]] = {
-    val getScoresStitch = Stitch.traverse(sourceTweetIds) { sourceTweetId =>
+  pr vate def getT etScores(
+    cand dateT et d: T et d,
+    s ceT et ds: Seq[T et d]
+  ): St ch[Seq[ScoreResult]] = {
+    val getScoresSt ch = St ch.traverse(s ceT et ds) { s ceT et d =>
       scoreStore
-        .uniformScoringStoreStitch(getTweetScoreId(sourceTweetId, candidateTweetId))
-        .liftNotFoundToOption
-        .map(score => ScoreResult(sourceTweetId, score.map(_.score)))
+        .un formScor ngStoreSt ch(getT etScore d(s ceT et d, cand dateT et d))
+        .l ftNotFoundToOpt on
+        .map(score => ScoreResult(s ceT et d, score.map(_.score)))
     }
 
-    Stitch.time(getScoresStitch).flatMap {
-      case (tryResult, duration) =>
-        tweetScoreStats.add(duration.inMillis)
-        Stitch.const(tryResult)
+    St ch.t  (getScoresSt ch).flatMap {
+      case (tryResult, durat on) =>
+        t etScoreStats.add(durat on. nM ll s)
+        St ch.const(tryResult)
     }
   }
 
-  private def getUserScores(
-    tweetId: TweetId,
-    authorIds: Seq[UserId]
-  ): Stitch[Seq[ScoreResult]] = {
-    val getScoresStitch = Stitch.traverse(authorIds) { authorId =>
+  pr vate def getUserScores(
+    t et d: T et d,
+    author ds: Seq[User d]
+  ): St ch[Seq[ScoreResult]] = {
+    val getScoresSt ch = St ch.traverse(author ds) { author d =>
       scoreStore
-        .uniformScoringStoreStitch(getAuthorScoreId(authorId, tweetId))
-        .liftNotFoundToOption
-        .map(score => ScoreResult(authorId, score.map(_.score)))
+        .un formScor ngStoreSt ch(getAuthorScore d(author d, t et d))
+        .l ftNotFoundToOpt on
+        .map(score => ScoreResult(author d, score.map(_.score)))
     }
 
-    Stitch.time(getScoresStitch).flatMap {
-      case (tryResult, duration) =>
-        userScoreStats.add(duration.inMillis)
-        Stitch.const(tryResult)
+    St ch.t  (getScoresSt ch).flatMap {
+      case (tryResult, durat on) =>
+        userScoreStats.add(durat on. nM ll s)
+        St ch.const(tryResult)
     }
   }
 
   /**
-   * Get the [[SimClustersRecentEngagementSimilarities]] result containing the similarity
-   * features for the given userId-TweetId.
+   * Get t  [[S mClustersRecentEngage ntS m lar  es]] result conta n ng t  s m lar y
+   * features for t  g ven user d-T et d.
    */
   def get(
-    userId: UserId,
-    tweetId: TweetId
-  ): Stitch[SimClustersRecentEngagementSimilarities] = {
-    get(userId, Seq(tweetId)).map(x => x.head)
+    user d: User d,
+    t et d: T et d
+  ): St ch[S mClustersRecentEngage ntS m lar  es] = {
+    get(user d, Seq(t et d)).map(x => x. ad)
   }
 
   /**
-   * Get a list of [[SimClustersRecentEngagementSimilarities]] results containing the similarity
-   * features for the given tweets of the user Id.
-   * Guaranteed to be the same number/order as requested.
+   * Get a l st of [[S mClustersRecentEngage ntS m lar  es]] results conta n ng t  s m lar y
+   * features for t  g ven t ets of t  user  d.
+   * Guaranteed to be t  sa  number/order as requested.
    */
   def get(
-    userId: UserId,
-    tweetIds: Seq[TweetId]
-  ): Stitch[Seq[SimClustersRecentEngagementSimilarities]] = {
-    fetchEngagementsFromUSS(userId)
-      .flatMap(engagements => {
-        // For each tweet received in the request, compute the similarity scores between them
-        // and the user signals fetched from USS.
-        Stitch
-          .join(
-            Stitch.traverse(tweetIds)(id => getTweetScores(id, engagements.tweetIds)),
-            Stitch.traverse(tweetIds)(id => getUserScores(id, engagements.authorIds)),
+    user d: User d,
+    t et ds: Seq[T et d]
+  ): St ch[Seq[S mClustersRecentEngage ntS m lar  es]] = {
+    fetchEngage ntsFromUSS(user d)
+      .flatMap(engage nts => {
+        // For each t et rece ved  n t  request, compute t  s m lar y scores bet en t m
+        // and t  user s gnals fetc d from USS.
+        St ch
+          .jo n(
+            St ch.traverse(t et ds)( d => getT etScores( d, engage nts.t et ds)),
+            St ch.traverse(t et ds)( d => getUserScores( d, engage nts.author ds)),
           )
           .map {
-            case (tweetScoresSeq, userScoreSeq) =>
-              // All seq have = size because when scores don't exist, they are returned as Option
-              (tweetScoresSeq, userScoreSeq).zipped.map { (tweetScores, userScores) =>
-                computeSimilarityScoresPerTweet(
-                  engagements,
-                  tweetScores.groupBy(_.id),
-                  userScores.groupBy(_.id))
+            case (t etScoresSeq, userScoreSeq) =>
+              // All seq have = s ze because w n scores don't ex st, t y are returned as Opt on
+              (t etScoresSeq, userScoreSeq).z pped.map { (t etScores, userScores) =>
+                computeS m lar yScoresPerT et(
+                  engage nts,
+                  t etScores.groupBy(_. d),
+                  userScores.groupBy(_. d))
               }
           }
       })
@@ -150,169 +150,169 @@ class Scorer @Inject() (
 
   /**
    *
-   * Computes the [[SimClustersRecentEngagementSimilarities]]
-   * using the given tweet-tweet and user-tweet scores in TweetScoresMap
-   * and the user signals in [[Engagements]].
+   * Computes t  [[S mClustersRecentEngage ntS m lar  es]]
+   * us ng t  g ven t et-t et and user-t et scores  n T etScoresMap
+   * and t  user s gnals  n [[Engage nts]].
    */
-  private def computeSimilarityScoresPerTweet(
-    engagements: Engagements,
-    tweetScores: Map[TweetId, Seq[ScoreResult]],
-    authorScores: Map[UserId, Seq[ScoreResult]]
-  ): SimClustersRecentEngagementSimilarities = {
-    val favs7d = engagements.favs7d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+  pr vate def computeS m lar yScoresPerT et(
+    engage nts: Engage nts,
+    t etScores: Map[T et d, Seq[ScoreResult]],
+    authorScores: Map[User d, Seq[ScoreResult]]
+  ): S mClustersRecentEngage ntS m lar  es = {
+    val favs7d = engage nts.favs7d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val favs1d = engagements.favs1d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+    val favs1d = engage nts.favs1d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val retweets7d = engagements.retweets7d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+    val ret ets7d = engage nts.ret ets7d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val retweets1d = engagements.retweets1d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+    val ret ets1d = engage nts.ret ets1d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val follows30d = engagements.follows30d.view
-      .flatMap(s => authorScores.get(s.targetId))
+    val follows30d = engage nts.follows30d.v ew
+      .flatMap(s => authorScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val follows7d = engagements.follows7d.view
-      .flatMap(s => authorScores.get(s.targetId))
+    val follows7d = engage nts.follows7d.v ew
+      .flatMap(s => authorScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val shares7d = engagements.shares7d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+    val shares7d = engage nts.shares7d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val shares1d = engagements.shares1d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+    val shares1d = engage nts.shares1d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val replies7d = engagements.replies7d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+    val repl es7d = engage nts.repl es7d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val replies1d = engagements.replies1d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+    val repl es1d = engage nts.repl es1d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val originalTweets7d = engagements.originalTweets7d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+    val or g nalT ets7d = engage nts.or g nalT ets7d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val originalTweets1d = engagements.originalTweets1d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+    val or g nalT ets1d = engage nts.or g nalT ets1d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val videoViews7d = engagements.videoPlaybacks7d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+    val v deoV ews7d = engage nts.v deoPlaybacks7d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val videoViews1d = engagements.videoPlaybacks1d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+    val v deoV ews1d = engage nts.v deoPlaybacks1d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val block30d = engagements.block30d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+    val block30d = engage nts.block30d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val block7d = engagements.block7d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+    val block7d = engage nts.block7d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val block1d = engagements.block1d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+    val block1d = engage nts.block1d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val mute30d = engagements.mute30d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+    val mute30d = engage nts.mute30d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val mute7d = engagements.mute7d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+    val mute7d = engage nts.mute7d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val mute1d = engagements.mute1d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+    val mute1d = engage nts.mute1d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val report30d = engagements.report30d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+    val report30d = engage nts.report30d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val report7d = engagements.report7d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+    val report7d = engage nts.report7d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val report1d = engagements.report1d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+    val report1d = engage nts.report1d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val dontlike30d = engagements.dontlike30d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+    val dontl ke30d = engage nts.dontl ke30d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val dontlike7d = engagements.dontlike7d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+    val dontl ke7d = engage nts.dontl ke7d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val dontlike1d = engagements.dontlike1d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+    val dontl ke1d = engage nts.dontl ke1d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val seeFewer30d = engagements.seeFewer30d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+    val seeFe r30d = engage nts.seeFe r30d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val seeFewer7d = engagements.seeFewer7d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+    val seeFe r7d = engage nts.seeFe r7d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val seeFewer1d = engagements.seeFewer1d.view
-      .flatMap(s => tweetScores.get(s.targetId))
+    val seeFe r1d = engage nts.seeFe r1d.v ew
+      .flatMap(s => t etScores.get(s.target d))
       .flatten.flatMap(_.score)
       .force
 
-    val result = SimClustersRecentEngagementSimilarities(
+    val result = S mClustersRecentEngage ntS m lar  es(
       fav1dLast10Max = max(favs1d),
       fav1dLast10Avg = avg(favs1d),
       fav7dLast10Max = max(favs7d),
       fav7dLast10Avg = avg(favs7d),
-      retweet1dLast10Max = max(retweets1d),
-      retweet1dLast10Avg = avg(retweets1d),
-      retweet7dLast10Max = max(retweets7d),
-      retweet7dLast10Avg = avg(retweets7d),
+      ret et1dLast10Max = max(ret ets1d),
+      ret et1dLast10Avg = avg(ret ets1d),
+      ret et7dLast10Max = max(ret ets7d),
+      ret et7dLast10Avg = avg(ret ets7d),
       follow7dLast10Max = max(follows7d),
       follow7dLast10Avg = avg(follows7d),
       follow30dLast10Max = max(follows30d),
@@ -321,18 +321,18 @@ class Scorer @Inject() (
       share1dLast10Avg = avg(shares1d),
       share7dLast10Max = max(shares7d),
       share7dLast10Avg = avg(shares7d),
-      reply1dLast10Max = max(replies1d),
-      reply1dLast10Avg = avg(replies1d),
-      reply7dLast10Max = max(replies7d),
-      reply7dLast10Avg = avg(replies7d),
-      originalTweet1dLast10Max = max(originalTweets1d),
-      originalTweet1dLast10Avg = avg(originalTweets1d),
-      originalTweet7dLast10Max = max(originalTweets7d),
-      originalTweet7dLast10Avg = avg(originalTweets7d),
-      videoPlayback1dLast10Max = max(videoViews1d),
-      videoPlayback1dLast10Avg = avg(videoViews1d),
-      videoPlayback7dLast10Max = max(videoViews7d),
-      videoPlayback7dLast10Avg = avg(videoViews7d),
+      reply1dLast10Max = max(repl es1d),
+      reply1dLast10Avg = avg(repl es1d),
+      reply7dLast10Max = max(repl es7d),
+      reply7dLast10Avg = avg(repl es7d),
+      or g nalT et1dLast10Max = max(or g nalT ets1d),
+      or g nalT et1dLast10Avg = avg(or g nalT ets1d),
+      or g nalT et7dLast10Max = max(or g nalT ets7d),
+      or g nalT et7dLast10Avg = avg(or g nalT ets7d),
+      v deoPlayback1dLast10Max = max(v deoV ews1d),
+      v deoPlayback1dLast10Avg = avg(v deoV ews1d),
+      v deoPlayback7dLast10Max = max(v deoV ews7d),
+      v deoPlayback7dLast10Avg = avg(v deoV ews7d),
       block1dLast10Max = max(block1d),
       block1dLast10Avg = avg(block1d),
       block7dLast10Max = max(block7d),
@@ -351,122 +351,122 @@ class Scorer @Inject() (
       report7dLast10Avg = avg(report7d),
       report30dLast10Max = max(report30d),
       report30dLast10Avg = avg(report30d),
-      dontlike1dLast10Max = max(dontlike1d),
-      dontlike1dLast10Avg = avg(dontlike1d),
-      dontlike7dLast10Max = max(dontlike7d),
-      dontlike7dLast10Avg = avg(dontlike7d),
-      dontlike30dLast10Max = max(dontlike30d),
-      dontlike30dLast10Avg = avg(dontlike30d),
-      seeFewer1dLast10Max = max(seeFewer1d),
-      seeFewer1dLast10Avg = avg(seeFewer1d),
-      seeFewer7dLast10Max = max(seeFewer7d),
-      seeFewer7dLast10Avg = avg(seeFewer7d),
-      seeFewer30dLast10Max = max(seeFewer30d),
-      seeFewer30dLast10Avg = avg(seeFewer30d),
+      dontl ke1dLast10Max = max(dontl ke1d),
+      dontl ke1dLast10Avg = avg(dontl ke1d),
+      dontl ke7dLast10Max = max(dontl ke7d),
+      dontl ke7dLast10Avg = avg(dontl ke7d),
+      dontl ke30dLast10Max = max(dontl ke30d),
+      dontl ke30dLast10Avg = avg(dontl ke30d),
+      seeFe r1dLast10Max = max(seeFe r1d),
+      seeFe r1dLast10Avg = avg(seeFe r1d),
+      seeFe r7dLast10Max = max(seeFe r7d),
+      seeFe r7dLast10Avg = avg(seeFe r7d),
+      seeFe r30dLast10Max = max(seeFe r30d),
+      seeFe r30dLast10Avg = avg(seeFe r30d),
     )
     trackStats(result)
     result
   }
 
-  private def trackStats(result: SimClustersRecentEngagementSimilarities): Unit = {
+  pr vate def trackStats(result: S mClustersRecentEngage ntS m lar  es): Un  = {
     val scores = Seq(
       result.fav7dLast10Max,
-      result.retweet7dLast10Max,
+      result.ret et7dLast10Max,
       result.follow30dLast10Max,
       result.share1dLast10Max,
       result.share7dLast10Max,
       result.reply7dLast10Max,
-      result.originalTweet7dLast10Max,
-      result.videoPlayback7dLast10Max,
+      result.or g nalT et7dLast10Max,
+      result.v deoPlayback7dLast10Max,
       result.block30dLast10Max,
       result.mute30dLast10Max,
       result.report30dLast10Max,
-      result.dontlike30dLast10Max,
-      result.seeFewer30dLast10Max
+      result.dontl ke30dLast10Max,
+      result.seeFe r30dLast10Max
     )
 
-    val nonEmpty = scores.exists(_.isDefined)
-    val nonZero = scores.exists { case Some(score) if score > 0 => true; case _ => false }
+    val nonEmpty = scores.ex sts(_. sDef ned)
+    val nonZero = scores.ex sts { case So (score)  f score > 0 => true; case _ => false }
 
-    if (nonEmpty) {
-      scoresNonEmptyCounter.incr()
+     f (nonEmpty) {
+      scoresNonEmptyCounter. ncr()
     }
 
-    if (nonZero) {
-      scoresNonZeroCounter.incr()
+     f (nonZero) {
+      scoresNonZeroCounter. ncr()
     }
 
-    // We use the largest window of a given type of score,
-    // because the largest window is inclusive of smaller windows.
-    trackSignalStats(favNonEmpty, favNonZero, result.fav7dLast10Avg)
-    trackSignalStats(retweetsNonEmpty, retweetsNonZero, result.retweet7dLast10Avg)
-    trackSignalStats(followsNonEmpty, followsNonZero, result.follow30dLast10Avg)
-    trackSignalStats(sharesNonEmpty, sharesNonZero, result.share7dLast10Avg)
-    trackSignalStats(repliesNonEmpty, repliesNonZero, result.reply7dLast10Avg)
-    trackSignalStats(originalTweetsNonEmpty, originalTweetsNonZero, result.originalTweet7dLast10Avg)
-    trackSignalStats(videoViewsNonEmpty, videoViewsNonZero, result.videoPlayback7dLast10Avg)
-    trackSignalStats(blockNonEmpty, blockNonZero, result.block30dLast10Avg)
-    trackSignalStats(muteNonEmpty, muteNonZero, result.mute30dLast10Avg)
-    trackSignalStats(reportNonEmpty, reportNonZero, result.report30dLast10Avg)
-    trackSignalStats(dontlikeNonEmpty, dontlikeNonZero, result.dontlike30dLast10Avg)
-    trackSignalStats(seeFewerNonEmpty, seeFewerNonZero, result.seeFewer30dLast10Avg)
+    //   use t  largest w ndow of a g ven type of score,
+    // because t  largest w ndow  s  nclus ve of smaller w ndows.
+    trackS gnalStats(favNonEmpty, favNonZero, result.fav7dLast10Avg)
+    trackS gnalStats(ret etsNonEmpty, ret etsNonZero, result.ret et7dLast10Avg)
+    trackS gnalStats(followsNonEmpty, followsNonZero, result.follow30dLast10Avg)
+    trackS gnalStats(sharesNonEmpty, sharesNonZero, result.share7dLast10Avg)
+    trackS gnalStats(repl esNonEmpty, repl esNonZero, result.reply7dLast10Avg)
+    trackS gnalStats(or g nalT etsNonEmpty, or g nalT etsNonZero, result.or g nalT et7dLast10Avg)
+    trackS gnalStats(v deoV ewsNonEmpty, v deoV ewsNonZero, result.v deoPlayback7dLast10Avg)
+    trackS gnalStats(blockNonEmpty, blockNonZero, result.block30dLast10Avg)
+    trackS gnalStats(muteNonEmpty, muteNonZero, result.mute30dLast10Avg)
+    trackS gnalStats(reportNonEmpty, reportNonZero, result.report30dLast10Avg)
+    trackS gnalStats(dontl keNonEmpty, dontl keNonZero, result.dontl ke30dLast10Avg)
+    trackS gnalStats(seeFe rNonEmpty, seeFe rNonZero, result.seeFe r30dLast10Avg)
   }
 
-  private def trackSignalStats(nonEmpty: Counter, nonZero: Counter, score: Option[Double]): Unit = {
-    if (score.nonEmpty) {
-      nonEmpty.incr()
+  pr vate def trackS gnalStats(nonEmpty: Counter, nonZero: Counter, score: Opt on[Double]): Un  = {
+     f (score.nonEmpty) {
+      nonEmpty. ncr()
 
-      if (score.get > 0)
-        nonZero.incr()
+       f (score.get > 0)
+        nonZero. ncr()
     }
   }
 }
 
 object Scorer {
-  def avg(s: Traversable[Double]): Option[Double] =
-    if (s.isEmpty) None else Some(s.sum / s.size)
-  def max(s: Traversable[Double]): Option[Double] =
-    if (s.isEmpty) None else Some(s.foldLeft(0.0D) { (curr, _max) => math.max(curr, _max) })
+  def avg(s: Traversable[Double]): Opt on[Double] =
+     f (s. sEmpty) None else So (s.sum / s.s ze)
+  def max(s: Traversable[Double]): Opt on[Double] =
+     f (s. sEmpty) None else So (s.foldLeft(0.0D) { (curr, _max) => math.max(curr, _max) })
 
-  private def getAuthorScoreId(
-    userId: UserId,
-    tweetId: TweetId
+  pr vate def getAuthorScore d(
+    user d: User d,
+    t et d: T et d
   ) = {
-    ScoreId(
-      algorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      internalId = ScoreInternalId.SimClustersEmbeddingPairScoreId(
-        SimClustersEmbeddingPairScoreId(
-          SimClustersEmbeddingId(
-            internalId = InternalId.UserId(userId),
-            modelVersion = ModelVersion.Model20m145k2020,
-            embeddingType = EmbeddingType.FavBasedProducer
+    Score d(
+      algor hm = Scor ngAlgor hm.Pa rEmbedd ngCos neS m lar y,
+       nternal d = Score nternal d.S mClustersEmbedd ngPa rScore d(
+        S mClustersEmbedd ngPa rScore d(
+          S mClustersEmbedd ng d(
+             nternal d =  nternal d.User d(user d),
+            modelVers on = ModelVers on.Model20m145k2020,
+            embedd ngType = Embedd ngType.FavBasedProducer
           ),
-          SimClustersEmbeddingId(
-            internalId = InternalId.TweetId(tweetId),
-            modelVersion = ModelVersion.Model20m145k2020,
-            embeddingType = EmbeddingType.LogFavBasedTweet
+          S mClustersEmbedd ng d(
+             nternal d =  nternal d.T et d(t et d),
+            modelVers on = ModelVers on.Model20m145k2020,
+            embedd ngType = Embedd ngType.LogFavBasedT et
           )
         ))
     )
   }
 
-  private def getTweetScoreId(
-    sourceTweetId: TweetId,
-    candidateTweetId: TweetId
+  pr vate def getT etScore d(
+    s ceT et d: T et d,
+    cand dateT et d: T et d
   ) = {
-    ScoreId(
-      algorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      internalId = ScoreInternalId.SimClustersEmbeddingPairScoreId(
-        SimClustersEmbeddingPairScoreId(
-          SimClustersEmbeddingId(
-            internalId = InternalId.TweetId(sourceTweetId),
-            modelVersion = ModelVersion.Model20m145k2020,
-            embeddingType = EmbeddingType.LogFavLongestL2EmbeddingTweet
+    Score d(
+      algor hm = Scor ngAlgor hm.Pa rEmbedd ngCos neS m lar y,
+       nternal d = Score nternal d.S mClustersEmbedd ngPa rScore d(
+        S mClustersEmbedd ngPa rScore d(
+          S mClustersEmbedd ng d(
+             nternal d =  nternal d.T et d(s ceT et d),
+            modelVers on = ModelVers on.Model20m145k2020,
+            embedd ngType = Embedd ngType.LogFavLongestL2Embedd ngT et
           ),
-          SimClustersEmbeddingId(
-            internalId = InternalId.TweetId(candidateTweetId),
-            modelVersion = ModelVersion.Model20m145k2020,
-            embeddingType = EmbeddingType.LogFavBasedTweet
+          S mClustersEmbedd ng d(
+             nternal d =  nternal d.T et d(cand dateT et d),
+            modelVers on = ModelVers on.Model20m145k2020,
+            embedd ngType = Embedd ngType.LogFavBasedT et
           )
         ))
     )

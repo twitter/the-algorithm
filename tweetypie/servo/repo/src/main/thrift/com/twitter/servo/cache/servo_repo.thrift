@@ -1,39 +1,39 @@
-#@namespace scala com.twitter.servo.cache.thriftscala
-#@ namespace strato com.twitter.servo.cache
-// the java namespace is unused, but appeases the thrift Linter gods
-namespace java com.twitter.servo.cache.thriftjava
+#@na space scala com.tw ter.servo.cac .thr ftscala
+#@ na space strato com.tw ter.servo.cac 
+// t  java na space  s unused, but appeases t  thr ft L nter gods
+na space java com.tw ter.servo.cac .thr ftjava
 
-enum CachedValueStatus {
+enum Cac dValueStatus {
   FOUND = 0,
   NOT_FOUND = 1,
   DELETED = 2,
-  SERIALIZATION_FAILED = 3
-  DESERIALIZATION_FAILED = 4,
-  EVICTED = 5,
+  SER AL ZAT ON_FA LED = 3
+  DESER AL ZAT ON_FA LED = 4,
+  EV CTED = 5,
   DO_NOT_CACHE = 6
 }
 
 /**
- * Caching metadata for an binary cache value
+ * Cach ng  tadata for an b nary cac  value
  */
-struct CachedValue {
-  1: optional binary value
-  // can be used to distinguish between deletion tombstones and not-found tombstones
-  2: CachedValueStatus status
-  // when was the cache value written
-  3: i64 cached_at_msec
-  // set if the cache was read through
-  4: optional i64 read_through_at_msec
-  // set if the cache was written through
-  5: optional i64 written_through_at_msec
-  // This optional field is only read when the CacheValueStatus is DO_NOT_CACHE.
-  // When CacheValueStatus is DO_NOT_CACHE and this field is not set, the key
-  // will not be cached without a time limit. If the client wants to cache
-  // immediately, they would not set DO_NOT_CACHE.
-  6: optional i64 do_not_cache_until_msec
-  // Indicates how many times we've successfully checked
-  // the cached value against the backing store. Should be initially set to 0.
-  // The client may choose to increase the soft TTL duration based on this value.
-  // See http://go/gd-dynamic-cache-ttls and http://go/strato-progressive-ttls for some use cases
-  7: optional i16 soft_ttl_step
-} (persisted='true')
+struct Cac dValue {
+  1: opt onal b nary value
+  // can be used to d st ngu sh bet en delet on tombstones and not-found tombstones
+  2: Cac dValueStatus status
+  // w n was t  cac  value wr ten
+  3:  64 cac d_at_msec
+  // set  f t  cac  was read through
+  4: opt onal  64 read_through_at_msec
+  // set  f t  cac  was wr ten through
+  5: opt onal  64 wr ten_through_at_msec
+  // T  opt onal f eld  s only read w n t  Cac ValueStatus  s DO_NOT_CACHE.
+  // W n Cac ValueStatus  s DO_NOT_CACHE and t  f eld  s not set, t  key
+  // w ll not be cac d w hout a t   l m .  f t  cl ent wants to cac 
+  //  m d ately, t y would not set DO_NOT_CACHE.
+  6: opt onal  64 do_not_cac _unt l_msec
+  //  nd cates how many t  s  've successfully c cked
+  // t  cac d value aga nst t  back ng store. Should be  n  ally set to 0.
+  // T  cl ent may choose to  ncrease t  soft TTL durat on based on t  value.
+  // See http://go/gd-dynam c-cac -ttls and http://go/strato-progress ve-ttls for so  use cases
+  7: opt onal  16 soft_ttl_step
+} (pers sted='true')

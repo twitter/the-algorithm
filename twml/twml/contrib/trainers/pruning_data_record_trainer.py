@@ -1,59 +1,59 @@
-import tensorflow.compat.v1 as tf
+ mport tensorflow.compat.v1 as tf
 
-from twml.trainers import DataRecordTrainer
-from twml.contrib.optimizers import PruningOptimizer
+from twml.tra ners  mport DataRecordTra ner
+from twml.contr b.opt m zers  mport Prun ngOpt m zer
 
 
-class PruningDataRecordTrainer(DataRecordTrainer):
-  @staticmethod
-  def get_train_op(params, loss):
-    train_op = DataRecordTrainer.get_train_op(params, loss)
+class Prun ngDataRecordTra ner(DataRecordTra ner):
+  @stat c thod
+  def get_tra n_op(params, loss):
+    tra n_op = DataRecordTra ner.get_tra n_op(params, loss)
 
-    optimizer = PruningOptimizer(learning_rate=params.get('learning_rate'))
+    opt m zer = Prun ngOpt m zer(learn ng_rate=params.get('learn ng_rate'))
 
-    return optimizer.minimize(
+    return opt m zer.m n m ze(
         loss=loss,
-        prune_every=params.get('pruning_iter', 5000),
-        burn_in=params.get('pruning_burn_in', 100000),
-        decay=params.get('pruning_decay', .9999),
-        flops_target=params.get('pruning_flops_target', 250000),
-        update_params=train_op,
-        global_step=tf.train.get_global_step())
+        prune_every=params.get('prun ng_ er', 5000),
+        burn_ n=params.get('prun ng_burn_ n', 100000),
+        decay=params.get('prun ng_decay', .9999),
+        flops_target=params.get('prun ng_flops_target', 250000),
+        update_params=tra n_op,
+        global_step=tf.tra n.get_global_step())
 
-  def __init__(self, name, params, build_graph_fn, feature_config=None, **kwargs):
-    kwargs['optimize_loss_fn'] = self.get_train_op
+  def __ n __(self, na , params, bu ld_graph_fn, feature_conf g=None, **kwargs):
+    kwargs['opt m ze_loss_fn'] = self.get_tra n_op
 
-    super(PruningDataRecordTrainer, self).__init__(
-      name=name,
+    super(Prun ngDataRecordTra ner, self).__ n __(
+      na =na ,
       params=params,
-      build_graph_fn=build_graph_fn,
-      feature_config=feature_config,
+      bu ld_graph_fn=bu ld_graph_fn,
+      feature_conf g=feature_conf g,
       **kwargs)
 
   def export_model(self, *args, **kwargs):
-    # TODO: modify graph before exporting to take into account masks
-    return super(PruningDataRecordTrainer, self).export_model(*args, **kwargs)
+    # TODO: mod fy graph before export ng to take  nto account masks
+    return super(Prun ngDataRecordTra ner, self).export_model(*args, **kwargs)
 
-  @staticmethod
-  def add_parser_arguments():
-    parser = DataRecordTrainer.add_parser_arguments()
-    parser.add_argument(
-      "--pruning.iter", "--pruning_iter", type=int, default=5000,
-      dest="pruning_iter",
-      help="A single feature or feature map is pruned every this many iterations")
-    parser.add_argument(
-      "--pruning.burn_in", "--pruning_burn_in", type=int, default=100000,
-      dest="pruning_burn_in",
-      help="Only start pruning after collecting statistics for this many training steps")
-    parser.add_argument(
-      "--pruning.flops_target", "--pruning_flops_target", type=int, default=250000,
-      dest="pruning_flops_target",
-      help="Stop pruning when estimated number of floating point operations reached this target. \
-      For example, a small feed-forward network might require 250,000 FLOPs to run.")
-    parser.add_argument(
-      "--pruning.decay", "--pruning_decay", type=float, default=.9999,
-      dest="pruning_decay",
-      help="A float value in [0.0, 1.0) controlling an exponential moving average of pruning \
-      signal statistics. A value of 0.9999 can be thought of as averaging statistics over 10,000 \
+  @stat c thod
+  def add_parser_argu nts():
+    parser = DataRecordTra ner.add_parser_argu nts()
+    parser.add_argu nt(
+      "--prun ng. er", "--prun ng_ er", type= nt, default=5000,
+      dest="prun ng_ er",
+       lp="A s ngle feature or feature map  s pruned every t  many  erat ons")
+    parser.add_argu nt(
+      "--prun ng.burn_ n", "--prun ng_burn_ n", type= nt, default=100000,
+      dest="prun ng_burn_ n",
+       lp="Only start prun ng after collect ng stat st cs for t  many tra n ng steps")
+    parser.add_argu nt(
+      "--prun ng.flops_target", "--prun ng_flops_target", type= nt, default=250000,
+      dest="prun ng_flops_target",
+       lp="Stop prun ng w n est mated number of float ng po nt operat ons reac d t  target. \
+      For example, a small feed-forward network m ght requ re 250,000 FLOPs to run.")
+    parser.add_argu nt(
+      "--prun ng.decay", "--prun ng_decay", type=float, default=.9999,
+      dest="prun ng_decay",
+       lp="A float value  n [0.0, 1.0) controll ng an exponent al mov ng average of prun ng \
+      s gnal stat st cs. A value of 0.9999 can be thought of as averag ng stat st cs over 10,000 \
       steps.")
     return parser

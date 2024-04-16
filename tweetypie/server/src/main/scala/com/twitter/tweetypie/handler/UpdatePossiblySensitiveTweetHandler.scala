@@ -1,46 +1,46 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.tweetypie.store.UpdatePossiblySensitiveTweet
-import com.twitter.tweetypie.thriftscala.UpdatePossiblySensitiveTweetRequest
-import com.twitter.tweetypie.util.TweetLenses
+ mport com.tw ter.t etyp e.store.UpdatePoss blySens  veT et
+ mport com.tw ter.t etyp e.thr ftscala.UpdatePoss blySens  veT etRequest
+ mport com.tw ter.t etyp e.ut l.T etLenses
 
-object UpdatePossiblySensitiveTweetHandler {
-  type Type = FutureArrow[UpdatePossiblySensitiveTweetRequest, Unit]
+object UpdatePoss blySens  veT etHandler {
+  type Type = FutureArrow[UpdatePoss blySens  veT etRequest, Un ]
 
   def apply(
-    tweetGetter: FutureArrow[TweetId, Tweet],
-    userGetter: FutureArrow[UserId, User],
-    updatePossiblySensitiveTweetStore: FutureEffect[UpdatePossiblySensitiveTweet.Event]
+    t etGetter: FutureArrow[T et d, T et],
+    userGetter: FutureArrow[User d, User],
+    updatePoss blySens  veT etStore: FutureEffect[UpdatePoss blySens  veT et.Event]
   ): Type =
     FutureArrow { request =>
-      val nsfwAdminMutation = Mutation[Boolean](_ => request.nsfwAdmin).checkEq
-      val nsfwUserMutation = Mutation[Boolean](_ => request.nsfwUser).checkEq
-      val tweetMutation =
-        TweetLenses.nsfwAdmin
-          .mutation(nsfwAdminMutation)
-          .also(TweetLenses.nsfwUser.mutation(nsfwUserMutation))
+      val nsfwAdm nMutat on = Mutat on[Boolean](_ => request.nsfwAdm n).c ckEq
+      val nsfwUserMutat on = Mutat on[Boolean](_ => request.nsfwUser).c ckEq
+      val t etMutat on =
+        T etLenses.nsfwAdm n
+          .mutat on(nsfwAdm nMutat on)
+          .also(T etLenses.nsfwUser.mutat on(nsfwUserMutat on))
 
       for {
-        originalTweet <- tweetGetter(request.tweetId)
-        _ <- tweetMutation(originalTweet) match {
-          case None => Future.Unit
-          case Some(mutatedTweet) =>
-            userGetter(getUserId(originalTweet))
+        or g nalT et <- t etGetter(request.t et d)
+        _ <- t etMutat on(or g nalT et) match {
+          case None => Future.Un 
+          case So (mutatedT et) =>
+            userGetter(getUser d(or g nalT et))
               .map { user =>
-                UpdatePossiblySensitiveTweet.Event(
-                  tweet = mutatedTweet,
+                UpdatePoss blySens  veT et.Event(
+                  t et = mutatedT et,
                   user = user,
-                  timestamp = Time.now,
-                  byUserId = request.byUserId,
-                  nsfwAdminChange = nsfwAdminMutation(TweetLenses.nsfwAdmin.get(originalTweet)),
-                  nsfwUserChange = nsfwUserMutation(TweetLenses.nsfwUser.get(originalTweet)),
+                  t  stamp = T  .now,
+                  byUser d = request.byUser d,
+                  nsfwAdm nChange = nsfwAdm nMutat on(T etLenses.nsfwAdm n.get(or g nalT et)),
+                  nsfwUserChange = nsfwUserMutat on(T etLenses.nsfwUser.get(or g nalT et)),
                   note = request.note,
                   host = request.host
                 )
               }
-              .flatMap(updatePossiblySensitiveTweetStore)
+              .flatMap(updatePoss blySens  veT etStore)
         }
-      } yield ()
+      } y eld ()
     }
 }

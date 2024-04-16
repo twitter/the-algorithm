@@ -1,253 +1,253 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
 /**
- * A packed ints reader reading packed values (int/long) written in {@link IntBlockPool}.
- * @see IntBlockPoolPackedLongsWriter
+ * A packed  nts reader read ng packed values ( nt/long) wr ten  n {@l nk  ntBlockPool}.
+ * @see  ntBlockPoolPackedLongsWr er
  *
  * A standard usage would be :
- * - set reader at an int block pool pointer and number of bits per packed value:
- *   {@link #jumpToInt(int, int)}}
- * - read: {@link #readPackedLong()}
+ * - set reader at an  nt block pool po nter and number of b s per packed value:
+ *   {@l nk #jumpTo nt( nt,  nt)}}
+ * - read: {@l nk #readPackedLong()}
  *
  * Example usage:
- * @see HighDFPackedIntsDocsEnum
- * @see HighDFPackedIntsDocsAndPositionsEnum
+ * @see H ghDFPacked ntsDocsEnum
+ * @see H ghDFPacked ntsDocsAndPos  onsEnum
  */
-public final class IntBlockPoolPackedLongsReader {
+publ c f nal class  ntBlockPoolPackedLongsReader {
   /**
-   * Mask used to convert an int to a long. We cannot just cast because it will fill in the higher
-   * 32 bits with the sign bit, but we need the higher 32 bits to be 0 instead.
+   * Mask used to convert an  nt to a long.   cannot just cast because   w ll f ll  n t  h g r
+   * 32 b s w h t  s gn b , but   need t  h g r 32 b s to be 0  nstead.
    */
-  private static final long LONG_MASK = 0xFFFFFFFFL;
+  pr vate stat c f nal long LONG_MASK = 0xFFFFFFFFL;
 
-  /** The int block pool from which packed ints will be read. */
-  private final IntBlockPool intBlockPool;
+  /** T   nt block pool from wh ch packed  nts w ll be read. */
+  pr vate f nal  ntBlockPool  ntBlockPool;
 
-  /** Pre-computed shifts, masks, and start int indices used to decode packed ints. */
-  private final PackedLongsReaderPreComputedValues preComputedValues;
+  /** Pre-computed sh fts, masks, and start  nt  nd ces used to decode packed  nts. */
+  pr vate f nal PackedLongsReaderPreComputedValues preComputedValues;
 
   /**
-   * The underlying {@link #intBlockPool} will be read block by blocks. The current read
-   * block will be identified by {@link #startPointerForCurrentBlock} and assigned to
-   * {@link #currentBlock}. {@link #indexInCurrentBlock} will be used access values from the
-   * {@link #currentBlock}.
+   * T  underly ng {@l nk # ntBlockPool} w ll be read block by blocks. T  current read
+   * block w ll be  dent f ed by {@l nk #startPo nterForCurrentBlock} and ass gned to
+   * {@l nk #currentBlock}. {@l nk # ndex nCurrentBlock} w ll be used access values from t 
+   * {@l nk #currentBlock}.
    */
-  private int[] currentBlock;
-  private int indexInCurrentBlock;
-  private int startPointerForCurrentBlock = -1;
+  pr vate  nt[] currentBlock;
+  pr vate  nt  ndex nCurrentBlock;
+  pr vate  nt startPo nterForCurrentBlock = -1;
 
   /**
-   * Whether the decoded packed values are spanning more than 1 int.
+   * W t r t  decoded packed values are spann ng more than 1  nt.
    * @see #readPackedLong()
    */
-  private boolean packedValueNeedsLong;
+  pr vate boolean packedValueNeedsLong;
 
   /**
    * Masks used to extract packed values.
    * @see #readPackedLong()
    */
-  private long packedValueMask;
+  pr vate long packedValueMask;
 
-  /** PRE-COMPUTED: The index of the first int that has a specific packed values. */
-  private int[] packedValueStartIndices;
+  /** PRE-COMPUTED: T   ndex of t  f rst  nt that has a spec f c packed values. */
+  pr vate  nt[] packedValueStart nd ces;
 
-  /** PRE-COMPUTED: The shifts and masks used to decode packed values. */
-  private int[] packedValueLowBitsRightShift;
-  private int[] packedValueMiddleBitsLeftShift;
-  private int[] packedValueMiddleBitsMask;
-  private int[] packedValueHighBitsLeftShift;
-  private int[] packedValueHighBitsMask;
+  /** PRE-COMPUTED: T  sh fts and masks used to decode packed values. */
+  pr vate  nt[] packedValueLowB sR ghtSh ft;
+  pr vate  nt[] packedValueM ddleB sLeftSh ft;
+  pr vate  nt[] packedValueM ddleB sMask;
+  pr vate  nt[] packedValueH ghB sLeftSh ft;
+  pr vate  nt[] packedValueH ghB sMask;
 
-  /** Index of packed values. */
-  private int packedValueIndex;
+  /**  ndex of packed values. */
+  pr vate  nt packedValue ndex;
 
   /**
-   * The {@link #indexInCurrentBlock} and {@link #startPointerForCurrentBlock} of the first int
-   * that holds packed values. This two values together uniquely form a int block pool pointer
-   * --- {@link #packedValueStartBlockStart} + {@link #packedValueStartBlockIndex} --- that points
-   * to the first int that has pointer.
+   * T  {@l nk # ndex nCurrentBlock} and {@l nk #startPo nterForCurrentBlock} of t  f rst  nt
+   * that holds packed values. T  two values toget r un quely form a  nt block pool po nter
+   * --- {@l nk #packedValueStartBlockStart} + {@l nk #packedValueStartBlock ndex} --- that po nts
+   * to t  f rst  nt that has po nter.
    *
-   * @see #jumpToInt(int, int)
+   * @see #jumpTo nt( nt,  nt)
    */
-  private int packedValueStartBlockIndex;
-  private int packedValueStartBlockStart;
+  pr vate  nt packedValueStartBlock ndex;
+  pr vate  nt packedValueStartBlockStart;
 
-  /** Current int read from {@link #currentBlock}. */
-  private int currentInt;
+  /** Current  nt read from {@l nk #currentBlock}. */
+  pr vate  nt current nt;
 
   /**
-   * If given, query cost will be tracked every time a int block is loaded.
+   *  f g ven, query cost w ll be tracked every t   a  nt block  s loaded.
    * @see #loadNextBlock()
    */
-  private final QueryCostTracker queryCostTracker;
-  private final QueryCostTracker.CostType queryCostType;
+  pr vate f nal QueryCostTracker queryCostTracker;
+  pr vate f nal QueryCostTracker.CostType queryCostType;
 
   /**
    * Default constructor.
    *
-   * @param intBlockPool from which packed ints will be read
-   * @param preComputedValues pre-computed shifts, masks, and start int
-   * @param queryCostTracker optional, query cost tracker used while loading a new block
-   * @param queryCostType optional, query cost type will be tracked while loading a new block
+   * @param  ntBlockPool from wh ch packed  nts w ll be read
+   * @param preComputedValues pre-computed sh fts, masks, and start  nt
+   * @param queryCostTracker opt onal, query cost tracker used wh le load ng a new block
+   * @param queryCostType opt onal, query cost type w ll be tracked wh le load ng a new block
    */
-  public IntBlockPoolPackedLongsReader(
-      IntBlockPool intBlockPool,
+  publ c  ntBlockPoolPackedLongsReader(
+       ntBlockPool  ntBlockPool,
       PackedLongsReaderPreComputedValues preComputedValues,
       @Nullable QueryCostTracker queryCostTracker,
       @Nullable QueryCostTracker.CostType queryCostType) {
-    this.intBlockPool = intBlockPool;
-    this.preComputedValues = preComputedValues;
+    t . ntBlockPool =  ntBlockPool;
+    t .preComputedValues = preComputedValues;
 
-    // For query cost tracking.
-    this.queryCostTracker = queryCostTracker;
-    this.queryCostType = queryCostType;
+    // For query cost track ng.
+    t .queryCostTracker = queryCostTracker;
+    t .queryCostType = queryCostType;
   }
 
   /**
-   * Constructor with {@link #queryCostTracker} and {@link #queryCostType} set to null.
+   * Constructor w h {@l nk #queryCostTracker} and {@l nk #queryCostType} set to null.
    *
-   * @param intBlockPool from which packed ints will be read
-   * @param preComputedValues pre-computed shifts, masks, and start int
+   * @param  ntBlockPool from wh ch packed  nts w ll be read
+   * @param preComputedValues pre-computed sh fts, masks, and start  nt
    */
-  public IntBlockPoolPackedLongsReader(
-      IntBlockPool intBlockPool,
+  publ c  ntBlockPoolPackedLongsReader(
+       ntBlockPool  ntBlockPool,
       PackedLongsReaderPreComputedValues preComputedValues) {
-    this(intBlockPool, preComputedValues, null, null);
+    t ( ntBlockPool, preComputedValues, null, null);
   }
 
   /**
-   * 1. Set the reader to starting reading at the given int block pool pointer. Correct block will
-   *    be loaded if the given pointer points to the different block than {@link #currentBlock}.
-   * 2. Update shifts, masks, and start int indices based on given number of bits per packed value.
+   * 1. Set t  reader to start ng read ng at t  g ven  nt block pool po nter. Correct block w ll
+   *    be loaded  f t  g ven po nter po nts to t  d fferent block than {@l nk #currentBlock}.
+   * 2. Update sh fts, masks, and start  nt  nd ces based on g ven number of b s per packed value.
    * 3. Reset packed value sequence start data.
    *
-   * @param intBlockPoolPointer points to the int from which this reader will start reading
-   * @param bitsPerPackedValue number of bits per packed value.
+   * @param  ntBlockPoolPo nter po nts to t   nt from wh ch t  reader w ll start read ng
+   * @param b sPerPackedValue number of b s per packed value.
    */
-  public void jumpToInt(int intBlockPoolPointer, int bitsPerPackedValue) {
-    assert  bitsPerPackedValue <= Long.SIZE;
+  publ c vo d jumpTo nt( nt  ntBlockPoolPo nter,  nt b sPerPackedValue) {
+    assert  b sPerPackedValue <= Long.S ZE;
 
-    // Update indexInCurrentBlock and load a different index if needed.
-    int newBlockStart = IntBlockPool.getBlockStart(intBlockPoolPointer);
-    indexInCurrentBlock = IntBlockPool.getOffsetInBlock(intBlockPoolPointer);
+    // Update  ndex nCurrentBlock and load a d fferent  ndex  f needed.
+     nt newBlockStart =  ntBlockPool.getBlockStart( ntBlockPoolPo nter);
+     ndex nCurrentBlock =  ntBlockPool.getOffset nBlock( ntBlockPoolPo nter);
 
-    if (startPointerForCurrentBlock != newBlockStart) {
-      startPointerForCurrentBlock = newBlockStart;
+     f (startPo nterForCurrentBlock != newBlockStart) {
+      startPo nterForCurrentBlock = newBlockStart;
       loadNextBlock();
     }
 
-    // Re-set shifts, masks, and start int indices for the given number bits per packed value.
-    packedValueNeedsLong = bitsPerPackedValue > Integer.SIZE;
+    // Re-set sh fts, masks, and start  nt  nd ces for t  g ven number b s per packed value.
+    packedValueNeedsLong = b sPerPackedValue >  nteger.S ZE;
     packedValueMask =
-        bitsPerPackedValue == Long.SIZE ? 0xFFFFFFFFFFFFFFFFL : (1L << bitsPerPackedValue) - 1;
-    packedValueStartIndices = preComputedValues.getStartIntIndices(bitsPerPackedValue);
-    packedValueLowBitsRightShift = preComputedValues.getLowBitsRightShift(bitsPerPackedValue);
-    packedValueMiddleBitsLeftShift = preComputedValues.getMiddleBitsLeftShift(bitsPerPackedValue);
-    packedValueMiddleBitsMask = preComputedValues.getMiddleBitsMask(bitsPerPackedValue);
-    packedValueHighBitsLeftShift = preComputedValues.getHighBitsLeftShift(bitsPerPackedValue);
-    packedValueHighBitsMask = preComputedValues.getHighBitsMask(bitsPerPackedValue);
+        b sPerPackedValue == Long.S ZE ? 0xFFFFFFFFFFFFFFFFL : (1L << b sPerPackedValue) - 1;
+    packedValueStart nd ces = preComputedValues.getStart nt nd ces(b sPerPackedValue);
+    packedValueLowB sR ghtSh ft = preComputedValues.getLowB sR ghtSh ft(b sPerPackedValue);
+    packedValueM ddleB sLeftSh ft = preComputedValues.getM ddleB sLeftSh ft(b sPerPackedValue);
+    packedValueM ddleB sMask = preComputedValues.getM ddleB sMask(b sPerPackedValue);
+    packedValueH ghB sLeftSh ft = preComputedValues.getH ghB sLeftSh ft(b sPerPackedValue);
+    packedValueH ghB sMask = preComputedValues.getH ghB sMask(b sPerPackedValue);
 
     // Update packed values sequence start data.
-    packedValueIndex = 0;
-    packedValueStartBlockIndex = indexInCurrentBlock;
-    packedValueStartBlockStart = startPointerForCurrentBlock;
+    packedValue ndex = 0;
+    packedValueStartBlock ndex =  ndex nCurrentBlock;
+    packedValueStartBlockStart = startPo nterForCurrentBlock;
 
-    // Load an int to prepare for readPackedLong.
-    loadInt();
+    // Load an  nt to prepare for readPackedLong.
+    load nt();
   }
 
   /**
    * Read next packed value as a long.
    *
-   * Caller could cast the returned long to an int if needed.
-   * NOTICE! Be careful of overflow while casting a long to an int.
+   * Caller could cast t  returned long to an  nt  f needed.
+   * NOT CE! Be careful of overflow wh le cast ng a long to an  nt.
    *
-   * @return next packed value in a long.
+   * @return next packed value  n a long.
    */
-  public long readPackedLong() {
+  publ c long readPackedLong() {
     long packedValue;
 
-    if (packedValueNeedsLong) {
+     f (packedValueNeedsLong) {
       packedValue =
-          (LONG_MASK & currentInt)
-              >>> packedValueLowBitsRightShift[packedValueIndex] & packedValueMask;
+          (LONG_MASK & current nt)
+              >>> packedValueLowB sR ghtSh ft[packedValue ndex] & packedValueMask;
       packedValue |=
-          (LONG_MASK & loadInt()
-              & packedValueMiddleBitsMask[packedValueIndex])
-              << packedValueMiddleBitsLeftShift[packedValueIndex];
-      if (packedValueHighBitsLeftShift[packedValueIndex] != 0) {
+          (LONG_MASK & load nt()
+              & packedValueM ddleB sMask[packedValue ndex])
+              << packedValueM ddleB sLeftSh ft[packedValue ndex];
+       f (packedValueH ghB sLeftSh ft[packedValue ndex] != 0) {
         packedValue |=
-            (LONG_MASK & loadInt()
-                & packedValueHighBitsMask[packedValueIndex])
-                << packedValueHighBitsLeftShift[packedValueIndex];
+            (LONG_MASK & load nt()
+                & packedValueH ghB sMask[packedValue ndex])
+                << packedValueH ghB sLeftSh ft[packedValue ndex];
       }
     } else {
       packedValue =
-          currentInt >>> packedValueLowBitsRightShift[packedValueIndex] & packedValueMask;
-      if (packedValueMiddleBitsLeftShift[packedValueIndex] != 0) {
+          current nt >>> packedValueLowB sR ghtSh ft[packedValue ndex] & packedValueMask;
+       f (packedValueM ddleB sLeftSh ft[packedValue ndex] != 0) {
         packedValue |=
-            (loadInt()
-                & packedValueMiddleBitsMask[packedValueIndex])
-                << packedValueMiddleBitsLeftShift[packedValueIndex];
+            (load nt()
+                & packedValueM ddleB sMask[packedValue ndex])
+                << packedValueM ddleB sLeftSh ft[packedValue ndex];
       }
     }
 
-    packedValueIndex++;
+    packedValue ndex++;
     return packedValue;
   }
 
   /**
-   * A simple getter of {@link #packedValueIndex}.
+   * A s mple getter of {@l nk #packedValue ndex}.
    */
-  public int getPackedValueIndex() {
-    return packedValueIndex;
+  publ c  nt getPackedValue ndex() {
+    return packedValue ndex;
   }
 
   /**
-   * A setter of {@link #packedValueIndex}. This setter will also set the correct
-   * {@link #indexInCurrentBlock} based on {@link #packedValueStartIndices}.
+   * A setter of {@l nk #packedValue ndex}. T  setter w ll also set t  correct
+   * {@l nk # ndex nCurrentBlock} based on {@l nk #packedValueStart nd ces}.
    */
-  public void setPackedValueIndex(int packedValueIndex) {
-    this.packedValueIndex = packedValueIndex;
-    this.indexInCurrentBlock =
-        packedValueStartBlockIndex + packedValueStartIndices[packedValueIndex];
-    this.startPointerForCurrentBlock = packedValueStartBlockStart;
-    loadInt();
+  publ c vo d setPackedValue ndex( nt packedValue ndex) {
+    t .packedValue ndex = packedValue ndex;
+    t . ndex nCurrentBlock =
+        packedValueStartBlock ndex + packedValueStart nd ces[packedValue ndex];
+    t .startPo nterForCurrentBlock = packedValueStartBlockStart;
+    load nt();
   }
 
   /**************************
-   * Private Helper Methods *
+   * Pr vate  lper  thods *
    **************************/
 
   /**
-   * Load a new int block, specified by {@link #startPointerForCurrentBlock}, from
-   * {@link #intBlockPool}. If {@link #queryCostTracker} is given, query cost with type
-   * {@link #queryCostType} will be tracked as well.
+   * Load a new  nt block, spec f ed by {@l nk #startPo nterForCurrentBlock}, from
+   * {@l nk # ntBlockPool}.  f {@l nk #queryCostTracker}  s g ven, query cost w h type
+   * {@l nk #queryCostType} w ll be tracked as  ll.
    */
-  private void loadNextBlock() {
-    if (queryCostTracker != null) {
+  pr vate vo d loadNextBlock() {
+     f (queryCostTracker != null) {
       assert queryCostType != null;
       queryCostTracker.track(queryCostType);
     }
 
-    currentBlock = intBlockPool.getBlock(startPointerForCurrentBlock);
+    currentBlock =  ntBlockPool.getBlock(startPo nterForCurrentBlock);
   }
 
   /**
-   * Load an int from {@link #currentBlock}. The loaded int will be returned as well.
-   * If the {@link #currentBlock} is used up, next block will be automatically loaded.
+   * Load an  nt from {@l nk #currentBlock}. T  loaded  nt w ll be returned as  ll.
+   *  f t  {@l nk #currentBlock}  s used up, next block w ll be automat cally loaded.
    */
-  private int loadInt() {
-    while (indexInCurrentBlock >= IntBlockPool.BLOCK_SIZE) {
-      startPointerForCurrentBlock += IntBlockPool.BLOCK_SIZE;
+  pr vate  nt load nt() {
+    wh le ( ndex nCurrentBlock >=  ntBlockPool.BLOCK_S ZE) {
+      startPo nterForCurrentBlock +=  ntBlockPool.BLOCK_S ZE;
       loadNextBlock();
 
-      indexInCurrentBlock = Math.max(indexInCurrentBlock - IntBlockPool.BLOCK_SIZE, 0);
+       ndex nCurrentBlock = Math.max( ndex nCurrentBlock -  ntBlockPool.BLOCK_S ZE, 0);
     }
 
-    currentInt = currentBlock[indexInCurrentBlock++];
-    return currentInt;
+    current nt = currentBlock[ ndex nCurrentBlock++];
+    return current nt;
   }
 }

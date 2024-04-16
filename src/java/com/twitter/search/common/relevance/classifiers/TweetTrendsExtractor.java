@@ -1,165 +1,165 @@
-package com.twitter.search.common.relevance.classifiers;
+package com.tw ter.search.common.relevance.class f ers;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.L st;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect. mmutableL st;
+ mport com.google.common.collect. mmutableMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
-import com.twitter.search.common.metrics.RelevanceStats;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.relevance.NGramCache;
-import com.twitter.search.common.relevance.TrendsThriftDataServiceManager;
-import com.twitter.search.common.relevance.config.TweetProcessingConfig;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.features.TweetTextFeatures;
-import com.twitter.util.Duration;
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers on;
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er;
+ mport com.tw ter.search.common. tr cs.RelevanceStats;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.relevance.NGramCac ;
+ mport com.tw ter.search.common.relevance.TrendsThr ftDataServ ceManager;
+ mport com.tw ter.search.common.relevance.conf g.T etProcess ngConf g;
+ mport com.tw ter.search.common.relevance.ent  es.Tw ter ssage;
+ mport com.tw ter.search.common.relevance.features.T etTextFeatures;
+ mport com.tw ter.ut l.Durat on;
 
 /**
- * Determines if tweets contains trending terms.
- * Sets corresponding bits and fields to TweetTextFeatures.
+ * Determ nes  f t ets conta ns trend ng terms.
+ * Sets correspond ng b s and f elds to T etTextFeatures.
  */
-public class TweetTrendsExtractor {
+publ c class T etTrendsExtractor {
 
-  // The amount of time before filling the trends cache for the first time.
-  private static final long INIT_TRENDS_CACHE_DELAY = 0;
+  // T  amount of t   before f ll ng t  trends cac  for t  f rst t  .
+  pr vate stat c f nal long  N T_TRENDS_CACHE_DELAY = 0;
 
-  private static final Logger LOG = LoggerFactory.getLogger(TweetTrendsExtractor.class.getName());
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(T etTrendsExtractor.class.getNa ());
 
-  private static final int LOGGING_INTERVAL = 100000;
+  pr vate stat c f nal  nt LOGG NG_ NTERVAL = 100000;
 
-  // Singleton trends data service. This is the default service used unless a different
-  // instance is injected in the constructor.
-  private static volatile TrendsThriftDataServiceManager trendsDataServiceSingleton;
+  // S ngleton trends data serv ce. T   s t  default serv ce used unless a d fferent
+  //  nstance  s  njected  n t  constructor.
+  pr vate stat c volat le TrendsThr ftDataServ ceManager trendsDataServ ceS ngleton;
 
-  // trends cache used for extracting trends from tweets
-  private static volatile ImmutableMap<PenguinVersion, NGramCache> trendsCaches;
+  // trends cac  used for extract ng trends from t ets
+  pr vate stat c volat le  mmutableMap<Pengu nVers on, NGramCac > trendsCac s;
 
-  private static synchronized void initTrendsDataServiceInstance(
-      ServiceIdentifier serviceIdentifier,
-      List<PenguinVersion> supportedPenguinVersions) {
-    if (trendsDataServiceSingleton == null) {
-      TweetProcessingConfig.init();
-      if (trendsCaches == null) {
-        ImmutableMap.Builder<PenguinVersion, NGramCache> trendsCachesBuilder =
-            ImmutableMap.builder();
-        for (PenguinVersion penguinVersion : supportedPenguinVersions) {
-          NGramCache cache = NGramCache.builder()
-              .maxCacheSize(
-                  TweetProcessingConfig.getInt("trends_extractor_num_trends_to_cache", 5000))
-              .penguinVersion(penguinVersion)
-              .build();
-          trendsCachesBuilder.put(penguinVersion, cache);
+  pr vate stat c synchron zed vo d  n TrendsDataServ ce nstance(
+      Serv ce dent f er serv ce dent f er,
+      L st<Pengu nVers on> supportedPengu nVers ons) {
+     f (trendsDataServ ceS ngleton == null) {
+      T etProcess ngConf g. n ();
+       f (trendsCac s == null) {
+         mmutableMap.Bu lder<Pengu nVers on, NGramCac > trendsCac sBu lder =
+             mmutableMap.bu lder();
+        for (Pengu nVers on pengu nVers on : supportedPengu nVers ons) {
+          NGramCac  cac  = NGramCac .bu lder()
+              .maxCac S ze(
+                  T etProcess ngConf g.get nt("trends_extractor_num_trends_to_cac ", 5000))
+              .pengu nVers on(pengu nVers on)
+              .bu ld();
+          trendsCac sBu lder.put(pengu nVers on, cac );
         }
-        trendsCaches = trendsCachesBuilder.build();
+        trendsCac s = trendsCac sBu lder.bu ld();
       }
-      long rawTimeout = TweetProcessingConfig.getLong("trends_extractor_timeout_msec", 200);
-      long rawInterval =
-          TweetProcessingConfig.getLong("trends_extractor_reload_interval_sec", 600L);
-      trendsDataServiceSingleton =
-          TrendsThriftDataServiceManager.newInstance(
-              serviceIdentifier,
-              TweetProcessingConfig.getInt("trends_extractor_retry", 2),
-              Duration.apply(rawTimeout, TimeUnit.MILLISECONDS),
-              Duration.apply(INIT_TRENDS_CACHE_DELAY, TimeUnit.SECONDS),
-              Duration.apply(rawInterval, TimeUnit.SECONDS),
-              trendsCaches.values().asList()
+      long rawT  out = T etProcess ngConf g.getLong("trends_extractor_t  out_msec", 200);
+      long raw nterval =
+          T etProcess ngConf g.getLong("trends_extractor_reload_ nterval_sec", 600L);
+      trendsDataServ ceS ngleton =
+          TrendsThr ftDataServ ceManager.new nstance(
+              serv ce dent f er,
+              T etProcess ngConf g.get nt("trends_extractor_retry", 2),
+              Durat on.apply(rawT  out, T  Un .M LL SECONDS),
+              Durat on.apply( N T_TRENDS_CACHE_DELAY, T  Un .SECONDS),
+              Durat on.apply(raw nterval, T  Un .SECONDS),
+              trendsCac s.values().asL st()
           );
-      trendsDataServiceSingleton.startAutoRefresh();
-      LOG.info("Started trend extractor.");
+      trendsDataServ ceS ngleton.startAutoRefresh();
+      LOG. nfo("Started trend extractor.");
     }
   }
 
-  public TweetTrendsExtractor(
-      ServiceIdentifier serviceIdentifier,
-      List<PenguinVersion> supportedPenguinVersions) {
-    initTrendsDataServiceInstance(serviceIdentifier, supportedPenguinVersions);
+  publ c T etTrendsExtractor(
+      Serv ce dent f er serv ce dent f er,
+      L st<Pengu nVers on> supportedPengu nVers ons) {
+     n TrendsDataServ ce nstance(serv ce dent f er, supportedPengu nVers ons);
   }
 
   /**
-   * Extract trending terms from the specified tweet.
-   * @param tweet the specified tweet
+   * Extract trend ng terms from t  spec f ed t et.
+   * @param t et t  spec f ed t et
    */
-  public void extractTrends(TwitterMessage tweet) {
-    extractTrends(ImmutableList.of(tweet));
+  publ c vo d extractTrends(Tw ter ssage t et) {
+    extractTrends( mmutableL st.of(t et));
   }
 
   /**
-   * Extract trending terms from the specified list of tweets.
-   * @param tweets a list of tweets
+   * Extract trend ng terms from t  spec f ed l st of t ets.
+   * @param t ets a l st of t ets
    */
-  public void extractTrends(Iterable<TwitterMessage> tweets) {
-    Preconditions.checkNotNull(tweets);
+  publ c vo d extractTrends( erable<Tw ter ssage> t ets) {
+    Precond  ons.c ckNotNull(t ets);
 
-    for (TwitterMessage tweet : tweets) {
-      for (PenguinVersion penguinVersion : tweet.getSupportedPenguinVersions()) {
-        NGramCache trendsCache = trendsCaches.get(penguinVersion);
-        if (trendsCache == null) {
-          LOG.info("Trends cache for Penguin version " + penguinVersion + " is null.");
-          continue;
-        } else if (trendsCache.numTrendingTerms() == 0) {
-          LOG.info("Trends cache for Penguin version " + penguinVersion + " is empty.");
-          continue;
+    for (Tw ter ssage t et : t ets) {
+      for (Pengu nVers on pengu nVers on : t et.getSupportedPengu nVers ons()) {
+        NGramCac  trendsCac  = trendsCac s.get(pengu nVers on);
+         f (trendsCac  == null) {
+          LOG. nfo("Trends cac  for Pengu n vers on " + pengu nVers on + "  s null.");
+          cont nue;
+        } else  f (trendsCac .numTrend ngTerms() == 0) {
+          LOG. nfo("Trends cac  for Pengu n vers on " + pengu nVers on + "  s empty.");
+          cont nue;
         }
 
-        List<String> trendsInTweet = trendsCache.extractTrendsFrom(
-            tweet.getTokenizedCharSequence(penguinVersion), tweet.getLocale());
+        L st<Str ng> trends nT et = trendsCac .extractTrendsFrom(
+            t et.getToken zedCharSequence(pengu nVers on), t et.getLocale());
 
-        TweetTextFeatures textFeatures = tweet.getTweetTextFeatures(penguinVersion);
-        if (textFeatures == null || textFeatures.getTokens() == null) {
-          continue;
+        T etTextFeatures textFeatures = t et.getT etTextFeatures(pengu nVers on);
+         f (textFeatures == null || textFeatures.getTokens() == null) {
+          cont nue;
         }
 
-        textFeatures.getTrendingTerms().addAll(trendsInTweet);
+        textFeatures.getTrend ngTerms().addAll(trends nT et);
 
         updateTrendsStats(
-            tweet,
+            t et,
             textFeatures,
-            penguinVersion,
+            pengu nVers on,
             RelevanceStats.exportLong(
-                "trends_extractor_has_trends_" + penguinVersion.name().toLowerCase()),
+                "trends_extractor_has_trends_" + pengu nVers on.na ().toLo rCase()),
             RelevanceStats.exportLong(
-                "trends_extractor_no_trends_" + penguinVersion.name().toLowerCase()),
+                "trends_extractor_no_trends_" + pengu nVers on.na ().toLo rCase()),
             RelevanceStats.exportLong(
-                "trends_extractor_too_many_trends_" + penguinVersion.name().toLowerCase()));
+                "trends_extractor_too_many_trends_" + pengu nVers on.na ().toLo rCase()));
       }
     }
   }
 
-  private void updateTrendsStats(TwitterMessage tweet,
-                                 TweetTextFeatures textFeatures,
-                                 PenguinVersion penguinVersion,
+  pr vate vo d updateTrendsStats(Tw ter ssage t et,
+                                 T etTextFeatures textFeatures,
+                                 Pengu nVers on pengu nVers on,
                                  SearchCounter hasTrendsCounterToUpdate,
                                  SearchCounter noTrendsCounterToUpdate,
                                  SearchCounter tooManyTrendsCounterToUpdate) {
-    int numTrendingTerms = textFeatures.getTrendingTerms().size();
-    if (numTrendingTerms == 0) {
-      noTrendsCounterToUpdate.increment();
+     nt numTrend ngTerms = textFeatures.getTrend ngTerms().s ze();
+     f (numTrend ngTerms == 0) {
+      noTrendsCounterToUpdate. ncre nt();
     } else {
-      if (numTrendingTerms > 1) {
-        tooManyTrendsCounterToUpdate.increment();
+       f (numTrend ngTerms > 1) {
+        tooManyTrendsCounterToUpdate. ncre nt();
       }
-      hasTrendsCounterToUpdate.increment();
+      hasTrendsCounterToUpdate. ncre nt();
     }
 
     long counter = noTrendsCounterToUpdate.get();
-    if (counter % LOGGING_INTERVAL == 0) {
+     f (counter % LOGG NG_ NTERVAL == 0) {
       long hasTrends = hasTrendsCounterToUpdate.get();
       long noTrends = noTrendsCounterToUpdate.get();
       long tooManyTrends = tooManyTrendsCounterToUpdate.get();
-      double ratio = 100.0d * hasTrends / (hasTrends + noTrends + 1);
-      double tooManyTrendsRatio = 100.0d * tooManyTrends / (hasTrends + 1);
-      LOG.info(String.format(
-          "Has trends %d, no trends %d, ratio %.2f, too many trends %.2f,"
-              + " sample tweet id [%d] matching terms [%s] penguin version [%s]",
-          hasTrends, noTrends, ratio, tooManyTrendsRatio, tweet.getId(),
-          textFeatures.getTrendingTerms(), penguinVersion));
+      double rat o = 100.0d * hasTrends / (hasTrends + noTrends + 1);
+      double tooManyTrendsRat o = 100.0d * tooManyTrends / (hasTrends + 1);
+      LOG. nfo(Str ng.format(
+          "Has trends %d, no trends %d, rat o %.2f, too many trends %.2f,"
+              + " sample t et  d [%d] match ng terms [%s] pengu n vers on [%s]",
+          hasTrends, noTrends, rat o, tooManyTrendsRat o, t et.get d(),
+          textFeatures.getTrend ngTerms(), pengu nVers on));
     }
   }
 }

@@ -1,57 +1,57 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.tw ter.cr_m xer.s m lar y_eng ne
 
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.param.ProducerBasedUserTweetGraphParams
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.user_tweet_graph.thriftscala.ProducerBasedRelatedTweetRequest
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import javax.inject.Singleton
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.timelines.configapi
-import com.twitter.recos.user_tweet_graph.thriftscala.UserTweetGraph
+ mport com.tw ter.cr_m xer.model.S m lar yEng ne nfo
+ mport com.tw ter.cr_m xer.model.T etW hScore
+ mport com.tw ter.cr_m xer.param.ProducerBasedUserT etGraphParams
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.recos.user_t et_graph.thr ftscala.ProducerBasedRelatedT etRequest
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
+ mport javax. nject.S ngleton
+ mport com.tw ter.cr_m xer.param.GlobalParams
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.fr gate.common.ut l.StatsUt l
+ mport com.tw ter.t  l nes.conf gap 
+ mport com.tw ter.recos.user_t et_graph.thr ftscala.UserT etGraph
 
 /**
- * This store looks for similar tweets from UserTweetGraph for a Source ProducerId
- * For a query producerId,User Tweet Graph (UTG),
- * lets us find out which tweets the query producer's followers co-engaged
+ * T  store looks for s m lar t ets from UserT etGraph for a S ce Producer d
+ * For a query producer d,User T et Graph (UTG),
+ * lets us f nd out wh ch t ets t  query producer's follo rs co-engaged
  */
-@Singleton
-case class ProducerBasedUserTweetGraphSimilarityEngine(
-  userTweetGraphService: UserTweetGraph.MethodPerEndpoint,
-  statsReceiver: StatsReceiver)
-    extends ReadableStore[ProducerBasedUserTweetGraphSimilarityEngine.Query, Seq[
-      TweetWithScore
+@S ngleton
+case class ProducerBasedUserT etGraphS m lar yEng ne(
+  userT etGraphServ ce: UserT etGraph. thodPerEndpo nt,
+  statsRece ver: StatsRece ver)
+    extends ReadableStore[ProducerBasedUserT etGraphS m lar yEng ne.Query, Seq[
+      T etW hScore
     ]] {
 
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val fetchCandidatesStat = stats.scope("fetchCandidates")
+  pr vate val stats = statsRece ver.scope(t .getClass.getS mpleNa )
+  pr vate val fetchCand datesStat = stats.scope("fetchCand dates")
 
-  override def get(
-    query: ProducerBasedUserTweetGraphSimilarityEngine.Query
-  ): Future[Option[Seq[TweetWithScore]]] = {
-    query.sourceId match {
-      case InternalId.UserId(producerId) =>
-        StatsUtil.trackOptionItemsStats(fetchCandidatesStat) {
-          val relatedTweetRequest =
-            ProducerBasedRelatedTweetRequest(
-              producerId,
-              maxResults = Some(query.maxResults),
-              minCooccurrence = Some(query.minCooccurrence),
-              minScore = Some(query.minScore),
-              maxNumFollowers = Some(query.maxNumFollowers),
-              maxTweetAgeInHours = Some(query.maxTweetAgeInHours),
+  overr de def get(
+    query: ProducerBasedUserT etGraphS m lar yEng ne.Query
+  ): Future[Opt on[Seq[T etW hScore]]] = {
+    query.s ce d match {
+      case  nternal d.User d(producer d) =>
+        StatsUt l.trackOpt on emsStats(fetchCand datesStat) {
+          val relatedT etRequest =
+            ProducerBasedRelatedT etRequest(
+              producer d,
+              maxResults = So (query.maxResults),
+              m nCooccurrence = So (query.m nCooccurrence),
+              m nScore = So (query.m nScore),
+              maxNumFollo rs = So (query.maxNumFollo rs),
+              maxT etAge nH s = So (query.maxT etAge nH s),
             )
 
-          userTweetGraphService.producerBasedRelatedTweets(relatedTweetRequest).map {
-            relatedTweetResponse =>
-              val candidates =
-                relatedTweetResponse.tweets.map(tweet => TweetWithScore(tweet.tweetId, tweet.score))
-              Some(candidates)
+          userT etGraphServ ce.producerBasedRelatedT ets(relatedT etRequest).map {
+            relatedT etResponse =>
+              val cand dates =
+                relatedT etResponse.t ets.map(t et => T etW hScore(t et.t et d, t et.score))
+              So (cand dates)
           }
         }
       case _ =>
@@ -60,35 +60,35 @@ case class ProducerBasedUserTweetGraphSimilarityEngine(
   }
 }
 
-object ProducerBasedUserTweetGraphSimilarityEngine {
+object ProducerBasedUserT etGraphS m lar yEng ne {
 
-  def toSimilarityEngineInfo(score: Double): SimilarityEngineInfo = {
-    SimilarityEngineInfo(
-      similarityEngineType = SimilarityEngineType.ProducerBasedUserTweetGraph,
-      modelId = None,
-      score = Some(score))
+  def toS m lar yEng ne nfo(score: Double): S m lar yEng ne nfo = {
+    S m lar yEng ne nfo(
+      s m lar yEng neType = S m lar yEng neType.ProducerBasedUserT etGraph,
+      model d = None,
+      score = So (score))
   }
 
   case class Query(
-    sourceId: InternalId,
-    maxResults: Int,
-    minCooccurrence: Int, // require at least {minCooccurrence} lhs user engaged with returned tweet
-    minScore: Double,
-    maxNumFollowers: Int, // max number of lhs users
-    maxTweetAgeInHours: Int)
+    s ce d:  nternal d,
+    maxResults:  nt,
+    m nCooccurrence:  nt, // requ re at least {m nCooccurrence} lhs user engaged w h returned t et
+    m nScore: Double,
+    maxNumFollo rs:  nt, // max number of lhs users
+    maxT etAge nH s:  nt)
 
   def fromParams(
-    sourceId: InternalId,
-    params: configapi.Params,
-  ): EngineQuery[Query] = {
-    EngineQuery(
+    s ce d:  nternal d,
+    params: conf gap .Params,
+  ): Eng neQuery[Query] = {
+    Eng neQuery(
       Query(
-        sourceId = sourceId,
-        maxResults = params(GlobalParams.MaxCandidateNumPerSourceKeyParam),
-        minCooccurrence = params(ProducerBasedUserTweetGraphParams.MinCoOccurrenceParam),
-        maxNumFollowers = params(ProducerBasedUserTweetGraphParams.MaxNumFollowersParam),
-        maxTweetAgeInHours = params(GlobalParams.MaxTweetAgeHoursParam).inHours,
-        minScore = params(ProducerBasedUserTweetGraphParams.MinScoreParam)
+        s ce d = s ce d,
+        maxResults = params(GlobalParams.MaxCand dateNumPerS ceKeyParam),
+        m nCooccurrence = params(ProducerBasedUserT etGraphParams.M nCoOccurrenceParam),
+        maxNumFollo rs = params(ProducerBasedUserT etGraphParams.MaxNumFollo rsParam),
+        maxT etAge nH s = params(GlobalParams.MaxT etAgeH sParam). nH s,
+        m nScore = params(ProducerBasedUserT etGraphParams.M nScoreParam)
       ),
       params
     )

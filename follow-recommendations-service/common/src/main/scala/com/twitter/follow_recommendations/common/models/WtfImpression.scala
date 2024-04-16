@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-import com.twitter.util.Time
+ mport com.tw ter.ut l.T  
 
 /**
- * Domain model for representing impressions on wtf recommendations in the past 16 days
+ * Doma n model for represent ng  mpress ons on wtf recom ndat ons  n t  past 16 days
  */
-case class WtfImpression(
-  candidateId: Long,
-  displayLocation: DisplayLocation,
-  latestTime: Time,
-  counts: Int)
+case class Wtf mpress on(
+  cand date d: Long,
+  d splayLocat on: D splayLocat on,
+  latestT  : T  ,
+  counts:  nt)

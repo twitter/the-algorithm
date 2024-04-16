@@ -1,70 +1,70 @@
-package com.twitter.search.earlybird_root.routers;
+package com.tw ter.search.earlyb rd_root.routers;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+ mport javax. nject. nject;
+ mport javax. nject.Na d;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.InjectionNames;
-import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchRank ngMode;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdFeatureSc ma rger;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.earlyb rd_root.common. nject onNa s;
+ mport com.tw ter.search.earlyb rd_root.f lters.Earlyb rdT  RangeF lter;
 
-public class RecencyRequestRouter extends AbstractRecencyAndRelevanceRequestRouter {
-  private static final SearchCounter SKIPPED_ARCHIVE_DUE_TO_REALTIME_EARLY_TERMINATION_COUNTER =
-      SearchCounter.export("recency_skipped_archive_due_to_realtime_early_termination");
-  private static final SearchCounter SKIPPED_ARCHIVE_DUE_TO_REALTIME_ENOUGH_RESULTS_COUNTER =
-      SearchCounter.export("recency_skipped_archive_due_to_realtime_enough_results");
+publ c class RecencyRequestRouter extends AbstractRecencyAndRelevanceRequestRouter {
+  pr vate stat c f nal SearchCounter SK PPED_ARCH VE_DUE_TO_REALT ME_EARLY_TERM NAT ON_COUNTER =
+      SearchCounter.export("recency_sk pped_arch ve_due_to_realt  _early_term nat on");
+  pr vate stat c f nal SearchCounter SK PPED_ARCH VE_DUE_TO_REALT ME_ENOUGH_RESULTS_COUNTER =
+      SearchCounter.export("recency_sk pped_arch ve_due_to_realt  _enough_results");
 
-  @Inject
-  public RecencyRequestRouter(
-      @Named(InjectionNames.REALTIME)
-      Service<EarlybirdRequestContext, EarlybirdResponse> realtime,
-      @Named(InjectionNames.PROTECTED)
-      Service<EarlybirdRequestContext, EarlybirdResponse> protectedRealtime,
-      @Named(InjectionNames.FULL_ARCHIVE)
-      Service<EarlybirdRequestContext, EarlybirdResponse> fullArchive,
-      @Named(RecencyRequestRouterModule.REALTIME_TIME_RANGE_FILTER)
-      EarlybirdTimeRangeFilter realtimeTimeRangeFilter,
-      @Named(RecencyRequestRouterModule.PROTECTED_TIME_RANGE_FILTER)
-      EarlybirdTimeRangeFilter protectedTimeRangeFilter,
-      @Named(RecencyRequestRouterModule.FULL_ARCHIVE_TIME_RANGE_FILTER)
-      EarlybirdTimeRangeFilter fullArchiveTimeRangeFilter,
+  @ nject
+  publ c RecencyRequestRouter(
+      @Na d( nject onNa s.REALT ME)
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> realt  ,
+      @Na d( nject onNa s.PROTECTED)
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> protectedRealt  ,
+      @Na d( nject onNa s.FULL_ARCH VE)
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> fullArch ve,
+      @Na d(RecencyRequestRouterModule.REALT ME_T ME_RANGE_F LTER)
+      Earlyb rdT  RangeF lter realt  T  RangeF lter,
+      @Na d(RecencyRequestRouterModule.PROTECTED_T ME_RANGE_F LTER)
+      Earlyb rdT  RangeF lter protectedT  RangeF lter,
+      @Na d(RecencyRequestRouterModule.FULL_ARCH VE_T ME_RANGE_F LTER)
+      Earlyb rdT  RangeF lter fullArch veT  RangeF lter,
       Clock clock,
-      SearchDecider decider,
-      EarlybirdFeatureSchemaMerger featureSchemaMerger) {
-    super(realtime,
-          protectedRealtime,
-          fullArchive,
-          realtimeTimeRangeFilter,
-          protectedTimeRangeFilter,
-          fullArchiveTimeRangeFilter,
-          ThriftSearchRankingMode.RECENCY,
+      SearchDec der dec der,
+      Earlyb rdFeatureSc ma rger featureSc ma rger) {
+    super(realt  ,
+          protectedRealt  ,
+          fullArch ve,
+          realt  T  RangeF lter,
+          protectedT  RangeF lter,
+          fullArch veT  RangeF lter,
+          Thr ftSearchRank ngMode.RECENCY,
           clock,
-          decider,
-          featureSchemaMerger);
+          dec der,
+          featureSc ma rger);
   }
 
-  @Override
-  protected boolean shouldSendRequestToFullArchiveCluster(
-      EarlybirdRequest request, EarlybirdResponse realtimeResponse) {
-    boolean isEarlyTerminated = realtimeResponse.isSetEarlyTerminationInfo()
-        && realtimeResponse.getEarlyTerminationInfo().isEarlyTerminated();
-    if (isEarlyTerminated) {
-      SKIPPED_ARCHIVE_DUE_TO_REALTIME_EARLY_TERMINATION_COUNTER.increment();
+  @Overr de
+  protected boolean shouldSendRequestToFullArch veCluster(
+      Earlyb rdRequest request, Earlyb rdResponse realt  Response) {
+    boolean  sEarlyTerm nated = realt  Response. sSetEarlyTerm nat on nfo()
+        && realt  Response.getEarlyTerm nat on nfo(). sEarlyTerm nated();
+     f ( sEarlyTerm nated) {
+      SK PPED_ARCH VE_DUE_TO_REALT ME_EARLY_TERM NAT ON_COUNTER. ncre nt();
       return false;
     }
 
-    // Check if we have the minimum number of results to fulfill the original request.
-    int numResultsRequested = request.getSearchQuery().getNumResults();
-    int actualNumResults = realtimeResponse.getSearchResults().getResultsSize();
-    if (actualNumResults >= numResultsRequested) {
-      SKIPPED_ARCHIVE_DUE_TO_REALTIME_ENOUGH_RESULTS_COUNTER.increment();
+    // C ck  f   have t  m n mum number of results to fulf ll t  or g nal request.
+     nt numResultsRequested = request.getSearchQuery().getNumResults();
+     nt actualNumResults = realt  Response.getSearchResults().getResultsS ze();
+     f (actualNumResults >= numResultsRequested) {
+      SK PPED_ARCH VE_DUE_TO_REALT ME_ENOUGH_RESULTS_COUNTER. ncre nt();
       return false;
     }
 

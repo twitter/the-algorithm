@@ -1,41 +1,41 @@
-package com.twitter.frigate.pushservice.refresh_handler.cross
+package com.tw ter.fr gate.pushserv ce.refresh_handler.cross
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.util.MRPushCopy
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base._
+ mport com.tw ter.fr gate.common.ut l.MRPushCopy
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter.ut l.Future
 
-private[cross] class CopyFilters(statsReceiver: StatsReceiver) {
+pr vate[cross] class CopyF lters(statsRece ver: StatsRece ver) {
 
-  private val copyPredicates = new CopyPredicates(statsReceiver.scope("copy_predicate"))
+  pr vate val copyPred cates = new CopyPred cates(statsRece ver.scope("copy_pred cate"))
 
-  def execute(rawCandidate: RawCandidate, pushCopies: Seq[MRPushCopy]): Future[Seq[MRPushCopy]] = {
-    val candidateCopyPairs: Seq[CandidateCopyPair] =
-      pushCopies.map(CandidateCopyPair(rawCandidate, _))
+  def execute(rawCand date: RawCand date, pushCop es: Seq[MRPushCopy]): Future[Seq[MRPushCopy]] = {
+    val cand dateCopyPa rs: Seq[Cand dateCopyPa r] =
+      pushCop es.map(Cand dateCopyPa r(rawCand date, _))
 
-    val compositePredicate: Predicate[CandidateCopyPair] = rawCandidate match {
-      case _: F1FirstDegree | _: OutOfNetworkTweetCandidate | _: EventCandidate |
-          _: TopicProofTweetCandidate | _: ListPushCandidate | _: HermitInterestBasedUserFollow |
-          _: UserFollowWithoutSocialContextCandidate | _: DiscoverTwitterCandidate |
-          _: TopTweetImpressionsCandidate | _: TrendTweetCandidate |
-          _: SubscribedSearchTweetCandidate | _: DigestCandidate =>
-        copyPredicates.alwaysTruePredicate
+    val compos ePred cate: Pred cate[Cand dateCopyPa r] = rawCand date match {
+      case _: F1F rstDegree | _: OutOfNetworkT etCand date | _: EventCand date |
+          _: Top cProofT etCand date | _: L stPushCand date | _:  rm  nterestBasedUserFollow |
+          _: UserFollowW houtSoc alContextCand date | _: D scoverTw terCand date |
+          _: TopT et mpress onsCand date | _: TrendT etCand date |
+          _: Subscr bedSearchT etCand date | _: D gestCand date =>
+        copyPred cates.alwaysTruePred cate
 
-      case _: SocialContextActions => copyPredicates.displaySocialContextPredicate
+      case _: Soc alContextAct ons => copyPred cates.d splaySoc alContextPred cate
 
-      case _ => copyPredicates.unrecognizedCandidatePredicate // block unrecognised candidates
+      case _ => copyPred cates.unrecogn zedCand datePred cate // block unrecogn sed cand dates
     }
 
-    // apply predicate to all [[MRPushCopy]] objects
-    val filterResults: Future[Seq[Boolean]] = compositePredicate(candidateCopyPairs)
-    filterResults.map { results: Seq[Boolean] =>
-      val seqBuilder = Seq.newBuilder[MRPushCopy]
-      results.zip(pushCopies).foreach {
-        case (result, pushCopy) => if (result) seqBuilder += pushCopy
+    // apply pred cate to all [[MRPushCopy]] objects
+    val f lterResults: Future[Seq[Boolean]] = compos ePred cate(cand dateCopyPa rs)
+    f lterResults.map { results: Seq[Boolean] =>
+      val seqBu lder = Seq.newBu lder[MRPushCopy]
+      results.z p(pushCop es).foreach {
+        case (result, pushCopy) =>  f (result) seqBu lder += pushCopy
       }
-      seqBuilder.result()
+      seqBu lder.result()
     }
   }
 }

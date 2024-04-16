@@ -1,39 +1,39 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+package com.tw ter.product_m xer.component_l brary.p pel ne.cand date.who_to_follow_module
 
-import com.twitter.peoplediscovery.api.thriftscala.ClientContext
-import com.twitter.peoplediscovery.api.thriftscala.GetModuleRequest
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.peopled scovery.ap .thr ftscala.Cl entContext
+ mport com.tw ter.peopled scovery.ap .thr ftscala.GetModuleRequest
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes.conf gap .Param
 
-object WhoToFollowCandidatePipelineQueryTransformer {
-  val DisplayLocation = "timeline"
-  val SupportedLayouts = Seq("user-bio-list")
-  val LayoutVersion = 2
+object WhoToFollowCand dateP pel neQueryTransfor r {
+  val D splayLocat on = "t  l ne"
+  val SupportedLa ts = Seq("user-b o-l st")
+  val La tVers on = 2
 }
 
-case class WhoToFollowCandidatePipelineQueryTransformer[-Query <: PipelineQuery](
-  displayLocationParam: Param[String],
-  supportedLayoutsParam: Param[Seq[String]],
-  layoutVersionParam: Param[Int],
-  excludedUserIdsFeature: Option[Feature[PipelineQuery, Seq[Long]]],
-) extends CandidatePipelineQueryTransformer[Query, GetModuleRequest] {
+case class WhoToFollowCand dateP pel neQueryTransfor r[-Query <: P pel neQuery](
+  d splayLocat onParam: Param[Str ng],
+  supportedLa tsParam: Param[Seq[Str ng]],
+  la tVers onParam: Param[ nt],
+  excludedUser dsFeature: Opt on[Feature[P pel neQuery, Seq[Long]]],
+) extends Cand dateP pel neQueryTransfor r[Query, GetModuleRequest] {
 
-  override def transform(input: Query): GetModuleRequest =
+  overr de def transform( nput: Query): GetModuleRequest =
     GetModuleRequest(
-      clientContext = ClientContext(
-        userId = input.getRequiredUserId,
-        deviceId = input.clientContext.deviceId,
-        userAgent = input.clientContext.userAgent,
-        countryCode = input.clientContext.countryCode,
-        languageCode = input.clientContext.languageCode,
+      cl entContext = Cl entContext(
+        user d =  nput.getRequ redUser d,
+        dev ce d =  nput.cl entContext.dev ce d,
+        userAgent =  nput.cl entContext.userAgent,
+        countryCode =  nput.cl entContext.countryCode,
+        languageCode =  nput.cl entContext.languageCode,
       ),
-      displayLocation = input.params(displayLocationParam),
-      supportedLayouts = input.params(supportedLayoutsParam),
-      layoutVersion = input.params(layoutVersionParam),
-      excludedUserIds =
-        excludedUserIdsFeature.flatMap(feature => input.features.map(_.get(feature))),
-      includePromoted = Some(true),
+      d splayLocat on =  nput.params(d splayLocat onParam),
+      supportedLa ts =  nput.params(supportedLa tsParam),
+      la tVers on =  nput.params(la tVers onParam),
+      excludedUser ds =
+        excludedUser dsFeature.flatMap(feature =>  nput.features.map(_.get(feature))),
+       ncludePromoted = So (true),
     )
 }

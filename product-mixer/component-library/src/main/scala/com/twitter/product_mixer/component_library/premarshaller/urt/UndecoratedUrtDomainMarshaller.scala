@@ -1,148 +1,148 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt
+package com.tw ter.product_m xer.component_l brary.premarshaller.urt
 
-import com.twitter.product_mixer.component_library.model.candidate.ArticleCandidate
-import com.twitter.product_mixer.component_library.model.candidate.AudioSpaceCandidate
-import com.twitter.product_mixer.component_library.model.candidate.TopicCandidate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.component_library.model.candidate.TwitterListCandidate
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.AddEntriesInstructionBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.BaseUrtMetadataBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtCursorBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtCursorUpdater
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtInstructionBuilder
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.functional_component.premarshaller.UnsupportedCandidateDomainMarshallerException
-import com.twitter.product_mixer.core.functional_component.premarshaller.UnsupportedModuleDomainMarshallerException
-import com.twitter.product_mixer.core.functional_component.premarshaller.UnsupportedPresentationDomainMarshallerException
-import com.twitter.product_mixer.core.model.common.identifier.DomainMarshallerIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.FollowingListSeed
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.audio_space.AudioSpaceItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.Tweet
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.TwitterListItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.User
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.Art cleCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.Aud oSpaceCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.Top cCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.Tw terL stCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.UserCand date
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.AddEntr es nstruct onBu lder
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.BaseUrt tadataBu lder
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.UrtBu lder
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.UrtCursorBu lder
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.UrtCursorUpdater
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.Urt nstruct onBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.premarshaller.Doma nMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.premarshaller.UnsupportedCand dateDoma nMarshallerExcept on
+ mport com.tw ter.product_m xer.core.funct onal_component.premarshaller.UnsupportedModuleDoma nMarshallerExcept on
+ mport com.tw ter.product_m xer.core.funct onal_component.premarshaller.UnsupportedPresentat onDoma nMarshallerExcept on
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Doma nMarshaller dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on. emCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on.ModuleCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne nstruct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.art cle.Art cle em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.art cle.Follow ngL stSeed
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.aud o_space.Aud oSpace em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.top c.Top c em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t et.T et
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t et.T et em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.tw ter_l st.Tw terL st em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.user.User
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.user.User em
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * Decorator that is useful for fast prototyping, as it will generate URT entries from only
- * candidate IDs (no ItemPresentations or ModulePresentations from candidate pipeline decorators
- * are required).
+ * Decorator that  s useful for fast prototyp ng, as   w ll generate URT entr es from only
+ * cand date  Ds (no  emPresentat ons or ModulePresentat ons from cand date p pel ne decorators
+ * are requ red).
  */
-case class UndecoratedUrtDomainMarshaller[Query <: PipelineQuery](
-  override val instructionBuilders: Seq[UrtInstructionBuilder[Query, TimelineInstruction]] =
-    Seq(AddEntriesInstructionBuilder()),
-  override val cursorBuilders: Seq[UrtCursorBuilder[Query]] = Seq.empty,
-  override val cursorUpdaters: Seq[UrtCursorUpdater[Query]] = Seq.empty,
-  override val metadataBuilder: Option[BaseUrtMetadataBuilder[Query]] = None,
-  override val sortIndexStep: Int = 1,
-  override val identifier: DomainMarshallerIdentifier =
-    DomainMarshallerIdentifier("UndecoratedUnifiedRichTimeline"))
-    extends DomainMarshaller[Query, Timeline]
-    with UrtBuilder[Query, TimelineInstruction] {
+case class UndecoratedUrtDoma nMarshaller[Query <: P pel neQuery](
+  overr de val  nstruct onBu lders: Seq[Urt nstruct onBu lder[Query, T  l ne nstruct on]] =
+    Seq(AddEntr es nstruct onBu lder()),
+  overr de val cursorBu lders: Seq[UrtCursorBu lder[Query]] = Seq.empty,
+  overr de val cursorUpdaters: Seq[UrtCursorUpdater[Query]] = Seq.empty,
+  overr de val  tadataBu lder: Opt on[BaseUrt tadataBu lder[Query]] = None,
+  overr de val sort ndexStep:  nt = 1,
+  overr de val  dent f er: Doma nMarshaller dent f er =
+    Doma nMarshaller dent f er("UndecoratedUn f edR chT  l ne"))
+    extends Doma nMarshaller[Query, T  l ne]
+    w h UrtBu lder[Query, T  l ne nstruct on] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    selections: Seq[CandidateWithDetails]
-  ): Timeline = {
-    val entries = selections.map {
-      case itemCandidateWithDetails @ ItemCandidateWithDetails(candidate, None, _) =>
-        candidate match {
-          case candidate: ArticleCandidate =>
-            ArticleItem(
-              id = candidate.id,
-              articleSeedType = FollowingListSeed,
-              sortIndex = None,
-              clientEventInfo = None,
-              feedbackActionInfo = None,
-              displayType = None,
-              socialContext = None,
+    select ons: Seq[Cand dateW hDeta ls]
+  ): T  l ne = {
+    val entr es = select ons.map {
+      case  emCand dateW hDeta ls @  emCand dateW hDeta ls(cand date, None, _) =>
+        cand date match {
+          case cand date: Art cleCand date =>
+            Art cle em(
+               d = cand date. d,
+              art cleSeedType = Follow ngL stSeed,
+              sort ndex = None,
+              cl entEvent nfo = None,
+              feedbackAct on nfo = None,
+              d splayType = None,
+              soc alContext = None,
             )
-          case candidate: AudioSpaceCandidate =>
-            AudioSpaceItem(
-              id = candidate.id,
-              sortIndex = None,
-              clientEventInfo = None,
-              feedbackActionInfo = None)
-          case candidate: TopicCandidate =>
-            TopicItem(
-              id = candidate.id,
-              sortIndex = None,
-              clientEventInfo = None,
-              feedbackActionInfo = None,
-              topicFunctionalityType = None,
-              topicDisplayType = None
+          case cand date: Aud oSpaceCand date =>
+            Aud oSpace em(
+               d = cand date. d,
+              sort ndex = None,
+              cl entEvent nfo = None,
+              feedbackAct on nfo = None)
+          case cand date: Top cCand date =>
+            Top c em(
+               d = cand date. d,
+              sort ndex = None,
+              cl entEvent nfo = None,
+              feedbackAct on nfo = None,
+              top cFunct onal yType = None,
+              top cD splayType = None
             )
-          case candidate: TweetCandidate =>
-            TweetItem(
-              id = candidate.id,
-              entryNamespace = TweetItem.TweetEntryNamespace,
-              sortIndex = None,
-              clientEventInfo = None,
-              feedbackActionInfo = None,
-              isPinned = None,
-              entryIdToReplace = None,
-              socialContext = None,
-              highlights = None,
-              displayType = Tweet,
-              innerTombstoneInfo = None,
-              timelinesScoreInfo = None,
-              hasModeratedReplies = None,
-              forwardPivot = None,
-              innerForwardPivot = None,
-              promotedMetadata = None,
-              conversationAnnotation = None,
-              contextualTweetRef = None,
-              prerollMetadata = None,
+          case cand date: T etCand date =>
+            T et em(
+               d = cand date. d,
+              entryNa space = T et em.T etEntryNa space,
+              sort ndex = None,
+              cl entEvent nfo = None,
+              feedbackAct on nfo = None,
+               sP nned = None,
+              entry dToReplace = None,
+              soc alContext = None,
+              h ghl ghts = None,
+              d splayType = T et,
+               nnerTombstone nfo = None,
+              t  l nesScore nfo = None,
+              hasModeratedRepl es = None,
+              forwardP vot = None,
+               nnerForwardP vot = None,
+              promoted tadata = None,
+              conversat onAnnotat on = None,
+              contextualT etRef = None,
+              preroll tadata = None,
               replyBadge = None,
-              destination = None
+              dest nat on = None
             )
-          case candidate: TwitterListCandidate =>
-            TwitterListItem(
-              id = candidate.id,
-              sortIndex = None,
-              clientEventInfo = None,
-              feedbackActionInfo = None,
-              displayType = None
+          case cand date: Tw terL stCand date =>
+            Tw terL st em(
+               d = cand date. d,
+              sort ndex = None,
+              cl entEvent nfo = None,
+              feedbackAct on nfo = None,
+              d splayType = None
             )
-          case candidate: UserCandidate =>
-            UserItem(
-              id = candidate.id,
-              sortIndex = None,
-              clientEventInfo = None,
-              feedbackActionInfo = None,
-              isMarkUnread = None,
-              displayType = User,
-              promotedMetadata = None,
-              socialContext = None,
-              reactiveTriggers = None,
-              enableReactiveBlending = None
+          case cand date: UserCand date =>
+            User em(
+               d = cand date. d,
+              sort ndex = None,
+              cl entEvent nfo = None,
+              feedbackAct on nfo = None,
+               sMarkUnread = None,
+              d splayType = User,
+              promoted tadata = None,
+              soc alContext = None,
+              react veTr ggers = None,
+              enableReact veBlend ng = None
             )
-          case candidate =>
-            throw new UnsupportedCandidateDomainMarshallerException(
-              candidate,
-              itemCandidateWithDetails.source)
+          case cand date =>
+            throw new UnsupportedCand dateDoma nMarshallerExcept on(
+              cand date,
+               emCand dateW hDeta ls.s ce)
         }
-      case itemCandidateWithDetails @ ItemCandidateWithDetails(candidate, Some(presentation), _) =>
-        throw new UnsupportedPresentationDomainMarshallerException(
-          candidate,
-          presentation,
-          itemCandidateWithDetails.source)
-      case moduleCandidateWithDetails @ ModuleCandidateWithDetails(_, presentation, _) =>
-        throw new UnsupportedModuleDomainMarshallerException(
-          presentation,
-          moduleCandidateWithDetails.source)
+      case  emCand dateW hDeta ls @  emCand dateW hDeta ls(cand date, So (presentat on), _) =>
+        throw new UnsupportedPresentat onDoma nMarshallerExcept on(
+          cand date,
+          presentat on,
+           emCand dateW hDeta ls.s ce)
+      case moduleCand dateW hDeta ls @ ModuleCand dateW hDeta ls(_, presentat on, _) =>
+        throw new UnsupportedModuleDoma nMarshallerExcept on(
+          presentat on,
+          moduleCand dateW hDeta ls.s ce)
     }
 
-    buildTimeline(query, entries)
+    bu ldT  l ne(query, entr es)
   }
 }

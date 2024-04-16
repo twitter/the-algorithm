@@ -1,84 +1,84 @@
-/* Copyright 2016 The TensorFlow Authors. All Rights Reserved.
+/* Copyr ght 2016 T  TensorFlow Authors. All R ghts Reserved.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+L censed under t  Apac  L cense, Vers on 2.0 (t  "L cense");
+  may not use t  f le except  n compl ance w h t  L cense.
+  may obta n a copy of t  L cense at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apac .org/l censes/L CENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Unless requ red by appl cable law or agreed to  n wr  ng, software
+d str buted under t  L cense  s d str buted on an "AS  S" BAS S,
+W THOUT WARRANT ES OR COND T ONS OF ANY K ND, e  r express or  mpl ed.
+See t  L cense for t  spec f c language govern ng perm ss ons and
+l m at ons under t  L cense.
 ==============================================================================*/
 
 syntax = "proto3";
 
 package tensorflow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "ClusterProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.distruntime";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "ClusterProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.d strunt  ";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
-// This file contains protos to be used when defining a TensorFlow
+// T  f le conta ns protos to be used w n def n ng a TensorFlow
 // cluster.
 //
 // EXAMPLES
 // --------
 //
-// 1. A single-process cluster, containing "/job:local/task:0".
+// 1. A s ngle-process cluster, conta n ng "/job:local/task:0".
 //
 //    Cluster:
-//      job { name: 'local' tasks { key: 0 value: 'localhost:2222' } }
+//      job { na : 'local' tasks { key: 0 value: 'localhost:2222' } }
 //
 //    Server:
-//      cluster { $CLUSTER } job_name: 'local' task_index: 0
+//      cluster { $CLUSTER } job_na : 'local' task_ ndex: 0
 //
-// 2. A two-process cluster, containing "/job:local/task:{0,1}".
+// 2. A two-process cluster, conta n ng "/job:local/task:{0,1}".
 //
 //    Cluster:
-//      job { name: 'local' tasks { key: 0 value: 'localhost:2222' }
+//      job { na : 'local' tasks { key: 0 value: 'localhost:2222' }
 //                          tasks { key: 1 value: 'localhost:2223' } }
 //
 //    Servers:
-//      cluster { $CLUSTER } job_name: 'local' task_index: 0
-//      cluster { $CLUSTER } job_name: 'local' task_index: 1
+//      cluster { $CLUSTER } job_na : 'local' task_ ndex: 0
+//      cluster { $CLUSTER } job_na : 'local' task_ ndex: 1
 //
-// 3. A two-job cluster, containing "/job:worker/task:{0,1,2}" and
+// 3. A two-job cluster, conta n ng "/job:worker/task:{0,1,2}" and
 //    "/job:ps/task:{0,1}".
 //
 //    Cluster:
-//      job { name: 'worker' tasks { key: 0 value: 'worker1:2222' }
+//      job { na : 'worker' tasks { key: 0 value: 'worker1:2222' }
 //                           tasks { key: 1 value: 'worker2:2222' }
 //                           tasks { key: 2 value: 'worker3:2222' } }
-//      job { name: 'ps'     tasks { key: 0 value: 'ps0:2222' }
+//      job { na : 'ps'     tasks { key: 0 value: 'ps0:2222' }
 //                           tasks { key: 1 value: 'ps1:2222' } }
 //
 //    Servers:
-//      cluster { $CLUSTER } job_name: 'worker' task_index: 0
-//      cluster { $CLUSTER } job_name: 'worker' task_index: 1
-//      cluster { $CLUSTER } job_name: 'worker' task_index: 2
-//      cluster { $CLUSTER } job_name: 'ps'     task_index: 0
-//      cluster { $CLUSTER } job_name: 'ps'     task_index: 1
+//      cluster { $CLUSTER } job_na : 'worker' task_ ndex: 0
+//      cluster { $CLUSTER } job_na : 'worker' task_ ndex: 1
+//      cluster { $CLUSTER } job_na : 'worker' task_ ndex: 2
+//      cluster { $CLUSTER } job_na : 'ps'     task_ ndex: 0
+//      cluster { $CLUSTER } job_na : 'ps'     task_ ndex: 1
 
-// Defines a single job in a TensorFlow cluster.
-message JobDef {
-  // The name of this job.
-  string name = 1;
+// Def nes a s ngle job  n a TensorFlow cluster.
+ ssage JobDef {
+  // T  na  of t  job.
+  str ng na  = 1;
 
-  // Mapping from task ID to "hostname:port" string.
+  // Mapp ng from task  D to "hostna :port" str ng.
   //
-  // If the `name` field contains "worker", and the `tasks` map contains a
-  // mapping from 7 to "example.org:2222", then the device prefix
-  // "/job:worker/task:7" will be assigned to "example.org:2222".
-  map<int32, string> tasks = 2;
+  //  f t  `na ` f eld conta ns "worker", and t  `tasks` map conta ns a
+  // mapp ng from 7 to "example.org:2222", t n t  dev ce pref x
+  // "/job:worker/task:7" w ll be ass gned to "example.org:2222".
+  map< nt32, str ng> tasks = 2;
 }
 
-// Defines a TensorFlow cluster as a set of jobs.
-message ClusterDef {
-  // The jobs that comprise the cluster.
+// Def nes a TensorFlow cluster as a set of jobs.
+ ssage ClusterDef {
+  // T  jobs that compr se t  cluster.
   repeated JobDef job = 1;
 }

@@ -1,88 +1,88 @@
-package com.twitter.product_mixer.component_library.module.http
+package com.tw ter.product_m xer.component_l brary.module.http
 
-import com.google.inject.Provides
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.httpclient.HttpClient
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientAcquisitionTimeout
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientConnectTimeout
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientRequestTimeout
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyRemoteHost
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyRemotePort
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyTwitterHost
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyTwitterPort
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ServiceLocal
-import com.twitter.product_mixer.shared_library.http_client.FinagleHttpClientWithProxyBuilder.buildFinagleHttpClientWithProxy
-import com.twitter.product_mixer.shared_library.http_client.FinagleHttpClientWithProxyBuilder.buildFinagleHttpServiceWithProxy
-import com.twitter.product_mixer.shared_library.http_client.HttpHostPort
-import com.twitter.util.Duration
-import com.twitter.util.jackson.ScalaObjectMapper
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f natra.httpcl ent.HttpCl ent
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.product_m xer.component_l brary.module.http.F nagleHttpCl entModule.HttpCl entAcqu s  onT  out
+ mport com.tw ter.product_m xer.component_l brary.module.http.F nagleHttpCl entModule.HttpCl entConnectT  out
+ mport com.tw ter.product_m xer.component_l brary.module.http.F nagleHttpCl entModule.HttpCl entRequestT  out
+ mport com.tw ter.product_m xer.component_l brary.module.http.F nagleHttpCl entW hProxyModule.HttpCl entW hProxyRemoteHost
+ mport com.tw ter.product_m xer.component_l brary.module.http.F nagleHttpCl entW hProxyModule.HttpCl entW hProxyRemotePort
+ mport com.tw ter.product_m xer.component_l brary.module.http.F nagleHttpCl entW hProxyModule.HttpCl entW hProxyTw terHost
+ mport com.tw ter.product_m xer.component_l brary.module.http.F nagleHttpCl entW hProxyModule.HttpCl entW hProxyTw terPort
+ mport com.tw ter.product_m xer.core.module.product_m xer_flags.ProductM xerFlagModule.Serv ceLocal
+ mport com.tw ter.product_m xer.shared_l brary.http_cl ent.F nagleHttpCl entW hProxyBu lder.bu ldF nagleHttpCl entW hProxy
+ mport com.tw ter.product_m xer.shared_l brary.http_cl ent.F nagleHttpCl entW hProxyBu lder.bu ldF nagleHttpServ ceW hProxy
+ mport com.tw ter.product_m xer.shared_l brary.http_cl ent.HttpHostPort
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.jackson.ScalaObjectMapper
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-object FinatraHttpClientWithProxyModule extends TwitterModule {
+object F natraHttpCl entW hProxyModule extends Tw terModule {
 
-  final val FinatraHttpClientWithProxy = "FinagleHttpClientWithProxy"
+  f nal val F natraHttpCl entW hProxy = "F nagleHttpCl entW hProxy"
 
   /**
-   * Build a Finatra HTTP client with Egress Proxy support for a host. The Finatra HTTP client can
-   * be helpful (as opposed to the base Finagle HTTP Client), as it provides built-in JSON response
-   * parsing and other convenience methods
+   * Bu ld a F natra HTTP cl ent w h Egress Proxy support for a host. T  F natra HTTP cl ent can
+   * be  lpful (as opposed to t  base F nagle HTTP Cl ent), as   prov des bu lt- n JSON response
+   * pars ng and ot r conven ence  thods
    *
-   * Note that the timeouts configured in this module are meant to be a reasonable starting point
-   * only. To further tuning the settings, either override the flags or create local copy of the module.
+   * Note that t  t  outs conf gured  n t  module are  ant to be a reasonable start ng po nt
+   * only. To furt r tun ng t  sett ngs, e  r overr de t  flags or create local copy of t  module.
    *
-   * @param proxyTwitterHost       Twitter egress proxy host
-   * @param proxyTwitterPort       Twitter egress proxy port
+   * @param proxyTw terHost       Tw ter egress proxy host
+   * @param proxyTw terPort       Tw ter egress proxy port
    * @param proxyRemoteHost        Remote proxy host
    * @param proxyRemotePort        Remote proxy port
-   * @param requestTimeout         HTTP client request timeout
-   * @param connectTimeout         HTTP client transport connect timeout
-   * @param acquisitionTimeout     HTTP client session acquisition timeout
-   * @param isServiceLocal         Local deployment for testing
-   * @param scalaObjectMapper      Object mapper used by the built-in JSON response parsing
-   * @param statsReceiver          Stats
+   * @param requestT  out         HTTP cl ent request t  out
+   * @param connectT  out         HTTP cl ent transport connect t  out
+   * @param acqu s  onT  out     HTTP cl ent sess on acqu s  on t  out
+   * @param  sServ ceLocal         Local deploy nt for test ng
+   * @param scalaObjectMapper      Object mapper used by t  bu lt- n JSON response pars ng
+   * @param statsRece ver          Stats
    *
-   * @return Finatra HTTP client with Egress Proxy support for a host
+   * @return F natra HTTP cl ent w h Egress Proxy support for a host
    */
-  @Provides
-  @Singleton
-  @Named(FinatraHttpClientWithProxy)
-  def providesFinatraHttpClientWithProxy(
-    @Flag(HttpClientWithProxyTwitterHost) proxyTwitterHost: String,
-    @Flag(HttpClientWithProxyTwitterPort) proxyTwitterPort: Int,
-    @Flag(HttpClientWithProxyRemoteHost) proxyRemoteHost: String,
-    @Flag(HttpClientWithProxyRemotePort) proxyRemotePort: Int,
-    @Flag(HttpClientRequestTimeout) requestTimeout: Duration,
-    @Flag(HttpClientConnectTimeout) connectTimeout: Duration,
-    @Flag(HttpClientAcquisitionTimeout) acquisitionTimeout: Duration,
-    @Flag(ServiceLocal) isServiceLocal: Boolean,
+  @Prov des
+  @S ngleton
+  @Na d(F natraHttpCl entW hProxy)
+  def prov desF natraHttpCl entW hProxy(
+    @Flag(HttpCl entW hProxyTw terHost) proxyTw terHost: Str ng,
+    @Flag(HttpCl entW hProxyTw terPort) proxyTw terPort:  nt,
+    @Flag(HttpCl entW hProxyRemoteHost) proxyRemoteHost: Str ng,
+    @Flag(HttpCl entW hProxyRemotePort) proxyRemotePort:  nt,
+    @Flag(HttpCl entRequestT  out) requestT  out: Durat on,
+    @Flag(HttpCl entConnectT  out) connectT  out: Durat on,
+    @Flag(HttpCl entAcqu s  onT  out) acqu s  onT  out: Durat on,
+    @Flag(Serv ceLocal)  sServ ceLocal: Boolean,
     scalaObjectMapper: ScalaObjectMapper,
-    statsReceiver: StatsReceiver
-  ): HttpClient = {
-    val twitterProxyHostPort = HttpHostPort(proxyTwitterHost, proxyTwitterPort)
+    statsRece ver: StatsRece ver
+  ): HttpCl ent = {
+    val tw terProxyHostPort = HttpHostPort(proxyTw terHost, proxyTw terPort)
     val proxyRemoteHostPort = HttpHostPort(proxyRemoteHost, proxyRemotePort)
 
-    val finagleHttpClientWithProxy =
-      buildFinagleHttpClientWithProxy(
-        twitterProxyHostPort = twitterProxyHostPort,
+    val f nagleHttpCl entW hProxy =
+      bu ldF nagleHttpCl entW hProxy(
+        tw terProxyHostPort = tw terProxyHostPort,
         remoteProxyHostPort = proxyRemoteHostPort,
-        requestTimeout = requestTimeout,
-        connectTimeout = connectTimeout,
-        acquisitionTimeout = acquisitionTimeout,
-        statsReceiver = statsReceiver
+        requestT  out = requestT  out,
+        connectT  out = connectT  out,
+        acqu s  onT  out = acqu s  onT  out,
+        statsRece ver = statsRece ver
       )
 
-    val finagleHttpServiceWithProxy =
-      buildFinagleHttpServiceWithProxy(
-        finagleHttpClientWithProxy = finagleHttpClientWithProxy,
-        twitterProxyHostPort = twitterProxyHostPort
+    val f nagleHttpServ ceW hProxy =
+      bu ldF nagleHttpServ ceW hProxy(
+        f nagleHttpCl entW hProxy = f nagleHttpCl entW hProxy,
+        tw terProxyHostPort = tw terProxyHostPort
       )
 
-    new HttpClient(
-      hostname = twitterProxyHostPort.host,
-      httpService = finagleHttpServiceWithProxy,
+    new HttpCl ent(
+      hostna  = tw terProxyHostPort.host,
+      httpServ ce = f nagleHttpServ ceW hProxy,
       mapper = scalaObjectMapper
     )
   }

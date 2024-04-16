@@ -1,66 +1,66 @@
-package com.twitter.product_mixer.component_library.module
+package com.tw ter.product_m xer.component_l brary.module
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.Memcached
-import com.twitter.finagle.Resolver
-import com.twitter.finagle.memcached.protocol.Command
-import com.twitter.finagle.memcached.protocol.Response
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.param.HighResTimer
-import com.twitter.finagle.service.RetryExceptionsFilter
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.service.StatsFilter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.impressionstore.store.TweetImpressionsStore
-import com.twitter.timelines.impressionstore.thriftscala.ImpressionList
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle. mcac d
+ mport com.tw ter.f nagle.Resolver
+ mport com.tw ter.f nagle. mcac d.protocol.Command
+ mport com.tw ter.f nagle. mcac d.protocol.Response
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.mtls.cl ent.MtlsStackCl ent._
+ mport com.tw ter.f nagle.param.H ghResT  r
+ mport com.tw ter.f nagle.serv ce.RetryExcept onsF lter
+ mport com.tw ter.f nagle.serv ce.RetryPol cy
+ mport com.tw ter.f nagle.serv ce.StatsF lter
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes. mpress onstore.store.T et mpress onsStore
+ mport com.tw ter.t  l nes. mpress onstore.thr ftscala. mpress onL st
+ mport javax. nject.S ngleton
 
-object TweetImpressionStoreModule extends TwitterModule {
-  private val TweetImpressionMemcacheWilyPath = "/s/cache/timelines_impressionstore:twemcaches"
-  private val tweetImpressionLabel = "timelinesTweetImpressions"
+object T et mpress onStoreModule extends Tw terModule {
+  pr vate val T et mpress on mcac W lyPath = "/s/cac /t  l nes_ mpress onstore:t mcac s"
+  pr vate val t et mpress onLabel = "t  l nesT et mpress ons"
 
-  @Provides
-  @Singleton
-  def provideTimelineTweetImpressionStore(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): ReadableStore[Long, ImpressionList] = {
-    val scopedStatsReceiver = statsReceiver.scope("timelinesTweetImpressions")
+  @Prov des
+  @S ngleton
+  def prov deT  l neT et mpress onStore(
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver
+  ): ReadableStore[Long,  mpress onL st] = {
+    val scopedStatsRece ver = statsRece ver.scope("t  l nesT et mpress ons")
 
-    // the below values for configuring the Memcached client
-    // are set to be the same as Home timeline's read path to the impression store.
-    val acquisitionTimeoutMillis = 200.milliseconds
-    val requestTimeoutMillis = 300.milliseconds
-    val numTries = 2
+    // t  below values for conf gur ng t   mcac d cl ent
+    // are set to be t  sa  as Ho  t  l ne's read path to t   mpress on store.
+    val acqu s  onT  outM ll s = 200.m ll seconds
+    val requestT  outM ll s = 300.m ll seconds
+    val numTr es = 2
 
-    val statsFilter = new StatsFilter[Command, Response](scopedStatsReceiver)
-    val retryFilter = new RetryExceptionsFilter[Command, Response](
-      retryPolicy = RetryPolicy.tries(
-        numTries,
-        RetryPolicy.TimeoutAndWriteExceptionsOnly
-          .orElse(RetryPolicy.ChannelClosedExceptionsOnly)
+    val statsF lter = new StatsF lter[Command, Response](scopedStatsRece ver)
+    val retryF lter = new RetryExcept onsF lter[Command, Response](
+      retryPol cy = RetryPol cy.tr es(
+        numTr es,
+        RetryPol cy.T  outAndWr eExcept onsOnly
+          .orElse(RetryPol cy.ChannelClosedExcept onsOnly)
       ),
-      timer = HighResTimer.Default,
-      statsReceiver = scopedStatsReceiver
+      t  r = H ghResT  r.Default,
+      statsRece ver = scopedStatsRece ver
     )
 
-    val client = Memcached.client
-      .withMutualTls(serviceIdentifier)
-      .withSession
-      .acquisitionTimeout(acquisitionTimeoutMillis)
-      .withRequestTimeout(requestTimeoutMillis)
-      .withStatsReceiver(scopedStatsReceiver)
-      .filtered(statsFilter.andThen(retryFilter))
-      .newRichClient(
-        dest = Resolver.eval(TweetImpressionMemcacheWilyPath),
-        label = tweetImpressionLabel
+    val cl ent =  mcac d.cl ent
+      .w hMutualTls(serv ce dent f er)
+      .w hSess on
+      .acqu s  onT  out(acqu s  onT  outM ll s)
+      .w hRequestT  out(requestT  outM ll s)
+      .w hStatsRece ver(scopedStatsRece ver)
+      .f ltered(statsF lter.andT n(retryF lter))
+      .newR chCl ent(
+        dest = Resolver.eval(T et mpress on mcac W lyPath),
+        label = t et mpress onLabel
       )
 
-    TweetImpressionsStore.tweetImpressionsStore(client)
+    T et mpress onsStore.t et mpress onsStore(cl ent)
   }
 
 }

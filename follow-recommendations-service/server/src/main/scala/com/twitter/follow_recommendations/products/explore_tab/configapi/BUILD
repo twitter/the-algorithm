@@ -1,9 +1,9 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "configapi/configapi-core",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/configapi/common",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "conf gap /conf gap -core",
+        "follow-recom ndat ons-serv ce/server/src/ma n/scala/com/tw ter/follow_recom ndat ons/conf gap /common",
     ],
 )

@@ -1,375 +1,375 @@
-package com.twitter.search.ingester.pipeline.util;
+package com.tw ter.search. ngester.p pel ne.ut l;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import javax.annotation.Nullable;
+ mport java.ut l.Collect on;
+ mport java.ut l.Collect ons;
+ mport java.ut l.HashSet;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.Opt onal;
+ mport java.ut l.Set;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect. mmutableL st;
+ mport com.google.common.collect.L sts;
+ mport com.google.common.collect.Maps;
 
-import org.apache.thrift.TBase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .thr ft.TBase;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common_internal.analytics.test_user_filter.TestUserFilter;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.metastore.client_v2.MetastoreClient;
-import com.twitter.metastore.data.MetastoreColumn;
-import com.twitter.metastore.data.MetastoreException;
-import com.twitter.metastore.data.MetastoreRow;
-import com.twitter.metastore.data.MetastoreValue;
-import com.twitter.search.common.metrics.RelevanceStats;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchRequestStats;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.features.RelevanceSignalConstants;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.service.metastore.gen.ResponseCode;
-import com.twitter.service.metastore.gen.TweepCred;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+ mport com.tw ter.common_ nternal.analyt cs.test_user_f lter.TestUserF lter;
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers on;
+ mport com.tw ter. tastore.cl ent_v2. tastoreCl ent;
+ mport com.tw ter. tastore.data. tastoreColumn;
+ mport com.tw ter. tastore.data. tastoreExcept on;
+ mport com.tw ter. tastore.data. tastoreRow;
+ mport com.tw ter. tastore.data. tastoreValue;
+ mport com.tw ter.search.common. tr cs.RelevanceStats;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common. tr cs.SearchRequestStats;
+ mport com.tw ter.search.common.relevance.ent  es.Tw ter ssage;
+ mport com.tw ter.search.common.relevance.features.RelevanceS gnalConstants;
+ mport com.tw ter.search. ngester.model. ngesterTw ter ssage;
+ mport com.tw ter.serv ce. tastore.gen.ResponseCode;
+ mport com.tw ter.serv ce. tastore.gen.T epCred;
+ mport com.tw ter.ut l.Funct on;
+ mport com.tw ter.ut l.Future;
 
-public class UserPropertiesManager {
-  private static final Logger LOG = LoggerFactory.getLogger(UserPropertiesManager.class);
+publ c class UserPropert esManager {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(UserPropert esManager.class);
 
-  @VisibleForTesting
-  protected static final List<MetastoreColumn<? extends TBase<?, ?>>> COLUMNS =
-      ImmutableList.of(MetastoreColumn.TWEEPCRED);           // contains tweepcred value
+  @V s bleForTest ng
+  protected stat c f nal L st< tastoreColumn<? extends TBase<?, ?>>> COLUMNS =
+       mmutableL st.of( tastoreColumn.TWEEPCRED);           // conta ns t epcred value
 
-  // same spam threshold that is use in tweeypie to spread user level spam to tweets, all tweets
-  // from user with spam score above such are marked so and removed from search results
-  @VisibleForTesting
-  public static final double SPAM_SCORE_THRESHOLD = 4.5;
+  // sa  spam threshold that  s use  n t eyp e to spread user level spam to t ets, all t ets
+  // from user w h spam score above such are marked so and removed from search results
+  @V s bleForTest ng
+  publ c stat c f nal double SPAM_SCORE_THRESHOLD = 4.5;
 
-  @VisibleForTesting
-  static final SearchRequestStats MANHATTAN_METASTORE_STATS =
-      SearchRequestStats.export("manhattan_metastore_get", true);
+  @V s bleForTest ng
+  stat c f nal SearchRequestStats MANHATTAN_METASTORE_STATS =
+      SearchRequestStats.export("manhattan_ tastore_get", true);
 
-  private static final MetastoreGetColumnStats GET_TWEEP_CRED
-      = new MetastoreGetColumnStats("tweep_cred");
+  pr vate stat c f nal  tastoreGetColumnStats GET_TWEEP_CRED
+      = new  tastoreGetColumnStats("t ep_cred");
 
-  @VisibleForTesting
-  static final SearchRateCounter MISSING_REPUTATION_COUNTER = RelevanceStats.exportRate(
-      "num_missing_reputation");
-  @VisibleForTesting
-  static final SearchRateCounter INVALID_REPUTATION_COUNTER = RelevanceStats.exportRate(
-      "num_invalid_reputation");
-  @VisibleForTesting
-  static final SearchRateCounter ACCEPTED_REPUTATION_COUNTER = RelevanceStats.exportRate(
-      "num_accepted_reputation");
-  @VisibleForTesting
-  static final SearchRateCounter SKIPPED_REPUTATION_CHECK_COUNTER = RelevanceStats.exportRate(
-      "num_skipped_reputation_check_for_test_user");
-  @VisibleForTesting
-  static final SearchCounter DEFAULT_REPUTATION_COUNTER = SearchCounter.export(
-      "messages_default_reputation_count");
-  @VisibleForTesting
-  static final SearchCounter MESSAGE_FROM_TEST_USER =
-      SearchCounter.export("messages_from_test_user");
+  @V s bleForTest ng
+  stat c f nal SearchRateCounter M SS NG_REPUTAT ON_COUNTER = RelevanceStats.exportRate(
+      "num_m ss ng_reputat on");
+  @V s bleForTest ng
+  stat c f nal SearchRateCounter  NVAL D_REPUTAT ON_COUNTER = RelevanceStats.exportRate(
+      "num_ nval d_reputat on");
+  @V s bleForTest ng
+  stat c f nal SearchRateCounter ACCEPTED_REPUTAT ON_COUNTER = RelevanceStats.exportRate(
+      "num_accepted_reputat on");
+  @V s bleForTest ng
+  stat c f nal SearchRateCounter SK PPED_REPUTAT ON_CHECK_COUNTER = RelevanceStats.exportRate(
+      "num_sk pped_reputat on_c ck_for_test_user");
+  @V s bleForTest ng
+  stat c f nal SearchCounter DEFAULT_REPUTAT ON_COUNTER = SearchCounter.export(
+      " ssages_default_reputat on_count");
+  @V s bleForTest ng
+  stat c f nal SearchCounter MESSAGE_FROM_TEST_USER =
+      SearchCounter.export(" ssages_from_test_user");
 
-  // User level bits that are spread onto tweets
-  private static final SearchRateCounter IS_USER_NSFW_COUNTER = RelevanceStats.exportRate(
-      "num_is_nsfw");
-  private static final SearchRateCounter IS_USER_SPAM_COUNTER = RelevanceStats.exportRate(
-      "num_is_spam");
+  // User level b s that are spread onto t ets
+  pr vate stat c f nal SearchRateCounter  S_USER_NSFW_COUNTER = RelevanceStats.exportRate(
+      "num_ s_nsfw");
+  pr vate stat c f nal SearchRateCounter  S_USER_SPAM_COUNTER = RelevanceStats.exportRate(
+      "num_ s_spam");
 
-  // count how many tweets has "possibly_sensitive" set to true in the original json message
-  private static final SearchRateCounter IS_SENSITIVE_FROM_JSON_COUNTER = RelevanceStats.exportRate(
-      "num_is_sensitive_in_json");
+  // count how many t ets has "poss bly_sens  ve" set to true  n t  or g nal json  ssage
+  pr vate stat c f nal SearchRateCounter  S_SENS T VE_FROM_JSON_COUNTER = RelevanceStats.exportRate(
+      "num_ s_sens  ve_ n_json");
 
-  private static final SearchCounter SENSITIVE_BITS_COUNTER =
-      SearchCounter.export("messages_sensitive_bits_set_count");
+  pr vate stat c f nal SearchCounter SENS T VE_B TS_COUNTER =
+      SearchCounter.export(" ssages_sens  ve_b s_set_count");
 
-  private final MetastoreClient metastoreClient;
-  private final UserPropertiesManager.MetastoreGetColumnStats tweepCredStats;
+  pr vate f nal  tastoreCl ent  tastoreCl ent;
+  pr vate f nal UserPropert esManager. tastoreGetColumnStats t epCredStats;
 
   /**
-   * Stats for keeping track of multiGet requests to metastore for a specific data column.
+   * Stats for keep ng track of mult Get requests to  tastore for a spec f c data column.
    */
-  @VisibleForTesting static class MetastoreGetColumnStats {
+  @V s bleForTest ng stat c class  tastoreGetColumnStats {
     /**
-     * No data was returned from metastore for a specific user.
+     * No data was returned from  tastore for a spec f c user.
      */
-    private final SearchCounter notReturned;
+    pr vate f nal SearchCounter notReturned;
     /**
-     * Metastore returned a successful OK response.
+     *  tastore returned a successful OK response.
      */
-    private final SearchCounter metastoreSuccess;
+    pr vate f nal SearchCounter  tastoreSuccess;
     /**
-     * Metastore returned a NOT_FOUND response for a user.
+     *  tastore returned a NOT_FOUND response for a user.
      */
-    private final SearchCounter metastoreNotFound;
+    pr vate f nal SearchCounter  tastoreNotFound;
     /**
-     * Metastore returned a BAD_INPUT response for a user.
+     *  tastore returned a BAD_ NPUT response for a user.
      */
-    private final SearchCounter metastoreBadInput;
+    pr vate f nal SearchCounter  tastoreBad nput;
     /**
-     * Metastore returned a TRANSIENT_ERROR response for a user.
+     *  tastore returned a TRANS ENT_ERROR response for a user.
      */
-    private final SearchCounter metastoreTransientError;
+    pr vate f nal SearchCounter  tastoreTrans entError;
     /**
-     * Metastore returned a PERMANENT_ERROR response for a user.
+     *  tastore returned a PERMANENT_ERROR response for a user.
      */
-    private final SearchCounter metastorePermanentError;
+    pr vate f nal SearchCounter  tastorePermanentError;
     /**
-     * Metastore returned an unknown response code for a user.
+     *  tastore returned an unknown response code for a user.
      */
-    private final SearchCounter metastoreUnknownResponseCode;
+    pr vate f nal SearchCounter  tastoreUnknownResponseCode;
     /**
-     * Total number of users that we asked data for in metastore.
+     * Total number of users that   asked data for  n  tastore.
      */
-    private final SearchCounter totalRequests;
+    pr vate f nal SearchCounter totalRequests;
 
-    @VisibleForTesting MetastoreGetColumnStats(String columnName) {
-      String prefix = "manhattan_metastore_get_" + columnName;
-      notReturned = SearchCounter.export(prefix + "_response_not_returned");
-      metastoreSuccess = SearchCounter.export(prefix + "_response_success");
-      metastoreNotFound = SearchCounter.export(prefix + "_response_not_found");
-      metastoreBadInput = SearchCounter.export(prefix + "_response_bad_input");
-      metastoreTransientError = SearchCounter.export(prefix + "_response_transient_error");
-      metastorePermanentError = SearchCounter.export(prefix + "_response_permanent_error");
-      metastoreUnknownResponseCode =
-          SearchCounter.export(prefix + "_response_unknown_response_code");
-      // Have a distinguishable prefix for the total requests stat so that we can use it to get
-      // a viz rate against wild-carded "prefix_response_*" stats.
-      totalRequests = SearchCounter.export(prefix + "_requests");
+    @V s bleForTest ng  tastoreGetColumnStats(Str ng columnNa ) {
+      Str ng pref x = "manhattan_ tastore_get_" + columnNa ;
+      notReturned = SearchCounter.export(pref x + "_response_not_returned");
+       tastoreSuccess = SearchCounter.export(pref x + "_response_success");
+       tastoreNotFound = SearchCounter.export(pref x + "_response_not_found");
+       tastoreBad nput = SearchCounter.export(pref x + "_response_bad_ nput");
+       tastoreTrans entError = SearchCounter.export(pref x + "_response_trans ent_error");
+       tastorePermanentError = SearchCounter.export(pref x + "_response_permanent_error");
+       tastoreUnknownResponseCode =
+          SearchCounter.export(pref x + "_response_unknown_response_code");
+      // Have a d st ngu shable pref x for t  total requests stat so that   can use   to get
+      // a v z rate aga nst w ld-carded "pref x_response_*" stats.
+      totalRequests = SearchCounter.export(pref x + "_requests");
     }
 
     /**
-     * Tracks metastore get column stats for an individual user's response.
-     * @param responseCode the response code received from metastore. Expected to be null if no
-     *        response came back at all.
+     * Tracks  tastore get column stats for an  nd v dual user's response.
+     * @param responseCode t  response code rece ved from  tastore. Expected to be null  f no
+     *        response ca  back at all.
      */
-    private void trackMetastoreResponseCode(@Nullable ResponseCode responseCode) {
-      totalRequests.increment();
+    pr vate vo d track tastoreResponseCode(@Nullable ResponseCode responseCode) {
+      totalRequests. ncre nt();
 
-      if (responseCode == null) {
-        notReturned.increment();
-      } else if (responseCode == ResponseCode.OK) {
-        metastoreSuccess.increment();
-      } else if (responseCode == ResponseCode.NOT_FOUND) {
-        metastoreNotFound.increment();
-      } else if (responseCode == ResponseCode.BAD_INPUT) {
-        metastoreBadInput.increment();
-      } else if (responseCode == ResponseCode.TRANSIENT_ERROR) {
-        metastoreTransientError.increment();
-      } else if (responseCode == ResponseCode.PERMANENT_ERROR) {
-        metastorePermanentError.increment();
+       f (responseCode == null) {
+        notReturned. ncre nt();
+      } else  f (responseCode == ResponseCode.OK) {
+         tastoreSuccess. ncre nt();
+      } else  f (responseCode == ResponseCode.NOT_FOUND) {
+         tastoreNotFound. ncre nt();
+      } else  f (responseCode == ResponseCode.BAD_ NPUT) {
+         tastoreBad nput. ncre nt();
+      } else  f (responseCode == ResponseCode.TRANS ENT_ERROR) {
+         tastoreTrans entError. ncre nt();
+      } else  f (responseCode == ResponseCode.PERMANENT_ERROR) {
+         tastorePermanentError. ncre nt();
       } else {
-        metastoreUnknownResponseCode.increment();
+         tastoreUnknownResponseCode. ncre nt();
       }
     }
 
-    @VisibleForTesting long getTotalRequests() {
+    @V s bleForTest ng long getTotalRequests() {
       return totalRequests.get();
     }
 
-    @VisibleForTesting long getNotReturnedCount() {
+    @V s bleForTest ng long getNotReturnedCount() {
       return notReturned.get();
     }
 
-    @VisibleForTesting long getMetastoreSuccessCount() {
-      return metastoreSuccess.get();
+    @V s bleForTest ng long get tastoreSuccessCount() {
+      return  tastoreSuccess.get();
     }
 
-    @VisibleForTesting long getMetastoreNotFoundCount() {
-      return metastoreNotFound.get();
+    @V s bleForTest ng long get tastoreNotFoundCount() {
+      return  tastoreNotFound.get();
     }
 
-    @VisibleForTesting long getMetastoreBadInputCount() {
-      return metastoreBadInput.get();
+    @V s bleForTest ng long get tastoreBad nputCount() {
+      return  tastoreBad nput.get();
     }
 
-    @VisibleForTesting long getMetastoreTransientErrorCount() {
-      return metastoreTransientError.get();
+    @V s bleForTest ng long get tastoreTrans entErrorCount() {
+      return  tastoreTrans entError.get();
     }
 
-    @VisibleForTesting long getMetastorePermanentErrorCount() {
-      return metastorePermanentError.get();
+    @V s bleForTest ng long get tastorePermanentErrorCount() {
+      return  tastorePermanentError.get();
     }
 
-    @VisibleForTesting long getMetastoreUnknownResponseCodeCount() {
-      return metastoreUnknownResponseCode.get();
-    }
-  }
-
-  /** Class that holds all user properties from Manhattan. */
-  @VisibleForTesting
-  protected static class ManhattanUserProperties {
-    private double spamScore = 0;
-    private float tweepcred = RelevanceSignalConstants.UNSET_REPUTATION_SENTINEL;   // default
-
-    public ManhattanUserProperties setSpamScore(double newSpamScore) {
-      this.spamScore = newSpamScore;
-      return this;
-    }
-
-    public float getTweepcred() {
-      return tweepcred;
-    }
-
-    public ManhattanUserProperties setTweepcred(float newTweepcred) {
-      this.tweepcred = newTweepcred;
-      return this;
+    @V s bleForTest ng long get tastoreUnknownResponseCodeCount() {
+      return  tastoreUnknownResponseCode.get();
     }
   }
 
-  public UserPropertiesManager(MetastoreClient metastoreClient) {
-    this(metastoreClient, GET_TWEEP_CRED);
+  /** Class that holds all user propert es from Manhattan. */
+  @V s bleForTest ng
+  protected stat c class ManhattanUserPropert es {
+    pr vate double spamScore = 0;
+    pr vate float t epcred = RelevanceS gnalConstants.UNSET_REPUTAT ON_SENT NEL;   // default
+
+    publ c ManhattanUserPropert es setSpamScore(double newSpamScore) {
+      t .spamScore = newSpamScore;
+      return t ;
+    }
+
+    publ c float getT epcred() {
+      return t epcred;
+    }
+
+    publ c ManhattanUserPropert es setT epcred(float newT epcred) {
+      t .t epcred = newT epcred;
+      return t ;
+    }
   }
 
-  @VisibleForTesting
-  UserPropertiesManager(
-      MetastoreClient metastoreClient,
-      MetastoreGetColumnStats tweepCredStats) {
-    this.metastoreClient = metastoreClient;
-    this.tweepCredStats = tweepCredStats;
+  publ c UserPropert esManager( tastoreCl ent  tastoreCl ent) {
+    t ( tastoreCl ent, GET_TWEEP_CRED);
+  }
+
+  @V s bleForTest ng
+  UserPropert esManager(
+       tastoreCl ent  tastoreCl ent,
+       tastoreGetColumnStats t epCredStats) {
+    t . tastoreCl ent =  tastoreCl ent;
+    t .t epCredStats = t epCredStats;
   }
 
   /**
-   * Gets user properties including TWEEPCRED, SpamScore values/flags from metastore for the
-   * given userids.
+   * Gets user propert es  nclud ng TWEEPCRED, SpamScore values/flags from  tastore for t 
+   * g ven user ds.
    *
-   * @param userIds the list of users for which to get the properties.
-   * @return mapping from userId to UserProperties. If a user's twepcred score is not present in the
-   * metastore, of if there was a problem retrieving it, that user's score will not be set in the
+   * @param user ds t  l st of users for wh ch to get t  propert es.
+   * @return mapp ng from user d to UserPropert es.  f a user's t pcred score  s not present  n t 
+   *  tastore, of  f t re was a problem retr ev ng  , that user's score w ll not be set  n t 
    * returned map.
    */
-  @VisibleForTesting
-  Future<Map<Long, ManhattanUserProperties>> getManhattanUserProperties(final List<Long> userIds) {
-    Preconditions.checkArgument(userIds != null);
-    if (metastoreClient == null || userIds.isEmpty()) {
-      return Future.value(Collections.emptyMap());
+  @V s bleForTest ng
+  Future<Map<Long, ManhattanUserPropert es>> getManhattanUserPropert es(f nal L st<Long> user ds) {
+    Precond  ons.c ckArgu nt(user ds != null);
+     f ( tastoreCl ent == null || user ds. sEmpty()) {
+      return Future.value(Collect ons.emptyMap());
     }
 
-    final long start = System.currentTimeMillis();
+    f nal long start = System.currentT  M ll s();
 
-    return metastoreClient.multiGet(userIds, COLUMNS)
-        .map(new Function<Map<Long, MetastoreRow>, Map<Long, ManhattanUserProperties>>() {
-          @Override
-          public Map<Long, ManhattanUserProperties> apply(Map<Long, MetastoreRow> response) {
-            long latencyMs = System.currentTimeMillis() - start;
-            Map<Long, ManhattanUserProperties> resultMap =
-                Maps.newHashMapWithExpectedSize(userIds.size());
+    return  tastoreCl ent.mult Get(user ds, COLUMNS)
+        .map(new Funct on<Map<Long,  tastoreRow>, Map<Long, ManhattanUserPropert es>>() {
+          @Overr de
+          publ c Map<Long, ManhattanUserPropert es> apply(Map<Long,  tastoreRow> response) {
+            long latencyMs = System.currentT  M ll s() - start;
+            Map<Long, ManhattanUserPropert es> resultMap =
+                Maps.newHashMapW hExpectedS ze(user ds.s ze());
 
-            for (Long userId : userIds) {
-              MetastoreRow row = response.get(userId);
-              processTweepCredColumn(userId, row, resultMap);
+            for (Long user d : user ds) {
+               tastoreRow row = response.get(user d);
+              processT epCredColumn(user d, row, resultMap);
             }
 
-            MANHATTAN_METASTORE_STATS.requestComplete(latencyMs, resultMap.size(), true);
+            MANHATTAN_METASTORE_STATS.requestComplete(latencyMs, resultMap.s ze(), true);
             return resultMap;
           }
         })
-        .handle(new Function<Throwable, Map<Long, ManhattanUserProperties>>() {
-          @Override
-          public Map<Long, ManhattanUserProperties> apply(Throwable t) {
-            long latencyMs = System.currentTimeMillis() - start;
-            LOG.error("Exception talking to metastore after " + latencyMs + " ms.", t);
+        .handle(new Funct on<Throwable, Map<Long, ManhattanUserPropert es>>() {
+          @Overr de
+          publ c Map<Long, ManhattanUserPropert es> apply(Throwable t) {
+            long latencyMs = System.currentT  M ll s() - start;
+            LOG.error("Except on talk ng to  tastore after " + latencyMs + " ms.", t);
 
             MANHATTAN_METASTORE_STATS.requestComplete(latencyMs, 0, false);
-            return Collections.emptyMap();
+            return Collect ons.emptyMap();
           }
         });
   }
 
 
   /**
-   * Process the TweepCred column data returned from metastore, takes TweepCred, fills in the
-   * the resultMap as appropriate.
+   * Process t  T epCred column data returned from  tastore, takes T epCred, f lls  n t 
+   * t  resultMap as appropr ate.
    */
-  private void processTweepCredColumn(
-      Long userId,
-      MetastoreRow metastoreRow,
-      Map<Long, ManhattanUserProperties> resultMap) {
-    MetastoreValue<TweepCred> tweepCredValue =
-        metastoreRow == null ? null : metastoreRow.getValue(MetastoreColumn.TWEEPCRED);
-    ResponseCode responseCode = tweepCredValue == null ? null : tweepCredValue.getResponseCode();
-    tweepCredStats.trackMetastoreResponseCode(responseCode);
+  pr vate vo d processT epCredColumn(
+      Long user d,
+       tastoreRow  tastoreRow,
+      Map<Long, ManhattanUserPropert es> resultMap) {
+     tastoreValue<T epCred> t epCredValue =
+         tastoreRow == null ? null :  tastoreRow.getValue( tastoreColumn.TWEEPCRED);
+    ResponseCode responseCode = t epCredValue == null ? null : t epCredValue.getResponseCode();
+    t epCredStats.track tastoreResponseCode(responseCode);
 
-    if (responseCode == ResponseCode.OK) {
+     f (responseCode == ResponseCode.OK) {
       try {
-        TweepCred tweepCred = tweepCredValue.getValue();
-        if (tweepCred != null && tweepCred.isSetScore()) {
-          ManhattanUserProperties manhattanUserProperties =
-              getOrCreateManhattanUserProperties(userId, resultMap);
-          manhattanUserProperties.setTweepcred(tweepCred.getScore());
+        T epCred t epCred = t epCredValue.getValue();
+         f (t epCred != null && t epCred. sSetScore()) {
+          ManhattanUserPropert es manhattanUserPropert es =
+              getOrCreateManhattanUserPropert es(user d, resultMap);
+          manhattanUserPropert es.setT epcred(t epCred.getScore());
         }
-      } catch (MetastoreException e) {
-        // guaranteed not to be thrown if ResponseCode.OK
-        LOG.warn("Unexpected MetastoreException parsing userinfo column!", e);
+      } catch ( tastoreExcept on e) {
+        // guaranteed not to be thrown  f ResponseCode.OK
+        LOG.warn("Unexpected  tastoreExcept on pars ng user nfo column!", e);
       }
     }
   }
 
-  private static ManhattanUserProperties getOrCreateManhattanUserProperties(
-      Long userId, Map<Long, ManhattanUserProperties> resultMap) {
+  pr vate stat c ManhattanUserPropert es getOrCreateManhattanUserPropert es(
+      Long user d, Map<Long, ManhattanUserPropert es> resultMap) {
 
-    ManhattanUserProperties manhattanUserProperties = resultMap.get(userId);
-    if (manhattanUserProperties == null) {
-      manhattanUserProperties = new ManhattanUserProperties();
-      resultMap.put(userId, manhattanUserProperties);
+    ManhattanUserPropert es manhattanUserPropert es = resultMap.get(user d);
+     f (manhattanUserPropert es == null) {
+      manhattanUserPropert es = new ManhattanUserPropert es();
+      resultMap.put(user d, manhattanUserPropert es);
     }
 
-    return manhattanUserProperties;
+    return manhattanUserPropert es;
   }
 
   /**
-   * Populates the user properties from the given batch.
+   * Populates t  user propert es from t  g ven batch.
    */
-  public  Future<Collection<IngesterTwitterMessage>> populateUserProperties(
-      Collection<IngesterTwitterMessage> batch) {
-    Set<Long> userIds = new HashSet<>();
-    for (IngesterTwitterMessage message : batch) {
-      if ((message.getUserReputation() == IngesterTwitterMessage.DOUBLE_FIELD_NOT_PRESENT)
-          && !message.isDeleted()) {
-        Optional<Long> userId = message.getFromUserTwitterId();
-        if (userId.isPresent()) {
-          userIds.add(userId.get());
+  publ c  Future<Collect on< ngesterTw ter ssage>> populateUserPropert es(
+      Collect on< ngesterTw ter ssage> batch) {
+    Set<Long> user ds = new HashSet<>();
+    for ( ngesterTw ter ssage  ssage : batch) {
+       f (( ssage.getUserReputat on() ==  ngesterTw ter ssage.DOUBLE_F ELD_NOT_PRESENT)
+          && ! ssage. sDeleted()) {
+        Opt onal<Long> user d =  ssage.getFromUserTw ter d();
+         f (user d. sPresent()) {
+          user ds.add(user d.get());
         } else {
-          LOG.error("No user id present for tweet {}", message.getId());
+          LOG.error("No user  d present for t et {}",  ssage.get d());
         }
       }
     }
-    List<Long> uniqIds = Lists.newArrayList(userIds);
-    Collections.sort(uniqIds);   // for testing predictability
+    L st<Long> un q ds = L sts.newArrayL st(user ds);
+    Collect ons.sort(un q ds);   // for test ng pred ctab l y
 
-    Future<Map<Long, ManhattanUserProperties>> manhattanUserPropertiesMap =
-        getManhattanUserProperties(uniqIds);
+    Future<Map<Long, ManhattanUserPropert es>> manhattanUserPropert esMap =
+        getManhattanUserPropert es(un q ds);
 
-    return manhattanUserPropertiesMap.map(Function.func(map -> {
-      for (IngesterTwitterMessage message : batch) {
-        if (((message.getUserReputation() != IngesterTwitterMessage.DOUBLE_FIELD_NOT_PRESENT)
-            && RelevanceSignalConstants.isValidUserReputation(
-            (int) Math.floor(message.getUserReputation())))
-            || message.isDeleted()) {
-          continue;
+    return manhattanUserPropert esMap.map(Funct on.func(map -> {
+      for ( ngesterTw ter ssage  ssage : batch) {
+         f ((( ssage.getUserReputat on() !=  ngesterTw ter ssage.DOUBLE_F ELD_NOT_PRESENT)
+            && RelevanceS gnalConstants. sVal dUserReputat on(
+            ( nt) Math.floor( ssage.getUserReputat on())))
+            ||  ssage. sDeleted()) {
+          cont nue;
         }
-        Optional<Long> optionalUserId = message.getFromUserTwitterId();
-        if (optionalUserId.isPresent()) {
-          long userId = optionalUserId.get();
-          ManhattanUserProperties manhattanUserProperties =  map.get(userId);
+        Opt onal<Long> opt onalUser d =  ssage.getFromUserTw ter d();
+         f (opt onalUser d. sPresent()) {
+          long user d = opt onalUser d.get();
+          ManhattanUserPropert es manhattanUserPropert es =  map.get(user d);
 
-          final boolean isTestUser = TestUserFilter.isTestUserId(userId);
-          if (isTestUser) {
-            MESSAGE_FROM_TEST_USER.increment();
+          f nal boolean  sTestUser = TestUserF lter. sTestUser d(user d);
+           f ( sTestUser) {
+            MESSAGE_FROM_TEST_USER. ncre nt();
           }
 
-          // legacy setting of tweepcred
-          setTweepCred(isTestUser, manhattanUserProperties, message);
+          // legacy sett ng of t epcred
+          setT epCred( sTestUser, manhattanUserPropert es,  ssage);
 
-          // set additional fields
-          if (setSensitiveBits(manhattanUserProperties, message)) {
-            SENSITIVE_BITS_COUNTER.increment();
+          // set add  onal f elds
+           f (setSens  veB s(manhattanUserPropert es,  ssage)) {
+            SENS T VE_B TS_COUNTER. ncre nt();
           }
         }
       }
@@ -377,70 +377,70 @@ public class UserPropertiesManager {
     }));
   }
 
-  // good old tweepcred
-  private void setTweepCred(
-      boolean isTestUser,
-      ManhattanUserProperties manhattanUserProperties,
-      TwitterMessage message) {
-    float score = RelevanceSignalConstants.UNSET_REPUTATION_SENTINEL;
-    if (manhattanUserProperties == null) {
-      if (isTestUser) {
-        SKIPPED_REPUTATION_CHECK_COUNTER.increment();
+  // good old t epcred
+  pr vate vo d setT epCred(
+      boolean  sTestUser,
+      ManhattanUserPropert es manhattanUserPropert es,
+      Tw ter ssage  ssage) {
+    float score = RelevanceS gnalConstants.UNSET_REPUTAT ON_SENT NEL;
+     f (manhattanUserPropert es == null) {
+       f ( sTestUser) {
+        SK PPED_REPUTAT ON_CHECK_COUNTER. ncre nt();
       } else {
-        MISSING_REPUTATION_COUNTER.increment();
-        DEFAULT_REPUTATION_COUNTER.increment();
+        M SS NG_REPUTAT ON_COUNTER. ncre nt();
+        DEFAULT_REPUTAT ON_COUNTER. ncre nt();
       }
-    } else if (!RelevanceSignalConstants.isValidUserReputation(
-        (int) Math.floor(manhattanUserProperties.tweepcred))) {
-      if (!isTestUser) {
-        INVALID_REPUTATION_COUNTER.increment();
-        DEFAULT_REPUTATION_COUNTER.increment();
+    } else  f (!RelevanceS gnalConstants. sVal dUserReputat on(
+        ( nt) Math.floor(manhattanUserPropert es.t epcred))) {
+       f (! sTestUser) {
+         NVAL D_REPUTAT ON_COUNTER. ncre nt();
+        DEFAULT_REPUTAT ON_COUNTER. ncre nt();
       }
     } else {
-      score = manhattanUserProperties.tweepcred;
-      ACCEPTED_REPUTATION_COUNTER.increment();
+      score = manhattanUserPropert es.t epcred;
+      ACCEPTED_REPUTAT ON_COUNTER. ncre nt();
     }
-    message.setUserReputation(score);
+     ssage.setUserReputat on(score);
   }
 
-  // Sets sensitive content, nsfw, and spam flags in TwitterMessage, further
-  // sets the following bits in encoded features:
-  // EarlybirdFeatureConfiguration.IS_SENSITIVE_FLAG
-  // EarlybirdFeatureConfiguration.IS_USER_NSFW_FLAG
-  // EarlybirdFeatureConfiguration.IS_USER_SPAM_FLAG
-  private boolean setSensitiveBits(
-      ManhattanUserProperties manhattanUserProperties,
-      TwitterMessage message) {
-    if (manhattanUserProperties == null) {
+  // Sets sens  ve content, nsfw, and spam flags  n Tw ter ssage, furt r
+  // sets t  follow ng b s  n encoded features:
+  // Earlyb rdFeatureConf gurat on. S_SENS T VE_FLAG
+  // Earlyb rdFeatureConf gurat on. S_USER_NSFW_FLAG
+  // Earlyb rdFeatureConf gurat on. S_USER_SPAM_FLAG
+  pr vate boolean setSens  veB s(
+      ManhattanUserPropert es manhattanUserPropert es,
+      Tw ter ssage  ssage) {
+     f (manhattanUserPropert es == null) {
       return false;
     }
 
-    final boolean isUserSpam = manhattanUserProperties.spamScore > SPAM_SCORE_THRESHOLD;
-    // SEARCH-17413: Compute the field with gizmoduck data.
-    final boolean isUserNSFW = false;
-    final boolean anySensitiveBitSet = isUserSpam || isUserNSFW;
+    f nal boolean  sUserSpam = manhattanUserPropert es.spamScore > SPAM_SCORE_THRESHOLD;
+    // SEARCH-17413: Compute t  f eld w h g zmoduck data.
+    f nal boolean  sUserNSFW = false;
+    f nal boolean anySens  veB Set =  sUserSpam ||  sUserNSFW;
 
-    if (message.isSensitiveContent()) {
-      // original json has possibly_sensitive = true, count it
-      IS_SENSITIVE_FROM_JSON_COUNTER.increment();
+     f ( ssage. sSens  veContent()) {
+      // or g nal json has poss bly_sens  ve = true, count  
+       S_SENS T VE_FROM_JSON_COUNTER. ncre nt();
     }
 
-    if (isUserNSFW) {
-      // set EarlybirdFeatureConfiguration.IS_USER_NSFW_FLAG
-      for (PenguinVersion penguinVersion : message.getSupportedPenguinVersions()) {
-        message.getTweetUserFeatures(penguinVersion).setNsfw(isUserNSFW);
+     f ( sUserNSFW) {
+      // set Earlyb rdFeatureConf gurat on. S_USER_NSFW_FLAG
+      for (Pengu nVers on pengu nVers on :  ssage.getSupportedPengu nVers ons()) {
+         ssage.getT etUserFeatures(pengu nVers on).setNsfw( sUserNSFW);
       }
-      IS_USER_NSFW_COUNTER.increment();
+       S_USER_NSFW_COUNTER. ncre nt();
     }
-    if (isUserSpam) {
-      // set EarlybirdFeatureConfiguration.IS_USER_SPAM_FLAG
-      for (PenguinVersion penguinVersion : message.getSupportedPenguinVersions()) {
-        message.getTweetUserFeatures(penguinVersion).setSpam(isUserSpam);
+     f ( sUserSpam) {
+      // set Earlyb rdFeatureConf gurat on. S_USER_SPAM_FLAG
+      for (Pengu nVers on pengu nVers on :  ssage.getSupportedPengu nVers ons()) {
+         ssage.getT etUserFeatures(pengu nVers on).setSpam( sUserSpam);
       }
-      IS_USER_SPAM_COUNTER.increment();
+       S_USER_SPAM_COUNTER. ncre nt();
     }
 
-    // if any of the sensitive bits are set, we return true
-    return anySensitiveBitSet;
+    //  f any of t  sens  ve b s are set,   return true
+    return anySens  veB Set;
   }
 }

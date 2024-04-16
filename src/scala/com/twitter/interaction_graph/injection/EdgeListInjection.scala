@@ -1,14 +1,14 @@
-package com.twitter.interaction_graph.injection
+package com.tw ter. nteract on_graph. nject on
 
-import com.twitter.interaction_graph.thriftscala.EdgeList
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaCompactThrift
+ mport com.tw ter. nteract on_graph.thr ftscala.EdgeL st
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.Long2B gEnd an
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.ScalaCompactThr ft
 
-object EdgeListInjection {
-  final val injection: KeyValInjection[Long, EdgeList] =
-    KeyValInjection(
-      Long2BigEndian,
-      ScalaCompactThrift(EdgeList)
+object EdgeL st nject on {
+  f nal val  nject on: KeyVal nject on[Long, EdgeL st] =
+    KeyVal nject on(
+      Long2B gEnd an,
+      ScalaCompactThr ft(EdgeL st)
     )
 }

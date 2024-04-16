@@ -1,81 +1,81 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.featureswitches.v2.FeatureSwitchResults
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
-import scala.collection.mutable
+ mport com.tw ter.featuresw c s.v2.FeatureSw chResults
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.repos ory._
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport scala.collect on.mutable
 
-object TweetCountsHydrator {
-  type Type = ValueHydrator[Option[StatusCounts], Ctx]
+object T etCountsHydrator {
+  type Type = ValueHydrator[Opt on[StatusCounts], Ctx]
 
-  case class Ctx(featureSwitchResults: Option[FeatureSwitchResults], underlyingTweetCtx: TweetCtx)
-      extends TweetCtx.Proxy
+  case class Ctx(featureSw chResults: Opt on[FeatureSw chResults], underly ngT etCtx: T etCtx)
+      extends T etCtx.Proxy
 
-  val retweetCountField: FieldByPath =
-    fieldByPath(Tweet.CountsField, StatusCounts.RetweetCountField)
-  val replyCountField: FieldByPath = fieldByPath(Tweet.CountsField, StatusCounts.ReplyCountField)
-  val favoriteCountField: FieldByPath =
-    fieldByPath(Tweet.CountsField, StatusCounts.FavoriteCountField)
-  val quoteCountField: FieldByPath = fieldByPath(Tweet.CountsField, StatusCounts.QuoteCountField)
-  val bookmarkCountField: FieldByPath =
-    fieldByPath(Tweet.CountsField, StatusCounts.BookmarkCountField)
+  val ret etCountF eld: F eldByPath =
+    f eldByPath(T et.CountsF eld, StatusCounts.Ret etCountF eld)
+  val replyCountF eld: F eldByPath = f eldByPath(T et.CountsF eld, StatusCounts.ReplyCountF eld)
+  val favor eCountF eld: F eldByPath =
+    f eldByPath(T et.CountsF eld, StatusCounts.Favor eCountF eld)
+  val quoteCountF eld: F eldByPath = f eldByPath(T et.CountsF eld, StatusCounts.QuoteCountF eld)
+  val bookmarkCountF eld: F eldByPath =
+    f eldByPath(T et.CountsF eld, StatusCounts.BookmarkCountF eld)
 
   val emptyCounts = StatusCounts()
 
-  val retweetCountPartial = ValueState.partial(emptyCounts, retweetCountField)
-  val replyCountPartial = ValueState.partial(emptyCounts, replyCountField)
-  val favoriteCountPartial = ValueState.partial(emptyCounts, favoriteCountField)
-  val quoteCountPartial = ValueState.partial(emptyCounts, quoteCountField)
-  val bookmarkCountPartial = ValueState.partial(emptyCounts, bookmarkCountField)
+  val ret etCountPart al = ValueState.part al(emptyCounts, ret etCountF eld)
+  val replyCountPart al = ValueState.part al(emptyCounts, replyCountF eld)
+  val favor eCountPart al = ValueState.part al(emptyCounts, favor eCountF eld)
+  val quoteCountPart al = ValueState.part al(emptyCounts, quoteCountF eld)
+  val bookmarkCountPart al = ValueState.part al(emptyCounts, bookmarkCountF eld)
 
-  val bookmarksCountHydrationEnabledKey = "bookmarks_count_hydration_enabled"
+  val bookmarksCountHydrat onEnabledKey = "bookmarks_count_hydrat on_enabled"
 
   /**
-   * Take a Seq of StatusCounts and reduce down to a single StatusCounts.
-   * Note: `reduce` here is safe because we are guaranteed to always have at least
+   * Take a Seq of StatusCounts and reduce down to a s ngle StatusCounts.
+   * Note: `reduce`  re  s safe because   are guaranteed to always have at least
    * one value.
    */
   def reduceStatusCounts(counts: Seq[StatusCounts]): StatusCounts =
     counts.reduce { (a, b) =>
       StatusCounts(
-        retweetCount = b.retweetCount.orElse(a.retweetCount),
+        ret etCount = b.ret etCount.orElse(a.ret etCount),
         replyCount = b.replyCount.orElse(a.replyCount),
-        favoriteCount = b.favoriteCount.orElse(a.favoriteCount),
+        favor eCount = b.favor eCount.orElse(a.favor eCount),
         quoteCount = b.quoteCount.orElse(a.quoteCount),
         bookmarkCount = b.bookmarkCount.orElse(a.bookmarkCount)
       )
     }
 
   def toKeys(
-    tweetId: TweetId,
-    countsFields: Set[FieldId],
-    curr: Option[StatusCounts]
-  ): Seq[TweetCountKey] = {
-    val keys = new mutable.ArrayBuffer[TweetCountKey](4)
+    t et d: T et d,
+    countsF elds: Set[F eld d],
+    curr: Opt on[StatusCounts]
+  ): Seq[T etCountKey] = {
+    val keys = new mutable.ArrayBuffer[T etCountKey](4)
 
-    countsFields.foreach {
-      case StatusCounts.RetweetCountField.id =>
-        if (curr.flatMap(_.retweetCount).isEmpty)
-          keys += RetweetsKey(tweetId)
+    countsF elds.foreach {
+      case StatusCounts.Ret etCountF eld. d =>
+         f (curr.flatMap(_.ret etCount). sEmpty)
+          keys += Ret etsKey(t et d)
 
-      case StatusCounts.ReplyCountField.id =>
-        if (curr.flatMap(_.replyCount).isEmpty)
-          keys += RepliesKey(tweetId)
+      case StatusCounts.ReplyCountF eld. d =>
+         f (curr.flatMap(_.replyCount). sEmpty)
+          keys += Repl esKey(t et d)
 
-      case StatusCounts.FavoriteCountField.id =>
-        if (curr.flatMap(_.favoriteCount).isEmpty)
-          keys += FavsKey(tweetId)
+      case StatusCounts.Favor eCountF eld. d =>
+         f (curr.flatMap(_.favor eCount). sEmpty)
+          keys += FavsKey(t et d)
 
-      case StatusCounts.QuoteCountField.id =>
-        if (curr.flatMap(_.quoteCount).isEmpty)
-          keys += QuotesKey(tweetId)
+      case StatusCounts.QuoteCountF eld. d =>
+         f (curr.flatMap(_.quoteCount). sEmpty)
+          keys += QuotesKey(t et d)
 
-      case StatusCounts.BookmarkCountField.id =>
-        if (curr.flatMap(_.bookmarkCount).isEmpty)
-          keys += BookmarksKey(tweetId)
+      case StatusCounts.BookmarkCountF eld. d =>
+         f (curr.flatMap(_.bookmarkCount). sEmpty)
+          keys += BookmarksKey(t et d)
 
       case _ =>
     }
@@ -84,105 +84,105 @@ object TweetCountsHydrator {
   }
 
   /*
-   * Get a StatusCounts object for a specific tweet and specific field (e.g. only fav, or reply etc).
-   * StatusCounts returned from here can be combined with other StatusCounts using `sumStatusCount`
+   * Get a StatusCounts object for a spec f c t et and spec f c f eld (e.g. only fav, or reply etc).
+   * StatusCounts returned from  re can be comb ned w h ot r StatusCounts us ng `sumStatusCount`
    */
   def statusCountsRepo(
-    key: TweetCountKey,
-    repo: TweetCountsRepository.Type
-  ): Stitch[ValueState[StatusCounts]] =
-    repo(key).liftToTry.map {
+    key: T etCountKey,
+    repo: T etCountsRepos ory.Type
+  ): St ch[ValueState[StatusCounts]] =
+    repo(key).l ftToTry.map {
       case Return(count) =>
-        ValueState.modified(
+        ValueState.mod f ed(
           key match {
-            case _: RetweetsKey => StatusCounts(retweetCount = Some(count))
-            case _: RepliesKey => StatusCounts(replyCount = Some(count))
-            case _: FavsKey => StatusCounts(favoriteCount = Some(count))
-            case _: QuotesKey => StatusCounts(quoteCount = Some(count))
-            case _: BookmarksKey => StatusCounts(bookmarkCount = Some(count))
+            case _: Ret etsKey => StatusCounts(ret etCount = So (count))
+            case _: Repl esKey => StatusCounts(replyCount = So (count))
+            case _: FavsKey => StatusCounts(favor eCount = So (count))
+            case _: QuotesKey => StatusCounts(quoteCount = So (count))
+            case _: BookmarksKey => StatusCounts(bookmarkCount = So (count))
           }
         )
 
       case Throw(_) =>
         key match {
-          case _: RetweetsKey => retweetCountPartial
-          case _: RepliesKey => replyCountPartial
-          case _: FavsKey => favoriteCountPartial
-          case _: QuotesKey => quoteCountPartial
-          case _: BookmarksKey => bookmarkCountPartial
+          case _: Ret etsKey => ret etCountPart al
+          case _: Repl esKey => replyCountPart al
+          case _: FavsKey => favor eCountPart al
+          case _: QuotesKey => quoteCountPart al
+          case _: BookmarksKey => bookmarkCountPart al
         }
     }
 
-  def filterRequestedCounts(
-    userId: UserId,
-    requestedCounts: Set[FieldId],
-    bookmarkCountsDecider: Gate[Long],
-    featureSwitchResults: Option[FeatureSwitchResults]
-  ): Set[FieldId] = {
-    if (requestedCounts.contains(StatusCounts.BookmarkCountField.id))
-      if (bookmarkCountsDecider(userId) ||
-        featureSwitchResults
-          .flatMap(_.getBoolean(bookmarksCountHydrationEnabledKey, false))
+  def f lterRequestedCounts(
+    user d: User d,
+    requestedCounts: Set[F eld d],
+    bookmarkCountsDec der: Gate[Long],
+    featureSw chResults: Opt on[FeatureSw chResults]
+  ): Set[F eld d] = {
+     f (requestedCounts.conta ns(StatusCounts.BookmarkCountF eld. d))
+       f (bookmarkCountsDec der(user d) ||
+        featureSw chResults
+          .flatMap(_.getBoolean(bookmarksCountHydrat onEnabledKey, false))
           .getOrElse(false))
         requestedCounts
       else
-        requestedCounts.filter(_ != StatusCounts.BookmarkCountField.id)
+        requestedCounts.f lter(_ != StatusCounts.BookmarkCountF eld. d)
     else
       requestedCounts
   }
 
-  def apply(repo: TweetCountsRepository.Type, shouldHydrateBookmarksCount: Gate[Long]): Type = {
+  def apply(repo: T etCountsRepos ory.Type, shouldHydrateBookmarksCount: Gate[Long]): Type = {
 
-    val all: Set[FieldId] = StatusCounts.fieldInfos.map(_.tfield.id).toSet
+    val all: Set[F eld d] = StatusCounts.f eld nfos.map(_.tf eld. d).toSet
 
-    val modifiedZero: Map[Set[FieldId], ValueState[Some[StatusCounts]]] = {
-      for (set <- all.subsets) yield {
-        @inline
-        def zeroOrNone(fieldId: FieldId) =
-          if (set.contains(fieldId)) Some(0L) else None
+    val mod f edZero: Map[Set[F eld d], ValueState[So [StatusCounts]]] = {
+      for (set <- all.subsets) y eld {
+        @ nl ne
+        def zeroOrNone(f eld d: F eld d) =
+           f (set.conta ns(f eld d)) So (0L) else None
 
         val statusCounts =
           StatusCounts(
-            retweetCount = zeroOrNone(StatusCounts.RetweetCountField.id),
-            replyCount = zeroOrNone(StatusCounts.ReplyCountField.id),
-            favoriteCount = zeroOrNone(StatusCounts.FavoriteCountField.id),
-            quoteCount = zeroOrNone(StatusCounts.QuoteCountField.id),
-            bookmarkCount = zeroOrNone(StatusCounts.BookmarkCountField.id)
+            ret etCount = zeroOrNone(StatusCounts.Ret etCountF eld. d),
+            replyCount = zeroOrNone(StatusCounts.ReplyCountF eld. d),
+            favor eCount = zeroOrNone(StatusCounts.Favor eCountF eld. d),
+            quoteCount = zeroOrNone(StatusCounts.QuoteCountF eld. d),
+            bookmarkCount = zeroOrNone(StatusCounts.BookmarkCountF eld. d)
           )
 
-        set -> ValueState.modified(Some(statusCounts))
+        set -> ValueState.mod f ed(So (statusCounts))
       }
     }.toMap
 
-    ValueHydrator[Option[StatusCounts], Ctx] { (curr, ctx) =>
-      val countsFields: Set[FieldId] = filterRequestedCounts(
-        ctx.opts.forUserId.getOrElse(ctx.userId),
-        ctx.opts.include.countsFields,
+    ValueHydrator[Opt on[StatusCounts], Ctx] { (curr, ctx) =>
+      val countsF elds: Set[F eld d] = f lterRequestedCounts(
+        ctx.opts.forUser d.getOrElse(ctx.user d),
+        ctx.opts. nclude.countsF elds,
         shouldHydrateBookmarksCount,
-        ctx.featureSwitchResults
+        ctx.featureSw chResults
       )
-      if (ctx.isRetweet) {
-        // To avoid a reflection-induced key error where the countsFields can contain a fieldId
-        // that is not in the thrift schema loaded at start, we strip unknown field_ids using
-        // `intersect`
-        Stitch.value(modifiedZero(countsFields.intersect(all)))
+       f (ctx. sRet et) {
+        // To avo d a reflect on- nduced key error w re t  countsF elds can conta n a f eld d
+        // that  s not  n t  thr ft sc ma loaded at start,   str p unknown f eld_ ds us ng
+        // ` ntersect`
+        St ch.value(mod f edZero(countsF elds. ntersect(all)))
       } else {
-        val keys = toKeys(ctx.tweetId, countsFields, curr)
+        val keys = toKeys(ctx.t et d, countsF elds, curr)
 
-        Stitch.traverse(keys)(key => statusCountsRepo(key, repo)).map { results =>
-          // always flag modified if starting from None
-          val vs0 = ValueState.success(curr.getOrElse(emptyCounts), curr.isEmpty)
+        St ch.traverse(keys)(key => statusCountsRepo(key, repo)).map { results =>
+          // always flag mod f ed  f start ng from None
+          val vs0 = ValueState.success(curr.getOrElse(emptyCounts), curr. sEmpty)
           val vs = vs0 +: results
 
-          ValueState.sequence(vs).map(reduceStatusCounts).map(Some(_))
+          ValueState.sequence(vs).map(reduceStatusCounts).map(So (_))
         }
       }
-    }.onlyIf { (_, ctx) =>
-      filterRequestedCounts(
-        ctx.opts.forUserId.getOrElse(ctx.userId),
-        ctx.opts.include.countsFields,
+    }.only f { (_, ctx) =>
+      f lterRequestedCounts(
+        ctx.opts.forUser d.getOrElse(ctx.user d),
+        ctx.opts. nclude.countsF elds,
         shouldHydrateBookmarksCount,
-        ctx.featureSwitchResults
+        ctx.featureSw chResults
       ).nonEmpty
     }
   }

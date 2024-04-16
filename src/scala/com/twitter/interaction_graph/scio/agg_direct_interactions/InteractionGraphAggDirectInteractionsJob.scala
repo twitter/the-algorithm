@@ -1,77 +1,77 @@
-package com.twitter.interaction_graph.scio.agg_direct_interactions
+package com.tw ter. nteract on_graph.sc o.agg_d rect_ nteract ons
 
-import com.spotify.scio.ScioContext
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.dal.DAL.DiskFormat
-import com.twitter.beam.io.fs.multiformat.PathLayout
-import com.twitter.beam.io.fs.multiformat.WriteOptions
-import com.twitter.beam.job.ServiceIdentifierOptions
-import com.twitter.interaction_graph.scio.common.UserUtil
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.statebird.v2.thriftscala.Environment
-import org.joda.time.Interval
+ mport com.spot fy.sc o.Sc oContext
+ mport com.tw ter.beam. o.dal.DAL
+ mport com.tw ter.beam. o.dal.DAL.D skFormat
+ mport com.tw ter.beam. o.fs.mult format.PathLa t
+ mport com.tw ter.beam. o.fs.mult format.Wr eOpt ons
+ mport com.tw ter.beam.job.Serv ce dent f erOpt ons
+ mport com.tw ter. nteract on_graph.sc o.common.UserUt l
+ mport com.tw ter. nteract on_graph.thr ftscala.Edge
+ mport com.tw ter. nteract on_graph.thr ftscala.Vertex
+ mport com.tw ter.sc o_ nternal.job.Sc oBeamJob
+ mport com.tw ter.stateb rd.v2.thr ftscala.Env ron nt
+ mport org.joda.t  . nterval
 
-object InteractionGraphAggDirectInteractionsJob
-    extends ScioBeamJob[InteractionGraphAggDirectInteractionsOption] {
-  override protected def configurePipeline(
-    scioContext: ScioContext,
-    pipelineOptions: InteractionGraphAggDirectInteractionsOption
-  ): Unit = {
-    @transient
-    implicit lazy val sc: ScioContext = scioContext
-    implicit lazy val dateInterval: Interval = pipelineOptions.interval
+object  nteract onGraphAggD rect nteract onsJob
+    extends Sc oBeamJob[ nteract onGraphAggD rect nteract onsOpt on] {
+  overr de protected def conf gureP pel ne(
+    sc oContext: Sc oContext,
+    p pel neOpt ons:  nteract onGraphAggD rect nteract onsOpt on
+  ): Un  = {
+    @trans ent
+     mpl c  lazy val sc: Sc oContext = sc oContext
+     mpl c  lazy val date nterval:  nterval = p pel neOpt ons. nterval
 
-    val dalEnvironment: String = pipelineOptions
-      .as(classOf[ServiceIdentifierOptions])
-      .getEnvironment()
-    val dalWriteEnvironment = if (pipelineOptions.getDALWriteEnvironment != null) {
-      pipelineOptions.getDALWriteEnvironment
+    val dalEnv ron nt: Str ng = p pel neOpt ons
+      .as(classOf[Serv ce dent f erOpt ons])
+      .getEnv ron nt()
+    val dalWr eEnv ron nt =  f (p pel neOpt ons.getDALWr eEnv ron nt != null) {
+      p pel neOpt ons.getDALWr eEnv ron nt
     } else {
-      dalEnvironment
+      dalEnv ron nt
     }
 
-    val source = InteractionGraphAggDirectInteractionsSource(pipelineOptions)
+    val s ce =  nteract onGraphAggD rect nteract onsS ce(p pel neOpt ons)
 
-    val rawUsers = source.readCombinedUsers()
-    val safeUsers = UserUtil.getValidUsers(rawUsers)
+    val rawUsers = s ce.readComb nedUsers()
+    val safeUsers = UserUt l.getVal dUsers(rawUsers)
 
-    val rawFavorites = source.readFavorites(dateInterval)
-    val rawPhotoTags = source.readPhotoTags(dateInterval)
-    val tweetSource = source.readTweetSource(dateInterval)
+    val rawFavor es = s ce.readFavor es(date nterval)
+    val rawPhotoTags = s ce.readPhotoTags(date nterval)
+    val t etS ce = s ce.readT etS ce(date nterval)
 
-    val (vertex, edges) = InteractionGraphAggDirectInteractionsUtil.process(
-      rawFavorites,
-      tweetSource,
+    val (vertex, edges) =  nteract onGraphAggD rect nteract onsUt l.process(
+      rawFavor es,
+      t etS ce,
       rawPhotoTags,
       safeUsers
     )
 
     vertex.saveAsCustomOutput(
-      "Write Vertex Records",
-      DAL.write[Vertex](
-        InteractionGraphAggDirectInteractionsVertexDailyScalaDataset,
-        PathLayout.DailyPath(
-          pipelineOptions.getOutputPath + "/aggregated_direct_interactions_vertex_daily"),
-        dateInterval,
-        DiskFormat.Parquet,
-        Environment.valueOf(dalWriteEnvironment),
-        writeOption =
-          WriteOptions(numOfShards = Some((pipelineOptions.getNumberOfShards / 8.0).ceil.toInt))
+      "Wr e Vertex Records",
+      DAL.wr e[Vertex](
+         nteract onGraphAggD rect nteract onsVertexDa lyScalaDataset,
+        PathLa t.Da lyPath(
+          p pel neOpt ons.getOutputPath + "/aggregated_d rect_ nteract ons_vertex_da ly"),
+        date nterval,
+        D skFormat.Parquet,
+        Env ron nt.valueOf(dalWr eEnv ron nt),
+        wr eOpt on =
+          Wr eOpt ons(numOfShards = So ((p pel neOpt ons.getNumberOfShards / 8.0).ce l.to nt))
       )
     )
 
     edges.saveAsCustomOutput(
-      "Write Edge Records",
-      DAL.write[Edge](
-        InteractionGraphAggDirectInteractionsEdgeDailyScalaDataset,
-        PathLayout.DailyPath(
-          pipelineOptions.getOutputPath + "/aggregated_direct_interactions_edge_daily"),
-        dateInterval,
-        DiskFormat.Parquet,
-        Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards))
+      "Wr e Edge Records",
+      DAL.wr e[Edge](
+         nteract onGraphAggD rect nteract onsEdgeDa lyScalaDataset,
+        PathLa t.Da lyPath(
+          p pel neOpt ons.getOutputPath + "/aggregated_d rect_ nteract ons_edge_da ly"),
+        date nterval,
+        D skFormat.Parquet,
+        Env ron nt.valueOf(dalWr eEnv ron nt),
+        wr eOpt on = Wr eOpt ons(numOfShards = So (p pel neOpt ons.getNumberOfShards))
       )
     )
 

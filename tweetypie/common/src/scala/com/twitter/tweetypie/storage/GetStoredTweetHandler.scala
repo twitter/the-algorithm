@@ -1,126 +1,126 @@
-package com.twitter.tweetypie.storage
+package com.tw ter.t etyp e.storage
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.StitchSeqGroup
-import com.twitter.tweetypie.storage.TweetStorageClient.GetStoredTweet
-import com.twitter.tweetypie.storage.TweetStorageClient.GetStoredTweet.Error
-import com.twitter.tweetypie.storage.TweetStorageClient.GetStoredTweet.Response._
-import com.twitter.tweetypie.storage.TweetUtils._
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.util.Time
-import com.twitter.util.Try
-import scala.collection.mutable
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.St chSeqGroup
+ mport com.tw ter.t etyp e.storage.T etStorageCl ent.GetStoredT et
+ mport com.tw ter.t etyp e.storage.T etStorageCl ent.GetStoredT et.Error
+ mport com.tw ter.t etyp e.storage.T etStorageCl ent.GetStoredT et.Response._
+ mport com.tw ter.t etyp e.storage.T etUt ls._
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.ut l.Try
+ mport scala.collect on.mutable
 
-object GetStoredTweetHandler {
-  private[this] object DeletedState {
-    def unapply(stateRecord: Option[TweetStateRecord]): Option[TweetStateRecord] =
+object GetStoredT etHandler {
+  pr vate[t ] object DeletedState {
+    def unapply(stateRecord: Opt on[T etStateRecord]): Opt on[T etStateRecord] =
       stateRecord match {
-        case state @ (Some(_: TweetStateRecord.SoftDeleted) | Some(
-              _: TweetStateRecord.HardDeleted) | Some(_: TweetStateRecord.BounceDeleted)) =>
+        case state @ (So (_: T etStateRecord.SoftDeleted) | So (
+              _: T etStateRecord.HardDeleted) | So (_: T etStateRecord.BounceDeleted)) =>
           state
         case _ => None
       }
   }
 
-  private[this] def deletedAtMs(stateRecord: Option[TweetStateRecord]): Option[Long] =
+  pr vate[t ] def deletedAtMs(stateRecord: Opt on[T etStateRecord]): Opt on[Long] =
     stateRecord match {
-      case Some(d: TweetStateRecord.SoftDeleted) => Some(d.createdAt)
-      case Some(d: TweetStateRecord.BounceDeleted) => Some(d.createdAt)
-      case Some(d: TweetStateRecord.HardDeleted) => Some(d.deletedAt)
+      case So (d: T etStateRecord.SoftDeleted) => So (d.createdAt)
+      case So (d: T etStateRecord.BounceDeleted) => So (d.createdAt)
+      case So (d: T etStateRecord.HardDeleted) => So (d.deletedAt)
       case _ => None
     }
 
-  private[this] def tweetResponseFromRecords(
-    tweetId: TweetId,
-    mhRecords: Seq[TweetManhattanRecord],
-    statsReceiver: StatsReceiver,
-  ): GetStoredTweet.Response = {
+  pr vate[t ] def t etResponseFromRecords(
+    t et d: T et d,
+    mhRecords: Seq[T etManhattanRecord],
+    statsRece ver: StatsRece ver,
+  ): GetStoredT et.Response = {
     val errs =
       mutable.Buffer[Error]()
 
-    val hasStoredTweetFields: Boolean = mhRecords.exists {
-      case TweetManhattanRecord(TweetKey(_, _: TweetKey.LKey.FieldKey), _) => true
+    val hasStoredT etF elds: Boolean = mhRecords.ex sts {
+      case T etManhattanRecord(T etKey(_, _: T etKey.LKey.F eldKey), _) => true
       case _ => false
     }
 
-    val storedTweet = if (hasStoredTweetFields) {
-      Try(buildStoredTweet(tweetId, mhRecords, includeScrubbed = true))
-        .onFailure(_ => errs.append(Error.TweetIsCorrupt))
-        .toOption
+    val storedT et =  f (hasStoredT etF elds) {
+      Try(bu ldStoredT et(t et d, mhRecords,  ncludeScrubbed = true))
+        .onFa lure(_ => errs.append(Error.T et sCorrupt))
+        .toOpt on
     } else {
       None
     }
 
-    val scrubbedFields: Set[FieldId] = extractScrubbedFields(mhRecords)
-    val tweet: Option[Tweet] = storedTweet.map(StorageConversions.fromStoredTweetAllowInvalid)
-    val stateRecords: Seq[TweetStateRecord] = TweetStateRecord.fromTweetMhRecords(mhRecords)
-    val tweetState: Option[TweetStateRecord] = TweetStateRecord.mostRecent(mhRecords)
+    val scrubbedF elds: Set[F eld d] = extractScrubbedF elds(mhRecords)
+    val t et: Opt on[T et] = storedT et.map(StorageConvers ons.fromStoredT etAllow nval d)
+    val stateRecords: Seq[T etStateRecord] = T etStateRecord.fromT etMhRecords(mhRecords)
+    val t etState: Opt on[T etStateRecord] = T etStateRecord.mostRecent(mhRecords)
 
-    storedTweet.foreach { storedTweet =>
-      val storedExpectedFields = storedTweet.getFieldBlobs(expectedFields)
-      val missingExpectedFields = expectedFields.filterNot(storedExpectedFields.contains)
-      if (missingExpectedFields.nonEmpty || !isValid(storedTweet)) {
-        errs.append(Error.TweetFieldsMissingOrInvalid)
+    storedT et.foreach { storedT et =>
+      val storedExpectedF elds = storedT et.getF eldBlobs(expectedF elds)
+      val m ss ngExpectedF elds = expectedF elds.f lterNot(storedExpectedF elds.conta ns)
+       f (m ss ngExpectedF elds.nonEmpty || ! sVal d(storedT et)) {
+        errs.append(Error.T etF eldsM ss ngOr nval d)
       }
 
-      val invalidScrubbedFields = storedTweet.getFieldBlobs(scrubbedFields).keys
-      if (invalidScrubbedFields.nonEmpty) {
-        errs.append(Error.ScrubbedFieldsPresent)
+      val  nval dScrubbedF elds = storedT et.getF eldBlobs(scrubbedF elds).keys
+       f ( nval dScrubbedF elds.nonEmpty) {
+        errs.append(Error.ScrubbedF eldsPresent)
       }
 
-      if (deletedAtMs(tweetState).exists(_ < Time.now.inMilliseconds - 14.days.inMilliseconds)) {
-        errs.append(Error.TweetShouldBeHardDeleted)
+       f (deletedAtMs(t etState).ex sts(_ < T  .now. nM ll seconds - 14.days. nM ll seconds)) {
+        errs.append(Error.T etShouldBeHardDeleted)
       }
     }
 
-    val err = Option(errs.toList).filter(_.nonEmpty)
+    val err = Opt on(errs.toL st).f lter(_.nonEmpty)
 
-    (tweet, tweetState, err) match {
+    (t et, t etState, err) match {
       case (None, None, None) =>
-        statsReceiver.counter("not_found").incr()
-        NotFound(tweetId)
+        statsRece ver.counter("not_found"). ncr()
+        NotFound(t et d)
 
-      case (None, Some(tweetState: TweetStateRecord.HardDeleted), None) =>
-        statsReceiver.counter("hard_deleted").incr()
-        HardDeleted(tweetId, Some(tweetState), stateRecords, scrubbedFields)
+      case (None, So (t etState: T etStateRecord.HardDeleted), None) =>
+        statsRece ver.counter("hard_deleted"). ncr()
+        HardDeleted(t et d, So (t etState), stateRecords, scrubbedF elds)
 
-      case (None, _, Some(errs)) =>
-        statsReceiver.counter("failed").incr()
-        Failed(tweetId, tweetState, stateRecords, scrubbedFields, errs)
+      case (None, _, So (errs)) =>
+        statsRece ver.counter("fa led"). ncr()
+        Fa led(t et d, t etState, stateRecords, scrubbedF elds, errs)
 
-      case (Some(tweet), _, Some(errs)) =>
-        statsReceiver.counter("found_invalid").incr()
-        FoundWithErrors(tweet, tweetState, stateRecords, scrubbedFields, errs)
+      case (So (t et), _, So (errs)) =>
+        statsRece ver.counter("found_ nval d"). ncr()
+        FoundW hErrors(t et, t etState, stateRecords, scrubbedF elds, errs)
 
-      case (Some(tweet), DeletedState(state), None) =>
-        statsReceiver.counter("deleted").incr()
-        FoundDeleted(tweet, Some(state), stateRecords, scrubbedFields)
+      case (So (t et), DeletedState(state), None) =>
+        statsRece ver.counter("deleted"). ncr()
+        FoundDeleted(t et, So (state), stateRecords, scrubbedF elds)
 
-      case (Some(tweet), _, None) =>
-        statsReceiver.counter("found").incr()
-        Found(tweet, tweetState, stateRecords, scrubbedFields)
+      case (So (t et), _, None) =>
+        statsRece ver.counter("found"). ncr()
+        Found(t et, t etState, stateRecords, scrubbedF elds)
     }
   }
 
-  def apply(read: ManhattanOperations.Read, statsReceiver: StatsReceiver): GetStoredTweet = {
+  def apply(read: ManhattanOperat ons.Read, statsRece ver: StatsRece ver): GetStoredT et = {
 
-    object mhGroup extends StitchSeqGroup[TweetId, Seq[TweetManhattanRecord]] {
-      override def run(tweetIds: Seq[TweetId]): Stitch[Seq[Seq[TweetManhattanRecord]]] = {
-        Stats.addWidthStat("getStoredTweet", "tweetIds", tweetIds.size, statsReceiver)
-        Stitch.traverse(tweetIds)(read(_))
+    object mhGroup extends St chSeqGroup[T et d, Seq[T etManhattanRecord]] {
+      overr de def run(t et ds: Seq[T et d]): St ch[Seq[Seq[T etManhattanRecord]]] = {
+        Stats.addW dthStat("getStoredT et", "t et ds", t et ds.s ze, statsRece ver)
+        St ch.traverse(t et ds)(read(_))
       }
     }
 
-    tweetId =>
-      if (tweetId <= 0) {
-        Stitch.NotFound
+    t et d =>
+       f (t et d <= 0) {
+        St ch.NotFound
       } else {
-        Stitch
-          .call(tweetId, mhGroup)
+        St ch
+          .call(t et d, mhGroup)
           .map(mhRecords =>
-            tweetResponseFromRecords(tweetId, mhRecords, statsReceiver.scope("getStoredTweet")))
+            t etResponseFromRecords(t et d, mhRecords, statsRece ver.scope("getStoredT et")))
       }
   }
 }

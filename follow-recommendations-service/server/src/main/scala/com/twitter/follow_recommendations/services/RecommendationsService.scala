@@ -1,28 +1,28 @@
-package com.twitter.follow_recommendations.services
+package com.tw ter.follow_recom ndat ons.serv ces
 
-import com.twitter.follow_recommendations.configapi.deciders.DeciderParams
-import com.twitter.follow_recommendations.logging.FrsLogger
-import com.twitter.follow_recommendations.models.RecommendationRequest
-import com.twitter.follow_recommendations.models.RecommendationResponse
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Params
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.conf gap .dec ders.Dec derParams
+ mport com.tw ter.follow_recom ndat ons.logg ng.FrsLogger
+ mport com.tw ter.follow_recom ndat ons.models.Recom ndat onRequest
+ mport com.tw ter.follow_recom ndat ons.models.Recom ndat onResponse
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class RecommendationsService @Inject() (
-  productRecommenderService: ProductRecommenderService,
+@S ngleton
+class Recom ndat onsServ ce @ nject() (
+  productRecom nderServ ce: ProductRecom nderServ ce,
   resultLogger: FrsLogger) {
-  def get(request: RecommendationRequest, params: Params): Stitch[RecommendationResponse] = {
-    if (params(DeciderParams.EnableRecommendations)) {
-      productRecommenderService
-        .getRecommendations(request, params).map(RecommendationResponse).onSuccess { response =>
-          if (resultLogger.shouldLog(request.debugParams)) {
-            resultLogger.logRecommendationResult(request, response)
+  def get(request: Recom ndat onRequest, params: Params): St ch[Recom ndat onResponse] = {
+     f (params(Dec derParams.EnableRecom ndat ons)) {
+      productRecom nderServ ce
+        .getRecom ndat ons(request, params).map(Recom ndat onResponse).onSuccess { response =>
+           f (resultLogger.shouldLog(request.debugParams)) {
+            resultLogger.logRecom ndat onResult(request, response)
           }
         }
     } else {
-      Stitch.value(RecommendationResponse(Nil))
+      St ch.value(Recom ndat onResponse(N l))
     }
   }
 }

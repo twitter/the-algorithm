@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.forward_pivot
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.forward_p vot
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color.RosettaColorMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.BadgeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ImageVariantMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.ForwardPivot
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.color.RosettaColorMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.BadgeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata. mageVar antMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.UrlMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.r chtext.R chTextMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.forward_p vot.ForwardP vot
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ForwardPivotMarshaller @Inject() (
+@S ngleton
+class ForwardP votMarshaller @ nject() (
   urlMarshaller: UrlMarshaller,
-  richTextMarshaller: RichTextMarshaller,
-  forwardPivotDisplayTypeMarshaller: ForwardPivotDisplayTypeMarshaller,
-  softInterventionDisplayTypeMarshaller: SoftInterventionDisplayTypeMarshaller,
-  imageVariantMarshaller: ImageVariantMarshaller,
+  r chTextMarshaller: R chTextMarshaller,
+  forwardP votD splayTypeMarshaller: ForwardP votD splayTypeMarshaller,
+  soft ntervent onD splayTypeMarshaller: Soft ntervent onD splayTypeMarshaller,
+   mageVar antMarshaller:  mageVar antMarshaller,
   badgeMarshaller: BadgeMarshaller,
   rosettaColorMarshaller: RosettaColorMarshaller) {
 
-  def apply(forwardPivot: ForwardPivot): urt.ForwardPivot = urt.ForwardPivot(
-    text = richTextMarshaller(forwardPivot.text),
-    landingUrl = urlMarshaller(forwardPivot.landingUrl),
-    displayType = forwardPivotDisplayTypeMarshaller(forwardPivot.displayType),
-    iconImageVariant = forwardPivot.iconImageVariant.map(imageVariantMarshaller(_)),
-    stateBadge = forwardPivot.stateBadge.map(badgeMarshaller(_)),
-    subtext = forwardPivot.subtext.map(richTextMarshaller(_)),
-    backgroundColorName = forwardPivot.backgroundColorName.map(rosettaColorMarshaller(_)),
-    engagementNudge = forwardPivot.engagementNudge,
-    softInterventionDisplayType =
-      forwardPivot.softInterventionDisplayType.map(softInterventionDisplayTypeMarshaller(_)),
+  def apply(forwardP vot: ForwardP vot): urt.ForwardP vot = urt.ForwardP vot(
+    text = r chTextMarshaller(forwardP vot.text),
+    land ngUrl = urlMarshaller(forwardP vot.land ngUrl),
+    d splayType = forwardP votD splayTypeMarshaller(forwardP vot.d splayType),
+     con mageVar ant = forwardP vot. con mageVar ant.map( mageVar antMarshaller(_)),
+    stateBadge = forwardP vot.stateBadge.map(badgeMarshaller(_)),
+    subtext = forwardP vot.subtext.map(r chTextMarshaller(_)),
+    backgroundColorNa  = forwardP vot.backgroundColorNa .map(rosettaColorMarshaller(_)),
+    engage ntNudge = forwardP vot.engage ntNudge,
+    soft ntervent onD splayType =
+      forwardP vot.soft ntervent onD splayType.map(soft ntervent onD splayTypeMarshaller(_)),
   )
 }

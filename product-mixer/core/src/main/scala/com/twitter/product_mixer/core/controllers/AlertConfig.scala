@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.core.controllers
+package com.tw ter.product_m xer.core.controllers
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.common.alert.NotificationGroup
-import com.twitter.product_mixer.core.functional_component.common.alert.Source
+ mport com.fasterxml.jackson.annotat on.Json gnorePropert es
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Not f cat onGroup
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.S ce
 
 /**
- * Simple representation for an [[Alert]] used for Product Mixer's JSON API, which in turn is
- * consumed by our monitoring script generation job and Turntable.
+ * S mple representat on for an [[Alert]] used for Product M xer's JSON AP , wh ch  n turn  s
+ * consu d by   mon or ng scr pt generat on job and Turntable.
  *
- * @note not all mixers will upgrade at the same time so new fields should be added with backwards
- *       compatibility in mind.
+ * @note not all m xers w ll upgrade at t  sa  t   so new f elds should be added w h backwards
+ *       compat b l y  n m nd.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
-private[core] case class AlertConfig(
-  source: Source,
-  metricType: String,
-  notificationGroup: NotificationGroup,
-  warnPredicate: PredicateConfig,
-  criticalPredicate: PredicateConfig,
-  runbookLink: Option[String],
-  metricSuffix: Option[String])
+@Json gnorePropert es( gnoreUnknown = true)
+pr vate[core] case class AlertConf g(
+  s ce: S ce,
+   tr cType: Str ng,
+  not f cat onGroup: Not f cat onGroup,
+  warnPred cate: Pred cateConf g,
+  cr  calPred cate: Pred cateConf g,
+  runbookL nk: Opt on[Str ng],
+   tr cSuff x: Opt on[Str ng])
 
-private[core] object AlertConfig {
+pr vate[core] object AlertConf g {
 
-  /** Represent this [[Alert]] as an [[AlertConfig]] case class */
-  private[core] def apply(alert: Alert): AlertConfig =
-    AlertConfig(
-      alert.source,
-      alert.alertType.metricType,
-      alert.notificationGroup,
-      PredicateConfig(alert.warnPredicate),
-      PredicateConfig(alert.criticalPredicate),
-      alert.runbookLink,
-      alert.metricSuffix
+  /** Represent t  [[Alert]] as an [[AlertConf g]] case class */
+  pr vate[core] def apply(alert: Alert): AlertConf g =
+    AlertConf g(
+      alert.s ce,
+      alert.alertType. tr cType,
+      alert.not f cat onGroup,
+      Pred cateConf g(alert.warnPred cate),
+      Pred cateConf g(alert.cr  calPred cate),
+      alert.runbookL nk,
+      alert. tr cSuff x
     )
 }

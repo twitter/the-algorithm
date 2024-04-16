@@ -1,163 +1,163 @@
-package com.twitter.search.earlybird.search;
+package com.tw ter.search.earlyb rd.search;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+ mport java. o. OExcept on;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Collect ons;
+ mport java.ut l.HashSet;
+ mport java.ut l.L st;
+ mport java.ut l.Set;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.features.thrift.ThriftSearchResultFeatures;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.search.EarlyTerminationState;
-import com.twitter.search.common.util.LongIntConverter;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadataOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common.constants.thr ftjava.Thr ftLanguage;
+ mport com.tw ter.search.common.features.thr ft.Thr ftSearchResultFeatures;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.common.search.EarlyTerm nat onState;
+ mport com.tw ter.search.common.ut l.Long ntConverter;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserTable;
+ mport com.tw ter.search.earlyb rd.stats.Earlyb rdSearc rStats;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult tadata;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult tadataOpt ons;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultType;
 
 /**
- * This class collects results for Recency queries for delegation to collectors based on query mode
+ * T  class collects results for Recency quer es for delegat on to collectors based on query mode
  */
-public class SearchResultsCollector
-    extends AbstractResultsCollector<SearchRequestInfo, SimpleSearchResults> {
-  private static final EarlyTerminationState TERMINATED_COLLECTED_ENOUGH_RESULTS =
-      new EarlyTerminationState("terminated_collected_enough_results", true);
+publ c class SearchResultsCollector
+    extends AbstractResultsCollector<SearchRequest nfo, S mpleSearchResults> {
+  pr vate stat c f nal EarlyTerm nat onState TERM NATED_COLLECTED_ENOUGH_RESULTS =
+      new EarlyTerm nat onState("term nated_collected_enough_results", true);
 
-  protected final List<Hit> results;
-  private final Set<Integer> requestedFeatureIds;
-  private final EarlybirdCluster cluster;
-  private final UserTable userTable;
+  protected f nal L st<H > results;
+  pr vate f nal Set< nteger> requestedFeature ds;
+  pr vate f nal Earlyb rdCluster cluster;
+  pr vate f nal UserTable userTable;
 
-  public SearchResultsCollector(
-      ImmutableSchemaInterface schema,
-      SearchRequestInfo searchRequestInfo,
+  publ c SearchResultsCollector(
+       mmutableSc ma nterface sc ma,
+      SearchRequest nfo searchRequest nfo,
       Clock clock,
-      EarlybirdSearcherStats searcherStats,
-      EarlybirdCluster cluster,
+      Earlyb rdSearc rStats searc rStats,
+      Earlyb rdCluster cluster,
       UserTable userTable,
-      int requestDebugMode) {
-    super(schema, searchRequestInfo, clock, searcherStats, requestDebugMode);
-    results = new ArrayList<>();
-    this.cluster = cluster;
-    this.userTable = userTable;
+       nt requestDebugMode) {
+    super(sc ma, searchRequest nfo, clock, searc rStats, requestDebugMode);
+    results = new ArrayL st<>();
+    t .cluster = cluster;
+    t .userTable = userTable;
 
-    ThriftSearchResultMetadataOptions options =
-        searchRequestInfo.getSearchQuery().getResultMetadataOptions();
-    if (options != null && options.isReturnSearchResultFeatures()) {
-      requestedFeatureIds = schema.getSearchFeatureSchema().getEntries().keySet();
-    } else if (options != null && options.isSetRequestedFeatureIDs()) {
-      requestedFeatureIds = new HashSet<>(options.getRequestedFeatureIDs());
+    Thr ftSearchResult tadataOpt ons opt ons =
+        searchRequest nfo.getSearchQuery().getResult tadataOpt ons();
+     f (opt ons != null && opt ons. sReturnSearchResultFeatures()) {
+      requestedFeature ds = sc ma.getSearchFeatureSc ma().getEntr es().keySet();
+    } else  f (opt ons != null && opt ons. sSetRequestedFeature Ds()) {
+      requestedFeature ds = new HashSet<>(opt ons.getRequestedFeature Ds());
     } else {
-      requestedFeatureIds = null;
+      requestedFeature ds = null;
     }
   }
 
-  @Override
-  public void startSegment() throws IOException {
-    featuresRequested = requestedFeatureIds != null;
+  @Overr de
+  publ c vo d startSeg nt() throws  OExcept on {
+    featuresRequested = requestedFeature ds != null;
   }
 
-  @Override
-  public void doCollect(long tweetID) throws IOException {
-    Hit hit = new Hit(currTimeSliceID, tweetID);
-    ThriftSearchResultMetadata metadata =
-        new ThriftSearchResultMetadata(ThriftSearchResultType.RECENCY)
-            .setPenguinVersion(EarlybirdConfig.getPenguinVersionByte());
+  @Overr de
+  publ c vo d doCollect(long t et D) throws  OExcept on {
+    H  h  = new H (currT  Sl ce D, t et D);
+    Thr ftSearchResult tadata  tadata =
+        new Thr ftSearchResult tadata(Thr ftSearchResultType.RECENCY)
+            .setPengu nVers on(Earlyb rdConf g.getPengu nVers onByte());
 
-    // Set tweet language in metadata
-    ThriftLanguage thriftLanguage = ThriftLanguage.findByValue(
-        (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.LANGUAGE));
-    metadata.setLanguage(thriftLanguage);
+    // Set t et language  n  tadata
+    Thr ftLanguage thr ftLanguage = Thr ftLanguage.f ndByValue(
+        ( nt) docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.LANGUAGE));
+     tadata.setLanguage(thr ftLanguage);
 
-    // Check and collect hit attribution data, if it's available.
-    fillHitAttributionMetadata(metadata);
+    // C ck and collect h  attr but on data,  f  's ava lable.
+    f llH Attr but on tadata( tadata);
 
-    // Set the nullcast flag in metadata
-    metadata.setIsNullcast(documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_NULLCAST_FLAG));
+    // Set t  nullcast flag  n  tadata
+     tadata.set sNullcast(docu ntFeatures. sFlagSet(Earlyb rdF eldConstant. S_NULLCAST_FLAG));
 
-    if (searchRequestInfo.isCollectConversationId()) {
-      long conversationId =
-          documentFeatures.getFeatureValue(EarlybirdFieldConstant.CONVERSATION_ID_CSF);
-      if (conversationId != 0) {
-        ensureExtraMetadataIsSet(metadata);
-        metadata.getExtraMetadata().setConversationId(conversationId);
+     f (searchRequest nfo. sCollectConversat on d()) {
+      long conversat on d =
+          docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.CONVERSAT ON_ D_CSF);
+       f (conversat on d != 0) {
+        ensureExtra tadata sSet( tadata);
+         tadata.getExtra tadata().setConversat on d(conversat on d);
       }
     }
 
-    fillResultGeoLocation(metadata);
-    collectRetweetAndReplyMetadata(metadata);
+    f llResultGeoLocat on( tadata);
+    collectRet etAndReply tadata( tadata);
 
-    long fromUserId = documentFeatures.getFeatureValue(EarlybirdFieldConstant.FROM_USER_ID_CSF);
-    if (requestedFeatureIds != null) {
-      ThriftSearchResultFeatures features = documentFeatures.getSearchResultFeatures(
-          getSchema(), requestedFeatureIds::contains);
-      ensureExtraMetadataIsSet(metadata);
-      metadata.getExtraMetadata().setFeatures(features);
-      metadata.setFromUserId(fromUserId);
-      if (documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_CARD_FLAG)) {
-        metadata.setCardType(
-            (byte) documentFeatures.getFeatureValue(EarlybirdFieldConstant.CARD_TYPE_CSF_FIELD));
+    long fromUser d = docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.FROM_USER_ D_CSF);
+     f (requestedFeature ds != null) {
+      Thr ftSearchResultFeatures features = docu ntFeatures.getSearchResultFeatures(
+          getSc ma(), requestedFeature ds::conta ns);
+      ensureExtra tadata sSet( tadata);
+       tadata.getExtra tadata().setFeatures(features);
+       tadata.setFromUser d(fromUser d);
+       f (docu ntFeatures. sFlagSet(Earlyb rdF eldConstant.HAS_CARD_FLAG)) {
+         tadata.setCardType(
+            (byte) docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.CARD_TYPE_CSF_F ELD));
       }
     }
-    if (searchRequestInfo.isGetFromUserId()) {
-      metadata.setFromUserId(fromUserId);
+     f (searchRequest nfo. sGetFromUser d()) {
+       tadata.setFromUser d(fromUser d);
     }
 
-    collectExclusiveConversationAuthorId(metadata);
-    collectFacets(metadata);
-    collectFeatures(metadata);
-    collectIsProtected(metadata, cluster, userTable);
-    hit.setMetadata(metadata);
-    results.add(hit);
-    updateHitCounts(tweetID);
+    collectExclus veConversat onAuthor d( tadata);
+    collectFacets( tadata);
+    collectFeatures( tadata);
+    collect sProtected( tadata, cluster, userTable);
+    h .set tadata( tadata);
+    results.add(h );
+    updateH Counts(t et D);
   }
 
-  private final void collectRetweetAndReplyMetadata(ThriftSearchResultMetadata metadata)
-      throws IOException {
-    if (searchRequestInfo.isGetInReplyToStatusId() || searchRequestInfo.isGetReferenceAuthorId()) {
-      boolean isRetweet = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_RETWEET_FLAG);
-      boolean isReply = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_REPLY_FLAG);
-      // Set the isRetweet and isReply metadata so that clients who request retweet and reply
-      // metadata know whether a result is a retweet or reply or neither.
-      metadata.setIsRetweet(isRetweet);
-      metadata.setIsReply(isReply);
+  pr vate f nal vo d collectRet etAndReply tadata(Thr ftSearchResult tadata  tadata)
+      throws  OExcept on {
+     f (searchRequest nfo. sGet nReplyToStatus d() || searchRequest nfo. sGetReferenceAuthor d()) {
+      boolean  sRet et = docu ntFeatures. sFlagSet(Earlyb rdF eldConstant. S_RETWEET_FLAG);
+      boolean  sReply = docu ntFeatures. sFlagSet(Earlyb rdF eldConstant. S_REPLY_FLAG);
+      // Set t   sRet et and  sReply  tadata so that cl ents who request ret et and reply
+      //  tadata know w t r a result  s a ret et or reply or ne  r.
+       tadata.set sRet et( sRet et);
+       tadata.set sReply( sReply);
 
-      // Only store the shared status id if the hit is a reply or a retweet and
-      // the getInReplyToStatusId flag is set.
-      if (searchRequestInfo.isGetInReplyToStatusId() && (isReply || isRetweet)) {
-        long sharedStatusID =
-            documentFeatures.getFeatureValue(EarlybirdFieldConstant.SHARED_STATUS_ID_CSF);
-        if (sharedStatusID != 0) {
-          metadata.setSharedStatusId(sharedStatusID);
+      // Only store t  shared status  d  f t  h   s a reply or a ret et and
+      // t  get nReplyToStatus d flag  s set.
+       f (searchRequest nfo. sGet nReplyToStatus d() && ( sReply ||  sRet et)) {
+        long sharedStatus D =
+            docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.SHARED_STATUS_ D_CSF);
+         f (sharedStatus D != 0) {
+           tadata.setSharedStatus d(sharedStatus D);
         }
       }
 
-      // Only store the reference tweet author ID if the hit is a reply or a retweet and the
-      // getReferenceAuthorId flag is set.
-      if (searchRequestInfo.isGetReferenceAuthorId() && (isReply || isRetweet)) {
-        // the REFERENCE_AUTHOR_ID_CSF stores the source tweet author id for all retweets
-        long referenceAuthorId =
-            documentFeatures.getFeatureValue(EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_CSF);
-        if (referenceAuthorId != 0) {
-          metadata.setReferencedTweetAuthorId(referenceAuthorId);
-        } else if (cluster != EarlybirdCluster.FULL_ARCHIVE) {
-          // we also store the reference author id for retweets, directed at tweets, and self
-          // threaded tweets separately on Realtime/Protected Earlybirds. This data will be moved to
-          // the REFERENCE_AUTHOR_ID_CSF and these fields will be deprecated in SEARCH-34958.
-          referenceAuthorId = LongIntConverter.convertTwoIntToOneLong(
-              (int) documentFeatures.getFeatureValue(
-                  EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_MOST_SIGNIFICANT_INT),
-              (int) documentFeatures.getFeatureValue(
-                  EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_LEAST_SIGNIFICANT_INT));
-          if (referenceAuthorId > 0) {
-            metadata.setReferencedTweetAuthorId(referenceAuthorId);
+      // Only store t  reference t et author  D  f t  h   s a reply or a ret et and t 
+      // getReferenceAuthor d flag  s set.
+       f (searchRequest nfo. sGetReferenceAuthor d() && ( sReply ||  sRet et)) {
+        // t  REFERENCE_AUTHOR_ D_CSF stores t  s ce t et author  d for all ret ets
+        long referenceAuthor d =
+            docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.REFERENCE_AUTHOR_ D_CSF);
+         f (referenceAuthor d != 0) {
+           tadata.setReferencedT etAuthor d(referenceAuthor d);
+        } else  f (cluster != Earlyb rdCluster.FULL_ARCH VE) {
+          //   also store t  reference author  d for ret ets, d rected at t ets, and self
+          // threaded t ets separately on Realt  /Protected Earlyb rds. T  data w ll be moved to
+          // t  REFERENCE_AUTHOR_ D_CSF and t se f elds w ll be deprecated  n SEARCH-34958.
+          referenceAuthor d = Long ntConverter.convertTwo ntToOneLong(
+              ( nt) docu ntFeatures.getFeatureValue(
+                  Earlyb rdF eldConstant.REFERENCE_AUTHOR_ D_MOST_S GN F CANT_ NT),
+              ( nt) docu ntFeatures.getFeatureValue(
+                  Earlyb rdF eldConstant.REFERENCE_AUTHOR_ D_LEAST_S GN F CANT_ NT));
+           f (referenceAuthor d > 0) {
+             tadata.setReferencedT etAuthor d(referenceAuthor d);
           }
         }
       }
@@ -165,24 +165,24 @@ public class SearchResultsCollector
   }
 
   /**
-   * This differs from base class because we check against num results collected instead of
-   * num hits collected.
+   * T  d ffers from base class because   c ck aga nst num results collected  nstead of
+   * num h s collected.
    */
-  @Override
-  public EarlyTerminationState innerShouldCollectMore() throws IOException {
-    if (results.size() >= searchRequestInfo.getNumResultsRequested()) {
+  @Overr de
+  publ c EarlyTerm nat onState  nnerShouldCollectMore() throws  OExcept on {
+     f (results.s ze() >= searchRequest nfo.getNumResultsRequested()) {
       collectedEnoughResults();
-      if (shouldTerminate()) {
-        return setEarlyTerminationState(TERMINATED_COLLECTED_ENOUGH_RESULTS);
+       f (shouldTerm nate()) {
+        return setEarlyTerm nat onState(TERM NATED_COLLECTED_ENOUGH_RESULTS);
       }
     }
-    return EarlyTerminationState.COLLECTING;
+    return EarlyTerm nat onState.COLLECT NG;
   }
 
-  @Override
-  public SimpleSearchResults doGetResults() {
-    // Sort hits by tweet id.
-    Collections.sort(results);
-    return new SimpleSearchResults(results);
+  @Overr de
+  publ c S mpleSearchResults doGetResults() {
+    // Sort h s by t et  d.
+    Collect ons.sort(results);
+    return new S mpleSearchResults(results);
   }
 }

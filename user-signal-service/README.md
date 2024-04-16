@@ -1,5 +1,5 @@
-# User Signal Service #
+# User S gnal Serv ce #
 
-**User Signal Service** (USS) is a centralized online platform that supplies comprehensive data on user actions and behaviors on Twitter. This information encompasses both explicit signals, such as favoriting, retweeting, and replying, as well as implicit signals, including tweet clicks, video views, profile visits, and more.
+**User S gnal Serv ce** (USS)  s a central zed onl ne platform that suppl es compre ns ve data on user act ons and behav ors on Tw ter. T   nformat on encompasses both expl c  s gnals, such as favor  ng, ret et ng, and reply ng, as  ll as  mpl c  s gnals,  nclud ng t et cl cks, v deo v ews, prof le v s s, and more.
 
-To ensure consistency and accuracy, USS gathers these signals from various underlying datasets and online services, processing them into uniform formats. These standardized source signals are then utilized in candidate retrieval and machine learning features for ranking stages.
+To ensure cons stency and accuracy, USS gat rs t se s gnals from var ous underly ng datasets and onl ne serv ces, process ng t m  nto un form formats. T se standard zed s ce s gnals are t n ut l zed  n cand date retr eval and mach ne learn ng features for rank ng stages.

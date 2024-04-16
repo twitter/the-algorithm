@@ -1,17 +1,17 @@
-package com.twitter.tsp.modules
+package com.tw ter.tsp.modules
 
-import com.google.inject.Provides
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.topiclisting.TopicListing
-import com.twitter.topiclisting.TopicListingBuilder
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.top cl st ng.Top cL st ng
+ mport com.tw ter.top cl st ng.Top cL st ngBu lder
+ mport javax. nject.S ngleton
 
-object TopicListingModule extends TwitterModule {
+object Top cL st ngModule extends Tw terModule {
 
-  @Provides
-  @Singleton
-  def providesTopicListing(statsReceiver: StatsReceiver): TopicListing = {
-    new TopicListingBuilder(statsReceiver.scope(namespace = "TopicListingBuilder")).build
+  @Prov des
+  @S ngleton
+  def prov desTop cL st ng(statsRece ver: StatsRece ver): Top cL st ng = {
+    new Top cL st ngBu lder(statsRece ver.scope(na space = "Top cL st ngBu lder")).bu ld
   }
 }

@@ -1,38 +1,38 @@
-package com.twitter.tweetypie.store
-import com.twitter.tweetypie.FutureEffect
-import com.twitter.tweetypie.thriftscala.AsyncWriteAction
-import com.twitter.tweetypie.thriftscala.RetweetArchivalEvent
+package com.tw ter.t etyp e.store
+ mport com.tw ter.t etyp e.FutureEffect
+ mport com.tw ter.t etyp e.thr ftscala.AsyncWr eAct on
+ mport com.tw ter.t etyp e.thr ftscala.Ret etArch valEvent
 
-trait RetweetArchivalEnqueueStore
-    extends TweetStoreBase[RetweetArchivalEnqueueStore]
-    with AsyncSetRetweetVisibility.Store {
-  def wrap(w: TweetStore.Wrap): RetweetArchivalEnqueueStore =
-    new TweetStoreWrapper(w, this)
-      with RetweetArchivalEnqueueStore
-      with AsyncSetRetweetVisibility.StoreWrapper
+tra  Ret etArch valEnqueueStore
+    extends T etStoreBase[Ret etArch valEnqueueStore]
+    w h AsyncSetRet etV s b l y.Store {
+  def wrap(w: T etStore.Wrap): Ret etArch valEnqueueStore =
+    new T etStoreWrapper(w, t )
+      w h Ret etArch valEnqueueStore
+      w h AsyncSetRet etV s b l y.StoreWrapper
 }
 
-object RetweetArchivalEnqueueStore {
+object Ret etArch valEnqueueStore {
 
-  def apply(enqueue: FutureEffect[RetweetArchivalEvent]): RetweetArchivalEnqueueStore =
-    new RetweetArchivalEnqueueStore {
-      override val asyncSetRetweetVisibility: FutureEffect[AsyncSetRetweetVisibility.Event] =
-        FutureEffect[AsyncSetRetweetVisibility.Event] { e =>
+  def apply(enqueue: FutureEffect[Ret etArch valEvent]): Ret etArch valEnqueueStore =
+    new Ret etArch valEnqueueStore {
+      overr de val asyncSetRet etV s b l y: FutureEffect[AsyncSetRet etV s b l y.Event] =
+        FutureEffect[AsyncSetRet etV s b l y.Event] { e =>
           enqueue(
-            RetweetArchivalEvent(
-              retweetId = e.retweetId,
-              srcTweetId = e.srcId,
-              retweetUserId = e.retweetUserId,
-              srcTweetUserId = e.srcTweetUserId,
-              timestampMs = e.timestamp.inMillis,
-              isArchivingAction = Some(!e.visible)
+            Ret etArch valEvent(
+              ret et d = e.ret et d,
+              srcT et d = e.src d,
+              ret etUser d = e.ret etUser d,
+              srcT etUser d = e.srcT etUser d,
+              t  stampMs = e.t  stamp. nM ll s,
+               sArch v ngAct on = So (!e.v s ble)
             )
           )
         }
 
-      override val retryAsyncSetRetweetVisibility: FutureEffect[
-        TweetStoreRetryEvent[AsyncSetRetweetVisibility.Event]
+      overr de val retryAsyncSetRet etV s b l y: FutureEffect[
+        T etStoreRetryEvent[AsyncSetRet etV s b l y.Event]
       ] =
-        TweetStore.retry(AsyncWriteAction.RetweetArchivalEnqueue, asyncSetRetweetVisibility)
+        T etStore.retry(AsyncWr eAct on.Ret etArch valEnqueue, asyncSetRet etV s b l y)
     }
 }

@@ -1,89 +1,89 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
-import com.twitter.tweetypie.store.TweetStoreEvent.NoRetry
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.t etyp e.store.T etStoreEvent.NoRetry
+ mport com.tw ter.t etyp e.thr ftscala._
 
-object IncrFavCount extends TweetStore.SyncModule {
+object  ncrFavCount extends T etStore.SyncModule {
 
-  case class Event(tweetId: TweetId, delta: Int, timestamp: Time)
-      extends SyncTweetStoreEvent("incr_fav_count") {
-    val toAsyncRequest: AsyncIncrFavCountRequest = AsyncIncrFavCountRequest(tweetId, delta)
+  case class Event(t et d: T et d, delta:  nt, t  stamp: T  )
+      extends SyncT etStoreEvent(" ncr_fav_count") {
+    val toAsyncRequest: Async ncrFavCountRequest = Async ncrFavCountRequest(t et d, delta)
   }
 
-  trait Store {
-    val incrFavCount: FutureEffect[Event]
+  tra  Store {
+    val  ncrFavCount: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val incrFavCount: FutureEffect[Event] = wrap(underlying.incrFavCount)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val  ncrFavCount: FutureEffect[Event] = wrap(underly ng. ncrFavCount)
   }
 
   object Store {
     def apply(
       asyncEnqueueStore: AsyncEnqueueStore,
-      replicatingStore: ReplicatingTweetStore
+      repl cat ngStore: Repl cat ngT etStore
     ): Store =
       new Store {
-        override val incrFavCount: FutureEffect[Event] =
-          FutureEffect.inParallel(
-            asyncEnqueueStore.incrFavCount,
-            replicatingStore.incrFavCount
+        overr de val  ncrFavCount: FutureEffect[Event] =
+          FutureEffect. nParallel(
+            asyncEnqueueStore. ncrFavCount,
+            repl cat ngStore. ncrFavCount
           )
       }
   }
 }
 
-object AsyncIncrFavCount extends TweetStore.AsyncModule {
+object Async ncrFavCount extends T etStore.AsyncModule {
 
-  case class Event(tweetId: TweetId, delta: Int, timestamp: Time)
-      extends AsyncTweetStoreEvent("async_incr_fav_count") {
+  case class Event(t et d: T et d, delta:  nt, t  stamp: T  )
+      extends AsyncT etStoreEvent("async_ ncr_fav_count") {
 
-    override def enqueueRetry(service: ThriftTweetService, action: AsyncWriteAction): Future[Unit] =
-      Future.Unit // We need to define this method for TweetStoreEvent.Async but we don't use it
+    overr de def enqueueRetry(serv ce: Thr ftT etServ ce, act on: AsyncWr eAct on): Future[Un ] =
+      Future.Un  //   need to def ne t   thod for T etStoreEvent.Async but   don't use  
 
-    override def retryStrategy: TweetStoreEvent.RetryStrategy = NoRetry
+    overr de def retryStrategy: T etStoreEvent.RetryStrategy = NoRetry
   }
 
-  trait Store {
-    val asyncIncrFavCount: FutureEffect[Event]
+  tra  Store {
+    val async ncrFavCount: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val asyncIncrFavCount: FutureEffect[Event] = wrap(underlying.asyncIncrFavCount)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val async ncrFavCount: FutureEffect[Event] = wrap(underly ng.async ncrFavCount)
   }
 
   object Store {
-    def apply(tweetCountsUpdatingStore: TweetCountsCacheUpdatingStore): Store = {
+    def apply(t etCountsUpdat ngStore: T etCountsCac Updat ngStore): Store = {
       new Store {
-        override val asyncIncrFavCount: FutureEffect[Event] =
-          tweetCountsUpdatingStore.asyncIncrFavCount
+        overr de val async ncrFavCount: FutureEffect[Event] =
+          t etCountsUpdat ngStore.async ncrFavCount
       }
     }
   }
 }
 
-object ReplicatedIncrFavCount extends TweetStore.ReplicatedModule {
+object Repl cated ncrFavCount extends T etStore.Repl catedModule {
 
-  case class Event(tweetId: TweetId, delta: Int)
-      extends ReplicatedTweetStoreEvent("replicated_incr_fav_count") {
-    override def retryStrategy: TweetStoreEvent.NoRetry.type = NoRetry
+  case class Event(t et d: T et d, delta:  nt)
+      extends Repl catedT etStoreEvent("repl cated_ ncr_fav_count") {
+    overr de def retryStrategy: T etStoreEvent.NoRetry.type = NoRetry
   }
 
-  trait Store {
-    val replicatedIncrFavCount: FutureEffect[Event]
+  tra  Store {
+    val repl cated ncrFavCount: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val replicatedIncrFavCount: FutureEffect[Event] = wrap(
-      underlying.replicatedIncrFavCount)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val repl cated ncrFavCount: FutureEffect[Event] = wrap(
+      underly ng.repl cated ncrFavCount)
   }
 
   object Store {
-    def apply(tweetCountsUpdatingStore: TweetCountsCacheUpdatingStore): Store = {
+    def apply(t etCountsUpdat ngStore: T etCountsCac Updat ngStore): Store = {
       new Store {
-        override val replicatedIncrFavCount: FutureEffect[Event] =
-          tweetCountsUpdatingStore.replicatedIncrFavCount.ignoreFailures
+        overr de val repl cated ncrFavCount: FutureEffect[Event] =
+          t etCountsUpdat ngStore.repl cated ncrFavCount. gnoreFa lures
       }
     }
   }

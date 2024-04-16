@@ -1,42 +1,42 @@
-package com.twitter.ann.scalding.offline.faissindexbuilder
+package com.tw ter.ann.scald ng.offl ne.fa ss ndexbu lder
 
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.EntityEmbedding
-import com.twitter.ann.common.Metric
-import com.twitter.ann.faiss.FaissIndexer
-import com.twitter.cortex.ml.embeddings.common.EmbeddingFormat
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.scalding.Execution
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.util.logging.Logging
+ mport com.tw ter.ann.common.D stance
+ mport com.tw ter.ann.common.Ent yEmbedd ng
+ mport com.tw ter.ann.common. tr c
+ mport com.tw ter.ann.fa ss.Fa ss ndexer
+ mport com.tw ter.cortex.ml.embedd ngs.common.Embedd ngFormat
+ mport com.tw ter.ml.ap .embedd ng.Embedd ng
+ mport com.tw ter.ml.featurestore.l b.User d
+ mport com.tw ter.scald ng.Execut on
+ mport com.tw ter.search.common.f le.AbstractF le
+ mport com.tw ter.ut l.logg ng.Logg ng
 
-object IndexBuilder extends FaissIndexer with Logging {
-  def run[T <: UserId, D <: Distance[D]](
-    embeddingFormat: EmbeddingFormat[T],
-    embeddingLimit: Option[Int],
+object  ndexBu lder extends Fa ss ndexer w h Logg ng {
+  def run[T <: User d, D <: D stance[D]](
+    embedd ngFormat: Embedd ngFormat[T],
+    embedd ngL m : Opt on[ nt],
     sampleRate: Float,
-    factoryString: String,
-    metric: Metric[D],
-    outputDirectory: AbstractFile,
-    numDimensions: Int
-  ): Execution[Unit] = {
-    val embeddingsPipe = embeddingFormat.getEmbeddings
-    val limitedEmbeddingsPipe = embeddingLimit
-      .map { limit =>
-        embeddingsPipe.limit(limit)
-      }.getOrElse(embeddingsPipe)
+    factoryStr ng: Str ng,
+     tr c:  tr c[D],
+    outputD rectory: AbstractF le,
+    numD  ns ons:  nt
+  ): Execut on[Un ] = {
+    val embedd ngsP pe = embedd ngFormat.getEmbedd ngs
+    val l m edEmbedd ngsP pe = embedd ngL m 
+      .map { l m  =>
+        embedd ngsP pe.l m (l m )
+      }.getOrElse(embedd ngsP pe)
 
-    val annEmbeddingPipe = limitedEmbeddingsPipe.map { embedding =>
-      val embeddingSize = embedding.embedding.length
+    val annEmbedd ngP pe = l m edEmbedd ngsP pe.map { embedd ng =>
+      val embedd ngS ze = embedd ng.embedd ng.length
       assert(
-        embeddingSize == numDimensions,
-        s"Specified number of dimensions $numDimensions does not match the dimensions of the " +
-          s"embedding $embeddingSize"
+        embedd ngS ze == numD  ns ons,
+        s"Spec f ed number of d  ns ons $numD  ns ons does not match t  d  ns ons of t  " +
+          s"embedd ng $embedd ngS ze"
       )
-      EntityEmbedding[Long](embedding.entityId.userId, Embedding(embedding.embedding.toArray))
+      Ent yEmbedd ng[Long](embedd ng.ent y d.user d, Embedd ng(embedd ng.embedd ng.toArray))
     }
 
-    build(annEmbeddingPipe, sampleRate, factoryString, metric, outputDirectory)
+    bu ld(annEmbedd ngP pe, sampleRate, factoryStr ng,  tr c, outputD rectory)
   }
 }

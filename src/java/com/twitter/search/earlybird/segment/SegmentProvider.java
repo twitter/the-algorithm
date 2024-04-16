@@ -1,13 +1,13 @@
-package com.twitter.search.earlybird.segment;
+package com.tw ter.search.earlyb rd.seg nt;
 
-import java.io.IOException;
-import java.util.List;
+ mport java. o. OExcept on;
+ mport java.ut l.L st;
 
-import com.twitter.search.common.partitioning.base.Segment;
+ mport com.tw ter.search.common.part  on ng.base.Seg nt;
 
-public interface SegmentProvider {
+publ c  nterface Seg ntProv der {
   /**
-   * Returns a *new* sorted list of all available segments on disk / db / hdfs / etc.
+   * Returns a *new* sorted l st of all ava lable seg nts on d sk / db / hdfs / etc.
    */
-  List<Segment> newSegmentList() throws IOException;
+  L st<Seg nt> newSeg ntL st() throws  OExcept on;
 }

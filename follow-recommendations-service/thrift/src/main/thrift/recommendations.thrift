@@ -1,40 +1,40 @@
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendations
+na space java com.tw ter.follow_recom ndat ons.thr ftjava
+#@na space scala com.tw ter.follow_recom ndat ons.thr ftscala
+#@na space strato com.tw ter.follow_recom ndat ons
 
-include "com/twitter/ads/adserver/adserver_common.thrift"
-include "debug.thrift"
-include "reasons.thrift"
-include "scoring.thrift"
+ nclude "com/tw ter/ads/adserver/adserver_common.thr ft"
+ nclude "debug.thr ft"
+ nclude "reasons.thr ft"
+ nclude "scor ng.thr ft"
 
-struct UserRecommendation {
-    1: required i64 userId(personalDataType='UserId')
-    // reason for this suggestions, eg: social context
-    2: optional reasons.Reason reason
-    // present if it is a promoted account
-    3: optional adserver_common.AdImpression adImpression
-    // tracking token for attribution
-    4: optional string trackingInfo
-    // scoring details
-    5: optional scoring.ScoringDetails scoringDetails
-    6: optional string recommendationFlowIdentifier
-    // FeatureSwitch overrides for candidates:
-    7: optional map<string, debug.FeatureValue> featureOverrides
+struct UserRecom ndat on {
+    1: requ red  64 user d(personalDataType='User d')
+    // reason for t  suggest ons, eg: soc al context
+    2: opt onal reasons.Reason reason
+    // present  f    s a promoted account
+    3: opt onal adserver_common.Ad mpress on ad mpress on
+    // track ng token for attr but on
+    4: opt onal str ng track ng nfo
+    // scor ng deta ls
+    5: opt onal scor ng.Scor ngDeta ls scor ngDeta ls
+    6: opt onal str ng recom ndat onFlow dent f er
+    // FeatureSw ch overr des for cand dates:
+    7: opt onal map<str ng, debug.FeatureValue> featureOverr des
 }(hasPersonalData='true')
 
-union Recommendation {
-    1: UserRecommendation user
+un on Recom ndat on {
+    1: UserRecom ndat on user
 }(hasPersonalData='true')
 
-struct HydratedUserRecommendation {
-  1: required i64 userId(personalDataType='UserId')
-  2: optional string socialProof
-  // present if it is a promoted account, used by clients for determining ad impression
-  3: optional adserver_common.AdImpression adImpression
-  // tracking token for attribution
-  4: optional string trackingInfo
+struct HydratedUserRecom ndat on {
+  1: requ red  64 user d(personalDataType='User d')
+  2: opt onal str ng soc alProof
+  // present  f    s a promoted account, used by cl ents for determ n ng ad  mpress on
+  3: opt onal adserver_common.Ad mpress on ad mpress on
+  // track ng token for attr but on
+  4: opt onal str ng track ng nfo
 }(hasPersonalData='true')
 
-union HydratedRecommendation {
-  1: HydratedUserRecommendation hydratedUserRecommendation
+un on HydratedRecom ndat on {
+  1: HydratedUserRecom ndat on hydratedUserRecom ndat on
 }

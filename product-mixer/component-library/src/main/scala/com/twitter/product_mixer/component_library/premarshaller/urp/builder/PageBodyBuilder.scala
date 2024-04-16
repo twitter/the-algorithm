@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.component_library.premarshaller.urp.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.urp.bu lder
 
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PageBody
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urp.PageBody
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * Trait for our builder which given a query and selections will return a `PageBody`
+ * Tra  for   bu lder wh ch g ven a query and select ons w ll return a `PageBody`
  *
  * @tparam Query
  */
-trait PageBodyBuilder[-Query <: PipelineQuery] {
+tra  PageBodyBu lder[-Query <: P pel neQuery] {
 
-  def build(
+  def bu ld(
     query: Query,
-    selections: Seq[CandidateWithDetails]
+    select ons: Seq[Cand dateW hDeta ls]
   ): PageBody
 }

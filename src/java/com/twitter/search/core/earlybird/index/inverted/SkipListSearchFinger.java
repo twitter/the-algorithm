@@ -1,45 +1,45 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
 /**
- * A forward search finger used, optionally, by {@link SkipListContainer#search}.
+ * A forward search f nger used, opt onally, by {@l nk Sk pL stConta ner#search}.
  *
- * A search finger is pointer to the result returned by last time a search method is performed.
- * @see <a href="http://en.wikipedia.org/wiki/Finger_search">Finger search wikipedia</a>.
+ * A search f nger  s po nter to t  result returned by last t   a search  thod  s perfor d.
+ * @see <a href="http://en.w k ped a.org/w k /F nger_search">F nger search w k ped a</a>.
  *
- * Using a search finger on a skip list could reduce the search search time from
- * log(n) to log(k), where n is length of the skip list and k is the distance between last searched
- * key and current searched key.
+ * Us ng a search f nger on a sk p l st could reduce t  search search t   from
+ * log(n) to log(k), w re n  s length of t  sk p l st and k  s t  d stance bet en last searc d
+ * key and current searc d key.
  */
-public class SkipListSearchFinger {
-  // Pointer used when initialize the search finger.
-  public static final int INITIAL_POINTER = Integer.MIN_VALUE;
+publ c class Sk pL stSearchF nger {
+  // Po nter used w n  n  al ze t  search f nger.
+  publ c stat c f nal  nt  N T AL_PO NTER =  nteger.M N_VALUE;
 
-  private final int[] lastPointers;
+  pr vate f nal  nt[] lastPo nters;
 
   /**
-   * Creates a new search finger.
+   * Creates a new search f nger.
    */
-  public SkipListSearchFinger(int maxTowerHeight) {
-    lastPointers = new int[maxTowerHeight];
+  publ c Sk pL stSearchF nger( nt maxTo r  ght) {
+    lastPo nters = new  nt[maxTo r  ght];
 
     reset();
   }
 
-  public void reset() {
-    for (int i = 0; i < lastPointers.length; i++) {
-      setPointer(i, INITIAL_POINTER);
+  publ c vo d reset() {
+    for ( nt   = 0;   < lastPo nters.length;  ++) {
+      setPo nter( ,  N T AL_PO NTER);
     }
   }
 
-  public int getPointer(int level) {
-    return lastPointers[level];
+  publ c  nt getPo nter( nt level) {
+    return lastPo nters[level];
   }
 
-  public void setPointer(int level, int pointer) {
-    lastPointers[level] = pointer;
+  publ c vo d setPo nter( nt level,  nt po nter) {
+    lastPo nters[level] = po nter;
   }
 
-  public boolean isInitialPointer(int pointer) {
-    return pointer == INITIAL_POINTER;
+  publ c boolean  s n  alPo nter( nt po nter) {
+    return po nter ==  N T AL_PO NTER;
   }
 }

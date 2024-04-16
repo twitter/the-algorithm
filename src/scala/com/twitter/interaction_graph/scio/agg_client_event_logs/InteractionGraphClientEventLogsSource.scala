@@ -1,40 +1,40 @@
-package com.twitter.interaction_graph.scio.agg_client_event_logs
+package com.tw ter. nteract on_graph.sc o.agg_cl ent_event_logs
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.beam.job.ServiceIdentifierOptions
-import com.twitter.twadoop.user.gen.thriftscala.CombinedUser
-import com.twitter.usersource.snapshot.combined.UsersourceScalaDataset
-import com.twitter.util.Duration
-import com.twitter.cde.scio.dal_read.SourceUtil
-import com.twitter.wtf.scalding.client_event_processing.thriftscala.UserInteraction
-import com.twitter.wtf.scalding.jobs.client_event_processing.UserInteractionScalaDataset
-import org.joda.time.Interval
+ mport com.spot fy.sc o.Sc oContext
+ mport com.spot fy.sc o.values.SCollect on
+ mport com.tw ter.beam.job.Serv ce dent f erOpt ons
+ mport com.tw ter.twadoop.user.gen.thr ftscala.Comb nedUser
+ mport com.tw ter.users ce.snapshot.comb ned.Users ceScalaDataset
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.cde.sc o.dal_read.S ceUt l
+ mport com.tw ter.wtf.scald ng.cl ent_event_process ng.thr ftscala.User nteract on
+ mport com.tw ter.wtf.scald ng.jobs.cl ent_event_process ng.User nteract onScalaDataset
+ mport org.joda.t  . nterval
 
-case class InteractionGraphClientEventLogsSource(
-  pipelineOptions: InteractionGraphClientEventLogsOption
+case class  nteract onGraphCl entEventLogsS ce(
+  p pel neOpt ons:  nteract onGraphCl entEventLogsOpt on
 )(
-  implicit sc: ScioContext) {
+   mpl c  sc: Sc oContext) {
 
-  val dalEnvironment: String = pipelineOptions
-    .as(classOf[ServiceIdentifierOptions])
-    .getEnvironment()
+  val dalEnv ron nt: Str ng = p pel neOpt ons
+    .as(classOf[Serv ce dent f erOpt ons])
+    .getEnv ron nt()
 
-  def readUserInteractions(dateInterval: Interval): SCollection[UserInteraction] = {
+  def readUser nteract ons(date nterval:  nterval): SCollect on[User nteract on] = {
 
-    SourceUtil.readDALDataset[UserInteraction](
-      dataset = UserInteractionScalaDataset,
-      interval = dateInterval,
-      dalEnvironment = dalEnvironment)
+    S ceUt l.readDALDataset[User nteract on](
+      dataset = User nteract onScalaDataset,
+       nterval = date nterval,
+      dalEnv ron nt = dalEnv ron nt)
 
   }
 
-  def readCombinedUsers(): SCollection[CombinedUser] = {
+  def readComb nedUsers(): SCollect on[Comb nedUser] = {
 
-    SourceUtil.readMostRecentSnapshotNoOlderThanDALDataset[CombinedUser](
-      dataset = UsersourceScalaDataset,
-      noOlderThan = Duration.fromDays(5),
-      dalEnvironment = dalEnvironment
+    S ceUt l.readMostRecentSnapshotNoOlderThanDALDataset[Comb nedUser](
+      dataset = Users ceScalaDataset,
+      noOlderThan = Durat on.fromDays(5),
+      dalEnv ron nt = dalEnv ron nt
     )
   }
 }

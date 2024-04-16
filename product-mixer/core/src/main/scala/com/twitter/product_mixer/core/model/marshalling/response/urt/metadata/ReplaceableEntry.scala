@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata
 
-trait ReplaceableEntry {
-  def entryIdToReplace: Option[String] = None
+tra  ReplaceableEntry {
+  def entry dToReplace: Opt on[Str ng] = None
 }

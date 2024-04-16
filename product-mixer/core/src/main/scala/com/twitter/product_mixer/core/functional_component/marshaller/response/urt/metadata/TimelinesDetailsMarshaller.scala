@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.T  l nesDeta ls
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TimelinesDetailsMarshaller @Inject() () {
+@S ngleton
+class T  l nesDeta lsMarshaller @ nject() () {
 
-  def apply(timelinesDetails: TimelinesDetails): urt.TimelinesDetails = urt.TimelinesDetails(
-    injectionType = timelinesDetails.injectionType,
-    controllerData = timelinesDetails.controllerData,
-    sourceData = timelinesDetails.sourceData
+  def apply(t  l nesDeta ls: T  l nesDeta ls): urt.T  l nesDeta ls = urt.T  l nesDeta ls(
+     nject onType = t  l nesDeta ls. nject onType,
+    controllerData = t  l nesDeta ls.controllerData,
+    s ceData = t  l nesDeta ls.s ceData
   )
 }

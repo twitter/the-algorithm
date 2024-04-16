@@ -1,11 +1,11 @@
-namespace java com.twitter.follow_recommendations.logging.thriftjava
-#@namespace scala com.twitter.follow_recommendations.logging.thriftscala
-#@namespace strato com.twitter.follow_recommendations.logging
+na space java com.tw ter.follow_recom ndat ons.logg ng.thr ftjava
+#@na space scala com.tw ter.follow_recom ndat ons.logg ng.thr ftscala
+#@na space strato com.tw ter.follow_recom ndat ons.logg ng
 
-enum EngagementType {
-    Click = 0
-    Like = 1
-    Mention = 2
-    Retweet = 3
-    ProfileView = 4
+enum Engage ntType {
+    Cl ck = 0
+    L ke = 1
+     nt on = 2
+    Ret et = 3
+    Prof leV ew = 4
 }

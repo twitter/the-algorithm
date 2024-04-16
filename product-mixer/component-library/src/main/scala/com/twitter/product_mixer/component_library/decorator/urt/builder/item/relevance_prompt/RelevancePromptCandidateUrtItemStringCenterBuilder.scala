@@ -1,62 +1,62 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.relevance_prompt
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.relevance_prompt
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.relevance_prompt.RelevancePromptCandidateUrtItemStringCenterBuilder.RelevancePromptClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.RelevancePromptCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.PromptItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptFollowUpFeedbackType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.relevance_prompt.RelevancePromptCand dateUrt emStr ngCenterBu lder.RelevancePromptCl entEvent nfoEle nt
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.RelevancePromptCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.Cand dateUrtEntryBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseCl entEvent nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseStr
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.prompt.Prompt em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.prompt.RelevancePromptContent
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.prompt.RelevancePromptD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.prompt.RelevancePromptFollowUpFeedbackType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Callback
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object RelevancePromptCandidateUrtItemStringCenterBuilder {
-  val RelevancePromptClientEventInfoElement: String = "relevance_prompt"
+object RelevancePromptCand dateUrt emStr ngCenterBu lder {
+  val RelevancePromptCl entEvent nfoEle nt: Str ng = "relevance_prompt"
 }
 
-case class RelevancePromptCandidateUrtItemStringCenterBuilder[-Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, RelevancePromptCandidate],
-  titleTextBuilder: BaseStr[Query, RelevancePromptCandidate],
-  confirmationTextBuilder: BaseStr[Query, RelevancePromptCandidate],
-  isRelevantTextBuilder: BaseStr[Query, RelevancePromptCandidate],
-  notRelevantTextBuilder: BaseStr[Query, RelevancePromptCandidate],
-  displayType: RelevancePromptDisplayType,
-  isRelevantCallback: Callback,
+case class RelevancePromptCand dateUrt emStr ngCenterBu lder[-Query <: P pel neQuery](
+  cl entEvent nfoBu lder: BaseCl entEvent nfoBu lder[Query, RelevancePromptCand date],
+  t leTextBu lder: BaseStr[Query, RelevancePromptCand date],
+  conf rmat onTextBu lder: BaseStr[Query, RelevancePromptCand date],
+   sRelevantTextBu lder: BaseStr[Query, RelevancePromptCand date],
+  notRelevantTextBu lder: BaseStr[Query, RelevancePromptCand date],
+  d splayType: RelevancePromptD splayType,
+   sRelevantCallback: Callback,
   notRelevantCallback: Callback,
-  isRelevantFollowUp: Option[RelevancePromptFollowUpFeedbackType] = None,
-  notRelevantFollowUp: Option[RelevancePromptFollowUpFeedbackType] = None,
-  impressionCallbacks: Option[List[Callback]] = None)
-    extends CandidateUrtEntryBuilder[Query, RelevancePromptCandidate, PromptItem] {
+   sRelevantFollowUp: Opt on[RelevancePromptFollowUpFeedbackType] = None,
+  notRelevantFollowUp: Opt on[RelevancePromptFollowUpFeedbackType] = None,
+   mpress onCallbacks: Opt on[L st[Callback]] = None)
+    extends Cand dateUrtEntryBu lder[Query, RelevancePromptCand date, Prompt em] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    relevancePromptCandidate: RelevancePromptCandidate,
-    candidateFeatures: FeatureMap
-  ): PromptItem =
-    PromptItem(
-      id = relevancePromptCandidate.id,
-      sortIndex = None,
-      clientEventInfo = clientEventInfoBuilder(
+    relevancePromptCand date: RelevancePromptCand date,
+    cand dateFeatures: FeatureMap
+  ): Prompt em =
+    Prompt em(
+       d = relevancePromptCand date. d,
+      sort ndex = None,
+      cl entEvent nfo = cl entEvent nfoBu lder(
         query,
-        relevancePromptCandidate,
-        candidateFeatures,
-        Some(RelevancePromptClientEventInfoElement)),
-      feedbackActionInfo = None,
+        relevancePromptCand date,
+        cand dateFeatures,
+        So (RelevancePromptCl entEvent nfoEle nt)),
+      feedbackAct on nfo = None,
       content = RelevancePromptContent(
-        title = titleTextBuilder(query, relevancePromptCandidate, candidateFeatures),
-        confirmation = confirmationTextBuilder(query, relevancePromptCandidate, candidateFeatures),
-        isRelevantText = isRelevantTextBuilder(query, relevancePromptCandidate, candidateFeatures),
+        t le = t leTextBu lder(query, relevancePromptCand date, cand dateFeatures),
+        conf rmat on = conf rmat onTextBu lder(query, relevancePromptCand date, cand dateFeatures),
+         sRelevantText =  sRelevantTextBu lder(query, relevancePromptCand date, cand dateFeatures),
         notRelevantText =
-          notRelevantTextBuilder(query, relevancePromptCandidate, candidateFeatures),
-        isRelevantCallback = isRelevantCallback,
+          notRelevantTextBu lder(query, relevancePromptCand date, cand dateFeatures),
+         sRelevantCallback =  sRelevantCallback,
         notRelevantCallback = notRelevantCallback,
-        displayType = displayType,
-        isRelevantFollowUp = isRelevantFollowUp,
+        d splayType = d splayType,
+         sRelevantFollowUp =  sRelevantFollowUp,
         notRelevantFollowUp = notRelevantFollowUp,
       ),
-      impressionCallbacks = impressionCallbacks
+       mpress onCallbacks =  mpress onCallbacks
     )
 }

@@ -1,34 +1,34 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
+package com.tw ter.follow_recom ndat ons.common.rankers.ml_ranker.scor ng
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasDebugOptions
-import com.twitter.follow_recommendations.common.models.Score
-import com.twitter.follow_recommendations.common.models.ScoreType
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.HasD splayLocat on
+ mport com.tw ter.follow_recom ndat ons.common.models.HasDebugOpt ons
+ mport com.tw ter.follow_recom ndat ons.common.models.Score
+ mport com.tw ter.follow_recom ndat ons.common.models.ScoreType
+ mport com.tw ter.follow_recom ndat ons.common.rankers.common.Ranker d
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
 
-trait Scorer {
+tra  Scorer {
 
-  // unique id of the scorer
-  def id: RankerId.Value
+  // un que  d of t  scorer
+  def  d: Ranker d.Value
 
-  // type of the output scores
-  def scoreType: Option[ScoreType] = None
+  // type of t  output scores
+  def scoreType: Opt on[ScoreType] = None
 
-  // Scoring when an ML model is used.
-  def score(records: Seq[DataRecord]): Stitch[Seq[Score]]
+  // Scor ng w n an ML model  s used.
+  def score(records: Seq[DataRecord]): St ch[Seq[Score]]
 
   /**
-   * Scoring when a non-ML method is applied. E.g: Boosting, randomized reordering, etc.
-   * This method assumes that candidates' scores are already retrieved from heavy-ranker models and
-   * are available for use.
+   * Scor ng w n a non-ML  thod  s appl ed. E.g: Boost ng, random zed reorder ng, etc.
+   * T   thod assu s that cand dates' scores are already retr eved from  avy-ranker models and
+   * are ava lable for use.
    */
   def score(
-    target: HasClientContext with HasParams with HasDisplayLocation with HasDebugOptions,
-    candidates: Seq[CandidateUser]
-  ): Seq[Option[Score]]
+    target: HasCl entContext w h HasParams w h HasD splayLocat on w h HasDebugOpt ons,
+    cand dates: Seq[Cand dateUser]
+  ): Seq[Opt on[Score]]
 }

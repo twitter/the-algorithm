@@ -1,87 +1,87 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+package com.tw ter.search.earlyb rd.search.relevance.scor ng;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+ mport java.n o.ByteBuffer;
+ mport java.n o.ByteOrder;
 
-// Ideally, this part should live somewhere in the Cortex common
-// code. Today, it is not possible to create
-// a `SparseTensor` that relies only on ByteBuffer.
-public class SparseTensor {
+//  deally, t  part should l ve so w re  n t  Cortex common
+// code. Today,    s not poss ble to create
+// a `SparseTensor` that rel es only on ByteBuffer.
+publ c class SparseTensor {
 
-  private ByteBuffer sparseIndices;
-  private ByteBuffer sparseValues;
-  private ByteBuffer sparseShape;
+  pr vate ByteBuffer sparse nd ces;
+  pr vate ByteBuffer sparseValues;
+  pr vate ByteBuffer sparseShape;
 
-  private int numDocs;
-  private final long[] sparseShapeShapeDimension = new long[] {2L};
-  private final long inputBitSize = 1 << 63;
+  pr vate  nt numDocs;
+  pr vate f nal long[] sparseShapeShapeD  ns on = new long[] {2L};
+  pr vate f nal long  nputB S ze = 1 << 63;
 
-  private long numRecordsSeen = 0;
-  private final long numFeatures;
-  private int numValuesSeen;
+  pr vate long numRecordsSeen = 0;
+  pr vate f nal long numFeatures;
+  pr vate  nt numValuesSeen;
 
-  public SparseTensor(int numDocs, int numFeatures) {
-    this.numDocs = numDocs;
-    this.numFeatures = (long) numFeatures;
-    this.sparseValues =
+  publ c SparseTensor( nt numDocs,  nt numFeatures) {
+    t .numDocs = numDocs;
+    t .numFeatures = (long) numFeatures;
+    t .sparseValues =
       ByteBuffer
       .allocate(numFeatures * numDocs * Float.BYTES)
-      .order(ByteOrder.LITTLE_ENDIAN);
-    this.sparseIndices =
+      .order(ByteOrder.L TTLE_END AN);
+    t .sparse nd ces =
       ByteBuffer
         .allocate(2 * numFeatures * numDocs * Long.BYTES)
-        .order(ByteOrder.LITTLE_ENDIAN);
-    this.sparseShape =
+        .order(ByteOrder.L TTLE_END AN);
+    t .sparseShape =
       ByteBuffer
       .allocate(2 * Long.BYTES)
-      .order(ByteOrder.LITTLE_ENDIAN);
+      .order(ByteOrder.L TTLE_END AN);
   }
 
-  public void incNumRecordsSeen() {
+  publ c vo d  ncNumRecordsSeen() {
     numRecordsSeen++;
   }
 
   /**
-   * Adds the given value to this tensor.
+   * Adds t  g ven value to t  tensor.
    */
-  public void addValue(long featureId, float value) {
+  publ c vo d addValue(long feature d, float value) {
     sparseValues.putFloat(value);
-    sparseIndices.putLong(numRecordsSeen);
-    sparseIndices.putLong(featureId);
+    sparse nd ces.putLong(numRecordsSeen);
+    sparse nd ces.putLong(feature d);
     numValuesSeen++;
   }
 
-  public ByteBuffer getSparseValues() {
-    sparseValues.limit(numValuesSeen * Float.BYTES);
-    sparseValues.rewind();
+  publ c ByteBuffer getSparseValues() {
+    sparseValues.l m (numValuesSeen * Float.BYTES);
+    sparseValues.rew nd();
     return sparseValues;
   }
 
-  public long[] getSparseValuesShape() {
+  publ c long[] getSparseValuesShape() {
     return new long[] {numValuesSeen};
   }
 
-  public long[] getSparseIndicesShape() {
+  publ c long[] getSparse nd cesShape() {
     return new long[] {numValuesSeen, 2L};
   }
 
-  public long[] getSparseShapeShape() {
-    return sparseShapeShapeDimension;
+  publ c long[] getSparseShapeShape() {
+    return sparseShapeShapeD  ns on;
   }
 
-  public ByteBuffer getSparseIndices() {
-    sparseIndices.limit(2 * numValuesSeen * Long.BYTES);
-    sparseIndices.rewind();
-    return sparseIndices;
+  publ c ByteBuffer getSparse nd ces() {
+    sparse nd ces.l m (2 * numValuesSeen * Long.BYTES);
+    sparse nd ces.rew nd();
+    return sparse nd ces;
   }
 
   /**
-   * Returns the sparse shape for this tensor.
+   * Returns t  sparse shape for t  tensor.
    */
-  public ByteBuffer getSparseShape() {
+  publ c ByteBuffer getSparseShape() {
     sparseShape.putLong(numRecordsSeen);
-    sparseShape.putLong(inputBitSize);
-    sparseShape.rewind();
+    sparseShape.putLong( nputB S ze);
+    sparseShape.rew nd();
     return sparseShape;
   }
 }

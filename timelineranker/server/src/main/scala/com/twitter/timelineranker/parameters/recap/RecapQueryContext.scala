@@ -1,79 +1,79 @@
-package com.twitter.timelineranker.parameters.recap
+package com.tw ter.t  l neranker.para ters.recap
 
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelines.util.bounds.BoundsWithDefault
+ mport com.tw ter.t  l neranker.model.RecapQuery
+ mport com.tw ter.t  l nes.ut l.bounds.BoundsW hDefault
 
 object RecapQueryContext {
-  val MaxFollowedUsers: BoundsWithDefault[Int] = BoundsWithDefault[Int](1, 3000, 1000)
-  val MaxCountMultiplier: BoundsWithDefault[Double] = BoundsWithDefault[Double](0.1, 2.0, 2.0)
-  val MaxRealGraphAndFollowedUsers: BoundsWithDefault[Int] = BoundsWithDefault[Int](0, 2000, 1000)
+  val MaxFollo dUsers: BoundsW hDefault[ nt] = BoundsW hDefault[ nt](1, 3000, 1000)
+  val MaxCountMult pl er: BoundsW hDefault[Double] = BoundsW hDefault[Double](0.1, 2.0, 2.0)
+  val MaxRealGraphAndFollo dUsers: BoundsW hDefault[ nt] = BoundsW hDefault[ nt](0, 2000, 1000)
 
   def getDefaultContext(query: RecapQuery): RecapQueryContext = {
-    new RecapQueryContextImpl(
+    new RecapQueryContext mpl(
       query,
-      getEnableHydrationUsingTweetyPie = () => false,
-      getMaxFollowedUsers = () => MaxFollowedUsers.default,
-      getMaxCountMultiplier = () => MaxCountMultiplier.default,
+      getEnableHydrat onUs ngT etyP e = () => false,
+      getMaxFollo dUsers = () => MaxFollo dUsers.default,
+      getMaxCountMult pl er = () => MaxCountMult pl er.default,
       getEnableRealGraphUsers = () => false,
       getOnlyRealGraphUsers = () => false,
-      getMaxRealGraphAndFollowedUsers = () => MaxRealGraphAndFollowedUsers.default,
-      getEnableTextFeatureHydration = () => false
+      getMaxRealGraphAndFollo dUsers = () => MaxRealGraphAndFollo dUsers.default,
+      getEnableTextFeatureHydrat on = () => false
     )
   }
 }
 
-// Note that methods that return parameter value always use () to indicate that
-// side effects may be involved in their invocation.
-trait RecapQueryContext {
+// Note that  thods that return para ter value always use () to  nd cate that
+// s de effects may be  nvolved  n t  r  nvocat on.
+tra  RecapQueryContext {
   def query: RecapQuery
 
-  // If true, tweet hydration are performed by calling TweetyPie.
-  // Otherwise, tweets are partially hydrated based on information in ThriftSearchResult.
-  def enableHydrationUsingTweetyPie(): Boolean
+  //  f true, t et hydrat on are perfor d by call ng T etyP e.
+  // Ot rw se, t ets are part ally hydrated based on  nformat on  n Thr ftSearchResult.
+  def enableHydrat onUs ngT etyP e(): Boolean
 
-  // Maximum number of followed user accounts to use when fetching recap tweets.
-  def maxFollowedUsers(): Int
+  // Max mum number of follo d user accounts to use w n fetch ng recap t ets.
+  def maxFollo dUsers():  nt
 
-  // We multiply maxCount (caller supplied value) by this multiplier and fetch those many
-  // candidates from search so that we are left with sufficient number of candidates after
-  // hydration and filtering.
-  def maxCountMultiplier(): Double
+  //   mult ply maxCount (caller suppl ed value) by t  mult pl er and fetch those many
+  // cand dates from search so that   are left w h suff c ent number of cand dates after
+  // hydrat on and f lter ng.
+  def maxCountMult pl er(): Double
 
-  // Only used if user follows >= 1000.
-  // If true, fetches recap/recycled tweets using author seedset mixing with real graph users and followed users.
-  // Otherwise, fetches recap/recycled tweets only using followed users
+  // Only used  f user follows >= 1000.
+  //  f true, fetc s recap/recycled t ets us ng author seedset m x ng w h real graph users and follo d users.
+  // Ot rw se, fetc s recap/recycled t ets only us ng follo d users
   def enableRealGraphUsers(): Boolean
 
-  // Only used if enableRealGraphUsers is true.
-  // If true, user seedset only contains real graph users.
-  // Otherwise, user seedset contains real graph users and recent followed users.
+  // Only used  f enableRealGraphUsers  s true.
+  //  f true, user seedset only conta ns real graph users.
+  // Ot rw se, user seedset conta ns real graph users and recent follo d users.
   def onlyRealGraphUsers(): Boolean
 
-  // Only used if enableRealGraphUsers is true and onlyRealGraphUsers is false.
-  // Maximum number of real graph users and recent followed users when mixing recent/real-graph users.
-  def maxRealGraphAndFollowedUsers(): Int
+  // Only used  f enableRealGraphUsers  s true and onlyRealGraphUsers  s false.
+  // Max mum number of real graph users and recent follo d users w n m x ng recent/real-graph users.
+  def maxRealGraphAndFollo dUsers():  nt
 
-  // If true, text features are hydrated for prediction.
-  // Otherwise those feature values are not set at all.
-  def enableTextFeatureHydration(): Boolean
+  //  f true, text features are hydrated for pred ct on.
+  // Ot rw se those feature values are not set at all.
+  def enableTextFeatureHydrat on(): Boolean
 }
 
-class RecapQueryContextImpl(
-  override val query: RecapQuery,
-  getEnableHydrationUsingTweetyPie: () => Boolean,
-  getMaxFollowedUsers: () => Int,
-  getMaxCountMultiplier: () => Double,
+class RecapQueryContext mpl(
+  overr de val query: RecapQuery,
+  getEnableHydrat onUs ngT etyP e: () => Boolean,
+  getMaxFollo dUsers: () =>  nt,
+  getMaxCountMult pl er: () => Double,
   getEnableRealGraphUsers: () => Boolean,
   getOnlyRealGraphUsers: () => Boolean,
-  getMaxRealGraphAndFollowedUsers: () => Int,
-  getEnableTextFeatureHydration: () => Boolean)
+  getMaxRealGraphAndFollo dUsers: () =>  nt,
+  getEnableTextFeatureHydrat on: () => Boolean)
     extends RecapQueryContext {
 
-  override def enableHydrationUsingTweetyPie(): Boolean = { getEnableHydrationUsingTweetyPie() }
-  override def maxFollowedUsers(): Int = { getMaxFollowedUsers() }
-  override def maxCountMultiplier(): Double = { getMaxCountMultiplier() }
-  override def enableRealGraphUsers(): Boolean = { getEnableRealGraphUsers() }
-  override def onlyRealGraphUsers(): Boolean = { getOnlyRealGraphUsers() }
-  override def maxRealGraphAndFollowedUsers(): Int = { getMaxRealGraphAndFollowedUsers() }
-  override def enableTextFeatureHydration(): Boolean = { getEnableTextFeatureHydration() }
+  overr de def enableHydrat onUs ngT etyP e(): Boolean = { getEnableHydrat onUs ngT etyP e() }
+  overr de def maxFollo dUsers():  nt = { getMaxFollo dUsers() }
+  overr de def maxCountMult pl er(): Double = { getMaxCountMult pl er() }
+  overr de def enableRealGraphUsers(): Boolean = { getEnableRealGraphUsers() }
+  overr de def onlyRealGraphUsers(): Boolean = { getOnlyRealGraphUsers() }
+  overr de def maxRealGraphAndFollo dUsers():  nt = { getMaxRealGraphAndFollo dUsers() }
+  overr de def enableTextFeatureHydrat on(): Boolean = { getEnableTextFeatureHydrat on() }
 }

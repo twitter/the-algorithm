@@ -1,5 +1,5 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work
 
-trait AggregateStore extends Serializable {
-  def name: String
+tra  AggregateStore extends Ser al zable {
+  def na : Str ng
 }

@@ -1,13 +1,13 @@
-scala_library(
-    sources = ["*.scala"],
+scala_l brary(
+    s ces = ["*.scala"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/scala/com/twitter/simclusters_v2/common",
-        "src/thrift/com/twitter/hermit/candidate:hermit-candidate-scala",
-        "src/thrift/com/twitter/ml/api:embedding-scala",
-        "src/thrift/com/twitter/recos/entities:entities-thrift-scala",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "src/scala/com/tw ter/scald ng_ nternal/mult format/format",
+        "src/scala/com/tw ter/s mclusters_v2/common",
+        "src/thr ft/com/tw ter/ rm /cand date: rm -cand date-scala",
+        "src/thr ft/com/tw ter/ml/ap :embedd ng-scala",
+        "src/thr ft/com/tw ter/recos/ent  es:ent  es-thr ft-scala",
+        "src/thr ft/com/tw ter/s mclusters_v2:s mclusters_v2-thr ft-scala",
     ],
 )

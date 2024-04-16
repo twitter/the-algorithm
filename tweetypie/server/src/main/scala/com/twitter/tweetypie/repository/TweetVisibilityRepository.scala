@@ -1,123 +1,123 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.logging.Logger
-import com.twitter.spam.rtf.thriftscala.{SafetyLevel => ThriftSafetyLevel}
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository.VisibilityResultToFilteredState.toFilteredState
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.interfaces.tweets.TweetVisibilityLibrary
-import com.twitter.visibility.interfaces.tweets.TweetVisibilityRequest
-import com.twitter.visibility.models.SafetyLevel.DeprecatedSafetyLevel
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.spam.rtf.thr ftscala.{SafetyLevel => Thr ftSafetyLevel}
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.repos ory.V s b l yResultToF lteredState.toF lteredState
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.v s b l y.conf gap .conf gs.V s b l yDec derGates
+ mport com.tw ter.v s b l y. nterfaces.t ets.T etV s b l yL brary
+ mport com.tw ter.v s b l y. nterfaces.t ets.T etV s b l yRequest
+ mport com.tw ter.v s b l y.models.SafetyLevel.DeprecatedSafetyLevel
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.models.V e rContext
 
 /**
- * This repository handles visibility filtering of tweets
+ * T  repos ory handles v s b l y f lter ng of t ets
  *
- * i.e. deciding whether to drop/suppress tweets based on viewer
- * and safety level for instance. Rules in VF library can be thought as:
+ *  .e. dec d ng w t r to drop/suppress t ets based on v e r
+ * and safety level for  nstance. Rules  n VF l brary can be thought as:
  *
- * (SafetyLevel)(Viewer, Content, Features) => Action
+ * (SafetyLevel)(V e r, Content, Features) => Act on
  *
- * SafetyLevel represents the product context in which the Viewer is
- * requesting to view the Content. Example: TimelineHome, TweetDetail,
- * Recommendations, Notifications
+ * SafetyLevel represents t  product context  n wh ch t  V e r  s
+ * request ng to v ew t  Content. Example: T  l neHo , T etDeta l,
+ * Recom ndat ons, Not f cat ons
  *
- * Content here is mainly tweets (can be users, notifications, cards etc)
+ * Content  re  s ma nly t ets (can be users, not f cat ons, cards etc)
  *
- * Features might include safety labels and other metadata of a Tweet,
- * flags set on a User (including the Viewer), relationships between Users
- * (e.g. block, follow), relationships between Users and Content
+ * Features m ght  nclude safety labels and ot r  tadata of a T et,
+ * flags set on a User ( nclud ng t  V e r), relat onsh ps bet en Users
+ * (e.g. block, follow), relat onsh ps bet en Users and Content
  * (e.g. reported for spam)
  *
- * We initialize VisibilityLibrary using UserSource and UserRelationshipSource:
- * Stitch interfaces that provide methods to retrieve user and relationship
- * information in Gizmoduck and SocialGraph repositories, respectively.
- * This user and relationship info along with Tweet labels, provide necessary
- * features to take a filtering decision.
+ *    n  al ze V s b l yL brary us ng UserS ce and UserRelat onsh pS ce:
+ * St ch  nterfaces that prov de  thods to retr eve user and relat onsh p
+ *  nformat on  n G zmoduck and Soc alGraph repos or es, respect vely.
+ * T  user and relat onsh p  nfo along w h T et labels, prov de necessary
+ * features to take a f lter ng dec s on.
  *
- * Actions supported in Tweetypie right now are Drop and Suppress.
- * In the future, we might want to surface other granular actions such as
- * Tombstone and Downrank which are supported in VF lib.
+ * Act ons supported  n T etyp e r ght now are Drop and Suppress.
+ *  n t  future,   m ght want to surface ot r granular act ons such as
+ * Tombstone and Downrank wh ch are supported  n VF l b.
  *
- * The TweetVisibilityRepository has the following format:
+ * T  T etV s b l yRepos ory has t  follow ng format:
  *
- * Request(Tweet, Option[SafetyLevel], Option[UserId]) => Stitch[Option[FilteredState]]
+ * Request(T et, Opt on[SafetyLevel], Opt on[User d]) => St ch[Opt on[F lteredState]]
  *
- * SafetyLevel is plumbed from the tweet query options.
+ * SafetyLevel  s plumbed from t  t et query opt ons.
  *
- * In addition to the latency stats and rpc counts from VF library, we also capture
- * unsupported and deprecated safety level stats here to inform the relevant clients.
+ *  n add  on to t  latency stats and rpc counts from VF l brary,   also capture
+ * unsupported and deprecated safety level stats  re to  nform t  relevant cl ents.
  *
- * go/visibilityfiltering, go/visibilityfilteringdocs
+ * go/v s b l yf lter ng, go/v s b l yf lter ngdocs
  *
  */
-object TweetVisibilityRepository {
-  type Type = Request => Stitch[Option[FilteredState]]
+object T etV s b l yRepos ory {
+  type Type = Request => St ch[Opt on[F lteredState]]
 
   case class Request(
-    tweet: Tweet,
-    viewerId: Option[UserId],
-    safetyLevel: ThriftSafetyLevel,
-    isInnerQuotedTweet: Boolean,
-    isRetweet: Boolean,
-    hydrateConversationControl: Boolean,
-    isSourceTweet: Boolean)
+    t et: T et,
+    v e r d: Opt on[User d],
+    safetyLevel: Thr ftSafetyLevel,
+     s nnerQuotedT et: Boolean,
+     sRet et: Boolean,
+    hydrateConversat onControl: Boolean,
+     sS ceT et: Boolean)
 
   def apply(
-    visibilityLibrary: TweetVisibilityLibrary.Type,
-    visibilityDeciderGates: VisibilityDeciderGates,
+    v s b l yL brary: T etV s b l yL brary.Type,
+    v s b l yDec derGates: V s b l yDec derGates,
     log: Logger,
-    statsReceiver: StatsReceiver
-  ): TweetVisibilityRepository.Type = {
+    statsRece ver: StatsRece ver
+  ): T etV s b l yRepos ory.Type = {
 
-    val noTweetRulesCounter = statsReceiver.counter("no_tweet_rules_requests")
-    val deprecatedScope = statsReceiver.scope("deprecated_safety_level")
+    val noT etRulesCounter = statsRece ver.counter("no_t et_rules_requests")
+    val deprecatedScope = statsRece ver.scope("deprecated_safety_level")
 
     request: Request =>
-      SafetyLevel.fromThrift(request.safetyLevel) match {
+      SafetyLevel.fromThr ft(request.safetyLevel) match {
         case DeprecatedSafetyLevel =>
-          deprecatedScope.counter(request.safetyLevel.name.toLowerCase()).incr()
-          log.warning("Deprecated SafetyLevel (%s) requested".format(request.safetyLevel.name))
-          Stitch.None
+          deprecatedScope.counter(request.safetyLevel.na .toLo rCase()). ncr()
+          log.warn ng("Deprecated SafetyLevel (%s) requested".format(request.safetyLevel.na ))
+          St ch.None
         case safetyLevel: SafetyLevel =>
-          if (!TweetVisibilityLibrary.hasTweetRules(safetyLevel)) {
-            noTweetRulesCounter.incr()
-            Stitch.None
+           f (!T etV s b l yL brary.hasT etRules(safetyLevel)) {
+            noT etRulesCounter. ncr()
+            St ch.None
           } else {
-            visibilityLibrary(
-              TweetVisibilityRequest(
-                tweet = request.tweet,
+            v s b l yL brary(
+              T etV s b l yRequest(
+                t et = request.t et,
                 safetyLevel = safetyLevel,
-                viewerContext = ViewerContext.fromContextWithViewerIdFallback(request.viewerId),
-                isInnerQuotedTweet = request.isInnerQuotedTweet,
-                isRetweet = request.isRetweet,
-                hydrateConversationControl = request.hydrateConversationControl,
-                isSourceTweet = request.isSourceTweet
+                v e rContext = V e rContext.fromContextW hV e r dFallback(request.v e r d),
+                 s nnerQuotedT et = request. s nnerQuotedT et,
+                 sRet et = request. sRet et,
+                hydrateConversat onControl = request.hydrateConversat onControl,
+                 sS ceT et = request. sS ceT et
               )
-            ).map(visibilityResult =>
-              toFilteredState(
-                visibilityResult = visibilityResult,
-                disableLegacyInterstitialFilteredReason =
-                  visibilityDeciderGates.disableLegacyInterstitialFilteredReason()))
+            ).map(v s b l yResult =>
+              toF lteredState(
+                v s b l yResult = v s b l yResult,
+                d sableLegacy nterst  alF lteredReason =
+                  v s b l yDec derGates.d sableLegacy nterst  alF lteredReason()))
           }
       }
   }
 
   /**
-   * We can skip visibility filtering when any of the following is true:
+   *   can sk p v s b l y f lter ng w n any of t  follow ng  s true:
    *
-   * - SafetyLevel is deprecated
-   * - SafetyLevel has no tweet rules
+   * - SafetyLevel  s deprecated
+   * - SafetyLevel has no t et rules
    */
-  def canSkipVisibilityFiltering(thriftSafetyLevel: ThriftSafetyLevel): Boolean =
-    SafetyLevel.fromThrift(thriftSafetyLevel) match {
+  def canSk pV s b l yF lter ng(thr ftSafetyLevel: Thr ftSafetyLevel): Boolean =
+    SafetyLevel.fromThr ft(thr ftSafetyLevel) match {
       case DeprecatedSafetyLevel =>
         true
       case safetyLevel: SafetyLevel =>
-        !TweetVisibilityLibrary.hasTweetRules(safetyLevel)
+        !T etV s b l yL brary.hasT etRules(safetyLevel)
     }
 }

@@ -1,97 +1,97 @@
-package com.twitter.product_mixer.shared_library.http_client
+package com.tw ter.product_m xer.shared_l brary.http_cl ent
 
-import com.twitter.finagle.Http
-import com.twitter.finagle.Service
-import com.twitter.finagle.client.Transporter
-import com.twitter.finagle.http.ProxyCredentials
-import com.twitter.finagle.http.Request
-import com.twitter.finagle.http.Response
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.shared_library.http_client.FinagleHttpClientBuilder.buildFinagleHttpClient
-import com.twitter.util.Duration
+ mport com.tw ter.f nagle.Http
+ mport com.tw ter.f nagle.Serv ce
+ mport com.tw ter.f nagle.cl ent.Transporter
+ mport com.tw ter.f nagle.http.ProxyCredent als
+ mport com.tw ter.f nagle.http.Request
+ mport com.tw ter.f nagle.http.Response
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.shared_l brary.http_cl ent.F nagleHttpCl entBu lder.bu ldF nagleHttpCl ent
+ mport com.tw ter.ut l.Durat on
 
-object FinagleHttpClientWithProxyBuilder {
+object F nagleHttpCl entW hProxyBu lder {
 
   /**
-   * Build a Finagle HTTP client with Egress Proxy support using Credentials
+   * Bu ld a F nagle HTTP cl ent w h Egress Proxy support us ng Credent als
    *
-   * @param twitterProxyHostPort    Twitter egress proxy host port
+   * @param tw terProxyHostPort    Tw ter egress proxy host port
    * @param remoteProxyHostPort     Remote proxy host port
-   * @param requestTimeout          HTTP client request timeout
-   * @param connectTimeout          HTTP client transport connect timeout
-   * @param acquisitionTimeout      HTTP client session acquisition timeout
-   * @param proxyCredentials        Proxy credentials
-   * @param statsReceiver           Stats
+   * @param requestT  out          HTTP cl ent request t  out
+   * @param connectT  out          HTTP cl ent transport connect t  out
+   * @param acqu s  onT  out      HTTP cl ent sess on acqu s  on t  out
+   * @param proxyCredent als        Proxy credent als
+   * @param statsRece ver           Stats
    *
-   * @return Finagle HTTP client with Egress Proxy support using Credentials
+   * @return F nagle HTTP cl ent w h Egress Proxy support us ng Credent als
    */
-  def buildFinagleHttpClientWithCredentialProxy(
-    twitterProxyHostPort: HttpHostPort,
+  def bu ldF nagleHttpCl entW hCredent alProxy(
+    tw terProxyHostPort: HttpHostPort,
     remoteProxyHostPort: HttpHostPort,
-    requestTimeout: Duration,
-    connectTimeout: Duration,
-    acquisitionTimeout: Duration,
-    proxyCredentials: ProxyCredentials,
-    statsReceiver: StatsReceiver,
-  ): Http.Client = {
-    val httpClient = buildFinagleHttpClient(
-      requestTimeout = requestTimeout,
-      connectTimeout = connectTimeout,
-      acquisitionTimeout = acquisitionTimeout,
-      statsReceiver = statsReceiver
+    requestT  out: Durat on,
+    connectT  out: Durat on,
+    acqu s  onT  out: Durat on,
+    proxyCredent als: ProxyCredent als,
+    statsRece ver: StatsRece ver,
+  ): Http.Cl ent = {
+    val httpCl ent = bu ldF nagleHttpCl ent(
+      requestT  out = requestT  out,
+      connectT  out = connectT  out,
+      acqu s  onT  out = acqu s  onT  out,
+      statsRece ver = statsRece ver
     )
 
-    httpClient.withTransport
+    httpCl ent.w hTransport
       .httpProxyTo(
-        host = remoteProxyHostPort.toString,
-        credentials = Transporter.Credentials(proxyCredentials.username, proxyCredentials.password))
-      .withTls(remoteProxyHostPort.host)
+        host = remoteProxyHostPort.toStr ng,
+        credent als = Transporter.Credent als(proxyCredent als.userna , proxyCredent als.password))
+      .w hTls(remoteProxyHostPort.host)
   }
 
   /**
-   * Build a Finagle HTTP client with Egress Proxy support
+   * Bu ld a F nagle HTTP cl ent w h Egress Proxy support
    *
-   * @param twitterProxyHostPort   Twitter egress proxy host port
+   * @param tw terProxyHostPort   Tw ter egress proxy host port
    * @param remoteProxyHostPort    Remote proxy host port
-   * @param requestTimeout         HTTP client request timeout
-   * @param connectTimeout         HTTP client transport connect timeout
-   * @param acquisitionTimeout     HTTP client session acquisition timeout
-   * @param statsReceiver          Stats
+   * @param requestT  out         HTTP cl ent request t  out
+   * @param connectT  out         HTTP cl ent transport connect t  out
+   * @param acqu s  onT  out     HTTP cl ent sess on acqu s  on t  out
+   * @param statsRece ver          Stats
    *
-   * @return Finagle HTTP client with Egress Proxy support
+   * @return F nagle HTTP cl ent w h Egress Proxy support
    */
-  def buildFinagleHttpClientWithProxy(
-    twitterProxyHostPort: HttpHostPort,
+  def bu ldF nagleHttpCl entW hProxy(
+    tw terProxyHostPort: HttpHostPort,
     remoteProxyHostPort: HttpHostPort,
-    requestTimeout: Duration,
-    connectTimeout: Duration,
-    acquisitionTimeout: Duration,
-    statsReceiver: StatsReceiver,
-  ): Http.Client = {
-    val httpClient = buildFinagleHttpClient(
-      requestTimeout = requestTimeout,
-      connectTimeout = connectTimeout,
-      acquisitionTimeout = acquisitionTimeout,
-      statsReceiver = statsReceiver
+    requestT  out: Durat on,
+    connectT  out: Durat on,
+    acqu s  onT  out: Durat on,
+    statsRece ver: StatsRece ver,
+  ): Http.Cl ent = {
+    val httpCl ent = bu ldF nagleHttpCl ent(
+      requestT  out = requestT  out,
+      connectT  out = connectT  out,
+      acqu s  onT  out = acqu s  onT  out,
+      statsRece ver = statsRece ver
     )
 
-    httpClient.withTransport
-      .httpProxyTo(remoteProxyHostPort.toString)
-      .withTls(remoteProxyHostPort.host)
+    httpCl ent.w hTransport
+      .httpProxyTo(remoteProxyHostPort.toStr ng)
+      .w hTls(remoteProxyHostPort.host)
   }
 
   /**
-   * Build a Finagle HTTP service with Egress Proxy support
+   * Bu ld a F nagle HTTP serv ce w h Egress Proxy support
    *
-   * @param finagleHttpClientWithProxy Finagle HTTP client from which to build the service
-   * @param twitterProxyHostPort       Twitter egress proxy host port
+   * @param f nagleHttpCl entW hProxy F nagle HTTP cl ent from wh ch to bu ld t  serv ce
+   * @param tw terProxyHostPort       Tw ter egress proxy host port
    *
-   * @return Finagle HTTP service with Egress Proxy support
+   * @return F nagle HTTP serv ce w h Egress Proxy support
    */
-  def buildFinagleHttpServiceWithProxy(
-    finagleHttpClientWithProxy: Http.Client,
-    twitterProxyHostPort: HttpHostPort
-  ): Service[Request, Response] = {
-    finagleHttpClientWithProxy.newService(twitterProxyHostPort.toString)
+  def bu ldF nagleHttpServ ceW hProxy(
+    f nagleHttpCl entW hProxy: Http.Cl ent,
+    tw terProxyHostPort: HttpHostPort
+  ): Serv ce[Request, Response] = {
+    f nagleHttpCl entW hProxy.newServ ce(tw terProxyHostPort.toStr ng)
   }
 }

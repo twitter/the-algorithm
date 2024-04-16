@@ -1,57 +1,57 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.stp
 
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.thrift.BinaryThriftCodec
-import com.twitter.relevance.ep_model.scorer.EPScorer
-import com.twitter.relevance.ep_model.scorer.ScorerUtil
-import com.twitter.relevance.ep_model.thrift
-import com.twitter.relevance.ep_model.thriftscala.EPScoringOptions
-import com.twitter.relevance.ep_model.thriftscala.EPScoringRequest
-import com.twitter.relevance.ep_model.thriftscala.EPScoringResponse
-import com.twitter.relevance.ep_model.thriftscala.Record
-import com.twitter.stitch.Stitch
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
-import scala.util.Success
+ mport com.tw ter.b ject on.scrooge.B naryScalaCodec
+ mport com.tw ter.b ject on.thr ft.B naryThr ftCodec
+ mport com.tw ter.relevance.ep_model.scorer.EPScorer
+ mport com.tw ter.relevance.ep_model.scorer.ScorerUt l
+ mport com.tw ter.relevance.ep_model.thr ft
+ mport com.tw ter.relevance.ep_model.thr ftscala.EPScor ngOpt ons
+ mport com.tw ter.relevance.ep_model.thr ftscala.EPScor ngRequest
+ mport com.tw ter.relevance.ep_model.thr ftscala.EPScor ngResponse
+ mport com.tw ter.relevance.ep_model.thr ftscala.Record
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.ut l.Future
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport scala.collect on.JavaConverters._
+ mport scala.ut l.Success
 
-case class ScoredResponse(score: Double, featuresBreakdown: Option[String] = None)
+case class ScoredResponse(score: Double, featuresBreakdown: Opt on[Str ng] = None)
 
 /**
- * STP ML ranker trained using prehistoric ML framework
+ * STP ML ranker tra ned us ng pre tor c ML fra work
  */
-@Singleton
-class EpStpScorer @Inject() (epScorer: EPScorer) {
-  private def getScore(responses: List[EPScoringResponse]): Option[ScoredResponse] =
-    responses.headOption
+@S ngleton
+class EpStpScorer @ nject() (epScorer: EPScorer) {
+  pr vate def getScore(responses: L st[EPScor ngResponse]): Opt on[ScoredResponse] =
+    responses. adOpt on
       .flatMap { response =>
         response.scores.flatMap {
-          _.headOption.map(score => ScoredResponse(ScorerUtil.normalize(score)))
+          _. adOpt on.map(score => ScoredResponse(ScorerUt l.normal ze(score)))
         }
       }
 
   def getScoredResponse(
     record: Record,
-    details: Boolean = false
-  ): Stitch[Option[ScoredResponse]] = {
-    val scoringOptions = EPScoringOptions(
-      addFeaturesBreakDown = details,
-      addTransformerIntermediateRecords = details
+    deta ls: Boolean = false
+  ): St ch[Opt on[ScoredResponse]] = {
+    val scor ngOpt ons = EPScor ngOpt ons(
+      addFeaturesBreakDown = deta ls,
+      addTransfor r nter d ateRecords = deta ls
     )
-    val request = EPScoringRequest(auxFeatures = Some(Seq(record)), options = Some(scoringOptions))
+    val request = EPScor ngRequest(auxFeatures = So (Seq(record)), opt ons = So (scor ngOpt ons))
 
-    Stitch.callFuture(
-      BinaryThriftCodec[thrift.EPScoringRequest]
-        .invert(BinaryScalaCodec(EPScoringRequest).apply(request))
-        .map { thriftRequest: thrift.EPScoringRequest =>
+    St ch.callFuture(
+      B naryThr ftCodec[thr ft.EPScor ngRequest]
+        . nvert(B naryScalaCodec(EPScor ngRequest).apply(request))
+        .map { thr ftRequest: thr ft.EPScor ngRequest =>
           val responsesF = epScorer
-            .score(List(thriftRequest).asJava)
+            .score(L st(thr ftRequest).asJava)
             .map(
-              _.asScala.toList
+              _.asScala.toL st
                 .map(response =>
-                  BinaryScalaCodec(EPScoringResponse)
-                    .invert(BinaryThriftCodec[thrift.EPScoringResponse].apply(response)))
+                  B naryScalaCodec(EPScor ngResponse)
+                    . nvert(B naryThr ftCodec[thr ft.EPScor ngResponse].apply(response)))
                 .collect { case Success(response) => response }
             )
           responsesF.map(getScore)
@@ -61,5 +61,5 @@ class EpStpScorer @Inject() (epScorer: EPScorer) {
 }
 
 object EpStpScorer {
-  val WithFeaturesBreakDown = false
+  val W hFeaturesBreakDown = false
 }

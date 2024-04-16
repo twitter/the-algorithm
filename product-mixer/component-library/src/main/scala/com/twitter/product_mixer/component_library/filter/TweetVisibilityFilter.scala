@@ -1,71 +1,71 @@
-package com.twitter.product_mixer.component_library.filter
+package com.tw ter.product_m xer.component_l brary.f lter
 
-import com.twitter.util.logging.Logging
-import com.twitter.product_mixer.component_library.filter.TweetVisibilityFilter._
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.tweetypie.{TweetyPie => TweetypieStitchClient}
-import com.twitter.tweetypie.{thriftscala => TP}
-import com.twitter.util.Return
-import com.twitter.util.Try
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport com.tw ter.product_m xer.component_l brary.f lter.T etV s b l yF lter._
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.BaseT etCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lterResult
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLevel
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.t etyp e.{T etyP e => T etyp eSt chCl ent}
+ mport com.tw ter.t etyp e.{thr ftscala => TP}
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Try
 
-object TweetVisibilityFilter {
-  val DefaultTweetIncludes = Set(TP.TweetInclude.TweetFieldId(TP.Tweet.IdField.id))
-  private final val getTweetFieldsFailureMessage = "TweetyPie.getTweetFields failed: "
+object T etV s b l yF lter {
+  val DefaultT et ncludes = Set(TP.T et nclude.T etF eld d(TP.T et. dF eld. d))
+  pr vate f nal val getT etF eldsFa lure ssage = "T etyP e.getT etF elds fa led: "
 }
 
-case class TweetVisibilityFilter[Candidate <: BaseTweetCandidate](
-  tweetypieStitchClient: TweetypieStitchClient,
-  tweetVisibilityPolicy: TP.TweetVisibilityPolicy,
+case class T etV s b l yF lter[Cand date <: BaseT etCand date](
+  t etyp eSt chCl ent: T etyp eSt chCl ent,
+  t etV s b l yPol cy: TP.T etV s b l yPol cy,
   safetyLevel: SafetyLevel,
-  tweetIncludes: Set[TP.TweetInclude.TweetFieldId] = DefaultTweetIncludes)
-    extends Filter[PipelineQuery, Candidate]
-    with Logging {
+  t et ncludes: Set[TP.T et nclude.T etF eld d] = DefaultT et ncludes)
+    extends F lter[P pel neQuery, Cand date]
+    w h Logg ng {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("TweetVisibility")
+  overr de val  dent f er: F lter dent f er = F lter dent f er("T etV s b l y")
 
   def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
-    Stitch
-      .traverse(candidates.map(_.candidate.id)) { tweetId =>
-        tweetypieStitchClient
-          .getTweetFields(tweetId, getTweetFieldsOptions(query.getOptionalUserId))
-          .liftToTry
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): St ch[F lterResult[Cand date]] = {
+    St ch
+      .traverse(cand dates.map(_.cand date. d)) { t et d =>
+        t etyp eSt chCl ent
+          .getT etF elds(t et d, getT etF eldsOpt ons(query.getOpt onalUser d))
+          .l ftToTry
       }
-      .map { getTweetFieldsResults: Seq[Try[TP.GetTweetFieldsResult]] =>
-        val (checkedSucceeded, checkFailed) = getTweetFieldsResults.partition(_.isReturn)
-        checkFailed.foreach(e => warn(() => getTweetFieldsFailureMessage, e.throwable))
-        if (checkFailed.nonEmpty) {
+      .map { getT etF eldsResults: Seq[Try[TP.GetT etF eldsResult]] =>
+        val (c ckedSucceeded, c ckFa led) = getT etF eldsResults.part  on(_. sReturn)
+        c ckFa led.foreach(e => warn(() => getT etF eldsFa lure ssage, e.throwable))
+         f (c ckFa led.nonEmpty) {
           warn(() =>
-            s"TweetVisibilityFilter dropped ${checkFailed.size} candidates due to tweetypie failure.")
+            s"T etV s b l yF lter dropped ${c ckFa led.s ze} cand dates due to t etyp e fa lure.")
         }
 
-        val allowedTweets = checkedSucceeded.collect {
-          case Return(TP.GetTweetFieldsResult(_, TP.TweetFieldsResultState.Found(found), _, _)) =>
-            found.tweet.id
+        val allo dT ets = c ckedSucceeded.collect {
+          case Return(TP.GetT etF eldsResult(_, TP.T etF eldsResultState.Found(found), _, _)) =>
+            found.t et. d
         }.toSet
 
         val (kept, removed) =
-          candidates.map(_.candidate).partition(candidate => allowedTweets.contains(candidate.id))
+          cand dates.map(_.cand date).part  on(cand date => allo dT ets.conta ns(cand date. d))
 
-        FilterResult(kept = kept, removed = removed)
+        F lterResult(kept = kept, removed = removed)
       }
   }
 
-  private def getTweetFieldsOptions(userId: Option[Long]) =
-    TP.GetTweetFieldsOptions(
-      forUserId = userId,
-      tweetIncludes = tweetIncludes.toSet,
-      doNotCache = true,
-      visibilityPolicy = tweetVisibilityPolicy,
-      safetyLevel = Some(safetyLevel)
+  pr vate def getT etF eldsOpt ons(user d: Opt on[Long]) =
+    TP.GetT etF eldsOpt ons(
+      forUser d = user d,
+      t et ncludes = t et ncludes.toSet,
+      doNotCac  = true,
+      v s b l yPol cy = t etV s b l yPol cy,
+      safetyLevel = So (safetyLevel)
     )
 }

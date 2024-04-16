@@ -4,15 +4,15 @@ use std::fs;
 use serde_json::{Map, Value};
 
 use crate::error::SegDenseError;
-use crate::mapper::{FeatureInfo, FeatureMapper, MapWriter};
-use crate::segdense_transform_spec_home_recap_2022::{self as seg_dense, InputFeature};
+use crate::mapper::{Feature nfo, FeatureMapper, MapWr er};
+use crate::segdense_transform_spec_ho _recap_2022::{self as seg_dense,  nputFeature};
 
-pub fn load_config(file_name: &str) -> Result<seg_dense::Root, SegDenseError> {
-    let json_str = fs::read_to_string(file_name)?;
-    // &format!("Unable to load segdense file {}", file_name));
-    let seg_dense_config = parse(&json_str)?;
-    // &format!("Unable to parse segdense file {}", file_name));
-    Ok(seg_dense_config)
+pub fn load_conf g(f le_na : &str) -> Result<seg_dense::Root, SegDenseError> {
+    let json_str = fs::read_to_str ng(f le_na )?;
+    // &format!("Unable to load segdense f le {}", f le_na ));
+    let seg_dense_conf g = parse(&json_str)?;
+    // &format!("Unable to parse segdense f le {}", f le_na ));
+    Ok(seg_dense_conf g)
 }
 
 pub fn parse(json_str: &str) -> Result<seg_dense::Root, SegDenseError> {
@@ -21,64 +21,64 @@ pub fn parse(json_str: &str) -> Result<seg_dense::Root, SegDenseError> {
 }
 
 /**
- * Given a json string containing a seg dense schema create a feature mapper
- * which is essentially:
+ * G ven a json str ng conta n ng a seg dense sc ma create a feature mapper
+ * wh ch  s essent ally:
  *
- *   {feature-id -> (Tensor Index, Index of feature within the tensor)}
+ *   {feature- d -> (Tensor  ndex,  ndex of feature w h n t  tensor)}
  *
- *   Feature id : 64 bit hash of the feature name used in DataRecords.
+ *   Feature  d : 64 b  hash of t  feature na  used  n DataRecords.
  *
- *   Tensor Index : A vector of tensors is passed to the model. Tensor
- *     index refers to the tensor this feature is part of.
+ *   Tensor  ndex : A vector of tensors  s passed to t  model. Tensor
+ *      ndex refers to t  tensor t  feature  s part of.
  *
- *   Index of feature in tensor : The tensors are vectors, the index of
- *     feature is the position to put the feature value.
+ *    ndex of feature  n tensor : T  tensors are vectors, t   ndex of
+ *     feature  s t  pos  on to put t  feature value.
  *
- * There are many assumptions made in this function that is very model specific.
- * These assumptions are called out below and need to be schematized eventually.
+ * T re are many assumpt ons made  n t  funct on that  s very model spec f c.
+ * T se assumpt ons are called out below and need to be sc mat zed eventually.
  *
- * Call this once for each segdense schema and cache the FeatureMapper.
+ * Call t  once for each segdense sc ma and cac  t  FeatureMapper.
  */
-pub fn safe_load_config(json_str: &str) -> Result<FeatureMapper, SegDenseError> {
+pub fn safe_load_conf g(json_str: &str) -> Result<FeatureMapper, SegDenseError> {
     let root = parse(json_str)?;
-    load_from_parsed_config(root)
+    load_from_parsed_conf g(root)
 }
 
 // Perf note : make 'root' un-owned
-pub fn load_from_parsed_config(root: seg_dense::Root) -> Result<FeatureMapper, SegDenseError> {
-    let v = root.input_features_map;
+pub fn load_from_parsed_conf g(root: seg_dense::Root) -> Result<FeatureMapper, SegDenseError> {
+    let v = root. nput_features_map;
 
-    // Do error check
-    let map: Map<String, Value> = match v {
+    // Do error c ck
+    let map: Map<Str ng, Value> = match v {
         Value::Object(map) => map,
-        _ => return Err(SegDenseError::JsonMissingObject),
+        _ => return Err(SegDenseError::JsonM ss ngObject),
     };
 
     let mut fm: FeatureMapper = FeatureMapper::new();
 
-    let items = map.values();
+    let  ems = map.values();
 
-    // Perf : Consider a way to avoid clone here
-    for item in items.cloned() {
-        let mut vec = match item {
+    // Perf : Cons der a way to avo d clone  re
+    for  em  n  ems.cloned() {
+        let mut vec = match  em {
             Value::Array(v) => v,
-            _ => return Err(SegDenseError::JsonMissingArray),
+            _ => return Err(SegDenseError::JsonM ss ngArray),
         };
 
-        if vec.len() != 1 {
-            return Err(SegDenseError::JsonArraySize);
+         f vec.len() != 1 {
+            return Err(SegDenseError::JsonArrayS ze);
         }
 
         let val = vec.pop().unwrap();
 
-        let input_feature: seg_dense::InputFeature = serde_json::from_value(val)?;
-        let feature_id = input_feature.feature_id;
-        let feature_info = to_feature_info(&input_feature);
+        let  nput_feature: seg_dense:: nputFeature = serde_json::from_value(val)?;
+        let feature_ d =  nput_feature.feature_ d;
+        let feature_ nfo = to_feature_ nfo(& nput_feature);
 
-        match feature_info {
-            Some(info) => {
-                debug!("{:?}", info);
-                fm.set(feature_id, info)
+        match feature_ nfo {
+            So ( nfo) => {
+                debug!("{:?}",  nfo);
+                fm.set(feature_ d,  nfo)
             }
             None => (),
         }
@@ -87,50 +87,50 @@ pub fn load_from_parsed_config(root: seg_dense::Root) -> Result<FeatureMapper, S
     Ok(fm)
 }
 #[allow(dead_code)]
-fn add_feature_info_to_mapper(
+fn add_feature_ nfo_to_mapper(
     feature_mapper: &mut FeatureMapper,
-    input_features: &Vec<InputFeature>,
+     nput_features: &Vec< nputFeature>,
 ) {
-    for input_feature in input_features.iter() {
-        let feature_id = input_feature.feature_id;
-        let feature_info = to_feature_info(input_feature);
+    for  nput_feature  n  nput_features. er() {
+        let feature_ d =  nput_feature.feature_ d;
+        let feature_ nfo = to_feature_ nfo( nput_feature);
 
-        match feature_info {
-            Some(info) => {
-                debug!("{:?}", info);
-                feature_mapper.set(feature_id, info)
+        match feature_ nfo {
+            So ( nfo) => {
+                debug!("{:?}",  nfo);
+                feature_mapper.set(feature_ d,  nfo)
             }
             None => (),
         }
     }
 }
 
-pub fn to_feature_info(input_feature: &seg_dense::InputFeature) -> Option<FeatureInfo> {
-    if input_feature.maybe_exclude {
+pub fn to_feature_ nfo( nput_feature: &seg_dense:: nputFeature) -> Opt on<Feature nfo> {
+     f  nput_feature.maybe_exclude {
         return None;
     }
 
-    // This part needs to be schema driven
+    // T  part needs to be sc ma dr ven
     //
-    //   tensor index : Which of these tensors this feature is part of
-    //      [Continious, Binary, Discrete, User_embedding, user_eng_embedding, author_embedding]
-    //      Note that this order is fixed/hardcoded here, and need to be schematized
+    //   tensor  ndex : Wh ch of t se tensors t  feature  s part of
+    //      [Cont n ous, B nary, D screte, User_embedd ng, user_eng_embedd ng, author_embedd ng]
+    //      Note that t  order  s f xed/hardcoded  re, and need to be sc mat zed
     //
-    let tensor_idx: i8 = match input_feature.feature_id {
-        // user.timelines.twhin_user_follow_embeddings.twhin_user_follow_embeddings
-        // Feature name is mapped to a feature-id value. The hardcoded values below correspond to a specific feature name.
+    let tensor_ dx:  8 = match  nput_feature.feature_ d {
+        // user.t  l nes.twh n_user_follow_embedd ngs.twh n_user_follow_embedd ngs
+        // Feature na   s mapped to a feature- d value. T  hardcoded values below correspond to a spec f c feature na .
         -2550691008059411095 => 3,
 
-        // user.timelines.twhin_user_engagement_embeddings.twhin_user_engagement_embeddings
+        // user.t  l nes.twh n_user_engage nt_embedd ngs.twh n_user_engage nt_embedd ngs
         5390650078733277231 => 4,
 
-        // original_author.timelines.twhin_author_follow_embeddings.twhin_author_follow_embeddings
+        // or g nal_author.t  l nes.twh n_author_follow_embedd ngs.twh n_author_follow_embedd ngs
         3223956748566688423 => 5,
 
-        _ => match input_feature.feature_type {
-            //   feature_type : src/thrift/com/twitter/ml/api/data.thrift
-            //       BINARY = 1, CONTINUOUS = 2, DISCRETE = 3,
-            //    Map to slots in [Continious, Binary, Discrete, ..]
+        _ => match  nput_feature.feature_type {
+            //   feature_type : src/thr ft/com/tw ter/ml/ap /data.thr ft
+            //       B NARY = 1, CONT NUOUS = 2, D SCRETE = 3,
+            //    Map to slots  n [Cont n ous, B nary, D screte, ..]
             1 => 1,
             2 => 0,
             3 => 2,
@@ -138,17 +138,17 @@ pub fn to_feature_info(input_feature: &seg_dense::InputFeature) -> Option<Featur
         },
     };
 
-    if input_feature.index < 0 {
+     f  nput_feature. ndex < 0 {
         return None;
     }
 
-    // Handle this case later
-    if tensor_idx == -1 {
+    // Handle t  case later
+     f tensor_ dx == -1 {
         return None;
     }
 
-    Some(FeatureInfo {
-        tensor_index: tensor_idx,
-        index_within_tensor: input_feature.index,
+    So (Feature nfo {
+        tensor_ ndex: tensor_ dx,
+         ndex_w h n_tensor:  nput_feature. ndex,
     })
 }

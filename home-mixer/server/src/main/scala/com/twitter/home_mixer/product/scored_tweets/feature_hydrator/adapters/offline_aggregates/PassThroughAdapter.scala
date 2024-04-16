@@ -1,12 +1,12 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.offline_aggregates
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.adapters.offl ne_aggregates
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.IRecordOneToOneAdapter
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap . RecordOneToOneAdapter
 
-object PassThroughAdapter extends IRecordOneToOneAdapter[Seq[DataRecord]] {
-  override def adaptToDataRecord(record: Seq[DataRecord]): DataRecord =
-    record.headOption.getOrElse(new DataRecord)
+object PassThroughAdapter extends  RecordOneToOneAdapter[Seq[DataRecord]] {
+  overr de def adaptToDataRecord(record: Seq[DataRecord]): DataRecord =
+    record. adOpt on.getOrElse(new DataRecord)
 
-  // This is not necessary and should not be used.
-  override def getFeatureContext = ???
+  // T   s not necessary and should not be used.
+  overr de def getFeatureContext = ???
 }

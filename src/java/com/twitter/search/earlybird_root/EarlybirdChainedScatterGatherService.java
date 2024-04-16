@@ -1,58 +1,58 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import java.util.List;
+ mport java.ut l.L st;
 
-import javax.inject.Inject;
+ mport javax. nject. nject;
 
-import com.google.common.collect.Lists;
+ mport com.google.common.collect.L sts;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.finagle.Service;
-import com.twitter.search.common.root.PartitionLoggingSupport;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.search.common.root.Part  onLogg ngSupport;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.ut l.Future;
 
 /**
- * A chain of scatter gather services.
- * Regular roots use ScatterGatherService directly. This class is only used by multi-tier roots.
+ * A cha n of scatter gat r serv ces.
+ * Regular roots use ScatterGat rServ ce d rectly. T  class  s only used by mult -t er roots.
  */
-public class EarlybirdChainedScatterGatherService extends
-    Service<EarlybirdRequestContext, List<Future<EarlybirdResponse>>> {
+publ c class Earlyb rdCha nedScatterGat rServ ce extends
+    Serv ce<Earlyb rdRequestContext, L st<Future<Earlyb rdResponse>>> {
 
-  private static final Logger LOG =
-    LoggerFactory.getLogger(EarlybirdChainedScatterGatherService.class);
+  pr vate stat c f nal Logger LOG =
+    LoggerFactory.getLogger(Earlyb rdCha nedScatterGat rServ ce.class);
 
-  private final List<Service<EarlybirdRequestContext, EarlybirdResponse>> serviceChain;
+  pr vate f nal L st<Serv ce<Earlyb rdRequestContext, Earlyb rdResponse>> serv ceCha n;
 
   /**
-   * Construct a ScatterGatherServiceChain, by loading configurations from earlybird-tiers.yml.
+   * Construct a ScatterGat rServ ceCha n, by load ng conf gurat ons from earlyb rd-t ers.yml.
    */
-  @Inject
-  public EarlybirdChainedScatterGatherService(
-      EarlybirdServiceChainBuilder serviceChainBuilder,
-      EarlybirdServiceScatterGatherSupport scatterGatherSupport,
-      PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport) {
+  @ nject
+  publ c Earlyb rdCha nedScatterGat rServ ce(
+      Earlyb rdServ ceCha nBu lder serv ceCha nBu lder,
+      Earlyb rdServ ceScatterGat rSupport scatterGat rSupport,
+      Part  onLogg ngSupport<Earlyb rdRequestContext> part  onLogg ngSupport) {
 
-    serviceChain =
-        serviceChainBuilder.buildServiceChain(scatterGatherSupport, partitionLoggingSupport);
+    serv ceCha n =
+        serv ceCha nBu lder.bu ldServ ceCha n(scatterGat rSupport, part  onLogg ngSupport);
 
-    if (serviceChain.isEmpty()) {
-      LOG.error("At least one tier has to be enabled.");
-      throw new RuntimeException("Root does not work with all tiers disabled.");
+     f (serv ceCha n. sEmpty()) {
+      LOG.error("At least one t er has to be enabled.");
+      throw new Runt  Except on("Root does not work w h all t ers d sabled.");
     }
   }
 
-  @Override
-  public Future<List<Future<EarlybirdResponse>>> apply(EarlybirdRequestContext requestContext) {
-    // Hit all tiers in parallel.
-    List<Future<EarlybirdResponse>> resultList =
-        Lists.newArrayListWithCapacity(serviceChain.size());
-    for (final Service<EarlybirdRequestContext, EarlybirdResponse> service : serviceChain) {
-      resultList.add(service.apply(requestContext));
+  @Overr de
+  publ c Future<L st<Future<Earlyb rdResponse>>> apply(Earlyb rdRequestContext requestContext) {
+    // H  all t ers  n parallel.
+    L st<Future<Earlyb rdResponse>> resultL st =
+        L sts.newArrayL stW hCapac y(serv ceCha n.s ze());
+    for (f nal Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> serv ce : serv ceCha n) {
+      resultL st.add(serv ce.apply(requestContext));
     }
-    return Future.value(resultList);
+    return Future.value(resultL st);
   }
 }

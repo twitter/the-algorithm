@@ -1,14 +1,14 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.top_k_map
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+na space java com.tw ter.s mclusters_v2.thr ftjava
+na space py gen.tw ter.s mclusters_v2.top_k_map
+#@na space scala com.tw ter.s mclusters_v2.thr ftscala
+#@na space strato com.tw ter.s mclusters_v2
 
-include "com/twitter/algebird_internal/algebird.thrift"
+ nclude "com/tw ter/algeb rd_ nternal/algeb rd.thr ft"
 
 struct TopKClusters {
-	1: required map<i32, algebird.DecayedValue> topK(personalDataTypeKey = 'InferredInterests')
+	1: requ red map< 32, algeb rd.DecayedValue> topK(personalDataTypeKey = ' nferred nterests')
 }(hasPersonalData = 'true')
 
-struct TopKTweets {
-	1: required map<i64, algebird.DecayedValue> topK(personalDataTypeKey='TweetId')
+struct TopKT ets {
+	1: requ red map< 64, algeb rd.DecayedValue> topK(personalDataTypeKey='T et d')
 }(hasPersonalData = 'true') 

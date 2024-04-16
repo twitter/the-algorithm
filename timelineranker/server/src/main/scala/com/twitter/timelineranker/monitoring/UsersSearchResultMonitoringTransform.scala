@@ -1,52 +1,52 @@
-package com.twitter.timelineranker.monitoring
+package com.tw ter.t  l neranker.mon or ng
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.search.earlyb rd.thr ftscala.Thr ftSearchResult
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t  l neranker.core.Cand dateEnvelope
+ mport com.tw ter.t  l neranker.model.RecapQuery.DependencyProv der
+ mport com.tw ter.ut l.Future
 
 /**
- * Captures tweet counts pre and post transformation for a list of users
+ * Captures t et counts pre and post transformat on for a l st of users
  */
-class UsersSearchResultMonitoringTransform(
-  name: String,
-  underlyingTransformer: FutureArrow[CandidateEnvelope, CandidateEnvelope],
-  statsReceiver: StatsReceiver,
-  debugAuthorListDependencyProvider: DependencyProvider[Seq[Long]])
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+class UsersSearchResultMon or ngTransform(
+  na : Str ng,
+  underly ngTransfor r: FutureArrow[Cand dateEnvelope, Cand dateEnvelope],
+  statsRece ver: StatsRece ver,
+  debugAuthorL stDependencyProv der: DependencyProv der[Seq[Long]])
+    extends FutureArrow[Cand dateEnvelope, Cand dateEnvelope] {
 
-  private val scopedStatsReceiver = statsReceiver.scope(name)
-  private val preTransformCounter = (userId: Long) =>
-    scopedStatsReceiver
-      .scope("pre_transform").scope(userId.toString).counter("debug_author_list")
-  private val postTransformCounter = (userId: Long) =>
-    scopedStatsReceiver
-      .scope("post_transform").scope(userId.toString).counter("debug_author_list")
+  pr vate val scopedStatsRece ver = statsRece ver.scope(na )
+  pr vate val preTransformCounter = (user d: Long) =>
+    scopedStatsRece ver
+      .scope("pre_transform").scope(user d.toStr ng).counter("debug_author_l st")
+  pr vate val postTransformCounter = (user d: Long) =>
+    scopedStatsRece ver
+      .scope("post_transform").scope(user d.toStr ng).counter("debug_author_l st")
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val debugAuthorList = debugAuthorListDependencyProvider.apply(envelope.query)
+  overr de def apply(envelope: Cand dateEnvelope): Future[Cand dateEnvelope] = {
+    val debugAuthorL st = debugAuthorL stDependencyProv der.apply(envelope.query)
     envelope.searchResults
-      .filter(isTweetFromDebugAuthorList(_, debugAuthorList))
-      .flatMap(_.metadata)
-      .foreach(metadata => preTransformCounter(metadata.fromUserId).incr())
+      .f lter( sT etFromDebugAuthorL st(_, debugAuthorL st))
+      .flatMap(_. tadata)
+      .foreach( tadata => preTransformCounter( tadata.fromUser d). ncr())
 
-    underlyingTransformer
+    underly ngTransfor r
       .apply(envelope)
       .map { result =>
         envelope.searchResults
-          .filter(isTweetFromDebugAuthorList(_, debugAuthorList))
-          .flatMap(_.metadata)
-          .foreach(metadata => postTransformCounter(metadata.fromUserId).incr())
+          .f lter( sT etFromDebugAuthorL st(_, debugAuthorL st))
+          .flatMap(_. tadata)
+          .foreach( tadata => postTransformCounter( tadata.fromUser d). ncr())
         result
       }
   }
 
-  private def isTweetFromDebugAuthorList(
-    searchResult: ThriftSearchResult,
-    debugAuthorList: Seq[Long]
+  pr vate def  sT etFromDebugAuthorL st(
+    searchResult: Thr ftSearchResult,
+    debugAuthorL st: Seq[Long]
   ): Boolean =
-    searchResult.metadata.exists(metadata => debugAuthorList.contains(metadata.fromUserId))
+    searchResult. tadata.ex sts( tadata => debugAuthorL st.conta ns( tadata.fromUser d))
 
 }

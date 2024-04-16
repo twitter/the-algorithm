@@ -1,42 +1,42 @@
 """
-Utilties that aid in building the magic recs graph.
+Ut lt es that a d  n bu ld ng t  mag c recs graph.
 """
 
-import re
+ mport re
 
-import tensorflow.compat.v1 as tf
+ mport tensorflow.compat.v1 as tf
 
 
-def get_trainable_variables(all_trainable_variables, trainable_regexes):
-  """Returns a subset of trainable variables for training.
+def get_tra nable_var ables(all_tra nable_var ables, tra nable_regexes):
+  """Returns a subset of tra nable var ables for tra n ng.
 
-  Given a collection of trainable variables, this will return all those that match the given regexes.
-  Will also log those variables.
+  G ven a collect on of tra nable var ables, t  w ll return all those that match t  g ven regexes.
+  W ll also log those var ables.
 
   Args:
-      all_trainable_variables (a collection of trainable tf.Variable): The variables to search through.
-      trainable_regexes (a collection of regexes): Variables that match any regex will be included.
+      all_tra nable_var ables (a collect on of tra nable tf.Var able): T  var ables to search through.
+      tra nable_regexes (a collect on of regexes): Var ables that match any regex w ll be  ncluded.
 
-  Returns a list of tf.Variable
+  Returns a l st of tf.Var able
   """
-  if trainable_regexes is None or len(trainable_regexes) == 0:
-    tf.logging.info("No trainable regexes found. Not using get_trainable_variables behavior.")
+   f tra nable_regexes  s None or len(tra nable_regexes) == 0:
+    tf.logg ng. nfo("No tra nable regexes found. Not us ng get_tra nable_var ables behav or.")
     return None
 
   assert any(
-    tf.is_tensor(var) for var in all_trainable_variables
-  ), f"Non TF variable found: {all_trainable_variables}"
-  trainable_variables = list(
-    filter(
-      lambda var: any(re.match(regex, var.name, re.IGNORECASE) for regex in trainable_regexes),
-      all_trainable_variables,
+    tf. s_tensor(var) for var  n all_tra nable_var ables
+  ), f"Non TF var able found: {all_tra nable_var ables}"
+  tra nable_var ables = l st(
+    f lter(
+      lambda var: any(re.match(regex, var.na , re. GNORECASE) for regex  n tra nable_regexes),
+      all_tra nable_var ables,
     )
   )
-  tf.logging.info(f"Using filtered trainable variables: {trainable_variables}")
+  tf.logg ng. nfo(f"Us ng f ltered tra nable var ables: {tra nable_var ables}")
 
   assert (
-    trainable_variables
-  ), "Did not find trainable variables after filtering after filtering from {} number of vars originaly. All vars: {} and train regexes: {}".format(
-    len(all_trainable_variables), all_trainable_variables, trainable_regexes
+    tra nable_var ables
+  ), "D d not f nd tra nable var ables after f lter ng after f lter ng from {} number of vars or g naly. All vars: {} and tra n regexes: {}".format(
+    len(all_tra nable_var ables), all_tra nable_var ables, tra nable_regexes
   )
-  return trainable_variables
+  return tra nable_var ables

@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neScr beConf g
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * Trait for our builder which given a query and entries will return an `Option[TimelineScribeConfig]`
+ * Tra  for   bu lder wh ch g ven a query and entr es w ll return an `Opt on[T  l neScr beConf g]`
  *
  * @tparam Query
  */
-trait TimelineScribeConfigBuilder[-Query <: PipelineQuery] {
+tra  T  l neScr beConf gBu lder[-Query <: P pel neQuery] {
 
-  def build(
+  def bu ld(
     query: Query,
-    entries: Seq[TimelineEntry]
-  ): Option[TimelineScribeConfig]
+    entr es: Seq[T  l neEntry]
+  ): Opt on[T  l neScr beConf g]
 }

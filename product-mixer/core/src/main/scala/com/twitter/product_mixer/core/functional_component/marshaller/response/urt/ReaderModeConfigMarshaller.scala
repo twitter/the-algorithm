@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ReaderModeConfig
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.UrlMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.ReaderModeConf g
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ReaderModeConfigMarshaller @Inject() (urlMarshaller: UrlMarshaller) {
+@S ngleton
+class ReaderModeConf gMarshaller @ nject() (urlMarshaller: UrlMarshaller) {
 
-  def apply(readerModeConfig: ReaderModeConfig): urt.ReaderModeConfig = urt.ReaderModeConfig(
-    isReaderModeAvailable = readerModeConfig.isReaderModeAvailable,
-    landingUrl = urlMarshaller(readerModeConfig.landingUrl)
+  def apply(readerModeConf g: ReaderModeConf g): urt.ReaderModeConf g = urt.ReaderModeConf g(
+     sReaderModeAva lable = readerModeConf g. sReaderModeAva lable,
+    land ngUrl = urlMarshaller(readerModeConf g.land ngUrl)
   )
 
 }

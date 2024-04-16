@@ -1,30 +1,30 @@
-package com.twitter.home_mixer.functional_component.filter
+package com.tw ter.ho _m xer.funct onal_component.f lter
 
-import com.twitter.home_mixer.model.HomeFeatures.ServedTweetPreviewIdsFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.ho _m xer.model.Ho Features.ServedT etPrev ew dsFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lterResult
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
-object PreviouslyServedTweetPreviewsFilter extends Filter[PipelineQuery, TweetCandidate] {
+object Prev ouslyServedT etPrev ewsF lter extends F lter[P pel neQuery, T etCand date] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("PreviouslyServedTweetPreviews")
+  overr de val  dent f er: F lter dent f er = F lter dent f er("Prev ouslyServedT etPrev ews")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = {
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[F lterResult[T etCand date]] = {
 
-    val servedTweetPreviewIds =
-      query.features.map(_.getOrElse(ServedTweetPreviewIdsFeature, Seq.empty)).toSeq.flatten.toSet
+    val servedT etPrev ew ds =
+      query.features.map(_.getOrElse(ServedT etPrev ew dsFeature, Seq.empty)).toSeq.flatten.toSet
 
-    val (removed, kept) = candidates.partition { candidate =>
-      servedTweetPreviewIds.contains(candidate.candidate.id)
+    val (removed, kept) = cand dates.part  on { cand date =>
+      servedT etPrev ew ds.conta ns(cand date.cand date. d)
     }
 
-    Stitch.value(FilterResult(kept = kept.map(_.candidate), removed = removed.map(_.candidate)))
+    St ch.value(F lterResult(kept = kept.map(_.cand date), removed = removed.map(_.cand date)))
   }
 }

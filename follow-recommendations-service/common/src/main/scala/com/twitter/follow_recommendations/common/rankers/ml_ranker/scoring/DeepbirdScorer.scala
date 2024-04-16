@@ -1,149 +1,149 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
+package com.tw ter.follow_recom ndat ons.common.rankers.ml_ranker.scor ng
 
-import com.twitter.cortex.deepbird.thriftjava.DeepbirdPredictionService
-import com.twitter.cortex.deepbird.thriftjava.ModelSelector
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDebugOptions
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.Score
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.ml.prediction_service.{BatchPredictionRequest => JBatchPredictionRequest}
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Future
-import com.twitter.util.TimeoutException
-import scala.collection.JavaConversions._
-import scala.collection.JavaConverters._
+ mport com.tw ter.cortex.deepb rd.thr ftjava.Deepb rdPred ct onServ ce
+ mport com.tw ter.cortex.deepb rd.thr ftjava.ModelSelector
+ mport com.tw ter.f nagle.stats.Stat
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.HasDebugOpt ons
+ mport com.tw ter.follow_recom ndat ons.common.models.HasD splayLocat on
+ mport com.tw ter.follow_recom ndat ons.common.models.Score
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.ml.ap .R chDataRecord
+ mport com.tw ter.ml.pred ct on_serv ce.{BatchPred ct onRequest => JBatchPred ct onRequest}
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  outExcept on
+ mport scala.collect on.JavaConvers ons._
+ mport scala.collect on.JavaConverters._
 
 /**
- * Generic trait that implements the scoring given a deepbirdClient
- * To test out a new model, create a scorer extending this trait, override the modelName and inject the scorer
+ * Gener c tra  that  mple nts t  scor ng g ven a deepb rdCl ent
+ * To test out a new model, create a scorer extend ng t  tra , overr de t  modelNa  and  nject t  scorer
  */
-trait DeepbirdScorer extends Scorer {
-  def modelName: String
-  def predictionFeature: Feature.Continuous
-  // Set a default batchSize of 100 when making model prediction calls to the Deepbird V2 prediction server
-  def batchSize: Int = 100
-  def deepbirdClient: DeepbirdPredictionService.ServiceToClient
-  def baseStats: StatsReceiver
+tra  Deepb rdScorer extends Scorer {
+  def modelNa : Str ng
+  def pred ct onFeature: Feature.Cont nuous
+  // Set a default batchS ze of 100 w n mak ng model pred ct on calls to t  Deepb rd V2 pred ct on server
+  def batchS ze:  nt = 100
+  def deepb rdCl ent: Deepb rdPred ct onServ ce.Serv ceToCl ent
+  def baseStats: StatsRece ver
 
-  def modelSelector: ModelSelector = new ModelSelector().setId(modelName)
-  def stats: StatsReceiver = baseStats.scope(this.getClass.getSimpleName).scope(modelName)
+  def modelSelector: ModelSelector = new ModelSelector().set d(modelNa )
+  def stats: StatsRece ver = baseStats.scope(t .getClass.getS mpleNa ).scope(modelNa )
 
-  private def requestCount = stats.counter("requests")
-  private def emptyRequestCount = stats.counter("empty_requests")
-  private def successCount = stats.counter("success")
-  private def failureCount = stats.counter("failures")
-  private def inputRecordsStat = stats.stat("input_records")
-  private def outputRecordsStat = stats.stat("output_records")
+  pr vate def requestCount = stats.counter("requests")
+  pr vate def emptyRequestCount = stats.counter("empty_requests")
+  pr vate def successCount = stats.counter("success")
+  pr vate def fa lureCount = stats.counter("fa lures")
+  pr vate def  nputRecordsStat = stats.stat(" nput_records")
+  pr vate def outputRecordsStat = stats.stat("output_records")
 
-  // Counters for tracking batch-prediction statistics when making DBv2 prediction calls
+  // Counters for track ng batch-pred ct on stat st cs w n mak ng DBv2 pred ct on calls
   //
-  // numBatchRequests tracks the number of batch prediction requests made to DBv2 prediction servers
-  private def numBatchRequests = stats.counter("batches")
-  // numEmptyBatchRequests tracks the number of batch prediction requests made to DBv2 prediction servers
-  // that had an empty input DataRecord
-  private def numEmptyBatchRequests = stats.counter("empty_batches")
-  // numTimedOutBatchRequests tracks the number of batch prediction requests made to DBv2 prediction servers
-  // that had timed-out
-  private def numTimedOutBatchRequests = stats.counter("timeout_batches")
+  // numBatchRequests tracks t  number of batch pred ct on requests made to DBv2 pred ct on servers
+  pr vate def numBatchRequests = stats.counter("batc s")
+  // numEmptyBatchRequests tracks t  number of batch pred ct on requests made to DBv2 pred ct on servers
+  // that had an empty  nput DataRecord
+  pr vate def numEmptyBatchRequests = stats.counter("empty_batc s")
+  // numT  dOutBatchRequests tracks t  number of batch pred ct on requests made to DBv2 pred ct on servers
+  // that had t  d-out
+  pr vate def numT  dOutBatchRequests = stats.counter("t  out_batc s")
 
-  private def batchPredictionLatency = stats.stat("batch_prediction_latency")
-  private def predictionLatency = stats.stat("prediction_latency")
+  pr vate def batchPred ct onLatency = stats.stat("batch_pred ct on_latency")
+  pr vate def pred ct onLatency = stats.stat("pred ct on_latency")
 
-  private def numEmptyModelPredictions = stats.counter("empty_model_predictions")
-  private def numNonEmptyModelPredictions = stats.counter("non_empty_model_predictions")
+  pr vate def numEmptyModelPred ct ons = stats.counter("empty_model_pred ct ons")
+  pr vate def numNonEmptyModelPred ct ons = stats.counter("non_empty_model_pred ct ons")
 
-  private val DefaultPredictionScore = 0.0
+  pr vate val DefaultPred ct onScore = 0.0
 
   /**
-   * NOTE: For instances of [[DeepbirdScorer]] this function SHOULD NOT be used.
-   * Please use [[score(records: Seq[DataRecord])]] instead.
+   * NOTE: For  nstances of [[Deepb rdScorer]] t  funct on SHOULD NOT be used.
+   * Please use [[score(records: Seq[DataRecord])]]  nstead.
    */
   @Deprecated
   def score(
-    target: HasClientContext with HasParams with HasDisplayLocation with HasDebugOptions,
-    candidates: Seq[CandidateUser]
-  ): Seq[Option[Score]] =
-    throw new UnsupportedOperationException(
-      "For instances of DeepbirdScorer this operation is not defined. Please use " +
-        "`def score(records: Seq[DataRecord]): Stitch[Seq[Score]]` " +
-        "instead.")
+    target: HasCl entContext w h HasParams w h HasD splayLocat on w h HasDebugOpt ons,
+    cand dates: Seq[Cand dateUser]
+  ): Seq[Opt on[Score]] =
+    throw new UnsupportedOperat onExcept on(
+      "For  nstances of Deepb rdScorer t  operat on  s not def ned. Please use " +
+        "`def score(records: Seq[DataRecord]): St ch[Seq[Score]]` " +
+        " nstead.")
 
-  override def score(records: Seq[DataRecord]): Stitch[Seq[Score]] = {
-    requestCount.incr()
-    if (records.isEmpty) {
-      emptyRequestCount.incr()
-      Stitch.Nil
+  overr de def score(records: Seq[DataRecord]): St ch[Seq[Score]] = {
+    requestCount. ncr()
+     f (records. sEmpty) {
+      emptyRequestCount. ncr()
+      St ch.N l
     } else {
-      inputRecordsStat.add(records.size)
-      Stitch.callFuture(
-        batchPredict(records, batchSize)
-          .map { recordList =>
-            val scores = recordList.map { record =>
+       nputRecordsStat.add(records.s ze)
+      St ch.callFuture(
+        batchPred ct(records, batchS ze)
+          .map { recordL st =>
+            val scores = recordL st.map { record =>
               Score(
-                value = record.getOrElse(DefaultPredictionScore),
-                rankerId = Some(id),
+                value = record.getOrElse(DefaultPred ct onScore),
+                ranker d = So ( d),
                 scoreType = scoreType)
             }
-            outputRecordsStat.add(scores.size)
+            outputRecordsStat.add(scores.s ze)
             scores
-          }.onSuccess(_ => successCount.incr())
-          .onFailure(_ => failureCount.incr()))
+          }.onSuccess(_ => successCount. ncr())
+          .onFa lure(_ => fa lureCount. ncr()))
     }
   }
 
-  def batchPredict(
+  def batchPred ct(
     dataRecords: Seq[DataRecord],
-    batchSize: Int
-  ): Future[Seq[Option[Double]]] = {
+    batchS ze:  nt
+  ): Future[Seq[Opt on[Double]]] = {
     Stat
-      .timeFuture(predictionLatency) {
-        val batchedDataRecords = dataRecords.grouped(batchSize).toSeq
-        numBatchRequests.incr(batchedDataRecords.size)
+      .t  Future(pred ct onLatency) {
+        val batc dDataRecords = dataRecords.grouped(batchS ze).toSeq
+        numBatchRequests. ncr(batc dDataRecords.s ze)
         Future
-          .collect(batchedDataRecords.map(batch => predict(batch)))
+          .collect(batc dDataRecords.map(batch => pred ct(batch)))
           .map(res => res.reduce(_ ++ _))
       }
   }
 
-  def predict(dataRecords: Seq[DataRecord]): Future[Seq[Option[Double]]] = {
+  def pred ct(dataRecords: Seq[DataRecord]): Future[Seq[Opt on[Double]]] = {
     Stat
-      .timeFuture(batchPredictionLatency) {
-        if (dataRecords.isEmpty) {
-          numEmptyBatchRequests.incr()
-          Future.Nil
+      .t  Future(batchPred ct onLatency) {
+         f (dataRecords. sEmpty) {
+          numEmptyBatchRequests. ncr()
+          Future.N l
         } else {
-          deepbirdClient
-            .batchPredictFromModel(new JBatchPredictionRequest(dataRecords.asJava), modelSelector)
+          deepb rdCl ent
+            .batchPred ctFromModel(new JBatchPred ct onRequest(dataRecords.asJava), modelSelector)
             .map { response =>
-              response.predictions.toSeq.map { prediction =>
-                val predictionFeatureOption = Option(
-                  new RichDataRecord(prediction).getFeatureValue(predictionFeature)
+              response.pred ct ons.toSeq.map { pred ct on =>
+                val pred ct onFeatureOpt on = Opt on(
+                  new R chDataRecord(pred ct on).getFeatureValue(pred ct onFeature)
                 )
-                predictionFeatureOption match {
-                  case Some(predictionValue) =>
-                    numNonEmptyModelPredictions.incr()
-                    Option(predictionValue.toDouble)
+                pred ct onFeatureOpt on match {
+                  case So (pred ct onValue) =>
+                    numNonEmptyModelPred ct ons. ncr()
+                    Opt on(pred ct onValue.toDouble)
                   case None =>
-                    numEmptyModelPredictions.incr()
-                    Option(DefaultPredictionScore)
+                    numEmptyModelPred ct ons. ncr()
+                    Opt on(DefaultPred ct onScore)
                 }
               }
             }
             .rescue {
-              case e: TimeoutException => // DBv2 prediction calls that timed out
-                numTimedOutBatchRequests.incr()
-                stats.counter(e.getClass.getSimpleName).incr()
-                Future.value(dataRecords.map(_ => Option(DefaultPredictionScore)))
-              case e: Exception => // other generic DBv2 prediction call failures
-                stats.counter(e.getClass.getSimpleName).incr()
-                Future.value(dataRecords.map(_ => Option(DefaultPredictionScore)))
+              case e: T  outExcept on => // DBv2 pred ct on calls that t  d out
+                numT  dOutBatchRequests. ncr()
+                stats.counter(e.getClass.getS mpleNa ). ncr()
+                Future.value(dataRecords.map(_ => Opt on(DefaultPred ct onScore)))
+              case e: Except on => // ot r gener c DBv2 pred ct on call fa lures
+                stats.counter(e.getClass.getS mpleNa ). ncr()
+                Future.value(dataRecords.map(_ => Opt on(DefaultPred ct onScore)))
             }
         }
       }

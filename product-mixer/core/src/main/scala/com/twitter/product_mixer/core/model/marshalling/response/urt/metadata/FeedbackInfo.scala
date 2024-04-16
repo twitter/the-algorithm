@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata
 
-trait HasFeedbackInfo {
-  def feedbackInfo: Option[FeedbackInfo]
+tra  HasFeedback nfo {
+  def feedback nfo: Opt on[Feedback nfo]
 }
 
-case class FeedbackDisplayContext(reason: String)
+case class FeedbackD splayContext(reason: Str ng)
 
-case class FeedbackInfo(
-  feedbackKeys: Seq[String],
-  feedbackMetadata: Option[String],
-  displayContext: Option[FeedbackDisplayContext],
-  clientEventInfo: Option[ClientEventInfo])
+case class Feedback nfo(
+  feedbackKeys: Seq[Str ng],
+  feedback tadata: Opt on[Str ng],
+  d splayContext: Opt on[FeedbackD splayContext],
+  cl entEvent nfo: Opt on[Cl entEvent nfo])

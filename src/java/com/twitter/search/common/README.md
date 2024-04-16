@@ -1,1 +1,1 @@
-Contains code that is common to multiple earlybird services (ingesters, roots and earlybird).
+Conta ns code that  s common to mult ple earlyb rd serv ces ( ngesters, roots and earlyb rd).

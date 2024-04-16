@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.configapi
+package com.tw ter.product_m xer.core.funct onal_component.conf gap 
 
-import com.twitter.product_mixer.core.functional_component.configapi.registry.GlobalParamRegistry
-import com.twitter.product_mixer.core.product.registry.ProductParamRegistry
-import com.twitter.timelines.configapi.CompositeConfig
-import com.twitter.timelines.configapi.Config
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.conf gap .reg stry.GlobalParamReg stry
+ mport com.tw ter.product_m xer.core.product.reg stry.ProductParamReg stry
+ mport com.tw ter.t  l nes.conf gap .Compos eConf g
+ mport com.tw ter.t  l nes.conf gap .Conf g
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ConfigBuilder @Inject() (
-  productParamRegistry: ProductParamRegistry,
-  globalParamRegistry: GlobalParamRegistry) {
+@S ngleton
+class Conf gBu lder @ nject() (
+  productParamReg stry: ProductParamReg stry,
+  globalParamReg stry: GlobalParamReg stry) {
 
-  def build(): Config =
-    new CompositeConfig(productParamRegistry.build() ++ Seq(globalParamRegistry.build()))
+  def bu ld(): Conf g =
+    new Compos eConf g(productParamReg stry.bu ld() ++ Seq(globalParamReg stry.bu ld()))
 }

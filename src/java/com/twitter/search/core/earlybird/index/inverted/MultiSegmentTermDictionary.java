@@ -1,60 +1,60 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import com.google.common.collect.ImmutableList;
+ mport com.google.common.collect. mmutableL st;
 
-import org.apache.lucene.util.BytesRef;
+ mport org.apac .lucene.ut l.BytesRef;
 
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
 
 /**
- * A term dictionary that's backed by multiple underlying segments/indexes. For a given term, will
- * be able to return the termId for each of the underlying indexes.
+ * A term d ct onary that's backed by mult ple underly ng seg nts/ ndexes. For a g ven term, w ll
+ * be able to return t  term d for each of t  underly ng  ndexes.
  */
-public interface MultiSegmentTermDictionary {
+publ c  nterface Mult Seg ntTermD ct onary {
 
   /**
-   * Lookup a term in this multi segment term dictionary, and return the term ids for that term on
-   * all of the managed segments.
+   * Lookup a term  n t  mult  seg nt term d ct onary, and return t  term  ds for that term on
+   * all of t  managed seg nts.
    *
-   * @return An array containing a termId for each segment that this term dictionary is backed by.
-   * The order of segments will match the order returned by {@link #getSegmentIndexes()}.
+   * @return An array conta n ng a term d for each seg nt that t  term d ct onary  s backed by.
+   * T  order of seg nts w ll match t  order returned by {@l nk #getSeg nt ndexes()}.
    *
-   * For each segment, the term id will be returned, or
-   * {@link EarlybirdIndexSegmentAtomicReader#TERM_NOT_FOUND} if that segment does not have the
-   * given term.
+   * For each seg nt, t  term  d w ll be returned, or
+   * {@l nk Earlyb rd ndexSeg ntAtom cReader#TERM_NOT_FOUND}  f that seg nt does not have t 
+   * g ven term.
    */
-  int[] lookupTermIds(BytesRef term);
+   nt[] lookupTerm ds(BytesRef term);
 
   /**
-   * A convenience method for checking whether a specific index/segment is backed by this term
-   * dictionary. Returning true here is equivalent to returning:
+   * A conven ence  thod for c ck ng w t r a spec f c  ndex/seg nt  s backed by t  term
+   * d ct onary. Return ng true  re  s equ valent to return ng:
    * <pre>
-   * getSegmentIndexes().contains(invertedIndex);
+   * getSeg nt ndexes().conta ns( nverted ndex);
    * </pre>
    */
-  default boolean supportSegmentIndex(InvertedIndex invertedIndex) {
-    return getSegmentIndexes().contains(invertedIndex);
+  default boolean supportSeg nt ndex( nverted ndex  nverted ndex) {
+    return getSeg nt ndexes().conta ns( nverted ndex);
   }
 
   /**
-   * The list of indexes that this term dictionary is backed by. The order of indexes here will
-   * be consistent with the order of termIds returned by {@link #lookupTermIds(BytesRef)}.
+   * T  l st of  ndexes that t  term d ct onary  s backed by. T  order of  ndexes  re w ll
+   * be cons stent w h t  order of term ds returned by {@l nk #lookupTerm ds(BytesRef)}.
    */
-  ImmutableList<? extends InvertedIndex> getSegmentIndexes();
+   mmutableL st<? extends  nverted ndex> getSeg nt ndexes();
 
   /**
-   * Returns the number of terms in this term dictionary.
+   * Returns t  number of terms  n t  term d ct onary.
    *
-   * If the term "foo" appears in segment A and in segment B, it will be counted once. To get the
-   * total number of terms across all managed segments, see {@link #getNumTermEntries()}.
+   *  f t  term "foo" appears  n seg nt A and  n seg nt B,   w ll be counted once. To get t 
+   * total number of terms across all managed seg nts, see {@l nk #getNumTermEntr es()}.
    */
-  int getNumTerms();
+   nt getNumTerms();
 
   /**
-   * Returns the total number of terms in this term dictionary across all managed segments.
+   * Returns t  total number of terms  n t  term d ct onary across all managed seg nts.
    *
-   * If the term "foo" appears in segment A and in segment B, it will have 2 entries in this term
-   * dictionary.
+   *  f t  term "foo" appears  n seg nt A and  n seg nt B,   w ll have 2 entr es  n t  term
+   * d ct onary.
    */
-  int getNumTermEntries();
+   nt getNumTermEntr es();
 }

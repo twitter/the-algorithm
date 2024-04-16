@@ -1,221 +1,221 @@
-# pylint: disable=no-member, attribute-defined-outside-init, duplicate-code
+# pyl nt: d sable=no- mber, attr bute-def ned-outs de- n , dupl cate-code
 """
-Contains the twml.layers.SparseMaxNorm layer.
+Conta ns t  twml.layers.SparseMaxNorm layer.
 """
-from .layer import Layer
+from .layer  mport Layer
 
-from libtwml import OPLIB
-import tensorflow.compat.v1 as tf
-import twml
+from l btwml  mport OPL B
+ mport tensorflow.compat.v1 as tf
+ mport twml
 
 
 class SparseMaxNorm(Layer):
   """
-  Computes a max-normalization and adds bias to the sparse_input,
-  forwards that through a sparse affine transform followed
-  by an non-linear activation on the resulting dense representation.
+  Computes a max-normal zat on and adds b as to t  sparse_ nput,
+  forwards that through a sparse aff ne transform follo d
+  by an non-l near act vat on on t  result ng dense representat on.
 
-  This layer has two parameters, one of which learns through gradient descent:
-    bias_x (optional):
-      vector of shape [input_size]. Learned through gradient descent.
+  T  layer has two para ters, one of wh ch learns through grad ent descent:
+    b as_x (opt onal):
+      vector of shape [ nput_s ze]. Learned through grad ent descent.
     max_x:
-      vector of shape [input_size]. Holds the maximas of input ``x`` for normalization.
-      Either calibrated through SparseMaxNorm calibrator, or calibrated online, or both.
+      vector of shape [ nput_s ze]. Holds t  max mas of  nput ``x`` for normal zat on.
+      E  r cal brated through SparseMaxNorm cal brator, or cal brated onl ne, or both.
 
-  The pseudo-code for this layer looks like:
+  T  pseudo-code for t  layer looks l ke:
 
   .. code-block:: python
 
     abs_x = abs(x)
-    normed_x = clip_by_value(x / max_x, -1, 1)
-    biased_x = normed_x + bias_x
-    return biased
+    nor d_x = cl p_by_value(x / max_x, -1, 1)
+    b ased_x = nor d_x + b as_x
+    return b ased
 
 
   Args:
-    max_x_initializer:
-      initializer vector of shape [input_size] used by variable `max_x`
-    bias_x_initializer:
-      initializer vector of shape [input_size] used by parameter `bias_x`
-    is_training:
-      Are we training the layer to learn the normalization maximas.
-      If set to True, max_x will be able to learn. This is independent of bias_x
-    epsilon:
-      The minimum value used for max_x. Defaults to 1E-5.
-    use_bias:
-      Default True. Set to False to not use a bias term.
+    max_x_ n  al zer:
+       n  al zer vector of shape [ nput_s ze] used by var able `max_x`
+    b as_x_ n  al zer:
+       n  al zer vector of shape [ nput_s ze] used by para ter `b as_x`
+     s_tra n ng:
+      Are   tra n ng t  layer to learn t  normal zat on max mas.
+       f set to True, max_x w ll be able to learn. T   s  ndependent of b as_x
+    eps lon:
+      T  m n mum value used for max_x. Defaults to 1E-5.
+    use_b as:
+      Default True. Set to False to not use a b as term.
 
   Returns:
-    A layer representing the output of the sparse_max_norm transformation.
+    A layer represent ng t  output of t  sparse_max_norm transformat on.
    """
 
-  def __init__(
+  def __ n __(
           self,
-          input_size=None,
-          max_x_initializer=None,
-          bias_x_initializer=None,
-          is_training=True,
-          epsilon=1E-5,
-          use_bias=True,
+           nput_s ze=None,
+          max_x_ n  al zer=None,
+          b as_x_ n  al zer=None,
+           s_tra n ng=True,
+          eps lon=1E-5,
+          use_b as=True,
           **kwargs):
 
-    super(SparseMaxNorm, self).__init__(**kwargs)
-    if input_size:
-      raise ValueError('input_size is deprecated - it is now automatically \
-                       inferred from your input.')
-    if max_x_initializer is None:
-      max_x_initializer = tf.zeros_initializer()
-    self.max_x_initializer = max_x_initializer
+    super(SparseMaxNorm, self).__ n __(**kwargs)
+     f  nput_s ze:
+      ra se ValueError(' nput_s ze  s deprecated -    s now automat cally \
+                        nferred from y   nput.')
+     f max_x_ n  al zer  s None:
+      max_x_ n  al zer = tf.zeros_ n  al zer()
+    self.max_x_ n  al zer = max_x_ n  al zer
 
-    self._use_bias = use_bias
-    if use_bias:
-      if bias_x_initializer is None:
-        bias_x_initializer = tf.zeros_initializer()
-      self.bias_x_initializer = bias_x_initializer
+    self._use_b as = use_b as
+     f use_b as:
+       f b as_x_ n  al zer  s None:
+        b as_x_ n  al zer = tf.zeros_ n  al zer()
+      self.b as_x_ n  al zer = b as_x_ n  al zer
 
-    self.epsilon = epsilon
-    self.is_training = is_training
+    self.eps lon = eps lon
+    self. s_tra n ng =  s_tra n ng
 
-  def build(self, input_shape):  # pylint: disable=unused-argument
-    """Creates the max_x and bias_x tf.Variables of the layer."""
+  def bu ld(self,  nput_shape):  # pyl nt: d sable=unused-argu nt
+    """Creates t  max_x and b as_x tf.Var ables of t  layer."""
 
-    self.max_x = self.add_variable(
+    self.max_x = self.add_var able(
       'max_x',
-      initializer=self.max_x_initializer,
-      shape=[input_shape[1]],
+       n  al zer=self.max_x_ n  al zer,
+      shape=[ nput_shape[1]],
       dtype=tf.float32,
-      trainable=False)
+      tra nable=False)
 
-    if self._use_bias:
-      self.bias_x = self.add_variable(
-        'bias_x',
-        initializer=self.bias_x_initializer,
-        shape=[input_shape[1]],
+     f self._use_b as:
+      self.b as_x = self.add_var able(
+        'b as_x',
+         n  al zer=self.b as_x_ n  al zer,
+        shape=[ nput_shape[1]],
         dtype=tf.float32,
-        trainable=True)
+        tra nable=True)
 
-    self.built = True
+    self.bu lt = True
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  def compute_output_shape(self,  nput_shape):
+    """Computes t  output shape of t  layer g ven t   nput shape.
 
     Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+       nput_shape: A (poss bly nested tuple of) `TensorShape`.    need not
+        be fully def ned (e.g. t  batch s ze may be unknown).
 
-    Raises NotImplementedError.
+    Ra ses Not mple ntedError.
 
     """
-    raise NotImplementedError
+    ra se Not mple ntedError
 
-  def _call(self, inputs, **kwargs):  # pylint: disable=unused-argument
+  def _call(self,  nputs, **kwargs):  # pyl nt: d sable=unused-argu nt
     """
-    The forward propagation logic of the layer lives here.
+    T  forward propagat on log c of t  layer l ves  re.
 
-    Arguments:
-      sparse_input:
-        A 2D ``tf.SparseTensor`` of dense_shape ``[batch_size, input_size]``
+    Argu nts:
+      sparse_ nput:
+        A 2D ``tf.SparseTensor`` of dense_shape ``[batch_s ze,  nput_s ze]``
     Returns:
-       A ``tf.SparseTensor`` representing the output of the max_norm transformation, this can
-       be fed into twml.layers.FullSparse in order to be transformed into a ``tf.Tensor``.
+       A ``tf.SparseTensor`` represent ng t  output of t  max_norm transformat on, t  can
+       be fed  nto twml.layers.FullSparse  n order to be transfor d  nto a ``tf.Tensor``.
     """
 
-    if isinstance(inputs, twml.SparseTensor):
-      inputs = inputs.to_tf()
-    elif not isinstance(inputs, tf.SparseTensor):
-      raise TypeError("The inputs must be of type tf.SparseTensor or twml.SparseTensor")
+     f  s nstance( nputs, twml.SparseTensor):
+       nputs =  nputs.to_tf()
+    el f not  s nstance( nputs, tf.SparseTensor):
+      ra se TypeError("T   nputs must be of type tf.SparseTensor or twml.SparseTensor")
 
-    indices_x = inputs.indices[:, 1]
-    values_x = inputs.values
+     nd ces_x =  nputs. nd ces[:, 1]
+    values_x =  nputs.values
 
-    if self.is_training is False:
-      normalized_x = OPLIB.sparse_max_norm_inference(self.max_x,
-                                                     indices_x,
+     f self. s_tra n ng  s False:
+      normal zed_x = OPL B.sparse_max_norm_ nference(self.max_x,
+                                                      nd ces_x,
                                                      values_x,
-                                                     self.epsilon)
+                                                     self.eps lon)
 
       update_op = tf.no_op()
     else:
-      max_x, normalized_x = OPLIB.sparse_max_norm_training(self.max_x,
-                                                           indices_x,
+      max_x, normal zed_x = OPL B.sparse_max_norm_tra n ng(self.max_x,
+                                                            nd ces_x,
                                                            values_x,
-                                                           self.epsilon)
+                                                           self.eps lon)
 
-      update_op = tf.assign(self.max_x, max_x)
+      update_op = tf.ass gn(self.max_x, max_x)
 
-    with tf.control_dependencies([update_op]):
-      normalized_x = tf.stop_gradient(normalized_x)
+    w h tf.control_dependenc es([update_op]):
+      normal zed_x = tf.stop_grad ent(normal zed_x)
 
-    # add input bias
-    if self._use_bias:
-      normalized_x = normalized_x + tf.gather(self.bias_x, indices_x)
+    # add  nput b as
+     f self._use_b as:
+      normal zed_x = normal zed_x + tf.gat r(self.b as_x,  nd ces_x)
 
     # convert back to sparse tensor
-    return tf.SparseTensor(inputs.indices, normalized_x, inputs.dense_shape)
+    return tf.SparseTensor( nputs. nd ces, normal zed_x,  nputs.dense_shape)
 
-  def call(self, inputs, **kwargs):  # pylint: disable=unused-argument
+  def call(self,  nputs, **kwargs):  # pyl nt: d sable=unused-argu nt
     """
-    The forward propagation logic of the layer lives here.
+    T  forward propagat on log c of t  layer l ves  re.
 
-    Arguments:
-      sparse_input:
-        A 2D ``tf.SparseTensor`` of dense_shape ``[batch_size, input_size]``
+    Argu nts:
+      sparse_ nput:
+        A 2D ``tf.SparseTensor`` of dense_shape ``[batch_s ze,  nput_s ze]``
     Returns:
-       A ``tf.SparseTensor`` representing the output of the max_norm transformation, this can
-       be fed into twml.layers.FullSparse in order to be transformed into a ``tf.Tensor``.
+       A ``tf.SparseTensor`` represent ng t  output of t  max_norm transformat on, t  can
+       be fed  nto twml.layers.FullSparse  n order to be transfor d  nto a ``tf.Tensor``.
     """
-    with tf.device(self.max_x.device):
-      return self._call(inputs, **kwargs)
+    w h tf.dev ce(self.max_x.dev ce):
+      return self._call( nputs, **kwargs)
 
-# For backwards compatiblity and also because I don't want to change all the tests.
+# For backwards compat bl y and also because   don't want to change all t  tests.
 MaxNorm = SparseMaxNorm
 
 
-def sparse_max_norm(inputs,
-                    input_size=None,
-                    max_x_initializer=None,
-                    bias_x_initializer=None,
-                    is_training=True,
-                    epsilon=1E-5,
-                    use_bias=True,
-                    name=None,
+def sparse_max_norm( nputs,
+                     nput_s ze=None,
+                    max_x_ n  al zer=None,
+                    b as_x_ n  al zer=None,
+                     s_tra n ng=True,
+                    eps lon=1E-5,
+                    use_b as=True,
+                    na =None,
                     reuse=None):
   """
-  Functional inteface to SparseMaxNorm.
+  Funct onal  nteface to SparseMaxNorm.
 
   Args:
-    inputs:
+     nputs:
       A sparse tensor (can be twml.SparseTensor or tf.SparseTensor)
-    input_size:
-      number of input units
-    max_x_initializer:
-      initializer vector of shape [input_size] used by variable `max_x`
-    bias_x_initializer:
-      initializer vector of shape [input_size] used by parameter `bias_x`
-    is_training:
-      Are we training the layer to learn the normalization maximas.
-      If set to True, max_x will be able to learn. This is independent of bias_x
-    epsilon:
-      The minimum value used for max_x. Defaults to 1E-5.
-    use_bias:
-      Default True. Set to False to not use a bias term.
+     nput_s ze:
+      number of  nput un s
+    max_x_ n  al zer:
+       n  al zer vector of shape [ nput_s ze] used by var able `max_x`
+    b as_x_ n  al zer:
+       n  al zer vector of shape [ nput_s ze] used by para ter `b as_x`
+     s_tra n ng:
+      Are   tra n ng t  layer to learn t  normal zat on max mas.
+       f set to True, max_x w ll be able to learn. T   s  ndependent of b as_x
+    eps lon:
+      T  m n mum value used for max_x. Defaults to 1E-5.
+    use_b as:
+      Default True. Set to False to not use a b as term.
 
   Returns:
-    Output after normalizing with the max value.
+    Output after normal z ng w h t  max value.
    """
-  if input_size:
-    raise ValueError('input_size is deprecated - it is now automatically \
-                     inferred from your input.')
+   f  nput_s ze:
+    ra se ValueError(' nput_s ze  s deprecated -    s now automat cally \
+                      nferred from y   nput.')
 
-  if isinstance(inputs, twml.SparseTensor):
-    inputs = inputs.to_tf()
+   f  s nstance( nputs, twml.SparseTensor):
+     nputs =  nputs.to_tf()
 
-  layer = SparseMaxNorm(max_x_initializer=max_x_initializer,
-                        bias_x_initializer=bias_x_initializer,
-                        is_training=is_training,
-                        epsilon=epsilon,
-                        use_bias=use_bias,
-                        name=name,
-                        _scope=name,
+  layer = SparseMaxNorm(max_x_ n  al zer=max_x_ n  al zer,
+                        b as_x_ n  al zer=b as_x_ n  al zer,
+                         s_tra n ng= s_tra n ng,
+                        eps lon=eps lon,
+                        use_b as=use_b as,
+                        na =na ,
+                        _scope=na ,
                         _reuse=reuse)
-  return layer(inputs)
+  return layer( nputs)

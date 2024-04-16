@@ -1,41 +1,41 @@
-package com.twitter.search.common.relevance.entities;
+package com.tw ter.search.common.relevance.ent  es;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+ mport org.apac .commons.lang3.bu lder.EqualsBu lder;
+ mport org.apac .commons.lang3.bu lder.HashCodeBu lder;
+ mport org.apac .commons.lang3.bu lder.ToStr ngBu lder;
 
 /**
- * The object for quoted message
+ * T  object for quoted  ssage
   */
-public class TwitterQuotedMessage {
-  private final long quotedStatusId;
-  private final long quotedUserId;
+publ c class Tw terQuoted ssage {
+  pr vate f nal long quotedStatus d;
+  pr vate f nal long quotedUser d;
 
-  public TwitterQuotedMessage(long quotedStatusId, long quotedUserId) {
-    this.quotedStatusId = quotedStatusId;
-    this.quotedUserId = quotedUserId;
+  publ c Tw terQuoted ssage(long quotedStatus d, long quotedUser d) {
+    t .quotedStatus d = quotedStatus d;
+    t .quotedUser d = quotedUser d;
   }
 
-  public long getQuotedStatusId() {
-    return quotedStatusId;
+  publ c long getQuotedStatus d() {
+    return quotedStatus d;
   }
 
-  public long getQuotedUserId() {
-    return quotedUserId;
+  publ c long getQuotedUser d() {
+    return quotedUser d;
   }
 
-  @Override
-  public boolean equals(Object o) {
-    return EqualsBuilder.reflectionEquals(this, o);
+  @Overr de
+  publ c boolean equals(Object o) {
+    return EqualsBu lder.reflect onEquals(t , o);
   }
 
-  @Override
-  public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
+  @Overr de
+  publ c  nt hashCode() {
+    return HashCodeBu lder.reflect onHashCode(t );
   }
 
-  @Override
-  public String toString() {
-    return ToStringBuilder.reflectionToString(this);
+  @Overr de
+  publ c Str ng toStr ng() {
+    return ToStr ngBu lder.reflect onToStr ng(t );
   }
 }

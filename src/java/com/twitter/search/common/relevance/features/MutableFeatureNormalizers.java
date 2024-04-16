@@ -1,23 +1,23 @@
-package com.twitter.search.common.relevance.features;
+package com.tw ter.search.common.relevance.features;
 
-import com.twitter.search.common.encoding.features.ByteNormalizer;
-import com.twitter.search.common.encoding.features.SingleBytePositiveFloatNormalizer;
-import com.twitter.search.common.encoding.features.SmartIntegerNormalizer;
+ mport com.tw ter.search.common.encod ng.features.ByteNormal zer;
+ mport com.tw ter.search.common.encod ng.features.S ngleBytePos  veFloatNormal zer;
+ mport com.tw ter.search.common.encod ng.features.Smart ntegerNormal zer;
 
 /**
- * Byte value normalizers used to push feature values into earlybird db.
+ * Byte value normal zers used to push feature values  nto earlyb rd db.
  */
-public abstract class MutableFeatureNormalizers {
-  // The max value we support in SMART_INTEGER_NORMALIZER below, this should be enough for all kinds
-  // of engagements we see on Twitter, anything larger than this would be represented as the same
-  // value (255, if using a byte).
-  private static final int MAX_COUNTER_VALUE_SUPPORTED = 50000000;
+publ c abstract class MutableFeatureNormal zers {
+  // T  max value   support  n SMART_ NTEGER_NORMAL ZER below, t  should be enough for all k nds
+  // of engage nts   see on Tw ter, anyth ng larger than t  would be represented as t  sa 
+  // value (255,  f us ng a byte).
+  pr vate stat c f nal  nt MAX_COUNTER_VALUE_SUPPORTED = 50000000;
 
-  // Avoid using this normalizer for procesing any new data, always use SmartIntegerNormalizer
+  // Avo d us ng t  normal zer for proces ng any new data, always use Smart ntegerNormal zer
   // below.
-  public static final SingleBytePositiveFloatNormalizer BYTE_NORMALIZER =
-      new SingleBytePositiveFloatNormalizer();
+  publ c stat c f nal S ngleBytePos  veFloatNormal zer BYTE_NORMAL ZER =
+      new S ngleBytePos  veFloatNormal zer();
 
-  public static final ByteNormalizer SMART_INTEGER_NORMALIZER =
-      new SmartIntegerNormalizer(MAX_COUNTER_VALUE_SUPPORTED, 8);
+  publ c stat c f nal ByteNormal zer SMART_ NTEGER_NORMAL ZER =
+      new Smart ntegerNormal zer(MAX_COUNTER_VALUE_SUPPORTED, 8);
 }

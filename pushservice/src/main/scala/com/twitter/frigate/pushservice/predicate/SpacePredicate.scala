@@ -1,153 +1,153 @@
-package com.twitter.frigate.pushservice.predicate
+package com.tw ter.fr gate.pushserv ce.pred cate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.SpaceCandidate
-import com.twitter.frigate.common.base.SpaceCandidateDetails
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.hermit.predicate.socialgraph.Edge
-import com.twitter.hermit.predicate.socialgraph.RelationEdge
-import com.twitter.hermit.predicate.socialgraph.SocialGraphPredicate
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.response.Err
-import com.twitter.ubs.thriftscala.AudioSpace
-import com.twitter.ubs.thriftscala.BroadcastState
-import com.twitter.ubs.thriftscala.ParticipantUser
-import com.twitter.ubs.thriftscala.Participants
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.SpaceCand date
+ mport com.tw ter.fr gate.common.base.SpaceCand dateDeta ls
+ mport com.tw ter.fr gate.common.base.T etAuthorDeta ls
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter. rm .pred cate.soc algraph.Edge
+ mport com.tw ter. rm .pred cate.soc algraph.Relat onEdge
+ mport com.tw ter. rm .pred cate.soc algraph.Soc alGraphPred cate
+ mport com.tw ter.soc algraph.thr ftscala.Relat onsh pType
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.strato.response.Err
+ mport com.tw ter.ubs.thr ftscala.Aud oSpace
+ mport com.tw ter.ubs.thr ftscala.BroadcastState
+ mport com.tw ter.ubs.thr ftscala.Part c pantUser
+ mport com.tw ter.ubs.thr ftscala.Part c pants
+ mport com.tw ter.ut l.Future
 
-object SpacePredicate {
+object SpacePred cate {
 
-  /** Filters the request if the target is present in the space as a listener, speakeTestConfigr, or admin */
-  def targetInSpace(
-    audioSpaceParticipantsStore: ReadableStore[String, Participants]
+  /** F lters t  request  f t  target  s present  n t  space as a l stener, speakeTestConf gr, or adm n */
+  def target nSpace(
+    aud oSpacePart c pantsStore: ReadableStore[Str ng, Part c pants]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[SpaceCandidateDetails with RawCandidate] = {
-    val name = "target_in_space"
-    Predicate
-      .fromAsync[SpaceCandidateDetails with RawCandidate] { spaceCandidate =>
-        audioSpaceParticipantsStore.get(spaceCandidate.spaceId).map {
-          case Some(participants) =>
-            val allParticipants: Seq[ParticipantUser] =
-              (participants.admins ++ participants.speakers ++ participants.listeners).flatten.toSeq
-            val isInSpace = allParticipants.exists { participant =>
-              participant.twitterUserId.contains(spaceCandidate.target.targetId)
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[SpaceCand dateDeta ls w h RawCand date] = {
+    val na  = "target_ n_space"
+    Pred cate
+      .fromAsync[SpaceCand dateDeta ls w h RawCand date] { spaceCand date =>
+        aud oSpacePart c pantsStore.get(spaceCand date.space d).map {
+          case So (part c pants) =>
+            val allPart c pants: Seq[Part c pantUser] =
+              (part c pants.adm ns ++ part c pants.speakers ++ part c pants.l steners).flatten.toSeq
+            val  s nSpace = allPart c pants.ex sts { part c pant =>
+              part c pant.tw terUser d.conta ns(spaceCand date.target.target d)
             }
-            !isInSpace
+            ! s nSpace
           case None => false
         }
-      }.withStats(statsReceiver.scope(name))
-      .withName(name)
+      }.w hStats(statsRece ver.scope(na ))
+      .w hNa (na )
   }
 
   /**
    *
-   * @param audioSpaceStore: space metadata store
-   * @param statsReceiver: record stats
-   * @return: true if the space not started ELSE false to filter out notification
+   * @param aud oSpaceStore: space  tadata store
+   * @param statsRece ver: record stats
+   * @return: true  f t  space not started ELSE false to f lter out not f cat on
    */
-  def scheduledSpaceStarted(
-    audioSpaceStore: ReadableStore[String, AudioSpace]
+  def sc duledSpaceStarted(
+    aud oSpaceStore: ReadableStore[Str ng, Aud oSpace]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[SpaceCandidate with RawCandidate] = {
-    val name = "scheduled_space_started"
-    Predicate
-      .fromAsync[SpaceCandidate with RawCandidate] { spaceCandidate =>
-        audioSpaceStore
-          .get(spaceCandidate.spaceId)
-          .map(_.exists(_.state.contains(BroadcastState.NotStarted)))
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[SpaceCand date w h RawCand date] = {
+    val na  = "sc duled_space_started"
+    Pred cate
+      .fromAsync[SpaceCand date w h RawCand date] { spaceCand date =>
+        aud oSpaceStore
+          .get(spaceCand date.space d)
+          .map(_.ex sts(_.state.conta ns(BroadcastState.NotStarted)))
           .rescue {
-            case Err(Err.Authorization, _, _) =>
+            case Err(Err.Author zat on, _, _) =>
               Future.False
           }
       }
-      .withStats(statsReceiver.scope(name))
-      .withName(name)
+      .w hStats(statsRece ver.scope(na ))
+      .w hNa (na )
   }
 
-  private def relationshipMapEdgeFromSpaceCandidate(
-    candidate: RawCandidate with SpaceCandidate
-  ): Option[(Long, Seq[Long])] = {
-    candidate.hostId.map { spaceHostId =>
-      (candidate.target.targetId, Seq(spaceHostId))
+  pr vate def relat onsh pMapEdgeFromSpaceCand date(
+    cand date: RawCand date w h SpaceCand date
+  ): Opt on[(Long, Seq[Long])] = {
+    cand date.host d.map { spaceHost d =>
+      (cand date.target.target d, Seq(spaceHost d))
     }
   }
 
   /**
-   * Check only host block for scheduled space reminders
-   * @return: True if no blocking relation between host and target user, else False
+   * C ck only host block for sc duled space rem nders
+   * @return: True  f no block ng relat on bet en host and target user, else False
    */
-  def spaceHostTargetUserBlocking(
-    edgeStore: ReadableStore[RelationEdge, Boolean]
+  def spaceHostTargetUserBlock ng(
+    edgeStore: ReadableStore[Relat onEdge, Boolean]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[SpaceCandidate with RawCandidate] = {
-    val name = "space_host_target_user_blocking"
-    PredicatesForCandidate
-      .blocking(edgeStore)
-      .optionalOn(relationshipMapEdgeFromSpaceCandidate, false)
-      .withStats(statsReceiver.scope(name))
-      .withName(name)
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[SpaceCand date w h RawCand date] = {
+    val na  = "space_host_target_user_block ng"
+    Pred catesForCand date
+      .block ng(edgeStore)
+      .opt onalOn(relat onsh pMapEdgeFromSpaceCand date, false)
+      .w hStats(statsRece ver.scope(na ))
+      .w hNa (na )
   }
 
-  private def edgeFromCandidate(
-    candidate: PushCandidate with TweetAuthorDetails
-  ): Future[Option[Edge]] = {
-    candidate.tweetAuthor.map(_.map { author => Edge(candidate.target.targetId, author.id) })
+  pr vate def edgeFromCand date(
+    cand date: PushCand date w h T etAuthorDeta ls
+  ): Future[Opt on[Edge]] = {
+    cand date.t etAuthor.map(_.map { author => Edge(cand date.target.target d, author. d) })
   }
 
-  def recommendedTweetAuthorAcceptableToTargetUser(
-    edgeStore: ReadableStore[RelationEdge, Boolean]
+  def recom ndedT etAuthorAcceptableToTargetUser(
+    edgeStore: ReadableStore[Relat onEdge, Boolean]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthorDetails] = {
-    val name = "recommended_tweet_author_acceptable_to_target_user"
-    SocialGraphPredicate
-      .anyRelationExists(
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etAuthorDeta ls] = {
+    val na  = "recom nded_t et_author_acceptable_to_target_user"
+    Soc alGraphPred cate
+      .anyRelat onEx sts(
         edgeStore,
         Set(
-          RelationshipType.Blocking,
-          RelationshipType.BlockedBy,
-          RelationshipType.HideRecommendations,
-          RelationshipType.Muting
+          Relat onsh pType.Block ng,
+          Relat onsh pType.BlockedBy,
+          Relat onsh pType.H deRecom ndat ons,
+          Relat onsh pType.Mut ng
         )
       )
-      .flip
-      .flatOptionContraMap(
-        edgeFromCandidate,
-        missingResult = false
+      .fl p
+      .flatOpt onContraMap(
+        edgeFromCand date,
+        m ss ngResult = false
       )
-      .withStats(statsReceiver.scope(s"predicate_$name"))
-      .withName(name)
+      .w hStats(statsRece ver.scope(s"pred cate_$na "))
+      .w hNa (na )
   }
 
   def narrowCastSpace(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[SpaceCandidateDetails with RawCandidate] = {
-    val name = "narrow_cast_space"
-    val narrowCastSpaceScope = statsReceiver.scope(name)
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[SpaceCand dateDeta ls w h RawCand date] = {
+    val na  = "narrow_cast_space"
+    val narrowCastSpaceScope = statsRece ver.scope(na )
     val employeeSpaceCounter = narrowCastSpaceScope.counter("employees")
-    val superFollowerSpaceCounter = narrowCastSpaceScope.counter("super_followers")
+    val superFollo rSpaceCounter = narrowCastSpaceScope.counter("super_follo rs")
 
-    Predicate
-      .fromAsync[SpaceCandidateDetails with RawCandidate] { candidate =>
-        candidate.audioSpaceFut.map {
-          case Some(audioSpace) if audioSpace.narrowCastSpaceType.contains(1L) =>
-            employeeSpaceCounter.incr()
-            candidate.target.params(PushFeatureSwitchParams.EnableEmployeeOnlySpaceNotifications)
-          case Some(audioSpace) if audioSpace.narrowCastSpaceType.contains(2L) =>
-            superFollowerSpaceCounter.incr()
+    Pred cate
+      .fromAsync[SpaceCand dateDeta ls w h RawCand date] { cand date =>
+        cand date.aud oSpaceFut.map {
+          case So (aud oSpace)  f aud oSpace.narrowCastSpaceType.conta ns(1L) =>
+            employeeSpaceCounter. ncr()
+            cand date.target.params(PushFeatureSw chParams.EnableEmployeeOnlySpaceNot f cat ons)
+          case So (aud oSpace)  f aud oSpace.narrowCastSpaceType.conta ns(2L) =>
+            superFollo rSpaceCounter. ncr()
             false
           case _ => true
         }
-      }.withStats(narrowCastSpaceScope)
-      .withName(name)
+      }.w hStats(narrowCastSpaceScope)
+      .w hNa (na )
   }
 }

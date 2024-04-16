@@ -1,61 +1,61 @@
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendations
+na space java com.tw ter.follow_recom ndat ons.thr ftjava
+#@na space scala com.tw ter.follow_recom ndat ons.thr ftscala
+#@na space strato com.tw ter.follow_recom ndat ons
 
-// Proof based on Follow relationship
+// Proof based on Follow relat onsh p
 struct FollowProof {
-  1: required list<i64> userIds(personalDataType='UserId')
-  2: required i32 numIds(personalDataType='CountOfFollowersAndFollowees')
+  1: requ red l st< 64> user ds(personalDataType='User d')
+  2: requ red  32 num ds(personalDataType='CountOfFollo rsAndFollo es')
 }(hasPersonalData='true')
 
-// Similar to userIds in the context (e.g. profileId)
-struct SimilarToProof {
-  1: required list<i64> userIds(personalDataType='UserId')
+// S m lar to user ds  n t  context (e.g. prof le d)
+struct S m larToProof {
+  1: requ red l st< 64> user ds(personalDataType='User d')
 }(hasPersonalData='true')
 
-// Proof based on geo location
-struct PopularInGeoProof {
-  1: required string location(personalDataType='InferredLocation')
+// Proof based on geo locat on
+struct Popular nGeoProof {
+  1: requ red str ng locat on(personalDataType=' nferredLocat on')
 }(hasPersonalData='true')
 
-// Proof based on ttt interest
-struct TttInterestProof {
-  1: required i64 interestId(personalDataType='ProvidedInterests')
-  2: required string interestDisplayName(personalDataType='ProvidedInterests')
+// Proof based on ttt  nterest
+struct Ttt nterestProof {
+  1: requ red  64  nterest d(personalDataType='Prov ded nterests')
+  2: requ red str ng  nterestD splayNa (personalDataType='Prov ded nterests')
 }(hasPersonalData='true')
 
-// Proof based on topics
-struct TopicProof {
-  1: required i64 topicId(personalDataType='ProvidedInterests')
+// Proof based on top cs
+struct Top cProof {
+  1: requ red  64 top c d(personalDataType='Prov ded nterests')
 }(hasPersonalData='true')
 
-// Proof based on custom interest / search queries
-struct CustomInterestProof {
-  1: required string query(personalDataType='SearchQuery')
+// Proof based on custom  nterest / search quer es
+struct Custom nterestProof {
+  1: requ red str ng query(personalDataType='SearchQuery')
 }(hasPersonalData='true')
 
-// Proof based on tweet authors
-struct TweetsAuthorProof {
-  1: required list<i64> tweetIds(personalDataType='TweetId')
+// Proof based on t et authors
+struct T etsAuthorProof {
+  1: requ red l st< 64> t et ds(personalDataType='T et d')
 }(hasPersonalData='true')
 
-// Proof candidate is of device follow type
-struct DeviceFollowProof {
-  1: required bool isDeviceFollow(personalDataType='OtherDeviceInfo')
+// Proof cand date  s of dev ce follow type
+struct Dev ceFollowProof {
+  1: requ red bool  sDev ceFollow(personalDataType='Ot rDev ce nfo')
 }(hasPersonalData='true')
 
-// Account level proof that should be attached to each candidate
+// Account level proof that should be attac d to each cand date
 struct AccountProof {
-  1: optional FollowProof followProof
-  2: optional SimilarToProof similarToProof
-  3: optional PopularInGeoProof popularInGeoProof
-  4: optional TttInterestProof tttInterestProof
-  5: optional TopicProof topicProof
-  6: optional CustomInterestProof customInterestProof
-  7: optional TweetsAuthorProof tweetsAuthorProof
-  8: optional DeviceFollowProof deviceFollowProof
+  1: opt onal FollowProof followProof
+  2: opt onal S m larToProof s m larToProof
+  3: opt onal Popular nGeoProof popular nGeoProof
+  4: opt onal Ttt nterestProof ttt nterestProof
+  5: opt onal Top cProof top cProof
+  6: opt onal Custom nterestProof custom nterestProof
+  7: opt onal T etsAuthorProof t etsAuthorProof
+  8: opt onal Dev ceFollowProof dev ceFollowProof
 }(hasPersonalData='true')
 
 struct Reason {
-  1: optional AccountProof accountProof 
+  1: opt onal AccountProof accountProof 
 }(hasPersonalData='true')

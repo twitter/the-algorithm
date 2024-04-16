@@ -2,710 +2,710 @@ syntax = "proto3";
 
 package tensorflow;
 
-import "tensorflow/core/framework/cost_graph.proto";
-import "tensorflow/core/framework/graph.proto";
-import "tensorflow/core/framework/step_stats.proto";
-import "tensorflow/core/protobuf/cluster.proto";
-import "tensorflow/core/protobuf/coordination_config.proto";
-import "tensorflow/core/protobuf/debug.proto";
-import "tensorflow/core/protobuf/rewriter_config.proto";
+ mport "tensorflow/core/fra work/cost_graph.proto";
+ mport "tensorflow/core/fra work/graph.proto";
+ mport "tensorflow/core/fra work/step_stats.proto";
+ mport "tensorflow/core/protobuf/cluster.proto";
+ mport "tensorflow/core/protobuf/coord nat on_conf g.proto";
+ mport "tensorflow/core/protobuf/debug.proto";
+ mport "tensorflow/core/protobuf/rewr er_conf g.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "ConfigProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "Conf gProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.fra work";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
-message GPUOptions {
-  // Fraction of the available GPU memory to allocate for each process.
-  // 1 means to allocate all of the GPU memory, 0.5 means the process
-  // allocates up to ~50% of the available GPU memory.
+ ssage GPUOpt ons {
+  // Fract on of t  ava lable GPU  mory to allocate for each process.
+  // 1  ans to allocate all of t  GPU  mory, 0.5  ans t  process
+  // allocates up to ~50% of t  ava lable GPU  mory.
   //
-  // GPU memory is pre-allocated unless the allow_growth option is enabled.
+  // GPU  mory  s pre-allocated unless t  allow_growth opt on  s enabled.
   //
-  // If greater than 1.0, uses CUDA unified memory to potentially oversubscribe
-  // the amount of memory available on the GPU device by using host memory as a
-  // swap space. Accessing memory not available on the device will be
-  // significantly slower as that would require memory transfer between the host
-  // and the device. Options to reduce the memory requirement should be
-  // considered before enabling this option as this may come with a negative
-  // performance impact. Oversubscription using the unified memory requires
-  // Pascal class or newer GPUs and it is currently only supported on the Linux
-  // operating system. See
-  // https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-requirements
-  // for the detailed requirements.
-  double per_process_gpu_memory_fraction = 1;
+  //  f greater than 1.0, uses CUDA un f ed  mory to potent ally oversubscr be
+  // t  amount of  mory ava lable on t  GPU dev ce by us ng host  mory as a
+  // swap space. Access ng  mory not ava lable on t  dev ce w ll be
+  // s gn f cantly slo r as that would requ re  mory transfer bet en t  host
+  // and t  dev ce. Opt ons to reduce t   mory requ re nt should be
+  // cons dered before enabl ng t  opt on as t  may co  w h a negat ve
+  // performance  mpact. Oversubscr pt on us ng t  un f ed  mory requ res
+  // Pascal class or ne r GPUs and    s currently only supported on t  L nux
+  // operat ng system. See
+  // https://docs.nv d a.com/cuda/cuda-c-programm ng-gu de/ ndex.html#um-requ re nts
+  // for t  deta led requ re nts.
+  double per_process_gpu_ mory_fract on = 1;
 
-  // If true, the allocator does not pre-allocate the entire specified
-  // GPU memory region, instead starting small and growing as needed.
+  //  f true, t  allocator does not pre-allocate t  ent re spec f ed
+  // GPU  mory reg on,  nstead start ng small and grow ng as needed.
   bool allow_growth = 4;
 
-  // The type of GPU allocation strategy to use.
+  // T  type of GPU allocat on strategy to use.
   //
-  // Allowed values:
-  // "": The empty string (default) uses a system-chosen default
-  //     which may change over time.
+  // Allo d values:
+  // "": T  empty str ng (default) uses a system-chosen default
+  //     wh ch may change over t  .
   //
-  // "BFC": A "Best-fit with coalescing" algorithm, simplified from a
-  //        version of dlmalloc.
-  string allocator_type = 2;
+  // "BFC": A "Best-f  w h coalesc ng" algor hm, s mpl f ed from a
+  //        vers on of dlmalloc.
+  str ng allocator_type = 2;
 
-  // Delay deletion of up to this many bytes to reduce the number of
-  // interactions with gpu driver code.  If 0, the system chooses
+  // Delay delet on of up to t  many bytes to reduce t  number of
+  //  nteract ons w h gpu dr ver code.   f 0, t  system chooses
   // a reasonable default (several MBs).
-  int64 deferred_deletion_bytes = 3;
+   nt64 deferred_delet on_bytes = 3;
 
-  // A comma-separated list of GPU ids that determines the 'visible'
-  // to 'virtual' mapping of GPU devices.  For example, if TensorFlow
-  // can see 8 GPU devices in the process, and one wanted to map
-  // visible GPU devices 5 and 3 as "/device:GPU:0", and "/device:GPU:1",
-  // then one would specify this field as "5,3".  This field is similar in
-  // spirit to the CUDA_VISIBLE_DEVICES environment variable, except
-  // it applies to the visible GPU devices in the process.
+  // A comma-separated l st of GPU  ds that determ nes t  'v s ble'
+  // to 'v rtual' mapp ng of GPU dev ces.  For example,  f TensorFlow
+  // can see 8 GPU dev ces  n t  process, and one wanted to map
+  // v s ble GPU dev ces 5 and 3 as "/dev ce:GPU:0", and "/dev ce:GPU:1",
+  // t n one would spec fy t  f eld as "5,3".  T  f eld  s s m lar  n
+  // sp r  to t  CUDA_V S BLE_DEV CES env ron nt var able, except
+  //   appl es to t  v s ble GPU dev ces  n t  process.
   //
   // NOTE:
-  // 1. The GPU driver provides the process with the visible GPUs
-  //    in an order which is not guaranteed to have any correlation to
-  //    the *physical* GPU id in the machine.  This field is used for
-  //    remapping "visible" to "virtual", which means this operates only
-  //    after the process starts.  Users are required to use vendor
-  //    specific mechanisms (e.g., CUDA_VISIBLE_DEVICES) to control the
-  //    physical to visible device mapping prior to invoking TensorFlow.
-  // 2. In the code, the ids in this list are also called "platform GPU id"s,
-  //    and the 'virtual' ids of GPU devices (i.e. the ids in the device
-  //    name "/device:GPU:<id>") are also called "TF GPU id"s. Please
-  //    refer to third_party/tensorflow/core/common_runtime/gpu/gpu_id.h
-  //    for more information.
-  string visible_device_list = 5;
+  // 1. T  GPU dr ver prov des t  process w h t  v s ble GPUs
+  //     n an order wh ch  s not guaranteed to have any correlat on to
+  //    t  *phys cal* GPU  d  n t  mach ne.  T  f eld  s used for
+  //    remapp ng "v s ble" to "v rtual", wh ch  ans t  operates only
+  //    after t  process starts.  Users are requ red to use vendor
+  //    spec f c  chan sms (e.g., CUDA_V S BLE_DEV CES) to control t 
+  //    phys cal to v s ble dev ce mapp ng pr or to  nvok ng TensorFlow.
+  // 2.  n t  code, t   ds  n t  l st are also called "platform GPU  d"s,
+  //    and t  'v rtual'  ds of GPU dev ces ( .e. t   ds  n t  dev ce
+  //    na  "/dev ce:GPU:< d>") are also called "TF GPU  d"s. Please
+  //    refer to th rd_party/tensorflow/core/common_runt  /gpu/gpu_ d.h
+  //    for more  nformat on.
+  str ng v s ble_dev ce_l st = 5;
 
-  // In the event polling loop sleep this many microseconds between
-  // PollEvents calls, when the queue is not empty.  If value is not
+  //  n t  event poll ng loop sleep t  many m croseconds bet en
+  // PollEvents calls, w n t  queue  s not empty.   f value  s not
   // set or set to 0, gets set to a non-zero default.
-  int32 polling_active_delay_usecs = 6;
+   nt32 poll ng_act ve_delay_usecs = 6;
 
-  // This field is deprecated and ignored.
-  int32 polling_inactive_delay_msecs = 7;
+  // T  f eld  s deprecated and  gnored.
+   nt32 poll ng_ nact ve_delay_msecs = 7;
 
-  // Force all tensors to be gpu_compatible. On a GPU-enabled TensorFlow,
-  // enabling this option forces all CPU tensors to be allocated with Cuda
-  // pinned memory. Normally, TensorFlow will infer which tensors should be
-  // allocated as the pinned memory. But in case where the inference is
-  // incomplete, this option can significantly speed up the cross-device memory
-  // copy performance as long as it fits the memory.
-  // Note that this option is not something that should be
-  // enabled by default for unknown or very large models, since all Cuda pinned
-  // memory is unpageable, having too much pinned memory might negatively impact
-  // the overall host system performance.
-  bool force_gpu_compatible = 8;
+  // Force all tensors to be gpu_compat ble. On a GPU-enabled TensorFlow,
+  // enabl ng t  opt on forces all CPU tensors to be allocated w h Cuda
+  // p nned  mory. Normally, TensorFlow w ll  nfer wh ch tensors should be
+  // allocated as t  p nned  mory. But  n case w re t   nference  s
+  //  ncomplete, t  opt on can s gn f cantly speed up t  cross-dev ce  mory
+  // copy performance as long as   f s t   mory.
+  // Note that t  opt on  s not so th ng that should be
+  // enabled by default for unknown or very large models, s nce all Cuda p nned
+  //  mory  s unpageable, hav ng too much p nned  mory m ght negat vely  mpact
+  // t  overall host system performance.
+  bool force_gpu_compat ble = 8;
 
-  message Experimental {
-    // Configuration for breaking down a visible GPU into multiple "virtual"
-    // devices.
-    message VirtualDevices {
-      // Per "virtual" device memory limit, in MB. The number of elements in
-      // the list is the number of virtual devices to create on the
-      // corresponding visible GPU (see "virtual_devices" below).
-      // If empty, it will create single virtual device taking all available
-      // memory from the device.
+   ssage Exper  ntal {
+    // Conf gurat on for break ng down a v s ble GPU  nto mult ple "v rtual"
+    // dev ces.
+     ssage V rtualDev ces {
+      // Per "v rtual" dev ce  mory l m ,  n MB. T  number of ele nts  n
+      // t  l st  s t  number of v rtual dev ces to create on t 
+      // correspond ng v s ble GPU (see "v rtual_dev ces" below).
+      //  f empty,   w ll create s ngle v rtual dev ce tak ng all ava lable
+      //  mory from t  dev ce.
       //
-      // For the concept of "visible" and "virtual" GPU, see the comments for
-      // "visible_device_list" above for more information.
-      repeated float memory_limit_mb = 1;
+      // For t  concept of "v s ble" and "v rtual" GPU, see t  com nts for
+      // "v s ble_dev ce_l st" above for more  nformat on.
+      repeated float  mory_l m _mb = 1;
 
-      // Priority values to use with the virtual devices. Use the cuda function
-      // cudaDeviceGetStreamPriorityRange to query for valid range of values for
-      // priority.
+      // Pr or y values to use w h t  v rtual dev ces. Use t  cuda funct on
+      // cudaDev ceGetStreamPr or yRange to query for val d range of values for
+      // pr or y.
       //
-      // On a P4000 GPU with cuda 10.1, the priority range reported was 0 for
-      // least priority and -1 for greatest priority.
+      // On a P4000 GPU w h cuda 10.1, t  pr or y range reported was 0 for
+      // least pr or y and -1 for greatest pr or y.
       //
-      // If this field is not specified, then the virtual devices will be
-      // created with the default. If this field has values set, then the size
-      // of this must match with the above memory_limit_mb.
-      repeated int32 priority = 2;
+      //  f t  f eld  s not spec f ed, t n t  v rtual dev ces w ll be
+      // created w h t  default.  f t  f eld has values set, t n t  s ze
+      // of t  must match w h t  above  mory_l m _mb.
+      repeated  nt32 pr or y = 2;
     }
 
-    // The multi virtual device settings. If empty (not set), it will create
-    // single virtual device on each visible GPU, according to the settings
-    // in "visible_device_list" above. Otherwise, the number of elements in the
-    // list must be the same as the number of visible GPUs (after
-    // "visible_device_list" filtering if it is set), and the string represented
-    // device names (e.g. /device:GPU:<id>) will refer to the virtual
-    // devices and have the <id> field assigned sequentially starting from 0,
-    // according to the order they appear in this list and the "memory_limit"
-    // list inside each element. For example,
-    //   visible_device_list = "1,0"
-    //   virtual_devices { memory_limit: 1GB memory_limit: 2GB }
-    //   virtual_devices {}
-    // will create three virtual devices as:
-    //   /device:GPU:0 -> visible GPU 1 with 1GB memory
-    //   /device:GPU:1 -> visible GPU 1 with 2GB memory
-    //   /device:GPU:2 -> visible GPU 0 with all available memory
+    // T  mult  v rtual dev ce sett ngs.  f empty (not set),   w ll create
+    // s ngle v rtual dev ce on each v s ble GPU, accord ng to t  sett ngs
+    //  n "v s ble_dev ce_l st" above. Ot rw se, t  number of ele nts  n t 
+    // l st must be t  sa  as t  number of v s ble GPUs (after
+    // "v s ble_dev ce_l st" f lter ng  f    s set), and t  str ng represented
+    // dev ce na s (e.g. /dev ce:GPU:< d>) w ll refer to t  v rtual
+    // dev ces and have t  < d> f eld ass gned sequent ally start ng from 0,
+    // accord ng to t  order t y appear  n t  l st and t  " mory_l m "
+    // l st  ns de each ele nt. For example,
+    //   v s ble_dev ce_l st = "1,0"
+    //   v rtual_dev ces {  mory_l m : 1GB  mory_l m : 2GB }
+    //   v rtual_dev ces {}
+    // w ll create three v rtual dev ces as:
+    //   /dev ce:GPU:0 -> v s ble GPU 1 w h 1GB  mory
+    //   /dev ce:GPU:1 -> v s ble GPU 1 w h 2GB  mory
+    //   /dev ce:GPU:2 -> v s ble GPU 0 w h all ava lable  mory
     //
     // NOTE:
-    // 1. It's invalid to set both this and "per_process_gpu_memory_fraction"
-    //    at the same time.
-    // 2. Currently this setting is per-process, not per-session. Using
-    //    different settings in different sessions within same process will
-    //    result in undefined behavior.
-    repeated VirtualDevices virtual_devices = 1;
+    // 1.  's  nval d to set both t  and "per_process_gpu_ mory_fract on"
+    //    at t  sa  t  .
+    // 2. Currently t  sett ng  s per-process, not per-sess on. Us ng
+    //    d fferent sett ngs  n d fferent sess ons w h n sa  process w ll
+    //    result  n undef ned behav or.
+    repeated V rtualDev ces v rtual_dev ces = 1;
 
-    // If true, uses CUDA unified memory for memory allocations. If
-    // per_process_gpu_memory_fraction option is greater than 1.0, then unified
-    // memory is used regardless of the value for this field. See comments for
-    // per_process_gpu_memory_fraction field for more details and requirements
-    // of the unified memory. This option is useful to oversubscribe memory if
-    // multiple processes are sharing a single GPU while individually using less
-    // than 1.0 per process memory fraction.
-    bool use_unified_memory = 2;
+    //  f true, uses CUDA un f ed  mory for  mory allocat ons.  f
+    // per_process_gpu_ mory_fract on opt on  s greater than 1.0, t n un f ed
+    //  mory  s used regardless of t  value for t  f eld. See com nts for
+    // per_process_gpu_ mory_fract on f eld for more deta ls and requ re nts
+    // of t  un f ed  mory. T  opt on  s useful to oversubscr be  mory  f
+    // mult ple processes are shar ng a s ngle GPU wh le  nd v dually us ng less
+    // than 1.0 per process  mory fract on.
+    bool use_un f ed_ mory = 2;
 
-    // If > 1, the number of device-to-device copy streams to create
-    // for each GPUDevice.  Default value is 0, which is automatically
+    //  f > 1, t  number of dev ce-to-dev ce copy streams to create
+    // for each GPUDev ce.  Default value  s 0, wh ch  s automat cally
     // converted to 1.
-    int32 num_dev_to_dev_copy_streams = 3;
+     nt32 num_dev_to_dev_copy_streams = 3;
 
-    // If non-empty, defines a good GPU ring order on a single worker based on
-    // device interconnect.  This assumes that all workers have the same GPU
-    // topology.  Specify as a comma-separated string, e.g. "3,2,1,0,7,6,5,4".
-    // This ring order is used by the RingReducer implementation of
-    // CollectiveReduce, and serves as an override to automatic ring order
-    // generation in OrderTaskDeviceMap() during CollectiveParam resolution.
-    string collective_ring_order = 4;
+    //  f non-empty, def nes a good GPU r ng order on a s ngle worker based on
+    // dev ce  nterconnect.  T  assu s that all workers have t  sa  GPU
+    // topology.  Spec fy as a comma-separated str ng, e.g. "3,2,1,0,7,6,5,4".
+    // T  r ng order  s used by t  R ngReducer  mple ntat on of
+    // Collect veReduce, and serves as an overr de to automat c r ng order
+    // generat on  n OrderTaskDev ceMap() dur ng Collect veParam resolut on.
+    str ng collect ve_r ng_order = 4;
 
-    // If true then extra work is done by GPUDevice and GPUBFCAllocator to
-    // keep track of when GPU memory is freed and when kernels actually
-    // complete so that we can know when a nominally free memory chunk
-    // is really not subject to pending use.
-    bool timestamped_allocator = 5;
+    //  f true t n extra work  s done by GPUDev ce and GPUBFCAllocator to
+    // keep track of w n GPU  mory  s freed and w n kernels actually
+    // complete so that   can know w n a nom nally free  mory chunk
+    //  s really not subject to pend ng use.
+    bool t  stamped_allocator = 5;
 
-    // reserved id: 6
+    // reserved  d: 6
 
-    // Parameters for GPUKernelTracker.  By default no kernel tracking is done.
-    // Note that timestamped_allocator is only effective if some tracking is
-    // specified.
+    // Para ters for GPUKernelTracker.  By default no kernel track ng  s done.
+    // Note that t  stamped_allocator  s only effect ve  f so  track ng  s
+    // spec f ed.
     //
-    // If kernel_tracker_max_interval = n > 0, then a tracking event
-    // is inserted after every n kernels without an event.
-    int32 kernel_tracker_max_interval = 7;
-    // If kernel_tracker_max_bytes = n > 0, then a tracking event is
-    // inserted after every series of kernels allocating a sum of
-    // memory >= n.  If one kernel allocates b * n bytes, then one
-    // event will be inserted after it, but it will count as b against
-    // the pending limit.
-    int32 kernel_tracker_max_bytes = 8;
-    // If kernel_tracker_max_pending > 0 then no more than this many
-    // tracking events can be outstanding at a time.  An attempt to
-    // launch an additional kernel will stall until an event
+    //  f kernel_tracker_max_ nterval = n > 0, t n a track ng event
+    //  s  nserted after every n kernels w hout an event.
+     nt32 kernel_tracker_max_ nterval = 7;
+    //  f kernel_tracker_max_bytes = n > 0, t n a track ng event  s
+    //  nserted after every ser es of kernels allocat ng a sum of
+    //  mory >= n.   f one kernel allocates b * n bytes, t n one
+    // event w ll be  nserted after  , but   w ll count as b aga nst
+    // t  pend ng l m .
+     nt32 kernel_tracker_max_bytes = 8;
+    //  f kernel_tracker_max_pend ng > 0 t n no more than t  many
+    // track ng events can be outstand ng at a t  .  An attempt to
+    // launch an add  onal kernel w ll stall unt l an event
     // completes.
-    int32 kernel_tracker_max_pending = 9;
+     nt32 kernel_tracker_max_pend ng = 9;
 
-    // BFC Allocator can return an allocated chunk of memory upto 2x the
-    // requested size. For virtual devices with tight memory constraints, and
-    // proportionately large allocation requests, this can lead to a significant
-    // reduction in available memory. The threshold below controls when a chunk
-    // should be split if the chunk size exceeds requested memory size. It is
-    // expressed as a fraction of total available memory for the tf device. For
-    // example setting it to 0.05 would imply a chunk needs to be split if its
-    // size exceeds the requested memory by 5% of the total virtual device/gpu
-    // memory size.
-    double internal_fragmentation_fraction = 10;
+    // BFC Allocator can return an allocated chunk of  mory upto 2x t 
+    // requested s ze. For v rtual dev ces w h t ght  mory constra nts, and
+    // proport onately large allocat on requests, t  can lead to a s gn f cant
+    // reduct on  n ava lable  mory. T  threshold below controls w n a chunk
+    // should be spl   f t  chunk s ze exceeds requested  mory s ze.    s
+    // expressed as a fract on of total ava lable  mory for t  tf dev ce. For
+    // example sett ng   to 0.05 would  mply a chunk needs to be spl   f  s
+    // s ze exceeds t  requested  mory by 5% of t  total v rtual dev ce/gpu
+    //  mory s ze.
+    double  nternal_frag ntat on_fract on = 10;
 
-    // When true, use CUDA cudaMallocAsync API instead of TF gpu allocator.
+    // W n true, use CUDA cudaMallocAsync AP   nstead of TF gpu allocator.
     bool use_cuda_malloc_async = 11;
 
-    // By default, BFCAllocator may sleep when it runs out of memory, in the
-    // hopes that another thread will free up memory in the meantime.  Setting
-    // this to true disables the sleep; instead we'll OOM immediately.
-    bool disallow_retry_on_allocation_failure = 12;
+    // By default, BFCAllocator may sleep w n   runs out of  mory,  n t 
+    // hopes that anot r thread w ll free up  mory  n t   ant  .  Sett ng
+    // t  to true d sables t  sleep;  nstead  'll OOM  m d ately.
+    bool d sallow_retry_on_allocat on_fa lure = 12;
   }
 
-  // Everything inside experimental is subject to change and is not subject
-  // to API stability guarantees in
-  // https://www.tensorflow.org/guide/version_compat.
-  Experimental experimental = 9;
+  // Everyth ng  ns de exper  ntal  s subject to change and  s not subject
+  // to AP  stab l y guarantees  n
+  // https://www.tensorflow.org/gu de/vers on_compat.
+  Exper  ntal exper  ntal = 9;
 }
 
-// Options passed to the graph optimizer
-message OptimizerOptions {
-  // If true, optimize the graph using common subexpression elimination.
-  // Note: the optimization Level L1 will override this setting to true. So in
-  // order to disable common subexpression elimination the opt_level has to be
+// Opt ons passed to t  graph opt m zer
+ ssage Opt m zerOpt ons {
+  //  f true, opt m ze t  graph us ng common subexpress on el m nat on.
+  // Note: t  opt m zat on Level L1 w ll overr de t  sett ng to true. So  n
+  // order to d sable common subexpress on el m nat on t  opt_level has to be
   // set to L0.
-  bool do_common_subexpression_elimination = 1;
+  bool do_common_subexpress on_el m nat on = 1;
 
-  // If true, perform constant folding optimization on the graph.
-  // Note: the optimization Level L1 will override this setting to true. So in
-  // order to disable constant folding the opt_level has to be set to L0.
-  bool do_constant_folding = 2;
+  //  f true, perform constant fold ng opt m zat on on t  graph.
+  // Note: t  opt m zat on Level L1 w ll overr de t  sett ng to true. So  n
+  // order to d sable constant fold ng t  opt_level has to be set to L0.
+  bool do_constant_fold ng = 2;
 
-  // Constant folding optimization replaces tensors whose values can be
-  // predetermined, with constant nodes. To avoid inserting too large constants,
-  // the size of each constant created can be limited. If this value is zero, a
-  // default limit of 10 MiB will be applied. If constant folding optimization
-  // is disabled, this value is ignored.
-  int64 max_folded_constant_in_bytes = 6;
+  // Constant fold ng opt m zat on replaces tensors whose values can be
+  // predeterm ned, w h constant nodes. To avo d  nsert ng too large constants,
+  // t  s ze of each constant created can be l m ed.  f t  value  s zero, a
+  // default l m  of 10 M B w ll be appl ed.  f constant fold ng opt m zat on
+  //  s d sabled, t  value  s  gnored.
+   nt64 max_folded_constant_ n_bytes = 6;
 
-  // If true, perform function inlining on the graph.
-  bool do_function_inlining = 4;
+  //  f true, perform funct on  nl n ng on t  graph.
+  bool do_funct on_ nl n ng = 4;
 
-  // Optimization level
+  // Opt m zat on level
   enum Level {
-    // L1 is the default level.
-    // Optimization performed at L1 :
-    // 1. Common subexpression elimination
-    // 2. Constant folding
+    // L1  s t  default level.
+    // Opt m zat on perfor d at L1 :
+    // 1. Common subexpress on el m nat on
+    // 2. Constant fold ng
     L1 = 0;
 
-    // No optimizations
+    // No opt m zat ons
     L0 = -1;
   }
 
-  // Overall optimization level. The actual optimizations applied will be the
-  // logical OR of the flags that this level implies and any flags already set.
+  // Overall opt m zat on level. T  actual opt m zat ons appl ed w ll be t 
+  // log cal OR of t  flags that t  level  mpl es and any flags already set.
   Level opt_level = 3;
 
-  // Control the use of the compiler/jit.  Experimental.
-  enum GlobalJitLevel {
-    DEFAULT = 0;  // Default setting ("off" now, but later expected to be "on")
+  // Control t  use of t  comp ler/j .  Exper  ntal.
+  enum GlobalJ Level {
+    DEFAULT = 0;  // Default sett ng ("off" now, but later expected to be "on")
     OFF = -1;
-    // The following settings turn on compilation, with higher values being
-    // more aggressive.  Higher values may reduce opportunities for parallelism
-    // and may use more memory.  (At present, there is no distinction, but this
-    // is expected to change.)
+    // T  follow ng sett ngs turn on comp lat on, w h h g r values be ng
+    // more aggress ve.  H g r values may reduce opportun  es for parallel sm
+    // and may use more  mory.  (At present, t re  s no d st nct on, but t 
+    //  s expected to change.)
     ON_1 = 1;
     ON_2 = 2;
   }
-  GlobalJitLevel global_jit_level = 5;
+  GlobalJ Level global_j _level = 5;
 
-  // CPU code will be autoclustered only if global_jit_level >= ON_1 and either:
-  //  - this flag is true, or
-  //  - TF_XLA_FLAGS contains --tf_xla_cpu_global_jit=true.
-  bool cpu_global_jit = 7;
+  // CPU code w ll be autoclustered only  f global_j _level >= ON_1 and e  r:
+  //  - t  flag  s true, or
+  //  - TF_XLA_FLAGS conta ns --tf_xla_cpu_global_j =true.
+  bool cpu_global_j  = 7;
 }
 
-message GraphOptions {
-  // Removed, use optimizer_options below.
-  reserved "skip_common_subexpression_elimination";
+ ssage GraphOpt ons {
+  // Removed, use opt m zer_opt ons below.
+  reserved "sk p_common_subexpress on_el m nat on";
   reserved 1;
 
-  // If true, use control flow to schedule the activation of Recv nodes.
-  // (Currently ignored.)
-  bool enable_recv_scheduling = 2;
+  //  f true, use control flow to sc dule t  act vat on of Recv nodes.
+  // (Currently  gnored.)
+  bool enable_recv_sc dul ng = 2;
 
-  // Options controlling how graph is optimized.
-  OptimizerOptions optimizer_options = 3;
+  // Opt ons controll ng how graph  s opt m zed.
+  Opt m zerOpt ons opt m zer_opt ons = 3;
 
-  // The number of steps to run before returning a cost model detailing
-  // the memory usage and performance of each node of the graph. 0 means
+  // T  number of steps to run before return ng a cost model deta l ng
+  // t   mory usage and performance of each node of t  graph. 0  ans
   // no cost model.
-  int64 build_cost_model = 4;
+   nt64 bu ld_cost_model = 4;
 
-  // The number of steps to skip before collecting statistics for the
+  // T  number of steps to sk p before collect ng stat st cs for t 
   // cost model.
-  int64 build_cost_model_after = 9;
+   nt64 bu ld_cost_model_after = 9;
 
-  // Annotate each Node with Op output shape data, to the extent it can
-  // be statically inferred.
-  bool infer_shapes = 5;
+  // Annotate each Node w h Op output shape data, to t  extent   can
+  // be stat cally  nferred.
+  bool  nfer_shapes = 5;
 
-  // Only place the subgraphs that are run, rather than the entire graph.
+  // Only place t  subgraphs that are run, rat r than t  ent re graph.
   //
-  // This is useful for interactive graph building, where one might
-  // produce graphs that cannot be placed during the debugging
-  // process.  In particular, it allows the client to continue work in
-  // a session after adding a node to a graph whose placement
-  // constraints are unsatisfiable.
+  // T   s useful for  nteract ve graph bu ld ng, w re one m ght
+  // produce graphs that cannot be placed dur ng t  debugg ng
+  // process.   n part cular,   allows t  cl ent to cont nue work  n
+  // a sess on after add ng a node to a graph whose place nt
+  // constra nts are unsat sf able.
   bool place_pruned_graph = 6;
 
-  // If true, transfer float values between processes as bfloat16.
+  //  f true, transfer float values bet en processes as bfloat16.
   bool enable_bfloat16_sendrecv = 7;
 
-  // If > 0, record a timeline every this many steps.
-  // EXPERIMENTAL: This currently has no effect in MasterSession.
-  int32 timeline_step = 8;
+  //  f > 0, record a t  l ne every t  many steps.
+  // EXPER MENTAL: T  currently has no effect  n MasterSess on.
+   nt32 t  l ne_step = 8;
 
-  // Options that control the type and amount of graph rewriting.
-  // Not currently configurable via the public Python API (i.e. there is no API
-  // stability guarantee if you import RewriterConfig explicitly).
-  RewriterConfig rewrite_options = 10;
+  // Opt ons that control t  type and amount of graph rewr  ng.
+  // Not currently conf gurable v a t  publ c Python AP  ( .e. t re  s no AP 
+  // stab l y guarantee  f    mport Rewr erConf g expl c ly).
+  Rewr erConf g rewr e_opt ons = 10;
 }
 
-message ThreadPoolOptionProto {
-  // The number of threads in the pool.
+ ssage ThreadPoolOpt onProto {
+  // T  number of threads  n t  pool.
   //
-  // 0 means the system picks a value based on where this option proto is used
-  // (see the declaration of the specific field for more info).
-  int32 num_threads = 1;
+  // 0  ans t  system p cks a value based on w re t  opt on proto  s used
+  // (see t  declarat on of t  spec f c f eld for more  nfo).
+   nt32 num_threads = 1;
 
-  // The global name of the threadpool.
+  // T  global na  of t  threadpool.
   //
-  // If empty, then the threadpool is made and used according to the scope it's
-  // in - e.g., for a session threadpool, it is used by that session only.
+  //  f empty, t n t  threadpool  s made and used accord ng to t  scope  's
+  //  n - e.g., for a sess on threadpool,    s used by that sess on only.
   //
-  // If non-empty, then:
-  // - a global threadpool associated with this name is looked
-  //   up or created. This allows, for example, sharing one threadpool across
-  //   many sessions (e.g., like the default behavior, if
-  //   inter_op_parallelism_threads is not configured), but still partitioning
-  //   into a large and small pool.
-  // - if the threadpool for this global_name already exists, then it is an
-  //   error if the existing pool was created using a different num_threads
-  //   value as is specified on this call.
-  // - threadpools created this way are never garbage collected.
-  string global_name = 2;
+  //  f non-empty, t n:
+  // - a global threadpool assoc ated w h t  na   s looked
+  //   up or created. T  allows, for example, shar ng one threadpool across
+  //   many sess ons (e.g., l ke t  default behav or,  f
+  //    nter_op_parallel sm_threads  s not conf gured), but st ll part  on ng
+  //    nto a large and small pool.
+  // -  f t  threadpool for t  global_na  already ex sts, t n    s an
+  //   error  f t  ex st ng pool was created us ng a d fferent num_threads
+  //   value as  s spec f ed on t  call.
+  // - threadpools created t  way are never garbage collected.
+  str ng global_na  = 2;
 }
 
-message RPCOptions {
-  // If true, always use RPC to contact the session target.
+ ssage RPCOpt ons {
+  //  f true, always use RPC to contact t  sess on target.
   //
-  // If false (the default option), TensorFlow may use an optimized
-  // transport for client-master communication that avoids the RPC
-  // stack. This option is primarily for used testing the RPC stack.
-  bool use_rpc_for_inprocess_master = 1;
+  //  f false (t  default opt on), TensorFlow may use an opt m zed
+  // transport for cl ent-master commun cat on that avo ds t  RPC
+  // stack. T  opt on  s pr mar ly for used test ng t  RPC stack.
+  bool use_rpc_for_ nprocess_master = 1;
 
-  // The compression algorithm to be used. One of "deflate", "gzip".
-  string compression_algorithm = 2;
+  // T  compress on algor hm to be used. One of "deflate", "gz p".
+  str ng compress on_algor hm = 2;
 
-  // If compression_algorithm is set, the compression level to be used.
-  // From 0 (no compression), up to 3.
-  int32 compression_level = 3;
+  //  f compress on_algor hm  s set, t  compress on level to be used.
+  // From 0 (no compress on), up to 3.
+   nt32 compress on_level = 3;
 
-  // Setting cache_rpc_response to true will enable sender side caching of
-  // response for RecvTensorAsync and RecvBufAsync to allow receiver to retry
-  // requests . This is only necessary when the network fabric is experiencing a
-  // significant error rate.  Without it we'll fail a step on an network error,
-  // while with it we'll be able to complete long steps (like complex
-  // initializations) in the face of some network errors during RecvTensor.
-  bool cache_rpc_response = 4;
+  // Sett ng cac _rpc_response to true w ll enable sender s de cach ng of
+  // response for RecvTensorAsync and RecvBufAsync to allow rece ver to retry
+  // requests . T   s only necessary w n t  network fabr c  s exper enc ng a
+  // s gn f cant error rate.  W hout    'll fa l a step on an network error,
+  // wh le w h    'll be able to complete long steps (l ke complex
+  //  n  al zat ons)  n t  face of so  network errors dur ng RecvTensor.
+  bool cac _rpc_response = 4;
 
-  // Disables TCP connection sharing when opening a new RPC channel.
-  bool disable_session_connection_sharing = 5;
+  // D sables TCP connect on shar ng w n open ng a new RPC channel.
+  bool d sable_sess on_connect on_shar ng = 5;
 
-  // Setting num_channels_per_target > 0 allows uses of multiple channels to
-  // communicate to the same target. This can be used to improve the aggregate
-  // throughput on high speed links (e.g 100G) where single connection is not
-  // sufficient to maximize link utilization. Note that a single RPC only goes
-  // on a single channel, this only helps in situations where there are multiple
-  // transfers to the same target overlapping in time.
-  int32 num_channels_per_target = 6;
+  // Sett ng num_channels_per_target > 0 allows uses of mult ple channels to
+  // commun cate to t  sa  target. T  can be used to  mprove t  aggregate
+  // throughput on h gh speed l nks (e.g 100G) w re s ngle connect on  s not
+  // suff c ent to max m ze l nk ut l zat on. Note that a s ngle RPC only goes
+  // on a s ngle channel, t  only  lps  n s uat ons w re t re are mult ple
+  // transfers to t  sa  target overlapp ng  n t  .
+   nt32 num_channels_per_target = 6;
 }
 
-// Metadata about the session.
+//  tadata about t  sess on.
 //
-// This can be used by the runtime and the Ops for debugging, monitoring, etc.
+// T  can be used by t  runt   and t  Ops for debugg ng, mon or ng, etc.
 //
-// The (name, version) tuple is expected to be a unique identifier for
-// sessions within the same process.
+// T  (na , vers on) tuple  s expected to be a un que  dent f er for
+// sess ons w h n t  sa  process.
 //
-// NOTE: This is currently used and propagated only by the direct session.
-message SessionMetadata {
-  string name = 1;
+// NOTE: T   s currently used and propagated only by t  d rect sess on.
+ ssage Sess on tadata {
+  str ng na  = 1;
 
-  // The version is optional. If set, needs to be >= 0.
-  int64 version = 2;
+  // T  vers on  s opt onal.  f set, needs to be >= 0.
+   nt64 vers on = 2;
 }
 
-// Session configuration parameters.
-// The system picks appropriate values for fields that are not set.
-message ConfigProto {
-  // Map from device type name (e.g., "CPU" or "GPU" ) to maximum
-  // number of devices of that type to use.  If a particular device
-  // type is not found in the map, the system picks an appropriate
+// Sess on conf gurat on para ters.
+// T  system p cks appropr ate values for f elds that are not set.
+ ssage Conf gProto {
+  // Map from dev ce type na  (e.g., "CPU" or "GPU" ) to max mum
+  // number of dev ces of that type to use.   f a part cular dev ce
+  // type  s not found  n t  map, t  system p cks an appropr ate
   // number.
-  map<string, int32> device_count = 1;
+  map<str ng,  nt32> dev ce_count = 1;
 
-  // The execution of an individual op (for some op types) can be
-  // parallelized on a pool of intra_op_parallelism_threads.
-  // 0 means the system picks an appropriate number.
+  // T  execut on of an  nd v dual op (for so  op types) can be
+  // parallel zed on a pool of  ntra_op_parallel sm_threads.
+  // 0  ans t  system p cks an appropr ate number.
   //
-  // If you create an ordinary session, e.g., from Python or C++,
-  // then there is exactly one intra op thread pool per process.
-  // The first session created determines the number of threads in this pool.
-  // All subsequent sessions reuse/share this one global pool.
+  //  f   create an ord nary sess on, e.g., from Python or C++,
+  // t n t re  s exactly one  ntra op thread pool per process.
+  // T  f rst sess on created determ nes t  number of threads  n t  pool.
+  // All subsequent sess ons reuse/share t  one global pool.
   //
-  // There are notable exceptions to the default behavior described above:
-  // 1. There is an environment variable  for overriding this thread pool,
-  //    named TF_OVERRIDE_GLOBAL_THREADPOOL.
-  // 2. When connecting to a server, such as a remote `tf.train.Server`
-  //    instance, then this option will be ignored altogether.
-  int32 intra_op_parallelism_threads = 2;
+  // T re are notable except ons to t  default behav or descr bed above:
+  // 1. T re  s an env ron nt var able  for overr d ng t  thread pool,
+  //    na d TF_OVERR DE_GLOBAL_THREADPOOL.
+  // 2. W n connect ng to a server, such as a remote `tf.tra n.Server`
+  //     nstance, t n t  opt on w ll be  gnored altoget r.
+   nt32  ntra_op_parallel sm_threads = 2;
 
-  // Nodes that perform blocking operations are enqueued on a pool of
-  // inter_op_parallelism_threads available in each process.
+  // Nodes that perform block ng operat ons are enqueued on a pool of
+  //  nter_op_parallel sm_threads ava lable  n each process.
   //
-  // 0 means the system picks an appropriate number.
-  // Negative means all operations are performed in caller's thread.
+  // 0  ans t  system p cks an appropr ate number.
+  // Negat ve  ans all operat ons are perfor d  n caller's thread.
   //
-  // Note that the first Session created in the process sets the
-  // number of threads for all future sessions unless use_per_session_threads is
-  // true or session_inter_op_thread_pool is configured.
-  int32 inter_op_parallelism_threads = 5;
+  // Note that t  f rst Sess on created  n t  process sets t 
+  // number of threads for all future sess ons unless use_per_sess on_threads  s
+  // true or sess on_ nter_op_thread_pool  s conf gured.
+   nt32  nter_op_parallel sm_threads = 5;
 
-  // If true, use a new set of threads for this session rather than the global
-  // pool of threads. Only supported by direct sessions.
+  //  f true, use a new set of threads for t  sess on rat r than t  global
+  // pool of threads. Only supported by d rect sess ons.
   //
-  // If false, use the global threads created by the first session, or the
-  // per-session thread pools configured by session_inter_op_thread_pool.
+  //  f false, use t  global threads created by t  f rst sess on, or t 
+  // per-sess on thread pools conf gured by sess on_ nter_op_thread_pool.
   //
-  // This option is deprecated. The same effect can be achieved by setting
-  // session_inter_op_thread_pool to have one element, whose num_threads equals
-  // inter_op_parallelism_threads.
-  bool use_per_session_threads = 9;
+  // T  opt on  s deprecated. T  sa  effect can be ach eved by sett ng
+  // sess on_ nter_op_thread_pool to have one ele nt, whose num_threads equals
+  //  nter_op_parallel sm_threads.
+  bool use_per_sess on_threads = 9;
 
-  // This option is experimental - it may be replaced with a different mechanism
-  // in the future.
+  // T  opt on  s exper  ntal -   may be replaced w h a d fferent  chan sm
+  //  n t  future.
   //
-  // Configures session thread pools. If this is configured, then RunOptions for
-  // a Run call can select the thread pool to use.
+  // Conf gures sess on thread pools.  f t   s conf gured, t n RunOpt ons for
+  // a Run call can select t  thread pool to use.
   //
-  // The intended use is for when some session invocations need to run in a
-  // background pool limited to a small number of threads:
-  // - For example, a session may be configured to have one large pool (for
-  // regular compute) and one small pool (for periodic, low priority work);
-  // using the small pool is currently the mechanism for limiting the inter-op
-  // parallelism of the low priority work.  Note that it does not limit the
-  // parallelism of work spawned by a single op kernel implementation.
-  // - Using this setting is normally not needed in training, but may help some
-  // serving use cases.
-  // - It is also generally recommended to set the global_name field of this
-  // proto, to avoid creating multiple large pools. It is typically better to
-  // run the non-low-priority work, even across sessions, in a single large
+  // T   ntended use  s for w n so  sess on  nvocat ons need to run  n a
+  // background pool l m ed to a small number of threads:
+  // - For example, a sess on may be conf gured to have one large pool (for
+  // regular compute) and one small pool (for per od c, low pr or y work);
+  // us ng t  small pool  s currently t   chan sm for l m  ng t   nter-op
+  // parallel sm of t  low pr or y work.  Note that   does not l m  t 
+  // parallel sm of work spawned by a s ngle op kernel  mple ntat on.
+  // - Us ng t  sett ng  s normally not needed  n tra n ng, but may  lp so 
+  // serv ng use cases.
+  // -    s also generally recom nded to set t  global_na  f eld of t 
+  // proto, to avo d creat ng mult ple large pools.    s typ cally better to
+  // run t  non-low-pr or y work, even across sess ons,  n a s ngle large
   // pool.
-  repeated ThreadPoolOptionProto session_inter_op_thread_pool = 12;
+  repeated ThreadPoolOpt onProto sess on_ nter_op_thread_pool = 12;
 
-  // Assignment of Nodes to Devices is recomputed every placement_period
-  // steps until the system warms up (at which point the recomputation
-  // typically slows down automatically).
-  int32 placement_period = 3;
+  // Ass gn nt of Nodes to Dev ces  s recomputed every place nt_per od
+  // steps unt l t  system warms up (at wh ch po nt t  recomputat on
+  // typ cally slows down automat cally).
+   nt32 place nt_per od = 3;
 
-  // When any filters are present sessions will ignore all devices which do not
-  // match the filters. Each filter can be partially specified, e.g. "/job:ps"
-  // "/job:worker/replica:3", etc.
-  repeated string device_filters = 4;
+  // W n any f lters are present sess ons w ll  gnore all dev ces wh ch do not
+  // match t  f lters. Each f lter can be part ally spec f ed, e.g. "/job:ps"
+  // "/job:worker/repl ca:3", etc.
+  repeated str ng dev ce_f lters = 4;
 
-  // Options that apply to all GPUs.
-  GPUOptions gpu_options = 6;
+  // Opt ons that apply to all GPUs.
+  GPUOpt ons gpu_opt ons = 6;
 
-  // Whether soft placement is allowed. If allow_soft_placement is true,
-  // an op will be placed on CPU if
-  //   1. there's no GPU implementation for the OP
+  // W t r soft place nt  s allo d.  f allow_soft_place nt  s true,
+  // an op w ll be placed on CPU  f
+  //   1. t re's no GPU  mple ntat on for t  OP
   // or
-  //   2. no GPU devices are known or registered
+  //   2. no GPU dev ces are known or reg stered
   // or
-  //   3. need to co-locate with reftype input(s) which are from CPU.
-  bool allow_soft_placement = 7;
+  //   3. need to co-locate w h reftype  nput(s) wh ch are from CPU.
+  bool allow_soft_place nt = 7;
 
-  // Whether device placements should be logged.
-  bool log_device_placement = 8;
+  // W t r dev ce place nts should be logged.
+  bool log_dev ce_place nt = 8;
 
-  // Options that apply to all graphs.
-  GraphOptions graph_options = 10;
+  // Opt ons that apply to all graphs.
+  GraphOpt ons graph_opt ons = 10;
 
-  // Global timeout for all blocking operations in this session.  If non-zero,
-  // and not overridden on a per-operation basis, this value will be used as the
-  // deadline for all blocking operations.
-  int64 operation_timeout_in_ms = 11;
+  // Global t  out for all block ng operat ons  n t  sess on.   f non-zero,
+  // and not overr dden on a per-operat on bas s, t  value w ll be used as t 
+  // deadl ne for all block ng operat ons.
+   nt64 operat on_t  out_ n_ms = 11;
 
-  // Options that apply when this session uses the distributed runtime.
-  RPCOptions rpc_options = 13;
+  // Opt ons that apply w n t  sess on uses t  d str buted runt  .
+  RPCOpt ons rpc_opt ons = 13;
 
-  // Optional list of all workers to use in this session.
+  // Opt onal l st of all workers to use  n t  sess on.
   ClusterDef cluster_def = 14;
 
-  // If true, any resources such as Variables used in the session will not be
-  // shared with other sessions. However, when clusterspec propagation is
-  // enabled, this field is ignored and sessions are always isolated.
-  bool isolate_session_state = 15;
+  //  f true, any res ces such as Var ables used  n t  sess on w ll not be
+  // shared w h ot r sess ons. Ho ver, w n clusterspec propagat on  s
+  // enabled, t  f eld  s  gnored and sess ons are always  solated.
+  bool  solate_sess on_state = 15;
 
-  // When true, WorkerSessions are created with device attributes from the
+  // W n true, WorkerSess ons are created w h dev ce attr butes from t 
   // full cluster.
-  // This is helpful when a worker wants to partition a graph
-  // (for example during a PartitionedCallOp).
-  bool share_cluster_devices_in_session = 17;
+  // T   s  lpful w n a worker wants to part  on a graph
+  // (for example dur ng a Part  onedCallOp).
+  bool share_cluster_dev ces_ n_sess on = 17;
 
-  // Everything inside Experimental is subject to change and is not subject
-  // to API stability guarantees in
-  // https://www.tensorflow.org/guide/version_compat.
-  message Experimental {
-    // Task name for group resolution.
-    string collective_group_leader = 1;
+  // Everyth ng  ns de Exper  ntal  s subject to change and  s not subject
+  // to AP  stab l y guarantees  n
+  // https://www.tensorflow.org/gu de/vers on_compat.
+   ssage Exper  ntal {
+    // Task na  for group resolut on.
+    str ng collect ve_group_leader = 1;
 
-    // We removed the flag client_handles_error_formatting. Marking the tag
+    //   removed t  flag cl ent_handles_error_formatt ng. Mark ng t  tag
     // number as reserved.
-    // TODO(shikharagarwal): Should we just remove this tag so that it can be
-    // used in future for other purpose?
+    // TODO(sh kharagarwal): Should   just remove t  tag so that   can be
+    // used  n future for ot r purpose?
     reserved 2;
 
-    // Which executor to use, the default executor will be used
-    // if it is an empty string or "DEFAULT"
-    string executor_type = 3;
+    // Wh ch executor to use, t  default executor w ll be used
+    //  f    s an empty str ng or "DEFAULT"
+    str ng executor_type = 3;
 
-    // Guidance to formatting of large RecvBuf fields for transfer.
-    // Any positive value sets the max chunk size.  0 defaults to 4096.
-    // Any negative value indicates no max, i.e. one chunk only.
-    int32 recv_buf_max_chunk = 4;
+    // Gu dance to formatt ng of large RecvBuf f elds for transfer.
+    // Any pos  ve value sets t  max chunk s ze.  0 defaults to 4096.
+    // Any negat ve value  nd cates no max,  .e. one chunk only.
+     nt32 recv_buf_max_chunk = 4;
 
-    // If true, and supported by the platform, the runtime will attempt to
-    // use NUMA affinity where applicable.  One consequence will be the
-    // existence of as many CPU devices as there are available NUMA nodes.
-    bool use_numa_affinity = 5;
+    //  f true, and supported by t  platform, t  runt   w ll attempt to
+    // use NUMA aff n y w re appl cable.  One consequence w ll be t 
+    // ex stence of as many CPU dev ces as t re are ava lable NUMA nodes.
+    bool use_numa_aff n y = 5;
 
-    // If true, make collective op execution order sequential and deterministic
-    // for potentially concurrent collective instances.
-    bool collective_deterministic_sequential_execution = 6;
+    //  f true, make collect ve op execut on order sequent al and determ n st c
+    // for potent ally concurrent collect ve  nstances.
+    bool collect ve_determ n st c_sequent al_execut on = 6;
 
-    // If true, use NCCL for CollectiveOps.  This feature is highly
-    // experimental.
-    bool collective_nccl = 7;
+    //  f true, use NCCL for Collect veOps.  T  feature  s h ghly
+    // exper  ntal.
+    bool collect ve_nccl = 7;
 
-    // In the following, session state means the value of a variable, elements
-    // in a hash table, or any other resource, accessible by worker sessions
-    // held by a TF server.
+    //  n t  follow ng, sess on state  ans t  value of a var able, ele nts
+    //  n a hash table, or any ot r res ce, access ble by worker sess ons
+    //  ld by a TF server.
     //
-    // When ClusterSpec propagation is enabled, the value of
-    // isolate_session_state is ignored when deciding whether to share session
-    // states in a TF server (for backwards compatibility reasons).
-    // - If share_session_state_in_clusterspec_propagation is true, the session
+    // W n ClusterSpec propagat on  s enabled, t  value of
+    //  solate_sess on_state  s  gnored w n dec d ng w t r to share sess on
+    // states  n a TF server (for backwards compat b l y reasons).
+    // -  f share_sess on_state_ n_clusterspec_propagat on  s true, t  sess on
     // states are shared.
-    // - If share_session_state_in_clusterspec_propagation is false, session
-    // states are isolated.
+    // -  f share_sess on_state_ n_clusterspec_propagat on  s false, sess on
+    // states are  solated.
     //
-    // When clusterspec propagation is not used, the value of
-    // share_session_state_in_clusterspec_propagation is ignored when deciding
-    // whether to share session states in a TF server.
-    // - If isolate_session_state is true, session states are isolated.
-    // - If isolate_session_state is false, session states are shared.
+    // W n clusterspec propagat on  s not used, t  value of
+    // share_sess on_state_ n_clusterspec_propagat on  s  gnored w n dec d ng
+    // w t r to share sess on states  n a TF server.
+    // -  f  solate_sess on_state  s true, sess on states are  solated.
+    // -  f  solate_sess on_state  s false, sess on states are shared.
     //
-    // TODO(b/129330037): Add a single API that consistently treats
-    // isolate_session_state and ClusterSpec propagation.
-    bool share_session_state_in_clusterspec_propagation = 8;
+    // TODO(b/129330037): Add a s ngle AP  that cons stently treats
+    //  solate_sess on_state and ClusterSpec propagat on.
+    bool share_sess on_state_ n_clusterspec_propagat on = 8;
 
-    // If using a direct session, disable spinning while waiting for work in
-    // the thread pool. This may result in higher latency for completing ops,
-    // but in the case where there is a lot of spinning may result in lower
+    //  f us ng a d rect sess on, d sable sp nn ng wh le wa  ng for work  n
+    // t  thread pool. T  may result  n h g r latency for complet ng ops,
+    // but  n t  case w re t re  s a lot of sp nn ng may result  n lo r
     // CPU usage.
-    bool disable_thread_spinning = 9;
+    bool d sable_thread_sp nn ng = 9;
 
-    // This was promoted to a non-experimental API. Please use
-    // ConfigProto.share_cluster_devices_in_session instead.
-    bool share_cluster_devices_in_session = 10;
+    // T  was promoted to a non-exper  ntal AP . Please use
+    // Conf gProto.share_cluster_dev ces_ n_sess on  nstead.
+    bool share_cluster_dev ces_ n_sess on = 10;
 
-    // Metadata about the session.
+    //  tadata about t  sess on.
     //
-    // If set, this can be used by the runtime and the Ops for debugging,
-    // monitoring, etc.
+    //  f set, t  can be used by t  runt   and t  Ops for debugg ng,
+    // mon or ng, etc.
     //
-    // NOTE: This is currently used and propagated only by the direct session.
-    SessionMetadata session_metadata = 11;
+    // NOTE: T   s currently used and propagated only by t  d rect sess on.
+    Sess on tadata sess on_ tadata = 11;
 
-    // If true, the session may treat the graph as being static for optimization
+    //  f true, t  sess on may treat t  graph as be ng stat c for opt m zat on
     // purposes.
     //
-    // If this option is set to true when a session is created, the full
-    // GraphDef must be passed in a single call to Session::Create(), and
-    // Session::Extend() may not be supported.
-    bool optimize_for_static_graph = 12;
+    //  f t  opt on  s set to true w n a sess on  s created, t  full
+    // GraphDef must be passed  n a s ngle call to Sess on::Create(), and
+    // Sess on::Extend() may not be supported.
+    bool opt m ze_for_stat c_graph = 12;
 
-    // This field will eventually be deprecated and replaced by
-    // mlir_bridge_rollout (b/166038521).
+    // T  f eld w ll eventually be deprecated and replaced by
+    // ml r_br dge_rollout (b/166038521).
     //
-    // Whether to enable the MLIR-based TF->XLA bridge.
+    // W t r to enable t  ML R-based TF->XLA br dge.
     //
-    // This is a replacement to the existing bridge, and not ready for
-    // production usage yet.
-    // If this option is set to true when a session is created, MLIR is used to
-    // perform the set of graph transformations to put the graph in a form that
-    // can be executed with delegation of some computations to an accelerator.
-    // This builds on the model of XLA where a subset of the graph is
-    // encapsulated and attached to a "compile" operation, whose result is fed
-    // to an "execute" operation. The kernel for these operations is responsible
-    // to lower the encapsulated graph to a particular device.
-    bool enable_mlir_bridge = 13;
+    // T   s a replace nt to t  ex st ng br dge, and not ready for
+    // product on usage yet.
+    //  f t  opt on  s set to true w n a sess on  s created, ML R  s used to
+    // perform t  set of graph transformat ons to put t  graph  n a form that
+    // can be executed w h delegat on of so  computat ons to an accelerator.
+    // T  bu lds on t  model of XLA w re a subset of t  graph  s
+    // encapsulated and attac d to a "comp le" operat on, whose result  s fed
+    // to an "execute" operat on. T  kernel for t se operat ons  s respons ble
+    // to lo r t  encapsulated graph to a part cular dev ce.
+    bool enable_ml r_br dge = 13;
 
-    // An enum that describes the state of the MLIR bridge rollout.
-    enum MlirBridgeRollout {
-      // If this field is left unspecified, the MLIR bridge may be selectively
-      // enabled on a per graph basis.
-      MLIR_BRIDGE_ROLLOUT_UNSPECIFIED = 0;
-      // Enabling the MLIR bridge enables it for all graphs in this session.
-      MLIR_BRIDGE_ROLLOUT_ENABLED = 1;
-      // Disabling the MLIR bridge disables it for all graphs in this session.
-      MLIR_BRIDGE_ROLLOUT_DISABLED = 2;
-      // Enable the MLIR bridge on a per graph basis based on an analysis of
-      // the features used in the graph. If the features used by the graph are
-      // supported by the MLIR bridge, the MLIR bridge will be used to run the
+    // An enum that descr bes t  state of t  ML R br dge rollout.
+    enum Ml rBr dgeRollout {
+      //  f t  f eld  s left unspec f ed, t  ML R br dge may be select vely
+      // enabled on a per graph bas s.
+      ML R_BR DGE_ROLLOUT_UNSPEC F ED = 0;
+      // Enabl ng t  ML R br dge enables   for all graphs  n t  sess on.
+      ML R_BR DGE_ROLLOUT_ENABLED = 1;
+      // D sabl ng t  ML R br dge d sables   for all graphs  n t  sess on.
+      ML R_BR DGE_ROLLOUT_D SABLED = 2;
+      // Enable t  ML R br dge on a per graph bas s based on an analys s of
+      // t  features used  n t  graph.  f t  features used by t  graph are
+      // supported by t  ML R br dge, t  ML R br dge w ll be used to run t 
       // graph.
-      MLIR_BRIDGE_ROLLOUT_SAFE_MODE_ENABLED = 3;
-      // Enable the MLIR bridge in a fallback mode on a per graph basis based
-      // on an analysis of the features used in the graph.
-      // Running the MLIR bridge in the fallback mode means that it is
-      // executed and it commits all the changes to the TF graph in case
-      // of success. And it does not in case of failures and let the old bridge
-      // to process the TF graph.
-      MLIR_BRIDGE_ROLLOUT_SAFE_MODE_FALLBACK_ENABLED = 4;
+      ML R_BR DGE_ROLLOUT_SAFE_MODE_ENABLED = 3;
+      // Enable t  ML R br dge  n a fallback mode on a per graph bas s based
+      // on an analys s of t  features used  n t  graph.
+      // Runn ng t  ML R br dge  n t  fallback mode  ans that    s
+      // executed and   comm s all t  changes to t  TF graph  n case
+      // of success. And   does not  n case of fa lures and let t  old br dge
+      // to process t  TF graph.
+      ML R_BR DGE_ROLLOUT_SAFE_MODE_FALLBACK_ENABLED = 4;
     }
-    // This field is underdevelopment, for now use enable_mlir_bridge
+    // T  f eld  s underdevelop nt, for now use enable_ml r_br dge
     // (b/166038521).
     //
-    // Whether to enable the MLIR-based TF->XLA bridge.
-    MlirBridgeRollout mlir_bridge_rollout = 17;
+    // W t r to enable t  ML R-based TF->XLA br dge.
+    Ml rBr dgeRollout ml r_br dge_rollout = 17;
 
-    // Whether to enable the MLIR-based Graph optimizations.
+    // W t r to enable t  ML R-based Graph opt m zat ons.
     //
-    // This will become a part of standard Tensorflow graph optimization
-    // pipeline, currently this is only used for gradual migration and testing
-    // new passes that are replacing existing optimizations in Grappler.
-    bool enable_mlir_graph_optimization = 16;
+    // T  w ll beco  a part of standard Tensorflow graph opt m zat on
+    // p pel ne, currently t   s only used for gradual m grat on and test ng
+    // new passes that are replac ng ex st ng opt m zat ons  n Grappler.
+    bool enable_ml r_graph_opt m zat on = 16;
 
-    // If true, the session will not store an additional copy of the graph for
+    //  f true, t  sess on w ll not store an add  onal copy of t  graph for
     // each subgraph.
     //
-    // If this option is set to true when a session is created, the
-    // `RunOptions.output_partition_graphs` options must not be set.
-    bool disable_output_partition_graphs = 14;
+    //  f t  opt on  s set to true w n a sess on  s created, t 
+    // `RunOpt ons.output_part  on_graphs` opt ons must not be set.
+    bool d sable_output_part  on_graphs = 14;
 
-    // Minimum number of batches run through the XLA graph before XLA fusion
-    // autotuner is enabled. Default value of zero disables the autotuner.
+    // M n mum number of batc s run through t  XLA graph before XLA fus on
+    // autotuner  s enabled. Default value of zero d sables t  autotuner.
     //
-    // The XLA fusion autotuner can improve performance by executing a heuristic
-    // search on the compiler parameters.
-    int64 xla_fusion_autotuner_thresh = 15;
+    // T  XLA fus on autotuner can  mprove performance by execut ng a  ur st c
+    // search on t  comp ler para ters.
+     nt64 xla_fus on_autotuner_thresh = 15;
 
-    // Whether runtime execution uses TFRT.
+    // W t r runt   execut on uses TFRT.
     bool use_tfrt = 18;
 
-    // The field "coordination_service was previously specified as a string;
-    // this has been replaced with a message below.
+    // T  f eld "coord nat on_serv ce was prev ously spec f ed as a str ng;
+    // t  has been replaced w h a  ssage below.
     reserved 19;
 
-    // We removed the flag fetch_remote_devices_in_multi_client. Marking the tag
+    //   removed t  flag fetch_remote_dev ces_ n_mult _cl ent. Mark ng t  tag
     // number as reserved.
     reserved 20;
 
-    // Whether functional control flow op lowering should be disabled. This is
-    // useful when executing within a portable runtime where control flow op
-    // kernels may not be loaded due to selective registration.
-    bool disable_functional_ops_lowering = 21;
+    // W t r funct onal control flow op lo r ng should be d sabled. T   s
+    // useful w n execut ng w h n a portable runt   w re control flow op
+    // kernels may not be loaded due to select ve reg strat on.
+    bool d sable_funct onal_ops_lo r ng = 21;
 
-    // Provides a hint to XLA auto clustering to prefer forming a single large
-    // cluster that encompases most of the graph.
-    bool xla_prefer_single_graph_cluster = 22;
+    // Prov des a h nt to XLA auto cluster ng to prefer form ng a s ngle large
+    // cluster that encompases most of t  graph.
+    bool xla_prefer_s ngle_graph_cluster = 22;
 
-    // Distributed coordination service configurations.
-    CoordinationServiceConfig coordination_config = 23;
+    // D str buted coord nat on serv ce conf gurat ons.
+    Coord nat onServ ceConf g coord nat on_conf g = 23;
 
     // Next: 24
   }
 
-  Experimental experimental = 16;
+  Exper  ntal exper  ntal = 16;
 
   // Next: 18
 }
 
-// Options for a single Run() call.
-message RunOptions {
-  // TODO(pbar) Turn this into a TraceOptions proto which allows
-  // tracing to be controlled in a more orthogonal manner?
+// Opt ons for a s ngle Run() call.
+ ssage RunOpt ons {
+  // TODO(pbar) Turn t   nto a TraceOpt ons proto wh ch allows
+  // trac ng to be controlled  n a more orthogonal manner?
   enum TraceLevel {
     NO_TRACE = 0;
     SOFTWARE_TRACE = 1;
@@ -714,189 +714,189 @@ message RunOptions {
   }
   TraceLevel trace_level = 1;
 
-  // Time to wait for operation to complete in milliseconds.
-  int64 timeout_in_ms = 2;
+  // T   to wa  for operat on to complete  n m ll seconds.
+   nt64 t  out_ n_ms = 2;
 
-  // The thread pool to use, if session_inter_op_thread_pool is configured.
-  // To use the caller thread set this to -1 - this uses the caller thread
-  // to execute Session::Run() and thus avoids a context switch. Using the
-  // caller thread to execute Session::Run() should be done ONLY for simple
-  // graphs, where the overhead of an additional context switch is
-  // comparable with the overhead of Session::Run().
-  int32 inter_op_thread_pool = 3;
+  // T  thread pool to use,  f sess on_ nter_op_thread_pool  s conf gured.
+  // To use t  caller thread set t  to -1 - t  uses t  caller thread
+  // to execute Sess on::Run() and thus avo ds a context sw ch. Us ng t 
+  // caller thread to execute Sess on::Run() should be done ONLY for s mple
+  // graphs, w re t  over ad of an add  onal context sw ch  s
+  // comparable w h t  over ad of Sess on::Run().
+   nt32  nter_op_thread_pool = 3;
 
-  // Whether the partition graph(s) executed by the executor(s) should be
-  // outputted via RunMetadata.
-  bool output_partition_graphs = 5;
+  // W t r t  part  on graph(s) executed by t  executor(s) should be
+  // outputted v a Run tadata.
+  bool output_part  on_graphs = 5;
 
-  // EXPERIMENTAL.  Options used to initialize DebuggerState, if enabled.
-  DebugOptions debug_options = 6;
+  // EXPER MENTAL.  Opt ons used to  n  al ze DebuggerState,  f enabled.
+  DebugOpt ons debug_opt ons = 6;
 
-  // When enabled, causes tensor allocation information to be included in
-  // the error message when the Run() call fails because the allocator ran
-  // out of memory (OOM).
+  // W n enabled, causes tensor allocat on  nformat on to be  ncluded  n
+  // t  error  ssage w n t  Run() call fa ls because t  allocator ran
+  // out of  mory (OOM).
   //
-  // Enabling this option can slow down the Run() call.
-  bool report_tensor_allocations_upon_oom = 7;
+  // Enabl ng t  opt on can slow down t  Run() call.
+  bool report_tensor_allocat ons_upon_oom = 7;
 
-  // Everything inside Experimental is subject to change and is not subject
-  // to API stability guarantees in
-  // https://www.tensorflow.org/guide/version_compat.
-  message Experimental {
-    // If non-zero, declares that this graph is going to use collective
-    // ops and must synchronize step_ids with any other graph with this
-    // same group_key value (in a distributed computation where tasks
-    // run disjoint graphs).
-    int64 collective_graph_key = 1;
-    // If true, then operations (using the inter-op pool) across all
-    // session::run() calls will be centrally scheduled, optimizing for (median
-    // and tail) latency.
-    // Consider using this option for CPU-bound workloads like inference.
+  // Everyth ng  ns de Exper  ntal  s subject to change and  s not subject
+  // to AP  stab l y guarantees  n
+  // https://www.tensorflow.org/gu de/vers on_compat.
+   ssage Exper  ntal {
+    //  f non-zero, declares that t  graph  s go ng to use collect ve
+    // ops and must synchron ze step_ ds w h any ot r graph w h t 
+    // sa  group_key value ( n a d str buted computat on w re tasks
+    // run d sjo nt graphs).
+     nt64 collect ve_graph_key = 1;
+    //  f true, t n operat ons (us ng t   nter-op pool) across all
+    // sess on::run() calls w ll be centrally sc duled, opt m z ng for ( d an
+    // and ta l) latency.
+    // Cons der us ng t  opt on for CPU-bound workloads l ke  nference.
     bool use_run_handler_pool = 2;
-    // Options for run handler thread pool.
-    message RunHandlerPoolOptions {
-      // Priority of the request. The run handler thread pool will schedule ops
-      // based on the priority number. The larger number means higher priority.
-      int64 priority = 1;
+    // Opt ons for run handler thread pool.
+     ssage RunHandlerPoolOpt ons {
+      // Pr or y of t  request. T  run handler thread pool w ll sc dule ops
+      // based on t  pr or y number. T  larger number  ans h g r pr or y.
+       nt64 pr or y = 1;
     }
-    RunHandlerPoolOptions run_handler_pool_options = 3;
+    RunHandlerPoolOpt ons run_handler_pool_opt ons = 3;
   }
 
-  Experimental experimental = 8;
+  Exper  ntal exper  ntal = 8;
 
   reserved 4;
 }
 
-// Metadata output (i.e., non-Tensor) for a single Run() call.
-message RunMetadata {
-  // Statistics traced for this step. Populated if tracing is turned on via the
-  // "RunOptions" proto.
-  // EXPERIMENTAL: The format and set of events may change in future versions.
+//  tadata output ( .e., non-Tensor) for a s ngle Run() call.
+ ssage Run tadata {
+  // Stat st cs traced for t  step. Populated  f trac ng  s turned on v a t 
+  // "RunOpt ons" proto.
+  // EXPER MENTAL: T  format and set of events may change  n future vers ons.
   StepStats step_stats = 1;
 
-  // The cost graph for the computation defined by the run call.
+  // T  cost graph for t  computat on def ned by t  run call.
   CostGraphDef cost_graph = 2;
 
-  // Graphs of the partitions executed by executors.
-  repeated GraphDef partition_graphs = 3;
+  // Graphs of t  part  ons executed by executors.
+  repeated GraphDef part  on_graphs = 3;
 
-  message FunctionGraphs {
-    // TODO(nareshmodi): Include some sort of function/cache-key identifier?
-    repeated GraphDef partition_graphs = 1;
+   ssage Funct onGraphs {
+    // TODO(nareshmod ):  nclude so  sort of funct on/cac -key  dent f er?
+    repeated GraphDef part  on_graphs = 1;
 
-    GraphDef pre_optimization_graph = 2;
-    GraphDef post_optimization_graph = 3;
+    GraphDef pre_opt m zat on_graph = 2;
+    GraphDef post_opt m zat on_graph = 3;
   }
-  // This is only populated for graphs that are run as functions in TensorFlow
-  // V2. There will be an entry below for each function that is traced.
-  // The main use cases of the post_optimization_graph and the partition_graphs
-  // is to give the caller insight into the graphs that were actually run by the
-  // runtime. Additional information (such as those in step_stats) will match
-  // these graphs.
-  // We also include the pre_optimization_graph since it is usually easier to
-  // read, and is helpful in situations where the caller wants to get a high
-  // level idea of what the built graph looks like (since the various graph
-  // optimization passes might change the structure of the graph significantly).
-  repeated FunctionGraphs function_graphs = 4;
+  // T   s only populated for graphs that are run as funct ons  n TensorFlow
+  // V2. T re w ll be an entry below for each funct on that  s traced.
+  // T  ma n use cases of t  post_opt m zat on_graph and t  part  on_graphs
+  //  s to g ve t  caller  ns ght  nto t  graphs that  re actually run by t 
+  // runt  . Add  onal  nformat on (such as those  n step_stats) w ll match
+  // t se graphs.
+  //   also  nclude t  pre_opt m zat on_graph s nce    s usually eas er to
+  // read, and  s  lpful  n s uat ons w re t  caller wants to get a h gh
+  // level  dea of what t  bu lt graph looks l ke (s nce t  var ous graph
+  // opt m zat on passes m ght change t  structure of t  graph s gn f cantly).
+  repeated Funct onGraphs funct on_graphs = 4;
 }
 
-// Defines a connection between two tensors in a `GraphDef`.
-message TensorConnection {
-  // A tensor name. The value of this tensor will be substituted for
-  // the tensor named in `to_tensor`.
-  string from_tensor = 1;
+// Def nes a connect on bet en two tensors  n a `GraphDef`.
+ ssage TensorConnect on {
+  // A tensor na . T  value of t  tensor w ll be subst uted for
+  // t  tensor na d  n `to_tensor`.
+  str ng from_tensor = 1;
 
-  // A tensor name. The value of this tensor will be bound to the
-  // value of the tensor named in `from_tensor`.
-  string to_tensor = 2;
+  // A tensor na . T  value of t  tensor w ll be bound to t 
+  // value of t  tensor na d  n `from_tensor`.
+  str ng to_tensor = 2;
 }
 
-// Defines a subgraph in another `GraphDef` as a set of feed points and nodes
-// to be fetched or executed.
+// Def nes a subgraph  n anot r `GraphDef` as a set of feed po nts and nodes
+// to be fetc d or executed.
 //
-// Compare with the arguments to `Session::Run()`.
-message CallableOptions {
-  // Tensors to be fed in the callable. Each feed is the name of a tensor.
-  repeated string feed = 1;
+// Compare w h t  argu nts to `Sess on::Run()`.
+ ssage CallableOpt ons {
+  // Tensors to be fed  n t  callable. Each feed  s t  na  of a tensor.
+  repeated str ng feed = 1;
 
-  // Fetches. A list of tensor names. The caller of the callable expects a
-  // tensor to be returned for each fetch[i] (see RunStepResponse.tensor). The
-  // order of specified fetches does not change the execution order.
-  repeated string fetch = 2;
+  // Fetc s. A l st of tensor na s. T  caller of t  callable expects a
+  // tensor to be returned for each fetch[ ] (see RunStepResponse.tensor). T 
+  // order of spec f ed fetc s does not change t  execut on order.
+  repeated str ng fetch = 2;
 
-  // Target Nodes. A list of node names. The named nodes will be run by the
-  // callable but their outputs will not be returned.
-  repeated string target = 3;
+  // Target Nodes. A l st of node na s. T  na d nodes w ll be run by t 
+  // callable but t  r outputs w ll not be returned.
+  repeated str ng target = 3;
 
-  // Options that will be applied to each run.
-  RunOptions run_options = 4;
+  // Opt ons that w ll be appl ed to each run.
+  RunOpt ons run_opt ons = 4;
 
-  // Tensors to be connected in the callable. Each TensorConnection denotes
-  // a pair of tensors in the graph, between which an edge will be created
-  // in the callable.
-  repeated TensorConnection tensor_connection = 5;
+  // Tensors to be connected  n t  callable. Each TensorConnect on denotes
+  // a pa r of tensors  n t  graph, bet en wh ch an edge w ll be created
+  //  n t  callable.
+  repeated TensorConnect on tensor_connect on = 5;
 
-  // The Tensor objects fed in the callable and fetched from the callable
-  // are expected to be backed by host (CPU) memory by default.
+  // T  Tensor objects fed  n t  callable and fetc d from t  callable
+  // are expected to be backed by host (CPU)  mory by default.
   //
-  // The options below allow changing that - feeding tensors backed by
-  // device memory, or returning tensors that are backed by device memory.
+  // T  opt ons below allow chang ng that - feed ng tensors backed by
+  // dev ce  mory, or return ng tensors that are backed by dev ce  mory.
   //
-  // The maps below map the name of a feed/fetch tensor (which appears in
-  // 'feed' or 'fetch' fields above), to the fully qualified name of the device
-  // owning the memory backing the contents of the tensor.
+  // T  maps below map t  na  of a feed/fetch tensor (wh ch appears  n
+  // 'feed' or 'fetch' f elds above), to t  fully qual f ed na  of t  dev ce
+  // own ng t   mory back ng t  contents of t  tensor.
   //
-  // For example, creating a callable with the following options:
+  // For example, creat ng a callable w h t  follow ng opt ons:
   //
-  // CallableOptions {
+  // CallableOpt ons {
   //   feed: "a:0"
   //   feed: "b:0"
   //
   //   fetch: "x:0"
   //   fetch: "y:0"
   //
-  //   feed_devices: {
-  //     "a:0": "/job:localhost/replica:0/task:0/device:GPU:0"
+  //   feed_dev ces: {
+  //     "a:0": "/job:localhost/repl ca:0/task:0/dev ce:GPU:0"
   //   }
   //
-  //   fetch_devices: {
-  //     "y:0": "/job:localhost/replica:0/task:0/device:GPU:0"
+  //   fetch_dev ces: {
+  //     "y:0": "/job:localhost/repl ca:0/task:0/dev ce:GPU:0"
   //  }
   // }
   //
-  // means that the Callable expects:
-  // - The first argument ("a:0") is a Tensor backed by GPU memory.
-  // - The second argument ("b:0") is a Tensor backed by host memory.
-  // and of its return values:
-  // - The first output ("x:0") will be backed by host memory.
-  // - The second output ("y:0") will be backed by GPU memory.
+  //  ans that t  Callable expects:
+  // - T  f rst argu nt ("a:0")  s a Tensor backed by GPU  mory.
+  // - T  second argu nt ("b:0")  s a Tensor backed by host  mory.
+  // and of  s return values:
+  // - T  f rst output ("x:0") w ll be backed by host  mory.
+  // - T  second output ("y:0") w ll be backed by GPU  mory.
   //
   // FEEDS:
-  // It is the responsibility of the caller to ensure that the memory of the fed
-  // tensors will be correctly initialized and synchronized before it is
-  // accessed by operations executed during the call to Session::RunCallable().
+  //    s t  respons b l y of t  caller to ensure that t   mory of t  fed
+  // tensors w ll be correctly  n  al zed and synchron zed before    s
+  // accessed by operat ons executed dur ng t  call to Sess on::RunCallable().
   //
-  // This is typically ensured by using the TensorFlow memory allocators
-  // (Device::GetAllocator()) to create the Tensor to be fed.
+  // T   s typ cally ensured by us ng t  TensorFlow  mory allocators
+  // (Dev ce::GetAllocator()) to create t  Tensor to be fed.
   //
-  // Alternatively, for CUDA-enabled GPU devices, this typically means that the
-  // operation that produced the contents of the tensor has completed, i.e., the
-  // CUDA stream has been synchronized (e.g., via cuCtxSynchronize() or
-  // cuStreamSynchronize()).
-  map<string, string> feed_devices = 6;
-  map<string, string> fetch_devices = 7;
+  // Alternat vely, for CUDA-enabled GPU dev ces, t  typ cally  ans that t 
+  // operat on that produced t  contents of t  tensor has completed,  .e., t 
+  // CUDA stream has been synchron zed (e.g., v a cuCtxSynchron ze() or
+  // cuStreamSynchron ze()).
+  map<str ng, str ng> feed_dev ces = 6;
+  map<str ng, str ng> fetch_dev ces = 7;
 
-  // By default, RunCallable() will synchronize the GPU stream before returning
-  // fetched tensors on a GPU device, to ensure that the values in those tensors
-  // have been produced. This simplifies interacting with the tensors, but
-  // potentially incurs a performance hit.
+  // By default, RunCallable() w ll synchron ze t  GPU stream before return ng
+  // fetc d tensors on a GPU dev ce, to ensure that t  values  n those tensors
+  // have been produced. T  s mpl f es  nteract ng w h t  tensors, but
+  // potent ally  ncurs a performance h .
   //
-  // If this options is set to true, the caller is responsible for ensuring
-  // that the values in the fetched tensors have been produced before they are
-  // used. The caller can do this by invoking `Device::Sync()` on the underlying
-  // device(s), or by feeding the tensors back to the same Session using
-  // `feed_devices` with the same corresponding device name.
-  bool fetch_skip_sync = 8;
+  //  f t  opt ons  s set to true, t  caller  s respons ble for ensur ng
+  // that t  values  n t  fetc d tensors have been produced before t y are
+  // used. T  caller can do t  by  nvok ng `Dev ce::Sync()` on t  underly ng
+  // dev ce(s), or by feed ng t  tensors back to t  sa  Sess on us ng
+  // `feed_dev ces` w h t  sa  correspond ng dev ce na .
+  bool fetch_sk p_sync = 8;
 
   // Next: 9
 }

@@ -1,75 +1,75 @@
-package com.twitter.ann.scalding.offline.faissindexbuilder
+package com.tw ter.ann.scald ng.offl ne.fa ss ndexbu lder
 
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.Metric
-import com.twitter.cortex.ml.embeddings.common._
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.scalding.Args
-import com.twitter.scalding.DateOps
-import com.twitter.scalding.DateParser
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Execution
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.search.common.file.FileUtils
-import com.twitter.util.logging.Logging
-import java.util.Calendar
-import java.util.TimeZone
+ mport com.tw ter.ann.common.D stance
+ mport com.tw ter.ann.common. tr c
+ mport com.tw ter.cortex.ml.embedd ngs.common._
+ mport com.tw ter.ml.featurestore.l b.User d
+ mport com.tw ter.scald ng.Args
+ mport com.tw ter.scald ng.DateOps
+ mport com.tw ter.scald ng.DateParser
+ mport com.tw ter.scald ng.DateRange
+ mport com.tw ter.scald ng.Execut on
+ mport com.tw ter.scald ng_ nternal.job.Tw terExecut onApp
+ mport com.tw ter.search.common.f le.F leUt ls
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport java.ut l.Calendar
+ mport java.ut l.T  Zone
 
-trait IndexBuilderExecutable extends Logging {
-  // This method is used to cast the entityKind and the metric to have parameters.
-  def indexBuilderExecution[T <: UserId, D <: Distance[D]](
+tra   ndexBu lderExecutable extends Logg ng {
+  // T   thod  s used to cast t  ent yK nd and t   tr c to have para ters.
+  def  ndexBu lderExecut on[T <: User d, D <: D stance[D]](
     args: Args
-  ): Execution[Unit] = {
-    // parse the arguments for this job
-    val uncastEntityKind = EntityKind.getEntityKind(args("entity_kind"))
-    val uncastMetric = Metric.fromString(args("metric"))
-    val entityKind = uncastEntityKind.asInstanceOf[EntityKind[T]]
-    val metric = uncastMetric.asInstanceOf[Metric[D]]
-    val uncastDateRange = args.list("embedding_date_range")
-    val embeddingDateRange = if (uncastDateRange.nonEmpty) {
-      Some(DateRange.parse(uncastDateRange)(DateOps.UTC, DateParser.default))
+  ): Execut on[Un ] = {
+    // parse t  argu nts for t  job
+    val uncastEnt yK nd = Ent yK nd.getEnt yK nd(args("ent y_k nd"))
+    val uncast tr c =  tr c.fromStr ng(args(" tr c"))
+    val ent yK nd = uncastEnt yK nd.as nstanceOf[Ent yK nd[T]]
+    val  tr c = uncast tr c.as nstanceOf[ tr c[D]]
+    val uncastDateRange = args.l st("embedd ng_date_range")
+    val embedd ngDateRange =  f (uncastDateRange.nonEmpty) {
+      So (DateRange.parse(uncastDateRange)(DateOps.UTC, DateParser.default))
     } else {
       None
     }
-    val embeddingFormat =
-      entityKind.parser.getEmbeddingFormat(args, "input", providedDateRange = embeddingDateRange)
-    val numDimensions = args.int("num_dimensions")
-    val embeddingLimit = args.optional("embedding_limit").map(_.toInt)
-    val outputDirectory = FileUtils.getFileHandle(args("output_dir"))
-    val factoryString = args.optional("factory_string").get
-    val sampleRate = args.float("training_sample_rate", 0.05f)
+    val embedd ngFormat =
+      ent yK nd.parser.getEmbedd ngFormat(args, " nput", prov dedDateRange = embedd ngDateRange)
+    val numD  ns ons = args. nt("num_d  ns ons")
+    val embedd ngL m  = args.opt onal("embedd ng_l m ").map(_.to nt)
+    val outputD rectory = F leUt ls.getF leHandle(args("output_d r"))
+    val factoryStr ng = args.opt onal("factory_str ng").get
+    val sampleRate = args.float("tra n ng_sample_rate", 0.05f)
 
-    logger.debug(s"Job args: ${args.toString}")
+    logger.debug(s"Job args: ${args.toStr ng}")
 
-    val finalOutputDirectory = embeddingDateRange
+    val f nalOutputD rectory = embedd ngDateRange
       .map { range =>
-        val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-        cal.setTime(range.end)
-        outputDirectory
-          .getChild(s"${cal.get(Calendar.YEAR)}")
-          .getChild(f"${cal.get(Calendar.MONTH) + 1}%02d")
-          .getChild(f"${cal.get(Calendar.DAY_OF_MONTH)}%02d")
-      }.getOrElse(outputDirectory)
+        val cal = Calendar.get nstance(T  Zone.getT  Zone("UTC"))
+        cal.setT  (range.end)
+        outputD rectory
+          .getCh ld(s"${cal.get(Calendar.YEAR)}")
+          .getCh ld(f"${cal.get(Calendar.MONTH) + 1}%02d")
+          .getCh ld(f"${cal.get(Calendar.DAY_OF_MONTH)}%02d")
+      }.getOrElse(outputD rectory)
 
-    logger.info(s"Final output directory is ${finalOutputDirectory.getPath}")
+    logger. nfo(s"F nal output d rectory  s ${f nalOutputD rectory.getPath}")
 
-    IndexBuilder
+     ndexBu lder
       .run(
-        embeddingFormat,
-        embeddingLimit,
+        embedd ngFormat,
+        embedd ngL m ,
         sampleRate,
-        factoryString,
-        metric,
-        finalOutputDirectory,
-        numDimensions
+        factoryStr ng,
+         tr c,
+        f nalOutputD rectory,
+        numD  ns ons
       ).onComplete { _ =>
-        Unit
+        Un 
       }
   }
 }
 
-object IndexBuilderApp extends TwitterExecutionApp with IndexBuilderExecutable {
-  override def job: Execution[Unit] = Execution.getArgs.flatMap { args: Args =>
-    indexBuilderExecution(args)
+object  ndexBu lderApp extends Tw terExecut onApp w h  ndexBu lderExecutable {
+  overr de def job: Execut on[Un ] = Execut on.getArgs.flatMap { args: Args =>
+     ndexBu lderExecut on(args)
   }
 }

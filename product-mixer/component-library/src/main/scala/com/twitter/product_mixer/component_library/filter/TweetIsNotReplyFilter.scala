@@ -1,36 +1,36 @@
-package com.twitter.product_mixer.component_library.filter
-import com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_tweetypie.IsReplyFeature
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+package com.tw ter.product_m xer.component_l brary.f lter
+ mport com.tw ter.product_m xer.component_l brary.feature_hydrator.cand date.t et_t etyp e. sReplyFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.BaseT etCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lterResult
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
 /**
- * Filters out tweets that is a reply to a tweet
+ * F lters out t ets that  s a reply to a t et
  */
-case class TweetIsNotReplyFilter[Candidate <: BaseTweetCandidate]()
-    extends Filter[PipelineQuery, Candidate] {
-  override val identifier: FilterIdentifier = FilterIdentifier("TweetIsNotReply")
+case class T et sNotReplyF lter[Cand date <: BaseT etCand date]()
+    extends F lter[P pel neQuery, Cand date] {
+  overr de val  dent f er: F lter dent f er = F lter dent f er("T et sNotReply")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): St ch[F lterResult[Cand date]] = {
 
-    val (kept, removed) = candidates
-      .partition { candidate =>
-        !candidate.features.get(IsReplyFeature)
+    val (kept, removed) = cand dates
+      .part  on { cand date =>
+        !cand date.features.get( sReplyFeature)
       }
 
-    val filterResult = FilterResult(
-      kept = kept.map(_.candidate),
-      removed = removed.map(_.candidate)
+    val f lterResult = F lterResult(
+      kept = kept.map(_.cand date),
+      removed = removed.map(_.cand date)
     )
 
-    Stitch.value(filterResult)
+    St ch.value(f lterResult)
   }
 
 }

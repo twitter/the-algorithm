@@ -1,203 +1,203 @@
-package com.twitter.product_mixer.shared_library.observer
+package com.tw ter.product_m xer.shared_l brary.observer
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.RollupStatsReceiver
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.CancelledExceptionExtractor
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Throwables
-import com.twitter.util.Try
+ mport com.tw ter.f nagle.stats.Counter
+ mport com.tw ter.f nagle.stats.RollupStatsRece ver
+ mport com.tw ter.f nagle.stats.Stat
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.servo.ut l.CancelledExcept onExtractor
+ mport com.tw ter.st ch.Arrow
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Throwables
+ mport com.tw ter.ut l.Try
 
 /**
- * Helper functions to observe requests, success, failures, cancellations, exceptions, and latency.
- * Supports native functions and asynchronous operations.
+ *  lper funct ons to observe requests, success, fa lures, cancellat ons, except ons, and latency.
+ * Supports nat ve funct ons and asynchronous operat ons.
  */
 object Observer {
   val Requests = "requests"
   val Success = "success"
-  val Failures = "failures"
+  val Fa lures = "fa lures"
   val Cancelled = "cancelled"
   val Latency = "latency_ms"
 
   /**
-   * Helper function to observe a stitch
+   *  lper funct on to observe a st ch
    *
-   * @see [[StitchObserver]]
+   * @see [[St chObserver]]
    */
-  def stitch[T](statsReceiver: StatsReceiver, scopes: String*): StitchObserver[T] =
-    new StitchObserver[T](statsReceiver, scopes)
+  def st ch[T](statsRece ver: StatsRece ver, scopes: Str ng*): St chObserver[T] =
+    new St chObserver[T](statsRece ver, scopes)
 
   /**
-   * Helper function to observe an arrow
+   *  lper funct on to observe an arrow
    *
    * @see [[ArrowObserver]]
    */
-  def arrow[In, Out](statsReceiver: StatsReceiver, scopes: String*): ArrowObserver[In, Out] =
-    new ArrowObserver[In, Out](statsReceiver, scopes)
+  def arrow[ n, Out](statsRece ver: StatsRece ver, scopes: Str ng*): ArrowObserver[ n, Out] =
+    new ArrowObserver[ n, Out](statsRece ver, scopes)
 
   /**
-   * Helper function to observe a future
+   *  lper funct on to observe a future
    *
    * @see [[FutureObserver]]
    */
-  def future[T](statsReceiver: StatsReceiver, scopes: String*): FutureObserver[T] =
-    new FutureObserver[T](statsReceiver, scopes)
+  def future[T](statsRece ver: StatsRece ver, scopes: Str ng*): FutureObserver[T] =
+    new FutureObserver[T](statsRece ver, scopes)
 
   /**
-   * Helper function to observe a function
+   *  lper funct on to observe a funct on
    *
-   * @see [[FunctionObserver]]
+   * @see [[Funct onObserver]]
    */
-  def function[T](statsReceiver: StatsReceiver, scopes: String*): FunctionObserver[T] =
-    new FunctionObserver[T](statsReceiver, scopes)
+  def funct on[T](statsRece ver: StatsRece ver, scopes: Str ng*): Funct onObserver[T] =
+    new Funct onObserver[T](statsRece ver, scopes)
 
   /**
-   * [[StitchObserver]] can record latency stats, success counters, and
-   * detailed failure stats for the results of a Stitch computation.
+   * [[St chObserver]] can record latency stats, success counters, and
+   * deta led fa lure stats for t  results of a St ch computat on.
    */
-  class StitchObserver[T](
-    override val statsReceiver: StatsReceiver,
-    override val scopes: Seq[String])
+  class St chObserver[T](
+    overr de val statsRece ver: StatsRece ver,
+    overr de val scopes: Seq[Str ng])
       extends Observer[T] {
 
     /**
-     * Record stats for the provided Stitch.
-     * The result of the computation is passed through.
+     * Record stats for t  prov ded St ch.
+     * T  result of t  computat on  s passed through.
      *
-     * @note the provided Stitch must contain the parts that need to be timed.
-     *       Using this on just the result of the computation the latency stat
-     *       will be incorrect.
+     * @note t  prov ded St ch must conta n t  parts that need to be t  d.
+     *       Us ng t  on just t  result of t  computat on t  latency stat
+     *       w ll be  ncorrect.
      */
-    def apply(stitch: => Stitch[T]): Stitch[T] =
-      Stitch.time(stitch).map(observe.tupled).lowerFromTry
+    def apply(st ch: => St ch[T]): St ch[T] =
+      St ch.t  (st ch).map(observe.tupled).lo rFromTry
   }
 
   /**
-   * [[ArrowObserver]] can record the latency stats, success counters, and
-   * detailed failure stats for the result of an Arrow computation.
-   * The result of the computation is passed through.
+   * [[ArrowObserver]] can record t  latency stats, success counters, and
+   * deta led fa lure stats for t  result of an Arrow computat on.
+   * T  result of t  computat on  s passed through.
    */
-  class ArrowObserver[In, Out](
-    override val statsReceiver: StatsReceiver,
-    override val scopes: Seq[String])
+  class ArrowObserver[ n, Out](
+    overr de val statsRece ver: StatsRece ver,
+    overr de val scopes: Seq[Str ng])
       extends Observer[Out] {
 
     /**
-     * Returns a new Arrow that records stats when it's run.
-     * The result of the Arrow is passed through.
+     * Returns a new Arrow that records stats w n  's run.
+     * T  result of t  Arrow  s passed through.
      *
-     * @note the provided Arrow must contain the parts that need to be timed.
-     *       Using this on just the result of the computation the latency stat
-     *       will be incorrect.
+     * @note t  prov ded Arrow must conta n t  parts that need to be t  d.
+     *       Us ng t  on just t  result of t  computat on t  latency stat
+     *       w ll be  ncorrect.
      */
-    def apply(arrow: Arrow[In, Out]): Arrow[In, Out] =
-      Arrow.time(arrow).map(observe.tupled).lowerFromTry
+    def apply(arrow: Arrow[ n, Out]): Arrow[ n, Out] =
+      Arrow.t  (arrow).map(observe.tupled).lo rFromTry
   }
 
   /**
    * [[FutureObserver]] can record latency stats, success counters, and
-   * detailed failure stats for the results of a Future computation.
+   * deta led fa lure stats for t  results of a Future computat on.
    */
   class FutureObserver[T](
-    override val statsReceiver: StatsReceiver,
-    override val scopes: Seq[String])
+    overr de val statsRece ver: StatsRece ver,
+    overr de val scopes: Seq[Str ng])
       extends Observer[T] {
 
     /**
-     * Record stats for the provided Future.
-     * The result of the computation is passed through.
+     * Record stats for t  prov ded Future.
+     * T  result of t  computat on  s passed through.
      *
-     * @note the provided Future must contain the parts that need to be timed.
-     *       Using this on just the result of the computation the latency stat
-     *       will be incorrect.
+     * @note t  prov ded Future must conta n t  parts that need to be t  d.
+     *       Us ng t  on just t  result of t  computat on t  latency stat
+     *       w ll be  ncorrect.
      */
     def apply(future: => Future[T]): Future[T] =
       Stat
-        .timeFuture(latencyStat)(future)
+        .t  Future(latencyStat)(future)
         .onSuccess(observeSuccess)
-        .onFailure(observeFailure)
+        .onFa lure(observeFa lure)
   }
 
   /**
-   * [[FunctionObserver]] can record latency stats, success counters, and
-   * detailed failure stats for the results of a computation computation.
+   * [[Funct onObserver]] can record latency stats, success counters, and
+   * deta led fa lure stats for t  results of a computat on computat on.
    */
-  class FunctionObserver[T](
-    override val statsReceiver: StatsReceiver,
-    override val scopes: Seq[String])
+  class Funct onObserver[T](
+    overr de val statsRece ver: StatsRece ver,
+    overr de val scopes: Seq[Str ng])
       extends Observer[T] {
 
     /**
-     * Record stats for the provided computation.
-     * The result of the computation is passed through.
+     * Record stats for t  prov ded computat on.
+     * T  result of t  computat on  s passed through.
      *
-     * @note the provided computation must contain the parts that need to be timed.
-     *       Using this on just the result of the computation the latency stat
-     *       will be incorrect.
+     * @note t  prov ded computat on must conta n t  parts that need to be t  d.
+     *       Us ng t  on just t  result of t  computat on t  latency stat
+     *       w ll be  ncorrect.
      */
     def apply(f: => T): T = {
-      Try(Stat.time(latencyStat)(f))
+      Try(Stat.t  (latencyStat)(f))
         .onSuccess(observeSuccess)
-        .onFailure(observeFailure)
+        .onFa lure(observeFa lure)
         .apply()
     }
   }
 
-  /** [[Observer]] provides methods for recording latency, success, and failure stats */
-  trait Observer[T] {
-    protected val statsReceiver: StatsReceiver
+  /** [[Observer]] prov des  thods for record ng latency, success, and fa lure stats */
+  tra  Observer[T] {
+    protected val statsRece ver: StatsRece ver
 
-    /** Scopes that prefix all stats */
-    protected val scopes: Seq[String]
+    /** Scopes that pref x all stats */
+    protected val scopes: Seq[Str ng]
 
-    private val rollupStatsReceiver = new RollupStatsReceiver(statsReceiver.scope(scopes: _*))
-    private val requestsCounter: Counter = statsReceiver.counter(scopes :+ Requests: _*)
-    private val successCounter: Counter = statsReceiver.counter(scopes :+ Success: _*)
+    pr vate val rollupStatsRece ver = new RollupStatsRece ver(statsRece ver.scope(scopes: _*))
+    pr vate val requestsCounter: Counter = statsRece ver.counter(scopes :+ Requests: _*)
+    pr vate val successCounter: Counter = statsRece ver.counter(scopes :+ Success: _*)
 
-    // create the stats so their metrics paths are always present but
-    // defer to the [[RollupStatsReceiver]] to increment these stats
-    rollupStatsReceiver.counter(Failures)
-    rollupStatsReceiver.counter(Cancelled)
+    // create t  stats so t  r  tr cs paths are always present but
+    // defer to t  [[RollupStatsRece ver]] to  ncre nt t se stats
+    rollupStatsRece ver.counter(Fa lures)
+    rollupStatsRece ver.counter(Cancelled)
 
-    /** Serialize a throwable and it's causes into a seq of Strings for scoping metrics */
-    protected def serializeThrowable(throwable: Throwable): Seq[String] =
-      Throwables.mkString(throwable)
+    /** Ser al ze a throwable and  's causes  nto a seq of Str ngs for scop ng  tr cs */
+    protected def ser al zeThrowable(throwable: Throwable): Seq[Str ng] =
+      Throwables.mkStr ng(throwable)
 
-    /** Used to record latency in milliseconds */
-    protected val latencyStat: Stat = statsReceiver.stat(scopes :+ Latency: _*)
+    /** Used to record latency  n m ll seconds */
+    protected val latencyStat: Stat = statsRece ver.stat(scopes :+ Latency: _*)
 
-    /** Records the latency from a [[Duration]] */
-    protected val observeLatency: Duration => Unit = { latency =>
-      latencyStat.add(latency.inMilliseconds)
+    /** Records t  latency from a [[Durat on]] */
+    protected val observeLatency: Durat on => Un  = { latency =>
+      latencyStat.add(latency. nM ll seconds)
     }
 
     /** Records successes */
-    protected val observeSuccess: T => Unit = { _ =>
-      requestsCounter.incr()
-      successCounter.incr()
+    protected val observeSuccess: T => Un  = { _ =>
+      requestsCounter. ncr()
+      successCounter. ncr()
     }
 
-    /** Records failures and failure details */
-    protected val observeFailure: Throwable => Unit = {
-      case CancelledExceptionExtractor(throwable) =>
-        requestsCounter.incr()
-        rollupStatsReceiver.counter(Cancelled +: serializeThrowable(throwable): _*).incr()
+    /** Records fa lures and fa lure deta ls */
+    protected val observeFa lure: Throwable => Un  = {
+      case CancelledExcept onExtractor(throwable) =>
+        requestsCounter. ncr()
+        rollupStatsRece ver.counter(Cancelled +: ser al zeThrowable(throwable): _*). ncr()
       case throwable =>
-        requestsCounter.incr()
-        rollupStatsReceiver.counter(Failures +: serializeThrowable(throwable): _*).incr()
+        requestsCounter. ncr()
+        rollupStatsRece ver.counter(Fa lures +: ser al zeThrowable(throwable): _*). ncr()
     }
 
-    /** Records the latency, successes, and failures */
-    protected val observe: (Try[T], Duration) => Try[T] =
-      (response: Try[T], runDuration: Duration) => {
-        observeLatency(runDuration)
+    /** Records t  latency, successes, and fa lures */
+    protected val observe: (Try[T], Durat on) => Try[T] =
+      (response: Try[T], runDurat on: Durat on) => {
+        observeLatency(runDurat on)
         response
           .onSuccess(observeSuccess)
-          .onFailure(observeFailure)
+          .onFa lure(observeFa lure)
       }
   }
 }

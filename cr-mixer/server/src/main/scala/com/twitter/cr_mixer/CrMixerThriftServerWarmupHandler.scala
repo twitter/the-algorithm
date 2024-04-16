@@ -1,75 +1,75 @@
-package com.twitter.cr_mixer
+package com.tw ter.cr_m xer
 
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finatra.thrift.routing.ThriftWarmup
-import com.twitter.inject.Logging
-import com.twitter.inject.utils.Handler
-import com.twitter.product_mixer.core.{thriftscala => pt}
-import com.twitter.cr_mixer.{thriftscala => st}
-import com.twitter.scrooge.Request
-import com.twitter.scrooge.Response
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.f natra.thr ft.rout ng.Thr ftWarmup
+ mport com.tw ter. nject.Logg ng
+ mport com.tw ter. nject.ut ls.Handler
+ mport com.tw ter.product_m xer.core.{thr ftscala => pt}
+ mport com.tw ter.cr_m xer.{thr ftscala => st}
+ mport com.tw ter.scrooge.Request
+ mport com.tw ter.scrooge.Response
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.Try
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class CrMixerThriftServerWarmupHandler @Inject() (warmup: ThriftWarmup)
+@S ngleton
+class CrM xerThr ftServerWarmupHandler @ nject() (warmup: Thr ftWarmup)
     extends Handler
-    with Logging {
+    w h Logg ng {
 
-  private val clientId = ClientId("thrift-warmup-client")
+  pr vate val cl ent d = Cl ent d("thr ft-warmup-cl ent")
 
-  def handle(): Unit = {
-    val testIds = Seq(1, 2, 3)
+  def handle(): Un  = {
+    val test ds = Seq(1, 2, 3)
     try {
-      clientId.asCurrent {
-        testIds.foreach { id =>
-          val warmupReq = warmupQuery(id)
-          info(s"Sending warm-up request to service with query: $warmupReq")
+      cl ent d.asCurrent {
+        test ds.foreach {  d =>
+          val warmupReq = warmupQuery( d)
+           nfo(s"Send ng warm-up request to serv ce w h query: $warmupReq")
           warmup.sendRequest(
-            method = st.CrMixer.GetTweetRecommendations,
-            req = Request(st.CrMixer.GetTweetRecommendations.Args(warmupReq)))(assertWarmupResponse)
+             thod = st.CrM xer.GetT etRecom ndat ons,
+            req = Request(st.CrM xer.GetT etRecom ndat ons.Args(warmupReq)))(assertWarmupResponse)
         }
       }
     } catch {
       case e: Throwable =>
-        // we don't want a warmup failure to prevent start-up
-        error(e.getMessage, e)
+        //   don't want a warmup fa lure to prevent start-up
+        error(e.get ssage, e)
     }
-    info("Warm-up done.")
+     nfo("Warm-up done.")
   }
 
-  private def warmupQuery(userId: Long): st.CrMixerTweetRequest = {
-    val clientContext = pt.ClientContext(
-      userId = Some(userId),
-      guestId = None,
-      appId = Some(258901L),
-      ipAddress = Some("0.0.0.0"),
-      userAgent = Some("FAKE_USER_AGENT_FOR_WARMUPS"),
-      countryCode = Some("US"),
-      languageCode = Some("en"),
-      isTwoffice = None,
+  pr vate def warmupQuery(user d: Long): st.CrM xerT etRequest = {
+    val cl entContext = pt.Cl entContext(
+      user d = So (user d),
+      guest d = None,
+      app d = So (258901L),
+       pAddress = So ("0.0.0.0"),
+      userAgent = So ("FAKE_USER_AGENT_FOR_WARMUPS"),
+      countryCode = So ("US"),
+      languageCode = So ("en"),
+       sTwoff ce = None,
       userRoles = None,
-      deviceId = Some("FAKE_DEVICE_ID_FOR_WARMUPS")
+      dev ce d = So ("FAKE_DEV CE_ D_FOR_WARMUPS")
     )
-    st.CrMixerTweetRequest(
-      clientContext = clientContext,
-      product = st.Product.Home,
-      productContext = Some(st.ProductContext.HomeContext(st.HomeContext())),
+    st.CrM xerT etRequest(
+      cl entContext = cl entContext,
+      product = st.Product.Ho ,
+      productContext = So (st.ProductContext.Ho Context(st.Ho Context())),
     )
   }
 
-  private def assertWarmupResponse(
-    result: Try[Response[st.CrMixer.GetTweetRecommendations.SuccessType]]
-  ): Unit = {
-    // we collect and log any exceptions from the result.
+  pr vate def assertWarmupResponse(
+    result: Try[Response[st.CrM xer.GetT etRecom ndat ons.SuccessType]]
+  ): Un  = {
+    //   collect and log any except ons from t  result.
     result match {
       case Return(_) => // ok
-      case Throw(exception) =>
-        warn("Error performing warm-up request.")
-        error(exception.getMessage, exception)
+      case Throw(except on) =>
+        warn("Error perform ng warm-up request.")
+        error(except on.get ssage, except on)
     }
   }
 }

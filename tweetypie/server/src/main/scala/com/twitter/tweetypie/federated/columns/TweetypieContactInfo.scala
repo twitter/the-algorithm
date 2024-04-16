@@ -1,11 +1,11 @@
-package com.twitter.tweetypie.federated.columns
+package com.tw ter.t etyp e.federated.columns
 
-import com.twitter.strato.config.ContactInfo
+ mport com.tw ter.strato.conf g.Contact nfo
 
-object TweetypieContactInfo
-    extends ContactInfo(
-      contactEmail = "",
+object T etyp eContact nfo
+    extends Contact nfo(
+      contactEma l = "",
       ldapGroup = "",
-      jiraProject = "",
-      slackRoomId = ""
+      j raProject = "",
+      slackRoom d = ""
     )

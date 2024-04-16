@@ -1,21 +1,21 @@
-package com.twitter.follow_recommendations.common.rankers.first_n_ranker
+package com.tw ter.follow_recom ndat ons.common.rankers.f rst_n_ranker
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport com.tw ter.follow_recom ndat ons.conf gap .common.FeatureSw chConf g
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
-@Singleton
-class FirstNRankerFSConfig @Inject() extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[FSParam[Boolean]] =
-    Seq(FirstNRankerParams.ScribeRankingInfoInFirstNRanker)
+@S ngleton
+class F rstNRankerFSConf g @ nject() extends FeatureSw chConf g {
+  overr de val booleanFSParams: Seq[FSParam[Boolean]] =
+    Seq(F rstNRankerParams.Scr beRank ng nfo nF rstNRanker)
 
-  override val intFSParams: Seq[FSBoundedParam[Int]] = Seq(
-    FirstNRankerParams.CandidatesToRank
+  overr de val  ntFSParams: Seq[FSBoundedParam[ nt]] = Seq(
+    F rstNRankerParams.Cand datesToRank
   )
 
-  override val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
-    FirstNRankerParams.MinNumCandidatesScoredScaleDownFactor
+  overr de val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
+    F rstNRankerParams.M nNumCand datesScoredScaleDownFactor
   )
 }

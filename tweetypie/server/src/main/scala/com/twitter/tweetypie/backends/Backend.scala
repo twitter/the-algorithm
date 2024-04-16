@@ -1,172 +1,172 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package backends
 
-import com.twitter.finagle.context.Deadline
-import com.twitter.finagle.service.RetryBudget
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.servo.util.FutureArrow
-import com.twitter.servo.util.RetryHandler
-import com.twitter.tweetypie.core.OverCapacity
-import com.twitter.util.Timer
-import com.twitter.util.TimeoutException
+ mport com.tw ter.f nagle.context.Deadl ne
+ mport com.tw ter.f nagle.serv ce.RetryBudget
+ mport com.tw ter.f nagle.serv ce.RetryPol cy
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.servo.ut l.RetryHandler
+ mport com.tw ter.t etyp e.core.OverCapac y
+ mport com.tw ter.ut l.T  r
+ mport com.tw ter.ut l.T  outExcept on
 
 object Backend {
   val log: Logger = Logger(getClass)
 
   /**
-   * Common stuff that is needed as part of the configuration of all
-   * of the backends.
+   * Common stuff that  s needed as part of t  conf gurat on of all
+   * of t  backends.
    */
-  case class Context(val timer: Timer, val stats: StatsReceiver)
+  case class Context(val t  r: T  r, val stats: StatsRece ver)
 
   /**
-   * All backend operations are encapsulated in the FutureArrow type.  The Builder type
-   * represents functions that can decorate the FutureArrow, typically by calling the various
-   * combinator methods on FutureArrow.
+   * All backend operat ons are encapsulated  n t  FutureArrow type.  T  Bu lder type
+   * represents funct ons that can decorate t  FutureArrow, typ cally by call ng t  var ous
+   * comb nator  thods on FutureArrow.
    */
-  type Builder[A, B] = FutureArrow[A, B] => FutureArrow[A, B]
+  type Bu lder[A, B] = FutureArrow[A, B] => FutureArrow[A, B]
 
   /**
-   * A Policy defines some behavior to apply to a FutureArrow that wraps an endpoint.
+   * A Pol cy def nes so  behav or to apply to a FutureArrow that wraps an endpo nt.
    */
-  trait Policy {
+  tra  Pol cy {
 
     /**
-     * Using an endpoint name and Context, returns a Builder that does the actual
-     * application of the policy to the FutureArrow.
+     * Us ng an endpo nt na  and Context, returns a Bu lder that does t  actual
+     * appl cat on of t  pol cy to t  FutureArrow.
      */
-    def apply[A, B](name: String, ctx: Context): Builder[A, B]
+    def apply[A, B](na : Str ng, ctx: Context): Bu lder[A, B]
 
     /**
-     * Sequentially combines policies, first applying this policy and then applying
-     * the next policy.  Order matters!  For example, to retry on timeouts, the FailureRetryPolicy
-     * needs to be applied after the TimeoutPolicy:
+     * Sequent ally comb nes pol c es, f rst apply ng t  pol cy and t n apply ng
+     * t  next pol cy.  Order matters!  For example, to retry on t  outs, t  Fa lureRetryPol cy
+     * needs to be appl ed after t  T  outPol cy:
      *
-     *     TimeoutPolicy(100.milliseconds) >>> FailureRetryPolicy(retryPolicy)
+     *     T  outPol cy(100.m ll seconds) >>> Fa lureRetryPol cy(retryPol cy)
      */
-    def andThen(next: Policy): Policy = {
-      val first = this
-      new Policy {
-        def apply[A, B](name: String, ctx: Context): Builder[A, B] =
-          first(name, ctx).andThen(next(name, ctx))
+    def andT n(next: Pol cy): Pol cy = {
+      val f rst = t 
+      new Pol cy {
+        def apply[A, B](na : Str ng, ctx: Context): Bu lder[A, B] =
+          f rst(na , ctx).andT n(next(na , ctx))
 
-        override def toString = s"$first >>> $next"
+        overr de def toStr ng = s"$f rst >>> $next"
       }
     }
 
     /**
-     * An alias for `andThen`.
+     * An al as for `andT n`.
      */
-    def >>>(next: Policy): Policy = andThen(next)
+    def >>>(next: Pol cy): Pol cy = andT n(next)
   }
 
   /**
-   * Applies a timeout to the underlying FutureArrow.
+   * Appl es a t  out to t  underly ng FutureArrow.
    */
-  case class TimeoutPolicy(timeout: Duration) extends Policy {
-    def apply[A, B](name: String, ctx: Context): Builder[A, B] = {
-      val stats = ctx.stats.scope(name)
-      val ex = new TimeoutException(name + ": " + timeout)
-      (_: FutureArrow[A, B]).raiseWithin(ctx.timer, timeout, ex)
+  case class T  outPol cy(t  out: Durat on) extends Pol cy {
+    def apply[A, B](na : Str ng, ctx: Context): Bu lder[A, B] = {
+      val stats = ctx.stats.scope(na )
+      val ex = new T  outExcept on(na  + ": " + t  out)
+      (_: FutureArrow[A, B]).ra seW h n(ctx.t  r, t  out, ex)
     }
   }
 
   /**
-   * Attaches a RetryHandler with the given RetryPolicy to retry failures.
+   * Attac s a RetryHandler w h t  g ven RetryPol cy to retry fa lures.
    */
-  case class FailureRetryPolicy(
-    retryPolicy: RetryPolicy[Try[Nothing]],
+  case class Fa lureRetryPol cy(
+    retryPol cy: RetryPol cy[Try[Noth ng]],
     retryBudget: RetryBudget = RetryBudget())
-      extends Policy {
-    def apply[A, B](name: String, ctx: Context): Builder[A, B] = {
-      val stats = ctx.stats.scope(name)
+      extends Pol cy {
+    def apply[A, B](na : Str ng, ctx: Context): Bu lder[A, B] = {
+      val stats = ctx.stats.scope(na )
       (_: FutureArrow[A, B])
-        .retry(RetryHandler.failuresOnly(retryPolicy, ctx.timer, stats, retryBudget))
+        .retry(RetryHandler.fa luresOnly(retryPol cy, ctx.t  r, stats, retryBudget))
     }
   }
 
   /**
-   * This policy applies standardized endpoint metrics.  This should be used with every endpoint.
+   * T  pol cy appl es standard zed endpo nt  tr cs.  T  should be used w h every endpo nt.
    */
-  case object TrackPolicy extends Policy {
-    def apply[A, B](name: String, ctx: Context): Builder[A, B] = {
-      val stats = ctx.stats.scope(name)
+  case object TrackPol cy extends Pol cy {
+    def apply[A, B](na : Str ng, ctx: Context): Bu lder[A, B] = {
+      val stats = ctx.stats.scope(na )
       (_: FutureArrow[A, B])
-        .onFailure(countOverCapacityExceptions(stats))
-        .trackOutcome(ctx.stats, (_: A) => name)
-        .trackLatency(ctx.stats, (_: A) => name)
+        .onFa lure(countOverCapac yExcept ons(stats))
+        .trackOutco (ctx.stats, (_: A) => na )
+        .trackLatency(ctx.stats, (_: A) => na )
     }
   }
 
   /**
-   * The default "policy" for timeouts, retries, exception counting, latency tracking, etc. to
-   * apply to each backend operation.  This returns a Builder type (an endofunction on FutureArrow),
-   * which can be composed with other Builders via simple function composition.
+   * T  default "pol cy" for t  outs, retr es, except on count ng, latency track ng, etc. to
+   * apply to each backend operat on.  T  returns a Bu lder type (an endofunct on on FutureArrow),
+   * wh ch can be composed w h ot r Bu lders v a s mple funct on compos  on.
    */
-  def defaultPolicy[A, B](
-    name: String,
-    requestTimeout: Duration,
-    retryPolicy: RetryPolicy[Try[B]],
+  def defaultPol cy[A, B](
+    na : Str ng,
+    requestT  out: Durat on,
+    retryPol cy: RetryPol cy[Try[B]],
     ctx: Context,
     retryBudget: RetryBudget = RetryBudget(),
-    totalTimeout: Duration = Duration.Top,
-    exceptionCategorizer: Throwable => Option[String] = _ => None
-  ): Builder[A, B] = {
-    val scopedStats = ctx.stats.scope(name)
-    val requestTimeoutException = new TimeoutException(
-      s"$name: hit request timeout of $requestTimeout"
+    totalT  out: Durat on = Durat on.Top,
+    except onCategor zer: Throwable => Opt on[Str ng] = _ => None
+  ): Bu lder[A, B] = {
+    val scopedStats = ctx.stats.scope(na )
+    val requestT  outExcept on = new T  outExcept on(
+      s"$na : h  request t  out of $requestT  out"
     )
-    val totalTimeoutException = new TimeoutException(s"$name: hit total timeout of $totalTimeout")
+    val totalT  outExcept on = new T  outExcept on(s"$na : h  total t  out of $totalT  out")
     base =>
       base
-        .raiseWithin(
-          ctx.timer,
-          // We defer to a per-request deadline. When the deadline is missing or wasn't toggled,
-          // 'requestTimeout' is used instead. This mimics the behavior happening within a standard
-          // Finagle client stack and its 'TimeoutFilter'.
-          Deadline.currentToggled.fold(requestTimeout)(_.remaining),
-          requestTimeoutException
+        .ra seW h n(
+          ctx.t  r,
+          //   defer to a per-request deadl ne. W n t  deadl ne  s m ss ng or wasn't toggled,
+          // 'requestT  out'  s used  nstead. T  m m cs t  behav or happen ng w h n a standard
+          // F nagle cl ent stack and  s 'T  outF lter'.
+          Deadl ne.currentToggled.fold(requestT  out)(_.rema n ng),
+          requestT  outExcept on
         )
-        .retry(RetryHandler(retryPolicy, ctx.timer, scopedStats, retryBudget))
-        .raiseWithin(ctx.timer, totalTimeout, totalTimeoutException)
-        .onFailure(countOverCapacityExceptions(scopedStats))
-        .trackOutcome(ctx.stats, (_: A) => name, exceptionCategorizer)
-        .trackLatency(ctx.stats, (_: A) => name)
+        .retry(RetryHandler(retryPol cy, ctx.t  r, scopedStats, retryBudget))
+        .ra seW h n(ctx.t  r, totalT  out, totalT  outExcept on)
+        .onFa lure(countOverCapac yExcept ons(scopedStats))
+        .trackOutco (ctx.stats, (_: A) => na , except onCategor zer)
+        .trackLatency(ctx.stats, (_: A) => na )
   }
 
   /**
-   * An onFailure FutureArrow callback that counts OverCapacity exceptions to a special counter.
-   * These will also be counted as failures and by exception class name, but having a special
-   * counter for this is easier to use in success rate computations where you want to factor out
+   * An onFa lure FutureArrow callback that counts OverCapac y except ons to a spec al counter.
+   * T se w ll also be counted as fa lures and by except on class na , but hav ng a spec al
+   * counter for t   s eas er to use  n success rate computat ons w re   want to factor out
    * backpressure responses.
    */
-  def countOverCapacityExceptions[A](scopedStats: StatsReceiver): (A, Throwable) => Unit = {
-    val overCapacityCounter = scopedStats.counter("over_capacity")
+  def countOverCapac yExcept ons[A](scopedStats: StatsRece ver): (A, Throwable) => Un  = {
+    val overCapac yCounter = scopedStats.counter("over_capac y")
 
     {
-      case (_, ex: OverCapacity) => overCapacityCounter.incr()
+      case (_, ex: OverCapac y) => overCapac yCounter. ncr()
       case _ => ()
     }
   }
 
   /**
-   * Provides a simple mechanism for applying a Policy to an endpoint FutureArrow from
-   * an underlying service interface.
+   * Prov des a s mple  chan sm for apply ng a Pol cy to an endpo nt FutureArrow from
+   * an underly ng serv ce  nterface.
    */
-  class PolicyAdvocate[S](backendName: String, ctx: Backend.Context, svc: S) {
+  class Pol cyAdvocate[S](backendNa : Str ng, ctx: Backend.Context, svc: S) {
 
     /**
-     * Tacks on the TrackPolicy to the given base policy, and then applies the policy to
-     * a FutureArrow.  This is more of a convenience method that every Backend can use to
-     * build the fully configured FutureArrow.
+     * Tacks on t  TrackPol cy to t  g ven base pol cy, and t n appl es t  pol cy to
+     * a FutureArrow.  T   s more of a conven ence  thod that every Backend can use to
+     * bu ld t  fully conf gured FutureArrow.
      */
     def apply[A, B](
-      endpointName: String,
-      policy: Policy,
-      endpoint: S => FutureArrow[A, B]
+      endpo ntNa : Str ng,
+      pol cy: Pol cy,
+      endpo nt: S => FutureArrow[A, B]
     ): FutureArrow[A, B] = {
-      log.info(s"appling policy to $backendName.$endpointName: $policy")
-      policy.andThen(TrackPolicy)(endpointName, ctx)(endpoint(svc))
+      log. nfo(s"appl ng pol cy to $backendNa .$endpo ntNa : $pol cy")
+      pol cy.andT n(TrackPol cy)(endpo ntNa , ctx)(endpo nt(svc))
     }
   }
 }

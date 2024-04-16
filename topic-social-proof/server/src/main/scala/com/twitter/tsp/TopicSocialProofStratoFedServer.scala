@@ -1,55 +1,55 @@
-package com.twitter.tsp
+package com.tw ter.tsp
 
-import com.google.inject.Module
-import com.twitter.strato.fed._
-import com.twitter.strato.fed.server._
-import com.twitter.strato.warmup.Warmer
-import com.twitter.tsp.columns.TopicSocialProofColumn
-import com.twitter.tsp.columns.TopicSocialProofBatchColumn
-import com.twitter.tsp.handlers.UttChildrenWarmupHandler
-import com.twitter.tsp.modules.RepresentationScorerStoreModule
-import com.twitter.tsp.modules.GizmoduckUserModule
-import com.twitter.tsp.modules.TSPClientIdModule
-import com.twitter.tsp.modules.TopicListingModule
-import com.twitter.tsp.modules.TopicSocialProofStoreModule
-import com.twitter.tsp.modules.TopicTweetCosineSimilarityAggregateStoreModule
-import com.twitter.tsp.modules.TweetInfoStoreModule
-import com.twitter.tsp.modules.TweetyPieClientModule
-import com.twitter.tsp.modules.UttClientModule
-import com.twitter.tsp.modules.UttLocalizationModule
-import com.twitter.util.Future
+ mport com.google. nject.Module
+ mport com.tw ter.strato.fed._
+ mport com.tw ter.strato.fed.server._
+ mport com.tw ter.strato.warmup.War r
+ mport com.tw ter.tsp.columns.Top cSoc alProofColumn
+ mport com.tw ter.tsp.columns.Top cSoc alProofBatchColumn
+ mport com.tw ter.tsp.handlers.UttCh ldrenWarmupHandler
+ mport com.tw ter.tsp.modules.Representat onScorerStoreModule
+ mport com.tw ter.tsp.modules.G zmoduckUserModule
+ mport com.tw ter.tsp.modules.TSPCl ent dModule
+ mport com.tw ter.tsp.modules.Top cL st ngModule
+ mport com.tw ter.tsp.modules.Top cSoc alProofStoreModule
+ mport com.tw ter.tsp.modules.Top cT etCos neS m lar yAggregateStoreModule
+ mport com.tw ter.tsp.modules.T et nfoStoreModule
+ mport com.tw ter.tsp.modules.T etyP eCl entModule
+ mport com.tw ter.tsp.modules.UttCl entModule
+ mport com.tw ter.tsp.modules.UttLocal zat onModule
+ mport com.tw ter.ut l.Future
 
-object TopicSocialProofStratoFedServerMain extends TopicSocialProofStratoFedServer
+object Top cSoc alProofStratoFedServerMa n extends Top cSoc alProofStratoFedServer
 
-trait TopicSocialProofStratoFedServer extends StratoFedServer {
-  override def dest: String = "/s/topic-social-proof/topic-social-proof"
+tra  Top cSoc alProofStratoFedServer extends StratoFedServer {
+  overr de def dest: Str ng = "/s/top c-soc al-proof/top c-soc al-proof"
 
-  override val modules: Seq[Module] =
+  overr de val modules: Seq[Module] =
     Seq(
-      GizmoduckUserModule,
-      RepresentationScorerStoreModule,
-      TopicSocialProofStoreModule,
-      TopicListingModule,
-      TopicTweetCosineSimilarityAggregateStoreModule,
-      TSPClientIdModule,
-      TweetInfoStoreModule,
-      TweetyPieClientModule,
-      UttClientModule,
-      UttLocalizationModule
+      G zmoduckUserModule,
+      Representat onScorerStoreModule,
+      Top cSoc alProofStoreModule,
+      Top cL st ngModule,
+      Top cT etCos neS m lar yAggregateStoreModule,
+      TSPCl ent dModule,
+      T et nfoStoreModule,
+      T etyP eCl entModule,
+      UttCl entModule,
+      UttLocal zat onModule
     )
 
-  override def columns: Seq[Class[_ <: StratoFed.Column]] =
+  overr de def columns: Seq[Class[_ <: StratoFed.Column]] =
     Seq(
-      classOf[TopicSocialProofColumn],
-      classOf[TopicSocialProofBatchColumn]
+      classOf[Top cSoc alProofColumn],
+      classOf[Top cSoc alProofBatchColumn]
     )
 
-  override def configureWarmer(warmer: Warmer): Unit = {
-    warmer.add(
-      "uttChildrenWarmupHandler",
+  overr de def conf gureWar r(war r: War r): Un  = {
+    war r.add(
+      "uttCh ldrenWarmupHandler",
       () => {
-        handle[UttChildrenWarmupHandler]()
-        Future.Unit
+        handle[UttCh ldrenWarmupHandler]()
+        Future.Un 
       }
     )
   }

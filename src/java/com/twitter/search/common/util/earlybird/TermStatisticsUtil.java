@@ -1,47 +1,47 @@
-package com.twitter.search.common.util.earlybird;
+package com.tw ter.search.common.ut l.earlyb rd;
 
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.twitter.search.earlybird.thrift.ThriftHistogramSettings;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ft togramSett ngs;
 
 /**
- * A utility class to provide some functions for TermStatistics request processing
+ * A ut l y class to prov de so  funct ons for TermStat st cs request process ng
  */
-public final class TermStatisticsUtil {
+publ c f nal class TermStat st csUt l {
 
-  private static final org.slf4j.Logger LOG =
-      org.slf4j.LoggerFactory.getLogger(TermStatisticsUtil.class);
+  pr vate stat c f nal org.slf4j.Logger LOG =
+      org.slf4j.LoggerFactory.getLogger(TermStat st csUt l.class);
 
-  private TermStatisticsUtil() {
+  pr vate TermStat st csUt l() {
   }
 
   /**
-   * Determine the binsize base on settings in ThriftHistogramSettings.granularity
+   * Determ ne t  b ns ze base on sett ngs  n Thr ft togramSett ngs.granular y
    */
-  public static int determineBinSize(ThriftHistogramSettings histogramSettings) {
-    final int DEFAULT_BINSIZE = (int) TimeUnit.HOURS.toSeconds(1);
-    int binSize;
-    switch (histogramSettings.getGranularity()) {
+  publ c stat c  nt determ neB nS ze(Thr ft togramSett ngs  togramSett ngs) {
+    f nal  nt DEFAULT_B NS ZE = ( nt) T  Un .HOURS.toSeconds(1);
+     nt b nS ze;
+    sw ch ( togramSett ngs.getGranular y()) {
       case DAYS:
-        binSize = (int) TimeUnit.DAYS.toSeconds(1);
+        b nS ze = ( nt) T  Un .DAYS.toSeconds(1);
         break;
       case HOURS:
-        binSize = (int) TimeUnit.HOURS.toSeconds(1);
+        b nS ze = ( nt) T  Un .HOURS.toSeconds(1);
         break;
-      case MINUTES:
-        binSize = (int) TimeUnit.MINUTES.toSeconds(1);
+      case M NUTES:
+        b nS ze = ( nt) T  Un .M NUTES.toSeconds(1);
         break;
       case CUSTOM:
-        binSize = histogramSettings.isSetBinSizeInSeconds()
-                      ? histogramSettings.getBinSizeInSeconds()
-                      : DEFAULT_BINSIZE;
+        b nS ze =  togramSett ngs. sSetB nS ze nSeconds()
+                      ?  togramSett ngs.getB nS ze nSeconds()
+                      : DEFAULT_B NS ZE;
         break;
       default:
-        binSize = DEFAULT_BINSIZE;
-        LOG.warn("Unknown ThriftHistogramGranularityType {} using default binsize: {}",
-                 histogramSettings.getGranularity(), DEFAULT_BINSIZE);
+        b nS ze = DEFAULT_B NS ZE;
+        LOG.warn("Unknown Thr ft togramGranular yType {} us ng default b ns ze: {}",
+                  togramSett ngs.getGranular y(), DEFAULT_B NS ZE);
     }
 
-    return binSize;
+    return b nS ze;
   }
 }

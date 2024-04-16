@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtPassThroughCursor
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.model.cursor.UrtPassThroughCursor
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.cursor.UrtCursorSer al zer
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.CursorType
+ mport com.tw ter.product_m xer.core.p pel ne.HasP pel neCursor
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-case class PassThroughCursorBuilder[
-  -Query <: PipelineQuery with HasPipelineCursor[UrtPassThroughCursor]
+case class PassThroughCursorBu lder[
+  -Query <: P pel neQuery w h HasP pel neCursor[UrtPassThroughCursor]
 ](
-  cursorFeature: Feature[Query, String],
-  override val cursorType: CursorType)
-    extends UrtCursorBuilder[Query] {
+  cursorFeature: Feature[Query, Str ng],
+  overr de val cursorType: CursorType)
+    extends UrtCursorBu lder[Query] {
 
-  override val includeOperation: IncludeInstruction[Query] = { (query, _) =>
-    query.features.exists(_.getOrElse(cursorFeature, "").nonEmpty)
+  overr de val  ncludeOperat on:  nclude nstruct on[Query] = { (query, _) =>
+    query.features.ex sts(_.getOrElse(cursorFeature, "").nonEmpty)
   }
 
-  override def cursorValue(
+  overr de def cursorValue(
     query: Query,
-    entries: Seq[TimelineEntry]
-  ): String =
-    UrtCursorSerializer.serializeCursor(
+    entr es: Seq[T  l neEntry]
+  ): Str ng =
+    UrtCursorSer al zer.ser al zeCursor(
       UrtPassThroughCursor(
-        cursorSortIndex(query, entries),
+        cursorSort ndex(query, entr es),
         query.features.map(_.get(cursorFeature)).getOrElse(""),
-        cursorType = Some(cursorType)
+        cursorType = So (cursorType)
       )
     )
 }

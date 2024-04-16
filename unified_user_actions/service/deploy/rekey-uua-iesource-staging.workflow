@@ -1,39 +1,39 @@
 {
-  "role": "discode",
-  "name": "rekey-uua-iesource-staging",
-  "config-files": [
-    "rekey-uua-iesource.aurora"
+  "role": "d scode",
+  "na ": "rekey-uua- es ce-stag ng",
+  "conf g-f les": [
+    "rekey-uua- es ce.aurora"
   ],
-  "build": {
+  "bu ld": {
     "play": true,
-    "dependencies": [
+    "dependenc es": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "na ": "packer-cl ent-no-pex",
+        "vers on": "latest"
       }
     ],
     "steps": [
       {
         "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:rekey-uua-iesource"
+        "na ": "bundle",
+        "target": "un f ed_user_act ons/serv ce/src/ma n/scala:rekey-uua- es ce"
       },
       {
         "type": "packer",
-        "name": "rekey-uua-iesource-staging",
-        "artifact": "./dist/rekey-uua-iesource.zip"
+        "na ": "rekey-uua- es ce-stag ng",
+        "art fact": "./d st/rekey-uua- es ce.z p"
       }
     ]
   },
   "targets": [
     {
       "type": "group",
-      "name": "staging",
+      "na ": "stag ng",
       "targets": [
         {
-          "name": "rekey-uua-iesource-staging-pdxa",
-          "key": "pdxa/discode/staging/rekey-uua-iesource"
+          "na ": "rekey-uua- es ce-stag ng-pdxa",
+          "key": "pdxa/d scode/stag ng/rekey-uua- es ce"
         }
       ]
     }

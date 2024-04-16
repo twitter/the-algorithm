@@ -1,13 +1,13 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work
 
-trait StoreRegister {
-  def allStores: Set[StoreConfig[_]]
+tra  StoreReg ster {
+  def allStores: Set[StoreConf g[_]]
 
-  lazy val storeMap: Map[AggregateType.Value, StoreConfig[_]] = allStores
+  lazy val storeMap: Map[AggregateType.Value, StoreConf g[_]] = allStores
     .map(store => (store.aggregateType, store))
     .toMap
 
-  lazy val storeNameToTypeMap: Map[String, AggregateType.Value] = allStores
-    .flatMap(store => store.storeNames.map(name => (name, store.aggregateType)))
+  lazy val storeNa ToTypeMap: Map[Str ng, AggregateType.Value] = allStores
+    .flatMap(store => store.storeNa s.map(na  => (na , store.aggregateType)))
     .toMap
 }

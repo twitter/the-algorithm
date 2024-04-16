@@ -1,76 +1,76 @@
-package com.twitter.search.earlybird.tools;
+package com.tw ter.search.earlyb rd.tools;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
+ mport java. o.BufferedReader;
+ mport java. o. OExcept on;
+ mport java.n o.charset.Charset;
+ mport java.n o.f le.F leSystems;
+ mport java.n o.f le.F les;
+ mport java.n o.f le.Path;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.thrift.TDeserializer;
-import org.apache.thrift.TException;
+ mport org.apac .commons.codec.b nary.Base64;
+ mport org.apac .thr ft.TDeser al zer;
+ mport org.apac .thr ft.TExcept on;
 
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
 
 /**
  *
- * This tool deserializes the collected thrift requests into human readable format.
+ * T  tool deser al zes t  collected thr ft requests  nto human readable format.
  *
- * Takes zero or one parameter: path to the thrift request log file.
+ * Takes zero or one para ter: path to t  thr ft request log f le.
  *
- * To run: Launch main from IntelliJ / Eclipse.
+ * To run: Launch ma n from  ntell J / Ecl pse.
  */
-public final class EarlybirdThriftRequestDeserializerUtil {
-  private static final String DEFAULT_LOG_FILE_LOCATION = "/tmp/eb_req.B64";
-  // Not threadsafe. Single thread main().
-  private static final Base64 B64 = new Base64(0);
-  private static final TDeserializer DESERIALIZER = new TDeserializer();
+publ c f nal class Earlyb rdThr ftRequestDeser al zerUt l {
+  pr vate stat c f nal Str ng DEFAULT_LOG_F LE_LOCAT ON = "/tmp/eb_req.B64";
+  // Not threadsafe. S ngle thread ma n().
+  pr vate stat c f nal Base64 B64 = new Base64(0);
+  pr vate stat c f nal TDeser al zer DESER AL ZER = new TDeser al zer();
 
-  private EarlybirdThriftRequestDeserializerUtil() {
+  pr vate Earlyb rdThr ftRequestDeser al zerUt l() {
   }
 
   /**
-   * Runs the EarlybirdThriftRequestDeserializerUtil tool with the given command-line arguments.
+   * Runs t  Earlyb rdThr ftRequestDeser al zerUt l tool w h t  g ven command-l ne argu nts.
    */
-  public static void main(String[] args) throws IOException {
-    Path logFile = null;
-    if (args.length == 1) {
-      logFile = FileSystems.getDefault().getPath(args[0]);
-    } else if (args.length == 0) {
-      logFile = FileSystems.getDefault().getPath(DEFAULT_LOG_FILE_LOCATION);
+  publ c stat c vo d ma n(Str ng[] args) throws  OExcept on {
+    Path logF le = null;
+     f (args.length == 1) {
+      logF le = F leSystems.getDefault().getPath(args[0]);
+    } else  f (args.length == 0) {
+      logF le = F leSystems.getDefault().getPath(DEFAULT_LOG_F LE_LOCAT ON);
     } else {
-      System.err.println("Usage: takes zero or one parameter (log file path). "
-          + "If no log file is specified, " + DEFAULT_LOG_FILE_LOCATION + " is used.");
-      //CHECKSTYLE:OFF RegexpSinglelineJava
-      System.exit(-1);
-      //CHECKSTYLE:ON RegexpSinglelineJava
+      System.err.pr ntln("Usage: takes zero or one para ter (log f le path). "
+          + " f no log f le  s spec f ed, " + DEFAULT_LOG_F LE_LOCAT ON + "  s used.");
+      //CHECKSTYLE:OFF RegexpS nglel neJava
+      System.ex (-1);
+      //CHECKSTYLE:ON RegexpS nglel neJava
     }
-    Preconditions.checkState(logFile.toFile().exists());
+    Precond  ons.c ckState(logF le.toF le().ex sts());
 
-    BufferedReader reader = Files.newBufferedReader(logFile, Charset.defaultCharset());
+    BufferedReader reader = F les.newBufferedReader(logF le, Charset.defaultCharset());
     try {
-      String line;
-      while ((line = reader.readLine()) != null) {
-        EarlybirdRequest ebRequest = deserializeEBRequest(line);
-        if (ebRequest != null) {
-          System.out.println(ebRequest);
+      Str ng l ne;
+      wh le ((l ne = reader.readL ne()) != null) {
+        Earlyb rdRequest ebRequest = deser al zeEBRequest(l ne);
+         f (ebRequest != null) {
+          System.out.pr ntln(ebRequest);
         }
       }
-    } finally {
+    } f nally {
       reader.close();
     }
   }
 
-  private static EarlybirdRequest deserializeEBRequest(String line) {
-    EarlybirdRequest ebRequest = new EarlybirdRequest();
-    byte[] bytes = B64.decode(line);
+  pr vate stat c Earlyb rdRequest deser al zeEBRequest(Str ng l ne) {
+    Earlyb rdRequest ebRequest = new Earlyb rdRequest();
+    byte[] bytes = B64.decode(l ne);
     try {
-      DESERIALIZER.deserialize(ebRequest, bytes);
-    } catch (TException e) {
-      System.err.println("Error deserializing thrift.");
+      DESER AL ZER.deser al ze(ebRequest, bytes);
+    } catch (TExcept on e) {
+      System.err.pr ntln("Error deser al z ng thr ft.");
     }
     return ebRequest;
   }

@@ -1,70 +1,70 @@
-package com.twitter.search.ingester.util.jndi;
+package com.tw ter.search. ngester.ut l.jnd ;
 
-import java.util.Hashtable;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameNotFoundException;
+ mport java.ut l.Hashtable;
+ mport javax.nam ng.Context;
+ mport javax.nam ng. n  alContext;
+ mport javax.nam ng.Na NotFoundExcept on;
 
-import org.apache.naming.config.XmlConfigurator;
+ mport org.apac .nam ng.conf g.XmlConf gurator;
 
-public abstract class JndiUtil {
-  // This is different from the search repo---twitter-naming-devtest.xml is
-  // checked in as a resource in src/resources/com/twitter/search/ingester.
-  public static final String DEFAULT_JNDI_XML =
-      System.getProperty("jndiXml", "/com/twitter/search/ingester/twitter-naming-devtest.xml");
-  protected static String jndiXml = DEFAULT_JNDI_XML;
-  protected static boolean testingMode = false;
+publ c abstract class Jnd Ut l {
+  // T   s d fferent from t  search repo---tw ter-nam ng-devtest.xml  s
+  // c cked  n as a res ce  n src/res ces/com/tw ter/search/ ngester.
+  publ c stat c f nal Str ng DEFAULT_JND _XML =
+      System.getProperty("jnd Xml", "/com/tw ter/search/ ngester/tw ter-nam ng-devtest.xml");
+  protected stat c Str ng jnd Xml = DEFAULT_JND _XML;
+  protected stat c boolean test ngMode = false;
 
-  static {
+  stat c {
     System.setProperty("javax.xml.parsers.SAXParserFactory",
-        "org.apache.xerces.jaxp.SAXParserFactoryImpl");
-    System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
-        "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl");
+        "org.apac .xerces.jaxp.SAXParserFactory mpl");
+    System.setProperty("javax.xml.parsers.Docu ntBu lderFactory",
+        "com.sun.org.apac .xerces. nternal.jaxp.Docu ntBu lderFactory mpl");
   }
 
-  public static void loadJNDI() {
-    loadJNDI(jndiXml);
+  publ c stat c vo d loadJND () {
+    loadJND (jnd Xml);
   }
 
-  protected static void loadJNDI(String jndiXmlFile) {
+  protected stat c vo d loadJND (Str ng jnd XmlF le) {
     try {
-      Hashtable<String, String> props = new Hashtable<>();
-      props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
-      Context jndiContext = new InitialContext(props);
+      Hashtable<Str ng, Str ng> props = new Hashtable<>();
+      props.put(Context. N T AL_CONTEXT_FACTORY, "org.apac .nam ng.java.javaURLContextFactory");
+      Context jnd Context = new  n  alContext(props);
       try {
-        jndiContext.lookup("java:comp");
-        setTestingModeFromJndiContext(jndiContext);
-      } catch (NameNotFoundException e) {
+        jnd Context.lookup("java:comp");
+        setTest ngModeFromJnd Context(jnd Context);
+      } catch (Na NotFoundExcept on e) {
         // No context.
-        XmlConfigurator.loadConfiguration(JndiUtil.class.getResourceAsStream(jndiXmlFile));
+        XmlConf gurator.loadConf gurat on(Jnd Ut l.class.getRes ceAsStream(jnd XmlF le));
       }
-    } catch (Exception e) {
-      throw new RuntimeException(String.format("Failed to load JNDI configuration file=%s %s",
-          jndiXmlFile, e.getMessage()), e);
+    } catch (Except on e) {
+      throw new Runt  Except on(Str ng.format("Fa led to load JND  conf gurat on f le=%s %s",
+          jnd XmlF le, e.get ssage()), e);
     }
   }
 
-  public static void setJndiXml(String jndiXml) {
-    JndiUtil.jndiXml = jndiXml;
+  publ c stat c vo d setJnd Xml(Str ng jnd Xml) {
+    Jnd Ut l.jnd Xml = jnd Xml;
   }
 
-  public static String getJndiXml() {
-    return jndiXml;
+  publ c stat c Str ng getJnd Xml() {
+    return jnd Xml;
   }
 
-  public static void setTestingMode(Boolean testingMode) {
-     JndiUtil.testingMode = testingMode;
+  publ c stat c vo d setTest ngMode(Boolean test ngMode) {
+     Jnd Ut l.test ngMode = test ngMode;
   }
 
-  public static boolean isTestingMode() {
-    return testingMode;
+  publ c stat c boolean  sTest ngMode() {
+    return test ngMode;
   }
 
-  private static void setTestingModeFromJndiContext(Context jndiContext) {
+  pr vate stat c vo d setTest ngModeFromJnd Context(Context jnd Context) {
     try {
-      setTestingMode((Boolean) jndiContext.lookup("java:comp/env/testingMode"));
-    } catch (Exception e) {
-      setTestingMode(false);
+      setTest ngMode((Boolean) jnd Context.lookup("java:comp/env/test ngMode"));
+    } catch (Except on e) {
+      setTest ngMode(false);
     }
   }
 }

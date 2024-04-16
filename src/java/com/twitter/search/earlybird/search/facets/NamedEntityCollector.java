@@ -1,49 +1,49 @@
-package com.twitter.search.earlybird.search.facets;
+package com.tw ter.search.earlyb rd.search.facets;
 
-import java.util.List;
-import java.util.Map;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
+ mport com.google.common.collect. mmutableL st;
+ mport com.google.common.collect. mmutableMap;
+ mport com.google.common.collect.L sts;
 
-import org.apache.commons.lang.StringUtils;
+ mport org.apac .commons.lang.Str ngUt ls;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.earlybird.thrift.NamedEntitySource;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultNamedEntity;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.earlyb rd.thr ft.Na dEnt yS ce;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultNa dEnt y;
 
-public class NamedEntityCollector extends AbstractFacetTermCollector {
-  private static final Map<String, NamedEntitySource> NAMED_ENTITY_WITH_TYPE_FIELDS =
-      ImmutableMap.of(
-          EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_TEXT_FIELD.getFieldName(),
-          NamedEntitySource.TEXT,
-          EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_URL_FIELD.getFieldName(),
-          NamedEntitySource.URL);
+publ c class Na dEnt yCollector extends AbstractFacetTermCollector {
+  pr vate stat c f nal Map<Str ng, Na dEnt yS ce> NAMED_ENT TY_W TH_TYPE_F ELDS =
+       mmutableMap.of(
+          Earlyb rdF eldConstant.NAMED_ENT TY_W TH_TYPE_FROM_TEXT_F ELD.getF eldNa (),
+          Na dEnt yS ce.TEXT,
+          Earlyb rdF eldConstant.NAMED_ENT TY_W TH_TYPE_FROM_URL_F ELD.getF eldNa (),
+          Na dEnt yS ce.URL);
 
-  private List<ThriftSearchResultNamedEntity> namedEntities = Lists.newArrayList();
+  pr vate L st<Thr ftSearchResultNa dEnt y> na dEnt  es = L sts.newArrayL st();
 
-  @Override
-  public boolean collect(int docID, long termID, int fieldID) {
+  @Overr de
+  publ c boolean collect( nt doc D, long term D,  nt f eld D) {
 
-    String term = getTermFromFacet(termID, fieldID, NAMED_ENTITY_WITH_TYPE_FIELDS.keySet());
-    if (StringUtils.isEmpty(term)) {
+    Str ng term = getTermFromFacet(term D, f eld D, NAMED_ENT TY_W TH_TYPE_F ELDS.keySet());
+     f (Str ngUt ls. sEmpty(term)) {
       return false;
     }
 
-    int index = term.lastIndexOf(":");
-    namedEntities.add(new ThriftSearchResultNamedEntity(
-        term.substring(0, index),
-        term.substring(index + 1),
-        NAMED_ENTITY_WITH_TYPE_FIELDS.get(findFacetName(fieldID))));
+     nt  ndex = term.last ndexOf(":");
+    na dEnt  es.add(new Thr ftSearchResultNa dEnt y(
+        term.substr ng(0,  ndex),
+        term.substr ng( ndex + 1),
+        NAMED_ENT TY_W TH_TYPE_F ELDS.get(f ndFacetNa (f eld D))));
 
     return true;
   }
 
-  @Override
-  public void fillResultAndClear(ThriftSearchResult result) {
-    getExtraMetadata(result).setNamedEntities(ImmutableList.copyOf(namedEntities));
-    namedEntities.clear();
+  @Overr de
+  publ c vo d f llResultAndClear(Thr ftSearchResult result) {
+    getExtra tadata(result).setNa dEnt  es( mmutableL st.copyOf(na dEnt  es));
+    na dEnt  es.clear();
   }
 }

@@ -1,49 +1,49 @@
-package com.twitter.servo.util
+package com.tw ter.servo.ut l
 
-import com.twitter.finagle.stats.{NullStatsReceiver, StatsReceiver}
-import scala.collection.mutable
+ mport com.tw ter.f nagle.stats.{NullStatsRece ver, StatsRece ver}
+ mport scala.collect on.mutable
 
 /**
- * Maintains a frequency counted circular buffer of objects.
+ * Ma nta ns a frequency counted c rcular buffer of objects.
  */
 class FrequencyCounter[Q](
-  size: Int,
-  threshold: Int,
-  trigger: Q => Unit,
-  statsReceiver: StatsReceiver = NullStatsReceiver) {
-  require(threshold > 1) // in order to minimize work for the common case
-  private[this] val buffer = new mutable.ArraySeq[Q](size)
-  private[this] var index = 0
-  private[this] val counts = mutable.Map[Q, Int]()
+  s ze:  nt,
+  threshold:  nt,
+  tr gger: Q => Un ,
+  statsRece ver: StatsRece ver = NullStatsRece ver) {
+  requ re(threshold > 1) //  n order to m n m ze work for t  common case
+  pr vate[t ] val buffer = new mutable.ArraySeq[Q](s ze)
+  pr vate[t ] var  ndex = 0
+  pr vate[t ] val counts = mutable.Map[Q,  nt]()
 
-  private[this] val keyCountStat = statsReceiver.scope("frequencyCounter").stat("keyCount")
+  pr vate[t ] val keyCountStat = statsRece ver.scope("frequencyCounter").stat("keyCount")
 
   /**
-   * Adds a new key to the circular buffer and updates frequency counts.
-   * Runs trigger if this key occurs exactly `threshold` times in the buffer.
-   * Returns true if this key occurs at least `threshold` times in the buffer.
+   * Adds a new key to t  c rcular buffer and updates frequency counts.
+   * Runs tr gger  f t  key occurs exactly `threshold` t  s  n t  buffer.
+   * Returns true  f t  key occurs at least `threshold` t  s  n t  buffer.
    */
-  def incr(key: Q): Boolean = {
-    // TOOD(aa): maybe write lock-free version
-    val count = synchronized {
+  def  ncr(key: Q): Boolean = {
+    // TOOD(aa): maybe wr e lock-free vers on
+    val count = synchron zed {
       counts(key) = counts.getOrElse(key, 0) + 1
 
-      Option(buffer(index)) foreach { oldKey =>
+      Opt on(buffer( ndex)) foreach { oldKey =>
         val countVal = counts(oldKey)
-        if (countVal == 1) {
+         f (countVal == 1) {
           counts -= oldKey
         } else {
           counts(oldKey) = countVal - 1
         }
       }
 
-      buffer(index) = key
-      index = (index + 1) % size
+      buffer( ndex) = key
+       ndex = ( ndex + 1) % s ze
       counts(key)
     }
     keyCountStat.add(count)
-    if (count == threshold) {
-      trigger(key)
+     f (count == threshold) {
+      tr gger(key)
     }
     count >= threshold
   }

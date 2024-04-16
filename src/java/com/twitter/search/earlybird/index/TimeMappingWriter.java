@@ -1,32 +1,32 @@
-package com.twitter.search.earlybird.index;
+package com.tw ter.search.earlyb rd. ndex;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.apache.lucene.util.AttributeSource;
+ mport org.apac .lucene.ut l.Attr buteS ce;
 
-import com.twitter.search.common.util.analysis.IntTermAttribute;
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentWriter;
+ mport com.tw ter.search.common.ut l.analys s. ntTermAttr bute;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rdRealt   ndexSeg ntWr er;
 
-public class TimeMappingWriter implements EarlybirdRealtimeIndexSegmentWriter.InvertedDocConsumer {
-  private IntTermAttribute termAtt;
-  private final RealtimeTimeMapper mapper;
+publ c class T  Mapp ngWr er  mple nts Earlyb rdRealt   ndexSeg ntWr er. nvertedDocConsu r {
+  pr vate  ntTermAttr bute termAtt;
+  pr vate f nal Realt  T  Mapper mapper;
 
-  public TimeMappingWriter(RealtimeTimeMapper mapper) {
-    this.mapper = mapper;
+  publ c T  Mapp ngWr er(Realt  T  Mapper mapper) {
+    t .mapper = mapper;
   }
 
-  @Override
-  public final void start(AttributeSource attributeSource, boolean currentDocIsOffensive) {
-    termAtt = attributeSource.addAttribute(IntTermAttribute.class);
+  @Overr de
+  publ c f nal vo d start(Attr buteS ce attr buteS ce, boolean currentDoc sOffens ve) {
+    termAtt = attr buteS ce.addAttr bute( ntTermAttr bute.class);
   }
 
-  @Override
-  public final void add(int docId, int position) throws IOException {
-    final int timeSec = termAtt.getTerm();
-    mapper.addMapping(docId, timeSec);
+  @Overr de
+  publ c f nal vo d add( nt doc d,  nt pos  on) throws  OExcept on {
+    f nal  nt t  Sec = termAtt.getTerm();
+    mapper.addMapp ng(doc d, t  Sec);
   }
 
-  @Override
-  public void finish() {
+  @Overr de
+  publ c vo d f n sh() {
   }
 }

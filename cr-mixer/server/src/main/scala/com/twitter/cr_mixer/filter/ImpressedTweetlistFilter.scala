@@ -1,63 +1,63 @@
-package com.twitter.cr_mixer.filter
+package com.tw ter.cr_m xer.f lter
 
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.util.Future
-import javax.inject.Singleton
+ mport com.tw ter.cr_m xer.model.Cand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model. n  alCand date
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.ut l.Future
+ mport javax. nject.S ngleton
 
-@Singleton
-case class ImpressedTweetlistFilter() extends FilterBase {
-  import ImpressedTweetlistFilter._
+@S ngleton
+case class  mpressedT etl stF lter() extends F lterBase {
+   mport  mpressedT etl stF lter._
 
-  override val name: String = this.getClass.getCanonicalName
+  overr de val na : Str ng = t .getClass.getCanon calNa 
 
-  override type ConfigType = FilterConfig
+  overr de type Conf gType = F lterConf g
 
   /*
-   Filtering removes some candidates based on configurable criteria.
+   F lter ng removes so  cand dates based on conf gurable cr er a.
    */
-  override def filter(
-    candidates: Seq[Seq[InitialCandidate]],
-    config: FilterConfig
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    // Remove candidates which match a source tweet, or which are passed in impressedTweetList
-    val sourceTweetsMatch = candidates
+  overr de def f lter(
+    cand dates: Seq[Seq[ n  alCand date]],
+    conf g: F lterConf g
+  ): Future[Seq[Seq[ n  alCand date]]] = {
+    // Remove cand dates wh ch match a s ce t et, or wh ch are passed  n  mpressedT etL st
+    val s ceT etsMatch = cand dates
       .flatMap {
 
         /***
-         * Within a Seq[Seq[InitialCandidate]], all candidates within a inner Seq
-         * are guaranteed to have the same sourceInfo. Hence, we can pick .headOption
-         * to represent the whole list when filtering by the internalId of the sourceInfoOpt.
-         * But of course the similarityEngineInfo could be different.
+         * W h n a Seq[Seq[ n  alCand date]], all cand dates w h n a  nner Seq
+         * are guaranteed to have t  sa  s ce nfo.  nce,   can p ck . adOpt on
+         * to represent t  whole l st w n f lter ng by t   nternal d of t  s ce nfoOpt.
+         * But of c se t  s m lar yEng ne nfo could be d fferent.
          */
-        _.headOption.flatMap { candidate =>
-          candidate.candidateGenerationInfo.sourceInfoOpt.map(_.internalId)
+        _. adOpt on.flatMap { cand date =>
+          cand date.cand dateGenerat on nfo.s ce nfoOpt.map(_. nternal d)
         }
       }.collect {
-        case InternalId.TweetId(id) => id
+        case  nternal d.T et d( d) =>  d
       }
 
-    val impressedTweetList: Set[TweetId] =
-      config.impressedTweetList ++ sourceTweetsMatch
+    val  mpressedT etL st: Set[T et d] =
+      conf g. mpressedT etL st ++ s ceT etsMatch
 
-    val filteredCandidateMap: Seq[Seq[InitialCandidate]] =
-      candidates.map {
-        _.filterNot { candidate =>
-          impressedTweetList.contains(candidate.tweetId)
+    val f lteredCand dateMap: Seq[Seq[ n  alCand date]] =
+      cand dates.map {
+        _.f lterNot { cand date =>
+           mpressedT etL st.conta ns(cand date.t et d)
         }
       }
-    Future.value(filteredCandidateMap)
+    Future.value(f lteredCand dateMap)
   }
 
-  override def requestToConfig[CGQueryType <: CandidateGeneratorQuery](
+  overr de def requestToConf g[CGQueryType <: Cand dateGeneratorQuery](
     request: CGQueryType
-  ): FilterConfig = {
-    FilterConfig(request.impressedTweetList)
+  ): F lterConf g = {
+    F lterConf g(request. mpressedT etL st)
   }
 }
 
-object ImpressedTweetlistFilter {
-  case class FilterConfig(impressedTweetList: Set[TweetId])
+object  mpressedT etl stF lter {
+  case class F lterConf g( mpressedT etL st: Set[T et d])
 }

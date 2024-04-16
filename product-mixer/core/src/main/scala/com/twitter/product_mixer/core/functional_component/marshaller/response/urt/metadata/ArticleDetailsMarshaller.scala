@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ArticleDetails
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Art cleDeta ls
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ArticleDetailsMarshaller @Inject() () {
+@S ngleton
+class Art cleDeta lsMarshaller @ nject() () {
 
-  def apply(articleDetails: ArticleDetails): urt.ArticleDetails = urt.ArticleDetails(
-    articlePosition = articleDetails.articlePosition,
-    shareCount = articleDetails.shareCount
+  def apply(art cleDeta ls: Art cleDeta ls): urt.Art cleDeta ls = urt.Art cleDeta ls(
+    art clePos  on = art cleDeta ls.art clePos  on,
+    shareCount = art cleDeta ls.shareCount
   )
 }

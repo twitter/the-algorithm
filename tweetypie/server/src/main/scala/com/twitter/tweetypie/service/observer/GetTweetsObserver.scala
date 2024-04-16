@@ -1,16 +1,16 @@
-package com.twitter.tweetypie
-package service
+package com.tw ter.t etyp e
+package serv ce
 package observer
 
-import com.twitter.servo.exception.thriftscala.ClientError
-import com.twitter.tweetypie.thriftscala.GetTweetOptions
-import com.twitter.tweetypie.thriftscala.GetTweetResult
-import com.twitter.tweetypie.thriftscala.GetTweetsRequest
+ mport com.tw ter.servo.except on.thr ftscala.Cl entError
+ mport com.tw ter.t etyp e.thr ftscala.GetT etOpt ons
+ mport com.tw ter.t etyp e.thr ftscala.GetT etResult
+ mport com.tw ter.t etyp e.thr ftscala.GetT etsRequest
 
-private[service] object GetTweetsObserver {
-  type Type = ObserveExchange[GetTweetsRequest, Seq[GetTweetResult]]
+pr vate[serv ce] object GetT etsObserver {
+  type Type = ObserveExchange[GetT etsRequest, Seq[GetT etResult]]
 
-  def observeExchange(stats: StatsReceiver): Effect[Type] = {
+  def observeExchange(stats: StatsRece ver): Effect[Type] = {
     val resultStateStats = ResultStateStats(stats)
 
     Effect {
@@ -18,102 +18,102 @@ private[service] object GetTweetsObserver {
         response match {
           case Return(xs) =>
             xs.foreach {
-              case result if Observer.successStatusStates(result.tweetState) =>
+              case result  f Observer.successStatusStates(result.t etState) =>
                 resultStateStats.success()
               case _ =>
-                resultStateStats.failed()
+                resultStateStats.fa led()
             }
-          case Throw(ClientError(_)) =>
-            resultStateStats.success(request.tweetIds.size)
+          case Throw(Cl entError(_)) =>
+            resultStateStats.success(request.t et ds.s ze)
           case Throw(_) =>
-            resultStateStats.failed(request.tweetIds.size)
+            resultStateStats.fa led(request.t et ds.s ze)
         }
     }
   }
 
-  def observeResults(stats: StatsReceiver, byClient: Boolean): Effect[Seq[GetTweetResult]] =
-    countStates(stats).also(countTweetReadAttributes(stats, byClient))
+  def observeResults(stats: StatsRece ver, byCl ent: Boolean): Effect[Seq[GetT etResult]] =
+    countStates(stats).also(countT etReadAttr butes(stats, byCl ent))
 
-  def observeRequest(stats: StatsReceiver, byClient: Boolean): Effect[GetTweetsRequest] = {
-    val requestSizeStat = stats.stat("request_size")
-    val optionsScope = stats.scope("options")
-    val languageScope = optionsScope.scope("language")
-    val includeSourceTweetCounter = optionsScope.counter("source_tweet")
-    val includeQuotedTweetCounter = optionsScope.counter("quoted_tweet")
-    val includePerspectiveCounter = optionsScope.counter("perspective")
-    val includeConversationMutedCounter = optionsScope.counter("conversation_muted")
-    val includePlacesCounter = optionsScope.counter("places")
-    val includeCardsCounter = optionsScope.counter("cards")
-    val includeRetweetCountsCounter = optionsScope.counter("retweet_counts")
-    val includeReplyCountsCounter = optionsScope.counter("reply_counts")
-    val includeFavoriteCountsCounter = optionsScope.counter("favorite_counts")
-    val includeQuoteCountsCounter = optionsScope.counter("quote_counts")
-    val bypassVisibilityFilteringCounter = optionsScope.counter("bypass_visibility_filtering")
-    val excludeReportedCounter = optionsScope.counter("exclude_reported")
-    val cardsPlatformKeyScope = optionsScope.scope("cards_platform_key")
-    val extensionsArgsCounter = optionsScope.counter("extensions_args")
-    val doNotCacheCounter = optionsScope.counter("do_not_cache")
-    val additionalFieldsScope = optionsScope.scope("additional_fields")
-    val safetyLevelScope = optionsScope.scope("safety_level")
-    val includeProfileGeoEnrichment = optionsScope.counter("profile_geo_enrichment")
-    val includeMediaAdditionalMetadata = optionsScope.counter("media_additional_metadata")
-    val simpleQuotedTweet = optionsScope.counter("simple_quoted_tweet")
-    val forUserIdCounter = optionsScope.counter("for_user_id")
+  def observeRequest(stats: StatsRece ver, byCl ent: Boolean): Effect[GetT etsRequest] = {
+    val requestS zeStat = stats.stat("request_s ze")
+    val opt onsScope = stats.scope("opt ons")
+    val languageScope = opt onsScope.scope("language")
+    val  ncludeS ceT etCounter = opt onsScope.counter("s ce_t et")
+    val  ncludeQuotedT etCounter = opt onsScope.counter("quoted_t et")
+    val  ncludePerspect veCounter = opt onsScope.counter("perspect ve")
+    val  ncludeConversat onMutedCounter = opt onsScope.counter("conversat on_muted")
+    val  ncludePlacesCounter = opt onsScope.counter("places")
+    val  ncludeCardsCounter = opt onsScope.counter("cards")
+    val  ncludeRet etCountsCounter = opt onsScope.counter("ret et_counts")
+    val  ncludeReplyCountsCounter = opt onsScope.counter("reply_counts")
+    val  ncludeFavor eCountsCounter = opt onsScope.counter("favor e_counts")
+    val  ncludeQuoteCountsCounter = opt onsScope.counter("quote_counts")
+    val bypassV s b l yF lter ngCounter = opt onsScope.counter("bypass_v s b l y_f lter ng")
+    val excludeReportedCounter = opt onsScope.counter("exclude_reported")
+    val cardsPlatformKeyScope = opt onsScope.scope("cards_platform_key")
+    val extens onsArgsCounter = opt onsScope.counter("extens ons_args")
+    val doNotCac Counter = opt onsScope.counter("do_not_cac ")
+    val add  onalF eldsScope = opt onsScope.scope("add  onal_f elds")
+    val safetyLevelScope = opt onsScope.scope("safety_level")
+    val  ncludeProf leGeoEnr ch nt = opt onsScope.counter("prof le_geo_enr ch nt")
+    val  nclude d aAdd  onal tadata = opt onsScope.counter(" d a_add  onal_ tadata")
+    val s mpleQuotedT et = opt onsScope.counter("s mple_quoted_t et")
+    val forUser dCounter = opt onsScope.counter("for_user_ d")
 
-    def includesPerspectivals(options: GetTweetOptions) =
-      options.includePerspectivals && options.forUserId.nonEmpty
+    def  ncludesPerspect vals(opt ons: GetT etOpt ons) =
+      opt ons. ncludePerspect vals && opt ons.forUser d.nonEmpty
 
     Effect {
-      case GetTweetsRequest(tweetIds, _, Some(options), _) =>
-        requestSizeStat.add(tweetIds.size)
-        if (!byClient) languageScope.counter(options.languageTag).incr()
-        if (options.includeSourceTweet) includeSourceTweetCounter.incr()
-        if (options.includeQuotedTweet) includeQuotedTweetCounter.incr()
-        if (includesPerspectivals(options)) includePerspectiveCounter.incr()
-        if (options.includeConversationMuted) includeConversationMutedCounter.incr()
-        if (options.includePlaces) includePlacesCounter.incr()
-        if (options.includeCards) includeCardsCounter.incr()
-        if (options.includeRetweetCount) includeRetweetCountsCounter.incr()
-        if (options.includeReplyCount) includeReplyCountsCounter.incr()
-        if (options.includeFavoriteCount) includeFavoriteCountsCounter.incr()
-        if (options.includeQuoteCount) includeQuoteCountsCounter.incr()
-        if (options.bypassVisibilityFiltering) bypassVisibilityFilteringCounter.incr()
-        if (options.excludeReported) excludeReportedCounter.incr()
-        if (options.extensionsArgs.nonEmpty) extensionsArgsCounter.incr()
-        if (options.doNotCache) doNotCacheCounter.incr()
-        if (options.includeProfileGeoEnrichment) includeProfileGeoEnrichment.incr()
-        if (options.includeMediaAdditionalMetadata) includeMediaAdditionalMetadata.incr()
-        if (options.simpleQuotedTweet) simpleQuotedTweet.incr()
-        if (options.forUserId.nonEmpty) forUserIdCounter.incr()
-        if (!byClient) {
-          options.cardsPlatformKey.foreach { cardsPlatformKey =>
-            cardsPlatformKeyScope.counter(cardsPlatformKey).incr()
+      case GetT etsRequest(t et ds, _, So (opt ons), _) =>
+        requestS zeStat.add(t et ds.s ze)
+         f (!byCl ent) languageScope.counter(opt ons.languageTag). ncr()
+         f (opt ons. ncludeS ceT et)  ncludeS ceT etCounter. ncr()
+         f (opt ons. ncludeQuotedT et)  ncludeQuotedT etCounter. ncr()
+         f ( ncludesPerspect vals(opt ons))  ncludePerspect veCounter. ncr()
+         f (opt ons. ncludeConversat onMuted)  ncludeConversat onMutedCounter. ncr()
+         f (opt ons. ncludePlaces)  ncludePlacesCounter. ncr()
+         f (opt ons. ncludeCards)  ncludeCardsCounter. ncr()
+         f (opt ons. ncludeRet etCount)  ncludeRet etCountsCounter. ncr()
+         f (opt ons. ncludeReplyCount)  ncludeReplyCountsCounter. ncr()
+         f (opt ons. ncludeFavor eCount)  ncludeFavor eCountsCounter. ncr()
+         f (opt ons. ncludeQuoteCount)  ncludeQuoteCountsCounter. ncr()
+         f (opt ons.bypassV s b l yF lter ng) bypassV s b l yF lter ngCounter. ncr()
+         f (opt ons.excludeReported) excludeReportedCounter. ncr()
+         f (opt ons.extens onsArgs.nonEmpty) extens onsArgsCounter. ncr()
+         f (opt ons.doNotCac ) doNotCac Counter. ncr()
+         f (opt ons. ncludeProf leGeoEnr ch nt)  ncludeProf leGeoEnr ch nt. ncr()
+         f (opt ons. nclude d aAdd  onal tadata)  nclude d aAdd  onal tadata. ncr()
+         f (opt ons.s mpleQuotedT et) s mpleQuotedT et. ncr()
+         f (opt ons.forUser d.nonEmpty) forUser dCounter. ncr()
+         f (!byCl ent) {
+          opt ons.cardsPlatformKey.foreach { cardsPlatformKey =>
+            cardsPlatformKeyScope.counter(cardsPlatformKey). ncr()
           }
         }
-        options.additionalFieldIds.foreach { id =>
-          additionalFieldsScope.counter(id.toString).incr()
+        opt ons.add  onalF eld ds.foreach {  d =>
+          add  onalF eldsScope.counter( d.toStr ng). ncr()
         }
-        options.safetyLevel.foreach { level => safetyLevelScope.counter(level.toString).incr() }
+        opt ons.safetyLevel.foreach { level => safetyLevelScope.counter(level.toStr ng). ncr() }
     }
   }
 
   /**
-   * We count the number of times each tweet state is returned as a
-   * general measure of the health of TweetyPie. partial and not_found
-   * tweet states should be close to zero.
+   *   count t  number of t  s each t et state  s returned as a
+   * general  asure of t   alth of T etyP e. part al and not_found
+   * t et states should be close to zero.
    */
-  private def countStates(stats: StatsReceiver): Effect[Seq[GetTweetResult]] = {
+  pr vate def countStates(stats: StatsRece ver): Effect[Seq[GetT etResult]] = {
     val state = Observer.observeStatusStates(stats)
-    Effect { results => results.foreach { tweetResult => state(tweetResult.tweetState) } }
+    Effect { results => results.foreach { t etResult => state(t etResult.t etState) } }
   }
 
-  private def countTweetReadAttributes(
-    stats: StatsReceiver,
-    byClient: Boolean
-  ): Effect[Seq[GetTweetResult]] = {
-    val tweetObserver = Observer.countTweetAttributes(stats, byClient)
+  pr vate def countT etReadAttr butes(
+    stats: StatsRece ver,
+    byCl ent: Boolean
+  ): Effect[Seq[GetT etResult]] = {
+    val t etObserver = Observer.countT etAttr butes(stats, byCl ent)
     Effect { results =>
-      results.foreach { tweetResult => tweetResult.tweet.foreach(tweetObserver) }
+      results.foreach { t etResult => t etResult.t et.foreach(t etObserver) }
     }
   }
 

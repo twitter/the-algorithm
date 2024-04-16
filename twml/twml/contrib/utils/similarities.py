@@ -1,17 +1,17 @@
-import tensorflow.compat.v1 as tf
+ mport tensorflow.compat.v1 as tf
 
 
-def cosine_similarity(x1, x2, axis):
+def cos ne_s m lar y(x1, x2, ax s):
   """
-  cosine similarity of two tensors.
+  cos ne s m lar y of two tensors.
 
-  Arguments:
+  Argu nts:
     x1:
       A tf.Tensor
     x2:
       A tf.Tensor
-    axis: Dimension along which to normalize.
+    ax s: D  ns on along wh ch to normal ze.
   """
-  normalize_x1 = tf.nn.l2_normalize(x1, axis=axis)
-  normalize_x2 = tf.nn.l2_normalize(x2, axis=axis)
-  return tf.reduce_sum(tf.multiply(normalize_x1, normalize_x2), axis=axis)
+  normal ze_x1 = tf.nn.l2_normal ze(x1, ax s=ax s)
+  normal ze_x2 = tf.nn.l2_normal ze(x2, ax s=ax s)
+  return tf.reduce_sum(tf.mult ply(normal ze_x1, normal ze_x2), ax s=ax s)

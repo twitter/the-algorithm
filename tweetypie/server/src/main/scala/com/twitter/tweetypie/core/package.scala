@@ -1,5 +1,5 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 
 package object core {
-  type TweetResult = ValueState[TweetData]
+  type T etResult = ValueState[T etData]
 }

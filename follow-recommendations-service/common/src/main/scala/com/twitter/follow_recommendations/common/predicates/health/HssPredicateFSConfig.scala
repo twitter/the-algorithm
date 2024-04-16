@@ -1,22 +1,22 @@
-package com.twitter.follow_recommendations.common.predicates.hss
+package com.tw ter.follow_recom ndat ons.common.pred cates.hss
 
-import com.twitter.follow_recommendations.common.predicates.hss.HssPredicateParams._
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.util.Duration
+ mport com.tw ter.follow_recom ndat ons.common.pred cates.hss.HssPred cateParams._
+ mport com.tw ter.follow_recom ndat ons.conf gap .common.FeatureSw chConf g
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .HasDurat onConvers on
+ mport com.tw ter.ut l.Durat on
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class HssPredicateFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
+@S ngleton
+class HssPred cateFSConf g @ nject() () extends FeatureSw chConf g {
+  overr de val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
     HssCseScoreThreshold,
     HssNsfwScoreThreshold,
   )
 
-  override val durationFSParams: Seq[FSBoundedParam[Duration] with HasDurationConversion] = Seq(
-    HssApiTimeout
+  overr de val durat onFSParams: Seq[FSBoundedParam[Durat on] w h HasDurat onConvers on] = Seq(
+    HssAp T  out
   )
 }

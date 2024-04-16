@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.assembler.models
+package com.tw ter.follow_recom ndat ons.assembler.models
 
-import com.twitter.follow_recommendations.{thriftscala => t}
+ mport com.tw ter.follow_recom ndat ons.{thr ftscala => t}
 
-case class Footer(action: Option[Action]) {
-  lazy val toThrift: t.Footer = {
-    t.Footer(action.map(_.toThrift))
+case class Footer(act on: Opt on[Act on]) {
+  lazy val toThr ft: t.Footer = {
+    t.Footer(act on.map(_.toThr ft))
   }
 }

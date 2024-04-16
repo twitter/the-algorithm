@@ -1,20 +1,20 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finagle/finagle-core/src/main",
-        "finagle/finagle-thriftmux/src/main/scala",
-        "finatra-internal/mtls-http/src/main/scala",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "util/util-core",
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "f nagle/f nagle-core/src/ma n",
+        "f nagle/f nagle-thr ftmux/src/ma n/scala",
+        "f natra- nternal/mtls-http/src/ma n/scala",
+        "f natra- nternal/mtls-thr ftmux/src/ma n/scala",
+        "ut l/ut l-core",
     ],
     exports = [
-        "finagle/finagle-core/src/main",
-        "finagle/finagle-thriftmux/src/main/scala",
-        "finatra-internal/mtls-http/src/main/scala",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
-        "util/util-core",
+        "f nagle/f nagle-core/src/ma n",
+        "f nagle/f nagle-thr ftmux/src/ma n/scala",
+        "f natra- nternal/mtls-http/src/ma n/scala",
+        "f natra- nternal/mtls-thr ftmux/src/ma n/scala",
+        "ut l/ut l-core",
     ],
 )

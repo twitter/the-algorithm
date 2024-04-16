@@ -1,53 +1,53 @@
-package com.twitter.ann.scalding.offline.indexbuilderfrombq
+package com.tw ter.ann.scald ng.offl ne. ndexbu lderfrombq
 
-import com.twitter.ann.common.Appendable
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.EntityEmbedding
-import com.twitter.ann.common.Serialization
-import com.twitter.ann.util.IndexBuilderUtils
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.scalding.Execution
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding_internal.job.FutureHelper
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.util.logging.Logger
+ mport com.tw ter.ann.common.Appendable
+ mport com.tw ter.ann.common.D stance
+ mport com.tw ter.ann.common.Ent yEmbedd ng
+ mport com.tw ter.ann.common.Ser al zat on
+ mport com.tw ter.ann.ut l. ndexBu lderUt ls
+ mport com.tw ter.ml.ap .embedd ng.Embedd ng
+ mport com.tw ter.ml.featurestore.l b.embedd ng.Embedd ngW hEnt y
+ mport com.tw ter.ml.featurestore.l b.Ent y d
+ mport com.tw ter.scald ng.Execut on
+ mport com.tw ter.scald ng.TypedP pe
+ mport com.tw ter.scald ng_ nternal.job.Future lper
+ mport com.tw ter.search.common.f le.AbstractF le
+ mport com.tw ter.ut l.logg ng.Logger
 
-object IndexBuilder {
-  private[this] val Log = Logger.apply[IndexBuilder.type]
+object  ndexBu lder {
+  pr vate[t ] val Log = Logger.apply[ ndexBu lder.type]
 
-  def run[T <: EntityId, _, D <: Distance[D]](
-    embeddingsPipe: TypedPipe[EmbeddingWithEntity[T]],
-    embeddingLimit: Option[Int],
-    index: Appendable[T, _, D] with Serialization,
-    concurrencyLevel: Int,
-    outputDirectory: AbstractFile,
-    numDimensions: Int
-  ): Execution[Unit] = {
-    val limitedEmbeddingsPipe = embeddingLimit
-      .map { limit =>
-        embeddingsPipe.limit(limit)
-      }.getOrElse(embeddingsPipe)
+  def run[T <: Ent y d, _, D <: D stance[D]](
+    embedd ngsP pe: TypedP pe[Embedd ngW hEnt y[T]],
+    embedd ngL m : Opt on[ nt],
+     ndex: Appendable[T, _, D] w h Ser al zat on,
+    concurrencyLevel:  nt,
+    outputD rectory: AbstractF le,
+    numD  ns ons:  nt
+  ): Execut on[Un ] = {
+    val l m edEmbedd ngsP pe = embedd ngL m 
+      .map { l m  =>
+        embedd ngsP pe.l m (l m )
+      }.getOrElse(embedd ngsP pe)
 
-    val annEmbeddingPipe = limitedEmbeddingsPipe.map { embedding =>
-      val embeddingSize = embedding.embedding.length
+    val annEmbedd ngP pe = l m edEmbedd ngsP pe.map { embedd ng =>
+      val embedd ngS ze = embedd ng.embedd ng.length
       assert(
-        embeddingSize == numDimensions,
-        s"Specified number of dimensions $numDimensions does not match the dimensions of the " +
-          s"embedding $embeddingSize"
+        embedd ngS ze == numD  ns ons,
+        s"Spec f ed number of d  ns ons $numD  ns ons does not match t  d  ns ons of t  " +
+          s"embedd ng $embedd ngS ze"
       )
-      EntityEmbedding[T](embedding.entityId, Embedding(embedding.embedding.toArray))
+      Ent yEmbedd ng[T](embedd ng.ent y d, Embedd ng(embedd ng.embedd ng.toArray))
     }
 
-    annEmbeddingPipe.toIterableExecution.flatMap { annEmbeddings =>
-      val future = IndexBuilderUtils.addToIndex(index, annEmbeddings.toStream, concurrencyLevel)
+    annEmbedd ngP pe.to erableExecut on.flatMap { annEmbedd ngs =>
+      val future =  ndexBu lderUt ls.addTo ndex( ndex, annEmbedd ngs.toStream, concurrencyLevel)
       val result = future.map { numberUpdates =>
-        Log.info(s"Performed $numberUpdates updates")
-        index.toDirectory(outputDirectory)
-        Log.info(s"Finished writing to $outputDirectory")
+        Log. nfo(s"Perfor d $numberUpdates updates")
+         ndex.toD rectory(outputD rectory)
+        Log. nfo(s"F n s d wr  ng to $outputD rectory")
       }
-      FutureHelper.executionFrom(result).unit
+      Future lper.execut onFrom(result).un 
     }
   }
 }

@@ -1,117 +1,117 @@
-package com.twitter.home_mixer.module
+package com.tw ter.ho _m xer.module
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.Memcached
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.HomeAuthorFeaturesCacheClient
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealTimeInteractionGraphUserVertexClient
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TimelinesRealTimeAggregateClient
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TwhinAuthorFollowFeatureCacheClient
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.shared_library.memcached_client.MemcachedClientBuilder
-import com.twitter.servo.cache.FinagleMemcacheFactory
-import com.twitter.servo.cache.Memcache
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle. mcac d
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.Ho AuthorFeaturesCac Cl ent
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.RealT   nteract onGraphUserVertexCl ent
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.T  l nesRealT  AggregateCl ent
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.Twh nAuthorFollowFeatureCac Cl ent
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.product_m xer.shared_l brary. mcac d_cl ent. mcac dCl entBu lder
+ mport com.tw ter.servo.cac .F nagle mcac Factory
+ mport com.tw ter.servo.cac . mcac 
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-object MemcachedFeatureRepositoryModule extends TwitterModule {
+object  mcac dFeatureRepos oryModule extends Tw terModule {
 
-  // This must match the respective parameter on the write path. Note that servo sets a different
-  // hasher by default. See [[com.twitter.hashing.KeyHasher]] for the list of other available
-  // hashers.
-  private val memcacheKeyHasher = "ketama"
+  // T  must match t  respect ve para ter on t  wr e path. Note that servo sets a d fferent
+  // has r by default. See [[com.tw ter.hash ng.KeyHas r]] for t  l st of ot r ava lable
+  // has rs.
+  pr vate val  mcac KeyHas r = "ketama"
 
-  @Provides
-  @Singleton
-  @Named(TimelinesRealTimeAggregateClient)
-  def providesTimelinesRealTimeAggregateClient(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Memcache = {
-    val rawClient = MemcachedClientBuilder.buildRawMemcachedClient(
-      numTries = 3,
-      numConnections = 1,
-      requestTimeout = 100.milliseconds,
-      globalTimeout = 300.milliseconds,
-      connectTimeout = 200.milliseconds,
-      acquisitionTimeout = 200.milliseconds,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver
+  @Prov des
+  @S ngleton
+  @Na d(T  l nesRealT  AggregateCl ent)
+  def prov desT  l nesRealT  AggregateCl ent(
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver
+  ):  mcac  = {
+    val rawCl ent =  mcac dCl entBu lder.bu ldRaw mcac dCl ent(
+      numTr es = 3,
+      numConnect ons = 1,
+      requestT  out = 100.m ll seconds,
+      globalT  out = 300.m ll seconds,
+      connectT  out = 200.m ll seconds,
+      acqu s  onT  out = 200.m ll seconds,
+      serv ce dent f er = serv ce dent f er,
+      statsRece ver = statsRece ver
     )
 
-    buildMemcacheClient(rawClient, "/s/cache/timelines_real_time_aggregates:twemcaches")
+    bu ld mcac Cl ent(rawCl ent, "/s/cac /t  l nes_real_t  _aggregates:t mcac s")
   }
 
-  @Provides
-  @Singleton
-  @Named(HomeAuthorFeaturesCacheClient)
-  def providesHomeAuthorFeaturesCacheClient(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Memcache = {
-    val cacheClient = MemcachedClientBuilder.buildRawMemcachedClient(
-      numTries = 2,
-      numConnections = 1,
-      requestTimeout = 150.milliseconds,
-      globalTimeout = 300.milliseconds,
-      connectTimeout = 200.milliseconds,
-      acquisitionTimeout = 200.milliseconds,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver
+  @Prov des
+  @S ngleton
+  @Na d(Ho AuthorFeaturesCac Cl ent)
+  def prov desHo AuthorFeaturesCac Cl ent(
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver
+  ):  mcac  = {
+    val cac Cl ent =  mcac dCl entBu lder.bu ldRaw mcac dCl ent(
+      numTr es = 2,
+      numConnect ons = 1,
+      requestT  out = 150.m ll seconds,
+      globalT  out = 300.m ll seconds,
+      connectT  out = 200.m ll seconds,
+      acqu s  onT  out = 200.m ll seconds,
+      serv ce dent f er = serv ce dent f er,
+      statsRece ver = statsRece ver
     )
 
-    buildMemcacheClient(cacheClient, "/s/cache/timelines_author_features:twemcaches")
+    bu ld mcac Cl ent(cac Cl ent, "/s/cac /t  l nes_author_features:t mcac s")
   }
 
-  @Provides
-  @Singleton
-  @Named(TwhinAuthorFollowFeatureCacheClient)
-  def providesTwhinAuthorFollowFeatureCacheClient(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Memcache = {
-    val cacheClient = MemcachedClientBuilder.buildRawMemcachedClient(
-      numTries = 2,
-      numConnections = 1,
-      requestTimeout = 150.milliseconds,
-      globalTimeout = 300.milliseconds,
-      connectTimeout = 200.milliseconds,
-      acquisitionTimeout = 200.milliseconds,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver
+  @Prov des
+  @S ngleton
+  @Na d(Twh nAuthorFollowFeatureCac Cl ent)
+  def prov desTwh nAuthorFollowFeatureCac Cl ent(
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver
+  ):  mcac  = {
+    val cac Cl ent =  mcac dCl entBu lder.bu ldRaw mcac dCl ent(
+      numTr es = 2,
+      numConnect ons = 1,
+      requestT  out = 150.m ll seconds,
+      globalT  out = 300.m ll seconds,
+      connectT  out = 200.m ll seconds,
+      acqu s  onT  out = 200.m ll seconds,
+      serv ce dent f er = serv ce dent f er,
+      statsRece ver = statsRece ver
     )
 
-    buildMemcacheClient(cacheClient, "/s/cache/home_twhin_author_features:twemcaches")
+    bu ld mcac Cl ent(cac Cl ent, "/s/cac /ho _twh n_author_features:t mcac s")
   }
 
-  @Provides
-  @Singleton
-  @Named(RealTimeInteractionGraphUserVertexClient)
-  def providesRealTimeInteractionGraphUserVertexClient(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Memcache = {
-    val cacheClient = MemcachedClientBuilder.buildRawMemcachedClient(
-      numTries = 2,
-      numConnections = 1,
-      requestTimeout = 150.milliseconds,
-      globalTimeout = 300.milliseconds,
-      connectTimeout = 200.milliseconds,
-      acquisitionTimeout = 200.milliseconds,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver
+  @Prov des
+  @S ngleton
+  @Na d(RealT   nteract onGraphUserVertexCl ent)
+  def prov desRealT   nteract onGraphUserVertexCl ent(
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver
+  ):  mcac  = {
+    val cac Cl ent =  mcac dCl entBu lder.bu ldRaw mcac dCl ent(
+      numTr es = 2,
+      numConnect ons = 1,
+      requestT  out = 150.m ll seconds,
+      globalT  out = 300.m ll seconds,
+      connectT  out = 200.m ll seconds,
+      acqu s  onT  out = 200.m ll seconds,
+      serv ce dent f er = serv ce dent f er,
+      statsRece ver = statsRece ver
     )
 
-    buildMemcacheClient(cacheClient, "/s/cache/realtime_interactive_graph_prod_v2:twemcaches")
+    bu ld mcac Cl ent(cac Cl ent, "/s/cac /realt  _ nteract ve_graph_prod_v2:t mcac s")
   }
 
-  private def buildMemcacheClient(cacheClient: Memcached.Client, dest: String): Memcache =
-    FinagleMemcacheFactory(
-      client = cacheClient,
+  pr vate def bu ld mcac Cl ent(cac Cl ent:  mcac d.Cl ent, dest: Str ng):  mcac  =
+    F nagle mcac Factory(
+      cl ent = cac Cl ent,
       dest = dest,
-      hashName = memcacheKeyHasher
+      hashNa  =  mcac KeyHas r
     )()
 
 }

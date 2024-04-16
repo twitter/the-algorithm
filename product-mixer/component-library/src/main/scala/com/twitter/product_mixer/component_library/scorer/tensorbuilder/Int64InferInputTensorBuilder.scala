@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.component_library.scorer.tensorbuilder
+package com.tw ter.product_m xer.component_l brary.scorer.tensorbu lder
 
-import com.twitter.ml.featurestore.lib.Discrete
-import inference.GrpcService.ModelInferRequest.InferInputTensor
+ mport com.tw ter.ml.featurestore.l b.D screte
+ mport  nference.GrpcServ ce.Model nferRequest. nfer nputTensor
 
-case object Int64InferInputTensorBuilder extends InferInputTensorBuilder[AnyVal] {
+case object  nt64 nfer nputTensorBu lder extends  nfer nputTensorBu lder[AnyVal] {
 
-  private def toLong(x: AnyVal): Long = {
+  pr vate def toLong(x: AnyVal): Long = {
     x match {
-      case y: Int => y.toLong
+      case y:  nt => y.toLong
       case y: Long => y
-      case y: Discrete => y.value
-      case y => throw new UnexpectedDataTypeException(y, this)
+      case y: D screte => y.value
+      case y => throw new UnexpectedDataTypeExcept on(y, t )
     }
   }
   def apply(
-    featureName: String,
+    featureNa : Str ng,
     featureValues: Seq[AnyVal]
-  ): Seq[InferInputTensor] = {
-    val tensorShape = Seq(featureValues.size, 1)
-    InferInputTensorBuilder.buildInt64InferInputTensor(
-      featureName,
+  ): Seq[ nfer nputTensor] = {
+    val tensorShape = Seq(featureValues.s ze, 1)
+     nfer nputTensorBu lder.bu ld nt64 nfer nputTensor(
+      featureNa ,
       featureValues.map(toLong),
       tensorShape)
   }

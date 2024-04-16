@@ -1,353 +1,353 @@
-package com.twitter.unified_user_actions.adapter
+package com.tw ter.un f ed_user_act ons.adapter
 
-import com.twitter.clientapp.thriftscala.SuggestionDetails
-import com.twitter.clientapp.thriftscala._
-import com.twitter.search.common.constants.thriftscala.ThriftQuerySource
-import com.twitter.search.common.constants.thriftscala.TweetResultSource
-import com.twitter.search.common.constants.thriftscala.UserResultSource
-import com.twitter.suggests.controller_data.search_response.item_types.thriftscala.ItemTypesControllerData
-import com.twitter.suggests.controller_data.search_response.request.thriftscala.RequestControllerData
-import com.twitter.suggests.controller_data.search_response.thriftscala.SearchResponseControllerData
-import com.twitter.suggests.controller_data.search_response.tweet_types.thriftscala.TweetTypesControllerData
-import com.twitter.suggests.controller_data.search_response.user_types.thriftscala.UserTypesControllerData
-import com.twitter.suggests.controller_data.search_response.v1.thriftscala.{
+ mport com.tw ter.cl entapp.thr ftscala.Suggest onDeta ls
+ mport com.tw ter.cl entapp.thr ftscala._
+ mport com.tw ter.search.common.constants.thr ftscala.Thr ftQueryS ce
+ mport com.tw ter.search.common.constants.thr ftscala.T etResultS ce
+ mport com.tw ter.search.common.constants.thr ftscala.UserResultS ce
+ mport com.tw ter.suggests.controller_data.search_response. em_types.thr ftscala. emTypesControllerData
+ mport com.tw ter.suggests.controller_data.search_response.request.thr ftscala.RequestControllerData
+ mport com.tw ter.suggests.controller_data.search_response.thr ftscala.SearchResponseControllerData
+ mport com.tw ter.suggests.controller_data.search_response.t et_types.thr ftscala.T etTypesControllerData
+ mport com.tw ter.suggests.controller_data.search_response.user_types.thr ftscala.UserTypesControllerData
+ mport com.tw ter.suggests.controller_data.search_response.v1.thr ftscala.{
   SearchResponseControllerData => SearchResponseControllerDataV1
 }
-import com.twitter.suggests.controller_data.thriftscala.ControllerData
-import com.twitter.suggests.controller_data.v2.thriftscala.{ControllerData => ControllerDataV2}
-import com.twitter.util.mock.Mockito
-import org.junit.runner.RunWith
-import org.scalatest.funsuite.AnyFunSuite
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.prop.TableDrivenPropertyChecks
-import org.scalatestplus.junit.JUnitRunner
-import com.twitter.unified_user_actions.adapter.client_event.SearchInfoUtils
-import com.twitter.unified_user_actions.thriftscala.SearchQueryFilterType
-import com.twitter.unified_user_actions.thriftscala.SearchQueryFilterType._
-import org.scalatest.prop.TableFor2
+ mport com.tw ter.suggests.controller_data.thr ftscala.ControllerData
+ mport com.tw ter.suggests.controller_data.v2.thr ftscala.{ControllerData => ControllerDataV2}
+ mport com.tw ter.ut l.mock.Mock o
+ mport org.jun .runner.RunW h
+ mport org.scalatest.funsu e.AnyFunSu e
+ mport org.scalatest.matc rs.should.Matc rs
+ mport org.scalatest.prop.TableDr venPropertyC cks
+ mport org.scalatestplus.jun .JUn Runner
+ mport com.tw ter.un f ed_user_act ons.adapter.cl ent_event.Search nfoUt ls
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.SearchQueryF lterType
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.SearchQueryF lterType._
+ mport org.scalatest.prop.TableFor2
 
-@RunWith(classOf[JUnitRunner])
-class SearchInfoUtilsSpec
-    extends AnyFunSuite
-    with Matchers
-    with Mockito
-    with TableDrivenPropertyChecks {
+@RunW h(classOf[JUn Runner])
+class Search nfoUt lsSpec
+    extends AnyFunSu e
+    w h Matc rs
+    w h Mock o
+    w h TableDr venPropertyC cks {
 
-  trait Fixture {
+  tra  F xture {
     def mkControllerData(
-      queryOpt: Option[String],
-      querySourceOpt: Option[Int] = None,
-      traceId: Option[Long] = None,
-      requestJoinId: Option[Long] = None
+      queryOpt: Opt on[Str ng],
+      queryS ceOpt: Opt on[ nt] = None,
+      trace d: Opt on[Long] = None,
+      requestJo n d: Opt on[Long] = None
     ): ControllerData = {
       ControllerData.V2(
         ControllerDataV2.SearchResponse(
           SearchResponseControllerData.V1(
-            SearchResponseControllerDataV1(requestControllerData = Some(
+            SearchResponseControllerDataV1(requestControllerData = So (
               RequestControllerData(
                 rawQuery = queryOpt,
-                querySource = querySourceOpt,
-                traceId = traceId,
-                requestJoinId = requestJoinId
+                queryS ce = queryS ceOpt,
+                trace d = trace d,
+                requestJo n d = requestJo n d
               )))
           )))
     }
 
-    def mkTweetTypeControllerData(bitmap: Long, topicId: Option[Long] = None): ControllerData.V2 = {
+    def mkT etTypeControllerData(b map: Long, top c d: Opt on[Long] = None): ControllerData.V2 = {
       ControllerData.V2(
         ControllerDataV2.SearchResponse(
           SearchResponseControllerData.V1(
-            SearchResponseControllerDataV1(itemTypesControllerData = Some(
-              ItemTypesControllerData.TweetTypesControllerData(
-                TweetTypesControllerData(
-                  tweetTypesBitmap = Some(bitmap),
-                  topicId = topicId
+            SearchResponseControllerDataV1( emTypesControllerData = So (
+               emTypesControllerData.T etTypesControllerData(
+                T etTypesControllerData(
+                  t etTypesB map = So (b map),
+                  top c d = top c d
                 ))
             ))
           )))
     }
 
-    def mkUserTypeControllerData(bitmap: Long): ControllerData.V2 = {
+    def mkUserTypeControllerData(b map: Long): ControllerData.V2 = {
       ControllerData.V2(
         ControllerDataV2.SearchResponse(
           SearchResponseControllerData.V1(
-            SearchResponseControllerDataV1(itemTypesControllerData = Some(
-              ItemTypesControllerData.UserTypesControllerData(UserTypesControllerData(
-                userTypesBitmap = Some(bitmap)
+            SearchResponseControllerDataV1( emTypesControllerData = So (
+               emTypesControllerData.UserTypesControllerData(UserTypesControllerData(
+                userTypesB map = So (b map)
               ))
             ))
           )))
     }
   }
 
-  test("getQueryOptFromControllerDataFromItem should return query if present in controller data") {
-    new Fixture {
+  test("getQueryOptFromControllerDataFrom em should return query  f present  n controller data") {
+    new F xture {
 
-      val controllerData: ControllerData = mkControllerData(Some("twitter"))
-      val suggestionDetails: SuggestionDetails =
-        SuggestionDetails(decodedControllerData = Some(controllerData))
-      val item: Item = Item(suggestionDetails = Some(suggestionDetails))
-      val result: Option[String] = new SearchInfoUtils(item).getQueryOptFromControllerDataFromItem
-      result shouldEqual Option("twitter")
+      val controllerData: ControllerData = mkControllerData(So ("tw ter"))
+      val suggest onDeta ls: Suggest onDeta ls =
+        Suggest onDeta ls(decodedControllerData = So (controllerData))
+      val  em:  em =  em(suggest onDeta ls = So (suggest onDeta ls))
+      val result: Opt on[Str ng] = new Search nfoUt ls( em).getQueryOptFromControllerDataFrom em
+      result shouldEqual Opt on("tw ter")
     }
   }
 
-  test("getRequestJoinId should return requestJoinId if present in controller data") {
-    new Fixture {
+  test("getRequestJo n d should return requestJo n d  f present  n controller data") {
+    new F xture {
 
       val controllerData: ControllerData = mkControllerData(
-        Some("twitter"),
-        traceId = Some(11L),
-        requestJoinId = Some(12L)
+        So ("tw ter"),
+        trace d = So (11L),
+        requestJo n d = So (12L)
       )
-      val suggestionDetails: SuggestionDetails =
-        SuggestionDetails(decodedControllerData = Some(controllerData))
-      val item: Item = Item(suggestionDetails = Some(suggestionDetails))
-      val infoUtils = new SearchInfoUtils(item)
-      infoUtils.getTraceId shouldEqual Some(11L)
-      infoUtils.getRequestJoinId shouldEqual Some(12L)
+      val suggest onDeta ls: Suggest onDeta ls =
+        Suggest onDeta ls(decodedControllerData = So (controllerData))
+      val  em:  em =  em(suggest onDeta ls = So (suggest onDeta ls))
+      val  nfoUt ls = new Search nfoUt ls( em)
+       nfoUt ls.getTrace d shouldEqual So (11L)
+       nfoUt ls.getRequestJo n d shouldEqual So (12L)
     }
   }
 
-  test("getQueryOptFromControllerDataFromItem should return None if no suggestion details") {
-    new Fixture {
+  test("getQueryOptFromControllerDataFrom em should return None  f no suggest on deta ls") {
+    new F xture {
 
-      val suggestionDetails: SuggestionDetails = SuggestionDetails()
-      val item: Item = Item(suggestionDetails = Some(suggestionDetails))
-      val result: Option[String] = new SearchInfoUtils(item).getQueryOptFromControllerDataFromItem
+      val suggest onDeta ls: Suggest onDeta ls = Suggest onDeta ls()
+      val  em:  em =  em(suggest onDeta ls = So (suggest onDeta ls))
+      val result: Opt on[Str ng] = new Search nfoUt ls( em).getQueryOptFromControllerDataFrom em
       result shouldEqual None
     }
   }
 
-  test("getQueryOptFromSearchDetails should return query if present") {
-    new Fixture {
+  test("getQueryOptFromSearchDeta ls should return query  f present") {
+    new F xture {
 
-      val searchDetails: SearchDetails = SearchDetails(query = Some("twitter"))
-      val result: Option[String] = new SearchInfoUtils(Item()).getQueryOptFromSearchDetails(
-        LogEvent(eventName = "", searchDetails = Some(searchDetails))
+      val searchDeta ls: SearchDeta ls = SearchDeta ls(query = So ("tw ter"))
+      val result: Opt on[Str ng] = new Search nfoUt ls( em()).getQueryOptFromSearchDeta ls(
+        LogEvent(eventNa  = "", searchDeta ls = So (searchDeta ls))
       )
-      result shouldEqual Option("twitter")
+      result shouldEqual Opt on("tw ter")
     }
   }
 
-  test("getQueryOptFromSearchDetails should return None if not present") {
-    new Fixture {
+  test("getQueryOptFromSearchDeta ls should return None  f not present") {
+    new F xture {
 
-      val searchDetails: SearchDetails = SearchDetails()
-      val result: Option[String] = new SearchInfoUtils(Item()).getQueryOptFromSearchDetails(
-        LogEvent(eventName = "", searchDetails = Some(searchDetails))
+      val searchDeta ls: SearchDeta ls = SearchDeta ls()
+      val result: Opt on[Str ng] = new Search nfoUt ls( em()).getQueryOptFromSearchDeta ls(
+        LogEvent(eventNa  = "", searchDeta ls = So (searchDeta ls))
       )
       result shouldEqual None
     }
   }
 
-  test("getQuerySourceOptFromControllerDataFromItem should return QuerySource if present") {
-    new Fixture {
+  test("getQueryS ceOptFromControllerDataFrom em should return QueryS ce  f present") {
+    new F xture {
 
-      // 1 is Typed Query
-      val controllerData: ControllerData = mkControllerData(Some("twitter"), Some(1))
+      // 1  s Typed Query
+      val controllerData: ControllerData = mkControllerData(So ("tw ter"), So (1))
 
-      val item: Item = Item(
-        suggestionDetails = Some(
-          SuggestionDetails(
-            decodedControllerData = Some(controllerData)
+      val  em:  em =  em(
+        suggest onDeta ls = So (
+          Suggest onDeta ls(
+            decodedControllerData = So (controllerData)
           ))
       )
-      new SearchInfoUtils(item).getQuerySourceOptFromControllerDataFromItem shouldEqual Some(
-        ThriftQuerySource.TypedQuery)
+      new Search nfoUt ls( em).getQueryS ceOptFromControllerDataFrom em shouldEqual So (
+        Thr ftQueryS ce.TypedQuery)
     }
   }
 
-  test("getQuerySourceOptFromControllerDataFromItem should return None if not present") {
-    new Fixture {
+  test("getQueryS ceOptFromControllerDataFrom em should return None  f not present") {
+    new F xture {
 
-      val controllerData: ControllerData = mkControllerData(Some("twitter"), None)
+      val controllerData: ControllerData = mkControllerData(So ("tw ter"), None)
 
-      val item: Item = Item(
-        suggestionDetails = Some(
-          SuggestionDetails(
-            decodedControllerData = Some(controllerData)
+      val  em:  em =  em(
+        suggest onDeta ls = So (
+          Suggest onDeta ls(
+            decodedControllerData = So (controllerData)
           ))
       )
-      new SearchInfoUtils(item).getQuerySourceOptFromControllerDataFromItem shouldEqual None
+      new Search nfoUt ls( em).getQueryS ceOptFromControllerDataFrom em shouldEqual None
     }
   }
 
-  test("Decoding Tweet Result Sources bitmap") {
-    new Fixture {
+  test("Decod ng T et Result S ces b map") {
+    new F xture {
 
-      TweetResultSource.list
-        .foreach { tweetResultSource =>
-          val bitmap = (1 << tweetResultSource.getValue()).toLong
-          val controllerData = mkTweetTypeControllerData(bitmap)
+      T etResultS ce.l st
+        .foreach { t etResultS ce =>
+          val b map = (1 << t etResultS ce.getValue()).toLong
+          val controllerData = mkT etTypeControllerData(b map)
 
-          val item = Item(
-            suggestionDetails = Some(
-              SuggestionDetails(
-                decodedControllerData = Some(controllerData)
+          val  em =  em(
+            suggest onDeta ls = So (
+              Suggest onDeta ls(
+                decodedControllerData = So (controllerData)
               ))
           )
 
-          val result = new SearchInfoUtils(item).getTweetResultSources
-          result shouldEqual Some(Set(tweetResultSource))
+          val result = new Search nfoUt ls( em).getT etResultS ces
+          result shouldEqual So (Set(t etResultS ce))
         }
     }
   }
 
-  test("Decoding multiple Tweet Result Sources") {
-    new Fixture {
+  test("Decod ng mult ple T et Result S ces") {
+    new F xture {
 
-      val tweetResultSources: Set[TweetResultSource] =
-        Set(TweetResultSource.QueryInteractionGraph, TweetResultSource.QueryExpansion)
-      val bitmap: Long = tweetResultSources.foldLeft(0L) {
-        case (acc, source) => acc + (1 << source.getValue())
+      val t etResultS ces: Set[T etResultS ce] =
+        Set(T etResultS ce.Query nteract onGraph, T etResultS ce.QueryExpans on)
+      val b map: Long = t etResultS ces.foldLeft(0L) {
+        case (acc, s ce) => acc + (1 << s ce.getValue())
       }
 
-      val controllerData: ControllerData.V2 = mkTweetTypeControllerData(bitmap)
+      val controllerData: ControllerData.V2 = mkT etTypeControllerData(b map)
 
-      val item: Item = Item(
-        suggestionDetails = Some(
-          SuggestionDetails(
-            decodedControllerData = Some(controllerData)
+      val  em:  em =  em(
+        suggest onDeta ls = So (
+          Suggest onDeta ls(
+            decodedControllerData = So (controllerData)
           ))
       )
 
-      val result: Option[Set[TweetResultSource]] = new SearchInfoUtils(item).getTweetResultSources
-      result shouldEqual Some(tweetResultSources)
+      val result: Opt on[Set[T etResultS ce]] = new Search nfoUt ls( em).getT etResultS ces
+      result shouldEqual So (t etResultS ces)
     }
   }
 
-  test("Decoding User Result Sources bitmap") {
-    new Fixture {
+  test("Decod ng User Result S ces b map") {
+    new F xture {
 
-      UserResultSource.list
-        .foreach { userResultSource =>
-          val bitmap = (1 << userResultSource.getValue()).toLong
-          val controllerData = mkUserTypeControllerData(bitmap)
+      UserResultS ce.l st
+        .foreach { userResultS ce =>
+          val b map = (1 << userResultS ce.getValue()).toLong
+          val controllerData = mkUserTypeControllerData(b map)
 
-          val item = Item(
-            suggestionDetails = Some(
-              SuggestionDetails(
-                decodedControllerData = Some(controllerData)
+          val  em =  em(
+            suggest onDeta ls = So (
+              Suggest onDeta ls(
+                decodedControllerData = So (controllerData)
               ))
           )
 
-          val result = new SearchInfoUtils(item).getUserResultSources
-          result shouldEqual Some(Set(userResultSource))
+          val result = new Search nfoUt ls( em).getUserResultS ces
+          result shouldEqual So (Set(userResultS ce))
         }
     }
   }
 
-  test("Decoding multiple User Result Sources") {
-    new Fixture {
+  test("Decod ng mult ple User Result S ces") {
+    new F xture {
 
-      val userResultSources: Set[UserResultSource] =
-        Set(UserResultSource.QueryInteractionGraph, UserResultSource.ExpertSearch)
-      val bitmap: Long = userResultSources.foldLeft(0L) {
-        case (acc, source) => acc + (1 << source.getValue())
+      val userResultS ces: Set[UserResultS ce] =
+        Set(UserResultS ce.Query nteract onGraph, UserResultS ce.ExpertSearch)
+      val b map: Long = userResultS ces.foldLeft(0L) {
+        case (acc, s ce) => acc + (1 << s ce.getValue())
       }
 
-      val controllerData: ControllerData.V2 = mkUserTypeControllerData(bitmap)
+      val controllerData: ControllerData.V2 = mkUserTypeControllerData(b map)
 
-      val item: Item = Item(
-        suggestionDetails = Some(
-          SuggestionDetails(
-            decodedControllerData = Some(controllerData)
+      val  em:  em =  em(
+        suggest onDeta ls = So (
+          Suggest onDeta ls(
+            decodedControllerData = So (controllerData)
           ))
       )
 
-      val result: Option[Set[UserResultSource]] = new SearchInfoUtils(item).getUserResultSources
-      result shouldEqual Some(userResultSources)
+      val result: Opt on[Set[UserResultS ce]] = new Search nfoUt ls( em).getUserResultS ces
+      result shouldEqual So (userResultS ces)
     }
   }
 
-  test("getQueryFilterTabType should return correct query filter type") {
-    new Fixture {
-      val infoUtils = new SearchInfoUtils(Item())
-      val eventsToBeChecked: TableFor2[Option[EventNamespace], Option[SearchQueryFilterType]] =
+  test("getQueryF lterTabType should return correct query f lter type") {
+    new F xture {
+      val  nfoUt ls = new Search nfoUt ls( em())
+      val eventsToBeC cked: TableFor2[Opt on[EventNa space], Opt on[SearchQueryF lterType]] =
         Table(
-          ("eventNamespace", "queryFilterType"),
+          ("eventNa space", "queryF lterType"),
           (
-            Some(EventNamespace(client = Some("m5"), element = Some("search_filter_top"))),
-            Some(Top)),
+            So (EventNa space(cl ent = So ("m5"), ele nt = So ("search_f lter_top"))),
+            So (Top)),
           (
-            Some(EventNamespace(client = Some("m5"), element = Some("search_filter_live"))),
-            Some(Latest)),
+            So (EventNa space(cl ent = So ("m5"), ele nt = So ("search_f lter_l ve"))),
+            So (Latest)),
           (
-            Some(EventNamespace(client = Some("m5"), element = Some("search_filter_user"))),
-            Some(People)),
+            So (EventNa space(cl ent = So ("m5"), ele nt = So ("search_f lter_user"))),
+            So (People)),
           (
-            Some(EventNamespace(client = Some("m5"), element = Some("search_filter_image"))),
-            Some(Photos)),
+            So (EventNa space(cl ent = So ("m5"), ele nt = So ("search_f lter_ mage"))),
+            So (Photos)),
           (
-            Some(EventNamespace(client = Some("m5"), element = Some("search_filter_video"))),
-            Some(Videos)),
+            So (EventNa space(cl ent = So ("m5"), ele nt = So ("search_f lter_v deo"))),
+            So (V deos)),
           (
-            Some(EventNamespace(client = Some("m5"), section = Some("search_filter_top"))),
+            So (EventNa space(cl ent = So ("m5"), sect on = So ("search_f lter_top"))),
             None
-          ), // if client is web, element determines the query filter hence None if element is None
+          ), //  f cl ent  s  b, ele nt determ nes t  query f lter  nce None  f ele nt  s None
           (
-            Some(EventNamespace(client = Some("android"), element = Some("search_filter_top"))),
-            Some(Top)),
+            So (EventNa space(cl ent = So ("andro d"), ele nt = So ("search_f lter_top"))),
+            So (Top)),
           (
-            Some(EventNamespace(client = Some("android"), element = Some("search_filter_tweets"))),
-            Some(Latest)),
+            So (EventNa space(cl ent = So ("andro d"), ele nt = So ("search_f lter_t ets"))),
+            So (Latest)),
           (
-            Some(EventNamespace(client = Some("android"), element = Some("search_filter_user"))),
-            Some(People)),
+            So (EventNa space(cl ent = So ("andro d"), ele nt = So ("search_f lter_user"))),
+            So (People)),
           (
-            Some(EventNamespace(client = Some("android"), element = Some("search_filter_image"))),
-            Some(Photos)),
+            So (EventNa space(cl ent = So ("andro d"), ele nt = So ("search_f lter_ mage"))),
+            So (Photos)),
           (
-            Some(EventNamespace(client = Some("android"), element = Some("search_filter_video"))),
-            Some(Videos)),
+            So (EventNa space(cl ent = So ("andro d"), ele nt = So ("search_f lter_v deo"))),
+            So (V deos)),
           (
-            Some(EventNamespace(client = Some("m5"), section = Some("search_filter_top"))),
+            So (EventNa space(cl ent = So ("m5"), sect on = So ("search_f lter_top"))),
             None
-          ), // if client is android, element determines the query filter hence None if element is None
+          ), //  f cl ent  s andro d, ele nt determ nes t  query f lter  nce None  f ele nt  s None
           (
-            Some(EventNamespace(client = Some("iphone"), section = Some("search_filter_top"))),
-            Some(Top)),
+            So (EventNa space(cl ent = So (" phone"), sect on = So ("search_f lter_top"))),
+            So (Top)),
           (
-            Some(EventNamespace(client = Some("iphone"), section = Some("search_filter_live"))),
-            Some(Latest)),
+            So (EventNa space(cl ent = So (" phone"), sect on = So ("search_f lter_l ve"))),
+            So (Latest)),
           (
-            Some(EventNamespace(client = Some("iphone"), section = Some("search_filter_user"))),
-            Some(People)),
+            So (EventNa space(cl ent = So (" phone"), sect on = So ("search_f lter_user"))),
+            So (People)),
           (
-            Some(EventNamespace(client = Some("iphone"), section = Some("search_filter_image"))),
-            Some(Photos)),
+            So (EventNa space(cl ent = So (" phone"), sect on = So ("search_f lter_ mage"))),
+            So (Photos)),
           (
-            Some(EventNamespace(client = Some("iphone"), section = Some("search_filter_video"))),
-            Some(Videos)),
+            So (EventNa space(cl ent = So (" phone"), sect on = So ("search_f lter_v deo"))),
+            So (V deos)),
           (
-            Some(EventNamespace(client = Some("iphone"), element = Some("search_filter_top"))),
+            So (EventNa space(cl ent = So (" phone"), ele nt = So ("search_f lter_top"))),
             None
-          ), // if client is iphone, section determines the query filter hence None if section is None
+          ), //  f cl ent  s  phone, sect on determ nes t  query f lter  nce None  f sect on  s None
           (
-            Some(EventNamespace(client = None, section = Some("search_filter_top"))),
-            Some(Top)
-          ), // if client is missing, use section by default
+            So (EventNa space(cl ent = None, sect on = So ("search_f lter_top"))),
+            So (Top)
+          ), //  f cl ent  s m ss ng, use sect on by default
           (
-            Some(EventNamespace(client = None, element = Some("search_filter_top"))),
+            So (EventNa space(cl ent = None, ele nt = So ("search_f lter_top"))),
             None
-          ), // if client is missing, section is used by default hence None since section is missing
+          ), //  f cl ent  s m ss ng, sect on  s used by default  nce None s nce sect on  s m ss ng
           (
-            Some(EventNamespace(client = Some("iphone"))),
+            So (EventNa space(cl ent = So (" phone"))),
             None
-          ), // if both element and section missing, expect None
-          (None, None), // if namespace is missing from LogEvent, expect None
+          ), //  f both ele nt and sect on m ss ng, expect None
+          (None, None), //  f na space  s m ss ng from LogEvent, expect None
         )
 
-      forEvery(eventsToBeChecked) {
+      forEvery(eventsToBeC cked) {
         (
-          eventNamespace: Option[EventNamespace],
-          searchQueryFilterType: Option[SearchQueryFilterType]
+          eventNa space: Opt on[EventNa space],
+          searchQueryF lterType: Opt on[SearchQueryF lterType]
         ) =>
-          infoUtils.getQueryFilterType(
+           nfoUt ls.getQueryF lterType(
             LogEvent(
-              eventName = "srp_event",
-              eventNamespace = eventNamespace)) shouldEqual searchQueryFilterType
+              eventNa  = "srp_event",
+              eventNa space = eventNa space)) shouldEqual searchQueryF lterType
       }
 
     }

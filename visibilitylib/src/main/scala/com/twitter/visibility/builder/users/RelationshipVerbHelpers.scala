@@ -1,79 +1,79 @@
-package com.twitter.visibility.builder.users
+package com.tw ter.v s b l y.bu lder.users
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.gizmoduck.thriftscala.Perspective
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.common.UserId
+ mport com.tw ter.f nagle.stats.Counter
+ mport com.tw ter.g zmoduck.thr ftscala.Perspect ve
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.v s b l y.common.User d
 
-case object ViewerVerbsAuthor {
+case object V e rVerbsAuthor {
   def apply(
-    authorId: UserId,
-    viewerIdOpt: Option[UserId],
-    relationship: (UserId, UserId) => Stitch[Boolean],
-    relationshipCounter: Counter
-  ): Stitch[Boolean] = {
-    relationshipCounter.incr()
+    author d: User d,
+    v e r dOpt: Opt on[User d],
+    relat onsh p: (User d, User d) => St ch[Boolean],
+    relat onsh pCounter: Counter
+  ): St ch[Boolean] = {
+    relat onsh pCounter. ncr()
 
-    viewerIdOpt match {
-      case Some(viewerId) => relationship(viewerId, authorId)
-      case _ => Stitch.False
+    v e r dOpt match {
+      case So (v e r d) => relat onsh p(v e r d, author d)
+      case _ => St ch.False
     }
   }
 
   def apply(
     author: User,
-    viewerId: Option[UserId],
-    checkPerspective: Perspective => Option[Boolean],
-    relationship: (UserId, UserId) => Stitch[Boolean],
-    relationshipCounter: Counter
-  ): Stitch[Boolean] = {
-    author.perspective match {
-      case Some(perspective) =>
-        checkPerspective(perspective) match {
-          case Some(status) =>
-            relationshipCounter.incr()
-            Stitch.value(status)
+    v e r d: Opt on[User d],
+    c ckPerspect ve: Perspect ve => Opt on[Boolean],
+    relat onsh p: (User d, User d) => St ch[Boolean],
+    relat onsh pCounter: Counter
+  ): St ch[Boolean] = {
+    author.perspect ve match {
+      case So (perspect ve) =>
+        c ckPerspect ve(perspect ve) match {
+          case So (status) =>
+            relat onsh pCounter. ncr()
+            St ch.value(status)
           case None =>
-            ViewerVerbsAuthor(author.id, viewerId, relationship, relationshipCounter)
+            V e rVerbsAuthor(author. d, v e r d, relat onsh p, relat onsh pCounter)
         }
-      case None => ViewerVerbsAuthor(author.id, viewerId, relationship, relationshipCounter)
+      case None => V e rVerbsAuthor(author. d, v e r d, relat onsh p, relat onsh pCounter)
     }
   }
 }
 
-case object AuthorVerbsViewer {
+case object AuthorVerbsV e r {
 
   def apply(
-    authorId: UserId,
-    viewerIdOpt: Option[UserId],
-    relationship: (UserId, UserId) => Stitch[Boolean],
-    relationshipCounter: Counter
-  ): Stitch[Boolean] = {
-    relationshipCounter.incr()
+    author d: User d,
+    v e r dOpt: Opt on[User d],
+    relat onsh p: (User d, User d) => St ch[Boolean],
+    relat onsh pCounter: Counter
+  ): St ch[Boolean] = {
+    relat onsh pCounter. ncr()
 
-    viewerIdOpt match {
-      case Some(viewerId) => relationship(authorId, viewerId)
-      case _ => Stitch.False
+    v e r dOpt match {
+      case So (v e r d) => relat onsh p(author d, v e r d)
+      case _ => St ch.False
     }
   }
   def apply(
     author: User,
-    viewerId: Option[UserId],
-    checkPerspective: Perspective => Option[Boolean],
-    relationship: (UserId, UserId) => Stitch[Boolean],
-    relationshipCounter: Counter
-  ): Stitch[Boolean] = {
-    author.perspective match {
-      case Some(perspective) =>
-        checkPerspective(perspective) match {
-          case Some(status) =>
-            relationshipCounter.incr()
-            Stitch.value(status)
+    v e r d: Opt on[User d],
+    c ckPerspect ve: Perspect ve => Opt on[Boolean],
+    relat onsh p: (User d, User d) => St ch[Boolean],
+    relat onsh pCounter: Counter
+  ): St ch[Boolean] = {
+    author.perspect ve match {
+      case So (perspect ve) =>
+        c ckPerspect ve(perspect ve) match {
+          case So (status) =>
+            relat onsh pCounter. ncr()
+            St ch.value(status)
           case None =>
-            AuthorVerbsViewer(author.id, viewerId, relationship, relationshipCounter)
+            AuthorVerbsV e r(author. d, v e r d, relat onsh p, relat onsh pCounter)
         }
-      case None => AuthorVerbsViewer(author.id, viewerId, relationship, relationshipCounter)
+      case None => AuthorVerbsV e r(author. d, v e r d, relat onsh p, relat onsh pCounter)
     }
   }
 }

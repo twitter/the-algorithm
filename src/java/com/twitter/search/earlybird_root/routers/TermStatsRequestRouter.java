@@ -1,149 +1,149 @@
-package com.twitter.search.earlybird_root.routers;
+package com.tw ter.search.earlyb rd_root.routers;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.inject.Inject;
-import javax.inject.Named;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.L st;
+ mport javax. nject. nject;
+ mport javax. nject.Na d;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect. mmutableL st;
+ mport com.google.common.collect.L sts;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.finagle.Service;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.util.earlybird.EarlybirdResponseUtil;
-import com.twitter.search.earlybird.config.ServingRange;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.InjectionNames;
-import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
-import com.twitter.search.earlybird_root.filters.ServingRangeProvider;
-import com.twitter.search.earlybird_root.mergers.EarlybirdResponseMerger;
-import com.twitter.search.earlybird_root.mergers.SuperRootResponseMerger;
-import com.twitter.search.earlybird_root.mergers.TermStatisticsResponseMerger;
-import com.twitter.search.earlybird_root.mergers.TierResponseAccumulator;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.common.ut l.earlyb rd.Earlyb rdResponseUt l;
+ mport com.tw ter.search.earlyb rd.conf g.Serv ngRange;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResults;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.earlyb rd_root.common. nject onNa s;
+ mport com.tw ter.search.earlyb rd_root.f lters.Earlyb rdT  RangeF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters.Serv ngRangeProv der;
+ mport com.tw ter.search.earlyb rd_root. rgers.Earlyb rdResponse rger;
+ mport com.tw ter.search.earlyb rd_root. rgers.SuperRootResponse rger;
+ mport com.tw ter.search.earlyb rd_root. rgers.TermStat st csResponse rger;
+ mport com.tw ter.search.earlyb rd_root. rgers.T erResponseAccumulator;
+ mport com.tw ter.ut l.Funct on;
+ mport com.tw ter.ut l.Future;
 
-import static com.twitter.search.common.util.earlybird.TermStatisticsUtil.determineBinSize;
+ mport stat c com.tw ter.search.common.ut l.earlyb rd.TermStat st csUt l.determ neB nS ze;
 
 /**
- * For TermStats traffic SuperRoot hits both realtime and archive in parallel, and then merges
- * the results.
+ * For TermStats traff c SuperRoot h s both realt   and arch ve  n parallel, and t n  rges
+ * t  results.
  */
-public class TermStatsRequestRouter extends RequestRouter {
-  private static final Logger LOG = LoggerFactory.getLogger(TermStatsRequestRouter.class);
+publ c class TermStatsRequestRouter extends RequestRouter {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(TermStatsRequestRouter.class);
 
-  private static final String SUPERROOT_SKIP_FULL_ARCHIVE_CLUSTER_FOR_TERM_STATS_REQUESTS =
-      "superroot_skip_full_archive_cluster_for_term_stats_requests";
+  pr vate stat c f nal Str ng SUPERROOT_SK P_FULL_ARCH VE_CLUSTER_FOR_TERM_STATS_REQUESTS =
+      "superroot_sk p_full_arch ve_cluster_for_term_stats_requests";
 
-  private final Service<EarlybirdRequestContext, EarlybirdResponse> realtimeService;
-  private final Service<EarlybirdRequestContext, EarlybirdResponse> fullArchiveService;
+  pr vate f nal Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> realt  Serv ce;
+  pr vate f nal Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> fullArch veServ ce;
 
-  private final SearchDecider decider;
+  pr vate f nal SearchDec der dec der;
 
-  private final ServingRangeProvider realtimeServingRangeProvider;
+  pr vate f nal Serv ngRangeProv der realt  Serv ngRangeProv der;
 
-  @Inject
-  public TermStatsRequestRouter(
-      @Named(InjectionNames.REALTIME)
-          Service<EarlybirdRequestContext, EarlybirdResponse> realtime,
-      @Named(TermStatsRequestRouterModule.REALTIME_TIME_RANGE_FILTER)
-          EarlybirdTimeRangeFilter realtimeTimeRangeFilter,
-      @Named(InjectionNames.FULL_ARCHIVE)
-          Service<EarlybirdRequestContext, EarlybirdResponse> fullArchive,
-      @Named(TermStatsRequestRouterModule.FULL_ARCHIVE_TIME_RANGE_FILTER)
-          EarlybirdTimeRangeFilter fullArchiveTimeRangeFilter,
-      SearchDecider decider) {
-    LOG.info("Instantiating a TermStatsRequestRouter");
+  @ nject
+  publ c TermStatsRequestRouter(
+      @Na d( nject onNa s.REALT ME)
+          Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> realt  ,
+      @Na d(TermStatsRequestRouterModule.REALT ME_T ME_RANGE_F LTER)
+          Earlyb rdT  RangeF lter realt  T  RangeF lter,
+      @Na d( nject onNa s.FULL_ARCH VE)
+          Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> fullArch ve,
+      @Na d(TermStatsRequestRouterModule.FULL_ARCH VE_T ME_RANGE_F LTER)
+          Earlyb rdT  RangeF lter fullArch veT  RangeF lter,
+      SearchDec der dec der) {
+    LOG. nfo(" nstant at ng a TermStatsRequestRouter");
 
-    this.realtimeService = realtimeTimeRangeFilter
-        .andThen(realtime);
+    t .realt  Serv ce = realt  T  RangeF lter
+        .andT n(realt  );
 
-    this.fullArchiveService = fullArchiveTimeRangeFilter
-        .andThen(fullArchive);
+    t .fullArch veServ ce = fullArch veT  RangeF lter
+        .andT n(fullArch ve);
 
-    this.decider = decider;
-    this.realtimeServingRangeProvider = realtimeTimeRangeFilter.getServingRangeProvider();
+    t .dec der = dec der;
+    t .realt  Serv ngRangeProv der = realt  T  RangeF lter.getServ ngRangeProv der();
   }
 
   /**
-   * Hit both realtime and full-archive clusters then merges term stat request.
+   * H  both realt   and full-arch ve clusters t n  rges term stat request.
    */
-  @Override
-  public Future<EarlybirdResponse> route(EarlybirdRequestContext requestContext) {
-    List<RequestResponse> requestResponses = new ArrayList<>();
+  @Overr de
+  publ c Future<Earlyb rdResponse> route(Earlyb rdRequestContext requestContext) {
+    L st<RequestResponse> requestResponses = new ArrayL st<>();
 
-    Future<EarlybirdResponse> realtimeResponseFuture = realtimeService.apply(requestContext);
-    this.saveRequestResponse(requestResponses, "realtime", requestContext, realtimeResponseFuture);
+    Future<Earlyb rdResponse> realt  ResponseFuture = realt  Serv ce.apply(requestContext);
+    t .saveRequestResponse(requestResponses, "realt  ", requestContext, realt  ResponseFuture);
 
-    Future<EarlybirdResponse> archiveResponseFuture =
-        requestContext.getRequest().isGetOlderResults()
-            && !decider.isAvailable(SUPERROOT_SKIP_FULL_ARCHIVE_CLUSTER_FOR_TERM_STATS_REQUESTS)
-            ? fullArchiveService.apply(requestContext)
+    Future<Earlyb rdResponse> arch veResponseFuture =
+        requestContext.getRequest(). sGetOlderResults()
+            && !dec der. sAva lable(SUPERROOT_SK P_FULL_ARCH VE_CLUSTER_FOR_TERM_STATS_REQUESTS)
+            ? fullArch veServ ce.apply(requestContext)
             : Future.value(emptyResponse());
-    this.saveRequestResponse(requestResponses, "archive", requestContext, archiveResponseFuture);
+    t .saveRequestResponse(requestResponses, "arch ve", requestContext, arch veResponseFuture);
 
-    Future<EarlybirdResponse> mergedResponse =
-        merge(realtimeResponseFuture, archiveResponseFuture, requestContext);
+    Future<Earlyb rdResponse>  rgedResponse =
+         rge(realt  ResponseFuture, arch veResponseFuture, requestContext);
 
-    return this.maybeAttachSentRequestsToDebugInfo(
+    return t .maybeAttachSentRequestsToDebug nfo(
         requestResponses,
         requestContext,
-        mergedResponse
+         rgedResponse
     );
   }
 
   /**
-   * Merge responses from realtime and full archive clusters.
+   *  rge responses from realt   and full arch ve clusters.
    */
-  private Future<EarlybirdResponse> merge(
-      final Future<EarlybirdResponse> realtimeResponseFuture,
-      final Future<EarlybirdResponse> archiveResponseFuture,
-      final EarlybirdRequestContext requestContext) {
+  pr vate Future<Earlyb rdResponse>  rge(
+      f nal Future<Earlyb rdResponse> realt  ResponseFuture,
+      f nal Future<Earlyb rdResponse> arch veResponseFuture,
+      f nal Earlyb rdRequestContext requestContext) {
 
-    return realtimeResponseFuture.flatMap(
-        new Function<EarlybirdResponse, Future<EarlybirdResponse>>() {
-          @Override
-          public Future<EarlybirdResponse> apply(final EarlybirdResponse realtimeResponse) {
-            if (!EarlybirdResponseUtil.isSuccessfulResponse(realtimeResponse)) {
-              return Future.value(realtimeResponse);
+    return realt  ResponseFuture.flatMap(
+        new Funct on<Earlyb rdResponse, Future<Earlyb rdResponse>>() {
+          @Overr de
+          publ c Future<Earlyb rdResponse> apply(f nal Earlyb rdResponse realt  Response) {
+             f (!Earlyb rdResponseUt l. sSuccessfulResponse(realt  Response)) {
+              return Future.value(realt  Response);
             }
 
-            return archiveResponseFuture.flatMap(
-                new Function<EarlybirdResponse, Future<EarlybirdResponse>>() {
-                  @Override
-                  public Future<EarlybirdResponse> apply(EarlybirdResponse archiveResponse) {
-                    if (!EarlybirdResponseUtil.isSuccessfulResponse(archiveResponse)) {
+            return arch veResponseFuture.flatMap(
+                new Funct on<Earlyb rdResponse, Future<Earlyb rdResponse>>() {
+                  @Overr de
+                  publ c Future<Earlyb rdResponse> apply(Earlyb rdResponse arch veResponse) {
+                     f (!Earlyb rdResponseUt l. sSuccessfulResponse(arch veResponse)) {
                       return Future.value(
-                          mergeWithUnsuccessfulArchiveResponse(
-                              requestContext, realtimeResponse, archiveResponse));
+                           rgeW hUnsuccessfulArch veResponse(
+                              requestContext, realt  Response, arch veResponse));
                     }
 
-                    List<Future<EarlybirdResponse>> responses =
-                        ImmutableList.<Future<EarlybirdResponse>>builder()
-                            .add(realtimeResponseFuture)
-                            .add(archiveResponseFuture)
-                            .build();
+                    L st<Future<Earlyb rdResponse>> responses =
+                         mmutableL st.<Future<Earlyb rdResponse>>bu lder()
+                            .add(realt  ResponseFuture)
+                            .add(arch veResponseFuture)
+                            .bu ld();
 
-                    EarlybirdResponseMerger merger = new TermStatisticsResponseMerger(
-                        requestContext, responses, new TierResponseAccumulator());
+                    Earlyb rdResponse rger  rger = new TermStat st csResponse rger(
+                        requestContext, responses, new T erResponseAccumulator());
 
-                    return merger.merge().map(new Function<EarlybirdResponse, EarlybirdResponse>() {
-                      @Override
-                      public EarlybirdResponse apply(EarlybirdResponse mergedResponse) {
-                        if (requestContext.getRequest().getDebugMode() > 0) {
-                          mergedResponse.setDebugString(
-                              SuperRootResponseMerger.mergeClusterDebugStrings(
-                                  realtimeResponse, null, archiveResponse));
+                    return  rger. rge().map(new Funct on<Earlyb rdResponse, Earlyb rdResponse>() {
+                      @Overr de
+                      publ c Earlyb rdResponse apply(Earlyb rdResponse  rgedResponse) {
+                         f (requestContext.getRequest().getDebugMode() > 0) {
+                           rgedResponse.setDebugStr ng(
+                              SuperRootResponse rger. rgeClusterDebugStr ngs(
+                                  realt  Response, null, arch veResponse));
                         }
-                        return mergedResponse;
+                        return  rgedResponse;
                       }
                     });
                   }
@@ -152,87 +152,87 @@ public class TermStatsRequestRouter extends RequestRouter {
         });
   }
 
-  private EarlybirdResponse mergeWithUnsuccessfulArchiveResponse(
-      EarlybirdRequestContext requestContext,
-      EarlybirdResponse realtimeResponse,
-      EarlybirdResponse archiveResponse) {
-    // If the realtime cluster was skipped, and the full archive returned an error
-    // response, return the full archive response.
-    if (isTierSkippedResponse(realtimeResponse)) {
-      return archiveResponse;
+  pr vate Earlyb rdResponse  rgeW hUnsuccessfulArch veResponse(
+      Earlyb rdRequestContext requestContext,
+      Earlyb rdResponse realt  Response,
+      Earlyb rdResponse arch veResponse) {
+    //  f t  realt   cluster was sk pped, and t  full arch ve returned an error
+    // response, return t  full arch ve response.
+     f ( sT erSk ppedResponse(realt  Response)) {
+      return arch veResponse;
     }
 
-    // If the realtime response has results and the full archive cluster returned an error
-    // response, we return the realtime response. If the client needs more results, it can paginate,
-    // and on the next request it will get the error response from the full archive cluster.
-    if (realtimeResponse.isSetTermStatisticsResults()
-        && !realtimeResponse.getTermStatisticsResults().getTermResults().isEmpty()) {
-      realtimeResponse.setDebugString(
-          "Full archive cluster returned an error response ("
-              + archiveResponse.getResponseCode() + "). "
-              + SuperRootResponseMerger.mergeClusterDebugStrings(
-              realtimeResponse, null, archiveResponse));
-      return updateMinCompleteBinId(requestContext, realtimeResponse);
+    //  f t  realt   response has results and t  full arch ve cluster returned an error
+    // response,   return t  realt   response.  f t  cl ent needs more results,   can pag nate,
+    // and on t  next request   w ll get t  error response from t  full arch ve cluster.
+     f (realt  Response. sSetTermStat st csResults()
+        && !realt  Response.getTermStat st csResults().getTermResults(). sEmpty()) {
+      realt  Response.setDebugStr ng(
+          "Full arch ve cluster returned an error response ("
+              + arch veResponse.getResponseCode() + "). "
+              + SuperRootResponse rger. rgeClusterDebugStr ngs(
+              realt  Response, null, arch veResponse));
+      return updateM nCompleteB n d(requestContext, realt  Response);
     }
 
-    // If the realtime response has no results, and the full archive cluster returned an error
-    // response, return a PERSISTENT_ERROR response, and merge the debug strings from the two
+    //  f t  realt   response has no results, and t  full arch ve cluster returned an error
+    // response, return a PERS STENT_ERROR response, and  rge t  debug str ngs from t  two
     // responses.
-    EarlybirdResponse mergedResponse =
-        new EarlybirdResponse(EarlybirdResponseCode.PERSISTENT_ERROR, 0);
-    mergedResponse.setDebugString(
-        "Full archive cluster returned an error response ("
-            + archiveResponse.getResponseCode()
-            + "), and the realtime response had no results. "
-            + SuperRootResponseMerger.mergeClusterDebugStrings(
-            realtimeResponse, null, archiveResponse));
-    return mergedResponse;
+    Earlyb rdResponse  rgedResponse =
+        new Earlyb rdResponse(Earlyb rdResponseCode.PERS STENT_ERROR, 0);
+     rgedResponse.setDebugStr ng(
+        "Full arch ve cluster returned an error response ("
+            + arch veResponse.getResponseCode()
+            + "), and t  realt   response had no results. "
+            + SuperRootResponse rger. rgeClusterDebugStr ngs(
+            realt  Response, null, arch veResponse));
+    return  rgedResponse;
   }
 
   /**
-   * If we get a completed realtime response but a failed archive response, the minCompleteBinId we
-   * return will be incorrect -- the realtime minCompleteBinId is assumed to be the oldest bin
-   * returned, rather than the bin that intersects the realtime serving boundary. In these cases, we
-   * need to move the minCompleteBinId forward.
+   *  f   get a completed realt   response but a fa led arch ve response, t  m nCompleteB n d  
+   * return w ll be  ncorrect -- t  realt   m nCompleteB n d  s assu d to be t  oldest b n
+   * returned, rat r than t  b n that  ntersects t  realt   serv ng boundary.  n t se cases,  
+   * need to move t  m nCompleteB n d forward.
    * <p>
-   * Note that we cannot always set the minCompleteBinId for the realtime results to the bin
-   * intersecting the realtime serving boundary: somewhere in the guts of the merging logic, we set
-   * the minCompleteBinId of the merged response to the max of the minCompleteBinIds of the original
+   * Note that   cannot always set t  m nCompleteB n d for t  realt   results to t  b n
+   *  ntersect ng t  realt   serv ng boundary: so w re  n t  guts of t   rg ng log c,   set
+   * t  m nCompleteB n d of t   rged response to t  max of t  m nCompleteB n ds of t  or g nal
    * responses. :-(
    */
-  private EarlybirdResponse updateMinCompleteBinId(
-      EarlybirdRequestContext requestContext, EarlybirdResponse realtimeResponse) {
-    Preconditions.checkArgument(
-        realtimeResponse.getTermStatisticsResults().isSetMinCompleteBinId());
-    int roundedServingRange = roundServingRangeUpToNearestBinId(requestContext, realtimeResponse);
-    int minCompleteBinId = Math.max(
-        roundedServingRange,
-        realtimeResponse.getTermStatisticsResults().getMinCompleteBinId());
-    realtimeResponse.getTermStatisticsResults().setMinCompleteBinId(minCompleteBinId);
-    return realtimeResponse;
+  pr vate Earlyb rdResponse updateM nCompleteB n d(
+      Earlyb rdRequestContext requestContext, Earlyb rdResponse realt  Response) {
+    Precond  ons.c ckArgu nt(
+        realt  Response.getTermStat st csResults(). sSetM nCompleteB n d());
+     nt roundedServ ngRange = roundServ ngRangeUpToNearestB n d(requestContext, realt  Response);
+     nt m nCompleteB n d = Math.max(
+        roundedServ ngRange,
+        realt  Response.getTermStat st csResults().getM nCompleteB n d());
+    realt  Response.getTermStat st csResults().setM nCompleteB n d(m nCompleteB n d);
+    return realt  Response;
   }
 
-  private static EarlybirdResponse emptyResponse() {
-    return new EarlybirdResponse(EarlybirdResponseCode.SUCCESS, 0)
-        .setSearchResults(new ThriftSearchResults()
-            .setResults(Lists.newArrayList()))
-        .setDebugString("Full archive cluster not requested or not available.");
+  pr vate stat c Earlyb rdResponse emptyResponse() {
+    return new Earlyb rdResponse(Earlyb rdResponseCode.SUCCESS, 0)
+        .setSearchResults(new Thr ftSearchResults()
+            .setResults(L sts.newArrayL st()))
+        .setDebugStr ng("Full arch ve cluster not requested or not ava lable.");
   }
 
-  private static boolean isTierSkippedResponse(EarlybirdResponse response) {
-    return response.getResponseCode() == EarlybirdResponseCode.TIER_SKIPPED;
+  pr vate stat c boolean  sT erSk ppedResponse(Earlyb rdResponse response) {
+    return response.getResponseCode() == Earlyb rdResponseCode.T ER_SK PPED;
   }
 
   /**
-   * Given a termstats request/response pair, round the serving range for the appropriate cluster up
-   * to the nearest binId at the appropriate resolution.
+   * G ven a termstats request/response pa r, round t  serv ng range for t  appropr ate cluster up
+   * to t  nearest b n d at t  appropr ate resolut on.
    */
-  private int roundServingRangeUpToNearestBinId(
-      EarlybirdRequestContext request, EarlybirdResponse response) {
-    ServingRange servingRange = realtimeServingRangeProvider.getServingRange(
-        request, request.useOverrideTierConfig());
-    long servingRangeStartSecs = servingRange.getServingRangeSinceTimeSecondsFromEpoch();
-    int binSize = determineBinSize(response.getTermStatisticsResults().getHistogramSettings());
-    return (int) Math.ceil((double) servingRangeStartSecs / binSize);
+  pr vate  nt roundServ ngRangeUpToNearestB n d(
+      Earlyb rdRequestContext request, Earlyb rdResponse response) {
+    Serv ngRange serv ngRange = realt  Serv ngRangeProv der.getServ ngRange(
+        request, request.useOverr deT erConf g());
+    long serv ngRangeStartSecs = serv ngRange.getServ ngRangeS nceT  SecondsFromEpoch();
+     nt b nS ze = determ neB nS ze(response.getTermStat st csResults().get togramSett ngs());
+    return ( nt) Math.ce l((double) serv ngRangeStartSecs / b nS ze);
   }
 }

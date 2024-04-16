@@ -1,55 +1,55 @@
 syntax = "proto3";
 
-package tensorflow.serving;
+package tensorflow.serv ng;
 
-import "tensorflow_serving/apis/model.proto";
-import "tensorflow_serving/apis/status.proto";
+ mport "tensorflow_serv ng/ap s/model.proto";
+ mport "tensorflow_serv ng/ap s/status.proto";
 
-option cc_enable_arenas = true;
+opt on cc_enable_arenas = true;
 
-// GetModelStatusRequest contains a ModelSpec indicating the model for which
+// GetModelStatusRequest conta ns a ModelSpec  nd cat ng t  model for wh ch
 // to get status.
-message GetModelStatusRequest {
-  // Model Specification. If version is not specified, information about all
-  // versions of the model will be returned. If a version is specified, the
-  // status of only that version will be returned.
+ ssage GetModelStatusRequest {
+  // Model Spec f cat on.  f vers on  s not spec f ed,  nformat on about all
+  // vers ons of t  model w ll be returned.  f a vers on  s spec f ed, t 
+  // status of only that vers on w ll be returned.
   ModelSpec model_spec = 1;
 }
 
-// Version number, state, and status for a single version of a model.
-message ModelVersionStatus {
-  // Model version.
-  int64 version = 1;
+// Vers on number, state, and status for a s ngle vers on of a model.
+ ssage ModelVers onStatus {
+  // Model vers on.
+   nt64 vers on = 1;
 
-  // States that map to ManagerState enum in
-  // tensorflow_serving/core/servable_state.h
+  // States that map to ManagerState enum  n
+  // tensorflow_serv ng/core/servable_state.h
   enum State {
     // Default value.
     UNKNOWN = 0;
 
-    // The manager is tracking this servable, but has not initiated any action
-    // pertaining to it.
+    // T  manager  s track ng t  servable, but has not  n  ated any act on
+    // perta n ng to  .
     START = 10;
 
-    // The manager has decided to load this servable. In particular, checks
-    // around resource availability and other aspects have passed, and the
-    // manager is about to invoke the loader's Load() method.
-    LOADING = 20;
+    // T  manager has dec ded to load t  servable.  n part cular, c cks
+    // around res ce ava lab l y and ot r aspects have passed, and t 
+    // manager  s about to  nvoke t  loader's Load()  thod.
+    LOAD NG = 20;
 
-    // The manager has successfully loaded this servable and made it available
-    // for serving (i.e. GetServableHandle(id) will succeed). To avoid races,
-    // this state is not reported until *after* the servable is made
-    // available.
-    AVAILABLE = 30;
+    // T  manager has successfully loaded t  servable and made   ava lable
+    // for serv ng ( .e. GetServableHandle( d) w ll succeed). To avo d races,
+    // t  state  s not reported unt l *after* t  servable  s made
+    // ava lable.
+    AVA LABLE = 30;
 
-    // The manager has decided to make this servable unavailable, and unload
-    // it. To avoid races, this state is reported *before* the servable is
-    // made unavailable.
-    UNLOADING = 40;
+    // T  manager has dec ded to make t  servable unava lable, and unload
+    //  . To avo d races, t  state  s reported *before* t  servable  s
+    // made unava lable.
+    UNLOAD NG = 40;
 
-    // This servable has reached the end of its journey in the manager. Either
-    // it loaded and ultimately unloaded successfully, or it hit an error at
-    // some point in its lifecycle.
+    // T  servable has reac d t  end of  s j ney  n t  manager. E  r
+    //   loaded and ult mately unloaded successfully, or   h  an error at
+    // so  po nt  n  s l fecycle.
     END = 50;
   }
 
@@ -61,8 +61,8 @@ message ModelVersionStatus {
 }
 
 // Response for ModelStatusRequest on successful run.
-message GetModelStatusResponse {
-  // Version number and status information for applicable model version(s).
-  repeated ModelVersionStatus model_version_status = 1
-      [json_name = "model_version_status"];
+ ssage GetModelStatusResponse {
+  // Vers on number and status  nformat on for appl cable model vers on(s).
+  repeated ModelVers onStatus model_vers on_status = 1
+      [json_na  = "model_vers on_status"];
 }

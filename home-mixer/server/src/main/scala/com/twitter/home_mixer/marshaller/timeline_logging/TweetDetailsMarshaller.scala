@@ -1,47 +1,47 @@
-package com.twitter.home_mixer.marshaller.timeline_logging
+package com.tw ter.ho _m xer.marshaller.t  l ne_logg ng
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtModulePresentation
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.GeneralContextTypeMarshaller
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ConversationGeneralContextType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TopicContext
-import com.twitter.timelines.service.{thriftscala => tst}
-import com.twitter.timelines.timeline_logging.{thriftscala => thriftlog}
+ mport com.tw ter.ho _m xer.model.Ho Features.Author dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.S ceT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.S ceUser dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.SuggestTypeFeature
+ mport com.tw ter.product_m xer.component_l brary.model.presentat on.urt.Urt emPresentat on
+ mport com.tw ter.product_m xer.component_l brary.model.presentat on.urt.UrtModulePresentat on
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.GeneralContextTypeMarshaller
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t et.T et em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Conversat onGeneralContextType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.GeneralContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Top cContext
+ mport com.tw ter.t  l nes.serv ce.{thr ftscala => tst}
+ mport com.tw ter.t  l nes.t  l ne_logg ng.{thr ftscala => thr ftlog}
 
-object TweetDetailsMarshaller {
+object T etDeta lsMarshaller {
 
-  private val generalContextTypeMarshaller = new GeneralContextTypeMarshaller()
+  pr vate val generalContextTypeMarshaller = new GeneralContextTypeMarshaller()
 
-  def apply(entry: TweetItem, candidate: CandidateWithDetails): thriftlog.TweetDetails = {
-    val socialContext = candidate.presentation.flatMap {
-      case _ @UrtItemPresentation(timelineItem: TweetItem, _) => timelineItem.socialContext
-      case _ @UrtModulePresentation(timelineModule) =>
-        timelineModule.items.head.item match {
-          case timelineItem: TweetItem => timelineItem.socialContext
-          case _ => Some(ConversationGeneralContextType)
+  def apply(entry: T et em, cand date: Cand dateW hDeta ls): thr ftlog.T etDeta ls = {
+    val soc alContext = cand date.presentat on.flatMap {
+      case _ @Urt emPresentat on(t  l ne em: T et em, _) => t  l ne em.soc alContext
+      case _ @UrtModulePresentat on(t  l neModule) =>
+        t  l neModule. ems. ad. em match {
+          case t  l ne em: T et em => t  l ne em.soc alContext
+          case _ => So (Conversat onGeneralContextType)
         }
     }
 
-    val socialContextType = socialContext match {
-      case Some(GeneralContext(contextType, _, _, _, _)) =>
-        Some(generalContextTypeMarshaller(contextType).value.toShort)
-      case Some(TopicContext(_, _)) => Some(tst.ContextType.Topic.value.toShort)
+    val soc alContextType = soc alContext match {
+      case So (GeneralContext(contextType, _, _, _, _)) =>
+        So (generalContextTypeMarshaller(contextType).value.toShort)
+      case So (Top cContext(_, _)) => So (tst.ContextType.Top c.value.toShort)
       case _ => None
     }
 
-    thriftlog.TweetDetails(
-      sourceTweetId = candidate.features.getOrElse(SourceTweetIdFeature, None),
-      socialContextType = socialContextType,
-      suggestType = candidate.features.getOrElse(SuggestTypeFeature, None).map(_.name),
-      authorId = candidate.features.getOrElse(AuthorIdFeature, None),
-      sourceAuthorId = candidate.features.getOrElse(SourceUserIdFeature, None)
+    thr ftlog.T etDeta ls(
+      s ceT et d = cand date.features.getOrElse(S ceT et dFeature, None),
+      soc alContextType = soc alContextType,
+      suggestType = cand date.features.getOrElse(SuggestTypeFeature, None).map(_.na ),
+      author d = cand date.features.getOrElse(Author dFeature, None),
+      s ceAuthor d = cand date.features.getOrElse(S ceUser dFeature, None)
     )
   }
 }

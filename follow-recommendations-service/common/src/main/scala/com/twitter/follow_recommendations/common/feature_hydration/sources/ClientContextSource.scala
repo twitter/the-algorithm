@@ -1,43 +1,43 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+package com.tw ter.follow_recom ndat ons.common.feature_hydrat on.s ces
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.common.feature_hydration.adapters.ClientContextAdapter
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSource
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSourceId
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+ mport com.google. nject.Prov des
+ mport com.google. nject.S ngleton
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.adapters.Cl entContextAdapter
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.common.FeatureS ce
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.common.FeatureS ce d
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.common.HasPreFetc dFeature
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.HasD splayLocat on
+ mport com.tw ter.follow_recom ndat ons.common.models.HasS m larToContext
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
 
 /**
- * This source only takes features from the request (e.g. client context, WTF display location)
+ * T  s ce only takes features from t  request (e.g. cl ent context, WTF d splay locat on)
  * No external calls are made.
  */
-@Provides
-@Singleton
-class ClientContextSource() extends FeatureSource {
+@Prov des
+@S ngleton
+class Cl entContextS ce() extends FeatureS ce {
 
-  override val id: FeatureSourceId = FeatureSourceId.ClientContextSourceId
+  overr de val  d: FeatureS ce d = FeatureS ce d.Cl entContextS ce d
 
-  override val featureContext: FeatureContext = ClientContextAdapter.getFeatureContext
+  overr de val featureContext: FeatureContext = Cl entContextAdapter.getFeatureContext
 
-  override def hydrateFeatures(
-    t: HasClientContext
-      with HasPreFetchedFeature
-      with HasParams
-      with HasSimilarToContext
-      with HasDisplayLocation,
-    candidates: Seq[CandidateUser]
-  ): Stitch[Map[CandidateUser, DataRecord]] = {
-    Stitch.value(
-      candidates
-        .map(_ -> ((t.clientContext, t.displayLocation))).toMap.mapValues(
-          ClientContextAdapter.adaptToDataRecord))
+  overr de def hydrateFeatures(
+    t: HasCl entContext
+      w h HasPreFetc dFeature
+      w h HasParams
+      w h HasS m larToContext
+      w h HasD splayLocat on,
+    cand dates: Seq[Cand dateUser]
+  ): St ch[Map[Cand dateUser, DataRecord]] = {
+    St ch.value(
+      cand dates
+        .map(_ -> ((t.cl entContext, t.d splayLocat on))).toMap.mapValues(
+          Cl entContextAdapter.adaptToDataRecord))
   }
 }

@@ -1,19 +1,19 @@
-package com.twitter.follow_recommendations.common.feature_hydration.common
+package com.tw ter.follow_recom ndat ons.common.feature_hydrat on.common
 
-sealed trait FeatureSourceId
+sealed tra  FeatureS ce d
 
-object FeatureSourceId {
-  object CandidateAlgorithmSourceId extends FeatureSourceId
-  object ClientContextSourceId extends FeatureSourceId
-  object FeatureStoreSourceId extends FeatureSourceId
-  object FeatureStoreTimelinesAuthorSourceId extends FeatureSourceId
-  object FeatureStoreGizmoduckSourceId extends FeatureSourceId
-  object FeatureStoreUserMetricCountsSourceId extends FeatureSourceId
-  object FeatureStoreNotificationSourceId extends FeatureSourceId
+object FeatureS ce d {
+  object Cand dateAlgor hmS ce d extends FeatureS ce d
+  object Cl entContextS ce d extends FeatureS ce d
+  object FeatureStoreS ce d extends FeatureS ce d
+  object FeatureStoreT  l nesAuthorS ce d extends FeatureS ce d
+  object FeatureStoreG zmoduckS ce d extends FeatureS ce d
+  object FeatureStoreUser tr cCountsS ce d extends FeatureS ce d
+  object FeatureStoreNot f cat onS ce d extends FeatureS ce d
 
-  object FeatureStorePrecomputedNotificationSourceId extends FeatureSourceId
-  object FeatureStorePostNuxAlgorithmSourceId extends FeatureSourceId
-  @deprecated object StratoFeatureHydrationSourceId extends FeatureSourceId
-  object PreFetchedFeatureSourceId extends FeatureSourceId
-  object UserScoringFeatureSourceId extends FeatureSourceId
+  object FeatureStorePrecomputedNot f cat onS ce d extends FeatureS ce d
+  object FeatureStorePostNuxAlgor hmS ce d extends FeatureS ce d
+  @deprecated object StratoFeatureHydrat onS ce d extends FeatureS ce d
+  object PreFetc dFeatureS ce d extends FeatureS ce d
+  object UserScor ngFeatureS ce d extends FeatureS ce d
 }

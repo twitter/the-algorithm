@@ -1,87 +1,87 @@
-package com.twitter.search.earlybird_root.common;
+package com.tw ter.search.earlyb rd_root.common;
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
 
 /**
- * A class that wraps an EarlybirdResponse and a flag that determines if a request was sent to a
- * service.
+ * A class that wraps an Earlyb rdResponse and a flag that determ nes  f a request was sent to a
+ * serv ce.
  */
-public final class EarlybirdServiceResponse {
-  public static enum ServiceState {
-    // The service was called (or will be called).
-    SERVICE_CALLED(true),
+publ c f nal class Earlyb rdServ ceResponse {
+  publ c stat c enum Serv ceState {
+    // T  serv ce was called (or w ll be called).
+    SERV CE_CALLED(true),
 
-    // The service is not available (turned off by a decider, for example).
-    SERVICE_NOT_AVAILABLE(false),
+    // T  serv ce  s not ava lable (turned off by a dec der, for example).
+    SERV CE_NOT_AVA LABLE(false),
 
-    // The client did not request results from this service.
-    SERVICE_NOT_REQUESTED(false),
+    // T  cl ent d d not request results from t  serv ce.
+    SERV CE_NOT_REQUESTED(false),
 
-    // The service is available and the client wants results from this service, but the service
-    // was not called (because we got enough results from other services, for example).
-    SERVICE_NOT_CALLED(false);
+    // T  serv ce  s ava lable and t  cl ent wants results from t  serv ce, but t  serv ce
+    // was not called (because   got enough results from ot r serv ces, for example).
+    SERV CE_NOT_CALLED(false);
 
-    private final boolean serviceWasCalled;
+    pr vate f nal boolean serv ceWasCalled;
 
-    private ServiceState(boolean serviceWasCalled) {
-      this.serviceWasCalled = serviceWasCalled;
+    pr vate Serv ceState(boolean serv ceWasCalled) {
+      t .serv ceWasCalled = serv ceWasCalled;
     }
 
-    public boolean serviceWasCalled() {
-      return serviceWasCalled;
+    publ c boolean serv ceWasCalled() {
+      return serv ceWasCalled;
     }
 
-    public boolean serviceWasRequested() {
-      return this != SERVICE_NOT_REQUESTED;
+    publ c boolean serv ceWasRequested() {
+      return t  != SERV CE_NOT_REQUESTED;
     }
 
   }
 
-  private final EarlybirdResponse earlybirdResponse;
-  private final ServiceState serviceState;
+  pr vate f nal Earlyb rdResponse earlyb rdResponse;
+  pr vate f nal Serv ceState serv ceState;
 
-  private EarlybirdServiceResponse(@Nullable EarlybirdResponse earlybirdResponse,
-                                   ServiceState serviceState) {
-    this.earlybirdResponse = earlybirdResponse;
-    this.serviceState = serviceState;
-    if (!serviceState.serviceWasCalled()) {
-      Preconditions.checkArgument(earlybirdResponse == null);
+  pr vate Earlyb rdServ ceResponse(@Nullable Earlyb rdResponse earlyb rdResponse,
+                                   Serv ceState serv ceState) {
+    t .earlyb rdResponse = earlyb rdResponse;
+    t .serv ceState = serv ceState;
+     f (!serv ceState.serv ceWasCalled()) {
+      Precond  ons.c ckArgu nt(earlyb rdResponse == null);
     }
-  }
-
-  /**
-   * Creates a new EarlybirdServiceResponse instance, indicating that the service was not called.
-   *
-   * @param serviceState The state of the service.
-   * @return a new EarlybirdServiceResponse instance, indicating that the service was not called.
-   */
-  public static EarlybirdServiceResponse serviceNotCalled(ServiceState serviceState) {
-    Preconditions.checkArgument(!serviceState.serviceWasCalled());
-    return new EarlybirdServiceResponse(null, serviceState);
   }
 
   /**
-   * Creates a new EarlybirdServiceResponse instance that wraps the given earlybird response.
+   * Creates a new Earlyb rdServ ceResponse  nstance,  nd cat ng that t  serv ce was not called.
    *
-   * @param earlybirdResponse The EarlybirdResponse instance returned by the service.
-   * @return a new EarlybirdServiceResponse instance that wraps the given earlybird response.
+   * @param serv ceState T  state of t  serv ce.
+   * @return a new Earlyb rdServ ceResponse  nstance,  nd cat ng that t  serv ce was not called.
    */
-  public static EarlybirdServiceResponse serviceCalled(EarlybirdResponse earlybirdResponse) {
-    return new EarlybirdServiceResponse(earlybirdResponse, ServiceState.SERVICE_CALLED);
+  publ c stat c Earlyb rdServ ceResponse serv ceNotCalled(Serv ceState serv ceState) {
+    Precond  ons.c ckArgu nt(!serv ceState.serv ceWasCalled());
+    return new Earlyb rdServ ceResponse(null, serv ceState);
   }
 
-  /** Returns the wrapped earlybird response. */
+  /**
+   * Creates a new Earlyb rdServ ceResponse  nstance that wraps t  g ven earlyb rd response.
+   *
+   * @param earlyb rdResponse T  Earlyb rdResponse  nstance returned by t  serv ce.
+   * @return a new Earlyb rdServ ceResponse  nstance that wraps t  g ven earlyb rd response.
+   */
+  publ c stat c Earlyb rdServ ceResponse serv ceCalled(Earlyb rdResponse earlyb rdResponse) {
+    return new Earlyb rdServ ceResponse(earlyb rdResponse, Serv ceState.SERV CE_CALLED);
+  }
+
+  /** Returns t  wrapped earlyb rd response. */
   @Nullable
-  public EarlybirdResponse getResponse() {
-    return earlybirdResponse;
+  publ c Earlyb rdResponse getResponse() {
+    return earlyb rdResponse;
   }
 
-  /** Returns the state of the service. */
-  public ServiceState getServiceState() {
-    return serviceState;
+  /** Returns t  state of t  serv ce. */
+  publ c Serv ceState getServ ceState() {
+    return serv ceState;
   }
 }

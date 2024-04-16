@@ -1,158 +1,158 @@
-package com.twitter.frigate.pushservice.take
+package com.tw ter.fr gate.pushserv ce.take
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.Stats.track
-import com.twitter.frigate.common.logger.MRLogger
-import com.twitter.frigate.common.store.Fail
-import com.twitter.frigate.common.store.IbisResponse
-import com.twitter.frigate.common.store.InvalidConfiguration
-import com.twitter.frigate.common.store.NoRequest
-import com.twitter.frigate.common.store.Sent
-import com.twitter.frigate.common.util.CasLock
-import com.twitter.frigate.common.util.PushServiceUtil.InvalidConfigResponse
-import com.twitter.frigate.common.util.PushServiceUtil.NtabWriteOnlyResponse
-import com.twitter.frigate.common.util.PushServiceUtil.SendFailedResponse
-import com.twitter.frigate.common.util.PushServiceUtil.SentResponse
-import com.twitter.frigate.pushservice.predicate.CasLockPredicate
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.take.history._
-import com.twitter.frigate.pushservice.util.CopyUtil
-import com.twitter.frigate.pushservice.thriftscala.PushResponse
-import com.twitter.frigate.pushservice.thriftscala.PushStatus
-import com.twitter.frigate.pushservice.util.OverrideNotificationUtil
-import com.twitter.frigate.thriftscala.ChannelName
-import com.twitter.util.Future
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Stats.track
+ mport com.tw ter.fr gate.common.logger.MRLogger
+ mport com.tw ter.fr gate.common.store.Fa l
+ mport com.tw ter.fr gate.common.store. b sResponse
+ mport com.tw ter.fr gate.common.store. nval dConf gurat on
+ mport com.tw ter.fr gate.common.store.NoRequest
+ mport com.tw ter.fr gate.common.store.Sent
+ mport com.tw ter.fr gate.common.ut l.CasLock
+ mport com.tw ter.fr gate.common.ut l.PushServ ceUt l. nval dConf gResponse
+ mport com.tw ter.fr gate.common.ut l.PushServ ceUt l.NtabWr eOnlyResponse
+ mport com.tw ter.fr gate.common.ut l.PushServ ceUt l.SendFa ledResponse
+ mport com.tw ter.fr gate.common.ut l.PushServ ceUt l.SentResponse
+ mport com.tw ter.fr gate.pushserv ce.pred cate.CasLockPred cate
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.take. tory._
+ mport com.tw ter.fr gate.pushserv ce.ut l.CopyUt l
+ mport com.tw ter.fr gate.pushserv ce.thr ftscala.PushResponse
+ mport com.tw ter.fr gate.pushserv ce.thr ftscala.PushStatus
+ mport com.tw ter.fr gate.pushserv ce.ut l.Overr deNot f cat onUt l
+ mport com.tw ter.fr gate.thr ftscala.ChannelNa 
+ mport com.tw ter.ut l.Future
 
-class CandidateNotifier(
-  notificationSender: NotificationSender,
+class Cand dateNot f er(
+  not f cat onSender: Not f cat onSender,
   casLock: CasLock,
-  historyWriter: HistoryWriter,
-  eventBusWriter: EventBusWriter,
+   toryWr er:  toryWr er,
+  eventBusWr er: EventBusWr er,
   ntabOnlyChannelSelector: NtabOnlyChannelSelector
 )(
-  implicit statsReceiver: StatsReceiver) {
+   mpl c  statsRece ver: StatsRece ver) {
 
-  private lazy val casLockPredicate =
-    CasLockPredicate(casLock, expiryDuration = 10.minutes)(statsReceiver)
-  private val candidateNotifierStats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val historyWriteCounter =
-    candidateNotifierStats.counter("simply_notifier_history_write_num")
-  private val loggedOutHistoryWriteCounter =
-    candidateNotifierStats.counter("logged_out_simply_notifier_history_write_num")
-  private val notificationSenderLatency =
-    candidateNotifierStats.scope("notification_sender_send")
-  private val log = MRLogger("CandidateNotifier")
+  pr vate lazy val casLockPred cate =
+    CasLockPred cate(casLock, exp ryDurat on = 10.m nutes)(statsRece ver)
+  pr vate val cand dateNot f erStats = statsRece ver.scope(t .getClass.getS mpleNa )
+  pr vate val  toryWr eCounter =
+    cand dateNot f erStats.counter("s mply_not f er_ tory_wr e_num")
+  pr vate val loggedOut toryWr eCounter =
+    cand dateNot f erStats.counter("logged_out_s mply_not f er_ tory_wr e_num")
+  pr vate val not f cat onSenderLatency =
+    cand dateNot f erStats.scope("not f cat on_sender_send")
+  pr vate val log = MRLogger("Cand dateNot f er")
 
-  private def mapIbisResponse(ibisResponse: IbisResponse): PushResponse = {
-    ibisResponse match {
-      case IbisResponse(Sent, _) => SentResponse
-      case IbisResponse(Fail, _) => SendFailedResponse
-      case IbisResponse(InvalidConfiguration, _) => InvalidConfigResponse
-      case IbisResponse(NoRequest, _) => NtabWriteOnlyResponse
+  pr vate def map b sResponse( b sResponse:  b sResponse): PushResponse = {
+     b sResponse match {
+      case  b sResponse(Sent, _) => SentResponse
+      case  b sResponse(Fa l, _) => SendFa ledResponse
+      case  b sResponse( nval dConf gurat on, _) =>  nval dConf gResponse
+      case  b sResponse(NoRequest, _) => NtabWr eOnlyResponse
     }
   }
 
   /**
-   * - write to history store
-   * - send the notification
-   * - scribe the notification
+   * - wr e to  tory store
+   * - send t  not f cat on
+   * - scr be t  not f cat on
    *
-   * final modifier is to signal that this function cannot be overriden. There's some critical logic
-   * in this function, and it's helpful to know that no sub-class overrides it.
+   * f nal mod f er  s to s gnal that t  funct on cannot be overr den. T re's so  cr  cal log c
+   *  n t  funct on, and  's  lpful to know that no sub-class overr des  .
    */
-  final def notify(
-    candidate: PushCandidate,
+  f nal def not fy(
+    cand date: PushCand date,
   ): Future[PushResponse] = {
-    if (candidate.target.isDarkWrite) {
-      notificationSender.sendIbisDarkWrite(candidate).map(mapIbisResponse)
+     f (cand date.target. sDarkWr e) {
+      not f cat onSender.send b sDarkWr e(cand date).map(map b sResponse)
     } else {
-      casLockPredicate(Seq(candidate)).flatMap { casLockResults =>
-        if (casLockResults.head || candidate.target.pushContext
-            .exists(_.skipFilters.contains(true))) {
+      casLockPred cate(Seq(cand date)).flatMap { casLockResults =>
+         f (casLockResults. ad || cand date.target.pushContext
+            .ex sts(_.sk pF lters.conta ns(true))) {
           Future
-            .join(
-              candidate.target.isSilentPush,
-              OverrideNotificationUtil
-                .getOverrideInfo(candidate, candidateNotifierStats),
-              CopyUtil.getCopyFeatures(candidate, candidateNotifierStats)
+            .jo n(
+              cand date.target. sS lentPush,
+              Overr deNot f cat onUt l
+                .getOverr de nfo(cand date, cand dateNot f erStats),
+              CopyUt l.getCopyFeatures(cand date, cand dateNot f erStats)
             ).flatMap {
-              case (isSilentPush, overrideInfoOpt, copyFeaturesMap) =>
-                val channels = ntabOnlyChannelSelector.selectChannel(candidate)
+              case ( sS lentPush, overr de nfoOpt, copyFeaturesMap) =>
+                val channels = ntabOnlyChannelSelector.selectChannel(cand date)
                 channels.flatMap { channels =>
-                  candidate
-                    .frigateNotificationForPersistence(
+                  cand date
+                    .fr gateNot f cat onForPers stence(
                       channels,
-                      isSilentPush,
-                      overrideInfoOpt,
-                      copyFeaturesMap.keySet).flatMap { frigateNotificationForPersistence =>
-                      val result = if (candidate.target.isDarkWrite) {
-                        candidateNotifierStats.counter("dark_write").incr()
-                        Future.Unit
+                       sS lentPush,
+                      overr de nfoOpt,
+                      copyFeaturesMap.keySet).flatMap { fr gateNot f cat onForPers stence =>
+                      val result =  f (cand date.target. sDarkWr e) {
+                        cand dateNot f erStats.counter("dark_wr e"). ncr()
+                        Future.Un 
                       } else {
-                        historyWriteCounter.incr()
-                        historyWriter
-                          .writeSendToHistory(candidate, frigateNotificationForPersistence)
+                         toryWr eCounter. ncr()
+                         toryWr er
+                          .wr eSendTo tory(cand date, fr gateNot f cat onForPers stence)
                       }
                       result.flatMap { _ =>
-                        track(notificationSenderLatency)(
-                          notificationSender
-                            .notify(channels, candidate)
-                            .map { ibisResponse =>
-                              eventBusWriter
-                                .writeToEventBus(candidate, frigateNotificationForPersistence)
-                              mapIbisResponse(ibisResponse)
+                        track(not f cat onSenderLatency)(
+                          not f cat onSender
+                            .not fy(channels, cand date)
+                            .map {  b sResponse =>
+                              eventBusWr er
+                                .wr eToEventBus(cand date, fr gateNot f cat onForPers stence)
+                              map b sResponse( b sResponse)
                             })
                       }
                     }
                 }
             }
         } else {
-          candidateNotifierStats.counter("filtered_by_cas_lock").incr()
-          Future.value(PushResponse(PushStatus.Filtered, Some(casLockPredicate.name)))
+          cand dateNot f erStats.counter("f ltered_by_cas_lock"). ncr()
+          Future.value(PushResponse(PushStatus.F ltered, So (casLockPred cate.na )))
         }
       }
     }
   }
 
-  final def loggedOutNotify(
-    candidate: PushCandidate,
+  f nal def loggedOutNot fy(
+    cand date: PushCand date,
   ): Future[PushResponse] = {
-    if (candidate.target.isDarkWrite) {
-      notificationSender.sendIbisDarkWrite(candidate).map(mapIbisResponse)
+     f (cand date.target. sDarkWr e) {
+      not f cat onSender.send b sDarkWr e(cand date).map(map b sResponse)
     } else {
-      casLockPredicate(Seq(candidate)).flatMap { casLockResults =>
-        if (casLockResults.head || candidate.target.pushContext
-            .exists(_.skipFilters.contains(true))) {
-          val response = candidate.target.isSilentPush.flatMap { isSilentPush =>
-            candidate
-              .frigateNotificationForPersistence(
-                Seq(ChannelName.PushNtab),
-                isSilentPush,
+      casLockPred cate(Seq(cand date)).flatMap { casLockResults =>
+         f (casLockResults. ad || cand date.target.pushContext
+            .ex sts(_.sk pF lters.conta ns(true))) {
+          val response = cand date.target. sS lentPush.flatMap {  sS lentPush =>
+            cand date
+              .fr gateNot f cat onForPers stence(
+                Seq(ChannelNa .PushNtab),
+                 sS lentPush,
                 None,
-                Set.empty).flatMap { frigateNotificationForPersistence =>
-                val result = if (candidate.target.isDarkWrite) {
-                  candidateNotifierStats.counter("logged_out_dark_write").incr()
-                  Future.Unit
+                Set.empty).flatMap { fr gateNot f cat onForPers stence =>
+                val result =  f (cand date.target. sDarkWr e) {
+                  cand dateNot f erStats.counter("logged_out_dark_wr e"). ncr()
+                  Future.Un 
                 } else {
-                  loggedOutHistoryWriteCounter.incr()
-                  historyWriter.writeSendToHistory(candidate, frigateNotificationForPersistence)
+                  loggedOut toryWr eCounter. ncr()
+                   toryWr er.wr eSendTo tory(cand date, fr gateNot f cat onForPers stence)
                 }
 
                 result.flatMap { _ =>
-                  track(notificationSenderLatency)(
-                    notificationSender
-                      .loggedOutNotify(candidate)
-                      .map { ibisResponse =>
-                        mapIbisResponse(ibisResponse)
+                  track(not f cat onSenderLatency)(
+                    not f cat onSender
+                      .loggedOutNot fy(cand date)
+                      .map {  b sResponse =>
+                        map b sResponse( b sResponse)
                       })
                 }
               }
           }
           response
         } else {
-          candidateNotifierStats.counter("filtered_by_cas_lock").incr()
-          Future.value(PushResponse(PushStatus.Filtered, Some(casLockPredicate.name)))
+          cand dateNot f erStats.counter("f ltered_by_cas_lock"). ncr()
+          Future.value(PushResponse(PushStatus.F ltered, So (casLockPred cate.na )))
         }
       }
     }

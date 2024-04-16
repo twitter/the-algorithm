@@ -1,68 +1,68 @@
-package com.twitter.product_mixer.component_library.feature.featurestorev1
+package com.tw ter.product_m xer.component_l brary.feature.featurestorev1
 
-import com.twitter.ml.api.transform.FeatureRenameTransform
-import com.twitter.ml.featurestore.catalog.entities
-import com.twitter.ml.featurestore.lib.EdgeEntityId
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.ml.featurestore.lib.entity.Entity
-import com.twitter.ml.featurestore.lib.entity.EntityWithId
-import com.twitter.ml.featurestore.lib.feature.TimelinesAggregationFrameworkFeatureGroup
-import com.twitter.ml.featurestore.lib.feature.{Feature => FSv1Feature}
-import com.twitter.product_mixer.component_library.model.candidate.TweetAuthorIdFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featurestorev1._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.FSParam
-import scala.reflect.ClassTag
+ mport com.tw ter.ml.ap .transform.FeatureRena Transform
+ mport com.tw ter.ml.featurestore.catalog.ent  es
+ mport com.tw ter.ml.featurestore.l b.EdgeEnt y d
+ mport com.tw ter.ml.featurestore.l b.Ent y d
+ mport com.tw ter.ml.featurestore.l b.User d
+ mport com.tw ter.ml.featurestore.l b.ent y.Ent y
+ mport com.tw ter.ml.featurestore.l b.ent y.Ent yW h d
+ mport com.tw ter.ml.featurestore.l b.feature.T  l nesAggregat onFra workFeatureGroup
+ mport com.tw ter.ml.featurestore.l b.feature.{Feature => FSv1Feature}
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etAuthor dFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featurestorev1._
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport scala.reflect.ClassTag
 
-object FeatureStoreV1QueryUserIdTweetCandidateAuthorIdFeature {
-  def apply[Query <: PipelineQuery, Value](
-    feature: FSv1Feature[EdgeEntityId[UserId, UserId], Value],
-    legacyName: Option[String] = None,
-    defaultValue: Option[Value] = None,
-    enabledParam: Option[FSParam[Boolean]] = None
-  ): FeatureStoreV1CandidateFeature[Query, TweetCandidate, _ <: EntityId, Value] =
-    FeatureStoreV1CandidateFeature(
+object FeatureStoreV1QueryUser dT etCand dateAuthor dFeature {
+  def apply[Query <: P pel neQuery, Value](
+    feature: FSv1Feature[EdgeEnt y d[User d, User d], Value],
+    legacyNa : Opt on[Str ng] = None,
+    defaultValue: Opt on[Value] = None,
+    enabledParam: Opt on[FSParam[Boolean]] = None
+  ): FeatureStoreV1Cand dateFeature[Query, T etCand date, _ <: Ent y d, Value] =
+    FeatureStoreV1Cand dateFeature(
       feature,
-      QueryUserIdTweetCandidateAuthorIdEntity,
-      legacyName,
+      QueryUser dT etCand dateAuthor dEnt y,
+      legacyNa ,
       defaultValue,
       enabledParam)
 }
 
-object FeatureStoreV1QueryUserIdTweetCandidateAuthorIdAggregateFeature {
-  def apply[Query <: PipelineQuery](
-    featureGroup: TimelinesAggregationFrameworkFeatureGroup[EdgeEntityId[UserId, UserId]],
-    enabledParam: Option[FSParam[Boolean]] = None,
-    keepLegacyNames: Boolean = false,
-    featureNameTransform: Option[FeatureRenameTransform] = None
-  ): FeatureStoreV1CandidateFeatureGroup[Query, TweetCandidate, _ <: EntityId] =
-    FeatureStoreV1CandidateFeatureGroup(
+object FeatureStoreV1QueryUser dT etCand dateAuthor dAggregateFeature {
+  def apply[Query <: P pel neQuery](
+    featureGroup: T  l nesAggregat onFra workFeatureGroup[EdgeEnt y d[User d, User d]],
+    enabledParam: Opt on[FSParam[Boolean]] = None,
+    keepLegacyNa s: Boolean = false,
+    featureNa Transform: Opt on[FeatureRena Transform] = None
+  ): FeatureStoreV1Cand dateFeatureGroup[Query, T etCand date, _ <: Ent y d] =
+    FeatureStoreV1Cand dateFeatureGroup(
       featureGroup,
-      QueryUserIdTweetCandidateAuthorIdEntity,
+      QueryUser dT etCand dateAuthor dEnt y,
       enabledParam,
-      keepLegacyNames,
-      featureNameTransform
-    )(implicitly[ClassTag[EdgeEntityId[UserId, UserId]]])
+      keepLegacyNa s,
+      featureNa Transform
+    )( mpl c ly[ClassTag[EdgeEnt y d[User d, User d]]])
 }
 
-object QueryUserIdTweetCandidateAuthorIdEntity
-    extends FeatureStoreV1CandidateEntity[
-      PipelineQuery,
-      TweetCandidate,
-      EdgeEntityId[UserId, UserId]
+object QueryUser dT etCand dateAuthor dEnt y
+    extends FeatureStoreV1Cand dateEnt y[
+      P pel neQuery,
+      T etCand date,
+      EdgeEnt y d[User d, User d]
     ] {
-  override val entity: Entity[EdgeEntityId[UserId, UserId]] = entities.core.UserAuthor
+  overr de val ent y: Ent y[EdgeEnt y d[User d, User d]] = ent  es.core.UserAuthor
 
-  override def entityWithId(
-    query: PipelineQuery,
-    tweet: TweetCandidate,
-    existingFeatures: FeatureMap
-  ): EntityWithId[EdgeEntityId[UserId, UserId]] =
-    entity.withId(
-      EdgeEntityId(
-        UserId(query.getUserIdLoggedOutSupport),
-        UserId(existingFeatures.get(TweetAuthorIdFeature))))
+  overr de def ent yW h d(
+    query: P pel neQuery,
+    t et: T etCand date,
+    ex st ngFeatures: FeatureMap
+  ): Ent yW h d[EdgeEnt y d[User d, User d]] =
+    ent y.w h d(
+      EdgeEnt y d(
+        User d(query.getUser dLoggedOutSupport),
+        User d(ex st ngFeatures.get(T etAuthor dFeature))))
 }

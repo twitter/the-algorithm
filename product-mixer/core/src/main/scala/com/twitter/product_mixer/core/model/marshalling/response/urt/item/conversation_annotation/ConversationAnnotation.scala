@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.conversation_annotation
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.conversat on_annotat on
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chText
 
-case class ConversationAnnotation(
-  conversationAnnotationType: ConversationAnnotationType,
-  header: Option[RichText],
-  description: Option[RichText])
+case class Conversat onAnnotat on(
+  conversat onAnnotat onType: Conversat onAnnotat onType,
+   ader: Opt on[R chText],
+  descr pt on: Opt on[R chText])

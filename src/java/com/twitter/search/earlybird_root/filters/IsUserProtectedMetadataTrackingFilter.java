@@ -1,77 +1,77 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+ mport java.ut l.EnumMap;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultExtraMetadata;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.util.Future;
-import com.twitter.util.FutureEventListener;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultExtra tadata;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestType;
+ mport com.tw ter.ut l.Future;
+ mport com.tw ter.ut l.FutureEventL stener;
 
 /**
- * Filter tracks the isUserProtected metadata stats returned from Earlybirds.
+ * F lter tracks t   sUserProtected  tadata stats returned from Earlyb rds.
  */
-public class IsUserProtectedMetadataTrackingFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
-  private static final String COUNTER_PREFIX = "is_user_protected_metadata_count_filter_";
-  @VisibleForTesting
-  final Map<EarlybirdRequestType, SearchCounter> totalCounterByRequestTypeMap;
-  @VisibleForTesting
-  final Map<EarlybirdRequestType, SearchCounter> isProtectedCounterByRequestTypeMap;
+publ c class  sUserProtected tadataTrack ngF lter
+    extends S mpleF lter<Earlyb rdRequestContext, Earlyb rdResponse> {
+  pr vate stat c f nal Str ng COUNTER_PREF X = " s_user_protected_ tadata_count_f lter_";
+  @V s bleForTest ng
+  f nal Map<Earlyb rdRequestType, SearchCounter> totalCounterByRequestTypeMap;
+  @V s bleForTest ng
+  f nal Map<Earlyb rdRequestType, SearchCounter>  sProtectedCounterByRequestTypeMap;
 
-  public IsUserProtectedMetadataTrackingFilter() {
-    this.totalCounterByRequestTypeMap = new EnumMap<>(EarlybirdRequestType.class);
-    this.isProtectedCounterByRequestTypeMap = new EnumMap<>(EarlybirdRequestType.class);
-    for (EarlybirdRequestType requestType : EarlybirdRequestType.values()) {
-      this.totalCounterByRequestTypeMap.put(requestType,
-          SearchCounter.export(COUNTER_PREFIX + requestType.getNormalizedName() + "_total"));
-      this.isProtectedCounterByRequestTypeMap.put(requestType,
-          SearchCounter.export(COUNTER_PREFIX + requestType.getNormalizedName() + "_is_protected"));
+  publ c  sUserProtected tadataTrack ngF lter() {
+    t .totalCounterByRequestTypeMap = new EnumMap<>(Earlyb rdRequestType.class);
+    t . sProtectedCounterByRequestTypeMap = new EnumMap<>(Earlyb rdRequestType.class);
+    for (Earlyb rdRequestType requestType : Earlyb rdRequestType.values()) {
+      t .totalCounterByRequestTypeMap.put(requestType,
+          SearchCounter.export(COUNTER_PREF X + requestType.getNormal zedNa () + "_total"));
+      t . sProtectedCounterByRequestTypeMap.put(requestType,
+          SearchCounter.export(COUNTER_PREF X + requestType.getNormal zedNa () + "_ s_protected"));
     }
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext request,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    Future<EarlybirdResponse> response = service.apply(request);
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(
+      Earlyb rdRequestContext request,
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> serv ce) {
+    Future<Earlyb rdResponse> response = serv ce.apply(request);
 
-    EarlybirdRequestType requestType = request.getEarlybirdRequestType();
-    response.addEventListener(new FutureEventListener<EarlybirdResponse>() {
-      @Override
-      public void onSuccess(EarlybirdResponse response) {
-        if (!response.isSetSearchResults() || response.getSearchResults().getResults().isEmpty()) {
+    Earlyb rdRequestType requestType = request.getEarlyb rdRequestType();
+    response.addEventL stener(new FutureEventL stener<Earlyb rdResponse>() {
+      @Overr de
+      publ c vo d onSuccess(Earlyb rdResponse response) {
+         f (!response. sSetSearchResults() || response.getSearchResults().getResults(). sEmpty()) {
           return;
         }
-        List<ThriftSearchResult> searchResults = response.getSearchResults().getResults();
-        int totalCount = searchResults.size();
-        int isUserProtectedCount = 0;
-        for (ThriftSearchResult searchResult : searchResults) {
-          if (searchResult.isSetMetadata() && searchResult.getMetadata().isSetExtraMetadata()) {
-            ThriftSearchResultExtraMetadata extraMetadata =
-                searchResult.getMetadata().getExtraMetadata();
-            if (extraMetadata.isIsUserProtected()) {
-              isUserProtectedCount++;
+        L st<Thr ftSearchResult> searchResults = response.getSearchResults().getResults();
+         nt totalCount = searchResults.s ze();
+         nt  sUserProtectedCount = 0;
+        for (Thr ftSearchResult searchResult : searchResults) {
+           f (searchResult. sSet tadata() && searchResult.get tadata(). sSetExtra tadata()) {
+            Thr ftSearchResultExtra tadata extra tadata =
+                searchResult.get tadata().getExtra tadata();
+             f (extra tadata. s sUserProtected()) {
+               sUserProtectedCount++;
             }
           }
         }
-        IsUserProtectedMetadataTrackingFilter.this
+         sUserProtected tadataTrack ngF lter.t 
             .totalCounterByRequestTypeMap.get(requestType).add(totalCount);
-        IsUserProtectedMetadataTrackingFilter.this
-            .isProtectedCounterByRequestTypeMap.get(requestType).add(isUserProtectedCount);
+         sUserProtected tadataTrack ngF lter.t 
+            . sProtectedCounterByRequestTypeMap.get(requestType).add( sUserProtectedCount);
       }
 
-      @Override
-      public void onFailure(Throwable cause) { }
+      @Overr de
+      publ c vo d onFa lure(Throwable cause) { }
     });
 
     return response;

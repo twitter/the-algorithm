@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.core.service.selector_executor
+package com.tw ter.product_m xer.core.serv ce.selector_executor
 
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.service.ExecutorResult
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.SelectorResult
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.serv ce.ExecutorResult
 
 case class SelectorExecutorResult(
-  selectedCandidates: Seq[CandidateWithDetails],
-  remainingCandidates: Seq[CandidateWithDetails],
-  droppedCandidates: Seq[CandidateWithDetails],
-  individualSelectorResults: Seq[SelectorResult])
+  selectedCand dates: Seq[Cand dateW hDeta ls],
+  rema n ngCand dates: Seq[Cand dateW hDeta ls],
+  droppedCand dates: Seq[Cand dateW hDeta ls],
+   nd v dualSelectorResults: Seq[SelectorResult])
     extends ExecutorResult

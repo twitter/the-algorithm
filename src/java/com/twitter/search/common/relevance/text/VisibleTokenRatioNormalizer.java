@@ -1,39 +1,39 @@
-package com.twitter.search.common.relevance.text;
+package com.tw ter.search.common.relevance.text;
 
-public class VisibleTokenRatioNormalizer {
+publ c class V s bleTokenRat oNormal zer {
 
-  private static final int NORMALIZE_TO_BITS = 4;
-  private final int normalizeToSize;
+  pr vate stat c f nal  nt NORMAL ZE_TO_B TS = 4;
+  pr vate f nal  nt normal zeToS ze;
 
   /**
    * constructor
    */
-  public VisibleTokenRatioNormalizer(int normalizeToBits) {
-    int size = 2 << (normalizeToBits - 1);
-    // Let's say normalizeSize is set to 16....
-    // If you multiply 1.0 * 16, it is 16
-    // If you multiply 0.0 * 16, it is 0
-    // That would be occupying 17 ints, not 16, so we subtract 1 here...
-    this.normalizeToSize = size - 1;
+  publ c V s bleTokenRat oNormal zer( nt normal zeToB s) {
+     nt s ze = 2 << (normal zeToB s - 1);
+    // Let's say normal zeS ze  s set to 16....
+    //  f   mult ply 1.0 * 16,    s 16
+    //  f   mult ply 0.0 * 16,    s 0
+    // That would be occupy ng 17  nts, not 16, so   subtract 1  re...
+    t .normal zeToS ze = s ze - 1;
   }
 
   /**
-   * method
+   *  thod
    */
-  public int normalize(double percent) {
-    if (percent > 1 || percent < 0) {
-      throw new IllegalArgumentException("percent should be less than 1 and greater than 0");
+  publ c  nt normal ze(double percent) {
+     f (percent > 1 || percent < 0) {
+      throw new  llegalArgu ntExcept on("percent should be less than 1 and greater than 0");
     }
-    int bucket = (int) (percent * normalizeToSize);
-    return normalizeToSize - bucket;
+     nt bucket = ( nt) (percent * normal zeToS ze);
+    return normal zeToS ze - bucket;
   }
 
-  public double denormalize(int reverseBucket) {
-    int bucket = normalizeToSize - reverseBucket;
-    return bucket / (double) normalizeToSize;
+  publ c double denormal ze( nt reverseBucket) {
+     nt bucket = normal zeToS ze - reverseBucket;
+    return bucket / (double) normal zeToS ze;
   }
 
-  public static VisibleTokenRatioNormalizer createInstance() {
-    return new VisibleTokenRatioNormalizer(NORMALIZE_TO_BITS);
+  publ c stat c V s bleTokenRat oNormal zer create nstance() {
+    return new V s bleTokenRat oNormal zer(NORMAL ZE_TO_B TS);
   }
 }

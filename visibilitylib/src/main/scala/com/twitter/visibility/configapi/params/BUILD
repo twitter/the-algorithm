@@ -1,15 +1,15 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "configapi/configapi-core",
-        "finagle/finagle-stats",
-        "visibility/common/src/main/scala/com/twitter/visibility/common:model_thresholds",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "conf gap /conf gap -core",
+        "f nagle/f nagle-stats",
+        "v s b l y/common/src/ma n/scala/com/tw ter/v s b l y/common:model_thresholds",
     ],
     exports = [
-        "visibility/common/src/main/scala/com/twitter/visibility/common:model_thresholds",
+        "v s b l y/common/src/ma n/scala/com/tw ter/v s b l y/common:model_thresholds",
     ],
 )

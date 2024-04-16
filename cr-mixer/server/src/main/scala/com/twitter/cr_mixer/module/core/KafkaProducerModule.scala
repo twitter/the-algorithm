@@ -1,70 +1,70 @@
-package com.twitter.cr_mixer.module.core
+package com.tw ter.cr_m xer.module.core
 
-import com.google.inject.Provides
-import com.twitter.cr_mixer.thriftscala.GetTweetsRecommendationsScribe
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finatra.kafka.producers.FinagleKafkaProducerBuilder
-import com.twitter.finatra.kafka.producers.KafkaProducerBase
-import com.twitter.finatra.kafka.producers.NullKafkaProducer
-import com.twitter.finatra.kafka.serde.ScalaSerdes
-import com.twitter.inject.TwitterModule
-import javax.inject.Singleton
-import org.apache.kafka.clients.CommonClientConfigs
-import org.apache.kafka.common.config.SaslConfigs
-import org.apache.kafka.common.config.SslConfigs
-import org.apache.kafka.common.record.CompressionType
-import org.apache.kafka.common.security.auth.SecurityProtocol
-import org.apache.kafka.common.serialization.Serdes
+ mport com.google. nject.Prov des
+ mport com.tw ter.cr_m xer.thr ftscala.GetT etsRecom ndat onsScr be
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f natra.kafka.producers.F nagleKafkaProducerBu lder
+ mport com.tw ter.f natra.kafka.producers.KafkaProducerBase
+ mport com.tw ter.f natra.kafka.producers.NullKafkaProducer
+ mport com.tw ter.f natra.kafka.serde.ScalaSerdes
+ mport com.tw ter. nject.Tw terModule
+ mport javax. nject.S ngleton
+ mport org.apac .kafka.cl ents.CommonCl entConf gs
+ mport org.apac .kafka.common.conf g.SaslConf gs
+ mport org.apac .kafka.common.conf g.SslConf gs
+ mport org.apac .kafka.common.record.Compress onType
+ mport org.apac .kafka.common.secur y.auth.Secur yProtocol
+ mport org.apac .kafka.common.ser al zat on.Serdes
 
-object KafkaProducerModule extends TwitterModule {
+object KafkaProducerModule extends Tw terModule {
 
-  @Provides
-  @Singleton
-  def provideTweetRecsLoggerFactory(
-    serviceIdentifier: ServiceIdentifier,
-  ): KafkaProducerBase[String, GetTweetsRecommendationsScribe] = {
-    KafkaProducerFactory.getKafkaProducer(serviceIdentifier.environment)
+  @Prov des
+  @S ngleton
+  def prov deT etRecsLoggerFactory(
+    serv ce dent f er: Serv ce dent f er,
+  ): KafkaProducerBase[Str ng, GetT etsRecom ndat onsScr be] = {
+    KafkaProducerFactory.getKafkaProducer(serv ce dent f er.env ron nt)
   }
 }
 
 object KafkaProducerFactory {
-  private val jaasConfig =
-    """com.sun.security.auth.module.Krb5LoginModule
-      |required 
-      |principal="cr-mixer@TWITTER.BIZ" 
+  pr vate val jaasConf g =
+    """com.sun.secur y.auth.module.Krb5Log nModule
+      |requ red 
+      |pr nc pal="cr-m xer@TW TTER.B Z" 
       |debug=true 
       |useKeyTab=true 
       |storeKey=true 
-      |keyTab="/var/lib/tss/keys/fluffy/keytabs/client/cr-mixer.keytab" 
+      |keyTab="/var/l b/tss/keys/fluffy/keytabs/cl ent/cr-m xer.keytab" 
       |doNotPrompt=true;
-    """.stripMargin.replaceAll("\n", " ")
+    """.str pMarg n.replaceAll("\n", " ")
 
-  private val trustStoreLocation = "/etc/tw_truststore/messaging/kafka/client.truststore.jks"
+  pr vate val trustStoreLocat on = "/etc/tw_truststore/ ssag ng/kafka/cl ent.truststore.jks"
 
   def getKafkaProducer(
-    environment: String
-  ): KafkaProducerBase[String, GetTweetsRecommendationsScribe] = {
-    if (environment == "prod") {
-      FinagleKafkaProducerBuilder()
-        .dest("/s/kafka/recommendations:kafka-tls")
+    env ron nt: Str ng
+  ): KafkaProducerBase[Str ng, GetT etsRecom ndat onsScr be] = {
+     f (env ron nt == "prod") {
+      F nagleKafkaProducerBu lder()
+        .dest("/s/kafka/recom ndat ons:kafka-tls")
         // kerberos params
-        .withConfig(SaslConfigs.SASL_JAAS_CONFIG, jaasConfig)
-        .withConfig(
-          CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,
-          SecurityProtocol.SASL_SSL.toString)
-        .withConfig(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, trustStoreLocation)
-        .withConfig(SaslConfigs.SASL_MECHANISM, SaslConfigs.GSSAPI_MECHANISM)
-        .withConfig(SaslConfigs.SASL_KERBEROS_SERVICE_NAME, "kafka")
-        .withConfig(SaslConfigs.SASL_KERBEROS_SERVER_NAME, "kafka")
+        .w hConf g(SaslConf gs.SASL_JAAS_CONF G, jaasConf g)
+        .w hConf g(
+          CommonCl entConf gs.SECUR TY_PROTOCOL_CONF G,
+          Secur yProtocol.SASL_SSL.toStr ng)
+        .w hConf g(SslConf gs.SSL_TRUSTSTORE_LOCAT ON_CONF G, trustStoreLocat on)
+        .w hConf g(SaslConf gs.SASL_MECHAN SM, SaslConf gs.GSSAP _MECHAN SM)
+        .w hConf g(SaslConf gs.SASL_KERBEROS_SERV CE_NAME, "kafka")
+        .w hConf g(SaslConf gs.SASL_KERBEROS_SERVER_NAME, "kafka")
         // Kafka params
-        .keySerializer(Serdes.String.serializer)
-        .valueSerializer(ScalaSerdes.CompactThrift[GetTweetsRecommendationsScribe].serializer())
-        .clientId("cr-mixer")
-        .enableIdempotence(true)
-        .compressionType(CompressionType.LZ4)
-        .build()
+        .keySer al zer(Serdes.Str ng.ser al zer)
+        .valueSer al zer(ScalaSerdes.CompactThr ft[GetT etsRecom ndat onsScr be].ser al zer())
+        .cl ent d("cr-m xer")
+        .enable dempotence(true)
+        .compress onType(Compress onType.LZ4)
+        .bu ld()
     } else {
-      new NullKafkaProducer[String, GetTweetsRecommendationsScribe]
+      new NullKafkaProducer[Str ng, GetT etsRecom ndat onsScr be]
     }
   }
 }

@@ -1,54 +1,54 @@
-package com.twitter.product_mixer.component_library.experiments.metrics
+package com.tw ter.product_m xer.component_l brary.exper  nts. tr cs
 
-import scala.collection.immutable.ListSet
+ mport scala.collect on. mmutable.L stSet
 
 /**
  *
- * @param id optional metric group id. If id is None, this means the group
- *           is being newly created and the id is not provisioned by go/ddg. Otherwise, the metric
- *           group is present in DDG and has a corresponding id.
- * @param name metric group name
- * @param description metric group description
- * @param metrics set of metrics that belong to this metric group
+ * @param  d opt onal  tr c group  d.  f  d  s None, t   ans t  group
+ *            s be ng newly created and t   d  s not prov s oned by go/ddg. Ot rw se, t   tr c
+ *           group  s present  n DDG and has a correspond ng  d.
+ * @param na   tr c group na 
+ * @param descr pt on  tr c group descr pt on
+ * @param  tr cs set of  tr cs that belong to t   tr c group
  */
-case class MetricGroup(
-  id: Option[Long],
-  name: String,
-  description: String,
-  metrics: ListSet[Metric]) {
+case class  tr cGroup(
+   d: Opt on[Long],
+  na : Str ng,
+  descr pt on: Str ng,
+   tr cs: L stSet[ tr c]) {
 
   /*
-   * Returns a CSV representation of this metric group that can be imported via DDG's bulk import tool
-   * The bulk import tool consumes CSV data with the following columns:
-   * 1. group name
-   * 2. group description
-   * 3. metric name
-   * 4. metric description
-   * 5. metric pattern
-   * 6. group id -- numeric id
-   * 7. (optional) metric type -- `NAMED_PATTERN`, `STRAINER`, or `LAMBDA`.
+   * Returns a CSV representat on of t   tr c group that can be  mported v a DDG's bulk  mport tool
+   * T  bulk  mport tool consu s CSV data w h t  follow ng columns:
+   * 1. group na 
+   * 2. group descr pt on
+   * 3.  tr c na 
+   * 4.  tr c descr pt on
+   * 5.  tr c pattern
+   * 6. group  d -- nu r c  d
+   * 7. (opt onal)  tr c type -- `NAMED_PATTERN`, `STRA NER`, or `LAMBDA`.
    */
-  def toCsv: String = {
-    val metricCsvLines: ListSet[String] = for {
-      metric <- metrics
-      definition <- metric.definition.toCsvField
-    } yield {
+  def toCsv: Str ng = {
+    val  tr cCsvL nes: L stSet[Str ng] = for {
+       tr c <-  tr cs
+      def n  on <-  tr c.def n  on.toCsvF eld
+    } y eld {
       Seq(
-        name,
-        description,
-        metric.name,
-        metric.name,
-        // wrap in single quotes so that DDG bulk import tool correctly parses
-        s""""$definition"""",
-        id.map(_.toString).getOrElse(""),
-        metric.definition.metricDefinitionType
-      ).mkString(",")
+        na ,
+        descr pt on,
+         tr c.na ,
+         tr c.na ,
+        // wrap  n s ngle quotes so that DDG bulk  mport tool correctly parses
+        s""""$def n  on"""",
+         d.map(_.toStr ng).getOrElse(""),
+         tr c.def n  on. tr cDef n  onType
+      ).mkStr ng(",")
     }
-    println(s"Generated metrics in CSV count: ${metricCsvLines.size}")
-    metricCsvLines.mkString("\n")
+    pr ntln(s"Generated  tr cs  n CSV count: ${ tr cCsvL nes.s ze}")
+     tr cCsvL nes.mkStr ng("\n")
   }
 
-  // Unique metric names based on globally unique metric name
-  def uniqueMetricNames: Set[String] =
-    metrics.groupBy(_.name).keys.toSet
+  // Un que  tr c na s based on globally un que  tr c na 
+  def un que tr cNa s: Set[Str ng] =
+     tr cs.groupBy(_.na ).keys.toSet
 }

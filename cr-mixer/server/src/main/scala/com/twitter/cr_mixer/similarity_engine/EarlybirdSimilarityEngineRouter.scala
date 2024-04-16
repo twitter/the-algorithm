@@ -1,135 +1,135 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.tw ter.cr_m xer.s m lar y_eng ne
 
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.EarlybirdSimilarityEngineType
-import com.twitter.cr_mixer.model.EarlybirdSimilarityEngineType_ModelBased
-import com.twitter.cr_mixer.model.EarlybirdSimilarityEngineType_RecencyBased
-import com.twitter.cr_mixer.model.EarlybirdSimilarityEngineType_TensorflowBased
-import com.twitter.cr_mixer.model.TweetWithAuthor
-import com.twitter.cr_mixer.param.EarlybirdFrsBasedCandidateGenerationParams
-import com.twitter.cr_mixer.param.EarlybirdFrsBasedCandidateGenerationParams.FrsBasedCandidateGenerationEarlybirdSimilarityEngineTypeParam
-import com.twitter.cr_mixer.param.FrsParams.FrsBasedCandidateGenerationMaxCandidatesNumParam
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.cr_m xer.conf g.T  outConf g
+ mport com.tw ter.cr_m xer.model.Earlyb rdS m lar yEng neType
+ mport com.tw ter.cr_m xer.model.Earlyb rdS m lar yEng neType_ModelBased
+ mport com.tw ter.cr_m xer.model.Earlyb rdS m lar yEng neType_RecencyBased
+ mport com.tw ter.cr_m xer.model.Earlyb rdS m lar yEng neType_TensorflowBased
+ mport com.tw ter.cr_m xer.model.T etW hAuthor
+ mport com.tw ter.cr_m xer.param.Earlyb rdFrsBasedCand dateGenerat onParams
+ mport com.tw ter.cr_m xer.param.Earlyb rdFrsBasedCand dateGenerat onParams.FrsBasedCand dateGenerat onEarlyb rdS m lar yEng neTypeParam
+ mport com.tw ter.cr_m xer.param.FrsParams.FrsBasedCand dateGenerat onMaxCand datesNumParam
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.conf gap 
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-case class EarlybirdSimilarityEngineRouter @Inject() (
-  earlybirdRecencyBasedSimilarityEngine: EarlybirdSimilarityEngine[
-    EarlybirdRecencyBasedSimilarityEngine.EarlybirdRecencyBasedSearchQuery,
-    EarlybirdRecencyBasedSimilarityEngine
+@S ngleton
+case class Earlyb rdS m lar yEng neRouter @ nject() (
+  earlyb rdRecencyBasedS m lar yEng ne: Earlyb rdS m lar yEng ne[
+    Earlyb rdRecencyBasedS m lar yEng ne.Earlyb rdRecencyBasedSearchQuery,
+    Earlyb rdRecencyBasedS m lar yEng ne
   ],
-  earlybirdModelBasedSimilarityEngine: EarlybirdSimilarityEngine[
-    EarlybirdModelBasedSimilarityEngine.EarlybirdModelBasedSearchQuery,
-    EarlybirdModelBasedSimilarityEngine
+  earlyb rdModelBasedS m lar yEng ne: Earlyb rdS m lar yEng ne[
+    Earlyb rdModelBasedS m lar yEng ne.Earlyb rdModelBasedSearchQuery,
+    Earlyb rdModelBasedS m lar yEng ne
   ],
-  earlybirdTensorflowBasedSimilarityEngine: EarlybirdSimilarityEngine[
-    EarlybirdTensorflowBasedSimilarityEngine.EarlybirdTensorflowBasedSearchQuery,
-    EarlybirdTensorflowBasedSimilarityEngine
+  earlyb rdTensorflowBasedS m lar yEng ne: Earlyb rdS m lar yEng ne[
+    Earlyb rdTensorflowBasedS m lar yEng ne.Earlyb rdTensorflowBasedSearchQuery,
+    Earlyb rdTensorflowBasedS m lar yEng ne
   ],
-  timeoutConfig: TimeoutConfig,
-  statsReceiver: StatsReceiver)
-    extends ReadableStore[EarlybirdSimilarityEngineRouter.Query, Seq[TweetWithAuthor]] {
-  import EarlybirdSimilarityEngineRouter._
+  t  outConf g: T  outConf g,
+  statsRece ver: StatsRece ver)
+    extends ReadableStore[Earlyb rdS m lar yEng neRouter.Query, Seq[T etW hAuthor]] {
+   mport Earlyb rdS m lar yEng neRouter._
 
-  override def get(
-    k: EarlybirdSimilarityEngineRouter.Query
-  ): Future[Option[Seq[TweetWithAuthor]]] = {
-    k.rankingMode match {
-      case EarlybirdSimilarityEngineType_RecencyBased =>
-        earlybirdRecencyBasedSimilarityEngine.getCandidates(recencyBasedQueryFromParams(k))
-      case EarlybirdSimilarityEngineType_ModelBased =>
-        earlybirdModelBasedSimilarityEngine.getCandidates(modelBasedQueryFromParams(k))
-      case EarlybirdSimilarityEngineType_TensorflowBased =>
-        earlybirdTensorflowBasedSimilarityEngine.getCandidates(tensorflowBasedQueryFromParams(k))
+  overr de def get(
+    k: Earlyb rdS m lar yEng neRouter.Query
+  ): Future[Opt on[Seq[T etW hAuthor]]] = {
+    k.rank ngMode match {
+      case Earlyb rdS m lar yEng neType_RecencyBased =>
+        earlyb rdRecencyBasedS m lar yEng ne.getCand dates(recencyBasedQueryFromParams(k))
+      case Earlyb rdS m lar yEng neType_ModelBased =>
+        earlyb rdModelBasedS m lar yEng ne.getCand dates(modelBasedQueryFromParams(k))
+      case Earlyb rdS m lar yEng neType_TensorflowBased =>
+        earlyb rdTensorflowBasedS m lar yEng ne.getCand dates(tensorflowBasedQueryFromParams(k))
     }
   }
 }
 
-object EarlybirdSimilarityEngineRouter {
+object Earlyb rdS m lar yEng neRouter {
   case class Query(
-    searcherUserId: Option[UserId],
-    seedUserIds: Seq[UserId],
-    maxNumTweets: Int,
-    excludedTweetIds: Set[TweetId],
-    rankingMode: EarlybirdSimilarityEngineType,
-    frsUserToScoresForScoreAdjustment: Option[Map[UserId, Double]],
-    maxTweetAge: Duration,
-    filterOutRetweetsAndReplies: Boolean,
-    params: configapi.Params)
+    searc rUser d: Opt on[User d],
+    seedUser ds: Seq[User d],
+    maxNumT ets:  nt,
+    excludedT et ds: Set[T et d],
+    rank ngMode: Earlyb rdS m lar yEng neType,
+    frsUserToScoresForScoreAdjust nt: Opt on[Map[User d, Double]],
+    maxT etAge: Durat on,
+    f lterOutRet etsAndRepl es: Boolean,
+    params: conf gap .Params)
 
   def queryFromParams(
-    searcherUserId: Option[UserId],
-    seedUserIds: Seq[UserId],
-    excludedTweetIds: Set[TweetId],
-    frsUserToScoresForScoreAdjustment: Option[Map[UserId, Double]],
-    params: configapi.Params
+    searc rUser d: Opt on[User d],
+    seedUser ds: Seq[User d],
+    excludedT et ds: Set[T et d],
+    frsUserToScoresForScoreAdjust nt: Opt on[Map[User d, Double]],
+    params: conf gap .Params
   ): Query =
     Query(
-      searcherUserId,
-      seedUserIds,
-      maxNumTweets = params(FrsBasedCandidateGenerationMaxCandidatesNumParam),
-      excludedTweetIds,
-      rankingMode =
-        params(FrsBasedCandidateGenerationEarlybirdSimilarityEngineTypeParam).rankingMode,
-      frsUserToScoresForScoreAdjustment,
-      maxTweetAge = params(
-        EarlybirdFrsBasedCandidateGenerationParams.FrsBasedCandidateGenerationEarlybirdMaxTweetAge),
-      filterOutRetweetsAndReplies = params(
-        EarlybirdFrsBasedCandidateGenerationParams.FrsBasedCandidateGenerationEarlybirdFilterOutRetweetsAndReplies),
+      searc rUser d,
+      seedUser ds,
+      maxNumT ets = params(FrsBasedCand dateGenerat onMaxCand datesNumParam),
+      excludedT et ds,
+      rank ngMode =
+        params(FrsBasedCand dateGenerat onEarlyb rdS m lar yEng neTypeParam).rank ngMode,
+      frsUserToScoresForScoreAdjust nt,
+      maxT etAge = params(
+        Earlyb rdFrsBasedCand dateGenerat onParams.FrsBasedCand dateGenerat onEarlyb rdMaxT etAge),
+      f lterOutRet etsAndRepl es = params(
+        Earlyb rdFrsBasedCand dateGenerat onParams.FrsBasedCand dateGenerat onEarlyb rdF lterOutRet etsAndRepl es),
       params
     )
 
-  private def recencyBasedQueryFromParams(
+  pr vate def recencyBasedQueryFromParams(
     query: Query
-  ): EngineQuery[EarlybirdRecencyBasedSimilarityEngine.EarlybirdRecencyBasedSearchQuery] =
-    EngineQuery(
-      EarlybirdRecencyBasedSimilarityEngine.EarlybirdRecencyBasedSearchQuery(
-        seedUserIds = query.seedUserIds,
-        maxNumTweets = query.maxNumTweets,
-        excludedTweetIds = query.excludedTweetIds,
-        maxTweetAge = query.maxTweetAge,
-        filterOutRetweetsAndReplies = query.filterOutRetweetsAndReplies
+  ): Eng neQuery[Earlyb rdRecencyBasedS m lar yEng ne.Earlyb rdRecencyBasedSearchQuery] =
+    Eng neQuery(
+      Earlyb rdRecencyBasedS m lar yEng ne.Earlyb rdRecencyBasedSearchQuery(
+        seedUser ds = query.seedUser ds,
+        maxNumT ets = query.maxNumT ets,
+        excludedT et ds = query.excludedT et ds,
+        maxT etAge = query.maxT etAge,
+        f lterOutRet etsAndRepl es = query.f lterOutRet etsAndRepl es
       ),
       query.params
     )
 
-  private def tensorflowBasedQueryFromParams(
+  pr vate def tensorflowBasedQueryFromParams(
     query: Query,
-  ): EngineQuery[EarlybirdTensorflowBasedSimilarityEngine.EarlybirdTensorflowBasedSearchQuery] =
-    EngineQuery(
-      EarlybirdTensorflowBasedSimilarityEngine.EarlybirdTensorflowBasedSearchQuery(
-        searcherUserId = query.searcherUserId,
-        seedUserIds = query.seedUserIds,
-        maxNumTweets = query.maxNumTweets,
-        // hard code the params below for now. Will move to FS after shipping the ddg
-        beforeTweetIdExclusive = None,
-        afterTweetIdExclusive =
-          Some(SnowflakeId.firstIdFor((Time.now - query.maxTweetAge).inMilliseconds)),
-        filterOutRetweetsAndReplies = query.filterOutRetweetsAndReplies,
-        useTensorflowRanking = true,
-        excludedTweetIds = query.excludedTweetIds,
-        maxNumHitsPerShard = 1000
+  ): Eng neQuery[Earlyb rdTensorflowBasedS m lar yEng ne.Earlyb rdTensorflowBasedSearchQuery] =
+    Eng neQuery(
+      Earlyb rdTensorflowBasedS m lar yEng ne.Earlyb rdTensorflowBasedSearchQuery(
+        searc rUser d = query.searc rUser d,
+        seedUser ds = query.seedUser ds,
+        maxNumT ets = query.maxNumT ets,
+        // hard code t  params below for now. W ll move to FS after sh pp ng t  ddg
+        beforeT et dExclus ve = None,
+        afterT et dExclus ve =
+          So (Snowflake d.f rst dFor((T  .now - query.maxT etAge). nM ll seconds)),
+        f lterOutRet etsAndRepl es = query.f lterOutRet etsAndRepl es,
+        useTensorflowRank ng = true,
+        excludedT et ds = query.excludedT et ds,
+        maxNumH sPerShard = 1000
       ),
       query.params
     )
-  private def modelBasedQueryFromParams(
+  pr vate def modelBasedQueryFromParams(
     query: Query,
-  ): EngineQuery[EarlybirdModelBasedSimilarityEngine.EarlybirdModelBasedSearchQuery] =
-    EngineQuery(
-      EarlybirdModelBasedSimilarityEngine.EarlybirdModelBasedSearchQuery(
-        seedUserIds = query.seedUserIds,
-        maxNumTweets = query.maxNumTweets,
-        oldestTweetTimestampInSec = Some(query.maxTweetAge.ago.inSeconds),
-        frsUserToScoresForScoreAdjustment = query.frsUserToScoresForScoreAdjustment
+  ): Eng neQuery[Earlyb rdModelBasedS m lar yEng ne.Earlyb rdModelBasedSearchQuery] =
+    Eng neQuery(
+      Earlyb rdModelBasedS m lar yEng ne.Earlyb rdModelBasedSearchQuery(
+        seedUser ds = query.seedUser ds,
+        maxNumT ets = query.maxNumT ets,
+        oldestT etT  stamp nSec = So (query.maxT etAge.ago. nSeconds),
+        frsUserToScoresForScoreAdjust nt = query.frsUserToScoresForScoreAdjust nt
       ),
       query.params
     )

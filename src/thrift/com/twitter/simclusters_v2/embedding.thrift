@@ -1,137 +1,137 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.embedding
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+na space java com.tw ter.s mclusters_v2.thr ftjava
+na space py gen.tw ter.s mclusters_v2.embedd ng
+#@na space scala com.tw ter.s mclusters_v2.thr ftscala
+#@na space strato com.tw ter.s mclusters_v2
 
-include "com/twitter/simclusters_v2/identifier.thrift"
-include "com/twitter/simclusters_v2/online_store.thrift"
+ nclude "com/tw ter/s mclusters_v2/ dent f er.thr ft"
+ nclude "com/tw ter/s mclusters_v2/onl ne_store.thr ft"
 
-struct SimClusterWithScore {
-  1: required i32 clusterId(personalDataType = 'InferredInterests')
-  2: required double score(personalDataType = 'EngagementScore')
-}(persisted = 'true', hasPersonalData = 'true')
+struct S mClusterW hScore {
+  1: requ red  32 cluster d(personalDataType = ' nferred nterests')
+  2: requ red double score(personalDataType = 'Engage ntScore')
+}(pers sted = 'true', hasPersonalData = 'true')
 
-struct TopSimClustersWithScore {
-  1: required list<SimClusterWithScore> topClusters
-  2: required online_store.ModelVersion modelVersion
-}(persisted = 'true', hasPersonalData = 'true')
+struct TopS mClustersW hScore {
+  1: requ red l st<S mClusterW hScore> topClusters
+  2: requ red onl ne_store.ModelVers on modelVers on
+}(pers sted = 'true', hasPersonalData = 'true')
 
-struct InternalIdWithScore {
-  1: required identifier.InternalId internalId
-  2: required double score(personalDataType = 'EngagementScore')
-}(persisted = 'true', hasPersonalData = 'true')
+struct  nternal dW hScore {
+  1: requ red  dent f er. nternal d  nternal d
+  2: requ red double score(personalDataType = 'Engage ntScore')
+}(pers sted = 'true', hasPersonalData = 'true')
 
-struct InternalIdEmbedding {
-  1: required list<InternalIdWithScore> embedding
-}(persisted = 'true', hasPersonalData = 'true')
+struct  nternal dEmbedd ng {
+  1: requ red l st< nternal dW hScore> embedd ng
+}(pers sted = 'true', hasPersonalData = 'true')
 
-struct SemanticCoreEntityWithScore {
-  1: required i64 entityId(personalDataType = 'SemanticcoreClassification')
-  2: required double score(personalDataType = 'EngagementScore')
-}(persisted = 'true', hasPersonalData = 'true')
+struct Semant cCoreEnt yW hScore {
+  1: requ red  64 ent y d(personalDataType = 'Semant ccoreClass f cat on')
+  2: requ red double score(personalDataType = 'Engage ntScore')
+}(pers sted = 'true', hasPersonalData = 'true')
 
-struct TopSemanticCoreEntitiesWithScore {
-  1: required list<SemanticCoreEntityWithScore> topEntities
-}(persisted = 'true', hasPersonalData = 'true')
+struct TopSemant cCoreEnt  esW hScore {
+  1: requ red l st<Semant cCoreEnt yW hScore> topEnt  es
+}(pers sted = 'true', hasPersonalData = 'true')
 
-struct PersistedFullClusterId {
-  1: required online_store.ModelVersion modelVersion
-  2: required i32 clusterId(personalDataType = 'InferredInterests')
-}(persisted = 'true', hasPersonalData = 'true')
+struct Pers stedFullCluster d {
+  1: requ red onl ne_store.ModelVers on modelVers on
+  2: requ red  32 cluster d(personalDataType = ' nferred nterests')
+}(pers sted = 'true', hasPersonalData = 'true')
 
-struct DayPartitionedClusterId {
-  1: required i32 clusterId(personalDataType = 'InferredInterests')
-  2: required string dayPartition // format: yyyy-MM-dd
+struct DayPart  onedCluster d {
+  1: requ red  32 cluster d(personalDataType = ' nferred nterests')
+  2: requ red str ng dayPart  on // format: yyyy-MM-dd
 }
 
-struct TopProducerWithScore {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: required double score(personalDataType = 'EngagementScore')
-}(persisted = 'true', hasPersonalData = 'true')
+struct TopProducerW hScore {
+  1: requ red  64 user d(personalDataType = 'User d')
+  2: requ red double score(personalDataType = 'Engage ntScore')
+}(pers sted = 'true', hasPersonalData = 'true')
 
-struct TopProducersWithScore {
-  1: required list<TopProducerWithScore> topProducers
-}(persisted = 'true', hasPersonalData = 'true')
+struct TopProducersW hScore {
+  1: requ red l st<TopProducerW hScore> topProducers
+}(pers sted = 'true', hasPersonalData = 'true')
 
-struct TweetWithScore {
-  1: required i64 tweetId(personalDataType = 'TweetId')
-  2: required double score(personalDataType = 'EngagementScore')
-}(persisted = 'true', hasPersonalData = 'true')
+struct T etW hScore {
+  1: requ red  64 t et d(personalDataType = 'T et d')
+  2: requ red double score(personalDataType = 'Engage ntScore')
+}(pers sted = 'true', hasPersonalData = 'true')
 
-struct TweetsWithScore {
-  1: required list<TweetWithScore> tweets
-}(persisted = 'true', hasPersonalData = 'true')
+struct T etsW hScore {
+  1: requ red l st<T etW hScore> t ets
+}(pers sted = 'true', hasPersonalData = 'true')
 
-struct TweetTopKTweetsWithScore {
-  1: required i64 tweetId(personalDataType = 'TweetId')
-  2: required TweetsWithScore topkTweetsWithScore
-}(persisted = 'true', hasPersonalData = 'true')
-
-/**
-  * The generic SimClustersEmbedding for online long-term storage and real-time calculation.
-  * Use SimClustersEmbeddingId as the only identifier.
-  * Warning: Doesn't include model version and embedding type in the value struct.
-  **/
-struct SimClustersEmbedding {
-  1: required list<SimClusterWithScore> embedding
-}(persisted = 'true', hasPersonalData = 'true')
-
-struct SimClustersEmbeddingWithScore {
-  1: required SimClustersEmbedding embedding
-  2: required double score
-}(persisted = 'true', hasPersonalData = 'false')
+struct T etTopKT etsW hScore {
+  1: requ red  64 t et d(personalDataType = 'T et d')
+  2: requ red T etsW hScore topkT etsW hScore
+}(pers sted = 'true', hasPersonalData = 'true')
 
 /**
-  * This is the recommended structure for aggregating embeddings with time decay - the metadata
-  * stores the information needed for decayed aggregation.
+  * T  gener c S mClustersEmbedd ng for onl ne long-term storage and real-t   calculat on.
+  * Use S mClustersEmbedd ng d as t  only  dent f er.
+  * Warn ng: Doesn't  nclude model vers on and embedd ng type  n t  value struct.
   **/
-struct SimClustersEmbeddingWithMetadata {
-  1: required SimClustersEmbedding embedding
-  2: required SimClustersEmbeddingMetadata metadata
+struct S mClustersEmbedd ng {
+  1: requ red l st<S mClusterW hScore> embedd ng
+}(pers sted = 'true', hasPersonalData = 'true')
+
+struct S mClustersEmbedd ngW hScore {
+  1: requ red S mClustersEmbedd ng embedd ng
+  2: requ red double score
+}(pers sted = 'true', hasPersonalData = 'false')
+
+/**
+  * T   s t  recom nded structure for aggregat ng embedd ngs w h t   decay - t   tadata
+  * stores t   nformat on needed for decayed aggregat on.
+  **/
+struct S mClustersEmbedd ngW h tadata {
+  1: requ red S mClustersEmbedd ng embedd ng
+  2: requ red S mClustersEmbedd ng tadata  tadata
 }(hasPersonalData = 'true')
 
-struct SimClustersEmbeddingIdWithScore {
-  1: required identifier.SimClustersEmbeddingId id
-  2: required double score
-}(persisted = 'true', hasPersonalData = 'false')
+struct S mClustersEmbedd ng dW hScore {
+  1: requ red  dent f er.S mClustersEmbedd ng d  d
+  2: requ red double score
+}(pers sted = 'true', hasPersonalData = 'false')
 
-struct SimClustersMultiEmbeddingByValues {
-  1: required list<SimClustersEmbeddingWithScore> embeddings
-}(persisted = 'true', hasPersonalData = 'false')
+struct S mClustersMult Embedd ngByValues {
+  1: requ red l st<S mClustersEmbedd ngW hScore> embedd ngs
+}(pers sted = 'true', hasPersonalData = 'false')
 
-struct SimClustersMultiEmbeddingByIds {
-  1: required list<SimClustersEmbeddingIdWithScore> ids
-}(persisted = 'true', hasPersonalData = 'false')
+struct S mClustersMult Embedd ngBy ds {
+  1: requ red l st<S mClustersEmbedd ng dW hScore>  ds
+}(pers sted = 'true', hasPersonalData = 'false')
 
 /**
- * Generic SimClusters Multiple Embeddings. The identifier.SimClustersMultiEmbeddingId is the key of
- * the multiple embedding.
+ * Gener c S mClusters Mult ple Embedd ngs. T   dent f er.S mClustersMult Embedd ng d  s t  key of
+ * t  mult ple embedd ng.
  **/
-union SimClustersMultiEmbedding {
-  1: SimClustersMultiEmbeddingByValues values
-  2: SimClustersMultiEmbeddingByIds ids
-}(persisted = 'true', hasPersonalData = 'false')
+un on S mClustersMult Embedd ng {
+  1: S mClustersMult Embedd ngByValues values
+  2: S mClustersMult Embedd ngBy ds  ds
+}(pers sted = 'true', hasPersonalData = 'false')
 
 /**
-  * The metadata of a SimClustersEmbedding. The updatedCount represent the version of the Embedding.
-  * For tweet embedding, the updatedCount is same/close to the favorite count.
+  * T   tadata of a S mClustersEmbedd ng. T  updatedCount represent t  vers on of t  Embedd ng.
+  * For t et embedd ng, t  updatedCount  s sa /close to t  favor e count.
   **/
-struct SimClustersEmbeddingMetadata {
-  1: optional i64 updatedAtMs
-  2: optional i64 updatedCount
-}(persisted = 'true', hasPersonalData = 'true')
+struct S mClustersEmbedd ng tadata {
+  1: opt onal  64 updatedAtMs
+  2: opt onal  64 updatedCount
+}(pers sted = 'true', hasPersonalData = 'true')
 
 /**
-  * The data structure for PersistentSimClustersEmbedding Store
+  * T  data structure for Pers stentS mClustersEmbedd ng Store
   **/
-struct PersistentSimClustersEmbedding {
-  1: required SimClustersEmbedding embedding
-  2: required SimClustersEmbeddingMetadata metadata
-}(persisted = 'true', hasPersonalData = 'true')
+struct Pers stentS mClustersEmbedd ng {
+  1: requ red S mClustersEmbedd ng embedd ng
+  2: requ red S mClustersEmbedd ng tadata  tadata
+}(pers sted = 'true', hasPersonalData = 'true')
 
 /**
-  * The data structure for the Multi Model PersistentSimClustersEmbedding Store
+  * T  data structure for t  Mult  Model Pers stentS mClustersEmbedd ng Store
   **/
-struct MultiModelPersistentSimClustersEmbedding {
-  1: required map<online_store.ModelVersion, PersistentSimClustersEmbedding> multiModelPersistentSimClustersEmbedding
-}(persisted = 'true', hasPersonalData = 'true')
+struct Mult ModelPers stentS mClustersEmbedd ng {
+  1: requ red map<onl ne_store.ModelVers on, Pers stentS mClustersEmbedd ng> mult ModelPers stentS mClustersEmbedd ng
+}(pers sted = 'true', hasPersonalData = 'true')

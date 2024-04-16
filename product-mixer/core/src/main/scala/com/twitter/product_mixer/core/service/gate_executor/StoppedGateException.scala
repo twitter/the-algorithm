@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.service.gate_executor
+package com.tw ter.product_m xer.core.serv ce.gate_executor
 
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureCategory
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureClassifier
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Gate dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lureCategory
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lureClass f er
 
-import scala.util.control.NoStackTrace
+ mport scala.ut l.control.NoStackTrace
 
-case class StoppedGateException(identifier: GateIdentifier)
-    extends Exception("Closed gate stopped execution of the pipeline")
-    with NoStackTrace {
-  override def toString: String = s"StoppedGateException($identifier)"
+case class StoppedGateExcept on( dent f er: Gate dent f er)
+    extends Except on("Closed gate stopped execut on of t  p pel ne")
+    w h NoStackTrace {
+  overr de def toStr ng: Str ng = s"StoppedGateExcept on($ dent f er)"
 }
 
-object StoppedGateException {
+object StoppedGateExcept on {
 
   /**
-   * Creates a [[PipelineFailureClassifier]] that is used as the default for classifying failures
-   * in a pipeline by mapping [[StoppedGateException]] to a [[PipelineFailure]] with the provided
-   * [[PipelineFailureCategory]]
+   * Creates a [[P pel neFa lureClass f er]] that  s used as t  default for class fy ng fa lures
+   *  n a p pel ne by mapp ng [[StoppedGateExcept on]] to a [[P pel neFa lure]] w h t  prov ded
+   * [[P pel neFa lureCategory]]
    */
-  def classifier(
-    category: PipelineFailureCategory
-  ): PipelineFailureClassifier = PipelineFailureClassifier {
-    case stoppedGateException: StoppedGateException =>
-      PipelineFailure(category, stoppedGateException.getMessage, Some(stoppedGateException))
+  def class f er(
+    category: P pel neFa lureCategory
+  ): P pel neFa lureClass f er = P pel neFa lureClass f er {
+    case stoppedGateExcept on: StoppedGateExcept on =>
+      P pel neFa lure(category, stoppedGateExcept on.get ssage, So (stoppedGateExcept on))
   }
 }

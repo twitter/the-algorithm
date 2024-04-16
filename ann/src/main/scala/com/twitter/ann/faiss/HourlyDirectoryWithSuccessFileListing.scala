@@ -1,63 +1,63 @@
-package com.twitter.ann.faiss
+package com.tw ter.ann.fa ss
 
-import com.twitter.conversions.DurationOps.richDurationFromInt
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.search.common.file.FileUtils
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Time
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
-import java.util.Locale
+ mport com.tw ter.convers ons.Durat onOps.r chDurat onFrom nt
+ mport com.tw ter.search.common.f le.AbstractF le
+ mport com.tw ter.search.common.f le.F leUt ls
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.ut l.Try
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport java.ut l.Locale
 
-object HourlyDirectoryWithSuccessFileListing extends Logging {
-  private val SUCCESS_FILE_NAME = "_SUCCESS"
+object H lyD rectoryW hSuccessF leL st ng extends Logg ng {
+  pr vate val SUCCESS_F LE_NAME = "_SUCCESS"
 
-  def listHourlyIndexDirectories(
-    root: AbstractFile,
-    startingFrom: Time,
-    count: Int,
-    lookbackInterval: Int
-  ): Seq[AbstractFile] = listingStep(root, startingFrom, count, lookbackInterval)
+  def l stH ly ndexD rector es(
+    root: AbstractF le,
+    start ngFrom: T  ,
+    count:  nt,
+    lookback nterval:  nt
+  ): Seq[AbstractF le] = l st ngStep(root, start ngFrom, count, lookback nterval)
 
-  private def listingStep(
-    root: AbstractFile,
-    startingFrom: Time,
-    remainingDirectoriesToFind: Int,
-    remainingAttempts: Int
-  ): List[AbstractFile] = {
-    if (remainingDirectoriesToFind == 0 || remainingAttempts == 0) {
-      return List.empty
+  pr vate def l st ngStep(
+    root: AbstractF le,
+    start ngFrom: T  ,
+    rema n ngD rector esToF nd:  nt,
+    rema n ngAttempts:  nt
+  ): L st[AbstractF le] = {
+     f (rema n ngD rector esToF nd == 0 || rema n ngAttempts == 0) {
+      return L st.empty
     }
 
-    val head = getSuccessfulDirectoryForDate(root, startingFrom)
+    val  ad = getSuccessfulD rectoryForDate(root, start ngFrom)
 
-    val previousHour = startingFrom - 1.hour
+    val prev ousH  = start ngFrom - 1.h 
 
-    head match {
+     ad match {
       case Throw(e) =>
-        listingStep(root, previousHour, remainingDirectoriesToFind, remainingAttempts - 1)
-      case Return(directory) =>
-        directory ::
-          listingStep(root, previousHour, remainingDirectoriesToFind - 1, remainingAttempts - 1)
+        l st ngStep(root, prev ousH , rema n ngD rector esToF nd, rema n ngAttempts - 1)
+      case Return(d rectory) =>
+        d rectory ::
+          l st ngStep(root, prev ousH , rema n ngD rector esToF nd - 1, rema n ngAttempts - 1)
     }
   }
 
-  private def getSuccessfulDirectoryForDate(
-    root: AbstractFile,
-    date: Time
-  ): Try[AbstractFile] = {
+  pr vate def getSuccessfulD rectoryForDate(
+    root: AbstractF le,
+    date: T  
+  ): Try[AbstractF le] = {
     val folder = root.getPath + "/" + date.format("yyyy/MM/dd/HH", Locale.ROOT)
     val successPath =
-      folder + "/" + SUCCESS_FILE_NAME
+      folder + "/" + SUCCESS_F LE_NAME
 
-    debug(s"Checking ${successPath}")
+    debug(s"C ck ng ${successPath}")
 
-    Try(FileUtils.getFileHandle(successPath)).flatMap { file =>
-      if (file.canRead) {
-        Try(FileUtils.getFileHandle(folder))
+    Try(F leUt ls.getF leHandle(successPath)).flatMap { f le =>
+       f (f le.canRead) {
+        Try(F leUt ls.getF leHandle(folder))
       } else {
-        Throw(new IllegalArgumentException(s"Found ${file.toString} but can't read it"))
+        Throw(new  llegalArgu ntExcept on(s"Found ${f le.toStr ng} but can't read  "))
       }
     }
   }

@@ -1,96 +1,96 @@
-import uuid
+ mport uu d
 
-from tensorflow.compat.v1 import logging
-import twml
-import tensorflow.compat.v1 as tf
-
-
-def write_list_to_hdfs_gfile(list_to_write, output_path):
-  """Use tensorflow gfile to write a list to a location on hdfs"""
-  locname = "/tmp/{}".format(str(uuid.uuid4()))
-  with open(locname, "w") as f:
-    for row in list_to_write:
-      f.write("%s\n" % row)
-  tf.io.gfile.copy(locname, output_path, overwrite=False)
+from tensorflow.compat.v1  mport logg ng
+ mport twml
+ mport tensorflow.compat.v1 as tf
 
 
-def decode_str_or_unicode(str_or_unicode):
-  return str_or_unicode.decode() if hasattr(str_or_unicode, 'decode') else str_or_unicode
+def wr e_l st_to_hdfs_gf le(l st_to_wr e, output_path):
+  """Use tensorflow gf le to wr e a l st to a locat on on hdfs"""
+  locna  = "/tmp/{}".format(str(uu d.uu d4()))
+  w h open(locna , "w") as f:
+    for row  n l st_to_wr e:
+      f.wr e("%s\n" % row)
+  tf. o.gf le.copy(locna , output_path, overwr e=False)
 
 
-def longest_common_prefix(strings, split_character):
+def decode_str_or_un code(str_or_un code):
+  return str_or_un code.decode()  f hasattr(str_or_un code, 'decode') else str_or_un code
+
+
+def longest_common_pref x(str ngs, spl _character):
   """
   Args:
-    string (list<str>): The list of strings to find the longest common prefix of
-    split_character (str): If not None, require that the return string end in this character or
-      be the length of the entire string
+    str ng (l st<str>): T  l st of str ngs to f nd t  longest common pref x of
+    spl _character (str):  f not None, requ re that t  return str ng end  n t  character or
+      be t  length of t  ent re str ng
   Returns:
-    The string corresponding to the longest common prefix
+    T  str ng correspond ng to t  longest common pref x
   """
-  sorted_strings = sorted(strings)
-  s1, s2 = sorted_strings[0], sorted_strings[-1]
-  if s1 == s2:
-    # If the strings are the same, just return the full string
+  sorted_str ngs = sorted(str ngs)
+  s1, s2 = sorted_str ngs[0], sorted_str ngs[-1]
+   f s1 == s2:
+    #  f t  str ngs are t  sa , just return t  full str ng
     out = s1
   else:
-    # If the strings are not the same, return the longest common prefix optionally ending in split_character
-    ix = 0
-    for i in range(min(len(s1), len(s2))):
-      if s1[i] != s2[i]:
+    #  f t  str ngs are not t  sa , return t  longest common pref x opt onally end ng  n spl _character
+     x = 0
+    for    n range(m n(len(s1), len(s2))):
+       f s1[ ] != s2[ ]:
         break
-      if split_character is None or s1[i] == split_character:
-        ix = i + 1
-    out = s1[:ix]
+       f spl _character  s None or s1[ ] == spl _character:
+         x =   + 1
+    out = s1[: x]
   return out
 
 
-def _expand_prefix(fname, prefix, split_character):
-  if len(fname) == len(prefix):
-    # If the prefix is already the full feature, just take the feature name
-    out = fname
-  elif split_character is None:
-    # Advance the prefix by one character
-    out = fname[:len(prefix) + 1]
+def _expand_pref x(fna , pref x, spl _character):
+   f len(fna ) == len(pref x):
+    #  f t  pref x  s already t  full feature, just take t  feature na 
+    out = fna 
+  el f spl _character  s None:
+    # Advance t  pref x by one character
+    out = fna [:len(pref x) + 1]
   else:
-    # Advance the prefix to the next instance of split_character or the end of the string
-    for ix in range(len(prefix), len(fname)):
-      if fname[ix] == split_character:
+    # Advance t  pref x to t  next  nstance of spl _character or t  end of t  str ng
+    for  x  n range(len(pref x), len(fna )):
+       f fna [ x] == spl _character:
         break
-    out = fname[:ix + 1]
+    out = fna [: x + 1]
   return out
 
 
-def _get_feature_types_from_records(records, fnames):
-  # This method gets the types of the features in fnames by looking at the datarecords themselves.
-  #   The reason why we do this rather than extract the feature types from the feature_config is
-  #   that the feature naming conventions in the feature_config are different from those in the
+def _get_feature_types_from_records(records, fna s):
+  # T   thod gets t  types of t  features  n fna s by look ng at t  datarecords t mselves.
+  #   T  reason why   do t  rat r than extract t  feature types from t  feature_conf g  s
+  #   that t  feature nam ng convent ons  n t  feature_conf g are d fferent from those  n t 
   #   datarecords.
-  fids = [twml.feature_id(fname)[0] for fname in fnames]
+  f ds = [twml.feature_ d(fna )[0] for fna   n fna s]
   feature_to_type = {}
-  for record in records:
-    for feature_type, values in record.__dict__.items():
-      if values is not None:
-        included_ids = set(values)
-        for fname, fid in zip(fnames, fids):
-          if fid in included_ids:
-            feature_to_type[fname] = feature_type
+  for record  n records:
+    for feature_type, values  n record.__d ct__. ems():
+       f values  s not None:
+         ncluded_ ds = set(values)
+        for fna , f d  n z p(fna s, f ds):
+           f f d  n  ncluded_ ds:
+            feature_to_type[fna ] = feature_type
   return feature_to_type
 
 
-def _get_metrics_hook(trainer):
-  def get_metrics_fn(trainer=trainer):
-    return {k: v[0]for k, v in trainer.current_estimator_spec.eval_metric_ops.items()}
-  return twml.hooks.GetMetricsHook(get_metrics_fn=get_metrics_fn)
+def _get_ tr cs_hook(tra ner):
+  def get_ tr cs_fn(tra ner=tra ner):
+    return {k: v[0]for k, v  n tra ner.current_est mator_spec.eval_ tr c_ops. ems()}
+  return twml.hooks.Get tr csHook(get_ tr cs_fn=get_ tr cs_fn)
 
 
-def _get_feature_name_from_config(feature_config):
-  """Extract the names of the features on a feature config object
+def _get_feature_na _from_conf g(feature_conf g):
+  """Extract t  na s of t  features on a feature conf g object
   """
-  decoded_feature_names = []
-  for f in feature_config.get_feature_spec()['features'].values():
+  decoded_feature_na s = []
+  for f  n feature_conf g.get_feature_spec()['features'].values():
     try:
-      fname = decode_str_or_unicode(f['featureName'])
-    except UnicodeEncodeError as e:
-      logging.error("Encountered decoding exception when decoding %s: %s" % (f, e))
-    decoded_feature_names.append(fname)
-  return decoded_feature_names
+      fna  = decode_str_or_un code(f['featureNa '])
+    except Un codeEncodeError as e:
+      logg ng.error("Encountered decod ng except on w n decod ng %s: %s" % (f, e))
+    decoded_feature_na s.append(fna )
+  return decoded_feature_na s

@@ -1,29 +1,29 @@
-package com.twitter.simclusters_v2.summingbird.stores
+package com.tw ter.s mclusters_v2.summ ngb rd.stores
 
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.Client
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.tweetypie.thriftscala.{GetTweetOptions, StatusCounts, Tweet}
+ mport com.tw ter.fr gate.common.store.strato.StratoFetchableStore
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.strato.cl ent.Cl ent
+ mport com.tw ter.strato.thr ft.ScroogeConv mpl c s._
+ mport com.tw ter.t etyp e.thr ftscala.{GetT etOpt ons, StatusCounts, T et}
 
-object TweetStatusCountsStore {
+object T etStatusCountsStore {
 
-  def tweetStatusCountsStore(
-    stratoClient: Client,
-    column: String
-  ): ReadableStore[TweetId, StatusCounts] = {
+  def t etStatusCountsStore(
+    stratoCl ent: Cl ent,
+    column: Str ng
+  ): ReadableStore[T et d, StatusCounts] = {
     StratoFetchableStore
-      .withView[TweetId, GetTweetOptions, Tweet](stratoClient, column, getTweetOptions)
+      .w hV ew[T et d, GetT etOpt ons, T et](stratoCl ent, column, getT etOpt ons)
       .mapValues(_.counts.getOrElse(emptyStatusCount))
   }
 
-  private val emptyStatusCount = StatusCounts()
+  pr vate val emptyStatusCount = StatusCounts()
 
-  private val getTweetOptions =
-    GetTweetOptions(
-      includeRetweetCount = true,
-      includeReplyCount = true,
-      includeFavoriteCount = true,
-      includeQuoteCount = true)
+  pr vate val getT etOpt ons =
+    GetT etOpt ons(
+       ncludeRet etCount = true,
+       ncludeReplyCount = true,
+       ncludeFavor eCount = true,
+       ncludeQuoteCount = true)
 }

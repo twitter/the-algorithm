@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata
 
-import com.twitter.timelines.render.{thriftscala => urt}
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TopicContext
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.GeneralContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Soc alContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Top cContext
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class SocialContextMarshaller @Inject() (
+@S ngleton
+class Soc alContextMarshaller @ nject() (
   generalContextMarshaller: GeneralContextMarshaller,
-  topicContextMarshaller: TopicContextMarshaller) {
+  top cContextMarshaller: Top cContextMarshaller) {
 
-  def apply(socialContext: SocialContext): urt.SocialContext =
-    socialContext match {
+  def apply(soc alContext: Soc alContext): urt.Soc alContext =
+    soc alContext match {
       case generalContextBanner: GeneralContext =>
         generalContextMarshaller(generalContextBanner)
-      case topicContextBanner: TopicContext =>
-        topicContextMarshaller(topicContextBanner)
+      case top cContextBanner: Top cContext =>
+        top cContextMarshaller(top cContextBanner)
     }
 }

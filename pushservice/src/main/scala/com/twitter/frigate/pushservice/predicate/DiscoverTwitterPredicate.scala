@@ -1,47 +1,47 @@
-package com.twitter.frigate.pushservice.predicate
+package com.tw ter.fr gate.pushserv ce.pred cate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.TargetUser
-import com.twitter.frigate.common.candidate.FrigateHistory
-import com.twitter.frigate.common.history.History
-import com.twitter.frigate.common.predicate.FrigateHistoryFatiguePredicate
-import com.twitter.frigate.common.predicate.{FatiguePredicate => TargetFatiguePredicate}
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.TargetUser
+ mport com.tw ter.fr gate.common.cand date.Fr gate tory
+ mport com.tw ter.fr gate.common. tory. tory
+ mport com.tw ter.fr gate.common.pred cate.Fr gate toryFat guePred cate
+ mport com.tw ter.fr gate.common.pred cate.{Fat guePred cate => TargetFat guePred cate}
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.ut l.Durat on
 
-object DiscoverTwitterPredicate {
+object D scoverTw terPred cate {
 
   /**
-   * Predicate used to determine if a minimum duration has elapsed since the last MR push
-   * for a CRT to be valid.
-   * @param name            Identifier of the caller (used for stats)
-   * @param intervalParam   The minimum duration interval
-   * @param stats           StatsReceiver
-   * @return                Target Predicate
+   * Pred cate used to determ ne  f a m n mum durat on has elapsed s nce t  last MR push
+   * for a CRT to be val d.
+   * @param na              dent f er of t  caller (used for stats)
+   * @param  ntervalParam   T  m n mum durat on  nterval
+   * @param stats           StatsRece ver
+   * @return                Target Pred cate
    */
-  def minDurationElapsedSinceLastMrPushPredicate(
-    name: String,
-    intervalParam: Param[Duration],
-    stats: StatsReceiver
-  ): Predicate[Target] =
-    Predicate
+  def m nDurat onElapsedS nceLastMrPushPred cate(
+    na : Str ng,
+     ntervalParam: Param[Durat on],
+    stats: StatsRece ver
+  ): Pred cate[Target] =
+    Pred cate
       .fromAsync { target: Target =>
-        val interval =
-          target.params(intervalParam)
-        FrigateHistoryFatiguePredicate(
-          minInterval = interval,
-          getSortedHistory = { h: History =>
-            val magicRecsOnlyHistory =
-              TargetFatiguePredicate.magicRecsPushOnlyFilter(h.sortedPushDmHistory)
-            TargetFatiguePredicate.magicRecsNewUserPlaybookPushFilter(magicRecsOnlyHistory)
+        val  nterval =
+          target.params( ntervalParam)
+        Fr gate toryFat guePred cate(
+          m n nterval =  nterval,
+          getSorted tory = { h:  tory =>
+            val mag cRecsOnly tory =
+              TargetFat guePred cate.mag cRecsPushOnlyF lter(h.sortedPushDm tory)
+            TargetFat guePred cate.mag cRecsNewUserPlaybookPushF lter(mag cRecsOnly tory)
           }
-        ).flatContraMap { target: TargetUser with FrigateHistory =>
-            target.history
+        ).flatContraMap { target: TargetUser w h Fr gate tory =>
+            target. tory
           }.apply(Seq(target)).map {
-            _.head
+            _. ad
           }
-      }.withStats(stats.scope(s"${name}_predicate_mr_push_min_interval"))
-      .withName(s"${name}_predicate_mr_push_min_interval")
+      }.w hStats(stats.scope(s"${na }_pred cate_mr_push_m n_ nterval"))
+      .w hNa (s"${na }_pred cate_mr_push_m n_ nterval")
 }

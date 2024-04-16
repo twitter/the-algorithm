@@ -1,242 +1,242 @@
-package com.twitter.simclusters_v2.scalding
+package com.tw ter.s mclusters_v2.scald ng
 
-import com.twitter.bijection.Injection
-import com.twitter.frigate.user_sampler.common.EmployeeIds
-import com.twitter.hashing.KeyHasher
-import com.twitter.logging.Logger
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecution
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecutionArgs
-import com.twitter.scalding_internal.job.analytics_batch.BatchDescription
-import com.twitter.scalding_internal.job.analytics_batch.BatchFirstTime
-import com.twitter.scalding_internal.job.analytics_batch.BatchIncrement
-import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledExecutionApp
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.EdgeWithDecayedWeights
-import com.twitter.simclusters_v2.thriftscala.NeighborWithWeights
-import com.twitter.simclusters_v2.thriftscala.NormsAndCounts
-import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import flockdb_tools.datasets.flock.FlockFollowsEdgesScalaDataset
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.fr gate.user_sampler.common.Employee ds
+ mport com.tw ter.hash ng.KeyHas r
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e._
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.Expl c Locat on
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.ProcAtla
+ mport com.tw ter.scald ng_ nternal.job.Tw terExecut onApp
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.Analyt csBatchExecut on
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.Analyt csBatchExecut onArgs
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.BatchDescr pt on
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.BatchF rstT  
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.Batch ncre nt
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.Tw terSc duledExecut onApp
+ mport com.tw ter.s mclusters_v2.hdfs_s ces._
+ mport com.tw ter.s mclusters_v2.scald ng.common.TypedR chP pe._
+ mport com.tw ter.s mclusters_v2.scald ng.common.Ut l
+ mport com.tw ter.s mclusters_v2.thr ftscala.EdgeW hDecayed  ghts
+ mport com.tw ter.s mclusters_v2.thr ftscala.Ne ghborW h  ghts
+ mport com.tw ter.s mclusters_v2.thr ftscala.NormsAndCounts
+ mport com.tw ter.s mclusters_v2.thr ftscala.UserAndNe ghbors
+ mport com.tw ter.users ce.snapshot.flat.Users ceFlatScalaDataset
+ mport flockdb_tools.datasets.flock.FlockFollowsEdgesScalaDataset
 
-case class Edge(srcId: Long, destId: Long, isFollowEdge: Boolean, favWeight: Double)
+case class Edge(src d: Long, dest d: Long,  sFollowEdge: Boolean, fav  ght: Double)
 
-object UserUserNormalizedGraph {
+object UserUserNormal zedGraph {
 
-  // The common function for applying logarithmic transformation
-  def logTransformation(weight: Double): Double = {
-    math.max(math.log10(1.0 + weight), 0.0)
+  // T  common funct on for apply ng logar hm c transformat on
+  def logTransformat on(  ght: Double): Double = {
+    math.max(math.log10(1.0 +   ght), 0.0)
   }
 
-  def getFollowEdges(implicit dateRange: DateRange, uniqueID: UniqueID): TypedPipe[(Long, Long)] = {
-    val numInputFollowEdges = Stat("num_input_follow_edges")
+  def getFollowEdges( mpl c  dateRange: DateRange, un que D: Un que D): TypedP pe[(Long, Long)] = {
+    val num nputFollowEdges = Stat("num_ nput_follow_edges")
     DAL
       .readMostRecentSnapshot(FlockFollowsEdgesScalaDataset)
-      .toTypedPipe
+      .toTypedP pe
       .collect {
-        case edge if edge.state == 0 =>
-          numInputFollowEdges.inc()
-          (edge.sourceId, edge.destinationId)
+        case edge  f edge.state == 0 =>
+          num nputFollowEdges. nc()
+          (edge.s ce d, edge.dest nat on d)
       }
   }
 
   def transformFavEdges(
-    input: TypedPipe[EdgeWithDecayedWeights],
-    halfLifeInDaysForFavScore: Int
+     nput: TypedP pe[EdgeW hDecayed  ghts],
+    halfL fe nDaysForFavScore:  nt
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(Long, Long, Double)] = {
-    val numEdgesWithSpecifiedHalfLife = Stat(
-      s"num_edges_with_specified_half_life_${halfLifeInDaysForFavScore}_days")
-    val numEdgesWithoutSpecifiedHalfLife = Stat(
-      s"num_edges_without_specified_half_life_${halfLifeInDaysForFavScore}_days")
-    input
+     mpl c  un que D: Un que D
+  ): TypedP pe[(Long, Long, Double)] = {
+    val numEdgesW hSpec f edHalfL fe = Stat(
+      s"num_edges_w h_spec f ed_half_l fe_${halfL fe nDaysForFavScore}_days")
+    val numEdgesW houtSpec f edHalfL fe = Stat(
+      s"num_edges_w hout_spec f ed_half_l fe_${halfL fe nDaysForFavScore}_days")
+     nput
       .flatMap { edge =>
-        if (edge.weights.halfLifeInDaysToDecayedSums.contains(halfLifeInDaysForFavScore)) {
-          numEdgesWithSpecifiedHalfLife.inc()
-          Some((edge.sourceId, edge.destinationId, edge.weights.halfLifeInDaysToDecayedSums(100)))
+         f (edge.  ghts.halfL fe nDaysToDecayedSums.conta ns(halfL fe nDaysForFavScore)) {
+          numEdgesW hSpec f edHalfL fe. nc()
+          So ((edge.s ce d, edge.dest nat on d, edge.  ghts.halfL fe nDaysToDecayedSums(100)))
         } else {
-          numEdgesWithoutSpecifiedHalfLife.inc()
+          numEdgesW houtSpec f edHalfL fe. nc()
           None
         }
       }
   }
 
   def getFavEdges(
-    halfLifeInDaysForFavScore: Int
+    halfL fe nDaysForFavScore:  nt
   )(
-    implicit dateRange: DateRange,
-    uniqueID: UniqueID
-  ): TypedPipe[(Long, Long, Double)] = {
-    implicit val tz: java.util.TimeZone = DateOps.UTC
+     mpl c  dateRange: DateRange,
+    un que D: Un que D
+  ): TypedP pe[(Long, Long, Double)] = {
+     mpl c  val tz: java.ut l.T  Zone = DateOps.UTC
     transformFavEdges(
       DAL
         .readMostRecentSnapshot(UserUserFavGraphScalaDataset)
-        .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-        .toTypedPipe,
-      halfLifeInDaysForFavScore
+        .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+        .toTypedP pe,
+      halfL fe nDaysForFavScore
     )
   }
 
-  def getNeighborWithWeights(
-    inputEdge: Edge,
-    followerL2NormOfDest: Double,
+  def getNe ghborW h  ghts(
+     nputEdge: Edge,
+    follo rL2NormOfDest: Double,
     faverL2NormOfDest: Double,
     logFavL2Norm: Double
-  ): NeighborWithWeights = {
-    val normalizedFollowScore = {
-      val numerator = if (inputEdge.isFollowEdge) 1.0 else 0.0
-      if (followerL2NormOfDest > 0) numerator / followerL2NormOfDest else 0.0
+  ): Ne ghborW h  ghts = {
+    val normal zedFollowScore = {
+      val nu rator =  f ( nputEdge. sFollowEdge) 1.0 else 0.0
+       f (follo rL2NormOfDest > 0) nu rator / follo rL2NormOfDest else 0.0
     }
-    val normalizedFavScore =
-      if (faverL2NormOfDest > 0) inputEdge.favWeight / faverL2NormOfDest else 0.0
-    val logFavScore = if (inputEdge.favWeight > 0) logTransformation(inputEdge.favWeight) else 0.0
-    val logFavScoreL2Normalized = if (logFavL2Norm > 0) logFavScore / logFavL2Norm else 0.0
-    NeighborWithWeights(
-      inputEdge.destId,
-      Some(inputEdge.isFollowEdge),
-      Some(normalizedFollowScore),
-      Some(inputEdge.favWeight),
-      Some(normalizedFavScore),
-      logFavScore = Some(logFavScore),
-      logFavScoreL2Normalized = Some(logFavScoreL2Normalized)
+    val normal zedFavScore =
+       f (faverL2NormOfDest > 0)  nputEdge.fav  ght / faverL2NormOfDest else 0.0
+    val logFavScore =  f ( nputEdge.fav  ght > 0) logTransformat on( nputEdge.fav  ght) else 0.0
+    val logFavScoreL2Normal zed =  f (logFavL2Norm > 0) logFavScore / logFavL2Norm else 0.0
+    Ne ghborW h  ghts(
+       nputEdge.dest d,
+      So ( nputEdge. sFollowEdge),
+      So (normal zedFollowScore),
+      So ( nputEdge.fav  ght),
+      So (normal zedFavScore),
+      logFavScore = So (logFavScore),
+      logFavScoreL2Normal zed = So (logFavScoreL2Normal zed)
     )
   }
 
-  def addNormalizedWeightsAndAdjListify(
-    input: TypedPipe[Edge],
-    maxNeighborsPerUser: Int,
-    normsAndCountsFull: TypedPipe[NormsAndCounts]
+  def addNormal zed  ghtsAndAdjL st fy(
+     nput: TypedP pe[Edge],
+    maxNe ghborsPerUser:  nt,
+    normsAndCountsFull: TypedP pe[NormsAndCounts]
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[UserAndNeighbors] = {
-    val numUsersNeedingNeighborTruncation = Stat("num_users_needing_neighbor_truncation")
-    val numEdgesAfterTruncation = Stat("num_edges_after_truncation")
-    val numEdgesBeforeTruncation = Stat("num_edges_before_truncation")
-    val numFollowEdgesBeforeTruncation = Stat("num_follow_edges_before_truncation")
-    val numFavEdgesBeforeTruncation = Stat("num_fav_edges_before_truncation")
-    val numFollowEdgesAfterTruncation = Stat("num_follow_edges_after_truncation")
-    val numFavEdgesAfterTruncation = Stat("num_fav_edges_after_truncation")
-    val numRecordsInOutputGraph = Stat("num_records_in_output_graph")
+     mpl c  un que d: Un que D
+  ): TypedP pe[UserAndNe ghbors] = {
+    val numUsersNeed ngNe ghborTruncat on = Stat("num_users_need ng_ne ghbor_truncat on")
+    val numEdgesAfterTruncat on = Stat("num_edges_after_truncat on")
+    val numEdgesBeforeTruncat on = Stat("num_edges_before_truncat on")
+    val numFollowEdgesBeforeTruncat on = Stat("num_follow_edges_before_truncat on")
+    val numFavEdgesBeforeTruncat on = Stat("num_fav_edges_before_truncat on")
+    val numFollowEdgesAfterTruncat on = Stat("num_follow_edges_after_truncat on")
+    val numFavEdgesAfterTruncat on = Stat("num_fav_edges_after_truncat on")
+    val numRecords nOutputGraph = Stat("num_records_ n_output_graph")
 
     val norms = normsAndCountsFull.map { record =>
       (
-        record.userId,
+        record.user d,
         (
-          record.followerL2Norm.getOrElse(0.0),
+          record.follo rL2Norm.getOrElse(0.0),
           record.faverL2Norm.getOrElse(0.0),
           record.logFavL2Norm.getOrElse(0.0)))
     }
 
-    implicit val l2b: Long => Array[Byte] = Injection.long2BigEndian
-    input
-      .map { edge => (edge.destId, edge) }
+     mpl c  val l2b: Long => Array[Byte] =  nject on.long2B gEnd an
+     nput
+      .map { edge => (edge.dest d, edge) }
       .sketch(reducers = 2000)
-      .join(norms)
+      .jo n(norms)
       .map {
-        case (destId, (edge, (followNorm, favNorm, logFavNorm))) =>
-          numEdgesBeforeTruncation.inc()
-          if (edge.isFollowEdge) numFollowEdgesBeforeTruncation.inc()
-          if (edge.favWeight > 0) numFavEdgesBeforeTruncation.inc()
-          (edge.srcId, getNeighborWithWeights(edge, followNorm, favNorm, logFavNorm))
+        case (dest d, (edge, (followNorm, favNorm, logFavNorm))) =>
+          numEdgesBeforeTruncat on. nc()
+           f (edge. sFollowEdge) numFollowEdgesBeforeTruncat on. nc()
+           f (edge.fav  ght > 0) numFavEdgesBeforeTruncat on. nc()
+          (edge.src d, getNe ghborW h  ghts(edge, followNorm, favNorm, logFavNorm))
       }
       .group
-      //.withReducers(1000)
-      .sortedReverseTake(maxNeighborsPerUser)(Ordering.by { x: NeighborWithWeights =>
+      //.w hReducers(1000)
+      .sortedReverseTake(maxNe ghborsPerUser)(Order ng.by { x: Ne ghborW h  ghts =>
         (
-          x.favScoreHalfLife100Days.getOrElse(0.0),
-          x.followScoreNormalizedByNeighborFollowersL2.getOrElse(0.0)
+          x.favScoreHalfL fe100Days.getOrElse(0.0),
+          x.followScoreNormal zedByNe ghborFollo rsL2.getOrElse(0.0)
         )
       })
       .map {
-        case (srcId, neighborList) =>
-          if (neighborList.size >= maxNeighborsPerUser) numUsersNeedingNeighborTruncation.inc()
-          neighborList.foreach { neighbor =>
-            numEdgesAfterTruncation.inc()
-            if (neighbor.favScoreHalfLife100Days.exists(_ > 0)) numFavEdgesAfterTruncation.inc()
-            if (neighbor.isFollowed.contains(true)) numFollowEdgesAfterTruncation.inc()
+        case (src d, ne ghborL st) =>
+           f (ne ghborL st.s ze >= maxNe ghborsPerUser) numUsersNeed ngNe ghborTruncat on. nc()
+          ne ghborL st.foreach { ne ghbor =>
+            numEdgesAfterTruncat on. nc()
+             f (ne ghbor.favScoreHalfL fe100Days.ex sts(_ > 0)) numFavEdgesAfterTruncat on. nc()
+             f (ne ghbor. sFollo d.conta ns(true)) numFollowEdgesAfterTruncat on. nc()
           }
-          numRecordsInOutputGraph.inc()
-          UserAndNeighbors(srcId, neighborList)
+          numRecords nOutputGraph. nc()
+          UserAndNe ghbors(src d, ne ghborL st)
       }
   }
 
-  def combineFollowAndFav(
-    followEdges: TypedPipe[(Long, Long)],
-    favEdges: TypedPipe[(Long, Long, Double)]
-  ): TypedPipe[Edge] = {
+  def comb neFollowAndFav(
+    followEdges: TypedP pe[(Long, Long)],
+    favEdges: TypedP pe[(Long, Long, Double)]
+  ): TypedP pe[Edge] = {
     (
       followEdges.map { case (src, dest) => ((src, dest), (1, 0.0)) } ++
         favEdges.map { case (src, dest, wt) => ((src, dest), (0, wt)) }
     ).sumByKey
-    //.withReducers(2500)
+    //.w hReducers(2500)
       .map {
         case ((src, dest), (follow, favWt)) =>
-          Edge(src, dest, isFollowEdge = follow > 0, favWt)
+          Edge(src, dest,  sFollowEdge = follow > 0, favWt)
       }
   }
 
   def run(
-    followEdges: TypedPipe[(Long, Long)],
-    favEdges: TypedPipe[(Long, Long, Double)],
-    normsAndCounts: TypedPipe[NormsAndCounts],
-    maxNeighborsPerUser: Int
+    followEdges: TypedP pe[(Long, Long)],
+    favEdges: TypedP pe[(Long, Long, Double)],
+    normsAndCounts: TypedP pe[NormsAndCounts],
+    maxNe ghborsPerUser:  nt
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[UserAndNeighbors] = {
-    val combined = combineFollowAndFav(followEdges, favEdges)
-    addNormalizedWeightsAndAdjListify(
-      combined,
-      maxNeighborsPerUser,
+     mpl c  un que D: Un que D
+  ): TypedP pe[UserAndNe ghbors] = {
+    val comb ned = comb neFollowAndFav(followEdges, favEdges)
+    addNormal zed  ghtsAndAdjL st fy(
+      comb ned,
+      maxNe ghborsPerUser,
       normsAndCounts
     )
   }
 }
 
-object UserUserNormalizedGraphBatch extends TwitterScheduledExecutionApp {
-  private val firstTime: String = "2018-06-16"
-  implicit val tz = DateOps.UTC
-  implicit val parser = DateParser.default
-  private val batchIncrement: Duration = Days(7)
-  private val halfLifeInDaysForFavScore = 100
+object UserUserNormal zedGraphBatch extends Tw terSc duledExecut onApp {
+  pr vate val f rstT  : Str ng = "2018-06-16"
+   mpl c  val tz = DateOps.UTC
+   mpl c  val parser = DateParser.default
+  pr vate val batch ncre nt: Durat on = Days(7)
+  pr vate val halfL fe nDaysForFavScore = 100
 
-  private val outputPath: String = "/user/cassowary/processed/user_user_normalized_graph"
+  pr vate val outputPath: Str ng = "/user/cassowary/processed/user_user_normal zed_graph"
 
-  private val execArgs = AnalyticsBatchExecutionArgs(
-    batchDesc = BatchDescription(this.getClass.getName.replace("$", "")),
-    firstTime = BatchFirstTime(RichDate(firstTime)),
-    lastTime = None,
-    batchIncrement = BatchIncrement(batchIncrement)
+  pr vate val execArgs = Analyt csBatchExecut onArgs(
+    batchDesc = BatchDescr pt on(t .getClass.getNa .replace("$", "")),
+    f rstT   = BatchF rstT  (R chDate(f rstT  )),
+    lastT   = None,
+    batch ncre nt = Batch ncre nt(batch ncre nt)
   )
 
-  override def scheduledJob: Execution[Unit] = AnalyticsBatchExecution(execArgs) {
-    implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        Execution.withArgs { args =>
-          val maxNeighborsPerUser = args.int("maxNeighborsPerUser", 2000)
+  overr de def sc duledJob: Execut on[Un ] = Analyt csBatchExecut on(execArgs) {
+     mpl c  dateRange =>
+      Execut on.w h d {  mpl c  un que d =>
+        Execut on.w hArgs { args =>
+          val maxNe ghborsPerUser = args. nt("maxNe ghborsPerUser", 2000)
 
           val producerNormsAndCounts =
-            DAL.readMostRecentSnapshot(ProducerNormsAndCountsScalaDataset).toTypedPipe
+            DAL.readMostRecentSnapshot(ProducerNormsAndCountsScalaDataset).toTypedP pe
 
-          Util.printCounters(
-            UserUserNormalizedGraph
+          Ut l.pr ntCounters(
+            UserUserNormal zedGraph
               .run(
-                UserUserNormalizedGraph.getFollowEdges,
-                UserUserNormalizedGraph.getFavEdges(halfLifeInDaysForFavScore),
+                UserUserNormal zedGraph.getFollowEdges,
+                UserUserNormal zedGraph.getFavEdges(halfL fe nDaysForFavScore),
                 producerNormsAndCounts,
-                maxNeighborsPerUser
+                maxNe ghborsPerUser
               )
-              .writeDALSnapshotExecution(
-                UserUserNormalizedGraphScalaDataset,
-                D.Daily,
-                D.Suffix(outputPath),
+              .wr eDALSnapshotExecut on(
+                UserUserNormal zedGraphScalaDataset,
+                D.Da ly,
+                D.Suff x(outputPath),
                 D.EBLzo(),
                 dateRange.end)
           )
@@ -245,206 +245,206 @@ object UserUserNormalizedGraphBatch extends TwitterScheduledExecutionApp {
   }
 }
 
-object UserUserNormalizedGraphAdhoc extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  implicit val dp = DateParser.default
+object UserUserNormal zedGraphAdhoc extends Tw terExecut onApp {
+   mpl c  val tz: java.ut l.T  Zone = DateOps.UTC
+   mpl c  val dp = DateParser.default
   val log = Logger()
 
-  def hashToLong(input: Long): Long = {
-    val bb = java.nio.ByteBuffer.allocate(8)
-    bb.putLong(input)
-    Math.abs(KeyHasher.KETAMA.hashKey(bb.array()))
+  def hashToLong( nput: Long): Long = {
+    val bb = java.n o.ByteBuffer.allocate(8)
+    bb.putLong( nput)
+    Math.abs(KeyHas r.KETAMA.hashKey(bb.array()))
   }
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
-          implicit val dateRange: DateRange = DateRange.parse(args.list("date"))
-          val halfLifeInDaysForFavScore = 100
-          val maxNeighborsPerUser = args.int("maxNeighborsPerUser", 2000)
-          val producerNormsAndCounts = TypedPipe.from(
-            NormsAndCountsFixedPathSource(args("normsInputDir"))
+  def job: Execut on[Un ] =
+    Execut on.getConf gMode.flatMap {
+      case (conf g, mode) =>
+        Execut on.w h d {  mpl c  un que d =>
+          val args = conf g.getArgs
+           mpl c  val dateRange: DateRange = DateRange.parse(args.l st("date"))
+          val halfL fe nDaysForFavScore = 100
+          val maxNe ghborsPerUser = args. nt("maxNe ghborsPerUser", 2000)
+          val producerNormsAndCounts = TypedP pe.from(
+            NormsAndCountsF xedPathS ce(args("norms nputD r"))
           )
-          val favEdges = args.optional("favGraphInputDir") match {
-            case Some(favGraphInputDir) =>
-              UserUserNormalizedGraph.transformFavEdges(
-                TypedPipe.from(
-                  EdgeWithDecayedWtsFixedPathSource(favGraphInputDir)
+          val favEdges = args.opt onal("favGraph nputD r") match {
+            case So (favGraph nputD r) =>
+              UserUserNormal zedGraph.transformFavEdges(
+                TypedP pe.from(
+                  EdgeW hDecayedWtsF xedPathS ce(favGraph nputD r)
                 ),
-                halfLifeInDaysForFavScore
+                halfL fe nDaysForFavScore
               )
             case None =>
-              UserUserNormalizedGraph.getFavEdges(halfLifeInDaysForFavScore)
+              UserUserNormal zedGraph.getFavEdges(halfL fe nDaysForFavScore)
           }
 
-          val followEdges = UserUserNormalizedGraph.getFollowEdges
+          val followEdges = UserUserNormal zedGraph.getFollowEdges
 
-          Util.printCounters(
-            UserUserNormalizedGraph
+          Ut l.pr ntCounters(
+            UserUserNormal zedGraph
               .run(
                 followEdges,
                 favEdges,
                 producerNormsAndCounts,
-                maxNeighborsPerUser
-              ).writeExecution(UserAndNeighborsFixedPathSource(args("outputDir")))
+                maxNe ghborsPerUser
+              ).wr eExecut on(UserAndNe ghborsF xedPathS ce(args("outputD r")))
           )
         }
     }
 }
 
-object DumpUserUserGraphAdhoc extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
-          val input = args.optional("inputDir") match {
-            case Some(inputDir) => TypedPipe.from(UserAndNeighborsFixedPathSource(inputDir))
+object DumpUserUserGraphAdhoc extends Tw terExecut onApp {
+   mpl c  val tz: java.ut l.T  Zone = DateOps.UTC
+  def job: Execut on[Un ] =
+    Execut on.getConf gMode.flatMap {
+      case (conf g, mode) =>
+        Execut on.w h d {  mpl c  un que d =>
+          val args = conf g.getArgs
+          val  nput = args.opt onal(" nputD r") match {
+            case So ( nputD r) => TypedP pe.from(UserAndNe ghborsF xedPathS ce( nputD r))
             case None =>
               DAL
-                .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(30))
-                .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-                .toTypedPipe
+                .readMostRecentSnapshotNoOlderThan(UserUserNormal zedGraphScalaDataset, Days(30))
+                .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+                .toTypedP pe
           }
-          val users = args.list("users").map(_.toLong).toSet
-          if (users.isEmpty) {
-            input.printSummary("Producer norms and counts")
+          val users = args.l st("users").map(_.toLong).toSet
+           f (users. sEmpty) {
+             nput.pr ntSummary("Producer norms and counts")
           } else {
-            input
+             nput
               .collect {
-                case rec if users.contains(rec.userId) =>
-                  (Seq(rec.userId.toString) ++ rec.neighbors.map { n =>
-                    Util.prettyJsonMapper.writeValueAsString(n).replaceAll("\n", " ")
-                  }).mkString("\n")
+                case rec  f users.conta ns(rec.user d) =>
+                  (Seq(rec.user d.toStr ng) ++ rec.ne ghbors.map { n =>
+                    Ut l.prettyJsonMapper.wr eValueAsStr ng(n).replaceAll("\n", " ")
+                  }).mkStr ng("\n")
               }
-              .toIterableExecution
-              .map { strings => println(strings.mkString("\n")) }
+              .to erableExecut on
+              .map { str ngs => pr ntln(str ngs.mkStr ng("\n")) }
           }
         }
     }
 }
 
 /*
- * ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:user_user_normalized_graph && \
- * oscar hdfs --host hadoopnest2.atla.twitter.com --bundle user_user_normalized_graph \
- * --tool com.twitter.simclusters_v2.scalding.EmployeeGraph --screen --screen-detached \
- * --tee your_ldap/employeeGraph20190809 -- --outputDir adhoc/employeeGraph20190809
+ * ./bazel bundle src/scala/com/tw ter/s mclusters_v2/scald ng:user_user_normal zed_graph && \
+ * oscar hdfs --host hadoopnest2.atla.tw ter.com --bundle user_user_normal zed_graph \
+ * --tool com.tw ter.s mclusters_v2.scald ng.EmployeeGraph --screen --screen-detac d \
+ * --tee y _ldap/employeeGraph20190809 -- --outputD r adhoc/employeeGraph20190809
  */
-object EmployeeGraph extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
-          val input = args.optional("inputDir") match {
-            case Some(inputDir) => TypedPipe.from(UserAndNeighborsFixedPathSource(inputDir))
+object EmployeeGraph extends Tw terExecut onApp {
+   mpl c  val tz: java.ut l.T  Zone = DateOps.UTC
+  def job: Execut on[Un ] =
+    Execut on.getConf gMode.flatMap {
+      case (conf g, mode) =>
+        Execut on.w h d {  mpl c  un que d =>
+          val args = conf g.getArgs
+          val  nput = args.opt onal(" nputD r") match {
+            case So ( nputD r) => TypedP pe.from(UserAndNe ghborsF xedPathS ce( nputD r))
             case None =>
               DAL
-                .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(30))
-                .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-                .toTypedPipe
+                .readMostRecentSnapshotNoOlderThan(UserUserNormal zedGraphScalaDataset, Days(30))
+                .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+                .toTypedP pe
           }
-          val employeeIds = EmployeeIds.buildMerlinClientAndGetEmployees("frigate-scalding.dev")
-          input
+          val employee ds = Employee ds.bu ld rl nCl entAndGetEmployees("fr gate-scald ng.dev")
+           nput
             .collect {
-              case rec if employeeIds.contains(rec.userId) =>
-                rec.neighbors.collect {
-                  case n if employeeIds.contains(n.neighborId) =>
+              case rec  f employee ds.conta ns(rec.user d) =>
+                rec.ne ghbors.collect {
+                  case n  f employee ds.conta ns(n.ne ghbor d) =>
                     (
-                      rec.userId,
-                      n.neighborId,
-                      n.favScoreHalfLife100Days.getOrElse(0),
-                      n.isFollowed.getOrElse(false))
+                      rec.user d,
+                      n.ne ghbor d,
+                      n.favScoreHalfL fe100Days.getOrElse(0),
+                      n. sFollo d.getOrElse(false))
                 }
             }
             .flatten
-            .writeExecution(TypedTsv(args("outputDir")))
+            .wr eExecut on(TypedTsv(args("outputD r")))
 
         }
     }
 }
 /*
- * scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding:employee_graph_from_user_user
- * --main-class com.twitter.simclusters_v2.scalding.EmployeeGraphFromUserUser
- * --submitter  hadoopnest2.atla.twitter.com --user recos-platform -- --graphOutputDir "/user/recos-platform/adhoc/employee_graph_from_user_user/"
+ * scald ng remote run --target src/scala/com/tw ter/s mclusters_v2/scald ng:employee_graph_from_user_user
+ * --ma n-class com.tw ter.s mclusters_v2.scald ng.EmployeeGraphFromUserUser
+ * --subm ter  hadoopnest2.atla.tw ter.com --user recos-platform -- --graphOutputD r "/user/recos-platform/adhoc/employee_graph_from_user_user/"
  */
 
-object EmployeeGraphFromUserUser extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
-          val graphOutputDir = args("graphOutputDir")
-          val input = args.optional("inputDir") match {
-            case Some(inputDir) => TypedPipe.from(UserAndNeighborsFixedPathSource(inputDir))
+object EmployeeGraphFromUserUser extends Tw terExecut onApp {
+   mpl c  val tz: java.ut l.T  Zone = DateOps.UTC
+  def job: Execut on[Un ] =
+    Execut on.getConf gMode.flatMap {
+      case (conf g, mode) =>
+        Execut on.w h d {  mpl c  un que d =>
+          val args = conf g.getArgs
+          val graphOutputD r = args("graphOutputD r")
+          val  nput = args.opt onal(" nputD r") match {
+            case So ( nputD r) => TypedP pe.from(UserAndNe ghborsF xedPathS ce( nputD r))
             case None =>
               DAL
-                .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(30))
-                .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-                .toTypedPipe
+                .readMostRecentSnapshotNoOlderThan(UserUserNormal zedGraphScalaDataset, Days(30))
+                .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+                .toTypedP pe
           }
-          val employeeIds = EmployeeIds.buildMerlinClientAndGetEmployees("frigate-scalding.dev")
-          input
+          val employee ds = Employee ds.bu ld rl nCl entAndGetEmployees("fr gate-scald ng.dev")
+           nput
             .collect {
-              case rec if employeeIds.contains(rec.userId) =>
+              case rec  f employee ds.conta ns(rec.user d) =>
                 rec
             }
-            .writeExecution(UserAndNeighborsFixedPathSource(graphOutputDir))
+            .wr eExecut on(UserAndNe ghborsF xedPathS ce(graphOutputD r))
 
         }
     }
 }
 
 /*
- * ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:user_user_normalized_graph && \
- * oscar hdfs --host hadoopnest2.atla.twitter.com --bundle user_user_normalized_graph \
- * --tool com.twitter.simclusters_v2.scalding.VitGraph --screen --screen-detached \
- * --tee your_ldap/vitGraph20190809 -- --outputDir adhoc/vitGraph20190809
+ * ./bazel bundle src/scala/com/tw ter/s mclusters_v2/scald ng:user_user_normal zed_graph && \
+ * oscar hdfs --host hadoopnest2.atla.tw ter.com --bundle user_user_normal zed_graph \
+ * --tool com.tw ter.s mclusters_v2.scald ng.V Graph --screen --screen-detac d \
+ * --tee y _ldap/v Graph20190809 -- --outputD r adhoc/v Graph20190809
  */
-object VitGraph extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
-          val minActiveFollowers = args.int("minActiveFollowers")
-          val topK = args.int("topK")
-          val input = args.optional("inputDir") match {
-            case Some(inputDir) => TypedPipe.from(UserAndNeighborsFixedPathSource(inputDir))
+object V Graph extends Tw terExecut onApp {
+   mpl c  val tz: java.ut l.T  Zone = DateOps.UTC
+  def job: Execut on[Un ] =
+    Execut on.getConf gMode.flatMap {
+      case (conf g, mode) =>
+        Execut on.w h d {  mpl c  un que d =>
+          val args = conf g.getArgs
+          val m nAct veFollo rs = args. nt("m nAct veFollo rs")
+          val topK = args. nt("topK")
+          val  nput = args.opt onal(" nputD r") match {
+            case So ( nputD r) => TypedP pe.from(UserAndNe ghborsF xedPathS ce( nputD r))
             case None =>
               DAL
-                .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(30))
-                .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-                .toTypedPipe
+                .readMostRecentSnapshotNoOlderThan(UserUserNormal zedGraphScalaDataset, Days(30))
+                .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+                .toTypedP pe
           }
-          val userSource =
-            DAL.readMostRecentSnapshotNoOlderThan(UsersourceFlatScalaDataset, Days(30)).toTypedPipe
+          val userS ce =
+            DAL.readMostRecentSnapshotNoOlderThan(Users ceFlatScalaDataset, Days(30)).toTypedP pe
 
-          TopUsersSimilarityGraph
-            .vits(userSource, minActiveFollowers, topK).toIterableExecution.flatMap { vitsIter =>
-              val vits = vitsIter.toSet
-              println(s"Found ${vits.size} many vits. First few: " + vits.take(5).mkString(","))
-              input
+          TopUsersS m lar yGraph
+            .v s(userS ce, m nAct veFollo rs, topK).to erableExecut on.flatMap { v s er =>
+              val v s = v s er.toSet
+              pr ntln(s"Found ${v s.s ze} many v s. F rst few: " + v s.take(5).mkStr ng(","))
+               nput
                 .collect {
-                  case rec if vits.contains(rec.userId) =>
-                    rec.neighbors.collect {
-                      case n if vits.contains(n.neighborId) =>
+                  case rec  f v s.conta ns(rec.user d) =>
+                    rec.ne ghbors.collect {
+                      case n  f v s.conta ns(n.ne ghbor d) =>
                         (
-                          rec.userId,
-                          n.neighborId,
-                          n.favScoreHalfLife100Days.getOrElse(0),
-                          n.isFollowed.getOrElse(false))
+                          rec.user d,
+                          n.ne ghbor d,
+                          n.favScoreHalfL fe100Days.getOrElse(0),
+                          n. sFollo d.getOrElse(false))
                     }
                 }
                 .flatten
-                .writeExecution(TypedTsv(args("outputDir")))
+                .wr eExecut on(TypedTsv(args("outputD r")))
             }
 
         }

@@ -1,57 +1,57 @@
-package com.twitter.product_mixer.shared_library.http_client
+package com.tw ter.product_m xer.shared_l brary.http_cl ent
 
-import com.twitter.finagle.Http
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Duration
+ mport com.tw ter.f nagle.Http
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.mtls.cl ent.MtlsStackCl ent._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ut l.Durat on
 
-object FinagleHttpClientBuilder {
-
-  /**
-   * Build a Finagle HTTP client with S2S Auth / Mutual TLS
-   *
-   * @param requestTimeout     HTTP client request timeout
-   * @param connectTimeout     HTTP client transport connect timeout
-   * @param acquisitionTimeout HTTP client session acquisition timeout
-   * @param serviceIdentifier  Service ID used to S2S Auth
-   * @param statsReceiver      Stats
-   *
-   * @return Finagle HTTP Client with S2S Auth / Mutual TLS
-   */
-  def buildFinagleHttpClientMutualTls(
-    requestTimeout: Duration,
-    connectTimeout: Duration,
-    acquisitionTimeout: Duration,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Http.Client =
-    buildFinagleHttpClient(
-      requestTimeout = requestTimeout,
-      connectTimeout = connectTimeout,
-      acquisitionTimeout = acquisitionTimeout,
-      statsReceiver = statsReceiver
-    ).withMutualTls(serviceIdentifier)
+object F nagleHttpCl entBu lder {
 
   /**
-   * Build a Finagle HTTP client
+   * Bu ld a F nagle HTTP cl ent w h S2S Auth / Mutual TLS
    *
-   * @param requestTimeout     HTTP client request timeout
-   * @param connectTimeout     HTTP client transport connect timeout
-   * @param acquisitionTimeout HTTP client session acquisition timeout
-   * @param statsReceiver      stats
+   * @param requestT  out     HTTP cl ent request t  out
+   * @param connectT  out     HTTP cl ent transport connect t  out
+   * @param acqu s  onT  out HTTP cl ent sess on acqu s  on t  out
+   * @param serv ce dent f er  Serv ce  D used to S2S Auth
+   * @param statsRece ver      Stats
    *
-   * @return Finagle HTTP Client
+   * @return F nagle HTTP Cl ent w h S2S Auth / Mutual TLS
    */
-  def buildFinagleHttpClient(
-    requestTimeout: Duration,
-    connectTimeout: Duration,
-    acquisitionTimeout: Duration,
-    statsReceiver: StatsReceiver,
-  ): Http.Client =
-    Http.client
-      .withStatsReceiver(statsReceiver)
-      .withRequestTimeout(requestTimeout)
-      .withTransport.connectTimeout(connectTimeout)
-      .withSession.acquisitionTimeout(acquisitionTimeout)
+  def bu ldF nagleHttpCl entMutualTls(
+    requestT  out: Durat on,
+    connectT  out: Durat on,
+    acqu s  onT  out: Durat on,
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver
+  ): Http.Cl ent =
+    bu ldF nagleHttpCl ent(
+      requestT  out = requestT  out,
+      connectT  out = connectT  out,
+      acqu s  onT  out = acqu s  onT  out,
+      statsRece ver = statsRece ver
+    ).w hMutualTls(serv ce dent f er)
+
+  /**
+   * Bu ld a F nagle HTTP cl ent
+   *
+   * @param requestT  out     HTTP cl ent request t  out
+   * @param connectT  out     HTTP cl ent transport connect t  out
+   * @param acqu s  onT  out HTTP cl ent sess on acqu s  on t  out
+   * @param statsRece ver      stats
+   *
+   * @return F nagle HTTP Cl ent
+   */
+  def bu ldF nagleHttpCl ent(
+    requestT  out: Durat on,
+    connectT  out: Durat on,
+    acqu s  onT  out: Durat on,
+    statsRece ver: StatsRece ver,
+  ): Http.Cl ent =
+    Http.cl ent
+      .w hStatsRece ver(statsRece ver)
+      .w hRequestT  out(requestT  out)
+      .w hTransport.connectT  out(connectT  out)
+      .w hSess on.acqu s  onT  out(acqu s  onT  out)
 }

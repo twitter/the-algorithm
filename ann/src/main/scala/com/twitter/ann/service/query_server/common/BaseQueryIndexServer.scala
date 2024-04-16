@@ -1,52 +1,52 @@
-package com.twitter.ann.service.query_server.common
+package com.tw ter.ann.serv ce.query_server.common
 
-import com.google.inject.Module
-import com.twitter.ann.common.thriftscala.AnnQueryService
-import com.twitter.app.Flag
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.thrift.ThriftServer
-import com.twitter.finatra.mtls.thriftmux.Mtls
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule
-import com.twitter.finatra.thrift.filters.{
-  AccessLoggingFilter,
-  LoggingMDCFilter,
-  StatsFilter,
-  ThriftMDCFilter,
-  TraceIdMDCFilter
+ mport com.google. nject.Module
+ mport com.tw ter.ann.common.thr ftscala.AnnQueryServ ce
+ mport com.tw ter.app.Flag
+ mport com.tw ter.f natra.dec der.modules.Dec derModule
+ mport com.tw ter.f natra.thr ft.Thr ftServer
+ mport com.tw ter.f natra.mtls.thr ftmux.Mtls
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsThr ft bFormsModule
+ mport com.tw ter.f natra.thr ft.f lters.{
+  AccessLogg ngF lter,
+  Logg ngMDCF lter,
+  StatsF lter,
+  Thr ftMDCF lter,
+  Trace dMDCF lter
 }
-import com.twitter.finatra.thrift.routing.ThriftRouter
+ mport com.tw ter.f natra.thr ft.rout ng.Thr ftRouter
 
 /**
- * This class provides most of the configuration needed for logging, stats, deciders etc.
+ * T  class prov des most of t  conf gurat on needed for logg ng, stats, dec ders etc.
  */
-abstract class BaseQueryIndexServer extends ThriftServer with Mtls {
+abstract class BaseQuery ndexServer extends Thr ftServer w h Mtls {
 
-  protected val environment: Flag[String] = flag[String]("environment", "service environment")
+  protected val env ron nt: Flag[Str ng] = flag[Str ng]("env ron nt", "serv ce env ron nt")
 
   /**
-   * Override with method to provide more module to guice.
+   * Overr de w h  thod to prov de more module to gu ce.
    */
-  protected def additionalModules: Seq[Module]
+  protected def add  onalModules: Seq[Module]
 
   /**
-   * Override this method to add the controller to the thrift router. BaseQueryIndexServer takes
-   * care of most of the other configuration for you.
+   * Overr de t   thod to add t  controller to t  thr ft router. BaseQuery ndexServer takes
+   * care of most of t  ot r conf gurat on for  .
    * @param router
    */
-  protected def addController(router: ThriftRouter): Unit
+  protected def addController(router: Thr ftRouter): Un 
 
-  override protected final lazy val modules: Seq[Module] = Seq(
-    DeciderModule,
-    new MtlsThriftWebFormsModule[AnnQueryService.MethodPerEndpoint](this)
-  ) ++ additionalModules
+  overr de protected f nal lazy val modules: Seq[Module] = Seq(
+    Dec derModule,
+    new MtlsThr ft bFormsModule[AnnQueryServ ce. thodPerEndpo nt](t )
+  ) ++ add  onalModules
 
-  override protected final def configureThrift(router: ThriftRouter): Unit = {
+  overr de protected f nal def conf gureThr ft(router: Thr ftRouter): Un  = {
     router
-      .filter[LoggingMDCFilter]
-      .filter[TraceIdMDCFilter]
-      .filter[ThriftMDCFilter]
-      .filter[AccessLoggingFilter]
-      .filter[StatsFilter]
+      .f lter[Logg ngMDCF lter]
+      .f lter[Trace dMDCF lter]
+      .f lter[Thr ftMDCF lter]
+      .f lter[AccessLogg ngF lter]
+      .f lter[StatsF lter]
 
     addController(router)
   }

@@ -1,18 +1,18 @@
-package com.twitter.search.earlybird.exception;
+package com.tw ter.search.earlyb rd.except on;
 
 /**
- * General Earlybird exception class to use instead of the Java exception class.
+ * General Earlyb rd except on class to use  nstead of t  Java except on class.
  */
-public class EarlybirdException extends Exception {
-  public EarlybirdException(Throwable cause) {
+publ c class Earlyb rdExcept on extends Except on {
+  publ c Earlyb rdExcept on(Throwable cause) {
     super(cause);
   }
 
-  public EarlybirdException(String message) {
-    super(message);
+  publ c Earlyb rdExcept on(Str ng  ssage) {
+    super( ssage);
   }
 
-  public EarlybirdException(String message, Throwable cause) {
-    super(message, cause);
+  publ c Earlyb rdExcept on(Str ng  ssage, Throwable cause) {
+    super( ssage, cause);
   }
 }

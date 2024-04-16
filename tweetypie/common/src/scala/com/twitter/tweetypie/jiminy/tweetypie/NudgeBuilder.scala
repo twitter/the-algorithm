@@ -1,148 +1,148 @@
-package com.twitter.tweetypie.jiminy.tweetypie
+package com.tw ter.t etyp e.j m ny.t etyp e
 
-import com.twitter.finagle.stats.CategorizingExceptionStatsHandler
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.incentives.jiminy.thriftscala._
-import com.twitter.servo.util.FutureArrow
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.tweetypie.core.TweetCreateFailure
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Throw
+ mport com.tw ter.f nagle.stats.Categor z ngExcept onStatsHandler
+ mport com.tw ter.f nagle.stats.Stat
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. ncent ves.j m ny.thr ftscala._
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.thr ft.ScroogeConv mpl c s._
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.t etyp e.core.T etCreateFa lure
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
 
-case class NudgeBuilderRequest(
-  text: String,
-  inReplyToTweetId: Option[NudgeBuilder.TweetId],
-  conversationId: Option[NudgeBuilder.TweetId],
-  hasQuotedTweet: Boolean,
-  nudgeOptions: Option[CreateTweetNudgeOptions],
-  tweetId: Option[NudgeBuilder.TweetId])
+case class NudgeBu lderRequest(
+  text: Str ng,
+   nReplyToT et d: Opt on[NudgeBu lder.T et d],
+  conversat on d: Opt on[NudgeBu lder.T et d],
+  hasQuotedT et: Boolean,
+  nudgeOpt ons: Opt on[CreateT etNudgeOpt ons],
+  t et d: Opt on[NudgeBu lder.T et d])
 
-trait NudgeBuilder extends FutureArrow[NudgeBuilderRequest, Unit] {
+tra  NudgeBu lder extends FutureArrow[NudgeBu lderRequest, Un ] {
 
   /**
-   * Check whether the user should receive a nudge instead of creating
-   * the Tweet. If nudgeOptions is None, then no nudge check will be
-   * performed.
+   * C ck w t r t  user should rece ve a nudge  nstead of creat ng
+   * t  T et.  f nudgeOpt ons  s None, t n no nudge c ck w ll be
+   * perfor d.
    *
-   * @return a Future.exception containing a [[TweetCreateFailure]] if the
-   *   user should be nudged, or Future.Unit if the user should not be
+   * @return a Future.except on conta n ng a [[T etCreateFa lure]]  f t 
+   *   user should be nudged, or Future.Un   f t  user should not be
    *   nudged.
    */
   def apply(
-    request: NudgeBuilderRequest
-  ): Future[Unit]
+    request: NudgeBu lderRequest
+  ): Future[Un ]
 }
 
-object NudgeBuilder {
-  type Type = FutureArrow[NudgeBuilderRequest, Unit]
-  type TweetId = Long
+object NudgeBu lder {
+  type Type = FutureArrow[NudgeBu lderRequest, Un ]
+  type T et d = Long
 
-  // darkTrafficCreateNudgeOptions ensure that our dark traffic sends a request that will
-  // accurately test the Jiminy backend. in this case, we specify that we want checks for all
-  // possible nudge types
-  private[this] val darkTrafficCreateNudgeOptions = Some(
-    CreateTweetNudgeOptions(
-      requestedNudgeTypes = Some(
+  // darkTraff cCreateNudgeOpt ons ensure that   dark traff c sends a request that w ll
+  // accurately test t  J m ny backend.  n t  case,   spec fy that   want c cks for all
+  // poss ble nudge types
+  pr vate[t ] val darkTraff cCreateNudgeOpt ons = So (
+    CreateT etNudgeOpt ons(
+      requestedNudgeTypes = So (
         Set(
-          TweetNudgeType.PotentiallyToxicTweet,
-          TweetNudgeType.ReviseOrMute,
-          TweetNudgeType.ReviseOrHideThenBlock,
-          TweetNudgeType.ReviseOrBlock
+          T etNudgeType.Potent allyTox cT et,
+          T etNudgeType.Rev seOrMute,
+          T etNudgeType.Rev seOrH deT nBlock,
+          T etNudgeType.Rev seOrBlock
         )
       )
     )
   )
 
-  private[this] def mkJiminyRequest(
-    request: NudgeBuilderRequest,
-    isDarkRequest: Boolean = false
-  ): CreateTweetNudgeRequest = {
-    val tweetType =
-      if (request.inReplyToTweetId.nonEmpty) TweetType.Reply
-      else if (request.hasQuotedTweet) TweetType.QuoteTweet
-      else TweetType.OriginalTweet
+  pr vate[t ] def mkJ m nyRequest(
+    request: NudgeBu lderRequest,
+     sDarkRequest: Boolean = false
+  ): CreateT etNudgeRequest = {
+    val t etType =
+       f (request. nReplyToT et d.nonEmpty) T etType.Reply
+      else  f (request.hasQuotedT et) T etType.QuoteT et
+      else T etType.Or g nalT et
 
-    CreateTweetNudgeRequest(
-      tweetText = request.text,
-      tweetType = tweetType,
-      inReplyToTweetId = request.inReplyToTweetId,
-      conversationId = request.conversationId,
-      createTweetNudgeOptions =
-        if (isDarkRequest) darkTrafficCreateNudgeOptions else request.nudgeOptions,
-      tweetId = request.tweetId
+    CreateT etNudgeRequest(
+      t etText = request.text,
+      t etType = t etType,
+       nReplyToT et d = request. nReplyToT et d,
+      conversat on d = request.conversat on d,
+      createT etNudgeOpt ons =
+         f ( sDarkRequest) darkTraff cCreateNudgeOpt ons else request.nudgeOpt ons,
+      t et d = request.t et d
     )
   }
 
   /**
-   * NudgeBuilder implemented by calling the strato column `incentives/createNudge`.
+   * NudgeBu lder  mple nted by call ng t  strato column ` ncent ves/createNudge`.
    *
    * Stats recorded:
-   *   - latency_ms: Latency histogram (also implicitly number of
-   *     invocations). This is counted only in the case that a nudge
-   *     check was requested (`nudgeOptions` is non-empty)
+   *   - latency_ms: Latency  togram (also  mpl c ly number of
+   *      nvocat ons). T   s counted only  n t  case that a nudge
+   *     c ck was requested (`nudgeOpt ons`  s non-empty)
    *
-   *   - nudge: The nudge check succeeded and a nudge was created.
+   *   - nudge: T  nudge c ck succeeded and a nudge was created.
    *
-   *   - no_nudge: The nudge check succeeded, but no nudge was created.
+   *   - no_nudge: T  nudge c ck succeeded, but no nudge was created.
    *
-   *   - failures: Calling strato to create a nudge failed. Broken out
-   *     by exception.
+   *   - fa lures: Call ng strato to create a nudge fa led. Broken out
+   *     by except on.
    */
 
   def apply(
-    nudgeArrow: FutureArrow[CreateTweetNudgeRequest, CreateTweetNudgeResponse],
-    enableDarkTraffic: Gate[Unit],
-    stats: StatsReceiver
-  ): NudgeBuilder = {
-    new NudgeBuilder {
-      private[this] val nudgeLatencyStat = stats.stat("latency_ms")
-      private[this] val nudgeCounter = stats.counter("nudge")
-      private[this] val noNudgeCounter = stats.counter("no_nudge")
-      private[this] val darkRequestCounter = stats.counter("dark_request")
-      private[this] val nudgeExceptionHandler = new CategorizingExceptionStatsHandler
+    nudgeArrow: FutureArrow[CreateT etNudgeRequest, CreateT etNudgeResponse],
+    enableDarkTraff c: Gate[Un ],
+    stats: StatsRece ver
+  ): NudgeBu lder = {
+    new NudgeBu lder {
+      pr vate[t ] val nudgeLatencyStat = stats.stat("latency_ms")
+      pr vate[t ] val nudgeCounter = stats.counter("nudge")
+      pr vate[t ] val noNudgeCounter = stats.counter("no_nudge")
+      pr vate[t ] val darkRequestCounter = stats.counter("dark_request")
+      pr vate[t ] val nudgeExcept onHandler = new Categor z ngExcept onStatsHandler
 
-      override def apply(
-        request: NudgeBuilderRequest
-      ): Future[Unit] =
-        request.nudgeOptions match {
+      overr de def apply(
+        request: NudgeBu lderRequest
+      ): Future[Un ] =
+        request.nudgeOpt ons match {
           case None =>
-            if (enableDarkTraffic()) {
-              darkRequestCounter.incr()
+             f (enableDarkTraff c()) {
+              darkRequestCounter. ncr()
               Stat
-                .timeFuture(nudgeLatencyStat) {
-                  nudgeArrow(mkJiminyRequest(request, isDarkRequest = true))
+                .t  Future(nudgeLatencyStat) {
+                  nudgeArrow(mkJ m nyRequest(request,  sDarkRequest = true))
                 }
                 .transform { _ =>
-                  // ignore the response since it is a dark request
+                  //  gnore t  response s nce    s a dark request
                   Future.Done
                 }
             } else {
               Future.Done
             }
 
-          case Some(_) =>
+          case So (_) =>
             Stat
-              .timeFuture(nudgeLatencyStat) {
-                nudgeArrow(mkJiminyRequest(request))
+              .t  Future(nudgeLatencyStat) {
+                nudgeArrow(mkJ m nyRequest(request))
               }
               .transform {
                 case Throw(e) =>
-                  nudgeExceptionHandler.record(stats, e)
-                  // If we failed to invoke the nudge column, then
-                  // just continue on with the Tweet creation.
+                  nudgeExcept onHandler.record(stats, e)
+                  //  f   fa led to  nvoke t  nudge column, t n
+                  // just cont nue on w h t  T et creat on.
                   Future.Done
 
-                case Return(CreateTweetNudgeResponse(Some(nudge))) =>
-                  nudgeCounter.incr()
-                  Future.exception(TweetCreateFailure.Nudged(nudge = nudge))
+                case Return(CreateT etNudgeResponse(So (nudge))) =>
+                  nudgeCounter. ncr()
+                  Future.except on(T etCreateFa lure.Nudged(nudge = nudge))
 
-                case Return(CreateTweetNudgeResponse(None)) =>
-                  noNudgeCounter.incr()
+                case Return(CreateT etNudgeResponse(None)) =>
+                  noNudgeCounter. ncr()
                   Future.Done
               }
         }
@@ -150,16 +150,16 @@ object NudgeBuilder {
   }
 
   def apply(
-    strato: StratoClient,
-    enableDarkTraffic: Gate[Unit],
-    stats: StatsReceiver
-  ): NudgeBuilder = {
+    strato: StratoCl ent,
+    enableDarkTraff c: Gate[Un ],
+    stats: StatsRece ver
+  ): NudgeBu lder = {
     val executer =
-      strato.executer[CreateTweetNudgeRequest, CreateTweetNudgeResponse](
-        "incentives/createTweetNudge")
-    val nudgeArrow: FutureArrow[CreateTweetNudgeRequest, CreateTweetNudgeResponse] = { req =>
-      Stitch.run(executer.execute(req))
+      strato.executer[CreateT etNudgeRequest, CreateT etNudgeResponse](
+        " ncent ves/createT etNudge")
+    val nudgeArrow: FutureArrow[CreateT etNudgeRequest, CreateT etNudgeResponse] = { req =>
+      St ch.run(executer.execute(req))
     }
-    apply(nudgeArrow, enableDarkTraffic, stats)
+    apply(nudgeArrow, enableDarkTraff c, stats)
   }
 }

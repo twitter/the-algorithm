@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.component_library.candidate_source.explore_ranker
+package com.tw ter.product_m xer.component_l brary.cand date_s ce.explore_ranker
 
-import com.twitter.explore_ranker.{thriftscala => t}
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.explore_ranker.{thr ftscala => t}
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.st ch.St ch
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ExploreRankerCandidateSource @Inject() (
-  exploreRankerService: t.ExploreRanker.MethodPerEndpoint)
-    extends CandidateSource[t.ExploreRankerRequest, t.ImmersiveRecsResult] {
+@S ngleton
+class ExploreRankerCand dateS ce @ nject() (
+  exploreRankerServ ce: t.ExploreRanker. thodPerEndpo nt)
+    extends Cand dateS ce[t.ExploreRankerRequest, t. m rs veRecsResult] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("ExploreRanker")
+  overr de val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er("ExploreRanker")
 
-  override def apply(
+  overr de def apply(
     request: t.ExploreRankerRequest
-  ): Stitch[Seq[t.ImmersiveRecsResult]] = {
-    Stitch
-      .callFuture(exploreRankerService.getRankedResults(request))
+  ): St ch[Seq[t. m rs veRecsResult]] = {
+    St ch
+      .callFuture(exploreRankerServ ce.getRankedResults(request))
       .map {
         case t.ExploreRankerResponse(
               t.ExploreRankerProductResponse
-                .ImmersiveRecsResponse(t.ImmersiveRecsResponse(immersiveRecsResults))) =>
-          immersiveRecsResults
+                . m rs veRecsResponse(t. m rs veRecsResponse( m rs veRecsResults))) =>
+           m rs veRecsResults
         case response =>
-          throw new UnsupportedOperationException(s"Unknown response type: $response")
+          throw new UnsupportedOperat onExcept on(s"Unknown response type: $response")
       }
   }
 }

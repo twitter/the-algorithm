@@ -1,140 +1,140 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import java.util.Set;
+ mport java.ut l.Set;
 
-import com.google.common.base.Joiner;
+ mport com.google.common.base.Jo ner;
 
-import org.apache.thrift.TException;
-import org.slf4j.Logger;
+ mport org.apac .thr ft.TExcept on;
+ mport org.slf4j.Logger;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.thrift.ThriftUtils;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
-import com.twitter.util.FutureEventListener;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.ut l.thr ft.Thr ftUt ls;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.ut l.Future;
+ mport com.tw ter.ut l.FutureEventL stener;
 
 /**
- * The general framework for earlybird root to track sensitive results.
+ * T  general fra work for earlyb rd root to track sens  ve results.
  */
-public abstract class SensitiveResultsTrackingFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+publ c abstract class Sens  veResultsTrack ngF lter
+    extends S mpleF lter<Earlyb rdRequestContext, Earlyb rdResponse> {
 
   /**
-   * The type name is used to distinguish different kinds of sensitive results in log.
+   * T  type na   s used to d st ngu sh d fferent k nds of sens  ve results  n log.
    */
-  private final String typeName;
+  pr vate f nal Str ng typeNa ;
 
   /**
-   * The mark is to control whether to log expensive information.
+   * T  mark  s to control w t r to log expens ve  nformat on.
    */
-  private final boolean logDetails;
+  pr vate f nal boolean logDeta ls;
 
   /**
-   * Constructor helps distinguish different sensitive content trackers.
-   * @param typeName The sensitive content's name (e.g. nullcast)
-   * @param logDetails Whether to log details such as serialized requests and responses
+   * Constructor  lps d st ngu sh d fferent sens  ve content trackers.
+   * @param typeNa  T  sens  ve content's na  (e.g. nullcast)
+   * @param logDeta ls W t r to log deta ls such as ser al zed requests and responses
    */
-  public SensitiveResultsTrackingFilter(final String typeName, boolean logDetails) {
+  publ c Sens  veResultsTrack ngF lter(f nal Str ng typeNa , boolean logDeta ls) {
     super();
-    this.typeName = typeName;
-    this.logDetails = logDetails;
+    t .typeNa  = typeNa ;
+    t .logDeta ls = logDeta ls;
   }
 
   /**
-   * Get the LOG that the sensitive results can write to.
+   * Get t  LOG that t  sens  ve results can wr e to.
    */
   protected abstract Logger getLogger();
 
   /**
-   * The counter which counts the number of queries with sensitive results.
+   * T  counter wh ch counts t  number of quer es w h sens  ve results.
    */
-  protected abstract SearchCounter getSensitiveQueryCounter();
+  protected abstract SearchCounter getSens  veQueryCounter();
 
   /**
-   * The counter which counts the number of sensitive results.
+   * T  counter wh ch counts t  number of sens  ve results.
    */
-  protected abstract SearchCounter getSensitiveResultsCounter();
+  protected abstract SearchCounter getSens  veResultsCounter();
 
   /**
-   * The method defines how the sensitive results are identified.
+   * T   thod def nes how t  sens  ve results are  dent f ed.
    */
-  protected abstract Set<Long> getSensitiveResults(
-      EarlybirdRequestContext requestContext,
-      EarlybirdResponse earlybirdResponse) throws Exception;
+  protected abstract Set<Long> getSens  veResults(
+      Earlyb rdRequestContext requestContext,
+      Earlyb rdResponse earlyb rdResponse) throws Except on;
 
   /**
-   * Get a set of tweets which should be exclude from the sensitive results set.
+   * Get a set of t ets wh ch should be exclude from t  sens  ve results set.
    */
-  protected abstract Set<Long> getExceptedResults(EarlybirdRequestContext requestContext);
+  protected abstract Set<Long> getExceptedResults(Earlyb rdRequestContext requestContext);
 
-  @Override
-  public final Future<EarlybirdResponse> apply(
-      final EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    Future<EarlybirdResponse> response = service.apply(requestContext);
+  @Overr de
+  publ c f nal Future<Earlyb rdResponse> apply(
+      f nal Earlyb rdRequestContext requestContext,
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> serv ce) {
+    Future<Earlyb rdResponse> response = serv ce.apply(requestContext);
 
-    response.addEventListener(new FutureEventListener<EarlybirdResponse>() {
-      @Override
-      public void onSuccess(EarlybirdResponse earlybirdResponse) {
+    response.addEventL stener(new FutureEventL stener<Earlyb rdResponse>() {
+      @Overr de
+      publ c vo d onSuccess(Earlyb rdResponse earlyb rdResponse) {
         try {
-          if (earlybirdResponse.responseCode == EarlybirdResponseCode.SUCCESS
-              && earlybirdResponse.isSetSearchResults()
+           f (earlyb rdResponse.responseCode == Earlyb rdResponseCode.SUCCESS
+              && earlyb rdResponse. sSetSearchResults()
               && requestContext.getParsedQuery() != null) {
-            Set<Long> statusIds = getSensitiveResults(requestContext, earlybirdResponse);
-            Set<Long> exceptedIds = getExceptedResults(requestContext);
-            statusIds.removeAll(exceptedIds);
+            Set<Long> status ds = getSens  veResults(requestContext, earlyb rdResponse);
+            Set<Long> excepted ds = getExceptedResults(requestContext);
+            status ds.removeAll(excepted ds);
 
-            if (statusIds.size() > 0) {
-              getSensitiveQueryCounter().increment();
-              getSensitiveResultsCounter().add(statusIds.size());
-              logContent(requestContext, earlybirdResponse, statusIds);
+             f (status ds.s ze() > 0) {
+              getSens  veQueryCounter(). ncre nt();
+              getSens  veResultsCounter().add(status ds.s ze());
+              logContent(requestContext, earlyb rdResponse, status ds);
             }
           }
-        } catch (Exception e) {
-          getLogger().error("Caught exception while trying to log sensitive results for query: {}",
-                            requestContext.getParsedQuery().serialize(), e);
+        } catch (Except on e) {
+          getLogger().error("Caught except on wh le try ng to log sens  ve results for query: {}",
+                            requestContext.getParsedQuery().ser al ze(), e);
         }
       }
 
-      @Override
-      public void onFailure(Throwable cause) {
+      @Overr de
+      publ c vo d onFa lure(Throwable cause) {
       }
     });
 
     return response;
   }
 
-  private void logContent(
-      final EarlybirdRequestContext requestContext,
-      final EarlybirdResponse earlybirdResponse,
-      final Set<Long> statusIds) {
+  pr vate vo d logContent(
+      f nal Earlyb rdRequestContext requestContext,
+      f nal Earlyb rdResponse earlyb rdResponse,
+      f nal Set<Long> status ds) {
 
-    if (logDetails) {
-      String base64Request;
+     f (logDeta ls) {
+      Str ng base64Request;
       try {
-        base64Request = ThriftUtils.toBase64EncodedString(requestContext.getRequest());
-      } catch (TException e) {
-        base64Request = "Failed to parse base 64 request";
+        base64Request = Thr ftUt ls.toBase64EncodedStr ng(requestContext.getRequest());
+      } catch (TExcept on e) {
+        base64Request = "Fa led to parse base 64 request";
       }
-      getLogger().error("Found " + typeName
+      getLogger().error("Found " + typeNa 
               + ": {} | "
               + "parsedQuery: {} | "
               + "request: {} | "
               + "base 64 request: {} | "
               + "response: {}",
-          Joiner.on(",").join(statusIds),
-          requestContext.getParsedQuery().serialize(),
+          Jo ner.on(",").jo n(status ds),
+          requestContext.getParsedQuery().ser al ze(),
           requestContext.getRequest(),
           base64Request,
-          earlybirdResponse);
+          earlyb rdResponse);
     } else {
-      getLogger().error("Found " + typeName + ": {} for parsedQuery {}",
-          Joiner.on(",").join(statusIds),
-          requestContext.getParsedQuery().serialize());
+      getLogger().error("Found " + typeNa  + ": {} for parsedQuery {}",
+          Jo ner.on(",").jo n(status ds),
+          requestContext.getParsedQuery().ser al ze());
     }
   }
 }

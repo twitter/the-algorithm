@@ -1,37 +1,37 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.tw ter.fr gate.pushserv ce.model.ntab
 
-import com.twitter.frigate.common.base.TopTweetImpressionsCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.notificationservice.thriftscala.DisplayText
-import com.twitter.notificationservice.thriftscala.DisplayTextEntity
-import com.twitter.notificationservice.thriftscala.InlineCard
-import com.twitter.notificationservice.thriftscala.StoryContext
-import com.twitter.notificationservice.thriftscala.StoryContextValue
-import com.twitter.notificationservice.thriftscala.TextValue
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.common.base.TopT et mpress onsCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.not f cat onserv ce.thr ftscala.D splayText
+ mport com.tw ter.not f cat onserv ce.thr ftscala.D splayTextEnt y
+ mport com.tw ter.not f cat onserv ce.thr ftscala. nl neCard
+ mport com.tw ter.not f cat onserv ce.thr ftscala.StoryContext
+ mport com.tw ter.not f cat onserv ce.thr ftscala.StoryContextValue
+ mport com.tw ter.not f cat onserv ce.thr ftscala.TextValue
+ mport com.tw ter.ut l.Future
 
-trait TopTweetImpressionsNTabRequestHydrator extends NTabRequestHydrator {
-  self: PushCandidate with TopTweetImpressionsCandidate =>
+tra  TopT et mpress onsNTabRequestHydrator extends NTabRequestHydrator {
+  self: PushCand date w h TopT et mpress onsCand date =>
 
-  override lazy val tapThroughFut: Future[String] =
-    Future.value(s"${target.targetId}/status/$tweetId")
+  overr de lazy val tapThroughFut: Future[Str ng] =
+    Future.value(s"${target.target d}/status/$t et d")
 
-  override val senderIdFut: Future[Long] = Future.value(0L)
+  overr de val sender dFut: Future[Long] = Future.value(0L)
 
-  override val facepileUsersFut: Future[Seq[Long]] = Future.Nil
+  overr de val facep leUsersFut: Future[Seq[Long]] = Future.N l
 
-  override val storyContext: Option[StoryContext] =
-    Some(StoryContext(altText = "", value = Some(StoryContextValue.Tweets(Seq(tweetId)))))
+  overr de val storyContext: Opt on[StoryContext] =
+    So (StoryContext(altText = "", value = So (StoryContextValue.T ets(Seq(t et d)))))
 
-  override val inlineCard: Option[InlineCard] = None
+  overr de val  nl neCard: Opt on[ nl neCard] = None
 
-  override lazy val displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] = {
+  overr de lazy val d splayTextEnt  esFut: Future[Seq[D splayTextEnt y]] = {
     Future.value(
       Seq(
-        DisplayTextEntity(name = "num_impressions", value = TextValue.Number(self.impressionsCount))
+        D splayTextEnt y(na  = "num_ mpress ons", value = TextValue.Number(self. mpress onsCount))
       )
     )
   }
 
-  override def socialProofDisplayText: Option[DisplayText] = None
+  overr de def soc alProofD splayText: Opt on[D splayText] = None
 }

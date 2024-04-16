@@ -1,39 +1,39 @@
-package com.twitter.search.earlybird.config;
+package com.tw ter.search.earlyb rd.conf g;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.L st;
+ mport java.ut l.Set;
 
-import javax.inject.Inject;
+ mport javax. nject. nject;
 
-import com.twitter.search.common.util.zookeeper.ZooKeeperProxy;
+ mport com.tw ter.search.common.ut l.zookeeper.ZooKeeperProxy;
 
-public class TierInfoSource {
-  private final ZooKeeperProxy zkClient;
+publ c class T er nfoS ce {
+  pr vate f nal ZooKeeperProxy zkCl ent;
 
-  @Inject
-  public TierInfoSource(ZooKeeperProxy sZooKeeperClient) {
-    this.zkClient = sZooKeeperClient;
+  @ nject
+  publ c T er nfoS ce(ZooKeeperProxy sZooKeeperCl ent) {
+    t .zkCl ent = sZooKeeperCl ent;
   }
 
-  public List<TierInfo> getTierInformation() {
-    return getTierInfoWithPrefix("tier");
+  publ c L st<T er nfo> getT er nformat on() {
+    return getT er nfoW hPref x("t er");
   }
 
-  public String getConfigFileType() {
-    return TierConfig.getConfigFileName();
+  publ c Str ng getConf gF leType() {
+    return T erConf g.getConf gF leNa ();
   }
 
-  private List<TierInfo> getTierInfoWithPrefix(String tierPrefix) {
-    Set<String> tierNames = TierConfig.getTierNames();
-    List<TierInfo> tierInfos = new ArrayList<>();
-    for (String name : tierNames) {
-      if (name.startsWith(tierPrefix)) {
-        TierInfo tierInfo = TierConfig.getTierInfo(name);
-        tierInfos.add(tierInfo);
+  pr vate L st<T er nfo> getT er nfoW hPref x(Str ng t erPref x) {
+    Set<Str ng> t erNa s = T erConf g.getT erNa s();
+    L st<T er nfo> t er nfos = new ArrayL st<>();
+    for (Str ng na  : t erNa s) {
+       f (na .startsW h(t erPref x)) {
+        T er nfo t er nfo = T erConf g.getT er nfo(na );
+        t er nfos.add(t er nfo);
       }
     }
-    return tierInfos;
+    return t er nfos;
   }
 
 }

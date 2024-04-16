@@ -1,23 +1,23 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.SkAdNetworkData
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.timelines.render.{thriftscala => urt}
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.SkAdNetworkData
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
 
-@Singleton
-class SkAdNetworkDataMarshaller @Inject() () {
+@S ngleton
+class SkAdNetworkDataMarshaller @ nject() () {
 
   def apply(skAdNetworkData: SkAdNetworkData): urt.SkAdNetworkData =
     urt.SkAdNetworkData(
-      version = skAdNetworkData.version,
-      srcAppId = skAdNetworkData.srcAppId,
-      dstAppId = skAdNetworkData.dstAppId,
-      adNetworkId = skAdNetworkData.adNetworkId,
-      campaignId = skAdNetworkData.campaignId,
-      impressionTimeInMillis = skAdNetworkData.impressionTimeInMillis,
+      vers on = skAdNetworkData.vers on,
+      srcApp d = skAdNetworkData.srcApp d,
+      dstApp d = skAdNetworkData.dstApp d,
+      adNetwork d = skAdNetworkData.adNetwork d,
+      campa gn d = skAdNetworkData.campa gn d,
+       mpress onT   nM ll s = skAdNetworkData. mpress onT   nM ll s,
       nonce = skAdNetworkData.nonce,
-      signature = skAdNetworkData.signature,
-      fidelityType = skAdNetworkData.fidelityType
+      s gnature = skAdNetworkData.s gnature,
+      f del yType = skAdNetworkData.f del yType
     )
 }

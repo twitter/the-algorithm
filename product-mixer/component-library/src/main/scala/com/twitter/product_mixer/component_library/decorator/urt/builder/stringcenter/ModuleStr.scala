@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.stringcenter
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.str ngcenter
 
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseModuleStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.stringcenter.BaseModuleStringCenterPlaceholderBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.stringcenter.client.core.ExternalString
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseModuleStr
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.str ngcenter.BaseModuleStr ngCenterPlaceholderBu lder
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.str ngcenter.cl ent.Str ngCenter
+ mport com.tw ter.str ngcenter.cl ent.core.ExternalStr ng
 
 /**
- * This class works the same as [[Str]] but passes in a list of candidates to the
- * [[BaseModuleStringCenterPlaceholderBuilder]] when building the placeholders.
+ * T  class works t  sa  as [[Str]] but passes  n a l st of cand dates to t 
+ * [[BaseModuleStr ngCenterPlaceholderBu lder]] w n bu ld ng t  placeholders.
  */
-case class ModuleStr[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  text: ExternalString,
-  stringCenter: StringCenter,
-  stringCenterPlaceholderBuilder: Option[
-    BaseModuleStringCenterPlaceholderBuilder[Query, Candidate]
+case class ModuleStr[-Query <: P pel neQuery, -Cand date <: Un versalNoun[Any]](
+  text: ExternalStr ng,
+  str ngCenter: Str ngCenter,
+  str ngCenterPlaceholderBu lder: Opt on[
+    BaseModuleStr ngCenterPlaceholderBu lder[Query, Cand date]
   ] = None)
-    extends BaseModuleStr[Query, Candidate] {
+    extends BaseModuleStr[Query, Cand date] {
 
-  def apply(query: Query, candidates: Seq[CandidateWithFeatures[Candidate]]): String = {
+  def apply(query: Query, cand dates: Seq[Cand dateW hFeatures[Cand date]]): Str ng = {
     val placeholderMapOpt =
-      stringCenterPlaceholderBuilder.map(_.apply(query, candidates))
-    stringCenter.prepare(
-      externalString = text,
-      placeholders = placeholderMapOpt.getOrElse(Map.empty[String, Any])
+      str ngCenterPlaceholderBu lder.map(_.apply(query, cand dates))
+    str ngCenter.prepare(
+      externalStr ng = text,
+      placeholders = placeholderMapOpt.getOrElse(Map.empty[Str ng, Any])
     )
   }
 }

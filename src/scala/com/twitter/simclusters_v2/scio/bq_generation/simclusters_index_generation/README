@@ -1,146 +1,146 @@
-# Adhoc SimClusters Cluster-to-tweet Index Generation Jobs
-## Build and bundle the binaries
+# Adhoc S mClusters Cluster-to-t et  ndex Generat on Jobs
+## Bu ld and bundle t  b nar es
 
 ```
- bazel bundle src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/...
+ bazel bundle src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/s mclusters_ ndex_generat on/...
 ```
 
-## Run the adhoc jobs
-### To run fav based cluster-to-tweet index generation job (adhoc):
-bin/d6w create \
-  twttr-recos-ml-prod/us-central1/fav-based-index-generation-adhoc-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --jar dist/fav-based-cluster-to-tweet-index-generation-adhoc-job-bundle/fav-based-cluster-to-tweet-index-generation-adhoc-job.jar \
-  --bind=profile.user_name=your_ldap \
-  --bind=profile.date="2022-07-15" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.environment=dev \
-  --bind=profile.job_name="fav-based-index-generation-adhoc-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:fav-based-cluster-to-tweet-index-generation-adhoc-job"
+## Run t  adhoc jobs
+### To run fav based cluster-to-t et  ndex generat on job (adhoc):
+b n/d6w create \
+  twttr-recos-ml-prod/us-central1/fav-based- ndex-generat on-adhoc-job \
+  src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/s mclusters_ ndex_generat on/engage nt-event-based-s mclusters- ndex-generat on-job.d6w \
+  --jar d st/fav-based-cluster-to-t et- ndex-generat on-adhoc-job-bundle/fav-based-cluster-to-t et- ndex-generat on-adhoc-job.jar \
+  --b nd=prof le.user_na =y _ldap \
+  --b nd=prof le.date="2022-07-15" \
+  --b nd=prof le.frequency="PT1H" \
+  --b nd=prof le.env ron nt=dev \
+  --b nd=prof le.job_na ="fav-based- ndex-generat on-adhoc-job" \
+  --b nd=prof le.bu ld_target="src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/s mclusters_ ndex_generat on:fav-based-cluster-to-t et- ndex-generat on-adhoc-job"
 
-### To run VideoView based cluster-to-tweet index generation job (adhoc):
-bin/d6w create \
-  twttr-recos-ml-prod/us-central1/video-view-based-index-generation-adhoc-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --jar dist/video-view-based-cluster-to-tweet-index-generation-adhoc-job-bundle/video-view-based-cluster-to-tweet-index-generation-adhoc-job.jar \
-  --bind=profile.user_name=your_ldap \
-  --bind=profile.date="2022-07-15" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.environment=dev \
-  --bind=profile.job_name="video-view-based-index-generation-adhoc-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:video-view-based-cluster-to-tweet-index-generation-adhoc-job"
+### To run V deoV ew based cluster-to-t et  ndex generat on job (adhoc):
+b n/d6w create \
+  twttr-recos-ml-prod/us-central1/v deo-v ew-based- ndex-generat on-adhoc-job \
+  src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/s mclusters_ ndex_generat on/engage nt-event-based-s mclusters- ndex-generat on-job.d6w \
+  --jar d st/v deo-v ew-based-cluster-to-t et- ndex-generat on-adhoc-job-bundle/v deo-v ew-based-cluster-to-t et- ndex-generat on-adhoc-job.jar \
+  --b nd=prof le.user_na =y _ldap \
+  --b nd=prof le.date="2022-07-15" \
+  --b nd=prof le.frequency="PT1H" \
+  --b nd=prof le.env ron nt=dev \
+  --b nd=prof le.job_na ="v deo-v ew-based- ndex-generat on-adhoc-job" \
+  --b nd=prof le.bu ld_target="src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/s mclusters_ ndex_generat on:v deo-v ew-based-cluster-to-t et- ndex-generat on-adhoc-job"
 
-### To run retweet based cluster-to-tweet index generation job (adhoc):
-bin/d6w create \
-  twttr-recos-ml-prod/us-central1/retweet-based-index-generation-adhoc-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --jar dist/retweet-based-cluster-to-tweet-index-generation-adhoc-job-bundle/retweet-based-cluster-to-tweet-index-generation-adhoc-job.jar \
-  --bind=profile.user_name=your_ldap \
-  --bind=profile.date="2022-07-15" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.environment=dev \
-  --bind=profile.job_name="retweet-based-index-generation-adhoc-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:retweet-based-cluster-to-tweet-index-generation-adhoc-job"
+### To run ret et based cluster-to-t et  ndex generat on job (adhoc):
+b n/d6w create \
+  twttr-recos-ml-prod/us-central1/ret et-based- ndex-generat on-adhoc-job \
+  src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/s mclusters_ ndex_generat on/engage nt-event-based-s mclusters- ndex-generat on-job.d6w \
+  --jar d st/ret et-based-cluster-to-t et- ndex-generat on-adhoc-job-bundle/ret et-based-cluster-to-t et- ndex-generat on-adhoc-job.jar \
+  --b nd=prof le.user_na =y _ldap \
+  --b nd=prof le.date="2022-07-15" \
+  --b nd=prof le.frequency="PT1H" \
+  --b nd=prof le.env ron nt=dev \
+  --b nd=prof le.job_na ="ret et-based- ndex-generat on-adhoc-job" \
+  --b nd=prof le.bu ld_target="src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/s mclusters_ ndex_generat on:ret et-based-cluster-to-t et- ndex-generat on-adhoc-job"
 
-### To run reply based cluster-to-tweet index generation job (adhoc):
-bin/d6w create \
-  twttr-recos-ml-prod/us-central1/reply-based-index-generation-adhoc-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --jar dist/reply-based-cluster-to-tweet-index-generation-adhoc-job-bundle/reply-based-cluster-to-tweet-index-generation-adhoc-job.jar \
-  --bind=profile.user_name=your_ldap \
-  --bind=profile.date="2022-07-15" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.environment=dev \
-  --bind=profile.job_name="reply-based-index-generation-adhoc-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:reply-based-cluster-to-tweet-index-generation-adhoc-job"
+### To run reply based cluster-to-t et  ndex generat on job (adhoc):
+b n/d6w create \
+  twttr-recos-ml-prod/us-central1/reply-based- ndex-generat on-adhoc-job \
+  src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/s mclusters_ ndex_generat on/engage nt-event-based-s mclusters- ndex-generat on-job.d6w \
+  --jar d st/reply-based-cluster-to-t et- ndex-generat on-adhoc-job-bundle/reply-based-cluster-to-t et- ndex-generat on-adhoc-job.jar \
+  --b nd=prof le.user_na =y _ldap \
+  --b nd=prof le.date="2022-07-15" \
+  --b nd=prof le.frequency="PT1H" \
+  --b nd=prof le.env ron nt=dev \
+  --b nd=prof le.job_na ="reply-based- ndex-generat on-adhoc-job" \
+  --b nd=prof le.bu ld_target="src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/s mclusters_ ndex_generat on:reply-based-cluster-to-t et- ndex-generat on-adhoc-job"
 
-### To run push open based cluster-to-tweet index generation job (adhoc):
-bin/d6w create \
-  twttr-recos-ml-prod/us-central1/push-open-based-index-generation-adhoc-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --jar dist/push-open-based-cluster-to-tweet-index-generation-adhoc-job-bundle/push-open-based-cluster-to-tweet-index-generation-adhoc-job.jar \
-  --bind=profile.user_name=your_ldap \
-  --bind=profile.date="2022-10-06" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.environment=dev \
-  --bind=profile.job_name="push-open-based-index-generation-adhoc-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:push-open-based-cluster-to-tweet-index-generation-adhoc-job"
+### To run push open based cluster-to-t et  ndex generat on job (adhoc):
+b n/d6w create \
+  twttr-recos-ml-prod/us-central1/push-open-based- ndex-generat on-adhoc-job \
+  src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/s mclusters_ ndex_generat on/engage nt-event-based-s mclusters- ndex-generat on-job.d6w \
+  --jar d st/push-open-based-cluster-to-t et- ndex-generat on-adhoc-job-bundle/push-open-based-cluster-to-t et- ndex-generat on-adhoc-job.jar \
+  --b nd=prof le.user_na =y _ldap \
+  --b nd=prof le.date="2022-10-06" \
+  --b nd=prof le.frequency="PT1H" \
+  --b nd=prof le.env ron nt=dev \
+  --b nd=prof le.job_na ="push-open-based- ndex-generat on-adhoc-job" \
+  --b nd=prof le.bu ld_target="src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/s mclusters_ ndex_generat on:push-open-based-cluster-to-t et- ndex-generat on-adhoc-job"
 
-# For prod scheduled Cluster-to-tweet Index Generation Jobs
-### To run Fav based cluster-to-tweet index generation job (batch):
- bin/d6w schedule \
-  twttr-recos-ml-prod/us-central1/fav-based-index-generation-batch-job  \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.environment=prod \
-  --bind=profile.date="2022-07-19" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.job_name="fav-based-index-generation-batch-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:fav-based-cluster-to-tweet-index-generation-batch-job"
+# For prod sc duled Cluster-to-t et  ndex Generat on Jobs
+### To run Fav based cluster-to-t et  ndex generat on job (batch):
+ b n/d6w sc dule \
+  twttr-recos-ml-prod/us-central1/fav-based- ndex-generat on-batch-job  \
+  src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/s mclusters_ ndex_generat on/engage nt-event-based-s mclusters- ndex-generat on-job.d6w \
+  --b nd=prof le.user_na =cassowary \
+  --b nd=prof le.env ron nt=prod \
+  --b nd=prof le.date="2022-07-19" \
+  --b nd=prof le.frequency="PT1H" \
+  --b nd=prof le.job_na ="fav-based- ndex-generat on-batch-job" \
+  --b nd=prof le.bu ld_target="src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/s mclusters_ ndex_generat on:fav-based-cluster-to-t et- ndex-generat on-batch-job"
 
-### To run VideoView based cluster-to-tweet index generation job (batch):
- bin/d6w schedule \
-  twttr-recos-ml-prod/us-central1/video-view-based-index-generation-batch-job  \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.environment=prod \
-  --bind=profile.date="2022-07-19" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.job_name="video-view-based-index-generation-batch-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:video-view-based-cluster-to-tweet-index-generation-batch-job"
+### To run V deoV ew based cluster-to-t et  ndex generat on job (batch):
+ b n/d6w sc dule \
+  twttr-recos-ml-prod/us-central1/v deo-v ew-based- ndex-generat on-batch-job  \
+  src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/s mclusters_ ndex_generat on/engage nt-event-based-s mclusters- ndex-generat on-job.d6w \
+  --b nd=prof le.user_na =cassowary \
+  --b nd=prof le.env ron nt=prod \
+  --b nd=prof le.date="2022-07-19" \
+  --b nd=prof le.frequency="PT1H" \
+  --b nd=prof le.job_na ="v deo-v ew-based- ndex-generat on-batch-job" \
+  --b nd=prof le.bu ld_target="src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/s mclusters_ ndex_generat on:v deo-v ew-based-cluster-to-t et- ndex-generat on-batch-job"
 
-### To run Retweet based cluster-to-tweet index generation job (batch):
- bin/d6w schedule \
-  twttr-recos-ml-prod/us-central1/retweet-based-index-generation-batch-job  \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.environment=prod \
-  --bind=profile.date="2022-07-19" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.job_name="retweet-based-index-generation-batch-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:retweet-based-cluster-to-tweet-index-generation-batch-job"
+### To run Ret et based cluster-to-t et  ndex generat on job (batch):
+ b n/d6w sc dule \
+  twttr-recos-ml-prod/us-central1/ret et-based- ndex-generat on-batch-job  \
+  src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/s mclusters_ ndex_generat on/engage nt-event-based-s mclusters- ndex-generat on-job.d6w \
+  --b nd=prof le.user_na =cassowary \
+  --b nd=prof le.env ron nt=prod \
+  --b nd=prof le.date="2022-07-19" \
+  --b nd=prof le.frequency="PT1H" \
+  --b nd=prof le.job_na ="ret et-based- ndex-generat on-batch-job" \
+  --b nd=prof le.bu ld_target="src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/s mclusters_ ndex_generat on:ret et-based-cluster-to-t et- ndex-generat on-batch-job"
 
-### To run Reply based cluster-to-tweet index generation job (batch):
- bin/d6w schedule \
-  twttr-recos-ml-prod/us-central1/reply-based-index-generation-batch-job  \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.environment=prod \
-  --bind=profile.date="2022-07-19" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.job_name="reply-based-index-generation-batch-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:reply-based-cluster-to-tweet-index-generation-batch-job"
+### To run Reply based cluster-to-t et  ndex generat on job (batch):
+ b n/d6w sc dule \
+  twttr-recos-ml-prod/us-central1/reply-based- ndex-generat on-batch-job  \
+  src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/s mclusters_ ndex_generat on/engage nt-event-based-s mclusters- ndex-generat on-job.d6w \
+  --b nd=prof le.user_na =cassowary \
+  --b nd=prof le.env ron nt=prod \
+  --b nd=prof le.date="2022-07-19" \
+  --b nd=prof le.frequency="PT1H" \
+  --b nd=prof le.job_na ="reply-based- ndex-generat on-batch-job" \
+  --b nd=prof le.bu ld_target="src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/s mclusters_ ndex_generat on:reply-based-cluster-to-t et- ndex-generat on-batch-job"
 
-### To run Push open based cluster-to-tweet index generation job (batch):
- bin/d6w schedule \
-  twttr-recos-ml-prod/us-central1/push-open-based-index-generation-batch-job  \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.environment=prod \
-  --bind=profile.date="2022-10-06" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.job_name="push-open-based-index-generation-batch-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:push-open-based-cluster-to-tweet-index-generation-batch-job"
+### To run Push open based cluster-to-t et  ndex generat on job (batch):
+ b n/d6w sc dule \
+  twttr-recos-ml-prod/us-central1/push-open-based- ndex-generat on-batch-job  \
+  src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/s mclusters_ ndex_generat on/engage nt-event-based-s mclusters- ndex-generat on-job.d6w \
+  --b nd=prof le.user_na =cassowary \
+  --b nd=prof le.env ron nt=prod \
+  --b nd=prof le.date="2022-10-06" \
+  --b nd=prof le.frequency="PT1H" \
+  --b nd=prof le.job_na ="push-open-based- ndex-generat on-batch-job" \
+  --b nd=prof le.bu ld_target="src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/s mclusters_ ndex_generat on:push-open-based-cluster-to-t et- ndex-generat on-batch-job"
 
-### To run Ads Fav based cluster-to-tweet index generation job (batch):
- bin/d6w schedule \
-  twttr-recos-ml-prod/us-central1/ads-fav-based-index-generation-batch-job  \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.environment=prod \
-  --bind=profile.date="2022-10-06" \
-  --bind=profile.frequency="PT3H" \
-  --bind=profile.job_name="ads-fav-based-index-generation-batch-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:ads-fav-based-cluster-to-tweet-index-generation-batch-job"
+### To run Ads Fav based cluster-to-t et  ndex generat on job (batch):
+ b n/d6w sc dule \
+  twttr-recos-ml-prod/us-central1/ads-fav-based- ndex-generat on-batch-job  \
+  src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/s mclusters_ ndex_generat on/engage nt-event-based-s mclusters- ndex-generat on-job.d6w \
+  --b nd=prof le.user_na =cassowary \
+  --b nd=prof le.env ron nt=prod \
+  --b nd=prof le.date="2022-10-06" \
+  --b nd=prof le.frequency="PT3H" \
+  --b nd=prof le.job_na ="ads-fav-based- ndex-generat on-batch-job" \
+  --b nd=prof le.bu ld_target="src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/s mclusters_ ndex_generat on:ads-fav-based-cluster-to-t et- ndex-generat on-batch-job"
 
-### To run Ads Fav Click based cluster-to-tweet index generation job (batch):
- bin/d6w schedule \
-  twttr-recos-ml-prod/us-central1/ads-fav-click-based-index-generation-batch-job  \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.environment=prod \
-  --bind=profile.date="2022-12-09" \
-  --bind=profile.frequency="PT3H" \
-  --bind=profile.job_name="ads-fav-click-based-index-generation-batch-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:ads-fav-click-based-cluster-to-tweet-index-generation-batch-job"
+### To run Ads Fav Cl ck based cluster-to-t et  ndex generat on job (batch):
+ b n/d6w sc dule \
+  twttr-recos-ml-prod/us-central1/ads-fav-cl ck-based- ndex-generat on-batch-job  \
+  src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/s mclusters_ ndex_generat on/engage nt-event-based-s mclusters- ndex-generat on-job.d6w \
+  --b nd=prof le.user_na =cassowary \
+  --b nd=prof le.env ron nt=prod \
+  --b nd=prof le.date="2022-12-09" \
+  --b nd=prof le.frequency="PT3H" \
+  --b nd=prof le.job_na ="ads-fav-cl ck-based- ndex-generat on-batch-job" \
+  --b nd=prof le.bu ld_target="src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/s mclusters_ ndex_generat on:ads-fav-cl ck-based-cluster-to-t et- ndex-generat on-batch-job"
 

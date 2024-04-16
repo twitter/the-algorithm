@@ -1,68 +1,68 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work
 
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureType
+ mport com.tw ter.ml.ap .constant.SharedFeatures
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.ml.ap .FeatureType
 
 /**
- * Convenience class to describe the stores that make up a particular type of aggregate.
+ * Conven ence class to descr be t  stores that make up a part cular type of aggregate.
  *
- * For example, as of 2018/07, user aggregates are generate by merging the individual
- * "user_aggregates", "rectweet_user_aggregates", and, "twitter_wide_user_aggregates".
+ * For example, as of 2018/07, user aggregates are generate by  rg ng t   nd v dual
+ * "user_aggregates", "rect et_user_aggregates", and, "tw ter_w de_user_aggregates".
  *
- * @param storeNames Name of the stores.
- * @param aggregateType Type of aggregate, usually differentiated by the aggregation key.
- * @param shouldHash Used at TimelineRankingAggregatesUtil.extractSecondary when extracting the
+ * @param storeNa s Na  of t  stores.
+ * @param aggregateType Type of aggregate, usually d fferent ated by t  aggregat on key.
+ * @param shouldHash Used at T  l neRank ngAggregatesUt l.extractSecondary w n extract ng t 
  *                   secondary key value.
  */
-case class StoreConfig[T](
-  storeNames: Set[String],
+case class StoreConf g[T](
+  storeNa s: Set[Str ng],
   aggregateType: AggregateType.Value,
   shouldHash: Boolean = false
 )(
-  implicit storeMerger: StoreMerger) {
-  require(storeMerger.isValidToMerge(storeNames))
+   mpl c  store rger: Store rger) {
+  requ re(store rger. sVal dTo rge(storeNa s))
 
-  private val representativeStore = storeNames.head
+  pr vate val representat veStore = storeNa s. ad
 
-  val aggregationKeyIds: Set[Long] = storeMerger.getAggregateKeys(representativeStore)
-  val aggregationKeyFeatures: Set[Feature[_]] =
-    storeMerger.getAggregateKeyFeatures(representativeStore)
-  val secondaryKeyFeatureOpt: Option[Feature[_]] = storeMerger.getSecondaryKey(representativeStore)
+  val aggregat onKey ds: Set[Long] = store rger.getAggregateKeys(representat veStore)
+  val aggregat onKeyFeatures: Set[Feature[_]] =
+    store rger.getAggregateKeyFeatures(representat veStore)
+  val secondaryKeyFeatureOpt: Opt on[Feature[_]] = store rger.getSecondaryKey(representat veStore)
 }
 
-trait StoreMerger {
-  def aggregationConfig: AggregationConfig
+tra  Store rger {
+  def aggregat onConf g: Aggregat onConf g
 
-  def getAggregateKeyFeatures(storeName: String): Set[Feature[_]] =
-    aggregationConfig.aggregatesToCompute
-      .filter(_.outputStore.name == storeName)
+  def getAggregateKeyFeatures(storeNa : Str ng): Set[Feature[_]] =
+    aggregat onConf g.aggregatesToCompute
+      .f lter(_.outputStore.na  == storeNa )
       .flatMap(_.keysToAggregate)
 
-  def getAggregateKeys(storeName: String): Set[Long] =
-    TypedAggregateGroup.getKeyFeatureIds(getAggregateKeyFeatures(storeName))
+  def getAggregateKeys(storeNa : Str ng): Set[Long] =
+    TypedAggregateGroup.getKeyFeature ds(getAggregateKeyFeatures(storeNa ))
 
-  def getSecondaryKey(storeName: String): Option[Feature[_]] = {
-    val keys = getAggregateKeyFeatures(storeName)
-    require(keys.size <= 2, "Only singleton or binary aggregation keys are supported.")
-    require(keys.contains(SharedFeatures.USER_ID), "USER_ID must be one of the aggregation keys.")
+  def getSecondaryKey(storeNa : Str ng): Opt on[Feature[_]] = {
+    val keys = getAggregateKeyFeatures(storeNa )
+    requ re(keys.s ze <= 2, "Only s ngleton or b nary aggregat on keys are supported.")
+    requ re(keys.conta ns(SharedFeatures.USER_ D), "USER_ D must be one of t  aggregat on keys.")
     keys
-      .filterNot(_ == SharedFeatures.USER_ID)
-      .headOption
-      .map { possiblySparseKey =>
-        if (possiblySparseKey.getFeatureType != FeatureType.SPARSE_BINARY) {
-          possiblySparseKey
+      .f lterNot(_ == SharedFeatures.USER_ D)
+      . adOpt on
+      .map { poss blySparseKey =>
+         f (poss blySparseKey.getFeatureType != FeatureType.SPARSE_B NARY) {
+          poss blySparseKey
         } else {
-          TypedAggregateGroup.sparseFeature(possiblySparseKey)
+          TypedAggregateGroup.sparseFeature(poss blySparseKey)
         }
       }
   }
 
   /**
-   * Stores may only be merged if they have the same aggregation key.
+   * Stores may only be  rged  f t y have t  sa  aggregat on key.
    */
-  def isValidToMerge(storeNames: Set[String]): Boolean = {
-    val expectedKeyOpt = storeNames.headOption.map(getAggregateKeys)
-    storeNames.forall(v => getAggregateKeys(v) == expectedKeyOpt.get)
+  def  sVal dTo rge(storeNa s: Set[Str ng]): Boolean = {
+    val expectedKeyOpt = storeNa s. adOpt on.map(getAggregateKeys)
+    storeNa s.forall(v => getAggregateKeys(v) == expectedKeyOpt.get)
   }
 }

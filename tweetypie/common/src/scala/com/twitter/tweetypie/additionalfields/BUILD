@@ -1,15 +1,15 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/org/apache/thrift:libthrift",
-        "mediaservices/commons/src/main/thrift:thrift-scala",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/org/apac /thr ft:l bthr ft",
+        " d aserv ces/commons/src/ma n/thr ft:thr ft-scala",
         "scrooge/scrooge-core",
-        "src/thrift/com/twitter/escherbird:media-annotation-structs-scala",
-        "src/thrift/com/twitter/spam/rtf:safety-label-scala",
-        "tweetypie/common/src/thrift/com/twitter/tweetypie:tweet-scala",
+        "src/thr ft/com/tw ter/esc rb rd: d a-annotat on-structs-scala",
+        "src/thr ft/com/tw ter/spam/rtf:safety-label-scala",
+        "t etyp e/common/src/thr ft/com/tw ter/t etyp e:t et-scala",
     ],
 )

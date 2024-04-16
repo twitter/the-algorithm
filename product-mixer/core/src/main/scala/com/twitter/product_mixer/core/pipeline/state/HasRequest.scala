@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.pipeline.state
+package com.tw ter.product_m xer.core.p pel ne.state
 
-import com.twitter.product_mixer.core.model.marshalling.request.Request
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Request
 
-trait HasRequest[TRequest <: Request] {
+tra  HasRequest[TRequest <: Request] {
   def request: TRequest
 }

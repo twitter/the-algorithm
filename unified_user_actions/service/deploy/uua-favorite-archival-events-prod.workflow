@@ -1,66 +1,66 @@
 {
-  "role": "discode",
-  "name": "uua-favorite-archival-events-prod",
-  "config-files": [
-    "uua-favorite-archival-events.aurora"
+  "role": "d scode",
+  "na ": "uua-favor e-arch val-events-prod",
+  "conf g-f les": [
+    "uua-favor e-arch val-events.aurora"
   ],
-  "build": {
+  "bu ld": {
     "play": true,
-    "trigger": {
-      "cron-schedule": "0 17 * * 2"
+    "tr gger": {
+      "cron-sc dule": "0 17 * * 2"
     },
-    "dependencies": [
+    "dependenc es": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "na ": "packer-cl ent-no-pex",
+        "vers on": "latest"
       }
     ],
     "steps": [
       {
         "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-favorite-archival-events"
+        "na ": "bundle",
+        "target": "un f ed_user_act ons/serv ce/src/ma n/scala:uua-favor e-arch val-events"
       },
       {
         "type": "packer",
-        "name": "uua-favorite-archival-events",
-        "artifact": "./dist/uua-favorite-archival-events.zip"
+        "na ": "uua-favor e-arch val-events",
+        "art fact": "./d st/uua-favor e-arch val-events.z p"
       }
     ]
   },
   "targets": [
     {
       "type": "group",
-      "name": "prod",
+      "na ": "prod",
       "targets": [
         {
-          "name": "uua-favorite-archival-events-prod-atla",
-          "key": "atla/discode/prod/uua-favorite-archival-events"
+          "na ": "uua-favor e-arch val-events-prod-atla",
+          "key": "atla/d scode/prod/uua-favor e-arch val-events"
         },
         {
-          "name": "uua-favorite-archival-events-prod-pdxa",
-          "key": "pdxa/discode/prod/uua-favorite-archival-events"
+          "na ": "uua-favor e-arch val-events-prod-pdxa",
+          "key": "pdxa/d scode/prod/uua-favor e-arch val-events"
         }
       ]
     }
   ],
-  "subscriptions": [
+  "subscr pt ons": [
     {
       "type": "SLACK",
-      "recipients": [
+      "rec p ents": [
         {
-          "to": "discode-oncall"
+          "to": "d scode-oncall"
         }
       ],
       "events": ["WORKFLOW_SUCCESS"]
     },
     {
       "type": "SLACK",
-      "recipients": [{
-        "to": "discode-oncall"
+      "rec p ents": [{
+        "to": "d scode-oncall"
       }],
-      "events": ["*FAILED"]
+      "events": ["*FA LED"]
     }
   ]
 }

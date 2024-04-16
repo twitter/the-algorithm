@@ -1,30 +1,30 @@
-package com.twitter.search.feature_update_service.modules;
+package com.tw ter.search.feature_update_serv ce.modules;
 
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
+ mport com.google. nject.Prov des;
+ mport com.google. nject.S ngleton;
 
-import com.twitter.app.Flaggable;
-import com.twitter.inject.TwitterModule;
-import com.twitter.inject.annotations.Flag;
+ mport com.tw ter.app.Flaggable;
+ mport com.tw ter. nject.Tw terModule;
+ mport com.tw ter. nject.annotat ons.Flag;
 
-import com.twitter.search.feature_update_service.whitelist.ClientIdWhitelist;
+ mport com.tw ter.search.feature_update_serv ce.wh el st.Cl ent dWh el st;
 
 /**
- * Provides a ClientIdWhitelist, which periodically loads the
- * Feature Update Service client whitelist from ConfigBus
+ * Prov des a Cl ent dWh el st, wh ch per od cally loads t 
+ * Feature Update Serv ce cl ent wh el st from Conf gBus
  */
-public class ClientIdWhitelistModule extends TwitterModule {
-  public ClientIdWhitelistModule() {
-    flag("client.whitelist.path", "",
-        "Path to client id white list.", Flaggable.ofString());
-    flag("client.whitelist.enable", true,
-        "Enable client whitelist for production.", Flaggable.ofBoolean());
+publ c class Cl ent dWh el stModule extends Tw terModule {
+  publ c Cl ent dWh el stModule() {
+    flag("cl ent.wh el st.path", "",
+        "Path to cl ent  d wh e l st.", Flaggable.ofStr ng());
+    flag("cl ent.wh el st.enable", true,
+        "Enable cl ent wh el st for product on.", Flaggable.ofBoolean());
   }
 
-    @Provides
-    @Singleton
-    public ClientIdWhitelist provideClientWhitelist(
-        @Flag("client.whitelist.path") String clientIdWhiteListPath) throws Exception {
-        return ClientIdWhitelist.initWhitelist(clientIdWhiteListPath);
+    @Prov des
+    @S ngleton
+    publ c Cl ent dWh el st prov deCl entWh el st(
+        @Flag("cl ent.wh el st.path") Str ng cl ent dWh eL stPath) throws Except on {
+        return Cl ent dWh el st. n Wh el st(cl ent dWh eL stPath);
     }
   }

@@ -1,63 +1,63 @@
-package com.twitter.ann.featurestore
+package com.tw ter.ann.featurestore
 
-import com.twitter.ann.common.EmbeddingProducer
-import com.twitter.finagle.stats.{InMemoryStatsReceiver, StatsReceiver}
-import com.twitter.ml.api.embedding.{Embedding, EmbeddingSerDe}
-import com.twitter.ml.api.thriftscala
-import com.twitter.ml.api.thriftscala.{Embedding => TEmbedding}
-import com.twitter.ml.featurestore.lib.dataset.online.VersionedOnlineAccessDataset
-import com.twitter.ml.featurestore.lib.{EntityId, RawFloatTensor}
-import com.twitter.ml.featurestore.lib.dataset.DatasetParams
-import com.twitter.ml.featurestore.lib.entity.EntityWithId
-import com.twitter.ml.featurestore.lib.feature.{BoundFeature, BoundFeatureSet}
-import com.twitter.ml.featurestore.lib.online.{FeatureStoreClient, FeatureStoreRequest}
-import com.twitter.ml.featurestore.lib.params.FeatureStoreParams
-import com.twitter.stitch.Stitch
-import com.twitter.strato.opcontext.Attribution
-import com.twitter.strato.client.Client
+ mport com.tw ter.ann.common.Embedd ngProducer
+ mport com.tw ter.f nagle.stats.{ n moryStatsRece ver, StatsRece ver}
+ mport com.tw ter.ml.ap .embedd ng.{Embedd ng, Embedd ngSerDe}
+ mport com.tw ter.ml.ap .thr ftscala
+ mport com.tw ter.ml.ap .thr ftscala.{Embedd ng => TEmbedd ng}
+ mport com.tw ter.ml.featurestore.l b.dataset.onl ne.Vers onedOnl neAccessDataset
+ mport com.tw ter.ml.featurestore.l b.{Ent y d, RawFloatTensor}
+ mport com.tw ter.ml.featurestore.l b.dataset.DatasetParams
+ mport com.tw ter.ml.featurestore.l b.ent y.Ent yW h d
+ mport com.tw ter.ml.featurestore.l b.feature.{BoundFeature, BoundFeatureSet}
+ mport com.tw ter.ml.featurestore.l b.onl ne.{FeatureStoreCl ent, FeatureStoreRequest}
+ mport com.tw ter.ml.featurestore.l b.params.FeatureStoreParams
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.opcontext.Attr but on
+ mport com.tw ter.strato.cl ent.Cl ent
 
-object FeatureStoreEmbeddingProducer {
-  def apply[T <: EntityId](
-    dataset: VersionedOnlineAccessDataset[T, TEmbedding],
-    version: Long,
+object FeatureStoreEmbedd ngProducer {
+  def apply[T <: Ent y d](
+    dataset: Vers onedOnl neAccessDataset[T, TEmbedd ng],
+    vers on: Long,
     boundFeature: BoundFeature[T, RawFloatTensor],
-    client: Client,
-    statsReceiver: StatsReceiver = new InMemoryStatsReceiver,
-    featureStoreAttributions: Seq[Attribution] = Seq.empty
-  ): EmbeddingProducer[EntityWithId[T]] = {
+    cl ent: Cl ent,
+    statsRece ver: StatsRece ver = new  n moryStatsRece ver,
+    featureStoreAttr but ons: Seq[Attr but on] = Seq.empty
+  ): Embedd ngProducer[Ent yW h d[T]] = {
     val featureStoreParams = FeatureStoreParams(
       perDataset = Map(
-        dataset.id -> DatasetParams(datasetVersion = Some(version))
+        dataset. d -> DatasetParams(datasetVers on = So (vers on))
       ),
-      global = DatasetParams(attributions = featureStoreAttributions)
+      global = DatasetParams(attr but ons = featureStoreAttr but ons)
     )
-    val featureStoreClient = FeatureStoreClient(
+    val featureStoreCl ent = FeatureStoreCl ent(
       BoundFeatureSet(boundFeature),
-      client,
-      statsReceiver,
+      cl ent,
+      statsRece ver,
       featureStoreParams
     )
-    new FeatureStoreEmbeddingProducer(boundFeature, featureStoreClient)
+    new FeatureStoreEmbedd ngProducer(boundFeature, featureStoreCl ent)
   }
 }
 
-private[featurestore] class FeatureStoreEmbeddingProducer[T <: EntityId](
+pr vate[featurestore] class FeatureStoreEmbedd ngProducer[T <: Ent y d](
   boundFeature: BoundFeature[T, RawFloatTensor],
-  featureStoreClient: FeatureStoreClient)
-    extends EmbeddingProducer[EntityWithId[T]] {
-  // Looks up embedding from online feature store for an entity.
-  override def produceEmbedding(input: EntityWithId[T]): Stitch[Option[Embedding[Float]]] = {
+  featureStoreCl ent: FeatureStoreCl ent)
+    extends Embedd ngProducer[Ent yW h d[T]] {
+  // Looks up embedd ng from onl ne feature store for an ent y.
+  overr de def produceEmbedd ng( nput: Ent yW h d[T]): St ch[Opt on[Embedd ng[Float]]] = {
     val featureStoreRequest = FeatureStoreRequest(
-      entityIds = Seq(input)
+      ent y ds = Seq( nput)
     )
 
-    Stitch.callFuture(featureStoreClient(featureStoreRequest).map { predictionRecord =>
-      predictionRecord.getFeatureValue(boundFeature) match {
-        case Some(featureValue) => {
-          val embedding = EmbeddingSerDe.floatEmbeddingSerDe.fromThrift(
-            thriftscala.Embedding(Some(featureValue.value))
+    St ch.callFuture(featureStoreCl ent(featureStoreRequest).map { pred ct onRecord =>
+      pred ct onRecord.getFeatureValue(boundFeature) match {
+        case So (featureValue) => {
+          val embedd ng = Embedd ngSerDe.floatEmbedd ngSerDe.fromThr ft(
+            thr ftscala.Embedd ng(So (featureValue.value))
           )
-          Some(embedding)
+          So (embedd ng)
         }
         case _ => None
       }

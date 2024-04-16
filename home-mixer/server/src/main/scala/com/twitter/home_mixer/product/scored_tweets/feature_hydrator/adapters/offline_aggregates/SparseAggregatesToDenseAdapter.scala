@@ -1,17 +1,17 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.offline_aggregates
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.adapters.offl ne_aggregates
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion.CombineCountsPolicy
-import com.twitter.timelines.prediction.common.adapters.TimelinesIRecordAdapter
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ml.ap .R chDataRecord
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.convers on.Comb neCountsPol cy
+ mport com.tw ter.t  l nes.pred ct on.common.adapters.T  l nes RecordAdapter
 
-class SparseAggregatesToDenseAdapter(policy: CombineCountsPolicy)
-    extends TimelinesIRecordAdapter[Seq[DataRecord]] {
+class SparseAggregatesToDenseAdapter(pol cy: Comb neCountsPol cy)
+    extends T  l nes RecordAdapter[Seq[DataRecord]] {
 
-  override def setFeatures(input: Seq[DataRecord], mutableDataRecord: RichDataRecord): Unit =
-    policy.defaultMergeRecord(mutableDataRecord.getRecord, input.toList)
+  overr de def setFeatures( nput: Seq[DataRecord], mutableDataRecord: R chDataRecord): Un  =
+    pol cy.default rgeRecord(mutableDataRecord.getRecord,  nput.toL st)
 
-  override val getFeatureContext: FeatureContext =
-    new FeatureContext(policy.outputFeaturesPostMerge.toSeq: _*)
+  overr de val getFeatureContext: FeatureContext =
+    new FeatureContext(pol cy.outputFeaturesPost rge.toSeq: _*)
 }

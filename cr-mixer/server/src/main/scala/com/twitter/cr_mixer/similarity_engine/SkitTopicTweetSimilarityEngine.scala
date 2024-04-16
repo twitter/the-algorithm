@@ -1,141 +1,141 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.tw ter.cr_m xer.s m lar y_eng ne
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.google.inject.name.Named
-import com.twitter.contentrecommender.thriftscala.AlgorithmType
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.TopicTweetWithScore
-import com.twitter.cr_mixer.param.TopicTweetParams
-import com.twitter.cr_mixer.similarity_engine.SkitTopicTweetSimilarityEngine._
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.TopicId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.topic_recos.thriftscala.TopicTweet
-import com.twitter.topic_recos.thriftscala.TopicTweetPartitionFlatKey
-import com.twitter.util.Duration
-import com.twitter.util.Future
+ mport com.google. nject. nject
+ mport com.google. nject.S ngleton
+ mport com.google. nject.na .Na d
+ mport com.tw ter.contentrecom nder.thr ftscala.Algor hmType
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.cr_m xer.model.Top cT etW hScore
+ mport com.tw ter.cr_m xer.param.Top cT etParams
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.Sk Top cT etS m lar yEng ne._
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.ut l.StatsUt l
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.tw ter.s mclusters_v2.thr ftscala.Top c d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.conf gap 
+ mport com.tw ter.top c_recos.thr ftscala.Top cT et
+ mport com.tw ter.top c_recos.thr ftscala.Top cT etPart  onFlatKey
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
 
-@Singleton
-case class SkitTopicTweetSimilarityEngine @Inject() (
-  @Named(ModuleNames.SkitStratoStoreName) skitStratoStore: ReadableStore[
-    TopicTweetPartitionFlatKey,
-    Seq[TopicTweet]
+@S ngleton
+case class Sk Top cT etS m lar yEng ne @ nject() (
+  @Na d(ModuleNa s.Sk StratoStoreNa ) sk StratoStore: ReadableStore[
+    Top cT etPart  onFlatKey,
+    Seq[Top cT et]
   ],
-  statsReceiver: StatsReceiver)
-    extends ReadableStore[EngineQuery[Query], Seq[TopicTweetWithScore]] {
+  statsRece ver: StatsRece ver)
+    extends ReadableStore[Eng neQuery[Query], Seq[Top cT etW hScore]] {
 
-  private val name: String = this.getClass.getSimpleName
-  private val stats = statsReceiver.scope(name)
+  pr vate val na : Str ng = t .getClass.getS mpleNa 
+  pr vate val stats = statsRece ver.scope(na )
 
-  override def get(query: EngineQuery[Query]): Future[Option[Seq[TopicTweetWithScore]]] = {
-    StatsUtil.trackOptionItemsStats(stats) {
-      fetch(query).map { tweets =>
-        val topTweets =
-          tweets
-            .sortBy(-_.cosineSimilarityScore)
-            .take(query.storeQuery.maxCandidates)
-            .map { tweet =>
-              TopicTweetWithScore(
-                tweetId = tweet.tweetId,
-                score = tweet.cosineSimilarityScore,
-                similarityEngineType = SimilarityEngineType.SkitTfgTopicTweet
+  overr de def get(query: Eng neQuery[Query]): Future[Opt on[Seq[Top cT etW hScore]]] = {
+    StatsUt l.trackOpt on emsStats(stats) {
+      fetch(query).map { t ets =>
+        val topT ets =
+          t ets
+            .sortBy(-_.cos neS m lar yScore)
+            .take(query.storeQuery.maxCand dates)
+            .map { t et =>
+              Top cT etW hScore(
+                t et d = t et.t et d,
+                score = t et.cos neS m lar yScore,
+                s m lar yEng neType = S m lar yEng neType.Sk TfgTop cT et
               )
             }
-        Some(topTweets)
+        So (topT ets)
       }
     }
   }
 
-  private def fetch(query: EngineQuery[Query]): Future[Seq[SkitTopicTweet]] = {
-    val latestTweetTimeInHour = System.currentTimeMillis() / 1000 / 60 / 60
+  pr vate def fetch(query: Eng neQuery[Query]): Future[Seq[Sk Top cT et]] = {
+    val latestT etT   nH  = System.currentT  M ll s() / 1000 / 60 / 60
 
-    val earliestTweetTimeInHour = latestTweetTimeInHour -
-      math.min(MaxTweetAgeInHours, query.storeQuery.maxTweetAge.inHours)
-    val timedKeys = for (timePartition <- earliestTweetTimeInHour to latestTweetTimeInHour) yield {
+    val earl estT etT   nH  = latestT etT   nH  -
+      math.m n(MaxT etAge nH s, query.storeQuery.maxT etAge. nH s)
+    val t  dKeys = for (t  Part  on <- earl estT etT   nH  to latestT etT   nH ) y eld {
 
-      TopicTweetPartitionFlatKey(
-        entityId = query.storeQuery.topicId.entityId,
-        timePartition = timePartition,
-        algorithmType = Some(AlgorithmType.TfgTweet),
-        tweetEmbeddingType = Some(EmbeddingType.LogFavBasedTweet),
-        language = query.storeQuery.topicId.language.getOrElse("").toLowerCase,
-        country = None, // Disable country. It is not used.
-        semanticCoreAnnotationVersionId = Some(query.storeQuery.semanticCoreVersionId),
-        simclustersModelVersion = Some(ModelVersion.Model20m145k2020)
+      Top cT etPart  onFlatKey(
+        ent y d = query.storeQuery.top c d.ent y d,
+        t  Part  on = t  Part  on,
+        algor hmType = So (Algor hmType.TfgT et),
+        t etEmbedd ngType = So (Embedd ngType.LogFavBasedT et),
+        language = query.storeQuery.top c d.language.getOrElse("").toLo rCase,
+        country = None, // D sable country.    s not used.
+        semant cCoreAnnotat onVers on d = So (query.storeQuery.semant cCoreVers on d),
+        s mclustersModelVers on = So (ModelVers on.Model20m145k2020)
       )
     }
 
-    getTweetsForKeys(
-      timedKeys,
-      query.storeQuery.topicId
+    getT etsForKeys(
+      t  dKeys,
+      query.storeQuery.top c d
     )
   }
 
   /**
-   * Given a set of keys, multiget the underlying Strato store, combine and flatten the results.
+   * G ven a set of keys, mult get t  underly ng Strato store, comb ne and flatten t  results.
    */
-  private def getTweetsForKeys(
-    keys: Seq[TopicTweetPartitionFlatKey],
-    sourceTopic: TopicId
-  ): Future[Seq[SkitTopicTweet]] = {
+  pr vate def getT etsForKeys(
+    keys: Seq[Top cT etPart  onFlatKey],
+    s ceTop c: Top c d
+  ): Future[Seq[Sk Top cT et]] = {
     Future
-      .collect { skitStratoStore.multiGet(keys.toSet).values.toSeq }
-      .map { combinedResults =>
-        val topTweets = combinedResults.flatten.flatten
-        topTweets.map { tweet =>
-          SkitTopicTweet(
-            tweetId = tweet.tweetId,
-            favCount = tweet.scores.favCount.getOrElse(0L),
-            cosineSimilarityScore = tweet.scores.cosineSimilarity.getOrElse(0.0),
-            sourceTopic = sourceTopic
+      .collect { sk StratoStore.mult Get(keys.toSet).values.toSeq }
+      .map { comb nedResults =>
+        val topT ets = comb nedResults.flatten.flatten
+        topT ets.map { t et =>
+          Sk Top cT et(
+            t et d = t et.t et d,
+            favCount = t et.scores.favCount.getOrElse(0L),
+            cos neS m lar yScore = t et.scores.cos neS m lar y.getOrElse(0.0),
+            s ceTop c = s ceTop c
           )
         }
       }
   }
 }
 
-object SkitTopicTweetSimilarityEngine {
+object Sk Top cT etS m lar yEng ne {
 
-  val MaxTweetAgeInHours: Int = 7.days.inHours // Simple guard to prevent overloading
+  val MaxT etAge nH s:  nt = 7.days. nH s // S mple guard to prevent overload ng
 
-  // Query is used as a cache key. Do not add any user level information in this.
+  // Query  s used as a cac  key. Do not add any user level  nformat on  n t .
   case class Query(
-    topicId: TopicId,
-    maxCandidates: Int,
-    maxTweetAge: Duration,
-    semanticCoreVersionId: Long)
+    top c d: Top c d,
+    maxCand dates:  nt,
+    maxT etAge: Durat on,
+    semant cCoreVers on d: Long)
 
-  case class SkitTopicTweet(
-    sourceTopic: TopicId,
-    tweetId: TweetId,
+  case class Sk Top cT et(
+    s ceTop c: Top c d,
+    t et d: T et d,
     favCount: Long,
-    cosineSimilarityScore: Double)
+    cos neS m lar yScore: Double)
 
   def fromParams(
-    topicId: TopicId,
-    isVideoOnly: Boolean,
-    params: configapi.Params,
-  ): EngineQuery[Query] = {
-    val maxCandidates = if (isVideoOnly) {
-      params(TopicTweetParams.MaxSkitTfgCandidatesParam) * 2
+    top c d: Top c d,
+     sV deoOnly: Boolean,
+    params: conf gap .Params,
+  ): Eng neQuery[Query] = {
+    val maxCand dates =  f ( sV deoOnly) {
+      params(Top cT etParams.MaxSk TfgCand datesParam) * 2
     } else {
-      params(TopicTweetParams.MaxSkitTfgCandidatesParam)
+      params(Top cT etParams.MaxSk TfgCand datesParam)
     }
 
-    EngineQuery(
+    Eng neQuery(
       Query(
-        topicId = topicId,
-        maxCandidates = maxCandidates,
-        maxTweetAge = params(TopicTweetParams.MaxTweetAge),
-        semanticCoreVersionId = params(TopicTweetParams.SemanticCoreVersionIdParam)
+        top c d = top c d,
+        maxCand dates = maxCand dates,
+        maxT etAge = params(Top cT etParams.MaxT etAge),
+        semant cCoreVers on d = params(Top cT etParams.Semant cCoreVers on dParam)
       ),
       params
     )

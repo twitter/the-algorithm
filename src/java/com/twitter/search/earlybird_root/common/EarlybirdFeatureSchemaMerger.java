@@ -1,374 +1,374 @@
-package com.twitter.search.earlybird_root.common;
+package com.tw ter.search.earlyb rd_root.common;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
+ mport java.ut l.TreeSet;
+ mport java.ut l.concurrent.ConcurrentHashMap;
 
-import javax.annotation.concurrent.ThreadSafe;
+ mport javax.annotat on.concurrent.ThreadSafe;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect. mmutableL st;
+ mport com.google.common.collect.Maps;
 
-import org.apache.commons.lang.mutable.MutableInt;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons.lang.mutable.Mutable nt;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchema;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchemaSpecifier;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
+ mport com.tw ter.search.common.features.thr ft.Thr ftSearchFeatureSc ma;
+ mport com.tw ter.search.common.features.thr ft.Thr ftSearchFeatureSc maSpec f er;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchRank ngMode;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResults;
 
 @ThreadSafe
-public class EarlybirdFeatureSchemaMerger {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdFeatureSchemaMerger.class);
+publ c class Earlyb rdFeatureSc ma rger {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rdFeatureSc ma rger.class);
 
-  private static final SearchLongGauge NUM_FEATURE_SCHEMAS_MAP = SearchLongGauge.export(
-      "earlybird_feature_schema_cached_cnt");
+  pr vate stat c f nal SearchLongGauge NUM_FEATURE_SCHEMAS_MAP = SearchLongGauge.export(
+      "earlyb rd_feature_sc ma_cac d_cnt");
 
-  private class Stats {
-    public final SearchCounter fieldFormatResponses;
-    public final SearchCounter mapFormatResponses;
-    public final SearchCounter mapFormatSavedSchemaResponses;
-    public final SearchCounter mapFormatAllDownstreamMissingSchema;
-    public final SearchCounter mapFormatOneDownstreamMissingSchema;
-    public final SearchCounter mapFormatSchemaCachedMismatch;
-    public final SearchCounter numInvalidRankingModeRequests;
-    public final SearchCounter numEmptyResponses;
+  pr vate class Stats {
+    publ c f nal SearchCounter f eldFormatResponses;
+    publ c f nal SearchCounter mapFormatResponses;
+    publ c f nal SearchCounter mapFormatSavedSc maResponses;
+    publ c f nal SearchCounter mapFormatAllDownstreamM ss ngSc ma;
+    publ c f nal SearchCounter mapFormatOneDownstreamM ss ngSc ma;
+    publ c f nal SearchCounter mapFormatSc maCac dM smatch;
+    publ c f nal SearchCounter num nval dRank ngModeRequests;
+    publ c f nal SearchCounter numEmptyResponses;
 
-    public Stats(String prefix) {
-      this.fieldFormatResponses =
+    publ c Stats(Str ng pref x) {
+      t .f eldFormatResponses =
           SearchCounter.export(
-              "earlybird_feature_schema_" + prefix + "_field_format_feature_responses");
-      this.mapFormatResponses =
+              "earlyb rd_feature_sc ma_" + pref x + "_f eld_format_feature_responses");
+      t .mapFormatResponses =
           SearchCounter.export(
-              "earlybird_feature_schema_" + prefix + "_map_format_feature_responses");
-      this.mapFormatSavedSchemaResponses =
+              "earlyb rd_feature_sc ma_" + pref x + "_map_format_feature_responses");
+      t .mapFormatSavedSc maResponses =
           SearchCounter.export(
-              "earlybird_feature_schema_" + prefix + "_map_format_feature_saved_schema_responses");
-      this.mapFormatAllDownstreamMissingSchema =
+              "earlyb rd_feature_sc ma_" + pref x + "_map_format_feature_saved_sc ma_responses");
+      t .mapFormatAllDownstreamM ss ngSc ma =
           SearchCounter.export(
-              "earlybird_feature_schema_" + prefix
-                  + "_map_format_feature_all_downstream_missing_schema_error");
-      this.mapFormatOneDownstreamMissingSchema =
+              "earlyb rd_feature_sc ma_" + pref x
+                  + "_map_format_feature_all_downstream_m ss ng_sc ma_error");
+      t .mapFormatOneDownstreamM ss ngSc ma =
           SearchCounter.export(
-              "earlybird_feature_schema_" + prefix
-                  + "_map_format_feature_one_downstream_missing_schema_error");
-      this.mapFormatSchemaCachedMismatch =
+              "earlyb rd_feature_sc ma_" + pref x
+                  + "_map_format_feature_one_downstream_m ss ng_sc ma_error");
+      t .mapFormatSc maCac dM smatch =
           SearchCounter.export(
-              "earlybird_feature_schema_" + prefix
-                  + "_map_format_feature_schema_cached_mismatch_error");
-      this.numInvalidRankingModeRequests =
+              "earlyb rd_feature_sc ma_" + pref x
+                  + "_map_format_feature_sc ma_cac d_m smatch_error");
+      t .num nval dRank ngModeRequests =
           SearchCounter.export(
-              "earlybird_feature_schema_" + prefix + "_num_invalid_ranking_mode_requests");
-      this.numEmptyResponses =
+              "earlyb rd_feature_sc ma_" + pref x + "_num_ nval d_rank ng_mode_requests");
+      t .numEmptyResponses =
           SearchCounter.export(
-              "earlybird_feature_schema_" + prefix
-                  + "_num_empty_response_without_schema");
+              "earlyb rd_feature_sc ma_" + pref x
+                  + "_num_empty_response_w hout_sc ma");
     }
   }
 
-  private final ConcurrentHashMap<ThriftSearchFeatureSchemaSpecifier, ThriftSearchFeatureSchema>
-      featureSchemas = new ConcurrentHashMap<>();
-  private final ConcurrentHashMap<String, Stats> mergeStats = new ConcurrentHashMap<>();
+  pr vate f nal ConcurrentHashMap<Thr ftSearchFeatureSc maSpec f er, Thr ftSearchFeatureSc ma>
+      featureSc mas = new ConcurrentHashMap<>();
+  pr vate f nal ConcurrentHashMap<Str ng, Stats>  rgeStats = new ConcurrentHashMap<>();
 
   /**
-   * Get all available cache schema list indicated by the schema specifier.
-   * @return identifiers for all the cached schema
+   * Get all ava lable cac  sc ma l st  nd cated by t  sc ma spec f er.
+   * @return  dent f ers for all t  cac d sc ma
    */
-  public List<ThriftSearchFeatureSchemaSpecifier> getAvailableSchemaList() {
-    return ImmutableList.copyOf(featureSchemas.keySet());
+  publ c L st<Thr ftSearchFeatureSc maSpec f er> getAva lableSc maL st() {
+    return  mmutableL st.copyOf(featureSc mas.keySet());
   }
 
   /**
-   * Iterate all the responses and collect and cache feature schemas from response.
-   * Set the feature schema for the response in searchResults if needed.
-   * (This is done inside earlybird roots)
+   *  erate all t  responses and collect and cac  feature sc mas from response.
+   * Set t  feature sc ma for t  response  n searchResults  f needed.
+   * (T   s done  ns de earlyb rd roots)
    *
-   * @param searchResults the response
-   * @param requestContext the request, which should record the client cached feature schemas
-   * @param statPrefix the stats prefix string
+   * @param searchResults t  response
+   * @param requestContext t  request, wh ch should record t  cl ent cac d feature sc mas
+   * @param statPref x t  stats pref x str ng
    * @param successfulResponses all successfull responses from downstream
    */
-  public void collectAndSetFeatureSchemaInResponse(
-      ThriftSearchResults searchResults,
-      EarlybirdRequestContext requestContext,
-      String statPrefix,
-      List<EarlybirdResponse> successfulResponses) {
-    Stats stats = getOrCreateMergeStat(statPrefix);
-    EarlybirdRequest request = requestContext.getRequest();
-    if (!request.isSetSearchQuery()
-          || !request.getSearchQuery().isSetResultMetadataOptions()
-          || !request.getSearchQuery().getResultMetadataOptions().isReturnSearchResultFeatures()) {
-      // If the client does not want to get all features in map format, do not do anything.
-      stats.fieldFormatResponses.increment();
+  publ c vo d collectAndSetFeatureSc ma nResponse(
+      Thr ftSearchResults searchResults,
+      Earlyb rdRequestContext requestContext,
+      Str ng statPref x,
+      L st<Earlyb rdResponse> successfulResponses) {
+    Stats stats = getOrCreate rgeStat(statPref x);
+    Earlyb rdRequest request = requestContext.getRequest();
+     f (!request. sSetSearchQuery()
+          || !request.getSearchQuery(). sSetResult tadataOpt ons()
+          || !request.getSearchQuery().getResult tadataOpt ons(). sReturnSearchResultFeatures()) {
+      //  f t  cl ent does not want to get all features  n map format, do not do anyth ng.
+      stats.f eldFormatResponses. ncre nt();
       return;
     }
 
-    // Find the most occurred schema from per-merge responses and return it in the post-merge
+    // F nd t  most occurred sc ma from per- rge responses and return    n t  post- rge
     // response.
-    ThriftSearchFeatureSchemaSpecifier schemaMostOccurred = findMostOccurredSchema(
+    Thr ftSearchFeatureSc maSpec f er sc maMostOccurred = f ndMostOccurredSc ma(
         stats, request, successfulResponses);
-    if (schemaMostOccurred == null) {
+     f (sc maMostOccurred == null) {
       return;
     }
 
-    Set<ThriftSearchFeatureSchemaSpecifier> availableSchemasInClient =
-        requestContext.getFeatureSchemasAvailableInClient();
-    if (availableSchemasInClient != null && availableSchemasInClient.contains(schemaMostOccurred)) {
-      // The client already knows the schema that we used for this response, so we don't need to
-      // send it the full schema, just the ThriftSearchFeatureSchemaSpecifier.
-      ThriftSearchFeatureSchema schema = new ThriftSearchFeatureSchema();
-      schema.setSchemaSpecifier(schemaMostOccurred);
-      searchResults.setFeatureSchema(schema);
-      stats.mapFormatResponses.increment();
-      stats.mapFormatSavedSchemaResponses.increment();
+    Set<Thr ftSearchFeatureSc maSpec f er> ava lableSc mas nCl ent =
+        requestContext.getFeatureSc masAva lable nCl ent();
+     f (ava lableSc mas nCl ent != null && ava lableSc mas nCl ent.conta ns(sc maMostOccurred)) {
+      // T  cl ent already knows t  sc ma that   used for t  response, so   don't need to
+      // send   t  full sc ma, just t  Thr ftSearchFeatureSc maSpec f er.
+      Thr ftSearchFeatureSc ma sc ma = new Thr ftSearchFeatureSc ma();
+      sc ma.setSc maSpec f er(sc maMostOccurred);
+      searchResults.setFeatureSc ma(sc ma);
+      stats.mapFormatResponses. ncre nt();
+      stats.mapFormatSavedSc maResponses. ncre nt();
     } else {
-      ThriftSearchFeatureSchema schema = featureSchemas.get(schemaMostOccurred);
-      if (schema != null) {
-        Preconditions.checkState(schema.isSetEntries());
-        Preconditions.checkState(schema.isSetSchemaSpecifier());
-        searchResults.setFeatureSchema(schema);
-        stats.mapFormatResponses.increment();
+      Thr ftSearchFeatureSc ma sc ma = featureSc mas.get(sc maMostOccurred);
+       f (sc ma != null) {
+        Precond  ons.c ckState(sc ma. sSetEntr es());
+        Precond  ons.c ckState(sc ma. sSetSc maSpec f er());
+        searchResults.setFeatureSc ma(sc ma);
+        stats.mapFormatResponses. ncre nt();
       } else {
-        stats.mapFormatSchemaCachedMismatch.increment();
-        LOG.error("The feature schema cache misses the schema entry {} it should cache for {}",
-            schemaMostOccurred, request);
+        stats.mapFormatSc maCac dM smatch. ncre nt();
+        LOG.error("T  feature sc ma cac  m sses t  sc ma entry {}   should cac  for {}",
+            sc maMostOccurred, request);
       }
     }
   }
 
   /**
-   * Merge the feature schema from each cluster's response and return it to the client.
-   * (This is done inside superroot)
-   * @param requestContext the search request context
-   * @param mergedResponse the merged result inside the superroot
-   * @param realtimeResponse the realtime tier resposne
-   * @param protectedResponse the protected tier response
-   * @param fullArchiveResponse the full archive tier response
-   * @param statsPrefix
+   *  rge t  feature sc ma from each cluster's response and return   to t  cl ent.
+   * (T   s done  ns de superroot)
+   * @param requestContext t  search request context
+   * @param  rgedResponse t   rged result  ns de t  superroot
+   * @param realt  Response t  realt   t er resposne
+   * @param protectedResponse t  protected t er response
+   * @param fullArch veResponse t  full arch ve t er response
+   * @param statsPref x
    */
-  public void mergeFeatureSchemaAcrossClusters(
-      EarlybirdRequestContext requestContext,
-      EarlybirdResponse mergedResponse,
-      String statsPrefix,
-      EarlybirdResponse realtimeResponse,
-      EarlybirdResponse protectedResponse,
-      EarlybirdResponse fullArchiveResponse) {
-    Stats superrootStats = getOrCreateMergeStat(statsPrefix);
+  publ c vo d  rgeFeatureSc maAcrossClusters(
+      Earlyb rdRequestContext requestContext,
+      Earlyb rdResponse  rgedResponse,
+      Str ng statsPref x,
+      Earlyb rdResponse realt  Response,
+      Earlyb rdResponse protectedResponse,
+      Earlyb rdResponse fullArch veResponse) {
+    Stats superrootStats = getOrCreate rgeStat(statsPref x);
 
-    // Only try to merge feature schema if there are search results.
-    ThriftSearchResults mergedResults = Preconditions.checkNotNull(
-        mergedResponse.getSearchResults());
-    if (mergedResults.getResults().isEmpty()) {
-      mergedResults.unsetFeatureSchema();
-      superrootStats.numEmptyResponses.increment();
+    // Only try to  rge feature sc ma  f t re are search results.
+    Thr ftSearchResults  rgedResults = Precond  ons.c ckNotNull(
+         rgedResponse.getSearchResults());
+     f ( rgedResults.getResults(). sEmpty()) {
+       rgedResults.unsetFeatureSc ma();
+      superrootStats.numEmptyResponses. ncre nt();
       return;
     }
 
-    EarlybirdRequest request = requestContext.getRequest();
-    if (!request.isSetSearchQuery()
-        || !request.getSearchQuery().isSetResultMetadataOptions()
-        || !request.getSearchQuery().getResultMetadataOptions().isReturnSearchResultFeatures()) {
-      mergedResults.unsetFeatureSchema();
+    Earlyb rdRequest request = requestContext.getRequest();
+     f (!request. sSetSearchQuery()
+        || !request.getSearchQuery(). sSetResult tadataOpt ons()
+        || !request.getSearchQuery().getResult tadataOpt ons(). sReturnSearchResultFeatures()) {
+       rgedResults.unsetFeatureSc ma();
 
-      // If the client does not want to get all features in map format, do not do anything.
-      superrootStats.fieldFormatResponses.increment();
+      //  f t  cl ent does not want to get all features  n map format, do not do anyth ng.
+      superrootStats.f eldFormatResponses. ncre nt();
       return;
     }
-    if (request.getSearchQuery().getRankingMode() != ThriftSearchRankingMode.RELEVANCE
-        && request.getSearchQuery().getRankingMode() != ThriftSearchRankingMode.TOPTWEETS
-        && request.getSearchQuery().getRankingMode() != ThriftSearchRankingMode.RECENCY) {
-      mergedResults.unsetFeatureSchema();
+     f (request.getSearchQuery().getRank ngMode() != Thr ftSearchRank ngMode.RELEVANCE
+        && request.getSearchQuery().getRank ngMode() != Thr ftSearchRank ngMode.TOPTWEETS
+        && request.getSearchQuery().getRank ngMode() != Thr ftSearchRank ngMode.RECENCY) {
+       rgedResults.unsetFeatureSc ma();
 
-      // Only RELEVANCE, TOPTWEETS and RECENCY requests might need a feature schema in the response.
-      superrootStats.numInvalidRankingModeRequests.increment();
-      LOG.warn("Request asked for feature schema, but has incorrect ranking mode: {}", request);
+      // Only RELEVANCE, TOPTWEETS and RECENCY requests m ght need a feature sc ma  n t  response.
+      superrootStats.num nval dRank ngModeRequests. ncre nt();
+      LOG.warn("Request asked for feature sc ma, but has  ncorrect rank ng mode: {}", request);
       return;
     }
-    superrootStats.mapFormatResponses.increment();
+    superrootStats.mapFormatResponses. ncre nt();
 
-    ThriftSearchFeatureSchema schema = updateReturnSchemaForClusterResponse(
-        null, realtimeResponse, request, superrootStats);
-    schema = updateReturnSchemaForClusterResponse(
-        schema, protectedResponse, request, superrootStats);
-    schema = updateReturnSchemaForClusterResponse(
-        schema, fullArchiveResponse, request, superrootStats);
+    Thr ftSearchFeatureSc ma sc ma = updateReturnSc maForClusterResponse(
+        null, realt  Response, request, superrootStats);
+    sc ma = updateReturnSc maForClusterResponse(
+        sc ma, protectedResponse, request, superrootStats);
+    sc ma = updateReturnSc maForClusterResponse(
+        sc ma, fullArch veResponse, request, superrootStats);
 
-    if (schema != null) {
-      if (requestContext.getFeatureSchemasAvailableInClient() != null
-          && requestContext.getFeatureSchemasAvailableInClient().contains(
-          schema.getSchemaSpecifier())) {
-        mergedResults.setFeatureSchema(
-            new ThriftSearchFeatureSchema().setSchemaSpecifier(schema.getSchemaSpecifier()));
+     f (sc ma != null) {
+       f (requestContext.getFeatureSc masAva lable nCl ent() != null
+          && requestContext.getFeatureSc masAva lable nCl ent().conta ns(
+          sc ma.getSc maSpec f er())) {
+         rgedResults.setFeatureSc ma(
+            new Thr ftSearchFeatureSc ma().setSc maSpec f er(sc ma.getSc maSpec f er()));
       } else {
-        mergedResults.setFeatureSchema(schema);
+         rgedResults.setFeatureSc ma(sc ma);
       }
     } else {
-      superrootStats.mapFormatAllDownstreamMissingSchema.increment();
-      LOG.error("The response for request {} is missing feature schema from all clusters", request);
+      superrootStats.mapFormatAllDownstreamM ss ngSc ma. ncre nt();
+      LOG.error("T  response for request {}  s m ss ng feature sc ma from all clusters", request);
     }
   }
 
   /**
-   * Add the schema to both the schema map and and the schema list if it is not there yet.
+   * Add t  sc ma to both t  sc ma map and and t  sc ma l st  f    s not t re yet.
    *
-   * @param schema the feature schema for search results
+   * @param sc ma t  feature sc ma for search results
    */
-  private void addNewSchema(ThriftSearchFeatureSchema schema) {
-    if (!schema.isSetEntries()
-        || !schema.isSetSchemaSpecifier()
-        || featureSchemas.containsKey(schema.getSchemaSpecifier())) {
+  pr vate vo d addNewSc ma(Thr ftSearchFeatureSc ma sc ma) {
+     f (!sc ma. sSetEntr es()
+        || !sc ma. sSetSc maSpec f er()
+        || featureSc mas.conta nsKey(sc ma.getSc maSpec f er())) {
       return;
     }
 
-    synchronized (this) {
-      String oldExportedSchemaName = null;
-      if (!featureSchemas.isEmpty()) {
-        oldExportedSchemaName = getExportSchemasName();
+    synchron zed (t ) {
+      Str ng oldExportedSc maNa  = null;
+       f (!featureSc mas. sEmpty()) {
+        oldExportedSc maNa  = getExportSc masNa ();
       }
 
-      if (featureSchemas.putIfAbsent(schema.getSchemaSpecifier(), schema) == null) {
-        LOG.info("Add new feature schema {} into the list", schema);
-        NUM_FEATURE_SCHEMAS_MAP.set(featureSchemas.size());
+       f (featureSc mas.put fAbsent(sc ma.getSc maSpec f er(), sc ma) == null) {
+        LOG. nfo("Add new feature sc ma {}  nto t  l st", sc ma);
+        NUM_FEATURE_SCHEMAS_MAP.set(featureSc mas.s ze());
 
-        if (oldExportedSchemaName != null) {
-          SearchLongGauge.export(oldExportedSchemaName).reset();
+         f (oldExportedSc maNa  != null) {
+          SearchLongGauge.export(oldExportedSc maNa ).reset();
         }
-        SearchLongGauge.export(getExportSchemasName()).set(1);
-        LOG.info("Expanded feature schema: {}", ImmutableList.copyOf(featureSchemas.keySet()));
+        SearchLongGauge.export(getExportSc masNa ()).set(1);
+        LOG. nfo("Expanded feature sc ma: {}",  mmutableL st.copyOf(featureSc mas.keySet()));
       }
     }
   }
 
-  private String getExportSchemasName() {
-    StringBuilder builder = new StringBuilder("earlybird_feature_schema_cached");
-    TreeSet<String> exportedVersions = new TreeSet<>();
+  pr vate Str ng getExportSc masNa () {
+    Str ngBu lder bu lder = new Str ngBu lder("earlyb rd_feature_sc ma_cac d");
+    TreeSet<Str ng> exportedVers ons = new TreeSet<>();
 
-    // We do not need checksum for exported vars as all cached schemas are from the majority of the
+    //   do not need c cksum for exported vars as all cac d sc mas are from t  major y of t 
     // responses.
-    featureSchemas.keySet().stream().forEach(key -> exportedVersions.add(key.getVersion()));
-    exportedVersions.stream().forEach(version -> {
-      builder.append('_');
-      builder.append(version);
+    featureSc mas.keySet().stream().forEach(key -> exportedVers ons.add(key.getVers on()));
+    exportedVers ons.stream().forEach(vers on -> {
+      bu lder.append('_');
+      bu lder.append(vers on);
     });
-    return builder.toString();
+    return bu lder.toStr ng();
   }
 
-  // Get the updated the feature schema based on the earlybird response from the search cluster.
-  // . If the existingSchema is not null, the function would return the existing schema.  Under the
-  //   situation, we would still check whether the feature in earlybird response is valid.
-  // . Otherwise, the function would extract the feature schema from the earlybird response.
-  private ThriftSearchFeatureSchema updateReturnSchemaForClusterResponse(
-      ThriftSearchFeatureSchema existingSchema,
-      EarlybirdResponse clusterResponse,
-      EarlybirdRequest request,
+  // Get t  updated t  feature sc ma based on t  earlyb rd response from t  search cluster.
+  // .  f t  ex st ngSc ma  s not null, t  funct on would return t  ex st ng sc ma.  Under t 
+  //   s uat on,   would st ll c ck w t r t  feature  n earlyb rd response  s val d.
+  // . Ot rw se, t  funct on would extract t  feature sc ma from t  earlyb rd response.
+  pr vate Thr ftSearchFeatureSc ma updateReturnSc maForClusterResponse(
+      Thr ftSearchFeatureSc ma ex st ngSc ma,
+      Earlyb rdResponse clusterResponse,
+      Earlyb rdRequest request,
       Stats stats) {
-    // If there is no response or search result for this cluster, do not update returned schema.
-    if ((clusterResponse == null) || !clusterResponse.isSetSearchResults()) {
-      return existingSchema;
+    //  f t re  s no response or search result for t  cluster, do not update returned sc ma.
+     f ((clusterResponse == null) || !clusterResponse. sSetSearchResults()) {
+      return ex st ngSc ma;
     }
-    ThriftSearchResults results = clusterResponse.getSearchResults();
-    if (results.getResults().isEmpty()) {
-      return existingSchema;
+    Thr ftSearchResults results = clusterResponse.getSearchResults();
+     f (results.getResults(). sEmpty()) {
+      return ex st ngSc ma;
     }
 
-    if (!results.isSetFeatureSchema() || !results.getFeatureSchema().isSetSchemaSpecifier()) {
-      stats.mapFormatOneDownstreamMissingSchema.increment();
-      LOG.error("The downstream response {} is missing feature schema for request {}",
+     f (!results. sSetFeatureSc ma() || !results.getFeatureSc ma(). sSetSc maSpec f er()) {
+      stats.mapFormatOneDownstreamM ss ngSc ma. ncre nt();
+      LOG.error("T  downstream response {}  s m ss ng feature sc ma for request {}",
           clusterResponse, request);
-      return existingSchema;
+      return ex st ngSc ma;
     }
 
-    ThriftSearchFeatureSchema schema = results.getFeatureSchema();
+    Thr ftSearchFeatureSc ma sc ma = results.getFeatureSc ma();
 
-    // Even if existingSchema is already set, we would still try to cache the returned schema.
-    // In this way, the next time earlybird roots don't have to send the full schema back again.
-    if (schema.isSetEntries()) {
-      addNewSchema(schema);
-    } else if (featureSchemas.containsKey(schema.getSchemaSpecifier())) {
-      stats.mapFormatSavedSchemaResponses.increment();
+    // Even  f ex st ngSc ma  s already set,   would st ll try to cac  t  returned sc ma.
+    //  n t  way, t  next t   earlyb rd roots don't have to send t  full sc ma back aga n.
+     f (sc ma. sSetEntr es()) {
+      addNewSc ma(sc ma);
+    } else  f (featureSc mas.conta nsKey(sc ma.getSc maSpec f er())) {
+      stats.mapFormatSavedSc maResponses. ncre nt();
     } else {
-      stats.mapFormatSchemaCachedMismatch.increment();
+      stats.mapFormatSc maCac dM smatch. ncre nt();
       LOG.error(
-          "The feature schema cache misses the schema entry {}, it should cache {} in {}",
-          schema.getSchemaSpecifier(), request, clusterResponse);
+          "T  feature sc ma cac  m sses t  sc ma entry {},   should cac  {}  n {}",
+          sc ma.getSc maSpec f er(), request, clusterResponse);
     }
 
-    ThriftSearchFeatureSchema updatedSchema = existingSchema;
-    if (updatedSchema == null) {
-      updatedSchema = featureSchemas.get(schema.getSchemaSpecifier());
-      if (updatedSchema != null) {
-        Preconditions.checkState(updatedSchema.isSetEntries());
-        Preconditions.checkState(updatedSchema.isSetSchemaSpecifier());
+    Thr ftSearchFeatureSc ma updatedSc ma = ex st ngSc ma;
+     f (updatedSc ma == null) {
+      updatedSc ma = featureSc mas.get(sc ma.getSc maSpec f er());
+       f (updatedSc ma != null) {
+        Precond  ons.c ckState(updatedSc ma. sSetEntr es());
+        Precond  ons.c ckState(updatedSc ma. sSetSc maSpec f er());
       }
     }
-    return updatedSchema;
+    return updatedSc ma;
   }
 
-  private ThriftSearchFeatureSchemaSpecifier findMostOccurredSchema(
+  pr vate Thr ftSearchFeatureSc maSpec f er f ndMostOccurredSc ma(
       Stats stats,
-      EarlybirdRequest request,
-      List<EarlybirdResponse> successfulResponses) {
+      Earlyb rdRequest request,
+      L st<Earlyb rdResponse> successfulResponses) {
     boolean hasResults = false;
-    Map<ThriftSearchFeatureSchemaSpecifier, MutableInt> schemaCount =
-        Maps.newHashMapWithExpectedSize(successfulResponses.size());
-    for (EarlybirdResponse response : successfulResponses) {
-      if (!response.isSetSearchResults()
-          || response.getSearchResults().getResultsSize() == 0) {
-        continue;
+    Map<Thr ftSearchFeatureSc maSpec f er, Mutable nt> sc maCount =
+        Maps.newHashMapW hExpectedS ze(successfulResponses.s ze());
+    for (Earlyb rdResponse response : successfulResponses) {
+       f (!response. sSetSearchResults()
+          || response.getSearchResults().getResultsS ze() == 0) {
+        cont nue;
       }
 
       hasResults = true;
-      if (response.getSearchResults().isSetFeatureSchema()) {
-        ThriftSearchFeatureSchema schema = response.getSearchResults().getFeatureSchema();
-        if (schema.isSetSchemaSpecifier()) {
-          MutableInt cnt = schemaCount.get(schema.getSchemaSpecifier());
-          if (cnt != null) {
-            cnt.increment();
+       f (response.getSearchResults(). sSetFeatureSc ma()) {
+        Thr ftSearchFeatureSc ma sc ma = response.getSearchResults().getFeatureSc ma();
+         f (sc ma. sSetSc maSpec f er()) {
+          Mutable nt cnt = sc maCount.get(sc ma.getSc maSpec f er());
+           f (cnt != null) {
+            cnt. ncre nt();
           } else {
-            schemaCount.put(schema.getSchemaSpecifier(), new MutableInt(1));
+            sc maCount.put(sc ma.getSc maSpec f er(), new Mutable nt(1));
           }
 
-          if (schema.isSetEntries()) {
-            addNewSchema(schema);
+           f (sc ma. sSetEntr es()) {
+            addNewSc ma(sc ma);
           }
         }
       } else {
-        stats.mapFormatOneDownstreamMissingSchema.increment();
-        LOG.error("The downstream response {} is missing feature schema for request {}",
+        stats.mapFormatOneDownstreamM ss ngSc ma. ncre nt();
+        LOG.error("T  downstream response {}  s m ss ng feature sc ma for request {}",
             response, request);
       }
     }
 
-    int numMostOccurred = 0;
-    ThriftSearchFeatureSchemaSpecifier schemaMostOccurred = null;
-    for (Map.Entry<ThriftSearchFeatureSchemaSpecifier, MutableInt> entry : schemaCount.entrySet()) {
-      if (entry.getValue().toInteger() > numMostOccurred) {
-        numMostOccurred = entry.getValue().toInteger();
-        schemaMostOccurred = entry.getKey();
+     nt numMostOccurred = 0;
+    Thr ftSearchFeatureSc maSpec f er sc maMostOccurred = null;
+    for (Map.Entry<Thr ftSearchFeatureSc maSpec f er, Mutable nt> entry : sc maCount.entrySet()) {
+       f (entry.getValue().to nteger() > numMostOccurred) {
+        numMostOccurred = entry.getValue().to nteger();
+        sc maMostOccurred = entry.getKey();
       }
     }
 
-    if (schemaMostOccurred == null && hasResults) {
-      stats.mapFormatAllDownstreamMissingSchema.increment();
-      LOG.error("None of the downstream host returned feature schema for {}", request);
+     f (sc maMostOccurred == null && hasResults) {
+      stats.mapFormatAllDownstreamM ss ngSc ma. ncre nt();
+      LOG.error("None of t  downstream host returned feature sc ma for {}", request);
     }
-    return schemaMostOccurred;
+    return sc maMostOccurred;
   }
 
-  private Stats getOrCreateMergeStat(String statPrefix) {
-    Stats stats = mergeStats.get(statPrefix);
-    if (stats == null) {
-      Stats newStats = new Stats(statPrefix);
-      stats = mergeStats.putIfAbsent(statPrefix, newStats);
-      if (stats == null) {
+  pr vate Stats getOrCreate rgeStat(Str ng statPref x) {
+    Stats stats =  rgeStats.get(statPref x);
+     f (stats == null) {
+      Stats newStats = new Stats(statPref x);
+      stats =  rgeStats.put fAbsent(statPref x, newStats);
+       f (stats == null) {
         stats = newStats;
       }
     }

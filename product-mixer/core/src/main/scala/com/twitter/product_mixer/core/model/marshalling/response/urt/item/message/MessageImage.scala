@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.message
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata. mageVar ant
 
-case class MessageImage(
-  imageVariants: Set[ImageVariant],
-  backgroundColor: Option[String])
+case class  ssage mage(
+   mageVar ants: Set[ mageVar ant],
+  backgroundColor: Opt on[Str ng])

@@ -1,51 +1,51 @@
-package com.twitter.search.ingester.pipeline.twitter.userupdates;
+package com.tw ter.search. ngester.p pel ne.tw ter.userupdates;
 
-import java.util.function.Supplier;
+ mport java.ut l.funct on.Suppl er;
 
-import org.apache.commons.pipeline.Pipeline;
-import org.apache.commons.pipeline.StageDriver;
-import org.apache.commons.pipeline.StageException;
+ mport org.apac .commons.p pel ne.P pel ne;
+ mport org.apac .commons.p pel ne.StageDr ver;
+ mport org.apac .commons.p pel ne.StageExcept on;
 
-import com.twitter.search.ingester.pipeline.twitter.TwitterBaseStage;
-import com.twitter.search.ingester.pipeline.util.PipelineUtil;
+ mport com.tw ter.search. ngester.p pel ne.tw ter.Tw terBaseStage;
+ mport com.tw ter.search. ngester.p pel ne.ut l.P pel neUt l;
 
 /**
- * This stage is a shim for the UserUpdatesPipeline.
+ * T  stage  s a sh m for t  UserUpdatesP pel ne.
  *
- * Eventually the UserUpdatesPipeline will be called directly from a TwitterServer, but this exists
- * as a bridge while we migrate.
+ * Eventually t  UserUpdatesP pel ne w ll be called d rectly from a Tw terServer, but t  ex sts
+ * as a br dge wh le   m grate.
  */
-public class UserUpdatesPipelineStage extends TwitterBaseStage {
-  // This is 'prod', 'staging', or 'staging1'.
-  private String environment;
-  private UserUpdatesPipeline userUpdatesPipeline;
+publ c class UserUpdatesP pel neStage extends Tw terBaseStage {
+  // T   s 'prod', 'stag ng', or 'stag ng1'.
+  pr vate Str ng env ron nt;
+  pr vate UserUpdatesP pel ne userUpdatesP pel ne;
 
-  @Override
-  protected void doInnerPreprocess() throws StageException {
-    StageDriver driver = ((Pipeline) stageContext).getStageDriver(this);
-    Supplier<Boolean> booleanSupplier = () -> driver.getState() == StageDriver.State.RUNNING;
+  @Overr de
+  protected vo d do nnerPreprocess() throws StageExcept on {
+    StageDr ver dr ver = ((P pel ne) stageContext).getStageDr ver(t );
+    Suppl er<Boolean> booleanSuppl er = () -> dr ver.getState() == StageDr ver.State.RUNN NG;
     try {
-      userUpdatesPipeline = UserUpdatesPipeline.buildPipeline(
-          environment,
-          wireModule,
-          getStageNamePrefix(),
-          booleanSupplier,
+      userUpdatesP pel ne = UserUpdatesP pel ne.bu ldP pel ne(
+          env ron nt,
+          w reModule,
+          getStageNa Pref x(),
+          booleanSuppl er,
           clock);
 
-    } catch (Exception e) {
-      throw new StageException(this, e);
+    } catch (Except on e) {
+      throw new StageExcept on(t , e);
     }
-    PipelineUtil.feedStartObjectToStage(this);
+    P pel neUt l.feedStartObjectToStage(t );
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    userUpdatesPipeline.run();
+  @Overr de
+  publ c vo d  nnerProcess(Object obj) throws StageExcept on {
+    userUpdatesP pel ne.run();
   }
 
-  @SuppressWarnings("unused")  // populated from pipeline config
-  public void setEnvironment(String environment) {
-    this.environment = environment;
+  @SuppressWarn ngs("unused")  // populated from p pel ne conf g
+  publ c vo d setEnv ron nt(Str ng env ron nt) {
+    t .env ron nt = env ron nt;
   }
 
 }

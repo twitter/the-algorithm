@@ -1,274 +1,274 @@
-package com.twitter.frigate.pushservice.model
+package com.tw ter.fr gate.pushserv ce.model
 
-import com.twitter.escherbird.metadata.thriftscala.EntityMegadata
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.MagicFanoutEventCandidate
-import com.twitter.frigate.common.base.RecommendationType
-import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContext
-import com.twitter.frigate.common.util.HighPriorityLocaleUtil
-import com.twitter.frigate.magic_events.thriftscala.FanoutEvent
-import com.twitter.frigate.magic_events.thriftscala.FanoutMetadata
-import com.twitter.frigate.magic_events.thriftscala.MagicEventsReason
-import com.twitter.frigate.magic_events.thriftscala.NewsForYouMetadata
-import com.twitter.frigate.magic_events.thriftscala.ReasonSource
-import com.twitter.frigate.magic_events.thriftscala.TargetID
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.frigate.pushservice.model.ibis.Ibis2HydratorForCandidate
-import com.twitter.frigate.pushservice.model.ntab.EventNTabRequestHydrator
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.predicate.magic_fanout.MagicFanoutPredicatesUtil
-import com.twitter.frigate.pushservice.store.EventRequest
-import com.twitter.frigate.pushservice.store.UttEntityHydrationStore
-import com.twitter.frigate.pushservice.util.PushDeviceUtil
-import com.twitter.frigate.pushservice.util.TopicsUtil
-import com.twitter.frigate.thriftscala.FrigateNotification
-import com.twitter.frigate.thriftscala.MagicFanoutEventNotificationDetails
-import com.twitter.hermit.store.semantic_core.SemanticEntityForQuery
-import com.twitter.interests.thriftscala.InterestId.SemanticCore
-import com.twitter.interests.thriftscala.UserInterests
-import com.twitter.livevideo.common.ids.CountryId
-import com.twitter.livevideo.common.ids.UserId
-import com.twitter.livevideo.timeline.domain.v2.Event
-import com.twitter.livevideo.timeline.domain.v2.HydrationOptions
-import com.twitter.livevideo.timeline.domain.v2.LookupContext
-import com.twitter.simclusters_v2.thriftscala.SimClustersInferredEntities
-import com.twitter.storehaus.ReadableStore
-import com.twitter.topiclisting.utt.LocalizedEntity
-import com.twitter.util.Future
+ mport com.tw ter.esc rb rd. tadata.thr ftscala.Ent y gadata
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Mag cFanoutEventCand date
+ mport com.tw ter.fr gate.common.base.Recom ndat onType
+ mport com.tw ter.fr gate.common.store. nterests. nterestsLookupRequestW hContext
+ mport com.tw ter.fr gate.common.ut l.H ghPr or yLocaleUt l
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.FanoutEvent
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.Fanout tadata
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.Mag cEventsReason
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.NewsFor  tadata
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.ReasonS ce
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.Target D
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.ml.PushMLModelScorer
+ mport com.tw ter.fr gate.pushserv ce.model.cand date.Copy ds
+ mport com.tw ter.fr gate.pushserv ce.model. b s. b s2HydratorForCand date
+ mport com.tw ter.fr gate.pushserv ce.model.ntab.EventNTabRequestHydrator
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.pred cate.mag c_fanout.Mag cFanoutPred catesUt l
+ mport com.tw ter.fr gate.pushserv ce.store.EventRequest
+ mport com.tw ter.fr gate.pushserv ce.store.UttEnt yHydrat onStore
+ mport com.tw ter.fr gate.pushserv ce.ut l.PushDev ceUt l
+ mport com.tw ter.fr gate.pushserv ce.ut l.Top csUt l
+ mport com.tw ter.fr gate.thr ftscala.Fr gateNot f cat on
+ mport com.tw ter.fr gate.thr ftscala.Mag cFanoutEventNot f cat onDeta ls
+ mport com.tw ter. rm .store.semant c_core.Semant cEnt yForQuery
+ mport com.tw ter. nterests.thr ftscala. nterest d.Semant cCore
+ mport com.tw ter. nterests.thr ftscala.User nterests
+ mport com.tw ter.l vev deo.common. ds.Country d
+ mport com.tw ter.l vev deo.common. ds.User d
+ mport com.tw ter.l vev deo.t  l ne.doma n.v2.Event
+ mport com.tw ter.l vev deo.t  l ne.doma n.v2.Hydrat onOpt ons
+ mport com.tw ter.l vev deo.t  l ne.doma n.v2.LookupContext
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClusters nferredEnt  es
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.top cl st ng.utt.Local zedEnt y
+ mport com.tw ter.ut l.Future
 
-abstract class MagicFanoutEventPushCandidate(
-  candidate: RawCandidate with MagicFanoutEventCandidate with RecommendationType,
-  copyIds: CopyIds,
-  override val fanoutEvent: Option[FanoutEvent],
-  override val semanticEntityResults: Map[SemanticEntityForQuery, Option[EntityMegadata]],
-  simClusterToEntities: Map[Int, Option[SimClustersInferredEntities]],
-  lexServiceStore: ReadableStore[EventRequest, Event],
-  interestsLookupStore: ReadableStore[InterestsLookupRequestWithContext, UserInterests],
-  uttEntityHydrationStore: UttEntityHydrationStore
+abstract class Mag cFanoutEventPushCand date(
+  cand date: RawCand date w h Mag cFanoutEventCand date w h Recom ndat onType,
+  copy ds: Copy ds,
+  overr de val fanoutEvent: Opt on[FanoutEvent],
+  overr de val semant cEnt yResults: Map[Semant cEnt yForQuery, Opt on[Ent y gadata]],
+  s mClusterToEnt  es: Map[ nt, Opt on[S mClusters nferredEnt  es]],
+  lexServ ceStore: ReadableStore[EventRequest, Event],
+   nterestsLookupStore: ReadableStore[ nterestsLookupRequestW hContext, User nterests],
+  uttEnt yHydrat onStore: UttEnt yHydrat onStore
 )(
-  implicit statsScoped: StatsReceiver,
+   mpl c  statsScoped: StatsRece ver,
   pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
-    with MagicFanoutEventHydratedCandidate
-    with MagicFanoutEventCandidate
-    with EventNTabRequestHydrator
-    with RecommendationType
-    with Ibis2HydratorForCandidate {
+    extends PushCand date
+    w h Mag cFanoutEventHydratedCand date
+    w h Mag cFanoutEventCand date
+    w h EventNTabRequestHydrator
+    w h Recom ndat onType
+    w h  b s2HydratorForCand date {
 
-  override lazy val eventFut: Future[Option[Event]] = {
+  overr de lazy val eventFut: Future[Opt on[Event]] = {
     eventRequestFut.flatMap {
-      case Some(eventRequest) => lexServiceStore.get(eventRequest)
+      case So (eventRequest) => lexServ ceStore.get(eventRequest)
       case _ => Future.None
     }
   }
 
-  override val frigateNotification: FrigateNotification = candidate.frigateNotification
+  overr de val fr gateNot f cat on: Fr gateNot f cat on = cand date.fr gateNot f cat on
 
-  override val pushId: Long = candidate.pushId
+  overr de val push d: Long = cand date.push d
 
-  override val candidateMagicEventsReasons: Seq[MagicEventsReason] =
-    candidate.candidateMagicEventsReasons
+  overr de val cand dateMag cEventsReasons: Seq[Mag cEventsReason] =
+    cand date.cand dateMag cEventsReasons
 
-  override val eventId: Long = candidate.eventId
+  overr de val event d: Long = cand date.event d
 
-  override val momentId: Option[Long] = candidate.momentId
+  overr de val mo nt d: Opt on[Long] = cand date.mo nt d
 
-  override val target: Target = candidate.target
+  overr de val target: Target = cand date.target
 
-  override val eventLanguage: Option[String] = candidate.eventLanguage
+  overr de val eventLanguage: Opt on[Str ng] = cand date.eventLanguage
 
-  override val details: Option[MagicFanoutEventNotificationDetails] = candidate.details
+  overr de val deta ls: Opt on[Mag cFanoutEventNot f cat onDeta ls] = cand date.deta ls
 
-  override lazy val stats: StatsReceiver = statsScoped.scope("MagicFanoutEventPushCandidate")
+  overr de lazy val stats: StatsRece ver = statsScoped.scope("Mag cFanoutEventPushCand date")
 
-  override val weightedOpenOrNtabClickModelScorer: PushMLModelScorer = pushModelScorer
+  overr de val   ghtedOpenOrNtabCl ckModelScorer: PushMLModelScorer = pushModelScorer
 
-  override val pushCopyId: Option[Int] = copyIds.pushCopyId
+  overr de val pushCopy d: Opt on[ nt] = copy ds.pushCopy d
 
-  override val ntabCopyId: Option[Int] = copyIds.ntabCopyId
+  overr de val ntabCopy d: Opt on[ nt] = copy ds.ntabCopy d
 
-  override val copyAggregationId: Option[String] = copyIds.aggregationId
+  overr de val copyAggregat on d: Opt on[Str ng] = copy ds.aggregat on d
 
-  override val statsReceiver: StatsReceiver = statsScoped.scope("MagicFanoutEventPushCandidate")
+  overr de val statsRece ver: StatsRece ver = statsScoped.scope("Mag cFanoutEventPushCand date")
 
-  override val effectiveMagicEventsReasons: Option[Seq[MagicEventsReason]] = Some(
-    candidateMagicEventsReasons)
+  overr de val effect veMag cEventsReasons: Opt on[Seq[Mag cEventsReason]] = So (
+    cand dateMag cEventsReasons)
 
-  lazy val newsForYouMetadata: Option[NewsForYouMetadata] =
+  lazy val newsFor  tadata: Opt on[NewsFor  tadata] =
     fanoutEvent.flatMap { event =>
       {
-        event.fanoutMetadata.collect {
-          case FanoutMetadata.NewsForYouMetadata(nfyMetadata) => nfyMetadata
+        event.fanout tadata.collect {
+          case Fanout tadata.NewsFor  tadata(nfy tadata) => nfy tadata
         }
       }
     }
 
-  val reverseIndexedTopicIds = candidate.candidateMagicEventsReasons
-    .filter(_.source.contains(ReasonSource.UttTopicFollowGraph))
+  val reverse ndexedTop c ds = cand date.cand dateMag cEventsReasons
+    .f lter(_.s ce.conta ns(ReasonS ce.UttTop cFollowGraph))
     .map(_.reason).collect {
-      case TargetID.SemanticCoreID(semanticCoreID) => semanticCoreID.entityId
+      case Target D.Semant cCore D(semant cCore D) => semant cCore D.ent y d
     }.toSet
 
-  val ergSemanticCoreIds = candidate.candidateMagicEventsReasons
-    .filter(_.source.contains(ReasonSource.ErgShortTermInterestSemanticCore)).map(
+  val ergSemant cCore ds = cand date.cand dateMag cEventsReasons
+    .f lter(_.s ce.conta ns(ReasonS ce.ErgShortTerm nterestSemant cCore)).map(
       _.reason).collect {
-      case TargetID.SemanticCoreID(semanticCoreID) => semanticCoreID.entityId
+      case Target D.Semant cCore D(semant cCore D) => semant cCore D.ent y d
     }.toSet
 
-  override lazy val ergLocalizedEntities = TopicsUtil
-    .getLocalizedEntityMap(target, ergSemanticCoreIds, uttEntityHydrationStore)
-    .map { localizedEntityMap =>
-      ergSemanticCoreIds.collect {
-        case topicId if localizedEntityMap.contains(topicId) => localizedEntityMap(topicId)
+  overr de lazy val ergLocal zedEnt  es = Top csUt l
+    .getLocal zedEnt yMap(target, ergSemant cCore ds, uttEnt yHydrat onStore)
+    .map { local zedEnt yMap =>
+      ergSemant cCore ds.collect {
+        case top c d  f local zedEnt yMap.conta ns(top c d) => local zedEnt yMap(top c d)
       }
     }
 
-  val eventSemanticCoreEntityIds: Seq[Long] = {
-    val entityIds = for {
+  val eventSemant cCoreEnt y ds: Seq[Long] = {
+    val ent y ds = for {
       event <- fanoutEvent
       targets <- event.targets
-    } yield {
+    } y eld {
       targets.flatMap {
-        _.whitelist.map {
+        _.wh el st.map {
           _.collect {
-            case TargetID.SemanticCoreID(semanticCoreID) => semanticCoreID.entityId
+            case Target D.Semant cCore D(semant cCore D) => semant cCore D.ent y d
           }
         }
       }
     }
 
-    entityIds.map(_.flatten).getOrElse(Seq.empty)
+    ent y ds.map(_.flatten).getOrElse(Seq.empty)
   }
 
-  val eventSemanticCoreDomainIds: Seq[Long] = {
-    val domainIds = for {
+  val eventSemant cCoreDoma n ds: Seq[Long] = {
+    val doma n ds = for {
       event <- fanoutEvent
       targets <- event.targets
-    } yield {
+    } y eld {
       targets.flatMap {
-        _.whitelist.map {
+        _.wh el st.map {
           _.collect {
-            case TargetID.SemanticCoreID(semanticCoreID) => semanticCoreID.domainId
+            case Target D.Semant cCore D(semant cCore D) => semant cCore D.doma n d
           }
         }
       }
     }
 
-    domainIds.map(_.flatten).getOrElse(Seq.empty)
+    doma n ds.map(_.flatten).getOrElse(Seq.empty)
   }
 
-  override lazy val followedTopicLocalizedEntities: Future[Set[LocalizedEntity]] = {
+  overr de lazy val follo dTop cLocal zedEnt  es: Future[Set[Local zedEnt y]] = {
 
-    val isNewSignupTargetingReason = candidateMagicEventsReasons.size == 1 &&
-      candidateMagicEventsReasons.headOption.exists(_.source.contains(ReasonSource.NewSignup))
+    val  sNewS gnupTarget ngReason = cand dateMag cEventsReasons.s ze == 1 &&
+      cand dateMag cEventsReasons. adOpt on.ex sts(_.s ce.conta ns(ReasonS ce.NewS gnup))
 
-    val shouldFetchTopicFollows = reverseIndexedTopicIds.nonEmpty || isNewSignupTargetingReason
+    val shouldFetchTop cFollows = reverse ndexedTop c ds.nonEmpty ||  sNewS gnupTarget ngReason
 
-    val topicFollows = if (shouldFetchTopicFollows) {
-      TopicsUtil
-        .getTopicsFollowedByUser(
-          candidate.target,
-          interestsLookupStore,
-          stats.stat("followed_topics")
+    val top cFollows =  f (shouldFetchTop cFollows) {
+      Top csUt l
+        .getTop csFollo dByUser(
+          cand date.target,
+           nterestsLookupStore,
+          stats.stat("follo d_top cs")
         ).map { _.getOrElse(Seq.empty) }.map {
           _.flatMap {
-            _.interestId match {
-              case SemanticCore(semanticCore) => Some(semanticCore.id)
+            _. nterest d match {
+              case Semant cCore(semant cCore) => So (semant cCore. d)
               case _ => None
             }
           }
         }
-    } else Future.Nil
+    } else Future.N l
 
-    topicFollows.flatMap { followedTopicIds =>
-      val topicIds = if (isNewSignupTargetingReason) {
-        // if new signup is the only targeting reason then we check the event targeting reason
-        // against realtime topic follows.
-        eventSemanticCoreEntityIds.toSet.intersect(followedTopicIds.toSet)
+    top cFollows.flatMap { follo dTop c ds =>
+      val top c ds =  f ( sNewS gnupTarget ngReason) {
+        //  f new s gnup  s t  only target ng reason t n   c ck t  event target ng reason
+        // aga nst realt   top c follows.
+        eventSemant cCoreEnt y ds.toSet. ntersect(follo dTop c ds.toSet)
       } else {
-        // check against the fanout reason of topics
-        followedTopicIds.toSet.intersect(reverseIndexedTopicIds)
+        // c ck aga nst t  fanout reason of top cs
+        follo dTop c ds.toSet. ntersect(reverse ndexedTop c ds)
       }
 
-      TopicsUtil
-        .getLocalizedEntityMap(target, topicIds, uttEntityHydrationStore)
-        .map { localizedEntityMap =>
-          topicIds.collect {
-            case topicId if localizedEntityMap.contains(topicId) => localizedEntityMap(topicId)
+      Top csUt l
+        .getLocal zedEnt yMap(target, top c ds, uttEnt yHydrat onStore)
+        .map { local zedEnt yMap =>
+          top c ds.collect {
+            case top c d  f local zedEnt yMap.conta ns(top c d) => local zedEnt yMap(top c d)
           }
         }
     }
   }
 
-  lazy val simClusterToEntityMapping: Map[Int, Seq[Long]] =
-    simClusterToEntities.flatMap {
-      case (clusterId, Some(inferredEntities)) =>
-        statsReceiver.counter("with_cluster_to_entity_mapping").incr()
-        Some(
+  lazy val s mClusterToEnt yMapp ng: Map[ nt, Seq[Long]] =
+    s mClusterToEnt  es.flatMap {
+      case (cluster d, So ( nferredEnt  es)) =>
+        statsRece ver.counter("w h_cluster_to_ent y_mapp ng"). ncr()
+        So (
           (
-            clusterId,
-            inferredEntities.entities
-              .map(_.entityId)))
+            cluster d,
+             nferredEnt  es.ent  es
+              .map(_.ent y d)))
       case _ =>
-        statsReceiver.counter("without_cluster_to_entity_mapping").incr()
+        statsRece ver.counter("w hout_cluster_to_ent y_mapp ng"). ncr()
         None
     }
 
-  lazy val annotatedAndInferredSemanticCoreEntities: Seq[Long] =
-    (simClusterToEntityMapping, eventFanoutReasonEntities) match {
-      case (entityMapping, eventFanoutReasons) =>
-        entityMapping.values.flatten.toSeq ++
-          eventFanoutReasons.semanticCoreIds.map(_.entityId)
+  lazy val annotatedAnd nferredSemant cCoreEnt  es: Seq[Long] =
+    (s mClusterToEnt yMapp ng, eventFanoutReasonEnt  es) match {
+      case (ent yMapp ng, eventFanoutReasons) =>
+        ent yMapp ng.values.flatten.toSeq ++
+          eventFanoutReasons.semant cCore ds.map(_.ent y d)
     }
 
-  lazy val shouldHydrateSquareImage = target.deviceInfo.map { deviceInfo =>
-    (PushDeviceUtil.isPrimaryDeviceIOS(deviceInfo) &&
-    target.params(PushFeatureSwitchParams.EnableEventSquareMediaIosMagicFanoutNewsEvent)) ||
-    (PushDeviceUtil.isPrimaryDeviceAndroid(deviceInfo) &&
-    target.params(PushFeatureSwitchParams.EnableEventSquareMediaAndroid))
+  lazy val shouldHydrateSquare mage = target.dev ce nfo.map { dev ce nfo =>
+    (PushDev ceUt l. sPr maryDev ce OS(dev ce nfo) &&
+    target.params(PushFeatureSw chParams.EnableEventSquare d a osMag cFanoutNewsEvent)) ||
+    (PushDev ceUt l. sPr maryDev ceAndro d(dev ce nfo) &&
+    target.params(PushFeatureSw chParams.EnableEventSquare d aAndro d))
   }
 
-  lazy val shouldHydratePrimaryImage: Future[Boolean] = target.deviceInfo.map { deviceInfo =>
-    (PushDeviceUtil.isPrimaryDeviceAndroid(deviceInfo) &&
-    target.params(PushFeatureSwitchParams.EnableEventPrimaryMediaAndroid))
+  lazy val shouldHydratePr mary mage: Future[Boolean] = target.dev ce nfo.map { dev ce nfo =>
+    (PushDev ceUt l. sPr maryDev ceAndro d(dev ce nfo) &&
+    target.params(PushFeatureSw chParams.EnableEventPr mary d aAndro d))
   }
 
-  lazy val eventRequestFut: Future[Option[EventRequest]] =
+  lazy val eventRequestFut: Future[Opt on[EventRequest]] =
     Future
-      .join(
-        target.inferredUserDeviceLanguage,
+      .jo n(
+        target. nferredUserDev ceLanguage,
         target.accountCountryCode,
-        shouldHydrateSquareImage,
-        shouldHydratePrimaryImage).map {
+        shouldHydrateSquare mage,
+        shouldHydratePr mary mage).map {
         case (
-              inferredUserDeviceLanguage,
+               nferredUserDev ceLanguage,
               accountCountryCode,
-              shouldHydrateSquareImage,
-              shouldHydratePrimaryImage) =>
-          if (shouldHydrateSquareImage || shouldHydratePrimaryImage) {
-            Some(
+              shouldHydrateSquare mage,
+              shouldHydratePr mary mage) =>
+           f (shouldHydrateSquare mage || shouldHydratePr mary mage) {
+            So (
               EventRequest(
-                eventId,
+                event d,
                 lookupContext = LookupContext(
-                  hydrationOptions = HydrationOptions(
-                    includeSquareImage = shouldHydrateSquareImage,
-                    includePrimaryImage = shouldHydratePrimaryImage
+                  hydrat onOpt ons = Hydrat onOpt ons(
+                     ncludeSquare mage = shouldHydrateSquare mage,
+                     ncludePr mary mage = shouldHydratePr mary mage
                   ),
-                  language = inferredUserDeviceLanguage,
+                  language =  nferredUserDev ceLanguage,
                   countryCode = accountCountryCode,
-                  userId = Some(UserId(target.targetId))
+                  user d = So (User d(target.target d))
                 )
               ))
           } else {
-            Some(
+            So (
               EventRequest(
-                eventId,
+                event d,
                 lookupContext = LookupContext(
-                  language = inferredUserDeviceLanguage,
+                  language =  nferredUserDev ceLanguage,
                   countryCode = accountCountryCode
                 )
               ))
@@ -276,28 +276,28 @@ abstract class MagicFanoutEventPushCandidate(
         case _ => None
       }
 
-  lazy val isHighPriorityEvent: Future[Boolean] = target.accountCountryCode.map { countryCodeOpt =>
-    val isHighPriorityPushOpt = for {
+  lazy val  sH ghPr or yEvent: Future[Boolean] = target.accountCountryCode.map { countryCodeOpt =>
+    val  sH ghPr or yPushOpt = for {
       countryCode <- countryCodeOpt
-      nfyMetadata <- newsForYouMetadata
-      eventContext <- nfyMetadata.eventContextScribe
-    } yield {
-      val highPriorityLocales = HighPriorityLocaleUtil.getHighPriorityLocales(
+      nfy tadata <- newsFor  tadata
+      eventContext <- nfy tadata.eventContextScr be
+    } y eld {
+      val h ghPr or yLocales = H ghPr or yLocaleUt l.getH ghPr or yLocales(
         eventContext = eventContext,
-        defaultLocalesOpt = nfyMetadata.locales)
-      val highPriorityGeos = HighPriorityLocaleUtil.getHighPriorityGeos(
+        defaultLocalesOpt = nfy tadata.locales)
+      val h ghPr or yGeos = H ghPr or yLocaleUt l.getH ghPr or yGeos(
         eventContext = eventContext,
-        defaultGeoPlaceIdsOpt = nfyMetadata.placeIds)
-      val isHighPriorityLocalePush =
-        highPriorityLocales.flatMap(_.country).map(CountryId(_)).contains(CountryId(countryCode))
-      val isHighPriorityGeoPush = MagicFanoutPredicatesUtil
-        .geoPlaceIdsFromReasons(candidateMagicEventsReasons)
-        .intersect(highPriorityGeos.toSet)
+        defaultGeoPlace dsOpt = nfy tadata.place ds)
+      val  sH ghPr or yLocalePush =
+        h ghPr or yLocales.flatMap(_.country).map(Country d(_)).conta ns(Country d(countryCode))
+      val  sH ghPr or yGeoPush = Mag cFanoutPred catesUt l
+        .geoPlace dsFromReasons(cand dateMag cEventsReasons)
+        . ntersect(h ghPr or yGeos.toSet)
         .nonEmpty
-      stats.scope("is_high_priority_locale_push").counter(s"$isHighPriorityLocalePush").incr()
-      stats.scope("is_high_priority_geo_push").counter(s"$isHighPriorityGeoPush").incr()
-      isHighPriorityLocalePush || isHighPriorityGeoPush
+      stats.scope(" s_h gh_pr or y_locale_push").counter(s"$ sH ghPr or yLocalePush"). ncr()
+      stats.scope(" s_h gh_pr or y_geo_push").counter(s"$ sH ghPr or yGeoPush"). ncr()
+       sH ghPr or yLocalePush ||  sH ghPr or yGeoPush
     }
-    isHighPriorityPushOpt.getOrElse(false)
+     sH ghPr or yPushOpt.getOrElse(false)
   }
 }

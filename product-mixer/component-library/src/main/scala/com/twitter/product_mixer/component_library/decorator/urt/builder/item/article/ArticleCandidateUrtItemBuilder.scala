@@ -1,52 +1,52 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.article
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.art cle
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.article.ArticleCandidateUrtItemBuilder.ArticleClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.BaseArticleCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleSeedType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.FollowingListSeed
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.art cle.Art cleCand dateUrt emBu lder.Art cleCl entEvent nfoEle nt
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.BaseArt cleCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.Cand dateUrtEntryBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseCl entEvent nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseFeedbackAct on nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.soc al_context.BaseSoc alContextBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.art cle.Art cleD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.art cle.Art cle em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.art cle.Art cleSeedType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.art cle.Follow ngL stSeed
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object ArticleCandidateUrtItemBuilder {
-  val ArticleClientEventInfoElement: String = "article"
+object Art cleCand dateUrt emBu lder {
+  val Art cleCl entEvent nfoEle nt: Str ng = "art cle"
 }
 
-case class ArticleCandidateUrtItemBuilder[
-  -Query <: PipelineQuery,
-  Candidate <: BaseArticleCandidate
+case class Art cleCand dateUrt emBu lder[
+  -Query <: P pel neQuery,
+  Cand date <: BaseArt cleCand date
 ](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, Candidate],
-  articleSeedType: ArticleSeedType = FollowingListSeed,
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, Candidate]
+  cl entEvent nfoBu lder: BaseCl entEvent nfoBu lder[Query, Cand date],
+  art cleSeedType: Art cleSeedType = Follow ngL stSeed,
+  feedbackAct on nfoBu lder: Opt on[
+    BaseFeedbackAct on nfoBu lder[Query, Cand date]
   ] = None,
-  displayType: Option[ArticleDisplayType] = None,
-  socialContextBuilder: Option[BaseSocialContextBuilder[Query, Candidate]] = None,
-) extends CandidateUrtEntryBuilder[Query, Candidate, ArticleItem] {
+  d splayType: Opt on[Art cleD splayType] = None,
+  soc alContextBu lder: Opt on[BaseSoc alContextBu lder[Query, Cand date]] = None,
+) extends Cand dateUrtEntryBu lder[Query, Cand date, Art cle em] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    articleCandidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): ArticleItem = ArticleItem(
-    id = articleCandidate.id,
-    sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-    clientEventInfo = clientEventInfoBuilder(
+    art cleCand date: Cand date,
+    cand dateFeatures: FeatureMap
+  ): Art cle em = Art cle em(
+     d = art cleCand date. d,
+    sort ndex = None, // Sort  ndexes are automat cally set  n t  doma n marshaller phase
+    cl entEvent nfo = cl entEvent nfoBu lder(
       query,
-      articleCandidate,
-      candidateFeatures,
-      Some(ArticleClientEventInfoElement)),
-    feedbackActionInfo =
-      feedbackActionInfoBuilder.flatMap(_.apply(query, articleCandidate, candidateFeatures)),
-    displayType = displayType,
-    socialContext =
-      socialContextBuilder.flatMap(_.apply(query, articleCandidate, candidateFeatures)),
-    articleSeedType = articleSeedType
+      art cleCand date,
+      cand dateFeatures,
+      So (Art cleCl entEvent nfoEle nt)),
+    feedbackAct on nfo =
+      feedbackAct on nfoBu lder.flatMap(_.apply(query, art cleCand date, cand dateFeatures)),
+    d splayType = d splayType,
+    soc alContext =
+      soc alContextBu lder.flatMap(_.apply(query, art cleCand date, cand dateFeatures)),
+    art cleSeedType = art cleSeedType
   )
 }

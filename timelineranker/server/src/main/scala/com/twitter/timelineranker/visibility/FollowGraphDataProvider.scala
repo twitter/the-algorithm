@@ -1,25 +1,25 @@
-package com.twitter.timelineranker.visibility
+package com.tw ter.t  l neranker.v s b l y
 
-import com.twitter.timelineranker.core.FollowGraphData
-import com.twitter.timelineranker.core.FollowGraphDataFuture
-import com.twitter.timelines.model.UserId
-import com.twitter.util.Future
+ mport com.tw ter.t  l neranker.core.FollowGraphData
+ mport com.tw ter.t  l neranker.core.FollowGraphDataFuture
+ mport com.tw ter.t  l nes.model.User d
+ mport com.tw ter.ut l.Future
 
-trait FollowGraphDataProvider {
+tra  FollowGraphDataProv der {
 
   /**
-   * Gets follow graph data for the given user.
+   * Gets follow graph data for t  g ven user.
    *
-   * @param userId user whose follow graph details are to be obtained.
-   * @param maxFollowingCount Maximum number of followed user IDs to fetch.
-   *          If the given user follows more than these many users,
-   *          then the most recent maxFollowingCount users are returned.
+   * @param user d user whose follow graph deta ls are to be obta ned.
+   * @param maxFollow ngCount Max mum number of follo d user  Ds to fetch.
+   *           f t  g ven user follows more than t se many users,
+   *          t n t  most recent maxFollow ngCount users are returned.
    */
-  def get(userId: UserId, maxFollowingCount: Int): Future[FollowGraphData]
+  def get(user d: User d, maxFollow ngCount:  nt): Future[FollowGraphData]
 
-  def getAsync(userId: UserId, maxFollowingCount: Int): FollowGraphDataFuture
+  def getAsync(user d: User d, maxFollow ngCount:  nt): FollowGraphDataFuture
 
-  def getFollowing(userId: UserId, maxFollowingCount: Int): Future[Seq[UserId]]
+  def getFollow ng(user d: User d, maxFollow ngCount:  nt): Future[Seq[User d]]
 
-  def getMutuallyFollowingUserIds(userId: UserId, followingIds: Seq[UserId]): Future[Set[UserId]]
+  def getMutuallyFollow ngUser ds(user d: User d, follow ng ds: Seq[User d]): Future[Set[User d]]
 }

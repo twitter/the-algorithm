@@ -1,32 +1,32 @@
 [package]
-name = "dr_transform"
-version = "0.1.0"
-edition = "2021"
+na  = "dr_transform"
+vers on = "0.1.0"
+ed  on = "2021"
 
-[dependencies]
-serde = { version = "1.0", features = ["derive"] }
+[dependenc es]
+serde = { vers on = "1.0", features = ["der ve"] }
 serde_json = "1.0"
 json = "0.12.4"
-bpr_thrift = { path = "../thrift_bpr_adapter/thrift/"}
+bpr_thr ft = { path = "../thr ft_bpr_adapter/thr ft/"}
 segdense = { path = "../segdense/"}
-thrift = "0.17.0"
+thr ft = "0.17.0"
 ndarray = "0.15"
 base64 = "0.20.0"
 npyz = "0.7.2"
 log = "0.4.17"
 env_logger = "0.9.0"
-prometheus = "0.13.1"
+pro t us = "0.13.1"
 once_cell = "1.17.0"
 rand = "0.8.5"
-itertools = "0.10.5"
+ ertools = "0.10.5"
 anyhow = "1.0.70"
-[target.'cfg(not(target_os="linux"))'.dependencies]
-ort = {git ="https://github.com/pykeio/ort.git", features=["profiling"], tag="v1.14.6"}
-[target.'cfg(target_os="linux")'.dependencies]
-ort = {git ="https://github.com/pykeio/ort.git", features=["profiling", "tensorrt", "cuda", "copy-dylibs"], tag="v1.14.6"}
-[dev-dependencies]
-criterion = "0.3.0"
+[target.'cfg(not(target_os="l nux"))'.dependenc es]
+ort = {g  ="https://g hub.com/pyke o/ort.g ", features=["prof l ng"], tag="v1.14.6"}
+[target.'cfg(target_os="l nux")'.dependenc es]
+ort = {g  ="https://g hub.com/pyke o/ort.g ", features=["prof l ng", "tensorrt", "cuda", "copy-dyl bs"], tag="v1.14.6"}
+[dev-dependenc es]
+cr er on = "0.3.0"
 
 [[bench]]
-name = "bpr_benchmark"
+na  = "bpr_benchmark"
 harness = false

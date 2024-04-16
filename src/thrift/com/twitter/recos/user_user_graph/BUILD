@@ -1,19 +1,19 @@
-RECOSGRAPH_SOURCES = ["user_user_graph.thrift"]
+RECOSGRAPH_SOURCES = ["user_user_graph.thr ft"]
 
-create_thrift_libraries(
-    base_name = "user_user_graph",
-    sources = RECOSGRAPH_SOURCES,
+create_thr ft_l brar es(
+    base_na  = "user_user_graph",
+    s ces = RECOSGRAPH_SOURCES,
     platform = "java8",
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
     dependency_roots = [
-        "src/thrift/com/twitter/recos:recos-common",
-        "src/thrift/com/twitter/recos/features:tweet",
+        "src/thr ft/com/tw ter/recos:recos-common",
+        "src/thr ft/com/tw ter/recos/features:t et",
     ],
     generate_languages = [
         "java",
         "scala",
         "strato",
     ],
-    provides_java_name = "user_user_graph-java",
-    provides_scala_name = "user_user_graph-scala",
+    prov des_java_na  = "user_user_graph-java",
+    prov des_scala_na  = "user_user_graph-scala",
 )

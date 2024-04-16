@@ -1,56 +1,56 @@
-package com.twitter.search.feature_update_service.modules;
+package com.tw ter.search.feature_update_serv ce.modules;
 
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.concurrent.L nkedBlock ngQueue;
+ mport java.ut l.concurrent.ThreadPoolExecutor;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google. nject.Prov des;
+ mport com.google. nject.S ngleton;
 
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.feature_update_service.stats.FeatureUpdateStats;
-import com.twitter.util.ExecutorServiceFuturePool;
-import com.twitter.util.InterruptibleExecutorServiceFuturePool;
+ mport com.tw ter. nject.Tw terModule;
+ mport com.tw ter.search.common. tr cs.SearchCustomGauge;
+ mport com.tw ter.search.feature_update_serv ce.stats.FeatureUpdateStats;
+ mport com.tw ter.ut l.ExecutorServ ceFuturePool;
+ mport com.tw ter.ut l. nterrupt bleExecutorServ ceFuturePool;
 
-public class FuturePoolModule extends TwitterModule {
+publ c class FuturePoolModule extends Tw terModule {
   /**
-   * Provide future pool backed by executor service, with bounded thread pool and bounded backing
+   * Prov de future pool backed by executor serv ce, w h bounded thread pool and bounded back ng
    * queue.
    */
-  @Provides
-  @Singleton
-  public ExecutorServiceFuturePool futurePool() {
-    // These limits are based on service capacity estimates and testing on staging,
-    // attempting to give the pool as many resources as possible without overloading anything.
-    // 100-200 threads is manageable, and the 2000 queue size is based on a conservative upper
-    // limit that tasks in the queue take 1 MB each, meaning queue maxes out at 2 GB, which should
-    // be okay given 4 GB RAM with 3 GB reserved heap.
+  @Prov des
+  @S ngleton
+  publ c ExecutorServ ceFuturePool futurePool() {
+    // T se l m s are based on serv ce capac y est mates and test ng on stag ng,
+    // attempt ng to g ve t  pool as many res ces as poss ble w hout overload ng anyth ng.
+    // 100-200 threads  s manageable, and t  2000 queue s ze  s based on a conservat ve upper
+    // l m  that tasks  n t  queue take 1 MB each,  an ng queue maxes out at 2 GB, wh ch should
+    // be okay g ven 4 GB RAM w h 3 GB reserved  ap.
     return createFuturePool(100, 200, 2000);
   }
 
   /**
-   * Create a future pool backed by executor service, with bounded thread pool and bounded backing
-   * queue. ONLY VISIBILE FOR TESTING; don't invoke outside this class.
+   * Create a future pool backed by executor serv ce, w h bounded thread pool and bounded back ng
+   * queue. ONLY V S B LE FOR TEST NG; don't  nvoke outs de t  class.
    */
-  @VisibleForTesting
-  public static ExecutorServiceFuturePool createFuturePool(
-      int corePoolSize, int maximumPoolSize, int queueCapacity) {
-    final LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<>(queueCapacity);
+  @V s bleForTest ng
+  publ c stat c ExecutorServ ceFuturePool createFuturePool(
+       nt corePoolS ze,  nt max mumPoolS ze,  nt queueCapac y) {
+    f nal L nkedBlock ngQueue<Runnable> queue = new L nkedBlock ngQueue<>(queueCapac y);
 
-    ExecutorServiceFuturePool futurePool = new InterruptibleExecutorServiceFuturePool(
+    ExecutorServ ceFuturePool futurePool = new  nterrupt bleExecutorServ ceFuturePool(
         new ThreadPoolExecutor(
-            corePoolSize,
-            maximumPoolSize,
+            corePoolS ze,
+            max mumPoolS ze,
             60L,
-            TimeUnit.SECONDS,
+            T  Un .SECONDS,
             queue));
 
-    SearchCustomGauge.export(FeatureUpdateStats.PREFIX + "thread_pool_size",
-        futurePool::poolSize);
-    SearchCustomGauge.export(FeatureUpdateStats.PREFIX + "work_queue_size",
-        queue::size);
+    SearchCustomGauge.export(FeatureUpdateStats.PREF X + "thread_pool_s ze",
+        futurePool::poolS ze);
+    SearchCustomGauge.export(FeatureUpdateStats.PREF X + "work_queue_s ze",
+        queue::s ze);
 
     return futurePool;
   }

@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.component_library.candidate_source.timeline_ranker
+package com.tw ter.product_m xer.component_l brary.cand date_s ce.t  l ne_ranker
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.timelineranker.{thriftscala => t}
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l neranker.{thr ftscala => t}
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TimelineRankerRecapCandidateSource @Inject() (
-  timelineRankerClient: t.TimelineRanker.MethodPerEndpoint)
-    extends CandidateSource[t.RecapQuery, t.CandidateTweet] {
+@S ngleton
+class T  l neRankerRecapCand dateS ce @ nject() (
+  t  l neRankerCl ent: t.T  l neRanker. thodPerEndpo nt)
+    extends Cand dateS ce[t.RecapQuery, t.Cand dateT et] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier("TimelineRankerRecap")
+  overr de val  dent f er: Cand dateS ce dent f er =
+    Cand dateS ce dent f er("T  l neRankerRecap")
 
-  override def apply(
+  overr de def apply(
     request: t.RecapQuery
-  ): Stitch[Seq[t.CandidateTweet]] = {
-    Stitch
-      .callFuture(timelineRankerClient.getRecapCandidatesFromAuthors(Seq(request)))
-      .map { response: Seq[t.GetCandidateTweetsResponse] =>
-        response.headOption.flatMap(_.candidates).getOrElse(Seq.empty).filter(_.tweet.nonEmpty)
+  ): St ch[Seq[t.Cand dateT et]] = {
+    St ch
+      .callFuture(t  l neRankerCl ent.getRecapCand datesFromAuthors(Seq(request)))
+      .map { response: Seq[t.GetCand dateT etsResponse] =>
+        response. adOpt on.flatMap(_.cand dates).getOrElse(Seq.empty).f lter(_.t et.nonEmpty)
       }
   }
 }

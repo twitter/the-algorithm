@@ -1,60 +1,60 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.Timer;
-import com.twitter.search.common.root.LoggingSupport;
-import com.twitter.search.earlybird.common.EarlybirdRequestPostLogger;
-import com.twitter.search.earlybird.common.EarlybirdRequestPreLogger;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.common. tr cs.T  r;
+ mport com.tw ter.search.common.root.Logg ngSupport;
+ mport com.tw ter.search.earlyb rd.common.Earlyb rdRequestPostLogger;
+ mport com.tw ter.search.earlyb rd.common.Earlyb rdRequestPreLogger;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
 
-public class EarlybirdServiceLoggingSupport extends
-    LoggingSupport.DefaultLoggingSupport<EarlybirdRequest, EarlybirdResponse> {
-  private static final int LATENCY_WARN_THRESHOLD_MS = 100;
+publ c class Earlyb rdServ ceLogg ngSupport extends
+    Logg ngSupport.DefaultLogg ngSupport<Earlyb rdRequest, Earlyb rdResponse> {
+  pr vate stat c f nal  nt LATENCY_WARN_THRESHOLD_MS = 100;
 
-  private static final Timer DUMMY_TIMER;
+  pr vate stat c f nal T  r DUMMY_T MER;
 
-  private final EarlybirdRequestPreLogger requestPreLogger;
-  private final EarlybirdRequestPostLogger requestPostLogger;
+  pr vate f nal Earlyb rdRequestPreLogger requestPreLogger;
+  pr vate f nal Earlyb rdRequestPostLogger requestPostLogger;
 
 
-  static {
-    DUMMY_TIMER = new Timer(TimeUnit.MILLISECONDS);
-    DUMMY_TIMER.stop();
+  stat c {
+    DUMMY_T MER = new T  r(T  Un .M LL SECONDS);
+    DUMMY_T MER.stop();
   }
 
-  public EarlybirdServiceLoggingSupport(SearchDecider decider) {
-    requestPreLogger = EarlybirdRequestPreLogger.buildForRoot(decider.getDecider());
-    requestPostLogger = EarlybirdRequestPostLogger.buildForRoot(LATENCY_WARN_THRESHOLD_MS,
-                                                                decider.getDecider());
+  publ c Earlyb rdServ ceLogg ngSupport(SearchDec der dec der) {
+    requestPreLogger = Earlyb rdRequestPreLogger.bu ldForRoot(dec der.getDec der());
+    requestPostLogger = Earlyb rdRequestPostLogger.bu ldForRoot(LATENCY_WARN_THRESHOLD_MS,
+                                                                dec der.getDec der());
   }
 
-  @Override
-  public void prelogRequest(EarlybirdRequest req) {
+  @Overr de
+  publ c vo d prelogRequest(Earlyb rdRequest req) {
     requestPreLogger.logRequest(req);
   }
 
-  @Override
-  public void postLogRequest(
-      EarlybirdRequest request,
-      EarlybirdResponse response,
+  @Overr de
+  publ c vo d postLogRequest(
+      Earlyb rdRequest request,
+      Earlyb rdResponse response,
       long latencyNanos) {
 
-    Preconditions.checkNotNull(request);
-    Preconditions.checkNotNull(response);
+    Precond  ons.c ckNotNull(request);
+    Precond  ons.c ckNotNull(response);
 
-    response.setResponseTimeMicros(TimeUnit.NANOSECONDS.toMicros(latencyNanos));
-    response.setResponseTime(TimeUnit.NANOSECONDS.toMillis(latencyNanos));
+    response.setResponseT  M cros(T  Un .NANOSECONDS.toM cros(latencyNanos));
+    response.setResponseT  (T  Un .NANOSECONDS.toM ll s(latencyNanos));
 
-    requestPostLogger.logRequest(request, response, DUMMY_TIMER);
+    requestPostLogger.logRequest(request, response, DUMMY_T MER);
   }
 
-  @Override
-  public void logExceptions(EarlybirdRequest req, Throwable t) {
-    ExceptionHandler.logException(req, t);
+  @Overr de
+  publ c vo d logExcept ons(Earlyb rdRequest req, Throwable t) {
+    Except onHandler.logExcept on(req, t);
   }
 }

@@ -1,24 +1,24 @@
-package com.twitter.follow_recommendations.common.candidate_sources.geo
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.geo
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.conf gap .common.FeatureSw chConf g
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class PopGeoQualityFollowSourceFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val intFSParams: Seq[FSBoundedParam[Int] with FSName] = Seq(
-    PopGeoQualityFollowSourceParams.PopGeoSourceGeoHashMaxPrecision,
-    PopGeoQualityFollowSourceParams.PopGeoSourceGeoHashMinPrecision,
-    PopGeoQualityFollowSourceParams.PopGeoSourceMaxResultsPerPrecision
+@S ngleton
+class PopGeoQual yFollowS ceFSConf g @ nject() () extends FeatureSw chConf g {
+  overr de val  ntFSParams: Seq[FSBoundedParam[ nt] w h FSNa ] = Seq(
+    PopGeoQual yFollowS ceParams.PopGeoS ceGeoHashMaxPrec s on,
+    PopGeoQual yFollowS ceParams.PopGeoS ceGeoHashM nPrec s on,
+    PopGeoQual yFollowS ceParams.PopGeoS ceMaxResultsPerPrec s on
   )
-  override val doubleFSParams: Seq[FSBoundedParam[Double] with FSName] = Seq(
-    PopGeoQualityFollowSourceParams.CandidateSourceWeight
+  overr de val doubleFSParams: Seq[FSBoundedParam[Double] w h FSNa ] = Seq(
+    PopGeoQual yFollowS ceParams.Cand dateS ce  ght
   )
-  override val booleanFSParams: Seq[FSParam[Boolean] with FSName] = Seq(
-    PopGeoQualityFollowSourceParams.CandidateSourceEnabled,
-    PopGeoQualityFollowSourceParams.PopGeoSourceReturnFromAllPrecisions
+  overr de val booleanFSParams: Seq[FSParam[Boolean] w h FSNa ] = Seq(
+    PopGeoQual yFollowS ceParams.Cand dateS ceEnabled,
+    PopGeoQual yFollowS ceParams.PopGeoS ceReturnFromAllPrec s ons
   )
 }

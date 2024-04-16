@@ -1,140 +1,140 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package federated
 package warmups
 
-import com.twitter.context.TwitterContext
-import com.twitter.context.thriftscala.Viewer
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.Stitch
-import com.twitter.strato.access.Access
-import com.twitter.strato.access.Access.AccessToken
-import com.twitter.strato.access.Access.AuthenticatedTwitterUserId
-import com.twitter.strato.access.Access.AuthenticatedTwitterUserNotSuspended
-import com.twitter.strato.access.Access.TwitterUserId
-import com.twitter.strato.access.Access.TwitterUserNotSuspended
-import com.twitter.strato.catalog.Ops
-import com.twitter.strato.client.StaticClient
-import com.twitter.strato.context.StratoContext
-import com.twitter.strato.opcontext.DarkRequest
-import com.twitter.strato.opcontext.OpContext
-import com.twitter.strato.test.config.bouncer.TestPrincipals
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.tweetypie.federated.columns.CreateRetweetColumn
-import com.twitter.tweetypie.federated.columns.CreateTweetColumn
-import com.twitter.tweetypie.federated.columns.DeleteTweetColumn
-import com.twitter.tweetypie.federated.columns.UnretweetColumn
-import com.twitter.tweetypie.service.WarmupQueriesSettings
-import com.twitter.tweetypie.thriftscala.graphql._
-import com.twitter.util.logging.Logger
-import com.twitter.util.Future
-import com.twitter.util.Stopwatch
+ mport com.tw ter.context.Tw terContext
+ mport com.tw ter.context.thr ftscala.V e r
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLevel
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.access.Access
+ mport com.tw ter.strato.access.Access.AccessToken
+ mport com.tw ter.strato.access.Access.Aut nt catedTw terUser d
+ mport com.tw ter.strato.access.Access.Aut nt catedTw terUserNotSuspended
+ mport com.tw ter.strato.access.Access.Tw terUser d
+ mport com.tw ter.strato.access.Access.Tw terUserNotSuspended
+ mport com.tw ter.strato.catalog.Ops
+ mport com.tw ter.strato.cl ent.Stat cCl ent
+ mport com.tw ter.strato.context.StratoContext
+ mport com.tw ter.strato.opcontext.DarkRequest
+ mport com.tw ter.strato.opcontext.OpContext
+ mport com.tw ter.strato.test.conf g.bouncer.TestPr nc pals
+ mport com.tw ter.strato.thr ft.ScroogeConv mpl c s._
+ mport com.tw ter.t etyp e.federated.columns.CreateRet etColumn
+ mport com.tw ter.t etyp e.federated.columns.CreateT etColumn
+ mport com.tw ter.t etyp e.federated.columns.DeleteT etColumn
+ mport com.tw ter.t etyp e.federated.columns.Unret etColumn
+ mport com.tw ter.t etyp e.serv ce.WarmupQuer esSett ngs
+ mport com.tw ter.t etyp e.thr ftscala.graphql._
+ mport com.tw ter.ut l.logg ng.Logger
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Stopwatch
 
 object StratoCatalogWarmups {
-  private[this] val log = Logger(getClass)
+  pr vate[t ] val log = Logger(getClass)
 
-  // Performs warmup queries, failing after 30 seconds
+  // Performs warmup quer es, fa l ng after 30 seconds
   def warmup(
-    warmupSettings: WarmupQueriesSettings,
-    catalog: PartialFunction[String, Ops]
-  ): Future[Unit] = {
+    warmupSett ngs: WarmupQuer esSett ngs,
+    catalog: Part alFunct on[Str ng, Ops]
+  ): Future[Un ] = {
     val elapsed = Stopwatch.start()
-    // note: we need to supply bouncer principals here, because the
-    //       columns are gated by a bouncer policy
+    // note:   need to supply bouncer pr nc pals  re, because t 
+    //       columns are gated by a bouncer pol cy
     Access
-      .withPrincipals(WarmupPrincipals) {
-        StratoContext.withOpContext(WarmupOpContext) {
-          TwitterContext.let(viewer = WarmupViewer) {
-            warmupSettings.clientId.asCurrent {
-              Stitch.run(executeDarkly(catalog))
+      .w hPr nc pals(WarmupPr nc pals) {
+        StratoContext.w hOpContext(WarmupOpContext) {
+          Tw terContext.let(v e r = WarmupV e r) {
+            warmupSett ngs.cl ent d.asCurrent {
+              St ch.run(executeDarkly(catalog))
             }
           }
         }
       }
-      .onSuccess { _ => log.info("warmup completed in %s".format(elapsed())) }
-      .onFailure { t => log.error("could not complete warmup queries before startup.", t) }
+      .onSuccess { _ => log. nfo("warmup completed  n %s".format(elapsed())) }
+      .onFa lure { t => log.error("could not complete warmup quer es before startup.", t) }
   }
 
-  private val WarmupTwitterUserId = 0L
+  pr vate val WarmupTw terUser d = 0L
 
-  private val WarmupPrincipals = Set(
-    TestPrincipals.normalStratoBouncerAccessPrincipal,
-    AuthenticatedTwitterUserId(WarmupTwitterUserId),
-    TwitterUserId(WarmupTwitterUserId),
-    TwitterUserNotSuspended,
-    AuthenticatedTwitterUserNotSuspended,
-    AccessToken(isWritable = true)
+  pr vate val WarmupPr nc pals = Set(
+    TestPr nc pals.normalStratoBouncerAccessPr nc pal,
+    Aut nt catedTw terUser d(WarmupTw terUser d),
+    Tw terUser d(WarmupTw terUser d),
+    Tw terUserNotSuspended,
+    Aut nt catedTw terUserNotSuspended,
+    AccessToken( sWr able = true)
   )
 
-  private[this] val RwebClientId = 0L
+  pr vate[t ] val R bCl ent d = 0L
 
-  private[this] val WarmupViewer = Viewer(
-    userId = Some(WarmupTwitterUserId),
-    authenticatedUserId = Some(WarmupTwitterUserId),
-    clientApplicationId = Some(RwebClientId),
+  pr vate[t ] val WarmupV e r = V e r(
+    user d = So (WarmupTw terUser d),
+    aut nt catedUser d = So (WarmupTw terUser d),
+    cl entAppl cat on d = So (R bCl ent d),
   )
 
-  private[this] val WarmupOpContext =
+  pr vate[t ] val WarmupOpContext =
     OpContext
-      .safetyLevel(SafetyLevel.TweetWritesApi.name)
-      .copy(darkRequest = Some(DarkRequest()))
-      .toThrift()
+      .safetyLevel(SafetyLevel.T etWr esAp .na )
+      .copy(darkRequest = So (DarkRequest()))
+      .toThr ft()
 
-  private[this] val EllenOscarSelfie = 440322224407314432L
+  pr vate[t ] val EllenOscarSelf e = 440322224407314432L
 
-  private[this] val TwitterContext: TwitterContext =
-    com.twitter.context.TwitterContext(com.twitter.tweetypie.TwitterContextPermit)
+  pr vate[t ] val Tw terContext: Tw terContext =
+    com.tw ter.context.Tw terContext(com.tw ter.t etyp e.Tw terContextPerm )
 
-  private[this] def executeDarkly(catalog: PartialFunction[String, Ops]): Stitch[Unit] = {
-    val stratoClient = new StaticClient(catalog)
-    val tweetCreator =
-      stratoClient.executer[CreateTweetRequest, CreateTweetResponseWithSubqueryPrefetchItems](
-        CreateTweetColumn.Path)
+  pr vate[t ] def executeDarkly(catalog: Part alFunct on[Str ng, Ops]): St ch[Un ] = {
+    val stratoCl ent = new Stat cCl ent(catalog)
+    val t etCreator =
+      stratoCl ent.executer[CreateT etRequest, CreateT etResponseW hSubqueryPrefetch ems](
+        CreateT etColumn.Path)
 
-    val tweetDeletor =
-      stratoClient
-        .executer[DeleteTweetRequest, DeleteTweetResponseWithSubqueryPrefetchItems](
-          DeleteTweetColumn.Path)
+    val t etDeletor =
+      stratoCl ent
+        .executer[DeleteT etRequest, DeleteT etResponseW hSubqueryPrefetch ems](
+          DeleteT etColumn.Path)
 
-    val retweetCreator =
-      stratoClient
-        .executer[CreateRetweetRequest, CreateRetweetResponseWithSubqueryPrefetchItems](
-          CreateRetweetColumn.Path)
+    val ret etCreator =
+      stratoCl ent
+        .executer[CreateRet etRequest, CreateRet etResponseW hSubqueryPrefetch ems](
+          CreateRet etColumn.Path)
 
-    val unretweetor =
-      stratoClient
-        .executer[UnretweetRequest, UnretweetResponseWithSubqueryPrefetchItems](
-          UnretweetColumn.Path)
+    val unret etor =
+      stratoCl ent
+        .executer[Unret etRequest, Unret etResponseW hSubqueryPrefetch ems](
+          Unret etColumn.Path)
 
-    val stitchCreateTweet =
-      tweetCreator
-        .execute(CreateTweetRequest("getting warmer"))
-        .onSuccess(_ => log.info(s"${CreateTweetColumn.Path} warmup success"))
-        .onFailure(e => log.info(s"${CreateTweetColumn.Path} warmup fail: $e"))
+    val st chCreateT et =
+      t etCreator
+        .execute(CreateT etRequest("gett ng war r"))
+        .onSuccess(_ => log. nfo(s"${CreateT etColumn.Path} warmup success"))
+        .onFa lure(e => log. nfo(s"${CreateT etColumn.Path} warmup fa l: $e"))
 
-    val stitchDeleteTweet =
-      tweetDeletor
-        .execute(DeleteTweetRequest(-1L))
-        .onSuccess(_ => log.info(s"${DeleteTweetColumn.Path} warmup success"))
-        .onFailure(e => log.info(s"${DeleteTweetColumn.Path} warmup fail: $e"))
+    val st chDeleteT et =
+      t etDeletor
+        .execute(DeleteT etRequest(-1L))
+        .onSuccess(_ => log. nfo(s"${DeleteT etColumn.Path} warmup success"))
+        .onFa lure(e => log. nfo(s"${DeleteT etColumn.Path} warmup fa l: $e"))
 
-    val stitchCreateRetweet =
-      retweetCreator
-        .execute(CreateRetweetRequest(EllenOscarSelfie))
-        .onSuccess(_ => log.info(s"${CreateRetweetColumn.Path} warmup success"))
-        .onFailure(e => log.info(s"${CreateRetweetColumn.Path} warmup fail: $e"))
+    val st chCreateRet et =
+      ret etCreator
+        .execute(CreateRet etRequest(EllenOscarSelf e))
+        .onSuccess(_ => log. nfo(s"${CreateRet etColumn.Path} warmup success"))
+        .onFa lure(e => log. nfo(s"${CreateRet etColumn.Path} warmup fa l: $e"))
 
-    val stitchUnretweet =
-      unretweetor
-        .execute(UnretweetRequest(EllenOscarSelfie))
-        .onSuccess(_ => log.info(s"${UnretweetColumn.Path} warmup success"))
-        .onFailure(e => log.info(s"${UnretweetColumn.Path} warmup fail: $e"))
+    val st chUnret et =
+      unret etor
+        .execute(Unret etRequest(EllenOscarSelf e))
+        .onSuccess(_ => log. nfo(s"${Unret etColumn.Path} warmup success"))
+        .onFa lure(e => log. nfo(s"${Unret etColumn.Path} warmup fa l: $e"))
 
-    Stitch
-      .join(
-        stitchCreateTweet,
-        stitchDeleteTweet,
-        stitchCreateRetweet,
-        stitchUnretweet,
-      ).unit
+    St ch
+      .jo n(
+        st chCreateT et,
+        st chDeleteT et,
+        st chCreateRet et,
+        st chUnret et,
+      ).un 
   }
 }

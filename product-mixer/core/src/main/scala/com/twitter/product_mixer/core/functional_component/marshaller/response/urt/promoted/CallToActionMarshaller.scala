@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.CallToAction
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.CallToAct on
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject.S ngleton
 
-@Singleton
-class CallToActionMarshaller {
-  def apply(callToAction: CallToAction): urt.CallToAction = {
-    urt.CallToAction(
-      callToActionType = callToAction.callToActionType,
-      url = callToAction.url
+@S ngleton
+class CallToAct onMarshaller {
+  def apply(callToAct on: CallToAct on): urt.CallToAct on = {
+    urt.CallToAct on(
+      callToAct onType = callToAct on.callToAct onType,
+      url = callToAct on.url
     )
   }
 }

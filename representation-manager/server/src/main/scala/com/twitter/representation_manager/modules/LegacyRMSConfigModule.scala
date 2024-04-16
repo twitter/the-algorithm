@@ -1,18 +1,18 @@
-package com.twitter.representation_manager.modules
+package com.tw ter.representat on_manager.modules
 
-import com.google.inject.Provides
-import com.twitter.inject.TwitterModule
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter. nject.Tw terModule
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-object LegacyRMSConfigModule extends TwitterModule {
-  @Singleton
-  @Provides
-  @Named("cacheHashKeyPrefix")
-  def providesCacheHashKeyPrefix: String = "RMS"
+object LegacyRMSConf gModule extends Tw terModule {
+  @S ngleton
+  @Prov des
+  @Na d("cac HashKeyPref x")
+  def prov desCac HashKeyPref x: Str ng = "RMS"
 
-  @Singleton
-  @Provides
-  @Named("useContentRecommenderConfiguration")
-  def providesUseContentRecommenderConfiguration: Boolean = false
+  @S ngleton
+  @Prov des
+  @Na d("useContentRecom nderConf gurat on")
+  def prov desUseContentRecom nderConf gurat on: Boolean = false
 }

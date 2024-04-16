@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.twitter_text
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.r chtext.tw ter_text
 
-trait TwitterTextRendererProcessor {
-  def process(twitterTextRichTextBuilder: TwitterTextRenderer): TwitterTextRenderer
+tra  Tw terTextRendererProcessor {
+  def process(tw terTextR chTextBu lder: Tw terTextRenderer): Tw terTextRenderer
 }

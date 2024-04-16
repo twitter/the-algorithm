@@ -1,88 +1,88 @@
-package com.twitter.visibility.interfaces.media
+package com.tw ter.v s b l y. nterfaces. d a
 
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.util.Stopwatch
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.builder.media.MediaFeatures
-import com.twitter.visibility.builder.media.MediaMetadataFeatures
-import com.twitter.visibility.builder.media.StratoMediaLabelMaps
-import com.twitter.visibility.common.MediaMetadataSource
-import com.twitter.visibility.common.MediaSafetyLabelMapSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.generators.TombstoneGenerator
-import com.twitter.visibility.models.ContentId.MediaId
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.providers.ProvidedEvaluationContext
-import com.twitter.visibility.rules.utils.ShimUtils
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.ut l.Stopwatch
+ mport com.tw ter.v s b l y.V s b l yL brary
+ mport com.tw ter.v s b l y.bu lder.V s b l yResult
+ mport com.tw ter.v s b l y.bu lder.users.V e rFeatures
+ mport com.tw ter.v s b l y.bu lder. d a. d aFeatures
+ mport com.tw ter.v s b l y.bu lder. d a. d a tadataFeatures
+ mport com.tw ter.v s b l y.bu lder. d a.Strato d aLabelMaps
+ mport com.tw ter.v s b l y.common. d a tadataS ce
+ mport com.tw ter.v s b l y.common. d aSafetyLabelMapS ce
+ mport com.tw ter.v s b l y.common.UserS ce
+ mport com.tw ter.v s b l y.features.FeatureMap
+ mport com.tw ter.v s b l y.generators.TombstoneGenerator
+ mport com.tw ter.v s b l y.models.Content d. d a d
+ mport com.tw ter.v s b l y.rules.Evaluat onContext
+ mport com.tw ter.v s b l y.rules.prov ders.Prov dedEvaluat onContext
+ mport com.tw ter.v s b l y.rules.ut ls.Sh mUt ls
 
-object MediaVisibilityLibrary {
-  type Type = MediaVisibilityRequest => Stitch[VisibilityResult]
+object  d aV s b l yL brary {
+  type Type =  d aV s b l yRequest => St ch[V s b l yResult]
 
   def apply(
-    visibilityLibrary: VisibilityLibrary,
-    userSource: UserSource,
+    v s b l yL brary: V s b l yL brary,
+    userS ce: UserS ce,
     tombstoneGenerator: TombstoneGenerator,
-    stratoClient: StratoClient,
+    stratoCl ent: StratoCl ent,
   ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
-    val vfLatencyOverallStat = libraryStatsReceiver.stat("vf_latency_overall")
-    val vfLatencyStitchRunStat = libraryStatsReceiver.stat("vf_latency_stitch_run")
+    val l braryStatsRece ver = v s b l yL brary.statsRece ver
+    val vfEng neCounter = l braryStatsRece ver.counter("vf_eng ne_requests")
+    val vfLatencyOverallStat = l braryStatsRece ver.stat("vf_latency_overall")
+    val vfLatencySt chRunStat = l braryStatsRece ver.stat("vf_latency_st ch_run")
 
-    val stratoClientStatsReceiver = libraryStatsReceiver.scope("strato")
+    val stratoCl entStatsRece ver = l braryStatsRece ver.scope("strato")
 
-    val mediaMetadataFeatures = new MediaMetadataFeatures(
-      MediaMetadataSource.fromStrato(stratoClient, stratoClientStatsReceiver),
-      libraryStatsReceiver)
+    val  d a tadataFeatures = new  d a tadataFeatures(
+       d a tadataS ce.fromStrato(stratoCl ent, stratoCl entStatsRece ver),
+      l braryStatsRece ver)
 
-    val mediaLabelMaps = new StratoMediaLabelMaps(
-      MediaSafetyLabelMapSource.fromStrato(stratoClient, stratoClientStatsReceiver))
-    val mediaFeatures = new MediaFeatures(mediaLabelMaps, libraryStatsReceiver)
+    val  d aLabelMaps = new Strato d aLabelMaps(
+       d aSafetyLabelMapS ce.fromStrato(stratoCl ent, stratoCl entStatsRece ver))
+    val  d aFeatures = new  d aFeatures( d aLabelMaps, l braryStatsRece ver)
 
-    val viewerFeatures = new ViewerFeatures(userSource, libraryStatsReceiver)
+    val v e rFeatures = new V e rFeatures(userS ce, l braryStatsRece ver)
 
-    { r: MediaVisibilityRequest =>
-      vfEngineCounter.incr()
+    { r:  d aV s b l yRequest =>
+      vfEng neCounter. ncr()
 
-      val contentId = MediaId(r.mediaKey.toStringKey)
-      val languageCode = r.viewerContext.requestLanguageCode.getOrElse("en")
+      val content d =  d a d(r. d aKey.toStr ngKey)
+      val languageCode = r.v e rContext.requestLanguageCode.getOrElse("en")
 
-      val featureMap = visibilityLibrary.featureMapBuilder(
+      val featureMap = v s b l yL brary.featureMapBu lder(
         Seq(
-          viewerFeatures.forViewerContext(r.viewerContext),
-          mediaFeatures.forGenericMediaKey(r.mediaKey),
-          mediaMetadataFeatures.forGenericMediaKey(r.mediaKey),
+          v e rFeatures.forV e rContext(r.v e rContext),
+           d aFeatures.forGener c d aKey(r. d aKey),
+           d a tadataFeatures.forGener c d aKey(r. d aKey),
         )
       )
 
-      val evaluationContext = ProvidedEvaluationContext.injectRuntimeRulesIntoEvaluationContext(
-        evaluationContext = EvaluationContext(
+      val evaluat onContext = Prov dedEvaluat onContext. njectRunt  Rules ntoEvaluat onContext(
+        evaluat onContext = Evaluat onContext(
           r.safetyLevel,
-          visibilityLibrary.getParams(r.viewerContext, r.safetyLevel),
-          visibilityLibrary.statsReceiver)
+          v s b l yL brary.getParams(r.v e rContext, r.safetyLevel),
+          v s b l yL brary.statsRece ver)
       )
 
-      val preFilteredFeatureMap =
-        ShimUtils.preFilterFeatureMap(featureMap, r.safetyLevel, contentId, evaluationContext)
+      val preF lteredFeatureMap =
+        Sh mUt ls.preF lterFeatureMap(featureMap, r.safetyLevel, content d, evaluat onContext)
 
       val elapsed = Stopwatch.start()
-      FeatureMap.resolve(preFilteredFeatureMap, libraryStatsReceiver).flatMap {
+      FeatureMap.resolve(preF lteredFeatureMap, l braryStatsRece ver).flatMap {
         resolvedFeatureMap =>
-          vfLatencyStitchRunStat.add(elapsed().inMilliseconds)
+          vfLatencySt chRunStat.add(elapsed(). nM ll seconds)
 
-          visibilityLibrary
-            .runRuleEngine(
-              contentId,
+          v s b l yL brary
+            .runRuleEng ne(
+              content d,
               resolvedFeatureMap,
-              r.viewerContext,
+              r.v e rContext,
               r.safetyLevel
             )
             .map(tombstoneGenerator(_, languageCode))
-            .onSuccess(_ => vfLatencyOverallStat.add(elapsed().inMilliseconds))
+            .onSuccess(_ => vfLatencyOverallStat.add(elapsed(). nM ll seconds))
       }
     }
   }

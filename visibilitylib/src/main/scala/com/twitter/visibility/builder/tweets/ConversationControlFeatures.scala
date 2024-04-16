@@ -1,178 +1,178 @@
-package com.twitter.visibility.builder.tweets
+package com.tw ter.v s b l y.bu lder.t ets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.tweetypie.thriftscala.ConversationControl
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.common.InvitedToConversationRepo
-import com.twitter.visibility.features.ConversationRootAuthorFollowsViewer
-import com.twitter.visibility.features.TweetConversationViewerIsInvited
-import com.twitter.visibility.features.TweetConversationViewerIsInvitedViaReplyMention
-import com.twitter.visibility.features.TweetConversationViewerIsRootAuthor
-import com.twitter.visibility.features.TweetHasByInvitationConversationControl
-import com.twitter.visibility.features.TweetHasCommunityConversationControl
-import com.twitter.visibility.features.TweetHasFollowersConversationControl
-import com.twitter.visibility.features.ViewerFollowsConversationRootAuthor
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.t etyp e.thr ftscala.Conversat onControl
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.bu lder.users.Relat onsh pFeatures
+ mport com.tw ter.v s b l y.common. nv edToConversat onRepo
+ mport com.tw ter.v s b l y.features.Conversat onRootAuthorFollowsV e r
+ mport com.tw ter.v s b l y.features.T etConversat onV e r s nv ed
+ mport com.tw ter.v s b l y.features.T etConversat onV e r s nv edV aReply nt on
+ mport com.tw ter.v s b l y.features.T etConversat onV e r sRootAuthor
+ mport com.tw ter.v s b l y.features.T etHasBy nv at onConversat onControl
+ mport com.tw ter.v s b l y.features.T etHasCommun yConversat onControl
+ mport com.tw ter.v s b l y.features.T etHasFollo rsConversat onControl
+ mport com.tw ter.v s b l y.features.V e rFollowsConversat onRootAuthor
 
-class ConversationControlFeatures(
-  relationshipFeatures: RelationshipFeatures,
-  isInvitedToConversationRepository: InvitedToConversationRepo,
-  statsReceiver: StatsReceiver) {
+class Conversat onControlFeatures(
+  relat onsh pFeatures: Relat onsh pFeatures,
+   s nv edToConversat onRepos ory:  nv edToConversat onRepo,
+  statsRece ver: StatsRece ver) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("conversation_control_features")
+  pr vate[t ] val scopedStatsRece ver = statsRece ver.scope("conversat on_control_features")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  pr vate[t ] val requests = scopedStatsRece ver.counter("requests")
 
-  private[this] val tweetCommunityConversationRequest =
-    scopedStatsReceiver.scope(TweetHasCommunityConversationControl.name).counter("requests")
-  private[this] val tweetByInvitationConversationRequest =
-    scopedStatsReceiver.scope(TweetHasByInvitationConversationControl.name).counter("requests")
-  private[this] val tweetFollowersConversationRequest =
-    scopedStatsReceiver.scope(TweetHasFollowersConversationControl.name).counter("requests")
-  private[this] val rootAuthorFollowsViewer =
-    scopedStatsReceiver.scope(ConversationRootAuthorFollowsViewer.name).counter("requests")
-  private[this] val viewerFollowsRootAuthor =
-    scopedStatsReceiver.scope(ViewerFollowsConversationRootAuthor.name).counter("requests")
+  pr vate[t ] val t etCommun yConversat onRequest =
+    scopedStatsRece ver.scope(T etHasCommun yConversat onControl.na ).counter("requests")
+  pr vate[t ] val t etBy nv at onConversat onRequest =
+    scopedStatsRece ver.scope(T etHasBy nv at onConversat onControl.na ).counter("requests")
+  pr vate[t ] val t etFollo rsConversat onRequest =
+    scopedStatsRece ver.scope(T etHasFollo rsConversat onControl.na ).counter("requests")
+  pr vate[t ] val rootAuthorFollowsV e r =
+    scopedStatsRece ver.scope(Conversat onRootAuthorFollowsV e r.na ).counter("requests")
+  pr vate[t ] val v e rFollowsRootAuthor =
+    scopedStatsRece ver.scope(V e rFollowsConversat onRootAuthor.na ).counter("requests")
 
-  def isCommunityConversation(conversationControl: Option[ConversationControl]): Boolean =
-    conversationControl
+  def  sCommun yConversat on(conversat onControl: Opt on[Conversat onControl]): Boolean =
+    conversat onControl
       .collect {
-        case _: ConversationControl.Community =>
-          tweetCommunityConversationRequest.incr()
+        case _: Conversat onControl.Commun y =>
+          t etCommun yConversat onRequest. ncr()
           true
       }.getOrElse(false)
 
-  def isByInvitationConversation(conversationControl: Option[ConversationControl]): Boolean =
-    conversationControl
+  def  sBy nv at onConversat on(conversat onControl: Opt on[Conversat onControl]): Boolean =
+    conversat onControl
       .collect {
-        case _: ConversationControl.ByInvitation =>
-          tweetByInvitationConversationRequest.incr()
+        case _: Conversat onControl.By nv at on =>
+          t etBy nv at onConversat onRequest. ncr()
           true
       }.getOrElse(false)
 
-  def isFollowersConversation(conversationControl: Option[ConversationControl]): Boolean =
-    conversationControl
+  def  sFollo rsConversat on(conversat onControl: Opt on[Conversat onControl]): Boolean =
+    conversat onControl
       .collect {
-        case _: ConversationControl.Followers =>
-          tweetFollowersConversationRequest.incr()
+        case _: Conversat onControl.Follo rs =>
+          t etFollo rsConversat onRequest. ncr()
           true
       }.getOrElse(false)
 
-  def conversationRootAuthorId(
-    conversationControl: Option[ConversationControl]
-  ): Option[Long] =
-    conversationControl match {
-      case Some(ConversationControl.Community(community)) =>
-        Some(community.conversationTweetAuthorId)
-      case Some(ConversationControl.ByInvitation(byInvitation)) =>
-        Some(byInvitation.conversationTweetAuthorId)
-      case Some(ConversationControl.Followers(followers)) =>
-        Some(followers.conversationTweetAuthorId)
+  def conversat onRootAuthor d(
+    conversat onControl: Opt on[Conversat onControl]
+  ): Opt on[Long] =
+    conversat onControl match {
+      case So (Conversat onControl.Commun y(commun y)) =>
+        So (commun y.conversat onT etAuthor d)
+      case So (Conversat onControl.By nv at on(by nv at on)) =>
+        So (by nv at on.conversat onT etAuthor d)
+      case So (Conversat onControl.Follo rs(follo rs)) =>
+        So (follo rs.conversat onT etAuthor d)
       case _ => None
     }
 
-  def viewerIsRootAuthor(
-    conversationControl: Option[ConversationControl],
-    viewerIdOpt: Option[Long]
+  def v e r sRootAuthor(
+    conversat onControl: Opt on[Conversat onControl],
+    v e r dOpt: Opt on[Long]
   ): Boolean =
-    (conversationRootAuthorId(conversationControl), viewerIdOpt) match {
-      case (Some(rootAuthorId), Some(viewerId)) if rootAuthorId == viewerId => true
+    (conversat onRootAuthor d(conversat onControl), v e r dOpt) match {
+      case (So (rootAuthor d), So (v e r d))  f rootAuthor d == v e r d => true
       case _ => false
     }
 
-  def viewerIsInvited(
-    conversationControl: Option[ConversationControl],
-    viewerId: Option[Long]
+  def v e r s nv ed(
+    conversat onControl: Opt on[Conversat onControl],
+    v e r d: Opt on[Long]
   ): Boolean = {
-    val invitedUserIds = conversationControl match {
-      case Some(ConversationControl.Community(community)) =>
-        community.invitedUserIds
-      case Some(ConversationControl.ByInvitation(byInvitation)) =>
-        byInvitation.invitedUserIds
-      case Some(ConversationControl.Followers(followers)) =>
-        followers.invitedUserIds
+    val  nv edUser ds = conversat onControl match {
+      case So (Conversat onControl.Commun y(commun y)) =>
+        commun y. nv edUser ds
+      case So (Conversat onControl.By nv at on(by nv at on)) =>
+        by nv at on. nv edUser ds
+      case So (Conversat onControl.Follo rs(follo rs)) =>
+        follo rs. nv edUser ds
       case _ => Seq()
     }
 
-    viewerId.exists(invitedUserIds.contains(_))
+    v e r d.ex sts( nv edUser ds.conta ns(_))
   }
 
-  def conversationAuthorFollows(
-    conversationControl: Option[ConversationControl],
-    viewerId: Option[Long]
-  ): Stitch[Boolean] = {
-    val conversationAuthorId = conversationControl.collect {
-      case ConversationControl.Community(community) =>
-        community.conversationTweetAuthorId
+  def conversat onAuthorFollows(
+    conversat onControl: Opt on[Conversat onControl],
+    v e r d: Opt on[Long]
+  ): St ch[Boolean] = {
+    val conversat onAuthor d = conversat onControl.collect {
+      case Conversat onControl.Commun y(commun y) =>
+        commun y.conversat onT etAuthor d
     }
 
-    conversationAuthorId match {
-      case Some(authorId) =>
-        rootAuthorFollowsViewer.incr()
-        relationshipFeatures.authorFollowsViewer(authorId, viewerId)
+    conversat onAuthor d match {
+      case So (author d) =>
+        rootAuthorFollowsV e r. ncr()
+        relat onsh pFeatures.authorFollowsV e r(author d, v e r d)
       case None =>
-        Stitch.False
+        St ch.False
     }
   }
 
-  def followsConversationAuthor(
-    conversationControl: Option[ConversationControl],
-    viewerId: Option[Long]
-  ): Stitch[Boolean] = {
-    val conversationAuthorId = conversationControl.collect {
-      case ConversationControl.Followers(followers) =>
-        followers.conversationTweetAuthorId
+  def followsConversat onAuthor(
+    conversat onControl: Opt on[Conversat onControl],
+    v e r d: Opt on[Long]
+  ): St ch[Boolean] = {
+    val conversat onAuthor d = conversat onControl.collect {
+      case Conversat onControl.Follo rs(follo rs) =>
+        follo rs.conversat onT etAuthor d
     }
 
-    conversationAuthorId match {
-      case Some(authorId) =>
-        viewerFollowsRootAuthor.incr()
-        relationshipFeatures.viewerFollowsAuthor(authorId, viewerId)
+    conversat onAuthor d match {
+      case So (author d) =>
+        v e rFollowsRootAuthor. ncr()
+        relat onsh pFeatures.v e rFollowsAuthor(author d, v e r d)
       case None =>
-        Stitch.False
+        St ch.False
     }
   }
 
-  def viewerIsInvitedViaReplyMention(
-    tweet: Tweet,
-    viewerIdOpt: Option[Long]
-  ): Stitch[Boolean] = {
-    val conversationIdOpt: Option[Long] = tweet.conversationControl match {
-      case Some(ConversationControl.Community(community))
-          if community.inviteViaMention.contains(true) =>
-        tweet.coreData.flatMap(_.conversationId)
-      case Some(ConversationControl.ByInvitation(invitation))
-          if invitation.inviteViaMention.contains(true) =>
-        tweet.coreData.flatMap(_.conversationId)
-      case Some(ConversationControl.Followers(followers))
-          if followers.inviteViaMention.contains(true) =>
-        tweet.coreData.flatMap(_.conversationId)
+  def v e r s nv edV aReply nt on(
+    t et: T et,
+    v e r dOpt: Opt on[Long]
+  ): St ch[Boolean] = {
+    val conversat on dOpt: Opt on[Long] = t et.conversat onControl match {
+      case So (Conversat onControl.Commun y(commun y))
+           f commun y. nv eV a nt on.conta ns(true) =>
+        t et.coreData.flatMap(_.conversat on d)
+      case So (Conversat onControl.By nv at on( nv at on))
+           f  nv at on. nv eV a nt on.conta ns(true) =>
+        t et.coreData.flatMap(_.conversat on d)
+      case So (Conversat onControl.Follo rs(follo rs))
+           f follo rs. nv eV a nt on.conta ns(true) =>
+        t et.coreData.flatMap(_.conversat on d)
       case _ => None
     }
 
-    (conversationIdOpt, viewerIdOpt) match {
-      case (Some(conversationId), Some(viewerId)) =>
-        isInvitedToConversationRepository(conversationId, viewerId)
-      case _ => Stitch.False
+    (conversat on dOpt, v e r dOpt) match {
+      case (So (conversat on d), So (v e r d)) =>
+         s nv edToConversat onRepos ory(conversat on d, v e r d)
+      case _ => St ch.False
     }
   }
 
-  def forTweet(tweet: Tweet, viewerId: Option[Long]): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
-    val cc = tweet.conversationControl
+  def forT et(t et: T et, v e r d: Opt on[Long]): FeatureMapBu lder => FeatureMapBu lder = {
+    requests. ncr()
+    val cc = t et.conversat onControl
 
-    _.withConstantFeature(TweetHasCommunityConversationControl, isCommunityConversation(cc))
-      .withConstantFeature(TweetHasByInvitationConversationControl, isByInvitationConversation(cc))
-      .withConstantFeature(TweetHasFollowersConversationControl, isFollowersConversation(cc))
-      .withConstantFeature(TweetConversationViewerIsRootAuthor, viewerIsRootAuthor(cc, viewerId))
-      .withConstantFeature(TweetConversationViewerIsInvited, viewerIsInvited(cc, viewerId))
-      .withFeature(ConversationRootAuthorFollowsViewer, conversationAuthorFollows(cc, viewerId))
-      .withFeature(ViewerFollowsConversationRootAuthor, followsConversationAuthor(cc, viewerId))
-      .withFeature(
-        TweetConversationViewerIsInvitedViaReplyMention,
-        viewerIsInvitedViaReplyMention(tweet, viewerId))
+    _.w hConstantFeature(T etHasCommun yConversat onControl,  sCommun yConversat on(cc))
+      .w hConstantFeature(T etHasBy nv at onConversat onControl,  sBy nv at onConversat on(cc))
+      .w hConstantFeature(T etHasFollo rsConversat onControl,  sFollo rsConversat on(cc))
+      .w hConstantFeature(T etConversat onV e r sRootAuthor, v e r sRootAuthor(cc, v e r d))
+      .w hConstantFeature(T etConversat onV e r s nv ed, v e r s nv ed(cc, v e r d))
+      .w hFeature(Conversat onRootAuthorFollowsV e r, conversat onAuthorFollows(cc, v e r d))
+      .w hFeature(V e rFollowsConversat onRootAuthor, followsConversat onAuthor(cc, v e r d))
+      .w hFeature(
+        T etConversat onV e r s nv edV aReply nt on,
+        v e r s nv edV aReply nt on(t et, v e r d))
 
   }
 }

@@ -1,162 +1,162 @@
-#include "internal/error.h"
-#include "internal/thrift.h"
+# nclude " nternal/error.h"
+# nclude " nternal/thr ft.h"
 
-#include <map>
-#include <twml/ThriftWriter.h>
-#include <twml/TensorRecordWriter.h>
-#include <twml/io/IOError.h>
+# nclude <map>
+# nclude <twml/Thr ftWr er.h>
+# nclude <twml/TensorRecordWr er.h>
+# nclude <twml/ o/ OError.h>
 
-using namespace twml::io;
+us ng na space twml:: o;
 
-namespace twml {
+na space twml {
 
-static int32_t getRawThriftType(twml_type dtype) {
-  // convert twml enum to tensor.thrift enum
-  switch (dtype) {
+stat c  nt32_t getRawThr ftType(twml_type dtype) {
+  // convert twml enum to tensor.thr ft enum
+  sw ch (dtype) {
     case TWML_TYPE_FLOAT:
       return DATA_TYPE_FLOAT;
     case TWML_TYPE_DOUBLE:
       return DATA_TYPE_DOUBLE;
-    case TWML_TYPE_INT64:
-      return DATA_TYPE_INT64;
-    case TWML_TYPE_INT32:
-      return DATA_TYPE_INT32;
-    case TWML_TYPE_UINT8:
-      return DATA_TYPE_UINT8;
-    case TWML_TYPE_STRING:
-      return DATA_TYPE_STRING;
+    case TWML_TYPE_ NT64:
+      return DATA_TYPE_ NT64;
+    case TWML_TYPE_ NT32:
+      return DATA_TYPE_ NT32;
+    case TWML_TYPE_U NT8:
+      return DATA_TYPE_U NT8;
+    case TWML_TYPE_STR NG:
+      return DATA_TYPE_STR NG;
     case TWML_TYPE_BOOL:
       return DATA_TYPE_BOOL;
     default:
-      throw IOError(IOError::UNSUPPORTED_OUTPUT_TYPE);
+      throw  OError( OError::UNSUPPORTED_OUTPUT_TYPE);
   }
 }
 
-void TensorRecordWriter::writeTensor(const RawTensor &tensor) {
-  if (tensor.getType() == TWML_TYPE_INT32) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_STRUCT, GT_INT32);
-    m_thrift_writer.writeStructFieldHeader(TTYPE_LIST, 1);
-    m_thrift_writer.writeListHeader(TTYPE_I32, tensor.getNumElements());
+vo d TensorRecordWr er::wr eTensor(const RawTensor &tensor) {
+   f (tensor.getType() == TWML_TYPE_ NT32) {
+    m_thr ft_wr er.wr eStructF eld ader(TTYPE_STRUCT, GT_ NT32);
+    m_thr ft_wr er.wr eStructF eld ader(TTYPE_L ST, 1);
+    m_thr ft_wr er.wr eL st ader(TTYPE_ 32, tensor.getNumEle nts());
 
-    const int32_t *data = tensor.getData<int32_t>();
+    const  nt32_t *data = tensor.getData< nt32_t>();
 
-    for (uint64_t i = 0; i < tensor.getNumElements(); i++)
-      m_thrift_writer.writeInt32(data[i]);
+    for (u nt64_t   = 0;   < tensor.getNumEle nts();  ++)
+      m_thr ft_wr er.wr e nt32(data[ ]);
 
-  } else if (tensor.getType() == TWML_TYPE_INT64) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_STRUCT, GT_INT64);
-    m_thrift_writer.writeStructFieldHeader(TTYPE_LIST, 1);
-    m_thrift_writer.writeListHeader(TTYPE_I64, tensor.getNumElements());
+  } else  f (tensor.getType() == TWML_TYPE_ NT64) {
+    m_thr ft_wr er.wr eStructF eld ader(TTYPE_STRUCT, GT_ NT64);
+    m_thr ft_wr er.wr eStructF eld ader(TTYPE_L ST, 1);
+    m_thr ft_wr er.wr eL st ader(TTYPE_ 64, tensor.getNumEle nts());
 
-    const int64_t *data = tensor.getData<int64_t>();
+    const  nt64_t *data = tensor.getData< nt64_t>();
 
-    for (uint64_t i = 0; i < tensor.getNumElements(); i++)
-      m_thrift_writer.writeInt64(data[i]);
+    for (u nt64_t   = 0;   < tensor.getNumEle nts();  ++)
+      m_thr ft_wr er.wr e nt64(data[ ]);
 
-  } else if (tensor.getType() == TWML_TYPE_FLOAT) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_STRUCT, GT_FLOAT);
-    m_thrift_writer.writeStructFieldHeader(TTYPE_LIST, 1);
-    m_thrift_writer.writeListHeader(TTYPE_DOUBLE, tensor.getNumElements());
+  } else  f (tensor.getType() == TWML_TYPE_FLOAT) {
+    m_thr ft_wr er.wr eStructF eld ader(TTYPE_STRUCT, GT_FLOAT);
+    m_thr ft_wr er.wr eStructF eld ader(TTYPE_L ST, 1);
+    m_thr ft_wr er.wr eL st ader(TTYPE_DOUBLE, tensor.getNumEle nts());
 
     const float *data = tensor.getData<float>();
 
-    for (uint64_t i = 0; i < tensor.getNumElements(); i++)
-      m_thrift_writer.writeDouble(static_cast<double>(data[i]));
+    for (u nt64_t   = 0;   < tensor.getNumEle nts();  ++)
+      m_thr ft_wr er.wr eDouble(stat c_cast<double>(data[ ]));
 
-  } else if (tensor.getType() == TWML_TYPE_DOUBLE) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_STRUCT, GT_DOUBLE);
-    m_thrift_writer.writeStructFieldHeader(TTYPE_LIST, 1);
-    m_thrift_writer.writeListHeader(TTYPE_DOUBLE, tensor.getNumElements());
+  } else  f (tensor.getType() == TWML_TYPE_DOUBLE) {
+    m_thr ft_wr er.wr eStructF eld ader(TTYPE_STRUCT, GT_DOUBLE);
+    m_thr ft_wr er.wr eStructF eld ader(TTYPE_L ST, 1);
+    m_thr ft_wr er.wr eL st ader(TTYPE_DOUBLE, tensor.getNumEle nts());
 
     const double *data = tensor.getData<double>();
 
-    for (uint64_t i = 0; i < tensor.getNumElements(); i++)
-      m_thrift_writer.writeDouble(data[i]);
+    for (u nt64_t   = 0;   < tensor.getNumEle nts();  ++)
+      m_thr ft_wr er.wr eDouble(data[ ]);
 
-  } else if (tensor.getType() == TWML_TYPE_STRING) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_STRUCT, GT_STRING);
-    m_thrift_writer.writeStructFieldHeader(TTYPE_LIST, 1);
-    m_thrift_writer.writeListHeader(TTYPE_STRING, tensor.getNumElements());
+  } else  f (tensor.getType() == TWML_TYPE_STR NG) {
+    m_thr ft_wr er.wr eStructF eld ader(TTYPE_STRUCT, GT_STR NG);
+    m_thr ft_wr er.wr eStructF eld ader(TTYPE_L ST, 1);
+    m_thr ft_wr er.wr eL st ader(TTYPE_STR NG, tensor.getNumEle nts());
 
-    const std::string *data = tensor.getData<std::string>();
+    const std::str ng *data = tensor.getData<std::str ng>();
 
-    for (uint64_t i = 0; i < tensor.getNumElements(); i++)
-      m_thrift_writer.writeString(data[i]);
+    for (u nt64_t   = 0;   < tensor.getNumEle nts();  ++)
+      m_thr ft_wr er.wr eStr ng(data[ ]);
 
-  } else if (tensor.getType() == TWML_TYPE_BOOL) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_STRUCT, GT_BOOL);
-    m_thrift_writer.writeStructFieldHeader(TTYPE_LIST, 1);
-    m_thrift_writer.writeListHeader(TTYPE_BOOL, tensor.getNumElements());
+  } else  f (tensor.getType() == TWML_TYPE_BOOL) {
+    m_thr ft_wr er.wr eStructF eld ader(TTYPE_STRUCT, GT_BOOL);
+    m_thr ft_wr er.wr eStructF eld ader(TTYPE_L ST, 1);
+    m_thr ft_wr er.wr eL st ader(TTYPE_BOOL, tensor.getNumEle nts());
 
     const bool *data = tensor.getData<bool>();
 
-    for (uint64_t i = 0; i < tensor.getNumElements(); i++)
-      m_thrift_writer.writeBool(data[i]);
+    for (u nt64_t   = 0;   < tensor.getNumEle nts();  ++)
+      m_thr ft_wr er.wr eBool(data[ ]);
 
   } else {
-    throw IOError(IOError::UNSUPPORTED_OUTPUT_TYPE);
+    throw  OError( OError::UNSUPPORTED_OUTPUT_TYPE);
   }
 
-  // write tensor shape field
-  m_thrift_writer.writeStructFieldHeader(TTYPE_LIST, 2);
-  m_thrift_writer.writeListHeader(TTYPE_I64, tensor.getNumDims());
+  // wr e tensor shape f eld
+  m_thr ft_wr er.wr eStructF eld ader(TTYPE_L ST, 2);
+  m_thr ft_wr er.wr eL st ader(TTYPE_ 64, tensor.getNumD ms());
 
-  for (uint64_t i = 0; i < tensor.getNumDims(); i++)
-    m_thrift_writer.writeInt64(tensor.getDim(i));
+  for (u nt64_t   = 0;   < tensor.getNumD ms();  ++)
+    m_thr ft_wr er.wr e nt64(tensor.getD m( ));
 
-  m_thrift_writer.writeStructStop();
-  m_thrift_writer.writeStructStop();
+  m_thr ft_wr er.wr eStructStop();
+  m_thr ft_wr er.wr eStructStop();
 }
 
-void TensorRecordWriter::writeRawTensor(const RawTensor &tensor) {
-  m_thrift_writer.writeStructFieldHeader(TTYPE_STRUCT, GT_RAW);
+vo d TensorRecordWr er::wr eRawTensor(const RawTensor &tensor) {
+  m_thr ft_wr er.wr eStructF eld ader(TTYPE_STRUCT, GT_RAW);
 
-  // dataType field
-  m_thrift_writer.writeStructFieldHeader(TTYPE_I32, 1);
-  m_thrift_writer.writeInt32(getRawThriftType(tensor.getType()));
+  // dataType f eld
+  m_thr ft_wr er.wr eStructF eld ader(TTYPE_ 32, 1);
+  m_thr ft_wr er.wr e nt32(getRawThr ftType(tensor.getType()));
 
-  // content field
-  uint64_t type_size = getSizeOf(tensor.getType());
-  m_thrift_writer.writeStructFieldHeader(TTYPE_STRING, 2);
-  const uint8_t *data = reinterpret_cast<const uint8_t *>(tensor.getData<void>());
-  m_thrift_writer.writeBinary(data, tensor.getNumElements() * type_size);
+  // content f eld
+  u nt64_t type_s ze = getS zeOf(tensor.getType());
+  m_thr ft_wr er.wr eStructF eld ader(TTYPE_STR NG, 2);
+  const u nt8_t *data = re nterpret_cast<const u nt8_t *>(tensor.getData<vo d>());
+  m_thr ft_wr er.wr eB nary(data, tensor.getNumEle nts() * type_s ze);
 
-  // shape field
-  m_thrift_writer.writeStructFieldHeader(TTYPE_LIST, 3);
-  m_thrift_writer.writeListHeader(TTYPE_I64, tensor.getNumDims());
+  // shape f eld
+  m_thr ft_wr er.wr eStructF eld ader(TTYPE_L ST, 3);
+  m_thr ft_wr er.wr eL st ader(TTYPE_ 64, tensor.getNumD ms());
 
-  for (uint64_t i = 0; i < tensor.getNumDims(); i++)
-    m_thrift_writer.writeInt64(tensor.getDim(i));
+  for (u nt64_t   = 0;   < tensor.getNumD ms();  ++)
+    m_thr ft_wr er.wr e nt64(tensor.getD m( ));
 
-  m_thrift_writer.writeStructStop();
-  m_thrift_writer.writeStructStop();
+  m_thr ft_wr er.wr eStructStop();
+  m_thr ft_wr er.wr eStructStop();
 }
 
-TWMLAPI uint32_t TensorRecordWriter::getRecordsWritten() {
-  return m_records_written;
+TWMLAP  u nt32_t TensorRecordWr er::getRecordsWr ten() {
+  return m_records_wr ten;
 }
 
-// Caller (usually DataRecordWriter) must precede with struct header field
-// like thrift_writer.writeStructFieldHeader(TTYPE_MAP, DR_GENERAL_TENSOR)
-TWMLAPI uint64_t TensorRecordWriter::write(twml::TensorRecord &record) {
-  uint64_t bytes_written_before = m_thrift_writer.getBytesWritten();
+// Caller (usually DataRecordWr er) must precede w h struct  ader f eld
+// l ke thr ft_wr er.wr eStructF eld ader(TTYPE_MAP, DR_GENERAL_TENSOR)
+TWMLAP  u nt64_t TensorRecordWr er::wr e(twml::TensorRecord &record) {
+  u nt64_t bytes_wr ten_before = m_thr ft_wr er.getBytesWr ten();
 
-  m_thrift_writer.writeMapHeader(TTYPE_I64, TTYPE_STRUCT, record.getRawTensors().size());
+  m_thr ft_wr er.wr eMap ader(TTYPE_ 64, TTYPE_STRUCT, record.getRawTensors().s ze());
 
-  for (auto id_tensor_pairs : record.getRawTensors()) {
-    m_thrift_writer.writeInt64(id_tensor_pairs.first);
+  for (auto  d_tensor_pa rs : record.getRawTensors()) {
+    m_thr ft_wr er.wr e nt64( d_tensor_pa rs.f rst);
 
-    // all tensors written as RawTensor Thrift except for StringTensors
-    // this avoids the overhead of converting little endian to big endian
-    if (id_tensor_pairs.second.getType() == TWML_TYPE_STRING)
-      writeTensor(id_tensor_pairs.second);
+    // all tensors wr ten as RawTensor Thr ft except for Str ngTensors
+    // t  avo ds t  over ad of convert ng l tle end an to b g end an
+     f ( d_tensor_pa rs.second.getType() == TWML_TYPE_STR NG)
+      wr eTensor( d_tensor_pa rs.second);
     else
-      writeRawTensor(id_tensor_pairs.second);
+      wr eRawTensor( d_tensor_pa rs.second);
   }
 
-  m_records_written++;
+  m_records_wr ten++;
 
-  return m_thrift_writer.getBytesWritten() - bytes_written_before;
+  return m_thr ft_wr er.getBytesWr ten() - bytes_wr ten_before;
 }
 
-}  // namespace twml
+}  // na space twml

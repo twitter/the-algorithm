@@ -1,44 +1,44 @@
-package com.twitter.tsp.common
+package com.tw ter.tsp.common
 
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.util.Future
-import javax.inject.Inject
-import scala.util.control.NoStackTrace
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.dec der.RandomRec p ent
+ mport com.tw ter.ut l.Future
+ mport javax. nject. nject
+ mport scala.ut l.control.NoStackTrace
 
 /*
-  Provides deciders-controlled load shedding for a given displayLocation
-  The format of the decider keys is:
+  Prov des dec ders-controlled load s dd ng for a g ven d splayLocat on
+  T  format of t  dec der keys  s:
 
-    enable_loadshedding_<display location>
+    enable_loads dd ng_<d splay locat on>
   E.g.:
-    enable_loadshedding_HomeTimeline
+    enable_loads dd ng_Ho T  l ne
 
-  Deciders are fractional, so a value of 50.00 will drop 50% of responses. If a decider key is not
-  defined for a particular displayLocation, those requests will always be served.
+  Dec ders are fract onal, so a value of 50.00 w ll drop 50% of responses.  f a dec der key  s not
+  def ned for a part cular d splayLocat on, those requests w ll always be served.
 
-  We should therefore aim to define keys for the locations we care most about in decider.yml,
-  so that we can control them during incidents.
+    should t refore a m to def ne keys for t  locat ons   care most about  n dec der.yml,
+  so that   can control t m dur ng  nc dents.
  */
-class LoadShedder @Inject() (decider: Decider) {
-  import LoadShedder._
+class LoadS dder @ nject() (dec der: Dec der) {
+   mport LoadS dder._
 
-  // Fall back to False for any undefined key
-  private val deciderWithFalseFallback: Decider = decider.orElse(Decider.False)
-  private val keyPrefix = "enable_loadshedding"
+  // Fall back to False for any undef ned key
+  pr vate val dec derW hFalseFallback: Dec der = dec der.orElse(Dec der.False)
+  pr vate val keyPref x = "enable_loads dd ng"
 
-  def apply[T](typeString: String)(serve: => Future[T]): Future[T] = {
+  def apply[T](typeStr ng: Str ng)(serve: => Future[T]): Future[T] = {
     /*
-    Per-typeString level load shedding: enable_loadshedding_HomeTimeline
-    Checks if per-typeString load shedding is enabled
+    Per-typeStr ng level load s dd ng: enable_loads dd ng_Ho T  l ne
+    C cks  f per-typeStr ng load s dd ng  s enabled
      */
-    val keyTyped = s"${keyPrefix}_$typeString"
-    if (deciderWithFalseFallback.isAvailable(keyTyped, recipient = Some(RandomRecipient)))
-      Future.exception(LoadSheddingException)
+    val keyTyped = s"${keyPref x}_$typeStr ng"
+     f (dec derW hFalseFallback. sAva lable(keyTyped, rec p ent = So (RandomRec p ent)))
+      Future.except on(LoadS dd ngExcept on)
     else serve
   }
 }
 
-object LoadShedder {
-  object LoadSheddingException extends Exception with NoStackTrace
+object LoadS dder {
+  object LoadS dd ngExcept on extends Except on w h NoStackTrace
 }

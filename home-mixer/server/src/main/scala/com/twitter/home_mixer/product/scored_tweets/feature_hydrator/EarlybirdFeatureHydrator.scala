@@ -1,151 +1,151 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.earlybird.EarlybirdAdapter
-import com.twitter.home_mixer.model.HomeFeatures.DeviceLanguageFeature
-import com.twitter.home_mixer.model.HomeFeatures.EarlybirdFeature
-import com.twitter.home_mixer.model.HomeFeatures.EarlybirdSearchResultFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.TweetUrlsFeature
-import com.twitter.home_mixer.model.HomeFeatures.UserScreenNameFeature
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.EarlybirdRepository
-import com.twitter.home_mixer.util.ObservedKeyValueResultHandler
-import com.twitter.home_mixer.util.earlybird.EarlybirdResponseUtil
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.feature_hydrator.query.social_graph.SGSFollowedUsersFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.search.earlybird.{thriftscala => eb}
-import com.twitter.servo.keyvalue.KeyValueResult
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.stitch.Stitch
-import com.twitter.util.Return
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.adapters.earlyb rd.Earlyb rdAdapter
+ mport com.tw ter.ho _m xer.model.Ho Features.Dev ceLanguageFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Earlyb rdFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Earlyb rdSearchResultFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. sRet etFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.T etUrlsFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.UserScreenNa Feature
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.Earlyb rdRepos ory
+ mport com.tw ter.ho _m xer.ut l.ObservedKeyValueResultHandler
+ mport com.tw ter.ho _m xer.ut l.earlyb rd.Earlyb rdResponseUt l
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.product_m xer.component_l brary.feature_hydrator.query.soc al_graph.SGSFollo dUsersFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.FeatureW hDefaultOnFa lure
+ mport com.tw ter.product_m xer.core.feature.datarecord.DataRecord nAFeature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BulkCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.ut l.OffloadFuturePools
+ mport com.tw ter.search.earlyb rd.{thr ftscala => eb}
+ mport com.tw ter.servo.keyvalue.KeyValueResult
+ mport com.tw ter.servo.repos ory.KeyValueRepos ory
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.ut l.Return
+ mport javax. nject. nject
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
+ mport scala.collect on.JavaConverters._
 
-object EarlybirdDataRecordFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+object Earlyb rdDataRecordFeature
+    extends DataRecord nAFeature[T etCand date]
+    w h FeatureW hDefaultOnFa lure[T etCand date, DataRecord] {
+  overr de def defaultValue: DataRecord = new DataRecord()
 }
 
-@Singleton
-class EarlybirdFeatureHydrator @Inject() (
-  @Named(EarlybirdRepository) client: KeyValueRepository[
+@S ngleton
+class Earlyb rdFeatureHydrator @ nject() (
+  @Na d(Earlyb rdRepos ory) cl ent: KeyValueRepos ory[
     (Seq[Long], Long),
     Long,
-    eb.ThriftSearchResult
+    eb.Thr ftSearchResult
   ],
-  override val statsReceiver: StatsReceiver)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate]
-    with ObservedKeyValueResultHandler {
+  overr de val statsRece ver: StatsRece ver)
+    extends BulkCand dateFeatureHydrator[P pel neQuery, T etCand date]
+    w h ObservedKeyValueResultHandler {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("Earlybird")
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er("Earlyb rd")
 
-  override val features: Set[Feature[_, _]] = Set(
-    EarlybirdDataRecordFeature,
-    EarlybirdFeature,
-    EarlybirdSearchResultFeature,
-    TweetUrlsFeature
+  overr de val features: Set[Feature[_, _]] = Set(
+    Earlyb rdDataRecordFeature,
+    Earlyb rdFeature,
+    Earlyb rdSearchResultFeature,
+    T etUrlsFeature
   )
 
-  override val statScope: String = identifier.toString
+  overr de val statScope: Str ng =  dent f er.toStr ng
 
-  private val scopedStatsReceiver = statsReceiver.scope(statScope)
-  private val originalKeyFoundCounter = scopedStatsReceiver.counter("originalKey/found")
-  private val originalKeyLossCounter = scopedStatsReceiver.counter("originalKey/loss")
+  pr vate val scopedStatsRece ver = statsRece ver.scope(statScope)
+  pr vate val or g nalKeyFoundCounter = scopedStatsRece ver.counter("or g nalKey/found")
+  pr vate val or g nalKeyLossCounter = scopedStatsRece ver.counter("or g nalKey/loss")
 
-  private val ebSearchResultNotExistPredicate: CandidateWithFeatures[TweetCandidate] => Boolean =
-    candidate => candidate.features.getOrElse(EarlybirdSearchResultFeature, None).isEmpty
-  private val ebFeaturesNotExistPredicate: CandidateWithFeatures[TweetCandidate] => Boolean =
-    candidate => candidate.features.getOrElse(EarlybirdFeature, None).isEmpty
+  pr vate val ebSearchResultNotEx stPred cate: Cand dateW hFeatures[T etCand date] => Boolean =
+    cand date => cand date.features.getOrElse(Earlyb rdSearchResultFeature, None). sEmpty
+  pr vate val ebFeaturesNotEx stPred cate: Cand dateW hFeatures[T etCand date] => Boolean =
+    cand date => cand date.features.getOrElse(Earlyb rdFeature, None). sEmpty
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
-    val candidatesToHydrate = candidates.filter { candidate =>
-      val isEmpty =
-        ebFeaturesNotExistPredicate(candidate) && ebSearchResultNotExistPredicate(candidate)
-      if (isEmpty) originalKeyLossCounter.incr() else originalKeyFoundCounter.incr()
-      isEmpty
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
+    val cand datesToHydrate = cand dates.f lter { cand date =>
+      val  sEmpty =
+        ebFeaturesNotEx stPred cate(cand date) && ebSearchResultNotEx stPred cate(cand date)
+       f ( sEmpty) or g nalKeyLossCounter. ncr() else or g nalKeyFoundCounter. ncr()
+       sEmpty
     }
 
-    client((candidatesToHydrate.map(_.candidate.id), query.getRequiredUserId))
-      .map(handleResponse(query, candidates, _, candidatesToHydrate))
+    cl ent((cand datesToHydrate.map(_.cand date. d), query.getRequ redUser d))
+      .map(handleResponse(query, cand dates, _, cand datesToHydrate))
   }
 
-  private def handleResponse(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]],
-    results: KeyValueResult[Long, eb.ThriftSearchResult],
-    candidatesToHydrate: Seq[CandidateWithFeatures[TweetCandidate]]
+  pr vate def handleResponse(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]],
+    results: KeyValueResult[Long, eb.Thr ftSearchResult],
+    cand datesToHydrate: Seq[Cand dateW hFeatures[T etCand date]]
   ): Seq[FeatureMap] = {
     val queryFeatureMap = query.features.getOrElse(FeatureMap.empty)
     val userLanguages = queryFeatureMap.getOrElse(UserLanguagesFeature, Seq.empty)
-    val uiLanguageCode = queryFeatureMap.getOrElse(DeviceLanguageFeature, None)
-    val screenName = queryFeatureMap.getOrElse(UserScreenNameFeature, None)
-    val followedUserIds = queryFeatureMap.getOrElse(SGSFollowedUsersFeature, Seq.empty).toSet
+    val u LanguageCode = queryFeatureMap.getOrElse(Dev ceLanguageFeature, None)
+    val screenNa  = queryFeatureMap.getOrElse(UserScreenNa Feature, None)
+    val follo dUser ds = queryFeatureMap.getOrElse(SGSFollo dUsersFeature, Seq.empty).toSet
 
-    val searchResults = candidatesToHydrate
-      .map { candidate =>
-        observedGet(Some(candidate.candidate.id), results)
+    val searchResults = cand datesToHydrate
+      .map { cand date =>
+        observedGet(So (cand date.cand date. d), results)
       }.collect {
-        case Return(Some(value)) => value
+        case Return(So (value)) => value
       }
 
     val allSearchResults = searchResults ++
-      candidates.filter(!ebSearchResultNotExistPredicate(_)).flatMap { candidate =>
-        candidate.features
-          .getOrElse(EarlybirdSearchResultFeature, None)
+      cand dates.f lter(!ebSearchResultNotEx stPred cate(_)).flatMap { cand date =>
+        cand date.features
+          .getOrElse(Earlyb rdSearchResultFeature, None)
       }
-    val idToSearchResults = allSearchResults.map(sr => sr.id -> sr).toMap
-    val tweetIdToEbFeatures = EarlybirdResponseUtil.getTweetThriftFeaturesByTweetId(
-      searcherUserId = query.getRequiredUserId,
-      screenName = screenName,
+    val  dToSearchResults = allSearchResults.map(sr => sr. d -> sr).toMap
+    val t et dToEbFeatures = Earlyb rdResponseUt l.getT etThr ftFeaturesByT et d(
+      searc rUser d = query.getRequ redUser d,
+      screenNa  = screenNa ,
       userLanguages = userLanguages,
-      uiLanguageCode = uiLanguageCode,
-      followedUserIds = followedUserIds,
-      mutuallyFollowingUserIds = Set.empty,
+      u LanguageCode = u LanguageCode,
+      follo dUser ds = follo dUser ds,
+      mutuallyFollow ngUser ds = Set.empty,
       searchResults = allSearchResults,
-      sourceTweetSearchResults = Seq.empty,
+      s ceT etSearchResults = Seq.empty,
     )
 
-    candidates.map { candidate =>
-      val transformedEbFeatures = tweetIdToEbFeatures.get(candidate.candidate.id)
-      val earlybirdFeatures =
-        if (transformedEbFeatures.nonEmpty) transformedEbFeatures
-        else candidate.features.getOrElse(EarlybirdFeature, None)
+    cand dates.map { cand date =>
+      val transfor dEbFeatures = t et dToEbFeatures.get(cand date.cand date. d)
+      val earlyb rdFeatures =
+         f (transfor dEbFeatures.nonEmpty) transfor dEbFeatures
+        else cand date.features.getOrElse(Earlyb rdFeature, None)
 
-      val candidateIsRetweet = candidate.features.getOrElse(IsRetweetFeature, false)
-      val sourceTweetEbFeatures =
-        candidate.features.getOrElse(SourceTweetEarlybirdFeature, None)
+      val cand date sRet et = cand date.features.getOrElse( sRet etFeature, false)
+      val s ceT etEbFeatures =
+        cand date.features.getOrElse(S ceT etEarlyb rdFeature, None)
 
-      val originalTweetEbFeatures =
-        if (candidateIsRetweet && sourceTweetEbFeatures.nonEmpty)
-          sourceTweetEbFeatures
-        else earlybirdFeatures
+      val or g nalT etEbFeatures =
+         f (cand date sRet et && s ceT etEbFeatures.nonEmpty)
+          s ceT etEbFeatures
+        else earlyb rdFeatures
 
-      val earlybirdDataRecord =
-        EarlybirdAdapter.adaptToDataRecords(originalTweetEbFeatures).asScala.head
+      val earlyb rdDataRecord =
+        Earlyb rdAdapter.adaptToDataRecords(or g nalT etEbFeatures).asScala. ad
 
-      FeatureMapBuilder()
-        .add(EarlybirdFeature, earlybirdFeatures)
-        .add(EarlybirdDataRecordFeature, earlybirdDataRecord)
-        .add(EarlybirdSearchResultFeature, idToSearchResults.get(candidate.candidate.id))
-        .add(TweetUrlsFeature, earlybirdFeatures.flatMap(_.urlsList).getOrElse(Seq.empty))
-        .build()
+      FeatureMapBu lder()
+        .add(Earlyb rdFeature, earlyb rdFeatures)
+        .add(Earlyb rdDataRecordFeature, earlyb rdDataRecord)
+        .add(Earlyb rdSearchResultFeature,  dToSearchResults.get(cand date.cand date. d))
+        .add(T etUrlsFeature, earlyb rdFeatures.flatMap(_.urlsL st).getOrElse(Seq.empty))
+        .bu ld()
     }
   }
 }

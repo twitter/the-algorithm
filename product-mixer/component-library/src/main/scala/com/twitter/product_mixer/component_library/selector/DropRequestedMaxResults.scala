@@ -1,55 +1,55 @@
-package com.twitter.product_mixer.component_library.selector
+package com.tw ter.product_m xer.component_l brary.selector
 
-import com.twitter.product_mixer.core.functional_component.common.AllPipelines
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.BoundedParam
+ mport com.tw ter.product_m xer.core.funct onal_component.common.AllP pel nes
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.SelectorResult
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes.conf gap .BoundedParam
 
 /**
- * Limit the number of results to min(PipelineQuery.requestedMaxResults, ServerMaxResultsParam)
+ * L m  t  number of results to m n(P pel neQuery.requestedMaxResults, ServerMaxResultsParam)
  *
- * PipelineQuery.requestedMaxResults is optionally set in the pipelineQuery.
- * If it is not set, then the default value of DefaultRequestedMaxResultsParam is used.
+ * P pel neQuery.requestedMaxResults  s opt onally set  n t  p pel neQuery.
+ *  f    s not set, t n t  default value of DefaultRequestedMaxResultsParam  s used.
  *
- * ServerMaxResultsParam specifies the maximum number of results supported, irrespective of what is
- * specified by the client in PipelineQuery.requestedMaxResults
- * (or the DefaultRequestedMaxResultsParam default if not specified)
+ * ServerMaxResultsParam spec f es t  max mum number of results supported,  rrespect ve of what  s
+ * spec f ed by t  cl ent  n P pel neQuery.requestedMaxResults
+ * (or t  DefaultRequestedMaxResultsParam default  f not spec f ed)
  *
- * For example, if ServerMaxResultsParam is 5, PipelineQuery.requestedMaxResults is 3,
- * and the results contain 10 items, then these items will be reduced to the first 3 selected items.
+ * For example,  f ServerMaxResultsParam  s 5, P pel neQuery.requestedMaxResults  s 3,
+ * and t  results conta n 10  ems, t n t se  ems w ll be reduced to t  f rst 3 selected  ems.
  *
- * If PipelineQuery.requestedMaxResults is not set, DefaultRequestedMaxResultsParam is 3,
- * ServerMaxResultsParam is 5 and the results contain 10 items,
- * then these items will be reduced to the first 3 selected items.
+ *  f P pel neQuery.requestedMaxResults  s not set, DefaultRequestedMaxResultsParam  s 3,
+ * ServerMaxResultsParam  s 5 and t  results conta n 10  ems,
+ * t n t se  ems w ll be reduced to t  f rst 3 selected  ems.
  *
- * Another example, if ServerMaxResultsParam is 5, PipelineQuery.requestedMaxResults is 8,
- * and the results contain 10 items, then these will be reduced to the first 5 selected items.
+ * Anot r example,  f ServerMaxResultsParam  s 5, P pel neQuery.requestedMaxResults  s 8,
+ * and t  results conta n 10  ems, t n t se w ll be reduced to t  f rst 5 selected  ems.
  *
- * The items inside the modules will not be affected by this selector.
+ * T   ems  ns de t  modules w ll not be affected by t  selector.
  */
 case class DropRequestedMaxResults(
-  defaultRequestedMaxResultsParam: BoundedParam[Int],
-  serverMaxResultsParam: BoundedParam[Int])
-    extends Selector[PipelineQuery] {
+  defaultRequestedMaxResultsParam: BoundedParam[ nt],
+  serverMaxResultsParam: BoundedParam[ nt])
+    extends Selector[P pel neQuery] {
 
-  override val pipelineScope: CandidateScope = AllPipelines
+  overr de val p pel neScope: Cand dateScope = AllP pel nes
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+  overr de def apply(
+    query: P pel neQuery,
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
     val requestedMaxResults = query.maxResults(defaultRequestedMaxResultsParam)
     val serverMaxResults = query.params(serverMaxResultsParam)
     assert(requestedMaxResults > 0, "Requested max results must be greater than zero")
     assert(serverMaxResults > 0, "Server max results must be greater than zero")
 
-    val appliedMaxResults = Math.min(requestedMaxResults, serverMaxResults)
-    val resultUpdated = DropSelector.takeUntil(appliedMaxResults, result)
+    val appl edMaxResults = Math.m n(requestedMaxResults, serverMaxResults)
+    val resultUpdated = DropSelector.takeUnt l(appl edMaxResults, result)
 
-    SelectorResult(remainingCandidates = remainingCandidates, result = resultUpdated)
+    SelectorResult(rema n ngCand dates = rema n ngCand dates, result = resultUpdated)
   }
 }

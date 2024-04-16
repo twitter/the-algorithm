@@ -1,200 +1,200 @@
-package com.twitter.unified_user_actions.adapter.tweetypie_event
+package com.tw ter.un f ed_user_act ons.adapter.t etyp e_event
 
-import com.twitter.tweetypie.thriftscala.QuotedTweet
-import com.twitter.tweetypie.thriftscala.Share
-import com.twitter.tweetypie.thriftscala.TweetCreateEvent
-import com.twitter.tweetypie.thriftscala.TweetEventFlags
-import com.twitter.unified_user_actions.adapter.common.AdapterUtils
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.AuthorInfo
-import com.twitter.unified_user_actions.thriftscala.EventMetadata
-import com.twitter.unified_user_actions.thriftscala.Item
-import com.twitter.unified_user_actions.thriftscala.SourceLineage
-import com.twitter.unified_user_actions.thriftscala.TweetInfo
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
-import com.twitter.unified_user_actions.thriftscala.UserIdentifier
+ mport com.tw ter.t etyp e.thr ftscala.QuotedT et
+ mport com.tw ter.t etyp e.thr ftscala.Share
+ mport com.tw ter.t etyp e.thr ftscala.T etCreateEvent
+ mport com.tw ter.t etyp e.thr ftscala.T etEventFlags
+ mport com.tw ter.un f ed_user_act ons.adapter.common.AdapterUt ls
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Act onType
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Author nfo
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Event tadata
+ mport com.tw ter.un f ed_user_act ons.thr ftscala. em
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.S ceL neage
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.T et nfo
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Un f edUserAct on
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.User dent f er
 
 /**
- * Base class for Tweetypie TweetCreateEvent including Quote, Reply, Retweet, and Create.
+ * Base class for T etyp e T etCreateEvent  nclud ng Quote, Reply, Ret et, and Create.
  */
-trait BaseTweetypieTweetEventCreate extends BaseTweetypieTweetEvent[TweetCreateEvent] {
+tra  BaseT etyp eT etEventCreate extends BaseT etyp eT etEvent[T etCreateEvent] {
   type ExtractedEvent
-  protected def actionType: ActionType
+  protected def act onType: Act onType
 
   /**
-   *  This is the country code where actionTweetId is sent from. For the definitions,
-   *  check https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/thrift/com/twitter/tweetypie/tweet.thrift?L1001.
+   *  T   s t  country code w re act onT et d  s sent from. For t  def n  ons,
+   *  c ck https://s cegraph.tw ter.b z/g .tw ter.b z/s ce/-/blob/src/thr ft/com/tw ter/t etyp e/t et.thr ft?L1001.
    *
-   *  UUA sets this to be consistent with IESource to meet existing use requirement.
+   *  UUA sets t  to be cons stent w h  ES ce to  et ex st ng use requ re nt.
    *
-   *  For ServerTweetReply/Retweet/Quote, the geo-tagging country code is not available in TweetCreatEvent.
-   *  Thus, user signup country is picked to meet a customer use case.
+   *  For ServerT etReply/Ret et/Quote, t  geo-tagg ng country code  s not ava lable  n T etCreatEvent.
+   *  Thus, user s gnup country  s p cked to  et a custo r use case.
    *
-   *  The definition here conflicts with the intention of UUA to log the request country code
-   *  rather than the signup / geo-tagging country.
+   *  T  def n  on  re confl cts w h t   ntent on of UUA to log t  request country code
+   *  rat r than t  s gnup / geo-tagg ng country.
    *
    */
-  protected def getCountryCode(tce: TweetCreateEvent): Option[String] = {
-    tce.tweet.place match {
-      case Some(p) => p.countryCode
-      case _ => tce.user.safety.flatMap(_.signupCountryCode)
+  protected def getCountryCode(tce: T etCreateEvent): Opt on[Str ng] = {
+    tce.t et.place match {
+      case So (p) => p.countryCode
+      case _ => tce.user.safety.flatMap(_.s gnupCountryCode)
     }
   }
 
-  protected def getItem(
+  protected def get em(
     extractedEvent: ExtractedEvent,
-    tweetCreateEvent: TweetCreateEvent
-  ): Item
-  protected def extract(tweetCreateEvent: TweetCreateEvent): Option[ExtractedEvent]
+    t etCreateEvent: T etCreateEvent
+  ):  em
+  protected def extract(t etCreateEvent: T etCreateEvent): Opt on[ExtractedEvent]
 
-  def getUnifiedUserAction(
-    tweetCreateEvent: TweetCreateEvent,
-    tweetEventFlags: TweetEventFlags
-  ): Option[UnifiedUserAction] = {
-    extract(tweetCreateEvent).map { extractedEvent =>
-      UnifiedUserAction(
-        userIdentifier = getUserIdentifier(tweetCreateEvent),
-        item = getItem(extractedEvent, tweetCreateEvent),
-        actionType = actionType,
-        eventMetadata = getEventMetadata(tweetCreateEvent, tweetEventFlags),
+  def getUn f edUserAct on(
+    t etCreateEvent: T etCreateEvent,
+    t etEventFlags: T etEventFlags
+  ): Opt on[Un f edUserAct on] = {
+    extract(t etCreateEvent).map { extractedEvent =>
+      Un f edUserAct on(
+        user dent f er = getUser dent f er(t etCreateEvent),
+         em = get em(extractedEvent, t etCreateEvent),
+        act onType = act onType,
+        event tadata = getEvent tadata(t etCreateEvent, t etEventFlags),
         productSurface = None,
-        productSurfaceInfo = None
+        productSurface nfo = None
       )
     }
   }
 
-  protected def getUserIdentifier(tweetCreateEvent: TweetCreateEvent): UserIdentifier =
-    UserIdentifier(userId = Some(tweetCreateEvent.user.id))
+  protected def getUser dent f er(t etCreateEvent: T etCreateEvent): User dent f er =
+    User dent f er(user d = So (t etCreateEvent.user. d))
 
-  protected def getEventMetadata(
-    tweetCreateEvent: TweetCreateEvent,
-    flags: TweetEventFlags
-  ): EventMetadata =
-    EventMetadata(
-      sourceTimestampMs = flags.timestampMs,
-      receivedTimestampMs = AdapterUtils.currentTimestampMs,
-      sourceLineage = SourceLineage.ServerTweetypieEvents,
-      traceId = None, // Currently traceId is not stored in TweetCreateEvent
-      // UUA sets this to None since there is no request level language info.
+  protected def getEvent tadata(
+    t etCreateEvent: T etCreateEvent,
+    flags: T etEventFlags
+  ): Event tadata =
+    Event tadata(
+      s ceT  stampMs = flags.t  stampMs,
+      rece vedT  stampMs = AdapterUt ls.currentT  stampMs,
+      s ceL neage = S ceL neage.ServerT etyp eEvents,
+      trace d = None, // Currently trace d  s not stored  n T etCreateEvent
+      // UUA sets t  to None s nce t re  s no request level language  nfo.
       language = None,
-      countryCode = getCountryCode(tweetCreateEvent),
-      clientAppId = tweetCreateEvent.tweet.deviceSource.flatMap(_.clientAppId),
-      clientVersion = None // Currently clientVersion is not stored in TweetCreateEvent
+      countryCode = getCountryCode(t etCreateEvent),
+      cl entApp d = t etCreateEvent.t et.dev ceS ce.flatMap(_.cl entApp d),
+      cl entVers on = None // Currently cl entVers on  s not stored  n T etCreateEvent
     )
 }
 
 /**
- * Get UnifiedUserAction from a tweet Create.
- * Note the Create is generated when the tweet is not a Quote/Retweet/Reply.
+ * Get Un f edUserAct on from a t et Create.
+ * Note t  Create  s generated w n t  t et  s not a Quote/Ret et/Reply.
  */
-object TweetypieCreateEvent extends BaseTweetypieTweetEventCreate {
+object T etyp eCreateEvent extends BaseT etyp eT etEventCreate {
   type ExtractedEvent = Long
-  override protected val actionType: ActionType = ActionType.ServerTweetCreate
-  override protected def extract(tweetCreateEvent: TweetCreateEvent): Option[Long] =
-    Option(tweetCreateEvent.tweet.id)
+  overr de protected val act onType: Act onType = Act onType.ServerT etCreate
+  overr de protected def extract(t etCreateEvent: T etCreateEvent): Opt on[Long] =
+    Opt on(t etCreateEvent.t et. d)
 
-  protected def getItem(
-    tweetId: Long,
-    tweetCreateEvent: TweetCreateEvent
-  ): Item =
-    Item.TweetInfo(
-      TweetInfo(
-        actionTweetId = tweetId,
-        actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(tweetCreateEvent.user.id)))
+  protected def get em(
+    t et d: Long,
+    t etCreateEvent: T etCreateEvent
+  ):  em =
+     em.T et nfo(
+      T et nfo(
+        act onT et d = t et d,
+        act onT etAuthor nfo = So (Author nfo(author d = So (t etCreateEvent.user. d)))
       ))
 }
 
 /**
- * Get UnifiedUserAction from a Reply.
- * Note the Reply is generated when someone is replying to a tweet.
+ * Get Un f edUserAct on from a Reply.
+ * Note t  Reply  s generated w n so one  s reply ng to a t et.
  */
-object TweetypieReplyEvent extends BaseTweetypieTweetEventCreate {
-  case class PredicateOutput(tweetId: Long, userId: Long)
-  override type ExtractedEvent = PredicateOutput
-  override protected val actionType: ActionType = ActionType.ServerTweetReply
-  override protected def extract(tweetCreateEvent: TweetCreateEvent): Option[PredicateOutput] =
-    tweetCreateEvent.tweet.coreData
+object T etyp eReplyEvent extends BaseT etyp eT etEventCreate {
+  case class Pred cateOutput(t et d: Long, user d: Long)
+  overr de type ExtractedEvent = Pred cateOutput
+  overr de protected val act onType: Act onType = Act onType.ServerT etReply
+  overr de protected def extract(t etCreateEvent: T etCreateEvent): Opt on[Pred cateOutput] =
+    t etCreateEvent.t et.coreData
       .flatMap(_.reply).flatMap(r =>
-        r.inReplyToStatusId.map(tweetId => PredicateOutput(tweetId, r.inReplyToUserId)))
+        r. nReplyToStatus d.map(t et d => Pred cateOutput(t et d, r. nReplyToUser d)))
 
-  override protected def getItem(
-    repliedTweet: PredicateOutput,
-    tweetCreateEvent: TweetCreateEvent
-  ): Item = {
-    Item.TweetInfo(
-      TweetInfo(
-        actionTweetId = repliedTweet.tweetId,
-        actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(repliedTweet.userId))),
-        replyingTweetId = Some(tweetCreateEvent.tweet.id)
+  overr de protected def get em(
+    repl edT et: Pred cateOutput,
+    t etCreateEvent: T etCreateEvent
+  ):  em = {
+     em.T et nfo(
+      T et nfo(
+        act onT et d = repl edT et.t et d,
+        act onT etAuthor nfo = So (Author nfo(author d = So (repl edT et.user d))),
+        reply ngT et d = So (t etCreateEvent.t et. d)
       )
     )
   }
 }
 
 /**
- * Get UnifiedUserAction from a Quote.
- * Note the Quote is generated when someone is quoting (retweeting with comment) a tweet.
+ * Get Un f edUserAct on from a Quote.
+ * Note t  Quote  s generated w n so one  s quot ng (ret et ng w h com nt) a t et.
  */
-object TweetypieQuoteEvent extends BaseTweetypieTweetEventCreate {
-  override protected val actionType: ActionType = ActionType.ServerTweetQuote
-  type ExtractedEvent = QuotedTweet
-  override protected def extract(tweetCreateEvent: TweetCreateEvent): Option[QuotedTweet] =
-    tweetCreateEvent.tweet.quotedTweet
+object T etyp eQuoteEvent extends BaseT etyp eT etEventCreate {
+  overr de protected val act onType: Act onType = Act onType.ServerT etQuote
+  type ExtractedEvent = QuotedT et
+  overr de protected def extract(t etCreateEvent: T etCreateEvent): Opt on[QuotedT et] =
+    t etCreateEvent.t et.quotedT et
 
-  override protected def getItem(
-    quotedTweet: QuotedTweet,
-    tweetCreateEvent: TweetCreateEvent
-  ): Item =
-    Item.TweetInfo(
-      TweetInfo(
-        actionTweetId = quotedTweet.tweetId,
-        actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(quotedTweet.userId))),
-        quotingTweetId = Some(tweetCreateEvent.tweet.id)
+  overr de protected def get em(
+    quotedT et: QuotedT et,
+    t etCreateEvent: T etCreateEvent
+  ):  em =
+     em.T et nfo(
+      T et nfo(
+        act onT et d = quotedT et.t et d,
+        act onT etAuthor nfo = So (Author nfo(author d = So (quotedT et.user d))),
+        quot ngT et d = So (t etCreateEvent.t et. d)
       )
     )
 }
 
 /**
- * Get UnifiedUserAction from a Retweet.
- * Note the Retweet is generated when someone is retweeting (without comment) a tweet.
+ * Get Un f edUserAct on from a Ret et.
+ * Note t  Ret et  s generated w n so one  s ret et ng (w hout com nt) a t et.
  */
-object TweetypieRetweetEvent extends BaseTweetypieTweetEventCreate {
-  override type ExtractedEvent = Share
-  override protected val actionType: ActionType = ActionType.ServerTweetRetweet
-  override protected def extract(tweetCreateEvent: TweetCreateEvent): Option[Share] =
-    tweetCreateEvent.tweet.coreData.flatMap(_.share)
+object T etyp eRet etEvent extends BaseT etyp eT etEventCreate {
+  overr de type ExtractedEvent = Share
+  overr de protected val act onType: Act onType = Act onType.ServerT etRet et
+  overr de protected def extract(t etCreateEvent: T etCreateEvent): Opt on[Share] =
+    t etCreateEvent.t et.coreData.flatMap(_.share)
 
-  override protected def getItem(share: Share, tweetCreateEvent: TweetCreateEvent): Item =
-    Item.TweetInfo(
-      TweetInfo(
-        actionTweetId = share.sourceStatusId,
-        actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(share.sourceUserId))),
-        retweetingTweetId = Some(tweetCreateEvent.tweet.id)
+  overr de protected def get em(share: Share, t etCreateEvent: T etCreateEvent):  em =
+     em.T et nfo(
+      T et nfo(
+        act onT et d = share.s ceStatus d,
+        act onT etAuthor nfo = So (Author nfo(author d = So (share.s ceUser d))),
+        ret et ngT et d = So (t etCreateEvent.t et. d)
       )
     )
 }
 
 /**
- * Get UnifiedUserAction from a TweetEdit.
- * Note the Edit is generated when someone is editing their quote or default tweet. The edit will
- * generate a new Tweet.
+ * Get Un f edUserAct on from a T etEd .
+ * Note t  Ed   s generated w n so one  s ed  ng t  r quote or default t et. T  ed  w ll
+ * generate a new T et.
  */
-object TweetypieEditEvent extends BaseTweetypieTweetEventCreate {
-  override type ExtractedEvent = Long
-  override protected def actionType: ActionType = ActionType.ServerTweetEdit
-  override protected def extract(tweetCreateEvent: TweetCreateEvent): Option[Long] =
-    TweetypieEventUtils.editedTweetIdFromTweet(tweetCreateEvent.tweet)
+object T etyp eEd Event extends BaseT etyp eT etEventCreate {
+  overr de type ExtractedEvent = Long
+  overr de protected def act onType: Act onType = Act onType.ServerT etEd 
+  overr de protected def extract(t etCreateEvent: T etCreateEvent): Opt on[Long] =
+    T etyp eEventUt ls.ed edT et dFromT et(t etCreateEvent.t et)
 
-  override protected def getItem(
-    editedTweetId: Long,
-    tweetCreateEvent: TweetCreateEvent
-  ): Item =
-    Item.TweetInfo(
-      TweetInfo(
-        actionTweetId = tweetCreateEvent.tweet.id,
-        actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(tweetCreateEvent.user.id))),
-        editedTweetId = Some(editedTweetId),
-        quotedTweetId = tweetCreateEvent.tweet.quotedTweet.map(_.tweetId)
+  overr de protected def get em(
+    ed edT et d: Long,
+    t etCreateEvent: T etCreateEvent
+  ):  em =
+     em.T et nfo(
+      T et nfo(
+        act onT et d = t etCreateEvent.t et. d,
+        act onT etAuthor nfo = So (Author nfo(author d = So (t etCreateEvent.user. d))),
+        ed edT et d = So (ed edT et d),
+        quotedT et d = t etCreateEvent.t et.quotedT et.map(_.t et d)
       )
     )
 }

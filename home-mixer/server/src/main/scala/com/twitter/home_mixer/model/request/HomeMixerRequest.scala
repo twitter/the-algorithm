@@ -1,19 +1,19 @@
-package com.twitter.home_mixer.model.request
+package com.tw ter.ho _m xer.model.request
 
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.DebugParams
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import com.twitter.product_mixer.core.model.marshalling.request.ProductContext
-import com.twitter.product_mixer.core.model.marshalling.request.Request
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Cl entContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.DebugParams
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Product
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.ProductContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Request
 
-case class HomeMixerRequest(
-  override val clientContext: ClientContext,
-  override val product: Product,
-  // Product-specific parameters should be placed in the Product Context
-  override val productContext: Option[ProductContext],
-  override val serializedRequestCursor: Option[String],
-  override val maxResults: Option[Int],
-  override val debugParams: Option[DebugParams],
-  // Parameters that apply to all products can be promoted to the request-level
-  homeRequestParam: Boolean)
+case class Ho M xerRequest(
+  overr de val cl entContext: Cl entContext,
+  overr de val product: Product,
+  // Product-spec f c para ters should be placed  n t  Product Context
+  overr de val productContext: Opt on[ProductContext],
+  overr de val ser al zedRequestCursor: Opt on[Str ng],
+  overr de val maxResults: Opt on[ nt],
+  overr de val debugParams: Opt on[DebugParams],
+  // Para ters that apply to all products can be promoted to t  request-level
+  ho RequestParam: Boolean)
     extends Request

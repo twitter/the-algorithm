@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.core.service.debug_query
+package com.tw ter.product_m xer.core.serv ce.debug_query
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.SerializerProvider
-import com.fasterxml.jackson.databind.ser.std.StdSerializer
-import com.twitter.timelines.configapi.Params
-import com.fasterxml.jackson.databind.module.SimpleModule
-import com.twitter.timelines.configapi.Config
+ mport com.fasterxml.jackson.core.JsonGenerator
+ mport com.fasterxml.jackson.datab nd.Ser al zerProv der
+ mport com.fasterxml.jackson.datab nd.ser.std.StdSer al zer
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.fasterxml.jackson.datab nd.module.S mpleModule
+ mport com.tw ter.t  l nes.conf gap .Conf g
 
-object ParamsSerializerModule extends SimpleModule {
-  addSerializer(ParamsConfigSerializer)
-  addSerializer(ParamsStdSerializer)
+object ParamsSer al zerModule extends S mpleModule {
+  addSer al zer(ParamsConf gSer al zer)
+  addSer al zer(ParamsStdSer al zer)
 }
 
-object ParamsStdSerializer extends StdSerializer[Params](classOf[Params]) {
-  override def serialize(
+object ParamsStdSer al zer extends StdSer al zer[Params](classOf[Params]) {
+  overr de def ser al ze(
     value: Params,
     gen: JsonGenerator,
-    provider: SerializerProvider
-  ): Unit = {
-    gen.writeStartObject()
-    gen.writeObjectField("applied_params", value.allAppliedValues)
-    gen.writeEndObject()
+    prov der: Ser al zerProv der
+  ): Un  = {
+    gen.wr eStartObject()
+    gen.wr eObjectF eld("appl ed_params", value.allAppl edValues)
+    gen.wr eEndObject()
   }
 }
 
-object ParamsConfigSerializer extends StdSerializer[Config](classOf[Config]) {
-  override def serialize(
-    value: Config,
+object ParamsConf gSer al zer extends StdSer al zer[Conf g](classOf[Conf g]) {
+  overr de def ser al ze(
+    value: Conf g,
     gen: JsonGenerator,
-    provider: SerializerProvider
-  ): Unit = {
-    gen.writeString(value.simpleName)
+    prov der: Ser al zerProv der
+  ): Un  = {
+    gen.wr eStr ng(value.s mpleNa )
   }
 }

@@ -1,11 +1,11 @@
-scala_library(
-    sources = ["*.scala"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "unified_user_actions/enricher/src/main/scala/com/twitter/unified_user_actions/enricher",
-        "unified_user_actions/enricher/src/main/scala/com/twitter/unified_user_actions/enricher/hydrator:base",
-        "unified_user_actions/enricher/src/main/scala/com/twitter/unified_user_actions/enricher/partitioner:base",
-        "unified_user_actions/enricher/src/main/thrift/com/twitter/unified_user_actions/enricher/internal:internal-scala",
-        "unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions:unified_user_actions-scala",
+scala_l brary(
+    s ces = ["*.scala"],
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "un f ed_user_act ons/enr c r/src/ma n/scala/com/tw ter/un f ed_user_act ons/enr c r",
+        "un f ed_user_act ons/enr c r/src/ma n/scala/com/tw ter/un f ed_user_act ons/enr c r/hydrator:base",
+        "un f ed_user_act ons/enr c r/src/ma n/scala/com/tw ter/un f ed_user_act ons/enr c r/part  oner:base",
+        "un f ed_user_act ons/enr c r/src/ma n/thr ft/com/tw ter/un f ed_user_act ons/enr c r/ nternal: nternal-scala",
+        "un f ed_user_act ons/thr ft/src/ma n/thr ft/com/tw ter/un f ed_user_act ons:un f ed_user_act ons-scala",
     ],
 )

@@ -1,113 +1,113 @@
-package com.twitter.search.earlybird;
+package com.tw ter.search.earlyb rd;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.concurrent.ArrayBlock ngQueue;
+ mport java.ut l.concurrent.ExecutorServ ce;
+ mport java.ut l.concurrent.Executors;
+ mport java.ut l.concurrent.RejectedExecut onExcept on;
+ mport java.ut l.concurrent.ThreadFactory;
+ mport java.ut l.concurrent.ThreadPoolExecutor;
+ mport java.ut l.concurrent.T  Un ;
 
-import scala.Function0;
+ mport scala.Funct on0;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.ut l.concurrent.ThreadFactoryBu lder;
 
-import com.twitter.search.common.concurrent.ThreadPoolExecutorStats;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.util.ExecutorServiceFuturePool;
-import com.twitter.util.Future;
-import com.twitter.util.FuturePool;
+ mport com.tw ter.search.common.concurrent.ThreadPoolExecutorStats;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdProperty;
+ mport com.tw ter.ut l.ExecutorServ ceFuturePool;
+ mport com.tw ter.ut l.Future;
+ mport com.tw ter.ut l.FuturePool;
 
 /**
- * A future pool that delegates all calls to an underlying futurePool, which can be recreated.
+ * A future pool that delegates all calls to an underly ng futurePool, wh ch can be recreated.
  */
-public class EarlybirdFuturePoolManager implements FuturePool {
-  private volatile ExecutorServiceFuturePool pool = null;
+publ c class Earlyb rdFuturePoolManager  mple nts FuturePool {
+  pr vate volat le ExecutorServ ceFuturePool pool = null;
 
-  private final String threadName;
-  private final ThreadPoolExecutorStats threadPoolExecutorStats;
+  pr vate f nal Str ng threadNa ;
+  pr vate f nal ThreadPoolExecutorStats threadPoolExecutorStats;
 
-  public EarlybirdFuturePoolManager(String threadName) {
-    this.threadName = threadName;
-    this.threadPoolExecutorStats = new ThreadPoolExecutorStats(threadName);
+  publ c Earlyb rdFuturePoolManager(Str ng threadNa ) {
+    t .threadNa  = threadNa ;
+    t .threadPoolExecutorStats = new ThreadPoolExecutorStats(threadNa );
   }
 
-  final synchronized void createUnderlyingFuturePool(int threadCount) {
-    Preconditions.checkState(pool == null, "Cannot create a new pool before stopping the old one");
+  f nal synchron zed vo d createUnderly ngFuturePool( nt threadCount) {
+    Precond  ons.c ckState(pool == null, "Cannot create a new pool before stopp ng t  old one");
 
-    ExecutorService executorService =
-        createExecutorService(threadCount, getMaxQueueSize());
-    if (executorService instanceof ThreadPoolExecutor) {
-      threadPoolExecutorStats.setUnderlyingExecutorForStats((ThreadPoolExecutor) executorService);
+    ExecutorServ ce executorServ ce =
+        createExecutorServ ce(threadCount, getMaxQueueS ze());
+     f (executorServ ce  nstanceof ThreadPoolExecutor) {
+      threadPoolExecutorStats.setUnderly ngExecutorForStats((ThreadPoolExecutor) executorServ ce);
     }
 
-    pool = new ExecutorServiceFuturePool(executorService);
+    pool = new ExecutorServ ceFuturePool(executorServ ce);
   }
 
-  final synchronized void stopUnderlyingFuturePool(long timeout, TimeUnit timeunit)
-      throws InterruptedException {
-    Preconditions.checkNotNull(pool);
+  f nal synchron zed vo d stopUnderly ngFuturePool(long t  out, T  Un  t  un )
+      throws  nterruptedExcept on {
+    Precond  ons.c ckNotNull(pool);
     pool.executor().shutdown();
-    pool.executor().awaitTermination(timeout, timeunit);
+    pool.executor().awa Term nat on(t  out, t  un );
     pool = null;
   }
 
-  boolean isPoolReady() {
+  boolean  sPoolReady() {
     return pool != null;
   }
 
-  @Override
-  public final <T> Future<T> apply(Function0<T> f) {
-    return Preconditions.checkNotNull(pool).apply(f);
+  @Overr de
+  publ c f nal <T> Future<T> apply(Funct on0<T> f) {
+    return Precond  ons.c ckNotNull(pool).apply(f);
   }
 
-  @VisibleForTesting
-  protected ExecutorService createExecutorService(int threadCount, int maxQueueSize) {
-    if (maxQueueSize <= 0) {
-      return Executors.newFixedThreadPool(threadCount, createThreadFactory(threadName));
+  @V s bleForTest ng
+  protected ExecutorServ ce createExecutorServ ce( nt threadCount,  nt maxQueueS ze) {
+     f (maxQueueS ze <= 0) {
+      return Executors.newF xedThreadPool(threadCount, createThreadFactory(threadNa ));
     }
 
     SearchRateCounter rejectedTaskCounter =
-        SearchRateCounter.export(threadName + "_rejected_task_count");
+        SearchRateCounter.export(threadNa  + "_rejected_task_count");
     return new ThreadPoolExecutor(
-        threadCount, threadCount, 0, TimeUnit.MILLISECONDS,
-        new ArrayBlockingQueue<>(maxQueueSize),
-        createThreadFactory(threadName),
+        threadCount, threadCount, 0, T  Un .M LL SECONDS,
+        new ArrayBlock ngQueue<>(maxQueueS ze),
+        createThreadFactory(threadNa ),
         (runnable, executor) -> {
-          rejectedTaskCounter.increment();
-          throw new RejectedExecutionException(threadName + " queue is full");
+          rejectedTaskCounter. ncre nt();
+          throw new RejectedExecut onExcept on(threadNa  + " queue  s full");
         });
   }
 
-  @VisibleForTesting
-  protected int getMaxQueueSize() {
-    return EarlybirdProperty.MAX_QUEUE_SIZE.get(0);
+  @V s bleForTest ng
+  protected  nt getMaxQueueS ze() {
+    return Earlyb rdProperty.MAX_QUEUE_S ZE.get(0);
   }
 
-  @VisibleForTesting
-  static ThreadFactory createThreadFactory(String threadName) {
-    return new ThreadFactoryBuilder()
-        .setNameFormat(threadName + "-%d")
+  @V s bleForTest ng
+  stat c ThreadFactory createThreadFactory(Str ng threadNa ) {
+    return new ThreadFactoryBu lder()
+        .setNa Format(threadNa  + "-%d")
         .setDaemon(true)
-        .build();
+        .bu ld();
   }
 
-  @Override
-  public int poolSize() {
-    return Preconditions.checkNotNull(pool).poolSize();
+  @Overr de
+  publ c  nt poolS ze() {
+    return Precond  ons.c ckNotNull(pool).poolS ze();
   }
 
-  @Override
-  public int numActiveTasks() {
-    return Preconditions.checkNotNull(pool).numActiveTasks();
+  @Overr de
+  publ c  nt numAct veTasks() {
+    return Precond  ons.c ckNotNull(pool).numAct veTasks();
   }
 
-  @Override
-  public long numCompletedTasks() {
-    return Preconditions.checkNotNull(pool).numCompletedTasks();
+  @Overr de
+  publ c long numCompletedTasks() {
+    return Precond  ons.c ckNotNull(pool).numCompletedTasks();
   }
 
 

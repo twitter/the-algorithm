@@ -1,16 +1,16 @@
-package com.twitter.frigate.pushservice.config
+package com.tw ter.fr gate.pushserv ce.conf g
 
-import com.twitter.frigate.common.util.Experiments
+ mport com.tw ter.fr gate.common.ut l.Exper  nts
 
-object ExperimentsWithStats {
+object Exper  ntsW hStats {
 
   /**
-   * Add an experiment here to collect detailed pushservice stats.
+   * Add an exper  nt  re to collect deta led pushserv ce stats.
    *
-   * ! Important !
-   * Keep this set small and remove experiments when you don't need the stats anymore.
+   * !  mportant !
+   * Keep t  set small and remove exper  nts w n   don't need t  stats anymore.
    */
-  final val PushExperiments: Set[String] = Set(
-    Experiments.MRAndroidInlineActionHoldback.exptName,
+  f nal val PushExper  nts: Set[Str ng] = Set(
+    Exper  nts.MRAndro d nl neAct onHoldback.exptNa ,
   )
 }

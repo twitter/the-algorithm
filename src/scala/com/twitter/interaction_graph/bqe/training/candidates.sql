@@ -1,18 +1,18 @@
--- get latest partition of candidates with data
-DECLARE date_candidates DATE;
-SET date_candidates = (SELECT DATE(TIMESTAMP_MILLIS($start_time$)));
+-- get latest part  on of cand dates w h data
+DECLARE date_cand dates DATE;
+SET date_cand dates = (SELECT DATE(T MESTAMP_M LL S($start_t  $)));
 
-CREATE TABLE IF NOT EXISTS  `twttr-recos-ml-prod.realgraph.candidates_sampled` AS
-SELECT * FROM `twttr-recos-ml-prod.realgraph.candidates_for_training` LIMIT 100;
+CREATE TABLE  F NOT EX STS  `twttr-recos-ml-prod.realgraph.cand dates_sampled` AS
+SELECT * FROM `twttr-recos-ml-prod.realgraph.cand dates_for_tra n ng` L M T 100;
 
--- remove previous output snapshot (if exists) to avoid double-writing
+-- remove prev ous output snapshot ( f ex sts) to avo d double-wr  ng
 DELETE
-FROM `twttr-recos-ml-prod.realgraph.candidates_sampled`
-WHERE ds = date_candidates;
+FROM `twttr-recos-ml-prod.realgraph.cand dates_sampled`
+WHERE ds = date_cand dates;
 
--- sample from candidates table instead of recomputing features
-INSERT INTO `twttr-recos-ml-prod.realgraph.candidates_sampled`
-SELECT * FROM `twttr-recos-ml-prod.realgraph.candidates_for_training`
-WHERE MOD(ABS(FARM_FINGERPRINT(CONCAT(source_id, '_', destination_id))), 100) = $mod_remainder$
-AND ds = date_candidates;
+-- sample from cand dates table  nstead of recomput ng features
+ NSERT  NTO `twttr-recos-ml-prod.realgraph.cand dates_sampled`
+SELECT * FROM `twttr-recos-ml-prod.realgraph.cand dates_for_tra n ng`
+WHERE MOD(ABS(FARM_F NGERPR NT(CONCAT(s ce_ d, '_', dest nat on_ d))), 100) = $mod_rema nder$
+AND ds = date_cand dates;
 

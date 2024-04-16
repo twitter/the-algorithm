@@ -1,29 +1,29 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
 
 /**
- * contains information if a candidate is from a candidate source generated using the following signals.
+ * conta ns  nformat on  f a cand date  s from a cand date s ce generated us ng t  follow ng s gnals.
  */
-case class AddressBookMetadata(
-  inForwardPhoneBook: Boolean,
-  inReversePhoneBook: Boolean,
-  inForwardEmailBook: Boolean,
-  inReverseEmailBook: Boolean)
+case class AddressBook tadata(
+   nForwardPhoneBook: Boolean,
+   nReversePhoneBook: Boolean,
+   nForwardEma lBook: Boolean,
+   nReverseEma lBook: Boolean)
 
-object AddressBookMetadata {
+object AddressBook tadata {
 
-  val ForwardPhoneBookCandidateSource = CandidateSourceIdentifier(
-    Algorithm.ForwardPhoneBook.toString)
+  val ForwardPhoneBookCand dateS ce = Cand dateS ce dent f er(
+    Algor hm.ForwardPhoneBook.toStr ng)
 
-  val ReversePhoneBookCandidateSource = CandidateSourceIdentifier(
-    Algorithm.ReversePhoneBook.toString)
+  val ReversePhoneBookCand dateS ce = Cand dateS ce dent f er(
+    Algor hm.ReversePhoneBook.toStr ng)
 
-  val ForwardEmailBookCandidateSource = CandidateSourceIdentifier(
-    Algorithm.ForwardEmailBook.toString)
+  val ForwardEma lBookCand dateS ce = Cand dateS ce dent f er(
+    Algor hm.ForwardEma lBook.toStr ng)
 
-  val ReverseEmailBookCandidateSource = CandidateSourceIdentifier(
-    Algorithm.ReverseEmailBookIbis.toString)
+  val ReverseEma lBookCand dateS ce = Cand dateS ce dent f er(
+    Algor hm.ReverseEma lBook b s.toStr ng)
 
 }

@@ -1,45 +1,45 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.aurora.AuroraInstanceKey;
-import com.twitter.search.common.aurora.AuroraSchedulerClient;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.factory.PartitionConfigUtil;
+ mport com.tw ter.search.common.aurora.Aurora nstanceKey;
+ mport com.tw ter.search.common.aurora.AuroraSc dulerCl ent;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.factory.Part  onConf gUt l;
 
-public final class PartitionConfigLoader {
-  private static final Logger LOG = LoggerFactory.getLogger(PartitionConfigLoader.class);
+publ c f nal class Part  onConf gLoader {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Part  onConf gLoader.class);
 
-  private PartitionConfigLoader() {
-    // this never gets called
+  pr vate Part  onConf gLoader() {
+    // t  never gets called
   }
 
   /**
-   * Load partition information from the command line arguments and Aurora scheduler.
+   * Load part  on  nformat on from t  command l ne argu nts and Aurora sc duler.
    *
-   * @return The new PartitionConfig object for this host
+   * @return T  new Part  onConf g object for t  host
    */
-  public static PartitionConfig getPartitionInfoForMesosConfig(
-      AuroraSchedulerClient schedulerClient) throws PartitionConfigLoadingException {
-    AuroraInstanceKey instanceKey =
-        Preconditions.checkNotNull(EarlybirdConfig.getAuroraInstanceKey());
-    int numTasks;
+  publ c stat c Part  onConf g getPart  on nfoFor sosConf g(
+      AuroraSc dulerCl ent sc dulerCl ent) throws Part  onConf gLoad ngExcept on {
+    Aurora nstanceKey  nstanceKey =
+        Precond  ons.c ckNotNull(Earlyb rdConf g.getAurora nstanceKey());
+     nt numTasks;
 
     try {
-      numTasks = schedulerClient.getActiveTasks(
-          instanceKey.getRole(), instanceKey.getEnv(), instanceKey.getJobName()).size();
-      LOG.info("Found {} active tasks", numTasks);
-    } catch (IOException e) {
-      // This can happen when Aurora Scheduler is holding a conclave to elect a new reader.
-      LOG.warn("Failed to get tasks from Aurora scheduler.", e);
-      throw new PartitionConfigLoadingException("Failed to get tasks from Aurora scheduler.");
+      numTasks = sc dulerCl ent.getAct veTasks(
+           nstanceKey.getRole(),  nstanceKey.getEnv(),  nstanceKey.getJobNa ()).s ze();
+      LOG. nfo("Found {} act ve tasks", numTasks);
+    } catch ( OExcept on e) {
+      // T  can happen w n Aurora Sc duler  s hold ng a conclave to elect a new reader.
+      LOG.warn("Fa led to get tasks from Aurora sc duler.", e);
+      throw new Part  onConf gLoad ngExcept on("Fa led to get tasks from Aurora sc duler.");
     }
 
-    return PartitionConfigUtil.initPartitionConfigForAurora(numTasks);
+    return Part  onConf gUt l. n Part  onConf gForAurora(numTasks);
   }
 }

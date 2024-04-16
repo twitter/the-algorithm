@@ -1,22 +1,22 @@
-package com.twitter.search.core.earlybird.index;
+package com.tw ter.search.core.earlyb rd. ndex;
 
-import org.apache.lucene.document.Field;
-import org.apache.lucene.index.DocValuesType;
+ mport org.apac .lucene.docu nt.F eld;
+ mport org.apac .lucene. ndex.DocValuesType;
 
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
+ mport com.tw ter.search.common.sc ma.base.Earlyb rdF eldType;
 
-public class EarlybirdIndexableField extends Field {
+publ c class Earlyb rd ndexableF eld extends F eld {
 
   /**
-   * Creates a new indexable field with the given name, value and {@link EarlybirdFieldType}.
+   * Creates a new  ndexable f eld w h t  g ven na , value and {@l nk Earlyb rdF eldType}.
    */
-  public EarlybirdIndexableField(String name, Object value, EarlybirdFieldType fieldType) {
-    super(name, fieldType);
-    if (fieldType.docValuesType() == DocValuesType.NUMERIC) {
-      if (value instanceof Number) {
-        super.fieldsData = ((Number) value).longValue();
+  publ c Earlyb rd ndexableF eld(Str ng na , Object value, Earlyb rdF eldType f eldType) {
+    super(na , f eldType);
+     f (f eldType.docValuesType() == DocValuesType.NUMER C) {
+       f (value  nstanceof Number) {
+        super.f eldsData = ((Number) value).longValue();
       } else {
-        throw new IllegalArgumentException("value not a number: " + value.getClass());
+        throw new  llegalArgu ntExcept on("value not a number: " + value.getClass());
       }
     }
   }

@@ -1,794 +1,794 @@
-package com.twitter.simclusters_v2.scalding
+package com.tw ter.s mclusters_v2.scald ng
 
-import com.twitter.algebird.OptionMonoid
-import com.twitter.algebird.QTree
-import com.twitter.algebird.QTreeSemigroup
-import com.twitter.algebird.Semigroup
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.dal.client.dataset.SnapshotDALDataset
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.pluck.source.cassowary.FollowingsCosineSimilaritiesManhattanSource
-import com.twitter.pluck.source.cassowary.SimsCandidatesSource
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
+ mport com.tw ter.algeb rd.Opt onMono d
+ mport com.tw ter.algeb rd.QTree
+ mport com.tw ter.algeb rd.QTreeSem group
+ mport com.tw ter.algeb rd.Sem group
+ mport com.tw ter.dal.cl ent.dataset.KeyValDALDataset
+ mport com.tw ter.dal.cl ent.dataset.SnapshotDALDataset
+ mport com.tw ter. rm .cand date.thr ftscala.Cand dates
+ mport com.tw ter.pluck.s ce.cassowary.Follow ngsCos neS m lar  esManhattanS ce
+ mport com.tw ter.pluck.s ce.cassowary.S msCand datesS ce
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e._
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.Expl c Locat on
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.ProcAtla
+ mport com.tw ter.scald ng_ nternal.job.Tw terExecut onApp
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch._
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons
+ mport com.tw ter.s mclusters_v2.hdfs_s ces._
+ mport com.tw ter.s mclusters_v2.scald ng.common.Ut l
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.ExternalDataS ces
+ mport com.tw ter.s mclusters_v2.thr ftscala._
+ mport com.tw ter.users ce.snapshot.flat.Users ceFlatScalaDataset
+ mport com.tw ter.users ce.snapshot.flat.thr ftscala.FlatUser
 
-object ClusterDetailsJob {
+object ClusterDeta lsJob {
   case class Scores(followScore: Double, favScore: Double, logFavScore: Double)
 
-  case class IntermediateDetails(
-    numUsersWithAnyNonZeroScore: Int,
-    numUsersWithNonZeroFollowScore: Int,
-    numUsersWithNonZeroFavScore: Int,
-    favQTree: Option[QTree[Double]],
-    followQTree: Option[QTree[Double]],
-    logFavQTree: Option[QTree[Double]],
+  case class  nter d ateDeta ls(
+    numUsersW hAnyNonZeroScore:  nt,
+    numUsersW hNonZeroFollowScore:  nt,
+    numUsersW hNonZeroFavScore:  nt,
+    favQTree: Opt on[QTree[Double]],
+    followQTree: Opt on[QTree[Double]],
+    logFavQTree: Opt on[QTree[Double]],
     sumOfSquares: Scores,
     sum: Scores,
-    min: Scores,
+    m n: Scores,
     max: Scores)
 
-  case class InfoFromUserSource(
-    fractionMarkedNSFWUser: Double,
-    languageToFractionDeviceLanguage: Map[String, Double],
-    countryCodeToFractionKnownForWithCountryCode: Map[String, Double],
-    languageToFractionInferredLanguage: Map[String, Double])
+  case class  nfoFromUserS ce(
+    fract onMarkedNSFWUser: Double,
+    languageToFract onDev ceLanguage: Map[Str ng, Double],
+    countryCodeToFract onKnownForW hCountryCode: Map[Str ng, Double],
+    languageToFract on nferredLanguage: Map[Str ng, Double])
 
-  def positiveMin(a: Double, b: Double) = {
-    if (math.min(a, b) == 0.0) math.max(a, b) else math.min(a, b)
+  def pos  veM n(a: Double, b: Double) = {
+     f (math.m n(a, b) == 0.0) math.max(a, b) else math.m n(a, b)
   }
 
-  case class ClusterDetailsSemigroup(implicit qtreeSemigroup: Semigroup[QTree[Double]])
-      extends Semigroup[IntermediateDetails] {
-    val optionMonoid: OptionMonoid[QTree[Double]] = new OptionMonoid[QTree[Double]]()
-    override def plus(
-      left: IntermediateDetails,
-      right: IntermediateDetails
-    ): IntermediateDetails = {
-      IntermediateDetails(
-        left.numUsersWithAnyNonZeroScore + right.numUsersWithAnyNonZeroScore,
-        left.numUsersWithNonZeroFollowScore + right.numUsersWithNonZeroFollowScore,
-        left.numUsersWithNonZeroFavScore + right.numUsersWithNonZeroFavScore,
-        optionMonoid.plus(left.favQTree, right.favQTree),
-        optionMonoid.plus(left.followQTree, right.followQTree),
-        optionMonoid.plus(left.logFavQTree, right.logFavQTree),
+  case class ClusterDeta lsSem group( mpl c  qtreeSem group: Sem group[QTree[Double]])
+      extends Sem group[ nter d ateDeta ls] {
+    val opt onMono d: Opt onMono d[QTree[Double]] = new Opt onMono d[QTree[Double]]()
+    overr de def plus(
+      left:  nter d ateDeta ls,
+      r ght:  nter d ateDeta ls
+    ):  nter d ateDeta ls = {
+       nter d ateDeta ls(
+        left.numUsersW hAnyNonZeroScore + r ght.numUsersW hAnyNonZeroScore,
+        left.numUsersW hNonZeroFollowScore + r ght.numUsersW hNonZeroFollowScore,
+        left.numUsersW hNonZeroFavScore + r ght.numUsersW hNonZeroFavScore,
+        opt onMono d.plus(left.favQTree, r ght.favQTree),
+        opt onMono d.plus(left.followQTree, r ght.followQTree),
+        opt onMono d.plus(left.logFavQTree, r ght.logFavQTree),
         Scores(
-          left.sumOfSquares.followScore + right.sumOfSquares.followScore,
-          left.sumOfSquares.favScore + right.sumOfSquares.favScore,
-          left.sumOfSquares.logFavScore + right.sumOfSquares.logFavScore
+          left.sumOfSquares.followScore + r ght.sumOfSquares.followScore,
+          left.sumOfSquares.favScore + r ght.sumOfSquares.favScore,
+          left.sumOfSquares.logFavScore + r ght.sumOfSquares.logFavScore
         ),
         Scores(
-          left.sum.followScore + right.sum.followScore,
-          left.sum.favScore + right.sum.favScore,
-          left.sum.logFavScore + right.sum.logFavScore
+          left.sum.followScore + r ght.sum.followScore,
+          left.sum.favScore + r ght.sum.favScore,
+          left.sum.logFavScore + r ght.sum.logFavScore
         ),
         Scores(
-          positiveMin(left.min.followScore, right.min.followScore),
-          positiveMin(left.min.favScore, right.min.favScore),
-          positiveMin(left.min.logFavScore, right.min.logFavScore)
+          pos  veM n(left.m n.followScore, r ght.m n.followScore),
+          pos  veM n(left.m n.favScore, r ght.m n.favScore),
+          pos  veM n(left.m n.logFavScore, r ght.m n.logFavScore)
         ),
         Scores(
-          math.max(left.max.followScore, right.max.followScore),
-          math.max(left.max.favScore, right.max.favScore),
-          math.max(left.max.logFavScore, right.max.logFavScore)
+          math.max(left.max.followScore, r ght.max.followScore),
+          math.max(left.max.favScore, r ght.max.favScore),
+          math.max(left.max.logFavScore, r ght.max.logFavScore)
         )
       )
     }
   }
 
-  def intermediateDetailsPipe(
-    input: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    qtreeSemigroupKParameter: Int
-  ): TypedPipe[(Int, IntermediateDetails)] = {
-    implicit val qtSg: Semigroup[QTree[Double]] =
-      new QTreeSemigroup[Double](qtreeSemigroupKParameter)
-    implicit val cdSg: Semigroup[IntermediateDetails] = ClusterDetailsSemigroup()
-    input
+  def  nter d ateDeta lsP pe(
+     nput: TypedP pe[(Long, ClustersUser s nterested n)],
+    qtreeSem groupKPara ter:  nt
+  ): TypedP pe[( nt,  nter d ateDeta ls)] = {
+     mpl c  val qtSg: Sem group[QTree[Double]] =
+      new QTreeSem group[Double](qtreeSem groupKPara ter)
+     mpl c  val cdSg: Sem group[ nter d ateDeta ls] = ClusterDeta lsSem group()
+     nput
       .flatMap {
-        case (userId, clusterScoresStruct) =>
-          val clusterScoresArray = clusterScoresStruct.clusterIdToScores.toArray
+        case (user d, clusterScoresStruct) =>
+          val clusterScoresArray = clusterScoresStruct.cluster dToScores.toArray
           clusterScoresArray.map {
-            case (clusterId, scoresStruct) =>
+            case (cluster d, scoresStruct) =>
               val followScore = scoresStruct.followScore.getOrElse(0.0)
               val favScore = scoresStruct.favScore.getOrElse(0.0)
               val logFavScore = scoresStruct.logFavScore.getOrElse(0.0)
               (
-                clusterId,
-                IntermediateDetails(
-                  numUsersWithAnyNonZeroScore = 1,
-                  numUsersWithNonZeroFollowScore = if (followScore > 0) 1 else 0,
-                  numUsersWithNonZeroFavScore = if (favScore > 0) 1 else 0,
-                  favQTree = if (favScore > 0) Some(QTree(favScore)) else None,
-                  followQTree = if (followScore > 0) Some(QTree(followScore)) else None,
-                  logFavQTree = if (logFavScore > 0) Some(QTree(logFavScore)) else None,
+                cluster d,
+                 nter d ateDeta ls(
+                  numUsersW hAnyNonZeroScore = 1,
+                  numUsersW hNonZeroFollowScore =  f (followScore > 0) 1 else 0,
+                  numUsersW hNonZeroFavScore =  f (favScore > 0) 1 else 0,
+                  favQTree =  f (favScore > 0) So (QTree(favScore)) else None,
+                  followQTree =  f (followScore > 0) So (QTree(followScore)) else None,
+                  logFavQTree =  f (logFavScore > 0) So (QTree(logFavScore)) else None,
                   sumOfSquares = Scores(
                     followScore * followScore,
                     favScore * favScore,
                     logFavScore * logFavScore),
                   sum = Scores(followScore, favScore, logFavScore),
-                  min = Scores(followScore, favScore, logFavScore),
+                  m n = Scores(followScore, favScore, logFavScore),
                   max = Scores(followScore, favScore, logFavScore)
                 )
               )
           }
       }
       .sumByKey
-      // Uncomment for adhoc job
-      //.withReducers(100)
-      .toTypedPipe
+      // Uncom nt for adhoc job
+      //.w hReducers(100)
+      .toTypedP pe
   }
 
-  private def safeGetDoubleOpt(x: Option[Double]): Double = {
-    x.map { y => if (y.isNaN) 0 else y }.getOrElse(0)
+  pr vate def safeGetDoubleOpt(x: Opt on[Double]): Double = {
+    x.map { y =>  f (y. sNaN) 0 else y }.getOrElse(0)
   }
 
-  private def getSimilaritiesForAllPairs(
-    input: TypedPipe[(Long, ClustersUserIsInterestedIn)]
+  pr vate def getS m lar  esForAllPa rs(
+     nput: TypedP pe[(Long, ClustersUser s nterested n)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[((Int, Int), Scores)] = {
-    val allClusterPairsBeforeSumByKey = Stat("all_cluster_pairs_before_sum_by_key")
-    val clusterPairsWithin10Ratio = Stat("cluster_pairs_within_10_ratio")
-    val clusterPairsBeforeTopK = Stat("cluster_pairs_before_thresholding")
+     mpl c  un que D: Un que D
+  ): TypedP pe[(( nt,  nt), Scores)] = {
+    val allClusterPa rsBeforeSumByKey = Stat("all_cluster_pa rs_before_sum_by_key")
+    val clusterPa rsW h n10Rat o = Stat("cluster_pa rs_w h n_10_rat o")
+    val clusterPa rsBeforeTopK = Stat("cluster_pa rs_before_threshold ng")
 
-    input
+     nput
       .flatMap {
-        case (userId, clusterScoresStruct) =>
-          val clusterScoresArray = clusterScoresStruct.clusterIdToScores.toArray
-          (0 until clusterScoresArray.length).flatMap { i =>
-            (0 until clusterScoresArray.length).map { j =>
-              val (clusterI, scoresI) = clusterScoresArray(i)
+        case (user d, clusterScoresStruct) =>
+          val clusterScoresArray = clusterScoresStruct.cluster dToScores.toArray
+          (0 unt l clusterScoresArray.length).flatMap {   =>
+            (0 unt l clusterScoresArray.length).map { j =>
+              val (cluster , scores ) = clusterScoresArray( )
               val (clusterJ, scoresJ) = clusterScoresArray(j)
-              val ratioOfSizes =
-                scoresI.numUsersInterestedInThisClusterUpperBound.getOrElse(1).toDouble /
-                  scoresJ.numUsersInterestedInThisClusterUpperBound.getOrElse(1).toDouble
-              allClusterPairsBeforeSumByKey.inc()
-              if (ratioOfSizes > 0.1 && ratioOfSizes < 10) {
-                clusterPairsWithin10Ratio.inc()
+              val rat oOfS zes =
+                scores .numUsers nterested nT ClusterUpperBound.getOrElse(1).toDouble /
+                  scoresJ.numUsers nterested nT ClusterUpperBound.getOrElse(1).toDouble
+              allClusterPa rsBeforeSumByKey. nc()
+               f (rat oOfS zes > 0.1 && rat oOfS zes < 10) {
+                clusterPa rsW h n10Rat o. nc()
               }
-              val followI = safeGetDoubleOpt(scoresI.followScoreClusterNormalizedOnly)
-              val followJ = safeGetDoubleOpt(scoresJ.followScoreClusterNormalizedOnly)
-              val follow = followI * followJ
-              val favI = safeGetDoubleOpt(scoresI.favScoreClusterNormalizedOnly)
-              val favJ = safeGetDoubleOpt(scoresJ.favScoreClusterNormalizedOnly)
-              val fav = favI * favJ
-              val logFavI = safeGetDoubleOpt(scoresI.logFavScoreClusterNormalizedOnly)
-              val logFavJ = safeGetDoubleOpt(scoresJ.logFavScoreClusterNormalizedOnly)
-              val logFav = logFavI * logFavJ
-              ((clusterI, clusterJ), (follow, fav, logFav))
+              val follow  = safeGetDoubleOpt(scores .followScoreClusterNormal zedOnly)
+              val followJ = safeGetDoubleOpt(scoresJ.followScoreClusterNormal zedOnly)
+              val follow = follow  * followJ
+              val fav  = safeGetDoubleOpt(scores .favScoreClusterNormal zedOnly)
+              val favJ = safeGetDoubleOpt(scoresJ.favScoreClusterNormal zedOnly)
+              val fav = fav  * favJ
+              val logFav  = safeGetDoubleOpt(scores .logFavScoreClusterNormal zedOnly)
+              val logFavJ = safeGetDoubleOpt(scoresJ.logFavScoreClusterNormal zedOnly)
+              val logFav = logFav  * logFavJ
+              ((cluster , clusterJ), (follow, fav, logFav))
             }
           }
       }
       .sumByKey
-      // Uncomment for adhoc job
-      //.withReducers(600)
+      // Uncom nt for adhoc job
+      //.w hReducers(600)
       .map {
         case (key, (follow, fav, logFav)) =>
-          clusterPairsBeforeTopK.inc()
+          clusterPa rsBeforeTopK. nc()
           (key, Scores(follow, fav, logFav))
       }
   }
 
-  private def keepTopNeighbors(
-    allPairs: TypedPipe[((Int, Int), Scores)],
-    cosineThreshold: Double
+  pr vate def keepTopNe ghbors(
+    allPa rs: TypedP pe[(( nt,  nt), Scores)],
+    cos neThreshold: Double
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(Int, List[ClusterNeighbor])] = {
-    val clusterPairsMoreThanThreshold = Stat("cluster_pairs_cosine_gt_" + cosineThreshold)
-    val clusterPairsAfterTopK = Stat("cluster_pairs_after_topk")
-    val clustersWithFewNeighbors = Stat(s"clusters_with_fewer_than_100_neighbors")
-    val clustersWithManyNeighbors = Stat(s"clusters_with_more_than_100_neighbors")
+     mpl c  un que D: Un que D
+  ): TypedP pe[( nt, L st[ClusterNe ghbor])] = {
+    val clusterPa rsMoreThanThreshold = Stat("cluster_pa rs_cos ne_gt_" + cos neThreshold)
+    val clusterPa rsAfterTopK = Stat("cluster_pa rs_after_topk")
+    val clustersW hFewNe ghbors = Stat(s"clusters_w h_fe r_than_100_ne ghbors")
+    val clustersW hManyNe ghbors = Stat(s"clusters_w h_more_than_100_ne ghbors")
 
-    allPairs
+    allPa rs
       .flatMap {
-        case ((cI, cJ), Scores(followScore, favScore, logFavScore)) =>
-          if (followScore > cosineThreshold || logFavScore > cosineThreshold || favScore > cosineThreshold) {
-            clusterPairsMoreThanThreshold.inc()
-            Some((cI, ClusterNeighbor(cJ, Some(followScore), Some(favScore), Some(logFavScore))))
+        case ((c , cJ), Scores(followScore, favScore, logFavScore)) =>
+           f (followScore > cos neThreshold || logFavScore > cos neThreshold || favScore > cos neThreshold) {
+            clusterPa rsMoreThanThreshold. nc()
+            So ((c , ClusterNe ghbor(cJ, So (followScore), So (favScore), So (logFavScore))))
           } else None
       }
       .group
-      .toList
-      // Uncomment for adhoc job
-      //.withReducers(40)
+      .toL st
+      // Uncom nt for adhoc job
+      //.w hReducers(40)
       .map {
         case (key, seq) =>
-          val finalSize = seq.size
-          clusterPairsAfterTopK.incBy(finalSize)
-          if (finalSize < 100) {
-            clustersWithFewNeighbors.inc()
+          val f nalS ze = seq.s ze
+          clusterPa rsAfterTopK. ncBy(f nalS ze)
+           f (f nalS ze < 100) {
+            clustersW hFewNe ghbors. nc()
           } else {
-            clustersWithManyNeighbors.inc()
+            clustersW hManyNe ghbors. nc()
           }
           (
             key,
             seq.sortBy {
-              case cn: ClusterNeighbor =>
-                -(cn.followCosineSimilarity.getOrElse(0.0) + cn.logFavCosineSimilarity.getOrElse(
+              case cn: ClusterNe ghbor =>
+                -(cn.followCos neS m lar y.getOrElse(0.0) + cn.logFavCos neS m lar y.getOrElse(
                   0.0)) / 2
             })
       }
   }
 
-  def getTopSimilarClustersWithCosine(
-    input: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    cosineThreshold: Double
+  def getTopS m larClustersW hCos ne(
+     nput: TypedP pe[(Long, ClustersUser s nterested n)],
+    cos neThreshold: Double
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(Int, List[ClusterNeighbor])] = {
-    keepTopNeighbors(getSimilaritiesForAllPairs(input), cosineThreshold)
+     mpl c  un que D: Un que D
+  ): TypedP pe[( nt, L st[ClusterNe ghbor])] = {
+    keepTopNe ghbors(getS m lar  esForAllPa rs( nput), cos neThreshold)
   }
 
-  def getDistributionDetails(
+  def getD str but onDeta ls(
     qtree: QTree[Double],
     sum: Double,
     sumOfSquares: Double,
-    min: Double,
+    m n: Double,
     max: Double,
-    fullSize: Int
-  ): DistributionDetails = {
-    val mean = sum / fullSize
-    // note that the below is the naive calculation, and not the sample standard dev formula
-    // that divides by n-1. I don't think it makes a difference at our scale whether we use n or n-1
-    // and I'd rather use the simpler one.
-    val stdDev = math.sqrt(sumOfSquares / fullSize - mean * mean)
+    fullS ze:  nt
+  ): D str but onDeta ls = {
+    val  an = sum / fullS ze
+    // note that t  below  s t  na ve calculat on, and not t  sample standard dev formula
+    // that d v des by n-1.   don't th nk   makes a d fference at   scale w t r   use n or n-1
+    // and  'd rat r use t  s mpler one.
+    val stdDev = math.sqrt(sumOfSquares / fullS ze -  an *  an)
 
-    def getQB(percentile: Double): QuantileBounds = {
-      val (lb, ub) = qtree.quantileBounds(percentile)
-      QuantileBounds(lb, ub)
+    def getQB(percent le: Double): Quant leBounds = {
+      val (lb, ub) = qtree.quant leBounds(percent le)
+      Quant leBounds(lb, ub)
     }
 
-    DistributionDetails(
-      mean = mean,
-      standardDeviation = Some(stdDev),
-      min = Some(min),
-      p25 = Some(getQB(0.25)),
-      p50 = Some(getQB(0.5)),
-      p75 = Some(getQB(0.75)),
-      p95 = Some(getQB(0.95)),
-      max = Some(max)
+    D str but onDeta ls(
+       an =  an,
+      standardDev at on = So (stdDev),
+      m n = So (m n),
+      p25 = So (getQB(0.25)),
+      p50 = So (getQB(0.5)),
+      p75 = So (getQB(0.75)),
+      p95 = So (getQB(0.95)),
+      max = So (max)
     )
   }
 
   def keepCorrectModel(
-    input: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    modelVersionToKeep: String
+     nput: TypedP pe[(Long, ClustersUser s nterested n)],
+    modelVers onToKeep: Str ng
   )(
-    implicit uniqId: UniqueID
-  ): TypedPipe[(Long, ClustersUserIsInterestedIn)] = {
-    val allRecords = Stat("all_input_records")
-    val withCorrectVersion = Stat("with_correct_version")
-    input.filter {
+     mpl c  un q d: Un que D
+  ): TypedP pe[(Long, ClustersUser s nterested n)] = {
+    val allRecords = Stat("all_ nput_records")
+    val w hCorrectVers on = Stat("w h_correct_vers on")
+     nput.f lter {
       case (_, clusterScoresStruct) =>
-        //  allRecords.inc()
-        val result = clusterScoresStruct.knownForModelVersion == modelVersionToKeep
-        //  if (result) withCorrectVersion.inc()
+        //  allRecords. nc()
+        val result = clusterScoresStruct.knownForModelVers on == modelVers onToKeep
+        //   f (result) w hCorrectVers on. nc()
         result
     }
   }
 
-  def getInfoFromUserSource(
-    knownFor: TypedPipe[(Int, List[(Long, Float)])],
-    usersource: TypedPipe[FlatUser],
-    inferredLanguages: TypedPipe[(Long, Seq[(String, Double)])]
+  def get nfoFromUserS ce(
+    knownFor: TypedP pe[( nt, L st[(Long, Float)])],
+    users ce: TypedP pe[FlatUser],
+     nferredLanguages: TypedP pe[(Long, Seq[(Str ng, Double)])]
   )(
-    implicit uniqId: UniqueID
-  ): TypedPipe[(Int, InfoFromUserSource)] = {
+     mpl c  un q d: Un que D
+  ): TypedP pe[( nt,  nfoFromUserS ce)] = {
     val knownForUsers = knownFor.flatMap {
-      case (clusterId, userScoreList) =>
-        userScoreList.map {
-          case (userId, _) =>
-            (userId, clusterId)
+      case (cluster d, userScoreL st) =>
+        userScoreL st.map {
+          case (user d, _) =>
+            (user d, cluster d)
         }
     }
 
-    usersource
+    users ce
       .collect {
-        case fuser: FlatUser if fuser.id.isDefined =>
+        case fuser: FlatUser  f fuser. d. sDef ned =>
           (
-            fuser.id.get,
+            fuser. d.get,
             (
               fuser.accountCountryCode.getOrElse(""),
               fuser.language.getOrElse(""),
               fuser.nsfwUser.getOrElse(false)
             ))
       }
-      .join(knownForUsers)
-      .leftJoin(inferredLanguages)
+      .jo n(knownForUsers)
+      .leftJo n( nferredLanguages)
       .map {
-        case (_, (((countryCode, language, nsfw), clusterId), inferredLangsOpt)) =>
-          val nsfwInt = if (nsfw) 1 else 0
+        case (_, (((countryCode, language, nsfw), cluster d),  nferredLangsOpt)) =>
+          val nsfw nt =  f (nsfw) 1 else 0
           (
-            clusterId,
+            cluster d,
             (
               1,
-              nsfwInt,
+              nsfw nt,
               Map(language -> 1),
               Map(countryCode -> 1),
-              inferredLangsOpt.getOrElse(Seq(("", 1.0))).toMap
+               nferredLangsOpt.getOrElse(Seq(("", 1.0))).toMap
             )
           )
       }
       .sumByKey
       .mapValues {
         case (
-              denominator,
-              nsfwNumerator,
-              languageNumeratorsMap,
-              countryNumeratorsMap,
-              inferredLangsNumeratorsMap) =>
-          InfoFromUserSource(
-            nsfwNumerator * 1.0 / denominator,
-            languageNumeratorsMap.mapValues { x => x * 1.0 / denominator },
-            countryNumeratorsMap.mapValues { x => x * 1.0 / denominator },
-            inferredLangsNumeratorsMap.mapValues { x => x * 1.0 / denominator }
+              denom nator,
+              nsfwNu rator,
+              languageNu ratorsMap,
+              countryNu ratorsMap,
+               nferredLangsNu ratorsMap) =>
+           nfoFromUserS ce(
+            nsfwNu rator * 1.0 / denom nator,
+            languageNu ratorsMap.mapValues { x => x * 1.0 / denom nator },
+            countryNu ratorsMap.mapValues { x => x * 1.0 / denom nator },
+             nferredLangsNu ratorsMap.mapValues { x => x * 1.0 / denom nator }
           )
       }
   }
 
   /**
-   * Run the cluster details job and return the details for each cluster
-   * @param input interestedIn data
-   * @param qtreeSemigroupKParameter parameter for calculating percentiles using qtree monoid (set to a small number, usually < 7)
-   * @param modelVersionToKeep which modelVersion to use from interestedIn dataset
-   * @param knownFor clusterId -> users known for this cluster and their scores
-   * @param knownForTranspose userId -> clusters this user is known for and their scores
-   * @param usersource -> user source
-   * @param simsGraph -> sims graph in the form of userId -> adjacency list
-   * @param cosineThreshold -> cosine threshold to include a cluster in the list of similar clusters for a given cluster
-   * @param uniqId
-   * @return pipe with (modelVersion, clusterId) as the key and ClusterDetails struct as the value.
+   * Run t  cluster deta ls job and return t  deta ls for each cluster
+   * @param  nput  nterested n data
+   * @param qtreeSem groupKPara ter para ter for calculat ng percent les us ng qtree mono d (set to a small number, usually < 7)
+   * @param modelVers onToKeep wh ch modelVers on to use from  nterested n dataset
+   * @param knownFor cluster d -> users known for t  cluster and t  r scores
+   * @param knownForTranspose user d -> clusters t  user  s known for and t  r scores
+   * @param users ce -> user s ce
+   * @param s msGraph -> s ms graph  n t  form of user d -> adjacency l st
+   * @param cos neThreshold -> cos ne threshold to  nclude a cluster  n t  l st of s m lar clusters for a g ven cluster
+   * @param un q d
+   * @return p pe w h (modelVers on, cluster d) as t  key and ClusterDeta ls struct as t  value.
    */
   def run(
-    input: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    qtreeSemigroupKParameter: Int,
-    modelVersionToKeep: String,
-    knownFor: TypedPipe[(Int, List[(Long, Float)])],
-    knownForTranspose: TypedPipe[(Long, Array[(Int, Float)])],
-    usersource: Option[TypedPipe[FlatUser]],
-    inferredLanguageSource: Option[TypedPipe[(Long, Seq[(String, Double)])]],
-    simsGraph: Option[TypedPipe[(Long, Map[Long, Float])]],
-    cosineThreshold: Double
+     nput: TypedP pe[(Long, ClustersUser s nterested n)],
+    qtreeSem groupKPara ter:  nt,
+    modelVers onToKeep: Str ng,
+    knownFor: TypedP pe[( nt, L st[(Long, Float)])],
+    knownForTranspose: TypedP pe[(Long, Array[( nt, Float)])],
+    users ce: Opt on[TypedP pe[FlatUser]],
+     nferredLanguageS ce: Opt on[TypedP pe[(Long, Seq[(Str ng, Double)])]],
+    s msGraph: Opt on[TypedP pe[(Long, Map[Long, Float])]],
+    cos neThreshold: Double
   )(
-    implicit uniqId: UniqueID
-  ): Execution[TypedPipe[((String, Int), ClusterDetails)]] = {
-    val topSimilarClusters = getTopSimilarClustersWithCosine(input, cosineThreshold)
-    val infoFromUserSource: TypedPipe[(Int, InfoFromUserSource)] = (for {
-      us <- usersource
-      inferredLanguages <- inferredLanguageSource
-    } yield getInfoFromUserSource(knownFor, us, inferredLanguages)).getOrElse(TypedPipe.empty)
+     mpl c  un q d: Un que D
+  ): Execut on[TypedP pe[((Str ng,  nt), ClusterDeta ls)]] = {
+    val topS m larClusters = getTopS m larClustersW hCos ne( nput, cos neThreshold)
+    val  nfoFromUserS ce: TypedP pe[( nt,  nfoFromUserS ce)] = (for {
+      us <- users ce
+       nferredLanguages <-  nferredLanguageS ce
+    } y eld get nfoFromUserS ce(knownFor, us,  nferredLanguages)).getOrElse(TypedP pe.empty)
 
-    val clusterEvaluationExec = simsGraph match {
-      case Some(sg) =>
-        ClusterEvaluation.clusterLevelEvaluation(sg, knownForTranspose, "eval")
+    val clusterEvaluat onExec = s msGraph match {
+      case So (sg) =>
+        ClusterEvaluat on.clusterLevelEvaluat on(sg, knownForTranspose, "eval")
       case None =>
-        val dummyPipe: TypedPipe[(Int, (Int, ClusterQuality))] = TypedPipe.empty
-        Execution.from(dummyPipe)
+        val dum P pe: TypedP pe[( nt, ( nt, ClusterQual y))] = TypedP pe.empty
+        Execut on.from(dum P pe)
     }
 
-    clusterEvaluationExec
-      .map { clusterIdToSizesAndQualities =>
-        val clusterQualities: TypedPipe[(Int, ClusterQuality)] =
-          clusterIdToSizesAndQualities.mapValues(_._2)
-        intermediateDetailsPipe(
-          keepCorrectModel(input, modelVersionToKeep),
-          qtreeSemigroupKParameter)
-          .leftJoin(topSimilarClusters)
-          .leftJoin(infoFromUserSource)
-          .leftJoin(clusterQualities)
-          .join(knownFor)
+    clusterEvaluat onExec
+      .map { cluster dToS zesAndQual  es =>
+        val clusterQual  es: TypedP pe[( nt, ClusterQual y)] =
+          cluster dToS zesAndQual  es.mapValues(_._2)
+         nter d ateDeta lsP pe(
+          keepCorrectModel( nput, modelVers onToKeep),
+          qtreeSem groupKPara ter)
+          .leftJo n(topS m larClusters)
+          .leftJo n( nfoFromUserS ce)
+          .leftJo n(clusterQual  es)
+          .jo n(knownFor)
           .map {
             case (
-                  clusterId,
+                  cluster d,
                   (
                     (
-                      ((intermediateDetails, topSimilarNeighborsOpt), userSourceInfoOpt),
-                      qualityOpt),
+                      (( nter d ateDeta ls, topS m larNe ghborsOpt), userS ce nfoOpt),
+                      qual yOpt),
                     knownForUsers)
                 ) =>
               val knownForSorted = knownForUsers.sortBy(-_._2).map {
-                case (userId, score) =>
-                  UserWithScore(userId, score)
+                case (user d, score) =>
+                  UserW hScore(user d, score)
               }
-              (modelVersionToKeep, clusterId) ->
-                ClusterDetails(
-                  numUsersWithAnyNonZeroScore = intermediateDetails.numUsersWithAnyNonZeroScore,
-                  numUsersWithNonZeroFavScore = intermediateDetails.numUsersWithNonZeroFavScore,
-                  numUsersWithNonZeroFollowScore =
-                    intermediateDetails.numUsersWithNonZeroFollowScore,
-                  favScoreDistributionDetails = intermediateDetails.favQTree.map { qt =>
-                    getDistributionDetails(
+              (modelVers onToKeep, cluster d) ->
+                ClusterDeta ls(
+                  numUsersW hAnyNonZeroScore =  nter d ateDeta ls.numUsersW hAnyNonZeroScore,
+                  numUsersW hNonZeroFavScore =  nter d ateDeta ls.numUsersW hNonZeroFavScore,
+                  numUsersW hNonZeroFollowScore =
+                     nter d ateDeta ls.numUsersW hNonZeroFollowScore,
+                  favScoreD str but onDeta ls =  nter d ateDeta ls.favQTree.map { qt =>
+                    getD str but onDeta ls(
                       qtree = qt,
-                      sum = intermediateDetails.sum.favScore,
-                      sumOfSquares = intermediateDetails.sumOfSquares.favScore,
-                      min = intermediateDetails.min.favScore,
-                      max = intermediateDetails.max.favScore,
-                      fullSize = intermediateDetails.numUsersWithNonZeroFavScore
+                      sum =  nter d ateDeta ls.sum.favScore,
+                      sumOfSquares =  nter d ateDeta ls.sumOfSquares.favScore,
+                      m n =  nter d ateDeta ls.m n.favScore,
+                      max =  nter d ateDeta ls.max.favScore,
+                      fullS ze =  nter d ateDeta ls.numUsersW hNonZeroFavScore
                     )
                   },
-                  followScoreDistributionDetails = intermediateDetails.followQTree.map { qt =>
-                    getDistributionDetails(
+                  followScoreD str but onDeta ls =  nter d ateDeta ls.followQTree.map { qt =>
+                    getD str but onDeta ls(
                       qtree = qt,
-                      sum = intermediateDetails.sum.followScore,
-                      sumOfSquares = intermediateDetails.sumOfSquares.followScore,
-                      min = intermediateDetails.min.followScore,
-                      max = intermediateDetails.max.followScore,
-                      fullSize = intermediateDetails.numUsersWithNonZeroFollowScore
+                      sum =  nter d ateDeta ls.sum.followScore,
+                      sumOfSquares =  nter d ateDeta ls.sumOfSquares.followScore,
+                      m n =  nter d ateDeta ls.m n.followScore,
+                      max =  nter d ateDeta ls.max.followScore,
+                      fullS ze =  nter d ateDeta ls.numUsersW hNonZeroFollowScore
                     )
                   },
-                  logFavScoreDistributionDetails = intermediateDetails.logFavQTree.map { qt =>
-                    getDistributionDetails(
+                  logFavScoreD str but onDeta ls =  nter d ateDeta ls.logFavQTree.map { qt =>
+                    getD str but onDeta ls(
                       qtree = qt,
-                      sum = intermediateDetails.sum.logFavScore,
-                      sumOfSquares = intermediateDetails.sumOfSquares.logFavScore,
-                      min = intermediateDetails.min.logFavScore,
-                      max = intermediateDetails.max.logFavScore,
-                      // note: user has non-zero fav score iff a user has non-zero log-fav score
-                      fullSize = intermediateDetails.numUsersWithNonZeroFavScore
+                      sum =  nter d ateDeta ls.sum.logFavScore,
+                      sumOfSquares =  nter d ateDeta ls.sumOfSquares.logFavScore,
+                      m n =  nter d ateDeta ls.m n.logFavScore,
+                      max =  nter d ateDeta ls.max.logFavScore,
+                      // note: user has non-zero fav score  ff a user has non-zero log-fav score
+                      fullS ze =  nter d ateDeta ls.numUsersW hNonZeroFavScore
                     )
                   },
-                  knownForUsersAndScores = Some(knownForSorted),
-                  neighborClusters = topSimilarNeighborsOpt,
-                  fractionKnownForMarkedNSFWUser = userSourceInfoOpt.map(_.fractionMarkedNSFWUser),
-                  languageToFractionDeviceLanguage =
-                    userSourceInfoOpt.map(_.languageToFractionDeviceLanguage),
-                  countryCodeToFractionKnownForWithCountryCode =
-                    userSourceInfoOpt.map(_.countryCodeToFractionKnownForWithCountryCode),
-                  qualityMeasuredOnSimsGraph = qualityOpt,
-                  languageToFractionInferredLanguage =
-                    userSourceInfoOpt.map(_.languageToFractionInferredLanguage),
+                  knownForUsersAndScores = So (knownForSorted),
+                  ne ghborClusters = topS m larNe ghborsOpt,
+                  fract onKnownForMarkedNSFWUser = userS ce nfoOpt.map(_.fract onMarkedNSFWUser),
+                  languageToFract onDev ceLanguage =
+                    userS ce nfoOpt.map(_.languageToFract onDev ceLanguage),
+                  countryCodeToFract onKnownForW hCountryCode =
+                    userS ce nfoOpt.map(_.countryCodeToFract onKnownForW hCountryCode),
+                  qual y asuredOnS msGraph = qual yOpt,
+                  languageToFract on nferredLanguage =
+                    userS ce nfoOpt.map(_.languageToFract on nferredLanguage),
                 )
           }
       }
   }
 
-  def getTruncatedSims(
-    sims: TypedPipe[Candidates],
-    maxNeighbors: Int
-  ): TypedPipe[(Long, Map[Long, Float])] = {
-    sims.map { cands =>
+  def getTruncatedS ms(
+    s ms: TypedP pe[Cand dates],
+    maxNe ghbors:  nt
+  ): TypedP pe[(Long, Map[Long, Float])] = {
+    s ms.map { cands =>
       (
-        cands.userId,
-        // These candidates are already sorted, but leaving it in just in case the behavior changes upstream
-        cands.candidates
-          .map { c => (c.userId, c.score.toFloat) }.sortBy(-_._2).take(maxNeighbors).toMap
+        cands.user d,
+        // T se cand dates are already sorted, but leav ng    n just  n case t  behav or changes upstream
+        cands.cand dates
+          .map { c => (c.user d, c.score.toFloat) }.sortBy(-_._2).take(maxNe ghbors).toMap
       )
     }
   }
 }
 
 /**
- scalding remote run  --main-class com.twitter.simclusters_v2.scalding.ClusterDetailsAdhoc \
-  --target src/scala/com/twitter/simclusters_v2/scalding:cluster_details-adhoc \
-  --hadoop-properties "scalding.with.reducers.set.explicitly=true mapreduce.job.reduces=4000" \
+ scald ng remote run  --ma n-class com.tw ter.s mclusters_v2.scald ng.ClusterDeta lsAdhoc \
+  --target src/scala/com/tw ter/s mclusters_v2/scald ng:cluster_deta ls-adhoc \
+  --hadoop-propert es "scald ng.w h.reducers.set.expl c ly=true mapreduce.job.reduces=4000" \
   --user recos-platform -- \
   --date 2020-06-25 \
-  --dateForUserSource 2020-06-25 \
-  --includeUserSource \
-  --outputDir /user/recos-platform/adhoc/your_ldap/cluster_details_inferred_lang
+  --dateForUserS ce 2020-06-25 \
+  -- ncludeUserS ce \
+  --outputD r /user/recos-platform/adhoc/y _ldap/cluster_deta ls_ nferred_lang
  */
-object ClusterDetailsAdhoc extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  implicit val dp = DateParser.default
+object ClusterDeta lsAdhoc extends Tw terExecut onApp {
+   mpl c  val tz: java.ut l.T  Zone = DateOps.UTC
+   mpl c  val dp = DateParser.default
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
-          val date = DateRange.parse(args("dateForUserSource"))
+  def job: Execut on[Un ] =
+    Execut on.getConf gMode.flatMap {
+      case (conf g, mode) =>
+        Execut on.w h d {  mpl c  un que d =>
+          val args = conf g.getArgs
+          val date = DateRange.parse(args("dateForUserS ce"))
           val (knownFor, knownForTranspose) =
             args
-              .optional("knownForDir").map { location =>
+              .opt onal("knownForD r").map { locat on =>
                 (
-                  KnownForSources.transpose(KnownForSources.readKnownFor(location)),
-                  KnownForSources.readKnownFor(location)
+                  KnownForS ces.transpose(KnownForS ces.readKnownFor(locat on)),
+                  KnownForS ces.readKnownFor(locat on)
                 )
               }.getOrElse(
                 (
-                  KnownForSources.clusterToKnownFor_20M_145K_updated,
-                  KnownForSources.knownFor_20M_145K_updated
+                  KnownForS ces.clusterToKnownFor_20M_145K_updated,
+                  KnownForS ces.knownFor_20M_145K_updated
                 )
               )
 
-          val interestedIn = args
-            .optional("inputDir").map { interestedInInputDir =>
-              TypedPipe.from(AdhocKeyValSources.interestedInSource(interestedInInputDir))
+          val  nterested n = args
+            .opt onal(" nputD r").map {  nterested n nputD r =>
+              TypedP pe.from(AdhocKeyValS ces. nterested nS ce( nterested n nputD r))
             }.getOrElse(
               DAL
                 .readMostRecentSnapshotNoOlderThan(
-                  SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
+                  S mclustersV2 nterested n20M145KUpdatedScalaDataset,
                   Days(14))
-                .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-                .toTypedPipe
+                .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+                .toTypedP pe
                 .map {
-                  case KeyVal(userId, clustersUserIsInterestedIn) =>
-                    (userId, clustersUserIsInterestedIn)
+                  case KeyVal(user d, clustersUser s nterested n) =>
+                    (user d, clustersUser s nterested n)
                 }
             )
 
-          val userSourceOpt = if (args.boolean("includeUserSource")) {
-            Some(DAL.readMostRecentSnapshot(UsersourceFlatScalaDataset, date).toTypedPipe)
+          val userS ceOpt =  f (args.boolean(" ncludeUserS ce")) {
+            So (DAL.readMostRecentSnapshot(Users ceFlatScalaDataset, date).toTypedP pe)
           } else None
 
-          val inferredLanguagesOpt = if (args.boolean("includeUserSource")) {
-            Some(ExternalDataSources.inferredUserProducedLanguageSource)
+          val  nferredLanguagesOpt =  f (args.boolean(" ncludeUserS ce")) {
+            So (ExternalDataS ces. nferredUserProducedLanguageS ce)
           } else None
 
-          val simsGraphOpt = args.optional("simsForEvalInputDir").map { sgDir =>
-            ClusterDetailsJob.getTruncatedSims(
-              TypedPipe.from(WTFCandidatesSource(sgDir)),
-              args.int("maxSimsNeighborsForEval", 20)
+          val s msGraphOpt = args.opt onal("s msForEval nputD r").map { sgD r =>
+            ClusterDeta lsJob.getTruncatedS ms(
+              TypedP pe.from(WTFCand datesS ce(sgD r)),
+              args. nt("maxS msNe ghborsForEval", 20)
             )
           }
 
-          Util.printCounters(
-            ClusterDetailsJob
+          Ut l.pr ntCounters(
+            ClusterDeta lsJob
               .run(
-                interestedIn,
-                args.int("qtreeSemigroupKParameter", 3),
-                args.getOrElse("modelVersion", "20M_145K_updated"),
+                 nterested n,
+                args. nt("qtreeSem groupKPara ter", 3),
+                args.getOrElse("modelVers on", "20M_145K_updated"),
                 knownFor,
                 knownForTranspose,
-                userSourceOpt,
-                inferredLanguagesOpt,
-                simsGraphOpt,
-                cosineThreshold = args.double("cosineThreshold", 0.01)
+                userS ceOpt,
+                 nferredLanguagesOpt,
+                s msGraphOpt,
+                cos neThreshold = args.double("cos neThreshold", 0.01)
               ).flatMap(
-                _.writeExecution(AdhocKeyValSources.clusterDetailsSource(args("outputDir"))))
+                _.wr eExecut on(AdhocKeyValS ces.clusterDeta lsS ce(args("outputD r"))))
           )
         }
     }
 }
 
-trait ClusterDetailsBatchTrait extends TwitterScheduledExecutionApp {
-  implicit val tz = DateOps.UTC
-  implicit val parser = DateParser.default
+tra  ClusterDeta lsBatchTra  extends Tw terSc duledExecut onApp {
+   mpl c  val tz = DateOps.UTC
+   mpl c  val parser = DateParser.default
 
-  def firstTime: String
-  def batchIncrement: Duration
-  def manhattanOutputPath: String
-  def clusterDetailsLiteOutputPath: String
-  def modelVersion: String
-  def knownForDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]]
-  def interestedInDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsInterestedIn]]
-  def outputDataset: KeyValDALDataset[KeyVal[(String, Int), ClusterDetails]]
-  def clusterDetailsLiteOutputDataset: SnapshotDALDataset[ClusterDetailsLite]
+  def f rstT  : Str ng
+  def batch ncre nt: Durat on
+  def manhattanOutputPath: Str ng
+  def clusterDeta lsL eOutputPath: Str ng
+  def modelVers on: Str ng
+  def knownForDataset: KeyValDALDataset[KeyVal[Long, ClustersUser sKnownFor]]
+  def  nterested nDataset: KeyValDALDataset[KeyVal[Long, ClustersUser s nterested n]]
+  def outputDataset: KeyValDALDataset[KeyVal[(Str ng,  nt), ClusterDeta ls]]
+  def clusterDeta lsL eOutputDataset: SnapshotDALDataset[ClusterDeta lsL e]
 
-  private lazy val execArgs = AnalyticsBatchExecutionArgs(
-    batchDesc = BatchDescription(this.getClass.getName.replace("$", "")),
-    firstTime = BatchFirstTime(RichDate(firstTime)),
-    lastTime = None,
-    batchIncrement = BatchIncrement(batchIncrement)
+  pr vate lazy val execArgs = Analyt csBatchExecut onArgs(
+    batchDesc = BatchDescr pt on(t .getClass.getNa .replace("$", "")),
+    f rstT   = BatchF rstT  (R chDate(f rstT  )),
+    lastT   = None,
+    batch ncre nt = Batch ncre nt(batch ncre nt)
   )
 
-  override def scheduledJob: Execution[Unit] = AnalyticsBatchExecution(execArgs) {
-    implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        Execution.withArgs { args =>
-          val qtreeSemigroupKParameter = args.int("qtreeSemigroupKParameter", 5)
-          val maxSimsNeighborsForEval = args.int("maxSimsNeighborsForEval", 20)
+  overr de def sc duledJob: Execut on[Un ] = Analyt csBatchExecut on(execArgs) {
+     mpl c  dateRange =>
+      Execut on.w h d {  mpl c  un que d =>
+        Execut on.w hArgs { args =>
+          val qtreeSem groupKPara ter = args. nt("qtreeSem groupKPara ter", 5)
+          val maxS msNe ghborsForEval = args. nt("maxS msNe ghborsForEval", 20)
           val knownForTranspose =
-            KnownForSources.fromKeyVal(
-              DAL.readMostRecentSnapshot(knownForDataset, dateRange.extend(Days(7))).toTypedPipe,
-              modelVersion)
-          val knownFor = KnownForSources.transpose(knownForTranspose)
-          val cosineThreshold = args.double("cosineThreshold", 0.01)
-          val interestedIn =
+            KnownForS ces.fromKeyVal(
+              DAL.readMostRecentSnapshot(knownForDataset, dateRange.extend(Days(7))).toTypedP pe,
+              modelVers on)
+          val knownFor = KnownForS ces.transpose(knownForTranspose)
+          val cos neThreshold = args.double("cos neThreshold", 0.01)
+          val  nterested n =
             DAL
-              .readMostRecentSnapshot(interestedInDataset, dateRange.extend(Days(7)))
-              .toTypedPipe
+              .readMostRecentSnapshot( nterested nDataset, dateRange.extend(Days(7)))
+              .toTypedP pe
               .map {
-                case KeyVal(userId, clustersUserIsInterestedIn) =>
-                  (userId, clustersUserIsInterestedIn)
+                case KeyVal(user d, clustersUser s nterested n) =>
+                  (user d, clustersUser s nterested n)
               }
-          val sims = if (modelVersion == ModelVersions.Model20M145K2020) {
-            // The model version 20m_145k_2020 uses approximate_cosine_follow as the input sims graph
-            // to cluster users. The same graph is used to evaluate the clusters
-            TypedPipe
-              .from(FollowingsCosineSimilaritiesManhattanSource())
+          val s ms =  f (modelVers on == ModelVers ons.Model20M145K2020) {
+            // T  model vers on 20m_145k_2020 uses approx mate_cos ne_follow as t   nput s ms graph
+            // to cluster users. T  sa  graph  s used to evaluate t  clusters
+            TypedP pe
+              .from(Follow ngsCos neS m lar  esManhattanS ce())
               .map(_._2)
           } else {
-            TypedPipe.from(
-              SimsCandidatesSource()(
+            TypedP pe.from(
+              S msCand datesS ce()(
                 dateRange = dateRange,
-                suffixPath = "/classified_candidates_rollup"
+                suff xPath = "/class f ed_cand dates_rollup"
               ))
           }
-          val resultExec = ClusterDetailsJob
+          val resultExec = ClusterDeta lsJob
             .run(
-              interestedIn,
-              qtreeSemigroupKParameter,
-              modelVersion,
+               nterested n,
+              qtreeSem groupKPara ter,
+              modelVers on,
               knownFor,
               knownForTranspose,
-              Some(DAL.readMostRecentSnapshot(UsersourceFlatScalaDataset, dateRange).toTypedPipe),
-              Some(ExternalDataSources.inferredUserProducedLanguageSource),
-              Some(
-                ClusterDetailsJob.getTruncatedSims(sims, maxNeighbors = maxSimsNeighborsForEval)),
-              cosineThreshold
+              So (DAL.readMostRecentSnapshot(Users ceFlatScalaDataset, dateRange).toTypedP pe),
+              So (ExternalDataS ces. nferredUserProducedLanguageS ce),
+              So (
+                ClusterDeta lsJob.getTruncatedS ms(s ms, maxNe ghbors = maxS msNe ghborsForEval)),
+              cos neThreshold
             ).flatMap { resultUnmapped =>
-              val clusterDetailsExec = resultUnmapped
+              val clusterDeta lsExec = resultUnmapped
                 .map {
-                  case (clusterKey, details) =>
-                    KeyVal(clusterKey, details)
-                }.writeDALVersionedKeyValExecution(
+                  case (clusterKey, deta ls) =>
+                    KeyVal(clusterKey, deta ls)
+                }.wr eDALVers onedKeyValExecut on(
                   outputDataset,
-                  D.Suffix(manhattanOutputPath)
+                  D.Suff x(manhattanOutputPath)
                 )
 
-              val clusterDetailsLiteExec =
+              val clusterDeta lsL eExec =
                 resultUnmapped
                   .map {
-                    case ((_, clusterId), details)
-                        if modelVersion == ModelVersions.Model20M145KDec11 =>
-                      ClusterDetailsLite(
-                        FullClusterId(ModelVersion.Model20m145kDec11, clusterId),
-                        details.numUsersWithAnyNonZeroScore,
-                        details.numUsersWithNonZeroFollowScore,
-                        details.numUsersWithNonZeroFavScore,
-                        details.knownForUsersAndScores.getOrElse(Nil)
+                    case ((_, cluster d), deta ls)
+                         f modelVers on == ModelVers ons.Model20M145KDec11 =>
+                      ClusterDeta lsL e(
+                        FullCluster d(ModelVers on.Model20m145kDec11, cluster d),
+                        deta ls.numUsersW hAnyNonZeroScore,
+                        deta ls.numUsersW hNonZeroFollowScore,
+                        deta ls.numUsersW hNonZeroFavScore,
+                        deta ls.knownForUsersAndScores.getOrElse(N l)
                       )
-                    case ((_, clusterId), details)
-                        if modelVersion == ModelVersions.Model20M145KUpdated =>
-                      ClusterDetailsLite(
-                        FullClusterId(ModelVersion.Model20m145kUpdated, clusterId),
-                        details.numUsersWithAnyNonZeroScore,
-                        details.numUsersWithNonZeroFollowScore,
-                        details.numUsersWithNonZeroFavScore,
-                        details.knownForUsersAndScores.getOrElse(Nil)
+                    case ((_, cluster d), deta ls)
+                         f modelVers on == ModelVers ons.Model20M145KUpdated =>
+                      ClusterDeta lsL e(
+                        FullCluster d(ModelVers on.Model20m145kUpdated, cluster d),
+                        deta ls.numUsersW hAnyNonZeroScore,
+                        deta ls.numUsersW hNonZeroFollowScore,
+                        deta ls.numUsersW hNonZeroFavScore,
+                        deta ls.knownForUsersAndScores.getOrElse(N l)
                       )
-                    case ((_, clusterId), details)
-                        if modelVersion == ModelVersions.Model20M145K2020 =>
-                      ClusterDetailsLite(
-                        FullClusterId(ModelVersion.Model20m145k2020, clusterId),
-                        details.numUsersWithAnyNonZeroScore,
-                        details.numUsersWithNonZeroFollowScore,
-                        details.numUsersWithNonZeroFavScore,
-                        details.knownForUsersAndScores.getOrElse(Nil)
+                    case ((_, cluster d), deta ls)
+                         f modelVers on == ModelVers ons.Model20M145K2020 =>
+                      ClusterDeta lsL e(
+                        FullCluster d(ModelVers on.Model20m145k2020, cluster d),
+                        deta ls.numUsersW hAnyNonZeroScore,
+                        deta ls.numUsersW hNonZeroFollowScore,
+                        deta ls.numUsersW hNonZeroFavScore,
+                        deta ls.knownForUsersAndScores.getOrElse(N l)
                       )
-                  }.writeDALSnapshotExecution(
-                    clusterDetailsLiteOutputDataset,
-                    D.Daily,
-                    D.Suffix(clusterDetailsLiteOutputPath),
+                  }.wr eDALSnapshotExecut on(
+                    clusterDeta lsL eOutputDataset,
+                    D.Da ly,
+                    D.Suff x(clusterDeta lsL eOutputPath),
                     D.EBLzo(),
                     dateRange.end)
 
-              Execution.zip(clusterDetailsExec, clusterDetailsLiteExec)
+              Execut on.z p(clusterDeta lsExec, clusterDeta lsL eExec)
             }
 
-          Util.printCounters(resultExec)
+          Ut l.pr ntCounters(resultExec)
         }
       }
   }
 
 }
 
-object ClusterDetailsBatch extends ClusterDetailsBatchTrait {
-  override val firstTime: String = "2018-07-28"
-  override val batchIncrement: Duration = Days(7)
+object ClusterDeta lsBatch extends ClusterDeta lsBatchTra  {
+  overr de val f rstT  : Str ng = "2018-07-28"
+  overr de val batch ncre nt: Durat on = Days(7)
 
-  override val manhattanOutputPath: String =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_cluster_details"
+  overr de val manhattanOutputPath: Str ng =
+    "/user/cassowary/manhattan_sequence_f les/s mclusters_v2_cluster_deta ls"
 
-  override val clusterDetailsLiteOutputPath: String =
-    "/user/cassowary/processed/simclusters_v2_cluster_details_lite"
+  overr de val clusterDeta lsL eOutputPath: Str ng =
+    "/user/cassowary/processed/s mclusters_v2_cluster_deta ls_l e"
 
-  override val modelVersion: String = ModelVersions.Model20M145KDec11
-  override val knownForDataset = SimclustersV2KnownFor20M145KDec11ScalaDataset
-  override val interestedInDataset = SimclustersV2InterestedInScalaDataset
-  override val outputDataset = SimclustersV2ClusterDetailsScalaDataset
-  override val clusterDetailsLiteOutputDataset =
-    SimclustersV2ClusterDetailsLiteScalaDataset
+  overr de val modelVers on: Str ng = ModelVers ons.Model20M145KDec11
+  overr de val knownForDataset = S mclustersV2KnownFor20M145KDec11ScalaDataset
+  overr de val  nterested nDataset = S mclustersV2 nterested nScalaDataset
+  overr de val outputDataset = S mclustersV2ClusterDeta lsScalaDataset
+  overr de val clusterDeta lsL eOutputDataset =
+    S mclustersV2ClusterDeta lsL eScalaDataset
 }
 
-object ClusterDetails20M145KUpdated extends ClusterDetailsBatchTrait {
-  override val firstTime: String = "2019-06-16"
-  override val batchIncrement: Duration = Days(7)
+object ClusterDeta ls20M145KUpdated extends ClusterDeta lsBatchTra  {
+  overr de val f rstT  : Str ng = "2019-06-16"
+  overr de val batch ncre nt: Durat on = Days(7)
 
-  override val manhattanOutputPath: String =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_cluster_details_20m_145k_updated"
+  overr de val manhattanOutputPath: Str ng =
+    "/user/cassowary/manhattan_sequence_f les/s mclusters_v2_cluster_deta ls_20m_145k_updated"
 
-  override val clusterDetailsLiteOutputPath: String =
-    "/user/cassowary/processed/simclusters_v2_cluster_details_lite_20m_145k_updated"
+  overr de val clusterDeta lsL eOutputPath: Str ng =
+    "/user/cassowary/processed/s mclusters_v2_cluster_deta ls_l e_20m_145k_updated"
 
-  override val modelVersion: String = ModelVersions.Model20M145KUpdated
-  override val knownForDataset = SimclustersV2KnownFor20M145KUpdatedScalaDataset
-  override val interestedInDataset = SimclustersV2InterestedIn20M145KUpdatedScalaDataset
-  override val outputDataset = SimclustersV2ClusterDetails20M145KUpdatedScalaDataset
-  override val clusterDetailsLiteOutputDataset =
-    SimclustersV2ClusterDetailsLite20M145KUpdatedScalaDataset
+  overr de val modelVers on: Str ng = ModelVers ons.Model20M145KUpdated
+  overr de val knownForDataset = S mclustersV2KnownFor20M145KUpdatedScalaDataset
+  overr de val  nterested nDataset = S mclustersV2 nterested n20M145KUpdatedScalaDataset
+  overr de val outputDataset = S mclustersV2ClusterDeta ls20M145KUpdatedScalaDataset
+  overr de val clusterDeta lsL eOutputDataset =
+    S mclustersV2ClusterDeta lsL e20M145KUpdatedScalaDataset
 }
 
 /**
- * capesospy-v2 update --build_locally --start_cron cluster_details_20m_145k_2020 \
- * src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+ * capesospy-v2 update --bu ld_locally --start_cron cluster_deta ls_20m_145k_2020 \
+ * src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc.yaml
  */
-object ClusterDetails20M145K2020 extends ClusterDetailsBatchTrait {
-  override val firstTime: String = "2020-10-15"
-  override val batchIncrement: Duration = Days(7)
+object ClusterDeta ls20M145K2020 extends ClusterDeta lsBatchTra  {
+  overr de val f rstT  : Str ng = "2020-10-15"
+  overr de val batch ncre nt: Durat on = Days(7)
 
-  override val manhattanOutputPath: String =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_cluster_details_20m_145k_2020"
+  overr de val manhattanOutputPath: Str ng =
+    "/user/cassowary/manhattan_sequence_f les/s mclusters_v2_cluster_deta ls_20m_145k_2020"
 
-  override val clusterDetailsLiteOutputPath: String =
-    "/user/cassowary/processed/simclusters_v2_cluster_details_lite_20m_145k_2020"
+  overr de val clusterDeta lsL eOutputPath: Str ng =
+    "/user/cassowary/processed/s mclusters_v2_cluster_deta ls_l e_20m_145k_2020"
 
-  override val modelVersion: String = ModelVersions.Model20M145K2020
-  override val knownForDataset = SimclustersV2KnownFor20M145K2020ScalaDataset
-  override val interestedInDataset = SimclustersV2InterestedIn20M145K2020ScalaDataset
-  override val outputDataset = SimclustersV2ClusterDetails20M145K2020ScalaDataset
-  override val clusterDetailsLiteOutputDataset =
-    SimclustersV2ClusterDetailsLite20M145K2020ScalaDataset
+  overr de val modelVers on: Str ng = ModelVers ons.Model20M145K2020
+  overr de val knownForDataset = S mclustersV2KnownFor20M145K2020ScalaDataset
+  overr de val  nterested nDataset = S mclustersV2 nterested n20M145K2020ScalaDataset
+  overr de val outputDataset = S mclustersV2ClusterDeta ls20M145K2020ScalaDataset
+  overr de val clusterDeta lsL eOutputDataset =
+    S mclustersV2ClusterDeta lsL e20M145K2020ScalaDataset
 }
 
 /**
-scalding remote run  --main-class com.twitter.simclusters_v2.scalding.DumpClusterDetailsAdhoc \
-  --target src/scala/com/twitter/simclusters_v2/scalding:cluster_details-dump \
+scald ng remote run  --ma n-class com.tw ter.s mclusters_v2.scald ng.DumpClusterDeta lsAdhoc \
+  --target src/scala/com/tw ter/s mclusters_v2/scald ng:cluster_deta ls-dump \
   --user recos-platform -- \
   --date 2020-06-25 \
-  --clusterIds 5542 129677 48645 \
-  --inputDir /user/recos-platform/adhoc/your_ldap/cluster_details_inferred_lang
+  --cluster ds 5542 129677 48645 \
+  -- nputD r /user/recos-platform/adhoc/y _ldap/cluster_deta ls_ nferred_lang
  */
-object DumpClusterDetailsAdhoc extends TwitterExecutionApp {
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
-          val clusters = args.list("clusterIds").map(_.toInt).toSet //(1 to 2500).toSet //
-          TypedPipe
-            .from(AdhocKeyValSources.clusterDetailsSource(args("inputDir")))
-            .filter { case ((modelVersion, clusterId), details) => clusters.contains(clusterId) }
-            .toIterableExecution
-            .map { iter =>
-              iter.foreach { x => println(Util.prettyJsonMapper.writeValueAsString(x)) }
+object DumpClusterDeta lsAdhoc extends Tw terExecut onApp {
+  def job: Execut on[Un ] =
+    Execut on.getConf gMode.flatMap {
+      case (conf g, mode) =>
+        Execut on.w h d {  mpl c  un que d =>
+          val args = conf g.getArgs
+          val clusters = args.l st("cluster ds").map(_.to nt).toSet //(1 to 2500).toSet //
+          TypedP pe
+            .from(AdhocKeyValS ces.clusterDeta lsS ce(args(" nputD r")))
+            .f lter { case ((modelVers on, cluster d), deta ls) => clusters.conta ns(cluster d) }
+            .to erableExecut on
+            .map {  er =>
+               er.foreach { x => pr ntln(Ut l.prettyJsonMapper.wr eValueAsStr ng(x)) }
             }
         }
     }
 }
 
 /**
- * ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:cluster_details && \
- * oscar hdfs --user cassowary --host hadoopnest2.atla.twitter.com --bundle cluster_details \
- * --tool com.twitter.simclusters_v2.scalding.DumpClusterSimilaritiesAdhoc --screen --screen-detached \
- * --tee your_ldap/dumpClusterSimilarities_20200103 -- \
- * --inputDir /user/cassowary/manhattan_sequence_files/simclusters_v2_cluster_details_20m_145k_updated/ \
- * --outputDir adhoc/your_ldap
+ * ./bazel bundle src/scala/com/tw ter/s mclusters_v2/scald ng:cluster_deta ls && \
+ * oscar hdfs --user cassowary --host hadoopnest2.atla.tw ter.com --bundle cluster_deta ls \
+ * --tool com.tw ter.s mclusters_v2.scald ng.DumpClusterS m lar  esAdhoc --screen --screen-detac d \
+ * --tee y _ldap/dumpClusterS m lar  es_20200103 -- \
+ * -- nputD r /user/cassowary/manhattan_sequence_f les/s mclusters_v2_cluster_deta ls_20m_145k_updated/ \
+ * --outputD r adhoc/y _ldap
  */
-object DumpClusterSimilaritiesAdhoc extends TwitterExecutionApp {
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
-          TypedPipe
-            .from(AdhocKeyValSources.clusterDetailsSource(args("inputDir")))
+object DumpClusterS m lar  esAdhoc extends Tw terExecut onApp {
+  def job: Execut on[Un ] =
+    Execut on.getConf gMode.flatMap {
+      case (conf g, mode) =>
+        Execut on.w h d {  mpl c  un que d =>
+          val args = conf g.getArgs
+          TypedP pe
+            .from(AdhocKeyValS ces.clusterDeta lsS ce(args(" nputD r")))
             .flatMap {
-              case ((_, clusterId), details) =>
-                details.neighborClusters.getOrElse(Nil).map { neighbor =>
-                  val compositeScore = (neighbor.followCosineSimilarity
-                    .getOrElse(0.0) + neighbor.favCosineSimilarity.getOrElse(0.0)) / 2
+              case ((_, cluster d), deta ls) =>
+                deta ls.ne ghborClusters.getOrElse(N l).map { ne ghbor =>
+                  val compos eScore = (ne ghbor.followCos neS m lar y
+                    .getOrElse(0.0) + ne ghbor.favCos neS m lar y.getOrElse(0.0)) / 2
                   (
-                    clusterId,
-                    neighbor.clusterId,
-                    "%.4f".format(compositeScore)
+                    cluster d,
+                    ne ghbor.cluster d,
+                    "%.4f".format(compos eScore)
                   )
                 }
-            }.writeExecution(TypedTsv(args("outputDir")))
+            }.wr eExecut on(TypedTsv(args("outputD r")))
         }
     }
 }

@@ -1,24 +1,24 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.ut l.Future;
 
-/** A top level filter for handling exceptions. */
-public class TopLevelExceptionHandlingFilter
-    extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  private final EarlybirdResponseExceptionHandler exceptionHandler;
+/** A top level f lter for handl ng except ons. */
+publ c class TopLevelExcept onHandl ngF lter
+    extends S mpleF lter<Earlyb rdRequest, Earlyb rdResponse> {
+  pr vate f nal Earlyb rdResponseExcept onHandler except onHandler;
 
-  /** Creates a new TopLevelExceptionHandlingFilter instance. */
-  public TopLevelExceptionHandlingFilter() {
-    this.exceptionHandler = new EarlybirdResponseExceptionHandler("top_level");
+  /** Creates a new TopLevelExcept onHandl ngF lter  nstance. */
+  publ c TopLevelExcept onHandl ngF lter() {
+    t .except onHandler = new Earlyb rdResponseExcept onHandler("top_level");
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
-    return exceptionHandler.handleException(request, service.apply(request));
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(Earlyb rdRequest request,
+                                         Serv ce<Earlyb rdRequest, Earlyb rdResponse> serv ce) {
+    return except onHandler.handleExcept on(request, serv ce.apply(request));
   }
 }

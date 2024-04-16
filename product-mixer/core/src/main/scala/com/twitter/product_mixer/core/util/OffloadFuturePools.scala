@@ -1,58 +1,58 @@
-package com.twitter.product_mixer.core.util
+package com.tw ter.product_m xer.core.ut l
 
-import com.twitter.finagle.offload.OffloadFuturePool
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.offload.OffloadFuturePool
+ mport com.tw ter.ut l.Future
 
 object OffloadFuturePools {
 
-  def parallelize[In, Out](
-    inputSeq: Seq[In],
-    transformer: In => Out,
-    parallelism: Int
+  def parallel ze[ n, Out](
+     nputSeq: Seq[ n],
+    transfor r:  n => Out,
+    parallel sm:  nt
   ): Future[Seq[Out]] = {
-    parallelize(inputSeq, transformer.andThen(Some(_)), parallelism, None).map(_.flatten)
+    parallel ze( nputSeq, transfor r.andT n(So (_)), parallel sm, None).map(_.flatten)
   }
 
-  def parallelize[In, Out](
-    inputSeq: Seq[In],
-    transformer: In => Out,
-    parallelism: Int,
+  def parallel ze[ n, Out](
+     nputSeq: Seq[ n],
+    transfor r:  n => Out,
+    parallel sm:  nt,
     default: Out
   ): Future[Seq[Out]] = {
-    val threadProcessFutures = (0 until parallelism).map { i =>
-      OffloadFuturePool.getPool(partitionAndProcessInput(inputSeq, transformer, i, parallelism))
+    val threadProcessFutures = (0 unt l parallel sm).map {   =>
+      OffloadFuturePool.getPool(part  onAndProcess nput( nputSeq, transfor r,  , parallel sm))
     }
 
     val resultMap = Future.collect(threadProcessFutures).map(_.flatten.toMap)
 
     Future.collect {
-      inputSeq.indices.map { idx =>
-        resultMap.map(_.getOrElse(idx, default))
+       nputSeq. nd ces.map {  dx =>
+        resultMap.map(_.getOrElse( dx, default))
       }
     }
   }
 
-  private def partitionAndProcessInput[In, Out](
-    inputSeq: Seq[In],
-    transformer: In => Out,
-    threadId: Int,
-    parallelism: Int
-  ): Seq[(Int, Out)] = {
-    partitionInputForThread(inputSeq, threadId, parallelism)
+  pr vate def part  onAndProcess nput[ n, Out](
+     nputSeq: Seq[ n],
+    transfor r:  n => Out,
+    thread d:  nt,
+    parallel sm:  nt
+  ): Seq[( nt, Out)] = {
+    part  on nputForThread( nputSeq, thread d, parallel sm)
       .map {
-        case (inputRecord, idx) =>
-          (idx, transformer(inputRecord))
+        case ( nputRecord,  dx) =>
+          ( dx, transfor r( nputRecord))
       }
   }
 
-  private def partitionInputForThread[In](
-    inputSeq: Seq[In],
-    threadId: Int,
-    parallelism: Int
-  ): Seq[(In, Int)] = {
-    inputSeq.zipWithIndex
-      .filter {
-        case (_, idx) => idx % parallelism == threadId
+  pr vate def part  on nputForThread[ n](
+     nputSeq: Seq[ n],
+    thread d:  nt,
+    parallel sm:  nt
+  ): Seq[( n,  nt)] = {
+     nputSeq.z pW h ndex
+      .f lter {
+        case (_,  dx) =>  dx % parallel sm == thread d
         case _ => false
       }
   }

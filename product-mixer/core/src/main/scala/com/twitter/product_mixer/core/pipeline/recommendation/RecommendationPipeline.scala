@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.pipeline.recommendation
+package com.tw ter.product_m xer.core.p pel ne.recom ndat on
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.RecommendationPipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.Pipeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Arrow
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Recom ndat onP pel ne dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel ne
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.Arrow
 
 /**
- * A Recommendation Pipeline
+ * A Recom ndat on P pel ne
  *
- * This is an abstract class, as we only construct these via the [[RecommendationPipelineBuilder]].
+ * T   s an abstract class, as   only construct t se v a t  [[Recom ndat onP pel neBu lder]].
  *
- * A [[RecommendationPipeline]] is capable of processing requests (queries) and returning responses (results)
- * in the correct format to directly send to users.
+ * A [[Recom ndat onP pel ne]]  s capable of process ng requests (quer es) and return ng responses (results)
+ *  n t  correct format to d rectly send to users.
  *
- * @tparam Query the domain model for the query or request
- * @tparam Candidate the type of the candidates
- * @tparam Result the final marshalled result type
+ * @tparam Query t  doma n model for t  query or request
+ * @tparam Cand date t  type of t  cand dates
+ * @tparam Result t  f nal marshalled result type
  */
-abstract class RecommendationPipeline[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
+abstract class Recom ndat onP pel ne[
+  Query <: P pel neQuery,
+  Cand date <: Un versalNoun[Any],
   Result]
-    extends Pipeline[Query, Result] {
-  override private[core] val config: RecommendationPipelineConfig[Query, Candidate, _, Result]
-  override val arrow: Arrow[Query, RecommendationPipelineResult[Candidate, Result]]
-  override val identifier: RecommendationPipelineIdentifier
+    extends P pel ne[Query, Result] {
+  overr de pr vate[core] val conf g: Recom ndat onP pel neConf g[Query, Cand date, _, Result]
+  overr de val arrow: Arrow[Query, Recom ndat onP pel neResult[Cand date, Result]]
+  overr de val  dent f er: Recom ndat onP pel ne dent f er
 }

@@ -1,441 +1,441 @@
-package com.twitter.search.earlybird_root.routers;
+package com.tw ter.search.earlyb rd_root.routers;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Collect ons;
+ mport java.ut l.L st;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.futures.Futures;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.earlybird.EarlybirdResponseMergeUtil;
-import com.twitter.search.earlybird.thrift.AdjustedRequestParams;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.common.ClientErrorException;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird_root.common.EarlybirdServiceResponse;
-import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
-import com.twitter.search.earlybird_root.mergers.SuperRootResponseMerger;
-import com.twitter.search.queryparser.util.QueryUtil;
-import com.twitter.util.Function;
-import com.twitter.util.Function0;
-import com.twitter.util.Future;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.common.futures.Futures;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.ut l.earlyb rd.Earlyb rdResponse rgeUt l;
+ mport com.tw ter.search.earlyb rd.thr ft.AdjustedRequestParams;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchQuery;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchRank ngMode;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResults;
+ mport com.tw ter.search.earlyb rd_root.common.Cl entErrorExcept on;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdFeatureSc ma rger;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestUt l;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdServ ceResponse;
+ mport com.tw ter.search.earlyb rd_root.f lters.Earlyb rdT  RangeF lter;
+ mport com.tw ter.search.earlyb rd_root. rgers.SuperRootResponse rger;
+ mport com.tw ter.search.queryparser.ut l.QueryUt l;
+ mport com.tw ter.ut l.Funct on;
+ mport com.tw ter.ut l.Funct on0;
+ mport com.tw ter.ut l.Future;
 
 /**
- * For Recency traffic SuperRoot hits realtime and/or protected realtime first and then archive
+ * For Recency traff c SuperRoot h s realt   and/or protected realt   f rst and t n arch ve
  */
-public abstract class AbstractRecencyAndRelevanceRequestRouter extends RequestRouter {
-  public static final String FULL_ARCHIVE_AVAILABLE_FOR_GET_PROTECTED_TWEETS_ONLY_DECIDER_KEY =
-      "superroot_full_archive_cluster_available_for_get_protected_tweets_only_requests";
-  public static final String FULL_ARCHIVE_AVAILABLE_FOR_NOT_ENOUGH_PROTECTED_RESULTS_DECIDER_KEY =
-      "superroot_full_archive_cluster_available_for_requests_without_enough_protected_results";
+publ c abstract class AbstractRecencyAndRelevanceRequestRouter extends RequestRouter {
+  publ c stat c f nal Str ng FULL_ARCH VE_AVA LABLE_FOR_GET_PROTECTED_TWEETS_ONLY_DEC DER_KEY =
+      "superroot_full_arch ve_cluster_ava lable_for_get_protected_t ets_only_requests";
+  publ c stat c f nal Str ng FULL_ARCH VE_AVA LABLE_FOR_NOT_ENOUGH_PROTECTED_RESULTS_DEC DER_KEY =
+      "superroot_full_arch ve_cluster_ava lable_for_requests_w hout_enough_protected_results";
 
-  private static final Logger LOG =
+  pr vate stat c f nal Logger LOG =
       LoggerFactory.getLogger(AbstractRecencyAndRelevanceRequestRouter.class);
 
-  private final String skipProtectedClusterDeciderKey;
-  private final String skipFullArchiveClusterDeciderKey;
+  pr vate f nal Str ng sk pProtectedClusterDec derKey;
+  pr vate f nal Str ng sk pFullArch veClusterDec derKey;
 
-  private final SearchCounter realtimeResponseInvalidCounter;
-  private final SearchCounter realtimeResponseSearchResultsNotSetCounter;
-  private final SearchCounter minSearchedStatusIdLargerThanRequestMaxIdCounter;
-  private final SearchCounter minSearchedStatusIdLargerThanRequestUntilTimeCounter;
+  pr vate f nal SearchCounter realt  Response nval dCounter;
+  pr vate f nal SearchCounter realt  ResponseSearchResultsNotSetCounter;
+  pr vate f nal SearchCounter m nSearc dStatus dLargerThanRequestMax dCounter;
+  pr vate f nal SearchCounter m nSearc dStatus dLargerThanRequestUnt lT  Counter;
 
-  private final Service<EarlybirdRequestContext, EarlybirdResponse> realtime;
-  private final Service<EarlybirdRequestContext, EarlybirdResponse> protectedRealtime;
-  private final Service<EarlybirdRequestContext, EarlybirdResponse> fullArchive;
-  private final SuperRootResponseMerger responseMerger;
-  private final SearchDecider decider;
+  pr vate f nal Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> realt  ;
+  pr vate f nal Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> protectedRealt  ;
+  pr vate f nal Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> fullArch ve;
+  pr vate f nal SuperRootResponse rger response rger;
+  pr vate f nal SearchDec der dec der;
 
   AbstractRecencyAndRelevanceRequestRouter(
-      Service<EarlybirdRequestContext, EarlybirdResponse> realtime,
-      Service<EarlybirdRequestContext, EarlybirdResponse> protectedRealtime,
-      Service<EarlybirdRequestContext, EarlybirdResponse> fullArchive,
-      EarlybirdTimeRangeFilter realtimeTimeRangeFilter,
-      EarlybirdTimeRangeFilter protectedTimeRangeFilter,
-      EarlybirdTimeRangeFilter fullArchiveTimeRangeFilter,
-      ThriftSearchRankingMode rankingMode,
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> realt  ,
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> protectedRealt  ,
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> fullArch ve,
+      Earlyb rdT  RangeF lter realt  T  RangeF lter,
+      Earlyb rdT  RangeF lter protectedT  RangeF lter,
+      Earlyb rdT  RangeF lter fullArch veT  RangeF lter,
+      Thr ftSearchRank ngMode rank ngMode,
       Clock clock,
-      SearchDecider decider,
-      EarlybirdFeatureSchemaMerger featureSchemaMerger) {
-    LOG.info("Instantiating AbstractRecencyAndRelevanceRequestRouter");
-    this.realtime = realtimeTimeRangeFilter.andThen(realtime);
-    this.protectedRealtime = protectedTimeRangeFilter.andThen(protectedRealtime);
-    this.fullArchive = fullArchiveTimeRangeFilter.andThen(fullArchive);
-    this.responseMerger = new SuperRootResponseMerger(rankingMode, featureSchemaMerger, clock);
-    this.decider = decider;
+      SearchDec der dec der,
+      Earlyb rdFeatureSc ma rger featureSc ma rger) {
+    LOG. nfo(" nstant at ng AbstractRecencyAndRelevanceRequestRouter");
+    t .realt   = realt  T  RangeF lter.andT n(realt  );
+    t .protectedRealt   = protectedT  RangeF lter.andT n(protectedRealt  );
+    t .fullArch ve = fullArch veT  RangeF lter.andT n(fullArch ve);
+    t .response rger = new SuperRootResponse rger(rank ngMode, featureSc ma rger, clock);
+    t .dec der = dec der;
 
-    String rankingModeForStats = rankingMode.name().toLowerCase();
-    skipProtectedClusterDeciderKey =
-        String.format("superroot_skip_protected_cluster_for_%s_requests", rankingModeForStats);
-    skipFullArchiveClusterDeciderKey =
-        String.format("superroot_skip_full_archive_cluster_for_%s_requests", rankingModeForStats);
+    Str ng rank ngModeForStats = rank ngMode.na ().toLo rCase();
+    sk pProtectedClusterDec derKey =
+        Str ng.format("superroot_sk p_protected_cluster_for_%s_requests", rank ngModeForStats);
+    sk pFullArch veClusterDec derKey =
+        Str ng.format("superroot_sk p_full_arch ve_cluster_for_%s_requests", rank ngModeForStats);
 
-    realtimeResponseInvalidCounter =
-        SearchCounter.export(rankingModeForStats + "_realtime_response_invalid");
-    realtimeResponseSearchResultsNotSetCounter =
-        SearchCounter.export(rankingModeForStats + "_realtime_response_search_results_not_set");
-    minSearchedStatusIdLargerThanRequestMaxIdCounter = SearchCounter.export(
-        rankingModeForStats + "_min_searched_status_id_larger_than_request_max_id");
-    minSearchedStatusIdLargerThanRequestUntilTimeCounter = SearchCounter.export(
-        rankingModeForStats + "_min_searched_status_id_larger_than_request_until_time");
+    realt  Response nval dCounter =
+        SearchCounter.export(rank ngModeForStats + "_realt  _response_ nval d");
+    realt  ResponseSearchResultsNotSetCounter =
+        SearchCounter.export(rank ngModeForStats + "_realt  _response_search_results_not_set");
+    m nSearc dStatus dLargerThanRequestMax dCounter = SearchCounter.export(
+        rank ngModeForStats + "_m n_searc d_status_ d_larger_than_request_max_ d");
+    m nSearc dStatus dLargerThanRequestUnt lT  Counter = SearchCounter.export(
+        rank ngModeForStats + "_m n_searc d_status_ d_larger_than_request_unt l_t  ");
   }
 
-  private void checkRequestPreconditions(EarlybirdRequest request) {
-    // CollectorParams should be set in EarlybirdRequestUtil.checkAndSetCollectorParams().
-    Preconditions.checkNotNull(request.getSearchQuery().getCollectorParams());
+  pr vate vo d c ckRequestPrecond  ons(Earlyb rdRequest request) {
+    // CollectorParams should be set  n Earlyb rdRequestUt l.c ckAndSetCollectorParams().
+    Precond  ons.c ckNotNull(request.getSearchQuery().getCollectorParams());
 
-    // return a Client error if the num results are less than 0
-    if (request.getSearchQuery().getNumResults() < 0) {
-      throw new ClientErrorException("The request.searchQuery.numResults field can't be negative");
+    // return a Cl ent error  f t  num results are less than 0
+     f (request.getSearchQuery().getNumResults() < 0) {
+      throw new Cl entErrorExcept on("T  request.searchQuery.numResults f eld can't be negat ve");
     }
 
-    if (request.getSearchQuery().getCollectorParams().getNumResultsToReturn() < 0) {
-      throw new ClientErrorException("The request.searchQuery.collectorParams.numResultsToReturn "
-          + "field can't be negative");
+     f (request.getSearchQuery().getCollectorParams().getNumResultsToReturn() < 0) {
+      throw new Cl entErrorExcept on("T  request.searchQuery.collectorParams.numResultsToReturn "
+          + "f eld can't be negat ve");
     }
   }
 
   /**
-   * Hit realtime and/or protected realtime first, if not enough results, then hit archive,
-   * merge the results.
+   * H  realt   and/or protected realt   f rst,  f not enough results, t n h  arch ve,
+   *  rge t  results.
    */
-  @Override
-  public Future<EarlybirdResponse> route(final EarlybirdRequestContext requestContext) {
-    EarlybirdRequest request = requestContext.getRequest();
+  @Overr de
+  publ c Future<Earlyb rdResponse> route(f nal Earlyb rdRequestContext requestContext) {
+    Earlyb rdRequest request = requestContext.getRequest();
 
-    this.checkRequestPreconditions(request);
+    t .c ckRequestPrecond  ons(request);
 
-    ArrayList<RequestResponse> savedRequestResponses = new ArrayList<>();
+    ArrayL st<RequestResponse> savedRequestResponses = new ArrayL st<>();
 
-    // If clients do not define numResults to return or the numResults requested are 0
-    // return an empty EarlyBirdResponse without hitting any service.
-    if (request.getSearchQuery().getNumResults() == 0
+    //  f cl ents do not def ne numResults to return or t  numResults requested are 0
+    // return an empty EarlyB rdResponse w hout h t ng any serv ce.
+     f (request.getSearchQuery().getNumResults() == 0
         || request.getSearchQuery().getCollectorParams().getNumResultsToReturn() == 0) {
       return Future.value(successNoResultsResponse());
     }
 
-    // Realtime earlybird response is already required. Even if the service is not called
-    // the result passed to the mergers should be a valid one.
-    EarlybirdServiceResponse.ServiceState realtimeServiceState =
-        getRealtimeServiceState(requestContext);
-    final Future<EarlybirdServiceResponse> realtimeResponseFuture =
-        realtimeServiceState.serviceWasCalled()
-            ? getRealtimeResponse(savedRequestResponses, requestContext)
-            : Future.value(EarlybirdServiceResponse.serviceNotCalled(realtimeServiceState));
+    // Realt   earlyb rd response  s already requ red. Even  f t  serv ce  s not called
+    // t  result passed to t   rgers should be a val d one.
+    Earlyb rdServ ceResponse.Serv ceState realt  Serv ceState =
+        getRealt  Serv ceState(requestContext);
+    f nal Future<Earlyb rdServ ceResponse> realt  ResponseFuture =
+        realt  Serv ceState.serv ceWasCalled()
+            ? getRealt  Response(savedRequestResponses, requestContext)
+            : Future.value(Earlyb rdServ ceResponse.serv ceNotCalled(realt  Serv ceState));
 
-    // If no flock response (followedUserIds) is set, request wont be sent to protected.
-    EarlybirdServiceResponse.ServiceState protectedServiceState =
-        getProtectedServiceState(requestContext);
-    final Future<EarlybirdServiceResponse> protectedResponseFuture =
-        protectedServiceState.serviceWasCalled()
+    //  f no flock response (follo dUser ds)  s set, request wont be sent to protected.
+    Earlyb rdServ ceResponse.Serv ceState protectedServ ceState =
+        getProtectedServ ceState(requestContext);
+    f nal Future<Earlyb rdServ ceResponse> protectedResponseFuture =
+        protectedServ ceState.serv ceWasCalled()
             ? getProtectedResponse(savedRequestResponses, requestContext)
-            : Future.value(EarlybirdServiceResponse.serviceNotCalled(protectedServiceState));
+            : Future.value(Earlyb rdServ ceResponse.serv ceNotCalled(protectedServ ceState));
 
-    final Future<EarlybirdServiceResponse> archiveResponseFuture =
-        Futures.flatMap(realtimeResponseFuture, protectedResponseFuture,
-            new Function0<Future<EarlybirdServiceResponse>>() {
-              @Override
-              public Future<EarlybirdServiceResponse> apply() {
-                EarlybirdServiceResponse realtimeResponse = Futures.get(realtimeResponseFuture);
-                EarlybirdServiceResponse protectedResponse = Futures.get(protectedResponseFuture);
-                EarlybirdServiceResponse.ServiceState fullArchiveServiceState =
-                    getFullArchiveServiceState(requestContext, realtimeResponse, protectedResponse);
-                return fullArchiveServiceState.serviceWasCalled()
-                    ? getFullArchiveResponse(savedRequestResponses, requestContext,
-                    realtimeResponse.getResponse(), protectedResponse.getResponse())
+    f nal Future<Earlyb rdServ ceResponse> arch veResponseFuture =
+        Futures.flatMap(realt  ResponseFuture, protectedResponseFuture,
+            new Funct on0<Future<Earlyb rdServ ceResponse>>() {
+              @Overr de
+              publ c Future<Earlyb rdServ ceResponse> apply() {
+                Earlyb rdServ ceResponse realt  Response = Futures.get(realt  ResponseFuture);
+                Earlyb rdServ ceResponse protectedResponse = Futures.get(protectedResponseFuture);
+                Earlyb rdServ ceResponse.Serv ceState fullArch veServ ceState =
+                    getFullArch veServ ceState(requestContext, realt  Response, protectedResponse);
+                return fullArch veServ ceState.serv ceWasCalled()
+                    ? getFullArch veResponse(savedRequestResponses, requestContext,
+                    realt  Response.getResponse(), protectedResponse.getResponse())
                     : Future.value(
-                        EarlybirdServiceResponse.serviceNotCalled(fullArchiveServiceState));
+                        Earlyb rdServ ceResponse.serv ceNotCalled(fullArch veServ ceState));
               }
             }
         );
 
-    Future<EarlybirdResponse> mergedResponse = responseMerger.mergeResponseFutures(
-        requestContext, realtimeResponseFuture, protectedResponseFuture, archiveResponseFuture);
-    mergedResponse = mergedResponse
-        .map(RequestRouterUtil.checkMinSearchedStatusId(
+    Future<Earlyb rdResponse>  rgedResponse = response rger. rgeResponseFutures(
+        requestContext, realt  ResponseFuture, protectedResponseFuture, arch veResponseFuture);
+     rgedResponse =  rgedResponse
+        .map(RequestRouterUt l.c ckM nSearc dStatus d(
                  requestContext,
-                 "max_id",
-                 EarlybirdRequestUtil.getRequestMaxId(requestContext.getParsedQuery()),
-                 realtimeResponseFuture,
+                 "max_ d",
+                 Earlyb rdRequestUt l.getRequestMax d(requestContext.getParsedQuery()),
+                 realt  ResponseFuture,
                  protectedResponseFuture,
-                 archiveResponseFuture,
-                 minSearchedStatusIdLargerThanRequestMaxIdCounter))
-        .map(RequestRouterUtil.checkMinSearchedStatusId(
+                 arch veResponseFuture,
+                 m nSearc dStatus dLargerThanRequestMax dCounter))
+        .map(RequestRouterUt l.c ckM nSearc dStatus d(
                  requestContext,
-                 "until_time",
-                 EarlybirdRequestUtil.getRequestMaxIdFromUntilTime(requestContext.getParsedQuery()),
-                 realtimeResponseFuture,
+                 "unt l_t  ",
+                 Earlyb rdRequestUt l.getRequestMax dFromUnt lT  (requestContext.getParsedQuery()),
+                 realt  ResponseFuture,
                  protectedResponseFuture,
-                 archiveResponseFuture,
-                 minSearchedStatusIdLargerThanRequestUntilTimeCounter));
+                 arch veResponseFuture,
+                 m nSearc dStatus dLargerThanRequestUnt lT  Counter));
 
-    return this.maybeAttachSentRequestsToDebugInfo(
+    return t .maybeAttachSentRequestsToDebug nfo(
         savedRequestResponses,
         requestContext,
-        mergedResponse
+         rgedResponse
     );
   }
 
-  private EarlybirdResponse successNoResultsResponse() {
-    return new EarlybirdResponse(EarlybirdResponseCode.SUCCESS, 0)
-        .setSearchResults(new ThriftSearchResults().setResults(Collections.emptyList()));
+  pr vate Earlyb rdResponse successNoResultsResponse() {
+    return new Earlyb rdResponse(Earlyb rdResponseCode.SUCCESS, 0)
+        .setSearchResults(new Thr ftSearchResults().setResults(Collect ons.emptyL st()));
   }
 
-  protected abstract boolean shouldSendRequestToFullArchiveCluster(
-      EarlybirdRequest request, EarlybirdResponse realtimeResponse);
+  protected abstract boolean shouldSendRequestToFullArch veCluster(
+      Earlyb rdRequest request, Earlyb rdResponse realt  Response);
 
-  /** Determines if the protected service is available and if a request should be sent to it. */
-  private EarlybirdServiceResponse.ServiceState getProtectedServiceState(
-      EarlybirdRequestContext requestContext) {
-    if (!requestContext.getRequest().isSetFollowedUserIds()
-        || requestContext.getRequest().getFollowedUserIds().isEmpty()) {
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_REQUESTED;
+  /** Determ nes  f t  protected serv ce  s ava lable and  f a request should be sent to  . */
+  pr vate Earlyb rdServ ceResponse.Serv ceState getProtectedServ ceState(
+      Earlyb rdRequestContext requestContext) {
+     f (!requestContext.getRequest(). sSetFollo dUser ds()
+        || requestContext.getRequest().getFollo dUser ds(). sEmpty()) {
+      return Earlyb rdServ ceResponse.Serv ceState.SERV CE_NOT_REQUESTED;
     }
 
-    if (decider.isAvailable(skipProtectedClusterDeciderKey)) {
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_AVAILABLE;
+     f (dec der. sAva lable(sk pProtectedClusterDec derKey)) {
+      return Earlyb rdServ ceResponse.Serv ceState.SERV CE_NOT_AVA LABLE;
     }
 
-    return EarlybirdServiceResponse.ServiceState.SERVICE_CALLED;
+    return Earlyb rdServ ceResponse.Serv ceState.SERV CE_CALLED;
   }
 
-  /** Determines if the realtime service is available and if a request should be sent to it. */
-  private EarlybirdServiceResponse.ServiceState getRealtimeServiceState(
-      EarlybirdRequestContext requestContext) {
-    EarlybirdRequest request = requestContext.getRequest();
+  /** Determ nes  f t  realt   serv ce  s ava lable and  f a request should be sent to  . */
+  pr vate Earlyb rdServ ceResponse.Serv ceState getRealt  Serv ceState(
+      Earlyb rdRequestContext requestContext) {
+    Earlyb rdRequest request = requestContext.getRequest();
 
-    // SERVICE_NOT_REQUESTED should always be returned before other states as
-    // SuperRootResponseMerger has special logic for this case.
-    if (request.isSetGetProtectedTweetsOnly() && request.isGetProtectedTweetsOnly()) {
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_REQUESTED;
+    // SERV CE_NOT_REQUESTED should always be returned before ot r states as
+    // SuperRootResponse rger has spec al log c for t  case.
+     f (request. sSetGetProtectedT etsOnly() && request. sGetProtectedT etsOnly()) {
+      return Earlyb rdServ ceResponse.Serv ceState.SERV CE_NOT_REQUESTED;
     }
 
-    return EarlybirdServiceResponse.ServiceState.SERVICE_CALLED;
+    return Earlyb rdServ ceResponse.Serv ceState.SERV CE_CALLED;
   }
 
-  /** Determines if the full archive service is available and if a request should be sent to it. */
-  private EarlybirdServiceResponse.ServiceState getFullArchiveServiceState(
-      EarlybirdRequestContext requestContext,
-      EarlybirdServiceResponse publicServiceResponse,
-      EarlybirdServiceResponse protectedServiceResponse) {
+  /** Determ nes  f t  full arch ve serv ce  s ava lable and  f a request should be sent to  . */
+  pr vate Earlyb rdServ ceResponse.Serv ceState getFullArch veServ ceState(
+      Earlyb rdRequestContext requestContext,
+      Earlyb rdServ ceResponse publ cServ ceResponse,
+      Earlyb rdServ ceResponse protectedServ ceResponse) {
 
-    // SERVICE_NOT_REQUESTED should be always be returned before other states as
-    // SuperRootResponseMerger has special logic for this case.
-    if (!requestContext.getRequest().isSetGetOlderResults()
-        || !requestContext.getRequest().isGetOlderResults()) {
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_REQUESTED;
+    // SERV CE_NOT_REQUESTED should be always be returned before ot r states as
+    // SuperRootResponse rger has spec al log c for t  case.
+     f (!requestContext.getRequest(). sSetGetOlderResults()
+        || !requestContext.getRequest(). sGetOlderResults()) {
+      return Earlyb rdServ ceResponse.Serv ceState.SERV CE_NOT_REQUESTED;
     }
 
-    // allow requesting full archive service when decider is enabled
-    if (!decider.isAvailable(FULL_ARCHIVE_AVAILABLE_FOR_GET_PROTECTED_TWEETS_ONLY_DECIDER_KEY)
-        && requestContext.getRequest().isSetGetProtectedTweetsOnly()
-        && requestContext.getRequest().isGetProtectedTweetsOnly()) {
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_REQUESTED;
+    // allow request ng full arch ve serv ce w n dec der  s enabled
+     f (!dec der. sAva lable(FULL_ARCH VE_AVA LABLE_FOR_GET_PROTECTED_TWEETS_ONLY_DEC DER_KEY)
+        && requestContext.getRequest(). sSetGetProtectedT etsOnly()
+        && requestContext.getRequest(). sGetProtectedT etsOnly()) {
+      return Earlyb rdServ ceResponse.Serv ceState.SERV CE_NOT_REQUESTED;
     }
 
-    if (decider.isAvailable(skipFullArchiveClusterDeciderKey)) {
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_AVAILABLE;
+     f (dec der. sAva lable(sk pFullArch veClusterDec derKey)) {
+      return Earlyb rdServ ceResponse.Serv ceState.SERV CE_NOT_AVA LABLE;
     }
 
-    boolean serviceWasCalledForPublic =
-        getFullArchiveServiceState(requestContext, publicServiceResponse).serviceWasCalled();
-    boolean serviceWasCalledForProtected =
-        decider.isAvailable(FULL_ARCHIVE_AVAILABLE_FOR_NOT_ENOUGH_PROTECTED_RESULTS_DECIDER_KEY)
-        && getFullArchiveServiceState(requestContext, protectedServiceResponse).serviceWasCalled();
-    if (!serviceWasCalledForPublic && !serviceWasCalledForProtected) {
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_CALLED;
+    boolean serv ceWasCalledForPubl c =
+        getFullArch veServ ceState(requestContext, publ cServ ceResponse).serv ceWasCalled();
+    boolean serv ceWasCalledForProtected =
+        dec der. sAva lable(FULL_ARCH VE_AVA LABLE_FOR_NOT_ENOUGH_PROTECTED_RESULTS_DEC DER_KEY)
+        && getFullArch veServ ceState(requestContext, protectedServ ceResponse).serv ceWasCalled();
+     f (!serv ceWasCalledForPubl c && !serv ceWasCalledForProtected) {
+      return Earlyb rdServ ceResponse.Serv ceState.SERV CE_NOT_CALLED;
     }
 
-    return EarlybirdServiceResponse.ServiceState.SERVICE_CALLED;
+    return Earlyb rdServ ceResponse.Serv ceState.SERV CE_CALLED;
   }
 
-  private EarlybirdServiceResponse.ServiceState getFullArchiveServiceState(
-      EarlybirdRequestContext requestContext,
-      EarlybirdServiceResponse realtimeServiceResponse) {
-    EarlybirdResponse realtimeResponse = realtimeServiceResponse.getResponse();
+  pr vate Earlyb rdServ ceResponse.Serv ceState getFullArch veServ ceState(
+      Earlyb rdRequestContext requestContext,
+      Earlyb rdServ ceResponse realt  Serv ceResponse) {
+    Earlyb rdResponse realt  Response = realt  Serv ceResponse.getResponse();
 
-    if (!EarlybirdResponseMergeUtil.isValidResponse(realtimeResponse)) {
-      realtimeResponseInvalidCounter.increment();
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_CALLED;
+     f (!Earlyb rdResponse rgeUt l. sVal dResponse(realt  Response)) {
+      realt  Response nval dCounter. ncre nt();
+      return Earlyb rdServ ceResponse.Serv ceState.SERV CE_NOT_CALLED;
     }
 
-    if (!realtimeResponse.isSetSearchResults()) {
-      realtimeResponseSearchResultsNotSetCounter.increment();
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_CALLED;
+     f (!realt  Response. sSetSearchResults()) {
+      realt  ResponseSearchResultsNotSetCounter. ncre nt();
+      return Earlyb rdServ ceResponse.Serv ceState.SERV CE_NOT_CALLED;
     }
 
-    if (!shouldSendRequestToFullArchiveCluster(requestContext.getRequest(), realtimeResponse)) {
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_CALLED;
+     f (!shouldSendRequestToFullArch veCluster(requestContext.getRequest(), realt  Response)) {
+      return Earlyb rdServ ceResponse.Serv ceState.SERV CE_NOT_CALLED;
     }
 
-    return EarlybirdServiceResponse.ServiceState.SERVICE_CALLED;
+    return Earlyb rdServ ceResponse.Serv ceState.SERV CE_CALLED;
   }
 
   /**
-   * Modify the original request context based on the followedUserId field and then send the
-   * request to the protected cluster.
+   * Mod fy t  or g nal request context based on t  follo dUser d f eld and t n send t 
+   * request to t  protected cluster.
    */
-  private Future<EarlybirdServiceResponse> getProtectedResponse(
-      ArrayList<RequestResponse> savedRequestResponses,
-      final EarlybirdRequestContext requestContext) {
-    EarlybirdRequestContext protectedRequestContext =
-        EarlybirdRequestContext.newContextWithRestrictFromUserIdFilter64(requestContext);
-    Preconditions.checkArgument(
-        protectedRequestContext.getRequest().getSearchQuery().isSetFromUserIDFilter64());
+  pr vate Future<Earlyb rdServ ceResponse> getProtectedResponse(
+      ArrayL st<RequestResponse> savedRequestResponses,
+      f nal Earlyb rdRequestContext requestContext) {
+    Earlyb rdRequestContext protectedRequestContext =
+        Earlyb rdRequestContext.newContextW hRestr ctFromUser dF lter64(requestContext);
+    Precond  ons.c ckArgu nt(
+        protectedRequestContext.getRequest().getSearchQuery(). sSetFromUser DF lter64());
 
-    // SERVICE_NOT_REQUESTED should be always be returned before other states as
-    // SuperRootResponseMerger has special logic for this case.
-    if (protectedRequestContext.getRequest().getSearchQuery().getFromUserIDFilter64().isEmpty()) {
-      return Future.value(EarlybirdServiceResponse.serviceNotCalled(
-          EarlybirdServiceResponse.ServiceState.SERVICE_NOT_REQUESTED));
+    // SERV CE_NOT_REQUESTED should be always be returned before ot r states as
+    // SuperRootResponse rger has spec al log c for t  case.
+     f (protectedRequestContext.getRequest().getSearchQuery().getFromUser DF lter64(). sEmpty()) {
+      return Future.value(Earlyb rdServ ceResponse.serv ceNotCalled(
+          Earlyb rdServ ceResponse.Serv ceState.SERV CE_NOT_REQUESTED));
     }
 
-    if (requestContext.getRequest().isSetAdjustedProtectedRequestParams()) {
+     f (requestContext.getRequest(). sSetAdjustedProtectedRequestParams()) {
       adjustRequestParams(protectedRequestContext.getRequest(),
                           requestContext.getRequest().getAdjustedProtectedRequestParams());
     }
 
-    LOG.debug("Request sent to the protected cluster: {}", protectedRequestContext.getRequest());
-    return toEarlybirdServiceResponseFuture(
+    LOG.debug("Request sent to t  protected cluster: {}", protectedRequestContext.getRequest());
+    return toEarlyb rdServ ceResponseFuture(
         savedRequestResponses,
         protectedRequestContext,
         "protected",
-        this.protectedRealtime
+        t .protectedRealt  
     );
   }
 
-  private Future<EarlybirdServiceResponse> getRealtimeResponse(
-      ArrayList<RequestResponse> savedRequestResponses,
-      EarlybirdRequestContext requestContext) {
-    return toEarlybirdServiceResponseFuture(
+  pr vate Future<Earlyb rdServ ceResponse> getRealt  Response(
+      ArrayL st<RequestResponse> savedRequestResponses,
+      Earlyb rdRequestContext requestContext) {
+    return toEarlyb rdServ ceResponseFuture(
         savedRequestResponses,
         requestContext,
-        "realtime",
-        this.realtime);
+        "realt  ",
+        t .realt  );
   }
 
   /**
-   * Modifying the existing max id filter of the request or appending a new
-   * max id filter and then send the request to the full archive cluster.
+   * Mod fy ng t  ex st ng max  d f lter of t  request or append ng a new
+   * max  d f lter and t n send t  request to t  full arch ve cluster.
    */
-  private Future<EarlybirdServiceResponse> getFullArchiveResponse(
-      ArrayList<RequestResponse> savedRequestResponses,
-      EarlybirdRequestContext requestContext,
-      EarlybirdResponse realtimeResponse,
-      EarlybirdResponse protectedResponse) {
-    long realtimeMinId = getMinSearchedId(realtimeResponse);
-    long protectedMinId = getMinSearchedId(protectedResponse);
-    // if both realtime and protected min searched ids are available, the larger(newer) one is used
-    // to make sure no tweets are left out. However, this means it might introduce duplicates for
-    // the other response. The response merger will dedup the response. This logic is enabled
-    // when full archive cluster is available for requests without enough protected results.
-    long minId =
-        decider.isAvailable(FULL_ARCHIVE_AVAILABLE_FOR_NOT_ENOUGH_PROTECTED_RESULTS_DECIDER_KEY)
-            ? Math.max(realtimeMinId, protectedMinId) : realtimeMinId;
+  pr vate Future<Earlyb rdServ ceResponse> getFullArch veResponse(
+      ArrayL st<RequestResponse> savedRequestResponses,
+      Earlyb rdRequestContext requestContext,
+      Earlyb rdResponse realt  Response,
+      Earlyb rdResponse protectedResponse) {
+    long realt  M n d = getM nSearc d d(realt  Response);
+    long protectedM n d = getM nSearc d d(protectedResponse);
+    //  f both realt   and protected m n searc d  ds are ava lable, t  larger(ne r) one  s used
+    // to make sure no t ets are left out. Ho ver, t   ans   m ght  ntroduce dupl cates for
+    // t  ot r response. T  response  rger w ll dedup t  response. T  log c  s enabled
+    // w n full arch ve cluster  s ava lable for requests w hout enough protected results.
+    long m n d =
+        dec der. sAva lable(FULL_ARCH VE_AVA LABLE_FOR_NOT_ENOUGH_PROTECTED_RESULTS_DEC DER_KEY)
+            ? Math.max(realt  M n d, protectedM n d) : realt  M n d;
 
-    if (minId <= 0) {
-      // If the realtime response doesn't have a minSearchedStatusID set, get all results from
-      // the full archive cluster.
-      minId = Long.MAX_VALUE;
+     f (m n d <= 0) {
+      //  f t  realt   response doesn't have a m nSearc dStatus D set, get all results from
+      // t  full arch ve cluster.
+      m n d = Long.MAX_VALUE;
     }
 
-    // The [max_id] operator is inclusive in earlybirds. This means that a query with [max_id X]
-    // will return tweet X, if X matches the rest of the query. So we should add a [max_id (X - 1)]
-    // operator to the full archive query (instead of [max_id X]). Otherwise, we could end up with
-    // duplicates. For example:
+    // T  [max_ d] operator  s  nclus ve  n earlyb rds. T   ans that a query w h [max_ d X]
+    // w ll return t et X,  f X matc s t  rest of t  query. So   should add a [max_ d (X - 1)]
+    // operator to t  full arch ve query ( nstead of [max_ d X]). Ot rw se,   could end up w h
+    // dupl cates. For example:
     //
-    //  realtime response: results = [ 100, 90, 80 ], minSearchedStatusID = 80
-    //  full archive request: [max_id 80]
-    //  full archive response: results = [ 80, 70, 60 ]
+    //  realt   response: results = [ 100, 90, 80 ], m nSearc dStatus D = 80
+    //  full arch ve request: [max_ d 80]
+    //  full arch ve response: results = [ 80, 70, 60 ]
     //
-    // In this case, tweet 80 would be returned from both the realtime and full archive clusters.
-    EarlybirdRequestContext archiveRequestContext =
-        EarlybirdRequestContext.copyRequestContext(
+    //  n t  case, t et 80 would be returned from both t  realt   and full arch ve clusters.
+    Earlyb rdRequestContext arch veRequestContext =
+        Earlyb rdRequestContext.copyRequestContext(
             requestContext,
-            QueryUtil.addOrReplaceMaxIdFilter(
+            QueryUt l.addOrReplaceMax dF lter(
                 requestContext.getParsedQuery(),
-                minId - 1));
+                m n d - 1));
 
-    if (requestContext.getRequest().isSetAdjustedFullArchiveRequestParams()) {
-      adjustRequestParams(archiveRequestContext.getRequest(),
-                          requestContext.getRequest().getAdjustedFullArchiveRequestParams());
+     f (requestContext.getRequest(). sSetAdjustedFullArch veRequestParams()) {
+      adjustRequestParams(arch veRequestContext.getRequest(),
+                          requestContext.getRequest().getAdjustedFullArch veRequestParams());
     }
 
-    LOG.debug("Request sent to the full archive cluster: {},", archiveRequestContext.getRequest());
-    return toEarlybirdServiceResponseFuture(
+    LOG.debug("Request sent to t  full arch ve cluster: {},", arch veRequestContext.getRequest());
+    return toEarlyb rdServ ceResponseFuture(
         savedRequestResponses,
-        archiveRequestContext,
-        "archive",
-        this.fullArchive
+        arch veRequestContext,
+        "arch ve",
+        t .fullArch ve
     );
   }
 
-  private long getMinSearchedId(EarlybirdResponse response) {
-    return response != null && response.isSetSearchResults()
-        ? response.getSearchResults().getMinSearchedStatusID() : 0;
+  pr vate long getM nSearc d d(Earlyb rdResponse response) {
+    return response != null && response. sSetSearchResults()
+        ? response.getSearchResults().getM nSearc dStatus D() : 0;
   }
 
-  private void adjustRequestParams(EarlybirdRequest request,
+  pr vate vo d adjustRequestParams(Earlyb rdRequest request,
                                    AdjustedRequestParams adjustedRequestParams) {
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
+    Thr ftSearchQuery searchQuery = request.getSearchQuery();
 
-    if (adjustedRequestParams.isSetNumResults()) {
+     f (adjustedRequestParams. sSetNumResults()) {
       searchQuery.setNumResults(adjustedRequestParams.getNumResults());
-      if (searchQuery.isSetCollectorParams()) {
+       f (searchQuery. sSetCollectorParams()) {
         searchQuery.getCollectorParams().setNumResultsToReturn(
             adjustedRequestParams.getNumResults());
       }
     }
 
-    if (adjustedRequestParams.isSetMaxHitsToProcess()) {
-      searchQuery.setMaxHitsToProcess(adjustedRequestParams.getMaxHitsToProcess());
-      if (searchQuery.isSetRelevanceOptions()) {
-        searchQuery.getRelevanceOptions().setMaxHitsToProcess(
-            adjustedRequestParams.getMaxHitsToProcess());
+     f (adjustedRequestParams. sSetMaxH sToProcess()) {
+      searchQuery.setMaxH sToProcess(adjustedRequestParams.getMaxH sToProcess());
+       f (searchQuery. sSetRelevanceOpt ons()) {
+        searchQuery.getRelevanceOpt ons().setMaxH sToProcess(
+            adjustedRequestParams.getMaxH sToProcess());
       }
-      if (searchQuery.isSetCollectorParams()
-          && searchQuery.getCollectorParams().isSetTerminationParams()) {
-        searchQuery.getCollectorParams().getTerminationParams().setMaxHitsToProcess(
-            adjustedRequestParams.getMaxHitsToProcess());
+       f (searchQuery. sSetCollectorParams()
+          && searchQuery.getCollectorParams(). sSetTerm nat onParams()) {
+        searchQuery.getCollectorParams().getTerm nat onParams().setMaxH sToProcess(
+            adjustedRequestParams.getMaxH sToProcess());
       }
     }
 
-    if (adjustedRequestParams.isSetReturnAllResults()) {
-      if (searchQuery.isSetRelevanceOptions()) {
-        searchQuery.getRelevanceOptions().setReturnAllResults(
-            adjustedRequestParams.isReturnAllResults());
+     f (adjustedRequestParams. sSetReturnAllResults()) {
+       f (searchQuery. sSetRelevanceOpt ons()) {
+        searchQuery.getRelevanceOpt ons().setReturnAllResults(
+            adjustedRequestParams. sReturnAllResults());
       }
     }
   }
 
-  private Future<EarlybirdServiceResponse> toEarlybirdServiceResponseFuture(
-      List<RequestResponse> savedRequestResponses,
-      EarlybirdRequestContext requestContext,
-      String sentTo,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    Future<EarlybirdResponse> responseFuture = service.apply(requestContext);
-    this.saveRequestResponse(
+  pr vate Future<Earlyb rdServ ceResponse> toEarlyb rdServ ceResponseFuture(
+      L st<RequestResponse> savedRequestResponses,
+      Earlyb rdRequestContext requestContext,
+      Str ng sentTo,
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> serv ce) {
+    Future<Earlyb rdResponse> responseFuture = serv ce.apply(requestContext);
+    t .saveRequestResponse(
         savedRequestResponses, sentTo, requestContext, responseFuture
     );
 
-    return responseFuture.map(new Function<EarlybirdResponse, EarlybirdServiceResponse>() {
-      @Override
-      public EarlybirdServiceResponse apply(EarlybirdResponse response) {
-        return EarlybirdServiceResponse.serviceCalled(response);
+    return responseFuture.map(new Funct on<Earlyb rdResponse, Earlyb rdServ ceResponse>() {
+      @Overr de
+      publ c Earlyb rdServ ceResponse apply(Earlyb rdResponse response) {
+        return Earlyb rdServ ceResponse.serv ceCalled(response);
       }
     });
   }

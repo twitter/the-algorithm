@@ -1,93 +1,93 @@
-package com.twitter.timelines.prediction.features.two_hop_features
+package com.tw ter.t  l nes.pred ct on.features.two_hop_features
 
-import com.twitter.graph_feature_service.thriftscala.EdgeType
-import com.twitter.ml.api.Feature._
-import scala.collection.JavaConverters._
-import TwoHopFeaturesConfig.personalDataTypesMap
+ mport com.tw ter.graph_feature_serv ce.thr ftscala.EdgeType
+ mport com.tw ter.ml.ap .Feature._
+ mport scala.collect on.JavaConverters._
+ mport TwoHopFeaturesConf g.personalDataTypesMap
 
-object TwoHopFeaturesDescriptor {
-  val prefix = "two_hop"
-  val normalizedPostfix = "normalized"
-  val leftNodeDegreePostfix = "left_degree"
-  val rightNodeDegreePostfix = "right_degree"
+object TwoHopFeaturesDescr ptor {
+  val pref x = "two_hop"
+  val normal zedPostf x = "normal zed"
+  val leftNodeDegreePostf x = "left_degree"
+  val r ghtNodeDegreePostf x = "r ght_degree"
 
-  type TwoHopFeatureMap = Map[(EdgeType, EdgeType), Continuous]
-  type TwoHopFeatureNodeDegreeMap = Map[EdgeType, Continuous]
+  type TwoHopFeatureMap = Map[(EdgeType, EdgeType), Cont nuous]
+  type TwoHopFeatureNodeDegreeMap = Map[EdgeType, Cont nuous]
 
-  def apply(edgeTypePairs: Seq[(EdgeType, EdgeType)]): TwoHopFeaturesDescriptor = {
-    new TwoHopFeaturesDescriptor(edgeTypePairs)
+  def apply(edgeTypePa rs: Seq[(EdgeType, EdgeType)]): TwoHopFeaturesDescr ptor = {
+    new TwoHopFeaturesDescr ptor(edgeTypePa rs)
   }
 }
 
-class TwoHopFeaturesDescriptor(edgeTypePairs: Seq[(EdgeType, EdgeType)]) {
-  import TwoHopFeaturesDescriptor._
+class TwoHopFeaturesDescr ptor(edgeTypePa rs: Seq[(EdgeType, EdgeType)]) {
+   mport TwoHopFeaturesDescr ptor._
 
-  def getLeftEdge(edgeTypePair: (EdgeType, EdgeType)): EdgeType = {
-    edgeTypePair._1
+  def getLeftEdge(edgeTypePa r: (EdgeType, EdgeType)): EdgeType = {
+    edgeTypePa r._1
   }
 
-  def getLeftEdgeName(edgeTypePair: (EdgeType, EdgeType)): String = {
-    getLeftEdge(edgeTypePair).originalName.toLowerCase
+  def getLeftEdgeNa (edgeTypePa r: (EdgeType, EdgeType)): Str ng = {
+    getLeftEdge(edgeTypePa r).or g nalNa .toLo rCase
   }
 
-  def getRightEdge(edgeTypePair: (EdgeType, EdgeType)): EdgeType = {
-    edgeTypePair._2
+  def getR ghtEdge(edgeTypePa r: (EdgeType, EdgeType)): EdgeType = {
+    edgeTypePa r._2
   }
 
-  def getRightEdgeName(edgeTypePair: (EdgeType, EdgeType)): String = {
-    getRightEdge(edgeTypePair).originalName.toLowerCase
+  def getR ghtEdgeNa (edgeTypePa r: (EdgeType, EdgeType)): Str ng = {
+    getR ghtEdge(edgeTypePa r).or g nalNa .toLo rCase
   }
 
-  val rawFeaturesMap: TwoHopFeatureMap = edgeTypePairs.map(edgeTypePair => {
-    val leftEdgeType = getLeftEdge(edgeTypePair)
-    val leftEdgeName = getLeftEdgeName(edgeTypePair)
-    val rightEdgeType = getRightEdge(edgeTypePair)
-    val rightEdgeName = getRightEdgeName(edgeTypePair)
+  val rawFeaturesMap: TwoHopFeatureMap = edgeTypePa rs.map(edgeTypePa r => {
+    val leftEdgeType = getLeftEdge(edgeTypePa r)
+    val leftEdgeNa  = getLeftEdgeNa (edgeTypePa r)
+    val r ghtEdgeType = getR ghtEdge(edgeTypePa r)
+    val r ghtEdgeNa  = getR ghtEdgeNa (edgeTypePa r)
     val personalDataTypes = (
       personalDataTypesMap.getOrElse(leftEdgeType, Set.empty) ++
-        personalDataTypesMap.getOrElse(rightEdgeType, Set.empty)
+        personalDataTypesMap.getOrElse(r ghtEdgeType, Set.empty)
     ).asJava
-    val rawFeature = new Continuous(s"$prefix.$leftEdgeName.$rightEdgeName", personalDataTypes)
-    edgeTypePair -> rawFeature
-  })(collection.breakOut)
+    val rawFeature = new Cont nuous(s"$pref x.$leftEdgeNa .$r ghtEdgeNa ", personalDataTypes)
+    edgeTypePa r -> rawFeature
+  })(collect on.breakOut)
 
-  val leftNodeDegreeFeaturesMap: TwoHopFeatureNodeDegreeMap = edgeTypePairs.map(edgeTypePair => {
-    val leftEdgeType = getLeftEdge(edgeTypePair)
-    val leftEdgeName = getLeftEdgeName(edgeTypePair)
+  val leftNodeDegreeFeaturesMap: TwoHopFeatureNodeDegreeMap = edgeTypePa rs.map(edgeTypePa r => {
+    val leftEdgeType = getLeftEdge(edgeTypePa r)
+    val leftEdgeNa  = getLeftEdgeNa (edgeTypePa r)
     val personalDataTypes = personalDataTypesMap.getOrElse(leftEdgeType, Set.empty).asJava
     val leftNodeDegreeFeature =
-      new Continuous(s"$prefix.$leftEdgeName.$leftNodeDegreePostfix", personalDataTypes)
+      new Cont nuous(s"$pref x.$leftEdgeNa .$leftNodeDegreePostf x", personalDataTypes)
     leftEdgeType -> leftNodeDegreeFeature
-  })(collection.breakOut)
+  })(collect on.breakOut)
 
-  val rightNodeDegreeFeaturesMap: TwoHopFeatureNodeDegreeMap = edgeTypePairs.map(edgeTypePair => {
-    val rightEdgeType = getRightEdge(edgeTypePair)
-    val rightEdgeName = getRightEdgeName(edgeTypePair)
-    val personalDataTypes = personalDataTypesMap.getOrElse(rightEdgeType, Set.empty).asJava
-    val rightNodeDegreeFeature =
-      new Continuous(s"$prefix.$rightEdgeName.$rightNodeDegreePostfix", personalDataTypes)
-    rightEdgeType -> rightNodeDegreeFeature
-  })(collection.breakOut)
+  val r ghtNodeDegreeFeaturesMap: TwoHopFeatureNodeDegreeMap = edgeTypePa rs.map(edgeTypePa r => {
+    val r ghtEdgeType = getR ghtEdge(edgeTypePa r)
+    val r ghtEdgeNa  = getR ghtEdgeNa (edgeTypePa r)
+    val personalDataTypes = personalDataTypesMap.getOrElse(r ghtEdgeType, Set.empty).asJava
+    val r ghtNodeDegreeFeature =
+      new Cont nuous(s"$pref x.$r ghtEdgeNa .$r ghtNodeDegreePostf x", personalDataTypes)
+    r ghtEdgeType -> r ghtNodeDegreeFeature
+  })(collect on.breakOut)
 
-  val normalizedFeaturesMap: TwoHopFeatureMap = edgeTypePairs.map(edgeTypePair => {
-    val leftEdgeType = getLeftEdge(edgeTypePair)
-    val leftEdgeName = getLeftEdgeName(edgeTypePair)
-    val rightEdgeType = getRightEdge(edgeTypePair)
-    val rightEdgeName = getRightEdgeName(edgeTypePair)
+  val normal zedFeaturesMap: TwoHopFeatureMap = edgeTypePa rs.map(edgeTypePa r => {
+    val leftEdgeType = getLeftEdge(edgeTypePa r)
+    val leftEdgeNa  = getLeftEdgeNa (edgeTypePa r)
+    val r ghtEdgeType = getR ghtEdge(edgeTypePa r)
+    val r ghtEdgeNa  = getR ghtEdgeNa (edgeTypePa r)
     val personalDataTypes = (
       personalDataTypesMap.getOrElse(leftEdgeType, Set.empty) ++
-        personalDataTypesMap.getOrElse(rightEdgeType, Set.empty)
+        personalDataTypesMap.getOrElse(r ghtEdgeType, Set.empty)
     ).asJava
-    val normalizedFeature =
-      new Continuous(s"$prefix.$leftEdgeName.$rightEdgeName.$normalizedPostfix", personalDataTypes)
-    edgeTypePair -> normalizedFeature
-  })(collection.breakOut)
+    val normal zedFeature =
+      new Cont nuous(s"$pref x.$leftEdgeNa .$r ghtEdgeNa .$normal zedPostf x", personalDataTypes)
+    edgeTypePa r -> normal zedFeature
+  })(collect on.breakOut)
 
-  private val rawFeaturesSeq: Seq[Continuous] = rawFeaturesMap.values.toSeq
-  private val leftNodeDegreeFeaturesSeq: Seq[Continuous] = leftNodeDegreeFeaturesMap.values.toSeq
-  private val rightNodeDegreeFeaturesSeq: Seq[Continuous] = rightNodeDegreeFeaturesMap.values.toSeq
-  private val normalizedFeaturesSeq: Seq[Continuous] = normalizedFeaturesMap.values.toSeq
+  pr vate val rawFeaturesSeq: Seq[Cont nuous] = rawFeaturesMap.values.toSeq
+  pr vate val leftNodeDegreeFeaturesSeq: Seq[Cont nuous] = leftNodeDegreeFeaturesMap.values.toSeq
+  pr vate val r ghtNodeDegreeFeaturesSeq: Seq[Cont nuous] = r ghtNodeDegreeFeaturesMap.values.toSeq
+  pr vate val normal zedFeaturesSeq: Seq[Cont nuous] = normal zedFeaturesMap.values.toSeq
 
-  val featuresSeq: Seq[Continuous] =
-    rawFeaturesSeq ++ leftNodeDegreeFeaturesSeq ++ rightNodeDegreeFeaturesSeq ++ normalizedFeaturesSeq
+  val featuresSeq: Seq[Cont nuous] =
+    rawFeaturesSeq ++ leftNodeDegreeFeaturesSeq ++ r ghtNodeDegreeFeaturesSeq ++ normal zedFeaturesSeq
 }

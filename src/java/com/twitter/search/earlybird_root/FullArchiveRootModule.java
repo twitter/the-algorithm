@@ -1,241 +1,241 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.L st;
+ mport java.ut l.concurrent.T  Un ;
 
-import javax.annotation.Nullable;
-import javax.inject.Named;
-import javax.inject.Singleton;
+ mport javax.annotat on.Nullable;
+ mport javax. nject.Na d;
+ mport javax. nject.S ngleton;
 
-import com.google.inject.Key;
-import com.google.inject.Provides;
+ mport com.google. nject.Key;
+ mport com.google. nject.Prov des;
 
-import com.twitter.app.Flag;
-import com.twitter.app.Flaggable;
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.memcached.JavaClient;
-import com.twitter.finagle.stats.StatsReceiver;
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.caching.Cache;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.root.LoggingSupport;
-import com.twitter.search.common.root.PartitionConfig;
-import com.twitter.search.common.root.PartitionLoggingSupport;
-import com.twitter.search.common.root.RootClientServiceBuilder;
-import com.twitter.search.common.root.SearchRootModule;
-import com.twitter.search.common.root.SearchRootWarmup;
-import com.twitter.search.common.root.SplitterService;
-import com.twitter.search.common.root.ValidationBehavior;
-import com.twitter.search.common.root.WarmupConfig;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.config.TierInfoSource;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird_root.caching.DefaultForcedCacheMissDecider;
-import com.twitter.search.earlybird_root.caching.RecencyCache;
-import com.twitter.search.earlybird_root.caching.RelevanceCache;
-import com.twitter.search.earlybird_root.caching.StrictRecencyCache;
-import com.twitter.search.earlybird_root.caching.TermStatsCache;
-import com.twitter.search.earlybird_root.caching.TopTweetsCache;
-import com.twitter.search.earlybird_root.caching.TopTweetsServicePostProcessor;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.filters.RequestContextToEarlybirdRequestFilter;
-import com.twitter.util.Future;
+ mport com.tw ter.app.Flag;
+ mport com.tw ter.app.Flaggable;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle. mcac d.JavaCl ent;
+ mport com.tw ter.f nagle.stats.StatsRece ver;
+ mport com.tw ter. nject.Tw terModule;
+ mport com.tw ter.search.common.cach ng.Cac ;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.common.root.Logg ngSupport;
+ mport com.tw ter.search.common.root.Part  onConf g;
+ mport com.tw ter.search.common.root.Part  onLogg ngSupport;
+ mport com.tw ter.search.common.root.RootCl entServ ceBu lder;
+ mport com.tw ter.search.common.root.SearchRootModule;
+ mport com.tw ter.search.common.root.SearchRootWarmup;
+ mport com.tw ter.search.common.root.Spl terServ ce;
+ mport com.tw ter.search.common.root.Val dat onBehav or;
+ mport com.tw ter.search.common.root.WarmupConf g;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.earlyb rd.conf g.T er nfoS ce;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdServ ce;
+ mport com.tw ter.search.earlyb rd_root.cach ng.DefaultForcedCac M ssDec der;
+ mport com.tw ter.search.earlyb rd_root.cach ng.RecencyCac ;
+ mport com.tw ter.search.earlyb rd_root.cach ng.RelevanceCac ;
+ mport com.tw ter.search.earlyb rd_root.cach ng.Str ctRecencyCac ;
+ mport com.tw ter.search.earlyb rd_root.cach ng.TermStatsCac ;
+ mport com.tw ter.search.earlyb rd_root.cach ng.TopT etsCac ;
+ mport com.tw ter.search.earlyb rd_root.cach ng.TopT etsServ cePostProcessor;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.earlyb rd_root.f lters.RequestContextToEarlyb rdRequestF lter;
+ mport com.tw ter.ut l.Future;
 
-import static com.twitter.search.earlybird_root.EarlybirdCommonModule.NAMED_ALT_CLIENT;
+ mport stat c com.tw ter.search.earlyb rd_root.Earlyb rdCommonModule.NAMED_ALT_CL ENT;
 
-public class FullArchiveRootModule extends TwitterModule {
-  private static final String CLUSTER = "archive_full";
-  private static final String ALT_TRAFFIC_PERCENTAGE_DECIDER_KEY =
-      "full_archive_alt_client_traffic_percentage";
+publ c class FullArch veRootModule extends Tw terModule {
+  pr vate stat c f nal Str ng CLUSTER = "arch ve_full";
+  pr vate stat c f nal Str ng ALT_TRAFF C_PERCENTAGE_DEC DER_KEY =
+      "full_arch ve_alt_cl ent_traff c_percentage";
 
-  private final Flag<Boolean> forceAltClientFlag = createFlag(
-      "force_alt_client",
+  pr vate f nal Flag<Boolean> forceAltCl entFlag = createFlag(
+      "force_alt_cl ent",
       false,
-      "Always sends traffic to the alt client",
+      "Always sends traff c to t  alt cl ent",
       Flaggable.ofJavaBoolean());
 
-  @Override
-  public void configure() {
-    bind(Key.get(EarlybirdCluster.class)).toInstance(EarlybirdCluster.FULL_ARCHIVE);
+  @Overr de
+  publ c vo d conf gure() {
+    b nd(Key.get(Earlyb rdCluster.class)).to nstance(Earlyb rdCluster.FULL_ARCH VE);
 
-    bind(EarlybirdServiceScatterGatherSupport.class)
-      .to(EarlybirdFullArchiveScatterGatherSupport.class);
+    b nd(Earlyb rdServ ceScatterGat rSupport.class)
+      .to(Earlyb rdFullArch veScatterGat rSupport.class);
 
-    bind(EarlybirdService.ServiceIface.class).to(FullArchiveRootService.class);
+    b nd(Earlyb rdServ ce.Serv ce face.class).to(FullArch veRootServ ce.class);
   }
 
-  @Provides
-  LoggingSupport<EarlybirdRequest, EarlybirdResponse> provideLoggingSupport(
-      SearchDecider decider) {
-    return new EarlybirdServiceLoggingSupport(decider);
+  @Prov des
+  Logg ngSupport<Earlyb rdRequest, Earlyb rdResponse> prov deLogg ngSupport(
+      SearchDec der dec der) {
+    return new Earlyb rdServ ceLogg ngSupport(dec der);
   }
 
-  @Provides
-  PartitionLoggingSupport<EarlybirdRequestContext> providePartitionLoggingSupport() {
-    return new EarlybirdServicePartitionLoggingSupport();
+  @Prov des
+  Part  onLogg ngSupport<Earlyb rdRequestContext> prov dePart  onLogg ngSupport() {
+    return new Earlyb rdServ cePart  onLogg ngSupport();
   }
 
-  @Provides
-  ValidationBehavior<EarlybirdRequest, EarlybirdResponse> provideValidationBehavior() {
-    return new EarlybirdServiceValidationBehavior();
+  @Prov des
+  Val dat onBehav or<Earlyb rdRequest, Earlyb rdResponse> prov deVal dat onBehav or() {
+    return new Earlyb rdServ ceVal dat onBehav or();
   }
 
-  @Provides
-  @Singleton
+  @Prov des
+  @S ngleton
   @Nullable
-  @Named(NAMED_ALT_CLIENT)
-  EarlybirdServiceChainBuilder provideAltEarlybirdServiceChainBuilder(
-      @Named(NAMED_ALT_CLIENT) @Nullable PartitionConfig altPartitionConfig,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
-      EarlybirdTierThrottleDeciders tierThrottleDeciders,
-      @Named(SearchRootModule.NAMED_NORMALIZED_SEARCH_ROOT_NAME) String normalizedSearchRootName,
-      SearchDecider decider,
-      TierInfoSource tierConfig,
-      @Named(NAMED_ALT_CLIENT) @Nullable
-          RootClientServiceBuilder<EarlybirdService.ServiceIface> altRootClientServiceBuilder,
-      PartitionAccessController partitionAccessController,
-      StatsReceiver statsReceiver
+  @Na d(NAMED_ALT_CL ENT)
+  Earlyb rdServ ceCha nBu lder prov deAltEarlyb rdServ ceCha nBu lder(
+      @Na d(NAMED_ALT_CL ENT) @Nullable Part  onConf g altPart  onConf g,
+      RequestContextToEarlyb rdRequestF lter requestContextToEarlyb rdRequestF lter,
+      Earlyb rdT erThrottleDec ders t erThrottleDec ders,
+      @Na d(SearchRootModule.NAMED_NORMAL ZED_SEARCH_ROOT_NAME) Str ng normal zedSearchRootNa ,
+      SearchDec der dec der,
+      T er nfoS ce t erConf g,
+      @Na d(NAMED_ALT_CL ENT) @Nullable
+          RootCl entServ ceBu lder<Earlyb rdServ ce.Serv ce face> altRootCl entServ ceBu lder,
+      Part  onAccessController part  onAccessController,
+      StatsRece ver statsRece ver
   ) {
-    if (altPartitionConfig == null || altRootClientServiceBuilder == null) {
+     f (altPart  onConf g == null || altRootCl entServ ceBu lder == null) {
       return null;
     }
 
-    return new EarlybirdServiceChainBuilder(
-        altPartitionConfig,
-        requestContextToEarlybirdRequestFilter,
-        tierThrottleDeciders,
-        normalizedSearchRootName,
-        decider,
-        tierConfig,
-        altRootClientServiceBuilder,
-        partitionAccessController,
-        statsReceiver
+    return new Earlyb rdServ ceCha nBu lder(
+        altPart  onConf g,
+        requestContextToEarlyb rdRequestF lter,
+        t erThrottleDec ders,
+        normal zedSearchRootNa ,
+        dec der,
+        t erConf g,
+        altRootCl entServ ceBu lder,
+        part  onAccessController,
+        statsRece ver
     );
   }
 
-  @Provides
-  @Singleton
+  @Prov des
+  @S ngleton
   @Nullable
-  @Named(NAMED_ALT_CLIENT)
-  EarlybirdChainedScatterGatherService provideAltEarlybirdChainedScatterGatherService(
-      @Named(NAMED_ALT_CLIENT) @Nullable EarlybirdServiceChainBuilder altServiceChainBuilder,
-      EarlybirdServiceScatterGatherSupport scatterGatherSupport,
-      PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport
+  @Na d(NAMED_ALT_CL ENT)
+  Earlyb rdCha nedScatterGat rServ ce prov deAltEarlyb rdCha nedScatterGat rServ ce(
+      @Na d(NAMED_ALT_CL ENT) @Nullable Earlyb rdServ ceCha nBu lder altServ ceCha nBu lder,
+      Earlyb rdServ ceScatterGat rSupport scatterGat rSupport,
+      Part  onLogg ngSupport<Earlyb rdRequestContext> part  onLogg ngSupport
   ) {
-    if (altServiceChainBuilder == null) {
+     f (altServ ceCha nBu lder == null) {
       return null;
     }
 
-    return new EarlybirdChainedScatterGatherService(
-        altServiceChainBuilder,
-        scatterGatherSupport,
-        partitionLoggingSupport
+    return new Earlyb rdCha nedScatterGat rServ ce(
+        altServ ceCha nBu lder,
+        scatterGat rSupport,
+        part  onLogg ngSupport
     );
   }
 
-  @Provides
-  @Singleton
-  Service<EarlybirdRequestContext, List<Future<EarlybirdResponse>>>
-  provideEarlybirdChainedScatterGatherService(
-      EarlybirdChainedScatterGatherService chainedScatterGatherService,
-      @Named(NAMED_ALT_CLIENT) @Nullable
-          EarlybirdChainedScatterGatherService altChainedScatterGatherService,
-      SearchDecider decider
+  @Prov des
+  @S ngleton
+  Serv ce<Earlyb rdRequestContext, L st<Future<Earlyb rdResponse>>>
+  prov deEarlyb rdCha nedScatterGat rServ ce(
+      Earlyb rdCha nedScatterGat rServ ce cha nedScatterGat rServ ce,
+      @Na d(NAMED_ALT_CL ENT) @Nullable
+          Earlyb rdCha nedScatterGat rServ ce altCha nedScatterGat rServ ce,
+      SearchDec der dec der
   ) {
-    if (forceAltClientFlag.apply()) {
-      if (altChainedScatterGatherService == null) {
-        throw new RuntimeException(
-            "alt client cannot be null when 'force_alt_client' is set to true");
+     f (forceAltCl entFlag.apply()) {
+       f (altCha nedScatterGat rServ ce == null) {
+        throw new Runt  Except on(
+            "alt cl ent cannot be null w n 'force_alt_cl ent'  s set to true");
       } else {
-        return altChainedScatterGatherService;
+        return altCha nedScatterGat rServ ce;
       }
     }
 
-    if (altChainedScatterGatherService == null) {
-      return chainedScatterGatherService;
+     f (altCha nedScatterGat rServ ce == null) {
+      return cha nedScatterGat rServ ce;
     }
 
-    return new SplitterService<>(
-        chainedScatterGatherService,
-        altChainedScatterGatherService,
-        decider,
-        ALT_TRAFFIC_PERCENTAGE_DECIDER_KEY
+    return new Spl terServ ce<>(
+        cha nedScatterGat rServ ce,
+        altCha nedScatterGat rServ ce,
+        dec der,
+        ALT_TRAFF C_PERCENTAGE_DEC DER_KEY
     );
   }
 
-  @Provides
-  @Singleton
-  @RecencyCache
-  Cache<EarlybirdRequest, EarlybirdResponse> provideRecencyCache(
-      JavaClient client,
-      DefaultForcedCacheMissDecider decider,
-      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFIX) String serializedKeyPrefix,
-      @Named(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES) int cacheKeyMaxBytes,
-      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
-    return EarlybirdCacheCommonModule.createCache(client, decider, CLUSTER + "_recency_root",
-        serializedKeyPrefix, TimeUnit.HOURS.toMillis(2), cacheKeyMaxBytes, cacheValueMaxBytes);
+  @Prov des
+  @S ngleton
+  @RecencyCac 
+  Cac <Earlyb rdRequest, Earlyb rdResponse> prov deRecencyCac (
+      JavaCl ent cl ent,
+      DefaultForcedCac M ssDec der dec der,
+      @Na d(SearchRootModule.NAMED_SER AL ZED_KEY_PREF X) Str ng ser al zedKeyPref x,
+      @Na d(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES)  nt cac KeyMaxBytes,
+      @Na d(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES)  nt cac ValueMaxBytes) {
+    return Earlyb rdCac CommonModule.createCac (cl ent, dec der, CLUSTER + "_recency_root",
+        ser al zedKeyPref x, T  Un .HOURS.toM ll s(2), cac KeyMaxBytes, cac ValueMaxBytes);
   }
 
-  @Provides
-  @Singleton
-  @RelevanceCache
-  Cache<EarlybirdRequest, EarlybirdResponse> provideRelevanceCache(
-      JavaClient client,
-      DefaultForcedCacheMissDecider decider,
-      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFIX) String serializedKeyPrefix,
-      @Named(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES) int cacheKeyMaxBytes,
-      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
-    return EarlybirdCacheCommonModule.createCache(client, decider, CLUSTER + "_relevance_root",
-        serializedKeyPrefix, TimeUnit.HOURS.toMillis(2), cacheKeyMaxBytes, cacheValueMaxBytes);
+  @Prov des
+  @S ngleton
+  @RelevanceCac 
+  Cac <Earlyb rdRequest, Earlyb rdResponse> prov deRelevanceCac (
+      JavaCl ent cl ent,
+      DefaultForcedCac M ssDec der dec der,
+      @Na d(SearchRootModule.NAMED_SER AL ZED_KEY_PREF X) Str ng ser al zedKeyPref x,
+      @Na d(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES)  nt cac KeyMaxBytes,
+      @Na d(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES)  nt cac ValueMaxBytes) {
+    return Earlyb rdCac CommonModule.createCac (cl ent, dec der, CLUSTER + "_relevance_root",
+        ser al zedKeyPref x, T  Un .HOURS.toM ll s(2), cac KeyMaxBytes, cac ValueMaxBytes);
   }
 
-  @Provides
-  @Singleton
-  @StrictRecencyCache
-  Cache<EarlybirdRequest, EarlybirdResponse> provideStrictRecencyCache(
-      JavaClient client,
-      DefaultForcedCacheMissDecider decider,
-      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFIX) String serializedKeyPrefix,
-      @Named(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES) int cacheKeyMaxBytes,
-      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
-    return EarlybirdCacheCommonModule.createCache(client, decider, CLUSTER + "_strict_recency_root",
-        serializedKeyPrefix, TimeUnit.HOURS.toMillis(2), cacheKeyMaxBytes, cacheValueMaxBytes);
+  @Prov des
+  @S ngleton
+  @Str ctRecencyCac 
+  Cac <Earlyb rdRequest, Earlyb rdResponse> prov deStr ctRecencyCac (
+      JavaCl ent cl ent,
+      DefaultForcedCac M ssDec der dec der,
+      @Na d(SearchRootModule.NAMED_SER AL ZED_KEY_PREF X) Str ng ser al zedKeyPref x,
+      @Na d(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES)  nt cac KeyMaxBytes,
+      @Na d(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES)  nt cac ValueMaxBytes) {
+    return Earlyb rdCac CommonModule.createCac (cl ent, dec der, CLUSTER + "_str ct_recency_root",
+        ser al zedKeyPref x, T  Un .HOURS.toM ll s(2), cac KeyMaxBytes, cac ValueMaxBytes);
   }
 
-  @Provides
-  @Singleton
-  @TermStatsCache
-  Cache<EarlybirdRequest, EarlybirdResponse> provideTermStatsCache(
-      JavaClient client,
-      DefaultForcedCacheMissDecider decider,
-      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFIX) String serializedKeyPrefix,
-      @Named(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES) int cacheKeyMaxBytes,
-      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
-    return EarlybirdCacheCommonModule.createCache(client, decider, CLUSTER + "_termstats_root",
-        serializedKeyPrefix, TimeUnit.MINUTES.toMillis(5), cacheKeyMaxBytes, cacheValueMaxBytes);
+  @Prov des
+  @S ngleton
+  @TermStatsCac 
+  Cac <Earlyb rdRequest, Earlyb rdResponse> prov deTermStatsCac (
+      JavaCl ent cl ent,
+      DefaultForcedCac M ssDec der dec der,
+      @Na d(SearchRootModule.NAMED_SER AL ZED_KEY_PREF X) Str ng ser al zedKeyPref x,
+      @Na d(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES)  nt cac KeyMaxBytes,
+      @Na d(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES)  nt cac ValueMaxBytes) {
+    return Earlyb rdCac CommonModule.createCac (cl ent, dec der, CLUSTER + "_termstats_root",
+        ser al zedKeyPref x, T  Un .M NUTES.toM ll s(5), cac KeyMaxBytes, cac ValueMaxBytes);
   }
 
-  @Provides
-  @Singleton
-  @TopTweetsCache
-  Cache<EarlybirdRequest, EarlybirdResponse> provideTopTweetsCache(
-      JavaClient client,
-      DefaultForcedCacheMissDecider decider,
-      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFIX) String serializedKeyPrefix,
-      @Named(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES) int cacheKeyMaxBytes,
-      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
-    return EarlybirdCacheCommonModule.createCache(client, decider, CLUSTER + "_toptweets_root",
-        serializedKeyPrefix, TopTweetsServicePostProcessor.CACHE_AGE_IN_MS,
-        cacheKeyMaxBytes, cacheValueMaxBytes);
+  @Prov des
+  @S ngleton
+  @TopT etsCac 
+  Cac <Earlyb rdRequest, Earlyb rdResponse> prov deTopT etsCac (
+      JavaCl ent cl ent,
+      DefaultForcedCac M ssDec der dec der,
+      @Na d(SearchRootModule.NAMED_SER AL ZED_KEY_PREF X) Str ng ser al zedKeyPref x,
+      @Na d(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES)  nt cac KeyMaxBytes,
+      @Na d(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES)  nt cac ValueMaxBytes) {
+    return Earlyb rdCac CommonModule.createCac (cl ent, dec der, CLUSTER + "_topt ets_root",
+        ser al zedKeyPref x, TopT etsServ cePostProcessor.CACHE_AGE_ N_MS,
+        cac KeyMaxBytes, cac ValueMaxBytes);
   }
 
-  @Provides
-  SearchRootWarmup<EarlybirdService.ServiceIface, ?, ?> providesSearchRootWarmup(
+  @Prov des
+  SearchRootWarmup<Earlyb rdServ ce.Serv ce face, ?, ?> prov desSearchRootWarmup(
       Clock clock,
-      WarmupConfig config) {
-    return new EarlybirdWarmup(clock, config);
+      WarmupConf g conf g) {
+    return new Earlyb rdWarmup(clock, conf g);
   }
 }

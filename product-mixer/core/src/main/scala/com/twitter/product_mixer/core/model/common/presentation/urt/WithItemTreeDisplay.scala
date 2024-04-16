@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.model.common.presentation.urt
+package com.tw ter.product_m xer.core.model.common.presentat on.urt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ModuleItemTreeDisplay
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.Module emTreeD splay
 
 /*
- * Tree state declaring item’s parent relationship with any other items in
- * the module, any display indentation information, and/or collapsed display state.
+ * Tree state declar ng  em’s parent relat onsh p w h any ot r  ems  n
+ * t  module, any d splay  ndentat on  nformat on, and/or collapsed d splay state.
  */
-trait WithItemTreeDisplay { self: BaseUrtItemPresentation =>
-  def treeDisplay: Option[ModuleItemTreeDisplay]
+tra  W h emTreeD splay { self: BaseUrt emPresentat on =>
+  def treeD splay: Opt on[Module emTreeD splay]
 }

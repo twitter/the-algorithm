@@ -1,143 +1,143 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.tweetypie.repository.TweetQuery
+ mport com.tw ter.t etyp e.repos ory.T etQuery
 
 /**
- * An instance of `TweetQueryOptionsExpander.Type` can be used to take a `TweetQuery.Options`
- * instance provided by a user, and expand the set of options included to take into account
- * dependencies between fields and options.
+ * An  nstance of `T etQueryOpt onsExpander.Type` can be used to take a `T etQuery.Opt ons`
+ *  nstance prov ded by a user, and expand t  set of opt ons  ncluded to take  nto account
+ * dependenc es bet en f elds and opt ons.
  */
-object TweetQueryOptionsExpander {
-  import TweetQuery._
+object T etQueryOpt onsExpander {
+   mport T etQuery._
 
   /**
-   * Used by AdditionalFieldsHydrator, this function type can filter out or inject fieldIds to
-   * request from Manhattan per tweet.
+   * Used by Add  onalF eldsHydrator, t  funct on type can f lter out or  nject f eld ds to
+   * request from Manhattan per t et.
    */
-  type Type = Options => Options
+  type Type = Opt ons => Opt ons
 
   /**
-   * The identity TweetQueryOptionsExpander, which passes through fieldIds unchanged.
+   * T   dent y T etQueryOpt onsExpander, wh ch passes through f eld ds unchanged.
    */
-  val unit: TweetQueryOptionsExpander.Type = identity
+  val un : T etQueryOpt onsExpander.Type =  dent y
 
-  case class Selector(f: Include => Boolean) {
-    def apply(i: Include): Boolean = f(i)
+  case class Selector(f:  nclude => Boolean) {
+    def apply( :  nclude): Boolean = f( )
 
-    def ||(other: Selector) = Selector(i => this(i) || other(i))
+    def ||(ot r: Selector) = Selector(  => t ( ) || ot r( ))
   }
 
-  private def selectTweetField(fieldId: FieldId): Selector =
-    Selector(_.tweetFields.contains(fieldId))
+  pr vate def selectT etF eld(f eld d: F eld d): Selector =
+    Selector(_.t etF elds.conta ns(f eld d))
 
-  private val firstOrderDependencies: Seq[(Selector, Include)] =
+  pr vate val f rstOrderDependenc es: Seq[(Selector,  nclude)] =
     Seq(
-      selectTweetField(Tweet.MediaField.id) ->
-        Include(tweetFields = Set(Tweet.UrlsField.id, Tweet.MediaKeysField.id)),
-      selectTweetField(Tweet.QuotedTweetField.id) ->
-        Include(tweetFields = Set(Tweet.UrlsField.id)),
-      selectTweetField(Tweet.MediaRefsField.id) ->
-        Include(tweetFields = Set(Tweet.UrlsField.id, Tweet.MediaKeysField.id)),
-      selectTweetField(Tweet.CardsField.id) ->
-        Include(tweetFields = Set(Tweet.UrlsField.id)),
-      selectTweetField(Tweet.Card2Field.id) ->
-        Include(tweetFields = Set(Tweet.UrlsField.id, Tweet.CardReferenceField.id)),
-      selectTweetField(Tweet.CoreDataField.id) ->
-        Include(tweetFields = Set(Tweet.DirectedAtUserMetadataField.id)),
-      selectTweetField(Tweet.SelfThreadInfoField.id) ->
-        Include(tweetFields = Set(Tweet.CoreDataField.id)),
-      (selectTweetField(Tweet.TakedownCountryCodesField.id) ||
-        selectTweetField(Tweet.TakedownReasonsField.id)) ->
-        Include(
-          tweetFields = Set(
-            Tweet.TweetypieOnlyTakedownCountryCodesField.id,
-            Tweet.TweetypieOnlyTakedownReasonsField.id
+      selectT etF eld(T et. d aF eld. d) ->
+         nclude(t etF elds = Set(T et.UrlsF eld. d, T et. d aKeysF eld. d)),
+      selectT etF eld(T et.QuotedT etF eld. d) ->
+         nclude(t etF elds = Set(T et.UrlsF eld. d)),
+      selectT etF eld(T et. d aRefsF eld. d) ->
+         nclude(t etF elds = Set(T et.UrlsF eld. d, T et. d aKeysF eld. d)),
+      selectT etF eld(T et.CardsF eld. d) ->
+         nclude(t etF elds = Set(T et.UrlsF eld. d)),
+      selectT etF eld(T et.Card2F eld. d) ->
+         nclude(t etF elds = Set(T et.UrlsF eld. d, T et.CardReferenceF eld. d)),
+      selectT etF eld(T et.CoreDataF eld. d) ->
+         nclude(t etF elds = Set(T et.D rectedAtUser tadataF eld. d)),
+      selectT etF eld(T et.SelfThread nfoF eld. d) ->
+         nclude(t etF elds = Set(T et.CoreDataF eld. d)),
+      (selectT etF eld(T et.TakedownCountryCodesF eld. d) ||
+        selectT etF eld(T et.TakedownReasonsF eld. d)) ->
+         nclude(
+          t etF elds = Set(
+            T et.T etyp eOnlyTakedownCountryCodesF eld. d,
+            T et.T etyp eOnlyTakedownReasonsF eld. d
           )
         ),
-      selectTweetField(Tweet.EditPerspectiveField.id) ->
-        Include(tweetFields = Set(Tweet.PerspectiveField.id)),
-      Selector(_.quotedTweet) ->
-        Include(tweetFields = Set(Tweet.QuotedTweetField.id)),
-      // asking for any count implies getting the Tweet.counts field
-      Selector(_.countsFields.nonEmpty) ->
-        Include(tweetFields = Set(Tweet.CountsField.id)),
-      // asking for any media field implies getting the Tweet.media field
-      Selector(_.mediaFields.nonEmpty) ->
-        Include(tweetFields = Set(Tweet.MediaField.id)),
-      selectTweetField(Tweet.UnmentionDataField.id) ->
-        Include(tweetFields = Set(Tweet.MentionsField.id)),
+      selectT etF eld(T et.Ed Perspect veF eld. d) ->
+         nclude(t etF elds = Set(T et.Perspect veF eld. d)),
+      Selector(_.quotedT et) ->
+         nclude(t etF elds = Set(T et.QuotedT etF eld. d)),
+      // ask ng for any count  mpl es gett ng t  T et.counts f eld
+      Selector(_.countsF elds.nonEmpty) ->
+         nclude(t etF elds = Set(T et.CountsF eld. d)),
+      // ask ng for any  d a f eld  mpl es gett ng t  T et. d a f eld
+      Selector(_. d aF elds.nonEmpty) ->
+         nclude(t etF elds = Set(T et. d aF eld. d)),
+      selectT etF eld(T et.Un nt onDataF eld. d) ->
+         nclude(t etF elds = Set(T et. nt onsF eld. d)),
     )
 
-  private val allDependencies =
-    firstOrderDependencies.map {
-      case (sel, inc) => sel -> transitiveExpand(inc)
+  pr vate val allDependenc es =
+    f rstOrderDependenc es.map {
+      case (sel,  nc) => sel -> trans  veExpand( nc)
     }
 
-  private def transitiveExpand(inc: Include): Include =
-    firstOrderDependencies.foldLeft(inc) {
-      case (z, (selector, include)) =>
-        if (!selector(z)) z
-        else z ++ include ++ transitiveExpand(include)
+  pr vate def trans  veExpand( nc:  nclude):  nclude =
+    f rstOrderDependenc es.foldLeft( nc) {
+      case (z, (selector,  nclude)) =>
+         f (!selector(z)) z
+        else z ++  nclude ++ trans  veExpand( nclude)
     }
 
   /**
-   * Sequentially composes multiple TweetQueryOptionsExpander into a new TweetQueryOptionsExpander
+   * Sequent ally composes mult ple T etQueryOpt onsExpander  nto a new T etQueryOpt onsExpander
    */
-  def sequentially(updaters: TweetQueryOptionsExpander.Type*): TweetQueryOptionsExpander.Type =
-    options =>
-      updaters.foldLeft(options) {
-        case (options, updater) => updater(options)
+  def sequent ally(updaters: T etQueryOpt onsExpander.Type*): T etQueryOpt onsExpander.Type =
+    opt ons =>
+      updaters.foldLeft(opt ons) {
+        case (opt ons, updater) => updater(opt ons)
       }
 
   /**
-   * For requested fields that depend on other fields being present for correct hydration,
-   * returns an updated `TweetQuery.Options` with those dependee fields included.
+   * For requested f elds that depend on ot r f elds be ng present for correct hydrat on,
+   * returns an updated `T etQuery.Opt ons` w h those dependee f elds  ncluded.
    */
-  def expandDependencies: TweetQueryOptionsExpander.Type =
-    options =>
-      options.copy(
-        include = allDependencies.foldLeft(options.include) {
-          case (z, (selector, include)) =>
-            if (!selector(options.include)) z
-            else z ++ include
+  def expandDependenc es: T etQueryOpt onsExpander.Type =
+    opt ons =>
+      opt ons.copy(
+         nclude = allDependenc es.foldLeft(opt ons. nclude) {
+          case (z, (selector,  nclude)) =>
+             f (!selector(opt ons. nclude)) z
+            else z ++  nclude
         }
       )
 
   /**
-   * If the gate is true, add 'fields' to the list of tweetFields to load.
+   *  f t  gate  s true, add 'f elds' to t  l st of t etF elds to load.
    */
-  def gatedTweetFieldUpdater(
-    gate: Gate[Unit],
-    fields: Seq[FieldId]
-  ): TweetQueryOptionsExpander.Type =
-    options =>
-      if (gate()) {
-        options.copy(
-          include = options.include.also(tweetFields = fields)
+  def gatedT etF eldUpdater(
+    gate: Gate[Un ],
+    f elds: Seq[F eld d]
+  ): T etQueryOpt onsExpander.Type =
+    opt ons =>
+       f (gate()) {
+        opt ons.copy(
+           nclude = opt ons. nclude.also(t etF elds = f elds)
         )
       } else {
-        options
+        opt ons
       }
 
   /**
-   * Uses a `ThreadLocal` to remember the last expansion performed, and to reuse the
-   * previous result if the input value is the same.  This is useful to avoid repeatedly
-   * computing the expansion of the same input when multiple tweets are queried together
-   * with the same options.
+   * Uses a `ThreadLocal` to re mber t  last expans on perfor d, and to reuse t 
+   * prev ous result  f t   nput value  s t  sa .  T   s useful to avo d repeatedly
+   * comput ng t  expans on of t  sa   nput w n mult ple t ets are quer ed toget r
+   * w h t  sa  opt ons.
    */
-  def threadLocalMemoize(expander: Type): Type = {
-    val memo: ThreadLocal[Option[(Options, Options)]] =
-      new ThreadLocal[Option[(Options, Options)]] {
-        override def initialValue(): None.type = None
+  def threadLocal mo ze(expander: Type): Type = {
+    val  mo: ThreadLocal[Opt on[(Opt ons, Opt ons)]] =
+      new ThreadLocal[Opt on[(Opt ons, Opt ons)]] {
+        overr de def  n  alValue(): None.type = None
       }
 
-    options =>
-      memo.get() match {
-        case Some((`options`, res)) => res
+    opt ons =>
+       mo.get() match {
+        case So ((`opt ons`, res)) => res
         case _ =>
-          val res = expander(options)
-          memo.set(Some((options, res)))
+          val res = expander(opt ons)
+           mo.set(So ((opt ons, res)))
           res
       }
   }

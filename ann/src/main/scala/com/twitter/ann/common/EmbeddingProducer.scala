@@ -1,13 +1,13 @@
-package com.twitter.ann.common
+package com.tw ter.ann.common
 
-import com.twitter.stitch.Stitch
+ mport com.tw ter.st ch.St ch
 
-trait EmbeddingProducer[T] {
+tra  Embedd ngProducer[T] {
 
   /**
-   * Produce an embedding from type T. Implementations of this could do a lookup from an id to an
-   * embedding. Or they could run a deep model on features that output and embedding.
-   * @return An embedding Stitch. See go/stitch for details on how to use the Stitch API.
+   * Produce an embedd ng from type T.  mple ntat ons of t  could do a lookup from an  d to an
+   * embedd ng. Or t y could run a deep model on features that output and embedd ng.
+   * @return An embedd ng St ch. See go/st ch for deta ls on how to use t  St ch AP .
    */
-  def produceEmbedding(input: T): Stitch[Option[EmbeddingType.EmbeddingVector]]
+  def produceEmbedd ng( nput: T): St ch[Opt on[Embedd ngType.Embedd ngVector]]
 }

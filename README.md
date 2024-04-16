@@ -1,69 +1,69 @@
-# Twitter's Recommendation Algorithm
+# Tw ter's Recom ndat on Algor hm
 
-Twitter's Recommendation Algorithm is a set of services and jobs that are responsible for serving feeds of Tweets and other content across all Twitter product surfaces (e.g. For You Timeline, Search, Explore, Notifications). For an introduction to how the algorithm works, please refer to our [engineering blog](https://blog.twitter.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm).
+Tw ter's Recom ndat on Algor hm  s a set of serv ces and jobs that are respons ble for serv ng feeds of T ets and ot r content across all Tw ter product surfaces (e.g. For   T  l ne, Search, Explore, Not f cat ons). For an  ntroduct on to how t  algor hm works, please refer to   [eng neer ng blog](https://blog.tw ter.com/eng neer ng/en_us/top cs/open-s ce/2023/tw ter-recom ndat on-algor hm).
 
-## Architecture
+## Arch ecture
 
-Product surfaces at Twitter are built on a shared set of data, models, and software frameworks. The shared components included in this repository are listed below:
+Product surfaces at Tw ter are bu lt on a shared set of data, models, and software fra works. T  shared components  ncluded  n t  repos ory are l sted below:
 
-| Type | Component | Description |
+| Type | Component | Descr pt on |
 |------------|------------|------------|
-| Data | [tweetypie](tweetypie/server/README.md) | Core Tweet service that handles the reading and writing of Tweet data. |
-|      | [unified-user-actions](unified_user_actions/README.md) | Real-time stream of user actions on Twitter. |
-|      | [user-signal-service](user-signal-service/README.md) | Centralized platform to retrieve explicit (e.g. likes, replies) and implicit (e.g. profile visits, tweet clicks) user signals. |
-| Model | [SimClusters](src/scala/com/twitter/simclusters_v2/README.md) | Community detection and sparse embeddings into those communities. |
-|       | [TwHIN](https://github.com/twitter/the-algorithm-ml/blob/main/projects/twhin/README.md) | Dense knowledge graph embeddings for Users and Tweets. |
-|       | [trust-and-safety-models](trust_and_safety_models/README.md) | Models for detecting NSFW or abusive content. |
-|       | [real-graph](src/scala/com/twitter/interaction_graph/README.md) | Model to predict the likelihood of a Twitter User interacting with another User. |
-|       | [tweepcred](src/scala/com/twitter/graph/batch/job/tweepcred/README) | Page-Rank algorithm for calculating Twitter User reputation. |
-|       | [recos-injector](recos-injector/README.md) | Streaming event processor for building input streams for [GraphJet](https://github.com/twitter/GraphJet) based services. |
-|       | [graph-feature-service](graph-feature-service/README.md) | Serves graph features for a directed pair of Users (e.g. how many of User A's following liked Tweets from User B). |
-|       | [topic-social-proof](topic-social-proof/README.md) | Identifies topics related to individual Tweets. |
-|       | [representation-scorer](representation-scorer/README.md) | Compute scores between pairs of entities (Users, Tweets, etc.) using embedding similarity. |
-| Software framework | [navi](navi/README.md) | High performance, machine learning model serving written in Rust. |
-|                    | [product-mixer](product-mixer/README.md) | Software framework for building feeds of content. |
-|                    | [timelines-aggregation-framework](timelines/data_processing/ml_util/aggregation_framework/README.md) | Framework for generating aggregate features in batch or real time. |
-|                    | [representation-manager](representation-manager/README.md) | Service to retrieve embeddings (i.e. SimClusers and TwHIN). |
-|                    | [twml](twml/README.md) | Legacy machine learning framework built on TensorFlow v1. |
+| Data | [t etyp e](t etyp e/server/README.md) | Core T et serv ce that handles t  read ng and wr  ng of T et data. |
+|      | [un f ed-user-act ons](un f ed_user_act ons/README.md) | Real-t   stream of user act ons on Tw ter. |
+|      | [user-s gnal-serv ce](user-s gnal-serv ce/README.md) | Central zed platform to retr eve expl c  (e.g. l kes, repl es) and  mpl c  (e.g. prof le v s s, t et cl cks) user s gnals. |
+| Model | [S mClusters](src/scala/com/tw ter/s mclusters_v2/README.md) | Commun y detect on and sparse embedd ngs  nto those commun  es. |
+|       | [TwH N](https://g hub.com/tw ter/t -algor hm-ml/blob/ma n/projects/twh n/README.md) | Dense knowledge graph embedd ngs for Users and T ets. |
+|       | [trust-and-safety-models](trust_and_safety_models/README.md) | Models for detect ng NSFW or abus ve content. |
+|       | [real-graph](src/scala/com/tw ter/ nteract on_graph/README.md) | Model to pred ct t  l kel hood of a Tw ter User  nteract ng w h anot r User. |
+|       | [t epcred](src/scala/com/tw ter/graph/batch/job/t epcred/README) | Page-Rank algor hm for calculat ng Tw ter User reputat on. |
+|       | [recos- njector](recos- njector/README.md) | Stream ng event processor for bu ld ng  nput streams for [GraphJet](https://g hub.com/tw ter/GraphJet) based serv ces. |
+|       | [graph-feature-serv ce](graph-feature-serv ce/README.md) | Serves graph features for a d rected pa r of Users (e.g. how many of User A's follow ng l ked T ets from User B). |
+|       | [top c-soc al-proof](top c-soc al-proof/README.md) |  dent f es top cs related to  nd v dual T ets. |
+|       | [representat on-scorer](representat on-scorer/README.md) | Compute scores bet en pa rs of ent  es (Users, T ets, etc.) us ng embedd ng s m lar y. |
+| Software fra work | [nav ](nav /README.md) | H gh performance, mach ne learn ng model serv ng wr ten  n Rust. |
+|                    | [product-m xer](product-m xer/README.md) | Software fra work for bu ld ng feeds of content. |
+|                    | [t  l nes-aggregat on-fra work](t  l nes/data_process ng/ml_ut l/aggregat on_fra work/README.md) | Fra work for generat ng aggregate features  n batch or real t  . |
+|                    | [representat on-manager](representat on-manager/README.md) | Serv ce to retr eve embedd ngs ( .e. S mClusers and TwH N). |
+|                    | [twml](twml/README.md) | Legacy mach ne learn ng fra work bu lt on TensorFlow v1. |
 
-The product surfaces currently included in this repository are the For You Timeline and Recommended Notifications.
+T  product surfaces currently  ncluded  n t  repos ory are t  For   T  l ne and Recom nded Not f cat ons.
 
-### For You Timeline
+### For   T  l ne
 
-The diagram below illustrates how major services and jobs interconnect to construct a For You Timeline.
+T  d agram below  llustrates how major serv ces and jobs  nterconnect to construct a For   T  l ne.
 
-![](docs/system-diagram.png)
+![](docs/system-d agram.png)
 
-The core components of the For You Timeline included in this repository are listed below:
+T  core components of t  For   T  l ne  ncluded  n t  repos ory are l sted below:
 
-| Type | Component | Description |
+| Type | Component | Descr pt on |
 |------------|------------|------------|
-| Candidate Source | [search-index](src/java/com/twitter/search/README.md) | Find and rank In-Network Tweets. ~50% of Tweets come from this candidate source. |
-|                  | [cr-mixer](cr-mixer/README.md) | Coordination layer for fetching Out-of-Network tweet candidates from underlying compute services. |
-|                  | [user-tweet-entity-graph](src/scala/com/twitter/recos/user_tweet_entity_graph/README.md) (UTEG)| Maintains an in memory User to Tweet interaction graph, and finds candidates based on traversals of this graph. This is built on the [GraphJet](https://github.com/twitter/GraphJet) framework. Several other GraphJet based features and candidate sources are located [here](src/scala/com/twitter/recos). |
-|                  | [follow-recommendation-service](follow-recommendations-service/README.md) (FRS)| Provides Users with recommendations for accounts to follow, and Tweets from those accounts. |
-| Ranking | [light-ranker](src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird/README.md) | Light Ranker model used by search index (Earlybird) to rank Tweets. |
-|         | [heavy-ranker](https://github.com/twitter/the-algorithm-ml/blob/main/projects/home/recap/README.md) | Neural network for ranking candidate tweets. One of the main signals used to select timeline Tweets post candidate sourcing. |
-| Tweet mixing & filtering | [home-mixer](home-mixer/README.md) | Main service used to construct and serve the Home Timeline. Built on [product-mixer](product-mixer/README.md). |
-|                          | [visibility-filters](visibilitylib/README.md) | Responsible for filtering Twitter content to support legal compliance, improve product quality, increase user trust, protect revenue through the use of hard-filtering, visible product treatments, and coarse-grained downranking. |
-|                          | [timelineranker](timelineranker/README.md) | Legacy service which provides relevance-scored tweets from the Earlybird Search Index and UTEG service. |
+| Cand date S ce | [search- ndex](src/java/com/tw ter/search/README.md) | F nd and rank  n-Network T ets. ~50% of T ets co  from t  cand date s ce. |
+|                  | [cr-m xer](cr-m xer/README.md) | Coord nat on layer for fetch ng Out-of-Network t et cand dates from underly ng compute serv ces. |
+|                  | [user-t et-ent y-graph](src/scala/com/tw ter/recos/user_t et_ent y_graph/README.md) (UTEG)| Ma nta ns an  n  mory User to T et  nteract on graph, and f nds cand dates based on traversals of t  graph. T   s bu lt on t  [GraphJet](https://g hub.com/tw ter/GraphJet) fra work. Several ot r GraphJet based features and cand date s ces are located [ re](src/scala/com/tw ter/recos). |
+|                  | [follow-recom ndat on-serv ce](follow-recom ndat ons-serv ce/README.md) (FRS)| Prov des Users w h recom ndat ons for accounts to follow, and T ets from those accounts. |
+| Rank ng | [l ght-ranker](src/python/tw ter/deepb rd/projects/t  l nes/scr pts/models/earlyb rd/README.md) | L ght Ranker model used by search  ndex (Earlyb rd) to rank T ets. |
+|         | [ avy-ranker](https://g hub.com/tw ter/t -algor hm-ml/blob/ma n/projects/ho /recap/README.md) | Neural network for rank ng cand date t ets. One of t  ma n s gnals used to select t  l ne T ets post cand date s c ng. |
+| T et m x ng & f lter ng | [ho -m xer](ho -m xer/README.md) | Ma n serv ce used to construct and serve t  Ho  T  l ne. Bu lt on [product-m xer](product-m xer/README.md). |
+|                          | [v s b l y-f lters](v s b l yl b/README.md) | Respons ble for f lter ng Tw ter content to support legal compl ance,  mprove product qual y,  ncrease user trust, protect revenue through t  use of hard-f lter ng, v s ble product treat nts, and coarse-gra ned downrank ng. |
+|                          | [t  l neranker](t  l neranker/README.md) | Legacy serv ce wh ch prov des relevance-scored t ets from t  Earlyb rd Search  ndex and UTEG serv ce. |
 
-### Recommended Notifications
+### Recom nded Not f cat ons
 
-The core components of Recommended Notifications included in this repository are listed below:
+T  core components of Recom nded Not f cat ons  ncluded  n t  repos ory are l sted below:
 
-| Type | Component | Description |
+| Type | Component | Descr pt on |
 |------------|------------|------------|
-| Service | [pushservice](pushservice/README.md) | Main recommendation service at Twitter used to surface recommendations to our users via notifications.
-| Ranking | [pushservice-light-ranker](pushservice/src/main/python/models/light_ranking/README.md) | Light Ranker model used by pushservice to rank Tweets. Bridges candidate generation and heavy ranking by pre-selecting highly-relevant candidates from the initial huge candidate pool. |
-|         | [pushservice-heavy-ranker](pushservice/src/main/python/models/heavy_ranking/README.md) | Multi-task learning model to predict the probabilities that the target users will open and engage with the sent notifications. |
+| Serv ce | [pushserv ce](pushserv ce/README.md) | Ma n recom ndat on serv ce at Tw ter used to surface recom ndat ons to   users v a not f cat ons.
+| Rank ng | [pushserv ce-l ght-ranker](pushserv ce/src/ma n/python/models/l ght_rank ng/README.md) | L ght Ranker model used by pushserv ce to rank T ets. Br dges cand date generat on and  avy rank ng by pre-select ng h ghly-relevant cand dates from t   n  al huge cand date pool. |
+|         | [pushserv ce- avy-ranker](pushserv ce/src/ma n/python/models/ avy_rank ng/README.md) | Mult -task learn ng model to pred ct t  probab l  es that t  target users w ll open and engage w h t  sent not f cat ons. |
 
-## Build and test code
+## Bu ld and test code
 
-We include Bazel BUILD files for most components, but not a top-level BUILD or WORKSPACE file. We plan to add a more complete build and test system in the future.
+   nclude Bazel BU LD f les for most components, but not a top-level BU LD or WORKSPACE f le.   plan to add a more complete bu ld and test system  n t  future.
 
-## Contributing
+## Contr but ng
 
-We invite the community to submit GitHub issues and pull requests for suggestions on improving the recommendation algorithm. We are working on tools to manage these suggestions and sync changes to our internal repository. Any security concerns or issues should be routed to our official [bug bounty program](https://hackerone.com/twitter) through HackerOne. We hope to benefit from the collective intelligence and expertise of the global community in helping us identify issues and suggest improvements, ultimately leading to a better Twitter.
+   nv e t  commun y to subm  G Hub  ssues and pull requests for suggest ons on  mprov ng t  recom ndat on algor hm.   are work ng on tools to manage t se suggest ons and sync changes to    nternal repos ory. Any secur y concerns or  ssues should be routed to   off c al [bug bounty program](https://hackerone.com/tw ter) through HackerOne.   hope to benef  from t  collect ve  ntell gence and expert se of t  global commun y  n  lp ng us  dent fy  ssues and suggest  mprove nts, ult mately lead ng to a better Tw ter.
 
-Read our blog on the open source initiative [here](https://blog.twitter.com/en_us/topics/company/2023/a-new-era-of-transparency-for-twitter).
+Read   blog on t  open s ce  n  at ve [ re](https://blog.tw ter.com/en_us/top cs/company/2023/a-new-era-of-transparency-for-tw ter).

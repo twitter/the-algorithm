@@ -1,5 +1,5 @@
-package com.twitter.home_mixer.util
+package com.tw ter.ho _m xer.ut l
 
-object MissingKeyException extends Exception("Missing key") {
-  override def toString: String = getMessage
+object M ss ngKeyExcept on extends Except on("M ss ng key") {
+  overr de def toStr ng: Str ng = get ssage
 }

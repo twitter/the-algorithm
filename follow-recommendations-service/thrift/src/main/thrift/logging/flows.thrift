@@ -1,16 +1,16 @@
-namespace java com.twitter.follow_recommendations.logging.thriftjava
-#@namespace scala com.twitter.follow_recommendations.logging.thriftscala
-#@namespace strato com.twitter.follow_recommendations.logging
+na space java com.tw ter.follow_recom ndat ons.logg ng.thr ftjava
+#@na space scala com.tw ter.follow_recom ndat ons.logg ng.thr ftscala
+#@na space strato com.tw ter.follow_recom ndat ons.logg ng
 
-struct OfflineFlowRecommendation {
-  1: required i64 userId(personalDataType='UserId')
-}(persisted='true', hasPersonalData='true')
+struct Offl neFlowRecom ndat on {
+  1: requ red  64 user d(personalDataType='User d')
+}(pers sted='true', hasPersonalData='true')
 
-struct OfflineRecommendationStep {
-  1: required list<OfflineFlowRecommendation> recommendations
-  2: required set<i64> followedUserIds(personalDataType='UserId')
-}(persisted='true', hasPersonalData='true')
+struct Offl neRecom ndat onStep {
+  1: requ red l st<Offl neFlowRecom ndat on> recom ndat ons
+  2: requ red set< 64> follo dUser ds(personalDataType='User d')
+}(pers sted='true', hasPersonalData='true')
 
-struct OfflineFlowContext {
-  1: required list<OfflineRecommendationStep> steps
-}(persisted='true', hasPersonalData='true')
+struct Offl neFlowContext {
+  1: requ red l st<Offl neRecom ndat onStep> steps
+}(pers sted='true', hasPersonalData='true')

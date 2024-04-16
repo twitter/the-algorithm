@@ -1,12 +1,12 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+package com.tw ter.search.earlyb rd.arch ve.seg ntbu lder;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
 /**
- * Used if exceptions are thrown during creating new SegmentInfo during the indexing loop
+ * Used  f except ons are thrown dur ng creat ng new Seg nt nfo dur ng t   ndex ng loop
  */
-class SegmentInfoConstructionException extends Exception {
-  SegmentInfoConstructionException(String msg, IOException e) {
+class Seg nt nfoConstruct onExcept on extends Except on {
+  Seg nt nfoConstruct onExcept on(Str ng msg,  OExcept on e) {
     super(msg, e);
   }
 }

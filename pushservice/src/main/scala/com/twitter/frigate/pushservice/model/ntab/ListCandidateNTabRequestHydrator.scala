@@ -1,34 +1,34 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.tw ter.fr gate.pushserv ce.model.ntab
 
-import com.twitter.frigate.pushservice.model.ListRecommendationPushCandidate
-import com.twitter.notificationservice.thriftscala.DisplayText
-import com.twitter.notificationservice.thriftscala.DisplayTextEntity
-import com.twitter.notificationservice.thriftscala.InlineCard
-import com.twitter.notificationservice.thriftscala.StoryContext
-import com.twitter.notificationservice.thriftscala.TextValue
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.pushserv ce.model.L stRecom ndat onPushCand date
+ mport com.tw ter.not f cat onserv ce.thr ftscala.D splayText
+ mport com.tw ter.not f cat onserv ce.thr ftscala.D splayTextEnt y
+ mport com.tw ter.not f cat onserv ce.thr ftscala. nl neCard
+ mport com.tw ter.not f cat onserv ce.thr ftscala.StoryContext
+ mport com.tw ter.not f cat onserv ce.thr ftscala.TextValue
+ mport com.tw ter.ut l.Future
 
-trait ListCandidateNTabRequestHydrator extends NTabRequestHydrator {
+tra  L stCand dateNTabRequestHydrator extends NTabRequestHydrator {
 
-  self: ListRecommendationPushCandidate =>
+  self: L stRecom ndat onPushCand date =>
 
-  override lazy val senderIdFut: Future[Long] =
-    listOwnerId.map(_.getOrElse(0L))
+  overr de lazy val sender dFut: Future[Long] =
+    l stOwner d.map(_.getOrElse(0L))
 
-  override lazy val facepileUsersFut: Future[Seq[Long]] = Future.Nil
+  overr de lazy val facep leUsersFut: Future[Seq[Long]] = Future.N l
 
-  override lazy val storyContext: Option[StoryContext] = None
+  overr de lazy val storyContext: Opt on[StoryContext] = None
 
-  override lazy val inlineCard: Option[InlineCard] = None
+  overr de lazy val  nl neCard: Opt on[ nl neCard] = None
 
-  override lazy val tapThroughFut: Future[String] = Future.value(s"i/lists/${listId}")
+  overr de lazy val tapThroughFut: Future[Str ng] = Future.value(s" /l sts/${l st d}")
 
-  override lazy val displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] = listName.map {
-    listNameOpt =>
-      listNameOpt.toSeq.map { name =>
-        DisplayTextEntity(name = "title", value = TextValue.Text(name))
+  overr de lazy val d splayTextEnt  esFut: Future[Seq[D splayTextEnt y]] = l stNa .map {
+    l stNa Opt =>
+      l stNa Opt.toSeq.map { na  =>
+        D splayTextEnt y(na  = "t le", value = TextValue.Text(na ))
       }
   }
 
-  override val socialProofDisplayText: Option[DisplayText] = Some(DisplayText())
+  overr de val soc alProofD splayText: Opt on[D splayText] = So (D splayText())
 }

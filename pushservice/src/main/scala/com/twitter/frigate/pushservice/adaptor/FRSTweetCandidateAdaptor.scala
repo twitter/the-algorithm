@@ -1,249 +1,249 @@
-package com.twitter.frigate.pushservice.adaptor
+package com.tw ter.fr gate.pushserv ce.adaptor
 
-import com.twitter.cr_mixer.thriftscala.FrsTweetRequest
-import com.twitter.cr_mixer.thriftscala.NotificationsContext
-import com.twitter.cr_mixer.thriftscala.Product
-import com.twitter.cr_mixer.thriftscala.ProductContext
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.frigate.common.base.CandidateSourceEligible
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.predicate.CommonOutNetworkTweetCandidatesSourcePredicates.filterOutReplyTweet
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.store.CrMixerTweetStore
-import com.twitter.frigate.pushservice.store.UttEntityHydrationStore
-import com.twitter.frigate.pushservice.util.MediaCRT
-import com.twitter.frigate.pushservice.util.PushAdaptorUtil
-import com.twitter.frigate.pushservice.util.PushDeviceUtil
-import com.twitter.frigate.pushservice.util.TopicsUtil
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.hermit.constants.AlgorithmFeedbackTokens
-import com.twitter.hermit.model.Algorithm.Algorithm
-import com.twitter.hermit.model.Algorithm.CrowdSearchAccounts
-import com.twitter.hermit.model.Algorithm.ForwardEmailBook
-import com.twitter.hermit.model.Algorithm.ForwardPhoneBook
-import com.twitter.hermit.model.Algorithm.ReverseEmailBookIbis
-import com.twitter.hermit.model.Algorithm.ReversePhoneBook
-import com.twitter.hermit.store.tweetypie.UserTweet
-import com.twitter.product_mixer.core.thriftscala.ClientContext
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.tsp.thriftscala.TopicSocialProofRequest
-import com.twitter.tsp.thriftscala.TopicSocialProofResponse
-import com.twitter.util.Future
+ mport com.tw ter.cr_m xer.thr ftscala.FrsT etRequest
+ mport com.tw ter.cr_m xer.thr ftscala.Not f cat onsContext
+ mport com.tw ter.cr_m xer.thr ftscala.Product
+ mport com.tw ter.cr_m xer.thr ftscala.ProductContext
+ mport com.tw ter.f nagle.stats.Counter
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Cand dateS ce
+ mport com.tw ter.fr gate.common.base.Cand dateS ceEl g ble
+ mport com.tw ter.fr gate.common.base._
+ mport com.tw ter.fr gate.common.pred cate.CommonOutNetworkT etCand datesS cePred cates.f lterOutReplyT et
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.store.CrM xerT etStore
+ mport com.tw ter.fr gate.pushserv ce.store.UttEnt yHydrat onStore
+ mport com.tw ter.fr gate.pushserv ce.ut l. d aCRT
+ mport com.tw ter.fr gate.pushserv ce.ut l.PushAdaptorUt l
+ mport com.tw ter.fr gate.pushserv ce.ut l.PushDev ceUt l
+ mport com.tw ter.fr gate.pushserv ce.ut l.Top csUt l
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
+ mport com.tw ter. rm .constants.Algor hmFeedbackTokens
+ mport com.tw ter. rm .model.Algor hm.Algor hm
+ mport com.tw ter. rm .model.Algor hm.CrowdSearchAccounts
+ mport com.tw ter. rm .model.Algor hm.ForwardEma lBook
+ mport com.tw ter. rm .model.Algor hm.ForwardPhoneBook
+ mport com.tw ter. rm .model.Algor hm.ReverseEma lBook b s
+ mport com.tw ter. rm .model.Algor hm.ReversePhoneBook
+ mport com.tw ter. rm .store.t etyp e.UserT et
+ mport com.tw ter.product_m xer.core.thr ftscala.Cl entContext
+ mport com.tw ter.st ch.t etyp e.T etyP e.T etyP eResult
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.tsp.thr ftscala.Top cSoc alProofRequest
+ mport com.tw ter.tsp.thr ftscala.Top cSoc alProofResponse
+ mport com.tw ter.ut l.Future
 
-object FRSAlgorithmFeedbackTokenUtil {
-  private val crtsByAlgoToken = Map(
-    getAlgorithmToken(ReverseEmailBookIbis) -> CommonRecommendationType.ReverseAddressbookTweet,
-    getAlgorithmToken(ReversePhoneBook) -> CommonRecommendationType.ReverseAddressbookTweet,
-    getAlgorithmToken(ForwardEmailBook) -> CommonRecommendationType.ForwardAddressbookTweet,
-    getAlgorithmToken(ForwardPhoneBook) -> CommonRecommendationType.ForwardAddressbookTweet,
-    getAlgorithmToken(CrowdSearchAccounts) -> CommonRecommendationType.CrowdSearchTweet
+object FRSAlgor hmFeedbackTokenUt l {
+  pr vate val crtsByAlgoToken = Map(
+    getAlgor hmToken(ReverseEma lBook b s) -> CommonRecom ndat onType.ReverseAddressbookT et,
+    getAlgor hmToken(ReversePhoneBook) -> CommonRecom ndat onType.ReverseAddressbookT et,
+    getAlgor hmToken(ForwardEma lBook) -> CommonRecom ndat onType.ForwardAddressbookT et,
+    getAlgor hmToken(ForwardPhoneBook) -> CommonRecom ndat onType.ForwardAddressbookT et,
+    getAlgor hmToken(CrowdSearchAccounts) -> CommonRecom ndat onType.CrowdSearchT et
   )
 
-  def getAlgorithmToken(algorithm: Algorithm): Int = {
-    AlgorithmFeedbackTokens.AlgorithmToFeedbackTokenMap(algorithm)
+  def getAlgor hmToken(algor hm: Algor hm):  nt = {
+    Algor hmFeedbackTokens.Algor hmToFeedbackTokenMap(algor hm)
   }
 
-  def getCRTForAlgoToken(algorithmToken: Int): Option[CommonRecommendationType] = {
-    crtsByAlgoToken.get(algorithmToken)
+  def getCRTForAlgoToken(algor hmToken:  nt): Opt on[CommonRecom ndat onType] = {
+    crtsByAlgoToken.get(algor hmToken)
   }
 }
 
-case class FRSTweetCandidateAdaptor(
-  crMixerTweetStore: CrMixerTweetStore,
-  tweetyPieStore: ReadableStore[Long, TweetyPieResult],
-  tweetyPieStoreNoVF: ReadableStore[Long, TweetyPieResult],
-  userTweetTweetyPieStore: ReadableStore[UserTweet, TweetyPieResult],
-  uttEntityHydrationStore: UttEntityHydrationStore,
-  topicSocialProofServiceStore: ReadableStore[TopicSocialProofRequest, TopicSocialProofResponse],
-  globalStats: StatsReceiver)
-    extends CandidateSource[Target, RawCandidate]
-    with CandidateSourceEligible[Target, RawCandidate] {
+case class FRST etCand dateAdaptor(
+  crM xerT etStore: CrM xerT etStore,
+  t etyP eStore: ReadableStore[Long, T etyP eResult],
+  t etyP eStoreNoVF: ReadableStore[Long, T etyP eResult],
+  userT etT etyP eStore: ReadableStore[UserT et, T etyP eResult],
+  uttEnt yHydrat onStore: UttEnt yHydrat onStore,
+  top cSoc alProofServ ceStore: ReadableStore[Top cSoc alProofRequest, Top cSoc alProofResponse],
+  globalStats: StatsRece ver)
+    extends Cand dateS ce[Target, RawCand date]
+    w h Cand dateS ceEl g ble[Target, RawCand date] {
 
-  private val stats = globalStats.scope(this.getClass.getSimpleName)
-  private val crtStats = stats.scope("CandidateDistribution")
-  private val totalRequests = stats.counter("total_requests")
+  pr vate val stats = globalStats.scope(t .getClass.getS mpleNa )
+  pr vate val crtStats = stats.scope("Cand dateD str but on")
+  pr vate val totalRequests = stats.counter("total_requests")
 
-  // Candidate Distribution stats
-  private val reverseAddressbookCounter = crtStats.counter("reverse_addressbook")
-  private val forwardAddressbookCounter = crtStats.counter("forward_addressbook")
-  private val frsTweetCounter = crtStats.counter("frs_tweet")
-  private val nonReplyTweetsCounter = stats.counter("non_reply_tweets")
-  private val crtToCounterMapping: Map[CommonRecommendationType, Counter] = Map(
-    CommonRecommendationType.ReverseAddressbookTweet -> reverseAddressbookCounter,
-    CommonRecommendationType.ForwardAddressbookTweet -> forwardAddressbookCounter,
-    CommonRecommendationType.FrsTweet -> frsTweetCounter
+  // Cand date D str but on stats
+  pr vate val reverseAddressbookCounter = crtStats.counter("reverse_addressbook")
+  pr vate val forwardAddressbookCounter = crtStats.counter("forward_addressbook")
+  pr vate val frsT etCounter = crtStats.counter("frs_t et")
+  pr vate val nonReplyT etsCounter = stats.counter("non_reply_t ets")
+  pr vate val crtToCounterMapp ng: Map[CommonRecom ndat onType, Counter] = Map(
+    CommonRecom ndat onType.ReverseAddressbookT et -> reverseAddressbookCounter,
+    CommonRecom ndat onType.ForwardAddressbookT et -> forwardAddressbookCounter,
+    CommonRecom ndat onType.FrsT et -> frsT etCounter
   )
 
-  private val emptyTweetyPieResult = stats.stat("empty_tweetypie_result")
+  pr vate val emptyT etyP eResult = stats.stat("empty_t etyp e_result")
 
-  private[this] val numberReturnedCandidates = stats.stat("returned_candidates_from_earlybird")
-  private[this] val numberCandidateWithTopic: Counter = stats.counter("num_can_with_topic")
-  private[this] val numberCandidateWithoutTopic: Counter = stats.counter("num_can_without_topic")
+  pr vate[t ] val numberReturnedCand dates = stats.stat("returned_cand dates_from_earlyb rd")
+  pr vate[t ] val numberCand dateW hTop c: Counter = stats.counter("num_can_w h_top c")
+  pr vate[t ] val numberCand dateW houtTop c: Counter = stats.counter("num_can_w hout_top c")
 
-  private val userTweetTweetyPieStoreCounter = stats.counter("user_tweet_tweetypie_store")
+  pr vate val userT etT etyP eStoreCounter = stats.counter("user_t et_t etyp e_store")
 
-  override val name: String = this.getClass.getSimpleName
+  overr de val na : Str ng = t .getClass.getS mpleNa 
 
-  private def filterInvalidTweets(
-    tweetIds: Seq[Long],
+  pr vate def f lter nval dT ets(
+    t et ds: Seq[Long],
     target: Target
-  ): Future[Map[Long, TweetyPieResult]] = {
+  ): Future[Map[Long, T etyP eResult]] = {
     val resMap = {
-      if (target.params(PushFeatureSwitchParams.EnableF1FromProtectedTweetAuthors)) {
-        userTweetTweetyPieStoreCounter.incr()
-        val keys = tweetIds.map { tweetId =>
-          UserTweet(tweetId, Some(target.targetId))
+       f (target.params(PushFeatureSw chParams.EnableF1FromProtectedT etAuthors)) {
+        userT etT etyP eStoreCounter. ncr()
+        val keys = t et ds.map { t et d =>
+          UserT et(t et d, So (target.target d))
         }
-        userTweetTweetyPieStore
-          .multiGet(keys.toSet).map {
-            case (userTweet, resultFut) =>
-              userTweet.tweetId -> resultFut
+        userT etT etyP eStore
+          .mult Get(keys.toSet).map {
+            case (userT et, resultFut) =>
+              userT et.t et d -> resultFut
           }.toMap
       } else {
-        (if (target.params(PushFeatureSwitchParams.EnableVFInTweetypie)) {
-           tweetyPieStore
+        ( f (target.params(PushFeatureSw chParams.EnableVF nT etyp e)) {
+           t etyP eStore
          } else {
-           tweetyPieStoreNoVF
-         }).multiGet(tweetIds.toSet)
+           t etyP eStoreNoVF
+         }).mult Get(t et ds.toSet)
       }
     }
 
-    Future.collect(resMap).map { tweetyPieResultMap =>
-      // Filter out replies and generate earlybird candidates only for non-empty tweetypie result
-      val cands = filterOutReplyTweet(tweetyPieResultMap, nonReplyTweetsCounter).collect {
-        case (id: Long, Some(result)) =>
-          id -> result
+    Future.collect(resMap).map { t etyP eResultMap =>
+      // F lter out repl es and generate earlyb rd cand dates only for non-empty t etyp e result
+      val cands = f lterOutReplyT et(t etyP eResultMap, nonReplyT etsCounter).collect {
+        case ( d: Long, So (result)) =>
+           d -> result
       }
 
-      emptyTweetyPieResult.add(tweetyPieResultMap.size - cands.size)
+      emptyT etyP eResult.add(t etyP eResultMap.s ze - cands.s ze)
       cands
     }
   }
 
-  private def buildRawCandidates(
+  pr vate def bu ldRawCand dates(
     target: Target,
-    ebCandidates: Seq[FRSTweetCandidate]
-  ): Future[Option[Seq[RawCandidate with TweetCandidate]]] = {
+    ebCand dates: Seq[FRST etCand date]
+  ): Future[Opt on[Seq[RawCand date w h T etCand date]]] = {
 
-    val enableTopic = target.params(PushFeatureSwitchParams.EnableFrsTweetCandidatesTopicAnnotation)
-    val topicScoreThre =
-      target.params(PushFeatureSwitchParams.FrsTweetCandidatesTopicScoreThreshold)
+    val enableTop c = target.params(PushFeatureSw chParams.EnableFrsT etCand datesTop cAnnotat on)
+    val top cScoreThre =
+      target.params(PushFeatureSw chParams.FrsT etCand datesTop cScoreThreshold)
 
-    val ebTweets = ebCandidates.map { ebCandidate =>
-      ebCandidate.tweetId -> ebCandidate.tweetyPieResult
+    val ebT ets = ebCand dates.map { ebCand date =>
+      ebCand date.t et d -> ebCand date.t etyP eResult
     }.toMap
 
-    val tweetIdLocalizedEntityMapFut = TopicsUtil.getTweetIdLocalizedEntityMap(
+    val t et dLocal zedEnt yMapFut = Top csUt l.getT et dLocal zedEnt yMap(
       target,
-      ebTweets,
-      uttEntityHydrationStore,
-      topicSocialProofServiceStore,
-      enableTopic,
-      topicScoreThre
+      ebT ets,
+      uttEnt yHydrat onStore,
+      top cSoc alProofServ ceStore,
+      enableTop c,
+      top cScoreThre
     )
 
-    Future.join(target.deviceInfo, tweetIdLocalizedEntityMapFut).map {
-      case (Some(deviceInfo), tweetIdLocalizedEntityMap) =>
-        val candidates = ebCandidates
-          .map { ebCandidate =>
-            val crt = ebCandidate.commonRecType
-            crtToCounterMapping.get(crt).foreach(_.incr())
+    Future.jo n(target.dev ce nfo, t et dLocal zedEnt yMapFut).map {
+      case (So (dev ce nfo), t et dLocal zedEnt yMap) =>
+        val cand dates = ebCand dates
+          .map { ebCand date =>
+            val crt = ebCand date.commonRecType
+            crtToCounterMapp ng.get(crt).foreach(_. ncr())
 
-            val tweetId = ebCandidate.tweetId
-            val localizedEntityOpt = {
-              if (tweetIdLocalizedEntityMap
-                  .contains(tweetId) && tweetIdLocalizedEntityMap.contains(
-                  tweetId) && deviceInfo.isTopicsEligible) {
-                tweetIdLocalizedEntityMap(tweetId)
+            val t et d = ebCand date.t et d
+            val local zedEnt yOpt = {
+               f (t et dLocal zedEnt yMap
+                  .conta ns(t et d) && t et dLocal zedEnt yMap.conta ns(
+                  t et d) && dev ce nfo. sTop csEl g ble) {
+                t et dLocal zedEnt yMap(t et d)
               } else {
                 None
               }
             }
 
-            PushAdaptorUtil.generateOutOfNetworkTweetCandidates(
-              inputTarget = target,
-              id = ebCandidate.tweetId,
-              mediaCRT = MediaCRT(
+            PushAdaptorUt l.generateOutOfNetworkT etCand dates(
+               nputTarget = target,
+               d = ebCand date.t et d,
+               d aCRT =  d aCRT(
                 crt,
                 crt,
                 crt
               ),
-              result = ebCandidate.tweetyPieResult,
-              localizedEntity = localizedEntityOpt)
-          }.filter { candidate =>
-            // If user only has the topic setting enabled, filter out all non-topic cands
-            deviceInfo.isRecommendationsEligible || (deviceInfo.isTopicsEligible && candidate.semanticCoreEntityId.nonEmpty)
+              result = ebCand date.t etyP eResult,
+              local zedEnt y = local zedEnt yOpt)
+          }.f lter { cand date =>
+            //  f user only has t  top c sett ng enabled, f lter out all non-top c cands
+            dev ce nfo. sRecom ndat onsEl g ble || (dev ce nfo. sTop csEl g ble && cand date.semant cCoreEnt y d.nonEmpty)
           }
 
-        candidates.map { candidate =>
-          if (candidate.semanticCoreEntityId.nonEmpty) {
-            numberCandidateWithTopic.incr()
+        cand dates.map { cand date =>
+           f (cand date.semant cCoreEnt y d.nonEmpty) {
+            numberCand dateW hTop c. ncr()
           } else {
-            numberCandidateWithoutTopic.incr()
+            numberCand dateW houtTop c. ncr()
           }
         }
 
-        numberReturnedCandidates.add(candidates.length)
-        Some(candidates)
-      case _ => Some(Seq.empty)
+        numberReturnedCand dates.add(cand dates.length)
+        So (cand dates)
+      case _ => So (Seq.empty)
     }
   }
 
-  def getTweetCandidatesFromCrMixer(
-    inputTarget: Target,
+  def getT etCand datesFromCrM xer(
+     nputTarget: Target,
     showAllResultsFromFrs: Boolean,
-  ): Future[Option[Seq[RawCandidate with TweetCandidate]]] = {
+  ): Future[Opt on[Seq[RawCand date w h T etCand date]]] = {
     Future
-      .join(
-        inputTarget.seenTweetIds,
-        inputTarget.pushRecItems,
-        inputTarget.countryCode,
-        inputTarget.targetLanguage).flatMap {
-        case (seenTweetIds, pastRecItems, countryCode, language) =>
-          val pastUserRecs = pastRecItems.userIds.toSeq
-          val request = FrsTweetRequest(
-            clientContext = ClientContext(
-              userId = Some(inputTarget.targetId),
+      .jo n(
+         nputTarget.seenT et ds,
+         nputTarget.pushRec ems,
+         nputTarget.countryCode,
+         nputTarget.targetLanguage).flatMap {
+        case (seenT et ds, pastRec ems, countryCode, language) =>
+          val pastUserRecs = pastRec ems.user ds.toSeq
+          val request = FrsT etRequest(
+            cl entContext = Cl entContext(
+              user d = So ( nputTarget.target d),
               countryCode = countryCode,
               languageCode = language
             ),
-            product = Product.Notifications,
-            productContext = Some(ProductContext.NotificationsContext(NotificationsContext())),
-            excludedUserIds = Some(pastUserRecs),
-            excludedTweetIds = Some(seenTweetIds)
+            product = Product.Not f cat ons,
+            productContext = So (ProductContext.Not f cat onsContext(Not f cat onsContext())),
+            excludedUser ds = So (pastUserRecs),
+            excludedT et ds = So (seenT et ds)
           )
-          crMixerTweetStore.getFRSTweetCandidates(request).flatMap {
-            case Some(response) =>
-              val tweetIds = response.tweets.map(_.tweetId)
-              val validTweets = filterInvalidTweets(tweetIds, inputTarget)
-              validTweets.flatMap { tweetypieMap =>
-                val ebCandidates = response.tweets
-                  .map { frsTweet =>
-                    val candidateTweetId = frsTweet.tweetId
-                    val resultFromTweetyPie = tweetypieMap.get(candidateTweetId)
-                    new FRSTweetCandidate {
-                      override val tweetId = candidateTweetId
-                      override val features = None
-                      override val tweetyPieResult = resultFromTweetyPie
-                      override val feedbackToken = frsTweet.frsPrimarySource
-                      override val commonRecType: CommonRecommendationType = feedbackToken
+          crM xerT etStore.getFRST etCand dates(request).flatMap {
+            case So (response) =>
+              val t et ds = response.t ets.map(_.t et d)
+              val val dT ets = f lter nval dT ets(t et ds,  nputTarget)
+              val dT ets.flatMap { t etyp eMap =>
+                val ebCand dates = response.t ets
+                  .map { frsT et =>
+                    val cand dateT et d = frsT et.t et d
+                    val resultFromT etyP e = t etyp eMap.get(cand dateT et d)
+                    new FRST etCand date {
+                      overr de val t et d = cand dateT et d
+                      overr de val features = None
+                      overr de val t etyP eResult = resultFromT etyP e
+                      overr de val feedbackToken = frsT et.frsPr maryS ce
+                      overr de val commonRecType: CommonRecom ndat onType = feedbackToken
                         .flatMap(token =>
-                          FRSAlgorithmFeedbackTokenUtil.getCRTForAlgoToken(token)).getOrElse(
-                          CommonRecommendationType.FrsTweet)
+                          FRSAlgor hmFeedbackTokenUt l.getCRTForAlgoToken(token)).getOrElse(
+                          CommonRecom ndat onType.FrsT et)
                     }
-                  }.filter { ebCandidate =>
-                    showAllResultsFromFrs || ebCandidate.commonRecType == CommonRecommendationType.ReverseAddressbookTweet
+                  }.f lter { ebCand date =>
+                    showAllResultsFromFrs || ebCand date.commonRecType == CommonRecom ndat onType.ReverseAddressbookT et
                   }
 
-                numberReturnedCandidates.add(ebCandidates.length)
-                buildRawCandidates(
-                  inputTarget,
-                  ebCandidates
+                numberReturnedCand dates.add(ebCand dates.length)
+                bu ldRawCand dates(
+                   nputTarget,
+                  ebCand dates
                 )
               }
             case _ => Future.None
@@ -251,21 +251,21 @@ case class FRSTweetCandidateAdaptor(
       }
   }
 
-  override def get(inputTarget: Target): Future[Option[Seq[RawCandidate with TweetCandidate]]] = {
-    totalRequests.incr()
+  overr de def get( nputTarget: Target): Future[Opt on[Seq[RawCand date w h T etCand date]]] = {
+    totalRequests. ncr()
     val enableResultsFromFrs =
-      inputTarget.params(PushFeatureSwitchParams.EnableResultFromFrsCandidates)
-    getTweetCandidatesFromCrMixer(inputTarget, enableResultsFromFrs)
+       nputTarget.params(PushFeatureSw chParams.EnableResultFromFrsCand dates)
+    getT etCand datesFromCrM xer( nputTarget, enableResultsFromFrs)
   }
 
-  override def isCandidateSourceAvailable(target: Target): Future[Boolean] = {
-    lazy val enableFrsCandidates = target.params(PushFeatureSwitchParams.EnableFrsCandidates)
-    PushDeviceUtil.isRecommendationsEligible(target).flatMap { isEnabledForRecosSetting =>
-      PushDeviceUtil.isTopicsEligible(target).map { topicSettingEnabled =>
-        val isEnabledForTopics =
-          topicSettingEnabled && target.params(
-            PushFeatureSwitchParams.EnableFrsTweetCandidatesTopicSetting)
-        (isEnabledForRecosSetting || isEnabledForTopics) && enableFrsCandidates
+  overr de def  sCand dateS ceAva lable(target: Target): Future[Boolean] = {
+    lazy val enableFrsCand dates = target.params(PushFeatureSw chParams.EnableFrsCand dates)
+    PushDev ceUt l. sRecom ndat onsEl g ble(target).flatMap {  sEnabledForRecosSett ng =>
+      PushDev ceUt l. sTop csEl g ble(target).map { top cSett ngEnabled =>
+        val  sEnabledForTop cs =
+          top cSett ngEnabled && target.params(
+            PushFeatureSw chParams.EnableFrsT etCand datesTop cSett ng)
+        ( sEnabledForRecosSett ng ||  sEnabledForTop cs) && enableFrsCand dates
       }
     }
   }

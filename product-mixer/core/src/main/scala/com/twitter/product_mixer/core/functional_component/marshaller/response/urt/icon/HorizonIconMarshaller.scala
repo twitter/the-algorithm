@@ -1,52 +1,52 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.icon
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. con
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon._
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. con._
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class HorizonIconMarshaller @Inject() () {
+@S ngleton
+class Hor zon conMarshaller @ nject() () {
 
-  def apply(icon: HorizonIcon): urt.HorizonIcon = icon match {
-    case Bookmark => urt.HorizonIcon.Bookmark
-    case Moment => urt.HorizonIcon.Moment
-    case Debug => urt.HorizonIcon.Debug
-    case Error => urt.HorizonIcon.Error
-    case Follow => urt.HorizonIcon.Follow
-    case Unfollow => urt.HorizonIcon.Unfollow
-    case Smile => urt.HorizonIcon.Smile
-    case Frown => urt.HorizonIcon.Frown
-    case Help => urt.HorizonIcon.Help
-    case Link => urt.HorizonIcon.Link
-    case Message => urt.HorizonIcon.Message
-    case No => urt.HorizonIcon.No
-    case Outgoing => urt.HorizonIcon.Outgoing
-    case Pin => urt.HorizonIcon.Pin
-    case Retweet => urt.HorizonIcon.Retweet
-    case Speaker => urt.HorizonIcon.Speaker
-    case Trashcan => urt.HorizonIcon.Trashcan
-    case Feedback => urt.HorizonIcon.Feedback
-    case FeedbackClose => urt.HorizonIcon.FeedbackClose
-    case EyeOff => urt.HorizonIcon.EyeOff
-    case Moderation => urt.HorizonIcon.Moderation
-    case Topic => urt.HorizonIcon.Topic
-    case TopicClose => urt.HorizonIcon.TopicClose
-    case Flag => urt.HorizonIcon.Flag
-    case TopicFilled => urt.HorizonIcon.TopicFilled
-    case NotificationsFollow => urt.HorizonIcon.NotificationsFollow
-    case Person => urt.HorizonIcon.Person
-    case BalloonStroke => urt.HorizonIcon.BalloonStroke
-    case Calendar => urt.HorizonIcon.Calendar
-    case LocationStroke => urt.HorizonIcon.LocationStroke
-    case PersonStroke => urt.HorizonIcon.PersonStroke
-    case Safety => urt.HorizonIcon.Safety
-    case Logo => urt.HorizonIcon.Logo
-    case SparkleOn => urt.HorizonIcon.SparkleOn
-    case StarRising => urt.HorizonIcon.StarRising
-    case CameraVideo => urt.HorizonIcon.CameraVideo
-    case ShoppingClock => urt.HorizonIcon.ShoppingClock
-    case ArrowRight => urt.HorizonIcon.ArrowRight
-    case SpeakerOff => urt.HorizonIcon.SpeakerOff
+  def apply( con: Hor zon con): urt.Hor zon con =  con match {
+    case Bookmark => urt.Hor zon con.Bookmark
+    case Mo nt => urt.Hor zon con.Mo nt
+    case Debug => urt.Hor zon con.Debug
+    case Error => urt.Hor zon con.Error
+    case Follow => urt.Hor zon con.Follow
+    case Unfollow => urt.Hor zon con.Unfollow
+    case Sm le => urt.Hor zon con.Sm le
+    case Frown => urt.Hor zon con.Frown
+    case  lp => urt.Hor zon con. lp
+    case L nk => urt.Hor zon con.L nk
+    case  ssage => urt.Hor zon con. ssage
+    case No => urt.Hor zon con.No
+    case Outgo ng => urt.Hor zon con.Outgo ng
+    case P n => urt.Hor zon con.P n
+    case Ret et => urt.Hor zon con.Ret et
+    case Speaker => urt.Hor zon con.Speaker
+    case Trashcan => urt.Hor zon con.Trashcan
+    case Feedback => urt.Hor zon con.Feedback
+    case FeedbackClose => urt.Hor zon con.FeedbackClose
+    case EyeOff => urt.Hor zon con.EyeOff
+    case Moderat on => urt.Hor zon con.Moderat on
+    case Top c => urt.Hor zon con.Top c
+    case Top cClose => urt.Hor zon con.Top cClose
+    case Flag => urt.Hor zon con.Flag
+    case Top cF lled => urt.Hor zon con.Top cF lled
+    case Not f cat onsFollow => urt.Hor zon con.Not f cat onsFollow
+    case Person => urt.Hor zon con.Person
+    case BalloonStroke => urt.Hor zon con.BalloonStroke
+    case Calendar => urt.Hor zon con.Calendar
+    case Locat onStroke => urt.Hor zon con.Locat onStroke
+    case PersonStroke => urt.Hor zon con.PersonStroke
+    case Safety => urt.Hor zon con.Safety
+    case Logo => urt.Hor zon con.Logo
+    case SparkleOn => urt.Hor zon con.SparkleOn
+    case StarR s ng => urt.Hor zon con.StarR s ng
+    case Ca raV deo => urt.Hor zon con.Ca raV deo
+    case Shopp ngClock => urt.Hor zon con.Shopp ngClock
+    case ArrowR ght => urt.Hor zon con.ArrowR ght
+    case SpeakerOff => urt.Hor zon con.SpeakerOff
   }
 }

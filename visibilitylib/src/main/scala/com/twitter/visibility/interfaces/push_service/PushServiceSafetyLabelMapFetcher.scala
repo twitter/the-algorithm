@@ -1,21 +1,21 @@
-package com.twitter.visibility.interfaces.push_service
+package com.tw ter.v s b l y. nterfaces.push_serv ce
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.spam.rtf.thriftscala.SafetyLabelMap
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.visibility.common.stitch.StitchHelpers
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLabelMap
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.strato.thr ft.ScroogeConv mpl c s._
+ mport com.tw ter.v s b l y.common.st ch.St ch lpers
 
-object PushServiceSafetyLabelMapFetcher {
-  val Column = "frigate/magicrecs/tweetSafetyLabels"
+object PushServ ceSafetyLabelMapFetc r {
+  val Column = "fr gate/mag crecs/t etSafetyLabels"
 
   def apply(
-    client: StratoClient,
-    statsReceiver: StatsReceiver
-  ): Long => Stitch[Option[SafetyLabelMap]] = {
-    val stats = statsReceiver.scope("strato_tweet_safety_labels")
-    lazy val fetcher = client.fetcher[Long, SafetyLabelMap](Column)
-    tweetId => StitchHelpers.observe(stats)(fetcher.fetch(tweetId).map(_.v))
+    cl ent: StratoCl ent,
+    statsRece ver: StatsRece ver
+  ): Long => St ch[Opt on[SafetyLabelMap]] = {
+    val stats = statsRece ver.scope("strato_t et_safety_labels")
+    lazy val fetc r = cl ent.fetc r[Long, SafetyLabelMap](Column)
+    t et d => St ch lpers.observe(stats)(fetc r.fetch(t et d).map(_.v))
   }
 }

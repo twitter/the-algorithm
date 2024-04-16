@@ -1,30 +1,30 @@
-package com.twitter.ann.scalding.offline
+package com.tw ter.ann.scald ng.offl ne
 
-import com.twitter.ann.common.Metric
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
-import com.twitter.cortex.ml.embeddings.common.EntityKind
-import com.twitter.entityembeddings.neighbors.thriftscala.{EntityKey, NearestNeighbors}
-import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.{Args, DateOps, DateParser, DateRange, Execution, TypedTsv, UniqueID}
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.search.common.file.{AbstractFile, LocalFile}
-import java.util.TimeZone
+ mport com.tw ter.ann.common. tr c
+ mport com.tw ter.b ject on.scrooge.B naryScalaCodec
+ mport com.tw ter.ml.featurestore.l b.User d
+ mport com.tw ter.ml.featurestore.l b.embedd ng.Embedd ngW hEnt y
+ mport com.tw ter.cortex.ml.embedd ngs.common.Ent yK nd
+ mport com.tw ter.ent yembedd ngs.ne ghbors.thr ftscala.{Ent yKey, NearestNe ghbors}
+ mport com.tw ter.scald ng.commons.s ce.Vers onedKeyValS ce
+ mport com.tw ter.scald ng.typed.TypedP pe
+ mport com.tw ter.scald ng.{Args, DateOps, DateParser, DateRange, Execut on, TypedTsv, Un que D}
+ mport com.tw ter.scald ng_ nternal.job.Tw terExecut onApp
+ mport com.tw ter.search.common.f le.{AbstractF le, LocalF le}
+ mport java.ut l.T  Zone
 
 /**
- * Generates the nearest neighbour for users and store them in Manhattan format i.e sequence files.
+ * Generates t  nearest ne ghb  for users and store t m  n Manhattan format  .e sequence f les.
  * See README for oscar usage.
  */
-object KnnOfflineJob extends TwitterExecutionApp {
-  override def job: Execution[Unit] = Execution.withId { implicit uniqueId =>
-    Execution.getArgs.flatMap { args: Args =>
-      val knnDirectoryOpt: Option[String] = args.optional("knn_directory")
-      knnDirectoryOpt match {
-        case Some(knnDirectory) =>
-          Execution.withCachedFile(knnDirectory) { directory =>
-            execute(args, Some(new LocalFile(directory.file)))
+object KnnOffl neJob extends Tw terExecut onApp {
+  overr de def job: Execut on[Un ] = Execut on.w h d {  mpl c  un que d =>
+    Execut on.getArgs.flatMap { args: Args =>
+      val knnD rectoryOpt: Opt on[Str ng] = args.opt onal("knn_d rectory")
+      knnD rectoryOpt match {
+        case So (knnD rectory) =>
+          Execut on.w hCac dF le(knnD rectory) { d rectory =>
+            execute(args, So (new LocalF le(d rectory.f le)))
           }
         case None =>
           execute(args, None)
@@ -33,76 +33,76 @@ object KnnOfflineJob extends TwitterExecutionApp {
   }
 
   /**
-   * Execute KnnOfflineJob
-   * @param args: The args object for this job
-   * @param abstractFile: An optional of producer embedding path
+   * Execute KnnOffl neJob
+   * @param args: T  args object for t  job
+   * @param abstractF le: An opt onal of producer embedd ng path
    */
   def execute(
     args: Args,
-    abstractFile: Option[AbstractFile]
+    abstractF le: Opt on[AbstractF le]
   )(
-    implicit uniqueID: UniqueID
-  ): Execution[Unit] = {
-    implicit val tz: TimeZone = TimeZone.getDefault()
-    implicit val dp: DateParser = DateParser.default
-    implicit val dateRange = DateRange.parse(args.list("date"))(DateOps.UTC, DateParser.default)
-    implicit val keyInject = BinaryScalaCodec(EntityKey)
-    implicit val valueInject = BinaryScalaCodec(NearestNeighbors)
+     mpl c  un que D: Un que D
+  ): Execut on[Un ] = {
+     mpl c  val tz: T  Zone = T  Zone.getDefault()
+     mpl c  val dp: DateParser = DateParser.default
+     mpl c  val dateRange = DateRange.parse(args.l st("date"))(DateOps.UTC, DateParser.default)
+     mpl c  val key nject = B naryScalaCodec(Ent yKey)
+     mpl c  val value nject = B naryScalaCodec(NearestNe ghbors)
 
-    val entityKind = EntityKind.getEntityKind(args("producer_entity_kind"))
-    val metric = Metric.fromString(args("metric"))
-    val outputPath: String = args("output_path")
-    val numNeighbors: Int = args("neighbors").toInt
-    val ef = args.getOrElse("ef", numNeighbors.toString).toInt
-    val reducers: Int = args("reducers").toInt
-    val knnDimension: Int = args("dimension").toInt
-    val debugOutputPath: Option[String] = args.optional("debug_output_path")
-    val filterPath: Option[String] = args.optional("users_filter_path")
-    val shards: Int = args.getOrElse("shards", "100").toInt
-    val useHashJoin: Boolean = args.getOrElse("use_hash_join", "false").toBoolean
-    val mhOutput = VersionedKeyValSource[EntityKey, NearestNeighbors](
+    val ent yK nd = Ent yK nd.getEnt yK nd(args("producer_ent y_k nd"))
+    val  tr c =  tr c.fromStr ng(args(" tr c"))
+    val outputPath: Str ng = args("output_path")
+    val numNe ghbors:  nt = args("ne ghbors").to nt
+    val ef = args.getOrElse("ef", numNe ghbors.toStr ng).to nt
+    val reducers:  nt = args("reducers").to nt
+    val knnD  ns on:  nt = args("d  ns on").to nt
+    val debugOutputPath: Opt on[Str ng] = args.opt onal("debug_output_path")
+    val f lterPath: Opt on[Str ng] = args.opt onal("users_f lter_path")
+    val shards:  nt = args.getOrElse("shards", "100").to nt
+    val useHashJo n: Boolean = args.getOrElse("use_hash_jo n", "false").toBoolean
+    val mhOutput = Vers onedKeyValS ce[Ent yKey, NearestNe ghbors](
       path = outputPath,
-      sourceVersion = None,
-      sinkVersion = None,
-      maxFailures = 0,
-      versionsToKeep = 1
+      s ceVers on = None,
+      s nkVers on = None,
+      maxFa lures = 0,
+      vers onsToKeep = 1
     )
 
-    val consumerEmbeddings: TypedPipe[EmbeddingWithEntity[UserId]] =
-      KnnHelper.getFilteredUserEmbeddings(
+    val consu rEmbedd ngs: TypedP pe[Embedd ngW hEnt y[User d]] =
+      Knn lper.getF lteredUserEmbedd ngs(
         args,
-        filterPath,
+        f lterPath,
         reducers,
-        useHashJoin
+        useHashJo n
       )
 
-    val neighborsPipe: TypedPipe[(EntityKey, NearestNeighbors)] = KnnHelper.getNeighborsPipe(
+    val ne ghborsP pe: TypedP pe[(Ent yKey, NearestNe ghbors)] = Knn lper.getNe ghborsP pe(
       args,
-      entityKind,
-      metric,
+      ent yK nd,
+       tr c,
       ef,
-      consumerEmbeddings,
-      abstractFile,
+      consu rEmbedd ngs,
+      abstractF le,
       reducers,
-      numNeighbors,
-      knnDimension
+      numNe ghbors,
+      knnD  ns on
     )
 
-    val neighborsExecution: Execution[Unit] = neighborsPipe
-      .writeExecution(mhOutput)
+    val ne ghborsExecut on: Execut on[Un ] = ne ghborsP pe
+      .wr eExecut on(mhOutput)
 
-    // Write manual Inspection
+    // Wr e manual  nspect on
     debugOutputPath match {
-      case Some(path: String) =>
-        val debugExecution: Execution[Unit] = KnnDebug
+      case So (path: Str ng) =>
+        val debugExecut on: Execut on[Un ] = KnnDebug
           .getDebugTable(
-            neighborsPipe = neighborsPipe,
+            ne ghborsP pe = ne ghborsP pe,
             shards = shards,
             reducers = reducers
           )
-          .writeExecution(TypedTsv(path))
-        Execution.zip(debugExecution, neighborsExecution).unit
-      case None => neighborsExecution
+          .wr eExecut on(TypedTsv(path))
+        Execut on.z p(debugExecut on, ne ghborsExecut on).un 
+      case None => ne ghborsExecut on
     }
   }
 }

@@ -1,55 +1,55 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. tr cs
 
-import com.twitter.algebird.DecayedValue
-import com.twitter.algebird.DecayedValueMonoid
-import com.twitter.algebird.Monoid
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType
-import com.twitter.ml.api._
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.util.Duration
-import java.lang.{Long => JLong}
-import java.util.{HashSet => JHashSet}
-import java.util.{Set => JSet}
+ mport com.tw ter.algeb rd.DecayedValue
+ mport com.tw ter.algeb rd.DecayedValueMono d
+ mport com.tw ter.algeb rd.Mono d
+ mport com.tw ter.dal.personal_data.thr ftjava.PersonalDataType
+ mport com.tw ter.ml.ap ._
+ mport com.tw ter.ml.ap .constant.SharedFeatures
+ mport com.tw ter.ml.ap .ut l.SR chDataRecord
+ mport com.tw ter.ut l.Durat on
+ mport java.lang.{Long => JLong}
+ mport java.ut l.{HashSet => JHashSet}
+ mport java.ut l.{Set => JSet}
 
-object AggregationMetricCommon {
-  /* Shared definitions and utils that can be reused by child classes */
-  val Epsilon: Double = 1e-6
-  val decayedValueMonoid: Monoid[DecayedValue] = DecayedValueMonoid(Epsilon)
-  val TimestampHash: JLong = SharedFeatures.TIMESTAMP.getDenseFeatureId()
+object Aggregat on tr cCommon {
+  /* Shared def n  ons and ut ls that can be reused by ch ld classes */
+  val Eps lon: Double = 1e-6
+  val decayedValueMono d: Mono d[DecayedValue] = DecayedValueMono d(Eps lon)
+  val T  stampHash: JLong = SharedFeatures.T MESTAMP.getDenseFeature d()
 
-  def toDecayedValue(tv: TimedValue[Double], halfLife: Duration): DecayedValue = {
-    DecayedValue.build(
+  def toDecayedValue(tv: T  dValue[Double], halfL fe: Durat on): DecayedValue = {
+    DecayedValue.bu ld(
       tv.value,
-      tv.timestamp.inMilliseconds,
-      halfLife.inMilliseconds
+      tv.t  stamp. nM ll seconds,
+      halfL fe. nM ll seconds
     )
   }
 
-  def getTimestamp(
+  def getT  stamp(
     record: DataRecord,
-    timestampFeature: Feature[JLong] = SharedFeatures.TIMESTAMP
+    t  stampFeature: Feature[JLong] = SharedFeatures.T MESTAMP
   ): Long = {
-    Option(
-      SRichDataRecord(record)
-        .getFeatureValue(timestampFeature)
+    Opt on(
+      SR chDataRecord(record)
+        .getFeatureValue(t  stampFeature)
     ).map(_.toLong)
       .getOrElse(0L)
   }
 
   /*
-   * Union the PDTs of the input featureOpts.
-   * Return null if empty, else the JSet[PersonalDataType]
+   * Un on t  PDTs of t   nput featureOpts.
+   * Return null  f empty, else t  JSet[PersonalDataType]
    */
-  def derivePersonalDataTypes(features: Option[Feature[_]]*): JSet[PersonalDataType] = {
-    val unionPersonalDataTypes = new JHashSet[PersonalDataType]()
+  def der vePersonalDataTypes(features: Opt on[Feature[_]]*): JSet[PersonalDataType] = {
+    val un onPersonalDataTypes = new JHashSet[PersonalDataType]()
     for {
       featureOpt <- features
       feature <- featureOpt
-      pdtSetOptional = feature.getPersonalDataTypes
-      if pdtSetOptional.isPresent
-      pdtSet = pdtSetOptional.get
-    } unionPersonalDataTypes.addAll(pdtSet)
-    if (unionPersonalDataTypes.isEmpty) null else unionPersonalDataTypes
+      pdtSetOpt onal = feature.getPersonalDataTypes
+       f pdtSetOpt onal. sPresent
+      pdtSet = pdtSetOpt onal.get
+    } un onPersonalDataTypes.addAll(pdtSet)
+     f (un onPersonalDataTypes. sEmpty) null else un onPersonalDataTypes
   }
 }

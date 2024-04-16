@@ -1,58 +1,58 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.tw ter.s mclusters_v2.summ ngb rd.common
 
-import com.twitter.algebird.{Monoid, OptionMonoid}
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.summingbird.common.Monoids.TopKScoresUtils
-import com.twitter.simclusters_v2.thriftscala.{
-  SimClustersEmbeddingMetadata,
-  SimClustersEmbeddingWithMetadata,
-  SimClustersEmbedding => ThriftSimClustersEmbedding
+ mport com.tw ter.algeb rd.{Mono d, Opt onMono d}
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.Mono ds.TopKScoresUt ls
+ mport com.tw ter.s mclusters_v2.thr ftscala.{
+  S mClustersEmbedd ng tadata,
+  S mClustersEmbedd ngW h tadata,
+  S mClustersEmbedd ng => Thr ftS mClustersEmbedd ng
 }
 
 /**
- * Decayed aggregation of embeddings.
+ * Decayed aggregat on of embedd ngs.
  *
- * When merging 2 embeddings, the older embedding's scores are scaled by time. If a cluster is
- * present in both embeddings, the highest score (after scaling) is used in the result.
+ * W n  rg ng 2 embedd ngs, t  older embedd ng's scores are scaled by t  .  f a cluster  s
+ * present  n both embedd ngs, t  h g st score (after scal ng)  s used  n t  result.
  *
- * @halfLifeMs - defines how quickly a score decays
- * @topK - only the topk clusters with the highest scores are retained in the result
- * @threshold - any clusters with weights below threshold are excluded from the result
+ * @halfL feMs - def nes how qu ckly a score decays
+ * @topK - only t  topk clusters w h t  h g st scores are reta ned  n t  result
+ * @threshold - any clusters w h   ghts below threshold are excluded from t  result
  */
-class SimClustersEmbeddingWithMetadataMonoid(
-  halfLifeMs: Long,
-  topK: Int,
+class S mClustersEmbedd ngW h tadataMono d(
+  halfL feMs: Long,
+  topK:  nt,
   threshold: Double)
-    extends Monoid[SimClustersEmbeddingWithMetadata] {
+    extends Mono d[S mClustersEmbedd ngW h tadata] {
 
-  override val zero: SimClustersEmbeddingWithMetadata = SimClustersEmbeddingWithMetadata(
-    ThriftSimClustersEmbedding(),
-    SimClustersEmbeddingMetadata()
+  overr de val zero: S mClustersEmbedd ngW h tadata = S mClustersEmbedd ngW h tadata(
+    Thr ftS mClustersEmbedd ng(),
+    S mClustersEmbedd ng tadata()
   )
 
-  private val optionLongMonoid = new OptionMonoid[Long]()
-  private val optionMaxMonoid =
-    new OptionMonoid[Long]()(com.twitter.algebird.Max.maxSemigroup[Long])
+  pr vate val opt onLongMono d = new Opt onMono d[Long]()
+  pr vate val opt onMaxMono d =
+    new Opt onMono d[Long]()(com.tw ter.algeb rd.Max.maxSem group[Long])
 
-  override def plus(
-    x: SimClustersEmbeddingWithMetadata,
-    y: SimClustersEmbeddingWithMetadata
-  ): SimClustersEmbeddingWithMetadata = {
+  overr de def plus(
+    x: S mClustersEmbedd ngW h tadata,
+    y: S mClustersEmbedd ngW h tadata
+  ): S mClustersEmbedd ngW h tadata = {
 
-    val mergedClusterScores = TopKScoresUtils.mergeClusterScoresWithUpdateTimes(
-      x = SimClustersEmbedding(x.embedding).embedding,
-      xUpdatedAtMs = x.metadata.updatedAtMs.getOrElse(0),
-      y = SimClustersEmbedding(y.embedding).embedding,
-      yUpdatedAtMs = y.metadata.updatedAtMs.getOrElse(0),
-      halfLifeMs = halfLifeMs,
+    val  rgedClusterScores = TopKScoresUt ls. rgeClusterScoresW hUpdateT  s(
+      x = S mClustersEmbedd ng(x.embedd ng).embedd ng,
+      xUpdatedAtMs = x. tadata.updatedAtMs.getOrElse(0),
+      y = S mClustersEmbedd ng(y.embedd ng).embedd ng,
+      yUpdatedAtMs = y. tadata.updatedAtMs.getOrElse(0),
+      halfL feMs = halfL feMs,
       topK = topK,
       threshold = threshold
     )
-    SimClustersEmbeddingWithMetadata(
-      embedding = SimClustersEmbedding(mergedClusterScores).toThrift,
-      metadata = SimClustersEmbeddingMetadata(
-        updatedAtMs = optionMaxMonoid.plus(x.metadata.updatedAtMs, y.metadata.updatedAtMs),
-        updatedCount = optionLongMonoid.plus(x.metadata.updatedCount, y.metadata.updatedCount)
+    S mClustersEmbedd ngW h tadata(
+      embedd ng = S mClustersEmbedd ng( rgedClusterScores).toThr ft,
+       tadata = S mClustersEmbedd ng tadata(
+        updatedAtMs = opt onMaxMono d.plus(x. tadata.updatedAtMs, y. tadata.updatedAtMs),
+        updatedCount = opt onLongMono d.plus(x. tadata.updatedCount, y. tadata.updatedCount)
       )
     )
   }

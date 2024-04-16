@@ -1,47 +1,47 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.snowflake.id.SnowflakeId
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.snowflake. d.Snowflake d
 
-object CreatedAtRepairer {
-  // no createdAt value should be less than this
+object CreatedAtRepa rer {
+  // no createdAt value should be less than t 
   val jan_01_2006 = 1136073600000L
 
-  // no non-snowflake createdAt value should be greater than this
+  // no non-snowflake createdAt value should be greater than t 
   val jan_01_2011 = 1293840000000L
 
-  // allow createdAt timestamp to be up to this amount off from the snowflake id
-  // before applying the correction.
-  val varianceThreshold: MediaId = 10.minutes.inMilliseconds
+  // allow createdAt t  stamp to be up to t  amount off from t  snowflake  d
+  // before apply ng t  correct on.
+  val var anceThreshold:  d a d = 10.m nutes. nM ll seconds
 }
 
 /**
- * Detects tweets with bad createdAt timestamps and attempts to fix, if possible
- * using the snowflake id.  pre-snowflake tweets are left unmodified.
+ * Detects t ets w h bad createdAt t  stamps and attempts to f x,  f poss ble
+ * us ng t  snowflake  d.  pre-snowflake t ets are left unmod f ed.
  */
-class CreatedAtRepairer(scribe: FutureEffect[String]) extends Mutation[Tweet] {
-  import CreatedAtRepairer._
+class CreatedAtRepa rer(scr be: FutureEffect[Str ng]) extends Mutat on[T et] {
+   mport CreatedAtRepa rer._
 
-  def apply(tweet: Tweet): Option[Tweet] = {
-    assert(tweet.coreData.nonEmpty, "tweet core data is missing")
-    val createdAtMillis = getCreatedAt(tweet) * 1000
+  def apply(t et: T et): Opt on[T et] = {
+    assert(t et.coreData.nonEmpty, "t et core data  s m ss ng")
+    val createdAtM ll s = getCreatedAt(t et) * 1000
 
-    if (SnowflakeId.isSnowflakeId(tweet.id)) {
-      val snowflakeMillis = SnowflakeId(tweet.id).unixTimeMillis.asLong
-      val diff = (snowflakeMillis - createdAtMillis).abs
+     f (Snowflake d. sSnowflake d(t et. d)) {
+      val snowflakeM ll s = Snowflake d(t et. d).un xT  M ll s.asLong
+      val d ff = (snowflakeM ll s - createdAtM ll s).abs
 
-      if (diff >= varianceThreshold) {
-        scribe(tweet.id + "\t" + createdAtMillis)
-        val snowflakeSeconds = snowflakeMillis / 1000
-        Some(TweetLenses.createdAt.set(tweet, snowflakeSeconds))
+       f (d ff >= var anceThreshold) {
+        scr be(t et. d + "\t" + createdAtM ll s)
+        val snowflakeSeconds = snowflakeM ll s / 1000
+        So (T etLenses.createdAt.set(t et, snowflakeSeconds))
       } else {
         None
       }
     } else {
-      // not a snowflake id, hard to repair, so just log it
-      if (createdAtMillis < jan_01_2006 || createdAtMillis > jan_01_2011) {
-        scribe(tweet.id + "\t" + createdAtMillis)
+      // not a snowflake  d, hard to repa r, so just log  
+       f (createdAtM ll s < jan_01_2006 || createdAtM ll s > jan_01_2011) {
+        scr be(t et. d + "\t" + createdAtM ll s)
       }
       None
     }

@@ -1,79 +1,79 @@
-package com.twitter.search.core.earlybird.index.column;
+package com.tw ter.search.core.earlyb rd. ndex.column;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.index.BinaryDocValues;
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.util.BytesRef;
+ mport org.apac .lucene. ndex.B naryDocValues;
+ mport org.apac .lucene. ndex.LeafReader;
+ mport org.apac .lucene.ut l.BytesRef;
 
-import com.twitter.search.common.encoding.docvalues.CSFTypeUtil;
-import com.twitter.search.common.util.io.flushable.Flushable;
+ mport com.tw ter.search.common.encod ng.docvalues.CSFTypeUt l;
+ mport com.tw ter.search.common.ut l. o.flushable.Flushable;
 
-public abstract class AbstractColumnStrideMultiIntIndex
-    extends ColumnStrideFieldIndex implements Flushable {
-  private static final int NUM_BYTES_PER_INT = java.lang.Integer.SIZE / java.lang.Byte.SIZE;
+publ c abstract class AbstractColumnStr deMult  nt ndex
+    extends ColumnStr deF eld ndex  mple nts Flushable {
+  pr vate stat c f nal  nt NUM_BYTES_PER_ NT = java.lang. nteger.S ZE / java.lang.Byte.S ZE;
 
-  private final int numIntsPerField;
+  pr vate f nal  nt num ntsPerF eld;
 
-  protected AbstractColumnStrideMultiIntIndex(String name, int numIntsPerField) {
-    super(name);
-    this.numIntsPerField = numIntsPerField;
+  protected AbstractColumnStr deMult  nt ndex(Str ng na ,  nt num ntsPerF eld) {
+    super(na );
+    t .num ntsPerF eld = num ntsPerF eld;
   }
 
-  public int getNumIntsPerField() {
-    return numIntsPerField;
+  publ c  nt getNum ntsPerF eld() {
+    return num ntsPerF eld;
   }
 
-  @Override
-  public long get(int docID) {
-    throw new UnsupportedOperationException();
+  @Overr de
+  publ c long get( nt doc D) {
+    throw new UnsupportedOperat onExcept on();
   }
 
   /**
-   * Returns the value stored at the given index for the given doc ID.
+   * Returns t  value stored at t  g ven  ndex for t  g ven doc  D.
    */
-  public abstract int get(int docID, int valueIndex);
+  publ c abstract  nt get( nt doc D,  nt value ndex);
 
   /**
-   * Sets the value stored at the given index for the given doc ID.
+   * Sets t  value stored at t  g ven  ndex for t  g ven doc  D.
    */
-  public abstract void setValue(int docID, int valueIndex, int val);
+  publ c abstract vo d setValue( nt doc D,  nt value ndex,  nt val);
 
-  @Override
-  public void load(LeafReader atomicReader, String field) throws IOException {
-    BinaryDocValues docValues = atomicReader.getBinaryDocValues(field);
-    int numBytesPerDoc = numIntsPerField * NUM_BYTES_PER_INT;
+  @Overr de
+  publ c vo d load(LeafReader atom cReader, Str ng f eld) throws  OExcept on {
+    B naryDocValues docValues = atom cReader.getB naryDocValues(f eld);
+     nt numBytesPerDoc = num ntsPerF eld * NUM_BYTES_PER_ NT;
 
-    for (int docID = 0; docID < atomicReader.maxDoc(); docID++) {
-      Preconditions.checkState(docValues.advanceExact(docID));
-      BytesRef scratch = docValues.binaryValue();
-      Preconditions.checkState(
+    for ( nt doc D = 0; doc D < atom cReader.maxDoc(); doc D++) {
+      Precond  ons.c ckState(docValues.advanceExact(doc D));
+      BytesRef scratch = docValues.b naryValue();
+      Precond  ons.c ckState(
           scratch.length == numBytesPerDoc,
-          "Unexpected doc value length for field " + field
+          "Unexpected doc value length for f eld " + f eld
           + ": Should be " + numBytesPerDoc + ", but was " + scratch.length);
 
-      scratch.length = NUM_BYTES_PER_INT;
-      for (int i = 0; i < numIntsPerField; i++) {
-        setValue(docID, i, asInt(scratch));
-        scratch.offset += NUM_BYTES_PER_INT;
+      scratch.length = NUM_BYTES_PER_ NT;
+      for ( nt   = 0;   < num ntsPerF eld;  ++) {
+        setValue(doc D,  , as nt(scratch));
+        scratch.offset += NUM_BYTES_PER_ NT;
       }
     }
   }
 
-  public void updateDocValues(BytesRef ref, int docID) {
-    for (int i = 0; i < numIntsPerField; i++) {
-      setValue(docID, i, CSFTypeUtil.convertFromBytes(ref.bytes, ref.offset, i));
+  publ c vo d updateDocValues(BytesRef ref,  nt doc D) {
+    for ( nt   = 0;   < num ntsPerF eld;  ++) {
+      setValue(doc D,  , CSFTypeUt l.convertFromBytes(ref.bytes, ref.offset,  ));
     }
   }
 
-  private static int asInt(BytesRef b) {
-    return asInt(b, b.offset);
+  pr vate stat c  nt as nt(BytesRef b) {
+    return as nt(b, b.offset);
   }
 
-  private static int asInt(BytesRef b, int pos) {
-    int p = pos;
+  pr vate stat c  nt as nt(BytesRef b,  nt pos) {
+     nt p = pos;
     return (b.bytes[p++] << 24) | (b.bytes[p++] << 16) | (b.bytes[p++] << 8) | (b.bytes[p] & 0xFF);
   }
 }

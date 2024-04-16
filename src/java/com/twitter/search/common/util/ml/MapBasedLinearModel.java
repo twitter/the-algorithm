@@ -1,32 +1,32 @@
-package com.twitter.search.common.util.ml;
+package com.tw ter.search.common.ut l.ml;
 
-import java.util.Map;
+ mport java.ut l.Map;
 
 /**
- * An interface for linear models that are backed by some sort of map
+ * An  nterface for l near models that are backed by so  sort of map
  */
-public interface MapBasedLinearModel<K> {
+publ c  nterface MapBasedL nearModel<K> {
   /**
-   * Evaluate using this model given a feature vector.
-   * @param instance The feature vector in format of a hashmap.
+   * Evaluate us ng t  model g ven a feature vector.
+   * @param  nstance T  feature vector  n format of a hashmap.
    * @return
    */
-  boolean classify(Map<K, Float> instance);
+  boolean class fy(Map<K, Float>  nstance);
 
   /**
-   * Evaluate using this model given a classification threshold and a feature vector.
-   * @param threshold Score threshold used for classification.
-   * @param instance The feature vector in format of a hashmap.
+   * Evaluate us ng t  model g ven a class f cat on threshold and a feature vector.
+   * @param threshold Score threshold used for class f cat on.
+   * @param  nstance T  feature vector  n format of a hashmap.
    * @return
    */
-  boolean classify(float threshold, Map<K, Float> instance);
+  boolean class fy(float threshold, Map<K, Float>  nstance);
 
   /**
-   * Computes the score of an instance as a linear combination of the features and the model
-   * weights. 0 is used as default value for features or weights that are not present.
+   * Computes t  score of an  nstance as a l near comb nat on of t  features and t  model
+   *   ghts. 0  s used as default value for features or   ghts that are not present.
    *
-   * @param instance The feature vector in format of a hashmap.
-   * @return The instance score according to the model.
+   * @param  nstance T  feature vector  n format of a hashmap.
+   * @return T   nstance score accord ng to t  model.
    */
-  float score(Map<K, Float> instance);
+  float score(Map<K, Float>  nstance);
 }

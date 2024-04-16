@@ -1,8 +1,8 @@
-package com.twitter.timelineranker.model
+package com.tw ter.t  l neranker.model
 
-import com.twitter.timelines.model.UserId
+ mport com.tw ter.t  l nes.model.User d
 
-case class UtegLikedByTweetsOptions(
-  utegCount: Int,
-  isInNetwork: Boolean,
-  weightedFollowings: Map[UserId, Double])
+case class UtegL kedByT etsOpt ons(
+  utegCount:  nt,
+   s nNetwork: Boolean,
+    ghtedFollow ngs: Map[User d, Double])

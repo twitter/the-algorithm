@@ -1,68 +1,68 @@
-package com.twitter.frigate.pushservice.module
+package com.tw ter.fr gate.pushserv ce.module
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.decider.Decider
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.tunable.StandardTunableMap
-import com.twitter.frigate.pushservice.config.DeployConfig
-import com.twitter.frigate.pushservice.config.ProdConfig
-import com.twitter.frigate.pushservice.config.StagingConfig
-import com.twitter.frigate.pushservice.params.ShardParams
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ConfigRepoLocalPath
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ServiceLocal
+ mport com.google. nject.Prov des
+ mport com.google. nject.S ngleton
+ mport com.tw ter.abdec der.Logg ngABDec der
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.featuresw c s.v2.FeatureSw c s
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.tunable.StandardTunableMap
+ mport com.tw ter.fr gate.pushserv ce.conf g.DeployConf g
+ mport com.tw ter.fr gate.pushserv ce.conf g.ProdConf g
+ mport com.tw ter.fr gate.pushserv ce.conf g.Stag ngConf g
+ mport com.tw ter.fr gate.pushserv ce.params.ShardParams
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.product_m xer.core.module.product_m xer_flags.ProductM xerFlagModule.Conf gRepoLocalPath
+ mport com.tw ter.product_m xer.core.module.product_m xer_flags.ProductM xerFlagModule.Serv ceLocal
 
-object DeployConfigModule extends TwitterModule {
+object DeployConf gModule extends Tw terModule {
 
-  @Provides
-  @Singleton
-  def providesDeployConfig(
-    @Flag(FlagName.numShards) numShards: Int,
-    @Flag(FlagName.shardId) shardId: Int,
-    @Flag(FlagName.isInMemCacheOff) inMemCacheOff: Boolean,
-    @Flag(ServiceLocal) isServiceLocal: Boolean,
-    @Flag(ConfigRepoLocalPath) localConfigRepoPath: String,
-    serviceIdentifier: ServiceIdentifier,
-    decider: Decider,
-    abDecider: LoggingABDecider,
-    featureSwitches: FeatureSwitches,
-    statsReceiver: StatsReceiver
-  ): DeployConfig = {
-    val tunableMap = if (serviceIdentifier.service.contains("canary")) {
-      StandardTunableMap(id = "frigate-pushservice-canary")
-    } else { StandardTunableMap(id = serviceIdentifier.service) }
-    val shardParams = ShardParams(numShards, shardId)
-    serviceIdentifier.environment match {
-      case "devel" | "staging" =>
-        StagingConfig(
-          isServiceLocal = isServiceLocal,
-          localConfigRepoPath = localConfigRepoPath,
-          inMemCacheOff = inMemCacheOff,
-          decider = decider,
-          abDecider = abDecider,
-          featureSwitches = featureSwitches,
-          serviceIdentifier = serviceIdentifier,
+  @Prov des
+  @S ngleton
+  def prov desDeployConf g(
+    @Flag(FlagNa .numShards) numShards:  nt,
+    @Flag(FlagNa .shard d) shard d:  nt,
+    @Flag(FlagNa . s n mCac Off)  n mCac Off: Boolean,
+    @Flag(Serv ceLocal)  sServ ceLocal: Boolean,
+    @Flag(Conf gRepoLocalPath) localConf gRepoPath: Str ng,
+    serv ce dent f er: Serv ce dent f er,
+    dec der: Dec der,
+    abDec der: Logg ngABDec der,
+    featureSw c s: FeatureSw c s,
+    statsRece ver: StatsRece ver
+  ): DeployConf g = {
+    val tunableMap =  f (serv ce dent f er.serv ce.conta ns("canary")) {
+      StandardTunableMap( d = "fr gate-pushserv ce-canary")
+    } else { StandardTunableMap( d = serv ce dent f er.serv ce) }
+    val shardParams = ShardParams(numShards, shard d)
+    serv ce dent f er.env ron nt match {
+      case "devel" | "stag ng" =>
+        Stag ngConf g(
+           sServ ceLocal =  sServ ceLocal,
+          localConf gRepoPath = localConf gRepoPath,
+           n mCac Off =  n mCac Off,
+          dec der = dec der,
+          abDec der = abDec der,
+          featureSw c s = featureSw c s,
+          serv ce dent f er = serv ce dent f er,
           tunableMap = tunableMap,
           shardParams = shardParams
-        )(statsReceiver)
+        )(statsRece ver)
       case "prod" =>
-        ProdConfig(
-          isServiceLocal = isServiceLocal,
-          localConfigRepoPath = localConfigRepoPath,
-          inMemCacheOff = inMemCacheOff,
-          decider = decider,
-          abDecider = abDecider,
-          featureSwitches = featureSwitches,
-          serviceIdentifier = serviceIdentifier,
+        ProdConf g(
+           sServ ceLocal =  sServ ceLocal,
+          localConf gRepoPath = localConf gRepoPath,
+           n mCac Off =  n mCac Off,
+          dec der = dec der,
+          abDec der = abDec der,
+          featureSw c s = featureSw c s,
+          serv ce dent f er = serv ce dent f er,
           tunableMap = tunableMap,
           shardParams = shardParams
-        )(statsReceiver)
-      case env => throw new Exception(s"Unknown environment $env")
+        )(statsRece ver)
+      case env => throw new Except on(s"Unknown env ron nt $env")
     }
   }
 }

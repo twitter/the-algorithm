@@ -1,16 +1,16 @@
-package com.twitter.visibility.configapi.params
+package com.tw ter.v s b l y.conf gap .params
 
-private[visibility] object VisibilityExperiments {
+pr vate[v s b l y] object V s b l yExper  nts {
 
-  case object TestExperiment extends VisibilityExperiment("vf_test_ddg_7727")
+  case object TestExper  nt extends V s b l yExper  nt("vf_test_ddg_7727")
 
-  object CommonBucketId extends Enumeration {
-    type CommonBucketId = Value
+  object CommonBucket d extends Enu rat on {
+    type CommonBucket d = Value
     val Control = Value("control")
-    val Treatment = Value("treatment")
+    val Treat nt = Value("treat nt")
     val None = Value("none")
   }
 
-  case object NotGraduatedUserLabelRuleExperiment
-      extends VisibilityExperiment("not_graduated_user_holdback_16332")
+  case object NotGraduatedUserLabelRuleExper  nt
+      extends V s b l yExper  nt("not_graduated_user_holdback_16332")
 }

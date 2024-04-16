@@ -1,227 +1,227 @@
-package com.twitter.servo.util
+package com.tw ter.servo.ut l
 
-import com.google.common.base.Charsets
-import com.google.common.primitives.{Ints, Longs}
-import com.twitter.scrooge.{BinaryThriftStructSerializer, ThriftStructCodec, ThriftStruct}
-import com.twitter.util.{Future, Return, Try, Throw}
-import java.nio.{ByteBuffer, CharBuffer}
-import java.nio.charset.{Charset, CharsetEncoder, CharsetDecoder}
+ mport com.google.common.base.Charsets
+ mport com.google.common.pr m  ves.{ nts, Longs}
+ mport com.tw ter.scrooge.{B naryThr ftStructSer al zer, Thr ftStructCodec, Thr ftStruct}
+ mport com.tw ter.ut l.{Future, Return, Try, Throw}
+ mport java.n o.{ByteBuffer, CharBuffer}
+ mport java.n o.charset.{Charset, CharsetEncoder, CharsetDecoder}
 
 /**
- * Transformer is a (possibly partial) bidirectional conversion
- * between values of two types. It is particularly useful for
- * serializing values for storage and reading them back out (see
- * com.twitter.servo.cache.Serializer).
+ * Transfor r  s a (poss bly part al) b d rect onal convers on
+ * bet en values of two types.    s part cularly useful for
+ * ser al z ng values for storage and read ng t m back out (see
+ * com.tw ter.servo.cac .Ser al zer).
  *
- * In some implementations, the conversion may lose data (for example
- * when used for storage in a cache). In general, any data that passes
- * through a conversion should be preserved if the data is converted
- * back. There is code to make it easy to check that your Transformer
- * instance has this property in
- * com.twitter.servo.util.TransformerLawSpec.
+ *  n so   mple ntat ons, t  convers on may lose data (for example
+ * w n used for storage  n a cac ).  n general, any data that passes
+ * through a convers on should be preserved  f t  data  s converted
+ * back. T re  s code to make   easy to c ck that y  Transfor r
+ *  nstance has t  property  n
+ * com.tw ter.servo.ut l.Transfor rLawSpec.
  *
- * Transformers should take care not to mutate their inputs when
- * converting in either direction, in order to ensure that concurrent
- * transformations of the same input yield the same result.
+ * Transfor rs should take care not to mutate t  r  nputs w n
+ * convert ng  n e  r d rect on,  n order to ensure that concurrent
+ * transformat ons of t  sa   nput y eld t  sa  result.
  *
- * Transformer forms a category with `andThen` and `identity`.
+ * Transfor r forms a category w h `andT n` and ` dent y`.
  */
-trait Transformer[A, B] { self =>
+tra  Transfor r[A, B] { self =>
   def to(a: A): Try[B]
 
   def from(b: B): Try[A]
 
-  @deprecated("Use Future.const(transformer.to(x))", "2.0.1")
+  @deprecated("Use Future.const(transfor r.to(x))", "2.0.1")
   def asyncTo(a: A): Future[B] = Future.const(to(a))
 
-  @deprecated("Use Future.const(transformer.from(x))", "2.0.1")
+  @deprecated("Use Future.const(transfor r.from(x))", "2.0.1")
   def asyncFrom(b: B): Future[A] = Future.const(from(b))
 
   /**
-   * Compose this transformer with another. As long as both
-   * transformers follow the stated laws, the composed transformer
-   * will follow them.
+   * Compose t  transfor r w h anot r. As long as both
+   * transfor rs follow t  stated laws, t  composed transfor r
+   * w ll follow t m.
    */
-  def andThen[C](t: Transformer[B, C]): Transformer[A, C] =
-    new Transformer[A, C] {
-      override def to(a: A) = self.to(a) andThen t.to
-      override def from(c: C) = t.from(c) andThen self.from
+  def andT n[C](t: Transfor r[B, C]): Transfor r[A, C] =
+    new Transfor r[A, C] {
+      overr de def to(a: A) = self.to(a) andT n t.to
+      overr de def from(c: C) = t.from(c) andT n self.from
     }
 
   /**
-   * Reverse the direction of this transformer.
+   * Reverse t  d rect on of t  transfor r.
    *
-   * Law: t.flip.flip == t
+   * Law: t.fl p.fl p == t
    */
-  lazy val flip: Transformer[B, A] =
-    new Transformer[B, A] {
-      override lazy val flip = self
-      override def to(b: B) = self.from(b)
-      override def from(a: A) = self.to(a)
+  lazy val fl p: Transfor r[B, A] =
+    new Transfor r[B, A] {
+      overr de lazy val fl p = self
+      overr de def to(b: B) = self.from(b)
+      overr de def from(a: A) = self.to(a)
     }
 }
 
-object Transformer {
+object Transfor r {
 
   /**
-   * Create a new Transformer from the supplied functions, catching
-   * exceptions and converting them to failures.
+   * Create a new Transfor r from t  suppl ed funct ons, catch ng
+   * except ons and convert ng t m to fa lures.
    */
-  def apply[A, B](tTo: A => B, tFrom: B => A): Transformer[A, B] =
-    new Transformer[A, B] {
-      override def to(a: A): Try[B] = Try { tTo(a) }
-      override def from(b: B): Try[A] = Try { tFrom(b) }
+  def apply[A, B](tTo: A => B, tFrom: B => A): Transfor r[A, B] =
+    new Transfor r[A, B] {
+      overr de def to(a: A): Try[B] = Try { tTo(a) }
+      overr de def from(b: B): Try[A] = Try { tFrom(b) }
     }
 
-  def identity[A]: Transformer[A, A] = pure[A, A](a => a, a => a)
+  def  dent y[A]: Transfor r[A, A] = pure[A, A](a => a, a => a)
 
   /**
-   * Lift a pair of (total) conversion functions to a Transformer. The
-   * caller is responsible for ensuring that the resulting transformer
-   * follows the laws for Transformers.
+   * L ft a pa r of (total) convers on funct ons to a Transfor r. T 
+   * caller  s respons ble for ensur ng that t  result ng transfor r
+   * follows t  laws for Transfor rs.
    */
-  def pure[A, B](pureTo: A => B, pureFrom: B => A): Transformer[A, B] =
-    new Transformer[A, B] {
-      override def to(a: A): Try[B] = Return(pureTo(a))
-      override def from(b: B): Try[A] = Return(pureFrom(b))
+  def pure[A, B](pureTo: A => B, pureFrom: B => A): Transfor r[A, B] =
+    new Transfor r[A, B] {
+      overr de def to(a: A): Try[B] = Return(pureTo(a))
+      overr de def from(b: B): Try[A] = Return(pureFrom(b))
     }
 
   /**
-   * Lift a transformer to a transformer on optional values.
+   * L ft a transfor r to a transfor r on opt onal values.
    *
-   * None bypasses the underlying conversion (as it must, since there
-   * is no value to transform).
+   * None bypasses t  underly ng convers on (as   must, s nce t re
+   *  s no value to transform).
    */
-  def optional[A, B](underlying: Transformer[A, B]): Transformer[Option[A], Option[B]] =
-    new Transformer[Option[A], Option[B]] {
-      override def to(optA: Option[A]) = optA match {
+  def opt onal[A, B](underly ng: Transfor r[A, B]): Transfor r[Opt on[A], Opt on[B]] =
+    new Transfor r[Opt on[A], Opt on[B]] {
+      overr de def to(optA: Opt on[A]) = optA match {
         case None => Return.None
-        case Some(a) => underlying.to(a) map { Some(_) }
+        case So (a) => underly ng.to(a) map { So (_) }
       }
 
-      override def from(optB: Option[B]) = optB match {
+      overr de def from(optB: Opt on[B]) = optB match {
         case None => Return.None
-        case Some(b) => underlying.from(b) map { Some(_) }
+        case So (b) => underly ng.from(b) map { So (_) }
       }
     }
 
   //////////////////////////////////////////////////
-  // Transformers for accessing/generating fields of a Map.
+  // Transfor rs for access ng/generat ng f elds of a Map.
   //
-  // These transformers are useful for serializing/deserializing to
+  // T se transfor rs are useful for ser al z ng/deser al z ng to
   // storage that stores Maps, for example Hamsa.
 
   /**
-   * Thrown by `requiredField` when the field is not present.
+   * Thrown by `requ redF eld` w n t  f eld  s not present.
    */
-  case class MissingRequiredField[K](k: K) extends RuntimeException
+  case class M ss ngRequ redF eld[K](k: K) extends Runt  Except on
 
   /**
-   * Get a value from the map, yielding MissingRequiredField when the
-   * value is not present in the map.
+   * Get a value from t  map, y eld ng M ss ngRequ redF eld w n t 
+   * value  s not present  n t  map.
    *
-   * The inverse transform yields a Map containing only the one value.
+   * T   nverse transform y elds a Map conta n ng only t  one value.
    */
-  def requiredField[K, V](k: K): Transformer[Map[K, V], V] =
-    new Transformer[Map[K, V], V] {
-      override def to(m: Map[K, V]) =
+  def requ redF eld[K, V](k: K): Transfor r[Map[K, V], V] =
+    new Transfor r[Map[K, V], V] {
+      overr de def to(m: Map[K, V]) =
         m get k match {
-          case Some(v) => Return(v)
-          case None => Throw(MissingRequiredField(k))
+          case So (v) => Return(v)
+          case None => Throw(M ss ngRequ redF eld(k))
         }
 
-      override def from(v: V) = Return(Map(k -> v))
+      overr de def from(v: V) = Return(Map(k -> v))
     }
 
   /**
-   * Attempt to get a field from a Map, yielding None if the value is
+   * Attempt to get a f eld from a Map, y eld ng None  f t  value  s
    * not present.
    *
-   * The inverse transform will put the value in a Map if it is Some,
-   * and omit it if it is None.
+   * T   nverse transform w ll put t  value  n a Map  f    s So ,
+   * and om     f    s None.
    */
-  def optionalField[K, V](k: K): Transformer[Map[K, V], Option[V]] =
-    pure[Map[K, V], Option[V]](_.get(k), _.map { k -> _ }.toMap)
+  def opt onalF eld[K, V](k: K): Transfor r[Map[K, V], Opt on[V]] =
+    pure[Map[K, V], Opt on[V]](_.get(k), _.map { k -> _ }.toMap)
 
   /**
-   * Transforms an Option[T] to a T, using a default value for None.
+   * Transforms an Opt on[T] to a T, us ng a default value for None.
    *
-   * Note that the default value will be converted back to None by
-   * .from (.from will never return Some(default)).
+   * Note that t  default value w ll be converted back to None by
+   * .from (.from w ll never return So (default)).
    */
-  def default[T](value: T): Transformer[Option[T], T] =
-    pure[Option[T], T](_ getOrElse value, t => if (t == value) None else Some(t))
+  def default[T](value: T): Transfor r[Opt on[T], T] =
+    pure[Opt on[T], T](_ getOrElse value, t =>  f (t == value) None else So (t))
 
   /**
-   * Transforms `Long`s to big-endian byte arrays.
+   * Transforms `Long`s to b g-end an byte arrays.
    */
-  lazy val LongToBigEndian: Transformer[Long, Array[Byte]] =
-    new Transformer[Long, Array[Byte]] {
+  lazy val LongToB gEnd an: Transfor r[Long, Array[Byte]] =
+    new Transfor r[Long, Array[Byte]] {
       def to(a: Long) = Try(Longs.toByteArray(a))
       def from(b: Array[Byte]) = Try(Longs.fromByteArray(b))
     }
 
   /**
-   * Transforms `Int`s to big-endian byte arrays.
+   * Transforms ` nt`s to b g-end an byte arrays.
    */
-  lazy val IntToBigEndian: Transformer[Int, Array[Byte]] =
-    new Transformer[Int, Array[Byte]] {
-      def to(a: Int) = Try(Ints.toByteArray(a))
-      def from(b: Array[Byte]) = Try(Ints.fromByteArray(b))
+  lazy val  ntToB gEnd an: Transfor r[ nt, Array[Byte]] =
+    new Transfor r[ nt, Array[Byte]] {
+      def to(a:  nt) = Try( nts.toByteArray(a))
+      def from(b: Array[Byte]) = Try( nts.fromByteArray(b))
     }
 
   /**
-   * Transforms UTF8-encoded strings to byte arrays.
+   * Transforms UTF8-encoded str ngs to byte arrays.
    */
-  lazy val Utf8ToBytes: Transformer[String, Array[Byte]] =
-    stringToBytes(Charsets.UTF_8)
+  lazy val Utf8ToBytes: Transfor r[Str ng, Array[Byte]] =
+    str ngToBytes(Charsets.UTF_8)
 
   /**
-   * Transforms strings, encoded in a given character set, to byte arrays.
+   * Transforms str ngs, encoded  n a g ven character set, to byte arrays.
    */
-  private[util] def stringToBytes(charset: Charset): Transformer[String, Array[Byte]] =
-    new Transformer[String, Array[Byte]] {
-      private[this] val charsetEncoder = new ThreadLocal[CharsetEncoder]() {
-        protected override def initialValue() = charset.newEncoder
+  pr vate[ut l] def str ngToBytes(charset: Charset): Transfor r[Str ng, Array[Byte]] =
+    new Transfor r[Str ng, Array[Byte]] {
+      pr vate[t ] val charsetEncoder = new ThreadLocal[CharsetEncoder]() {
+        protected overr de def  n  alValue() = charset.newEncoder
       }
 
-      private[this] val charsetDecoder = new ThreadLocal[CharsetDecoder]() {
-        protected override def initialValue() = charset.newDecoder
+      pr vate[t ] val charsetDecoder = new ThreadLocal[CharsetDecoder]() {
+        protected overr de def  n  alValue() = charset.newDecoder
       }
 
-      override def to(str: String): Try[Array[Byte]] = Try {
-        // We can't just use `String.getBytes("UTF-8")` here because it will
-        // silently replace UTF-16 surrogate characters, which will cause
-        // CharsetEncoder to throw exceptions.
+      overr de def to(str: Str ng): Try[Array[Byte]] = Try {
+        //   can't just use `Str ng.getBytes("UTF-8")`  re because   w ll
+        // s lently replace UTF-16 surrogate characters, wh ch w ll cause
+        // CharsetEncoder to throw except ons.
         val bytes = charsetEncoder.get.encode(CharBuffer.wrap(str))
-        bytes.array.slice(bytes.position, bytes.limit)
+        bytes.array.sl ce(bytes.pos  on, bytes.l m )
       }
 
-      override def from(bytes: Array[Byte]): Try[String] = Try {
-        charsetDecoder.get.decode(ByteBuffer.wrap(bytes)).toString
+      overr de def from(bytes: Array[Byte]): Try[Str ng] = Try {
+        charsetDecoder.get.decode(ByteBuffer.wrap(bytes)).toStr ng
       }
     }
 
   /**
-   * Transforms a ThriftStruct to a byte-array using Thrift's TBinaryProtocol.
+   * Transforms a Thr ftStruct to a byte-array us ng Thr ft's TB naryProtocol.
    */
-  def thriftStructToBytes[T <: ThriftStruct](c: ThriftStructCodec[T]): Transformer[T, Array[Byte]] =
-    new Transformer[T, Array[Byte]] {
-      private[this] val ser = BinaryThriftStructSerializer(c)
+  def thr ftStructToBytes[T <: Thr ftStruct](c: Thr ftStructCodec[T]): Transfor r[T, Array[Byte]] =
+    new Transfor r[T, Array[Byte]] {
+      pr vate[t ] val ser = B naryThr ftStructSer al zer(c)
       def to(a: T) = Try(ser.toBytes(a))
       def from(b: Array[Byte]) = Try(ser.fromBytes(b))
     }
 }
 
 /**
- * transforms an Option[T] to a T, using a default value for None
+ * transforms an Opt on[T] to a T, us ng a default value for None
  */
-@deprecated("Use Transformer.default", "2.0.1")
-class OptionToTypeTransformer[T](default: T) extends Transformer[Option[T], T] {
-  override def to(b: Option[T]): Try[T] = Return(b.getOrElse(default))
+@deprecated("Use Transfor r.default", "2.0.1")
+class Opt onToTypeTransfor r[T](default: T) extends Transfor r[Opt on[T], T] {
+  overr de def to(b: Opt on[T]): Try[T] = Return(b.getOrElse(default))
 
-  override def from(a: T): Try[Option[T]] = a match {
+  overr de def from(a: T): Try[Opt on[T]] = a match {
     case `default` => Return.None
-    case _ => Return(Some(a))
+    case _ => Return(So (a))
   }
 }

@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.service.slice
+package com.tw ter.product_m xer.core.serv ce.sl ce
 
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineRequest
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistry
-import com.twitter.stitch.Stitch
-import com.twitter.strato.graphql.thriftscala.SliceResult
-import com.twitter.timelines.configapi.Params
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Request
+ mport com.tw ter.product_m xer.core.p pel ne.product.ProductP pel neRequest
+ mport com.tw ter.product_m xer.core.product.reg stry.ProductP pel neReg stry
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.graphql.thr ftscala.Sl ceResult
+ mport com.tw ter.t  l nes.conf gap .Params
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.reflect.runtime.universe.TypeTag
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport scala.reflect.runt  .un verse.TypeTag
 
 /**
- * Look up and execute Slice products in the [[ProductPipelineRegistry]]
+ * Look up and execute Sl ce products  n t  [[ProductP pel neReg stry]]
  */
-@Singleton
-class SliceService @Inject() (productPipelineRegistry: ProductPipelineRegistry) {
+@S ngleton
+class Sl ceServ ce @ nject() (productP pel neReg stry: ProductP pel neReg stry) {
 
-  def getSliceResponse[RequestType <: Request](
+  def getSl ceResponse[RequestType <: Request](
     request: RequestType,
     params: Params
   )(
-    implicit requestTypeTag: TypeTag[RequestType]
-  ): Stitch[SliceResult] =
-    productPipelineRegistry
-      .getProductPipeline[RequestType, SliceResult](request.product)
-      .process(ProductPipelineRequest(request, params))
+     mpl c  requestTypeTag: TypeTag[RequestType]
+  ): St ch[Sl ceResult] =
+    productP pel neReg stry
+      .getProductP pel ne[RequestType, Sl ceResult](request.product)
+      .process(ProductP pel neRequest(request, params))
 }

@@ -1,264 +1,264 @@
 """
-Functions for exporting models for different modes.
+Funct ons for export ng models for d fferent modes.
 """
-from collections import OrderedDict
-import os
+from collect ons  mport OrderedD ct
+ mport os
 
-import tensorflow.compat.v1 as tf
-from tensorflow.python.estimator.export import export
-import twml
-import yaml
+ mport tensorflow.compat.v1 as tf
+from tensorflow.python.est mator.export  mport export
+ mport twml
+ mport yaml
 
 
-def get_sparse_batch_supervised_input_receiver_fn(feature_config, keep_fields=None):
-  """Gets supervised_input_receiver_fn that decodes a BatchPredictionRequest as sparse tensors
-  with labels and weights as defined in feature_config.
-  This input_receiver_fn is required for exporting models with 'train' mode to be trained with
-  Java API
+def get_sparse_batch_superv sed_ nput_rece ver_fn(feature_conf g, keep_f elds=None):
+  """Gets superv sed_ nput_rece ver_fn that decodes a BatchPred ct onRequest as sparse tensors
+  w h labels and   ghts as def ned  n feature_conf g.
+  T   nput_rece ver_fn  s requ red for export ng models w h 'tra n' mode to be tra ned w h
+  Java AP 
 
   Args:
-    feature_config (FeatureConfig): deepbird v2 feature config object
-    keep_fields (list): list of fields to keep
+    feature_conf g (FeatureConf g): deepb rd v2 feature conf g object
+    keep_f elds (l st): l st of f elds to keep
 
   Returns:
-    supervised_input_receiver_fn: input_receiver_fn used for train mode
+    superv sed_ nput_rece ver_fn:  nput_rece ver_fn used for tra n mode
   """
-  def supervised_input_receiver_fn():
-    serialized_request = tf.placeholder(dtype=tf.uint8, name='request')
-    receiver_tensors = {'request': serialized_request}
+  def superv sed_ nput_rece ver_fn():
+    ser al zed_request = tf.placeholder(dtype=tf.u nt8, na ='request')
+    rece ver_tensors = {'request': ser al zed_request}
 
-    bpr = twml.contrib.readers.HashedBatchPredictionRequest(serialized_request, feature_config)
-    features = bpr.get_sparse_features() if keep_fields is None else bpr.get_features(keep_fields)
-    features['weights'] = bpr.weights
+    bpr = twml.contr b.readers.Has dBatchPred ct onRequest(ser al zed_request, feature_conf g)
+    features = bpr.get_sparse_features()  f keep_f elds  s None else bpr.get_features(keep_f elds)
+    features['  ghts'] = bpr.  ghts
     labels = bpr.labels
-    features, labels = bpr.apply_filter(features, labels)
+    features, labels = bpr.apply_f lter(features, labels)
 
-    return export.SupervisedInputReceiver(features, labels, receiver_tensors)
+    return export.Superv sed nputRece ver(features, labels, rece ver_tensors)
 
-  return supervised_input_receiver_fn
+  return superv sed_ nput_rece ver_fn
 
 
-def update_build_graph_fn_for_train(build_graph_fn):
-  """Updates a build_graph_fn by inserting in graph output a serialized BatchPredictionResponse
-  similar to the export_output_fns for serving.
-  The key difference here is that
-  1. We insert serialized BatchPredictionResponse in graph output with key 'prediction' instead of
-     creating an export_output object. This is because of the way estimators export model in 'train'
+def update_bu ld_graph_fn_for_tra n(bu ld_graph_fn):
+  """Updates a bu ld_graph_fn by  nsert ng  n graph output a ser al zed BatchPred ct onResponse
+  s m lar to t  export_output_fns for serv ng.
+  T  key d fference  re  s that
+  1.    nsert ser al zed BatchPred ct onResponse  n graph output w h key 'pred ct on'  nstead of
+     creat ng an export_output object. T   s because of t  way est mators export model  n 'tra n'
      mode doesn't take custom export_output
-  2. We only do it when `mode == 'train'` to avoid altering the graph when exporting
-     for 'infer' mode
+  2.   only do   w n `mode == 'tra n'` to avo d alter ng t  graph w n export ng
+     for ' nfer' mode
 
   Args:
-    build_graph_fn (Callable): deepbird v2 build graph function
+    bu ld_graph_fn (Callable): deepb rd v2 bu ld graph funct on
 
   Returns:
-    new_build_graph_fn: An updated build_graph_fn that inserts serialized BatchPredictResponse
-                        to graph output when in 'train' mode
+    new_bu ld_graph_fn: An updated bu ld_graph_fn that  nserts ser al zed BatchPred ctResponse
+                        to graph output w n  n 'tra n' mode
   """
-  def new_build_graph_fn(features, label, mode, params, config=None):
-    output = build_graph_fn(features, label, mode, params, config)
-    if mode == tf.estimator.ModeKeys.TRAIN:
+  def new_bu ld_graph_fn(features, label, mode, params, conf g=None):
+    output = bu ld_graph_fn(features, label, mode, params, conf g)
+     f mode == tf.est mator.ModeKeys.TRA N:
       output.update(
-        twml.export_output_fns.batch_prediction_continuous_output_fn(output)[
-          tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY].outputs
+        twml.export_output_fns.batch_pred ct on_cont nuous_output_fn(output)[
+          tf.saved_model.s gnature_constants.DEFAULT_SERV NG_S GNATURE_DEF_KEY].outputs
       )
     return output
-  return new_build_graph_fn
+  return new_bu ld_graph_fn
 
 
-def export_model_for_train_and_infer(
-    trainer, feature_config, keep_fields, export_dir, as_text=False):
-  """Function for exporting model with both 'train' and 'infer' mode.
+def export_model_for_tra n_and_ nfer(
+    tra ner, feature_conf g, keep_f elds, export_d r, as_text=False):
+  """Funct on for export ng model w h both 'tra n' and ' nfer' mode.
 
-  This means the exported saved_model.pb will contain two meta graphs, one with tag 'train'
-  and the other with tag 'serve', and it can be loaded in Java API with either tag depending on
-  the use case
+  T   ans t  exported saved_model.pb w ll conta n two  ta graphs, one w h tag 'tra n'
+  and t  ot r w h tag 'serve', and   can be loaded  n Java AP  w h e  r tag depend ng on
+  t  use case
 
   Args:
-    trainer (DataRecordTrainer): deepbird v2 DataRecordTrainer
-    feature_config (FeatureConfig): deepbird v2 feature config
-    keep_fields (list of string): list of field keys, e.g.
-                                  ('ids', 'keys', 'values', 'batch_size', 'total_size', 'codes')
-    export_dir (str): a directory (local or hdfs) to export model to
-    as_text (bool): if True, write 'saved_model.pb' as binary file, else write
-                    'saved_model.pbtxt' as human readable text file. Default False
+    tra ner (DataRecordTra ner): deepb rd v2 DataRecordTra ner
+    feature_conf g (FeatureConf g): deepb rd v2 feature conf g
+    keep_f elds (l st of str ng): l st of f eld keys, e.g.
+                                  (' ds', 'keys', 'values', 'batch_s ze', 'total_s ze', 'codes')
+    export_d r (str): a d rectory (local or hdfs) to export model to
+    as_text (bool):  f True, wr e 'saved_model.pb' as b nary f le, else wr e
+                    'saved_model.pbtxt' as human readable text f le. Default False
   """
-  train_input_receiver_fn = get_sparse_batch_supervised_input_receiver_fn(
-    feature_config, keep_fields)
-  predict_input_receiver_fn = twml.parsers.get_sparse_serving_input_receiver_fn(
-    feature_config, keep_fields)
-  trainer._export_output_fn = twml.export_output_fns.batch_prediction_continuous_output_fn
-  trainer._build_graph_fn = update_build_graph_fn_for_train(trainer._build_graph_fn)
-  trainer._estimator._export_all_saved_models(
-    export_dir_base=export_dir,
-    input_receiver_fn_map={
-      tf.estimator.ModeKeys.TRAIN: train_input_receiver_fn,
-      tf.estimator.ModeKeys.PREDICT: predict_input_receiver_fn
+  tra n_ nput_rece ver_fn = get_sparse_batch_superv sed_ nput_rece ver_fn(
+    feature_conf g, keep_f elds)
+  pred ct_ nput_rece ver_fn = twml.parsers.get_sparse_serv ng_ nput_rece ver_fn(
+    feature_conf g, keep_f elds)
+  tra ner._export_output_fn = twml.export_output_fns.batch_pred ct on_cont nuous_output_fn
+  tra ner._bu ld_graph_fn = update_bu ld_graph_fn_for_tra n(tra ner._bu ld_graph_fn)
+  tra ner._est mator._export_all_saved_models(
+    export_d r_base=export_d r,
+     nput_rece ver_fn_map={
+      tf.est mator.ModeKeys.TRA N: tra n_ nput_rece ver_fn,
+      tf.est mator.ModeKeys.PRED CT: pred ct_ nput_rece ver_fn
     },
     as_text=as_text,
   )
 
-  trainer.export_model_effects(export_dir)
+  tra ner.export_model_effects(export_d r)
 
 
-def export_all_models_with_receivers(estimator, export_dir,
-                                     train_input_receiver_fn,
-                                     eval_input_receiver_fn,
-                                     predict_input_receiver_fn,
+def export_all_models_w h_rece vers(est mator, export_d r,
+                                     tra n_ nput_rece ver_fn,
+                                     eval_ nput_rece ver_fn,
+                                     pred ct_ nput_rece ver_fn,
                                      export_output_fn,
-                                     export_modes=('train', 'eval', 'predict'),
-                                     register_model_fn=None,
+                                     export_modes=('tra n', 'eval', 'pred ct'),
+                                     reg ster_model_fn=None,
                                      feature_spec=None,
-                                     checkpoint_path=None,
+                                     c ckpo nt_path=None,
                                      log_features=True):
   """
-  Function for exporting a model with train, eval, and infer modes.
+  Funct on for export ng a model w h tra n, eval, and  nfer modes.
 
   Args:
-    estimator:
-      Should be of type tf.estimator.Estimator.
-      You can get this from trainer using trainer.estimator
-    export_dir:
-      Directory to export the model.
-    train_input_receiver_fn:
-      Input receiver for train interface.
-    eval_input_receiver_fn:
-      Input receiver for eval interface.
-    predict_input_receiver_fn:
-      Input receiver for predict interface.
+    est mator:
+      Should be of type tf.est mator.Est mator.
+        can get t  from tra ner us ng tra ner.est mator
+    export_d r:
+      D rectory to export t  model.
+    tra n_ nput_rece ver_fn:
+       nput rece ver for tra n  nterface.
+    eval_ nput_rece ver_fn:
+       nput rece ver for eval  nterface.
+    pred ct_ nput_rece ver_fn:
+       nput rece ver for pred ct  nterface.
     export_output_fn:
-      export_output_fn to be used for serving.
+      export_output_fn to be used for serv ng.
     export_modes:
-      A list to Specify what modes to export. Can be "train", "eval", "predict".
-      Defaults to ["train", "eval", "predict"]
-    register_model_fn:
-      An optional function which is called with export_dir after models are exported.
+      A l st to Spec fy what modes to export. Can be "tra n", "eval", "pred ct".
+      Defaults to ["tra n", "eval", "pred ct"]
+    reg ster_model_fn:
+      An opt onal funct on wh ch  s called w h export_d r after models are exported.
       Defaults to None.
   Returns:
-     The timestamped directory the models are exported to.
+     T  t  stamped d rectory t  models are exported to.
   """
-  # TODO: Fix for hogwild / distributed training.
+  # TODO: F x for hogw ld / d str buted tra n ng.
 
-  if export_dir is None:
-    raise ValueError("export_dir can not be None")
-  export_dir = twml.util.sanitize_hdfs_path(export_dir)
-  input_receiver_fn_map = {}
+   f export_d r  s None:
+    ra se ValueError("export_d r can not be None")
+  export_d r = twml.ut l.san  ze_hdfs_path(export_d r)
+   nput_rece ver_fn_map = {}
 
-  if "train" in export_modes:
-    input_receiver_fn_map[tf.estimator.ModeKeys.TRAIN] = train_input_receiver_fn
+   f "tra n"  n export_modes:
+     nput_rece ver_fn_map[tf.est mator.ModeKeys.TRA N] = tra n_ nput_rece ver_fn
 
-  if "eval" in export_modes:
-    input_receiver_fn_map[tf.estimator.ModeKeys.EVAL] = eval_input_receiver_fn
+   f "eval"  n export_modes:
+     nput_rece ver_fn_map[tf.est mator.ModeKeys.EVAL] = eval_ nput_rece ver_fn
 
-  if "predict" in export_modes:
-    input_receiver_fn_map[tf.estimator.ModeKeys.PREDICT] = predict_input_receiver_fn
+   f "pred ct"  n export_modes:
+     nput_rece ver_fn_map[tf.est mator.ModeKeys.PRED CT] = pred ct_ nput_rece ver_fn
 
-  export_dir = estimator._export_all_saved_models(
-    export_dir_base=export_dir,
-    input_receiver_fn_map=input_receiver_fn_map,
-    checkpoint_path=checkpoint_path,
+  export_d r = est mator._export_all_saved_models(
+    export_d r_base=export_d r,
+     nput_rece ver_fn_map= nput_rece ver_fn_map,
+    c ckpo nt_path=c ckpo nt_path,
   )
 
-  if register_model_fn is not None:
-    register_model_fn(export_dir, feature_spec, log_features)
+   f reg ster_model_fn  s not None:
+    reg ster_model_fn(export_d r, feature_spec, log_features)
 
-  return export_dir
+  return export_d r
 
 
-def export_all_models(trainer,
-                      export_dir,
+def export_all_models(tra ner,
+                      export_d r,
                       parse_fn,
-                      serving_input_receiver_fn,
+                      serv ng_ nput_rece ver_fn,
                       export_output_fn=None,
-                      export_modes=('train', 'eval', 'predict'),
+                      export_modes=('tra n', 'eval', 'pred ct'),
                       feature_spec=None,
-                      checkpoint=None,
+                      c ckpo nt=None,
                       log_features=True):
   """
-  Function for exporting a model with train, eval, and infer modes.
+  Funct on for export ng a model w h tra n, eval, and  nfer modes.
 
   Args:
-    trainer:
-      An object of type twml.trainers.Trainer.
-    export_dir:
-      Directory to export the model.
+    tra ner:
+      An object of type twml.tra ners.Tra ner.
+    export_d r:
+      D rectory to export t  model.
     parse_fn:
-      The parse function used parse the inputs for train and eval.
-    serving_input_receiver_fn:
-      The input receiver function used during serving.
+      T  parse funct on used parse t   nputs for tra n and eval.
+    serv ng_ nput_rece ver_fn:
+      T   nput rece ver funct on used dur ng serv ng.
     export_output_fn:
-      export_output_fn to be used for serving.
+      export_output_fn to be used for serv ng.
     export_modes:
-      A list to Specify what modes to export. Can be "train", "eval", "predict".
-      Defaults to ["train", "eval", "predict"]
+      A l st to Spec fy what modes to export. Can be "tra n", "eval", "pred ct".
+      Defaults to ["tra n", "eval", "pred ct"]
     feature_spec:
-      A dictionary obtained from FeatureConfig.get_feature_spec() to serialize
-      as feature_spec.yaml in export_dir.
+      A d ct onary obta ned from FeatureConf g.get_feature_spec() to ser al ze
+      as feature_spec.yaml  n export_d r.
       Defaults to None
   Returns:
-     The timestamped directory the models are exported to.
+     T  t  stamped d rectory t  models are exported to.
   """
-  # Only export from chief in hogwild or distributed modes.
-  if trainer.params.get('distributed', False) and not trainer.estimator.config.is_chief:
-    tf.logging.info("Trainer.export_model ignored due to instance not being chief.")
+  # Only export from ch ef  n hogw ld or d str buted modes.
+   f tra ner.params.get('d str buted', False) and not tra ner.est mator.conf g. s_ch ef:
+    tf.logg ng. nfo("Tra ner.export_model  gnored due to  nstance not be ng ch ef.")
     return
 
-  if feature_spec is None:
-    if getattr(trainer, '_feature_config') is None:
-      raise ValueError("feature_spec is set to None."
-                       "Please pass feature_spec=feature_config.get_feature_spec() to the export_all_model function")
+   f feature_spec  s None:
+     f getattr(tra ner, '_feature_conf g')  s None:
+      ra se ValueError("feature_spec  s set to None."
+                       "Please pass feature_spec=feature_conf g.get_feature_spec() to t  export_all_model funct on")
     else:
-      feature_spec = trainer._feature_config.get_feature_spec()
+      feature_spec = tra ner._feature_conf g.get_feature_spec()
 
-  export_dir = twml.util.sanitize_hdfs_path(export_dir)
-  old_export_output_fn = trainer._export_output_fn
-  trainer._export_output_fn = export_output_fn
-  supervised_input_receiver_fn = twml.parsers.convert_to_supervised_input_receiver_fn(parse_fn)
-  if not checkpoint:
-    checkpoint = trainer.best_or_latest_checkpoint
+  export_d r = twml.ut l.san  ze_hdfs_path(export_d r)
+  old_export_output_fn = tra ner._export_output_fn
+  tra ner._export_output_fn = export_output_fn
+  superv sed_ nput_rece ver_fn = twml.parsers.convert_to_superv sed_ nput_rece ver_fn(parse_fn)
+   f not c ckpo nt:
+    c ckpo nt = tra ner.best_or_latest_c ckpo nt
 
-  export_dir = export_all_models_with_receivers(estimator=trainer.estimator,
-                                                export_dir=export_dir,
-                                                train_input_receiver_fn=supervised_input_receiver_fn,
-                                                eval_input_receiver_fn=supervised_input_receiver_fn,
-                                                predict_input_receiver_fn=serving_input_receiver_fn,
+  export_d r = export_all_models_w h_rece vers(est mator=tra ner.est mator,
+                                                export_d r=export_d r,
+                                                tra n_ nput_rece ver_fn=superv sed_ nput_rece ver_fn,
+                                                eval_ nput_rece ver_fn=superv sed_ nput_rece ver_fn,
+                                                pred ct_ nput_rece ver_fn=serv ng_ nput_rece ver_fn,
                                                 export_output_fn=export_output_fn,
                                                 export_modes=export_modes,
-                                                register_model_fn=trainer.export_model_effects,
+                                                reg ster_model_fn=tra ner.export_model_effects,
                                                 feature_spec=feature_spec,
-                                                checkpoint_path=checkpoint,
+                                                c ckpo nt_path=c ckpo nt,
                                                 log_features=log_features)
-  trainer._export_output_fn = old_export_output_fn
-  return export_dir
+  tra ner._export_output_fn = old_export_output_fn
+  return export_d r
 
 
-def export_feature_spec(dir_path, feature_spec_dict):
+def export_feature_spec(d r_path, feature_spec_d ct):
   """
-  Exports a FeatureConfig.get_feature_spec() dict to <dir_path>/feature_spec.yaml.
+  Exports a FeatureConf g.get_feature_spec() d ct to <d r_path>/feature_spec.yaml.
   """
-  def ordered_dict_representer(dumper, data):
-    return dumper.represent_mapping('tag:yaml.org,2002:map', data.items())
+  def ordered_d ct_representer(dumper, data):
+    return dumper.represent_mapp ng('tag:yaml.org,2002:map', data. ems())
 
   try:
     # needed for Python 2
     yaml.add_representer(str, yaml.representer.SafeRepresenter.represent_str)
-    yaml.add_representer(unicode, yaml.representer.SafeRepresenter.represent_unicode)
-  except NameError:
-    # 'unicode' type doesn't exist on Python 3
-    # PyYAML handles unicode correctly in Python 3
+    yaml.add_representer(un code, yaml.representer.SafeRepresenter.represent_un code)
+  except Na Error:
+    # 'un code' type doesn't ex st on Python 3
+    # PyYAML handles un code correctly  n Python 3
     pass
 
-  yaml.add_representer(OrderedDict, ordered_dict_representer)
+  yaml.add_representer(OrderedD ct, ordered_d ct_representer)
 
   fbase = "feature_spec.yaml"
-  fname = fbase.encode('utf-8') if type(dir_path) != str else fbase
-  file_path = os.path.join(dir_path, fname)
-  with tf.io.gfile.GFile(file_path, mode='w') as f:
-    yaml.dump(feature_spec_dict, f, default_flow_style=False, allow_unicode=True)
-  tf.logging.info("Exported feature spec to %s" % file_path)
+  fna  = fbase.encode('utf-8')  f type(d r_path) != str else fbase
+  f le_path = os.path.jo n(d r_path, fna )
+  w h tf. o.gf le.GF le(f le_path, mode='w') as f:
+    yaml.dump(feature_spec_d ct, f, default_flow_style=False, allow_un code=True)
+  tf.logg ng. nfo("Exported feature spec to %s" % f le_path)
 
-  return file_path
+  return f le_path
 
 
-# Keep the alias for compatibility.
-get_supervised_input_receiver_fn = twml.parsers.convert_to_supervised_input_receiver_fn
+# Keep t  al as for compat b l y.
+get_superv sed_ nput_rece ver_fn = twml.parsers.convert_to_superv sed_ nput_rece ver_fn

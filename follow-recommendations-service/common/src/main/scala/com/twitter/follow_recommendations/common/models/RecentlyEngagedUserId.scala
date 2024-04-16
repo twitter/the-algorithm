@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => t}
+ mport com.tw ter.follow_recom ndat ons.logg ng.{thr ftscala => offl ne}
+ mport com.tw ter.follow_recom ndat ons.{thr ftscala => t}
 
-case class RecentlyEngagedUserId(id: Long, engagementType: EngagementType) {
-  def toThrift: t.RecentlyEngagedUserId =
-    t.RecentlyEngagedUserId(id = id, engagementType = engagementType.toThrift)
+case class RecentlyEngagedUser d( d: Long, engage ntType: Engage ntType) {
+  def toThr ft: t.RecentlyEngagedUser d =
+    t.RecentlyEngagedUser d( d =  d, engage ntType = engage ntType.toThr ft)
 
-  def toOfflineThrift: offline.RecentlyEngagedUserId =
-    offline.RecentlyEngagedUserId(id = id, engagementType = engagementType.toOfflineThrift)
+  def toOffl neThr ft: offl ne.RecentlyEngagedUser d =
+    offl ne.RecentlyEngagedUser d( d =  d, engage ntType = engage ntType.toOffl neThr ft)
 }
 
-object RecentlyEngagedUserId {
-  def fromThrift(recentlyEngagedUserId: t.RecentlyEngagedUserId): RecentlyEngagedUserId = {
-    RecentlyEngagedUserId(
-      id = recentlyEngagedUserId.id,
-      engagementType = EngagementType.fromThrift(recentlyEngagedUserId.engagementType)
+object RecentlyEngagedUser d {
+  def fromThr ft(recentlyEngagedUser d: t.RecentlyEngagedUser d): RecentlyEngagedUser d = {
+    RecentlyEngagedUser d(
+       d = recentlyEngagedUser d. d,
+      engage ntType = Engage ntType.fromThr ft(recentlyEngagedUser d.engage ntType)
     )
   }
 
-  def fromOfflineThrift(
-    recentlyEngagedUserId: offline.RecentlyEngagedUserId
-  ): RecentlyEngagedUserId = {
-    RecentlyEngagedUserId(
-      id = recentlyEngagedUserId.id,
-      engagementType = EngagementType.fromOfflineThrift(recentlyEngagedUserId.engagementType)
+  def fromOffl neThr ft(
+    recentlyEngagedUser d: offl ne.RecentlyEngagedUser d
+  ): RecentlyEngagedUser d = {
+    RecentlyEngagedUser d(
+       d = recentlyEngagedUser d. d,
+      engage ntType = Engage ntType.fromOffl neThr ft(recentlyEngagedUser d.engage ntType)
     )
   }
 

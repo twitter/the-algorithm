@@ -1,3 +1,3 @@
-resources(
-    sources = ["*"],
+res ces(
+    s ces = ["*"],
 )

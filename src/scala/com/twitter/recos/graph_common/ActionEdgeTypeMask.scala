@@ -1,56 +1,56 @@
-package com.twitter.recos.graph_common
+package com.tw ter.recos.graph_common
 
-import com.twitter.graphjet.bipartite.api.EdgeTypeMask
-import com.twitter.recos.recos_common.thriftscala.SocialProofType
+ mport com.tw ter.graphjet.b part e.ap .EdgeTypeMask
+ mport com.tw ter.recos.recos_common.thr ftscala.Soc alProofType
 
 /**
- * The bit mask is used to encode edge types in the top bits of an integer,
- * e.g. favorite, retweet, reply and click. Under current segment configuration, each segment
- * stores up to 128M edges. Assuming that each node on one side is unique, each segment
- * stores up to 128M unique nodes on one side, which occupies the lower 27 bits of an integer.
- * This leaves five bits to encode the edge types, which at max can store 32 edge types.
- * The following implementation utilizes the top four bits and leaves one free bit out.
+ * T  b  mask  s used to encode edge types  n t  top b s of an  nteger,
+ * e.g. favor e, ret et, reply and cl ck. Under current seg nt conf gurat on, each seg nt
+ * stores up to 128M edges. Assum ng that each node on one s de  s un que, each seg nt
+ * stores up to 128M un que nodes on one s de, wh ch occup es t  lo r 27 b s of an  nteger.
+ * T  leaves f ve b s to encode t  edge types, wh ch at max can store 32 edge types.
+ * T  follow ng  mple ntat on ut l zes t  top f  b s and leaves one free b  out.
  */
-class ActionEdgeTypeMask extends EdgeTypeMask {
-  import ActionEdgeTypeMask._
+class Act onEdgeTypeMask extends EdgeTypeMask {
+   mport Act onEdgeTypeMask._
 
-  override def encode(node: Int, edgeType: Byte): Int = {
-    if (edgeType == FAVORITE) {
-      node | EDGEARRAY(FAVORITE)
-    } else if (edgeType == RETWEET) {
+  overr de def encode(node:  nt, edgeType: Byte):  nt = {
+     f (edgeType == FAVOR TE) {
+      node | EDGEARRAY(FAVOR TE)
+    } else  f (edgeType == RETWEET) {
       node | EDGEARRAY(RETWEET)
-    } else if (edgeType == REPLY) {
+    } else  f (edgeType == REPLY) {
       node | EDGEARRAY(REPLY)
-    } else if (edgeType == TWEET) {
+    } else  f (edgeType == TWEET) {
       node | EDGEARRAY(TWEET)
     } else {
-      // Anything that is not a public engagement (i.e. openlink, share, select, etc.) is a "click"
-      node | EDGEARRAY(CLICK)
+      // Anyth ng that  s not a publ c engage nt ( .e. openl nk, share, select, etc.)  s a "cl ck"
+      node | EDGEARRAY(CL CK)
     }
   }
 
-  override def edgeType(node: Int): Byte = {
+  overr de def edgeType(node:  nt): Byte = {
     (node >> 28).toByte
   }
 
-  override def restore(node: Int): Int = {
+  overr de def restore(node:  nt):  nt = {
     node & MASK
   }
 }
 
-object ActionEdgeTypeMask {
+object Act onEdgeTypeMask {
 
   /**
-   * Reserve the top four bits of each integer to encode the edge type information.
+   * Reserve t  top f  b s of each  nteger to encode t  edge type  nformat on.
    */
-  val MASK: Int =
-    Integer.parseInt("00001111111111111111111111111111", 2)
-  val CLICK: Byte = 0
-  val FAVORITE: Byte = 1
+  val MASK:  nt =
+     nteger.parse nt("00001111111111111111111111111111", 2)
+  val CL CK: Byte = 0
+  val FAVOR TE: Byte = 1
   val RETWEET: Byte = 2
   val REPLY: Byte = 3
   val TWEET: Byte = 4
-  val SIZE: Byte = 5
+  val S ZE: Byte = 5
   val UNUSED6: Byte = 6
   val UNUSED7: Byte = 7
   val UNUSED8: Byte = 8
@@ -61,7 +61,7 @@ object ActionEdgeTypeMask {
   val UNUSED13: Byte = 13
   val UNUSED14: Byte = 14
   val UNUSED15: Byte = 15
-  val EDGEARRAY: Array[Int] = Array(
+  val EDGEARRAY: Array[ nt] = Array(
     0,
     1 << 28,
     2 << 28,
@@ -81,19 +81,19 @@ object ActionEdgeTypeMask {
   )
 
   /**
-   * Map valid social proof types specified by clients to an array of bytes. If clients do not
-   * specify any social proof types in thrift, it will return all available social types by
+   * Map val d soc al proof types spec f ed by cl ents to an array of bytes.  f cl ents do not
+   * spec fy any soc al proof types  n thr ft,   w ll return all ava lable soc al types by
    * default.
    *
-   * @param socialProofTypes are the valid socialProofTypes specified by clients
-   * @return an array of bytes representing valid social proof types
+   * @param soc alProofTypes are t  val d soc alProofTypes spec f ed by cl ents
+   * @return an array of bytes represent ng val d soc al proof types
    */
-  def getUserTweetGraphSocialProofTypes(
-    socialProofTypes: Option[Seq[SocialProofType]]
+  def getUserT etGraphSoc alProofTypes(
+    soc alProofTypes: Opt on[Seq[Soc alProofType]]
   ): Array[Byte] = {
-    socialProofTypes
+    soc alProofTypes
       .map { _.map { _.getValue }.toArray }
-      .getOrElse((0 until SIZE).toArray)
+      .getOrElse((0 unt l S ZE).toArray)
       .map { _.toByte }
   }
 }

@@ -1,388 +1,388 @@
-package com.twitter.frigate.pushservice.scriber
+package com.tw ter.fr gate.pushserv ce.scr ber
 
-import com.twitter.bijection.Base64String
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.core_workflows.user_model.thriftscala.{UserState => ThriftUserState}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.tracing.Trace
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.common.base.CandidateResult
-import com.twitter.frigate.common.base.Invalid
-import com.twitter.frigate.common.base.OK
-import com.twitter.frigate.common.base.Result
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.data_pipeline.features_common.PushQualityModelFeatureContext
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.frigate.scribe.thriftscala.CandidateFilteredOutStep
-import com.twitter.frigate.scribe.thriftscala.CandidateRequestInfo
-import com.twitter.frigate.scribe.thriftscala.MrRequestScribe
-import com.twitter.frigate.scribe.thriftscala.TargetUserInfo
-import com.twitter.frigate.thriftscala.FrigateNotification
-import com.twitter.frigate.thriftscala.TweetNotification
-import com.twitter.frigate.thriftscala.{SocialContextAction => TSocialContextAction}
-import com.twitter.logging.Logger
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureType
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.ml.api.util.ScalaToJavaDataRecordConversions
-import com.twitter.nrel.heavyranker.PushPredictionHelper
-import com.twitter.util.Future
-import com.twitter.util.Time
-import java.util.UUID
-import scala.collection.mutable
+ mport com.tw ter.b ject on.Base64Str ng
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.b ject on.scrooge.B naryScalaCodec
+ mport com.tw ter.core_workflows.user_model.thr ftscala.{UserState => Thr ftUserState}
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.trac ng.Trace
+ mport com.tw ter.fr gate.common.base.Cand dateDeta ls
+ mport com.tw ter.fr gate.common.base.Cand dateResult
+ mport com.tw ter.fr gate.common.base. nval d
+ mport com.tw ter.fr gate.common.base.OK
+ mport com.tw ter.fr gate.common.base.Result
+ mport com.tw ter.fr gate.common.rec_types.RecTypes
+ mport com.tw ter.fr gate.data_p pel ne.features_common.PushQual yModelFeatureContext
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.params.PushParams
+ mport com.tw ter.fr gate.scr be.thr ftscala.Cand dateF lteredOutStep
+ mport com.tw ter.fr gate.scr be.thr ftscala.Cand dateRequest nfo
+ mport com.tw ter.fr gate.scr be.thr ftscala.MrRequestScr be
+ mport com.tw ter.fr gate.scr be.thr ftscala.TargetUser nfo
+ mport com.tw ter.fr gate.thr ftscala.Fr gateNot f cat on
+ mport com.tw ter.fr gate.thr ftscala.T etNot f cat on
+ mport com.tw ter.fr gate.thr ftscala.{Soc alContextAct on => TSoc alContextAct on}
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.ml.ap .FeatureType
+ mport com.tw ter.ml.ap .ut l.SR chDataRecord
+ mport com.tw ter.ml.ap .ut l.ScalaToJavaDataRecordConvers ons
+ mport com.tw ter.nrel. avyranker.PushPred ct on lper
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
+ mport java.ut l.UU D
+ mport scala.collect on.mutable
 
-class MrRequestScribeHandler(mrRequestScriberNode: String, stats: StatsReceiver) {
+class MrRequestScr beHandler(mrRequestScr berNode: Str ng, stats: StatsRece ver) {
 
-  private val mrRequestScribeLogger = Logger(mrRequestScriberNode)
+  pr vate val mrRequestScr beLogger = Logger(mrRequestScr berNode)
 
-  private val mrRequestScribeTargetFilteringStats =
-    stats.counter("MrRequestScribeHandler_target_filtering")
-  private val mrRequestScribeCandidateFilteringStats =
-    stats.counter("MrRequestScribeHandler_candidate_filtering")
-  private val mrRequestScribeInvalidStats =
-    stats.counter("MrRequestScribeHandler_invalid_filtering")
-  private val mrRequestScribeUnsupportedFeatureTypeStats =
-    stats.counter("MrRequestScribeHandler_unsupported_feature_type")
-  private val mrRequestScribeNotIncludedFeatureStats =
-    stats.counter("MrRequestScribeHandler_not_included_features")
+  pr vate val mrRequestScr beTargetF lter ngStats =
+    stats.counter("MrRequestScr beHandler_target_f lter ng")
+  pr vate val mrRequestScr beCand dateF lter ngStats =
+    stats.counter("MrRequestScr beHandler_cand date_f lter ng")
+  pr vate val mrRequestScr be nval dStats =
+    stats.counter("MrRequestScr beHandler_ nval d_f lter ng")
+  pr vate val mrRequestScr beUnsupportedFeatureTypeStats =
+    stats.counter("MrRequestScr beHandler_unsupported_feature_type")
+  pr vate val mrRequestScr beNot ncludedFeatureStats =
+    stats.counter("MrRequestScr beHandler_not_ ncluded_features")
 
-  private final val MrRequestScribeInjection: Injection[MrRequestScribe, String] = BinaryScalaCodec(
-    MrRequestScribe
-  ) andThen Injection.connect[Array[Byte], Base64String, String]
+  pr vate f nal val MrRequestScr be nject on:  nject on[MrRequestScr be, Str ng] = B naryScalaCodec(
+    MrRequestScr be
+  ) andT n  nject on.connect[Array[Byte], Base64Str ng, Str ng]
 
   /**
    *
-   * @param target : Target user id
-   * @param result : Result for target filtering
+   * @param target : Target user  d
+   * @param result : Result for target f lter ng
    *
    * @return
    */
-  def scribeForTargetFiltering(target: Target, result: Result): Future[Option[MrRequestScribe]] = {
-    if (target.isLoggedOutUser || !enableTargetFilteringScribing(target)) {
+  def scr beForTargetF lter ng(target: Target, result: Result): Future[Opt on[MrRequestScr be]] = {
+     f (target. sLoggedOutUser || !enableTargetF lter ngScr b ng(target)) {
       Future.None
     } else {
-      val predicate = result match {
-        case Invalid(reason) => reason
+      val pred cate = result match {
+        case  nval d(reason) => reason
         case _ =>
-          mrRequestScribeInvalidStats.incr()
-          throw new IllegalStateException("Invalid reason for Target Filtering " + result)
+          mrRequestScr be nval dStats. ncr()
+          throw new  llegalStateExcept on(" nval d reason for Target F lter ng " + result)
       }
-      buildScribeThrift(target, predicate, None).map { targetFilteredScribe =>
-        writeAtTargetFilteringStep(target, targetFilteredScribe)
-        Some(targetFilteredScribe)
+      bu ldScr beThr ft(target, pred cate, None).map { targetF lteredScr be =>
+        wr eAtTargetF lter ngStep(target, targetF lteredScr be)
+        So (targetF lteredScr be)
       }
     }
   }
 
   /**
    *
-   * @param target                       : Target user id
-   * @param hydratedCandidates           : Candidates hydrated with details: impressionId, frigateNotification and source
-   * @param preRankingFilteredCandidates : Candidates result filtered out at preRanking filtering step
-   * @param rankedCandidates             : Sorted candidates details ranked by ranking step
-   * @param rerankedCandidates           : Sorted candidates details ranked by reranking step
-   * @param restrictFilteredCandidates   : Candidates details filtered out at restrict step
-   * @param allTakeCandidateResults      : Candidates results at take step, include the candidates we take and the candidates filtered out at take step [with different result]
+   * @param target                       : Target user  d
+   * @param hydratedCand dates           : Cand dates hydrated w h deta ls:  mpress on d, fr gateNot f cat on and s ce
+   * @param preRank ngF lteredCand dates : Cand dates result f ltered out at preRank ng f lter ng step
+   * @param rankedCand dates             : Sorted cand dates deta ls ranked by rank ng step
+   * @param rerankedCand dates           : Sorted cand dates deta ls ranked by rerank ng step
+   * @param restr ctF lteredCand dates   : Cand dates deta ls f ltered out at restr ct step
+   * @param allTakeCand dateResults      : Cand dates results at take step,  nclude t  cand dates   take and t  cand dates f ltered out at take step [w h d fferent result]
    *
    * @return
    */
-  def scribeForCandidateFiltering(
+  def scr beForCand dateF lter ng(
     target: Target,
-    hydratedCandidates: Seq[CandidateDetails[PushCandidate]],
-    preRankingFilteredCandidates: Seq[CandidateResult[PushCandidate, Result]],
-    rankedCandidates: Seq[CandidateDetails[PushCandidate]],
-    rerankedCandidates: Seq[CandidateDetails[PushCandidate]],
-    restrictFilteredCandidates: Seq[CandidateDetails[PushCandidate]],
-    allTakeCandidateResults: Seq[CandidateResult[PushCandidate, Result]]
-  ): Future[Seq[MrRequestScribe]] = {
-    if (target.isLoggedOutUser || target.isEmailUser) {
-      Future.Nil
-    } else if (enableCandidateFilteringScribing(target)) {
+    hydratedCand dates: Seq[Cand dateDeta ls[PushCand date]],
+    preRank ngF lteredCand dates: Seq[Cand dateResult[PushCand date, Result]],
+    rankedCand dates: Seq[Cand dateDeta ls[PushCand date]],
+    rerankedCand dates: Seq[Cand dateDeta ls[PushCand date]],
+    restr ctF lteredCand dates: Seq[Cand dateDeta ls[PushCand date]],
+    allTakeCand dateResults: Seq[Cand dateResult[PushCand date, Result]]
+  ): Future[Seq[MrRequestScr be]] = {
+     f (target. sLoggedOutUser || target. sEma lUser) {
+      Future.N l
+    } else  f (enableCand dateF lter ngScr b ng(target)) {
       val hydrateFeature =
-        target.params(PushFeatureSwitchParams.EnableMrRequestScribingWithFeatureHydrating) ||
-          target.scribeFeatureForRequestScribe
+        target.params(PushFeatureSw chParams.EnableMrRequestScr b ngW hFeatureHydrat ng) ||
+          target.scr beFeatureForRequestScr be
 
-      val candidateRequestInfoSeq = generateCandidatesScribeInfo(
-        hydratedCandidates,
-        preRankingFilteredCandidates,
-        rankedCandidates,
-        rerankedCandidates,
-        restrictFilteredCandidates,
-        allTakeCandidateResults,
-        isFeatureHydratingEnabled = hydrateFeature
+      val cand dateRequest nfoSeq = generateCand datesScr be nfo(
+        hydratedCand dates,
+        preRank ngF lteredCand dates,
+        rankedCand dates,
+        rerankedCand dates,
+        restr ctF lteredCand dates,
+        allTakeCand dateResults,
+         sFeatureHydrat ngEnabled = hydrateFeature
       )
       val flattenStructure =
-        target.params(PushFeatureSwitchParams.EnableFlattenMrRequestScribing) || hydrateFeature
-      candidateRequestInfoSeq.flatMap { candidateRequestInfos =>
-        if (flattenStructure) {
+        target.params(PushFeatureSw chParams.EnableFlattenMrRequestScr b ng) || hydrateFeature
+      cand dateRequest nfoSeq.flatMap { cand dateRequest nfos =>
+         f (flattenStructure) {
           Future.collect {
-            candidateRequestInfos.map { candidateRequestInfo =>
-              buildScribeThrift(target, None, Some(Seq(candidateRequestInfo)))
-                .map { mrRequestScribe =>
-                  writeAtCandidateFilteringStep(target, mrRequestScribe)
-                  mrRequestScribe
+            cand dateRequest nfos.map { cand dateRequest nfo =>
+              bu ldScr beThr ft(target, None, So (Seq(cand dateRequest nfo)))
+                .map { mrRequestScr be =>
+                  wr eAtCand dateF lter ngStep(target, mrRequestScr be)
+                  mrRequestScr be
                 }
             }
           }
         } else {
-          buildScribeThrift(target, None, Some(candidateRequestInfos))
-            .map { mrRequestScribe =>
-              writeAtCandidateFilteringStep(target, mrRequestScribe)
-              Seq(mrRequestScribe)
+          bu ldScr beThr ft(target, None, So (cand dateRequest nfos))
+            .map { mrRequestScr be =>
+              wr eAtCand dateF lter ngStep(target, mrRequestScr be)
+              Seq(mrRequestScr be)
             }
         }
       }
-    } else Future.Nil
+    } else Future.N l
 
   }
 
-  private def buildScribeThrift(
+  pr vate def bu ldScr beThr ft(
     target: Target,
-    targetFilteredOutPredicate: Option[String],
-    candidatesRequestInfo: Option[Seq[CandidateRequestInfo]]
-  ): Future[MrRequestScribe] = {
+    targetF lteredOutPred cate: Opt on[Str ng],
+    cand datesRequest nfo: Opt on[Seq[Cand dateRequest nfo]]
+  ): Future[MrRequestScr be] = {
     Future
-      .join(
+      .jo n(
         target.targetUserState,
-        generateTargetFeatureScribeInfo(target),
+        generateTargetFeatureScr be nfo(target),
         target.targetUser).map {
-        case (userStateOption, targetFeatureOption, gizmoduckUserOpt) =>
-          val userState = userStateOption.map(userState => ThriftUserState(userState.id))
+        case (userStateOpt on, targetFeatureOpt on, g zmoduckUserOpt) =>
+          val userState = userStateOpt on.map(userState => Thr ftUserState(userState. d))
           val targetFeatures =
-            targetFeatureOption.map(ScalaToJavaDataRecordConversions.javaDataRecord2ScalaDataRecord)
-          val traceId = Trace.id.traceId.toLong
+            targetFeatureOpt on.map(ScalaToJavaDataRecordConvers ons.javaDataRecord2ScalaDataRecord)
+          val trace d = Trace. d.trace d.toLong
 
-          MrRequestScribe(
-            requestId = UUID.randomUUID.toString.replaceAll("-", ""),
-            scribedTimeMs = Time.now.inMilliseconds,
-            targetUserId = target.targetId,
-            targetUserInfo = Some(
-              TargetUserInfo(
+          MrRequestScr be(
+            request d = UU D.randomUU D.toStr ng.replaceAll("-", ""),
+            scr bedT  Ms = T  .now. nM ll seconds,
+            targetUser d = target.target d,
+            targetUser nfo = So (
+              TargetUser nfo(
                 userState,
                 features = targetFeatures,
-                userType = gizmoduckUserOpt.map(_.userType))
+                userType = g zmoduckUserOpt.map(_.userType))
             ),
-            targetFilteredOutPredicate = targetFilteredOutPredicate,
-            candidates = candidatesRequestInfo,
-            traceId = Some(traceId)
+            targetF lteredOutPred cate = targetF lteredOutPred cate,
+            cand dates = cand datesRequest nfo,
+            trace d = So (trace d)
           )
       }
   }
 
-  private def generateTargetFeatureScribeInfo(
+  pr vate def generateTargetFeatureScr be nfo(
     target: Target
-  ): Future[Option[DataRecord]] = {
-    val featureList =
-      target.params(PushFeatureSwitchParams.TargetLevelFeatureListForMrRequestScribing)
-    if (featureList.nonEmpty) {
-      PushPredictionHelper
+  ): Future[Opt on[DataRecord]] = {
+    val featureL st =
+      target.params(PushFeatureSw chParams.TargetLevelFeatureL stForMrRequestScr b ng)
+     f (featureL st.nonEmpty) {
+      PushPred ct on lper
         .getDataRecordFromTargetFeatureMap(
-          target.targetId,
+          target.target d,
           target.featureMap,
           stats
         ).map { dataRecord =>
-          val richRecord =
-            new SRichDataRecord(dataRecord, PushQualityModelFeatureContext.featureContext)
+          val r chRecord =
+            new SR chDataRecord(dataRecord, PushQual yModelFeatureContext.featureContext)
 
           val selectedRecord =
-            SRichDataRecord(new DataRecord(), PushQualityModelFeatureContext.featureContext)
-          featureList.map { featureName =>
+            SR chDataRecord(new DataRecord(), PushQual yModelFeatureContext.featureContext)
+          featureL st.map { featureNa  =>
             val feature: Feature[_] = {
               try {
-                PushQualityModelFeatureContext.featureContext.getFeature(featureName)
+                PushQual yModelFeatureContext.featureContext.getFeature(featureNa )
               } catch {
-                case _: Exception =>
-                  mrRequestScribeNotIncludedFeatureStats.incr()
-                  throw new IllegalStateException(
-                    "Scribing features not included in FeatureContext: " + featureName)
+                case _: Except on =>
+                  mrRequestScr beNot ncludedFeatureStats. ncr()
+                  throw new  llegalStateExcept on(
+                    "Scr b ng features not  ncluded  n FeatureContext: " + featureNa )
               }
             }
 
-            richRecord.getFeatureValueOpt(feature).foreach { featureVal =>
+            r chRecord.getFeatureValueOpt(feature).foreach { featureVal =>
               feature.getFeatureType() match {
-                case FeatureType.BINARY =>
+                case FeatureType.B NARY =>
                   selectedRecord.setFeatureValue(
-                    feature.asInstanceOf[Feature[Boolean]],
-                    featureVal.asInstanceOf[Boolean])
-                case FeatureType.CONTINUOUS =>
+                    feature.as nstanceOf[Feature[Boolean]],
+                    featureVal.as nstanceOf[Boolean])
+                case FeatureType.CONT NUOUS =>
                   selectedRecord.setFeatureValue(
-                    feature.asInstanceOf[Feature[Double]],
-                    featureVal.asInstanceOf[Double])
-                case FeatureType.STRING =>
+                    feature.as nstanceOf[Feature[Double]],
+                    featureVal.as nstanceOf[Double])
+                case FeatureType.STR NG =>
                   selectedRecord.setFeatureValue(
-                    feature.asInstanceOf[Feature[String]],
-                    featureVal.asInstanceOf[String])
-                case FeatureType.DISCRETE =>
+                    feature.as nstanceOf[Feature[Str ng]],
+                    featureVal.as nstanceOf[Str ng])
+                case FeatureType.D SCRETE =>
                   selectedRecord.setFeatureValue(
-                    feature.asInstanceOf[Feature[Long]],
-                    featureVal.asInstanceOf[Long])
+                    feature.as nstanceOf[Feature[Long]],
+                    featureVal.as nstanceOf[Long])
                 case _ =>
-                  mrRequestScribeUnsupportedFeatureTypeStats.incr()
+                  mrRequestScr beUnsupportedFeatureTypeStats. ncr()
               }
             }
           }
-          Some(selectedRecord.getRecord)
+          So (selectedRecord.getRecord)
         }
     } else Future.None
   }
 
-  private def generateCandidatesScribeInfo(
-    hydratedCandidates: Seq[CandidateDetails[PushCandidate]],
-    preRankingFilteredCandidates: Seq[CandidateResult[PushCandidate, Result]],
-    rankedCandidates: Seq[CandidateDetails[PushCandidate]],
-    rerankedCandidates: Seq[CandidateDetails[PushCandidate]],
-    restrictFilteredCandidates: Seq[CandidateDetails[PushCandidate]],
-    allTakeCandidateResults: Seq[CandidateResult[PushCandidate, Result]],
-    isFeatureHydratingEnabled: Boolean
-  ): Future[Seq[CandidateRequestInfo]] = {
-    val candidatesMap = new mutable.HashMap[String, CandidateRequestInfo]
+  pr vate def generateCand datesScr be nfo(
+    hydratedCand dates: Seq[Cand dateDeta ls[PushCand date]],
+    preRank ngF lteredCand dates: Seq[Cand dateResult[PushCand date, Result]],
+    rankedCand dates: Seq[Cand dateDeta ls[PushCand date]],
+    rerankedCand dates: Seq[Cand dateDeta ls[PushCand date]],
+    restr ctF lteredCand dates: Seq[Cand dateDeta ls[PushCand date]],
+    allTakeCand dateResults: Seq[Cand dateResult[PushCand date, Result]],
+     sFeatureHydrat ngEnabled: Boolean
+  ): Future[Seq[Cand dateRequest nfo]] = {
+    val cand datesMap = new mutable.HashMap[Str ng, Cand dateRequest nfo]
 
-    hydratedCandidates.foreach { hydratedCandidate =>
-      val frgNotif = hydratedCandidate.candidate.frigateNotification
-      val simplifiedTweetNotificationOpt = frgNotif.tweetNotification.map { tweetNotification =>
-        TweetNotification(
-          tweetNotification.tweetId,
-          Seq.empty[TSocialContextAction],
-          tweetNotification.tweetAuthorId)
+    hydratedCand dates.foreach { hydratedCand date =>
+      val frgNot f = hydratedCand date.cand date.fr gateNot f cat on
+      val s mpl f edT etNot f cat onOpt = frgNot f.t etNot f cat on.map { t etNot f cat on =>
+        T etNot f cat on(
+          t etNot f cat on.t et d,
+          Seq.empty[TSoc alContextAct on],
+          t etNot f cat on.t etAuthor d)
       }
-      val simplifiedFrigateNotification = FrigateNotification(
-        frgNotif.commonRecommendationType,
-        frgNotif.notificationDisplayLocation,
-        tweetNotification = simplifiedTweetNotificationOpt
+      val s mpl f edFr gateNot f cat on = Fr gateNot f cat on(
+        frgNot f.commonRecom ndat onType,
+        frgNot f.not f cat onD splayLocat on,
+        t etNot f cat on = s mpl f edT etNot f cat onOpt
       )
-      candidatesMap(hydratedCandidate.candidate.impressionId) = CandidateRequestInfo(
-        candidateId = "",
-        candidateSource = hydratedCandidate.source.substring(
+      cand datesMap(hydratedCand date.cand date. mpress on d) = Cand dateRequest nfo(
+        cand date d = "",
+        cand dateS ce = hydratedCand date.s ce.substr ng(
           0,
-          Math.min(6, hydratedCandidate.source.length)
+          Math.m n(6, hydratedCand date.s ce.length)
         ),
-        frigateNotification = Some(simplifiedFrigateNotification),
+        fr gateNot f cat on = So (s mpl f edFr gateNot f cat on),
         modelScore = None,
-        rankPosition = None,
-        rerankPosition = None,
+        rankPos  on = None,
+        rerankPos  on = None,
         features = None,
-        isSent = Some(false)
+         sSent = So (false)
       )
     }
 
-    preRankingFilteredCandidates.foreach { preRankingFilteredCandidateResult =>
-      candidatesMap(preRankingFilteredCandidateResult.candidate.impressionId) =
-        candidatesMap(preRankingFilteredCandidateResult.candidate.impressionId)
+    preRank ngF lteredCand dates.foreach { preRank ngF lteredCand dateResult =>
+      cand datesMap(preRank ngF lteredCand dateResult.cand date. mpress on d) =
+        cand datesMap(preRank ngF lteredCand dateResult.cand date. mpress on d)
           .copy(
-            candidateFilteredOutPredicate = preRankingFilteredCandidateResult.result match {
-              case Invalid(reason) => reason
+            cand dateF lteredOutPred cate = preRank ngF lteredCand dateResult.result match {
+              case  nval d(reason) => reason
               case _ => {
-                mrRequestScribeInvalidStats.incr()
-                throw new IllegalStateException(
-                  "Invalid reason for Candidate Filtering " + preRankingFilteredCandidateResult.result)
+                mrRequestScr be nval dStats. ncr()
+                throw new  llegalStateExcept on(
+                  " nval d reason for Cand date F lter ng " + preRank ngF lteredCand dateResult.result)
               }
             },
-            candidateFilteredOutStep = Some(CandidateFilteredOutStep.PreRankFiltering)
+            cand dateF lteredOutStep = So (Cand dateF lteredOutStep.PreRankF lter ng)
           )
     }
 
     for {
       _ <- Future.collectToTry {
-        rankedCandidates.zipWithIndex.map {
-          case (rankedCandidateDetail, index) =>
+        rankedCand dates.z pW h ndex.map {
+          case (rankedCand dateDeta l,  ndex) =>
             val modelScoresFut = {
-              val crt = rankedCandidateDetail.candidate.commonRecType
-              if (RecTypes.notEligibleForModelScoreTracking.contains(crt)) Future.None
-              else rankedCandidateDetail.candidate.modelScores.map(Some(_))
+              val crt = rankedCand dateDeta l.cand date.commonRecType
+               f (RecTypes.notEl g bleForModelScoreTrack ng.conta ns(crt)) Future.None
+              else rankedCand dateDeta l.cand date.modelScores.map(So (_))
             }
 
             modelScoresFut.map { modelScores =>
-              candidatesMap(rankedCandidateDetail.candidate.impressionId) =
-                candidatesMap(rankedCandidateDetail.candidate.impressionId).copy(
-                  rankPosition = Some(index),
+              cand datesMap(rankedCand dateDeta l.cand date. mpress on d) =
+                cand datesMap(rankedCand dateDeta l.cand date. mpress on d).copy(
+                  rankPos  on = So ( ndex),
                   modelScore = modelScores
                 )
             }
         }
       }
 
-      _ = rerankedCandidates.zipWithIndex.foreach {
-        case (rerankedCandidateDetail, index) => {
-          candidatesMap(rerankedCandidateDetail.candidate.impressionId) =
-            candidatesMap(rerankedCandidateDetail.candidate.impressionId).copy(
-              rerankPosition = Some(index)
+      _ = rerankedCand dates.z pW h ndex.foreach {
+        case (rerankedCand dateDeta l,  ndex) => {
+          cand datesMap(rerankedCand dateDeta l.cand date. mpress on d) =
+            cand datesMap(rerankedCand dateDeta l.cand date. mpress on d).copy(
+              rerankPos  on = So ( ndex)
             )
         }
       }
 
       _ <- Future.collectToTry {
-        rerankedCandidates.map { rerankedCandidateDetail =>
-          if (isFeatureHydratingEnabled) {
-            PushPredictionHelper
+        rerankedCand dates.map { rerankedCand dateDeta l =>
+           f ( sFeatureHydrat ngEnabled) {
+            PushPred ct on lper
               .getDataRecord(
-                rerankedCandidateDetail.candidate.target.targetHydrationContext,
-                rerankedCandidateDetail.candidate.target.featureMap,
-                rerankedCandidateDetail.candidate.candidateHydrationContext,
-                rerankedCandidateDetail.candidate.candidateFeatureMap(),
+                rerankedCand dateDeta l.cand date.target.targetHydrat onContext,
+                rerankedCand dateDeta l.cand date.target.featureMap,
+                rerankedCand dateDeta l.cand date.cand dateHydrat onContext,
+                rerankedCand dateDeta l.cand date.cand dateFeatureMap(),
                 stats
               ).map { features =>
-                candidatesMap(rerankedCandidateDetail.candidate.impressionId) =
-                  candidatesMap(rerankedCandidateDetail.candidate.impressionId).copy(
-                    features = Some(
-                      ScalaToJavaDataRecordConversions.javaDataRecord2ScalaDataRecord(features))
+                cand datesMap(rerankedCand dateDeta l.cand date. mpress on d) =
+                  cand datesMap(rerankedCand dateDeta l.cand date. mpress on d).copy(
+                    features = So (
+                      ScalaToJavaDataRecordConvers ons.javaDataRecord2ScalaDataRecord(features))
                   )
               }
-          } else Future.Unit
+          } else Future.Un 
         }
       }
 
-      _ = restrictFilteredCandidates.foreach { restrictFilteredCandidateDetatil =>
-        candidatesMap(restrictFilteredCandidateDetatil.candidate.impressionId) =
-          candidatesMap(restrictFilteredCandidateDetatil.candidate.impressionId)
-            .copy(candidateFilteredOutStep = Some(CandidateFilteredOutStep.Restrict))
+      _ = restr ctF lteredCand dates.foreach { restr ctF lteredCand dateDetat l =>
+        cand datesMap(restr ctF lteredCand dateDetat l.cand date. mpress on d) =
+          cand datesMap(restr ctF lteredCand dateDetat l.cand date. mpress on d)
+            .copy(cand dateF lteredOutStep = So (Cand dateF lteredOutStep.Restr ct))
       }
 
-      _ = allTakeCandidateResults.foreach { allTakeCandidateResult =>
-        allTakeCandidateResult.result match {
+      _ = allTakeCand dateResults.foreach { allTakeCand dateResult =>
+        allTakeCand dateResult.result match {
           case OK =>
-            candidatesMap(allTakeCandidateResult.candidate.impressionId) =
-              candidatesMap(allTakeCandidateResult.candidate.impressionId).copy(isSent = Some(true))
-          case Invalid(reason) =>
-            candidatesMap(allTakeCandidateResult.candidate.impressionId) =
-              candidatesMap(allTakeCandidateResult.candidate.impressionId).copy(
-                candidateFilteredOutPredicate = reason,
-                candidateFilteredOutStep = Some(CandidateFilteredOutStep.PostRankFiltering))
+            cand datesMap(allTakeCand dateResult.cand date. mpress on d) =
+              cand datesMap(allTakeCand dateResult.cand date. mpress on d).copy( sSent = So (true))
+          case  nval d(reason) =>
+            cand datesMap(allTakeCand dateResult.cand date. mpress on d) =
+              cand datesMap(allTakeCand dateResult.cand date. mpress on d).copy(
+                cand dateF lteredOutPred cate = reason,
+                cand dateF lteredOutStep = So (Cand dateF lteredOutStep.PostRankF lter ng))
           case _ =>
-            mrRequestScribeInvalidStats.incr()
-            throw new IllegalStateException(
-              "Invalid reason for Candidate Filtering " + allTakeCandidateResult.result)
+            mrRequestScr be nval dStats. ncr()
+            throw new  llegalStateExcept on(
+              " nval d reason for Cand date F lter ng " + allTakeCand dateResult.result)
         }
       }
-    } yield candidatesMap.values.toSeq
+    } y eld cand datesMap.values.toSeq
   }
 
-  private def enableTargetFilteringScribing(target: Target): Boolean = {
-    target.params(PushParams.EnableMrRequestScribing) && target.params(
-      PushFeatureSwitchParams.EnableMrRequestScribingForTargetFiltering)
+  pr vate def enableTargetF lter ngScr b ng(target: Target): Boolean = {
+    target.params(PushParams.EnableMrRequestScr b ng) && target.params(
+      PushFeatureSw chParams.EnableMrRequestScr b ngForTargetF lter ng)
   }
 
-  private def enableCandidateFilteringScribing(target: Target): Boolean = {
-    target.params(PushParams.EnableMrRequestScribing) && target.params(
-      PushFeatureSwitchParams.EnableMrRequestScribingForCandidateFiltering)
+  pr vate def enableCand dateF lter ngScr b ng(target: Target): Boolean = {
+    target.params(PushParams.EnableMrRequestScr b ng) && target.params(
+      PushFeatureSw chParams.EnableMrRequestScr b ngForCand dateF lter ng)
   }
 
-  private def writeAtTargetFilteringStep(target: Target, mrRequestScribe: MrRequestScribe) = {
-    logToScribe(mrRequestScribe)
-    mrRequestScribeTargetFilteringStats.incr()
+  pr vate def wr eAtTargetF lter ngStep(target: Target, mrRequestScr be: MrRequestScr be) = {
+    logToScr be(mrRequestScr be)
+    mrRequestScr beTargetF lter ngStats. ncr()
   }
 
-  private def writeAtCandidateFilteringStep(target: Target, mrRequestScribe: MrRequestScribe) = {
-    logToScribe(mrRequestScribe)
-    mrRequestScribeCandidateFilteringStats.incr()
+  pr vate def wr eAtCand dateF lter ngStep(target: Target, mrRequestScr be: MrRequestScr be) = {
+    logToScr be(mrRequestScr be)
+    mrRequestScr beCand dateF lter ngStats. ncr()
   }
 
-  private def logToScribe(mrRequestScribe: MrRequestScribe): Unit = {
-    val logEntry: String = MrRequestScribeInjection(mrRequestScribe)
-    mrRequestScribeLogger.info(logEntry)
+  pr vate def logToScr be(mrRequestScr be: MrRequestScr be): Un  = {
+    val logEntry: Str ng = MrRequestScr be nject on(mrRequestScr be)
+    mrRequestScr beLogger. nfo(logEntry)
   }
 }

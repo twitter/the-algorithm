@@ -1,149 +1,149 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.scalding
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.scald ng
 
-import com.twitter.ml.api._
-import com.twitter.ml.api.constant.SharedFeatures._
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.scalding.Stat
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework._
-import com.twitter.timelines.data_processing.ml_util.sampling.SamplingUtils
+ mport com.tw ter.ml.ap ._
+ mport com.tw ter.ml.ap .constant.SharedFeatures._
+ mport com.tw ter.ml.ap .ut l.SR chDataRecord
+ mport com.tw ter.scald ng.Stat
+ mport com.tw ter.scald ng.typed.TypedP pe
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work._
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.sampl ng.Sampl ngUt ls
 
-trait AggregateFeaturesMergerBase {
-  import Utils._
+tra  AggregateFeatures rgerBase {
+   mport Ut ls._
 
-  def samplingRateOpt: Option[Double]
-  def numReducers: Int = 2000
-  def numReducersMerge: Int = 20000
+  def sampl ngRateOpt: Opt on[Double]
+  def numReducers:  nt = 2000
+  def numReducers rge:  nt = 20000
 
-  def aggregationConfig: AggregationConfig
-  def storeRegister: StoreRegister
-  def storeMerger: StoreMerger
+  def aggregat onConf g: Aggregat onConf g
+  def storeReg ster: StoreReg ster
+  def store rger: Store rger
 
-  def getAggregatePipe(storeName: String): DataSetPipe
-  def applyMaxSizeByTypeOpt(aggregateType: AggregateType.Value): Option[Int] = Option.empty[Int]
+  def getAggregateP pe(storeNa : Str ng): DataSetP pe
+  def applyMaxS zeByTypeOpt(aggregateType: AggregateType.Value): Opt on[ nt] = Opt on.empty[ nt]
 
-  def usersActiveSourcePipe: TypedPipe[Long]
+  def usersAct veS ceP pe: TypedP pe[Long]
   def numRecords: Stat
-  def numFilteredRecords: Stat
+  def numF lteredRecords: Stat
 
   /*
-   * This method should only be called with a storeName that corresponds
+   * T   thod should only be called w h a storeNa  that corresponds
    * to a user aggregate store.
    */
-  def extractUserFeaturesMap(storeName: String): TypedPipe[(Long, KeyedRecord)] = {
-    val aggregateKey = storeRegister.storeNameToTypeMap(storeName)
-    samplingRateOpt
-      .map(rate => SamplingUtils.userBasedSample(getAggregatePipe(storeName), rate))
-      .getOrElse(getAggregatePipe(storeName)) // must return store with only user aggregates
+  def extractUserFeaturesMap(storeNa : Str ng): TypedP pe[(Long, KeyedRecord)] = {
+    val aggregateKey = storeReg ster.storeNa ToTypeMap(storeNa )
+    sampl ngRateOpt
+      .map(rate => Sampl ngUt ls.userBasedSample(getAggregateP pe(storeNa ), rate))
+      .getOrElse(getAggregateP pe(storeNa )) // must return store w h only user aggregates
       .records
       .map { r: DataRecord =>
-        val record = SRichDataRecord(r)
-        val userId = record.getFeatureValue(USER_ID).longValue
-        record.clearFeature(USER_ID)
-        (userId, KeyedRecord(aggregateKey, r))
+        val record = SR chDataRecord(r)
+        val user d = record.getFeatureValue(USER_ D).longValue
+        record.clearFeature(USER_ D)
+        (user d, KeyedRecord(aggregateKey, r))
       }
   }
 
   /*
-   * When the secondaryKey being used is a String, then the shouldHash function should be set to true.
-   * Refactor such that the shouldHash parameter is removed and the behavior
-   * is defaulted to true.
+   * W n t  secondaryKey be ng used  s a Str ng, t n t  shouldHash funct on should be set to true.
+   * Refactor such that t  shouldHash para ter  s removed and t  behav or
+   *  s defaulted to true.
    *
-   * This method should only be called with a storeName that contains records with the
-   * desired secondaryKey. We provide secondaryKeyFilterPipeOpt against which secondary
-   * keys can be filtered to help prune the final merged MH dataset.
+   * T   thod should only be called w h a storeNa  that conta ns records w h t 
+   * des red secondaryKey.   prov de secondaryKeyF lterP peOpt aga nst wh ch secondary
+   * keys can be f ltered to  lp prune t  f nal  rged MH dataset.
    */
   def extractSecondaryTuples[T](
-    storeName: String,
+    storeNa : Str ng,
     secondaryKey: Feature[T],
     shouldHash: Boolean = false,
-    maxSizeOpt: Option[Int] = None,
-    secondaryKeyFilterPipeOpt: Option[TypedPipe[Long]] = None
-  ): TypedPipe[(Long, KeyedRecordMap)] = {
-    val aggregateKey = storeRegister.storeNameToTypeMap(storeName)
+    maxS zeOpt: Opt on[ nt] = None,
+    secondaryKeyF lterP peOpt: Opt on[TypedP pe[Long]] = None
+  ): TypedP pe[(Long, KeyedRecordMap)] = {
+    val aggregateKey = storeReg ster.storeNa ToTypeMap(storeNa )
 
     val extractedRecordsBySecondaryKey =
-      samplingRateOpt
-        .map(rate => SamplingUtils.userBasedSample(getAggregatePipe(storeName), rate))
-        .getOrElse(getAggregatePipe(storeName))
+      sampl ngRateOpt
+        .map(rate => Sampl ngUt ls.userBasedSample(getAggregateP pe(storeNa ), rate))
+        .getOrElse(getAggregateP pe(storeNa ))
         .records
         .map { r: DataRecord =>
-          val record = SRichDataRecord(r)
-          val userId = keyFromLong(r, USER_ID)
-          val secondaryId = extractSecondary(r, secondaryKey, shouldHash)
-          record.clearFeature(USER_ID)
+          val record = SR chDataRecord(r)
+          val user d = keyFromLong(r, USER_ D)
+          val secondary d = extractSecondary(r, secondaryKey, shouldHash)
+          record.clearFeature(USER_ D)
           record.clearFeature(secondaryKey)
 
-          numRecords.inc()
-          (userId, secondaryId -> r)
+          numRecords. nc()
+          (user d, secondary d -> r)
         }
 
     val grouped =
-      (secondaryKeyFilterPipeOpt match {
-        case Some(secondaryKeyFilterPipe: TypedPipe[Long]) =>
+      (secondaryKeyF lterP peOpt match {
+        case So (secondaryKeyF lterP pe: TypedP pe[Long]) =>
           extractedRecordsBySecondaryKey
             .map {
-              // In this step, we swap `userId` with `secondaryId` to join on the `secondaryId`
-              // It is important to swap them back after the join, otherwise the job will fail.
-              case (userId, (secondaryId, r)) =>
-                (secondaryId, (userId, r))
+              //  n t  step,   swap `user d` w h `secondary d` to jo n on t  `secondary d`
+              //    s  mportant to swap t m back after t  jo n, ot rw se t  job w ll fa l.
+              case (user d, (secondary d, r)) =>
+                (secondary d, (user d, r))
             }
-            .join(secondaryKeyFilterPipe.groupBy(identity))
+            .jo n(secondaryKeyF lterP pe.groupBy( dent y))
             .map {
-              case (secondaryId, ((userId, r), _)) =>
-                numFilteredRecords.inc()
-                (userId, secondaryId -> r)
+              case (secondary d, ((user d, r), _)) =>
+                numF lteredRecords. nc()
+                (user d, secondary d -> r)
             }
         case _ => extractedRecordsBySecondaryKey
       }).group
-        .withReducers(numReducers)
+        .w hReducers(numReducers)
 
-    maxSizeOpt match {
-      case Some(maxSize) =>
+    maxS zeOpt match {
+      case So (maxS ze) =>
         grouped
-          .take(maxSize)
-          .mapValueStream(recordsIter => Iterator(KeyedRecordMap(aggregateKey, recordsIter.toMap)))
-          .toTypedPipe
+          .take(maxS ze)
+          .mapValueStream(records er =>  erator(KeyedRecordMap(aggregateKey, records er.toMap)))
+          .toTypedP pe
       case None =>
         grouped
-          .mapValueStream(recordsIter => Iterator(KeyedRecordMap(aggregateKey, recordsIter.toMap)))
-          .toTypedPipe
+          .mapValueStream(records er =>  erator(KeyedRecordMap(aggregateKey, records er.toMap)))
+          .toTypedP pe
     }
   }
 
-  def userPipes: Seq[TypedPipe[(Long, KeyedRecord)]] =
-    storeRegister.allStores.flatMap { storeConfig =>
-      val StoreConfig(storeNames, aggregateType, _) = storeConfig
-      require(storeMerger.isValidToMerge(storeNames))
+  def userP pes: Seq[TypedP pe[(Long, KeyedRecord)]] =
+    storeReg ster.allStores.flatMap { storeConf g =>
+      val StoreConf g(storeNa s, aggregateType, _) = storeConf g
+      requ re(store rger. sVal dTo rge(storeNa s))
 
-      if (aggregateType == AggregateType.User) {
-        storeNames.map(extractUserFeaturesMap)
+       f (aggregateType == AggregateType.User) {
+        storeNa s.map(extractUserFeaturesMap)
       } else None
     }.toSeq
 
-  private def getSecondaryKeyFilterPipeOpt(
+  pr vate def getSecondaryKeyF lterP peOpt(
     aggregateType: AggregateType.Value
-  ): Option[TypedPipe[Long]] = {
-    if (aggregateType == AggregateType.UserAuthor) {
-      Some(usersActiveSourcePipe)
+  ): Opt on[TypedP pe[Long]] = {
+     f (aggregateType == AggregateType.UserAuthor) {
+      So (usersAct veS ceP pe)
     } else None
   }
 
-  def userSecondaryKeyPipes: Seq[TypedPipe[(Long, KeyedRecordMap)]] = {
-    storeRegister.allStores.flatMap { storeConfig =>
-      val StoreConfig(storeNames, aggregateType, shouldHash) = storeConfig
-      require(storeMerger.isValidToMerge(storeNames))
+  def userSecondaryKeyP pes: Seq[TypedP pe[(Long, KeyedRecordMap)]] = {
+    storeReg ster.allStores.flatMap { storeConf g =>
+      val StoreConf g(storeNa s, aggregateType, shouldHash) = storeConf g
+      requ re(store rger. sVal dTo rge(storeNa s))
 
-      if (aggregateType != AggregateType.User) {
-        storeNames.flatMap { storeName =>
-          storeConfig.secondaryKeyFeatureOpt
+       f (aggregateType != AggregateType.User) {
+        storeNa s.flatMap { storeNa  =>
+          storeConf g.secondaryKeyFeatureOpt
             .map { secondaryFeature =>
               extractSecondaryTuples(
-                storeName,
+                storeNa ,
                 secondaryFeature,
                 shouldHash,
-                applyMaxSizeByTypeOpt(aggregateType),
-                getSecondaryKeyFilterPipeOpt(aggregateType)
+                applyMaxS zeByTypeOpt(aggregateType),
+                getSecondaryKeyF lterP peOpt(aggregateType)
               )
             }
         }
@@ -151,19 +151,19 @@ trait AggregateFeaturesMergerBase {
     }.toSeq
   }
 
-  def joinedAggregates: TypedPipe[(Long, MergedRecordsDescriptor)] = {
-    (userPipes ++ userSecondaryKeyPipes)
+  def jo nedAggregates: TypedP pe[(Long,  rgedRecordsDescr ptor)] = {
+    (userP pes ++ userSecondaryKeyP pes)
       .reduce(_ ++ _)
       .group
-      .withReducers(numReducersMerge)
+      .w hReducers(numReducers rge)
       .mapGroup {
-        case (uid, keyedRecordsAndMaps) =>
+        case (u d, keyedRecordsAndMaps) =>
           /*
-           * For every user, partition their records by aggregate type.
-           * AggregateType.User should only contain KeyedRecord whereas
-           * other aggregate types (with secondary keys) contain KeyedRecordMap.
+           * For every user, part  on t  r records by aggregate type.
+           * AggregateType.User should only conta n KeyedRecord w reas
+           * ot r aggregate types (w h secondary keys) conta n KeyedRecordMap.
            */
-          val (userRecords, userSecondaryKeyRecords) = keyedRecordsAndMaps.toList
+          val (userRecords, userSecondaryKeyRecords) = keyedRecordsAndMaps.toL st
             .map { record =>
               record match {
                 case record: KeyedRecord => (record.aggregateType, record)
@@ -172,42 +172,42 @@ trait AggregateFeaturesMergerBase {
             }
             .groupBy(_._1)
             .mapValues(_.map(_._2))
-            .partition(_._1 == AggregateType.User)
+            .part  on(_._1 == AggregateType.User)
 
-          val userAggregateRecordMap: Map[AggregateType.Value, Option[KeyedRecord]] =
+          val userAggregateRecordMap: Map[AggregateType.Value, Opt on[KeyedRecord]] =
             userRecords
-              .asInstanceOf[Map[AggregateType.Value, List[KeyedRecord]]]
+              .as nstanceOf[Map[AggregateType.Value, L st[KeyedRecord]]]
               .map {
                 case (aggregateType, keyedRecords) =>
-                  val mergedKeyedRecordOpt = mergeKeyedRecordOpts(keyedRecords.map(Some(_)): _*)
-                  (aggregateType, mergedKeyedRecordOpt)
+                  val  rgedKeyedRecordOpt =  rgeKeyedRecordOpts(keyedRecords.map(So (_)): _*)
+                  (aggregateType,  rgedKeyedRecordOpt)
               }
 
-          val userSecondaryKeyAggregateRecordOpt: Map[AggregateType.Value, Option[KeyedRecordMap]] =
+          val userSecondaryKeyAggregateRecordOpt: Map[AggregateType.Value, Opt on[KeyedRecordMap]] =
             userSecondaryKeyRecords
-              .asInstanceOf[Map[AggregateType.Value, List[KeyedRecordMap]]]
+              .as nstanceOf[Map[AggregateType.Value, L st[KeyedRecordMap]]]
               .map {
                 case (aggregateType, keyedRecordMaps) =>
                   val keyedRecordMapOpt =
-                    keyedRecordMaps.foldLeft(Option.empty[KeyedRecordMap]) {
-                      (mergedRecOpt, nextRec) =>
-                        applyMaxSizeByTypeOpt(aggregateType)
-                          .map { maxSize =>
-                            mergeKeyedRecordMapOpts(mergedRecOpt, Some(nextRec), maxSize)
+                    keyedRecordMaps.foldLeft(Opt on.empty[KeyedRecordMap]) {
+                      ( rgedRecOpt, nextRec) =>
+                        applyMaxS zeByTypeOpt(aggregateType)
+                          .map { maxS ze =>
+                             rgeKeyedRecordMapOpts( rgedRecOpt, So (nextRec), maxS ze)
                           }.getOrElse {
-                            mergeKeyedRecordMapOpts(mergedRecOpt, Some(nextRec))
+                             rgeKeyedRecordMapOpts( rgedRecOpt, So (nextRec))
                           }
                     }
                   (aggregateType, keyedRecordMapOpt)
               }
 
-          Iterator(
-            MergedRecordsDescriptor(
-              userId = uid,
+           erator(
+             rgedRecordsDescr ptor(
+              user d = u d,
               keyedRecords = userAggregateRecordMap,
               keyedRecordMaps = userSecondaryKeyAggregateRecordOpt
             )
           )
-      }.toTypedPipe
+      }.toTypedP pe
   }
 }

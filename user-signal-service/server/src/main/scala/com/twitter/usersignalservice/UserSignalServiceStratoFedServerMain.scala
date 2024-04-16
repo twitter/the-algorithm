@@ -1,32 +1,32 @@
-package com.twitter.usersignalservice
+package com.tw ter.users gnalserv ce
 
-import com.google.inject.Module
-import com.twitter.inject.thrift.modules.ThriftClientIdModule
-import com.twitter.usersignalservice.columns.UserSignalServiceColumn
-import com.twitter.strato.fed._
-import com.twitter.strato.fed.server._
-import com.twitter.usersignalservice.module.CacheModule
-import com.twitter.usersignalservice.module.MHMtlsParamsModule
-import com.twitter.usersignalservice.module.SocialGraphServiceClientModule
-import com.twitter.usersignalservice.module.TimerModule
+ mport com.google. nject.Module
+ mport com.tw ter. nject.thr ft.modules.Thr ftCl ent dModule
+ mport com.tw ter.users gnalserv ce.columns.UserS gnalServ ceColumn
+ mport com.tw ter.strato.fed._
+ mport com.tw ter.strato.fed.server._
+ mport com.tw ter.users gnalserv ce.module.Cac Module
+ mport com.tw ter.users gnalserv ce.module.MHMtlsParamsModule
+ mport com.tw ter.users gnalserv ce.module.Soc alGraphServ ceCl entModule
+ mport com.tw ter.users gnalserv ce.module.T  rModule
 
-object UserSignalServiceStratoFedServerMain extends UserSignalServiceStratoFedServer
+object UserS gnalServ ceStratoFedServerMa n extends UserS gnalServ ceStratoFedServer
 
-trait UserSignalServiceStratoFedServer extends StratoFedServer {
-  override def dest: String = "/s/user-signal-service/user-signal-service"
+tra  UserS gnalServ ceStratoFedServer extends StratoFedServer {
+  overr de def dest: Str ng = "/s/user-s gnal-serv ce/user-s gnal-serv ce"
 
-  override def columns: Seq[Class[_ <: StratoFed.Column]] =
+  overr de def columns: Seq[Class[_ <: StratoFed.Column]] =
     Seq(
-      classOf[UserSignalServiceColumn]
+      classOf[UserS gnalServ ceColumn]
     )
 
-  override def modules: Seq[Module] =
+  overr de def modules: Seq[Module] =
     Seq(
-      CacheModule,
+      Cac Module,
       MHMtlsParamsModule,
-      SocialGraphServiceClientModule,
-      ThriftClientIdModule,
-      TimerModule,
+      Soc alGraphServ ceCl entModule,
+      Thr ftCl ent dModule,
+      T  rModule,
     )
 
 }

@@ -1,22 +1,22 @@
-package com.twitter.follow_recommendations.products.home_timeline.configapi
+package com.tw ter.follow_recom ndat ons.products.ho _t  l ne.conf gap 
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.follow_recommendations.products.home_timeline.configapi.HomeTimelineParams._
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.conf gap .common.FeatureSw chConf g
+ mport com.tw ter.follow_recom ndat ons.products.ho _t  l ne.conf gap .Ho T  l neParams._
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .HasDurat onConvers on
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.ut l.Durat on
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class HomeTimelineFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] =
-    Seq(EnableWritingServingHistory)
+@S ngleton
+class Ho T  l neFSConf g @ nject() () extends FeatureSw chConf g {
+  overr de val booleanFSParams: Seq[Param[Boolean] w h FSNa ] =
+    Seq(EnableWr  ngServ ng tory)
 
-  override val durationFSParams: Seq[FSBoundedParam[Duration] with HasDurationConversion] = Seq(
-    DurationGuardrailToForceSuggest,
-    SuggestBasedFatigueDuration
+  overr de val durat onFSParams: Seq[FSBoundedParam[Durat on] w h HasDurat onConvers on] = Seq(
+    Durat onGuardra lToForceSuggest,
+    SuggestBasedFat gueDurat on
   )
 }

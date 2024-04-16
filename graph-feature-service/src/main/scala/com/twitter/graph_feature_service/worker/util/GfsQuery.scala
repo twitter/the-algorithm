@@ -1,14 +1,14 @@
-package com.twitter.graph_feature_service.worker.util
+package com.tw ter.graph_feature_serv ce.worker.ut l
 
-import com.twitter.graph_feature_service.thriftscala.EdgeType
+ mport com.tw ter.graph_feature_serv ce.thr ftscala.EdgeType
 
-sealed trait GfsQuery {
+sealed tra  GfsQuery {
   def edgeType: EdgeType
-  def userId: Long
+  def user d: Long
 }
 
 /**
- * Search for edges for any users to users in local partition.
+ * Search for edges for any users to users  n local part  on.
  */
-case class ToPartialQuery(edgeType: EdgeType, userId: Long) extends GfsQuery
+case class ToPart alQuery(edgeType: EdgeType, user d: Long) extends GfsQuery
 

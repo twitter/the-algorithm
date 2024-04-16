@@ -1,30 +1,30 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml vers on="1.0" encod ng="UTF-8"?>
   
 
 <!--
-     This indexer reads UserModification from user_modification Kafka topic, converts the
-     data into AntisocialUserUpdate by querying Gizmoduck and then writes the data to the
-     the search_user_updates Kafka topic.
+     T   ndexer reads UserMod f cat on from user_mod f cat on Kafka top c, converts t 
+     data  nto Ant soc alUserUpdate by query ng G zmoduck and t n wr es t  data to t 
+     t  search_user_updates Kafka top c.
 -->
-<pipeline>
+<p pel ne>
   <property
-      propName="validator"
-      className="org.apache.commons.pipeline.validation.SimplePipelineValidator"/>
-  <listener className="org.apache.commons.pipeline.listener.ObjectProcessedEventCounter"/>
-  <driverFactory
-      className="org.apache.commons.pipeline.driver.DedicatedThreadStageDriverFactory"
-      id="pipeline">
+      propNa ="val dator"
+      classNa ="org.apac .commons.p pel ne.val dat on.S mpleP pel neVal dator"/>
+  <l stener classNa ="org.apac .commons.p pel ne.l stener.ObjectProcessedEventCounter"/>
+  <dr verFactory
+      classNa ="org.apac .commons.p pel ne.dr ver.Ded catedThreadStageDr verFactory"
+       d="p pel ne">
 
-    <!-- This queue is a factor of batchSize larger than inner queues because it is unbatched -->
+    <!-- T  queue  s a factor of batchS ze larger than  nner queues because    s unbatc d -->
     <property
-        propName="queueFactory"
-        className="org.apache.commons.pipeline.util.BlockingQueueFactory$ArrayBlockingQueueFactory"
-        capacity="500"
-        fair="false"/>
-  </driverFactory>
+        propNa ="queueFactory"
+        classNa ="org.apac .commons.p pel ne.ut l.Block ngQueueFactory$ArrayBlock ngQueueFactory"
+        capac y="500"
+        fa r="false"/>
+  </dr verFactory>
 
   <stage
-    className="com.twitter.search.ingester.pipeline.twitter.userupdates.UserUpdatesPipelineStage"
-    environment="prod"
-    driverFactoryId="pipeline"/>
-</pipeline>
+    classNa ="com.tw ter.search. ngester.p pel ne.tw ter.userupdates.UserUpdatesP pel neStage"
+    env ron nt="prod"
+    dr verFactory d="p pel ne"/>
+</p pel ne>

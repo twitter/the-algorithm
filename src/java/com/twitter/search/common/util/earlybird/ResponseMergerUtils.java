@@ -1,45 +1,45 @@
-package com.twitter.search.common.util.earlybird;
+package com.tw ter.search.common.ut l.earlyb rd;
 
-import java.util.List;
-import java.util.Set;
+ mport java.ut l.L st;
+ mport java.ut l.Set;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+ mport com.google.common.collect.L sts;
+ mport com.google.common.collect.Sets;
 
-import com.twitter.search.common.query.thriftjava.EarlyTerminationInfo;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
+ mport com.tw ter.search.common.query.thr ftjava.EarlyTerm nat on nfo;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
 
-public final class ResponseMergerUtils {
+publ c f nal class Response rgerUt ls {
 
-  // Utility class, disallow instantiation.
-  private ResponseMergerUtils() {
+  // Ut l y class, d sallow  nstant at on.
+  pr vate Response rgerUt ls() {
   }
 
   /**
-   * Merges early termination infos from several earlybird responses.
+   *  rges early term nat on  nfos from several earlyb rd responses.
    *
-   * @param responses earlybird responses to merge the early termination infos from
-   * @return merged early termination info
+   * @param responses earlyb rd responses to  rge t  early term nat on  nfos from
+   * @return  rged early term nat on  nfo
    */
-  public static EarlyTerminationInfo mergeEarlyTerminationInfo(List<EarlybirdResponse> responses) {
-    EarlyTerminationInfo etInfo = new EarlyTerminationInfo(false);
-    Set<String> etReasonSet = Sets.newHashSet();
-    // Fill in EarlyTerminationStatus
-    for (EarlybirdResponse ebResp : responses) {
-      if (ebResp.isSetEarlyTerminationInfo()
-          && ebResp.getEarlyTerminationInfo().isEarlyTerminated()) {
-        etInfo.setEarlyTerminated(true);
-        if (ebResp.getEarlyTerminationInfo().isSetEarlyTerminationReason()) {
-          etReasonSet.add(ebResp.getEarlyTerminationInfo().getEarlyTerminationReason());
+  publ c stat c EarlyTerm nat on nfo  rgeEarlyTerm nat on nfo(L st<Earlyb rdResponse> responses) {
+    EarlyTerm nat on nfo et nfo = new EarlyTerm nat on nfo(false);
+    Set<Str ng> etReasonSet = Sets.newHashSet();
+    // F ll  n EarlyTerm nat onStatus
+    for (Earlyb rdResponse ebResp : responses) {
+       f (ebResp. sSetEarlyTerm nat on nfo()
+          && ebResp.getEarlyTerm nat on nfo(). sEarlyTerm nated()) {
+        et nfo.setEarlyTerm nated(true);
+         f (ebResp.getEarlyTerm nat on nfo(). sSetEarlyTerm nat onReason()) {
+          etReasonSet.add(ebResp.getEarlyTerm nat on nfo().getEarlyTerm nat onReason());
         }
-        if (ebResp.getEarlyTerminationInfo().isSetMergedEarlyTerminationReasons()) {
-          etReasonSet.addAll(ebResp.getEarlyTerminationInfo().getMergedEarlyTerminationReasons());
+         f (ebResp.getEarlyTerm nat on nfo(). sSet rgedEarlyTerm nat onReasons()) {
+          etReasonSet.addAll(ebResp.getEarlyTerm nat on nfo().get rgedEarlyTerm nat onReasons());
         }
       }
     }
-    if (etInfo.isEarlyTerminated()) {
-      etInfo.setMergedEarlyTerminationReasons(Lists.newArrayList(etReasonSet));
+     f (et nfo. sEarlyTerm nated()) {
+      et nfo.set rgedEarlyTerm nat onReasons(L sts.newArrayL st(etReasonSet));
     }
-    return etInfo;
+    return et nfo;
   }
 }

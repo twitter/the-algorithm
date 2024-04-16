@@ -1,33 +1,33 @@
-package com.twitter.frigate.pushservice.module
+package com.tw ter.fr gate.pushserv ce.module
 
-import com.google.inject.Singleton
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.frigate.pushservice.thriftscala.PushService
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ReqRepDarkTrafficFilterModule
+ mport com.google. nject.S ngleton
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.dec der.RandomRec p ent
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport com.tw ter.fr gate.pushserv ce.thr ftscala.PushServ ce
+ mport com.tw ter. nject. njector
+ mport com.tw ter. nject.thr ft.modules.ReqRepDarkTraff cF lterModule
 
 /**
- * The darkTraffic filter sample all requests by default
-  and set the diffy dest to nil for non prod environments
+ * T  darkTraff c f lter sample all requests by default
+  and set t  d ffy dest to n l for non prod env ron nts
  */
-@Singleton
-object PushServiceDarkTrafficModule
-    extends ReqRepDarkTrafficFilterModule[PushService.ReqRepServicePerEndpoint]
-    with MtlsClient {
+@S ngleton
+object PushServ ceDarkTraff cModule
+    extends ReqRepDarkTraff cF lterModule[PushServ ce.ReqRepServ cePerEndpo nt]
+    w h MtlsCl ent {
 
-  override def label: String = "frigate-pushservice-diffy-proxy"
+  overr de def label: Str ng = "fr gate-pushserv ce-d ffy-proxy"
 
   /**
-   * Function to determine if the request should be "sampled", e.g.
-   * sent to the dark service.
+   * Funct on to determ ne  f t  request should be "sampled", e.g.
+   * sent to t  dark serv ce.
    *
-   * @param injector the [[com.twitter.inject.Injector]] for use in determining if a given request
+   * @param  njector t  [[com.tw ter. nject. njector]] for use  n determ n ng  f a g ven request
    *                 should be forwarded or not.
    */
-  override protected def enableSampling(injector: Injector): Any => Boolean = {
-    val decider = injector.instance[Decider]
-    _ => decider.isAvailable("frigate_pushservice_dark_traffic_percent", Some(RandomRecipient))
+  overr de protected def enableSampl ng( njector:  njector): Any => Boolean = {
+    val dec der =  njector. nstance[Dec der]
+    _ => dec der. sAva lable("fr gate_pushserv ce_dark_traff c_percent", So (RandomRec p ent))
   }
 }

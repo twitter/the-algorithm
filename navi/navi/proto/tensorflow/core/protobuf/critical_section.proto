@@ -2,23 +2,23 @@ syntax = "proto3";
 
 package tensorflow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "CriticalSectionProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "Cr  calSect onProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.fra work";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
-// Protocol buffer representing a CriticalSection.
-message CriticalSectionDef {
-  // Name of the critical section handle.
-  string critical_section_name = 1;
+// Protocol buffer represent ng a Cr  calSect on.
+ ssage Cr  calSect onDef {
+  // Na  of t  cr  cal sect on handle.
+  str ng cr  cal_sect on_na  = 1;
 }
 
-// Protocol buffer representing a CriticalSection execution.
-message CriticalSectionExecutionDef {
-  // Name of the critical section handle.
-  string execute_in_critical_section_name = 1;
-  // Whether this operation requires exclusive access to its resources,
-  // (i.e., no other CriticalSections may request the same resources).
-  bool exclusive_resource_access = 2;
+// Protocol buffer represent ng a Cr  calSect on execut on.
+ ssage Cr  calSect onExecut onDef {
+  // Na  of t  cr  cal sect on handle.
+  str ng execute_ n_cr  cal_sect on_na  = 1;
+  // W t r t  operat on requ res exclus ve access to  s res ces,
+  // ( .e., no ot r Cr  calSect ons may request t  sa  res ces).
+  bool exclus ve_res ce_access = 2;
 }

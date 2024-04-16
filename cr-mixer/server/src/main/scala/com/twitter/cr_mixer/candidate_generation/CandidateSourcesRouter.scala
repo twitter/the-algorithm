@@ -1,372 +1,372 @@
-package com.twitter.cr_mixer.candidate_generation
+package com.tw ter.cr_m xer.cand date_generat on
 
-import com.twitter.contentrecommender.thriftscala.TweetInfo
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.GraphSourceInfo
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.ModelConfig
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.model.TripTweetWithScore
-import com.twitter.cr_mixer.model.TweetWithCandidateGenerationInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.model.TweetWithScoreAndSocialProof
-import com.twitter.cr_mixer.param.ConsumerBasedWalsParams
-import com.twitter.cr_mixer.param.ConsumerEmbeddingBasedCandidateGenerationParams
-import com.twitter.cr_mixer.param.ConsumersBasedUserVideoGraphParams
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.cr_mixer.similarity_engine.ConsumersBasedUserVideoGraphSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.ConsumerBasedWalsSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.ConsumerEmbeddingBasedTripSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.ConsumerEmbeddingBasedTwHINSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.ConsumerEmbeddingBasedTwoTowerSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.EngineQuery
-import com.twitter.cr_mixer.similarity_engine.FilterUtil
-import com.twitter.cr_mixer.similarity_engine.HnswANNEngineQuery
-import com.twitter.cr_mixer.similarity_engine.HnswANNSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.ProducerBasedUnifiedSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.TripEngineQuery
-import com.twitter.cr_mixer.similarity_engine.TweetBasedUnifiedSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.UserTweetEntityGraphSimilarityEngine
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.tw ter.contentrecom nder.thr ftscala.T et nfo
+ mport com.tw ter.cr_m xer.model.Cand dateGenerat on nfo
+ mport com.tw ter.cr_m xer.model.GraphS ce nfo
+ mport com.tw ter.cr_m xer.model. n  alCand date
+ mport com.tw ter.cr_m xer.model.ModelConf g
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.cr_m xer.model.S m lar yEng ne nfo
+ mport com.tw ter.cr_m xer.model.S ce nfo
+ mport com.tw ter.cr_m xer.model.Tr pT etW hScore
+ mport com.tw ter.cr_m xer.model.T etW hCand dateGenerat on nfo
+ mport com.tw ter.cr_m xer.model.T etW hScore
+ mport com.tw ter.cr_m xer.model.T etW hScoreAndSoc alProof
+ mport com.tw ter.cr_m xer.param.Consu rBasedWalsParams
+ mport com.tw ter.cr_m xer.param.Consu rEmbedd ngBasedCand dateGenerat onParams
+ mport com.tw ter.cr_m xer.param.Consu rsBasedUserV deoGraphParams
+ mport com.tw ter.cr_m xer.param.GlobalParams
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.Consu rsBasedUserV deoGraphS m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.Consu rBasedWalsS m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.Consu rEmbedd ngBasedTr pS m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.Consu rEmbedd ngBasedTwH NS m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.Consu rEmbedd ngBasedTwoTo rS m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.Eng neQuery
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.F lterUt l
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.HnswANNEng neQuery
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.HnswANNS m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.ProducerBasedUn f edS m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.StandardS m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.Tr pEng neQuery
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.T etBasedUn f edS m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.UserT etEnt yGraphS m lar yEng ne
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.cr_m xer.thr ftscala.S ceType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.conf gap 
+ mport com.tw ter.ut l.Future
+ mport javax. nject. nject
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
 /**
- * Route the SourceInfo to the associated Candidate Engines.
+ * Route t  S ce nfo to t  assoc ated Cand date Eng nes.
  */
-@Singleton
-case class CandidateSourcesRouter @Inject() (
-  customizedRetrievalCandidateGeneration: CustomizedRetrievalCandidateGeneration,
-  simClustersInterestedInCandidateGeneration: SimClustersInterestedInCandidateGeneration,
-  @Named(ModuleNames.TweetBasedUnifiedSimilarityEngine)
-  tweetBasedUnifiedSimilarityEngine: StandardSimilarityEngine[
-    TweetBasedUnifiedSimilarityEngine.Query,
-    TweetWithCandidateGenerationInfo
+@S ngleton
+case class Cand dateS cesRouter @ nject() (
+  custom zedRetr evalCand dateGenerat on: Custom zedRetr evalCand dateGenerat on,
+  s mClusters nterested nCand dateGenerat on: S mClusters nterested nCand dateGenerat on,
+  @Na d(ModuleNa s.T etBasedUn f edS m lar yEng ne)
+  t etBasedUn f edS m lar yEng ne: StandardS m lar yEng ne[
+    T etBasedUn f edS m lar yEng ne.Query,
+    T etW hCand dateGenerat on nfo
   ],
-  @Named(ModuleNames.ProducerBasedUnifiedSimilarityEngine)
-  producerBasedUnifiedSimilarityEngine: StandardSimilarityEngine[
-    ProducerBasedUnifiedSimilarityEngine.Query,
-    TweetWithCandidateGenerationInfo
+  @Na d(ModuleNa s.ProducerBasedUn f edS m lar yEng ne)
+  producerBasedUn f edS m lar yEng ne: StandardS m lar yEng ne[
+    ProducerBasedUn f edS m lar yEng ne.Query,
+    T etW hCand dateGenerat on nfo
   ],
-  @Named(ModuleNames.ConsumerEmbeddingBasedTripSimilarityEngine)
-  consumerEmbeddingBasedTripSimilarityEngine: StandardSimilarityEngine[
-    TripEngineQuery,
-    TripTweetWithScore
+  @Na d(ModuleNa s.Consu rEmbedd ngBasedTr pS m lar yEng ne)
+  consu rEmbedd ngBasedTr pS m lar yEng ne: StandardS m lar yEng ne[
+    Tr pEng neQuery,
+    Tr pT etW hScore
   ],
-  @Named(ModuleNames.ConsumerEmbeddingBasedTwHINANNSimilarityEngine)
-  consumerBasedTwHINANNSimilarityEngine: HnswANNSimilarityEngine,
-  @Named(ModuleNames.ConsumerEmbeddingBasedTwoTowerANNSimilarityEngine)
-  consumerBasedTwoTowerSimilarityEngine: HnswANNSimilarityEngine,
-  @Named(ModuleNames.ConsumersBasedUserVideoGraphSimilarityEngine)
-  consumersBasedUserVideoGraphSimilarityEngine: StandardSimilarityEngine[
-    ConsumersBasedUserVideoGraphSimilarityEngine.Query,
-    TweetWithScore
+  @Na d(ModuleNa s.Consu rEmbedd ngBasedTwH NANNS m lar yEng ne)
+  consu rBasedTwH NANNS m lar yEng ne: HnswANNS m lar yEng ne,
+  @Na d(ModuleNa s.Consu rEmbedd ngBasedTwoTo rANNS m lar yEng ne)
+  consu rBasedTwoTo rS m lar yEng ne: HnswANNS m lar yEng ne,
+  @Na d(ModuleNa s.Consu rsBasedUserV deoGraphS m lar yEng ne)
+  consu rsBasedUserV deoGraphS m lar yEng ne: StandardS m lar yEng ne[
+    Consu rsBasedUserV deoGraphS m lar yEng ne.Query,
+    T etW hScore
   ],
-  @Named(ModuleNames.UserTweetEntityGraphSimilarityEngine) userTweetEntityGraphSimilarityEngine: StandardSimilarityEngine[
-    UserTweetEntityGraphSimilarityEngine.Query,
-    TweetWithScoreAndSocialProof
+  @Na d(ModuleNa s.UserT etEnt yGraphS m lar yEng ne) userT etEnt yGraphS m lar yEng ne: StandardS m lar yEng ne[
+    UserT etEnt yGraphS m lar yEng ne.Query,
+    T etW hScoreAndSoc alProof
   ],
-  @Named(ModuleNames.ConsumerBasedWalsSimilarityEngine)
-  consumerBasedWalsSimilarityEngine: StandardSimilarityEngine[
-    ConsumerBasedWalsSimilarityEngine.Query,
-    TweetWithScore
+  @Na d(ModuleNa s.Consu rBasedWalsS m lar yEng ne)
+  consu rBasedWalsS m lar yEng ne: StandardS m lar yEng ne[
+    Consu rBasedWalsS m lar yEng ne.Query,
+    T etW hScore
   ],
-  tweetInfoStore: ReadableStore[TweetId, TweetInfo],
-  globalStats: StatsReceiver,
+  t et nfoStore: ReadableStore[T et d, T et nfo],
+  globalStats: StatsRece ver,
 ) {
 
-  import CandidateSourcesRouter._
-  val stats: StatsReceiver = globalStats.scope(this.getClass.getSimpleName)
+   mport Cand dateS cesRouter._
+  val stats: StatsRece ver = globalStats.scope(t .getClass.getS mpleNa )
 
-  def fetchCandidates(
-    requestUserId: UserId,
-    sourceSignals: Set[SourceInfo],
-    sourceGraphs: Map[String, Option[GraphSourceInfo]],
-    params: configapi.Params,
-  ): Future[Seq[Seq[InitialCandidate]]] = {
+  def fetchCand dates(
+    requestUser d: User d,
+    s ceS gnals: Set[S ce nfo],
+    s ceGraphs: Map[Str ng, Opt on[GraphS ce nfo]],
+    params: conf gap .Params,
+  ): Future[Seq[Seq[ n  alCand date]]] = {
 
-    val tweetBasedCandidatesFuture = getCandidates(
-      getTweetBasedSourceInfo(sourceSignals),
+    val t etBasedCand datesFuture = getCand dates(
+      getT etBasedS ce nfo(s ceS gnals),
       params,
-      TweetBasedUnifiedSimilarityEngine.fromParams,
-      tweetBasedUnifiedSimilarityEngine.getCandidates)
+      T etBasedUn f edS m lar yEng ne.fromParams,
+      t etBasedUn f edS m lar yEng ne.getCand dates)
 
-    val producerBasedCandidatesFuture =
-      getCandidates(
-        getProducerBasedSourceInfo(sourceSignals),
+    val producerBasedCand datesFuture =
+      getCand dates(
+        getProducerBasedS ce nfo(s ceS gnals),
         params,
-        ProducerBasedUnifiedSimilarityEngine.fromParams(_, _),
-        producerBasedUnifiedSimilarityEngine.getCandidates
+        ProducerBasedUn f edS m lar yEng ne.fromParams(_, _),
+        producerBasedUn f edS m lar yEng ne.getCand dates
       )
 
-    val simClustersInterestedInBasedCandidatesFuture =
-      getCandidatesPerSimilarityEngineModel(
-        requestUserId,
+    val s mClusters nterested nBasedCand datesFuture =
+      getCand datesPerS m lar yEng neModel(
+        requestUser d,
         params,
-        SimClustersInterestedInCandidateGeneration.fromParams,
-        simClustersInterestedInCandidateGeneration.get)
+        S mClusters nterested nCand dateGenerat on.fromParams,
+        s mClusters nterested nCand dateGenerat on.get)
 
-    val consumerEmbeddingBasedLogFavBasedTripCandidatesFuture =
-      if (params(
-          ConsumerEmbeddingBasedCandidateGenerationParams.EnableLogFavBasedSimClustersTripParam)) {
-        getSimClustersTripCandidates(
+    val consu rEmbedd ngBasedLogFavBasedTr pCand datesFuture =
+       f (params(
+          Consu rEmbedd ngBasedCand dateGenerat onParams.EnableLogFavBasedS mClustersTr pParam)) {
+        getS mClustersTr pCand dates(
           params,
-          ConsumerEmbeddingBasedTripSimilarityEngine.fromParams(
-            ModelConfig.ConsumerLogFavBasedInterestedInEmbedding,
-            InternalId.UserId(requestUserId),
+          Consu rEmbedd ngBasedTr pS m lar yEng ne.fromParams(
+            ModelConf g.Consu rLogFavBased nterested nEmbedd ng,
+             nternal d.User d(requestUser d),
             params
           ),
-          consumerEmbeddingBasedTripSimilarityEngine
+          consu rEmbedd ngBasedTr pS m lar yEng ne
         ).map {
           Seq(_)
         }
       } else
-        Future.Nil
+        Future.N l
 
-    val consumersBasedUvgRealGraphInCandidatesFuture =
-      if (params(ConsumersBasedUserVideoGraphParams.EnableSourceParam)) {
-        val realGraphInGraphSourceInfoOpt =
-          getGraphSourceInfoBySourceType(SourceType.RealGraphIn.name, sourceGraphs)
+    val consu rsBasedUvgRealGraph nCand datesFuture =
+       f (params(Consu rsBasedUserV deoGraphParams.EnableS ceParam)) {
+        val realGraph nGraphS ce nfoOpt =
+          getGraphS ce nfoByS ceType(S ceType.RealGraph n.na , s ceGraphs)
 
-        getGraphBasedCandidates(
+        getGraphBasedCand dates(
           params,
-          ConsumersBasedUserVideoGraphSimilarityEngine
-            .fromParamsForRealGraphIn(
-              realGraphInGraphSourceInfoOpt
-                .map { graphSourceInfo => graphSourceInfo.seedWithScores }.getOrElse(Map.empty),
+          Consu rsBasedUserV deoGraphS m lar yEng ne
+            .fromParamsForRealGraph n(
+              realGraph nGraphS ce nfoOpt
+                .map { graphS ce nfo => graphS ce nfo.seedW hScores }.getOrElse(Map.empty),
               params),
-          consumersBasedUserVideoGraphSimilarityEngine,
-          ConsumersBasedUserVideoGraphSimilarityEngine.toSimilarityEngineInfo,
-          realGraphInGraphSourceInfoOpt
+          consu rsBasedUserV deoGraphS m lar yEng ne,
+          Consu rsBasedUserV deoGraphS m lar yEng ne.toS m lar yEng ne nfo,
+          realGraph nGraphS ce nfoOpt
         ).map {
           Seq(_)
         }
-      } else Future.Nil
+      } else Future.N l
 
-    val consumerEmbeddingBasedFollowBasedTripCandidatesFuture =
-      if (params(
-          ConsumerEmbeddingBasedCandidateGenerationParams.EnableFollowBasedSimClustersTripParam)) {
-        getSimClustersTripCandidates(
+    val consu rEmbedd ngBasedFollowBasedTr pCand datesFuture =
+       f (params(
+          Consu rEmbedd ngBasedCand dateGenerat onParams.EnableFollowBasedS mClustersTr pParam)) {
+        getS mClustersTr pCand dates(
           params,
-          ConsumerEmbeddingBasedTripSimilarityEngine.fromParams(
-            ModelConfig.ConsumerFollowBasedInterestedInEmbedding,
-            InternalId.UserId(requestUserId),
+          Consu rEmbedd ngBasedTr pS m lar yEng ne.fromParams(
+            ModelConf g.Consu rFollowBased nterested nEmbedd ng,
+             nternal d.User d(requestUser d),
             params
           ),
-          consumerEmbeddingBasedTripSimilarityEngine
+          consu rEmbedd ngBasedTr pS m lar yEng ne
         ).map {
           Seq(_)
         }
       } else
-        Future.Nil
+        Future.N l
 
-    val consumerBasedWalsCandidatesFuture =
-      if (params(
-          ConsumerBasedWalsParams.EnableSourceParam
+    val consu rBasedWalsCand datesFuture =
+       f (params(
+          Consu rBasedWalsParams.EnableS ceParam
         )) {
-        getConsumerBasedWalsCandidates(sourceSignals, params)
+        getConsu rBasedWalsCand dates(s ceS gnals, params)
       }.map { Seq(_) }
-      else Future.Nil
+      else Future.N l
 
-    val consumerEmbeddingBasedTwHINCandidatesFuture =
-      if (params(ConsumerEmbeddingBasedCandidateGenerationParams.EnableTwHINParam)) {
-        getHnswCandidates(
+    val consu rEmbedd ngBasedTwH NCand datesFuture =
+       f (params(Consu rEmbedd ngBasedCand dateGenerat onParams.EnableTwH NParam)) {
+        getHnswCand dates(
           params,
-          ConsumerEmbeddingBasedTwHINSimilarityEngine.fromParams(
-            InternalId.UserId(requestUserId),
+          Consu rEmbedd ngBasedTwH NS m lar yEng ne.fromParams(
+             nternal d.User d(requestUser d),
             params),
-          consumerBasedTwHINANNSimilarityEngine
+          consu rBasedTwH NANNS m lar yEng ne
         ).map { Seq(_) }
-      } else Future.Nil
+      } else Future.N l
 
-    val consumerEmbeddingBasedTwoTowerCandidatesFuture =
-      if (params(ConsumerEmbeddingBasedCandidateGenerationParams.EnableTwoTowerParam)) {
-        getHnswCandidates(
+    val consu rEmbedd ngBasedTwoTo rCand datesFuture =
+       f (params(Consu rEmbedd ngBasedCand dateGenerat onParams.EnableTwoTo rParam)) {
+        getHnswCand dates(
           params,
-          ConsumerEmbeddingBasedTwoTowerSimilarityEngine.fromParams(
-            InternalId.UserId(requestUserId),
+          Consu rEmbedd ngBasedTwoTo rS m lar yEng ne.fromParams(
+             nternal d.User d(requestUser d),
             params),
-          consumerBasedTwoTowerSimilarityEngine
+          consu rBasedTwoTo rS m lar yEng ne
         ).map {
           Seq(_)
         }
-      } else Future.Nil
+      } else Future.N l
 
-    val customizedRetrievalBasedCandidatesFuture =
-      getCandidatesPerSimilarityEngineModel(
-        requestUserId,
+    val custom zedRetr evalBasedCand datesFuture =
+      getCand datesPerS m lar yEng neModel(
+        requestUser d,
         params,
-        CustomizedRetrievalCandidateGeneration.fromParams,
-        customizedRetrievalCandidateGeneration.get)
+        Custom zedRetr evalCand dateGenerat on.fromParams,
+        custom zedRetr evalCand dateGenerat on.get)
 
     Future
       .collect(
         Seq(
-          tweetBasedCandidatesFuture,
-          producerBasedCandidatesFuture,
-          simClustersInterestedInBasedCandidatesFuture,
-          consumerBasedWalsCandidatesFuture,
-          consumerEmbeddingBasedLogFavBasedTripCandidatesFuture,
-          consumerEmbeddingBasedFollowBasedTripCandidatesFuture,
-          consumerEmbeddingBasedTwHINCandidatesFuture,
-          consumerEmbeddingBasedTwoTowerCandidatesFuture,
-          consumersBasedUvgRealGraphInCandidatesFuture,
-          customizedRetrievalBasedCandidatesFuture
-        )).map { candidatesList =>
-        // remove empty innerSeq
-        val result = candidatesList.flatten.filter(_.nonEmpty)
-        stats.stat("numOfSequences").add(result.size)
-        stats.stat("flattenCandidatesWithDup").add(result.flatten.size)
+          t etBasedCand datesFuture,
+          producerBasedCand datesFuture,
+          s mClusters nterested nBasedCand datesFuture,
+          consu rBasedWalsCand datesFuture,
+          consu rEmbedd ngBasedLogFavBasedTr pCand datesFuture,
+          consu rEmbedd ngBasedFollowBasedTr pCand datesFuture,
+          consu rEmbedd ngBasedTwH NCand datesFuture,
+          consu rEmbedd ngBasedTwoTo rCand datesFuture,
+          consu rsBasedUvgRealGraph nCand datesFuture,
+          custom zedRetr evalBasedCand datesFuture
+        )).map { cand datesL st =>
+        // remove empty  nnerSeq
+        val result = cand datesL st.flatten.f lter(_.nonEmpty)
+        stats.stat("numOfSequences").add(result.s ze)
+        stats.stat("flattenCand datesW hDup").add(result.flatten.s ze)
 
         result
       }
   }
 
-  private def getGraphBasedCandidates[QueryType](
-    params: configapi.Params,
-    query: EngineQuery[QueryType],
-    engine: StandardSimilarityEngine[QueryType, TweetWithScore],
-    toSimilarityEngineInfo: Double => SimilarityEngineInfo,
-    graphSourceInfoOpt: Option[GraphSourceInfo] = None
-  ): Future[Seq[InitialCandidate]] = {
-    val candidatesOptFut = engine.getCandidates(query)
-    val tweetsWithCandidateGenerationInfoOptFut = candidatesOptFut.map {
-      _.map { tweetsWithScores =>
-        val sortedCandidates = tweetsWithScores.sortBy(-_.score)
-        engine.getScopedStats.stat("sortedCandidates_size").add(sortedCandidates.size)
-        val tweetsWithCandidateGenerationInfo = sortedCandidates.map { tweetWithScore =>
+  pr vate def getGraphBasedCand dates[QueryType](
+    params: conf gap .Params,
+    query: Eng neQuery[QueryType],
+    eng ne: StandardS m lar yEng ne[QueryType, T etW hScore],
+    toS m lar yEng ne nfo: Double => S m lar yEng ne nfo,
+    graphS ce nfoOpt: Opt on[GraphS ce nfo] = None
+  ): Future[Seq[ n  alCand date]] = {
+    val cand datesOptFut = eng ne.getCand dates(query)
+    val t etsW hCand dateGenerat on nfoOptFut = cand datesOptFut.map {
+      _.map { t etsW hScores =>
+        val sortedCand dates = t etsW hScores.sortBy(-_.score)
+        eng ne.getScopedStats.stat("sortedCand dates_s ze").add(sortedCand dates.s ze)
+        val t etsW hCand dateGenerat on nfo = sortedCand dates.map { t etW hScore =>
           {
-            val similarityEngineInfo = toSimilarityEngineInfo(tweetWithScore.score)
-            val sourceInfo = graphSourceInfoOpt.map { graphSourceInfo =>
-              // The internalId is a placeholder value. We do not plan to store the full seedUserId set.
-              SourceInfo(
-                sourceType = graphSourceInfo.sourceType,
-                internalId = InternalId.UserId(0L),
-                sourceEventTime = None
+            val s m lar yEng ne nfo = toS m lar yEng ne nfo(t etW hScore.score)
+            val s ce nfo = graphS ce nfoOpt.map { graphS ce nfo =>
+              // T   nternal d  s a placeholder value.   do not plan to store t  full seedUser d set.
+              S ce nfo(
+                s ceType = graphS ce nfo.s ceType,
+                 nternal d =  nternal d.User d(0L),
+                s ceEventT   = None
               )
             }
-            TweetWithCandidateGenerationInfo(
-              tweetWithScore.tweetId,
-              CandidateGenerationInfo(
-                sourceInfo,
-                similarityEngineInfo,
-                Seq.empty // Atomic Similarity Engine. Hence it has no contributing SEs
+            T etW hCand dateGenerat on nfo(
+              t etW hScore.t et d,
+              Cand dateGenerat on nfo(
+                s ce nfo,
+                s m lar yEng ne nfo,
+                Seq.empty // Atom c S m lar y Eng ne.  nce   has no contr but ng SEs
               )
             )
           }
         }
-        val maxCandidateNum = params(GlobalParams.MaxCandidateNumPerSourceKeyParam)
-        tweetsWithCandidateGenerationInfo.take(maxCandidateNum)
+        val maxCand dateNum = params(GlobalParams.MaxCand dateNumPerS ceKeyParam)
+        t etsW hCand dateGenerat on nfo.take(maxCand dateNum)
       }
     }
     for {
-      tweetsWithCandidateGenerationInfoOpt <- tweetsWithCandidateGenerationInfoOptFut
-      initialCandidates <- convertToInitialCandidates(
-        tweetsWithCandidateGenerationInfoOpt.toSeq.flatten)
-    } yield initialCandidates
+      t etsW hCand dateGenerat on nfoOpt <- t etsW hCand dateGenerat on nfoOptFut
+       n  alCand dates <- convertTo n  alCand dates(
+        t etsW hCand dateGenerat on nfoOpt.toSeq.flatten)
+    } y eld  n  alCand dates
   }
 
-  private def getCandidates[QueryType](
-    sourceSignals: Set[SourceInfo],
-    params: configapi.Params,
-    fromParams: (SourceInfo, configapi.Params) => QueryType,
-    getFunc: QueryType => Future[Option[Seq[TweetWithCandidateGenerationInfo]]]
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    val queries = sourceSignals.map { sourceInfo =>
-      fromParams(sourceInfo, params)
+  pr vate def getCand dates[QueryType](
+    s ceS gnals: Set[S ce nfo],
+    params: conf gap .Params,
+    fromParams: (S ce nfo, conf gap .Params) => QueryType,
+    getFunc: QueryType => Future[Opt on[Seq[T etW hCand dateGenerat on nfo]]]
+  ): Future[Seq[Seq[ n  alCand date]]] = {
+    val quer es = s ceS gnals.map { s ce nfo =>
+      fromParams(s ce nfo, params)
     }.toSeq
 
     Future
       .collect {
-        queries.map { query =>
+        quer es.map { query =>
           for {
-            candidates <- getFunc(query)
-            prefilterCandidates <- convertToInitialCandidates(candidates.toSeq.flatten)
-          } yield {
-            prefilterCandidates
+            cand dates <- getFunc(query)
+            pref lterCand dates <- convertTo n  alCand dates(cand dates.toSeq.flatten)
+          } y eld {
+            pref lterCand dates
           }
         }
       }
   }
 
-  private def getConsumerBasedWalsCandidates(
-    sourceSignals: Set[SourceInfo],
-    params: configapi.Params
-  ): Future[Seq[InitialCandidate]] = {
-    // Fetch source signals and filter them based on age.
-    val signals = FilterUtil.tweetSourceAgeFilter(
-      getConsumerBasedWalsSourceInfo(sourceSignals).toSeq,
-      params(ConsumerBasedWalsParams.MaxTweetSignalAgeHoursParam))
+  pr vate def getConsu rBasedWalsCand dates(
+    s ceS gnals: Set[S ce nfo],
+    params: conf gap .Params
+  ): Future[Seq[ n  alCand date]] = {
+    // Fetch s ce s gnals and f lter t m based on age.
+    val s gnals = F lterUt l.t etS ceAgeF lter(
+      getConsu rBasedWalsS ce nfo(s ceS gnals).toSeq,
+      params(Consu rBasedWalsParams.MaxT etS gnalAgeH sParam))
 
-    val candidatesOptFut = consumerBasedWalsSimilarityEngine.getCandidates(
-      ConsumerBasedWalsSimilarityEngine.fromParams(signals, params)
+    val cand datesOptFut = consu rBasedWalsS m lar yEng ne.getCand dates(
+      Consu rBasedWalsS m lar yEng ne.fromParams(s gnals, params)
     )
-    val tweetsWithCandidateGenerationInfoOptFut = candidatesOptFut.map {
-      _.map { tweetsWithScores =>
-        val sortedCandidates = tweetsWithScores.sortBy(-_.score)
-        val filteredCandidates =
-          FilterUtil.tweetAgeFilter(sortedCandidates, params(GlobalParams.MaxTweetAgeHoursParam))
-        consumerBasedWalsSimilarityEngine.getScopedStats
-          .stat("filteredCandidates_size").add(filteredCandidates.size)
+    val t etsW hCand dateGenerat on nfoOptFut = cand datesOptFut.map {
+      _.map { t etsW hScores =>
+        val sortedCand dates = t etsW hScores.sortBy(-_.score)
+        val f lteredCand dates =
+          F lterUt l.t etAgeF lter(sortedCand dates, params(GlobalParams.MaxT etAgeH sParam))
+        consu rBasedWalsS m lar yEng ne.getScopedStats
+          .stat("f lteredCand dates_s ze").add(f lteredCand dates.s ze)
 
-        val tweetsWithCandidateGenerationInfo = filteredCandidates.map { tweetWithScore =>
+        val t etsW hCand dateGenerat on nfo = f lteredCand dates.map { t etW hScore =>
           {
-            val similarityEngineInfo =
-              ConsumerBasedWalsSimilarityEngine.toSimilarityEngineInfo(tweetWithScore.score)
-            TweetWithCandidateGenerationInfo(
-              tweetWithScore.tweetId,
-              CandidateGenerationInfo(
+            val s m lar yEng ne nfo =
+              Consu rBasedWalsS m lar yEng ne.toS m lar yEng ne nfo(t etW hScore.score)
+            T etW hCand dateGenerat on nfo(
+              t etW hScore.t et d,
+              Cand dateGenerat on nfo(
                 None,
-                similarityEngineInfo,
-                Seq.empty // Atomic Similarity Engine. Hence it has no contributing SEs
+                s m lar yEng ne nfo,
+                Seq.empty // Atom c S m lar y Eng ne.  nce   has no contr but ng SEs
               )
             )
           }
         }
-        val maxCandidateNum = params(GlobalParams.MaxCandidateNumPerSourceKeyParam)
-        tweetsWithCandidateGenerationInfo.take(maxCandidateNum)
+        val maxCand dateNum = params(GlobalParams.MaxCand dateNumPerS ceKeyParam)
+        t etsW hCand dateGenerat on nfo.take(maxCand dateNum)
       }
     }
     for {
-      tweetsWithCandidateGenerationInfoOpt <- tweetsWithCandidateGenerationInfoOptFut
-      initialCandidates <- convertToInitialCandidates(
-        tweetsWithCandidateGenerationInfoOpt.toSeq.flatten)
-    } yield initialCandidates
+      t etsW hCand dateGenerat on nfoOpt <- t etsW hCand dateGenerat on nfoOptFut
+       n  alCand dates <- convertTo n  alCand dates(
+        t etsW hCand dateGenerat on nfoOpt.toSeq.flatten)
+    } y eld  n  alCand dates
   }
 
-  private def getSimClustersTripCandidates(
-    params: configapi.Params,
-    query: TripEngineQuery,
-    engine: StandardSimilarityEngine[
-      TripEngineQuery,
-      TripTweetWithScore
+  pr vate def getS mClustersTr pCand dates(
+    params: conf gap .Params,
+    query: Tr pEng neQuery,
+    eng ne: StandardS m lar yEng ne[
+      Tr pEng neQuery,
+      Tr pT etW hScore
     ],
-  ): Future[Seq[InitialCandidate]] = {
-    val tweetsWithCandidatesGenerationInfoOptFut =
-      engine.getCandidates(EngineQuery(query, params)).map {
+  ): Future[Seq[ n  alCand date]] = {
+    val t etsW hCand datesGenerat on nfoOptFut =
+      eng ne.getCand dates(Eng neQuery(query, params)).map {
         _.map {
-          _.map { tweetWithScore =>
-            // define filters
-            TweetWithCandidateGenerationInfo(
-              tweetWithScore.tweetId,
-              CandidateGenerationInfo(
+          _.map { t etW hScore =>
+            // def ne f lters
+            T etW hCand dateGenerat on nfo(
+              t etW hScore.t et d,
+              Cand dateGenerat on nfo(
                 None,
-                SimilarityEngineInfo(
-                  SimilarityEngineType.ExploreTripOfflineSimClustersTweets,
+                S m lar yEng ne nfo(
+                  S m lar yEng neType.ExploreTr pOffl neS mClustersT ets,
                   None,
-                  Some(tweetWithScore.score)),
+                  So (t etW hScore.score)),
                 Seq.empty
               )
             )
@@ -374,163 +374,163 @@ case class CandidateSourcesRouter @Inject() (
         }
       }
     for {
-      tweetsWithCandidateGenerationInfoOpt <- tweetsWithCandidatesGenerationInfoOptFut
-      initialCandidates <- convertToInitialCandidates(
-        tweetsWithCandidateGenerationInfoOpt.toSeq.flatten)
-    } yield initialCandidates
+      t etsW hCand dateGenerat on nfoOpt <- t etsW hCand datesGenerat on nfoOptFut
+       n  alCand dates <- convertTo n  alCand dates(
+        t etsW hCand dateGenerat on nfoOpt.toSeq.flatten)
+    } y eld  n  alCand dates
   }
 
-  private def getHnswCandidates(
-    params: configapi.Params,
-    query: HnswANNEngineQuery,
-    engine: HnswANNSimilarityEngine,
-  ): Future[Seq[InitialCandidate]] = {
-    val candidatesOptFut = engine.getCandidates(query)
-    val tweetsWithCandidateGenerationInfoOptFut = candidatesOptFut.map {
-      _.map { tweetsWithScores =>
-        val sortedCandidates = tweetsWithScores.sortBy(-_.score)
-        val filteredCandidates =
-          FilterUtil.tweetAgeFilter(sortedCandidates, params(GlobalParams.MaxTweetAgeHoursParam))
-        engine.getScopedStats.stat("filteredCandidates_size").add(filteredCandidates.size)
-        val tweetsWithCandidateGenerationInfo = filteredCandidates.map { tweetWithScore =>
+  pr vate def getHnswCand dates(
+    params: conf gap .Params,
+    query: HnswANNEng neQuery,
+    eng ne: HnswANNS m lar yEng ne,
+  ): Future[Seq[ n  alCand date]] = {
+    val cand datesOptFut = eng ne.getCand dates(query)
+    val t etsW hCand dateGenerat on nfoOptFut = cand datesOptFut.map {
+      _.map { t etsW hScores =>
+        val sortedCand dates = t etsW hScores.sortBy(-_.score)
+        val f lteredCand dates =
+          F lterUt l.t etAgeF lter(sortedCand dates, params(GlobalParams.MaxT etAgeH sParam))
+        eng ne.getScopedStats.stat("f lteredCand dates_s ze").add(f lteredCand dates.s ze)
+        val t etsW hCand dateGenerat on nfo = f lteredCand dates.map { t etW hScore =>
           {
-            val similarityEngineInfo =
-              engine.toSimilarityEngineInfo(query, tweetWithScore.score)
-            TweetWithCandidateGenerationInfo(
-              tweetWithScore.tweetId,
-              CandidateGenerationInfo(
+            val s m lar yEng ne nfo =
+              eng ne.toS m lar yEng ne nfo(query, t etW hScore.score)
+            T etW hCand dateGenerat on nfo(
+              t etW hScore.t et d,
+              Cand dateGenerat on nfo(
                 None,
-                similarityEngineInfo,
-                Seq.empty // Atomic Similarity Engine. Hence it has no contributing SEs
+                s m lar yEng ne nfo,
+                Seq.empty // Atom c S m lar y Eng ne.  nce   has no contr but ng SEs
               )
             )
           }
         }
-        val maxCandidateNum = params(GlobalParams.MaxCandidateNumPerSourceKeyParam)
-        tweetsWithCandidateGenerationInfo.take(maxCandidateNum)
+        val maxCand dateNum = params(GlobalParams.MaxCand dateNumPerS ceKeyParam)
+        t etsW hCand dateGenerat on nfo.take(maxCand dateNum)
       }
     }
     for {
-      tweetsWithCandidateGenerationInfoOpt <- tweetsWithCandidateGenerationInfoOptFut
-      initialCandidates <- convertToInitialCandidates(
-        tweetsWithCandidateGenerationInfoOpt.toSeq.flatten)
-    } yield initialCandidates
+      t etsW hCand dateGenerat on nfoOpt <- t etsW hCand dateGenerat on nfoOptFut
+       n  alCand dates <- convertTo n  alCand dates(
+        t etsW hCand dateGenerat on nfoOpt.toSeq.flatten)
+    } y eld  n  alCand dates
   }
 
   /**
-   * Returns candidates from each similarity engine separately.
-   * For 1 requestUserId, it will fetch results from each similarity engine e_i,
-   * and returns Seq[Seq[TweetCandidate]].
+   * Returns cand dates from each s m lar y eng ne separately.
+   * For 1 requestUser d,   w ll fetch results from each s m lar y eng ne e_ ,
+   * and returns Seq[Seq[T etCand date]].
    */
-  private def getCandidatesPerSimilarityEngineModel[QueryType](
-    requestUserId: UserId,
-    params: configapi.Params,
-    fromParams: (InternalId, configapi.Params) => QueryType,
+  pr vate def getCand datesPerS m lar yEng neModel[QueryType](
+    requestUser d: User d,
+    params: conf gap .Params,
+    fromParams: ( nternal d, conf gap .Params) => QueryType,
     getFunc: QueryType => Future[
-      Option[Seq[Seq[TweetWithCandidateGenerationInfo]]]
+      Opt on[Seq[Seq[T etW hCand dateGenerat on nfo]]]
     ]
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    val query = fromParams(InternalId.UserId(requestUserId), params)
-    getFunc(query).flatMap { candidatesPerSimilarityEngineModelOpt =>
-      val candidatesPerSimilarityEngineModel = candidatesPerSimilarityEngineModelOpt.toSeq.flatten
+  ): Future[Seq[Seq[ n  alCand date]]] = {
+    val query = fromParams( nternal d.User d(requestUser d), params)
+    getFunc(query).flatMap { cand datesPerS m lar yEng neModelOpt =>
+      val cand datesPerS m lar yEng neModel = cand datesPerS m lar yEng neModelOpt.toSeq.flatten
       Future.collect {
-        candidatesPerSimilarityEngineModel.map(convertToInitialCandidates)
+        cand datesPerS m lar yEng neModel.map(convertTo n  alCand dates)
       }
     }
   }
 
-  private[candidate_generation] def convertToInitialCandidates(
-    candidates: Seq[TweetWithCandidateGenerationInfo],
-  ): Future[Seq[InitialCandidate]] = {
-    val tweetIds = candidates.map(_.tweetId).toSet
-    Future.collect(tweetInfoStore.multiGet(tweetIds)).map { tweetInfos =>
+  pr vate[cand date_generat on] def convertTo n  alCand dates(
+    cand dates: Seq[T etW hCand dateGenerat on nfo],
+  ): Future[Seq[ n  alCand date]] = {
+    val t et ds = cand dates.map(_.t et d).toSet
+    Future.collect(t et nfoStore.mult Get(t et ds)).map { t et nfos =>
       /***
-       * If tweetInfo does not exist, we will filter out this tweet candidate.
+       *  f t et nfo does not ex st,   w ll f lter out t  t et cand date.
        */
-      candidates.collect {
-        case candidate if tweetInfos.getOrElse(candidate.tweetId, None).isDefined =>
-          val tweetInfo = tweetInfos(candidate.tweetId)
-            .getOrElse(throw new IllegalStateException("Check previous line's condition"))
+      cand dates.collect {
+        case cand date  f t et nfos.getOrElse(cand date.t et d, None). sDef ned =>
+          val t et nfo = t et nfos(cand date.t et d)
+            .getOrElse(throw new  llegalStateExcept on("C ck prev ous l ne's cond  on"))
 
-          InitialCandidate(
-            tweetId = candidate.tweetId,
-            tweetInfo = tweetInfo,
-            candidate.candidateGenerationInfo
+           n  alCand date(
+            t et d = cand date.t et d,
+            t et nfo = t et nfo,
+            cand date.cand dateGenerat on nfo
           )
       }
     }
   }
 }
 
-object CandidateSourcesRouter {
-  def getGraphSourceInfoBySourceType(
-    sourceTypeStr: String,
-    sourceGraphs: Map[String, Option[GraphSourceInfo]]
-  ): Option[GraphSourceInfo] = {
-    sourceGraphs.getOrElse(sourceTypeStr, None)
+object Cand dateS cesRouter {
+  def getGraphS ce nfoByS ceType(
+    s ceTypeStr: Str ng,
+    s ceGraphs: Map[Str ng, Opt on[GraphS ce nfo]]
+  ): Opt on[GraphS ce nfo] = {
+    s ceGraphs.getOrElse(s ceTypeStr, None)
   }
 
-  def getTweetBasedSourceInfo(
-    sourceSignals: Set[SourceInfo]
-  ): Set[SourceInfo] = {
-    sourceSignals.collect {
-      case sourceInfo
-          if AllowedSourceTypesForTweetBasedUnifiedSE.contains(sourceInfo.sourceType.value) =>
-        sourceInfo
+  def getT etBasedS ce nfo(
+    s ceS gnals: Set[S ce nfo]
+  ): Set[S ce nfo] = {
+    s ceS gnals.collect {
+      case s ce nfo
+           f Allo dS ceTypesForT etBasedUn f edSE.conta ns(s ce nfo.s ceType.value) =>
+        s ce nfo
     }
   }
 
-  def getProducerBasedSourceInfo(
-    sourceSignals: Set[SourceInfo]
-  ): Set[SourceInfo] = {
-    sourceSignals.collect {
-      case sourceInfo
-          if AllowedSourceTypesForProducerBasedUnifiedSE.contains(sourceInfo.sourceType.value) =>
-        sourceInfo
+  def getProducerBasedS ce nfo(
+    s ceS gnals: Set[S ce nfo]
+  ): Set[S ce nfo] = {
+    s ceS gnals.collect {
+      case s ce nfo
+           f Allo dS ceTypesForProducerBasedUn f edSE.conta ns(s ce nfo.s ceType.value) =>
+        s ce nfo
     }
   }
 
-  def getConsumerBasedWalsSourceInfo(
-    sourceSignals: Set[SourceInfo]
-  ): Set[SourceInfo] = {
-    sourceSignals.collect {
-      case sourceInfo
-          if AllowedSourceTypesForConsumerBasedWalsSE.contains(sourceInfo.sourceType.value) =>
-        sourceInfo
+  def getConsu rBasedWalsS ce nfo(
+    s ceS gnals: Set[S ce nfo]
+  ): Set[S ce nfo] = {
+    s ceS gnals.collect {
+      case s ce nfo
+           f Allo dS ceTypesForConsu rBasedWalsSE.conta ns(s ce nfo.s ceType.value) =>
+        s ce nfo
     }
   }
 
   /***
-   * Signal funneling should not exist in CG or even in any SimilarityEngine.
-   * They will be in Router, or eventually, in CrCandidateGenerator.
+   * S gnal funnel ng should not ex st  n CG or even  n any S m lar yEng ne.
+   * T y w ll be  n Router, or eventually,  n CrCand dateGenerator.
    */
-  val AllowedSourceTypesForConsumerBasedWalsSE = Set(
-    SourceType.TweetFavorite.value,
-    SourceType.Retweet.value,
-    SourceType.TweetDontLike.value, //currently no-op
-    SourceType.TweetReport.value, //currently no-op
-    SourceType.AccountMute.value, //currently no-op
-    SourceType.AccountBlock.value //currently no-op
+  val Allo dS ceTypesForConsu rBasedWalsSE = Set(
+    S ceType.T etFavor e.value,
+    S ceType.Ret et.value,
+    S ceType.T etDontL ke.value, //currently no-op
+    S ceType.T etReport.value, //currently no-op
+    S ceType.AccountMute.value, //currently no-op
+    S ceType.AccountBlock.value //currently no-op
   )
-  val AllowedSourceTypesForTweetBasedUnifiedSE = Set(
-    SourceType.TweetFavorite.value,
-    SourceType.Retweet.value,
-    SourceType.OriginalTweet.value,
-    SourceType.Reply.value,
-    SourceType.TweetShare.value,
-    SourceType.NotificationClick.value,
-    SourceType.GoodTweetClick.value,
-    SourceType.VideoTweetQualityView.value,
-    SourceType.VideoTweetPlayback50.value,
-    SourceType.TweetAggregation.value,
+  val Allo dS ceTypesForT etBasedUn f edSE = Set(
+    S ceType.T etFavor e.value,
+    S ceType.Ret et.value,
+    S ceType.Or g nalT et.value,
+    S ceType.Reply.value,
+    S ceType.T etShare.value,
+    S ceType.Not f cat onCl ck.value,
+    S ceType.GoodT etCl ck.value,
+    S ceType.V deoT etQual yV ew.value,
+    S ceType.V deoT etPlayback50.value,
+    S ceType.T etAggregat on.value,
   )
-  val AllowedSourceTypesForProducerBasedUnifiedSE = Set(
-    SourceType.UserFollow.value,
-    SourceType.UserRepeatedProfileVisit.value,
-    SourceType.RealGraphOon.value,
-    SourceType.FollowRecommendation.value,
-    SourceType.UserTrafficAttributionProfileVisit.value,
-    SourceType.GoodProfileClick.value,
-    SourceType.ProducerAggregation.value,
+  val Allo dS ceTypesForProducerBasedUn f edSE = Set(
+    S ceType.UserFollow.value,
+    S ceType.UserRepeatedProf leV s .value,
+    S ceType.RealGraphOon.value,
+    S ceType.FollowRecom ndat on.value,
+    S ceType.UserTraff cAttr but onProf leV s .value,
+    S ceType.GoodProf leCl ck.value,
+    S ceType.ProducerAggregat on.value,
   )
 }

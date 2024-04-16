@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.social_context
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.soc al_context
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContextType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseStr
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.soc al_context.BaseSoc alContextBu lder
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.GeneralContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.GeneralContextType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Url
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-case class GeneralSocialContextBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  textBuilder: BaseStr[Query, Candidate],
+case class GeneralSoc alContextBu lder[-Query <: P pel neQuery, -Cand date <: Un versalNoun[Any]](
+  textBu lder: BaseStr[Query, Cand date],
   contextType: GeneralContextType,
-  url: Option[String] = None,
-  contextImageUrls: Option[List[String]] = None,
-  landingUrl: Option[Url] = None)
-    extends BaseSocialContextBuilder[Query, Candidate] {
+  url: Opt on[Str ng] = None,
+  context mageUrls: Opt on[L st[Str ng]] = None,
+  land ngUrl: Opt on[Url] = None)
+    extends BaseSoc alContextBu lder[Query, Cand date] {
 
   def apply(
     query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): Option[GeneralContext] =
-    Some(
+    cand date: Cand date,
+    cand dateFeatures: FeatureMap
+  ): Opt on[GeneralContext] =
+    So (
       GeneralContext(
-        text = textBuilder(query, candidate, candidateFeatures),
+        text = textBu lder(query, cand date, cand dateFeatures),
         contextType = contextType,
         url = url,
-        contextImageUrls = contextImageUrls,
-        landingUrl = landingUrl))
+        context mageUrls = context mageUrls,
+        land ngUrl = land ngUrl))
 }

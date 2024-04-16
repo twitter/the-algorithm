@@ -1,13 +1,13 @@
-package com.twitter.search.earlybird_root.caching;
+package com.tw ter.search.earlyb rd_root.cach ng;
 
-import com.twitter.search.common.metrics.SearchRateCounter;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
 
-public final class CacheStats {
-  public static final SearchRateCounter REQUEST_FAILED_COUNTER =
-      SearchRateCounter.export("memcache_request_failed");
-  public static final SearchRateCounter REQUEST_TIMEOUT_COUNTER =
-      SearchRateCounter.export("memcache_request_timeout");
+publ c f nal class Cac Stats {
+  publ c stat c f nal SearchRateCounter REQUEST_FA LED_COUNTER =
+      SearchRateCounter.export(" mcac _request_fa led");
+  publ c stat c f nal SearchRateCounter REQUEST_T MEOUT_COUNTER =
+      SearchRateCounter.export(" mcac _request_t  out");
 
-  private CacheStats() {
+  pr vate Cac Stats() {
   }
 }

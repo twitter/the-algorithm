@@ -1,24 +1,24 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.flockdb.client.QuoteTweetsIndexGraph
-import com.twitter.flockdb.client.TFlockClient
-import com.twitter.flockdb.client.UserTimelineGraph
-import com.twitter.stitch.Stitch
+ mport com.tw ter.flockdb.cl ent.QuoteT ets ndexGraph
+ mport com.tw ter.flockdb.cl ent.TFlockCl ent
+ mport com.tw ter.flockdb.cl ent.UserT  l neGraph
+ mport com.tw ter.st ch.St ch
 
-object LastQuoteOfQuoterRepository {
-  type Type = (TweetId, UserId) => Stitch[Boolean]
+object LastQuoteOfQuoterRepos ory {
+  type Type = (T et d, User d) => St ch[Boolean]
 
   def apply(
-    tflockReadClient: TFlockClient
+    tflockReadCl ent: TFlockCl ent
   ): Type =
-    (tweetId, userId) => {
-      // Select the tweets authored by userId quoting tweetId.
-      // By intersecting the tweet quotes with this user's tweets.
-      val quotesFromQuotingUser = QuoteTweetsIndexGraph
-        .from(tweetId)
-        .intersect(UserTimelineGraph.from(userId))
+    (t et d, user d) => {
+      // Select t  t ets authored by user d quot ng t et d.
+      // By  ntersect ng t  t et quotes w h t  user's t ets.
+      val quotesFromQuot ngUser = QuoteT ets ndexGraph
+        .from(t et d)
+        . ntersect(UserT  l neGraph.from(user d))
 
-      Stitch.callFuture(tflockReadClient.selectAll(quotesFromQuotingUser).map(_.size <= 1))
+      St ch.callFuture(tflockReadCl ent.selectAll(quotesFromQuot ngUser).map(_.s ze <= 1))
     }
 }

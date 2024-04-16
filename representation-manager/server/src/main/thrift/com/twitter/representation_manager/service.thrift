@@ -1,14 +1,14 @@
-namespace java com.twitter.representation_manager.thriftjava
-#@namespace scala com.twitter.representation_manager.thriftscala
-#@namespace strato com.twitter.representation_manager
+na space java com.tw ter.representat on_manager.thr ftjava
+#@na space scala com.tw ter.representat on_manager.thr ftscala
+#@na space strato com.tw ter.representat on_manager
 
-include "com/twitter/simclusters_v2/online_store.thrift"
-include "com/twitter/simclusters_v2/identifier.thrift"
+ nclude "com/tw ter/s mclusters_v2/onl ne_store.thr ft"
+ nclude "com/tw ter/s mclusters_v2/ dent f er.thr ft"
 
 /**
-  * A uniform column view for all kinds of SimClusters based embeddings.
+  * A un form column v ew for all k nds of S mClusters based embedd ngs.
   **/
-struct SimClustersEmbeddingView {
-  1: required identifier.EmbeddingType embeddingType
-  2: required online_store.ModelVersion modelVersion
-}(persisted = 'false', hasPersonalData = 'false')
+struct S mClustersEmbedd ngV ew {
+  1: requ red  dent f er.Embedd ngType embedd ngType
+  2: requ red onl ne_store.ModelVers on modelVers on
+}(pers sted = 'false', hasPersonalData = 'false')

@@ -1,134 +1,134 @@
-package com.twitter.simclusters_v2.scalding.embedding.tfg
+package com.tw ter.s mclusters_v2.scald ng.embedd ng.tfg
 
-import com.twitter.bijection.{Bufferable, Injection}
-import com.twitter.dal.client.dataset.{KeyValDALDataset, SnapshotDALDatasetBase}
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite.{D, _}
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.{Language, SimClustersEmbedding, TopicId}
-import com.twitter.simclusters_v2.hdfs_sources.InterestedInSources
-import com.twitter.simclusters_v2.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.{UserId, _}
-import com.twitter.simclusters_v2.scalding.embedding.common.{
-  EmbeddingUtil,
-  ExternalDataSources,
-  SimClustersEmbeddingBaseJob
+ mport com.tw ter.b ject on.{Bufferable,  nject on}
+ mport com.tw ter.dal.cl ent.dataset.{KeyValDALDataset, SnapshotDALDatasetBase}
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e.{D, _}
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.common.{Language, S mClustersEmbedd ng, Top c d}
+ mport com.tw ter.s mclusters_v2.hdfs_s ces. nterested nS ces
+ mport com.tw ter.s mclusters_v2.scald ng.common.matr x.{SparseMatr x, SparseRowMatr x}
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.Embedd ngUt l.{User d, _}
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.{
+  Embedd ngUt l,
+  ExternalDataS ces,
+  S mClustersEmbedd ngBaseJob
 }
-import com.twitter.simclusters_v2.thriftscala.{
+ mport com.tw ter.s mclusters_v2.thr ftscala.{
   ClustersScore,
-  EmbeddingType,
-  TfgTopicEmbeddings,
-  InternalId,
-  LocaleEntityId,
-  ModelVersion,
-  SimClustersEmbeddingId,
-  UserToInterestedInClusterScores,
-  SimClustersEmbedding => ThriftSimClustersEmbedding,
-  TopicId => TID
+  Embedd ngType,
+  TfgTop cEmbedd ngs,
+   nternal d,
+  LocaleEnt y d,
+  ModelVers on,
+  S mClustersEmbedd ng d,
+  UserTo nterested nClusterScores,
+  S mClustersEmbedd ng => Thr ftS mClustersEmbedd ng,
+  Top c d => T D
 }
-import com.twitter.wtf.scalding.jobs.common.DateRangeExecutionApp
+ mport com.tw ter.wtf.scald ng.jobs.common.DateRangeExecut onApp
 
-import java.util.TimeZone
+ mport java.ut l.T  Zone
 
 /**
- * Base app for the Topic-Follow-Graph (TFG) topic embeddings
- * A topic's TFG embedding is represented by the sum of all the users who followed the topic
+ * Base app for t  Top c-Follow-Graph (TFG) top c embedd ngs
+ * A top c's TFG embedd ng  s represented by t  sum of all t  users who follo d t  top c
  */
-trait TfgBasedTopicEmbeddingsBaseApp
-    extends SimClustersEmbeddingBaseJob[(TopicId, Language)]
-    with DateRangeExecutionApp {
+tra  TfgBasedTop cEmbedd ngsBaseApp
+    extends S mClustersEmbedd ngBaseJob[(Top c d, Language)]
+    w h DateRangeExecut onApp {
 
-  val isAdhoc: Boolean
-  val embeddingType: EmbeddingType
-  val embeddingSource: KeyValDALDataset[KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]]
-  val pathSuffix: String
-  val modelVersion: ModelVersion
-  val parquetDataSource: SnapshotDALDatasetBase[TfgTopicEmbeddings]
-  def scoreExtractor: UserToInterestedInClusterScores => Double
+  val  sAdhoc: Boolean
+  val embedd ngType: Embedd ngType
+  val embedd ngS ce: KeyValDALDataset[KeyVal[S mClustersEmbedd ng d, Thr ftS mClustersEmbedd ng]]
+  val pathSuff x: Str ng
+  val modelVers on: ModelVers on
+  val parquetDataS ce: SnapshotDALDatasetBase[TfgTop cEmbedd ngs]
+  def scoreExtractor: UserTo nterested nClusterScores => Double
 
-  override def numClustersPerNoun: Int = 50
-  override def numNounsPerClusters: Int = 1 // not used for now. Set to an arbitrary number
-  override def thresholdForEmbeddingScores: Double = 0.001
+  overr de def numClustersPerNoun:  nt = 50
+  overr de def numNounsPerClusters:  nt = 1 // not used for now. Set to an arb rary number
+  overr de def thresholdForEmbedd ngScores: Double = 0.001
 
-  val minNumFollowers = 100
+  val m nNumFollo rs = 100
 
-  override def prepareNounToUserMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseMatrix[(TopicId, Language), UserId, Double] = {
-    implicit val inj: Injection[(TopicId, Language), Array[Byte]] =
-      Bufferable.injectionOf[(TopicId, Language)]
+  overr de def prepareNounToUserMatr x(
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): SparseMatr x[(Top c d, Language), User d, Double] = {
+     mpl c  val  nj:  nject on[(Top c d, Language), Array[Byte]] =
+      Bufferable. nject onOf[(Top c d, Language)]
 
-    val topicLangUsers = ExternalDataSources.topicFollowGraphSource
-      .map { case (topic, user) => (user, topic) }
-      .join(ExternalDataSources.userSource)
+    val top cLangUsers = ExternalDataS ces.top cFollowGraphS ce
+      .map { case (top c, user) => (user, top c) }
+      .jo n(ExternalDataS ces.userS ce)
       .map {
-        case (user, (topic, (_, language))) =>
-          ((topic, language), user, 1.0)
+        case (user, (top c, (_, language))) =>
+          ((top c, language), user, 1.0)
       }
-      .forceToDisk
+      .forceToD sk
 
-    val validTopicLang =
-      SparseMatrix(topicLangUsers).rowNnz.filter {
-        case (_, nzCount) => nzCount >= minNumFollowers
+    val val dTop cLang =
+      SparseMatr x(top cLangUsers).rowNnz.f lter {
+        case (_, nzCount) => nzCount >= m nNumFollo rs
       }.keys
 
-    SparseMatrix[(TopicId, Language), UserId, Double](topicLangUsers).filterRows(validTopicLang)
+    SparseMatr x[(Top c d, Language), User d, Double](top cLangUsers).f lterRows(val dTop cLang)
   }
 
-  override def prepareUserToClusterMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseRowMatrix[UserId, ClusterId, Double] =
-    SparseRowMatrix(
-      InterestedInSources
-        .simClustersInterestedInSource(modelVersion, dateRange, timeZone)
+  overr de def prepareUserToClusterMatr x(
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): SparseRowMatr x[User d, Cluster d, Double] =
+    SparseRowMatr x(
+       nterested nS ces
+        .s mClusters nterested nS ce(modelVers on, dateRange, t  Zone)
         .map {
-          case (userId, clustersUserIsInterestedIn) =>
-            userId -> clustersUserIsInterestedIn.clusterIdToScores
+          case (user d, clustersUser s nterested n) =>
+            user d -> clustersUser s nterested n.cluster dToScores
               .map {
-                case (clusterId, scores) =>
-                  clusterId -> scoreExtractor(scores)
+                case (cluster d, scores) =>
+                  cluster d -> scoreExtractor(scores)
               }
-              .filter(_._2 > 0.0)
+              .f lter(_._2 > 0.0)
               .toMap
         },
-      isSkinnyMatrix = true
+       sSk nnyMatr x = true
     )
 
-  override def writeNounToClustersIndex(
-    output: TypedPipe[((TopicId, Language), Seq[(ClusterId, Double)])]
+  overr de def wr eNounToClusters ndex(
+    output: TypedP pe[((Top c d, Language), Seq[(Cluster d, Double)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val topicEmbeddingCount = Stat(s"topic_embedding_count")
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
+    val top cEmbedd ngCount = Stat(s"top c_embedd ng_count")
     val user = System.getenv("USER")
     val parquetExec = output
       .map {
-        case ((entityId, language), clustersWithScores) =>
-          TfgTopicEmbeddings(
-            TID(
-              entityId = entityId,
-              language = Some(language),
+        case ((ent y d, language), clustersW hScores) =>
+          TfgTop cEmbedd ngs(
+            T D(
+              ent y d = ent y d,
+              language = So (language),
             ),
-            clusterScore = clustersWithScores.map {
-              case (clusterId, score) => ClustersScore(clusterId, score)
+            clusterScore = clustersW hScores.map {
+              case (cluster d, score) => ClustersScore(cluster d, score)
             }
           )
       }
-      .writeDALSnapshotExecution(
-        parquetDataSource,
-        D.Daily,
-        D.Suffix(
-          EmbeddingUtil.getHdfsPath(
-            isAdhoc = isAdhoc,
-            isManhattanKeyVal = false,
-            modelVersion,
-            pathSuffix + "/snapshot")),
+      .wr eDALSnapshotExecut on(
+        parquetDataS ce,
+        D.Da ly,
+        D.Suff x(
+          Embedd ngUt l.getHdfsPath(
+             sAdhoc =  sAdhoc,
+             sManhattanKeyVal = false,
+            modelVers on,
+            pathSuff x + "/snapshot")),
         D.Parquet,
         dateRange.end
       )
@@ -136,56 +136,56 @@ trait TfgBasedTopicEmbeddingsBaseApp
     val tsvExec =
       output
         .map {
-          case ((entityId, language), clustersWithScores) =>
-            (entityId, language, clustersWithScores.mkString(";"))
+          case ((ent y d, language), clustersW hScores) =>
+            (ent y d, language, clustersW hScores.mkStr ng(";"))
         }
         .shard(10)
-        .writeExecution(TypedTsv[(TopicId, Language, String)](
-          s"/user/$user/adhoc/topic_embedding/$pathSuffix/$ModelVersionPathMap($modelVersion)"))
+        .wr eExecut on(TypedTsv[(Top c d, Language, Str ng)](
+          s"/user/$user/adhoc/top c_embedd ng/$pathSuff x/$ModelVers onPathMap($modelVers on)"))
 
     val keyValExec = output
       .flatMap {
-        case ((entityId, lang), clustersWithScores) =>
-          topicEmbeddingCount.inc()
-          val embedding = SimClustersEmbedding(clustersWithScores).toThrift
+        case ((ent y d, lang), clustersW hScores) =>
+          top cEmbedd ngCount. nc()
+          val embedd ng = S mClustersEmbedd ng(clustersW hScores).toThr ft
           Seq(
             KeyVal(
-              SimClustersEmbeddingId(
-                embeddingType,
-                modelVersion,
-                InternalId.LocaleEntityId(LocaleEntityId(entityId, lang))
+              S mClustersEmbedd ng d(
+                embedd ngType,
+                modelVers on,
+                 nternal d.LocaleEnt y d(LocaleEnt y d(ent y d, lang))
               ),
-              embedding
+              embedd ng
             ),
             KeyVal(
-              SimClustersEmbeddingId(
-                embeddingType,
-                modelVersion,
-                InternalId.TopicId(TID(entityId, Some(lang), country = None))
+              S mClustersEmbedd ng d(
+                embedd ngType,
+                modelVers on,
+                 nternal d.Top c d(T D(ent y d, So (lang), country = None))
               ),
-              embedding
+              embedd ng
             ),
           )
       }
-      .writeDALVersionedKeyValExecution(
-        embeddingSource,
-        D.Suffix(
-          EmbeddingUtil
-            .getHdfsPath(isAdhoc = isAdhoc, isManhattanKeyVal = true, modelVersion, pathSuffix))
+      .wr eDALVers onedKeyValExecut on(
+        embedd ngS ce,
+        D.Suff x(
+          Embedd ngUt l
+            .getHdfsPath( sAdhoc =  sAdhoc,  sManhattanKeyVal = true, modelVers on, pathSuff x))
       )
-    if (isAdhoc)
-      Execution.zip(tsvExec, keyValExec, parquetExec).unit
+     f ( sAdhoc)
+      Execut on.z p(tsvExec, keyValExec, parquetExec).un 
     else
-      Execution.zip(keyValExec, parquetExec).unit
+      Execut on.z p(keyValExec, parquetExec).un 
   }
 
-  override def writeClusterToNounsIndex(
-    output: TypedPipe[(ClusterId, Seq[((TopicId, Language), Double)])]
+  overr de def wr eClusterToNouns ndex(
+    output: TypedP pe[(Cluster d, Seq[((Top c d, Language), Double)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    Execution.unit // do not need this
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
+    Execut on.un  // do not need t 
   }
 }

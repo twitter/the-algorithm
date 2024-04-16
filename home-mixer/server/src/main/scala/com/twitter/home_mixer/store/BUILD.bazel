@@ -1,13 +1,13 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/bijection:scrooge",
-        "3rdparty/jvm/com/twitter/storehaus:core",
-        "src/thrift/com/twitter/wtf/candidate:wtf-candidate-scala",
-        "stitch/stitch-core",
-        "storage/clients/manhattan/client/src/main/scala",
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/com/tw ter/b ject on:scrooge",
+        "3rdparty/jvm/com/tw ter/storehaus:core",
+        "src/thr ft/com/tw ter/wtf/cand date:wtf-cand date-scala",
+        "st ch/st ch-core",
+        "storage/cl ents/manhattan/cl ent/src/ma n/scala",
     ],
 )

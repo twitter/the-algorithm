@@ -1,81 +1,81 @@
-package com.twitter.search.earlybird.index;
+package com.tw ter.search.earlyb rd. ndex;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Set;
+ mport java. o. OExcept on;
+ mport java.ut l.Arrays;
+ mport java.ut l.Set;
 
-import com.google.common.collect.Sets;
+ mport com.google.common.collect.Sets;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.search. ndexSearc r;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .lucene.search.ScoreMode;
+ mport org.apac .lucene.search.  ght;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.common.search.IntArrayDocIdSetIterator;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
+ mport com.tw ter.search.common.query.DefaultF lter  ght;
+ mport com.tw ter.search.common.search. ntArrayDoc dSet erator;
+ mport com.tw ter.search.core.earlyb rd. ndex.Doc DToT et DMapper;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntData;
 
-public class TweetIDQuery extends Query {
-  private final Set<Long> tweetIDs = Sets.newHashSet();
+publ c class T et DQuery extends Query {
+  pr vate f nal Set<Long> t et Ds = Sets.newHashSet();
 
-  public TweetIDQuery(long... tweetIDs) {
-    for (long tweetID : tweetIDs) {
-      this.tweetIDs.add(tweetID);
+  publ c T et DQuery(long... t et Ds) {
+    for (long t et D : t et Ds) {
+      t .t et Ds.add(t et D);
     }
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        EarlybirdIndexSegmentData segmentData =
-            ((EarlybirdIndexSegmentAtomicReader) context.reader()).getSegmentData();
-        DocIDToTweetIDMapper docIdToTweetIdMapper = segmentData.getDocIDToTweetIDMapper();
+  @Overr de
+  publ c   ght create  ght( ndexSearc r searc r, ScoreMode scoreMode, float boost) {
+    return new DefaultF lter  ght(t ) {
+      @Overr de
+      protected Doc dSet erator getDoc dSet erator(LeafReaderContext context) throws  OExcept on {
+        Earlyb rd ndexSeg ntData seg ntData =
+            ((Earlyb rd ndexSeg ntAtom cReader) context.reader()).getSeg ntData();
+        Doc DToT et DMapper doc dToT et dMapper = seg ntData.getDoc DToT et DMapper();
 
-        Set<Integer> set = Sets.newHashSet();
-        for (long tweetID : tweetIDs) {
-          int docID = docIdToTweetIdMapper.getDocID(tweetID);
-          if (docID != DocIDToTweetIDMapper.ID_NOT_FOUND) {
-            set.add(docID);
+        Set< nteger> set = Sets.newHashSet();
+        for (long t et D : t et Ds) {
+           nt doc D = doc dToT et dMapper.getDoc D(t et D);
+           f (doc D != Doc DToT et DMapper. D_NOT_FOUND) {
+            set.add(doc D);
           }
         }
 
-        if (set.isEmpty()) {
-          return DocIdSetIterator.empty();
+         f (set. sEmpty()) {
+          return Doc dSet erator.empty();
         }
 
-        int[] docIDs = new int[set.size()];
-        int i = 0;
-        for (int docID : set) {
-          docIDs[i++] = docID;
+         nt[] doc Ds = new  nt[set.s ze()];
+         nt   = 0;
+        for ( nt doc D : set) {
+          doc Ds[ ++] = doc D;
         }
-        Arrays.sort(docIDs);
-        return new IntArrayDocIdSetIterator(docIDs);
+        Arrays.sort(doc Ds);
+        return new  ntArrayDoc dSet erator(doc Ds);
       }
     };
   }
 
-  @Override
-  public int hashCode() {
-    return tweetIDs.hashCode();
+  @Overr de
+  publ c  nt hashCode() {
+    return t et Ds.hashCode();
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof TweetIDQuery)) {
+  @Overr de
+  publ c boolean equals(Object obj) {
+     f (!(obj  nstanceof T et DQuery)) {
       return false;
     }
 
-    return tweetIDs.equals(TweetIDQuery.class.cast(obj).tweetIDs);
+    return t et Ds.equals(T et DQuery.class.cast(obj).t et Ds);
   }
 
-  @Override
-  public String toString(String field) {
-    return "TWEET_ID_QUERY: " + tweetIDs;
+  @Overr de
+  publ c Str ng toStr ng(Str ng f eld) {
+    return "TWEET_ D_QUERY: " + t et Ds;
   }
 }

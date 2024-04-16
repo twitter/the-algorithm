@@ -1,50 +1,50 @@
-package com.twitter.servo.cache
+package com.tw ter.servo.cac 
 
-import com.twitter.util.Future
+ mport com.tw ter.ut l.Future
 
 /**
- * A cache wrapper that makes the underlying cache transparent to
- * certain keys.
+ * A cac  wrapper that makes t  underly ng cac  transparent to
+ * certa n keys.
  */
-class KeyFilteringCache[K, V](val underlyingCache: Cache[K, V], keyPredicate: K => Boolean)
-    extends CacheWrapper[K, V] {
-  override def get(keys: Seq[K]): Future[KeyValueResult[K, V]] =
-    underlyingCache.get(keys filter keyPredicate)
+class KeyF lter ngCac [K, V](val underly ngCac : Cac [K, V], keyPred cate: K => Boolean)
+    extends Cac Wrapper[K, V] {
+  overr de def get(keys: Seq[K]): Future[KeyValueResult[K, V]] =
+    underly ngCac .get(keys f lter keyPred cate)
 
-  override def getWithChecksum(keys: Seq[K]): Future[CsKeyValueResult[K, V]] =
-    underlyingCache.getWithChecksum(keys filter keyPredicate)
+  overr de def getW hC cksum(keys: Seq[K]): Future[CsKeyValueResult[K, V]] =
+    underly ngCac .getW hC cksum(keys f lter keyPred cate)
 
-  override def add(key: K, value: V) =
-    if (keyPredicate(key)) {
-      underlyingCache.add(key, value)
+  overr de def add(key: K, value: V) =
+     f (keyPred cate(key)) {
+      underly ngCac .add(key, value)
     } else {
       Future.True
     }
 
-  override def checkAndSet(key: K, value: V, checksum: Checksum) =
-    if (keyPredicate(key)) {
-      underlyingCache.checkAndSet(key, value, checksum)
+  overr de def c ckAndSet(key: K, value: V, c cksum: C cksum) =
+     f (keyPred cate(key)) {
+      underly ngCac .c ckAndSet(key, value, c cksum)
     } else {
       Future.True
     }
 
-  override def set(key: K, value: V) =
-    if (keyPredicate(key)) {
-      underlyingCache.set(key, value)
+  overr de def set(key: K, value: V) =
+     f (keyPred cate(key)) {
+      underly ngCac .set(key, value)
     } else {
       Future.Done
     }
 
-  override def replace(key: K, value: V) =
-    if (keyPredicate(key)) {
-      underlyingCache.replace(key, value)
+  overr de def replace(key: K, value: V) =
+     f (keyPred cate(key)) {
+      underly ngCac .replace(key, value)
     } else {
       Future.True
     }
 
-  override def delete(key: K) =
-    if (keyPredicate(key)) {
-      underlyingCache.delete(key)
+  overr de def delete(key: K) =
+     f (keyPred cate(key)) {
+      underly ngCac .delete(key)
     } else {
       Future.True
     }

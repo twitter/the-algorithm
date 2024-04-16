@@ -1,17 +1,17 @@
-scala_library(
-    sources = [
+scala_l brary(
+    s ces = [
         "*.scala",
     ],
-    compiler_option_sets = ["fatal_warnings"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/service",
-        "stitch/stitch-core",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/serv ce",
+        "st ch/st ch-core",
     ],
     exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/service",
-        "stitch/stitch-core",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/serv ce",
+        "st ch/st ch-core",
     ],
 )

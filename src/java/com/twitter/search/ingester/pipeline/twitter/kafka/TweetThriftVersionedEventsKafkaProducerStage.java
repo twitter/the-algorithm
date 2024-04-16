@@ -1,108 +1,108 @@
-package com.twitter.search.ingester.pipeline.twitter.kafka;
+package com.tw ter.search. ngester.p pel ne.tw ter.kafka;
 
-import javax.naming.NamingException;
+ mport javax.nam ng.Nam ngExcept on;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons.p pel ne.StageExcept on;
+ mport org.apac .commons.p pel ne.val dat on.Consu dTypes;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.debug.DebugEventUtil;
-import com.twitter.search.common.debug.thriftjava.DebugEvents;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.ingester.model.IngesterThriftVersionedEvents;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
+ mport com.tw ter.search.common.debug.DebugEventUt l;
+ mport com.tw ter.search.common.debug.thr ftjava.DebugEvents;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
+ mport com.tw ter.search. ngester.model. ngesterThr ftVers onedEvents;
+ mport com.tw ter.search. ngester.p pel ne.ut l.P pel neStageExcept on;
 
 /**
- * Kafka producer stage to write tweet indexing data as {@code ThriftVersionedEvents}. This stage
- * also handles extra debug event processing.
+ * Kafka producer stage to wr e t et  ndex ng data as {@code Thr ftVers onedEvents}. T  stage
+ * also handles extra debug event process ng.
  */
-@ConsumedTypes(IngesterThriftVersionedEvents.class)
-public class TweetThriftVersionedEventsKafkaProducerStage extends KafkaProducerStage
-    <IngesterThriftVersionedEvents> {
-  private static final int PROCESSING_LATENCY_THRESHOLD_FOR_UPDATES_MILLIS = 30000;
+@Consu dTypes( ngesterThr ftVers onedEvents.class)
+publ c class T etThr ftVers onedEventsKafkaProducerStage extends KafkaProducerStage
+    < ngesterThr ftVers onedEvents> {
+  pr vate stat c f nal  nt PROCESS NG_LATENCY_THRESHOLD_FOR_UPDATES_M LL S = 30000;
 
-  private static final Logger LOG =
-      LoggerFactory.getLogger(TweetThriftVersionedEventsKafkaProducerStage.class);
+  pr vate stat c f nal Logger LOG =
+      LoggerFactory.getLogger(T etThr ftVers onedEventsKafkaProducerStage.class);
 
-  private long processedTweetCount = 0;
+  pr vate long processedT etCount = 0;
 
-  private SearchLongGauge kafkaProducerLag;
+  pr vate SearchLongGauge kafkaProducerLag;
 
-  private int debugEventLogPeriod = -1;
+  pr vate  nt debugEventLogPer od = -1;
 
-  public TweetThriftVersionedEventsKafkaProducerStage(String kafkaTopic, String clientId,
-                                            String clusterPath) {
-    super(kafkaTopic, clientId, clusterPath);
+  publ c T etThr ftVers onedEventsKafkaProducerStage(Str ng kafkaTop c, Str ng cl ent d,
+                                            Str ng clusterPath) {
+    super(kafkaTop c, cl ent d, clusterPath);
   }
 
-  public TweetThriftVersionedEventsKafkaProducerStage() {
+  publ c T etThr ftVers onedEventsKafkaProducerStage() {
     super();
   }
 
-  @Override
-  protected void initStats() {
-    super.initStats();
+  @Overr de
+  protected vo d  n Stats() {
+    super. n Stats();
     setupCommonStats();
   }
 
-  @Override
-  protected void innerSetupStats() {
-    super.innerSetupStats();
+  @Overr de
+  protected vo d  nnerSetupStats() {
+    super. nnerSetupStats();
     setupCommonStats();
   }
 
-  private void setupCommonStats() {
+  pr vate vo d setupCommonStats() {
     kafkaProducerLag = SearchLongGauge.export(
-        getStageNamePrefix() + "_kafka_producer_lag_millis");
+        getStageNa Pref x() + "_kafka_producer_lag_m ll s");
   }
 
-  @Override
-  protected void innerSetup() throws PipelineStageException, NamingException {
-    super.innerSetup();
+  @Overr de
+  protected vo d  nnerSetup() throws P pel neStageExcept on, Nam ngExcept on {
+    super. nnerSetup();
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    super.doInnerPreprocess();
-    commonInnerSetup();
+  @Overr de
+  protected vo d do nnerPreprocess() throws StageExcept on, Nam ngExcept on {
+    super.do nnerPreprocess();
+    common nnerSetup();
   }
 
-  private void commonInnerSetup() {
-    setProcessingLatencyThresholdMillis(PROCESSING_LATENCY_THRESHOLD_FOR_UPDATES_MILLIS);
+  pr vate vo d common nnerSetup() {
+    setProcess ngLatencyThresholdM ll s(PROCESS NG_LATENCY_THRESHOLD_FOR_UPDATES_M LL S);
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterThriftVersionedEvents)) {
-      throw new StageException(this, "Object is not IngesterThriftVersionedEvents: " + obj);
+  @Overr de
+  publ c vo d  nnerProcess(Object obj) throws StageExcept on {
+     f (!(obj  nstanceof  ngesterThr ftVers onedEvents)) {
+      throw new StageExcept on(t , "Object  s not  ngesterThr ftVers onedEvents: " + obj);
     }
 
-    IngesterThriftVersionedEvents events = (IngesterThriftVersionedEvents) obj;
-    innerRunFinalStageOfBranchV2(events);
+     ngesterThr ftVers onedEvents events = ( ngesterThr ftVers onedEvents) obj;
+     nnerRunF nalStageOfBranchV2(events);
   }
 
-  @Override
-  protected void innerRunFinalStageOfBranchV2(IngesterThriftVersionedEvents events) {
-    if ((debugEventLogPeriod > 0)
-        && (processedTweetCount % debugEventLogPeriod == 0)
+  @Overr de
+  protected vo d  nnerRunF nalStageOfBranchV2( ngesterThr ftVers onedEvents events) {
+     f ((debugEventLogPer od > 0)
+        && (processedT etCount % debugEventLogPer od == 0)
         && (events.getDebugEvents() != null)) {
-      LOG.info("DebugEvents for tweet {}: {}",
-          events.getTweetId(), DebugEventUtil.debugEventsToString(events.getDebugEvents()));
+      LOG. nfo("DebugEvents for t et {}: {}",
+          events.getT et d(), DebugEventUt l.debugEventsToStr ng(events.getDebugEvents()));
     }
-    processedTweetCount++;
+    processedT etCount++;
 
     DebugEvents debugEvents = events.getDebugEvents();
-    if ((debugEvents != null) && debugEvents.isSetProcessingStartedAt()) {
+     f ((debugEvents != null) && debugEvents. sSetProcess ngStartedAt()) {
       kafkaProducerLag.set(
-          clock.nowMillis() - debugEvents.getProcessingStartedAt().getEventTimestampMillis());
+          clock.nowM ll s() - debugEvents.getProcess ngStartedAt().getEventT  stampM ll s());
     }
 
     super.tryToSendEventsToKafka(events);
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setDebugEventLogPeriod(int debugEventLogPeriod) {
-    this.debugEventLogPeriod = debugEventLogPeriod;
+  @SuppressWarn ngs("unused")  // set from p pel ne conf g
+  publ c vo d setDebugEventLogPer od( nt debugEventLogPer od) {
+    t .debugEventLogPer od = debugEventLogPer od;
   }
 }

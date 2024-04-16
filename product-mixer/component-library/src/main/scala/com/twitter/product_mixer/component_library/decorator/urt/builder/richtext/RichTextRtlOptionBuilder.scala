@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.r chtext
 
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-trait RichTextRtlOptionBuilder[-Query <: PipelineQuery] {
-  def apply(query: Query): Option[Boolean]
+tra  R chTextRtlOpt onBu lder[-Query <: P pel neQuery] {
+  def apply(query: Query): Opt on[Boolean]
 }
 
-case class StaticRichTextRtlOptionBuilder[-Query <: PipelineQuery](rtlOption: Option[Boolean])
-    extends RichTextRtlOptionBuilder[Query] {
-  override def apply(query: Query): Option[Boolean] = rtlOption
+case class Stat cR chTextRtlOpt onBu lder[-Query <: P pel neQuery](rtlOpt on: Opt on[Boolean])
+    extends R chTextRtlOpt onBu lder[Query] {
+  overr de def apply(query: Query): Opt on[Boolean] = rtlOpt on
 }

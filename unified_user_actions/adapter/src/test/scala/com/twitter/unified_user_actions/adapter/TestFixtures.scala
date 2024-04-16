@@ -1,2293 +1,2293 @@
-package com.twitter.unified_user_actions.adapter
+package com.tw ter.un f ed_user_act ons.adapter
 
-import com.twitter.ads.cards.thriftscala.CardEvent
-import com.twitter.ads.eventstream.thriftscala.EngagementEvent
-import com.twitter.ads.spendserver.thriftscala.SpendServerEvent
-import com.twitter.adserver.thriftscala.ImpressionDataNeededAtEngagementTime
-import com.twitter.adserver.thriftscala.ClientInfo
-import com.twitter.adserver.thriftscala.EngagementType
-import com.twitter.adserver.thriftscala.DisplayLocation
-import com.twitter.clientapp.thriftscala.AmplifyDetails
-import com.twitter.clientapp.thriftscala.CardDetails
-import com.twitter.clientapp.thriftscala.EventDetails
-import com.twitter.clientapp.thriftscala.EventNamespace
-import com.twitter.clientapp.thriftscala.ImpressionDetails
-import com.twitter.clientapp.thriftscala.ItemType
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.clientapp.thriftscala.MediaDetails
-import com.twitter.clientapp.thriftscala.MediaDetailsV2
-import com.twitter.clientapp.thriftscala.MediaType
-import com.twitter.clientapp.thriftscala.NotificationDetails
-import com.twitter.clientapp.thriftscala.NotificationTabDetails
-import com.twitter.clientapp.thriftscala.PerformanceDetails
-import com.twitter.clientapp.thriftscala.ReportDetails
-import com.twitter.clientapp.thriftscala.SearchDetails
-import com.twitter.clientapp.thriftscala.SuggestionDetails
-import com.twitter.clientapp.thriftscala.{Item => LogEventItem}
-import com.twitter.clientapp.thriftscala.{TweetDetails => LogEventTweetDetails}
-import com.twitter.gizmoduck.thriftscala.UserModification
-import com.twitter.gizmoduck.thriftscala.Profile
-import com.twitter.gizmoduck.thriftscala.Auth
-import com.twitter.gizmoduck.thriftscala.UpdateDiffItem
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.gizmoduck.thriftscala.UserType
-import com.twitter.ibis.thriftscala.NotificationScribe
-import com.twitter.ibis.thriftscala.NotificationScribeType
-import com.twitter.iesource.thriftscala.ClientEventContext
-import com.twitter.iesource.thriftscala.TweetImpression
-import com.twitter.iesource.thriftscala.ClientType
-import com.twitter.iesource.thriftscala.ContextualEventNamespace
-import com.twitter.iesource.thriftscala.EngagingContext
-import com.twitter.iesource.thriftscala.EventSource
-import com.twitter.iesource.thriftscala.InteractionDetails
-import com.twitter.iesource.thriftscala.InteractionEvent
-import com.twitter.iesource.thriftscala.InteractionType
-import com.twitter.iesource.thriftscala.InteractionTargetType
-import com.twitter.iesource.thriftscala.{UserIdentifier => UserIdentifierIE}
-import com.twitter.logbase.thriftscala.ClientEventReceiver
-import com.twitter.logbase.thriftscala.LogBase
-import com.twitter.mediaservices.commons.thriftscala.MediaCategory
-import com.twitter.notificationservice.api.thriftscala.NotificationClientEventMetadata
-import com.twitter.reportflow.thriftscala.ReportType
-import com.twitter.suggests.controller_data.home_tweets.thriftscala.HomeTweetsControllerData
-import com.twitter.suggests.controller_data.home_tweets.v1.thriftscala.{
-  HomeTweetsControllerData => HomeTweetsControllerDataV1
+ mport com.tw ter.ads.cards.thr ftscala.CardEvent
+ mport com.tw ter.ads.eventstream.thr ftscala.Engage ntEvent
+ mport com.tw ter.ads.spendserver.thr ftscala.SpendServerEvent
+ mport com.tw ter.adserver.thr ftscala. mpress onDataNeededAtEngage ntT  
+ mport com.tw ter.adserver.thr ftscala.Cl ent nfo
+ mport com.tw ter.adserver.thr ftscala.Engage ntType
+ mport com.tw ter.adserver.thr ftscala.D splayLocat on
+ mport com.tw ter.cl entapp.thr ftscala.Ampl fyDeta ls
+ mport com.tw ter.cl entapp.thr ftscala.CardDeta ls
+ mport com.tw ter.cl entapp.thr ftscala.EventDeta ls
+ mport com.tw ter.cl entapp.thr ftscala.EventNa space
+ mport com.tw ter.cl entapp.thr ftscala. mpress onDeta ls
+ mport com.tw ter.cl entapp.thr ftscala. emType
+ mport com.tw ter.cl entapp.thr ftscala.LogEvent
+ mport com.tw ter.cl entapp.thr ftscala. d aDeta ls
+ mport com.tw ter.cl entapp.thr ftscala. d aDeta lsV2
+ mport com.tw ter.cl entapp.thr ftscala. d aType
+ mport com.tw ter.cl entapp.thr ftscala.Not f cat onDeta ls
+ mport com.tw ter.cl entapp.thr ftscala.Not f cat onTabDeta ls
+ mport com.tw ter.cl entapp.thr ftscala.PerformanceDeta ls
+ mport com.tw ter.cl entapp.thr ftscala.ReportDeta ls
+ mport com.tw ter.cl entapp.thr ftscala.SearchDeta ls
+ mport com.tw ter.cl entapp.thr ftscala.Suggest onDeta ls
+ mport com.tw ter.cl entapp.thr ftscala.{ em => LogEvent em}
+ mport com.tw ter.cl entapp.thr ftscala.{T etDeta ls => LogEventT etDeta ls}
+ mport com.tw ter.g zmoduck.thr ftscala.UserMod f cat on
+ mport com.tw ter.g zmoduck.thr ftscala.Prof le
+ mport com.tw ter.g zmoduck.thr ftscala.Auth
+ mport com.tw ter.g zmoduck.thr ftscala.UpdateD ff em
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter.g zmoduck.thr ftscala.UserType
+ mport com.tw ter. b s.thr ftscala.Not f cat onScr be
+ mport com.tw ter. b s.thr ftscala.Not f cat onScr beType
+ mport com.tw ter. es ce.thr ftscala.Cl entEventContext
+ mport com.tw ter. es ce.thr ftscala.T et mpress on
+ mport com.tw ter. es ce.thr ftscala.Cl entType
+ mport com.tw ter. es ce.thr ftscala.ContextualEventNa space
+ mport com.tw ter. es ce.thr ftscala.Engag ngContext
+ mport com.tw ter. es ce.thr ftscala.EventS ce
+ mport com.tw ter. es ce.thr ftscala. nteract onDeta ls
+ mport com.tw ter. es ce.thr ftscala. nteract onEvent
+ mport com.tw ter. es ce.thr ftscala. nteract onType
+ mport com.tw ter. es ce.thr ftscala. nteract onTargetType
+ mport com.tw ter. es ce.thr ftscala.{User dent f er => User dent f er E}
+ mport com.tw ter.logbase.thr ftscala.Cl entEventRece ver
+ mport com.tw ter.logbase.thr ftscala.LogBase
+ mport com.tw ter. d aserv ces.commons.thr ftscala. d aCategory
+ mport com.tw ter.not f cat onserv ce.ap .thr ftscala.Not f cat onCl entEvent tadata
+ mport com.tw ter.reportflow.thr ftscala.ReportType
+ mport com.tw ter.suggests.controller_data.ho _t ets.thr ftscala.Ho T etsControllerData
+ mport com.tw ter.suggests.controller_data.ho _t ets.v1.thr ftscala.{
+  Ho T etsControllerData => Ho T etsControllerDataV1
 }
-import com.twitter.suggests.controller_data.thriftscala.ControllerData
-import com.twitter.suggests.controller_data.timelines_topic.thriftscala.TimelinesTopicControllerData
-import com.twitter.suggests.controller_data.timelines_topic.v1.thriftscala.{
-  TimelinesTopicControllerData => TimelinesTopicControllerDataV1
+ mport com.tw ter.suggests.controller_data.thr ftscala.ControllerData
+ mport com.tw ter.suggests.controller_data.t  l nes_top c.thr ftscala.T  l nesTop cControllerData
+ mport com.tw ter.suggests.controller_data.t  l nes_top c.v1.thr ftscala.{
+  T  l nesTop cControllerData => T  l nesTop cControllerDataV1
 }
-import com.twitter.suggests.controller_data.v2.thriftscala.{ControllerData => ControllerDataV2}
-import com.twitter.unified_user_actions.thriftscala._
-import com.twitter.util.Time
-import com.twitter.video.analytics.thriftscala.ClientMediaEvent
-import com.twitter.video.analytics.thriftscala.SessionState
-import com.twitter.video.analytics.thriftscala._
-import com.twitter.suggests.controller_data.search_response.v1.thriftscala.{
+ mport com.tw ter.suggests.controller_data.v2.thr ftscala.{ControllerData => ControllerDataV2}
+ mport com.tw ter.un f ed_user_act ons.thr ftscala._
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.v deo.analyt cs.thr ftscala.Cl ent d aEvent
+ mport com.tw ter.v deo.analyt cs.thr ftscala.Sess onState
+ mport com.tw ter.v deo.analyt cs.thr ftscala._
+ mport com.tw ter.suggests.controller_data.search_response.v1.thr ftscala.{
   SearchResponseControllerData => SearchResponseControllerDataV1
 }
-import com.twitter.suggests.controller_data.search_response.thriftscala.SearchResponseControllerData
-import com.twitter.suggests.controller_data.search_response.request.thriftscala.RequestControllerData
-import com.twitter.unified_user_actions.thriftscala.FeedbackPromptInfo
+ mport com.tw ter.suggests.controller_data.search_response.thr ftscala.SearchResponseControllerData
+ mport com.tw ter.suggests.controller_data.search_response.request.thr ftscala.RequestControllerData
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.FeedbackPrompt nfo
 
-object TestFixtures {
-  trait CommonFixture {
-    val frozenTime: Time = Time.fromMilliseconds(1658949273000L)
+object TestF xtures {
+  tra  CommonF xture {
+    val frozenT  : T   = T  .fromM ll seconds(1658949273000L)
 
-    val userId: Long = 123L
-    val authorId: Long = 112233L
-    val itemTweetId: Long = 111L
-    val itemProfileId: Long = 123456L
-    val retweetingTweetId: Long = 222L
-    val quotedTweetId: Long = 333L
-    val quotedAuthorId: Long = 456L
-    val inReplyToTweetId: Long = 444L
-    val quotingTweetId: Long = 555L
-    val topicId: Long = 1234L
-    val traceId: Long = 5678L
-    val requestJoinId: Long = 91011L
-    val notificationId: String = "12345"
-    val tweetIds: Seq[Long] = Seq[Long](111, 222, 333)
-    val reportFlowId: String = "report-flow-id"
+    val user d: Long = 123L
+    val author d: Long = 112233L
+    val  emT et d: Long = 111L
+    val  emProf le d: Long = 123456L
+    val ret et ngT et d: Long = 222L
+    val quotedT et d: Long = 333L
+    val quotedAuthor d: Long = 456L
+    val  nReplyToT et d: Long = 444L
+    val quot ngT et d: Long = 555L
+    val top c d: Long = 1234L
+    val trace d: Long = 5678L
+    val requestJo n d: Long = 91011L
+    val not f cat on d: Str ng = "12345"
+    val t et ds: Seq[Long] = Seq[Long](111, 222, 333)
+    val reportFlow d: Str ng = "report-flow- d"
   }
 
-  trait ClientEventFixture extends CommonFixture {
+  tra  Cl entEventF xture extends CommonF xture {
 
-    val timestamp = 1001L
+    val t  stamp = 1001L
 
     val logBase: LogBase = LogBase(
-      ipAddress = "",
-      transactionId = "",
-      timestamp = 1002L,
-      driftAdjustedEventCreatedAtMs = Some(1001L),
-      userId = Some(userId),
-      clientEventReceiver = Some(ClientEventReceiver.CesHttp)
+       pAddress = "",
+      transact on d = "",
+      t  stamp = 1002L,
+      dr ftAdjustedEventCreatedAtMs = So (1001L),
+      user d = So (user d),
+      cl entEventRece ver = So (Cl entEventRece ver.CesHttp)
     )
 
     val logBase1: LogBase = LogBase(
-      ipAddress = "",
-      transactionId = "",
-      userId = Some(userId),
-      guestId = Some(2L),
-      guestIdMarketing = Some(2L),
-      timestamp = timestamp
+       pAddress = "",
+      transact on d = "",
+      user d = So (user d),
+      guest d = So (2L),
+      guest dMarket ng = So (2L),
+      t  stamp = t  stamp
     )
 
     def mkSearchResultControllerData(
-      queryOpt: Option[String],
-      querySourceOpt: Option[Int] = None,
-      traceId: Option[Long] = None,
-      requestJoinId: Option[Long] = None
+      queryOpt: Opt on[Str ng],
+      queryS ceOpt: Opt on[ nt] = None,
+      trace d: Opt on[Long] = None,
+      requestJo n d: Opt on[Long] = None
     ): ControllerData = {
       ControllerData.V2(
         ControllerDataV2.SearchResponse(
           SearchResponseControllerData.V1(
-            SearchResponseControllerDataV1(requestControllerData = Some(
+            SearchResponseControllerDataV1(requestControllerData = So (
               RequestControllerData(
                 rawQuery = queryOpt,
-                querySource = querySourceOpt,
-                traceId = traceId,
-                requestJoinId = requestJoinId
+                queryS ce = queryS ceOpt,
+                trace d = trace d,
+                requestJo n d = requestJo n d
               )))
           )))
     }
 
-    val videoEventElementValues: Seq[String] =
-      Seq[String](
-        "gif_player",
-        "periscope_player",
-        "platform_amplify_card",
-        "video_player",
-        "vine_player")
+    val v deoEventEle ntValues: Seq[Str ng] =
+      Seq[Str ng](
+        "g f_player",
+        "per scope_player",
+        "platform_ampl fy_card",
+        "v deo_player",
+        "v ne_player")
 
-    val invalidVideoEventElementValues: Seq[String] =
-      Seq[String](
-        "dynamic_video_ads",
-        "live_video_player",
+    val  nval dV deoEventEle ntValues: Seq[Str ng] =
+      Seq[Str ng](
+        "dynam c_v deo_ads",
+        "l ve_v deo_player",
         "platform_forward_card",
-        "video_app_card_canvas",
-        "youtube_player"
+        "v deo_app_card_canvas",
+        " tube_player"
       )
 
-    val clientMediaEvent: ClientMediaEvent = ClientMediaEvent(
-      sessionState = SessionState(
-        contentVideoIdentifier = MediaIdentifier.MediaPlatformIdentifier(
-          MediaPlatformIdentifier(mediaId = 123L, mediaCategory = MediaCategory.TweetVideo)),
-        sessionId = "",
+    val cl ent d aEvent: Cl ent d aEvent = Cl ent d aEvent(
+      sess onState = Sess onState(
+        contentV deo dent f er =  d a dent f er. d aPlatform dent f er(
+           d aPlatform dent f er( d a d = 123L,  d aCategory =  d aCategory.T etV deo)),
+        sess on d = "",
       ),
-      mediaClientEventType = MediaEventType.IntentToPlay(IntentToPlay()),
-      playingMediaState = PlayingMediaState(
-        videoType = VideoType.Content,
-        mediaAssetUrl = "",
-        mediaMetadata = MediaMetadata(publisherIdentifier = PublisherIdentifier
-          .TwitterPublisherIdentifier(TwitterPublisherIdentifier(123456L)))
+       d aCl entEventType =  d aEventType. ntentToPlay( ntentToPlay()),
+      play ng d aState = Play ng d aState(
+        v deoType = V deoType.Content,
+         d aAssetUrl = "",
+         d a tadata =  d a tadata(publ s r dent f er = Publ s r dent f er
+          .Tw terPubl s r dent f er(Tw terPubl s r dent f er(123456L)))
       ),
-      playerState = PlayerState(isMuted = false)
+      playerState = PlayerState( sMuted = false)
     )
 
-    val mediaDetailsV2: MediaDetailsV2 = MediaDetailsV2(
-      mediaItems = Some(
-        Seq[MediaDetails](
-          MediaDetails(
-            contentId = Some("456"),
-            mediaType = Some(MediaType.ConsumerVideo),
-            dynamicAds = Some(false)),
-          MediaDetails(
-            contentId = Some("123"),
-            mediaType = Some(MediaType.ConsumerVideo),
-            dynamicAds = Some(false)),
-          MediaDetails(
-            contentId = Some("789"),
-            mediaType = Some(MediaType.ConsumerVideo),
-            dynamicAds = Some(false))
+    val  d aDeta lsV2:  d aDeta lsV2 =  d aDeta lsV2(
+       d a ems = So (
+        Seq[ d aDeta ls](
+           d aDeta ls(
+            content d = So ("456"),
+             d aType = So ( d aType.Consu rV deo),
+            dynam cAds = So (false)),
+           d aDeta ls(
+            content d = So ("123"),
+             d aType = So ( d aType.Consu rV deo),
+            dynam cAds = So (false)),
+           d aDeta ls(
+            content d = So ("789"),
+             d aType = So ( d aType.Consu rV deo),
+            dynam cAds = So (false))
         ))
     )
 
-    val cardDetails =
-      CardDetails(amplifyDetails = Some(AmplifyDetails(videoType = Some("content"))))
+    val cardDeta ls =
+      CardDeta ls(ampl fyDeta ls = So (Ampl fyDeta ls(v deoType = So ("content"))))
 
-    val videoMetadata: TweetActionInfo = TweetActionInfo.TweetVideoWatch(
-      TweetVideoWatch(
-        mediaType = Some(MediaType.ConsumerVideo),
-        isMonetizable = Some(false),
-        videoType = Some("content")))
+    val v deo tadata: T etAct on nfo = T etAct on nfo.T etV deoWatch(
+      T etV deoWatch(
+         d aType = So ( d aType.Consu rV deo),
+         sMonet zable = So (false),
+        v deoType = So ("content")))
 
-    val notificationDetails: NotificationDetails =
-      NotificationDetails(impressionId = Some(notificationId))
+    val not f cat onDeta ls: Not f cat onDeta ls =
+      Not f cat onDeta ls( mpress on d = So (not f cat on d))
 
-    val notificationTabTweetEventDetails: NotificationTabDetails =
-      NotificationTabDetails(
-        clientEventMetadata = Some(
-          NotificationClientEventMetadata(
-            tweetIds = Some(Seq[Long](itemTweetId)),
-            upstreamId = Some(notificationId),
-            requestId = "",
-            notificationId = "",
-            notificationCount = 0))
+    val not f cat onTabT etEventDeta ls: Not f cat onTabDeta ls =
+      Not f cat onTabDeta ls(
+        cl entEvent tadata = So (
+          Not f cat onCl entEvent tadata(
+            t et ds = So (Seq[Long]( emT et d)),
+            upstream d = So (not f cat on d),
+            request d = "",
+            not f cat on d = "",
+            not f cat onCount = 0))
       )
 
-    val notificationTabMultiTweetEventDetails: NotificationTabDetails =
-      NotificationTabDetails(
-        clientEventMetadata = Some(
-          NotificationClientEventMetadata(
-            tweetIds = Some(tweetIds),
-            upstreamId = Some(notificationId),
-            requestId = "",
-            notificationId = "",
-            notificationCount = 0))
+    val not f cat onTabMult T etEventDeta ls: Not f cat onTabDeta ls =
+      Not f cat onTabDeta ls(
+        cl entEvent tadata = So (
+          Not f cat onCl entEvent tadata(
+            t et ds = So (t et ds),
+            upstream d = So (not f cat on d),
+            request d = "",
+            not f cat on d = "",
+            not f cat onCount = 0))
       )
 
-    val notificationTabUnknownEventDetails: NotificationTabDetails =
-      NotificationTabDetails(
-        clientEventMetadata = Some(
-          NotificationClientEventMetadata(
-            upstreamId = Some(notificationId),
-            requestId = "",
-            notificationId = "",
-            notificationCount = 0))
+    val not f cat onTabUnknownEventDeta ls: Not f cat onTabDeta ls =
+      Not f cat onTabDeta ls(
+        cl entEvent tadata = So (
+          Not f cat onCl entEvent tadata(
+            upstream d = So (not f cat on d),
+            request d = "",
+            not f cat on d = "",
+            not f cat onCount = 0))
       )
 
-    val tweetNotificationContent: NotificationContent =
-      NotificationContent.TweetNotification(TweetNotification(itemTweetId))
+    val t etNot f cat onContent: Not f cat onContent =
+      Not f cat onContent.T etNot f cat on(T etNot f cat on( emT et d))
 
-    val multiTweetNotificationContent: NotificationContent =
-      NotificationContent.MultiTweetNotification(MultiTweetNotification(tweetIds))
+    val mult T etNot f cat onContent: Not f cat onContent =
+      Not f cat onContent.Mult T etNot f cat on(Mult T etNot f cat on(t et ds))
 
-    val unknownNotificationContent: NotificationContent =
-      NotificationContent.UnknownNotification(UnknownNotification())
+    val unknownNot f cat onContent: Not f cat onContent =
+      Not f cat onContent.UnknownNot f cat on(UnknownNot f cat on())
 
-    val reportTweetClick: TweetActionInfo =
-      TweetActionInfo.ClientTweetReport(ClientTweetReport(isReportTweetDone = false))
+    val reportT etCl ck: T etAct on nfo =
+      T etAct on nfo.Cl entT etReport(Cl entT etReport( sReportT etDone = false))
 
-    val reportTweetDone: TweetActionInfo =
-      TweetActionInfo.ClientTweetReport(ClientTweetReport(isReportTweetDone = true))
+    val reportT etDone: T etAct on nfo =
+      T etAct on nfo.Cl entT etReport(Cl entT etReport( sReportT etDone = true))
 
-    val reportTweetWithReportFlowId: TweetActionInfo =
-      TweetActionInfo.ClientTweetReport(
-        ClientTweetReport(isReportTweetDone = true, reportFlowId = Some(reportFlowId)))
+    val reportT etW hReportFlow d: T etAct on nfo =
+      T etAct on nfo.Cl entT etReport(
+        Cl entT etReport( sReportT etDone = true, reportFlow d = So (reportFlow d)))
 
-    val reportTweetWithoutReportFlowId: TweetActionInfo =
-      TweetActionInfo.ClientTweetReport(
-        ClientTweetReport(isReportTweetDone = true, reportFlowId = None))
+    val reportT etW houtReportFlow d: T etAct on nfo =
+      T etAct on nfo.Cl entT etReport(
+        Cl entT etReport( sReportT etDone = true, reportFlow d = None))
 
-    val reportTweetSubmit: TweetActionInfo =
-      TweetActionInfo.ServerTweetReport(
-        ServerTweetReport(reportFlowId = Some(reportFlowId), reportType = Some(ReportType.Abuse)))
+    val reportT etSubm : T etAct on nfo =
+      T etAct on nfo.ServerT etReport(
+        ServerT etReport(reportFlow d = So (reportFlow d), reportType = So (ReportType.Abuse)))
 
-    val notificationTabProductSurfaceInfo: ProductSurfaceInfo =
-      ProductSurfaceInfo.NotificationTabInfo(NotificationTabInfo(notificationId = notificationId))
+    val not f cat onTabProductSurface nfo: ProductSurface nfo =
+      ProductSurface nfo.Not f cat onTab nfo(Not f cat onTab nfo(not f cat on d = not f cat on d))
 
-    val clientOpenLinkWithUrl: TweetActionInfo =
-      TweetActionInfo.ClientTweetOpenLink(ClientTweetOpenLink(url = Some("go/url")))
+    val cl entOpenL nkW hUrl: T etAct on nfo =
+      T etAct on nfo.Cl entT etOpenL nk(Cl entT etOpenL nk(url = So ("go/url")))
 
-    val clientOpenLinkWithoutUrl: TweetActionInfo =
-      TweetActionInfo.ClientTweetOpenLink(ClientTweetOpenLink(url = None))
+    val cl entOpenL nkW houtUrl: T etAct on nfo =
+      T etAct on nfo.Cl entT etOpenL nk(Cl entT etOpenL nk(url = None))
 
-    val clientTakeScreenshot: TweetActionInfo =
-      TweetActionInfo.ClientTweetTakeScreenshot(
-        ClientTweetTakeScreenshot(percentVisibleHeight100k = Some(100)))
+    val cl entTakeScreenshot: T etAct on nfo =
+      T etAct on nfo.Cl entT etTakeScreenshot(
+        Cl entT etTakeScreenshot(percentV s ble  ght100k = So (100)))
 
-    // client-event event_namespace
-    val ceLingerEventNamespace: EventNamespace = EventNamespace(
-      component = Some("stream"),
-      element = Some("linger"),
-      action = Some("results")
+    // cl ent-event event_na space
+    val ceL ngerEventNa space: EventNa space = EventNa space(
+      component = So ("stream"),
+      ele nt = So ("l nger"),
+      act on = So ("results")
     )
-    val ceRenderEventNamespace: EventNamespace = EventNamespace(
-      component = Some("stream"),
-      action = Some("results")
+    val ceRenderEventNa space: EventNa space = EventNa space(
+      component = So ("stream"),
+      act on = So ("results")
     )
-    val ceTweetDetailsEventNamespace1: EventNamespace = EventNamespace(
-      page = Some("tweet"),
-      section = None,
-      component = Some("tweet"),
-      element = None,
-      action = Some("impression")
+    val ceT etDeta lsEventNa space1: EventNa space = EventNa space(
+      page = So ("t et"),
+      sect on = None,
+      component = So ("t et"),
+      ele nt = None,
+      act on = So (" mpress on")
     )
-    val ceGalleryEventNamespace: EventNamespace = EventNamespace(
-      component = Some("gallery"),
-      element = Some("photo"),
-      action = Some("impression")
+    val ceGalleryEventNa space: EventNa space = EventNa space(
+      component = So ("gallery"),
+      ele nt = So ("photo"),
+      act on = So (" mpress on")
     )
-    val ceFavoriteEventNamespace: EventNamespace = EventNamespace(action = Some("favorite"))
-    val ceHomeFavoriteEventNamespace: EventNamespace =
-      EventNamespace(page = Some("home"), action = Some("favorite"))
-    val ceHomeLatestFavoriteEventNamespace: EventNamespace =
-      EventNamespace(page = Some("home_latest"), action = Some("favorite"))
-    val ceSearchFavoriteEventNamespace: EventNamespace =
-      EventNamespace(page = Some("search"), action = Some("favorite"))
-    val ceClickReplyEventNamespace: EventNamespace = EventNamespace(action = Some("reply"))
-    val ceReplyEventNamespace: EventNamespace = EventNamespace(action = Some("send_reply"))
-    val ceRetweetEventNamespace: EventNamespace = EventNamespace(action = Some("retweet"))
-    val ceVideoPlayback25: EventNamespace = EventNamespace(action = Some("playback_25"))
-    val ceVideoPlayback50: EventNamespace = EventNamespace(action = Some("playback_50"))
-    val ceVideoPlayback75: EventNamespace = EventNamespace(action = Some("playback_75"))
-    val ceVideoPlayback95: EventNamespace = EventNamespace(action = Some("playback_95"))
-    val ceVideoPlayFromTap: EventNamespace = EventNamespace(action = Some("play_from_tap"))
-    val ceVideoQualityView: EventNamespace = EventNamespace(action = Some("video_quality_view"))
-    val ceVideoView: EventNamespace = EventNamespace(action = Some("video_view"))
-    val ceVideoMrcView: EventNamespace = EventNamespace(action = Some("video_mrc_view"))
-    val ceVideoViewThreshold: EventNamespace = EventNamespace(action = Some("view_threshold"))
-    val ceVideoCtaUrlClick: EventNamespace = EventNamespace(action = Some("cta_url_click"))
-    val ceVideoCtaWatchClick: EventNamespace = EventNamespace(action = Some("cta_watch_click"))
-    val cePhotoExpand: EventNamespace =
-      EventNamespace(element = Some("platform_photo_card"), action = Some("click"))
-    val ceCardClick: EventNamespace =
-      EventNamespace(element = Some("platform_card"), action = Some("click"))
-    val ceCardOpenApp: EventNamespace = EventNamespace(action = Some("open_app"))
-    val ceCardAppInstallAttempt: EventNamespace = EventNamespace(action = Some("install_app"))
-    val cePollCardVote1: EventNamespace =
-      EventNamespace(element = Some("platform_card"), action = Some("vote"))
-    val cePollCardVote2: EventNamespace =
-      EventNamespace(element = Some("platform_forward_card"), action = Some("vote"))
-    val ceMentionClick: EventNamespace =
-      EventNamespace(element = Some("mention"), action = Some("click"))
-    val ceVideoPlaybackStart: EventNamespace = EventNamespace(action = Some("playback_start"))
-    val ceVideoPlaybackComplete: EventNamespace = EventNamespace(action = Some("playback_complete"))
-    val ceClickHashtag: EventNamespace = EventNamespace(action = Some("hashtag_click"))
-    val ceTopicFollow1: EventNamespace =
-      EventNamespace(element = Some("topic"), action = Some("follow"))
-    val ceOpenLink: EventNamespace = EventNamespace(action = Some("open_link"))
-    val ceTakeScreenshot: EventNamespace = EventNamespace(action = Some("take_screenshot"))
-    val ceTopicFollow2: EventNamespace =
-      EventNamespace(element = Some("social_proof"), action = Some("follow"))
-    val ceTopicFollow3: EventNamespace =
-      EventNamespace(element = Some("feedback_follow_topic"), action = Some("click"))
-    val ceTopicUnfollow1: EventNamespace =
-      EventNamespace(element = Some("topic"), action = Some("unfollow"))
-    val ceTopicUnfollow2: EventNamespace =
-      EventNamespace(element = Some("social_proof"), action = Some("unfollow"))
-    val ceTopicUnfollow3: EventNamespace =
-      EventNamespace(element = Some("feedback_unfollow_topic"), action = Some("click"))
-    val ceTopicNotInterestedIn1: EventNamespace =
-      EventNamespace(element = Some("topic"), action = Some("not_interested"))
-    val ceTopicNotInterestedIn2: EventNamespace =
-      EventNamespace(element = Some("feedback_not_interested_in_topic"), action = Some("click"))
-    val ceTopicUndoNotInterestedIn1: EventNamespace =
-      EventNamespace(element = Some("topic"), action = Some("un_not_interested"))
-    val ceTopicUndoNotInterestedIn2: EventNamespace =
-      EventNamespace(element = Some("feedback_not_interested_in_topic"), action = Some("undo"))
-    val ceProfileFollowAttempt: EventNamespace =
-      EventNamespace(action = Some("follow_attempt"))
-    val ceTweetFavoriteAttempt: EventNamespace =
-      EventNamespace(action = Some("favorite_attempt"))
-    val ceTweetRetweetAttempt: EventNamespace =
-      EventNamespace(action = Some("retweet_attempt"))
-    val ceTweetReplyAttempt: EventNamespace =
-      EventNamespace(action = Some("reply_attempt"))
-    val ceClientCTALoginClick: EventNamespace =
-      EventNamespace(action = Some("login"))
-    val ceClientCTALoginStart: EventNamespace =
-      EventNamespace(page = Some("login"), action = Some("show"))
-    val ceClientCTALoginSuccess: EventNamespace =
-      EventNamespace(page = Some("login"), action = Some("success"))
-    val ceClientCTASignupClick: EventNamespace =
-      EventNamespace(action = Some("signup"))
-    val ceClientCTASignupSuccess: EventNamespace =
-      EventNamespace(page = Some("signup"), action = Some("success"))
-    val ceNotificationOpen: EventNamespace = EventNamespace(
-      page = Some("notification"),
-      section = Some("status_bar"),
+    val ceFavor eEventNa space: EventNa space = EventNa space(act on = So ("favor e"))
+    val ceHo Favor eEventNa space: EventNa space =
+      EventNa space(page = So ("ho "), act on = So ("favor e"))
+    val ceHo LatestFavor eEventNa space: EventNa space =
+      EventNa space(page = So ("ho _latest"), act on = So ("favor e"))
+    val ceSearchFavor eEventNa space: EventNa space =
+      EventNa space(page = So ("search"), act on = So ("favor e"))
+    val ceCl ckReplyEventNa space: EventNa space = EventNa space(act on = So ("reply"))
+    val ceReplyEventNa space: EventNa space = EventNa space(act on = So ("send_reply"))
+    val ceRet etEventNa space: EventNa space = EventNa space(act on = So ("ret et"))
+    val ceV deoPlayback25: EventNa space = EventNa space(act on = So ("playback_25"))
+    val ceV deoPlayback50: EventNa space = EventNa space(act on = So ("playback_50"))
+    val ceV deoPlayback75: EventNa space = EventNa space(act on = So ("playback_75"))
+    val ceV deoPlayback95: EventNa space = EventNa space(act on = So ("playback_95"))
+    val ceV deoPlayFromTap: EventNa space = EventNa space(act on = So ("play_from_tap"))
+    val ceV deoQual yV ew: EventNa space = EventNa space(act on = So ("v deo_qual y_v ew"))
+    val ceV deoV ew: EventNa space = EventNa space(act on = So ("v deo_v ew"))
+    val ceV deoMrcV ew: EventNa space = EventNa space(act on = So ("v deo_mrc_v ew"))
+    val ceV deoV ewThreshold: EventNa space = EventNa space(act on = So ("v ew_threshold"))
+    val ceV deoCtaUrlCl ck: EventNa space = EventNa space(act on = So ("cta_url_cl ck"))
+    val ceV deoCtaWatchCl ck: EventNa space = EventNa space(act on = So ("cta_watch_cl ck"))
+    val cePhotoExpand: EventNa space =
+      EventNa space(ele nt = So ("platform_photo_card"), act on = So ("cl ck"))
+    val ceCardCl ck: EventNa space =
+      EventNa space(ele nt = So ("platform_card"), act on = So ("cl ck"))
+    val ceCardOpenApp: EventNa space = EventNa space(act on = So ("open_app"))
+    val ceCardApp nstallAttempt: EventNa space = EventNa space(act on = So (" nstall_app"))
+    val cePollCardVote1: EventNa space =
+      EventNa space(ele nt = So ("platform_card"), act on = So ("vote"))
+    val cePollCardVote2: EventNa space =
+      EventNa space(ele nt = So ("platform_forward_card"), act on = So ("vote"))
+    val ce nt onCl ck: EventNa space =
+      EventNa space(ele nt = So (" nt on"), act on = So ("cl ck"))
+    val ceV deoPlaybackStart: EventNa space = EventNa space(act on = So ("playback_start"))
+    val ceV deoPlaybackComplete: EventNa space = EventNa space(act on = So ("playback_complete"))
+    val ceCl ckHashtag: EventNa space = EventNa space(act on = So ("hashtag_cl ck"))
+    val ceTop cFollow1: EventNa space =
+      EventNa space(ele nt = So ("top c"), act on = So ("follow"))
+    val ceOpenL nk: EventNa space = EventNa space(act on = So ("open_l nk"))
+    val ceTakeScreenshot: EventNa space = EventNa space(act on = So ("take_screenshot"))
+    val ceTop cFollow2: EventNa space =
+      EventNa space(ele nt = So ("soc al_proof"), act on = So ("follow"))
+    val ceTop cFollow3: EventNa space =
+      EventNa space(ele nt = So ("feedback_follow_top c"), act on = So ("cl ck"))
+    val ceTop cUnfollow1: EventNa space =
+      EventNa space(ele nt = So ("top c"), act on = So ("unfollow"))
+    val ceTop cUnfollow2: EventNa space =
+      EventNa space(ele nt = So ("soc al_proof"), act on = So ("unfollow"))
+    val ceTop cUnfollow3: EventNa space =
+      EventNa space(ele nt = So ("feedback_unfollow_top c"), act on = So ("cl ck"))
+    val ceTop cNot nterested n1: EventNa space =
+      EventNa space(ele nt = So ("top c"), act on = So ("not_ nterested"))
+    val ceTop cNot nterested n2: EventNa space =
+      EventNa space(ele nt = So ("feedback_not_ nterested_ n_top c"), act on = So ("cl ck"))
+    val ceTop cUndoNot nterested n1: EventNa space =
+      EventNa space(ele nt = So ("top c"), act on = So ("un_not_ nterested"))
+    val ceTop cUndoNot nterested n2: EventNa space =
+      EventNa space(ele nt = So ("feedback_not_ nterested_ n_top c"), act on = So ("undo"))
+    val ceProf leFollowAttempt: EventNa space =
+      EventNa space(act on = So ("follow_attempt"))
+    val ceT etFavor eAttempt: EventNa space =
+      EventNa space(act on = So ("favor e_attempt"))
+    val ceT etRet etAttempt: EventNa space =
+      EventNa space(act on = So ("ret et_attempt"))
+    val ceT etReplyAttempt: EventNa space =
+      EventNa space(act on = So ("reply_attempt"))
+    val ceCl entCTALog nCl ck: EventNa space =
+      EventNa space(act on = So ("log n"))
+    val ceCl entCTALog nStart: EventNa space =
+      EventNa space(page = So ("log n"), act on = So ("show"))
+    val ceCl entCTALog nSuccess: EventNa space =
+      EventNa space(page = So ("log n"), act on = So ("success"))
+    val ceCl entCTAS gnupCl ck: EventNa space =
+      EventNa space(act on = So ("s gnup"))
+    val ceCl entCTAS gnupSuccess: EventNa space =
+      EventNa space(page = So ("s gnup"), act on = So ("success"))
+    val ceNot f cat onOpen: EventNa space = EventNa space(
+      page = So ("not f cat on"),
+      sect on = So ("status_bar"),
       component = None,
-      action = Some("open"))
-    val ceNotificationClick: EventNamespace = EventNamespace(
-      page = Some("ntab"),
-      section = Some("all"),
-      component = Some("urt"),
-      element = Some("users_liked_your_tweet"),
-      action = Some("navigate"))
-    val ceTypeaheadClick: EventNamespace =
-      EventNamespace(element = Some("typeahead"), action = Some("click"))
-    val ceTweetReport: EventNamespace = EventNamespace(element = Some("report_tweet"))
-    def ceEventNamespace(element: String, action: String): EventNamespace =
-      EventNamespace(element = Some(element), action = Some(action))
-    def ceTweetReportFlow(page: String, action: String): EventNamespace =
-      EventNamespace(element = Some("ticket"), page = Some(page), action = Some(action))
-    val ceNotificationSeeLessOften: EventNamespace = EventNamespace(
-      page = Some("ntab"),
-      section = Some("all"),
-      component = Some("urt"),
-      action = Some("see_less_often"))
-    val ceNotificationDismiss: EventNamespace = EventNamespace(
-      page = Some("notification"),
-      section = Some("status_bar"),
+      act on = So ("open"))
+    val ceNot f cat onCl ck: EventNa space = EventNa space(
+      page = So ("ntab"),
+      sect on = So ("all"),
+      component = So ("urt"),
+      ele nt = So ("users_l ked_y _t et"),
+      act on = So ("nav gate"))
+    val ceTypea adCl ck: EventNa space =
+      EventNa space(ele nt = So ("typea ad"), act on = So ("cl ck"))
+    val ceT etReport: EventNa space = EventNa space(ele nt = So ("report_t et"))
+    def ceEventNa space(ele nt: Str ng, act on: Str ng): EventNa space =
+      EventNa space(ele nt = So (ele nt), act on = So (act on))
+    def ceT etReportFlow(page: Str ng, act on: Str ng): EventNa space =
+      EventNa space(ele nt = So ("t cket"), page = So (page), act on = So (act on))
+    val ceNot f cat onSeeLessOften: EventNa space = EventNa space(
+      page = So ("ntab"),
+      sect on = So ("all"),
+      component = So ("urt"),
+      act on = So ("see_less_often"))
+    val ceNot f cat onD sm ss: EventNa space = EventNa space(
+      page = So ("not f cat on"),
+      sect on = So ("status_bar"),
       component = None,
-      action = Some("dismiss"))
-    val ceSearchResultsRelevant: EventNamespace = EventNamespace(
-      page = Some("search"),
-      component = Some("did_you_find_it_module"),
-      element = Some("is_relevant"),
-      action = Some("click")
+      act on = So ("d sm ss"))
+    val ceSearchResultsRelevant: EventNa space = EventNa space(
+      page = So ("search"),
+      component = So ("d d_ _f nd_ _module"),
+      ele nt = So (" s_relevant"),
+      act on = So ("cl ck")
     )
-    val ceSearchResultsNotRelevant: EventNamespace = EventNamespace(
-      page = Some("search"),
-      component = Some("did_you_find_it_module"),
-      element = Some("not_relevant"),
-      action = Some("click")
+    val ceSearchResultsNotRelevant: EventNa space = EventNa space(
+      page = So ("search"),
+      component = So ("d d_ _f nd_ _module"),
+      ele nt = So ("not_relevant"),
+      act on = So ("cl ck")
     )
-    val ceTweetRelevantToSearch: EventNamespace = EventNamespace(
-      page = Some("search"),
-      component = Some("relevance_prompt_module"),
-      element = Some("is_relevant"),
-      action = Some("click"))
-    val ceTweetNotRelevantToSearch: EventNamespace = EventNamespace(
-      page = Some("search"),
-      component = Some("relevance_prompt_module"),
-      element = Some("not_relevant"),
-      action = Some("click"))
-    val ceProfileBlock: EventNamespace =
-      EventNamespace(page = Some("profile"), action = Some("block"))
-    val ceProfileUnblock: EventNamespace =
-      EventNamespace(page = Some("profile"), action = Some("unblock"))
-    val ceProfileMute: EventNamespace =
-      EventNamespace(page = Some("profile"), action = Some("mute_user"))
-    val ceProfileReport: EventNamespace =
-      EventNamespace(page = Some("profile"), action = Some("report"))
-    val ceProfileShow: EventNamespace =
-      EventNamespace(page = Some("profile"), action = Some("show"))
-    val ceProfileFollow: EventNamespace =
-      EventNamespace(action = Some("follow"))
-    val ceProfileClick: EventNamespace =
-      EventNamespace(action = Some("profile_click"))
-    val ceTweetFollowAuthor1: EventNamespace = EventNamespace(
-      action = Some("click"),
-      element = Some("follow")
+    val ceT etRelevantToSearch: EventNa space = EventNa space(
+      page = So ("search"),
+      component = So ("relevance_prompt_module"),
+      ele nt = So (" s_relevant"),
+      act on = So ("cl ck"))
+    val ceT etNotRelevantToSearch: EventNa space = EventNa space(
+      page = So ("search"),
+      component = So ("relevance_prompt_module"),
+      ele nt = So ("not_relevant"),
+      act on = So ("cl ck"))
+    val ceProf leBlock: EventNa space =
+      EventNa space(page = So ("prof le"), act on = So ("block"))
+    val ceProf leUnblock: EventNa space =
+      EventNa space(page = So ("prof le"), act on = So ("unblock"))
+    val ceProf leMute: EventNa space =
+      EventNa space(page = So ("prof le"), act on = So ("mute_user"))
+    val ceProf leReport: EventNa space =
+      EventNa space(page = So ("prof le"), act on = So ("report"))
+    val ceProf leShow: EventNa space =
+      EventNa space(page = So ("prof le"), act on = So ("show"))
+    val ceProf leFollow: EventNa space =
+      EventNa space(act on = So ("follow"))
+    val ceProf leCl ck: EventNa space =
+      EventNa space(act on = So ("prof le_cl ck"))
+    val ceT etFollowAuthor1: EventNa space = EventNa space(
+      act on = So ("cl ck"),
+      ele nt = So ("follow")
     )
-    val ceTweetFollowAuthor2: EventNamespace = EventNamespace(
-      action = Some("follow")
+    val ceT etFollowAuthor2: EventNa space = EventNa space(
+      act on = So ("follow")
     )
-    val ceTweetUnfollowAuthor1: EventNamespace = EventNamespace(
-      action = Some("click"),
-      element = Some("unfollow")
+    val ceT etUnfollowAuthor1: EventNa space = EventNa space(
+      act on = So ("cl ck"),
+      ele nt = So ("unfollow")
     )
-    val ceTweetUnfollowAuthor2: EventNamespace = EventNamespace(
-      action = Some("unfollow")
+    val ceT etUnfollowAuthor2: EventNa space = EventNa space(
+      act on = So ("unfollow")
     )
-    val ceTweetBlockAuthor: EventNamespace = EventNamespace(
-      page = Some("profile"),
-      section = Some("tweets"),
-      component = Some("tweet"),
-      action = Some("click"),
-      element = Some("block")
+    val ceT etBlockAuthor: EventNa space = EventNa space(
+      page = So ("prof le"),
+      sect on = So ("t ets"),
+      component = So ("t et"),
+      act on = So ("cl ck"),
+      ele nt = So ("block")
     )
-    val ceTweetUnblockAuthor: EventNamespace = EventNamespace(
-      section = Some("tweets"),
-      component = Some("tweet"),
-      action = Some("click"),
-      element = Some("unblock")
+    val ceT etUnblockAuthor: EventNa space = EventNa space(
+      sect on = So ("t ets"),
+      component = So ("t et"),
+      act on = So ("cl ck"),
+      ele nt = So ("unblock")
     )
-    val ceTweetMuteAuthor: EventNamespace = EventNamespace(
-      component = Some("suggest_sc_tweet"),
-      action = Some("click"),
-      element = Some("mute")
+    val ceT etMuteAuthor: EventNa space = EventNa space(
+      component = So ("suggest_sc_t et"),
+      act on = So ("cl ck"),
+      ele nt = So ("mute")
     )
-    val ceTweetClick: EventNamespace =
-      EventNamespace(element = Some("tweet"), action = Some("click"))
-    val ceTweetClickProfile: EventNamespace = EventNamespace(
-      component = Some("tweet"),
-      element = Some("user"),
-      action = Some("profile_click"))
-    val ceAppExit: EventNamespace =
-      EventNamespace(page = Some("app"), action = Some("become_inactive"))
+    val ceT etCl ck: EventNa space =
+      EventNa space(ele nt = So ("t et"), act on = So ("cl ck"))
+    val ceT etCl ckProf le: EventNa space = EventNa space(
+      component = So ("t et"),
+      ele nt = So ("user"),
+      act on = So ("prof le_cl ck"))
+    val ceAppEx : EventNa space =
+      EventNa space(page = So ("app"), act on = So ("beco _ nact ve"))
 
-    // UUA client_event_namespace
-    val uuaLingerClientEventNamespace: ClientEventNamespace = ClientEventNamespace(
-      component = Some("stream"),
-      element = Some("linger"),
-      action = Some("results")
+    // UUA cl ent_event_na space
+    val uuaL ngerCl entEventNa space: Cl entEventNa space = Cl entEventNa space(
+      component = So ("stream"),
+      ele nt = So ("l nger"),
+      act on = So ("results")
     )
-    val uuaRenderClientEventNamespace: ClientEventNamespace = ClientEventNamespace(
-      component = Some("stream"),
-      action = Some("results")
+    val uuaRenderCl entEventNa space: Cl entEventNa space = Cl entEventNa space(
+      component = So ("stream"),
+      act on = So ("results")
     )
-    val ceTweetDetailsClientEventNamespace1: ClientEventNamespace = ClientEventNamespace(
-      page = Some("tweet"),
-      section = None,
-      component = Some("tweet"),
-      element = None,
-      action = Some("impression")
+    val ceT etDeta lsCl entEventNa space1: Cl entEventNa space = Cl entEventNa space(
+      page = So ("t et"),
+      sect on = None,
+      component = So ("t et"),
+      ele nt = None,
+      act on = So (" mpress on")
     )
-    val ceTweetDetailsClientEventNamespace2: ClientEventNamespace = ClientEventNamespace(
-      page = Some("tweet"),
-      section = None,
-      component = Some("suggest_ranked_list_tweet"),
-      element = None,
-      action = Some("impression")
+    val ceT etDeta lsCl entEventNa space2: Cl entEventNa space = Cl entEventNa space(
+      page = So ("t et"),
+      sect on = None,
+      component = So ("suggest_ranked_l st_t et"),
+      ele nt = None,
+      act on = So (" mpress on")
     )
-    val ceTweetDetailsClientEventNamespace3: ClientEventNamespace = ClientEventNamespace(
-      page = Some("tweet"),
-      section = None,
+    val ceT etDeta lsCl entEventNa space3: Cl entEventNa space = Cl entEventNa space(
+      page = So ("t et"),
+      sect on = None,
       component = None,
-      element = None,
-      action = Some("impression")
+      ele nt = None,
+      act on = So (" mpress on")
     )
-    val ceTweetDetailsClientEventNamespace4: ClientEventNamespace = ClientEventNamespace(
-      page = Some("tweet"),
-      section = None,
+    val ceT etDeta lsCl entEventNa space4: Cl entEventNa space = Cl entEventNa space(
+      page = So ("t et"),
+      sect on = None,
       component = None,
-      element = None,
-      action = Some("show")
+      ele nt = None,
+      act on = So ("show")
     )
-    val ceTweetDetailsClientEventNamespace5: ClientEventNamespace = ClientEventNamespace(
-      page = Some("tweet"),
-      section = Some("landing"),
+    val ceT etDeta lsCl entEventNa space5: Cl entEventNa space = Cl entEventNa space(
+      page = So ("t et"),
+      sect on = So ("land ng"),
       component = None,
-      element = None,
-      action = Some("show")
+      ele nt = None,
+      act on = So ("show")
     )
-    val ceGalleryClientEventNamespace: ClientEventNamespace = ClientEventNamespace(
-      component = Some("gallery"),
-      element = Some("photo"),
-      action = Some("impression")
+    val ceGalleryCl entEventNa space: Cl entEventNa space = Cl entEventNa space(
+      component = So ("gallery"),
+      ele nt = So ("photo"),
+      act on = So (" mpress on")
     )
-    val uuaFavoriteClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(action = Some("favorite"))
-    val uuaHomeFavoriteClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(page = Some("home"), action = Some("favorite"))
-    val uuaSearchFavoriteClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(page = Some("search"), action = Some("favorite"))
-    val uuaHomeLatestFavoriteClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(page = Some("home_latest"), action = Some("favorite"))
-    val uuaClickReplyClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(action = Some("reply"))
-    val uuaReplyClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(action = Some("send_reply"))
-    val uuaRetweetClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(action = Some("retweet"))
-    val uuaVideoPlayback25ClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(action = Some("playback_25"))
-    val uuaVideoPlayback50ClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(action = Some("playback_50"))
-    val uuaVideoPlayback75ClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(action = Some("playback_75"))
-    val uuaVideoPlayback95ClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(action = Some("playback_95"))
-    val uuaOpenLinkClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(action = Some("open_link"))
-    val uuaTakeScreenshotClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(action = Some("take_screenshot"))
-    val uuaVideoPlayFromTapClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(action = Some("play_from_tap"))
-    val uuaVideoQualityViewClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(action = Some("video_quality_view"))
-    val uuaVideoViewClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(action = Some("video_view"))
-    val uuaVideoMrcViewClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(action = Some("video_mrc_view"))
-    val uuaVideoViewThresholdClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(action = Some("view_threshold"))
-    val uuaVideoCtaUrlClickClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(action = Some("cta_url_click"))
-    val uuaVideoCtaWatchClickClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(action = Some("cta_watch_click"))
-    val uuaPhotoExpandClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(element = Some("platform_photo_card"), action = Some("click"))
-    val uuaCardClickClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(element = Some("platform_card"), action = Some("click"))
-    val uuaCardOpenAppClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(action = Some("open_app"))
-    val uuaCardAppInstallAttemptClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(action = Some("install_app"))
-    val uuaPollCardVote1ClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(element = Some("platform_card"), action = Some("vote"))
-    val uuaPollCardVote2ClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(element = Some("platform_forward_card"), action = Some("vote"))
-    val uuaMentionClickClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(element = Some("mention"), action = Some("click"))
-    val uuaVideoPlaybackStartClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(action = Some("playback_start"))
-    val uuaVideoPlaybackCompleteClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(action = Some("playback_complete"))
-    val uuaClickHashtagClientEventNamespace: ClientEventNamespace =
-      ClientEventNamespace(action = Some("hashtag_click"))
-    val uuaTopicFollowClientEventNamespace1: ClientEventNamespace =
-      ClientEventNamespace(element = Some("topic"), action = Some("follow"))
-    val uuaTopicFollowClientEventNamespace2: ClientEventNamespace =
-      ClientEventNamespace(element = Some("social_proof"), action = Some("follow"))
-    val uuaTopicFollowClientEventNamespace3: ClientEventNamespace =
-      ClientEventNamespace(element = Some("feedback_follow_topic"), action = Some("click"))
-    val uuaTopicUnfollowClientEventNamespace1: ClientEventNamespace =
-      ClientEventNamespace(element = Some("topic"), action = Some("unfollow"))
-    val uuaTopicUnfollowClientEventNamespace2: ClientEventNamespace =
-      ClientEventNamespace(element = Some("social_proof"), action = Some("unfollow"))
-    val uuaTopicUnfollowClientEventNamespace3: ClientEventNamespace =
-      ClientEventNamespace(element = Some("feedback_unfollow_topic"), action = Some("click"))
-    val uuaTopicNotInterestedInClientEventNamespace1: ClientEventNamespace =
-      ClientEventNamespace(element = Some("topic"), action = Some("not_interested"))
-    val uuaTopicNotInterestedInClientEventNamespace2: ClientEventNamespace =
-      ClientEventNamespace(
-        element = Some("feedback_not_interested_in_topic"),
-        action = Some("click"))
-    val uuaTopicUndoNotInterestedInClientEventNamespace1: ClientEventNamespace =
-      ClientEventNamespace(element = Some("topic"), action = Some("un_not_interested"))
-    val uuaTopicUndoNotInterestedInClientEventNamespace2: ClientEventNamespace =
-      ClientEventNamespace(
-        element = Some("feedback_not_interested_in_topic"),
-        action = Some("undo"))
-    val uuaProfileFollowAttempt: ClientEventNamespace =
-      ClientEventNamespace(action = Some("follow_attempt"))
-    val uuaTweetFavoriteAttempt: ClientEventNamespace =
-      ClientEventNamespace(action = Some("favorite_attempt"))
-    val uuaTweetRetweetAttempt: ClientEventNamespace =
-      ClientEventNamespace(action = Some("retweet_attempt"))
-    val uuaTweetReplyAttempt: ClientEventNamespace =
-      ClientEventNamespace(action = Some("reply_attempt"))
-    val uuaClientCTALoginClick: ClientEventNamespace =
-      ClientEventNamespace(action = Some("login"))
-    val uuaClientCTALoginStart: ClientEventNamespace =
-      ClientEventNamespace(page = Some("login"), action = Some("show"))
-    val uuaClientCTALoginSuccess: ClientEventNamespace =
-      ClientEventNamespace(page = Some("login"), action = Some("success"))
-    val uuaClientCTASignupClick: ClientEventNamespace =
-      ClientEventNamespace(action = Some("signup"))
-    val uuaClientCTASignupSuccess: ClientEventNamespace =
-      ClientEventNamespace(page = Some("signup"), action = Some("success"))
-    val uuaNotificationOpen: ClientEventNamespace =
-      ClientEventNamespace(
-        page = Some("notification"),
-        section = Some("status_bar"),
+    val uuaFavor eCl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("favor e"))
+    val uuaHo Favor eCl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(page = So ("ho "), act on = So ("favor e"))
+    val uuaSearchFavor eCl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(page = So ("search"), act on = So ("favor e"))
+    val uuaHo LatestFavor eCl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(page = So ("ho _latest"), act on = So ("favor e"))
+    val uuaCl ckReplyCl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("reply"))
+    val uuaReplyCl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("send_reply"))
+    val uuaRet etCl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("ret et"))
+    val uuaV deoPlayback25Cl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("playback_25"))
+    val uuaV deoPlayback50Cl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("playback_50"))
+    val uuaV deoPlayback75Cl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("playback_75"))
+    val uuaV deoPlayback95Cl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("playback_95"))
+    val uuaOpenL nkCl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("open_l nk"))
+    val uuaTakeScreenshotCl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("take_screenshot"))
+    val uuaV deoPlayFromTapCl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("play_from_tap"))
+    val uuaV deoQual yV ewCl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("v deo_qual y_v ew"))
+    val uuaV deoV ewCl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("v deo_v ew"))
+    val uuaV deoMrcV ewCl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("v deo_mrc_v ew"))
+    val uuaV deoV ewThresholdCl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("v ew_threshold"))
+    val uuaV deoCtaUrlCl ckCl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("cta_url_cl ck"))
+    val uuaV deoCtaWatchCl ckCl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("cta_watch_cl ck"))
+    val uuaPhotoExpandCl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(ele nt = So ("platform_photo_card"), act on = So ("cl ck"))
+    val uuaCardCl ckCl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(ele nt = So ("platform_card"), act on = So ("cl ck"))
+    val uuaCardOpenAppCl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("open_app"))
+    val uuaCardApp nstallAttemptCl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(act on = So (" nstall_app"))
+    val uuaPollCardVote1Cl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(ele nt = So ("platform_card"), act on = So ("vote"))
+    val uuaPollCardVote2Cl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(ele nt = So ("platform_forward_card"), act on = So ("vote"))
+    val uua nt onCl ckCl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(ele nt = So (" nt on"), act on = So ("cl ck"))
+    val uuaV deoPlaybackStartCl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("playback_start"))
+    val uuaV deoPlaybackCompleteCl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("playback_complete"))
+    val uuaCl ckHashtagCl entEventNa space: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("hashtag_cl ck"))
+    val uuaTop cFollowCl entEventNa space1: Cl entEventNa space =
+      Cl entEventNa space(ele nt = So ("top c"), act on = So ("follow"))
+    val uuaTop cFollowCl entEventNa space2: Cl entEventNa space =
+      Cl entEventNa space(ele nt = So ("soc al_proof"), act on = So ("follow"))
+    val uuaTop cFollowCl entEventNa space3: Cl entEventNa space =
+      Cl entEventNa space(ele nt = So ("feedback_follow_top c"), act on = So ("cl ck"))
+    val uuaTop cUnfollowCl entEventNa space1: Cl entEventNa space =
+      Cl entEventNa space(ele nt = So ("top c"), act on = So ("unfollow"))
+    val uuaTop cUnfollowCl entEventNa space2: Cl entEventNa space =
+      Cl entEventNa space(ele nt = So ("soc al_proof"), act on = So ("unfollow"))
+    val uuaTop cUnfollowCl entEventNa space3: Cl entEventNa space =
+      Cl entEventNa space(ele nt = So ("feedback_unfollow_top c"), act on = So ("cl ck"))
+    val uuaTop cNot nterested nCl entEventNa space1: Cl entEventNa space =
+      Cl entEventNa space(ele nt = So ("top c"), act on = So ("not_ nterested"))
+    val uuaTop cNot nterested nCl entEventNa space2: Cl entEventNa space =
+      Cl entEventNa space(
+        ele nt = So ("feedback_not_ nterested_ n_top c"),
+        act on = So ("cl ck"))
+    val uuaTop cUndoNot nterested nCl entEventNa space1: Cl entEventNa space =
+      Cl entEventNa space(ele nt = So ("top c"), act on = So ("un_not_ nterested"))
+    val uuaTop cUndoNot nterested nCl entEventNa space2: Cl entEventNa space =
+      Cl entEventNa space(
+        ele nt = So ("feedback_not_ nterested_ n_top c"),
+        act on = So ("undo"))
+    val uuaProf leFollowAttempt: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("follow_attempt"))
+    val uuaT etFavor eAttempt: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("favor e_attempt"))
+    val uuaT etRet etAttempt: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("ret et_attempt"))
+    val uuaT etReplyAttempt: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("reply_attempt"))
+    val uuaCl entCTALog nCl ck: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("log n"))
+    val uuaCl entCTALog nStart: Cl entEventNa space =
+      Cl entEventNa space(page = So ("log n"), act on = So ("show"))
+    val uuaCl entCTALog nSuccess: Cl entEventNa space =
+      Cl entEventNa space(page = So ("log n"), act on = So ("success"))
+    val uuaCl entCTAS gnupCl ck: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("s gnup"))
+    val uuaCl entCTAS gnupSuccess: Cl entEventNa space =
+      Cl entEventNa space(page = So ("s gnup"), act on = So ("success"))
+    val uuaNot f cat onOpen: Cl entEventNa space =
+      Cl entEventNa space(
+        page = So ("not f cat on"),
+        sect on = So ("status_bar"),
         component = None,
-        action = Some("open"))
-    val uuaNotificationClick: ClientEventNamespace =
-      ClientEventNamespace(
-        page = Some("ntab"),
-        section = Some("all"),
-        component = Some("urt"),
-        element = Some("users_liked_your_tweet"),
-        action = Some("navigate"))
-    val uuaTweetReport: ClientEventNamespace = ClientEventNamespace(element = Some("report_tweet"))
-    val uuaTweetFollowAuthor1: ClientEventNamespace =
-      ClientEventNamespace(element = Some("follow"), action = Some("click"))
-    val uuaTweetFollowAuthor2: ClientEventNamespace =
-      ClientEventNamespace(action = Some("follow"))
-    val uuaTweetUnfollowAuthor1: ClientEventNamespace =
-      ClientEventNamespace(element = Some("unfollow"), action = Some("click"))
-    val uuaTweetUnfollowAuthor2: ClientEventNamespace =
-      ClientEventNamespace(action = Some("unfollow"))
-    val uuaNotificationSeeLessOften: ClientEventNamespace = ClientEventNamespace(
-      page = Some("ntab"),
-      section = Some("all"),
-      component = Some("urt"),
-      action = Some("see_less_often"))
-    def uuaClientEventNamespace(element: String, action: String): ClientEventNamespace =
-      ClientEventNamespace(element = Some(element), action = Some(action))
-    def uuaTweetReportFlow(page: String, action: String): ClientEventNamespace =
-      ClientEventNamespace(element = Some("ticket"), page = Some(page), action = Some(action))
-    val uuaTweetClick: ClientEventNamespace =
-      ClientEventNamespace(element = Some("tweet"), action = Some("click"))
-    def uuaTweetClickProfile: ClientEventNamespace = ClientEventNamespace(
-      component = Some("tweet"),
-      element = Some("user"),
-      action = Some("profile_click"))
-    val uuaNotificationDismiss: ClientEventNamespace = ClientEventNamespace(
-      page = Some("notification"),
-      section = Some("status_bar"),
+        act on = So ("open"))
+    val uuaNot f cat onCl ck: Cl entEventNa space =
+      Cl entEventNa space(
+        page = So ("ntab"),
+        sect on = So ("all"),
+        component = So ("urt"),
+        ele nt = So ("users_l ked_y _t et"),
+        act on = So ("nav gate"))
+    val uuaT etReport: Cl entEventNa space = Cl entEventNa space(ele nt = So ("report_t et"))
+    val uuaT etFollowAuthor1: Cl entEventNa space =
+      Cl entEventNa space(ele nt = So ("follow"), act on = So ("cl ck"))
+    val uuaT etFollowAuthor2: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("follow"))
+    val uuaT etUnfollowAuthor1: Cl entEventNa space =
+      Cl entEventNa space(ele nt = So ("unfollow"), act on = So ("cl ck"))
+    val uuaT etUnfollowAuthor2: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("unfollow"))
+    val uuaNot f cat onSeeLessOften: Cl entEventNa space = Cl entEventNa space(
+      page = So ("ntab"),
+      sect on = So ("all"),
+      component = So ("urt"),
+      act on = So ("see_less_often"))
+    def uuaCl entEventNa space(ele nt: Str ng, act on: Str ng): Cl entEventNa space =
+      Cl entEventNa space(ele nt = So (ele nt), act on = So (act on))
+    def uuaT etReportFlow(page: Str ng, act on: Str ng): Cl entEventNa space =
+      Cl entEventNa space(ele nt = So ("t cket"), page = So (page), act on = So (act on))
+    val uuaT etCl ck: Cl entEventNa space =
+      Cl entEventNa space(ele nt = So ("t et"), act on = So ("cl ck"))
+    def uuaT etCl ckProf le: Cl entEventNa space = Cl entEventNa space(
+      component = So ("t et"),
+      ele nt = So ("user"),
+      act on = So ("prof le_cl ck"))
+    val uuaNot f cat onD sm ss: Cl entEventNa space = Cl entEventNa space(
+      page = So ("not f cat on"),
+      sect on = So ("status_bar"),
       component = None,
-      action = Some("dismiss"))
-    val uuaTypeaheadClick: ClientEventNamespace =
-      ClientEventNamespace(element = Some("typeahead"), action = Some("click"))
-    val uuaSearchResultsRelevant: ClientEventNamespace = ClientEventNamespace(
-      page = Some("search"),
-      component = Some("did_you_find_it_module"),
-      element = Some("is_relevant"),
-      action = Some("click")
+      act on = So ("d sm ss"))
+    val uuaTypea adCl ck: Cl entEventNa space =
+      Cl entEventNa space(ele nt = So ("typea ad"), act on = So ("cl ck"))
+    val uuaSearchResultsRelevant: Cl entEventNa space = Cl entEventNa space(
+      page = So ("search"),
+      component = So ("d d_ _f nd_ _module"),
+      ele nt = So (" s_relevant"),
+      act on = So ("cl ck")
     )
-    val uuaSearchResultsNotRelevant: ClientEventNamespace = ClientEventNamespace(
-      page = Some("search"),
-      component = Some("did_you_find_it_module"),
-      element = Some("not_relevant"),
-      action = Some("click")
+    val uuaSearchResultsNotRelevant: Cl entEventNa space = Cl entEventNa space(
+      page = So ("search"),
+      component = So ("d d_ _f nd_ _module"),
+      ele nt = So ("not_relevant"),
+      act on = So ("cl ck")
     )
-    val uuaTweetRelevantToSearch: ClientEventNamespace = ClientEventNamespace(
-      page = Some("search"),
-      component = Some("relevance_prompt_module"),
-      element = Some("is_relevant"),
-      action = Some("click"))
-    val uuaTweetNotRelevantToSearch: ClientEventNamespace = ClientEventNamespace(
-      page = Some("search"),
-      component = Some("relevance_prompt_module"),
-      element = Some("not_relevant"),
-      action = Some("click"))
-    val uuaProfileBlock: ClientEventNamespace =
-      ClientEventNamespace(page = Some("profile"), action = Some("block"))
-    val uuaProfileUnblock: ClientEventNamespace =
-      ClientEventNamespace(page = Some("profile"), action = Some("unblock"))
-    val uuaProfileMute: ClientEventNamespace =
-      ClientEventNamespace(page = Some("profile"), action = Some("mute_user"))
-    val uuaProfileReport: ClientEventNamespace =
-      ClientEventNamespace(page = Some("profile"), action = Some("report"))
-    val uuaProfileShow: ClientEventNamespace =
-      ClientEventNamespace(page = Some("profile"), action = Some("show"))
-    val uuaProfileFollow: ClientEventNamespace =
-      ClientEventNamespace(action = Some("follow"))
-    val uuaProfileClick: ClientEventNamespace =
-      ClientEventNamespace(action = Some("profile_click"))
-    val uuaTweetBlockAuthor: ClientEventNamespace = ClientEventNamespace(
-      page = Some("profile"),
-      section = Some("tweets"),
-      component = Some("tweet"),
-      action = Some("click"),
-      element = Some("block")
+    val uuaT etRelevantToSearch: Cl entEventNa space = Cl entEventNa space(
+      page = So ("search"),
+      component = So ("relevance_prompt_module"),
+      ele nt = So (" s_relevant"),
+      act on = So ("cl ck"))
+    val uuaT etNotRelevantToSearch: Cl entEventNa space = Cl entEventNa space(
+      page = So ("search"),
+      component = So ("relevance_prompt_module"),
+      ele nt = So ("not_relevant"),
+      act on = So ("cl ck"))
+    val uuaProf leBlock: Cl entEventNa space =
+      Cl entEventNa space(page = So ("prof le"), act on = So ("block"))
+    val uuaProf leUnblock: Cl entEventNa space =
+      Cl entEventNa space(page = So ("prof le"), act on = So ("unblock"))
+    val uuaProf leMute: Cl entEventNa space =
+      Cl entEventNa space(page = So ("prof le"), act on = So ("mute_user"))
+    val uuaProf leReport: Cl entEventNa space =
+      Cl entEventNa space(page = So ("prof le"), act on = So ("report"))
+    val uuaProf leShow: Cl entEventNa space =
+      Cl entEventNa space(page = So ("prof le"), act on = So ("show"))
+    val uuaProf leFollow: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("follow"))
+    val uuaProf leCl ck: Cl entEventNa space =
+      Cl entEventNa space(act on = So ("prof le_cl ck"))
+    val uuaT etBlockAuthor: Cl entEventNa space = Cl entEventNa space(
+      page = So ("prof le"),
+      sect on = So ("t ets"),
+      component = So ("t et"),
+      act on = So ("cl ck"),
+      ele nt = So ("block")
     )
-    val uuaTweetUnblockAuthor: ClientEventNamespace = ClientEventNamespace(
-      section = Some("tweets"),
-      component = Some("tweet"),
-      action = Some("click"),
-      element = Some("unblock")
+    val uuaT etUnblockAuthor: Cl entEventNa space = Cl entEventNa space(
+      sect on = So ("t ets"),
+      component = So ("t et"),
+      act on = So ("cl ck"),
+      ele nt = So ("unblock")
     )
-    val uuaTweetMuteAuthor: ClientEventNamespace = ClientEventNamespace(
-      component = Some("suggest_sc_tweet"),
-      action = Some("click"),
-      element = Some("mute")
+    val uuaT etMuteAuthor: Cl entEventNa space = Cl entEventNa space(
+      component = So ("suggest_sc_t et"),
+      act on = So ("cl ck"),
+      ele nt = So ("mute")
     )
-    val uuaAppExit: ClientEventNamespace =
-      ClientEventNamespace(page = Some("app"), action = Some("become_inactive"))
+    val uuaAppEx : Cl entEventNa space =
+      Cl entEventNa space(page = So ("app"), act on = So ("beco _ nact ve"))
 
-    // helper methods for creating client-events and UUA objects
+    //  lper  thods for creat ng cl ent-events and UUA objects
     def mkLogEvent(
-      eventName: String = "",
-      eventNamespace: Option[EventNamespace],
-      eventDetails: Option[EventDetails] = None,
-      logBase: Option[LogBase] = None,
-      pushNotificationDetails: Option[NotificationDetails] = None,
-      reportDetails: Option[ReportDetails] = None,
-      searchDetails: Option[SearchDetails] = None,
-      performanceDetails: Option[PerformanceDetails] = None
+      eventNa : Str ng = "",
+      eventNa space: Opt on[EventNa space],
+      eventDeta ls: Opt on[EventDeta ls] = None,
+      logBase: Opt on[LogBase] = None,
+      pushNot f cat onDeta ls: Opt on[Not f cat onDeta ls] = None,
+      reportDeta ls: Opt on[ReportDeta ls] = None,
+      searchDeta ls: Opt on[SearchDeta ls] = None,
+      performanceDeta ls: Opt on[PerformanceDeta ls] = None
     ): LogEvent = LogEvent(
-      eventName = eventName,
-      eventNamespace = eventNamespace,
-      eventDetails = eventDetails,
+      eventNa  = eventNa ,
+      eventNa space = eventNa space,
+      eventDeta ls = eventDeta ls,
       logBase = logBase,
-      notificationDetails = pushNotificationDetails,
-      reportDetails = reportDetails,
-      searchDetails = searchDetails,
-      performanceDetails = performanceDetails
+      not f cat onDeta ls = pushNot f cat onDeta ls,
+      reportDeta ls = reportDeta ls,
+      searchDeta ls = searchDeta ls,
+      performanceDeta ls = performanceDeta ls
     )
 
-    def actionTowardDefaultTweetEvent(
-      eventNamespace: Option[EventNamespace],
-      impressionDetails: Option[ImpressionDetails] = None,
-      suggestionDetails: Option[SuggestionDetails] = None,
-      itemId: Option[Long] = Some(itemTweetId),
-      mediaDetailsV2: Option[MediaDetailsV2] = None,
-      clientMediaEvent: Option[ClientMediaEvent] = None,
-      itemTypeOpt: Option[ItemType] = Some(ItemType.Tweet),
-      authorId: Option[Long] = None,
-      isFollowedByActingUser: Option[Boolean] = None,
-      isFollowingActingUser: Option[Boolean] = None,
-      notificationTabDetails: Option[NotificationTabDetails] = None,
-      reportDetails: Option[ReportDetails] = None,
+    def act onTowardDefaultT etEvent(
+      eventNa space: Opt on[EventNa space],
+       mpress onDeta ls: Opt on[ mpress onDeta ls] = None,
+      suggest onDeta ls: Opt on[Suggest onDeta ls] = None,
+       em d: Opt on[Long] = So ( emT et d),
+       d aDeta lsV2: Opt on[ d aDeta lsV2] = None,
+      cl ent d aEvent: Opt on[Cl ent d aEvent] = None,
+       emTypeOpt: Opt on[ emType] = So ( emType.T et),
+      author d: Opt on[Long] = None,
+       sFollo dByAct ngUser: Opt on[Boolean] = None,
+       sFollow ngAct ngUser: Opt on[Boolean] = None,
+      not f cat onTabDeta ls: Opt on[Not f cat onTabDeta ls] = None,
+      reportDeta ls: Opt on[ReportDeta ls] = None,
       logBase: LogBase = logBase,
-      tweetPosition: Option[Int] = None,
-      promotedId: Option[String] = None,
-      url: Option[String] = None,
-      targets: Option[Seq[LogEventItem]] = None,
-      percentVisibleHeight100k: Option[Int] = None,
-      searchDetails: Option[SearchDetails] = None,
-      cardDetails: Option[CardDetails] = None
+      t etPos  on: Opt on[ nt] = None,
+      promoted d: Opt on[Str ng] = None,
+      url: Opt on[Str ng] = None,
+      targets: Opt on[Seq[LogEvent em]] = None,
+      percentV s ble  ght100k: Opt on[ nt] = None,
+      searchDeta ls: Opt on[SearchDeta ls] = None,
+      cardDeta ls: Opt on[CardDeta ls] = None
     ): LogEvent =
       mkLogEvent(
-        eventName = "action_toward_default_tweet_event",
-        eventNamespace = eventNamespace,
-        reportDetails = reportDetails,
-        eventDetails = Some(
-          EventDetails(
+        eventNa  = "act on_toward_default_t et_event",
+        eventNa space = eventNa space,
+        reportDeta ls = reportDeta ls,
+        eventDeta ls = So (
+          EventDeta ls(
             url = url,
-            items = Some(
-              Seq(LogEventItem(
-                id = itemId,
-                percentVisibleHeight100k = percentVisibleHeight100k,
-                itemType = itemTypeOpt,
-                impressionDetails = impressionDetails,
-                suggestionDetails = suggestionDetails,
-                mediaDetailsV2 = mediaDetailsV2,
-                clientMediaEvent = clientMediaEvent,
-                cardDetails = cardDetails,
-                tweetDetails = authorId.map { id => LogEventTweetDetails(authorId = Some(id)) },
-                isViewerFollowsTweetAuthor = isFollowedByActingUser,
-                isTweetAuthorFollowsViewer = isFollowingActingUser,
-                notificationTabDetails = notificationTabDetails,
-                position = tweetPosition,
-                promotedId = promotedId
+             ems = So (
+              Seq(LogEvent em(
+                 d =  em d,
+                percentV s ble  ght100k = percentV s ble  ght100k,
+                 emType =  emTypeOpt,
+                 mpress onDeta ls =  mpress onDeta ls,
+                suggest onDeta ls = suggest onDeta ls,
+                 d aDeta lsV2 =  d aDeta lsV2,
+                cl ent d aEvent = cl ent d aEvent,
+                cardDeta ls = cardDeta ls,
+                t etDeta ls = author d.map {  d => LogEventT etDeta ls(author d = So ( d)) },
+                 sV e rFollowsT etAuthor =  sFollo dByAct ngUser,
+                 sT etAuthorFollowsV e r =  sFollow ngAct ngUser,
+                not f cat onTabDeta ls = not f cat onTabDeta ls,
+                pos  on = t etPos  on,
+                promoted d = promoted d
               ))),
             targets = targets
           )
         ),
-        logBase = Some(logBase),
-        searchDetails = searchDetails
+        logBase = So (logBase),
+        searchDeta ls = searchDeta ls
       )
 
-    def actionTowardReplyEvent(
-      eventNamespace: Option[EventNamespace],
-      inReplyToTweetId: Long = inReplyToTweetId,
-      impressionDetails: Option[ImpressionDetails] = None
+    def act onTowardReplyEvent(
+      eventNa space: Opt on[EventNa space],
+       nReplyToT et d: Long =  nReplyToT et d,
+       mpress onDeta ls: Opt on[ mpress onDeta ls] = None
     ): LogEvent =
       mkLogEvent(
-        eventName = "action_toward_reply_event",
-        eventNamespace = eventNamespace,
-        eventDetails = Some(
-          EventDetails(
-            items = Some(
+        eventNa  = "act on_toward_reply_event",
+        eventNa space = eventNa space,
+        eventDeta ls = So (
+          EventDeta ls(
+             ems = So (
               Seq(
-                LogEventItem(
-                  id = Some(itemTweetId),
-                  itemType = Some(ItemType.Tweet),
-                  impressionDetails = impressionDetails,
-                  tweetDetails =
-                    Some(LogEventTweetDetails(inReplyToTweetId = Some(inReplyToTweetId)))
+                LogEvent em(
+                   d = So ( emT et d),
+                   emType = So ( emType.T et),
+                   mpress onDeta ls =  mpress onDeta ls,
+                  t etDeta ls =
+                    So (LogEventT etDeta ls( nReplyToT et d = So ( nReplyToT et d)))
                 ))
             )
           )
         ),
-        logBase = Some(logBase)
+        logBase = So (logBase)
       )
 
-    def actionTowardRetweetEvent(
-      eventNamespace: Option[EventNamespace],
-      inReplyToTweetId: Option[Long] = None,
-      impressionDetails: Option[ImpressionDetails] = None
+    def act onTowardRet etEvent(
+      eventNa space: Opt on[EventNa space],
+       nReplyToT et d: Opt on[Long] = None,
+       mpress onDeta ls: Opt on[ mpress onDeta ls] = None
     ): LogEvent =
       mkLogEvent(
-        eventName = "action_toward_retweet_event",
-        eventNamespace = eventNamespace,
-        eventDetails = Some(
-          EventDetails(
-            items = Some(
-              Seq(LogEventItem(
-                id = Some(itemTweetId),
-                itemType = Some(ItemType.Tweet),
-                impressionDetails = impressionDetails,
-                tweetDetails = Some(LogEventTweetDetails(
-                  retweetingTweetId = Some(retweetingTweetId),
-                  inReplyToTweetId = inReplyToTweetId))
+        eventNa  = "act on_toward_ret et_event",
+        eventNa space = eventNa space,
+        eventDeta ls = So (
+          EventDeta ls(
+             ems = So (
+              Seq(LogEvent em(
+                 d = So ( emT et d),
+                 emType = So ( emType.T et),
+                 mpress onDeta ls =  mpress onDeta ls,
+                t etDeta ls = So (LogEventT etDeta ls(
+                  ret et ngT et d = So (ret et ngT et d),
+                   nReplyToT et d =  nReplyToT et d))
               )))
           )
         ),
-        logBase = Some(logBase)
+        logBase = So (logBase)
       )
 
-    def actionTowardQuoteEvent(
-      eventNamespace: Option[EventNamespace],
-      inReplyToTweetId: Option[Long] = None,
-      quotedAuthorId: Option[Long] = None,
-      impressionDetails: Option[ImpressionDetails] = None
+    def act onTowardQuoteEvent(
+      eventNa space: Opt on[EventNa space],
+       nReplyToT et d: Opt on[Long] = None,
+      quotedAuthor d: Opt on[Long] = None,
+       mpress onDeta ls: Opt on[ mpress onDeta ls] = None
     ): LogEvent =
       mkLogEvent(
-        eventName = "action_toward_quote_event",
-        eventNamespace = eventNamespace,
-        eventDetails = Some(
-          EventDetails(
-            items = Some(
+        eventNa  = "act on_toward_quote_event",
+        eventNa space = eventNa space,
+        eventDeta ls = So (
+          EventDeta ls(
+             ems = So (
               Seq(
-                LogEventItem(
-                  id = Some(itemTweetId),
-                  itemType = Some(ItemType.Tweet),
-                  impressionDetails = impressionDetails,
-                  tweetDetails = Some(
-                    LogEventTweetDetails(
-                      quotedTweetId = Some(quotedTweetId),
-                      inReplyToTweetId = inReplyToTweetId,
-                      quotedAuthorId = quotedAuthorId))
+                LogEvent em(
+                   d = So ( emT et d),
+                   emType = So ( emType.T et),
+                   mpress onDeta ls =  mpress onDeta ls,
+                  t etDeta ls = So (
+                    LogEventT etDeta ls(
+                      quotedT et d = So (quotedT et d),
+                       nReplyToT et d =  nReplyToT et d,
+                      quotedAuthor d = quotedAuthor d))
                 ))
             )
           )
         ),
-        logBase = Some(logBase)
+        logBase = So (logBase)
       )
 
-    def actionTowardRetweetEventWithReplyAndQuote(
-      eventNamespace: Option[EventNamespace],
-      inReplyToTweetId: Long = inReplyToTweetId,
-      impressionDetails: Option[ImpressionDetails] = None
+    def act onTowardRet etEventW hReplyAndQuote(
+      eventNa space: Opt on[EventNa space],
+       nReplyToT et d: Long =  nReplyToT et d,
+       mpress onDeta ls: Opt on[ mpress onDeta ls] = None
     ): LogEvent = mkLogEvent(
-      eventName = "action_toward_retweet_event_with_reply_and_quote",
-      eventNamespace = eventNamespace,
-      eventDetails = Some(
-        EventDetails(
-          items = Some(
-            Seq(LogEventItem(
-              id = Some(itemTweetId),
-              itemType = Some(ItemType.Tweet),
-              impressionDetails = impressionDetails,
-              tweetDetails = Some(
-                LogEventTweetDetails(
-                  retweetingTweetId = Some(retweetingTweetId),
-                  quotedTweetId = Some(quotedTweetId),
-                  inReplyToTweetId = Some(inReplyToTweetId),
+      eventNa  = "act on_toward_ret et_event_w h_reply_and_quote",
+      eventNa space = eventNa space,
+      eventDeta ls = So (
+        EventDeta ls(
+           ems = So (
+            Seq(LogEvent em(
+               d = So ( emT et d),
+               emType = So ( emType.T et),
+               mpress onDeta ls =  mpress onDeta ls,
+              t etDeta ls = So (
+                LogEventT etDeta ls(
+                  ret et ngT et d = So (ret et ngT et d),
+                  quotedT et d = So (quotedT et d),
+                   nReplyToT et d = So ( nReplyToT et d),
                 ))
             )))
         )
       ),
-      logBase = Some(logBase)
+      logBase = So (logBase)
     )
 
-    def pushNotificationEvent(
-      eventNamespace: Option[EventNamespace],
-      itemId: Option[Long] = Some(itemTweetId),
-      itemTypeOpt: Option[ItemType] = Some(ItemType.Tweet),
-      notificationDetails: Option[NotificationDetails],
+    def pushNot f cat onEvent(
+      eventNa space: Opt on[EventNa space],
+       em d: Opt on[Long] = So ( emT et d),
+       emTypeOpt: Opt on[ emType] = So ( emType.T et),
+      not f cat onDeta ls: Opt on[Not f cat onDeta ls],
     ): LogEvent =
       mkLogEvent(
-        eventName = "push_notification_open",
-        eventNamespace = eventNamespace,
-        eventDetails = Some(
-          EventDetails(
-            items = Some(
+        eventNa  = "push_not f cat on_open",
+        eventNa space = eventNa space,
+        eventDeta ls = So (
+          EventDeta ls(
+             ems = So (
               Seq(
-                LogEventItem(
-                  id = itemId,
-                  itemType = itemTypeOpt,
+                LogEvent em(
+                   d =  em d,
+                   emType =  emTypeOpt,
                 ))))
         ),
-        logBase = Some(logBase),
-        pushNotificationDetails = notificationDetails
+        logBase = So (logBase),
+        pushNot f cat onDeta ls = not f cat onDeta ls
       )
 
-    def actionTowardNotificationEvent(
-      eventNamespace: Option[EventNamespace],
-      notificationTabDetails: Option[NotificationTabDetails],
+    def act onTowardNot f cat onEvent(
+      eventNa space: Opt on[EventNa space],
+      not f cat onTabDeta ls: Opt on[Not f cat onTabDeta ls],
     ): LogEvent =
       mkLogEvent(
-        eventName = "notification_event",
-        eventNamespace = eventNamespace,
-        eventDetails = Some(
-          EventDetails(items =
-            Some(Seq(LogEventItem(notificationTabDetails = notificationTabDetails))))),
-        logBase = Some(logBase)
+        eventNa  = "not f cat on_event",
+        eventNa space = eventNa space,
+        eventDeta ls = So (
+          EventDeta ls( ems =
+            So (Seq(LogEvent em(not f cat onTabDeta ls = not f cat onTabDeta ls))))),
+        logBase = So (logBase)
       )
 
-    def profileClickEvent(eventNamespace: Option[EventNamespace]): LogEvent =
+    def prof leCl ckEvent(eventNa space: Opt on[EventNa space]): LogEvent =
       mkLogEvent(
-        eventName = "profile_click",
-        eventNamespace = eventNamespace,
-        eventDetails = Some(
-          EventDetails(items = Some(Seq(
-            LogEventItem(id = Some(userId), itemType = Some(ItemType.User)),
-            LogEventItem(
-              id = Some(itemTweetId),
-              itemType = Some(ItemType.Tweet),
-              tweetDetails = Some(LogEventTweetDetails(authorId = Some(authorId))))
+        eventNa  = "prof le_cl ck",
+        eventNa space = eventNa space,
+        eventDeta ls = So (
+          EventDeta ls( ems = So (Seq(
+            LogEvent em( d = So (user d),  emType = So ( emType.User)),
+            LogEvent em(
+               d = So ( emT et d),
+               emType = So ( emType.T et),
+              t etDeta ls = So (LogEventT etDeta ls(author d = So (author d))))
           )))),
-        logBase = Some(logBase)
+        logBase = So (logBase)
       )
 
-    def actionTowardProfileEvent(
-      eventName: String,
-      eventNamespace: Option[EventNamespace]
+    def act onTowardProf leEvent(
+      eventNa : Str ng,
+      eventNa space: Opt on[EventNa space]
     ): LogEvent =
       mkLogEvent(
-        eventName = eventName,
-        eventNamespace = eventNamespace,
-        eventDetails = Some(
-          EventDetails(items = Some(
+        eventNa  = eventNa ,
+        eventNa space = eventNa space,
+        eventDeta ls = So (
+          EventDeta ls( ems = So (
             Seq(
-              LogEventItem(id = Some(itemProfileId), itemType = Some(ItemType.User))
+              LogEvent em( d = So ( emProf le d),  emType = So ( emType.User))
             )))),
-        logBase = Some(logBase)
+        logBase = So (logBase)
       )
 
-    def tweetActionTowardAuthorEvent(
-      eventName: String,
-      eventNamespace: Option[EventNamespace]
+    def t etAct onTowardAuthorEvent(
+      eventNa : Str ng,
+      eventNa space: Opt on[EventNa space]
     ): LogEvent =
       mkLogEvent(
-        eventName = eventName,
-        eventNamespace = eventNamespace,
-        eventDetails = Some(
-          EventDetails(items = Some(Seq(
-            LogEventItem(id = Some(userId), itemType = Some(ItemType.User)),
-            LogEventItem(
-              id = Some(itemTweetId),
-              itemType = Some(ItemType.Tweet),
-              tweetDetails = Some(LogEventTweetDetails(authorId = Some(authorId))))
+        eventNa  = eventNa ,
+        eventNa space = eventNa space,
+        eventDeta ls = So (
+          EventDeta ls( ems = So (Seq(
+            LogEvent em( d = So (user d),  emType = So ( emType.User)),
+            LogEvent em(
+               d = So ( emT et d),
+               emType = So ( emType.T et),
+              t etDeta ls = So (LogEventT etDeta ls(author d = So (author d))))
           )))),
-        logBase = Some(logBase)
+        logBase = So (logBase)
       )
 
-    def actionTowardsTypeaheadEvent(
-      eventNamespace: Option[EventNamespace],
-      targets: Option[Seq[LogEventItem]],
-      searchQuery: String
+    def act onTowardsTypea adEvent(
+      eventNa space: Opt on[EventNa space],
+      targets: Opt on[Seq[LogEvent em]],
+      searchQuery: Str ng
     ): LogEvent =
       mkLogEvent(
-        eventNamespace = eventNamespace,
-        eventDetails = Some(EventDetails(targets = targets)),
-        logBase = Some(logBase),
-        searchDetails = Some(SearchDetails(query = Some(searchQuery)))
+        eventNa space = eventNa space,
+        eventDeta ls = So (EventDeta ls(targets = targets)),
+        logBase = So (logBase),
+        searchDeta ls = So (SearchDeta ls(query = So (searchQuery)))
       )
-    def actionTowardSearchResultPageEvent(
-      eventNamespace: Option[EventNamespace],
-      searchDetails: Option[SearchDetails],
-      items: Option[Seq[LogEventItem]] = None
+    def act onTowardSearchResultPageEvent(
+      eventNa space: Opt on[EventNa space],
+      searchDeta ls: Opt on[SearchDeta ls],
+       ems: Opt on[Seq[LogEvent em]] = None
     ): LogEvent =
       mkLogEvent(
-        eventNamespace = eventNamespace,
-        eventDetails = Some(EventDetails(items = items)),
-        logBase = Some(logBase),
-        searchDetails = searchDetails
-      )
-
-    def actionTowardsUasEvent(
-      eventNamespace: Option[EventNamespace],
-      clientAppId: Option[Long],
-      duration: Option[Long]
-    ): LogEvent =
-      mkLogEvent(
-        eventNamespace = eventNamespace,
-        logBase = Some(logBase.copy(clientAppId = clientAppId)),
-        performanceDetails = Some(PerformanceDetails(durationMs = duration))
+        eventNa space = eventNa space,
+        eventDeta ls = So (EventDeta ls( ems =  ems)),
+        logBase = So (logBase),
+        searchDeta ls = searchDeta ls
       )
 
-    def mkUUAEventMetadata(
-      clientEventNamespace: Option[ClientEventNamespace],
-      traceId: Option[Long] = None,
-      requestJoinId: Option[Long] = None,
-      clientAppId: Option[Long] = None
-    ): EventMetadata = EventMetadata(
-      sourceTimestampMs = 1001L,
-      receivedTimestampMs = frozenTime.inMilliseconds,
-      sourceLineage = SourceLineage.ClientEvents,
-      clientEventNamespace = clientEventNamespace,
-      traceId = traceId,
-      requestJoinId = requestJoinId,
-      clientAppId = clientAppId
+    def act onTowardsUasEvent(
+      eventNa space: Opt on[EventNa space],
+      cl entApp d: Opt on[Long],
+      durat on: Opt on[Long]
+    ): LogEvent =
+      mkLogEvent(
+        eventNa space = eventNa space,
+        logBase = So (logBase.copy(cl entApp d = cl entApp d)),
+        performanceDeta ls = So (PerformanceDeta ls(durat onMs = durat on))
+      )
+
+    def mkUUAEvent tadata(
+      cl entEventNa space: Opt on[Cl entEventNa space],
+      trace d: Opt on[Long] = None,
+      requestJo n d: Opt on[Long] = None,
+      cl entApp d: Opt on[Long] = None
+    ): Event tadata = Event tadata(
+      s ceT  stampMs = 1001L,
+      rece vedT  stampMs = frozenT  . nM ll seconds,
+      s ceL neage = S ceL neage.Cl entEvents,
+      cl entEventNa space = cl entEventNa space,
+      trace d = trace d,
+      requestJo n d = requestJo n d,
+      cl entApp d = cl entApp d
     )
 
-    def mkExpectedUUAForActionTowardDefaultTweetEvent(
-      clientEventNamespace: Option[ClientEventNamespace],
-      actionType: ActionType,
-      inReplyToTweetId: Option[Long] = None,
-      tweetActionInfo: Option[TweetActionInfo] = None,
-      topicId: Option[Long] = None,
-      authorInfo: Option[AuthorInfo] = None,
-      productSurface: Option[ProductSurface] = None,
-      productSurfaceInfo: Option[ProductSurfaceInfo] = None,
-      tweetPosition: Option[Int] = None,
-      promotedId: Option[String] = None,
-      traceIdOpt: Option[Long] = None,
-      requestJoinIdOpt: Option[Long] = None,
-      guestIdMarketingOpt: Option[Long] = None
-    ): UnifiedUserAction = UnifiedUserAction(
-      userIdentifier =
-        UserIdentifier(userId = Some(userId), guestIdMarketing = guestIdMarketingOpt),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = itemTweetId,
-          inReplyToTweetId = inReplyToTweetId,
-          tweetActionInfo = tweetActionInfo,
-          actionTweetTopicSocialProofId = topicId,
-          actionTweetAuthorInfo = authorInfo,
-          tweetPosition = tweetPosition,
-          promotedId = promotedId
+    def mkExpectedUUAForAct onTowardDefaultT etEvent(
+      cl entEventNa space: Opt on[Cl entEventNa space],
+      act onType: Act onType,
+       nReplyToT et d: Opt on[Long] = None,
+      t etAct on nfo: Opt on[T etAct on nfo] = None,
+      top c d: Opt on[Long] = None,
+      author nfo: Opt on[Author nfo] = None,
+      productSurface: Opt on[ProductSurface] = None,
+      productSurface nfo: Opt on[ProductSurface nfo] = None,
+      t etPos  on: Opt on[ nt] = None,
+      promoted d: Opt on[Str ng] = None,
+      trace dOpt: Opt on[Long] = None,
+      requestJo n dOpt: Opt on[Long] = None,
+      guest dMarket ngOpt: Opt on[Long] = None
+    ): Un f edUserAct on = Un f edUserAct on(
+      user dent f er =
+        User dent f er(user d = So (user d), guest dMarket ng = guest dMarket ngOpt),
+       em =  em.T et nfo(
+        T et nfo(
+          act onT et d =  emT et d,
+           nReplyToT et d =  nReplyToT et d,
+          t etAct on nfo = t etAct on nfo,
+          act onT etTop cSoc alProof d = top c d,
+          act onT etAuthor nfo = author nfo,
+          t etPos  on = t etPos  on,
+          promoted d = promoted d
         )
       ),
-      actionType = actionType,
-      eventMetadata = mkUUAEventMetadata(
-        clientEventNamespace = clientEventNamespace,
-        traceId = traceIdOpt,
-        requestJoinId = requestJoinIdOpt
+      act onType = act onType,
+      event tadata = mkUUAEvent tadata(
+        cl entEventNa space = cl entEventNa space,
+        trace d = trace dOpt,
+        requestJo n d = requestJo n dOpt
       ),
       productSurface = productSurface,
-      productSurfaceInfo = productSurfaceInfo
+      productSurface nfo = productSurface nfo
     )
 
-    def mkExpectedUUAForActionTowardReplyEvent(
-      clientEventNamespace: Option[ClientEventNamespace],
-      actionType: ActionType,
-      tweetActionInfo: Option[TweetActionInfo] = None,
-      authorInfo: Option[AuthorInfo] = None,
-    ): UnifiedUserAction = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(userId)),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = itemTweetId,
-          inReplyToTweetId = Some(inReplyToTweetId),
-          tweetActionInfo = tweetActionInfo,
-          actionTweetAuthorInfo = authorInfo
+    def mkExpectedUUAForAct onTowardReplyEvent(
+      cl entEventNa space: Opt on[Cl entEventNa space],
+      act onType: Act onType,
+      t etAct on nfo: Opt on[T etAct on nfo] = None,
+      author nfo: Opt on[Author nfo] = None,
+    ): Un f edUserAct on = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (user d)),
+       em =  em.T et nfo(
+        T et nfo(
+          act onT et d =  emT et d,
+           nReplyToT et d = So ( nReplyToT et d),
+          t etAct on nfo = t etAct on nfo,
+          act onT etAuthor nfo = author nfo
         )
       ),
-      actionType = actionType,
-      eventMetadata = mkUUAEventMetadata(clientEventNamespace = clientEventNamespace)
+      act onType = act onType,
+      event tadata = mkUUAEvent tadata(cl entEventNa space = cl entEventNa space)
     )
 
-    def mkExpectedUUAForActionTowardRetweetEvent(
-      clientEventNamespace: Option[ClientEventNamespace],
-      actionType: ActionType,
-      inReplyToTweetId: Option[Long] = None,
-      tweetActionInfo: Option[TweetActionInfo] = None,
-      authorInfo: Option[AuthorInfo] = None,
-    ): UnifiedUserAction = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(userId)),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = itemTweetId,
-          retweetingTweetId = Some(retweetingTweetId),
-          inReplyToTweetId = inReplyToTweetId,
-          tweetActionInfo = tweetActionInfo,
-          actionTweetAuthorInfo = authorInfo
+    def mkExpectedUUAForAct onTowardRet etEvent(
+      cl entEventNa space: Opt on[Cl entEventNa space],
+      act onType: Act onType,
+       nReplyToT et d: Opt on[Long] = None,
+      t etAct on nfo: Opt on[T etAct on nfo] = None,
+      author nfo: Opt on[Author nfo] = None,
+    ): Un f edUserAct on = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (user d)),
+       em =  em.T et nfo(
+        T et nfo(
+          act onT et d =  emT et d,
+          ret et ngT et d = So (ret et ngT et d),
+           nReplyToT et d =  nReplyToT et d,
+          t etAct on nfo = t etAct on nfo,
+          act onT etAuthor nfo = author nfo
         )
       ),
-      actionType = actionType,
-      eventMetadata = mkUUAEventMetadata(clientEventNamespace = clientEventNamespace)
+      act onType = act onType,
+      event tadata = mkUUAEvent tadata(cl entEventNa space = cl entEventNa space)
     )
 
-    def mkExpectedUUAForActionTowardQuoteEvent(
-      clientEventNamespace: Option[ClientEventNamespace],
-      actionType: ActionType,
-      inReplyToTweetId: Option[Long] = None,
-      quotedAuthorId: Option[Long] = None,
-      tweetActionInfo: Option[TweetActionInfo] = None,
-      authorInfo: Option[AuthorInfo] = None,
-    ): UnifiedUserAction = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(userId)),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = itemTweetId,
-          quotedTweetId = Some(quotedTweetId),
-          quotedAuthorId = quotedAuthorId,
-          inReplyToTweetId = inReplyToTweetId,
-          tweetActionInfo = tweetActionInfo,
-          actionTweetAuthorInfo = authorInfo
+    def mkExpectedUUAForAct onTowardQuoteEvent(
+      cl entEventNa space: Opt on[Cl entEventNa space],
+      act onType: Act onType,
+       nReplyToT et d: Opt on[Long] = None,
+      quotedAuthor d: Opt on[Long] = None,
+      t etAct on nfo: Opt on[T etAct on nfo] = None,
+      author nfo: Opt on[Author nfo] = None,
+    ): Un f edUserAct on = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (user d)),
+       em =  em.T et nfo(
+        T et nfo(
+          act onT et d =  emT et d,
+          quotedT et d = So (quotedT et d),
+          quotedAuthor d = quotedAuthor d,
+           nReplyToT et d =  nReplyToT et d,
+          t etAct on nfo = t etAct on nfo,
+          act onT etAuthor nfo = author nfo
         )
       ),
-      actionType = actionType,
-      eventMetadata = mkUUAEventMetadata(clientEventNamespace = clientEventNamespace)
+      act onType = act onType,
+      event tadata = mkUUAEvent tadata(cl entEventNa space = cl entEventNa space)
     )
 
-    def mkExpectedUUAForActionTowardQuotingEvent(
-      clientEventNamespace: Option[ClientEventNamespace],
-      actionType: ActionType,
-      inReplyToTweetId: Option[Long] = None,
-      tweetActionInfo: Option[TweetActionInfo] = None,
-      authorInfo: Option[AuthorInfo] = None,
-    ): UnifiedUserAction = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(userId)),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = quotedTweetId,
-          quotingTweetId = Some(itemTweetId),
-          inReplyToTweetId = inReplyToTweetId,
-          tweetActionInfo = tweetActionInfo,
-          actionTweetAuthorInfo = authorInfo
+    def mkExpectedUUAForAct onTowardQuot ngEvent(
+      cl entEventNa space: Opt on[Cl entEventNa space],
+      act onType: Act onType,
+       nReplyToT et d: Opt on[Long] = None,
+      t etAct on nfo: Opt on[T etAct on nfo] = None,
+      author nfo: Opt on[Author nfo] = None,
+    ): Un f edUserAct on = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (user d)),
+       em =  em.T et nfo(
+        T et nfo(
+          act onT et d = quotedT et d,
+          quot ngT et d = So ( emT et d),
+           nReplyToT et d =  nReplyToT et d,
+          t etAct on nfo = t etAct on nfo,
+          act onT etAuthor nfo = author nfo
         )
       ),
-      actionType = actionType,
-      eventMetadata = mkUUAEventMetadata(clientEventNamespace = clientEventNamespace)
+      act onType = act onType,
+      event tadata = mkUUAEvent tadata(cl entEventNa space = cl entEventNa space)
     )
 
-    def mkExpectedUUAForActionTowardRetweetEventWithReplyAndQuoted(
-      clientEventNamespace: Option[ClientEventNamespace],
-      actionType: ActionType,
-      inReplyToTweetId: Long = inReplyToTweetId,
-      tweetActionInfo: Option[TweetActionInfo] = None,
-      authorInfo: Option[AuthorInfo] = None,
-    ): UnifiedUserAction = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(userId)),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = itemTweetId,
-          retweetingTweetId = Some(retweetingTweetId),
-          quotedTweetId = Some(quotedTweetId),
-          inReplyToTweetId = Some(inReplyToTweetId),
-          tweetActionInfo = tweetActionInfo,
-          actionTweetAuthorInfo = authorInfo
+    def mkExpectedUUAForAct onTowardRet etEventW hReplyAndQuoted(
+      cl entEventNa space: Opt on[Cl entEventNa space],
+      act onType: Act onType,
+       nReplyToT et d: Long =  nReplyToT et d,
+      t etAct on nfo: Opt on[T etAct on nfo] = None,
+      author nfo: Opt on[Author nfo] = None,
+    ): Un f edUserAct on = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (user d)),
+       em =  em.T et nfo(
+        T et nfo(
+          act onT et d =  emT et d,
+          ret et ngT et d = So (ret et ngT et d),
+          quotedT et d = So (quotedT et d),
+           nReplyToT et d = So ( nReplyToT et d),
+          t etAct on nfo = t etAct on nfo,
+          act onT etAuthor nfo = author nfo
         )
       ),
-      actionType = actionType,
-      eventMetadata = mkUUAEventMetadata(clientEventNamespace = clientEventNamespace)
+      act onType = act onType,
+      event tadata = mkUUAEvent tadata(cl entEventNa space = cl entEventNa space)
     )
 
-    def mkExpectedUUAForActionTowardRetweetEventWithReplyAndQuoting(
-      clientEventNamespace: Option[ClientEventNamespace],
-      actionType: ActionType,
-      inReplyToTweetId: Long = inReplyToTweetId,
-      tweetActionInfo: Option[TweetActionInfo] = None,
-      authorInfo: Option[AuthorInfo] = None,
-    ): UnifiedUserAction = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(userId)),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = quotedTweetId,
-          quotingTweetId = Some(itemTweetId),
-          tweetActionInfo = tweetActionInfo,
-          actionTweetAuthorInfo = authorInfo
+    def mkExpectedUUAForAct onTowardRet etEventW hReplyAndQuot ng(
+      cl entEventNa space: Opt on[Cl entEventNa space],
+      act onType: Act onType,
+       nReplyToT et d: Long =  nReplyToT et d,
+      t etAct on nfo: Opt on[T etAct on nfo] = None,
+      author nfo: Opt on[Author nfo] = None,
+    ): Un f edUserAct on = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (user d)),
+       em =  em.T et nfo(
+        T et nfo(
+          act onT et d = quotedT et d,
+          quot ngT et d = So ( emT et d),
+          t etAct on nfo = t etAct on nfo,
+          act onT etAuthor nfo = author nfo
         )
       ),
-      actionType = actionType,
-      eventMetadata = mkUUAEventMetadata(clientEventNamespace = clientEventNamespace)
+      act onType = act onType,
+      event tadata = mkUUAEvent tadata(cl entEventNa space = cl entEventNa space)
     )
 
-    def mkExpectedUUAForActionTowardTopicEvent(
-      clientEventNamespace: Option[ClientEventNamespace],
-      actionType: ActionType,
-      topicId: Long,
-      traceId: Option[Long] = None,
-    ): UnifiedUserAction = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(userId)),
-      item = Item.TopicInfo(
-        TopicInfo(
-          actionTopicId = topicId,
+    def mkExpectedUUAForAct onTowardTop cEvent(
+      cl entEventNa space: Opt on[Cl entEventNa space],
+      act onType: Act onType,
+      top c d: Long,
+      trace d: Opt on[Long] = None,
+    ): Un f edUserAct on = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (user d)),
+       em =  em.Top c nfo(
+        Top c nfo(
+          act onTop c d = top c d,
         )
       ),
-      actionType = actionType,
-      eventMetadata =
-        mkUUAEventMetadata(clientEventNamespace = clientEventNamespace, traceId = traceId)
+      act onType = act onType,
+      event tadata =
+        mkUUAEvent tadata(cl entEventNa space = cl entEventNa space, trace d = trace d)
     )
 
-    def mkExpectedUUAForNotificationEvent(
-      clientEventNamespace: Option[ClientEventNamespace],
-      actionType: ActionType,
-      notificationContent: NotificationContent,
-      productSurface: Option[ProductSurface],
-      productSurfaceInfo: Option[ProductSurfaceInfo],
-    ): UnifiedUserAction = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(userId)),
-      item = Item.NotificationInfo(
-        NotificationInfo(
-          actionNotificationId = notificationId,
-          content = notificationContent
+    def mkExpectedUUAForNot f cat onEvent(
+      cl entEventNa space: Opt on[Cl entEventNa space],
+      act onType: Act onType,
+      not f cat onContent: Not f cat onContent,
+      productSurface: Opt on[ProductSurface],
+      productSurface nfo: Opt on[ProductSurface nfo],
+    ): Un f edUserAct on = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (user d)),
+       em =  em.Not f cat on nfo(
+        Not f cat on nfo(
+          act onNot f cat on d = not f cat on d,
+          content = not f cat onContent
         )
       ),
-      actionType = actionType,
-      eventMetadata = mkUUAEventMetadata(clientEventNamespace = clientEventNamespace),
+      act onType = act onType,
+      event tadata = mkUUAEvent tadata(cl entEventNa space = cl entEventNa space),
       productSurface = productSurface,
-      productSurfaceInfo = productSurfaceInfo
+      productSurface nfo = productSurface nfo
     )
 
-    def mkExpectedUUAForProfileClick(
-      clientEventNamespace: Option[ClientEventNamespace],
-      actionType: ActionType,
-      authorInfo: Option[AuthorInfo] = None
-    ): UnifiedUserAction = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(userId)),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = itemTweetId,
-          actionTweetAuthorInfo = authorInfo
+    def mkExpectedUUAForProf leCl ck(
+      cl entEventNa space: Opt on[Cl entEventNa space],
+      act onType: Act onType,
+      author nfo: Opt on[Author nfo] = None
+    ): Un f edUserAct on = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (user d)),
+       em =  em.T et nfo(
+        T et nfo(
+          act onT et d =  emT et d,
+          act onT etAuthor nfo = author nfo
         )
       ),
-      actionType = actionType,
-      eventMetadata = mkUUAEventMetadata(clientEventNamespace = clientEventNamespace)
+      act onType = act onType,
+      event tadata = mkUUAEvent tadata(cl entEventNa space = cl entEventNa space)
     )
 
-    def mkExpectedUUAForTweetActionTowardAuthor(
-      clientEventNamespace: Option[ClientEventNamespace],
-      actionType: ActionType,
-      authorInfo: Option[AuthorInfo] = None,
-      tweetActionInfo: Option[TweetActionInfo] = None
-    ): UnifiedUserAction = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(userId)),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = itemTweetId,
-          actionTweetAuthorInfo = authorInfo,
-          tweetActionInfo = tweetActionInfo
+    def mkExpectedUUAForT etAct onTowardAuthor(
+      cl entEventNa space: Opt on[Cl entEventNa space],
+      act onType: Act onType,
+      author nfo: Opt on[Author nfo] = None,
+      t etAct on nfo: Opt on[T etAct on nfo] = None
+    ): Un f edUserAct on = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (user d)),
+       em =  em.T et nfo(
+        T et nfo(
+          act onT et d =  emT et d,
+          act onT etAuthor nfo = author nfo,
+          t etAct on nfo = t etAct on nfo
         )
       ),
-      actionType = actionType,
-      eventMetadata = mkUUAEventMetadata(clientEventNamespace = clientEventNamespace)
+      act onType = act onType,
+      event tadata = mkUUAEvent tadata(cl entEventNa space = cl entEventNa space)
     )
 
-    def mkExpectedUUAForProfileAction(
-      clientEventNamespace: Option[ClientEventNamespace],
-      actionType: ActionType,
-      actionProfileId: Long
-    ): UnifiedUserAction = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(userId)),
-      item = Item.ProfileInfo(
-        ProfileInfo(
-          actionProfileId = actionProfileId
+    def mkExpectedUUAForProf leAct on(
+      cl entEventNa space: Opt on[Cl entEventNa space],
+      act onType: Act onType,
+      act onProf le d: Long
+    ): Un f edUserAct on = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (user d)),
+       em =  em.Prof le nfo(
+        Prof le nfo(
+          act onProf le d = act onProf le d
         )
       ),
-      actionType = actionType,
-      eventMetadata = mkUUAEventMetadata(clientEventNamespace = clientEventNamespace)
+      act onType = act onType,
+      event tadata = mkUUAEvent tadata(cl entEventNa space = cl entEventNa space)
     )
 
-    def mkExpectedUUAForTypeaheadAction(
-      clientEventNamespace: Option[ClientEventNamespace],
-      actionType: ActionType,
-      typeaheadActionInfo: TypeaheadActionInfo,
-      searchQuery: String,
-    ): UnifiedUserAction = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(userId)),
-      item = Item.TypeaheadInfo(
-        TypeaheadInfo(actionQuery = searchQuery, typeaheadActionInfo = typeaheadActionInfo)
+    def mkExpectedUUAForTypea adAct on(
+      cl entEventNa space: Opt on[Cl entEventNa space],
+      act onType: Act onType,
+      typea adAct on nfo: Typea adAct on nfo,
+      searchQuery: Str ng,
+    ): Un f edUserAct on = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (user d)),
+       em =  em.Typea ad nfo(
+        Typea ad nfo(act onQuery = searchQuery, typea adAct on nfo = typea adAct on nfo)
       ),
-      actionType = actionType,
-      eventMetadata = mkUUAEventMetadata(clientEventNamespace = clientEventNamespace),
-      productSurface = Some(ProductSurface.SearchTypeahead),
-      productSurfaceInfo =
-        Some(ProductSurfaceInfo.SearchTypeaheadInfo(SearchTypeaheadInfo(query = searchQuery)))
+      act onType = act onType,
+      event tadata = mkUUAEvent tadata(cl entEventNa space = cl entEventNa space),
+      productSurface = So (ProductSurface.SearchTypea ad),
+      productSurface nfo =
+        So (ProductSurface nfo.SearchTypea ad nfo(SearchTypea ad nfo(query = searchQuery)))
     )
-    def mkExpectedUUAForFeedbackSubmitAction(
-      clientEventNamespace: Option[ClientEventNamespace],
-      actionType: ActionType,
-      feedbackPromptInfo: FeedbackPromptInfo,
-      searchQuery: String
-    ): UnifiedUserAction = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(userId)),
-      item = Item.FeedbackPromptInfo(feedbackPromptInfo),
-      actionType = actionType,
-      eventMetadata = mkUUAEventMetadata(clientEventNamespace = clientEventNamespace),
-      productSurface = Some(ProductSurface.SearchResultsPage),
-      productSurfaceInfo =
-        Some(ProductSurfaceInfo.SearchResultsPageInfo(SearchResultsPageInfo(query = searchQuery)))
+    def mkExpectedUUAForFeedbackSubm Act on(
+      cl entEventNa space: Opt on[Cl entEventNa space],
+      act onType: Act onType,
+      feedbackPrompt nfo: FeedbackPrompt nfo,
+      searchQuery: Str ng
+    ): Un f edUserAct on = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (user d)),
+       em =  em.FeedbackPrompt nfo(feedbackPrompt nfo),
+      act onType = act onType,
+      event tadata = mkUUAEvent tadata(cl entEventNa space = cl entEventNa space),
+      productSurface = So (ProductSurface.SearchResultsPage),
+      productSurface nfo =
+        So (ProductSurface nfo.SearchResultsPage nfo(SearchResultsPage nfo(query = searchQuery)))
     )
 
-    def mkExpectedUUAForActionTowardCTAEvent(
-      clientEventNamespace: Option[ClientEventNamespace],
-      actionType: ActionType,
-      guestIdMarketingOpt: Option[Long]
-    ): UnifiedUserAction = UnifiedUserAction(
-      userIdentifier =
-        UserIdentifier(userId = Some(userId), guestIdMarketing = guestIdMarketingOpt),
-      item = Item.CtaInfo(CTAInfo()),
-      actionType = actionType,
-      eventMetadata = mkUUAEventMetadata(clientEventNamespace = clientEventNamespace)
+    def mkExpectedUUAForAct onTowardCTAEvent(
+      cl entEventNa space: Opt on[Cl entEventNa space],
+      act onType: Act onType,
+      guest dMarket ngOpt: Opt on[Long]
+    ): Un f edUserAct on = Un f edUserAct on(
+      user dent f er =
+        User dent f er(user d = So (user d), guest dMarket ng = guest dMarket ngOpt),
+       em =  em.Cta nfo(CTA nfo()),
+      act onType = act onType,
+      event tadata = mkUUAEvent tadata(cl entEventNa space = cl entEventNa space)
     )
 
     def mkExpectedUUAForUasEvent(
-      clientEventNamespace: Option[ClientEventNamespace],
-      actionType: ActionType,
-      clientAppId: Option[Long],
-      duration: Option[Long]
-    ): UnifiedUserAction = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(userId)),
-      item = Item.UasInfo(UASInfo(timeSpentMs = duration.get)),
-      actionType = actionType,
-      eventMetadata =
-        mkUUAEventMetadata(clientEventNamespace = clientEventNamespace, clientAppId = clientAppId)
+      cl entEventNa space: Opt on[Cl entEventNa space],
+      act onType: Act onType,
+      cl entApp d: Opt on[Long],
+      durat on: Opt on[Long]
+    ): Un f edUserAct on = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (user d)),
+       em =  em.Uas nfo(UAS nfo(t  SpentMs = durat on.get)),
+      act onType = act onType,
+      event tadata =
+        mkUUAEvent tadata(cl entEventNa space = cl entEventNa space, cl entApp d = cl entApp d)
     )
 
     def mkExpectedUUAForCardEvent(
-      id: Option[Long],
-      clientEventNamespace: Option[ClientEventNamespace],
-      actionType: ActionType,
-      itemType: Option[ItemType],
-      authorId: Option[Long],
-    ): UnifiedUserAction = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(userId)),
-      item = Item.CardInfo(
-        CardInfo(
-          id = id,
-          itemType = itemType,
-          actionTweetAuthorInfo = Some(AuthorInfo(authorId = authorId)))),
-      actionType = actionType,
-      eventMetadata = mkUUAEventMetadata(clientEventNamespace = clientEventNamespace)
+       d: Opt on[Long],
+      cl entEventNa space: Opt on[Cl entEventNa space],
+      act onType: Act onType,
+       emType: Opt on[ emType],
+      author d: Opt on[Long],
+    ): Un f edUserAct on = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (user d)),
+       em =  em.Card nfo(
+        Card nfo(
+           d =  d,
+           emType =  emType,
+          act onT etAuthor nfo = So (Author nfo(author d = author d)))),
+      act onType = act onType,
+      event tadata = mkUUAEvent tadata(cl entEventNa space = cl entEventNa space)
     )
 
-    def timelineTopicControllerData(topicId: Long = topicId): ControllerData.V2 =
+    def t  l neTop cControllerData(top c d: Long = top c d): ControllerData.V2 =
       ControllerData.V2(
-        ControllerDataV2.TimelinesTopic(
-          TimelinesTopicControllerData.V1(
-            TimelinesTopicControllerDataV1(
-              topicId = topicId,
-              topicTypesBitmap = 1
+        ControllerDataV2.T  l nesTop c(
+          T  l nesTop cControllerData.V1(
+            T  l nesTop cControllerDataV1(
+              top c d = top c d,
+              top cTypesB map = 1
             )
           )))
 
-    def homeTweetControllerData(
-      topicId: Long = topicId,
-      traceId: Long = traceId
+    def ho T etControllerData(
+      top c d: Long = top c d,
+      trace d: Long = trace d
     ): ControllerData.V2 =
       ControllerData.V2(
-        ControllerDataV2.HomeTweets(
-          HomeTweetsControllerData.V1(
-            HomeTweetsControllerDataV1(
-              topicId = Some(topicId),
-              traceId = Some(traceId)
+        ControllerDataV2.Ho T ets(
+          Ho T etsControllerData.V1(
+            Ho T etsControllerDataV1(
+              top c d = So (top c d),
+              trace d = So (trace d)
             ))))
 
-    def homeTweetControllerDataV2(
-      injectedPosition: Option[Int] = None,
-      requestJoinId: Option[Long] = None,
-      traceId: Option[Long] = None
+    def ho T etControllerDataV2(
+       njectedPos  on: Opt on[ nt] = None,
+      requestJo n d: Opt on[Long] = None,
+      trace d: Opt on[Long] = None
     ): ControllerData.V2 =
       ControllerData.V2(
-        ControllerDataV2.HomeTweets(
-          HomeTweetsControllerData.V1(
-            HomeTweetsControllerDataV1(
-              injectedPosition = injectedPosition,
-              traceId = traceId,
-              requestJoinId = requestJoinId
+        ControllerDataV2.Ho T ets(
+          Ho T etsControllerData.V1(
+            Ho T etsControllerDataV1(
+               njectedPos  on =  njectedPos  on,
+              trace d = trace d,
+              requestJo n d = requestJo n d
             ))))
 
-    // mock client-events
+    // mock cl ent-events
     val ddgEvent: LogEvent = mkLogEvent(
-      eventName = "ddg",
-      eventNamespace = Some(
-        EventNamespace(
-          page = Some("ddg"),
-          action = Some("experiment")
+      eventNa  = "ddg",
+      eventNa space = So (
+        EventNa space(
+          page = So ("ddg"),
+          act on = So ("exper  nt")
         )
       )
     )
 
-    val qigRankerEvent: LogEvent = mkLogEvent(
-      eventName = "qig_ranker",
-      eventNamespace = Some(
-        EventNamespace(
-          page = Some("qig_ranker"),
+    val q gRankerEvent: LogEvent = mkLogEvent(
+      eventNa  = "q g_ranker",
+      eventNa space = So (
+        EventNa space(
+          page = So ("q g_ranker"),
         )
       )
     )
 
-    val timelineMixerEvent: LogEvent = mkLogEvent(
-      eventName = "timelinemixer",
-      eventNamespace = Some(
-        EventNamespace(
-          page = Some("timelinemixer"),
+    val t  l neM xerEvent: LogEvent = mkLogEvent(
+      eventNa  = "t  l nem xer",
+      eventNa space = So (
+        EventNa space(
+          page = So ("t  l nem xer"),
         )
       )
     )
 
-    val timelineServiceEvent: LogEvent = mkLogEvent(
-      eventName = "timelineservice",
-      eventNamespace = Some(
-        EventNamespace(
-          page = Some("timelineservice"),
+    val t  l neServ ceEvent: LogEvent = mkLogEvent(
+      eventNa  = "t  l neserv ce",
+      eventNa space = So (
+        EventNa space(
+          page = So ("t  l neserv ce"),
         )
       )
     )
 
-    val tweetConcServiceEvent: LogEvent = mkLogEvent(
-      eventName = "tweetconvosvc",
-      eventNamespace = Some(
-        EventNamespace(
-          page = Some("tweetconvosvc"),
+    val t etConcServ ceEvent: LogEvent = mkLogEvent(
+      eventNa  = "t etconvosvc",
+      eventNa space = So (
+        EventNa space(
+          page = So ("t etconvosvc"),
         )
       )
     )
 
-    val renderNonTweetItemTypeEvent: LogEvent = mkLogEvent(
-      eventName = "render non-tweet item-type",
-      eventNamespace = Some(ceRenderEventNamespace),
-      eventDetails = Some(
-        EventDetails(
-          items = Some(
-            Seq(LogEventItem(itemType = Some(ItemType.Event)))
+    val renderNonT et emTypeEvent: LogEvent = mkLogEvent(
+      eventNa  = "render non-t et  em-type",
+      eventNa space = So (ceRenderEventNa space),
+      eventDeta ls = So (
+        EventDeta ls(
+           ems = So (
+            Seq(LogEvent em( emType = So ( emType.Event)))
           )
         )
       )
     )
 
-    val renderDefaultTweetWithTopicIdEvent: LogEvent = actionTowardDefaultTweetEvent(
-      eventNamespace = Some(ceRenderEventNamespace),
-      suggestionDetails =
-        Some(SuggestionDetails(decodedControllerData = Some(timelineTopicControllerData())))
+    val renderDefaultT etW hTop c dEvent: LogEvent = act onTowardDefaultT etEvent(
+      eventNa space = So (ceRenderEventNa space),
+      suggest onDeta ls =
+        So (Suggest onDeta ls(decodedControllerData = So (t  l neTop cControllerData())))
     )
 
-    def renderDefaultTweetUserFollowStatusEvent(
-      authorId: Option[Long],
-      isFollowedByActingUser: Boolean = false,
-      isFollowingActingUser: Boolean = false
-    ): LogEvent = actionTowardDefaultTweetEvent(
-      eventNamespace = Some(ceRenderEventNamespace),
-      authorId = authorId,
-      isFollowedByActingUser = Some(isFollowedByActingUser),
-      isFollowingActingUser = Some(isFollowingActingUser)
+    def renderDefaultT etUserFollowStatusEvent(
+      author d: Opt on[Long],
+       sFollo dByAct ngUser: Boolean = false,
+       sFollow ngAct ngUser: Boolean = false
+    ): LogEvent = act onTowardDefaultT etEvent(
+      eventNa space = So (ceRenderEventNa space),
+      author d = author d,
+       sFollo dByAct ngUser = So ( sFollo dByAct ngUser),
+       sFollow ngAct ngUser = So ( sFollow ngAct ngUser)
     )
 
-    val lingerDefaultTweetEvent: LogEvent = actionTowardDefaultTweetEvent(
-      eventNamespace = Some(ceLingerEventNamespace),
-      impressionDetails = Some(
-        ImpressionDetails(
-          visibilityStart = Some(100L),
-          visibilityEnd = Some(105L)
+    val l ngerDefaultT etEvent: LogEvent = act onTowardDefaultT etEvent(
+      eventNa space = So (ceL ngerEventNa space),
+       mpress onDeta ls = So (
+         mpress onDeta ls(
+          v s b l yStart = So (100L),
+          v s b l yEnd = So (105L)
         ))
     )
 
-    val lingerReplyEvent: LogEvent = actionTowardReplyEvent(
-      eventNamespace = Some(ceLingerEventNamespace),
-      impressionDetails = Some(
-        ImpressionDetails(
-          visibilityStart = Some(100L),
-          visibilityEnd = Some(105L)
+    val l ngerReplyEvent: LogEvent = act onTowardReplyEvent(
+      eventNa space = So (ceL ngerEventNa space),
+       mpress onDeta ls = So (
+         mpress onDeta ls(
+          v s b l yStart = So (100L),
+          v s b l yEnd = So (105L)
         ))
     )
 
-    val lingerRetweetEvent: LogEvent = actionTowardRetweetEvent(
-      eventNamespace = Some(ceLingerEventNamespace),
-      impressionDetails = Some(
-        ImpressionDetails(
-          visibilityStart = Some(100L),
-          visibilityEnd = Some(105L)
+    val l ngerRet etEvent: LogEvent = act onTowardRet etEvent(
+      eventNa space = So (ceL ngerEventNa space),
+       mpress onDeta ls = So (
+         mpress onDeta ls(
+          v s b l yStart = So (100L),
+          v s b l yEnd = So (105L)
         ))
     )
 
-    val lingerQuoteEvent: LogEvent = actionTowardQuoteEvent(
-      eventNamespace = Some(ceLingerEventNamespace),
-      impressionDetails = Some(
-        ImpressionDetails(
-          visibilityStart = Some(100L),
-          visibilityEnd = Some(105L)
+    val l ngerQuoteEvent: LogEvent = act onTowardQuoteEvent(
+      eventNa space = So (ceL ngerEventNa space),
+       mpress onDeta ls = So (
+         mpress onDeta ls(
+          v s b l yStart = So (100L),
+          v s b l yEnd = So (105L)
         ))
     )
 
-    val lingerRetweetWithReplyAndQuoteEvent: LogEvent = actionTowardRetweetEventWithReplyAndQuote(
-      eventNamespace = Some(ceLingerEventNamespace),
-      impressionDetails = Some(
-        ImpressionDetails(
-          visibilityStart = Some(100L),
-          visibilityEnd = Some(105L)
+    val l ngerRet etW hReplyAndQuoteEvent: LogEvent = act onTowardRet etEventW hReplyAndQuote(
+      eventNa space = So (ceL ngerEventNa space),
+       mpress onDeta ls = So (
+         mpress onDeta ls(
+          v s b l yStart = So (100L),
+          v s b l yEnd = So (105L)
         ))
     )
 
-    val replyToDefaultTweetOrReplyEvent: LogEvent = actionTowardReplyEvent(
-      eventNamespace = Some(ceReplyEventNamespace),
-      // since the action is reply, item.id = inReplyToTweetId
-      inReplyToTweetId = itemTweetId,
+    val replyToDefaultT etOrReplyEvent: LogEvent = act onTowardReplyEvent(
+      eventNa space = So (ceReplyEventNa space),
+      // s nce t  act on  s reply,  em. d =  nReplyToT et d
+       nReplyToT et d =  emT et d,
     )
 
-    val replyToRetweetEvent: LogEvent = actionTowardRetweetEvent(
-      eventNamespace = Some(ceReplyEventNamespace),
-      // since the action is reply, item.id = inReplyToTweetId
-      inReplyToTweetId = Some(itemTweetId),
+    val replyToRet etEvent: LogEvent = act onTowardRet etEvent(
+      eventNa space = So (ceReplyEventNa space),
+      // s nce t  act on  s reply,  em. d =  nReplyToT et d
+       nReplyToT et d = So ( emT et d),
     )
 
-    val replyToQuoteEvent: LogEvent = actionTowardQuoteEvent(
-      eventNamespace = Some(ceReplyEventNamespace),
-      // since the action is reply, item.id = inReplyToTweetId
-      inReplyToTweetId = Some(itemTweetId),
+    val replyToQuoteEvent: LogEvent = act onTowardQuoteEvent(
+      eventNa space = So (ceReplyEventNa space),
+      // s nce t  act on  s reply,  em. d =  nReplyToT et d
+       nReplyToT et d = So ( emT et d),
     )
 
-    val replyToRetweetWithReplyAndQuoteEvent: LogEvent = actionTowardRetweetEventWithReplyAndQuote(
-      eventNamespace = Some(ceReplyEventNamespace),
-      // since the action is reply, item.id = inReplyToTweetId
-      inReplyToTweetId = itemTweetId,
+    val replyToRet etW hReplyAndQuoteEvent: LogEvent = act onTowardRet etEventW hReplyAndQuote(
+      eventNa space = So (ceReplyEventNa space),
+      // s nce t  act on  s reply,  em. d =  nReplyToT et d
+       nReplyToT et d =  emT et d,
     )
 
-    // expected UUA corresponding to mock client-events
-    val expectedTweetRenderDefaultTweetUUA: UnifiedUserAction =
-      mkExpectedUUAForActionTowardDefaultTweetEvent(
-        clientEventNamespace = Some(uuaRenderClientEventNamespace),
-        actionType = ActionType.ClientTweetRenderImpression
+    // expected UUA correspond ng to mock cl ent-events
+    val expectedT etRenderDefaultT etUUA: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardDefaultT etEvent(
+        cl entEventNa space = So (uuaRenderCl entEventNa space),
+        act onType = Act onType.Cl entT etRender mpress on
       )
 
-    val expectedTweetRenderReplyUUA: UnifiedUserAction = mkExpectedUUAForActionTowardReplyEvent(
-      clientEventNamespace = Some(uuaRenderClientEventNamespace),
-      actionType = ActionType.ClientTweetRenderImpression
+    val expectedT etRenderReplyUUA: Un f edUserAct on = mkExpectedUUAForAct onTowardReplyEvent(
+      cl entEventNa space = So (uuaRenderCl entEventNa space),
+      act onType = Act onType.Cl entT etRender mpress on
     )
 
-    val expectedTweetRenderRetweetUUA: UnifiedUserAction = mkExpectedUUAForActionTowardRetweetEvent(
-      clientEventNamespace = Some(uuaRenderClientEventNamespace),
-      actionType = ActionType.ClientTweetRenderImpression
+    val expectedT etRenderRet etUUA: Un f edUserAct on = mkExpectedUUAForAct onTowardRet etEvent(
+      cl entEventNa space = So (uuaRenderCl entEventNa space),
+      act onType = Act onType.Cl entT etRender mpress on
     )
 
-    val expectedTweetRenderQuoteUUA1: UnifiedUserAction = mkExpectedUUAForActionTowardQuoteEvent(
-      clientEventNamespace = Some(uuaRenderClientEventNamespace),
-      actionType = ActionType.ClientTweetRenderImpression,
-      quotedAuthorId = Some(quotedAuthorId),
+    val expectedT etRenderQuoteUUA1: Un f edUserAct on = mkExpectedUUAForAct onTowardQuoteEvent(
+      cl entEventNa space = So (uuaRenderCl entEventNa space),
+      act onType = Act onType.Cl entT etRender mpress on,
+      quotedAuthor d = So (quotedAuthor d),
     )
-    val expectedTweetRenderQuoteUUA2: UnifiedUserAction = mkExpectedUUAForActionTowardQuotingEvent(
-      clientEventNamespace = Some(uuaRenderClientEventNamespace),
-      actionType = ActionType.ClientTweetRenderImpression,
-      authorInfo = Some(AuthorInfo(authorId = Some(quotedAuthorId)))
+    val expectedT etRenderQuoteUUA2: Un f edUserAct on = mkExpectedUUAForAct onTowardQuot ngEvent(
+      cl entEventNa space = So (uuaRenderCl entEventNa space),
+      act onType = Act onType.Cl entT etRender mpress on,
+      author nfo = So (Author nfo(author d = So (quotedAuthor d)))
     )
 
-    val expectedTweetRenderRetweetWithReplyAndQuoteUUA1: UnifiedUserAction =
-      mkExpectedUUAForActionTowardRetweetEventWithReplyAndQuoted(
-        clientEventNamespace = Some(uuaRenderClientEventNamespace),
-        actionType = ActionType.ClientTweetRenderImpression
+    val expectedT etRenderRet etW hReplyAndQuoteUUA1: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardRet etEventW hReplyAndQuoted(
+        cl entEventNa space = So (uuaRenderCl entEventNa space),
+        act onType = Act onType.Cl entT etRender mpress on
       )
-    val expectedTweetRenderRetweetWithReplyAndQuoteUUA2: UnifiedUserAction =
-      mkExpectedUUAForActionTowardRetweetEventWithReplyAndQuoting(
-        clientEventNamespace = Some(uuaRenderClientEventNamespace),
-        actionType = ActionType.ClientTweetRenderImpression
-      )
-
-    val expectedTweetRenderDefaultTweetWithTopicIdUUA: UnifiedUserAction =
-      mkExpectedUUAForActionTowardDefaultTweetEvent(
-        clientEventNamespace = Some(uuaRenderClientEventNamespace),
-        actionType = ActionType.ClientTweetRenderImpression,
-        topicId = Some(topicId)
+    val expectedT etRenderRet etW hReplyAndQuoteUUA2: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardRet etEventW hReplyAndQuot ng(
+        cl entEventNa space = So (uuaRenderCl entEventNa space),
+        act onType = Act onType.Cl entT etRender mpress on
       )
 
-    val expectedTweetDetailImpressionUUA1: UnifiedUserAction =
-      mkExpectedUUAForActionTowardDefaultTweetEvent(
-        clientEventNamespace = Some(ceTweetDetailsClientEventNamespace1),
-        actionType = ActionType.ClientTweetDetailsImpression
+    val expectedT etRenderDefaultT etW hTop c dUUA: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardDefaultT etEvent(
+        cl entEventNa space = So (uuaRenderCl entEventNa space),
+        act onType = Act onType.Cl entT etRender mpress on,
+        top c d = So (top c d)
       )
 
-    val expectedTweetGalleryImpressionUUA: UnifiedUserAction =
-      mkExpectedUUAForActionTowardDefaultTweetEvent(
-        clientEventNamespace = Some(ceGalleryClientEventNamespace),
-        actionType = ActionType.ClientTweetGalleryImpression
+    val expectedT etDeta l mpress onUUA1: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardDefaultT etEvent(
+        cl entEventNa space = So (ceT etDeta lsCl entEventNa space1),
+        act onType = Act onType.Cl entT etDeta ls mpress on
       )
 
-    def expectedTweetRenderDefaultTweetWithAuthorInfoUUA(
-      authorInfo: Option[AuthorInfo] = None
-    ): UnifiedUserAction =
-      mkExpectedUUAForActionTowardDefaultTweetEvent(
-        clientEventNamespace = Some(uuaRenderClientEventNamespace),
-        actionType = ActionType.ClientTweetRenderImpression,
-        authorInfo = authorInfo
+    val expectedT etGallery mpress onUUA: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardDefaultT etEvent(
+        cl entEventNa space = So (ceGalleryCl entEventNa space),
+        act onType = Act onType.Cl entT etGallery mpress on
       )
 
-    val expectedTweetLingerDefaultTweetUUA: UnifiedUserAction =
-      mkExpectedUUAForActionTowardDefaultTweetEvent(
-        clientEventNamespace = Some(uuaLingerClientEventNamespace),
-        actionType = ActionType.ClientTweetLingerImpression,
-        tweetActionInfo = Some(
-          TweetActionInfo.ClientTweetLingerImpression(
-            ClientTweetLingerImpression(
-              lingerStartTimestampMs = 100L,
-              lingerEndTimestampMs = 105L
+    def expectedT etRenderDefaultT etW hAuthor nfoUUA(
+      author nfo: Opt on[Author nfo] = None
+    ): Un f edUserAct on =
+      mkExpectedUUAForAct onTowardDefaultT etEvent(
+        cl entEventNa space = So (uuaRenderCl entEventNa space),
+        act onType = Act onType.Cl entT etRender mpress on,
+        author nfo = author nfo
+      )
+
+    val expectedT etL ngerDefaultT etUUA: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardDefaultT etEvent(
+        cl entEventNa space = So (uuaL ngerCl entEventNa space),
+        act onType = Act onType.Cl entT etL nger mpress on,
+        t etAct on nfo = So (
+          T etAct on nfo.Cl entT etL nger mpress on(
+            Cl entT etL nger mpress on(
+              l ngerStartT  stampMs = 100L,
+              l ngerEndT  stampMs = 105L
             ))
         )
       )
 
-    val expectedTweetLingerReplyUUA: UnifiedUserAction = mkExpectedUUAForActionTowardReplyEvent(
-      clientEventNamespace = Some(uuaLingerClientEventNamespace),
-      actionType = ActionType.ClientTweetLingerImpression,
-      tweetActionInfo = Some(
-        TweetActionInfo.ClientTweetLingerImpression(
-          ClientTweetLingerImpression(
-            lingerStartTimestampMs = 100L,
-            lingerEndTimestampMs = 105L
+    val expectedT etL ngerReplyUUA: Un f edUserAct on = mkExpectedUUAForAct onTowardReplyEvent(
+      cl entEventNa space = So (uuaL ngerCl entEventNa space),
+      act onType = Act onType.Cl entT etL nger mpress on,
+      t etAct on nfo = So (
+        T etAct on nfo.Cl entT etL nger mpress on(
+          Cl entT etL nger mpress on(
+            l ngerStartT  stampMs = 100L,
+            l ngerEndT  stampMs = 105L
           ))
       )
     )
 
-    val expectedTweetLingerRetweetUUA: UnifiedUserAction = mkExpectedUUAForActionTowardRetweetEvent(
-      clientEventNamespace = Some(uuaLingerClientEventNamespace),
-      actionType = ActionType.ClientTweetLingerImpression,
-      tweetActionInfo = Some(
-        TweetActionInfo.ClientTweetLingerImpression(
-          ClientTweetLingerImpression(
-            lingerStartTimestampMs = 100L,
-            lingerEndTimestampMs = 105L
+    val expectedT etL ngerRet etUUA: Un f edUserAct on = mkExpectedUUAForAct onTowardRet etEvent(
+      cl entEventNa space = So (uuaL ngerCl entEventNa space),
+      act onType = Act onType.Cl entT etL nger mpress on,
+      t etAct on nfo = So (
+        T etAct on nfo.Cl entT etL nger mpress on(
+          Cl entT etL nger mpress on(
+            l ngerStartT  stampMs = 100L,
+            l ngerEndT  stampMs = 105L
           ))
       )
     )
 
-    val expectedTweetLingerQuoteUUA: UnifiedUserAction = mkExpectedUUAForActionTowardQuoteEvent(
-      clientEventNamespace = Some(uuaLingerClientEventNamespace),
-      actionType = ActionType.ClientTweetLingerImpression,
-      tweetActionInfo = Some(
-        TweetActionInfo.ClientTweetLingerImpression(
-          ClientTweetLingerImpression(
-            lingerStartTimestampMs = 100L,
-            lingerEndTimestampMs = 105L
+    val expectedT etL ngerQuoteUUA: Un f edUserAct on = mkExpectedUUAForAct onTowardQuoteEvent(
+      cl entEventNa space = So (uuaL ngerCl entEventNa space),
+      act onType = Act onType.Cl entT etL nger mpress on,
+      t etAct on nfo = So (
+        T etAct on nfo.Cl entT etL nger mpress on(
+          Cl entT etL nger mpress on(
+            l ngerStartT  stampMs = 100L,
+            l ngerEndT  stampMs = 105L
           ))
       )
     )
 
-    val expectedTweetLingerRetweetWithReplyAndQuoteUUA: UnifiedUserAction =
-      mkExpectedUUAForActionTowardRetweetEventWithReplyAndQuoted(
-        clientEventNamespace = Some(uuaLingerClientEventNamespace),
-        actionType = ActionType.ClientTweetLingerImpression,
-        tweetActionInfo = Some(
-          TweetActionInfo.ClientTweetLingerImpression(
-            ClientTweetLingerImpression(
-              lingerStartTimestampMs = 100L,
-              lingerEndTimestampMs = 105L
+    val expectedT etL ngerRet etW hReplyAndQuoteUUA: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardRet etEventW hReplyAndQuoted(
+        cl entEventNa space = So (uuaL ngerCl entEventNa space),
+        act onType = Act onType.Cl entT etL nger mpress on,
+        t etAct on nfo = So (
+          T etAct on nfo.Cl entT etL nger mpress on(
+            Cl entT etL nger mpress on(
+              l ngerStartT  stampMs = 100L,
+              l ngerEndT  stampMs = 105L
             ))
         )
       )
 
-    val expectedTweetClickQuoteUUA: UnifiedUserAction =
-      mkExpectedUUAForActionTowardRetweetEventWithReplyAndQuoted(
-        clientEventNamespace = Some(
-          ClientEventNamespace(
-            action = Some("quote")
+    val expectedT etCl ckQuoteUUA: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardRet etEventW hReplyAndQuoted(
+        cl entEventNa space = So (
+          Cl entEventNa space(
+            act on = So ("quote")
           )),
-        actionType = ActionType.ClientTweetClickQuote
+        act onType = Act onType.Cl entT etCl ckQuote
       )
 
-    def expectedTweetQuoteUUA(action: String): UnifiedUserAction =
-      mkExpectedUUAForActionTowardRetweetEventWithReplyAndQuoted(
-        clientEventNamespace = Some(
-          ClientEventNamespace(
-            action = Some(action)
+    def expectedT etQuoteUUA(act on: Str ng): Un f edUserAct on =
+      mkExpectedUUAForAct onTowardRet etEventW hReplyAndQuoted(
+        cl entEventNa space = So (
+          Cl entEventNa space(
+            act on = So (act on)
           )),
-        actionType = ActionType.ClientTweetQuote
+        act onType = Act onType.Cl entT etQuote
       )
 
-    val expectedTweetFavoriteDefaultTweetUUA: UnifiedUserAction =
-      mkExpectedUUAForActionTowardDefaultTweetEvent(
-        clientEventNamespace = Some(uuaFavoriteClientEventNamespace),
-        actionType = ActionType.ClientTweetFav
+    val expectedT etFavor eDefaultT etUUA: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardDefaultT etEvent(
+        cl entEventNa space = So (uuaFavor eCl entEventNa space),
+        act onType = Act onType.Cl entT etFav
       )
 
-    val expectedHomeTweetEventWithControllerDataSuggestType: UnifiedUserAction =
-      mkExpectedUUAForActionTowardDefaultTweetEvent(
-        clientEventNamespace = Some(uuaHomeFavoriteClientEventNamespace),
-        actionType = ActionType.ClientTweetFav,
-        productSurface = Some(ProductSurface.HomeTimeline),
-        productSurfaceInfo = Some(
-          ProductSurfaceInfo.HomeTimelineInfo(
-            HomeTimelineInfo(suggestionType = Some("Test_type"), injectedPosition = Some(1)))),
-        traceIdOpt = Some(traceId),
-        requestJoinIdOpt = Some(requestJoinId)
+    val expectedHo T etEventW hControllerDataSuggestType: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardDefaultT etEvent(
+        cl entEventNa space = So (uuaHo Favor eCl entEventNa space),
+        act onType = Act onType.Cl entT etFav,
+        productSurface = So (ProductSurface.Ho T  l ne),
+        productSurface nfo = So (
+          ProductSurface nfo.Ho T  l ne nfo(
+            Ho T  l ne nfo(suggest onType = So ("Test_type"),  njectedPos  on = So (1)))),
+        trace dOpt = So (trace d),
+        requestJo n dOpt = So (requestJo n d)
       )
 
-    val expectedHomeTweetEventWithControllerData: UnifiedUserAction =
-      mkExpectedUUAForActionTowardDefaultTweetEvent(
-        clientEventNamespace = Some(uuaHomeFavoriteClientEventNamespace),
-        actionType = ActionType.ClientTweetFav,
-        productSurface = Some(ProductSurface.HomeTimeline),
-        productSurfaceInfo =
-          Some(ProductSurfaceInfo.HomeTimelineInfo(HomeTimelineInfo(injectedPosition = Some(1)))),
-        traceIdOpt = Some(traceId),
-        requestJoinIdOpt = Some(requestJoinId)
+    val expectedHo T etEventW hControllerData: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardDefaultT etEvent(
+        cl entEventNa space = So (uuaHo Favor eCl entEventNa space),
+        act onType = Act onType.Cl entT etFav,
+        productSurface = So (ProductSurface.Ho T  l ne),
+        productSurface nfo =
+          So (ProductSurface nfo.Ho T  l ne nfo(Ho T  l ne nfo( njectedPos  on = So (1)))),
+        trace dOpt = So (trace d),
+        requestJo n dOpt = So (requestJo n d)
       )
 
-    val expectedSearchTweetEventWithControllerData: UnifiedUserAction =
-      mkExpectedUUAForActionTowardDefaultTweetEvent(
-        clientEventNamespace = Some(uuaSearchFavoriteClientEventNamespace),
-        actionType = ActionType.ClientTweetFav,
-        productSurface = Some(ProductSurface.SearchResultsPage),
-        productSurfaceInfo =
-          Some(ProductSurfaceInfo.SearchResultsPageInfo(SearchResultsPageInfo(query = "twitter"))),
-        traceIdOpt = Some(traceId),
-        requestJoinIdOpt = Some(requestJoinId)
+    val expectedSearchT etEventW hControllerData: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardDefaultT etEvent(
+        cl entEventNa space = So (uuaSearchFavor eCl entEventNa space),
+        act onType = Act onType.Cl entT etFav,
+        productSurface = So (ProductSurface.SearchResultsPage),
+        productSurface nfo =
+          So (ProductSurface nfo.SearchResultsPage nfo(SearchResultsPage nfo(query = "tw ter"))),
+        trace dOpt = So (trace d),
+        requestJo n dOpt = So (requestJo n d)
       )
 
-    val expectedHomeTweetEventWithSuggestType: UnifiedUserAction =
-      mkExpectedUUAForActionTowardDefaultTweetEvent(
-        clientEventNamespace = Some(uuaHomeFavoriteClientEventNamespace),
-        actionType = ActionType.ClientTweetFav,
-        productSurface = Some(ProductSurface.HomeTimeline),
-        productSurfaceInfo = Some(
-          ProductSurfaceInfo.HomeTimelineInfo(HomeTimelineInfo(suggestionType = Some("Test_type"))))
+    val expectedHo T etEventW hSuggestType: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardDefaultT etEvent(
+        cl entEventNa space = So (uuaHo Favor eCl entEventNa space),
+        act onType = Act onType.Cl entT etFav,
+        productSurface = So (ProductSurface.Ho T  l ne),
+        productSurface nfo = So (
+          ProductSurface nfo.Ho T  l ne nfo(Ho T  l ne nfo(suggest onType = So ("Test_type"))))
       )
 
-    val expectedHomeLatestTweetEventWithControllerDataSuggestType: UnifiedUserAction =
-      mkExpectedUUAForActionTowardDefaultTweetEvent(
-        clientEventNamespace = Some(uuaHomeLatestFavoriteClientEventNamespace),
-        actionType = ActionType.ClientTweetFav,
-        productSurface = Some(ProductSurface.HomeTimeline),
-        productSurfaceInfo = Some(
-          ProductSurfaceInfo.HomeTimelineInfo(
-            HomeTimelineInfo(suggestionType = Some("Test_type"), injectedPosition = Some(1)))),
-        traceIdOpt = Some(traceId),
-        requestJoinIdOpt = Some(requestJoinId)
+    val expectedHo LatestT etEventW hControllerDataSuggestType: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardDefaultT etEvent(
+        cl entEventNa space = So (uuaHo LatestFavor eCl entEventNa space),
+        act onType = Act onType.Cl entT etFav,
+        productSurface = So (ProductSurface.Ho T  l ne),
+        productSurface nfo = So (
+          ProductSurface nfo.Ho T  l ne nfo(
+            Ho T  l ne nfo(suggest onType = So ("Test_type"),  njectedPos  on = So (1)))),
+        trace dOpt = So (trace d),
+        requestJo n dOpt = So (requestJo n d)
       )
 
-    val expectedHomeLatestTweetEventWithControllerData: UnifiedUserAction =
-      mkExpectedUUAForActionTowardDefaultTweetEvent(
-        clientEventNamespace = Some(uuaHomeLatestFavoriteClientEventNamespace),
-        actionType = ActionType.ClientTweetFav,
-        productSurface = Some(ProductSurface.HomeTimeline),
-        productSurfaceInfo =
-          Some(ProductSurfaceInfo.HomeTimelineInfo(HomeTimelineInfo(injectedPosition = Some(1)))),
-        traceIdOpt = Some(traceId),
-        requestJoinIdOpt = Some(requestJoinId)
+    val expectedHo LatestT etEventW hControllerData: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardDefaultT etEvent(
+        cl entEventNa space = So (uuaHo LatestFavor eCl entEventNa space),
+        act onType = Act onType.Cl entT etFav,
+        productSurface = So (ProductSurface.Ho T  l ne),
+        productSurface nfo =
+          So (ProductSurface nfo.Ho T  l ne nfo(Ho T  l ne nfo( njectedPos  on = So (1)))),
+        trace dOpt = So (trace d),
+        requestJo n dOpt = So (requestJo n d)
       )
 
-    val expectedHomeLatestTweetEventWithSuggestType: UnifiedUserAction =
-      mkExpectedUUAForActionTowardDefaultTweetEvent(
-        clientEventNamespace = Some(uuaHomeLatestFavoriteClientEventNamespace),
-        actionType = ActionType.ClientTweetFav,
-        productSurface = Some(ProductSurface.HomeTimeline),
-        productSurfaceInfo = Some(
-          ProductSurfaceInfo.HomeTimelineInfo(HomeTimelineInfo(suggestionType = Some("Test_type"))))
+    val expectedHo LatestT etEventW hSuggestType: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardDefaultT etEvent(
+        cl entEventNa space = So (uuaHo LatestFavor eCl entEventNa space),
+        act onType = Act onType.Cl entT etFav,
+        productSurface = So (ProductSurface.Ho T  l ne),
+        productSurface nfo = So (
+          ProductSurface nfo.Ho T  l ne nfo(Ho T  l ne nfo(suggest onType = So ("Test_type"))))
       )
 
-    val expectedTweetFavoriteReplyUUA: UnifiedUserAction = mkExpectedUUAForActionTowardReplyEvent(
-      clientEventNamespace = Some(uuaFavoriteClientEventNamespace),
-      actionType = ActionType.ClientTweetFav
+    val expectedT etFavor eReplyUUA: Un f edUserAct on = mkExpectedUUAForAct onTowardReplyEvent(
+      cl entEventNa space = So (uuaFavor eCl entEventNa space),
+      act onType = Act onType.Cl entT etFav
     )
 
-    val expectedTweetFavoriteRetweetUUA: UnifiedUserAction =
-      mkExpectedUUAForActionTowardRetweetEvent(
-        clientEventNamespace = Some(uuaFavoriteClientEventNamespace),
-        actionType = ActionType.ClientTweetFav
+    val expectedT etFavor eRet etUUA: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardRet etEvent(
+        cl entEventNa space = So (uuaFavor eCl entEventNa space),
+        act onType = Act onType.Cl entT etFav
       )
 
-    val expectedTweetFavoriteQuoteUUA: UnifiedUserAction = mkExpectedUUAForActionTowardQuoteEvent(
-      clientEventNamespace = Some(uuaFavoriteClientEventNamespace),
-      actionType = ActionType.ClientTweetFav)
+    val expectedT etFavor eQuoteUUA: Un f edUserAct on = mkExpectedUUAForAct onTowardQuoteEvent(
+      cl entEventNa space = So (uuaFavor eCl entEventNa space),
+      act onType = Act onType.Cl entT etFav)
 
-    val expectedTweetFavoriteRetweetWithReplyAndQuoteUUA: UnifiedUserAction =
-      mkExpectedUUAForActionTowardRetweetEventWithReplyAndQuoted(
-        clientEventNamespace = Some(uuaFavoriteClientEventNamespace),
-        actionType = ActionType.ClientTweetFav
+    val expectedT etFavor eRet etW hReplyAndQuoteUUA: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardRet etEventW hReplyAndQuoted(
+        cl entEventNa space = So (uuaFavor eCl entEventNa space),
+        act onType = Act onType.Cl entT etFav
       )
 
-    val expectedTweetClickReplyDefaultTweetUUA: UnifiedUserAction =
-      mkExpectedUUAForActionTowardDefaultTweetEvent(
-        clientEventNamespace = Some(uuaClickReplyClientEventNamespace),
-        actionType = ActionType.ClientTweetClickReply
+    val expectedT etCl ckReplyDefaultT etUUA: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardDefaultT etEvent(
+        cl entEventNa space = So (uuaCl ckReplyCl entEventNa space),
+        act onType = Act onType.Cl entT etCl ckReply
       )
 
-    val expectedTweetClickReplyReplyUUA: UnifiedUserAction =
-      mkExpectedUUAForActionTowardReplyEvent(
-        clientEventNamespace = Some(uuaClickReplyClientEventNamespace),
-        actionType = ActionType.ClientTweetClickReply
+    val expectedT etCl ckReplyReplyUUA: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardReplyEvent(
+        cl entEventNa space = So (uuaCl ckReplyCl entEventNa space),
+        act onType = Act onType.Cl entT etCl ckReply
       )
 
-    val expectedTweetClickReplyRetweetUUA: UnifiedUserAction =
-      mkExpectedUUAForActionTowardRetweetEvent(
-        clientEventNamespace = Some(uuaClickReplyClientEventNamespace),
-        actionType = ActionType.ClientTweetClickReply
+    val expectedT etCl ckReplyRet etUUA: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardRet etEvent(
+        cl entEventNa space = So (uuaCl ckReplyCl entEventNa space),
+        act onType = Act onType.Cl entT etCl ckReply
       )
 
-    val expectedTweetClickReplyQuoteUUA: UnifiedUserAction =
-      mkExpectedUUAForActionTowardQuoteEvent(
-        clientEventNamespace = Some(uuaClickReplyClientEventNamespace),
-        actionType = ActionType.ClientTweetClickReply
+    val expectedT etCl ckReplyQuoteUUA: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardQuoteEvent(
+        cl entEventNa space = So (uuaCl ckReplyCl entEventNa space),
+        act onType = Act onType.Cl entT etCl ckReply
       )
 
-    val expectedTweetClickReplyRetweetWithReplyAndQuoteUUA: UnifiedUserAction =
-      mkExpectedUUAForActionTowardRetweetEventWithReplyAndQuoted(
-        clientEventNamespace = Some(uuaClickReplyClientEventNamespace),
-        actionType = ActionType.ClientTweetClickReply
+    val expectedT etCl ckReplyRet etW hReplyAndQuoteUUA: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardRet etEventW hReplyAndQuoted(
+        cl entEventNa space = So (uuaCl ckReplyCl entEventNa space),
+        act onType = Act onType.Cl entT etCl ckReply
       )
 
-    val expectedTweetReplyDefaultTweetUUA: UnifiedUserAction =
-      mkExpectedUUAForActionTowardDefaultTweetEvent(
-        clientEventNamespace = Some(uuaReplyClientEventNamespace),
-        actionType = ActionType.ClientTweetReply,
-        inReplyToTweetId = Some(itemTweetId)
+    val expectedT etReplyDefaultT etUUA: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardDefaultT etEvent(
+        cl entEventNa space = So (uuaReplyCl entEventNa space),
+        act onType = Act onType.Cl entT etReply,
+         nReplyToT et d = So ( emT et d)
       )
 
-    val expectedTweetReplyRetweetUUA: UnifiedUserAction =
-      mkExpectedUUAForActionTowardRetweetEvent(
-        clientEventNamespace = Some(uuaReplyClientEventNamespace),
-        actionType = ActionType.ClientTweetReply,
-        inReplyToTweetId = Some(itemTweetId)
+    val expectedT etReplyRet etUUA: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardRet etEvent(
+        cl entEventNa space = So (uuaReplyCl entEventNa space),
+        act onType = Act onType.Cl entT etReply,
+         nReplyToT et d = So ( emT et d)
       )
 
-    val expectedTweetReplyQuoteUUA: UnifiedUserAction =
-      mkExpectedUUAForActionTowardQuoteEvent(
-        clientEventNamespace = Some(uuaReplyClientEventNamespace),
-        actionType = ActionType.ClientTweetReply,
-        inReplyToTweetId = Some(itemTweetId)
+    val expectedT etReplyQuoteUUA: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardQuoteEvent(
+        cl entEventNa space = So (uuaReplyCl entEventNa space),
+        act onType = Act onType.Cl entT etReply,
+         nReplyToT et d = So ( emT et d)
       )
 
-    val expectedTweetReplyRetweetWithReplyAndQuoteUUA: UnifiedUserAction =
-      mkExpectedUUAForActionTowardRetweetEventWithReplyAndQuoted(
-        clientEventNamespace = Some(uuaReplyClientEventNamespace),
-        actionType = ActionType.ClientTweetReply,
-        inReplyToTweetId = itemTweetId
+    val expectedT etReplyRet etW hReplyAndQuoteUUA: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardRet etEventW hReplyAndQuoted(
+        cl entEventNa space = So (uuaReplyCl entEventNa space),
+        act onType = Act onType.Cl entT etReply,
+         nReplyToT et d =  emT et d
       )
 
-    val expectedTweetRetweetDefaultTweetUUA: UnifiedUserAction =
-      mkExpectedUUAForActionTowardDefaultTweetEvent(
-        clientEventNamespace = Some(uuaRetweetClientEventNamespace),
-        actionType = ActionType.ClientTweetRetweet
+    val expectedT etRet etDefaultT etUUA: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardDefaultT etEvent(
+        cl entEventNa space = So (uuaRet etCl entEventNa space),
+        act onType = Act onType.Cl entT etRet et
       )
 
-    val expectedTweetRetweetReplyUUA: UnifiedUserAction = mkExpectedUUAForActionTowardReplyEvent(
-      clientEventNamespace = Some(uuaRetweetClientEventNamespace),
-      actionType = ActionType.ClientTweetRetweet
+    val expectedT etRet etReplyUUA: Un f edUserAct on = mkExpectedUUAForAct onTowardReplyEvent(
+      cl entEventNa space = So (uuaRet etCl entEventNa space),
+      act onType = Act onType.Cl entT etRet et
     )
 
-    val expectedTweetRetweetRetweetUUA: UnifiedUserAction =
-      mkExpectedUUAForActionTowardRetweetEvent(
-        clientEventNamespace = Some(uuaRetweetClientEventNamespace),
-        actionType = ActionType.ClientTweetRetweet
+    val expectedT etRet etRet etUUA: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardRet etEvent(
+        cl entEventNa space = So (uuaRet etCl entEventNa space),
+        act onType = Act onType.Cl entT etRet et
       )
 
-    val expectedTweetRetweetQuoteUUA: UnifiedUserAction = mkExpectedUUAForActionTowardQuoteEvent(
-      clientEventNamespace = Some(uuaRetweetClientEventNamespace),
-      actionType = ActionType.ClientTweetRetweet
+    val expectedT etRet etQuoteUUA: Un f edUserAct on = mkExpectedUUAForAct onTowardQuoteEvent(
+      cl entEventNa space = So (uuaRet etCl entEventNa space),
+      act onType = Act onType.Cl entT etRet et
     )
 
-    val expectedTweetRetweetRetweetWithReplyAndQuoteUUA: UnifiedUserAction =
-      mkExpectedUUAForActionTowardRetweetEventWithReplyAndQuoted(
-        clientEventNamespace = Some(uuaRetweetClientEventNamespace),
-        actionType = ActionType.ClientTweetRetweet
+    val expectedT etRet etRet etW hReplyAndQuoteUUA: Un f edUserAct on =
+      mkExpectedUUAForAct onTowardRet etEventW hReplyAndQuoted(
+        cl entEventNa space = So (uuaRet etCl entEventNa space),
+        act onType = Act onType.Cl entT etRet et
       )
   }
 
-  trait EmailNotificationEventFixture extends CommonFixture {
-    val timestamp = 1001L
+  tra  Ema lNot f cat onEventF xture extends CommonF xture {
+    val t  stamp = 1001L
     val pageUrlStatus =
-      "https://twitter.com/a/status/3?cn=a%3D%3D&refsrc=email"
-    val tweetIdStatus = 3L
+      "https://tw ter.com/a/status/3?cn=a%3D%3D&refsrc=ema l"
+    val t et dStatus = 3L
 
     val pageUrlEvent =
-      "https://twitter.com/i/events/2?cn=a%3D%3D&refsrc=email"
-    val tweetIdEvent = 2L
+      "https://tw ter.com/ /events/2?cn=a%3D%3D&refsrc=ema l"
+    val t et dEvent = 2L
 
-    val pageUrlNoArgs = "https://twitter.com/i/events/1"
-    val tweetIdNoArgs = 1L
+    val pageUrlNoArgs = "https://tw ter.com/ /events/1"
+    val t et dNoArgs = 1L
 
     val logBase1: LogBase = LogBase(
-      transactionId = "test",
-      ipAddress = "127.0.0.1",
-      userId = Some(userId),
-      guestId = Some(2L),
-      timestamp = timestamp,
-      page = Some(pageUrlStatus),
+      transact on d = "test",
+       pAddress = "127.0.0.1",
+      user d = So (user d),
+      guest d = So (2L),
+      t  stamp = t  stamp,
+      page = So (pageUrlStatus),
     )
 
     val logBase2: LogBase = LogBase(
-      transactionId = "test",
-      ipAddress = "127.0.0.1",
-      userId = Some(userId),
-      guestId = Some(2L),
-      timestamp = timestamp
+      transact on d = "test",
+       pAddress = "127.0.0.1",
+      user d = So (user d),
+      guest d = So (2L),
+      t  stamp = t  stamp
     )
 
-    val notificationEvent: NotificationScribe = NotificationScribe(
-      `type` = NotificationScribeType.Click,
-      impressionId = Some("1234"),
-      userId = Some(userId),
-      timestamp = timestamp,
-      logBase = Some(logBase1)
+    val not f cat onEvent: Not f cat onScr be = Not f cat onScr be(
+      `type` = Not f cat onScr beType.Cl ck,
+       mpress on d = So ("1234"),
+      user d = So (user d),
+      t  stamp = t  stamp,
+      logBase = So (logBase1)
     )
 
-    val notificationEventWOTweetId: NotificationScribe = NotificationScribe(
-      `type` = NotificationScribeType.Click,
-      impressionId = Some("1234"),
-      userId = Some(userId),
-      timestamp = timestamp,
-      logBase = Some(logBase2)
+    val not f cat onEventWOT et d: Not f cat onScr be = Not f cat onScr be(
+      `type` = Not f cat onScr beType.Cl ck,
+       mpress on d = So ("1234"),
+      user d = So (user d),
+      t  stamp = t  stamp,
+      logBase = So (logBase2)
     )
 
-    val notificationEventWOImpressionId: NotificationScribe = NotificationScribe(
-      `type` = NotificationScribeType.Click,
-      userId = Some(userId),
-      timestamp = timestamp,
-      logBase = Some(logBase1)
+    val not f cat onEventWO mpress on d: Not f cat onScr be = Not f cat onScr be(
+      `type` = Not f cat onScr beType.Cl ck,
+      user d = So (user d),
+      t  stamp = t  stamp,
+      logBase = So (logBase1)
     )
 
-    val expectedUua: UnifiedUserAction = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(userId)),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = tweetIdStatus,
+    val expectedUua: Un f edUserAct on = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (user d)),
+       em =  em.T et nfo(
+        T et nfo(
+          act onT et d = t et dStatus,
         )
       ),
-      actionType = ActionType.ClientTweetEmailClick,
-      eventMetadata = EventMetadata(
-        sourceTimestampMs = timestamp,
-        receivedTimestampMs = frozenTime.inMilliseconds,
-        sourceLineage = SourceLineage.EmailNotificationEvents,
-        traceId = None
+      act onType = Act onType.Cl entT etEma lCl ck,
+      event tadata = Event tadata(
+        s ceT  stampMs = t  stamp,
+        rece vedT  stampMs = frozenT  . nM ll seconds,
+        s ceL neage = S ceL neage.Ema lNot f cat onEvents,
+        trace d = None
       ),
-      productSurfaceInfo = Some(
-        ProductSurfaceInfo.EmailNotificationInfo(EmailNotificationInfo(notificationId = "1234"))),
-      productSurface = Some(ProductSurface.EmailNotification)
+      productSurface nfo = So (
+        ProductSurface nfo.Ema lNot f cat on nfo(Ema lNot f cat on nfo(not f cat on d = "1234"))),
+      productSurface = So (ProductSurface.Ema lNot f cat on)
     )
   }
 
-  trait UserModificationEventFixture extends CommonFixture {
-    val timestamp = 1001L
-    val userName = "A"
-    val screenName = "B"
-    val description = "this is A"
-    val location = "US"
-    val url = s"https://www.twitter.com/${userName}"
+  tra  UserMod f cat onEventF xture extends CommonF xture {
+    val t  stamp = 1001L
+    val userNa  = "A"
+    val screenNa  = "B"
+    val descr pt on = "t   s A"
+    val locat on = "US"
+    val url = s"https://www.tw ter.com/${userNa }"
 
-    val baseUserModification = UserModification(
-      forUserId = Some(userId),
-      userId = Some(userId),
+    val baseUserMod f cat on = UserMod f cat on(
+      forUser d = So (user d),
+      user d = So (user d),
     )
 
-    val userCreate = baseUserModification.copy(
-      create = Some(
+    val userCreate = baseUserMod f cat on.copy(
+      create = So (
         User(
-          id = userId,
-          createdAtMsec = timestamp,
-          updatedAtMsec = timestamp,
+           d = user d,
+          createdAtMsec = t  stamp,
+          updatedAtMsec = t  stamp,
           userType = UserType.Normal,
-          profile = Some(
-            Profile(
-              name = userName,
-              screenName = screenName,
-              description = description,
-              auth = null.asInstanceOf[Auth],
-              location = location,
+          prof le = So (
+            Prof le(
+              na  = userNa ,
+              screenNa  = screenNa ,
+              descr pt on = descr pt on,
+              auth = null.as nstanceOf[Auth],
+              locat on = locat on,
               url = url
             ))
         )),
     )
 
-    val updateDiffs = Seq(
-      UpdateDiffItem(fieldName = "user_name", before = Some("abc"), after = Some("def")),
-      UpdateDiffItem(fieldName = "description", before = Some("d1"), after = Some("d2")),
+    val updateD ffs = Seq(
+      UpdateD ff em(f eldNa  = "user_na ", before = So ("abc"), after = So ("def")),
+      UpdateD ff em(f eldNa  = "descr pt on", before = So ("d1"), after = So ("d2")),
     )
-    val userUpdate = baseUserModification.copy(
-      updatedAtMsec = Some(timestamp),
-      update = Some(updateDiffs),
-      success = Some(true)
+    val userUpdate = baseUserMod f cat on.copy(
+      updatedAtMsec = So (t  stamp),
+      update = So (updateD ffs),
+      success = So (true)
     )
 
-    val expectedUuaUserCreate: UnifiedUserAction = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(userId)),
-      item = Item.ProfileInfo(
-        ProfileInfo(
-          actionProfileId = userId,
-          name = Some(userName),
-          handle = Some(screenName),
-          description = Some(description)
+    val expectedUuaUserCreate: Un f edUserAct on = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (user d)),
+       em =  em.Prof le nfo(
+        Prof le nfo(
+          act onProf le d = user d,
+          na  = So (userNa ),
+          handle = So (screenNa ),
+          descr pt on = So (descr pt on)
         )
       ),
-      actionType = ActionType.ServerUserCreate,
-      eventMetadata = EventMetadata(
-        sourceTimestampMs = timestamp,
-        receivedTimestampMs = frozenTime.inMilliseconds,
-        sourceLineage = SourceLineage.ServerGizmoduckUserModificationEvents,
+      act onType = Act onType.ServerUserCreate,
+      event tadata = Event tadata(
+        s ceT  stampMs = t  stamp,
+        rece vedT  stampMs = frozenT  . nM ll seconds,
+        s ceL neage = S ceL neage.ServerG zmoduckUserMod f cat onEvents,
       )
     )
 
-    val expectedUuaUserUpdate: UnifiedUserAction = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(userId)),
-      item = Item.ProfileInfo(
-        ProfileInfo(
-          actionProfileId = userId,
-          profileActionInfo = Some(
-            ProfileActionInfo.ServerUserUpdate(
-              ServerUserUpdate(updates = updateDiffs, success = Some(true))))
+    val expectedUuaUserUpdate: Un f edUserAct on = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (user d)),
+       em =  em.Prof le nfo(
+        Prof le nfo(
+          act onProf le d = user d,
+          prof leAct on nfo = So (
+            Prof leAct on nfo.ServerUserUpdate(
+              ServerUserUpdate(updates = updateD ffs, success = So (true))))
         )
       ),
-      actionType = ActionType.ServerUserUpdate,
-      eventMetadata = EventMetadata(
-        sourceTimestampMs = timestamp,
-        receivedTimestampMs = frozenTime.inMilliseconds,
-        sourceLineage = SourceLineage.ServerGizmoduckUserModificationEvents,
+      act onType = Act onType.ServerUserUpdate,
+      event tadata = Event tadata(
+        s ceT  stampMs = t  stamp,
+        rece vedT  stampMs = frozenT  . nM ll seconds,
+        s ceL neage = S ceL neage.ServerG zmoduckUserMod f cat onEvents,
       )
     )
   }
 
-  trait AdsCallbackEngagementsFixture extends CommonFixture {
+  tra  AdsCallbackEngage ntsF xture extends CommonF xture {
 
-    val timestamp = 1001L
-    val engagementId = 123
-    val accountTimeZone = "PST"
-    val advertiserId = 2002L
-    val displayLocation: DisplayLocation = DisplayLocation(value = 1)
-    val trendId = 1002
+    val t  stamp = 1001L
+    val engage nt d = 123
+    val accountT  Zone = "PST"
+    val advert ser d = 2002L
+    val d splayLocat on: D splayLocat on = D splayLocat on(value = 1)
+    val trend d = 1002
 
-    val authorInfo: AuthorInfo = AuthorInfo(authorId = Some(advertiserId))
-    val openLinkWithUrl: TweetActionInfo =
-      TweetActionInfo.ServerPromotedTweetOpenLink(ServerPromotedTweetOpenLink(url = Some("go/url")))
-    val openLinkWithoutUrl: TweetActionInfo =
-      TweetActionInfo.ServerPromotedTweetOpenLink(ServerPromotedTweetOpenLink(url = None))
+    val author nfo: Author nfo = Author nfo(author d = So (advert ser d))
+    val openL nkW hUrl: T etAct on nfo =
+      T etAct on nfo.ServerPromotedT etOpenL nk(ServerPromotedT etOpenL nk(url = So ("go/url")))
+    val openL nkW houtUrl: T etAct on nfo =
+      T etAct on nfo.ServerPromotedT etOpenL nk(ServerPromotedT etOpenL nk(url = None))
 
-    def createTweetInfoItem(
-      authorInfo: Option[AuthorInfo] = None,
-      actionInfo: Option[TweetActionInfo] = None
-    ): Item = {
-      Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = itemTweetId,
-          actionTweetAuthorInfo = authorInfo,
-          tweetActionInfo = actionInfo))
+    def createT et nfo em(
+      author nfo: Opt on[Author nfo] = None,
+      act on nfo: Opt on[T etAct on nfo] = None
+    ):  em = {
+       em.T et nfo(
+        T et nfo(
+          act onT et d =  emT et d,
+          act onT etAuthor nfo = author nfo,
+          t etAct on nfo = act on nfo))
     }
 
-    val trendInfoItem: Item = Item.TrendInfo(TrendInfo(actionTrendId = trendId))
+    val trend nfo em:  em =  em.Trend nfo(Trend nfo(act onTrend d = trend d))
 
-    val organicTweetId = Some(100001L)
-    val promotedTweetId = Some(200002L)
+    val organ cT et d = So (100001L)
+    val promotedT et d = So (200002L)
 
-    val organicTweetVideoUuid = Some("organic_video_1")
-    val organicTweetVideoOwnerId = Some(123L)
+    val organ cT etV deoUu d = So ("organ c_v deo_1")
+    val organ cT etV deoOwner d = So (123L)
 
-    val promotedTweetVideoUuid = Some("promoted_video_1")
-    val promotedTweetVideoOwnerId = Some(345L)
+    val promotedT etV deoUu d = So ("promoted_v deo_1")
+    val promotedT etV deoOwner d = So (345L)
 
-    val prerollAdUuid = Some("preroll_ad_1")
-    val prerollAdOwnerId = Some(567L)
+    val prerollAdUu d = So ("preroll_ad_1")
+    val prerollAdOwner d = So (567L)
 
-    val amplifyDetailsPrerollAd = Some(
-      AmplifyDetails(
-        videoOwnerId = prerollAdOwnerId,
-        videoUuid = prerollAdUuid,
-        prerollOwnerId = prerollAdOwnerId,
-        prerollUuid = prerollAdUuid
+    val ampl fyDeta lsPrerollAd = So (
+      Ampl fyDeta ls(
+        v deoOwner d = prerollAdOwner d,
+        v deoUu d = prerollAdUu d,
+        prerollOwner d = prerollAdOwner d,
+        prerollUu d = prerollAdUu d
       ))
 
-    val tweetActionInfoPrerollAd = Some(
-      TweetActionInfo.TweetVideoWatch(
-        TweetVideoWatch(
-          isMonetizable = Some(true),
-          videoOwnerId = prerollAdOwnerId,
-          videoUuid = prerollAdUuid,
-          prerollOwnerId = prerollAdOwnerId,
-          prerollUuid = prerollAdUuid
+    val t etAct on nfoPrerollAd = So (
+      T etAct on nfo.T etV deoWatch(
+        T etV deoWatch(
+           sMonet zable = So (true),
+          v deoOwner d = prerollAdOwner d,
+          v deoUu d = prerollAdUu d,
+          prerollOwner d = prerollAdOwner d,
+          prerollUu d = prerollAdUu d
         )
       )
     )
 
-    val amplifyDetailsPromotedTweetWithoutAd = Some(
-      AmplifyDetails(
-        videoOwnerId = promotedTweetVideoOwnerId,
-        videoUuid = promotedTweetVideoUuid
+    val ampl fyDeta lsPromotedT etW houtAd = So (
+      Ampl fyDeta ls(
+        v deoOwner d = promotedT etV deoOwner d,
+        v deoUu d = promotedT etV deoUu d
       ))
 
-    val tweetActionInfoPromotedTweetWithoutAd = Some(
-      TweetActionInfo.TweetVideoWatch(
-        TweetVideoWatch(
-          isMonetizable = Some(true),
-          videoOwnerId = promotedTweetVideoOwnerId,
-          videoUuid = promotedTweetVideoUuid,
+    val t etAct on nfoPromotedT etW houtAd = So (
+      T etAct on nfo.T etV deoWatch(
+        T etV deoWatch(
+           sMonet zable = So (true),
+          v deoOwner d = promotedT etV deoOwner d,
+          v deoUu d = promotedT etV deoUu d,
         )
       )
     )
 
-    val amplifyDetailsPromotedTweetWithAd = Some(
-      AmplifyDetails(
-        videoOwnerId = promotedTweetVideoOwnerId,
-        videoUuid = promotedTweetVideoUuid,
-        prerollOwnerId = prerollAdOwnerId,
-        prerollUuid = prerollAdUuid
+    val ampl fyDeta lsPromotedT etW hAd = So (
+      Ampl fyDeta ls(
+        v deoOwner d = promotedT etV deoOwner d,
+        v deoUu d = promotedT etV deoUu d,
+        prerollOwner d = prerollAdOwner d,
+        prerollUu d = prerollAdUu d
       ))
 
-    val tweetActionInfoPromotedTweetWithAd = Some(
-      TweetActionInfo.TweetVideoWatch(
-        TweetVideoWatch(
-          isMonetizable = Some(true),
-          videoOwnerId = promotedTweetVideoOwnerId,
-          videoUuid = promotedTweetVideoUuid,
-          prerollOwnerId = prerollAdOwnerId,
-          prerollUuid = prerollAdUuid
+    val t etAct on nfoPromotedT etW hAd = So (
+      T etAct on nfo.T etV deoWatch(
+        T etV deoWatch(
+           sMonet zable = So (true),
+          v deoOwner d = promotedT etV deoOwner d,
+          v deoUu d = promotedT etV deoUu d,
+          prerollOwner d = prerollAdOwner d,
+          prerollUu d = prerollAdUu d
         )
       )
     )
 
-    val amplifyDetailsOrganicTweetWithAd = Some(
-      AmplifyDetails(
-        videoOwnerId = organicTweetVideoOwnerId,
-        videoUuid = organicTweetVideoUuid,
-        prerollOwnerId = prerollAdOwnerId,
-        prerollUuid = prerollAdUuid
+    val ampl fyDeta lsOrgan cT etW hAd = So (
+      Ampl fyDeta ls(
+        v deoOwner d = organ cT etV deoOwner d,
+        v deoUu d = organ cT etV deoUu d,
+        prerollOwner d = prerollAdOwner d,
+        prerollUu d = prerollAdUu d
       ))
 
-    val tweetActionInfoOrganicTweetWithAd = Some(
-      TweetActionInfo.TweetVideoWatch(
-        TweetVideoWatch(
-          isMonetizable = Some(true),
-          videoOwnerId = organicTweetVideoOwnerId,
-          videoUuid = organicTweetVideoUuid,
-          prerollOwnerId = prerollAdOwnerId,
-          prerollUuid = prerollAdUuid
+    val t etAct on nfoOrgan cT etW hAd = So (
+      T etAct on nfo.T etV deoWatch(
+        T etV deoWatch(
+           sMonet zable = So (true),
+          v deoOwner d = organ cT etV deoOwner d,
+          v deoUu d = organ cT etV deoUu d,
+          prerollOwner d = prerollAdOwner d,
+          prerollUu d = prerollAdUu d
         )
       )
     )
 
     def createExpectedUua(
-      actionType: ActionType,
-      item: Item
-    ): UnifiedUserAction = {
-      UnifiedUserAction(
-        userIdentifier = UserIdentifier(userId = Some(userId)),
-        item = item,
-        actionType = actionType,
-        eventMetadata = EventMetadata(
-          sourceTimestampMs = timestamp,
-          receivedTimestampMs = frozenTime.inMilliseconds,
-          sourceLineage = SourceLineage.ServerAdsCallbackEngagements
+      act onType: Act onType,
+       em:  em
+    ): Un f edUserAct on = {
+      Un f edUserAct on(
+        user dent f er = User dent f er(user d = So (user d)),
+         em =  em,
+        act onType = act onType,
+        event tadata = Event tadata(
+          s ceT  stampMs = t  stamp,
+          rece vedT  stampMs = frozenT  . nM ll seconds,
+          s ceL neage = S ceL neage.ServerAdsCallbackEngage nts
         )
       )
     }
 
-    def createExpectedUuaWithProfileInfo(
-      actionType: ActionType
-    ): UnifiedUserAction = {
-      UnifiedUserAction(
-        userIdentifier = UserIdentifier(userId = Some(userId)),
-        item = Item.ProfileInfo(ProfileInfo(actionProfileId = advertiserId)),
-        actionType = actionType,
-        eventMetadata = EventMetadata(
-          sourceTimestampMs = timestamp,
-          receivedTimestampMs = frozenTime.inMilliseconds,
-          sourceLineage = SourceLineage.ServerAdsCallbackEngagements
+    def createExpectedUuaW hProf le nfo(
+      act onType: Act onType
+    ): Un f edUserAct on = {
+      Un f edUserAct on(
+        user dent f er = User dent f er(user d = So (user d)),
+         em =  em.Prof le nfo(Prof le nfo(act onProf le d = advert ser d)),
+        act onType = act onType,
+        event tadata = Event tadata(
+          s ceT  stampMs = t  stamp,
+          rece vedT  stampMs = frozenT  . nM ll seconds,
+          s ceL neage = S ceL neage.ServerAdsCallbackEngage nts
         )
       )
     }
 
     def createSpendServerEvent(
-      engagementType: EngagementType,
-      url: Option[String] = None
+      engage ntType: Engage ntType,
+      url: Opt on[Str ng] = None
     ): SpendServerEvent = {
       SpendServerEvent(
-        engagementEvent = Some(
-          EngagementEvent(
-            clientInfo = Some(ClientInfo(userId64 = Some(userId))),
-            engagementId = engagementId,
-            engagementEpochTimeMilliSec = timestamp,
-            engagementType = engagementType,
-            accountTimeZone = accountTimeZone,
+        engage ntEvent = So (
+          Engage ntEvent(
+            cl ent nfo = So (Cl ent nfo(user d64 = So (user d))),
+            engage nt d = engage nt d,
+            engage ntEpochT  M ll Sec = t  stamp,
+            engage ntType = engage ntType,
+            accountT  Zone = accountT  Zone,
             url = url,
-            impressionData = Some(
-              ImpressionDataNeededAtEngagementTime(
-                advertiserId = advertiserId,
-                promotedTweetId = Some(itemTweetId),
-                displayLocation = displayLocation,
-                promotedTrendId = Some(trendId)))
+             mpress onData = So (
+               mpress onDataNeededAtEngage ntT  (
+                advert ser d = advert ser d,
+                promotedT et d = So ( emT et d),
+                d splayLocat on = d splayLocat on,
+                promotedTrend d = So (trend d)))
           )))
     }
 
-    def createExpectedVideoUua(
-      actionType: ActionType,
-      tweetActionInfo: Option[TweetActionInfo],
-      actionTweetId: Option[Long]
-    ): UnifiedUserAction = {
-      UnifiedUserAction(
-        userIdentifier = UserIdentifier(userId = Some(userId)),
-        item = Item.TweetInfo(
-          TweetInfo(
-            actionTweetId = actionTweetId.get,
-            actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(advertiserId))),
-            tweetActionInfo = tweetActionInfo
+    def createExpectedV deoUua(
+      act onType: Act onType,
+      t etAct on nfo: Opt on[T etAct on nfo],
+      act onT et d: Opt on[Long]
+    ): Un f edUserAct on = {
+      Un f edUserAct on(
+        user dent f er = User dent f er(user d = So (user d)),
+         em =  em.T et nfo(
+          T et nfo(
+            act onT et d = act onT et d.get,
+            act onT etAuthor nfo = So (Author nfo(author d = So (advert ser d))),
+            t etAct on nfo = t etAct on nfo
           )
         ),
-        actionType = actionType,
-        eventMetadata = EventMetadata(
-          sourceTimestampMs = timestamp,
-          receivedTimestampMs = frozenTime.inMilliseconds,
-          sourceLineage = SourceLineage.ServerAdsCallbackEngagements
+        act onType = act onType,
+        event tadata = Event tadata(
+          s ceT  stampMs = t  stamp,
+          rece vedT  stampMs = frozenT  . nM ll seconds,
+          s ceL neage = S ceL neage.ServerAdsCallbackEngage nts
         )
       )
     }
 
-    def createVideoSpendServerEvent(
-      engagementType: EngagementType,
-      amplifyDetails: Option[AmplifyDetails],
-      promotedTweetId: Option[Long],
-      organicTweetId: Option[Long]
+    def createV deoSpendServerEvent(
+      engage ntType: Engage ntType,
+      ampl fyDeta ls: Opt on[Ampl fyDeta ls],
+      promotedT et d: Opt on[Long],
+      organ cT et d: Opt on[Long]
     ): SpendServerEvent = {
       SpendServerEvent(
-        engagementEvent = Some(
-          EngagementEvent(
-            clientInfo = Some(ClientInfo(userId64 = Some(userId))),
-            engagementId = engagementId,
-            engagementEpochTimeMilliSec = timestamp,
-            engagementType = engagementType,
-            accountTimeZone = accountTimeZone,
-            impressionData = Some(
-              ImpressionDataNeededAtEngagementTime(
-                advertiserId = advertiserId,
-                promotedTweetId = promotedTweetId,
-                displayLocation = displayLocation,
-                organicTweetId = organicTweetId)),
-            cardEngagement = Some(
+        engage ntEvent = So (
+          Engage ntEvent(
+            cl ent nfo = So (Cl ent nfo(user d64 = So (user d))),
+            engage nt d = engage nt d,
+            engage ntEpochT  M ll Sec = t  stamp,
+            engage ntType = engage ntType,
+            accountT  Zone = accountT  Zone,
+             mpress onData = So (
+               mpress onDataNeededAtEngage ntT  (
+                advert ser d = advert ser d,
+                promotedT et d = promotedT et d,
+                d splayLocat on = d splayLocat on,
+                organ cT et d = organ cT et d)),
+            cardEngage nt = So (
               CardEvent(
-                amplifyDetails = amplifyDetails
+                ampl fyDeta ls = ampl fyDeta ls
               )
             )
           )))
     }
   }
 
-  trait InteractionEventsFixtures extends CommonFixture {
-    val timestamp = 123456L
-    val tweetId = 1L
-    val engagingUserId = 11L
+  tra   nteract onEventsF xtures extends CommonF xture {
+    val t  stamp = 123456L
+    val t et d = 1L
+    val engag ngUser d = 11L
 
-    val baseInteractionEvent: InteractionEvent = InteractionEvent(
-      targetId = tweetId,
-      targetType = InteractionTargetType.Tweet,
-      engagingUserId = engagingUserId,
-      eventSource = EventSource.ClientEvent,
-      timestampMillis = timestamp,
-      interactionType = Some(InteractionType.TweetRenderImpression),
-      details = InteractionDetails.TweetRenderImpression(TweetImpression()),
-      additionalEngagingUserIdentifiers = UserIdentifierIE(),
-      engagingContext = EngagingContext.ClientEventContext(
-        ClientEventContext(
-          clientEventNamespace = ContextualEventNamespace(),
-          clientType = ClientType.Iphone,
-          displayLocation = DisplayLocation(1),
-          isTweetDetailsImpression = Some(false)))
+    val base nteract onEvent:  nteract onEvent =  nteract onEvent(
+      target d = t et d,
+      targetType =  nteract onTargetType.T et,
+      engag ngUser d = engag ngUser d,
+      eventS ce = EventS ce.Cl entEvent,
+      t  stampM ll s = t  stamp,
+       nteract onType = So ( nteract onType.T etRender mpress on),
+      deta ls =  nteract onDeta ls.T etRender mpress on(T et mpress on()),
+      add  onalEngag ngUser dent f ers = User dent f er E(),
+      engag ngContext = Engag ngContext.Cl entEventContext(
+        Cl entEventContext(
+          cl entEventNa space = ContextualEventNa space(),
+          cl entType = Cl entType. phone,
+          d splayLocat on = D splayLocat on(1),
+           sT etDeta ls mpress on = So (false)))
     )
 
-    val loggedOutInteractionEvent: InteractionEvent = baseInteractionEvent.copy(engagingUserId = 0L)
+    val loggedOut nteract onEvent:  nteract onEvent = base nteract onEvent.copy(engag ngUser d = 0L)
 
-    val detailImpressionInteractionEvent: InteractionEvent = baseInteractionEvent.copy(
-      engagingContext = EngagingContext.ClientEventContext(
-        ClientEventContext(
-          clientEventNamespace = ContextualEventNamespace(),
-          clientType = ClientType.Iphone,
-          displayLocation = DisplayLocation(1),
-          isTweetDetailsImpression = Some(true)))
+    val deta l mpress on nteract onEvent:  nteract onEvent = base nteract onEvent.copy(
+      engag ngContext = Engag ngContext.Cl entEventContext(
+        Cl entEventContext(
+          cl entEventNa space = ContextualEventNa space(),
+          cl entType = Cl entType. phone,
+          d splayLocat on = D splayLocat on(1),
+           sT etDeta ls mpress on = So (true)))
     )
 
-    val expectedBaseKeyedUuaTweet: KeyedUuaTweet = KeyedUuaTweet(
-      tweetId = tweetId,
-      actionType = ActionType.ClientTweetRenderImpression,
-      userIdentifier = UserIdentifier(userId = Some(engagingUserId)),
-      eventMetadata = EventMetadata(
-        sourceTimestampMs = timestamp,
-        receivedTimestampMs = frozenTime.inMilliseconds,
-        sourceLineage = SourceLineage.ClientEvents
+    val expectedBaseKeyedUuaT et: KeyedUuaT et = KeyedUuaT et(
+      t et d = t et d,
+      act onType = Act onType.Cl entT etRender mpress on,
+      user dent f er = User dent f er(user d = So (engag ngUser d)),
+      event tadata = Event tadata(
+        s ceT  stampMs = t  stamp,
+        rece vedT  stampMs = frozenT  . nM ll seconds,
+        s ceL neage = S ceL neage.Cl entEvents
       )
     )
   }

@@ -1,37 +1,37 @@
-package com.twitter.search.earlybird_root.common;
+package com.tw ter.search.earlyb rd_root.common;
 
-import javax.annotation.Nonnull;
+ mport javax.annotat on.Nonnull;
 
-import com.twitter.search.common.constants.thriftjava.ThriftQuerySource;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
+ mport com.tw ter.search.common.constants.thr ftjava.Thr ftQueryS ce;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchRank ngMode;
 
 /**
- * Earlybird roots distinguish these types of requests and treat them differently.
+ * Earlyb rd roots d st ngu sh t se types of requests and treat t m d fferently.
  */
-public enum EarlybirdRequestType {
+publ c enum Earlyb rdRequestType {
   FACETS,
   RECENCY,
   RELEVANCE,
-  STRICT_RECENCY,
+  STR CT_RECENCY,
   TERM_STATS,
   TOP_TWEETS;
 
   /**
-   * Returns the type of the given requests.
+   * Returns t  type of t  g ven requests.
    */
   @Nonnull
-  public static EarlybirdRequestType of(EarlybirdRequest request) {
-    if (request.isSetFacetRequest()) {
+  publ c stat c Earlyb rdRequestType of(Earlyb rdRequest request) {
+     f (request. sSetFacetRequest()) {
       return FACETS;
-    } else if (request.isSetTermStatisticsRequest()) {
+    } else  f (request. sSetTermStat st csRequest()) {
       return TERM_STATS;
-    } else if (request.isSetSearchQuery() && request.getSearchQuery().isSetRankingMode()) {
-      ThriftSearchRankingMode rankingMode = request.getSearchQuery().getRankingMode();
-      switch (rankingMode) {
+    } else  f (request. sSetSearchQuery() && request.getSearchQuery(). sSetRank ngMode()) {
+      Thr ftSearchRank ngMode rank ngMode = request.getSearchQuery().getRank ngMode();
+      sw ch (rank ngMode) {
         case RECENCY:
-          if (shouldUseStrictRecency(request)) {
-            return STRICT_RECENCY;
+           f (shouldUseStr ctRecency(request)) {
+            return STR CT_RECENCY;
           } else {
             return RECENCY;
           }
@@ -40,29 +40,29 @@ public enum EarlybirdRequestType {
         case TOPTWEETS:
           return TOP_TWEETS;
         default:
-          throw new IllegalArgumentException();
+          throw new  llegalArgu ntExcept on();
       }
     } else {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperat onExcept on();
     }
   }
 
-  private static boolean shouldUseStrictRecency(EarlybirdRequest request) {
-    // For now, we decide to do strict merging solely based on the QuerySource, and only for GNIP.
-    return request.isSetQuerySource() && request.getQuerySource() == ThriftQuerySource.GNIP;
+  pr vate stat c boolean shouldUseStr ctRecency(Earlyb rdRequest request) {
+    // For now,   dec de to do str ct  rg ng solely based on t  QueryS ce, and only for GN P.
+    return request. sSetQueryS ce() && request.getQueryS ce() == Thr ftQueryS ce.GN P;
   }
 
-  private final String normalizedName;
+  pr vate f nal Str ng normal zedNa ;
 
-  EarlybirdRequestType() {
-    this.normalizedName = name().toLowerCase();
+  Earlyb rdRequestType() {
+    t .normal zedNa  = na ().toLo rCase();
   }
 
   /**
-   * Returns the "normalized" name of this request type, that can be used for stat and decider
-   * names.
+   * Returns t  "normal zed" na  of t  request type, that can be used for stat and dec der
+   * na s.
    */
-  public String getNormalizedName() {
-    return normalizedName;
+  publ c Str ng getNormal zedNa () {
+    return normal zedNa ;
   }
 }

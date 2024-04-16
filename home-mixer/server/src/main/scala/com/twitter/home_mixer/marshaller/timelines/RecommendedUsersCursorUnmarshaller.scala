@@ -1,18 +1,18 @@
-package com.twitter.home_mixer.marshaller.timelines
+package com.tw ter.ho _m xer.marshaller.t  l nes
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedExcludeIdsCursor
-import com.twitter.timelines.service.{thriftscala => t}
-import com.twitter.util.Time
+ mport com.tw ter.product_m xer.component_l brary.model.cursor.UrtUnorderedExclude dsCursor
+ mport com.tw ter.t  l nes.serv ce.{thr ftscala => t}
+ mport com.tw ter.ut l.T  
 
-object RecommendedUsersCursorUnmarshaller {
+object Recom ndedUsersCursorUnmarshaller {
 
-  def apply(requestCursor: t.RequestCursor): Option[UrtUnorderedExcludeIdsCursor] = {
+  def apply(requestCursor: t.RequestCursor): Opt on[UrtUnorderedExclude dsCursor] = {
     requestCursor match {
-      case t.RequestCursor.RecommendedUsersCursor(cursor) =>
-        Some(
-          UrtUnorderedExcludeIdsCursor(
-            initialSortIndex = cursor.minSortIndex.getOrElse(Time.now.inMilliseconds),
-            excludedIds = cursor.previouslyRecommendedUserIds
+      case t.RequestCursor.Recom ndedUsersCursor(cursor) =>
+        So (
+          UrtUnorderedExclude dsCursor(
+             n  alSort ndex = cursor.m nSort ndex.getOrElse(T  .now. nM ll seconds),
+            excluded ds = cursor.prev ouslyRecom ndedUser ds
           ))
       case _ => None
     }

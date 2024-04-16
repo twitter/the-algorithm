@@ -1,124 +1,124 @@
-package com.twitter.ann.faiss
+package com.tw ter.ann.fa ss
 
-import com.google.common.base.Preconditions
-import com.twitter.ann.common.Cosine
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.EntityEmbedding
-import com.twitter.ann.common.IndexOutputFile
-import com.twitter.ann.common.InnerProduct
-import com.twitter.ann.common.L2
-import com.twitter.ann.common.Metric
-import com.twitter.ml.api.embedding.EmbeddingMath
-import com.twitter.scalding.Execution
-import com.twitter.scalding.TypedPipe
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.search.common.file.FileUtils
-import com.twitter.util.logging.Logging
-import java.io.File
-import scala.util.Random
+ mport com.google.common.base.Precond  ons
+ mport com.tw ter.ann.common.Cos ne
+ mport com.tw ter.ann.common.D stance
+ mport com.tw ter.ann.common.Ent yEmbedd ng
+ mport com.tw ter.ann.common. ndexOutputF le
+ mport com.tw ter.ann.common. nnerProduct
+ mport com.tw ter.ann.common.L2
+ mport com.tw ter.ann.common. tr c
+ mport com.tw ter.ml.ap .embedd ng.Embedd ngMath
+ mport com.tw ter.scald ng.Execut on
+ mport com.tw ter.scald ng.TypedP pe
+ mport com.tw ter.search.common.f le.AbstractF le
+ mport com.tw ter.search.common.f le.F leUt ls
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport java. o.F le
+ mport scala.ut l.Random
 
-trait FaissIndexer extends Logging {
+tra  Fa ss ndexer extends Logg ng {
 
   /**
-   * Produce faiss index file specified by factory string
+   * Produce fa ss  ndex f le spec f ed by factory str ng
    *
-   * @param pipe Embeddings to be indexed
-   * @param sampleRate Fraction of embeddings used for training. Regardless of this parameter, all embeddings are present in the output.
-   * @param factoryString Faiss factory string, see https://github.com/facebookresearch/faiss/wiki/The-index-factory
-   * @param metric Metric to use
-   * @param outputDirectory Directory where _SUCCESS and faiss.index will be written.
+   * @param p pe Embedd ngs to be  ndexed
+   * @param sampleRate Fract on of embedd ngs used for tra n ng. Regardless of t  para ter, all embedd ngs are present  n t  output.
+   * @param factoryStr ng Fa ss factory str ng, see https://g hub.com/facebookresearch/fa ss/w k /T - ndex-factory
+   * @param  tr c  tr c to use
+   * @param outputD rectory D rectory w re _SUCCESS and fa ss. ndex w ll be wr ten.
    */
-  def build[D <: Distance[D]](
-    pipe: TypedPipe[EntityEmbedding[Long]],
+  def bu ld[D <: D stance[D]](
+    p pe: TypedP pe[Ent yEmbedd ng[Long]],
     sampleRate: Float,
-    factoryString: String,
-    metric: Metric[D],
-    outputDirectory: AbstractFile
-  ): Execution[Unit] = {
-    outputDirectory.mkdirs()
-    Preconditions.checkState(
-      outputDirectory.canRead,
-      "Failed to create parent directories for %s",
-      outputDirectory.toString)
+    factoryStr ng: Str ng,
+     tr c:  tr c[D],
+    outputD rectory: AbstractF le
+  ): Execut on[Un ] = {
+    outputD rectory.mkd rs()
+    Precond  ons.c ckState(
+      outputD rectory.canRead,
+      "Fa led to create parent d rector es for %s",
+      outputD rectory.toStr ng)
 
-    val maybeNormalizedPipe = if (l2Normalize(metric)) {
-      pipe.map { idAndEmbedding =>
-        EntityEmbedding(idAndEmbedding.id, EmbeddingMath.Float.normalize(idAndEmbedding.embedding))
+    val maybeNormal zedP pe =  f (l2Normal ze( tr c)) {
+      p pe.map {  dAndEmbedd ng =>
+        Ent yEmbedd ng( dAndEmbedd ng. d, Embedd ngMath.Float.normal ze( dAndEmbedd ng.embedd ng))
       }
     } else {
-      pipe
+      p pe
     }
 
-    maybeNormalizedPipe.toIterableExecution.flatMap { annEmbeddings =>
-      logger.info(s"${factoryString}")
-      val t1 = System.nanoTime
-      buildAndWriteFaissIndex(
-        Random.shuffle(annEmbeddings),
+    maybeNormal zedP pe.to erableExecut on.flatMap { annEmbedd ngs =>
+      logger. nfo(s"${factoryStr ng}")
+      val t1 = System.nanoT  
+      bu ldAndWr eFa ss ndex(
+        Random.shuffle(annEmbedd ngs),
         sampleRate,
-        factoryString,
-        metric,
-        new IndexOutputFile(outputDirectory))
-      val duration = (System.nanoTime - t1) / 1e9d
-      logger.info(s"It took ${duration}s to build and index")
+        factoryStr ng,
+         tr c,
+        new  ndexOutputF le(outputD rectory))
+      val durat on = (System.nanoT   - t1) / 1e9d
+      logger. nfo(s"  took ${durat on}s to bu ld and  ndex")
 
-      Execution.unit
+      Execut on.un 
     }
   }
 
-  def buildAndWriteFaissIndex[D <: Distance[D]](
-    entities: Iterable[EntityEmbedding[Long]],
+  def bu ldAndWr eFa ss ndex[D <: D stance[D]](
+    ent  es:  erable[Ent yEmbedd ng[Long]],
     sampleRate: Float,
-    factoryString: String,
-    metricType: Metric[D],
-    outputDirectory: IndexOutputFile
-  ): Unit = {
-    val metric = parseMetric(metricType)
-    val datasetSize = entities.size.toLong
-    val dimensions = entities.head.embedding.length
-    logger.info(s"There are $datasetSize embeddings")
-    logger.info(s"Faiss compile options are ${swigfaiss.get_compile_options()}")
-    logger.info(s"OMP threads count is ${swigfaiss.omp_get_max_threads()}")
+    factoryStr ng: Str ng,
+     tr cType:  tr c[D],
+    outputD rectory:  ndexOutputF le
+  ): Un  = {
+    val  tr c = parse tr c( tr cType)
+    val datasetS ze = ent  es.s ze.toLong
+    val d  ns ons = ent  es. ad.embedd ng.length
+    logger. nfo(s"T re are $datasetS ze embedd ngs")
+    logger. nfo(s"Fa ss comp le opt ons are ${sw gfa ss.get_comp le_opt ons()}")
+    logger. nfo(s"OMP threads count  s ${sw gfa ss.omp_get_max_threads()}")
 
-    val index = swigfaiss.index_factory(dimensions, factoryString, metric)
-    index.setVerbose(true)
-    val idMap = new IndexIDMap(index)
+    val  ndex = sw gfa ss. ndex_factory(d  ns ons, factoryStr ng,  tr c)
+     ndex.setVerbose(true)
+    val  dMap = new  ndex DMap( ndex)
 
-    val trainingSetSize = Math.min(datasetSize, Math.round(datasetSize * sampleRate))
-    val ids = toIndexVector(entities)
-    val fullDataset = toFloatVector(dimensions, entities)
-    logger.info("Finished bridging full dataset")
-    idMap.train(trainingSetSize, fullDataset.data())
-    logger.info("Finished training")
-    idMap.add_with_ids(datasetSize, fullDataset.data(), ids)
-    logger.info("Added data to the index")
+    val tra n ngSetS ze = Math.m n(datasetS ze, Math.round(datasetS ze * sampleRate))
+    val  ds = to ndexVector(ent  es)
+    val fullDataset = toFloatVector(d  ns ons, ent  es)
+    logger. nfo("F n s d br dg ng full dataset")
+     dMap.tra n(tra n ngSetS ze, fullDataset.data())
+    logger. nfo("F n s d tra n ng")
+     dMap.add_w h_ ds(datasetS ze, fullDataset.data(),  ds)
+    logger. nfo("Added data to t   ndex")
 
-    val tmpFile = File.createTempFile("faiss.index", ".tmp")
-    swigfaiss.write_index(idMap, tmpFile.toString)
-    logger.info(s"Wrote to tmp file ${tmpFile.toString}")
-    copyToOutputAndCreateSuccess(FileUtils.getFileHandle(tmpFile.toString), outputDirectory)
-    logger.info("Copied file")
+    val tmpF le = F le.createTempF le("fa ss. ndex", ".tmp")
+    sw gfa ss.wr e_ ndex( dMap, tmpF le.toStr ng)
+    logger. nfo(s"Wrote to tmp f le ${tmpF le.toStr ng}")
+    copyToOutputAndCreateSuccess(F leUt ls.getF leHandle(tmpF le.toStr ng), outputD rectory)
+    logger. nfo("Cop ed f le")
   }
 
-  private def copyToOutputAndCreateSuccess(
-    tmpFile: AbstractFile,
-    outputDirectory: IndexOutputFile
+  pr vate def copyToOutputAndCreateSuccess(
+    tmpF le: AbstractF le,
+    outputD rectory:  ndexOutputF le
   ) = {
-    val outputFile = outputDirectory.createFile("faiss.index")
-    logger.info(s"Final output file is ${outputFile.getPath()}")
-    outputFile.copyFrom(tmpFile.getByteSource.openStream())
-    outputDirectory.createSuccessFile()
+    val outputF le = outputD rectory.createF le("fa ss. ndex")
+    logger. nfo(s"F nal output f le  s ${outputF le.getPath()}")
+    outputF le.copyFrom(tmpF le.getByteS ce.openStream())
+    outputD rectory.createSuccessF le()
   }
 
-  private def toFloatVector(
-    dimensions: Int,
-    entities: Iterable[EntityEmbedding[Long]]
+  pr vate def toFloatVector(
+    d  ns ons:  nt,
+    ent  es:  erable[Ent yEmbedd ng[Long]]
   ): FloatVector = {
-    require(entities.nonEmpty)
+    requ re(ent  es.nonEmpty)
 
     val vector = new FloatVector()
-    vector.reserve(dimensions.toLong * entities.size.toLong)
-    for (entity <- entities) {
-      for (value <- entity.embedding) {
+    vector.reserve(d  ns ons.toLong * ent  es.s ze.toLong)
+    for (ent y <- ent  es) {
+      for (value <- ent y.embedd ng) {
         vector.push_back(value)
       }
     }
@@ -126,29 +126,29 @@ trait FaissIndexer extends Logging {
     vector
   }
 
-  private def toIndexVector(embeddings: Iterable[EntityEmbedding[Long]]): LongVector = {
-    require(embeddings.nonEmpty)
+  pr vate def to ndexVector(embedd ngs:  erable[Ent yEmbedd ng[Long]]): LongVector = {
+    requ re(embedd ngs.nonEmpty)
 
     val vector = new LongVector()
-    vector.reserve(embeddings.size)
-    for (embedding <- embeddings) {
-      vector.push_back(embedding.id)
+    vector.reserve(embedd ngs.s ze)
+    for (embedd ng <- embedd ngs) {
+      vector.push_back(embedd ng. d)
     }
 
     vector
   }
 
-  private def parseMetric[D <: Distance[D]](metric: Metric[D]): MetricType = metric match {
-    case L2 => MetricType.METRIC_L2
-    case InnerProduct => MetricType.METRIC_INNER_PRODUCT
-    case Cosine => MetricType.METRIC_INNER_PRODUCT
-    case _ => throw new AbstractMethodError(s"Not implemented for metric ${metric}")
+  pr vate def parse tr c[D <: D stance[D]]( tr c:  tr c[D]):  tr cType =  tr c match {
+    case L2 =>  tr cType.METR C_L2
+    case  nnerProduct =>  tr cType.METR C_ NNER_PRODUCT
+    case Cos ne =>  tr cType.METR C_ NNER_PRODUCT
+    case _ => throw new Abstract thodError(s"Not  mple nted for  tr c ${ tr c}")
   }
 
-  private def l2Normalize[D <: Distance[D]](metric: Metric[D]): Boolean = metric match {
-    case Cosine => true
+  pr vate def l2Normal ze[D <: D stance[D]]( tr c:  tr c[D]): Boolean =  tr c match {
+    case Cos ne => true
     case _ => false
   }
 }
 
-object FaissIndexer extends FaissIndexer {}
+object Fa ss ndexer extends Fa ss ndexer {}

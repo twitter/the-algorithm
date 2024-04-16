@@ -1,228 +1,228 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import javax.annotation.Nullable;
+ mport java. o. OExcept on;
+ mport java.ut l.Collect ons;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.concurrent.T  Un ;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect. mmutableL st;
+ mport com.google.common.collect. mmutableMap;
+ mport com.google.common.collect.L sts;
+ mport com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.decider.Decider;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
-import com.twitter.search.core.earlybird.index.inverted.MultiSegmentTermDictionary;
-import com.twitter.search.core.earlybird.index.inverted.MultiSegmentTermDictionaryWithFastutil;
-import com.twitter.search.core.earlybird.index.inverted.OptimizedMemoryIndex;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.index.EarlybirdSegment;
-import com.twitter.search.earlybird.partition.SegmentManager.Filter;
-import com.twitter.search.earlybird.partition.SegmentManager.Order;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.search.common.dec der.Dec derUt l;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
+ mport com.tw ter.search.common. tr cs.SearchStatsRece ver;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted. nverted ndex;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted.Mult Seg ntTermD ct onary;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted.Mult Seg ntTermD ct onaryW hFastut l;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted.Opt m zed mory ndex;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd. ndex.Earlyb rdSeg nt;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntManager.F lter;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntManager.Order;
 
 /**
- * Manages MultiSegmentTermDictionary's for specific fields on this earlybird. Only manages them
- * for optimized segments, and should only regenerate new dictionaries when the list of optimized
- * segments changes. See SEARCH-10836
+ * Manages Mult Seg ntTermD ct onary's for spec f c f elds on t  earlyb rd. Only manages t m
+ * for opt m zed seg nts, and should only regenerate new d ct onar es w n t  l st of opt m zed
+ * seg nts changes. See SEARCH-10836
  */
-public class MultiSegmentTermDictionaryManager {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(MultiSegmentTermDictionaryManager.class);
+publ c class Mult Seg ntTermD ct onaryManager {
+  pr vate stat c f nal Logger LOG =
+      LoggerFactory.getLogger(Mult Seg ntTermD ct onaryManager.class);
 
-  @VisibleForTesting
-  public static final SearchTimerStats TERM_DICTIONARY_CREATION_STATS =
-      SearchTimerStats.export("multi_segment_term_dictionary_manager_build_dictionary",
-          TimeUnit.MILLISECONDS, false);
+  @V s bleForTest ng
+  publ c stat c f nal SearchT  rStats TERM_D CT ONARY_CREAT ON_STATS =
+      SearchT  rStats.export("mult _seg nt_term_d ct onary_manager_bu ld_d ct onary",
+          T  Un .M LL SECONDS, false);
 
-  public static final MultiSegmentTermDictionaryManager NOOP_INSTANCE =
-      new MultiSegmentTermDictionaryManager(
-          new Config(Collections.emptyList()), null, null, null, null) {
-        @Override
-        public boolean buildDictionary() {
+  publ c stat c f nal Mult Seg ntTermD ct onaryManager NOOP_ NSTANCE =
+      new Mult Seg ntTermD ct onaryManager(
+          new Conf g(Collect ons.emptyL st()), null, null, null, null) {
+        @Overr de
+        publ c boolean bu ldD ct onary() {
           return false;
         }
       };
 
-  private static final String MANAGER_DISABLED_DECIDER_KEY_PREFIX =
-      "multi_segment_term_dictionary_manager_disabled_in_";
+  pr vate stat c f nal Str ng MANAGER_D SABLED_DEC DER_KEY_PREF X =
+      "mult _seg nt_term_d ct onary_manager_d sabled_ n_";
 
-  public static class Config {
-    private final ImmutableList<String> fieldNames;
+  publ c stat c class Conf g {
+    pr vate f nal  mmutableL st<Str ng> f eldNa s;
 
-    public Config(List<String> fieldNames) {
-      Preconditions.checkNotNull(fieldNames);
-      this.fieldNames = ImmutableList.copyOf(fieldNames);
+    publ c Conf g(L st<Str ng> f eldNa s) {
+      Precond  ons.c ckNotNull(f eldNa s);
+      t .f eldNa s =  mmutableL st.copyOf(f eldNa s);
     }
 
-    public List<String> managedFieldNames() {
-      return fieldNames;
+    publ c L st<Str ng> managedF eldNa s() {
+      return f eldNa s;
     }
 
-    public boolean isEnabled() {
-      return EarlybirdConfig.getBool("multi_segment_term_dictionary_enabled", false);
-    }
-  }
-
-  @VisibleForTesting
-  public static String getManagerDisabledDeciderName(EarlybirdCluster earlybirdCluster) {
-    return MANAGER_DISABLED_DECIDER_KEY_PREFIX + earlybirdCluster.name().toLowerCase();
-  }
-
-  private static final class FieldStats {
-    private final SearchTimerStats buildTime;
-    private final SearchLongGauge numTerms;
-    private final SearchLongGauge numTermEntries;
-
-    private FieldStats(SearchStatsReceiver statsReceiver, String fieldName) {
-      Preconditions.checkNotNull(fieldName);
-      Preconditions.checkNotNull(statsReceiver);
-
-      String timerName = String.format(
-          "multi_segment_term_dictionary_manager_field_%s_build_dictionary", fieldName);
-      this.buildTime = statsReceiver.getTimerStats(
-          timerName, TimeUnit.MILLISECONDS, false, false, false);
-
-      String numTermsName = String.format(
-          "multi_segment_term_dictionary_manager_field_%s_num_terms", fieldName);
-      this.numTerms = statsReceiver.getLongGauge(numTermsName);
-
-      String numTermEntriesName = String.format(
-          "multi_segment_term_dictionary_manager_field_%s_num_term_entries", fieldName);
-      this.numTermEntries = statsReceiver.getLongGauge(numTermEntriesName);
+    publ c boolean  sEnabled() {
+      return Earlyb rdConf g.getBool("mult _seg nt_term_d ct onary_enabled", false);
     }
   }
 
-  private final Config config;
-  @Nullable private final SegmentManager segmentManager;
-  @Nullable private final Decider decider;
-  @Nullable private final EarlybirdCluster earlybirdCluster;
-  private final ImmutableMap<String, FieldStats> fieldTimerStats;
-  // A per-field map of multi-segment term dictionaries. Each key is a field. The values are the
-  // multi-segment term dictionaries for that field.
-  private volatile ImmutableMap<String, MultiSegmentTermDictionary> multiSegmentTermDictionaryMap;
-  private List<SegmentInfo> previousSegmentsToMerge;
+  @V s bleForTest ng
+  publ c stat c Str ng getManagerD sabledDec derNa (Earlyb rdCluster earlyb rdCluster) {
+    return MANAGER_D SABLED_DEC DER_KEY_PREF X + earlyb rdCluster.na ().toLo rCase();
+  }
 
-  public MultiSegmentTermDictionaryManager(
-      Config config,
-      SegmentManager segmentManager,
-      SearchStatsReceiver statsReceiver,
-      Decider decider,
-      EarlybirdCluster earlybirdCluster) {
-    this.config = config;
-    this.segmentManager = segmentManager;
-    this.decider = decider;
-    this.earlybirdCluster = earlybirdCluster;
+  pr vate stat c f nal class F eldStats {
+    pr vate f nal SearchT  rStats bu ldT  ;
+    pr vate f nal SearchLongGauge numTerms;
+    pr vate f nal SearchLongGauge numTermEntr es;
 
-    this.multiSegmentTermDictionaryMap = ImmutableMap.of();
-    this.previousSegmentsToMerge = Lists.newArrayList();
+    pr vate F eldStats(SearchStatsRece ver statsRece ver, Str ng f eldNa ) {
+      Precond  ons.c ckNotNull(f eldNa );
+      Precond  ons.c ckNotNull(statsRece ver);
 
-    ImmutableMap.Builder<String, FieldStats> builder = ImmutableMap.builder();
-    if (statsReceiver != null) {
-      for (String fieldName : config.managedFieldNames()) {
-        builder.put(fieldName, new FieldStats(statsReceiver, fieldName));
+      Str ng t  rNa  = Str ng.format(
+          "mult _seg nt_term_d ct onary_manager_f eld_%s_bu ld_d ct onary", f eldNa );
+      t .bu ldT   = statsRece ver.getT  rStats(
+          t  rNa , T  Un .M LL SECONDS, false, false, false);
+
+      Str ng numTermsNa  = Str ng.format(
+          "mult _seg nt_term_d ct onary_manager_f eld_%s_num_terms", f eldNa );
+      t .numTerms = statsRece ver.getLongGauge(numTermsNa );
+
+      Str ng numTermEntr esNa  = Str ng.format(
+          "mult _seg nt_term_d ct onary_manager_f eld_%s_num_term_entr es", f eldNa );
+      t .numTermEntr es = statsRece ver.getLongGauge(numTermEntr esNa );
+    }
+  }
+
+  pr vate f nal Conf g conf g;
+  @Nullable pr vate f nal Seg ntManager seg ntManager;
+  @Nullable pr vate f nal Dec der dec der;
+  @Nullable pr vate f nal Earlyb rdCluster earlyb rdCluster;
+  pr vate f nal  mmutableMap<Str ng, F eldStats> f eldT  rStats;
+  // A per-f eld map of mult -seg nt term d ct onar es. Each key  s a f eld. T  values are t 
+  // mult -seg nt term d ct onar es for that f eld.
+  pr vate volat le  mmutableMap<Str ng, Mult Seg ntTermD ct onary> mult Seg ntTermD ct onaryMap;
+  pr vate L st<Seg nt nfo> prev ousSeg ntsTo rge;
+
+  publ c Mult Seg ntTermD ct onaryManager(
+      Conf g conf g,
+      Seg ntManager seg ntManager,
+      SearchStatsRece ver statsRece ver,
+      Dec der dec der,
+      Earlyb rdCluster earlyb rdCluster) {
+    t .conf g = conf g;
+    t .seg ntManager = seg ntManager;
+    t .dec der = dec der;
+    t .earlyb rdCluster = earlyb rdCluster;
+
+    t .mult Seg ntTermD ct onaryMap =  mmutableMap.of();
+    t .prev ousSeg ntsTo rge = L sts.newArrayL st();
+
+     mmutableMap.Bu lder<Str ng, F eldStats> bu lder =  mmutableMap.bu lder();
+     f (statsRece ver != null) {
+      for (Str ng f eldNa  : conf g.managedF eldNa s()) {
+        bu lder.put(f eldNa , new F eldStats(statsRece ver, f eldNa ));
       }
     }
-    this.fieldTimerStats = builder.build();
+    t .f eldT  rStats = bu lder.bu ld();
   }
 
   /**
-   * Return the most recently built MultiSegmentTermDictionary for the given field.
-   * Will return null if the field is not supported by this manager.
+   * Return t  most recently bu lt Mult Seg ntTermD ct onary for t  g ven f eld.
+   * W ll return null  f t  f eld  s not supported by t  manager.
    */
   @Nullable
-  public MultiSegmentTermDictionary getMultiSegmentTermDictionary(String fieldName) {
-    return this.multiSegmentTermDictionaryMap.get(fieldName);
+  publ c Mult Seg ntTermD ct onary getMult Seg ntTermD ct onary(Str ng f eldNa ) {
+    return t .mult Seg ntTermD ct onaryMap.get(f eldNa );
   }
 
   /**
-   * Build new versions of multi-segment term dictionaries if the manager is enabled, and new
-   * segments are available.
-   * @return true if the manager actually ran, and generated new versions of multi-segment term
-   * dictionaries.
+   * Bu ld new vers ons of mult -seg nt term d ct onar es  f t  manager  s enabled, and new
+   * seg nts are ava lable.
+   * @return true  f t  manager actually ran, and generated new vers ons of mult -seg nt term
+   * d ct onar es.
    *
-   * We synchronize this method because it would be a logic error to modify the variables from
-   * multiple threads simultaneously, and it is possible for two segments to finish optimizing at
-   * the same time and try to run it.
+   *   synchron ze t   thod because   would be a log c error to mod fy t  var ables from
+   * mult ple threads s multaneously, and    s poss ble for two seg nts to f n sh opt m z ng at
+   * t  sa  t   and try to run  .
    */
-  public synchronized boolean buildDictionary() {
-    if (!config.isEnabled()) {
+  publ c synchron zed boolean bu ldD ct onary() {
+     f (!conf g. sEnabled()) {
       return false;
     }
 
-    Preconditions.checkNotNull(decider);
-    Preconditions.checkNotNull(earlybirdCluster);
-    if (DeciderUtil.isAvailableForRandomRecipient(decider,
-        getManagerDisabledDeciderName(earlybirdCluster))) {
-      LOG.info("Multi segment term dictionary manager is disabled via decider for cluster {}.",
-          earlybirdCluster);
-      this.multiSegmentTermDictionaryMap = ImmutableMap.of();
-      this.previousSegmentsToMerge = Lists.newArrayList();
+    Precond  ons.c ckNotNull(dec der);
+    Precond  ons.c ckNotNull(earlyb rdCluster);
+     f (Dec derUt l. sAva lableForRandomRec p ent(dec der,
+        getManagerD sabledDec derNa (earlyb rdCluster))) {
+      LOG. nfo("Mult  seg nt term d ct onary manager  s d sabled v a dec der for cluster {}.",
+          earlyb rdCluster);
+      t .mult Seg ntTermD ct onaryMap =  mmutableMap.of();
+      t .prev ousSeg ntsTo rge = L sts.newArrayL st();
       return false;
     }
 
-    List<SegmentInfo> segmentsToMerge = getSegmentsToMerge();
+    L st<Seg nt nfo> seg ntsTo rge = getSeg ntsTo rge();
 
-    if (differentFromPreviousList(segmentsToMerge)) {
-       long start = System.currentTimeMillis();
+     f (d fferentFromPrev ousL st(seg ntsTo rge)) {
+       long start = System.currentT  M ll s();
        try {
-         this.multiSegmentTermDictionaryMap = createNewDictionaries(segmentsToMerge);
-         this.previousSegmentsToMerge = segmentsToMerge;
+         t .mult Seg ntTermD ct onaryMap = createNewD ct onar es(seg ntsTo rge);
+         t .prev ousSeg ntsTo rge = seg ntsTo rge;
          return true;
-       } catch (IOException e) {
-         LOG.error("Unable to build multi segment term dictionaries", e);
+       } catch ( OExcept on e) {
+         LOG.error("Unable to bu ld mult  seg nt term d ct onar es", e);
          return false;
-       } finally {
-         long elapsed = System.currentTimeMillis() - start;
-         TERM_DICTIONARY_CREATION_STATS.timerIncrement(elapsed);
+       } f nally {
+         long elapsed = System.currentT  M ll s() - start;
+         TERM_D CT ONARY_CREAT ON_STATS.t  r ncre nt(elapsed);
        }
     } else {
-      LOG.warn("No-op for buildDictionary()");
+      LOG.warn("No-op for bu ldD ct onary()");
       return false;
     }
   }
 
   /**
-   * Only merge terms from enabled and optimized segments. No need to look at non-enabled segments,
-   * and we also don't want to use un-optimized segments as their term dictionaries are still
-   * changing.
+   * Only  rge terms from enabled and opt m zed seg nts. No need to look at non-enabled seg nts,
+   * and   also don't want to use un-opt m zed seg nts as t  r term d ct onar es are st ll
+   * chang ng.
    */
-  private List<SegmentInfo> getSegmentsToMerge() {
-    Iterable<SegmentInfo> segmentInfos =
-        segmentManager.getSegmentInfos(Filter.Enabled, Order.OLD_TO_NEW);
+  pr vate L st<Seg nt nfo> getSeg ntsTo rge() {
+     erable<Seg nt nfo> seg nt nfos =
+        seg ntManager.getSeg nt nfos(F lter.Enabled, Order.OLD_TO_NEW);
 
-    List<SegmentInfo> segmentsToMerge = Lists.newArrayList();
-    for (SegmentInfo segmentInfo : segmentInfos) {
-      if (segmentInfo.getIndexSegment().isOptimized()) {
-        segmentsToMerge.add(segmentInfo);
+    L st<Seg nt nfo> seg ntsTo rge = L sts.newArrayL st();
+    for (Seg nt nfo seg nt nfo : seg nt nfos) {
+       f (seg nt nfo.get ndexSeg nt(). sOpt m zed()) {
+        seg ntsTo rge.add(seg nt nfo);
       }
     }
-    return segmentsToMerge;
+    return seg ntsTo rge;
   }
 
-  private boolean differentFromPreviousList(List<SegmentInfo> segmentsToMerge) {
-    // there is a potentially different approach here to only check if the
-    // segmentsToMerge is subsumed by the previousSegmentsToMerge list, and not recompute
-    // the multi segment term dictionary if so.
-    // There is a case where a new segment is added, the previously current segment is not yet
-    // optimized, but the oldest segment is dropped. With this impl, we will recompute to remove
-    // the dropped segment, however, we will recompute soon again when the
-    // "previously current segment" is actually optimized. We can potentially delay the first
-    // merging before the optimization.
-    if (this.previousSegmentsToMerge.size() == segmentsToMerge.size()) {
-      for (int i = 0; i < this.previousSegmentsToMerge.size(); i++) {
-        if (previousSegmentsToMerge.get(i).compareTo(segmentsToMerge.get(i)) != 0) {
+  pr vate boolean d fferentFromPrev ousL st(L st<Seg nt nfo> seg ntsTo rge) {
+    // t re  s a potent ally d fferent approach  re to only c ck  f t 
+    // seg ntsTo rge  s subsu d by t  prev ousSeg ntsTo rge l st, and not recompute
+    // t  mult  seg nt term d ct onary  f so.
+    // T re  s a case w re a new seg nt  s added, t  prev ously current seg nt  s not yet
+    // opt m zed, but t  oldest seg nt  s dropped. W h t   mpl,   w ll recompute to remove
+    // t  dropped seg nt, ho ver,   w ll recompute soon aga n w n t 
+    // "prev ously current seg nt"  s actually opt m zed.   can potent ally delay t  f rst
+    //  rg ng before t  opt m zat on.
+     f (t .prev ousSeg ntsTo rge.s ze() == seg ntsTo rge.s ze()) {
+      for ( nt   = 0;   < t .prev ousSeg ntsTo rge.s ze();  ++) {
+         f (prev ousSeg ntsTo rge.get( ).compareTo(seg ntsTo rge.get( )) != 0) {
           return true;
         }
       }
@@ -232,83 +232,83 @@ public class MultiSegmentTermDictionaryManager {
   }
 
   /**
-   * Rebuild the term dictionaries from scratch for all the managed fields.
-   * Returning a brand new map here with all the fields' term dictionaries so that we can isolate
-   * failures to build, and only replace the entire map of all the fields are built successfully.
+   * Rebu ld t  term d ct onar es from scratch for all t  managed f elds.
+   * Return ng a brand new map  re w h all t  f elds' term d ct onar es so that   can  solate
+   * fa lures to bu ld, and only replace t  ent re map of all t  f elds are bu lt successfully.
    */
-  private ImmutableMap<String, MultiSegmentTermDictionary> createNewDictionaries(
-      List<SegmentInfo> segments) throws IOException {
+  pr vate  mmutableMap<Str ng, Mult Seg ntTermD ct onary> createNewD ct onar es(
+      L st<Seg nt nfo> seg nts) throws  OExcept on {
 
-    Map<String, MultiSegmentTermDictionary> map = Maps.newHashMap();
+    Map<Str ng, Mult Seg ntTermD ct onary> map = Maps.newHashMap();
 
-    for (String field : config.managedFieldNames()) {
-      LOG.info("Merging term dictionaries for field {}", field);
+    for (Str ng f eld : conf g.managedF eldNa s()) {
+      LOG. nfo(" rg ng term d ct onar es for f eld {}", f eld);
 
-      List<OptimizedMemoryIndex> indexesToMerge = findFieldIndexesToMerge(segments, field);
+      L st<Opt m zed mory ndex>  ndexesTo rge = f ndF eld ndexesTo rge(seg nts, f eld);
 
-      if (indexesToMerge.isEmpty()) {
-        LOG.info("No indexes to merge for field {}", field);
+       f ( ndexesTo rge. sEmpty()) {
+        LOG. nfo("No  ndexes to  rge for f eld {}", f eld);
       } else {
-        long start = System.currentTimeMillis();
+        long start = System.currentT  M ll s();
 
-        MultiSegmentTermDictionary multiSegmentTermDictionary =
-            mergeDictionaries(field, indexesToMerge);
+        Mult Seg ntTermD ct onary mult Seg ntTermD ct onary =
+             rgeD ct onar es(f eld,  ndexesTo rge);
 
-        map.put(field, multiSegmentTermDictionary);
+        map.put(f eld, mult Seg ntTermD ct onary);
 
-        long elapsed = System.currentTimeMillis() - start;
-        LOG.info("Done merging term dictionary for field {}, for {} segments in {}ms",
-            field, indexesToMerge.size(), elapsed);
+        long elapsed = System.currentT  M ll s() - start;
+        LOG. nfo("Done  rg ng term d ct onary for f eld {}, for {} seg nts  n {}ms",
+            f eld,  ndexesTo rge.s ze(), elapsed);
 
-        FieldStats fieldStats = fieldTimerStats.get(field);
-        fieldStats.buildTime.timerIncrement(elapsed);
-        fieldStats.numTerms.set(multiSegmentTermDictionary.getNumTerms());
-        fieldStats.numTermEntries.set(multiSegmentTermDictionary.getNumTermEntries());
+        F eldStats f eldStats = f eldT  rStats.get(f eld);
+        f eldStats.bu ldT  .t  r ncre nt(elapsed);
+        f eldStats.numTerms.set(mult Seg ntTermD ct onary.getNumTerms());
+        f eldStats.numTermEntr es.set(mult Seg ntTermD ct onary.getNumTermEntr es());
       }
     }
-    return ImmutableMap.copyOf(map);
+    return  mmutableMap.copyOf(map);
   }
 
-  private List<OptimizedMemoryIndex> findFieldIndexesToMerge(
-      List<SegmentInfo> segments, String field) throws IOException {
+  pr vate L st<Opt m zed mory ndex> f ndF eld ndexesTo rge(
+      L st<Seg nt nfo> seg nts, Str ng f eld) throws  OExcept on {
 
-    List<OptimizedMemoryIndex> indexesToMerge = Lists.newArrayList();
+    L st<Opt m zed mory ndex>  ndexesTo rge = L sts.newArrayL st();
 
-    for (SegmentInfo segment : segments) {
-      EarlybirdSegment indexSegment = segment.getIndexSegment();
-      Preconditions.checkState(indexSegment.isOptimized(),
-          "Expect segment to be optimized: %s", segment);
+    for (Seg nt nfo seg nt : seg nts) {
+      Earlyb rdSeg nt  ndexSeg nt = seg nt.get ndexSeg nt();
+      Precond  ons.c ckState( ndexSeg nt. sOpt m zed(),
+          "Expect seg nt to be opt m zed: %s", seg nt);
 
-      InvertedIndex fieldIndex = Preconditions.checkNotNull(indexSegment.getIndexReader())
-          .getSegmentData().getFieldIndex(field);
+       nverted ndex f eld ndex = Precond  ons.c ckNotNull( ndexSeg nt.get ndexReader())
+          .getSeg ntData().getF eld ndex(f eld);
 
       // See SEARCH-11952
-      // We will only have a InvertedIndex/OptimizedMemoryIndex here
-      // in the in-memory non-lucene-based indexes, and not in the archive. We can somewhat
-      // reasonably extend this to work with the archive by making the dictionaries work with
-      // TermsEnum's directly instead of OptimizedMemoryIndex's. Leaving this as a further
-      // extension for now.
-      if (fieldIndex != null) {
-        if (fieldIndex instanceof OptimizedMemoryIndex) {
-          indexesToMerge.add((OptimizedMemoryIndex) fieldIndex);
+      //   w ll only have a  nverted ndex/Opt m zed mory ndex  re
+      //  n t   n- mory non-lucene-based  ndexes, and not  n t  arch ve.   can so what
+      // reasonably extend t  to work w h t  arch ve by mak ng t  d ct onar es work w h
+      // TermsEnum's d rectly  nstead of Opt m zed mory ndex's. Leav ng t  as a furt r
+      // extens on for now.
+       f (f eld ndex != null) {
+         f (f eld ndex  nstanceof Opt m zed mory ndex) {
+           ndexesTo rge.add((Opt m zed mory ndex) f eld ndex);
         } else {
-          LOG.info("Found field index for field {} in segment {} of type {}",
-              field, segment, fieldIndex.getClass());
+          LOG. nfo("Found f eld  ndex for f eld {}  n seg nt {} of type {}",
+              f eld, seg nt, f eld ndex.getClass());
         }
       } else {
-        LOG.info("Found null field index for field {} in segment {}", field, segment);
+        LOG. nfo("Found null f eld  ndex for f eld {}  n seg nt {}", f eld, seg nt);
       }
     }
-    LOG.info("Found good fields for {} out of {} segments", indexesToMerge.size(),
-            segments.size());
+    LOG. nfo("Found good f elds for {} out of {} seg nts",  ndexesTo rge.s ze(),
+            seg nts.s ze());
 
-    return indexesToMerge;
+    return  ndexesTo rge;
   }
 
-  private MultiSegmentTermDictionary mergeDictionaries(
-      String field,
-      List<OptimizedMemoryIndex> indexes) {
-    // May change this if we get a better implementation in the future.
-    return new MultiSegmentTermDictionaryWithFastutil(field, indexes);
+  pr vate Mult Seg ntTermD ct onary  rgeD ct onar es(
+      Str ng f eld,
+      L st<Opt m zed mory ndex>  ndexes) {
+    // May change t   f   get a better  mple ntat on  n t  future.
+    return new Mult Seg ntTermD ct onaryW hFastut l(f eld,  ndexes);
   }
 }

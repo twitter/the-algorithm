@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.alert
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.alert
 
-sealed trait ShowAlertIcon
-case object UpArrow extends ShowAlertIcon
-case object DownArrow extends ShowAlertIcon
+sealed tra  ShowAlert con
+case object UpArrow extends ShowAlert con
+case object DownArrow extends ShowAlert con

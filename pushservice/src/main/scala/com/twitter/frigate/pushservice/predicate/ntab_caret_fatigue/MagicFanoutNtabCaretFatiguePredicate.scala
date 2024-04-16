@@ -1,28 +1,28 @@
-package com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue
+package com.tw ter.fr gate.pushserv ce.pred cate.ntab_caret_fat gue
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.predicate.ntab_caret_fatigue.NtabCaretClickFatiguePredicateHelper
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.hermit.predicate.NamedPredicate
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.pred cate.ntab_caret_fat gue.NtabCaretCl ckFat guePred cate lper
+ mport com.tw ter.fr gate.common.rec_types.RecTypes
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter. rm .pred cate.Na dPred cate
 
-object MagicFanoutNtabCaretFatiguePredicate {
-  val name = "MagicFanoutNtabCaretFatiguePredicateForCandidate"
+object Mag cFanoutNtabCaretFat guePred cate {
+  val na  = "Mag cFanoutNtabCaretFat guePred cateForCand date"
 
-  private val MomentsCategory = "Moments"
-  private val MomentsViaMagicRecsCategory = "MomentsViaMagicRecs"
+  pr vate val Mo ntsCategory = "Mo nts"
+  pr vate val Mo ntsV aMag cRecsCategory = "Mo ntsV aMag cRecs"
 
-  def apply()(implicit globalStats: StatsReceiver): NamedPredicate[PushCandidate] = {
-    val scopedStats = globalStats.scope(name)
-    val genericTypeCategories = Seq(MomentsCategory, MomentsViaMagicRecsCategory)
-    val crts = RecTypes.magicFanoutEventTypes
-    RecTypeNtabCaretClickFatiguePredicate
+  def apply()( mpl c  globalStats: StatsRece ver): Na dPred cate[PushCand date] = {
+    val scopedStats = globalStats.scope(na )
+    val gener cTypeCategor es = Seq(Mo ntsCategory, Mo ntsV aMag cRecsCategory)
+    val crts = RecTypes.mag cFanoutEventTypes
+    RecTypeNtabCaretCl ckFat guePred cate
       .apply(
-        genericTypeCategories,
+        gener cTypeCategor es,
         crts,
-        NtabCaretClickFatiguePredicateHelper.calculateFatiguePeriodMagicRecs,
-        useMostRecentDislikeTime = true,
-        name = name
-      ).withStats(scopedStats).withName(name)
+        NtabCaretCl ckFat guePred cate lper.calculateFat guePer odMag cRecs,
+        useMostRecentD sl keT   = true,
+        na  = na 
+      ).w hStats(scopedStats).w hNa (na )
   }
 }

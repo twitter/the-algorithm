@@ -1,400 +1,400 @@
-package com.twitter.simclusters_v2.scalding.embedding.common
+package com.tw ter.s mclusters_v2.scald ng.embedd ng.common
 
-import com.twitter.algebird.Aggregator
-import com.twitter.common.text.language.LocaleUtil
-import com.twitter.escherbird.common.thriftscala.Locale
-import com.twitter.escherbird.common.thriftscala.LocalizedUser
-import com.twitter.escherbird.metadata.thriftscala.FullMetadata
-import com.twitter.escherbird.scalding.source.FullMetadataSource
-import com.twitter.escherbird.scalding.source.utt.UttSourceScalaDataset
-import com.twitter.escherbird.utt.strato.thriftscala.SnapshotType
-import com.twitter.escherbird.utt.thriftscala.UttEntityRecord
-import com.twitter.interests_ds.jobs.interests_service.UserTopicRelationSnapshotScalaDataset
-import com.twitter.interests.thriftscala.InterestRelationType
-import com.twitter.interests.thriftscala.UserInterestsRelationSnapshot
-import com.twitter.penguin.scalding.datasets.PenguinUserLanguagesScalaDataset
-import com.twitter.scalding.DateOps
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.Stat
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding.ValuePipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.common._
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2InterestedIn20M145KUpdatedScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.UserUserFavGraphScalaDataset
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossDC
-import com.twitter.common_header.thriftscala.CommonHeader
-import com.twitter.common_header.thriftscala.IdType
-import com.twitter.common_header.thriftscala.VersionedCommonHeader
-import flockdb_tools.datasets.flock.FlockBlocksEdgesScalaDataset
-import flockdb_tools.datasets.flock.FlockFollowsEdgesScalaDataset
-import flockdb_tools.datasets.flock.FlockReportAsAbuseEdgesScalaDataset
-import flockdb_tools.datasets.flock.FlockReportAsSpamEdgesScalaDataset
-import twadoop_config.configuration.log_categories.group.search.AdaptiveSearchScalaDataset
-import com.twitter.search.adaptive.scribing.thriftscala.AdaptiveSearchScribeLog
-import twadoop_config.configuration.log_categories.group.timeline.TimelineServiceFavoritesScalaDataset
-import tweetsource.common.UnhydratedFlatScalaDataset
-import com.twitter.frigate.data_pipeline.magicrecs.magicrecs_notifications_lite.thriftscala.MagicRecsNotificationLite
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.EdgeWithDecayedWeights
-import com.twitter.timelineservice.thriftscala.ContextualizedFavoriteEvent
-import com.twitter.timelineservice.thriftscala.FavoriteEventUnion
-import com.twitter.tweetsource.common.thriftscala.UnhydratedFlatTweet
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import com.twitter.wtf.entity_real_graph.scalding.common.DatasetConstants
-import com.twitter.wtf.entity_real_graph.scalding.common.SemanticCoreFilters
-import com.twitter.wtf.scalding.client_event_processing.thriftscala.InteractionDetails
-import com.twitter.wtf.scalding.client_event_processing.thriftscala.InteractionType
-import com.twitter.wtf.scalding.client_event_processing.thriftscala.TweetImpressionDetails
-import com.twitter.frigate.data_pipeline.scalding.magicrecs.magicrecs_notification_lite.MagicrecsNotificationLite1DayLagScalaDataset
-import com.twitter.iesource.thriftscala.InteractionEvent
-import com.twitter.iesource.thriftscala.InteractionTargetType
-import com.twitter.wtf.scalding.jobs.client_event_processing.UserInteractionScalaDataset
-import java.util.TimeZone
-import com.twitter.interests_ds.jobs.interests_service.UserInterestRelationSnapshotScalaDataset
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.UserId
-import com.twitter.scalding.typed.{ValuePipe => TypedValuePipe}
-import com.twitter.tweetsource.common.thriftscala.UnhydratedTweet
-import tweetsource.common.UnhydratedScalaDataset
+ mport com.tw ter.algeb rd.Aggregator
+ mport com.tw ter.common.text.language.LocaleUt l
+ mport com.tw ter.esc rb rd.common.thr ftscala.Locale
+ mport com.tw ter.esc rb rd.common.thr ftscala.Local zedUser
+ mport com.tw ter.esc rb rd. tadata.thr ftscala.Full tadata
+ mport com.tw ter.esc rb rd.scald ng.s ce.Full tadataS ce
+ mport com.tw ter.esc rb rd.scald ng.s ce.utt.UttS ceScalaDataset
+ mport com.tw ter.esc rb rd.utt.strato.thr ftscala.SnapshotType
+ mport com.tw ter.esc rb rd.utt.thr ftscala.UttEnt yRecord
+ mport com.tw ter. nterests_ds.jobs. nterests_serv ce.UserTop cRelat onSnapshotScalaDataset
+ mport com.tw ter. nterests.thr ftscala. nterestRelat onType
+ mport com.tw ter. nterests.thr ftscala.User nterestsRelat onSnapshot
+ mport com.tw ter.pengu n.scald ng.datasets.Pengu nUserLanguagesScalaDataset
+ mport com.tw ter.scald ng.DateOps
+ mport com.tw ter.scald ng.DateRange
+ mport com.tw ter.scald ng.Days
+ mport com.tw ter.scald ng.Stat
+ mport com.tw ter.scald ng.TypedP pe
+ mport com.tw ter.scald ng.Un que D
+ mport com.tw ter.scald ng.ValueP pe
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.Expl c Locat on
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.AllowCrossClusterSa DC
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.ProcAtla
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.s mclusters_v2.common._
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.S mclustersV2 nterested n20M145KUpdatedScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.UserUserFavGraphScalaDataset
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.AllowCrossDC
+ mport com.tw ter.common_ ader.thr ftscala.Common ader
+ mport com.tw ter.common_ ader.thr ftscala. dType
+ mport com.tw ter.common_ ader.thr ftscala.Vers onedCommon ader
+ mport flockdb_tools.datasets.flock.FlockBlocksEdgesScalaDataset
+ mport flockdb_tools.datasets.flock.FlockFollowsEdgesScalaDataset
+ mport flockdb_tools.datasets.flock.FlockReportAsAbuseEdgesScalaDataset
+ mport flockdb_tools.datasets.flock.FlockReportAsSpamEdgesScalaDataset
+ mport twadoop_conf g.conf gurat on.log_categor es.group.search.Adapt veSearchScalaDataset
+ mport com.tw ter.search.adapt ve.scr b ng.thr ftscala.Adapt veSearchScr beLog
+ mport twadoop_conf g.conf gurat on.log_categor es.group.t  l ne.T  l neServ ceFavor esScalaDataset
+ mport t ets ce.common.UnhydratedFlatScalaDataset
+ mport com.tw ter.fr gate.data_p pel ne.mag crecs.mag crecs_not f cat ons_l e.thr ftscala.Mag cRecsNot f cat onL e
+ mport com.tw ter.s mclusters_v2.thr ftscala.ClustersUser s nterested n
+ mport com.tw ter.s mclusters_v2.thr ftscala.EdgeW hDecayed  ghts
+ mport com.tw ter.t  l neserv ce.thr ftscala.Contextual zedFavor eEvent
+ mport com.tw ter.t  l neserv ce.thr ftscala.Favor eEventUn on
+ mport com.tw ter.t ets ce.common.thr ftscala.UnhydratedFlatT et
+ mport com.tw ter.users ce.snapshot.flat.Users ceFlatScalaDataset
+ mport com.tw ter.wtf.ent y_real_graph.scald ng.common.DatasetConstants
+ mport com.tw ter.wtf.ent y_real_graph.scald ng.common.Semant cCoreF lters
+ mport com.tw ter.wtf.scald ng.cl ent_event_process ng.thr ftscala. nteract onDeta ls
+ mport com.tw ter.wtf.scald ng.cl ent_event_process ng.thr ftscala. nteract onType
+ mport com.tw ter.wtf.scald ng.cl ent_event_process ng.thr ftscala.T et mpress onDeta ls
+ mport com.tw ter.fr gate.data_p pel ne.scald ng.mag crecs.mag crecs_not f cat on_l e.Mag crecsNot f cat onL e1DayLagScalaDataset
+ mport com.tw ter. es ce.thr ftscala. nteract onEvent
+ mport com.tw ter. es ce.thr ftscala. nteract onTargetType
+ mport com.tw ter.wtf.scald ng.jobs.cl ent_event_process ng.User nteract onScalaDataset
+ mport java.ut l.T  Zone
+ mport com.tw ter. nterests_ds.jobs. nterests_serv ce.User nterestRelat onSnapshotScalaDataset
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.Embedd ngUt l.User d
+ mport com.tw ter.scald ng.typed.{ValueP pe => TypedValueP pe}
+ mport com.tw ter.t ets ce.common.thr ftscala.UnhydratedT et
+ mport t ets ce.common.UnhydratedScalaDataset
 
-object ExternalDataSources {
-  val UTTDomain = 131L
-  val usersourceColumns = Set("id", "account_country_code", "language")
-  val ValidFlockEdgeStateId = 0
+object ExternalDataS ces {
+  val UTTDoma n = 131L
+  val users ceColumns = Set(" d", "account_country_code", "language")
+  val Val dFlockEdgeState d = 0
 
-  def getStandardLanguageCode(language: String): Option[String] = {
-    val locale = LocaleUtil.getLocaleOf(language)
-    if (locale == LocaleUtil.UNKNOWN) None else Some(locale.getLanguage)
+  def getStandardLanguageCode(language: Str ng): Opt on[Str ng] = {
+    val locale = LocaleUt l.getLocaleOf(language)
+     f (locale == LocaleUt l.UNKNOWN) None else So (locale.getLanguage)
   }
 
-  // Reads UTT Entity Records (`utt_source` dataset)
-  def getUttEntityRecords(implicit timeZone: TimeZone): TypedPipe[UttEntityRecord] = {
+  // Reads UTT Ent y Records (`utt_s ce` dataset)
+  def getUttEnt yRecords( mpl c  t  Zone: T  Zone): TypedP pe[UttEnt yRecord] = {
     DAL
-      .readMostRecentSnapshotNoOlderThan(UttSourceScalaDataset, Days(14))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .readMostRecentSnapshotNoOlderThan(UttS ceScalaDataset, Days(14))
+      .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+      .toTypedP pe
   }
 
   /**
-   * Extracts the KGO seeds from the UTT Entity Records.
-   * Uses the most recent "Stable" version by default unless specified otherwise.
+   * Extracts t  KGO seeds from t  UTT Ent y Records.
+   * Uses t  most recent "Stable" vers on by default unless spec f ed ot rw se.
    *
-   * @param uttVersion UTT Version to use instead of the default value.
+   * @param uttVers on UTT Vers on to use  nstead of t  default value.
    */
-  def getLocaleProducerSeedIdsFromUttEntityRecords(
-    uttVersion: Option[Long] = None
+  def getLocaleProducerSeed dsFromUttEnt yRecords(
+    uttVers on: Opt on[Long] = None
   )(
-    implicit timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): TypedPipe[((TopicId, Language), Seq[UserId])] = {
+     mpl c  t  Zone: T  Zone,
+    un que d: Un que D
+  ): TypedP pe[((Top c d, Language), Seq[User d])] = {
 
-    val topicLangPairCount = Stat("topic_lang_pair_count_all")
-    val topicLangPairCountEmptySeed = Stat("topic_lang_pair_count_empty_seed")
-    val topicLangPairCountLteOneSeed = Stat("topic_lang_pair_count_lte_one_seed")
-    val topicLangPairCountLteFiveSeeds = Stat("topic_lang_pair_count_lte_five_seeds")
-    val topicLangPairCountLteTenSeeds = Stat("topic_lang_pair_count_lte_ten_seeds")
+    val top cLangPa rCount = Stat("top c_lang_pa r_count_all")
+    val top cLangPa rCountEmptySeed = Stat("top c_lang_pa r_count_empty_seed")
+    val top cLangPa rCountLteOneSeed = Stat("top c_lang_pa r_count_lte_one_seed")
+    val top cLangPa rCountLteF veSeeds = Stat("top c_lang_pa r_count_lte_f ve_seeds")
+    val top cLangPa rCountLteTenSeeds = Stat("top c_lang_pa r_count_lte_ten_seeds")
 
-    val uttEntityRecords: TypedPipe[UttEntityRecord] = getUttEntityRecords
+    val uttEnt yRecords: TypedP pe[UttEnt yRecord] = getUttEnt yRecords
 
-    val uttVersionToUse: ValuePipe[Long] = uttVersion match {
-      case Some(uttVersionValue) =>
-        TypedValuePipe(uttVersionValue)
-      case _ => // find the most recent "stable" version as recommended by the SemanticCore team
-        uttEntityRecords
-          .filter(_.snapshotType.exists(_ == SnapshotType.Stable))
-          .map(_.version)
-          .distinct
-          .aggregate(Aggregator.min) // the most recent version is the smallest negative value
+    val uttVers onToUse: ValueP pe[Long] = uttVers on match {
+      case So (uttVers onValue) =>
+        TypedValueP pe(uttVers onValue)
+      case _ => // f nd t  most recent "stable" vers on as recom nded by t  Semant cCore team
+        uttEnt yRecords
+          .f lter(_.snapshotType.ex sts(_ == SnapshotType.Stable))
+          .map(_.vers on)
+          .d st nct
+          .aggregate(Aggregator.m n) // t  most recent vers on  s t  smallest negat ve value
     }
 
-    val uttEntityRecordsSingleVersion: TypedPipe[UttEntityRecord] =
-      uttEntityRecords
-        .filterWithValue(uttVersionToUse) {
-          case (uttEntityRecord: UttEntityRecord, uttVersionOpt: Option[Long]) =>
-            uttVersionOpt.contains(uttEntityRecord.version)
+    val uttEnt yRecordsS ngleVers on: TypedP pe[UttEnt yRecord] =
+      uttEnt yRecords
+        .f lterW hValue(uttVers onToUse) {
+          case (uttEnt yRecord: UttEnt yRecord, uttVers onOpt: Opt on[Long]) =>
+            uttVers onOpt.conta ns(uttEnt yRecord.vers on)
         }
 
-    uttEntityRecordsSingleVersion.flatMap { uttEntityRecord: UttEntityRecord =>
-      val localizedUsers: Seq[LocalizedUser] =
-        uttEntityRecord.knownForUsers.flatMap(_.localizedUsers).getOrElse(Nil)
+    uttEnt yRecordsS ngleVers on.flatMap { uttEnt yRecord: UttEnt yRecord =>
+      val local zedUsers: Seq[Local zedUser] =
+        uttEnt yRecord.knownForUsers.flatMap(_.local zedUsers).getOrElse(N l)
 
-      val validLocalizedUsers: Seq[(TopicId, Language, UserId)] =
-        localizedUsers
+      val val dLocal zedUsers: Seq[(Top c d, Language, User d)] =
+        local zedUsers
           .flatMap {
-            case LocalizedUser(userId: UserId, Some(Locale(Some(language: String), _)), _) =>
-              Some((uttEntityRecord.entityId, language, userId))
+            case Local zedUser(user d: User d, So (Locale(So (language: Str ng), _)), _) =>
+              So ((uttEnt yRecord.ent y d, language, user d))
             case _ =>
               None
           }
 
-      val localeProducerSeedIds: Seq[((TopicId, Language), Seq[UserId])] = validLocalizedUsers
+      val localeProducerSeed ds: Seq[((Top c d, Language), Seq[User d])] = val dLocal zedUsers
         .groupBy {
-          case (topicId: TopicId, language: Language, _) =>
-            (topicId, language)
+          case (top c d: Top c d, language: Language, _) =>
+            (top c d, language)
         }
-        .mapValues(_.map(_._3).distinct) // values are distinct producerIds
+        .mapValues(_.map(_._3).d st nct) // values are d st nct producer ds
         .toSeq
 
-      localeProducerSeedIds.foreach { // stats
-        case (_, seedIds: Seq[UserId]) =>
-          topicLangPairCount.inc()
-          if (seedIds.isEmpty) topicLangPairCountEmptySeed.inc()
-          if (seedIds.length <= 1) topicLangPairCountLteOneSeed.inc()
-          if (seedIds.length <= 5) topicLangPairCountLteFiveSeeds.inc()
-          if (seedIds.length <= 10) topicLangPairCountLteTenSeeds.inc()
+      localeProducerSeed ds.foreach { // stats
+        case (_, seed ds: Seq[User d]) =>
+          top cLangPa rCount. nc()
+           f (seed ds. sEmpty) top cLangPa rCountEmptySeed. nc()
+           f (seed ds.length <= 1) top cLangPa rCountLteOneSeed. nc()
+           f (seed ds.length <= 5) top cLangPa rCountLteF veSeeds. nc()
+           f (seed ds.length <= 10) top cLangPa rCountLteTenSeeds. nc()
       }
 
-      localeProducerSeedIds
-    }.forceToDisk
+      localeProducerSeed ds
+    }.forceToD sk
   }
 
-  def uttEntitiesSource(
-    customFullMetadataSource: Option[TypedPipe[FullMetadata]] = None
+  def uttEnt  esS ce(
+    customFull tadataS ce: Opt on[TypedP pe[Full tadata]] = None
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[Long] = {
-    customFullMetadataSource
-      .getOrElse(fullMetadataSource)
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone
+  ): TypedP pe[Long] = {
+    customFull tadataS ce
+      .getOrElse(full tadataS ce)
       .flatMap {
-        case fullMetadata if fullMetadata.domainId == UTTDomain =>
+        case full tadata  f full tadata.doma n d == UTTDoma n =>
           for {
-            basicMetadata <- fullMetadata.basicMetadata
-            indexableFields <- basicMetadata.indexableFields
-            tags <- indexableFields.tags
-            if !SemanticCoreFilters.shouldFilterByTags(tags.toSet, DatasetConstants.stopTags)
-          } yield {
-            fullMetadata.entityId
+            bas c tadata <- full tadata.bas c tadata
+             ndexableF elds <- bas c tadata. ndexableF elds
+            tags <-  ndexableF elds.tags
+             f !Semant cCoreF lters.shouldF lterByTags(tags.toSet, DatasetConstants.stopTags)
+          } y eld {
+            full tadata.ent y d
           }
         case _ => None
       }
   }
 
-  // Get followable topics from Escherbird
-  def uttFollowableEntitiesSource(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[Long] = {
-    val followableEntityCount = Stat("followable_entities_count")
-    val FollowableTag = "utt:followable_topic"
-    fullMetadataSource
+  // Get followable top cs from Esc rb rd
+  def uttFollowableEnt  esS ce(
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): TypedP pe[Long] = {
+    val followableEnt yCount = Stat("followable_ent  es_count")
+    val FollowableTag = "utt:followable_top c"
+    full tadataS ce
       .flatMap {
-        case fullMetadata if fullMetadata.domainId == UTTDomain =>
+        case full tadata  f full tadata.doma n d == UTTDoma n =>
           for {
-            basicMetadata <- fullMetadata.basicMetadata
-            indexableFields <- basicMetadata.indexableFields
-            tags <- indexableFields.tags
-            if tags.contains(FollowableTag)
-          } yield {
-            followableEntityCount.inc()
-            fullMetadata.entityId
+            bas c tadata <- full tadata.bas c tadata
+             ndexableF elds <- bas c tadata. ndexableF elds
+            tags <-  ndexableF elds.tags
+             f tags.conta ns(FollowableTag)
+          } y eld {
+            followableEnt yCount. nc()
+            full tadata.ent y d
           }
         case _ => None
       }
   }
 
-  def fullMetadataSource(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[FullMetadata] = {
-    TypedPipe
+  def full tadataS ce(
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone
+  ): TypedP pe[Full tadata] = {
+    TypedP pe
       .from(
-        new FullMetadataSource(s"/atla/proc/${FullMetadataSource.DefaultHdfsPath}")()(
-          dateRange.embiggen(Days(7))))
+        new Full tadataS ce(s"/atla/proc/${Full tadataS ce.DefaultHdfsPath}")()(
+          dateRange.emb ggen(Days(7))))
   }
 
-  def userSource(implicit timeZone: TimeZone): TypedPipe[(UserId, (Country, Language))] =
+  def userS ce( mpl c  t  Zone: T  Zone): TypedP pe[(User d, (Country, Language))] =
     DAL
-      .readMostRecentSnapshotNoOlderThan(UsersourceFlatScalaDataset, Days(7))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .withColumns(usersourceColumns)
-      .toTypedPipe.flatMap { flatUser =>
+      .readMostRecentSnapshotNoOlderThan(Users ceFlatScalaDataset, Days(7))
+      .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+      .w hColumns(users ceColumns)
+      .toTypedP pe.flatMap { flatUser =>
         for {
-          userId <- flatUser.id
+          user d <- flatUser. d
           country <- flatUser.accountCountryCode
           language <- flatUser.language
           standardLang <- getStandardLanguageCode(language)
-        } yield {
-          (userId, country.toUpperCase, standardLang)
+        } y eld {
+          (user d, country.toUpperCase, standardLang)
         }
-      }.distinct
+      }.d st nct
       .map { case (user, country, lang) => user -> (country, lang) }
 
-  // Build user language source from inferred languages (penguin_user_languages dataset)
-  def inferredUserConsumedLanguageSource(
-    implicit timeZone: TimeZone
-  ): TypedPipe[(UserId, Seq[(Language, Double)])] = {
+  // Bu ld user language s ce from  nferred languages (pengu n_user_languages dataset)
+  def  nferredUserConsu dLanguageS ce(
+     mpl c  t  Zone: T  Zone
+  ): TypedP pe[(User d, Seq[(Language, Double)])] = {
     DAL
-      .readMostRecentSnapshotNoOlderThan(PenguinUserLanguagesScalaDataset, Days(7))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .readMostRecentSnapshotNoOlderThan(Pengu nUserLanguagesScalaDataset, Days(7))
+      .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+      .toTypedP pe
       .map { kv =>
-        val consumed = kv.value.consumed
+        val consu d = kv.value.consu d
           .collect {
-            case scoredString if scoredString.weight > 0.001 => //throw away 5% outliers
-              (getStandardLanguageCode(scoredString.item), scoredString.weight)
+            case scoredStr ng  f scoredStr ng.  ght > 0.001 => //throw away 5% outl ers
+              (getStandardLanguageCode(scoredStr ng. em), scoredStr ng.  ght)
           }.collect {
-            case (Some(language), score) => (language, score)
+            case (So (language), score) => (language, score)
           }
-        (kv.key, consumed)
+        (kv.key, consu d)
       }
   }
 
-  def inferredUserProducedLanguageSource(
-    implicit timeZone: TimeZone
-  ): TypedPipe[(UserId, Seq[(Language, Double)])] = {
+  def  nferredUserProducedLanguageS ce(
+     mpl c  t  Zone: T  Zone
+  ): TypedP pe[(User d, Seq[(Language, Double)])] = {
     DAL
-      .readMostRecentSnapshotNoOlderThan(PenguinUserLanguagesScalaDataset, Days(7))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .readMostRecentSnapshotNoOlderThan(Pengu nUserLanguagesScalaDataset, Days(7))
+      .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+      .toTypedP pe
       .map { kv =>
         val produced = kv.value.produced
           .collect {
-            case scoredString if scoredString.weight > 0.15 => //throw away 5% outliers
-              (getStandardLanguageCode(scoredString.item), scoredString.weight)
+            case scoredStr ng  f scoredStr ng.  ght > 0.15 => //throw away 5% outl ers
+              (getStandardLanguageCode(scoredStr ng. em), scoredStr ng.  ght)
           }.collect {
-            case (Some(language), score) => (language, score)
+            case (So (language), score) => (language, score)
           }
         (kv.key, produced)
       }
   }
 
-  def simClustersInterestInSource(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[KeyVal[UserId, ClustersUserIsInterestedIn]] = {
+  def s mClusters nterest nS ce(
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone
+  ): TypedP pe[KeyVal[User d, ClustersUser s nterested n]] = {
     DAL
       .readMostRecentSnapshotNoOlderThan(
-        SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
+        S mclustersV2 nterested n20M145KUpdatedScalaDataset,
         Days(30))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+      .toTypedP pe
   }
 
-  def simClustersInterestInLogFavSource(
-    minLogFavScore: Double
+  def s mClusters nterest nLogFavS ce(
+    m nLogFavScore: Double
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, Map[ClusterId, Double])] = {
-    simClustersInterestInSource.map {
-      case KeyVal(userId, clustersUserIsInterestedIn) =>
-        userId -> clustersUserIsInterestedIn.clusterIdToScores
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone
+  ): TypedP pe[(User d, Map[Cluster d, Double])] = {
+    s mClusters nterest nS ce.map {
+      case KeyVal(user d, clustersUser s nterested n) =>
+        user d -> clustersUser s nterested n.cluster dToScores
           .map {
-            case (clusterId, scores) =>
-              clusterId -> scores.logFavScore.getOrElse(0.0)
+            case (cluster d, scores) =>
+              cluster d -> scores.logFavScore.getOrElse(0.0)
           }
-          .filter(_._2 > minLogFavScore)
+          .f lter(_._2 > m nLogFavScore)
           .toMap
     }
   }
 
-  def topicFollowGraphSource(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[(TopicId, UserId)] = {
-    val userTopicFollowCount = Stat("user_topic_follow_count")
+  def top cFollowGraphS ce(
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): TypedP pe[(Top c d, User d)] = {
+    val userTop cFollowCount = Stat("user_top c_follow_count")
     DAL
-      .readMostRecentSnapshotNoOlderThan(UserTopicRelationSnapshotScalaDataset, Days(7))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .readMostRecentSnapshotNoOlderThan(UserTop cRelat onSnapshotScalaDataset, Days(7))
+      .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+      .toTypedP pe
       .collect {
-        case userInterestsRelationSnapshot: UserInterestsRelationSnapshot
-            if userInterestsRelationSnapshot.interestType == "UTT" &&
-              userInterestsRelationSnapshot.relation == InterestRelationType.Followed =>
-          (userInterestsRelationSnapshot.interestId, userInterestsRelationSnapshot.userId)
+        case user nterestsRelat onSnapshot: User nterestsRelat onSnapshot
+             f user nterestsRelat onSnapshot. nterestType == "UTT" &&
+              user nterestsRelat onSnapshot.relat on ==  nterestRelat onType.Follo d =>
+          (user nterestsRelat onSnapshot. nterest d, user nterestsRelat onSnapshot.user d)
       }
-      .hashJoin(uttFollowableEntitiesSource.asKeys)
+      .hashJo n(uttFollowableEnt  esS ce.asKeys)
       .map {
-        case (topic, (user, _)) =>
-          userTopicFollowCount.inc()
-          (topic, user)
+        case (top c, (user, _)) =>
+          userTop cFollowCount. nc()
+          (top c, user)
       }
   }
 
-  def notInterestedTopicsSource(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[(TopicId, UserId)] = {
-    val userNotInterestedInTopicsCount = Stat("user_not_interested_in_topics_count")
+  def not nterestedTop csS ce(
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): TypedP pe[(Top c d, User d)] = {
+    val userNot nterested nTop csCount = Stat("user_not_ nterested_ n_top cs_count")
     DAL
       .readMostRecentSnapshotNoOlderThan(
-        UserInterestRelationSnapshotScalaDataset,
-        Days(7)).withRemoteReadPolicy(ExplicitLocation(ProcAtla)).toTypedPipe.collect {
-        case userInterestsRelationSnapshot: UserInterestsRelationSnapshot
-            if userInterestsRelationSnapshot.interestType == "UTT" &&
-              userInterestsRelationSnapshot.relation == InterestRelationType.NotInterested =>
-          (userInterestsRelationSnapshot.interestId, userInterestsRelationSnapshot.userId)
+        User nterestRelat onSnapshotScalaDataset,
+        Days(7)).w hRemoteReadPol cy(Expl c Locat on(ProcAtla)).toTypedP pe.collect {
+        case user nterestsRelat onSnapshot: User nterestsRelat onSnapshot
+             f user nterestsRelat onSnapshot. nterestType == "UTT" &&
+              user nterestsRelat onSnapshot.relat on ==  nterestRelat onType.Not nterested =>
+          (user nterestsRelat onSnapshot. nterest d, user nterestsRelat onSnapshot.user d)
       }
-      .hashJoin(uttFollowableEntitiesSource.asKeys)
+      .hashJo n(uttFollowableEnt  esS ce.asKeys)
       .map {
-        case (topic, (user, _)) =>
-          userNotInterestedInTopicsCount.inc()
-          (topic, user)
+        case (top c, (user, _)) =>
+          userNot nterested nTop csCount. nc()
+          (top c, user)
       }
   }
 
-  def tweetSource(
-    implicit dateRange: DateRange
-  ): TypedPipe[UnhydratedTweet] = {
+  def t etS ce(
+     mpl c  dateRange: DateRange
+  ): TypedP pe[UnhydratedT et] = {
     DAL
-      .read(UnhydratedScalaDataset, dateRange).withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .read(UnhydratedScalaDataset, dateRange).w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+      .toTypedP pe
   }
 
-  def flatTweetsSource(
-    implicit dateRange: DateRange
-  ): TypedPipe[UnhydratedFlatTweet] = {
+  def flatT etsS ce(
+     mpl c  dateRange: DateRange
+  ): TypedP pe[UnhydratedFlatT et] = {
     DAL
       .read(UnhydratedFlatScalaDataset, dateRange)
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+      .toTypedP pe
   }
 
-  def userTweetFavoritesSource(
-    implicit dateRange: DateRange
-  ): TypedPipe[(UserId, TweetId, Timestamp)] = {
+  def userT etFavor esS ce(
+     mpl c  dateRange: DateRange
+  ): TypedP pe[(User d, T et d, T  stamp)] = {
     DAL
-      .read(TimelineServiceFavoritesScalaDataset, dateRange)
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
-      .flatMap { cfe: ContextualizedFavoriteEvent =>
+      .read(T  l neServ ceFavor esScalaDataset, dateRange)
+      .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+      .toTypedP pe
+      .flatMap { cfe: Contextual zedFavor eEvent =>
         cfe.event match {
-          case FavoriteEventUnion.Favorite(fav) =>
-            Some(fav.userId, fav.tweetId, fav.eventTimeMs)
+          case Favor eEventUn on.Favor e(fav) =>
+            So (fav.user d, fav.t et d, fav.eventT  Ms)
           case _ =>
             None
         }
       }
   }
 
-  def userTweetImpressionsSource(
-    dwellSec: Int = 1
+  def userT et mpress onsS ce(
+    d llSec:  nt = 1
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(UserId, TweetId, Timestamp)] = {
+     mpl c  dateRange: DateRange
+  ): TypedP pe[(User d, T et d, T  stamp)] = {
     DAL
-      .read(UserInteractionScalaDataset, dateRange)
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
+      .read(User nteract onScalaDataset, dateRange)
+      .w hRemoteReadPol cy(AllowCrossClusterSa DC)
+      .toTypedP pe
       .flatMap {
-        case userInteraction
-            if userInteraction.interactionType == InteractionType.TweetImpressions =>
-          userInteraction.interactionDetails match {
-            case InteractionDetails.TweetImpressionDetails(
-                  TweetImpressionDetails(tweetId, _, dwellTimeInSecOpt))
-                if dwellTimeInSecOpt.exists(_ >= dwellSec) =>
-              Some(userInteraction.userId, tweetId, userInteraction.timeStamp)
+        case user nteract on
+             f user nteract on. nteract onType ==  nteract onType.T et mpress ons =>
+          user nteract on. nteract onDeta ls match {
+            case  nteract onDeta ls.T et mpress onDeta ls(
+                  T et mpress onDeta ls(t et d, _, d llT   nSecOpt))
+                 f d llT   nSecOpt.ex sts(_ >= d llSec) =>
+              So (user nteract on.user d, t et d, user nteract on.t  Stamp)
             case _ =>
               None
           }
@@ -403,162 +403,162 @@ object ExternalDataSources {
   }
 
   def transformFavEdges(
-    input: TypedPipe[EdgeWithDecayedWeights],
-    halfLifeInDaysForFavScore: Int
+     nput: TypedP pe[EdgeW hDecayed  ghts],
+    halfL fe nDaysForFavScore:  nt
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(Long, Long, Double)] = {
-    val numEdgesWithSpecifiedHalfLife = Stat(
-      s"num_edges_with_specified_half_life_${halfLifeInDaysForFavScore}_days")
-    val numEdgesWithoutSpecifiedHalfLife = Stat(
-      s"num_edges_without_specified_half_life_${halfLifeInDaysForFavScore}_days")
-    input
+     mpl c  un que D: Un que D
+  ): TypedP pe[(Long, Long, Double)] = {
+    val numEdgesW hSpec f edHalfL fe = Stat(
+      s"num_edges_w h_spec f ed_half_l fe_${halfL fe nDaysForFavScore}_days")
+    val numEdgesW houtSpec f edHalfL fe = Stat(
+      s"num_edges_w hout_spec f ed_half_l fe_${halfL fe nDaysForFavScore}_days")
+     nput
       .flatMap { edge =>
-        if (edge.weights.halfLifeInDaysToDecayedSums.contains(halfLifeInDaysForFavScore)) {
-          numEdgesWithSpecifiedHalfLife.inc()
-          Some((edge.sourceId, edge.destinationId, edge.weights.halfLifeInDaysToDecayedSums(100)))
+         f (edge.  ghts.halfL fe nDaysToDecayedSums.conta ns(halfL fe nDaysForFavScore)) {
+          numEdgesW hSpec f edHalfL fe. nc()
+          So ((edge.s ce d, edge.dest nat on d, edge.  ghts.halfL fe nDaysToDecayedSums(100)))
         } else {
-          numEdgesWithoutSpecifiedHalfLife.inc()
+          numEdgesW houtSpec f edHalfL fe. nc()
           None
         }
       }
   }
 
   def getFavEdges(
-    halfLifeInDaysForFavScore: Int
+    halfL fe nDaysForFavScore:  nt
   )(
-    implicit dateRange: DateRange,
-    uniqueID: UniqueID
-  ): TypedPipe[(Long, Long, Double)] = {
-    implicit val tz: java.util.TimeZone = DateOps.UTC
+     mpl c  dateRange: DateRange,
+    un que D: Un que D
+  ): TypedP pe[(Long, Long, Double)] = {
+     mpl c  val tz: java.ut l.T  Zone = DateOps.UTC
     transformFavEdges(
       DAL
         .readMostRecentSnapshotNoOlderThan(UserUserFavGraphScalaDataset, Days(14))
-        .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-        .toTypedPipe,
-      halfLifeInDaysForFavScore
+        .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+        .toTypedP pe,
+      halfL fe nDaysForFavScore
     )
   }
 
-  def flockReportAsSpamSource(
+  def flockReportAsSpamS ce(
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(UserId, UserId)] = {
+     mpl c  dateRange: DateRange
+  ): TypedP pe[(User d, User d)] = {
     DAL
       .readMostRecentSnapshot(FlockReportAsSpamEdgesScalaDataset)
-      .toTypedPipe
+      .toTypedP pe
       .collect {
-        case edge if edge.state == ValidFlockEdgeStateId =>
-          (edge.sourceId, edge.destinationId)
+        case edge  f edge.state == Val dFlockEdgeState d =>
+          (edge.s ce d, edge.dest nat on d)
       }
   }
 
-  def flockBlocksSource(
+  def flockBlocksS ce(
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(UserId, UserId)] = {
+     mpl c  dateRange: DateRange
+  ): TypedP pe[(User d, User d)] = {
     DAL
       .readMostRecentSnapshot(FlockBlocksEdgesScalaDataset)
-      .toTypedPipe
+      .toTypedP pe
       .collect {
-        case edge if edge.state == ValidFlockEdgeStateId =>
-          (edge.sourceId, edge.destinationId)
+        case edge  f edge.state == Val dFlockEdgeState d =>
+          (edge.s ce d, edge.dest nat on d)
       }
   }
 
-  def flockFollowsSource(
+  def flockFollowsS ce(
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(UserId, UserId)] = {
+     mpl c  dateRange: DateRange
+  ): TypedP pe[(User d, User d)] = {
     DAL
       .readMostRecentSnapshot(FlockFollowsEdgesScalaDataset)
-      .toTypedPipe
+      .toTypedP pe
       .collect {
-        case edge if edge.state == ValidFlockEdgeStateId =>
-          (edge.sourceId, edge.destinationId)
+        case edge  f edge.state == Val dFlockEdgeState d =>
+          (edge.s ce d, edge.dest nat on d)
       }
   }
 
-  def flockReportAsAbuseSource(
+  def flockReportAsAbuseS ce(
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(UserId, UserId)] = {
+     mpl c  dateRange: DateRange
+  ): TypedP pe[(User d, User d)] = {
     DAL
       .readMostRecentSnapshot(FlockReportAsAbuseEdgesScalaDataset)
-      .toTypedPipe
+      .toTypedP pe
       .collect {
-        case edge if edge.state == ValidFlockEdgeStateId =>
-          (edge.sourceId, edge.destinationId)
+        case edge  f edge.state == Val dFlockEdgeState d =>
+          (edge.s ce d, edge.dest nat on d)
       }
   }
 
-  def magicRecsNotficationOpenOrClickEventsSource(
-    implicit dateRange: DateRange
-  ): TypedPipe[MagicRecsNotificationLite] = {
+  def mag cRecsNotf cat onOpenOrCl ckEventsS ce(
+     mpl c  dateRange: DateRange
+  ): TypedP pe[Mag cRecsNot f cat onL e] = {
     DAL
-      .read(MagicrecsNotificationLite1DayLagScalaDataset, dateRange)
-      .toTypedPipe
-      .filter { entry =>
-        // keep entries with a valid userId and tweetId, opened or clicked timestamp defined
-        val userIdExists = entry.targetUserId.isDefined
-        val tweetIdExists = entry.tweetId.isDefined
-        val openOrClickExists =
-          entry.openTimestampMs.isDefined || entry.ntabClickTimestampMs.isDefined
-        userIdExists && tweetIdExists && openOrClickExists
+      .read(Mag crecsNot f cat onL e1DayLagScalaDataset, dateRange)
+      .toTypedP pe
+      .f lter { entry =>
+        // keep entr es w h a val d user d and t et d, opened or cl cked t  stamp def ned
+        val user dEx sts = entry.targetUser d. sDef ned
+        val t et dEx sts = entry.t et d. sDef ned
+        val openOrCl ckEx sts =
+          entry.openT  stampMs. sDef ned || entry.ntabCl ckT  stampMs. sDef ned
+        user dEx sts && t et dEx sts && openOrCl ckEx sts
       }
   }
 
-  def ieSourceTweetEngagementsSource(implicit dateRange: DateRange): TypedPipe[InteractionEvent] = {
+  def  eS ceT etEngage ntsS ce( mpl c  dateRange: DateRange): TypedP pe[ nteract onEvent] = {
     DAL
       .read(
-        com.twitter.iesource.processing.events.batch.ServerEngagementsScalaDataset,
-        dateRange).withColumns(
-        Set("targetId", "targetType", "engagingUserId", "details", "referenceTweet"))
-      .toTypedPipe
-      .filter { event =>
-        // filter out logged out users because their favorites are less reliable
-        event.engagingUserId > 0L && event.targetType == InteractionTargetType.Tweet
+        com.tw ter. es ce.process ng.events.batch.ServerEngage ntsScalaDataset,
+        dateRange).w hColumns(
+        Set("target d", "targetType", "engag ngUser d", "deta ls", "referenceT et"))
+      .toTypedP pe
+      .f lter { event =>
+        // f lter out logged out users because t  r favor es are less rel able
+        event.engag ngUser d > 0L && event.targetType ==  nteract onTargetType.T et
       }
   }
 
-  private def userIdFromBlenderAdaptiveScribeLog(
-    blenderAdaptiveLog: AdaptiveSearchScribeLog
-  ): Option[Long] = {
-    blenderAdaptiveLog.versionedCommonHeader match {
-      case VersionedCommonHeader.CommonHeader(CommonHeader.ServerHeader(serverHeader)) =>
-        serverHeader.requestInfo match {
-          case Some(requestInfo) => requestInfo.ids.get(IdType.UserId).map(_.toLong)
+  pr vate def user dFromBlenderAdapt veScr beLog(
+    blenderAdapt veLog: Adapt veSearchScr beLog
+  ): Opt on[Long] = {
+    blenderAdapt veLog.vers onedCommon ader match {
+      case Vers onedCommon ader.Common ader(Common ader.Server ader(server ader)) =>
+        server ader.request nfo match {
+          case So (request nfo) => request nfo. ds.get( dType.User d).map(_.toLong)
           case _ => None
         }
       case _ => None
     }
   }
 
-  def adaptiveSearchScribeLogsSource(
-    implicit dateRange: DateRange
-  ): TypedPipe[(UserId, String)] = {
-    val searchData: TypedPipe[AdaptiveSearchScribeLog] =
+  def adapt veSearchScr beLogsS ce(
+     mpl c  dateRange: DateRange
+  ): TypedP pe[(User d, Str ng)] = {
+    val searchData: TypedP pe[Adapt veSearchScr beLog] =
       DAL
-        .read(AdaptiveSearchScalaDataset, dateRange).toTypedPipe
+        .read(Adapt veSearchScalaDataset, dateRange).toTypedP pe
 
     searchData
-      .flatMap({ scribeLog: AdaptiveSearchScribeLog =>
+      .flatMap({ scr beLog: Adapt veSearchScr beLog =>
         for {
-          userId <- userIdFromBlenderAdaptiveScribeLog(scribeLog)
-          // filter out logged out search queries
-          if userId != 0
-          queryString <- scribeLog.requestLog.flatMap(_.request).flatMap(_.rawQuery)
-        } yield {
-          (userId, Set(queryString))
+          user d <- user dFromBlenderAdapt veScr beLog(scr beLog)
+          // f lter out logged out search quer es
+           f user d != 0
+          queryStr ng <- scr beLog.requestLog.flatMap(_.request).flatMap(_.rawQuery)
+        } y eld {
+          (user d, Set(queryStr ng))
         }
       })
-      // if a user searches for the same query multiple times, there could be duplicates.
-      // De-dup them to get the distinct queries searched by a user
+      //  f a user searc s for t  sa  query mult ple t  s, t re could be dupl cates.
+      // De-dup t m to get t  d st nct quer es searc d by a user
       .sumByKey
       .flatMap {
-        case (userId, distinctQuerySet) =>
-          distinctQuerySet.map { query =>
-            (userId, query)
+        case (user d, d st nctQuerySet) =>
+          d st nctQuerySet.map { query =>
+            (user d, query)
           }
       }
   }

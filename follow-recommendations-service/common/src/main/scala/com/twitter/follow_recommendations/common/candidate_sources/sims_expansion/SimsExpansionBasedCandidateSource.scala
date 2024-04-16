@@ -1,114 +1,114 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms_expans on
 
-import com.twitter.follow_recommendations.common.candidate_sources.base.TwoHopExpansionCandidateSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims.SwitchingSimsSource
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.follow_recommendations.common.models.SimilarToProof
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import scala.math._
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.base.TwoHopExpans onCand dateS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms.Sw ch ngS msS ce
+ mport com.tw ter.follow_recom ndat ons.common.models.AccountProof
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.HasS m larToContext
+ mport com.tw ter.follow_recom ndat ons.common.models.Reason
+ mport com.tw ter.follow_recom ndat ons.common.models.S m larToProof
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport scala.math._
 
-case class SimilarUser(candidateId: Long, similarTo: Long, score: Double)
+case class S m larUser(cand date d: Long, s m larTo: Long, score: Double)
 
-abstract class SimsExpansionBasedCandidateSource[-Target <: HasParams](
-  switchingSimsSource: SwitchingSimsSource)
-    extends TwoHopExpansionCandidateSource[Target, CandidateUser, SimilarUser, CandidateUser] {
+abstract class S msExpans onBasedCand dateS ce[-Target <: HasParams](
+  sw ch ngS msS ce: Sw ch ngS msS ce)
+    extends TwoHopExpans onCand dateS ce[Target, Cand dateUser, S m larUser, Cand dateUser] {
 
-  // max number secondary degree nodes per first degree node
-  def maxSecondaryDegreeNodes(req: Target): Int
+  // max number secondary degree nodes per f rst degree node
+  def maxSecondaryDegreeNodes(req: Target):  nt
 
   // max number output results
-  def maxResults(req: Target): Int
+  def maxResults(req: Target):  nt
 
-  // scorer to score candidate based on first and second degree node scores
-  def scoreCandidate(source: Double, similarToScore: Double): Double
+  // scorer to score cand date based on f rst and second degree node scores
+  def scoreCand date(s ce: Double, s m larToScore: Double): Double
 
-  def calibrateDivisor(req: Target): Double
+  def cal brateD v sor(req: Target): Double
 
-  def calibrateScore(candidateScore: Double, req: Target): Double = {
-    candidateScore / calibrateDivisor(req)
+  def cal brateScore(cand dateScore: Double, req: Target): Double = {
+    cand dateScore / cal brateD v sor(req)
   }
 
-  override def secondaryDegreeNodes(req: Target, node: CandidateUser): Stitch[Seq[SimilarUser]] = {
-    switchingSimsSource(new HasParams with HasSimilarToContext {
-      override val similarToUserIds = Seq(node.id)
-      override val params = (req.params)
-    }).map(_.take(maxSecondaryDegreeNodes(req)).map { candidate =>
-      SimilarUser(
-        candidate.id,
-        node.id,
-        (node.score, candidate.score) match {
-          // only calibrated sims expanded candidates scores
-          case (Some(nodeScore), Some(candidateScore)) =>
-            calibrateScore(scoreCandidate(nodeScore, candidateScore), req)
-          case (Some(nodeScore), _) => nodeScore
-          // NewFollowingSimilarUser will enter this case
-          case _ => calibrateScore(candidate.score.getOrElse(0.0), req)
+  overr de def secondaryDegreeNodes(req: Target, node: Cand dateUser): St ch[Seq[S m larUser]] = {
+    sw ch ngS msS ce(new HasParams w h HasS m larToContext {
+      overr de val s m larToUser ds = Seq(node. d)
+      overr de val params = (req.params)
+    }).map(_.take(maxSecondaryDegreeNodes(req)).map { cand date =>
+      S m larUser(
+        cand date. d,
+        node. d,
+        (node.score, cand date.score) match {
+          // only cal brated s ms expanded cand dates scores
+          case (So (nodeScore), So (cand dateScore)) =>
+            cal brateScore(scoreCand date(nodeScore, cand dateScore), req)
+          case (So (nodeScore), _) => nodeScore
+          // NewFollow ngS m larUser w ll enter t  case
+          case _ => cal brateScore(cand date.score.getOrElse(0.0), req)
         }
       )
     })
   }
 
-  override def aggregateAndScore(
+  overr de def aggregateAndScore(
     request: Target,
-    firstDegreeToSecondDegreeNodesMap: Map[CandidateUser, Seq[SimilarUser]]
-  ): Stitch[Seq[CandidateUser]] = {
+    f rstDegreeToSecondDegreeNodesMap: Map[Cand dateUser, Seq[S m larUser]]
+  ): St ch[Seq[Cand dateUser]] = {
 
-    val inputNodes = firstDegreeToSecondDegreeNodesMap.keys.map(_.id).toSet
-    val aggregator = request.params(SimsExpansionSourceParams.Aggregator) match {
-      case SimsExpansionSourceAggregatorId.Max =>
-        SimsExpansionBasedCandidateSource.ScoreAggregator.Max
-      case SimsExpansionSourceAggregatorId.Sum =>
-        SimsExpansionBasedCandidateSource.ScoreAggregator.Sum
-      case SimsExpansionSourceAggregatorId.MultiDecay =>
-        SimsExpansionBasedCandidateSource.ScoreAggregator.MultiDecay
+    val  nputNodes = f rstDegreeToSecondDegreeNodesMap.keys.map(_. d).toSet
+    val aggregator = request.params(S msExpans onS ceParams.Aggregator) match {
+      case S msExpans onS ceAggregator d.Max =>
+        S msExpans onBasedCand dateS ce.ScoreAggregator.Max
+      case S msExpans onS ceAggregator d.Sum =>
+        S msExpans onBasedCand dateS ce.ScoreAggregator.Sum
+      case S msExpans onS ceAggregator d.Mult Decay =>
+        S msExpans onBasedCand dateS ce.ScoreAggregator.Mult Decay
     }
 
-    val groupedCandidates = firstDegreeToSecondDegreeNodesMap.values.flatten
-      .filterNot(c => inputNodes.contains(c.candidateId))
-      .groupBy(_.candidateId)
+    val groupedCand dates = f rstDegreeToSecondDegreeNodesMap.values.flatten
+      .f lterNot(c =>  nputNodes.conta ns(c.cand date d))
+      .groupBy(_.cand date d)
       .map {
-        case (id, candidates) =>
-          // Different aggregators for final score
-          val finalScore = aggregator(candidates.map(_.score).toSeq)
-          val proofs = candidates.map(_.similarTo).toSet
+        case ( d, cand dates) =>
+          // D fferent aggregators for f nal score
+          val f nalScore = aggregator(cand dates.map(_.score).toSeq)
+          val proofs = cand dates.map(_.s m larTo).toSet
 
-          CandidateUser(
-            id = id,
-            score = Some(finalScore),
+          Cand dateUser(
+             d =  d,
+            score = So (f nalScore),
             reason =
-              Some(Reason(Some(AccountProof(similarToProof = Some(SimilarToProof(proofs.toSeq))))))
-          ).withCandidateSource(identifier)
+              So (Reason(So (AccountProof(s m larToProof = So (S m larToProof(proofs.toSeq))))))
+          ).w hCand dateS ce( dent f er)
       }
       .toSeq
       .sortBy(-_.score.getOrElse(0.0d))
       .take(maxResults(request))
 
-    Stitch.value(groupedCandidates)
+    St ch.value(groupedCand dates)
   }
 }
 
-object SimsExpansionBasedCandidateSource {
+object S msExpans onBasedCand dateS ce {
   object ScoreAggregator {
-    val Max: Seq[Double] => Double = (candidateScores: Seq[Double]) => {
-      if (candidateScores.size > 0) candidateScores.max else 0.0
+    val Max: Seq[Double] => Double = (cand dateScores: Seq[Double]) => {
+       f (cand dateScores.s ze > 0) cand dateScores.max else 0.0
     }
-    val Sum: Seq[Double] => Double = (candidateScores: Seq[Double]) => {
-      candidateScores.sum
+    val Sum: Seq[Double] => Double = (cand dateScores: Seq[Double]) => {
+      cand dateScores.sum
     }
-    val MultiDecay: Seq[Double] => Double = (candidateScores: Seq[Double]) => {
+    val Mult Decay: Seq[Double] => Double = (cand dateScores: Seq[Double]) => {
       val alpha = 0.1
       val beta = 0.1
       val gamma = 0.8
       val decay_scores: Seq[Double] =
-        candidateScores
-          .sorted(Ordering[Double].reverse)
-          .zipWithIndex
+        cand dateScores
+          .sorted(Order ng[Double].reverse)
+          .z pW h ndex
           .map(x => x._1 * pow(gamma, x._2))
-      alpha * candidateScores.max + decay_scores.sum + beta * candidateScores.size
+      alpha * cand dateScores.max + decay_scores.sum + beta * cand dateScores.s ze
     }
   }
 }

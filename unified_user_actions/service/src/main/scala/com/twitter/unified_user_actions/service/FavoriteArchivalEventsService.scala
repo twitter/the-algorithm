@@ -1,26 +1,26 @@
-package com.twitter.unified_user_actions.service
+package com.tw ter.un f ed_user_act ons.serv ce
 
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.inject.server.TwitterServer
-import com.twitter.kafka.client.processor.AtLeastOnceProcessor
-import com.twitter.timelineservice.fanout.thriftscala.FavoriteArchivalEvent
-import com.twitter.unified_user_actions.service.module.KafkaProcessorFavoriteArchivalEventsModule
+ mport com.tw ter.f natra.dec der.modules.Dec derModule
+ mport com.tw ter.f natra.kafka.serde.UnKeyed
+ mport com.tw ter. nject.server.Tw terServer
+ mport com.tw ter.kafka.cl ent.processor.AtLeastOnceProcessor
+ mport com.tw ter.t  l neserv ce.fanout.thr ftscala.Favor eArch valEvent
+ mport com.tw ter.un f ed_user_act ons.serv ce.module.KafkaProcessorFavor eArch valEventsModule
 
-object FavoriteArchivalEventsServiceMain extends FavoriteArchivalEventsService
+object Favor eArch valEventsServ ceMa n extends Favor eArch valEventsServ ce
 
-class FavoriteArchivalEventsService extends TwitterServer {
+class Favor eArch valEventsServ ce extends Tw terServer {
 
-  override val modules = Seq(
-    KafkaProcessorFavoriteArchivalEventsModule,
-    DeciderModule
+  overr de val modules = Seq(
+    KafkaProcessorFavor eArch valEventsModule,
+    Dec derModule
   )
 
-  override protected def setup(): Unit = {}
+  overr de protected def setup(): Un  = {}
 
-  override protected def start(): Unit = {
-    val processor = injector.instance[AtLeastOnceProcessor[UnKeyed, FavoriteArchivalEvent]]
-    closeOnExit(processor)
+  overr de protected def start(): Un  = {
+    val processor =  njector. nstance[AtLeastOnceProcessor[UnKeyed, Favor eArch valEvent]]
+    closeOnEx (processor)
     processor.start()
   }
 }

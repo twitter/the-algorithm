@@ -1,54 +1,54 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.tw ter.ho _m xer.funct onal_component.decorator.urt.bu lder
 
-import com.twitter.home_mixer.model.HomeFeatures.PerspectiveFilteredLikedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidLikedByUserIdsFeature
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.LikeGeneralContextType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.model.Ho Features.Perspect veF lteredL kedByUser dsFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.SGSVal dL kedByUser dsFeature
+ mport com.tw ter.ho _m xer.product.follow ng.model.Ho M xerExternalStr ngs
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.soc al_context.BaseSoc alContextBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.L keGeneralContextType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Soc alContext
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.product.gu ce.scope.ProductScoped
+ mport com.tw ter.str ngcenter.cl ent.Str ngCenter
+ mport javax. nject. nject
+ mport javax. nject.Prov der
+ mport javax. nject.S ngleton
 
-@Singleton
-case class LikedBySocialContextBuilder @Inject() (
-  externalStrings: HomeMixerExternalStrings,
-  @ProductScoped stringCenterProvider: Provider[StringCenter])
-    extends BaseSocialContextBuilder[PipelineQuery, TweetCandidate] {
+@S ngleton
+case class L kedBySoc alContextBu lder @ nject() (
+  externalStr ngs: Ho M xerExternalStr ngs,
+  @ProductScoped str ngCenterProv der: Prov der[Str ngCenter])
+    extends BaseSoc alContextBu lder[P pel neQuery, T etCand date] {
 
-  private val stringCenter = stringCenterProvider.get()
+  pr vate val str ngCenter = str ngCenterProv der.get()
 
-  private val engagerSocialContextBuilder = EngagerSocialContextBuilder(
-    contextType = LikeGeneralContextType,
-    stringCenter = stringCenter,
-    oneUserString = externalStrings.socialContextOneUserLikedString,
-    twoUsersString = externalStrings.socialContextTwoUsersLikedString,
-    moreUsersString = externalStrings.socialContextMoreUsersLikedString,
-    timelineTitle = externalStrings.socialContextLikedByTimelineTitle
+  pr vate val engagerSoc alContextBu lder = EngagerSoc alContextBu lder(
+    contextType = L keGeneralContextType,
+    str ngCenter = str ngCenter,
+    oneUserStr ng = externalStr ngs.soc alContextOneUserL kedStr ng,
+    twoUsersStr ng = externalStr ngs.soc alContextTwoUsersL kedStr ng,
+    moreUsersStr ng = externalStr ngs.soc alContextMoreUsersL kedStr ng,
+    t  l neT le = externalStr ngs.soc alContextL kedByT  l neT le
   )
 
   def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[SocialContext] = {
+    query: P pel neQuery,
+    cand date: T etCand date,
+    cand dateFeatures: FeatureMap
+  ): Opt on[Soc alContext] = {
 
-    // Liked by users are valid only if they pass both the SGS and Perspective filters.
-    val validLikedByUserIds =
-      candidateFeatures
-        .getOrElse(SGSValidLikedByUserIdsFeature, Nil)
-        .filter(
-          candidateFeatures.getOrElse(PerspectiveFilteredLikedByUserIdsFeature, Nil).toSet.contains)
+    // L ked by users are val d only  f t y pass both t  SGS and Perspect ve f lters.
+    val val dL kedByUser ds =
+      cand dateFeatures
+        .getOrElse(SGSVal dL kedByUser dsFeature, N l)
+        .f lter(
+          cand dateFeatures.getOrElse(Perspect veF lteredL kedByUser dsFeature, N l).toSet.conta ns)
 
-    engagerSocialContextBuilder(
-      socialContextIds = validLikedByUserIds,
+    engagerSoc alContextBu lder(
+      soc alContext ds = val dL kedByUser ds,
       query = query,
-      candidateFeatures = candidateFeatures
+      cand dateFeatures = cand dateFeatures
     )
   }
 }

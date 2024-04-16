@@ -1,50 +1,50 @@
-package com.twitter.home_mixer.product.for_you.side_effect
+package com.tw ter.ho _m xer.product.for_ .s de_effect
 
-import com.twitter.home_mixer.model.HomeFeatures.IsReadFromCacheFeature
-import com.twitter.home_mixer.model.HomeFeatures.PredictionRequestIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedRequestIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.StreamToKafkaFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.ho _m xer.model.Ho Features. sReadFromCac Feature
+ mport com.tw ter.ho _m xer.model.Ho Features.Pred ct onRequest dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Served dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.ServedRequest dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.StreamToKafkaFeature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on. emCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on.ModuleCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object ServedCandidateKafkaSideEffect {
+object ServedCand dateKafkaS deEffect {
 
-  def extractCandidates(
-    query: PipelineQuery,
-    selectedCandidates: Seq[CandidateWithDetails],
-    sourceIdentifiers: Set[CandidatePipelineIdentifier]
-  ): Seq[ItemCandidateWithDetails] = {
-    val servedRequestIdOpt =
-      query.features.getOrElse(FeatureMap.empty).getOrElse(ServedRequestIdFeature, None)
+  def extractCand dates(
+    query: P pel neQuery,
+    selectedCand dates: Seq[Cand dateW hDeta ls],
+    s ce dent f ers: Set[Cand dateP pel ne dent f er]
+  ): Seq[ emCand dateW hDeta ls] = {
+    val servedRequest dOpt =
+      query.features.getOrElse(FeatureMap.empty).getOrElse(ServedRequest dFeature, None)
 
-    selectedCandidates.iterator
-      .filter(candidate => sourceIdentifiers.contains(candidate.source))
+    selectedCand dates. erator
+      .f lter(cand date => s ce dent f ers.conta ns(cand date.s ce))
       .flatMap {
-        case item: ItemCandidateWithDetails => Seq(item)
-        case module: ModuleCandidateWithDetails => module.candidates
+        case  em:  emCand dateW hDeta ls => Seq( em)
+        case module: ModuleCand dateW hDeta ls => module.cand dates
       }
-      .filter(candidate => candidate.features.getOrElse(StreamToKafkaFeature, false))
-      .map { candidate =>
-        val servedId =
-          if (candidate.features.getOrElse(IsReadFromCacheFeature, false) &&
-            servedRequestIdOpt.nonEmpty)
-            servedRequestIdOpt
+      .f lter(cand date => cand date.features.getOrElse(StreamToKafkaFeature, false))
+      .map { cand date =>
+        val served d =
+           f (cand date.features.getOrElse( sReadFromCac Feature, false) &&
+            servedRequest dOpt.nonEmpty)
+            servedRequest dOpt
           else
-            candidate.features.getOrElse(PredictionRequestIdFeature, None)
+            cand date.features.getOrElse(Pred ct onRequest dFeature, None)
 
-        candidate.copy(features = candidate.features + (ServedIdFeature, servedId))
+        cand date.copy(features = cand date.features + (Served dFeature, served d))
       }.toSeq
-      // deduplicate by (tweetId, userId, servedId)
-      .groupBy { candidate =>
+      // dedupl cate by (t et d, user d, served d)
+      .groupBy { cand date =>
         (
-          candidate.candidateIdLong,
-          query.getRequiredUserId,
-          candidate.features.getOrElse(ServedIdFeature, None))
-      }.values.map(_.head).toSeq
+          cand date.cand date dLong,
+          query.getRequ redUser d,
+          cand date.features.getOrElse(Served dFeature, None))
+      }.values.map(_. ad).toSeq
   }
 }

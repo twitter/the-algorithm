@@ -1,26 +1,26 @@
-package com.twitter.visibility.builder.tweets
+package com.tw ter.v s b l y.bu lder.t ets
 
-import com.twitter.servo.util.Gate
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.models.ViewerContext
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.models.V e rContext
 
-class CommunityTweetFeaturesPartitioned(
-  a: CommunityTweetFeatures,
-  b: CommunityTweetFeatures,
-  bEnabled: Gate[Unit],
-) extends CommunityTweetFeatures {
-  override def forTweet(
-    tweet: Tweet,
-    viewerContext: ViewerContext
-  ): FeatureMapBuilder => FeatureMapBuilder =
-    bEnabled.pick(
-      b.forTweet(tweet, viewerContext),
-      a.forTweet(tweet, viewerContext),
+class Commun yT etFeaturesPart  oned(
+  a: Commun yT etFeatures,
+  b: Commun yT etFeatures,
+  bEnabled: Gate[Un ],
+) extends Commun yT etFeatures {
+  overr de def forT et(
+    t et: T et,
+    v e rContext: V e rContext
+  ): FeatureMapBu lder => FeatureMapBu lder =
+    bEnabled.p ck(
+      b.forT et(t et, v e rContext),
+      a.forT et(t et, v e rContext),
     )
 
-  override def forTweetOnly(tweet: Tweet): FeatureMapBuilder => FeatureMapBuilder = bEnabled.pick(
-    b.forTweetOnly(tweet),
-    a.forTweetOnly(tweet),
+  overr de def forT etOnly(t et: T et): FeatureMapBu lder => FeatureMapBu lder = bEnabled.p ck(
+    b.forT etOnly(t et),
+    a.forT etOnly(t et),
   )
 }

@@ -1,77 +1,77 @@
-#!/bin/bash
-# script to deploy simclusters persistent storm job to CI
+#!/b n/bash
+# scr pt to deploy s mclusters pers stent storm job to C 
 
 set -u -e
 
-cd "$(git rev-parse --show-toplevel)"
+cd "$(g  rev-parse --show-toplevel)"
 
-# shellcheck source=/dev/null
-. "$(git rev-parse --show-toplevel)/devprod/source-sh-setup"
+# s llc ck s ce=/dev/null
+. "$(g  rev-parse --show-toplevel)/devprod/s ce-sh-setup"
 
-function usage {
+funct on usage {
   cat <<EOF
     $0 --env [devel | prod] --dc [atla | pdxa]
 
-Optional:
+Opt onal:
     --dc              atla | pdxa
     --env             devel | prod
 
 EOF
-  if [ -n "$1" ] && [ "$1" != "noargs" ]; then
+   f [ -n "$1" ] && [ "$1" != "noargs" ]; t n
     echo ""
-    echo "Invalid app args encountered! Expecting: $1"
-  fi
+    echo " nval d app args encountered! Expect ng: $1"
+  f 
 }
 
-if [ $# -lt 1 ]; then
+ f [ $# -lt 1 ]; t n
   usage noargs
-  exit 1
-fi
+  ex  1
+f 
 
 CLUSTER=
 ENV=
 USER=cassowary
 
-while [[ $# -gt 1 ]]; do
+wh le [[ $# -gt 1 ]]; do
   key="$1"
   
-  case $key in
+  case $key  n
     --dc)
       CLUSTER="$2"
-      shift
+      sh ft
       ;;
     --env)
       ENV="$2"
-      shift
+      sh ft
       ;;
     *)
-      # options ignored
+      # opt ons  gnored
       ;;
   esac
-  shift
+  sh ft
 done
 
-echo "Bundling..."
+echo "Bundl ng..."
 
 
-JAR_NAME="persistent-tweet-simclusters-storm-job.tar"
-JOB_NAME="summingbird_simclusters_v2_persistent_tweet_job_${ENV}"
+JAR_NAME="pers stent-t et-s mclusters-storm-job.tar"
+JOB_NAME="summ ngb rd_s mclusters_v2_pers stent_t et_job_${ENV}"
 
-BASE_DIR="src/scala/com/twitter/simclusters_v2/summingbird"
-./bazel bundle --bundle-jvm-archive=tar ${BASE_DIR}:persistent-tweet-simclusters-storm-job || exit 1
+BASE_D R="src/scala/com/tw ter/s mclusters_v2/summ ngb rd"
+./bazel bundle --bundle-jvm-arch ve=tar ${BASE_D R}:pers stent-t et-s mclusters-storm-job || ex  1
 
-# initialize the aurora path for a heron job: <dc>/<role>/<env> where <env> can only be devel or prod 
+#  n  al ze t  aurora path for a  ron job: <dc>/<role>/<env> w re <env> can only be devel or prod 
 AURORA_PATH=${AURORA_PATH:="$CLUSTER/$USER/$ENV"}
 AURORA_JOB_KEY="${AURORA_PATH}/${JOB_NAME}"
 
-heron kill "$AURORA_PATH" "$JOB_NAME" || true
+ ron k ll "$AURORA_PATH" "$JOB_NAME" || true
 
-echo "Waiting 5 seconds so heron is sure its dead"
+echo "Wa  ng 5 seconds so  ron  s sure  s dead"
 sleep 5
 
 echo "AURORA_JOB_KEY: $AURORA_JOB_KEY"
 
-echo "Starting your topology... for ${ENV} ${JOB_NAME}"
+echo "Start ng y  topology... for ${ENV} ${JOB_NAME}"
 #set -v
 
-heron submit "${AURORA_PATH}" "dist/${JAR_NAME}" com.twitter.simclusters_v2.summingbird.storm.PersistentTweetJobRunner --env "$ENV" --dc "$CLUSTER"
+ ron subm  "${AURORA_PATH}" "d st/${JAR_NAME}" com.tw ter.s mclusters_v2.summ ngb rd.storm.Pers stentT etJobRunner --env "$ENV" --dc "$CLUSTER"

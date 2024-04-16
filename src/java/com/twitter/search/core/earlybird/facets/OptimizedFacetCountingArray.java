@@ -1,82 +1,82 @@
-package com.twitter.search.core.earlybird.facets;
+package com.tw ter.search.core.earlyb rd.facets;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Map;
+ mport java. o. OExcept on;
+ mport java.ut l.Arrays;
+ mport java.ut l.Map;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.inverted.IntBlockPool;
+ mport com.tw ter.search.common.ut l. o.flushable.DataDeser al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.DataSer al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.common.ut l. o.flushable.Flushable;
+ mport com.tw ter.search.core.earlyb rd. ndex.Doc DToT et DMapper;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted. ntBlockPool;
 
-public class OptimizedFacetCountingArray extends AbstractFacetCountingArray {
-  private final int[] facetsMap;
+publ c class Opt m zedFacetCount ngArray extends AbstractFacetCount ngArray {
+  pr vate f nal  nt[] facetsMap;
 
   /**
-   * Creates a new, empty FacetCountingArray with the given size.
+   * Creates a new, empty FacetCount ngArray w h t  g ven s ze.
    */
-  public OptimizedFacetCountingArray(int maxDocIdInclusive) {
+  publ c Opt m zedFacetCount ngArray( nt maxDoc d nclus ve) {
     super();
-    facetsMap = new int[maxDocIdInclusive];
-    Arrays.fill(facetsMap, UNASSIGNED);
+    facetsMap = new  nt[maxDoc d nclus ve];
+    Arrays.f ll(facetsMap, UNASS GNED);
   }
 
-  private OptimizedFacetCountingArray(int[] facetsMap, IntBlockPool facetsPool) {
+  pr vate Opt m zedFacetCount ngArray( nt[] facetsMap,  ntBlockPool facetsPool) {
     super(facetsPool);
-    this.facetsMap = facetsMap;
+    t .facetsMap = facetsMap;
   }
 
-  @Override
-  protected int getFacet(int docID) {
-    return facetsMap[docID];
+  @Overr de
+  protected  nt getFacet( nt doc D) {
+    return facetsMap[doc D];
   }
 
-  @Override
-  protected void setFacet(int docID, int facetID) {
-    facetsMap[docID] = facetID;
+  @Overr de
+  protected vo d setFacet( nt doc D,  nt facet D) {
+    facetsMap[doc D] = facet D;
   }
 
-  @Override
-  public AbstractFacetCountingArray rewriteAndMapIDs(
-      Map<Integer, int[]> termIDMapper,
-      DocIDToTweetIDMapper originalTweetIdMapper,
-      DocIDToTweetIDMapper optimizedTweetIdMapper) {
-    throw new UnsupportedOperationException(
-        "OptimizedFacetCountingArray instances should never be rewritten.");
+  @Overr de
+  publ c AbstractFacetCount ngArray rewr eAndMap Ds(
+      Map< nteger,  nt[]> term DMapper,
+      Doc DToT et DMapper or g nalT et dMapper,
+      Doc DToT et DMapper opt m zedT et dMapper) {
+    throw new UnsupportedOperat onExcept on(
+        "Opt m zedFacetCount ngArray  nstances should never be rewr ten.");
   }
 
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @Overr de
+  publ c FlushHandler getFlushHandler() {
+    return new FlushHandler(t );
   }
 
-  public static final class FlushHandler extends Flushable.Handler<OptimizedFacetCountingArray> {
-    private static final String FACETS_POOL_PROP_NAME = "facetsPool";
+  publ c stat c f nal class FlushHandler extends Flushable.Handler<Opt m zedFacetCount ngArray> {
+    pr vate stat c f nal Str ng FACETS_POOL_PROP_NAME = "facetsPool";
 
-    public FlushHandler() {
+    publ c FlushHandler() {
     }
 
-    public FlushHandler(OptimizedFacetCountingArray objectToFlush) {
+    publ c FlushHandler(Opt m zedFacetCount ngArray objectToFlush) {
       super(objectToFlush);
     }
 
-    @Override
-    public void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      OptimizedFacetCountingArray objectToFlush = getObjectToFlush();
-      out.writeIntArray(objectToFlush.facetsMap);
+    @Overr de
+    publ c vo d doFlush(Flush nfo flush nfo, DataSer al zer out) throws  OExcept on {
+      Opt m zedFacetCount ngArray objectToFlush = getObjectToFlush();
+      out.wr e ntArray(objectToFlush.facetsMap);
       objectToFlush.getFacetsPool().getFlushHandler().flush(
-          flushInfo.newSubProperties(FACETS_POOL_PROP_NAME), out);
+          flush nfo.newSubPropert es(FACETS_POOL_PROP_NAME), out);
     }
 
-    @Override
-    public OptimizedFacetCountingArray doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
-      int[] facetsMap = in.readIntArray();
-      IntBlockPool facetsPool = new IntBlockPool.FlushHandler().load(
-          flushInfo.getSubProperties(FACETS_POOL_PROP_NAME), in);
-      return new OptimizedFacetCountingArray(facetsMap, facetsPool);
+    @Overr de
+    publ c Opt m zedFacetCount ngArray doLoad(Flush nfo flush nfo, DataDeser al zer  n)
+        throws  OExcept on {
+       nt[] facetsMap =  n.read ntArray();
+       ntBlockPool facetsPool = new  ntBlockPool.FlushHandler().load(
+          flush nfo.getSubPropert es(FACETS_POOL_PROP_NAME),  n);
+      return new Opt m zedFacetCount ngArray(facetsMap, facetsPool);
     }
   }
 }

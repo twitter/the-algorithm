@@ -1,59 +1,59 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.flockdb.client._
-import com.twitter.stitch.SeqGroup
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.compat.LegacySeqGroup
+ mport com.tw ter.flockdb.cl ent._
+ mport com.tw ter.st ch.SeqGroup
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.compat.LegacySeqGroup
 
-sealed trait TweetCountKey {
-  // The flockdb Select used to calculate the count from TFlock
+sealed tra  T etCountKey {
+  // T  flockdb Select used to calculate t  count from TFlock
   def toSelect: Select[StatusGraph]
 
-  // The Tweet id for this count
-  def tweetId: TweetId
+  // T  T et  d for t  count
+  def t et d: T et d
 
-  // com.twitter.servo.cache.MemcacheCache calls toString to turn this key into a cache key
-  def toString: String
+  // com.tw ter.servo.cac . mcac Cac  calls toStr ng to turn t  key  nto a cac  key
+  def toStr ng: Str ng
 }
 
-case class RetweetsKey(tweetId: TweetId) extends TweetCountKey {
-  lazy val toSelect: Select[StatusGraph] = RetweetsGraph.from(tweetId)
-  override lazy val toString: String = "cnts:rt:" + tweetId
+case class Ret etsKey(t et d: T et d) extends T etCountKey {
+  lazy val toSelect: Select[StatusGraph] = Ret etsGraph.from(t et d)
+  overr de lazy val toStr ng: Str ng = "cnts:rt:" + t et d
 }
 
-case class RepliesKey(tweetId: TweetId) extends TweetCountKey {
-  lazy val toSelect: Select[StatusGraph] = RepliesToTweetsGraph.from(tweetId)
-  override lazy val toString: String = "cnts:re:" + tweetId
+case class Repl esKey(t et d: T et d) extends T etCountKey {
+  lazy val toSelect: Select[StatusGraph] = Repl esToT etsGraph.from(t et d)
+  overr de lazy val toStr ng: Str ng = "cnts:re:" + t et d
 }
 
-case class FavsKey(tweetId: TweetId) extends TweetCountKey {
-  lazy val toSelect: Select[StatusGraph] = FavoritesGraph.to(tweetId)
-  override lazy val toString: String = "cnts:fv:" + tweetId
+case class FavsKey(t et d: T et d) extends T etCountKey {
+  lazy val toSelect: Select[StatusGraph] = Favor esGraph.to(t et d)
+  overr de lazy val toStr ng: Str ng = "cnts:fv:" + t et d
 }
 
-case class QuotesKey(tweetId: TweetId) extends TweetCountKey {
-  lazy val toSelect: Select[StatusGraph] = QuotersGraph.from(tweetId)
-  override lazy val toString: String = "cnts:qt:" + tweetId
+case class QuotesKey(t et d: T et d) extends T etCountKey {
+  lazy val toSelect: Select[StatusGraph] = QuotersGraph.from(t et d)
+  overr de lazy val toStr ng: Str ng = "cnts:qt:" + t et d
 }
 
-case class BookmarksKey(tweetId: TweetId) extends TweetCountKey {
-  lazy val toSelect: Select[StatusGraph] = BookmarksGraph.to(tweetId)
-  override lazy val toString: String = "cnts:bm:" + tweetId
+case class BookmarksKey(t et d: T et d) extends T etCountKey {
+  lazy val toSelect: Select[StatusGraph] = BookmarksGraph.to(t et d)
+  overr de lazy val toStr ng: Str ng = "cnts:bm:" + t et d
 }
 
-object TweetCountsRepository {
-  type Type = TweetCountKey => Stitch[Count]
+object T etCountsRepos ory {
+  type Type = T etCountKey => St ch[Count]
 
-  def apply(tflock: TFlockClient, maxRequestSize: Int): Type = {
-    object RequestGroup extends SeqGroup[TweetCountKey, Count] {
-      override def run(keys: Seq[TweetCountKey]): Future[Seq[Try[MediaId]]] = {
-        val selects = MultiSelect[StatusGraph]() ++= keys.map(_.toSelect)
-        LegacySeqGroup.liftToSeqTry(tflock.multiCount(selects).map(counts => counts.map(_.toLong)))
+  def apply(tflock: TFlockCl ent, maxRequestS ze:  nt): Type = {
+    object RequestGroup extends SeqGroup[T etCountKey, Count] {
+      overr de def run(keys: Seq[T etCountKey]): Future[Seq[Try[ d a d]]] = {
+        val selects = Mult Select[StatusGraph]() ++= keys.map(_.toSelect)
+        LegacySeqGroup.l ftToSeqTry(tflock.mult Count(selects).map(counts => counts.map(_.toLong)))
       }
-      override val maxSize: Int = maxRequestSize
+      overr de val maxS ze:  nt = maxRequestS ze
     }
 
-    key => Stitch.call(key, RequestGroup)
+    key => St ch.call(key, RequestGroup)
   }
 }

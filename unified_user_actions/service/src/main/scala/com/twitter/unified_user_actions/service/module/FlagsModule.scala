@@ -1,172 +1,172 @@
-package com.twitter.unified_user_actions.service.module
+package com.tw ter.un f ed_user_act ons.serv ce.module
 
-import com.twitter.inject.TwitterModule
-import com.twitter.unified_user_actions.kafka.ClientConfigs
-import com.twitter.unified_user_actions.kafka.CompressionTypeFlag
-import com.twitter.util.Duration
-import com.twitter.util.StorageUnit
-import com.twitter.util.logging.Logging
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.un f ed_user_act ons.kafka.Cl entConf gs
+ mport com.tw ter.un f ed_user_act ons.kafka.Compress onTypeFlag
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.StorageUn 
+ mport com.tw ter.ut l.logg ng.Logg ng
 
-object FlagsModule extends TwitterModule with Logging {
-  // Twitter
-  final val cluster = "cluster"
+object FlagsModule extends Tw terModule w h Logg ng {
+  // Tw ter
+  f nal val cluster = "cluster"
 
-  // Required
-  final val kafkaSourceCluster = ClientConfigs.kafkaBootstrapServerConfig
-  final val kafkaDestCluster = ClientConfigs.kafkaBootstrapServerRemoteDestConfig
-  final val kafkaSourceTopic = "kafka.source.topic"
-  final val kafkaSinkTopics = "kafka.sink.topics"
-  final val kafkaGroupId = ClientConfigs.kafkaGroupIdConfig
-  final val kafkaProducerClientId = ClientConfigs.producerClientIdConfig
-  final val kafkaMaxPendingRequests = ClientConfigs.kafkaMaxPendingRequestsConfig
-  final val kafkaWorkerThreads = ClientConfigs.kafkaWorkerThreadsConfig
+  // Requ red
+  f nal val kafkaS ceCluster = Cl entConf gs.kafkaBootstrapServerConf g
+  f nal val kafkaDestCluster = Cl entConf gs.kafkaBootstrapServerRemoteDestConf g
+  f nal val kafkaS ceTop c = "kafka.s ce.top c"
+  f nal val kafkaS nkTop cs = "kafka.s nk.top cs"
+  f nal val kafkaGroup d = Cl entConf gs.kafkaGroup dConf g
+  f nal val kafkaProducerCl ent d = Cl entConf gs.producerCl ent dConf g
+  f nal val kafkaMaxPend ngRequests = Cl entConf gs.kafkaMaxPend ngRequestsConf g
+  f nal val kafkaWorkerThreads = Cl entConf gs.kafkaWorkerThreadsConf g
 
-  // Optional
-  /// Authentication
-  final val enableTrustStore = ClientConfigs.enableTrustStore
-  final val trustStoreLocation = ClientConfigs.trustStoreLocationConfig
+  // Opt onal
+  /// Aut nt cat on
+  f nal val enableTrustStore = Cl entConf gs.enableTrustStore
+  f nal val trustStoreLocat on = Cl entConf gs.trustStoreLocat onConf g
 
-  /// Consumer
-  final val commitInterval = ClientConfigs.kafkaCommitIntervalConfig
-  final val maxPollRecords = ClientConfigs.consumerMaxPollRecordsConfig
-  final val maxPollInterval = ClientConfigs.consumerMaxPollIntervalConfig
-  final val sessionTimeout = ClientConfigs.consumerSessionTimeoutConfig
-  final val fetchMax = ClientConfigs.consumerFetchMaxConfig
-  final val fetchMin = ClientConfigs.consumerFetchMinConfig
-  final val receiveBuffer = ClientConfigs.consumerReceiveBufferSizeConfig
+  /// Consu r
+  f nal val comm  nterval = Cl entConf gs.kafkaComm  ntervalConf g
+  f nal val maxPollRecords = Cl entConf gs.consu rMaxPollRecordsConf g
+  f nal val maxPoll nterval = Cl entConf gs.consu rMaxPoll ntervalConf g
+  f nal val sess onT  out = Cl entConf gs.consu rSess onT  outConf g
+  f nal val fetchMax = Cl entConf gs.consu rFetchMaxConf g
+  f nal val fetchM n = Cl entConf gs.consu rFetchM nConf g
+  f nal val rece veBuffer = Cl entConf gs.consu rRece veBufferS zeConf g
   /// Producer
-  final val batchSize = ClientConfigs.producerBatchSizeConfig
-  final val linger = ClientConfigs.producerLingerConfig
-  final val bufferMem = ClientConfigs.producerBufferMemConfig
-  final val compressionType = ClientConfigs.compressionConfig
-  final val retries = ClientConfigs.retriesConfig
-  final val retryBackoff = ClientConfigs.retryBackoffConfig
-  final val requestTimeout = ClientConfigs.producerRequestTimeoutConfig
+  f nal val batchS ze = Cl entConf gs.producerBatchS zeConf g
+  f nal val l nger = Cl entConf gs.producerL ngerConf g
+  f nal val buffer m = Cl entConf gs.producerBuffer mConf g
+  f nal val compress onType = Cl entConf gs.compress onConf g
+  f nal val retr es = Cl entConf gs.retr esConf g
+  f nal val retryBackoff = Cl entConf gs.retryBackoffConf g
+  f nal val requestT  out = Cl entConf gs.producerRequestT  outConf g
 
-  // Twitter
-  flag[String](
-    name = cluster,
-    help = "The zone (or DC) that this service runs, used to potentially filter events"
-  )
-
-  // Required
-  flag[String](
-    name = kafkaSourceCluster,
-    help = ClientConfigs.kafkaBootstrapServerHelp
-  )
-  flag[String](
-    name = kafkaDestCluster,
-    help = ClientConfigs.kafkaBootstrapServerRemoteDestHelp
-  )
-  flag[String](
-    name = kafkaSourceTopic,
-    help = "Name of the source Kafka topic"
-  )
-  flag[Seq[String]](
-    name = kafkaSinkTopics,
-    help = "A list of sink Kafka topics, separated by comma (,)"
-  )
-  flag[String](
-    name = kafkaGroupId,
-    help = ClientConfigs.kafkaGroupIdHelp
-  )
-  flag[String](
-    name = kafkaProducerClientId,
-    help = ClientConfigs.producerClientIdHelp
-  )
-  flag[Int](
-    name = kafkaMaxPendingRequests,
-    help = ClientConfigs.kafkaMaxPendingRequestsHelp
-  )
-  flag[Int](
-    name = kafkaWorkerThreads,
-    help = ClientConfigs.kafkaWorkerThreadsHelp
+  // Tw ter
+  flag[Str ng](
+    na  = cluster,
+     lp = "T  zone (or DC) that t  serv ce runs, used to potent ally f lter events"
   )
 
-  // Optional
-  /// Authentication
+  // Requ red
+  flag[Str ng](
+    na  = kafkaS ceCluster,
+     lp = Cl entConf gs.kafkaBootstrapServer lp
+  )
+  flag[Str ng](
+    na  = kafkaDestCluster,
+     lp = Cl entConf gs.kafkaBootstrapServerRemoteDest lp
+  )
+  flag[Str ng](
+    na  = kafkaS ceTop c,
+     lp = "Na  of t  s ce Kafka top c"
+  )
+  flag[Seq[Str ng]](
+    na  = kafkaS nkTop cs,
+     lp = "A l st of s nk Kafka top cs, separated by comma (,)"
+  )
+  flag[Str ng](
+    na  = kafkaGroup d,
+     lp = Cl entConf gs.kafkaGroup d lp
+  )
+  flag[Str ng](
+    na  = kafkaProducerCl ent d,
+     lp = Cl entConf gs.producerCl ent d lp
+  )
+  flag[ nt](
+    na  = kafkaMaxPend ngRequests,
+     lp = Cl entConf gs.kafkaMaxPend ngRequests lp
+  )
+  flag[ nt](
+    na  = kafkaWorkerThreads,
+     lp = Cl entConf gs.kafkaWorkerThreads lp
+  )
+
+  // Opt onal
+  /// Aut nt cat on
   flag[Boolean](
-    name = enableTrustStore,
-    default = ClientConfigs.enableTrustStoreDefault,
-    help = ClientConfigs.enableTrustStoreHelp
+    na  = enableTrustStore,
+    default = Cl entConf gs.enableTrustStoreDefault,
+     lp = Cl entConf gs.enableTrustStore lp
   )
-  flag[String](
-    name = trustStoreLocation,
-    default = ClientConfigs.trustStoreLocationDefault,
-    help = ClientConfigs.trustStoreLocationHelp
+  flag[Str ng](
+    na  = trustStoreLocat on,
+    default = Cl entConf gs.trustStoreLocat onDefault,
+     lp = Cl entConf gs.trustStoreLocat on lp
   )
 
-  /// Consumer
-  flag[Duration](
-    name = commitInterval,
-    default = ClientConfigs.kafkaCommitIntervalDefault,
-    help = ClientConfigs.kafkaCommitIntervalHelp
+  /// Consu r
+  flag[Durat on](
+    na  = comm  nterval,
+    default = Cl entConf gs.kafkaComm  ntervalDefault,
+     lp = Cl entConf gs.kafkaComm  nterval lp
   )
-  flag[Int](
-    name = maxPollRecords,
-    default = ClientConfigs.consumerMaxPollRecordsDefault,
-    help = ClientConfigs.consumerMaxPollRecordsHelp
+  flag[ nt](
+    na  = maxPollRecords,
+    default = Cl entConf gs.consu rMaxPollRecordsDefault,
+     lp = Cl entConf gs.consu rMaxPollRecords lp
   )
-  flag[Duration](
-    name = maxPollInterval,
-    default = ClientConfigs.consumerMaxPollIntervalDefault,
-    help = ClientConfigs.consumerMaxPollIntervalHelp
+  flag[Durat on](
+    na  = maxPoll nterval,
+    default = Cl entConf gs.consu rMaxPoll ntervalDefault,
+     lp = Cl entConf gs.consu rMaxPoll nterval lp
   )
-  flag[Duration](
-    name = sessionTimeout,
-    default = ClientConfigs.consumerSessionTimeoutDefault,
-    help = ClientConfigs.consumerSessionTimeoutHelp
+  flag[Durat on](
+    na  = sess onT  out,
+    default = Cl entConf gs.consu rSess onT  outDefault,
+     lp = Cl entConf gs.consu rSess onT  out lp
   )
-  flag[StorageUnit](
-    name = fetchMax,
-    default = ClientConfigs.consumerFetchMaxDefault,
-    help = ClientConfigs.consumerFetchMaxHelp
+  flag[StorageUn ](
+    na  = fetchMax,
+    default = Cl entConf gs.consu rFetchMaxDefault,
+     lp = Cl entConf gs.consu rFetchMax lp
   )
-  flag[StorageUnit](
-    name = fetchMin,
-    default = ClientConfigs.consumerFetchMinDefault,
-    help = ClientConfigs.consumerFetchMinHelp
+  flag[StorageUn ](
+    na  = fetchM n,
+    default = Cl entConf gs.consu rFetchM nDefault,
+     lp = Cl entConf gs.consu rFetchM n lp
   )
-  flag[StorageUnit](
-    name = receiveBuffer,
-    default = ClientConfigs.consumerReceiveBufferSizeDefault,
-    help = ClientConfigs.consumerReceiveBufferSizeHelp
+  flag[StorageUn ](
+    na  = rece veBuffer,
+    default = Cl entConf gs.consu rRece veBufferS zeDefault,
+     lp = Cl entConf gs.consu rRece veBufferS ze lp
   )
 
   /// Producer
-  flag[StorageUnit](
-    name = batchSize,
-    default = ClientConfigs.producerBatchSizeDefault,
-    help = ClientConfigs.producerBatchSizeHelp
+  flag[StorageUn ](
+    na  = batchS ze,
+    default = Cl entConf gs.producerBatchS zeDefault,
+     lp = Cl entConf gs.producerBatchS ze lp
   )
-  flag[Duration](
-    name = linger,
-    default = ClientConfigs.producerLingerDefault,
-    help = ClientConfigs.producerLingerHelp
+  flag[Durat on](
+    na  = l nger,
+    default = Cl entConf gs.producerL ngerDefault,
+     lp = Cl entConf gs.producerL nger lp
   )
-  flag[StorageUnit](
-    name = bufferMem,
-    default = ClientConfigs.producerBufferMemDefault,
-    help = ClientConfigs.producerBufferMemHelp
+  flag[StorageUn ](
+    na  = buffer m,
+    default = Cl entConf gs.producerBuffer mDefault,
+     lp = Cl entConf gs.producerBuffer m lp
   )
-  flag[CompressionTypeFlag](
-    name = compressionType,
-    default = ClientConfigs.compressionDefault,
-    help = ClientConfigs.compressionHelp
+  flag[Compress onTypeFlag](
+    na  = compress onType,
+    default = Cl entConf gs.compress onDefault,
+     lp = Cl entConf gs.compress on lp
   )
-  flag[Int](
-    name = retries,
-    default = ClientConfigs.retriesDefault,
-    help = ClientConfigs.retriesHelp
+  flag[ nt](
+    na  = retr es,
+    default = Cl entConf gs.retr esDefault,
+     lp = Cl entConf gs.retr es lp
   )
-  flag[Duration](
-    name = retryBackoff,
-    default = ClientConfigs.retryBackoffDefault,
-    help = ClientConfigs.retryBackoffHelp
+  flag[Durat on](
+    na  = retryBackoff,
+    default = Cl entConf gs.retryBackoffDefault,
+     lp = Cl entConf gs.retryBackoff lp
   )
-  flag[Duration](
-    name = requestTimeout,
-    default = ClientConfigs.producerRequestTimeoutDefault,
-    help = ClientConfigs.producerRequestTimeoutHelp
+  flag[Durat on](
+    na  = requestT  out,
+    default = Cl entConf gs.producerRequestT  outDefault,
+     lp = Cl entConf gs.producerRequestT  out lp
   )
 }

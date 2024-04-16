@@ -1,28 +1,28 @@
-package com.twitter.simclusters_v2.scalding.topic_recommendations.model_based_topic_recommendations
+package com.tw ter.s mclusters_v2.scald ng.top c_recom ndat ons.model_based_top c_recom ndat ons
 
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.ml.api.{DataRecord, FeatureContext, IRecordOneToOneAdapter}
+ mport com.tw ter.ml.ap .ut l.FDsl._
+ mport com.tw ter.ml.ap .{DataRecord, FeatureContext,  RecordOneToOneAdapter}
 
-case class UserTopicTrainingSample(
-  userId: Long,
-  followedTopics: Set[Long],
-  notInterestedTopics: Set[Long],
-  userCountry: String,
-  userLanguage: String,
-  targetTopicId: Int,
-  userInterestedInSimClusters: Map[Int, Double],
-  followedTopicsSimClusters: Map[Int, Double],
-  notInterestedTopicsSimClusters: Map[Int, Double])
+case class UserTop cTra n ngSample(
+  user d: Long,
+  follo dTop cs: Set[Long],
+  not nterestedTop cs: Set[Long],
+  userCountry: Str ng,
+  userLanguage: Str ng,
+  targetTop c d:  nt,
+  user nterested nS mClusters: Map[ nt, Double],
+  follo dTop csS mClusters: Map[ nt, Double],
+  not nterestedTop csS mClusters: Map[ nt, Double])
 
-class UserTopicDataRecordAdapter extends IRecordOneToOneAdapter[UserTopicTrainingSample] {
-  import UserFeatures._
+class UserTop cDataRecordAdapter extends  RecordOneToOneAdapter[UserTop cTra n ngSample] {
+   mport UserFeatures._
 
   /**
-   * Get its feature context used to annotate the data.
+   * Get  s feature context used to annotate t  data.
    *
    * @return feature context
    */
-  override def getFeatureContext: FeatureContext = UserFeatures.FeatureContext
+  overr de def getFeatureContext: FeatureContext = UserFeatures.FeatureContext
 
   /**
    * Adapt record of type T to DataRecord.
@@ -31,34 +31,34 @@ class UserTopicDataRecordAdapter extends IRecordOneToOneAdapter[UserTopicTrainin
    *
    * @return a DataRecord
    *
-   * @throws com.twitter.ml.api.InvalidFeatureException
+   * @throws com.tw ter.ml.ap . nval dFeatureExcept on
    */
-  override def adaptToDataRecord(record: UserTopicTrainingSample): DataRecord = {
+  overr de def adaptToDataRecord(record: UserTop cTra n ngSample): DataRecord = {
     val dr = new DataRecord()
 
-    dr.setFeatureValue(UserIdFeature, record.userId)
+    dr.setFeatureValue(User dFeature, record.user d)
     dr.setFeatureValue(
-      UserSimClusterFeatures,
-      record.userInterestedInSimClusters.map {
-        case (id, score) => id.toString -> score
+      UserS mClusterFeatures,
+      record.user nterested nS mClusters.map {
+        case ( d, score) =>  d.toStr ng -> score
       })
-    dr.setFeatureValue(FollowedTopicIdFeatures, record.followedTopics.map(_.toString))
-    dr.setFeatureValue(NotInterestedTopicIdFeatures, record.notInterestedTopics.map(_.toString))
+    dr.setFeatureValue(Follo dTop c dFeatures, record.follo dTop cs.map(_.toStr ng))
+    dr.setFeatureValue(Not nterestedTop c dFeatures, record.not nterestedTop cs.map(_.toStr ng))
     dr.setFeatureValue(UserCountryFeature, record.userCountry)
     dr.setFeatureValue(UserLanguageFeature, record.userLanguage)
 
     dr.setFeatureValue(
-      FollowedTopicSimClusterAvgFeatures,
-      record.followedTopicsSimClusters.map {
-        case (id, score) => id.toString -> score
+      Follo dTop cS mClusterAvgFeatures,
+      record.follo dTop csS mClusters.map {
+        case ( d, score) =>  d.toStr ng -> score
       })
 
     dr.setFeatureValue(
-      NotInterestedTopicSimClusterAvgFeatures,
-      record.notInterestedTopicsSimClusters.map {
-        case (id, score) => id.toString -> score
+      Not nterestedTop cS mClusterAvgFeatures,
+      record.not nterestedTop csS mClusters.map {
+        case ( d, score) =>  d.toStr ng -> score
       })
-    dr.setFeatureValue(TargetTopicIdFeatures, record.targetTopicId.toLong)
+    dr.setFeatureValue(TargetTop c dFeatures, record.targetTop c d.toLong)
     dr.getRecord
   }
 }

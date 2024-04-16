@@ -1,46 +1,46 @@
-package com.twitter.home_mixer.product.scored_tweets.response_transformer
+package com.tw ter.ho _m xer.product.scored_t ets.response_transfor r
 
-import com.twitter.explore_ranker.{thriftscala => ert}
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.CandidateSourceIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.FromInNetworkSourceFeature
-import com.twitter.home_mixer.model.HomeFeatures.HasVideoFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRandomTweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.StreamToKafkaFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.timelineservice.suggests.logging.candidate_tweet_source_id.{thriftscala => cts}
-import com.twitter.timelineservice.suggests.{thriftscala => st}
+ mport com.tw ter.explore_ranker.{thr ftscala => ert}
+ mport com.tw ter.ho _m xer.model.Ho Features.Author dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Cand dateS ce dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.From nNetworkS ceFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.HasV deoFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. sRandomT etFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.StreamToKafkaFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.SuggestTypeFeature
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Transfor r dent f er
+ mport com.tw ter.t  l neserv ce.suggests.logg ng.cand date_t et_s ce_ d.{thr ftscala => cts}
+ mport com.tw ter.t  l neserv ce.suggests.{thr ftscala => st}
 
-object ScoredTweetsPopularVideosResponseFeatureTransformer
-    extends CandidateFeatureTransformer[ert.ExploreTweetRecommendation] {
+object ScoredT etsPopularV deosResponseFeatureTransfor r
+    extends Cand dateFeatureTransfor r[ert.ExploreT etRecom ndat on] {
 
-  override val identifier: TransformerIdentifier =
-    TransformerIdentifier("ScoredTweetsPopularVideosResponse")
+  overr de val  dent f er: Transfor r dent f er =
+    Transfor r dent f er("ScoredT etsPopularV deosResponse")
 
-  override val features: Set[Feature[_, _]] = Set(
-    AuthorIdFeature,
-    CandidateSourceIdFeature,
-    FromInNetworkSourceFeature,
-    HasVideoFeature,
-    IsRandomTweetFeature,
+  overr de val features: Set[Feature[_, _]] = Set(
+    Author dFeature,
+    Cand dateS ce dFeature,
+    From nNetworkS ceFeature,
+    HasV deoFeature,
+     sRandomT etFeature,
     StreamToKafkaFeature,
     SuggestTypeFeature
   )
 
-  override def transform(candidate: ert.ExploreTweetRecommendation): FeatureMap = {
-    FeatureMapBuilder()
-      .add(AuthorIdFeature, candidate.authorId)
-      .add(CandidateSourceIdFeature, Some(cts.CandidateTweetSourceId.MediaTweet))
-      .add(FromInNetworkSourceFeature, false)
-      .add(HasVideoFeature, candidate.mediaType.contains(ert.MediaType.Video))
-      .add(IsRandomTweetFeature, false)
+  overr de def transform(cand date: ert.ExploreT etRecom ndat on): FeatureMap = {
+    FeatureMapBu lder()
+      .add(Author dFeature, cand date.author d)
+      .add(Cand dateS ce dFeature, So (cts.Cand dateT etS ce d. d aT et))
+      .add(From nNetworkS ceFeature, false)
+      .add(HasV deoFeature, cand date. d aType.conta ns(ert. d aType.V deo))
+      .add( sRandomT etFeature, false)
       .add(StreamToKafkaFeature, true)
-      .add(SuggestTypeFeature, Some(st.SuggestType.MediaTweet))
-      .build()
+      .add(SuggestTypeFeature, So (st.SuggestType. d aT et))
+      .bu ld()
   }
 }

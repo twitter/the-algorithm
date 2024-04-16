@@ -1,89 +1,89 @@
-package com.twitter.timelineranker.repository
+package com.tw ter.t  l neranker.repos ory
 
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.servo.util.Gate
-import com.twitter.timelineranker.config.RuntimeConfiguration
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.visibility.SgsFollowGraphDataFields
-import com.twitter.timelineranker.visibility.ScopedSgsFollowGraphDataProviderFactory
-import com.twitter.timelines.clients.relevance_search.ScopedSearchClientFactory
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.clients.user_tweet_entity_graph.UserTweetEntityGraphClient
-import com.twitter.timelines.util.stats.RequestScope
-import com.twitter.util.Duration
-import com.twitter.timelineranker.config.ClientWrapperFactories
-import com.twitter.timelineranker.config.UnderlyingClientConfiguration
-import com.twitter.timelineranker.visibility.FollowGraphDataProvider
-import com.twitter.timelines.clients.gizmoduck.GizmoduckClient
-import com.twitter.timelines.clients.manhattan.ManhattanUserMetadataClient
-import com.twitter.timelines.clients.tweetypie.TweetyPieClient
+ mport com.tw ter.search.earlyb rd.thr ftscala.Earlyb rdServ ce
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.t  l neranker.conf g.Runt  Conf gurat on
+ mport com.tw ter.t  l neranker.model.RecapQuery
+ mport com.tw ter.t  l neranker.model.RecapQuery.DependencyProv der
+ mport com.tw ter.t  l neranker.v s b l y.SgsFollowGraphDataF elds
+ mport com.tw ter.t  l neranker.v s b l y.ScopedSgsFollowGraphDataProv derFactory
+ mport com.tw ter.t  l nes.cl ents.relevance_search.ScopedSearchCl entFactory
+ mport com.tw ter.t  l nes.cl ents.relevance_search.SearchCl ent
+ mport com.tw ter.t  l nes.cl ents.user_t et_ent y_graph.UserT etEnt yGraphCl ent
+ mport com.tw ter.t  l nes.ut l.stats.RequestScope
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.t  l neranker.conf g.Cl entWrapperFactor es
+ mport com.tw ter.t  l neranker.conf g.Underly ngCl entConf gurat on
+ mport com.tw ter.t  l neranker.v s b l y.FollowGraphDataProv der
+ mport com.tw ter.t  l nes.cl ents.g zmoduck.G zmoduckCl ent
+ mport com.tw ter.t  l nes.cl ents.manhattan.ManhattanUser tadataCl ent
+ mport com.tw ter.t  l nes.cl ents.t etyp e.T etyP eCl ent
 
-abstract class CandidatesRepositoryBuilder(config: RuntimeConfiguration) extends RepositoryBuilder {
+abstract class Cand datesRepos oryBu lder(conf g: Runt  Conf gurat on) extends Repos oryBu lder {
 
-  def earlybirdClient(scope: String): EarlybirdService.MethodPerEndpoint
-  def searchProcessingTimeout: Duration
-  def clientSubId: String
+  def earlyb rdCl ent(scope: Str ng): Earlyb rdServ ce. thodPerEndpo nt
+  def searchProcess ngT  out: Durat on
+  def cl entSub d: Str ng
   def requestScope: RequestScope
-  def followGraphDataFieldsToFetch: SgsFollowGraphDataFields.ValueSet
+  def followGraphDataF eldsToFetch: SgsFollowGraphDataF elds.ValueSet
 
-  protected lazy val clientConfig: UnderlyingClientConfiguration = config.underlyingClients
+  protected lazy val cl entConf g: Underly ngCl entConf gurat on = conf g.underly ngCl ents
 
-  protected lazy val clientFactories: ClientWrapperFactories = config.clientWrapperFactories
-  protected lazy val gizmoduckClient: GizmoduckClient =
-    clientFactories.gizmoduckClientFactory.scope(requestScope)
-  protected lazy val searchClient: SearchClient = newSearchClient(clientId = clientSubId)
-  protected lazy val tweetyPieHighQoSClient: TweetyPieClient =
-    clientFactories.tweetyPieHighQoSClientFactory.scope(requestScope)
-  protected lazy val tweetyPieLowQoSClient: TweetyPieClient =
-    clientFactories.tweetyPieLowQoSClientFactory.scope(requestScope)
-  protected lazy val followGraphDataProvider: FollowGraphDataProvider =
-    new ScopedSgsFollowGraphDataProviderFactory(
-      clientFactories.socialGraphClientFactory,
-      clientFactories.visibilityProfileHydratorFactory,
-      followGraphDataFieldsToFetch,
-      config.statsReceiver
+  protected lazy val cl entFactor es: Cl entWrapperFactor es = conf g.cl entWrapperFactor es
+  protected lazy val g zmoduckCl ent: G zmoduckCl ent =
+    cl entFactor es.g zmoduckCl entFactory.scope(requestScope)
+  protected lazy val searchCl ent: SearchCl ent = newSearchCl ent(cl ent d = cl entSub d)
+  protected lazy val t etyP eH ghQoSCl ent: T etyP eCl ent =
+    cl entFactor es.t etyP eH ghQoSCl entFactory.scope(requestScope)
+  protected lazy val t etyP eLowQoSCl ent: T etyP eCl ent =
+    cl entFactor es.t etyP eLowQoSCl entFactory.scope(requestScope)
+  protected lazy val followGraphDataProv der: FollowGraphDataProv der =
+    new ScopedSgsFollowGraphDataProv derFactory(
+      cl entFactor es.soc alGraphCl entFactory,
+      cl entFactor es.v s b l yProf leHydratorFactory,
+      followGraphDataF eldsToFetch,
+      conf g.statsRece ver
     ).scope(requestScope)
-  protected lazy val userMetadataClient: ManhattanUserMetadataClient =
-    clientFactories.userMetadataClientFactory.scope(requestScope)
-  protected lazy val userTweetEntityGraphClient: UserTweetEntityGraphClient =
-    new UserTweetEntityGraphClient(
-      config.underlyingClients.userTweetEntityGraphClient,
-      config.statsReceiver
+  protected lazy val user tadataCl ent: ManhattanUser tadataCl ent =
+    cl entFactor es.user tadataCl entFactory.scope(requestScope)
+  protected lazy val userT etEnt yGraphCl ent: UserT etEnt yGraphCl ent =
+    new UserT etEnt yGraphCl ent(
+      conf g.underly ngCl ents.userT etEnt yGraphCl ent,
+      conf g.statsRece ver
     )
 
-  protected lazy val perRequestSearchClientIdProvider: DependencyProvider[Option[String]] =
-    DependencyProvider { recapQuery: RecapQuery =>
-      recapQuery.searchClientSubId.map { subId =>
-        clientConfig.timelineRankerClientId(Some(s"$subId.$clientSubId")).name
+  protected lazy val perRequestSearchCl ent dProv der: DependencyProv der[Opt on[Str ng]] =
+    DependencyProv der { recapQuery: RecapQuery =>
+      recapQuery.searchCl entSub d.map { sub d =>
+        cl entConf g.t  l neRankerCl ent d(So (s"$sub d.$cl entSub d")).na 
       }
     }
 
-  protected lazy val perRequestSourceSearchClientIdProvider: DependencyProvider[Option[String]] =
-    DependencyProvider { recapQuery: RecapQuery =>
-      recapQuery.searchClientSubId.map { subId =>
-        clientConfig.timelineRankerClientId(Some(s"$subId.${clientSubId}_source_tweets")).name
+  protected lazy val perRequestS ceSearchCl ent dProv der: DependencyProv der[Opt on[Str ng]] =
+    DependencyProv der { recapQuery: RecapQuery =>
+      recapQuery.searchCl entSub d.map { sub d =>
+        cl entConf g.t  l neRankerCl ent d(So (s"$sub d.${cl entSub d}_s ce_t ets")).na 
       }
     }
 
-  protected def newSearchClient(clientId: String): SearchClient =
-    new ScopedSearchClientFactory(
-      searchServiceClient = earlybirdClient(clientId),
-      clientId = clientConfig.timelineRankerClientId(Some(clientId)).name,
-      processingTimeout = Some(searchProcessingTimeout),
-      collectConversationIdGate = Gate.True,
-      statsReceiver = config.statsReceiver
+  protected def newSearchCl ent(cl ent d: Str ng): SearchCl ent =
+    new ScopedSearchCl entFactory(
+      searchServ ceCl ent = earlyb rdCl ent(cl ent d),
+      cl ent d = cl entConf g.t  l neRankerCl ent d(So (cl ent d)).na ,
+      process ngT  out = So (searchProcess ngT  out),
+      collectConversat on dGate = Gate.True,
+      statsRece ver = conf g.statsRece ver
     ).scope(requestScope)
 
-  protected def newSearchClient(
-    earlybirdReplacementClient: String => EarlybirdService.MethodPerEndpoint,
-    clientId: String
-  ): SearchClient =
-    new ScopedSearchClientFactory(
-      searchServiceClient = earlybirdReplacementClient(clientId),
-      clientId = clientConfig.timelineRankerClientId(Some(clientId)).name,
-      processingTimeout = Some(searchProcessingTimeout),
-      collectConversationIdGate = Gate.True,
-      statsReceiver = config.statsReceiver
+  protected def newSearchCl ent(
+    earlyb rdReplace ntCl ent: Str ng => Earlyb rdServ ce. thodPerEndpo nt,
+    cl ent d: Str ng
+  ): SearchCl ent =
+    new ScopedSearchCl entFactory(
+      searchServ ceCl ent = earlyb rdReplace ntCl ent(cl ent d),
+      cl ent d = cl entConf g.t  l neRankerCl ent d(So (cl ent d)).na ,
+      process ngT  out = So (searchProcess ngT  out),
+      collectConversat on dGate = Gate.True,
+      statsRece ver = conf g.statsRece ver
     ).scope(requestScope)
 }

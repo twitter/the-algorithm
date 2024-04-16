@@ -1,69 +1,69 @@
-package com.twitter.recosinjector.filters
+package com.tw ter.recos njector.f lters
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.{LabelValue, User}
-import com.twitter.recosinjector.clients.Gizmoduck
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.g zmoduck.thr ftscala.{LabelValue, User}
+ mport com.tw ter.recos njector.cl ents.G zmoduck
+ mport com.tw ter.ut l.Future
 
-class UserFilter(
-  gizmoduck: Gizmoduck
+class UserF lter(
+  g zmoduck: G zmoduck
 )(
-  implicit statsReceiver: StatsReceiver) {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val requests = stats.counter("requests")
-  private val filtered = stats.counter("filtered")
+   mpl c  statsRece ver: StatsRece ver) {
+  pr vate val stats = statsRece ver.scope(t .getClass.getS mpleNa )
+  pr vate val requests = stats.counter("requests")
+  pr vate val f ltered = stats.counter("f ltered")
 
-  private def isUnsafe(user: User): Boolean =
-    user.safety.exists { s =>
-      s.deactivated || s.suspended || s.restricted || s.nsfwUser || s.nsfwAdmin || s.isProtected
+  pr vate def  sUnsafe(user: User): Boolean =
+    user.safety.ex sts { s =>
+      s.deact vated || s.suspended || s.restr cted || s.nsfwUser || s.nsfwAdm n || s. sProtected
     }
 
-  private def hasNsfwHighPrecisionLabel(user: User): Boolean =
-    user.labels.exists {
-      _.labels.exists(_.labelValue == LabelValue.NsfwHighPrecision)
+  pr vate def hasNsfwH ghPrec s onLabel(user: User): Boolean =
+    user.labels.ex sts {
+      _.labels.ex sts(_.labelValue == LabelValue.NsfwH ghPrec s on)
     }
 
   /**
-   * NOTE: This will by-pass Gizmoduck's safety level, and might allow invalid users to pass filter.
-   * Consider using filterByUserId instead.
-   * Return true if the user is valid, otherwise return false.
-   * It will first attempt to use the user object provided by the caller, and will call Gizmoduck
-   * to back fill if the caller does not provide it. This helps reduce Gizmoduck traffic.
+   * NOTE: T  w ll by-pass G zmoduck's safety level, and m ght allow  nval d users to pass f lter.
+   * Cons der us ng f lterByUser d  nstead.
+   * Return true  f t  user  s val d, ot rw se return false.
+   *   w ll f rst attempt to use t  user object prov ded by t  caller, and w ll call G zmoduck
+   * to back f ll  f t  caller does not prov de  . T   lps reduce G zmoduck traff c.
    */
-  def filterByUser(
-    userId: Long,
-    userOpt: Option[User] = None
+  def f lterByUser(
+    user d: Long,
+    userOpt: Opt on[User] = None
   ): Future[Boolean] = {
-    requests.incr()
+    requests. ncr()
     val userFut = userOpt match {
-      case Some(user) => Future(Some(user))
-      case _ => gizmoduck.getUser(userId)
+      case So (user) => Future(So (user))
+      case _ => g zmoduck.getUser(user d)
     }
 
-    userFut.map(_.exists { user =>
-      val isValidUser = !isUnsafe(user) && !hasNsfwHighPrecisionLabel(user)
-      if (!isValidUser) filtered.incr()
-      isValidUser
+    userFut.map(_.ex sts { user =>
+      val  sVal dUser = ! sUnsafe(user) && !hasNsfwH ghPrec s onLabel(user)
+       f (! sVal dUser) f ltered. ncr()
+       sVal dUser
     })
   }
 
   /**
-   * Given a userId, return true if the user is valid. This id done in 2 steps:
-   * 1. Applying Gizmoduck's safety level while querying for the user from Gizmoduck
-   * 2. If a user passes Gizmoduck's safety level, check its specific user status
+   * G ven a user d, return true  f t  user  s val d. T   d done  n 2 steps:
+   * 1. Apply ng G zmoduck's safety level wh le query ng for t  user from G zmoduck
+   * 2.  f a user passes G zmoduck's safety level, c ck  s spec f c user status
    */
-  def filterByUserId(userId: Long): Future[Boolean] = {
-    requests.incr()
-    gizmoduck
-      .getUser(userId)
+  def f lterByUser d(user d: Long): Future[Boolean] = {
+    requests. ncr()
+    g zmoduck
+      .getUser(user d)
       .map { userOpt =>
-        val isValidUser = userOpt.exists { user =>
-          !(isUnsafe(user) || hasNsfwHighPrecisionLabel(user))
+        val  sVal dUser = userOpt.ex sts { user =>
+          !( sUnsafe(user) || hasNsfwH ghPrec s onLabel(user))
         }
-        if (!isValidUser) {
-          filtered.incr()
+         f (! sVal dUser) {
+          f ltered. ncr()
         }
-        isValidUser
+         sVal dUser
       }
   }
 }

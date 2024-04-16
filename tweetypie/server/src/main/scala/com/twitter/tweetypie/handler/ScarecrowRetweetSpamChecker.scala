@@ -1,64 +1,64 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.finagle.tracing.Trace
-import com.twitter.service.gen.scarecrow.thriftscala.Retweet
-import com.twitter.service.gen.scarecrow.thriftscala.TieredAction
-import com.twitter.service.gen.scarecrow.thriftscala.TieredActionResult
-import com.twitter.spam.features.thriftscala.SafetyMetaData
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.TweetCreateFailure
-import com.twitter.tweetypie.repository.RetweetSpamCheckRepository
-import com.twitter.tweetypie.thriftscala.TweetCreateState
+ mport com.tw ter.f nagle.trac ng.Trace
+ mport com.tw ter.serv ce.gen.scarecrow.thr ftscala.Ret et
+ mport com.tw ter.serv ce.gen.scarecrow.thr ftscala.T eredAct on
+ mport com.tw ter.serv ce.gen.scarecrow.thr ftscala.T eredAct onResult
+ mport com.tw ter.spam.features.thr ftscala.Safety taData
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.core.T etCreateFa lure
+ mport com.tw ter.t etyp e.repos ory.Ret etSpamC ckRepos ory
+ mport com.tw ter.t etyp e.thr ftscala.T etCreateState
 
-case class RetweetSpamRequest(
-  retweetId: TweetId,
-  sourceUserId: UserId,
-  sourceTweetId: TweetId,
-  sourceTweetText: String,
-  sourceUserName: Option[String],
-  safetyMetaData: Option[SafetyMetaData])
+case class Ret etSpamRequest(
+  ret et d: T et d,
+  s ceUser d: User d,
+  s ceT et d: T et d,
+  s ceT etText: Str ng,
+  s ceUserNa : Opt on[Str ng],
+  safety taData: Opt on[Safety taData])
 
 /**
- * Use the Scarecrow service as the spam checker for retweets.
+ * Use t  Scarecrow serv ce as t  spam c cker for ret ets.
  */
-object ScarecrowRetweetSpamChecker {
+object ScarecrowRet etSpamC cker {
   val log: Logger = Logger(getClass)
 
-  def requestToScarecrowRetweet(req: RetweetSpamRequest): Retweet =
-    Retweet(
-      id = req.retweetId,
-      sourceUserId = req.sourceUserId,
-      text = req.sourceTweetText,
-      sourceTweetId = req.sourceTweetId,
-      safetyMetaData = req.safetyMetaData
+  def requestToScarecrowRet et(req: Ret etSpamRequest): Ret et =
+    Ret et(
+       d = req.ret et d,
+      s ceUser d = req.s ceUser d,
+      text = req.s ceT etText,
+      s ceT et d = req.s ceT et d,
+      safety taData = req.safety taData
     )
 
   def apply(
-    stats: StatsReceiver,
-    repo: RetweetSpamCheckRepository.Type
-  ): Spam.Checker[RetweetSpamRequest] = {
+    stats: StatsRece ver,
+    repo: Ret etSpamC ckRepos ory.Type
+  ): Spam.C cker[Ret etSpamRequest] = {
 
-    def handler(request: RetweetSpamRequest): Spam.Checker[TieredAction] =
+    def handler(request: Ret etSpamRequest): Spam.C cker[T eredAct on] =
       Spam.handleScarecrowResult(stats) {
-        case (TieredActionResult.NotSpam, _, _) => Spam.AllowFuture
-        case (TieredActionResult.SilentFail, _, _) => Spam.SilentFailFuture
-        case (TieredActionResult.UrlSpam, _, denyMessage) =>
-          Future.exception(TweetCreateFailure.State(TweetCreateState.UrlSpam, denyMessage))
-        case (TieredActionResult.Deny, _, denyMessage) =>
-          Future.exception(TweetCreateFailure.State(TweetCreateState.Spam, denyMessage))
-        case (TieredActionResult.DenyByIpiPolicy, _, denyMessage) =>
-          Future.exception(Spam.DisabledByIpiFailure(request.sourceUserName, denyMessage))
-        case (TieredActionResult.RateLimit, _, denyMessage) =>
-          Future.exception(
-            TweetCreateFailure.State(TweetCreateState.SafetyRateLimitExceeded, denyMessage))
-        case (TieredActionResult.Bounce, Some(b), _) =>
-          Future.exception(TweetCreateFailure.Bounced(b))
+        case (T eredAct onResult.NotSpam, _, _) => Spam.AllowFuture
+        case (T eredAct onResult.S lentFa l, _, _) => Spam.S lentFa lFuture
+        case (T eredAct onResult.UrlSpam, _, deny ssage) =>
+          Future.except on(T etCreateFa lure.State(T etCreateState.UrlSpam, deny ssage))
+        case (T eredAct onResult.Deny, _, deny ssage) =>
+          Future.except on(T etCreateFa lure.State(T etCreateState.Spam, deny ssage))
+        case (T eredAct onResult.DenyBy p Pol cy, _, deny ssage) =>
+          Future.except on(Spam.D sabledBy p Fa lure(request.s ceUserNa , deny ssage))
+        case (T eredAct onResult.RateL m , _, deny ssage) =>
+          Future.except on(
+            T etCreateFa lure.State(T etCreateState.SafetyRateL m Exceeded, deny ssage))
+        case (T eredAct onResult.Bounce, So (b), _) =>
+          Future.except on(T etCreateFa lure.Bounced(b))
       }
 
     req => {
-      Trace.record("com.twitter.tweetypie.ScarecrowRetweetSpamChecker.retweetId=" + req.retweetId)
-      Stitch.run(repo(requestToScarecrowRetweet(req))).flatMap(handler(req))
+      Trace.record("com.tw ter.t etyp e.ScarecrowRet etSpamC cker.ret et d=" + req.ret et d)
+      St ch.run(repo(requestToScarecrowRet et(req))).flatMap(handler(req))
     }
   }
 }

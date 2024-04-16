@@ -1,29 +1,29 @@
-package com.twitter.timelineranker.recap_author
+package com.tw ter.t  l neranker.recap_author
 
-import com.twitter.timelineranker.model.CandidateTweetsResult
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.util.Future
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.parameters.recap_author.RecapAuthorParams
+ mport com.tw ter.t  l neranker.model.Cand dateT etsResult
+ mport com.tw ter.t  l neranker.model.RecapQuery
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.t  l neranker.model.RecapQuery.DependencyProv der
+ mport com.tw ter.t  l neranker.para ters.recap_author.RecapAuthorParams
 
 /**
- * A repository of recap author results.
+ * A repos ory of recap author results.
  *
- * For now, it does not cache any results therefore forwards all calls to the underlying source.
+ * For now,   does not cac  any results t refore forwards all calls to t  underly ng s ce.
  */
-class RecapAuthorRepository(source: RecapAuthorSource, realtimeCGSource: RecapAuthorSource) {
-  private[this] val enableRealtimeCGProvider =
-    DependencyProvider.from(RecapAuthorParams.EnableEarlybirdRealtimeCgMigrationParam)
+class RecapAuthorRepos ory(s ce: RecapAuthorS ce, realt  CGS ce: RecapAuthorS ce) {
+  pr vate[t ] val enableRealt  CGProv der =
+    DependencyProv der.from(RecapAuthorParams.EnableEarlyb rdRealt  CgM grat onParam)
 
-  def get(query: RecapQuery): Future[CandidateTweetsResult] = {
-    if (enableRealtimeCGProvider(query)) {
-      realtimeCGSource.get(query)
+  def get(query: RecapQuery): Future[Cand dateT etsResult] = {
+     f (enableRealt  CGProv der(query)) {
+      realt  CGS ce.get(query)
     } else {
-      source.get(query)
+      s ce.get(query)
     }
   }
 
-  def get(queries: Seq[RecapQuery]): Future[Seq[CandidateTweetsResult]] = {
-    Future.collect(queries.map(query => get(query)))
+  def get(quer es: Seq[RecapQuery]): Future[Seq[Cand dateT etsResult]] = {
+    Future.collect(quer es.map(query => get(query)))
   }
 }

@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.pipeline.pipeline_failure
+package com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure
 
-/** Represents a way to classify a given [[Throwable]] to a [[PipelineFailure]] */
-case class PipelineFailureClassifier(
-  classifier: PartialFunction[Throwable, PipelineFailure])
-    extends PartialFunction[Throwable, PipelineFailure] {
-  override def isDefinedAt(throwable: Throwable): Boolean = classifier.isDefinedAt(throwable)
-  override def apply(throwable: Throwable): PipelineFailure = classifier.apply(throwable)
+/** Represents a way to class fy a g ven [[Throwable]] to a [[P pel neFa lure]] */
+case class P pel neFa lureClass f er(
+  class f er: Part alFunct on[Throwable, P pel neFa lure])
+    extends Part alFunct on[Throwable, P pel neFa lure] {
+  overr de def  sDef nedAt(throwable: Throwable): Boolean = class f er. sDef nedAt(throwable)
+  overr de def apply(throwable: Throwable): P pel neFa lure = class f er.apply(throwable)
 }
 
-private[core] object PipelineFailureClassifier {
-  val Empty: PipelineFailureClassifier = PipelineFailureClassifier(PartialFunction.empty)
+pr vate[core] object P pel neFa lureClass f er {
+  val Empty: P pel neFa lureClass f er = P pel neFa lureClass f er(Part alFunct on.empty)
 }

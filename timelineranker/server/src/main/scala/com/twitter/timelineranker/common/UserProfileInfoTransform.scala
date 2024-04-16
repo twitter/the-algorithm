@@ -1,29 +1,29 @@
-package com.twitter.timelineranker.common
+package com.tw ter.t  l neranker.common
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelines.clients.gizmoduck.GizmoduckClient
-import com.twitter.timelines.clients.gizmoduck.UserProfileInfo
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.util.Future
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t  l neranker.model.RecapQuery
+ mport com.tw ter.t  l nes.cl ents.g zmoduck.G zmoduckCl ent
+ mport com.tw ter.t  l nes.cl ents.g zmoduck.UserProf le nfo
+ mport com.tw ter.t  l nes.ut l.Fa lOpenHandler
+ mport com.tw ter.ut l.Future
 
-object UserProfileInfoTransform {
-  val EmptyUserProfileInfo: UserProfileInfo = UserProfileInfo(None, None, None, None)
-  val EmptyUserProfileInfoFuture: Future[UserProfileInfo] = Future.value(EmptyUserProfileInfo)
+object UserProf le nfoTransform {
+  val EmptyUserProf le nfo: UserProf le nfo = UserProf le nfo(None, None, None, None)
+  val EmptyUserProf le nfoFuture: Future[UserProf le nfo] = Future.value(EmptyUserProf le nfo)
 }
 
 /**
- * FutureArrow which fetches user profile info
- * It should be run in parallel with the main pipeline which fetches and hydrates CandidateTweets
+ * FutureArrow wh ch fetc s user prof le  nfo
+ *   should be run  n parallel w h t  ma n p pel ne wh ch fetc s and hydrates Cand dateT ets
  */
-class UserProfileInfoTransform(handler: FailOpenHandler, gizmoduckClient: GizmoduckClient)
-    extends FutureArrow[RecapQuery, UserProfileInfo] {
-  import UserProfileInfoTransform._
-  override def apply(request: RecapQuery): Future[UserProfileInfo] = {
+class UserProf le nfoTransform(handler: Fa lOpenHandler, g zmoduckCl ent: G zmoduckCl ent)
+    extends FutureArrow[RecapQuery, UserProf le nfo] {
+   mport UserProf le nfoTransform._
+  overr de def apply(request: RecapQuery): Future[UserProf le nfo] = {
     handler {
-      gizmoduckClient.getProfileInfo(request.userId).map { profileInfoOpt =>
-        profileInfoOpt.getOrElse(EmptyUserProfileInfo)
+      g zmoduckCl ent.getProf le nfo(request.user d).map { prof le nfoOpt =>
+        prof le nfoOpt.getOrElse(EmptyUserProf le nfo)
       }
-    } { _: Throwable => EmptyUserProfileInfoFuture }
+    } { _: Throwable => EmptyUserProf le nfoFuture }
   }
 }

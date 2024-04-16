@@ -1,80 +1,80 @@
-package com.twitter.recosinjector.edges
+package com.tw ter.recos njector.edges
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphjet.algorithms.RecommendationType
-import com.twitter.recosinjector.clients.CacheEntityEntry
-import com.twitter.recosinjector.clients.RecosHoseEntitiesCache
-import com.twitter.recosinjector.clients.UrlResolver
-import com.twitter.recosinjector.util.TweetDetails
-import com.twitter.util.Future
-import scala.collection.Map
-import scala.util.hashing.MurmurHash3
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.graphjet.algor hms.Recom ndat onType
+ mport com.tw ter.recos njector.cl ents.Cac Ent yEntry
+ mport com.tw ter.recos njector.cl ents.RecosHoseEnt  esCac 
+ mport com.tw ter.recos njector.cl ents.UrlResolver
+ mport com.tw ter.recos njector.ut l.T etDeta ls
+ mport com.tw ter.ut l.Future
+ mport scala.collect on.Map
+ mport scala.ut l.hash ng.MurmurHash3
 
-class UserTweetEntityEdgeBuilder(
-  cache: RecosHoseEntitiesCache,
+class UserT etEnt yEdgeBu lder(
+  cac : RecosHoseEnt  esCac ,
   urlResolver: UrlResolver
 )(
-  implicit val stats: StatsReceiver) {
+   mpl c  val stats: StatsRece ver) {
 
-  def getHashedEntities(entities: Seq[String]): Seq[Int] = {
-    entities.map(MurmurHash3.stringHash)
+  def getHas dEnt  es(ent  es: Seq[Str ng]): Seq[ nt] = {
+    ent  es.map(MurmurHash3.str ngHash)
   }
 
   /**
-   * Given the entities and their corresponding hashedIds, store the hashId->entity mapping into a
-   * cache.
-   * This is because UTEG edges only store the hashIds, and relies on the cache values to
-   * recover the actual entities. This allows us to store integer values instead of string in the
+   * G ven t  ent  es and t  r correspond ng has d ds, store t  hash d->ent y mapp ng  nto a
+   * cac .
+   * T   s because UTEG edges only store t  hash ds, and rel es on t  cac  values to
+   * recover t  actual ent  es. T  allows us to store  nteger values  nstead of str ng  n t 
    * edges to save space.
    */
-  private def storeEntitiesInCache(
-    urlEntities: Seq[String],
-    urlHashIds: Seq[Int]
-  ): Future[Unit] = {
-    val urlCacheEntries = urlHashIds.zip(urlEntities).map {
-      case (hashId, url) =>
-        CacheEntityEntry(RecosHoseEntitiesCache.UrlPrefix, hashId, url)
+  pr vate def storeEnt  es nCac (
+    urlEnt  es: Seq[Str ng],
+    urlHash ds: Seq[ nt]
+  ): Future[Un ] = {
+    val urlCac Entr es = urlHash ds.z p(urlEnt  es).map {
+      case (hash d, url) =>
+        Cac Ent yEntry(RecosHoseEnt  esCac .UrlPref x, hash d, url)
     }
-    cache.updateEntitiesCache(
-      newCacheEntries = urlCacheEntries,
-      stats = stats.scope("urlCache")
+    cac .updateEnt  esCac (
+      newCac Entr es = urlCac Entr es,
+      stats = stats.scope("urlCac ")
     )
   }
 
   /**
-   * Return an entity mapping from GraphJet recType -> hash(entity)
+   * Return an ent y mapp ng from GraphJet recType -> hash(ent y)
    */
-  private def getEntitiesMap(
-    urlHashIds: Seq[Int]
+  pr vate def getEnt  esMap(
+    urlHash ds: Seq[ nt]
   ) = {
-    val entitiesMap = Seq(
-      RecommendationType.URL.getValue.toByte -> urlHashIds
+    val ent  esMap = Seq(
+      Recom ndat onType.URL.getValue.toByte -> urlHash ds
     ).collect {
-      case (keys, ids) if ids.nonEmpty => keys -> ids
+      case (keys,  ds)  f  ds.nonEmpty => keys ->  ds
     }.toMap
-    if (entitiesMap.isEmpty) None else Some(entitiesMap)
+     f (ent  esMap. sEmpty) None else So (ent  esMap)
   }
 
-  def getEntitiesMapAndUpdateCache(
-    tweetId: Long,
-    tweetDetails: Option[TweetDetails]
-  ): Future[Option[Map[Byte, Seq[Int]]]] = {
+  def getEnt  esMapAndUpdateCac (
+    t et d: Long,
+    t etDeta ls: Opt on[T etDeta ls]
+  ): Future[Opt on[Map[Byte, Seq[ nt]]]] = {
     val resolvedUrlFut = urlResolver
       .getResolvedUrls(
-        urls = tweetDetails.flatMap(_.urls).getOrElse(Nil),
-        tweetId = tweetId
+        urls = t etDeta ls.flatMap(_.urls).getOrElse(N l),
+        t et d = t et d
       ).map(_.values.toSeq)
 
     resolvedUrlFut.map { resolvedUrls =>
-      val urlEntities = resolvedUrls
-      val urlHashIds = getHashedEntities(urlEntities)
+      val urlEnt  es = resolvedUrls
+      val urlHash ds = getHas dEnt  es(urlEnt  es)
 
-      // Async call to cache
-      storeEntitiesInCache(
-        urlEntities = urlEntities,
-        urlHashIds = urlHashIds
+      // Async call to cac 
+      storeEnt  es nCac (
+        urlEnt  es = urlEnt  es,
+        urlHash ds = urlHash ds
       )
-      getEntitiesMap(urlHashIds)
+      getEnt  esMap(urlHash ds)
     }
   }
 }

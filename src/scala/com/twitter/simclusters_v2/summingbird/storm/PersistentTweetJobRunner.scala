@@ -1,226 +1,226 @@
-package com.twitter.simclusters_v2.summingbird.storm
+package com.tw ter.s mclusters_v2.summ ngb rd.storm
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.hermit.store.common.ObservedCachedReadableStore
-import com.twitter.scalding.Args
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.summingbird.common.Monoids.PersistentSimClustersEmbeddingLongestL2NormMonoid
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.AltSetting
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.Environment
-import com.twitter.simclusters_v2.summingbird.common.ClientConfigs
-import com.twitter.simclusters_v2.summingbird.common.Implicits
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile
-import com.twitter.simclusters_v2.summingbird.stores.PersistentTweetEmbeddingStore.PersistentTweetEmbeddingId
-import com.twitter.simclusters_v2.summingbird.stores.PersistentTweetEmbeddingStore
-import com.twitter.simclusters_v2.summingbird.stores.TopKClustersForTweetKeyReadableStore
-import com.twitter.simclusters_v2.summingbird.stores.TweetKey
-import com.twitter.simclusters_v2.summingbird.stores.TweetStatusCountsStore
-import com.twitter.simclusters_v2.thriftscala.PersistentSimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
-import com.twitter.storehaus.FutureCollector
-import com.twitter.summingbird.online.option._
-import com.twitter.summingbird.option._
-import com.twitter.summingbird.storm.Storm
-import com.twitter.summingbird.Options
-import com.twitter.summingbird.TailProducer
-import com.twitter.summingbird_internal.runner.common.JobName
-import com.twitter.summingbird_internal.runner.common.SBRunConfig
-import com.twitter.summingbird_internal.runner.storm.GenericRunner
-import com.twitter.summingbird_internal.runner.storm.StormConfig
-import com.twitter.tormenta_internal.spout.eventbus.SubscriberId
-import com.twitter.tweetypie.thriftscala.StatusCounts
-import com.twitter.wtf.summingbird.sources.storm.TimelineEventSource
-import java.lang
-import java.util.{HashMap => JMap}
-import org.apache.heron.api.{Config => HeronConfig}
-import org.apache.storm.{Config => BTConfig}
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter. rm .store.common.ObservedCac dReadableStore
+ mport com.tw ter.scald ng.Args
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.Mono ds.Pers stentS mClustersEmbedd ngLongestL2NormMono d
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.S mClustersProf le.AltSett ng
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.S mClustersProf le.Env ron nt
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.Cl entConf gs
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common. mpl c s
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.S mClustersProf le
+ mport com.tw ter.s mclusters_v2.summ ngb rd.stores.Pers stentT etEmbedd ngStore.Pers stentT etEmbedd ng d
+ mport com.tw ter.s mclusters_v2.summ ngb rd.stores.Pers stentT etEmbedd ngStore
+ mport com.tw ter.s mclusters_v2.summ ngb rd.stores.TopKClustersForT etKeyReadableStore
+ mport com.tw ter.s mclusters_v2.summ ngb rd.stores.T etKey
+ mport com.tw ter.s mclusters_v2.summ ngb rd.stores.T etStatusCountsStore
+ mport com.tw ter.s mclusters_v2.thr ftscala.Pers stentS mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.thr ftscala.{S mClustersEmbedd ng => Thr ftS mClustersEmbedd ng}
+ mport com.tw ter.storehaus.FutureCollector
+ mport com.tw ter.summ ngb rd.onl ne.opt on._
+ mport com.tw ter.summ ngb rd.opt on._
+ mport com.tw ter.summ ngb rd.storm.Storm
+ mport com.tw ter.summ ngb rd.Opt ons
+ mport com.tw ter.summ ngb rd.Ta lProducer
+ mport com.tw ter.summ ngb rd_ nternal.runner.common.JobNa 
+ mport com.tw ter.summ ngb rd_ nternal.runner.common.SBRunConf g
+ mport com.tw ter.summ ngb rd_ nternal.runner.storm.Gener cRunner
+ mport com.tw ter.summ ngb rd_ nternal.runner.storm.StormConf g
+ mport com.tw ter.tor nta_ nternal.spout.eventbus.Subscr ber d
+ mport com.tw ter.t etyp e.thr ftscala.StatusCounts
+ mport com.tw ter.wtf.summ ngb rd.s ces.storm.T  l neEventS ce
+ mport java.lang
+ mport java.ut l.{HashMap => JMap}
+ mport org.apac . ron.ap .{Conf g =>  ronConf g}
+ mport org.apac .storm.{Conf g => BTConf g}
 
-object PersistentTweetJobRunner {
-  def main(args: Array[String]): Unit = {
-    GenericRunner(args, PersistentTweetStormJob(_))
+object Pers stentT etJobRunner {
+  def ma n(args: Array[Str ng]): Un  = {
+    Gener cRunner(args, Pers stentT etStormJob(_))
   }
 }
 
-object PersistentTweetStormJob {
+object Pers stentT etStormJob {
 
-  import com.twitter.simclusters_v2.summingbird.common.Implicits._
+   mport com.tw ter.s mclusters_v2.summ ngb rd.common. mpl c s._
 
   def jLong(num: Long): lang.Long = java.lang.Long.valueOf(num)
-  def jInt(num: Int): Integer = java.lang.Integer.valueOf(num)
+  def j nt(num:  nt):  nteger = java.lang. nteger.valueOf(num)
   def jFloat(num: Float): lang.Float = java.lang.Float.valueOf(num)
 
-  def apply(args: Args): StormConfig = {
+  def apply(args: Args): StormConf g = {
 
-    lazy val env: String = args.getOrElse("env", "prod")
-    lazy val zone: String = args.getOrElse("dc", "atla")
-    lazy val alt: String = args.getOrElse("alt", default = "normal")
+    lazy val env: Str ng = args.getOrElse("env", "prod")
+    lazy val zone: Str ng = args.getOrElse("dc", "atla")
+    lazy val alt: Str ng = args.getOrElse("alt", default = "normal")
 
-    lazy val profile =
-      SimClustersProfile.fetchPersistentJobProfile(Environment(env), AltSetting(alt))
+    lazy val prof le =
+      S mClustersProf le.fetchPers stentJobProf le(Env ron nt(env), AltSett ng(alt))
 
-    lazy val stratoClient = ClientConfigs.stratoClient(profile.serviceIdentifier(zone))
+    lazy val stratoCl ent = Cl entConf gs.stratoCl ent(prof le.serv ce dent f er(zone))
 
-    lazy val favoriteEventSource = TimelineEventSource(
-      // Note: do not share the same subsriberId with other jobs. Apply a new one if needed
-      SubscriberId(profile.timelineEventSourceSubscriberId)
-    ).kafkaSource
+    lazy val favor eEventS ce = T  l neEventS ce(
+      // Note: do not share t  sa  subsr ber d w h ot r jobs. Apply a new one  f needed
+      Subscr ber d(prof le.t  l neEventS ceSubscr ber d)
+    ).kafkaS ce
 
-    lazy val persistentTweetEmbeddingStore =
-      PersistentTweetEmbeddingStore
-        .persistentTweetEmbeddingStore(stratoClient, profile.persistentTweetStratoPath)
+    lazy val pers stentT etEmbedd ngStore =
+      Pers stentT etEmbedd ngStore
+        .pers stentT etEmbedd ngStore(stratoCl ent, prof le.pers stentT etStratoPath)
 
-    lazy val persistentTweetEmbeddingStoreWithLatestAggregation: Storm#Store[
-      PersistentTweetEmbeddingId,
-      PersistentSimClustersEmbedding
+    lazy val pers stentT etEmbedd ngStoreW hLatestAggregat on: Storm#Store[
+      Pers stentT etEmbedd ng d,
+      Pers stentS mClustersEmbedd ng
     ] = {
-      import com.twitter.storehaus.algebra.StoreAlgebra._
+       mport com.tw ter.storehaus.algebra.StoreAlgebra._
 
-      lazy val mergeableStore =
-        persistentTweetEmbeddingStore.toMergeable(
-          mon = Implicits.persistentSimClustersEmbeddingMonoid,
-          fc = implicitly[FutureCollector])
+      lazy val  rgeableStore =
+        pers stentT etEmbedd ngStore.to rgeable(
+          mon =  mpl c s.pers stentS mClustersEmbedd ngMono d,
+          fc =  mpl c ly[FutureCollector])
 
-      Storm.onlineOnlyStore(mergeableStore)
+      Storm.onl neOnlyStore( rgeableStore)
     }
 
-    lazy val persistentTweetEmbeddingStoreWithLongestL2NormAggregation: Storm#Store[
-      PersistentTweetEmbeddingId,
-      PersistentSimClustersEmbedding
+    lazy val pers stentT etEmbedd ngStoreW hLongestL2NormAggregat on: Storm#Store[
+      Pers stentT etEmbedd ng d,
+      Pers stentS mClustersEmbedd ng
     ] = {
-      import com.twitter.storehaus.algebra.StoreAlgebra._
+       mport com.tw ter.storehaus.algebra.StoreAlgebra._
 
-      val longestL2NormMonoid = new PersistentSimClustersEmbeddingLongestL2NormMonoid()
-      lazy val mergeableStore =
-        persistentTweetEmbeddingStore.toMergeable(
-          mon = longestL2NormMonoid,
-          fc = implicitly[FutureCollector])
+      val longestL2NormMono d = new Pers stentS mClustersEmbedd ngLongestL2NormMono d()
+      lazy val  rgeableStore =
+        pers stentT etEmbedd ngStore.to rgeable(
+          mon = longestL2NormMono d,
+          fc =  mpl c ly[FutureCollector])
 
-      Storm.onlineOnlyStore(mergeableStore)
+      Storm.onl neOnlyStore( rgeableStore)
     }
 
-    lazy val tweetStatusCountsService: Storm#Service[TweetId, StatusCounts] =
-      Storm.service(
-        ObservedCachedReadableStore.from[TweetId, StatusCounts](
-          TweetStatusCountsStore.tweetStatusCountsStore(stratoClient, "tweetypie/core.Tweet"),
-          ttl = 1.minute,
-          maxKeys = 10000, // 10K is enough for Heron Job.
-          cacheName = "tweet_status_count",
-          windowSize = 10000L
-        )(NullStatsReceiver)
+    lazy val t etStatusCountsServ ce: Storm#Serv ce[T et d, StatusCounts] =
+      Storm.serv ce(
+        ObservedCac dReadableStore.from[T et d, StatusCounts](
+          T etStatusCountsStore.t etStatusCountsStore(stratoCl ent, "t etyp e/core.T et"),
+          ttl = 1.m nute,
+          maxKeys = 10000, // 10K  s enough for  ron Job.
+          cac Na  = "t et_status_count",
+          w ndowS ze = 10000L
+        )(NullStatsRece ver)
       )
 
-    lazy val tweetEmbeddingService: Storm#Service[TweetId, ThriftSimClustersEmbedding] =
-      Storm.service(
-        TopKClustersForTweetKeyReadableStore
-          .overrideLimitDefaultStore(50, profile.serviceIdentifier(zone))
-          .composeKeyMapping { tweetId: TweetId =>
-            TweetKey(tweetId, profile.modelVersionStr, profile.coreEmbeddingType)
-          }.mapValues { value => SimClustersEmbedding(value).toThrift })
+    lazy val t etEmbedd ngServ ce: Storm#Serv ce[T et d, Thr ftS mClustersEmbedd ng] =
+      Storm.serv ce(
+        TopKClustersForT etKeyReadableStore
+          .overr deL m DefaultStore(50, prof le.serv ce dent f er(zone))
+          .composeKeyMapp ng { t et d: T et d =>
+            T etKey(t et d, prof le.modelVers onStr, prof le.coreEmbedd ngType)
+          }.mapValues { value => S mClustersEmbedd ng(value).toThr ft })
 
-    new StormConfig {
+    new StormConf g {
 
-      val jobName: JobName = JobName(profile.jobName)
+      val jobNa : JobNa  = JobNa (prof le.jobNa )
 
-      implicit val jobID: JobId = JobId(jobName.toString)
+       mpl c  val job D: Job d = Job d(jobNa .toStr ng)
 
       /**
-       * Add registrars for chill serialization for user-defined types.
+       * Add reg strars for ch ll ser al zat on for user-def ned types.
        */
-      override def registrars =
-        List(
-          SBRunConfig.register[StatusCounts],
-          SBRunConfig.register[ThriftSimClustersEmbedding],
-          SBRunConfig.register[PersistentSimClustersEmbedding]
+      overr de def reg strars =
+        L st(
+          SBRunConf g.reg ster[StatusCounts],
+          SBRunConf g.reg ster[Thr ftS mClustersEmbedd ng],
+          SBRunConf g.reg ster[Pers stentS mClustersEmbedd ng]
         )
 
-      /***** Job configuration settings *****/
+      /***** Job conf gurat on sett ngs *****/
       /**
-       * Use vmSettings to configure the VM
+       * Use vmSett ngs to conf gure t  VM
        */
-      override def vmSettings: Seq[String] = Seq()
+      overr de def vmSett ngs: Seq[Str ng] = Seq()
 
-      private val SourcePerWorker = 1
-      private val FlatMapPerWorker = 1
-      private val SummerPerWorker = 1
+      pr vate val S cePerWorker = 1
+      pr vate val FlatMapPerWorker = 1
+      pr vate val Sum rPerWorker = 1
 
-      private val TotalWorker = 60
+      pr vate val TotalWorker = 60
 
       /**
-       * Use transformConfig to set Heron options.
+       * Use transformConf g to set  ron opt ons.
        */
-      override def transformConfig(config: Map[String, AnyRef]): Map[String, AnyRef] = {
+      overr de def transformConf g(conf g: Map[Str ng, AnyRef]): Map[Str ng, AnyRef] = {
 
-        val heronJvmOptions = new JMap[String, AnyRef]()
+        val  ronJvmOpt ons = new JMap[Str ng, AnyRef]()
 
-        val MetaspaceSize = jLong(256L * 1024 * 1024)
-        val DefaultHeapSize = jLong(2L * 1024 * 1024 * 1024)
-        val HighHeapSize = jLong(4L * 1024 * 1024 * 1024)
+        val  taspaceS ze = jLong(256L * 1024 * 1024)
+        val Default apS ze = jLong(2L * 1024 * 1024 * 1024)
+        val H gh apS ze = jLong(4L * 1024 * 1024 * 1024)
 
         val TotalCPU = jLong(
-          SourcePerWorker * 1 + FlatMapPerWorker * 4 + SummerPerWorker * 3 + 1
+          S cePerWorker * 1 + FlatMapPerWorker * 4 + Sum rPerWorker * 3 + 1
         )
 
-        // reserve 4GB for the StreamMgr
+        // reserve 4GB for t  StreamMgr
         val TotalRam = jLong(
-          DefaultHeapSize * (SourcePerWorker * 1 + FlatMapPerWorker * 4)
-            + HighHeapSize * SummerPerWorker * 3
-            + MetaspaceSize * 8 // Applies to all workers
+          Default apS ze * (S cePerWorker * 1 + FlatMapPerWorker * 4)
+            + H gh apS ze * Sum rPerWorker * 3
+            +  taspaceS ze * 8 // Appl es to all workers
             + 4L * 1024 * 1024 * 1024)
 
-        // These settings help prevent GC issues in the most memory intensive steps of the job by
-        // dedicating more memory to the new gen heap designated by the -Xmn flag.
+        // T se sett ngs  lp prevent GC  ssues  n t  most  mory  ntens ve steps of t  job by
+        // ded cat ng more  mory to t  new gen  ap des gnated by t  -Xmn flag.
         Map(
-          "Tail" -> HighHeapSize
+          "Ta l" -> H gh apS ze
         ).foreach {
-          case (stage, heap) =>
-            HeronConfig.setComponentJvmOptions(
-              heronJvmOptions,
+          case (stage,  ap) =>
+             ronConf g.setComponentJvmOpt ons(
+               ronJvmOpt ons,
               stage,
-              s"-Xmx$heap -Xms$heap -Xmn${heap / 2}"
+              s"-Xmx$ ap -Xms$ ap -Xmn${ ap / 2}"
             )
         }
 
-        super.transformConfig(config) ++ List(
-          BTConfig.TOPOLOGY_TEAM_NAME -> "cassowary",
-          BTConfig.TOPOLOGY_TEAM_EMAIL -> "no-reply@twitter.com",
-          BTConfig.TOPOLOGY_WORKERS -> jInt(TotalWorker),
-          BTConfig.TOPOLOGY_ACKER_EXECUTORS -> jInt(0),
-          BTConfig.TOPOLOGY_MESSAGE_TIMEOUT_SECS -> jInt(30),
-          BTConfig.TOPOLOGY_WORKER_CHILDOPTS -> List(
-            "-Djava.security.auth.login.config=config/jaas.conf",
-            "-Dsun.security.krb5.debug=true",
-            "-Dcom.twitter.eventbus.client.EnableKafkaSaslTls=true",
-            "-Dcom.twitter.eventbus.client.zoneName=" + zone,
-            s"-XX:MaxMetaspaceSize=$MetaspaceSize"
-          ).mkString(" "),
-          HeronConfig.TOPOLOGY_CONTAINER_CPU_REQUESTED -> TotalCPU,
-          HeronConfig.TOPOLOGY_CONTAINER_RAM_REQUESTED -> TotalRam,
-          "storm.job.uniqueId" -> jobID.get
+        super.transformConf g(conf g) ++ L st(
+          BTConf g.TOPOLOGY_TEAM_NAME -> "cassowary",
+          BTConf g.TOPOLOGY_TEAM_EMA L -> "no-reply@tw ter.com",
+          BTConf g.TOPOLOGY_WORKERS -> j nt(TotalWorker),
+          BTConf g.TOPOLOGY_ACKER_EXECUTORS -> j nt(0),
+          BTConf g.TOPOLOGY_MESSAGE_T MEOUT_SECS -> j nt(30),
+          BTConf g.TOPOLOGY_WORKER_CH LDOPTS -> L st(
+            "-Djava.secur y.auth.log n.conf g=conf g/jaas.conf",
+            "-Dsun.secur y.krb5.debug=true",
+            "-Dcom.tw ter.eventbus.cl ent.EnableKafkaSaslTls=true",
+            "-Dcom.tw ter.eventbus.cl ent.zoneNa =" + zone,
+            s"-XX:Max taspaceS ze=$ taspaceS ze"
+          ).mkStr ng(" "),
+           ronConf g.TOPOLOGY_CONTA NER_CPU_REQUESTED -> TotalCPU,
+           ronConf g.TOPOLOGY_CONTA NER_RAM_REQUESTED -> TotalRam,
+          "storm.job.un que d" -> job D.get
         )
       }
 
       /**
-       * Use getNamedOptions to set Summingbird runtime options
-       * The list of available options: com.twitter.summingbird.online.option
+       * Use getNa dOpt ons to set Summ ngb rd runt   opt ons
+       * T  l st of ava lable opt ons: com.tw ter.summ ngb rd.onl ne.opt on
        */
-      override def getNamedOptions: Map[String, Options] = Map(
-        "DEFAULT" -> Options()
-          .set(SummerParallelism(TotalWorker * SummerPerWorker))
-          .set(FlatMapParallelism(TotalWorker * FlatMapPerWorker))
-          .set(SourceParallelism(TotalWorker * SourcePerWorker))
-          .set(CacheSize(10000))
+      overr de def getNa dOpt ons: Map[Str ng, Opt ons] = Map(
+        "DEFAULT" -> Opt ons()
+          .set(Sum rParallel sm(TotalWorker * Sum rPerWorker))
+          .set(FlatMapParallel sm(TotalWorker * FlatMapPerWorker))
+          .set(S ceParallel sm(TotalWorker * S cePerWorker))
+          .set(Cac S ze(10000))
           .set(FlushFrequency(30.seconds))
       )
 
-      /** Required job generation call for your job, defined in Job.scala */
-      override def graph: TailProducer[Storm, Any] = PersistentTweetJob.generate[Storm](
-        favoriteEventSource,
-        tweetStatusCountsService,
-        tweetEmbeddingService,
-        persistentTweetEmbeddingStoreWithLatestAggregation,
-        persistentTweetEmbeddingStoreWithLongestL2NormAggregation
+      /** Requ red job generat on call for y  job, def ned  n Job.scala */
+      overr de def graph: Ta lProducer[Storm, Any] = Pers stentT etJob.generate[Storm](
+        favor eEventS ce,
+        t etStatusCountsServ ce,
+        t etEmbedd ngServ ce,
+        pers stentT etEmbedd ngStoreW hLatestAggregat on,
+        pers stentT etEmbedd ngStoreW hLongestL2NormAggregat on
       )
     }
   }

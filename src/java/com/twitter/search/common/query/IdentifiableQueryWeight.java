@@ -1,58 +1,58 @@
-package com.twitter.search.common.query;
+package com.tw ter.search.common.query;
 
-import java.io.IOException;
-import java.util.Set;
+ mport java. o. OExcept on;
+ mport java.ut l.Set;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.Weight;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene. ndex.Term;
+ mport org.apac .lucene.search.Explanat on;
+ mport org.apac .lucene.search.Scorer;
+ mport org.apac .lucene.search.  ght;
 
 /**
- * Weight implementation that adds attribute collection support for an underlying query.
- * Meant to be used in conjunction with {@link IdentifiableQuery}.
+ *   ght  mple ntat on that adds attr bute collect on support for an underly ng query.
+ *  ant to be used  n conjunct on w h {@l nk  dent f ableQuery}.
  */
-public class IdentifiableQueryWeight extends Weight {
-  private final Weight inner;
-  private final FieldRankHitInfo queryId;
-  private final HitAttributeCollector attrCollector;
+publ c class  dent f ableQuery  ght extends   ght {
+  pr vate f nal   ght  nner;
+  pr vate f nal F eldRankH  nfo query d;
+  pr vate f nal H Attr buteCollector attrCollector;
 
-  /** Creates a new IdentifiableQueryWeight instance. */
-  public IdentifiableQueryWeight(IdentifiableQuery query, Weight inner, FieldRankHitInfo queryId,
-                                 HitAttributeCollector attrCollector) {
+  /** Creates a new  dent f ableQuery  ght  nstance. */
+  publ c  dent f ableQuery  ght( dent f ableQuery query,   ght  nner, F eldRankH  nfo query d,
+                                 H Attr buteCollector attrCollector) {
     super(query);
-    this.inner = inner;
-    this.queryId = queryId;
-    this.attrCollector = Preconditions.checkNotNull(attrCollector);
+    t . nner =  nner;
+    t .query d = query d;
+    t .attrCollector = Precond  ons.c ckNotNull(attrCollector);
   }
 
-  @Override
-  public Explanation explain(LeafReaderContext context, int doc)
-      throws IOException {
-    return inner.explain(context, doc);
+  @Overr de
+  publ c Explanat on expla n(LeafReaderContext context,  nt doc)
+      throws  OExcept on {
+    return  nner.expla n(context, doc);
   }
 
-  @Override
-  public Scorer scorer(LeafReaderContext context) throws IOException {
-    attrCollector.clearHitAttributions(context, queryId);
-    Scorer innerScorer = inner.scorer(context);
-    if (innerScorer != null) {
-      return new IdentifiableQueryScorer(this, innerScorer, queryId, attrCollector);
+  @Overr de
+  publ c Scorer scorer(LeafReaderContext context) throws  OExcept on {
+    attrCollector.clearH Attr but ons(context, query d);
+    Scorer  nnerScorer =  nner.scorer(context);
+     f ( nnerScorer != null) {
+      return new  dent f ableQueryScorer(t ,  nnerScorer, query d, attrCollector);
     } else {
       return null;
     }
   }
 
-  @Override
-  public void extractTerms(Set<Term> terms) {
-    inner.extractTerms(terms);
+  @Overr de
+  publ c vo d extractTerms(Set<Term> terms) {
+     nner.extractTerms(terms);
   }
 
-  @Override
-  public boolean isCacheable(LeafReaderContext ctx) {
-    return inner.isCacheable(ctx);
+  @Overr de
+  publ c boolean  sCac able(LeafReaderContext ctx) {
+    return  nner. sCac able(ctx);
   }
 }

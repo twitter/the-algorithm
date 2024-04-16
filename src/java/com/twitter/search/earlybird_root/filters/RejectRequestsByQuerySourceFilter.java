@@ -1,94 +1,94 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import java.util.HashMap;
-import java.util.Map;
-import javax.annotation.Nullable;
-import javax.inject.Inject;
+ mport java.ut l.HashMap;
+ mport java.ut l.Map;
+ mport javax.annotat on.Nullable;
+ mport javax. nject. nject;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.constants.thriftjava.ThriftQuerySource;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.common.constants.thr ftjava.Thr ftQueryS ce;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResults;
+ mport com.tw ter.ut l.Future;
 
 /**
- * Rejects requests based on the query source of the request. Intended to be used at super-root
- * or archive-root. If used to reject client request at super-root, the client will get a response
- * with empty results and a REQUEST_BLOCKED_ERROR status code. If used at archive-root the client
- * will get a response which might contain some results from realtime and protected and the status
- * code of the response will depend on how super-root combines responses from the three downstream
+ * Rejects requests based on t  query s ce of t  request.  ntended to be used at super-root
+ * or arch ve-root.  f used to reject cl ent request at super-root, t  cl ent w ll get a response
+ * w h empty results and a REQUEST_BLOCKED_ERROR status code.  f used at arch ve-root t  cl ent
+ * w ll get a response wh ch m ght conta n so  results from realt   and protected and t  status
+ * code of t  response w ll depend on how super-root comb nes responses from t  three downstream
  * roots.
  */
-public class RejectRequestsByQuerySourceFilter extends
-    SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
+publ c class RejectRequestsByQueryS ceF lter extends
+    S mpleF lter<Earlyb rdRequest, Earlyb rdResponse> {
 
-  @VisibleForTesting
-  protected static final String NUM_REJECTED_REQUESTS_STAT_NAME_PATTERN =
-      "num_root_%s_rejected_requests_with_query_source_%s";
-  @VisibleForTesting
-  protected static final String REJECT_REQUESTS_DECIDER_KEY_PATTERN =
-      "root_%s_reject_requests_with_query_source_%s";
-  private final Map<ThriftQuerySource, SearchRateCounter> rejectedRequestsCounterPerQuerySource =
+  @V s bleForTest ng
+  protected stat c f nal Str ng NUM_REJECTED_REQUESTS_STAT_NAME_PATTERN =
+      "num_root_%s_rejected_requests_w h_query_s ce_%s";
+  @V s bleForTest ng
+  protected stat c f nal Str ng REJECT_REQUESTS_DEC DER_KEY_PATTERN =
+      "root_%s_reject_requests_w h_query_s ce_%s";
+  pr vate f nal Map<Thr ftQueryS ce, SearchRateCounter> rejectedRequestsCounterPerQueryS ce =
       new HashMap<>();
-  private final Map<ThriftQuerySource, String> rejectRequestsDeciderKeyPerQuerySource =
+  pr vate f nal Map<Thr ftQueryS ce, Str ng> rejectRequestsDec derKeyPerQueryS ce =
       new HashMap<>();
-  private final SearchDecider searchDecider;
+  pr vate f nal SearchDec der searchDec der;
 
 
-  @Inject
-  public RejectRequestsByQuerySourceFilter(
-      @Nullable EarlybirdCluster cluster,
-      SearchDecider searchDecider) {
+  @ nject
+  publ c RejectRequestsByQueryS ceF lter(
+      @Nullable Earlyb rdCluster cluster,
+      SearchDec der searchDec der) {
 
-    this.searchDecider = searchDecider;
+    t .searchDec der = searchDec der;
 
-    String clusterName = cluster != null
-        ? cluster.getNameForStats()
-        : EarlybirdCluster.SUPERROOT.getNameForStats();
+    Str ng clusterNa  = cluster != null
+        ? cluster.getNa ForStats()
+        : Earlyb rdCluster.SUPERROOT.getNa ForStats();
 
-    for (ThriftQuerySource querySource : ThriftQuerySource.values()) {
-      String querySourceName = querySource.name().toLowerCase();
+    for (Thr ftQueryS ce queryS ce : Thr ftQueryS ce.values()) {
+      Str ng queryS ceNa  = queryS ce.na ().toLo rCase();
 
-      rejectedRequestsCounterPerQuerySource.put(querySource,
+      rejectedRequestsCounterPerQueryS ce.put(queryS ce,
           SearchRateCounter.export(
-              String.format(
-                  NUM_REJECTED_REQUESTS_STAT_NAME_PATTERN, clusterName, querySourceName)));
+              Str ng.format(
+                  NUM_REJECTED_REQUESTS_STAT_NAME_PATTERN, clusterNa , queryS ceNa )));
 
-      rejectRequestsDeciderKeyPerQuerySource.put(querySource,
-          String.format(
-              REJECT_REQUESTS_DECIDER_KEY_PATTERN, clusterName, querySourceName));
+      rejectRequestsDec derKeyPerQueryS ce.put(queryS ce,
+          Str ng.format(
+              REJECT_REQUESTS_DEC DER_KEY_PATTERN, clusterNa , queryS ceNa ));
     }
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(Earlyb rdRequest request,
+                                         Serv ce<Earlyb rdRequest, Earlyb rdResponse> serv ce) {
 
-    ThriftQuerySource querySource = request.isSetQuerySource()
-        ? request.getQuerySource()
-        : ThriftQuerySource.UNKNOWN;
+    Thr ftQueryS ce queryS ce = request. sSetQueryS ce()
+        ? request.getQueryS ce()
+        : Thr ftQueryS ce.UNKNOWN;
 
-    String deciderKey = rejectRequestsDeciderKeyPerQuerySource.get(querySource);
-    if (searchDecider.isAvailable(deciderKey)) {
-      rejectedRequestsCounterPerQuerySource.get(querySource).increment();
-      return Future.value(getRejectedRequestResponse(querySource, deciderKey));
+    Str ng dec derKey = rejectRequestsDec derKeyPerQueryS ce.get(queryS ce);
+     f (searchDec der. sAva lable(dec derKey)) {
+      rejectedRequestsCounterPerQueryS ce.get(queryS ce). ncre nt();
+      return Future.value(getRejectedRequestResponse(queryS ce, dec derKey));
     }
-    return service.apply(request);
+    return serv ce.apply(request);
   }
 
-  private static EarlybirdResponse getRejectedRequestResponse(
-      ThriftQuerySource querySource, String deciderKey) {
-    return new EarlybirdResponse(EarlybirdResponseCode.REQUEST_BLOCKED_ERROR, 0)
-        .setSearchResults(new ThriftSearchResults())
-        .setDebugString(String.format(
-            "Request with query source %s is blocked by decider %s", querySource, deciderKey));
+  pr vate stat c Earlyb rdResponse getRejectedRequestResponse(
+      Thr ftQueryS ce queryS ce, Str ng dec derKey) {
+    return new Earlyb rdResponse(Earlyb rdResponseCode.REQUEST_BLOCKED_ERROR, 0)
+        .setSearchResults(new Thr ftSearchResults())
+        .setDebugStr ng(Str ng.format(
+            "Request w h query s ce %s  s blocked by dec der %s", queryS ce, dec derKey));
   }
 }

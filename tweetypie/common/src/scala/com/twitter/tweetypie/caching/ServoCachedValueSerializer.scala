@@ -1,140 +1,140 @@
-package com.twitter.tweetypie.caching
+package com.tw ter.t etyp e.cach ng
 
-import com.twitter.io.Buf
-import com.twitter.scrooge.CompactThriftSerializer
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.scrooge.ThriftStructCodec
-import com.twitter.servo.cache.thriftscala.CachedValue
-import com.twitter.servo.cache.thriftscala.CachedValueStatus
-import com.twitter.stitch.NotFound
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Time
-import com.twitter.util.Try
-import java.nio.ByteBuffer
+ mport com.tw ter. o.Buf
+ mport com.tw ter.scrooge.CompactThr ftSer al zer
+ mport com.tw ter.scrooge.Thr ftStruct
+ mport com.tw ter.scrooge.Thr ftStructCodec
+ mport com.tw ter.servo.cac .thr ftscala.Cac dValue
+ mport com.tw ter.servo.cac .thr ftscala.Cac dValueStatus
+ mport com.tw ter.st ch.NotFound
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.ut l.Try
+ mport java.n o.ByteBuffer
 
-object ServoCachedValueSerializer {
+object ServoCac dValueSer al zer {
 
   /**
-   * Thrown when the fields of the servo CachedValue struct do not
-   * satisfy the invariants expected by this serialization code.
+   * Thrown w n t  f elds of t  servo Cac dValue struct do not
+   * sat sfy t   nvar ants expected by t  ser al zat on code.
    */
-  case class UnexpectedCachedValueState(cachedValue: CachedValue) extends Exception {
-    def message: String = s"Unexpected state for CachedValue. Value was: $cachedValue"
+  case class UnexpectedCac dValueState(cac dValue: Cac dValue) extends Except on {
+    def  ssage: Str ng = s"Unexpected state for Cac dValue. Value was: $cac dValue"
   }
 
-  val CachedValueThriftSerializer: CompactThriftSerializer[CachedValue] = CompactThriftSerializer(
-    CachedValue)
+  val Cac dValueThr ftSer al zer: CompactThr ftSer al zer[Cac dValue] = CompactThr ftSer al zer(
+    Cac dValue)
 }
 
 /**
- * A [[ValueSerializer]] that is compatible with the use of
- * Servo's [[CachedValue]] struct by tweetypie:
+ * A [[ValueSer al zer]] that  s compat ble w h t  use of
+ * Servo's [[Cac dValue]] struct by t etyp e:
  *
- * - The only [[CachedValueStatus]] values that are cacheable are
- *   [[CachedValueStatus.Found]] and [[CachedValueStatus.NotFound]].
+ * - T  only [[Cac dValueStatus]] values that are cac able are
+ *   [[Cac dValueStatus.Found]] and [[Cac dValueStatus.NotFound]].
  *
- * - We only track the `cachedAtMsec` field, because tweetypie's cache
- *   interaction does not use the other fields, and the values that
- *   are cached this way are never updated, so storing readThroughAt
- *   or writtenThroughAt would not add any information.
+ * -   only track t  `cac dAtMsec` f eld, because t etyp e's cac 
+ *    nteract on does not use t  ot r f elds, and t  values that
+ *   are cac d t  way are never updated, so stor ng readThroughAt
+ *   or wr tenThroughAt would not add any  nformat on.
  *
- * - When values are present, they are serialized using
- *   [[org.apache.thrift.protocol.TCompactProtocol]].
+ * - W n values are present, t y are ser al zed us ng
+ *   [[org.apac .thr ft.protocol.TCompactProtocol]].
  *
- * - The CachedValue struct itself is also serialized using TCompactProtocol.
+ * - T  Cac dValue struct  self  s also ser al zed us ng TCompactProtocol.
  *
- * The serializer operates on [[Try]] values and will cache [[Return]]
+ * T  ser al zer operates on [[Try]] values and w ll cac  [[Return]]
  * and `Throw(NotFound)` values.
  */
-case class ServoCachedValueSerializer[V <: ThriftStruct](
-  codec: ThriftStructCodec[V],
-  expiry: Try[V] => Time,
+case class ServoCac dValueSer al zer[V <: Thr ftStruct](
+  codec: Thr ftStructCodec[V],
+  exp ry: Try[V] => T  ,
   softTtl: SoftTtl[Try[V]])
-    extends ValueSerializer[Try[V]] {
-  import ServoCachedValueSerializer.UnexpectedCachedValueState
-  import ServoCachedValueSerializer.CachedValueThriftSerializer
+    extends ValueSer al zer[Try[V]] {
+   mport ServoCac dValueSer al zer.UnexpectedCac dValueState
+   mport ServoCac dValueSer al zer.Cac dValueThr ftSer al zer
 
-  private[this] val ValueThriftSerializer = CompactThriftSerializer(codec)
+  pr vate[t ] val ValueThr ftSer al zer = CompactThr ftSer al zer(codec)
 
   /**
-   * Return an expiry based on the value and a
-   * TCompactProtocol-encoded servo CachedValue struct with the
-   * following fields defined:
+   * Return an exp ry based on t  value and a
+   * TCompactProtocol-encoded servo Cac dValue struct w h t 
+   * follow ng f elds def ned:
    *
    * - `value`: [[None]]
-   *   for {{{Throw(NotFound)}}, {{{Some(encodedStruct)}}} for
-   *   [[Return]], where {{{encodedStruct}}} is a
-   *   TCompactProtocol-encoding of the value inside of the Return.
+   *   for {{{Throw(NotFound)}}, {{{So (encodedStruct)}}} for
+   *   [[Return]], w re {{{encodedStruct}}}  s a
+   *   TCompactProtocol-encod ng of t  value  ns de of t  Return.
    *
-   * - `status`: [[CachedValueStatus.Found]] if the value is Return,
-   *   and [[CachedValueStatus.NotFound]] if it is Throw(NotFound)
+   * - `status`: [[Cac dValueStatus.Found]]  f t  value  s Return,
+   *   and [[Cac dValueStatus.NotFound]]  f    s Throw(NotFound)
    *
-   * - `cachedAtMsec`: The current time, accoring to [[Time.now]]
+   * - `cac dAtMsec`: T  current t  , accor ng to [[T  .now]]
    *
-   * No other fields will be defined.
+   * No ot r f elds w ll be def ned.
    *
-   * @throws IllegalArgumentException if called with a value that
-   *   should not be cached.
+   * @throws  llegalArgu ntExcept on  f called w h a value that
+   *   should not be cac d.
    */
-  override def serialize(value: Try[V]): Option[(Time, Buf)] = {
-    def serializeCachedValue(payload: Option[ByteBuffer]) = {
-      val cachedValue = CachedValue(
+  overr de def ser al ze(value: Try[V]): Opt on[(T  , Buf)] = {
+    def ser al zeCac dValue(payload: Opt on[ByteBuffer]) = {
+      val cac dValue = Cac dValue(
         value = payload,
-        status = if (payload.isDefined) CachedValueStatus.Found else CachedValueStatus.NotFound,
-        cachedAtMsec = Time.now.inMilliseconds)
+        status =  f (payload. sDef ned) Cac dValueStatus.Found else Cac dValueStatus.NotFound,
+        cac dAtMsec = T  .now. nM ll seconds)
 
-      val serialized = Buf.ByteArray.Owned(CachedValueThriftSerializer.toBytes(cachedValue))
+      val ser al zed = Buf.ByteArray.Owned(Cac dValueThr ftSer al zer.toBytes(cac dValue))
 
-      (expiry(value), serialized)
+      (exp ry(value), ser al zed)
     }
 
     value match {
       case Throw(NotFound) =>
-        Some(serializeCachedValue(None))
+        So (ser al zeCac dValue(None))
       case Return(struct) =>
-        val payload = Some(ByteBuffer.wrap(ValueThriftSerializer.toBytes(struct)))
-        Some(serializeCachedValue(payload))
+        val payload = So (ByteBuffer.wrap(ValueThr ftSer al zer.toBytes(struct)))
+        So (ser al zeCac dValue(payload))
       case _ =>
         None
     }
   }
 
   /**
-   * Deserializes values serialized by [[serializeValue]]. The
-   * value will be [[CacheResult.Fresh]] or [[CacheResult.Stale]]
-   * depending on the result of {{{softTtl.isFresh}}}.
+   * Deser al zes values ser al zed by [[ser al zeValue]]. T 
+   * value w ll be [[Cac Result.Fresh]] or [[Cac Result.Stale]]
+   * depend ng on t  result of {{{softTtl. sFresh}}}.
    *
-   * @throws UnexpectedCachedValueState if the state of the
-   *   [[CachedValue]] could not be produced by [[serialize]]
+   * @throws UnexpectedCac dValueState  f t  state of t 
+   *   [[Cac dValue]] could not be produced by [[ser al ze]]
    */
-  override def deserialize(buf: Buf): CacheResult[Try[V]] = {
-    val cachedValue = CachedValueThriftSerializer.fromBytes(Buf.ByteArray.Owned.extract(buf))
-    val hasValue = cachedValue.value.isDefined
-    val isValid =
-      (hasValue && cachedValue.status == CachedValueStatus.Found) ||
-        (!hasValue && cachedValue.status == CachedValueStatus.NotFound)
+  overr de def deser al ze(buf: Buf): Cac Result[Try[V]] = {
+    val cac dValue = Cac dValueThr ftSer al zer.fromBytes(Buf.ByteArray.Owned.extract(buf))
+    val hasValue = cac dValue.value. sDef ned
+    val  sVal d =
+      (hasValue && cac dValue.status == Cac dValueStatus.Found) ||
+        (!hasValue && cac dValue.status == Cac dValueStatus.NotFound)
 
-    if (!isValid) {
-      // Exceptions thrown by deserialization are recorded and treated
-      // as a cache miss by CacheOperations, so throwing this
-      // exception will cause the value in cache to be
-      // overwritten. There will be stats recorded whenever this
+     f (! sVal d) {
+      // Except ons thrown by deser al zat on are recorded and treated
+      // as a cac  m ss by Cac Operat ons, so throw ng t 
+      // except on w ll cause t  value  n cac  to be
+      // overwr ten. T re w ll be stats recorded w never t 
       // happens.
-      throw UnexpectedCachedValueState(cachedValue)
+      throw UnexpectedCac dValueState(cac dValue)
     }
 
     val value =
-      cachedValue.value match {
-        case Some(valueBuffer) =>
-          val valueBytes = new Array[Byte](valueBuffer.remaining)
-          valueBuffer.duplicate.get(valueBytes)
-          Return(ValueThriftSerializer.fromBytes(valueBytes))
+      cac dValue.value match {
+        case So (valueBuffer) =>
+          val valueBytes = new Array[Byte](valueBuffer.rema n ng)
+          valueBuffer.dupl cate.get(valueBytes)
+          Return(ValueThr ftSer al zer.fromBytes(valueBytes))
 
         case None =>
           Throw(NotFound)
       }
 
-    softTtl.toCacheResult(value, Time.fromMilliseconds(cachedValue.cachedAtMsec))
+    softTtl.toCac Result(value, T  .fromM ll seconds(cac dValue.cac dAtMsec))
   }
 }

@@ -1,181 +1,181 @@
-package com.twitter.visibility.interfaces.notifications
+package com.tw ter.v s b l y. nterfaces.not f cat ons
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.notificationservice.model.notification.Notification
-import com.twitter.notificationservice.model.notification.NotificationType
-import com.twitter.notificationservice.model.notification.SimpleActivityNotification
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.tweets.CommunityNotificationFeatures
-import com.twitter.visibility.builder.tweets.UnmentionNotificationFeatures
-import com.twitter.visibility.builder.users.AuthorDeviceFeatures
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.builder.users.ViewerAdvancedFilteringFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.common.TweetSource
-import com.twitter.visibility.common.UserDeviceSource
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.features.AuthorUserLabels
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.models.ContentId.NotificationId
-import com.twitter.visibility.models.SafetyLevel.NotificationsWriterV2
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.rules.State.FeatureFailed
-import com.twitter.visibility.rules.State.MissingFeature
-import com.twitter.visibility.rules.Action
-import com.twitter.visibility.rules.RuleResult
-import com.twitter.visibility.rules.{Allow => AllowAction}
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.not f cat onserv ce.model.not f cat on.Not f cat on
+ mport com.tw ter.not f cat onserv ce.model.not f cat on.Not f cat onType
+ mport com.tw ter.not f cat onserv ce.model.not f cat on.S mpleAct v yNot f cat on
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.v s b l y.V s b l yL brary
+ mport com.tw ter.v s b l y.bu lder.V s b l yResult
+ mport com.tw ter.v s b l y.bu lder.t ets.Commun yNot f cat onFeatures
+ mport com.tw ter.v s b l y.bu lder.t ets.Un nt onNot f cat onFeatures
+ mport com.tw ter.v s b l y.bu lder.users.AuthorDev ceFeatures
+ mport com.tw ter.v s b l y.bu lder.users.AuthorFeatures
+ mport com.tw ter.v s b l y.bu lder.users.Relat onsh pFeatures
+ mport com.tw ter.v s b l y.bu lder.users.V e rAdvancedF lter ngFeatures
+ mport com.tw ter.v s b l y.bu lder.users.V e rFeatures
+ mport com.tw ter.v s b l y.common.T etS ce
+ mport com.tw ter.v s b l y.common.UserDev ceS ce
+ mport com.tw ter.v s b l y.common.UserRelat onsh pS ce
+ mport com.tw ter.v s b l y.common.UserS ce
+ mport com.tw ter.v s b l y.features.AuthorUserLabels
+ mport com.tw ter.v s b l y.features.FeatureMap
+ mport com.tw ter.v s b l y.models.Content d.Not f cat on d
+ mport com.tw ter.v s b l y.models.SafetyLevel.Not f cat onsWr erV2
+ mport com.tw ter.v s b l y.models.V e rContext
+ mport com.tw ter.v s b l y.rules.State.FeatureFa led
+ mport com.tw ter.v s b l y.rules.State.M ss ngFeature
+ mport com.tw ter.v s b l y.rules.Act on
+ mport com.tw ter.v s b l y.rules.RuleResult
+ mport com.tw ter.v s b l y.rules.{Allow => AllowAct on}
 
-object NotificationsVisibilityLibrary {
-  type Type = Notification => Stitch[NotificationsFilteringResponse]
+object Not f cat onsV s b l yL brary {
+  type Type = Not f cat on => St ch[Not f cat onsF lter ngResponse]
 
-  private val AllowResponse: Stitch[NotificationsFilteringResponse] = Stitch.value(Allow)
+  pr vate val AllowResponse: St ch[Not f cat onsF lter ngResponse] = St ch.value(Allow)
 
-  def isApplicableOrganicNotificationType(notificationType: NotificationType): Boolean = {
-    NotificationType.isTlsActivityType(notificationType) ||
-    NotificationType.isReactionType(notificationType)
+  def  sAppl cableOrgan cNot f cat onType(not f cat onType: Not f cat onType): Boolean = {
+    Not f cat onType. sTlsAct v yType(not f cat onType) ||
+    Not f cat onType. sReact onType(not f cat onType)
   }
 
   def apply(
-    visibilityLibrary: VisibilityLibrary,
-    userSource: UserSource,
-    userRelationshipSource: UserRelationshipSource,
-    userDeviceSource: UserDeviceSource,
-    tweetSource: TweetSource,
-    enableShimFeatureHydration: Gate[Unit] = Gate.False,
-    enableCommunityTweetHydration: Gate[Long] = Gate.False,
-    enableUnmentionHydration: Gate[Long] = Gate.False,
+    v s b l yL brary: V s b l yL brary,
+    userS ce: UserS ce,
+    userRelat onsh pS ce: UserRelat onsh pS ce,
+    userDev ceS ce: UserDev ceS ce,
+    t etS ce: T etS ce,
+    enableSh mFeatureHydrat on: Gate[Un ] = Gate.False,
+    enableCommun yT etHydrat on: Gate[Long] = Gate.False,
+    enableUn nt onHydrat on: Gate[Long] = Gate.False,
   ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    lazy val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
+    val l braryStatsRece ver = v s b l yL brary.statsRece ver
+    lazy val vfEng neCounter = l braryStatsRece ver.counter("vf_eng ne_requests")
 
-    val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
-    val authorDeviceFeatures = new AuthorDeviceFeatures(userDeviceSource, libraryStatsReceiver)
-    val viewerFeatures = new ViewerFeatures(userSource, libraryStatsReceiver)
-    val communityNotificationFeatures =
-      new CommunityNotificationFeatures(
-        tweetSource,
-        enableCommunityTweetHydration,
-        libraryStatsReceiver)
+    val authorFeatures = new AuthorFeatures(userS ce, l braryStatsRece ver)
+    val authorDev ceFeatures = new AuthorDev ceFeatures(userDev ceS ce, l braryStatsRece ver)
+    val v e rFeatures = new V e rFeatures(userS ce, l braryStatsRece ver)
+    val commun yNot f cat onFeatures =
+      new Commun yNot f cat onFeatures(
+        t etS ce,
+        enableCommun yT etHydrat on,
+        l braryStatsRece ver)
 
-    val unmentionNotificationFeatures = new UnmentionNotificationFeatures(
-      tweetSource = tweetSource,
-      enableUnmentionHydration = enableUnmentionHydration,
-      statsReceiver = libraryStatsReceiver
+    val un nt onNot f cat onFeatures = new Un nt onNot f cat onFeatures(
+      t etS ce = t etS ce,
+      enableUn nt onHydrat on = enableUn nt onHydrat on,
+      statsRece ver = l braryStatsRece ver
     )
 
-    val viewerAdvancedFilteringFeatures =
-      new ViewerAdvancedFilteringFeatures(userSource, libraryStatsReceiver)
-    val relationshipFeatures =
-      new RelationshipFeatures(userRelationshipSource, libraryStatsReceiver)
+    val v e rAdvancedF lter ngFeatures =
+      new V e rAdvancedF lter ngFeatures(userS ce, l braryStatsRece ver)
+    val relat onsh pFeatures =
+      new Relat onsh pFeatures(userRelat onsh pS ce, l braryStatsRece ver)
 
-    val isShimFeatureHydrationEnabled = enableShimFeatureHydration()
+    val  sSh mFeatureHydrat onEnabled = enableSh mFeatureHydrat on()
 
-    def runRuleEngine(
-      visibilityLibrary: VisibilityLibrary,
-      candidate: Notification
-    ): Stitch[VisibilityResult] = {
-      candidate match {
-        case notification: SimpleActivityNotification[_] =>
-          vfEngineCounter.incr()
+    def runRuleEng ne(
+      v s b l yL brary: V s b l yL brary,
+      cand date: Not f cat on
+    ): St ch[V s b l yResult] = {
+      cand date match {
+        case not f cat on: S mpleAct v yNot f cat on[_] =>
+          vfEng neCounter. ncr()
 
-          val featureMap = visibilityLibrary.featureMapBuilder(
+          val featureMap = v s b l yL brary.featureMapBu lder(
             Seq(
-              viewerFeatures.forViewerId(Some(notification.target)),
-              viewerAdvancedFilteringFeatures.forViewerId(Some(notification.target)),
-              authorFeatures.forAuthorId(notification.subjectId),
-              authorDeviceFeatures.forAuthorId(notification.subjectId),
-              relationshipFeatures
-                .forAuthorId(notification.subjectId, Some(notification.target)),
-              communityNotificationFeatures.forNotification(notification),
-              unmentionNotificationFeatures.forNotification(notification)
+              v e rFeatures.forV e r d(So (not f cat on.target)),
+              v e rAdvancedF lter ngFeatures.forV e r d(So (not f cat on.target)),
+              authorFeatures.forAuthor d(not f cat on.subject d),
+              authorDev ceFeatures.forAuthor d(not f cat on.subject d),
+              relat onsh pFeatures
+                .forAuthor d(not f cat on.subject d, So (not f cat on.target)),
+              commun yNot f cat onFeatures.forNot f cat on(not f cat on),
+              un nt onNot f cat onFeatures.forNot f cat on(not f cat on)
             )
           )
 
-          if (isShimFeatureHydrationEnabled) {
-            FeatureMap.resolve(featureMap, libraryStatsReceiver).flatMap { resolvedFeatureMap =>
-              visibilityLibrary.runRuleEngine(
-                contentId =
+           f ( sSh mFeatureHydrat onEnabled) {
+            FeatureMap.resolve(featureMap, l braryStatsRece ver).flatMap { resolvedFeatureMap =>
+              v s b l yL brary.runRuleEng ne(
+                content d =
                 featureMap = resolvedFeatureMap,
-                viewerContext =
-                  ViewerContext.fromContextWithViewerIdFallback(Some(notification.target)),
-                safetyLevel = NotificationsWriterV2
+                v e rContext =
+                  V e rContext.fromContextW hV e r dFallback(So (not f cat on.target)),
+                safetyLevel = Not f cat onsWr erV2
               )
             }
           } else {
-            visibilityLibrary.runRuleEngine(
-              contentId = NotificationId(tweetId = None),
+            v s b l yL brary.runRuleEng ne(
+              content d = Not f cat on d(t et d = None),
               featureMap = featureMap,
-              viewerContext =
-                ViewerContext.fromContextWithViewerIdFallback(Some(notification.target)),
-              safetyLevel = NotificationsWriterV2
+              v e rContext =
+                V e rContext.fromContextW hV e r dFallback(So (not f cat on.target)),
+              safetyLevel = Not f cat onsWr erV2
             )
           }
       }
     }
 
     {
-      case candidate if isApplicableOrganicNotificationType(candidate.notificationType) =>
-        runRuleEngine(visibilityLibrary, candidate)
-          .flatMap(failCloseForFailures(_, libraryStatsReceiver))
+      case cand date  f  sAppl cableOrgan cNot f cat onType(cand date.not f cat onType) =>
+        runRuleEng ne(v s b l yL brary, cand date)
+          .flatMap(fa lCloseForFa lures(_, l braryStatsRece ver))
       case _ =>
         AllowResponse
     }
   }
 
-  def failCloseForFailures(
-    visibilityResult: VisibilityResult,
-    stats: StatsReceiver
-  ): Stitch[NotificationsFilteringResponse] = {
-    lazy val vfEngineSuccess = stats.counter("vf_engine_success")
-    lazy val vfEngineFailures = stats.counter("vf_engine_failures")
-    lazy val vfEngineFailuresMissing = stats.scope("vf_engine_failures").counter("missing")
-    lazy val vfEngineFailuresFailed = stats.scope("vf_engine_failures").counter("failed")
-    lazy val vfEngineFiltered = stats.counter("vf_engine_filtered")
+  def fa lCloseForFa lures(
+    v s b l yResult: V s b l yResult,
+    stats: StatsRece ver
+  ): St ch[Not f cat onsF lter ngResponse] = {
+    lazy val vfEng neSuccess = stats.counter("vf_eng ne_success")
+    lazy val vfEng neFa lures = stats.counter("vf_eng ne_fa lures")
+    lazy val vfEng neFa luresM ss ng = stats.scope("vf_eng ne_fa lures").counter("m ss ng")
+    lazy val vfEng neFa luresFa led = stats.scope("vf_eng ne_fa lures").counter("fa led")
+    lazy val vfEng neF ltered = stats.counter("vf_eng ne_f ltered")
 
-    val isFailedOrMissingFeature: RuleResult => Boolean = {
-      case RuleResult(_, FeatureFailed(features)) =>
-        !(features.contains(AuthorUserLabels) && features.size == 1)
-      case RuleResult(_, MissingFeature(_)) => true
+    val  sFa ledOrM ss ngFeature: RuleResult => Boolean = {
+      case RuleResult(_, FeatureFa led(features)) =>
+        !(features.conta ns(AuthorUserLabels) && features.s ze == 1)
+      case RuleResult(_, M ss ngFeature(_)) => true
       case _ => false
     }
 
-    val failedRuleResults =
-      visibilityResult.ruleResultMap.values.filter(isFailedOrMissingFeature(_))
+    val fa ledRuleResults =
+      v s b l yResult.ruleResultMap.values.f lter( sFa ledOrM ss ngFeature(_))
 
-    val (failedFeatures, missingFeatures) = failedRuleResults.partition {
-      case RuleResult(_, FeatureFailed(_)) => true
-      case RuleResult(_, MissingFeature(_)) => false
+    val (fa ledFeatures, m ss ngFeatures) = fa ledRuleResults.part  on {
+      case RuleResult(_, FeatureFa led(_)) => true
+      case RuleResult(_, M ss ngFeature(_)) => false
       case _ => false
     }
 
-    val failedOrMissingFeatures = failedRuleResults
+    val fa ledOrM ss ngFeatures = fa ledRuleResults
       .collect {
-        case RuleResult(_, FeatureFailed(features)) => features.keySet
-        case RuleResult(_, MissingFeature(features)) => features
+        case RuleResult(_, FeatureFa led(features)) => features.keySet
+        case RuleResult(_, M ss ngFeature(features)) => features
       }.toSet.flatten
 
-    visibilityResult.verdict match {
-      case AllowAction if failedOrMissingFeatures.isEmpty =>
-        vfEngineSuccess.incr()
+    v s b l yResult.verd ct match {
+      case AllowAct on  f fa ledOrM ss ngFeatures. sEmpty =>
+        vfEng neSuccess. ncr()
         AllowResponse
-      case AllowAction if failedOrMissingFeatures.nonEmpty =>
-        vfEngineFailures.incr()
-        if (missingFeatures.nonEmpty) {
-          vfEngineFailuresMissing.incr()
+      case AllowAct on  f fa ledOrM ss ngFeatures.nonEmpty =>
+        vfEng neFa lures. ncr()
+         f (m ss ngFeatures.nonEmpty) {
+          vfEng neFa luresM ss ng. ncr()
         }
-        if (failedFeatures.nonEmpty) {
-          vfEngineFailuresFailed.incr()
+         f (fa ledFeatures.nonEmpty) {
+          vfEng neFa luresFa led. ncr()
         }
 
-        Stitch.value(Failed(failedOrMissingFeatures))
-      case action: Action =>
-        vfEngineFiltered.incr()
-        Stitch.value(Filtered(action))
+        St ch.value(Fa led(fa ledOrM ss ngFeatures))
+      case act on: Act on =>
+        vfEng neF ltered. ncr()
+        St ch.value(F ltered(act on))
     }
   }
 }

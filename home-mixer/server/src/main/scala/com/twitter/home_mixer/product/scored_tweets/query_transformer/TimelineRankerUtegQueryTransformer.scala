@@ -1,59 +1,59 @@
-package com.twitter.home_mixer.product.scored_tweets.query_transformer
+package com.tw ter.ho _m xer.product.scored_t ets.query_transfor r
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures.RealGraphInNetworkScoresFeature
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam
-import com.twitter.home_mixer.product.scored_tweets.query_transformer.TimelineRankerUtegQueryTransformer._
-import com.twitter.home_mixer.util.earlybird.EarlybirdRequestUtil
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.timelineranker.{model => tlr}
-import com.twitter.timelineranker.{thriftscala => t}
-import com.twitter.timelines.common.model.TweetKindOption
-import com.twitter.timelines.earlybird.common.options.EarlybirdScoringModelConfig
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.model.candidate.CandidateTweetSourceId
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.ho _m xer.model.Ho Features.RealGraph nNetworkScoresFeature
+ mport com.tw ter.ho _m xer.model.request.HasDev ceContext
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParam
+ mport com.tw ter.ho _m xer.product.scored_t ets.query_transfor r.T  l neRankerUtegQueryTransfor r._
+ mport com.tw ter.ho _m xer.ut l.earlyb rd.Earlyb rdRequestUt l
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.qual y_factor.HasQual yFactorStatus
+ mport com.tw ter.t  l neranker.{model => tlr}
+ mport com.tw ter.t  l neranker.{thr ftscala => t}
+ mport com.tw ter.t  l nes.common.model.T etK ndOpt on
+ mport com.tw ter.t  l nes.earlyb rd.common.opt ons.Earlyb rdScor ngModelConf g
+ mport com.tw ter.t  l nes.model.User d
+ mport com.tw ter.t  l nes.model.cand date.Cand dateT etS ce d
 
-object TimelineRankerUtegQueryTransformer {
-  private val SinceDuration = 24.hours
-  private val MaxTweetsToFetch = 300
-  private val MaxUtegCandidates = 800
+object T  l neRankerUtegQueryTransfor r {
+  pr vate val S nceDurat on = 24.h s
+  pr vate val MaxT etsToFetch = 300
+  pr vate val MaxUtegCand dates = 800
 
-  private val tweetKindOptions =
-    TweetKindOption(includeOriginalTweetsAndQuotes = true, includeReplies = true)
+  pr vate val t etK ndOpt ons =
+    T etK ndOpt on( ncludeOr g nalT etsAndQuotes = true,  ncludeRepl es = true)
 
-  def utegEarlybirdModels: Seq[EarlybirdScoringModelConfig] =
-    EarlybirdRequestUtil.EarlybirdScoringModels.UnifiedEngagementRectweet
+  def utegEarlyb rdModels: Seq[Earlyb rdScor ngModelConf g] =
+    Earlyb rdRequestUt l.Earlyb rdScor ngModels.Un f edEngage ntRect et
 }
 
-case class TimelineRankerUtegQueryTransformer[
-  Query <: PipelineQuery with HasQualityFactorStatus with HasDeviceContext
+case class T  l neRankerUtegQueryTransfor r[
+  Query <: P pel neQuery w h HasQual yFactorStatus w h HasDev ceContext
 ](
-  override val candidatePipelineIdentifier: CandidatePipelineIdentifier,
-  override val maxTweetsToFetch: Int = MaxTweetsToFetch)
-    extends CandidatePipelineQueryTransformer[Query, t.UtegLikedByTweetsQuery]
-    with TimelineRankerQueryTransformer[Query] {
+  overr de val cand dateP pel ne dent f er: Cand dateP pel ne dent f er,
+  overr de val maxT etsToFetch:  nt = MaxT etsToFetch)
+    extends Cand dateP pel neQueryTransfor r[Query, t.UtegL kedByT etsQuery]
+    w h T  l neRankerQueryTransfor r[Query] {
 
-  override val candidateTweetSourceId = CandidateTweetSourceId.RecommendedTweet
-  override val options = tweetKindOptions
-  override val earlybirdModels = utegEarlybirdModels
-  override def getTensorflowModel(query: Query): Option[String] = {
-    Some(query.params(ScoredTweetsParam.EarlybirdTensorflowModel.UtegParam))
+  overr de val cand dateT etS ce d = Cand dateT etS ce d.Recom ndedT et
+  overr de val opt ons = t etK ndOpt ons
+  overr de val earlyb rdModels = utegEarlyb rdModels
+  overr de def getTensorflowModel(query: Query): Opt on[Str ng] = {
+    So (query.params(ScoredT etsParam.Earlyb rdTensorflowModel.UtegParam))
   }
 
-  override def utegLikedByTweetsOptions(input: Query): Option[tlr.UtegLikedByTweetsOptions] = Some(
-    tlr.UtegLikedByTweetsOptions(
-      utegCount = MaxUtegCandidates,
-      isInNetwork = false,
-      weightedFollowings = input.features
-        .map(_.getOrElse(RealGraphInNetworkScoresFeature, Map.empty[UserId, Double]))
+  overr de def utegL kedByT etsOpt ons( nput: Query): Opt on[tlr.UtegL kedByT etsOpt ons] = So (
+    tlr.UtegL kedByT etsOpt ons(
+      utegCount = MaxUtegCand dates,
+       s nNetwork = false,
+        ghtedFollow ngs =  nput.features
+        .map(_.getOrElse(RealGraph nNetworkScoresFeature, Map.empty[User d, Double]))
         .getOrElse(Map.empty)
     )
   )
 
-  override def transform(input: Query): t.UtegLikedByTweetsQuery =
-    buildTimelineRankerQuery(input, SinceDuration).toThriftUtegLikedByTweetsQuery
+  overr de def transform( nput: Query): t.UtegL kedByT etsQuery =
+    bu ldT  l neRankerQuery( nput, S nceDurat on).toThr ftUtegL kedByT etsQuery
 }

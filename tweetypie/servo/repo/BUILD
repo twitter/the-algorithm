@@ -1,5 +1,5 @@
 target(
-    dependencies = [
-        "tweetypie/servo/repo/src/main/scala",
+    dependenc es = [
+        "t etyp e/servo/repo/src/ma n/scala",
     ],
 )

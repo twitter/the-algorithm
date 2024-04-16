@@ -1,126 +1,126 @@
-package com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap
+package com.tw ter.product_m xer.core.feature.featuremap.asyncfeaturemap
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.stitch.Stitch
+ mport com.fasterxml.jackson.datab nd.annotat on.JsonSer al ze
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.P pel neStep dent f er
+ mport com.tw ter.st ch.St ch
 
-import scala.collection.immutable.Queue
+ mport scala.collect on. mmutable.Queue
 
 /**
- * An internal representation of an async [[FeatureMap]] containing [[Stitch]]s of [[FeatureMap]]s
- * which are already running in the background.
+ * An  nternal representat on of an async [[FeatureMap]] conta n ng [[St ch]]s of [[FeatureMap]]s
+ * wh ch are already runn ng  n t  background.
  *
- * Async features are added by providing the [[PipelineStepIdentifier]] of the [[com.twitter.product_mixer.core.pipeline.PipelineBuilder.Step Step]]
- * before which the async [[Feature]]s are needed, and a [[Stitch]] of the async [[FeatureMap]].
- * It's expected that the [[Stitch]] has already been started and is running in the background.
+ * Async features are added by prov d ng t  [[P pel neStep dent f er]] of t  [[com.tw ter.product_m xer.core.p pel ne.P pel neBu lder.Step Step]]
+ * before wh ch t  async [[Feature]]s are needed, and a [[St ch]] of t  async [[FeatureMap]].
+ *  's expected that t  [[St ch]] has already been started and  s runn ng  n t  background.
  *
- * While not essential to it's core behavior, [[AsyncFeatureMap]] also keeps track of the [[FeatureHydratorIdentifier]]
- * and the Set of [[Feature]]s which will be hydrated for each [[Stitch]] of a [[FeatureMap]] it's given.
+ * Wh le not essent al to  's core behav or, [[AsyncFeatureMap]] also keeps track of t  [[FeatureHydrator dent f er]]
+ * and t  Set of [[Feature]]s wh ch w ll be hydrated for each [[St ch]] of a [[FeatureMap]]  's g ven.
  *
- * @param asyncFeatureMaps the [[FeatureMap]]s for [[PipelineStepIdentifier]]s which have not been reached yet
+ * @param asyncFeatureMaps t  [[FeatureMap]]s for [[P pel neStep dent f er]]s wh ch have not been reac d yet
  *
- * @note [[PipelineStepIdentifier]]s must only refer to [[com.twitter.product_mixer.core.pipeline.PipelineBuilder.Step Step]]s
- *       in the current [[com.twitter.product_mixer.core.pipeline.Pipeline Pipeline]].
- *       Only plain [[FeatureMap]]s are passed into underlying [[com.twitter.product_mixer.core.model.common.Component Component]]s and
- *       [[com.twitter.product_mixer.core.pipeline.Pipeline Pipeline]]s so [[AsyncFeatureMap]]s are scoped
- *       for a specific [[com.twitter.product_mixer.core.pipeline.Pipeline Pipeline]] only.
+ * @note [[P pel neStep dent f er]]s must only refer to [[com.tw ter.product_m xer.core.p pel ne.P pel neBu lder.Step Step]]s
+ *        n t  current [[com.tw ter.product_m xer.core.p pel ne.P pel ne P pel ne]].
+ *       Only pla n [[FeatureMap]]s are passed  nto underly ng [[com.tw ter.product_m xer.core.model.common.Component Component]]s and
+ *       [[com.tw ter.product_m xer.core.p pel ne.P pel ne P pel ne]]s so [[AsyncFeatureMap]]s are scoped
+ *       for a spec f c [[com.tw ter.product_m xer.core.p pel ne.P pel ne P pel ne]] only.
  */
-@JsonSerialize(using = classOf[AsyncFeatureMapSerializer])
-private[core] case class AsyncFeatureMap(
-  asyncFeatureMaps: Map[PipelineStepIdentifier, Queue[
-    (FeatureHydratorIdentifier, Set[Feature[_, _]], Stitch[FeatureMap])
+@JsonSer al ze(us ng = classOf[AsyncFeatureMapSer al zer])
+pr vate[core] case class AsyncFeatureMap(
+  asyncFeatureMaps: Map[P pel neStep dent f er, Queue[
+    (FeatureHydrator dent f er, Set[Feature[_, _]], St ch[FeatureMap])
   ]]) {
 
-  def ++(right: AsyncFeatureMap): AsyncFeatureMap = {
-    val map = Map.newBuilder[
-      PipelineStepIdentifier,
-      Queue[(FeatureHydratorIdentifier, Set[Feature[_, _]], Stitch[FeatureMap])]]
-    (asyncFeatureMaps.keysIterator ++ right.asyncFeatureMaps.keysIterator).foreach { key =>
-      val currentThenRightAsyncFeatureMaps =
+  def ++(r ght: AsyncFeatureMap): AsyncFeatureMap = {
+    val map = Map.newBu lder[
+      P pel neStep dent f er,
+      Queue[(FeatureHydrator dent f er, Set[Feature[_, _]], St ch[FeatureMap])]]
+    (asyncFeatureMaps.keys erator ++ r ght.asyncFeatureMaps.keys erator).foreach { key =>
+      val currentT nR ghtAsyncFeatureMaps =
         asyncFeatureMaps.getOrElse(key, Queue.empty) ++
-          right.asyncFeatureMaps.getOrElse(key, Queue.empty)
-      map += (key -> currentThenRightAsyncFeatureMaps)
+          r ght.asyncFeatureMaps.getOrElse(key, Queue.empty)
+      map += (key -> currentT nR ghtAsyncFeatureMaps)
     }
     AsyncFeatureMap(map.result())
   }
 
   /**
-   * Returns a new [[AsyncFeatureMap]] which now keeps track of the provided `features`
-   * and will make them available when calling [[hydrate]] with `hydrateBefore`.
+   * Returns a new [[AsyncFeatureMap]] wh ch now keeps track of t  prov ded `features`
+   * and w ll make t m ava lable w n call ng [[hydrate]] w h `hydrateBefore`.
    *
-   * @param featureHydratorIdentifier the [[FeatureHydratorIdentifier]] of the [[com.twitter.product_mixer.core.functional_component.feature_hydrator.FeatureHydrator FeatureHydrator]]
-   *                                  which these [[Feature]]s are from
-   * @param hydrateBefore             the [[PipelineStepIdentifier]] before which the [[Feature]]s need to be hydrated
-   * @param featuresToHydrate         a Set of the [[Feature]]s which will be hydrated
-   * @param features                  a [[Stitch]] of the [[FeatureMap]]
+   * @param featureHydrator dent f er t  [[FeatureHydrator dent f er]] of t  [[com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.FeatureHydrator FeatureHydrator]]
+   *                                  wh ch t se [[Feature]]s are from
+   * @param hydrateBefore             t  [[P pel neStep dent f er]] before wh ch t  [[Feature]]s need to be hydrated
+   * @param featuresToHydrate         a Set of t  [[Feature]]s wh ch w ll be hydrated
+   * @param features                  a [[St ch]] of t  [[FeatureMap]]
    */
   def addAsyncFeatures(
-    featureHydratorIdentifier: FeatureHydratorIdentifier,
-    hydrateBefore: PipelineStepIdentifier,
+    featureHydrator dent f er: FeatureHydrator dent f er,
+    hydrateBefore: P pel neStep dent f er,
     featuresToHydrate: Set[Feature[_, _]],
-    features: Stitch[FeatureMap]
+    features: St ch[FeatureMap]
   ): AsyncFeatureMap = {
-    val featureMapList =
+    val featureMapL st =
       asyncFeatureMaps.getOrElse(hydrateBefore, Queue.empty) :+
-        ((featureHydratorIdentifier, featuresToHydrate, features))
-    AsyncFeatureMap(asyncFeatureMaps + (hydrateBefore -> featureMapList))
+        ((featureHydrator dent f er, featuresToHydrate, features))
+    AsyncFeatureMap(asyncFeatureMaps + (hydrateBefore -> featureMapL st))
   }
 
   /**
-   * The current state of the [[AsyncFeatureMap]] excluding the [[Stitch]]s.
+   * T  current state of t  [[AsyncFeatureMap]] exclud ng t  [[St ch]]s.
    */
-  def features: Map[PipelineStepIdentifier, Seq[(FeatureHydratorIdentifier, Set[Feature[_, _]])]] =
+  def features: Map[P pel neStep dent f er, Seq[(FeatureHydrator dent f er, Set[Feature[_, _]])]] =
     asyncFeatureMaps.mapValues(_.map {
-      case (featureHydratorIdentifier, features, _) => (featureHydratorIdentifier, features)
+      case (featureHydrator dent f er, features, _) => (featureHydrator dent f er, features)
     })
 
   /**
-   * Returns a [[Some]] containing a [[Stitch]] with a [[FeatureMap]] holding the [[Feature]]s that are
-   * supposed to be hydrated at `identifier` if there are [[Feature]]s to hydrate at `identifier`
+   * Returns a [[So ]] conta n ng a [[St ch]] w h a [[FeatureMap]] hold ng t  [[Feature]]s that are
+   * supposed to be hydrated at ` dent f er`  f t re are [[Feature]]s to hydrate at ` dent f er`
    *
-   * Returns [[None]] if there are no [[Feature]]s to hydrate at the provided `identifier`,
-   * this allows for determining if there is work to do without running a [[Stitch]].
+   * Returns [[None]]  f t re are no [[Feature]]s to hydrate at t  prov ded ` dent f er`,
+   * t  allows for determ n ng  f t re  s work to do w hout runn ng a [[St ch]].
    *
-   * @note this only hydrates the [[Feature]]s for the specific `identifier`, it does not hydrate
-   *       [[Feature]]s for earlier Steps.
-   * @param identifier the [[PipelineStepIdentifier]] to hydrate [[Feature]]s for
+   * @note t  only hydrates t  [[Feature]]s for t  spec f c ` dent f er`,   does not hydrate
+   *       [[Feature]]s for earl er Steps.
+   * @param  dent f er t  [[P pel neStep dent f er]] to hydrate [[Feature]]s for
    */
   def hydrate(
-    identifier: PipelineStepIdentifier
-  ): Option[Stitch[FeatureMap]] =
-    asyncFeatureMaps.get(identifier) match {
-      case Some(Queue((_, _, featureMap))) =>
-        // if there is only 1 `FeatureMap` we dont need to do a collect so just return that Stitch
-        Some(featureMap)
-      case Some(featureMapList) =>
-        // if there are multiple `FeatureMap`s we need to collect and merge them together
-        Some(
-          Stitch
-            .collect(featureMapList.map { case (_, _, featureMap) => featureMap })
-            .map { featureMapList => FeatureMap.merge(featureMapList) })
+     dent f er: P pel neStep dent f er
+  ): Opt on[St ch[FeatureMap]] =
+    asyncFeatureMaps.get( dent f er) match {
+      case So (Queue((_, _, featureMap))) =>
+        //  f t re  s only 1 `FeatureMap`   dont need to do a collect so just return that St ch
+        So (featureMap)
+      case So (featureMapL st) =>
+        //  f t re are mult ple `FeatureMap`s   need to collect and  rge t m toget r
+        So (
+          St ch
+            .collect(featureMapL st.map { case (_, _, featureMap) => featureMap })
+            .map { featureMapL st => FeatureMap. rge(featureMapL st) })
       case None =>
-        // No results for the provided `identifier` so return `None`
+        // No results for t  prov ded ` dent f er` so return `None`
         None
     }
 }
 
-private[core] object AsyncFeatureMap {
+pr vate[core] object AsyncFeatureMap {
   val empty: AsyncFeatureMap = AsyncFeatureMap(Map.empty)
 
   /**
-   * Builds the an [[AsyncFeatureMap]] from a Seq of [[Stitch]] of [[FeatureMap]]
-   * tupled with the relevant metadata we use to build the necessary state.
+   * Bu lds t  an [[AsyncFeatureMap]] from a Seq of [[St ch]] of [[FeatureMap]]
+   * tupled w h t  relevant  tadata   use to bu ld t  necessary state.
    *
-   * This is primarily for convenience, since in most cases an [[AsyncFeatureMap]]
-   * will be built from the result of individual [[com.twitter.product_mixer.core.functional_component.feature_hydrator.FeatureHydrator FeatureHydrator]]s
-   * and combining them into the correct internal state.
+   * T   s pr mar ly for conven ence, s nce  n most cases an [[AsyncFeatureMap]]
+   * w ll be bu lt from t  result of  nd v dual [[com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.FeatureHydrator FeatureHydrator]]s
+   * and comb n ng t m  nto t  correct  nternal state.
    */
   def fromFeatureMaps(
     asyncFeatureMaps: Seq[
-      (FeatureHydratorIdentifier, PipelineStepIdentifier, Set[Feature[_, _]], Stitch[FeatureMap])
+      (FeatureHydrator dent f er, P pel neStep dent f er, Set[Feature[_, _]], St ch[FeatureMap])
     ]
   ): AsyncFeatureMap =
     AsyncFeatureMap(
@@ -128,7 +128,7 @@ private[core] object AsyncFeatureMap {
         .groupBy { case (_, hydrateBefore, _, _) => hydrateBefore }
         .mapValues(featureMaps =>
           Queue(featureMaps.map {
-            case (hydratorIdentifier, _, featuresToHydrate, stitch) =>
-              (hydratorIdentifier, featuresToHydrate, stitch)
+            case (hydrator dent f er, _, featuresToHydrate, st ch) =>
+              (hydrator dent f er, featuresToHydrate, st ch)
           }: _*)))
 }

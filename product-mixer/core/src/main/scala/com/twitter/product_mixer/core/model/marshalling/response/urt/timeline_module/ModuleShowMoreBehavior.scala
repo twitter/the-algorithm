@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module
 
-sealed trait ModuleShowMoreBehavior
+sealed tra  ModuleShowMoreBehav or
 
-case class ModuleShowMoreBehaviorRevealByCount(
-  initialItemsCount: Int,
-  showMoreItemsCount: Int)
-    extends ModuleShowMoreBehavior
+case class ModuleShowMoreBehav orRevealByCount(
+   n  al emsCount:  nt,
+  showMore emsCount:  nt)
+    extends ModuleShowMoreBehav or

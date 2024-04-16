@@ -1,180 +1,180 @@
-package com.twitter.cr_mixer.util
+package com.tw ter.cr_m xer.ut l
 
-import com.twitter.cr_mixer.model.Candidate
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.param.BlenderParams.BlendGroupingMethodEnum
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.simclusters_v2.thriftscala.InternalId
+ mport com.tw ter.cr_m xer.model.Cand date
+ mport com.tw ter.cr_m xer.model. n  alCand date
+ mport com.tw ter.cr_m xer.model.RankedCand date
+ mport com.tw ter.cr_m xer.model.S ce nfo
+ mport com.tw ter.cr_m xer.param.BlenderParams.BlendGroup ng thodEnum
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
 
-object CountWeightedInterleaveUtil {
+object Count  ghted nterleaveUt l {
 
   /**
-   * Grouping key for interleaving candidates
+   * Group ng key for  nterleav ng cand dates
    *
-   * @param sourceInfoOpt optional SourceInfo, containing the source information
-   * @param similarityEngineTypeOpt optional SimilarityEngineType, containing similarity engine
-   *                                information
-   * @param modelIdOpt optional modelId, containing the model ID
-   * @param authorIdOpt optional authorId, containing the tweet author ID
-   * @param groupIdOpt optional groupId, containing the ID corresponding to the blending group
+   * @param s ce nfoOpt opt onal S ce nfo, conta n ng t  s ce  nformat on
+   * @param s m lar yEng neTypeOpt opt onal S m lar yEng neType, conta n ng s m lar y eng ne
+   *                                 nformat on
+   * @param model dOpt opt onal model d, conta n ng t  model  D
+   * @param author dOpt opt onal author d, conta n ng t  t et author  D
+   * @param group dOpt opt onal group d, conta n ng t   D correspond ng to t  blend ng group
    */
-  case class GroupingKey(
-    sourceInfoOpt: Option[SourceInfo],
-    similarityEngineTypeOpt: Option[SimilarityEngineType],
-    modelIdOpt: Option[String],
-    authorIdOpt: Option[Long],
-    groupIdOpt: Option[Int])
+  case class Group ngKey(
+    s ce nfoOpt: Opt on[S ce nfo],
+    s m lar yEng neTypeOpt: Opt on[S m lar yEng neType],
+    model dOpt: Opt on[Str ng],
+    author dOpt: Opt on[Long],
+    group dOpt: Opt on[ nt])
 
   /**
-   * Converts candidates to grouping key based upon the feature that we interleave with.
+   * Converts cand dates to group ng key based upon t  feature that    nterleave w h.
    */
-  def toGroupingKey[CandidateType <: Candidate](
-    candidate: CandidateType,
-    interleaveFeature: Option[BlendGroupingMethodEnum.Value],
-    groupId: Option[Int],
-  ): GroupingKey = {
-    val grouping: GroupingKey = candidate match {
-      case c: RankedCandidate =>
-        interleaveFeature.getOrElse(BlendGroupingMethodEnum.SourceKeyDefault) match {
-          case BlendGroupingMethodEnum.SourceKeyDefault =>
-            GroupingKey(
-              sourceInfoOpt = c.reasonChosen.sourceInfoOpt,
-              similarityEngineTypeOpt =
-                Some(c.reasonChosen.similarityEngineInfo.similarityEngineType),
-              modelIdOpt = c.reasonChosen.similarityEngineInfo.modelId,
-              authorIdOpt = None,
-              groupIdOpt = groupId
+  def toGroup ngKey[Cand dateType <: Cand date](
+    cand date: Cand dateType,
+     nterleaveFeature: Opt on[BlendGroup ng thodEnum.Value],
+    group d: Opt on[ nt],
+  ): Group ngKey = {
+    val group ng: Group ngKey = cand date match {
+      case c: RankedCand date =>
+         nterleaveFeature.getOrElse(BlendGroup ng thodEnum.S ceKeyDefault) match {
+          case BlendGroup ng thodEnum.S ceKeyDefault =>
+            Group ngKey(
+              s ce nfoOpt = c.reasonChosen.s ce nfoOpt,
+              s m lar yEng neTypeOpt =
+                So (c.reasonChosen.s m lar yEng ne nfo.s m lar yEng neType),
+              model dOpt = c.reasonChosen.s m lar yEng ne nfo.model d,
+              author dOpt = None,
+              group dOpt = group d
             )
-          // Some candidate sources don't have a sourceType, so it defaults to similarityEngine
-          case BlendGroupingMethodEnum.SourceTypeSimilarityEngine =>
-            val sourceInfoOpt = c.reasonChosen.sourceInfoOpt.map(_.sourceType).map { sourceType =>
-              SourceInfo(
-                sourceType = sourceType,
-                internalId = InternalId.UserId(0),
-                sourceEventTime = None)
+          // So  cand date s ces don't have a s ceType, so   defaults to s m lar yEng ne
+          case BlendGroup ng thodEnum.S ceTypeS m lar yEng ne =>
+            val s ce nfoOpt = c.reasonChosen.s ce nfoOpt.map(_.s ceType).map { s ceType =>
+              S ce nfo(
+                s ceType = s ceType,
+                 nternal d =  nternal d.User d(0),
+                s ceEventT   = None)
             }
-            GroupingKey(
-              sourceInfoOpt = sourceInfoOpt,
-              similarityEngineTypeOpt =
-                Some(c.reasonChosen.similarityEngineInfo.similarityEngineType),
-              modelIdOpt = c.reasonChosen.similarityEngineInfo.modelId,
-              authorIdOpt = None,
-              groupIdOpt = groupId
+            Group ngKey(
+              s ce nfoOpt = s ce nfoOpt,
+              s m lar yEng neTypeOpt =
+                So (c.reasonChosen.s m lar yEng ne nfo.s m lar yEng neType),
+              model dOpt = c.reasonChosen.s m lar yEng ne nfo.model d,
+              author dOpt = None,
+              group dOpt = group d
             )
-          case BlendGroupingMethodEnum.AuthorId =>
-            GroupingKey(
-              sourceInfoOpt = None,
-              similarityEngineTypeOpt = None,
-              modelIdOpt = None,
-              authorIdOpt = Some(c.tweetInfo.authorId),
-              groupIdOpt = groupId
+          case BlendGroup ng thodEnum.Author d =>
+            Group ngKey(
+              s ce nfoOpt = None,
+              s m lar yEng neTypeOpt = None,
+              model dOpt = None,
+              author dOpt = So (c.t et nfo.author d),
+              group dOpt = group d
             )
           case _ =>
-            throw new UnsupportedOperationException(
-              s"Unsupported interleave feature: $interleaveFeature")
+            throw new UnsupportedOperat onExcept on(
+              s"Unsupported  nterleave feature: $ nterleaveFeature")
         }
       case _ =>
-        GroupingKey(
-          sourceInfoOpt = None,
-          similarityEngineTypeOpt = None,
-          modelIdOpt = None,
-          authorIdOpt = None,
-          groupIdOpt = groupId
+        Group ngKey(
+          s ce nfoOpt = None,
+          s m lar yEng neTypeOpt = None,
+          model dOpt = None,
+          author dOpt = None,
+          group dOpt = group d
         )
     }
-    grouping
+    group ng
   }
 
   /**
-   * Rather than manually calculating and maintaining the weights to rank with, we instead
-   * calculate the weights on the fly, based upon the frequencies of the candidates within each
-   * group. To ensure that diversity of the feature is maintained, we additionally employ a
-   * 'shrinkage' parameter which enforces more diversity by moving the weights closer to uniformity.
-   * More details are available at go/weighted-interleave.
+   * Rat r than manually calculat ng and ma nta n ng t    ghts to rank w h,    nstead
+   * calculate t    ghts on t  fly, based upon t  frequenc es of t  cand dates w h n each
+   * group. To ensure that d vers y of t  feature  s ma nta ned,   add  onally employ a
+   * 'shr nkage' para ter wh ch enforces more d vers y by mov ng t    ghts closer to un form y.
+   * More deta ls are ava lable at go/  ghted- nterleave.
    *
-   * @param candidateSeqKeyByFeature candidate to key.
-   * @param rankerWeightShrinkage value between [0, 1] with 1 being complete uniformity.
-   * @return Interleaving weights keyed by feature.
+   * @param cand dateSeqKeyByFeature cand date to key.
+   * @param ranker  ghtShr nkage value bet en [0, 1] w h 1 be ng complete un form y.
+   * @return  nterleav ng   ghts keyed by feature.
    */
-  private def calculateWeightsKeyByFeature[CandidateType <: Candidate](
-    candidateSeqKeyByFeature: Map[GroupingKey, Seq[CandidateType]],
-    rankerWeightShrinkage: Double
-  ): Map[GroupingKey, Double] = {
-    val maxNumberCandidates: Double = candidateSeqKeyByFeature.values
-      .map { candidates =>
-        candidates.size
+  pr vate def calculate  ghtsKeyByFeature[Cand dateType <: Cand date](
+    cand dateSeqKeyByFeature: Map[Group ngKey, Seq[Cand dateType]],
+    ranker  ghtShr nkage: Double
+  ): Map[Group ngKey, Double] = {
+    val maxNumberCand dates: Double = cand dateSeqKeyByFeature.values
+      .map { cand dates =>
+        cand dates.s ze
       }.max.toDouble
-    candidateSeqKeyByFeature.map {
-      case (featureKey: GroupingKey, candidateSeq: Seq[CandidateType]) =>
-        val observedWeight: Double = candidateSeq.size.toDouble / maxNumberCandidates
-        // How much to shrink empirical estimates to 1 (Default is to make all weights 1).
-        val finalWeight =
-          (1.0 - rankerWeightShrinkage) * observedWeight + rankerWeightShrinkage * 1.0
-        featureKey -> finalWeight
+    cand dateSeqKeyByFeature.map {
+      case (featureKey: Group ngKey, cand dateSeq: Seq[Cand dateType]) =>
+        val observed  ght: Double = cand dateSeq.s ze.toDouble / maxNumberCand dates
+        // How much to shr nk emp r cal est mates to 1 (Default  s to make all   ghts 1).
+        val f nal  ght =
+          (1.0 - ranker  ghtShr nkage) * observed  ght + ranker  ghtShr nkage * 1.0
+        featureKey -> f nal  ght
     }
   }
 
   /**
-   * Builds out the groups and weights for weighted interleaving of the candidates.
-   * More details are available at go/weighted-interleave.
+   * Bu lds out t  groups and   ghts for   ghted  nterleav ng of t  cand dates.
+   * More deta ls are ava lable at go/  ghted- nterleave.
    *
-   * @param rankedCandidateSeq candidates to interleave.
-   * @param rankerWeightShrinkage value between [0, 1] with 1 being complete uniformity.
-   * @return Candidates grouped by feature key and with calculated interleaving weights.
+   * @param rankedCand dateSeq cand dates to  nterleave.
+   * @param ranker  ghtShr nkage value bet en [0, 1] w h 1 be ng complete un form y.
+   * @return Cand dates grouped by feature key and w h calculated  nterleav ng   ghts.
    */
-  def buildRankedCandidatesWithWeightKeyByFeature(
-    rankedCandidateSeq: Seq[RankedCandidate],
-    rankerWeightShrinkage: Double,
-    interleaveFeature: BlendGroupingMethodEnum.Value
-  ): Seq[(Seq[RankedCandidate], Double)] = {
-    // To accommodate the re-grouping in InterleaveRanker
-    // In InterleaveBlender, we have already abandoned the grouping keys, and use Seq[Seq[]] to do interleave
-    // Since that we build the candidateSeq with groupingKey, we can guarantee there is no empty candidateSeq
-    val candidateSeqKeyByFeature: Map[GroupingKey, Seq[RankedCandidate]] =
-      rankedCandidateSeq.groupBy { candidate: RankedCandidate =>
-        toGroupingKey(candidate, Some(interleaveFeature), None)
+  def bu ldRankedCand datesW h  ghtKeyByFeature(
+    rankedCand dateSeq: Seq[RankedCand date],
+    ranker  ghtShr nkage: Double,
+     nterleaveFeature: BlendGroup ng thodEnum.Value
+  ): Seq[(Seq[RankedCand date], Double)] = {
+    // To accommodate t  re-group ng  n  nterleaveRanker
+    //  n  nterleaveBlender,   have already abandoned t  group ng keys, and use Seq[Seq[]] to do  nterleave
+    // S nce that   bu ld t  cand dateSeq w h group ngKey,   can guarantee t re  s no empty cand dateSeq
+    val cand dateSeqKeyByFeature: Map[Group ngKey, Seq[RankedCand date]] =
+      rankedCand dateSeq.groupBy { cand date: RankedCand date =>
+        toGroup ngKey(cand date, So ( nterleaveFeature), None)
       }
 
-    // These weights [0, 1] are used to do weighted interleaving
-    // The default value of 1.0 ensures the group is always sampled.
-    val candidateWeightsKeyByFeature: Map[GroupingKey, Double] =
-      calculateWeightsKeyByFeature(candidateSeqKeyByFeature, rankerWeightShrinkage)
+    // T se   ghts [0, 1] are used to do   ghted  nterleav ng
+    // T  default value of 1.0 ensures t  group  s always sampled.
+    val cand date  ghtsKeyByFeature: Map[Group ngKey, Double] =
+      calculate  ghtsKeyByFeature(cand dateSeqKeyByFeature, ranker  ghtShr nkage)
 
-    candidateSeqKeyByFeature.map {
-      case (groupingKey: GroupingKey, candidateSeq: Seq[RankedCandidate]) =>
+    cand dateSeqKeyByFeature.map {
+      case (group ngKey: Group ngKey, cand dateSeq: Seq[RankedCand date]) =>
         Tuple2(
-          candidateSeq.sortBy(-_.predictionScore),
-          candidateWeightsKeyByFeature.getOrElse(groupingKey, 1.0))
+          cand dateSeq.sortBy(-_.pred ct onScore),
+          cand date  ghtsKeyByFeature.getOrElse(group ngKey, 1.0))
     }.toSeq
   }
 
   /**
-   * Takes current grouping (as implied by the outer Seq) and computes blending weights.
+   * Takes current group ng (as  mpl ed by t  outer Seq) and computes blend ng   ghts.
    *
-   * @param initialCandidatesSeqSeq grouped candidates to interleave.
-   * @param rankerWeightShrinkage value between [0, 1] with 1 being complete uniformity.
-   * @return Grouped candidates with calculated interleaving weights.
+   * @param  n  alCand datesSeqSeq grouped cand dates to  nterleave.
+   * @param ranker  ghtShr nkage value bet en [0, 1] w h 1 be ng complete un form y.
+   * @return Grouped cand dates w h calculated  nterleav ng   ghts.
    */
-  def buildInitialCandidatesWithWeightKeyByFeature(
-    initialCandidatesSeqSeq: Seq[Seq[InitialCandidate]],
-    rankerWeightShrinkage: Double,
-  ): Seq[(Seq[InitialCandidate], Double)] = {
-    val candidateSeqKeyByFeature: Map[GroupingKey, Seq[InitialCandidate]] =
-      initialCandidatesSeqSeq.zipWithIndex.map(_.swap).toMap.map {
-        case (groupId: Int, initialCandidatesSeq: Seq[InitialCandidate]) =>
-          toGroupingKey(initialCandidatesSeq.head, None, Some(groupId)) -> initialCandidatesSeq
+  def bu ld n  alCand datesW h  ghtKeyByFeature(
+     n  alCand datesSeqSeq: Seq[Seq[ n  alCand date]],
+    ranker  ghtShr nkage: Double,
+  ): Seq[(Seq[ n  alCand date], Double)] = {
+    val cand dateSeqKeyByFeature: Map[Group ngKey, Seq[ n  alCand date]] =
+       n  alCand datesSeqSeq.z pW h ndex.map(_.swap).toMap.map {
+        case (group d:  nt,  n  alCand datesSeq: Seq[ n  alCand date]) =>
+          toGroup ngKey( n  alCand datesSeq. ad, None, So (group d)) ->  n  alCand datesSeq
       }
 
-    // These weights [0, 1] are used to do weighted interleaving
-    // The default value of 1.0 ensures the group is always sampled.
-    val candidateWeightsKeyByFeature =
-      calculateWeightsKeyByFeature(candidateSeqKeyByFeature, rankerWeightShrinkage)
+    // T se   ghts [0, 1] are used to do   ghted  nterleav ng
+    // T  default value of 1.0 ensures t  group  s always sampled.
+    val cand date  ghtsKeyByFeature =
+      calculate  ghtsKeyByFeature(cand dateSeqKeyByFeature, ranker  ghtShr nkage)
 
-    candidateSeqKeyByFeature.map {
-      case (groupingKey: GroupingKey, candidateSeq: Seq[InitialCandidate]) =>
-        Tuple2(candidateSeq, candidateWeightsKeyByFeature.getOrElse(groupingKey, 1.0))
+    cand dateSeqKeyByFeature.map {
+      case (group ngKey: Group ngKey, cand dateSeq: Seq[ n  alCand date]) =>
+        Tuple2(cand dateSeq, cand date  ghtsKeyByFeature.getOrElse(group ngKey, 1.0))
     }.toSeq
   }
 }

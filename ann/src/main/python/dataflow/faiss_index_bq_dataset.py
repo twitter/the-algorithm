@@ -1,232 +1,232 @@
-import argparse
-import logging
-import os
-import pkgutil
-import sys
-from urllib.parse import urlsplit
+ mport argparse
+ mport logg ng
+ mport os
+ mport pkgut l
+ mport sys
+from urll b.parse  mport urlspl 
 
-import apache_beam as beam
-from apache_beam.options.pipeline_options import PipelineOptions
-import faiss
+ mport apac _beam as beam
+from apac _beam.opt ons.p pel ne_opt ons  mport P pel neOpt ons
+ mport fa ss
 
 
-def parse_d6w_config(argv=None):
-  """Parse d6w config.
-  :param argv: d6w config
-  :return: dictionary containing d6w config
+def parse_d6w_conf g(argv=None):
+  """Parse d6w conf g.
+  :param argv: d6w conf g
+  :return: d ct onary conta n ng d6w conf g
   """
 
-  parser = argparse.ArgumentParser(
-    description="See https://docbird.twitter.biz/d6w/model.html for any parameters inherited from d6w job config"
+  parser = argparse.Argu ntParser(
+    descr pt on="See https://docb rd.tw ter.b z/d6w/model.html for any para ters  n r ed from d6w job conf g"
   )
-  parser.add_argument("--job_name", dest="job_name", required=True, help="d6w attribute")
-  parser.add_argument("--project", dest="project", required=True, help="d6w attribute")
-  parser.add_argument(
-    "--staging_location", dest="staging_location", required=True, help="d6w attribute"
+  parser.add_argu nt("--job_na ", dest="job_na ", requ red=True,  lp="d6w attr bute")
+  parser.add_argu nt("--project", dest="project", requ red=True,  lp="d6w attr bute")
+  parser.add_argu nt(
+    "--stag ng_locat on", dest="stag ng_locat on", requ red=True,  lp="d6w attr bute"
   )
-  parser.add_argument("--temp_location", dest="temp_location", required=True, help="d6w attribute")
-  parser.add_argument(
-    "--output_location",
-    dest="output_location",
-    required=True,
-    help="GCS bucket and path where resulting artifacts are uploaded",
+  parser.add_argu nt("--temp_locat on", dest="temp_locat on", requ red=True,  lp="d6w attr bute")
+  parser.add_argu nt(
+    "--output_locat on",
+    dest="output_locat on",
+    requ red=True,
+     lp="GCS bucket and path w re result ng art facts are uploaded",
   )
-  parser.add_argument(
-    "--service_account_email", dest="service_account_email", required=True, help="d6w attribute"
+  parser.add_argu nt(
+    "--serv ce_account_ema l", dest="serv ce_account_ema l", requ red=True,  lp="d6w attr bute"
   )
-  parser.add_argument(
-    "--factory_string",
-    dest="factory_string",
-    required=False,
-    help="FAISS factory string describing index to build. See https://github.com/facebookresearch/faiss/wiki/The-index-factory",
+  parser.add_argu nt(
+    "--factory_str ng",
+    dest="factory_str ng",
+    requ red=False,
+     lp="FA SS factory str ng descr b ng  ndex to bu ld. See https://g hub.com/facebookresearch/fa ss/w k /T - ndex-factory",
   )
-  parser.add_argument(
-    "--metric",
-    dest="metric",
-    required=True,
-    help="Metric used to compute distance between embeddings. Valid values are 'l2', 'ip', 'l1', 'linf'",
+  parser.add_argu nt(
+    "-- tr c",
+    dest=" tr c",
+    requ red=True,
+     lp=" tr c used to compute d stance bet en embedd ngs. Val d values are 'l2', ' p', 'l1', 'l nf'",
   )
-  parser.add_argument(
+  parser.add_argu nt(
     "--use_gpu",
     dest="gpu",
-    required=True,
-    help="--use_gpu=yes if you want to use GPU during index building",
+    requ red=True,
+     lp="--use_gpu=yes  f   want to use GPU dur ng  ndex bu ld ng",
   )
 
   known_args, unknown_args = parser.parse_known_args(argv)
-  d6w_config = vars(known_args)
-  d6w_config["gpu"] = d6w_config["gpu"].lower() == "yes"
-  d6w_config["metric"] = parse_metric(d6w_config)
+  d6w_conf g = vars(known_args)
+  d6w_conf g["gpu"] = d6w_conf g["gpu"].lo r() == "yes"
+  d6w_conf g[" tr c"] = parse_ tr c(d6w_conf g)
 
   """
-  WARNING: Currently, d6w (a Twitter tool used to deploy Dataflow jobs to GCP) and
-  PipelineOptions.for_dataflow_runner (a helper method in twitter.ml.common.apache_beam) do not
-  play nicely together. The helper method will overwrite some of the config specified in the d6w
-  file using the defaults in https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/python/twitter/ml/common/apache_beam/__init__.py?L24.'
-  However, the d6w output message will still report that the config specified in the d6w file was used.
+  WARN NG: Currently, d6w (a Tw ter tool used to deploy Dataflow jobs to GCP) and
+  P pel neOpt ons.for_dataflow_runner (a  lper  thod  n tw ter.ml.common.apac _beam) do not
+  play n cely toget r. T   lper  thod w ll overwr e so  of t  conf g spec f ed  n t  d6w
+  f le us ng t  defaults  n https://s cegraph.tw ter.b z/g .tw ter.b z/s ce/-/blob/src/python/tw ter/ml/common/apac _beam/__ n __.py?L24.'
+  Ho ver, t  d6w output  ssage w ll st ll report that t  conf g spec f ed  n t  d6w f le was used.
   """
-  logging.warning(
-    f"The following d6w config parameters will be overwritten by the defaults in "
-    f"https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/python/twitter/ml/common/apache_beam/__init__.py?L24\n"
+  logg ng.warn ng(
+    f"T  follow ng d6w conf g para ters w ll be overwr ten by t  defaults  n "
+    f"https://s cegraph.tw ter.b z/g .tw ter.b z/s ce/-/blob/src/python/tw ter/ml/common/apac _beam/__ n __.py?L24\n"
     f"{str(unknown_args)}"
   )
-  return d6w_config
+  return d6w_conf g
 
 
 def get_bq_query():
   """
-  Query is expected to return rows with unique entityId
+  Query  s expected to return rows w h un que ent y d
   """
-  return pkgutil.get_data(__name__, "bq.sql").decode("utf-8")
+  return pkgut l.get_data(__na __, "bq.sql").decode("utf-8")
 
 
-def parse_metric(config):
-  metric_str = config["metric"].lower()
-  if metric_str == "l2":
-    return faiss.METRIC_L2
-  elif metric_str == "ip":
-    return faiss.METRIC_INNER_PRODUCT
-  elif metric_str == "l1":
-    return faiss.METRIC_L1
-  elif metric_str == "linf":
-    return faiss.METRIC_Linf
+def parse_ tr c(conf g):
+   tr c_str = conf g[" tr c"].lo r()
+   f  tr c_str == "l2":
+    return fa ss.METR C_L2
+  el f  tr c_str == " p":
+    return fa ss.METR C_ NNER_PRODUCT
+  el f  tr c_str == "l1":
+    return fa ss.METR C_L1
+  el f  tr c_str == "l nf":
+    return fa ss.METR C_L nf
   else:
-    raise Exception(f"Unknown metric: {metric_str}")
+    ra se Except on(f"Unknown  tr c: { tr c_str}")
 
 
-def run_pipeline(argv=[]):
-  config = parse_d6w_config(argv)
-  argv_with_extras = argv
-  if config["gpu"]:
-    argv_with_extras.extend(["--experiments", "use_runner_v2"])
-    argv_with_extras.extend(
-      ["--experiments", "worker_accelerator=type:nvidia-tesla-t4;count:1;install-nvidia-driver"]
+def run_p pel ne(argv=[]):
+  conf g = parse_d6w_conf g(argv)
+  argv_w h_extras = argv
+   f conf g["gpu"]:
+    argv_w h_extras.extend(["--exper  nts", "use_runner_v2"])
+    argv_w h_extras.extend(
+      ["--exper  nts", "worker_accelerator=type:nv d a-tesla-t4;count:1; nstall-nv d a-dr ver"]
     )
-    argv_with_extras.extend(
+    argv_w h_extras.extend(
       [
-        "--worker_harness_container_image",
-        "gcr.io/twttr-recos-ml-prod/dataflow-gpu/beam2_39_0_py3_7",
+        "--worker_harness_conta ner_ mage",
+        "gcr. o/twttr-recos-ml-prod/dataflow-gpu/beam2_39_0_py3_7",
       ]
     )
 
-  options = PipelineOptions(argv_with_extras)
-  output_bucket_name = urlsplit(config["output_location"]).netloc
+  opt ons = P pel neOpt ons(argv_w h_extras)
+  output_bucket_na  = urlspl (conf g["output_locat on"]).netloc
 
-  with beam.Pipeline(options=options) as p:
-    input_data = p | "Read from BigQuery" >> beam.io.ReadFromBigQuery(
-      method=beam.io.ReadFromBigQuery.Method.DIRECT_READ,
+  w h beam.P pel ne(opt ons=opt ons) as p:
+     nput_data = p | "Read from B gQuery" >> beam. o.ReadFromB gQuery(
+       thod=beam. o.ReadFromB gQuery. thod.D RECT_READ,
       query=get_bq_query(),
       use_standard_sql=True,
     )
 
-    index_built = input_data | "Build and upload index" >> beam.CombineGlobally(
-      MergeAndBuildIndex(
-        output_bucket_name,
-        config["output_location"],
-        config["factory_string"],
-        config["metric"],
-        config["gpu"],
+     ndex_bu lt =  nput_data | "Bu ld and upload  ndex" >> beam.Comb neGlobally(
+       rgeAndBu ld ndex(
+        output_bucket_na ,
+        conf g["output_locat on"],
+        conf g["factory_str ng"],
+        conf g[" tr c"],
+        conf g["gpu"],
       )
     )
 
-    # Make linter happy
-    index_built
+    # Make l nter happy
+     ndex_bu lt
 
 
-class MergeAndBuildIndex(beam.CombineFn):
-  def __init__(self, bucket_name, gcs_output_path, factory_string, metric, gpu):
-    self.bucket_name = bucket_name
+class  rgeAndBu ld ndex(beam.Comb neFn):
+  def __ n __(self, bucket_na , gcs_output_path, factory_str ng,  tr c, gpu):
+    self.bucket_na  = bucket_na 
     self.gcs_output_path = gcs_output_path
-    self.factory_string = factory_string
-    self.metric = metric
+    self.factory_str ng = factory_str ng
+    self. tr c =  tr c
     self.gpu = gpu
 
   def create_accumulator(self):
     return []
 
-  def add_input(self, accumulator, element):
-    accumulator.append(element)
+  def add_ nput(self, accumulator, ele nt):
+    accumulator.append(ele nt)
     return accumulator
 
-  def merge_accumulators(self, accumulators):
-    merged = []
-    for accum in accumulators:
-      merged.extend(accum)
-    return merged
+  def  rge_accumulators(self, accumulators):
+     rged = []
+    for accum  n accumulators:
+       rged.extend(accum)
+    return  rged
 
   def extract_output(self, rows):
-    # Reimports are needed on workers
-    import glob
-    import subprocess
+    # Re mports are needed on workers
+     mport glob
+     mport subprocess
 
-    import faiss
-    from google.cloud import storage
-    import numpy as np
+     mport fa ss
+    from google.cloud  mport storage
+     mport numpy as np
 
-    client = storage.Client()
-    bucket = client.get_bucket(self.bucket_name)
+    cl ent = storage.Cl ent()
+    bucket = cl ent.get_bucket(self.bucket_na )
 
-    logging.info("Building FAISS index")
-    logging.info(f"There are {len(rows)} rows")
+    logg ng. nfo("Bu ld ng FA SS  ndex")
+    logg ng. nfo(f"T re are {len(rows)} rows")
 
-    ids = np.array([x["entityId"] for x in rows]).astype("long")
-    embeds = np.array([x["embedding"] for x in rows]).astype("float32")
-    dimensions = len(embeds[0])
-    N = ids.shape[0]
-    logging.info(f"There are {dimensions} dimensions")
+     ds = np.array([x["ent y d"] for x  n rows]).astype("long")
+    embeds = np.array([x["embedd ng"] for x  n rows]).astype("float32")
+    d  ns ons = len(embeds[0])
+    N =  ds.shape[0]
+    logg ng. nfo(f"T re are {d  ns ons} d  ns ons")
 
-    if self.factory_string is None:
+     f self.factory_str ng  s None:
       M = 48
 
-      divideable_dimensions = (dimensions // M) * M
-      if divideable_dimensions != dimensions:
-        opq_prefix = f"OPQ{M}_{divideable_dimensions}"
+      d v deable_d  ns ons = (d  ns ons // M) * M
+       f d v deable_d  ns ons != d  ns ons:
+        opq_pref x = f"OPQ{M}_{d v deable_d  ns ons}"
       else:
-        opq_prefix = f"OPQ{M}"
+        opq_pref x = f"OPQ{M}"
 
       clusters = N // 20
-      self.factory_string = f"{opq_prefix},IVF{clusters},PQ{M}"
+      self.factory_str ng = f"{opq_pref x}, VF{clusters},PQ{M}"
 
-    logging.info(f"Factory string is {self.factory_string}, metric={self.metric}")
+    logg ng. nfo(f"Factory str ng  s {self.factory_str ng},  tr c={self. tr c}")
 
-    if self.gpu:
-      logging.info("Using GPU")
+     f self.gpu:
+      logg ng. nfo("Us ng GPU")
 
-      res = faiss.StandardGpuResources()
-      cpu_index = faiss.index_factory(dimensions, self.factory_string, self.metric)
-      cpu_index = faiss.IndexIDMap(cpu_index)
-      gpu_index = faiss.index_cpu_to_gpu(res, 0, cpu_index)
-      gpu_index.train(embeds)
-      gpu_index.add_with_ids(embeds, ids)
-      cpu_index = faiss.index_gpu_to_cpu(gpu_index)
+      res = fa ss.StandardGpuRes ces()
+      cpu_ ndex = fa ss. ndex_factory(d  ns ons, self.factory_str ng, self. tr c)
+      cpu_ ndex = fa ss. ndex DMap(cpu_ ndex)
+      gpu_ ndex = fa ss. ndex_cpu_to_gpu(res, 0, cpu_ ndex)
+      gpu_ ndex.tra n(embeds)
+      gpu_ ndex.add_w h_ ds(embeds,  ds)
+      cpu_ ndex = fa ss. ndex_gpu_to_cpu(gpu_ ndex)
     else:
-      logging.info("Using CPU")
+      logg ng. nfo("Us ng CPU")
 
-      cpu_index = faiss.index_factory(dimensions, self.factory_string, self.metric)
-      cpu_index = faiss.IndexIDMap(cpu_index)
-      cpu_index.train(embeds)
-      cpu_index.add_with_ids(embeds, ids)
+      cpu_ ndex = fa ss. ndex_factory(d  ns ons, self.factory_str ng, self. tr c)
+      cpu_ ndex = fa ss. ndex DMap(cpu_ ndex)
+      cpu_ ndex.tra n(embeds)
+      cpu_ ndex.add_w h_ ds(embeds,  ds)
 
-    logging.info("Built faiss index")
+    logg ng. nfo("Bu lt fa ss  ndex")
 
-    local_path = "/indices"
-    logging.info(f"Writing indices to local {local_path}")
-    subprocess.run(f"mkdir -p {local_path}".strip().split())
-    local_index_path = os.path.join(local_path, "result.index")
+    local_path = "/ nd ces"
+    logg ng. nfo(f"Wr  ng  nd ces to local {local_path}")
+    subprocess.run(f"mkd r -p {local_path}".str p().spl ())
+    local_ ndex_path = os.path.jo n(local_path, "result. ndex")
 
-    faiss.write_index(cpu_index, local_index_path)
-    logging.info(f"Done writing indices to local {local_path}")
+    fa ss.wr e_ ndex(cpu_ ndex, local_ ndex_path)
+    logg ng. nfo(f"Done wr  ng  nd ces to local {local_path}")
 
-    logging.info(f"Uploading to GCS with path {self.gcs_output_path}")
-    assert os.path.isdir(local_path)
-    for local_file in glob.glob(local_path + "/*"):
-      remote_path = os.path.join(
-        self.gcs_output_path.split("/")[-1], local_file[1 + len(local_path) :]
+    logg ng. nfo(f"Upload ng to GCS w h path {self.gcs_output_path}")
+    assert os.path. sd r(local_path)
+    for local_f le  n glob.glob(local_path + "/*"):
+      remote_path = os.path.jo n(
+        self.gcs_output_path.spl ("/")[-1], local_f le[1 + len(local_path) :]
       )
       blob = bucket.blob(remote_path)
-      blob.upload_from_filename(local_file)
+      blob.upload_from_f lena (local_f le)
 
 
-if __name__ == "__main__":
-  logging.getLogger().setLevel(logging.INFO)
-  run_pipeline(sys.argv)
+ f __na __ == "__ma n__":
+  logg ng.getLogger().setLevel(logg ng. NFO)
+  run_p pel ne(sys.argv)

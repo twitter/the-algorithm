@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.audio_space
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.aud o_space
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.audio_space.AudioSpaceItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.aud o_space.Aud oSpace em
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class AudioSpaceItemMarshaller @Inject() () {
+@S ngleton
+class Aud oSpace emMarshaller @ nject() () {
 
-  def apply(audioSpaceItem: AudioSpaceItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.AudioSpace(
-      urt.AudioSpace(
-        id = audioSpaceItem.id
+  def apply(aud oSpace em: Aud oSpace em): urt.T  l ne emContent =
+    urt.T  l ne emContent.Aud oSpace(
+      urt.Aud oSpace(
+         d = aud oSpace em. d
       )
     )
 }

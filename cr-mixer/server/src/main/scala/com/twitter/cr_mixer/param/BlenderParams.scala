@@ -1,152 +1,152 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSEnumParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .Param
 
 object BlenderParams {
-  object BlendingAlgorithmEnum extends Enumeration {
-    val RoundRobin: Value = Value
-    val SourceTypeBackFill: Value = Value
-    val SourceSignalSorting: Value = Value
+  object Blend ngAlgor hmEnum extends Enu rat on {
+    val RoundRob n: Value = Value
+    val S ceTypeBackF ll: Value = Value
+    val S ceS gnalSort ng: Value = Value
   }
-  object ContentBasedSortingAlgorithmEnum extends Enumeration {
-    val FavoriteCount: Value = Value
-    val SourceSignalRecency: Value = Value
-    val RandomSorting: Value = Value
-    val SimilarityToSignalSorting: Value = Value
-    val CandidateRecency: Value = Value
+  object ContentBasedSort ngAlgor hmEnum extends Enu rat on {
+    val Favor eCount: Value = Value
+    val S ceS gnalRecency: Value = Value
+    val RandomSort ng: Value = Value
+    val S m lar yToS gnalSort ng: Value = Value
+    val Cand dateRecency: Value = Value
   }
 
-  object BlendingAlgorithmParam
-      extends FSEnumParam[BlendingAlgorithmEnum.type](
-        name = "blending_algorithm_id",
-        default = BlendingAlgorithmEnum.RoundRobin,
-        enum = BlendingAlgorithmEnum
+  object Blend ngAlgor hmParam
+      extends FSEnumParam[Blend ngAlgor hmEnum.type](
+        na  = "blend ng_algor hm_ d",
+        default = Blend ngAlgor hmEnum.RoundRob n,
+        enum = Blend ngAlgor hmEnum
       )
 
-  object RankingInterleaveWeightShrinkageParam
+  object Rank ng nterleave  ghtShr nkageParam
       extends FSBoundedParam[Double](
-        name = "blending_enable_ml_ranking_interleave_weights_shrinkage",
+        na  = "blend ng_enable_ml_rank ng_ nterleave_  ghts_shr nkage",
         default = 1.0,
-        min = 0.0,
+        m n = 0.0,
         max = 1.0
       )
 
-  object RankingInterleaveMaxWeightAdjustments
-      extends FSBoundedParam[Int](
-        name = "blending_interleave_max_weighted_adjustments",
+  object Rank ng nterleaveMax  ghtAdjust nts
+      extends FSBoundedParam[ nt](
+        na  = "blend ng_ nterleave_max_  ghted_adjust nts",
         default = 3000,
-        min = 0,
+        m n = 0,
         max = 9999
       )
 
-  object SignalTypeSortingAlgorithmParam
-      extends FSEnumParam[ContentBasedSortingAlgorithmEnum.type](
-        name = "blending_algorithm_inner_signal_sorting_id",
-        default = ContentBasedSortingAlgorithmEnum.SourceSignalRecency,
-        enum = ContentBasedSortingAlgorithmEnum
+  object S gnalTypeSort ngAlgor hmParam
+      extends FSEnumParam[ContentBasedSort ngAlgor hmEnum.type](
+        na  = "blend ng_algor hm_ nner_s gnal_sort ng_ d",
+        default = ContentBasedSort ngAlgor hmEnum.S ceS gnalRecency,
+        enum = ContentBasedSort ngAlgor hmEnum
       )
 
-  object ContentBlenderTypeSortingAlgorithmParam
-      extends FSEnumParam[ContentBasedSortingAlgorithmEnum.type](
-        name = "blending_algorithm_content_blender_sorting_id",
-        default = ContentBasedSortingAlgorithmEnum.FavoriteCount,
-        enum = ContentBasedSortingAlgorithmEnum
+  object ContentBlenderTypeSort ngAlgor hmParam
+      extends FSEnumParam[ContentBasedSort ngAlgor hmEnum.type](
+        na  = "blend ng_algor hm_content_blender_sort ng_ d",
+        default = ContentBasedSort ngAlgor hmEnum.Favor eCount,
+        enum = ContentBasedSort ngAlgor hmEnum
       )
 
-  //UserAffinities Algo Param: whether to distributed the source type weights
-  object EnableDistributedSourceTypeWeightsParam
+  //UserAff n  es Algo Param: w t r to d str buted t  s ce type   ghts
+  object EnableD str butedS ceType  ghtsParam
       extends FSParam[Boolean](
-        name = "blending_algorithm_enable_distributed_source_type_weights",
+        na  = "blend ng_algor hm_enable_d str buted_s ce_type_  ghts",
         default = false
       )
 
-  object BlendGroupingMethodEnum extends Enumeration {
-    val SourceKeyDefault: Value = Value("SourceKey")
-    val SourceTypeSimilarityEngine: Value = Value("SourceTypeSimilarityEngine")
-    val AuthorId: Value = Value("AuthorId")
+  object BlendGroup ng thodEnum extends Enu rat on {
+    val S ceKeyDefault: Value = Value("S ceKey")
+    val S ceTypeS m lar yEng ne: Value = Value("S ceTypeS m lar yEng ne")
+    val Author d: Value = Value("Author d")
   }
 
-  object BlendGroupingMethodParam
-      extends FSEnumParam[BlendGroupingMethodEnum.type](
-        name = "blending_grouping_method_id",
-        default = BlendGroupingMethodEnum.SourceKeyDefault,
-        enum = BlendGroupingMethodEnum
+  object BlendGroup ng thodParam
+      extends FSEnumParam[BlendGroup ng thodEnum.type](
+        na  = "blend ng_group ng_ thod_ d",
+        default = BlendGroup ng thodEnum.S ceKeyDefault,
+        enum = BlendGroup ng thodEnum
       )
 
-  object RecencyBasedRandomSamplingHalfLifeInDays
-      extends FSBoundedParam[Int](
-        name = "blending_interleave_random_sampling_recency_based_half_life_in_days",
+  object RecencyBasedRandomSampl ngHalfL fe nDays
+      extends FSBoundedParam[ nt](
+        na  = "blend ng_ nterleave_random_sampl ng_recency_based_half_l fe_ n_days",
         default = 7,
-        min = 1,
+        m n = 1,
         max = 28
       )
 
-  object RecencyBasedRandomSamplingDefaultWeight
+  object RecencyBasedRandomSampl ngDefault  ght
       extends FSBoundedParam[Double](
-        name = "blending_interleave_random_sampling_recency_based_default_weight",
+        na  = "blend ng_ nterleave_random_sampl ng_recency_based_default_  ght",
         default = 1.0,
-        min = 0.1,
+        m n = 0.1,
         max = 2.0
       )
 
-  object SourceTypeBackFillEnableVideoBackFill
+  object S ceTypeBackF llEnableV deoBackF ll
       extends FSParam[Boolean](
-        name = "blending_enable_video_backfill",
+        na  = "blend ng_enable_v deo_backf ll",
         default = false
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    BlendingAlgorithmParam,
-    RankingInterleaveWeightShrinkageParam,
-    RankingInterleaveMaxWeightAdjustments,
-    EnableDistributedSourceTypeWeightsParam,
-    BlendGroupingMethodParam,
-    RecencyBasedRandomSamplingHalfLifeInDays,
-    RecencyBasedRandomSamplingDefaultWeight,
-    SourceTypeBackFillEnableVideoBackFill,
-    SignalTypeSortingAlgorithmParam,
-    ContentBlenderTypeSortingAlgorithmParam,
+  val AllParams: Seq[Param[_] w h FSNa ] = Seq(
+    Blend ngAlgor hmParam,
+    Rank ng nterleave  ghtShr nkageParam,
+    Rank ng nterleaveMax  ghtAdjust nts,
+    EnableD str butedS ceType  ghtsParam,
+    BlendGroup ng thodParam,
+    RecencyBasedRandomSampl ngHalfL fe nDays,
+    RecencyBasedRandomSampl ngDefault  ght,
+    S ceTypeBackF llEnableV deoBackF ll,
+    S gnalTypeSort ngAlgor hmParam,
+    ContentBlenderTypeSort ngAlgor hmParam,
   )
 
-  lazy val config: BaseConfig = {
-    val enumOverrides = FeatureSwitchOverrideUtil.getEnumFSOverrides(
-      NullStatsReceiver,
+  lazy val conf g: BaseConf g = {
+    val enumOverr des = FeatureSw chOverr deUt l.getEnumFSOverr des(
+      NullStatsRece ver,
       Logger(getClass),
-      BlendingAlgorithmParam,
-      BlendGroupingMethodParam,
-      SignalTypeSortingAlgorithmParam,
-      ContentBlenderTypeSortingAlgorithmParam
+      Blend ngAlgor hmParam,
+      BlendGroup ng thodParam,
+      S gnalTypeSort ngAlgor hmParam,
+      ContentBlenderTypeSort ngAlgor hmParam
     )
 
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableDistributedSourceTypeWeightsParam,
-      SourceTypeBackFillEnableVideoBackFill
+    val booleanOverr des = FeatureSw chOverr deUt l.getBooleanFSOverr des(
+      EnableD str butedS ceType  ghtsParam,
+      S ceTypeBackF llEnableV deoBackF ll
     )
 
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-      RankingInterleaveMaxWeightAdjustments,
-      RecencyBasedRandomSamplingHalfLifeInDays
+    val  ntOverr des = FeatureSw chOverr deUt l.getBounded ntFSOverr des(
+      Rank ng nterleaveMax  ghtAdjust nts,
+      RecencyBasedRandomSampl ngHalfL fe nDays
     )
 
-    val doubleOverrides = FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(
-      RankingInterleaveWeightShrinkageParam,
-      RecencyBasedRandomSamplingDefaultWeight
+    val doubleOverr des = FeatureSw chOverr deUt l.getBoundedDoubleFSOverr des(
+      Rank ng nterleave  ghtShr nkageParam,
+      RecencyBasedRandomSampl ngDefault  ght
     )
 
-    BaseConfigBuilder()
-      .set(enumOverrides: _*)
-      .set(booleanOverrides: _*)
-      .set(intOverrides: _*)
-      .set(doubleOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set(enumOverr des: _*)
+      .set(booleanOverr des: _*)
+      .set( ntOverr des: _*)
+      .set(doubleOverr des: _*)
+      .bu ld()
   }
 }

@@ -1,51 +1,51 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .Param
 
 object RealGraphOonParams {
-  object EnableSourceParam
+  object EnableS ceParam
       extends FSParam[Boolean](
-        name = "signal_realgraphoon_enable_source",
+        na  = "s gnal_realgraphoon_enable_s ce",
         default = false
       )
 
-  object EnableSourceGraphParam
+  object EnableS ceGraphParam
       extends FSParam[Boolean](
-        name = "graph_realgraphoon_enable_source",
+        na  = "graph_realgraphoon_enable_s ce",
         default = false
       )
 
-  object MaxConsumerSeedsNumParam
-      extends FSBoundedParam[Int](
-        name = "graph_realgraphoon_max_user_seeds_num",
+  object MaxConsu rSeedsNumParam
+      extends FSBoundedParam[ nt](
+        na  = "graph_realgraphoon_max_user_seeds_num",
         default = 200,
-        min = 0,
+        m n = 0,
         max = 1000
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableSourceParam,
-    EnableSourceGraphParam,
-    MaxConsumerSeedsNumParam
+  val AllParams: Seq[Param[_] w h FSNa ] = Seq(
+    EnableS ceParam,
+    EnableS ceGraphParam,
+    MaxConsu rSeedsNumParam
   )
 
-  lazy val config: BaseConfig = {
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableSourceParam,
-      EnableSourceGraphParam
+  lazy val conf g: BaseConf g = {
+    val booleanOverr des = FeatureSw chOverr deUt l.getBooleanFSOverr des(
+      EnableS ceParam,
+      EnableS ceGraphParam
     )
 
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(MaxConsumerSeedsNumParam)
+    val  ntOverr des = FeatureSw chOverr deUt l.getBounded ntFSOverr des(MaxConsu rSeedsNumParam)
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(intOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set(booleanOverr des: _*)
+      .set( ntOverr des: _*)
+      .bu ld()
   }
 }

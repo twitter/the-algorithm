@@ -1,23 +1,23 @@
-package com.twitter.follow_recommendations.common.feature_hydration.common
+package com.tw ter.follow_recom ndat ons.common.feature_hydrat on.common
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.HasD splayLocat on
+ mport com.tw ter.follow_recom ndat ons.common.models.HasS m larToContext
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
 
-trait FeatureSource {
-  def id: FeatureSourceId
+tra  FeatureS ce {
+  def  d: FeatureS ce d
   def featureContext: FeatureContext
   def hydrateFeatures(
-    target: HasClientContext
-      with HasPreFetchedFeature
-      with HasParams
-      with HasSimilarToContext
-      with HasDisplayLocation,
-    candidates: Seq[CandidateUser]
-  ): Stitch[Map[CandidateUser, DataRecord]]
+    target: HasCl entContext
+      w h HasPreFetc dFeature
+      w h HasParams
+      w h HasS m larToContext
+      w h HasD splayLocat on,
+    cand dates: Seq[Cand dateUser]
+  ): St ch[Map[Cand dateUser, DataRecord]]
 }

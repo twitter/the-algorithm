@@ -1,150 +1,150 @@
-package com.twitter.search.earlybird.util;
+package com.tw ter.search.earlyb rd.ut l;
 
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.concurrent.Sc duledExecutorServ ce;
+ mport java.ut l.concurrent.Sc duledFuture;
+ mport java.ut l.concurrent.T  Un ;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchStatsRece ver;
+ mport com.tw ter.search.earlyb rd.except on.Cr  calExcept onHandler;
 
 /**
- * Base class for classes that run periodic tasks.
+ * Base class for classes that run per od c tasks.
  */
-public abstract class ScheduledExecutorManager {
-  private static final Logger LOG = LoggerFactory.getLogger(ScheduledExecutorManager.class);
-  private static final long SHUTDOWN_WAIT_INTERVAL_SEC = 30;
+publ c abstract class Sc duledExecutorManager {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Sc duledExecutorManager.class);
+  pr vate stat c f nal long SHUTDOWN_WA T_ NTERVAL_SEC = 30;
 
-  public static final String SCHEDULED_EXECUTOR_TASK_PREFIX = "scheduled_executor_task_";
+  publ c stat c f nal Str ng SCHEDULED_EXECUTOR_TASK_PREF X = "sc duled_executor_task_";
 
-  private final String name;
-  private final ScheduledExecutorService executor;
+  pr vate f nal Str ng na ;
+  pr vate f nal Sc duledExecutorServ ce executor;
 
-  private final ShutdownWaitTimeParams shutdownWaitTimeParams;
+  pr vate f nal ShutdownWa T  Params shutdownWa T  Params;
 
-  private final SearchCounter iterationCounter;
-  private final SearchStatsReceiver searchStatsReceiver;
+  pr vate f nal SearchCounter  erat onCounter;
+  pr vate f nal SearchStatsRece ver searchStatsRece ver;
 
-  protected final CriticalExceptionHandler criticalExceptionHandler;
-  private final Clock clock;
+  protected f nal Cr  calExcept onHandler cr  calExcept onHandler;
+  pr vate f nal Clock clock;
 
   protected boolean shouldLog = true;
 
-  public ScheduledExecutorManager(
-      ScheduledExecutorService executor,
-      ShutdownWaitTimeParams shutdownWaitTimeParams,
-      SearchStatsReceiver searchStatsReceiver,
-      CriticalExceptionHandler criticalExceptionHandler,
+  publ c Sc duledExecutorManager(
+      Sc duledExecutorServ ce executor,
+      ShutdownWa T  Params shutdownWa T  Params,
+      SearchStatsRece ver searchStatsRece ver,
+      Cr  calExcept onHandler cr  calExcept onHandler,
       Clock clock) {
-    this(executor, shutdownWaitTimeParams, searchStatsReceiver, null,
-        criticalExceptionHandler, clock);
+    t (executor, shutdownWa T  Params, searchStatsRece ver, null,
+        cr  calExcept onHandler, clock);
   }
 
-  ScheduledExecutorManager(
-      ScheduledExecutorService executor,
-      ShutdownWaitTimeParams shutdownWaitTimeParams,
-      SearchStatsReceiver searchStatsReceiver,
-      SearchCounter iterationCounter,
-      CriticalExceptionHandler criticalExceptionHandler,
+  Sc duledExecutorManager(
+      Sc duledExecutorServ ce executor,
+      ShutdownWa T  Params shutdownWa T  Params,
+      SearchStatsRece ver searchStatsRece ver,
+      SearchCounter  erat onCounter,
+      Cr  calExcept onHandler cr  calExcept onHandler,
       Clock clock) {
-    this.name = getClass().getSimpleName();
-    this.executor = executor;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.shutdownWaitTimeParams = shutdownWaitTimeParams;
+    t .na  = getClass().getS mpleNa ();
+    t .executor = executor;
+    t .cr  calExcept onHandler = cr  calExcept onHandler;
+    t .shutdownWa T  Params = shutdownWa T  Params;
 
-    if (iterationCounter != null) {
-      this.iterationCounter = iterationCounter;
+     f ( erat onCounter != null) {
+      t . erat onCounter =  erat onCounter;
     } else {
-      this.iterationCounter = searchStatsReceiver.getCounter(SCHEDULED_EXECUTOR_TASK_PREFIX + name);
+      t . erat onCounter = searchStatsRece ver.getCounter(SCHEDULED_EXECUTOR_TASK_PREF X + na );
     }
 
-    this.searchStatsReceiver = searchStatsReceiver;
-    this.clock = clock;
+    t .searchStatsRece ver = searchStatsRece ver;
+    t .clock = clock;
   }
 
   /**
-   * Schedule a task.
+   * Sc dule a task.
    */
-  protected final ScheduledFuture scheduleNewTask(
-      ScheduledExecutorTask task,
-      PeriodicActionParams periodicActionParams) {
-    long interval = periodicActionParams.getIntervalDuration();
-    TimeUnit timeUnit = periodicActionParams.getIntervalUnit();
-    long initialDelay = periodicActionParams.getInitialDelayDuration();
+  protected f nal Sc duledFuture sc duleNewTask(
+      Sc duledExecutorTask task,
+      Per od cAct onParams per od cAct onParams) {
+    long  nterval = per od cAct onParams.get ntervalDurat on();
+    T  Un  t  Un  = per od cAct onParams.get ntervalUn ();
+    long  n  alDelay = per od cAct onParams.get n  alDelayDurat on();
 
-    if (interval <= 0) {
-      String message = String.format(
-          "Not scheduling manager %s for wrong interval %d %s", name, interval, timeUnit);
-      LOG.error(message);
-      throw new UnsupportedOperationException(message);
+     f ( nterval <= 0) {
+      Str ng  ssage = Str ng.format(
+          "Not sc dul ng manager %s for wrong  nterval %d %s", na ,  nterval, t  Un );
+      LOG.error( ssage);
+      throw new UnsupportedOperat onExcept on( ssage);
     }
 
-    if (shouldLog) {
-      LOG.info("Scheduling to run {} every {} {} with {}", name, interval, timeUnit,
-              periodicActionParams.getDelayType());
+     f (shouldLog) {
+      LOG. nfo("Sc dul ng to run {} every {} {} w h {}", na ,  nterval, t  Un ,
+              per od cAct onParams.getDelayType());
     }
-    final ScheduledFuture scheduledFuture;
-    if (periodicActionParams.isFixedDelay()) {
-      scheduledFuture = executor.scheduleWithFixedDelay(task, initialDelay, interval, timeUnit);
+    f nal Sc duledFuture sc duledFuture;
+     f (per od cAct onParams. sF xedDelay()) {
+      sc duledFuture = executor.sc duleW hF xedDelay(task,  n  alDelay,  nterval, t  Un );
     } else {
-      scheduledFuture = executor.scheduleAtFixedRate(task, initialDelay, interval, timeUnit);
+      sc duledFuture = executor.sc duleAtF xedRate(task,  n  alDelay,  nterval, t  Un );
     }
-    return scheduledFuture;
+    return sc duledFuture;
   }
 
   /**
-   * Shutdown everything that's running with the executor.
+   * Shutdown everyth ng that's runn ng w h t  executor.
    */
-  public boolean shutdown() throws InterruptedException {
-    LOG.info("Start shutting down {}.", name);
+  publ c boolean shutdown() throws  nterruptedExcept on {
+    LOG. nfo("Start shutt ng down {}.", na );
     executor.shutdownNow();
 
-    boolean terminated = false;
-    long waitSeconds = shutdownWaitTimeParams.getWaitUnit().toSeconds(
-        shutdownWaitTimeParams.getWaitDuration()
+    boolean term nated = false;
+    long wa Seconds = shutdownWa T  Params.getWa Un ().toSeconds(
+        shutdownWa T  Params.getWa Durat on()
     );
 
-    if (waitSeconds == 0) {
-      LOG.info("Not waiting at all for {}, wait time is set to zero.", name);
+     f (wa Seconds == 0) {
+      LOG. nfo("Not wa  ng at all for {}, wa  t    s set to zero.", na );
     } else {
-      while (!terminated && waitSeconds > 0) {
-        long waitTime = Math.min(waitSeconds, SHUTDOWN_WAIT_INTERVAL_SEC);
-        terminated = executor.awaitTermination(waitTime, TimeUnit.SECONDS);
-        waitSeconds -= waitTime;
+      wh le (!term nated && wa Seconds > 0) {
+        long wa T   = Math.m n(wa Seconds, SHUTDOWN_WA T_ NTERVAL_SEC);
+        term nated = executor.awa Term nat on(wa T  , T  Un .SECONDS);
+        wa Seconds -= wa T  ;
 
-        if (!terminated) {
-          LOG.info("Still shutting down {} ...", name);
+         f (!term nated) {
+          LOG. nfo("St ll shutt ng down {} ...", na );
         }
       }
     }
 
-    LOG.info("Done shutting down {}, terminated: {}", name, terminated);
+    LOG. nfo("Done shutt ng down {}, term nated: {}", na , term nated);
 
     shutdownComponent();
-    return terminated;
+    return term nated;
   }
 
-  protected ScheduledExecutorService getExecutor() {
+  protected Sc duledExecutorServ ce getExecutor() {
     return executor;
   }
 
-  public final String getName() {
-    return name;
+  publ c f nal Str ng getNa () {
+    return na ;
   }
 
-  public SearchCounter getIterationCounter() {
-    return iterationCounter;
+  publ c SearchCounter get erat onCounter() {
+    return  erat onCounter;
   }
 
-  protected final SearchStatsReceiver getSearchStatsReceiver() {
-    return searchStatsReceiver;
+  protected f nal SearchStatsRece ver getSearchStatsRece ver() {
+    return searchStatsRece ver;
   }
 
-  // Override if you need to shutdown additional services.
-  protected void shutdownComponent() {
+  // Overr de  f   need to shutdown add  onal serv ces.
+  protected vo d shutdownComponent() {
   }
 }

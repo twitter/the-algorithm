@@ -1,17 +1,17 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
-import com.twitter.timelines.configapi.FSEnumParam
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms_expans on
+ mport com.tw ter.t  l nes.conf gap .FSEnumParam
 
-object SimsExpansionSourceParams {
+object S msExpans onS ceParams {
   case object Aggregator
-      extends FSEnumParam[SimsExpansionSourceAggregatorId.type](
-        name = "sims_expansion_aggregator_id",
-        default = SimsExpansionSourceAggregatorId.Sum,
-        enum = SimsExpansionSourceAggregatorId)
+      extends FSEnumParam[S msExpans onS ceAggregator d.type](
+        na  = "s ms_expans on_aggregator_ d",
+        default = S msExpans onS ceAggregator d.Sum,
+        enum = S msExpans onS ceAggregator d)
 }
 
-object SimsExpansionSourceAggregatorId extends Enumeration {
-  type AggregatorId = Value
-  val Sum: AggregatorId = Value("sum")
-  val Max: AggregatorId = Value("max")
-  val MultiDecay: AggregatorId = Value("multi_decay")
+object S msExpans onS ceAggregator d extends Enu rat on {
+  type Aggregator d = Value
+  val Sum: Aggregator d = Value("sum")
+  val Max: Aggregator d = Value("max")
+  val Mult Decay: Aggregator d = Value("mult _decay")
 }

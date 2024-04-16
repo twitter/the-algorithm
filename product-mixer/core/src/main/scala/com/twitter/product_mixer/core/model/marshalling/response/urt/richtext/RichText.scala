@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.richtext
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext
 
-case class RichText(
-  text: String,
-  entities: List[RichTextEntity],
-  rtl: Option[Boolean],
-  alignment: Option[RichTextAlignment])
+case class R chText(
+  text: Str ng,
+  ent  es: L st[R chTextEnt y],
+  rtl: Opt on[Boolean],
+  al gn nt: Opt on[R chTextAl gn nt])

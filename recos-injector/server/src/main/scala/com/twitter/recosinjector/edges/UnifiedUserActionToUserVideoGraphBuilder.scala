@@ -1,56 +1,56 @@
-package com.twitter.recosinjector.edges
+package com.tw ter.recos njector.edges
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.util.Action
-import com.twitter.recosinjector.util.UuaEngagementEventDetails
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.recos.ut l.Act on
+ mport com.tw ter.recos njector.ut l.UuaEngage ntEventDeta ls
+ mport com.tw ter.ut l.Future
 
-class UnifiedUserActionToUserVideoGraphBuilder(
-  userTweetEntityEdgeBuilder: UserTweetEntityEdgeBuilder
+class Un f edUserAct onToUserV deoGraphBu lder(
+  userT etEnt yEdgeBu lder: UserT etEnt yEdgeBu lder
 )(
-  override implicit val statsReceiver: StatsReceiver)
-    extends EventToMessageBuilder[UuaEngagementEventDetails, UserTweetEntityEdge] {
+  overr de  mpl c  val statsRece ver: StatsRece ver)
+    extends EventTo ssageBu lder[UuaEngage ntEventDeta ls, UserT etEnt yEdge] {
 
-  private val numVideoPlayback50EdgeCounter = statsReceiver.counter("num_video_playback50_edge")
-  private val numUnVideoPlayback50Counter = statsReceiver.counter("num_non_video_playback50_edge")
+  pr vate val numV deoPlayback50EdgeCounter = statsRece ver.counter("num_v deo_playback50_edge")
+  pr vate val numUnV deoPlayback50Counter = statsRece ver.counter("num_non_v deo_playback50_edge")
 
-  override def shouldProcessEvent(event: UuaEngagementEventDetails): Future[Boolean] = {
-    event.userTweetEngagement.action match {
-      case Action.VideoPlayback50 => Future(true)
+  overr de def shouldProcessEvent(event: UuaEngage ntEventDeta ls): Future[Boolean] = {
+    event.userT etEngage nt.act on match {
+      case Act on.V deoPlayback50 => Future(true)
       case _ => Future(false)
     }
   }
 
-  override def buildEdges(details: UuaEngagementEventDetails): Future[Seq[UserTweetEntityEdge]] = {
-    val engagement = details.userTweetEngagement
-    val tweetDetails = engagement.tweetDetails
+  overr de def bu ldEdges(deta ls: UuaEngage ntEventDeta ls): Future[Seq[UserT etEnt yEdge]] = {
+    val engage nt = deta ls.userT etEngage nt
+    val t etDeta ls = engage nt.t etDeta ls
 
     Future
       .value(
-        UserTweetEntityEdge(
-          sourceUser = engagement.engageUserId,
-          targetTweet = engagement.tweetId,
-          action = engagement.action,
-          metadata = engagement.engagementTimeMillis,
-          cardInfo = engagement.tweetDetails.map(_.cardInfo.toByte),
-          entitiesMap = None,
-          tweetDetails = tweetDetails
+        UserT etEnt yEdge(
+          s ceUser = engage nt.engageUser d,
+          targetT et = engage nt.t et d,
+          act on = engage nt.act on,
+           tadata = engage nt.engage ntT  M ll s,
+          card nfo = engage nt.t etDeta ls.map(_.card nfo.toByte),
+          ent  esMap = None,
+          t etDeta ls = t etDeta ls
         )
       ).map { edge =>
         edge match {
-          case videoPlayback50 if videoPlayback50.action == Action.VideoPlayback50 =>
-            numVideoPlayback50EdgeCounter.incr()
+          case v deoPlayback50  f v deoPlayback50.act on == Act on.V deoPlayback50 =>
+            numV deoPlayback50EdgeCounter. ncr()
           case _ =>
-            numUnVideoPlayback50Counter.incr()
+            numUnV deoPlayback50Counter. ncr()
         }
         Seq(edge)
       }
   }
 
-  override def filterEdges(
-    event: UuaEngagementEventDetails,
-    edges: Seq[UserTweetEntityEdge]
-  ): Future[Seq[UserTweetEntityEdge]] = {
+  overr de def f lterEdges(
+    event: UuaEngage ntEventDeta ls,
+    edges: Seq[UserT etEnt yEdge]
+  ): Future[Seq[UserT etEnt yEdge]] = {
     Future(edges)
   }
 }

@@ -1,15 +1,15 @@
-package com.twitter.search.common.encoding.features;
+package com.tw ter.search.common.encod ng.features;
 
 /**
- * Interface for processing different feature values into an int. It provides a one-way translation
- * of encoding using com.twitter.search.common.encoding.features.ByteNormalizer and supports all the
- * old normalizers. The difference is that we directly return the normalized int value
- * (instead of converting from byte).
+ *  nterface for process ng d fferent feature values  nto an  nt.   prov des a one-way translat on
+ * of encod ng us ng com.tw ter.search.common.encod ng.features.ByteNormal zer and supports all t 
+ * old normal zers. T  d fference  s that   d rectly return t  normal zed  nt value
+ * ( nstead of convert ng from byte).
  */
-public interface IntNormalizer {
+publ c  nterface  ntNormal zer {
   /**
-   * Returns the normalized value of {@code val}.
-   * The value may be byte-compressed or as-is depending on the normalizer type
+   * Returns t  normal zed value of {@code val}.
+   * T  value may be byte-compressed or as- s depend ng on t  normal zer type
    */
-  int normalize(double val);
+   nt normal ze(double val);
 }

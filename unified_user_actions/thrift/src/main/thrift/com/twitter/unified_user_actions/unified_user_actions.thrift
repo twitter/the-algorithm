@@ -1,37 +1,37 @@
-namespace java com.twitter.unified_user_actions.thriftjava
-#@namespace scala com.twitter.unified_user_actions.thriftscala
-#@namespace strato com.twitter.unified_user_actions
+na space java com.tw ter.un f ed_user_act ons.thr ftjava
+#@na space scala com.tw ter.un f ed_user_act ons.thr ftscala
+#@na space strato com.tw ter.un f ed_user_act ons
 
-include "com/twitter/unified_user_actions/action_info.thrift"
-include "com/twitter/unified_user_actions/common.thrift"
-include "com/twitter/unified_user_actions/item.thrift"
-include "com/twitter/unified_user_actions/metadata.thrift"
-include "com/twitter/unified_user_actions/product_surface_info.thrift"
+ nclude "com/tw ter/un f ed_user_act ons/act on_ nfo.thr ft"
+ nclude "com/tw ter/un f ed_user_act ons/common.thr ft"
+ nclude "com/tw ter/un f ed_user_act ons/ em.thr ft"
+ nclude "com/tw ter/un f ed_user_act ons/ tadata.thr ft"
+ nclude "com/tw ter/un f ed_user_act ons/product_surface_ nfo.thr ft"
 
 /*
- * A Unified User Action (UUA) is essentially a tuple of
- * (user, item, action type, some metadata) with more optional
- * information unique to product surfaces when available.
- * It represents a user (logged in / out) taking some action (e.g. engagement,
- * impression) on an item (e.g. tweet, profile).
+ * A Un f ed User Act on (UUA)  s essent ally a tuple of
+ * (user,  em, act on type, so   tadata) w h more opt onal
+ *  nformat on un que to product surfaces w n ava lable.
+ *   represents a user (logged  n / out) tak ng so  act on (e.g. engage nt,
+ *  mpress on) on an  em (e.g. t et, prof le).
  */
-struct UnifiedUserAction {
-   /* A user refers to either a logged in / logged out user */
-   1: required common.UserIdentifier userIdentifier
-   /* The item that received the action from the user */
-   2: required item.Item item
-   /* The type of action which took place */
-   3: required action_info.ActionType actionType
-   /* Useful for event level analysis and joins */
-   4: required metadata.EventMetadata eventMetadata
+struct Un f edUserAct on {
+   /* A user refers to e  r a logged  n / logged out user */
+   1: requ red common.User dent f er user dent f er
+   /* T   em that rece ved t  act on from t  user */
+   2: requ red  em. em  em
+   /* T  type of act on wh ch took place */
+   3: requ red act on_ nfo.Act onType act onType
+   /* Useful for event level analys s and jo ns */
+   4: requ red  tadata.Event tadata event tadata
    /* 
-    * Product surface on which the action occurred. If None,
-    * it means we can not capture the product surface (e.g. for server-side events).
+    * Product surface on wh ch t  act on occurred.  f None,
+    *    ans   can not capture t  product surface (e.g. for server-s de events).
     */
-   5: optional product_surface_info.ProductSurface productSurface
+   5: opt onal product_surface_ nfo.ProductSurface productSurface
    /* 
-    * Product specific information like join keys. If None,
-    * it means we can not capture the product surface information.
+    * Product spec f c  nformat on l ke jo n keys.  f None,
+    *    ans   can not capture t  product surface  nformat on.
     */
-   6: optional product_surface_info.ProductSurfaceInfo productSurfaceInfo
-}(persisted='true', hasPersonalData='true')
+   6: opt onal product_surface_ nfo.ProductSurface nfo productSurface nfo
+}(pers sted='true', hasPersonalData='true')

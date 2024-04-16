@@ -1,22 +1,22 @@
-namespace java com.twitter.unified_user_actions.thriftjava
-#@namespace scala com.twitter.unified_user_actions.thriftscala
-#@namespace strato com.twitter.unified_user_actions
+na space java com.tw ter.un f ed_user_act ons.thr ftjava
+#@na space scala com.tw ter.un f ed_user_act ons.thr ftscala
+#@na space strato com.tw ter.un f ed_user_act ons
 
-include "com/twitter/unified_user_actions/action_info.thrift"
-include "com/twitter/unified_user_actions/common.thrift"
-include "com/twitter/unified_user_actions/metadata.thrift"
+ nclude "com/tw ter/un f ed_user_act ons/act on_ nfo.thr ft"
+ nclude "com/tw ter/un f ed_user_act ons/common.thr ft"
+ nclude "com/tw ter/un f ed_user_act ons/ tadata.thr ft"
 
 /*
- * This is mainly for View Counts project, which only require minimum fields for now.
- * The name KeyedUuaTweet indicates the value is about a Tweet, not a Moment or other entities.
+ * T   s ma nly for V ew Counts project, wh ch only requ re m n mum f elds for now.
+ * T  na  KeyedUuaT et  nd cates t  value  s about a T et, not a Mo nt or ot r ent  es.
  */
-struct KeyedUuaTweet {
-   /* A user refers to either a logged in / logged out user */
-   1: required common.UserIdentifier userIdentifier
-   /* The tweet that received the action from the user */
-   2: required i64 tweetId(personalDataType='TweetId')
-   /* The type of action which took place */
-   3: required action_info.ActionType actionType
-   /* Useful for event level analysis and joins */
-   4: required metadata.EventMetadata eventMetadata
-}(persisted='true', hasPersonalData='true')
+struct KeyedUuaT et {
+   /* A user refers to e  r a logged  n / logged out user */
+   1: requ red common.User dent f er user dent f er
+   /* T  t et that rece ved t  act on from t  user */
+   2: requ red  64 t et d(personalDataType='T et d')
+   /* T  type of act on wh ch took place */
+   3: requ red act on_ nfo.Act onType act onType
+   /* Useful for event level analys s and jo ns */
+   4: requ red  tadata.Event tadata event tadata
+}(pers sted='true', hasPersonalData='true')

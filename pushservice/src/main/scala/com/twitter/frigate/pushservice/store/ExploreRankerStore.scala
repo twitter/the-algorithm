@@ -1,28 +1,28 @@
-package com.twitter.frigate.pushservice.store
+package com.tw ter.fr gate.pushserv ce.store
 
-import com.twitter.explore_ranker.thriftscala.ExploreRanker
-import com.twitter.explore_ranker.thriftscala.ExploreRankerResponse
-import com.twitter.explore_ranker.thriftscala.ExploreRankerRequest
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter.explore_ranker.thr ftscala.ExploreRanker
+ mport com.tw ter.explore_ranker.thr ftscala.ExploreRankerResponse
+ mport com.tw ter.explore_ranker.thr ftscala.ExploreRankerRequest
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
-/** A Store for Video Tweet Recommendations from Explore
+/** A Store for V deo T et Recom ndat ons from Explore
  *
- * @param exploreRankerService
+ * @param exploreRankerServ ce
  */
-case class ExploreRankerStore(exploreRankerService: ExploreRanker.MethodPerEndpoint)
+case class ExploreRankerStore(exploreRankerServ ce: ExploreRanker. thodPerEndpo nt)
     extends ReadableStore[ExploreRankerRequest, ExploreRankerResponse] {
 
-  /** Method to get video recommendations
+  /**  thod to get v deo recom ndat ons
    *
    * @param request explore ranker request object
    * @return
    */
-  override def get(
+  overr de def get(
     request: ExploreRankerRequest
-  ): Future[Option[ExploreRankerResponse]] = {
-    exploreRankerService.getRankedResults(request).map { response =>
-      Some(response)
+  ): Future[Opt on[ExploreRankerResponse]] = {
+    exploreRankerServ ce.getRankedResults(request).map { response =>
+      So (response)
     }
   }
 }

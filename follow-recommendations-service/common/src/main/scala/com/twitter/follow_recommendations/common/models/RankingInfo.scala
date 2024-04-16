@@ -1,27 +1,27 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
+ mport com.tw ter.follow_recom ndat ons.{thr ftscala => t}
+ mport com.tw ter.follow_recom ndat ons.logg ng.{thr ftscala => offl ne}
 
-case class RankingInfo(
-  scores: Option[Scores],
-  rank: Option[Int]) {
+case class Rank ng nfo(
+  scores: Opt on[Scores],
+  rank: Opt on[ nt]) {
 
-  def toThrift: t.RankingInfo = {
-    t.RankingInfo(scores.map(_.toThrift), rank)
+  def toThr ft: t.Rank ng nfo = {
+    t.Rank ng nfo(scores.map(_.toThr ft), rank)
   }
 
-  def toOfflineThrift: offline.RankingInfo = {
-    offline.RankingInfo(scores.map(_.toOfflineThrift), rank)
+  def toOffl neThr ft: offl ne.Rank ng nfo = {
+    offl ne.Rank ng nfo(scores.map(_.toOffl neThr ft), rank)
   }
 }
 
-object RankingInfo {
+object Rank ng nfo {
 
-  def fromThrift(rankingInfo: t.RankingInfo): RankingInfo = {
-    RankingInfo(
-      scores = rankingInfo.scores.map(Scores.fromThrift),
-      rank = rankingInfo.rank
+  def fromThr ft(rank ng nfo: t.Rank ng nfo): Rank ng nfo = {
+    Rank ng nfo(
+      scores = rank ng nfo.scores.map(Scores.fromThr ft),
+      rank = rank ng nfo.rank
     )
   }
 

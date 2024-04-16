@@ -1,387 +1,387 @@
-package com.twitter.search.common.schema;
+package com.tw ter.search.common.sc ma;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+ mport java. o. OExcept on;
+ mport java. o.Str ngReader;
+ mport java.ut l.Collect ons;
+ mport java.ut l.L st;
+ mport java.ut l.Set;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect. mmutableL st;
+ mport com.google.common.collect.Sets;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-import org.apache.lucene.analysis.tokenattributes.TermToBytesRefAttribute;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.facet.sortedset.SortedSetDocValuesFacetField;
-import org.apache.lucene.util.BytesRef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .lucene.analys s.Analyzer;
+ mport org.apac .lucene.analys s.TokenStream;
+ mport org.apac .lucene.analys s.tokenattr butes.CharTermAttr bute;
+ mport org.apac .lucene.analys s.tokenattr butes.TermToBytesRefAttr bute;
+ mport org.apac .lucene.docu nt.Docu nt;
+ mport org.apac .lucene.docu nt.F eld;
+ mport org.apac .lucene.facet.sortedset.SortedSetDocValuesFacetF eld;
+ mport org.apac .lucene.ut l.BytesRef;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.text.token.TwitterTokenStream;
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.base.IndexedNumericFieldSettings;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftField;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldData;
-import com.twitter.search.common.schema.thriftjava.ThriftGeoCoordinate;
-import com.twitter.search.common.util.analysis.IntTermAttribute;
-import com.twitter.search.common.util.analysis.LongTermAttribute;
-import com.twitter.search.common.util.analysis.SortableLongTermAttribute;
-import com.twitter.search.common.util.spatial.GeoUtil;
-import com.twitter.search.common.util.text.HighFrequencyTermPairs;
-import com.twitter.search.common.util.text.OmitNormTextField;
-import com.twitter.search.common.util.text.SingleTokenStream;
+ mport com.tw ter.common.text.token.Tw terTokenStream;
+ mport com.tw ter.search.common.sc ma.base.Earlyb rdF eldType;
+ mport com.tw ter.search.common.sc ma.base. ndexedNu r cF eldSett ngs;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftDocu nt;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftF eld;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftF eldData;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftGeoCoord nate;
+ mport com.tw ter.search.common.ut l.analys s. ntTermAttr bute;
+ mport com.tw ter.search.common.ut l.analys s.LongTermAttr bute;
+ mport com.tw ter.search.common.ut l.analys s.SortableLongTermAttr bute;
+ mport com.tw ter.search.common.ut l.spat al.GeoUt l;
+ mport com.tw ter.search.common.ut l.text.H ghFrequencyTermPa rs;
+ mport com.tw ter.search.common.ut l.text.Om NormTextF eld;
+ mport com.tw ter.search.common.ut l.text.S ngleTokenStream;
 
 /**
- * A document factory that converts {@link ThriftDocument} into Lucene {@link Document}s
- * using the provided {@link com.twitter.search.common.schema.base.Schema}.
+ * A docu nt factory that converts {@l nk Thr ftDocu nt}  nto Lucene {@l nk Docu nt}s
+ * us ng t  prov ded {@l nk com.tw ter.search.common.sc ma.base.Sc ma}.
  */
-public class SchemaDocumentFactory {
-  private static final Logger LOG = LoggerFactory.getLogger(SchemaDocumentFactory.class);
+publ c class Sc maDocu ntFactory {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Sc maDocu ntFactory.class);
 
-  private final Schema schema;
-  private final ImmutableList<TokenStreamRewriter> tokenStreamRewriters;
+  pr vate f nal Sc ma sc ma;
+  pr vate f nal  mmutableL st<TokenStreamRewr er> tokenStreamRewr ers;
 
   /**
-   * Creates a SchemaDocumentFactory with a schema and the tokenStreamRewriters.
+   * Creates a Sc maDocu ntFactory w h a sc ma and t  tokenStreamRewr ers.
    *
-   * @param tokenStreamRewriters a list of token stream rewriters, which will be applied in order.
+   * @param tokenStreamRewr ers a l st of token stream rewr ers, wh ch w ll be appl ed  n order.
    */
-  public SchemaDocumentFactory(
-      Schema schema,
-      List<TokenStreamRewriter> tokenStreamRewriters) {
-    this.schema = schema;
-    this.tokenStreamRewriters = ImmutableList.copyOf(tokenStreamRewriters);
+  publ c Sc maDocu ntFactory(
+      Sc ma sc ma,
+      L st<TokenStreamRewr er> tokenStreamRewr ers) {
+    t .sc ma = sc ma;
+    t .tokenStreamRewr ers =  mmutableL st.copyOf(tokenStreamRewr ers);
   }
 
   /**
-   * Creates a SchemaDocumentFactory with no tokenStreamRewriters.
+   * Creates a Sc maDocu ntFactory w h no tokenStreamRewr ers.
    */
-  public SchemaDocumentFactory(Schema schema) {
-    this(schema, Collections.EMPTY_LIST);
+  publ c Sc maDocu ntFactory(Sc ma sc ma) {
+    t (sc ma, Collect ons.EMPTY_L ST);
   }
 
-  public final Document newDocument(ThriftDocument document) throws IOException {
-    return innerNewDocument(document);
+  publ c f nal Docu nt newDocu nt(Thr ftDocu nt docu nt) throws  OExcept on {
+    return  nnerNewDocu nt(docu nt);
   }
 
   /**
-   * Create a Lucene document from the ThriftDocument.
+   * Create a Lucene docu nt from t  Thr ftDocu nt.
    */
-  @VisibleForTesting
-  public Document innerNewDocument(ThriftDocument document) throws IOException {
-    Document luceneDocument = new Document();
-    Set<String> hfTerms = Sets.newHashSet();
-    Set<String> hfPhrases = Sets.newHashSet();
+  @V s bleForTest ng
+  publ c Docu nt  nnerNewDocu nt(Thr ftDocu nt docu nt) throws  OExcept on {
+    Docu nt luceneDocu nt = new Docu nt();
+    Set<Str ng> hfTerms = Sets.newHashSet();
+    Set<Str ng> hfPhrases = Sets.newHashSet();
 
-    Analyzer defaultAnalyzer = schema.getDefaultAnalyzer(document.getDefaultAnalyzerOverride());
+    Analyzer defaultAnalyzer = sc ma.getDefaultAnalyzer(docu nt.getDefaultAnalyzerOverr de());
 
-    for (ThriftField field : document.getFields()) {
+    for (Thr ftF eld f eld : docu nt.getF elds()) {
       boolean successful = false;
       try {
-        addLuceneFields(field, defaultAnalyzer, luceneDocument, hfTerms, hfPhrases);
+        addLuceneF elds(f eld, defaultAnalyzer, luceneDocu nt, hfTerms, hfPhrases);
         successful = true;
-      } finally {
-        if (!successful) {
-          LOG.warn("Unexpected exception while trying to add field. Field ID: "
-              + field.getFieldConfigId() + " Field Name: "
-              + schema.getFieldName(field.getFieldConfigId()));
+      } f nally {
+         f (!successful) {
+          LOG.warn("Unexpected except on wh le try ng to add f eld. F eld  D: "
+              + f eld.getF eldConf g d() + " F eld Na : "
+              + sc ma.getF eldNa (f eld.getF eldConf g d()));
         }
       }
     }
 
-    for (String token : hfTerms) {
-      for (String token2 : hfTerms) {
-        if (token.compareTo(token2) < 0) {
-          luceneDocument.add(new Field(ImmutableSchema.HF_TERM_PAIRS_FIELD,
-                                          HighFrequencyTermPairs.createPair(token, token2),
-                                          OmitNormTextField.TYPE_NOT_STORED));
+    for (Str ng token : hfTerms) {
+      for (Str ng token2 : hfTerms) {
+         f (token.compareTo(token2) < 0) {
+          luceneDocu nt.add(new F eld( mmutableSc ma.HF_TERM_PA RS_F ELD,
+                                          H ghFrequencyTermPa rs.createPa r(token, token2),
+                                          Om NormTextF eld.TYPE_NOT_STORED));
         }
       }
     }
 
-    for (String phrase : hfPhrases) {
-      // Tokens in the phrase set are not terms and have already been processed with
-      // HighFrequencyTermPairs.createPhrasePair.
-      luceneDocument.add(new Field(ImmutableSchema.HF_PHRASE_PAIRS_FIELD, phrase,
-                                      OmitNormTextField.TYPE_NOT_STORED));
+    for (Str ng phrase : hfPhrases) {
+      // Tokens  n t  phrase set are not terms and have already been processed w h
+      // H ghFrequencyTermPa rs.createPhrasePa r.
+      luceneDocu nt.add(new F eld( mmutableSc ma.HF_PHRASE_PA RS_F ELD, phrase,
+                                      Om NormTextF eld.TYPE_NOT_STORED));
     }
 
-    return schema.getFacetsConfig().build(luceneDocument);
+    return sc ma.getFacetsConf g().bu ld(luceneDocu nt);
   }
 
-  private void addLuceneFields(ThriftField field, Analyzer analyzer, Document doc,
-                               Set<String> hfTerms, Set<String> hfPhrases) throws IOException {
-    Schema.FieldInfo fieldInfo =
-        schema.getFieldInfo(field.getFieldConfigId(), field.getFieldConfigOverride());
+  pr vate vo d addLuceneF elds(Thr ftF eld f eld, Analyzer analyzer, Docu nt doc,
+                               Set<Str ng> hfTerms, Set<Str ng> hfPhrases) throws  OExcept on {
+    Sc ma.F eld nfo f eld nfo =
+        sc ma.getF eld nfo(f eld.getF eldConf g d(), f eld.getF eldConf gOverr de());
 
-    if (fieldInfo == null) {
-      // field not defined in schema - skip it
+     f (f eld nfo == null) {
+      // f eld not def ned  n sc ma - sk p  
       return;
     }
 
-    ThriftFieldData fieldData = field.getFieldData();
-    if (fieldInfo.getFieldType().getCsfType() !=  null) {
-      addCSFField(doc, fieldInfo, fieldData);
+    Thr ftF eldData f eldData = f eld.getF eldData();
+     f (f eld nfo.getF eldType().getCsfType() !=  null) {
+      addCSFF eld(doc, f eld nfo, f eldData);
       return;
     }
 
-    // Checking which data type is set is not sufficient here. We also need to check schema to
-    // see what the type the field is configured to be. See SEARCH-5173 for more details.
-    // The problem is that Pig, while converting Tuples to Thrift, sets all primitive type
-    // fields to 0. (i.e. the isSet calls will return true).
-    IndexedNumericFieldSettings numericSettings =
-        fieldInfo.getFieldType().getNumericFieldSettings();
-    if (fieldData.isSetTokenStreamValue()) {
-      addTokenField(doc, hfTerms, hfPhrases, fieldInfo, fieldData);
-    } else if (fieldData.isSetStringValue()) {
-      addStringField(analyzer, doc, hfTerms, hfPhrases, fieldInfo, fieldData);
-    } else if (fieldData.isSetBytesValue()) {
-      addBytesField(doc, fieldInfo, fieldData);
-    } else if (fieldData.isSetGeoCoordinate()) {
-      addGeoField(doc, fieldInfo, fieldData);
-    } else if (numericSettings != null) {
-      // handle numeric fields.
-      switch (numericSettings.getNumericType()) {
-        case INT:
-          Preconditions.checkState(fieldData.isSetIntValue(),
-              "Int field does not have int value set. Field name: %s", fieldInfo.getName());
-          addIntField(doc, fieldInfo, fieldData);
+    // C ck ng wh ch data type  s set  s not suff c ent  re.   also need to c ck sc ma to
+    // see what t  type t  f eld  s conf gured to be. See SEARCH-5173 for more deta ls.
+    // T  problem  s that P g, wh le convert ng Tuples to Thr ft, sets all pr m  ve type
+    // f elds to 0. ( .e. t   sSet calls w ll return true).
+     ndexedNu r cF eldSett ngs nu r cSett ngs =
+        f eld nfo.getF eldType().getNu r cF eldSett ngs();
+     f (f eldData. sSetTokenStreamValue()) {
+      addTokenF eld(doc, hfTerms, hfPhrases, f eld nfo, f eldData);
+    } else  f (f eldData. sSetStr ngValue()) {
+      addStr ngF eld(analyzer, doc, hfTerms, hfPhrases, f eld nfo, f eldData);
+    } else  f (f eldData. sSetBytesValue()) {
+      addBytesF eld(doc, f eld nfo, f eldData);
+    } else  f (f eldData. sSetGeoCoord nate()) {
+      addGeoF eld(doc, f eld nfo, f eldData);
+    } else  f (nu r cSett ngs != null) {
+      // handle nu r c f elds.
+      sw ch (nu r cSett ngs.getNu r cType()) {
+        case  NT:
+          Precond  ons.c ckState(f eldData. sSet ntValue(),
+              " nt f eld does not have  nt value set. F eld na : %s", f eld nfo.getNa ());
+          add ntF eld(doc, f eld nfo, f eldData);
           break;
         case LONG:
-          Preconditions.checkState(fieldData.isSetLongValue(),
-              "Long field does not have long value set. Field name: %s", fieldInfo.getName());
-          addLongField(doc, fieldInfo, fieldData);
+          Precond  ons.c ckState(f eldData. sSetLongValue(),
+              "Long f eld does not have long value set. F eld na : %s", f eld nfo.getNa ());
+          addLongF eld(doc, f eld nfo, f eldData);
           break;
         case FLOAT:
-          Preconditions.checkState(fieldData.isSetFloatValue(),
-              "Float field does not have float value set. Field name: %s ", fieldInfo.getName());
-          addFloatField();
+          Precond  ons.c ckState(f eldData. sSetFloatValue(),
+              "Float f eld does not have float value set. F eld na : %s ", f eld nfo.getNa ());
+          addFloatF eld();
           break;
         case DOUBLE:
-          Preconditions.checkState(fieldData.isSetDoubleValue(),
-              "Double field does not have double value set. Field name: %s", fieldInfo.getName());
-          addDoubleFIeld();
+          Precond  ons.c ckState(f eldData. sSetDoubleValue(),
+              "Double f eld does not have double value set. F eld na : %s", f eld nfo.getNa ());
+          addDoubleF eld();
           break;
         default:
-          throw new UnsupportedOperationException("Earlybird does not know how to handle field "
-              + field.getFieldConfigId() + " " + field);
+          throw new UnsupportedOperat onExcept on("Earlyb rd does not know how to handle f eld "
+              + f eld.getF eldConf g d() + " " + f eld);
       }
     } else {
-      throw new UnsupportedOperationException("Earlybird does not know how to handle field "
-          + field.getFieldConfigId() + " " + field);
+      throw new UnsupportedOperat onExcept on("Earlyb rd does not know how to handle f eld "
+          + f eld.getF eldConf g d() + " " + f eld);
     }
   }
 
-  private void addCSFField(Document doc, Schema.FieldInfo fieldInfo, ThriftFieldData fieldData) {
-    if (fieldInfo.getFieldType().getCsfFixedLengthNumValuesPerDoc() > 1) {
+  pr vate vo d addCSFF eld(Docu nt doc, Sc ma.F eld nfo f eld nfo, Thr ftF eldData f eldData) {
+     f (f eld nfo.getF eldType().getCsfF xedLengthNumValuesPerDoc() > 1) {
 
-      // As an optimization, TBinaryProtocol stores a byte array field as a part of a larger byte
-      // array field.  Must call fieldData.getBytesValue().  fieldData.bytesValue.array() will
+      // As an opt m zat on, TB naryProtocol stores a byte array f eld as a part of a larger byte
+      // array f eld.  Must call f eldData.getBytesValue().  f eldData.bytesValue.array() w ll
       // return extraneous data. See: SEARCH-3996
-      doc.add(new Field(fieldInfo.getName(), fieldData.getBytesValue(), fieldInfo.getFieldType()));
+      doc.add(new F eld(f eld nfo.getNa (), f eldData.getBytesValue(), f eld nfo.getF eldType()));
     } else {
-      doc.add(new CSFField(fieldInfo.getName(), fieldInfo.getFieldType(), fieldData));
+      doc.add(new CSFF eld(f eld nfo.getNa (), f eld nfo.getF eldType(), f eldData));
     }
   }
 
-  private void addTokenField(
-      Document doc,
-      Set<String> hfTerms,
-      Set<String> hfPhrases,
-      Schema.FieldInfo fieldInfo,
-      ThriftFieldData fieldData) throws IOException {
-    TwitterTokenStream twitterTokenStream
-        = fieldInfo.getFieldType().getTokenStreamSerializer().deserialize(
-        fieldData.getTokenStreamValue(), fieldData.getStringValue());
+  pr vate vo d addTokenF eld(
+      Docu nt doc,
+      Set<Str ng> hfTerms,
+      Set<Str ng> hfPhrases,
+      Sc ma.F eld nfo f eld nfo,
+      Thr ftF eldData f eldData) throws  OExcept on {
+    Tw terTokenStream tw terTokenStream
+        = f eld nfo.getF eldType().getTokenStreamSer al zer().deser al ze(
+        f eldData.getTokenStreamValue(), f eldData.getStr ngValue());
 
     try {
-      for (TokenStreamRewriter rewriter : tokenStreamRewriters) {
-        twitterTokenStream = rewriter.rewrite(fieldInfo, twitterTokenStream);
+      for (TokenStreamRewr er rewr er : tokenStreamRewr ers) {
+        tw terTokenStream = rewr er.rewr e(f eld nfo, tw terTokenStream);
       }
 
-      expandStream(doc, fieldInfo, twitterTokenStream, hfTerms, hfPhrases);
-      doc.add(new Field(fieldInfo.getName(), twitterTokenStream, fieldInfo.getFieldType()));
-    } finally {
-      twitterTokenStream.close();
+      expandStream(doc, f eld nfo, tw terTokenStream, hfTerms, hfPhrases);
+      doc.add(new F eld(f eld nfo.getNa (), tw terTokenStream, f eld nfo.getF eldType()));
+    } f nally {
+      tw terTokenStream.close();
     }
   }
 
-  private void addStringField(Analyzer analyzer, Document doc, Set<String> hfTerms,
-                              Set<String> hfPhrases, Schema.FieldInfo fieldInfo,
-                              ThriftFieldData fieldData) {
-    doc.add(new Field(fieldInfo.getName(), fieldData.getStringValue(), fieldInfo.getFieldType()));
-    if (fieldInfo.getFieldType().tokenized()) {
+  pr vate vo d addStr ngF eld(Analyzer analyzer, Docu nt doc, Set<Str ng> hfTerms,
+                              Set<Str ng> hfPhrases, Sc ma.F eld nfo f eld nfo,
+                              Thr ftF eldData f eldData) {
+    doc.add(new F eld(f eld nfo.getNa (), f eldData.getStr ngValue(), f eld nfo.getF eldType()));
+     f (f eld nfo.getF eldType().token zed()) {
       try {
-        TokenStream tokenStream = analyzer.tokenStream(fieldInfo.getName(),
-                new StringReader(fieldData.getStringValue()));
+        TokenStream tokenStream = analyzer.tokenStream(f eld nfo.getNa (),
+                new Str ngReader(f eldData.getStr ngValue()));
         try {
           expandStream(
               doc,
-              fieldInfo,
+              f eld nfo,
               tokenStream,
               hfTerms,
               hfPhrases);
-        } finally {
+        } f nally {
           tokenStream.close();
         }
-      } catch (IOException e) {
-        LOG.error("IOException expanding token stream", e);
+      } catch ( OExcept on e) {
+        LOG.error(" OExcept on expand ng token stream", e);
       }
     } else {
-      addFacetField(doc, fieldInfo, fieldData.getStringValue());
+      addFacetF eld(doc, f eld nfo, f eldData.getStr ngValue());
     }
   }
 
-  private void addBytesField(Document doc, Schema.FieldInfo fieldInfo, ThriftFieldData fieldData) {
-    doc.add(new Field(fieldInfo.getName(), fieldData.getBytesValue(), fieldInfo.getFieldType()));
+  pr vate vo d addBytesF eld(Docu nt doc, Sc ma.F eld nfo f eld nfo, Thr ftF eldData f eldData) {
+    doc.add(new F eld(f eld nfo.getNa (), f eldData.getBytesValue(), f eld nfo.getF eldType()));
   }
 
-  private void addIntField(Document doc, Schema.FieldInfo fieldInfo,
-                           ThriftFieldData fieldData) {
-    int value = fieldData.getIntValue();
-    addFacetField(doc, fieldInfo, String.valueOf(value));
+  pr vate vo d add ntF eld(Docu nt doc, Sc ma.F eld nfo f eld nfo,
+                           Thr ftF eldData f eldData) {
+     nt value = f eldData.get ntValue();
+    addFacetF eld(doc, f eld nfo, Str ng.valueOf(value));
 
-    if (fieldInfo.getFieldType().getNumericFieldSettings() == null) {
-      // No NumericFieldSettings. Even though the data is numeric, this field is not
-      // really a numerical field. Just add as a string.
-      doc.add(new Field(fieldInfo.getName(), String.valueOf(value), fieldInfo.getFieldType()));
-    } else if (fieldInfo.getFieldType().getNumericFieldSettings().isUseTwitterFormat()) {
-      addIntTermAttributeField(value, fieldInfo, doc);
+     f (f eld nfo.getF eldType().getNu r cF eldSett ngs() == null) {
+      // No Nu r cF eldSett ngs. Even though t  data  s nu r c, t  f eld  s not
+      // really a nu r cal f eld. Just add as a str ng.
+      doc.add(new F eld(f eld nfo.getNa (), Str ng.valueOf(value), f eld nfo.getF eldType()));
+    } else  f (f eld nfo.getF eldType().getNu r cF eldSett ngs(). sUseTw terFormat()) {
+      add ntTermAttr buteF eld(value, f eld nfo, doc);
     } else {
-      // Use lucene style numerical fields
-      doc.add(NumericField.newIntField(fieldInfo.getName(), value));
+      // Use lucene style nu r cal f elds
+      doc.add(Nu r cF eld.new ntF eld(f eld nfo.getNa (), value));
     }
   }
 
-  private void addIntTermAttributeField(int value,
-                                        Schema.FieldInfo fieldInfo,
-                                        Document doc) {
-    SingleTokenStream singleToken = new SingleTokenStream();
-    IntTermAttribute termAtt = singleToken.addAttribute(IntTermAttribute.class);
+  pr vate vo d add ntTermAttr buteF eld( nt value,
+                                        Sc ma.F eld nfo f eld nfo,
+                                        Docu nt doc) {
+    S ngleTokenStream s ngleToken = new S ngleTokenStream();
+     ntTermAttr bute termAtt = s ngleToken.addAttr bute( ntTermAttr bute.class);
     termAtt.setTerm(value);
-    doc.add(new Field(fieldInfo.getName(), singleToken, fieldInfo.getFieldType()));
+    doc.add(new F eld(f eld nfo.getNa (), s ngleToken, f eld nfo.getF eldType()));
   }
 
-  private void addLongField(Document doc, Schema.FieldInfo fieldInfo,
-                            ThriftFieldData fieldData) {
-    long value = fieldData.getLongValue();
-    addFacetField(doc, fieldInfo, String.valueOf(value));
+  pr vate vo d addLongF eld(Docu nt doc, Sc ma.F eld nfo f eld nfo,
+                            Thr ftF eldData f eldData) {
+    long value = f eldData.getLongValue();
+    addFacetF eld(doc, f eld nfo, Str ng.valueOf(value));
 
-    if (fieldInfo.getFieldType().getNumericFieldSettings() == null) {
-      // No NumericFieldSettings. Even though the data is numeric, this field is not
-      // really a numerical field. Just add as a string.
-      doc.add(new Field(fieldInfo.getName(), String.valueOf(value), fieldInfo.getFieldType()));
-    } else if (fieldInfo.getFieldType().getNumericFieldSettings().isUseTwitterFormat()) {
-      // Twitter style numerical field: use LongTermAttribute
-      addLongTermAttributeField(value, fieldInfo, doc);
+     f (f eld nfo.getF eldType().getNu r cF eldSett ngs() == null) {
+      // No Nu r cF eldSett ngs. Even though t  data  s nu r c, t  f eld  s not
+      // really a nu r cal f eld. Just add as a str ng.
+      doc.add(new F eld(f eld nfo.getNa (), Str ng.valueOf(value), f eld nfo.getF eldType()));
+    } else  f (f eld nfo.getF eldType().getNu r cF eldSett ngs(). sUseTw terFormat()) {
+      // Tw ter style nu r cal f eld: use LongTermAttr bute
+      addLongTermAttr buteF eld(value, f eld nfo, doc);
     } else {
-      // Use lucene style numerical fields
-      doc.add(NumericField.newLongField(fieldInfo.getName(), value));
+      // Use lucene style nu r cal f elds
+      doc.add(Nu r cF eld.newLongF eld(f eld nfo.getNa (), value));
     }
   }
 
-  private void addLongTermAttributeField(long value,
-                                         Schema.FieldInfo fieldInfo,
-                                         Document doc) {
-    SingleTokenStream singleToken = new SingleTokenStream();
-    boolean useSortableEncoding =
-        fieldInfo.getFieldType().getNumericFieldSettings().isUseSortableEncoding();
+  pr vate vo d addLongTermAttr buteF eld(long value,
+                                         Sc ma.F eld nfo f eld nfo,
+                                         Docu nt doc) {
+    S ngleTokenStream s ngleToken = new S ngleTokenStream();
+    boolean useSortableEncod ng =
+        f eld nfo.getF eldType().getNu r cF eldSett ngs(). sUseSortableEncod ng();
 
-    if (useSortableEncoding) {
-      SortableLongTermAttribute termAtt = singleToken.addAttribute(SortableLongTermAttribute.class);
+     f (useSortableEncod ng) {
+      SortableLongTermAttr bute termAtt = s ngleToken.addAttr bute(SortableLongTermAttr bute.class);
       termAtt.setTerm(value);
     } else {
-      LongTermAttribute termAtt = singleToken.addAttribute(LongTermAttribute.class);
+      LongTermAttr bute termAtt = s ngleToken.addAttr bute(LongTermAttr bute.class);
       termAtt.setTerm(value);
     }
-    doc.add(new Field(fieldInfo.getName(), singleToken, fieldInfo.getFieldType()));
+    doc.add(new F eld(f eld nfo.getNa (), s ngleToken, f eld nfo.getF eldType()));
   }
 
-  private void addFloatField() {
-    throw new UnsupportedOperationException("Earlybird does not support float values yet.");
+  pr vate vo d addFloatF eld() {
+    throw new UnsupportedOperat onExcept on("Earlyb rd does not support float values yet.");
   }
 
-  private void addDoubleFIeld() {
-    throw new UnsupportedOperationException("Earlybird does not support double values yet.");
+  pr vate vo d addDoubleF eld() {
+    throw new UnsupportedOperat onExcept on("Earlyb rd does not support double values yet.");
   }
 
-  private void addGeoField(Document doc, Schema.FieldInfo fieldInfo, ThriftFieldData fieldData) {
-    ThriftGeoCoordinate coord = fieldData.getGeoCoordinate();
-    if (GeoUtil.validateGeoCoordinates(coord.getLat(), coord.getLon())) {
-      GeoUtil.fillGeoFields(doc, fieldInfo.getName(),
+  pr vate vo d addGeoF eld(Docu nt doc, Sc ma.F eld nfo f eld nfo, Thr ftF eldData f eldData) {
+    Thr ftGeoCoord nate coord = f eldData.getGeoCoord nate();
+     f (GeoUt l.val dateGeoCoord nates(coord.getLat(), coord.getLon())) {
+      GeoUt l.f llGeoF elds(doc, f eld nfo.getNa (),
           coord.getLat(), coord.getLon(), coord.getAccuracy());
     }
   }
 
-  private void addFacetField(Document doc, Schema.FieldInfo fieldInfo, String value) {
-    Preconditions.checkArgument(doc != null);
-    Preconditions.checkArgument(fieldInfo != null);
-    Preconditions.checkArgument(value != null);
+  pr vate vo d addFacetF eld(Docu nt doc, Sc ma.F eld nfo f eld nfo, Str ng value) {
+    Precond  ons.c ckArgu nt(doc != null);
+    Precond  ons.c ckArgu nt(f eld nfo != null);
+    Precond  ons.c ckArgu nt(value != null);
 
-    if (fieldInfo.getFieldType().getFacetName() != null) {
-      doc.add(new SortedSetDocValuesFacetField(fieldInfo.getFieldType().getFacetName(), value));
+     f (f eld nfo.getF eldType().getFacetNa () != null) {
+      doc.add(new SortedSetDocValuesFacetF eld(f eld nfo.getF eldType().getFacetNa (), value));
     }
   }
 
-  private String getTerm(TermToBytesRefAttribute attr) {
-    if (attr instanceof CharTermAttribute) {
-      return ((CharTermAttribute) attr).toString();
-    } else if (attr instanceof IntTermAttribute) {
-      return String.valueOf(((IntTermAttribute) attr).getTerm());
-    } else if (attr instanceof LongTermAttribute) {
-      return String.valueOf(((LongTermAttribute) attr).getTerm());
+  pr vate Str ng getTerm(TermToBytesRefAttr bute attr) {
+     f (attr  nstanceof CharTermAttr bute) {
+      return ((CharTermAttr bute) attr).toStr ng();
+    } else  f (attr  nstanceof  ntTermAttr bute) {
+      return Str ng.valueOf((( ntTermAttr bute) attr).getTerm());
+    } else  f (attr  nstanceof LongTermAttr bute) {
+      return Str ng.valueOf(((LongTermAttr bute) attr).getTerm());
     } else {
-      return attr.getBytesRef().utf8ToString();
+      return attr.getBytesRef().utf8ToStr ng();
     }
   }
 
   /**
-   * Expand the TwitterTokenStream and populate high-frequency terms, phrases and/or facet category paths.
+   * Expand t  Tw terTokenStream and populate h gh-frequency terms, phrases and/or facet category paths.
    */
-  private void expandStream(
-      Document doc,
-      Schema.FieldInfo fieldInfo,
+  pr vate vo d expandStream(
+      Docu nt doc,
+      Sc ma.F eld nfo f eld nfo,
       TokenStream stream,
-      Set<String> hfTerms,
-      Set<String> hfPhrases) throws IOException {
-    // Checkstyle does not allow assignment to parameters.
-    Set<String> facetHfTerms = hfTerms;
-    Set<String> facetHfPhrases = hfPhrases;
+      Set<Str ng> hfTerms,
+      Set<Str ng> hfPhrases) throws  OExcept on {
+    // C ckstyle does not allow ass gn nt to para ters.
+    Set<Str ng> facetHfTerms = hfTerms;
+    Set<Str ng> facetHfPhrases = hfPhrases;
 
-    if (!(HighFrequencyTermPairs.INDEX_HF_TERM_PAIRS
-        && fieldInfo.getFieldType().isIndexHFTermPairs())) {
-      // high-frequency terms and phrases are not needed
-      if (fieldInfo.getFieldType().getFacetName() == null) {
-        // Facets are not needed either, simply return, would do nothing otherwise
+     f (!(H ghFrequencyTermPa rs. NDEX_HF_TERM_PA RS
+        && f eld nfo.getF eldType(). s ndexHFTermPa rs())) {
+      // h gh-frequency terms and phrases are not needed
+       f (f eld nfo.getF eldType().getFacetNa () == null) {
+        // Facets are not needed e  r, s mply return, would do noth ng ot rw se
         return;
       }
       facetHfTerms = null;
       facetHfPhrases = null;
     }
 
-    final TermToBytesRefAttribute attr = stream.getAttribute(TermToBytesRefAttribute.class);
+    f nal TermToBytesRefAttr bute attr = stream.getAttr bute(TermToBytesRefAttr bute.class);
     stream.reset();
 
-    String lastHFTerm = null;
-    while (stream.incrementToken()) {
-      String term = getTerm(attr);
-      if (fieldInfo.getFieldType().getFacetName() != null) {
-        addFacetField(doc, fieldInfo, term);
+    Str ng lastHFTerm = null;
+    wh le (stream. ncre ntToken()) {
+      Str ng term = getTerm(attr);
+       f (f eld nfo.getF eldType().getFacetNa () != null) {
+        addFacetF eld(doc, f eld nfo, term);
       }
-      if (HighFrequencyTermPairs.HF_TERM_SET.contains(term)) {
-        if (facetHfTerms != null) {
+       f (H ghFrequencyTermPa rs.HF_TERM_SET.conta ns(term)) {
+         f (facetHfTerms != null) {
           facetHfTerms.add(term);
         }
-        if (lastHFTerm != null) {
-          if (facetHfPhrases != null) {
-            facetHfPhrases.add(HighFrequencyTermPairs.createPhrasePair(lastHFTerm, term));
+         f (lastHFTerm != null) {
+           f (facetHfPhrases != null) {
+            facetHfPhrases.add(H ghFrequencyTermPa rs.createPhrasePa r(lastHFTerm, term));
           }
         }
         lastHFTerm = term;
@@ -391,43 +391,43 @@ public class SchemaDocumentFactory {
     }
   }
 
-  public static final class CSFField extends Field {
+  publ c stat c f nal class CSFF eld extends F eld {
     /**
-     * Create a CSFField with the given fieldType, containing the given field data.
+     * Create a CSFF eld w h t  g ven f eldType, conta n ng t  g ven f eld data.
      */
-    public CSFField(String name, EarlybirdFieldType fieldType, ThriftFieldData data) {
-      super(name, fieldType);
+    publ c CSFF eld(Str ng na , Earlyb rdF eldType f eldType, Thr ftF eldData data) {
+      super(na , f eldType);
 
-      if (fieldType.isCsfVariableLength()) {
-        fieldsData = new BytesRef(data.getBytesValue());
+       f (f eldType. sCsfVar ableLength()) {
+        f eldsData = new BytesRef(data.getBytesValue());
       } else {
-        switch (fieldType.getCsfType()) {
+        sw ch (f eldType.getCsfType()) {
           case BYTE:
-            fieldsData = Long.valueOf(data.getByteValue());
+            f eldsData = Long.valueOf(data.getByteValue());
             break;
-          case INT:
-            fieldsData = Long.valueOf(data.getIntValue());
+          case  NT:
+            f eldsData = Long.valueOf(data.get ntValue());
             break;
           case LONG:
-            fieldsData = Long.valueOf(data.getLongValue());
+            f eldsData = Long.valueOf(data.getLongValue());
             break;
           case FLOAT:
-            fieldsData = Long.valueOf(Float.floatToRawIntBits((float) data.getFloatValue()));
+            f eldsData = Long.valueOf(Float.floatToRaw ntB s((float) data.getFloatValue()));
             break;
           case DOUBLE:
-            fieldsData = Long.valueOf(Double.doubleToRawLongBits(data.getDoubleValue()));
+            f eldsData = Long.valueOf(Double.doubleToRawLongB s(data.getDoubleValue()));
             break;
           default:
-            throw new IllegalArgumentException("Unknown csf type: " + fieldType.getCsfType());
+            throw new  llegalArgu ntExcept on("Unknown csf type: " + f eldType.getCsfType());
         }
       }
     }
   }
 
-  public interface TokenStreamRewriter {
+  publ c  nterface TokenStreamRewr er {
     /**
-     * Rewrite the token stream.
+     * Rewr e t  token stream.
      */
-    TwitterTokenStream rewrite(Schema.FieldInfo fieldInfo, TwitterTokenStream stream);
+    Tw terTokenStream rewr e(Sc ma.F eld nfo f eld nfo, Tw terTokenStream stream);
   }
 }

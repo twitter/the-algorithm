@@ -1,72 +1,72 @@
-package com.twitter.timelineranker.uteg_liked_by_tweets
+package com.tw ter.t  l neranker.uteg_l ked_by_t ets
 
-import com.twitter.recos.recos_common.thriftscala.SocialProofType
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.TweetEntityDisplayLocation
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.TweetRecommendation
-import com.twitter.servo.util.FutureArrow
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.core.DependencyTransformer
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelineranker.model.TimeRange
-import com.twitter.timelineranker.model.TweetIdRange
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelines.clients.user_tweet_entity_graph.RecommendTweetEntityQuery
-import com.twitter.timelines.clients.user_tweet_entity_graph.UserTweetEntityGraphClient
-import com.twitter.util.Future
+ mport com.tw ter.recos.recos_common.thr ftscala.Soc alProofType
+ mport com.tw ter.recos.user_t et_ent y_graph.thr ftscala.T etEnt yD splayLocat on
+ mport com.tw ter.recos.user_t et_ent y_graph.thr ftscala.T etRecom ndat on
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.t  l neranker.core.Cand dateEnvelope
+ mport com.tw ter.t  l neranker.core.DependencyTransfor r
+ mport com.tw ter.t  l neranker.model.RecapQuery
+ mport com.tw ter.t  l neranker.model.T  Range
+ mport com.tw ter.t  l neranker.model.T et dRange
+ mport com.tw ter.t  l neranker.model.RecapQuery.DependencyProv der
+ mport com.tw ter.t  l nes.cl ents.user_t et_ent y_graph.Recom ndT etEnt yQuery
+ mport com.tw ter.t  l nes.cl ents.user_t et_ent y_graph.UserT etEnt yGraphCl ent
+ mport com.tw ter.ut l.Future
 
 object UTEGResultsTransform {
-  val MaxUserSocialProofSize = 10
-  val MaxTweetSocialProofSize = 10
-  val MinUserSocialProofSize = 1
+  val MaxUserSoc alProofS ze = 10
+  val MaxT etSoc alProofS ze = 10
+  val M nUserSoc alProofS ze = 1
 
-  def requiredTweetAuthors(query: RecapQuery): Option[Set[Long]] = {
-    query.utegLikedByTweetsOptions
-      .filter(_.isInNetwork)
-      .map(_.weightedFollowings.keySet)
+  def requ redT etAuthors(query: RecapQuery): Opt on[Set[Long]] = {
+    query.utegL kedByT etsOpt ons
+      .f lter(_. s nNetwork)
+      .map(_.  ghtedFollow ngs.keySet)
   }
 
   def makeUTEGQuery(
     query: RecapQuery,
-    socialProofTypes: Seq[SocialProofType],
-    utegCountProvider: DependencyProvider[Int]
-  ): RecommendTweetEntityQuery = {
-    val utegLikedByTweetsOpt = query.utegLikedByTweetsOptions
-    RecommendTweetEntityQuery(
-      userId = query.userId,
-      displayLocation = TweetEntityDisplayLocation.HomeTimeline,
-      seedUserIdsWithWeights = utegLikedByTweetsOpt.map(_.weightedFollowings).getOrElse(Map.empty),
-      maxTweetResults = utegCountProvider(query),
-      maxTweetAgeInMillis = // the "to" in the Range field is not supported by this new endpoint
+    soc alProofTypes: Seq[Soc alProofType],
+    utegCountProv der: DependencyProv der[ nt]
+  ): Recom ndT etEnt yQuery = {
+    val utegL kedByT etsOpt = query.utegL kedByT etsOpt ons
+    Recom ndT etEnt yQuery(
+      user d = query.user d,
+      d splayLocat on = T etEnt yD splayLocat on.Ho T  l ne,
+      seedUser dsW h  ghts = utegL kedByT etsOpt.map(_.  ghtedFollow ngs).getOrElse(Map.empty),
+      maxT etResults = utegCountProv der(query),
+      maxT etAge nM ll s = // t  "to"  n t  Range f eld  s not supported by t  new endpo nt
         query.range match {
-          case Some(TimeRange(from, _)) => from.map(_.untilNow.inMillis)
-          case Some(TweetIdRange(from, _)) => from.map(SnowflakeId.timeFromId(_).untilNow.inMillis)
+          case So (T  Range(from, _)) => from.map(_.unt lNow. nM ll s)
+          case So (T et dRange(from, _)) => from.map(Snowflake d.t  From d(_).unt lNow. nM ll s)
           case _ => None
         },
-      excludedTweetIds = query.excludedTweetIds,
-      maxUserSocialProofSize = Some(MaxUserSocialProofSize),
-      maxTweetSocialProofSize = Some(MaxTweetSocialProofSize),
-      minUserSocialProofSize = Some(MinUserSocialProofSize),
-      socialProofTypes = socialProofTypes,
-      tweetAuthors = requiredTweetAuthors(query)
+      excludedT et ds = query.excludedT et ds,
+      maxUserSoc alProofS ze = So (MaxUserSoc alProofS ze),
+      maxT etSoc alProofS ze = So (MaxT etSoc alProofS ze),
+      m nUserSoc alProofS ze = So (M nUserSoc alProofS ze),
+      soc alProofTypes = soc alProofTypes,
+      t etAuthors = requ redT etAuthors(query)
     )
   }
 }
 
 class UTEGResultsTransform(
-  userTweetEntityGraphClient: UserTweetEntityGraphClient,
-  utegCountProvider: DependencyProvider[Int],
-  recommendationsFilter: DependencyTransformer[Seq[TweetRecommendation], Seq[TweetRecommendation]],
-  socialProofTypes: Seq[SocialProofType])
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+  userT etEnt yGraphCl ent: UserT etEnt yGraphCl ent,
+  utegCountProv der: DependencyProv der[ nt],
+  recom ndat onsF lter: DependencyTransfor r[Seq[T etRecom ndat on], Seq[T etRecom ndat on]],
+  soc alProofTypes: Seq[Soc alProofType])
+    extends FutureArrow[Cand dateEnvelope, Cand dateEnvelope] {
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
+  overr de def apply(envelope: Cand dateEnvelope): Future[Cand dateEnvelope] = {
     val utegQuery =
-      UTEGResultsTransform.makeUTEGQuery(envelope.query, socialProofTypes, utegCountProvider)
-    userTweetEntityGraphClient.findTweetRecommendations(utegQuery).map { recommendations =>
-      val filteredRecommendations = recommendationsFilter(envelope.query, recommendations)
-      val utegResultsMap = filteredRecommendations.map { recommendation =>
-        recommendation.tweetId -> recommendation
+      UTEGResultsTransform.makeUTEGQuery(envelope.query, soc alProofTypes, utegCountProv der)
+    userT etEnt yGraphCl ent.f ndT etRecom ndat ons(utegQuery).map { recom ndat ons =>
+      val f lteredRecom ndat ons = recom ndat onsF lter(envelope.query, recom ndat ons)
+      val utegResultsMap = f lteredRecom ndat ons.map { recom ndat on =>
+        recom ndat on.t et d -> recom ndat on
       }.toMap
       envelope.copy(utegResults = utegResultsMap)
     }

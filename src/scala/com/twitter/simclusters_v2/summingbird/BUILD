@@ -1,118 +1,118 @@
-scala_library(
-    name = "common",
+scala_l brary(
+    na  = "common",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/scala/com/twitter/simclusters_v2/summingbird/common",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "src/scala/com/tw ter/s mclusters_v2/summ ngb rd/common",
     ],
 )
 
-scala_library(
-    name = "stores",
+scala_l brary(
+    na  = "stores",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/scala/com/twitter/simclusters_v2/summingbird/stores",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "src/scala/com/tw ter/s mclusters_v2/summ ngb rd/stores",
     ],
 )
 
-scala_library(
-    name = "webservice",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/scala/com/twitter/simclusters_v2/summingbird/webservice",
-        "twitter-server/slf4j-jdk14/src/main/scala/com/twitter/server/logging",
+scala_l brary(
+    na  = " bserv ce",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "src/scala/com/tw ter/s mclusters_v2/summ ngb rd/ bserv ce",
+        "tw ter-server/slf4j-jdk14/src/ma n/scala/com/tw ter/server/logg ng",
     ],
 )
 
-heron_binary(
-    name = "tweet-simclusters-storm-binary",
-    main = "com.twitter.simclusters_v2.summingbird.storm.TweetJobRunner",
+ ron_b nary(
+    na  = "t et-s mclusters-storm-b nary",
+    ma n = "com.tw ter.s mclusters_v2.summ ngb rd.storm.T etJobRunner",
     platform = "java8",
-    runtime_platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
+    runt  _platform = "java8",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
         ":common",
         "3rdparty/jvm/org/slf4j:slf4j-jdk14",
-        "src/scala/com/twitter/simclusters_v2/summingbird/storm",
+        "src/scala/com/tw ter/s mclusters_v2/summ ngb rd/storm",
     ],
 )
 
 jvm_app(
-    name = "tweet-simclusters-storm-job",
-    binary = ":tweet-simclusters-storm-binary",
+    na  = "t et-s mclusters-storm-job",
+    b nary = ":t et-s mclusters-storm-b nary",
     bundles = [
         bundle(
-            fileset = ["config/jaas.conf"],
+            f leset = ["conf g/jaas.conf"],
         ),
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
 )
 
-heron_binary(
-    name = "persistent-tweet-simclusters-storm-binary",
-    main = "com.twitter.simclusters_v2.summingbird.storm.PersistentTweetJobRunner",
+ ron_b nary(
+    na  = "pers stent-t et-s mclusters-storm-b nary",
+    ma n = "com.tw ter.s mclusters_v2.summ ngb rd.storm.Pers stentT etJobRunner",
     platform = "java8",
-    runtime_platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
+    runt  _platform = "java8",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
         ":common",
         "3rdparty/jvm/org/slf4j:slf4j-jdk14",
-        "src/scala/com/twitter/simclusters_v2/summingbird/storm",
+        "src/scala/com/tw ter/s mclusters_v2/summ ngb rd/storm",
     ],
 )
 
 jvm_app(
-    name = "persistent-tweet-simclusters-storm-job",
-    binary = ":persistent-tweet-simclusters-storm-binary",
+    na  = "pers stent-t et-s mclusters-storm-job",
+    b nary = ":pers stent-t et-s mclusters-storm-b nary",
     bundles = [
         bundle(
-            fileset = ["config/jaas.conf"],
+            f leset = ["conf g/jaas.conf"],
         ),
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
 )
 
-heron_binary(
-    name = "multi-model-tweet-simclusters-storm-binary",
-    main = "com.twitter.simclusters_v2.summingbird.storm.MultiModelTweetJobRunner",
+ ron_b nary(
+    na  = "mult -model-t et-s mclusters-storm-b nary",
+    ma n = "com.tw ter.s mclusters_v2.summ ngb rd.storm.Mult ModelT etJobRunner",
     platform = "java8",
-    runtime_platform = "java8",
-    dependencies = [
+    runt  _platform = "java8",
+    dependenc es = [
         ":common",
         "3rdparty/jvm/org/slf4j:slf4j-jdk14",
-        "src/scala/com/twitter/simclusters_v2/summingbird/storm",
+        "src/scala/com/tw ter/s mclusters_v2/summ ngb rd/storm",
     ],
 )
 
 jvm_app(
-    name = "multi-model-tweet-simclusters-storm-job",
-    binary = ":multi-model-tweet-simclusters-storm-binary",
+    na  = "mult -model-t et-s mclusters-storm-job",
+    b nary = ":mult -model-t et-s mclusters-storm-b nary",
     bundles = [
         bundle(
-            fileset = ["config/jaas.conf"],
+            f leset = ["conf g/jaas.conf"],
         ),
     ],
 )
 
-jvm_binary(
-    name = "repl",
-    basename = "repl-simclusters_v2",
-    main = "scala.tools.nsc.MainGenericRunner",
+jvm_b nary(
+    na  = "repl",
+    basena  = "repl-s mclusters_v2",
+    ma n = "scala.tools.nsc.Ma nGener cRunner",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
+    tags = ["bazel-compat ble"],
+    dependenc es = [
         ":common",
-        "3rdparty/jvm/org/scala-lang:scala-compiler",
+        "3rdparty/jvm/org/scala-lang:scala-comp ler",
     ],
 )
 
 target(
-    dependencies = [
+    dependenc es = [
         ":common",
         ":repl",
         ":stores",
-        ":webservice",
-        "src/scala/com/twitter/simclusters_v2/summingbird/storm",
+        ": bserv ce",
+        "src/scala/com/tw ter/s mclusters_v2/summ ngb rd/storm",
     ],
 )

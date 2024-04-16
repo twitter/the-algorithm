@@ -1,74 +1,74 @@
-package com.twitter.search.common.query;
+package com.tw ter.search.common.query;
 
-import java.io.IOException;
-import java.util.Set;
+ mport java. o. OExcept on;
+ mport java.ut l.Set;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.ConstantScoreScorer;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene. ndex.Term;
+ mport org.apac .lucene.search.ConstantScoreScorer;
+ mport org.apac .lucene.search.Explanat on;
+ mport org.apac .lucene.search. ndexSearc r;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .lucene.search.Scorer;
+ mport org.apac .lucene.search.ScoreMode;
+ mport org.apac .lucene.search.  ght;
 
 /**
- * Lucene filter on top of a known docid
+ * Lucene f lter on top of a known doc d
  *
  */
-public class DocIdFilter extends Query {
-  private final int docid;
+publ c class Doc dF lter extends Query {
+  pr vate f nal  nt doc d;
 
-  public DocIdFilter(int docid) {
-    this.docid = docid;
+  publ c Doc dF lter( nt doc d) {
+    t .doc d = doc d;
   }
 
-  @Override
-  public Weight createWeight(
-      IndexSearcher searcher, ScoreMode scoreMode, float boost) throws IOException {
-    return new Weight(this) {
-      @Override
-      public void extractTerms(Set<Term> terms) {
+  @Overr de
+  publ c   ght create  ght(
+       ndexSearc r searc r, ScoreMode scoreMode, float boost) throws  OExcept on {
+    return new   ght(t ) {
+      @Overr de
+      publ c vo d extractTerms(Set<Term> terms) {
       }
 
-      @Override
-      public Explanation explain(LeafReaderContext context, int doc) throws IOException {
+      @Overr de
+      publ c Explanat on expla n(LeafReaderContext context,  nt doc) throws  OExcept on {
         Scorer scorer = scorer(context);
-        if ((scorer != null) && (scorer.iterator().advance(doc) == doc)) {
-          return Explanation.match(0f, "Match on id " + doc);
+         f ((scorer != null) && (scorer. erator().advance(doc) == doc)) {
+          return Explanat on.match(0f, "Match on  d " + doc);
         }
-        return Explanation.match(0f, "No match on id " + doc);
+        return Explanat on.match(0f, "No match on  d " + doc);
       }
 
-      @Override
-      public Scorer scorer(LeafReaderContext context) throws IOException {
-        return new ConstantScoreScorer(this, 0.0f, scoreMode, new SingleDocDocIdSetIterator(docid));
+      @Overr de
+      publ c Scorer scorer(LeafReaderContext context) throws  OExcept on {
+        return new ConstantScoreScorer(t , 0.0f, scoreMode, new S ngleDocDoc dSet erator(doc d));
       }
 
-      @Override
-      public boolean isCacheable(LeafReaderContext ctx) {
+      @Overr de
+      publ c boolean  sCac able(LeafReaderContext ctx) {
         return true;
       }
     };
   }
 
-  @Override
-  public int hashCode() {
-    return docid;
+  @Overr de
+  publ c  nt hashCode() {
+    return doc d;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof DocIdFilter)) {
+  @Overr de
+  publ c boolean equals(Object obj) {
+     f (!(obj  nstanceof Doc dF lter)) {
       return false;
     }
 
-    return docid == DocIdFilter.class.cast(obj).docid;
+    return doc d == Doc dF lter.class.cast(obj).doc d;
   }
 
-  @Override
-  public String toString(String field) {
-    return "DOC_ID_FILTER[docId=" + docid + " + ]";
+  @Overr de
+  publ c Str ng toStr ng(Str ng f eld) {
+    return "DOC_ D_F LTER[doc d=" + doc d + " + ]";
   }
 }

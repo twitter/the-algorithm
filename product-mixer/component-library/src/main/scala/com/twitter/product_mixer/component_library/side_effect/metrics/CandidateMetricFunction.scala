@@ -1,58 +1,58 @@
-package com.twitter.product_mixer.component_library.side_effect.metrics
+package com.tw ter.product_m xer.component_l brary.s de_effect. tr cs
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.component_library.model.candidate.BaseUserCandidate
-import com.twitter.product_mixer.component_library.side_effect.metrics.CandidateMetricFunction.getCountForType
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.BaseT etCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.BaseUserCand date
+ mport com.tw ter.product_m xer.component_l brary.s de_effect. tr cs.Cand date tr cFunct on.getCountForType
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on. emCand dateW hDeta ls
 
 /**
- * Function to extract numerical metric value from [[CandidateWithDetails]].
- * This CandidateMetricFunction will be applied on all [[CandidateWithDetails]] instances in the
- * candidateSelection from the RecommendationPipeline.
+ * Funct on to extract nu r cal  tr c value from [[Cand dateW hDeta ls]].
+ * T  Cand date tr cFunct on w ll be appl ed on all [[Cand dateW hDeta ls]]  nstances  n t 
+ * cand dateSelect on from t  Recom ndat onP pel ne.
  */
-trait CandidateMetricFunction {
-  def apply(candidateWithDetails: CandidateWithDetails): Long
+tra  Cand date tr cFunct on {
+  def apply(cand dateW hDeta ls: Cand dateW hDeta ls): Long
 }
 
-object CandidateMetricFunction {
+object Cand date tr cFunct on {
 
-  private val defaultCountOnePf: PartialFunction[CandidateWithDetails, Long] = {
+  pr vate val defaultCountOnePf: Part alFunct on[Cand dateW hDeta ls, Long] = {
     case _ => 0L
   }
 
   /**
-   * Count the occurrences of a certain candidate type from [[CandidateWithDetails]].
+   * Count t  occurrences of a certa n cand date type from [[Cand dateW hDeta ls]].
    */
   def getCountForType(
-    candidateWithDetails: CandidateWithDetails,
-    countOnePf: PartialFunction[CandidateWithDetails, Long]
+    cand dateW hDeta ls: Cand dateW hDeta ls,
+    countOnePf: Part alFunct on[Cand dateW hDeta ls, Long]
   ): Long = {
-    (countOnePf orElse defaultCountOnePf)(candidateWithDetails)
+    (countOnePf orElse defaultCountOnePf)(cand dateW hDeta ls)
   }
 }
 
-object DefaultServedTweetsSumFunction extends CandidateMetricFunction {
-  override def apply(candidateWithDetails: CandidateWithDetails): Long =
+object DefaultServedT etsSumFunct on extends Cand date tr cFunct on {
+  overr de def apply(cand dateW hDeta ls: Cand dateW hDeta ls): Long =
     getCountForType(
-      candidateWithDetails,
+      cand dateW hDeta ls,
       {
-        case item: ItemCandidateWithDetails =>
-          item.candidate match {
-            case _: BaseTweetCandidate => 1L
+        case  em:  emCand dateW hDeta ls =>
+           em.cand date match {
+            case _: BaseT etCand date => 1L
             case _ => 0L
           }
       })
 }
 
-object DefaultServedUsersSumFunction extends CandidateMetricFunction {
-  override def apply(candidateWithDetails: CandidateWithDetails): Long =
+object DefaultServedUsersSumFunct on extends Cand date tr cFunct on {
+  overr de def apply(cand dateW hDeta ls: Cand dateW hDeta ls): Long =
     getCountForType(
-      candidateWithDetails,
+      cand dateW hDeta ls,
       {
-        case item: ItemCandidateWithDetails =>
-          item.candidate match {
-            case _: BaseUserCandidate => 1L
+        case  em:  emCand dateW hDeta ls =>
+           em.cand date match {
+            case _: BaseUserCand date => 1L
             case _ => 0L
           }
       })

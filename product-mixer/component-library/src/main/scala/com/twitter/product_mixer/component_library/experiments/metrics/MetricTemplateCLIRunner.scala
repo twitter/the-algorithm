@@ -1,101 +1,101 @@
-package com.twitter.product_mixer.component_library.experiments.metrics
+package com.tw ter.product_m xer.component_l brary.exper  nts. tr cs
 
-import com.twitter.product_mixer.component_library.experiments.metrics.PlaceholderConfig.PlaceholdersMap
-import java.io.File
-import java.io.PrintWriter
-import scala.collection.immutable.ListSet
-import scala.io.Source
-import scopt.OptionParser
+ mport com.tw ter.product_m xer.component_l brary.exper  nts. tr cs.PlaceholderConf g.PlaceholdersMap
+ mport java. o.F le
+ mport java. o.Pr ntWr er
+ mport scala.collect on. mmutable.L stSet
+ mport scala. o.S ce
+ mport scopt.Opt onParser
 
-private case class MetricTemplateCLIConfig(
-  // default values required for OptionParser
-  templateFileName: String = null,
-  outputFileName: String = null,
-  metricGroupName: String = null,
-  metricGroupDesc: String = null,
-  metricGroupId: Option[Long] = None,
-  absolutePath: Option[String] = None)
+pr vate case class  tr cTemplateCL Conf g(
+  // default values requ red for Opt onParser
+  templateF leNa : Str ng = null,
+  outputF leNa : Str ng = null,
+   tr cGroupNa : Str ng = null,
+   tr cGroupDesc: Str ng = null,
+   tr cGroup d: Opt on[Long] = None,
+  absolutePath: Opt on[Str ng] = None)
 
-trait MetricTemplateCLIRunner {
-  def templateDir: String
+tra   tr cTemplateCL Runner {
+  def templateD r: Str ng
   def placeholders: PlaceholdersMap
-  private val ProgramName = "Metric Template CLI"
-  private val VersionNumber = "1.0"
+  pr vate val ProgramNa  = " tr c Template CL "
+  pr vate val Vers onNumber = "1.0"
 
-  private def mkPath(fileName: String, absolutePath: Option[String]): String = {
-    val relativeDir = s"$templateDir/$fileName"
+  pr vate def mkPath(f leNa : Str ng, absolutePath: Opt on[Str ng]): Str ng = {
+    val relat veD r = s"$templateD r/$f leNa "
     absolutePath match {
-      case Some(path) => s"$path/$relativeDir"
-      case _ => relativeDir
+      case So (path) => s"$path/$relat veD r"
+      case _ => relat veD r
     }
   }
 
-  def main(args: Array[String]): Unit = {
-    val parser = new OptionParser[MetricTemplateCLIConfig](ProgramName) {
-      head(ProgramName, VersionNumber)
-      // option invoked by -o or --output
-      opt[String]('o', "output")
-        .required()
-        .valueName("<file>")
-        .action((value, config) => config.copy(outputFileName = value))
-        .text("output CSV file with interpolated lines")
-      // option invoked by -t or --template
-      opt[String]('t', "template")
-        .required()
-        .valueName("<file>")
-        .action((value, config) => config.copy(templateFileName = value))
+  def ma n(args: Array[Str ng]): Un  = {
+    val parser = new Opt onParser[ tr cTemplateCL Conf g](ProgramNa ) {
+       ad(ProgramNa , Vers onNumber)
+      // opt on  nvoked by -o or --output
+      opt[Str ng]('o', "output")
+        .requ red()
+        .valueNa ("<f le>")
+        .act on((value, conf g) => conf g.copy(outputF leNa  = value))
+        .text("output CSV f le w h  nterpolated l nes")
+      // opt on  nvoked by -t or --template
+      opt[Str ng]('t', "template")
+        .requ red()
+        .valueNa ("<f le>")
+        .act on((value, conf g) => conf g.copy(templateF leNa  = value))
         .text(
-          s"input template file (see README.md for template format). Path is relative to $templateDir.")
-      // option invoked by -n or --name
-      opt[String]('n', "name")
-        .required()
-        .valueName("<groupName>")
-        .action((value, config) => config.copy(metricGroupName = value))
-        .text("metric group name")
-      // option invoked by -d or --description
-      opt[String]('d', "description")
-        .required()
-        .valueName("<groupDescription>")
-        .action((value, config) => config.copy(metricGroupDesc = value))
-        .text("metric group description")
-      // option invoked by --id
-      opt[Long]("id")
-        .optional()
-        .valueName("<groupId>")
-        .action((value, config) => config.copy(metricGroupId = Some(value)))
-        .text("metric group ID (metric MUST be created in go/ddg)")
-      // option invoked by -p or --path
-      opt[String]('p', "path")
-        .optional()
-        .valueName("<directory>")
-        .action((value, config) => config.copy(absolutePath = Some(value)))
-        .text(s"absolute path pointing to the $templateDir. Required by bazel")
+          s" nput template f le (see README.md for template format). Path  s relat ve to $templateD r.")
+      // opt on  nvoked by -n or --na 
+      opt[Str ng]('n', "na ")
+        .requ red()
+        .valueNa ("<groupNa >")
+        .act on((value, conf g) => conf g.copy( tr cGroupNa  = value))
+        .text(" tr c group na ")
+      // opt on  nvoked by -d or --descr pt on
+      opt[Str ng]('d', "descr pt on")
+        .requ red()
+        .valueNa ("<groupDescr pt on>")
+        .act on((value, conf g) => conf g.copy( tr cGroupDesc = value))
+        .text(" tr c group descr pt on")
+      // opt on  nvoked by -- d
+      opt[Long](" d")
+        .opt onal()
+        .valueNa ("<group d>")
+        .act on((value, conf g) => conf g.copy( tr cGroup d = So (value)))
+        .text(" tr c group  D ( tr c MUST be created  n go/ddg)")
+      // opt on  nvoked by -p or --path
+      opt[Str ng]('p', "path")
+        .opt onal()
+        .valueNa ("<d rectory>")
+        .act on((value, conf g) => conf g.copy(absolutePath = So (value)))
+        .text(s"absolute path po nt ng to t  $templateD r. Requ red by bazel")
     }
 
-    parser.parse(args, MetricTemplateCLIConfig()) match {
-      case Some(config) =>
-        val templateLines =
-          Source.fromFile(mkPath(config.templateFileName, config.absolutePath)).getLines.toList
-        val interpolatedLines = templateLines
-          .filter(!_.startsWith("#")).flatMap(MetricTemplates.interpolate(_, placeholders))
-        val writer = new PrintWriter(new File(mkPath(config.outputFileName, config.absolutePath)))
-        val metrics = interpolatedLines.map(Metric.fromLine)
-        println(s"${metrics.size} metric definitions found in template file.")
-        val dupMetrics = metrics.groupBy(identity).collect {
-          case (dup, lst) if lst.lengthCompare(1) > 0 => dup
+    parser.parse(args,  tr cTemplateCL Conf g()) match {
+      case So (conf g) =>
+        val templateL nes =
+          S ce.fromF le(mkPath(conf g.templateF leNa , conf g.absolutePath)).getL nes.toL st
+        val  nterpolatedL nes = templateL nes
+          .f lter(!_.startsW h("#")).flatMap( tr cTemplates. nterpolate(_, placeholders))
+        val wr er = new Pr ntWr er(new F le(mkPath(conf g.outputF leNa , conf g.absolutePath)))
+        val  tr cs =  nterpolatedL nes.map( tr c.fromL ne)
+        pr ntln(s"${ tr cs.s ze}  tr c def n  ons found  n template f le.")
+        val dup tr cs =  tr cs.groupBy( dent y).collect {
+          case (dup, lst)  f lst.lengthCompare(1) > 0 => dup
         }
-        println(s"\nWARNING: ${dupMetrics.size} Duplicate metric definition(s)\n$dupMetrics\n")
-        val metricGroup = MetricGroup(
-          config.metricGroupId,
-          config.metricGroupName,
-          config.metricGroupDesc,
-          metrics.to[ListSet])
-        println(s"${metricGroup.uniqueMetricNames.size} unique DDG metrics with " +
-          s"${metricGroup.metrics.size} metric definitions in '${metricGroup.name}' metric group.")
-        writer.write(metricGroup.toCsv)
-        writer.close()
+        pr ntln(s"\nWARN NG: ${dup tr cs.s ze} Dupl cate  tr c def n  on(s)\n$dup tr cs\n")
+        val  tr cGroup =  tr cGroup(
+          conf g. tr cGroup d,
+          conf g. tr cGroupNa ,
+          conf g. tr cGroupDesc,
+           tr cs.to[L stSet])
+        pr ntln(s"${ tr cGroup.un que tr cNa s.s ze} un que DDG  tr cs w h " +
+          s"${ tr cGroup. tr cs.s ze}  tr c def n  ons  n '${ tr cGroup.na }'  tr c group.")
+        wr er.wr e( tr cGroup.toCsv)
+        wr er.close()
       case _ =>
-      // arguments are bad, error message will have been displayed
+      // argu nts are bad, error  ssage w ll have been d splayed
     }
   }
 }

@@ -1,47 +1,47 @@
-package com.twitter.home_mixer.module
+package com.tw ter.ho _m xer.module
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.timelinemixer.clients.feedback.FeedbackHistoryManhattanClient
-import com.twitter.timelinemixer.clients.feedback.FeedbackHistoryManhattanClientConfig
-import com.twitter.timelines.clients.manhattan.mhv3.ManhattanClientBuilder
-import com.twitter.util.Duration
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.t  l nem xer.cl ents.feedback.Feedback toryManhattanCl ent
+ mport com.tw ter.t  l nem xer.cl ents.feedback.Feedback toryManhattanCl entConf g
+ mport com.tw ter.t  l nes.cl ents.manhattan.mhv3.ManhattanCl entBu lder
+ mport com.tw ter.ut l.Durat on
+ mport javax. nject.S ngleton
 
-object FeedbackHistoryClientModule extends TwitterModule {
-  private val ProdDataset = "feedback_history"
-  private val StagingDataset = "feedback_history_nonprod"
-  private final val Timeout = "mh_feedback_history.timeout"
+object Feedback toryCl entModule extends Tw terModule {
+  pr vate val ProdDataset = "feedback_ tory"
+  pr vate val Stag ngDataset = "feedback_ tory_nonprod"
+  pr vate f nal val T  out = "mh_feedback_ tory.t  out"
 
-  flag[Duration](Timeout, 150.millis, "Timeout per request")
+  flag[Durat on](T  out, 150.m ll s, "T  out per request")
 
-  @Provides
-  @Singleton
-  def providesFeedbackHistoryClient(
-    @Flag(Timeout) timeout: Duration,
-    serviceId: ServiceIdentifier,
-    statsReceiver: StatsReceiver
+  @Prov des
+  @S ngleton
+  def prov desFeedback toryCl ent(
+    @Flag(T  out) t  out: Durat on,
+    serv ce d: Serv ce dent f er,
+    statsRece ver: StatsRece ver
   ) = {
-    val manhattanDataset = serviceId.environment.toLowerCase match {
+    val manhattanDataset = serv ce d.env ron nt.toLo rCase match {
       case "prod" => ProdDataset
-      case _ => StagingDataset
+      case _ => Stag ngDataset
     }
 
-    val config = new FeedbackHistoryManhattanClientConfig {
+    val conf g = new Feedback toryManhattanCl entConf g {
       val dataset = manhattanDataset
-      val isReadOnly = true
-      val serviceIdentifier = serviceId
-      override val defaultMaxTimeout = timeout
+      val  sReadOnly = true
+      val serv ce dent f er = serv ce d
+      overr de val defaultMaxT  out = t  out
     }
 
-    new FeedbackHistoryManhattanClient(
-      ManhattanClientBuilder.buildManhattanEndpoint(config, statsReceiver),
+    new Feedback toryManhattanCl ent(
+      ManhattanCl entBu lder.bu ldManhattanEndpo nt(conf g, statsRece ver),
       manhattanDataset,
-      statsReceiver
+      statsRece ver
     )
   }
 }

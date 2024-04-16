@@ -1,136 +1,136 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.repository.PlaceKey
-import com.twitter.tweetypie.repository.PlaceRepository
-import com.twitter.tweetypie.serverutil.ExceptionCounter
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.f nagle.stats.Counter
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.repos ory.PlaceKey
+ mport com.tw ter.t etyp e.repos ory.PlaceRepos ory
+ mport com.tw ter.t etyp e.serverut l.Except onCounter
+ mport com.tw ter.t etyp e.thr ftscala._
 
 object GeoStats {
   val topTenCountryCodes: Set[PlaceLanguage] =
-    Set("US", "JP", "GB", "ID", "BR", "SA", "TR", "MX", "ES", "CA")
+    Set("US", "JP", "GB", " D", "BR", "SA", "TR", "MX", "ES", "CA")
 
-  def apply(stats: StatsReceiver): Effect[Option[Place]] = {
+  def apply(stats: StatsRece ver): Effect[Opt on[Place]] = {
     val totalCount = stats.counter("total")
     val notFoundCount = stats.counter("not_found")
-    val countryStats: Map[String, Counter] =
-      topTenCountryCodes.map(cc => cc -> stats.scope("with_country_code").counter(cc)).toMap
+    val countryStats: Map[Str ng, Counter] =
+      topTenCountryCodes.map(cc => cc -> stats.scope("w h_country_code").counter(cc)).toMap
 
     val placeTypeStats: Map[PlaceType, Counter] =
       Map(
-        PlaceType.Admin -> stats.counter("admin"),
-        PlaceType.City -> stats.counter("city"),
+        PlaceType.Adm n -> stats.counter("adm n"),
+        PlaceType.C y -> stats.counter("c y"),
         PlaceType.Country -> stats.counter("country"),
-        PlaceType.Neighborhood -> stats.counter("neighborhood"),
-        PlaceType.Poi -> stats.counter("poi"),
+        PlaceType.Ne ghborhood -> stats.counter("ne ghborhood"),
+        PlaceType.Po  -> stats.counter("po "),
         PlaceType.Unknown -> stats.counter("unknown")
       )
 
-    Effect.fromPartial {
-      case Some(place) => {
-        totalCount.incr()
-        placeTypeStats(place.`type`).incr()
-        place.countryCode.foreach(cc => countryStats.get(cc).foreach(_.incr()))
+    Effect.fromPart al {
+      case So (place) => {
+        totalCount. ncr()
+        placeTypeStats(place.`type`). ncr()
+        place.countryCode.foreach(cc => countryStats.get(cc).foreach(_. ncr()))
       }
-      case None => notFoundCount.incr()
+      case None => notFoundCount. ncr()
     }
   }
 }
 
-object GeoBuilder {
-  case class Request(createGeo: TweetCreateGeo, userGeoEnabled: Boolean, language: String)
+object GeoBu lder {
+  case class Request(createGeo: T etCreateGeo, userGeoEnabled: Boolean, language: Str ng)
 
-  case class Result(geoCoordinates: Option[GeoCoordinates], placeId: Option[PlaceId])
+  case class Result(geoCoord nates: Opt on[GeoCoord nates], place d: Opt on[Place d])
 
   type Type = FutureArrow[Request, Result]
 
-  def apply(placeRepo: PlaceRepository.Type, rgc: ReverseGeocoder, stats: StatsReceiver): Type = {
-    val exceptionCounters = ExceptionCounter(stats)
+  def apply(placeRepo: PlaceRepos ory.Type, rgc: ReverseGeocoder, stats: StatsRece ver): Type = {
+    val except onCounters = Except onCounter(stats)
 
-    def ignoreFailures[A](future: Future[Option[A]]): Future[Option[A]] =
-      exceptionCounters(future).handle { case _ => None }
+    def  gnoreFa lures[A](future: Future[Opt on[A]]): Future[Opt on[A]] =
+      except onCounters(future).handle { case _ => None }
 
-    def isValidPlaceId(placeId: String) = PlaceIdRegex.pattern.matcher(placeId).matches
+    def  sVal dPlace d(place d: Str ng) = Place dRegex.pattern.matc r(place d).matc s
 
-    def isValidLatLon(latitude: Double, longitude: Double): Boolean =
-      latitude >= -90.0 && latitude <= 90.0 &&
-        longitude >= -180.0 && longitude <= 180.0 &&
-        // some clients send (0.0, 0.0) for unknown reasons, but this is highly unlikely to be
-        // valid and should be treated as if no coordinates were sent.  if a place Id is provided,
-        // that will still be used.
-        (latitude != 0.0 || longitude != 0.0)
+    def  sVal dLatLon(lat ude: Double, long ude: Double): Boolean =
+      lat ude >= -90.0 && lat ude <= 90.0 &&
+        long ude >= -180.0 && long ude <= 180.0 &&
+        // so  cl ents send (0.0, 0.0) for unknown reasons, but t   s h ghly unl kely to be
+        // val d and should be treated as  f no coord nates  re sent.   f a place  d  s prov ded,
+        // that w ll st ll be used.
+        (lat ude != 0.0 || long ude != 0.0)
 
-    // Count the number of times we erase geo information based on user preferences.
+    // Count t  number of t  s   erase geo  nformat on based on user preferences.
     val geoErasedCounter = stats.counter("geo_erased")
-    // Count the number of times we override a user's preferences and add geo anyway.
-    val geoOverriddenCounter = stats.counter("geo_overridden")
+    // Count t  number of t  s   overr de a user's preferences and add geo anyway.
+    val geoOverr ddenCounter = stats.counter("geo_overr dden")
 
-    val geoScope = stats.scope("create_geotagged_tweet")
+    val geoScope = stats.scope("create_geotagged_t et")
 
-    // Counter for geo tweets with neither lat lon nor place id data
-    val noGeoCounter = geoScope.counter("no_geo_info")
-    val invalidCoordinates = geoScope.counter("invalid_coordinates")
-    val inValidPlaceId = geoScope.counter("invalid_place_id")
+    // Counter for geo t ets w h ne  r lat lon nor place  d data
+    val noGeoCounter = geoScope.counter("no_geo_ nfo")
+    val  nval dCoord nates = geoScope.counter(" nval d_coord nates")
+    val  nVal dPlace d = geoScope.counter(" nval d_place_ d")
     val latlonStatsEffect = GeoStats(geoScope.scope("from_latlon"))
-    val placeIdStatsEffect = GeoStats(geoScope.scope("from_place_id"))
+    val place dStatsEffect = GeoStats(geoScope.scope("from_place_ d"))
 
-    def validateCoordinates(coords: GeoCoordinates): Option[GeoCoordinates] =
-      if (isValidLatLon(coords.latitude, coords.longitude)) Some(coords)
+    def val dateCoord nates(coords: GeoCoord nates): Opt on[GeoCoord nates] =
+       f ( sVal dLatLon(coords.lat ude, coords.long ude)) So (coords)
       else {
-        invalidCoordinates.incr()
+         nval dCoord nates. ncr()
         None
       }
 
-    def validatePlaceId(placeId: String): Option[String] =
-      if (isValidPlaceId(placeId)) Some(placeId)
+    def val datePlace d(place d: Str ng): Opt on[Str ng] =
+       f ( sVal dPlace d(place d)) So (place d)
       else {
-        inValidPlaceId.incr()
+         nVal dPlace d. ncr()
         None
       }
 
-    def getPlaceByRGC(coordinates: GeoCoordinates, language: String): Future[Option[Place]] =
-      ignoreFailures(
-        rgc((coordinates, language)).onSuccess(latlonStatsEffect)
+    def getPlaceByRGC(coord nates: GeoCoord nates, language: Str ng): Future[Opt on[Place]] =
+       gnoreFa lures(
+        rgc((coord nates, language)).onSuccess(latlonStatsEffect)
       )
 
-    def getPlaceById(placeId: String, language: String): Future[Option[Place]] =
-      ignoreFailures(
-        Stitch
-          .run(placeRepo(PlaceKey(placeId, language)).liftNotFoundToOption)
-          .onSuccess(placeIdStatsEffect)
+    def getPlaceBy d(place d: Str ng, language: Str ng): Future[Opt on[Place]] =
+       gnoreFa lures(
+        St ch
+          .run(placeRepo(PlaceKey(place d, language)).l ftNotFoundToOpt on)
+          .onSuccess(place dStatsEffect)
       )
 
     FutureArrow[Request, Result] { request =>
       val createGeo = request.createGeo
-      val allowGeo = createGeo.overrideUserGeoSetting || request.userGeoEnabled
-      val overrideGeo = createGeo.overrideUserGeoSetting && !request.userGeoEnabled
+      val allowGeo = createGeo.overr deUserGeoSett ng || request.userGeoEnabled
+      val overr deGeo = createGeo.overr deUserGeoSett ng && !request.userGeoEnabled
 
-      if (createGeo.placeId.isEmpty && createGeo.coordinates.isEmpty) {
-        noGeoCounter.incr()
+       f (createGeo.place d. sEmpty && createGeo.coord nates. sEmpty) {
+        noGeoCounter. ncr()
         Future.value(Result(None, None))
-      } else if (!allowGeo) {
-        // Record that we had geo information but had to erase it based on user preferences.
-        geoErasedCounter.incr()
+      } else  f (!allowGeo) {
+        // Record that   had geo  nformat on but had to erase   based on user preferences.
+        geoErasedCounter. ncr()
         Future.value(Result(None, None))
       } else {
-        if (overrideGeo) geoOverriddenCounter.incr()
+         f (overr deGeo) geoOverr ddenCounter. ncr()
 
-        // treat invalidate coordinates the same as no-coordinates
-        val validatedCoordinates = createGeo.coordinates.flatMap(validateCoordinates)
-        val validatedPlaceId = createGeo.placeId.flatMap(validatePlaceId)
+        // treat  nval date coord nates t  sa  as no-coord nates
+        val val datedCoord nates = createGeo.coord nates.flatMap(val dateCoord nates)
+        val val datedPlace d = createGeo.place d.flatMap(val datePlace d)
 
         for {
-          place <- (createGeo.placeId, validatedPlaceId, validatedCoordinates) match {
-            // if the request contains an invalid place id, we want to return None for the
-            // place instead of reverse-geocoding the coordinates
-            case (Some(_), None, _) => Future.None
-            case (_, Some(placeId), _) => getPlaceById(placeId, request.language)
-            case (_, _, Some(coords)) => getPlaceByRGC(coords, request.language)
+          place <- (createGeo.place d, val datedPlace d, val datedCoord nates) match {
+            //  f t  request conta ns an  nval d place  d,   want to return None for t 
+            // place  nstead of reverse-geocod ng t  coord nates
+            case (So (_), None, _) => Future.None
+            case (_, So (place d), _) => getPlaceBy d(place d, request.language)
+            case (_, _, So (coords)) => getPlaceByRGC(coords, request.language)
             case _ => Future.None
           }
-        } yield Result(validatedCoordinates, place.map(_.id))
+        } y eld Result(val datedCoord nates, place.map(_. d))
       }
     }
   }

@@ -1,96 +1,96 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.conversions.DurationOps.richDurationFromInt
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps.r chDurat onFrom nt
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .Durat onConvers on
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .HasDurat onConvers on
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.ut l.Durat on
 
-object ConsumerBasedWalsParams {
+object Consu rBasedWalsParams {
 
-  object EnableSourceParam
+  object EnableS ceParam
       extends FSParam[Boolean](
-        name = "consumer_based_wals_enable_source",
+        na  = "consu r_based_wals_enable_s ce",
         default = false
       )
 
-  object ModelNameParam
-      extends FSParam[String](
-        name = "consumer_based_wals_model_name",
+  object ModelNa Param
+      extends FSParam[Str ng](
+        na  = "consu r_based_wals_model_na ",
         default = "model_0"
       )
 
-  object WilyNsNameParam
-      extends FSParam[String](
-        name = "consumer_based_wals_wily_ns_name",
+  object W lyNsNa Param
+      extends FSParam[Str ng](
+        na  = "consu r_based_wals_w ly_ns_na ",
         default = ""
       )
 
-  object ModelInputNameParam
-      extends FSParam[String](
-        name = "consumer_based_wals_model_input_name",
+  object Model nputNa Param
+      extends FSParam[Str ng](
+        na  = "consu r_based_wals_model_ nput_na ",
         default = "examples"
       )
 
-  object ModelOutputNameParam
-      extends FSParam[String](
-        name = "consumer_based_wals_model_output_name",
-        default = "all_tweet_ids"
+  object ModelOutputNa Param
+      extends FSParam[Str ng](
+        na  = "consu r_based_wals_model_output_na ",
+        default = "all_t et_ ds"
       )
 
-  object ModelSignatureNameParam
-      extends FSParam[String](
-        name = "consumer_based_wals_model_signature_name",
-        default = "serving_default"
+  object ModelS gnatureNa Param
+      extends FSParam[Str ng](
+        na  = "consu r_based_wals_model_s gnature_na ",
+        default = "serv ng_default"
       )
 
-  object MaxTweetSignalAgeHoursParam
-      extends FSBoundedParam[Duration](
-        name = "consumer_based_wals_max_tweet_signal_age_hours",
-        default = 72.hours,
-        min = 1.hours,
-        max = 720.hours
+  object MaxT etS gnalAgeH sParam
+      extends FSBoundedParam[Durat on](
+        na  = "consu r_based_wals_max_t et_s gnal_age_h s",
+        default = 72.h s,
+        m n = 1.h s,
+        max = 720.h s
       )
-      with HasDurationConversion {
+      w h HasDurat onConvers on {
 
-    override val durationConversion: DurationConversion = DurationConversion.FromHours
+    overr de val durat onConvers on: Durat onConvers on = Durat onConvers on.FromH s
   }
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableSourceParam,
-    ModelNameParam,
-    ModelInputNameParam,
-    ModelOutputNameParam,
-    ModelSignatureNameParam,
-    MaxTweetSignalAgeHoursParam,
-    WilyNsNameParam,
+  val AllParams: Seq[Param[_] w h FSNa ] = Seq(
+    EnableS ceParam,
+    ModelNa Param,
+    Model nputNa Param,
+    ModelOutputNa Param,
+    ModelS gnatureNa Param,
+    MaxT etS gnalAgeH sParam,
+    W lyNsNa Param,
   )
 
-  lazy val config: BaseConfig = {
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableSourceParam,
+  lazy val conf g: BaseConf g = {
+    val booleanOverr des = FeatureSw chOverr deUt l.getBooleanFSOverr des(
+      EnableS ceParam,
     )
-    val stringOverrides = FeatureSwitchOverrideUtil.getStringFSOverrides(
-      ModelNameParam,
-      ModelInputNameParam,
-      ModelOutputNameParam,
-      ModelSignatureNameParam,
-      WilyNsNameParam
+    val str ngOverr des = FeatureSw chOverr deUt l.getStr ngFSOverr des(
+      ModelNa Param,
+      Model nputNa Param,
+      ModelOutputNa Param,
+      ModelS gnatureNa Param,
+      W lyNsNa Param
     )
 
-    val boundedDurationFSOverrides =
-      FeatureSwitchOverrideUtil.getBoundedDurationFSOverrides(MaxTweetSignalAgeHoursParam)
+    val boundedDurat onFSOverr des =
+      FeatureSw chOverr deUt l.getBoundedDurat onFSOverr des(MaxT etS gnalAgeH sParam)
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(stringOverrides: _*)
-      .set(boundedDurationFSOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set(booleanOverr des: _*)
+      .set(str ngOverr des: _*)
+      .set(boundedDurat onFSOverr des: _*)
+      .bu ld()
   }
 }

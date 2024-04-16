@@ -1,151 +1,151 @@
-package com.twitter.frigate.pushservice.util
+package com.tw ter.fr gate.pushserv ce.ut l
 
-import com.twitter.contentrecommender.thriftscala.MetricTag
-import com.twitter.frigate.common.base.AlgorithmScore
-import com.twitter.frigate.common.base.OutOfNetworkTweetCandidate
-import com.twitter.frigate.common.base.SocialContextAction
-import com.twitter.frigate.common.base.TopicCandidate
-import com.twitter.frigate.common.base.TripCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.thriftscala.{SocialContextAction => TSocialContextAction}
-import com.twitter.frigate.thriftscala.{CommonRecommendationType => CRT}
-import com.twitter.frigate.thriftscala._
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.topiclisting.utt.LocalizedEntity
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripDomain
-import scala.collection.Seq
+ mport com.tw ter.contentrecom nder.thr ftscala. tr cTag
+ mport com.tw ter.fr gate.common.base.Algor hmScore
+ mport com.tw ter.fr gate.common.base.OutOfNetworkT etCand date
+ mport com.tw ter.fr gate.common.base.Soc alContextAct on
+ mport com.tw ter.fr gate.common.base.Top cCand date
+ mport com.tw ter.fr gate.common.base.Tr pCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.thr ftscala.{Soc alContextAct on => TSoc alContextAct on}
+ mport com.tw ter.fr gate.thr ftscala.{CommonRecom ndat onType => CRT}
+ mport com.tw ter.fr gate.thr ftscala._
+ mport com.tw ter.st ch.t etyp e.T etyP e.T etyP eResult
+ mport com.tw ter.top cl st ng.utt.Local zedEnt y
+ mport com.tw ter.trends.tr p_v1.tr p_t ets.thr ftscala.Tr pDoma n
+ mport scala.collect on.Seq
 
-case class MediaCRT(
+case class  d aCRT(
   crt: CRT,
   photoCRT: CRT,
-  videoCRT: CRT)
+  v deoCRT: CRT)
 
-object PushAdaptorUtil {
+object PushAdaptorUt l {
 
-  def getFrigateNotificationForUser(
+  def getFr gateNot f cat onForUser(
     crt: CRT,
-    userId: Long,
-    scActions: Seq[SocialContextAction],
-    pushCopyId: Option[Int],
-    ntabCopyId: Option[Int]
-  ): FrigateNotification = {
+    user d: Long,
+    scAct ons: Seq[Soc alContextAct on],
+    pushCopy d: Opt on[ nt],
+    ntabCopy d: Opt on[ nt]
+  ): Fr gateNot f cat on = {
 
-    val thriftSCActions = scActions.map { scAction =>
-      TSocialContextAction(
-        scAction.userId,
-        scAction.timestampInMillis,
-        scAction.tweetId
+    val thr ftSCAct ons = scAct ons.map { scAct on =>
+      TSoc alContextAct on(
+        scAct on.user d,
+        scAct on.t  stamp nM ll s,
+        scAct on.t et d
       )
     }
-    FrigateNotification(
+    Fr gateNot f cat on(
       crt,
-      NotificationDisplayLocation.PushToMobileDevice,
-      userNotification = Some(UserNotification(userId, thriftSCActions)),
-      pushCopyId = pushCopyId,
-      ntabCopyId = ntabCopyId
+      Not f cat onD splayLocat on.PushToMob leDev ce,
+      userNot f cat on = So (UserNot f cat on(user d, thr ftSCAct ons)),
+      pushCopy d = pushCopy d,
+      ntabCopy d = ntabCopy d
     )
   }
 
-  def getFrigateNotificationForTweet(
+  def getFr gateNot f cat onForT et(
     crt: CRT,
-    tweetId: Long,
-    scActions: Seq[TSocialContextAction],
-    authorIdOpt: Option[Long],
-    pushCopyId: Option[Int],
-    ntabCopyId: Option[Int],
-    simclusterId: Option[Int],
-    semanticCoreEntityIds: Option[List[Long]],
-    candidateContent: Option[CandidateContent],
-    trendId: Option[String],
-    tweetTripDomain: Option[scala.collection.Set[TripDomain]] = None
-  ): FrigateNotification = {
-    FrigateNotification(
+    t et d: Long,
+    scAct ons: Seq[TSoc alContextAct on],
+    author dOpt: Opt on[Long],
+    pushCopy d: Opt on[ nt],
+    ntabCopy d: Opt on[ nt],
+    s mcluster d: Opt on[ nt],
+    semant cCoreEnt y ds: Opt on[L st[Long]],
+    cand dateContent: Opt on[Cand dateContent],
+    trend d: Opt on[Str ng],
+    t etTr pDoma n: Opt on[scala.collect on.Set[Tr pDoma n]] = None
+  ): Fr gateNot f cat on = {
+    Fr gateNot f cat on(
       crt,
-      NotificationDisplayLocation.PushToMobileDevice,
-      tweetNotification = Some(
-        TweetNotification(
-          tweetId,
-          scActions,
-          authorIdOpt,
-          simclusterId,
-          semanticCoreEntityIds,
-          trendId,
-          tripDomain = tweetTripDomain)
+      Not f cat onD splayLocat on.PushToMob leDev ce,
+      t etNot f cat on = So (
+        T etNot f cat on(
+          t et d,
+          scAct ons,
+          author dOpt,
+          s mcluster d,
+          semant cCoreEnt y ds,
+          trend d,
+          tr pDoma n = t etTr pDoma n)
       ),
-      pushCopyId = pushCopyId,
-      ntabCopyId = ntabCopyId,
-      candidateContent = candidateContent
+      pushCopy d = pushCopy d,
+      ntabCopy d = ntabCopy d,
+      cand dateContent = cand dateContent
     )
   }
 
-  def getFrigateNotificationForTweetWithSocialContextActions(
+  def getFr gateNot f cat onForT etW hSoc alContextAct ons(
     crt: CRT,
-    tweetId: Long,
-    scActions: Seq[SocialContextAction],
-    authorIdOpt: Option[Long],
-    pushCopyId: Option[Int],
-    ntabCopyId: Option[Int],
-    candidateContent: Option[CandidateContent],
-    semanticCoreEntityIds: Option[List[Long]],
-    trendId: Option[String]
-  ): FrigateNotification = {
+    t et d: Long,
+    scAct ons: Seq[Soc alContextAct on],
+    author dOpt: Opt on[Long],
+    pushCopy d: Opt on[ nt],
+    ntabCopy d: Opt on[ nt],
+    cand dateContent: Opt on[Cand dateContent],
+    semant cCoreEnt y ds: Opt on[L st[Long]],
+    trend d: Opt on[Str ng]
+  ): Fr gateNot f cat on = {
 
-    val thriftSCActions = scActions.map { scAction =>
-      TSocialContextAction(
-        scAction.userId,
-        scAction.timestampInMillis,
-        scAction.tweetId
+    val thr ftSCAct ons = scAct ons.map { scAct on =>
+      TSoc alContextAct on(
+        scAct on.user d,
+        scAct on.t  stamp nM ll s,
+        scAct on.t et d
       )
     }
 
-    getFrigateNotificationForTweet(
+    getFr gateNot f cat onForT et(
       crt = crt,
-      tweetId = tweetId,
-      scActions = thriftSCActions,
-      authorIdOpt = authorIdOpt,
-      pushCopyId = pushCopyId,
-      ntabCopyId = ntabCopyId,
-      simclusterId = None,
-      candidateContent = candidateContent,
-      semanticCoreEntityIds = semanticCoreEntityIds,
-      trendId = trendId
+      t et d = t et d,
+      scAct ons = thr ftSCAct ons,
+      author dOpt = author dOpt,
+      pushCopy d = pushCopy d,
+      ntabCopy d = ntabCopy d,
+      s mcluster d = None,
+      cand dateContent = cand dateContent,
+      semant cCoreEnt y ds = semant cCoreEnt y ds,
+      trend d = trend d
     )
   }
 
-  def generateOutOfNetworkTweetCandidates(
-    inputTarget: Target,
-    id: Long,
-    mediaCRT: MediaCRT,
-    result: Option[TweetyPieResult],
-    localizedEntity: Option[LocalizedEntity] = None,
-    isMrBackfillFromCR: Option[Boolean] = None,
-    tagsFromCR: Option[Seq[MetricTag]] = None,
-    score: Option[Double] = None,
-    algorithmTypeCR: Option[String] = None,
-    tripTweetDomain: Option[scala.collection.Set[TripDomain]] = None
-  ): RawCandidate
-    with OutOfNetworkTweetCandidate
-    with TopicCandidate
-    with TripCandidate
-    with AlgorithmScore = {
-    new RawCandidate
-      with OutOfNetworkTweetCandidate
-      with TopicCandidate
-      with TripCandidate
-      with AlgorithmScore {
-      override val tweetId: Long = id
-      override val target: Target = inputTarget
-      override val tweetyPieResult: Option[TweetyPieResult] = result
-      override val localizedUttEntity: Option[LocalizedEntity] = localizedEntity
-      override val semanticCoreEntityId: Option[Long] = localizedEntity.map(_.entityId)
-      override def commonRecType: CRT =
-        getMediaBasedCRT(mediaCRT.crt, mediaCRT.photoCRT, mediaCRT.videoCRT)
-      override def isMrBackfillCR: Option[Boolean] = isMrBackfillFromCR
-      override def tagsCR: Option[Seq[MetricTag]] = tagsFromCR
-      override def algorithmScore: Option[Double] = score
-      override def algorithmCR: Option[String] = algorithmTypeCR
-      override def tripDomain: Option[collection.Set[TripDomain]] = tripTweetDomain
+  def generateOutOfNetworkT etCand dates(
+     nputTarget: Target,
+     d: Long,
+     d aCRT:  d aCRT,
+    result: Opt on[T etyP eResult],
+    local zedEnt y: Opt on[Local zedEnt y] = None,
+     sMrBackf llFromCR: Opt on[Boolean] = None,
+    tagsFromCR: Opt on[Seq[ tr cTag]] = None,
+    score: Opt on[Double] = None,
+    algor hmTypeCR: Opt on[Str ng] = None,
+    tr pT etDoma n: Opt on[scala.collect on.Set[Tr pDoma n]] = None
+  ): RawCand date
+    w h OutOfNetworkT etCand date
+    w h Top cCand date
+    w h Tr pCand date
+    w h Algor hmScore = {
+    new RawCand date
+      w h OutOfNetworkT etCand date
+      w h Top cCand date
+      w h Tr pCand date
+      w h Algor hmScore {
+      overr de val t et d: Long =  d
+      overr de val target: Target =  nputTarget
+      overr de val t etyP eResult: Opt on[T etyP eResult] = result
+      overr de val local zedUttEnt y: Opt on[Local zedEnt y] = local zedEnt y
+      overr de val semant cCoreEnt y d: Opt on[Long] = local zedEnt y.map(_.ent y d)
+      overr de def commonRecType: CRT =
+        get d aBasedCRT( d aCRT.crt,  d aCRT.photoCRT,  d aCRT.v deoCRT)
+      overr de def  sMrBackf llCR: Opt on[Boolean] =  sMrBackf llFromCR
+      overr de def tagsCR: Opt on[Seq[ tr cTag]] = tagsFromCR
+      overr de def algor hmScore: Opt on[Double] = score
+      overr de def algor hmCR: Opt on[Str ng] = algor hmTypeCR
+      overr de def tr pDoma n: Opt on[collect on.Set[Tr pDoma n]] = tr pT etDoma n
     }
   }
 }

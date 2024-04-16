@@ -1,41 +1,41 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.tw ter.ho _m xer.funct onal_component.feature_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.product_mixer.component_library.feature_hydrator.query.social_graph.SGSFollowedUsersFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.ho _m xer.model.Ho Features.Author dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nNetworkFeature
+ mport com.tw ter.product_m xer.component_l brary.feature_hydrator.query.soc al_graph.SGSFollo dUsersFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BulkCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
-object InNetworkFeatureHydrator
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+object  nNetworkFeatureHydrator
+    extends BulkCand dateFeatureHydrator[P pel neQuery, T etCand date] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("InNetwork")
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er(" nNetwork")
 
-  override val features: Set[Feature[_, _]] = Set(InNetworkFeature)
+  overr de val features: Set[Feature[_, _]] = Set( nNetworkFeature)
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val viewerId = query.getRequiredUserId
-    val followedUserIds = query.features.get.get(SGSFollowedUsersFeature).toSet
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[Seq[FeatureMap]] = {
+    val v e r d = query.getRequ redUser d
+    val follo dUser ds = query.features.get.get(SGSFollo dUsersFeature).toSet
 
-    val featureMaps = candidates.map { candidate =>
-      // We use authorId and not sourceAuthorId here so that retweets are defined as in network
-      val isInNetworkOpt = candidate.features.getOrElse(AuthorIdFeature, None).map { authorId =>
-        // Users cannot follow themselves but this is in network by definition
-        val isSelfTweet = authorId == viewerId
-        isSelfTweet || followedUserIds.contains(authorId)
+    val featureMaps = cand dates.map { cand date =>
+      //   use author d and not s ceAuthor d  re so that ret ets are def ned as  n network
+      val  s nNetworkOpt = cand date.features.getOrElse(Author dFeature, None).map { author d =>
+        // Users cannot follow t mselves but t   s  n network by def n  on
+        val  sSelfT et = author d == v e r d
+         sSelfT et || follo dUser ds.conta ns(author d)
       }
-      FeatureMapBuilder().add(InNetworkFeature, isInNetworkOpt.getOrElse(true)).build()
+      FeatureMapBu lder().add( nNetworkFeature,  s nNetworkOpt.getOrElse(true)).bu ld()
     }
-    Stitch.value(featureMaps)
+    St ch.value(featureMaps)
   }
 }

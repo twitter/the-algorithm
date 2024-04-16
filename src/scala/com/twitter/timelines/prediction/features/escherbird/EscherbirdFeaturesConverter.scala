@@ -1,19 +1,19 @@
-package com.twitter.timelines.prediction.features.escherbird
+package com.tw ter.t  l nes.pred ct on.features.esc rb rd
 
-import com.twitter.tweetypie.thriftscala.Tweet
-import scala.collection.JavaConverters._
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport scala.collect on.JavaConverters._
 
-object EscherbirdFeaturesConverter {
-  val DeprecatedOrTestDomains = Set(1L, 5L, 7L, 9L, 14L, 19L, 20L, 31L)
+object Esc rb rdFeaturesConverter {
+  val DeprecatedOrTestDoma ns = Set(1L, 5L, 7L, 9L, 14L, 19L, 20L, 31L)
 
-  def fromTweet(tweet: Tweet): Option[EscherbirdFeatures] = tweet.escherbirdEntityAnnotations.map {
-    escherbirdEntityAnnotations =>
-      val annotations = escherbirdEntityAnnotations.entityAnnotations
-        .filterNot(annotation => DeprecatedOrTestDomains.contains(annotation.domainId))
-      val tweetGroupIds = annotations.map(_.groupId.toString).toSet.asJava
-      val tweetDomainIds = annotations.map(_.domainId.toString).toSet.asJava
-      // An entity is only unique within a given domain
-      val tweetEntityIds = annotations.map(a => s"${a.domainId}.${a.entityId}").toSet.asJava
-      EscherbirdFeatures(tweet.id, tweetGroupIds, tweetDomainIds, tweetEntityIds)
+  def fromT et(t et: T et): Opt on[Esc rb rdFeatures] = t et.esc rb rdEnt yAnnotat ons.map {
+    esc rb rdEnt yAnnotat ons =>
+      val annotat ons = esc rb rdEnt yAnnotat ons.ent yAnnotat ons
+        .f lterNot(annotat on => DeprecatedOrTestDoma ns.conta ns(annotat on.doma n d))
+      val t etGroup ds = annotat ons.map(_.group d.toStr ng).toSet.asJava
+      val t etDoma n ds = annotat ons.map(_.doma n d.toStr ng).toSet.asJava
+      // An ent y  s only un que w h n a g ven doma n
+      val t etEnt y ds = annotat ons.map(a => s"${a.doma n d}.${a.ent y d}").toSet.asJava
+      Esc rb rdFeatures(t et. d, t etGroup ds, t etDoma n ds, t etEnt y ds)
   }
 }

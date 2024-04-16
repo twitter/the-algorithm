@@ -1,261 +1,261 @@
-package com.twitter.servo.cache
+package com.tw ter.servo.cac 
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.cache.thriftscala.CachedValueStatus.DoNotCache
-import com.twitter.servo.util.{Gate, Transformer}
-import com.twitter.util.{Duration, Return, Throw, Time}
-import java.nio.ByteBuffer
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.servo.cac .thr ftscala.Cac dValueStatus.DoNotCac 
+ mport com.tw ter.servo.ut l.{Gate, Transfor r}
+ mport com.tw ter.ut l.{Durat on, Return, Throw, T  }
+ mport java.n o.ByteBuffer
 
-object Cached {
+object Cac d {
 
-  private[this] val millisToTime: Long => Time =
-    ms => Time.fromMilliseconds(ms)
+  pr vate[t ] val m ll sToT  : Long => T   =
+    ms => T  .fromM ll seconds(ms)
 
-  private val timeToMills: Time => Long =
-    time => time.inMilliseconds
+  pr vate val t  ToM lls: T   => Long =
+    t   => t  . nM ll seconds
 
   /**
-   * Deserialize a CachedValue to a Cached[V]
+   * Deser al ze a Cac dValue to a Cac d[V]
    *
-   * If the ByteBuffer contained in the `cachedValue` is backed by an `Array[Byte]` with its offset
-   * at 0, we will apply the serializer directly to the backing array for performance reasons.
+   *  f t  ByteBuffer conta ned  n t  `cac dValue`  s backed by an `Array[Byte]` w h  s offset
+   * at 0,   w ll apply t  ser al zer d rectly to t  back ng array for performance reasons.
    *
-   * As such, the `Serializer[V]` the caller provides MUST NOT mutate the buffer it is given.
-   * This exhortation is also given in com.twitter.servo.util.Transformer, but repeated here.
+   * As such, t  `Ser al zer[V]` t  caller prov des MUST NOT mutate t  buffer    s g ven.
+   * T  exhortat on  s also g ven  n com.tw ter.servo.ut l.Transfor r, but repeated  re.
    */
-  def apply[V](cachedValue: CachedValue, serializer: Serializer[V]): Cached[V] = {
-    val value: Option[V] = cachedValue.value match {
-      case Some(buf) if buf.hasArray && buf.arrayOffset() == 0 =>
-        serializer.from(buf.array).toOption
-      case Some(buf) =>
-        val array = new Array[Byte](buf.remaining)
-        buf.duplicate.get(array)
-        serializer.from(array).toOption
+  def apply[V](cac dValue: Cac dValue, ser al zer: Ser al zer[V]): Cac d[V] = {
+    val value: Opt on[V] = cac dValue.value match {
+      case So (buf)  f buf.hasArray && buf.arrayOffset() == 0 =>
+        ser al zer.from(buf.array).toOpt on
+      case So (buf) =>
+        val array = new Array[Byte](buf.rema n ng)
+        buf.dupl cate.get(array)
+        ser al zer.from(array).toOpt on
       case None => None
     }
     val status =
-      if (cachedValue.value.nonEmpty && value.isEmpty)
-        CachedValueStatus.DeserializationFailed
+       f (cac dValue.value.nonEmpty && value. sEmpty)
+        Cac dValueStatus.Deser al zat onFa led
       else
-        cachedValue.status
+        cac dValue.status
 
-    Cached(
+    Cac d(
       value,
       status,
-      Time.fromMilliseconds(cachedValue.cachedAtMsec),
-      cachedValue.readThroughAtMsec.map(millisToTime),
-      cachedValue.writtenThroughAtMsec.map(millisToTime),
-      cachedValue.doNotCacheUntilMsec.map(millisToTime),
-      cachedValue.softTtlStep
+      T  .fromM ll seconds(cac dValue.cac dAtMsec),
+      cac dValue.readThroughAtMsec.map(m ll sToT  ),
+      cac dValue.wr tenThroughAtMsec.map(m ll sToT  ),
+      cac dValue.doNotCac Unt lMsec.map(m ll sToT  ),
+      cac dValue.softTtlStep
     )
   }
 }
 
 /**
- * A simple metadata wrapper for cached values. This is stored in the cache
- * using the [[com.twitter.servo.cache.thriftscala.CachedValue]] struct, which is similar, but
+ * A s mple  tadata wrapper for cac d values. T   s stored  n t  cac 
+ * us ng t  [[com.tw ter.servo.cac .thr ftscala.Cac dValue]] struct, wh ch  s s m lar, but
  * untyped.
  */
-case class Cached[V](
-  value: Option[V],
-  status: CachedValueStatus,
-  cachedAt: Time,
-  readThroughAt: Option[Time] = None,
-  writtenThroughAt: Option[Time] = None,
-  doNotCacheUntil: Option[Time] = None,
-  softTtlStep: Option[Short] = None) {
+case class Cac d[V](
+  value: Opt on[V],
+  status: Cac dValueStatus,
+  cac dAt: T  ,
+  readThroughAt: Opt on[T  ] = None,
+  wr tenThroughAt: Opt on[T  ] = None,
+  doNotCac Unt l: Opt on[T  ] = None,
+  softTtlStep: Opt on[Short] = None) {
 
   /**
-   * produce a new cached value with the same metadata
+   * produce a new cac d value w h t  sa   tadata
    */
-  def map[W](f: V => W): Cached[W] = copy(value = value.map(f))
+  def map[W](f: V => W): Cac d[W] = copy(value = value.map(f))
 
   /**
-   * serialize to a CachedValue
+   * ser al ze to a Cac dValue
    */
-  def toCachedValue(serializer: Serializer[V]): CachedValue = {
-    var serializedValue: Option[ByteBuffer] = None
-    val cachedValueStatus = value match {
-      case Some(v) =>
-        serializer.to(v) match {
+  def toCac dValue(ser al zer: Ser al zer[V]): Cac dValue = {
+    var ser al zedValue: Opt on[ByteBuffer] = None
+    val cac dValueStatus = value match {
+      case So (v) =>
+        ser al zer.to(v) match {
           case Return(sv) =>
-            serializedValue = Some(ByteBuffer.wrap(sv))
+            ser al zedValue = So (ByteBuffer.wrap(sv))
             status
-          case Throw(_) => CachedValueStatus.SerializationFailed
+          case Throw(_) => Cac dValueStatus.Ser al zat onFa led
         }
       case None => status
     }
 
-    CachedValue(
-      serializedValue,
-      cachedValueStatus,
-      cachedAt.inMilliseconds,
-      readThroughAt.map(Cached.timeToMills),
-      writtenThroughAt.map(Cached.timeToMills),
-      doNotCacheUntil.map(Cached.timeToMills),
+    Cac dValue(
+      ser al zedValue,
+      cac dValueStatus,
+      cac dAt. nM ll seconds,
+      readThroughAt.map(Cac d.t  ToM lls),
+      wr tenThroughAt.map(Cac d.t  ToM lls),
+      doNotCac Unt l.map(Cac d.t  ToM lls),
       softTtlStep
     )
   }
 
   /**
-   * Resolves conflicts between a value being inserted into cache and a value already in cache by
-   * using the time a cached value was last updated.
-   * If the cached value has a writtenThroughAt, returns it. Otherwise returns readThroughAt, but
-   * if that doesn't exist, returns cachedAt.
-   * This makes it favor writes to reads in the event of a race condition.
+   * Resolves confl cts bet en a value be ng  nserted  nto cac  and a value already  n cac  by
+   * us ng t  t   a cac d value was last updated.
+   *  f t  cac d value has a wr tenThroughAt, returns  . Ot rw se returns readThroughAt, but
+   *  f that doesn't ex st, returns cac dAt.
+   * T  makes   favor wr es to reads  n t  event of a race cond  on.
    */
-  def effectiveUpdateTime[V](writtenThroughBuffer: Duration = 0.second): Time = {
-    this.writtenThroughAt match {
-      case Some(wta) => wta + writtenThroughBuffer
+  def effect veUpdateT  [V](wr tenThroughBuffer: Durat on = 0.second): T   = {
+    t .wr tenThroughAt match {
+      case So (wta) => wta + wr tenThroughBuffer
       case None =>
-        this.readThroughAt match {
-          case Some(rta) => rta
-          case None => this.cachedAt
+        t .readThroughAt match {
+          case So (rta) => rta
+          case None => t .cac dAt
         }
     }
   }
 }
 
 /**
- * Switch between two cache pickers by providing deciderable gate
+ * Sw ch bet en two cac  p ckers by prov d ng dec derable gate
  */
-class DeciderablePicker[V](
-  primaryPicker: LockingCache.Picker[Cached[V]],
-  secondaryPicker: LockingCache.Picker[Cached[V]],
-  usePrimary: Gate[Unit],
-  statsReceiver: StatsReceiver)
-    extends LockingCache.Picker[Cached[V]] {
-  private[this] val stats = statsReceiver.scope("deciderable_picker")
-  private[this] val pickerScope = stats.scope("picker")
-  private[this] val primaryPickerCount = pickerScope.counter("primary")
-  private[this] val secondaryPickerCount = pickerScope.counter("secondary")
+class Dec derableP cker[V](
+  pr maryP cker: Lock ngCac .P cker[Cac d[V]],
+  secondaryP cker: Lock ngCac .P cker[Cac d[V]],
+  usePr mary: Gate[Un ],
+  statsRece ver: StatsRece ver)
+    extends Lock ngCac .P cker[Cac d[V]] {
+  pr vate[t ] val stats = statsRece ver.scope("dec derable_p cker")
+  pr vate[t ] val p ckerScope = stats.scope("p cker")
+  pr vate[t ] val pr maryP ckerCount = p ckerScope.counter("pr mary")
+  pr vate[t ] val secondaryP ckerCount = p ckerScope.counter("secondary")
 
-  private[this] val pickedScope = stats.scope("picked_values")
-  private[this] val pickedValuesMatched = pickedScope.counter("matched")
-  private[this] val pickedValuesMismatched = pickedScope.counter("mismatched")
+  pr vate[t ] val p ckedScope = stats.scope("p cked_values")
+  pr vate[t ] val p ckedValuesMatc d = p ckedScope.counter("matc d")
+  pr vate[t ] val p ckedValuesM smatc d = p ckedScope.counter("m smatc d")
 
-  override def apply(newValue: Cached[V], oldValue: Cached[V]): Option[Cached[V]] = {
-    val secondaryPickerValue = secondaryPicker(newValue, oldValue)
+  overr de def apply(newValue: Cac d[V], oldValue: Cac d[V]): Opt on[Cac d[V]] = {
+    val secondaryP ckerValue = secondaryP cker(newValue, oldValue)
 
-    if (usePrimary()) {
-      val primaryPickerValue = primaryPicker(newValue, oldValue)
+     f (usePr mary()) {
+      val pr maryP ckerValue = pr maryP cker(newValue, oldValue)
 
-      primaryPickerCount.incr()
-      if (primaryPickerValue == secondaryPickerValue) pickedValuesMatched.incr()
-      else pickedValuesMismatched.incr()
+      pr maryP ckerCount. ncr()
+       f (pr maryP ckerValue == secondaryP ckerValue) p ckedValuesMatc d. ncr()
+      else p ckedValuesM smatc d. ncr()
 
-      primaryPickerValue
+      pr maryP ckerValue
     } else {
-      secondaryPickerCount.incr()
-      secondaryPickerValue
+      secondaryP ckerCount. ncr()
+      secondaryP ckerValue
     }
   }
 
-  override def toString(): String = "DeciderablePicker"
+  overr de def toStr ng(): Str ng = "Dec derableP cker"
 
 }
 
 /**
- * It's similar to the PreferNewestCached picker, but it prefers written-through value
- * over read-through as long as written-through value + writtenThroughExtra is
- * newer than read-through value. Same as in PreferNewestCached, if values cached
- * have the same cached method and time picker picks the new value.
+ *  's s m lar to t  PreferNe stCac d p cker, but   prefers wr ten-through value
+ * over read-through as long as wr ten-through value + wr tenThroughExtra  s
+ * ne r than read-through value. Sa  as  n PreferNe stCac d,  f values cac d
+ * have t  sa  cac d  thod and t   p cker p cks t  new value.
  *
- * It intends to solve race condition when the read and write requests come at the
- * same time, but write requests is getting cached first and then getting override with
- * a stale value from the read request.
+ *    ntends to solve race cond  on w n t  read and wr e requests co  at t 
+ * sa  t  , but wr e requests  s gett ng cac d f rst and t n gett ng overr de w h
+ * a stale value from t  read request.
  *
- * If enabled gate is disabled, it falls back to PreferNewestCached logic.
+ *  f enabled gate  s d sabled,   falls back to PreferNe stCac d log c.
  *
  */
-class PreferWrittenThroughCached[V](
-  writtenThroughBuffer: Duration = 1.second)
-    extends PreferNewestCached[V] {
-  override def apply(newValue: Cached[V], oldValue: Cached[V]): Option[Cached[V]] = {
-    // the tie goes to newValue
-    if (oldValue.effectiveUpdateTime(writtenThroughBuffer) > newValue.effectiveUpdateTime(
-        writtenThroughBuffer))
+class PreferWr tenThroughCac d[V](
+  wr tenThroughBuffer: Durat on = 1.second)
+    extends PreferNe stCac d[V] {
+  overr de def apply(newValue: Cac d[V], oldValue: Cac d[V]): Opt on[Cac d[V]] = {
+    // t  t e goes to newValue
+     f (oldValue.effect veUpdateT  (wr tenThroughBuffer) > newValue.effect veUpdateT  (
+        wr tenThroughBuffer))
       None
     else
-      Some(newValue)
+      So (newValue)
   }
-  override def toString(): String = "PreferWrittenThroughCached"
+  overr de def toStr ng(): Str ng = "PreferWr tenThroughCac d"
 }
 
 /**
- * prefer one value over another based on Cached metadata
+ * prefer one value over anot r based on Cac d  tadata
  */
-class PreferNewestCached[V] extends LockingCache.Picker[Cached[V]] {
+class PreferNe stCac d[V] extends Lock ngCac .P cker[Cac d[V]] {
 
-  override def apply(newValue: Cached[V], oldValue: Cached[V]): Option[Cached[V]] = {
-    if (oldValue.effectiveUpdateTime() > newValue.effectiveUpdateTime())
+  overr de def apply(newValue: Cac d[V], oldValue: Cac d[V]): Opt on[Cac d[V]] = {
+     f (oldValue.effect veUpdateT  () > newValue.effect veUpdateT  ())
       None
     else
-      Some(newValue)
+      So (newValue)
   }
 
-  override def toString(): String = "PreferNewestCached"
+  overr de def toStr ng(): Str ng = "PreferNe stCac d"
 }
 
 /**
- * Prefer non-empty values. If a non-empty value is in cache, and the
- * value to store is empty, return the non-empty value with a fresh cachedAt
- * instead.
+ * Prefer non-empty values.  f a non-empty value  s  n cac , and t 
+ * value to store  s empty, return t  non-empty value w h a fresh cac dAt
+ *  nstead.
  */
-class PreferNewestNonEmptyCached[V] extends PreferNewestCached[V] {
-  override def apply(newValue: Cached[V], oldValue: Cached[V]) = {
+class PreferNe stNonEmptyCac d[V] extends PreferNe stCac d[V] {
+  overr de def apply(newValue: Cac d[V], oldValue: Cac d[V]) = {
     (newValue.value, oldValue.value) match {
-      // Some/Some and None/None cases are handled by the super class
-      case (Some(_), Some(_)) => super.apply(newValue, oldValue)
+      // So /So  and None/None cases are handled by t  super class
+      case (So (_), So (_)) => super.apply(newValue, oldValue)
       case (None, None) => super.apply(newValue, oldValue)
-      case (Some(_), None) => Some(newValue)
-      case (None, Some(_)) => Some(oldValue.copy(cachedAt = Time.now))
+      case (So (_), None) => So (newValue)
+      case (None, So (_)) => So (oldValue.copy(cac dAt = T  .now))
     }
   }
 }
 
 /**
- * Prefer do not cache entries if they're not expired. Otherwise uses fallbackPicker
- * @param fallBackPicker the picker to use when the oldvalue isn't do not cache or is expired.
- *                       Defaults to PreferNewestCache.
+ * Prefer do not cac  entr es  f t y're not exp red. Ot rw se uses fallbackP cker
+ * @param fallBackP cker t  p cker to use w n t  oldvalue  sn't do not cac  or  s exp red.
+ *                       Defaults to PreferNe stCac .
  */
-class PreferDoNotCache[V](
-  fallBackPicker: LockingCache.Picker[Cached[V]] = new PreferNewestCached[V]: PreferNewestCached[V],
-  statsReceiver: StatsReceiver)
-    extends LockingCache.Picker[Cached[V]] {
-  private[this] val pickDoNotCacheEntryCounter = statsReceiver.counter("pick_do_not_cache_entry")
-  private[this] val useFallbackCounter = statsReceiver.counter("use_fallback")
-  override def apply(newValue: Cached[V], oldValue: Cached[V]): Option[Cached[V]] = {
-    if (oldValue.status == DoNotCache && oldValue.doNotCacheUntil.forall(
-        _ > newValue.effectiveUpdateTime())) { // evaluates to true if dnc until is None
-      pickDoNotCacheEntryCounter.incr()
+class PreferDoNotCac [V](
+  fallBackP cker: Lock ngCac .P cker[Cac d[V]] = new PreferNe stCac d[V]: PreferNe stCac d[V],
+  statsRece ver: StatsRece ver)
+    extends Lock ngCac .P cker[Cac d[V]] {
+  pr vate[t ] val p ckDoNotCac EntryCounter = statsRece ver.counter("p ck_do_not_cac _entry")
+  pr vate[t ] val useFallbackCounter = statsRece ver.counter("use_fallback")
+  overr de def apply(newValue: Cac d[V], oldValue: Cac d[V]): Opt on[Cac d[V]] = {
+     f (oldValue.status == DoNotCac  && oldValue.doNotCac Unt l.forall(
+        _ > newValue.effect veUpdateT  ())) { // evaluates to true  f dnc unt l  s None
+      p ckDoNotCac EntryCounter. ncr()
       None
     } else {
-      useFallbackCounter.incr()
-      fallBackPicker.apply(newValue, oldValue)
+      useFallbackCounter. ncr()
+      fallBackP cker.apply(newValue, oldValue)
     }
   }
 }
 
 /**
- * A Transformer of Cached values composed of a Transformer of the underlying values.
+ * A Transfor r of Cac d values composed of a Transfor r of t  underly ng values.
  */
-class CachedTransformer[A, B](underlying: Transformer[A, B])
-    extends Transformer[Cached[A], Cached[B]] {
-  def to(cachedA: Cached[A]) = cachedA.value match {
-    case None => Return(cachedA.copy(value = None))
-    case Some(a) =>
-      underlying.to(a) map { b =>
-        cachedA.copy(value = Some(b))
+class Cac dTransfor r[A, B](underly ng: Transfor r[A, B])
+    extends Transfor r[Cac d[A], Cac d[B]] {
+  def to(cac dA: Cac d[A]) = cac dA.value match {
+    case None => Return(cac dA.copy(value = None))
+    case So (a) =>
+      underly ng.to(a) map { b =>
+        cac dA.copy(value = So (b))
       }
   }
 
-  def from(cachedB: Cached[B]) = cachedB.value match {
-    case None => Return(cachedB.copy(value = None))
-    case Some(b) =>
-      underlying.from(b) map { a =>
-        cachedB.copy(value = Some(a))
+  def from(cac dB: Cac d[B]) = cac dB.value match {
+    case None => Return(cac dB.copy(value = None))
+    case So (b) =>
+      underly ng.from(b) map { a =>
+        cac dB.copy(value = So (a))
       }
   }
 }

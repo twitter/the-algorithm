@@ -1,56 +1,56 @@
-# pylint: disable=no-member, arguments-differ, attribute-defined-outside-init, unused-argument
+# pyl nt: d sable=no- mber, argu nts-d ffer, attr bute-def ned-outs de- n , unused-argu nt
 """
-Implementing Full Sparse Layer, allow specify use_binary_value in call() to
-overide default action.
+ mple nt ng Full Sparse Layer, allow spec fy use_b nary_value  n call() to
+over de default act on.
 """
 
-from twml.layers import FullSparse as defaultFullSparse
-from twml.layers.full_sparse import sparse_dense_matmul
+from twml.layers  mport FullSparse as defaultFullSparse
+from twml.layers.full_sparse  mport sparse_dense_matmul
 
-import tensorflow.compat.v1 as tf
+ mport tensorflow.compat.v1 as tf
 
 
 class FullSparse(defaultFullSparse):
-  def call(self, inputs, use_binary_values=None, **kwargs):  # pylint: disable=unused-argument
-    """The logic of the layer lives here.
+  def call(self,  nputs, use_b nary_values=None, **kwargs):  # pyl nt: d sable=unused-argu nt
+    """T  log c of t  layer l ves  re.
 
-    Arguments:
-      inputs:
-        A SparseTensor or a list of SparseTensors.
-        If `inputs` is a list, all tensors must have same `dense_shape`.
+    Argu nts:
+       nputs:
+        A SparseTensor or a l st of SparseTensors.
+         f ` nputs`  s a l st, all tensors must have sa  `dense_shape`.
 
     Returns:
-      - If `inputs` is `SparseTensor`, then returns `bias + inputs * dense_b`.
-      - If `inputs` is a `list[SparseTensor`, then returns
-       `bias + add_n([sp_a * dense_b for sp_a in inputs])`.
+      -  f ` nputs`  s `SparseTensor`, t n returns `b as +  nputs * dense_b`.
+      -  f ` nputs`  s a `l st[SparseTensor`, t n returns
+       `b as + add_n([sp_a * dense_b for sp_a  n  nputs])`.
     """
 
-    if use_binary_values is not None:
-      default_use_binary_values = use_binary_values
+     f use_b nary_values  s not None:
+      default_use_b nary_values = use_b nary_values
     else:
-      default_use_binary_values = self.use_binary_values
+      default_use_b nary_values = self.use_b nary_values
 
-    if isinstance(default_use_binary_values, (list, tuple)):
-      raise ValueError(
-        "use_binary_values can not be %s when inputs is %s"
-        % (type(default_use_binary_values), type(inputs))
+     f  s nstance(default_use_b nary_values, (l st, tuple)):
+      ra se ValueError(
+        "use_b nary_values can not be %s w n  nputs  s %s"
+        % (type(default_use_b nary_values), type( nputs))
       )
 
     outputs = sparse_dense_matmul(
-      inputs,
-      self.weight,
+       nputs,
+      self.  ght,
       self.use_sparse_grads,
-      default_use_binary_values,
-      name="sparse_mm",
-      partition_axis=self.partition_axis,
-      num_partitions=self.num_partitions,
-      compress_ids=self._use_compression,
-      cast_indices_dtype=self._cast_indices_dtype,
+      default_use_b nary_values,
+      na ="sparse_mm",
+      part  on_ax s=self.part  on_ax s,
+      num_part  ons=self.num_part  ons,
+      compress_ ds=self._use_compress on,
+      cast_ nd ces_dtype=self._cast_ nd ces_dtype,
     )
 
-    if self.bias is not None:
-      outputs = tf.nn.bias_add(outputs, self.bias)
+     f self.b as  s not None:
+      outputs = tf.nn.b as_add(outputs, self.b as)
 
-    if self.activation is not None:
-      return self.activation(outputs)  # pylint: disable=not-callable
+     f self.act vat on  s not None:
+      return self.act vat on(outputs)  # pyl nt: d sable=not-callable
     return outputs

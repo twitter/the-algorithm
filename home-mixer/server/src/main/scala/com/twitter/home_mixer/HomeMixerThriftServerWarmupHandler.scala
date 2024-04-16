@@ -1,73 +1,73 @@
-package com.twitter.home_mixer
+package com.tw ter.ho _m xer
 
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finatra.thrift.routing.ThriftWarmup
-import com.twitter.home_mixer.{thriftscala => st}
-import com.twitter.util.logging.Logging
-import com.twitter.inject.utils.Handler
-import com.twitter.product_mixer.core.{thriftscala => pt}
-import com.twitter.scrooge.Request
-import com.twitter.scrooge.Response
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.f natra.thr ft.rout ng.Thr ftWarmup
+ mport com.tw ter.ho _m xer.{thr ftscala => st}
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport com.tw ter. nject.ut ls.Handler
+ mport com.tw ter.product_m xer.core.{thr ftscala => pt}
+ mport com.tw ter.scrooge.Request
+ mport com.tw ter.scrooge.Response
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.Try
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class HomeMixerThriftServerWarmupHandler @Inject() (warmup: ThriftWarmup)
+@S ngleton
+class Ho M xerThr ftServerWarmupHandler @ nject() (warmup: Thr ftWarmup)
     extends Handler
-    with Logging {
+    w h Logg ng {
 
-  private val clientId = ClientId("thrift-warmup-client")
+  pr vate val cl ent d = Cl ent d("thr ft-warmup-cl ent")
 
-  def handle(): Unit = {
-    val testIds = Seq(1, 2, 3)
+  def handle(): Un  = {
+    val test ds = Seq(1, 2, 3)
     try {
-      clientId.asCurrent {
-        testIds.foreach { id =>
-          val warmupReq = warmupQuery(id)
-          info(s"Sending warm-up request to service with query: $warmupReq")
+      cl ent d.asCurrent {
+        test ds.foreach {  d =>
+          val warmupReq = warmupQuery( d)
+           nfo(s"Send ng warm-up request to serv ce w h query: $warmupReq")
           warmup.sendRequest(
-            method = st.HomeMixer.GetUrtResponse,
-            req = Request(st.HomeMixer.GetUrtResponse.Args(warmupReq)))(assertWarmupResponse)
+             thod = st.Ho M xer.GetUrtResponse,
+            req = Request(st.Ho M xer.GetUrtResponse.Args(warmupReq)))(assertWarmupResponse)
         }
       }
     } catch {
-      case e: Throwable => error(e.getMessage, e)
+      case e: Throwable => error(e.get ssage, e)
     }
-    info("Warm-up done.")
+     nfo("Warm-up done.")
   }
 
-  private def warmupQuery(userId: Long): st.HomeMixerRequest = {
-    val clientContext = pt.ClientContext(
-      userId = Some(userId),
-      guestId = None,
-      appId = Some(12345L),
-      ipAddress = Some("0.0.0.0"),
-      userAgent = Some("FAKE_USER_AGENT_FOR_WARMUPS"),
-      countryCode = Some("US"),
-      languageCode = Some("en"),
-      isTwoffice = None,
+  pr vate def warmupQuery(user d: Long): st.Ho M xerRequest = {
+    val cl entContext = pt.Cl entContext(
+      user d = So (user d),
+      guest d = None,
+      app d = So (12345L),
+       pAddress = So ("0.0.0.0"),
+      userAgent = So ("FAKE_USER_AGENT_FOR_WARMUPS"),
+      countryCode = So ("US"),
+      languageCode = So ("en"),
+       sTwoff ce = None,
       userRoles = None,
-      deviceId = Some("FAKE_DEVICE_ID_FOR_WARMUPS")
+      dev ce d = So ("FAKE_DEV CE_ D_FOR_WARMUPS")
     )
-    st.HomeMixerRequest(
-      clientContext = clientContext,
-      product = st.Product.Following,
-      productContext = Some(st.ProductContext.Following(st.Following())),
-      maxResults = Some(3)
+    st.Ho M xerRequest(
+      cl entContext = cl entContext,
+      product = st.Product.Follow ng,
+      productContext = So (st.ProductContext.Follow ng(st.Follow ng())),
+      maxResults = So (3)
     )
   }
 
-  private def assertWarmupResponse(
-    result: Try[Response[st.HomeMixer.GetUrtResponse.SuccessType]]
-  ): Unit = {
+  pr vate def assertWarmupResponse(
+    result: Try[Response[st.Ho M xer.GetUrtResponse.SuccessType]]
+  ): Un  = {
     result match {
       case Return(_) => // ok
-      case Throw(exception) =>
-        warn("Error performing warm-up request.")
-        error(exception.getMessage, exception)
+      case Throw(except on) =>
+        warn("Error perform ng warm-up request.")
+        error(except on.get ssage, except on)
     }
   }
 }

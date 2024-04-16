@@ -1,103 +1,103 @@
-package com.twitter.frigate.pushservice.predicate
+package com.tw ter.fr gate.pushserv ce.pred cate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushConstants
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.util.CandidateUtil
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base._
+ mport com.tw ter.fr gate.common.rec_types.RecTypes
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.params.PushConstants
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.ut l.Cand dateUt l
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter.ut l.Future
 
-object TweetEngagementRatioPredicate {
+object T etEngage ntRat oPred cate {
 
-  def QTtoNtabClickBasedPredicate(
+  def QTtoNtabCl ckBasedPred cate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[
-    PushCandidate with TweetCandidate with RecommendationType
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[
+    PushCand date w h T etCand date w h Recom ndat onType
   ] = {
-    val name = "oon_tweet_engagement_filter_qt_to_ntabclick_ratio_based_predicate"
-    val scopedStatsReceiver = stats.scope(name)
-    val allOonCandidatesCounter = scopedStatsReceiver.counter("all_oon_candidates")
-    val filteredCandidatesCounter =
-      scopedStatsReceiver.counter("filtered_oon_candidates")
+    val na  = "oon_t et_engage nt_f lter_qt_to_ntabcl ck_rat o_based_pred cate"
+    val scopedStatsRece ver = stats.scope(na )
+    val allOonCand datesCounter = scopedStatsRece ver.counter("all_oon_cand dates")
+    val f lteredCand datesCounter =
+      scopedStatsRece ver.counter("f ltered_oon_cand dates")
 
     val quoteCountFeature =
-      "tweet.core.tweet_counts.quote_count"
-    val ntabClickCountFeature =
-      "tweet.magic_recs_tweet_real_time_aggregates_v2.pair.v2.magicrecs.realtime.is_ntab_clicked.any_feature.Duration.Top.count"
+      "t et.core.t et_counts.quote_count"
+    val ntabCl ckCountFeature =
+      "t et.mag c_recs_t et_real_t  _aggregates_v2.pa r.v2.mag crecs.realt  . s_ntab_cl cked.any_feature.Durat on.Top.count"
 
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetCandidate with RecommendationType =>
-        val target = candidate.target
-        val crt = candidate.commonRecType
-        val isOonCandidate = RecTypes.isOutOfNetworkTweetRecType(crt) ||
-          RecTypes.outOfNetworkTopicTweetTypes.contains(crt)
+    Pred cate
+      .fromAsync { cand date: PushCand date w h T etCand date w h Recom ndat onType =>
+        val target = cand date.target
+        val crt = cand date.commonRecType
+        val  sOonCand date = RecTypes. sOutOfNetworkT etRecType(crt) ||
+          RecTypes.outOfNetworkTop cT etTypes.conta ns(crt)
 
-        lazy val QTtoNtabClickRatioThreshold =
-          target.params(PushFeatureSwitchParams.TweetQTtoNtabClickRatioThresholdParam)
-        lazy val quoteCount = candidate.numericFeatures.getOrElse(quoteCountFeature, 0.0)
-        lazy val ntabClickCount = candidate.numericFeatures.getOrElse(ntabClickCountFeature, 0.0)
-        lazy val quoteRate = if (ntabClickCount > 0) quoteCount / ntabClickCount else 1.0
+        lazy val QTtoNtabCl ckRat oThreshold =
+          target.params(PushFeatureSw chParams.T etQTtoNtabCl ckRat oThresholdParam)
+        lazy val quoteCount = cand date.nu r cFeatures.getOrElse(quoteCountFeature, 0.0)
+        lazy val ntabCl ckCount = cand date.nu r cFeatures.getOrElse(ntabCl ckCountFeature, 0.0)
+        lazy val quoteRate =  f (ntabCl ckCount > 0) quoteCount / ntabCl ckCount else 1.0
 
-        if (isOonCandidate) allOonCandidatesCounter.incr()
-        if (CandidateUtil.shouldApplyHealthQualityFilters(candidate) && isOonCandidate) {
-          val ntabClickThreshold = 1000
-          candidate.cachePredicateInfo(
-            name + "_count",
-            ntabClickCount,
-            ntabClickThreshold,
-            ntabClickCount >= ntabClickThreshold)
-          candidate.cachePredicateInfo(
-            name + "_ratio",
+         f ( sOonCand date) allOonCand datesCounter. ncr()
+         f (Cand dateUt l.shouldApply althQual yF lters(cand date) &&  sOonCand date) {
+          val ntabCl ckThreshold = 1000
+          cand date.cac Pred cate nfo(
+            na  + "_count",
+            ntabCl ckCount,
+            ntabCl ckThreshold,
+            ntabCl ckCount >= ntabCl ckThreshold)
+          cand date.cac Pred cate nfo(
+            na  + "_rat o",
             quoteRate,
-            QTtoNtabClickRatioThreshold,
-            quoteRate < QTtoNtabClickRatioThreshold)
-          if (ntabClickCount >= ntabClickThreshold && quoteRate < QTtoNtabClickRatioThreshold) {
-            filteredCandidatesCounter.incr()
+            QTtoNtabCl ckRat oThreshold,
+            quoteRate < QTtoNtabCl ckRat oThreshold)
+           f (ntabCl ckCount >= ntabCl ckThreshold && quoteRate < QTtoNtabCl ckRat oThreshold) {
+            f lteredCand datesCounter. ncr()
             Future.False
           } else Future.True
         } else Future.True
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .w hStats(stats.scope(na ))
+      .w hNa (na )
   }
 
-  def TweetReplyLikeRatioPredicate(
+  def T etReplyL keRat oPred cate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetCandidate] = {
-    val name = "tweet_reply_like_ratio"
-    val scopedStatsReceiver = stats.scope(name)
-    val allCandidatesCounter = scopedStatsReceiver.counter("all_candidates")
-    val filteredCandidatesCounter = scopedStatsReceiver.counter("filtered_candidates")
-    val bucketedCandidatesCounter = scopedStatsReceiver.counter("bucketed_candidates")
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etCand date] = {
+    val na  = "t et_reply_l ke_rat o"
+    val scopedStatsRece ver = stats.scope(na )
+    val allCand datesCounter = scopedStatsRece ver.counter("all_cand dates")
+    val f lteredCand datesCounter = scopedStatsRece ver.counter("f ltered_cand dates")
+    val bucketedCand datesCounter = scopedStatsRece ver.counter("bucketed_cand dates")
 
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        allCandidatesCounter.incr()
-        val target = candidate.target
-        val likeCount = candidate.numericFeatures
-          .getOrElse(PushConstants.TweetLikesFeatureName, 0.0)
-        val replyCount = candidate.numericFeatures
-          .getOrElse(PushConstants.TweetRepliesFeatureName, 0.0)
-        val ratio = replyCount / likeCount.max(1)
-        val isOonCandidate = RecTypes.isOutOfNetworkTweetRecType(candidate.commonRecType) ||
-          RecTypes.outOfNetworkTopicTweetTypes.contains(candidate.commonRecType)
+    Pred cate
+      .fromAsync { cand date: PushCand date =>
+        allCand datesCounter. ncr()
+        val target = cand date.target
+        val l keCount = cand date.nu r cFeatures
+          .getOrElse(PushConstants.T etL kesFeatureNa , 0.0)
+        val replyCount = cand date.nu r cFeatures
+          .getOrElse(PushConstants.T etRepl esFeatureNa , 0.0)
+        val rat o = replyCount / l keCount.max(1)
+        val  sOonCand date = RecTypes. sOutOfNetworkT etRecType(cand date.commonRecType) ||
+          RecTypes.outOfNetworkTop cT etTypes.conta ns(cand date.commonRecType)
 
-        if (isOonCandidate
-          && CandidateUtil.shouldApplyHealthQualityFilters(candidate)
+         f ( sOonCand date
+          && Cand dateUt l.shouldApply althQual yF lters(cand date)
           && replyCount > target.params(
-            PushFeatureSwitchParams.TweetReplytoLikeRatioReplyCountThreshold)) {
-          bucketedCandidatesCounter.incr()
-          if (ratio > target.params(
-              PushFeatureSwitchParams.TweetReplytoLikeRatioThresholdLowerBound)
-            && ratio < target.params(
-              PushFeatureSwitchParams.TweetReplytoLikeRatioThresholdUpperBound)) {
-            filteredCandidatesCounter.incr()
+            PushFeatureSw chParams.T etReplytoL keRat oReplyCountThreshold)) {
+          bucketedCand datesCounter. ncr()
+           f (rat o > target.params(
+              PushFeatureSw chParams.T etReplytoL keRat oThresholdLo rBound)
+            && rat o < target.params(
+              PushFeatureSw chParams.T etReplytoL keRat oThresholdUpperBound)) {
+            f lteredCand datesCounter. ncr()
             Future.False
           } else {
             Future.True
@@ -106,7 +106,7 @@ object TweetEngagementRatioPredicate {
           Future.True
         }
       }
-      .withStats(stats.scope(s"predicate_$name"))
-      .withName(name)
+      .w hStats(stats.scope(s"pred cate_$na "))
+      .w hNa (na )
   }
 }

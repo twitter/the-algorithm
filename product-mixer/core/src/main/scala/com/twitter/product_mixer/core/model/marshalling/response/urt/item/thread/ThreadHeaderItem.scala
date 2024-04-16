@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.thread
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.thread
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.EntryNa space
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEvent nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FeedbackAct on nfo
 
-object ThreadHeaderItem {
-  val ThreadHeaderEntryNamespace = EntryNamespace("threadheader")
+object Thread ader em {
+  val Thread aderEntryNa space = EntryNa space("thread ader")
 }
 
-case class ThreadHeaderItem(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  override val isPinned: Option[Boolean],
-  content: ThreadHeaderContent)
-    extends TimelineItem {
-  override val entryNamespace: EntryNamespace = ThreadHeaderItem.ThreadHeaderEntryNamespace
+case class Thread ader em(
+  overr de val  d: Long,
+  overr de val sort ndex: Opt on[Long],
+  overr de val cl entEvent nfo: Opt on[Cl entEvent nfo],
+  overr de val feedbackAct on nfo: Opt on[FeedbackAct on nfo],
+  overr de val  sP nned: Opt on[Boolean],
+  content: Thread aderContent)
+    extends T  l ne em {
+  overr de val entryNa space: EntryNa space = Thread ader em.Thread aderEntryNa space
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  overr de def w hSort ndex(sort ndex: Long): T  l neEntry = copy(sort ndex = So (sort ndex))
 }

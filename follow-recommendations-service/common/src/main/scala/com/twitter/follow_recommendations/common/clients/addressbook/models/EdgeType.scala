@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.common.clients.addressbook.models
+package com.tw ter.follow_recom ndat ons.common.cl ents.addressbook.models
 
-import com.twitter.addressbook.datatypes.{thriftscala => t}
+ mport com.tw ter.addressbook.datatypes.{thr ftscala => t}
 
-sealed trait EdgeType {
-  def toThrift: t.EdgeType
+sealed tra  EdgeType {
+  def toThr ft: t.EdgeType
 }
 
 object EdgeType {
   case object Forward extends EdgeType {
-    override val toThrift: t.EdgeType = t.EdgeType.Forward
+    overr de val toThr ft: t.EdgeType = t.EdgeType.Forward
   }
   case object Reverse extends EdgeType {
-    override val toThrift: t.EdgeType = t.EdgeType.Reverse
+    overr de val toThr ft: t.EdgeType = t.EdgeType.Reverse
   }
 }

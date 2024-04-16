@@ -1,32 +1,32 @@
-package com.twitter.home_mixer.candidate_pipeline
+package com.tw ter.ho _m xer.cand date_p pel ne
 
-import com.twitter.home_mixer.functional_component.feature_hydrator.NamesFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.TweetypieFeatureHydrator
-import com.twitter.home_mixer.functional_component.filter.InvalidSubscriptionTweetFilter
-import com.twitter.product_mixer.component_library.candidate_source.tweetconvosvc.ConversationServiceCandidateSource
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.gate.BaseGate
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.funct onal_component.feature_hydrator.Na sFeatureHydrator
+ mport com.tw ter.ho _m xer.funct onal_component.feature_hydrator.T etyp eFeatureHydrator
+ mport com.tw ter.ho _m xer.funct onal_component.f lter. nval dSubscr pt onT etF lter
+ mport com.tw ter.product_m xer.component_l brary.cand date_s ce.t etconvosvc.Conversat onServ ceCand dateS ce
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Cand dateDecorator
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.BaseGate
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ConversationServiceCandidatePipelineConfigBuilder[Query <: PipelineQuery] @Inject() (
-  conversationServiceCandidateSource: ConversationServiceCandidateSource,
-  tweetypieFeatureHydrator: TweetypieFeatureHydrator,
-  invalidSubscriptionTweetFilter: InvalidSubscriptionTweetFilter,
-  namesFeatureHydrator: NamesFeatureHydrator) {
+@S ngleton
+class Conversat onServ ceCand dateP pel neConf gBu lder[Query <: P pel neQuery] @ nject() (
+  conversat onServ ceCand dateS ce: Conversat onServ ceCand dateS ce,
+  t etyp eFeatureHydrator: T etyp eFeatureHydrator,
+   nval dSubscr pt onT etF lter:  nval dSubscr pt onT etF lter,
+  na sFeatureHydrator: Na sFeatureHydrator) {
 
-  def build(
+  def bu ld(
     gates: Seq[BaseGate[Query]] = Seq.empty,
-    decorator: Option[CandidateDecorator[Query, TweetCandidate]] = None
-  ): ConversationServiceCandidatePipelineConfig[Query] = {
-    new ConversationServiceCandidatePipelineConfig(
-      conversationServiceCandidateSource,
-      tweetypieFeatureHydrator,
-      namesFeatureHydrator,
-      invalidSubscriptionTweetFilter,
+    decorator: Opt on[Cand dateDecorator[Query, T etCand date]] = None
+  ): Conversat onServ ceCand dateP pel neConf g[Query] = {
+    new Conversat onServ ceCand dateP pel neConf g(
+      conversat onServ ceCand dateS ce,
+      t etyp eFeatureHydrator,
+      na sFeatureHydrator,
+       nval dSubscr pt onT etF lter,
       gates,
       decorator
     )

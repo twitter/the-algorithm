@@ -1,49 +1,49 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedExcludeIdsCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.BottomCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineCursorSerializer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.product_m xer.component_l brary.model.cursor.UrtUnorderedExclude dsCursor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.BottomCursor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.CursorType
+ mport com.tw ter.product_m xer.core.p pel ne.HasP pel neCursor
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neCursorSer al zer
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes.conf gap .Param
 
-trait BaseUnorderedExcludeIdsBottomCursorBuilder
-    extends UrtCursorBuilder[
-      PipelineQuery with HasPipelineCursor[UrtUnorderedExcludeIdsCursor]
+tra  BaseUnorderedExclude dsBottomCursorBu lder
+    extends UrtCursorBu lder[
+      P pel neQuery w h HasP pel neCursor[UrtUnorderedExclude dsCursor]
     ] {
 
-  def excludedIdsMaxLengthParam: Param[Int]
+  def excluded dsMaxLengthParam: Param[ nt]
 
-  def excludeEntriesCollector(entries: Seq[TimelineEntry]): Seq[Long]
+  def excludeEntr esCollector(entr es: Seq[T  l neEntry]): Seq[Long]
 
-  def serializer: PipelineCursorSerializer[UrtUnorderedExcludeIdsCursor]
+  def ser al zer: P pel neCursorSer al zer[UrtUnorderedExclude dsCursor]
 
-  override val cursorType: CursorType = BottomCursor
+  overr de val cursorType: CursorType = BottomCursor
 
-  override def cursorValue(
-    query: PipelineQuery with HasPipelineCursor[UrtUnorderedExcludeIdsCursor],
-    entries: Seq[TimelineEntry]
-  ): String = {
-    val excludedIdsMaxLength = query.params(excludedIdsMaxLengthParam)
-    assert(excludedIdsMaxLength > 0, "Excluded IDs max length must be greater than zero")
+  overr de def cursorValue(
+    query: P pel neQuery w h HasP pel neCursor[UrtUnorderedExclude dsCursor],
+    entr es: Seq[T  l neEntry]
+  ): Str ng = {
+    val excluded dsMaxLength = query.params(excluded dsMaxLengthParam)
+    assert(excluded dsMaxLength > 0, "Excluded  Ds max length must be greater than zero")
 
-    val newEntryIds = excludeEntriesCollector(entries)
+    val newEntry ds = excludeEntr esCollector(entr es)
     assert(
-      newEntryIds.length < excludedIdsMaxLength,
-      "New entry IDs length must be smaller than excluded IDs max length")
+      newEntry ds.length < excluded dsMaxLength,
+      "New entry  Ds length must be smaller than excluded  Ds max length")
 
-    val excludedIds = query.pipelineCursor
-      .map(_.excludedIds ++ newEntryIds)
-      .getOrElse(newEntryIds)
-      .takeRight(excludedIdsMaxLength)
+    val excluded ds = query.p pel neCursor
+      .map(_.excluded ds ++ newEntry ds)
+      .getOrElse(newEntry ds)
+      .takeR ght(excluded dsMaxLength)
 
-    val cursor = UrtUnorderedExcludeIdsCursor(
-      initialSortIndex = nextBottomInitialSortIndex(query, entries),
-      excludedIds = excludedIds
+    val cursor = UrtUnorderedExclude dsCursor(
+       n  alSort ndex = nextBottom n  alSort ndex(query, entr es),
+      excluded ds = excluded ds
     )
 
-    serializer.serializeCursor(cursor)
+    ser al zer.ser al zeCursor(cursor)
   }
 }

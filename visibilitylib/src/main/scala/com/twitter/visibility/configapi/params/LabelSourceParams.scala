@@ -1,15 +1,15 @@
-package com.twitter.visibility.configapi.params
+package com.tw ter.v s b l y.conf gap .params
 
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.t  l nes.conf gap .Param
 
-abstract class LabelSourceParam(override val default: Boolean) extends Param(default) {
-  override val statName: String = s"LabelSourceParam/${this.getClass.getSimpleName}"
+abstract class LabelS ceParam(overr de val default: Boolean) extends Param(default) {
+  overr de val statNa : Str ng = s"LabelS ceParam/${t .getClass.getS mpleNa }"
 }
 
-private[visibility] object LabelSourceParams {
-  object FilterLabelsFromBot7174Param extends LabelSourceParam(false)
+pr vate[v s b l y] object LabelS ceParams {
+  object F lterLabelsFromBot7174Param extends LabelS ceParam(false)
 
-  object FilterTweetsSmyteAutomationParamA extends LabelSourceParam(false)
-  object FilterTweetsSmyteAutomationParamB extends LabelSourceParam(false)
-  object FilterTweetsSmyteAutomationParamAB extends LabelSourceParam(false)
+  object F lterT etsS teAutomat onParamA extends LabelS ceParam(false)
+  object F lterT etsS teAutomat onParamB extends LabelS ceParam(false)
+  object F lterT etsS teAutomat onParamAB extends LabelS ceParam(false)
 }

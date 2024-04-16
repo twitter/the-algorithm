@@ -1,51 +1,51 @@
-package com.twitter.cr_mixer.filter
+package com.tw ter.cr_m xer.f lter
 
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.param.UtegTweetGlobalParams
-import com.twitter.util.Future
+ mport com.tw ter.cr_m xer.model.Cand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model. n  alCand date
+ mport com.tw ter.cr_m xer.param.UtegT etGlobalParams
+ mport com.tw ter.ut l.Future
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * Remove unhealthy candidates
- * Currently Timeline Ranker applies a check on the following three scores:
- *  - toxicityScore
+ * Remove un althy cand dates
+ * Currently T  l ne Ranker appl es a c ck on t  follow ng three scores:
+ *  - tox c yScore
  *  - pBlockScore
- *  - pReportedTweetScore
+ *  - pReportedT etScore
  *
- * Where isPassTweetHealthFilterStrict checks two additions scores with the same threshold:
- *  - pSpammyTweetScore
- *  - spammyTweetContentScore
+ * W re  sPassT et althF lterStr ct c cks two add  ons scores w h t  sa  threshold:
+ *  - pSpam T etScore
+ *  - spam T etContentScore
  *
- * We've verified that both filters behave very similarly.
+ *  've ver f ed that both f lters behave very s m larly.
  */
-@Singleton
-case class UtegHealthFilter @Inject() () extends FilterBase {
-  override def name: String = this.getClass.getCanonicalName
-  override type ConfigType = Boolean
+@S ngleton
+case class Uteg althF lter @ nject() () extends F lterBase {
+  overr de def na : Str ng = t .getClass.getCanon calNa 
+  overr de type Conf gType = Boolean
 
-  override def filter(
-    candidates: Seq[Seq[InitialCandidate]],
-    config: ConfigType
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    if (config) {
+  overr de def f lter(
+    cand dates: Seq[Seq[ n  alCand date]],
+    conf g: Conf gType
+  ): Future[Seq[Seq[ n  alCand date]]] = {
+     f (conf g) {
       Future.value(
-        candidates.map { candidateSeq =>
-          candidateSeq.filter { candidate =>
-            candidate.tweetInfo.isPassTweetHealthFilterStrict.getOrElse(false)
+        cand dates.map { cand dateSeq =>
+          cand dateSeq.f lter { cand date =>
+            cand date.t et nfo. sPassT et althF lterStr ct.getOrElse(false)
           }
         }
       )
     } else {
-      Future.value(candidates)
+      Future.value(cand dates)
     }
   }
 
-  override def requestToConfig[CGQueryType <: CandidateGeneratorQuery](
+  overr de def requestToConf g[CGQueryType <: Cand dateGeneratorQuery](
     query: CGQueryType
-  ): ConfigType = {
-    query.params(UtegTweetGlobalParams.EnableTLRHealthFilterParam)
+  ): Conf gType = {
+    query.params(UtegT etGlobalParams.EnableTLR althF lterParam)
   }
 }

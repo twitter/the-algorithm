@@ -1,13 +1,13 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "timelineranker/common/src/main/scala/com/twitter/timelineranker/model",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/core",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/recap/model",
-        "timelines/src/main/scala/com/twitter/timelines/model/types",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "t  l neranker/common/src/ma n/scala/com/tw ter/t  l neranker/model",
+        "t  l neranker/server/src/ma n/scala/com/tw ter/t  l neranker/core",
+        "t  l neranker/server/src/ma n/scala/com/tw ter/t  l neranker/recap/model",
+        "t  l nes/src/ma n/scala/com/tw ter/t  l nes/model/types",
     ],
 )

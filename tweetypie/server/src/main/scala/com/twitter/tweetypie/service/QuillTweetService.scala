@@ -1,75 +1,75 @@
-package com.twitter.tweetypie
-package service
+package com.tw ter.t etyp e
+package serv ce
 
-import com.twitter.quill.capture.QuillCapture
-import com.twitter.tweetypie.thriftscala._
-import org.apache.thrift.transport.TMemoryBuffer
-import com.twitter.finagle.thrift.Protocols
-import com.twitter.quill.capture.Payloads
-import com.twitter.tweetypie.service.QuillTweetService.createThriftBinaryRequest
-import org.apache.thrift.protocol.TMessage
-import org.apache.thrift.protocol.TMessageType
-import org.apache.thrift.protocol.TProtocol
+ mport com.tw ter.qu ll.capture.Qu llCapture
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport org.apac .thr ft.transport.T moryBuffer
+ mport com.tw ter.f nagle.thr ft.Protocols
+ mport com.tw ter.qu ll.capture.Payloads
+ mport com.tw ter.t etyp e.serv ce.Qu llT etServ ce.createThr ftB naryRequest
+ mport org.apac .thr ft.protocol.T ssage
+ mport org.apac .thr ft.protocol.T ssageType
+ mport org.apac .thr ft.protocol.TProtocol
 
-object QuillTweetService {
-  // Construct the byte stream for a binary thrift request
-  def createThriftBinaryRequest(method_name: String, write_args: TProtocol => Unit): Array[Byte] = {
-    val buf = new TMemoryBuffer(512)
-    val oprot = Protocols.binaryFactory().getProtocol(buf)
+object Qu llT etServ ce {
+  // Construct t  byte stream for a b nary thr ft request
+  def createThr ftB naryRequest( thod_na : Str ng, wr e_args: TProtocol => Un ): Array[Byte] = {
+    val buf = new T moryBuffer(512)
+    val oprot = Protocols.b naryFactory().getProtocol(buf)
 
-    oprot.writeMessageBegin(new TMessage(method_name, TMessageType.CALL, 0))
-    write_args(oprot)
-    oprot.writeMessageEnd()
+    oprot.wr e ssageBeg n(new T ssage( thod_na , T ssageType.CALL, 0))
+    wr e_args(oprot)
+    oprot.wr e ssageEnd()
 
     // Return bytes
-    java.util.Arrays.copyOfRange(buf.getArray, 0, buf.length)
+    java.ut l.Arrays.copyOfRange(buf.getArray, 0, buf.length)
   }
 }
 
 /**
- * Wraps an underlying TweetService, logging some requests.
+ * Wraps an underly ng T etServ ce, logg ng so  requests.
  */
-class QuillTweetService(quillCapture: QuillCapture, protected val underlying: ThriftTweetService)
-    extends TweetServiceProxy {
+class Qu llT etServ ce(qu llCapture: Qu llCapture, protected val underly ng: Thr ftT etServ ce)
+    extends T etServ ceProxy {
 
-  override def postTweet(request: PostTweetRequest): Future[PostTweetResult] = {
-    val requestBytes = createThriftBinaryRequest(
-      TweetService.PostTweet.name,
-      TweetService.PostTweet.Args(request).write)
-    quillCapture.storeServerRecv(Payloads.fromThriftMessageBytes(requestBytes))
-    underlying.postTweet(request)
+  overr de def postT et(request: PostT etRequest): Future[PostT etResult] = {
+    val requestBytes = createThr ftB naryRequest(
+      T etServ ce.PostT et.na ,
+      T etServ ce.PostT et.Args(request).wr e)
+    qu llCapture.storeServerRecv(Payloads.fromThr ft ssageBytes(requestBytes))
+    underly ng.postT et(request)
   }
 
-  override def deleteTweets(request: DeleteTweetsRequest): Future[Seq[DeleteTweetResult]] = {
-    val requestBytes = createThriftBinaryRequest(
-      TweetService.DeleteTweets.name,
-      TweetService.DeleteTweets.Args(request).write)
-    quillCapture.storeServerRecv(Payloads.fromThriftMessageBytes(requestBytes))
-    underlying.deleteTweets(request)
+  overr de def deleteT ets(request: DeleteT etsRequest): Future[Seq[DeleteT etResult]] = {
+    val requestBytes = createThr ftB naryRequest(
+      T etServ ce.DeleteT ets.na ,
+      T etServ ce.DeleteT ets.Args(request).wr e)
+    qu llCapture.storeServerRecv(Payloads.fromThr ft ssageBytes(requestBytes))
+    underly ng.deleteT ets(request)
   }
 
-  override def postRetweet(request: RetweetRequest): Future[PostTweetResult] = {
-    val requestBytes = createThriftBinaryRequest(
-      TweetService.PostRetweet.name,
-      TweetService.PostRetweet.Args(request).write)
-    quillCapture.storeServerRecv(Payloads.fromThriftMessageBytes(requestBytes))
-    underlying.postRetweet(request)
+  overr de def postRet et(request: Ret etRequest): Future[PostT etResult] = {
+    val requestBytes = createThr ftB naryRequest(
+      T etServ ce.PostRet et.na ,
+      T etServ ce.PostRet et.Args(request).wr e)
+    qu llCapture.storeServerRecv(Payloads.fromThr ft ssageBytes(requestBytes))
+    underly ng.postRet et(request)
   }
 
-  override def unretweet(request: UnretweetRequest): Future[UnretweetResult] = {
-    val requestBytes = createThriftBinaryRequest(
-      TweetService.Unretweet.name,
-      TweetService.Unretweet.Args(request).write)
-    quillCapture.storeServerRecv(Payloads.fromThriftMessageBytes(requestBytes))
-    underlying.unretweet(request)
+  overr de def unret et(request: Unret etRequest): Future[Unret etResult] = {
+    val requestBytes = createThr ftB naryRequest(
+      T etServ ce.Unret et.na ,
+      T etServ ce.Unret et.Args(request).wr e)
+    qu llCapture.storeServerRecv(Payloads.fromThr ft ssageBytes(requestBytes))
+    underly ng.unret et(request)
   }
 
-  override def cascadedDeleteTweet(request: CascadedDeleteTweetRequest): Future[Unit] = {
-    val requestBytes = createThriftBinaryRequest(
-      TweetServiceInternal.CascadedDeleteTweet.name,
-      TweetServiceInternal.CascadedDeleteTweet.Args(request).write)
-    quillCapture.storeServerRecv(Payloads.fromThriftMessageBytes(requestBytes))
-    underlying.cascadedDeleteTweet(request)
+  overr de def cascadedDeleteT et(request: CascadedDeleteT etRequest): Future[Un ] = {
+    val requestBytes = createThr ftB naryRequest(
+      T etServ ce nternal.CascadedDeleteT et.na ,
+      T etServ ce nternal.CascadedDeleteT et.Args(request).wr e)
+    qu llCapture.storeServerRecv(Payloads.fromThr ft ssageBytes(requestBytes))
+    underly ng.cascadedDeleteT et(request)
   }
 
 }

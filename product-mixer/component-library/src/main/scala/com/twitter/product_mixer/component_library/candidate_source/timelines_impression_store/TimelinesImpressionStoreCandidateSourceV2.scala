@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.component_library.candidate_source.timelines_impression_store
+package com.tw ter.product_m xer.component_l brary.cand date_s ce.t  l nes_ mpress on_store
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyFetcherSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.timelines.impression_store.TweetImpressionStoreManhattanV2OnUserClientColumn
-import com.twitter.timelines.impression.thriftscala.TweetImpressionsEntries
-import com.twitter.timelines.impression.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.strato.StratoKeyFetc rS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.strato.generated.cl ent.t  l nes. mpress on_store.T et mpress onStoreManhattanV2OnUserCl entColumn
+ mport com.tw ter.t  l nes. mpress on.thr ftscala.T et mpress onsEntr es
+ mport com.tw ter.t  l nes. mpress on.{thr ftscala => t}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TimelinesImpressionStoreCandidateSourceV2 @Inject() (
-  client: TweetImpressionStoreManhattanV2OnUserClientColumn)
-    extends StratoKeyFetcherSource[
+@S ngleton
+class T  l nes mpress onStoreCand dateS ceV2 @ nject() (
+  cl ent: T et mpress onStoreManhattanV2OnUserCl entColumn)
+    extends StratoKeyFetc rS ce[
       Long,
-      t.TweetImpressionsEntries,
-      t.TweetImpressionsEntry
+      t.T et mpress onsEntr es,
+      t.T et mpress onsEntry
     ] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    "TimelinesImpressionStore")
+  overr de val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er(
+    "T  l nes mpress onStore")
 
-  override val fetcher: Fetcher[Long, Unit, TweetImpressionsEntries] = client.fetcher
+  overr de val fetc r: Fetc r[Long, Un , T et mpress onsEntr es] = cl ent.fetc r
 
-  override def stratoResultTransformer(
-    stratoResult: t.TweetImpressionsEntries
-  ): Seq[t.TweetImpressionsEntry] =
-    stratoResult.entries
+  overr de def stratoResultTransfor r(
+    stratoResult: t.T et mpress onsEntr es
+  ): Seq[t.T et mpress onsEntry] =
+    stratoResult.entr es
 }

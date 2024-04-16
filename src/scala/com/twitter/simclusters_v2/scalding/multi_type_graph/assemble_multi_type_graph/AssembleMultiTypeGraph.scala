@@ -1,514 +1,514 @@
-package com.twitter.simclusters_v2.scalding
-package multi_type_graph.assemble_multi_type_graph
+package com.tw ter.s mclusters_v2.scald ng
+package mult _type_graph.assemble_mult _type_graph
 
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.scalding_internal.job.RequiredBinaryComparators.ordSer
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.{DateRange, Days, Stat, UniqueID}
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.{
+ mport com.tw ter.b ject on.scrooge.B naryScalaCodec
+ mport com.tw ter.scald ng_ nternal.job.Requ redB naryComparators.ordSer
+ mport com.tw ter.scald ng.typed.TypedP pe
+ mport com.tw ter.scald ng.{DateRange, Days, Stat, Un que D}
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.ExternalDataS ces
+ mport com.tw ter.s mclusters_v2.thr ftscala.{
   LeftNode,
   Noun,
-  RightNode,
-  RightNodeType,
-  RightNodeWithEdgeWeight
+  R ghtNode,
+  R ghtNodeType,
+  R ghtNodeW hEdge  ght
 }
-import java.util.TimeZone
-import com.twitter.iesource.thriftscala.{InteractionEvent, InteractionType, ReferenceTweet}
-import com.twitter.simclusters_v2.common.{Country, Language, TopicId, TweetId, UserId}
-import com.twitter.usersource.snapshot.combined.UsersourceScalaDataset
-import com.twitter.frigate.data_pipeline.magicrecs.magicrecs_notifications_lite.thriftscala.MagicRecsNotificationLite
-import com.twitter.twadoop.user.gen.thriftscala.CombinedUser
+ mport java.ut l.T  Zone
+ mport com.tw ter. es ce.thr ftscala.{ nteract onEvent,  nteract onType, ReferenceT et}
+ mport com.tw ter.s mclusters_v2.common.{Country, Language, Top c d, T et d, User d}
+ mport com.tw ter.users ce.snapshot.comb ned.Users ceScalaDataset
+ mport com.tw ter.fr gate.data_p pel ne.mag crecs.mag crecs_not f cat ons_l e.thr ftscala.Mag cRecsNot f cat onL e
+ mport com.tw ter.twadoop.user.gen.thr ftscala.Comb nedUser
 
-object AssembleMultiTypeGraph {
-  import Config._
+object AssembleMult TypeGraph {
+   mport Conf g._
 
-  implicit val nounOrdering: Ordering[Noun] = new Ordering[Noun] {
-    // We define an ordering for each noun type as specified in simclusters_v2/multi_type_graph.thrift
-    // Please make sure we don't remove anything here that's still a part of the union Noun thrift and
-    // vice versa, if we add a new noun type to thrift, an ordering for it needs to added here as well.
-    def nounTypeOrder(noun: Noun): Int = noun match {
-      case _: Noun.UserId => 0
+   mpl c  val nounOrder ng: Order ng[Noun] = new Order ng[Noun] {
+    //   def ne an order ng for each noun type as spec f ed  n s mclusters_v2/mult _type_graph.thr ft
+    // Please make sure   don't remove anyth ng  re that's st ll a part of t  un on Noun thr ft and
+    // v ce versa,  f   add a new noun type to thr ft, an order ng for   needs to added  re as  ll.
+    def nounTypeOrder(noun: Noun):  nt = noun match {
+      case _: Noun.User d => 0
       case _: Noun.Country => 1
       case _: Noun.Language => 2
       case _: Noun.Query => 3
-      case _: Noun.TopicId => 4
-      case _: Noun.TweetId => 5
+      case _: Noun.Top c d => 4
+      case _: Noun.T et d => 5
     }
 
-    override def compare(x: Noun, y: Noun): Int = (x, y) match {
-      case (Noun.UserId(a), Noun.UserId(b)) => a compare b
+    overr de def compare(x: Noun, y: Noun):  nt = (x, y) match {
+      case (Noun.User d(a), Noun.User d(b)) => a compare b
       case (Noun.Country(a), Noun.Country(b)) => a compare b
       case (Noun.Language(a), Noun.Language(b)) => a compare b
       case (Noun.Query(a), Noun.Query(b)) => a compare b
-      case (Noun.TopicId(a), Noun.TopicId(b)) => a compare b
-      case (Noun.TweetId(a), Noun.TweetId(b)) => a compare b
+      case (Noun.Top c d(a), Noun.Top c d(b)) => a compare b
+      case (Noun.T et d(a), Noun.T et d(b)) => a compare b
       case (nounA, nounB) => nounTypeOrder(nounA) compare nounTypeOrder(nounB)
     }
   }
-  implicit val rightNodeTypeOrdering: Ordering[RightNodeType] = ordSer[RightNodeType]
+   mpl c  val r ghtNodeTypeOrder ng: Order ng[R ghtNodeType] = ordSer[R ghtNodeType]
 
-  implicit val rightNodeTypeWithNounOrdering: Ordering[RightNode] =
-    new Ordering[RightNode] {
-      override def compare(x: RightNode, y: RightNode): Int = {
-        Ordering
-          .Tuple2(rightNodeTypeOrdering, nounOrdering)
-          .compare((x.rightNodeType, x.noun), (y.rightNodeType, y.noun))
+   mpl c  val r ghtNodeTypeW hNounOrder ng: Order ng[R ghtNode] =
+    new Order ng[R ghtNode] {
+      overr de def compare(x: R ghtNode, y: R ghtNode):  nt = {
+        Order ng
+          .Tuple2(r ghtNodeTypeOrder ng, nounOrder ng)
+          .compare((x.r ghtNodeType, x.noun), (y.r ghtNodeType, y.noun))
       }
     }
 
-  def getUserTweetInteractionGraph(
-    tweetInteractionEvents: TypedPipe[InteractionEvent],
+  def getUserT et nteract onGraph(
+    t et nteract onEvents: TypedP pe[ nteract onEvent],
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
-    val numUserTweetInteractionEntries = Stat("num_user_tweet_interaction_entries")
-    val numDistinctUserTweetInteractionEntries = Stat("num_distinct_user_tweet_interaction_entries")
-    val numFavedTweets = Stat("num_faved_tweets")
-    val numRepliedTweets = Stat("num_replied_tweets")
-    val numRetweetedTweets = Stat("num_retweeted_tweets")
-    val userTweetInteractionsByType: TypedPipe[((UserId, RightNodeType), TweetId)] =
-      tweetInteractionEvents
+     mpl c  un que D: Un que D
+  ): TypedP pe[(LeftNode, R ghtNodeW hEdge  ght)] = {
+    val numUserT et nteract onEntr es = Stat("num_user_t et_ nteract on_entr es")
+    val numD st nctUserT et nteract onEntr es = Stat("num_d st nct_user_t et_ nteract on_entr es")
+    val numFavedT ets = Stat("num_faved_t ets")
+    val numRepl edT ets = Stat("num_repl ed_t ets")
+    val numRet etedT ets = Stat("num_ret eted_t ets")
+    val userT et nteract onsByType: TypedP pe[((User d, R ghtNodeType), T et d)] =
+      t et nteract onEvents
         .flatMap { event =>
-          val referenceTweet: Option[ReferenceTweet] = event.referenceTweet
-          val targetId: Long = event.targetId
-          val userId: Long = event.engagingUserId
+          val referenceT et: Opt on[ReferenceT et] = event.referenceT et
+          val target d: Long = event.target d
+          val user d: Long = event.engag ngUser d
 
-          //  To find the id of the tweet that was interacted with
-          //  For likes, this is the targetId; for retweet or reply, it is the referenceTweet's id
-          //  One thing to note is that for likes, referenceTweet is empty
-          val (tweetIdOpt, rightNodeTypeOpt) = {
-            event.interactionType match {
-              case Some(InteractionType.Favorite) =>
-                // Only allow favorites on original tweets, not retweets, to avoid double-counting
-                // because we have retweet-type tweets in the data source as well
+          //  To f nd t   d of t  t et that was  nteracted w h
+          //  For l kes, t   s t  target d; for ret et or reply,    s t  referenceT et's  d
+          //  One th ng to note  s that for l kes, referenceT et  s empty
+          val (t et dOpt, r ghtNodeTypeOpt) = {
+            event. nteract onType match {
+              case So ( nteract onType.Favor e) =>
+                // Only allow favor es on or g nal t ets, not ret ets, to avo d double-count ng
+                // because   have ret et-type t ets  n t  data s ce as  ll
                 (
-                  if (referenceTweet.isEmpty) {
-                    numFavedTweets.inc()
-                    Some(targetId)
+                   f (referenceT et. sEmpty) {
+                    numFavedT ets. nc()
+                    So (target d)
                   } else None,
-                  Some(RightNodeType.FavTweet))
-              case Some(InteractionType.Reply) =>
-                numRepliedTweets.inc()
-                (referenceTweet.map(_.tweetId), Some(RightNodeType.ReplyTweet))
-              case Some(InteractionType.Retweet) =>
-                numRetweetedTweets.inc()
-                (referenceTweet.map(_.tweetId), Some(RightNodeType.RetweetTweet))
+                  So (R ghtNodeType.FavT et))
+              case So ( nteract onType.Reply) =>
+                numRepl edT ets. nc()
+                (referenceT et.map(_.t et d), So (R ghtNodeType.ReplyT et))
+              case So ( nteract onType.Ret et) =>
+                numRet etedT ets. nc()
+                (referenceT et.map(_.t et d), So (R ghtNodeType.Ret etT et))
               case _ => (None, None)
             }
           }
           for {
-            tweetId <- tweetIdOpt
-            rightNodeType <- rightNodeTypeOpt
-          } yield {
-            numUserTweetInteractionEntries.inc()
-            ((userId, rightNodeType), tweetId)
+            t et d <- t et dOpt
+            r ghtNodeType <- r ghtNodeTypeOpt
+          } y eld {
+            numUserT et nteract onEntr es. nc()
+            ((user d, r ghtNodeType), t et d)
           }
         }
 
-    userTweetInteractionsByType
+    userT et nteract onsByType
       .mapValues(Set(_))
       .sumByKey
       .flatMap {
-        case ((userId, rightNodeType), tweetIdSet) =>
-          tweetIdSet.map { tweetId =>
-            numDistinctUserTweetInteractionEntries.inc()
+        case ((user d, r ghtNodeType), t et dSet) =>
+          t et dSet.map { t et d =>
+            numD st nctUserT et nteract onEntr es. nc()
             (
-              LeftNode.UserId(userId),
-              RightNodeWithEdgeWeight(
-                rightNode = RightNode(rightNodeType = rightNodeType, noun = Noun.TweetId(tweetId)),
-                weight = 1.0))
+              LeftNode.User d(user d),
+              R ghtNodeW hEdge  ght(
+                r ghtNode = R ghtNode(r ghtNodeType = r ghtNodeType, noun = Noun.T et d(t et d)),
+                  ght = 1.0))
           }
       }
   }
 
   def getUserFavGraph(
-    userUserFavEdges: TypedPipe[(UserId, UserId, Double)]
+    userUserFavEdges: TypedP pe[(User d, User d, Double)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
-    val numInputFavEdges = Stat("num_input_fav_edges")
+     mpl c  un que D: Un que D
+  ): TypedP pe[(LeftNode, R ghtNodeW hEdge  ght)] = {
+    val num nputFavEdges = Stat("num_ nput_fav_edges")
     userUserFavEdges.map {
-      case (srcId, destId, edgeWt) =>
-        numInputFavEdges.inc()
+      case (src d, dest d, edgeWt) =>
+        num nputFavEdges. nc()
         (
-          LeftNode.UserId(srcId),
-          RightNodeWithEdgeWeight(
-            rightNode =
-              RightNode(rightNodeType = RightNodeType.FavUser, noun = Noun.UserId(destId)),
-            weight = edgeWt))
+          LeftNode.User d(src d),
+          R ghtNodeW hEdge  ght(
+            r ghtNode =
+              R ghtNode(r ghtNodeType = R ghtNodeType.FavUser, noun = Noun.User d(dest d)),
+              ght = edgeWt))
     }
   }
 
   def getUserFollowGraph(
-    userUserFollowEdges: TypedPipe[(UserId, UserId)]
+    userUserFollowEdges: TypedP pe[(User d, User d)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
+     mpl c  un que D: Un que D
+  ): TypedP pe[(LeftNode, R ghtNodeW hEdge  ght)] = {
     val numFlockFollowEdges = Stat("num_flock_follow_edges")
     userUserFollowEdges.map {
-      case (srcId, destId) =>
-        numFlockFollowEdges.inc()
+      case (src d, dest d) =>
+        numFlockFollowEdges. nc()
         (
-          LeftNode.UserId(srcId),
-          RightNodeWithEdgeWeight(
-            rightNode =
-              RightNode(rightNodeType = RightNodeType.FollowUser, noun = Noun.UserId(destId)),
-            weight = 1.0))
+          LeftNode.User d(src d),
+          R ghtNodeW hEdge  ght(
+            r ghtNode =
+              R ghtNode(r ghtNodeType = R ghtNodeType.FollowUser, noun = Noun.User d(dest d)),
+              ght = 1.0))
     }
   }
 
   def getUserBlockGraph(
-    userUserBlockEdges: TypedPipe[(UserId, UserId)]
+    userUserBlockEdges: TypedP pe[(User d, User d)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
+     mpl c  un que D: Un que D
+  ): TypedP pe[(LeftNode, R ghtNodeW hEdge  ght)] = {
     val numFlockBlockEdges = Stat("num_flock_block_edges")
     userUserBlockEdges.map {
-      case (srcId, destId) =>
-        numFlockBlockEdges.inc()
+      case (src d, dest d) =>
+        numFlockBlockEdges. nc()
         (
-          LeftNode.UserId(srcId),
-          RightNodeWithEdgeWeight(
-            rightNode =
-              RightNode(rightNodeType = RightNodeType.BlockUser, noun = Noun.UserId(destId)),
-            weight = 1.0))
+          LeftNode.User d(src d),
+          R ghtNodeW hEdge  ght(
+            r ghtNode =
+              R ghtNode(r ghtNodeType = R ghtNodeType.BlockUser, noun = Noun.User d(dest d)),
+              ght = 1.0))
     }
   }
 
   def getUserAbuseReportGraph(
-    userUserAbuseReportEdges: TypedPipe[(UserId, UserId)]
+    userUserAbuseReportEdges: TypedP pe[(User d, User d)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
+     mpl c  un que D: Un que D
+  ): TypedP pe[(LeftNode, R ghtNodeW hEdge  ght)] = {
     val numFlockAbuseEdges = Stat("num_flock_abuse_edges")
     userUserAbuseReportEdges.map {
-      case (srcId, destId) =>
-        numFlockAbuseEdges.inc()
+      case (src d, dest d) =>
+        numFlockAbuseEdges. nc()
         (
-          LeftNode.UserId(srcId),
-          RightNodeWithEdgeWeight(
-            rightNode =
-              RightNode(rightNodeType = RightNodeType.AbuseReportUser, noun = Noun.UserId(destId)),
-            weight = 1.0))
+          LeftNode.User d(src d),
+          R ghtNodeW hEdge  ght(
+            r ghtNode =
+              R ghtNode(r ghtNodeType = R ghtNodeType.AbuseReportUser, noun = Noun.User d(dest d)),
+              ght = 1.0))
     }
   }
 
-  def filterInvalidUsers(
-    flockEdges: TypedPipe[(UserId, UserId)],
-    validUsers: TypedPipe[UserId]
-  ): TypedPipe[(UserId, UserId)] = {
+  def f lter nval dUsers(
+    flockEdges: TypedP pe[(User d, User d)],
+    val dUsers: TypedP pe[User d]
+  ): TypedP pe[(User d, User d)] = {
     flockEdges
-      .join(validUsers.asKeys)
-      //      .withReducers(10000)
+      .jo n(val dUsers.asKeys)
+      //      .w hReducers(10000)
       .map {
-        case (srcId, (destId, _)) =>
-          (destId, srcId)
+        case (src d, (dest d, _)) =>
+          (dest d, src d)
       }
-      .join(validUsers.asKeys)
-      //      .withReducers(10000)
+      .jo n(val dUsers.asKeys)
+      //      .w hReducers(10000)
       .map {
-        case (destId, (srcId, _)) =>
-          (srcId, destId)
+        case (dest d, (src d, _)) =>
+          (src d, dest d)
       }
   }
 
   def getUserSpamReportGraph(
-    userUserSpamReportEdges: TypedPipe[(UserId, UserId)]
+    userUserSpamReportEdges: TypedP pe[(User d, User d)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
+     mpl c  un que D: Un que D
+  ): TypedP pe[(LeftNode, R ghtNodeW hEdge  ght)] = {
     val numFlockSpamEdges = Stat("num_flock_spam_edges")
     userUserSpamReportEdges.map {
-      case (srcId, destId) =>
-        numFlockSpamEdges.inc()
+      case (src d, dest d) =>
+        numFlockSpamEdges. nc()
         (
-          LeftNode.UserId(srcId),
-          RightNodeWithEdgeWeight(
-            rightNode =
-              RightNode(rightNodeType = RightNodeType.SpamReportUser, noun = Noun.UserId(destId)),
-            weight = 1.0))
+          LeftNode.User d(src d),
+          R ghtNodeW hEdge  ght(
+            r ghtNode =
+              R ghtNode(r ghtNodeType = R ghtNodeType.SpamReportUser, noun = Noun.User d(dest d)),
+              ght = 1.0))
     }
   }
 
-  def getUserTopicFollowGraph(
-    topicUserFollowedByEdges: TypedPipe[(TopicId, UserId)]
+  def getUserTop cFollowGraph(
+    top cUserFollo dByEdges: TypedP pe[(Top c d, User d)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
+     mpl c  un que D: Un que D
+  ): TypedP pe[(LeftNode, R ghtNodeW hEdge  ght)] = {
     val numTFGEdges = Stat("num_tfg_edges")
-    topicUserFollowedByEdges.map {
-      case (topicId, userId) =>
-        numTFGEdges.inc()
+    top cUserFollo dByEdges.map {
+      case (top c d, user d) =>
+        numTFGEdges. nc()
         (
-          LeftNode.UserId(userId),
-          RightNodeWithEdgeWeight(
-            rightNode =
-              RightNode(rightNodeType = RightNodeType.FollowTopic, noun = Noun.TopicId(topicId)),
-            weight = 1.0)
+          LeftNode.User d(user d),
+          R ghtNodeW hEdge  ght(
+            r ghtNode =
+              R ghtNode(r ghtNodeType = R ghtNodeType.FollowTop c, noun = Noun.Top c d(top c d)),
+              ght = 1.0)
         )
     }
   }
 
-  def getUserSignUpCountryGraph(
-    userSignUpCountryEdges: TypedPipe[(UserId, (Country, Language))]
+  def getUserS gnUpCountryGraph(
+    userS gnUpCountryEdges: TypedP pe[(User d, (Country, Language))]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
-    val numUserSourceEntriesRead = Stat("num_user_source_entries")
-    userSignUpCountryEdges.map {
-      case (userId, (country, lang)) =>
-        numUserSourceEntriesRead.inc()
+     mpl c  un que D: Un que D
+  ): TypedP pe[(LeftNode, R ghtNodeW hEdge  ght)] = {
+    val numUserS ceEntr esRead = Stat("num_user_s ce_entr es")
+    userS gnUpCountryEdges.map {
+      case (user d, (country, lang)) =>
+        numUserS ceEntr esRead. nc()
         (
-          LeftNode.UserId(userId),
-          RightNodeWithEdgeWeight(
-            rightNode =
-              RightNode(rightNodeType = RightNodeType.SignUpCountry, noun = Noun.Country(country)),
-            weight = 1.0))
+          LeftNode.User d(user d),
+          R ghtNodeW hEdge  ght(
+            r ghtNode =
+              R ghtNode(r ghtNodeType = R ghtNodeType.S gnUpCountry, noun = Noun.Country(country)),
+              ght = 1.0))
     }
   }
 
-  def getMagicRecsNotifOpenOrClickTweetsGraph(
-    userMRNotifOpenOrClickEvents: TypedPipe[MagicRecsNotificationLite]
+  def getMag cRecsNot fOpenOrCl ckT etsGraph(
+    userMRNot fOpenOrCl ckEvents: TypedP pe[Mag cRecsNot f cat onL e]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
-    val numNotifOpenOrClickEntries = Stat("num_notif_open_or_click")
-    userMRNotifOpenOrClickEvents.flatMap { entry =>
-      numNotifOpenOrClickEntries.inc()
+     mpl c  un que D: Un que D
+  ): TypedP pe[(LeftNode, R ghtNodeW hEdge  ght)] = {
+    val numNot fOpenOrCl ckEntr es = Stat("num_not f_open_or_cl ck")
+    userMRNot fOpenOrCl ckEvents.flatMap { entry =>
+      numNot fOpenOrCl ckEntr es. nc()
       for {
-        userId <- entry.targetUserId
-        tweetId <- entry.tweetId
-      } yield {
+        user d <- entry.targetUser d
+        t et d <- entry.t et d
+      } y eld {
         (
-          LeftNode.UserId(userId),
-          RightNodeWithEdgeWeight(
-            rightNode = RightNode(
-              rightNodeType = RightNodeType.NotifOpenOrClickTweet,
-              noun = Noun.TweetId(tweetId)),
-            weight = 1.0))
+          LeftNode.User d(user d),
+          R ghtNodeW hEdge  ght(
+            r ghtNode = R ghtNode(
+              r ghtNodeType = R ghtNodeType.Not fOpenOrCl ckT et,
+              noun = Noun.T et d(t et d)),
+              ght = 1.0))
       }
     }
   }
 
-  def getUserConsumedLanguagesGraph(
-    userConsumedLanguageEdges: TypedPipe[(UserId, Seq[(Language, Double)])]
+  def getUserConsu dLanguagesGraph(
+    userConsu dLanguageEdges: TypedP pe[(User d, Seq[(Language, Double)])]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
-    val numPenguinSourceEntriesRead = Stat("num_penguin_source_entries")
-    userConsumedLanguageEdges.flatMap {
-      case (userId, langWithWeights) =>
-        numPenguinSourceEntriesRead.inc()
-        langWithWeights.map {
-          case (lang, weight) =>
+     mpl c  un que D: Un que D
+  ): TypedP pe[(LeftNode, R ghtNodeW hEdge  ght)] = {
+    val numPengu nS ceEntr esRead = Stat("num_pengu n_s ce_entr es")
+    userConsu dLanguageEdges.flatMap {
+      case (user d, langW h  ghts) =>
+        numPengu nS ceEntr esRead. nc()
+        langW h  ghts.map {
+          case (lang,   ght) =>
             (
-              LeftNode.UserId(userId),
-              RightNodeWithEdgeWeight(
-                rightNode = RightNode(
-                  rightNodeType = RightNodeType.ConsumedLanguage,
+              LeftNode.User d(user d),
+              R ghtNodeW hEdge  ght(
+                r ghtNode = R ghtNode(
+                  r ghtNodeType = R ghtNodeType.Consu dLanguage,
                   noun = Noun.Language(lang)),
-                weight = weight))
+                  ght =   ght))
         }
     }
   }
 
   def getSearchGraph(
-    userSearchQueryEdges: TypedPipe[(UserId, String)]
+    userSearchQueryEdges: TypedP pe[(User d, Str ng)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
-    val numSearchQueries = Stat("num_search_queries")
+     mpl c  un que D: Un que D
+  ): TypedP pe[(LeftNode, R ghtNodeW hEdge  ght)] = {
+    val numSearchQuer es = Stat("num_search_quer es")
     userSearchQueryEdges.map {
-      case (userId, query) =>
-        numSearchQueries.inc()
+      case (user d, query) =>
+        numSearchQuer es. nc()
         (
-          LeftNode.UserId(userId),
-          RightNodeWithEdgeWeight(
-            rightNode =
-              RightNode(rightNodeType = RightNodeType.SearchQuery, noun = Noun.Query(query)),
-            weight = 1.0))
+          LeftNode.User d(user d),
+          R ghtNodeW hEdge  ght(
+            r ghtNode =
+              R ghtNode(r ghtNodeType = R ghtNodeType.SearchQuery, noun = Noun.Query(query)),
+              ght = 1.0))
     }
   }
 
-  def buildEmployeeGraph(
-    fullGraph: TypedPipe[(LeftNode, RightNodeWithEdgeWeight)]
+  def bu ldEmployeeGraph(
+    fullGraph: TypedP pe[(LeftNode, R ghtNodeW hEdge  ght)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
+     mpl c  un que D: Un que D
+  ): TypedP pe[(LeftNode, R ghtNodeW hEdge  ght)] = {
     val numEmployeeEdges = Stat("num_employee_edges")
-    val employeeIds = Config.SampledEmployeeIds
+    val employee ds = Conf g.SampledEmployee ds
     fullGraph
       .collect {
-        case (LeftNode.UserId(userId), rightNodeWithWeight) if employeeIds.contains(userId) =>
-          numEmployeeEdges.inc()
-          (LeftNode.UserId(userId), rightNodeWithWeight)
+        case (LeftNode.User d(user d), r ghtNodeW h  ght)  f employee ds.conta ns(user d) =>
+          numEmployeeEdges. nc()
+          (LeftNode.User d(user d), r ghtNodeW h  ght)
       }
   }
 
   def getTruncatedGraph(
-    fullGraph: TypedPipe[(LeftNode, RightNodeWithEdgeWeight)],
-    topKWithFrequency: TypedPipe[(RightNodeType, Seq[(Noun, Double)])]
+    fullGraph: TypedP pe[(LeftNode, R ghtNodeW hEdge  ght)],
+    topKW hFrequency: TypedP pe[(R ghtNodeType, Seq[(Noun, Double)])]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
-    val numEntriesTruncatedGraph = Stat("num_entries_truncated_graph")
+     mpl c  un que D: Un que D
+  ): TypedP pe[(LeftNode, R ghtNodeW hEdge  ght)] = {
+    val numEntr esTruncatedGraph = Stat("num_entr es_truncated_graph")
     val numTopKTruncatedNouns = Stat("num_topk_truncated_nouns")
 
-    implicit val rightNodeSer: RightNode => Array[Byte] = BinaryScalaCodec(RightNode)
-    val topNouns: TypedPipe[RightNode] = topKWithFrequency
+     mpl c  val r ghtNodeSer: R ghtNode => Array[Byte] = B naryScalaCodec(R ghtNode)
+    val topNouns: TypedP pe[R ghtNode] = topKW hFrequency
       .flatMap {
-        case (rightNodeType, nounsList) =>
-          nounsList
+        case (r ghtNodeType, nounsL st) =>
+          nounsL st
             .map {
               case (nounVal, aggregatedFrequency) =>
-                numTopKTruncatedNouns.inc()
-                RightNode(rightNodeType, nounVal)
+                numTopKTruncatedNouns. nc()
+                R ghtNode(r ghtNodeType, nounVal)
             }
       }
 
     fullGraph
       .map {
-        case (leftNode, rightNodeWithWeight) =>
-          (rightNodeWithWeight.rightNode, (leftNode, rightNodeWithWeight))
+        case (leftNode, r ghtNodeW h  ght) =>
+          (r ghtNodeW h  ght.r ghtNode, (leftNode, r ghtNodeW h  ght))
       }
       .sketch(reducers = 5000)
-      .join(topNouns.asKeys.toTypedPipe)
+      .jo n(topNouns.asKeys.toTypedP pe)
       .map {
-        case (rightNode, ((left, rightNodeWithWeight), _)) =>
-          numEntriesTruncatedGraph.inc()
-          (left, rightNodeWithWeight)
+        case (r ghtNode, ((left, r ghtNodeW h  ght), _)) =>
+          numEntr esTruncatedGraph. nc()
+          (left, r ghtNodeW h  ght)
       }
   }
 
-  def getTopKRightNounsWithFrequencies(
-    fullGraph: TypedPipe[(LeftNode, RightNodeWithEdgeWeight)],
-    topKConfig: Map[RightNodeType, Int],
-    minFrequency: Int
+  def getTopKR ghtNounsW hFrequenc es(
+    fullGraph: TypedP pe[(LeftNode, R ghtNodeW hEdge  ght)],
+    topKConf g: Map[R ghtNodeType,  nt],
+    m nFrequency:  nt
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(RightNodeType, Seq[(Noun, Double)])] = {
-    val maxAcrossRightNounType: Int = topKConfig.valuesIterator.max
+     mpl c  un que D: Un que D
+  ): TypedP pe[(R ghtNodeType, Seq[(Noun, Double)])] = {
+    val maxAcrossR ghtNounType:  nt = topKConf g.values erator.max
     fullGraph
       .map {
-        case (leftNode, rightNodeWithWeight) =>
-          (rightNodeWithWeight.rightNode, 1.0)
+        case (leftNode, r ghtNodeW h  ght) =>
+          (r ghtNodeW h  ght.r ghtNode, 1.0)
       }
       .sumByKey
-      //      .withReducers(20000)
-      .toTypedPipe
-      .filter(_._2 >= minFrequency)
+      //      .w hReducers(20000)
+      .toTypedP pe
+      .f lter(_._2 >= m nFrequency)
       .map {
-        case (rightNode, freq) =>
-          (rightNode.rightNodeType, (rightNode.noun, freq))
+        case (r ghtNode, freq) =>
+          (r ghtNode.r ghtNodeType, (r ghtNode.noun, freq))
       }
-      .group(rightNodeTypeOrdering)
-      // Note: if maxAcrossRightNounType is >15M, it might result in OOM on reducer
-      .sortedReverseTake(maxAcrossRightNounType)(Ordering.by(_._2))
-      // An alternative to using group followed by sortedReverseTake is to define TopKMonoids,
-      // one for each RightNodeType to get the most frequent rightNouns
+      .group(r ghtNodeTypeOrder ng)
+      // Note:  f maxAcrossR ghtNounType  s >15M,   m ght result  n OOM on reducer
+      .sortedReverseTake(maxAcrossR ghtNounType)(Order ng.by(_._2))
+      // An alternat ve to us ng group follo d by sortedReverseTake  s to def ne TopKMono ds,
+      // one for each R ghtNodeType to get t  most frequent r ghtNouns
       .map {
-        case (rightNodeType, nounsListWithFreq) =>
-          val truncatedList = nounsListWithFreq
+        case (r ghtNodeType, nounsL stW hFreq) =>
+          val truncatedL st = nounsL stW hFreq
             .sortBy(-_._2)
-            .take(topKConfig.getOrElse(rightNodeType, NumTopNounsForUnknownRightNodeType))
-          (rightNodeType, truncatedList)
+            .take(topKConf g.getOrElse(r ghtNodeType, NumTopNounsForUnknownR ghtNodeType))
+          (r ghtNodeType, truncatedL st)
       }
   }
 
-  def getValidUsers(
-    userSource: TypedPipe[CombinedUser]
+  def getVal dUsers(
+    userS ce: TypedP pe[Comb nedUser]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[UserId] = {
-    val numValidUsers = Stat("num_valid_users")
-    userSource
+     mpl c  un que D: Un que D
+  ): TypedP pe[User d] = {
+    val numVal dUsers = Stat("num_val d_users")
+    userS ce
       .flatMap { u =>
         for {
           user <- u.user
-          if user.id != 0
+           f user. d != 0
           safety <- user.safety
-          if !(safety.suspended || safety.deactivated)
-        } yield {
-          numValidUsers.inc()
-          user.id
+           f !(safety.suspended || safety.deact vated)
+        } y eld {
+          numVal dUsers. nc()
+          user. d
         }
       }
   }
 
   def getFullGraph(
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): TypedP pe[(LeftNode, R ghtNodeW hEdge  ght)] = {
 
-    // list of valid UserIds - to filter out deactivated or suspended user accounts
-    val userSource: TypedPipe[CombinedUser] =
+    // l st of val d User ds - to f lter out deact vated or suspended user accounts
+    val userS ce: TypedP pe[Comb nedUser] =
       DAL
-        .readMostRecentSnapshotNoOlderThan(UsersourceScalaDataset, Days(7)).toTypedPipe
-    val validUsers: TypedPipe[UserId] = getValidUsers(userSource).forceToDisk
+        .readMostRecentSnapshotNoOlderThan(Users ceScalaDataset, Days(7)).toTypedP pe
+    val val dUsers: TypedP pe[User d] = getVal dUsers(userS ce).forceToD sk
 
-    //Dataset read operations
+    //Dataset read operat ons
 
-    // ieSource tweet engagements data for tweet favs, replies, retweets - from last 14 days
-    val tweetSource: TypedPipe[InteractionEvent] =
-      ExternalDataSources.ieSourceTweetEngagementsSource(dateRange =
+    //  eS ce t et engage nts data for t et favs, repl es, ret ets - from last 14 days
+    val t etS ce: TypedP pe[ nteract onEvent] =
+      ExternalDataS ces. eS ceT etEngage ntsS ce(dateRange =
         DateRange(dateRange.end - Days(14), dateRange.end))
 
     // user-user fav edges
-    val userUserFavEdges: TypedPipe[(UserId, UserId, Double)] =
-      ExternalDataSources.getFavEdges(HalfLifeInDaysForFavScore)
+    val userUserFavEdges: TypedP pe[(User d, User d, Double)] =
+      ExternalDataS ces.getFavEdges(HalfL fe nDaysForFavScore)
 
     // user-user follow edges
-    val userUserFollowEdges: TypedPipe[(UserId, UserId)] =
-      filterInvalidUsers(ExternalDataSources.flockFollowsSource, validUsers)
+    val userUserFollowEdges: TypedP pe[(User d, User d)] =
+      f lter nval dUsers(ExternalDataS ces.flockFollowsS ce, val dUsers)
 
     // user-user block edges
-    val userUserBlockEdges: TypedPipe[(UserId, UserId)] =
-      filterInvalidUsers(ExternalDataSources.flockBlocksSource, validUsers)
+    val userUserBlockEdges: TypedP pe[(User d, User d)] =
+      f lter nval dUsers(ExternalDataS ces.flockBlocksS ce, val dUsers)
 
     // user-user abuse report edges
-    val userUserAbuseReportEdges: TypedPipe[(UserId, UserId)] =
-      filterInvalidUsers(ExternalDataSources.flockReportAsAbuseSource, validUsers)
+    val userUserAbuseReportEdges: TypedP pe[(User d, User d)] =
+      f lter nval dUsers(ExternalDataS ces.flockReportAsAbuseS ce, val dUsers)
 
     // user-user spam report edges
-    val userUserSpamReportEdges: TypedPipe[(UserId, UserId)] =
-      filterInvalidUsers(ExternalDataSources.flockReportAsSpamSource, validUsers)
+    val userUserSpamReportEdges: TypedP pe[(User d, User d)] =
+      f lter nval dUsers(ExternalDataS ces.flockReportAsSpamS ce, val dUsers)
 
-    // user-signup country edges
-    val userSignUpCountryEdges: TypedPipe[(UserId, (Country, Language))] =
-      ExternalDataSources.userSource
+    // user-s gnup country edges
+    val userS gnUpCountryEdges: TypedP pe[(User d, (Country, Language))] =
+      ExternalDataS ces.userS ce
 
-    // user-consumed language edges
-    val userConsumedLanguageEdges: TypedPipe[(UserId, Seq[(Language, Double)])] =
-      ExternalDataSources.inferredUserConsumedLanguageSource
+    // user-consu d language edges
+    val userConsu dLanguageEdges: TypedP pe[(User d, Seq[(Language, Double)])] =
+      ExternalDataS ces. nferredUserConsu dLanguageS ce
 
-    // user-topic follow edges
-    val topicUserFollowedByEdges: TypedPipe[(TopicId, UserId)] =
-      ExternalDataSources.topicFollowGraphSource
+    // user-top c follow edges
+    val top cUserFollo dByEdges: TypedP pe[(Top c d, User d)] =
+      ExternalDataS ces.top cFollowGraphS ce
 
-    // user-MRNotifOpenOrClick events from last 7 days
-    val userMRNotifOpenOrClickEvents: TypedPipe[MagicRecsNotificationLite] =
-      ExternalDataSources.magicRecsNotficationOpenOrClickEventsSource(dateRange =
+    // user-MRNot fOpenOrCl ck events from last 7 days
+    val userMRNot fOpenOrCl ckEvents: TypedP pe[Mag cRecsNot f cat onL e] =
+      ExternalDataS ces.mag cRecsNotf cat onOpenOrCl ckEventsS ce(dateRange =
         DateRange(dateRange.end - Days(7), dateRange.end))
 
-    // user-searchQuery strings from last 7 days
-    val userSearchQueryEdges: TypedPipe[(UserId, String)] =
-      ExternalDataSources.adaptiveSearchScribeLogsSource(dateRange =
+    // user-searchQuery str ngs from last 7 days
+    val userSearchQueryEdges: TypedP pe[(User d, Str ng)] =
+      ExternalDataS ces.adapt veSearchScr beLogsS ce(dateRange =
         DateRange(dateRange.end - Days(7), dateRange.end))
 
-    getUserTweetInteractionGraph(tweetSource) ++
+    getUserT et nteract onGraph(t etS ce) ++
       getUserFavGraph(userUserFavEdges) ++
       getUserFollowGraph(userUserFollowEdges) ++
       getUserBlockGraph(userUserBlockEdges) ++
       getUserAbuseReportGraph(userUserAbuseReportEdges) ++
       getUserSpamReportGraph(userUserSpamReportEdges) ++
-      getUserSignUpCountryGraph(userSignUpCountryEdges) ++
-      getUserConsumedLanguagesGraph(userConsumedLanguageEdges) ++
-      getUserTopicFollowGraph(topicUserFollowedByEdges) ++
-      getMagicRecsNotifOpenOrClickTweetsGraph(userMRNotifOpenOrClickEvents) ++
+      getUserS gnUpCountryGraph(userS gnUpCountryEdges) ++
+      getUserConsu dLanguagesGraph(userConsu dLanguageEdges) ++
+      getUserTop cFollowGraph(top cUserFollo dByEdges) ++
+      getMag cRecsNot fOpenOrCl ckT etsGraph(userMRNot fOpenOrCl ckEvents) ++
       getSearchGraph(userSearchQueryEdges)
   }
 }

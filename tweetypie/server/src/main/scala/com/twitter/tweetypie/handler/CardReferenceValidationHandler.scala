@@ -1,74 +1,74 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.expandodo.thriftscala.AttachmentEligibilityResponses
-import com.twitter.expandodo.{thriftscala => expandodo}
-import com.twitter.tweetypie.backends.Expandodo
-import com.twitter.twittertext.Extractor
-import scala.util.control.NoStackTrace
-import scala.util.control.NonFatal
-import java.net.URI
+ mport com.tw ter.expandodo.thr ftscala.Attach ntEl g b l yResponses
+ mport com.tw ter.expandodo.{thr ftscala => expandodo}
+ mport com.tw ter.t etyp e.backends.Expandodo
+ mport com.tw ter.tw tertext.Extractor
+ mport scala.ut l.control.NoStackTrace
+ mport scala.ut l.control.NonFatal
+ mport java.net.UR 
 
-object CardReferenceValidationFailedException extends Exception with NoStackTrace
+object CardReferenceVal dat onFa ledExcept on extends Except on w h NoStackTrace
 
-object CardReferenceValidationHandler {
-  type Type = FutureArrow[(UserId, CardUri), CardUri]
+object CardReferenceVal dat onHandler {
+  type Type = FutureArrow[(User d, CardUr ), CardUr ]
 
-  def apply(checkEligibility: Expandodo.CheckAttachmentEligibility): Type = {
-    def validateAttachmentForUser(userId: UserId, cardUri: CardUri): Future[CardUri] = {
-      val request = Seq(expandodo.AttachmentEligibilityRequest(cardUri, userId))
-      checkEligibility(request)
-        .flatMap(validatedCardUri)
+  def apply(c ckEl g b l y: Expandodo.C ckAttach ntEl g b l y): Type = {
+    def val dateAttach ntForUser(user d: User d, cardUr : CardUr ): Future[CardUr ] = {
+      val request = Seq(expandodo.Attach ntEl g b l yRequest(cardUr , user d))
+      c ckEl g b l y(request)
+        .flatMap(val datedCardUr )
         .rescue {
-          case NonFatal(_) => Future.exception(CardReferenceValidationFailedException)
+          case NonFatal(_) => Future.except on(CardReferenceVal dat onFa ledExcept on)
         }
     }
 
     FutureArrow {
-      case (userId, cardUri) =>
-        if (shouldSkipValidation(cardUri)) {
-          Future.value(cardUri)
+      case (user d, cardUr ) =>
+         f (shouldSk pVal dat on(cardUr )) {
+          Future.value(cardUr )
         } else {
-          validateAttachmentForUser(userId, cardUri)
+          val dateAttach ntForUser(user d, cardUr )
         }
     }
   }
 
-  private[this] def validatedCardUri(responses: AttachmentEligibilityResponses) = {
-    responses.results.headOption match {
-      case Some(
-            expandodo.AttachmentEligibilityResult
-              .Success(expandodo.ValidCardUri(validatedCardUri))
+  pr vate[t ] def val datedCardUr (responses: Attach ntEl g b l yResponses) = {
+    responses.results. adOpt on match {
+      case So (
+            expandodo.Attach ntEl g b l yResult
+              .Success(expandodo.Val dCardUr (val datedCardUr ))
           ) =>
-        Future.value(validatedCardUri)
+        Future.value(val datedCardUr )
       case _ =>
-        Future.exception(CardReferenceValidationFailedException)
+        Future.except on(CardReferenceVal dat onFa ledExcept on)
     }
   }
 
-  // We're not changing state between calls, so it's safe to share among threads
-  private[this] val extractor = {
+  //  're not chang ng state bet en calls, so  's safe to share among threads
+  pr vate[t ] val extractor = {
     val extractor = new Extractor
-    extractor.setExtractURLWithoutProtocol(false)
+    extractor.setExtractURLW houtProtocol(false)
     extractor
   }
 
-  // Card References with these URIs don't need validation since cards referenced by URIs in these
-  // schemes are public and hence not subject to restrictions.
-  private[handler] val isWhitelistedSchema = Set("http", "https", "tombstone")
+  // Card References w h t se UR s don't need val dat on s nce cards referenced by UR s  n t se
+  // sc  s are publ c and  nce not subject to restr ct ons.
+  pr vate[handler] val  sWh el stedSc ma = Set("http", "https", "tombstone")
 
-  // NOTE: http://www.ietf.org/rfc/rfc2396.txt
-  private[this] def hasWhitelistedScheme(cardUri: CardUri) =
-    Try(new URI(cardUri)).toOption
-      .map(_.getScheme)
-      .exists(isWhitelistedSchema)
+  // NOTE: http://www. etf.org/rfc/rfc2396.txt
+  pr vate[t ] def hasWh el stedSc  (cardUr : CardUr ) =
+    Try(new UR (cardUr )).toOpt on
+      .map(_.getSc  )
+      .ex sts( sWh el stedSc ma)
 
-  // Even though URI spec is technically is a superset of http:// and https:// URLs, we have to
-  // resort to using a Regex based parser here as a fallback because many URLs found in the wild
-  // have unescaped components that would fail java.net.URI parsing, yet are still considered acceptable.
-  private[this] def isTwitterUrlEntity(cardUri: CardUri) =
-    extractor.extractURLs(cardUri).size == 1
+  // Even though UR  spec  s techn cally  s a superset of http:// and https:// URLs,   have to
+  // resort to us ng a Regex based parser  re as a fallback because many URLs found  n t  w ld
+  // have unescaped components that would fa l java.net.UR  pars ng, yet are st ll cons dered acceptable.
+  pr vate[t ] def  sTw terUrlEnt y(cardUr : CardUr ) =
+    extractor.extractURLs(cardUr ).s ze == 1
 
-  private[this] def shouldSkipValidation(cardUri: CardUri) =
-    hasWhitelistedScheme(cardUri) || isTwitterUrlEntity(cardUri)
+  pr vate[t ] def shouldSk pVal dat on(cardUr : CardUr ) =
+    hasWh el stedSc  (cardUr ) ||  sTw terUrlEnt y(cardUr )
 }

@@ -1,120 +1,120 @@
-package com.twitter.product_mixer.component_library.selector
+package com.tw ter.product_m xer.component_l brary.selector
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import scala.collection.mutable
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Spec f cP pel ne
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Spec f cP pel nes
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.SelectorResult
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport scala.collect on.mutable
 
-object InsertAppendWeaveResults {
-  def apply[Query <: PipelineQuery, Bucket](
-    candidatePipelines: Set[CandidatePipelineIdentifier],
+object  nsertAppend aveResults {
+  def apply[Query <: P pel neQuery, Bucket](
+    cand dateP pel nes: Set[Cand dateP pel ne dent f er],
     bucketer: Bucketer[Bucket],
-  ): InsertAppendWeaveResults[Query, Bucket] =
-    new InsertAppendWeaveResults(SpecificPipelines(candidatePipelines), bucketer)
+  ):  nsertAppend aveResults[Query, Bucket] =
+    new  nsertAppend aveResults(Spec f cP pel nes(cand dateP pel nes), bucketer)
 
-  def apply[Query <: PipelineQuery, Bucket](
-    candidatePipeline: CandidatePipelineIdentifier,
+  def apply[Query <: P pel neQuery, Bucket](
+    cand dateP pel ne: Cand dateP pel ne dent f er,
     bucketer: Bucketer[Bucket],
-  ): InsertAppendWeaveResults[Query, Bucket] =
-    new InsertAppendWeaveResults(SpecificPipeline(candidatePipeline), bucketer)
+  ):  nsertAppend aveResults[Query, Bucket] =
+    new  nsertAppend aveResults(Spec f cP pel ne(cand dateP pel ne), bucketer)
 }
 
 /**
- * Select candidates weave them together according to their [[Bucket]].
+ * Select cand dates  ave t m toget r accord ng to t  r [[Bucket]].
  *
- * Candidates are grouped according to [[Bucket]] and one candidate is added from each group until
- * no candidates belonging to any group are left.
+ * Cand dates are grouped accord ng to [[Bucket]] and one cand date  s added from each group unt l
+ * no cand dates belong ng to any group are left.
  *
- * Functionally similar to [[InsertAppendPatternResults]]. [[InsertAppendPatternResults]] is useful
- * if you have more complex ordering requirements but it requires you to know all the buckets in
+ * Funct onally s m lar to [[ nsertAppendPatternResults]]. [[ nsertAppendPatternResults]]  s useful
+ *  f   have more complex order ng requ re nts but   requ res   to know all t  buckets  n
  * advance.
  *
- * @note The order in which candidates are weaved together depends on the order in which the buckets
- *       were first seen on candidates.
+ * @note T  order  n wh ch cand dates are  aved toget r depends on t  order  n wh ch t  buckets
+ *        re f rst seen on cand dates.
  *
- * @example If the candidates are Seq(Tweet(10), Tweet(8), Tweet(3), Tweet(13)) and they are bucketed
- *          using an IsEven bucketing function, then the resulting buckets would be:
+ * @example  f t  cand dates are Seq(T et(10), T et(8), T et(3), T et(13)) and t y are bucketed
+ *          us ng an  sEven bucket ng funct on, t n t  result ng buckets would be:
  *
- *          - Seq(Tweet(10), Tweet(8))
- *          - Seq(Tweet(3), Tweet(13))
+ *          - Seq(T et(10), T et(8))
+ *          - Seq(T et(3), T et(13))
  *
- *          The selector would then loop through these buckets and produce:
+ *          T  selector would t n loop through t se buckets and produce:
  *
- *          - Tweet(10)
- *          - Tweet(3)
- *          - Tweet(8)
- *          - Tweet(13)
+ *          - T et(10)
+ *          - T et(3)
+ *          - T et(8)
+ *          - T et(13)
  *
- *          Note that first bucket encountered was the 'even' bucket so weaving proceeds first with
- *          the even bucket then the odd bucket. Tweet(3) had been first then the opposite would be
+ *          Note that f rst bucket encountered was t  'even' bucket so  av ng proceeds f rst w h
+ *          t  even bucket t n t  odd bucket. T et(3) had been f rst t n t  oppos e would be
  *          true.
  */
-case class InsertAppendWeaveResults[-Query <: PipelineQuery, Bucket](
-  override val pipelineScope: CandidateScope,
+case class  nsertAppend aveResults[-Query <: P pel neQuery, Bucket](
+  overr de val p pel neScope: Cand dateScope,
   bucketer: Bucketer[Bucket])
     extends Selector[Query] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
-    val (bucketableCandidates, otherCandidates) =
-      remainingCandidates.partition(pipelineScope.contains)
+    val (bucketableCand dates, ot rCand dates) =
+      rema n ngCand dates.part  on(p pel neScope.conta ns)
 
-    val groupedCandidates = groupByBucket(bucketableCandidates)
+    val groupedCand dates = groupByBucket(bucketableCand dates)
 
-    val candidateBucketQueues: mutable.Queue[mutable.Queue[CandidateWithDetails]] =
-      mutable.Queue() ++= groupedCandidates
-    val newResult = mutable.ArrayBuffer[CandidateWithDetails]()
+    val cand dateBucketQueues: mutable.Queue[mutable.Queue[Cand dateW hDeta ls]] =
+      mutable.Queue() ++= groupedCand dates
+    val newResult = mutable.ArrayBuffer[Cand dateW hDeta ls]()
 
-    // Take the next group of candidates from the queue and attempt to add the first candidate from
-    // that group into the result. The loop will terminate when every queue is empty.
-    while (candidateBucketQueues.nonEmpty) {
-      val nextCandidateQueue = candidateBucketQueues.dequeue()
+    // Take t  next group of cand dates from t  queue and attempt to add t  f rst cand date from
+    // that group  nto t  result. T  loop w ll term nate w n every queue  s empty.
+    wh le (cand dateBucketQueues.nonEmpty) {
+      val nextCand dateQueue = cand dateBucketQueues.dequeue()
 
-      if (nextCandidateQueue.nonEmpty) {
-        newResult += nextCandidateQueue.dequeue()
+       f (nextCand dateQueue.nonEmpty) {
+        newResult += nextCand dateQueue.dequeue()
 
-        // Re-queue this bucket of candidates if it's still non-empty
-        if (nextCandidateQueue.nonEmpty) {
-          candidateBucketQueues.enqueue(nextCandidateQueue)
+        // Re-queue t  bucket of cand dates  f  's st ll non-empty
+         f (nextCand dateQueue.nonEmpty) {
+          cand dateBucketQueues.enqueue(nextCand dateQueue)
         }
       }
     }
 
-    SelectorResult(remainingCandidates = otherCandidates, result = result ++ newResult)
+    SelectorResult(rema n ngCand dates = ot rCand dates, result = result ++ newResult)
   }
 
   /**
-   * Similar to `groupBy` but respect the order in which individual bucket values are first seen.
-   * This is useful when the candidates have already been sorted prior to the selector running.
+   * S m lar to `groupBy` but respect t  order  n wh ch  nd v dual bucket values are f rst seen.
+   * T   s useful w n t  cand dates have already been sorted pr or to t  selector runn ng.
    */
-  private def groupByBucket(
-    candidates: Seq[CandidateWithDetails]
-  ): mutable.ArrayBuffer[mutable.Queue[CandidateWithDetails]] = {
-    val bucketToCandidateGroupIndex = mutable.Map.empty[Bucket, Int]
-    val candidateGroups = mutable.ArrayBuffer[mutable.Queue[CandidateWithDetails]]()
+  pr vate def groupByBucket(
+    cand dates: Seq[Cand dateW hDeta ls]
+  ): mutable.ArrayBuffer[mutable.Queue[Cand dateW hDeta ls]] = {
+    val bucketToCand dateGroup ndex = mutable.Map.empty[Bucket,  nt]
+    val cand dateGroups = mutable.ArrayBuffer[mutable.Queue[Cand dateW hDeta ls]]()
 
-    candidates.foreach { candidate =>
-      val bucket = bucketer(candidate)
+    cand dates.foreach { cand date =>
+      val bucket = bucketer(cand date)
 
-      // Index points to the specific sub-group in candidateGroups where we want to insert the next
-      // candidate. If a bucket has already been seen then this value is known, otherwise we need
-      // to add a new entry for it.
-      if (!bucketToCandidateGroupIndex.contains(bucket)) {
-        candidateGroups.append(mutable.Queue())
-        bucketToCandidateGroupIndex.put(bucket, candidateGroups.length - 1)
+      //  ndex po nts to t  spec f c sub-group  n cand dateGroups w re   want to  nsert t  next
+      // cand date.  f a bucket has already been seen t n t  value  s known, ot rw se   need
+      // to add a new entry for  .
+       f (!bucketToCand dateGroup ndex.conta ns(bucket)) {
+        cand dateGroups.append(mutable.Queue())
+        bucketToCand dateGroup ndex.put(bucket, cand dateGroups.length - 1)
       }
 
-      candidateGroups(bucketToCandidateGroupIndex(bucket)).enqueue(candidate)
+      cand dateGroups(bucketToCand dateGroup ndex(bucket)).enqueue(cand date)
     }
 
-    candidateGroups
+    cand dateGroups
   }
 }

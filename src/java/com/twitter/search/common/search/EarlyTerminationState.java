@@ -1,51 +1,51 @@
-package com.twitter.search.common.search;
+package com.tw ter.search.common.search;
 
-import javax.annotation.Nonnull;
+ mport javax.annotat on.Nonnull;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.search.common.metrics.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
 
 /**
- * This is not an enum to allow different clusters to define their own EarlyTerminationStates.
+ * T   s not an enum to allow d fferent clusters to def ne t  r own EarlyTerm nat onStates.
  */
-public final class EarlyTerminationState {
-  private static final String STATS_PREFIX = "early_termination_";
+publ c f nal class EarlyTerm nat onState {
+  pr vate stat c f nal Str ng STATS_PREF X = "early_term nat on_";
 
-  public static final EarlyTerminationState COLLECTING =
-      new EarlyTerminationState("no_early_termination", false);
-  public static final EarlyTerminationState TERMINATED_TIME_OUT_EXCEEDED =
-      new EarlyTerminationState("terminated_timeout_exceeded", true);
-  public static final EarlyTerminationState TERMINATED_MAX_QUERY_COST_EXCEEDED =
-      new EarlyTerminationState("terminated_max_query_cost_exceeded", true);
-  public static final EarlyTerminationState TERMINATED_MAX_HITS_EXCEEDED =
-      new EarlyTerminationState("terminated_max_hits_exceeded", true);
-  public static final EarlyTerminationState TERMINATED_NUM_RESULTS_EXCEEDED =
-      new EarlyTerminationState("terminated_num_results_exceeded", true);
+  publ c stat c f nal EarlyTerm nat onState COLLECT NG =
+      new EarlyTerm nat onState("no_early_term nat on", false);
+  publ c stat c f nal EarlyTerm nat onState TERM NATED_T ME_OUT_EXCEEDED =
+      new EarlyTerm nat onState("term nated_t  out_exceeded", true);
+  publ c stat c f nal EarlyTerm nat onState TERM NATED_MAX_QUERY_COST_EXCEEDED =
+      new EarlyTerm nat onState("term nated_max_query_cost_exceeded", true);
+  publ c stat c f nal EarlyTerm nat onState TERM NATED_MAX_H TS_EXCEEDED =
+      new EarlyTerm nat onState("term nated_max_h s_exceeded", true);
+  publ c stat c f nal EarlyTerm nat onState TERM NATED_NUM_RESULTS_EXCEEDED =
+      new EarlyTerm nat onState("term nated_num_results_exceeded", true);
 
 
-  // This string can be returned as a part of a search response, to tell the searcher
-  // why the search got early terminated.
-  private final String terminationReason;
-  private final boolean terminated;
-  private final SearchCounter count;
+  // T  str ng can be returned as a part of a search response, to tell t  searc r
+  // why t  search got early term nated.
+  pr vate f nal Str ng term nat onReason;
+  pr vate f nal boolean term nated;
+  pr vate f nal SearchCounter count;
 
-  public EarlyTerminationState(@Nonnull String terminationReason, boolean terminated) {
-    this.terminationReason = Preconditions.checkNotNull(terminationReason);
-    this.terminated = terminated;
-    count = SearchCounter.export(STATS_PREFIX + terminationReason + "_count");
+  publ c EarlyTerm nat onState(@Nonnull Str ng term nat onReason, boolean term nated) {
+    t .term nat onReason = Precond  ons.c ckNotNull(term nat onReason);
+    t .term nated = term nated;
+    count = SearchCounter.export(STATS_PREF X + term nat onReason + "_count");
 
   }
 
-  public boolean isTerminated() {
-    return terminated;
+  publ c boolean  sTerm nated() {
+    return term nated;
   }
 
-  public String getTerminationReason() {
-    return terminationReason;
+  publ c Str ng getTerm nat onReason() {
+    return term nat onReason;
   }
 
-  public void incrementCount() {
-    count.increment();
+  publ c vo d  ncre ntCount() {
+    count. ncre nt();
   }
 }

@@ -1,236 +1,236 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.util.Date;
-import java.util.Optional;
+ mport java.sql.T  stamp;
+ mport java.text.DateFormat;
+ mport java.text.S mpleDateFormat;
+ mport java.t  .Durat on;
+ mport java.ut l.Date;
+ mport java.ut l.Opt onal;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.earlybird.EarlybirdStatus;
-import com.twitter.search.earlybird.common.NonPagingAssert;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.common.userupdates.UserScrubGeoMap;
-import com.twitter.search.earlybird.common.userupdates.UserTableBuilderFromSnapshot;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.factory.EarlybirdIndexConfigUtil;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common. tr cs.SearchT  r;
+ mport com.tw ter.search.earlyb rd.Earlyb rdStatus;
+ mport com.tw ter.search.earlyb rd.common.NonPag ngAssert;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdProperty;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserScrubGeoMap;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserTableBu lderFromSnapshot;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserTable;
+ mport com.tw ter.search.earlyb rd.factory.Earlyb rd ndexConf gUt l;
 
 /**
- * Indexer class responsible for getting the the {@link UserTable} and {@link UserScrubGeoMap}
- * indexed up until the current moment.
+ *  ndexer class respons ble for gett ng t  t  {@l nk UserTable} and {@l nk UserScrubGeoMap}
+ *  ndexed up unt l t  current mo nt.
  */
-public class StartupUserEventIndexer {
-  private static final Logger LOG = LoggerFactory.getLogger(StartupUserEventIndexer.class);
-  private static final String LOAD_USER_UPDATE_SNAPSHOT =
-      "loading user update snapshot";
-  private static final String INDEX_ALL_USER_EVENTS =
-      "indexing all user events";
-  private static final NonPagingAssert FAILED_USER_TABLE_HDFS_LOAD
-      = new NonPagingAssert("failed_user_table_hdfs_load");
+publ c class StartupUserEvent ndexer {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(StartupUserEvent ndexer.class);
+  pr vate stat c f nal Str ng LOAD_USER_UPDATE_SNAPSHOT =
+      "load ng user update snapshot";
+  pr vate stat c f nal Str ng  NDEX_ALL_USER_EVENTS =
+      " ndex ng all user events";
+  pr vate stat c f nal NonPag ngAssert FA LED_USER_TABLE_HDFS_LOAD
+      = new NonPag ngAssert("fa led_user_table_hdfs_load");
 
-  private static final long MAX_RETRY_MILLIS_FOR_SEEK_TO_TIMESTAMP =
-      Duration.ofMinutes(1).toMillis();
-  private static final long SLEEP_MILLIS_BETWEEN_RETRIES_FOR_SEEK_TO_TIMESTAMP =
-      Duration.ofSeconds(1).toMillis();
+  pr vate stat c f nal long MAX_RETRY_M LL S_FOR_SEEK_TO_T MESTAMP =
+      Durat on.ofM nutes(1).toM ll s();
+  pr vate stat c f nal long SLEEP_M LL S_BETWEEN_RETR ES_FOR_SEEK_TO_T MESTAMP =
+      Durat on.ofSeconds(1).toM ll s();
 
-  private static final long MILLIS_IN_FOURTEEN_DAYS = 1209600000;
-  private static final long MILLIS_IN_ONE_DAY = 86400000;
+  pr vate stat c f nal long M LL S_ N_FOURTEEN_DAYS = 1209600000;
+  pr vate stat c f nal long M LL S_ N_ONE_DAY = 86400000;
 
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  private final UserUpdatesStreamIndexer userUpdatesStreamIndexer;
-  private final UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer;
-  private final SegmentManager segmentManager;
-  private final Clock clock;
+  pr vate f nal Search ndex ng tr cSet search ndex ng tr cSet;
+  pr vate f nal UserUpdatesStream ndexer userUpdatesStream ndexer;
+  pr vate f nal UserScrubGeoEventStream ndexer userScrubGeoEventStream ndexer;
+  pr vate f nal Seg ntManager seg ntManager;
+  pr vate f nal Clock clock;
 
-  public StartupUserEventIndexer(
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      UserUpdatesStreamIndexer userUpdatesStreamIndexer,
-      UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer,
-      SegmentManager segmentManager,
+  publ c StartupUserEvent ndexer(
+      Search ndex ng tr cSet search ndex ng tr cSet,
+      UserUpdatesStream ndexer userUpdatesStream ndexer,
+      UserScrubGeoEventStream ndexer userScrubGeoEventStream ndexer,
+      Seg ntManager seg ntManager,
       Clock clock) {
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.userUpdatesStreamIndexer = userUpdatesStreamIndexer;
-    this.userScrubGeoEventStreamIndexer = userScrubGeoEventStreamIndexer;
-    this.segmentManager = segmentManager;
-    this.clock = clock;
+    t .search ndex ng tr cSet = search ndex ng tr cSet;
+    t .userUpdatesStream ndexer = userUpdatesStream ndexer;
+    t .userScrubGeoEventStream ndexer = userScrubGeoEventStream ndexer;
+    t .seg ntManager = seg ntManager;
+    t .clock = clock;
   }
 
   /**
-   * Index all user events.
+   *  ndex all user events.
    */
-  public void indexAllEvents() {
-    EarlybirdStatus.beginEvent(
-        INDEX_ALL_USER_EVENTS, searchIndexingMetricSet.startupInUserEventIndexer);
+  publ c vo d  ndexAllEvents() {
+    Earlyb rdStatus.beg nEvent(
+         NDEX_ALL_USER_EVENTS, search ndex ng tr cSet.startup nUserEvent ndexer);
 
-    indexUserUpdates();
-    if (EarlybirdConfig.consumeUserScrubGeoEvents()) {
-      indexUserScrubGeoEvents();
+     ndexUserUpdates();
+     f (Earlyb rdConf g.consu UserScrubGeoEvents()) {
+       ndexUserScrubGeoEvents();
     }
 
-    EarlybirdStatus.endEvent(
-        INDEX_ALL_USER_EVENTS, searchIndexingMetricSet.startupInUserEventIndexer);
+    Earlyb rdStatus.endEvent(
+         NDEX_ALL_USER_EVENTS, search ndex ng tr cSet.startup nUserEvent ndexer);
   }
 
   /**
-   * Index user updates until current.
+   *  ndex user updates unt l current.
    */
-  public void indexUserUpdates() {
-    EarlybirdStatus.beginEvent(
-        LOAD_USER_UPDATE_SNAPSHOT, searchIndexingMetricSet.startupInUserUpdates);
+  publ c vo d  ndexUserUpdates() {
+    Earlyb rdStatus.beg nEvent(
+        LOAD_USER_UPDATE_SNAPSHOT, search ndex ng tr cSet.startup nUserUpdates);
 
-    Optional<UserTable> userTable = buildUserTable();
-    if (userTable.isPresent()) {
-      segmentManager.getUserTable().setTable(userTable.get());
-      LOG.info("Set new user table.");
+    Opt onal<UserTable> userTable = bu ldUserTable();
+     f (userTable. sPresent()) {
+      seg ntManager.getUserTable().setTable(userTable.get());
+      LOG. nfo("Set new user table.");
 
-      if (!seekToTimestampWithRetriesIfNecessary(
-          userTable.get().getLastRecordTimestamp(),
-          userUpdatesStreamIndexer)) {
-        LOG.error("User Updates stream indexer unable to seek to timestamp. "
-            + "Will seek to beginning.");
-        userUpdatesStreamIndexer.seekToBeginning();
+       f (!seekToT  stampW hRetr es fNecessary(
+          userTable.get().getLastRecordT  stamp(),
+          userUpdatesStream ndexer)) {
+        LOG.error("User Updates stream  ndexer unable to seek to t  stamp. "
+            + "W ll seek to beg nn ng.");
+        userUpdatesStream ndexer.seekToBeg nn ng();
       }
     } else {
-      LOG.info("Failed to load user update snapshot. Will reindex user updates from scratch.");
-      FAILED_USER_TABLE_HDFS_LOAD.assertFailed();
-      userUpdatesStreamIndexer.seekToBeginning();
+      LOG. nfo("Fa led to load user update snapshot. W ll re ndex user updates from scratch.");
+      FA LED_USER_TABLE_HDFS_LOAD.assertFa led();
+      userUpdatesStream ndexer.seekToBeg nn ng();
     }
 
-    userUpdatesStreamIndexer.readRecordsUntilCurrent();
-    LOG.info("Finished catching up on user updates via Kafka");
+    userUpdatesStream ndexer.readRecordsUnt lCurrent();
+    LOG. nfo("F n s d catch ng up on user updates v a Kafka");
 
-    EarlybirdStatus.endEvent(
-        LOAD_USER_UPDATE_SNAPSHOT, searchIndexingMetricSet.startupInUserUpdates);
+    Earlyb rdStatus.endEvent(
+        LOAD_USER_UPDATE_SNAPSHOT, search ndex ng tr cSet.startup nUserUpdates);
   }
 
   /**
-   * Index UserScrubGeoEvents until current.
+   *  ndex UserScrubGeoEvents unt l current.
    */
-  public void indexUserScrubGeoEvents() {
-    seekUserScrubGeoEventKafkaConsumer();
+  publ c vo d  ndexUserScrubGeoEvents() {
+    seekUserScrubGeoEventKafkaConsu r();
 
-    SearchTimer timer = new SearchTimer();
-    timer.start();
-    userScrubGeoEventStreamIndexer.readRecordsUntilCurrent();
-    timer.stop();
+    SearchT  r t  r = new SearchT  r();
+    t  r.start();
+    userScrubGeoEventStream ndexer.readRecordsUnt lCurrent();
+    t  r.stop();
 
-    LOG.info("Finished catching up on user scrub geo events via Kafka");
-    LOG.info("UserScrubGeoMap contains {} users and finished in {} milliseconds",
-        segmentManager.getUserScrubGeoMap().getNumUsersInMap(), timer.getElapsed());
+    LOG. nfo("F n s d catch ng up on user scrub geo events v a Kafka");
+    LOG. nfo("UserScrubGeoMap conta ns {} users and f n s d  n {} m ll seconds",
+        seg ntManager.getUserScrubGeoMap().getNumUsers nMap(), t  r.getElapsed());
   }
 
   /**
-   * Seeks UserScrubGeoEventKafkaConsumer using timestamp derived from
-   * getTimestampForUserScrubGeoEventKafkaConsumer().
+   * Seeks UserScrubGeoEventKafkaConsu r us ng t  stamp der ved from
+   * getT  stampForUserScrubGeoEventKafkaConsu r().
    */
-  @VisibleForTesting
-  public void seekUserScrubGeoEventKafkaConsumer() {
-    long seekTimestamp = getTimestampForUserScrubGeoEventKafkaConsumer();
-    if (seekTimestamp == -1) {
-      userScrubGeoEventStreamIndexer.seekToBeginning();
+  @V s bleForTest ng
+  publ c vo d seekUserScrubGeoEventKafkaConsu r() {
+    long seekT  stamp = getT  stampForUserScrubGeoEventKafkaConsu r();
+     f (seekT  stamp == -1) {
+      userScrubGeoEventStream ndexer.seekToBeg nn ng();
     } else {
-      if (!seekToTimestampWithRetriesIfNecessary(seekTimestamp, userScrubGeoEventStreamIndexer)) {
-        LOG.error("User Scrub Geo stream indexer unable to seek to timestamp. "
-            + "Will seek to beginning.");
-        userScrubGeoEventStreamIndexer.seekToBeginning();
+       f (!seekToT  stampW hRetr es fNecessary(seekT  stamp, userScrubGeoEventStream ndexer)) {
+        LOG.error("User Scrub Geo stream  ndexer unable to seek to t  stamp. "
+            + "W ll seek to beg nn ng.");
+        userScrubGeoEventStream ndexer.seekToBeg nn ng();
       }
     }
   }
 
   /**
-   * Get timestamp to seek UserScrubGeoEventKafkaConsumer to.
+   * Get t  stamp to seek UserScrubGeoEventKafkaConsu r to.
    * @return
    */
-  public long getTimestampForUserScrubGeoEventKafkaConsumer() {
-    if (EarlybirdIndexConfigUtil.isArchiveSearch()) {
-      return getTimestampForArchive();
+  publ c long getT  stampForUserScrubGeoEventKafkaConsu r() {
+     f (Earlyb rd ndexConf gUt l. sArch veSearch()) {
+      return getT  stampForArch ve();
     } else {
-      return getTimestampForRealtime();
+      return getT  stampForRealt  ();
     }
   }
 
   /**
-   * For archive: grab scrub gen from config file and convert date into a timestamp. Add buffer of
-   * one day. We need all UserScrubGeoEvents since the date of the current scrub gen.
+   * For arch ve: grab scrub gen from conf g f le and convert date  nto a t  stamp. Add buffer of
+   * one day.   need all UserScrubGeoEvents s nce t  date of t  current scrub gen.
    *
-   * See go/realtime-geo-filtering
+   * See go/realt  -geo-f lter ng
    * @return
    */
-  public long getTimestampForArchive() {
+  publ c long getT  stampForArch ve() {
     try {
-      String scrubGenString = EarlybirdProperty.EARLYBIRD_SCRUB_GEN.get();
+      Str ng scrubGenStr ng = Earlyb rdProperty.EARLYB RD_SCRUB_GEN.get();
 
-      DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-      Date date = dateFormat.parse(scrubGenString);
-      return new Timestamp(date.getTime()).getTime() - MILLIS_IN_ONE_DAY;
+      DateFormat dateFormat = new S mpleDateFormat("yyyyMMdd");
+      Date date = dateFormat.parse(scrubGenStr ng);
+      return new T  stamp(date.getT  ()).getT  () - M LL S_ N_ONE_DAY;
 
-    } catch (Exception e) {
-      LOG.error("Could not derive timestamp from scrub gen. "
-          + "Will seek User Scrub Geo Kafka consumer to beginning of topic");
+    } catch (Except on e) {
+      LOG.error("Could not der ve t  stamp from scrub gen. "
+          + "W ll seek User Scrub Geo Kafka consu r to beg nn ng of top c");
     }
     return -1;
   }
 
   /**
-   * For realtime/protected: Compute the timestamp 14 days from the current time. This will account
-   * for all events that have occurred during the lifecylce of the current index.
+   * For realt  /protected: Compute t  t  stamp 14 days from t  current t  . T  w ll account
+   * for all events that have occurred dur ng t  l fecylce of t  current  ndex.
    *
-   * See go/realtime-geo-filtering
+   * See go/realt  -geo-f lter ng
    */
-  public long getTimestampForRealtime() {
-   return System.currentTimeMillis() - MILLIS_IN_FOURTEEN_DAYS;
+  publ c long getT  stampForRealt  () {
+   return System.currentT  M ll s() - M LL S_ N_FOURTEEN_DAYS;
   }
 
-  private boolean seekToTimestampWithRetriesIfNecessary(
-      long lastRecordTimestamp,
-      SimpleStreamIndexer streamIndexer) {
-    long initialTimeMillis = clock.nowMillis();
-    int numFailures = 0;
-    while (shouldTrySeekToTimestamp(initialTimeMillis, numFailures)) {
+  pr vate boolean seekToT  stampW hRetr es fNecessary(
+      long lastRecordT  stamp,
+      S mpleStream ndexer stream ndexer) {
+    long  n  alT  M ll s = clock.nowM ll s();
+     nt numFa lures = 0;
+    wh le (shouldTrySeekToT  stamp( n  alT  M ll s, numFa lures)) {
       try {
-        streamIndexer.seekToTimestamp(lastRecordTimestamp);
-        LOG.info("Seeked consumer to timestamp {} after {} failures",
-            lastRecordTimestamp, numFailures);
+        stream ndexer.seekToT  stamp(lastRecordT  stamp);
+        LOG. nfo("Seeked consu r to t  stamp {} after {} fa lures",
+            lastRecordT  stamp, numFa lures);
         return true;
-      } catch (Exception e) {
-        numFailures++;
-        LOG.info("Caught exception when seeking to timestamp. Num failures: {}. Exception: {}",
-            numFailures, e);
-        // Sleep before attempting to retry
+      } catch (Except on e) {
+        numFa lures++;
+        LOG. nfo("Caught except on w n seek ng to t  stamp. Num fa lures: {}. Except on: {}",
+            numFa lures, e);
+        // Sleep before attempt ng to retry
         try {
-          clock.waitFor(SLEEP_MILLIS_BETWEEN_RETRIES_FOR_SEEK_TO_TIMESTAMP);
-        } catch (InterruptedException interruptedException) {
-          LOG.warn("Interrupted while sleeping between seekToTimestamp retries",
-              interruptedException);
-          // Preserve interrupt status.
-          Thread.currentThread().interrupt();
+          clock.wa For(SLEEP_M LL S_BETWEEN_RETR ES_FOR_SEEK_TO_T MESTAMP);
+        } catch ( nterruptedExcept on  nterruptedExcept on) {
+          LOG.warn(" nterrupted wh le sleep ng bet en seekToT  stamp retr es",
+               nterruptedExcept on);
+          // Preserve  nterrupt status.
+          Thread.currentThread(). nterrupt();
           break;
         }
       }
     }
-    // Failed to seek to timestamp
+    // Fa led to seek to t  stamp
     return false;
   }
 
-  private boolean shouldTrySeekToTimestamp(long initialTimeMillis, int numFailures) {
-    if (numFailures == 0) {
-      // no attempts have been made yet, so we should try to seek to timestamp
+  pr vate boolean shouldTrySeekToT  stamp(long  n  alT  M ll s,  nt numFa lures) {
+     f (numFa lures == 0) {
+      // no attempts have been made yet, so   should try to seek to t  stamp
       return true;
     } else {
-      return clock.nowMillis() - initialTimeMillis < MAX_RETRY_MILLIS_FOR_SEEK_TO_TIMESTAMP;
+      return clock.nowM ll s() -  n  alT  M ll s < MAX_RETRY_M LL S_FOR_SEEK_TO_T MESTAMP;
     }
   }
 
-  protected Optional<UserTable> buildUserTable() {
-    UserTableBuilderFromSnapshot builder = new UserTableBuilderFromSnapshot();
-    return builder.build(segmentManager.getUserTable().getUserIdFilter());
+  protected Opt onal<UserTable> bu ldUserTable() {
+    UserTableBu lderFromSnapshot bu lder = new UserTableBu lderFromSnapshot();
+    return bu lder.bu ld(seg ntManager.getUserTable().getUser dF lter());
   }
 }

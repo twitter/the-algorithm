@@ -1,49 +1,49 @@
-package com.twitter.product_mixer.core.pipeline.mixer
+package com.tw ter.product_m xer.core.p pel ne.m xer
 
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.model.common.identifier.MixerPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.FailOpenPolicy
-import com.twitter.product_mixer.core.pipeline.PipelineConfig
-import com.twitter.product_mixer.core.pipeline.PipelineConfigCompanion
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.product_mixer.core.pipeline.candidate.DependentCandidatePipelineConfig
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ClosedGate
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.quality_factor.QualityFactorConfig
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.Gate
+ mport com.tw ter.product_m xer.core.funct onal_component.premarshaller.Doma nMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.s de_effect.P pel neResultS deEffect
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.TransportMarshaller
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f erStack
+ mport com.tw ter.product_m xer.core.model.common. dent f er.M xerP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.P pel neStep dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.HasMarshall ng
+ mport com.tw ter.product_m xer.core.p pel ne.Fa lOpenPol cy
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neConf g
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neConf gCompan on
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neConf g
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.DependentCand dateP pel neConf g
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.ClosedGate
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.qual y_factor.Qual yFactorConf g
 
 /**
- *  This is the configuration necessary to generate a Mixer Pipeline. Product code should create a
- *  MixerPipelineConfig, and then use a MixerPipelineBuilder to get the final MixerPipeline which can
+ *  T   s t  conf gurat on necessary to generate a M xer P pel ne. Product code should create a
+ *  M xerP pel neConf g, and t n use a M xerP pel neBu lder to get t  f nal M xerP pel ne wh ch can
  *  process requests.
  *
- * @tparam Query - The domain model for the query or request
- * @tparam UnmarshalledResultType - The result type of the pipeline, but before marshalling to a wire protocol like URT
- * @tparam Result - The final result that will be served to users
+ * @tparam Query - T  doma n model for t  query or request
+ * @tparam UnmarshalledResultType - T  result type of t  p pel ne, but before marshall ng to a w re protocol l ke URT
+ * @tparam Result - T  f nal result that w ll be served to users
  */
-trait MixerPipelineConfig[Query <: PipelineQuery, UnmarshalledResultType <: HasMarshalling, Result]
-    extends PipelineConfig {
+tra  M xerP pel neConf g[Query <: P pel neQuery, UnmarshalledResultType <: HasMarshall ng, Result]
+    extends P pel neConf g {
 
-  override val identifier: MixerPipelineIdentifier
+  overr de val  dent f er: M xerP pel ne dent f er
 
   /**
-   * Mixer Pipeline Gates will be executed before any other step (including retrieval from candidate
-   * pipelines). They're executed sequentially, and any "Stop" result will prevent pipeline execution.
+   * M xer P pel ne Gates w ll be executed before any ot r step ( nclud ng retr eval from cand date
+   * p pel nes). T y're executed sequent ally, and any "Stop" result w ll prevent p pel ne execut on.
    */
   def gates: Seq[Gate[Query]] = Seq.empty
 
   /**
-   * A mixer pipeline can fetch query-level features before candidate pipelines are executed.
+   * A m xer p pel ne can fetch query-level features before cand date p pel nes are executed.
    */
   def fetchQueryFeatures: Seq[QueryFeatureHydrator[Query]] = Seq.empty
 
@@ -53,123 +53,123 @@ trait MixerPipelineConfig[Query <: PipelineQuery, UnmarshalledResultType <: HasM
   def fetchQueryFeaturesPhase2: Seq[QueryFeatureHydrator[Query]] = Seq.empty
 
   /**
-   * Candidate pipelines retrieve candidates for possible inclusion in the result
+   * Cand date p pel nes retr eve cand dates for poss ble  nclus on  n t  result
    */
-  def candidatePipelines: Seq[CandidatePipelineConfig[Query, _, _, _]]
+  def cand dateP pel nes: Seq[Cand dateP pel neConf g[Query, _, _, _]]
 
   /**
-   * Dependent candidate pipelines to retrieve candidates that depend on the result of [[candidatePipelines]]
-   * [[DependentCandidatePipelineConfig]] have access to the list of previously retrieved & decorated
-   * candidates for use in constructing the query object.
+   * Dependent cand date p pel nes to retr eve cand dates that depend on t  result of [[cand dateP pel nes]]
+   * [[DependentCand dateP pel neConf g]] have access to t  l st of prev ously retr eved & decorated
+   * cand dates for use  n construct ng t  query object.
    */
-  def dependentCandidatePipelines: Seq[DependentCandidatePipelineConfig[Query, _, _, _]] = Seq.empty
+  def dependentCand dateP pel nes: Seq[DependentCand dateP pel neConf g[Query, _, _, _]] = Seq.empty
 
   /**
-   * [[defaultFailOpenPolicy]] is the [[FailOpenPolicy]] that will be applied to any candidate
-   * pipeline that isn't in the [[failOpenPolicies]] map. By default Candidate Pipelines will fail
+   * [[defaultFa lOpenPol cy]]  s t  [[Fa lOpenPol cy]] that w ll be appl ed to any cand date
+   * p pel ne that  sn't  n t  [[fa lOpenPol c es]] map. By default Cand date P pel nes w ll fa l
    * open for Closed Gates only.
    */
-  def defaultFailOpenPolicy: FailOpenPolicy = FailOpenPolicy(Set(ClosedGate))
+  def defaultFa lOpenPol cy: Fa lOpenPol cy = Fa lOpenPol cy(Set(ClosedGate))
 
   /**
-   * [[failOpenPolicies]] associates [[FailOpenPolicy]]s to specific candidate pipelines using
-   * [[CandidatePipelineIdentifier]].
+   * [[fa lOpenPol c es]] assoc ates [[Fa lOpenPol cy]]s to spec f c cand date p pel nes us ng
+   * [[Cand dateP pel ne dent f er]].
    *
-   * @note these [[FailOpenPolicy]]s override the [[defaultFailOpenPolicy]] for a mapped
-   *       Candidate Pipeline.
+   * @note t se [[Fa lOpenPol cy]]s overr de t  [[defaultFa lOpenPol cy]] for a mapped
+   *       Cand date P pel ne.
    */
-  def failOpenPolicies: Map[CandidatePipelineIdentifier, FailOpenPolicy] = Map.empty
+  def fa lOpenPol c es: Map[Cand dateP pel ne dent f er, Fa lOpenPol cy] = Map.empty
 
   /**
-   ** [[qualityFactorConfigs]] associates [[QualityFactorConfig]]s to specific candidate pipelines
-   * using [[CandidatePipelineIdentifier]].
+   ** [[qual yFactorConf gs]] assoc ates [[Qual yFactorConf g]]s to spec f c cand date p pel nes
+   * us ng [[Cand dateP pel ne dent f er]].
    */
-  def qualityFactorConfigs: Map[CandidatePipelineIdentifier, QualityFactorConfig] =
+  def qual yFactorConf gs: Map[Cand dateP pel ne dent f er, Qual yFactorConf g] =
     Map.empty
 
   /**
-   * Selectors are executed in sequential order to combine the candidates into a result
+   * Selectors are executed  n sequent al order to comb ne t  cand dates  nto a result
    */
   def resultSelectors: Seq[Selector[Query]]
 
   /**
-   * Mixer result side effects that are executed after selection and domain marshalling
+   * M xer result s de effects that are executed after select on and doma n marshall ng
    */
-  def resultSideEffects: Seq[PipelineResultSideEffect[Query, UnmarshalledResultType]] = Seq()
+  def resultS deEffects: Seq[P pel neResultS deEffect[Query, UnmarshalledResultType]] = Seq()
 
   /**
-   * Domain marshaller transforms the selections into the model expected by the marshaller
+   * Doma n marshaller transforms t  select ons  nto t  model expected by t  marshaller
    */
-  def domainMarshaller: DomainMarshaller[Query, UnmarshalledResultType]
+  def doma nMarshaller: Doma nMarshaller[Query, UnmarshalledResultType]
 
   /**
-   * Transport marshaller transforms the model into our line-level API like URT or JSON
+   * Transport marshaller transforms t  model  nto   l ne-level AP  l ke URT or JSON
    */
   def transportMarshaller: TransportMarshaller[UnmarshalledResultType, Result]
 
   /**
-   * A pipeline can define a partial function to rescue failures here. They will be treated as failures
-   * from a monitoring standpoint, and cancellation exceptions will always be propagated (they cannot be caught here).
+   * A p pel ne can def ne a part al funct on to rescue fa lures  re. T y w ll be treated as fa lures
+   * from a mon or ng standpo nt, and cancellat on except ons w ll always be propagated (t y cannot be caught  re).
    */
-  def failureClassifier: PartialFunction[Throwable, PipelineFailure] = PartialFunction.empty
+  def fa lureClass f er: Part alFunct on[Throwable, P pel neFa lure] = Part alFunct on.empty
 
   /**
-   * Alert can be used to indicate the pipeline's service level objectives. Alerts and
-   * dashboards will be automatically created based on this information.
+   * Alert can be used to  nd cate t  p pel ne's serv ce level object ves. Alerts and
+   * dashboards w ll be automat cally created based on t   nformat on.
    */
   val alerts: Seq[Alert] = Seq.empty
 
   /**
-   * This method is used by the product mixer framework to build the pipeline.
+   * T   thod  s used by t  product m xer fra work to bu ld t  p pel ne.
    */
-  private[core] final def build(
-    parentComponentIdentifierStack: ComponentIdentifierStack,
-    builder: MixerPipelineBuilderFactory
-  ): MixerPipeline[Query, Result] =
-    builder.get.build(parentComponentIdentifierStack, this)
+  pr vate[core] f nal def bu ld(
+    parentComponent dent f erStack: Component dent f erStack,
+    bu lder: M xerP pel neBu lderFactory
+  ): M xerP pel ne[Query, Result] =
+    bu lder.get.bu ld(parentComponent dent f erStack, t )
 }
 
-object MixerPipelineConfig extends PipelineConfigCompanion {
-  val qualityFactorStep: PipelineStepIdentifier = PipelineStepIdentifier("QualityFactor")
-  val gatesStep: PipelineStepIdentifier = PipelineStepIdentifier("Gates")
-  val fetchQueryFeaturesStep: PipelineStepIdentifier = PipelineStepIdentifier("FetchQueryFeatures")
-  val fetchQueryFeaturesPhase2Step: PipelineStepIdentifier =
-    PipelineStepIdentifier("FetchQueryFeaturesPhase2")
-  val candidatePipelinesStep: PipelineStepIdentifier = PipelineStepIdentifier("CandidatePipelines")
-  val dependentCandidatePipelinesStep: PipelineStepIdentifier =
-    PipelineStepIdentifier("DependentCandidatePipelines")
-  val resultSelectorsStep: PipelineStepIdentifier = PipelineStepIdentifier("ResultSelectors")
-  val domainMarshallerStep: PipelineStepIdentifier = PipelineStepIdentifier("DomainMarshaller")
-  val resultSideEffectsStep: PipelineStepIdentifier = PipelineStepIdentifier("ResultSideEffects")
-  val transportMarshallerStep: PipelineStepIdentifier = PipelineStepIdentifier(
+object M xerP pel neConf g extends P pel neConf gCompan on {
+  val qual yFactorStep: P pel neStep dent f er = P pel neStep dent f er("Qual yFactor")
+  val gatesStep: P pel neStep dent f er = P pel neStep dent f er("Gates")
+  val fetchQueryFeaturesStep: P pel neStep dent f er = P pel neStep dent f er("FetchQueryFeatures")
+  val fetchQueryFeaturesPhase2Step: P pel neStep dent f er =
+    P pel neStep dent f er("FetchQueryFeaturesPhase2")
+  val cand dateP pel nesStep: P pel neStep dent f er = P pel neStep dent f er("Cand dateP pel nes")
+  val dependentCand dateP pel nesStep: P pel neStep dent f er =
+    P pel neStep dent f er("DependentCand dateP pel nes")
+  val resultSelectorsStep: P pel neStep dent f er = P pel neStep dent f er("ResultSelectors")
+  val doma nMarshallerStep: P pel neStep dent f er = P pel neStep dent f er("Doma nMarshaller")
+  val resultS deEffectsStep: P pel neStep dent f er = P pel neStep dent f er("ResultS deEffects")
+  val transportMarshallerStep: P pel neStep dent f er = P pel neStep dent f er(
     "TransportMarshaller")
 
-  /** All the Steps which are executed by a [[MixerPipeline]] in the order in which they are run */
-  override val stepsInOrder: Seq[PipelineStepIdentifier] = Seq(
-    qualityFactorStep,
+  /** All t  Steps wh ch are executed by a [[M xerP pel ne]]  n t  order  n wh ch t y are run */
+  overr de val steps nOrder: Seq[P pel neStep dent f er] = Seq(
+    qual yFactorStep,
     gatesStep,
     fetchQueryFeaturesStep,
     fetchQueryFeaturesPhase2Step,
-    asyncFeaturesStep(candidatePipelinesStep),
-    candidatePipelinesStep,
-    asyncFeaturesStep(dependentCandidatePipelinesStep),
-    dependentCandidatePipelinesStep,
+    asyncFeaturesStep(cand dateP pel nesStep),
+    cand dateP pel nesStep,
+    asyncFeaturesStep(dependentCand dateP pel nesStep),
+    dependentCand dateP pel nesStep,
     asyncFeaturesStep(resultSelectorsStep),
     resultSelectorsStep,
-    domainMarshallerStep,
-    asyncFeaturesStep(resultSideEffectsStep),
-    resultSideEffectsStep,
+    doma nMarshallerStep,
+    asyncFeaturesStep(resultS deEffectsStep),
+    resultS deEffectsStep,
     transportMarshallerStep
   )
 
   /**
-   * All the Steps which an [[com.twitter.product_mixer.core.functional_component.feature_hydrator.AsyncHydrator AsyncHydrator]]
-   * can be configured to [[com.twitter.product_mixer.core.functional_component.feature_hydrator.AsyncHydrator.hydrateBefore hydrateBefore]]
+   * All t  Steps wh ch an [[com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.AsyncHydrator AsyncHydrator]]
+   * can be conf gured to [[com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.AsyncHydrator.hydrateBefore hydrateBefore]]
    */
-  override val stepsAsyncFeatureHydrationCanBeCompletedBy: Set[PipelineStepIdentifier] = Set(
-    candidatePipelinesStep,
-    dependentCandidatePipelinesStep,
+  overr de val stepsAsyncFeatureHydrat onCanBeCompletedBy: Set[P pel neStep dent f er] = Set(
+    cand dateP pel nesStep,
+    dependentCand dateP pel nesStep,
     resultSelectorsStep,
-    resultSideEffectsStep
+    resultS deEffectsStep
   )
 }

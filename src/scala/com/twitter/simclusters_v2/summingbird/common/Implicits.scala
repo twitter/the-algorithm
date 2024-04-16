@@ -1,140 +1,140 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.tw ter.s mclusters_v2.summ ngb rd.common
 
-import com.twitter.algebird.DecayedValueMonoid
-import com.twitter.algebird.Monoid
-import com.twitter.algebird_internal.injection.AlgebirdImplicits
-import com.twitter.algebird_internal.thriftscala.{DecayedValue => ThriftDecayedValue}
-import com.twitter.bijection.Bufferable
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.simclusters_v2.summingbird.common.Monoids.ClustersWithScoresMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.MultiModelClustersWithScoresMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.MultiModelPersistentSimClustersEmbeddingLongestL2NormMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.MultiModelPersistentSimClustersEmbeddingMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.MultiModelTopKTweetsWithScoresMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.PersistentSimClustersEmbeddingLongestL2NormMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.PersistentSimClustersEmbeddingMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.ScoresMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.TopKClustersWithScoresMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.TopKTweetsWithScoresMonoid
-import com.twitter.simclusters_v2.thriftscala.FullClusterIdBucket
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.summingbird.batch.Batcher
-import com.twitter.tweetypie.thriftscala.StatusCounts
+ mport com.tw ter.algeb rd.DecayedValueMono d
+ mport com.tw ter.algeb rd.Mono d
+ mport com.tw ter.algeb rd_ nternal. nject on.Algeb rd mpl c s
+ mport com.tw ter.algeb rd_ nternal.thr ftscala.{DecayedValue => Thr ftDecayedValue}
+ mport com.tw ter.b ject on.Bufferable
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.b ject on.scrooge.CompactScalaCodec
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.Mono ds.ClustersW hScoresMono d
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.Mono ds.Mult ModelClustersW hScoresMono d
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.Mono ds.Mult ModelPers stentS mClustersEmbedd ngLongestL2NormMono d
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.Mono ds.Mult ModelPers stentS mClustersEmbedd ngMono d
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.Mono ds.Mult ModelTopKT etsW hScoresMono d
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.Mono ds.Pers stentS mClustersEmbedd ngLongestL2NormMono d
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.Mono ds.Pers stentS mClustersEmbedd ngMono d
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.Mono ds.ScoresMono d
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.Mono ds.TopKClustersW hScoresMono d
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.Mono ds.TopKT etsW hScoresMono d
+ mport com.tw ter.s mclusters_v2.thr ftscala.FullCluster dBucket
+ mport com.tw ter.s mclusters_v2.thr ftscala._
+ mport com.tw ter.summ ngb rd.batch.Batc r
+ mport com.tw ter.t etyp e.thr ftscala.StatusCounts
 
-object Implicits {
+object  mpl c s {
 
-  // -------------------- Monoids -------------------- //
-  implicit val decayedValueMonoid: DecayedValueMonoid = DecayedValueMonoid(0.0)
+  // -------------------- Mono ds -------------------- //
+   mpl c  val decayedValueMono d: DecayedValueMono d = DecayedValueMono d(0.0)
 
-  implicit val thriftDecayedValueMonoid: ThriftDecayedValueMonoid =
-    new ThriftDecayedValueMonoid(Configs.HalfLifeInMs)(decayedValueMonoid)
+   mpl c  val thr ftDecayedValueMono d: Thr ftDecayedValueMono d =
+    new Thr ftDecayedValueMono d(Conf gs.HalfL fe nMs)(decayedValueMono d)
 
-  implicit val scoresMonoid: ScoresMonoid = new Monoids.ScoresMonoid()
+   mpl c  val scoresMono d: ScoresMono d = new Mono ds.ScoresMono d()
 
-  implicit val clustersWithScoreMonoid: ClustersWithScoresMonoid =
-    new Monoids.ClustersWithScoresMonoid()(scoresMonoid)
+   mpl c  val clustersW hScoreMono d: ClustersW hScoresMono d =
+    new Mono ds.ClustersW hScoresMono d()(scoresMono d)
 
-  implicit val multiModelClustersWithScoresMonoid: Monoid[MultiModelClustersWithScores] =
-    new MultiModelClustersWithScoresMonoid()
+   mpl c  val mult ModelClustersW hScoresMono d: Mono d[Mult ModelClustersW hScores] =
+    new Mult ModelClustersW hScoresMono d()
 
-  implicit val topKClustersWithScoresMonoid: Monoid[TopKClustersWithScores] =
-    new TopKClustersWithScoresMonoid(
-      Configs.topKClustersPerEntity,
-      Configs.scoreThresholdForEntityTopKClustersCache
-    )(thriftDecayedValueMonoid)
+   mpl c  val topKClustersW hScoresMono d: Mono d[TopKClustersW hScores] =
+    new TopKClustersW hScoresMono d(
+      Conf gs.topKClustersPerEnt y,
+      Conf gs.scoreThresholdForEnt yTopKClustersCac 
+    )(thr ftDecayedValueMono d)
 
-  implicit val topKTweetsWithScoresMonoid: Monoid[TopKTweetsWithScores] =
-    new TopKTweetsWithScoresMonoid(
-      Configs.topKTweetsPerCluster,
-      Configs.scoreThresholdForClusterTopKTweetsCache,
-      Configs.OldestTweetFavEventTimeInMillis
-    )(thriftDecayedValueMonoid)
+   mpl c  val topKT etsW hScoresMono d: Mono d[TopKT etsW hScores] =
+    new TopKT etsW hScoresMono d(
+      Conf gs.topKT etsPerCluster,
+      Conf gs.scoreThresholdForClusterTopKT etsCac ,
+      Conf gs.OldestT etFavEventT   nM ll s
+    )(thr ftDecayedValueMono d)
 
-  implicit val topKTweetsWithScoresLightMonoid: Monoid[TopKTweetsWithScores] =
-    new TopKTweetsWithScoresMonoid(
-      Configs.topKTweetsPerCluster,
-      Configs.scoreThresholdForClusterTopKTweetsCache,
-      Configs.OldestTweetInLightIndexInMillis
-    )(thriftDecayedValueMonoid)
+   mpl c  val topKT etsW hScoresL ghtMono d: Mono d[TopKT etsW hScores] =
+    new TopKT etsW hScoresMono d(
+      Conf gs.topKT etsPerCluster,
+      Conf gs.scoreThresholdForClusterTopKT etsCac ,
+      Conf gs.OldestT et nL ght ndex nM ll s
+    )(thr ftDecayedValueMono d)
 
-  implicit val MultiModeltopKTweetsWithScoresMonoid: Monoid[MultiModelTopKTweetsWithScores] =
-    new MultiModelTopKTweetsWithScoresMonoid(
-    )(thriftDecayedValueMonoid)
+   mpl c  val Mult ModeltopKT etsW hScoresMono d: Mono d[Mult ModelTopKT etsW hScores] =
+    new Mult ModelTopKT etsW hScoresMono d(
+    )(thr ftDecayedValueMono d)
 
-  implicit val persistentSimClustersEmbeddingMonoid: Monoid[PersistentSimClustersEmbedding] =
-    new PersistentSimClustersEmbeddingMonoid()
+   mpl c  val pers stentS mClustersEmbedd ngMono d: Mono d[Pers stentS mClustersEmbedd ng] =
+    new Pers stentS mClustersEmbedd ngMono d()
 
-  implicit val persistentSimClustersEmbeddingLongestL2NormMonoid: Monoid[
-    PersistentSimClustersEmbedding
+   mpl c  val pers stentS mClustersEmbedd ngLongestL2NormMono d: Mono d[
+    Pers stentS mClustersEmbedd ng
   ] =
-    new PersistentSimClustersEmbeddingLongestL2NormMonoid()
+    new Pers stentS mClustersEmbedd ngLongestL2NormMono d()
 
-  implicit val multiModelPersistentSimClustersEmbeddingMonoid: Monoid[
-    MultiModelPersistentSimClustersEmbedding
+   mpl c  val mult ModelPers stentS mClustersEmbedd ngMono d: Mono d[
+    Mult ModelPers stentS mClustersEmbedd ng
   ] =
-    new MultiModelPersistentSimClustersEmbeddingMonoid()
+    new Mult ModelPers stentS mClustersEmbedd ngMono d()
 
-  implicit val multiModelPersistentSimClustersEmbeddingLongestL2NormMonoid: Monoid[
-    MultiModelPersistentSimClustersEmbedding
-  ] = new MultiModelPersistentSimClustersEmbeddingLongestL2NormMonoid()
+   mpl c  val mult ModelPers stentS mClustersEmbedd ngLongestL2NormMono d: Mono d[
+    Mult ModelPers stentS mClustersEmbedd ng
+  ] = new Mult ModelPers stentS mClustersEmbedd ngLongestL2NormMono d()
 
   // -------------------- Codecs -------------------- //
-  implicit val longIntPairCodec: Injection[(Long, Int), Array[Byte]] =
-    Bufferable.injectionOf[(Long, Int)]
+   mpl c  val long ntPa rCodec:  nject on[(Long,  nt), Array[Byte]] =
+    Bufferable. nject onOf[(Long,  nt)]
 
-  implicit val simClusterEntityCodec: Injection[SimClusterEntity, Array[Byte]] =
-    CompactScalaCodec(SimClusterEntity)
+   mpl c  val s mClusterEnt yCodec:  nject on[S mClusterEnt y, Array[Byte]] =
+    CompactScalaCodec(S mClusterEnt y)
 
-  implicit val fullClusterIdBucket: Injection[FullClusterIdBucket, Array[Byte]] =
-    CompactScalaCodec(FullClusterIdBucket)
+   mpl c  val fullCluster dBucket:  nject on[FullCluster dBucket, Array[Byte]] =
+    CompactScalaCodec(FullCluster dBucket)
 
-  implicit val clustersWithScoresCodec: Injection[ClustersWithScores, Array[Byte]] =
-    CompactScalaCodec(ClustersWithScores)
+   mpl c  val clustersW hScoresCodec:  nject on[ClustersW hScores, Array[Byte]] =
+    CompactScalaCodec(ClustersW hScores)
 
-  implicit val topKClustersKeyCodec: Injection[EntityWithVersion, Array[Byte]] =
-    CompactScalaCodec(EntityWithVersion)
+   mpl c  val topKClustersKeyCodec:  nject on[Ent yW hVers on, Array[Byte]] =
+    CompactScalaCodec(Ent yW hVers on)
 
-  implicit val topKClustersWithScoresCodec: Injection[TopKClustersWithScores, Array[Byte]] =
-    CompactScalaCodec(TopKClustersWithScores)
+   mpl c  val topKClustersW hScoresCodec:  nject on[TopKClustersW hScores, Array[Byte]] =
+    CompactScalaCodec(TopKClustersW hScores)
 
-  implicit val fullClusterIdCodec: Injection[FullClusterId, Array[Byte]] =
-    CompactScalaCodec(FullClusterId)
+   mpl c  val fullCluster dCodec:  nject on[FullCluster d, Array[Byte]] =
+    CompactScalaCodec(FullCluster d)
 
-  implicit val topKEntitiesWithScoresCodec: Injection[TopKEntitiesWithScores, Array[Byte]] =
-    CompactScalaCodec(TopKEntitiesWithScores)
+   mpl c  val topKEnt  esW hScoresCodec:  nject on[TopKEnt  esW hScores, Array[Byte]] =
+    CompactScalaCodec(TopKEnt  esW hScores)
 
-  implicit val topKTweetsWithScoresCodec: Injection[TopKTweetsWithScores, Array[Byte]] =
-    CompactScalaCodec(TopKTweetsWithScores)
+   mpl c  val topKT etsW hScoresCodec:  nject on[TopKT etsW hScores, Array[Byte]] =
+    CompactScalaCodec(TopKT etsW hScores)
 
-  implicit val pairedArrayBytesCodec: Injection[(Array[Byte], Array[Byte]), Array[Byte]] =
-    Bufferable.injectionOf[(Array[Byte], Array[Byte])]
+   mpl c  val pa redArrayBytesCodec:  nject on[(Array[Byte], Array[Byte]), Array[Byte]] =
+    Bufferable. nject onOf[(Array[Byte], Array[Byte])]
 
-  implicit val entityWithClusterInjection: Injection[(SimClusterEntity, FullClusterIdBucket), Array[
+   mpl c  val ent yW hCluster nject on:  nject on[(S mClusterEnt y, FullCluster dBucket), Array[
     Byte
   ]] =
-    Injection
-      .connect[(SimClusterEntity, FullClusterIdBucket), (Array[Byte], Array[Byte]), Array[Byte]]
+     nject on
+      .connect[(S mClusterEnt y, FullCluster dBucket), (Array[Byte], Array[Byte]), Array[Byte]]
 
-  implicit val topKClustersCodec: Injection[TopKClusters, Array[Byte]] =
+   mpl c  val topKClustersCodec:  nject on[TopKClusters, Array[Byte]] =
     CompactScalaCodec(TopKClusters)
 
-  implicit val topKTweetsCodec: Injection[TopKTweets, Array[Byte]] =
-    CompactScalaCodec(TopKTweets)
+   mpl c  val topKT etsCodec:  nject on[TopKT ets, Array[Byte]] =
+    CompactScalaCodec(TopKT ets)
 
-  implicit val simClustersEmbeddingCodec: Injection[SimClustersEmbedding, Array[Byte]] =
-    CompactScalaCodec(SimClustersEmbedding)
+   mpl c  val s mClustersEmbedd ngCodec:  nject on[S mClustersEmbedd ng, Array[Byte]] =
+    CompactScalaCodec(S mClustersEmbedd ng)
 
-  implicit val persistentSimClustersEmbeddingCodec: Injection[PersistentSimClustersEmbedding, Array[
+   mpl c  val pers stentS mClustersEmbedd ngCodec:  nject on[Pers stentS mClustersEmbedd ng, Array[
     Byte
   ]] =
-    CompactScalaCodec(PersistentSimClustersEmbedding)
+    CompactScalaCodec(Pers stentS mClustersEmbedd ng)
 
-  implicit val statusCountsCodec: Injection[StatusCounts, Array[Byte]] =
+   mpl c  val statusCountsCodec:  nject on[StatusCounts, Array[Byte]] =
     CompactScalaCodec(StatusCounts)
 
-  implicit val thriftDecayedValueCodec: Injection[ThriftDecayedValue, Array[Byte]] =
-    AlgebirdImplicits.decayedValueCodec
+   mpl c  val thr ftDecayedValueCodec:  nject on[Thr ftDecayedValue, Array[Byte]] =
+    Algeb rd mpl c s.decayedValueCodec
 
-  implicit val batcher: Batcher = Batcher.unit
+   mpl c  val batc r: Batc r = Batc r.un 
 }

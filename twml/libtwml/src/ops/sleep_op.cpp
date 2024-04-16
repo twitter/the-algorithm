@@ -1,51 +1,51 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/common_shape_fns.h"
-#include "tensorflow/core/framework/op_kernel.h"
+# nclude "tensorflow/core/fra work/op.h"
+# nclude "tensorflow/core/fra work/shape_ nference.h"
+# nclude "tensorflow/core/fra work/common_shape_fns.h"
+# nclude "tensorflow/core/fra work/op_kernel.h"
 
-#include <chrono>
-#include <thread>
+# nclude <chrono>
+# nclude <thread>
 
-using namespace tensorflow;
+us ng na space tensorflow;
 
-REGISTER_OP("Sleep")
-.Input("num_milliseconds: int32")
-.Output("sleep_time_in_ms: int32")
-.SetShapeFn(tensorflow::shape_inference::ScalarShape)
+REG STER_OP("Sleep")
+. nput("num_m ll seconds:  nt32")
+.Output("sleep_t  _ n_ms:  nt32")
+.SetShapeFn(tensorflow::shape_ nference::ScalarShape)
 .Doc(R"doc(
-A tensorflow OP that sleeps for specified number of milliseconds. 
-This is a proxy to determine the number of inter_op_parallelism pool. 
-This is not part of the Tensorflow API as of the date of writing this 
-doc. Hence, a tensorflow operation is the best resort.
-Input
-  num_milliseconds: A scalar tensor corresponding to the number
-  of milliseconds the operation should sleep for
+A tensorflow OP that sleeps for spec f ed number of m ll seconds. 
+T   s a proxy to determ ne t  number of  nter_op_parallel sm pool. 
+T   s not part of t  Tensorflow AP  as of t  date of wr  ng t  
+doc.  nce, a tensorflow operat on  s t  best resort.
+ nput
+  num_m ll seconds: A scalar tensor correspond ng to t  number
+  of m ll seconds t  operat on should sleep for
 Output
-  sleep_time_in_ms: A scalar tensor corresponding to the 
-  actual number of milliseconds for which the operation slept
+  sleep_t  _ n_ms: A scalar tensor correspond ng to t  
+  actual number of m ll seconds for wh ch t  operat on slept
 )doc");
 
-class SleepOp : public OpKernel {
- public:
-    explicit SleepOp(OpKernelConstruction* context) : OpKernel(context) {}
+class SleepOp : publ c OpKernel {
+ publ c:
+    expl c  SleepOp(OpKernelConstruct on* context) : OpKernel(context) {}
 
-    void Compute(OpKernelContext* context) override {
-      // Grab the input tensor
-      const Tensor& input_tensor = context->input(0);
-      auto input = input_tensor.flat<int32>();
+    vo d Compute(OpKernelContext* context) overr de {
+      // Grab t   nput tensor
+      const Tensor&  nput_tensor = context-> nput(0);
+      auto  nput =  nput_tensor.flat< nt32>();
 
-      // Sleep for specified milliseconds
-      auto start = std::chrono::high_resolution_clock::now();
-      std::this_thread::sleep_for(std::chrono::milliseconds(input(0)));
-      auto end = std::chrono::high_resolution_clock::now();
-      std::chrono::duration<double, std::milli> elapsed = end-start;
+      // Sleep for spec f ed m ll seconds
+      auto start = std::chrono::h gh_resolut on_clock::now();
+      std::t _thread::sleep_for(std::chrono::m ll seconds( nput(0)));
+      auto end = std::chrono::h gh_resolut on_clock::now();
+      std::chrono::durat on<double, std::m ll > elapsed = end-start;
 
-      // Set the output tensor
+      // Set t  output tensor
       Tensor* output_tensor = NULL;
-      OP_REQUIRES_OK(context, context->allocate_output(0, TensorShape({}), &output_tensor));
-      auto output_flat = output_tensor->flat<int32>();
+      OP_REQU RES_OK(context, context->allocate_output(0, TensorShape({}), &output_tensor));
+      auto output_flat = output_tensor->flat< nt32>();
       output_flat(0) = elapsed.count();
     }
 };
 
-REGISTER_KERNEL_BUILDER(Name("Sleep").Device(DEVICE_CPU), SleepOp);
+REG STER_KERNEL_BU LDER(Na ("Sleep").Dev ce(DEV CE_CPU), SleepOp);

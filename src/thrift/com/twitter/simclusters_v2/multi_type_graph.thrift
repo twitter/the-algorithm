@@ -1,110 +1,110 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.multi_type_graph
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+na space java com.tw ter.s mclusters_v2.thr ftjava
+na space py gen.tw ter.s mclusters_v2.mult _type_graph
+#@na space scala com.tw ter.s mclusters_v2.thr ftscala
+#@na space strato com.tw ter.s mclusters_v2
 
-include "entity.thrift"
+ nclude "ent y.thr ft"
 
-union LeftNode {
-  1: i64 userId(personalDataType = 'UserId')
-}(persisted = 'true', hasPersonalData = 'true')
+un on LeftNode {
+  1:  64 user d(personalDataType = 'User d')
+}(pers sted = 'true', hasPersonalData = 'true')
 
-struct RightNode {
-  1: required RightNodeType rightNodeType(personalDataType = 'EngagementsPublic')
-  2: required Noun noun
-}(persisted = 'true', hasPersonalData = 'true')
+struct R ghtNode {
+  1: requ red R ghtNodeType r ghtNodeType(personalDataType = 'Engage ntsPubl c')
+  2: requ red Noun noun
+}(pers sted = 'true', hasPersonalData = 'true')
 
-struct RightNodeWithEdgeWeight {
-  1: required RightNode rightNode
-  2: required double weight(personalDataType = 'EngagementScore')
-}(persisted = 'true', hasPersonalData = 'true')
+struct R ghtNodeW hEdge  ght {
+  1: requ red R ghtNode r ghtNode
+  2: requ red double   ght(personalDataType = 'Engage ntScore')
+}(pers sted = 'true', hasPersonalData = 'true')
 
-enum RightNodeType {
+enum R ghtNodeType {
   FollowUser = 1,
   FavUser = 2,
   BlockUser = 3,
   AbuseReportUser = 4,
   SpamReportUser = 5,
-  FollowTopic = 6,
-  SignUpCountry = 7,
-  ConsumedLanguage = 8,
-  FavTweet = 9,
-  ReplyTweet = 10,
-  RetweetTweet = 11,
-  NotifOpenOrClickTweet = 12,
+  FollowTop c = 6,
+  S gnUpCountry = 7,
+  Consu dLanguage = 8,
+  FavT et = 9,
+  ReplyT et = 10,
+  Ret etT et = 11,
+  Not fOpenOrCl ckT et = 12,
   SearchQuery = 13
-}(persisted = 'true')
+}(pers sted = 'true')
 
-union Noun {
-// Note: Each of the following needs to have an ordering defined in Ordering[Noun]
-// in file: multi_type_graph/assemble_multi_type_graph/AssembleMultiTypeGraph.scala
-// Please take note to make changes to Ordering[Noun] when modifying/adding new noun type here
-  1: i64 userId(personalDataType = 'UserId')
-  2: string country(personalDataType = 'InferredCountry')
-  3: string language(personalDataType = 'InferredLanguage')
-  4: i64 topicId(personalDataType = 'TopicFollow')
-  5: i64 tweetId(personalDataType = 'TweetId')
-  6: string query(personalDataType = 'SearchQuery')
-}(persisted = 'true', hasPersonalData = 'true')
+un on Noun {
+// Note: Each of t  follow ng needs to have an order ng def ned  n Order ng[Noun]
+//  n f le: mult _type_graph/assemble_mult _type_graph/AssembleMult TypeGraph.scala
+// Please take note to make changes to Order ng[Noun] w n mod fy ng/add ng new noun type  re
+  1:  64 user d(personalDataType = 'User d')
+  2: str ng country(personalDataType = ' nferredCountry')
+  3: str ng language(personalDataType = ' nferredLanguage')
+  4:  64 top c d(personalDataType = 'Top cFollow')
+  5:  64 t et d(personalDataType = 'T et d')
+  6: str ng query(personalDataType = 'SearchQuery')
+}(pers sted = 'true', hasPersonalData = 'true')
 
-struct RightNodeWithEdgeWeightList {
-  1: required list<RightNodeWithEdgeWeight> rightNodeWithEdgeWeightList
-}(persisted = 'true', hasPersonalData = 'true')
+struct R ghtNodeW hEdge  ghtL st {
+  1: requ red l st<R ghtNodeW hEdge  ght> r ghtNodeW hEdge  ghtL st
+}(pers sted = 'true', hasPersonalData = 'true')
 
-struct NounWithFrequency {
-  1: required Noun noun
-  2: required double frequency (personalDataType = 'EngagementScore')
-}(persisted = 'true', hasPersonalData = 'true')
+struct NounW hFrequency {
+  1: requ red Noun noun
+  2: requ red double frequency (personalDataType = 'Engage ntScore')
+}(pers sted = 'true', hasPersonalData = 'true')
 
-struct NounWithFrequencyList {
-  1: required list<NounWithFrequency> nounWithFrequencyList
-}(persisted = 'true', hasPersonalData = 'true')
+struct NounW hFrequencyL st {
+  1: requ red l st<NounW hFrequency> nounW hFrequencyL st
+}(pers sted = 'true', hasPersonalData = 'true')
 
-struct RightNodeTypeStruct {
-   1: required RightNodeType rightNodeType
-}(persisted = 'true', hasPersonalData = 'false')
+struct R ghtNodeTypeStruct {
+   1: requ red R ghtNodeType r ghtNodeType
+}(pers sted = 'true', hasPersonalData = 'false')
 
-struct MultiTypeGraphEdge{
-   1: required LeftNode leftNode
-   2: required RightNodeWithEdgeWeight rightNodeWithEdgeWeight
-}(persisted = 'true', hasPersonalData = 'true')
+struct Mult TypeGraphEdge{
+   1: requ red LeftNode leftNode
+   2: requ red R ghtNodeW hEdge  ght r ghtNodeW hEdge  ght
+}(pers sted = 'true', hasPersonalData = 'true')
 
-struct LeftNodeToRightNodeWithEdgeWeightList{
-   1: required LeftNode leftNode
-   2: required RightNodeWithEdgeWeightList rightNodeWithEdgeWeightList
-}(persisted = 'true', hasPersonalData = 'true')
+struct LeftNodeToR ghtNodeW hEdge  ghtL st{
+   1: requ red LeftNode leftNode
+   2: requ red R ghtNodeW hEdge  ghtL st r ghtNodeW hEdge  ghtL st
+}(pers sted = 'true', hasPersonalData = 'true')
 
-struct RightNodeSimHashSketch {
-  1: required RightNode rightNode
-  2: required list<byte> simHashOfEngagers
-  3: optional double normalizer
-}(persisted='true', hasPersonalData = 'false')
+struct R ghtNodeS mHashSketch {
+  1: requ red R ghtNode r ghtNode
+  2: requ red l st<byte> s mHashOfEngagers
+  3: opt onal double normal zer
+}(pers sted='true', hasPersonalData = 'false')
 
-struct SimilarRightNode {
-  1: required RightNode rightNode
-  2: required double score (personalDataType = 'EngagementScore')
-}(persisted='true', hasPersonalData = 'true')
+struct S m larR ghtNode {
+  1: requ red R ghtNode r ghtNode
+  2: requ red double score (personalDataType = 'Engage ntScore')
+}(pers sted='true', hasPersonalData = 'true')
 
-struct SimilarRightNodes {
-  1: required list<SimilarRightNode> rightNodesWithScores
-}(persisted='true', hasPersonalData = 'true')
+struct S m larR ghtNodes {
+  1: requ red l st<S m larR ghtNode> r ghtNodesW hScores
+}(pers sted='true', hasPersonalData = 'true')
 
-struct RightNodeWithScore {
-  1: required RightNode rightNode
-  2: required double clusterScore (personalDataType = 'EngagementScore')
-}(persisted='true', hasPersonalData = 'true')
+struct R ghtNodeW hScore {
+  1: requ red R ghtNode r ghtNode
+  2: requ red double clusterScore (personalDataType = 'Engage ntScore')
+}(pers sted='true', hasPersonalData = 'true')
 
-struct RightNodeWithScoreList {
-  1: required list<RightNodeWithScore> rightNodeWithScoreList
-}(persisted='true', hasPersonalData = 'true')
+struct R ghtNodeW hScoreL st {
+  1: requ red l st<R ghtNodeW hScore> r ghtNodeW hScoreL st
+}(pers sted='true', hasPersonalData = 'true')
 
-struct RightNodeWithClusters {
-  1: required RightNode rightNode
-  2: required string modelVersion (personalDataType = 'EngagementId')
-  3: required map<i32, double> clusterIdToScores (personalDataTypeKey = 'EngagementId', personalDataTypeValue = 'EngagementScore')
-}(persisted="true", hasPersonalData = 'true')
+struct R ghtNodeW hClusters {
+  1: requ red R ghtNode r ghtNode
+  2: requ red str ng modelVers on (personalDataType = 'Engage nt d')
+  3: requ red map< 32, double> cluster dToScores (personalDataTypeKey = 'Engage nt d', personalDataTypeValue = 'Engage ntScore')
+}(pers sted="true", hasPersonalData = 'true')
 
-struct ModelVersionWithClusterScores {
-  1: required string modelVersion (personalDataType = 'EngagementId')
-  2: required map<i32, double> clusterIdToScores (personalDataTypeKey = 'EngagementId', personalDataTypeValue = 'EngagementScore')
-}(persisted = 'true', hasPersonalData = 'true')
+struct ModelVers onW hClusterScores {
+  1: requ red str ng modelVers on (personalDataType = 'Engage nt d')
+  2: requ red map< 32, double> cluster dToScores (personalDataTypeKey = 'Engage nt d', personalDataTypeValue = 'Engage ntScore')
+}(pers sted = 'true', hasPersonalData = 'true')

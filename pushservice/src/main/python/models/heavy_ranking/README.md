@@ -1,20 +1,20 @@
-# Notification Heavy Ranker Model
+# Not f cat on  avy Ranker Model
 
 ## Model Context
-There are 4 major components of Twitter notifications recommendation system: 1) candidate generation 2) light ranking 3) heavy ranking & 4) quality control. This notification heavy ranker model is the core ranking model for the personalised notifications recommendation. It's a multi-task learning model to predict the probabilities that the target users will open and engage with the sent notifications. 
+T re are 4 major components of Tw ter not f cat ons recom ndat on system: 1) cand date generat on 2) l ght rank ng 3)  avy rank ng & 4) qual y control. T  not f cat on  avy ranker model  s t  core rank ng model for t  personal sed not f cat ons recom ndat on.  's a mult -task learn ng model to pred ct t  probab l  es that t  target users w ll open and engage w h t  sent not f cat ons. 
 
 
-## Directory Structure
-- BUILD: this file defines python library dependencies
-- deep_norm.py: this file contains how to set up continuous training, model evaluation and model exporting for the notification heavy ranker model
-- eval.py: the main python entry file to set up the overall model evaluation pipeline
-- features.py: this file contains importing feature list and support functions for feature engineering
-- graph.py: this file defines how to build the tensorflow graph with specified model architecture, loss function and training configuration
-- model_pools.py: this file defines the available model types for the heavy ranker
-- params.py: this file defines hyper-parameters used in the notification heavy ranker 
-- run_args.py: this file defines command line parameters to run model training & evaluation
-- update_warm_start_checkpoint.py: this file contains the support to modify checkpoints of the given saved heavy ranker model
-- lib/BUILD: this file defines python library dependencies for tensorflow model architecture
-- lib/layers.py: this file defines different type of convolution layers to be used in the heavy ranker model
-- lib/model.py: this file defines the module containing ClemNet, the heavy ranker model type
-- lib/params.py: this file defines parameters used in the heavy ranker model 
+## D rectory Structure
+- BU LD: t  f le def nes python l brary dependenc es
+- deep_norm.py: t  f le conta ns how to set up cont nuous tra n ng, model evaluat on and model export ng for t  not f cat on  avy ranker model
+- eval.py: t  ma n python entry f le to set up t  overall model evaluat on p pel ne
+- features.py: t  f le conta ns  mport ng feature l st and support funct ons for feature eng neer ng
+- graph.py: t  f le def nes how to bu ld t  tensorflow graph w h spec f ed model arch ecture, loss funct on and tra n ng conf gurat on
+- model_pools.py: t  f le def nes t  ava lable model types for t   avy ranker
+- params.py: t  f le def nes hyper-para ters used  n t  not f cat on  avy ranker 
+- run_args.py: t  f le def nes command l ne para ters to run model tra n ng & evaluat on
+- update_warm_start_c ckpo nt.py: t  f le conta ns t  support to mod fy c ckpo nts of t  g ven saved  avy ranker model
+- l b/BU LD: t  f le def nes python l brary dependenc es for tensorflow model arch ecture
+- l b/layers.py: t  f le def nes d fferent type of convolut on layers to be used  n t   avy ranker model
+- l b/model.py: t  f le def nes t  module conta n ng ClemNet, t   avy ranker model type
+- l b/params.py: t  f le def nes para ters used  n t   avy ranker model 

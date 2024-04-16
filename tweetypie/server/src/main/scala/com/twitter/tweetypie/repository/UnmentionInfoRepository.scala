@@ -1,39 +1,39 @@
-package com.twitter.tweetypie.repository
+package com.tw ter.t etyp e.repos ory
 
-import com.twitter.consumer_privacy.mention_controls.thriftscala.UnmentionInfo
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.strato.thrift.ScroogeConvImplicits._
+ mport com.tw ter.consu r_pr vacy. nt on_controls.thr ftscala.Un nt on nfo
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.strato.thr ft.ScroogeConv mpl c s._
 
-object UnmentionInfoRepository {
-  type Type = Tweet => Stitch[Option[UnmentionInfo]]
+object Un nt on nfoRepos ory {
+  type Type = T et => St ch[Opt on[Un nt on nfo]]
 
-  val column = "consumer-privacy/mentions-management/unmentionInfoFromTweet"
-  case class UnmentionInfoView(asViewer: Option[Long])
+  val column = "consu r-pr vacy/ nt ons-manage nt/un nt on nfoFromT et"
+  case class Un nt on nfoV ew(asV e r: Opt on[Long])
 
   /**
-   * Creates a function that extracts users fields from a tweet and checks
-   * if the extracted users have been unmentioned from the tweet's asssociated conversation.
-   * This function enables the prefetch caching of UnmentionInfo used by graphql during createTweet
-   * events and mirrors the logic found in the unmentionInfo Strato column found
-   * here: http://go/unmentionInfo.strato
-   * @param client Strato client
+   * Creates a funct on that extracts users f elds from a t et and c cks
+   *  f t  extracted users have been un nt oned from t  t et's asssoc ated conversat on.
+   * T  funct on enables t  prefetch cach ng of Un nt on nfo used by graphql dur ng createT et
+   * events and m rrors t  log c found  n t  un nt on nfo Strato column found
+   *  re: http://go/un nt on nfo.strato
+   * @param cl ent Strato cl ent
    * @return
    */
-  def apply(client: StratoClient): Type = {
-    val fetcher: Fetcher[Tweet, UnmentionInfoView, UnmentionInfo] =
-      client.fetcher[Tweet, UnmentionInfoView, UnmentionInfo](column)
+  def apply(cl ent: StratoCl ent): Type = {
+    val fetc r: Fetc r[T et, Un nt on nfoV ew, Un nt on nfo] =
+      cl ent.fetc r[T et, Un nt on nfoV ew, Un nt on nfo](column)
 
-    tweet =>
-      tweet.coreData.flatMap(_.conversationId) match {
-        case Some(conversationId) =>
-          val viewerUserId = TwitterContext().flatMap(_.userId)
-          fetcher
-            .fetch(tweet, UnmentionInfoView(viewerUserId))
+    t et =>
+      t et.coreData.flatMap(_.conversat on d) match {
+        case So (conversat on d) =>
+          val v e rUser d = Tw terContext().flatMap(_.user d)
+          fetc r
+            .fetch(t et, Un nt on nfoV ew(v e rUser d))
             .map(_.v)
-        case _ => Stitch.None
+        case _ => St ch.None
       }
   }
 }

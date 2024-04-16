@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.core.functional_component.candidate_source.strato
+package com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.strato
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.cl ent.Fetc r
 
 /**
- * A [[CandidateSource]] for getting Candidates from Strato where the
- * Strato column's View is [[Unit]] and the Value is a Seq of [[StratoResult]]
+ * A [[Cand dateS ce]] for gett ng Cand dates from Strato w re t 
+ * Strato column's V ew  s [[Un ]] and t  Value  s a Seq of [[StratoResult]]
  *
- * @tparam StratoKey the column's Key type
- * @tparam StratoResult the column's Value's Seq type
+ * @tparam StratoKey t  column's Key type
+ * @tparam StratoResult t  column's Value's Seq type
  */
-trait StratoKeyFetcherSeqSource[StratoKey, StratoResult]
-    extends CandidateSource[StratoKey, StratoResult] {
+tra  StratoKeyFetc rSeqS ce[StratoKey, StratoResult]
+    extends Cand dateS ce[StratoKey, StratoResult] {
 
-  val fetcher: Fetcher[StratoKey, Unit, Seq[StratoResult]]
+  val fetc r: Fetc r[StratoKey, Un , Seq[StratoResult]]
 
-  override def apply(key: StratoKey): Stitch[Seq[StratoResult]] = {
-    fetcher
+  overr de def apply(key: StratoKey): St ch[Seq[StratoResult]] = {
+    fetc r
       .fetch(key)
       .map { result =>
         result.v
           .getOrElse(Seq.empty)
-      }.rescue(StratoErrCategorizer.CategorizeStratoException)
+      }.rescue(StratoErrCategor zer.Categor zeStratoExcept on)
   }
 }

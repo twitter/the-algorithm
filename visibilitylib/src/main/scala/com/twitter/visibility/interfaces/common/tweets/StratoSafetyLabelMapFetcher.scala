@@ -1,17 +1,17 @@
-package com.twitter.visibility.interfaces.common.tweets
+package com.tw ter.v s b l y. nterfaces.common.t ets
 
-import com.twitter.spam.rtf.thriftscala.SafetyLabelMap
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.strato.thrift.ScroogeConvImplicits._
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLabelMap
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.strato.thr ft.ScroogeConv mpl c s._
 
-object StratoSafetyLabelMapFetcher {
-  val column = "visibility/baseTweetSafetyLabelMap"
+object StratoSafetyLabelMapFetc r {
+  val column = "v s b l y/baseT etSafetyLabelMap"
 
-  def apply(client: StratoClient): SafetyLabelMapFetcherType = {
-    val fetcher: Fetcher[Long, Unit, SafetyLabelMap] =
-      client.fetcher[Long, SafetyLabelMap](column)
+  def apply(cl ent: StratoCl ent): SafetyLabelMapFetc rType = {
+    val fetc r: Fetc r[Long, Un , SafetyLabelMap] =
+      cl ent.fetc r[Long, SafetyLabelMap](column)
 
-    tweetId => fetcher.fetch(tweetId).map(_.v)
+    t et d => fetc r.fetch(t et d).map(_.v)
   }
 }

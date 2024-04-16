@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.message
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em. ssage
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageActionType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageTextAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.UserFacepile
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.UserFacepileDisplayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage. ssageAct onType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage. ssageTextAct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage.UserFacep le
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage.UserFacep leD splayType
 
-case class UserFacePileBuilder(
-  userIds: Seq[Long],
-  featuredUserIds: Seq[Long],
-  action: Option[MessageTextAction],
-  actionType: Option[MessageActionType],
-  displaysFeaturingText: Option[Boolean],
-  displayType: Option[UserFacepileDisplayType]) {
+case class UserFaceP leBu lder(
+  user ds: Seq[Long],
+  featuredUser ds: Seq[Long],
+  act on: Opt on[ ssageTextAct on],
+  act onType: Opt on[ ssageAct onType],
+  d splaysFeatur ngText: Opt on[Boolean],
+  d splayType: Opt on[UserFacep leD splayType]) {
 
-  def apply(): UserFacepile = UserFacepile(
-    userIds = userIds,
-    featuredUserIds = featuredUserIds,
-    action = action,
-    actionType = actionType,
-    displaysFeaturingText = displaysFeaturingText,
-    displayType = displayType
+  def apply(): UserFacep le = UserFacep le(
+    user ds = user ds,
+    featuredUser ds = featuredUser ds,
+    act on = act on,
+    act onType = act onType,
+    d splaysFeatur ngText = d splaysFeatur ngText,
+    d splayType = d splayType
   )
 }

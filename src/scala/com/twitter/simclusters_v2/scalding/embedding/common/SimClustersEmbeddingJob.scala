@@ -1,120 +1,120 @@
-package com.twitter.simclusters_v2.scalding.embedding.common
+package com.tw ter.s mclusters_v2.scald ng.embedd ng.common
 
-import com.twitter.scalding.{Args, DateRange, Execution, TypedPipe, UniqueID}
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil._
-import com.twitter.simclusters_v2.thriftscala._
-import java.util.TimeZone
+ mport com.tw ter.scald ng.{Args, DateRange, Execut on, TypedP pe, Un que D}
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons
+ mport com.tw ter.s mclusters_v2.scald ng.common.matr x.{SparseMatr x, SparseRowMatr x}
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.Embedd ngUt l._
+ mport com.tw ter.s mclusters_v2.thr ftscala._
+ mport java.ut l.T  Zone
 
 /**
- * This is the base job for computing SimClusters Embedding for any Noun Type on Twitter, such as
- * Users, Tweets, Topics, Entities, Channels, etc.
+ * T   s t  base job for comput ng S mClusters Embedd ng for any Noun Type on Tw ter, such as
+ * Users, T ets, Top cs, Ent  es, Channels, etc.
  *
- * The most straightforward way to understand the SimClusters Embeddings for a Noun is that it is
- * a weighted sum of SimClusters InterestedIn vectors from users who are interested in the Noun.
- * So for a noun type, you only need to define `prepareNounToUserMatrix` to pass in a matrix which
- * represents how much each user is interested in this noun.
+ * T  most stra ghtforward way to understand t  S mClusters Embedd ngs for a Noun  s that    s
+ * a   ghted sum of S mClusters  nterested n vectors from users who are  nterested  n t  Noun.
+ * So for a noun type,   only need to def ne `prepareNounToUserMatr x` to pass  n a matr x wh ch
+ * represents how much each user  s  nterested  n t  noun.
  */
-trait SimClustersEmbeddingBaseJob[NounType] {
+tra  S mClustersEmbedd ngBaseJob[NounType] {
 
-  def numClustersPerNoun: Int
+  def numClustersPerNoun:  nt
 
-  def numNounsPerClusters: Int
+  def numNounsPerClusters:  nt
 
-  def thresholdForEmbeddingScores: Double
+  def thresholdForEmbedd ngScores: Double
 
-  def numReducersOpt: Option[Int] = None
+  def numReducersOpt: Opt on[ nt] = None
 
-  def prepareNounToUserMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseMatrix[NounType, UserId, Double]
+  def prepareNounToUserMatr x(
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): SparseMatr x[NounType, User d, Double]
 
-  def prepareUserToClusterMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseRowMatrix[UserId, ClusterId, Double]
+  def prepareUserToClusterMatr x(
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): SparseRowMatr x[User d, Cluster d, Double]
 
-  def writeNounToClustersIndex(
-    output: TypedPipe[(NounType, Seq[(ClusterId, Double)])]
+  def wr eNounToClusters ndex(
+    output: TypedP pe[(NounType, Seq[(Cluster d, Double)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit]
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ]
 
-  def writeClusterToNounsIndex(
-    output: TypedPipe[(ClusterId, Seq[(NounType, Double)])]
+  def wr eClusterToNouns ndex(
+    output: TypedP pe[(Cluster d, Seq[(NounType, Double)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit]
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ]
 
   def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
 
-    val embeddingMatrix: SparseRowMatrix[NounType, ClusterId, Double] =
-      prepareNounToUserMatrix.rowL2Normalize
-        .multiplySkinnySparseRowMatrix(
-          prepareUserToClusterMatrix.colL2Normalize,
+    val embedd ngMatr x: SparseRowMatr x[NounType, Cluster d, Double] =
+      prepareNounToUserMatr x.rowL2Normal ze
+        .mult plySk nnySparseRowMatr x(
+          prepareUserToClusterMatr x.colL2Normal ze,
           numReducersOpt
         )
-        .filter((_, _, v) => v > thresholdForEmbeddingScores)
+        .f lter((_, _, v) => v > thresholdForEmbedd ngScores)
 
-    Execution
-      .zip(
-        writeNounToClustersIndex(
-          embeddingMatrix.sortWithTakePerRow(numClustersPerNoun)(Ordering.by(-_._2))
+    Execut on
+      .z p(
+        wr eNounToClusters ndex(
+          embedd ngMatr x.sortW hTakePerRow(numClustersPerNoun)(Order ng.by(-_._2))
         ),
-        writeClusterToNounsIndex(
-          embeddingMatrix.sortWithTakePerCol(numNounsPerClusters)(
-            Ordering.by(-_._2)
+        wr eClusterToNouns ndex(
+          embedd ngMatr x.sortW hTakePerCol(numNounsPerClusters)(
+            Order ng.by(-_._2)
           )
         )
       )
-      .unit
+      .un 
   }
 
 }
 
-object SimClustersEmbeddingJob {
+object S mClustersEmbedd ngJob {
 
   /**
-   * Multiply the [user, cluster] and [user, T] matrices, and return the cross product.
+   * Mult ply t  [user, cluster] and [user, T] matr ces, and return t  cross product.
    */
-  def computeEmbeddings[T](
-    simClustersSource: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    normalizedInputMatrix: TypedPipe[(UserId, (T, Double))],
-    scoreExtractors: Seq[UserToInterestedInClusterScores => (Double, ScoreType.ScoreType)],
-    modelVersion: ModelVersion,
-    toSimClustersEmbeddingId: (T, ScoreType.ScoreType) => SimClustersEmbeddingId,
-    numReducers: Option[Int] = None
-  ): TypedPipe[(SimClustersEmbeddingId, (ClusterId, Double))] = {
-    val userSimClustersMatrix =
-      getUserSimClustersMatrix(simClustersSource, scoreExtractors, modelVersion)
-    multiplyMatrices(
-      normalizedInputMatrix,
-      userSimClustersMatrix,
-      toSimClustersEmbeddingId,
+  def computeEmbedd ngs[T](
+    s mClustersS ce: TypedP pe[(User d, ClustersUser s nterested n)],
+    normal zed nputMatr x: TypedP pe[(User d, (T, Double))],
+    scoreExtractors: Seq[UserTo nterested nClusterScores => (Double, ScoreType.ScoreType)],
+    modelVers on: ModelVers on,
+    toS mClustersEmbedd ng d: (T, ScoreType.ScoreType) => S mClustersEmbedd ng d,
+    numReducers: Opt on[ nt] = None
+  ): TypedP pe[(S mClustersEmbedd ng d, (Cluster d, Double))] = {
+    val userS mClustersMatr x =
+      getUserS mClustersMatr x(s mClustersS ce, scoreExtractors, modelVers on)
+    mult plyMatr ces(
+      normal zed nputMatr x,
+      userS mClustersMatr x,
+      toS mClustersEmbedd ng d,
       numReducers)
   }
 
   def getL2Norm[T](
-    inputMatrix: TypedPipe[(T, (UserId, Double))],
-    numReducers: Option[Int] = None
+     nputMatr x: TypedP pe[(T, (User d, Double))],
+    numReducers: Opt on[ nt] = None
   )(
-    implicit ordering: Ordering[T]
-  ): TypedPipe[(T, Double)] = {
-    val l2Norm = inputMatrix
+     mpl c  order ng: Order ng[T]
+  ): TypedP pe[(T, Double)] = {
+    val l2Norm =  nputMatr x
       .mapValues {
         case (_, score) => score * score
       }
@@ -122,127 +122,127 @@ object SimClustersEmbeddingJob {
       .mapValues(math.sqrt)
 
     numReducers match {
-      case Some(reducers) => l2Norm.withReducers(reducers)
+      case So (reducers) => l2Norm.w hReducers(reducers)
       case _ => l2Norm
     }
   }
 
-  def getNormalizedTransposeInputMatrix[T](
-    inputMatrix: TypedPipe[(T, (UserId, Double))],
-    numReducers: Option[Int] = None
+  def getNormal zedTranspose nputMatr x[T](
+     nputMatr x: TypedP pe[(T, (User d, Double))],
+    numReducers: Opt on[ nt] = None
   )(
-    implicit ordering: Ordering[T]
-  ): TypedPipe[(UserId, (T, Double))] = {
-    val inputWithNorm = inputMatrix.join(getL2Norm(inputMatrix, numReducers))
+     mpl c  order ng: Order ng[T]
+  ): TypedP pe[(User d, (T, Double))] = {
+    val  nputW hNorm =  nputMatr x.jo n(getL2Norm( nputMatr x, numReducers))
 
     (numReducers match {
-      case Some(reducers) => inputWithNorm.withReducers(reducers)
-      case _ => inputWithNorm
+      case So (reducers) =>  nputW hNorm.w hReducers(reducers)
+      case _ =>  nputW hNorm
     }).map {
-      case (inputId, ((userId, favScore), norm)) =>
-        (userId, (inputId, favScore / norm))
+      case ( nput d, ((user d, favScore), norm)) =>
+        (user d, ( nput d, favScore / norm))
     }
   }
 
   /**
-   * Matrix multiplication with the ability to tune the reducer size for better performance
+   * Matr x mult pl cat on w h t  ab l y to tune t  reducer s ze for better performance
    */
   @Deprecated
-  def legacyMultiplyMatrices[T](
-    normalizedTransposeInputMatrix: TypedPipe[(UserId, (T, Double))],
-    userSimClustersMatrix: TypedPipe[(UserId, Seq[(ClusterId, Double)])],
-    numReducers: Int // Matrix multiplication is expensive. Use this to tune performance
+  def legacyMult plyMatr ces[T](
+    normal zedTranspose nputMatr x: TypedP pe[(User d, (T, Double))],
+    userS mClustersMatr x: TypedP pe[(User d, Seq[(Cluster d, Double)])],
+    numReducers:  nt // Matr x mult pl cat on  s expens ve. Use t  to tune performance
   )(
-    implicit ordering: Ordering[T]
-  ): TypedPipe[((ClusterId, T), Double)] = {
-    normalizedTransposeInputMatrix
-      .join(userSimClustersMatrix)
-      .withReducers(numReducers)
+     mpl c  order ng: Order ng[T]
+  ): TypedP pe[((Cluster d, T), Double)] = {
+    normal zedTranspose nputMatr x
+      .jo n(userS mClustersMatr x)
+      .w hReducers(numReducers)
       .flatMap {
-        case (_, ((inputId, score), clustersWithScores)) =>
-          clustersWithScores.map {
-            case (clusterId, clusterScore) =>
-              ((clusterId, inputId), score * clusterScore)
+        case (_, (( nput d, score), clustersW hScores)) =>
+          clustersW hScores.map {
+            case (cluster d, clusterScore) =>
+              ((cluster d,  nput d), score * clusterScore)
           }
       }
       .sumByKey
-      .withReducers(numReducers + 1) // +1 to distinguish this step from above in Dr. Scalding
+      .w hReducers(numReducers + 1) // +1 to d st ngu sh t  step from above  n Dr. Scald ng
   }
 
-  def multiplyMatrices[T](
-    normalizedTransposeInputMatrix: TypedPipe[(UserId, (T, Double))],
-    userSimClustersMatrix: TypedPipe[(UserId, Seq[((ClusterId, ScoreType.ScoreType), Double)])],
-    toSimClustersEmbeddingId: (T, ScoreType.ScoreType) => SimClustersEmbeddingId,
-    numReducers: Option[Int] = None
-  ): TypedPipe[(SimClustersEmbeddingId, (ClusterId, Double))] = {
-    val inputJoinedWithSimClusters = numReducers match {
-      case Some(reducers) =>
-        normalizedTransposeInputMatrix
-          .join(userSimClustersMatrix)
-          .withReducers(reducers)
+  def mult plyMatr ces[T](
+    normal zedTranspose nputMatr x: TypedP pe[(User d, (T, Double))],
+    userS mClustersMatr x: TypedP pe[(User d, Seq[((Cluster d, ScoreType.ScoreType), Double)])],
+    toS mClustersEmbedd ng d: (T, ScoreType.ScoreType) => S mClustersEmbedd ng d,
+    numReducers: Opt on[ nt] = None
+  ): TypedP pe[(S mClustersEmbedd ng d, (Cluster d, Double))] = {
+    val  nputJo nedW hS mClusters = numReducers match {
+      case So (reducers) =>
+        normal zedTranspose nputMatr x
+          .jo n(userS mClustersMatr x)
+          .w hReducers(reducers)
       case _ =>
-        normalizedTransposeInputMatrix.join(userSimClustersMatrix)
+        normal zedTranspose nputMatr x.jo n(userS mClustersMatr x)
     }
 
-    val matrixMultiplicationResult = inputJoinedWithSimClusters.flatMap {
-      case (_, ((inputId, inputScore), clustersWithScores)) =>
-        clustersWithScores.map {
-          case ((clusterId, scoreType), clusterScore) =>
-            ((clusterId, toSimClustersEmbeddingId(inputId, scoreType)), inputScore * clusterScore)
+    val matr xMult pl cat onResult =  nputJo nedW hS mClusters.flatMap {
+      case (_, (( nput d,  nputScore), clustersW hScores)) =>
+        clustersW hScores.map {
+          case ((cluster d, scoreType), clusterScore) =>
+            ((cluster d, toS mClustersEmbedd ng d( nput d, scoreType)),  nputScore * clusterScore)
         }
     }.sumByKey
 
     (numReducers match {
-      case Some(reducers) =>
-        matrixMultiplicationResult.withReducers(reducers + 1)
-      case _ => matrixMultiplicationResult
+      case So (reducers) =>
+        matr xMult pl cat onResult.w hReducers(reducers + 1)
+      case _ => matr xMult pl cat onResult
     }).map {
-      case ((clusterId, embeddingId), score) =>
-        (embeddingId, (clusterId, score))
+      case ((cluster d, embedd ng d), score) =>
+        (embedd ng d, (cluster d, score))
     }
   }
 
-  def getUserSimClustersMatrix(
-    simClustersSource: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    scoreExtractors: Seq[UserToInterestedInClusterScores => (Double, ScoreType.ScoreType)],
-    modelVersion: ModelVersion
-  ): TypedPipe[(UserId, Seq[((ClusterId, ScoreType.ScoreType), Double)])] = {
-    simClustersSource.map {
-      case (userId, clusters)
-          if ModelVersions.toModelVersion(clusters.knownForModelVersion) == modelVersion =>
-        userId -> clusters.clusterIdToScores.flatMap {
-          case (clusterId, clusterScores) =>
+  def getUserS mClustersMatr x(
+    s mClustersS ce: TypedP pe[(User d, ClustersUser s nterested n)],
+    scoreExtractors: Seq[UserTo nterested nClusterScores => (Double, ScoreType.ScoreType)],
+    modelVers on: ModelVers on
+  ): TypedP pe[(User d, Seq[((Cluster d, ScoreType.ScoreType), Double)])] = {
+    s mClustersS ce.map {
+      case (user d, clusters)
+           f ModelVers ons.toModelVers on(clusters.knownForModelVers on) == modelVers on =>
+        user d -> clusters.cluster dToScores.flatMap {
+          case (cluster d, clusterScores) =>
             scoreExtractors.map { scoreExtractor =>
               scoreExtractor(clusterScores) match {
-                case (score, scoreType) => ((clusterId, scoreType), score)
+                case (score, scoreType) => ((cluster d, scoreType), score)
               }
             }
         }.toSeq
-      case (userId, _) => userId -> Nil
+      case (user d, _) => user d -> N l
     }
   }
 
-  def toReverseIndexSimClusterEmbedding(
-    embeddings: TypedPipe[(SimClustersEmbeddingId, (ClusterId, EmbeddingScore))],
-    topK: Int
-  ): TypedPipe[(SimClustersEmbeddingId, InternalIdEmbedding)] = {
-    embeddings
+  def toReverse ndexS mClusterEmbedd ng(
+    embedd ngs: TypedP pe[(S mClustersEmbedd ng d, (Cluster d, Embedd ngScore))],
+    topK:  nt
+  ): TypedP pe[(S mClustersEmbedd ng d,  nternal dEmbedd ng)] = {
+    embedd ngs
       .map {
-        case (embeddingId, (clusterId, score)) =>
+        case (embedd ng d, (cluster d, score)) =>
           (
-            SimClustersEmbeddingId(
-              embeddingId.embeddingType,
-              embeddingId.modelVersion,
-              InternalId.ClusterId(clusterId)),
-            (embeddingId.internalId, score))
+            S mClustersEmbedd ng d(
+              embedd ng d.embedd ngType,
+              embedd ng d.modelVers on,
+               nternal d.Cluster d(cluster d)),
+            (embedd ng d. nternal d, score))
       }
       .group
-      .sortedReverseTake(topK)(Ordering.by(_._2))
-      .mapValues { topInternalIdsWithScore =>
-        val internalIdsWithScore = topInternalIdsWithScore.map {
-          case (internalId, score) => InternalIdWithScore(internalId, score)
+      .sortedReverseTake(topK)(Order ng.by(_._2))
+      .mapValues { top nternal dsW hScore =>
+        val  nternal dsW hScore = top nternal dsW hScore.map {
+          case ( nternal d, score) =>  nternal dW hScore( nternal d, score)
         }
-        InternalIdEmbedding(internalIdsWithScore)
+         nternal dEmbedd ng( nternal dsW hScore)
       }
   }
 }

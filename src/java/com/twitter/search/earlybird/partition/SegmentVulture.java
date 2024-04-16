@@ -1,380 +1,380 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+ mport java. o.F le;
+ mport java. o. OExcept on;
+ mport java.ut l.L st;
+ mport java.ut l.Set;
+ mport java.ut l.SortedSet;
+ mport java.ut l.TreeSet;
 
-import javax.annotation.Nonnull;
+ mport javax.annotat on.Nonnull;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.Sets;
 
-import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons. o.F leUt ls;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.common.schema.earlybird.FlushVersion;
-import com.twitter.search.earlybird.archive.ArchiveSearchPartitionManager;
-import com.twitter.search.earlybird.archive.ArchiveTimeSlicer;
-import com.twitter.search.earlybird.archive.ArchiveTimeSlicer.ArchiveTimeSlice;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.factory.EarlybirdIndexConfigUtil;
+ mport com.tw ter.search.common.part  on ng.base.Seg nt;
+ mport com.tw ter.search.common.sc ma.earlyb rd.FlushVers on;
+ mport com.tw ter.search.earlyb rd.arch ve.Arch veSearchPart  onManager;
+ mport com.tw ter.search.earlyb rd.arch ve.Arch veT  Sl cer;
+ mport com.tw ter.search.earlyb rd.arch ve.Arch veT  Sl cer.Arch veT  Sl ce;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.factory.Earlyb rd ndexConf gUt l;
 
 /**
- * This class removes older flush version segments.
- * Considering that we almost never increase status flush versions, old statuses are not cleaned up
- * automatically.
+ * T  class removes older flush vers on seg nts.
+ * Cons der ng that   almost never  ncrease status flush vers ons, old statuses are not cleaned up
+ * automat cally.
  */
-public final class SegmentVulture {
-  private static final Logger LOG = LoggerFactory.getLogger(SegmentVulture.class);
-  @VisibleForTesting // Not final for testing.
-  protected static int numIndexFlushVersionsToKeep =
-      EarlybirdConfig.getInt("number_of_flush_versions_to_keep", 2);
+publ c f nal class Seg ntVulture {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Seg ntVulture.class);
+  @V s bleForTest ng // Not f nal for test ng.
+  protected stat c  nt num ndexFlushVers onsToKeep =
+      Earlyb rdConf g.get nt("number_of_flush_vers ons_to_keep", 2);
 
-  private SegmentVulture() {
-    // this never gets called
+  pr vate Seg ntVulture() {
+    // t  never gets called
   }
 
   /**
-   * Delete old build generations, keep currentGeneration.
+   * Delete old bu ld generat ons, keep currentGenerat on.
    */
-  @VisibleForTesting
-  static void removeOldBuildGenerations(String rootDirPath, String currentGeneration) {
-    File rootDir = new File(rootDirPath);
+  @V s bleForTest ng
+  stat c vo d removeOldBu ldGenerat ons(Str ng rootD rPath, Str ng currentGenerat on) {
+    F le rootD r = new F le(rootD rPath);
 
-    if (!rootDir.exists() || !rootDir.isDirectory()) {
-      LOG.error("Root directory is invalid: " + rootDirPath);
+     f (!rootD r.ex sts() || !rootD r. sD rectory()) {
+      LOG.error("Root d rectory  s  nval d: " + rootD rPath);
       return;
     }
 
-    File[] buildGenerations = rootDir.listFiles();
+    F le[] bu ldGenerat ons = rootD r.l stF les();
 
-    for (File generation : buildGenerations) {
-      if (generation.getName().equals(currentGeneration)) {
-        LOG.info("Skipping current generation: " + generation.getAbsoluteFile());
-        continue;
+    for (F le generat on : bu ldGenerat ons) {
+       f (generat on.getNa ().equals(currentGenerat on)) {
+        LOG. nfo("Sk pp ng current generat on: " + generat on.getAbsoluteF le());
+        cont nue;
       }
 
       try {
-        FileUtils.deleteDirectory(generation);
-        LOG.info("Deleted old build generation: " + generation.getAbsolutePath());
-      } catch (IOException e) {
-        LOG.error("Failed to delete old build generation at: " + generation.getAbsolutePath(), e);
+        F leUt ls.deleteD rectory(generat on);
+        LOG. nfo("Deleted old bu ld generat on: " + generat on.getAbsolutePath());
+      } catch ( OExcept on e) {
+        LOG.error("Fa led to delete old bu ld generat on at: " + generat on.getAbsolutePath(), e);
       }
     }
-    LOG.info("Successfully deleted all old generations");
+    LOG. nfo("Successfully deleted all old generat ons");
   }
 
   /**
-   * Delete all the timeslice data outside the serving range.
+   * Delete all t  t  sl ce data outs de t  serv ng range.
    */
-  @VisibleForTesting
-  static void removeArchiveTimesliceOutsideServingRange(PartitionConfig partitionConfig,
-      ArchiveTimeSlicer timeSlicer, SegmentSyncConfig segmentSyncConfig) {
+  @V s bleForTest ng
+  stat c vo d removeArch veT  sl ceOuts deServ ngRange(Part  onConf g part  onConf g,
+      Arch veT  Sl cer t  Sl cer, Seg ntSyncConf g seg ntSyncConf g) {
     try {
-      long servingStartTimesliceId = Long.MAX_VALUE;
-      long servingEndTimesliceId = 0;
-      int partitionID = partitionConfig.getIndexingHashPartitionID();
-      List<ArchiveTimeSlice> timeSliceList = timeSlicer.getTimeSlicesInTierRange();
-      for (ArchiveTimeSlice timeSlice : timeSliceList) {
-        if (timeSlice.getMinStatusID(partitionID) < servingStartTimesliceId) {
-          servingStartTimesliceId = timeSlice.getMinStatusID(partitionID);
+      long serv ngStartT  sl ce d = Long.MAX_VALUE;
+      long serv ngEndT  sl ce d = 0;
+       nt part  on D = part  onConf g.get ndex ngHashPart  on D();
+      L st<Arch veT  Sl ce> t  Sl ceL st = t  Sl cer.getT  Sl ces nT erRange();
+      for (Arch veT  Sl ce t  Sl ce : t  Sl ceL st) {
+         f (t  Sl ce.getM nStatus D(part  on D) < serv ngStartT  sl ce d) {
+          serv ngStartT  sl ce d = t  Sl ce.getM nStatus D(part  on D);
         }
-        if (timeSlice.getMaxStatusID(partitionID) > servingEndTimesliceId) {
-          servingEndTimesliceId = timeSlice.getMaxStatusID(partitionID);
+         f (t  Sl ce.getMaxStatus D(part  on D) > serv ngEndT  sl ce d) {
+          serv ngEndT  sl ce d = t  Sl ce.getMaxStatus D(part  on D);
         }
       }
-      LOG.info("Got the serving range: [" + servingStartTimesliceId + ", "
-          + servingEndTimesliceId + "], " + "[" + partitionConfig.getTierStartDate() + ", "
-          + partitionConfig.getTierEndDate() + ") for tier: " + partitionConfig.getTierName());
+      LOG. nfo("Got t  serv ng range: [" + serv ngStartT  sl ce d + ", "
+          + serv ngEndT  sl ce d + "], " + "[" + part  onConf g.getT erStartDate() + ", "
+          + part  onConf g.getT erEndDate() + ") for t er: " + part  onConf g.getT erNa ());
 
-      // The tier configuration does not have valid serving range: do not do anything.
-      if (servingEndTimesliceId <= servingStartTimesliceId) {
-        LOG.error("Invalid serving range [" + partitionConfig.getTierStartDate() + ", "
-            + partitionConfig.getTierEndDate() + "] for tier: " + partitionConfig.getTierName());
+      // T  t er conf gurat on does not have val d serv ng range: do not do anyth ng.
+       f (serv ngEndT  sl ce d <= serv ngStartT  sl ce d) {
+        LOG.error(" nval d serv ng range [" + part  onConf g.getT erStartDate() + ", "
+            + part  onConf g.getT erEndDate() + "] for t er: " + part  onConf g.getT erNa ());
         return;
       }
 
-      int numDeleted = 0;
-      File[] segments = getSegmentsOnRootDir(segmentSyncConfig);
-      for (File segment : segments) {
-        String segmentName = SegmentInfo.getSegmentNameFromFlushedDir(segment.getName());
-        if (segmentName == null) {
-          LOG.error("Invalid directory for segments: " + segment.getAbsolutePath());
-          continue;
+       nt numDeleted = 0;
+      F le[] seg nts = getSeg ntsOnRootD r(seg ntSyncConf g);
+      for (F le seg nt : seg nts) {
+        Str ng seg ntNa  = Seg nt nfo.getSeg ntNa FromFlus dD r(seg nt.getNa ());
+         f (seg ntNa  == null) {
+          LOG.error(" nval d d rectory for seg nts: " + seg nt.getAbsolutePath());
+          cont nue;
         }
-        long timesliceId = Segment.getTimeSliceIdFromName(segmentName);
-        if (timesliceId < 0) {
-          LOG.error("Unknown dir/file found: " + segment.getAbsolutePath());
-          continue;
+        long t  sl ce d = Seg nt.getT  Sl ce dFromNa (seg ntNa );
+         f (t  sl ce d < 0) {
+          LOG.error("Unknown d r/f le found: " + seg nt.getAbsolutePath());
+          cont nue;
         }
 
-        if (timesliceId < servingStartTimesliceId || timesliceId > servingEndTimesliceId) {
-          LOG.info(segment.getAbsolutePath() + " will be deleted for outside serving Range["
-              + partitionConfig.getTierStartDate() + ", " + partitionConfig.getTierEndDate() + ")");
-          if (deleteSegment(segment)) {
+         f (t  sl ce d < serv ngStartT  sl ce d || t  sl ce d > serv ngEndT  sl ce d) {
+          LOG. nfo(seg nt.getAbsolutePath() + " w ll be deleted for outs de serv ng Range["
+              + part  onConf g.getT erStartDate() + ", " + part  onConf g.getT erEndDate() + ")");
+           f (deleteSeg nt(seg nt)) {
             numDeleted++;
           }
         }
       }
-      LOG.info("Deleted " + numDeleted + " segments out of " + segments.length + " segments");
-    } catch (IOException e) {
-      LOG.error("Can not timeslice based on the document data: ", e);
-      throw new RuntimeException(e);
+      LOG. nfo("Deleted " + numDeleted + " seg nts out of " + seg nts.length + " seg nts");
+    } catch ( OExcept on e) {
+      LOG.error("Can not t  sl ce based on t  docu nt data: ", e);
+      throw new Runt  Except on(e);
     }
   }
 
   /**
-   * Deleted segments from other partitions. When boxes are moved between
-   * partitions, segments from other partitions may stay, we will have to
-   * delete them.
+   * Deleted seg nts from ot r part  ons. W n boxes are moved bet en
+   * part  ons, seg nts from ot r part  ons may stay,   w ll have to
+   * delete t m.
    */
-  @VisibleForTesting
-  static void removeIndexesFromOtherPartitions(int myPartition, int numPartitions,
-        SegmentSyncConfig segmentSyncConfig) {
-    File[] segments = getSegmentsOnRootDir(segmentSyncConfig);
-    int numDeleted = 0;
-    for (File segment : segments) {
-      int segmentNumPartitions = Segment.numPartitionsFromName(segment.getName());
-      int segmentPartition = Segment.getPartitionFromName(segment.getName());
+  @V s bleForTest ng
+  stat c vo d remove ndexesFromOt rPart  ons( nt  Part  on,  nt numPart  ons,
+        Seg ntSyncConf g seg ntSyncConf g) {
+    F le[] seg nts = getSeg ntsOnRootD r(seg ntSyncConf g);
+     nt numDeleted = 0;
+    for (F le seg nt : seg nts) {
+       nt seg ntNumPart  ons = Seg nt.numPart  onsFromNa (seg nt.getNa ());
+       nt seg ntPart  on = Seg nt.getPart  onFromNa (seg nt.getNa ());
 
-      if (segmentNumPartitions < 0 || segmentPartition < 0) { // Not a segment file, ignoring
-        LOG.info("Unknown dir/file found: " + segment.getAbsolutePath());
-        continue;
+       f (seg ntNumPart  ons < 0 || seg ntPart  on < 0) { // Not a seg nt f le,  gnor ng
+        LOG. nfo("Unknown d r/f le found: " + seg nt.getAbsolutePath());
+        cont nue;
       }
 
-      if (segmentNumPartitions != numPartitions || segmentPartition != myPartition) {
-        if (deleteSegment(segment)) {
+       f (seg ntNumPart  ons != numPart  ons || seg ntPart  on !=  Part  on) {
+         f (deleteSeg nt(seg nt)) {
           numDeleted++;
         }
       }
     }
-    LOG.info("Deleted " + numDeleted + " segments out of " + segments.length + " segments");
+    LOG. nfo("Deleted " + numDeleted + " seg nts out of " + seg nts.length + " seg nts");
   }
 
   /**
-   * Delete flushed segments of older flush versions.
+   * Delete flus d seg nts of older flush vers ons.
    */
-  @VisibleForTesting
-  static void removeOldFlushVersionIndexes(int currentFlushVersion,
-                                           SegmentSyncConfig segmentSyncConfig) {
-    SortedSet<Integer> indexFlushVersions =
-        listFlushVersions(segmentSyncConfig, currentFlushVersion);
+  @V s bleForTest ng
+  stat c vo d removeOldFlushVers on ndexes( nt currentFlushVers on,
+                                           Seg ntSyncConf g seg ntSyncConf g) {
+    SortedSet< nteger>  ndexFlushVers ons =
+        l stFlushVers ons(seg ntSyncConf g, currentFlushVers on);
 
-    if (indexFlushVersions == null
-        || indexFlushVersions.size() <= numIndexFlushVersionsToKeep) {
+     f ( ndexFlushVers ons == null
+        ||  ndexFlushVers ons.s ze() <= num ndexFlushVers onsToKeep) {
       return;
     }
 
-    Set<String> suffixesToKeep = Sets.newHashSetWithExpectedSize(numIndexFlushVersionsToKeep);
-    int flushVersionsToKeep = numIndexFlushVersionsToKeep;
-    while (flushVersionsToKeep > 0 && !indexFlushVersions.isEmpty()) {
-      Integer oldestFlushVersion = indexFlushVersions.last();
-      String flushFileExtension = FlushVersion.getVersionFileExtension(oldestFlushVersion);
-      if (flushFileExtension != null) {
-        suffixesToKeep.add(flushFileExtension);
-        flushVersionsToKeep--;
+    Set<Str ng> suff xesToKeep = Sets.newHashSetW hExpectedS ze(num ndexFlushVers onsToKeep);
+     nt flushVers onsToKeep = num ndexFlushVers onsToKeep;
+    wh le (flushVers onsToKeep > 0 && ! ndexFlushVers ons. sEmpty()) {
+       nteger oldestFlushVers on =  ndexFlushVers ons.last();
+      Str ng flushF leExtens on = FlushVers on.getVers onF leExtens on(oldestFlushVers on);
+       f (flushF leExtens on != null) {
+        suff xesToKeep.add(flushF leExtens on);
+        flushVers onsToKeep--;
       } else {
-        LOG.warn("Found unknown flush versions: " + oldestFlushVersion
-            + " Segments with this flush version will be deleted to recover disk space.");
+        LOG.warn("Found unknown flush vers ons: " + oldestFlushVers on
+            + " Seg nts w h t  flush vers on w ll be deleted to recover d sk space.");
       }
-      indexFlushVersions.remove(oldestFlushVersion);
+       ndexFlushVers ons.remove(oldestFlushVers on);
     }
 
-    String segmentSyncRootDir = segmentSyncConfig.getLocalSegmentSyncRootDir();
-    File dir = new File(segmentSyncRootDir);
-    File[] segments = dir.listFiles();
+    Str ng seg ntSyncRootD r = seg ntSyncConf g.getLocalSeg ntSyncRootD r();
+    F le d r = new F le(seg ntSyncRootD r);
+    F le[] seg nts = d r.l stF les();
 
-    for (File segment : segments) {
-      boolean keepSegment = false;
-      for (String suffix : suffixesToKeep) {
-        if (segment.getName().endsWith(suffix)) {
-          keepSegment = true;
+    for (F le seg nt : seg nts) {
+      boolean keepSeg nt = false;
+      for (Str ng suff x : suff xesToKeep) {
+         f (seg nt.getNa ().endsW h(suff x)) {
+          keepSeg nt = true;
           break;
         }
       }
-      if (!keepSegment) {
+       f (!keepSeg nt) {
         try {
-          FileUtils.deleteDirectory(segment);
-          LOG.info("Deleted old flushed segment: " + segment.getAbsolutePath());
-        } catch (IOException e) {
-          LOG.error("Failed to delete old flushed segment.", e);
+          F leUt ls.deleteD rectory(seg nt);
+          LOG. nfo("Deleted old flus d seg nt: " + seg nt.getAbsolutePath());
+        } catch ( OExcept on e) {
+          LOG.error("Fa led to delete old flus d seg nt.", e);
         }
       }
     }
   }
 
-  private static File[] getSegmentsOnRootDir(SegmentSyncConfig segmentSyncConfig) {
-    String segmentSyncRootDir = segmentSyncConfig.getLocalSegmentSyncRootDir();
-    File dir = new File(segmentSyncRootDir);
-    File[] segments = dir.listFiles();
-    if (segments == null) {
-      return new File[0];
+  pr vate stat c F le[] getSeg ntsOnRootD r(Seg ntSyncConf g seg ntSyncConf g) {
+    Str ng seg ntSyncRootD r = seg ntSyncConf g.getLocalSeg ntSyncRootD r();
+    F le d r = new F le(seg ntSyncRootD r);
+    F le[] seg nts = d r.l stF les();
+     f (seg nts == null) {
+      return new F le[0];
     } else {
-      return segments;
+      return seg nts;
     }
   }
 
-  private static boolean deleteSegment(File segment) {
+  pr vate stat c boolean deleteSeg nt(F le seg nt) {
     try {
-      FileUtils.deleteDirectory(segment);
-      LOG.info("Deleted segment from other partition: " + segment.getAbsolutePath());
+      F leUt ls.deleteD rectory(seg nt);
+      LOG. nfo("Deleted seg nt from ot r part  on: " + seg nt.getAbsolutePath());
       return true;
-    } catch (IOException e) {
-      LOG.error("Failed to delete segment from other partition.", e);
+    } catch ( OExcept on e) {
+      LOG.error("Fa led to delete seg nt from ot r part  on.", e);
       return false;
     }
   }
 
-  // Returns FlushVersions found on disk.
-  // Current FlushVersion is always added into the list, even if segments are not found on disk,
-  // because they may not have appeared yet.
+  // Returns FlushVers ons found on d sk.
+  // Current FlushVers on  s always added  nto t  l st, even  f seg nts are not found on d sk,
+  // because t y may not have appeared yet.
   @Nonnull
-  @VisibleForTesting
-  static SortedSet<Integer> listFlushVersions(SegmentSyncConfig sync, int currentFlushVersion) {
-    TreeSet<Integer> flushVersions = Sets.newTreeSet();
+  @V s bleForTest ng
+  stat c SortedSet< nteger> l stFlushVers ons(Seg ntSyncConf g sync,  nt currentFlushVers on) {
+    TreeSet< nteger> flushVers ons = Sets.newTreeSet();
 
-    // Always add current flush version.
-    // It is possible that on startup when this is run, the current flush version
-    // segments have not appeared yet.
-    flushVersions.add(currentFlushVersion);
+    // Always add current flush vers on.
+    //    s poss ble that on startup w n t   s run, t  current flush vers on
+    // seg nts have not appeared yet.
+    flushVers ons.add(currentFlushVers on);
 
-    String segmentSyncRootDir = sync.getLocalSegmentSyncRootDir();
-    File dir = new File(segmentSyncRootDir);
-    if (!dir.exists()) {
-      LOG.info("segmentSyncRootDir [" + segmentSyncRootDir
-          + "] does not exist");
-      return flushVersions;
+    Str ng seg ntSyncRootD r = sync.getLocalSeg ntSyncRootD r();
+    F le d r = new F le(seg ntSyncRootD r);
+     f (!d r.ex sts()) {
+      LOG. nfo("seg ntSyncRootD r [" + seg ntSyncRootD r
+          + "] does not ex st");
+      return flushVers ons;
     }
-    if (!dir.isDirectory()) {
-      LOG.error("segmentSyncRootDir [" + segmentSyncRootDir
-          + "] does not point to a directory");
-      return flushVersions;
+     f (!d r. sD rectory()) {
+      LOG.error("seg ntSyncRootD r [" + seg ntSyncRootD r
+          + "] does not po nt to a d rectory");
+      return flushVers ons;
     }
-    if (!dir.canRead()) {
-      LOG.error("No permission to read from segmentSyncRootDir ["
-          + segmentSyncRootDir + "]");
-      return flushVersions;
+     f (!d r.canRead()) {
+      LOG.error("No perm ss on to read from seg ntSyncRootD r ["
+          + seg ntSyncRootD r + "]");
+      return flushVers ons;
     }
-    if (!dir.canWrite()) {
-      LOG.error("No permission to write to segmentSyncRootDir ["
-          + segmentSyncRootDir + "]");
-      return flushVersions;
+     f (!d r.canWr e()) {
+      LOG.error("No perm ss on to wr e to seg ntSyncRootD r ["
+          + seg ntSyncRootD r + "]");
+      return flushVers ons;
     }
 
-    File[] segments = dir.listFiles();
-    for (File segment : segments) {
-      String name = segment.getName();
-      if (!name.contains(FlushVersion.DELIMITER)) {
-        // This is a not a segment with a FlushVersion, skip.
-        LOG.info("Found segment directory without a flush version: " + name);
-        continue;
+    F le[] seg nts = d r.l stF les();
+    for (F le seg nt : seg nts) {
+      Str ng na  = seg nt.getNa ();
+       f (!na .conta ns(FlushVers on.DEL M TER)) {
+        // T   s a not a seg nt w h a FlushVers on, sk p.
+        LOG. nfo("Found seg nt d rectory w hout a flush vers on: " + na );
+        cont nue;
       }
-      String[] nameSplits = name.split(FlushVersion.DELIMITER);
-      if (nameSplits.length != 2) {
-        LOG.warn("Found segment with bad name: " + segment.getAbsolutePath());
-        continue;
+      Str ng[] na Spl s = na .spl (FlushVers on.DEL M TER);
+       f (na Spl s.length != 2) {
+        LOG.warn("Found seg nt w h bad na : " + seg nt.getAbsolutePath());
+        cont nue;
       }
 
-      // Second half contains flush version
+      // Second half conta ns flush vers on
       try {
-        int flushVersion = Integer.parseInt(nameSplits[1]);
-        flushVersions.add(flushVersion);
-      } catch (NumberFormatException e) {
-        LOG.warn("Bad flush version number in segment name: " + segment.getAbsolutePath());
+         nt flushVers on =  nteger.parse nt(na Spl s[1]);
+        flushVers ons.add(flushVers on);
+      } catch (NumberFormatExcept on e) {
+        LOG.warn("Bad flush vers on number  n seg nt na : " + seg nt.getAbsolutePath());
       }
     }
-    return flushVersions;
+    return flushVers ons;
   }
 
   /**
-   * Removes old segments in the current build gen.
+   * Removes old seg nts  n t  current bu ld gen.
    */
-  @VisibleForTesting
-  static void removeOldSegments(SegmentSyncConfig sync) {
-    if (!sync.getScrubGen().isPresent()) {
+  @V s bleForTest ng
+  stat c vo d removeOldSeg nts(Seg ntSyncConf g sync) {
+     f (!sync.getScrubGen(). sPresent()) {
       return;
     }
 
-    File currentScrubGenSegmentDir = new File(sync.getLocalSegmentSyncRootDir());
+    F le currentScrubGenSeg ntD r = new F le(sync.getLocalSeg ntSyncRootD r());
 
-    // The unscrubbed segment root directory, used for rebuilds and for segments created before
-    // we introduced scrub gens. The getLocalSegmentSyncRootDir should be something like:
-    // $unscrubbedSegmentDir/scrubbed/$scrub_gen/,
-    // get unscrubbedSegmentDir from string name here in case scrubbed dir does not exist yet
-    File unscrubbedSegmentDir = new File(sync.getLocalSegmentSyncRootDir().split("scrubbed")[0]);
-    if (!unscrubbedSegmentDir.exists()) {
-      // For a new host that swapped in, it might not have flushed_segment dir yet.
-      // return directly in that case.
-      LOG.info(unscrubbedSegmentDir.getAbsoluteFile() + "does not exist, nothing to remove.");
+    // T  unscrubbed seg nt root d rectory, used for rebu lds and for seg nts created before
+    //    ntroduced scrub gens. T  getLocalSeg ntSyncRootD r should be so th ng l ke:
+    // $unscrubbedSeg ntD r/scrubbed/$scrub_gen/,
+    // get unscrubbedSeg ntD r from str ng na   re  n case scrubbed d r does not ex st yet
+    F le unscrubbedSeg ntD r = new F le(sync.getLocalSeg ntSyncRootD r().spl ("scrubbed")[0]);
+     f (!unscrubbedSeg ntD r.ex sts()) {
+      // For a new host that swapped  n,   m ght not have flus d_seg nt d r yet.
+      // return d rectly  n that case.
+      LOG. nfo(unscrubbedSeg ntD r.getAbsoluteF le() + "does not ex st, noth ng to remove.");
       return;
     }
-    Preconditions.checkArgument(unscrubbedSegmentDir.exists());
-    for (File file : unscrubbedSegmentDir.listFiles()) {
-      if (file.getName().matches("scrubbed")) {
-        continue;
+    Precond  ons.c ckArgu nt(unscrubbedSeg ntD r.ex sts());
+    for (F le f le : unscrubbedSeg ntD r.l stF les()) {
+       f (f le.getNa ().matc s("scrubbed")) {
+        cont nue;
       }
       try {
-        LOG.info("Deleting old unscrubbed segment: " + file.getAbsolutePath());
-        FileUtils.deleteDirectory(file);
-      } catch (IOException e) {
-        LOG.error("Failed to delete directory: " + file.getPath(), e);
+        LOG. nfo("Delet ng old unscrubbed seg nt: " + f le.getAbsolutePath());
+        F leUt ls.deleteD rectory(f le);
+      } catch ( OExcept on e) {
+        LOG.error("Fa led to delete d rectory: " + f le.getPath(), e);
       }
     }
 
-    // Delete all segments from previous scrub generations.
-    File allScrubbedSegmentsDir = currentScrubGenSegmentDir.getParentFile();
-    if (allScrubbedSegmentsDir.exists()) {
-      for (File file : allScrubbedSegmentsDir.listFiles()) {
-        if (file.getPath().equals(currentScrubGenSegmentDir.getPath())) {
-          continue;
+    // Delete all seg nts from prev ous scrub generat ons.
+    F le allScrubbedSeg ntsD r = currentScrubGenSeg ntD r.getParentF le();
+     f (allScrubbedSeg ntsD r.ex sts()) {
+      for (F le f le : allScrubbedSeg ntsD r.l stF les()) {
+         f (f le.getPath().equals(currentScrubGenSeg ntD r.getPath())) {
+          cont nue;
         }
         try {
-          LOG.info("Deleting old scrubbed segment: " + file.getAbsolutePath());
-          FileUtils.deleteDirectory(file);
-        } catch (IOException e) {
-          LOG.error("Failed to delete directory: " + file.getPath(), e);
+          LOG. nfo("Delet ng old scrubbed seg nt: " + f le.getAbsolutePath());
+          F leUt ls.deleteD rectory(f le);
+        } catch ( OExcept on e) {
+          LOG.error("Fa led to delete d rectory: " + f le.getPath(), e);
         }
       }
     }
   }
 
   /**
-   * Removes the data for all unused segments from the local disk. This includes:
-   *  - data for old segments
-   *  - data for segments belonging to another partition
-   *  - data for segments belonging to a different flush version.
+   * Removes t  data for all unused seg nts from t  local d sk. T   ncludes:
+   *  - data for old seg nts
+   *  - data for seg nts belong ng to anot r part  on
+   *  - data for seg nts belong ng to a d fferent flush vers on.
    */
-  public static void removeUnusedSegments(
-      PartitionManager partitionManager,
-      PartitionConfig partitionConfig,
-      int schemaMajorVersion,
-      SegmentSyncConfig segmentSyncConfig) {
+  publ c stat c vo d removeUnusedSeg nts(
+      Part  onManager part  onManager,
+      Part  onConf g part  onConf g,
+       nt sc maMajorVers on,
+      Seg ntSyncConf g seg ntSyncConf g) {
 
-    if (EarlybirdIndexConfigUtil.isArchiveSearch()) {
-      removeOldBuildGenerations(
-          EarlybirdConfig.getString("root_dir"),
-          EarlybirdConfig.getString("offline_segment_build_gen")
+     f (Earlyb rd ndexConf gUt l. sArch veSearch()) {
+      removeOldBu ldGenerat ons(
+          Earlyb rdConf g.getStr ng("root_d r"),
+          Earlyb rdConf g.getStr ng("offl ne_seg nt_bu ld_gen")
       );
-      removeOldSegments(segmentSyncConfig);
+      removeOldSeg nts(seg ntSyncConf g);
 
-      Preconditions.checkState(partitionManager instanceof ArchiveSearchPartitionManager);
-      removeArchiveTimesliceOutsideServingRange(
-          partitionConfig,
-          ((ArchiveSearchPartitionManager) partitionManager).getTimeSlicer(), segmentSyncConfig);
+      Precond  ons.c ckState(part  onManager  nstanceof Arch veSearchPart  onManager);
+      removeArch veT  sl ceOuts deServ ngRange(
+          part  onConf g,
+          ((Arch veSearchPart  onManager) part  onManager).getT  Sl cer(), seg ntSyncConf g);
     }
 
-    // Remove segments from other partitions
-    removeIndexesFromOtherPartitions(
-        partitionConfig.getIndexingHashPartitionID(),
-        partitionConfig.getNumPartitions(), segmentSyncConfig);
+    // Remove seg nts from ot r part  ons
+    remove ndexesFromOt rPart  ons(
+        part  onConf g.get ndex ngHashPart  on D(),
+        part  onConf g.getNumPart  ons(), seg ntSyncConf g);
 
-    // Remove old flushed segments
-    removeOldFlushVersionIndexes(schemaMajorVersion, segmentSyncConfig);
+    // Remove old flus d seg nts
+    removeOldFlushVers on ndexes(sc maMajorVers on, seg ntSyncConf g);
   }
 }

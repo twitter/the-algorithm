@@ -1,474 +1,474 @@
-package com.twitter.search.core.earlybird.index;
+package com.tw ter.search.core.earlyb rd. ndex;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+ mport java. o. OExcept on;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Collect ons;
+ mport java.ut l.HashMap;
+ mport java.ut l. erator;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.concurrent.ConcurrentHashMap;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.store.Directory;
+ mport org.apac .lucene. ndex.D rectoryReader;
+ mport org.apac .lucene. ndex. ndexWr erConf g;
+ mport org.apac .lucene. ndex.LeafReader;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene.store.D rectory;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.facets.AbstractFacetCountingArray;
-import com.twitter.search.core.earlybird.facets.FacetCountingArrayWriter;
-import com.twitter.search.core.earlybird.facets.FacetIDMap;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideByteIndex;
-import com.twitter.search.core.earlybird.index.column.DocValuesManager;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsData;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsFactory;
-import com.twitter.search.core.earlybird.index.inverted.DeletedDocs;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
-import com.twitter.search.core.earlybird.index.inverted.InvertedRealtimeIndex;
-import com.twitter.search.core.earlybird.index.inverted.OptimizedMemoryIndex;
-import com.twitter.search.core.earlybird.index.inverted.TermPointerEncoding;
+ mport com.tw ter.common.collect ons.Pa r;
+ mport com.tw ter.search.common.sc ma.base.Earlyb rdF eldType;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.common.ut l. o.flushable.DataDeser al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.DataSer al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.common.ut l. o.flushable.Flushable;
+ mport com.tw ter.search.core.earlyb rd.facets.AbstractFacetCount ngArray;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetCount ngArrayWr er;
+ mport com.tw ter.search.core.earlyb rd.facets.Facet DMap;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetLabelProv der;
+ mport com.tw ter.search.core.earlyb rd. ndex.column.ColumnStr deByte ndex;
+ mport com.tw ter.search.core.earlyb rd. ndex.column.DocValuesManager;
+ mport com.tw ter.search.core.earlyb rd. ndex.extens ons.Earlyb rd ndexExtens onsData;
+ mport com.tw ter.search.core.earlyb rd. ndex.extens ons.Earlyb rd ndexExtens onsFactory;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted.DeletedDocs;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted. nverted ndex;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted. nvertedRealt   ndex;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted.Opt m zed mory ndex;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted.TermPo nterEncod ng;
 
 /**
- * Base class that references data structures belonging to an Earlybird segment.
+ * Base class that references data structures belong ng to an Earlyb rd seg nt.
  */
-public abstract class EarlybirdIndexSegmentData implements Flushable {
+publ c abstract class Earlyb rd ndexSeg ntData  mple nts Flushable {
   /**
-   * This class has a map which contains a snapshot of max published pointers, to distinguish the
-   * documents in the skip lists that are fully indexed, and safe to return to searchers and those
-   * that are in progress and should not be returned to searchers. See
-   * "Earlybird Indexing Latency Design Document"
-   * for rationale and design.
+   * T  class has a map wh ch conta ns a snapshot of max publ s d po nters, to d st ngu sh t 
+   * docu nts  n t  sk p l sts that are fully  ndexed, and safe to return to searc rs and those
+   * that are  n progress and should not be returned to searc rs. See
+   * "Earlyb rd  ndex ng Latency Des gn Docu nt"
+   * for rat onale and des gn.
    *
-   * It also has the smallestDocID, which determines the smallest assigned doc ID in the tweet ID
-   * mapper that is safe to traverse.
+   *   also has t  smallestDoc D, wh ch determ nes t  smallest ass gned doc  D  n t  t et  D
+   * mapper that  s safe to traverse.
    *
-   * The pointer map and smallestDocID need to be updated atomically. See SEARCH-27650.
+   * T  po nter map and smallestDoc D need to be updated atom cally. See SEARCH-27650.
    */
-  public static class SyncData {
-    private final Map<InvertedIndex, Integer> indexPointers;
-    private final int smallestDocID;
+  publ c stat c class SyncData {
+    pr vate f nal Map< nverted ndex,  nteger>  ndexPo nters;
+    pr vate f nal  nt smallestDoc D;
 
-    public SyncData(Map<InvertedIndex, Integer> indexPointers, int smallestDocID) {
-      this.indexPointers = indexPointers;
-      this.smallestDocID = smallestDocID;
+    publ c SyncData(Map< nverted ndex,  nteger>  ndexPo nters,  nt smallestDoc D) {
+      t . ndexPo nters =  ndexPo nters;
+      t .smallestDoc D = smallestDoc D;
     }
 
-    public Map<InvertedIndex, Integer> getIndexPointers() {
-      return indexPointers;
+    publ c Map< nverted ndex,  nteger> get ndexPo nters() {
+      return  ndexPo nters;
     }
 
-    public int getSmallestDocID() {
-      return smallestDocID;
+    publ c  nt getSmallestDoc D() {
+      return smallestDoc D;
     }
   }
 
-  private volatile SyncData syncData;
+  pr vate volat le SyncData syncData;
 
-  private final int maxSegmentSize;
-  private final long timeSliceID;
+  pr vate f nal  nt maxSeg ntS ze;
+  pr vate f nal long t  Sl ce D;
 
-  private final ConcurrentHashMap<String, QueryCacheResultForSegment> queryCacheMap =
+  pr vate f nal ConcurrentHashMap<Str ng, QueryCac ResultForSeg nt> queryCac Map =
       new ConcurrentHashMap<>();
-  private final AbstractFacetCountingArray facetCountingArray;
-  private final boolean isOptimized;
-  private final ConcurrentHashMap<String, InvertedIndex> perFieldMap;
-  private final ConcurrentHashMap<String, ColumnStrideByteIndex> normsMap;
+  pr vate f nal AbstractFacetCount ngArray facetCount ngArray;
+  pr vate f nal boolean  sOpt m zed;
+  pr vate f nal ConcurrentHashMap<Str ng,  nverted ndex> perF eldMap;
+  pr vate f nal ConcurrentHashMap<Str ng, ColumnStr deByte ndex> normsMap;
 
-  private final Map<String, FacetLabelProvider> facetLabelProviders;
-  private final FacetIDMap facetIDMap;
+  pr vate f nal Map<Str ng, FacetLabelProv der> facetLabelProv ders;
+  pr vate f nal Facet DMap facet DMap;
 
-  private final Schema schema;
-  private final DocValuesManager docValuesManager;
+  pr vate f nal Sc ma sc ma;
+  pr vate f nal DocValuesManager docValuesManager;
 
-  private final DeletedDocs deletedDocs;
+  pr vate f nal DeletedDocs deletedDocs;
 
-  private final DocIDToTweetIDMapper docIdToTweetIdMapper;
-  private final TimeMapper timeMapper;
+  pr vate f nal Doc DToT et DMapper doc dToT et dMapper;
+  pr vate f nal T  Mapper t  Mapper;
 
-  static LeafReader getLeafReaderFromOptimizedDirectory(Directory directory) throws IOException {
-    List<LeafReaderContext> leaves = DirectoryReader.open(directory).getContext().leaves();
-    int leavesSize = leaves.size();
-    Preconditions.checkState(1 == leavesSize,
-        "Expected one leaf reader in directory %s, but found %s", directory, leavesSize);
+  stat c LeafReader getLeafReaderFromOpt m zedD rectory(D rectory d rectory) throws  OExcept on {
+    L st<LeafReaderContext> leaves = D rectoryReader.open(d rectory).getContext().leaves();
+     nt leavesS ze = leaves.s ze();
+    Precond  ons.c ckState(1 == leavesS ze,
+        "Expected one leaf reader  n d rectory %s, but found %s", d rectory, leavesS ze);
     return leaves.get(0).reader();
   }
 
   /**
-   * Creates a new SegmentData instance using the provided data.
+   * Creates a new Seg ntData  nstance us ng t  prov ded data.
    */
-  public EarlybirdIndexSegmentData(
-      int maxSegmentSize,
-      long timeSliceID,
-      Schema schema,
-      boolean isOptimized,
-      int smallestDocID,
-      ConcurrentHashMap<String, InvertedIndex> perFieldMap,
-      ConcurrentHashMap<String, ColumnStrideByteIndex> normsMap,
-      AbstractFacetCountingArray facetCountingArray,
+  publ c Earlyb rd ndexSeg ntData(
+       nt maxSeg ntS ze,
+      long t  Sl ce D,
+      Sc ma sc ma,
+      boolean  sOpt m zed,
+       nt smallestDoc D,
+      ConcurrentHashMap<Str ng,  nverted ndex> perF eldMap,
+      ConcurrentHashMap<Str ng, ColumnStr deByte ndex> normsMap,
+      AbstractFacetCount ngArray facetCount ngArray,
       DocValuesManager docValuesManager,
-      Map<String, FacetLabelProvider> facetLabelProviders,
-      FacetIDMap facetIDMap,
+      Map<Str ng, FacetLabelProv der> facetLabelProv ders,
+      Facet DMap facet DMap,
       DeletedDocs deletedDocs,
-      DocIDToTweetIDMapper docIdToTweetIdMapper,
-      TimeMapper timeMapper) {
-    this.maxSegmentSize = maxSegmentSize;
-    this.timeSliceID = timeSliceID;
-    this.schema = schema;
-    this.isOptimized = isOptimized;
-    this.facetCountingArray = facetCountingArray;
-    this.perFieldMap = perFieldMap;
-    this.syncData = new SyncData(buildIndexPointers(), smallestDocID);
-    this.normsMap = normsMap;
-    this.docValuesManager = docValuesManager;
-    this.facetLabelProviders = facetLabelProviders;
-    this.facetIDMap = facetIDMap;
-    this.deletedDocs = deletedDocs;
-    this.docIdToTweetIdMapper = docIdToTweetIdMapper;
-    this.timeMapper = timeMapper;
+      Doc DToT et DMapper doc dToT et dMapper,
+      T  Mapper t  Mapper) {
+    t .maxSeg ntS ze = maxSeg ntS ze;
+    t .t  Sl ce D = t  Sl ce D;
+    t .sc ma = sc ma;
+    t . sOpt m zed =  sOpt m zed;
+    t .facetCount ngArray = facetCount ngArray;
+    t .perF eldMap = perF eldMap;
+    t .syncData = new SyncData(bu ld ndexPo nters(), smallestDoc D);
+    t .normsMap = normsMap;
+    t .docValuesManager = docValuesManager;
+    t .facetLabelProv ders = facetLabelProv ders;
+    t .facet DMap = facet DMap;
+    t .deletedDocs = deletedDocs;
+    t .doc dToT et dMapper = doc dToT et dMapper;
+    t .t  Mapper = t  Mapper;
 
-    Preconditions.checkNotNull(schema);
+    Precond  ons.c ckNotNull(sc ma);
   }
 
-  public final Schema getSchema() {
-    return schema;
+  publ c f nal Sc ma getSc ma() {
+    return sc ma;
   }
 
   /**
-   * Returns all {@link EarlybirdIndexExtensionsData} instances contained in this segment.
-   * Since index extensions are optional, the returned map might be null or empty.
+   * Returns all {@l nk Earlyb rd ndexExtens onsData}  nstances conta ned  n t  seg nt.
+   * S nce  ndex extens ons are opt onal, t  returned map m ght be null or empty.
    */
-  public abstract <S extends EarlybirdIndexExtensionsData> S getIndexExtensionsData();
+  publ c abstract <S extends Earlyb rd ndexExtens onsData> S get ndexExtens onsData();
 
-  public DocIDToTweetIDMapper getDocIDToTweetIDMapper() {
-    return docIdToTweetIdMapper;
+  publ c Doc DToT et DMapper getDoc DToT et DMapper() {
+    return doc dToT et dMapper;
   }
 
-  public TimeMapper getTimeMapper() {
-    return timeMapper;
+  publ c T  Mapper getT  Mapper() {
+    return t  Mapper;
   }
 
-  public final DocValuesManager getDocValuesManager() {
+  publ c f nal DocValuesManager getDocValuesManager() {
     return docValuesManager;
   }
 
-  public Map<String, FacetLabelProvider> getFacetLabelProviders() {
-    return facetLabelProviders;
+  publ c Map<Str ng, FacetLabelProv der> getFacetLabelProv ders() {
+    return facetLabelProv ders;
   }
 
-  public FacetIDMap getFacetIDMap() {
-    return facetIDMap;
+  publ c Facet DMap getFacet DMap() {
+    return facet DMap;
   }
 
   /**
-   * Returns the QueryCacheResult for the given filter for this segment.
+   * Returns t  QueryCac Result for t  g ven f lter for t  seg nt.
    */
-  public QueryCacheResultForSegment getQueryCacheResult(String queryCacheFilterName) {
-    return queryCacheMap.get(queryCacheFilterName);
+  publ c QueryCac ResultForSeg nt getQueryCac Result(Str ng queryCac F lterNa ) {
+    return queryCac Map.get(queryCac F lterNa );
   }
 
-  public long getQueryCachesCardinality() {
-    return queryCacheMap.values().stream().mapToLong(q -> q.getCardinality()).sum();
+  publ c long getQueryCac sCard nal y() {
+    return queryCac Map.values().stream().mapToLong(q -> q.getCard nal y()).sum();
   }
 
   /**
-   * Get cache cardinality for each query cache.
+   * Get cac  card nal y for each query cac .
    * @return
    */
-  public List<Pair<String, Long>> getPerQueryCacheCardinality() {
-    ArrayList<Pair<String, Long>> result = new ArrayList<>();
+  publ c L st<Pa r<Str ng, Long>> getPerQueryCac Card nal y() {
+    ArrayL st<Pa r<Str ng, Long>> result = new ArrayL st<>();
 
-    queryCacheMap.forEach((cacheName, queryCacheResult) -> {
-      result.add(Pair.of(cacheName, queryCacheResult.getCardinality()));
+    queryCac Map.forEach((cac Na , queryCac Result) -> {
+      result.add(Pa r.of(cac Na , queryCac Result.getCard nal y()));
     });
     return result;
   }
 
   /**
-   * Updates the QueryCacheResult stored for the given filter for this segment
+   * Updates t  QueryCac Result stored for t  g ven f lter for t  seg nt
    */
-  public QueryCacheResultForSegment updateQueryCacheResult(
-      String queryCacheFilterName, QueryCacheResultForSegment queryCacheResultForSegment) {
-    return queryCacheMap.put(queryCacheFilterName, queryCacheResultForSegment);
+  publ c QueryCac ResultForSeg nt updateQueryCac Result(
+      Str ng queryCac F lterNa , QueryCac ResultForSeg nt queryCac ResultForSeg nt) {
+    return queryCac Map.put(queryCac F lterNa , queryCac ResultForSeg nt);
   }
 
   /**
-   * Subclasses are allowed to return null here to disable writing to a FacetCountingArray.
+   * Subclasses are allo d to return null  re to d sable wr  ng to a FacetCount ngArray.
    */
-  public FacetCountingArrayWriter createFacetCountingArrayWriter() {
-    return getFacetCountingArray() != null
-        ? new FacetCountingArrayWriter(getFacetCountingArray()) : null;
+  publ c FacetCount ngArrayWr er createFacetCount ngArrayWr er() {
+    return getFacetCount ngArray() != null
+        ? new FacetCount ngArrayWr er(getFacetCount ngArray()) : null;
   }
 
-  public int getMaxSegmentSize() {
-    return maxSegmentSize;
+  publ c  nt getMaxSeg ntS ze() {
+    return maxSeg ntS ze;
   }
 
-  public long getTimeSliceID() {
-    return timeSliceID;
+  publ c long getT  Sl ce D() {
+    return t  Sl ce D;
   }
 
-  public void updateSmallestDocID(int smallestDocID) {
-    // Atomic swap
-    syncData = new SyncData(Collections.unmodifiableMap(buildIndexPointers()), smallestDocID);
+  publ c vo d updateSmallestDoc D( nt smallestDoc D) {
+    // Atom c swap
+    syncData = new SyncData(Collect ons.unmod f ableMap(bu ld ndexPo nters()), smallestDoc D);
   }
 
-  private Map<InvertedIndex, Integer> buildIndexPointers() {
-    Map<InvertedIndex, Integer> newIndexPointers = new HashMap<>();
-    for (InvertedIndex index : perFieldMap.values()) {
-      if (index.hasMaxPublishedPointer()) {
-        newIndexPointers.put(index, index.getMaxPublishedPointer());
+  pr vate Map< nverted ndex,  nteger> bu ld ndexPo nters() {
+    Map< nverted ndex,  nteger> new ndexPo nters = new HashMap<>();
+    for ( nverted ndex  ndex : perF eldMap.values()) {
+       f ( ndex.hasMaxPubl s dPo nter()) {
+        new ndexPo nters.put( ndex,  ndex.getMaxPubl s dPo nter());
       }
     }
 
-    return newIndexPointers;
+    return new ndexPo nters;
   }
 
-  public SyncData getSyncData() {
+  publ c SyncData getSyncData() {
     return syncData;
   }
 
-  public AbstractFacetCountingArray getFacetCountingArray() {
-    return facetCountingArray;
+  publ c AbstractFacetCount ngArray getFacetCount ngArray() {
+    return facetCount ngArray;
   }
 
-  public void addField(String fieldName, InvertedIndex field) {
-    perFieldMap.put(fieldName, field);
+  publ c vo d addF eld(Str ng f eldNa ,  nverted ndex f eld) {
+    perF eldMap.put(f eldNa , f eld);
   }
 
-  public Map<String, InvertedIndex> getPerFieldMap() {
-    return Collections.unmodifiableMap(perFieldMap);
+  publ c Map<Str ng,  nverted ndex> getPerF eldMap() {
+    return Collect ons.unmod f ableMap(perF eldMap);
   }
 
-  public InvertedIndex getFieldIndex(String fieldName) {
-    return perFieldMap.get(fieldName);
+  publ c  nverted ndex getF eld ndex(Str ng f eldNa ) {
+    return perF eldMap.get(f eldNa );
   }
 
-  public Map<String, ColumnStrideByteIndex> getNormsMap() {
-    return Collections.unmodifiableMap(normsMap);
+  publ c Map<Str ng, ColumnStr deByte ndex> getNormsMap() {
+    return Collect ons.unmod f ableMap(normsMap);
   }
 
-  public DeletedDocs getDeletedDocs() {
+  publ c DeletedDocs getDeletedDocs() {
     return deletedDocs;
   }
 
   /**
-   * Returns the norms index for the given field name.
+   * Returns t  norms  ndex for t  g ven f eld na .
    */
-  public ColumnStrideByteIndex getNormIndex(String fieldName) {
-    return normsMap == null ? null : normsMap.get(fieldName);
+  publ c ColumnStr deByte ndex getNorm ndex(Str ng f eldNa ) {
+    return normsMap == null ? null : normsMap.get(f eldNa );
   }
 
   /**
-   * Returns the norms index for the given field name, add if not exist.
+   * Returns t  norms  ndex for t  g ven f eld na , add  f not ex st.
    */
-  public ColumnStrideByteIndex createNormIndex(String fieldName) {
-    if (normsMap == null) {
+  publ c ColumnStr deByte ndex createNorm ndex(Str ng f eldNa ) {
+     f (normsMap == null) {
       return null;
     }
-    ColumnStrideByteIndex csf = normsMap.get(fieldName);
-    if (csf == null) {
-      csf = new ColumnStrideByteIndex(fieldName, maxSegmentSize);
-      normsMap.put(fieldName, csf);
+    ColumnStr deByte ndex csf = normsMap.get(f eldNa );
+     f (csf == null) {
+      csf = new ColumnStr deByte ndex(f eldNa , maxSeg ntS ze);
+      normsMap.put(f eldNa , csf);
     }
     return csf;
   }
 
   /**
-   * Flushes this segment to disk.
+   * Flus s t  seg nt to d sk.
    */
-  public void flushSegment(FlushInfo flushInfo, DataSerializer out) throws IOException {
-    getFlushHandler().flush(flushInfo, out);
+  publ c vo d flushSeg nt(Flush nfo flush nfo, DataSer al zer out) throws  OExcept on {
+    getFlushHandler().flush(flush nfo, out);
   }
 
-  public final boolean isOptimized() {
-    return this.isOptimized;
+  publ c f nal boolean  sOpt m zed() {
+    return t . sOpt m zed;
   }
 
   /**
-   * Returns a new atomic reader for this segment.
+   * Returns a new atom c reader for t  seg nt.
    */
-  public EarlybirdIndexSegmentAtomicReader createAtomicReader() throws IOException {
-    EarlybirdIndexSegmentAtomicReader reader = doCreateAtomicReader();
-    EarlybirdIndexExtensionsData indexExtension = getIndexExtensionsData();
-    if (indexExtension != null) {
-      indexExtension.setupExtensions(reader);
+  publ c Earlyb rd ndexSeg ntAtom cReader createAtom cReader() throws  OExcept on {
+    Earlyb rd ndexSeg ntAtom cReader reader = doCreateAtom cReader();
+    Earlyb rd ndexExtens onsData  ndexExtens on = get ndexExtens onsData();
+     f ( ndexExtens on != null) {
+       ndexExtens on.setupExtens ons(reader);
     }
     return reader;
   }
 
   /**
-   * Creates a new atomic reader for this segment.
+   * Creates a new atom c reader for t  seg nt.
    */
-  protected abstract EarlybirdIndexSegmentAtomicReader doCreateAtomicReader() throws IOException;
+  protected abstract Earlyb rd ndexSeg ntAtom cReader doCreateAtom cReader() throws  OExcept on;
 
   /**
-   * Creates a new segment writer for this segment.
+   * Creates a new seg nt wr er for t  seg nt.
    */
-  public abstract EarlybirdIndexSegmentWriter createEarlybirdIndexSegmentWriter(
-      IndexWriterConfig indexWriterConfig) throws IOException;
+  publ c abstract Earlyb rd ndexSeg ntWr er createEarlyb rd ndexSeg ntWr er(
+       ndexWr erConf g  ndexWr erConf g) throws  OExcept on;
 
-  public abstract static class AbstractSegmentDataFlushHandler
-      <S extends EarlybirdIndexExtensionsData>
-      extends Flushable.Handler<EarlybirdIndexSegmentData> {
-    protected static final String MAX_SEGMENT_SIZE_PROP_NAME = "maxSegmentSize";
-    protected static final String TIME_SLICE_ID_PROP_NAME = "time_slice_id";
-    protected static final String SMALLEST_DOCID_PROP_NAME = "smallestDocID";
-    protected static final String DOC_ID_MAPPER_SUBPROPS_NAME = "doc_id_mapper";
-    protected static final String TIME_MAPPER_SUBPROPS_NAME = "time_mapper";
-    public static final String IS_OPTIMIZED_PROP_NAME = "isOptimized";
+  publ c abstract stat c class AbstractSeg ntDataFlushHandler
+      <S extends Earlyb rd ndexExtens onsData>
+      extends Flushable.Handler<Earlyb rd ndexSeg ntData> {
+    protected stat c f nal Str ng MAX_SEGMENT_S ZE_PROP_NAME = "maxSeg ntS ze";
+    protected stat c f nal Str ng T ME_SL CE_ D_PROP_NAME = "t  _sl ce_ d";
+    protected stat c f nal Str ng SMALLEST_DOC D_PROP_NAME = "smallestDoc D";
+    protected stat c f nal Str ng DOC_ D_MAPPER_SUBPROPS_NAME = "doc_ d_mapper";
+    protected stat c f nal Str ng T ME_MAPPER_SUBPROPS_NAME = "t  _mapper";
+    publ c stat c f nal Str ng  S_OPT M ZED_PROP_NAME = " sOpt m zed";
 
-    // Abstract methods child classes should implement:
-    // 1. How to additional data structures
-    protected abstract void flushAdditionalDataStructures(
-        FlushInfo flushInfo, DataSerializer out, EarlybirdIndexSegmentData toFlush)
-            throws IOException;
+    // Abstract  thods ch ld classes should  mple nt:
+    // 1. How to add  onal data structures
+    protected abstract vo d flushAdd  onalDataStructures(
+        Flush nfo flush nfo, DataSer al zer out, Earlyb rd ndexSeg ntData toFlush)
+            throws  OExcept on;
 
-    // 2. Load additional data structures and construct SegmentData.
-    // Common data structures should be passed into this method to avoid code duplication.
-    // Subclasses should load additional data structures and construct a SegmentData.
-    protected abstract EarlybirdIndexSegmentData constructSegmentData(
-        FlushInfo flushInfo,
-        ConcurrentHashMap<String, InvertedIndex> perFieldMap,
-        int maxSegmentSize,
-        S indexExtension,
-        DocIDToTweetIDMapper docIdToTweetIdMapper,
-        TimeMapper timeMapper,
-        DataDeserializer in) throws IOException;
+    // 2. Load add  onal data structures and construct Seg ntData.
+    // Common data structures should be passed  nto t   thod to avo d code dupl cat on.
+    // Subclasses should load add  onal data structures and construct a Seg ntData.
+    protected abstract Earlyb rd ndexSeg ntData constructSeg ntData(
+        Flush nfo flush nfo,
+        ConcurrentHashMap<Str ng,  nverted ndex> perF eldMap,
+         nt maxSeg ntS ze,
+        S  ndexExtens on,
+        Doc DToT et DMapper doc dToT et dMapper,
+        T  Mapper t  Mapper,
+        DataDeser al zer  n) throws  OExcept on;
 
-    protected abstract S newIndexExtension();
+    protected abstract S new ndexExtens on();
 
-    protected final Schema schema;
-    protected final EarlybirdIndexExtensionsFactory indexExtensionsFactory;
-    private final Flushable.Handler<? extends DocIDToTweetIDMapper> docIdMapperFlushHandler;
-    private final Flushable.Handler<? extends TimeMapper> timeMapperFlushHandler;
+    protected f nal Sc ma sc ma;
+    protected f nal Earlyb rd ndexExtens onsFactory  ndexExtens onsFactory;
+    pr vate f nal Flushable.Handler<? extends Doc DToT et DMapper> doc dMapperFlushHandler;
+    pr vate f nal Flushable.Handler<? extends T  Mapper> t  MapperFlushHandler;
 
-    public AbstractSegmentDataFlushHandler(
-        Schema schema,
-        EarlybirdIndexExtensionsFactory indexExtensionsFactory,
-        Flushable.Handler<? extends DocIDToTweetIDMapper> docIdMapperFlushHandler,
-        Flushable.Handler<? extends TimeMapper> timeMapperFlushHandler) {
+    publ c AbstractSeg ntDataFlushHandler(
+        Sc ma sc ma,
+        Earlyb rd ndexExtens onsFactory  ndexExtens onsFactory,
+        Flushable.Handler<? extends Doc DToT et DMapper> doc dMapperFlushHandler,
+        Flushable.Handler<? extends T  Mapper> t  MapperFlushHandler) {
       super();
-      this.schema = schema;
-      this.indexExtensionsFactory = indexExtensionsFactory;
-      this.docIdMapperFlushHandler = docIdMapperFlushHandler;
-      this.timeMapperFlushHandler = timeMapperFlushHandler;
+      t .sc ma = sc ma;
+      t . ndexExtens onsFactory =  ndexExtens onsFactory;
+      t .doc dMapperFlushHandler = doc dMapperFlushHandler;
+      t .t  MapperFlushHandler = t  MapperFlushHandler;
     }
 
-    public AbstractSegmentDataFlushHandler(EarlybirdIndexSegmentData objectToFlush) {
+    publ c AbstractSeg ntDataFlushHandler(Earlyb rd ndexSeg ntData objectToFlush) {
       super(objectToFlush);
-      this.schema = objectToFlush.schema;
-      this.indexExtensionsFactory = null; // factory only needed for loading SegmentData from disk
-      this.docIdMapperFlushHandler = null; // docIdMapperFlushHandler needed only for loading data
-      this.timeMapperFlushHandler = null; // timeMapperFlushHandler needed only for loading data
+      t .sc ma = objectToFlush.sc ma;
+      t . ndexExtens onsFactory = null; // factory only needed for load ng Seg ntData from d sk
+      t .doc dMapperFlushHandler = null; // doc dMapperFlushHandler needed only for load ng data
+      t .t  MapperFlushHandler = null; // t  MapperFlushHandler needed only for load ng data
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out)
-        throws IOException {
-      EarlybirdIndexSegmentData segmentData = getObjectToFlush();
+    @Overr de
+    protected vo d doFlush(Flush nfo flush nfo, DataSer al zer out)
+        throws  OExcept on {
+      Earlyb rd ndexSeg ntData seg ntData = getObjectToFlush();
 
-      Preconditions.checkState(segmentData.docIdToTweetIdMapper instanceof Flushable);
-      ((Flushable) segmentData.docIdToTweetIdMapper).getFlushHandler().flush(
-          flushInfo.newSubProperties(DOC_ID_MAPPER_SUBPROPS_NAME), out);
+      Precond  ons.c ckState(seg ntData.doc dToT et dMapper  nstanceof Flushable);
+      ((Flushable) seg ntData.doc dToT et dMapper).getFlushHandler().flush(
+          flush nfo.newSubPropert es(DOC_ D_MAPPER_SUBPROPS_NAME), out);
 
-      if (segmentData.timeMapper != null) {
-        segmentData.timeMapper.getFlushHandler()
-            .flush(flushInfo.newSubProperties(TIME_MAPPER_SUBPROPS_NAME), out);
+       f (seg ntData.t  Mapper != null) {
+        seg ntData.t  Mapper.getFlushHandler()
+            .flush(flush nfo.newSubPropert es(T ME_MAPPER_SUBPROPS_NAME), out);
       }
 
-      flushInfo.addBooleanProperty(IS_OPTIMIZED_PROP_NAME, segmentData.isOptimized());
-      flushInfo.addIntProperty(MAX_SEGMENT_SIZE_PROP_NAME, segmentData.getMaxSegmentSize());
-      flushInfo.addLongProperty(TIME_SLICE_ID_PROP_NAME, segmentData.getTimeSliceID());
-      flushInfo.addIntProperty(SMALLEST_DOCID_PROP_NAME,
-                               segmentData.getSyncData().getSmallestDocID());
+      flush nfo.addBooleanProperty( S_OPT M ZED_PROP_NAME, seg ntData. sOpt m zed());
+      flush nfo.add ntProperty(MAX_SEGMENT_S ZE_PROP_NAME, seg ntData.getMaxSeg ntS ze());
+      flush nfo.addLongProperty(T ME_SL CE_ D_PROP_NAME, seg ntData.getT  Sl ce D());
+      flush nfo.add ntProperty(SMALLEST_DOC D_PROP_NAME,
+                               seg ntData.getSyncData().getSmallestDoc D());
 
-      flushIndexes(flushInfo, out, segmentData);
+      flush ndexes(flush nfo, out, seg ntData);
 
-      // Flush cluster specific data structures:
-      // FacetCountingArray, TweetIDMapper, LatLonMapper, and TimeMapper
-      flushAdditionalDataStructures(flushInfo, out, segmentData);
+      // Flush cluster spec f c data structures:
+      // FacetCount ngArray, T et DMapper, LatLonMapper, and T  Mapper
+      flushAdd  onalDataStructures(flush nfo, out, seg ntData);
     }
 
-    private void flushIndexes(
-        FlushInfo flushInfo,
-        DataSerializer out,
-        EarlybirdIndexSegmentData segmentData) throws IOException {
-      Map<String, InvertedIndex> perFieldMap = segmentData.getPerFieldMap();
-      FlushInfo fieldProps = flushInfo.newSubProperties("fields");
-      long sizeBeforeFlush = out.length();
-      for (Map.Entry<String, InvertedIndex> entry : perFieldMap.entrySet()) {
-        String fieldName = entry.getKey();
-        entry.getValue().getFlushHandler().flush(fieldProps.newSubProperties(fieldName), out);
+    pr vate vo d flush ndexes(
+        Flush nfo flush nfo,
+        DataSer al zer out,
+        Earlyb rd ndexSeg ntData seg ntData) throws  OExcept on {
+      Map<Str ng,  nverted ndex> perF eldMap = seg ntData.getPerF eldMap();
+      Flush nfo f eldProps = flush nfo.newSubPropert es("f elds");
+      long s zeBeforeFlush = out.length();
+      for (Map.Entry<Str ng,  nverted ndex> entry : perF eldMap.entrySet()) {
+        Str ng f eldNa  = entry.getKey();
+        entry.getValue().getFlushHandler().flush(f eldProps.newSubPropert es(f eldNa ), out);
       }
-      fieldProps.setSizeInBytes(out.length() - sizeBeforeFlush);
+      f eldProps.setS ze nBytes(out.length() - s zeBeforeFlush);
     }
 
-    @Override
-    protected EarlybirdIndexSegmentData doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
-      DocIDToTweetIDMapper docIdToTweetIdMapper = docIdMapperFlushHandler.load(
-          flushInfo.getSubProperties(DOC_ID_MAPPER_SUBPROPS_NAME), in);
+    @Overr de
+    protected Earlyb rd ndexSeg ntData doLoad(Flush nfo flush nfo, DataDeser al zer  n)
+        throws  OExcept on {
+      Doc DToT et DMapper doc dToT et dMapper = doc dMapperFlushHandler.load(
+          flush nfo.getSubPropert es(DOC_ D_MAPPER_SUBPROPS_NAME),  n);
 
-      FlushInfo timeMapperFlushInfo = flushInfo.getSubProperties(TIME_MAPPER_SUBPROPS_NAME);
-      TimeMapper timeMapper =
-          timeMapperFlushInfo != null ? timeMapperFlushHandler.load(timeMapperFlushInfo, in) : null;
+      Flush nfo t  MapperFlush nfo = flush nfo.getSubPropert es(T ME_MAPPER_SUBPROPS_NAME);
+      T  Mapper t  Mapper =
+          t  MapperFlush nfo != null ? t  MapperFlushHandler.load(t  MapperFlush nfo,  n) : null;
 
-      final int maxSegmentSize = flushInfo.getIntProperty(MAX_SEGMENT_SIZE_PROP_NAME);
-      ConcurrentHashMap<String, InvertedIndex> perFieldMap = loadIndexes(flushInfo, in);
-      return constructSegmentData(
-          flushInfo,
-          perFieldMap,
-          maxSegmentSize,
-          newIndexExtension(),
-          docIdToTweetIdMapper,
-          timeMapper,
-          in);
+      f nal  nt maxSeg ntS ze = flush nfo.get ntProperty(MAX_SEGMENT_S ZE_PROP_NAME);
+      ConcurrentHashMap<Str ng,  nverted ndex> perF eldMap = load ndexes(flush nfo,  n);
+      return constructSeg ntData(
+          flush nfo,
+          perF eldMap,
+          maxSeg ntS ze,
+          new ndexExtens on(),
+          doc dToT et dMapper,
+          t  Mapper,
+           n);
     }
 
-    // Move this method into EarlybirdRealtimeIndexSegmentData (careful,
-    // we may need to increment FlushVersion because EarlybirdLuceneIndexSegmentData
-    // currently has the 'fields' subproperty in its FlushInfo as well)
-    private ConcurrentHashMap<String, InvertedIndex> loadIndexes(
-        FlushInfo flushInfo, DataDeserializer in) throws IOException {
-      ConcurrentHashMap<String, InvertedIndex> perFieldMap = new ConcurrentHashMap<>();
+    // Move t   thod  nto Earlyb rdRealt   ndexSeg ntData (careful,
+    //   may need to  ncre nt FlushVers on because Earlyb rdLucene ndexSeg ntData
+    // currently has t  'f elds' subproperty  n  s Flush nfo as  ll)
+    pr vate ConcurrentHashMap<Str ng,  nverted ndex> load ndexes(
+        Flush nfo flush nfo, DataDeser al zer  n) throws  OExcept on {
+      ConcurrentHashMap<Str ng,  nverted ndex> perF eldMap = new ConcurrentHashMap<>();
 
-      FlushInfo fieldProps = flushInfo.getSubProperties("fields");
-      Iterator<String> fieldIterator = fieldProps.getKeyIterator();
-      while (fieldIterator.hasNext()) {
-        String fieldName = fieldIterator.next();
-        EarlybirdFieldType fieldType = schema.getFieldInfo(fieldName).getFieldType();
-        FlushInfo subProp = fieldProps.getSubProperties(fieldName);
-        boolean isOptimized = subProp.getBooleanProperty(
-            OptimizedMemoryIndex.FlushHandler.IS_OPTIMIZED_PROP_NAME);
-        final InvertedIndex invertedIndex;
-        if (isOptimized) {
-          if (!fieldType.becomesImmutable()) {
-            throw new IOException("Tried to load an optimized field that is not immutable: "
-                + fieldName);
+      Flush nfo f eldProps = flush nfo.getSubPropert es("f elds");
+       erator<Str ng> f eld erator = f eldProps.getKey erator();
+      wh le (f eld erator.hasNext()) {
+        Str ng f eldNa  = f eld erator.next();
+        Earlyb rdF eldType f eldType = sc ma.getF eld nfo(f eldNa ).getF eldType();
+        Flush nfo subProp = f eldProps.getSubPropert es(f eldNa );
+        boolean  sOpt m zed = subProp.getBooleanProperty(
+            Opt m zed mory ndex.FlushHandler. S_OPT M ZED_PROP_NAME);
+        f nal  nverted ndex  nverted ndex;
+         f ( sOpt m zed) {
+           f (!f eldType.beco s mmutable()) {
+            throw new  OExcept on("Tr ed to load an opt m zed f eld that  s not  mmutable: "
+                + f eldNa );
           }
-          invertedIndex = (new OptimizedMemoryIndex.FlushHandler(fieldType)).load(subProp, in);
+           nverted ndex = (new Opt m zed mory ndex.FlushHandler(f eldType)).load(subProp,  n);
         } else {
-          invertedIndex = (new InvertedRealtimeIndex.FlushHandler(
-                               fieldType, TermPointerEncoding.DEFAULT_ENCODING))
-              .load(subProp, in);
+           nverted ndex = (new  nvertedRealt   ndex.FlushHandler(
+                               f eldType, TermPo nterEncod ng.DEFAULT_ENCOD NG))
+              .load(subProp,  n);
         }
-        perFieldMap.put(fieldName, invertedIndex);
+        perF eldMap.put(f eldNa ,  nverted ndex);
       }
-      return perFieldMap;
+      return perF eldMap;
     }
   }
 
-  public int numDocs() {
-    return docIdToTweetIdMapper.getNumDocs();
+  publ c  nt numDocs() {
+    return doc dToT et dMapper.getNumDocs();
   }
 }

@@ -1,39 +1,39 @@
 {
-  "role": "discode",
-  "name": "uua-enrichment-planner-staging",
-  "config-files": [
-    "uua-enrichment-planner.aurora"
+  "role": "d scode",
+  "na ": "uua-enr ch nt-planner-stag ng",
+  "conf g-f les": [
+    "uua-enr ch nt-planner.aurora"
   ],
-  "build": {
+  "bu ld": {
     "play": true,
-    "dependencies": [
+    "dependenc es": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "na ": "packer-cl ent-no-pex",
+        "vers on": "latest"
       }
     ],
     "steps": [
       {
         "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-enrichment-planner"
+        "na ": "bundle",
+        "target": "un f ed_user_act ons/serv ce/src/ma n/scala:uua-enr ch nt-planner"
       },
       {
         "type": "packer",
-        "name": "uua-enrichment-planner-staging",
-        "artifact": "./dist/uua-enrichment-planner.zip"
+        "na ": "uua-enr ch nt-planner-stag ng",
+        "art fact": "./d st/uua-enr ch nt-planner.z p"
       }
     ]
   },
   "targets": [
     {
       "type": "group",
-      "name": "staging",
+      "na ": "stag ng",
       "targets": [
         {
-          "name": "uua-enricher-enrichment-planner-pdxa",
-          "key": "pdxa/discode/staging/uua-enrichment-planner"
+          "na ": "uua-enr c r-enr ch nt-planner-pdxa",
+          "key": "pdxa/d scode/stag ng/uua-enr ch nt-planner"
         }
       ]
     }

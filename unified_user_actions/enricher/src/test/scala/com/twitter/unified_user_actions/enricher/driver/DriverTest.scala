@@ -1,284 +1,284 @@
-package com.twitter.unified_user_actions.enricher.driver
+package com.tw ter.un f ed_user_act ons.enr c r.dr ver
 
-import com.twitter.inject.Test
-import com.twitter.unified_user_actions.enricher.EnricherFixture
-import com.twitter.unified_user_actions.enricher.hydrator.Hydrator
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentEnvelop
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentIdType
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentKey
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentPlan
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentStage
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentStageStatus
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentStageType
-import com.twitter.unified_user_actions.enricher.partitioner.Partitioner
-import com.twitter.util.Await
-import com.twitter.util.Future
-import org.scalatest.BeforeAndAfter
-import org.scalatest.matchers.should.Matchers
-import scala.collection.mutable
+ mport com.tw ter. nject.Test
+ mport com.tw ter.un f ed_user_act ons.enr c r.Enr c rF xture
+ mport com.tw ter.un f ed_user_act ons.enr c r.hydrator.Hydrator
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntEnvelop
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch nt dType
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch nt nstruct on
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntKey
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntPlan
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntStage
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntStageStatus
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntStageType
+ mport com.tw ter.un f ed_user_act ons.enr c r.part  oner.Part  oner
+ mport com.tw ter.ut l.Awa 
+ mport com.tw ter.ut l.Future
+ mport org.scalatest.BeforeAndAfter
+ mport org.scalatest.matc rs.should.Matc rs
+ mport scala.collect on.mutable
 
-class DriverTest extends Test with Matchers with BeforeAndAfter {
-  object ExecutionContext {
-    var executionCount = 0
+class Dr verTest extends Test w h Matc rs w h BeforeAndAfter {
+  object Execut onContext {
+    var execut onCount = 0
   }
 
   before {
-    ExecutionContext.executionCount = 0
+    Execut onContext.execut onCount = 0
   }
 
-  trait Fixtures extends EnricherFixture {
-    val repartitionTweet = mkStage()
-    val repartitionNotiTweet =
-      mkStage(instructions = Seq(EnrichmentInstruction.NotificationTweetEnrichment))
-    val hydrateTweet = mkStage(stageType = EnrichmentStageType.Hydration)
-    val hydrateTweetMultiInstructions = mkStage(
-      stageType = EnrichmentStageType.Hydration,
-      instructions = Seq(
-        EnrichmentInstruction.NotificationTweetEnrichment,
-        EnrichmentInstruction.TweetEnrichment,
-        EnrichmentInstruction.NotificationTweetEnrichment,
-        EnrichmentInstruction.TweetEnrichment
+  tra  F xtures extends Enr c rF xture {
+    val repart  onT et = mkStage()
+    val repart  onNot T et =
+      mkStage( nstruct ons = Seq(Enr ch nt nstruct on.Not f cat onT etEnr ch nt))
+    val hydrateT et = mkStage(stageType = Enr ch ntStageType.Hydrat on)
+    val hydrateT etMult  nstruct ons = mkStage(
+      stageType = Enr ch ntStageType.Hydrat on,
+       nstruct ons = Seq(
+        Enr ch nt nstruct on.Not f cat onT etEnr ch nt,
+        Enr ch nt nstruct on.T etEnr ch nt,
+        Enr ch nt nstruct on.Not f cat onT etEnr ch nt,
+        Enr ch nt nstruct on.T etEnr ch nt
       )
     )
-    val hydrateNotiTweet = mkStage(
-      stageType = EnrichmentStageType.Hydration,
-      instructions = Seq(EnrichmentInstruction.NotificationTweetEnrichment))
-    val key1 = EnrichmentKey(EnrichmentIdType.TweetId, 123L)
-    val tweet1 = mkUUATweetEvent(981L)
+    val hydrateNot T et = mkStage(
+      stageType = Enr ch ntStageType.Hydrat on,
+       nstruct ons = Seq(Enr ch nt nstruct on.Not f cat onT etEnr ch nt))
+    val key1 = Enr ch ntKey(Enr ch nt dType.T et d, 123L)
+    val t et1 = mkUUAT etEvent(981L)
     val hydrator = new MockHydrator
-    val partitioner = new MockPartitioner
-    val outputTopic = "output"
-    val partitionTopic = "partition"
+    val part  oner = new MockPart  oner
+    val outputTop c = "output"
+    val part  onTop c = "part  on"
 
     def complete(
-      enrichmentStage: EnrichmentStage,
-      outputTopic: Option[String] = None
-    ): EnrichmentStage = {
-      enrichmentStage.copy(status = EnrichmentStageStatus.Completion, outputTopic = outputTopic)
+      enr ch ntStage: Enr ch ntStage,
+      outputTop c: Opt on[Str ng] = None
+    ): Enr ch ntStage = {
+      enr ch ntStage.copy(status = Enr ch ntStageStatus.Complet on, outputTop c = outputTop c)
     }
 
-    def mkPlan(enrichmentStages: EnrichmentStage*): EnrichmentPlan = {
-      EnrichmentPlan(enrichmentStages)
+    def mkPlan(enr ch ntStages: Enr ch ntStage*): Enr ch ntPlan = {
+      Enr ch ntPlan(enr ch ntStages)
     }
 
     def mkStage(
-      status: EnrichmentStageStatus = EnrichmentStageStatus.Initialized,
-      stageType: EnrichmentStageType = EnrichmentStageType.Repartition,
-      instructions: Seq[EnrichmentInstruction] = Seq(EnrichmentInstruction.TweetEnrichment)
-    ): EnrichmentStage = {
-      EnrichmentStage(status, stageType, instructions)
+      status: Enr ch ntStageStatus = Enr ch ntStageStatus. n  al zed,
+      stageType: Enr ch ntStageType = Enr ch ntStageType.Repart  on,
+       nstruct ons: Seq[Enr ch nt nstruct on] = Seq(Enr ch nt nstruct on.T etEnr ch nt)
+    ): Enr ch ntStage = {
+      Enr ch ntStage(status, stageType,  nstruct ons)
     }
 
-    trait ExecutionCount {
-      val callMap: mutable.Map[Int, (EnrichmentInstruction, EnrichmentEnvelop)] =
-        mutable.Map[Int, (EnrichmentInstruction, EnrichmentEnvelop)]()
+    tra  Execut onCount {
+      val callMap: mutable.Map[ nt, (Enr ch nt nstruct on, Enr ch ntEnvelop)] =
+        mutable.Map[ nt, (Enr ch nt nstruct on, Enr ch ntEnvelop)]()
 
-      def recordExecution(instruction: EnrichmentInstruction, envelop: EnrichmentEnvelop): Unit = {
-        ExecutionContext.executionCount = ExecutionContext.executionCount + 1
-        callMap.put(ExecutionContext.executionCount, (instruction, envelop))
+      def recordExecut on( nstruct on: Enr ch nt nstruct on, envelop: Enr ch ntEnvelop): Un  = {
+        Execut onContext.execut onCount = Execut onContext.execut onCount + 1
+        callMap.put(Execut onContext.execut onCount, ( nstruct on, envelop))
       }
     }
 
-    class MockHydrator extends Hydrator with ExecutionCount {
+    class MockHydrator extends Hydrator w h Execut onCount {
       def hydrate(
-        instruction: EnrichmentInstruction,
-        key: Option[EnrichmentKey],
-        envelop: EnrichmentEnvelop
-      ): Future[EnrichmentEnvelop] = {
-        recordExecution(instruction, envelop)
-        Future(envelop.copy(envelopId = ExecutionContext.executionCount))
+         nstruct on: Enr ch nt nstruct on,
+        key: Opt on[Enr ch ntKey],
+        envelop: Enr ch ntEnvelop
+      ): Future[Enr ch ntEnvelop] = {
+        recordExecut on( nstruct on, envelop)
+        Future(envelop.copy(envelop d = Execut onContext.execut onCount))
       }
     }
 
-    class MockPartitioner extends Partitioner with ExecutionCount {
-      def repartition(
-        instruction: EnrichmentInstruction,
-        envelop: EnrichmentEnvelop
-      ): Option[EnrichmentKey] = {
-        recordExecution(instruction, envelop)
-        Some(EnrichmentKey(EnrichmentIdType.TweetId, ExecutionContext.executionCount))
+    class MockPart  oner extends Part  oner w h Execut onCount {
+      def repart  on(
+         nstruct on: Enr ch nt nstruct on,
+        envelop: Enr ch ntEnvelop
+      ): Opt on[Enr ch ntKey] = {
+        recordExecut on( nstruct on, envelop)
+        So (Enr ch ntKey(Enr ch nt dType.T et d, Execut onContext.execut onCount))
       }
     }
   }
 
-  test("single partitioning plan works") {
-    new Fixtures {
-      val driver = new EnrichmentDriver(Some(outputTopic), partitionTopic, hydrator, partitioner)
-      // given a simple plan that only repartition the input and nothing else
-      val plan = mkPlan(repartitionTweet)
+  test("s ngle part  on ng plan works") {
+    new F xtures {
+      val dr ver = new Enr ch ntDr ver(So (outputTop c), part  onTop c, hydrator, part  oner)
+      // g ven a s mple plan that only repart  on t   nput and noth ng else
+      val plan = mkPlan(repart  onT et)
 
-      (1L to 10).foreach(id => {
-        val envelop = EnrichmentEnvelop(id, tweet1, plan)
+      (1L to 10).foreach( d => {
+        val envelop = Enr ch ntEnvelop( d, t et1, plan)
 
-        // when
-        val actual = Await.result(driver.execute(Some(key1), Future(envelop)))
+        // w n
+        val actual = Awa .result(dr ver.execute(So (key1), Future(envelop)))
 
-        val expectedKey = Some(key1.copy(id = id))
+        val expectedKey = So (key1.copy( d =  d))
         val expectedValue =
-          envelop.copy(plan = mkPlan(complete(repartitionTweet, Some(partitionTopic))))
+          envelop.copy(plan = mkPlan(complete(repart  onT et, So (part  onTop c))))
 
-        // then the result should have a new partitioned key, with the envelop unchanged except the plan is complete
-        // however, the output topic is the partitionTopic (since this is only a partitioning stage)
+        // t n t  result should have a new part  oned key, w h t  envelop unchanged except t  plan  s complete
+        // ho ver, t  output top c  s t  part  onTop c (s nce t   s only a part  on ng stage)
         assert((expectedKey, expectedValue) == actual)
       })
     }
   }
 
-  test("multi-stage partitioning plan works") {
-    new Fixtures {
-      val driver = new EnrichmentDriver(Some(outputTopic), partitionTopic, hydrator, partitioner)
-      // given a plan that chain multiple repartition stages together
-      val plan = mkPlan(repartitionTweet, repartitionNotiTweet)
-      val envelop1 = EnrichmentEnvelop(1L, tweet1, plan)
+  test("mult -stage part  on ng plan works") {
+    new F xtures {
+      val dr ver = new Enr ch ntDr ver(So (outputTop c), part  onTop c, hydrator, part  oner)
+      // g ven a plan that cha n mult ple repart  on stages toget r
+      val plan = mkPlan(repart  onT et, repart  onNot T et)
+      val envelop1 = Enr ch ntEnvelop(1L, t et1, plan)
 
-      // when 1st partitioning trip
-      val actual1 = Await.result(driver.execute(Some(key1), Future(envelop1)))
+      // w n 1st part  on ng tr p
+      val actual1 = Awa .result(dr ver.execute(So (key1), Future(envelop1)))
 
-      // then the result should have a new partitioned key, with the envelop unchanged except the
-      // 1st stage of the plan is complete
-      val expectedKey1 = key1.copy(id = 1L)
+      // t n t  result should have a new part  oned key, w h t  envelop unchanged except t 
+      // 1st stage of t  plan  s complete
+      val expectedKey1 = key1.copy( d = 1L)
       val expectedValue1 =
         envelop1.copy(plan =
-          mkPlan(complete(repartitionTweet, Some(partitionTopic)), repartitionNotiTweet))
+          mkPlan(complete(repart  onT et, So (part  onTop c)), repart  onNot T et))
 
-      assert((Some(expectedKey1), expectedValue1) == actual1)
+      assert((So (expectedKey1), expectedValue1) == actual1)
 
-      // then, we reuse the last result to exercise the logics on the driver again for the 2st trip
-      val actual2 = Await.result(driver.execute(Some(expectedKey1), Future(expectedValue1)))
-      val expectedKey2 = key1.copy(id = 2L)
+      // t n,   reuse t  last result to exerc se t  log cs on t  dr ver aga n for t  2st tr p
+      val actual2 = Awa .result(dr ver.execute(So (expectedKey1), Future(expectedValue1)))
+      val expectedKey2 = key1.copy( d = 2L)
       val expectedValue2 =
         envelop1.copy(plan = mkPlan(
-          complete(repartitionTweet, Some(partitionTopic)),
-          complete(repartitionNotiTweet, Some(partitionTopic))))
+          complete(repart  onT et, So (part  onTop c)),
+          complete(repart  onNot T et, So (part  onTop c))))
 
-      assert((Some(expectedKey2), expectedValue2) == actual2)
+      assert((So (expectedKey2), expectedValue2) == actual2)
     }
   }
 
-  test("single hydration plan works") {
-    new Fixtures {
-      val driver = new EnrichmentDriver(Some(outputTopic), partitionTopic, hydrator, partitioner)
-      // given a simple plan that only hydrate the input and nothing else
-      val plan = mkPlan(hydrateTweet)
+  test("s ngle hydrat on plan works") {
+    new F xtures {
+      val dr ver = new Enr ch ntDr ver(So (outputTop c), part  onTop c, hydrator, part  oner)
+      // g ven a s mple plan that only hydrate t   nput and noth ng else
+      val plan = mkPlan(hydrateT et)
 
-      (1L to 10).foreach(id => {
-        val envelop = EnrichmentEnvelop(id, tweet1, plan)
+      (1L to 10).foreach( d => {
+        val envelop = Enr ch ntEnvelop( d, t et1, plan)
 
-        // when
-        val actual = Await.result(driver.execute(Some(key1), Future(envelop)))
+        // w n
+        val actual = Awa .result(dr ver.execute(So (key1), Future(envelop)))
 
         val expectedValue =
-          envelop.copy(envelopId = id, plan = mkPlan(complete(hydrateTweet, Some(outputTopic))))
+          envelop.copy(envelop d =  d, plan = mkPlan(complete(hydrateT et, So (outputTop c))))
 
-        // then the result should have the same key, with the envelop hydrated & the plan is complete
-        // the output topic should be the final topic since this is a hydration stage and the plan is complete
-        assert((Some(key1), expectedValue) == actual)
+        // t n t  result should have t  sa  key, w h t  envelop hydrated & t  plan  s complete
+        // t  output top c should be t  f nal top c s nce t   s a hydrat on stage and t  plan  s complete
+        assert((So (key1), expectedValue) == actual)
       })
     }
   }
 
-  test("single hydration with multiple instructions plan works") {
-    new Fixtures {
-      val driver = new EnrichmentDriver(Some(outputTopic), partitionTopic, hydrator, partitioner)
-      // given a simple plan that only hydrate the input and nothing else
-      val plan = mkPlan(hydrateTweetMultiInstructions)
-      val envelop = EnrichmentEnvelop(0L, tweet1, plan)
+  test("s ngle hydrat on w h mult ple  nstruct ons plan works") {
+    new F xtures {
+      val dr ver = new Enr ch ntDr ver(So (outputTop c), part  onTop c, hydrator, part  oner)
+      // g ven a s mple plan that only hydrate t   nput and noth ng else
+      val plan = mkPlan(hydrateT etMult  nstruct ons)
+      val envelop = Enr ch ntEnvelop(0L, t et1, plan)
 
-      // when
-      val actual = Await.result(driver.execute(Some(key1), Future(envelop)))
+      // w n
+      val actual = Awa .result(dr ver.execute(So (key1), Future(envelop)))
       val expectedValue = envelop.copy(
-        envelopId = 4L, // hydrate is called 4 times for 4 instructions in 1 stage
-        plan = mkPlan(complete(hydrateTweetMultiInstructions, Some(outputTopic))))
+        envelop d = 4L, // hydrate  s called 4 t  s for 4  nstruct ons  n 1 stage
+        plan = mkPlan(complete(hydrateT etMult  nstruct ons, So (outputTop c))))
 
-      // then the result should have the same key, with the envelop hydrated & the plan is complete
-      // the output topic should be the final topic since this is a hydration stage and the plan is complete
-      assert((Some(key1), expectedValue) == actual)
+      // t n t  result should have t  sa  key, w h t  envelop hydrated & t  plan  s complete
+      // t  output top c should be t  f nal top c s nce t   s a hydrat on stage and t  plan  s complete
+      assert((So (key1), expectedValue) == actual)
     }
   }
 
-  test("multi-stage hydration plan works") {
-    new Fixtures {
-      val driver = new EnrichmentDriver(Some(outputTopic), partitionTopic, hydrator, partitioner)
-      // given a plan that only hydrate twice
-      val plan = mkPlan(hydrateTweet, hydrateNotiTweet)
-      val envelop = EnrichmentEnvelop(1L, tweet1, plan)
+  test("mult -stage hydrat on plan works") {
+    new F xtures {
+      val dr ver = new Enr ch ntDr ver(So (outputTop c), part  onTop c, hydrator, part  oner)
+      // g ven a plan that only hydrate tw ce
+      val plan = mkPlan(hydrateT et, hydrateNot T et)
+      val envelop = Enr ch ntEnvelop(1L, t et1, plan)
 
-      // when
-      val actual = Await.result(driver.execute(Some(key1), Future(envelop)))
+      // w n
+      val actual = Awa .result(dr ver.execute(So (key1), Future(envelop)))
 
-      // then the result should have the same key, with the envelop hydrated. since there's no
-      // partitioning stages, the driver will just recurse until all the hydration is done,
-      // then output to the final topic
+      // t n t  result should have t  sa  key, w h t  envelop hydrated. s nce t re's no
+      // part  on ng stages, t  dr ver w ll just recurse unt l all t  hydrat on  s done,
+      // t n output to t  f nal top c
       val expectedValue =
         envelop.copy(
-          envelopId = 2L,
+          envelop d = 2L,
           plan = mkPlan(
-            complete(hydrateTweet),
+            complete(hydrateT et),
             complete(
-              hydrateNotiTweet,
-              Some(outputTopic)
-            ) // only the last stage has the output topic
+              hydrateNot T et,
+              So (outputTop c)
+            ) // only t  last stage has t  output top c
           ))
 
-      assert((Some(key1), expectedValue) == actual)
+      assert((So (key1), expectedValue) == actual)
     }
   }
 
-  test("multi-stage partition+hydration plan works") {
-    new Fixtures {
-      val driver = new EnrichmentDriver(Some(outputTopic), partitionTopic, hydrator, partitioner)
+  test("mult -stage part  on+hydrat on plan works") {
+    new F xtures {
+      val dr ver = new Enr ch ntDr ver(So (outputTop c), part  onTop c, hydrator, part  oner)
 
-      // given a plan that repartition then hydrate twice
-      val plan = mkPlan(repartitionTweet, hydrateTweet, repartitionNotiTweet, hydrateNotiTweet)
-      var curEnvelop = EnrichmentEnvelop(1L, tweet1, plan)
+      // g ven a plan that repart  on t n hydrate tw ce
+      val plan = mkPlan(repart  onT et, hydrateT et, repart  onNot T et, hydrateNot T et)
+      var curEnvelop = Enr ch ntEnvelop(1L, t et1, plan)
       var curKey = key1
 
-      // stage 1, partitioning on tweet should be correct
-      var actual = Await.result(driver.execute(Some(curKey), Future(curEnvelop)))
-      var expectedKey = curKey.copy(id = 1L)
+      // stage 1, part  on ng on t et should be correct
+      var actual = Awa .result(dr ver.execute(So (curKey), Future(curEnvelop)))
+      var expectedKey = curKey.copy( d = 1L)
       var expectedValue = curEnvelop.copy(
         plan = mkPlan(
-          complete(repartitionTweet, Some(partitionTopic)),
-          hydrateTweet,
-          repartitionNotiTweet,
-          hydrateNotiTweet))
+          complete(repart  onT et, So (part  onTop c)),
+          hydrateT et,
+          repart  onNot T et,
+          hydrateNot T et))
 
-      assert((Some(expectedKey), expectedValue) == actual)
+      assert((So (expectedKey), expectedValue) == actual)
       curEnvelop = actual._2
       curKey = actual._1.get
 
-      // stage 2-3, hydrating on tweet should be correct
-      // and since the next stage after hydration is a repartition, it will does so correctly
-      actual = Await.result(driver.execute(Some(curKey), Future(curEnvelop)))
-      expectedKey = curKey.copy(id = 3) // repartition is done in stage 3
+      // stage 2-3, hydrat ng on t et should be correct
+      // and s nce t  next stage after hydrat on  s a repart  on,   w ll does so correctly
+      actual = Awa .result(dr ver.execute(So (curKey), Future(curEnvelop)))
+      expectedKey = curKey.copy( d = 3) // repart  on  s done  n stage 3
       expectedValue = curEnvelop.copy(
-        envelopId = 2L, // hydration is done in stage 2
+        envelop d = 2L, // hydrat on  s done  n stage 2
         plan = mkPlan(
-          complete(repartitionTweet, Some(partitionTopic)),
-          complete(hydrateTweet),
-          complete(repartitionNotiTweet, Some(partitionTopic)),
-          hydrateNotiTweet)
+          complete(repart  onT et, So (part  onTop c)),
+          complete(hydrateT et),
+          complete(repart  onNot T et, So (part  onTop c)),
+          hydrateNot T et)
       )
 
-      assert((Some(expectedKey), expectedValue) == actual)
+      assert((So (expectedKey), expectedValue) == actual)
       curEnvelop = actual._2
       curKey = actual._1.get
 
-      // then finally, stage 4 would output to the final topic
-      actual = Await.result(driver.execute(Some(curKey), Future(curEnvelop)))
-      expectedKey = curKey // nothing's changed in the key
+      // t n f nally, stage 4 would output to t  f nal top c
+      actual = Awa .result(dr ver.execute(So (curKey), Future(curEnvelop)))
+      expectedKey = curKey // noth ng's changed  n t  key
       expectedValue = curEnvelop.copy(
-        envelopId = 4L,
+        envelop d = 4L,
         plan = mkPlan(
-          complete(repartitionTweet, Some(partitionTopic)),
-          complete(hydrateTweet),
-          complete(repartitionNotiTweet, Some(partitionTopic)),
-          complete(hydrateNotiTweet, Some(outputTopic))
+          complete(repart  onT et, So (part  onTop c)),
+          complete(hydrateT et),
+          complete(repart  onNot T et, So (part  onTop c)),
+          complete(hydrateNot T et, So (outputTop c))
         )
       )
 
-      assert((Some(expectedKey), expectedValue) == actual)
+      assert((So (expectedKey), expectedValue) == actual)
     }
   }
 }

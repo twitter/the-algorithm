@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted
 
-sealed trait DisclaimerType
+sealed tra  D scla  rType
 
-object DisclaimerPolitical extends DisclaimerType
-object DisclaimerIssue extends DisclaimerType
+object D scla  rPol  cal extends D scla  rType
+object D scla  r ssue extends D scla  rType

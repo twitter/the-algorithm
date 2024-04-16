@@ -1,113 +1,113 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms_expans on
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.sims.SwitchingSimsSource
-import com.twitter.follow_recommendations.common.clients.real_time_real_graph.RealTimeRealGraphClient
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.follow_recommendations.common.models.SimilarToProof
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms.Sw ch ngS msS ce
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.real_t  _real_graph.RealT  RealGraphCl ent
+ mport com.tw ter.follow_recom ndat ons.common.models.AccountProof
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.Reason
+ mport com.tw ter.follow_recom ndat ons.common.models.S m larToProof
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class RecentEngagementSimilarUsersSource @Inject() (
-  realTimeRealGraphClient: RealTimeRealGraphClient,
-  switchingSimsSource: SwitchingSimsSource,
-  statsReceiver: StatsReceiver)
-    extends SimsExpansionBasedCandidateSource[HasClientContext with HasParams](
-      switchingSimsSource) {
-  override def maxSecondaryDegreeNodes(req: HasClientContext with HasParams): Int = Int.MaxValue
+@S ngleton
+class RecentEngage ntS m larUsersS ce @ nject() (
+  realT  RealGraphCl ent: RealT  RealGraphCl ent,
+  sw ch ngS msS ce: Sw ch ngS msS ce,
+  statsRece ver: StatsRece ver)
+    extends S msExpans onBasedCand dateS ce[HasCl entContext w h HasParams](
+      sw ch ngS msS ce) {
+  overr de def maxSecondaryDegreeNodes(req: HasCl entContext w h HasParams):  nt =  nt.MaxValue
 
-  override def maxResults(req: HasClientContext with HasParams): Int =
-    RecentEngagementSimilarUsersSource.MaxResults
+  overr de def maxResults(req: HasCl entContext w h HasParams):  nt =
+    RecentEngage ntS m larUsersS ce.MaxResults
 
-  override val identifier: CandidateSourceIdentifier = RecentEngagementSimilarUsersSource.Identifier
-  private val stats = statsReceiver.scope(identifier.name)
-  private val calibratedScoreCounter = stats.counter("calibrated_scores_counter")
+  overr de val  dent f er: Cand dateS ce dent f er = RecentEngage ntS m larUsersS ce. dent f er
+  pr vate val stats = statsRece ver.scope( dent f er.na )
+  pr vate val cal bratedScoreCounter = stats.counter("cal brated_scores_counter")
 
-  override def scoreCandidate(sourceScore: Double, similarToScore: Double): Double = {
-    sourceScore * similarToScore
+  overr de def scoreCand date(s ceScore: Double, s m larToScore: Double): Double = {
+    s ceScore * s m larToScore
   }
 
-  override def calibrateDivisor(req: HasClientContext with HasParams): Double = {
-    req.params(DBV2SimsExpansionParams.RecentEngagementSimilarUsersDBV2CalibrateDivisor)
+  overr de def cal brateD v sor(req: HasCl entContext w h HasParams): Double = {
+    req.params(DBV2S msExpans onParams.RecentEngage ntS m larUsersDBV2Cal brateD v sor)
   }
 
-  override def calibrateScore(
-    candidateScore: Double,
-    req: HasClientContext with HasParams
+  overr de def cal brateScore(
+    cand dateScore: Double,
+    req: HasCl entContext w h HasParams
   ): Double = {
-    calibratedScoreCounter.incr()
-    candidateScore / calibrateDivisor(req)
+    cal bratedScoreCounter. ncr()
+    cand dateScore / cal brateD v sor(req)
   }
 
   /**
-   * fetch first degree nodes given request
+   * fetch f rst degree nodes g ven request
    */
-  override def firstDegreeNodes(
-    target: HasClientContext with HasParams
-  ): Stitch[Seq[CandidateUser]] = {
-    target.getOptionalUserId
-      .map { userId =>
-        realTimeRealGraphClient
-          .getUsersRecentlyEngagedWith(
-            userId,
-            RealTimeRealGraphClient.EngagementScoreMap,
-            includeDirectFollowCandidates = true,
-            includeNonDirectFollowCandidates = true
+  overr de def f rstDegreeNodes(
+    target: HasCl entContext w h HasParams
+  ): St ch[Seq[Cand dateUser]] = {
+    target.getOpt onalUser d
+      .map { user d =>
+        realT  RealGraphCl ent
+          .getUsersRecentlyEngagedW h(
+            user d,
+            RealT  RealGraphCl ent.Engage ntScoreMap,
+             ncludeD rectFollowCand dates = true,
+             ncludeNonD rectFollowCand dates = true
           ).map(_.sortBy(-_.score.getOrElse(0.0d))
-            .take(RecentEngagementSimilarUsersSource.MaxFirstDegreeNodes))
-      }.getOrElse(Stitch.Nil)
+            .take(RecentEngage ntS m larUsersS ce.MaxF rstDegreeNodes))
+      }.getOrElse(St ch.N l)
   }
 
-  override def aggregateAndScore(
-    request: HasClientContext with HasParams,
-    firstDegreeToSecondDegreeNodesMap: Map[CandidateUser, Seq[SimilarUser]]
-  ): Stitch[Seq[CandidateUser]] = {
+  overr de def aggregateAndScore(
+    request: HasCl entContext w h HasParams,
+    f rstDegreeToSecondDegreeNodesMap: Map[Cand dateUser, Seq[S m larUser]]
+  ): St ch[Seq[Cand dateUser]] = {
 
-    val inputNodes = firstDegreeToSecondDegreeNodesMap.keys.map(_.id).toSet
-    val aggregator = request.params(RecentEngagementSimilarUsersParams.Aggregator) match {
-      case SimsExpansionSourceAggregatorId.Max =>
-        SimsExpansionBasedCandidateSource.ScoreAggregator.Max
-      case SimsExpansionSourceAggregatorId.Sum =>
-        SimsExpansionBasedCandidateSource.ScoreAggregator.Sum
-      case SimsExpansionSourceAggregatorId.MultiDecay =>
-        SimsExpansionBasedCandidateSource.ScoreAggregator.MultiDecay
+    val  nputNodes = f rstDegreeToSecondDegreeNodesMap.keys.map(_. d).toSet
+    val aggregator = request.params(RecentEngage ntS m larUsersParams.Aggregator) match {
+      case S msExpans onS ceAggregator d.Max =>
+        S msExpans onBasedCand dateS ce.ScoreAggregator.Max
+      case S msExpans onS ceAggregator d.Sum =>
+        S msExpans onBasedCand dateS ce.ScoreAggregator.Sum
+      case S msExpans onS ceAggregator d.Mult Decay =>
+        S msExpans onBasedCand dateS ce.ScoreAggregator.Mult Decay
     }
 
-    val groupedCandidates = firstDegreeToSecondDegreeNodesMap.values.flatten
-      .filterNot(c => inputNodes.contains(c.candidateId))
-      .groupBy(_.candidateId)
+    val groupedCand dates = f rstDegreeToSecondDegreeNodesMap.values.flatten
+      .f lterNot(c =>  nputNodes.conta ns(c.cand date d))
+      .groupBy(_.cand date d)
       .map {
-        case (id, candidates) =>
-          // Different aggregators for final score
-          val finalScore = aggregator(candidates.map(_.score).toSeq)
-          val proofs = candidates.map(_.similarTo).toSet
+        case ( d, cand dates) =>
+          // D fferent aggregators for f nal score
+          val f nalScore = aggregator(cand dates.map(_.score).toSeq)
+          val proofs = cand dates.map(_.s m larTo).toSet
 
-          CandidateUser(
-            id = id,
-            score = Some(finalScore),
+          Cand dateUser(
+             d =  d,
+            score = So (f nalScore),
             reason =
-              Some(Reason(Some(AccountProof(similarToProof = Some(SimilarToProof(proofs.toSeq))))))
-          ).withCandidateSource(identifier)
+              So (Reason(So (AccountProof(s m larToProof = So (S m larToProof(proofs.toSeq))))))
+          ).w hCand dateS ce( dent f er)
       }
       .toSeq
       .sortBy(-_.score.getOrElse(0.0d))
       .take(maxResults(request))
 
-    Stitch.value(groupedCandidates)
+    St ch.value(groupedCand dates)
   }
 }
 
-object RecentEngagementSimilarUsersSource {
-  val Identifier = CandidateSourceIdentifier(Algorithm.RecentEngagementSimilarUser.toString)
-  val MaxFirstDegreeNodes = 10
+object RecentEngage ntS m larUsersS ce {
+  val  dent f er = Cand dateS ce dent f er(Algor hm.RecentEngage ntS m larUser.toStr ng)
+  val MaxF rstDegreeNodes = 10
   val MaxResults = 200
 }

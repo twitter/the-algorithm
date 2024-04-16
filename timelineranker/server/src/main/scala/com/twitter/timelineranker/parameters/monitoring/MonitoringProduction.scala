@@ -1,14 +1,14 @@
-package com.twitter.timelineranker.parameters.monitoring
+package com.tw ter.t  l neranker.para ters.mon or ng
 
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelineranker.parameters.monitoring.MonitoringParams.DebugAuthorsAllowListParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l neranker.para ters.mon or ng.Mon or ngParams.DebugAuthorsAllowL stParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
 
-object MonitoringProduction {
-  private val longSeqOverrides =
-    FeatureSwitchOverrideUtil.getLongSeqFSOverrides(DebugAuthorsAllowListParam)
+object Mon or ngProduct on {
+  pr vate val longSeqOverr des =
+    FeatureSw chOverr deUt l.getLongSeqFSOverr des(DebugAuthorsAllowL stParam)
 
-  val config = BaseConfigBuilder()
-    .set(longSeqOverrides: _*)
-    .build()
+  val conf g = BaseConf gBu lder()
+    .set(longSeqOverr des: _*)
+    .bu ld()
 }

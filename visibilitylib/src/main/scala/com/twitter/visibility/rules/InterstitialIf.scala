@@ -1,43 +1,43 @@
-package com.twitter.visibility.rules
+package com.tw ter.v s b l y.rules
 
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.Not
+ mport com.tw ter.v s b l y.rules.Cond  on.And
+ mport com.tw ter.v s b l y.rules.Cond  on.Not
 
-object InterstitialIf {
+object  nterst  al f {
 
-  object ViewerMutedKeyword
-      extends RuleWithConstantAction(
-        Interstitial(Reason.MutedKeyword),
+  object V e rMutedKeyword
+      extends RuleW hConstantAct on(
+         nterst  al(Reason.MutedKeyword),
         And(
-          Not(Condition.IsFocalTweet),
-          Condition.ViewerHasMatchingKeywordForTweetReplies,
+          Not(Cond  on. sFocalT et),
+          Cond  on.V e rHasMatch ngKeywordForT etRepl es,
         )
       )
 
-  object ViewerBlockedAuthor
-      extends RuleWithConstantAction(
-        Interstitial(Reason.ViewerBlocksAuthor),
+  object V e rBlockedAuthor
+      extends RuleW hConstantAct on(
+         nterst  al(Reason.V e rBlocksAuthor),
         And(
-          Not(Condition.IsFocalTweet),
-          Condition.ViewerBlocksAuthor
+          Not(Cond  on. sFocalT et),
+          Cond  on.V e rBlocksAuthor
         )
       )
 
-  object ViewerHardMutedAuthor
-      extends RuleWithConstantAction(
-        Interstitial(Reason.ViewerHardMutedAuthor),
+  object V e rHardMutedAuthor
+      extends RuleW hConstantAct on(
+         nterst  al(Reason.V e rHardMutedAuthor),
         And(
-          Not(Condition.IsFocalTweet),
-          Condition.ViewerMutesAuthor,
+          Not(Cond  on. sFocalT et),
+          Cond  on.V e rMutesAuthor,
           Not(
-            Condition.ViewerDoesFollowAuthor
+            Cond  on.V e rDoesFollowAuthor
           )
         )
       )
 
-  object ViewerReportedAuthor
-      extends RuleWithConstantAction(
-        Interstitial(Reason.ViewerReportedAuthor),
-        Condition.ViewerReportsAuthor
+  object V e rReportedAuthor
+      extends RuleW hConstantAct on(
+         nterst  al(Reason.V e rReportedAuthor),
+        Cond  on.V e rReportsAuthor
       )
 }

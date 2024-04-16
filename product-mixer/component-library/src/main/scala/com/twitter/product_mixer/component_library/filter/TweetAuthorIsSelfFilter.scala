@@ -1,37 +1,37 @@
-package com.twitter.product_mixer.component_library.filter
+package com.tw ter.product_m xer.component_l brary.f lter
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.component_library.model.candidate.TweetAuthorIdFeature
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.BaseT etCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etAuthor dFeature
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lterResult
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
 /**
- * A [[filter]] that filters based on whether query user is the author of the tweet. This will NOT filter empty user ids
- * @note It is recommended to apply [[HasAuthorIdFeatureFilter]] before this, as this will FAIL if feature is unavailable
+ * A [[f lter]] that f lters based on w t r query user  s t  author of t  t et. T  w ll NOT f lter empty user  ds
+ * @note    s recom nded to apply [[HasAuthor dFeatureF lter]] before t , as t  w ll FA L  f feature  s unava lable
  *
- * @tparam Candidate The type of the candidates
+ * @tparam Cand date T  type of t  cand dates
  */
-case class TweetAuthorIsSelfFilter[Candidate <: BaseTweetCandidate]()
-    extends Filter[PipelineQuery, Candidate] {
-  override val identifier: FilterIdentifier = FilterIdentifier("TweetAuthorIsSelf")
+case class T etAuthor sSelfF lter[Cand date <: BaseT etCand date]()
+    extends F lter[P pel neQuery, Cand date] {
+  overr de val  dent f er: F lter dent f er = F lter dent f er("T etAuthor sSelf")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
-    val (kept, removed) = candidates.partition { candidate =>
-      val authorId = candidate.features.get(TweetAuthorIdFeature)
-      !query.getOptionalUserId.contains(authorId)
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): St ch[F lterResult[Cand date]] = {
+    val (kept, removed) = cand dates.part  on { cand date =>
+      val author d = cand date.features.get(T etAuthor dFeature)
+      !query.getOpt onalUser d.conta ns(author d)
     }
 
-    val filterResult = FilterResult(
-      kept = kept.map(_.candidate),
-      removed = removed.map(_.candidate)
+    val f lterResult = F lterResult(
+      kept = kept.map(_.cand date),
+      removed = removed.map(_.cand date)
     )
-    Stitch.value(filterResult)
+    St ch.value(f lterResult)
   }
 }

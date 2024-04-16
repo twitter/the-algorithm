@@ -1,96 +1,96 @@
-package com.twitter.search.core.earlybird.facets;
+package com.tw ter.search.core.earlyb rd.facets;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.facet.FacetResult;
-import org.apache.lucene.facet.LabelAndValue;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.PriorityQueue;
+ mport org.apac .lucene.facet.FacetResult;
+ mport org.apac .lucene.facet.LabelAndValue;
+ mport org.apac .lucene.ut l.BytesRef;
+ mport org.apac .lucene.ut l.Pr or yQueue;
 
-import com.twitter.search.common.facets.FacetSearchParam;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider.FacetLabelAccessor;
+ mport com.tw ter.search.common.facets.FacetSearchParam;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetLabelProv der.FacetLabelAccessor;
 
-import it.unimi.dsi.fastutil.ints.Int2IntMap.Entry;
-import it.unimi.dsi.fastutil.ints.Int2IntMap.FastEntrySet;
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+ mport  .un m .ds .fastut l. nts. nt2 ntMap.Entry;
+ mport  .un m .ds .fastut l. nts. nt2 ntMap.FastEntrySet;
+ mport  .un m .ds .fastut l. nts. nt2 ntOpenHashMap;
 
-public class PerfieldFacetCountAggregator {
+publ c class Perf eldFacetCountAggregator {
 
-  private final Int2IntOpenHashMap countMap;
-  private final FacetLabelAccessor facetLabelAccessor;
-  private final String name;
-
-  /**
-   * Creates a new per-field facet aggregator.
-   */
-  public PerfieldFacetCountAggregator(String name, FacetLabelProvider facetLabelProvider) {
-    this.name = name;
-    this.countMap = new Int2IntOpenHashMap();
-    this.countMap.defaultReturnValue(0);
-    this.facetLabelAccessor = facetLabelProvider.getLabelAccessor();
-  }
-
-  public void collect(int termId) {
-    countMap.put(termId, countMap.get(termId) + 1);
-  }
+  pr vate f nal  nt2 ntOpenHashMap countMap;
+  pr vate f nal FacetLabelAccessor facetLabelAccessor;
+  pr vate f nal Str ng na ;
 
   /**
-   * Returns the top facets.
+   * Creates a new per-f eld facet aggregator.
    */
-  public FacetResult getTop(FacetSearchParam facetSearchParam) {
-    Preconditions.checkArgument(
+  publ c Perf eldFacetCountAggregator(Str ng na , FacetLabelProv der facetLabelProv der) {
+    t .na  = na ;
+    t .countMap = new  nt2 ntOpenHashMap();
+    t .countMap.defaultReturnValue(0);
+    t .facetLabelAccessor = facetLabelProv der.getLabelAccessor();
+  }
+
+  publ c vo d collect( nt term d) {
+    countMap.put(term d, countMap.get(term d) + 1);
+  }
+
+  /**
+   * Returns t  top facets.
+   */
+  publ c FacetResult getTop(FacetSearchParam facetSearchParam) {
+    Precond  ons.c ckArgu nt(
         facetSearchParam != null
-        && facetSearchParam.getFacetFieldRequest().getField().equals(name)
-        && (facetSearchParam.getFacetFieldRequest().getPath() == null
-            || facetSearchParam.getFacetFieldRequest().getPath().isEmpty()));
+        && facetSearchParam.getFacetF eldRequest().getF eld().equals(na )
+        && (facetSearchParam.getFacetF eldRequest().getPath() == null
+            || facetSearchParam.getFacetF eldRequest().getPath(). sEmpty()));
 
-    PriorityQueue<Entry> pq = new PriorityQueue<Entry>(
-        facetSearchParam.getFacetFieldRequest().getNumResults()) {
+    Pr or yQueue<Entry> pq = new Pr or yQueue<Entry>(
+        facetSearchParam.getFacetF eldRequest().getNumResults()) {
 
-      private BytesRef buffer = new BytesRef();
+      pr vate BytesRef buffer = new BytesRef();
 
-      @Override
+      @Overr de
       protected boolean lessThan(Entry a, Entry b) {
-        // first by count desc
-        int r = Integer.compare(a.getIntValue(), b.getIntValue());
-        if (r != 0) {
+        // f rst by count desc
+         nt r =  nteger.compare(a.get ntValue(), b.get ntValue());
+         f (r != 0) {
           return r < 0;
         }
 
-        // and then by label asc
-        BytesRef label1 = facetLabelAccessor.getTermRef(a.getIntKey());
+        // and t n by label asc
+        BytesRef label1 = facetLabelAccessor.getTermRef(a.get ntKey());
         buffer.bytes = label1.bytes;
         buffer.offset = label1.offset;
         buffer.length = label1.length;
 
-        return buffer.compareTo(facetLabelAccessor.getTermRef(b.getIntKey())) > 0;
+        return buffer.compareTo(facetLabelAccessor.getTermRef(b.get ntKey())) > 0;
       }
 
     };
 
-    final FastEntrySet entrySet = countMap.int2IntEntrySet();
+    f nal FastEntrySet entrySet = countMap. nt2 ntEntrySet();
 
-    int numValid = 0;
+     nt numVal d = 0;
     for (Entry entry : entrySet) {
-      long val = entry.getIntValue();
-      if (val > 0) {
-        numValid++;
-        pq.insertWithOverflow(entry);
+      long val = entry.get ntValue();
+       f (val > 0) {
+        numVal d++;
+        pq. nsertW hOverflow(entry);
       }
     }
 
-    int numVals = pq.size();
+     nt numVals = pq.s ze();
     LabelAndValue[] labelValues = new LabelAndValue[numVals];
 
-    // Priority queue pops out "least" element first (that is the root).
-    // Least in our definition regardless of how we define what that is should be the last element.
-    for (int i = labelValues.length - 1; i >= 0; i--) {
+    // Pr or y queue pops out "least" ele nt f rst (that  s t  root).
+    // Least  n   def n  on regardless of how   def ne what that  s should be t  last ele nt.
+    for ( nt   = labelValues.length - 1;   >= 0;  --) {
       Entry entry = pq.pop();
-      labelValues[i] = new LabelAndValue(
-          facetLabelAccessor.getTermText(entry.getIntKey()),
+      labelValues[ ] = new LabelAndValue(
+          facetLabelAccessor.getTermText(entry.get ntKey()),
           entry.getValue());
     }
 
-    return new FacetResult(name, null, 0, labelValues, numValid);
+    return new FacetResult(na , null, 0, labelValues, numVal d);
   }
 }

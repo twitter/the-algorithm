@@ -1,23 +1,23 @@
-package com.twitter.product_mixer.component_library.selector
+package com.tw ter.product_m xer.component_l brary.selector
 
-private[selector] object DynamicPositionSelector {
+pr vate[selector] object Dynam cPos  onSelector {
 
-  sealed trait IndexType
-  case object RelativeIndices extends IndexType
-  case object AbsoluteIndices extends IndexType
+  sealed tra   ndexType
+  case object Relat ve nd ces extends  ndexType
+  case object Absolute nd ces extends  ndexType
 
   /**
-   * Given an existing `result` seq, inserts candidates from `candidatesToInsertByIndex` into the `result` 1-by-1 with
-   * the provided index being the index relative to the `result` if given [[RelativeIndices]] or
-   * absolute index if given [[AbsoluteIndices]] (excluding duplicate insertions at an index, see below).
+   * G ven an ex st ng `result` seq,  nserts cand dates from `cand datesTo nsertBy ndex`  nto t  `result` 1-by-1 w h
+   * t  prov ded  ndex be ng t   ndex relat ve to t  `result`  f g ven [[Relat ve nd ces]] or
+   * absolute  ndex  f g ven [[Absolute nd ces]] (exclud ng dupl cate  nsert ons at an  ndex, see below).
    *
-   * Indices below 0 are added to the front and indices > the length are added to the end
+   *  nd ces below 0 are added to t  front and  nd ces > t  length are added to t  end
    *
-   * @note if multiple candidates exist with the same index, they are inserted in the order which they appear and only count
-   *       as a single element with regards to the absolute index values, see the example below
+   * @note  f mult ple cand dates ex st w h t  sa   ndex, t y are  nserted  n t  order wh ch t y appear and only count
+   *       as a s ngle ele nt w h regards to t  absolute  ndex values, see t  example below
    *
-   * @example when using [[RelativeIndices]] {{{
-   *          mergeByIndexIntoResult(
+   * @example w n us ng [[Relat ve nd ces]] {{{
+   *           rgeBy ndex ntoResult(
    *          Seq(
    *            0 -> "a",
    *            0 -> "b",
@@ -29,7 +29,7 @@ private[selector] object DynamicPositionSelector {
    *            "D",
    *            "F"
    *          ),
-   *          RelativeIndices) == Seq(
+   *          Relat ve nd ces) == Seq(
    *            "a",
    *            "b",
    *            "c",
@@ -41,8 +41,8 @@ private[selector] object DynamicPositionSelector {
    *          )
    * }}}
    *
-   * @example when using [[AbsoluteIndices]] {{{
-   *          mergeByIndexIntoResult(
+   * @example w n us ng [[Absolute nd ces]] {{{
+   *           rgeBy ndex ntoResult(
    *          Seq(
    *            0 -> "a",
    *            0 -> "b",
@@ -54,70 +54,70 @@ private[selector] object DynamicPositionSelector {
    *            "D",
    *            "F"
    *          ),
-   *          AbsoluteIndices) == Seq(
-   *            "a", // index 0, "a" and "b" together only count as 1 element with regards to indexes because they have duplicate insertion points
-   *            "b", // index 0
-   *            "c", // index 1
-   *            "D", // index 2
-   *            "e", // index 3
-   *            "F", // index 4
-   *            "g", // index 5
-   *            "h" // index 6
+   *          Absolute nd ces) == Seq(
+   *            "a", //  ndex 0, "a" and "b" toget r only count as 1 ele nt w h regards to  ndexes because t y have dupl cate  nsert on po nts
+   *            "b", //  ndex 0
+   *            "c", //  ndex 1
+   *            "D", //  ndex 2
+   *            "e", //  ndex 3
+   *            "F", //  ndex 4
+   *            "g", //  ndex 5
+   *            "h" //  ndex 6
    *          )
    * }}}
    */
-  def mergeByIndexIntoResult[T]( // generic on `T` to simplify unit testing
-    candidatesToInsertByIndex: Seq[(Int, T)],
+  def  rgeBy ndex ntoResult[T]( // gener c on `T` to s mpl fy un  test ng
+    cand datesTo nsertBy ndex: Seq[( nt, T)],
     result: Seq[T],
-    indexType: IndexType
+     ndexType:  ndexType
   ): Seq[T] = {
-    val positionAndCandidateList = candidatesToInsertByIndex.sortWith {
-      case ((indexLeft: Int, _), (indexRight: Int, _)) =>
-        indexLeft < indexRight // order by desired absolute index ascending
+    val pos  onAndCand dateL st = cand datesTo nsertBy ndex.sortW h {
+      case (( ndexLeft:  nt, _), ( ndexR ght:  nt, _)) =>
+         ndexLeft <  ndexR ght // order by des red absolute  ndex ascend ng
     }
 
-    // Merge result and positionAndCandidateList into resultUpdated while making sure that the entries
-    // from the positionAndCandidateList are inserted at the right index.
-    val resultUpdated = Seq.newBuilder[T]
-    resultUpdated.sizeHint(result.size + positionAndCandidateList.size)
+    //  rge result and pos  onAndCand dateL st  nto resultUpdated wh le mak ng sure that t  entr es
+    // from t  pos  onAndCand dateL st are  nserted at t  r ght  ndex.
+    val resultUpdated = Seq.newBu lder[T]
+    resultUpdated.s zeH nt(result.s ze + pos  onAndCand dateL st.s ze)
 
-    var currentResultIndex = 0
-    val inputResultIterator = result.iterator
-    val positionAndCandidateIterator = positionAndCandidateList.iterator.buffered
-    var previousInsertPosition: Option[Int] = None
+    var currentResult ndex = 0
+    val  nputResult erator = result. erator
+    val pos  onAndCand date erator = pos  onAndCand dateL st. erator.buffered
+    var prev ous nsertPos  on: Opt on[ nt] = None
 
-    while (inputResultIterator.nonEmpty && positionAndCandidateIterator.nonEmpty) {
-      positionAndCandidateIterator.head match {
-        case (nextInsertionPosition, nextCandidateToInsert)
-            if previousInsertPosition.contains(nextInsertionPosition) =>
-          // inserting multiple candidates at the same index
-          resultUpdated += nextCandidateToInsert
-          // do not increment any indices, but insert the candidate and advance to the next candidate
-          positionAndCandidateIterator.next()
+    wh le ( nputResult erator.nonEmpty && pos  onAndCand date erator.nonEmpty) {
+      pos  onAndCand date erator. ad match {
+        case (next nsert onPos  on, nextCand dateTo nsert)
+             f prev ous nsertPos  on.conta ns(next nsert onPos  on) =>
+          //  nsert ng mult ple cand dates at t  sa   ndex
+          resultUpdated += nextCand dateTo nsert
+          // do not  ncre nt any  nd ces, but  nsert t  cand date and advance to t  next cand date
+          pos  onAndCand date erator.next()
 
-        case (nextInsertionPosition, nextCandidateToInsert)
-            if currentResultIndex >= nextInsertionPosition =>
-          // inserting a candidate at a new index
-          // add candidate to the results
-          resultUpdated += nextCandidateToInsert
-          // save the position of the inserted element to handle duplicate index insertions
-          previousInsertPosition = Some(nextInsertionPosition)
-          // advance to next candidate
-          positionAndCandidateIterator.next()
-          if (indexType == AbsoluteIndices) {
-            // if the indices are absolute, instead of relative to the original `result` we need to
-            // count the insertions of candidates into the results towards the `currentResultIndex`
-            currentResultIndex += 1
+        case (next nsert onPos  on, nextCand dateTo nsert)
+             f currentResult ndex >= next nsert onPos  on =>
+          //  nsert ng a cand date at a new  ndex
+          // add cand date to t  results
+          resultUpdated += nextCand dateTo nsert
+          // save t  pos  on of t   nserted ele nt to handle dupl cate  ndex  nsert ons
+          prev ous nsertPos  on = So (next nsert onPos  on)
+          // advance to next cand date
+          pos  onAndCand date erator.next()
+           f ( ndexType == Absolute nd ces) {
+            //  f t   nd ces are absolute,  nstead of relat ve to t  or g nal `result`   need to
+            // count t   nsert ons of cand dates  nto t  results towards t  `currentResult ndex`
+            currentResult ndex += 1
           }
         case _ =>
-          // no candidate to insert by index so use the candidates from the result and increment the index
-          resultUpdated += inputResultIterator.next()
-          currentResultIndex += 1
+          // no cand date to  nsert by  ndex so use t  cand dates from t  result and  ncre nt t   ndex
+          resultUpdated +=  nputResult erator.next()
+          currentResult ndex += 1
       }
     }
-    // one of the iterators is empty, so append the remaining candidates in order to the end
-    resultUpdated ++= positionAndCandidateIterator.map { case (_, candidate) => candidate }
-    resultUpdated ++= inputResultIterator
+    // one of t   erators  s empty, so append t  rema n ng cand dates  n order to t  end
+    resultUpdated ++= pos  onAndCand date erator.map { case (_, cand date) => cand date }
+    resultUpdated ++=  nputResult erator
 
     resultUpdated.result()
   }

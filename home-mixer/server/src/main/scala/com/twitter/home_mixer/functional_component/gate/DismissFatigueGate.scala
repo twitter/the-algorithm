@@ -1,48 +1,48 @@
-package com.twitter.home_mixer.functional_component.gate
+package com.tw ter.ho _m xer.funct onal_component.gate
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinemixer.clients.manhattan.DismissInfo
-import com.twitter.timelineservice.suggests.thriftscala.SuggestType
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.Gate
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Gate dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nem xer.cl ents.manhattan.D sm ss nfo
+ mport com.tw ter.t  l neserv ce.suggests.thr ftscala.SuggestType
+ mport com.tw ter.ut l.Durat on
 
-object DismissFatigueGate {
-  // how long a dismiss action from user needs to be respected
-  val DefaultBaseDismissDuration = 7.days
-  val MaximumDismissalCountMultiplier = 4
+object D sm ssFat gueGate {
+  // how long a d sm ss act on from user needs to be respected
+  val DefaultBaseD sm ssDurat on = 7.days
+  val Max mumD sm ssalCountMult pl er = 4
 }
 
-case class DismissFatigueGate(
+case class D sm ssFat gueGate(
   suggestType: SuggestType,
-  dismissInfoFeature: Feature[PipelineQuery, Map[SuggestType, Option[DismissInfo]]],
-  baseDismissDuration: Duration = DismissFatigueGate.DefaultBaseDismissDuration,
-) extends Gate[PipelineQuery] {
+  d sm ss nfoFeature: Feature[P pel neQuery, Map[SuggestType, Opt on[D sm ss nfo]]],
+  baseD sm ssDurat on: Durat on = D sm ssFat gueGate.DefaultBaseD sm ssDurat on,
+) extends Gate[P pel neQuery] {
 
-  override val identifier: GateIdentifier = GateIdentifier("DismissFatigue")
+  overr de val  dent f er: Gate dent f er = Gate dent f er("D sm ssFat gue")
 
-  override def shouldContinue(query: PipelineQuery): Stitch[Boolean] = {
-    val dismissInfoMap = query.features.map(
-      _.getOrElse(dismissInfoFeature, Map.empty[SuggestType, Option[DismissInfo]]))
+  overr de def shouldCont nue(query: P pel neQuery): St ch[Boolean] = {
+    val d sm ss nfoMap = query.features.map(
+      _.getOrElse(d sm ss nfoFeature, Map.empty[SuggestType, Opt on[D sm ss nfo]]))
 
-    val isVisible = dismissInfoMap
+    val  sV s ble = d sm ss nfoMap
       .flatMap(_.get(suggestType))
-      .flatMap(_.map { info =>
-        val currentDismissalDuration = query.queryTime.since(info.lastDismissed)
-        val targetDismissalDuration = dismissDurationForCount(info.count, baseDismissDuration)
+      .flatMap(_.map {  nfo =>
+        val currentD sm ssalDurat on = query.queryT  .s nce( nfo.lastD sm ssed)
+        val targetD sm ssalDurat on = d sm ssDurat onForCount( nfo.count, baseD sm ssDurat on)
 
-        currentDismissalDuration > targetDismissalDuration
+        currentD sm ssalDurat on > targetD sm ssalDurat on
       }).getOrElse(true)
-    Stitch.value(isVisible)
+    St ch.value( sV s ble)
   }
 
-  private def dismissDurationForCount(
-    dismissCount: Int,
-    dismissDuration: Duration
-  ): Duration =
-    // limit to maximum dismissal duration
-    dismissDuration * Math.min(dismissCount, DismissFatigueGate.MaximumDismissalCountMultiplier)
+  pr vate def d sm ssDurat onForCount(
+    d sm ssCount:  nt,
+    d sm ssDurat on: Durat on
+  ): Durat on =
+    // l m  to max mum d sm ssal durat on
+    d sm ssDurat on * Math.m n(d sm ssCount, D sm ssFat gueGate.Max mumD sm ssalCountMult pl er)
 }

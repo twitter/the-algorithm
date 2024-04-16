@@ -1,71 +1,71 @@
-package com.twitter.product_mixer.core.pipeline.step.candidate_feature_hydrator
+package com.tw ter.product_m xer.core.p pel ne.step.cand date_feature_hydrator
 
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithFeatures
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutor
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BaseCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasCand datesW hFeatures
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasQuery
+ mport com.tw ter.product_m xer.core.p pel ne.step.Step
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.product_m xer.core.serv ce.cand date_feature_hydrator_executor.Cand dateFeatureHydratorExecutor
+ mport com.tw ter.product_m xer.core.serv ce.cand date_feature_hydrator_executor.Cand dateFeatureHydratorExecutorResult
+ mport com.tw ter.st ch.Arrow
+ mport javax. nject. nject
 
 /**
- * A candidate level feature hydration step, it takes the input list of candidates and the given
- * hydrators and executes them. The [[State]] object is responsible for merging the resulting
- * feature maps with the hydrated ones in its updateCandidatesWithFeatures.
+ * A cand date level feature hydrat on step,   takes t   nput l st of cand dates and t  g ven
+ * hydrators and executes t m. T  [[State]] object  s respons ble for  rg ng t  result ng
+ * feature maps w h t  hydrated ones  n  s updateCand datesW hFeatures.
  *
- * @param candidateFeatureHydratorExecutor Hydrator Executor
- * @tparam Query Type of PipelineQuery domain model
- * @tparam Candidate Type of Candidates to hydrate features for.
- * @tparam State The pipeline state domain model.
+ * @param cand dateFeatureHydratorExecutor Hydrator Executor
+ * @tparam Query Type of P pel neQuery doma n model
+ * @tparam Cand date Type of Cand dates to hydrate features for.
+ * @tparam State T  p pel ne state doma n model.
  */
-case class CandidateFeatureHydratorStep[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
-  State <: HasQuery[Query, State] with HasCandidatesWithFeatures[
-    Candidate,
+case class Cand dateFeatureHydratorStep[
+  Query <: P pel neQuery,
+  Cand date <: Un versalNoun[Any],
+  State <: HasQuery[Query, State] w h HasCand datesW hFeatures[
+    Cand date,
     State
-  ]] @Inject() (
-  candidateFeatureHydratorExecutor: CandidateFeatureHydratorExecutor)
+  ]] @ nject() (
+  cand dateFeatureHydratorExecutor: Cand dateFeatureHydratorExecutor)
     extends Step[State, Seq[
-      BaseCandidateFeatureHydrator[Query, Candidate, _]
-    ], CandidateFeatureHydratorExecutor.Inputs[
+      BaseCand dateFeatureHydrator[Query, Cand date, _]
+    ], Cand dateFeatureHydratorExecutor. nputs[
       Query,
-      Candidate
-    ], CandidateFeatureHydratorExecutorResult[Candidate]] {
+      Cand date
+    ], Cand dateFeatureHydratorExecutorResult[Cand date]] {
 
-  override def adaptInput(
+  overr de def adapt nput(
     state: State,
-    config: Seq[BaseCandidateFeatureHydrator[Query, Candidate, _]]
-  ): CandidateFeatureHydratorExecutor.Inputs[Query, Candidate] =
-    CandidateFeatureHydratorExecutor.Inputs(state.query, state.candidatesWithFeatures)
+    conf g: Seq[BaseCand dateFeatureHydrator[Query, Cand date, _]]
+  ): Cand dateFeatureHydratorExecutor. nputs[Query, Cand date] =
+    Cand dateFeatureHydratorExecutor. nputs(state.query, state.cand datesW hFeatures)
 
-  override def arrow(
-    config: Seq[BaseCandidateFeatureHydrator[Query, Candidate, _]],
+  overr de def arrow(
+    conf g: Seq[BaseCand dateFeatureHydrator[Query, Cand date, _]],
     context: Executor.Context
   ): Arrow[
-    CandidateFeatureHydratorExecutor.Inputs[Query, Candidate],
-    CandidateFeatureHydratorExecutorResult[Candidate]
-  ] = candidateFeatureHydratorExecutor.arrow(config, context)
+    Cand dateFeatureHydratorExecutor. nputs[Query, Cand date],
+    Cand dateFeatureHydratorExecutorResult[Cand date]
+  ] = cand dateFeatureHydratorExecutor.arrow(conf g, context)
 
-  override def updateState(
-    input: State,
-    executorResult: CandidateFeatureHydratorExecutorResult[Candidate],
-    config: Seq[BaseCandidateFeatureHydrator[Query, Candidate, _]]
+  overr de def updateState(
+     nput: State,
+    executorResult: Cand dateFeatureHydratorExecutorResult[Cand date],
+    conf g: Seq[BaseCand dateFeatureHydrator[Query, Cand date, _]]
   ): State = {
-    val candidatesWithHydratedFeatures = executorResult.results
-    if (candidatesWithHydratedFeatures.isEmpty) {
-      input
+    val cand datesW hHydratedFeatures = executorResult.results
+     f (cand datesW hHydratedFeatures. sEmpty) {
+       nput
     } else {
-      input.updateCandidatesWithFeatures(candidatesWithHydratedFeatures)
+       nput.updateCand datesW hFeatures(cand datesW hHydratedFeatures)
     }
   }
 
-  override def isEmpty(
-    config: Seq[BaseCandidateFeatureHydrator[Query, Candidate, _]]
+  overr de def  sEmpty(
+    conf g: Seq[BaseCand dateFeatureHydrator[Query, Cand date, _]]
   ): Boolean =
-    config.isEmpty
+    conf g. sEmpty
 }

@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.AddEntr esT  l ne nstruct on
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class AddEntriesInstructionMarshaller @Inject() (
-  timelineEntryMarshaller: TimelineEntryMarshaller) {
+@S ngleton
+class AddEntr es nstruct onMarshaller @ nject() (
+  t  l neEntryMarshaller: T  l neEntryMarshaller) {
 
-  def apply(instruction: AddEntriesTimelineInstruction): urt.AddEntries = urt.AddEntries(
-    entries = instruction.entries.map(timelineEntryMarshaller(_))
+  def apply( nstruct on: AddEntr esT  l ne nstruct on): urt.AddEntr es = urt.AddEntr es(
+    entr es =  nstruct on.entr es.map(t  l neEntryMarshaller(_))
   )
 }

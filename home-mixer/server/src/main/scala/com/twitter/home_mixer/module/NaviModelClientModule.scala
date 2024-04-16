@@ -1,50 +1,50 @@
-package com.twitter.home_mixer.module
+package com.tw ter.ho _m xer.module
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.Http
-import com.twitter.finagle.grpc.FinagleChannelBuilder
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsStackClientSyntax
-import com.twitter.inject.TwitterModule
-import com.twitter.timelines.clients.predictionservice.PredictionGRPCService
-import com.twitter.util.Duration
-import io.grpc.ManagedChannel
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.Http
+ mport com.tw ter.f nagle.grpc.F nagleChannelBu lder
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.mtls.cl ent.MtlsStackCl ent.MtlsStackCl entSyntax
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.t  l nes.cl ents.pred ct onserv ce.Pred ct onGRPCServ ce
+ mport com.tw ter.ut l.Durat on
+ mport  o.grpc.ManagedChannel
+ mport javax. nject.S ngleton
 
-object NaviModelClientModule extends TwitterModule {
+object Nav ModelCl entModule extends Tw terModule {
 
-  @Singleton
-  @Provides
-  def providesPredictionGRPCService(
-    serviceIdentifier: ServiceIdentifier,
-  ): PredictionGRPCService = {
-    //  Wily path to the ML Model service (e.g. /s/ml-serving/navi-explore-ranker).
-    val modelPath = "/s/ml-serving/navi_home_recap_onnx"
+  @S ngleton
+  @Prov des
+  def prov desPred ct onGRPCServ ce(
+    serv ce dent f er: Serv ce dent f er,
+  ): Pred ct onGRPCServ ce = {
+    //  W ly path to t  ML Model serv ce (e.g. /s/ml-serv ng/nav -explore-ranker).
+    val modelPath = "/s/ml-serv ng/nav _ho _recap_onnx"
 
-    val MaxPredictionTimeoutMs: Duration = 500.millis
-    val ConnectTimeoutMs: Duration = 200.millis
-    val AcquisitionTimeoutMs: Duration = 500.millis
-    val MaxRetryAttempts: Int = 2
+    val MaxPred ct onT  outMs: Durat on = 500.m ll s
+    val ConnectT  outMs: Durat on = 200.m ll s
+    val Acqu s  onT  outMs: Durat on = 500.m ll s
+    val MaxRetryAttempts:  nt = 2
 
-    val client = Http.client
-      .withLabel(modelPath)
-      .withMutualTls(serviceIdentifier)
-      .withRequestTimeout(MaxPredictionTimeoutMs)
-      .withTransport.connectTimeout(ConnectTimeoutMs)
-      .withSession.acquisitionTimeout(AcquisitionTimeoutMs)
-      .withHttpStats
+    val cl ent = Http.cl ent
+      .w hLabel(modelPath)
+      .w hMutualTls(serv ce dent f er)
+      .w hRequestT  out(MaxPred ct onT  outMs)
+      .w hTransport.connectT  out(ConnectT  outMs)
+      .w hSess on.acqu s  onT  out(Acqu s  onT  outMs)
+      .w hHttpStats
 
-    val channel: ManagedChannel = FinagleChannelBuilder
+    val channel: ManagedChannel = F nagleChannelBu lder
       .forTarget(modelPath)
-      .overrideAuthority("rustserving")
+      .overr deAuthor y("rustserv ng")
       .maxRetryAttempts(MaxRetryAttempts)
-      .enableRetryForStatus(io.grpc.Status.RESOURCE_EXHAUSTED)
-      .enableRetryForStatus(io.grpc.Status.UNKNOWN)
-      .enableUnsafeFullyBufferingMode()
-      .httpClient(client)
-      .build()
+      .enableRetryForStatus( o.grpc.Status.RESOURCE_EXHAUSTED)
+      .enableRetryForStatus( o.grpc.Status.UNKNOWN)
+      .enableUnsafeFullyBuffer ngMode()
+      .httpCl ent(cl ent)
+      .bu ld()
 
-    new PredictionGRPCService(channel)
+    new Pred ct onGRPCServ ce(channel)
   }
 }

@@ -1,26 +1,26 @@
-namespace java com.twitter.unified_user_actions.enricher.internal.thriftjava
-#@namespace scala com.twitter.unified_user_actions.enricher.internal.thriftscala
-#@namespace strato com.twitter.unified_user_actions.enricher.internal
+na space java com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftjava
+#@na space scala com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala
+#@na space strato com.tw ter.un f ed_user_act ons.enr c r. nternal
 
-include "com/twitter/unified_user_actions/unified_user_actions.thrift"
-include "enrichment_plan.thrift"
+ nclude "com/tw ter/un f ed_user_act ons/un f ed_user_act ons.thr ft"
+ nclude "enr ch nt_plan.thr ft"
 
-struct EnrichmentEnvelop {
+struct Enr ch ntEnvelop {
   /**
-  * An internal ID that uniquely identifies this event created during the early stages of enrichment.
-  * It is useful for detecting debugging, tracing & profiling the events throughout the process.
+  * An  nternal  D that un quely  dent f es t  event created dur ng t  early stages of enr ch nt.
+  *    s useful for detect ng debugg ng, trac ng & prof l ng t  events throughout t  process.
   **/
-  1: required i64 envelopId
-
-  /**
-  * The UUA event to be enriched / currently being enriched / has been enriched depending on the
-  * stages of the enrichment process.
-  **/
-  2: unified_user_actions.UnifiedUserAction uua
+  1: requ red  64 envelop d
 
   /**
-  * The current enrichment plan. It keeps track of what is currently being enriched, what still
-  * needs to be done so that we can bring the enrichment process to completion.
+  * T  UUA event to be enr c d / currently be ng enr c d / has been enr c d depend ng on t 
+  * stages of t  enr ch nt process.
   **/
-  3: enrichment_plan.EnrichmentPlan plan
-}(persisted='true', hasPersonalData='true')
+  2: un f ed_user_act ons.Un f edUserAct on uua
+
+  /**
+  * T  current enr ch nt plan.   keeps track of what  s currently be ng enr c d, what st ll
+  * needs to be done so that   can br ng t  enr ch nt process to complet on.
+  **/
+  3: enr ch nt_plan.Enr ch ntPlan plan
+}(pers sted='true', hasPersonalData='true')

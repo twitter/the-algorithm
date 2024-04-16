@@ -1,39 +1,39 @@
-package com.twitter.search.core.earlybird.index;
+package com.tw ter.search.core.earlyb rd. ndex;
 
-import org.apache.lucene.search.DocIdSet;
+ mport org.apac .lucene.search.Doc dSet;
 
 /**
- * Class to hold the actual cache which provides a doc id iterator to walk through the cache/result.
+ * Class to hold t  actual cac  wh ch prov des a doc  d  erator to walk through t  cac /result.
  *
- * An instance holds the results for a single query of the different ones defined in querycache.yml.
+ * An  nstance holds t  results for a s ngle query of t  d fferent ones def ned  n querycac .yml.
  */
-public class QueryCacheResultForSegment {
-  private final DocIdSet docIdSet;
-  private final int smallestDocID;
-  private final long cardinality;
+publ c class QueryCac ResultForSeg nt {
+  pr vate f nal Doc dSet doc dSet;
+  pr vate f nal  nt smallestDoc D;
+  pr vate f nal long card nal y;
 
   /**
-   * Stores query cache results.
+   * Stores query cac  results.
    *
-   * @param docIdSet Documents in the cache.
-   * @param cardinality Size of the cache.
-   * @param smallestDocID The most recently posted document contained in the cache.
+   * @param doc dSet Docu nts  n t  cac .
+   * @param card nal y S ze of t  cac .
+   * @param smallestDoc D T  most recently posted docu nt conta ned  n t  cac .
    */
-  public QueryCacheResultForSegment(DocIdSet docIdSet, long cardinality, int smallestDocID) {
-    this.docIdSet = docIdSet;
-    this.smallestDocID = smallestDocID;
-    this.cardinality = cardinality;
+  publ c QueryCac ResultForSeg nt(Doc dSet doc dSet, long card nal y,  nt smallestDoc D) {
+    t .doc dSet = doc dSet;
+    t .smallestDoc D = smallestDoc D;
+    t .card nal y = card nal y;
   }
 
-  public DocIdSet getDocIdSet() {
-    return docIdSet;
+  publ c Doc dSet getDoc dSet() {
+    return doc dSet;
   }
 
-  public int getSmallestDocID() {
-    return smallestDocID;
+  publ c  nt getSmallestDoc D() {
+    return smallestDoc D;
   }
 
-  public long getCardinality() {
-    return cardinality;
+  publ c long getCard nal y() {
+    return card nal y;
   }
 }

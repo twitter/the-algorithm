@@ -1,55 +1,55 @@
 {
   "servers": [
     {
-      "name": "strato",
-      "indicators": [
+      "na ": "strato",
+      " nd cators": [
         {
-          "id": "success_rate_3m",
-          "indicator_type": "SuccessRateIndicator",
-          "duration": 3,
-          "duration_unit": "MINUTES"
+          " d": "success_rate_3m",
+          " nd cator_type": "SuccessRate nd cator",
+          "durat on": 3,
+          "durat on_un ": "M NUTES"
         }, {
-          "id": "latency_3m_p99",
-          "indicator_type": "LatencyIndicator",
-          "duration": 3,
-          "duration_unit": "MINUTES",
-          "percentile": 0.99
+          " d": "latency_3m_p99",
+          " nd cator_type": "Latency nd cator",
+          "durat on": 3,
+          "durat on_un ": "M NUTES",
+          "percent le": 0.99
         }
       ],
-      "objectives": [
+      "object ves": [
         {
-          "indicator": "success_rate_3m",
-          "objective_type": "SuccessRateObjective",
+          " nd cator": "success_rate_3m",
+          "object ve_type": "SuccessRateObject ve",
           "operator": ">=",
           "threshold": 0.995
         },
         {
-          "indicator": "latency_3m_p99",
-          "objective_type": "LatencyObjective",
+          " nd cator": "latency_3m_p99",
+          "object ve_type": "LatencyObject ve",
           "operator": "<=",
           "threshold": 50
         }
       ],
-      "long_term_objectives": [
+      "long_term_object ves": [
         {
-          "id": "success_rate_28_days",
-          "objective_type": "SuccessRateObjective",
+          " d": "success_rate_28_days",
+          "object ve_type": "SuccessRateObject ve",
           "operator": ">=",
           "threshold": 0.993,
-          "duration": 28,
-          "duration_unit": "DAYS"
+          "durat on": 28,
+          "durat on_un ": "DAYS"
         },
         {
-          "id": "latency_p99_28_days",
-          "objective_type": "LatencyObjective",
+          " d": "latency_p99_28_days",
+          "object ve_type": "LatencyObject ve",
           "operator": "<=",
           "threshold": 60,
-          "duration": 28,
-          "duration_unit": "DAYS",
-          "percentile": 0.99
+          "durat on": 28,
+          "durat on_un ": "DAYS",
+          "percent le": 0.99
         }
       ]
     }
   ],
-  "@version": 1
+  "@vers on": 1
 }

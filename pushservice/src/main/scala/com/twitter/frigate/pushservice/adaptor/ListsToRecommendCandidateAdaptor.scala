@@ -1,152 +1,152 @@
-package com.twitter.frigate.pushservice.adaptor
+package com.tw ter.fr gate.pushserv ce.adaptor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.frigate.common.base.CandidateSourceEligible
-import com.twitter.frigate.common.base.ListPushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.predicate.TargetPredicates
-import com.twitter.frigate.pushservice.util.PushDeviceUtil
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.geoduck.service.thriftscala.LocationResponse
-import com.twitter.interests_discovery.thriftscala.DisplayLocation
-import com.twitter.interests_discovery.thriftscala.NonPersonalizedRecommendedLists
-import com.twitter.interests_discovery.thriftscala.RecommendedListsRequest
-import com.twitter.interests_discovery.thriftscala.RecommendedListsResponse
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Cand dateS ce
+ mport com.tw ter.fr gate.common.base.Cand dateS ceEl g ble
+ mport com.tw ter.fr gate.common.base.L stPushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.pred cate.TargetPred cates
+ mport com.tw ter.fr gate.pushserv ce.ut l.PushDev ceUt l
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
+ mport com.tw ter.geoduck.serv ce.thr ftscala.Locat onResponse
+ mport com.tw ter. nterests_d scovery.thr ftscala.D splayLocat on
+ mport com.tw ter. nterests_d scovery.thr ftscala.NonPersonal zedRecom ndedL sts
+ mport com.tw ter. nterests_d scovery.thr ftscala.Recom ndedL stsRequest
+ mport com.tw ter. nterests_d scovery.thr ftscala.Recom ndedL stsResponse
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
-case class ListsToRecommendCandidateAdaptor(
-  listRecommendationsStore: ReadableStore[String, NonPersonalizedRecommendedLists],
-  geoDuckV2Store: ReadableStore[Long, LocationResponse],
-  idsStore: ReadableStore[RecommendedListsRequest, RecommendedListsResponse],
-  globalStats: StatsReceiver)
-    extends CandidateSource[Target, RawCandidate]
-    with CandidateSourceEligible[Target, RawCandidate] {
+case class L stsToRecom ndCand dateAdaptor(
+  l stRecom ndat onsStore: ReadableStore[Str ng, NonPersonal zedRecom ndedL sts],
+  geoDuckV2Store: ReadableStore[Long, Locat onResponse],
+   dsStore: ReadableStore[Recom ndedL stsRequest, Recom ndedL stsResponse],
+  globalStats: StatsRece ver)
+    extends Cand dateS ce[Target, RawCand date]
+    w h Cand dateS ceEl g ble[Target, RawCand date] {
 
-  override val name: String = this.getClass.getSimpleName
+  overr de val na : Str ng = t .getClass.getS mpleNa 
 
-  private[this] val stats = globalStats.scope(name)
-  private[this] val noLocationCodeCounter = stats.counter("no_location_code")
-  private[this] val noCandidatesCounter = stats.counter("no_candidates_for_geo")
-  private[this] val disablePopGeoListsCounter = stats.counter("disable_pop_geo_lists")
-  private[this] val disableIDSListsCounter = stats.counter("disable_ids_lists")
+  pr vate[t ] val stats = globalStats.scope(na )
+  pr vate[t ] val noLocat onCodeCounter = stats.counter("no_locat on_code")
+  pr vate[t ] val noCand datesCounter = stats.counter("no_cand dates_for_geo")
+  pr vate[t ] val d sablePopGeoL stsCounter = stats.counter("d sable_pop_geo_l sts")
+  pr vate[t ] val d sable DSL stsCounter = stats.counter("d sable_ ds_l sts")
 
-  private def getListCandidate(
+  pr vate def getL stCand date(
     targetUser: Target,
-    _listId: Long
-  ): RawCandidate with ListPushCandidate = {
-    new RawCandidate with ListPushCandidate {
-      override val listId: Long = _listId
+    _l st d: Long
+  ): RawCand date w h L stPushCand date = {
+    new RawCand date w h L stPushCand date {
+      overr de val l st d: Long = _l st d
 
-      override val commonRecType: CommonRecommendationType = CommonRecommendationType.List
+      overr de val commonRecType: CommonRecom ndat onType = CommonRecom ndat onType.L st
 
-      override val target: Target = targetUser
+      overr de val target: Target = targetUser
     }
   }
 
-  private def getListsRecommendedFromHistory(
+  pr vate def getL stsRecom ndedFrom tory(
     target: Target
   ): Future[Seq[Long]] = {
-    target.history.map { history =>
-      history.sortedHistory.flatMap {
-        case (_, notif) if notif.commonRecommendationType == List =>
-          notif.listNotification.map(_.listId)
+    target. tory.map {  tory =>
+       tory.sorted tory.flatMap {
+        case (_, not f)  f not f.commonRecom ndat onType == L st =>
+          not f.l stNot f cat on.map(_.l st d)
         case _ => None
       }
     }
   }
 
-  private def getIDSListRecs(
+  pr vate def get DSL stRecs(
     target: Target,
-    historicalListIds: Seq[Long]
+     tor calL st ds: Seq[Long]
   ): Future[Seq[Long]] = {
-    val request = RecommendedListsRequest(
-      target.targetId,
-      DisplayLocation.ListDiscoveryPage,
-      Some(historicalListIds)
+    val request = Recom ndedL stsRequest(
+      target.target d,
+      D splayLocat on.L stD scoveryPage,
+      So ( tor calL st ds)
     )
-    if (target.params(PushFeatureSwitchParams.EnableIDSListRecommendations)) {
-      idsStore.get(request).map {
-        case Some(response) =>
-          response.channels.map(_.id)
-        case _ => Nil
+     f (target.params(PushFeatureSw chParams.Enable DSL stRecom ndat ons)) {
+       dsStore.get(request).map {
+        case So (response) =>
+          response.channels.map(_. d)
+        case _ => N l
       }
     } else {
-      disableIDSListsCounter.incr()
-      Future.Nil
+      d sable DSL stsCounter. ncr()
+      Future.N l
     }
   }
 
-  private def getPopGeoLists(
+  pr vate def getPopGeoL sts(
     target: Target,
-    historicalListIds: Seq[Long]
+     tor calL st ds: Seq[Long]
   ): Future[Seq[Long]] = {
-    if (target.params(PushFeatureSwitchParams.EnablePopGeoListRecommendations)) {
-      geoDuckV2Store.get(target.targetId).flatMap {
-        case Some(locationResponse) if locationResponse.geohash.isDefined =>
+     f (target.params(PushFeatureSw chParams.EnablePopGeoL stRecom ndat ons)) {
+      geoDuckV2Store.get(target.target d).flatMap {
+        case So (locat onResponse)  f locat onResponse.geohash. sDef ned =>
           val geoHashLength =
-            target.params(PushFeatureSwitchParams.ListRecommendationsGeoHashLength)
-          val geoHash = locationResponse.geohash.get.take(geoHashLength)
-          listRecommendationsStore
+            target.params(PushFeatureSw chParams.L stRecom ndat onsGeoHashLength)
+          val geoHash = locat onResponse.geohash.get.take(geoHashLength)
+          l stRecom ndat onsStore
             .get(s"geohash_$geoHash")
             .map {
-              case Some(recommendedLists) =>
-                recommendedLists.recommendedListsByAlgo.flatMap { topLists =>
-                  topLists.lists.collect {
-                    case list if !historicalListIds.contains(list.listId) => list.listId
+              case So (recom ndedL sts) =>
+                recom ndedL sts.recom ndedL stsByAlgo.flatMap { topL sts =>
+                  topL sts.l sts.collect {
+                    case l st  f ! tor calL st ds.conta ns(l st.l st d) => l st.l st d
                   }
                 }
-              case _ => Nil
+              case _ => N l
             }
         case _ =>
-          noLocationCodeCounter.incr()
-          Future.Nil
+          noLocat onCodeCounter. ncr()
+          Future.N l
       }
     } else {
-      disablePopGeoListsCounter.incr()
-      Future.Nil
+      d sablePopGeoL stsCounter. ncr()
+      Future.N l
     }
   }
 
-  override def get(target: Target): Future[Option[Seq[RawCandidate]]] = {
-    getListsRecommendedFromHistory(target).flatMap { historicalListIds =>
+  overr de def get(target: Target): Future[Opt on[Seq[RawCand date]]] = {
+    getL stsRecom ndedFrom tory(target).flatMap {  tor calL st ds =>
       Future
-        .join(
-          getPopGeoLists(target, historicalListIds),
-          getIDSListRecs(target, historicalListIds)
+        .jo n(
+          getPopGeoL sts(target,  tor calL st ds),
+          get DSL stRecs(target,  tor calL st ds)
         )
         .map {
-          case (popGeoListsIds, idsListIds) =>
-            val candidates = (idsListIds ++ popGeoListsIds).map(getListCandidate(target, _))
-            Some(candidates)
+          case (popGeoL sts ds,  dsL st ds) =>
+            val cand dates = ( dsL st ds ++ popGeoL sts ds).map(getL stCand date(target, _))
+            So (cand dates)
           case _ =>
-            noCandidatesCounter.incr()
+            noCand datesCounter. ncr()
             None
         }
     }
   }
 
-  private val pushCapFatiguePredicate = TargetPredicates.pushRecTypeFatiguePredicate(
-    CommonRecommendationType.List,
-    PushFeatureSwitchParams.ListRecommendationsPushInterval,
-    PushFeatureSwitchParams.MaxListRecommendationsPushGivenInterval,
+  pr vate val pushCapFat guePred cate = TargetPred cates.pushRecTypeFat guePred cate(
+    CommonRecom ndat onType.L st,
+    PushFeatureSw chParams.L stRecom ndat onsPush nterval,
+    PushFeatureSw chParams.MaxL stRecom ndat onsPushG ven nterval,
     stats,
   )
-  override def isCandidateSourceAvailable(target: Target): Future[Boolean] = {
+  overr de def  sCand dateS ceAva lable(target: Target): Future[Boolean] = {
 
-    val isNotFatigued = pushCapFatiguePredicate.apply(Seq(target)).map(_.head)
+    val  sNotFat gued = pushCapFat guePred cate.apply(Seq(target)).map(_. ad)
 
     Future
-      .join(
-        PushDeviceUtil.isRecommendationsEligible(target),
-        isNotFatigued
+      .jo n(
+        PushDev ceUt l. sRecom ndat onsEl g ble(target),
+         sNotFat gued
       ).map {
-        case (userRecommendationsEligible, isUnderCAP) =>
-          userRecommendationsEligible && isUnderCAP && target.params(
-            PushFeatureSwitchParams.EnableListRecommendations)
+        case (userRecom ndat onsEl g ble,  sUnderCAP) =>
+          userRecom ndat onsEl g ble &&  sUnderCAP && target.params(
+            PushFeatureSw chParams.EnableL stRecom ndat ons)
       }
   }
 }

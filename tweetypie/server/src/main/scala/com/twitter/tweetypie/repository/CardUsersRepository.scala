@@ -1,43 +1,43 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.expandodo.thriftscala._
-import com.twitter.stitch.SeqGroup
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.compat.LegacySeqGroup
-import com.twitter.tweetypie.backends.Expandodo
+ mport com.tw ter.expandodo.thr ftscala._
+ mport com.tw ter.st ch.SeqGroup
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.compat.LegacySeqGroup
+ mport com.tw ter.t etyp e.backends.Expandodo
 
-object CardUsersRepository {
-  type CardUri = String
-  type Type = (CardUri, Context) => Stitch[Option[Set[UserId]]]
+object CardUsersRepos ory {
+  type CardUr  = Str ng
+  type Type = (CardUr , Context) => St ch[Opt on[Set[User d]]]
 
-  case class Context(perspectiveUserId: UserId) extends AnyVal
+  case class Context(perspect veUser d: User d) extends AnyVal
 
-  case class GetUsersGroup(perspectiveId: UserId, getCardUsers: Expandodo.GetCardUsers)
-      extends SeqGroup[CardUri, GetCardUsersResponse] {
-    protected override def run(keys: Seq[CardUri]): Future[Seq[Try[GetCardUsersResponse]]] =
-      LegacySeqGroup.liftToSeqTry(
+  case class GetUsersGroup(perspect ve d: User d, getCardUsers: Expandodo.GetCardUsers)
+      extends SeqGroup[CardUr , GetCardUsersResponse] {
+    protected overr de def run(keys: Seq[CardUr ]): Future[Seq[Try[GetCardUsersResponse]]] =
+      LegacySeqGroup.l ftToSeqTry(
         getCardUsers(
           GetCardUsersRequests(
             requests = keys.map(k => GetCardUsersRequest(k)),
-            perspectiveUserId = Some(perspectiveId)
+            perspect veUser d = So (perspect ve d)
           )
         ).map(_.responses)
       )
   }
 
   def apply(getCardUsers: Expandodo.GetCardUsers): Type =
-    (cardUri, ctx) =>
-      Stitch.call(cardUri, GetUsersGroup(ctx.perspectiveUserId, getCardUsers)).map { resp =>
-        val authorUserIds = resp.authorUserIds.map(_.toSet)
-        val siteUserIds = resp.siteUserIds.map(_.toSet)
+    (cardUr , ctx) =>
+      St ch.call(cardUr , GetUsersGroup(ctx.perspect veUser d, getCardUsers)).map { resp =>
+        val authorUser ds = resp.authorUser ds.map(_.toSet)
+        val s eUser ds = resp.s eUser ds.map(_.toSet)
 
-        if (authorUserIds.isEmpty) {
-          siteUserIds
-        } else if (siteUserIds.isEmpty) {
-          authorUserIds
+         f (authorUser ds. sEmpty) {
+          s eUser ds
+        } else  f (s eUser ds. sEmpty) {
+          authorUser ds
         } else {
-          Some(authorUserIds.get ++ siteUserIds.get)
+          So (authorUser ds.get ++ s eUser ds.get)
         }
       }
 }

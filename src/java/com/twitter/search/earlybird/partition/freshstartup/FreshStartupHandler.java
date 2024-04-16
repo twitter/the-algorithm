@@ -1,439 +1,439 @@
-package com.twitter.search.earlybird.partition.freshstartup;
+package com.tw ter.search.earlyb rd.part  on.freshstartup;
 
-import java.io.IOException;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+ mport java. o. OExcept on;
+ mport java.t  .Durat on;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.HashSet;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
 
-import com.google.common.base.Stopwatch;
-import com.google.common.base.Verify;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
+ mport com.google.common.base.Stopwatch;
+ mport com.google.common.base.Ver fy;
+ mport com.google.common.collect. mmutableL st;
+ mport com.google.common.collect. mmutableMap;
+ mport com.google.common.collect.L sts;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.OffsetAndTimestamp;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.errors.ApiException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .kafka.cl ents.consu r.Consu rRecord;
+ mport org.apac .kafka.cl ents.consu r.Consu rRecords;
+ mport org.apac .kafka.cl ents.consu r.KafkaConsu r;
+ mport org.apac .kafka.cl ents.consu r.OffsetAndT  stamp;
+ mport org.apac .kafka.common.Top cPart  on;
+ mport org.apac .kafka.common.errors.Ap Except on;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import static com.twitter.search.common.util.LogFormatUtil.formatInt;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftVers onedEvents;
+ mport stat c com.tw ter.search.common.ut l.LogFormatUt l.format nt;
 
-import com.twitter.search.common.util.GCUtil;
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.util.LogFormatUtil;
-import com.twitter.search.earlybird.common.NonPagingAssert;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.EarlybirdStartupException;
-import com.twitter.search.earlybird.exception.WrappedKafkaApiException;
-import com.twitter.search.earlybird.factory.EarlybirdKafkaConsumersFactory;
-import com.twitter.search.earlybird.partition.EarlybirdIndex;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentManager;
-import com.twitter.search.earlybird.util.ParallelUtil;
+ mport com.tw ter.search.common.ut l.GCUt l;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common.ut l.LogFormatUt l;
+ mport com.tw ter.search.earlyb rd.common.NonPag ngAssert;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.except on.Cr  calExcept onHandler;
+ mport com.tw ter.search.earlyb rd.except on.Earlyb rdStartupExcept on;
+ mport com.tw ter.search.earlyb rd.except on.WrappedKafkaAp Except on;
+ mport com.tw ter.search.earlyb rd.factory.Earlyb rdKafkaConsu rsFactory;
+ mport com.tw ter.search.earlyb rd.part  on.Earlyb rd ndex;
+ mport com.tw ter.search.earlyb rd.part  on.Seg nt nfo;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntManager;
+ mport com.tw ter.search.earlyb rd.ut l.ParallelUt l;
 
 /**
- * Bootstraps an index by indexing tweets and updates in parallel.
+ * Bootstraps an  ndex by  ndex ng t ets and updates  n parallel.
  *
  * DEVELOPMENT
  * ===========
  *
- * 1. In earlybird-search.yml, set the following values in the "production" section:
- *   - max_segment_size to 200000
- *   - late_tweet_buffer to 10000
+ * 1.  n earlyb rd-search.yml, set t  follow ng values  n t  "product on" sect on:
+ *   - max_seg nt_s ze to 200000
+ *   - late_t et_buffer to 10000
  *
- * 2. In KafkaStartup, don't load the index, replace the .loadIndex call as instructed
- *  in the file.
+ * 2.  n KafkaStartup, don't load t   ndex, replace t  .load ndex call as  nstructed
+ *   n t  f le.
  *
- * 3. In the aurora configs, set serving_timeslices to a low number (like 5) for staging.
+ * 3.  n t  aurora conf gs, set serv ng_t  sl ces to a low number (l ke 5) for stag ng.
  */
-public class FreshStartupHandler {
-  private static final Logger LOG = LoggerFactory.getLogger(FreshStartupHandler.class);
-  private static final NonPagingAssert BUILDING_FEWER_THAN_SPECIFIED_SEGMENTS =
-          new NonPagingAssert("building_fewer_than_specified_segments");
+publ c class FreshStartupHandler {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(FreshStartupHandler.class);
+  pr vate stat c f nal NonPag ngAssert BU LD NG_FEWER_THAN_SPEC F ED_SEGMENTS =
+          new NonPag ngAssert("bu ld ng_fe r_than_spec f ed_seg nts");
 
-  private final Clock clock;
-  private final TopicPartition tweetTopic;
-  private final TopicPartition updateTopic;
-  private final SegmentManager segmentManager;
-  private final int maxSegmentSize;
-  private final int lateTweetBuffer;
-  private final EarlybirdKafkaConsumersFactory earlybirdKafkaConsumersFactory;
-  private final CriticalExceptionHandler criticalExceptionHandler;
+  pr vate f nal Clock clock;
+  pr vate f nal Top cPart  on t etTop c;
+  pr vate f nal Top cPart  on updateTop c;
+  pr vate f nal Seg ntManager seg ntManager;
+  pr vate f nal  nt maxSeg ntS ze;
+  pr vate f nal  nt lateT etBuffer;
+  pr vate f nal Earlyb rdKafkaConsu rsFactory earlyb rdKafkaConsu rsFactory;
+  pr vate f nal Cr  calExcept onHandler cr  calExcept onHandler;
 
-  public FreshStartupHandler(
+  publ c FreshStartupHandler(
     Clock clock,
-    EarlybirdKafkaConsumersFactory earlybirdKafkaConsumersFactory,
-    TopicPartition tweetTopic,
-    TopicPartition updateTopic,
-    SegmentManager segmentManager,
-    int maxSegmentSize,
-    int lateTweetBuffer,
-    CriticalExceptionHandler criticalExceptionHandler
+    Earlyb rdKafkaConsu rsFactory earlyb rdKafkaConsu rsFactory,
+    Top cPart  on t etTop c,
+    Top cPart  on updateTop c,
+    Seg ntManager seg ntManager,
+     nt maxSeg ntS ze,
+     nt lateT etBuffer,
+    Cr  calExcept onHandler cr  calExcept onHandler
   ) {
-    this.clock = clock;
-    this.earlybirdKafkaConsumersFactory = earlybirdKafkaConsumersFactory;
-    this.tweetTopic = tweetTopic;
-    this.updateTopic = updateTopic;
-    this.segmentManager = segmentManager;
-    this.maxSegmentSize = maxSegmentSize;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.lateTweetBuffer = lateTweetBuffer;
+    t .clock = clock;
+    t .earlyb rdKafkaConsu rsFactory = earlyb rdKafkaConsu rsFactory;
+    t .t etTop c = t etTop c;
+    t .updateTop c = updateTop c;
+    t .seg ntManager = seg ntManager;
+    t .maxSeg ntS ze = maxSeg ntS ze;
+    t .cr  calExcept onHandler = cr  calExcept onHandler;
+    t .lateT etBuffer = lateT etBuffer;
   }
 
   /**
-   * Don't index in parallel, just pass some time back that the EarlybirdKafkaConsumer
-   * can start indexing from.
+   * Don't  ndex  n parallel, just pass so  t   back that t  Earlyb rdKafkaConsu r
+   * can start  ndex ng from.
    */
-  public EarlybirdIndex indexFromScratch() {
-    long indexTimePeriod = Duration.ofHours(
-        EarlybirdConfig.getInt("index_from_scratch_hours", 12)
-    ).toMillis();
+  publ c Earlyb rd ndex  ndexFromScratch() {
+    long  ndexT  Per od = Durat on.ofH s(
+        Earlyb rdConf g.get nt(" ndex_from_scratch_h s", 12)
+    ).toM ll s();
 
-    return runIndexFromScratch(indexTimePeriod);
+    return run ndexFromScratch( ndexT  Per od);
   }
 
-  public EarlybirdIndex fastIndexFromScratchForDevelopment() {
-    LOG.info("Running fast index from scratch...");
-    return runIndexFromScratch(Duration.ofMinutes(10).toMillis());
+  publ c Earlyb rd ndex fast ndexFromScratchForDevelop nt() {
+    LOG. nfo("Runn ng fast  ndex from scratch...");
+    return run ndexFromScratch(Durat on.ofM nutes(10).toM ll s());
   }
 
-  private EarlybirdIndex runIndexFromScratch(long indexTimePeriodMs) {
-    KafkaConsumer<Long, ThriftVersionedEvents> consumerForFindingOffsets =
-        earlybirdKafkaConsumersFactory.createKafkaConsumer("consumer_for_offsets");
+  pr vate Earlyb rd ndex run ndexFromScratch(long  ndexT  Per odMs) {
+    KafkaConsu r<Long, Thr ftVers onedEvents> consu rForF nd ngOffsets =
+        earlyb rdKafkaConsu rsFactory.createKafkaConsu r("consu r_for_offsets");
 
-    long timestamp = clock.nowMillis() - indexTimePeriodMs;
+    long t  stamp = clock.nowM ll s() -  ndexT  Per odMs;
 
-    Map<TopicPartition, OffsetAndTimestamp> offsets;
+    Map<Top cPart  on, OffsetAndT  stamp> offsets;
     try {
-      offsets = consumerForFindingOffsets
-          .offsetsForTimes(ImmutableMap.of(tweetTopic, timestamp, updateTopic, timestamp));
-    } catch (ApiException kafkaApiException) {
-      throw new WrappedKafkaApiException(kafkaApiException);
+      offsets = consu rForF nd ngOffsets
+          .offsetsForT  s( mmutableMap.of(t etTop c, t  stamp, updateTop c, t  stamp));
+    } catch (Ap Except on kafkaAp Except on) {
+      throw new WrappedKafkaAp Except on(kafkaAp Except on);
     }
 
-    return new EarlybirdIndex(
-        Lists.newArrayList(),
-        offsets.get(tweetTopic).offset(),
-        offsets.get(updateTopic).offset());
+    return new Earlyb rd ndex(
+        L sts.newArrayL st(),
+        offsets.get(t etTop c).offset(),
+        offsets.get(updateTop c).offset());
   }
 
 
   /**
-   * Index Tweets and updates from scratch, without relying on a serialized index in HDFS.
+   *  ndex T ets and updates from scratch, w hout rely ng on a ser al zed  ndex  n HDFS.
    *
-   * This function indexes the segments in parallel, limiting the number of segments that
-   * are currently indexed, due to memory limitations. That's followed by another pass to index
-   * some updates - see the implementation for more details.
+   * T  funct on  ndexes t  seg nts  n parallel, l m  ng t  number of seg nts that
+   * are currently  ndexed, due to  mory l m at ons. That's follo d by anot r pass to  ndex
+   * so  updates - see t   mple ntat on for more deta ls.
    *
-   * The index this function outputs contains N segments, where the first N-1 are optimized and
-   * the last one is not.
+   * T   ndex t  funct on outputs conta ns N seg nts, w re t  f rst N-1 are opt m zed and
+   * t  last one  s not.
    */
-  public EarlybirdIndex parallelIndexFromScratch() throws Exception {
-    Stopwatch parallelIndexStopwatch = Stopwatch.createStarted();
+  publ c Earlyb rd ndex parallel ndexFromScratch() throws Except on {
+    Stopwatch parallel ndexStopwatch = Stopwatch.createStarted();
 
-    LOG.info("Starting parallel fresh startup.");
-    LOG.info("Max segment size: {}", maxSegmentSize);
-    LOG.info("Late tweet buffer size: {}", lateTweetBuffer);
+    LOG. nfo("Start ng parallel fresh startup.");
+    LOG. nfo("Max seg nt s ze: {}", maxSeg ntS ze);
+    LOG. nfo("Late t et buffer s ze: {}", lateT etBuffer);
 
-    // Once we finish fresh startup and proceed to indexing from the streams, we'll immediately
-    // start a new segment, since the output of the fresh startup is full segments.
+    // Once   f n sh fresh startup and proceed to  ndex ng from t  streams,  'll  m d ately
+    // start a new seg nt, s nce t  output of t  fresh startup  s full seg nts.
     //
-    // That's why we index max_segments-1 segments here instead of indexing max_segments segments
-    // and discarding the first one later.
-    int numSegments = segmentManager.getMaxEnabledSegments() - 1;
-    LOG.info("Number of segments to build: {}", numSegments);
+    // That's why    ndex max_seg nts-1 seg nts  re  nstead of  ndex ng max_seg nts seg nts
+    // and d scard ng t  f rst one later.
+     nt numSeg nts = seg ntManager.getMaxEnabledSeg nts() - 1;
+    LOG. nfo("Number of seg nts to bu ld: {}", numSeg nts);
 
-    // Find end offsets.
-    KafkaOffsetPair tweetsOffsetRange = findOffsetRangeForTweetsKafkaTopic();
+    // F nd end offsets.
+    KafkaOffsetPa r t etsOffsetRange = f ndOffsetRangeForT etsKafkaTop c();
 
-    ArrayList<SegmentBuildInfo> segmentBuildInfos = makeSegmentBuildInfos(
-        numSegments, tweetsOffsetRange);
+    ArrayL st<Seg ntBu ld nfo> seg ntBu ld nfos = makeSeg ntBu ld nfos(
+        numSeg nts, t etsOffsetRange);
 
-    segmentManager.logState("Before starting fresh startup");
+    seg ntManager.logState("Before start ng fresh startup");
 
-    // Index tweets and events.
-    Stopwatch initialIndexStopwatch = Stopwatch.createStarted();
+    //  ndex t ets and events.
+    Stopwatch  n  al ndexStopwatch = Stopwatch.createStarted();
 
-    // We index at most `MAX_PARALLEL_INDEXED` (MPI) segments at the same time. If we need to
-    // produce 20 segments here, we'd need memory for MPI unoptimized and 20-MPI optimized segments.
+    //    ndex at most `MAX_PARALLEL_ NDEXED` (MP ) seg nts at t  sa  t  .  f   need to
+    // produce 20 seg nts  re,  'd need  mory for MP  unopt m zed and 20-MP  opt m zed seg nts.
     //
-    // For back of envelope calculations you can assume optimized segments take ~6GB and unoptimized
+    // For back of envelope calculat ons   can assu  opt m zed seg nts take ~6GB and unopt m zed
     // ones ~12GB.
-    final int MAX_PARALLEL_INDEXED = 8;
+    f nal  nt MAX_PARALLEL_ NDEXED = 8;
 
-    List<SegmentInfo> segmentInfos = ParallelUtil.parmap(
+    L st<Seg nt nfo> seg nt nfos = ParallelUt l.parmap(
         "fresh-startup",
-        MAX_PARALLEL_INDEXED,
-        segmentBuildInfo -> indexTweetsAndUpdatesForSegment(segmentBuildInfo, segmentBuildInfos),
-        segmentBuildInfos
+        MAX_PARALLEL_ NDEXED,
+        seg ntBu ld nfo ->  ndexT etsAndUpdatesForSeg nt(seg ntBu ld nfo, seg ntBu ld nfos),
+        seg ntBu ld nfos
     );
 
-    LOG.info("Finished indexing tweets and updates in {}", initialIndexStopwatch);
+    LOG. nfo("F n s d  ndex ng t ets and updates  n {}",  n  al ndexStopwatch);
 
-    PostOptimizationUpdatesIndexer postOptimizationUpdatesIndexer =
-        new PostOptimizationUpdatesIndexer(
-            segmentBuildInfos,
-            earlybirdKafkaConsumersFactory,
-            updateTopic);
+    PostOpt m zat onUpdates ndexer postOpt m zat onUpdates ndexer =
+        new PostOpt m zat onUpdates ndexer(
+            seg ntBu ld nfos,
+            earlyb rdKafkaConsu rsFactory,
+            updateTop c);
 
-    postOptimizationUpdatesIndexer.indexRestOfUpdates();
+    postOpt m zat onUpdates ndexer. ndexRestOfUpdates();
 
-    // Finished indexing tweets and updates.
-    LOG.info("Segment build infos after we're done:");
-    for (SegmentBuildInfo segmentBuildInfo : segmentBuildInfos) {
-      segmentBuildInfo.logState();
+    // F n s d  ndex ng t ets and updates.
+    LOG. nfo("Seg nt bu ld  nfos after  're done:");
+    for (Seg ntBu ld nfo seg ntBu ld nfo : seg ntBu ld nfos) {
+      seg ntBu ld nfo.logState();
     }
 
-    segmentManager.logState("After finishing fresh startup");
+    seg ntManager.logState("After f n sh ng fresh startup");
 
-    LOG.info("Collected {} segment infos", segmentInfos.size());
-    LOG.info("Segment names:");
-    for (SegmentInfo segmentInfo : segmentInfos) {
-      LOG.info(segmentInfo.getSegmentName());
+    LOG. nfo("Collected {} seg nt  nfos", seg nt nfos.s ze());
+    LOG. nfo("Seg nt na s:");
+    for (Seg nt nfo seg nt nfo : seg nt nfos) {
+      LOG. nfo(seg nt nfo.getSeg ntNa ());
     }
 
-    SegmentBuildInfo lastSegmentBuildInfo = segmentBuildInfos.get(segmentBuildInfos.size() - 1);
-    long finishedUpdatesAtOffset = lastSegmentBuildInfo.getUpdateKafkaOffsetPair().getEndOffset();
-    long maxIndexedTweetId = lastSegmentBuildInfo.getMaxIndexedTweetId();
+    Seg ntBu ld nfo lastSeg ntBu ld nfo = seg ntBu ld nfos.get(seg ntBu ld nfos.s ze() - 1);
+    long f n s dUpdatesAtOffset = lastSeg ntBu ld nfo.getUpdateKafkaOffsetPa r().getEndOffset();
+    long max ndexedT et d = lastSeg ntBu ld nfo.getMax ndexedT et d();
 
-    LOG.info("Max indexed tweet id: {}", maxIndexedTweetId);
-    LOG.info("Parallel startup finished in {}", parallelIndexStopwatch);
+    LOG. nfo("Max  ndexed t et  d: {}", max ndexedT et d);
+    LOG. nfo("Parallel startup f n s d  n {}", parallel ndexStopwatch);
 
-    // verifyConstructedIndex(segmentBuildInfos);
-    // Run a GC to free up some memory after the fresh startup.
-    GCUtil.runGC();
-    logMemoryStats();
+    // ver fyConstructed ndex(seg ntBu ld nfos);
+    // Run a GC to free up so   mory after t  fresh startup.
+    GCUt l.runGC();
+    log moryStats();
 
-    return new EarlybirdIndex(
-        segmentInfos,
-        tweetsOffsetRange.getEndOffset() + 1,
-        finishedUpdatesAtOffset + 1,
-        maxIndexedTweetId
+    return new Earlyb rd ndex(
+        seg nt nfos,
+        t etsOffsetRange.getEndOffset() + 1,
+        f n s dUpdatesAtOffset + 1,
+        max ndexedT et d
     );
   }
 
-  private void logMemoryStats() {
+  pr vate vo d log moryStats() {
     double toGB = 1024 * 1024 * 1024;
-    double totalMemoryGB = Runtime.getRuntime().totalMemory() / toGB;
-    double freeMemoryGB = Runtime.getRuntime().freeMemory() / toGB;
-    LOG.info("Memory stats: Total memory GB: {}, Free memory GB: {}",
-        totalMemoryGB, freeMemoryGB);
+    double total moryGB = Runt  .getRunt  ().total mory() / toGB;
+    double free moryGB = Runt  .getRunt  ().free mory() / toGB;
+    LOG. nfo(" mory stats: Total  mory GB: {}, Free  mory GB: {}",
+        total moryGB, free moryGB);
   }
 
   /**
-   * Prints statistics about the constructed index compared to all tweets in the
-   * tweets stream.
+   * Pr nts stat st cs about t  constructed  ndex compared to all t ets  n t 
+   * t ets stream.
    *
-   * Only run this for testing and debugging purposes, never in prod environment.
+   * Only run t  for test ng and debugg ng purposes, never  n prod env ron nt.
    */
-  private void verifyConstructedIndex(List<SegmentBuildInfo> segmentBuildInfos)
-      throws IOException {
-    LOG.info("Verifying constructed index...");
-    // Read every tweet from the offset range that we're constructing an index for.
-    KafkaConsumer<Long, ThriftVersionedEvents> tweetsKafkaConsumer =
-        earlybirdKafkaConsumersFactory.createKafkaConsumer("tweets_verify");
+  pr vate vo d ver fyConstructed ndex(L st<Seg ntBu ld nfo> seg ntBu ld nfos)
+      throws  OExcept on {
+    LOG. nfo("Ver fy ng constructed  ndex...");
+    // Read every t et from t  offset range that  're construct ng an  ndex for.
+    KafkaConsu r<Long, Thr ftVers onedEvents> t etsKafkaConsu r =
+        earlyb rdKafkaConsu rsFactory.createKafkaConsu r("t ets_ver fy");
     try {
-      tweetsKafkaConsumer.assign(ImmutableList.of(tweetTopic));
-      tweetsKafkaConsumer.seek(tweetTopic, segmentBuildInfos.get(0).getTweetStartOffset());
-    } catch (ApiException apiException) {
-      throw new WrappedKafkaApiException(apiException);
+      t etsKafkaConsu r.ass gn( mmutableL st.of(t etTop c));
+      t etsKafkaConsu r.seek(t etTop c, seg ntBu ld nfos.get(0).getT etStartOffset());
+    } catch (Ap Except on ap Except on) {
+      throw new WrappedKafkaAp Except on(ap Except on);
     }
-    long finalTweetOffset = segmentBuildInfos.get(segmentBuildInfos.size() - 1).getTweetEndOffset();
+    long f nalT etOffset = seg ntBu ld nfos.get(seg ntBu ld nfos.s ze() - 1).getT etEndOffset();
     boolean done = false;
-    Set<Long> uniqueTweetIds = new HashSet<>();
-    long readTweetsCount = 0;
+    Set<Long> un queT et ds = new HashSet<>();
+    long readT etsCount = 0;
     do {
-      for (ConsumerRecord<Long, ThriftVersionedEvents> record
-          : tweetsKafkaConsumer.poll(Duration.ofSeconds(1))) {
-        if (record.offset() > finalTweetOffset) {
+      for (Consu rRecord<Long, Thr ftVers onedEvents> record
+          : t etsKafkaConsu r.poll(Durat on.ofSeconds(1))) {
+         f (record.offset() > f nalT etOffset) {
           done = true;
           break;
         }
-        readTweetsCount++;
-        uniqueTweetIds.add(record.value().getId());
+        readT etsCount++;
+        un queT et ds.add(record.value().get d());
       }
-    } while (!done);
+    } wh le (!done);
 
-    LOG.info("Total amount of read tweets: {}", formatInt(readTweetsCount));
-    // Might be less, due to duplicates.
-    LOG.info("Unique tweet ids : {}", LogFormatUtil.formatInt(uniqueTweetIds.size()));
+    LOG. nfo("Total amount of read t ets: {}", format nt(readT etsCount));
+    // M ght be less, due to dupl cates.
+    LOG. nfo("Un que t et  ds : {}", LogFormatUt l.format nt(un queT et ds.s ze()));
 
-    int notFoundInIndex = 0;
-    for (Long tweetId : uniqueTweetIds) {
+     nt notFound n ndex = 0;
+    for (Long t et d : un queT et ds) {
       boolean found = false;
-      for (SegmentBuildInfo segmentBuildInfo : segmentBuildInfos) {
-        if (segmentBuildInfo.getSegmentWriter().hasTweet(tweetId)) {
+      for (Seg ntBu ld nfo seg ntBu ld nfo : seg ntBu ld nfos) {
+         f (seg ntBu ld nfo.getSeg ntWr er().hasT et(t et d)) {
           found = true;
           break;
         }
       }
-      if (!found) {
-        notFoundInIndex++;
+       f (!found) {
+        notFound n ndex++;
       }
     }
 
-    LOG.info("Tweets not found in the index: {}", LogFormatUtil.formatInt(notFoundInIndex));
+    LOG. nfo("T ets not found  n t   ndex: {}", LogFormatUt l.format nt(notFound n ndex));
 
-    long totalIndexedTweets = 0;
-    for (SegmentBuildInfo segmentBuildInfo : segmentBuildInfos) {
-      SegmentInfo si = segmentBuildInfo.getSegmentWriter().getSegmentInfo();
-      totalIndexedTweets += si.getIndexStats().getStatusCount();
+    long total ndexedT ets = 0;
+    for (Seg ntBu ld nfo seg ntBu ld nfo : seg ntBu ld nfos) {
+      Seg nt nfo s  = seg ntBu ld nfo.getSeg ntWr er().getSeg nt nfo();
+      total ndexedT ets += s .get ndexStats().getStatusCount();
     }
 
-    LOG.info("Total indexed tweets: {}", formatInt(totalIndexedTweets));
+    LOG. nfo("Total  ndexed t ets: {}", format nt(total ndexedT ets));
   }
 
   /**
-   * Find the end offsets for the tweets Kafka topic this partition is reading
+   * F nd t  end offsets for t  t ets Kafka top c t  part  on  s read ng
    * from.
    */
-  private KafkaOffsetPair findOffsetRangeForTweetsKafkaTopic() {
-    KafkaConsumer<Long, ThriftVersionedEvents> consumerForFindingOffsets =
-        earlybirdKafkaConsumersFactory.createKafkaConsumer("consumer_for_end_offsets");
+  pr vate KafkaOffsetPa r f ndOffsetRangeForT etsKafkaTop c() {
+    KafkaConsu r<Long, Thr ftVers onedEvents> consu rForF nd ngOffsets =
+        earlyb rdKafkaConsu rsFactory.createKafkaConsu r("consu r_for_end_offsets");
 
-    Map<TopicPartition, Long> endOffsets;
-    Map<TopicPartition, Long> beginningOffsets;
+    Map<Top cPart  on, Long> endOffsets;
+    Map<Top cPart  on, Long> beg nn ngOffsets;
 
     try {
-      endOffsets = consumerForFindingOffsets.endOffsets(ImmutableList.of(tweetTopic));
-      beginningOffsets = consumerForFindingOffsets.beginningOffsets(ImmutableList.of(tweetTopic));
-    } catch (ApiException kafkaApiException) {
-      throw new WrappedKafkaApiException(kafkaApiException);
-    } finally {
-      consumerForFindingOffsets.close();
+      endOffsets = consu rForF nd ngOffsets.endOffsets( mmutableL st.of(t etTop c));
+      beg nn ngOffsets = consu rForF nd ngOffsets.beg nn ngOffsets( mmutableL st.of(t etTop c));
+    } catch (Ap Except on kafkaAp Except on) {
+      throw new WrappedKafkaAp Except on(kafkaAp Except on);
+    } f nally {
+      consu rForF nd ngOffsets.close();
     }
 
-    long tweetsBeginningOffset = beginningOffsets.get(tweetTopic);
-    long tweetsEndOffset = endOffsets.get(tweetTopic);
-    LOG.info(String.format("Tweets beginning offset: %,d", tweetsBeginningOffset));
-    LOG.info(String.format("Tweets end offset: %,d", tweetsEndOffset));
-    LOG.info(String.format("Total amount of records in the stream: %,d",
-        tweetsEndOffset - tweetsBeginningOffset + 1));
+    long t etsBeg nn ngOffset = beg nn ngOffsets.get(t etTop c);
+    long t etsEndOffset = endOffsets.get(t etTop c);
+    LOG. nfo(Str ng.format("T ets beg nn ng offset: %,d", t etsBeg nn ngOffset));
+    LOG. nfo(Str ng.format("T ets end offset: %,d", t etsEndOffset));
+    LOG. nfo(Str ng.format("Total amount of records  n t  stream: %,d",
+        t etsEndOffset - t etsBeg nn ngOffset + 1));
 
-    return new KafkaOffsetPair(tweetsBeginningOffset, tweetsEndOffset);
+    return new KafkaOffsetPa r(t etsBeg nn ngOffset, t etsEndOffset);
   }
 
   /**
-   * For each segment, we know what offset it begins at. This function finds the tweet ids
-   * for these offsets.
+   * For each seg nt,   know what offset   beg ns at. T  funct on f nds t  t et  ds
+   * for t se offsets.
    */
-  private void fillTweetIdsForSegmentStarts(List<SegmentBuildInfo> segmentBuildInfos)
-      throws EarlybirdStartupException {
-    KafkaConsumer<Long, ThriftVersionedEvents> consumerForTweetIds =
-        earlybirdKafkaConsumersFactory.createKafkaConsumer("consumer_for_tweet_ids", 1);
-    consumerForTweetIds.assign(ImmutableList.of(tweetTopic));
+  pr vate vo d f llT et dsForSeg ntStarts(L st<Seg ntBu ld nfo> seg ntBu ld nfos)
+      throws Earlyb rdStartupExcept on {
+    KafkaConsu r<Long, Thr ftVers onedEvents> consu rForT et ds =
+        earlyb rdKafkaConsu rsFactory.createKafkaConsu r("consu r_for_t et_ ds", 1);
+    consu rForT et ds.ass gn( mmutableL st.of(t etTop c));
 
-    // Find first tweet ids for each segment.
-    for (SegmentBuildInfo buildInfo : segmentBuildInfos) {
-      long tweetOffset = buildInfo.getTweetStartOffset();
-      ConsumerRecords<Long, ThriftVersionedEvents> records;
+    // F nd f rst t et  ds for each seg nt.
+    for (Seg ntBu ld nfo bu ld nfo : seg ntBu ld nfos) {
+      long t etOffset = bu ld nfo.getT etStartOffset();
+      Consu rRecords<Long, Thr ftVers onedEvents> records;
       try {
-        consumerForTweetIds.seek(tweetTopic, tweetOffset);
-        records = consumerForTweetIds.poll(Duration.ofSeconds(1));
-      } catch (ApiException kafkaApiException) {
-        throw new WrappedKafkaApiException(kafkaApiException);
+        consu rForT et ds.seek(t etTop c, t etOffset);
+        records = consu rForT et ds.poll(Durat on.ofSeconds(1));
+      } catch (Ap Except on kafkaAp Except on) {
+        throw new WrappedKafkaAp Except on(kafkaAp Except on);
       }
 
-      if (records.count() > 0) {
-        ConsumerRecord<Long, ThriftVersionedEvents> recordAtOffset = records.iterator().next();
-        if (recordAtOffset.offset() != tweetOffset) {
-          LOG.error(String.format("We were looking for offset %,d. Found a record at offset %,d",
-              tweetOffset, recordAtOffset.offset()));
+       f (records.count() > 0) {
+        Consu rRecord<Long, Thr ftVers onedEvents> recordAtOffset = records. erator().next();
+         f (recordAtOffset.offset() != t etOffset) {
+          LOG.error(Str ng.format("   re look ng for offset %,d. Found a record at offset %,d",
+              t etOffset, recordAtOffset.offset()));
         }
 
-        buildInfo.setStartTweetId(recordAtOffset.value().getId());
+        bu ld nfo.setStartT et d(recordAtOffset.value().get d());
       } else {
-        throw new EarlybirdStartupException("Didn't get any tweets back for an offset");
+        throw new Earlyb rdStartupExcept on("D dn't get any t ets back for an offset");
       }
     }
 
-    // Check that something weird didn't happen where we end up with segment ids
-    // which are in non-incresing order.
-    // Goes from oldest to newest.
-    for (int i = 1; i < segmentBuildInfos.size(); i++) {
-      long startTweetId = segmentBuildInfos.get(i).getStartTweetId();
-      long prevStartTweetId = segmentBuildInfos.get(i - 1).getStartTweetId();
-      Verify.verify(prevStartTweetId < startTweetId);
+    // C ck that so th ng   rd d dn't happen w re   end up w h seg nt  ds
+    // wh ch are  n non- ncres ng order.
+    // Goes from oldest to ne st.
+    for ( nt   = 1;   < seg ntBu ld nfos.s ze();  ++) {
+      long startT et d = seg ntBu ld nfos.get( ).getStartT et d();
+      long prevStartT et d = seg ntBu ld nfos.get(  - 1).getStartT et d();
+      Ver fy.ver fy(prevStartT et d < startT et d);
     }
   }
 
   /**
-   * Generate the offsets at which tweets begin and end for each segment that we want
+   * Generate t  offsets at wh ch t ets beg n and end for each seg nt that   want
    * to create.
    */
-  private ArrayList<SegmentBuildInfo> makeSegmentBuildInfos(
-      int numSegments, KafkaOffsetPair tweetsOffsets) throws EarlybirdStartupException {
-    ArrayList<SegmentBuildInfo> segmentBuildInfos = new ArrayList<>();
+  pr vate ArrayL st<Seg ntBu ld nfo> makeSeg ntBu ld nfos(
+       nt numSeg nts, KafkaOffsetPa r t etsOffsets) throws Earlyb rdStartupExcept on {
+    ArrayL st<Seg ntBu ld nfo> seg ntBu ld nfos = new ArrayL st<>();
 
-    // If we have 3 segments, the starting tweet offsets are:
+    //  f   have 3 seg nts, t  start ng t et offsets are:
     // end-3N, end-2N, end-N
-    int segmentSize = maxSegmentSize - lateTweetBuffer;
-    LOG.info("Segment size: {}", segmentSize);
+     nt seg ntS ze = maxSeg ntS ze - lateT etBuffer;
+    LOG. nfo("Seg nt s ze: {}", seg ntS ze);
 
-    long tweetsInStream = tweetsOffsets.getEndOffset() - tweetsOffsets.getBeginOffset() + 1;
-    double numBuildableSegments = ((double) tweetsInStream) / segmentSize;
+    long t ets nStream = t etsOffsets.getEndOffset() - t etsOffsets.getBeg nOffset() + 1;
+    double numBu ldableSeg nts = ((double) t ets nStream) / seg ntS ze;
 
-    LOG.info("Number of segments we can build: {}", numBuildableSegments);
+    LOG. nfo("Number of seg nts   can bu ld: {}", numBu ldableSeg nts);
 
-    int numSegmentsToBuild = numSegments;
-    int numBuildableSegmentsInt = (int) numBuildableSegments;
+     nt numSeg ntsToBu ld = numSeg nts;
+     nt numBu ldableSeg nts nt = ( nt) numBu ldableSeg nts;
 
-    if (numBuildableSegmentsInt < numSegmentsToBuild) {
-      // This can happen if we get a low amount of tweets such that the ~10 days of tweets stored in
-      // Kafka are not enough to build the specified number of segments.
-      LOG.warn("Building {} segments instead of the specified {} segments because there are not "
-              + "enough tweets", numSegmentsToBuild, numSegments);
-      BUILDING_FEWER_THAN_SPECIFIED_SEGMENTS.assertFailed();
-      numSegmentsToBuild = numBuildableSegmentsInt;
+     f (numBu ldableSeg nts nt < numSeg ntsToBu ld) {
+      // T  can happen  f   get a low amount of t ets such that t  ~10 days of t ets stored  n
+      // Kafka are not enough to bu ld t  spec f ed number of seg nts.
+      LOG.warn("Bu ld ng {} seg nts  nstead of t  spec f ed {} seg nts because t re are not "
+              + "enough t ets", numSeg ntsToBu ld, numSeg nts);
+      BU LD NG_FEWER_THAN_SPEC F ED_SEGMENTS.assertFa led();
+      numSeg ntsToBu ld = numBu ldableSeg nts nt;
     }
 
-    for (int rewind = numSegmentsToBuild; rewind >= 1; rewind--) {
-      long tweetStartOffset = (tweetsOffsets.getEndOffset() + 1) - (rewind * segmentSize);
-      long tweetEndOffset = tweetStartOffset + segmentSize - 1;
+    for ( nt rew nd = numSeg ntsToBu ld; rew nd >= 1; rew nd--) {
+      long t etStartOffset = (t etsOffsets.getEndOffset() + 1) - (rew nd * seg ntS ze);
+      long t etEndOffset = t etStartOffset + seg ntS ze - 1;
 
-      int index = segmentBuildInfos.size();
+       nt  ndex = seg ntBu ld nfos.s ze();
 
-      segmentBuildInfos.add(new SegmentBuildInfo(
-          tweetStartOffset,
-          tweetEndOffset,
-          index,
-          rewind == 1
+      seg ntBu ld nfos.add(new Seg ntBu ld nfo(
+          t etStartOffset,
+          t etEndOffset,
+           ndex,
+          rew nd == 1
       ));
     }
 
-    Verify.verify(segmentBuildInfos.get(segmentBuildInfos.size() - 1)
-        .getTweetEndOffset() == tweetsOffsets.getEndOffset());
+    Ver fy.ver fy(seg ntBu ld nfos.get(seg ntBu ld nfos.s ze() - 1)
+        .getT etEndOffset() == t etsOffsets.getEndOffset());
 
-    LOG.info("Filling start tweet ids ...");
-    fillTweetIdsForSegmentStarts(segmentBuildInfos);
+    LOG. nfo("F ll ng start t et  ds ...");
+    f llT et dsForSeg ntStarts(seg ntBu ld nfos);
 
-    return segmentBuildInfos;
+    return seg ntBu ld nfos;
   }
 
-  private SegmentInfo indexTweetsAndUpdatesForSegment(
-      SegmentBuildInfo segmentBuildInfo,
-      ArrayList<SegmentBuildInfo> segmentBuildInfos) throws Exception {
+  pr vate Seg nt nfo  ndexT etsAndUpdatesForSeg nt(
+      Seg ntBu ld nfo seg ntBu ld nfo,
+      ArrayL st<Seg ntBu ld nfo> seg ntBu ld nfos) throws Except on {
 
-    PreOptimizationSegmentIndexer preOptimizationSegmentIndexer =
-        new PreOptimizationSegmentIndexer(
-            segmentBuildInfo,
-            segmentBuildInfos,
-            this.segmentManager,
-            this.tweetTopic,
-            this.updateTopic,
-            this.earlybirdKafkaConsumersFactory,
-            this.lateTweetBuffer
+    PreOpt m zat onSeg nt ndexer preOpt m zat onSeg nt ndexer =
+        new PreOpt m zat onSeg nt ndexer(
+            seg ntBu ld nfo,
+            seg ntBu ld nfos,
+            t .seg ntManager,
+            t .t etTop c,
+            t .updateTop c,
+            t .earlyb rdKafkaConsu rsFactory,
+            t .lateT etBuffer
         );
 
-    return preOptimizationSegmentIndexer.runIndexing();
+    return preOpt m zat onSeg nt ndexer.run ndex ng();
   }
 }

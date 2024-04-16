@@ -1,47 +1,47 @@
-package com.twitter.product_mixer.component_library.module
+package com.tw ter.product_m xer.component_l brary.module
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.timelineranker.{thriftscala => t}
-import com.twitter.util.Duration
-import org.apache.thrift.protocol.TCompactProtocol
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.Thr ftMux
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.mtls.cl ent.MtlsStackCl ent._
+ mport com.tw ter.f nagle.thr ftmux. thodBu lder
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport com.tw ter. nject. njector
+ mport com.tw ter. nject.thr ft.modules.Thr ft thodBu lderCl entModule
+ mport com.tw ter.t  l neranker.{thr ftscala => t}
+ mport com.tw ter.ut l.Durat on
+ mport org.apac .thr ft.protocol.TCompactProtocol
 
-object TimelineRankerClientModule
-    extends ThriftMethodBuilderClientModule[
-      t.TimelineRanker.ServicePerEndpoint,
-      t.TimelineRanker.MethodPerEndpoint
+object T  l neRankerCl entModule
+    extends Thr ft thodBu lderCl entModule[
+      t.T  l neRanker.Serv cePerEndpo nt,
+      t.T  l neRanker. thodPerEndpo nt
     ]
-    with MtlsClient {
+    w h MtlsCl ent {
 
-  override val label = "timeline-ranker"
-  override val dest = "/s/timelineranker/timelineranker:compactthrift"
+  overr de val label = "t  l ne-ranker"
+  overr de val dest = "/s/t  l neranker/t  l neranker:compactthr ft"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    methodBuilder
-      .withTimeoutPerRequest(750.millis)
-      .withTimeoutTotal(750.millis)
+  overr de protected def conf gure thodBu lder(
+     njector:  njector,
+     thodBu lder:  thodBu lder
+  ):  thodBu lder = {
+     thodBu lder
+      .w hT  outPerRequest(750.m ll s)
+      .w hT  outTotal(750.m ll s)
   }
 
-  override def configureThriftMuxClient(
-    injector: Injector,
-    client: ThriftMux.Client
-  ): ThriftMux.Client = {
-    val serviceIdentifier = injector.instance[ServiceIdentifier]
+  overr de def conf gureThr ftMuxCl ent(
+     njector:  njector,
+    cl ent: Thr ftMux.Cl ent
+  ): Thr ftMux.Cl ent = {
+    val serv ce dent f er =  njector. nstance[Serv ce dent f er]
     super
-      .configureThriftMuxClient(injector, client)
-      .withProtocolFactory(new TCompactProtocol.Factory())
-      .withMutualTls(serviceIdentifier)
-      .withPerEndpointStats
+      .conf gureThr ftMuxCl ent( njector, cl ent)
+      .w hProtocolFactory(new TCompactProtocol.Factory())
+      .w hMutualTls(serv ce dent f er)
+      .w hPerEndpo ntStats
   }
 
-  override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+  overr de protected def sess onAcqu s  onT  out: Durat on = 500.m ll seconds
 }

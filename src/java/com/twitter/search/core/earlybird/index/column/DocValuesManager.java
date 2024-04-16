@@ -1,248 +1,248 @@
-package com.twitter.search.core.earlybird.index.column;
+package com.tw ter.search.core.earlyb rd. ndex.column;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+ mport java. o. OExcept on;
+ mport java.ut l. erator;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
+ mport java.ut l.concurrent.ConcurrentHashMap;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.Maps;
+ mport com.google.common.collect.Sets;
 
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+ mport com.tw ter.search.common.sc ma.base.Earlyb rdF eldType;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.common.ut l. o.flushable.DataDeser al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.DataSer al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.common.ut l. o.flushable.Flushable;
+ mport com.tw ter.search.core.earlyb rd. ndex.Doc DToT et DMapper;
 
-public abstract class DocValuesManager implements Flushable {
-  protected final Schema schema;
-  protected final int segmentSize;
-  protected final ConcurrentHashMap<String, ColumnStrideFieldIndex> columnStrideFields;
+publ c abstract class DocValuesManager  mple nts Flushable {
+  protected f nal Sc ma sc ma;
+  protected f nal  nt seg ntS ze;
+  protected f nal ConcurrentHashMap<Str ng, ColumnStr deF eld ndex> columnStr deF elds;
 
-  public DocValuesManager(Schema schema, int segmentSize) {
-    this(schema, segmentSize, new ConcurrentHashMap<>());
+  publ c DocValuesManager(Sc ma sc ma,  nt seg ntS ze) {
+    t (sc ma, seg ntS ze, new ConcurrentHashMap<>());
   }
 
-  protected DocValuesManager(Schema schema,
-                             int segmentSize,
-                             ConcurrentHashMap<String, ColumnStrideFieldIndex> columnStrideFields) {
-    this.schema = Preconditions.checkNotNull(schema);
-    this.segmentSize = segmentSize;
-    this.columnStrideFields = columnStrideFields;
+  protected DocValuesManager(Sc ma sc ma,
+                              nt seg ntS ze,
+                             ConcurrentHashMap<Str ng, ColumnStr deF eld ndex> columnStr deF elds) {
+    t .sc ma = Precond  ons.c ckNotNull(sc ma);
+    t .seg ntS ze = seg ntS ze;
+    t .columnStr deF elds = columnStr deF elds;
   }
 
-  protected abstract ColumnStrideFieldIndex newByteCSF(String field);
-  protected abstract ColumnStrideFieldIndex newIntCSF(String field);
-  protected abstract ColumnStrideFieldIndex newLongCSF(String field);
-  protected abstract ColumnStrideFieldIndex newMultiIntCSF(String field, int numIntsPerField);
+  protected abstract ColumnStr deF eld ndex newByteCSF(Str ng f eld);
+  protected abstract ColumnStr deF eld ndex new ntCSF(Str ng f eld);
+  protected abstract ColumnStr deF eld ndex newLongCSF(Str ng f eld);
+  protected abstract ColumnStr deF eld ndex newMult  ntCSF(Str ng f eld,  nt num ntsPerF eld);
 
   /**
-   * Optimize this doc values manager, and return a doc values manager a more compact and fast
-   * encoding for doc values (but that we can't add new doc IDs to).
+   * Opt m ze t  doc values manager, and return a doc values manager a more compact and fast
+   * encod ng for doc values (but that   can't add new doc  Ds to).
    */
-  public abstract DocValuesManager optimize(
-      DocIDToTweetIDMapper originalTweetIdMapper,
-      DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException;
+  publ c abstract DocValuesManager opt m ze(
+      Doc DToT et DMapper or g nalT et dMapper,
+      Doc DToT et DMapper opt m zedT et dMapper) throws  OExcept on;
 
-  public Set<String> getDocValueNames() {
-    return columnStrideFields.keySet();
+  publ c Set<Str ng> getDocValueNa s() {
+    return columnStr deF elds.keySet();
   }
 
   /**
-   * Creates a new {@link ColumnStrideFieldIndex} for the given field and returns it.
+   * Creates a new {@l nk ColumnStr deF eld ndex} for t  g ven f eld and returns  .
    */
-  public ColumnStrideFieldIndex addColumnStrideField(String field, EarlybirdFieldType fieldType) {
-    // For CSF view fields, we will perform the same check on the base field when we try to create
-    // a ColumnStrideFieldIndex for them in newIntViewCSF().
-    if (!fieldType.isCsfViewField()) {
-      Preconditions.checkState(
-          fieldType.isCsfLoadIntoRam(), "Field %s is not loaded in RAM", field);
+  publ c ColumnStr deF eld ndex addColumnStr deF eld(Str ng f eld, Earlyb rdF eldType f eldType) {
+    // For CSF v ew f elds,   w ll perform t  sa  c ck on t  base f eld w n   try to create
+    // a ColumnStr deF eld ndex for t m  n new ntV ewCSF().
+     f (!f eldType. sCsfV ewF eld()) {
+      Precond  ons.c ckState(
+          f eldType. sCsfLoad ntoRam(), "F eld %s  s not loaded  n RAM", f eld);
     }
 
-    if (columnStrideFields.containsKey(field)) {
-      return columnStrideFields.get(field);
+     f (columnStr deF elds.conta nsKey(f eld)) {
+      return columnStr deF elds.get(f eld);
     }
 
-    final ColumnStrideFieldIndex index;
-    switch (fieldType.getCsfType()) {
+    f nal ColumnStr deF eld ndex  ndex;
+    sw ch (f eldType.getCsfType()) {
       case BYTE:
-        index = newByteCSF(field);
+         ndex = newByteCSF(f eld);
         break;
-      case INT:
-        if (fieldType.getCsfFixedLengthNumValuesPerDoc() > 1) {
-          index = newMultiIntCSF(field, fieldType.getCsfFixedLengthNumValuesPerDoc());
-        } else if (fieldType.isCsfViewField()) {
-          index = newIntViewCSF(field);
+      case  NT:
+         f (f eldType.getCsfF xedLengthNumValuesPerDoc() > 1) {
+           ndex = newMult  ntCSF(f eld, f eldType.getCsfF xedLengthNumValuesPerDoc());
+        } else  f (f eldType. sCsfV ewF eld()) {
+           ndex = new ntV ewCSF(f eld);
         } else {
-          index = newIntCSF(field);
+           ndex = new ntCSF(f eld);
         }
         break;
       case LONG:
-        index = newLongCSF(field);
+         ndex = newLongCSF(f eld);
         break;
       default:
-        throw new RuntimeException("Invalid CsfType.");
+        throw new Runt  Except on(" nval d CsfType.");
     }
 
-    columnStrideFields.put(field, index);
-    return index;
+    columnStr deF elds.put(f eld,  ndex);
+    return  ndex;
   }
 
-  protected ColumnStrideFieldIndex newIntViewCSF(String field) {
-    Schema.FieldInfo info = Preconditions.checkNotNull(schema.getFieldInfo(field));
-    Schema.FieldInfo baseFieldInfo = Preconditions.checkNotNull(
-        schema.getFieldInfo(info.getFieldType().getCsfViewBaseFieldId()));
+  protected ColumnStr deF eld ndex new ntV ewCSF(Str ng f eld) {
+    Sc ma.F eld nfo  nfo = Precond  ons.c ckNotNull(sc ma.getF eld nfo(f eld));
+    Sc ma.F eld nfo baseF eld nfo = Precond  ons.c ckNotNull(
+        sc ma.getF eld nfo( nfo.getF eldType().getCsfV ewBaseF eld d()));
 
-    Preconditions.checkState(
-        baseFieldInfo.getFieldType().isCsfLoadIntoRam(),
-        "Field %s has a base field (%s) that is not loaded in RAM",
-        field, baseFieldInfo.getName());
+    Precond  ons.c ckState(
+        baseF eld nfo.getF eldType(). sCsfLoad ntoRam(),
+        "F eld %s has a base f eld (%s) that  s not loaded  n RAM",
+        f eld, baseF eld nfo.getNa ());
 
-    // We might not have a CSF for the base field yet.
-    ColumnStrideFieldIndex baseFieldIndex =
-        addColumnStrideField(baseFieldInfo.getName(), baseFieldInfo.getFieldType());
-    Preconditions.checkNotNull(baseFieldIndex);
-    Preconditions.checkState(baseFieldIndex instanceof AbstractColumnStrideMultiIntIndex);
-    return new ColumnStrideIntViewIndex(info, (AbstractColumnStrideMultiIntIndex) baseFieldIndex);
+    //   m ght not have a CSF for t  base f eld yet.
+    ColumnStr deF eld ndex baseF eld ndex =
+        addColumnStr deF eld(baseF eld nfo.getNa (), baseF eld nfo.getF eldType());
+    Precond  ons.c ckNotNull(baseF eld ndex);
+    Precond  ons.c ckState(baseF eld ndex  nstanceof AbstractColumnStr deMult  nt ndex);
+    return new ColumnStr de ntV ew ndex( nfo, (AbstractColumnStr deMult  nt ndex) baseF eld ndex);
   }
 
   /**
-   * Returns the ColumnStrideFieldIndex instance for the given field.
+   * Returns t  ColumnStr deF eld ndex  nstance for t  g ven f eld.
    */
-  public ColumnStrideFieldIndex getColumnStrideFieldIndex(String field) {
-    ColumnStrideFieldIndex docValues = columnStrideFields.get(field);
-    if (docValues == null) {
-      Schema.FieldInfo info = schema.getFieldInfo(field);
-      if (info != null && info.getFieldType().isCsfDefaultValueSet()) {
-        return new ConstantColumnStrideFieldIndex(field, info.getFieldType().getCsfDefaultValue());
+  publ c ColumnStr deF eld ndex getColumnStr deF eld ndex(Str ng f eld) {
+    ColumnStr deF eld ndex docValues = columnStr deF elds.get(f eld);
+     f (docValues == null) {
+      Sc ma.F eld nfo  nfo = sc ma.getF eld nfo(f eld);
+       f ( nfo != null &&  nfo.getF eldType(). sCsfDefaultValueSet()) {
+        return new ConstantColumnStr deF eld ndex(f eld,  nfo.getF eldType().getCsfDefaultValue());
       }
     }
 
     return docValues;
   }
 
-  private static final String CSF_INDEX_CLASS_NAME_PROP_NAME = "csfIndexClassName";
-  private static final String CSF_PROP_NAME = "column_stride_fields";
-  protected static final String MAX_SEGMENT_SIZE_PROP_NAME = "maxSegmentSize";
+  pr vate stat c f nal Str ng CSF_ NDEX_CLASS_NAME_PROP_NAME = "csf ndexClassNa ";
+  pr vate stat c f nal Str ng CSF_PROP_NAME = "column_str de_f elds";
+  protected stat c f nal Str ng MAX_SEGMENT_S ZE_PROP_NAME = "maxSeg ntS ze";
 
-  private static Map<String, Set<Schema.FieldInfo>> getIntViewFields(Schema schema) {
-    Map<String, Set<Schema.FieldInfo>> intViewFields = Maps.newHashMap();
-    for (Schema.FieldInfo fieldInfo : schema.getFieldInfos()) {
-      if (fieldInfo.getFieldType().isCsfViewField()) {
-        Schema.FieldInfo baseFieldInfo = Preconditions.checkNotNull(
-            schema.getFieldInfo(fieldInfo.getFieldType().getCsfViewBaseFieldId()));
-        String baseFieldName = baseFieldInfo.getName();
-        Set<Schema.FieldInfo> intViewFieldsForBaseField =
-            intViewFields.computeIfAbsent(baseFieldName, k -> Sets.newHashSet());
-        intViewFieldsForBaseField.add(fieldInfo);
+  pr vate stat c Map<Str ng, Set<Sc ma.F eld nfo>> get ntV ewF elds(Sc ma sc ma) {
+    Map<Str ng, Set<Sc ma.F eld nfo>>  ntV ewF elds = Maps.newHashMap();
+    for (Sc ma.F eld nfo f eld nfo : sc ma.getF eld nfos()) {
+       f (f eld nfo.getF eldType(). sCsfV ewF eld()) {
+        Sc ma.F eld nfo baseF eld nfo = Precond  ons.c ckNotNull(
+            sc ma.getF eld nfo(f eld nfo.getF eldType().getCsfV ewBaseF eld d()));
+        Str ng baseF eldNa  = baseF eld nfo.getNa ();
+        Set<Sc ma.F eld nfo>  ntV ewF eldsForBaseF eld =
+             ntV ewF elds.compute fAbsent(baseF eldNa , k -> Sets.newHashSet());
+         ntV ewF eldsForBaseF eld.add(f eld nfo);
       }
     }
-    return intViewFields;
+    return  ntV ewF elds;
   }
 
-  public abstract static class FlushHandler extends Handler<DocValuesManager> {
-    private final Schema schema;
+  publ c abstract stat c class FlushHandler extends Handler<DocValuesManager> {
+    pr vate f nal Sc ma sc ma;
 
-    public FlushHandler(Schema schema) {
-      this.schema = schema;
+    publ c FlushHandler(Sc ma sc ma) {
+      t .sc ma = sc ma;
     }
 
-    public FlushHandler(DocValuesManager docValuesManager) {
+    publ c FlushHandler(DocValuesManager docValuesManager) {
       super(docValuesManager);
-      this.schema = docValuesManager.schema;
+      t .sc ma = docValuesManager.sc ma;
     }
 
-    @Override
-    public void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      long startTime = getClock().nowMillis();
+    @Overr de
+    publ c vo d doFlush(Flush nfo flush nfo, DataSer al zer out) throws  OExcept on {
+      long startT   = getClock().nowM ll s();
 
       DocValuesManager docValuesManager = getObjectToFlush();
-      flushInfo.addIntProperty(MAX_SEGMENT_SIZE_PROP_NAME, docValuesManager.segmentSize);
-      long sizeBeforeFlush = out.length();
-      FlushInfo csfProps = flushInfo.newSubProperties(CSF_PROP_NAME);
-      for (ColumnStrideFieldIndex csf : docValuesManager.columnStrideFields.values()) {
-      if (!(csf instanceof ColumnStrideIntViewIndex)) {
-        Preconditions.checkState(
-            csf instanceof Flushable,
-            "Cannot flush column stride field {} of type {}",
-            csf.getName(), csf.getClass().getCanonicalName());
-        FlushInfo info = csfProps.newSubProperties(csf.getName());
-        info.addStringProperty(CSF_INDEX_CLASS_NAME_PROP_NAME, csf.getClass().getCanonicalName());
-        ((Flushable) csf).getFlushHandler().flush(info, out);
+      flush nfo.add ntProperty(MAX_SEGMENT_S ZE_PROP_NAME, docValuesManager.seg ntS ze);
+      long s zeBeforeFlush = out.length();
+      Flush nfo csfProps = flush nfo.newSubPropert es(CSF_PROP_NAME);
+      for (ColumnStr deF eld ndex csf : docValuesManager.columnStr deF elds.values()) {
+       f (!(csf  nstanceof ColumnStr de ntV ew ndex)) {
+        Precond  ons.c ckState(
+            csf  nstanceof Flushable,
+            "Cannot flush column str de f eld {} of type {}",
+            csf.getNa (), csf.getClass().getCanon calNa ());
+        Flush nfo  nfo = csfProps.newSubPropert es(csf.getNa ());
+         nfo.addStr ngProperty(CSF_ NDEX_CLASS_NAME_PROP_NAME, csf.getClass().getCanon calNa ());
+        ((Flushable) csf).getFlushHandler().flush( nfo, out);
       }
     }
-      csfProps.setSizeInBytes(out.length() - sizeBeforeFlush);
-      getFlushTimerStats().timerIncrement(getClock().nowMillis() - startTime);
+      csfProps.setS ze nBytes(out.length() - s zeBeforeFlush);
+      getFlushT  rStats().t  r ncre nt(getClock().nowM ll s() - startT  );
     }
 
-    @Override
-    public DocValuesManager doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
-      long startTime = getClock().nowMillis();
-      Map<String, Set<Schema.FieldInfo>> intViewFields = getIntViewFields(schema);
+    @Overr de
+    publ c DocValuesManager doLoad(Flush nfo flush nfo, DataDeser al zer  n)
+        throws  OExcept on {
+      long startT   = getClock().nowM ll s();
+      Map<Str ng, Set<Sc ma.F eld nfo>>  ntV ewF elds = get ntV ewF elds(sc ma);
 
-      FlushInfo csfProps = flushInfo.getSubProperties(CSF_PROP_NAME);
-      ConcurrentHashMap<String, ColumnStrideFieldIndex> columnStrideFields =
+      Flush nfo csfProps = flush nfo.getSubPropert es(CSF_PROP_NAME);
+      ConcurrentHashMap<Str ng, ColumnStr deF eld ndex> columnStr deF elds =
           new ConcurrentHashMap<>();
 
-      Iterator<String> csfPropIter = csfProps.getKeyIterator();
-      while (csfPropIter.hasNext()) {
-        String fieldName = csfPropIter.next();
+       erator<Str ng> csfProp er = csfProps.getKey erator();
+      wh le (csfProp er.hasNext()) {
+        Str ng f eldNa  = csfProp er.next();
         try {
-          FlushInfo info = csfProps.getSubProperties(fieldName);
-          String className = info.getStringProperty(CSF_INDEX_CLASS_NAME_PROP_NAME);
-          Class<? extends ColumnStrideFieldIndex> fieldIndexType =
-              (Class<? extends ColumnStrideFieldIndex>) Class.forName(className);
-          Preconditions.checkNotNull(
-              fieldIndexType,
-              "Invalid field configuration: field " + fieldName + " not found in config.");
+          Flush nfo  nfo = csfProps.getSubPropert es(f eldNa );
+          Str ng classNa  =  nfo.getStr ngProperty(CSF_ NDEX_CLASS_NAME_PROP_NAME);
+          Class<? extends ColumnStr deF eld ndex> f eld ndexType =
+              (Class<? extends ColumnStr deF eld ndex>) Class.forNa (classNa );
+          Precond  ons.c ckNotNull(
+              f eld ndexType,
+              " nval d f eld conf gurat on: f eld " + f eldNa  + " not found  n conf g.");
 
-          for (Class<?> c : fieldIndexType.getDeclaredClasses()) {
-            if (Handler.class.isAssignableFrom(c)) {
-              @SuppressWarnings("rawtypes")
-              Handler handler = (Handler) c.newInstance();
-              ColumnStrideFieldIndex index = (ColumnStrideFieldIndex) handler.load(
-                  csfProps.getSubProperties(fieldName), in);
-              columnStrideFields.put(fieldName, index);
+          for (Class<?> c : f eld ndexType.getDeclaredClasses()) {
+             f (Handler.class. sAss gnableFrom(c)) {
+              @SuppressWarn ngs("rawtypes")
+              Handler handler = (Handler) c.new nstance();
+              ColumnStr deF eld ndex  ndex = (ColumnStr deF eld ndex) handler.load(
+                  csfProps.getSubPropert es(f eldNa ),  n);
+              columnStr deF elds.put(f eldNa ,  ndex);
 
-              // If this is a base field, create ColumnStrideIntViewIndex instances for all the
-              // view fields based on it.
-              if (index instanceof AbstractColumnStrideMultiIntIndex) {
-                AbstractColumnStrideMultiIntIndex multiIntIndex =
-                    (AbstractColumnStrideMultiIntIndex) index;
+              //  f t   s a base f eld, create ColumnStr de ntV ew ndex  nstances for all t 
+              // v ew f elds based on  .
+               f ( ndex  nstanceof AbstractColumnStr deMult  nt ndex) {
+                AbstractColumnStr deMult  nt ndex mult  nt ndex =
+                    (AbstractColumnStr deMult  nt ndex)  ndex;
 
-                // We should have AbstractColumnStrideMultiIntIndex instances only for base fields
-                // and all our base fields have views defined on top of them.
-                for (Schema.FieldInfo intViewFieldInfo : intViewFields.get(fieldName)) {
-                  columnStrideFields.put(
-                      intViewFieldInfo.getName(),
-                      new ColumnStrideIntViewIndex(intViewFieldInfo, multiIntIndex));
+                //   should have AbstractColumnStr deMult  nt ndex  nstances only for base f elds
+                // and all   base f elds have v ews def ned on top of t m.
+                for (Sc ma.F eld nfo  ntV ewF eld nfo :  ntV ewF elds.get(f eldNa )) {
+                  columnStr deF elds.put(
+                       ntV ewF eld nfo.getNa (),
+                      new ColumnStr de ntV ew ndex( ntV ewF eld nfo, mult  nt ndex));
                 }
               }
 
               break;
             }
           }
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-          throw new IOException(
-              "Invalid field configuration for column stride field: " + fieldName, e);
+        } catch (ClassNotFoundExcept on |  llegalAccessExcept on |  nstant at onExcept on e) {
+          throw new  OExcept on(
+              " nval d f eld conf gurat on for column str de f eld: " + f eldNa , e);
         }
       }
-      getLoadTimerStats().timerIncrement(getClock().nowMillis() - startTime);
+      getLoadT  rStats().t  r ncre nt(getClock().nowM ll s() - startT  );
 
       return createDocValuesManager(
-          schema,
-          flushInfo.getIntProperty(MAX_SEGMENT_SIZE_PROP_NAME),
-          columnStrideFields);
+          sc ma,
+          flush nfo.get ntProperty(MAX_SEGMENT_S ZE_PROP_NAME),
+          columnStr deF elds);
     }
 
     protected abstract DocValuesManager createDocValuesManager(
-        Schema docValuesSchema,
-        int maxSegmentSize,
-        ConcurrentHashMap<String, ColumnStrideFieldIndex> columnStrideFields);
+        Sc ma docValuesSc ma,
+         nt maxSeg ntS ze,
+        ConcurrentHashMap<Str ng, ColumnStr deF eld ndex> columnStr deF elds);
   }
 }

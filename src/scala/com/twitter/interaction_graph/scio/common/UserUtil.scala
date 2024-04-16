@@ -1,76 +1,76 @@
-package com.twitter.interaction_graph.scio.common
+package com.tw ter. nteract on_graph.sc o.common
 
-import com.spotify.scio.coders.Coder
-import com.spotify.scio.values.SCollection
-import com.twitter.twadoop.user.gen.thriftscala.CombinedUser
-import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
+ mport com.spot fy.sc o.coders.Coder
+ mport com.spot fy.sc o.values.SCollect on
+ mport com.tw ter.twadoop.user.gen.thr ftscala.Comb nedUser
+ mport com.tw ter.users ce.snapshot.flat.thr ftscala.FlatUser
 
-object UserUtil {
+object UserUt l {
 
   /**
-   * placeholder for the destId when representing vertex features with no dest (eg create tweet)
-   * this will only be aggregated and saved in the vertex datasets but not the edge datasets
+   * placeholder for t  dest d w n represent ng vertex features w h no dest (eg create t et)
+   * t  w ll only be aggregated and saved  n t  vertex datasets but not t  edge datasets
    */
-  val DUMMY_USER_ID = -1L
-  def getValidUsers(users: SCollection[CombinedUser]): SCollection[Long] = {
+  val DUMMY_USER_ D = -1L
+  def getVal dUsers(users: SCollect on[Comb nedUser]): SCollect on[Long] = {
     users
       .flatMap { u =>
         for {
           user <- u.user
-          if user.id != 0
+           f user. d != 0
           safety <- user.safety
-          if !(safety.suspended || safety.deactivated || safety.restricted ||
-            safety.nsfwUser || safety.nsfwAdmin || safety.erased)
-        } yield {
-          user.id
+           f !(safety.suspended || safety.deact vated || safety.restr cted ||
+            safety.nsfwUser || safety.nsfwAdm n || safety.erased)
+        } y eld {
+          user. d
         }
       }
   }
 
-  def getValidFlatUsers(users: SCollection[FlatUser]): SCollection[Long] = {
+  def getVal dFlatUsers(users: SCollect on[FlatUser]): SCollect on[Long] = {
     users
       .flatMap { u =>
         for {
-          id <- u.id
-          if id != 0 && u.validUser.contains(true)
-        } yield {
-          id
+           d <- u. d
+           f  d != 0 && u.val dUser.conta ns(true)
+        } y eld {
+           d
         }
       }
   }
 
-  def getInvalidUsers(users: SCollection[FlatUser]): SCollection[Long] = {
+  def get nval dUsers(users: SCollect on[FlatUser]): SCollect on[Long] = {
     users
       .flatMap { user =>
         for {
-          valid <- user.validUser
-          if !valid
-          id <- user.id
-        } yield id
+          val d <- user.val dUser
+           f !val d
+           d <- user. d
+        } y eld  d
       }
   }
 
-  def filterUsersByIdMapping[T: Coder](
-    input: SCollection[T],
-    usersToBeFiltered: SCollection[Long],
-    userIdMapping: T => Long
-  ): SCollection[T] = {
-    input
-      .withName("filter users by id")
-      .keyBy(userIdMapping(_))
-      .leftOuterJoin[Long](usersToBeFiltered.map(x => (x, x)))
+  def f lterUsersBy dMapp ng[T: Coder](
+     nput: SCollect on[T],
+    usersToBeF ltered: SCollect on[Long],
+    user dMapp ng: T => Long
+  ): SCollect on[T] = {
+     nput
+      .w hNa ("f lter users by  d")
+      .keyBy(user dMapp ng(_))
+      .leftOuterJo n[Long](usersToBeF ltered.map(x => (x, x)))
       .collect {
-        // only return data if the key is not in the list of usersToBeFiltered
+        // only return data  f t  key  s not  n t  l st of usersToBeF ltered
         case (_, (data, None)) => data
       }
   }
 
-  def filterUsersByMultipleIdMappings[T: Coder](
-    input: SCollection[T],
-    usersToBeFiltered: SCollection[Long],
-    userIdMappings: Seq[T => Long]
-  ): SCollection[T] = {
-    userIdMappings.foldLeft(input)((data, mapping) =>
-      filterUsersByIdMapping(data, usersToBeFiltered, mapping))
+  def f lterUsersByMult ple dMapp ngs[T: Coder](
+     nput: SCollect on[T],
+    usersToBeF ltered: SCollect on[Long],
+    user dMapp ngs: Seq[T => Long]
+  ): SCollect on[T] = {
+    user dMapp ngs.foldLeft( nput)((data, mapp ng) =>
+      f lterUsersBy dMapp ng(data, usersToBeF ltered, mapp ng))
   }
 }

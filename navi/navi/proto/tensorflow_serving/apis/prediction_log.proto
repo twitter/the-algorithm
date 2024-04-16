@@ -1,49 +1,49 @@
 syntax = "proto3";
 
-package tensorflow.serving;
+package tensorflow.serv ng;
 
-import "tensorflow_serving/apis/classification.proto";
-import "tensorflow_serving/apis/inference.proto";
-import "tensorflow_serving/apis/logging.proto";
-import "tensorflow_serving/apis/predict.proto";
-import "tensorflow_serving/apis/regression.proto";
-import "tensorflow_serving/apis/session_service.proto";
+ mport "tensorflow_serv ng/ap s/class f cat on.proto";
+ mport "tensorflow_serv ng/ap s/ nference.proto";
+ mport "tensorflow_serv ng/ap s/logg ng.proto";
+ mport "tensorflow_serv ng/ap s/pred ct.proto";
+ mport "tensorflow_serv ng/ap s/regress on.proto";
+ mport "tensorflow_serv ng/ap s/sess on_serv ce.proto";
 
-option cc_enable_arenas = true;
+opt on cc_enable_arenas = true;
 
-message ClassifyLog {
-  ClassificationRequest request = 1;
-  ClassificationResponse response = 2;
+ ssage Class fyLog {
+  Class f cat onRequest request = 1;
+  Class f cat onResponse response = 2;
 }
 
-message RegressLog {
-  RegressionRequest request = 1;
-  RegressionResponse response = 2;
+ ssage RegressLog {
+  Regress onRequest request = 1;
+  Regress onResponse response = 2;
 }
 
-message PredictLog {
-  PredictRequest request = 1;
-  PredictResponse response = 2;
+ ssage Pred ctLog {
+  Pred ctRequest request = 1;
+  Pred ctResponse response = 2;
 }
 
-message MultiInferenceLog {
-  MultiInferenceRequest request = 1;
-  MultiInferenceResponse response = 2;
+ ssage Mult  nferenceLog {
+  Mult  nferenceRequest request = 1;
+  Mult  nferenceResponse response = 2;
 }
 
-message SessionRunLog {
-  SessionRunRequest request = 1;
-  SessionRunResponse response = 2;
+ ssage Sess onRunLog {
+  Sess onRunRequest request = 1;
+  Sess onRunResponse response = 2;
 }
 
-// Logged model inference request.
-message PredictionLog {
-  LogMetadata log_metadata = 1;
+// Logged model  nference request.
+ ssage Pred ct onLog {
+  Log tadata log_ tadata = 1;
   oneof log_type {
-    ClassifyLog classify_log = 2;
+    Class fyLog class fy_log = 2;
     RegressLog regress_log = 3;
-    PredictLog predict_log = 6;
-    MultiInferenceLog multi_inference_log = 4;
-    SessionRunLog session_run_log = 5;
+    Pred ctLog pred ct_log = 6;
+    Mult  nferenceLog mult _ nference_log = 4;
+    Sess onRunLog sess on_run_log = 5;
   }
 }

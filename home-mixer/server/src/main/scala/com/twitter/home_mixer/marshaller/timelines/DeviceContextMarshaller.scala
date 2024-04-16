@@ -1,34 +1,34 @@
-package com.twitter.home_mixer.marshaller.timelines
+package com.tw ter.ho _m xer.marshaller.t  l nes
 
-import com.twitter.home_mixer.model.request.DeviceContext
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.timelineservice.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.model.request.Dev ceContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Cl entContext
+ mport com.tw ter.t  l neserv ce.{thr ftscala => t}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class DeviceContextMarshaller @Inject() () {
+@S ngleton
+class Dev ceContextMarshaller @ nject() () {
 
-  def apply(deviceContext: DeviceContext, clientContext: ClientContext): t.DeviceContext = {
-    t.DeviceContext(
-      countryCode = clientContext.countryCode,
-      languageCode = clientContext.languageCode,
-      clientAppId = clientContext.appId,
-      ipAddress = clientContext.ipAddress,
-      guestId = clientContext.guestId,
-      userAgent = clientContext.userAgent,
-      deviceId = clientContext.deviceId,
-      isPolling = deviceContext.isPolling,
-      requestContext = deviceContext.requestContext,
+  def apply(dev ceContext: Dev ceContext, cl entContext: Cl entContext): t.Dev ceContext = {
+    t.Dev ceContext(
+      countryCode = cl entContext.countryCode,
+      languageCode = cl entContext.languageCode,
+      cl entApp d = cl entContext.app d,
+       pAddress = cl entContext. pAddress,
+      guest d = cl entContext.guest d,
+      userAgent = cl entContext.userAgent,
+      dev ce d = cl entContext.dev ce d,
+       sPoll ng = dev ceContext. sPoll ng,
+      requestContext = dev ceContext.requestContext,
       referrer = None,
-      tfeAuthHeader = None,
-      mobileDeviceId = clientContext.mobileDeviceId,
-      isSessionStart = None,
-      latestControlAvailable = deviceContext.latestControlAvailable,
-      guestIdMarketing = clientContext.guestIdMarketing,
-      isInternalOrTwoffice = clientContext.isTwoffice,
-      guestIdAds = clientContext.guestIdAds,
-      isUrtRequest = Some(true)
+      tfeAuth ader = None,
+      mob leDev ce d = cl entContext.mob leDev ce d,
+       sSess onStart = None,
+      latestControlAva lable = dev ceContext.latestControlAva lable,
+      guest dMarket ng = cl entContext.guest dMarket ng,
+       s nternalOrTwoff ce = cl entContext. sTwoff ce,
+      guest dAds = cl entContext.guest dAds,
+       sUrtRequest = So (true)
     )
   }
 }

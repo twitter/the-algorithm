@@ -1,65 +1,65 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.tw ter.s mclusters_v2.summ ngb rd.common
 
-import com.twitter.recos.entities.thriftscala.NamedEntity
-import com.twitter.simclusters_v2.thriftscala.{
+ mport com.tw ter.recos.ent  es.thr ftscala.Na dEnt y
+ mport com.tw ter.s mclusters_v2.thr ftscala.{
   NerKey,
-  PenguinKey,
-  SimClusterEntity,
-  TweetTextEntity
+  Pengu nKey,
+  S mClusterEnt y,
+  T etTextEnt y
 }
-import com.twitter.taxi.util.text.{TweetFeatureExtractor, TweetTextFeatures}
-import com.twitter.tweetypie.thriftscala.Tweet
+ mport com.tw ter.tax .ut l.text.{T etFeatureExtractor, T etTextFeatures}
+ mport com.tw ter.t etyp e.thr ftscala.T et
 
-object TweetEntityExtractor {
+object T etEnt yExtractor {
 
-  private val MaxHashtagsPerTweet: Int = 4
+  pr vate val MaxHashtagsPerT et:  nt = 4
 
-  private val MaxNersPerTweet: Int = 4
+  pr vate val MaxNersPerT et:  nt = 4
 
-  private val MaxPenguinsPerTweet: Int = 4
+  pr vate val MaxPengu nsPerT et:  nt = 4
 
-  private val tweetFeatureExtractor: TweetFeatureExtractor = TweetFeatureExtractor.Default
+  pr vate val t etFeatureExtractor: T etFeatureExtractor = T etFeatureExtractor.Default
 
-  private def extractTweetTextFeatures(
-    text: String,
-    languageCode: Option[String]
-  ): TweetTextFeatures = {
-    if (languageCode.isDefined) {
-      tweetFeatureExtractor.extract(text, languageCode.get)
+  pr vate def extractT etTextFeatures(
+    text: Str ng,
+    languageCode: Opt on[Str ng]
+  ): T etTextFeatures = {
+     f (languageCode. sDef ned) {
+      t etFeatureExtractor.extract(text, languageCode.get)
     } else {
-      tweetFeatureExtractor.extract(text)
+      t etFeatureExtractor.extract(text)
     }
   }
 
-  def extractEntitiesFromText(
-    tweet: Option[Tweet],
-    nerEntitiesOpt: Option[Seq[NamedEntity]]
-  ): Seq[SimClusterEntity.TweetEntity] = {
+  def extractEnt  esFromText(
+    t et: Opt on[T et],
+    nerEnt  esOpt: Opt on[Seq[Na dEnt y]]
+  ): Seq[S mClusterEnt y.T etEnt y] = {
 
-    val hashtagEntities = tweet
-      .flatMap(_.hashtags.map(_.map(_.text))).getOrElse(Nil)
-      .map { hashtag => TweetTextEntity.Hashtag(hashtag.toLowerCase) }.take(MaxHashtagsPerTweet)
+    val hashtagEnt  es = t et
+      .flatMap(_.hashtags.map(_.map(_.text))).getOrElse(N l)
+      .map { hashtag => T etTextEnt y.Hashtag(hashtag.toLo rCase) }.take(MaxHashtagsPerT et)
 
-    val nerEntities = nerEntitiesOpt
-      .getOrElse(Nil).map { namedEntity =>
-        TweetTextEntity
-          .Ner(NerKey(namedEntity.namedEntity.toLowerCase, namedEntity.entityType.getValue))
-      }.take(MaxNersPerTweet)
+    val nerEnt  es = nerEnt  esOpt
+      .getOrElse(N l).map { na dEnt y =>
+        T etTextEnt y
+          .Ner(NerKey(na dEnt y.na dEnt y.toLo rCase, na dEnt y.ent yType.getValue))
+      }.take(MaxNersPerT et)
 
-    val nerEntitySet = nerEntities.map(_.ner.textEntity).toSet
+    val nerEnt ySet = nerEnt  es.map(_.ner.textEnt y).toSet
 
-    val penguinEntities =
-      extractTweetTextFeatures(
-        tweet.flatMap(_.coreData.map(_.text)).getOrElse(""),
-        tweet.flatMap(_.language.map(_.language))
+    val pengu nEnt  es =
+      extractT etTextFeatures(
+        t et.flatMap(_.coreData.map(_.text)).getOrElse(""),
+        t et.flatMap(_.language.map(_.language))
       ).phrases
-        .map(_.normalizedOrOriginal)
-        .filter { s =>
-          s.charAt(0) != '#' && !nerEntitySet.contains(s) // not included in hashtags and NER
+        .map(_.normal zedOrOr g nal)
+        .f lter { s =>
+          s.charAt(0) != '#' && !nerEnt ySet.conta ns(s) // not  ncluded  n hashtags and NER
         }
-        .map { penguinStr => TweetTextEntity.Penguin(PenguinKey(penguinStr.toLowerCase)) }.take(
-          MaxPenguinsPerTweet)
+        .map { pengu nStr => T etTextEnt y.Pengu n(Pengu nKey(pengu nStr.toLo rCase)) }.take(
+          MaxPengu nsPerT et)
 
-    (hashtagEntities ++ penguinEntities ++ nerEntities).map(e => SimClusterEntity.TweetEntity(e))
+    (hashtagEnt  es ++ pengu nEnt  es ++ nerEnt  es).map(e => S mClusterEnt y.T etEnt y(e))
   }
 }

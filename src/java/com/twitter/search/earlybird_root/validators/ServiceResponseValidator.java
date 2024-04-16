@@ -1,10 +1,10 @@
-package com.twitter.search.earlybird_root.validators;
+package com.tw ter.search.earlyb rd_root.val dators;
 
-import com.twitter.util.Future;
+ mport com.tw ter.ut l.Future;
 
-public interface ServiceResponseValidator<R> {
+publ c  nterface Serv ceResponseVal dator<R> {
   /**
-   * Interface for validating Service responses
+   *  nterface for val dat ng Serv ce responses
    */
-  Future<R> validate(R response);
+  Future<R> val date(R response);
 }

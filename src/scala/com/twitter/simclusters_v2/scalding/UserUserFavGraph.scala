@@ -1,202 +1,202 @@
-package com.twitter.simclusters_v2.scalding
+package com.tw ter.s mclusters_v2.scald ng
 
-import com.twitter.algebird.DecayedValue
-import com.twitter.algebird.DecayedValueMonoid
-import com.twitter.algebird.Monoid
-import com.twitter.algebird.Semigroup
-import com.twitter.conversions.DurationOps._
-import com.twitter.logging.Logger
-import com.twitter.scalding._
-import com.twitter.scalding.typed.UnsortedGrouped
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch._
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.DecayedSums
-import com.twitter.simclusters_v2.thriftscala.EdgeWithDecayedWeights
-import com.twitter.timelineservice.thriftscala.ContextualizedFavoriteEvent
-import com.twitter.timelineservice.thriftscala.FavoriteEventUnion
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
-import com.twitter.util.Time
-import twadoop_config.configuration.log_categories.group.timeline.TimelineServiceFavoritesScalaDataset
+ mport com.tw ter.algeb rd.DecayedValue
+ mport com.tw ter.algeb rd.DecayedValueMono d
+ mport com.tw ter.algeb rd.Mono d
+ mport com.tw ter.algeb rd.Sem group
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng.typed.UnsortedGrouped
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e._
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.Expl c Locat on
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.ProcAtla
+ mport com.tw ter.scald ng_ nternal.job.Tw terExecut onApp
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch._
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.s mclusters_v2.hdfs_s ces._
+ mport com.tw ter.s mclusters_v2.scald ng.common.Ut l
+ mport com.tw ter.s mclusters_v2.thr ftscala.DecayedSums
+ mport com.tw ter.s mclusters_v2.thr ftscala.EdgeW hDecayed  ghts
+ mport com.tw ter.t  l neserv ce.thr ftscala.Contextual zedFavor eEvent
+ mport com.tw ter.t  l neserv ce.thr ftscala.Favor eEventUn on
+ mport com.tw ter.users ce.snapshot.flat.Users ceFlatScalaDataset
+ mport com.tw ter.users ce.snapshot.flat.thr ftscala.FlatUser
+ mport com.tw ter.ut l.T  
+ mport twadoop_conf g.conf gurat on.log_categor es.group.t  l ne.T  l neServ ceFavor esScalaDataset
 
-sealed trait FavState
+sealed tra  FavState
 
 object Fav extends FavState
 
-object UnFavWithoutPriorFav extends FavState
+object UnFavW houtPr orFav extends FavState
 
-object UnFavWithPriorFav extends FavState
+object UnFavW hPr orFav extends FavState
 
-case class TimestampedFavState(favOrUnfav: FavState, timestampMillis: Long)
+case class T  stampedFavState(favOrUnfav: FavState, t  stampM ll s: Long)
 
-object TimestampedFavStateSemigroup extends Semigroup[TimestampedFavState] {
-  override def plus(left: TimestampedFavState, right: TimestampedFavState): TimestampedFavState = {
+object T  stampedFavStateSem group extends Sem group[T  stampedFavState] {
+  overr de def plus(left: T  stampedFavState, r ght: T  stampedFavState): T  stampedFavState = {
 
     /**
-     * Assigning to first, second ensures commutative property
+     * Ass gn ng to f rst, second ensures commutat ve property
      */
-    val (first, second) = if (left.timestampMillis < right.timestampMillis) {
-      (left, right)
+    val (f rst, second) =  f (left.t  stampM ll s < r ght.t  stampM ll s) {
+      (left, r ght)
     } else {
-      (right, left)
+      (r ght, left)
     }
-    (first.favOrUnfav, second.favOrUnfav) match {
-      case (_, UnFavWithPriorFav) => second
-      case (UnFavWithPriorFav, UnFavWithoutPriorFav) =>
-        TimestampedFavState(UnFavWithPriorFav, second.timestampMillis)
-      case (Fav, UnFavWithoutPriorFav) =>
-        TimestampedFavState(UnFavWithPriorFav, second.timestampMillis)
-      case (UnFavWithoutPriorFav, UnFavWithoutPriorFav) => second
+    (f rst.favOrUnfav, second.favOrUnfav) match {
+      case (_, UnFavW hPr orFav) => second
+      case (UnFavW hPr orFav, UnFavW houtPr orFav) =>
+        T  stampedFavState(UnFavW hPr orFav, second.t  stampM ll s)
+      case (Fav, UnFavW houtPr orFav) =>
+        T  stampedFavState(UnFavW hPr orFav, second.t  stampM ll s)
+      case (UnFavW houtPr orFav, UnFavW houtPr orFav) => second
       case (_, Fav) => second
     }
   }
 }
 
 object UserUserFavGraph {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  // setting the prune threshold in the monoid below to 0.0, since we want to do our own pruning
-  // outside the monoid, primarily to be able to count how many scores are pruned.
-  implicit val dvMonoid: Monoid[DecayedValue] = DecayedValueMonoid(0.0)
-  implicit val lfvSemigroup: Semigroup[TimestampedFavState] = TimestampedFavStateSemigroup
+   mpl c  val tz: java.ut l.T  Zone = DateOps.UTC
+  // sett ng t  prune threshold  n t  mono d below to 0.0, s nce   want to do   own prun ng
+  // outs de t  mono d, pr mar ly to be able to count how many scores are pruned.
+   mpl c  val dvMono d: Mono d[DecayedValue] = DecayedValueMono d(0.0)
+   mpl c  val lfvSem group: Sem group[T  stampedFavState] = T  stampedFavStateSem group
 
-  def getSummedFavGraph(
-    previousGraphOpt: Option[TypedPipe[EdgeWithDecayedWeights]],
+  def getSum dFavGraph(
+    prev ousGraphOpt: Opt on[TypedP pe[EdgeW hDecayed  ghts]],
     newFavsDateRange: DateRange,
-    halfLivesInDays: List[Int],
-    minScoreToKeep: Double
+    halfL ves nDays: L st[ nt],
+    m nScoreToKeep: Double
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[EdgeWithDecayedWeights] = {
-    val newFavs = DAL.read(TimelineServiceFavoritesScalaDataset, newFavsDateRange).toTypedPipe
-    val endTime = Time.fromMilliseconds(newFavsDateRange.end.timestamp)
-    val userSource =
-      DAL.readMostRecentSnapshotNoOlderThan(UsersourceFlatScalaDataset, Days(7)).toTypedPipe
-    getSummedFavGraphWithValidUsers(
-      previousGraphOpt,
+     mpl c  un que D: Un que D
+  ): TypedP pe[EdgeW hDecayed  ghts] = {
+    val newFavs = DAL.read(T  l neServ ceFavor esScalaDataset, newFavsDateRange).toTypedP pe
+    val endT   = T  .fromM ll seconds(newFavsDateRange.end.t  stamp)
+    val userS ce =
+      DAL.readMostRecentSnapshotNoOlderThan(Users ceFlatScalaDataset, Days(7)).toTypedP pe
+    getSum dFavGraphW hVal dUsers(
+      prev ousGraphOpt,
       newFavs,
-      halfLivesInDays,
-      endTime,
-      minScoreToKeep,
-      userSource
+      halfL ves nDays,
+      endT  ,
+      m nScoreToKeep,
+      userS ce
     )
   }
 
-  def getSummedFavGraphWithValidUsers(
-    previousGraphOpt: Option[TypedPipe[EdgeWithDecayedWeights]],
-    newFavs: TypedPipe[ContextualizedFavoriteEvent],
-    halfLivesInDays: List[Int],
-    endTime: Time,
-    minScoreToKeep: Double,
-    userSource: TypedPipe[FlatUser]
+  def getSum dFavGraphW hVal dUsers(
+    prev ousGraphOpt: Opt on[TypedP pe[EdgeW hDecayed  ghts]],
+    newFavs: TypedP pe[Contextual zedFavor eEvent],
+    halfL ves nDays: L st[ nt],
+    endT  : T  ,
+    m nScoreToKeep: Double,
+    userS ce: TypedP pe[FlatUser]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[EdgeWithDecayedWeights] = {
-    val fullGraph = getSummedFavGraph(
-      previousGraphOpt,
+     mpl c  un que D: Un que D
+  ): TypedP pe[EdgeW hDecayed  ghts] = {
+    val fullGraph = getSum dFavGraph(
+      prev ousGraphOpt,
       newFavs,
-      halfLivesInDays,
-      endTime,
-      minScoreToKeep
+      halfL ves nDays,
+      endT  ,
+      m nScoreToKeep
     )
-    removeDeactivedOrSuspendedUsers(fullGraph, userSource)
+    removeDeact vedOrSuspendedUsers(fullGraph, userS ce)
   }
 
   def processRawFavEvents(
-    favsOrUnfavs: TypedPipe[ContextualizedFavoriteEvent]
+    favsOrUnfavs: TypedP pe[Contextual zedFavor eEvent]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[((UserId, TweetId, UserId), TimestampedFavState)] = {
-    val numFavsBeforeUniq = Stat("num_favs_before_uniq")
-    val numUnFavsBeforeUniq = Stat("num_unfavs_before_uniq")
-    val numFinalFavs = Stat("num_final_favs")
-    val numUnFavsWithPriorFavs = Stat("num_unfavs_with_prior_favs")
-    val numUnFavsWithoutPriorFavs = Stat("num_unfavs_without_prior_favs")
+     mpl c  un que D: Un que D
+  ): TypedP pe[((User d, T et d, User d), T  stampedFavState)] = {
+    val numFavsBeforeUn q = Stat("num_favs_before_un q")
+    val numUnFavsBeforeUn q = Stat("num_unfavs_before_un q")
+    val numF nalFavs = Stat("num_f nal_favs")
+    val numUnFavsW hPr orFavs = Stat("num_unfavs_w h_pr or_favs")
+    val numUnFavsW houtPr orFavs = Stat("num_unfavs_w hout_pr or_favs")
 
     favsOrUnfavs
-      .flatMap { cfe: ContextualizedFavoriteEvent =>
+      .flatMap { cfe: Contextual zedFavor eEvent =>
         cfe.event match {
-          case FavoriteEventUnion.Favorite(fav) =>
-            numFavsBeforeUniq.inc()
-            Some(
+          case Favor eEventUn on.Favor e(fav) =>
+            numFavsBeforeUn q. nc()
+            So (
               (
-                (fav.userId, fav.tweetId, fav.tweetUserId),
-                TimestampedFavState(Fav, fav.eventTimeMs)))
-          case FavoriteEventUnion.Unfavorite(unfav) =>
-            numUnFavsBeforeUniq.inc()
-            Some(
+                (fav.user d, fav.t et d, fav.t etUser d),
+                T  stampedFavState(Fav, fav.eventT  Ms)))
+          case Favor eEventUn on.Unfavor e(unfav) =>
+            numUnFavsBeforeUn q. nc()
+            So (
               (
-                (unfav.userId, unfav.tweetId, unfav.tweetUserId),
-                TimestampedFavState(UnFavWithoutPriorFav, unfav.eventTimeMs)))
+                (unfav.user d, unfav.t et d, unfav.t etUser d),
+                T  stampedFavState(UnFavW houtPr orFav, unfav.eventT  Ms)))
           case _ => None
         }
       }
       .sumByKey
-      .toTypedPipe
+      .toTypedP pe
       .flatMap {
-        case fav @ (_, TimestampedFavState(Fav, _)) =>
-          numFinalFavs.inc()
-          Some(fav)
-        case unfav @ (_, TimestampedFavState(UnFavWithoutPriorFav, _)) =>
-          numUnFavsWithoutPriorFavs.inc()
-          Some(unfav)
-        case (_, TimestampedFavState(UnFavWithPriorFav, _)) =>
-          numUnFavsWithPriorFavs.inc()
+        case fav @ (_, T  stampedFavState(Fav, _)) =>
+          numF nalFavs. nc()
+          So (fav)
+        case unfav @ (_, T  stampedFavState(UnFavW houtPr orFav, _)) =>
+          numUnFavsW houtPr orFavs. nc()
+          So (unfav)
+        case (_, T  stampedFavState(UnFavW hPr orFav, _)) =>
+          numUnFavsW hPr orFavs. nc()
           None
       }
   }
 
-  private def getGraphFromNewFavsOnly(
-    newFavs: TypedPipe[ContextualizedFavoriteEvent],
-    halfLivesInDays: List[Int],
-    endTime: Time
+  pr vate def getGraphFromNewFavsOnly(
+    newFavs: TypedP pe[Contextual zedFavor eEvent],
+    halfL ves nDays: L st[ nt],
+    endT  : T  
   )(
-    implicit uniqueID: UniqueID
-  ): UnsortedGrouped[(UserId, UserId), Map[Int, DecayedValue]] = {
+     mpl c  un que D: Un que D
+  ): UnsortedGrouped[(User d, User d), Map[ nt, DecayedValue]] = {
 
-    val numEventsNewerThanEndTime = Stat("num_events_newer_than_endtime")
+    val numEventsNe rThanEndT   = Stat("num_events_ne r_than_endt  ")
 
     processRawFavEvents(newFavs).map {
-      case ((userId, _, authorId), TimestampedFavState(favOrUnfav, timestampMillis)) =>
-        val halfLifeInDaysToScores = halfLivesInDays.map { halfLifeInDays =>
-          val givenTime = Time.fromMilliseconds(timestampMillis)
-          if (givenTime > endTime) {
-            // technically this should never happen, and even if it did happen,
-            // we shouldn't have to care, but I'm noticing that the weights aren't being computed
-            // correctly for events that spilled over the edge
-            numEventsNewerThanEndTime.inc()
+      case ((user d, _, author d), T  stampedFavState(favOrUnfav, t  stampM ll s)) =>
+        val halfL fe nDaysToScores = halfL ves nDays.map { halfL fe nDays =>
+          val g venT   = T  .fromM ll seconds(t  stampM ll s)
+           f (g venT   > endT  ) {
+            // techn cally t  should never happen, and even  f   d d happen,
+            //   shouldn't have to care, but  'm not c ng that t    ghts aren't be ng computed
+            // correctly for events that sp lled over t  edge
+            numEventsNe rThanEndT  . nc()
           }
-          val timeInSeconds = math.min(givenTime.inSeconds, endTime.inSeconds)
+          val t   nSeconds = math.m n(g venT  . nSeconds, endT  . nSeconds)
           val value = favOrUnfav match {
             case Fav => 1.0
-            case UnFavWithoutPriorFav => -1.0
-            case UnFavWithPriorFav => 0.0
+            case UnFavW houtPr orFav => -1.0
+            case UnFavW hPr orFav => 0.0
           }
-          val decayedValue = DecayedValue.build(value, timeInSeconds, halfLifeInDays.days.inSeconds)
-          halfLifeInDays -> decayedValue
+          val decayedValue = DecayedValue.bu ld(value, t   nSeconds, halfL fe nDays.days. nSeconds)
+          halfL fe nDays -> decayedValue
         }
-        ((userId, authorId), halfLifeInDaysToScores.toMap)
+        ((user d, author d), halfL fe nDaysToScores.toMap)
     }.sumByKey
   }
 
-  def getSummedFavGraph(
-    previousGraphOpt: Option[TypedPipe[EdgeWithDecayedWeights]],
-    newFavs: TypedPipe[ContextualizedFavoriteEvent],
-    halfLivesInDays: List[Int],
-    endTime: Time,
-    minScoreToKeep: Double
+  def getSum dFavGraph(
+    prev ousGraphOpt: Opt on[TypedP pe[EdgeW hDecayed  ghts]],
+    newFavs: TypedP pe[Contextual zedFavor eEvent],
+    halfL ves nDays: L st[ nt],
+    endT  : T  ,
+    m nScoreToKeep: Double
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[EdgeWithDecayedWeights] = {
+     mpl c  un que D: Un que D
+  ): TypedP pe[EdgeW hDecayed  ghts] = {
     val prunedScoresCounter = Stat("num_pruned_scores")
-    val negativeScoresCounter = Stat("num_negative_scores")
+    val negat veScoresCounter = Stat("num_negat ve_scores")
     val prunedEdgesCounter = Stat("num_pruned_edges")
     val keptEdgesCounter = Stat("num_kept_edges")
     val keptScoresCounter = Stat("num_kept_scores")
@@ -204,196 +204,196 @@ object UserUserFavGraph {
     val numNewEdges = Stat("num_new_edges")
     val numOldEdges = Stat("num_old_edges")
 
-    val unprunedOuterJoinedGraph = previousGraphOpt match {
-      case Some(previousGraph) =>
-        previousGraph
+    val unprunedOuterJo nedGraph = prev ousGraphOpt match {
+      case So (prev ousGraph) =>
+        prev ousGraph
           .map {
-            case EdgeWithDecayedWeights(srcId, destId, decayedSums) =>
-              val ts = decayedSums.lastUpdatedTimestamp.toDouble / 1000
-              val map = decayedSums.halfLifeInDaysToDecayedSums.map {
-                case (halfLifeInDays, value) =>
-                  halfLifeInDays -> DecayedValue.build(value, ts, halfLifeInDays.days.inSeconds)
+            case EdgeW hDecayed  ghts(src d, dest d, decayedSums) =>
+              val ts = decayedSums.lastUpdatedT  stamp.toDouble / 1000
+              val map = decayedSums.halfL fe nDaysToDecayedSums.map {
+                case (halfL fe nDays, value) =>
+                  halfL fe nDays -> DecayedValue.bu ld(value, ts, halfL fe nDays.days. nSeconds)
               }.toMap
-              ((srcId, destId), map)
+              ((src d, dest d), map)
           }
-          .outerJoin(getGraphFromNewFavsOnly(newFavs, halfLivesInDays, endTime))
-          .toTypedPipe
+          .outerJo n(getGraphFromNewFavsOnly(newFavs, halfL ves nDays, endT  ))
+          .toTypedP pe
       case None =>
-        getGraphFromNewFavsOnly(newFavs, halfLivesInDays, endTime).toTypedPipe
+        getGraphFromNewFavsOnly(newFavs, halfL ves nDays, endT  ).toTypedP pe
           .map {
-            case ((srcId, destId), scoreMap) =>
-              ((srcId, destId), (None, Some(scoreMap)))
+            case ((src d, dest d), scoreMap) =>
+              ((src d, dest d), (None, So (scoreMap)))
           }
     }
 
-    unprunedOuterJoinedGraph
+    unprunedOuterJo nedGraph
       .flatMap {
-        case ((srcId, destId), (previousScoreMapOpt, newScoreMapOpt)) =>
-          val latestTimeDecayedValues = halfLivesInDays.map { hlInDays =>
-            hlInDays -> DecayedValue.build(0, endTime.inSeconds, hlInDays.days.inSeconds)
+        case ((src d, dest d), (prev ousScoreMapOpt, newScoreMapOpt)) =>
+          val latestT  DecayedValues = halfL ves nDays.map { hl nDays =>
+            hl nDays -> DecayedValue.bu ld(0, endT  . nSeconds, hl nDays.days. nSeconds)
           }.toMap
 
           val updatedDecayedValues =
-            Monoid.sum(
-              List(previousScoreMapOpt, newScoreMapOpt, Some(latestTimeDecayedValues)).flatten)
+            Mono d.sum(
+              L st(prev ousScoreMapOpt, newScoreMapOpt, So (latestT  DecayedValues)).flatten)
 
-          (previousScoreMapOpt, newScoreMapOpt) match {
-            case (Some(pm), None) => numOldEdges.inc()
-            case (None, Some(nm)) => numNewEdges.inc()
-            case (Some(pm), Some(nm)) => numCommonEdges.inc()
+          (prev ousScoreMapOpt, newScoreMapOpt) match {
+            case (So (pm), None) => numOldEdges. nc()
+            case (None, So (nm)) => numNewEdges. nc()
+            case (So (pm), So (nm)) => numCommonEdges. nc()
           }
 
           val prunedMap = updatedDecayedValues.flatMap {
-            case (hlInDays, decayedValue) =>
-              if (decayedValue.value < minScoreToKeep) {
-                if (decayedValue.value < 0) {
-                  negativeScoresCounter.inc()
+            case (hl nDays, decayedValue) =>
+               f (decayedValue.value < m nScoreToKeep) {
+                 f (decayedValue.value < 0) {
+                  negat veScoresCounter. nc()
                 }
-                prunedScoresCounter.inc()
+                prunedScoresCounter. nc()
                 None
               } else {
-                keptScoresCounter.inc()
-                Some((hlInDays, decayedValue.value))
+                keptScoresCounter. nc()
+                So ((hl nDays, decayedValue.value))
               }
           }
 
-          if (prunedMap.nonEmpty) {
-            keptEdgesCounter.inc()
-            Some(EdgeWithDecayedWeights(srcId, destId, DecayedSums(endTime.inMillis, prunedMap)))
+           f (prunedMap.nonEmpty) {
+            keptEdgesCounter. nc()
+            So (EdgeW hDecayed  ghts(src d, dest d, DecayedSums(endT  . nM ll s, prunedMap)))
           } else {
-            prunedEdgesCounter.inc()
+            prunedEdgesCounter. nc()
             None
           }
       }
   }
 
-  def removeDeactivedOrSuspendedUsers(
-    full: TypedPipe[EdgeWithDecayedWeights],
-    userSource: TypedPipe[FlatUser]
+  def removeDeact vedOrSuspendedUsers(
+    full: TypedP pe[EdgeW hDecayed  ghts],
+    userS ce: TypedP pe[FlatUser]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[EdgeWithDecayedWeights] = {
-    val numValidUsers = Stat("num_valid_users")
-    val numInvalidUsers = Stat("num_invalid_users")
-    val numEdgesBeforeUsersourceJoin = Stat("num_edges_before_join_with_usersource")
-    val numEdgesWithValidSource = Stat("num_edges_with_valid_source")
-    val numEdgesWithValidSourceAndDest = Stat("num_edges_with_valid_source_and_dest")
+     mpl c  un que D: Un que D
+  ): TypedP pe[EdgeW hDecayed  ghts] = {
+    val numVal dUsers = Stat("num_val d_users")
+    val num nval dUsers = Stat("num_ nval d_users")
+    val numEdgesBeforeUsers ceJo n = Stat("num_edges_before_jo n_w h_users ce")
+    val numEdgesW hVal dS ce = Stat("num_edges_w h_val d_s ce")
+    val numEdgesW hVal dS ceAndDest = Stat("num_edges_w h_val d_s ce_and_dest")
 
-    val validUsers = userSource.flatMap {
+    val val dUsers = userS ce.flatMap {
       case flatUser
-          if !flatUser.deactivated.contains(true) && !flatUser.suspended.contains(true)
-            && flatUser.id.nonEmpty =>
-        numValidUsers.inc()
-        flatUser.id
+           f !flatUser.deact vated.conta ns(true) && !flatUser.suspended.conta ns(true)
+            && flatUser. d.nonEmpty =>
+        numVal dUsers. nc()
+        flatUser. d
       case _ =>
-        numInvalidUsers.inc()
+        num nval dUsers. nc()
         None
-    }.forceToDisk // avoid reading in the whole of userSource for both of the joins below
+    }.forceToD sk // avo d read ng  n t  whole of userS ce for both of t  jo ns below
 
-    val toJoin = full.map { edge =>
-      numEdgesBeforeUsersourceJoin.inc()
-      (edge.sourceId, edge)
+    val toJo n = full.map { edge =>
+      numEdgesBeforeUsers ceJo n. nc()
+      (edge.s ce d, edge)
     }
 
-    toJoin
-      .join(validUsers.asKeys)
+    toJo n
+      .jo n(val dUsers.asKeys)
       .map {
         case (_, (edge, _)) =>
-          numEdgesWithValidSource.inc()
-          (edge.destinationId, edge)
+          numEdgesW hVal dS ce. nc()
+          (edge.dest nat on d, edge)
       }
-      .join(validUsers.asKeys)
+      .jo n(val dUsers.asKeys)
       .map {
         case (_, (edge, _)) =>
-          numEdgesWithValidSourceAndDest.inc()
+          numEdgesW hVal dS ceAndDest. nc()
           edge
       }
   }
 }
 
 /**
- * ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:fav_graph_adhoc && \
- * oscar hdfs --user frigate --host hadoopnest1.atla.twitter.com --bundle fav_graph_adhoc \
- * --tool com.twitter.simclusters_v2.scalding.UserUserFavGraphAdhoc --screen --screen-detached \
- * --tee logs/userUserFavGraphAdhoc_20170101 -- --date 2017-01-01 --halfLivesInDays 14 50 100 \
- * --outputDir /user/frigate/your_ldap/userUserFavGraphAdhoc_20170101_hl14_50_100
+ * ./bazel bundle src/scala/com/tw ter/s mclusters_v2/scald ng:fav_graph_adhoc && \
+ * oscar hdfs --user fr gate --host hadoopnest1.atla.tw ter.com --bundle fav_graph_adhoc \
+ * --tool com.tw ter.s mclusters_v2.scald ng.UserUserFavGraphAdhoc --screen --screen-detac d \
+ * --tee logs/userUserFavGraphAdhoc_20170101 -- --date 2017-01-01 --halfL ves nDays 14 50 100 \
+ * --outputD r /user/fr gate/y _ldap/userUserFavGraphAdhoc_20170101_hl14_50_100
  *
- * ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:fav_graph_adhoc && \
- * oscar hdfs --user frigate --host hadoopnest1.atla.twitter.com --bundle fav_graph_adhoc \
- * --tool com.twitter.simclusters_v2.scalding.UserUserFavGraphAdhoc --screen --screen-detached \
- * --tee logs/userUserFavGraphAdhoc_20170102_addPrevious20170101 -- --date 2017-01-02 \
- * --previousGraphDir /user/frigate/your_ldap/userUserFavGraphAdhoc_20170101_hl14_50_100 \
- * --halfLivesInDays 14 50 100 \
- * --outputDir /user/frigate/your_ldap/userUserFavGraphAdhoc_20170102_addPrevious20170101_hl14_50_100
+ * ./bazel bundle src/scala/com/tw ter/s mclusters_v2/scald ng:fav_graph_adhoc && \
+ * oscar hdfs --user fr gate --host hadoopnest1.atla.tw ter.com --bundle fav_graph_adhoc \
+ * --tool com.tw ter.s mclusters_v2.scald ng.UserUserFavGraphAdhoc --screen --screen-detac d \
+ * --tee logs/userUserFavGraphAdhoc_20170102_addPrev ous20170101 -- --date 2017-01-02 \
+ * --prev ousGraphD r /user/fr gate/y _ldap/userUserFavGraphAdhoc_20170101_hl14_50_100 \
+ * --halfL ves nDays 14 50 100 \
+ * --outputD r /user/fr gate/y _ldap/userUserFavGraphAdhoc_20170102_addPrev ous20170101_hl14_50_100
  */
-object UserUserFavGraphAdhoc extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  implicit val dp = DateParser.default
+object UserUserFavGraphAdhoc extends Tw terExecut onApp {
+   mpl c  val tz: java.ut l.T  Zone = DateOps.UTC
+   mpl c  val dp = DateParser.default
   val log = Logger()
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
-          val previousGraphOpt = args.optional("previousGraphDir").map { dir =>
-            TypedPipe.from(EdgeWithDecayedWtsFixedPathSource(dir))
+  def job: Execut on[Un ] =
+    Execut on.getConf gMode.flatMap {
+      case (conf g, mode) =>
+        Execut on.w h d {  mpl c  un que d =>
+          val args = conf g.getArgs
+          val prev ousGraphOpt = args.opt onal("prev ousGraphD r").map { d r =>
+            TypedP pe.from(EdgeW hDecayedWtsF xedPathS ce(d r))
           }
-          val favsDateRange = DateRange.parse(args.list("date"))
-          val halfLives = args.list("halfLivesInDays").map(_.toInt)
-          val minScoreToKeep = args.double("minScoreToKeep", 1e-5)
-          val outputDir = args("outputDir")
-          Util.printCounters(
+          val favsDateRange = DateRange.parse(args.l st("date"))
+          val halfL ves = args.l st("halfL ves nDays").map(_.to nt)
+          val m nScoreToKeep = args.double("m nScoreToKeep", 1e-5)
+          val outputD r = args("outputD r")
+          Ut l.pr ntCounters(
             UserUserFavGraph
-              .getSummedFavGraph(previousGraphOpt, favsDateRange, halfLives, minScoreToKeep)
-              .writeExecution(EdgeWithDecayedWtsFixedPathSource(outputDir))
+              .getSum dFavGraph(prev ousGraphOpt, favsDateRange, halfL ves, m nScoreToKeep)
+              .wr eExecut on(EdgeW hDecayedWtsF xedPathS ce(outputD r))
           )
         }
     }
 }
 
 /**
- * $ capesospy-v2 update --start_cron fav_graph src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+ * $ capesospy-v2 update --start_cron fav_graph src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc.yaml
  */
-object UserUserFavGraphBatch extends TwitterScheduledExecutionApp {
-  private val firstTime: String = "2017-01-01"
-  implicit val tz = DateOps.UTC
-  implicit val parser = DateParser.default
-  private val batchIncrement: Duration = Days(2)
-  private val firstStartDate = DateRange.parse(firstTime).start
+object UserUserFavGraphBatch extends Tw terSc duledExecut onApp {
+  pr vate val f rstT  : Str ng = "2017-01-01"
+   mpl c  val tz = DateOps.UTC
+   mpl c  val parser = DateParser.default
+  pr vate val batch ncre nt: Durat on = Days(2)
+  pr vate val f rstStartDate = DateRange.parse(f rstT  ).start
 
-  val outputPath: String = "/user/cassowary/processed/user_user_fav_graph"
+  val outputPath: Str ng = "/user/cassowary/processed/user_user_fav_graph"
   val log = Logger()
 
-  private val execArgs = AnalyticsBatchExecutionArgs(
-    batchDesc = BatchDescription(this.getClass.getName),
-    firstTime = BatchFirstTime(RichDate(firstTime)),
-    lastTime = None,
-    batchIncrement = BatchIncrement(batchIncrement)
+  pr vate val execArgs = Analyt csBatchExecut onArgs(
+    batchDesc = BatchDescr pt on(t .getClass.getNa ),
+    f rstT   = BatchF rstT  (R chDate(f rstT  )),
+    lastT   = None,
+    batch ncre nt = Batch ncre nt(batch ncre nt)
   )
 
-  override def scheduledJob: Execution[Unit] = AnalyticsBatchExecution(execArgs) { dateRange =>
-    Execution.withId { implicit uniqueId =>
-      Execution.withArgs { args =>
-        val previousGraph = if (dateRange.start.timestamp == firstStartDate.timestamp) {
-          log.info("Looks like this is the first time, setting previousGraph to None")
+  overr de def sc duledJob: Execut on[Un ] = Analyt csBatchExecut on(execArgs) { dateRange =>
+    Execut on.w h d {  mpl c  un que d =>
+      Execut on.w hArgs { args =>
+        val prev ousGraph =  f (dateRange.start.t  stamp == f rstStartDate.t  stamp) {
+          log. nfo("Looks l ke t   s t  f rst t  , sett ng prev ousGraph to None")
           None
         } else {
-          Some(
+          So (
             DAL
-              .readMostRecentSnapshot(UserUserFavGraphScalaDataset, dateRange - batchIncrement)
-              .toTypedPipe
+              .readMostRecentSnapshot(UserUserFavGraphScalaDataset, dateRange - batch ncre nt)
+              .toTypedP pe
           )
         }
-        val halfLives = args.list("halfLivesInDays").map(_.toInt)
-        val minScoreToKeep = args.double("minScoreToKeep", 1e-5)
-        Util.printCounters(
+        val halfL ves = args.l st("halfL ves nDays").map(_.to nt)
+        val m nScoreToKeep = args.double("m nScoreToKeep", 1e-5)
+        Ut l.pr ntCounters(
           UserUserFavGraph
-            .getSummedFavGraph(previousGraph, dateRange, halfLives, minScoreToKeep)
-            .writeDALSnapshotExecution(
+            .getSum dFavGraph(prev ousGraph, dateRange, halfL ves, m nScoreToKeep)
+            .wr eDALSnapshotExecut on(
               UserUserFavGraphScalaDataset,
-              D.Daily,
-              D.Suffix(outputPath),
+              D.Da ly,
+              D.Suff x(outputPath),
               D.EBLzo(),
               dateRange.end)
         )
@@ -402,43 +402,43 @@ object UserUserFavGraphBatch extends TwitterScheduledExecutionApp {
   }
 }
 
-object DumpFavGraphAdhoc extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
+object DumpFavGraphAdhoc extends Tw terExecut onApp {
+   mpl c  val tz: java.ut l.T  Zone = DateOps.UTC
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
+  def job: Execut on[Un ] =
+    Execut on.getConf gMode.flatMap {
+      case (conf g, mode) =>
+        Execut on.w h d {  mpl c  un que d =>
           val favGraph = DAL
             .readMostRecentSnapshotNoOlderThan(UserUserFavGraphScalaDataset, Days(10))
-            .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-            .toTypedPipe
+            .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+            .toTypedP pe
             .collect {
-              case edge if edge.weights.halfLifeInDaysToDecayedSums.contains(100) =>
-                (edge.sourceId, edge.destinationId, edge.weights.halfLifeInDaysToDecayedSums(100))
+              case edge  f edge.  ghts.halfL fe nDaysToDecayedSums.conta ns(100) =>
+                (edge.s ce d, edge.dest nat on d, edge.  ghts.halfL fe nDaysToDecayedSums(100))
             }
 
-          Execution
+          Execut on
             .sequence(
               Seq(
-                Util.printSummaryOfNumericColumn(
+                Ut l.pr ntSummaryOfNu r cColumn(
                   favGraph.map(_._3),
-                  Some("Weight")
+                  So ("  ght")
                 ),
-                Util.printSummaryOfNumericColumn(
+                Ut l.pr ntSummaryOfNu r cColumn(
                   favGraph.map(c => math.log10(10.0 + c._3)),
-                  Some("Weight_Log_P10")
+                  So ("  ght_Log_P10")
                 ),
-                Util.printSummaryOfNumericColumn(
+                Ut l.pr ntSummaryOfNu r cColumn(
                   favGraph.map(c => math.log10(1.0 + c._3)),
-                  Some("Weight_Log_P1")
+                  So ("  ght_Log_P1")
                 ),
-                Util.printSummaryOfCategoricalColumn(favGraph.map(_._1), Some("SourceId")),
-                Util.printSummaryOfCategoricalColumn(favGraph.map(_._2), Some("DestId"))
+                Ut l.pr ntSummaryOfCategor calColumn(favGraph.map(_._1), So ("S ce d")),
+                Ut l.pr ntSummaryOfCategor calColumn(favGraph.map(_._2), So ("Dest d"))
               )
             ).flatMap { summarySeq =>
-              println(summarySeq.mkString("\n"))
-              Execution.unit
+              pr ntln(summarySeq.mkStr ng("\n"))
+              Execut on.un 
             }
         }
     }

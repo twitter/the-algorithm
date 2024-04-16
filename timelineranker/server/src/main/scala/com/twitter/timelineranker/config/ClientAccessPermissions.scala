@@ -1,287 +1,287 @@
-package com.twitter.timelineranker.config
+package com.tw ter.t  l neranker.conf g
 
-import com.twitter.timelineranker.decider.DeciderKey._
-import com.twitter.timelines.authorization.TrustedPermission
-import com.twitter.timelines.authorization.RateLimitingTrustedPermission
-import com.twitter.timelines.authorization.RateLimitingUntrustedPermission
-import com.twitter.timelines.authorization.ClientDetails
+ mport com.tw ter.t  l neranker.dec der.Dec derKey._
+ mport com.tw ter.t  l nes.author zat on.TrustedPerm ss on
+ mport com.tw ter.t  l nes.author zat on.RateL m  ngTrustedPerm ss on
+ mport com.tw ter.t  l nes.author zat on.RateL m  ngUntrustedPerm ss on
+ mport com.tw ter.t  l nes.author zat on.Cl entDeta ls
 
-object ClientAccessPermissions {
-  // We want timelineranker locked down for requests outside of what's defined here.
-  val DefaultRateLimit = 0d
+object Cl entAccessPerm ss ons {
+  //   want t  l neranker locked down for requests outs de of what's def ned  re.
+  val DefaultRateL m  = 0d
 
-  def unknown(name: String): ClientDetails = {
-    ClientDetails(name, RateLimitingUntrustedPermission(RateLimitOverrideUnknown, DefaultRateLimit))
+  def unknown(na : Str ng): Cl entDeta ls = {
+    Cl entDeta ls(na , RateL m  ngUntrustedPerm ss on(RateL m Overr deUnknown, DefaultRateL m ))
   }
 
-  val All: Seq[ClientDetails] = Seq(
+  val All: Seq[Cl entDeta ls] = Seq(
     /**
-     * Production clients for timelinemixer.
+     * Product on cl ents for t  l nem xer.
      */
-    new ClientDetails(
-      "timelinemixer.recap.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerRecapProd),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nem xer.recap.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerRecapProd),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinemixer.recycled.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerRecycledProd),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nem xer.recycled.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerRecycledProd),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinemixer.hydrate.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerHydrateProd),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nem xer.hydrate.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerHydrateProd),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinemixer.hydrate_recos.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerHydrateRecosProd),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nem xer.hydrate_recos.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerHydrateRecosProd),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinemixer.seed_author_ids.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerSeedAuthorsProd),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nem xer.seed_author_ ds.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerSeedAuthorsProd),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinemixer.simcluster.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerSimclusterProd),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nem xer.s mcluster.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerS mclusterProd),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinemixer.entity_tweets.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerEntityTweetsProd),
-      protectedWriteAccess = TrustedPermission
-    ),
-    /**
-     * This client is whitelisted for timelinemixer only as it used by
-     * List injection service which will not be migrated to timelinescorer.
-     */
-    new ClientDetails(
-      "timelinemixer.list.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerListProd),
-      protectedWriteAccess = TrustedPermission
-    ),
-    new ClientDetails(
-      "timelinemixer.list_tweet.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerListTweetProd),
-      protectedWriteAccess = TrustedPermission
-    ),
-    new ClientDetails(
-      "timelinemixer.community.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerCommunityProd),
-      protectedWriteAccess = TrustedPermission
-    ),
-    new ClientDetails(
-      "timelinemixer.community_tweet.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerCommunityTweetProd),
-      protectedWriteAccess = TrustedPermission
-    ),
-    new ClientDetails(
-      "timelinemixer.uteg_liked_by_tweets.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerUtegLikedByTweetsProd),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nem xer.ent y_t ets.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerEnt yT etsProd),
+      protectedWr eAccess = TrustedPerm ss on
     ),
     /**
-     * Production clients for timelinescorer. Most of these clients have their
-     * equivalents under the timelinemixer scope (with exception of list injection
-     * client).
+     * T  cl ent  s wh el sted for t  l nem xer only as   used by
+     * L st  nject on serv ce wh ch w ll not be m grated to t  l nescorer.
      */
-    new ClientDetails(
-      "timelinescorer.recap.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerRecapProd),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nem xer.l st.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerL stProd),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinescorer.recycled.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerRecycledProd),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nem xer.l st_t et.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerL stT etProd),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinescorer.hydrate.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerHydrateProd),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nem xer.commun y.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerCommun yProd),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinescorer.hydrate_recos.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerHydrateRecosProd),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nem xer.commun y_t et.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerCommun yT etProd),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinescorer.seed_author_ids.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerSeedAuthorsProd),
-      protectedWriteAccess = TrustedPermission
-    ),
-    new ClientDetails(
-      "timelinescorer.simcluster.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerSimclusterProd),
-      protectedWriteAccess = TrustedPermission
-    ),
-    new ClientDetails(
-      "timelinescorer.entity_tweets.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerEntityTweetsProd),
-      protectedWriteAccess = TrustedPermission
-    ),
-    new ClientDetails(
-      "timelinescorer.list_tweet.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerListTweetProd),
-      protectedWriteAccess = TrustedPermission
-    ),
-    new ClientDetails(
-      "timelinescorer.uteg_liked_by_tweets.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerUtegLikedByTweetsProd),
-      protectedWriteAccess = TrustedPermission
-    ),
-    new ClientDetails(
-      "timelineservice.prod",
-      RateLimitingTrustedPermission(AllowTimelineServiceProd),
-      protectedWriteAccess = TrustedPermission
-    ),
-    new ClientDetails(
-      "timelinescorer.hydrate_tweet_scoring.prod",
-      RateLimitingTrustedPermission(AllowTimelineScorerHydrateTweetScoringProd),
-      protectedWriteAccess = TrustedPermission
-    ),
-    new ClientDetails(
-      "timelinescorer.community_tweet.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerCommunityTweetProd),
-      protectedWriteAccess = TrustedPermission
-    ),
-    new ClientDetails(
-      "timelinescorer.recommended_trend_tweet.prod",
-      RateLimitingTrustedPermission(AllowTimelineScorerRecommendedTrendTweetProd),
-      protectedWriteAccess = TrustedPermission
-    ),
-    new ClientDetails(
-      "timelinescorer.rec_topic_tweets.prod",
-      RateLimitingTrustedPermission(AllowTimelineScorerRecTopicTweetsProd),
-      protectedWriteAccess = TrustedPermission
-    ),
-    new ClientDetails(
-      "timelinescorer.popular_topic_tweets.prod",
-      RateLimitingTrustedPermission(AllowTimelineScorerPopularTopicTweetsProd),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nem xer.uteg_l ked_by_t ets.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerUtegL kedByT etsProd),
+      protectedWr eAccess = TrustedPerm ss on
     ),
     /**
-     * TimelineRanker utilities. Traffic proxy, warmups, and console.
+     * Product on cl ents for t  l nescorer. Most of t se cl ents have t  r
+     * equ valents under t  t  l nem xer scope (w h except on of l st  nject on
+     * cl ent).
      */
-    new ClientDetails(
-      "timelineranker.proxy",
-      RateLimitingTrustedPermission(AllowTimelineRankerProxy),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nescorer.recap.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerRecapProd),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      TimelineRankerConstants.WarmupClientName,
-      RateLimitingTrustedPermission(AllowTimelineRankerWarmup),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nescorer.recycled.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerRecycledProd),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      TimelineRankerConstants.ForwardedClientName,
-      RateLimitingTrustedPermission(AllowTimelineRankerWarmup),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nescorer.hydrate.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerHydrateProd),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelineranker.console",
-      RateLimitingUntrustedPermission(RateLimitOverrideUnknown, 1d),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nescorer.hydrate_recos.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerHydrateRecosProd),
+      protectedWr eAccess = TrustedPerm ss on
+    ),
+    new Cl entDeta ls(
+      "t  l nescorer.seed_author_ ds.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerSeedAuthorsProd),
+      protectedWr eAccess = TrustedPerm ss on
+    ),
+    new Cl entDeta ls(
+      "t  l nescorer.s mcluster.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerS mclusterProd),
+      protectedWr eAccess = TrustedPerm ss on
+    ),
+    new Cl entDeta ls(
+      "t  l nescorer.ent y_t ets.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerEnt yT etsProd),
+      protectedWr eAccess = TrustedPerm ss on
+    ),
+    new Cl entDeta ls(
+      "t  l nescorer.l st_t et.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerL stT etProd),
+      protectedWr eAccess = TrustedPerm ss on
+    ),
+    new Cl entDeta ls(
+      "t  l nescorer.uteg_l ked_by_t ets.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerUtegL kedByT etsProd),
+      protectedWr eAccess = TrustedPerm ss on
+    ),
+    new Cl entDeta ls(
+      "t  l neserv ce.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neServ ceProd),
+      protectedWr eAccess = TrustedPerm ss on
+    ),
+    new Cl entDeta ls(
+      "t  l nescorer.hydrate_t et_scor ng.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neScorerHydrateT etScor ngProd),
+      protectedWr eAccess = TrustedPerm ss on
+    ),
+    new Cl entDeta ls(
+      "t  l nescorer.commun y_t et.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerCommun yT etProd),
+      protectedWr eAccess = TrustedPerm ss on
+    ),
+    new Cl entDeta ls(
+      "t  l nescorer.recom nded_trend_t et.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neScorerRecom ndedTrendT etProd),
+      protectedWr eAccess = TrustedPerm ss on
+    ),
+    new Cl entDeta ls(
+      "t  l nescorer.rec_top c_t ets.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neScorerRecTop cT etsProd),
+      protectedWr eAccess = TrustedPerm ss on
+    ),
+    new Cl entDeta ls(
+      "t  l nescorer.popular_top c_t ets.prod",
+      RateL m  ngTrustedPerm ss on(AllowT  l neScorerPopularTop cT etsProd),
+      protectedWr eAccess = TrustedPerm ss on
     ),
     /**
-     * Staging clients.
+     * T  l neRanker ut l  es. Traff c proxy, warmups, and console.
      */
-    new ClientDetails(
-      "timelinemixer.recap.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l neranker.proxy",
+      RateL m  ngTrustedPerm ss on(AllowT  l neRankerProxy),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinemixer.recycled.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      T  l neRankerConstants.WarmupCl entNa ,
+      RateL m  ngTrustedPerm ss on(AllowT  l neRankerWarmup),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinemixer.hydrate.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      T  l neRankerConstants.ForwardedCl entNa ,
+      RateL m  ngTrustedPerm ss on(AllowT  l neRankerWarmup),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinemixer.hydrate_recos.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l neranker.console",
+      RateL m  ngUntrustedPerm ss on(RateL m Overr deUnknown, 1d),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinemixer.seed_author_ids.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
-      protectedWriteAccess = TrustedPermission
+    /**
+     * Stag ng cl ents.
+     */
+    new Cl entDeta ls(
+      "t  l nem xer.recap.stag ng",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerStag ng),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinemixer.simcluster.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nem xer.recycled.stag ng",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerStag ng),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinemixer.entity_tweets.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nem xer.hydrate.stag ng",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerStag ng),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinemixer.list.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nem xer.hydrate_recos.stag ng",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerStag ng),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinemixer.list_tweet.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nem xer.seed_author_ ds.stag ng",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerStag ng),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinemixer.community.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nem xer.s mcluster.stag ng",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerStag ng),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinemixer.community_tweet.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nem xer.ent y_t ets.stag ng",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerStag ng),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinescorer.community_tweet.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nem xer.l st.stag ng",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerStag ng),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinescorer.recommended_trend_tweet.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nem xer.l st_t et.stag ng",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerStag ng),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinemixer.uteg_liked_by_tweets.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nem xer.commun y.stag ng",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerStag ng),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinemixer.entity_tweets.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nem xer.commun y_t et.stag ng",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerStag ng),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinescorer.hydrate_tweet_scoring.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nescorer.commun y_t et.stag ng",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerStag ng),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinescorer.rec_topic_tweets.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nescorer.recom nded_trend_t et.stag ng",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerStag ng),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelinescorer.popular_topic_tweets.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nem xer.uteg_l ked_by_t ets.stag ng",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerStag ng),
+      protectedWr eAccess = TrustedPerm ss on
     ),
-    new ClientDetails(
-      "timelineservice.staging",
-      RateLimitingTrustedPermission(AllowTimelineServiceStaging),
-      protectedWriteAccess = TrustedPermission
+    new Cl entDeta ls(
+      "t  l nem xer.ent y_t ets.stag ng",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerStag ng),
+      protectedWr eAccess = TrustedPerm ss on
+    ),
+    new Cl entDeta ls(
+      "t  l nescorer.hydrate_t et_scor ng.stag ng",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerStag ng),
+      protectedWr eAccess = TrustedPerm ss on
+    ),
+    new Cl entDeta ls(
+      "t  l nescorer.rec_top c_t ets.stag ng",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerStag ng),
+      protectedWr eAccess = TrustedPerm ss on
+    ),
+    new Cl entDeta ls(
+      "t  l nescorer.popular_top c_t ets.stag ng",
+      RateL m  ngTrustedPerm ss on(AllowT  l neM xerStag ng),
+      protectedWr eAccess = TrustedPerm ss on
+    ),
+    new Cl entDeta ls(
+      "t  l neserv ce.stag ng",
+      RateL m  ngTrustedPerm ss on(AllowT  l neServ ceStag ng),
+      protectedWr eAccess = TrustedPerm ss on
     )
   )
 }

@@ -1,37 +1,37 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.twitter_text
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.r chtext.tw ter_text
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.RichTextReferenceObjectBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.RichTextRtlOptionBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.StaticRichTextRtlOptionBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.twitter_text.TwitterTextEntityProcessor.DefaultReferenceObjectBuilder
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Plain
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextAlignment
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextFormat
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Strong
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.r chtext.R chTextReferenceObjectBu lder
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.r chtext.R chTextRtlOpt onBu lder
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.r chtext.Stat cR chTextRtlOpt onBu lder
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.r chtext.tw ter_text.Tw terTextEnt yProcessor.DefaultReferenceObjectBu lder
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseStr
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.r chtext.BaseR chTextBu lder
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.Pla n
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chText
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chTextAl gn nt
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chTextFormat
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.Strong
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-case class TwitterTextRichTextBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  stringBuilder: BaseStr[Query, Candidate],
-  alignment: Option[RichTextAlignment] = None,
-  formats: Set[RichTextFormat] = Set(Plain, Strong),
-  twitterTextRtlOptionBuilder: RichTextRtlOptionBuilder[Query] =
-    StaticRichTextRtlOptionBuilder[Query](None),
-  twitterTextReferenceObjectBuilder: RichTextReferenceObjectBuilder = DefaultReferenceObjectBuilder)
-    extends BaseRichTextBuilder[Query, Candidate] {
-  def apply(query: Query, candidate: Candidate, candidateFeatures: FeatureMap): RichText = {
-    val twitterTextRenderer = TwitterTextRenderer(
-      text = stringBuilder(query, candidate, candidateFeatures),
-      rtl = twitterTextRtlOptionBuilder(query),
-      alignment = alignment)
+case class Tw terTextR chTextBu lder[-Query <: P pel neQuery, -Cand date <: Un versalNoun[Any]](
+  str ngBu lder: BaseStr[Query, Cand date],
+  al gn nt: Opt on[R chTextAl gn nt] = None,
+  formats: Set[R chTextFormat] = Set(Pla n, Strong),
+  tw terTextRtlOpt onBu lder: R chTextRtlOpt onBu lder[Query] =
+    Stat cR chTextRtlOpt onBu lder[Query](None),
+  tw terTextReferenceObjectBu lder: R chTextReferenceObjectBu lder = DefaultReferenceObjectBu lder)
+    extends BaseR chTextBu lder[Query, Cand date] {
+  def apply(query: Query, cand date: Cand date, cand dateFeatures: FeatureMap): R chText = {
+    val tw terTextRenderer = Tw terTextRenderer(
+      text = str ngBu lder(query, cand date, cand dateFeatures),
+      rtl = tw terTextRtlOpt onBu lder(query),
+      al gn nt = al gn nt)
 
-    twitterTextRenderer
-      .transform(TwitterTextFormatProcessor(formats))
-      .transform(TwitterTextEntityProcessor(twitterTextReferenceObjectBuilder))
-      .build
+    tw terTextRenderer
+      .transform(Tw terTextFormatProcessor(formats))
+      .transform(Tw terTextEnt yProcessor(tw terTextReferenceObjectBu lder))
+      .bu ld
   }
 }

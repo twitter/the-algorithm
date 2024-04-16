@@ -1,284 +1,284 @@
-package com.twitter.follow_recommendations.common.predicates.gizmoduck
+package com.tw ter.follow_recom ndat ons.common.pred cates.g zmoduck
 
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.escherbird.util.stitchcache.StitchCache
-import com.twitter.finagle.Memcached.Client
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.clients.cache.MemcacheClient
-import com.twitter.follow_recommendations.common.clients.cache.ThriftBijection
-import com.twitter.follow_recommendations.common.models.FilterReason._
-import com.twitter.follow_recommendations.common.models.AddressBookMetadata
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.follow_recommendations.common.predicates.gizmoduck.GizmoduckPredicate._
-import com.twitter.follow_recommendations.common.predicates.gizmoduck.GizmoduckPredicateParams._
-import com.twitter.follow_recommendations.configapi.deciders.DeciderKey
-import com.twitter.gizmoduck.thriftscala.LabelValue.BlinkBad
-import com.twitter.gizmoduck.thriftscala.LabelValue.BlinkWorst
-import com.twitter.gizmoduck.thriftscala.LabelValue
-import com.twitter.gizmoduck.thriftscala.LookupContext
-import com.twitter.gizmoduck.thriftscala.QueryFields
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.gizmoduck.thriftscala.UserResult
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.scrooge.CompactThriftSerializer
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.gizmoduck.Gizmoduck
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Duration
-import com.twitter.util.logging.Logging
-import java.lang.{Long => JLong}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.dec der.RandomRec p ent
+ mport com.tw ter.esc rb rd.ut l.st chcac .St chCac 
+ mport com.tw ter.f nagle. mcac d.Cl ent
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.ut l.DefaultT  r
+ mport com.tw ter.follow_recom ndat ons.common.base.StatsUt l
+ mport com.tw ter.follow_recom ndat ons.common.base.Pred cate
+ mport com.tw ter.follow_recom ndat ons.common.base.Pred cateResult
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.cac . mcac Cl ent
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.cac .Thr ftB ject on
+ mport com.tw ter.follow_recom ndat ons.common.models.F lterReason._
+ mport com.tw ter.follow_recom ndat ons.common.models.AddressBook tadata
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.F lterReason
+ mport com.tw ter.follow_recom ndat ons.common.pred cates.g zmoduck.G zmoduckPred cate._
+ mport com.tw ter.follow_recom ndat ons.common.pred cates.g zmoduck.G zmoduckPred cateParams._
+ mport com.tw ter.follow_recom ndat ons.conf gap .dec ders.Dec derKey
+ mport com.tw ter.g zmoduck.thr ftscala.LabelValue.Bl nkBad
+ mport com.tw ter.g zmoduck.thr ftscala.LabelValue.Bl nkWorst
+ mport com.tw ter.g zmoduck.thr ftscala.LabelValue
+ mport com.tw ter.g zmoduck.thr ftscala.LookupContext
+ mport com.tw ter.g zmoduck.thr ftscala.QueryF elds
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter.g zmoduck.thr ftscala.UserResult
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.scrooge.CompactThr ftSer al zer
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLevel
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.g zmoduck.G zmoduck
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport java.lang.{Long => JLong}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * In this filter, we want to check 4 categories of conditions:
- *   - if candidate is discoverable given that it's from an address-book/phone-book based source
- *   - if candidate is unsuitable based on it's safety sub-fields in gizmoduck
- *   - if candidate is withheld because of country-specific take-down policies
- *   - if candidate is marked as bad/worst based on blink labels
- * We fail close on the query as this is a product-critical filter
+ *  n t  f lter,   want to c ck 4 categor es of cond  ons:
+ *   -  f cand date  s d scoverable g ven that  's from an address-book/phone-book based s ce
+ *   -  f cand date  s unsu able based on  's safety sub-f elds  n g zmoduck
+ *   -  f cand date  s w h ld because of country-spec f c take-down pol c es
+ *   -  f cand date  s marked as bad/worst based on bl nk labels
+ *   fa l close on t  query as t   s a product-cr  cal f lter
  */
-@Singleton
-case class GizmoduckPredicate @Inject() (
-  gizmoduck: Gizmoduck,
-  client: Client,
-  statsReceiver: StatsReceiver,
-  decider: Decider = Decider.False)
-    extends Predicate[(HasClientContext with HasParams, CandidateUser)]
-    with Logging {
-  private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getName)
+@S ngleton
+case class G zmoduckPred cate @ nject() (
+  g zmoduck: G zmoduck,
+  cl ent: Cl ent,
+  statsRece ver: StatsRece ver,
+  dec der: Dec der = Dec der.False)
+    extends Pred cate[(HasCl entContext w h HasParams, Cand dateUser)]
+    w h Logg ng {
+  pr vate val stats: StatsRece ver = statsRece ver.scope(t .getClass.getNa )
 
-  // track # of Gizmoduck predicate queries that yielded valid & invalid predicate results
-  private val validPredicateResultCounter = stats.counter("predicate_valid")
-  private val invalidPredicateResultCounter = stats.counter("predicate_invalid")
+  // track # of G zmoduck pred cate quer es that y elded val d &  nval d pred cate results
+  pr vate val val dPred cateResultCounter = stats.counter("pred cate_val d")
+  pr vate val  nval dPred cateResultCounter = stats.counter("pred cate_ nval d")
 
-  // track # of cases where no Gizmoduck user was found
-  private val noGizmoduckUserCounter = stats.counter("no_gizmoduck_user_found")
+  // track # of cases w re no G zmoduck user was found
+  pr vate val noG zmoduckUserCounter = stats.counter("no_g zmoduck_user_found")
 
-  private val gizmoduckCache = StitchCache[JLong, UserResult](
-    maxCacheSize = MaxCacheSize,
-    ttl = CacheTTL,
-    statsReceiver = stats.scope("cache"),
-    underlyingCall = getByUserId
+  pr vate val g zmoduckCac  = St chCac [JLong, UserResult](
+    maxCac S ze = MaxCac S ze,
+    ttl = Cac TTL,
+    statsRece ver = stats.scope("cac "),
+    underly ngCall = getByUser d
   )
 
-  // Distributed Twemcache to store UserResult objects keyed on user IDs
-  val bijection = new ThriftBijection[UserResult] {
-    override val serializer = CompactThriftSerializer(UserResult)
+  // D str buted T mcac  to store UserResult objects keyed on user  Ds
+  val b ject on = new Thr ftB ject on[UserResult] {
+    overr de val ser al zer = CompactThr ftSer al zer(UserResult)
   }
-  val memcacheClient = MemcacheClient[UserResult](
-    client = client,
-    dest = "/s/cache/frs:twemcaches",
-    valueBijection = bijection,
-    ttl = CacheTTL,
-    statsReceiver = stats.scope("twemcache")
+  val  mcac Cl ent =  mcac Cl ent[UserResult](
+    cl ent = cl ent,
+    dest = "/s/cac /frs:t mcac s",
+    valueB ject on = b ject on,
+    ttl = Cac TTL,
+    statsRece ver = stats.scope("t mcac ")
   )
 
-  // main method used to apply GizmoduckPredicate to a candidate user
-  override def apply(
-    pair: (HasClientContext with HasParams, CandidateUser)
-  ): Stitch[PredicateResult] = {
-    val (request, candidate) = pair
-    // measure the latency of the getGizmoduckPredicateResult, since this predicate
-    // check is product-critical and relies on querying a core service (Gizmoduck)
-    StatsUtil.profileStitch(
-      getGizmoduckPredicateResult(request, candidate),
-      stats.scope("getGizmoduckPredicateResult")
+  // ma n  thod used to apply G zmoduckPred cate to a cand date user
+  overr de def apply(
+    pa r: (HasCl entContext w h HasParams, Cand dateUser)
+  ): St ch[Pred cateResult] = {
+    val (request, cand date) = pa r
+    //  asure t  latency of t  getG zmoduckPred cateResult, s nce t  pred cate
+    // c ck  s product-cr  cal and rel es on query ng a core serv ce (G zmoduck)
+    StatsUt l.prof leSt ch(
+      getG zmoduckPred cateResult(request, cand date),
+      stats.scope("getG zmoduckPred cateResult")
     )
   }
 
-  private def getGizmoduckPredicateResult(
-    request: HasClientContext with HasParams,
-    candidate: CandidateUser
-  ): Stitch[PredicateResult] = {
-    val timeout: Duration = request.params(GizmoduckGetTimeout)
+  pr vate def getG zmoduckPred cateResult(
+    request: HasCl entContext w h HasParams,
+    cand date: Cand dateUser
+  ): St ch[Pred cateResult] = {
+    val t  out: Durat on = request.params(G zmoduckGetT  out)
 
-    val deciderKey: String = DeciderKey.EnableGizmoduckCaching.toString
-    val enableDistributedCaching: Boolean = decider.isAvailable(deciderKey, Some(RandomRecipient))
+    val dec derKey: Str ng = Dec derKey.EnableG zmoduckCach ng.toStr ng
+    val enableD str butedCach ng: Boolean = dec der. sAva lable(dec derKey, So (RandomRec p ent))
 
-    // try getting an existing UserResult from cache if possible
-    val userResultStitch: Stitch[UserResult] = 
-      enableDistributedCaching match {
-        // read from memcache
-        case true => memcacheClient.readThrough(
-          // add a key prefix to address cache key collisions
-          key = "GizmoduckPredicate" + candidate.id.toString,
-          underlyingCall = () => getByUserId(candidate.id)
+    // try gett ng an ex st ng UserResult from cac   f poss ble
+    val userResultSt ch: St ch[UserResult] = 
+      enableD str butedCach ng match {
+        // read from  mcac 
+        case true =>  mcac Cl ent.readThrough(
+          // add a key pref x to address cac  key coll s ons
+          key = "G zmoduckPred cate" + cand date. d.toStr ng,
+          underly ngCall = () => getByUser d(cand date. d)
         )
-        // read from local cache
-        case false => gizmoduckCache.readThrough(candidate.id)
+        // read from local cac 
+        case false => g zmoduckCac .readThrough(cand date. d)
       }
 
-    val predicateResultStitch = userResultStitch.map {
+    val pred cateResultSt ch = userResultSt ch.map {
       userResult => {
-        val predicateResult = getPredicateResult(request, candidate, userResult)
-        if (enableDistributedCaching) {
-          predicateResult match {
-            case PredicateResult.Valid => 
-              stats.scope("twemcache").counter("predicate_valid").incr()
-            case PredicateResult.Invalid(reasons) => 
-              stats.scope("twemcache").counter("predicate_invalid").incr()
+        val pred cateResult = getPred cateResult(request, cand date, userResult)
+         f (enableD str butedCach ng) {
+          pred cateResult match {
+            case Pred cateResult.Val d => 
+              stats.scope("t mcac ").counter("pred cate_val d"). ncr()
+            case Pred cateResult. nval d(reasons) => 
+              stats.scope("t mcac ").counter("pred cate_ nval d"). ncr()
           }
-          // log metrics to check if local cache value matches distributed cache value  
-          logPredicateResultEquality(
+          // log  tr cs to c ck  f local cac  value matc s d str buted cac  value  
+          logPred cateResultEqual y(
             request,
-            candidate,
-            predicateResult
+            cand date,
+            pred cateResult
           )
         } else {
-          predicateResult match {
-            case PredicateResult.Valid => 
-              stats.scope("cache").counter("predicate_valid").incr()
-            case PredicateResult.Invalid(reasons) => 
-              stats.scope("cache").counter("predicate_invalid").incr()
+          pred cateResult match {
+            case Pred cateResult.Val d => 
+              stats.scope("cac ").counter("pred cate_val d"). ncr()
+            case Pred cateResult. nval d(reasons) => 
+              stats.scope("cac ").counter("pred cate_ nval d"). ncr()
           }
         }
-        predicateResult
+        pred cateResult
       }
     }
-    predicateResultStitch
-      .within(timeout)(DefaultTimer)
-      .rescue { // fail-open when timeout or exception
-        case e: Exception =>
-          stats.scope("rescued").counter(e.getClass.getSimpleName).incr()
-          invalidPredicateResultCounter.incr()
-          Stitch(PredicateResult.Invalid(Set(FailOpen)))
+    pred cateResultSt ch
+      .w h n(t  out)(DefaultT  r)
+      .rescue { // fa l-open w n t  out or except on
+        case e: Except on =>
+          stats.scope("rescued").counter(e.getClass.getS mpleNa ). ncr()
+           nval dPred cateResultCounter. ncr()
+          St ch(Pred cateResult. nval d(Set(Fa lOpen)))
       }
   }
 
-  private def logPredicateResultEquality(
-    request: HasClientContext with HasParams,
-    candidate: CandidateUser,
-    predicateResult: PredicateResult
-  ): Unit = {
-    val localCachedUserResult = Option(gizmoduckCache.cache.getIfPresent(candidate.id))
-    if (localCachedUserResult.isDefined) {
-      val localPredicateResult = getPredicateResult(request, candidate, localCachedUserResult.get)
-      localPredicateResult.equals(predicateResult) match {
-        case true => stats.scope("has_equal_predicate_value").counter("true").incr()
-        case false => stats.scope("has_equal_predicate_value").counter("false").incr()
+  pr vate def logPred cateResultEqual y(
+    request: HasCl entContext w h HasParams,
+    cand date: Cand dateUser,
+    pred cateResult: Pred cateResult
+  ): Un  = {
+    val localCac dUserResult = Opt on(g zmoduckCac .cac .get fPresent(cand date. d))
+     f (localCac dUserResult. sDef ned) {
+      val localPred cateResult = getPred cateResult(request, cand date, localCac dUserResult.get)
+      localPred cateResult.equals(pred cateResult) match {
+        case true => stats.scope("has_equal_pred cate_value").counter("true"). ncr()
+        case false => stats.scope("has_equal_pred cate_value").counter("false"). ncr()
       }
     } else {
-      stats.scope("has_equal_predicate_value").counter("undefined").incr()
+      stats.scope("has_equal_pred cate_value").counter("undef ned"). ncr()
     }
   }
 
-  // method to get PredicateResult from UserResult
-  def getPredicateResult(
-    request: HasClientContext with HasParams,
-    candidate: CandidateUser,
+  //  thod to get Pred cateResult from UserResult
+  def getPred cateResult(
+    request: HasCl entContext w h HasParams,
+    cand date: Cand dateUser,
     userResult: UserResult,
-  ): PredicateResult = {
+  ): Pred cateResult = {
     userResult.user match {
-      case Some(user) =>
-        val abPbReasons = getAbPbReason(user, candidate.getAddressBookMetadata)
+      case So (user) =>
+        val abPbReasons = getAbPbReason(user, cand date.getAddressBook tadata)
         val safetyReasons = getSafetyReasons(user)
         val countryTakedownReasons = getCountryTakedownReasons(user, request.getCountryCode)
-        val blinkReasons = getBlinkReasons(user)
+        val bl nkReasons = getBl nkReasons(user)
         val allReasons =
-          abPbReasons ++ safetyReasons ++ countryTakedownReasons ++ blinkReasons
-        if (allReasons.nonEmpty) {
-          invalidPredicateResultCounter.incr()
-          PredicateResult.Invalid(allReasons)
+          abPbReasons ++ safetyReasons ++ countryTakedownReasons ++ bl nkReasons
+         f (allReasons.nonEmpty) {
+           nval dPred cateResultCounter. ncr()
+          Pred cateResult. nval d(allReasons)
         } else {
-          validPredicateResultCounter.incr()
-          PredicateResult.Valid
+          val dPred cateResultCounter. ncr()
+          Pred cateResult.Val d
         }
       case None =>
-        noGizmoduckUserCounter.incr()
-        invalidPredicateResultCounter.incr()
-        PredicateResult.Invalid(Set(NoUser))
+        noG zmoduckUserCounter. ncr()
+         nval dPred cateResultCounter. ncr()
+        Pred cateResult. nval d(Set(NoUser))
     }
   }
 
-  private def getByUserId(userId: JLong): Stitch[UserResult] = {
-    StatsUtil.profileStitch(
-      gizmoduck.getById(userId = userId, queryFields = queryFields, context = lookupContext),
-      stats.scope("getByUserId")
+  pr vate def getByUser d(user d: JLong): St ch[UserResult] = {
+    StatsUt l.prof leSt ch(
+      g zmoduck.getBy d(user d = user d, queryF elds = queryF elds, context = lookupContext),
+      stats.scope("getByUser d")
     )
   }
 }
 
-object GizmoduckPredicate {
+object G zmoduckPred cate {
 
-  private[gizmoduck] val lookupContext: LookupContext =
-    LookupContext(`includeDeactivated` = true, `safetyLevel` = Some(SafetyLevel.Recommendations))
+  pr vate[g zmoduck] val lookupContext: LookupContext =
+    LookupContext(` ncludeDeact vated` = true, `safetyLevel` = So (SafetyLevel.Recom ndat ons))
 
-  private[gizmoduck] val queryFields: Set[QueryFields] =
+  pr vate[g zmoduck] val queryF elds: Set[QueryF elds] =
     Set(
-      QueryFields.Discoverability, // needed for Address Book / Phone Book discoverability checks in getAbPbReason
-      QueryFields.Safety, // needed for user state safety checks in getSafetyReasons, getCountryTakedownReasons
-      QueryFields.Labels, // needed for user label checks in getBlinkReasons
-      QueryFields.Takedowns // needed for checking takedown labels for a user in getCountryTakedownReasons
+      QueryF elds.D scoverab l y, // needed for Address Book / Phone Book d scoverab l y c cks  n getAbPbReason
+      QueryF elds.Safety, // needed for user state safety c cks  n getSafetyReasons, getCountryTakedownReasons
+      QueryF elds.Labels, // needed for user label c cks  n getBl nkReasons
+      QueryF elds.Takedowns // needed for c ck ng takedown labels for a user  n getCountryTakedownReasons
     )
 
-  private[gizmoduck] val BlinkLabels: Set[LabelValue] = Set(BlinkBad, BlinkWorst)
+  pr vate[g zmoduck] val Bl nkLabels: Set[LabelValue] = Set(Bl nkBad, Bl nkWorst)
 
-  private[gizmoduck] def getAbPbReason(
+  pr vate[g zmoduck] def getAbPbReason(
     user: User,
-    abMetadataOpt: Option[AddressBookMetadata]
-  ): Set[FilterReason] = {
+    ab tadataOpt: Opt on[AddressBook tadata]
+  ): Set[F lterReason] = {
     (for {
-      discoverability <- user.discoverability
-      abMetadata <- abMetadataOpt
-    } yield {
-      val AddressBookMetadata(fwdPb, rvPb, fwdAb, rvAb) = abMetadata
-      val abReason: Set[FilterReason] =
-        if ((!discoverability.discoverableByEmail) && (fwdAb || rvAb))
-          Set(AddressBookUndiscoverable)
+      d scoverab l y <- user.d scoverab l y
+      ab tadata <- ab tadataOpt
+    } y eld {
+      val AddressBook tadata(fwdPb, rvPb, fwdAb, rvAb) = ab tadata
+      val abReason: Set[F lterReason] =
+         f ((!d scoverab l y.d scoverableByEma l) && (fwdAb || rvAb))
+          Set(AddressBookUnd scoverable)
         else Set.empty
-      val pbReason: Set[FilterReason] =
-        if ((!discoverability.discoverableByMobilePhone) && (fwdPb || rvPb))
-          Set(PhoneBookUndiscoverable)
+      val pbReason: Set[F lterReason] =
+         f ((!d scoverab l y.d scoverableByMob lePhone) && (fwdPb || rvPb))
+          Set(PhoneBookUnd scoverable)
         else Set.empty
       abReason ++ pbReason
     }).getOrElse(Set.empty)
   }
 
-  private[gizmoduck] def getSafetyReasons(user: User): Set[FilterReason] = {
+  pr vate[g zmoduck] def getSafetyReasons(user: User): Set[F lterReason] = {
     user.safety
       .map { s =>
-        val deactivatedReason: Set[FilterReason] =
-          if (s.deactivated) Set(Deactivated) else Set.empty
-        val suspendedReason: Set[FilterReason] = if (s.suspended) Set(Suspended) else Set.empty
-        val restrictedReason: Set[FilterReason] = if (s.restricted) Set(Restricted) else Set.empty
-        val nsfwUserReason: Set[FilterReason] = if (s.nsfwUser) Set(NsfwUser) else Set.empty
-        val nsfwAdminReason: Set[FilterReason] = if (s.nsfwAdmin) Set(NsfwAdmin) else Set.empty
-        val isProtectedReason: Set[FilterReason] = if (s.isProtected) Set(IsProtected) else Set.empty
-        deactivatedReason ++ suspendedReason ++ restrictedReason ++ nsfwUserReason ++ nsfwAdminReason ++ isProtectedReason
+        val deact vatedReason: Set[F lterReason] =
+           f (s.deact vated) Set(Deact vated) else Set.empty
+        val suspendedReason: Set[F lterReason] =  f (s.suspended) Set(Suspended) else Set.empty
+        val restr ctedReason: Set[F lterReason] =  f (s.restr cted) Set(Restr cted) else Set.empty
+        val nsfwUserReason: Set[F lterReason] =  f (s.nsfwUser) Set(NsfwUser) else Set.empty
+        val nsfwAdm nReason: Set[F lterReason] =  f (s.nsfwAdm n) Set(NsfwAdm n) else Set.empty
+        val  sProtectedReason: Set[F lterReason] =  f (s. sProtected) Set( sProtected) else Set.empty
+        deact vatedReason ++ suspendedReason ++ restr ctedReason ++ nsfwUserReason ++ nsfwAdm nReason ++  sProtectedReason
       }.getOrElse(Set.empty)
   }
 
-  private[gizmoduck] def getCountryTakedownReasons(
+  pr vate[g zmoduck] def getCountryTakedownReasons(
     user: User,
-    countryCodeOpt: Option[String]
-  ): Set[FilterReason] = {
+    countryCodeOpt: Opt on[Str ng]
+  ): Set[F lterReason] = {
     (for {
       safety <- user.safety.toSeq
-      if safety.hasTakedown
+       f safety.hasTakedown
       takedowns <- user.takedowns.toSeq
       takedownCountry <- takedowns.countryCodes
-      requestingCountry <- countryCodeOpt
-      if takedownCountry.toLowerCase == requestingCountry.toLowerCase
-    } yield Set(CountryTakedown(takedownCountry.toLowerCase))).flatten.toSet
+      request ngCountry <- countryCodeOpt
+       f takedownCountry.toLo rCase == request ngCountry.toLo rCase
+    } y eld Set(CountryTakedown(takedownCountry.toLo rCase))).flatten.toSet
   }
 
-  private[gizmoduck] def getBlinkReasons(user: User): Set[FilterReason] = {
+  pr vate[g zmoduck] def getBl nkReasons(user: User): Set[F lterReason] = {
     user.labels
       .map(_.labels.map(_.labelValue))
-      .getOrElse(Nil)
-      .exists(BlinkLabels.contains)
+      .getOrElse(N l)
+      .ex sts(Bl nkLabels.conta ns)
     for {
       labels <- user.labels.toSeq
       label <- labels.labels
-      if (BlinkLabels.contains(label.labelValue))
-    } yield Set(Blink)
+       f (Bl nkLabels.conta ns(label.labelValue))
+    } y eld Set(Bl nk)
   }.flatten.toSet
 }

@@ -1,30 +1,30 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.online_store_internal
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+na space java com.tw ter.s mclusters_v2.thr ftjava
+na space py gen.tw ter.s mclusters_v2.onl ne_store_ nternal
+#@na space scala com.tw ter.s mclusters_v2.thr ftscala
+#@na space strato com.tw ter.s mclusters_v2
 
-include "online_store.thrift"
+ nclude "onl ne_store.thr ft"
 
 /**
- * Contains a hash bucket of the clusterId along with the Model Version.
- * All fields are required as this is used as a memcache key.
+ * Conta ns a hash bucket of t  cluster d along w h t  Model Vers on.
+ * All f elds are requ red as t   s used as a  mcac  key.
  **/
-struct FullClusterIdBucket {
-  1: required online_store.ModelVersion modelVersion
-  // (hash(clusterId) mod NUM_BUCKETS_XXXXXX)
-  2: required i32 bucket
+struct FullCluster dBucket {
+  1: requ red onl ne_store.ModelVers on modelVers on
+  // (hash(cluster d) mod NUM_BUCKETS_XXXXXX)
+  2: requ red  32 bucket
 }(hasPersonalData = 'false')
 
 /**
- * Contains scores per clusters. The model is not stored here as it's encoded into the memcache key.
+ * Conta ns scores per clusters. T  model  s not stored  re as  's encoded  nto t   mcac  key.
  **/
-struct ClustersWithScores {
- 1: optional map<i32, online_store.Scores> clustersToScore(personalDataTypeKey = 'InferredInterests')
+struct ClustersW hScores {
+ 1: opt onal map< 32, onl ne_store.Scores> clustersToScore(personalDataTypeKey = ' nferred nterests')
 }(hasPersonalData = 'true')
 
 /**
- * Contains a map of model version to scores per clusters.
+ * Conta ns a map of model vers on to scores per clusters.
  **/
-struct MultiModelClustersWithScores {
- 1: optional map<online_store.ModelVersion,ClustersWithScores> multiModelClustersWithScores
+struct Mult ModelClustersW hScores {
+ 1: opt onal map<onl ne_store.ModelVers on,ClustersW hScores> mult ModelClustersW hScores
 }(hasPersonalData = 'true')

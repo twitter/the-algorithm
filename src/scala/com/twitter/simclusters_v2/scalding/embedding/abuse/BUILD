@@ -1,74 +1,74 @@
-scala_library(
-    sources = [
+scala_l brary(
+    s ces = [
         "*.scala",
     ],
-    compiler_option_sets = ["fatal_warnings"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/algebird:core",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/com/tw ter/algeb rd:core",
         "graphstore/common:flock_blocks-java",
-        "src/java/com/twitter/search/common/features",
-        "src/scala/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/scalding_internal/dalv2",
-        "src/scala/com/twitter/scalding_internal/dalv2/dataset",
-        "src/scala/com/twitter/scalding_internal/source/lzo_scrooge",
-        "src/scala/com/twitter/search/tweet_ranking/scalding/datasets:tweet_engagement_raw_training_data_daily-java",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:adhoc_abuse_simcluster_features-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:adhoc_cross_simcluster_block_interaction_features-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:adhoc_cross_simcluster_fav_interaction_features-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:search_abuse_simcluster_features_manhattan-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:user_user_fav_graph-scala",
-        "src/scala/com/twitter/simclusters_v2/scalding/common",
-        "src/scala/com/twitter/simclusters_v2/scalding/common/matrix",
-        "src/scala/com/twitter/simclusters_v2/scalding/embedding",
-        "src/scala/com/twitter/wtf/entity_real_graph/common",
-        "src/scala/com/twitter/wtf/entity_real_graph/scalding/common",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:cassowary_job",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:execution_app",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:sources",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:stats_util",
+        "src/java/com/tw ter/search/common/features",
+        "src/scala/com/tw ter/ml/ap :ap -base",
+        "src/scala/com/tw ter/scald ng_ nternal/dalv2",
+        "src/scala/com/tw ter/scald ng_ nternal/dalv2/dataset",
+        "src/scala/com/tw ter/scald ng_ nternal/s ce/lzo_scrooge",
+        "src/scala/com/tw ter/search/t et_rank ng/scald ng/datasets:t et_engage nt_raw_tra n ng_data_da ly-java",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces:adhoc_abuse_s mcluster_features-scala",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces:adhoc_cross_s mcluster_block_ nteract on_features-scala",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces:adhoc_cross_s mcluster_fav_ nteract on_features-scala",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces:search_abuse_s mcluster_features_manhattan-scala",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces:user_user_fav_graph-scala",
+        "src/scala/com/tw ter/s mclusters_v2/scald ng/common",
+        "src/scala/com/tw ter/s mclusters_v2/scald ng/common/matr x",
+        "src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng",
+        "src/scala/com/tw ter/wtf/ent y_real_graph/common",
+        "src/scala/com/tw ter/wtf/ent y_real_graph/scald ng/common",
+        "src/scala/com/tw ter/wtf/scald ng/jobs/common:cassowary_job",
+        "src/scala/com/tw ter/wtf/scald ng/jobs/common:execut on_app",
+        "src/scala/com/tw ter/wtf/scald ng/jobs/common:s ces",
+        "src/scala/com/tw ter/wtf/scald ng/jobs/common:stats_ut l",
     ],
 )
 
-hadoop_binary(
-    name = "abuse-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.embedding.abuse.AdhocAbuseScaldingJob",
+hadoop_b nary(
+    na  = "abuse-adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.embedd ng.abuse.AdhocAbuseScald ngJob",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [":abuse"],
+    dependenc es = [":abuse"],
 )
 
-hadoop_binary(
-    name = "abuse-prod",
-    main = "com.twitter.simclusters_v2.scalding.embedding.abuse.SearchAbuseSimclusterFeaturesScaldingJob",
+hadoop_b nary(
+    na  = "abuse-prod",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.embedd ng.abuse.SearchAbuseS mclusterFeaturesScald ngJob",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [":abuse"],
+    dependenc es = [":abuse"],
 )
 
-hadoop_binary(
-    name = "cross_simcluster-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.embedding.abuse.CrossSimClusterFeaturesScaldingJob",
+hadoop_b nary(
+    na  = "cross_s mcluster-adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.embedd ng.abuse.CrossS mClusterFeaturesScald ngJob",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
+    dependenc es = [
         ":abuse",
     ],
 )

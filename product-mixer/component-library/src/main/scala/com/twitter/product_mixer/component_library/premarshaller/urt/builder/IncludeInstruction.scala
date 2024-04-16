@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.p pel ne.HasP pel neCursor
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-trait IncludeInstruction[-Query <: PipelineQuery] { self =>
-  def apply(query: Query, entries: Seq[TimelineEntry]): Boolean
+tra   nclude nstruct on[-Query <: P pel neQuery] { self =>
+  def apply(query: Query, entr es: Seq[T  l neEntry]): Boolean
 
-  def inverse(): IncludeInstruction[Query] = new IncludeInstruction[Query] {
-    def apply(query: Query, entries: Seq[TimelineEntry]): Boolean = !self.apply(query, entries)
+  def  nverse():  nclude nstruct on[Query] = new  nclude nstruct on[Query] {
+    def apply(query: Query, entr es: Seq[T  l neEntry]): Boolean = !self.apply(query, entr es)
   }
 }
 
-object AlwaysInclude extends IncludeInstruction[PipelineQuery] {
-  override def apply(query: PipelineQuery, entries: Seq[TimelineEntry]): Boolean = true
+object Always nclude extends  nclude nstruct on[P pel neQuery] {
+  overr de def apply(query: P pel neQuery, entr es: Seq[T  l neEntry]): Boolean = true
 }
 
-object IncludeOnFirstPage extends IncludeInstruction[PipelineQuery with HasPipelineCursor[_]] {
-  override def apply(
-    query: PipelineQuery with HasPipelineCursor[_],
-    entries: Seq[TimelineEntry]
-  ): Boolean = query.isFirstPage
+object  ncludeOnF rstPage extends  nclude nstruct on[P pel neQuery w h HasP pel neCursor[_]] {
+  overr de def apply(
+    query: P pel neQuery w h HasP pel neCursor[_],
+    entr es: Seq[T  l neEntry]
+  ): Boolean = query. sF rstPage
 }
 
-object IncludeAfterFirstPage extends IncludeInstruction[PipelineQuery with HasPipelineCursor[_]] {
-  override def apply(
-    query: PipelineQuery with HasPipelineCursor[_],
-    entries: Seq[TimelineEntry]
-  ): Boolean = !query.isFirstPage
+object  ncludeAfterF rstPage extends  nclude nstruct on[P pel neQuery w h HasP pel neCursor[_]] {
+  overr de def apply(
+    query: P pel neQuery w h HasP pel neCursor[_],
+    entr es: Seq[T  l neEntry]
+  ): Boolean = !query. sF rstPage
 }

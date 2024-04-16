@@ -1,50 +1,50 @@
-package com.twitter.simclusters_v2.scalding.evaluation
+package com.tw ter.s mclusters_v2.scald ng.evaluat on
 
-import com.twitter.core_workflows.user_model.thriftscala.CondensedUserState
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.pluck.source.core_workflows.user_model.CondensedUserStateScalaDataset
-import com.twitter.scalding._
-import com.twitter.scalding.source.TypedText
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.simclusters_v2.thriftscala.CandidateTweets
-import com.twitter.simclusters_v2.thriftscala.ReferenceTweets
-import scala.util.Random
+ mport com.tw ter.core_workflows.user_model.thr ftscala.CondensedUserState
+ mport com.tw ter.core_workflows.user_model.thr ftscala.UserState
+ mport com.tw ter.pluck.s ce.core_workflows.user_model.CondensedUserStateScalaDataset
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng.s ce.TypedText
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.job.Tw terExecut onApp
+ mport com.tw ter.s mclusters_v2.thr ftscala.Cand dateT ets
+ mport com.tw ter.s mclusters_v2.thr ftscala.ReferenceT ets
+ mport scala.ut l.Random
 
 /**
- * Helper functions to provide user samples by sampling across user states.
+ *  lper funct ons to prov de user samples by sampl ng across user states.
  */
 object UserStateUserSampler {
   def getSampleUsersByUserState(
-    userStateSource: TypedPipe[CondensedUserState],
-    validStates: Seq[UserState],
+    userStateS ce: TypedP pe[CondensedUserState],
+    val dStates: Seq[UserState],
     samplePercentage: Double
-  ): TypedPipe[(UserState, Long)] = {
+  ): TypedP pe[(UserState, Long)] = {
     assert(samplePercentage >= 0 && samplePercentage <= 1)
-    val validStateSet = validStates.toSet
+    val val dStateSet = val dStates.toSet
 
-    userStateSource
+    userStateS ce
       .collect {
-        case data if data.userState.isDefined && validStateSet.contains(data.userState.get) =>
-          (data.userState.get, data.uid)
+        case data  f data.userState. sDef ned && val dStateSet.conta ns(data.userState.get) =>
+          (data.userState.get, data.u d)
       }
-      .filter(_ => Random.nextDouble() <= samplePercentage)
-      .forceToDisk
+      .f lter(_ => Random.nextDouble() <= samplePercentage)
+      .forceToD sk
   }
 
   /**
-   * Given a list of string corresponding to user states, convert them to the UserState type.
-   * If the input is empty, default to return all available user states
+   * G ven a l st of str ng correspond ng to user states, convert t m to t  UserState type.
+   *  f t   nput  s empty, default to return all ava lable user states
    */
-  def parseUserStates(strStates: Seq[String]): Seq[UserState] = {
-    if (strStates.isEmpty) {
-      UserState.list
+  def parseUserStates(strStates: Seq[Str ng]): Seq[UserState] = {
+     f (strStates. sEmpty) {
+      UserState.l st
     } else {
       strStates.map { str =>
         UserState
           .valueOf(str).getOrElse(
-            throw new IllegalArgumentException(
-              s"Input user_states $str is invalid. Valid states are: " + UserState.list
+            throw new  llegalArgu ntExcept on(
+              s" nput user_states $str  s  nval d. Val d states are: " + UserState.l st
             )
           )
       }
@@ -53,111 +53,111 @@ object UserStateUserSampler {
 }
 
 /**
- * A variation of the evaluation base where target users are sampled by user states.
- * For each user state of interest (e.x. HEAVY_TWEETER), we run a separate evaluation call, and
- * output the evaluation results per user state. This is helpful when we want to horizontally
- * compare how users in different user states respond to the candidate tweets.
+ * A var at on of t  evaluat on base w re target users are sampled by user states.
+ * For each user state of  nterest (e.x. HEAVY_TWEETER),   run a separate evaluat on call, and
+ * output t  evaluat on results per user state. T   s  lpful w n   want to hor zontally
+ * compare how users  n d fferent user states respond to t  cand date t ets.
  */
-trait UserStateBasedEvaluationExecutionBase
-    extends CandidateEvaluationBase
-    with TwitterExecutionApp {
+tra  UserStateBasedEvaluat onExecut onBase
+    extends Cand dateEvaluat onBase
+    w h Tw terExecut onApp {
 
-  def referenceTweets: TypedPipe[ReferenceTweets]
-  def candidateTweets: TypedPipe[CandidateTweets]
+  def referenceT ets: TypedP pe[ReferenceT ets]
+  def cand dateT ets: TypedP pe[Cand dateT ets]
 
-  override def job: Execution[Unit] = {
-    Execution.withId { implicit uniqueId =>
-      Execution.withArgs { args =>
-        implicit val dateRange: DateRange =
-          DateRange.parse(args.list("date"))(DateOps.UTC, DateParser.default)
+  overr de def job: Execut on[Un ] = {
+    Execut on.w h d {  mpl c  un que d =>
+      Execut on.w hArgs { args =>
+         mpl c  val dateRange: DateRange =
+          DateRange.parse(args.l st("date"))(DateOps.UTC, DateParser.default)
 
-        val outputRootDir = args("outputDir")
+        val outputRootD r = args("outputD r")
         val userStates: Seq[UserState] =
-          UserStateUserSampler.parseUserStates(args.list("user_states"))
+          UserStateUserSampler.parseUserStates(args.l st("user_states"))
         val sampleRate = args.double("sample_rate")
 
-        // For each user state we are interested in, run separate executions and write
-        // the output into individual sub directories
-        val userStateSource = DAL.read(CondensedUserStateScalaDataset).toTypedPipe
-        val userIdsByState =
-          UserStateUserSampler.getSampleUsersByUserState(userStateSource, userStates, sampleRate)
-        val executionsPerUserState = userStates.map { userState =>
-          val sampleUsers = userIdsByState.collect { case data if data._1 == userState => data._2 }
-          val outputPath = outputRootDir + "/" + userState + "/"
+        // For each user state   are  nterested  n, run separate execut ons and wr e
+        // t  output  nto  nd v dual sub d rector es
+        val userStateS ce = DAL.read(CondensedUserStateScalaDataset).toTypedP pe
+        val user dsByState =
+          UserStateUserSampler.getSampleUsersByUserState(userStateS ce, userStates, sampleRate)
+        val execut onsPerUserState = userStates.map { userState =>
+          val sampleUsers = user dsByState.collect { case data  f data._1 == userState => data._2 }
+          val outputPath = outputRootD r + "/" + userState + "/"
 
           super
-            .runSampledEvaluation(sampleUsers, referenceTweets, candidateTweets)
-            .writeExecution(TypedText.csv(outputPath))
+            .runSampledEvaluat on(sampleUsers, referenceT ets, cand dateT ets)
+            .wr eExecut on(TypedText.csv(outputPath))
         }
-        // Run evaluation for each user state in parallel
-        Execution.sequence(executionsPerUserState).unit
+        // Run evaluat on for each user state  n parallel
+        Execut on.sequence(execut onsPerUserState).un 
       }
     }
   }
 }
 
 /**
- * A basic flow for evaluating the quality of a set of candidate tweets, typically generated by an
- * algorithm (ex. SimClusters), by comparing its engagement rates against a set of reference tweets
- * The job goes through the following steps:
- * 1. Generate a group of target users on which we measure tweet engagements
- * 2. Collect tweets impressed by these users and their engagements on tweets from a labeled
- * tweet source (ex. Home Timeline engagement data), and form a reference set
- * 3. For each candidate tweet, collect the engagement rates from the reference set
- * 4. Run evaluation calculations (ex. percentage of intersection, engagement rate, etc)
+ * A bas c flow for evaluat ng t  qual y of a set of cand date t ets, typ cally generated by an
+ * algor hm (ex. S mClusters), by compar ng  s engage nt rates aga nst a set of reference t ets
+ * T  job goes through t  follow ng steps:
+ * 1. Generate a group of target users on wh ch    asure t et engage nts
+ * 2. Collect t ets  mpressed by t se users and t  r engage nts on t ets from a labeled
+ * t et s ce (ex. Ho  T  l ne engage nt data), and form a reference set
+ * 3. For each cand date t et, collect t  engage nt rates from t  reference set
+ * 4. Run evaluat on calculat ons (ex. percentage of  ntersect on, engage nt rate, etc)
  *
- * Each sub class is expected to provide 3 sets of data sources, which are the sample users,
- * candidate tweet sources, and reference tweet sources.
+ * Each sub class  s expected to prov de 3 sets of data s ces, wh ch are t  sample users,
+ * cand date t et s ces, and reference t et s ces.
  */
-trait CandidateEvaluationBase {
-  private def getSampledReferenceTweets(
-    referenceTweetEngagements: TypedPipe[ReferenceTweets],
-    sampleUsers: TypedPipe[Long]
-  ): TypedPipe[ReferenceTweets] = {
-    referenceTweetEngagements
-      .groupBy(_.targetUserId)
-      .join(sampleUsers.asKeys)
-      .map { case (targetUserId, (referenceEngagements, _)) => referenceEngagements }
+tra  Cand dateEvaluat onBase {
+  pr vate def getSampledReferenceT ets(
+    referenceT etEngage nts: TypedP pe[ReferenceT ets],
+    sampleUsers: TypedP pe[Long]
+  ): TypedP pe[ReferenceT ets] = {
+    referenceT etEngage nts
+      .groupBy(_.targetUser d)
+      .jo n(sampleUsers.asKeys)
+      .map { case (targetUser d, (referenceEngage nts, _)) => referenceEngage nts }
   }
 
-  private def getSampledCandidateTweets(
-    candidateTweets: TypedPipe[CandidateTweets],
-    sampleUsers: TypedPipe[Long]
-  ): TypedPipe[CandidateTweets] = {
-    candidateTweets
-      .groupBy(_.targetUserId)
-      .join(sampleUsers.asKeys)
-      .map { case (_, (tweets, _)) => tweets }
+  pr vate def getSampledCand dateT ets(
+    cand dateT ets: TypedP pe[Cand dateT ets],
+    sampleUsers: TypedP pe[Long]
+  ): TypedP pe[Cand dateT ets] = {
+    cand dateT ets
+      .groupBy(_.targetUser d)
+      .jo n(sampleUsers.asKeys)
+      .map { case (_, (t ets, _)) => t ets }
   }
 
   /**
-   * Evaluation function, should be overridden by implementing sub classes to suit individual
-   * objectives, such as like engagement rates, CRT, etc.
+   * Evaluat on funct on, should be overr dden by  mple nt ng sub classes to su   nd v dual
+   * object ves, such as l ke engage nt rates, CRT, etc.
    * @param sampledReference
-   * @param sampledCandidate
+   * @param sampledCand date
    */
   def evaluateResults(
-    sampledReference: TypedPipe[ReferenceTweets],
-    sampledCandidate: TypedPipe[CandidateTweets]
-  ): TypedPipe[String]
+    sampledReference: TypedP pe[ReferenceT ets],
+    sampledCand date: TypedP pe[Cand dateT ets]
+  ): TypedP pe[Str ng]
 
   /**
-   * Given a list of target users, the reference tweet set, and the candidate tweet set,
-   * calculate the engagement rates on the reference set and the candidate set by these users.
-   * The evaluation result should be converted into an itemized format
-   * these users.
-   * @param referenceTweets
-   * @param candidateTweets
+   * G ven a l st of target users, t  reference t et set, and t  cand date t et set,
+   * calculate t  engage nt rates on t  reference set and t  cand date set by t se users.
+   * T  evaluat on result should be converted  nto an  em zed format
+   * t se users.
+   * @param referenceT ets
+   * @param cand dateT ets
    * @return
    */
-  def runSampledEvaluation(
-    targetUserSamples: TypedPipe[Long],
-    referenceTweets: TypedPipe[ReferenceTweets],
-    candidateTweets: TypedPipe[CandidateTweets]
-  ): TypedPipe[String] = {
-    val sampledCandidate = getSampledCandidateTweets(candidateTweets, targetUserSamples)
-    val referencePerUser = getSampledReferenceTweets(referenceTweets, targetUserSamples)
+  def runSampledEvaluat on(
+    targetUserSamples: TypedP pe[Long],
+    referenceT ets: TypedP pe[ReferenceT ets],
+    cand dateT ets: TypedP pe[Cand dateT ets]
+  ): TypedP pe[Str ng] = {
+    val sampledCand date = getSampledCand dateT ets(cand dateT ets, targetUserSamples)
+    val referencePerUser = getSampledReferenceT ets(referenceT ets, targetUserSamples)
 
-    evaluateResults(referencePerUser, sampledCandidate)
+    evaluateResults(referencePerUser, sampledCand date)
   }
 }

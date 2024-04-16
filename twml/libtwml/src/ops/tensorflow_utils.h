@@ -1,13 +1,13 @@
 #pragma once
 
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/op_kernel.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include <twml.h>
+# nclude "tensorflow/core/fra work/op.h"
+# nclude "tensorflow/core/fra work/op_kernel.h"
+# nclude "tensorflow/core/fra work/shape_ nference.h"
+# nclude <twml.h>
 
-using namespace tensorflow;
-twml::Tensor TFTensor_to_twml_tensor(Tensor &input);
-twml::RawTensor TFTensor_to_twml_raw_tensor(Tensor &input);
-const twml::Tensor TFTensor_to_twml_tensor(const Tensor &input);
-const twml::RawTensor TFTensor_to_twml_raw_tensor(const Tensor &input);
+us ng na space tensorflow;
+twml::Tensor TFTensor_to_twml_tensor(Tensor & nput);
+twml::RawTensor TFTensor_to_twml_raw_tensor(Tensor & nput);
+const twml::Tensor TFTensor_to_twml_tensor(const Tensor & nput);
+const twml::RawTensor TFTensor_to_twml_raw_tensor(const Tensor & nput);
 

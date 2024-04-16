@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. d a
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.media.MediaKey
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. d a. d aKey
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class MediaKeyMarshaller @Inject() () {
+@S ngleton
+class  d aKeyMarshaller @ nject() () {
 
-  def apply(mediaKey: MediaKey): urt.MediaKey = urt.MediaKey(
-    id = mediaKey.id,
-    category = mediaKey.category
+  def apply( d aKey:  d aKey): urt. d aKey = urt. d aKey(
+     d =  d aKey. d,
+    category =  d aKey.category
   )
 }

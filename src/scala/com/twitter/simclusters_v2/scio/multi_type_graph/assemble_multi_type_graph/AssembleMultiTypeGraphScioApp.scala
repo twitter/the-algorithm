@@ -1,39 +1,39 @@
-package com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph
+package com.tw ter.s mclusters_v2.sc o.mult _type_graph.assemble_mult _type_graph
 
 /**
-Build:
-./bazel bundle src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/assemble_multi_type_graph:assemble-multi-type-graph-scio-adhoc-app
+Bu ld:
+./bazel bundle src/scala/com/tw ter/s mclusters_v2/sc o/mult _type_graph/assemble_mult _type_graph:assemble-mult -type-graph-sc o-adhoc-app
 
-To kick off an adhoc run:
-bin/d6w create \
-  ${GCP_PROJECT_NAME}/us-central1/assemble-multi-type-graph-scio-adhoc-app \
-  src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/assemble_multi_type_graph/assemble-multi-type-graph-scio-adhoc.d6w \
-  --jar dist/assemble-multi-type-graph-scio-adhoc-app.jar \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=${USER} \
-  --bind=profile.date="2021-11-04" \
-  --bind=profile.machine="n2-highmem-16"
+To k ck off an adhoc run:
+b n/d6w create \
+  ${GCP_PROJECT_NAME}/us-central1/assemble-mult -type-graph-sc o-adhoc-app \
+  src/scala/com/tw ter/s mclusters_v2/sc o/mult _type_graph/assemble_mult _type_graph/assemble-mult -type-graph-sc o-adhoc.d6w \
+  --jar d st/assemble-mult -type-graph-sc o-adhoc-app.jar \
+  --b nd=prof le.project=${GCP_PROJECT_NAME} \
+  --b nd=prof le.user_na =${USER} \
+  --b nd=prof le.date="2021-11-04" \
+  --b nd=prof le.mach ne="n2-h gh m-16"
  */
 
-object AssembleMultiTypeGraphScioAdhocApp extends AssembleMultiTypeGraphScioBaseApp {
-  override val isAdhoc: Boolean = true
-  override val rootMHPath: String = Config.AdhocRootPath
-  override val rootThriftPath: String = Config.AdhocRootPath
+object AssembleMult TypeGraphSc oAdhocApp extends AssembleMult TypeGraphSc oBaseApp {
+  overr de val  sAdhoc: Boolean = true
+  overr de val rootMHPath: Str ng = Conf g.AdhocRootPath
+  overr de val rootThr ftPath: Str ng = Conf g.AdhocRootPath
 }
 
 /**
-To deploy the job:
+To deploy t  job:
 
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/assemble-multi-type-graph-scio-batch-app \
-  src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/assemble_multi_type_graph/assemble-multi-type-graph-scio-batch.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=recos-platform \
-  --bind=profile.date="2021-11-04" \
-  --bind=profile.machine="n2-highmem-16"
+b n/d6w sc dule \
+  ${GCP_PROJECT_NAME}/us-central1/assemble-mult -type-graph-sc o-batch-app \
+  src/scala/com/tw ter/s mclusters_v2/sc o/mult _type_graph/assemble_mult _type_graph/assemble-mult -type-graph-sc o-batch.d6w \
+  --b nd=prof le.project=${GCP_PROJECT_NAME} \
+  --b nd=prof le.user_na =recos-platform \
+  --b nd=prof le.date="2021-11-04" \
+  --b nd=prof le.mach ne="n2-h gh m-16"
  */
-object AssembleMultiTypeGraphScioBatchApp extends AssembleMultiTypeGraphScioBaseApp {
-  override val isAdhoc: Boolean = false
-  override val rootMHPath: String = Config.RootMHPath
-  override val rootThriftPath: String = Config.RootThriftPath
+object AssembleMult TypeGraphSc oBatchApp extends AssembleMult TypeGraphSc oBaseApp {
+  overr de val  sAdhoc: Boolean = false
+  overr de val rootMHPath: Str ng = Conf g.RootMHPath
+  overr de val rootThr ftPath: Str ng = Conf g.RootThr ftPath
 }

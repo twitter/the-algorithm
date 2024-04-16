@@ -1,50 +1,50 @@
-# pylint: disable=no-member
+# pyl nt: d sable=no- mber
 """
-Implementing a base layer for twml
+ mple nt ng a base layer for twml
 """
-import tensorflow.compat.v1 as tf
-from tensorflow.python.layers import base
+ mport tensorflow.compat.v1 as tf
+from tensorflow.python.layers  mport base
 
 
 class Layer(base.Layer):
   """
-  Base Layer implementation for twml.
+  Base Layer  mple ntat on for twml.
   Overloads `twml.layers.Layer
-  <https://www.tensorflow.org/versions/master/api_docs/python/tf/layers/Layer>`_
-  from tensorflow and adds a couple of custom methods.
+  <https://www.tensorflow.org/vers ons/master/ap _docs/python/tf/layers/Layer>`_
+  from tensorflow and adds a couple of custom  thods.
   """
 
   @property
-  def init(self):
+  def  n (self):
     """
-    Return initializer ops. By default returns tf.no_op().
-    This method is overwritten by classes like twml.layers.MDL, which
-    uses a HashTable internally, that must be initialized with its own op.
+    Return  n  al zer ops. By default returns tf.no_op().
+    T   thod  s overwr ten by classes l ke twml.layers.MDL, wh ch
+    uses a HashTable  nternally, that must be  n  al zed w h  s own op.
     """
     return tf.no_op()
 
-  def call(self, inputs, **kwargs):
-    """The logic of the layer lives here.
+  def call(self,  nputs, **kwargs):
+    """T  log c of t  layer l ves  re.
 
-    Arguments:
-      inputs:
-        input tensor(s).
+    Argu nts:
+       nputs:
+         nput tensor(s).
       **kwargs:
-        additional keyword arguments.
+        add  onal keyword argu nts.
 
     Returns:
       Output tensor(s).
     """
-    raise NotImplementedError
+    ra se Not mple ntedError
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  def compute_output_shape(self,  nput_shape):
+    """Computes t  output shape of t  layer g ven t   nput shape.
 
     Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+       nput_shape: A (poss bly nested tuple of) `TensorShape`.    need not
+        be fully def ned (e.g. t  batch s ze may be unknown).
 
-    Raise NotImplementedError.
+    Ra se Not mple ntedError.
 
     """
-    raise NotImplementedError
+    ra se Not mple ntedError

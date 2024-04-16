@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.message
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage
 
-sealed trait UserFacepileDisplayType
+sealed tra  UserFacep leD splayType
 
-case object LargeUserFacepileDisplayType extends UserFacepileDisplayType
-case object CompactUserFacepileDisplayType extends UserFacepileDisplayType
+case object LargeUserFacep leD splayType extends UserFacep leD splayType
+case object CompactUserFacep leD splayType extends UserFacep leD splayType

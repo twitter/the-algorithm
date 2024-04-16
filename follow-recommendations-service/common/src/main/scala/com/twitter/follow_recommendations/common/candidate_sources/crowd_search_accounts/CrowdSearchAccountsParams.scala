@@ -1,32 +1,32 @@
-package com.twitter.follow_recommendations.common.candidate_sources.crowd_search_accounts
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.crowd_search_accounts
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSEnumSeqParam
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSEnumSeqParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
 object CrowdSearchAccountsParams {
-  // whether or not to fetch CrowdSearchAccounts candidate sources
-  case object CandidateSourceEnabled
-      extends FSParam[Boolean]("crowd_search_accounts_candidate_source_enabled", false)
+  // w t r or not to fetch CrowdSearchAccounts cand date s ces
+  case object Cand dateS ceEnabled
+      extends FSParam[Boolean]("crowd_search_accounts_cand date_s ce_enabled", false)
 
   /**
-   *   Contains the logic key for account filtering and ranking. Currently we have 3 main logic keys
-   *    - new_daily: filtering top searched accounts with max daily searches based on new users
-   *    - new_weekly: filtering top searched accounts with max weekly searches based on new users
-   *    - daily: filtering top searched accounts with max daily searches
-   *    - weekly: filtering top searched accounts with max weekly searches
-   *    Mapping of the Logic Id to Logic key is done via @enum AccountsFilteringAndRankingLogic
+   *   Conta ns t  log c key for account f lter ng and rank ng. Currently   have 3 ma n log c keys
+   *    - new_da ly: f lter ng top searc d accounts w h max da ly searc s based on new users
+   *    - new_ ekly: f lter ng top searc d accounts w h max  ekly searc s based on new users
+   *    - da ly: f lter ng top searc d accounts w h max da ly searc s
+   *    -  ekly: f lter ng top searc d accounts w h max  ekly searc s
+   *    Mapp ng of t  Log c  d to Log c key  s done v a @enum AccountsF lter ngAndRank ngLog c
    */
-  case object AccountsFilteringAndRankingLogics
-      extends FSEnumSeqParam[AccountsFilteringAndRankingLogicId.type](
-        name = "crowd_search_accounts_filtering_and_ranking_logic_ids",
-        default = Seq(AccountsFilteringAndRankingLogicId.SearchesWeekly),
-        enum = AccountsFilteringAndRankingLogicId)
+  case object AccountsF lter ngAndRank ngLog cs
+      extends FSEnumSeqParam[AccountsF lter ngAndRank ngLog c d.type](
+        na  = "crowd_search_accounts_f lter ng_and_rank ng_log c_ ds",
+        default = Seq(AccountsF lter ngAndRank ngLog c d.Searc s ekly),
+        enum = AccountsF lter ngAndRank ngLog c d)
 
-  case object CandidateSourceWeight
+  case object Cand dateS ce  ght
       extends FSBoundedParam[Double](
-        "crowd_search_accounts_candidate_source_weight",
+        "crowd_search_accounts_cand date_s ce_  ght",
         default = 1200,
-        min = 0.001,
+        m n = 0.001,
         max = 2000)
 }

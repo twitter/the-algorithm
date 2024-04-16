@@ -1,31 +1,31 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-    <!-- See: https://logback.qos.ch/manual/configuration.html#LevelChangePropagator -->
-    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+<?xml vers on="1.0" encod ng="UTF-8"?>
+<conf gurat on>
+    <!-- See: https://logback.qos.ch/manual/conf gurat on.html#LevelChangePropagator -->
+    <contextL stener class="ch.qos.logback.class c.jul.LevelChangePropagator">
       <resetJUL>true</resetJUL>
-    </contextListener>
+    </contextL stener>
 
-    <include resource="logging/logback-all-include.xml" />
-    <property name="ALERTABLE_MESSAGE_FORMAT" value="ALERTABLE: %msg"/>
+    < nclude res ce="logg ng/logback-all- nclude.xml" />
+    <property na ="ALERTABLE_MESSAGE_FORMAT" value="ALERTABLE: %msg"/>
 
-    <!-- The following appender is used to log all important logs to a single file called
-     "tweetypie-important.log". The filter "OnlyImportantLogsLoggingFilter" is used by this
-     appender to categorize logs into important or not. Anything from warnings, errors and
-     criticals are logged here. Logs that are tweet creation, deletions, undeletions or
-     updates are not logged to reduce noise from the logger.
-     NOTE: This appender (and all file based loggers) is not persistent through host restarts.
-     All logs are lost on machine restarts. -->
-    <appender name="IMPORTANT-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>tweetypie-important.log</file>
+    <!-- T  follow ng appender  s used to log all  mportant logs to a s ngle f le called
+     "t etyp e- mportant.log". T  f lter "Only mportantLogsLogg ngF lter"  s used by t 
+     appender to categor ze logs  nto  mportant or not. Anyth ng from warn ngs, errors and
+     cr  cals are logged  re. Logs that are t et creat on, delet ons, undelet ons or
+     updates are not logged to reduce no se from t  logger.
+     NOTE: T  appender (and all f le based loggers)  s not pers stent through host restarts.
+     All logs are lost on mach ne restarts. -->
+    <appender na =" MPORTANT-F LE" class="ch.qos.logback.core.roll ng.Roll ngF leAppender">
+        <f le>t etyp e- mportant.log</f le>
         <append>true</append>
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>tweetypie-important-%i.log</fileNamePattern>
-            <minIndex>1</minIndex>
-            <maxIndex>20</maxIndex>
-        </rollingPolicy>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <maxFileSize>800MB</maxFileSize>
-        </triggeringPolicy>
+        <roll ngPol cy class="ch.qos.logback.core.roll ng.F xedW ndowRoll ngPol cy">
+            <f leNa Pattern>t etyp e- mportant-% .log</f leNa Pattern>
+            <m n ndex>1</m n ndex>
+            <max ndex>20</max ndex>
+        </roll ngPol cy>
+        <tr gger ngPol cy class="ch.qos.logback.core.roll ng.S zeBasedTr gger ngPol cy">
+            <maxF leS ze>800MB</maxF leS ze>
+        </tr gger ngPol cy>
 
         <encoder>
             <pattern>
@@ -33,48 +33,48 @@
             </pattern>
         </encoder>
 
-        <!-- Allow all INFO+ messages from tweetypie logs, ERROR+ messages from all others.
-             These filters do not change the log levels for the loggers, they only filter what is
-             allowed to be logged to the important file. -->
-        <filter class="com.twitter.tweetypie.util.logging.OnlyImportantLogsLoggingFilter" />
+        <!-- Allow all  NFO+  ssages from t etyp e logs, ERROR+  ssages from all ot rs.
+             T se f lters do not change t  log levels for t  loggers, t y only f lter what  s
+             allo d to be logged to t   mportant f le. -->
+        <f lter class="com.tw ter.t etyp e.ut l.logg ng.Only mportantLogsLogg ngF lter" />
     </appender>
 
-    <!-- The following appender is effectively a copy of the appender above in order to
-    persist logs through restarts, instead of writing the content to a file, this appender writes
-    it to our persistent storage "splunk". LOGLENS was the name of old library to write these logs
-    into a persistent storage and was later replaced by "splunk". So, any appender that mentions
-    loglens now is actually sending data to splunk. Due to limitations of logback, we cannot use
-    the same appender to write data at multiple places (file and splunk). So, we have 2 similar
-    appenders that write to 2 separate places. -->
-    <appender name="LOGLENS-BASE" class="com.twitter.loglens.logback.LoglensAppender">
-        <mdcAdditionalContext>true</mdcAdditionalContext>
+    <!-- T  follow ng appender  s effect vely a copy of t  appender above  n order to
+    pers st logs through restarts,  nstead of wr  ng t  content to a f le, t  appender wr es
+      to   pers stent storage "splunk". LOGLENS was t  na  of old l brary to wr e t se logs
+     nto a pers stent storage and was later replaced by "splunk". So, any appender that  nt ons
+    loglens now  s actually send ng data to splunk. Due to l m at ons of logback,   cannot use
+    t  sa  appender to wr e data at mult ple places (f le and splunk). So,   have 2 s m lar
+    appenders that wr e to 2 separate places. -->
+    <appender na ="LOGLENS-BASE" class="com.tw ter.loglens.logback.LoglensAppender">
+        <mdcAdd  onalContext>true</mdcAdd  onalContext>
         <tag>${log.lens.tag}</tag>
-        <index>${log.lens.index}</index>
+        < ndex>${log.lens. ndex}</ ndex>
         <category>loglens</category>
         <encoder>
           <pattern>%msg</pattern>
         </encoder>
 
-        <!-- Allow all INFO+ messages from tweetypie logs, ERROR+ messages from all others.
-             These filters do not change the log levels for the loggers, they only filter what is
-             allowed to be logged to loglens. -->
-        <filter class="com.twitter.tweetypie.util.logging.OnlyImportantLogsLoggingFilter" />
+        <!-- Allow all  NFO+  ssages from t etyp e logs, ERROR+  ssages from all ot rs.
+             T se f lters do not change t  log levels for t  loggers, t y only f lter what  s
+             allo d to be logged to loglens. -->
+        <f lter class="com.tw ter.t etyp e.ut l.logg ng.Only mportantLogsLogg ngF lter" />
     </appender>
 
-    <!-- The important logs may sometimes get too noisy to find relevant exceptions and errors
-     occurring in tweetypie. So, this appender is used to only writes Errors and RuntimeExceptions
-     to a file called "alertable-exception.log". -->
-    <appender name="ALERTABLE-EXCEPTION-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>alertable-exception.log</file>
+    <!-- T   mportant logs may so t  s get too no sy to f nd relevant except ons and errors
+     occurr ng  n t etyp e. So, t  appender  s used to only wr es Errors and Runt  Except ons
+     to a f le called "alertable-except on.log". -->
+    <appender na ="ALERTABLE-EXCEPT ON-F LE" class="ch.qos.logback.core.roll ng.Roll ngF leAppender">
+        <f le>alertable-except on.log</f le>
         <append>true</append>
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>alertable-exception-%i.log</fileNamePattern>
-            <minIndex>1</minIndex>
-            <maxIndex>17</maxIndex>
-        </rollingPolicy>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <maxFileSize>100MB</maxFileSize>
-        </triggeringPolicy>
+        <roll ngPol cy class="ch.qos.logback.core.roll ng.F xedW ndowRoll ngPol cy">
+            <f leNa Pattern>alertable-except on-% .log</f leNa Pattern>
+            <m n ndex>1</m n ndex>
+            <max ndex>17</max ndex>
+        </roll ngPol cy>
+        <tr gger ngPol cy class="ch.qos.logback.core.roll ng.S zeBasedTr gger ngPol cy">
+            <maxF leS ze>100MB</maxF leS ze>
+        </tr gger ngPol cy>
 
         <encoder>
             <pattern>
@@ -82,65 +82,65 @@
             </pattern>
         </encoder>
 
-        <!-- Only log alertable exceptions to this file -->
-        <filter class="com.twitter.tweetypie.util.logging.AlertableExceptionLoggingFilter" />
+        <!-- Only log alertable except ons to t  f le -->
+        <f lter class="com.tw ter.t etyp e.ut l.logg ng.AlertableExcept onLogg ngF lter" />
     </appender>
 
-    <!-- This is the persistent version of the appender above for logging Errors and RuntimeExceptions
-     to splunk. To make it easier to search for these exceptions/errors in splunk we prefix the
-     exceptions with "ALERTABLE:" string. -->
-    <appender name="LOGLENS-ALERTABLE-BASE" class="com.twitter.loglens.logback.LoglensAppender">
-        <mdcAdditionalContext>true</mdcAdditionalContext>
+    <!-- T   s t  pers stent vers on of t  appender above for logg ng Errors and Runt  Except ons
+     to splunk. To make   eas er to search for t se except ons/errors  n splunk   pref x t 
+     except ons w h "ALERTABLE:" str ng. -->
+    <appender na ="LOGLENS-ALERTABLE-BASE" class="com.tw ter.loglens.logback.LoglensAppender">
+        <mdcAdd  onalContext>true</mdcAdd  onalContext>
         <tag>${log.lens.tag}</tag>
-        <index>${log.lens.index}</index>
+        < ndex>${log.lens. ndex}</ ndex>
         <category>loglens</category>
         <encoder>
             <pattern>${ALERTABLE_MESSAGE_FORMAT}</pattern>
         </encoder>
 
-        <!-- Allow all Runtime Exceptions and Error messages from tweetypie logs.
-             These filters do not change the log levels for the loggers, they only filter what is
-             allowed to be logged to loglens. -->
-        <filter class="com.twitter.tweetypie.util.logging.AlertableExceptionLoggingFilter" />
+        <!-- Allow all Runt   Except ons and Error  ssages from t etyp e logs.
+             T se f lters do not change t  log levels for t  loggers, t y only f lter what  s
+             allo d to be logged to loglens. -->
+        <f lter class="com.tw ter.t etyp e.ut l.logg ng.AlertableExcept onLogg ngF lter" />
     </appender>
 
-    <!-- Each of the appenders above are called Asynchronously to make sure logging operations
-     are non-blocking. Also, one AsyncAppender should only wrap one appender, appending multiple
+    <!-- Each of t  appenders above are called Asynchronously to make sure logg ng operat ons
+     are non-block ng. Also, one AsyncAppender should only wrap one appender, append ng mult ple
      appenders under one AsyncAppender does not work. -->
-    <appender name="LOGLENS"  class="ch.qos.logback.classic.AsyncAppender">
+    <appender na ="LOGLENS"  class="ch.qos.logback.class c.AsyncAppender">
         <appender-ref ref="LOGLENS-BASE" />
     </appender>
 
-    <appender name="LOGLENS-ALERTABLE"  class="ch.qos.logback.classic.AsyncAppender">
+    <appender na ="LOGLENS-ALERTABLE"  class="ch.qos.logback.class c.AsyncAppender">
         <appender-ref ref="LOGLENS-ALERTABLE-BASE" />
     </appender>
 
-    <appender name="IMPORTANT"  class="ch.qos.logback.classic.AsyncAppender">
-        <appender-ref ref="IMPORTANT-FILE" />
+    <appender na =" MPORTANT"  class="ch.qos.logback.class c.AsyncAppender">
+        <appender-ref ref=" MPORTANT-F LE" />
     </appender>
 
-    <appender name="ALERTABLE-EXCEPTION"  class="ch.qos.logback.classic.AsyncAppender">
-        <appender-ref ref="ALERTABLE-EXCEPTION-FILE" />
+    <appender na ="ALERTABLE-EXCEPT ON"  class="ch.qos.logback.class c.AsyncAppender">
+        <appender-ref ref="ALERTABLE-EXCEPT ON-F LE" />
     </appender>
 
-    <!-- Memcached and ObservableCache log a lot of messages at the WARN level. These messages
-         are mostly not useful, so lets filter them out. If you would like to see them,
-         you can change the log level on the admin page. -->
-    <logger name="com.twitter.tweetypie.cache" level="error"/>
-    <logger name="memcache" level="error"/>
+    <!--  mcac d and ObservableCac  log a lot of  ssages at t  WARN level. T se  ssages
+         are mostly not useful, so lets f lter t m out.  f   would l ke to see t m,
+           can change t  log level on t  adm n page. -->
+    <logger na ="com.tw ter.t etyp e.cac " level="error"/>
+    <logger na =" mcac " level="error"/>
 
-    <logger name="com.twitter.tweetypie.config.MemcacheExceptionLoggingFilter" level="debug" />
-    <!-- Prune the log of noisy DarkTrafficFilter exceptions. If you would like to see them,
-         you can change the log level on the admin page. -->
-    <logger name="DarkTrafficFilter" level="off"/>
+    <logger na ="com.tw ter.t etyp e.conf g. mcac Except onLogg ngF lter" level="debug" />
+    <!-- Prune t  log of no sy DarkTraff cF lter except ons.  f   would l ke to see t m,
+           can change t  log level on t  adm n page. -->
+    <logger na ="DarkTraff cF lter" level="off"/>
 
-    <!-- At last, we combine all the active AsyncAppenders under a single Root node. Any appender
-    that is missing from the node below will  not be called for logging. -->
-    <root level="INFO">
+    <!-- At last,   comb ne all t  act ve AsyncAppenders under a s ngle Root node. Any appender
+    that  s m ss ng from t  node below w ll  not be called for logg ng. -->
+    <root level=" NFO">
         <appender-ref ref="ALL" />
-        <appender-ref ref="IMPORTANT" />
+        <appender-ref ref=" MPORTANT" />
         <appender-ref ref="LOGLENS" />
         <appender-ref ref="LOGLENS-ALERTABLE" />
-        <appender-ref ref="ALERTABLE-EXCEPTION" />
+        <appender-ref ref="ALERTABLE-EXCEPT ON" />
     </root>
-</configuration>
+</conf gurat on>

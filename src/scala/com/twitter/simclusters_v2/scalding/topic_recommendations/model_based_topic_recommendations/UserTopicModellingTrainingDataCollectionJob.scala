@@ -1,399 +1,399 @@
-package com.twitter.simclusters_v2.scalding.topic_recommendations.model_based_topic_recommendations
+package com.tw ter.s mclusters_v2.scald ng.top c_recom ndat ons.model_based_top c_recom ndat ons
 
-import com.twitter.algebird.Monoid
-import com.twitter.bijection.Injection
-import com.twitter.dal.client.dataset.SnapshotDALDatasetBase
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api._
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.dataset.DALWrite._
-import com.twitter.simclusters_v2.common.Country
-import com.twitter.simclusters_v2.common.Language
-import com.twitter.simclusters_v2.common.TopicId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
-import scala.util.Random
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.scalding.source.DailySuffixCsv
-import com.twitter.scalding.source.DailySuffixTypedTsv
-import com.twitter.simclusters_v2.hdfs_sources.FavTfgTopicEmbeddingsScalaDataset
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
+ mport com.tw ter.algeb rd.Mono d
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.dal.cl ent.dataset.SnapshotDALDatasetBase
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap ._
+ mport com.tw ter.scald ng.TypedP pe
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e.D
+ mport com.tw ter.scald ng_ nternal.dalv2.dataset.DALWr e._
+ mport com.tw ter.s mclusters_v2.common.Country
+ mport com.tw ter.s mclusters_v2.common.Language
+ mport com.tw ter.s mclusters_v2.common.Top c d
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.wtf.scald ng.jobs.common.AdhocExecut onApp
+ mport com.tw ter.wtf.scald ng.jobs.common.Sc duledExecut onApp
+ mport java.ut l.T  Zone
+ mport scala.ut l.Random
+ mport com.tw ter.ml.ap .ut l.FDsl._
+ mport com.tw ter.scald ng.s ce.Da lySuff xCsv
+ mport com.tw ter.scald ng.s ce.Da lySuff xTypedTsv
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.FavTfgTop cEmbedd ngsScalaDataset
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.ExternalDataS ces
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
 
 /**
- This job is to obtain the training and test data for the model-based approach to topic recommendations:
+ T  job  s to obta n t  tra n ng and test data for t  model-based approach to top c recom ndat ons:
  Approach:
- 1. Read FavTfgTopicEmbeddingsScalaDataset - to get topic simclusters embeddings for the followed and not interested in topics
- 2. Read SimclustersV2InterestedIn20M145KUpdatedScalaDataset - to get user's interestedIn Simclusters embeddings
- 3. Read UsersourceScalaDataset - to get user's countryCode and language
- Use the datasets above to get the features for the model and generate DataRecords.
+ 1. Read FavTfgTop cEmbedd ngsScalaDataset - to get top c s mclusters embedd ngs for t  follo d and not  nterested  n top cs
+ 2. Read S mclustersV2 nterested n20M145KUpdatedScalaDataset - to get user's  nterested n S mclusters embedd ngs
+ 3. Read Users ceScalaDataset - to get user's countryCode and language
+ Use t  datasets above to get t  features for t  model and generate DataRecords.
  */
 
 /*
 To run:
-scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/topic_recommendations/model_based_topic_recommendations:training_data_for_topic_recommendations-adhoc \
+scald ng remote run --target src/scala/com/tw ter/s mclusters_v2/scald ng/top c_recom ndat ons/model_based_top c_recom ndat ons:tra n ng_data_for_top c_recom ndat ons-adhoc \
 --user cassowary \
---submitter atla-aor-08-sr1 \
---main-class com.twitter.simclusters_v2.scalding.topic_recommendations.model_based_topic_recommendations.UserTopicFeatureHydrationAdhocApp \
---submitter-memory 128192.megabyte --hadoop-properties "mapreduce.map.memory.mb=8192 mapreduce.map.java.opts='-Xmx7618M' mapreduce.reduce.memory.mb=8192 mapreduce.reduce.java.opts='-Xmx7618M'" \
+--subm ter atla-aor-08-sr1 \
+--ma n-class com.tw ter.s mclusters_v2.scald ng.top c_recom ndat ons.model_based_top c_recom ndat ons.UserTop cFeatureHydrat onAdhocApp \
+--subm ter- mory 128192. gabyte --hadoop-propert es "mapreduce.map. mory.mb=8192 mapreduce.map.java.opts='-Xmx7618M' mapreduce.reduce. mory.mb=8192 mapreduce.reduce.java.opts='-Xmx7618M'" \
 -- \
 --date 2020-10-14 \
---outputDir "/user/cassowary/adhoc/your_ldap/user_topic_features_popular_clusters_filtered_oct_16"
+--outputD r "/user/cassowary/adhoc/y _ldap/user_top c_features_popular_clusters_f ltered_oct_16"
  */
 
-object UserTopicFeatureHydrationAdhocApp extends AdhocExecutionApp {
+object UserTop cFeatureHydrat onAdhocApp extends AdhocExecut onApp {
 
-  import UserTopicModellingJobUtils._
+   mport UserTop cModell ngJobUt ls._
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
 
-    val outputDir = args("outputDir")
-    val numDataRecordsTraining = Stat("num_data_records_training")
-    val numDataRecordsTesting = Stat("num_data_records_testing")
-    val testingRatio = args.double("testingRatio", 0.2)
+    val outputD r = args("outputD r")
+    val numDataRecordsTra n ng = Stat("num_data_records_tra n ng")
+    val numDataRecordsTest ng = Stat("num_data_records_test ng")
+    val test ngRat o = args.double("test ngRat o", 0.2)
 
-    val (trainingDataSamples, testDataSamples, sortedVocab) = UserTopicModellingJobUtils.run(
-      ExternalDataSources.topicFollowGraphSource,
-      ExternalDataSources.notInterestedTopicsSource,
-      ExternalDataSources.userSource,
-      DataSources.getUserInterestedInData,
-      DataSources.getPerLanguageTopicEmbeddings,
-      testingRatio
+    val (tra n ngDataSamples, testDataSamples, sortedVocab) = UserTop cModell ngJobUt ls.run(
+      ExternalDataS ces.top cFollowGraphS ce,
+      ExternalDataS ces.not nterestedTop csS ce,
+      ExternalDataS ces.userS ce,
+      DataS ces.getUser nterested nData,
+      DataS ces.getPerLanguageTop cEmbedd ngs,
+      test ngRat o
     )
 
-    val userTopicAdapter = new UserTopicDataRecordAdapter()
-    Execution
-      .zip(
-        convertTypedPipeToDataSetPipe(
-          trainingDataSamples.map { train =>
-            numDataRecordsTraining.inc()
-            train
+    val userTop cAdapter = new UserTop cDataRecordAdapter()
+    Execut on
+      .z p(
+        convertTypedP peToDataSetP pe(
+          tra n ngDataSamples.map { tra n =>
+            numDataRecordsTra n ng. nc()
+            tra n
           },
-          userTopicAdapter)
-          .writeExecution(
-            DailySuffixFeatureSink(outputDir + "/training")
+          userTop cAdapter)
+          .wr eExecut on(
+            Da lySuff xFeatureS nk(outputD r + "/tra n ng")
           ),
-        convertTypedPipeToDataSetPipe(
+        convertTypedP peToDataSetP pe(
           testDataSamples.map { test =>
-            numDataRecordsTesting.inc()
+            numDataRecordsTest ng. nc()
             test
           },
-          userTopicAdapter)
-          .writeExecution(
-            DailySuffixFeatureSink(outputDir + "/testing")
+          userTop cAdapter)
+          .wr eExecut on(
+            Da lySuff xFeatureS nk(outputD r + "/test ng")
           ),
         sortedVocab
-          .map { topicsWithSortedIndexes =>
-            topicsWithSortedIndexes.map(_._1)
-          }.flatten.writeExecution(DailySuffixTypedTsv(outputDir + "/vocab"))
-      ).unit
+          .map { top csW hSorted ndexes =>
+            top csW hSorted ndexes.map(_._1)
+          }.flatten.wr eExecut on(Da lySuff xTypedTsv(outputD r + "/vocab"))
+      ).un 
   }
 }
 
 /**
-capesospy-v2 update --build_locally \
- --start_cron training_data_for_topic_recommendations \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capesospy-v2 update --bu ld_locally \
+ --start_cron tra n ng_data_for_top c_recom ndat ons \
+ src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc3.yaml
  */
 
-object UserTopicFeatureHydrationScheduledApp extends ScheduledExecutionApp {
+object UserTop cFeatureHydrat onSc duledApp extends Sc duledExecut onApp {
 
-  import UserTopicModellingJobUtils._
+   mport UserTop cModell ngJobUt ls._
 
-  private val outputPath: String =
-    "/user/cassowary/processed/user_topic_modelling"
+  pr vate val outputPath: Str ng =
+    "/user/cassowary/processed/user_top c_modell ng"
 
-  override def batchIncrement: Duration = Days(1)
+  overr de def batch ncre nt: Durat on = Days(1)
 
-  override def firstTime: RichDate = RichDate("2020-10-13")
+  overr de def f rstT  : R chDate = R chDate("2020-10-13")
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val testingRatio = args.double("testingRatio", 0.2)
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
+    val test ngRat o = args.double("test ngRat o", 0.2)
 
-    val (trainingDataSamples, testDataSamples, sortedVocab) = UserTopicModellingJobUtils.run(
-      ExternalDataSources.topicFollowGraphSource,
-      ExternalDataSources.notInterestedTopicsSource,
-      ExternalDataSources.userSource,
-      DataSources.getUserInterestedInData,
-      DataSources.getPerLanguageTopicEmbeddings,
-      testingRatio
+    val (tra n ngDataSamples, testDataSamples, sortedVocab) = UserTop cModell ngJobUt ls.run(
+      ExternalDataS ces.top cFollowGraphS ce,
+      ExternalDataS ces.not nterestedTop csS ce,
+      ExternalDataS ces.userS ce,
+      DataS ces.getUser nterested nData,
+      DataS ces.getPerLanguageTop cEmbedd ngs,
+      test ngRat o
     )
 
-    val userTopicAdapter = new UserTopicDataRecordAdapter()
-    Execution
-      .zip(
-        getTrainTestExec(
-          trainingDataSamples,
+    val userTop cAdapter = new UserTop cDataRecordAdapter()
+    Execut on
+      .z p(
+        getTra nTestExec(
+          tra n ngDataSamples,
           testDataSamples,
-          TopicRecommendationsTrainDatarecordsJavaDataset,
-          TopicRecommendationsTestDatarecordsJavaDataset,
+          Top cRecom ndat onsTra nDatarecordsJavaDataset,
+          Top cRecom ndat onsTestDatarecordsJavaDataset,
           outputPath,
-          userTopicAdapter
+          userTop cAdapter
         ),
         sortedVocab
-          .map { topicsWithSortedIndexes =>
-            topicsWithSortedIndexes.map(_._1)
-          }.flatten.writeExecution(DailySuffixTypedTsv(outputPath + "/vocab"))
-      ).unit
+          .map { top csW hSorted ndexes =>
+            top csW hSorted ndexes.map(_._1)
+          }.flatten.wr eExecut on(Da lySuff xTypedTsv(outputPath + "/vocab"))
+      ).un 
 
   }
 }
 
-object UserTopicModellingJobUtils {
+object UserTop cModell ngJobUt ls {
 
   /**
-   * The main function that produces training and the test data
+   * T  ma n funct on that produces tra n ng and t  test data
    *
-   * @param topicFollowGraphSource user with followed topics from TFG
-   * @param notInterestedTopicsSource  user with not interested in topics
-   * @param userSource user with country and language
-   * @param userInterestedInData user with interestedin simcluster embeddings
-   * @param topicPerLanguageEmbeddings topics with simcluster embeddings
+   * @param top cFollowGraphS ce user w h follo d top cs from TFG
+   * @param not nterestedTop csS ce  user w h not  nterested  n top cs
+   * @param userS ce user w h country and language
+   * @param user nterested nData user w h  nterested n s mcluster embedd ngs
+   * @param top cPerLanguageEmbedd ngs top cs w h s mcluster embedd ngs
    *
-   * @return Tuple (trainingDataSamples, testingDataSamples, sortedTopicsVocab)
+   * @return Tuple (tra n ngDataSamples, test ngDataSamples, sortedTop csVocab)
    */
   def run(
-    topicFollowGraphSource: TypedPipe[(TopicId, UserId)],
-    notInterestedTopicsSource: TypedPipe[(TopicId, UserId)],
-    userSource: TypedPipe[(UserId, (Country, Language))],
-    userInterestedInData: TypedPipe[(UserId, Map[Int, Double])],
-    topicPerLanguageEmbeddings: TypedPipe[((TopicId, Language), Map[Int, Double])],
-    testingRatio: Double
+    top cFollowGraphS ce: TypedP pe[(Top c d, User d)],
+    not nterestedTop csS ce: TypedP pe[(Top c d, User d)],
+    userS ce: TypedP pe[(User d, (Country, Language))],
+    user nterested nData: TypedP pe[(User d, Map[ nt, Double])],
+    top cPerLanguageEmbedd ngs: TypedP pe[((Top c d, Language), Map[ nt, Double])],
+    test ngRat o: Double
   )(
-    implicit uniqueID: UniqueID,
+     mpl c  un que D: Un que D,
     dateRange: DateRange,
-    timeZone: TimeZone
+    t  Zone: T  Zone
   ): (
-    TypedPipe[UserTopicTrainingSample],
-    TypedPipe[UserTopicTrainingSample],
-    TypedPipe[Seq[(TopicId, Int)]]
+    TypedP pe[UserTop cTra n ngSample],
+    TypedP pe[UserTop cTra n ngSample],
+    TypedP pe[Seq[(Top c d,  nt)]]
   ) = {
-    val allFollowableTopics: TypedPipe[TopicId] =
-      topicFollowGraphSource.map(_._1).distinct
+    val allFollowableTop cs: TypedP pe[Top c d] =
+      top cFollowGraphS ce.map(_._1).d st nct
 
-    val allFollowableTopicsWithMappedIds: TypedPipe[(TopicId, Int)] =
-      allFollowableTopics.groupAll.mapGroup {
-        case (_, topicIter) =>
-          topicIter.zipWithIndex.map {
-            case (topicId, mappedId) =>
-              (topicId, mappedId)
+    val allFollowableTop csW hMapped ds: TypedP pe[(Top c d,  nt)] =
+      allFollowableTop cs.groupAll.mapGroup {
+        case (_, top c er) =>
+          top c er.z pW h ndex.map {
+            case (top c d, mapped d) =>
+              (top c d, mapped d)
           }
       }.values
 
-    val sortedVocab: TypedPipe[Seq[(TopicId, Int)]] =
-      allFollowableTopicsWithMappedIds.map(Seq(_)).map(_.sortBy(_._2))
+    val sortedVocab: TypedP pe[Seq[(Top c d,  nt)]] =
+      allFollowableTop csW hMapped ds.map(Seq(_)).map(_.sortBy(_._2))
 
-    val dataTrainingSamples: TypedPipe[UserTopicTrainingSample] = getDataSamplesFromTrainingData(
-      topicFollowGraphSource,
-      notInterestedTopicsSource,
-      userSource,
-      userInterestedInData,
-      topicPerLanguageEmbeddings,
-      allFollowableTopicsWithMappedIds
+    val dataTra n ngSamples: TypedP pe[UserTop cTra n ngSample] = getDataSamplesFromTra n ngData(
+      top cFollowGraphS ce,
+      not nterestedTop csS ce,
+      userS ce,
+      user nterested nData,
+      top cPerLanguageEmbedd ngs,
+      allFollowableTop csW hMapped ds
     )
-    val (trainSplit, testSplit) = splitByUser(dataTrainingSamples, testingRatio)
+    val (tra nSpl , testSpl ) = spl ByUser(dataTra n ngSamples, test ngRat o)
 
-    (trainSplit, testSplit, sortedVocab)
+    (tra nSpl , testSpl , sortedVocab)
   }
 
   /**
-   * Split the data samples based on user_id into train and test data. This ensures that the same
-   * user's data records are not part of both train and test data.
+   * Spl  t  data samples based on user_ d  nto tra n and test data. T  ensures that t  sa 
+   * user's data records are not part of both tra n and test data.
    */
-  def splitByUser(
-    dataTrainingSamples: TypedPipe[UserTopicTrainingSample],
-    testingRatio: Double
-  ): (TypedPipe[UserTopicTrainingSample], TypedPipe[UserTopicTrainingSample]) = {
-    val (trainSplit, testSplit) = dataTrainingSamples
-      .map { currSmple => (currSmple.userId, currSmple) }.groupBy(_._1).partition(_ =>
-        Random.nextDouble() > testingRatio)
-    val trainingData = trainSplit.values.map(_._2)
-    val testingData = testSplit.values.map(_._2)
-    (trainingData, testingData)
+  def spl ByUser(
+    dataTra n ngSamples: TypedP pe[UserTop cTra n ngSample],
+    test ngRat o: Double
+  ): (TypedP pe[UserTop cTra n ngSample], TypedP pe[UserTop cTra n ngSample]) = {
+    val (tra nSpl , testSpl ) = dataTra n ngSamples
+      .map { currSmple => (currSmple.user d, currSmple) }.groupBy(_._1).part  on(_ =>
+        Random.nextDouble() > test ngRat o)
+    val tra n ngData = tra nSpl .values.map(_._2)
+    val test ngData = testSpl .values.map(_._2)
+    (tra n ngData, test ngData)
   }
 
   /**
-   * To get the target topic for each training data sample for a user from the TopicFollowGraph
+   * To get t  target top c for each tra n ng data sample for a user from t  Top cFollowGraph
    *
-   * @param topicFollowSource
-   * @return (UserId, Set(allFollowedTopicsExceptTargetTopic), targetTopic)
+   * @param top cFollowS ce
+   * @return (User d, Set(allFollo dTop csExceptTargetTop c), targetTop c)
    */
-  def getTargetTopicsFromTFG(
-    topicFollowSource: TypedPipe[(TopicId, UserId)]
+  def getTargetTop csFromTFG(
+    top cFollowS ce: TypedP pe[(Top c d, User d)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(UserId, Set[TopicId], TopicId)] = {
-    val numTrainingSamples = Stat("num_positive_training_samples")
+     mpl c  un que D: Un que D
+  ): TypedP pe[(User d, Set[Top c d], Top c d)] = {
+    val numTra n ngSamples = Stat("num_pos  ve_tra n ng_samples")
 
-    val userFollowedTopics = topicFollowSource.swap
+    val userFollo dTop cs = top cFollowS ce.swap
       .map {
-        case (userId, topicId) => (userId, Set(topicId))
-      }.sumByKey.toTypedPipe
+        case (user d, top c d) => (user d, Set(top c d))
+      }.sumByKey.toTypedP pe
 
-    userFollowedTopics.flatMap {
-      case (userID, followedTopicsSet) =>
-        followedTopicsSet.map { currFollowedTopic =>
-          numTrainingSamples.inc()
-          val remainingTopics = followedTopicsSet - currFollowedTopic
-          (userID, remainingTopics, currFollowedTopic)
+    userFollo dTop cs.flatMap {
+      case (user D, follo dTop csSet) =>
+        follo dTop csSet.map { currFollo dTop c =>
+          numTra n ngSamples. nc()
+          val rema n ngTop cs = follo dTop csSet - currFollo dTop c
+          (user D, rema n ngTop cs, currFollo dTop c)
         }
     }
   }
 
   /**
-   * Helper function that does the intermediate join operation between a user's followed,
-   * not-interested, interestedIn, country and language typedpipe sources, read from different sources.
+   *  lper funct on that does t   nter d ate jo n operat on bet en a user's follo d,
+   * not- nterested,  nterested n, country and language typedp pe s ces, read from d fferent s ces.
    */
 
-  def getFeaturesIntermediateJoin(
-    topicFollowGraphSource: TypedPipe[(TopicId, UserId)],
-    notInterestedTopicsSource: TypedPipe[(TopicId, UserId)],
-    allFollowableTopicsWithMappedIds: TypedPipe[(TopicId, Int)],
-    userCountryAndLanguage: TypedPipe[(UserId, (Country, Language))],
-    userInterestedInData: TypedPipe[(UserId, Map[Int, Double])]
+  def getFeatures nter d ateJo n(
+    top cFollowGraphS ce: TypedP pe[(Top c d, User d)],
+    not nterestedTop csS ce: TypedP pe[(Top c d, User d)],
+    allFollowableTop csW hMapped ds: TypedP pe[(Top c d,  nt)],
+    userCountryAndLanguage: TypedP pe[(User d, (Country, Language))],
+    user nterested nData: TypedP pe[(User d, Map[ nt, Double])]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[
+     mpl c  un que D: Un que D
+  ): TypedP pe[
     (
-      UserId,
-      Set[TopicId],
-      Set[TopicId],
-      TopicId,
-      Int,
+      User d,
+      Set[Top c d],
+      Set[Top c d],
+      Top c d,
+       nt,
       Country,
       Language,
-      Map[Int, Double]
+      Map[ nt, Double]
     )
   ] = {
-    implicit val l2b: Long => Array[Byte] = Injection.long2BigEndian
+     mpl c  val l2b: Long => Array[Byte] =  nject on.long2B gEnd an
 
-    val userWithFollowedTargetTopics: TypedPipe[
-      (UserId, Set[TopicId], TopicId)
-    ] = getTargetTopicsFromTFG(topicFollowGraphSource)
+    val userW hFollo dTargetTop cs: TypedP pe[
+      (User d, Set[Top c d], Top c d)
+    ] = getTargetTop csFromTFG(top cFollowGraphS ce)
 
-    val userWithNotInterestedTopics: TypedPipe[(UserId, Set[TopicId])] =
-      notInterestedTopicsSource.swap.mapValues(Set(_)).sumByKey.toTypedPipe
+    val userW hNot nterestedTop cs: TypedP pe[(User d, Set[Top c d])] =
+      not nterestedTop csS ce.swap.mapValues(Set(_)).sumByKey.toTypedP pe
 
-    userWithFollowedTargetTopics
-      .groupBy(_._1).leftJoin(userWithNotInterestedTopics).values.map {
-        case ((userId, followedTopics, targetFollowedTopic), notInterestedOpt) =>
+    userW hFollo dTargetTop cs
+      .groupBy(_._1).leftJo n(userW hNot nterestedTop cs).values.map {
+        case ((user d, follo dTop cs, targetFollo dTop c), not nterestedOpt) =>
           (
-            userId,
-            followedTopics,
-            targetFollowedTopic,
-            notInterestedOpt.getOrElse(Set.empty[TopicId]))
+            user d,
+            follo dTop cs,
+            targetFollo dTop c,
+            not nterestedOpt.getOrElse(Set.empty[Top c d]))
       }
       .map {
-        case (userId, followedTopics, targetFollowedTopic, notInterestedTopics) =>
-          (targetFollowedTopic, (userId, followedTopics, notInterestedTopics))
-      }.join(allFollowableTopicsWithMappedIds).map {
-        case (targetTopic, ((userId, followedTopics, notInterestedTopics), targetTopicIdx)) =>
-          (userId, followedTopics, notInterestedTopics, targetTopic, targetTopicIdx)
+        case (user d, follo dTop cs, targetFollo dTop c, not nterestedTop cs) =>
+          (targetFollo dTop c, (user d, follo dTop cs, not nterestedTop cs))
+      }.jo n(allFollowableTop csW hMapped ds).map {
+        case (targetTop c, ((user d, follo dTop cs, not nterestedTop cs), targetTop c dx)) =>
+          (user d, follo dTop cs, not nterestedTop cs, targetTop c, targetTop c dx)
       }
       .groupBy(_._1).sketch(4000)
-      .join(userCountryAndLanguage
-        .groupBy(_._1)).sketch(4000).leftJoin(userInterestedInData)
+      .jo n(userCountryAndLanguage
+        .groupBy(_._1)).sketch(4000).leftJo n(user nterested nData)
       .values.map {
         case (
               (
-                (userId, followedTopics, notInterestedTopics, targetTopic, targetTopicIdx),
+                (user d, follo dTop cs, not nterestedTop cs, targetTop c, targetTop c dx),
                 (_, (userCountry, userLanguage))
               ),
-              userIntOpt) =>
+              user ntOpt) =>
           (
-            userId,
-            followedTopics,
-            notInterestedTopics,
-            targetTopic,
-            targetTopicIdx,
+            user d,
+            follo dTop cs,
+            not nterestedTop cs,
+            targetTop c,
+            targetTop c dx,
             userCountry,
             userLanguage,
-            userIntOpt.getOrElse(Map.empty))
+            user ntOpt.getOrElse(Map.empty))
       }
   }
 
   /**
-   * Helper function that aggregates user's followed topics, not-interested topics,
-   * country, language with join operations and generates the UserTopicTrainingSample
+   *  lper funct on that aggregates user's follo d top cs, not- nterested top cs,
+   * country, language w h jo n operat ons and generates t  UserTop cTra n ngSample
    * for each DataRecord
    */
-  def getDataSamplesFromTrainingData(
-    topicFollowGraphSource: TypedPipe[(TopicId, UserId)],
-    notInterestedTopicsSource: TypedPipe[(TopicId, UserId)],
-    userCountryAndLanguage: TypedPipe[(UserId, (Country, Language))],
-    userInterestedInData: TypedPipe[(UserId, Map[Int, Double])],
-    topicPerLanguageEmbeddings: TypedPipe[((TopicId, Language), Map[Int, Double])],
-    allFollowableTopicsWithMappedIds: TypedPipe[(TopicId, Int)]
+  def getDataSamplesFromTra n ngData(
+    top cFollowGraphS ce: TypedP pe[(Top c d, User d)],
+    not nterestedTop csS ce: TypedP pe[(Top c d, User d)],
+    userCountryAndLanguage: TypedP pe[(User d, (Country, Language))],
+    user nterested nData: TypedP pe[(User d, Map[ nt, Double])],
+    top cPerLanguageEmbedd ngs: TypedP pe[((Top c d, Language), Map[ nt, Double])],
+    allFollowableTop csW hMapped ds: TypedP pe[(Top c d,  nt)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[UserTopicTrainingSample] = {
+     mpl c  un que D: Un que D
+  ): TypedP pe[UserTop cTra n ngSample] = {
 
-    implicit val l2b: Long => Array[Byte] = Injection.long2BigEndian
+     mpl c  val l2b: Long => Array[Byte] =  nject on.long2B gEnd an
 
-    val allTopicEmbeddingsMap: ValuePipe[Map[(TopicId, Language), Map[Int, Double]]] =
-      topicPerLanguageEmbeddings.map {
-        case (topicWithLang, embedding) =>
-          Map(topicWithLang -> embedding)
+    val allTop cEmbedd ngsMap: ValueP pe[Map[(Top c d, Language), Map[ nt, Double]]] =
+      top cPerLanguageEmbedd ngs.map {
+        case (top cW hLang, embedd ng) =>
+          Map(top cW hLang -> embedd ng)
       }.sum
 
-    val userWithFollowedAndNotInterestedTopics = getFeaturesIntermediateJoin(
-      topicFollowGraphSource,
-      notInterestedTopicsSource,
-      allFollowableTopicsWithMappedIds,
+    val userW hFollo dAndNot nterestedTop cs = getFeatures nter d ateJo n(
+      top cFollowGraphS ce,
+      not nterestedTop csS ce,
+      allFollowableTop csW hMapped ds,
       userCountryAndLanguage,
-      userInterestedInData)
+      user nterested nData)
 
-    userWithFollowedAndNotInterestedTopics.flatMapWithValue(allTopicEmbeddingsMap) {
+    userW hFollo dAndNot nterestedTop cs.flatMapW hValue(allTop cEmbedd ngsMap) {
       case (
             (
-              userId,
-              followedTopics,
-              notInterestedTopics,
-              targetTopic,
-              targetTopicIdx,
+              user d,
+              follo dTop cs,
+              not nterestedTop cs,
+              targetTop c,
+              targetTop c dx,
               userCountry,
               userLanguage,
-              userInt),
-            Some(allTopicEmbeddings)) =>
-        val averageFollowedTopicsSimClusters = Monoid
-          .sum(followedTopics.toSeq.map { topicId =>
-            allTopicEmbeddings.getOrElse((topicId, userLanguage), Map.empty)
+              user nt),
+            So (allTop cEmbedd ngs)) =>
+        val averageFollo dTop csS mClusters = Mono d
+          .sum(follo dTop cs.toSeq.map { top c d =>
+            allTop cEmbedd ngs.getOrElse((top c d, userLanguage), Map.empty)
           }).mapValues(v =>
-            v / followedTopics.size) // average simcluster embedding of the followed topics
+            v / follo dTop cs.s ze) // average s mcluster embedd ng of t  follo d top cs
 
-        val averageNotInterestedTopicsSimClusters = Monoid
-          .sum(notInterestedTopics.toSeq.map { topicId =>
-            allTopicEmbeddings.getOrElse((topicId, userLanguage), Map.empty)
+        val averageNot nterestedTop csS mClusters = Mono d
+          .sum(not nterestedTop cs.toSeq.map { top c d =>
+            allTop cEmbedd ngs.getOrElse((top c d, userLanguage), Map.empty)
           }).mapValues(v =>
-            v / notInterestedTopics.size) // average simcluster embedding of the notInterested topics
+            v / not nterestedTop cs.s ze) // average s mcluster embedd ng of t  not nterested top cs
 
-        Some(
-          UserTopicTrainingSample(
-            userId,
-            followedTopics,
-            notInterestedTopics,
+        So (
+          UserTop cTra n ngSample(
+            user d,
+            follo dTop cs,
+            not nterestedTop cs,
             userCountry,
             userLanguage,
-            targetTopicIdx,
-            userInt,
-            averageFollowedTopicsSimClusters,
-            averageNotInterestedTopicsSimClusters
+            targetTop c dx,
+            user nt,
+            averageFollo dTop csS mClusters,
+            averageNot nterestedTop csS mClusters
           )
         )
 
@@ -403,47 +403,47 @@ object UserTopicModellingJobUtils {
   }
 
   /**
-   * Write train and test data
+   * Wr e tra n and test data
    */
-  def getTrainTestExec(
-    trainingData: TypedPipe[UserTopicTrainingSample],
-    testingData: TypedPipe[UserTopicTrainingSample],
-    trainDataset: SnapshotDALDatasetBase[DataRecord],
+  def getTra nTestExec(
+    tra n ngData: TypedP pe[UserTop cTra n ngSample],
+    test ngData: TypedP pe[UserTop cTra n ngSample],
+    tra nDataset: SnapshotDALDatasetBase[DataRecord],
     testDataset: SnapshotDALDatasetBase[DataRecord],
-    outputPath: String,
-    adapter: IRecordOneToOneAdapter[UserTopicTrainingSample]
+    outputPath: Str ng,
+    adapter:  RecordOneToOneAdapter[UserTop cTra n ngSample]
   )(
-    implicit dateRange: DateRange
-  ): Execution[Unit] = {
-    val trainExec =
-      convertTypedPipeToDataSetPipe(trainingData, adapter)
-        .writeDALSnapshotExecution(
-          trainDataset,
-          D.Daily,
-          D.Suffix(s"$outputPath/training"),
+     mpl c  dateRange: DateRange
+  ): Execut on[Un ] = {
+    val tra nExec =
+      convertTypedP peToDataSetP pe(tra n ngData, adapter)
+        .wr eDALSnapshotExecut on(
+          tra nDataset,
+          D.Da ly,
+          D.Suff x(s"$outputPath/tra n ng"),
           D.EBLzo(),
           dateRange.end)
     val testExec =
-      convertTypedPipeToDataSetPipe(testingData, adapter)
-        .writeDALSnapshotExecution(
+      convertTypedP peToDataSetP pe(test ngData, adapter)
+        .wr eDALSnapshotExecut on(
           testDataset,
-          D.Daily,
-          D.Suffix(s"$outputPath/testing"),
+          D.Da ly,
+          D.Suff x(s"$outputPath/test ng"),
           D.EBLzo(),
           dateRange.end)
-    Execution.zip(trainExec, testExec).unit
+    Execut on.z p(tra nExec, testExec).un 
   }
 
   /**
-   * To get the datasetPipe containing datarecords hydrated by datarecordAdapter
-   * @param userTrainingSamples
+   * To get t  datasetP pe conta n ng datarecords hydrated by datarecordAdapter
+   * @param userTra n ngSamples
    * @param adapter
-   * @return DataSetPipe
+   * @return DataSetP pe
    */
-  def convertTypedPipeToDataSetPipe(
-    userTrainingSamples: TypedPipe[UserTopicTrainingSample],
-    adapter: IRecordOneToOneAdapter[UserTopicTrainingSample]
-  ): DataSetPipe = {
-    userTrainingSamples.toDataSetPipe(adapter)
+  def convertTypedP peToDataSetP pe(
+    userTra n ngSamples: TypedP pe[UserTop cTra n ngSample],
+    adapter:  RecordOneToOneAdapter[UserTop cTra n ngSample]
+  ): DataSetP pe = {
+    userTra n ngSamples.toDataSetP pe(adapter)
   }
 }

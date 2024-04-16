@@ -1,56 +1,56 @@
-package com.twitter.simclusters_v2.candidate_source
+package com.tw ter.s mclusters_v2.cand date_s ce
 
-import com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusterScores
+ mport com.tw ter.s mclusters_v2.thr ftscala.UserTo nterested nClusterScores
 
-object ClusterRanker extends Enumeration {
-  val RankByNormalizedFavScore: ClusterRanker.Value = Value
+object ClusterRanker extends Enu rat on {
+  val RankByNormal zedFavScore: ClusterRanker.Value = Value
   val RankByFavScore: ClusterRanker.Value = Value
   val RankByFollowScore: ClusterRanker.Value = Value
   val RankByLogFavScore: ClusterRanker.Value = Value
-  val RankByNormalizedLogFavScore: ClusterRanker.Value = Value
+  val RankByNormal zedLogFavScore: ClusterRanker.Value = Value
 
   /**
-   * Given a map of clusters, sort out the top scoring clusters by a ranking scheme
-   * provided by the caller
+   * G ven a map of clusters, sort out t  top scor ng clusters by a rank ng sc  
+   * prov ded by t  caller
    */
   def getTopKClustersByScore(
-    clustersWithScores: Map[Int, UserToInterestedInClusterScores],
+    clustersW hScores: Map[ nt, UserTo nterested nClusterScores],
     rankByScore: ClusterRanker.Value,
-    topK: Int
-  ): Map[Int, Double] = {
-    val rankedClustersWithScores = clustersWithScores.map {
-      case (clusterId, score) =>
+    topK:  nt
+  ): Map[ nt, Double] = {
+    val rankedClustersW hScores = clustersW hScores.map {
+      case (cluster d, score) =>
         rankByScore match {
           case ClusterRanker.RankByFavScore =>
-            (clusterId, (score.favScore.getOrElse(0.0), score.followScore.getOrElse(0.0)))
+            (cluster d, (score.favScore.getOrElse(0.0), score.followScore.getOrElse(0.0)))
           case ClusterRanker.RankByFollowScore =>
-            (clusterId, (score.followScore.getOrElse(0.0), score.favScore.getOrElse(0.0)))
+            (cluster d, (score.followScore.getOrElse(0.0), score.favScore.getOrElse(0.0)))
           case ClusterRanker.RankByLogFavScore =>
-            (clusterId, (score.logFavScore.getOrElse(0.0), score.followScore.getOrElse(0.0)))
-          case ClusterRanker.RankByNormalizedLogFavScore =>
+            (cluster d, (score.logFavScore.getOrElse(0.0), score.followScore.getOrElse(0.0)))
+          case ClusterRanker.RankByNormal zedLogFavScore =>
             (
-              clusterId,
+              cluster d,
               (
-                score.logFavScoreClusterNormalizedOnly.getOrElse(0.0),
+                score.logFavScoreClusterNormal zedOnly.getOrElse(0.0),
                 score.followScore.getOrElse(0.0)))
-          case ClusterRanker.RankByNormalizedFavScore =>
+          case ClusterRanker.RankByNormal zedFavScore =>
             (
-              clusterId,
+              cluster d,
               (
-                score.favScoreProducerNormalizedOnly.getOrElse(0.0),
+                score.favScoreProducerNormal zedOnly.getOrElse(0.0),
                 score.followScore.getOrElse(0.0)))
           case _ =>
             (
-              clusterId,
+              cluster d,
               (
-                score.favScoreProducerNormalizedOnly.getOrElse(0.0),
+                score.favScoreProducerNormal zedOnly.getOrElse(0.0),
                 score.followScore.getOrElse(0.0)))
         }
     }
-    rankedClustersWithScores.toSeq
-      .sortBy(_._2) // sort in ascending order
-      .takeRight(topK)
-      .map { case (clusterId, scores) => clusterId -> math.max(scores._1, 1e-4) }
+    rankedClustersW hScores.toSeq
+      .sortBy(_._2) // sort  n ascend ng order
+      .takeR ght(topK)
+      .map { case (cluster d, scores) => cluster d -> math.max(scores._1, 1e-4) }
       .toMap
   }
 }

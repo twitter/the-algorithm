@@ -1,5 +1,5 @@
-package com.twitter.servo.util
+package com.tw ter.servo.ut l
 
-import scala.collection.mutable
+ mport scala.collect on.mutable
 
-class SynchronizedHashMap[K, V] extends mutable.HashMap[K, V] with mutable.SynchronizedMap[K, V]
+class Synchron zedHashMap[K, V] extends mutable.HashMap[K, V] w h mutable.Synchron zedMap[K, V]

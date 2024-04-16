@@ -1,21 +1,21 @@
-package com.twitter.home_mixer.product.list_recommended_users
+package com.tw ter.ho _m xer.product.l st_recom nded_users
 
-import com.twitter.hermit.candidate.{thriftscala => t}
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersFeatures.ScoreFeature
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+ mport com.tw ter. rm .cand date.{thr ftscala => t}
+ mport com.tw ter.ho _m xer.product.l st_recom nded_users.model.L stRecom ndedUsersFeatures.ScoreFeature
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Transfor r dent f er
 
-object ListMemberBasedUsersResponseFeatureTransfromer
-    extends CandidateFeatureTransformer[t.Candidate] {
+object L st mberBasedUsersResponseFeatureTransfro r
+    extends Cand dateFeatureTransfor r[t.Cand date] {
 
-  override val identifier: TransformerIdentifier = TransformerIdentifier("ListMemberBasedUsers")
+  overr de val  dent f er: Transfor r dent f er = Transfor r dent f er("L st mberBasedUsers")
 
-  override val features: Set[Feature[_, _]] = Set(ScoreFeature)
+  overr de val features: Set[Feature[_, _]] = Set(ScoreFeature)
 
-  override def transform(candidate: t.Candidate): FeatureMap = FeatureMapBuilder()
-    .add(ScoreFeature, candidate.score)
-    .build()
+  overr de def transform(cand date: t.Cand date): FeatureMap = FeatureMapBu lder()
+    .add(ScoreFeature, cand date.score)
+    .bu ld()
 }

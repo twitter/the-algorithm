@@ -1,47 +1,47 @@
-package com.twitter.search.ingester.pipeline.util;
+package com.tw ter.search. ngester.p pel ne.ut l;
 
-import java.util.ArrayList;
-import java.util.List;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.L st;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.decider.Decider;
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers on;
+ mport com.tw ter.dec der.Dec der;
 
-public final class PenguinVersionsUtil {
+publ c f nal class Pengu nVers onsUt l {
 
-  private PenguinVersionsUtil() { /* prevent instantiation */ }
+  pr vate Pengu nVers onsUt l() { /* prevent  nstant at on */ }
 
   /**
-   * Utility method for updating penguinVersions lists via decider availability. We must have
-   * at least one version available.
-   * @param penguinVersions
-   * @param decider
+   * Ut l y  thod for updat ng pengu nVers ons l sts v a dec der ava lab l y.   must have
+   * at least one vers on ava lable.
+   * @param pengu nVers ons
+   * @param dec der
    * @return
    */
-  public static List<PenguinVersion> filterPenguinVersionsWithDeciders(
-      List<PenguinVersion> penguinVersions,
-      Decider decider) {
-    List<PenguinVersion> updatedPenguinVersions = new ArrayList<>();
-    for (PenguinVersion penguinVersion : penguinVersions) {
-      if (isPenguinVersionAvailable(penguinVersion, decider)) {
-        updatedPenguinVersions.add(penguinVersion);
+  publ c stat c L st<Pengu nVers on> f lterPengu nVers onsW hDec ders(
+      L st<Pengu nVers on> pengu nVers ons,
+      Dec der dec der) {
+    L st<Pengu nVers on> updatedPengu nVers ons = new ArrayL st<>();
+    for (Pengu nVers on pengu nVers on : pengu nVers ons) {
+       f ( sPengu nVers onAva lable(pengu nVers on, dec der)) {
+        updatedPengu nVers ons.add(pengu nVers on);
       }
     }
-    Preconditions.checkArgument(penguinVersions.size() > 0,
-        "At least one penguin version must be specified.");
+    Precond  ons.c ckArgu nt(pengu nVers ons.s ze() > 0,
+        "At least one pengu n vers on must be spec f ed.");
 
-    return updatedPenguinVersions;
+    return updatedPengu nVers ons;
   }
 
   /**
-   * Checks penguinVersion decider for availability.
-   * @param penguinVersion
-   * @param decider
+   * C cks pengu nVers on dec der for ava lab l y.
+   * @param pengu nVers on
+   * @param dec der
    * @return
    */
-  public static boolean isPenguinVersionAvailable(PenguinVersion penguinVersion, Decider decider) {
-    return decider.isAvailable(
-        String.format("enable_penguin_version_%d", penguinVersion.getByteValue()));
+  publ c stat c boolean  sPengu nVers onAva lable(Pengu nVers on pengu nVers on, Dec der dec der) {
+    return dec der. sAva lable(
+        Str ng.format("enable_pengu n_vers on_%d", pengu nVers on.getByteValue()));
   }
 }

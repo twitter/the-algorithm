@@ -1,187 +1,187 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.tw ter.cr_m xer.s m lar y_eng ne
 
-import com.twitter.ann.common.thriftscala.AnnQueryService
-import com.twitter.ann.common.thriftscala.Distance
-import com.twitter.ann.common.thriftscala.NearestNeighborQuery
-import com.twitter.ann.hnsw.HnswCommon
-import com.twitter.ann.hnsw.HnswParams
-import com.twitter.bijection.Injection
-import com.twitter.cortex.ml.embeddings.common.TweetKind
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.MemCacheConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec
-import com.twitter.ml.api.thriftscala.{Embedding => ThriftEmbedding}
-import com.twitter.ml.featurestore.lib
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.Future
+ mport com.tw ter.ann.common.thr ftscala.AnnQueryServ ce
+ mport com.tw ter.ann.common.thr ftscala.D stance
+ mport com.tw ter.ann.common.thr ftscala.NearestNe ghborQuery
+ mport com.tw ter.ann.hnsw.HnswCommon
+ mport com.tw ter.ann.hnsw.HnswParams
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.cortex.ml.embedd ngs.common.T etK nd
+ mport com.tw ter.cr_m xer.model.S m lar yEng ne nfo
+ mport com.tw ter.cr_m xer.model.T etW hScore
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S m lar yEng ne. mCac Conf g
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S m lar yEng ne.S m lar yEng neConf g
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.ut l.StatsUt l
+ mport com.tw ter. d aserv ces.commons.codec.ArrayByteBufferCodec
+ mport com.tw ter.ml.ap .thr ftscala.{Embedd ng => Thr ftEmbedd ng}
+ mport com.tw ter.ml.featurestore.l b
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.tw ter.ut l.Future
 
-case class HnswANNEngineQuery(
-  modelId: String,
-  sourceId: InternalId,
+case class HnswANNEng neQuery(
+  model d: Str ng,
+  s ce d:  nternal d,
   params: Params,
 ) {
-  val cacheKey: String = s"${modelId}_${sourceId.toString}"
+  val cac Key: Str ng = s"${model d}_${s ce d.toStr ng}"
 }
 
 /**
- * This Engine looks for tweets whose similarity is close to a Source Dense Embedding.
- * Only support Long based embedding lookup. UserId or TweetId.
+ * T  Eng ne looks for t ets whose s m lar y  s close to a S ce Dense Embedd ng.
+ * Only support Long based embedd ng lookup. User d or T et d.
  *
- * It provides HNSW specific implementations
+ *   prov des HNSW spec f c  mple ntat ons
  *
- * @param memCacheConfigOpt   If specified, it will wrap the underlying store with a MemCache layer
- *                            You should only enable this for cacheable queries, e.x. TweetIds.
- *                            consumer based UserIds are generally not possible to cache.
+ * @param  mCac Conf gOpt    f spec f ed,   w ll wrap t  underly ng store w h a  mCac  layer
+ *                              should only enable t  for cac able quer es, e.x. T et ds.
+ *                            consu r based User ds are generally not poss ble to cac .
  */
-class HnswANNSimilarityEngine(
-  embeddingStoreLookUpMap: Map[String, ReadableStore[InternalId, ThriftEmbedding]],
-  annServiceLookUpMap: Map[String, AnnQueryService.MethodPerEndpoint],
-  globalStats: StatsReceiver,
-  override val identifier: SimilarityEngineType,
-  engineConfig: SimilarityEngineConfig,
-  memCacheConfigOpt: Option[MemCacheConfig[HnswANNEngineQuery]] = None)
-    extends SimilarityEngine[HnswANNEngineQuery, TweetWithScore] {
+class HnswANNS m lar yEng ne(
+  embedd ngStoreLookUpMap: Map[Str ng, ReadableStore[ nternal d, Thr ftEmbedd ng]],
+  annServ ceLookUpMap: Map[Str ng, AnnQueryServ ce. thodPerEndpo nt],
+  globalStats: StatsRece ver,
+  overr de val  dent f er: S m lar yEng neType,
+  eng neConf g: S m lar yEng neConf g,
+   mCac Conf gOpt: Opt on[ mCac Conf g[HnswANNEng neQuery]] = None)
+    extends S m lar yEng ne[HnswANNEng neQuery, T etW hScore] {
 
-  private val MaxNumResults: Int = 200
-  private val ef: Int = 800
-  private val TweetIdByteInjection: Injection[lib.TweetId, Array[Byte]] = TweetKind.byteInjection
+  pr vate val MaxNumResults:  nt = 200
+  pr vate val ef:  nt = 800
+  pr vate val T et dByte nject on:  nject on[l b.T et d, Array[Byte]] = T etK nd.byte nject on
 
-  private val scopedStats = globalStats.scope("similarityEngine", identifier.toString)
+  pr vate val scopedStats = globalStats.scope("s m lar yEng ne",  dent f er.toStr ng)
 
-  def getScopedStats: StatsReceiver = scopedStats
+  def getScopedStats: StatsRece ver = scopedStats
 
-  private def fetchEmbedding(
-    query: HnswANNEngineQuery,
-  ): Future[Option[ThriftEmbedding]] = {
-    val embeddingStore = embeddingStoreLookUpMap.getOrElse(
-      query.modelId,
-      throw new IllegalArgumentException(
-        s"${this.getClass.getSimpleName} ${identifier.toString}: " +
-          s"ModelId ${query.modelId} does not exist for embeddingStore"
+  pr vate def fetchEmbedd ng(
+    query: HnswANNEng neQuery,
+  ): Future[Opt on[Thr ftEmbedd ng]] = {
+    val embedd ngStore = embedd ngStoreLookUpMap.getOrElse(
+      query.model d,
+      throw new  llegalArgu ntExcept on(
+        s"${t .getClass.getS mpleNa } ${ dent f er.toStr ng}: " +
+          s"Model d ${query.model d} does not ex st for embedd ngStore"
       )
     )
 
-    embeddingStore.get(query.sourceId)
+    embedd ngStore.get(query.s ce d)
   }
 
-  private def fetchCandidates(
-    query: HnswANNEngineQuery,
-    embedding: ThriftEmbedding
-  ): Future[Seq[TweetWithScore]] = {
-    val annService = annServiceLookUpMap.getOrElse(
-      query.modelId,
-      throw new IllegalArgumentException(
-        s"${this.getClass.getSimpleName} ${identifier.toString}: " +
-          s"ModelId ${query.modelId} does not exist for annStore"
+  pr vate def fetchCand dates(
+    query: HnswANNEng neQuery,
+    embedd ng: Thr ftEmbedd ng
+  ): Future[Seq[T etW hScore]] = {
+    val annServ ce = annServ ceLookUpMap.getOrElse(
+      query.model d,
+      throw new  llegalArgu ntExcept on(
+        s"${t .getClass.getS mpleNa } ${ dent f er.toStr ng}: " +
+          s"Model d ${query.model d} does not ex st for annStore"
       )
     )
 
-    val hnswParams = HnswCommon.RuntimeParamsInjection.apply(HnswParams(ef))
+    val hnswParams = HnswCommon.Runt  Params nject on.apply(HnswParams(ef))
 
     val annQuery =
-      NearestNeighborQuery(embedding, withDistance = true, hnswParams, MaxNumResults)
+      NearestNe ghborQuery(embedd ng, w hD stance = true, hnswParams, MaxNumResults)
 
-    annService
+    annServ ce
       .query(annQuery)
       .map(
-        _.nearestNeighbors
-          .map { nearestNeighbor =>
-            val candidateId = TweetIdByteInjection
-              .invert(ArrayByteBufferCodec.decode(nearestNeighbor.id))
-              .toOption
-              .map(_.tweetId)
-            (candidateId, nearestNeighbor.distance)
+        _.nearestNe ghbors
+          .map { nearestNe ghbor =>
+            val cand date d = T et dByte nject on
+              . nvert(ArrayByteBufferCodec.decode(nearestNe ghbor. d))
+              .toOpt on
+              .map(_.t et d)
+            (cand date d, nearestNe ghbor.d stance)
           }.collect {
-            case (Some(candidateId), Some(distance)) =>
-              TweetWithScore(candidateId, toScore(distance))
+            case (So (cand date d), So (d stance)) =>
+              T etW hScore(cand date d, toScore(d stance))
           })
   }
 
-  // Convert Distance to a score such that higher scores mean more similar.
-  def toScore(distance: Distance): Double = {
-    distance match {
-      case Distance.EditDistance(editDistance) =>
-        // (-Infinite, 0.0]
-        0.0 - editDistance.distance
-      case Distance.L2Distance(l2Distance) =>
-        // (-Infinite, 0.0]
-        0.0 - l2Distance.distance
-      case Distance.CosineDistance(cosineDistance) =>
+  // Convert D stance to a score such that h g r scores  an more s m lar.
+  def toScore(d stance: D stance): Double = {
+    d stance match {
+      case D stance.Ed D stance(ed D stance) =>
+        // (- nf n e, 0.0]
+        0.0 - ed D stance.d stance
+      case D stance.L2D stance(l2D stance) =>
+        // (- nf n e, 0.0]
+        0.0 - l2D stance.d stance
+      case D stance.Cos neD stance(cos neD stance) =>
         // [0.0 - 1.0]
-        1.0 - cosineDistance.distance
-      case Distance.InnerProductDistance(innerProductDistance) =>
-        // (-Infinite, Infinite)
-        1.0 - innerProductDistance.distance
-      case Distance.UnknownUnionField(_) =>
-        throw new IllegalStateException(
-          s"${this.getClass.getSimpleName} does not recognize $distance.toString"
+        1.0 - cos neD stance.d stance
+      case D stance. nnerProductD stance( nnerProductD stance) =>
+        // (- nf n e,  nf n e)
+        1.0 -  nnerProductD stance.d stance
+      case D stance.UnknownUn onF eld(_) =>
+        throw new  llegalStateExcept on(
+          s"${t .getClass.getS mpleNa } does not recogn ze $d stance.toStr ng"
         )
     }
   }
 
-  private[similarity_engine] def getEmbeddingAndCandidates(
-    query: HnswANNEngineQuery
-  ): Future[Option[Seq[TweetWithScore]]] = {
+  pr vate[s m lar y_eng ne] def getEmbedd ngAndCand dates(
+    query: HnswANNEng neQuery
+  ): Future[Opt on[Seq[T etW hScore]]] = {
 
-    val fetchEmbeddingStat = scopedStats.scope(query.modelId).scope("fetchEmbedding")
-    val fetchCandidatesStat = scopedStats.scope(query.modelId).scope("fetchCandidates")
+    val fetchEmbedd ngStat = scopedStats.scope(query.model d).scope("fetchEmbedd ng")
+    val fetchCand datesStat = scopedStats.scope(query.model d).scope("fetchCand dates")
 
     for {
-      embeddingOpt <- StatsUtil.trackOptionStats(fetchEmbeddingStat) { fetchEmbedding(query) }
-      candidates <- StatsUtil.trackItemsStats(fetchCandidatesStat) {
+      embedd ngOpt <- StatsUt l.trackOpt onStats(fetchEmbedd ngStat) { fetchEmbedd ng(query) }
+      cand dates <- StatsUt l.track emsStats(fetchCand datesStat) {
 
-        embeddingOpt match {
-          case Some(embedding) => fetchCandidates(query, embedding)
-          case None => Future.Nil
+        embedd ngOpt match {
+          case So (embedd ng) => fetchCand dates(query, embedd ng)
+          case None => Future.N l
         }
       }
-    } yield {
-      Some(candidates)
+    } y eld {
+      So (cand dates)
     }
   }
 
-  // Add memcache wrapper, if specified
-  private val store = {
-    val uncachedStore = ReadableStore.fromFnFuture(getEmbeddingAndCandidates)
+  // Add  mcac  wrapper,  f spec f ed
+  pr vate val store = {
+    val uncac dStore = ReadableStore.fromFnFuture(getEmbedd ngAndCand dates)
 
-    memCacheConfigOpt match {
-      case Some(config) =>
-        SimilarityEngine.addMemCache(
-          underlyingStore = uncachedStore,
-          memCacheConfig = config,
-          statsReceiver = scopedStats
+     mCac Conf gOpt match {
+      case So (conf g) =>
+        S m lar yEng ne.add mCac (
+          underly ngStore = uncac dStore,
+           mCac Conf g = conf g,
+          statsRece ver = scopedStats
         )
-      case _ => uncachedStore
+      case _ => uncac dStore
     }
   }
 
-  def toSimilarityEngineInfo(
-    query: HnswANNEngineQuery,
+  def toS m lar yEng ne nfo(
+    query: HnswANNEng neQuery,
     score: Double
-  ): SimilarityEngineInfo = {
-    SimilarityEngineInfo(
-      similarityEngineType = this.identifier,
-      modelId = Some(query.modelId),
-      score = Some(score))
+  ): S m lar yEng ne nfo = {
+    S m lar yEng ne nfo(
+      s m lar yEng neType = t . dent f er,
+      model d = So (query.model d),
+      score = So (score))
   }
 
-  override def getCandidates(
-    engineQuery: HnswANNEngineQuery
-  ): Future[Option[Seq[TweetWithScore]]] = {
-    val versionedStats = globalStats.scope(engineQuery.modelId)
-    SimilarityEngine.getFromFn(
+  overr de def getCand dates(
+    eng neQuery: HnswANNEng neQuery
+  ): Future[Opt on[Seq[T etW hScore]]] = {
+    val vers onedStats = globalStats.scope(eng neQuery.model d)
+    S m lar yEng ne.getFromFn(
       store.get,
-      engineQuery,
-      engineConfig,
-      engineQuery.params,
-      versionedStats
+      eng neQuery,
+      eng neConf g,
+      eng neQuery.params,
+      vers onedStats
     )
   }
 }

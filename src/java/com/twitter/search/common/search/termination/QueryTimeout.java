@@ -1,24 +1,24 @@
-package com.twitter.search.common.search.termination;
+package com.tw ter.search.common.search.term nat on;
 
-import com.twitter.search.common.search.DocIdTracker;
+ mport com.tw ter.search.common.search.Doc dTracker;
 
 /**
- * QueryTimeout provides a method for early termination of queries.
+ * QueryT  out prov des a  thod for early term nat on of quer es.
  */
-public interface QueryTimeout {
+publ c  nterface QueryT  out {
   /**
-   * Returns true if query processing should terminate, otherwise false.
+   * Returns true  f query process ng should term nate, ot rw se false.
    */
-  boolean shouldExit();
+  boolean shouldEx ();
 
   /**
-   * Register a DocIdTracker for the scope of the query, to determine the last fully-searched
-   * doc ID after early termination.
+   * Reg ster a Doc dTracker for t  scope of t  query, to determ ne t  last fully-searc d
+   * doc  D after early term nat on.
    */
-  void registerDocIdTracker(DocIdTracker docIdTracker);
+  vo d reg sterDoc dTracker(Doc dTracker doc dTracker);
 
   /**
-   * Return client ID of query.
+   * Return cl ent  D of query.
    */
-  String getClientId();
+  Str ng getCl ent d();
 }

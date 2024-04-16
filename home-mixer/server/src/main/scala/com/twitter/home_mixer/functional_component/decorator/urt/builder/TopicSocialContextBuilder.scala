@@ -1,37 +1,37 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.tw ter.ho _m xer.funct onal_component.decorator.urt.bu lder
 
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.TopicContextFunctionalityTypeFeature
-import com.twitter.home_mixer.model.HomeFeatures.TopicIdSocialContextFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TopicContext
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.model.Ho Features. nNetworkFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Top cContextFunct onal yTypeFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Top c dSoc alContextFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.soc al_context.BaseSoc alContextBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Soc alContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Top cContext
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-case class TopicSocialContextBuilder @Inject() ()
-    extends BaseSocialContextBuilder[PipelineQuery, TweetCandidate] {
+@S ngleton
+case class Top cSoc alContextBu lder @ nject() ()
+    extends BaseSoc alContextBu lder[P pel neQuery, T etCand date] {
 
   def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[SocialContext] = {
-    val inNetwork = candidateFeatures.getOrElse(InNetworkFeature, true)
-    if (!inNetwork) {
-      val topicIdSocialContextOpt = candidateFeatures.getOrElse(TopicIdSocialContextFeature, None)
-      val topicContextFunctionalityTypeOpt =
-        candidateFeatures.getOrElse(TopicContextFunctionalityTypeFeature, None)
-      (topicIdSocialContextOpt, topicContextFunctionalityTypeOpt) match {
-        case (Some(topicId), Some(topicContextFunctionalityType)) =>
-          Some(
-            TopicContext(
-              topicId = topicId.toString,
-              functionalityType = Some(topicContextFunctionalityType)
+    query: P pel neQuery,
+    cand date: T etCand date,
+    cand dateFeatures: FeatureMap
+  ): Opt on[Soc alContext] = {
+    val  nNetwork = cand dateFeatures.getOrElse( nNetworkFeature, true)
+     f (! nNetwork) {
+      val top c dSoc alContextOpt = cand dateFeatures.getOrElse(Top c dSoc alContextFeature, None)
+      val top cContextFunct onal yTypeOpt =
+        cand dateFeatures.getOrElse(Top cContextFunct onal yTypeFeature, None)
+      (top c dSoc alContextOpt, top cContextFunct onal yTypeOpt) match {
+        case (So (top c d), So (top cContextFunct onal yType)) =>
+          So (
+            Top cContext(
+              top c d = top c d.toStr ng,
+              funct onal yType = So (top cContextFunct onal yType)
             ))
         case _ => None
       }

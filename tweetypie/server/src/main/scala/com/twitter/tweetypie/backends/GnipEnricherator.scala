@@ -1,42 +1,42 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package backends
 
-import com.twitter.conversions.PercentOps._
-import com.twitter.conversions.DurationOps._
-import com.twitter.dataproducts.enrichments.thriftscala._
-import com.twitter.dataproducts.enrichments.thriftscala.Enricherator
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.servo.util.FutureArrow
+ mport com.tw ter.convers ons.PercentOps._
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.dataproducts.enr ch nts.thr ftscala._
+ mport com.tw ter.dataproducts.enr ch nts.thr ftscala.Enr c rator
+ mport com.tw ter.f nagle.thr ftmux. thodBu lder
+ mport com.tw ter.servo.ut l.FutureArrow
 
-object GnipEnricherator {
+object Gn pEnr c rator {
 
-  type HydrateProfileGeo = FutureArrow[ProfileGeoRequest, Seq[ProfileGeoResponse]]
+  type HydrateProf leGeo = FutureArrow[Prof leGeoRequest, Seq[Prof leGeoResponse]]
 
-  private def methodPerEndpoint(methodBuilder: MethodBuilder) =
-    Enricherator.MethodPerEndpoint(
-      methodBuilder
-        .servicePerEndpoint[Enricherator.ServicePerEndpoint]
-        .withHydrateProfileGeo(
-          methodBuilder
-            .withTimeoutTotal(300.milliseconds)
-            .withTimeoutPerRequest(100.milliseconds)
-            .idempotent(maxExtraLoad = 1.percent)
-            .servicePerEndpoint[Enricherator.ServicePerEndpoint](methodName = "hydrateProfileGeo")
-            .hydrateProfileGeo
+  pr vate def  thodPerEndpo nt( thodBu lder:  thodBu lder) =
+    Enr c rator. thodPerEndpo nt(
+       thodBu lder
+        .serv cePerEndpo nt[Enr c rator.Serv cePerEndpo nt]
+        .w hHydrateProf leGeo(
+           thodBu lder
+            .w hT  outTotal(300.m ll seconds)
+            .w hT  outPerRequest(100.m ll seconds)
+            . dempotent(maxExtraLoad = 1.percent)
+            .serv cePerEndpo nt[Enr c rator.Serv cePerEndpo nt]( thodNa  = "hydrateProf leGeo")
+            .hydrateProf leGeo
         )
     )
 
-  def fromMethod(methodBuilder: MethodBuilder): GnipEnricherator = {
-    val mpe = methodPerEndpoint(methodBuilder)
+  def from thod( thodBu lder:  thodBu lder): Gn pEnr c rator = {
+    val mpe =  thodPerEndpo nt( thodBu lder)
 
-    new GnipEnricherator {
-      override val hydrateProfileGeo: HydrateProfileGeo =
-        FutureArrow(mpe.hydrateProfileGeo)
+    new Gn pEnr c rator {
+      overr de val hydrateProf leGeo: HydrateProf leGeo =
+        FutureArrow(mpe.hydrateProf leGeo)
     }
   }
 }
 
-trait GnipEnricherator {
-  import GnipEnricherator._
-  val hydrateProfileGeo: HydrateProfileGeo
+tra  Gn pEnr c rator {
+   mport Gn pEnr c rator._
+  val hydrateProf leGeo: HydrateProf leGeo
 }

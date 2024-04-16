@@ -1,78 +1,78 @@
-package com.twitter.visibility.interfaces.dms
+package com.tw ter.v s b l y. nterfaces.dms
 
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.dms.DmConversationFeatures
-import com.twitter.visibility.builder.dms.DmEventFeatures
-import com.twitter.visibility.builder.dms.InvalidDmEventFeatureException
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.common.dm_sources.DmConversationSource
-import com.twitter.visibility.common.dm_sources.DmEventSource
-import com.twitter.visibility.common.stitch.StitchHelpers
-import com.twitter.visibility.models.ContentId.DmEventId
-import com.twitter.visibility.rules.Drop
-import com.twitter.visibility.rules.Reason
-import com.twitter.visibility.rules.RuleBase
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.v s b l y.V s b l yL brary
+ mport com.tw ter.v s b l y.bu lder.V s b l yResult
+ mport com.tw ter.v s b l y.bu lder.dms.DmConversat onFeatures
+ mport com.tw ter.v s b l y.bu lder.dms.DmEventFeatures
+ mport com.tw ter.v s b l y.bu lder.dms. nval dDmEventFeatureExcept on
+ mport com.tw ter.v s b l y.bu lder.users.AuthorFeatures
+ mport com.tw ter.v s b l y.common.UserS ce
+ mport com.tw ter.v s b l y.common.dm_s ces.DmConversat onS ce
+ mport com.tw ter.v s b l y.common.dm_s ces.DmEventS ce
+ mport com.tw ter.v s b l y.common.st ch.St ch lpers
+ mport com.tw ter.v s b l y.models.Content d.DmEvent d
+ mport com.tw ter.v s b l y.rules.Drop
+ mport com.tw ter.v s b l y.rules.Reason
+ mport com.tw ter.v s b l y.rules.RuleBase
 
-object DmEventVisibilityLibrary {
-  type Type = DmEventVisibilityRequest => Stitch[VisibilityResult]
+object DmEventV s b l yL brary {
+  type Type = DmEventV s b l yRequest => St ch[V s b l yResult]
 
   def apply(
-    visibilityLibrary: VisibilityLibrary,
-    stratoClient: StratoClient,
-    userSource: UserSource
+    v s b l yL brary: V s b l yL brary,
+    stratoCl ent: StratoCl ent,
+    userS ce: UserS ce
   ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val stratoClientStatsReceiver = visibilityLibrary.statsReceiver.scope("strato")
-    val vfLatencyStatsReceiver = visibilityLibrary.statsReceiver.scope("vf_latency")
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
-    val dmConversationSource = {
-      DmConversationSource.fromStrato(stratoClient, stratoClientStatsReceiver)
+    val l braryStatsRece ver = v s b l yL brary.statsRece ver
+    val stratoCl entStatsRece ver = v s b l yL brary.statsRece ver.scope("strato")
+    val vfLatencyStatsRece ver = v s b l yL brary.statsRece ver.scope("vf_latency")
+    val vfEng neCounter = l braryStatsRece ver.counter("vf_eng ne_requests")
+    val dmConversat onS ce = {
+      DmConversat onS ce.fromStrato(stratoCl ent, stratoCl entStatsRece ver)
     }
-    val dmEventSource = {
-      DmEventSource.fromStrato(stratoClient, stratoClientStatsReceiver)
+    val dmEventS ce = {
+      DmEventS ce.fromStrato(stratoCl ent, stratoCl entStatsRece ver)
     }
-    val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
-    val dmConversationFeatures = new DmConversationFeatures(dmConversationSource, authorFeatures)
+    val authorFeatures = new AuthorFeatures(userS ce, l braryStatsRece ver)
+    val dmConversat onFeatures = new DmConversat onFeatures(dmConversat onS ce, authorFeatures)
     val dmEventFeatures =
       new DmEventFeatures(
-        dmEventSource,
-        dmConversationSource,
+        dmEventS ce,
+        dmConversat onS ce,
         authorFeatures,
-        dmConversationFeatures,
-        libraryStatsReceiver)
+        dmConversat onFeatures,
+        l braryStatsRece ver)
 
-    { req: DmEventVisibilityRequest =>
-      val dmEventId = req.dmEventId
-      val contentId = DmEventId(dmEventId)
+    { req: DmEventV s b l yRequest =>
+      val dmEvent d = req.dmEvent d
+      val content d = DmEvent d(dmEvent d)
       val safetyLevel = req.safetyLevel
 
-      if (!RuleBase.hasDmEventRules(safetyLevel)) {
-        Stitch.value(VisibilityResult(contentId = contentId, verdict = Drop(Reason.Unspecified)))
+       f (!RuleBase.hasDmEventRules(safetyLevel)) {
+        St ch.value(V s b l yResult(content d = content d, verd ct = Drop(Reason.Unspec f ed)))
       } else {
-        vfEngineCounter.incr()
+        vfEng neCounter. ncr()
 
-        val viewerContext = req.viewerContext
-        val viewerIdOpt = viewerContext.userId
+        val v e rContext = req.v e rContext
+        val v e r dOpt = v e rContext.user d
 
-        viewerIdOpt match {
-          case Some(viewerId) =>
-            val featureMap = visibilityLibrary.featureMapBuilder(
-              Seq(dmEventFeatures.forDmEventId(dmEventId, viewerId)))
+        v e r dOpt match {
+          case So (v e r d) =>
+            val featureMap = v s b l yL brary.featureMapBu lder(
+              Seq(dmEventFeatures.forDmEvent d(dmEvent d, v e r d)))
 
-            val resp = visibilityLibrary
-              .runRuleEngine(
-                contentId,
+            val resp = v s b l yL brary
+              .runRuleEng ne(
+                content d,
                 featureMap,
-                viewerContext,
+                v e rContext,
                 safetyLevel
               )
-            StitchHelpers.profileStitch(resp, Seq(vfLatencyStatsReceiver))
+            St ch lpers.prof leSt ch(resp, Seq(vfLatencyStatsRece ver))
 
-          case None => Stitch.exception(InvalidDmEventFeatureException("Viewer id is missing"))
+          case None => St ch.except on( nval dDmEventFeatureExcept on("V e r  d  s m ss ng"))
         }
       }
     }

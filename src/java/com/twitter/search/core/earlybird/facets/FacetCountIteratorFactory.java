@@ -1,23 +1,23 @@
-package com.twitter.search.core.earlybird.facets;
+package com.tw ter.search.core.earlyb rd.facets;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
 
 /**
- * A factory for {@link FacetCountIterator}s.
+ * A factory for {@l nk FacetCount erator}s.
  */
-public abstract class FacetCountIteratorFactory {
+publ c abstract class FacetCount eratorFactory {
   /**
-   * For a field that is being faceted on and for which we should use a CSF for facet counting,
-   * return the iterator we should use for counting.
+   * For a f eld that  s be ng faceted on and for wh ch   should use a CSF for facet count ng,
+   * return t   erator   should use for count ng.
    *
-   * @param reader The reader to use when getting CSF values
-   * @param fieldInfo The Schema.FieldInfo corresponding to the facet we're counting
-   * @return An iterator for this field
+   * @param reader T  reader to use w n gett ng CSF values
+   * @param f eld nfo T  Sc ma.F eld nfo correspond ng to t  facet  're count ng
+   * @return An  erator for t  f eld
    */
-  public abstract FacetCountIterator getFacetCountIterator(
-      EarlybirdIndexSegmentAtomicReader reader,
-      Schema.FieldInfo fieldInfo) throws IOException;
+  publ c abstract FacetCount erator getFacetCount erator(
+      Earlyb rd ndexSeg ntAtom cReader reader,
+      Sc ma.F eld nfo f eld nfo) throws  OExcept on;
 }

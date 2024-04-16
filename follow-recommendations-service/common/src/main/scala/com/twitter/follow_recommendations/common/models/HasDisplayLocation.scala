@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-trait HasDisplayLocation {
-  def displayLocation: DisplayLocation
+tra  HasD splayLocat on {
+  def d splayLocat on: D splayLocat on
 }

@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.models
+package com.tw ter.follow_recom ndat ons.models
 
-object CandidateSourceType extends Enumeration {
-  type CandidateSourceType = Value
-  val Social = Value("social")
-  val GeoAndInterests = Value("geo_and_interests")
-  val ActivityContextual = Value("activity_contextual")
+object Cand dateS ceType extends Enu rat on {
+  type Cand dateS ceType = Value
+  val Soc al = Value("soc al")
+  val GeoAnd nterests = Value("geo_and_ nterests")
+  val Act v yContextual = Value("act v y_contextual")
   val None = Value("none")
 }

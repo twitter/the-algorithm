@@ -1,97 +1,97 @@
-package com.twitter.product_mixer.component_library.scorer.cortex
+package com.tw ter.product_m xer.component_l brary.scorer.cortex
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.component_library.scorer.common.MLModelInferenceClient
-import com.twitter.product_mixer.component_library.scorer.tensorbuilder.ModelInferRequestBuilder
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.stitch.Stitch
-import com.twitter.util.logging.Logging
-import inference.GrpcService.ModelInferRequest
-import inference.GrpcService.ModelInferResponse.InferOutputTensor
-import scala.collection.convert.ImplicitConversions.`collection AsScalaIterable`
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.component_l brary.scorer.common.MLModel nferenceCl ent
+ mport com.tw ter.product_m xer.component_l brary.scorer.tensorbu lder.Model nferRequestBu lder
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.scorer.Scorer
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Scorer dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure. llegalStateFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport  nference.GrpcServ ce.Model nferRequest
+ mport  nference.GrpcServ ce.Model nferResponse. nferOutputTensor
+ mport scala.collect on.convert. mpl c Convers ons.`collect on AsScala erable`
 
-private[scorer] class CortexManagedInferenceServiceTensorScorer[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any]
+pr vate[scorer] class CortexManaged nferenceServ ceTensorScorer[
+  Query <: P pel neQuery,
+  Cand date <: Un versalNoun[Any]
 ](
-  override val identifier: ScorerIdentifier,
-  modelInferRequestBuilder: ModelInferRequestBuilder[
+  overr de val  dent f er: Scorer dent f er,
+  model nferRequestBu lder: Model nferRequestBu lder[
     Query,
-    Candidate
+    Cand date
   ],
-  resultFeatureExtractors: Seq[FeatureWithExtractor[Query, Candidate, _]],
-  client: MLModelInferenceClient,
-  statsReceiver: StatsReceiver)
-    extends Scorer[Query, Candidate]
-    with Logging {
+  resultFeatureExtractors: Seq[FeatureW hExtractor[Query, Cand date, _]],
+  cl ent: MLModel nferenceCl ent,
+  statsRece ver: StatsRece ver)
+    extends Scorer[Query, Cand date]
+    w h Logg ng {
 
-  require(resultFeatureExtractors.nonEmpty, "Result Extractors cannot be empty")
+  requ re(resultFeatureExtractors.nonEmpty, "Result Extractors cannot be empty")
 
-  private val managedServiceRequestFailures = statsReceiver.counter("managedServiceRequestFailures")
-  override val features: Set[Feature[_, _]] =
-    resultFeatureExtractors.map(_.feature).toSet.asInstanceOf[Set[Feature[_, _]]]
+  pr vate val managedServ ceRequestFa lures = statsRece ver.counter("managedServ ceRequestFa lures")
+  overr de val features: Set[Feature[_, _]] =
+    resultFeatureExtractors.map(_.feature).toSet.as nstanceOf[Set[Feature[_, _]]]
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val batchInferRequest: ModelInferRequest = modelInferRequestBuilder(query, candidates)
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): St ch[Seq[FeatureMap]] = {
+    val batch nferRequest: Model nferRequest = model nferRequestBu lder(query, cand dates)
 
-    val managedServiceResponse: Stitch[Seq[InferOutputTensor]] =
-      client.score(batchInferRequest).map(_.getOutputsList.toSeq).onFailure { e =>
-        error(s"request to ML Managed Service Failed: $e")
-        managedServiceRequestFailures.incr()
+    val managedServ ceResponse: St ch[Seq[ nferOutputTensor]] =
+      cl ent.score(batch nferRequest).map(_.getOutputsL st.toSeq).onFa lure { e =>
+        error(s"request to ML Managed Serv ce Fa led: $e")
+        managedServ ceRequestFa lures. ncr()
       }
 
-    managedServiceResponse.map { responses =>
-      extractResponse(query, candidates.map(_.candidate), responses)
+    managedServ ceResponse.map { responses =>
+      extractResponse(query, cand dates.map(_.cand date), responses)
     }
   }
 
   def extractResponse(
     query: Query,
-    candidates: Seq[Candidate],
-    tensorOutput: Seq[InferOutputTensor]
+    cand dates: Seq[Cand date],
+    tensorOutput: Seq[ nferOutputTensor]
   ): Seq[FeatureMap] = {
-    val featureMapBuilders = candidates.map { _ => FeatureMapBuilder.apply() }
-    // Extract the feature for each candidate from the tensor outputs
+    val featureMapBu lders = cand dates.map { _ => FeatureMapBu lder.apply() }
+    // Extract t  feature for each cand date from t  tensor outputs
     resultFeatureExtractors.foreach {
-      case FeatureWithExtractor(feature, extractor) =>
+      case FeatureW hExtractor(feature, extractor) =>
         val extractedValues = extractor.apply(query, tensorOutput)
-        if (candidates.size != extractedValues.size) {
-          throw PipelineFailure(
-            IllegalStateFailure,
-            s"Managed Service returned a different number of $feature than the number of candidates." +
-              s"Returned ${extractedValues.size} scores but there were ${candidates.size} candidates."
+         f (cand dates.s ze != extractedValues.s ze) {
+          throw P pel neFa lure(
+             llegalStateFa lure,
+            s"Managed Serv ce returned a d fferent number of $feature than t  number of cand dates." +
+              s"Returned ${extractedValues.s ze} scores but t re  re ${cand dates.s ze} cand dates."
           )
         }
-        // Go through the extracted features list one by one and update the feature map result for each candidate.
-        featureMapBuilders.zip(extractedValues).foreach {
-          case (builder, value) =>
-            builder.add(feature, Some(value))
+        // Go through t  extracted features l st one by one and update t  feature map result for each cand date.
+        featureMapBu lders.z p(extractedValues).foreach {
+          case (bu lder, value) =>
+            bu lder.add(feature, So (value))
         }
     }
 
-    featureMapBuilders.map(_.build())
+    featureMapBu lders.map(_.bu ld())
   }
 }
 
-case class FeatureWithExtractor[
-  -Query <: PipelineQuery,
-  -Candidate <: UniversalNoun[Any],
+case class FeatureW hExtractor[
+  -Query <: P pel neQuery,
+  -Cand date <: Un versalNoun[Any],
   ResultType
 ](
-  feature: Feature[Candidate, Option[ResultType]],
+  feature: Feature[Cand date, Opt on[ResultType]],
   featureExtractor: ModelFeatureExtractor[Query, ResultType])
 
-class UnexpectedFeatureTypeException(feature: Feature[_, _])
-    extends UnsupportedOperationException(s"Unsupported Feature type passed in $feature")
+class UnexpectedFeatureTypeExcept on(feature: Feature[_, _])
+    extends UnsupportedOperat onExcept on(s"Unsupported Feature type passed  n $feature")

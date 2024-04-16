@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.core.functional_component.side_effect
+package com.tw ter.product_m xer.core.funct onal_component.s de_effect
 
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.core.model.common.Component
+ mport com.tw ter.product_m xer.core.model.common. dent f er.S deEffect dent f er
+ mport com.tw ter.st ch.St ch
 
 /**
- * A side-effect is a ancillary action that doesn't affect the result of execution directly.
+ * A s de-effect  s a anc llary act on that doesn't affect t  result of execut on d rectly.
  *
- * For example: Logging, history stores
+ * For example: Logg ng,  tory stores
  *
- * Implementing components can express failures by throwing an exception. These exceptions
- * will be caught and not affect the request processing.
+ *  mple nt ng components can express fa lures by throw ng an except on. T se except ons
+ * w ll be caught and not affect t  request process ng.
  *
- * @note Side effects execute asynchronously in a fire-and-forget way, it's important to add alerts
- *       to the [[SideEffect]] component itself since a failures wont show up in metrics
- *       that just monitor your pipeline as a whole.
+ * @note S de effects execute asynchronously  n a f re-and-forget way,  's  mportant to add alerts
+ *       to t  [[S deEffect]] component  self s nce a fa lures wont show up  n  tr cs
+ *       that just mon or y  p pel ne as a whole.
  *
- * @see [[ExecuteSynchronously]] for modifying a [[SideEffect]] to execute with synchronously with
- *      the request waiting on the side effect to complete, this will impact the overall request's latency
+ * @see [[ExecuteSynchronously]] for mod fy ng a [[S deEffect]] to execute w h synchronously w h
+ *      t  request wa  ng on t  s de effect to complete, t  w ll  mpact t  overall request's latency
  **/
-trait SideEffect[-Inputs] extends Component {
+tra  S deEffect[- nputs] extends Component {
 
-  /** @see [[SideEffectIdentifier]] */
-  override val identifier: SideEffectIdentifier
+  /** @see [[S deEffect dent f er]] */
+  overr de val  dent f er: S deEffect dent f er
 
-  def apply(inputs: Inputs): Stitch[Unit]
+  def apply( nputs:  nputs): St ch[Un ]
 }

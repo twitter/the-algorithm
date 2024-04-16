@@ -1,31 +1,31 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
-import com.twitter.tseng.withholding.thriftscala.TakedownReason
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.tseng.w hhold ng.thr ftscala.TakedownReason
+ mport com.tw ter.t etyp e.thr ftscala._
 
-object QuotedTweetTakedown extends TweetStore.SyncModule {
+object QuotedT etTakedown extends T etStore.SyncModule {
 
   case class Event(
-    quotingTweetId: TweetId,
-    quotingUserId: UserId,
-    quotedTweetId: TweetId,
-    quotedUserId: UserId,
-    takedownCountryCodes: Seq[String],
+    quot ngT et d: T et d,
+    quot ngUser d: User d,
+    quotedT et d: T et d,
+    quotedUser d: User d,
+    takedownCountryCodes: Seq[Str ng],
     takedownReasons: Seq[TakedownReason],
-    timestamp: Time,
-    optUser: Option[User] = None)
-      extends SyncTweetStoreEvent("quoted_tweet_takedown")
-      with TweetStoreTweetEvent {
+    t  stamp: T  ,
+    optUser: Opt on[User] = None)
+      extends SyncT etStoreEvent("quoted_t et_takedown")
+      w h T etStoreT etEvent {
 
-    override def toTweetEventData: Seq[TweetEventData] =
+    overr de def toT etEventData: Seq[T etEventData] =
       Seq(
-        TweetEventData.QuotedTweetTakedownEvent(
-          QuotedTweetTakedownEvent(
-            quotingTweetId = quotingTweetId,
-            quotingUserId = quotingUserId,
-            quotedTweetId = quotedTweetId,
-            quotedUserId = quotedUserId,
+        T etEventData.QuotedT etTakedownEvent(
+          QuotedT etTakedownEvent(
+            quot ngT et d = quot ngT et d,
+            quot ngUser d = quot ngUser d,
+            quotedT et d = quotedT et d,
+            quotedUser d = quotedUser d,
             takedownCountryCodes = takedownCountryCodes,
             takedownReasons = takedownReasons
           )
@@ -33,19 +33,19 @@ object QuotedTweetTakedown extends TweetStore.SyncModule {
       )
   }
 
-  trait Store {
-    val quotedTweetTakedown: FutureEffect[Event]
+  tra  Store {
+    val quotedT etTakedown: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val quotedTweetTakedown: FutureEffect[Event] = wrap(underlying.quotedTweetTakedown)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val quotedT etTakedown: FutureEffect[Event] = wrap(underly ng.quotedT etTakedown)
   }
 
   object Store {
-    def apply(eventBusEnqueueStore: TweetEventBusStore): Store =
+    def apply(eventBusEnqueueStore: T etEventBusStore): Store =
       new Store {
-        override val quotedTweetTakedown: FutureEffect[Event] =
-          eventBusEnqueueStore.quotedTweetTakedown
+        overr de val quotedT etTakedown: FutureEffect[Event] =
+          eventBusEnqueueStore.quotedT etTakedown
       }
   }
 }

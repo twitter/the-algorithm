@@ -1,15 +1,15 @@
-package com.twitter.interaction_graph.scio.agg_address_book
+package com.tw ter. nteract on_graph.sc o.agg_address_book
 
-import com.spotify.scio.values.SCollection
-import com.twitter.addressbook.matches.thriftscala.UserMatchesRecord
-import com.twitter.interaction_graph.scio.common.FeatureGeneratorUtil
-import com.twitter.interaction_graph.scio.common.InteractionGraphRawInput
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.Vertex
+ mport com.spot fy.sc o.values.SCollect on
+ mport com.tw ter.addressbook.matc s.thr ftscala.UserMatc sRecord
+ mport com.tw ter. nteract on_graph.sc o.common.FeatureGeneratorUt l
+ mport com.tw ter. nteract on_graph.sc o.common. nteract onGraphRaw nput
+ mport com.tw ter. nteract on_graph.thr ftscala.Edge
+ mport com.tw ter. nteract on_graph.thr ftscala.FeatureNa 
+ mport com.tw ter. nteract on_graph.thr ftscala.Vertex
 
-object InteractionGraphAddressBookUtil {
-  val EMAIL = "email"
+object  nteract onGraphAddressBookUt l {
+  val EMA L = "ema l"
   val PHONE = "phone"
   val BOTH = "both"
 
@@ -17,77 +17,77 @@ object InteractionGraphAddressBookUtil {
   val DegaultFeatureValue = 1.0
 
   def process(
-    addressBook: SCollection[UserMatchesRecord]
+    addressBook: SCollect on[UserMatc sRecord]
   )(
-    implicit addressBookCounters: InteractionGraphAddressBookCountersTrait
-  ): (SCollection[Vertex], SCollection[Edge]) = {
-    // First construct a data with (src, dst, name), where name can be "email", "phone", or "both"
-    val addressBookTypes: SCollection[((Long, Long), String)] = addressBook.flatMap { record =>
-      record.forwardMatches.toSeq.flatMap { matchDetails =>
-        val matchedUsers = (record.userId, matchDetails.userId)
-        (matchDetails.matchedByEmail, matchDetails.matchedByPhone) match {
+     mpl c  addressBookCounters:  nteract onGraphAddressBookCountersTra 
+  ): (SCollect on[Vertex], SCollect on[Edge]) = {
+    // F rst construct a data w h (src, dst, na ), w re na  can be "ema l", "phone", or "both"
+    val addressBookTypes: SCollect on[((Long, Long), Str ng)] = addressBook.flatMap { record =>
+      record.forwardMatc s.toSeq.flatMap { matchDeta ls =>
+        val matc dUsers = (record.user d, matchDeta ls.user d)
+        (matchDeta ls.matc dByEma l, matchDeta ls.matc dByPhone) match {
           case (true, true) =>
-            Seq((matchedUsers, EMAIL), (matchedUsers, PHONE), (matchedUsers, BOTH))
-          case (true, false) => Seq((matchedUsers, EMAIL))
-          case (false, true) => Seq((matchedUsers, PHONE))
+            Seq((matc dUsers, EMA L), (matc dUsers, PHONE), (matc dUsers, BOTH))
+          case (true, false) => Seq((matc dUsers, EMA L))
+          case (false, true) => Seq((matc dUsers, PHONE))
           case _ => Seq.empty
         }
       }
     }
 
-    // Then construct the input data for feature calculation
-    val addressBookFeatureInput: SCollection[InteractionGraphRawInput] = addressBookTypes
+    // T n construct t   nput data for feature calculat on
+    val addressBookFeature nput: SCollect on[ nteract onGraphRaw nput] = addressBookTypes
       .map {
-        case ((src, dst), name) =>
-          if (src < dst)
-            ((src, dst, name), false)
+        case ((src, dst), na ) =>
+           f (src < dst)
+            ((src, dst, na ), false)
           else
-            ((dst, src, name), true)
+            ((dst, src, na ), true)
       }.groupByKey
       .flatMap {
-        case ((src, dst, name), iterator) =>
-          val isReversedValues = iterator.toSeq
-          // check if (src, dst) is mutual follow
-          val isMutualFollow = isReversedValues.size == 2
-          // get correct srcId and dstId if there is no mutual follow and they are reversed
-          val (srcId, dstId) = {
-            if (!isMutualFollow && isReversedValues.head)
+        case ((src, dst, na ),  erator) =>
+          val  sReversedValues =  erator.toSeq
+          // c ck  f (src, dst)  s mutual follow
+          val  sMutualFollow =  sReversedValues.s ze == 2
+          // get correct src d and dst d  f t re  s no mutual follow and t y are reversed
+          val (src d, dst d) = {
+             f (! sMutualFollow &&  sReversedValues. ad)
               (dst, src)
             else
               (src, dst)
           }
-          // get the feature name and mutual follow name
-          val (featureName, mfFeatureName) = name match {
-            case EMAIL =>
-              addressBookCounters.emailFeatureInc()
-              (FeatureName.AddressBookEmail, FeatureName.AddressBookMutualEdgeEmail)
+          // get t  feature na  and mutual follow na 
+          val (featureNa , mfFeatureNa ) = na  match {
+            case EMA L =>
+              addressBookCounters.ema lFeature nc()
+              (FeatureNa .AddressBookEma l, FeatureNa .AddressBookMutualEdgeEma l)
             case PHONE =>
-              addressBookCounters.phoneFeatureInc()
-              (FeatureName.AddressBookPhone, FeatureName.AddressBookMutualEdgePhone)
+              addressBookCounters.phoneFeature nc()
+              (FeatureNa .AddressBookPhone, FeatureNa .AddressBookMutualEdgePhone)
             case BOTH =>
-              addressBookCounters.bothFeatureInc()
-              (FeatureName.AddressBookInBoth, FeatureName.AddressBookMutualEdgeInBoth)
+              addressBookCounters.bothFeature nc()
+              (FeatureNa .AddressBook nBoth, FeatureNa .AddressBookMutualEdge nBoth)
           }
-          // construct the TypedPipe for feature calculation
-          if (isMutualFollow) {
-            Iterator(
-              InteractionGraphRawInput(srcId, dstId, featureName, DefaultAge, DegaultFeatureValue),
-              InteractionGraphRawInput(dstId, srcId, featureName, DefaultAge, DegaultFeatureValue),
-              InteractionGraphRawInput(
-                srcId,
-                dstId,
-                mfFeatureName,
+          // construct t  TypedP pe for feature calculat on
+           f ( sMutualFollow) {
+             erator(
+               nteract onGraphRaw nput(src d, dst d, featureNa , DefaultAge, DegaultFeatureValue),
+               nteract onGraphRaw nput(dst d, src d, featureNa , DefaultAge, DegaultFeatureValue),
+               nteract onGraphRaw nput(
+                src d,
+                dst d,
+                mfFeatureNa ,
                 DefaultAge,
                 DegaultFeatureValue),
-              InteractionGraphRawInput(dstId, srcId, mfFeatureName, DefaultAge, DegaultFeatureValue)
+               nteract onGraphRaw nput(dst d, src d, mfFeatureNa , DefaultAge, DegaultFeatureValue)
             )
           } else {
-            Iterator(
-              InteractionGraphRawInput(srcId, dstId, featureName, DefaultAge, DegaultFeatureValue))
+             erator(
+               nteract onGraphRaw nput(src d, dst d, featureNa , DefaultAge, DegaultFeatureValue))
           }
       }
 
-    // Calculate the Features
-    FeatureGeneratorUtil.getFeatures(addressBookFeatureInput)
+    // Calculate t  Features
+    FeatureGeneratorUt l.getFeatures(addressBookFeature nput)
   }
 }

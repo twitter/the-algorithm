@@ -1,92 +1,92 @@
-package com.twitter.frigate.pushservice.util
+package com.tw ter.fr gate.pushserv ce.ut l
 
-import com.twitter.frigate.common.store.deviceinfo.DeviceInfo
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams.EnableRuxLandingPage
-import com.twitter.frigate.pushservice.params.PushParams.EnableRuxLandingPageAndroidParam
-import com.twitter.frigate.pushservice.params.PushParams.EnableRuxLandingPageIOSParam
-import com.twitter.frigate.pushservice.params.PushParams.RuxLandingPageExperimentKeyAndroidParam
-import com.twitter.frigate.pushservice.params.PushParams.RuxLandingPageExperimentKeyIOSParam
-import com.twitter.frigate.pushservice.params.PushParams.ShowRuxLandingPageAsModalOnIOS
-import com.twitter.rux.common.context.thriftscala.MagicRecsNTabTweet
-import com.twitter.rux.common.context.thriftscala.MagicRecsPushTweet
-import com.twitter.rux.common.context.thriftscala.RuxContext
-import com.twitter.rux.common.context.thriftscala.Source
-import com.twitter.rux.common.encode.RuxContextEncoder
+ mport com.tw ter.fr gate.common.store.dev ce nfo.Dev ce nfo
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams.EnableRuxLand ngPage
+ mport com.tw ter.fr gate.pushserv ce.params.PushParams.EnableRuxLand ngPageAndro dParam
+ mport com.tw ter.fr gate.pushserv ce.params.PushParams.EnableRuxLand ngPage OSParam
+ mport com.tw ter.fr gate.pushserv ce.params.PushParams.RuxLand ngPageExper  ntKeyAndro dParam
+ mport com.tw ter.fr gate.pushserv ce.params.PushParams.RuxLand ngPageExper  ntKey OSParam
+ mport com.tw ter.fr gate.pushserv ce.params.PushParams.ShowRuxLand ngPageAsModalOn OS
+ mport com.tw ter.rux.common.context.thr ftscala.Mag cRecsNTabT et
+ mport com.tw ter.rux.common.context.thr ftscala.Mag cRecsPushT et
+ mport com.tw ter.rux.common.context.thr ftscala.RuxContext
+ mport com.tw ter.rux.common.context.thr ftscala.S ce
+ mport com.tw ter.rux.common.encode.RuxContextEncoder
 
 /**
- * This class provides utility functions for email landing page for push
+ * T  class prov des ut l y funct ons for ema l land ng page for push
  */
-object EmailLandingPageExperimentUtil {
+object Ema lLand ngPageExper  ntUt l {
   val ruxCxtEncoder = new RuxContextEncoder()
 
-  def getIbis2ModelValue(
-    deviceInfoOpt: Option[DeviceInfo],
+  def get b s2ModelValue(
+    dev ce nfoOpt: Opt on[Dev ce nfo],
     target: Target,
-    tweetId: Long
-  ): Map[String, String] = {
-    val enable = enablePushEmailLanding(deviceInfoOpt, target)
-    if (enable) {
-      val ruxCxt = if (deviceInfoOpt.exists(_.isRuxLandingPageEligible)) {
-        val encodedCxt = getRuxContext(tweetId, target, deviceInfoOpt)
+    t et d: Long
+  ): Map[Str ng, Str ng] = {
+    val enable = enablePushEma lLand ng(dev ce nfoOpt, target)
+     f (enable) {
+      val ruxCxt =  f (dev ce nfoOpt.ex sts(_. sRuxLand ngPageEl g ble)) {
+        val encodedCxt = getRuxContext(t et d, target, dev ce nfoOpt)
         Map("rux_cxt" -> encodedCxt)
-      } else Map.empty[String, String]
-      val enableModal = if (showModalForIOS(deviceInfoOpt, target)) {
+      } else Map.empty[Str ng, Str ng]
+      val enableModal =  f (showModalFor OS(dev ce nfoOpt, target)) {
         Map("enable_modal" -> "true")
-      } else Map.empty[String, String]
+      } else Map.empty[Str ng, Str ng]
 
-      Map("land_on_email_landing_page" -> "true") ++ ruxCxt ++ enableModal
-    } else Map.empty[String, String]
+      Map("land_on_ema l_land ng_page" -> "true") ++ ruxCxt ++ enableModal
+    } else Map.empty[Str ng, Str ng]
   }
 
-  def createNTabRuxLandingURI(screenName: String, tweetId: Long): String = {
+  def createNTabRuxLand ngUR (screenNa : Str ng, t et d: Long): Str ng = {
     val encodedCxt =
-      ruxCxtEncoder.encode(RuxContext(Some(Source.MagicRecsNTabTweet(MagicRecsNTabTweet(tweetId)))))
-    s"$screenName/status/${tweetId.toString}?cxt=$encodedCxt"
+      ruxCxtEncoder.encode(RuxContext(So (S ce.Mag cRecsNTabT et(Mag cRecsNTabT et(t et d)))))
+    s"$screenNa /status/${t et d.toStr ng}?cxt=$encodedCxt"
   }
 
-  private def getRuxContext(
-    tweetId: Long,
+  pr vate def getRuxContext(
+    t et d: Long,
     target: Target,
-    deviceInfoOpt: Option[DeviceInfo]
-  ): String = {
-    val isDeviceIOS = PushDeviceUtil.isPrimaryDeviceIOS(deviceInfoOpt)
-    val isDeviceAndroid = PushDeviceUtil.isPrimaryDeviceAndroid(deviceInfoOpt)
-    val keyOpt = if (isDeviceIOS) {
-      target.params(RuxLandingPageExperimentKeyIOSParam)
-    } else if (isDeviceAndroid) {
-      target.params(RuxLandingPageExperimentKeyAndroidParam)
+    dev ce nfoOpt: Opt on[Dev ce nfo]
+  ): Str ng = {
+    val  sDev ce OS = PushDev ceUt l. sPr maryDev ce OS(dev ce nfoOpt)
+    val  sDev ceAndro d = PushDev ceUt l. sPr maryDev ceAndro d(dev ce nfoOpt)
+    val keyOpt =  f ( sDev ce OS) {
+      target.params(RuxLand ngPageExper  ntKey OSParam)
+    } else  f ( sDev ceAndro d) {
+      target.params(RuxLand ngPageExper  ntKeyAndro dParam)
     } else None
-    val context = RuxContext(Some(Source.MagicRecsTweet(MagicRecsPushTweet(tweetId))), None, keyOpt)
+    val context = RuxContext(So (S ce.Mag cRecsT et(Mag cRecsPushT et(t et d))), None, keyOpt)
     ruxCxtEncoder.encode(context)
   }
 
-  private def enablePushEmailLanding(
-    deviceInfoOpt: Option[DeviceInfo],
+  pr vate def enablePushEma lLand ng(
+    dev ce nfoOpt: Opt on[Dev ce nfo],
     target: Target
   ): Boolean =
-    deviceInfoOpt.exists(deviceInfo =>
-      if (deviceInfo.isEmailLandingPageEligible) {
-        val isRuxLandingPageEnabled = target.params(EnableRuxLandingPage)
-        isRuxLandingPageEnabled && isRuxLandingEnabledBasedOnDeviceInfo(deviceInfoOpt, target)
+    dev ce nfoOpt.ex sts(dev ce nfo =>
+       f (dev ce nfo. sEma lLand ngPageEl g ble) {
+        val  sRuxLand ngPageEnabled = target.params(EnableRuxLand ngPage)
+         sRuxLand ngPageEnabled &&  sRuxLand ngEnabledBasedOnDev ce nfo(dev ce nfoOpt, target)
       } else false)
 
-  private def showModalForIOS(deviceInfoOpt: Option[DeviceInfo], target: Target): Boolean = {
-    deviceInfoOpt.exists { deviceInfo =>
-      deviceInfo.isRuxLandingPageAsModalEligible && target.params(ShowRuxLandingPageAsModalOnIOS)
+  pr vate def showModalFor OS(dev ce nfoOpt: Opt on[Dev ce nfo], target: Target): Boolean = {
+    dev ce nfoOpt.ex sts { dev ce nfo =>
+      dev ce nfo. sRuxLand ngPageAsModalEl g ble && target.params(ShowRuxLand ngPageAsModalOn OS)
     }
   }
 
-  private def isRuxLandingEnabledBasedOnDeviceInfo(
-    deviceInfoOpt: Option[DeviceInfo],
+  pr vate def  sRuxLand ngEnabledBasedOnDev ce nfo(
+    dev ce nfoOpt: Opt on[Dev ce nfo],
     target: Target
   ): Boolean = {
-    val isDeviceIOS = PushDeviceUtil.isPrimaryDeviceIOS(deviceInfoOpt)
-    val isDeviceAndroid = PushDeviceUtil.isPrimaryDeviceAndroid(deviceInfoOpt)
-    if (isDeviceIOS) {
-      target.params(EnableRuxLandingPageIOSParam)
-    } else if (isDeviceAndroid) {
-      target.params(EnableRuxLandingPageAndroidParam)
+    val  sDev ce OS = PushDev ceUt l. sPr maryDev ce OS(dev ce nfoOpt)
+    val  sDev ceAndro d = PushDev ceUt l. sPr maryDev ceAndro d(dev ce nfoOpt)
+     f ( sDev ce OS) {
+      target.params(EnableRuxLand ngPage OSParam)
+    } else  f ( sDev ceAndro d) {
+      target.params(EnableRuxLand ngPageAndro dParam)
     } else true
   }
 }

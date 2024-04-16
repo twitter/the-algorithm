@@ -1,32 +1,32 @@
-package com.twitter.interaction_graph.scio.agg_client_event_logs
+package com.tw ter. nteract on_graph.sc o.agg_cl ent_event_logs
 
-import com.spotify.scio.ScioMetrics
+ mport com.spot fy.sc o.Sc o tr cs
 
-trait InteractionGraphClientEventLogsCountersTrait {
-  val Namespace = "Interaction Graph Client Event Logs"
-  def profileViewFeaturesInc(): Unit
-  def linkOpenFeaturesInc(): Unit
-  def tweetClickFeaturesInc(): Unit
-  def tweetImpressionFeaturesInc(): Unit
-  def catchAllInc(): Unit
+tra   nteract onGraphCl entEventLogsCountersTra  {
+  val Na space = " nteract on Graph Cl ent Event Logs"
+  def prof leV ewFeatures nc(): Un 
+  def l nkOpenFeatures nc(): Un 
+  def t etCl ckFeatures nc(): Un 
+  def t et mpress onFeatures nc(): Un 
+  def catchAll nc(): Un 
 }
 
-case object InteractionGraphClientEventLogsCounters
-    extends InteractionGraphClientEventLogsCountersTrait {
+case object  nteract onGraphCl entEventLogsCounters
+    extends  nteract onGraphCl entEventLogsCountersTra  {
 
-  val profileViewCounter = ScioMetrics.counter(Namespace, "Profile View Features")
-  val linkOpenCounter = ScioMetrics.counter(Namespace, "Link Open Features")
-  val tweetClickCounter = ScioMetrics.counter(Namespace, "Tweet Click Features")
-  val tweetImpressionCounter = ScioMetrics.counter(Namespace, "Tweet Impression Features")
-  val catchAllCounter = ScioMetrics.counter(Namespace, "Catch All")
+  val prof leV ewCounter = Sc o tr cs.counter(Na space, "Prof le V ew Features")
+  val l nkOpenCounter = Sc o tr cs.counter(Na space, "L nk Open Features")
+  val t etCl ckCounter = Sc o tr cs.counter(Na space, "T et Cl ck Features")
+  val t et mpress onCounter = Sc o tr cs.counter(Na space, "T et  mpress on Features")
+  val catchAllCounter = Sc o tr cs.counter(Na space, "Catch All")
 
-  override def profileViewFeaturesInc(): Unit = profileViewCounter.inc()
+  overr de def prof leV ewFeatures nc(): Un  = prof leV ewCounter. nc()
 
-  override def linkOpenFeaturesInc(): Unit = linkOpenCounter.inc()
+  overr de def l nkOpenFeatures nc(): Un  = l nkOpenCounter. nc()
 
-  override def tweetClickFeaturesInc(): Unit = tweetClickCounter.inc()
+  overr de def t etCl ckFeatures nc(): Un  = t etCl ckCounter. nc()
 
-  override def tweetImpressionFeaturesInc(): Unit = tweetImpressionCounter.inc()
+  overr de def t et mpress onFeatures nc(): Un  = t et mpress onCounter. nc()
 
-  override def catchAllInc(): Unit = catchAllCounter.inc()
+  overr de def catchAll nc(): Un  = catchAllCounter. nc()
 }

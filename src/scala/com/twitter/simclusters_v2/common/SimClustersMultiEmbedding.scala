@@ -1,31 +1,31 @@
-package com.twitter.simclusters_v2.common
+package com.tw ter.s mclusters_v2.common
 
-import com.twitter.simclusters_v2.common.SimClustersMultiEmbeddingId._
-import com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbedding.{Ids, Values}
-import com.twitter.simclusters_v2.thriftscala.{
-  SimClustersMultiEmbedding,
-  SimClustersEmbeddingId,
-  SimClustersMultiEmbeddingId
+ mport com.tw ter.s mclusters_v2.common.S mClustersMult Embedd ng d._
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersMult Embedd ng.{ ds, Values}
+ mport com.tw ter.s mclusters_v2.thr ftscala.{
+  S mClustersMult Embedd ng,
+  S mClustersEmbedd ng d,
+  S mClustersMult Embedd ng d
 }
 
 /**
- * Helper methods for SimClustersMultiEmbedding
+ *  lper  thods for S mClustersMult Embedd ng
  */
-object SimClustersMultiEmbedding {
+object S mClustersMult Embedd ng {
 
-  // Convert a multiEmbedding to a list of (embeddingId, score)
-  def toSimClustersEmbeddingIdWithScores(
-    simClustersMultiEmbeddingId: SimClustersMultiEmbeddingId,
-    simClustersMultiEmbedding: SimClustersMultiEmbedding
-  ): Seq[(SimClustersEmbeddingId, Double)] = {
-    simClustersMultiEmbedding match {
+  // Convert a mult Embedd ng to a l st of (embedd ng d, score)
+  def toS mClustersEmbedd ng dW hScores(
+    s mClustersMult Embedd ng d: S mClustersMult Embedd ng d,
+    s mClustersMult Embedd ng: S mClustersMult Embedd ng
+  ): Seq[(S mClustersEmbedd ng d, Double)] = {
+    s mClustersMult Embedd ng match {
       case Values(values) =>
-        values.embeddings.zipWithIndex.map {
-          case (embeddingWithScore, i) =>
-            (toEmbeddingId(simClustersMultiEmbeddingId, i), embeddingWithScore.score)
+        values.embedd ngs.z pW h ndex.map {
+          case (embedd ngW hScore,  ) =>
+            (toEmbedd ng d(s mClustersMult Embedd ng d,  ), embedd ngW hScore.score)
         }
-      case Ids(ids) =>
-        ids.ids.map(_.toTuple)
+      case  ds( ds) =>
+         ds. ds.map(_.toTuple)
     }
   }
 

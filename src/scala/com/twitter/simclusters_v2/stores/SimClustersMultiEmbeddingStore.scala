@@ -1,74 +1,74 @@
-package com.twitter.simclusters_v2.stores
+package com.tw ter.s mclusters_v2.stores
 
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.SimClustersMultiEmbeddingId._
-import com.twitter.simclusters_v2.thriftscala.{
-  SimClustersMultiEmbedding,
-  SimClustersEmbeddingId,
-  SimClustersMultiEmbeddingId
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.common.S mClustersMult Embedd ng d._
+ mport com.tw ter.s mclusters_v2.thr ftscala.{
+  S mClustersMult Embedd ng,
+  S mClustersEmbedd ng d,
+  S mClustersMult Embedd ng d
 }
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
 /**
- * The helper methods for SimClusters Multi-Embedding based ReadableStore
+ * T   lper  thods for S mClusters Mult -Embedd ng based ReadableStore
  */
-object SimClustersMultiEmbeddingStore {
+object S mClustersMult Embedd ngStore {
 
   /**
-   * Only support the Values based Multi-embedding transformation.
+   * Only support t  Values based Mult -embedd ng transformat on.
    */
-  case class SimClustersMultiEmbeddingWrapperStore(
-    sourceStore: ReadableStore[SimClustersMultiEmbeddingId, SimClustersMultiEmbedding])
-      extends ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] {
+  case class S mClustersMult Embedd ngWrapperStore(
+    s ceStore: ReadableStore[S mClustersMult Embedd ng d, S mClustersMult Embedd ng])
+      extends ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng] {
 
-    override def get(k: SimClustersEmbeddingId): Future[Option[SimClustersEmbedding]] = {
-      sourceStore.get(toMultiEmbeddingId(k)).map(_.map(toSimClustersEmbedding(k, _)))
+    overr de def get(k: S mClustersEmbedd ng d): Future[Opt on[S mClustersEmbedd ng]] = {
+      s ceStore.get(toMult Embedd ng d(k)).map(_.map(toS mClustersEmbedd ng(k, _)))
     }
 
-    // Override the multiGet for better batch performance.
-    override def multiGet[K1 <: SimClustersEmbeddingId](
+    // Overr de t  mult Get for better batch performance.
+    overr de def mult Get[K1 <: S mClustersEmbedd ng d](
       ks: Set[K1]
-    ): Map[K1, Future[Option[SimClustersEmbedding]]] = {
-      if (ks.isEmpty) {
+    ): Map[K1, Future[Opt on[S mClustersEmbedd ng]]] = {
+       f (ks. sEmpty) {
         Map.empty
       } else {
-        // Aggregate multiple get requests by MultiEmbeddingId
-        val multiEmbeddingIds = ks.map { k =>
-          k -> toMultiEmbeddingId(k)
+        // Aggregate mult ple get requests by Mult Embedd ng d
+        val mult Embedd ng ds = ks.map { k =>
+          k -> toMult Embedd ng d(k)
         }.toMap
 
-        val multiEmbeddings = sourceStore.multiGet(multiEmbeddingIds.values.toSet)
+        val mult Embedd ngs = s ceStore.mult Get(mult Embedd ng ds.values.toSet)
         ks.map { k =>
-          k -> multiEmbeddings(multiEmbeddingIds(k)).map(_.map(toSimClustersEmbedding(k, _)))
+          k -> mult Embedd ngs(mult Embedd ng ds(k)).map(_.map(toS mClustersEmbedd ng(k, _)))
         }.toMap
       }
     }
 
-    private def toSimClustersEmbedding(
-      id: SimClustersEmbeddingId,
-      multiEmbedding: SimClustersMultiEmbedding
-    ): SimClustersEmbedding = {
-      multiEmbedding match {
-        case SimClustersMultiEmbedding.Values(values) =>
-          val subId = toSubId(id)
-          if (subId >= values.embeddings.size) {
-            throw new IllegalArgumentException(
-              s"SimClustersMultiEmbeddingId $id is over the size of ${values.embeddings.size}")
+    pr vate def toS mClustersEmbedd ng(
+       d: S mClustersEmbedd ng d,
+      mult Embedd ng: S mClustersMult Embedd ng
+    ): S mClustersEmbedd ng = {
+      mult Embedd ng match {
+        case S mClustersMult Embedd ng.Values(values) =>
+          val sub d = toSub d( d)
+           f (sub d >= values.embedd ngs.s ze) {
+            throw new  llegalArgu ntExcept on(
+              s"S mClustersMult Embedd ng d $ d  s over t  s ze of ${values.embedd ngs.s ze}")
           } else {
-            values.embeddings(subId).embedding
+            values.embedd ngs(sub d).embedd ng
           }
         case _ =>
-          throw new IllegalArgumentException(
-            s"Invalid SimClustersMultiEmbedding $id, $multiEmbedding")
+          throw new  llegalArgu ntExcept on(
+            s" nval d S mClustersMult Embedd ng $ d, $mult Embedd ng")
       }
     }
   }
 
-  def toSimClustersEmbeddingStore(
-    sourceStore: ReadableStore[SimClustersMultiEmbeddingId, SimClustersMultiEmbedding]
-  ): ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] = {
-    SimClustersMultiEmbeddingWrapperStore(sourceStore)
+  def toS mClustersEmbedd ngStore(
+    s ceStore: ReadableStore[S mClustersMult Embedd ng d, S mClustersMult Embedd ng]
+  ): ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng] = {
+    S mClustersMult Embedd ngWrapperStore(s ceStore)
   }
 
 }

@@ -1,41 +1,41 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.repository.TweetRepository
-import com.twitter.tweetypie.repository.UserKey
-import com.twitter.tweetypie.repository.UserQueryOptions
-import com.twitter.tweetypie.repository.UserRepository
-import com.twitter.tweetypie.repository.UserVisibility
-import com.twitter.tweetypie.store.AsyncDeleteAdditionalFields
-import com.twitter.tweetypie.store.DeleteAdditionalFields
-import com.twitter.tweetypie.store.TweetStoreEventOrRetry
-import com.twitter.tweetypie.thriftscala.AsyncDeleteAdditionalFieldsRequest
-import com.twitter.tweetypie.thriftscala.DeleteAdditionalFieldsRequest
+ mport com.tw ter.st ch.NotFound
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.repos ory.T etQuery
+ mport com.tw ter.t etyp e.repos ory.T etRepos ory
+ mport com.tw ter.t etyp e.repos ory.UserKey
+ mport com.tw ter.t etyp e.repos ory.UserQueryOpt ons
+ mport com.tw ter.t etyp e.repos ory.UserRepos ory
+ mport com.tw ter.t etyp e.repos ory.UserV s b l y
+ mport com.tw ter.t etyp e.store.AsyncDeleteAdd  onalF elds
+ mport com.tw ter.t etyp e.store.DeleteAdd  onalF elds
+ mport com.tw ter.t etyp e.store.T etStoreEventOrRetry
+ mport com.tw ter.t etyp e.thr ftscala.AsyncDeleteAdd  onalF eldsRequest
+ mport com.tw ter.t etyp e.thr ftscala.DeleteAdd  onalF eldsRequest
 
-object DeleteAdditionalFieldsBuilder {
-  type Type = DeleteAdditionalFieldsRequest => Future[Seq[DeleteAdditionalFields.Event]]
+object DeleteAdd  onalF eldsBu lder {
+  type Type = DeleteAdd  onalF eldsRequest => Future[Seq[DeleteAdd  onalF elds.Event]]
 
-  val tweetQueryOptions = TweetQuery.Options(include = GetTweetsHandler.BaseInclude)
+  val t etQueryOpt ons = T etQuery.Opt ons( nclude = GetT etsHandler.Base nclude)
 
-  def apply(tweetRepo: TweetRepository.Type): Type = {
-    def getTweet(tweetId: TweetId) =
-      Stitch.run(
-        tweetRepo(tweetId, tweetQueryOptions)
-          .rescue(HandlerError.translateNotFoundToClientError(tweetId))
+  def apply(t etRepo: T etRepos ory.Type): Type = {
+    def getT et(t et d: T et d) =
+      St ch.run(
+        t etRepo(t et d, t etQueryOpt ons)
+          .rescue(HandlerError.translateNotFoundToCl entError(t et d))
       )
 
     request => {
       Future.collect(
-        request.tweetIds.map { tweetId =>
-          getTweet(tweetId).map { tweet =>
-            DeleteAdditionalFields.Event(
-              tweetId = tweetId,
-              fieldIds = request.fieldIds,
-              userId = getUserId(tweet),
-              timestamp = Time.now
+        request.t et ds.map { t et d =>
+          getT et(t et d).map { t et =>
+            DeleteAdd  onalF elds.Event(
+              t et d = t et d,
+              f eld ds = request.f eld ds,
+              user d = getUser d(t et),
+              t  stamp = T  .now
             )
           }
         }
@@ -44,23 +44,23 @@ object DeleteAdditionalFieldsBuilder {
   }
 }
 
-object AsyncDeleteAdditionalFieldsBuilder {
-  type Type = AsyncDeleteAdditionalFieldsRequest => Future[
-    TweetStoreEventOrRetry[AsyncDeleteAdditionalFields.Event]
+object AsyncDeleteAdd  onalF eldsBu lder {
+  type Type = AsyncDeleteAdd  onalF eldsRequest => Future[
+    T etStoreEventOrRetry[AsyncDeleteAdd  onalF elds.Event]
   ]
 
-  val userQueryOpts: UserQueryOptions = UserQueryOptions(Set(UserField.Safety), UserVisibility.All)
+  val userQueryOpts: UserQueryOpt ons = UserQueryOpt ons(Set(UserF eld.Safety), UserV s b l y.All)
 
-  def apply(userRepo: UserRepository.Type): Type = {
-    def getUser(userId: UserId): Future[User] =
-      Stitch.run(
-        userRepo(UserKey.byId(userId), userQueryOpts)
-          .rescue { case NotFound => Stitch.exception(HandlerError.userNotFound(userId)) }
+  def apply(userRepo: UserRepos ory.Type): Type = {
+    def getUser(user d: User d): Future[User] =
+      St ch.run(
+        userRepo(UserKey.by d(user d), userQueryOpts)
+          .rescue { case NotFound => St ch.except on(HandlerError.userNotFound(user d)) }
       )
 
     request =>
-      getUser(request.userId).map { user =>
-        AsyncDeleteAdditionalFields.Event.fromAsyncRequest(request, user)
+      getUser(request.user d).map { user =>
+        AsyncDeleteAdd  onalF elds.Event.fromAsyncRequest(request, user)
       }
   }
 }

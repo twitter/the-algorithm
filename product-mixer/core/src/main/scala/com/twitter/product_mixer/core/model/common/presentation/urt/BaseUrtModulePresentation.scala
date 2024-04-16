@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.common.presentation.urt
+package com.tw ter.product_m xer.core.model.common.presentat on.urt
 
-import com.twitter.product_mixer.core.model.common.presentation.ModulePresentation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
+ mport com.tw ter.product_m xer.core.model.common.presentat on.ModulePresentat on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neModule
 
-trait BaseUrtModulePresentation extends ModulePresentation {
-  def timelineModule: TimelineModule
+tra  BaseUrtModulePresentat on extends ModulePresentat on {
+  def t  l neModule: T  l neModule
 }

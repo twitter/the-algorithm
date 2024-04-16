@@ -1,38 +1,38 @@
-package com.twitter.graph_feature_service.worker.controllers
+package com.tw ter.graph_feature_serv ce.worker.controllers
 
-import com.twitter.discovery.common.stats.DiscoveryStatsFilter
-import com.twitter.finagle.Service
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.thrift.Controller
-import com.twitter.graph_feature_service.thriftscala
-import com.twitter.graph_feature_service.thriftscala.Worker.GetIntersection
-import com.twitter.graph_feature_service.thriftscala._
-import com.twitter.graph_feature_service.worker.handlers._
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.d scovery.common.stats.D scoveryStatsF lter
+ mport com.tw ter.f nagle.Serv ce
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f natra.thr ft.Controller
+ mport com.tw ter.graph_feature_serv ce.thr ftscala
+ mport com.tw ter.graph_feature_serv ce.thr ftscala.Worker.Get ntersect on
+ mport com.tw ter.graph_feature_serv ce.thr ftscala._
+ mport com.tw ter.graph_feature_serv ce.worker.handlers._
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class WorkerController @Inject() (
-  workerGetIntersectionHandler: WorkerGetIntersectionHandler
+@S ngleton
+class WorkerController @ nject() (
+  workerGet ntersect onHandler: WorkerGet ntersect onHandler
 )(
-  implicit statsReceiver: StatsReceiver)
-    extends Controller(thriftscala.Worker) {
+   mpl c  statsRece ver: StatsRece ver)
+    extends Controller(thr ftscala.Worker) {
 
-  // use DiscoveryStatsFilter to filter out exceptions out of our control
-  private val getIntersectionService: Service[
-    WorkerIntersectionRequest,
-    WorkerIntersectionResponse
+  // use D scoveryStatsF lter to f lter out except ons out of   control
+  pr vate val get ntersect onServ ce: Serv ce[
+    Worker ntersect onRequest,
+    Worker ntersect onResponse
   ] =
-    new DiscoveryStatsFilter[WorkerIntersectionRequest, WorkerIntersectionResponse](
-      statsReceiver.scope("srv").scope("get_intersection")
-    ).andThen(Service.mk(workerGetIntersectionHandler))
+    new D scoveryStatsF lter[Worker ntersect onRequest, Worker ntersect onResponse](
+      statsRece ver.scope("srv").scope("get_ ntersect on")
+    ).andT n(Serv ce.mk(workerGet ntersect onHandler))
 
-  val getIntersection: Service[GetIntersection.Args, WorkerIntersectionResponse] = { args =>
-    getIntersectionService(args.request).onFailure { throwable =>
-      logger.error(s"Failure to get intersection for request $args.", throwable)
+  val get ntersect on: Serv ce[Get ntersect on.Args, Worker ntersect onResponse] = { args =>
+    get ntersect onServ ce(args.request).onFa lure { throwable =>
+      logger.error(s"Fa lure to get  ntersect on for request $args.", throwable)
     }
   }
 
-  handle(GetIntersection) { getIntersection }
+  handle(Get ntersect on) { get ntersect on }
 
 }

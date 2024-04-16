@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urp
 
-import com.twitter.pages.render.{thriftscala => urp}
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.TimelineScribeConfigMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urp.SegmentedTimeline
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.pages.render.{thr ftscala => urp}
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.T  l neScr beConf gMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urp.Seg ntedT  l ne
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class SegmentedTimelineMarshaller @Inject() (
-  timelineKeyMarshaller: TimelineKeyMarshaller,
-  timelineScribeConfigMarshaller: TimelineScribeConfigMarshaller) {
+@S ngleton
+class Seg ntedT  l neMarshaller @ nject() (
+  t  l neKeyMarshaller: T  l neKeyMarshaller,
+  t  l neScr beConf gMarshaller: T  l neScr beConf gMarshaller) {
 
-  def apply(segmentedTimeline: SegmentedTimeline): urp.SegmentedTimeline = urp.SegmentedTimeline(
-    id = segmentedTimeline.id,
-    labelText = segmentedTimeline.labelText,
-    timeline = timelineKeyMarshaller(segmentedTimeline.timeline),
-    scribeConfig = segmentedTimeline.scribeConfig.map(timelineScribeConfigMarshaller(_)),
-    refreshIntervalSec = segmentedTimeline.refreshIntervalSec
+  def apply(seg ntedT  l ne: Seg ntedT  l ne): urp.Seg ntedT  l ne = urp.Seg ntedT  l ne(
+     d = seg ntedT  l ne. d,
+    labelText = seg ntedT  l ne.labelText,
+    t  l ne = t  l neKeyMarshaller(seg ntedT  l ne.t  l ne),
+    scr beConf g = seg ntedT  l ne.scr beConf g.map(t  l neScr beConf gMarshaller(_)),
+    refresh ntervalSec = seg ntedT  l ne.refresh ntervalSec
   )
 }

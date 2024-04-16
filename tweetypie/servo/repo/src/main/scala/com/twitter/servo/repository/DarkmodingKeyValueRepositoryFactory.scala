@@ -1,161 +1,161 @@
-package com.twitter.servo.repository
+package com.tw ter.servo.repos ory
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.cache.{CacheObserver, Cached, LockingCache}
-import com.twitter.servo.repository
-import com.twitter.servo.repository.CachedResult.{Handler, HandlerFactory}
-import com.twitter.servo.util._
-import com.twitter.util._
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.servo.cac .{Cac Observer, Cac d, Lock ngCac }
+ mport com.tw ter.servo.repos ory
+ mport com.tw ter.servo.repos ory.Cac dResult.{Handler, HandlerFactory}
+ mport com.tw ter.servo.ut l._
+ mport com.tw ter.ut l._
 
-import scala.util.control.NoStackTrace
+ mport scala.ut l.control.NoStackTrace
 
-object DarkmodingKeyValueRepositoryFactory {
-  val DefaultEwmaHalfLife = 5.minutes
-  val DefaultRecentWindow = 10.seconds
-  val DefaultWindowSize = 5000
-  val DefaultAvailabilityFromSuccessRate =
-    Availability.linearlyScaled(highWaterMark = 0.98, lowWaterMark = 0.75, minAvailability = 0.02)
+object Darkmod ngKeyValueRepos oryFactory {
+  val DefaultEwmaHalfL fe = 5.m nutes
+  val DefaultRecentW ndow = 10.seconds
+  val DefaultW ndowS ze = 5000
+  val DefaultAva lab l yFromSuccessRate =
+    Ava lab l y.l nearlyScaled(h ghWaterMark = 0.98, lowWaterMark = 0.75, m nAva lab l y = 0.02)
 
-  def DefaultEwmaTracker = new EwmaSuccessRateTracker(DefaultEwmaHalfLife)
-  def DefaultRecentWindowTracker = SuccessRateTracker.recentWindowed(DefaultRecentWindow)
-  def DefaultRollingWindowTracker = SuccessRateTracker.rollingWindow(DefaultWindowSize)
+  def DefaultEwmaTracker = new EwmaSuccessRateTracker(DefaultEwmaHalfL fe)
+  def DefaultRecentW ndowTracker = SuccessRateTracker.recentW ndo d(DefaultRecentW ndow)
+  def DefaultRoll ngW ndowTracker = SuccessRateTracker.roll ngW ndow(DefaultW ndowS ze)
 
   /**
-   * Wraps an underlying repository, which can be manually or automatically darkmoded.
+   * Wraps an underly ng repos ory, wh ch can be manually or automat cally darkmoded.
    *
-   * Auto-darkmoding is based on success rate (SR) as reported by a [[SuccessRateTracker]].
+   * Auto-darkmod ng  s based on success rate (SR) as reported by a [[SuccessRateTracker]].
    *
-   * @param readFromUnderlying Open: operate normally. Closed: read from backupRepo regardless of SR.
-   * @param autoDarkmode Open: auto-darkmoding kicks in based on SR. Closed: auto-darkmoding will not kick in regardless of SR.
-   * @param stats Used to record success rate and availability; often should be scoped to this repo for stats naming
-   * @param underlyingRepo The underlying repo; read from when not darkmoded
-   * @param backupRepo The repo to read from when darkmoded; defaults to an always-failing repo.
-   * @param successRateTracker Strategy for reporting SR, usually over a moving window
-   * @param availabilityFromSuccessRate Function to calculate availability based on success rate
-   * @param shouldIgnore don't count certain exceptions as failures, e.g. cancellations
+   * @param readFromUnderly ng Open: operate normally. Closed: read from backupRepo regardless of SR.
+   * @param autoDarkmode Open: auto-darkmod ng k cks  n based on SR. Closed: auto-darkmod ng w ll not k ck  n regardless of SR.
+   * @param stats Used to record success rate and ava lab l y; often should be scoped to t  repo for stats nam ng
+   * @param underly ngRepo T  underly ng repo; read from w n not darkmoded
+   * @param backupRepo T  repo to read from w n darkmoded; defaults to an always-fa l ng repo.
+   * @param successRateTracker Strategy for report ng SR, usually over a mov ng w ndow
+   * @param ava lab l yFromSuccessRate Funct on to calculate ava lab l y based on success rate
+   * @param should gnore don't count certa n except ons as fa lures, e.g. cancellat ons
    */
-  def darkmoding[Q <: Seq[K], K, V](
-    readFromUnderlying: Gate[Unit],
-    autoDarkmode: Gate[Unit],
-    stats: StatsReceiver,
-    underlyingRepo: KeyValueRepository[Q, K, V],
-    backupRepo: KeyValueRepository[Q, K, V] =
-      KeyValueRepository.alwaysFailing[Q, K, V](DarkmodedException),
-    successRateTracker: SuccessRateTracker = DefaultRecentWindowTracker,
-    availabilityFromSuccessRate: Double => Double = DefaultAvailabilityFromSuccessRate,
-    shouldIgnore: Throwable => Boolean = SuccessRateTrackingRepository.isCancellation
-  ): KeyValueRepository[Q, K, V] = {
-    val (successRateTrackingRepoFactory, successRateGate) =
-      SuccessRateTrackingRepository.withGate[Q, K, V](
+  def darkmod ng[Q <: Seq[K], K, V](
+    readFromUnderly ng: Gate[Un ],
+    autoDarkmode: Gate[Un ],
+    stats: StatsRece ver,
+    underly ngRepo: KeyValueRepos ory[Q, K, V],
+    backupRepo: KeyValueRepos ory[Q, K, V] =
+      KeyValueRepos ory.alwaysFa l ng[Q, K, V](DarkmodedExcept on),
+    successRateTracker: SuccessRateTracker = DefaultRecentW ndowTracker,
+    ava lab l yFromSuccessRate: Double => Double = DefaultAva lab l yFromSuccessRate,
+    should gnore: Throwable => Boolean = SuccessRateTrack ngRepos ory. sCancellat on
+  ): KeyValueRepos ory[Q, K, V] = {
+    val (successRateTrack ngRepoFactory, successRateGate) =
+      SuccessRateTrack ngRepos ory.w hGate[Q, K, V](
         stats,
-        availabilityFromSuccessRate,
+        ava lab l yFromSuccessRate,
         successRateTracker.observed(stats),
-        shouldIgnore
+        should gnore
       )
-    val gate = mkGate(successRateGate, readFromUnderlying, autoDarkmode)
+    val gate = mkGate(successRateGate, readFromUnderly ng, autoDarkmode)
 
-    Repository.selected(
+    Repos ory.selected(
       q => gate(()),
-      successRateTrackingRepoFactory(underlyingRepo),
+      successRateTrack ngRepoFactory(underly ngRepo),
       backupRepo
     )
   }
 
   /**
-   * Produces a caching repository around an underlying repository, which
-   * can be manually or automatically darkmoded.
+   * Produces a cach ng repos ory around an underly ng repos ory, wh ch
+   * can be manually or automat cally darkmoded.
    *
-   * @param underlyingRepo The underlying repo from which to read
-   * @param cache The typed locking cache to fall back to when darkmoded
-   * @param picker Used to break ties when a value being written is already present in cache
-   * @param readFromUnderlying Open: operate normally. Closed: read from cache regardless of SR.
-   * @param autoDarkmode Open: auto-darkmoding kicks in based on SR. Closed: auto-darkmoding will not kick in regardless of SR.
-   * @param cacheObserver Observes interactions with the cache; often should be scoped to this repo for stats naming
-   * @param stats Used to record various stats; often should be scoped to this repo for stats naming
-   * @param handler a [[Handler]] to use when not darkmoded
-   * @param successRateTracker Strategy for reporting SR, usually over a moving window
-   * @param availabilityFromSuccessRate Function to calculate availability based on success rate
-   * @param shouldIgnore don't count certain exceptions as failures, e.g. cancellations
+   * @param underly ngRepo T  underly ng repo from wh ch to read
+   * @param cac  T  typed lock ng cac  to fall back to w n darkmoded
+   * @param p cker Used to break t es w n a value be ng wr ten  s already present  n cac 
+   * @param readFromUnderly ng Open: operate normally. Closed: read from cac  regardless of SR.
+   * @param autoDarkmode Open: auto-darkmod ng k cks  n based on SR. Closed: auto-darkmod ng w ll not k ck  n regardless of SR.
+   * @param cac Observer Observes  nteract ons w h t  cac ; often should be scoped to t  repo for stats nam ng
+   * @param stats Used to record var ous stats; often should be scoped to t  repo for stats nam ng
+   * @param handler a [[Handler]] to use w n not darkmoded
+   * @param successRateTracker Strategy for report ng SR, usually over a mov ng w ndow
+   * @param ava lab l yFromSuccessRate Funct on to calculate ava lab l y based on success rate
+   * @param should gnore don't count certa n except ons as fa lures, e.g. cancellat ons
    */
-  def darkmodingCaching[K, V, CacheKey](
-    underlyingRepo: KeyValueRepository[Seq[K], K, V],
-    cache: LockingCache[K, Cached[V]],
-    picker: LockingCache.Picker[Cached[V]],
-    readFromUnderlying: Gate[Unit],
-    autoDarkmode: Gate[Unit],
-    cacheObserver: CacheObserver,
-    stats: StatsReceiver,
+  def darkmod ngCach ng[K, V, Cac Key](
+    underly ngRepo: KeyValueRepos ory[Seq[K], K, V],
+    cac : Lock ngCac [K, Cac d[V]],
+    p cker: Lock ngCac .P cker[Cac d[V]],
+    readFromUnderly ng: Gate[Un ],
+    autoDarkmode: Gate[Un ],
+    cac Observer: Cac Observer,
+    stats: StatsRece ver,
     handler: Handler[K, V],
-    successRateTracker: SuccessRateTracker = DefaultRecentWindowTracker,
-    availabilityFromSuccessRate: Double => Double = DefaultAvailabilityFromSuccessRate,
-    shouldIgnore: Throwable => Boolean = SuccessRateTrackingRepository.isCancellation,
-    writeSoftTtlStep: Gate[Unit] = Gate.False,
-    cacheResultObserver: CachingKeyValueRepository.CacheResultObserver[K, V] =
-      CacheResultObserver.unit[K, V]: Effect[CacheResultObserver.CachingRepositoryResult[K, V]]
-  ): CachingKeyValueRepository[Seq[K], K, V] = {
-    val (successRateTrackingRepoFactory, successRateGate) =
-      SuccessRateTrackingRepository.withGate[Seq[K], K, V](
+    successRateTracker: SuccessRateTracker = DefaultRecentW ndowTracker,
+    ava lab l yFromSuccessRate: Double => Double = DefaultAva lab l yFromSuccessRate,
+    should gnore: Throwable => Boolean = SuccessRateTrack ngRepos ory. sCancellat on,
+    wr eSoftTtlStep: Gate[Un ] = Gate.False,
+    cac ResultObserver: Cach ngKeyValueRepos ory.Cac ResultObserver[K, V] =
+      Cac ResultObserver.un [K, V]: Effect[Cac ResultObserver.Cach ngRepos oryResult[K, V]]
+  ): Cach ngKeyValueRepos ory[Seq[K], K, V] = {
+    val (successRateTrack ngRepoFactory, successRateGate) =
+      SuccessRateTrack ngRepos ory.w hGate[Seq[K], K, V](
         stats,
-        availabilityFromSuccessRate,
+        ava lab l yFromSuccessRate,
         successRateTracker.observed(stats),
-        shouldIgnore
+        should gnore
       )
-    val gate = mkGate(successRateGate, readFromUnderlying, autoDarkmode)
+    val gate = mkGate(successRateGate, readFromUnderly ng, autoDarkmode)
 
-    new CachingKeyValueRepository[Seq[K], K, V](
-      successRateTrackingRepoFactory(underlyingRepo),
-      cache,
-      repository.keysAsQuery,
+    new Cach ngKeyValueRepos ory[Seq[K], K, V](
+      successRateTrack ngRepoFactory(underly ngRepo),
+      cac ,
+      repos ory.keysAsQuery,
       mkHandlerFactory(handler, gate),
-      picker,
-      cacheObserver,
-      writeSoftTtlStep = writeSoftTtlStep,
-      cacheResultObserver = cacheResultObserver
+      p cker,
+      cac Observer,
+      wr eSoftTtlStep = wr eSoftTtlStep,
+      cac ResultObserver = cac ResultObserver
     )
   }
 
   /**
-   * Create a composite gate suitable for controlling darkmoding, usually via decider
+   * Create a compos e gate su able for controll ng darkmod ng, usually v a dec der
    *
-   * @param successRate gate that should close and open according to success rate (SR) changes
-   * @param readFromUnderlying if open: returned gate operates normally. if closed: returned gate will be closed regardless of SR
-   * @param autoDarkMode if open: close gate according to SR. if closed: gate ignores SR changes
+   * @param successRate gate that should close and open accord ng to success rate (SR) changes
+   * @param readFromUnderly ng  f open: returned gate operates normally.  f closed: returned gate w ll be closed regardless of SR
+   * @param autoDarkMode  f open: close gate accord ng to SR.  f closed: gate  gnores SR changes
    * @return
    */
   def mkGate(
-    successRate: Gate[Unit],
-    readFromUnderlying: Gate[Unit],
-    autoDarkMode: Gate[Unit]
-  ): Gate[Unit] =
-    readFromUnderlying & (successRate | !autoDarkMode)
+    successRate: Gate[Un ],
+    readFromUnderly ng: Gate[Un ],
+    autoDarkMode: Gate[Un ]
+  ): Gate[Un ] =
+    readFromUnderly ng & (successRate | !autoDarkMode)
 
   /**
-   * Construct a [[CachedResult.HandlerFactory]] with sane defaults for use with a caching darkmoded repository
-   * @param softTtl TTL for soft-expiration of values in the cache
-   * @param expiry Used to apply the softTTL (e.g. fixed vs randomly perturbed)
+   * Construct a [[Cac dResult.HandlerFactory]] w h sane defaults for use w h a cach ng darkmoded repos ory
+   * @param softTtl TTL for soft-exp rat on of values  n t  cac 
+   * @param exp ry Used to apply t  softTTL (e.g. f xed vs randomly perturbed)
    */
   def mkDefaultHandler[K, V](
-    softTtl: Option[V] => Duration,
-    expiry: CachedResult.Expiry
+    softTtl: Opt on[V] => Durat on,
+    exp ry: Cac dResult.Exp ry
   ): Handler[K, V] =
-    CachedResult.Handler(
-      CachedResult.failuresAreDoNotCache,
-      CachedResult.Handler(CachedResult.softTtlExpiration(softTtl, expiry))
+    Cac dResult.Handler(
+      Cac dResult.fa luresAreDoNotCac ,
+      Cac dResult.Handler(Cac dResult.softTtlExp rat on(softTtl, exp ry))
     )
 
-  private[repository] def mkHandlerFactory[CacheKey, V, K](
+  pr vate[repos ory] def mkHandlerFactory[Cac Key, V, K](
     handler: Handler[K, V],
-    successRateGate: Gate[Unit]
+    successRateGate: Gate[Un ]
   ): HandlerFactory[Seq[K], K, V] =
     query =>
-      if (successRateGate(())) handler
-      else CachedResult.cacheOnly
+       f (successRateGate(())) handler
+      else Cac dResult.cac Only
 }
 
 /**
- * This exception is returned from a repository when it is auto-darkmoded due to low backend
- * success rate, or darkmoded manually via gate (usually a decider).
+ * T  except on  s returned from a repos ory w n    s auto-darkmoded due to low backend
+ * success rate, or darkmoded manually v a gate (usually a dec der).
  */
-class DarkmodedException extends Exception with NoStackTrace
-object DarkmodedException extends DarkmodedException
+class DarkmodedExcept on extends Except on w h NoStackTrace
+object DarkmodedExcept on extends DarkmodedExcept on

@@ -1,149 +1,149 @@
-#@namespace java com.twitter.unified_user_actions.thriftjava
-#@namespace scala com.twitter.unified_user_actions.thriftscala
-#@namespace strato com.twitter.unified_user_actions
+#@na space java com.tw ter.un f ed_user_act ons.thr ftjava
+#@na space scala com.tw ter.un f ed_user_act ons.thr ftscala
+#@na space strato com.tw ter.un f ed_user_act ons
 
-include "com/twitter/unified_user_actions/metadata.thrift"
-include "com/twitter/search/common/constants/query.thrift"
-include "com/twitter/search/common/constants/result.thrift"
+ nclude "com/tw ter/un f ed_user_act ons/ tadata.thr ft"
+ nclude "com/tw ter/search/common/constants/query.thr ft"
+ nclude "com/tw ter/search/common/constants/result.thr ft"
 
 
 /*
- * Represents the product surface on which an action took place.
- * See reference that delineates various product surfaces:
- * https://docs.google.com/document/d/1PS2ZOyNUoUdO45zxhE7dH3L8KUcqJwo6Vx-XUGGFo6U
- * Note: the implementation here may not reflect the above doc exactly.
+ * Represents t  product surface on wh ch an act on took place.
+ * See reference that del neates var ous product surfaces:
+ * https://docs.google.com/docu nt/d/1PS2ZOyNUoUdO45zxhE7dH3L8KUcqJwo6Vx-XUGGFo6U
+ * Note: t   mple ntat on  re may not reflect t  above doc exactly.
  */
 enum ProductSurface {
-  // 1 - 19 for Home
-  HomeTimeline = 1
-  // 20 - 39 for Notifications
-  NotificationTab = 20
-  PushNotification = 21
-  EmailNotification = 22
+  // 1 - 19 for Ho 
+  Ho T  l ne = 1
+  // 20 - 39 for Not f cat ons
+  Not f cat onTab = 20
+  PushNot f cat on = 21
+  Ema lNot f cat on = 22
   // 40 - 59 for Search
   SearchResultsPage = 40
-  SearchTypeahead = 41
-  // 60 - 79 for Tweet Details Page (Conversation Page)
-  TweetDetailsPage = 60
-  // 80 - 99 for Profile Page
-  ProfilePage = 80
+  SearchTypea ad = 41
+  // 60 - 79 for T et Deta ls Page (Conversat on Page)
+  T etDeta lsPage = 60
+  // 80 - 99 for Prof le Page
+  Prof lePage = 80
   // 100 - 119 for ?
   RESERVED_100 = 100
   // 120 - 139 for ?
   RESERVED_120 = 120
-}(persisted='true', hasPersonalData='false')
+}(pers sted='true', hasPersonalData='false')
 
-union ProductSurfaceInfo {
-  // 1 matches the enum index HomeTimeline in ProductSurface
-  1: HomeTimelineInfo homeTimelineInfo
-  // 20 matches the enum index NotificationTab in ProductSurface
-  20: NotificationTabInfo notificationTabInfo
-  // 21 matches the enum index PushNotification in ProductSurface
-  21: PushNotificationInfo pushNotificationInfo
-  // 22 matches the enum index EmailNotification in ProductSurface
-  22: EmailNotificationInfo emailNotificationInfo
-  // 40 matches the enum index SearchResultPage in ProductSurface
-  40: SearchResultsPageInfo searchResultsPageInfo
-  // 41 matches the enum index SearchTypeahead in ProductSurface
-  41: SearchTypeaheadInfo searchTypeaheadInfo
-  // 60 matches the enum index TweetDetailsPage in ProductSurface
-  60: TweetDetailsPageInfo tweetDetailsPageInfo
-  // 80 matches the enum index ProfilePage in ProductSurface
-  80: ProfilePageInfo profilePageInfo
-}(persisted='true', hasPersonalData='false')
+un on ProductSurface nfo {
+  // 1 matc s t  enum  ndex Ho T  l ne  n ProductSurface
+  1: Ho T  l ne nfo ho T  l ne nfo
+  // 20 matc s t  enum  ndex Not f cat onTab  n ProductSurface
+  20: Not f cat onTab nfo not f cat onTab nfo
+  // 21 matc s t  enum  ndex PushNot f cat on  n ProductSurface
+  21: PushNot f cat on nfo pushNot f cat on nfo
+  // 22 matc s t  enum  ndex Ema lNot f cat on  n ProductSurface
+  22: Ema lNot f cat on nfo ema lNot f cat on nfo
+  // 40 matc s t  enum  ndex SearchResultPage  n ProductSurface
+  40: SearchResultsPage nfo searchResultsPage nfo
+  // 41 matc s t  enum  ndex SearchTypea ad  n ProductSurface
+  41: SearchTypea ad nfo searchTypea ad nfo
+  // 60 matc s t  enum  ndex T etDeta lsPage  n ProductSurface
+  60: T etDeta lsPage nfo t etDeta lsPage nfo
+  // 80 matc s t  enum  ndex Prof lePage  n ProductSurface
+  80: Prof lePage nfo prof lePage nfo
+}(pers sted='true', hasPersonalData='false')
 
 /*
- * Please keep this minimal to avoid overhead. It should only
- * contain high value Home Timeline specific attributes.
+ * Please keep t  m n mal to avo d over ad.   should only
+ * conta n h gh value Ho  T  l ne spec f c attr butes.
  */
-struct HomeTimelineInfo {
-  // suggestType is deprecated, please do't re-use!
-  // 1: optional i32 suggestType
-  2: optional string suggestionType
-  3: optional i32 injectedPosition
-}(persisted='true', hasPersonalData='false')
+struct Ho T  l ne nfo {
+  // suggestType  s deprecated, please do't re-use!
+  // 1: opt onal  32 suggestType
+  2: opt onal str ng suggest onType
+  3: opt onal  32  njectedPos  on
+}(pers sted='true', hasPersonalData='false')
 
-struct NotificationTabInfo {
+struct Not f cat onTab nfo {
  /*
-  * Note that this field represents the `impressionId` in a Notification Tab notification.
-  * It has been renamed to `notificationId` in UUA so that the name effectively represents the
-  * value it holds, i.e., a unique id for a notification and request.
+  * Note that t  f eld represents t  ` mpress on d`  n a Not f cat on Tab not f cat on.
+  *   has been rena d to `not f cat on d`  n UUA so that t  na  effect vely represents t 
+  * value   holds,  .e., a un que  d for a not f cat on and request.
   */
-  1: required string notificationId(personalDataType='UniversallyUniqueIdentifierUuid')
-}(persisted='true', hasPersonalData='false')
+  1: requ red str ng not f cat on d(personalDataType='Un versallyUn que dent f erUu d')
+}(pers sted='true', hasPersonalData='false')
 
-struct PushNotificationInfo {
+struct PushNot f cat on nfo {
  /*
-  * Note that this field represents the `impressionId` in a Push Notification.
-  * It has been renamed to `notificationId` in UUA so that the name effectively represents the
-  * value it holds, i.e., a unique id for a notification and request.
+  * Note that t  f eld represents t  ` mpress on d`  n a Push Not f cat on.
+  *   has been rena d to `not f cat on d`  n UUA so that t  na  effect vely represents t 
+  * value   holds,  .e., a un que  d for a not f cat on and request.
   */
-  1: required string notificationId(personalDataType='UniversallyUniqueIdentifierUuid')
-}(persisted='true', hasPersonalData='false')
+  1: requ red str ng not f cat on d(personalDataType='Un versallyUn que dent f erUu d')
+}(pers sted='true', hasPersonalData='false')
 
-struct EmailNotificationInfo {
+struct Ema lNot f cat on nfo {
  /*
-  * Note that this field represents the `impressionId` in an Email Notification.
-  * It has been renamed to `notificationId` in UUA so that the name effectively represents the
-  * value it holds, i.e., a unique id for a notification and request.
+  * Note that t  f eld represents t  ` mpress on d`  n an Ema l Not f cat on.
+  *   has been rena d to `not f cat on d`  n UUA so that t  na  effect vely represents t 
+  * value   holds,  .e., a un que  d for a not f cat on and request.
   */
-  1: required string notificationId(personalDataType='UniversallyUniqueIdentifierUuid')
-}(persisted='true', hasPersonalData='false')
+  1: requ red str ng not f cat on d(personalDataType='Un versallyUn que dent f erUu d')
+}(pers sted='true', hasPersonalData='false')
 
 
-struct TweetDetailsPageInfo {
+struct T etDeta lsPage nfo {
   // To be deprecated, please don't re-use!
-  // Only reason to keep it now is Sparrow doesn't take empty struct. Once there is a real
-  // field we should just comment it out.
-  1: required list<string> breadcrumbViews(personalDataType = 'WebsitePage')
+  // Only reason to keep   now  s Sparrow doesn't take empty struct. Once t re  s a real
+  // f eld   should just com nt   out.
+  1: requ red l st<str ng> breadcrumbV ews(personalDataType = ' bs ePage')
   // Deprecated, please don't re-use!
-  // 2: required list<metadata.BreadcrumbTweet> breadcrumbTweets(personalDataType = 'TweetId')
-}(persisted='true', hasPersonalData='true')
+  // 2: requ red l st< tadata.BreadcrumbT et> breadcrumbT ets(personalDataType = 'T et d')
+}(pers sted='true', hasPersonalData='true')
 
-struct ProfilePageInfo {
+struct Prof lePage nfo {
   // To be deprecated, please don't re-use!
-  // Only reason to keep it now is Sparrow doesn't take empty struct. Once there is a real
-  // field we should just comment it out.
-  1: required list<string> breadcrumbViews(personalDataType = 'WebsitePage')
+  // Only reason to keep   now  s Sparrow doesn't take empty struct. Once t re  s a real
+  // f eld   should just com nt   out.
+  1: requ red l st<str ng> breadcrumbV ews(personalDataType = ' bs ePage')
   // Deprecated, please don't re-use!
-  // 2: required list<metadata.BreadcrumbTweet> breadcrumbTweets(personalDataType = 'TweetId')
-}(persisted='true', hasPersonalData='true')
+  // 2: requ red l st< tadata.BreadcrumbT et> breadcrumbT ets(personalDataType = 'T et d')
+}(pers sted='true', hasPersonalData='true')
 
-struct SearchResultsPageInfo {
-  // search query string
-  1: required string query(personalDataType = 'SearchQuery')
-  // Attribution of the search (e.g. Typed Query, Hashtag Click, etc.)
-  // see http://go/sgb/src/thrift/com/twitter/search/common/constants/query.thrift for details
-  2: optional query.ThriftQuerySource querySource
-  // 0-indexed position of item in list of search results
-  3: optional i32 itemPosition
-  // Attribution of the tweet result (e.g. QIG, Earlybird, etc)
-  // see http://go/sgb/src/thrift/com/twitter/search/common/constants/result.thrift for details
-  4: optional set<result.TweetResultSource> tweetResultSources
-  // Attribution of the user result (e.g. ExpertSearch, QIG, etc)
-  // see http://go/sgb/src/thrift/com/twitter/search/common/constants/result.thrift for details
-  5: optional set<result.UserResultSource> userResultSources
-  // The query filter type on the Search Results Page (SRP) when the action took place.
-  // Clicking on a tab in SRP applies a query filter automatically.
-  6: optional SearchQueryFilterType queryFilterType
-}(persisted='true', hasPersonalData='true')
+struct SearchResultsPage nfo {
+  // search query str ng
+  1: requ red str ng query(personalDataType = 'SearchQuery')
+  // Attr but on of t  search (e.g. Typed Query, Hashtag Cl ck, etc.)
+  // see http://go/sgb/src/thr ft/com/tw ter/search/common/constants/query.thr ft for deta ls
+  2: opt onal query.Thr ftQueryS ce queryS ce
+  // 0- ndexed pos  on of  em  n l st of search results
+  3: opt onal  32  emPos  on
+  // Attr but on of t  t et result (e.g. Q G, Earlyb rd, etc)
+  // see http://go/sgb/src/thr ft/com/tw ter/search/common/constants/result.thr ft for deta ls
+  4: opt onal set<result.T etResultS ce> t etResultS ces
+  // Attr but on of t  user result (e.g. ExpertSearch, Q G, etc)
+  // see http://go/sgb/src/thr ft/com/tw ter/search/common/constants/result.thr ft for deta ls
+  5: opt onal set<result.UserResultS ce> userResultS ces
+  // T  query f lter type on t  Search Results Page (SRP) w n t  act on took place.
+  // Cl ck ng on a tab  n SRP appl es a query f lter automat cally.
+  6: opt onal SearchQueryF lterType queryF lterType
+}(pers sted='true', hasPersonalData='true')
 
-struct SearchTypeaheadInfo {
-  // search query string
-  1: required string query(personalDataType = 'SearchQuery')
-  // 0-indexed position of item in list of typeahead drop-down
-  2: optional i32 itemPosition
-}(persisted='true', hasPersonalData='true')
+struct SearchTypea ad nfo {
+  // search query str ng
+  1: requ red str ng query(personalDataType = 'SearchQuery')
+  // 0- ndexed pos  on of  em  n l st of typea ad drop-down
+  2: opt onal  32  emPos  on
+}(pers sted='true', hasPersonalData='true')
 
-enum SearchQueryFilterType {
-  // filter to top ranked content for a query
+enum SearchQueryF lterType {
+  // f lter to top ranked content for a query
   TOP = 1
-  // filter to latest content for a query
+  // f lter to latest content for a query
   LATEST = 2
-  // filter to user results for a query
+  // f lter to user results for a query
   PEOPLE = 3
-  // filter to photo tweet results for a query
+  // f lter to photo t et results for a query
   PHOTOS = 4
-  // filter to video tweet results for a query
-  VIDEOS = 5
+  // f lter to v deo t et results for a query
+  V DEOS = 5
 }

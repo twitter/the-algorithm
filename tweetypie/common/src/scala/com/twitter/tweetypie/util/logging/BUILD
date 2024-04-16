@@ -1,17 +1,17 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    str ct_deps = True,
     tags = [
-        "bazel-compatible",
-        "logging_impl_check_whitelisted_target",
+        "bazel-compat ble",
+        "logg ng_ mpl_c ck_wh el sted_target",
     ],
-    dependencies = [
-        "3rdparty/jvm/ch/qos/logback:logback-classic",
+    dependenc es = [
+        "3rdparty/jvm/ch/qos/logback:logback-class c",
         "3rdparty/jvm/com/google/guava",
-        "finagle/finagle-memcached/src/main/scala",
-        "src/thrift/com/twitter/servo:servo-exception-java",
-        "tweetypie/server/src/main/scala/com/twitter/tweetypie/serverutil",
-        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
+        "f nagle/f nagle- mcac d/src/ma n/scala",
+        "src/thr ft/com/tw ter/servo:servo-except on-java",
+        "t etyp e/server/src/ma n/scala/com/tw ter/t etyp e/serverut l",
+        "ut l/ut l-stats/src/ma n/scala/com/tw ter/f nagle/stats",
     ],
 )

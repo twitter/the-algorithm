@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.component_library.module
+package com.tw ter.product_m xer.component_l brary.module
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.annotations.Flags
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.account_recommendations_mixer.thriftscala.AccountRecommendationsMixer
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.convers ons.PercentOps._
+ mport com.tw ter.f nagle.thr ftmux. thodBu lder
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport com.tw ter. nject.annotat ons.Flags
+ mport com.tw ter. nject. njector
+ mport com.tw ter. nject.thr ft.modules.Thr ft thodBu lderCl entModule
+ mport com.tw ter.account_recom ndat ons_m xer.thr ftscala.AccountRecom ndat onsM xer
+ mport com.tw ter.ut l.Durat on
 
 /**
- * Implementation with reasonable defaults for an idempotent Account Recommendations Mixer Thrift client.
+ *  mple ntat on w h reasonable defaults for an  dempotent Account Recom ndat ons M xer Thr ft cl ent.
  *
- * Note that the per request and total timeouts configured in this module are meant to represent a
- * reasonable starting point only. These were selected based on common practice, and should not be
- * assumed to be optimal for any particular use case. If you are interested in further tuning the
- * settings in this module, it is recommended to create local copy for your service.
+ * Note that t  per request and total t  outs conf gured  n t  module are  ant to represent a
+ * reasonable start ng po nt only. T se  re selected based on common pract ce, and should not be
+ * assu d to be opt mal for any part cular use case.  f   are  nterested  n furt r tun ng t 
+ * sett ngs  n t  module,    s recom nded to create local copy for y  serv ce.
  */
-object AccountRecommendationsMixerModule
-    extends ThriftMethodBuilderClientModule[
-      AccountRecommendationsMixer.ServicePerEndpoint,
-      AccountRecommendationsMixer.MethodPerEndpoint
+object AccountRecom ndat onsM xerModule
+    extends Thr ft thodBu lderCl entModule[
+      AccountRecom ndat onsM xer.Serv cePerEndpo nt,
+      AccountRecom ndat onsM xer. thodPerEndpo nt
     ]
-    with MtlsClient {
-  final val AccountRecommendationsMixerTimeoutPerRequest =
-    "account_recommendations_mixer.timeout_per_request"
-  final val AccountRecommendationsMixerTimeoutTotal = "account_recommendations_mixer.timeout_total"
+    w h MtlsCl ent {
+  f nal val AccountRecom ndat onsM xerT  outPerRequest =
+    "account_recom ndat ons_m xer.t  out_per_request"
+  f nal val AccountRecom ndat onsM xerT  outTotal = "account_recom ndat ons_m xer.t  out_total"
 
-  flag[Duration](
-    name = AccountRecommendationsMixerTimeoutPerRequest,
-    default = 800.milliseconds,
-    help = "Timeout per request for AccountRecommendationsMixer")
+  flag[Durat on](
+    na  = AccountRecom ndat onsM xerT  outPerRequest,
+    default = 800.m ll seconds,
+     lp = "T  out per request for AccountRecom ndat onsM xer")
 
-  flag[Duration](
-    name = AccountRecommendationsMixerTimeoutTotal,
-    default = 1200.milliseconds,
-    help = "Timeout total for AccountRecommendationsMixer")
+  flag[Durat on](
+    na  = AccountRecom ndat onsM xerT  outTotal,
+    default = 1200.m ll seconds,
+     lp = "T  out total for AccountRecom ndat onsM xer")
 
-  override val label: String = "account-recs-mixer"
+  overr de val label: Str ng = "account-recs-m xer"
 
-  override val dest: String = "/s/account-recs-mixer/account-recs-mixer:thrift"
+  overr de val dest: Str ng = "/s/account-recs-m xer/account-recs-m xer:thr ft"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    val timeOutPerRequest: Duration = injector
-      .instance[Duration](Flags.named(AccountRecommendationsMixerTimeoutPerRequest))
-    val timeOutTotal: Duration =
-      injector.instance[Duration](Flags.named(AccountRecommendationsMixerTimeoutTotal))
-    methodBuilder
-      .withTimeoutPerRequest(timeOutPerRequest)
-      .withTimeoutTotal(timeOutTotal)
-      .idempotent(5.percent)
+  overr de protected def conf gure thodBu lder(
+     njector:  njector,
+     thodBu lder:  thodBu lder
+  ):  thodBu lder = {
+    val t  OutPerRequest: Durat on =  njector
+      . nstance[Durat on](Flags.na d(AccountRecom ndat onsM xerT  outPerRequest))
+    val t  OutTotal: Durat on =
+       njector. nstance[Durat on](Flags.na d(AccountRecom ndat onsM xerT  outTotal))
+     thodBu lder
+      .w hT  outPerRequest(t  OutPerRequest)
+      .w hT  outTotal(t  OutTotal)
+      . dempotent(5.percent)
   }
 
-  override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+  overr de protected def sess onAcqu s  onT  out: Durat on = 500.m ll seconds
 }

@@ -1,66 +1,66 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.dataproducts.enrichments.thriftscala._
-import com.twitter.gizmoduck.thriftscala.UserResponseState._
-import com.twitter.stitch.SeqGroup
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.compat.LegacySeqGroup
-import com.twitter.tweetypie.backends.GnipEnricherator
-import com.twitter.tweetypie.thriftscala.GeoCoordinates
+ mport com.tw ter.dataproducts.enr ch nts.thr ftscala._
+ mport com.tw ter.g zmoduck.thr ftscala.UserResponseState._
+ mport com.tw ter.st ch.SeqGroup
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.compat.LegacySeqGroup
+ mport com.tw ter.t etyp e.backends.Gn pEnr c rator
+ mport com.tw ter.t etyp e.thr ftscala.GeoCoord nates
 
-case class ProfileGeoKey(tweetId: TweetId, userId: Option[UserId], coords: Option[GeoCoordinates]) {
-  def key: TweetData =
-    TweetData(
-      tweetId = tweetId,
-      userId = userId,
-      coordinates = coords.map(ProfileGeoRepository.convertGeo)
+case class Prof leGeoKey(t et d: T et d, user d: Opt on[User d], coords: Opt on[GeoCoord nates]) {
+  def key: T etData =
+    T etData(
+      t et d = t et d,
+      user d = user d,
+      coord nates = coords.map(Prof leGeoRepos ory.convertGeo)
     )
 }
 
-object ProfileGeoRepository {
-  type Type = ProfileGeoKey => Stitch[ProfileGeoEnrichment]
+object Prof leGeoRepos ory {
+  type Type = Prof leGeoKey => St ch[Prof leGeoEnr ch nt]
 
-  case class UnexpectedState(state: EnrichmentHydrationState) extends Exception(state.name)
+  case class UnexpectedState(state: Enr ch ntHydrat onState) extends Except on(state.na )
 
-  def convertGeo(coords: GeoCoordinates): TweetyPieGeoCoordinates =
-    TweetyPieGeoCoordinates(
-      latitude = coords.latitude,
-      longitude = coords.longitude,
-      geoPrecision = coords.geoPrecision,
-      display = coords.display
+  def convertGeo(coords: GeoCoord nates): T etyP eGeoCoord nates =
+    T etyP eGeoCoord nates(
+      lat ude = coords.lat ude,
+      long ude = coords.long ude,
+      geoPrec s on = coords.geoPrec s on,
+      d splay = coords.d splay
     )
 
-  def apply(hydrateProfileGeo: GnipEnricherator.HydrateProfileGeo): Type = {
-    import EnrichmentHydrationState._
+  def apply(hydrateProf leGeo: Gn pEnr c rator.HydrateProf leGeo): Type = {
+     mport Enr ch ntHydrat onState._
 
-    val emptyEnrichmentStitch = Stitch.value(ProfileGeoEnrichment())
+    val emptyEnr ch ntSt ch = St ch.value(Prof leGeoEnr ch nt())
 
-    val profileGeoGroup = SeqGroup[TweetData, ProfileGeoResponse] { keys: Seq[TweetData] =>
-      // Gnip ignores writePath and treats all requests as reads
-      LegacySeqGroup.liftToSeqTry(
-        hydrateProfileGeo(ProfileGeoRequest(requests = keys, writePath = false))
+    val prof leGeoGroup = SeqGroup[T etData, Prof leGeoResponse] { keys: Seq[T etData] =>
+      // Gn p  gnores wr ePath and treats all requests as reads
+      LegacySeqGroup.l ftToSeqTry(
+        hydrateProf leGeo(Prof leGeoRequest(requests = keys, wr ePath = false))
       )
     }
 
-    (geoKey: ProfileGeoKey) =>
-      Stitch
-        .call(geoKey.key, profileGeoGroup)
+    (geoKey: Prof leGeoKey) =>
+      St ch
+        .call(geoKey.key, prof leGeoGroup)
         .flatMap {
-          case ProfileGeoResponse(_, Success, Some(enrichment), _) =>
-            Stitch.value(enrichment)
-          case ProfileGeoResponse(_, Success, None, _) =>
-            // when state is Success enrichment should always be Some, but default to be safe
-            emptyEnrichmentStitch
-          case ProfileGeoResponse(
+          case Prof leGeoResponse(_, Success, So (enr ch nt), _) =>
+            St ch.value(enr ch nt)
+          case Prof leGeoResponse(_, Success, None, _) =>
+            // w n state  s Success enr ch nt should always be So , but default to be safe
+            emptyEnr ch ntSt ch
+          case Prof leGeoResponse(
                 _,
                 UserLookupError,
                 _,
-                Some(DeactivatedUser | SuspendedUser | NotFound)
+                So (Deact vatedUser | SuspendedUser | NotFound)
               ) =>
-            emptyEnrichmentStitch
+            emptyEnr ch ntSt ch
           case r =>
-            Stitch.exception(UnexpectedState(r.state))
+            St ch.except on(UnexpectedState(r.state))
         }
   }
 }

@@ -1,350 +1,350 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.flockdb.client._
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.additionalfields.AdditionalFields.setAdditionalFields
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.thriftscala.entities.EntityExtractor
-import com.twitter.tweetypie.tweettext.Truncator
-import com.twitter.tweetypie.util.CommunityUtil
-import com.twitter.tweetypie.util.EditControlUtil
+ mport com.tw ter.flockdb.cl ent._
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.add  onalf elds.Add  onalF elds.setAdd  onalF elds
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.repos ory._
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport com.tw ter.t etyp e.thr ftscala.ent  es.Ent yExtractor
+ mport com.tw ter.t etyp e.t ettext.Truncator
+ mport com.tw ter.t etyp e.ut l.Commun yUt l
+ mport com.tw ter.t etyp e.ut l.Ed ControlUt l
 
-case class SourceTweetRequest(
-  tweetId: TweetId,
+case class S ceT etRequest(
+  t et d: T et d,
   user: User,
-  hydrateOptions: WritePathHydrationOptions)
+  hydrateOpt ons: Wr ePathHydrat onOpt ons)
 
-object RetweetBuilder {
-  import TweetBuilder._
-  import UpstreamFailure._
+object Ret etBu lder {
+   mport T etBu lder._
+   mport UpstreamFa lure._
 
-  type Type = FutureArrow[RetweetRequest, TweetBuilderResult]
+  type Type = FutureArrow[Ret etRequest, T etBu lderResult]
 
-  val SGSTestRole = "socialgraph"
+  val SGSTestRole = "soc algraph"
 
   val log: Logger = Logger(getClass)
 
   /**
-   * Retweets text gets RT and username prepended
+   * Ret ets text gets RT and userna  prepended
    */
-  def composeRetweetText(text: String, sourceUser: User): String =
-    composeRetweetText(text, sourceUser.profile.get.screenName)
+  def composeRet etText(text: Str ng, s ceUser: User): Str ng =
+    composeRet etText(text, s ceUser.prof le.get.screenNa )
 
   /**
-   * Retweets text gets RT and username prepended
+   * Ret ets text gets RT and userna  prepended
    */
-  def composeRetweetText(text: String, screenName: String): String =
-    Truncator.truncateForRetweet("RT @" + screenName + ": " + text)
+  def composeRet etText(text: Str ng, screenNa : Str ng): Str ng =
+    Truncator.truncateForRet et("RT @" + screenNa  + ": " + text)
 
-  // We do not want to allow community tweets to be retweeted.
-  def validateNotCommunityTweet(sourceTweet: Tweet): Future[Unit] =
-    if (CommunityUtil.hasCommunity(sourceTweet.communities)) {
-      Future.exception(TweetCreateFailure.State(TweetCreateState.CommunityRetweetNotAllowed))
+  //   do not want to allow commun y t ets to be ret eted.
+  def val dateNotCommun yT et(s ceT et: T et): Future[Un ] =
+     f (Commun yUt l.hasCommun y(s ceT et.commun  es)) {
+      Future.except on(T etCreateFa lure.State(T etCreateState.Commun yRet etNotAllo d))
     } else {
-      Future.Unit
+      Future.Un 
     }
 
-  // We do not want to allow Trusted Friends tweets to be retweeted.
-  def validateNotTrustedFriendsTweet(sourceTweet: Tweet): Future[Unit] =
-    sourceTweet.trustedFriendsControl match {
-      case Some(trustedFriendsControl) =>
-        Future.exception(TweetCreateFailure.State(TweetCreateState.TrustedFriendsRetweetNotAllowed))
+  //   do not want to allow Trusted Fr ends t ets to be ret eted.
+  def val dateNotTrustedFr endsT et(s ceT et: T et): Future[Un ] =
+    s ceT et.trustedFr endsControl match {
+      case So (trustedFr endsControl) =>
+        Future.except on(T etCreateFa lure.State(T etCreateState.TrustedFr endsRet etNotAllo d))
       case None =>
-        Future.Unit
+        Future.Un 
     }
 
-  // We do not want to allow retweet of a stale version of a tweet in an edit chain.
-  def validateStaleTweet(sourceTweet: Tweet): Future[Unit] = {
-    if (!EditControlUtil.isLatestEdit(sourceTweet.editControl, sourceTweet.id).getOrElse(true)) {
-      Future.exception(TweetCreateFailure.State(TweetCreateState.StaleTweetRetweetNotAllowed))
+  //   do not want to allow ret et of a stale vers on of a t et  n an ed  cha n.
+  def val dateStaleT et(s ceT et: T et): Future[Un ] = {
+     f (!Ed ControlUt l. sLatestEd (s ceT et.ed Control, s ceT et. d).getOrElse(true)) {
+      Future.except on(T etCreateFa lure.State(T etCreateState.StaleT etRet etNotAllo d))
     } else {
-      // the source tweet does not have any edit control or the source tweet is the latest tweet
-      Future.Unit
+      // t  s ce t et does not have any ed  control or t  s ce t et  s t  latest t et
+      Future.Un 
     }
   }
 
   /**
-   * Builds the RetweetBuilder
+   * Bu lds t  Ret etBu lder
    */
   def apply(
-    validateRequest: RetweetRequest => Future[Unit],
-    tweetIdGenerator: TweetIdGenerator,
-    tweetRepo: TweetRepository.Type,
-    userRepo: UserRepository.Type,
-    tflock: TFlockClient,
-    deviceSourceRepo: DeviceSourceRepository.Type,
-    validateUpdateRateLimit: RateLimitChecker.Validate,
-    spamChecker: Spam.Checker[RetweetSpamRequest] = Spam.DoNotCheckSpam,
-    updateUserCounts: (User, Tweet) => Future[User],
-    superFollowRelationsRepo: StratoSuperFollowRelationsRepository.Type,
-    unretweetEdits: TweetDeletePathHandler.UnretweetEdits,
-    setEditWindowToSixtyMinutes: Gate[Unit]
-  ): RetweetBuilder.Type = {
-    val entityExtactor = EntityExtractor.mutationAll.endo
+    val dateRequest: Ret etRequest => Future[Un ],
+    t et dGenerator: T et dGenerator,
+    t etRepo: T etRepos ory.Type,
+    userRepo: UserRepos ory.Type,
+    tflock: TFlockCl ent,
+    dev ceS ceRepo: Dev ceS ceRepos ory.Type,
+    val dateUpdateRateL m : RateL m C cker.Val date,
+    spamC cker: Spam.C cker[Ret etSpamRequest] = Spam.DoNotC ckSpam,
+    updateUserCounts: (User, T et) => Future[User],
+    superFollowRelat onsRepo: StratoSuperFollowRelat onsRepos ory.Type,
+    unret etEd s: T etDeletePathHandler.Unret etEd s,
+    setEd W ndowToS xtyM nutes: Gate[Un ]
+  ): Ret etBu lder.Type = {
+    val ent yExtactor = Ent yExtractor.mutat onAll.endo
 
-    val sourceTweetRepo: SourceTweetRequest => Stitch[Tweet] =
+    val s ceT etRepo: S ceT etRequest => St ch[T et] =
       req => {
-        tweetRepo(
-          req.tweetId,
-          WritePathQueryOptions.retweetSourceTweet(req.user, req.hydrateOptions)
+        t etRepo(
+          req.t et d,
+          Wr ePathQueryOpt ons.ret etS ceT et(req.user, req.hydrateOpt ons)
         ).rescue {
-            case _: FilteredState => Stitch.NotFound
+            case _: F lteredState => St ch.NotFound
           }
           .rescue {
-            convertRepoExceptions(TweetCreateState.SourceTweetNotFound, TweetLookupFailure(_))
+            convertRepoExcept ons(T etCreateState.S ceT etNotFound, T etLookupFa lure(_))
           }
       }
 
     val getUser = userLookup(userRepo)
-    val getSourceUser = sourceUserLookup(userRepo)
-    val getDeviceSource = deviceSourceLookup(deviceSourceRepo)
+    val getS ceUser = s ceUserLookup(userRepo)
+    val getDev ceS ce = dev ceS ceLookup(dev ceS ceRepo)
 
     /**
-     * We exempt SGS test users from the check to get them through Block v2 testing.
+     *   exempt SGS test users from t  c ck to get t m through Block v2 test ng.
      */
-    def isSGSTestRole(user: User): Boolean =
-      user.roles.exists { roles => roles.roles.contains(SGSTestRole) }
+    def  sSGSTestRole(user: User): Boolean =
+      user.roles.ex sts { roles => roles.roles.conta ns(SGSTestRole) }
 
-    def validateCanRetweet(
+    def val dateCanRet et(
       user: User,
-      sourceUser: User,
-      sourceTweet: Tweet,
-      request: RetweetRequest
-    ): Future[Unit] =
+      s ceUser: User,
+      s ceT et: T et,
+      request: Ret etRequest
+    ): Future[Un ] =
       Future
-        .join(
-          validateNotCommunityTweet(sourceTweet),
-          validateNotTrustedFriendsTweet(sourceTweet),
-          validateSourceUserRetweetable(user, sourceUser),
-          validateStaleTweet(sourceTweet),
-          Future.when(!request.dark) {
-            if (request.returnSuccessOnDuplicate)
-              failWithRetweetIdIfAlreadyRetweeted(user, sourceTweet)
+        .jo n(
+          val dateNotCommun yT et(s ceT et),
+          val dateNotTrustedFr endsT et(s ceT et),
+          val dateS ceUserRet etable(user, s ceUser),
+          val dateStaleT et(s ceT et),
+          Future.w n(!request.dark) {
+             f (request.returnSuccessOnDupl cate)
+              fa lW hRet et d fAlreadyRet eted(user, s ceT et)
             else
-              validateNotAlreadyRetweeted(user, sourceTweet)
+              val dateNotAlreadyRet eted(user, s ceT et)
           }
         )
-        .unit
+        .un 
 
-    def validateSourceUserRetweetable(user: User, sourceUser: User): Future[Unit] =
-      if (sourceUser.profile.isEmpty)
-        Future.exception(UserProfileEmptyException)
-      else if (sourceUser.safety.isEmpty)
-        Future.exception(UserSafetyEmptyException)
-      else if (sourceUser.view.isEmpty)
-        Future.exception(UserViewEmptyException)
-      else if (user.id != sourceUser.id && sourceUser.safety.get.isProtected)
-        Future.exception(TweetCreateFailure.State(TweetCreateState.CannotRetweetProtectedTweet))
-      else if (sourceUser.safety.get.deactivated)
-        Future.exception(TweetCreateFailure.State(TweetCreateState.CannotRetweetDeactivatedUser))
-      else if (sourceUser.safety.get.suspended)
-        Future.exception(TweetCreateFailure.State(TweetCreateState.CannotRetweetSuspendedUser))
-      else if (sourceUser.view.get.blockedBy && !isSGSTestRole(user))
-        Future.exception(TweetCreateFailure.State(TweetCreateState.CannotRetweetBlockingUser))
-      else if (sourceUser.profile.get.screenName.isEmpty)
-        Future.exception(
-          TweetCreateFailure.State(TweetCreateState.CannotRetweetUserWithoutScreenName)
+    def val dateS ceUserRet etable(user: User, s ceUser: User): Future[Un ] =
+       f (s ceUser.prof le. sEmpty)
+        Future.except on(UserProf leEmptyExcept on)
+      else  f (s ceUser.safety. sEmpty)
+        Future.except on(UserSafetyEmptyExcept on)
+      else  f (s ceUser.v ew. sEmpty)
+        Future.except on(UserV ewEmptyExcept on)
+      else  f (user. d != s ceUser. d && s ceUser.safety.get. sProtected)
+        Future.except on(T etCreateFa lure.State(T etCreateState.CannotRet etProtectedT et))
+      else  f (s ceUser.safety.get.deact vated)
+        Future.except on(T etCreateFa lure.State(T etCreateState.CannotRet etDeact vatedUser))
+      else  f (s ceUser.safety.get.suspended)
+        Future.except on(T etCreateFa lure.State(T etCreateState.CannotRet etSuspendedUser))
+      else  f (s ceUser.v ew.get.blockedBy && ! sSGSTestRole(user))
+        Future.except on(T etCreateFa lure.State(T etCreateState.CannotRet etBlock ngUser))
+      else  f (s ceUser.prof le.get.screenNa . sEmpty)
+        Future.except on(
+          T etCreateFa lure.State(T etCreateState.CannotRet etUserW houtScreenNa )
         )
       else
-        Future.Unit
+        Future.Un 
 
-    def tflockGraphContains(
+    def tflockGraphConta ns(
       graph: StatusGraph,
-      fromId: Long,
-      toId: Long,
-      dir: Direction
+      from d: Long,
+      to d: Long,
+      d r: D rect on
     ): Future[Boolean] =
-      tflock.contains(graph, fromId, toId, dir).rescue {
-        case ex: OverCapacity => Future.exception(ex)
-        case ex => Future.exception(TFlockLookupFailure(ex))
+      tflock.conta ns(graph, from d, to d, d r).rescue {
+        case ex: OverCapac y => Future.except on(ex)
+        case ex => Future.except on(TFlockLookupFa lure(ex))
       }
 
-    def getRetweetIdFromTflock(sourceTweetId: TweetId, userId: UserId): Future[Option[Long]] =
+    def getRet et dFromTflock(s ceT et d: T et d, user d: User d): Future[Opt on[Long]] =
       tflock
         .selectAll(
           Select(
-            sourceId = sourceTweetId,
-            graph = RetweetsGraph,
-            direction = Forward
-          ).intersect(
+            s ce d = s ceT et d,
+            graph = Ret etsGraph,
+            d rect on = Forward
+          ). ntersect(
             Select(
-              sourceId = userId,
-              graph = UserTimelineGraph,
-              direction = Forward
+              s ce d = user d,
+              graph = UserT  l neGraph,
+              d rect on = Forward
             )
           )
         )
-        .map(_.headOption)
+        .map(_. adOpt on)
 
-    def validateNotAlreadyRetweeted(user: User, sourceTweet: Tweet): Future[Unit] =
-      // use the perspective object from TLS if available, otherwise, check with tflock
-      (sourceTweet.perspective match {
-        case Some(perspective) =>
-          Future.value(perspective.retweeted)
+    def val dateNotAlreadyRet eted(user: User, s ceT et: T et): Future[Un ] =
+      // use t  perspect ve object from TLS  f ava lable, ot rw se, c ck w h tflock
+      (s ceT et.perspect ve match {
+        case So (perspect ve) =>
+          Future.value(perspect ve.ret eted)
         case None =>
-          // we have to query the RetweetSourceGraph in the Reverse order because
-          // it is only defined in that direction, instead of bi-directionally
-          tflockGraphContains(RetweetSourceGraph, user.id, sourceTweet.id, Reverse)
+          //   have to query t  Ret etS ceGraph  n t  Reverse order because
+          //    s only def ned  n that d rect on,  nstead of b -d rect onally
+          tflockGraphConta ns(Ret etS ceGraph, user. d, s ceT et. d, Reverse)
       }).flatMap {
         case true =>
-          Future.exception(TweetCreateFailure.State(TweetCreateState.AlreadyRetweeted))
-        case false => Future.Unit
+          Future.except on(T etCreateFa lure.State(T etCreateState.AlreadyRet eted))
+        case false => Future.Un 
       }
 
-    def failWithRetweetIdIfAlreadyRetweeted(user: User, sourceTweet: Tweet): Future[Unit] =
-      // use the perspective object from TLS if available, otherwise, check with tflock
-      (sourceTweet.perspective.flatMap(_.retweetId) match {
-        case Some(tweetId) => Future.value(Some(tweetId))
+    def fa lW hRet et d fAlreadyRet eted(user: User, s ceT et: T et): Future[Un ] =
+      // use t  perspect ve object from TLS  f ava lable, ot rw se, c ck w h tflock
+      (s ceT et.perspect ve.flatMap(_.ret et d) match {
+        case So (t et d) => Future.value(So (t et d))
         case None =>
-          getRetweetIdFromTflock(sourceTweet.id, user.id)
+          getRet et dFromTflock(s ceT et. d, user. d)
       }).flatMap {
-        case None => Future.Unit
-        case Some(tweetId) =>
-          Future.exception(TweetCreateFailure.AlreadyRetweeted(tweetId))
+        case None => Future.Un 
+        case So (t et d) =>
+          Future.except on(T etCreateFa lure.AlreadyRet eted(t et d))
       }
 
-    def validateContributor(contributorIdOpt: Option[UserId]): Future[Unit] =
-      if (contributorIdOpt.isDefined)
-        Future.exception(TweetCreateFailure.State(TweetCreateState.ContributorNotSupported))
+    def val dateContr butor(contr butor dOpt: Opt on[User d]): Future[Un ] =
+       f (contr butor dOpt. sDef ned)
+        Future.except on(T etCreateFa lure.State(T etCreateState.Contr butorNotSupported))
       else
-        Future.Unit
+        Future.Un 
 
-    case class RetweetSource(sourceTweet: Tweet, parentUserId: UserId)
+    case class Ret etS ce(s ceT et: T et, parentUser d: User d)
 
     /**
-     * Recursively follows a retweet chain to the root source tweet.  Also returns user id from the
-     * first walked tweet as the 'parentUserId'.
-     * In practice, the depth of the chain should never be greater than 2 because
-     * share.sourceStatusId should always reference the root (unlike share.parentStatusId).
+     * Recurs vely follows a ret et cha n to t  root s ce t et.  Also returns user  d from t 
+     * f rst walked t et as t  'parentUser d'.
+     *  n pract ce, t  depth of t  cha n should never be greater than 2 because
+     * share.s ceStatus d should always reference t  root (unl ke share.parentStatus d).
      */
-    def findRetweetSource(
-      tweetId: TweetId,
+    def f ndRet etS ce(
+      t et d: T et d,
       forUser: User,
-      hydrateOptions: WritePathHydrationOptions
-    ): Future[RetweetSource] =
-      Stitch
-        .run(sourceTweetRepo(SourceTweetRequest(tweetId, forUser, hydrateOptions)))
-        .flatMap { tweet =>
-          getShare(tweet) match {
-            case None => Future.value(RetweetSource(tweet, getUserId(tweet)))
-            case Some(share) =>
-              findRetweetSource(share.sourceStatusId, forUser, hydrateOptions)
-                .map(_.copy(parentUserId = getUserId(tweet)))
+      hydrateOpt ons: Wr ePathHydrat onOpt ons
+    ): Future[Ret etS ce] =
+      St ch
+        .run(s ceT etRepo(S ceT etRequest(t et d, forUser, hydrateOpt ons)))
+        .flatMap { t et =>
+          getShare(t et) match {
+            case None => Future.value(Ret etS ce(t et, getUser d(t et)))
+            case So (share) =>
+              f ndRet etS ce(share.s ceStatus d, forUser, hydrateOpt ons)
+                .map(_.copy(parentUser d = getUser d(t et)))
           }
         }
 
     FutureArrow { request =>
       for {
-        () <- validateRequest(request)
-        userFuture = Stitch.run(getUser(request.userId))
-        tweetIdFuture = tweetIdGenerator()
-        devsrcFuture = Stitch.run(getDeviceSource(request.createdVia))
+        () <- val dateRequest(request)
+        userFuture = St ch.run(getUser(request.user d))
+        t et dFuture = t et dGenerator()
+        devsrcFuture = St ch.run(getDev ceS ce(request.createdV a))
         user <- userFuture
-        tweetId <- tweetIdFuture
+        t et d <- t et dFuture
         devsrc <- devsrcFuture
-        rtSource <- findRetweetSource(
-          request.sourceStatusId,
+        rtS ce <- f ndRet etS ce(
+          request.s ceStatus d,
           user,
-          request.hydrationOptions.getOrElse(WritePathHydrationOptions(simpleQuotedTweet = true))
+          request.hydrat onOpt ons.getOrElse(Wr ePathHydrat onOpt ons(s mpleQuotedT et = true))
         )
-        sourceTweet = rtSource.sourceTweet
-        sourceUser <- Stitch.run(getSourceUser(getUserId(sourceTweet), request.userId))
+        s ceT et = rtS ce.s ceT et
+        s ceUser <- St ch.run(getS ceUser(getUser d(s ceT et), request.user d))
 
-        // We want to confirm that a user is actually allowed to
-        // retweet an Exclusive Tweet (only available to super followers)
-        () <- StratoSuperFollowRelationsRepository.Validate(
-          sourceTweet.exclusiveTweetControl,
-          user.id,
-          superFollowRelationsRepo)
+        //   want to conf rm that a user  s actually allo d to
+        // ret et an Exclus ve T et (only ava lable to super follo rs)
+        () <- StratoSuperFollowRelat onsRepos ory.Val date(
+          s ceT et.exclus veT etControl,
+          user. d,
+          superFollowRelat onsRepo)
 
-        () <- validateUser(user)
-        () <- validateUpdateRateLimit((user.id, request.dark))
-        () <- validateContributor(request.contributorUserId)
-        () <- validateCanRetweet(user, sourceUser, sourceTweet, request)
-        () <- unretweetEdits(sourceTweet.editControl, sourceTweet.id, user.id)
+        () <- val dateUser(user)
+        () <- val dateUpdateRateL m ((user. d, request.dark))
+        () <- val dateContr butor(request.contr butorUser d)
+        () <- val dateCanRet et(user, s ceUser, s ceT et, request)
+        () <- unret etEd s(s ceT et.ed Control, s ceT et. d, user. d)
 
-        spamRequest = RetweetSpamRequest(
-          retweetId = tweetId,
-          sourceUserId = getUserId(sourceTweet),
-          sourceTweetId = sourceTweet.id,
-          sourceTweetText = getText(sourceTweet),
-          sourceUserName = sourceUser.profile.map(_.screenName),
-          safetyMetaData = request.safetyMetaData
+        spamRequest = Ret etSpamRequest(
+          ret et d = t et d,
+          s ceUser d = getUser d(s ceT et),
+          s ceT et d = s ceT et. d,
+          s ceT etText = getText(s ceT et),
+          s ceUserNa  = s ceUser.prof le.map(_.screenNa ),
+          safety taData = request.safety taData
         )
 
-        spamResult <- spamChecker(spamRequest)
+        spamResult <- spamC cker(spamRequest)
 
         safety = user.safety.get
 
         share = Share(
-          sourceStatusId = sourceTweet.id,
-          sourceUserId = sourceUser.id,
-          parentStatusId = request.sourceStatusId
+          s ceStatus d = s ceT et. d,
+          s ceUser d = s ceUser. d,
+          parentStatus d = request.s ceStatus d
         )
 
-        retweetText = composeRetweetText(getText(sourceTweet), sourceUser)
-        createdAt = SnowflakeId(tweetId).time
+        ret etText = composeRet etText(getText(s ceT et), s ceUser)
+        createdAt = Snowflake d(t et d).t  
 
-        coreData = TweetCoreData(
-          userId = request.userId,
-          text = retweetText,
-          createdAtSecs = createdAt.inSeconds,
-          createdVia = devsrc.internalName,
-          share = Some(share),
+        coreData = T etCoreData(
+          user d = request.user d,
+          text = ret etText,
+          createdAtSecs = createdAt. nSeconds,
+          createdV a = devsrc. nternalNa ,
+          share = So (share),
           hasTakedown = safety.hasTakedown,
-          trackingId = request.trackingId,
+          track ng d = request.track ng d,
           nsfwUser = safety.nsfwUser,
-          nsfwAdmin = safety.nsfwAdmin,
+          nsfwAdm n = safety.nsfwAdm n,
           narrowcast = request.narrowcast,
           nullcast = request.nullcast
         )
 
-        retweet = Tweet(
-          id = tweetId,
-          coreData = Some(coreData),
-          contributor = getContributor(request.userId),
-          editControl = Some(
-            EditControl.Initial(
-              EditControlUtil
-                .makeEditControlInitial(
-                  tweetId = tweetId,
+        ret et = T et(
+           d = t et d,
+          coreData = So (coreData),
+          contr butor = getContr butor(request.user d),
+          ed Control = So (
+            Ed Control. n  al(
+              Ed ControlUt l
+                .makeEd Control n  al(
+                  t et d = t et d,
                   createdAt = createdAt,
-                  setEditWindowToSixtyMinutes = setEditWindowToSixtyMinutes
+                  setEd W ndowToS xtyM nutes = setEd W ndowToS xtyM nutes
                 )
-                .initial
-                .copy(isEditEligible = Some(false))
+                . n  al
+                .copy( sEd El g ble = So (false))
             )
           ),
         )
 
-        retweetWithEntities = entityExtactor(retweet)
-        retweetWithAdditionalFields = setAdditionalFields(
-          retweetWithEntities,
-          request.additionalFields
+        ret etW hEnt  es = ent yExtactor(ret et)
+        ret etW hAdd  onalF elds = setAdd  onalF elds(
+          ret etW hEnt  es,
+          request.add  onalF elds
         )
-        // update the perspective and counts fields of the source tweet to reflect the effects
-        // of the user performing a retweet, even though those effects haven't happened yet.
-        updatedSourceTweet = sourceTweet.copy(
-          perspective = sourceTweet.perspective.map {
-            _.copy(retweeted = true, retweetId = Some(retweet.id))
+        // update t  perspect ve and counts f elds of t  s ce t et to reflect t  effects
+        // of t  user perform ng a ret et, even though those effects haven't happened yet.
+        updatedS ceT et = s ceT et.copy(
+          perspect ve = s ceT et.perspect ve.map {
+            _.copy(ret eted = true, ret et d = So (ret et. d))
           },
-          counts = sourceTweet.counts.map { c => c.copy(retweetCount = c.retweetCount.map(_ + 1)) }
+          counts = s ceT et.counts.map { c => c.copy(ret etCount = c.ret etCount.map(_ + 1)) }
         )
 
-        user <- updateUserCounts(user, retweetWithAdditionalFields)
-      } yield {
-        TweetBuilderResult(
-          tweet = retweetWithAdditionalFields,
+        user <- updateUserCounts(user, ret etW hAdd  onalF elds)
+      } y eld {
+        T etBu lderResult(
+          t et = ret etW hAdd  onalF elds,
           user = user,
           createdAt = createdAt,
-          sourceTweet = Some(updatedSourceTweet),
-          sourceUser = Some(sourceUser),
-          parentUserId = Some(rtSource.parentUserId),
-          isSilentFail = spamResult == Spam.SilentFail
+          s ceT et = So (updatedS ceT et),
+          s ceUser = So (s ceUser),
+          parentUser d = So (rtS ce.parentUser d),
+           sS lentFa l = spamResult == Spam.S lentFa l
         )
       }
     }

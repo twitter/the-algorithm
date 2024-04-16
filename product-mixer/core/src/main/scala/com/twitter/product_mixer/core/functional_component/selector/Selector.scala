@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.functional_component.selector
+package com.tw ter.product_m xer.core.funct onal_component.selector
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-/** Selects some `remainingCandidates` and add them to the `result` */
-trait Selector[-Query <: PipelineQuery] {
+/** Selects so  `rema n ngCand dates` and add t m to t  `result` */
+tra  Selector[-Query <: P pel neQuery] {
 
   /**
-   * Specifies which [[com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails.source]]s
-   * this [[Selector]] will apply to.
+   * Spec f es wh ch [[com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls.s ce]]s
+   * t  [[Selector]] w ll apply to.
    *
-   * @note it is up to each [[Selector]] implementation to correctly handle this behavior
+   * @note    s up to each [[Selector]]  mple ntat on to correctly handle t  behav or
    */
-  def pipelineScope: CandidateScope
+  def p pel neScope: Cand dateScope
 
-  /** Selects some `remainingCandidates` and add them to the `result` */
+  /** Selects so  `rema n ngCand dates` and add t m to t  `result` */
   def apply(
     query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult
 }

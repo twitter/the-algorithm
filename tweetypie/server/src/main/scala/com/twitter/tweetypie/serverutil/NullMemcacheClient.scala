@@ -1,46 +1,46 @@
-package com.twitter.tweetypie.serverutil
+package com.tw ter.t etyp e.serverut l
 
-import com.twitter.finagle.memcached
-import com.twitter.finagle.memcached.CasResult
-import com.twitter.io.Buf
-import com.twitter.tweetypie.Future
-import com.twitter.tweetypie.Time
-import java.lang
+ mport com.tw ter.f nagle. mcac d
+ mport com.tw ter.f nagle. mcac d.CasResult
+ mport com.tw ter. o.Buf
+ mport com.tw ter.t etyp e.Future
+ mport com.tw ter.t etyp e.T  
+ mport java.lang
 
 /**
- * This will be used during CI test runs, in the no-cache scenarios for both DCs.
- * We are treating this as cache of instantaneous expiry. MockClient uses an in-memory map as
- * an underlying data-store, we extend it and prevent any writes to the map - thus making sure
- * it's always empty.
+ * T  w ll be used dur ng C  test runs,  n t  no-cac  scenar os for both DCs.
+ *   are treat ng t  as cac  of  nstantaneous exp ry. MockCl ent uses an  n- mory map as
+ * an underly ng data-store,   extend   and prevent any wr es to t  map - thus mak ng sure
+ *  's always empty.
  */
-class NullMemcacheClient extends memcached.MockClient {
-  override def set(key: String, flags: Int, expiry: Time, value: Buf): Future[Unit] = Future.Done
+class Null mcac Cl ent extends  mcac d.MockCl ent {
+  overr de def set(key: Str ng, flags:  nt, exp ry: T  , value: Buf): Future[Un ] = Future.Done
 
-  override def add(key: String, flags: Int, expiry: Time, value: Buf): Future[lang.Boolean] =
+  overr de def add(key: Str ng, flags:  nt, exp ry: T  , value: Buf): Future[lang.Boolean] =
     Future.value(true)
 
-  override def append(key: String, flags: Int, expiry: Time, value: Buf): Future[lang.Boolean] =
+  overr de def append(key: Str ng, flags:  nt, exp ry: T  , value: Buf): Future[lang.Boolean] =
     Future.value(false)
 
-  override def prepend(key: String, flags: Int, expiry: Time, value: Buf): Future[lang.Boolean] =
+  overr de def prepend(key: Str ng, flags:  nt, exp ry: T  , value: Buf): Future[lang.Boolean] =
     Future.value(false)
 
-  override def replace(key: String, flags: Int, expiry: Time, value: Buf): Future[lang.Boolean] =
+  overr de def replace(key: Str ng, flags:  nt, exp ry: T  , value: Buf): Future[lang.Boolean] =
     Future.value(false)
 
-  override def checkAndSet(
-    key: String,
-    flags: Int,
-    expiry: Time,
+  overr de def c ckAndSet(
+    key: Str ng,
+    flags:  nt,
+    exp ry: T  ,
     value: Buf,
-    casUnique: Buf
+    casUn que: Buf
   ): Future[CasResult] = Future.value(CasResult.NotFound)
 
-  override def delete(key: String): Future[lang.Boolean] = Future.value(false)
+  overr de def delete(key: Str ng): Future[lang.Boolean] = Future.value(false)
 
-  override def incr(key: String, delta: Long): Future[Option[lang.Long]] =
+  overr de def  ncr(key: Str ng, delta: Long): Future[Opt on[lang.Long]] =
     Future.value(None)
 
-  override def decr(key: String, delta: Long): Future[Option[lang.Long]] =
+  overr de def decr(key: Str ng, delta: Long): Future[Opt on[lang.Long]] =
     Future.value(None)
 }

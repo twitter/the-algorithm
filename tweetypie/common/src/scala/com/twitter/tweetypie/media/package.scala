@@ -1,7 +1,7 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 
-package object media {
-  type TweetId = Long
-  type UserId = Long
-  type MediaId = Long
+package object  d a {
+  type T et d = Long
+  type User d = Long
+  type  d a d = Long
 }

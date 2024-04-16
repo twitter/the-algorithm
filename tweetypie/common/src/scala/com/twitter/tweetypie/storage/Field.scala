@@ -1,41 +1,41 @@
-package com.twitter.tweetypie.storage
+package com.tw ter.t etyp e.storage
 
-import com.twitter.tweetypie.additionalfields.AdditionalFields
-import com.twitter.tweetypie.storage_internal.thriftscala.StoredTweet
-import com.twitter.tweetypie.thriftscala.{Tweet => TpTweet}
+ mport com.tw ter.t etyp e.add  onalf elds.Add  onalF elds
+ mport com.tw ter.t etyp e.storage_ nternal.thr ftscala.StoredT et
+ mport com.tw ter.t etyp e.thr ftscala.{T et => TpT et}
 
 /**
- * A field of the stored version of a tweet to read, update, or delete.
+ * A f eld of t  stored vers on of a t et to read, update, or delete.
  *
- * There is not a one-to-one correspondence between the fields ids of
- * [[com.twitter.tweetypie.thriftscala.Tweet]] and
- * [[com.twitter.tweetypie.storage_internal.thriftscala.StoredTweet]]. For example, in StoredTweet,
- * the nsfwUser property is field 11; in Tweet, it is a property of the coreData struct in field 2.
- * To circumvent the confusion of using one set of field ids or the other, callers use instances of
- * [[Field]] to reference the part of the object to modify.
+ * T re  s not a one-to-one correspondence bet en t  f elds  ds of
+ * [[com.tw ter.t etyp e.thr ftscala.T et]] and
+ * [[com.tw ter.t etyp e.storage_ nternal.thr ftscala.StoredT et]]. For example,  n StoredT et,
+ * t  nsfwUser property  s f eld 11;  n T et,    s a property of t  coreData struct  n f eld 2.
+ * To c rcumvent t  confus on of us ng one set of f eld  ds or t  ot r, callers use  nstances of
+ * [[F eld]] to reference t  part of t  object to mod fy.
  */
-class Field private[storage] (val id: Short) extends AnyVal {
-  override def toString: String = id.toString
+class F eld pr vate[storage] (val  d: Short) extends AnyVal {
+  overr de def toStr ng: Str ng =  d.toStr ng
 }
 
 /**
- * NOTE: Make sure `AllUpdatableCompiledFields` is kept up to date when adding any new field
+ * NOTE: Make sure `AllUpdatableComp ledF elds`  s kept up to date w n add ng any new f eld
  */
-object Field {
-  import AdditionalFields.isAdditionalFieldId
-  val Geo: Field = new Field(StoredTweet.GeoField.id)
-  val HasTakedown: Field = new Field(StoredTweet.HasTakedownField.id)
-  val NsfwUser: Field = new Field(StoredTweet.NsfwUserField.id)
-  val NsfwAdmin: Field = new Field(StoredTweet.NsfwAdminField.id)
-  val TweetypieOnlyTakedownCountryCodes: Field =
-    new Field(TpTweet.TweetypieOnlyTakedownCountryCodesField.id)
-  val TweetypieOnlyTakedownReasons: Field =
-    new Field(TpTweet.TweetypieOnlyTakedownReasonsField.id)
+object F eld {
+   mport Add  onalF elds. sAdd  onalF eld d
+  val Geo: F eld = new F eld(StoredT et.GeoF eld. d)
+  val HasTakedown: F eld = new F eld(StoredT et.HasTakedownF eld. d)
+  val NsfwUser: F eld = new F eld(StoredT et.NsfwUserF eld. d)
+  val NsfwAdm n: F eld = new F eld(StoredT et.NsfwAdm nF eld. d)
+  val T etyp eOnlyTakedownCountryCodes: F eld =
+    new F eld(TpT et.T etyp eOnlyTakedownCountryCodesF eld. d)
+  val T etyp eOnlyTakedownReasons: F eld =
+    new F eld(TpT et.T etyp eOnlyTakedownReasonsF eld. d)
 
-  val AllUpdatableCompiledFields: Set[Field] = Set(Geo, HasTakedown, NsfwUser, NsfwAdmin)
+  val AllUpdatableComp ledF elds: Set[F eld] = Set(Geo, HasTakedown, NsfwUser, NsfwAdm n)
 
-  def additionalField(id: Short): Field = {
-    require(isAdditionalFieldId(id), "field id must be in the additional field range")
-    new Field(id)
+  def add  onalF eld( d: Short): F eld = {
+    requ re( sAdd  onalF eld d( d), "f eld  d must be  n t  add  onal f eld range")
+    new F eld( d)
   }
 }

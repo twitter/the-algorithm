@@ -1,45 +1,45 @@
-# Pushservice
+# Pushserv ce
 
-Pushservice is the main push recommendation service at Twitter used to generate recommendation-based notifications for users. It currently powers two functionalities:
+Pushserv ce  s t  ma n push recom ndat on serv ce at Tw ter used to generate recom ndat on-based not f cat ons for users.   currently po rs two funct onal  es:
 
-- RefreshForPushHandler: This handler determines whether to send a recommendation push to a user based on their ID. It generates the best push recommendation item and coordinates with downstream services to deliver it
-- SendHandler: This handler determines and manage whether send the push to users based on the given target user details and the provided push recommendation item
+- RefreshForPushHandler: T  handler determ nes w t r to send a recom ndat on push to a user based on t  r  D.   generates t  best push recom ndat on  em and coord nates w h downstream serv ces to del ver  
+- SendHandler: T  handler determ nes and manage w t r send t  push to users based on t  g ven target user deta ls and t  prov ded push recom ndat on  em
 
-## Overview
+## Overv ew
 
 ### RefreshForPushHandler
 
-RefreshForPushHandler follows these steps:
+RefreshForPushHandler follows t se steps:
 
-- Building Target and checking eligibility
-    - Builds a target user object based on the given user ID
-    - Performs target-level filterings to determine if the target is eligible for a recommendation push
-- Fetch Candidates
-    - Retrieves a list of potential candidates for the push by querying various candidate sources using the target
-- Candidate Hydration
-    - Hydrates the candidate details with batch calls to different downstream services
-- Pre-rank Filtering, also called Light Filtering
-    - Filters the hydrated candidates with lightweight RPC calls
+- Bu ld ng Target and c ck ng el g b l y
+    - Bu lds a target user object based on t  g ven user  D
+    - Performs target-level f lter ngs to determ ne  f t  target  s el g ble for a recom ndat on push
+- Fetch Cand dates
+    - Retr eves a l st of potent al cand dates for t  push by query ng var ous cand date s ces us ng t  target
+- Cand date Hydrat on
+    - Hydrates t  cand date deta ls w h batch calls to d fferent downstream serv ces
+- Pre-rank F lter ng, also called L ght F lter ng
+    - F lters t  hydrated cand dates w h l ght  ght RPC calls
 - Rank
-    - Perform feature hydration for candidates and target user
-    - Performs light ranking on candidates
-    - Performs heavy ranking on candidates
-- Take Step, also called Heavy Filtering
-    - Takes the top-ranked candidates one by one and applies heavy filtering until one candidate passes all filter steps
+    - Perform feature hydrat on for cand dates and target user
+    - Performs l ght rank ng on cand dates
+    - Performs  avy rank ng on cand dates
+- Take Step, also called  avy F lter ng
+    - Takes t  top-ranked cand dates one by one and appl es  avy f lter ng unt l one cand date passes all f lter steps
 - Send
-    - Calls the appropriate downstream service to deliver the eligible candidate as a push and in-app notification to the target user
+    - Calls t  appropr ate downstream serv ce to del ver t  el g ble cand date as a push and  n-app not f cat on to t  target user
 
 ### SendHandler
 
-SendHandler follows these steps:
+SendHandler follows t se steps:
 
-- Building Target
-    - Builds a target user object based on the given user ID
-- Candidate Hydration
-    - Hydrates the candidate details with batch calls to different downstream services
-- Feature Hydration
-    - Perform feature hydration for candidates and target user
-- Take Step, also called Heavy Filtering
-    - Perform filterings and validation checking for the given candidate
+- Bu ld ng Target
+    - Bu lds a target user object based on t  g ven user  D
+- Cand date Hydrat on
+    - Hydrates t  cand date deta ls w h batch calls to d fferent downstream serv ces
+- Feature Hydrat on
+    - Perform feature hydrat on for cand dates and target user
+- Take Step, also called  avy F lter ng
+    - Perform f lter ngs and val dat on c ck ng for t  g ven cand date
 - Send
-    - Calls the appropriate downstream service to deliver the given candidate as a push and/or in-app notification to the target user
+    - Calls t  appropr ate downstream serv ce to del ver t  g ven cand date as a push and/or  n-app not f cat on to t  target user

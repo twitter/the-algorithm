@@ -1,266 +1,266 @@
-package com.twitter.visibility.engine
+package com.tw ter.v s b l y.eng ne
 
-import com.twitter.servo.util.Gate
-import com.twitter.spam.rtf.thriftscala.{SafetyLevel => ThriftSafetyLevel}
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.VisibilityResultBuilder
-import com.twitter.visibility.features._
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.SafetyLevel.DeprecatedSafetyLevel
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.State._
-import com.twitter.visibility.rules._
-import com.twitter.visibility.rules.providers.ProvidedEvaluationContext
-import com.twitter.visibility.rules.providers.PolicyProvider
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.spam.rtf.thr ftscala.{SafetyLevel => Thr ftSafetyLevel}
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.v s b l y.bu lder.V s b l yResult
+ mport com.tw ter.v s b l y.bu lder.V s b l yResultBu lder
+ mport com.tw ter.v s b l y.features._
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.models.SafetyLevel.DeprecatedSafetyLevel
+ mport com.tw ter.v s b l y.rules.Evaluat onContext
+ mport com.tw ter.v s b l y.rules.State._
+ mport com.tw ter.v s b l y.rules._
+ mport com.tw ter.v s b l y.rules.prov ders.Prov dedEvaluat onContext
+ mport com.tw ter.v s b l y.rules.prov ders.Pol cyProv der
 
-class VisibilityRuleEngine private[VisibilityRuleEngine] (
-  rulePreprocessor: VisibilityRulePreprocessor,
-  metricsRecorder: VisibilityResultsMetricRecorder,
-  enableComposableActions: Gate[Unit],
-  enableFailClosed: Gate[Unit],
-  policyProviderOpt: Option[PolicyProvider] = None)
-    extends DeciderableVisibilityRuleEngine {
+class V s b l yRuleEng ne pr vate[V s b l yRuleEng ne] (
+  rulePreprocessor: V s b l yRulePreprocessor,
+   tr csRecorder: V s b l yResults tr cRecorder,
+  enableComposableAct ons: Gate[Un ],
+  enableFa lClosed: Gate[Un ],
+  pol cyProv derOpt: Opt on[Pol cyProv der] = None)
+    extends Dec derableV s b l yRuleEng ne {
 
-  private[visibility] def apply(
-    evaluationContext: ProvidedEvaluationContext,
-    visibilityPolicy: VisibilityPolicy,
-    visibilityResultBuilder: VisibilityResultBuilder,
-    enableShortCircuiting: Gate[Unit],
-    preprocessedRules: Option[Seq[Rule]]
-  ): Stitch[VisibilityResult] = {
-    val (resultBuilder, rules) = preprocessedRules match {
-      case Some(r) =>
-        (visibilityResultBuilder, r)
+  pr vate[v s b l y] def apply(
+    evaluat onContext: Prov dedEvaluat onContext,
+    v s b l yPol cy: V s b l yPol cy,
+    v s b l yResultBu lder: V s b l yResultBu lder,
+    enableShortC rcu  ng: Gate[Un ],
+    preprocessedRules: Opt on[Seq[Rule]]
+  ): St ch[V s b l yResult] = {
+    val (resultBu lder, rules) = preprocessedRules match {
+      case So (r) =>
+        (v s b l yResultBu lder, r)
       case None =>
-        rulePreprocessor.evaluate(evaluationContext, visibilityPolicy, visibilityResultBuilder)
+        rulePreprocessor.evaluate(evaluat onContext, v s b l yPol cy, v s b l yResultBu lder)
     }
-    evaluate(evaluationContext, resultBuilder, rules, enableShortCircuiting)
+    evaluate(evaluat onContext, resultBu lder, rules, enableShortC rcu  ng)
   }
 
   def apply(
-    evaluationContext: EvaluationContext,
+    evaluat onContext: Evaluat onContext,
     safetyLevel: SafetyLevel,
-    visibilityResultBuilder: VisibilityResultBuilder,
-    enableShortCircuiting: Gate[Unit] = Gate.True,
-    preprocessedRules: Option[Seq[Rule]] = None
-  ): Stitch[VisibilityResult] = {
-    val visibilityPolicy = policyProviderOpt match {
-      case Some(policyProvider) =>
-        policyProvider.policyForSurface(safetyLevel)
+    v s b l yResultBu lder: V s b l yResultBu lder,
+    enableShortC rcu  ng: Gate[Un ] = Gate.True,
+    preprocessedRules: Opt on[Seq[Rule]] = None
+  ): St ch[V s b l yResult] = {
+    val v s b l yPol cy = pol cyProv derOpt match {
+      case So (pol cyProv der) =>
+        pol cyProv der.pol cyForSurface(safetyLevel)
       case None => RuleBase.RuleMap(safetyLevel)
     }
-    if (evaluationContext.params(safetyLevel.enabledParam)) {
+     f (evaluat onContext.params(safetyLevel.enabledParam)) {
       apply(
-        ProvidedEvaluationContext.injectRuntimeRulesIntoEvaluationContext(
-          evaluationContext = evaluationContext,
-          safetyLevel = Some(safetyLevel),
-          policyProviderOpt = policyProviderOpt
+        Prov dedEvaluat onContext. njectRunt  Rules ntoEvaluat onContext(
+          evaluat onContext = evaluat onContext,
+          safetyLevel = So (safetyLevel),
+          pol cyProv derOpt = pol cyProv derOpt
         ),
-        visibilityPolicy,
-        visibilityResultBuilder,
-        enableShortCircuiting,
+        v s b l yPol cy,
+        v s b l yResultBu lder,
+        enableShortC rcu  ng,
         preprocessedRules
       ).onSuccess { result =>
-          metricsRecorder.recordSuccess(safetyLevel, result)
+           tr csRecorder.recordSuccess(safetyLevel, result)
         }
-        .onFailure { _ =>
-          metricsRecorder.recordAction(safetyLevel, "failure")
+        .onFa lure { _ =>
+           tr csRecorder.recordAct on(safetyLevel, "fa lure")
         }
     } else {
-      metricsRecorder.recordAction(safetyLevel, "disabled")
-      val rules: Seq[Rule] = visibilityPolicy.forContentId(visibilityResultBuilder.contentId)
-      Stitch.value(
-        visibilityResultBuilder
-          .withRuleResultMap(rules.map(r => r -> RuleResult(Allow, Skipped)).toMap)
-          .withVerdict(verdict = Allow)
-          .withFinished(finished = true)
-          .build
+       tr csRecorder.recordAct on(safetyLevel, "d sabled")
+      val rules: Seq[Rule] = v s b l yPol cy.forContent d(v s b l yResultBu lder.content d)
+      St ch.value(
+        v s b l yResultBu lder
+          .w hRuleResultMap(rules.map(r => r -> RuleResult(Allow, Sk pped)).toMap)
+          .w hVerd ct(verd ct = Allow)
+          .w hF n s d(f n s d = true)
+          .bu ld
       )
     }
   }
 
   def apply(
-    evaluationContext: EvaluationContext,
-    thriftSafetyLevel: ThriftSafetyLevel,
-    visibilityResultBuilder: VisibilityResultBuilder
-  ): Stitch[VisibilityResult] = {
-    val safetyLevel: SafetyLevel = SafetyLevel.fromThrift(thriftSafetyLevel)
+    evaluat onContext: Evaluat onContext,
+    thr ftSafetyLevel: Thr ftSafetyLevel,
+    v s b l yResultBu lder: V s b l yResultBu lder
+  ): St ch[V s b l yResult] = {
+    val safetyLevel: SafetyLevel = SafetyLevel.fromThr ft(thr ftSafetyLevel)
     safetyLevel match {
       case DeprecatedSafetyLevel =>
-        metricsRecorder.recordUnknownSafetyLevel(safetyLevel)
-        Stitch.value(
-          visibilityResultBuilder
-            .withVerdict(verdict = Allow)
-            .withFinished(finished = true)
-            .build
+         tr csRecorder.recordUnknownSafetyLevel(safetyLevel)
+        St ch.value(
+          v s b l yResultBu lder
+            .w hVerd ct(verd ct = Allow)
+            .w hF n s d(f n s d = true)
+            .bu ld
         )
 
-      case thriftSafetyLevel: SafetyLevel =>
-        this(
-          ProvidedEvaluationContext.injectRuntimeRulesIntoEvaluationContext(
-            evaluationContext = evaluationContext,
-            safetyLevel = Some(safetyLevel),
-            policyProviderOpt = policyProviderOpt
+      case thr ftSafetyLevel: SafetyLevel =>
+        t (
+          Prov dedEvaluat onContext. njectRunt  Rules ntoEvaluat onContext(
+            evaluat onContext = evaluat onContext,
+            safetyLevel = So (safetyLevel),
+            pol cyProv derOpt = pol cyProv derOpt
           ),
-          thriftSafetyLevel,
-          visibilityResultBuilder
+          thr ftSafetyLevel,
+          v s b l yResultBu lder
         )
     }
   }
 
-  private[visibility] def evaluateRules(
-    evaluationContext: ProvidedEvaluationContext,
+  pr vate[v s b l y] def evaluateRules(
+    evaluat onContext: Prov dedEvaluat onContext,
     resolvedFeatureMap: Map[Feature[_], Any],
-    failedFeatures: Map[Feature[_], Throwable],
-    resultBuilderWithoutFailedFeatures: VisibilityResultBuilder,
+    fa ledFeatures: Map[Feature[_], Throwable],
+    resultBu lderW houtFa ledFeatures: V s b l yResultBu lder,
     preprocessedRules: Seq[Rule],
-    enableShortCircuiting: Gate[Unit]
-  ): VisibilityResultBuilder = {
+    enableShortC rcu  ng: Gate[Un ]
+  ): V s b l yResultBu lder = {
     preprocessedRules
-      .foldLeft(resultBuilderWithoutFailedFeatures) { (builder, rule) =>
-        builder.ruleResults.get(rule) match {
-          case Some(RuleResult(_, state)) if state == Evaluated || state == ShortCircuited =>
-            builder
+      .foldLeft(resultBu lderW houtFa ledFeatures) { (bu lder, rule) =>
+        bu lder.ruleResults.get(rule) match {
+          case So (RuleResult(_, state))  f state == Evaluated || state == ShortC rcu ed =>
+            bu lder
 
           case _ =>
-            val failedFeatureDependencies: Map[Feature[_], Throwable] =
-              failedFeatures.filterKeys(key => rule.featureDependencies.contains(key))
+            val fa ledFeatureDependenc es: Map[Feature[_], Throwable] =
+              fa ledFeatures.f lterKeys(key => rule.featureDependenc es.conta ns(key))
 
-            val shortCircuit =
-              builder.finished && enableShortCircuiting() &&
-                !(enableComposableActions() && builder.isVerdictComposable())
+            val shortC rcu  =
+              bu lder.f n s d && enableShortC rcu  ng() &&
+                !(enableComposableAct ons() && bu lder. sVerd ctComposable())
 
-            if (failedFeatureDependencies.nonEmpty && rule.fallbackActionBuilder.isEmpty) {
-              metricsRecorder.recordRuleFailedFeatures(rule.name, failedFeatureDependencies)
-              builder.withRuleResult(
+             f (fa ledFeatureDependenc es.nonEmpty && rule.fallbackAct onBu lder. sEmpty) {
+               tr csRecorder.recordRuleFa ledFeatures(rule.na , fa ledFeatureDependenc es)
+              bu lder.w hRuleResult(
                 rule,
-                RuleResult(NotEvaluated, FeatureFailed(failedFeatureDependencies)))
+                RuleResult(NotEvaluated, FeatureFa led(fa ledFeatureDependenc es)))
 
-            } else if (shortCircuit) {
+            } else  f (shortC rcu ) {
 
-              metricsRecorder.recordRuleEvaluation(rule.name, NotEvaluated, ShortCircuited)
-              builder.withRuleResult(rule, RuleResult(builder.verdict, ShortCircuited))
+               tr csRecorder.recordRuleEvaluat on(rule.na , NotEvaluated, ShortC rcu ed)
+              bu lder.w hRuleResult(rule, RuleResult(bu lder.verd ct, ShortC rcu ed))
             } else {
 
-              if (failedFeatureDependencies.nonEmpty && rule.fallbackActionBuilder.nonEmpty) {
-                metricsRecorder.recordRuleFallbackAction(rule.name)
+               f (fa ledFeatureDependenc es.nonEmpty && rule.fallbackAct onBu lder.nonEmpty) {
+                 tr csRecorder.recordRuleFallbackAct on(rule.na )
               }
 
 
               val ruleResult =
-                rule.evaluate(evaluationContext, resolvedFeatureMap)
-              metricsRecorder
-                .recordRuleEvaluation(rule.name, ruleResult.action, ruleResult.state)
-              val nextBuilder = (ruleResult.action, builder.finished) match {
+                rule.evaluate(evaluat onContext, resolvedFeatureMap)
+               tr csRecorder
+                .recordRuleEvaluat on(rule.na , ruleResult.act on, ruleResult.state)
+              val nextBu lder = (ruleResult.act on, bu lder.f n s d) match {
                 case (NotEvaluated | Allow, _) =>
                   ruleResult.state match {
-                    case Heldback =>
-                      metricsRecorder.recordRuleHoldBack(rule.name)
-                    case RuleFailed(_) =>
-                      metricsRecorder.recordRuleFailed(rule.name)
+                    case  ldback =>
+                       tr csRecorder.recordRuleHoldBack(rule.na )
+                    case RuleFa led(_) =>
+                       tr csRecorder.recordRuleFa led(rule.na )
                     case _ =>
                   }
-                  builder.withRuleResult(rule, ruleResult)
+                  bu lder.w hRuleResult(rule, ruleResult)
 
                 case (_, true) =>
-                  builder
-                    .withRuleResult(rule, ruleResult)
-                    .withSecondaryVerdict(ruleResult.action, rule)
+                  bu lder
+                    .w hRuleResult(rule, ruleResult)
+                    .w hSecondaryVerd ct(ruleResult.act on, rule)
 
                 case _ =>
-                  builder
-                    .withRuleResult(rule, ruleResult)
-                    .withVerdict(ruleResult.action, Some(rule))
-                    .withFinished(true)
+                  bu lder
+                    .w hRuleResult(rule, ruleResult)
+                    .w hVerd ct(ruleResult.act on, So (rule))
+                    .w hF n s d(true)
               }
 
-              nextBuilder
+              nextBu lder
             }
         }
-      }.withResolvedFeatureMap(resolvedFeatureMap)
+      }.w hResolvedFeatureMap(resolvedFeatureMap)
   }
 
-  private[visibility] def evaluateFailClosed(
-    evaluationContext: ProvidedEvaluationContext
-  ): VisibilityResultBuilder => Stitch[VisibilityResultBuilder] = { builder =>
-    builder.failClosedException(evaluationContext) match {
-      case Some(e: FailClosedException) if enableFailClosed() =>
-        metricsRecorder.recordFailClosed(e.getRuleName, e.getState);
-        Stitch.exception(e)
-      case _ => Stitch.value(builder)
+  pr vate[v s b l y] def evaluateFa lClosed(
+    evaluat onContext: Prov dedEvaluat onContext
+  ): V s b l yResultBu lder => St ch[V s b l yResultBu lder] = { bu lder =>
+    bu lder.fa lClosedExcept on(evaluat onContext) match {
+      case So (e: Fa lClosedExcept on)  f enableFa lClosed() =>
+         tr csRecorder.recordFa lClosed(e.getRuleNa , e.getState);
+        St ch.except on(e)
+      case _ => St ch.value(bu lder)
     }
   }
 
-  private[visibility] def checkMarkFinished(
-    builder: VisibilityResultBuilder
-  ): VisibilityResult = {
-    val allRulesEvaluated: Boolean = builder.ruleResults.values.forall {
+  pr vate[v s b l y] def c ckMarkF n s d(
+    bu lder: V s b l yResultBu lder
+  ): V s b l yResult = {
+    val allRulesEvaluated: Boolean = bu lder.ruleResults.values.forall {
       case RuleResult(_, state) =>
-        state == Evaluated || state == Disabled || state == Skipped
+        state == Evaluated || state == D sabled || state == Sk pped
       case _ =>
         false
     }
 
-    if (allRulesEvaluated) {
-      builder.withFinished(true).build
+     f (allRulesEvaluated) {
+      bu lder.w hF n s d(true).bu ld
     } else {
-      builder.build
+      bu lder.bu ld
     }
   }
 
-  private[visibility] def evaluate(
-    evaluationContext: ProvidedEvaluationContext,
-    visibilityResultBuilder: VisibilityResultBuilder,
+  pr vate[v s b l y] def evaluate(
+    evaluat onContext: Prov dedEvaluat onContext,
+    v s b l yResultBu lder: V s b l yResultBu lder,
     preprocessedRules: Seq[Rule],
-    enableShortCircuiting: Gate[Unit] = Gate.True
-  ): Stitch[VisibilityResult] = {
+    enableShortC rcu  ng: Gate[Un ] = Gate.True
+  ): St ch[V s b l yResult] = {
 
-    val finalBuilder =
-      FeatureMap.resolve(visibilityResultBuilder.features, evaluationContext.statsReceiver).map {
+    val f nalBu lder =
+      FeatureMap.resolve(v s b l yResultBu lder.features, evaluat onContext.statsRece ver).map {
         resolvedFeatureMap =>
-          val (failedFeatureMap, successfulFeatureMap) = resolvedFeatureMap.constantMap.partition({
-            case (_, _: FeatureFailedPlaceholderObject) => true
+          val (fa ledFeatureMap, successfulFeatureMap) = resolvedFeatureMap.constantMap.part  on({
+            case (_, _: FeatureFa ledPlaceholderObject) => true
             case _ => false
           })
 
-          val failedFeatures: Map[Feature[_], Throwable] =
-            failedFeatureMap.mapValues({
-              case failurePlaceholder: FeatureFailedPlaceholderObject =>
-                failurePlaceholder.throwable
+          val fa ledFeatures: Map[Feature[_], Throwable] =
+            fa ledFeatureMap.mapValues({
+              case fa lurePlaceholder: FeatureFa ledPlaceholderObject =>
+                fa lurePlaceholder.throwable
             })
 
-          val resultBuilderWithoutFailedFeatures =
-            visibilityResultBuilder.withFeatureMap(ResolvedFeatureMap(successfulFeatureMap))
+          val resultBu lderW houtFa ledFeatures =
+            v s b l yResultBu lder.w hFeatureMap(ResolvedFeatureMap(successfulFeatureMap))
 
           evaluateRules(
-            evaluationContext,
+            evaluat onContext,
             successfulFeatureMap,
-            failedFeatures,
-            resultBuilderWithoutFailedFeatures,
+            fa ledFeatures,
+            resultBu lderW houtFa ledFeatures,
             preprocessedRules,
-            enableShortCircuiting
+            enableShortC rcu  ng
           )
       }
 
-    finalBuilder.flatMap(evaluateFailClosed(evaluationContext)).map(checkMarkFinished)
+    f nalBu lder.flatMap(evaluateFa lClosed(evaluat onContext)).map(c ckMarkF n s d)
   }
 }
 
-object VisibilityRuleEngine {
+object V s b l yRuleEng ne {
 
   def apply(
-    rulePreprocessor: Option[VisibilityRulePreprocessor] = None,
-    metricsRecorder: VisibilityResultsMetricRecorder = NullVisibilityResultsMetricsRecorder,
-    enableComposableActions: Gate[Unit] = Gate.False,
-    enableFailClosed: Gate[Unit] = Gate.False,
-    policyProviderOpt: Option[PolicyProvider] = None,
-  ): VisibilityRuleEngine = {
-    new VisibilityRuleEngine(
-      rulePreprocessor.getOrElse(VisibilityRulePreprocessor(metricsRecorder)),
-      metricsRecorder,
-      enableComposableActions,
-      enableFailClosed,
-      policyProviderOpt = policyProviderOpt)
+    rulePreprocessor: Opt on[V s b l yRulePreprocessor] = None,
+     tr csRecorder: V s b l yResults tr cRecorder = NullV s b l yResults tr csRecorder,
+    enableComposableAct ons: Gate[Un ] = Gate.False,
+    enableFa lClosed: Gate[Un ] = Gate.False,
+    pol cyProv derOpt: Opt on[Pol cyProv der] = None,
+  ): V s b l yRuleEng ne = {
+    new V s b l yRuleEng ne(
+      rulePreprocessor.getOrElse(V s b l yRulePreprocessor( tr csRecorder)),
+       tr csRecorder,
+      enableComposableAct ons,
+      enableFa lClosed,
+      pol cyProv derOpt = pol cyProv derOpt)
   }
 }

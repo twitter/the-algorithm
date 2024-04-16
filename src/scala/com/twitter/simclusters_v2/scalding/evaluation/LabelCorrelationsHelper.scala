@@ -1,61 +1,61 @@
-package com.twitter.simclusters_v2.scalding.evaluation
+package com.tw ter.s mclusters_v2.scald ng.evaluat on
 
-import com.twitter.algebird.AveragedValue
-import com.twitter.scalding.Execution
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.simclusters_v2.scalding.common.Util
+ mport com.tw ter.algeb rd.AveragedValue
+ mport com.tw ter.scald ng.Execut on
+ mport com.tw ter.scald ng.typed.TypedP pe
+ mport com.tw ter.s mclusters_v2.scald ng.common.Ut l
 
 /**
- * Utility object for correlation measures between the algorithm scores and the user engagements,
- * such as the number of Likes.
+ * Ut l y object for correlat on  asures bet en t  algor hm scores and t  user engage nts,
+ * such as t  number of L kes.
  */
-object LabelCorrelationsHelper {
+object LabelCorrelat ons lper {
 
-  private def toDouble(bool: Boolean): Double = {
-    if (bool) 1.0 else 0.0
+  pr vate def toDouble(bool: Boolean): Double = {
+     f (bool) 1.0 else 0.0
   }
 
   /**
-   * Given a pipe of labeled tweets, calculate the cosine similarity between the algorithm scores
-   * and users' favorite engagements.
+   * G ven a p pe of labeled t ets, calculate t  cos ne s m lar y bet en t  algor hm scores
+   * and users' favor e engage nts.
    */
-  def cosineSimilarityForLike(labeledTweets: TypedPipe[LabeledTweet]): Execution[Double] = {
-    labeledTweets
-      .map { tweet => (toDouble(tweet.labels.isLiked), tweet.algorithmScore.getOrElse(0.0)) }
-      .toIterableExecution.map { iter => Util.cosineSimilarity(iter.iterator) }
+  def cos neS m lar yForL ke(labeledT ets: TypedP pe[LabeledT et]): Execut on[Double] = {
+    labeledT ets
+      .map { t et => (toDouble(t et.labels. sL ked), t et.algor hmScore.getOrElse(0.0)) }
+      .to erableExecut on.map {  er => Ut l.cos neS m lar y( er. erator) }
   }
 
   /**
-   * Given a pipe of labeled tweets, calculate cosine similarity between algorithm score and users'
-   * favorites engagements, on a per user basis, and return the average of all cosine
-   * similarities across all users.
+   * G ven a p pe of labeled t ets, calculate cos ne s m lar y bet en algor hm score and users'
+   * favor es engage nts, on a per user bas s, and return t  average of all cos ne
+   * s m lar  es across all users.
    */
-  def cosineSimilarityForLikePerUser(labeledTweets: TypedPipe[LabeledTweet]): Execution[Double] = {
-    val avg = AveragedValue.aggregator.composePrepare[(Unit, Double)](_._2)
+  def cos neS m lar yForL kePerUser(labeledT ets: TypedP pe[LabeledT et]): Execut on[Double] = {
+    val avg = AveragedValue.aggregator.composePrepare[(Un , Double)](_._2)
 
-    labeledTweets
-      .map { tweet =>
+    labeledT ets
+      .map { t et =>
         (
-          tweet.targetUserId,
-          Seq((toDouble(tweet.labels.isLiked), tweet.algorithmScore.getOrElse(0.0)))
+          t et.targetUser d,
+          Seq((toDouble(t et.labels. sL ked), t et.algor hmScore.getOrElse(0.0)))
         )
       }
       .sumByKey
       .map {
-        case (userId, seq) =>
-          ((), Util.cosineSimilarity(seq.iterator))
+        case (user d, seq) =>
+          ((), Ut l.cos neS m lar y(seq. erator))
       }
       .aggregate(avg)
-      .getOrElseExecution(0.0)
+      .getOrElseExecut on(0.0)
   }
 
   /**
-   * Calculates the Pearson correlation coefficient for the algorithm scores and user's favorite
-   * engagement. Note this function call triggers a writeToDisk execution.
+   * Calculates t  Pearson correlat on coeff c ent for t  algor hm scores and user's favor e
+   * engage nt. Note t  funct on call tr ggers a wr eToD sk execut on.
    */
-  def pearsonCoefficientForLike(labeledTweets: TypedPipe[LabeledTweet]): Execution[Double] = {
-    labeledTweets
-      .map { tweet => (toDouble(tweet.labels.isLiked), tweet.algorithmScore.getOrElse(0.0)) }
-      .toIterableExecution.map { iter => Util.computeCorrelation(iter.iterator) }
+  def pearsonCoeff c entForL ke(labeledT ets: TypedP pe[LabeledT et]): Execut on[Double] = {
+    labeledT ets
+      .map { t et => (toDouble(t et.labels. sL ked), t et.algor hmScore.getOrElse(0.0)) }
+      .to erableExecut on.map {  er => Ut l.computeCorrelat on( er. erator) }
   }
 }

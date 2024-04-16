@@ -1,219 +1,219 @@
-package com.twitter.follow_recommendations.common.clients.addressbook
+package com.tw ter.follow_recom ndat ons.common.cl ents.addressbook
 
-import com.twitter.addressbook.datatypes.thriftscala.QueryType
-import com.twitter.addressbook.thriftscala.AddressBookGetRequest
-import com.twitter.addressbook.thriftscala.AddressBookGetResponse
-import com.twitter.addressbook.thriftscala.Addressbook2
-import com.twitter.addressbook.thriftscala.ClientInfo
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.wtf.scalding.jobs.addressbook.thriftscala.STPResultFeature
-import com.twitter.follow_recommendations.common.clients.addressbook.models.Contact
-import com.twitter.follow_recommendations.common.clients.addressbook.models.EdgeType
-import com.twitter.follow_recommendations.common.clients.addressbook.models.QueryOption
-import com.twitter.follow_recommendations.common.clients.addressbook.models.RecordIdentifier
-import com.twitter.wtf.scalding.jobs.address_book.ABUtil.hashContact
-import com.twitter.wtf.scalding.jobs.address_book.ABUtil.normalizeEmail
-import com.twitter.wtf.scalding.jobs.address_book.ABUtil.normalizePhoneNumber
-import com.twitter.hermit.usercontacts.thriftscala.{UserContacts => tUserContacts}
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.addressbook.datatypes.thr ftscala.QueryType
+ mport com.tw ter.addressbook.thr ftscala.AddressBookGetRequest
+ mport com.tw ter.addressbook.thr ftscala.AddressBookGetResponse
+ mport com.tw ter.addressbook.thr ftscala.Addressbook2
+ mport com.tw ter.addressbook.thr ftscala.Cl ent nfo
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.wtf.scald ng.jobs.addressbook.thr ftscala.STPResultFeature
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.addressbook.models.Contact
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.addressbook.models.EdgeType
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.addressbook.models.QueryOpt on
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.addressbook.models.Record dent f er
+ mport com.tw ter.wtf.scald ng.jobs.address_book.ABUt l.hashContact
+ mport com.tw ter.wtf.scald ng.jobs.address_book.ABUt l.normal zeEma l
+ mport com.tw ter.wtf.scald ng.jobs.address_book.ABUt l.normal zePhoneNumber
+ mport com.tw ter. rm .usercontacts.thr ftscala.{UserContacts => tUserContacts}
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class AddressbookClient @Inject() (
-  addressbookService: Addressbook2.MethodPerEndpoint,
-  statsReceiver: StatsReceiver = NullStatsReceiver) {
+@S ngleton
+class AddressbookCl ent @ nject() (
+  addressbookServ ce: Addressbook2. thodPerEndpo nt,
+  statsRece ver: StatsRece ver = NullStatsRece ver) {
 
-  private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getSimpleName)
+  pr vate val stats: StatsRece ver = statsRece ver.scope(t .getClass.getS mpleNa )
 
-  private[this] def getResponseFromService(
-    identifiers: Seq[RecordIdentifier],
-    batchSize: Int,
+  pr vate[t ] def getResponseFromServ ce(
+     dent f ers: Seq[Record dent f er],
+    batchS ze:  nt,
     edgeType: EdgeType,
-    maxFetches: Int,
-    queryOption: Option[QueryOption]
-  ): Stitch[Seq[AddressBookGetResponse]] = {
-    Stitch
+    maxFetc s:  nt,
+    queryOpt on: Opt on[QueryOpt on]
+  ): St ch[Seq[AddressBookGetResponse]] = {
+    St ch
       .collect(
-        identifiers.map { identifier =>
-          Stitch.callFuture(
-            addressbookService.get(AddressBookGetRequest(
-              clientInfo = ClientInfo(None),
-              identifier = identifier.toThrift,
-              edgeType = edgeType.toThrift,
-              queryType = QueryType.UserId,
-              queryOption = queryOption.map(_.toThrift),
-              maxFetches = maxFetches,
-              resultBatchSize = batchSize
+         dent f ers.map {  dent f er =>
+          St ch.callFuture(
+            addressbookServ ce.get(AddressBookGetRequest(
+              cl ent nfo = Cl ent nfo(None),
+               dent f er =  dent f er.toThr ft,
+              edgeType = edgeType.toThr ft,
+              queryType = QueryType.User d,
+              queryOpt on = queryOpt on.map(_.toThr ft),
+              maxFetc s = maxFetc s,
+              resultBatchS ze = batchS ze
             )))
         }
       )
   }
 
-  private[this] def getContactsResponseFromService(
-    identifiers: Seq[RecordIdentifier],
-    batchSize: Int,
+  pr vate[t ] def getContactsResponseFromServ ce(
+     dent f ers: Seq[Record dent f er],
+    batchS ze:  nt,
     edgeType: EdgeType,
-    maxFetches: Int,
-    queryOption: Option[QueryOption]
-  ): Stitch[Seq[AddressBookGetResponse]] = {
-    Stitch
+    maxFetc s:  nt,
+    queryOpt on: Opt on[QueryOpt on]
+  ): St ch[Seq[AddressBookGetResponse]] = {
+    St ch
       .collect(
-        identifiers.map { identifier =>
-          Stitch.callFuture(
-            addressbookService.get(AddressBookGetRequest(
-              clientInfo = ClientInfo(None),
-              identifier = identifier.toThrift,
-              edgeType = edgeType.toThrift,
+         dent f ers.map {  dent f er =>
+          St ch.callFuture(
+            addressbookServ ce.get(AddressBookGetRequest(
+              cl ent nfo = Cl ent nfo(None),
+               dent f er =  dent f er.toThr ft,
+              edgeType = edgeType.toThr ft,
               queryType = QueryType.Contact,
-              queryOption = queryOption.map(_.toThrift),
-              maxFetches = maxFetches,
-              resultBatchSize = batchSize
+              queryOpt on = queryOpt on.map(_.toThr ft),
+              maxFetc s = maxFetc s,
+              resultBatchS ze = batchS ze
             )))
         }
       )
   }
 
-  /** Mode of addressbook resolving logic
-   * ManhattanThenABV2: fetching manhattan cached result and backfill with addressbook v2
-   * ABV2Only: calling addressbook v2 directly without fetching manhattan cached result
-   * This can be controlled by passing a fetcher or not. Passing a fetcher will attempt to use it,
-   * if not then it won't.
+  /** Mode of addressbook resolv ng log c
+   * ManhattanT nABV2: fetch ng manhattan cac d result and backf ll w h addressbook v2
+   * ABV2Only: call ng addressbook v2 d rectly w hout fetch ng manhattan cac d result
+   * T  can be controlled by pass ng a fetc r or not. Pass ng a fetc r w ll attempt to use  ,
+   *  f not t n   won't.
    */
   def getUsers(
-    userId: Long,
-    identifiers: Seq[RecordIdentifier],
-    batchSize: Int,
+    user d: Long,
+     dent f ers: Seq[Record dent f er],
+    batchS ze:  nt,
     edgeType: EdgeType,
-    fetcherOption: Option[Fetcher[Long, Unit, tUserContacts]] = None,
-    maxFetches: Int = 1,
-    queryOption: Option[QueryOption] = None,
-  ): Stitch[Seq[Long]] = {
-    fetcherOption match {
-      case Some(fetcher) =>
-        getUsersFromManhattan(userId, fetcher).flatMap { userContacts =>
-          if (userContacts.isEmpty) {
-            stats.counter("mhEmptyThenFromAbService").incr()
-            getResponseFromService(identifiers, batchSize, edgeType, maxFetches, queryOption)
-              .map(_.flatMap(_.users).flatten.distinct)
+    fetc rOpt on: Opt on[Fetc r[Long, Un , tUserContacts]] = None,
+    maxFetc s:  nt = 1,
+    queryOpt on: Opt on[QueryOpt on] = None,
+  ): St ch[Seq[Long]] = {
+    fetc rOpt on match {
+      case So (fetc r) =>
+        getUsersFromManhattan(user d, fetc r).flatMap { userContacts =>
+           f (userContacts. sEmpty) {
+            stats.counter("mhEmptyT nFromAbServ ce"). ncr()
+            getResponseFromServ ce( dent f ers, batchS ze, edgeType, maxFetc s, queryOpt on)
+              .map(_.flatMap(_.users).flatten.d st nct)
           } else {
-            stats.counter("fromManhattan").incr()
-            Stitch.value(userContacts)
+            stats.counter("fromManhattan"). ncr()
+            St ch.value(userContacts)
           }
         }
       case None =>
-        stats.counter("fromAbService").incr()
-        getResponseFromService(identifiers, batchSize, edgeType, maxFetches, queryOption)
-          .map(_.flatMap(_.users).flatten.distinct)
+        stats.counter("fromAbServ ce"). ncr()
+        getResponseFromServ ce( dent f ers, batchS ze, edgeType, maxFetc s, queryOpt on)
+          .map(_.flatMap(_.users).flatten.d st nct)
     }
   }
 
-  def getHashedContacts(
-    normalizeFn: String => String,
-    extractField: String,
+  def getHas dContacts(
+    normal zeFn: Str ng => Str ng,
+    extractF eld: Str ng,
   )(
-    userId: Long,
-    identifiers: Seq[RecordIdentifier],
-    batchSize: Int,
+    user d: Long,
+     dent f ers: Seq[Record dent f er],
+    batchS ze:  nt,
     edgeType: EdgeType,
-    fetcherOption: Option[Fetcher[String, Unit, STPResultFeature]] = None,
-    maxFetches: Int = 1,
-    queryOption: Option[QueryOption] = None,
-  ): Stitch[Seq[String]] = {
+    fetc rOpt on: Opt on[Fetc r[Str ng, Un , STPResultFeature]] = None,
+    maxFetc s:  nt = 1,
+    queryOpt on: Opt on[QueryOpt on] = None,
+  ): St ch[Seq[Str ng]] = {
 
-    fetcherOption match {
-      case Some(fetcher) =>
-        getContactsFromManhattan(userId, fetcher).flatMap { userContacts =>
-          if (userContacts.isEmpty) {
-            getContactsResponseFromService(
-              identifiers,
-              batchSize,
+    fetc rOpt on match {
+      case So (fetc r) =>
+        getContactsFromManhattan(user d, fetc r).flatMap { userContacts =>
+           f (userContacts. sEmpty) {
+            getContactsResponseFromServ ce(
+               dent f ers,
+              batchS ze,
               edgeType,
-              maxFetches,
-              queryOption)
+              maxFetc s,
+              queryOpt on)
               .map { response =>
                 for {
                   resp <- response
                   contacts <- resp.contacts
-                  contactsThrift = contacts.map(Contact.fromThrift)
-                  contactsSet = extractField match {
-                    case "emails" => contactsThrift.flatMap(_.emails.toSeq.flatten)
-                    case "phoneNumbers" => contactsThrift.flatMap(_.phoneNumbers.toSeq.flatten)
+                  contactsThr ft = contacts.map(Contact.fromThr ft)
+                  contactsSet = extractF eld match {
+                    case "ema ls" => contactsThr ft.flatMap(_.ema ls.toSeq.flatten)
+                    case "phoneNumbers" => contactsThr ft.flatMap(_.phoneNumbers.toSeq.flatten)
                   }
-                  hashedAndNormalizedContacts = contactsSet.map(c => hashContact(normalizeFn(c)))
-                } yield hashedAndNormalizedContacts
+                  has dAndNormal zedContacts = contactsSet.map(c => hashContact(normal zeFn(c)))
+                } y eld has dAndNormal zedContacts
               }.map(_.flatten)
           } else {
-            Stitch.Nil
+            St ch.N l
           }
         }
       case None => {
-        getContactsResponseFromService(identifiers, batchSize, edgeType, maxFetches, queryOption)
+        getContactsResponseFromServ ce( dent f ers, batchS ze, edgeType, maxFetc s, queryOpt on)
           .map { response =>
             for {
               resp <- response
               contacts <- resp.contacts
-              contactsThrift = contacts.map(Contact.fromThrift)
-              contactsSet = extractField match {
-                case "emails" => contactsThrift.flatMap(_.emails.toSeq.flatten)
-                case "phoneNumbers" => contactsThrift.flatMap(_.phoneNumbers.toSeq.flatten)
+              contactsThr ft = contacts.map(Contact.fromThr ft)
+              contactsSet = extractF eld match {
+                case "ema ls" => contactsThr ft.flatMap(_.ema ls.toSeq.flatten)
+                case "phoneNumbers" => contactsThr ft.flatMap(_.phoneNumbers.toSeq.flatten)
               }
-              hashedAndNormalizedContacts = contactsSet.map(c => hashContact(normalizeFn(c)))
-            } yield hashedAndNormalizedContacts
+              has dAndNormal zedContacts = contactsSet.map(c => hashContact(normal zeFn(c)))
+            } y eld has dAndNormal zedContacts
           }.map(_.flatten)
       }
     }
   }
 
-  def getEmailContacts = getHashedContacts(normalizeEmail, "emails") _
-  def getPhoneContacts = getHashedContacts(normalizePhoneNumber, "phoneNumbers") _
+  def getEma lContacts = getHas dContacts(normal zeEma l, "ema ls") _
+  def getPhoneContacts = getHas dContacts(normal zePhoneNumber, "phoneNumbers") _
 
-  private def getUsersFromManhattan(
-    userId: Long,
-    fetcher: Fetcher[Long, Unit, tUserContacts],
-  ): Stitch[Seq[Long]] = fetcher
-    .fetch(userId)
-    .map(_.v.map(_.destinationIds).toSeq.flatten.distinct)
+  pr vate def getUsersFromManhattan(
+    user d: Long,
+    fetc r: Fetc r[Long, Un , tUserContacts],
+  ): St ch[Seq[Long]] = fetc r
+    .fetch(user d)
+    .map(_.v.map(_.dest nat on ds).toSeq.flatten.d st nct)
 
-  private def getContactsFromManhattan(
-    userId: Long,
-    fetcher: Fetcher[String, Unit, STPResultFeature],
-  ): Stitch[Seq[String]] = fetcher
-    .fetch(userId.toString)
-    .map(_.v.map(_.strongTieUserFeature.map(_.destId)).toSeq.flatten.distinct)
+  pr vate def getContactsFromManhattan(
+    user d: Long,
+    fetc r: Fetc r[Str ng, Un , STPResultFeature],
+  ): St ch[Seq[Str ng]] = fetc r
+    .fetch(user d.toStr ng)
+    .map(_.v.map(_.strongT eUserFeature.map(_.dest d)).toSeq.flatten.d st nct)
 }
 
-object AddressbookClient {
-  val AddressBook2BatchSize = 500
+object AddressbookCl ent {
+  val AddressBook2BatchS ze = 500
 
-  def createQueryOption(edgeType: EdgeType, isPhone: Boolean): Option[QueryOption] =
-    (edgeType, isPhone) match {
+  def createQueryOpt on(edgeType: EdgeType,  sPhone: Boolean): Opt on[QueryOpt on] =
+    (edgeType,  sPhone) match {
       case (EdgeType.Reverse, _) =>
         None
       case (EdgeType.Forward, true) =>
-        Some(
-          QueryOption(
-            onlyDiscoverableInExpansion = false,
-            onlyConfirmedInExpansion = false,
-            onlyDiscoverableInResult = false,
-            onlyConfirmedInResult = false,
-            fetchGlobalApiNamespace = false,
-            isDebugRequest = false,
-            resolveEmails = false,
+        So (
+          QueryOpt on(
+            onlyD scoverable nExpans on = false,
+            onlyConf r d nExpans on = false,
+            onlyD scoverable nResult = false,
+            onlyConf r d nResult = false,
+            fetchGlobalAp Na space = false,
+             sDebugRequest = false,
+            resolveEma ls = false,
             resolvePhoneNumbers = true
           ))
       case (EdgeType.Forward, false) =>
-        Some(
-          QueryOption(
-            onlyDiscoverableInExpansion = false,
-            onlyConfirmedInExpansion = false,
-            onlyDiscoverableInResult = false,
-            onlyConfirmedInResult = false,
-            fetchGlobalApiNamespace = false,
-            isDebugRequest = false,
-            resolveEmails = true,
+        So (
+          QueryOpt on(
+            onlyD scoverable nExpans on = false,
+            onlyConf r d nExpans on = false,
+            onlyD scoverable nResult = false,
+            onlyConf r d nResult = false,
+            fetchGlobalAp Na space = false,
+             sDebugRequest = false,
+            resolveEma ls = true,
             resolvePhoneNumbers = false
           ))
     }

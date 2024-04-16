@@ -1,167 +1,167 @@
-package com.twitter.timelineranker.util
+package com.tw ter.t  l neranker.ut l
 
-import com.twitter.common.text.tagger.UniversalPOS
-import com.twitter.common.text.token.attribute.TokenType
-import com.twitter.common_internal.text.pipeline.TwitterTextNormalizer
-import com.twitter.common_internal.text.pipeline.TwitterTextTokenizer
-import com.twitter.common_internal.text.version.PenguinVersion
-import com.twitter.search.common.util.text.LanguageIdentifierHelper
-import com.twitter.search.common.util.text.PhraseExtractor
-import com.twitter.search.common.util.text.TokenizerHelper
-import com.twitter.search.common.util.text.TokenizerResult
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.tweetypie.{thriftscala => tweetypie}
-import com.twitter.util.Try
-import java.util.Locale
-import scala.collection.JavaConversions._
+ mport com.tw ter.common.text.tagger.Un versalPOS
+ mport com.tw ter.common.text.token.attr bute.TokenType
+ mport com.tw ter.common_ nternal.text.p pel ne.Tw terTextNormal zer
+ mport com.tw ter.common_ nternal.text.p pel ne.Tw terTextToken zer
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers on
+ mport com.tw ter.search.common.ut l.text.Language dent f er lper
+ mport com.tw ter.search.common.ut l.text.PhraseExtractor
+ mport com.tw ter.search.common.ut l.text.Token zer lper
+ mport com.tw ter.search.common.ut l.text.Token zerResult
+ mport com.tw ter.t  l neranker.recap.model.ContentFeatures
+ mport com.tw ter.t etyp e.{thr ftscala => t etyp e}
+ mport com.tw ter.ut l.Try
+ mport java.ut l.Locale
+ mport scala.collect on.JavaConvers ons._
 
-object TweetTextFeaturesExtractor {
+object T etTextFeaturesExtractor {
 
-  private[this] val threadLocaltokenizer = new ThreadLocal[Option[TwitterTextTokenizer]] {
-    override protected def initialValue(): Option[TwitterTextTokenizer] =
+  pr vate[t ] val threadLocaltoken zer = new ThreadLocal[Opt on[Tw terTextToken zer]] {
+    overr de protected def  n  alValue(): Opt on[Tw terTextToken zer] =
       Try {
-        val normalizer = new TwitterTextNormalizer.Builder(penguinVersion).build
-        TokenizerHelper
-          .getTokenizerBuilder(penguinVersion)
+        val normal zer = new Tw terTextNormal zer.Bu lder(pengu nVers on).bu ld
+        Token zer lper
+          .getToken zerBu lder(pengu nVers on)
           .enablePOSTagger
-          .enableStopwordFilterWithNormalizer(normalizer)
-          .setStopwordResourcePath("com/twitter/ml/feature/generator/stopwords_extended_{LANG}.txt")
-          .enableStemmer
-          .build
-      }.toOption
+          .enableStopwordF lterW hNormal zer(normal zer)
+          .setStopwordRes cePath("com/tw ter/ml/feature/generator/stopwords_extended_{LANG}.txt")
+          .enableStem r
+          .bu ld
+      }.toOpt on
   }
 
-  val penguinVersion: PenguinVersion = PenguinVersion.PENGUIN_6
+  val pengu nVers on: Pengu nVers on = Pengu nVers on.PENGU N_6
 
-  def addTextFeaturesFromTweet(
-    inputFeatures: ContentFeatures,
-    tweet: tweetypie.Tweet,
-    hydratePenguinTextFeatures: Boolean,
+  def addTextFeaturesFromT et(
+     nputFeatures: ContentFeatures,
+    t et: t etyp e.T et,
+    hydratePengu nTextFeatures: Boolean,
     hydrateTokens: Boolean,
-    hydrateTweetText: Boolean
+    hydrateT etText: Boolean
   ): ContentFeatures = {
-    tweet.coreData
+    t et.coreData
       .map { coreData =>
-        val tweetText = coreData.text
-        val hasQuestion = hasQuestionCharacter(tweetText)
-        val length = getLength(tweetText).toShort
-        val numCaps = getCaps(tweetText).toShort
-        val numWhiteSpaces = getSpaces(tweetText).toShort
-        val numNewlines = Some(getNumNewlines(tweetText))
-        val tweetTextOpt = getTweetText(tweetText, hydrateTweetText)
+        val t etText = coreData.text
+        val hasQuest on = hasQuest onCharacter(t etText)
+        val length = getLength(t etText).toShort
+        val numCaps = getCaps(t etText).toShort
+        val numWh eSpaces = getSpaces(t etText).toShort
+        val numNewl nes = So (getNumNewl nes(t etText))
+        val t etTextOpt = getT etText(t etText, hydrateT etText)
 
-        if (hydratePenguinTextFeatures) {
-          val locale = getLocale(tweetText)
-          val tokenizerOpt = threadLocaltokenizer.get
+         f (hydratePengu nTextFeatures) {
+          val locale = getLocale(t etText)
+          val token zerOpt = threadLocaltoken zer.get
 
-          val tokenizerResult = tokenizerOpt.flatMap { tokenizer =>
-            tokenizeWithPosTagger(tokenizer, locale, tweetText)
+          val token zerResult = token zerOpt.flatMap { token zer =>
+            token zeW hPosTagger(token zer, locale, t etText)
           }
 
-          val normalizedTokensOpt = if (hydrateTokens) {
-            tokenizerOpt.flatMap { tokenizer =>
-              tokenizedStringsWithNormalizerAndStemmer(tokenizer, locale, tweetText)
+          val normal zedTokensOpt =  f (hydrateTokens) {
+            token zerOpt.flatMap { token zer =>
+              token zedStr ngsW hNormal zerAndStem r(token zer, locale, t etText)
             }
           } else None
 
-          val emoticonTokensOpt = tokenizerResult.map(getEmoticons)
-          val emojiTokensOpt = tokenizerResult.map(getEmojis)
-          val posUnigramsOpt = tokenizerResult.map(getPosUnigrams)
-          val posBigramsOpt = posUnigramsOpt.map(getPosBigrams)
-          val tokensOpt = normalizedTokensOpt
+          val emot conTokensOpt = token zerResult.map(getEmot cons)
+          val emoj TokensOpt = token zerResult.map(getEmoj s)
+          val posUn gramsOpt = token zerResult.map(getPosUn grams)
+          val posB gramsOpt = posUn gramsOpt.map(getPosB grams)
+          val tokensOpt = normal zedTokensOpt
 
-          inputFeatures.copy(
-            emojiTokens = emojiTokensOpt,
-            emoticonTokens = emoticonTokensOpt,
-            hasQuestion = hasQuestion,
+           nputFeatures.copy(
+            emoj Tokens = emoj TokensOpt,
+            emot conTokens = emot conTokensOpt,
+            hasQuest on = hasQuest on,
             length = length,
             numCaps = numCaps,
-            numWhiteSpaces = numWhiteSpaces,
-            numNewlines = numNewlines,
-            posUnigrams = posUnigramsOpt.map(_.toSet),
-            posBigrams = posBigramsOpt.map(_.toSet),
+            numWh eSpaces = numWh eSpaces,
+            numNewl nes = numNewl nes,
+            posUn grams = posUn gramsOpt.map(_.toSet),
+            posB grams = posB gramsOpt.map(_.toSet),
             tokens = tokensOpt.map(_.toSeq),
-            tweetText = tweetTextOpt
+            t etText = t etTextOpt
           )
         } else {
-          inputFeatures.copy(
-            hasQuestion = hasQuestion,
+           nputFeatures.copy(
+            hasQuest on = hasQuest on,
             length = length,
             numCaps = numCaps,
-            numWhiteSpaces = numWhiteSpaces,
-            numNewlines = numNewlines,
-            tweetText = tweetTextOpt
+            numWh eSpaces = numWh eSpaces,
+            numNewl nes = numNewl nes,
+            t etText = t etTextOpt
           )
         }
       }
-      .getOrElse(inputFeatures)
+      .getOrElse( nputFeatures)
   }
 
-  private def tokenizeWithPosTagger(
-    tokenizer: TwitterTextTokenizer,
+  pr vate def token zeW hPosTagger(
+    token zer: Tw terTextToken zer,
     locale: Locale,
-    text: String
-  ): Option[TokenizerResult] = {
-    tokenizer.enableStemmer(false)
-    tokenizer.enableStopwordFilter(false)
+    text: Str ng
+  ): Opt on[Token zerResult] = {
+    token zer.enableStem r(false)
+    token zer.enableStopwordF lter(false)
 
-    Try { TokenizerHelper.tokenizeTweet(tokenizer, text, locale) }.toOption
+    Try { Token zer lper.token zeT et(token zer, text, locale) }.toOpt on
   }
 
-  private def tokenizedStringsWithNormalizerAndStemmer(
-    tokenizer: TwitterTextTokenizer,
+  pr vate def token zedStr ngsW hNormal zerAndStem r(
+    token zer: Tw terTextToken zer,
     locale: Locale,
-    text: String
-  ): Option[Seq[String]] = {
-    tokenizer.enableStemmer(true)
-    tokenizer.enableStopwordFilter(true)
+    text: Str ng
+  ): Opt on[Seq[Str ng]] = {
+    token zer.enableStem r(true)
+    token zer.enableStopwordF lter(true)
 
-    Try { tokenizer.tokenizeToStrings(text, locale).toSeq }.toOption
+    Try { token zer.token zeToStr ngs(text, locale).toSeq }.toOpt on
   }
 
-  def getLocale(text: String): Locale = LanguageIdentifierHelper.identifyLanguage(text)
+  def getLocale(text: Str ng): Locale = Language dent f er lper. dent fyLanguage(text)
 
-  def getTokens(tokenizerResult: TokenizerResult): List[String] =
-    tokenizerResult.rawSequence.getTokenStrings().toList
+  def getTokens(token zerResult: Token zerResult): L st[Str ng] =
+    token zerResult.rawSequence.getTokenStr ngs().toL st
 
-  def getEmoticons(tokenizerResult: TokenizerResult): Set[String] =
-    tokenizerResult.smileys.toSet
+  def getEmot cons(token zerResult: Token zerResult): Set[Str ng] =
+    token zerResult.sm leys.toSet
 
-  def getEmojis(tokenizerResult: TokenizerResult): Set[String] =
-    tokenizerResult.rawSequence.getTokenStringsOf(TokenType.EMOJI).toSet
+  def getEmoj s(token zerResult: Token zerResult): Set[Str ng] =
+    token zerResult.rawSequence.getTokenStr ngsOf(TokenType.EMOJ ).toSet
 
-  def getPhrases(tokenizerResult: TokenizerResult, locale: Locale): Set[String] = {
-    PhraseExtractor.getPhrases(tokenizerResult.rawSequence, locale).map(_.toString).toSet
+  def getPhrases(token zerResult: Token zerResult, locale: Locale): Set[Str ng] = {
+    PhraseExtractor.getPhrases(token zerResult.rawSequence, locale).map(_.toStr ng).toSet
   }
 
-  def getPosUnigrams(tokenizerResult: TokenizerResult): List[String] =
-    tokenizerResult.tokenSequence.getTokens.toList
+  def getPosUn grams(token zerResult: Token zerResult): L st[Str ng] =
+    token zerResult.tokenSequence.getTokens.toL st
       .map { token =>
-        Option(token.getPartOfSpeech)
-          .map(_.toString)
-          .getOrElse(UniversalPOS.X.toString) // UniversalPOS.X is unknown POS tag
+        Opt on(token.getPartOfSpeech)
+          .map(_.toStr ng)
+          .getOrElse(Un versalPOS.X.toStr ng) // Un versalPOS.X  s unknown POS tag
       }
 
-  def getPosBigrams(tagsList: List[String]): List[String] = {
-    if (tagsList.nonEmpty) {
-      tagsList
-        .zip(tagsList.tail)
-        .map(tagPair => Seq(tagPair._1, tagPair._2).mkString(" "))
+  def getPosB grams(tagsL st: L st[Str ng]): L st[Str ng] = {
+     f (tagsL st.nonEmpty) {
+      tagsL st
+        .z p(tagsL st.ta l)
+        .map(tagPa r => Seq(tagPa r._1, tagPa r._2).mkStr ng(" "))
     } else {
-      tagsList
+      tagsL st
     }
   }
 
-  def getLength(text: String): Int =
-    text.codePointCount(0, text.length())
+  def getLength(text: Str ng):  nt =
+    text.codePo ntCount(0, text.length())
 
-  def getCaps(text: String): Int = text.count(Character.isUpperCase)
+  def getCaps(text: Str ng):  nt = text.count(Character. sUpperCase)
 
-  def getSpaces(text: String): Int = text.count(Character.isWhitespace)
+  def getSpaces(text: Str ng):  nt = text.count(Character. sWh espace)
 
-  def hasQuestionCharacter(text: String): Boolean = {
-    // List based on https://unicode-search.net/unicode-namesearch.pl?term=question
-    val QUESTION_MARK_CHARS = Seq(
+  def hasQuest onCharacter(text: Str ng): Boolean = {
+    // L st based on https://un code-search.net/un code-na search.pl?term=quest on
+    val QUEST ON_MARK_CHARS = Seq(
       "\u003F",
       "\u00BF",
       "\u037E",
@@ -185,15 +185,15 @@ object TweetTextFeaturesExtractor {
       "\u1114",
       "\u1E95"
     )
-    QUESTION_MARK_CHARS.exists(text.contains)
+    QUEST ON_MARK_CHARS.ex sts(text.conta ns)
   }
 
-  def getNumNewlines(text: String): Short = {
-    val newlineRegex = "\r\n|\r|\n".r
-    newlineRegex.findAllIn(text).length.toShort
+  def getNumNewl nes(text: Str ng): Short = {
+    val newl neRegex = "\r\n|\r|\n".r
+    newl neRegex.f ndAll n(text).length.toShort
   }
 
-  private[this] def getTweetText(tweetText: String, hydrateTweetText: Boolean): Option[String] = {
-    if (hydrateTweetText) Some(tweetText) else None
+  pr vate[t ] def getT etText(t etText: Str ng, hydrateT etText: Boolean): Opt on[Str ng] = {
+     f (hydrateT etText) So (t etText) else None
   }
 }

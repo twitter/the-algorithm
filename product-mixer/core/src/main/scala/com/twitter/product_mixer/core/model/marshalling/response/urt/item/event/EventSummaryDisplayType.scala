@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.event
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.event
 
-sealed trait EventSummaryDisplayType
+sealed tra  EventSummaryD splayType
 
-case object CellEventSummaryDisplayType extends EventSummaryDisplayType
-case object HeroEventSummaryDisplayType extends EventSummaryDisplayType
-case object CellWithProminentSocialContextEventSummaryDisplayType extends EventSummaryDisplayType
+case object CellEventSummaryD splayType extends EventSummaryD splayType
+case object  roEventSummaryD splayType extends EventSummaryD splayType
+case object CellW hProm nentSoc alContextEventSummaryD splayType extends EventSummaryD splayType

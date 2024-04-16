@@ -2,28 +2,28 @@ syntax = "proto3";
 
 package tensorflow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "AllocationDescriptionProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/allocation_description_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "Allocat onDescr pt onProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.fra work";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/fra work/allocat on_descr pt on_go_proto";
 
-message AllocationDescription {
+ ssage Allocat onDescr pt on {
   // Total number of bytes requested
-  int64 requested_bytes = 1;
+   nt64 requested_bytes = 1;
 
-  // Total number of bytes allocated if known
-  int64 allocated_bytes = 2;
+  // Total number of bytes allocated  f known
+   nt64 allocated_bytes = 2;
 
-  // Name of the allocator used
-  string allocator_name = 3;
+  // Na  of t  allocator used
+  str ng allocator_na  = 3;
 
-  // Identifier of the allocated buffer if known
-  int64 allocation_id = 4;
+  //  dent f er of t  allocated buffer  f known
+   nt64 allocat on_ d = 4;
 
-  // Set if this tensor only has one remaining reference
-  bool has_single_reference = 5;
+  // Set  f t  tensor only has one rema n ng reference
+  bool has_s ngle_reference = 5;
 
-  // Address of the allocation.
-  uint64 ptr = 6;
+  // Address of t  allocat on.
+  u nt64 ptr = 6;
 }

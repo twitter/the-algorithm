@@ -1,145 +1,145 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.tw ter.search. ngester.p pel ne.tw ter;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import javax.naming.NamingException;
+ mport java.ut l.concurrent.Block ngQueue;
+ mport java.ut l.concurrent.ExecutorServ ce;
+ mport javax.nam ng.Nam ngExcept on;
 
-import com.google.common.collect.Queues;
+ mport com.google.common.collect.Queues;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons.p pel ne.StageExcept on;
+ mport org.apac .commons.p pel ne.val dat on.Consu dTypes;
+ mport org.apac .commons.p pel ne.val dat on.ProducesConsu d;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.text.TweetParser;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
+ mport com.tw ter.search.common. tr cs.SearchCustomGauge;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common.relevance.ent  es.Tw ter ssage;
+ mport com.tw ter.search.common.relevance.text.T etParser;
+ mport com.tw ter.search. ngester.p pel ne.ut l.P pel neStageRunt  Except on;
 
-@ConsumedTypes(TwitterMessage.class)
-@ProducesConsumed
-public class TextFeatureExtractionWorkersStage extends TwitterBaseStage
-    <TwitterMessage, TwitterMessage> {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(TextFeatureExtractionWorkersStage.class);
+@Consu dTypes(Tw ter ssage.class)
+@ProducesConsu d
+publ c class TextFeatureExtract onWorkersStage extends Tw terBaseStage
+    <Tw ter ssage, Tw ter ssage> {
+  pr vate stat c f nal Logger LOG =
+      LoggerFactory.getLogger(TextFeatureExtract onWorkersStage.class);
 
-  private static final int NUM_THREADS = 5;
-  private static final int MAX_QUEUE_SIZE = 100;
-  private static final long SLOW_TWEET_TIME_MILLIS = 1000;
-  private ExecutorService executorService = null;
+  pr vate stat c f nal  nt NUM_THREADS = 5;
+  pr vate stat c f nal  nt MAX_QUEUE_S ZE = 100;
+  pr vate stat c f nal long SLOW_TWEET_T ME_M LL S = 1000;
+  pr vate ExecutorServ ce executorServ ce = null;
 
-  // define as static so that FeatureExtractorWorker thread can use it
-  private static SearchRateCounter slowTweetCounter;
-  private SearchRateCounter threadErrorCounter;
-  private SearchRateCounter threadInterruptionCounter;
-  private final BlockingQueue<TwitterMessage> messageQueue =
-      Queues.newLinkedBlockingQueue(MAX_QUEUE_SIZE);
-  private TweetParser tweetParser;
+  // def ne as stat c so that FeatureExtractorWorker thread can use  
+  pr vate stat c SearchRateCounter slowT etCounter;
+  pr vate SearchRateCounter threadErrorCounter;
+  pr vate SearchRateCounter thread nterrupt onCounter;
+  pr vate f nal Block ngQueue<Tw ter ssage>  ssageQueue =
+      Queues.newL nkedBlock ngQueue(MAX_QUEUE_S ZE);
+  pr vate T etParser t etParser;
 
-  @Override
-  public void initStats() {
-    super.initStats();
-    innerSetupStats();
+  @Overr de
+  publ c vo d  n Stats() {
+    super. n Stats();
+     nnerSetupStats();
   }
 
-  @Override
-  protected void innerSetupStats() {
-    slowTweetCounter = SearchRateCounter.export(
-        getStageNamePrefix() + "_text_feature_extraction_slow_tweet_count");
-    SearchCustomGauge.export(getStageNamePrefix() + "_queue_size",
-        messageQueue::size);
+  @Overr de
+  protected vo d  nnerSetupStats() {
+    slowT etCounter = SearchRateCounter.export(
+        getStageNa Pref x() + "_text_feature_extract on_slow_t et_count");
+    SearchCustomGauge.export(getStageNa Pref x() + "_queue_s ze",
+         ssageQueue::s ze);
     threadErrorCounter = SearchRateCounter.export(
-        getStageNamePrefix() + "_text_quality_evaluation_thread_error");
-    threadInterruptionCounter = SearchRateCounter.export(
-        getStageNamePrefix() + "_text_quality_evaluation_thread_interruption");
+        getStageNa Pref x() + "_text_qual y_evaluat on_thread_error");
+    thread nterrupt onCounter = SearchRateCounter.export(
+        getStageNa Pref x() + "_text_qual y_evaluat on_thread_ nterrupt on");
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    innerSetup();
-    // anything threading related, we don't need in V2 as of yet.
-    executorService = wireModule.getThreadPool(NUM_THREADS);
-    for (int i = 0; i < NUM_THREADS; ++i) {
-      executorService.submit(new FeatureExtractorWorker());
+  @Overr de
+  protected vo d do nnerPreprocess() throws StageExcept on, Nam ngExcept on {
+     nnerSetup();
+    // anyth ng thread ng related,   don't need  n V2 as of yet.
+    executorServ ce = w reModule.getThreadPool(NUM_THREADS);
+    for ( nt   = 0;   < NUM_THREADS; ++ ) {
+      executorServ ce.subm (new FeatureExtractorWorker());
     }
-    LOG.info("Initialized {} parsers.", NUM_THREADS);
+    LOG. nfo(" n  al zed {} parsers.", NUM_THREADS);
   }
 
-  @Override
-  protected void innerSetup() {
-    tweetParser = new TweetParser();
+  @Overr de
+  protected vo d  nnerSetup() {
+    t etParser = new T etParser();
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof TwitterMessage)) {
-      LOG.error("Object is not a TwitterMessage object: {}", obj);
+  @Overr de
+  publ c vo d  nnerProcess(Object obj) throws StageExcept on {
+     f (!(obj  nstanceof Tw ter ssage)) {
+      LOG.error("Object  s not a Tw ter ssage object: {}", obj);
       return;
     }
 
-    TwitterMessage message = TwitterMessage.class.cast(obj);
+    Tw ter ssage  ssage = Tw ter ssage.class.cast(obj);
     try {
-      messageQueue.put(message);
-    } catch (InterruptedException ie) {
-      LOG.error("Interrupted exception adding to the queue", ie);
+       ssageQueue.put( ssage);
+    } catch ( nterruptedExcept on  e) {
+      LOG.error(" nterrupted except on add ng to t  queue",  e);
     }
   }
 
-  private boolean tryToParse(TwitterMessage message) {
-    boolean isAbleToParse = false;
-    long startTime = clock.nowMillis();
-    // Parse tweet and merge the parsed out features into what we already have in the message.
+  pr vate boolean tryToParse(Tw ter ssage  ssage) {
+    boolean  sAbleToParse = false;
+    long startT   = clock.nowM ll s();
+    // Parse t et and  rge t  parsed out features  nto what   already have  n t   ssage.
     try {
-      synchronized (this) {
-        tweetParser.parseTweet(message, false, false);
+      synchron zed (t ) {
+        t etParser.parseT et( ssage, false, false);
       }
-      // If parsing failed we don't need to pass the tweet down the pipeline.
-      isAbleToParse = true;
-    } catch (Exception e) {
-      threadErrorCounter.increment();
-      LOG.error("Uncaught exception from tweetParser.parseTweet()", e);
-    } finally {
-      long elapsedTime = clock.nowMillis() - startTime;
-      if (elapsedTime > SLOW_TWEET_TIME_MILLIS) {
-        LOG.debug("Took {}ms to parse tweet {}: {}", elapsedTime, message.getId(), message);
-        slowTweetCounter.increment();
+      //  f pars ng fa led   don't need to pass t  t et down t  p pel ne.
+       sAbleToParse = true;
+    } catch (Except on e) {
+      threadErrorCounter. ncre nt();
+      LOG.error("Uncaught except on from t etParser.parseT et()", e);
+    } f nally {
+      long elapsedT   = clock.nowM ll s() - startT  ;
+       f (elapsedT   > SLOW_TWEET_T ME_M LL S) {
+        LOG.debug("Took {}ms to parse t et {}: {}", elapsedT  ,  ssage.get d(),  ssage);
+        slowT etCounter. ncre nt();
       }
     }
-    return isAbleToParse;
+    return  sAbleToParse;
   }
 
-  @Override
-  protected TwitterMessage innerRunStageV2(TwitterMessage message) {
-    if (!tryToParse(message)) {
-      throw new PipelineStageRuntimeException("Failed to parse, not passing to next stage.");
+  @Overr de
+  protected Tw ter ssage  nnerRunStageV2(Tw ter ssage  ssage) {
+     f (!tryToParse( ssage)) {
+      throw new P pel neStageRunt  Except on("Fa led to parse, not pass ng to next stage.");
     }
 
-    return message;
+    return  ssage;
   }
 
-  @Override
-  public void innerPostprocess() {
-    if (executorService != null) {
-      executorService.shutdownNow();
+  @Overr de
+  publ c vo d  nnerPostprocess() {
+     f (executorServ ce != null) {
+      executorServ ce.shutdownNow();
     }
-    executorService = null;
+    executorServ ce = null;
   }
 
-  private class FeatureExtractorWorker implements Runnable {
-    public void run() {
-      while (!Thread.currentThread().isInterrupted()) {
-        TwitterMessage message = null;
+  pr vate class FeatureExtractorWorker  mple nts Runnable {
+    publ c vo d run() {
+      wh le (!Thread.currentThread(). s nterrupted()) {
+        Tw ter ssage  ssage = null;
         try {
-          message = messageQueue.take();
-        } catch (InterruptedException ie) {
-          threadInterruptionCounter.increment();
-          LOG.error("Interrupted exception polling from the queue", ie);
-          continue;
-        } finally {
-          if (tryToParse(message)) {
-            emitAndCount(message);
+           ssage =  ssageQueue.take();
+        } catch ( nterruptedExcept on  e) {
+          thread nterrupt onCounter. ncre nt();
+          LOG.error(" nterrupted except on poll ng from t  queue",  e);
+          cont nue;
+        } f nally {
+           f (tryToParse( ssage)) {
+            em AndCount( ssage);
           }
         }
       }

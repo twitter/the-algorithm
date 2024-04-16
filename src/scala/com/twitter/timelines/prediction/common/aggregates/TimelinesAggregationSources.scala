@@ -1,45 +1,45 @@
-package com.twitter.timelines.prediction.common.aggregates
+package com.tw ter.t  l nes.pred ct on.common.aggregates
 
-import com.twitter.ml.api.constant.SharedFeatures.TIMESTAMP
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.OfflineAggregateSource
-import com.twitter.timelines.prediction.features.p_home_latest.HomeLatestUserAggregatesFeatures
-import timelines.data_processing.ad_hoc.recap.data_record_preparation.RecapDataRecordsAggMinimalJavaDataset
+ mport com.tw ter.ml.ap .constant.SharedFeatures.T MESTAMP
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.Offl neAggregateS ce
+ mport com.tw ter.t  l nes.pred ct on.features.p_ho _latest.Ho LatestUserAggregatesFeatures
+ mport t  l nes.data_process ng.ad_hoc.recap.data_record_preparat on.RecapDataRecordsAggM n malJavaDataset
 
 /**
- * Any update here should be in sync with [[TimelinesFeatureGroups]] and [[AggMinimalDataRecordGeneratorJob]].
+ * Any update  re should be  n sync w h [[T  l nesFeatureGroups]] and [[AggM n malDataRecordGeneratorJob]].
  */
-object TimelinesAggregationSources {
+object T  l nesAggregat onS ces {
 
   /**
-   * This is the recap data records after post-processing in [[GenerateRecapAggMinimalDataRecordsJob]]
+   * T   s t  recap data records after post-process ng  n [[GenerateRecapAggM n malDataRecordsJob]]
    */
-  val timelinesDailyRecapMinimalSource = OfflineAggregateSource(
-    name = "timelines_daily_recap",
-    timestampFeature = TIMESTAMP,
-    dalDataSet = Some(RecapDataRecordsAggMinimalJavaDataset),
-    scaldingSuffixType = Some("dal"),
-    withValidation = true
+  val t  l nesDa lyRecapM n malS ce = Offl neAggregateS ce(
+    na  = "t  l nes_da ly_recap",
+    t  stampFeature = T MESTAMP,
+    dalDataSet = So (RecapDataRecordsAggM n malJavaDataset),
+    scald ngSuff xType = So ("dal"),
+    w hVal dat on = true
   )
-  val timelinesDailyTwitterWideSource = OfflineAggregateSource(
-    name = "timelines_daily_twitter_wide",
-    timestampFeature = TIMESTAMP,
-    scaldingHdfsPath = Some("/user/timelines/processed/suggests/recap/twitter_wide_data_records"),
-    scaldingSuffixType = Some("daily"),
-    withValidation = true
-  )
-
-  val timelinesDailyListTimelineSource = OfflineAggregateSource(
-    name = "timelines_daily_list_timeline",
-    timestampFeature = TIMESTAMP,
-    scaldingHdfsPath = Some("/user/timelines/processed/suggests/recap/all_features/list"),
-    scaldingSuffixType = Some("hourly"),
-    withValidation = true
+  val t  l nesDa lyTw terW deS ce = Offl neAggregateS ce(
+    na  = "t  l nes_da ly_tw ter_w de",
+    t  stampFeature = T MESTAMP,
+    scald ngHdfsPath = So ("/user/t  l nes/processed/suggests/recap/tw ter_w de_data_records"),
+    scald ngSuff xType = So ("da ly"),
+    w hVal dat on = true
   )
 
-  val timelinesDailyHomeLatestSource = OfflineAggregateSource(
-    name = "timelines_daily_home_latest",
-    timestampFeature = HomeLatestUserAggregatesFeatures.AGGREGATE_TIMESTAMP_MS,
-    scaldingHdfsPath = Some("/user/timelines/processed/p_home_latest/user_aggregates"),
-    scaldingSuffixType = Some("daily")
+  val t  l nesDa lyL stT  l neS ce = Offl neAggregateS ce(
+    na  = "t  l nes_da ly_l st_t  l ne",
+    t  stampFeature = T MESTAMP,
+    scald ngHdfsPath = So ("/user/t  l nes/processed/suggests/recap/all_features/l st"),
+    scald ngSuff xType = So ("h ly"),
+    w hVal dat on = true
+  )
+
+  val t  l nesDa lyHo LatestS ce = Offl neAggregateS ce(
+    na  = "t  l nes_da ly_ho _latest",
+    t  stampFeature = Ho LatestUserAggregatesFeatures.AGGREGATE_T MESTAMP_MS,
+    scald ngHdfsPath = So ("/user/t  l nes/processed/p_ho _latest/user_aggregates"),
+    scald ngSuff xType = So ("da ly")
   )
 }

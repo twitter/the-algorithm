@@ -1,294 +1,294 @@
-namespace java com.twitter.unified_user_actions.thriftjava
-#@namespace scala com.twitter.unified_user_actions.thriftscala
-#@namespace strato com.twitter.unified_user_actions
+na space java com.tw ter.un f ed_user_act ons.thr ftjava
+#@na space scala com.tw ter.un f ed_user_act ons.thr ftscala
+#@na space strato com.tw ter.un f ed_user_act ons
 
-include "com/twitter/unified_user_actions/action_info.thrift"
-include "com/twitter/clientapp/gen/client_app.thrift"
+ nclude "com/tw ter/un f ed_user_act ons/act on_ nfo.thr ft"
+ nclude "com/tw ter/cl entapp/gen/cl ent_app.thr ft"
 
 /*
- * Tweet item information. Some development notes:
- * 1. Please keep this top-level struct as minimal as possible to reduce overhead.
- * 2. We intentionally avoid nesting action tweet in a separate structure
- * to underscore its importance and faciliate extraction of most commonly
- * needed fields such as actionTweetId. New fields related to the action tweet
- * should generally be prefixed with "actionTweet". 
- * 3. For the related Tweets, e.g. retweetingTweetId, inReplyToTweetId, etc, we
- * mostly only keep their ids for consistency and simplicity.
+ * T et  em  nformat on. So  develop nt notes:
+ * 1. Please keep t  top-level struct as m n mal as poss ble to reduce over ad.
+ * 2.    ntent onally avo d nest ng act on t et  n a separate structure
+ * to underscore  s  mportance and fac l ate extract on of most commonly
+ * needed f elds such as act onT et d. New f elds related to t  act on t et
+ * should generally be pref xed w h "act onT et". 
+ * 3. For t  related T ets, e.g. ret et ngT et d,  nReplyToT et d, etc,  
+ * mostly only keep t  r  ds for cons stency and s mpl c y.
  */
-struct TweetInfo {
+struct T et nfo {
   
-  /* Id for the tweet that was actioned on */
-  1: required i64 actionTweetId(personalDataType = 'TweetId')
+  /*  d for t  t et that was act oned on */
+  1: requ red  64 act onT et d(personalDataType = 'T et d')
   // Deprecated, please don't re-use!
-  // 2: optional i64 actionTweetAuthorId(personalDataType = 'UserId')
-  /* The social proof (i.e. banner) Topic Id that the action Tweet is associated to */
-  3: optional i64 actionTweetTopicSocialProofId(personalDataType='InferredInterests, ProvidedInterests')
-  4: optional AuthorInfo actionTweetAuthorInfo
+  // 2: opt onal  64 act onT etAuthor d(personalDataType = 'User d')
+  /* T  soc al proof ( .e. banner) Top c  d that t  act on T et  s assoc ated to */
+  3: opt onal  64 act onT etTop cSoc alProof d(personalDataType=' nferred nterests, Prov ded nterests')
+  4: opt onal Author nfo act onT etAuthor nfo
 
-  // Fields 1-99 reserved for `actionFooBar` fields
+  // F elds 1-99 reserved for `act onFooBar` f elds
 
-  /* Additional details for the action that took place on actionTweetId */
-  100: optional action_info.TweetActionInfo tweetActionInfo
+  /* Add  onal deta ls for t  act on that took place on act onT et d */
+  100: opt onal act on_ nfo.T etAct on nfo t etAct on nfo
 
-  /* Id of the tweet retweeting the action tweet */
-  101: optional i64 retweetingTweetId(personalDataType = 'TweetId')
-  /* Id of the tweet quoting the action Tweet, when the action type is quote */
-  102: optional i64 quotingTweetId(personalDataType = 'TweetId')
-  /* Id of the tweet replying to the action Tweet, when the action type is reply */
-  103: optional i64 replyingTweetId(personalDataType = 'TweetId')
-  /* Id of the tweet being quoted by the action tweet */
-  104: optional i64 quotedTweetId(personalDataType = 'TweetId')
-  /* Id of the tweet being replied to by the action tweet */
-  105: optional i64 inReplyToTweetId(personalDataType = 'TweetId')
-  /* Id of the tweet being retweeted by the action tweet, this is just for Unretweet action */
-  106: optional i64 retweetedTweetId(personalDataType = 'TweetId')
-  /* Id of the tweet being edited, this is only available for TweetEdit action, and TweetDelete
-   * action when the deleted tweet was created from Edit. */
-  107: optional i64 editedTweetId(personalDataType = 'TweetId')
-  /* Position of a tweet item in a page such as home and tweet detail, and is populated in
-   * Client Event. */
-  108: optional i32 tweetPosition
-  /* PromotedId is provided by ads team for each promoted tweet and is logged in client event */
-  109: optional string promotedId(personalDataType = 'AdsId')
-  /* corresponding to inReplyToTweetId */
-  110: optional i64 inReplyToAuthorId(personalDataType = 'UserId')
-  /* corresponding to retweetingTweetId */
-  111: optional i64 retweetingAuthorId(personalDataType = 'UserId')
-  /* corresponding to quotedTweetId */
-  112: optional i64 quotedAuthorId(personalDataType = 'UserId')
-}(persisted='true', hasPersonalData='true')
+  /*  d of t  t et ret et ng t  act on t et */
+  101: opt onal  64 ret et ngT et d(personalDataType = 'T et d')
+  /*  d of t  t et quot ng t  act on T et, w n t  act on type  s quote */
+  102: opt onal  64 quot ngT et d(personalDataType = 'T et d')
+  /*  d of t  t et reply ng to t  act on T et, w n t  act on type  s reply */
+  103: opt onal  64 reply ngT et d(personalDataType = 'T et d')
+  /*  d of t  t et be ng quoted by t  act on t et */
+  104: opt onal  64 quotedT et d(personalDataType = 'T et d')
+  /*  d of t  t et be ng repl ed to by t  act on t et */
+  105: opt onal  64  nReplyToT et d(personalDataType = 'T et d')
+  /*  d of t  t et be ng ret eted by t  act on t et, t   s just for Unret et act on */
+  106: opt onal  64 ret etedT et d(personalDataType = 'T et d')
+  /*  d of t  t et be ng ed ed, t   s only ava lable for T etEd  act on, and T etDelete
+   * act on w n t  deleted t et was created from Ed . */
+  107: opt onal  64 ed edT et d(personalDataType = 'T et d')
+  /* Pos  on of a t et  em  n a page such as ho  and t et deta l, and  s populated  n
+   * Cl ent Event. */
+  108: opt onal  32 t etPos  on
+  /* Promoted d  s prov ded by ads team for each promoted t et and  s logged  n cl ent event */
+  109: opt onal str ng promoted d(personalDataType = 'Ads d')
+  /* correspond ng to  nReplyToT et d */
+  110: opt onal  64  nReplyToAuthor d(personalDataType = 'User d')
+  /* correspond ng to ret et ngT et d */
+  111: opt onal  64 ret et ngAuthor d(personalDataType = 'User d')
+  /* correspond ng to quotedT et d */
+  112: opt onal  64 quotedAuthor d(personalDataType = 'User d')
+}(pers sted='true', hasPersonalData='true')
 
 /*
- * Profile item information. This follows TweetInfo's development notes.
+ * Prof le  em  nformat on. T  follows T et nfo's develop nt notes.
  */
-struct ProfileInfo {
+struct Prof le nfo {
 
-  /* Id for the profile (user_id) that was actioned on
+  /*  d for t  prof le (user_ d) that was act oned on
    *
-   * In a social graph user action, e.g., user1 follows/blocks/mutes user2,
-   * userIdentifier captures userId of user1 and actionProfileId records
-   * the userId of user2.
+   *  n a soc al graph user act on, e.g., user1 follows/blocks/mutes user2,
+   * user dent f er captures user d of user1 and act onProf le d records
+   * t  user d of user2.
    */
-  1: required i64 actionProfileId(personalDataType = 'UserId')
+  1: requ red  64 act onProf le d(personalDataType = 'User d')
 
-  // Fields 1-99 reserved for `actionFooBar` fields
-  /* the full name of the user. max length is 50. */
-  2: optional string name(personalDataType = 'DisplayName')
-  /* The handle/screenName of the user. This can't be changed.
+  // F elds 1-99 reserved for `act onFooBar` f elds
+  /* t  full na  of t  user. max length  s 50. */
+  2: opt onal str ng na (personalDataType = 'D splayNa ')
+  /* T  handle/screenNa  of t  user. T  can't be changed.
    */
-  3: optional string handle(personalDataType = 'UserName')
-  /* the "bio" of the user. max length is 160. May contain one or more t.co
-   * links, which will be hydrated in the UrlEntities substruct if the
-   * QueryFields.URL_ENTITIES is specified.
+  3: opt onal str ng handle(personalDataType = 'UserNa ')
+  /* t  "b o" of t  user. max length  s 160. May conta n one or more t.co
+   * l nks, wh ch w ll be hydrated  n t  UrlEnt  es substruct  f t 
+   * QueryF elds.URL_ENT T ES  s spec f ed.
    */
-  4: optional string description(personalDataType = 'Bio')
+  4: opt onal str ng descr pt on(personalDataType = 'B o')
 
-  /* Additional details for the action that took place on actionProfileId */
-  100: optional action_info.ProfileActionInfo profileActionInfo
-}(persisted='true', hasPersonalData='true')
+  /* Add  onal deta ls for t  act on that took place on act onProf le d */
+  100: opt onal act on_ nfo.Prof leAct on nfo prof leAct on nfo
+}(pers sted='true', hasPersonalData='true')
 
 /*
- * Topic item information. This follows TweetInfo's development notes.
+ * Top c  em  nformat on. T  follows T et nfo's develop nt notes.
  */
-struct TopicInfo {
-  /* Id for the Topic that was actioned on */
-  1: required i64 actionTopicId(personalDataType='InferredInterests, ProvidedInterests')
+struct Top c nfo {
+  /*  d for t  Top c that was act oned on */
+  1: requ red  64 act onTop c d(personalDataType=' nferred nterests, Prov ded nterests')
 
-  // Fields 1-99 reserved for `actionFooBar` fields
-}(persisted='true', hasPersonalData='true')
+  // F elds 1-99 reserved for `act onFooBar` f elds
+}(pers sted='true', hasPersonalData='true')
 
 /*
- * Notification Item information.
+ * Not f cat on  em  nformat on.
  *
- * See go/phab-d973370-discuss, go/phab-d968144-discuss, and go/uua-action-type for details about
- * the schema design for Notification events.
+ * See go/phab-d973370-d scuss, go/phab-d968144-d scuss, and go/uua-act on-type for deta ls about
+ * t  sc ma des gn for Not f cat on events.
  */
-struct NotificationInfo {
+struct Not f cat on nfo {
  /*
-  * Id of the Notification was actioned on.
+  *  d of t  Not f cat on was act oned on.
   *
-  * Note that this field represents the `impressionId` of a Notification. It has been renamed to
-  * `notificationId` in UUA so that the name effectively represents the value it holds,
-  * i.e. a unique id for a Notification and request.
+  * Note that t  f eld represents t  ` mpress on d` of a Not f cat on.   has been rena d to
+  * `not f cat on d`  n UUA so that t  na  effect vely represents t  value   holds,
+  *  .e. a un que  d for a Not f cat on and request.
   */
-  1: required string actionNotificationId(personalDataType='UniversallyUniqueIdentifierUuid')
+  1: requ red str ng act onNot f cat on d(personalDataType='Un versallyUn que dent f erUu d')
   /*
-   * Additional information contained in a Notification. This is a `union` arm to differentiate
-   * among different types of Notifications and store relevant metadata for each type.
+   * Add  onal  nformat on conta ned  n a Not f cat on. T   s a `un on` arm to d fferent ate
+   * among d fferent types of Not f cat ons and store relevant  tadata for each type.
    *
-   * For example, a Notification with a single Tweet will hold the Tweet id in `TweetNotification`.
-   * Similarly, `MultiTweetNotification` is defined for Notiifcations with multiple Tweet ids.
+   * For example, a Not f cat on w h a s ngle T et w ll hold t  T et  d  n `T etNot f cat on`.
+   * S m larly, `Mult T etNot f cat on`  s def ned for Not  fcat ons w h mult ple T et  ds.
    *
-   * Refer to the definition of `union NotificationContent` below for more details.
+   * Refer to t  def n  on of `un on Not f cat onContent` below for more deta ls.
    */
-  2: required NotificationContent content
-}(persisted='true', hasPersonalData='true')
+  2: requ red Not f cat onContent content
+}(pers sted='true', hasPersonalData='true')
 
 /*
- * Additional information contained in a Notification.
+ * Add  onal  nformat on conta ned  n a Not f cat on.
  */
-union NotificationContent {
-  1: TweetNotification tweetNotification
-  2: MultiTweetNotification multiTweetNotification
+un on Not f cat onContent {
+  1: T etNot f cat on t etNot f cat on
+  2: Mult T etNot f cat on mult T etNot f cat on
 
-  // 3 - 100 reserved for other specific Notification types (for example, profile, event, etc.).
+  // 3 - 100 reserved for ot r spec f c Not f cat on types (for example, prof le, event, etc.).
 
   /*
-   * If a Notification cannot be categorized into any of the types at indices 1 - 100,
-   * it is considered of `Unknown` type.
+   *  f a Not f cat on cannot be categor zed  nto any of t  types at  nd ces 1 - 100,
+   *    s cons dered of `Unknown` type.
    */
-  101: UnknownNotification unknownNotification
-}(persisted='true', hasPersonalData='true')
+  101: UnknownNot f cat on unknownNot f cat on
+}(pers sted='true', hasPersonalData='true')
 
 /*
- * Notification contains exactly one `tweetId`.
+ * Not f cat on conta ns exactly one `t et d`.
  */
-struct TweetNotification {
-  1: required i64 tweetId(personalDataType = 'TweetId')
-}(persisted='true', hasPersonalData='true')
+struct T etNot f cat on {
+  1: requ red  64 t et d(personalDataType = 'T et d')
+}(pers sted='true', hasPersonalData='true')
 
 /*
- * Notification contains multiple `tweetIds`.
- * For example, user A receives a Notification when user B likes multiple Tweets authored by user A.
+ * Not f cat on conta ns mult ple `t et ds`.
+ * For example, user A rece ves a Not f cat on w n user B l kes mult ple T ets authored by user A.
  */
-struct MultiTweetNotification {
-  1: required list<i64> tweetIds(personalDataType = 'TweetId')
-}(persisted='true', hasPersonalData='true')
+struct Mult T etNot f cat on {
+  1: requ red l st< 64> t et ds(personalDataType = 'T et d')
+}(pers sted='true', hasPersonalData='true')
 
 /*
- * Notification could not be categrized into known types at indices 1 - 100 in `NotificationContent`.
+ * Not f cat on could not be categr zed  nto known types at  nd ces 1 - 100  n `Not f cat onContent`.
  */
-struct UnknownNotification {
-  // this field is just a placeholder since Sparrow doesn't support empty struct
-  100: optional bool placeholder
-}(persisted='true', hasPersonalData='false')
+struct UnknownNot f cat on {
+  // t  f eld  s just a placeholder s nce Sparrow doesn't support empty struct
+  100: opt onal bool placeholder
+}(pers sted='true', hasPersonalData='false')
 
 /*
- * Trend Item information for promoted and non-promoted Trends.  
+ * Trend  em  nformat on for promoted and non-promoted Trends.  
  */
-struct TrendInfo {
+struct Trend nfo {
   /* 
-   * Identifier for promoted Trends only. 
-   * This is not available for non-promoted Trends and the default value should be set to 0. 
+   *  dent f er for promoted Trends only. 
+   * T   s not ava lable for non-promoted Trends and t  default value should be set to 0. 
    */
-  1: required i32 actionTrendId(personalDataType= 'TrendId')
+  1: requ red  32 act onTrend d(personalDataType= 'Trend d')
   /*
    * Empty for promoted Trends only. 
-   * This should be set for all non-promoted Trends. 
+   * T  should be set for all non-promoted Trends. 
    */
-  2: optional string actionTrendName
-}(persisted='true', hasPersonalData='true')
+  2: opt onal str ng act onTrendNa 
+}(pers sted='true', hasPersonalData='true')
 
-struct TypeaheadInfo {
-  /* search query string */
-  1: required string actionQuery(personalDataType = 'SearchQuery')
-  2: required TypeaheadActionInfo typeaheadActionInfo
-}(persisted='true', hasPersonalData='true')
+struct Typea ad nfo {
+  /* search query str ng */
+  1: requ red str ng act onQuery(personalDataType = 'SearchQuery')
+  2: requ red Typea adAct on nfo typea adAct on nfo
+}(pers sted='true', hasPersonalData='true')
 
-union TypeaheadActionInfo {
+un on Typea adAct on nfo {
   1: UserResult userResult
-  2: TopicQueryResult topicQueryResult
-}(persisted='true', hasPersonalData='true')
+  2: Top cQueryResult top cQueryResult
+}(pers sted='true', hasPersonalData='true')
 
 struct UserResult {
-  /* The userId of the profile suggested in the typeahead drop-down, upon which the user took the action */
-  1: required i64 profileId(personalDataType = 'UserId')
-}(persisted='true', hasPersonalData='true')
+  /* T  user d of t  prof le suggested  n t  typea ad drop-down, upon wh ch t  user took t  act on */
+  1: requ red  64 prof le d(personalDataType = 'User d')
+}(pers sted='true', hasPersonalData='true')
 
-struct TopicQueryResult {
-  /* The topic query name suggested in the typeahead drop-down, upon which the user took the action */
-  1: required string suggestedTopicQuery(personalDataType = 'SearchQuery')
-}(persisted='true', hasPersonalData='true')
+struct Top cQueryResult {
+  /* T  top c query na  suggested  n t  typea ad drop-down, upon wh ch t  user took t  act on */
+  1: requ red str ng suggestedTop cQuery(personalDataType = 'SearchQuery')
+}(pers sted='true', hasPersonalData='true')
 
 
-
-/*
- * Item that captures feedback related information submitted by the user across modules / item (Eg: Search Results / Tweets)
- * Design discussion doc: https://docs.google.com/document/d/1UHiCrGzfiXOSymRAUM565KchVLZBAByMwvP4ARxeixY/edit#
- */
-struct FeedbackPromptInfo {
-  1: required FeedbackPromptActionInfo feedbackPromptActionInfo
-}(persisted='true', hasPersonalData='true')
-
-union FeedbackPromptActionInfo {
-  1: DidYouFindItSearch didYouFindItSearch
-  2: TweetRelevantToSearch tweetRelevantToSearch
-}(persisted='true', hasPersonalData='true')
-
-struct DidYouFindItSearch {
-  1: required string searchQuery(personalDataType= 'SearchQuery')
-  2: optional bool isRelevant
-}(persisted='true', hasPersonalData='true')
-
-struct TweetRelevantToSearch {
-  1: required string searchQuery(personalDataType= 'SearchQuery')
-  2: required i64 tweetId
-  3: optional bool isRelevant
-}(persisted='true', hasPersonalData='true')
 
 /*
- * For (Tweet) Author info
+ *  em that captures feedback related  nformat on subm ted by t  user across modules /  em (Eg: Search Results / T ets)
+ * Des gn d scuss on doc: https://docs.google.com/docu nt/d/1UH CrGzf XOSymRAUM565KchVLZBAByMwvP4ARxe xY/ed #
  */
-struct AuthorInfo {
-  /* In practice, this should be set. Rarely, it may be unset. */
-  1: optional i64 authorId(personalDataType = 'UserId')
-  /* i.e. in-network (true) or out-of-network (false) */
-  2: optional bool isFollowedByActingUser
-  /* i.e. is a follower (true) or not (false) */
-  3: optional bool isFollowingActingUser
-}(persisted='true', hasPersonalData='true')
+struct FeedbackPrompt nfo {
+  1: requ red FeedbackPromptAct on nfo feedbackPromptAct on nfo
+}(pers sted='true', hasPersonalData='true')
+
+un on FeedbackPromptAct on nfo {
+  1: D d F nd Search d d F nd Search
+  2: T etRelevantToSearch t etRelevantToSearch
+}(pers sted='true', hasPersonalData='true')
+
+struct D d F nd Search {
+  1: requ red str ng searchQuery(personalDataType= 'SearchQuery')
+  2: opt onal bool  sRelevant
+}(pers sted='true', hasPersonalData='true')
+
+struct T etRelevantToSearch {
+  1: requ red str ng searchQuery(personalDataType= 'SearchQuery')
+  2: requ red  64 t et d
+  3: opt onal bool  sRelevant
+}(pers sted='true', hasPersonalData='true')
 
 /*
- * Use for Call to Action events.
+ * For (T et) Author  nfo
  */
-struct CTAInfo {
-  // this field is just a placeholder since Sparrow doesn't support empty struct
-  100: optional bool placeholder
-}(persisted='true', hasPersonalData='false')
+struct Author nfo {
+  /*  n pract ce, t  should be set. Rarely,   may be unset. */
+  1: opt onal  64 author d(personalDataType = 'User d')
+  /*  .e.  n-network (true) or out-of-network (false) */
+  2: opt onal bool  sFollo dByAct ngUser
+  /*  .e.  s a follo r (true) or not (false) */
+  3: opt onal bool  sFollow ngAct ngUser
+}(pers sted='true', hasPersonalData='true')
 
 /*
- * Card Info
+ * Use for Call to Act on events.
  */
-struct CardInfo {
-  1: optional i64 id
-  2: optional client_app.ItemType itemType
-  // authorId is deprecated, please use AuthorInfo instead
-  // 3: optional i64 authorId(personalDataType = 'UserId')
-  4: optional AuthorInfo actionTweetAuthorInfo
-}(persisted='true', hasPersonalData='false')
+struct CTA nfo {
+  // t  f eld  s just a placeholder s nce Sparrow doesn't support empty struct
+  100: opt onal bool placeholder
+}(pers sted='true', hasPersonalData='false')
 
 /*
- * When the user exits the app, the time (in millis) spent by them on the platform is recorded as User Active Seconds (UAS). 
+ * Card  nfo
  */
-struct UASInfo {
-  1: required i64 timeSpentMs
-}(persisted='true', hasPersonalData='false')
+struct Card nfo {
+  1: opt onal  64  d
+  2: opt onal cl ent_app. emType  emType
+  // author d  s deprecated, please use Author nfo  nstead
+  // 3: opt onal  64 author d(personalDataType = 'User d')
+  4: opt onal Author nfo act onT etAuthor nfo
+}(pers sted='true', hasPersonalData='false')
 
 /*
- * Corresponding item for a user action.
- * An item should be treated independently if it has different affordances
- * (https://www.interaction-design.org/literature/topics/affordances) for the user.
- * For example, a Notification has different affordances than a Tweet in the Notification Tab;
- * in the former, you can either "click" or "see less often" and in the latter,
- * you can perform inline engagements such as "like" or "reply".
- * Note that an item may be rendered differently in different contexts, but as long as the
- * affordances remain the same or nearly similar, it can be treated as the same item
- * (e.g. Tweets can be rendered in slightly different ways in embeds vs in the app).
- * Item types (e.g. Tweets, Notifications) and ActionTypes should be 1:1, and when an action can be
- * performed on multiple types of items, consider granular action types.
- * For example, a user can take the Click action on Tweets and Notifications, and we have
- * separate ActionTypes for Tweet Click and Notification Click. This makes it easier to identify all the
- * actions associated with a particular item.
+ * W n t  user ex s t  app, t  t   ( n m ll s) spent by t m on t  platform  s recorded as User Act ve Seconds (UAS). 
  */
-union Item {
-  1: TweetInfo tweetInfo
-  2: ProfileInfo profileInfo
-  3: TopicInfo topicInfo
-  4: NotificationInfo notificationInfo
-  5: TrendInfo trendInfo
-  6: CTAInfo ctaInfo
-  7: FeedbackPromptInfo feedbackPromptInfo
-  8: TypeaheadInfo typeaheadInfo
-  9: UASInfo uasInfo
-  10: CardInfo cardInfo
-}(persisted='true', hasPersonalData='true')
+struct UAS nfo {
+  1: requ red  64 t  SpentMs
+}(pers sted='true', hasPersonalData='false')
+
+/*
+ * Correspond ng  em for a user act on.
+ * An  em should be treated  ndependently  f   has d fferent affordances
+ * (https://www. nteract on-des gn.org/l erature/top cs/affordances) for t  user.
+ * For example, a Not f cat on has d fferent affordances than a T et  n t  Not f cat on Tab;
+ *  n t  for r,   can e  r "cl ck" or "see less often" and  n t  latter,
+ *   can perform  nl ne engage nts such as "l ke" or "reply".
+ * Note that an  em may be rendered d fferently  n d fferent contexts, but as long as t 
+ * affordances rema n t  sa  or nearly s m lar,   can be treated as t  sa   em
+ * (e.g. T ets can be rendered  n sl ghtly d fferent ways  n embeds vs  n t  app).
+ *  em types (e.g. T ets, Not f cat ons) and Act onTypes should be 1:1, and w n an act on can be
+ * perfor d on mult ple types of  ems, cons der granular act on types.
+ * For example, a user can take t  Cl ck act on on T ets and Not f cat ons, and   have
+ * separate Act onTypes for T et Cl ck and Not f cat on Cl ck. T  makes   eas er to  dent fy all t 
+ * act ons assoc ated w h a part cular  em.
+ */
+un on  em {
+  1: T et nfo t et nfo
+  2: Prof le nfo prof le nfo
+  3: Top c nfo top c nfo
+  4: Not f cat on nfo not f cat on nfo
+  5: Trend nfo trend nfo
+  6: CTA nfo cta nfo
+  7: FeedbackPrompt nfo feedbackPrompt nfo
+  8: Typea ad nfo typea ad nfo
+  9: UAS nfo uas nfo
+  10: Card nfo card nfo
+}(pers sted='true', hasPersonalData='true')

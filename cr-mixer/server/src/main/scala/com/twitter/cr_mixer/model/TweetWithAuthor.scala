@@ -1,6 +1,6 @@
-package com.twitter.cr_mixer.model
+package com.tw ter.cr_m xer.model
 
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.common.User d
 
-case class TweetWithAuthor(tweetId: TweetId, authorId: UserId)
+case class T etW hAuthor(t et d: T et d, author d: User d)

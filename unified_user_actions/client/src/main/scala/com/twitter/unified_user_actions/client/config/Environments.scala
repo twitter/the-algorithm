@@ -1,15 +1,15 @@
-package com.twitter.unified_user_actions.client.config
+package com.tw ter.un f ed_user_act ons.cl ent.conf g
 
-sealed trait EnvironmentConfig {
-  val name: String
+sealed tra  Env ron ntConf g {
+  val na : Str ng
 }
 
-object Environments {
-  case object Prod extends EnvironmentConfig {
-    override val name: String = Constants.UuaProdEnv
+object Env ron nts {
+  case object Prod extends Env ron ntConf g {
+    overr de val na : Str ng = Constants.UuaProdEnv
   }
 
-  case object Staging extends EnvironmentConfig {
-    override val name: String = Constants.UuaStagingEnv
+  case object Stag ng extends Env ron ntConf g {
+    overr de val na : Str ng = Constants.UuaStag ngEnv
   }
 }

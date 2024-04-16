@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.request
+package com.tw ter.product_m xer.core.model.marshall ng.request
 
-trait ProductContext
+tra  ProductContext
 
-trait HasProductContext {
-  def productContext: Option[ProductContext]
+tra  HasProductContext {
+  def productContext: Opt on[ProductContext]
 }

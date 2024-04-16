@@ -1,49 +1,49 @@
-package com.twitter.product_mixer.component_library.scorer.common
+package com.tw ter.product_m xer.component_l brary.scorer.common
 
-import com.twitter.finagle.Http
-import com.twitter.finagle.grpc.FinagleChannelBuilder
-import com.twitter.finagle.grpc.FutureConverters
-import com.twitter.mlserving.frontend.TFServingInferenceServiceImpl
-import com.twitter.stitch.Stitch
-import tensorflow.serving.PredictionServiceGrpc
-import inference.GrpcService.ModelInferRequest
-import inference.GrpcService.ModelInferResponse
-import io.grpc.ManagedChannel
-import io.grpc.Status
+ mport com.tw ter.f nagle.Http
+ mport com.tw ter.f nagle.grpc.F nagleChannelBu lder
+ mport com.tw ter.f nagle.grpc.FutureConverters
+ mport com.tw ter.mlserv ng.frontend.TFServ ng nferenceServ ce mpl
+ mport com.tw ter.st ch.St ch
+ mport tensorflow.serv ng.Pred ct onServ ceGrpc
+ mport  nference.GrpcServ ce.Model nferRequest
+ mport  nference.GrpcServ ce.Model nferResponse
+ mport  o.grpc.ManagedChannel
+ mport  o.grpc.Status
 
 /**
- * Client wrapper for calling a Navi Inference Service (go/navi).
- * @param httpClient Finagle HTTP Client to use for connection.
- * @param modelPath Wily path to the ML Model service (e.g. /s/role/service).
+ * Cl ent wrapper for call ng a Nav   nference Serv ce (go/nav ).
+ * @param httpCl ent F nagle HTTP Cl ent to use for connect on.
+ * @param modelPath W ly path to t  ML Model serv ce (e.g. /s/role/serv ce).
  */
-case class NaviModelClient(
-  httpClient: Http.Client,
-  modelPath: String)
-    extends MLModelInferenceClient {
+case class Nav ModelCl ent(
+  httpCl ent: Http.Cl ent,
+  modelPath: Str ng)
+    extends MLModel nferenceCl ent {
 
-  private val channel: ManagedChannel =
-    FinagleChannelBuilder
+  pr vate val channel: ManagedChannel =
+    F nagleChannelBu lder
       .forTarget(modelPath)
-      .httpClient(httpClient)
-      // Navi enforces an authority name.
-      .overrideAuthority("rustserving")
-      // certain GRPC errors need to be retried.
+      .httpCl ent(httpCl ent)
+      // Nav  enforces an author y na .
+      .overr deAuthor y("rustserv ng")
+      // certa n GRPC errors need to be retr ed.
       .enableRetryForStatus(Status.UNKNOWN)
       .enableRetryForStatus(Status.RESOURCE_EXHAUSTED)
-      // this is required at channel level as mTLS is enabled at httpClient level
-      .usePlaintext()
-      .build()
+      // t   s requ red at channel level as mTLS  s enabled at httpCl ent level
+      .usePla ntext()
+      .bu ld()
 
-  private val inferenceServiceStub = PredictionServiceGrpc.newFutureStub(channel)
+  pr vate val  nferenceServ ceStub = Pred ct onServ ceGrpc.newFutureStub(channel)
 
-  def score(request: ModelInferRequest): Stitch[ModelInferResponse] = {
-    val tfServingRequest = TFServingInferenceServiceImpl.adaptModelInferRequest(request)
-    Stitch
+  def score(request: Model nferRequest): St ch[Model nferResponse] = {
+    val tfServ ngRequest = TFServ ng nferenceServ ce mpl.adaptModel nferRequest(request)
+    St ch
       .callFuture(
         FutureConverters
-          .RichListenableFuture(inferenceServiceStub.predict(tfServingRequest)).toTwitter
+          .R chL stenableFuture( nferenceServ ceStub.pred ct(tfServ ngRequest)).toTw ter
           .map { response =>
-            TFServingInferenceServiceImpl.adaptModelInferResponse(response)
+            TFServ ng nferenceServ ce mpl.adaptModel nferResponse(response)
           }
       )
   }

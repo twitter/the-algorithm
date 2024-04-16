@@ -1,49 +1,49 @@
-package com.twitter.search.common.encoding.features;
+package com.tw ter.search.common.encod ng.features;
 
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeMap;
+ mport java.ut l.Map;
+ mport java.ut l.SortedSet;
+ mport java.ut l.TreeMap;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.Maps;
+ mport com.google.common.collect.Sets;
 
 /**
- * Normalizes values to predefined bins.
- * If the value to normalize is lower than the lowest bin defined, normalizes to Byte.MIN_VALUE.
+ * Normal zes values to predef ned b ns.
+ *  f t  value to normal ze  s lo r than t  lo st b n def ned, normal zes to Byte.M N_VALUE.
  */
-public class BinByteNormalizer extends ByteNormalizer {
+publ c class B nByteNormal zer extends ByteNormal zer {
 
-  private final TreeMap<Double, Byte> bins = Maps.newTreeMap();
-  private final TreeMap<Byte, Double> reverseBins = Maps.newTreeMap();
+  pr vate f nal TreeMap<Double, Byte> b ns = Maps.newTreeMap();
+  pr vate f nal TreeMap<Byte, Double> reverseB ns = Maps.newTreeMap();
 
   /**
-   * Constructs a normalizer using predefined bins.
-   * @param bins A mapping between the upper bound of a value and the bin it should normalize to.
-   * For example providing a map with 2 entries, {5=>1, 10=>2} will normalize as follows:
-   *   values under 5: Byte.MIN_VALUE
-   *   values between 5 and 10: 1
+   * Constructs a normal zer us ng predef ned b ns.
+   * @param b ns A mapp ng bet en t  upper bound of a value and t  b n   should normal ze to.
+   * For example prov d ng a map w h 2 entr es, {5=>1, 10=>2} w ll normal ze as follows:
+   *   values under 5: Byte.M N_VALUE
+   *   values bet en 5 and 10: 1
    *   values over 10: 2
    */
-  public BinByteNormalizer(final Map<Double, Byte> bins) {
-    Preconditions.checkNotNull(bins);
-    Preconditions.checkArgument(!bins.isEmpty(), "No bins provided");
-    Preconditions.checkArgument(hasIncreasingValues(bins));
-    this.bins.putAll(bins);
-    for (Map.Entry<Double, Byte> entry : bins.entrySet()) {
-      reverseBins.put(entry.getValue(), entry.getKey());
+  publ c B nByteNormal zer(f nal Map<Double, Byte> b ns) {
+    Precond  ons.c ckNotNull(b ns);
+    Precond  ons.c ckArgu nt(!b ns. sEmpty(), "No b ns prov ded");
+    Precond  ons.c ckArgu nt(has ncreas ngValues(b ns));
+    t .b ns.putAll(b ns);
+    for (Map.Entry<Double, Byte> entry : b ns.entrySet()) {
+      reverseB ns.put(entry.getValue(), entry.getKey());
     }
   }
 
   /**
-   * check that if key1 > key2 then val1 > val2 in the {@code map}.
+   * c ck that  f key1 > key2 t n val1 > val2  n t  {@code map}.
    */
-  private static boolean hasIncreasingValues(final Map<Double, Byte> map) {
+  pr vate stat c boolean has ncreas ngValues(f nal Map<Double, Byte> map) {
     SortedSet<Double> orderedKeys = Sets.newTreeSet(map.keySet());
-    byte prev = Byte.MIN_VALUE;
-    for (Double key : orderedKeys) { // save the unboxing
+    byte prev = Byte.M N_VALUE;
+    for (Double key : orderedKeys) { // save t  unbox ng
       byte cur = map.get(key);
-      if (cur <= prev) {
+       f (cur <= prev) {
         return false;
       }
       prev = cur;
@@ -51,23 +51,23 @@ public class BinByteNormalizer extends ByteNormalizer {
     return true;
   }
 
-  @Override
-  public byte normalize(double val) {
-    Map.Entry<Double, Byte> lowerBound = bins.floorEntry(val);
-    return lowerBound == null
-        ? Byte.MIN_VALUE
-        : lowerBound.getValue();
+  @Overr de
+  publ c byte normal ze(double val) {
+    Map.Entry<Double, Byte> lo rBound = b ns.floorEntry(val);
+    return lo rBound == null
+        ? Byte.M N_VALUE
+        : lo rBound.getValue();
     }
 
-  @Override
-  public double unnormLowerBound(byte norm) {
-    return reverseBins.get(reverseBins.floorKey(norm));
+  @Overr de
+  publ c double unnormLo rBound(byte norm) {
+    return reverseB ns.get(reverseB ns.floorKey(norm));
   }
 
-  @Override
-  public double unnormUpperBound(byte norm) {
-    return norm == reverseBins.lastKey()
-        ? Double.POSITIVE_INFINITY
-        : reverseBins.get(reverseBins.floorKey((byte) (1 + norm)));
+  @Overr de
+  publ c double unnormUpperBound(byte norm) {
+    return norm == reverseB ns.lastKey()
+        ? Double.POS T VE_ NF N TY
+        : reverseB ns.get(reverseB ns.floorKey((byte) (1 + norm)));
   }
 }

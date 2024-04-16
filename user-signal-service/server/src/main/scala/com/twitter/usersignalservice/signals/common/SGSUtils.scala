@@ -1,59 +1,59 @@
-package com.twitter.usersignalservice.signals
+package com.tw ter.users gnalserv ce.s gnals
 package common
 
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.socialgraph.thriftscala.EdgesRequest
-import com.twitter.socialgraph.thriftscala.EdgesResult
-import com.twitter.socialgraph.thriftscala.PageRequest
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.socialgraph.thriftscala.SocialGraphService
-import com.twitter.socialgraph.thriftscala.SrcRelationship
-import com.twitter.twistly.common.UserId
-import com.twitter.usersignalservice.thriftscala.Signal
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.soc algraph.thr ftscala.EdgesRequest
+ mport com.tw ter.soc algraph.thr ftscala.EdgesResult
+ mport com.tw ter.soc algraph.thr ftscala.PageRequest
+ mport com.tw ter.soc algraph.thr ftscala.Relat onsh pType
+ mport com.tw ter.soc algraph.thr ftscala.Soc alGraphServ ce
+ mport com.tw ter.soc algraph.thr ftscala.SrcRelat onsh p
+ mport com.tw ter.tw stly.common.User d
+ mport com.tw ter.users gnalserv ce.thr ftscala.S gnal
+ mport com.tw ter.users gnalserv ce.thr ftscala.S gnalType
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
 
-object SGSUtils {
-  val MaxNumSocialGraphSignals = 200
-  val MaxAge: Duration = Duration.fromDays(90)
+object SGSUt ls {
+  val MaxNumSoc alGraphS gnals = 200
+  val MaxAge: Durat on = Durat on.fromDays(90)
 
-  def getSGSRawSignals(
-    userId: UserId,
-    sgsClient: SocialGraphService.MethodPerEndpoint,
-    relationshipType: RelationshipType,
-    signalType: SignalType,
-  ): Future[Option[Seq[Signal]]] = {
+  def getSGSRawS gnals(
+    user d: User d,
+    sgsCl ent: Soc alGraphServ ce. thodPerEndpo nt,
+    relat onsh pType: Relat onsh pType,
+    s gnalType: S gnalType,
+  ): Future[Opt on[Seq[S gnal]]] = {
     val edgeRequest = EdgesRequest(
-      relationship = SrcRelationship(userId, relationshipType),
-      pageRequest = Some(PageRequest(count = None))
+      relat onsh p = SrcRelat onsh p(user d, relat onsh pType),
+      pageRequest = So (PageRequest(count = None))
     )
-    val now = Time.now.inMilliseconds
+    val now = T  .now. nM ll seconds
 
-    sgsClient
+    sgsCl ent
       .edges(Seq(edgeRequest))
       .map { sgsEdges =>
         sgsEdges.flatMap {
           case EdgesResult(edges, _, _) =>
             edges.collect {
-              case edge if edge.createdAt >= now - MaxAge.inMilliseconds =>
-                Signal(
-                  signalType,
-                  timestamp = edge.createdAt,
-                  targetInternalId = Some(InternalId.UserId(edge.target)))
+              case edge  f edge.createdAt >= now - MaxAge. nM ll seconds =>
+                S gnal(
+                  s gnalType,
+                  t  stamp = edge.createdAt,
+                  target nternal d = So ( nternal d.User d(edge.target)))
             }
         }
       }
-      .map { signals =>
-        signals
-          .take(MaxNumSocialGraphSignals)
-          .groupBy(_.targetInternalId)
-          .mapValues(_.maxBy(_.timestamp))
+      .map { s gnals =>
+        s gnals
+          .take(MaxNumSoc alGraphS gnals)
+          .groupBy(_.target nternal d)
+          .mapValues(_.maxBy(_.t  stamp))
           .values
           .toSeq
-          .sortBy(-_.timestamp)
+          .sortBy(-_.t  stamp)
       }
-      .map(Some(_))
+      .map(So (_))
   }
 }

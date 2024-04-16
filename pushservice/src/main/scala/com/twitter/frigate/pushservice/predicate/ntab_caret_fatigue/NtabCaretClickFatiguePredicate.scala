@@ -1,47 +1,47 @@
-package com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue
+package com.tw ter.fr gate.pushserv ce.pred cate.ntab_caret_fat gue
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.predicate.ntab_caret_fatigue.NtabCaretClickFatiguePredicateHelper
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.pred cate.ntab_caret_fat gue.NtabCaretCl ckFat guePred cate lper
+ mport com.tw ter.fr gate.common.rec_types.RecTypes
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter.ut l.Future
 
-object NtabCaretClickFatiguePredicate {
-  val name = "NtabCaretClickFatiguePredicate"
+object NtabCaretCl ckFat guePred cate {
+  val na  = "NtabCaretCl ckFat guePred cate"
 
-  def isSpacesTypeAndTeamMember(candidate: PushCandidate): Future[Boolean] = {
-    candidate.target.isTeamMember.map { isTeamMember =>
-      val isSpacesType = RecTypes.isRecommendedSpacesType(candidate.commonRecType)
-      isTeamMember && isSpacesType
+  def  sSpacesTypeAndTeam mber(cand date: PushCand date): Future[Boolean] = {
+    cand date.target. sTeam mber.map {  sTeam mber =>
+      val  sSpacesType = RecTypes. sRecom ndedSpacesType(cand date.commonRecType)
+       sTeam mber &&  sSpacesType
     }
   }
 
-  def apply()(implicit globalStats: StatsReceiver): NamedPredicate[PushCandidate] = {
-    val scopedStats = globalStats.scope(name)
-    val genericTypeCategories = Seq("MagicRecs")
-    val crts = RecTypes.sharedNTabCaretFatigueTypes
-    val recTypeNtabCaretClickFatiguePredicate =
-      RecTypeNtabCaretClickFatiguePredicate.apply(
-        genericTypeCategories,
+  def apply()( mpl c  globalStats: StatsRece ver): Na dPred cate[PushCand date] = {
+    val scopedStats = globalStats.scope(na )
+    val gener cTypeCategor es = Seq("Mag cRecs")
+    val crts = RecTypes.sharedNTabCaretFat gueTypes
+    val recTypeNtabCaretCl ckFat guePred cate =
+      RecTypeNtabCaretCl ckFat guePred cate.apply(
+        gener cTypeCategor es,
         crts,
-        NtabCaretClickFatiguePredicateHelper.calculateFatiguePeriodMagicRecs,
-        useMostRecentDislikeTime = false
+        NtabCaretCl ckFat guePred cate lper.calculateFat guePer odMag cRecs,
+        useMostRecentD sl keT   = false
       )
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        isSpacesTypeAndTeamMember(candidate).flatMap { isSpacesTypeAndTeamMember =>
-          if (RecTypes.sharedNTabCaretFatigueTypes(
-              candidate.commonRecType) && !isSpacesTypeAndTeamMember) {
-            recTypeNtabCaretClickFatiguePredicate
-              .apply(Seq(candidate)).map(_.headOption.getOrElse(false))
+    Pred cate
+      .fromAsync { cand date: PushCand date =>
+         sSpacesTypeAndTeam mber(cand date).flatMap {  sSpacesTypeAndTeam mber =>
+           f (RecTypes.sharedNTabCaretFat gueTypes(
+              cand date.commonRecType) && ! sSpacesTypeAndTeam mber) {
+            recTypeNtabCaretCl ckFat guePred cate
+              .apply(Seq(cand date)).map(_. adOpt on.getOrElse(false))
           } else {
             Future.True
           }
         }
       }
-      .withStats(scopedStats)
-      .withName(name)
+      .w hStats(scopedStats)
+      .w hNa (na )
   }
 }

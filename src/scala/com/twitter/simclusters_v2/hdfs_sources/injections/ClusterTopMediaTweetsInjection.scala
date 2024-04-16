@@ -1,13 +1,13 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.tw ter.s mclusters_v2.hdfs_s ces. nject ons
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaCompactThrift
-import com.twitter.simclusters_v2.thriftscala.{TweetsWithScore, DayPartitionedClusterId}
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.ScalaCompactThr ft
+ mport com.tw ter.s mclusters_v2.thr ftscala.{T etsW hScore, DayPart  onedCluster d}
 
-object ClusterTopMediaTweetsInjection {
+object ClusterTop d aT ets nject on {
 
-  val injection = KeyValInjection[DayPartitionedClusterId, TweetsWithScore](
-    ScalaCompactThrift(DayPartitionedClusterId),
-    ScalaCompactThrift(TweetsWithScore)
+  val  nject on = KeyVal nject on[DayPart  onedCluster d, T etsW hScore](
+    ScalaCompactThr ft(DayPart  onedCluster d),
+    ScalaCompactThr ft(T etsW hScore)
   )
 }

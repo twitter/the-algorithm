@@ -1,71 +1,71 @@
-package com.twitter.search.core.earlybird.index.column;
+package com.tw ter.search.core.earlyb rd. ndex.column;
 
-import com.twitter.search.common.encoding.features.IntegerEncodedFeatures;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+ mport com.tw ter.search.common.encod ng.features. ntegerEncodedFeatures;
+ mport com.tw ter.search.common.sc ma.base.FeatureConf gurat on;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.core.earlyb rd. ndex.Doc DToT et DMapper;
 
 /**
- * An Int CSF view on top of an {@link AbstractColumnStrideMultiIntIndex}.
+ * An  nt CSF v ew on top of an {@l nk AbstractColumnStr deMult  nt ndex}.
  *
- * Used for decoding encoded packed features and exposing them as
- * {@link org.apache.lucene.index.NumericDocValues}.
+ * Used for decod ng encoded packed features and expos ng t m as
+ * {@l nk org.apac .lucene. ndex.Nu r cDocValues}.
  */
-public class ColumnStrideIntViewIndex extends ColumnStrideFieldIndex {
-  private static class IntViewIntegerEncodedFeatures extends IntegerEncodedFeatures {
-    private final AbstractColumnStrideMultiIntIndex baseIndex;
-    private final int docID;
+publ c class ColumnStr de ntV ew ndex extends ColumnStr deF eld ndex {
+  pr vate stat c class  ntV ew ntegerEncodedFeatures extends  ntegerEncodedFeatures {
+    pr vate f nal AbstractColumnStr deMult  nt ndex base ndex;
+    pr vate f nal  nt doc D;
 
-    public IntViewIntegerEncodedFeatures(AbstractColumnStrideMultiIntIndex baseIndex, int docID) {
-      this.baseIndex = baseIndex;
-      this.docID = docID;
+    publ c  ntV ew ntegerEncodedFeatures(AbstractColumnStr deMult  nt ndex base ndex,  nt doc D) {
+      t .base ndex = base ndex;
+      t .doc D = doc D;
     }
 
-    @Override
-    public int getInt(int pos) {
-      return baseIndex.get(docID, pos);
+    @Overr de
+    publ c  nt get nt( nt pos) {
+      return base ndex.get(doc D, pos);
     }
 
-    @Override
-    public void setInt(int pos, int value) {
-      baseIndex.setValue(docID, pos, value);
+    @Overr de
+    publ c vo d set nt( nt pos,  nt value) {
+      base ndex.setValue(doc D, pos, value);
     }
 
-    @Override
-    public int getNumInts() {
-      return baseIndex.getNumIntsPerField();
+    @Overr de
+    publ c  nt getNum nts() {
+      return base ndex.getNum ntsPerF eld();
     }
   }
 
-  private final AbstractColumnStrideMultiIntIndex baseIndex;
-  private final FeatureConfiguration featureConfiguration;
+  pr vate f nal AbstractColumnStr deMult  nt ndex base ndex;
+  pr vate f nal FeatureConf gurat on featureConf gurat on;
 
   /**
-   * Creates a new ColumnStrideIntViewIndex on top of an existing AbstractColumnStrideMultiIntIndex.
+   * Creates a new ColumnStr de ntV ew ndex on top of an ex st ng AbstractColumnStr deMult  nt ndex.
    */
-  public ColumnStrideIntViewIndex(Schema.FieldInfo info,
-                                  AbstractColumnStrideMultiIntIndex baseIndex) {
-    super(info.getName());
-    this.baseIndex = baseIndex;
-    this.featureConfiguration = info.getFieldType().getCsfViewFeatureConfiguration();
+  publ c ColumnStr de ntV ew ndex(Sc ma.F eld nfo  nfo,
+                                  AbstractColumnStr deMult  nt ndex base ndex) {
+    super( nfo.getNa ());
+    t .base ndex = base ndex;
+    t .featureConf gurat on =  nfo.getF eldType().getCsfV ewFeatureConf gurat on();
   }
 
-  @Override
-  public long get(int docID) {
-    IntegerEncodedFeatures encodedFeatures = new IntViewIntegerEncodedFeatures(baseIndex, docID);
-    return encodedFeatures.getFeatureValue(featureConfiguration);
+  @Overr de
+  publ c long get( nt doc D) {
+     ntegerEncodedFeatures encodedFeatures = new  ntV ew ntegerEncodedFeatures(base ndex, doc D);
+    return encodedFeatures.getFeatureValue(featureConf gurat on);
   }
 
-  @Override
-  public void setValue(int docID, long value) {
-    IntegerEncodedFeatures encodedFeatures = new IntViewIntegerEncodedFeatures(baseIndex, docID);
-    encodedFeatures.setFeatureValue(featureConfiguration, (int) value);
+  @Overr de
+  publ c vo d setValue( nt doc D, long value) {
+     ntegerEncodedFeatures encodedFeatures = new  ntV ew ntegerEncodedFeatures(base ndex, doc D);
+    encodedFeatures.setFeatureValue(featureConf gurat on, ( nt) value);
   }
 
-  @Override
-  public ColumnStrideFieldIndex optimize(
-      DocIDToTweetIDMapper originalTweetIdMapper, DocIDToTweetIDMapper optimizedTweetIdMapper) {
-    throw new UnsupportedOperationException(
-        "ColumnStrideIntViewIndex instances do not support optimization");
+  @Overr de
+  publ c ColumnStr deF eld ndex opt m ze(
+      Doc DToT et DMapper or g nalT et dMapper, Doc DToT et DMapper opt m zedT et dMapper) {
+    throw new UnsupportedOperat onExcept on(
+        "ColumnStr de ntV ew ndex  nstances do not support opt m zat on");
   }
 }

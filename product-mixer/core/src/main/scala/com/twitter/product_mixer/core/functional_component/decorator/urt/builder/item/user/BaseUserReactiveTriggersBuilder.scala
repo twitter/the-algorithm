@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.user
+package com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. em.user
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseUserCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserReactiveTriggers
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.BaseUserCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.user.UserReact veTr ggers
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-trait BaseUserReactiveTriggersBuilder[-Query <: PipelineQuery, -Candidate <: BaseUserCandidate] {
+tra  BaseUserReact veTr ggersBu lder[-Query <: P pel neQuery, -Cand date <: BaseUserCand date] {
 
   def apply(
     query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): Option[UserReactiveTriggers]
+    cand date: Cand date,
+    cand dateFeatures: FeatureMap
+  ): Opt on[UserReact veTr ggers]
 }

@@ -1,42 +1,42 @@
-package com.twitter.tweetypie.decider.overrides
+package com.tw ter.t etyp e.dec der.overr des
 
-import com.twitter.decider.LocalOverrides
+ mport com.tw ter.dec der.LocalOverr des
 
-object TweetyPieDeciderOverrides extends LocalOverrides.Namespace("tweetypie", "tweetypie_") {
-  val CheckSpamOnRetweet: LocalOverrides.Override = feature("check_spam_on_retweet")
-  val CheckSpamOnTweet: LocalOverrides.Override = feature("check_spam_on_tweet")
-  val ConversationControlUseFeatureSwitchResults: LocalOverrides.Override = feature(
-    "conversation_control_use_feature_switch_results")
-  val ConversationControlTweetCreateEnabled: LocalOverrides.Override = feature(
-    "conversation_control_tweet_create_enabled")
-  val EnableExclusiveTweetControlValidation: LocalOverrides.Override = feature(
-    "enable_exclusive_tweet_control_validation")
-  val EnableHotKeyCaches: LocalOverrides.Override = feature("enable_hot_key_caches")
-  val HydrateConversationMuted: LocalOverrides.Override = feature("hydrate_conversation_muted")
-  val HydrateExtensionsOnWrite: LocalOverrides.Override = feature("hydrate_extensions_on_write")
-  val HydrateEscherbirdAnnotations: LocalOverrides.Override = feature(
-    "hydrate_escherbird_annotations")
-  val HydrateGnipProfileGeoEnrichment: LocalOverrides.Override = feature(
-    "hydrate_gnip_profile_geo_enrichment")
-  val HydratePastedPics: LocalOverrides.Override = feature("hydrate_pasted_pics")
-  val HydratePerspectivesEditsForOtherSafetyLevels: LocalOverrides.Override = feature(
-    "hydrate_perspectives_edits_for_other_levels")
-  val HydrateScrubEngagements: LocalOverrides.Override = feature("hydrate_scrub_engagements")
-  val LogRepoExceptions: LocalOverrides.Override = feature("log_repo_exceptions")
-  val MediaRefsHydratorIncludePastedMedia: LocalOverrides.Override = feature(
-    "media_refs_hydrator_include_pasted_media")
-  val ShortCircuitLikelyPartialTweetReads: LocalOverrides.Override = feature(
-    "short_circuit_likely_partial_tweet_reads_ms")
-  val RateLimitByLimiterService: LocalOverrides.Override = feature("rate_limit_by_limiter_service")
-  val RateLimitTweetCreationFailure: LocalOverrides.Override = feature(
-    "rate_limit_tweet_creation_failure")
-  val ReplyTweetConversationControlHydrationEnabled = feature(
-    "reply_tweet_conversation_control_hydration_enabled"
+object T etyP eDec derOverr des extends LocalOverr des.Na space("t etyp e", "t etyp e_") {
+  val C ckSpamOnRet et: LocalOverr des.Overr de = feature("c ck_spam_on_ret et")
+  val C ckSpamOnT et: LocalOverr des.Overr de = feature("c ck_spam_on_t et")
+  val Conversat onControlUseFeatureSw chResults: LocalOverr des.Overr de = feature(
+    "conversat on_control_use_feature_sw ch_results")
+  val Conversat onControlT etCreateEnabled: LocalOverr des.Overr de = feature(
+    "conversat on_control_t et_create_enabled")
+  val EnableExclus veT etControlVal dat on: LocalOverr des.Overr de = feature(
+    "enable_exclus ve_t et_control_val dat on")
+  val EnableHotKeyCac s: LocalOverr des.Overr de = feature("enable_hot_key_cac s")
+  val HydrateConversat onMuted: LocalOverr des.Overr de = feature("hydrate_conversat on_muted")
+  val HydrateExtens onsOnWr e: LocalOverr des.Overr de = feature("hydrate_extens ons_on_wr e")
+  val HydrateEsc rb rdAnnotat ons: LocalOverr des.Overr de = feature(
+    "hydrate_esc rb rd_annotat ons")
+  val HydrateGn pProf leGeoEnr ch nt: LocalOverr des.Overr de = feature(
+    "hydrate_gn p_prof le_geo_enr ch nt")
+  val HydratePastedP cs: LocalOverr des.Overr de = feature("hydrate_pasted_p cs")
+  val HydratePerspect vesEd sForOt rSafetyLevels: LocalOverr des.Overr de = feature(
+    "hydrate_perspect ves_ed s_for_ot r_levels")
+  val HydrateScrubEngage nts: LocalOverr des.Overr de = feature("hydrate_scrub_engage nts")
+  val LogRepoExcept ons: LocalOverr des.Overr de = feature("log_repo_except ons")
+  val  d aRefsHydrator ncludePasted d a: LocalOverr des.Overr de = feature(
+    " d a_refs_hydrator_ nclude_pasted_ d a")
+  val ShortC rcu L kelyPart alT etReads: LocalOverr des.Overr de = feature(
+    "short_c rcu _l kely_part al_t et_reads_ms")
+  val RateL m ByL m erServ ce: LocalOverr des.Overr de = feature("rate_l m _by_l m er_serv ce")
+  val RateL m T etCreat onFa lure: LocalOverr des.Overr de = feature(
+    "rate_l m _t et_creat on_fa lure")
+  val ReplyT etConversat onControlHydrat onEnabled = feature(
+    "reply_t et_conversat on_control_hydrat on_enabled"
   )
-  val DisableInviteViaMention = feature(
-    "disable_invite_via_mention"
+  val D sable nv eV a nt on = feature(
+    "d sable_ nv e_v a_ nt on"
   )
-  val EnableRemoveUnmentionedImplicitMentions: LocalOverrides.Override = feature(
-    "enable_remove_unmentioned_implicit_mentions")
-  val useReplicatedDeleteTweet2: LocalOverrides.Override = feature("use_replicated_delete_tweet_2")
+  val EnableRemoveUn nt oned mpl c  nt ons: LocalOverr des.Overr de = feature(
+    "enable_remove_un nt oned_ mpl c _ nt ons")
+  val useRepl catedDeleteT et2: LocalOverr des.Overr de = feature("use_repl cated_delete_t et_2")
 }

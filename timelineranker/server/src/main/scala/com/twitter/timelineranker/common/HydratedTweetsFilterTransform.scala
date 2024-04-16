@@ -1,95 +1,95 @@
-package com.twitter.timelineranker.common
+package com.tw ter.t  l neranker.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.core.HydratedTweets
-import com.twitter.timelineranker.util.TweetFilters
-import com.twitter.timelineranker.util.TweetsPostFilter
-import com.twitter.timelines.model.UserId
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t  l neranker.core.Cand dateEnvelope
+ mport com.tw ter.t  l neranker.core.HydratedT ets
+ mport com.tw ter.t  l neranker.ut l.T etF lters
+ mport com.tw ter.t  l neranker.ut l.T etsPostF lter
+ mport com.tw ter.t  l nes.model.User d
+ mport com.tw ter.ut l.Future
 
-object HydratedTweetsFilterTransform {
-  val EmptyFollowGraphDataTuple: (Seq[UserId], Seq[UserId], Set[UserId]) =
-    (Seq.empty[UserId], Seq.empty[UserId], Set.empty[UserId])
-  val DefaultNumRetweetsAllowed = 1
+object HydratedT etsF lterTransform {
+  val EmptyFollowGraphDataTuple: (Seq[User d], Seq[User d], Set[User d]) =
+    (Seq.empty[User d], Seq.empty[User d], Set.empty[User d])
+  val DefaultNumRet etsAllo d = 1
 
-  // Number of duplicate retweets (including the first one) allowed.
+  // Number of dupl cate ret ets ( nclud ng t  f rst one) allo d.
   // For example,
-  // If there are 7 retweets of a given tweet, the following value will cause 5 of them
-  // to be returned after filtering and the additional 2 will be filtered out.
-  val NumDuplicateRetweetsAllowed = 5
+  //  f t re are 7 ret ets of a g ven t et, t  follow ng value w ll cause 5 of t m
+  // to be returned after f lter ng and t  add  onal 2 w ll be f ltered out.
+  val NumDupl cateRet etsAllo d = 5
 }
 
 /**
- * Transform which takes TweetFilters ValueSets for inner and outer tweets and uses
- * TweetsPostFilter to filter down the HydratedTweets using the supplied filters
+ * Transform wh ch takes T etF lters ValueSets for  nner and outer t ets and uses
+ * T etsPostF lter to f lter down t  HydratedT ets us ng t  suppl ed f lters
  *
- * @param useFollowGraphData - use follow graph for filtering; otherwise only does filtering
- *                           independent of follow graph data
- * @param useSourceTweets - only needed when filtering extended replies
- * @param statsReceiver - scoped stats receiver
+ * @param useFollowGraphData - use follow graph for f lter ng; ot rw se only does f lter ng
+ *                            ndependent of follow graph data
+ * @param useS ceT ets - only needed w n f lter ng extended repl es
+ * @param statsRece ver - scoped stats rece ver
  */
-class HydratedTweetsFilterTransform(
-  outerFilters: TweetFilters.ValueSet,
-  innerFilters: TweetFilters.ValueSet,
+class HydratedT etsF lterTransform(
+  outerF lters: T etF lters.ValueSet,
+   nnerF lters: T etF lters.ValueSet,
   useFollowGraphData: Boolean,
-  useSourceTweets: Boolean,
-  statsReceiver: StatsReceiver,
-  numRetweetsAllowed: Int = HydratedTweetsFilterTransform.DefaultNumRetweetsAllowed)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  import HydratedTweetsFilterTransform._
+  useS ceT ets: Boolean,
+  statsRece ver: StatsRece ver,
+  numRet etsAllo d:  nt = HydratedT etsF lterTransform.DefaultNumRet etsAllo d)
+    extends FutureArrow[Cand dateEnvelope, Cand dateEnvelope] {
+   mport HydratedT etsF lterTransform._
 
-  val logger: Logger = Logger.get(getClass.getSimpleName)
+  val logger: Logger = Logger.get(getClass.getS mpleNa )
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    if (outerFilters == TweetFilters.None) {
+  overr de def apply(envelope: Cand dateEnvelope): Future[Cand dateEnvelope] = {
+     f (outerF lters == T etF lters.None) {
       Future.value(envelope)
     } else {
-      val tweetsPostOuterFilter = new TweetsPostFilter(outerFilters, logger, statsReceiver)
-      val tweetsPostInnerFilter = new TweetsPostFilter(innerFilters, logger, statsReceiver)
+      val t etsPostOuterF lter = new T etsPostF lter(outerF lters, logger, statsRece ver)
+      val t etsPost nnerF lter = new T etsPostF lter( nnerF lters, logger, statsRece ver)
 
-      val graphData = if (useFollowGraphData) {
-        Future.join(
-          envelope.followGraphData.followedUserIdsFuture,
-          envelope.followGraphData.inNetworkUserIdsFuture,
-          envelope.followGraphData.mutedUserIdsFuture
+      val graphData =  f (useFollowGraphData) {
+        Future.jo n(
+          envelope.followGraphData.follo dUser dsFuture,
+          envelope.followGraphData. nNetworkUser dsFuture,
+          envelope.followGraphData.mutedUser dsFuture
         )
       } else {
         Future.value(EmptyFollowGraphDataTuple)
       }
 
-      val sourceTweets = if (useSourceTweets) {
-        envelope.sourceHydratedTweets.outerTweets
+      val s ceT ets =  f (useS ceT ets) {
+        envelope.s ceHydratedT ets.outerT ets
       } else {
-        Nil
+        N l
       }
 
       graphData.map {
-        case (followedUserIds, inNetworkUserIds, mutedUserIds) =>
-          val outerTweets = tweetsPostOuterFilter(
-            userId = envelope.query.userId,
-            followedUserIds = followedUserIds,
-            inNetworkUserIds = inNetworkUserIds,
-            mutedUserIds = mutedUserIds,
-            tweets = envelope.hydratedTweets.outerTweets,
-            numRetweetsAllowed = numRetweetsAllowed,
-            sourceTweets = sourceTweets
+        case (follo dUser ds,  nNetworkUser ds, mutedUser ds) =>
+          val outerT ets = t etsPostOuterF lter(
+            user d = envelope.query.user d,
+            follo dUser ds = follo dUser ds,
+             nNetworkUser ds =  nNetworkUser ds,
+            mutedUser ds = mutedUser ds,
+            t ets = envelope.hydratedT ets.outerT ets,
+            numRet etsAllo d = numRet etsAllo d,
+            s ceT ets = s ceT ets
           )
-          val innerTweets = tweetsPostInnerFilter(
-            userId = envelope.query.userId,
-            followedUserIds = followedUserIds,
-            inNetworkUserIds = inNetworkUserIds,
-            mutedUserIds = mutedUserIds,
-            // inner tweets refers to quoted tweets not source tweets, and special rulesets
-            // in birdherd handle visibility of viewer to inner tweet author for these tweets.
-            tweets = envelope.hydratedTweets.innerTweets,
-            numRetweetsAllowed = numRetweetsAllowed,
-            sourceTweets = sourceTweets
+          val  nnerT ets = t etsPost nnerF lter(
+            user d = envelope.query.user d,
+            follo dUser ds = follo dUser ds,
+             nNetworkUser ds =  nNetworkUser ds,
+            mutedUser ds = mutedUser ds,
+            //  nner t ets refers to quoted t ets not s ce t ets, and spec al rulesets
+            //  n b rd rd handle v s b l y of v e r to  nner t et author for t se t ets.
+            t ets = envelope.hydratedT ets. nnerT ets,
+            numRet etsAllo d = numRet etsAllo d,
+            s ceT ets = s ceT ets
           )
 
-          envelope.copy(hydratedTweets = HydratedTweets(outerTweets, innerTweets))
+          envelope.copy(hydratedT ets = HydratedT ets(outerT ets,  nnerT ets))
       }
     }
   }

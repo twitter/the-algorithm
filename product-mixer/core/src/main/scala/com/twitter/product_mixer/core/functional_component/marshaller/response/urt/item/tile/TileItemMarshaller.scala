@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tile
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.t le
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ImageVariantMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.TileItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata. mageVar antMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.UrlMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t le.T le em
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TileItemMarshaller @Inject() (
-  tileContentMarshaller: TileContentMarshaller,
+@S ngleton
+class T le emMarshaller @ nject() (
+  t leContentMarshaller: T leContentMarshaller,
   urlMarshaller: UrlMarshaller,
-  imageVariantMarshaller: ImageVariantMarshaller) {
+   mageVar antMarshaller:  mageVar antMarshaller) {
 
-  def apply(tileItem: TileItem): urt.TimelineItemContent = {
-    urt.TimelineItemContent.Tile(
-      urt.Tile(
-        title = tileItem.title,
-        supportingText = tileItem.supportingText,
-        url = tileItem.url.map(urlMarshaller(_)),
-        image = tileItem.image.map(imageVariantMarshaller(_)),
+  def apply(t le em: T le em): urt.T  l ne emContent = {
+    urt.T  l ne emContent.T le(
+      urt.T le(
+        t le = t le em.t le,
+        support ngText = t le em.support ngText,
+        url = t le em.url.map(urlMarshaller(_)),
+         mage = t le em. mage.map( mageVar antMarshaller(_)),
         badge = None,
-        content = tileContentMarshaller(tileItem.content)
+        content = t leContentMarshaller(t le em.content)
       )
     )
   }

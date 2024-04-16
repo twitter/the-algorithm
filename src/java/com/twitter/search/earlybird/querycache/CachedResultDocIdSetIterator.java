@@ -1,72 +1,72 @@
-package com.twitter.search.earlybird.querycache;
+package com.tw ter.search.earlyb rd.querycac ;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.apache.lucene.search.DocIdSetIterator;
+ mport org.apac .lucene.search.Doc dSet erator;
 
-public class CachedResultDocIdSetIterator extends DocIdSetIterator {
-  // With the realtime index, we grow the doc id negatively.
-  // Hence the smallest doc id is the ID the latest/newest document in the cache.
-  private final int cachedSmallestDocID;
+publ c class Cac dResultDoc dSet erator extends Doc dSet erator {
+  // W h t  realt    ndex,   grow t  doc  d negat vely.
+  //  nce t  smallest doc  d  s t   D t  latest/ne st docu nt  n t  cac .
+  pr vate f nal  nt cac dSmallestDoc D;
 
-  // Documents that were indexed after the last cache update
-  private final DocIdSetIterator freshDocIdIterator;
-  // Documents that were cached
-  private final DocIdSetIterator cachedDocIdIterator;
+  // Docu nts that  re  ndexed after t  last cac  update
+  pr vate f nal Doc dSet erator freshDoc d erator;
+  // Docu nts that  re cac d
+  pr vate f nal Doc dSet erator cac dDoc d erator;
 
-  private int currentDocId;
-  private boolean initialized = false;
+  pr vate  nt currentDoc d;
+  pr vate boolean  n  al zed = false;
 
-  public CachedResultDocIdSetIterator(int cachedSmallestDocID,
-                                      DocIdSetIterator freshDocIdIterator,
-                                      DocIdSetIterator cachedDocIdIterator) {
-    this.cachedSmallestDocID = cachedSmallestDocID;
+  publ c Cac dResultDoc dSet erator( nt cac dSmallestDoc D,
+                                      Doc dSet erator freshDoc d erator,
+                                      Doc dSet erator cac dDoc d erator) {
+    t .cac dSmallestDoc D = cac dSmallestDoc D;
 
-    this.freshDocIdIterator = freshDocIdIterator;
-    this.cachedDocIdIterator = cachedDocIdIterator;
-    this.currentDocId = -1;
+    t .freshDoc d erator = freshDoc d erator;
+    t .cac dDoc d erator = cac dDoc d erator;
+    t .currentDoc d = -1;
   }
 
-  @Override
-  public int docID() {
-    return currentDocId;
+  @Overr de
+  publ c  nt doc D() {
+    return currentDoc d;
   }
 
-  @Override
-  public int nextDoc() throws IOException {
-    if (currentDocId < cachedSmallestDocID) {
-      currentDocId = freshDocIdIterator.nextDoc();
-    } else if (currentDocId != NO_MORE_DOCS) {
-      if (!initialized) {
-        // the first time we come in here, currentDocId should be pointing to
-        // something >= cachedMinDocID. We need to go to the doc after cachedMinDocID.
-        currentDocId = cachedDocIdIterator.advance(currentDocId + 1);
-        initialized = true;
+  @Overr de
+  publ c  nt nextDoc() throws  OExcept on {
+     f (currentDoc d < cac dSmallestDoc D) {
+      currentDoc d = freshDoc d erator.nextDoc();
+    } else  f (currentDoc d != NO_MORE_DOCS) {
+       f (! n  al zed) {
+        // t  f rst t     co   n  re, currentDoc d should be po nt ng to
+        // so th ng >= cac dM nDoc D.   need to go to t  doc after cac dM nDoc D.
+        currentDoc d = cac dDoc d erator.advance(currentDoc d + 1);
+         n  al zed = true;
       } else {
-        currentDocId = cachedDocIdIterator.nextDoc();
+        currentDoc d = cac dDoc d erator.nextDoc();
       }
     }
-    return currentDocId;
+    return currentDoc d;
   }
 
-  @Override
-  public int advance(int target) throws IOException {
-    if (target < cachedSmallestDocID) {
-      currentDocId = freshDocIdIterator.advance(target);
-    } else if (currentDocId != NO_MORE_DOCS) {
-      initialized = true;
-      currentDocId = cachedDocIdIterator.advance(target);
+  @Overr de
+  publ c  nt advance( nt target) throws  OExcept on {
+     f (target < cac dSmallestDoc D) {
+      currentDoc d = freshDoc d erator.advance(target);
+    } else  f (currentDoc d != NO_MORE_DOCS) {
+       n  al zed = true;
+      currentDoc d = cac dDoc d erator.advance(target);
     }
 
-    return currentDocId;
+    return currentDoc d;
   }
 
-  @Override
-  public long cost() {
-    if (currentDocId < cachedSmallestDocID) {
-      return freshDocIdIterator.cost();
+  @Overr de
+  publ c long cost() {
+     f (currentDoc d < cac dSmallestDoc D) {
+      return freshDoc d erator.cost();
     } else {
-      return cachedDocIdIterator.cost();
+      return cac dDoc d erator.cost();
     }
   }
 }

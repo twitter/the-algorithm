@@ -1,50 +1,50 @@
-package com.twitter.product_mixer.component_library.selector
+package com.tw ter.product_m xer.component_l brary.selector
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Spec f cP pel ne
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Spec f cP pel nes
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.SelectorResult
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on.ModuleCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object DropFilteredModuleItemCandidates {
-  def apply(candidatePipeline: CandidatePipelineIdentifier, filter: ShouldKeepCandidate) =
-    new DropFilteredModuleItemCandidates(SpecificPipeline(candidatePipeline), filter)
+object DropF lteredModule emCand dates {
+  def apply(cand dateP pel ne: Cand dateP pel ne dent f er, f lter: ShouldKeepCand date) =
+    new DropF lteredModule emCand dates(Spec f cP pel ne(cand dateP pel ne), f lter)
 
-  def apply(candidatePipelines: Set[CandidatePipelineIdentifier], filter: ShouldKeepCandidate) =
-    new DropFilteredModuleItemCandidates(SpecificPipelines(candidatePipelines), filter)
+  def apply(cand dateP pel nes: Set[Cand dateP pel ne dent f er], f lter: ShouldKeepCand date) =
+    new DropF lteredModule emCand dates(Spec f cP pel nes(cand dateP pel nes), f lter)
 }
 
 /**
- * Limit candidates in modules from certain candidates sources to those which satisfy
- * the provided predicate.
+ * L m  cand dates  n modules from certa n cand dates s ces to those wh ch sat sfy
+ * t  prov ded pred cate.
  *
- * This acts like a [[DropFilteredCandidates]] but for modules in `remainingCandidates`
- * from any of the provided [[candidatePipelines]].
+ * T  acts l ke a [[DropF lteredCand dates]] but for modules  n `rema n ngCand dates`
+ * from any of t  prov ded [[cand dateP pel nes]].
  *
- * @note this updates the module in the `remainingCandidates`
+ * @note t  updates t  module  n t  `rema n ngCand dates`
  */
-case class DropFilteredModuleItemCandidates(
-  override val pipelineScope: CandidateScope,
-  filter: ShouldKeepCandidate)
-    extends Selector[PipelineQuery] {
+case class DropF lteredModule emCand dates(
+  overr de val p pel neScope: Cand dateScope,
+  f lter: ShouldKeepCand date)
+    extends Selector[P pel neQuery] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+  overr de def apply(
+    query: P pel neQuery,
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
-    val candidatesUpdated = remainingCandidates.map {
-      case module: ModuleCandidateWithDetails if pipelineScope.contains(module) =>
-        // this applies to all candidates in a module, even if they are from a different
-        // candidate source, which can happen if items are added to a module during selection
-        module.copy(candidates = module.candidates.filter(filter.apply))
-      case candidate => candidate
+    val cand datesUpdated = rema n ngCand dates.map {
+      case module: ModuleCand dateW hDeta ls  f p pel neScope.conta ns(module) =>
+        // t  appl es to all cand dates  n a module, even  f t y are from a d fferent
+        // cand date s ce, wh ch can happen  f  ems are added to a module dur ng select on
+        module.copy(cand dates = module.cand dates.f lter(f lter.apply))
+      case cand date => cand date
     }
 
-    SelectorResult(remainingCandidates = candidatesUpdated, result = result)
+    SelectorResult(rema n ngCand dates = cand datesUpdated, result = result)
   }
 }

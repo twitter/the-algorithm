@@ -1,16 +1,16 @@
-package com.twitter.unified_user_actions.adapter.ads_callback_engagements
+package com.tw ter.un f ed_user_act ons.adapter.ads_callback_engage nts
 
-import com.twitter.ads.spendserver.thriftscala.SpendServerEvent
-import com.twitter.unified_user_actions.thriftscala._
+ mport com.tw ter.ads.spendserver.thr ftscala.SpendServerEvent
+ mport com.tw ter.un f ed_user_act ons.thr ftscala._
 
-abstract class BaseTrendAdsCallbackEngagement(actionType: ActionType)
-    extends BaseAdsCallbackEngagement(actionType = actionType) {
+abstract class BaseTrendAdsCallbackEngage nt(act onType: Act onType)
+    extends BaseAdsCallbackEngage nt(act onType = act onType) {
 
-  override protected def getItem(input: SpendServerEvent): Option[Item] = {
-    input.engagementEvent.flatMap { e =>
-      e.impressionData.flatMap { i =>
-        i.promotedTrendId.map { promotedTrendId =>
-          Item.TrendInfo(TrendInfo(actionTrendId = promotedTrendId))
+  overr de protected def get em( nput: SpendServerEvent): Opt on[ em] = {
+     nput.engage ntEvent.flatMap { e =>
+      e. mpress onData.flatMap {   =>
+         .promotedTrend d.map { promotedTrend d =>
+           em.Trend nfo(Trend nfo(act onTrend d = promotedTrend d))
         }
       }
     }

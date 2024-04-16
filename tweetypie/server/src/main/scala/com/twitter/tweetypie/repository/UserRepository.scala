@@ -1,260 +1,260 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.gizmoduck.thriftscala.LookupContext
-import com.twitter.gizmoduck.thriftscala.UserResponseState
-import com.twitter.gizmoduck.thriftscala.UserResult
-import com.twitter.servo.cache.ScopedCacheKey
-import com.twitter.servo.json.syntax._
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.SeqGroup
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.compat.LegacySeqGroup
-import com.twitter.tweetypie.backends.Gizmoduck
-import com.twitter.tweetypie.core._
-import com.twitter.util.Base64Long.toBase64
-import com.twitter.util.logging.Logger
-import com.twitter.visibility.thriftscala.UserVisibilityResult
-import scala.util.control.NoStackTrace
+ mport com.tw ter.g zmoduck.thr ftscala.LookupContext
+ mport com.tw ter.g zmoduck.thr ftscala.UserResponseState
+ mport com.tw ter.g zmoduck.thr ftscala.UserResult
+ mport com.tw ter.servo.cac .ScopedCac Key
+ mport com.tw ter.servo.json.syntax._
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLevel
+ mport com.tw ter.st ch.NotFound
+ mport com.tw ter.st ch.SeqGroup
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.compat.LegacySeqGroup
+ mport com.tw ter.t etyp e.backends.G zmoduck
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.ut l.Base64Long.toBase64
+ mport com.tw ter.ut l.logg ng.Logger
+ mport com.tw ter.v s b l y.thr ftscala.UserV s b l yResult
+ mport scala.ut l.control.NoStackTrace
 
-sealed trait UserKey
+sealed tra  UserKey
 
 object UserKey {
-  def byId(userId: UserId): UserKey = UserIdKey(userId)
-  def byScreenName(screenName: String): UserKey = ScreenNameKey.toLowerCase(screenName)
-  def apply(userId: UserId): UserKey = UserIdKey(userId)
-  def apply(screenName: String): UserKey = ScreenNameKey.toLowerCase(screenName)
+  def by d(user d: User d): UserKey = User dKey(user d)
+  def byScreenNa (screenNa : Str ng): UserKey = ScreenNa Key.toLo rCase(screenNa )
+  def apply(user d: User d): UserKey = User dKey(user d)
+  def apply(screenNa : Str ng): UserKey = ScreenNa Key.toLo rCase(screenNa )
 }
 
-case class UserIdKey(userId: UserId)
-    extends ScopedCacheKey("t", "usr", 1, "id", toBase64(userId))
-    with UserKey
+case class User dKey(user d: User d)
+    extends ScopedCac Key("t", "usr", 1, " d", toBase64(user d))
+    w h UserKey
 
-object ScreenNameKey {
-  def toLowerCase(screenName: String): ScreenNameKey = ScreenNameKey(screenName.toLowerCase)
+object ScreenNa Key {
+  def toLo rCase(screenNa : Str ng): ScreenNa Key = ScreenNa Key(screenNa .toLo rCase)
 }
 
 /**
- * Use UserKey.apply(String) instead of ScreenNameKey(String) to construct a key,
- * as it will down-case the screen-name to better utilize the user cache.
+ * Use UserKey.apply(Str ng)  nstead of ScreenNa Key(Str ng) to construct a key,
+ * as   w ll down-case t  screen-na  to better ut l ze t  user cac .
  */
-case class ScreenNameKey private (screenName: String)
-    extends ScopedCacheKey("t", "usr", 1, "sn", screenName)
-    with UserKey
+case class ScreenNa Key pr vate (screenNa : Str ng)
+    extends ScopedCac Key("t", "usr", 1, "sn", screenNa )
+    w h UserKey
 
 /**
- * A set of flags, used in UserQuery, which control whether to include or filter out
- * users in various non-standard states.
+ * A set of flags, used  n UserQuery, wh ch control w t r to  nclude or f lter out
+ * users  n var ous non-standard states.
  */
-case class UserVisibility(
-  filterProtected: Boolean,
-  filterSuspended: Boolean,
-  filterDeactivated: Boolean,
-  filterOffboardedAndErased: Boolean,
-  filterNoScreenName: Boolean,
-  filterPeriscope: Boolean,
-  filterSoft: Boolean)
+case class UserV s b l y(
+  f lterProtected: Boolean,
+  f lterSuspended: Boolean,
+  f lterDeact vated: Boolean,
+  f lterOffboardedAndErased: Boolean,
+  f lterNoScreenNa : Boolean,
+  f lterPer scope: Boolean,
+  f lterSoft: Boolean)
 
-object UserVisibility {
+object UserV s b l y {
 
   /**
-   * No filtering, can see every user that gizmoduck can return.
+   * No f lter ng, can see every user that g zmoduck can return.
    */
-  val All: UserVisibility = UserVisibility(
-    filterProtected = false,
-    filterSuspended = false,
-    filterDeactivated = false,
-    filterOffboardedAndErased = false,
-    filterNoScreenName = false,
-    filterPeriscope = false,
-    filterSoft = false
+  val All: UserV s b l y = UserV s b l y(
+    f lterProtected = false,
+    f lterSuspended = false,
+    f lterDeact vated = false,
+    f lterOffboardedAndErased = false,
+    f lterNoScreenNa  = false,
+    f lterPer scope = false,
+    f lterSoft = false
   )
 
   /**
-   * Only includes users that would be visible to a non-logged in user,
-   * or a logged in user where the following graph is checked for
+   * Only  ncludes users that would be v s ble to a non-logged  n user,
+   * or a logged  n user w re t  follow ng graph  s c cked for
    * protected users.
    *
-   * no-screen-name, soft, and periscope users are visible, but not
-   * mentionable.
+   * no-screen-na , soft, and per scope users are v s ble, but not
+   *  nt onable.
    */
-  val Visible: UserVisibility = UserVisibility(
-    filterProtected = true,
-    filterSuspended = true,
-    filterDeactivated = true,
-    filterOffboardedAndErased = true,
-    filterNoScreenName = false,
-    filterPeriscope = false,
-    filterSoft = false
+  val V s ble: UserV s b l y = UserV s b l y(
+    f lterProtected = true,
+    f lterSuspended = true,
+    f lterDeact vated = true,
+    f lterOffboardedAndErased = true,
+    f lterNoScreenNa  = false,
+    f lterPer scope = false,
+    f lterSoft = false
   )
 
-  val MediaTaggable: UserVisibility = UserVisibility(
-    filterProtected = false,
-    filterSuspended = true,
-    filterDeactivated = true,
-    filterOffboardedAndErased = true,
-    filterNoScreenName = true,
-    filterPeriscope = true,
-    filterSoft = true
+  val  d aTaggable: UserV s b l y = UserV s b l y(
+    f lterProtected = false,
+    f lterSuspended = true,
+    f lterDeact vated = true,
+    f lterOffboardedAndErased = true,
+    f lterNoScreenNa  = true,
+    f lterPer scope = true,
+    f lterSoft = true
   )
 
   /**
-   * Includes all mentionable users (filter deactivated/offboarded/erased/no-screen-name users)
+   *  ncludes all  nt onable users (f lter deact vated/offboarded/erased/no-screen-na  users)
    */
-  val Mentionable: UserVisibility = UserVisibility(
-    filterProtected = false,
-    filterSuspended = false,
-    filterDeactivated = false,
-    filterOffboardedAndErased = true,
-    filterNoScreenName = true,
-    filterPeriscope = true,
-    filterSoft = true
+  val  nt onable: UserV s b l y = UserV s b l y(
+    f lterProtected = false,
+    f lterSuspended = false,
+    f lterDeact vated = false,
+    f lterOffboardedAndErased = true,
+    f lterNoScreenNa  = true,
+    f lterPer scope = true,
+    f lterSoft = true
   )
 }
 
 /**
- * The `visibility` field includes a set of flags that indicate whether users in
- * various non-standard states should be included in the `found` results, or filtered
- * out.  By default, "filtered out" means to treat them as `notFound`, but if `filteredAsFailure`
- * is true, then the filtered users will be indicated in a [[UserFilteredFailure]] result.
+ * T  `v s b l y` f eld  ncludes a set of flags that  nd cate w t r users  n
+ * var ous non-standard states should be  ncluded  n t  `found` results, or f ltered
+ * out.  By default, "f ltered out"  ans to treat t m as `notFound`, but  f `f lteredAsFa lure`
+ *  s true, t n t  f ltered users w ll be  nd cated  n a [[UserF lteredFa lure]] result.
  */
-case class UserQueryOptions(
-  queryFields: Set[UserField] = Set.empty,
-  visibility: UserVisibility,
-  forUserId: Option[UserId] = None,
-  filteredAsFailure: Boolean = false,
-  safetyLevel: Option[SafetyLevel] = None) {
+case class UserQueryOpt ons(
+  queryF elds: Set[UserF eld] = Set.empty,
+  v s b l y: UserV s b l y,
+  forUser d: Opt on[User d] = None,
+  f lteredAsFa lure: Boolean = false,
+  safetyLevel: Opt on[SafetyLevel] = None) {
   def toLookupContext: LookupContext =
     LookupContext(
-      includeFailed = true,
-      forUserId = forUserId,
-      includeProtected = !visibility.filterProtected,
-      includeSuspended = !visibility.filterSuspended,
-      includeDeactivated = !visibility.filterDeactivated,
-      includeErased = !visibility.filterOffboardedAndErased,
-      includeNoScreenNameUsers = !visibility.filterNoScreenName,
-      includePeriscopeUsers = !visibility.filterPeriscope,
-      includeSoftUsers = !visibility.filterSoft,
-      includeOffboarded = !visibility.filterOffboardedAndErased,
+       ncludeFa led = true,
+      forUser d = forUser d,
+       ncludeProtected = !v s b l y.f lterProtected,
+       ncludeSuspended = !v s b l y.f lterSuspended,
+       ncludeDeact vated = !v s b l y.f lterDeact vated,
+       ncludeErased = !v s b l y.f lterOffboardedAndErased,
+       ncludeNoScreenNa Users = !v s b l y.f lterNoScreenNa ,
+       ncludePer scopeUsers = !v s b l y.f lterPer scope,
+       ncludeSoftUsers = !v s b l y.f lterSoft,
+       ncludeOffboarded = !v s b l y.f lterOffboardedAndErased,
       safetyLevel = safetyLevel
     )
 }
 
-case class UserLookupFailure(message: String, state: UserResponseState) extends RuntimeException {
-  override def getMessage(): String =
-    s"$message: responseState = $state"
+case class UserLookupFa lure( ssage: Str ng, state: UserResponseState) extends Runt  Except on {
+  overr de def get ssage(): Str ng =
+    s"$ ssage: responseState = $state"
 }
 
 /**
- * Indicates a failure due to the user being filtered.
+ *  nd cates a fa lure due to t  user be ng f ltered.
  *
- * @see [[GizmoduckUserRepository.FilteredStates]]
+ * @see [[G zmoduckUserRepos ory.F lteredStates]]
  */
-case class UserFilteredFailure(state: UserResponseState, reason: Option[UserVisibilityResult])
-    extends Exception
-    with NoStackTrace
+case class UserF lteredFa lure(state: UserResponseState, reason: Opt on[UserV s b l yResult])
+    extends Except on
+    w h NoStackTrace
 
-object UserRepository {
-  type Type = (UserKey, UserQueryOptions) => Stitch[User]
-  type Optional = (UserKey, UserQueryOptions) => Stitch[Option[User]]
+object UserRepos ory {
+  type Type = (UserKey, UserQueryOpt ons) => St ch[User]
+  type Opt onal = (UserKey, UserQueryOpt ons) => St ch[Opt on[User]]
 
-  def optional(repo: Type): Optional =
-    (userKey, queryOptions) => repo(userKey, queryOptions).liftNotFoundToOption
+  def opt onal(repo: Type): Opt onal =
+    (userKey, queryOpt ons) => repo(userKey, queryOpt ons).l ftNotFoundToOpt on
 
   def userGetter(
-    userRepo: UserRepository.Optional,
-    opts: UserQueryOptions
-  ): UserKey => Future[Option[User]] =
-    userKey => Stitch.run(userRepo(userKey, opts))
+    userRepo: UserRepos ory.Opt onal,
+    opts: UserQueryOpt ons
+  ): UserKey => Future[Opt on[User]] =
+    userKey => St ch.run(userRepo(userKey, opts))
 }
 
-object GizmoduckUserRepository {
-  private[this] val log = Logger(getClass)
+object G zmoduckUserRepos ory {
+  pr vate[t ] val log = Logger(getClass)
 
   def apply(
-    getById: Gizmoduck.GetById,
-    getByScreenName: Gizmoduck.GetByScreenName,
-    maxRequestSize: Int = Int.MaxValue
-  ): UserRepository.Type = {
+    getBy d: G zmoduck.GetBy d,
+    getByScreenNa : G zmoduck.GetByScreenNa ,
+    maxRequestS ze:  nt =  nt.MaxValue
+  ): UserRepos ory.Type = {
     case class GetBy[K](
-      opts: UserQueryOptions,
-      get: ((LookupContext, Seq[K], Set[UserField])) => Future[Seq[UserResult]])
+      opts: UserQueryOpt ons,
+      get: ((LookupContext, Seq[K], Set[UserF eld])) => Future[Seq[UserResult]])
         extends SeqGroup[K, UserResult] {
-      override def run(keys: Seq[K]): Future[Seq[Try[UserResult]]] =
-        LegacySeqGroup.liftToSeqTry(get((opts.toLookupContext, keys, opts.queryFields)))
-      override def maxSize: Int = maxRequestSize
+      overr de def run(keys: Seq[K]): Future[Seq[Try[UserResult]]] =
+        LegacySeqGroup.l ftToSeqTry(get((opts.toLookupContext, keys, opts.queryF elds)))
+      overr de def maxS ze:  nt = maxRequestS ze
     }
 
     (key, opts) => {
       val result =
         key match {
-          case UserIdKey(id) => Stitch.call(id, GetBy(opts, getById))
-          case ScreenNameKey(sn) => Stitch.call(sn, GetBy(opts, getByScreenName))
+          case User dKey( d) => St ch.call( d, GetBy(opts, getBy d))
+          case ScreenNa Key(sn) => St ch.call(sn, GetBy(opts, getByScreenNa ))
         }
 
-      result.flatMap(r => Stitch.const(toTryUser(r, opts.filteredAsFailure)))
+      result.flatMap(r => St ch.const(toTryUser(r, opts.f lteredAsFa lure)))
     }
   }
 
-  private def toTryUser(
+  pr vate def toTryUser(
     userResult: UserResult,
-    filteredAsFailure: Boolean
+    f lteredAsFa lure: Boolean
   ): Try[User] =
     userResult.responseState match {
-      case s if s.forall(SuccessStates.contains(_)) =>
+      case s  f s.forall(SuccessStates.conta ns(_)) =>
         userResult.user match {
-          case Some(u) =>
+          case So (u) =>
             Return(u)
 
           case None =>
             log.warn(
-              s"User expected to be present, but not found in:\n${userResult.prettyPrint}"
+              s"User expected to be present, but not found  n:\n${userResult.prettyPr nt}"
             )
-            // This should never happen, but if it does, treat it as the
-            // user being returned as NotFound.
+            // T  should never happen, but  f   does, treat   as t 
+            // user be ng returned as NotFound.
             Throw(NotFound)
         }
 
-      case Some(s) if NotFoundStates.contains(s) =>
+      case So (s)  f NotFoundStates.conta ns(s) =>
         Throw(NotFound)
 
-      case Some(s) if FilteredStates.contains(s) =>
-        Throw(if (filteredAsFailure) UserFilteredFailure(s, userResult.unsafeReason) else NotFound)
+      case So (s)  f F lteredStates.conta ns(s) =>
+        Throw( f (f lteredAsFa lure) UserF lteredFa lure(s, userResult.unsafeReason) else NotFound)
 
-      case Some(UserResponseState.Failed) =>
-        def lookupFailure(msg: String) =
-          UserLookupFailure(msg, UserResponseState.Failed)
+      case So (UserResponseState.Fa led) =>
+        def lookupFa lure(msg: Str ng) =
+          UserLookupFa lure(msg, UserResponseState.Fa led)
 
         Throw {
-          userResult.failureReason
+          userResult.fa lureReason
             .map { reason =>
-              reason.internalServerError
+              reason. nternalServerError
                 .orElse {
-                  reason.overCapacity.map { e =>
-                    // Convert Gizmoduck OverCapacity to Tweetypie
-                    // OverCapacity exception, explaining that it was
-                    // propagated from Gizmoduck.
-                    OverCapacity(s"gizmoduck over capacity: ${e.message}")
+                  reason.overCapac y.map { e =>
+                    // Convert G zmoduck OverCapac y to T etyp e
+                    // OverCapac y except on, expla n ng that   was
+                    // propagated from G zmoduck.
+                    OverCapac y(s"g zmoduck over capac y: ${e. ssage}")
                   }
                 }
-                .orElse(reason.unexpectedException.map(lookupFailure))
-                .getOrElse(lookupFailure("failureReason empty"))
+                .orElse(reason.unexpectedExcept on.map(lookupFa lure))
+                .getOrElse(lookupFa lure("fa lureReason empty"))
             }
-            .getOrElse(lookupFailure("failureReason missing"))
+            .getOrElse(lookupFa lure("fa lureReason m ss ng"))
         }
 
-      case Some(unexpected) =>
-        Throw(UserLookupFailure("Unexpected response state", unexpected))
+      case So (unexpected) =>
+        Throw(UserLookupFa lure("Unexpected response state", unexpected))
     }
 
   /**
-   * States that we expect to correspond to a user being returned.
+   * States that   expect to correspond to a user be ng returned.
    */
   val SuccessStates: Set[UserResponseState] =
     Set[UserResponseState](
       UserResponseState.Found,
-      UserResponseState.Partial
+      UserResponseState.Part al
     )
 
   /**
@@ -263,19 +263,19 @@ object GizmoduckUserRepository {
   val NotFoundStates: Set[UserResponseState] =
     Set[UserResponseState](
       UserResponseState.NotFound,
-      // These are really filtered out, but we treat them as not found
-      // since we don't have analogous filtering states for tweets.
-      UserResponseState.PeriscopeUser,
+      // T se are really f ltered out, but   treat t m as not found
+      // s nce   don't have analogous f lter ng states for t ets.
+      UserResponseState.Per scopeUser,
       UserResponseState.SoftUser,
-      UserResponseState.NoScreenNameUser
+      UserResponseState.NoScreenNa User
     )
 
   /**
-   * Response states that correspond to a FilteredState
+   * Response states that correspond to a F lteredState
    */
-  val FilteredStates: Set[UserResponseState] =
+  val F lteredStates: Set[UserResponseState] =
     Set(
-      UserResponseState.DeactivatedUser,
+      UserResponseState.Deact vatedUser,
       UserResponseState.OffboardedUser,
       UserResponseState.ErasedUser,
       UserResponseState.SuspendedUser,

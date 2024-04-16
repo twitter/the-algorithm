@@ -1,129 +1,129 @@
-package com.twitter.unified_user_actions.adapter
+package com.tw ter.un f ed_user_act ons.adapter
 
-import com.twitter.inject.Test
-import com.twitter.timelineservice.fanout.thriftscala.FavoriteArchivalEvent
-import com.twitter.unified_user_actions.adapter.favorite_archival_events.FavoriteArchivalEventsAdapter
-import com.twitter.unified_user_actions.thriftscala._
-import com.twitter.util.Time
-import org.scalatest.prop.TableDrivenPropertyChecks
+ mport com.tw ter. nject.Test
+ mport com.tw ter.t  l neserv ce.fanout.thr ftscala.Favor eArch valEvent
+ mport com.tw ter.un f ed_user_act ons.adapter.favor e_arch val_events.Favor eArch valEventsAdapter
+ mport com.tw ter.un f ed_user_act ons.thr ftscala._
+ mport com.tw ter.ut l.T  
+ mport org.scalatest.prop.TableDr venPropertyC cks
 
-class FavoriteArchivalEventsAdapterSpec extends Test with TableDrivenPropertyChecks {
-  trait Fixture {
+class Favor eArch valEventsAdapterSpec extends Test w h TableDr venPropertyC cks {
+  tra  F xture {
 
-    val frozenTime = Time.fromMilliseconds(1658949273000L)
+    val frozenT   = T  .fromM ll seconds(1658949273000L)
 
-    val userId = 1L
-    val authorId = 2L
-    val tweetId = 101L
-    val retweetId = 102L
+    val user d = 1L
+    val author d = 2L
+    val t et d = 101L
+    val ret et d = 102L
 
-    val favArchivalEventNoRetweet = FavoriteArchivalEvent(
-      favoriterId = userId,
-      tweetId = tweetId,
-      timestampMs = 0L,
-      isArchivingAction = Some(true),
-      tweetUserId = Some(authorId)
+    val favArch valEventNoRet et = Favor eArch valEvent(
+      favor er d = user d,
+      t et d = t et d,
+      t  stampMs = 0L,
+       sArch v ngAct on = So (true),
+      t etUser d = So (author d)
     )
-    val favArchivalEventRetweet = FavoriteArchivalEvent(
-      favoriterId = userId,
-      tweetId = retweetId,
-      timestampMs = 0L,
-      isArchivingAction = Some(true),
-      tweetUserId = Some(authorId),
-      sourceTweetId = Some(tweetId)
+    val favArch valEventRet et = Favor eArch valEvent(
+      favor er d = user d,
+      t et d = ret et d,
+      t  stampMs = 0L,
+       sArch v ngAct on = So (true),
+      t etUser d = So (author d),
+      s ceT et d = So (t et d)
     )
-    val favUnarchivalEventNoRetweet = FavoriteArchivalEvent(
-      favoriterId = userId,
-      tweetId = tweetId,
-      timestampMs = 0L,
-      isArchivingAction = Some(false),
-      tweetUserId = Some(authorId)
+    val favUnarch valEventNoRet et = Favor eArch valEvent(
+      favor er d = user d,
+      t et d = t et d,
+      t  stampMs = 0L,
+       sArch v ngAct on = So (false),
+      t etUser d = So (author d)
     )
-    val favUnarchivalEventRetweet = FavoriteArchivalEvent(
-      favoriterId = userId,
-      tweetId = retweetId,
-      timestampMs = 0L,
-      isArchivingAction = Some(false),
-      tweetUserId = Some(authorId),
-      sourceTweetId = Some(tweetId)
+    val favUnarch valEventRet et = Favor eArch valEvent(
+      favor er d = user d,
+      t et d = ret et d,
+      t  stampMs = 0L,
+       sArch v ngAct on = So (false),
+      t etUser d = So (author d),
+      s ceT et d = So (t et d)
     )
 
-    val expectedUua1 = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(userId)),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = tweetId,
-          actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(authorId))),
+    val expectedUua1 = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (user d)),
+       em =  em.T et nfo(
+        T et nfo(
+          act onT et d = t et d,
+          act onT etAuthor nfo = So (Author nfo(author d = So (author d))),
         )
       ),
-      actionType = ActionType.ServerTweetArchiveFavorite,
-      eventMetadata = EventMetadata(
-        sourceTimestampMs = 0L,
-        receivedTimestampMs = frozenTime.inMilliseconds,
-        sourceLineage = SourceLineage.ServerFavoriteArchivalEvents,
+      act onType = Act onType.ServerT etArch veFavor e,
+      event tadata = Event tadata(
+        s ceT  stampMs = 0L,
+        rece vedT  stampMs = frozenT  . nM ll seconds,
+        s ceL neage = S ceL neage.ServerFavor eArch valEvents,
       )
     )
-    val expectedUua2 = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(userId)),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = retweetId,
-          actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(authorId))),
-          retweetedTweetId = Some(tweetId)
+    val expectedUua2 = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (user d)),
+       em =  em.T et nfo(
+        T et nfo(
+          act onT et d = ret et d,
+          act onT etAuthor nfo = So (Author nfo(author d = So (author d))),
+          ret etedT et d = So (t et d)
         )
       ),
-      actionType = ActionType.ServerTweetArchiveFavorite,
-      eventMetadata = EventMetadata(
-        sourceTimestampMs = 0L,
-        receivedTimestampMs = frozenTime.inMilliseconds,
-        sourceLineage = SourceLineage.ServerFavoriteArchivalEvents,
+      act onType = Act onType.ServerT etArch veFavor e,
+      event tadata = Event tadata(
+        s ceT  stampMs = 0L,
+        rece vedT  stampMs = frozenT  . nM ll seconds,
+        s ceL neage = S ceL neage.ServerFavor eArch valEvents,
       )
     )
-    val expectedUua3 = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(userId)),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = tweetId,
-          actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(authorId))),
+    val expectedUua3 = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (user d)),
+       em =  em.T et nfo(
+        T et nfo(
+          act onT et d = t et d,
+          act onT etAuthor nfo = So (Author nfo(author d = So (author d))),
         )
       ),
-      actionType = ActionType.ServerTweetUnarchiveFavorite,
-      eventMetadata = EventMetadata(
-        sourceTimestampMs = 0L,
-        receivedTimestampMs = frozenTime.inMilliseconds,
-        sourceLineage = SourceLineage.ServerFavoriteArchivalEvents,
+      act onType = Act onType.ServerT etUnarch veFavor e,
+      event tadata = Event tadata(
+        s ceT  stampMs = 0L,
+        rece vedT  stampMs = frozenT  . nM ll seconds,
+        s ceL neage = S ceL neage.ServerFavor eArch valEvents,
       )
     )
-    val expectedUua4 = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(userId)),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = retweetId,
-          actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(authorId))),
-          retweetedTweetId = Some(tweetId)
+    val expectedUua4 = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (user d)),
+       em =  em.T et nfo(
+        T et nfo(
+          act onT et d = ret et d,
+          act onT etAuthor nfo = So (Author nfo(author d = So (author d))),
+          ret etedT et d = So (t et d)
         )
       ),
-      actionType = ActionType.ServerTweetUnarchiveFavorite,
-      eventMetadata = EventMetadata(
-        sourceTimestampMs = 0L,
-        receivedTimestampMs = frozenTime.inMilliseconds,
-        sourceLineage = SourceLineage.ServerFavoriteArchivalEvents,
+      act onType = Act onType.ServerT etUnarch veFavor e,
+      event tadata = Event tadata(
+        s ceT  stampMs = 0L,
+        rece vedT  stampMs = frozenT  . nM ll seconds,
+        s ceL neage = S ceL neage.ServerFavor eArch valEvents,
       )
     )
   }
 
   test("all tests") {
-    new Fixture {
-      Time.withTimeAt(frozenTime) { _ =>
+    new F xture {
+      T  .w hT  At(frozenT  ) { _ =>
         val table = Table(
           ("event", "expected"),
-          (favArchivalEventNoRetweet, expectedUua1),
-          (favArchivalEventRetweet, expectedUua2),
-          (favUnarchivalEventNoRetweet, expectedUua3),
-          (favUnarchivalEventRetweet, expectedUua4)
+          (favArch valEventNoRet et, expectedUua1),
+          (favArch valEventRet et, expectedUua2),
+          (favUnarch valEventNoRet et, expectedUua3),
+          (favUnarch valEventRet et, expectedUua4)
         )
-        forEvery(table) { (event: FavoriteArchivalEvent, expected: UnifiedUserAction) =>
-          val actual = FavoriteArchivalEventsAdapter.adaptEvent(event)
+        forEvery(table) { (event: Favor eArch valEvent, expected: Un f edUserAct on) =>
+          val actual = Favor eArch valEventsAdapter.adaptEvent(event)
           assert(Seq(expected) === actual)
         }
       }

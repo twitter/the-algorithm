@@ -1,153 +1,153 @@
-# Deciders that can be used to control load on TLR or its backends.
-enable_max_concurrency_limiting:
-  comment: "When enabled, limit maxConcurrency filter. Note: Requires system property maxConcurrency to be set."
-  default_availability: 0
+# Dec ders that can be used to control load on TLR or  s backends.
+enable_max_concurrency_l m  ng:
+  com nt: "W n enabled, l m  maxConcurrency f lter. Note: Requ res system property maxConcurrency to be set."
+  default_ava lab l y: 0
 
-# Deciders related to testing / debugging.
-enable_routing_to_ranker_dev_proxy:
-  comment: "Route dark traffic to the TimelineRanker development proxy. 100% means ~100% of requests to a host."
-  default_availability: 0
+# Dec ders related to test ng / debugg ng.
+enable_rout ng_to_ranker_dev_proxy:
+  com nt: "Route dark traff c to t  T  l neRanker develop nt proxy. 100%  ans ~100% of requests to a host."
+  default_ava lab l y: 0
 
-# Deciders related to authorization.
-client_request_authorization:
-  comment: "Enable client request authorization and rate limiting"
-  default_availability: 10000
-client_write_whitelist:
-  comment: "Enable authorization of write protected requests from only whitelisted clients"
-  default_availability: 0
-allow_timeline_mixer_recap_prod:
-  comment: "Allow requests from production TimelineMixer/recap"
-  default_availability: 10000
-allow_timeline_mixer_recycled_prod:
-  comment: "Allow requests from production TimelineMixer/recycled"
-  default_availability: 10000
-allow_timeline_mixer_hydrate_prod:
-  comment: "Allow requests from production TimelineMixer/hydrate"
-  default_availability: 10000
-allow_timeline_mixer_hydrate_recos_prod:
-  comment: "Allow requests from production TimelineMixer/hydrate_recos"
-  default_availability: 10000
-allow_timeline_mixer_seed_authors_prod:
-  comment: "Allow requests from production TimelineMixer/seed_author_ids"
-  default_availability: 10000
-allow_timeline_mixer_simcluster_prod:
-  comment: "Allow requests from production TimelineMixer/simcluster"
-  default_availability: 10000
-allow_timeline_mixer_entity_tweets_prod:
-  comment: "Allow requests from production TimelineMixer/entity_tweets"
-  default_availability: 10000
-allow_timeline_mixer_list_prod:
-  comment: "Allow requests from production TimelineMixer/list"
-  default_availability: 10000
-allow_timeline_mixer_list_tweet_prod:
-  comment: "Allow requests from production TimelineMixer/list_tweet"
-  default_availability: 10000
-allow_timeline_mixer_uteg_liked_by_tweets_prod:
-  comment: "Allow requests from production TimelineMixer/uteg_liked_by_tweets"
-  default_availability: 10000
-allow_timeline_mixer_community_prod:
-  comment: "Allow requests from production TimelineMixer/community"
-  default_availability: 10000
-allow_timeline_mixer_community_tweet_prod:
-  comment: "Allow requests from production TimelineMixer/community_tweet"
-  default_availability: 10000
-allow_timeline_scorer_recommended_trend_tweet_prod:
-  comment: "Allow requests from production TimelineMixer/recommended_trend_tweet"
-  default_availability: 10000
+# Dec ders related to author zat on.
+cl ent_request_author zat on:
+  com nt: "Enable cl ent request author zat on and rate l m  ng"
+  default_ava lab l y: 10000
+cl ent_wr e_wh el st:
+  com nt: "Enable author zat on of wr e protected requests from only wh el sted cl ents"
+  default_ava lab l y: 0
+allow_t  l ne_m xer_recap_prod:
+  com nt: "Allow requests from product on T  l neM xer/recap"
+  default_ava lab l y: 10000
+allow_t  l ne_m xer_recycled_prod:
+  com nt: "Allow requests from product on T  l neM xer/recycled"
+  default_ava lab l y: 10000
+allow_t  l ne_m xer_hydrate_prod:
+  com nt: "Allow requests from product on T  l neM xer/hydrate"
+  default_ava lab l y: 10000
+allow_t  l ne_m xer_hydrate_recos_prod:
+  com nt: "Allow requests from product on T  l neM xer/hydrate_recos"
+  default_ava lab l y: 10000
+allow_t  l ne_m xer_seed_authors_prod:
+  com nt: "Allow requests from product on T  l neM xer/seed_author_ ds"
+  default_ava lab l y: 10000
+allow_t  l ne_m xer_s mcluster_prod:
+  com nt: "Allow requests from product on T  l neM xer/s mcluster"
+  default_ava lab l y: 10000
+allow_t  l ne_m xer_ent y_t ets_prod:
+  com nt: "Allow requests from product on T  l neM xer/ent y_t ets"
+  default_ava lab l y: 10000
+allow_t  l ne_m xer_l st_prod:
+  com nt: "Allow requests from product on T  l neM xer/l st"
+  default_ava lab l y: 10000
+allow_t  l ne_m xer_l st_t et_prod:
+  com nt: "Allow requests from product on T  l neM xer/l st_t et"
+  default_ava lab l y: 10000
+allow_t  l ne_m xer_uteg_l ked_by_t ets_prod:
+  com nt: "Allow requests from product on T  l neM xer/uteg_l ked_by_t ets"
+  default_ava lab l y: 10000
+allow_t  l ne_m xer_commun y_prod:
+  com nt: "Allow requests from product on T  l neM xer/commun y"
+  default_ava lab l y: 10000
+allow_t  l ne_m xer_commun y_t et_prod:
+  com nt: "Allow requests from product on T  l neM xer/commun y_t et"
+  default_ava lab l y: 10000
+allow_t  l ne_scorer_recom nded_trend_t et_prod:
+  com nt: "Allow requests from product on T  l neM xer/recom nded_trend_t et"
+  default_ava lab l y: 10000
 
-allow_timeline_scorer_rec_topic_tweets_prod:
-  comment: "Allow requests from production TimelineScorer/rec_topic_tweets"
-  default_availability: 10000
-allow_timeline_scorer_popular_topic_tweets_prod:
-  comment: "Allow requests from production TimelineScorer/popular_topic_tweets"
-  default_availability: 10000
+allow_t  l ne_scorer_rec_top c_t ets_prod:
+  com nt: "Allow requests from product on T  l neScorer/rec_top c_t ets"
+  default_ava lab l y: 10000
+allow_t  l ne_scorer_popular_top c_t ets_prod:
+  com nt: "Allow requests from product on T  l neScorer/popular_top c_t ets"
+  default_ava lab l y: 10000
 
-allow_timelinescorer_hydrate_tweet_scoring_prod:
-  comment: "Allow requests from production TimelineScorer/hydrate_tweet_scoring"
-  default_availability: 10000
+allow_t  l nescorer_hydrate_t et_scor ng_prod:
+  com nt: "Allow requests from product on T  l neScorer/hydrate_t et_scor ng"
+  default_ava lab l y: 10000
 
-allow_timeline_mixer_staging:
-  comment: "Allow requests from staging TimelineMixer"
-  default_availability: 10000
-allow_timeline_ranker_warmup:
-  comment: "Allow warmup requests from the TLR cluster"
-  default_availability: 10000
-allow_timeline_ranker_proxy:
-  comment: "Allow warmup requests from the TimelineRanker proxy"
-  default_availability: 10000
-allow_timeline_service_prod:
-  comment: "Allow requests from production TimelineService"
-  default_availability: 10000
-allow_timeline_service_staging:
-  comment: "Allow requests from staging TimelineService"
-  default_availability: 10000
-rate_limit_override_unknown:
-  comment: "Override the rate limit for unknown clients"
-  default_availability: 0
+allow_t  l ne_m xer_stag ng:
+  com nt: "Allow requests from stag ng T  l neM xer"
+  default_ava lab l y: 10000
+allow_t  l ne_ranker_warmup:
+  com nt: "Allow warmup requests from t  TLR cluster"
+  default_ava lab l y: 10000
+allow_t  l ne_ranker_proxy:
+  com nt: "Allow warmup requests from t  T  l neRanker proxy"
+  default_ava lab l y: 10000
+allow_t  l ne_serv ce_prod:
+  com nt: "Allow requests from product on T  l neServ ce"
+  default_ava lab l y: 10000
+allow_t  l ne_serv ce_stag ng:
+  com nt: "Allow requests from stag ng T  l neServ ce"
+  default_ava lab l y: 10000
+rate_l m _overr de_unknown:
+  com nt: "Overr de t  rate l m  for unknown cl ents"
+  default_ava lab l y: 0
 
-# Deciders related to reverse-chron home timeline materialization.
-multiplier_of_materialization_tweets_fetched:
-  comment: "Multiplier applied to the number of tweets fetched from search expressed as percentage. 100 means 100%. It can be used to fetch more than the number tweets requested by a caller (to improve similarity) or to fetch less than requested to reduce load."
-  default_availability: 100
-enable_backfill_filtered_entries:
-  comment: "Controls whether to back-fill timeline entries that get filtered out by TweetsPostFilter during home timeline materialization."
-  default_availability: 0
-tweets_filtering_lossage_threshold:
-  comment: "If back-filling filtered entries is enabled and if percentage of tweets that get filtered out exceeds this value then we will issue a second call to get more tweets. Default value 2000 == 20%"
-  default_availability: 2000
-tweets_filtering_lossage_limit:
-  comment: "We need to ensure that the number of tweets requested by the second call are not unbounded (for example, if everything is filtered out in the first call) therefore we limit the actual filtered out percentage to be no greater than the value below. Default value 6000 == 60%. That is, even if the actual lossage is 90% we will consider it to be only 60% for the purpose of back-filling."
-  default_availability: 6000
-supplement_follows_with_real_graph:
-  comment: "Whether to fetch additional follows from RealGraph for users with more than the max follows fetched from SGS during home timeline materialization."
-  default_availability: 0
+# Dec ders related to reverse-chron ho  t  l ne mater al zat on.
+mult pl er_of_mater al zat on_t ets_fetc d:
+  com nt: "Mult pl er appl ed to t  number of t ets fetc d from search expressed as percentage. 100  ans 100%.   can be used to fetch more than t  number t ets requested by a caller (to  mprove s m lar y) or to fetch less than requested to reduce load."
+  default_ava lab l y: 100
+enable_backf ll_f ltered_entr es:
+  com nt: "Controls w t r to back-f ll t  l ne entr es that get f ltered out by T etsPostF lter dur ng ho  t  l ne mater al zat on."
+  default_ava lab l y: 0
+t ets_f lter ng_lossage_threshold:
+  com nt: " f back-f ll ng f ltered entr es  s enabled and  f percentage of t ets that get f ltered out exceeds t  value t n   w ll  ssue a second call to get more t ets. Default value 2000 == 20%"
+  default_ava lab l y: 2000
+t ets_f lter ng_lossage_l m :
+  com nt: "  need to ensure that t  number of t ets requested by t  second call are not unbounded (for example,  f everyth ng  s f ltered out  n t  f rst call) t refore   l m  t  actual f ltered out percentage to be no greater than t  value below. Default value 6000 == 60%. That  s, even  f t  actual lossage  s 90%   w ll cons der   to be only 60% for t  purpose of back-f ll ng."
+  default_ava lab l y: 6000
+supple nt_follows_w h_real_graph:
+  com nt: "W t r to fetch add  onal follows from RealGraph for users w h more than t  max follows fetc d from SGS dur ng ho  t  l ne mater al zat on."
+  default_ava lab l y: 0
 
-# Deciders related to recap.
-recap_enable_content_features_hydration:
-  comment: "If true, semantic core, penguin, and tweetypie based expensive features will be hydrated for recap Tweets. Otherwise those features are not set"
-  default_availability: 10000
-recap_max_count_multiplier:
-  comment: "We multiply maxCount (caller supplied value) by this multiplier and fetch those many candidates from search so that we are left with sufficient number of candidates after hydration and filtering. 100 == 1.0"
-  default_availability: 100
-recap_enable_extra_sorting_in_results:
-  comment: "If TLR will do extra sorting in search results"
-  default_availability: 10000
+# Dec ders related to recap.
+recap_enable_content_features_hydrat on:
+  com nt: " f true, semant c core, pengu n, and t etyp e based expens ve features w ll be hydrated for recap T ets. Ot rw se those features are not set"
+  default_ava lab l y: 10000
+recap_max_count_mult pl er:
+  com nt: "  mult ply maxCount (caller suppl ed value) by t  mult pl er and fetch those many cand dates from search so that   are left w h suff c ent number of cand dates after hydrat on and f lter ng. 100 == 1.0"
+  default_ava lab l y: 100
+recap_enable_extra_sort ng_ n_results:
+  com nt: " f TLR w ll do extra sort ng  n search results"
+  default_ava lab l y: 10000
 
-# Deciders related to recycled tweets.
-recycled_enable_content_features_hydration:
-  comment: "If true, semantic core, penguin, and tweetypie based expensive features will be hydrated for recycled Tweets. Otherwise those features are not set"
-  default_availability: 0
-recycled_max_count_multiplier:
-  comment: "We multiply maxCount (caller supplied value) by this multiplier and fetch those many candidates from search so that we are left with sufficient number of candidates after hydration and filtering. 100 == 1.0"
-  default_availability: 100
+# Dec ders related to recycled t ets.
+recycled_enable_content_features_hydrat on:
+  com nt: " f true, semant c core, pengu n, and t etyp e based expens ve features w ll be hydrated for recycled T ets. Ot rw se those features are not set"
+  default_ava lab l y: 0
+recycled_max_count_mult pl er:
+  com nt: "  mult ply maxCount (caller suppl ed value) by t  mult pl er and fetch those many cand dates from search so that   are left w h suff c ent number of cand dates after hydrat on and f lter ng. 100 == 1.0"
+  default_ava lab l y: 100
 
-# Deciders related to entity tweets.
-entity_tweets_enable_content_features_hydration:
-  comment: "If true, semantic core, penguin, and tweetypie based expensive features will be hydrated for entity Tweets. Otherwise those features are not set"
-  default_availability: 10000
+# Dec ders related to ent y t ets.
+ent y_t ets_enable_content_features_hydrat on:
+  com nt: " f true, semant c core, pengu n, and t etyp e based expens ve features w ll be hydrated for ent y T ets. Ot rw se those features are not set"
+  default_ava lab l y: 10000
 
-# Deciders related to both recap and recycled tweets
+# Dec ders related to both recap and recycled t ets
 enable_real_graph_users:
-  comment: "This is used only if user follows >= 1000. If true, expands user seedset with real graph users and recent followed users. Otherwise, user seedset only includes followed users."
-  default_availability: 0
-max_real_graph_and_followed_users:
-  comment: "Maximum number of combined real graph users and recent followed users in the user seedset for recap and recycled tweets if enable_real_graph_users is true and only_real_graph_users is false. This is upper bounded by 2000."
-  default_availability: 1000
+  com nt: "T   s used only  f user follows >= 1000.  f true, expands user seedset w h real graph users and recent follo d users. Ot rw se, user seedset only  ncludes follo d users."
+  default_ava lab l y: 0
+max_real_graph_and_follo d_users:
+  com nt: "Max mum number of comb ned real graph users and recent follo d users  n t  user seedset for recap and recycled t ets  f enable_real_graph_users  s true and only_real_graph_users  s false. T   s upper bounded by 2000."
+  default_ava lab l y: 1000
 
-# Deciders related to recap author
-recap_author_enable_new_pipeline:
-  comment: "Enable new recap author pipeline"
-  default_availability: 0
-recap_author_enable_content_features_hydration:
-  comment: "If true, semantic core, penguin, and tweetypie based expensive features will be hydrated for PYLE Tweets. Otherwise those features are not set"
-  default_availability: 0
+# Dec ders related to recap author
+recap_author_enable_new_p pel ne:
+  com nt: "Enable new recap author p pel ne"
+  default_ava lab l y: 0
+recap_author_enable_content_features_hydrat on:
+  com nt: " f true, semant c core, pengu n, and t etyp e based expens ve features w ll be hydrated for PYLE T ets. Ot rw se those features are not set"
+  default_ava lab l y: 0
 
-# Deciders related to recap hydration(rectweet+ranked organic).
-recap_hydration_enable_content_features_hydration:
-  comment: "If true, semantic core, penguin, and tweetypie based expensive features will be hydrated for rectweet+ranked organic Tweets. Otherwise those features are not set"
-  default_availability: 0
+# Dec ders related to recap hydrat on(rect et+ranked organ c).
+recap_hydrat on_enable_content_features_hydrat on:
+  com nt: " f true, semant c core, pengu n, and t etyp e based expens ve features w ll be hydrated for rect et+ranked organ c T ets. Ot rw se those features are not set"
+  default_ava lab l y: 0
 
-# Deciders related to uteg liked by tweets
-uteg_liked_by_tweets_enable_content_features_hydration:
-  comment: "If true, semantic core, penguin, and tweetypie based expensive features will be hydrated for rectweet+recycled utegLikedBy Tweets. Otherwise those features are not set"
-  default_availability: 0
+# Dec ders related to uteg l ked by t ets
+uteg_l ked_by_t ets_enable_content_features_hydrat on:
+  com nt: " f true, semant c core, pengu n, and t etyp e based expens ve features w ll be hydrated for rect et+recycled utegL kedBy T ets. Ot rw se those features are not set"
+  default_ava lab l y: 0

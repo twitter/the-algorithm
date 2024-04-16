@@ -1,63 +1,63 @@
-package com.twitter.product_mixer.core.pipeline.step.decorator
+package com.tw ter.product_m xer.core.p pel ne.step.decorator
 
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithDetails
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithFeatures
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.candidate_decorator_executor.CandidateDecoratorExecutor
-import com.twitter.product_mixer.core.service.candidate_decorator_executor.CandidateDecoratorExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Cand dateDecorator
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasCand datesW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasCand datesW hFeatures
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasQuery
+ mport com.tw ter.product_m xer.core.p pel ne.step.Step
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.product_m xer.core.serv ce.cand date_decorator_executor.Cand dateDecoratorExecutor
+ mport com.tw ter.product_m xer.core.serv ce.cand date_decorator_executor.Cand dateDecoratorExecutorResult
+ mport com.tw ter.st ch.Arrow
+ mport javax. nject. nject
 
 /**
- * A candidate decoration step, which takes the query and candidates and outputs decorations for them
+ * A cand date decorat on step, wh ch takes t  query and cand dates and outputs decorat ons for t m
  *
- * @param candidateDecoratorExecutor Candidate Source Executor
- * @tparam Query Type of PipelineQuery domain model
- * @tparam Candidate Type of Candidates to filter
- * @tparam State The pipeline state domain model.
+ * @param cand dateDecoratorExecutor Cand date S ce Executor
+ * @tparam Query Type of P pel neQuery doma n model
+ * @tparam Cand date Type of Cand dates to f lter
+ * @tparam State T  p pel ne state doma n model.
  */
 case class DecoratorStep[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
-  State <: HasQuery[Query, State] with HasCandidatesWithDetails[
+  Query <: P pel neQuery,
+  Cand date <: Un versalNoun[Any],
+  State <: HasQuery[Query, State] w h HasCand datesW hDeta ls[
     State
-  ] with HasCandidatesWithFeatures[
-    Candidate,
+  ] w h HasCand datesW hFeatures[
+    Cand date,
     State
-  ]] @Inject() (candidateDecoratorExecutor: CandidateDecoratorExecutor)
+  ]] @ nject() (cand dateDecoratorExecutor: Cand dateDecoratorExecutor)
     extends Step[
       State,
-      Option[CandidateDecorator[Query, Candidate]],
-      (Query, Seq[CandidateWithFeatures[Candidate]]),
-      CandidateDecoratorExecutorResult
+      Opt on[Cand dateDecorator[Query, Cand date]],
+      (Query, Seq[Cand dateW hFeatures[Cand date]]),
+      Cand dateDecoratorExecutorResult
     ] {
 
-  override def isEmpty(config: Option[CandidateDecorator[Query, Candidate]]): Boolean =
-    config.isEmpty
+  overr de def  sEmpty(conf g: Opt on[Cand dateDecorator[Query, Cand date]]): Boolean =
+    conf g. sEmpty
 
-  override def adaptInput(
+  overr de def adapt nput(
     state: State,
-    config: Option[CandidateDecorator[Query, Candidate]]
-  ): (Query, Seq[CandidateWithFeatures[Candidate]]) =
-    (state.query, state.candidatesWithFeatures)
+    conf g: Opt on[Cand dateDecorator[Query, Cand date]]
+  ): (Query, Seq[Cand dateW hFeatures[Cand date]]) =
+    (state.query, state.cand datesW hFeatures)
 
-  override def arrow(
-    config: Option[CandidateDecorator[Query, Candidate]],
+  overr de def arrow(
+    conf g: Opt on[Cand dateDecorator[Query, Cand date]],
     context: Executor.Context
-  ): Arrow[(Query, Seq[CandidateWithFeatures[Candidate]]), CandidateDecoratorExecutorResult] =
-    candidateDecoratorExecutor.arrow(config, context)
+  ): Arrow[(Query, Seq[Cand dateW hFeatures[Cand date]]), Cand dateDecoratorExecutorResult] =
+    cand dateDecoratorExecutor.arrow(conf g, context)
 
-  override def updateState(
+  overr de def updateState(
     state: State,
-    executorResult: CandidateDecoratorExecutorResult,
-    config: Option[CandidateDecorator[Query, Candidate]]
+    executorResult: Cand dateDecoratorExecutorResult,
+    conf g: Opt on[Cand dateDecorator[Query, Cand date]]
   ): State = {
-    state.updateDecorations(executorResult.result)
+    state.updateDecorat ons(executorResult.result)
   }
 }

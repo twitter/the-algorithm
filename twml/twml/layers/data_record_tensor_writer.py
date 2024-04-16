@@ -1,50 +1,50 @@
-# pylint: disable=no-member, invalid-name
+# pyl nt: d sable=no- mber,  nval d-na 
 """
-Implementing Writer Layer
+ mple nt ng Wr er Layer
 """
-from .layer import Layer
+from .layer  mport Layer
 
-import libtwml
+ mport l btwml
 
 
-class DataRecordTensorWriter(Layer):
+class DataRecordTensorWr er(Layer):
   """
-  A layer that packages keys and dense tensors into a DataRecord.
-  This layer was initially added to support exporting user embeddings as tensors.
+  A layer that packages keys and dense tensors  nto a DataRecord.
+  T  layer was  n  ally added to support export ng user embedd ngs as tensors.
 
-  Arguments:
+  Argu nts:
       keys:
         keys to hashmap
   Output:
       output:
-        a DataRecord serialized using Thrift into a uint8 tensor
+        a DataRecord ser al zed us ng Thr ft  nto a u nt8 tensor
    """
 
-  def __init__(self, keys, **kwargs):  # pylint: disable=useless-super-delegation
-    super(DataRecordTensorWriter, self).__init__(**kwargs)
+  def __ n __(self, keys, **kwargs):  # pyl nt: d sable=useless-super-delegat on
+    super(DataRecordTensorWr er, self).__ n __(**kwargs)
     self.keys = keys
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  def compute_output_shape(self,  nput_shape):
+    """Computes t  output shape of t  layer g ven t   nput shape.
 
     Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+       nput_shape: A (poss bly nested tuple of) `TensorShape`.    need not
+        be fully def ned (e.g. t  batch s ze may be unknown).
 
-    Raises NotImplementedError.
+    Ra ses Not mple ntedError.
 
     """
-    raise NotImplementedError
+    ra se Not mple ntedError
 
-  def call(self, values, **kwargs):  # pylint: disable=unused-argument, arguments-differ
-    """The logic of the layer lives here.
+  def call(self, values, **kwargs):  # pyl nt: d sable=unused-argu nt, argu nts-d ffer
+    """T  log c of t  layer l ves  re.
 
-    Arguments:
+    Argu nts:
       values:
-        dense tensors corresponding to keys in hashmap
+        dense tensors correspond ng to keys  n hashmap
 
     Returns:
-      The output from the layer
+      T  output from t  layer
     """
-    write_op = libtwml.ops.data_record_tensor_writer(self.keys, values)
-    return write_op
+    wr e_op = l btwml.ops.data_record_tensor_wr er(self.keys, values)
+    return wr e_op

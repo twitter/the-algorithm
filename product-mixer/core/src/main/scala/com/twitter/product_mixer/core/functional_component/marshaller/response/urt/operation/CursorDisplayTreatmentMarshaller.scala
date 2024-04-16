@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.operation
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.operat on
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorDisplayTreatment
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.CursorD splayTreat nt
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class CursorDisplayTreatmentMarshaller @Inject() () {
+@S ngleton
+class CursorD splayTreat ntMarshaller @ nject() () {
 
-  def apply(treatment: CursorDisplayTreatment): urt.CursorDisplayTreatment =
-    urt.CursorDisplayTreatment(
-      actionText = treatment.actionText,
-      labelText = treatment.labelText
+  def apply(treat nt: CursorD splayTreat nt): urt.CursorD splayTreat nt =
+    urt.CursorD splayTreat nt(
+      act onText = treat nt.act onText,
+      labelText = treat nt.labelText
     )
 }

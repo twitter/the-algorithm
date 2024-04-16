@@ -1,47 +1,47 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.tile
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.t le
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.tile.TileCandidateUrtItemBuilder.TopicTileClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.PromptCarouselTileCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.StandardTileContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.TileItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.t le.T leCand dateUrt emBu lder.Top cT leCl entEvent nfoEle nt
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.PromptCarouselT leCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.Cand dateUrtEntryBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseCl entEvent nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseFeedbackAct on nfoBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t le.StandardT leContent
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t le.T le em
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object TileCandidateUrtItemBuilder {
-  val TopicTileClientEventInfoElement: String = "tile"
+object T leCand dateUrt emBu lder {
+  val Top cT leCl entEvent nfoEle nt: Str ng = "t le"
 }
 
-case class TileCandidateUrtItemBuilder[-Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, PromptCarouselTileCandidate],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, PromptCarouselTileCandidate]
+case class T leCand dateUrt emBu lder[-Query <: P pel neQuery](
+  cl entEvent nfoBu lder: BaseCl entEvent nfoBu lder[Query, PromptCarouselT leCand date],
+  feedbackAct on nfoBu lder: Opt on[
+    BaseFeedbackAct on nfoBu lder[Query, PromptCarouselT leCand date]
   ] = None)
-    extends CandidateUrtEntryBuilder[Query, PromptCarouselTileCandidate, TileItem] {
+    extends Cand dateUrtEntryBu lder[Query, PromptCarouselT leCand date, T le em] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    tileCandidate: PromptCarouselTileCandidate,
-    candidateFeatures: FeatureMap
-  ): TileItem = TileItem(
-    id = tileCandidate.id,
-    sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-    clientEventInfo = clientEventInfoBuilder(
+    t leCand date: PromptCarouselT leCand date,
+    cand dateFeatures: FeatureMap
+  ): T le em = T le em(
+     d = t leCand date. d,
+    sort ndex = None, // Sort  ndexes are automat cally set  n t  doma n marshaller phase
+    cl entEvent nfo = cl entEvent nfoBu lder(
       query,
-      tileCandidate,
-      candidateFeatures,
-      Some(TopicTileClientEventInfoElement)),
-    title = "", //This data is ignored do
-    supportingText = "",
-    feedbackActionInfo =
-      feedbackActionInfoBuilder.flatMap(_.apply(query, tileCandidate, candidateFeatures)),
-    image = None,
+      t leCand date,
+      cand dateFeatures,
+      So (Top cT leCl entEvent nfoEle nt)),
+    t le = "", //T  data  s  gnored do
+    support ngText = "",
+    feedbackAct on nfo =
+      feedbackAct on nfoBu lder.flatMap(_.apply(query, t leCand date, cand dateFeatures)),
+     mage = None,
     url = None,
-    content = StandardTileContent(
-      title = "",
-      supportingText = "",
+    content = StandardT leContent(
+      t le = "",
+      support ngText = "",
       badge = None
     )
   )

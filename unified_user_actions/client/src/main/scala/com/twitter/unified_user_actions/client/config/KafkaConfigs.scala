@@ -1,61 +1,61 @@
-package com.twitter.unified_user_actions.client.config
+package com.tw ter.un f ed_user_act ons.cl ent.conf g
 
-sealed trait ClientConfig {
-  val cluster: ClusterConfig
-  val topic: String
-  val environment: EnvironmentConfig
+sealed tra  Cl entConf g {
+  val cluster: ClusterConf g
+  val top c: Str ng
+  val env ron nt: Env ron ntConf g
 }
 
-class AbstractClientConfig(isEngagementOnly: Boolean, env: EnvironmentConfig) extends ClientConfig {
-  override val cluster: ClusterConfig = {
+class AbstractCl entConf g( sEngage ntOnly: Boolean, env: Env ron ntConf g) extends Cl entConf g {
+  overr de val cluster: ClusterConf g = {
     env match {
-      case Environments.Prod => Clusters.ProdCluster
-      case Environments.Staging => Clusters.StagingCluster
+      case Env ron nts.Prod => Clusters.ProdCluster
+      case Env ron nts.Stag ng => Clusters.Stag ngCluster
       case _ => Clusters.ProdCluster
     }
   }
 
-  override val topic: String = {
-    if (isEngagementOnly) Constants.UuaEngagementOnlyKafkaTopicName
-    else Constants.UuaKafkaTopicName
+  overr de val top c: Str ng = {
+     f ( sEngage ntOnly) Constants.UuaEngage ntOnlyKafkaTop cNa 
+    else Constants.UuaKafkaTop cNa 
   }
 
-  override val environment: EnvironmentConfig = env
+  overr de val env ron nt: Env ron ntConf g = env
 }
 
-object KafkaConfigs {
+object KafkaConf gs {
 
   /*
-   * Unified User Actions Kafka config with all events (engagements and impressions).
-   * Use this config when you mainly need impression data and data volume is not an issue.
+   * Un f ed User Act ons Kafka conf g w h all events (engage nts and  mpress ons).
+   * Use t  conf g w n   ma nly need  mpress on data and data volu   s not an  ssue.
    */
-  case object ProdUnifiedUserActions
-      extends AbstractClientConfig(isEngagementOnly = false, env = Environments.Prod)
+  case object ProdUn f edUserAct ons
+      extends AbstractCl entConf g( sEngage ntOnly = false, env = Env ron nts.Prod)
 
   /*
-   * Unified User Actions Kafka config with engagements events only.
-   * Use this config when you only need engagement data. The data volume should be a lot smaller
-   * than our main config.
+   * Un f ed User Act ons Kafka conf g w h engage nts events only.
+   * Use t  conf g w n   only need engage nt data. T  data volu  should be a lot smaller
+   * than   ma n conf g.
    */
-  case object ProdUnifiedUserActionsEngagementOnly
-      extends AbstractClientConfig(isEngagementOnly = true, env = Environments.Prod)
+  case object ProdUn f edUserAct onsEngage ntOnly
+      extends AbstractCl entConf g( sEngage ntOnly = true, env = Env ron nts.Prod)
 
   /*
-   * Staging Environment for integration and testing. This is not a production config.
+   * Stag ng Env ron nt for  ntegrat on and test ng. T   s not a product on conf g.
    *
-   * Unified User Actions Kafka config with all events (engagements and impressions).
-   * Use this config when you mainly need impression data and data volume is not an issue.
+   * Un f ed User Act ons Kafka conf g w h all events (engage nts and  mpress ons).
+   * Use t  conf g w n   ma nly need  mpress on data and data volu   s not an  ssue.
    */
-  case object StagingUnifiedUserActions
-      extends AbstractClientConfig(isEngagementOnly = false, env = Environments.Staging)
+  case object Stag ngUn f edUserAct ons
+      extends AbstractCl entConf g( sEngage ntOnly = false, env = Env ron nts.Stag ng)
 
   /*
-   * Staging Environment for integration and testing. This is not a production config.
+   * Stag ng Env ron nt for  ntegrat on and test ng. T   s not a product on conf g.
    *
-   * Unified User Actions Kafka config with engagements events only.
-   * Use this config when you only need engagement data. The data volume should be a lot smaller
-   * than our main config.
+   * Un f ed User Act ons Kafka conf g w h engage nts events only.
+   * Use t  conf g w n   only need engage nt data. T  data volu  should be a lot smaller
+   * than   ma n conf g.
    */
-  case object StagingUnifiedUserActionsEngagementOnly
-      extends AbstractClientConfig(isEngagementOnly = true, env = Environments.Staging)
+  case object Stag ngUn f edUserAct onsEngage ntOnly
+      extends AbstractCl entConf g( sEngage ntOnly = true, env = Env ron nts.Stag ng)
 }

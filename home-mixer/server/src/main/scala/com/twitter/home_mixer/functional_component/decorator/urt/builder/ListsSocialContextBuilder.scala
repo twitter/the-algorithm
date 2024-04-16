@@ -1,48 +1,48 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.tw ter.ho _m xer.funct onal_component.decorator.urt.bu lder
 
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.model.HomeFeatures.UserScreenNameFeature
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.timelineservice.suggests.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.model.Ho Features.SuggestTypeFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.UserScreenNa Feature
+ mport com.tw ter.ho _m xer.product.follow ng.model.Ho M xerExternalStr ngs
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.soc al_context.BaseSoc alContextBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Soc alContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata._
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.product.gu ce.scope.ProductScoped
+ mport com.tw ter.str ngcenter.cl ent.Str ngCenter
+ mport com.tw ter.t  l neserv ce.suggests.{thr ftscala => t}
+ mport javax. nject. nject
+ mport javax. nject.Prov der
+ mport javax. nject.S ngleton
 
 /**
- * "Your Lists" will be rendered for the context and a url link for your lists.
+ * "Y  L sts" w ll be rendered for t  context and a url l nk for y  l sts.
  */
-@Singleton
-case class ListsSocialContextBuilder @Inject() (
-  externalStrings: HomeMixerExternalStrings,
-  @ProductScoped stringCenterProvider: Provider[StringCenter])
-    extends BaseSocialContextBuilder[PipelineQuery, TweetCandidate] {
+@S ngleton
+case class L stsSoc alContextBu lder @ nject() (
+  externalStr ngs: Ho M xerExternalStr ngs,
+  @ProductScoped str ngCenterProv der: Prov der[Str ngCenter])
+    extends BaseSoc alContextBu lder[P pel neQuery, T etCand date] {
 
-  private val stringCenter = stringCenterProvider.get()
-  private val listString = externalStrings.ownedSubscribedListsModuleHeaderString
+  pr vate val str ngCenter = str ngCenterProv der.get()
+  pr vate val l stStr ng = externalStr ngs.ownedSubscr bedL stsModule aderStr ng
 
   def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[SocialContext] = {
-    candidateFeatures.get(SuggestTypeFeature) match {
-      case Some(suggestType) if suggestType == t.SuggestType.RankedListTweet =>
-        val userName = query.features.flatMap(_.getOrElse(UserScreenNameFeature, None))
-        Some(
+    query: P pel neQuery,
+    cand date: T etCand date,
+    cand dateFeatures: FeatureMap
+  ): Opt on[Soc alContext] = {
+    cand dateFeatures.get(SuggestTypeFeature) match {
+      case So (suggestType)  f suggestType == t.SuggestType.RankedL stT et =>
+        val userNa  = query.features.flatMap(_.getOrElse(UserScreenNa Feature, None))
+        So (
           GeneralContext(
-            contextType = ListGeneralContextType,
-            text = stringCenter.prepare(listString),
-            url = userName.map(name => ""),
-            contextImageUrls = None,
-            landingUrl = None
+            contextType = L stGeneralContextType,
+            text = str ngCenter.prepare(l stStr ng),
+            url = userNa .map(na  => ""),
+            context mageUrls = None,
+            land ngUrl = None
           ))
       case _ => None
     }

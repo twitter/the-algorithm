@@ -1,148 +1,148 @@
-package com.twitter.search.common.schema.earlybird;
+package com.tw ter.search.common.sc ma.earlyb rd;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.search.common.encoding.features.IntegerEncodedFeatures;
-import com.twitter.search.common.indexing.thriftjava.PackedFeatures;
-import com.twitter.search.common.indexing.thriftjava.VersionedTweetFeatures;
-import com.twitter.search.common.schema.SchemaUtil;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
+ mport com.tw ter.search.common.encod ng.features. ntegerEncodedFeatures;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.PackedFeatures;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Vers onedT etFeatures;
+ mport com.tw ter.search.common.sc ma.Sc maUt l;
+ mport com.tw ter.search.common.sc ma.base.FeatureConf gurat on;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
 
 /**
- * A class for encoding earlybird features in integers
+ * A class for encod ng earlyb rd features  n  ntegers
  */
-public abstract class EarlybirdEncodedFeatures extends IntegerEncodedFeatures {
-  private final ImmutableSchemaInterface schema;
-  private final EarlybirdFieldConstant baseField;
+publ c abstract class Earlyb rdEncodedFeatures extends  ntegerEncodedFeatures {
+  pr vate f nal  mmutableSc ma nterface sc ma;
+  pr vate f nal Earlyb rdF eldConstant baseF eld;
 
-  public EarlybirdEncodedFeatures(ImmutableSchemaInterface schema,
-                                  EarlybirdFieldConstant baseField) {
-    this.schema = schema;
-    this.baseField = baseField;
+  publ c Earlyb rdEncodedFeatures( mmutableSc ma nterface sc ma,
+                                  Earlyb rdF eldConstant baseF eld) {
+    t .sc ma = sc ma;
+    t .baseF eld = baseF eld;
   }
 
   /**
-   * Write this object into packedFeatures of the given VersionedTweetFeatures.
+   * Wr e t  object  nto packedFeatures of t  g ven Vers onedT etFeatures.
    */
-  public void writeFeaturesToVersionedTweetFeatures(
-      VersionedTweetFeatures versionedTweetFeatures) {
-    if (!versionedTweetFeatures.isSetPackedFeatures()) {
-      versionedTweetFeatures.setPackedFeatures(new PackedFeatures());
+  publ c vo d wr eFeaturesToVers onedT etFeatures(
+      Vers onedT etFeatures vers onedT etFeatures) {
+     f (!vers onedT etFeatures. sSetPackedFeatures()) {
+      vers onedT etFeatures.setPackedFeatures(new PackedFeatures());
     }
-    copyToPackedFeatures(versionedTweetFeatures.getPackedFeatures());
+    copyToPackedFeatures(vers onedT etFeatures.getPackedFeatures());
   }
 
   /**
-   * Write this object into extendedPackedFeatures of the given VersionedTweetFeatures.
+   * Wr e t  object  nto extendedPackedFeatures of t  g ven Vers onedT etFeatures.
    */
-  public void writeExtendedFeaturesToVersionedTweetFeatures(
-      VersionedTweetFeatures versionedTweetFeatures) {
-    if (!versionedTweetFeatures.isSetExtendedPackedFeatures()) {
-      versionedTweetFeatures.setExtendedPackedFeatures(new PackedFeatures());
+  publ c vo d wr eExtendedFeaturesToVers onedT etFeatures(
+      Vers onedT etFeatures vers onedT etFeatures) {
+     f (!vers onedT etFeatures. sSetExtendedPackedFeatures()) {
+      vers onedT etFeatures.setExtendedPackedFeatures(new PackedFeatures());
     }
-    copyToPackedFeatures(versionedTweetFeatures.getExtendedPackedFeatures());
+    copyToPackedFeatures(vers onedT etFeatures.getExtendedPackedFeatures());
   }
 
-  @Override
-  public String toString() {
-    StringBuilder ret = new StringBuilder();
-    ret.append("Tweet features: \n");
-    for (FeatureConfiguration feature
-        : EarlybirdSchemaCreateTool.FEATURE_CONFIGURATION_MAP.values()) {
-      ret.append(feature.getName()).append(": ").append(getFeatureValue(feature)).append("\n");
+  @Overr de
+  publ c Str ng toStr ng() {
+    Str ngBu lder ret = new Str ngBu lder();
+    ret.append("T et features: \n");
+    for (FeatureConf gurat on feature
+        : Earlyb rdSc maCreateTool.FEATURE_CONF GURAT ON_MAP.values()) {
+      ret.append(feature.getNa ()).append(": ").append(getFeatureValue(feature)).append("\n");
     }
-    return ret.toString();
+    return ret.toStr ng();
   }
 
-  public boolean isFlagSet(EarlybirdFieldConstant field) {
-    return isFlagSet(schema.getFeatureConfigurationById(field.getFieldId()));
+  publ c boolean  sFlagSet(Earlyb rdF eldConstant f eld) {
+    return  sFlagSet(sc ma.getFeatureConf gurat onBy d(f eld.getF eld d()));
   }
 
-  public int getFeatureValue(EarlybirdFieldConstant field) {
-    return getFeatureValue(schema.getFeatureConfigurationById(field.getFieldId()));
+  publ c  nt getFeatureValue(Earlyb rdF eldConstant f eld) {
+    return getFeatureValue(sc ma.getFeatureConf gurat onBy d(f eld.getF eld d()));
   }
 
-  public EarlybirdEncodedFeatures setFlag(EarlybirdFieldConstant field) {
-    setFlag(schema.getFeatureConfigurationById(field.getFieldId()));
-    return this;
+  publ c Earlyb rdEncodedFeatures setFlag(Earlyb rdF eldConstant f eld) {
+    setFlag(sc ma.getFeatureConf gurat onBy d(f eld.getF eld d()));
+    return t ;
   }
 
-  public EarlybirdEncodedFeatures clearFlag(EarlybirdFieldConstant field) {
-    clearFlag(schema.getFeatureConfigurationById(field.getFieldId()));
-    return this;
+  publ c Earlyb rdEncodedFeatures clearFlag(Earlyb rdF eldConstant f eld) {
+    clearFlag(sc ma.getFeatureConf gurat onBy d(f eld.getF eld d()));
+    return t ;
   }
 
-  public EarlybirdEncodedFeatures setFlagValue(EarlybirdFieldConstant field,
+  publ c Earlyb rdEncodedFeatures setFlagValue(Earlyb rdF eldConstant f eld,
                                                boolean value) {
-    setFlagValue(schema.getFeatureConfigurationById(field.getFieldId()), value);
-    return this;
+    setFlagValue(sc ma.getFeatureConf gurat onBy d(f eld.getF eld d()), value);
+    return t ;
   }
 
-  public EarlybirdEncodedFeatures setFeatureValue(EarlybirdFieldConstant field,
-                                                  int value) {
-    setFeatureValue(schema.getFeatureConfigurationById(field.getFieldId()), value);
-    return this;
+  publ c Earlyb rdEncodedFeatures setFeatureValue(Earlyb rdF eldConstant f eld,
+                                                   nt value) {
+    setFeatureValue(sc ma.getFeatureConf gurat onBy d(f eld.getF eld d()), value);
+    return t ;
   }
 
-  public EarlybirdEncodedFeatures setFeatureValueIfGreater(EarlybirdFieldConstant field,
-                                                           int value) {
-    setFeatureValueIfGreater(schema.getFeatureConfigurationById(field.getFieldId()), value);
-    return this;
+  publ c Earlyb rdEncodedFeatures setFeatureValue fGreater(Earlyb rdF eldConstant f eld,
+                                                            nt value) {
+    setFeatureValue fGreater(sc ma.getFeatureConf gurat onBy d(f eld.getF eld d()), value);
+    return t ;
   }
 
-  public boolean incrementIfNotMaximum(EarlybirdFieldConstant field) {
-    return incrementIfNotMaximum(schema.getFeatureConfigurationById(field.getFieldId()));
+  publ c boolean  ncre nt fNotMax mum(Earlyb rdF eldConstant f eld) {
+    return  ncre nt fNotMax mum(sc ma.getFeatureConf gurat onBy d(f eld.getF eld d()));
   }
 
-  private static final class ArrayEncodedTweetFeatures extends EarlybirdEncodedFeatures {
-    private final int[] encodedInts;
+  pr vate stat c f nal class ArrayEncodedT etFeatures extends Earlyb rdEncodedFeatures {
+    pr vate f nal  nt[] encoded nts;
 
-    private ArrayEncodedTweetFeatures(ImmutableSchemaInterface schema,
-                                      EarlybirdFieldConstant baseField) {
-      super(schema, baseField);
+    pr vate ArrayEncodedT etFeatures( mmutableSc ma nterface sc ma,
+                                      Earlyb rdF eldConstant baseF eld) {
+      super(sc ma, baseF eld);
 
-      final int numIntegers = SchemaUtil.getCSFFieldFixedLength(schema, baseField.getFieldId());
-      Preconditions.checkState(numIntegers > 0);
-      this.encodedInts = new int[numIntegers];
+      f nal  nt num ntegers = Sc maUt l.getCSFF eldF xedLength(sc ma, baseF eld.getF eld d());
+      Precond  ons.c ckState(num ntegers > 0);
+      t .encoded nts = new  nt[num ntegers];
     }
 
-    @Override
-    public int getNumInts() {
-      return encodedInts.length;
+    @Overr de
+    publ c  nt getNum nts() {
+      return encoded nts.length;
     }
 
-    @Override
-    public int getInt(int pos) {
-      return encodedInts[pos];
+    @Overr de
+    publ c  nt get nt( nt pos) {
+      return encoded nts[pos];
     }
 
-    @Override
-    public void setInt(int pos, int value) {
-      encodedInts[pos] = value;
+    @Overr de
+    publ c vo d set nt( nt pos,  nt value) {
+      encoded nts[pos] = value;
     }
   }
 
   /**
-   * Create a new {@link EarlybirdEncodedFeatures} object based on schema and base field.
-   * @param schema the schema for all fields
-   * @param baseField base field's constant value
+   * Create a new {@l nk Earlyb rdEncodedFeatures} object based on sc ma and base f eld.
+   * @param sc ma t  sc ma for all f elds
+   * @param baseF eld base f eld's constant value
    */
-  public static EarlybirdEncodedFeatures newEncodedTweetFeatures(
-      ImmutableSchemaInterface schema, EarlybirdFieldConstant baseField) {
-    return new ArrayEncodedTweetFeatures(schema, baseField);
+  publ c stat c Earlyb rdEncodedFeatures newEncodedT etFeatures(
+       mmutableSc ma nterface sc ma, Earlyb rdF eldConstant baseF eld) {
+    return new ArrayEncodedT etFeatures(sc ma, baseF eld);
   }
 
   /**
-   * Create a new {@link EarlybirdEncodedFeatures} object based on schema and base field name.
-   * @param schema the schema for all fields
-   * @param baseFieldName base field's name
+   * Create a new {@l nk Earlyb rdEncodedFeatures} object based on sc ma and base f eld na .
+   * @param sc ma t  sc ma for all f elds
+   * @param baseF eldNa  base f eld's na 
    */
-  public static EarlybirdEncodedFeatures newEncodedTweetFeatures(
-      ImmutableSchemaInterface schema, String baseFieldName) {
-    EarlybirdFieldConstant baseField = EarlybirdFieldConstants.getFieldConstant(baseFieldName);
-    Preconditions.checkNotNull(baseField);
-    return newEncodedTweetFeatures(schema, baseField);
+  publ c stat c Earlyb rdEncodedFeatures newEncodedT etFeatures(
+       mmutableSc ma nterface sc ma, Str ng baseF eldNa ) {
+    Earlyb rdF eldConstant baseF eld = Earlyb rdF eldConstants.getF eldConstant(baseF eldNa );
+    Precond  ons.c ckNotNull(baseF eld);
+    return newEncodedT etFeatures(sc ma, baseF eld);
   }
 }

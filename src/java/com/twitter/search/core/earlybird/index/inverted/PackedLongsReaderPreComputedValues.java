@@ -1,202 +1,202 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
 /**
- * Pre-computed shifts, mask, and start int indices used by
- * {@link IntBlockPoolPackedLongsReader} to decode packed values from
- * {@link IntBlockPool}.
+ * Pre-computed sh fts, mask, and start  nt  nd ces used by
+ * {@l nk  ntBlockPoolPackedLongsReader} to decode packed values from
+ * {@l nk  ntBlockPool}.
  *
- * The purpose of this class is for decoding efficiency and speed. This class is thread-safe since
- * all its usages are read-only.
+ * T  purpose of t  class  s for decod ng eff c ency and speed. T  class  s thread-safe s nce
+ * all  s usages are read-only.
  *
- * Packed ints are stored from LOWEST bits for HIGHEST bits in an int.
+ * Packed  nts are stored from LOWEST b s for H GHEST b s  n an  nt.
  *
- * Here are 3 different situations when a packed value spans 1, 2, and 3 ints:
+ *  re are 3 d fferent s uat ons w n a packed value spans 1, 2, and 3  nts:
  *
- * - A packed value spans 1 int:
- *            [High Bits ................................. Low Bits]
- *   int[n] = [possible_other_data|packed_value|possible_other_data]
+ * - A packed value spans 1  nt:
+ *            [H gh B s ................................. Low B s]
+ *    nt[n] = [poss ble_ot r_data|packed_value|poss ble_ot r_data]
  *
- *   To decode, 1 shift right and 1 mask are needed:
- *     * shift - {@link #allLowBitsRightShift}
- *     * mask - dynamically computed based on bitsPerValue (in decoded slice).
+ *   To decode, 1 sh ft r ght and 1 mask are needed:
+ *     * sh ft - {@l nk #allLowB sR ghtSh ft}
+ *     * mask - dynam cally computed based on b sPerValue ( n decoded sl ce).
  *
- * - A packed value spans 2 ints:
- *   The data is stored as:
- *              [High Bits .................. Low Bits]
- *   int[n]   = [low_bits_of_packed_value | other_data]
- *   int[n+1] = [other_data| high_bits_of_packed_value]
+ * - A packed value spans 2  nts:
+ *   T  data  s stored as:
+ *              [H gh B s .................. Low B s]
+ *    nt[n]   = [low_b s_of_packed_value | ot r_data]
+ *    nt[n+1] = [ot r_data| h gh_b s_of_packed_value]
  *
- *   To decode, 1 shift right, 1 shift left, and 2 masks are needed:
- *     * 1 shift right {@link #allLowBitsRightShift} and 1 mask (computed on the fly) to compute
- *       low_bits_of_packed_value
- *     * 1 mask {@link #allMiddleBitsMask} and 1 shift left {@link #allMiddleBitsLeftShift} to
- *       compute high_bits_of_packed_value
- *     * 1 OR to combine `high_bits_of_packed_value | low_bits_of_packed_value`
+ *   To decode, 1 sh ft r ght, 1 sh ft left, and 2 masks are needed:
+ *     * 1 sh ft r ght {@l nk #allLowB sR ghtSh ft} and 1 mask (computed on t  fly) to compute
+ *       low_b s_of_packed_value
+ *     * 1 mask {@l nk #allM ddleB sMask} and 1 sh ft left {@l nk #allM ddleB sLeftSh ft} to
+ *       compute h gh_b s_of_packed_value
+ *     * 1 OR to comb ne `h gh_b s_of_packed_value | low_b s_of_packed_value`
  *
- * - A packed value spans 3 ints:
- *   The data is stored as:
- *              [High Bits .................. Low Bits]
- *   int[n]   = [low_bits_of_packed_value | other_data]
- *   int[n+1] = [ ... middle_bits_of_packed_value ... ]
- *   int[n+2] = [other_data| high_bits_of_packed_value]
+ * - A packed value spans 3  nts:
+ *   T  data  s stored as:
+ *              [H gh B s .................. Low B s]
+ *    nt[n]   = [low_b s_of_packed_value | ot r_data]
+ *    nt[n+1] = [ ... m ddle_b s_of_packed_value ... ]
+ *    nt[n+2] = [ot r_data| h gh_b s_of_packed_value]
  *
- *   To decode, 1 shift right, 2 shift left, and 3 masks are needed:
- *     * 1 shift right {@link #allLowBitsRightShift} and 1 mask (computed on the fly) to compute
- *       low_bits_of_packed_value
- *     * 1 shift left {@link #allMiddleBitsLeftShift} and 1 mask {@link #allMiddleBitsMask} to
- *       compute middle_bits_of_data
- *     * 1 shift left {@link #allHighBitsLeftShift} and 1 mask {@link #allHighBitsMask} to compute
- *       high_bits_of_data
- *     * 1 OR to combine `low_bits_of_data | middle_bits_of_data | high_bits_of_data`
+ *   To decode, 1 sh ft r ght, 2 sh ft left, and 3 masks are needed:
+ *     * 1 sh ft r ght {@l nk #allLowB sR ghtSh ft} and 1 mask (computed on t  fly) to compute
+ *       low_b s_of_packed_value
+ *     * 1 sh ft left {@l nk #allM ddleB sLeftSh ft} and 1 mask {@l nk #allM ddleB sMask} to
+ *       compute m ddle_b s_of_data
+ *     * 1 sh ft left {@l nk #allH ghB sLeftSh ft} and 1 mask {@l nk #allH ghB sMask} to compute
+ *       h gh_b s_of_data
+ *     * 1 OR to comb ne `low_b s_of_data | m ddle_b s_of_data | h gh_b s_of_data`
  *
  * Example usage:
- * @see HighDFPackedIntsDocsEnum
- * @see HighDFPackedIntsDocsAndPositionsEnum
+ * @see H ghDFPacked ntsDocsEnum
+ * @see H ghDFPacked ntsDocsAndPos  onsEnum
  */
-public final class PackedLongsReaderPreComputedValues {
-  private final int[][] allLowBitsRightShift;
-  private final int[][] allMiddleBitsLeftShift;
-  private final int[][] allMiddleBitsMask;
-  private final int[][] allHighBitsLeftShift;
-  private final int[][] allHighBitsMask;
+publ c f nal class PackedLongsReaderPreComputedValues {
+  pr vate f nal  nt[][] allLowB sR ghtSh ft;
+  pr vate f nal  nt[][] allM ddleB sLeftSh ft;
+  pr vate f nal  nt[][] allM ddleB sMask;
+  pr vate f nal  nt[][] allH ghB sLeftSh ft;
+  pr vate f nal  nt[][] allH ghB sMask;
 
   /**
-   * 2D int arrays containing pre-computed start int indices; the 2 dimensions are
-   * int[numBitsPerPackedValue][packedValueIndex].
+   * 2D  nt arrays conta n ng pre-computed start  nt  nd ces; t  2 d  ns ons are
+   *  nt[numB sPerPackedValue][packedValue ndex].
    *
-   * For a given number bits per packed value and a given packed value index, this is the first
-   * int in the subsequent of ints that contains the packed value with the given packed value index.
+   * For a g ven number b s per packed value and a g ven packed value  ndex, t   s t  f rst
+   *  nt  n t  subsequent of  nts that conta ns t  packed value w h t  g ven packed value  ndex.
    */
-  private final int[][] allStartIntIndices;
+  pr vate f nal  nt[][] allStart nt nd ces;
 
   /**
    * Sole constructor.
    *
-   * @param maxBitsPerValue max possible number of bits of packed values that will be decoded
+   * @param maxB sPerValue max poss ble number of b s of packed values that w ll be decoded
    * @param maxNumValues max number of values are encoded back to back
-   * @param maxNumInts max number of ints are used to store packed values
-   * @param needStartIntIndex for optimization: whether start int indices are needed
+   * @param maxNum nts max number of  nts are used to store packed values
+   * @param needStart nt ndex for opt m zat on: w t r start  nt  nd ces are needed
    */
   PackedLongsReaderPreComputedValues(
-      int maxBitsPerValue,
-      int maxNumValues,
-      int maxNumInts,
-      boolean needStartIntIndex) {
-    assert maxBitsPerValue <= Long.SIZE;
+       nt maxB sPerValue,
+       nt maxNumValues,
+       nt maxNum nts,
+      boolean needStart nt ndex) {
+    assert maxB sPerValue <= Long.S ZE;
 
-    if (needStartIntIndex) {
-      this.allStartIntIndices = new int[maxBitsPerValue + 1][maxNumValues];
+     f (needStart nt ndex) {
+      t .allStart nt nd ces = new  nt[maxB sPerValue + 1][maxNumValues];
     } else {
-      this.allStartIntIndices = null;
+      t .allStart nt nd ces = null;
     }
 
-    this.allLowBitsRightShift = new int[maxBitsPerValue + 1][maxNumValues];
-    this.allMiddleBitsLeftShift = new int[maxBitsPerValue + 1][maxNumValues];
-    this.allMiddleBitsMask = new int[maxBitsPerValue + 1][maxNumValues];
+    t .allLowB sR ghtSh ft = new  nt[maxB sPerValue + 1][maxNumValues];
+    t .allM ddleB sLeftSh ft = new  nt[maxB sPerValue + 1][maxNumValues];
+    t .allM ddleB sMask = new  nt[maxB sPerValue + 1][maxNumValues];
 
-    // Packed value could use up 2 ints.
-    if (maxBitsPerValue > Integer.SIZE) {
-      this.allHighBitsLeftShift = new int[maxBitsPerValue + 1][maxNumValues];
-      this.allHighBitsMask = new int[maxBitsPerValue + 1][maxNumValues];
+    // Packed value could use up 2  nts.
+     f (maxB sPerValue >  nteger.S ZE) {
+      t .allH ghB sLeftSh ft = new  nt[maxB sPerValue + 1][maxNumValues];
+      t .allH ghB sMask = new  nt[maxB sPerValue + 1][maxNumValues];
     } else {
-      this.allHighBitsLeftShift = null;
-      this.allHighBitsMask = null;
+      t .allH ghB sLeftSh ft = null;
+      t .allH ghB sMask = null;
     }
 
-    compute(maxBitsPerValue, maxNumValues, maxNumInts);
+    compute(maxB sPerValue, maxNumValues, maxNum nts);
   }
 
   /**
-   * Compute masks, shifts and start indices.
+   * Compute masks, sh fts and start  nd ces.
    */
-  private void compute(int maxBitsPerValue, int maxNumValues, int maxNumInts) {
-    // For each possible bits per packed value.
-    for (int bitsPerPackedValue = 0; bitsPerPackedValue <= maxBitsPerValue; bitsPerPackedValue++) {
-      int[] startIntIndices =
-          allStartIntIndices != null ? allStartIntIndices[bitsPerPackedValue] : null;
-      int[] lowBitsRightShift =
-          allLowBitsRightShift[bitsPerPackedValue];
-      int[] middleBitsLeftShift =
-          allMiddleBitsLeftShift[bitsPerPackedValue];
-      int[] middleBitsMask =
-          allMiddleBitsMask[bitsPerPackedValue];
-      int[] highBitsLeftShift =
-          allHighBitsLeftShift != null ? allHighBitsLeftShift[bitsPerPackedValue] : null;
-      int[] highBitsMask =
-          allHighBitsMask != null ? allHighBitsMask[bitsPerPackedValue] : null;
+  pr vate vo d compute( nt maxB sPerValue,  nt maxNumValues,  nt maxNum nts) {
+    // For each poss ble b s per packed value.
+    for ( nt b sPerPackedValue = 0; b sPerPackedValue <= maxB sPerValue; b sPerPackedValue++) {
+       nt[] start nt nd ces =
+          allStart nt nd ces != null ? allStart nt nd ces[b sPerPackedValue] : null;
+       nt[] lowB sR ghtSh ft =
+          allLowB sR ghtSh ft[b sPerPackedValue];
+       nt[] m ddleB sLeftSh ft =
+          allM ddleB sLeftSh ft[b sPerPackedValue];
+       nt[] m ddleB sMask =
+          allM ddleB sMask[b sPerPackedValue];
+       nt[] h ghB sLeftSh ft =
+          allH ghB sLeftSh ft != null ? allH ghB sLeftSh ft[b sPerPackedValue] : null;
+       nt[] h ghB sMask =
+          allH ghB sMask != null ? allH ghB sMask[b sPerPackedValue] : null;
 
-      int shift = 0;
-      int currentIntIndex = 0;
-      int bitsRead;
-      int bitsRemaining;
+       nt sh ft = 0;
+       nt current nt ndex = 0;
+       nt b sRead;
+       nt b sRema n ng;
 
       // For each packed value.
-      for (int packedValueIndex = 0; packedValueIndex < maxNumValues; packedValueIndex++) {
-        if (startIntIndices != null) {
-          startIntIndices[packedValueIndex] = currentIntIndex;
+      for ( nt packedValue ndex = 0; packedValue ndex < maxNumValues; packedValue ndex++) {
+         f (start nt nd ces != null) {
+          start nt nd ces[packedValue ndex] = current nt ndex;
         }
-        // Packed value spans to the 1st int.
-        lowBitsRightShift[packedValueIndex] = shift;
-        bitsRead = Integer.SIZE - shift;
-        bitsRemaining = bitsPerPackedValue - bitsRead;
+        // Packed value spans to t  1st  nt.
+        lowB sR ghtSh ft[packedValue ndex] = sh ft;
+        b sRead =  nteger.S ZE - sh ft;
+        b sRema n ng = b sPerPackedValue - b sRead;
 
-        if (bitsRemaining >= 0) {
-          // Packed value spans to the 2nd int.
-          currentIntIndex++;
-          if (currentIntIndex == maxNumInts) {
+         f (b sRema n ng >= 0) {
+          // Packed value spans to t  2nd  nt.
+          current nt ndex++;
+           f (current nt ndex == maxNum nts) {
             break;
           }
-          middleBitsLeftShift[packedValueIndex] = bitsRead;
-          middleBitsMask[packedValueIndex] =
-              bitsRemaining >= Integer.SIZE ? 0xFFFFFFFF : (1 << bitsRemaining) - 1;
+          m ddleB sLeftSh ft[packedValue ndex] = b sRead;
+          m ddleB sMask[packedValue ndex] =
+              b sRema n ng >=  nteger.S ZE ? 0xFFFFFFFF : (1 << b sRema n ng) - 1;
 
-          // Packed value spans to the 3rd int.
-          bitsRead += Integer.SIZE;
-          bitsRemaining -= Integer.SIZE;
-          if (bitsRemaining >= 0) {
-            currentIntIndex++;
-            if (currentIntIndex == maxNumInts) {
+          // Packed value spans to t  3rd  nt.
+          b sRead +=  nteger.S ZE;
+          b sRema n ng -=  nteger.S ZE;
+           f (b sRema n ng >= 0) {
+            current nt ndex++;
+             f (current nt ndex == maxNum nts) {
               break;
             }
-            assert highBitsLeftShift != null;
-            assert highBitsMask != null;
-            highBitsLeftShift[packedValueIndex] = bitsRead;
-            highBitsMask[packedValueIndex] =
-                bitsRemaining >= Integer.SIZE ? 0xFFFFFFFF : (1 << bitsRemaining) - 1;
+            assert h ghB sLeftSh ft != null;
+            assert h ghB sMask != null;
+            h ghB sLeftSh ft[packedValue ndex] = b sRead;
+            h ghB sMask[packedValue ndex] =
+                b sRema n ng >=  nteger.S ZE ? 0xFFFFFFFF : (1 << b sRema n ng) - 1;
           }
         }
 
-        shift += bitsPerPackedValue;
-        shift = shift % Integer.SIZE;
+        sh ft += b sPerPackedValue;
+        sh ft = sh ft %  nteger.S ZE;
       }
     }
   }
 
   /********************************************************************
-   * Getters of Pre-computed Values: returns should NEVER be modified *
+   * Getters of Pre-computed Values: returns should NEVER be mod f ed *
    ********************************************************************/
 
-  int[] getStartIntIndices(int numBitsPerValue) {
-    return allStartIntIndices == null ? null : allStartIntIndices[numBitsPerValue];
+   nt[] getStart nt nd ces( nt numB sPerValue) {
+    return allStart nt nd ces == null ? null : allStart nt nd ces[numB sPerValue];
   }
 
-  int[] getLowBitsRightShift(int numBitsPerValue) {
-    return allLowBitsRightShift[numBitsPerValue];
+   nt[] getLowB sR ghtSh ft( nt numB sPerValue) {
+    return allLowB sR ghtSh ft[numB sPerValue];
   }
 
-  int[] getMiddleBitsLeftShift(int numBitsPerValue) {
-    return allMiddleBitsLeftShift[numBitsPerValue];
+   nt[] getM ddleB sLeftSh ft( nt numB sPerValue) {
+    return allM ddleB sLeftSh ft[numB sPerValue];
   }
 
-  int[] getMiddleBitsMask(int numBitsPerValue) {
-    return allMiddleBitsMask[numBitsPerValue];
+   nt[] getM ddleB sMask( nt numB sPerValue) {
+    return allM ddleB sMask[numB sPerValue];
   }
 
-  int[] getHighBitsLeftShift(int numBitsPerValue) {
-    return allHighBitsLeftShift == null ? null : allHighBitsLeftShift[numBitsPerValue];
+   nt[] getH ghB sLeftSh ft( nt numB sPerValue) {
+    return allH ghB sLeftSh ft == null ? null : allH ghB sLeftSh ft[numB sPerValue];
   }
 
-  int[] getHighBitsMask(int numBitsPerValue) {
-    return allHighBitsMask == null ? null : allHighBitsMask[numBitsPerValue];
+   nt[] getH ghB sMask( nt numB sPerValue) {
+    return allH ghB sMask == null ? null : allH ghB sMask[numB sPerValue];
   }
 }

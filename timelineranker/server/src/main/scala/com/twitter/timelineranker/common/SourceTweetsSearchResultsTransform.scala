@@ -1,62 +1,62 @@
-package com.twitter.timelineranker.common
+package com.tw ter.t  l neranker.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.util.SourceTweetsUtil
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.search.earlyb rd.thr ftscala.Thr ftSearchResult
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t  l neranker.core.Cand dateEnvelope
+ mport com.tw ter.t  l neranker.model.RecapQuery.DependencyProv der
+ mport com.tw ter.t  l neranker.ut l.S ceT etsUt l
+ mport com.tw ter.t  l nes.cl ents.relevance_search.SearchCl ent
+ mport com.tw ter.t  l nes.ut l.Fa lOpenHandler
+ mport com.tw ter.ut l.Future
 
-object SourceTweetsSearchResultsTransform {
-  val EmptySearchResults: Seq[ThriftSearchResult] = Seq.empty[ThriftSearchResult]
-  val EmptySearchResultsFuture: Future[Seq[ThriftSearchResult]] = Future.value(EmptySearchResults)
+object S ceT etsSearchResultsTransform {
+  val EmptySearchResults: Seq[Thr ftSearchResult] = Seq.empty[Thr ftSearchResult]
+  val EmptySearchResultsFuture: Future[Seq[Thr ftSearchResult]] = Future.value(EmptySearchResults)
 }
 
 /**
- * Fetch source tweets for a given set of search results
- * Collects ids of source tweets, including extended reply and reply source tweets if needed,
- * fetches those tweets from search and populates them into the envelope
+ * Fetch s ce t ets for a g ven set of search results
+ * Collects  ds of s ce t ets,  nclud ng extended reply and reply s ce t ets  f needed,
+ * fetc s those t ets from search and populates t m  nto t  envelope
  */
-class SourceTweetsSearchResultsTransform(
-  searchClient: SearchClient,
-  failOpenHandler: FailOpenHandler,
-  hydrateReplyRootTweetProvider: DependencyProvider[Boolean],
-  perRequestSourceSearchClientIdProvider: DependencyProvider[Option[String]],
-  statsReceiver: StatsReceiver)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  import SourceTweetsSearchResultsTransform._
+class S ceT etsSearchResultsTransform(
+  searchCl ent: SearchCl ent,
+  fa lOpenHandler: Fa lOpenHandler,
+  hydrateReplyRootT etProv der: DependencyProv der[Boolean],
+  perRequestS ceSearchCl ent dProv der: DependencyProv der[Opt on[Str ng]],
+  statsRece ver: StatsRece ver)
+    extends FutureArrow[Cand dateEnvelope, Cand dateEnvelope] {
+   mport S ceT etsSearchResultsTransform._
 
-  private val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
+  pr vate val scopedStatsRece ver = statsRece ver.scope(getClass.getS mpleNa )
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    failOpenHandler {
-      envelope.followGraphData.followedUserIdsFuture.flatMap { followedUserIds =>
-        // NOTE: tweetIds are pre-computed as a performance optimisation.
-        val searchResultsTweetIds = envelope.searchResults.map(_.id).toSet
-        val sourceTweetIds = SourceTweetsUtil.getSourceTweetIds(
+  overr de def apply(envelope: Cand dateEnvelope): Future[Cand dateEnvelope] = {
+    fa lOpenHandler {
+      envelope.followGraphData.follo dUser dsFuture.flatMap { follo dUser ds =>
+        // NOTE: t et ds are pre-computed as a performance opt m sat on.
+        val searchResultsT et ds = envelope.searchResults.map(_. d).toSet
+        val s ceT et ds = S ceT etsUt l.getS ceT et ds(
           searchResults = envelope.searchResults,
-          searchResultsTweetIds = searchResultsTweetIds,
-          followedUserIds = followedUserIds,
-          shouldIncludeReplyRootTweets = hydrateReplyRootTweetProvider(envelope.query),
-          statsReceiver = scopedStatsReceiver
+          searchResultsT et ds = searchResultsT et ds,
+          follo dUser ds = follo dUser ds,
+          should ncludeReplyRootT ets = hydrateReplyRootT etProv der(envelope.query),
+          statsRece ver = scopedStatsRece ver
         )
-        if (sourceTweetIds.isEmpty) {
+         f (s ceT et ds. sEmpty) {
           EmptySearchResultsFuture
         } else {
-          searchClient.getTweetsScoredForRecap(
-            userId = envelope.query.userId,
-            tweetIds = sourceTweetIds,
-            earlybirdOptions = envelope.query.earlybirdOptions,
-            logSearchDebugInfo = false,
-            searchClientId = perRequestSourceSearchClientIdProvider(envelope.query)
+          searchCl ent.getT etsScoredForRecap(
+            user d = envelope.query.user d,
+            t et ds = s ceT et ds,
+            earlyb rdOpt ons = envelope.query.earlyb rdOpt ons,
+            logSearchDebug nfo = false,
+            searchCl ent d = perRequestS ceSearchCl ent dProv der(envelope.query)
           )
         }
       }
-    } { _: Throwable => EmptySearchResultsFuture }.map { sourceSearchResults =>
-      envelope.copy(sourceSearchResults = sourceSearchResults)
+    } { _: Throwable => EmptySearchResultsFuture }.map { s ceSearchResults =>
+      envelope.copy(s ceSearchResults = s ceSearchResults)
     }
   }
 }

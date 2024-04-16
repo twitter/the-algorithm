@@ -1,230 +1,230 @@
-/** Copyright 2010 Twitter, Inc. */
-package com.twitter.tweetypie
+/** Copyr ght 2010 Tw ter,  nc. */
+package com.tw ter.t etyp e
 package store
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.additionalfields.AdditionalFields
-import com.twitter.tweetypie.storage.Field
-import com.twitter.tweetypie.storage.Response.TweetResponse
-import com.twitter.tweetypie.storage.Response.TweetResponseCode
-import com.twitter.tweetypie.storage.TweetStorageClient
-import com.twitter.tweetypie.storage.TweetStorageClient.GetTweet
-import com.twitter.tweetypie.storage.TweetStorageException
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.util.Future
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.add  onalf elds.Add  onalF elds
+ mport com.tw ter.t etyp e.storage.F eld
+ mport com.tw ter.t etyp e.storage.Response.T etResponse
+ mport com.tw ter.t etyp e.storage.Response.T etResponseCode
+ mport com.tw ter.t etyp e.storage.T etStorageCl ent
+ mport com.tw ter.t etyp e.storage.T etStorageCl ent.GetT et
+ mport com.tw ter.t etyp e.storage.T etStorageExcept on
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport com.tw ter.ut l.Future
 
-case class UpdateTweetNotFoundException(tweetId: TweetId) extends Exception
+case class UpdateT etNotFoundExcept on(t et d: T et d) extends Except on
 
-trait ManhattanTweetStore
-    extends TweetStoreBase[ManhattanTweetStore]
-    with InsertTweet.Store
-    with AsyncDeleteTweet.Store
-    with ScrubGeo.Store
-    with SetAdditionalFields.Store
-    with DeleteAdditionalFields.Store
-    with AsyncDeleteAdditionalFields.Store
-    with Takedown.Store
-    with UpdatePossiblySensitiveTweet.Store
-    with AsyncUpdatePossiblySensitiveTweet.Store {
-  def wrap(w: TweetStore.Wrap): ManhattanTweetStore =
-    new TweetStoreWrapper(w, this)
-      with ManhattanTweetStore
-      with InsertTweet.StoreWrapper
-      with AsyncDeleteTweet.StoreWrapper
-      with ScrubGeo.StoreWrapper
-      with SetAdditionalFields.StoreWrapper
-      with DeleteAdditionalFields.StoreWrapper
-      with AsyncDeleteAdditionalFields.StoreWrapper
-      with Takedown.StoreWrapper
-      with UpdatePossiblySensitiveTweet.StoreWrapper
-      with AsyncUpdatePossiblySensitiveTweet.StoreWrapper
+tra  ManhattanT etStore
+    extends T etStoreBase[ManhattanT etStore]
+    w h  nsertT et.Store
+    w h AsyncDeleteT et.Store
+    w h ScrubGeo.Store
+    w h SetAdd  onalF elds.Store
+    w h DeleteAdd  onalF elds.Store
+    w h AsyncDeleteAdd  onalF elds.Store
+    w h Takedown.Store
+    w h UpdatePoss blySens  veT et.Store
+    w h AsyncUpdatePoss blySens  veT et.Store {
+  def wrap(w: T etStore.Wrap): ManhattanT etStore =
+    new T etStoreWrapper(w, t )
+      w h ManhattanT etStore
+      w h  nsertT et.StoreWrapper
+      w h AsyncDeleteT et.StoreWrapper
+      w h ScrubGeo.StoreWrapper
+      w h SetAdd  onalF elds.StoreWrapper
+      w h DeleteAdd  onalF elds.StoreWrapper
+      w h AsyncDeleteAdd  onalF elds.StoreWrapper
+      w h Takedown.StoreWrapper
+      w h UpdatePoss blySens  veT et.StoreWrapper
+      w h AsyncUpdatePoss blySens  veT et.StoreWrapper
 }
 
 /**
- * A TweetStore implementation that writes to Manhattan.
+ * A T etStore  mple ntat on that wr es to Manhattan.
  */
-object ManhattanTweetStore {
-  val Action: AsyncWriteAction.TbirdUpdate.type = AsyncWriteAction.TbirdUpdate
+object ManhattanT etStore {
+  val Act on: AsyncWr eAct on.Tb rdUpdate.type = AsyncWr eAct on.Tb rdUpdate
 
-  private val log = Logger(getClass)
-  private val successResponses = Set(TweetResponseCode.Success, TweetResponseCode.Deleted)
+  pr vate val log = Logger(getClass)
+  pr vate val successResponses = Set(T etResponseCode.Success, T etResponseCode.Deleted)
 
-  case class AnnotationFailure(message: String) extends Exception(message)
+  case class Annotat onFa lure( ssage: Str ng) extends Except on( ssage)
 
-  def apply(tweetStorageClient: TweetStorageClient): ManhattanTweetStore = {
+  def apply(t etStorageCl ent: T etStorageCl ent): ManhattanT etStore = {
 
     def handleStorageResponses(
-      responsesStitch: Stitch[Seq[TweetResponse]],
-      action: String
-    ): Future[Unit] =
-      Stitch
-        .run(responsesStitch)
-        .onFailure {
-          case ex: TweetStorageException => log.warn("failed on: " + action, ex)
+      responsesSt ch: St ch[Seq[T etResponse]],
+      act on: Str ng
+    ): Future[Un ] =
+      St ch
+        .run(responsesSt ch)
+        .onFa lure {
+          case ex: T etStorageExcept on => log.warn("fa led on: " + act on, ex)
           case _ =>
         }
         .flatMap { responses =>
-          Future.when(responses.exists(resp => !successResponses(resp.overallResponse))) {
-            Future.exception(AnnotationFailure(s"$action gets failure response $responses"))
+          Future.w n(responses.ex sts(resp => !successResponses(resp.overallResponse))) {
+            Future.except on(Annotat onFa lure(s"$act on gets fa lure response $responses"))
           }
         }
 
-    def updateTweetMediaIds(mutation: Mutation[MediaEntity]): Tweet => Tweet =
-      tweet => tweet.copy(media = tweet.media.map(entities => entities.map(mutation.endo)))
+    def updateT et d a ds(mutat on: Mutat on[ d aEnt y]): T et => T et =
+      t et => t et.copy( d a = t et. d a.map(ent  es => ent  es.map(mutat on.endo)))
 
     /**
-     * Does a get and set, and only sets fields that are allowed to be
-     * changed. This also prevents incoming tweets containing incomplete
-     * fields from being saved to Manhattan.
+     * Does a get and set, and only sets f elds that are allo d to be
+     * changed. T  also prevents  ncom ng t ets conta n ng  ncomplete
+     * f elds from be ng saved to Manhattan.
      */
-    def updateOneTweetByIdAction(tweetId: TweetId, copyFields: Tweet => Tweet): Future[Unit] = {
-      Stitch.run {
-        tweetStorageClient.getTweet(tweetId).flatMap {
-          case GetTweet.Response.Found(tweet) =>
-            val updatedTweet = copyFields(tweet)
+    def updateOneT etBy dAct on(t et d: T et d, copyF elds: T et => T et): Future[Un ] = {
+      St ch.run {
+        t etStorageCl ent.getT et(t et d).flatMap {
+          case GetT et.Response.Found(t et) =>
+            val updatedT et = copyF elds(t et)
 
-            if (updatedTweet != tweet) {
-              tweetStorageClient.addTweet(updatedTweet)
+             f (updatedT et != t et) {
+              t etStorageCl ent.addT et(updatedT et)
             } else {
-              Stitch.Unit
+              St ch.Un 
             }
-          case _ => Stitch.exception(UpdateTweetNotFoundException(tweetId))
+          case _ => St ch.except on(UpdateT etNotFoundExcept on(t et d))
         }
       }
     }
 
-    // This should NOT be used in parallel with other write operations.
-    // A race condition can occur after changes to the storage library to
-    // return all additional fields. The resulting behavior can cause
-    // fields that were modified by other writes to revert to their old value.
-    def updateOneTweetAction(update: Tweet, copyFields: Tweet => Tweet => Tweet): Future[Unit] =
-      updateOneTweetByIdAction(update.id, copyFields(update))
+    // T  should NOT be used  n parallel w h ot r wr e operat ons.
+    // A race cond  on can occur after changes to t  storage l brary to
+    // return all add  onal f elds. T  result ng behav or can cause
+    // f elds that  re mod f ed by ot r wr es to revert to t  r old value.
+    def updateOneT etAct on(update: T et, copyF elds: T et => T et => T et): Future[Un ] =
+      updateOneT etBy dAct on(update. d, copyF elds(update))
 
-    def tweetStoreUpdateTweet(tweet: Tweet): Future[Unit] = {
-      val setFields = AdditionalFields.nonEmptyAdditionalFieldIds(tweet).map(Field.additionalField)
+    def t etStoreUpdateT et(t et: T et): Future[Un ] = {
+      val setF elds = Add  onalF elds.nonEmptyAdd  onalF eld ds(t et).map(F eld.add  onalF eld)
       handleStorageResponses(
-        tweetStorageClient.updateTweet(tweet, setFields).map(Seq(_)),
-        s"updateTweet($tweet, $setFields)"
+        t etStorageCl ent.updateT et(t et, setF elds).map(Seq(_)),
+        s"updateT et($t et, $setF elds)"
       )
     }
 
-    // This is an edit so update the initial Tweet's control
-    def updateInitialTweet(event: InsertTweet.Event): Future[Unit] = {
-      event.initialTweetUpdateRequest match {
-        case Some(request) =>
-          updateOneTweetByIdAction(
-            request.initialTweetId,
-            tweet => InitialTweetUpdate.updateTweet(tweet, request)
+    // T   s an ed  so update t   n  al T et's control
+    def update n  alT et(event:  nsertT et.Event): Future[Un ] = {
+      event. n  alT etUpdateRequest match {
+        case So (request) =>
+          updateOneT etBy dAct on(
+            request. n  alT et d,
+            t et =>  n  alT etUpdate.updateT et(t et, request)
           )
-        case None => Future.Unit
+        case None => Future.Un 
       }
     }
 
-    new ManhattanTweetStore {
-      override val insertTweet: FutureEffect[InsertTweet.Event] =
-        FutureEffect[InsertTweet.Event] { event =>
-          Stitch
+    new ManhattanT etStore {
+      overr de val  nsertT et: FutureEffect[ nsertT et.Event] =
+        FutureEffect[ nsertT et.Event] { event =>
+          St ch
             .run(
-              tweetStorageClient.addTweet(event.internalTweet.tweet)
-            ).flatMap(_ => updateInitialTweet(event))
+              t etStorageCl ent.addT et(event. nternalT et.t et)
+            ).flatMap(_ => update n  alT et(event))
         }
 
-      override val asyncDeleteTweet: FutureEffect[AsyncDeleteTweet.Event] =
-        FutureEffect[AsyncDeleteTweet.Event] { event =>
-          if (event.isBounceDelete) {
-            Stitch.run(tweetStorageClient.bounceDelete(event.tweet.id))
+      overr de val asyncDeleteT et: FutureEffect[AsyncDeleteT et.Event] =
+        FutureEffect[AsyncDeleteT et.Event] { event =>
+           f (event. sBounceDelete) {
+            St ch.run(t etStorageCl ent.bounceDelete(event.t et. d))
           } else {
-            Stitch.run(tweetStorageClient.softDelete(event.tweet.id))
+            St ch.run(t etStorageCl ent.softDelete(event.t et. d))
           }
         }
 
-      override val retryAsyncDeleteTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncDeleteTweet.Event]
+      overr de val retryAsyncDeleteT et: FutureEffect[
+        T etStoreRetryEvent[AsyncDeleteT et.Event]
       ] =
-        TweetStore.retry(Action, asyncDeleteTweet)
+        T etStore.retry(Act on, asyncDeleteT et)
 
-      override val scrubGeo: FutureEffect[ScrubGeo.Event] =
+      overr de val scrubGeo: FutureEffect[ScrubGeo.Event] =
         FutureEffect[ScrubGeo.Event] { event =>
-          Stitch.run(tweetStorageClient.scrub(event.tweetIds, Seq(Field.Geo)))
+          St ch.run(t etStorageCl ent.scrub(event.t et ds, Seq(F eld.Geo)))
         }
 
-      override val setAdditionalFields: FutureEffect[SetAdditionalFields.Event] =
-        FutureEffect[SetAdditionalFields.Event] { event =>
-          tweetStoreUpdateTweet(event.additionalFields)
+      overr de val setAdd  onalF elds: FutureEffect[SetAdd  onalF elds.Event] =
+        FutureEffect[SetAdd  onalF elds.Event] { event =>
+          t etStoreUpdateT et(event.add  onalF elds)
         }
 
-      override val deleteAdditionalFields: FutureEffect[DeleteAdditionalFields.Event] =
-        FutureEffect[DeleteAdditionalFields.Event] { event =>
+      overr de val deleteAdd  onalF elds: FutureEffect[DeleteAdd  onalF elds.Event] =
+        FutureEffect[DeleteAdd  onalF elds.Event] { event =>
           handleStorageResponses(
-            tweetStorageClient.deleteAdditionalFields(
-              Seq(event.tweetId),
-              event.fieldIds.map(Field.additionalField)
+            t etStorageCl ent.deleteAdd  onalF elds(
+              Seq(event.t et d),
+              event.f eld ds.map(F eld.add  onalF eld)
             ),
-            s"deleteAdditionalFields(${event.tweetId}, ${event.fieldIds}})"
+            s"deleteAdd  onalF elds(${event.t et d}, ${event.f eld ds}})"
           )
         }
 
-      override val asyncDeleteAdditionalFields: FutureEffect[AsyncDeleteAdditionalFields.Event] =
-        FutureEffect[AsyncDeleteAdditionalFields.Event] { event =>
+      overr de val asyncDeleteAdd  onalF elds: FutureEffect[AsyncDeleteAdd  onalF elds.Event] =
+        FutureEffect[AsyncDeleteAdd  onalF elds.Event] { event =>
           handleStorageResponses(
-            tweetStorageClient.deleteAdditionalFields(
-              Seq(event.tweetId),
-              event.fieldIds.map(Field.additionalField)
+            t etStorageCl ent.deleteAdd  onalF elds(
+              Seq(event.t et d),
+              event.f eld ds.map(F eld.add  onalF eld)
             ),
-            s"deleteAdditionalFields(Seq(${event.tweetId}), ${event.fieldIds}})"
+            s"deleteAdd  onalF elds(Seq(${event.t et d}), ${event.f eld ds}})"
           )
         }
 
-      override val retryAsyncDeleteAdditionalFields: FutureEffect[
-        TweetStoreRetryEvent[AsyncDeleteAdditionalFields.Event]
+      overr de val retryAsyncDeleteAdd  onalF elds: FutureEffect[
+        T etStoreRetryEvent[AsyncDeleteAdd  onalF elds.Event]
       ] =
-        TweetStore.retry(Action, asyncDeleteAdditionalFields)
+        T etStore.retry(Act on, asyncDeleteAdd  onalF elds)
 
-      override val takedown: FutureEffect[Takedown.Event] =
+      overr de val takedown: FutureEffect[Takedown.Event] =
         FutureEffect[Takedown.Event] { event =>
-          val (fieldsToUpdate, fieldsToDelete) =
+          val (f eldsToUpdate, f eldsToDelete) =
             Seq(
-              Field.TweetypieOnlyTakedownCountryCodes,
-              Field.TweetypieOnlyTakedownReasons
-            ).filter(_ => event.updateCodesAndReasons)
-              .partition(f => event.tweet.getFieldBlob(f.id).isDefined)
+              F eld.T etyp eOnlyTakedownCountryCodes,
+              F eld.T etyp eOnlyTakedownReasons
+            ).f lter(_ => event.updateCodesAndReasons)
+              .part  on(f => event.t et.getF eldBlob(f. d). sDef ned)
 
-          val allFieldsToUpdate = Seq(Field.HasTakedown) ++ fieldsToUpdate
+          val allF eldsToUpdate = Seq(F eld.HasTakedown) ++ f eldsToUpdate
 
           Future
-            .join(
+            .jo n(
               handleStorageResponses(
-                tweetStorageClient
-                  .updateTweet(event.tweet, allFieldsToUpdate)
+                t etStorageCl ent
+                  .updateT et(event.t et, allF eldsToUpdate)
                   .map(Seq(_)),
-                s"updateTweet(${event.tweet}, $allFieldsToUpdate)"
+                s"updateT et(${event.t et}, $allF eldsToUpdate)"
               ),
-              Future.when(fieldsToDelete.nonEmpty) {
+              Future.w n(f eldsToDelete.nonEmpty) {
                 handleStorageResponses(
-                  tweetStorageClient
-                    .deleteAdditionalFields(Seq(event.tweet.id), fieldsToDelete),
-                  s"deleteAdditionalFields(Seq(${event.tweet.id}), $fieldsToDelete)"
+                  t etStorageCl ent
+                    .deleteAdd  onalF elds(Seq(event.t et. d), f eldsToDelete),
+                  s"deleteAdd  onalF elds(Seq(${event.t et. d}), $f eldsToDelete)"
                 )
               }
-            ).unit
+            ).un 
         }
 
-      override val updatePossiblySensitiveTweet: FutureEffect[UpdatePossiblySensitiveTweet.Event] =
-        FutureEffect[UpdatePossiblySensitiveTweet.Event] { event =>
-          updateOneTweetAction(event.tweet, TweetUpdate.copyNsfwFieldsForUpdate)
+      overr de val updatePoss blySens  veT et: FutureEffect[UpdatePoss blySens  veT et.Event] =
+        FutureEffect[UpdatePoss blySens  veT et.Event] { event =>
+          updateOneT etAct on(event.t et, T etUpdate.copyNsfwF eldsForUpdate)
         }
 
-      override val asyncUpdatePossiblySensitiveTweet: FutureEffect[
-        AsyncUpdatePossiblySensitiveTweet.Event
+      overr de val asyncUpdatePoss blySens  veT et: FutureEffect[
+        AsyncUpdatePoss blySens  veT et.Event
       ] =
-        FutureEffect[AsyncUpdatePossiblySensitiveTweet.Event] { event =>
-          updateOneTweetAction(event.tweet, TweetUpdate.copyNsfwFieldsForUpdate)
+        FutureEffect[AsyncUpdatePoss blySens  veT et.Event] { event =>
+          updateOneT etAct on(event.t et, T etUpdate.copyNsfwF eldsForUpdate)
         }
 
-      override val retryAsyncUpdatePossiblySensitiveTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncUpdatePossiblySensitiveTweet.Event]
+      overr de val retryAsyncUpdatePoss blySens  veT et: FutureEffect[
+        T etStoreRetryEvent[AsyncUpdatePoss blySens  veT et.Event]
       ] =
-        TweetStore.retry(Action, asyncUpdatePossiblySensitiveTweet)
+        T etStore.retry(Act on, asyncUpdatePoss blySens  veT et)
 
     }
   }

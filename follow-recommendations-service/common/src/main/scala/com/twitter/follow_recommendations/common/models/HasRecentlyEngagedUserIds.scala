@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-trait HasRecentlyEngagedUserIds {
-  val recentlyEngagedUserIds: Option[Seq[RecentlyEngagedUserId]]
+tra  HasRecentlyEngagedUser ds {
+  val recentlyEngagedUser ds: Opt on[Seq[RecentlyEngagedUser d]]
 }

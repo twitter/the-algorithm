@@ -1,30 +1,30 @@
-package com.twitter.visibility.builder.tweets
+package com.tw ter.v s b l y.bu lder.t ets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.CollabControl
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.SafetyLabelMapSource
-import com.twitter.visibility.common.TweetId
-import com.twitter.visibility.common.UserId
-import com.twitter.visibility.features._
-import com.twitter.visibility.models.SemanticCoreAnnotation
-import com.twitter.visibility.models.TweetSafetyLabel
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.thr ftscala.CollabControl
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.common.SafetyLabelMapS ce
+ mport com.tw ter.v s b l y.common.T et d
+ mport com.tw ter.v s b l y.common.User d
+ mport com.tw ter.v s b l y.features._
+ mport com.tw ter.v s b l y.models.Semant cCoreAnnotat on
+ mport com.tw ter.v s b l y.models.T etSafetyLabel
 
-object TweetFeatures {
+object T etFeatures {
 
-  def FALLBACK_TIMESTAMP: Time = Time.epoch
+  def FALLBACK_T MESTAMP: T   = T  .epoch
 
-  def tweetIsSelfReply(tweet: Tweet): Boolean = {
-    tweet.coreData match {
-      case Some(coreData) =>
+  def t et sSelfReply(t et: T et): Boolean = {
+    t et.coreData match {
+      case So (coreData) =>
         coreData.reply match {
-          case Some(reply) =>
-            reply.inReplyToUserId == coreData.userId
+          case So (reply) =>
+            reply. nReplyToUser d == coreData.user d
 
           case None =>
             false
@@ -35,175 +35,175 @@ object TweetFeatures {
     }
   }
 
-  def tweetReplyToParentTweetDuration(tweet: Tweet): Option[Duration] = for {
-    coreData <- tweet.coreData
+  def t etReplyToParentT etDurat on(t et: T et): Opt on[Durat on] = for {
+    coreData <- t et.coreData
     reply <- coreData.reply
-    inReplyToStatusId <- reply.inReplyToStatusId
-    replyTime <- SnowflakeId.timeFromIdOpt(tweet.id)
-    repliedToTime <- SnowflakeId.timeFromIdOpt(inReplyToStatusId)
-  } yield {
-    replyTime.diff(repliedToTime)
+     nReplyToStatus d <- reply. nReplyToStatus d
+    replyT   <- Snowflake d.t  From dOpt(t et. d)
+    repl edToT   <- Snowflake d.t  From dOpt( nReplyToStatus d)
+  } y eld {
+    replyT  .d ff(repl edToT  )
   }
 
-  def tweetReplyToRootTweetDuration(tweet: Tweet): Option[Duration] = for {
-    coreData <- tweet.coreData
-    if coreData.reply.isDefined
-    conversationId <- coreData.conversationId
-    replyTime <- SnowflakeId.timeFromIdOpt(tweet.id)
-    rootTime <- SnowflakeId.timeFromIdOpt(conversationId)
-  } yield {
-    replyTime.diff(rootTime)
+  def t etReplyToRootT etDurat on(t et: T et): Opt on[Durat on] = for {
+    coreData <- t et.coreData
+     f coreData.reply. sDef ned
+    conversat on d <- coreData.conversat on d
+    replyT   <- Snowflake d.t  From dOpt(t et. d)
+    rootT   <- Snowflake d.t  From dOpt(conversat on d)
+  } y eld {
+    replyT  .d ff(rootT  )
   }
 
-  def tweetTimestamp(tweetId: Long): Time =
-    SnowflakeId.timeFromIdOpt(tweetId).getOrElse(FALLBACK_TIMESTAMP)
+  def t etT  stamp(t et d: Long): T   =
+    Snowflake d.t  From dOpt(t et d).getOrElse(FALLBACK_T MESTAMP)
 
-  def tweetSemanticCoreAnnotations(tweet: Tweet): Seq[SemanticCoreAnnotation] = {
-    tweet.escherbirdEntityAnnotations
+  def t etSemant cCoreAnnotat ons(t et: T et): Seq[Semant cCoreAnnotat on] = {
+    t et.esc rb rdEnt yAnnotat ons
       .map(a =>
-        a.entityAnnotations.map { annotation =>
-          SemanticCoreAnnotation(
-            annotation.groupId,
-            annotation.domainId,
-            annotation.entityId
+        a.ent yAnnotat ons.map { annotat on =>
+          Semant cCoreAnnotat on(
+            annotat on.group d,
+            annotat on.doma n d,
+            annotat on.ent y d
           )
         }).toSeq.flatten
   }
 
-  def tweetIsNullcast(tweet: Tweet): Boolean = {
-    tweet.coreData match {
-      case Some(coreData) =>
+  def t et sNullcast(t et: T et): Boolean = {
+    t et.coreData match {
+      case So (coreData) =>
         coreData.nullcast
       case None =>
         false
     }
   }
 
-  def tweetAuthorUserId(tweet: Tweet): Option[UserId] = {
-    tweet.coreData.map(_.userId)
+  def t etAuthorUser d(t et: T et): Opt on[User d] = {
+    t et.coreData.map(_.user d)
   }
 }
 
-sealed trait TweetLabels {
-  def forTweet(tweet: Tweet): Stitch[Seq[TweetSafetyLabel]]
-  def forTweetId(tweetId: TweetId): Stitch[Seq[TweetSafetyLabel]]
+sealed tra  T etLabels {
+  def forT et(t et: T et): St ch[Seq[T etSafetyLabel]]
+  def forT et d(t et d: T et d): St ch[Seq[T etSafetyLabel]]
 }
 
-class StratoTweetLabelMaps(safetyLabelSource: SafetyLabelMapSource) extends TweetLabels {
+class StratoT etLabelMaps(safetyLabelS ce: SafetyLabelMapS ce) extends T etLabels {
 
-  override def forTweet(tweet: Tweet): Stitch[Seq[TweetSafetyLabel]] = {
-    forTweetId(tweet.id)
+  overr de def forT et(t et: T et): St ch[Seq[T etSafetyLabel]] = {
+    forT et d(t et. d)
   }
 
-  def forTweetId(tweetId: TweetId): Stitch[Seq[TweetSafetyLabel]] = {
-    safetyLabelSource
-      .fetch(tweetId).map(
+  def forT et d(t et d: T et d): St ch[Seq[T etSafetyLabel]] = {
+    safetyLabelS ce
+      .fetch(t et d).map(
         _.map(
           _.labels
             .map(
-              _.map(sl => TweetSafetyLabel.fromTuple(sl._1, sl._2)).toSeq
+              _.map(sl => T etSafetyLabel.fromTuple(sl._1, sl._2)).toSeq
             ).getOrElse(Seq())
         ).getOrElse(Seq()))
   }
 }
 
-object NilTweetLabelMaps extends TweetLabels {
-  override def forTweet(tweet: Tweet): Stitch[Seq[TweetSafetyLabel]] = Stitch.Nil
-  override def forTweetId(tweetId: TweetId): Stitch[Seq[TweetSafetyLabel]] = Stitch.Nil
+object N lT etLabelMaps extends T etLabels {
+  overr de def forT et(t et: T et): St ch[Seq[T etSafetyLabel]] = St ch.N l
+  overr de def forT et d(t et d: T et d): St ch[Seq[T etSafetyLabel]] = St ch.N l
 }
 
-class TweetFeatures(tweetLabels: TweetLabels, statsReceiver: StatsReceiver) {
-  private[this] val scopedStatsReceiver = statsReceiver.scope("tweet_features")
+class T etFeatures(t etLabels: T etLabels, statsRece ver: StatsRece ver) {
+  pr vate[t ] val scopedStatsRece ver = statsRece ver.scope("t et_features")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
-  private[this] val tweetSafetyLabels =
-    scopedStatsReceiver.scope(TweetSafetyLabels.name).counter("requests")
-  private[this] val tweetTakedownReasons =
-    scopedStatsReceiver.scope(TweetTakedownReasons.name).counter("requests")
-  private[this] val tweetIsSelfReply =
-    scopedStatsReceiver.scope(TweetIsSelfReply.name).counter("requests")
-  private[this] val tweetTimestamp =
-    scopedStatsReceiver.scope(TweetTimestamp.name).counter("requests")
-  private[this] val tweetReplyToParentTweetDuration =
-    scopedStatsReceiver.scope(TweetReplyToParentTweetDuration.name).counter("requests")
-  private[this] val tweetReplyToRootTweetDuration =
-    scopedStatsReceiver.scope(TweetReplyToRootTweetDuration.name).counter("requests")
-  private[this] val tweetSemanticCoreAnnotations =
-    scopedStatsReceiver.scope(TweetSemanticCoreAnnotations.name).counter("requests")
-  private[this] val tweetId =
-    scopedStatsReceiver.scope(TweetId.name).counter("requests")
-  private[this] val tweetHasNsfwUser =
-    scopedStatsReceiver.scope(TweetHasNsfwUser.name).counter("requests")
-  private[this] val tweetHasNsfwAdmin =
-    scopedStatsReceiver.scope(TweetHasNsfwAdmin.name).counter("requests")
-  private[this] val tweetIsNullcast =
-    scopedStatsReceiver.scope(TweetIsNullcast.name).counter("requests")
-  private[this] val tweetHasMedia =
-    scopedStatsReceiver.scope(TweetHasMedia.name).counter("requests")
-  private[this] val tweetIsCommunity =
-    scopedStatsReceiver.scope(TweetIsCommunityTweet.name).counter("requests")
-  private[this] val tweetIsCollabInvitation =
-    scopedStatsReceiver.scope(TweetIsCollabInvitationTweet.name).counter("requests")
+  pr vate[t ] val requests = scopedStatsRece ver.counter("requests")
+  pr vate[t ] val t etSafetyLabels =
+    scopedStatsRece ver.scope(T etSafetyLabels.na ).counter("requests")
+  pr vate[t ] val t etTakedownReasons =
+    scopedStatsRece ver.scope(T etTakedownReasons.na ).counter("requests")
+  pr vate[t ] val t et sSelfReply =
+    scopedStatsRece ver.scope(T et sSelfReply.na ).counter("requests")
+  pr vate[t ] val t etT  stamp =
+    scopedStatsRece ver.scope(T etT  stamp.na ).counter("requests")
+  pr vate[t ] val t etReplyToParentT etDurat on =
+    scopedStatsRece ver.scope(T etReplyToParentT etDurat on.na ).counter("requests")
+  pr vate[t ] val t etReplyToRootT etDurat on =
+    scopedStatsRece ver.scope(T etReplyToRootT etDurat on.na ).counter("requests")
+  pr vate[t ] val t etSemant cCoreAnnotat ons =
+    scopedStatsRece ver.scope(T etSemant cCoreAnnotat ons.na ).counter("requests")
+  pr vate[t ] val t et d =
+    scopedStatsRece ver.scope(T et d.na ).counter("requests")
+  pr vate[t ] val t etHasNsfwUser =
+    scopedStatsRece ver.scope(T etHasNsfwUser.na ).counter("requests")
+  pr vate[t ] val t etHasNsfwAdm n =
+    scopedStatsRece ver.scope(T etHasNsfwAdm n.na ).counter("requests")
+  pr vate[t ] val t et sNullcast =
+    scopedStatsRece ver.scope(T et sNullcast.na ).counter("requests")
+  pr vate[t ] val t etHas d a =
+    scopedStatsRece ver.scope(T etHas d a.na ).counter("requests")
+  pr vate[t ] val t et sCommun y =
+    scopedStatsRece ver.scope(T et sCommun yT et.na ).counter("requests")
+  pr vate[t ] val t et sCollab nv at on =
+    scopedStatsRece ver.scope(T et sCollab nv at onT et.na ).counter("requests")
 
-  def forTweet(tweet: Tweet): FeatureMapBuilder => FeatureMapBuilder = {
-    forTweetWithoutSafetyLabels(tweet)
-      .andThen(_.withFeature(TweetSafetyLabels, tweetLabels.forTweet(tweet)))
+  def forT et(t et: T et): FeatureMapBu lder => FeatureMapBu lder = {
+    forT etW houtSafetyLabels(t et)
+      .andT n(_.w hFeature(T etSafetyLabels, t etLabels.forT et(t et)))
   }
 
-  def forTweetWithoutSafetyLabels(tweet: Tweet): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
+  def forT etW houtSafetyLabels(t et: T et): FeatureMapBu lder => FeatureMapBu lder = {
+    requests. ncr()
 
-    tweetTakedownReasons.incr()
-    tweetIsSelfReply.incr()
-    tweetTimestamp.incr()
-    tweetReplyToParentTweetDuration.incr()
-    tweetReplyToRootTweetDuration.incr()
-    tweetSemanticCoreAnnotations.incr()
-    tweetId.incr()
-    tweetHasNsfwUser.incr()
-    tweetHasNsfwAdmin.incr()
-    tweetIsNullcast.incr()
-    tweetHasMedia.incr()
-    tweetIsCommunity.incr()
-    tweetIsCollabInvitation.incr()
+    t etTakedownReasons. ncr()
+    t et sSelfReply. ncr()
+    t etT  stamp. ncr()
+    t etReplyToParentT etDurat on. ncr()
+    t etReplyToRootT etDurat on. ncr()
+    t etSemant cCoreAnnotat ons. ncr()
+    t et d. ncr()
+    t etHasNsfwUser. ncr()
+    t etHasNsfwAdm n. ncr()
+    t et sNullcast. ncr()
+    t etHas d a. ncr()
+    t et sCommun y. ncr()
+    t et sCollab nv at on. ncr()
 
-    _.withConstantFeature(TweetTakedownReasons, tweet.takedownReasons.getOrElse(Seq.empty))
-      .withConstantFeature(TweetIsSelfReply, TweetFeatures.tweetIsSelfReply(tweet))
-      .withConstantFeature(TweetTimestamp, TweetFeatures.tweetTimestamp(tweet.id))
-      .withConstantFeature(
-        TweetReplyToParentTweetDuration,
-        TweetFeatures.tweetReplyToParentTweetDuration(tweet))
-      .withConstantFeature(
-        TweetReplyToRootTweetDuration,
-        TweetFeatures.tweetReplyToRootTweetDuration(tweet))
-      .withConstantFeature(
-        TweetSemanticCoreAnnotations,
-        TweetFeatures.tweetSemanticCoreAnnotations(tweet))
-      .withConstantFeature(TweetId, tweet.id)
-      .withConstantFeature(TweetHasNsfwUser, tweetHasNsfwUser(tweet))
-      .withConstantFeature(TweetHasNsfwAdmin, tweetHasNsfwAdmin(tweet))
-      .withConstantFeature(TweetIsNullcast, TweetFeatures.tweetIsNullcast(tweet))
-      .withConstantFeature(TweetHasMedia, tweetHasMedia(tweet))
-      .withConstantFeature(TweetIsCommunityTweet, tweetHasCommunity(tweet))
-      .withConstantFeature(TweetIsCollabInvitationTweet, tweetIsCollabInvitation(tweet))
+    _.w hConstantFeature(T etTakedownReasons, t et.takedownReasons.getOrElse(Seq.empty))
+      .w hConstantFeature(T et sSelfReply, T etFeatures.t et sSelfReply(t et))
+      .w hConstantFeature(T etT  stamp, T etFeatures.t etT  stamp(t et. d))
+      .w hConstantFeature(
+        T etReplyToParentT etDurat on,
+        T etFeatures.t etReplyToParentT etDurat on(t et))
+      .w hConstantFeature(
+        T etReplyToRootT etDurat on,
+        T etFeatures.t etReplyToRootT etDurat on(t et))
+      .w hConstantFeature(
+        T etSemant cCoreAnnotat ons,
+        T etFeatures.t etSemant cCoreAnnotat ons(t et))
+      .w hConstantFeature(T et d, t et. d)
+      .w hConstantFeature(T etHasNsfwUser, t etHasNsfwUser(t et))
+      .w hConstantFeature(T etHasNsfwAdm n, t etHasNsfwAdm n(t et))
+      .w hConstantFeature(T et sNullcast, T etFeatures.t et sNullcast(t et))
+      .w hConstantFeature(T etHas d a, t etHas d a(t et))
+      .w hConstantFeature(T et sCommun yT et, t etHasCommun y(t et))
+      .w hConstantFeature(T et sCollab nv at onT et, t et sCollab nv at on(t et))
   }
 
-  def tweetHasNsfwUser(tweet: Tweet): Boolean =
-    tweet.coreData.exists(_.nsfwUser)
+  def t etHasNsfwUser(t et: T et): Boolean =
+    t et.coreData.ex sts(_.nsfwUser)
 
-  def tweetHasNsfwAdmin(tweet: Tweet): Boolean =
-    tweet.coreData.exists(_.nsfwAdmin)
+  def t etHasNsfwAdm n(t et: T et): Boolean =
+    t et.coreData.ex sts(_.nsfwAdm n)
 
-  def tweetHasMedia(tweet: Tweet): Boolean =
-    tweet.coreData.exists(_.hasMedia.getOrElse(false))
+  def t etHas d a(t et: T et): Boolean =
+    t et.coreData.ex sts(_.has d a.getOrElse(false))
 
-  def tweetHasCommunity(tweet: Tweet): Boolean = {
-    tweet.communities.exists(_.communityIds.nonEmpty)
+  def t etHasCommun y(t et: T et): Boolean = {
+    t et.commun  es.ex sts(_.commun y ds.nonEmpty)
   }
 
-  def tweetIsCollabInvitation(tweet: Tweet): Boolean = {
-    tweet.collabControl.exists(_ match {
-      case CollabControl.CollabInvitation(_) => true
+  def t et sCollab nv at on(t et: T et): Boolean = {
+    t et.collabControl.ex sts(_ match {
+      case CollabControl.Collab nv at on(_) => true
       case _ => false
     })
   }

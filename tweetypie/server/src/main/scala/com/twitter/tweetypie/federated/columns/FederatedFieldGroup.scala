@@ -1,86 +1,86 @@
-package com.twitter.tweetypie.federated.columns
+package com.tw ter.t etyp e.federated.columns
 
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.MapGroup
-import com.twitter.tweetypie.UserId
-import com.twitter.tweetypie.federated.columns.FederatedFieldGroupBuilder.allCountFields
-import com.twitter.tweetypie.federated.columns.FederatedFieldGroupBuilder.countTweetFields
-import com.twitter.tweetypie.thriftscala.GetTweetFieldsOptions
-import com.twitter.tweetypie.thriftscala.GetTweetFieldsRequest
-import com.twitter.tweetypie.thriftscala.GetTweetFieldsResult
-import com.twitter.tweetypie.thriftscala.StatusCounts
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.tweetypie.thriftscala.TweetInclude
-import com.twitter.util.Future
-import com.twitter.util.Throw
-import com.twitter.util.Try
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLevel
+ mport com.tw ter.st ch.MapGroup
+ mport com.tw ter.t etyp e.User d
+ mport com.tw ter.t etyp e.federated.columns.FederatedF eldGroupBu lder.allCountF elds
+ mport com.tw ter.t etyp e.federated.columns.FederatedF eldGroupBu lder.countT etF elds
+ mport com.tw ter.t etyp e.thr ftscala.GetT etF eldsOpt ons
+ mport com.tw ter.t etyp e.thr ftscala.GetT etF eldsRequest
+ mport com.tw ter.t etyp e.thr ftscala.GetT etF eldsResult
+ mport com.tw ter.t etyp e.thr ftscala.StatusCounts
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.t etyp e.thr ftscala.T et nclude
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.Try
 
-case class GroupOptions(twitterUserId: Option[UserId])
+case class GroupOpt ons(tw terUser d: Opt on[User d])
 
-object FederatedFieldGroupBuilder {
-  type Type = GroupOptions => MapGroup[FederatedFieldReq, GetTweetFieldsResult]
+object FederatedF eldGroupBu lder {
+  type Type = GroupOpt ons => MapGroup[FederatedF eldReq, GetT etF eldsResult]
 
   def apply(
-    getTweetFieldsHandler: GetTweetFieldsRequest => Future[Seq[GetTweetFieldsResult]]
+    getT etF eldsHandler: GetT etF eldsRequest => Future[Seq[GetT etF eldsResult]]
   ): Type = {
-    FederatedFieldGroup(getTweetFieldsHandler, _)
+    FederatedF eldGroup(getT etF eldsHandler, _)
   }
 
-  // The set of non-deprecated count field includes
-  val allCountFields: Set[TweetInclude] = Set(
-    TweetInclude.CountsFieldId(StatusCounts.RetweetCountField.id),
-    TweetInclude.CountsFieldId(StatusCounts.QuoteCountField.id),
-    TweetInclude.CountsFieldId(StatusCounts.FavoriteCountField.id),
-    TweetInclude.CountsFieldId(StatusCounts.ReplyCountField.id),
-    TweetInclude.CountsFieldId(StatusCounts.BookmarkCountField.id),
+  // T  set of non-deprecated count f eld  ncludes
+  val allCountF elds: Set[T et nclude] = Set(
+    T et nclude.CountsF eld d(StatusCounts.Ret etCountF eld. d),
+    T et nclude.CountsF eld d(StatusCounts.QuoteCountF eld. d),
+    T et nclude.CountsF eld d(StatusCounts.Favor eCountF eld. d),
+    T et nclude.CountsF eld d(StatusCounts.ReplyCountF eld. d),
+    T et nclude.CountsF eld d(StatusCounts.BookmarkCountF eld. d),
   )
 
-  // Tweet field includes which contain counts. These are the only fields where count field includes are relevant.
-  val countTweetFields: Set[TweetInclude] = Set(
-    TweetInclude.TweetFieldId(Tweet.CountsField.id),
-    TweetInclude.TweetFieldId(Tweet.PreviousCountsField.id))
+  // T et f eld  ncludes wh ch conta n counts. T se are t  only f elds w re count f eld  ncludes are relevant.
+  val countT etF elds: Set[T et nclude] = Set(
+    T et nclude.T etF eld d(T et.CountsF eld. d),
+    T et nclude.T etF eld d(T et.Prev ousCountsF eld. d))
 }
 
-case class FederatedFieldGroup(
-  getTweetFieldsHandler: GetTweetFieldsRequest => Future[Seq[GetTweetFieldsResult]],
-  options: GroupOptions)
-    extends MapGroup[FederatedFieldReq, GetTweetFieldsResult] {
-  override protected def run(
-    reqs: Seq[FederatedFieldReq]
-  ): Future[FederatedFieldReq => Try[GetTweetFieldsResult]] = {
+case class FederatedF eldGroup(
+  getT etF eldsHandler: GetT etF eldsRequest => Future[Seq[GetT etF eldsResult]],
+  opt ons: GroupOpt ons)
+    extends MapGroup[FederatedF eldReq, GetT etF eldsResult] {
+  overr de protected def run(
+    reqs: Seq[FederatedF eldReq]
+  ): Future[FederatedF eldReq => Try[GetT etF eldsResult]] = {
 
-    // requesting the field ids of the requested additional field ids in this group
-    val fieldIncludes: Set[TweetInclude] = reqs.map { req: FederatedFieldReq =>
-      TweetInclude.TweetFieldId(req.fieldId)
+    // request ng t  f eld  ds of t  requested add  onal f eld  ds  n t  group
+    val f eld ncludes: Set[T et nclude] = reqs.map { req: FederatedF eldReq =>
+      T et nclude.T etF eld d(req.f eld d)
     }.toSet
 
-    val allIncludes: Set[TweetInclude] = if (fieldIncludes.intersect(countTweetFields).nonEmpty) {
-      // if counts are being requested we include all count fields by default
-      // because there is no way to specify them individually with federated fields,
-      fieldIncludes ++ allCountFields
+    val all ncludes: Set[T et nclude] =  f (f eld ncludes. ntersect(countT etF elds).nonEmpty) {
+      //  f counts are be ng requested    nclude all count f elds by default
+      // because t re  s no way to spec fy t m  nd v dually w h federated f elds,
+      f eld ncludes ++ allCountF elds
     } else {
-      fieldIncludes
+      f eld ncludes
     }
 
-    val gtfOptions = GetTweetFieldsOptions(
-      tweetIncludes = allIncludes,
-      forUserId = options.twitterUserId,
-      // visibility filtering happens at the api layer / tweet top level
-      // and therefore is not required at individual field level
-      safetyLevel = Some(SafetyLevel.FilterNone)
+    val gtfOpt ons = GetT etF eldsOpt ons(
+      t et ncludes = all ncludes,
+      forUser d = opt ons.tw terUser d,
+      // v s b l y f lter ng happens at t  ap  layer / t et top level
+      // and t refore  s not requ red at  nd v dual f eld level
+      safetyLevel = So (SafetyLevel.F lterNone)
     )
-    getTweetFieldsHandler(
-      GetTweetFieldsRequest(
-        tweetIds = reqs.map(_.tweetId).distinct,
-        options = gtfOptions
+    getT etF eldsHandler(
+      GetT etF eldsRequest(
+        t et ds = reqs.map(_.t et d).d st nct,
+        opt ons = gtfOpt ons
       )
     ).map {
       response =>
         { req =>
-          response.find(_.tweetId == req.tweetId) match {
-            case Some(result) => Try(result)
+          response.f nd(_.t et d == req.t et d) match {
+            case So (result) => Try(result)
             case None =>
-              Throw(new NoSuchElementException(s"response not found for tweet: ${req.tweetId}"))
+              Throw(new NoSuchEle ntExcept on(s"response not found for t et: ${req.t et d}"))
           }
         }
     }

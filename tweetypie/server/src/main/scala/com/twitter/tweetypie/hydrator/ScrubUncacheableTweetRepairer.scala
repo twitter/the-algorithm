@@ -1,38 +1,38 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.t etyp e.thr ftscala._
 
-object ScrubUncacheable {
+object ScrubUncac able {
 
-  // A mutation to use for scrubbing tweets for cache
-  val tweetMutation: Mutation[Tweet] =
-    Mutation { tweet =>
-      if (tweet.place != None ||
-        tweet.counts != None ||
-        tweet.deviceSource != None ||
-        tweet.perspective != None ||
-        tweet.cards != None ||
-        tweet.card2 != None ||
-        tweet.spamLabels != None ||
-        tweet.conversationMuted != None)
-        Some(
-          tweet.copy(
+  // A mutat on to use for scrubb ng t ets for cac 
+  val t etMutat on: Mutat on[T et] =
+    Mutat on { t et =>
+       f (t et.place != None ||
+        t et.counts != None ||
+        t et.dev ceS ce != None ||
+        t et.perspect ve != None ||
+        t et.cards != None ||
+        t et.card2 != None ||
+        t et.spamLabels != None ||
+        t et.conversat onMuted != None)
+        So (
+          t et.copy(
             place = None,
             counts = None,
-            deviceSource = None,
-            perspective = None,
+            dev ceS ce = None,
+            perspect ve = None,
             cards = None,
             card2 = None,
             spamLabels = None,
-            conversationMuted = None
+            conversat onMuted = None
           )
         )
       else
         None
     }
 
-  // throws an AssertionError if a tweet when a tweet is scrubbed
-  def assertNotScrubbed(message: String): Mutation[Tweet] =
-    tweetMutation.withEffect(Effect(update => assert(update.isEmpty, message)))
+  // throws an Assert onError  f a t et w n a t et  s scrubbed
+  def assertNotScrubbed( ssage: Str ng): Mutat on[T et] =
+    t etMutat on.w hEffect(Effect(update => assert(update. sEmpty,  ssage)))
 }

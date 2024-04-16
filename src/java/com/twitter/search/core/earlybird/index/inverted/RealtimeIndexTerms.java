@@ -1,365 +1,365 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import java.util.Iterator;
-import java.util.TreeSet;
+ mport java.ut l. erator;
+ mport java.ut l.TreeSet;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.index.BaseTermsEnum;
-import org.apache.lucene.index.ImpactsEnum;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.SlowImpactsEnum;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.util.BytesRef;
+ mport org.apac .lucene. ndex.BaseTermsEnum;
+ mport org.apac .lucene. ndex. mpactsEnum;
+ mport org.apac .lucene. ndex.Post ngsEnum;
+ mport org.apac .lucene. ndex.Slow mpactsEnum;
+ mport org.apac .lucene. ndex.Terms;
+ mport org.apac .lucene. ndex.TermsEnum;
+ mport org.apac .lucene.ut l.BytesRef;
 
-import com.twitter.search.common.hashtable.HashTable;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.hash.KeysSource;
+ mport com.tw ter.search.common.hashtable.HashTable;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.ut l.hash.KeysS ce;
 
-public class RealtimeIndexTerms extends Terms {
-  // Calling InMemoryTermsEnum.next() creates a full copy of the entire term dictionary, and can
-  // be quite expensive. We don't expect these calls to happen, and they shpould not happen on the
-  // regular read path. We stat them here just in case to see if there is any unexpected usage.
-  private static final SearchCounter TERMS_ENUM_NEXT_CALLS =
-      SearchCounter.export("in_memory_terms_enum_next_calls");
-  private static final SearchCounter TERMS_ENUM_CREATE_TERM_SET =
-      SearchCounter.export("in_memory_terms_enum_next_create_term_set");
-  private static final SearchCounter TERMS_ENUM_CREATE_TERM_SET_SIZE =
-      SearchCounter.export("in_memory_terms_enum_next_create_term_set_size");
+publ c class Realt   ndexTerms extends Terms {
+  // Call ng  n moryTermsEnum.next() creates a full copy of t  ent re term d ct onary, and can
+  // be qu e expens ve.   don't expect t se calls to happen, and t y shpould not happen on t 
+  // regular read path.   stat t m  re just  n case to see  f t re  s any unexpected usage.
+  pr vate stat c f nal SearchCounter TERMS_ENUM_NEXT_CALLS =
+      SearchCounter.export(" n_ mory_terms_enum_next_calls");
+  pr vate stat c f nal SearchCounter TERMS_ENUM_CREATE_TERM_SET =
+      SearchCounter.export(" n_ mory_terms_enum_next_create_term_set");
+  pr vate stat c f nal SearchCounter TERMS_ENUM_CREATE_TERM_SET_S ZE =
+      SearchCounter.export(" n_ mory_terms_enum_next_create_term_set_s ze");
 
-  private final InvertedRealtimeIndex index;
-  private final int maxPublishedPointer;
+  pr vate f nal  nvertedRealt   ndex  ndex;
+  pr vate f nal  nt maxPubl s dPo nter;
 
-  public RealtimeIndexTerms(InvertedRealtimeIndex index, int maxPublishedPointer) {
-    this.index = index;
-    this.maxPublishedPointer = maxPublishedPointer;
+  publ c Realt   ndexTerms( nvertedRealt   ndex  ndex,  nt maxPubl s dPo nter) {
+    t . ndex =  ndex;
+    t .maxPubl s dPo nter = maxPubl s dPo nter;
   }
 
-  @Override
-  public long size() {
-    return index.getNumTerms();
+  @Overr de
+  publ c long s ze() {
+    return  ndex.getNumTerms();
   }
 
-  @Override
-  public TermsEnum iterator() {
-    return index.createTermsEnum(maxPublishedPointer);
+  @Overr de
+  publ c TermsEnum  erator() {
+    return  ndex.createTermsEnum(maxPubl s dPo nter);
   }
 
   /**
-   * This TermsEnum use a tree set to support {@link TermsEnum#next()} method. However, this is not
-   * efficient enough to support realtime operation. {@link TermsEnum#seekCeil} is not fully
-   * supported in this termEnum.
+   * T  TermsEnum use a tree set to support {@l nk TermsEnum#next()}  thod. Ho ver, t   s not
+   * eff c ent enough to support realt   operat on. {@l nk TermsEnum#seekCe l}  s not fully
+   * supported  n t  termEnum.
    */
-  public static class InMemoryTermsEnum extends BaseTermsEnum {
-    private final InvertedRealtimeIndex index;
-    private final int maxPublishedPointer;
-    private int termID = -1;
-    private BytesRef bytesRef = new BytesRef();
-    private Iterator<BytesRef> termIter;
-    private TreeSet<BytesRef> termSet;
+  publ c stat c class  n moryTermsEnum extends BaseTermsEnum {
+    pr vate f nal  nvertedRealt   ndex  ndex;
+    pr vate f nal  nt maxPubl s dPo nter;
+    pr vate  nt term D = -1;
+    pr vate BytesRef bytesRef = new BytesRef();
+    pr vate  erator<BytesRef> term er;
+    pr vate TreeSet<BytesRef> termSet;
 
-    public InMemoryTermsEnum(InvertedRealtimeIndex index, int maxPublishedPointer) {
-      this.index = index;
-      this.maxPublishedPointer = maxPublishedPointer;
-      termIter = null;
+    publ c  n moryTermsEnum( nvertedRealt   ndex  ndex,  nt maxPubl s dPo nter) {
+      t . ndex =  ndex;
+      t .maxPubl s dPo nter = maxPubl s dPo nter;
+      term er = null;
     }
 
-    @Override
-    public int docFreq() {
-      return index.getDF(termID);
+    @Overr de
+    publ c  nt docFreq() {
+      return  ndex.getDF(term D);
     }
 
-    @Override
-    public PostingsEnum postings(PostingsEnum reuse, int flags) {
-      int postingsPointer = index.getPostingListPointer(termID);
-      return index.getPostingList().postings(postingsPointer, docFreq(), maxPublishedPointer);
+    @Overr de
+    publ c Post ngsEnum post ngs(Post ngsEnum reuse,  nt flags) {
+       nt post ngsPo nter =  ndex.getPost ngL stPo nter(term D);
+      return  ndex.getPost ngL st().post ngs(post ngsPo nter, docFreq(), maxPubl s dPo nter);
     }
 
-    @Override
-    public ImpactsEnum impacts(int flags) {
-      return new SlowImpactsEnum(postings(null, flags));
+    @Overr de
+    publ c  mpactsEnum  mpacts( nt flags) {
+      return new Slow mpactsEnum(post ngs(null, flags));
     }
 
-    @Override
-    public SeekStatus seekCeil(BytesRef text) {
-      // Nullify termIter.
-      termIter = null;
+    @Overr de
+    publ c SeekStatus seekCe l(BytesRef text) {
+      // Null fy term er.
+      term er = null;
 
-      termID = index.lookupTerm(text);
+      term D =  ndex.lookupTerm(text);
 
-      if (termID == -1) {
+       f (term D == -1) {
         return SeekStatus.END;
       } else {
-        index.getTerm(termID, bytesRef);
+         ndex.getTerm(term D, bytesRef);
         return SeekStatus.FOUND;
       }
     }
 
-    @Override
-    public BytesRef next() {
-      TERMS_ENUM_NEXT_CALLS.increment();
-      if (termSet == null) {
+    @Overr de
+    publ c BytesRef next() {
+      TERMS_ENUM_NEXT_CALLS. ncre nt();
+       f (termSet == null) {
         termSet = new TreeSet<>();
-        KeysSource keysource = index.getKeysSource();
-        keysource.rewind();
-        int numTerms = keysource.getNumberOfKeys();
-        for (int i = 0; i < numTerms; ++i) {
-          BytesRef ref = keysource.nextKey();
-          // we need to clone the ref since the keysource is reusing the returned BytesRef
-          // instance and we are storing it
+        KeysS ce keys ce =  ndex.getKeysS ce();
+        keys ce.rew nd();
+         nt numTerms = keys ce.getNumberOfKeys();
+        for ( nt   = 0;   < numTerms; ++ ) {
+          BytesRef ref = keys ce.nextKey();
+          //   need to clone t  ref s nce t  keys ce  s reus ng t  returned BytesRef
+          //  nstance and   are stor ng  
           termSet.add(ref.clone());
         }
-        TERMS_ENUM_CREATE_TERM_SET.increment();
-        TERMS_ENUM_CREATE_TERM_SET_SIZE.add(numTerms);
+        TERMS_ENUM_CREATE_TERM_SET. ncre nt();
+        TERMS_ENUM_CREATE_TERM_SET_S ZE.add(numTerms);
       }
 
-      // Construct termIter from the subset.
-      if (termIter == null) {
-        termIter = termSet.tailSet(bytesRef, true).iterator();
+      // Construct term er from t  subset.
+       f (term er == null) {
+        term er = termSet.ta lSet(bytesRef, true). erator();
       }
 
-      if (termIter.hasNext()) {
-        bytesRef = termIter.next();
-        termID = index.lookupTerm(bytesRef);
+       f (term er.hasNext()) {
+        bytesRef = term er.next();
+        term D =  ndex.lookupTerm(bytesRef);
       } else {
-        termID = -1;
+        term D = -1;
         bytesRef = null;
       }
       return bytesRef;
     }
 
-    @Override
-    public long ord() {
-      return termID;
+    @Overr de
+    publ c long ord() {
+      return term D;
     }
 
-    @Override
-    public void seekExact(long ord) {
-      // Nullify termIter.
-      termIter = null;
+    @Overr de
+    publ c vo d seekExact(long ord) {
+      // Null fy term er.
+      term er = null;
 
-      if (ord < index.getNumTerms()) {
-        termID = (int) ord;
-        index.getTerm(termID, bytesRef);
+       f (ord <  ndex.getNumTerms()) {
+        term D = ( nt) ord;
+         ndex.getTerm(term D, bytesRef);
       }
     }
 
-    @Override
-    public BytesRef term() {
+    @Overr de
+    publ c BytesRef term() {
       return bytesRef;
     }
 
-    @Override
-    public long totalTermFreq() {
+    @Overr de
+    publ c long totalTermFreq() {
       return docFreq();
     }
   }
 
   /**
-   * This TermsEnum use a {@link SkipListContainer} backed termsSkipList provided by
-   * {@link InvertedRealtimeIndex} to supported ordered terms operations like
-   * {@link TermsEnum#next()} and {@link TermsEnum#seekCeil}.
+   * T  TermsEnum use a {@l nk Sk pL stConta ner} backed termsSk pL st prov ded by
+   * {@l nk  nvertedRealt   ndex} to supported ordered terms operat ons l ke
+   * {@l nk TermsEnum#next()} and {@l nk TermsEnum#seekCe l}.
    */
-  public static class SkipListInMemoryTermsEnum extends BaseTermsEnum {
-    private final InvertedRealtimeIndex index;
+  publ c stat c class Sk pL st n moryTermsEnum extends BaseTermsEnum {
+    pr vate f nal  nvertedRealt   ndex  ndex;
 
-    private int termID = -1;
-    private BytesRef bytesRef = new BytesRef();
-    private int nextTermIDPointer;
-
-    /**
-     * {@link #nextTermIDPointer} is used to record pointer to next termsID to accelerate
-     * {@link #next}. However, {@link #seekCeil} and {@link #seekExact} may jump to an arbitrary
-     * term so the {@link #nextTermIDPointer} may not be correct, and this flag is used to check if
-     * this happens. If this flag is false, {@link #correctNextTermIDPointer} should be called to
-     * correct the value.
-     */
-    private boolean isNextTermIDPointerCorrect;
-
-    private final SkipListContainer<BytesRef> termsSkipList;
-    private final InvertedRealtimeIndex.TermsSkipListComparator termsSkipListComparator;
-    private final int maxPublishedPointer;
+    pr vate  nt term D = -1;
+    pr vate BytesRef bytesRef = new BytesRef();
+    pr vate  nt nextTerm DPo nter;
 
     /**
-     * Creates a new {@link TermsEnum} for a skip list-based sorted real-time term dictionary.
+     * {@l nk #nextTerm DPo nter}  s used to record po nter to next terms D to accelerate
+     * {@l nk #next}. Ho ver, {@l nk #seekCe l} and {@l nk #seekExact} may jump to an arb rary
+     * term so t  {@l nk #nextTerm DPo nter} may not be correct, and t  flag  s used to c ck  f
+     * t  happens.  f t  flag  s false, {@l nk #correctNextTerm DPo nter} should be called to
+     * correct t  value.
      */
-    public SkipListInMemoryTermsEnum(InvertedRealtimeIndex index, int maxPublishedPointer) {
-      Preconditions.checkNotNull(index.getTermsSkipList());
+    pr vate boolean  sNextTerm DPo nterCorrect;
 
-      this.index = index;
-      this.termsSkipList = index.getTermsSkipList();
+    pr vate f nal Sk pL stConta ner<BytesRef> termsSk pL st;
+    pr vate f nal  nvertedRealt   ndex.TermsSk pL stComparator termsSk pL stComparator;
+    pr vate f nal  nt maxPubl s dPo nter;
 
-      // Each Terms Enum shall have their own comparators to be thread safe.
-      this.termsSkipListComparator =
-          new InvertedRealtimeIndex.TermsSkipListComparator(index);
-      this.nextTermIDPointer =
-          termsSkipList.getNextPointer(SkipListContainer.FIRST_LIST_HEAD);
-      this.isNextTermIDPointerCorrect = true;
-      this.maxPublishedPointer = maxPublishedPointer;
+    /**
+     * Creates a new {@l nk TermsEnum} for a sk p l st-based sorted real-t   term d ct onary.
+     */
+    publ c Sk pL st n moryTermsEnum( nvertedRealt   ndex  ndex,  nt maxPubl s dPo nter) {
+      Precond  ons.c ckNotNull( ndex.getTermsSk pL st());
+
+      t . ndex =  ndex;
+      t .termsSk pL st =  ndex.getTermsSk pL st();
+
+      // Each Terms Enum shall have t  r own comparators to be thread safe.
+      t .termsSk pL stComparator =
+          new  nvertedRealt   ndex.TermsSk pL stComparator( ndex);
+      t .nextTerm DPo nter =
+          termsSk pL st.getNextPo nter(Sk pL stConta ner.F RST_L ST_HEAD);
+      t . sNextTerm DPo nterCorrect = true;
+      t .maxPubl s dPo nter = maxPubl s dPo nter;
     }
 
-    @Override
-    public int docFreq() {
-      return index.getDF(termID);
+    @Overr de
+    publ c  nt docFreq() {
+      return  ndex.getDF(term D);
     }
 
-    @Override
-    public PostingsEnum postings(PostingsEnum reuse, int flags) {
-      int postingsPointer = index.getPostingListPointer(termID);
-      return index.getPostingList().postings(postingsPointer, docFreq(), maxPublishedPointer);
+    @Overr de
+    publ c Post ngsEnum post ngs(Post ngsEnum reuse,  nt flags) {
+       nt post ngsPo nter =  ndex.getPost ngL stPo nter(term D);
+      return  ndex.getPost ngL st().post ngs(post ngsPo nter, docFreq(), maxPubl s dPo nter);
     }
 
-    @Override
-    public ImpactsEnum impacts(int flags) {
-      return new SlowImpactsEnum(postings(null, flags));
+    @Overr de
+    publ c  mpactsEnum  mpacts( nt flags) {
+      return new Slow mpactsEnum(post ngs(null, flags));
     }
 
-    @Override
-    public SeekStatus seekCeil(BytesRef text) {
-      // Next term pointer is not correct anymore since seek ceil
-      //   will jump to an arbitrary term.
-      isNextTermIDPointerCorrect = false;
+    @Overr de
+    publ c SeekStatus seekCe l(BytesRef text) {
+      // Next term po nter  s not correct anymore s nce seek ce l
+      //   w ll jump to an arb rary term.
+       sNextTerm DPo nterCorrect = false;
 
-      // Doing precise lookup first.
-      termID = index.lookupTerm(text);
+      // Do ng prec se lookup f rst.
+      term D =  ndex.lookupTerm(text);
 
-      // Doing ceil lookup if not found, otherwise we are good.
-      if (termID == -1) {
-        return seekCeilWithSkipList(text);
+      // Do ng ce l lookup  f not found, ot rw se   are good.
+       f (term D == -1) {
+        return seekCe lW hSk pL st(text);
       } else {
-        index.getTerm(termID, bytesRef);
+         ndex.getTerm(term D, bytesRef);
         return SeekStatus.FOUND;
       }
     }
 
     /**
-     * Doing ceil terms search with terms skip list.
+     * Do ng ce l terms search w h terms sk p l st.
      */
-    private SeekStatus seekCeilWithSkipList(BytesRef text) {
-      int termIDPointer = termsSkipList.searchCeil(text,
-          SkipListContainer.FIRST_LIST_HEAD,
-          termsSkipListComparator,
+    pr vate SeekStatus seekCe lW hSk pL st(BytesRef text) {
+       nt term DPo nter = termsSk pL st.searchCe l(text,
+          Sk pL stConta ner.F RST_L ST_HEAD,
+          termsSk pL stComparator,
           null);
 
-      // End reached but still cannot found a ceil term.
-      if (termIDPointer == SkipListContainer.FIRST_LIST_HEAD) {
-        termID = HashTable.EMPTY_SLOT;
+      // End reac d but st ll cannot found a ce l term.
+       f (term DPo nter == Sk pL stConta ner.F RST_L ST_HEAD) {
+        term D = HashTable.EMPTY_SLOT;
         return SeekStatus.END;
       }
 
-      termID = termsSkipList.getValue(termIDPointer);
+      term D = termsSk pL st.getValue(term DPo nter);
 
-      // Set next termID pointer and is correct flag.
-      nextTermIDPointer = termsSkipList.getNextPointer(termIDPointer);
-      isNextTermIDPointerCorrect = true;
+      // Set next term D po nter and  s correct flag.
+      nextTerm DPo nter = termsSk pL st.getNextPo nter(term DPo nter);
+       sNextTerm DPo nterCorrect = true;
 
-      // Found a ceil term but not the precise match.
-      index.getTerm(termID, bytesRef);
+      // Found a ce l term but not t  prec se match.
+       ndex.getTerm(term D, bytesRef);
       return SeekStatus.NOT_FOUND;
     }
 
     /**
-     * {@link #nextTermIDPointer} is used to record the pointer to next termID. This method is used
-     * to correct {@link #nextTermIDPointer} to correct value after {@link #seekCeil} or
-     * {@link #seekExact} dropped current term to arbitrary point.
+     * {@l nk #nextTerm DPo nter}  s used to record t  po nter to next term D. T   thod  s used
+     * to correct {@l nk #nextTerm DPo nter} to correct value after {@l nk #seekCe l} or
+     * {@l nk #seekExact} dropped current term to arb rary po nt.
      */
-    private void correctNextTermIDPointer() {
-      final int curTermIDPointer = termsSkipList.search(
+    pr vate vo d correctNextTerm DPo nter() {
+      f nal  nt curTerm DPo nter = termsSk pL st.search(
           bytesRef,
-          SkipListContainer.FIRST_LIST_HEAD,
-          termsSkipListComparator,
+          Sk pL stConta ner.F RST_L ST_HEAD,
+          termsSk pL stComparator,
           null);
-      // Must be able to find the exact term.
-      assert termID == HashTable.EMPTY_SLOT
-          || termID == termsSkipList.getValue(curTermIDPointer);
+      // Must be able to f nd t  exact term.
+      assert term D == HashTable.EMPTY_SLOT
+          || term D == termsSk pL st.getValue(curTerm DPo nter);
 
-      nextTermIDPointer = termsSkipList.getNextPointer(curTermIDPointer);
-      isNextTermIDPointerCorrect = true;
+      nextTerm DPo nter = termsSk pL st.getNextPo nter(curTerm DPo nter);
+       sNextTerm DPo nterCorrect = true;
     }
 
-    @Override
-    public BytesRef next() {
-      // Correct nextTermIDPointer first if not correct due to seekExact or seekCeil.
-      if (!isNextTermIDPointerCorrect) {
-        correctNextTermIDPointer();
+    @Overr de
+    publ c BytesRef next() {
+      // Correct nextTerm DPo nter f rst  f not correct due to seekExact or seekCe l.
+       f (! sNextTerm DPo nterCorrect) {
+        correctNextTerm DPo nter();
       }
 
-      // Skip list is exhausted.
-      if (nextTermIDPointer == SkipListContainer.FIRST_LIST_HEAD) {
-        termID = HashTable.EMPTY_SLOT;
+      // Sk p l st  s exhausted.
+       f (nextTerm DPo nter == Sk pL stConta ner.F RST_L ST_HEAD) {
+        term D = HashTable.EMPTY_SLOT;
         return null;
       }
 
-      termID = termsSkipList.getValue(nextTermIDPointer);
+      term D = termsSk pL st.getValue(nextTerm DPo nter);
 
-      index.getTerm(termID, bytesRef);
+       ndex.getTerm(term D, bytesRef);
 
-      // Set next termID Pointer.
-      nextTermIDPointer = termsSkipList.getNextPointer(nextTermIDPointer);
+      // Set next term D Po nter.
+      nextTerm DPo nter = termsSk pL st.getNextPo nter(nextTerm DPo nter);
       return bytesRef;
     }
 
-    @Override
-    public long ord() {
-      return termID;
+    @Overr de
+    publ c long ord() {
+      return term D;
     }
 
-    @Override
-    public void seekExact(long ord) {
-      if (ord < index.getNumTerms()) {
-        termID = (int) ord;
-        index.getTerm(termID, bytesRef);
+    @Overr de
+    publ c vo d seekExact(long ord) {
+       f (ord <  ndex.getNumTerms()) {
+        term D = ( nt) ord;
+         ndex.getTerm(term D, bytesRef);
 
-        // Next term pointer is not correct anymore since seek exact
-        //   just jump to an arbitrary term.
-        isNextTermIDPointerCorrect = false;
+        // Next term po nter  s not correct anymore s nce seek exact
+        //   just jump to an arb rary term.
+         sNextTerm DPo nterCorrect = false;
       }
     }
 
-    @Override
-    public BytesRef term() {
+    @Overr de
+    publ c BytesRef term() {
       return bytesRef;
     }
 
-    @Override
-    public long totalTermFreq() {
+    @Overr de
+    publ c long totalTermFreq() {
       return docFreq();
     }
   }
 
-  @Override
-  public long getSumTotalTermFreq() {
-    return index.getSumTotalTermFreq();
+  @Overr de
+  publ c long getSumTotalTermFreq() {
+    return  ndex.getSumTotalTermFreq();
   }
 
-  @Override
-  public long getSumDocFreq() {
-    return index.getSumTermDocFreq();
+  @Overr de
+  publ c long getSumDocFreq() {
+    return  ndex.getSumTermDocFreq();
   }
 
-  @Override
-  public int getDocCount() {
-    return index.getNumDocs();
+  @Overr de
+  publ c  nt getDocCount() {
+    return  ndex.getNumDocs();
   }
 
-  @Override
-  public boolean hasFreqs() {
+  @Overr de
+  publ c boolean hasFreqs() {
     return true;
   }
 
-  @Override
-  public boolean hasOffsets() {
+  @Overr de
+  publ c boolean hasOffsets() {
     return false;
   }
 
-  @Override
-  public boolean hasPositions() {
+  @Overr de
+  publ c boolean hasPos  ons() {
     return true;
   }
 
-  @Override
-  public boolean hasPayloads() {
+  @Overr de
+  publ c boolean hasPayloads() {
     return true;
   }
 }

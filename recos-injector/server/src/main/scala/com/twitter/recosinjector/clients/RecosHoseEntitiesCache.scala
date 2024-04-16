@@ -1,137 +1,137 @@
-package com.twitter.recosinjector.clients
+package com.tw ter.recos njector.cl ents
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.io.Buf
-import com.twitter.recos.internal.thriftscala.{RecosHoseEntities, RecosHoseEntity}
-import com.twitter.servo.cache.ThriftSerializer
-import com.twitter.util.{Duration, Future, Time}
-import org.apache.thrift.protocol.TBinaryProtocol
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle. mcac d.Cl ent
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. o.Buf
+ mport com.tw ter.recos. nternal.thr ftscala.{RecosHoseEnt  es, RecosHoseEnt y}
+ mport com.tw ter.servo.cac .Thr ftSer al zer
+ mport com.tw ter.ut l.{Durat on, Future, T  }
+ mport org.apac .thr ft.protocol.TB naryProtocol
 
-case class CacheEntityEntry(
-  cachePrefix: String,
-  hashedEntityId: Int,
-  entity: String) {
-  val fullKey: String = cachePrefix + hashedEntityId
+case class Cac Ent yEntry(
+  cac Pref x: Str ng,
+  has dEnt y d:  nt,
+  ent y: Str ng) {
+  val fullKey: Str ng = cac Pref x + has dEnt y d
 }
 
-object RecosHoseEntitiesCache {
-  val EntityTTL: Duration = 30.hours
-  val EntitiesSerializer =
-    new ThriftSerializer[RecosHoseEntities](RecosHoseEntities, new TBinaryProtocol.Factory())
+object RecosHoseEnt  esCac  {
+  val Ent yTTL: Durat on = 30.h s
+  val Ent  esSer al zer =
+    new Thr ftSer al zer[RecosHoseEnt  es](RecosHoseEnt  es, new TB naryProtocol.Factory())
 
-  val HashtagPrefix: String = "h"
-  val UrlPrefix: String = "u"
+  val HashtagPref x: Str ng = "h"
+  val UrlPref x: Str ng = "u"
 }
 
 /**
- * A cache layer to store entities.
- * Graph services like user_tweet_entity_graph and user_url_graph store user interactions with
- * entities in a tweet, such as HashTags and URLs. These entities are string values that can be
- * potentially very big. Therefore, we instead store a hashed id in the graph edge, and keep a
- * (hashedId -> entity) mapping in this cache. The actual entity values can be recovered
- * by the graph service at serving time using this cache.
+ * A cac  layer to store ent  es.
+ * Graph serv ces l ke user_t et_ent y_graph and user_url_graph store user  nteract ons w h
+ * ent  es  n a t et, such as HashTags and URLs. T se ent  es are str ng values that can be
+ * potent ally very b g. T refore,    nstead store a has d  d  n t  graph edge, and keep a
+ * (has d d -> ent y) mapp ng  n t  cac . T  actual ent y values can be recovered
+ * by t  graph serv ce at serv ng t   us ng t  cac .
  */
-class RecosHoseEntitiesCache(client: Client) {
-  import RecosHoseEntitiesCache._
+class RecosHoseEnt  esCac (cl ent: Cl ent) {
+   mport RecosHoseEnt  esCac ._
 
-  private def isEntityWithinTTL(entity: RecosHoseEntity, ttlInMillis: Long): Boolean = {
-    entity.timestamp.exists(timestamp => Time.now.inMilliseconds - timestamp <= ttlInMillis)
+  pr vate def  sEnt yW h nTTL(ent y: RecosHoseEnt y, ttl nM ll s: Long): Boolean = {
+    ent y.t  stamp.ex sts(t  stamp => T  .now. nM ll seconds - t  stamp <= ttl nM ll s)
   }
 
   /**
-   * Add a new RecosHoseEntity into RecosHoseEntities
+   * Add a new RecosHoseEnt y  nto RecosHoseEnt  es
    */
-  private def updateRecosHoseEntities(
-    existingEntitiesOpt: Option[RecosHoseEntities],
-    newEntityString: String,
-    stats: StatsReceiver
-  ): RecosHoseEntities = {
-    val existingEntities = existingEntitiesOpt.map(_.entities).getOrElse(Nil)
+  pr vate def updateRecosHoseEnt  es(
+    ex st ngEnt  esOpt: Opt on[RecosHoseEnt  es],
+    newEnt yStr ng: Str ng,
+    stats: StatsRece ver
+  ): RecosHoseEnt  es = {
+    val ex st ngEnt  es = ex st ngEnt  esOpt.map(_.ent  es).getOrElse(N l)
 
-    // Discard expired and duplicate existing entities
-    val validExistingEntities = existingEntities
-      .filter(entity => isEntityWithinTTL(entity, EntityTTL.inMillis))
-      .filter(_.entity != newEntityString)
+    // D scard exp red and dupl cate ex st ng ent  es
+    val val dEx st ngEnt  es = ex st ngEnt  es
+      .f lter(ent y =>  sEnt yW h nTTL(ent y, Ent yTTL. nM ll s))
+      .f lter(_.ent y != newEnt yStr ng)
 
-    val newRecosHoseEntity = RecosHoseEntity(newEntityString, Some(Time.now.inMilliseconds))
-    RecosHoseEntities(validExistingEntities :+ newRecosHoseEntity)
+    val newRecosHoseEnt y = RecosHoseEnt y(newEnt yStr ng, So (T  .now. nM ll seconds))
+    RecosHoseEnt  es(val dEx st ngEnt  es :+ newRecosHoseEnt y)
   }
 
-  private def getRecosHoseEntitiesCache(
-    cacheEntries: Seq[CacheEntityEntry],
-    stats: StatsReceiver
-  ): Future[Map[String, Option[RecosHoseEntities]]] = {
-    client
-      .get(cacheEntries.map(_.fullKey))
+  pr vate def getRecosHoseEnt  esCac (
+    cac Entr es: Seq[Cac Ent yEntry],
+    stats: StatsRece ver
+  ): Future[Map[Str ng, Opt on[RecosHoseEnt  es]]] = {
+    cl ent
+      .get(cac Entr es.map(_.fullKey))
       .map(_.map {
-        case (cacheKey, buf) =>
-          val recosHoseEntitiesTry = EntitiesSerializer.from(Buf.ByteArray.Owned.extract(buf))
-          if (recosHoseEntitiesTry.isThrow) {
-            stats.counter("cache_get_deserialization_failure").incr()
+        case (cac Key, buf) =>
+          val recosHoseEnt  esTry = Ent  esSer al zer.from(Buf.ByteArray.Owned.extract(buf))
+           f (recosHoseEnt  esTry. sThrow) {
+            stats.counter("cac _get_deser al zat on_fa lure"). ncr()
           }
-          cacheKey -> recosHoseEntitiesTry.toOption
+          cac Key -> recosHoseEnt  esTry.toOpt on
       })
-      .onSuccess { _ => stats.counter("get_cache_success").incr() }
-      .onFailure { ex =>
-        stats.scope("get_cache_failure").counter(ex.getClass.getSimpleName).incr()
+      .onSuccess { _ => stats.counter("get_cac _success"). ncr() }
+      .onFa lure { ex =>
+        stats.scope("get_cac _fa lure").counter(ex.getClass.getS mpleNa ). ncr()
       }
   }
 
-  private def putRecosHoseEntitiesCache(
-    cacheKey: String,
-    recosHoseEntities: RecosHoseEntities,
-    stats: StatsReceiver
-  ): Unit = {
-    val serialized = EntitiesSerializer.to(recosHoseEntities)
-    if (serialized.isThrow) {
-      stats.counter("cache_put_serialization_failure").incr()
+  pr vate def putRecosHoseEnt  esCac (
+    cac Key: Str ng,
+    recosHoseEnt  es: RecosHoseEnt  es,
+    stats: StatsRece ver
+  ): Un  = {
+    val ser al zed = Ent  esSer al zer.to(recosHoseEnt  es)
+     f (ser al zed. sThrow) {
+      stats.counter("cac _put_ser al zat on_fa lure"). ncr()
     }
-    serialized.toOption.map { bytes =>
-      client
-        .set(cacheKey, 0, EntityTTL.fromNow, Buf.ByteArray.Owned(bytes))
-        .onSuccess { _ => stats.counter("put_cache_success").incr() }
-        .onFailure { ex =>
-          stats.scope("put_cache_failure").counter(ex.getClass.getSimpleName).incr()
+    ser al zed.toOpt on.map { bytes =>
+      cl ent
+        .set(cac Key, 0, Ent yTTL.fromNow, Buf.ByteArray.Owned(bytes))
+        .onSuccess { _ => stats.counter("put_cac _success"). ncr() }
+        .onFa lure { ex =>
+          stats.scope("put_cac _fa lure").counter(ex.getClass.getS mpleNa ). ncr()
         }
     }
   }
 
   /**
-   * Store a list of new entities into the cache by their cacheKeys, and remove expired/invalid
-   * values in the existing cache entries at the same time
+   * Store a l st of new ent  es  nto t  cac  by t  r cac Keys, and remove exp red/ nval d
+   * values  n t  ex st ng cac  entr es at t  sa  t  
    */
-  def updateEntitiesCache(
-    newCacheEntries: Seq[CacheEntityEntry],
-    stats: StatsReceiver
-  ): Future[Unit] = {
-    stats.counter("update_cache_request").incr()
-    getRecosHoseEntitiesCache(newCacheEntries, stats)
-      .map { existingCacheEntries =>
-        newCacheEntries.foreach { newCacheEntry =>
-          val fullKey = newCacheEntry.fullKey
-          val existingRecosHoseEntities = existingCacheEntries.get(fullKey).flatten
-          stats.stat("num_existing_entities").add(existingRecosHoseEntities.size)
-          if (existingRecosHoseEntities.isEmpty) {
-            stats.counter("existing_entities_empty").incr()
+  def updateEnt  esCac (
+    newCac Entr es: Seq[Cac Ent yEntry],
+    stats: StatsRece ver
+  ): Future[Un ] = {
+    stats.counter("update_cac _request"). ncr()
+    getRecosHoseEnt  esCac (newCac Entr es, stats)
+      .map { ex st ngCac Entr es =>
+        newCac Entr es.foreach { newCac Entry =>
+          val fullKey = newCac Entry.fullKey
+          val ex st ngRecosHoseEnt  es = ex st ngCac Entr es.get(fullKey).flatten
+          stats.stat("num_ex st ng_ent  es").add(ex st ngRecosHoseEnt  es.s ze)
+           f (ex st ngRecosHoseEnt  es. sEmpty) {
+            stats.counter("ex st ng_ent  es_empty"). ncr()
           }
 
-          val updatedRecosHoseEntities = updateRecosHoseEntities(
-            existingRecosHoseEntities,
-            newCacheEntry.entity,
+          val updatedRecosHoseEnt  es = updateRecosHoseEnt  es(
+            ex st ngRecosHoseEnt  es,
+            newCac Entry.ent y,
             stats
           )
-          stats.stat("num_updated_entities").add(updatedRecosHoseEntities.entities.size)
+          stats.stat("num_updated_ent  es").add(updatedRecosHoseEnt  es.ent  es.s ze)
 
-          if (updatedRecosHoseEntities.entities.nonEmpty) {
-            putRecosHoseEntitiesCache(fullKey, updatedRecosHoseEntities, stats)
+           f (updatedRecosHoseEnt  es.ent  es.nonEmpty) {
+            putRecosHoseEnt  esCac (fullKey, updatedRecosHoseEnt  es, stats)
           }
         }
       }
-      .onSuccess { _ => stats.counter("update_cache_success").incr() }
-      .onFailure { ex =>
-        stats.scope("update_cache_failure").counter(ex.getClass.getSimpleName).incr()
+      .onSuccess { _ => stats.counter("update_cac _success"). ncr() }
+      .onFa lure { ex =>
+        stats.scope("update_cac _fa lure").counter(ex.getClass.getS mpleNa ). ncr()
       }
   }
 }

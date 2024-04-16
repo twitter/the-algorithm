@@ -1,168 +1,168 @@
-scala_library(
-    sources = ["*.scala"],
+scala_l brary(
+    s ces = ["*.scala"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "escherbird/src/scala/com/twitter/escherbird/scalding/jobs/exportentities:entities-scala",
-        "escherbird/src/scala/com/twitter/escherbird/scalding/source/utt:utt_source-scala",
-        "interests-ds/src/main/scala/com/twitter/interests_ds/jobs/interests_service",
-        "interests-ds/src/main/scala/com/twitter/interests_ds/jobs/interests_service:user_topic_relation_snapshot-scala",
-        "src/scala/com/twitter/scalding_internal/dalv2",
-        "src/scala/com/twitter/scalding_internal/job",
-        "src/scala/com/twitter/scalding_internal/job/analytics_batch",
-        "src/scala/com/twitter/scalding_internal/source",
-        "src/scala/com/twitter/scalding_internal/source/lzo_scrooge",
-        "src/scala/com/twitter/simclusters_v2/candidate_source",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/scalding",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:em_util",
-        "timelines/data_processing/jobs/metrics/per_topic_metrics:per_topic_aggregate_engagement-scala",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "esc rb rd/src/scala/com/tw ter/esc rb rd/scald ng/jobs/exportent  es:ent  es-scala",
+        "esc rb rd/src/scala/com/tw ter/esc rb rd/scald ng/s ce/utt:utt_s ce-scala",
+        " nterests-ds/src/ma n/scala/com/tw ter/ nterests_ds/jobs/ nterests_serv ce",
+        " nterests-ds/src/ma n/scala/com/tw ter/ nterests_ds/jobs/ nterests_serv ce:user_top c_relat on_snapshot-scala",
+        "src/scala/com/tw ter/scald ng_ nternal/dalv2",
+        "src/scala/com/tw ter/scald ng_ nternal/job",
+        "src/scala/com/tw ter/scald ng_ nternal/job/analyt cs_batch",
+        "src/scala/com/tw ter/scald ng_ nternal/s ce",
+        "src/scala/com/tw ter/scald ng_ nternal/s ce/lzo_scrooge",
+        "src/scala/com/tw ter/s mclusters_v2/cand date_s ce",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces",
+        "src/scala/com/tw ter/s mclusters_v2/scald ng",
+        "src/scala/com/tw ter/wtf/scald ng/jobs/common:em_ut l",
+        "t  l nes/data_process ng/jobs/ tr cs/per_top c_ tr cs:per_top c_aggregate_engage nt-scala",
     ],
 )
 
-hadoop_binary(
-    name = "geopopular_top_tweets_impressed_topics",
-    main = "com.twitter.simclusters_v2.scalding.topic_recommendations.GeoPopularTopicsBatchApp",
+hadoop_b nary(
+    na  = "geopopular_top_t ets_ mpressed_top cs",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.top c_recom ndat ons.GeoPopularTop csBatchApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":topic_recommendations",
+    dependenc es = [
+        ":top c_recom ndat ons",
     ],
 )
 
-hadoop_binary(
-    name = "geopopular_top_tweets_impressed_topics_adhoc",
-    main = "com.twitter.simclusters_v2.scalding.topic_recommendations.GeoPopularTopicsAdhocApp",
+hadoop_b nary(
+    na  = "geopopular_top_t ets_ mpressed_top cs_adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.top c_recom ndat ons.GeoPopularTop csAdhocApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":topic_recommendations",
+    dependenc es = [
+        ":top c_recom ndat ons",
     ],
 )
 
-hadoop_binary(
-    name = "similar_topics_from_topic_follow_graph",
-    main = "com.twitter.simclusters_v2.scalding.topic_recommendations.SimilarTopicsFromTopicFollowGraphScheduledApp",
+hadoop_b nary(
+    na  = "s m lar_top cs_from_top c_follow_graph",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.top c_recom ndat ons.S m larTop csFromTop cFollowGraphSc duledApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":topic_recommendations",
+    dependenc es = [
+        ":top c_recom ndat ons",
     ],
 )
 
-hadoop_binary(
-    name = "similar_topics_from_topic_follow_graph-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.topic_recommendations.SimilarTopicsFromTopicFollowGraphAdhocApp",
+hadoop_b nary(
+    na  = "s m lar_top cs_from_top c_follow_graph-adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.top c_recom ndat ons.S m larTop csFromTop cFollowGraphAdhocApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":topic_recommendations",
+    dependenc es = [
+        ":top c_recom ndat ons",
     ],
 )
 
-hadoop_binary(
-    name = "top_topics_for_producers_from_em",
-    main = "com.twitter.simclusters_v2.scalding.topic_recommendations.TopicsForProducersFromEMBatchApp",
+hadoop_b nary(
+    na  = "top_top cs_for_producers_from_em",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.top c_recom ndat ons.Top csForProducersFromEMBatchApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":topic_recommendations",
+    dependenc es = [
+        ":top c_recom ndat ons",
     ],
 )
 
-hadoop_binary(
-    name = "top_topics_for_producers_from_em-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.topic_recommendations.TopicsForProducersFromEMAdhocApp",
+hadoop_b nary(
+    na  = "top_top cs_for_producers_from_em-adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.top c_recom ndat ons.Top csForProducersFromEMAdhocApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":topic_recommendations",
+    dependenc es = [
+        ":top c_recom ndat ons",
     ],
 )
 
-hadoop_binary(
-    name = "top_producers_for_topics_from_topic_follow_graph",
-    main = "com.twitter.simclusters_v2.scalding.topic_recommendations.ProducersForTopicsFromTopicFollowGraphBatchApp",
+hadoop_b nary(
+    na  = "top_producers_for_top cs_from_top c_follow_graph",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.top c_recom ndat ons.ProducersForTop csFromTop cFollowGraphBatchApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":topic_recommendations",
+    dependenc es = [
+        ":top c_recom ndat ons",
     ],
 )
 
-hadoop_binary(
-    name = "top_producers_for_topics_from_topic_follow_graph-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.topic_recommendations.ProducersForTopicsFromTopicFollowGraphAdhocApp",
+hadoop_b nary(
+    na  = "top_producers_for_top cs_from_top c_follow_graph-adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.top c_recom ndat ons.ProducersForTop csFromTop cFollowGraphAdhocApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":topic_recommendations",
+    dependenc es = [
+        ":top c_recom ndat ons",
     ],
 )
 
-# Generated with `capesospy-v2 create_target popular_topics_per_country src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml`, config hash beffad.
-scalding_job(
-    name = "popular_topics_per_country",
-    main = "com.twitter.simclusters_v2.scalding.topic_recommendations.GeoPopularTopicsBatchApp",
-    args = ["--maxTopics 100"],
-    config = [
-        ("hadoop.combine-input", "true"),
-        ("hadoop.map.jvm.total-memory", "3072m"),
+# Generated w h `capesospy-v2 create_target popular_top cs_per_country src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc3.yaml`, conf g hash beffad.
+scald ng_job(
+    na  = "popular_top cs_per_country",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.top c_recom ndat ons.GeoPopularTop csBatchApp",
+    args = ["--maxTop cs 100"],
+    conf g = [
+        ("hadoop.comb ne- nput", "true"),
+        ("hadoop.map.jvm.total- mory", "3072m"),
         ("hadoop.queue", "cassowary.default"),
-        ("hadoop.reduce.jvm.total-memory", "3072m"),
-        ("hadoop.submitter.jvm.total-memory", "5120m"),
-        ("submitter.tier", "preemptible"),
+        ("hadoop.reduce.jvm.total- mory", "3072m"),
+        ("hadoop.subm ter.jvm.total- mory", "5120m"),
+        ("subm ter.t er", "preempt ble"),
     ],
     cron = "16 * * * *",
     hadoop_cluster = "atla-proc3",
     platform = "java8",
     role = "cassowary",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible:migrated",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":topic_recommendations",
+    dependenc es = [
+        ":top c_recom ndat ons",
     ],
 )

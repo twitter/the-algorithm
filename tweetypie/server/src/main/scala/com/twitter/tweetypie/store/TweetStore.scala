@@ -1,292 +1,292 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.stats.Stat
-import com.twitter.servo.util.RetryHandler
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.util.Timer
+ mport com.tw ter.f nagle.serv ce.RetryPol cy
+ mport com.tw ter.f nagle.stats.Stat
+ mport com.tw ter.servo.ut l.RetryHandler
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport com.tw ter.ut l.T  r
 
-object TweetStore {
-  // Using the old-school c.t.logging.Logger here as this log is only used by
-  // servo.FutureEffect's trackOutcome method, which needs that kind of logger.
-  val log: com.twitter.logging.Logger = com.twitter.logging.Logger(getClass)
+object T etStore {
+  // Us ng t  old-school c.t.logg ng.Logger  re as t  log  s only used by
+  // servo.FutureEffect's trackOutco   thod, wh ch needs that k nd of logger.
+  val log: com.tw ter.logg ng.Logger = com.tw ter.logg ng.Logger(getClass)
 
   /**
-   * Adapts a tweet store on a specific TweetStoreEvent type to one that handles
-   * TweetStoreRetryEvents of that type that match the given AsyncWriteAction.
+   * Adapts a t et store on a spec f c T etStoreEvent type to one that handles
+   * T etStoreRetryEvents of that type that match t  g ven AsyncWr eAct on.
    */
-  def retry[T <: AsyncTweetStoreEvent](
-    action: AsyncWriteAction,
+  def retry[T <: AsyncT etStoreEvent](
+    act on: AsyncWr eAct on,
     store: FutureEffect[T]
-  ): FutureEffect[TweetStoreRetryEvent[T]] =
-    store.contramap[TweetStoreRetryEvent[T]](_.event).onlyIf(_.action == action)
+  ): FutureEffect[T etStoreRetryEvent[T]] =
+    store.contramap[T etStoreRetryEvent[T]](_.event).only f(_.act on == act on)
 
   /**
-   * Defines an abstract polymorphic operation to be applied to FutureEffects over any
-   * TweetStoreEvent type.  The Wrap operation is defined over all possible
-   * FutureEffect[E <: TweetStoreEvent] types.
+   * Def nes an abstract polymorph c operat on to be appl ed to FutureEffects over any
+   * T etStoreEvent type.  T  Wrap operat on  s def ned over all poss ble
+   * FutureEffect[E <: T etStoreEvent] types.
    */
-  trait Wrap {
-    def apply[E <: TweetStoreEvent](handler: FutureEffect[E]): FutureEffect[E]
+  tra  Wrap {
+    def apply[E <: T etStoreEvent](handler: FutureEffect[E]): FutureEffect[E]
   }
 
   /**
-   * A Wrap operation that applies standardized metrics collection to the FutureEffect.
+   * A Wrap operat on that appl es standard zed  tr cs collect on to t  FutureEffect.
    */
-  case class Tracked(stats: StatsReceiver) extends Wrap {
-    def apply[E <: TweetStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
+  case class Tracked(stats: StatsRece ver) extends Wrap {
+    def apply[E <: T etStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
       FutureEffect[E] { event =>
-        Stat.timeFuture(stats.scope(event.name).stat("latency_ms")) {
+        Stat.t  Future(stats.scope(event.na ).stat("latency_ms")) {
           handler(event)
         }
-      }.trackOutcome(stats, _.name, log)
+      }.trackOutco (stats, _.na , log)
   }
 
   /**
-   * A Wrap operation that makes the FutureEffect enabled according to the given gate.
+   * A Wrap operat on that makes t  FutureEffect enabled accord ng to t  g ven gate.
    */
-  case class Gated(gate: Gate[Unit]) extends Wrap {
-    def apply[E <: TweetStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
+  case class Gated(gate: Gate[Un ]) extends Wrap {
+    def apply[E <: T etStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
       handler.enabledBy(gate)
   }
 
   /**
-   * A Wrap operation that updates the FutureEffect to ignore failures.
+   * A Wrap operat on that updates t  FutureEffect to  gnore fa lures.
    */
-  object IgnoreFailures extends Wrap {
-    def apply[E <: TweetStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
-      handler.ignoreFailures
+  object  gnoreFa lures extends Wrap {
+    def apply[E <: T etStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
+      handler. gnoreFa lures
   }
 
   /**
-   * A Wrap operation that updates the FutureEffect to ignore failures upon completion.
+   * A Wrap operat on that updates t  FutureEffect to  gnore fa lures upon complet on.
    */
-  object IgnoreFailuresUponCompletion extends Wrap {
-    def apply[E <: TweetStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
-      handler.ignoreFailuresUponCompletion
+  object  gnoreFa luresUponComplet on extends Wrap {
+    def apply[E <: T etStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
+      handler. gnoreFa luresUponComplet on
   }
 
   /**
-   * A Wrap operation that applies a RetryHandler to FutureEffects.
+   * A Wrap operat on that appl es a RetryHandler to FutureEffects.
    */
-  case class Retry(retryHandler: RetryHandler[Unit]) extends Wrap {
-    def apply[E <: TweetStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
+  case class Retry(retryHandler: RetryHandler[Un ]) extends Wrap {
+    def apply[E <: T etStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
       handler.retry(retryHandler)
   }
 
   /**
-   * A Wrap operation that applies a RetryHandler to FutureEffects.
+   * A Wrap operat on that appl es a RetryHandler to FutureEffects.
    */
-  case class ReplicatedEventRetry(retryHandler: RetryHandler[Unit]) extends Wrap {
-    def apply[E <: TweetStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
+  case class Repl catedEventRetry(retryHandler: RetryHandler[Un ]) extends Wrap {
+    def apply[E <: T etStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
       FutureEffect[E] { event =>
         event.retryStrategy match {
-          case TweetStoreEvent.ReplicatedEventLocalRetry => handler.retry(retryHandler)(event)
+          case T etStoreEvent.Repl catedEventLocalRetry => handler.retry(retryHandler)(event)
           case _ => handler(event)
         }
       }
   }
 
   /**
-   * A Wrap operation that configures async-retry behavior to async-write events.
+   * A Wrap operat on that conf gures async-retry behav or to async-wr e events.
    */
   class AsyncRetry(
-    localRetryPolicy: RetryPolicy[Try[Nothing]],
-    enqueueRetryPolicy: RetryPolicy[Try[Nothing]],
-    timer: Timer,
-    tweetService: ThriftTweetService,
-    scribe: FutureEffect[FailedAsyncWrite]
+    localRetryPol cy: RetryPol cy[Try[Noth ng]],
+    enqueueRetryPol cy: RetryPol cy[Try[Noth ng]],
+    t  r: T  r,
+    t etServ ce: Thr ftT etServ ce,
+    scr be: FutureEffect[Fa ledAsyncWr e]
   )(
-    stats: StatsReceiver,
-    action: AsyncWriteAction)
+    stats: StatsRece ver,
+    act on: AsyncWr eAct on)
       extends Wrap {
 
-    override def apply[E <: TweetStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
+    overr de def apply[E <: T etStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
       FutureEffect[E] { event =>
         event.retryStrategy match {
-          case TweetStoreEvent.EnqueueAsyncRetry(enqueueRetry) =>
+          case T etStoreEvent.EnqueueAsyncRetry(enqueueRetry) =>
             enqueueAsyncRetry(handler, enqueueRetry)(event)
 
-          case TweetStoreEvent.LocalRetryThenScribeFailure(toFailedAsyncWrite) =>
-            localRetryThenScribeFailure(handler, toFailedAsyncWrite)(event)
+          case T etStoreEvent.LocalRetryT nScr beFa lure(toFa ledAsyncWr e) =>
+            localRetryT nScr beFa lure(handler, toFa ledAsyncWr e)(event)
 
           case _ =>
             handler(event)
         }
       }
 
-    private def enqueueAsyncRetry[E <: TweetStoreEvent](
+    pr vate def enqueueAsyncRetry[E <: T etStoreEvent](
       handler: FutureEffect[E],
-      enqueueRetry: (ThriftTweetService, AsyncWriteAction) => Future[Unit]
+      enqueueRetry: (Thr ftT etServ ce, AsyncWr eAct on) => Future[Un ]
     ): FutureEffect[E] = {
-      val retryInitCounter = stats.counter("retries_initiated")
+      val retry n Counter = stats.counter("retr es_ n  ated")
 
-      // enqueues failed TweetStoreEvents to the deferredrpc-backed tweetService
-      // to be retried.  this store uses the enqueueRetryPolicy to retry the enqueue
-      // attempts in the case of deferredrpc application failures.
+      // enqueues fa led T etStoreEvents to t  deferredrpc-backed t etServ ce
+      // to be retr ed.  t  store uses t  enqueueRetryPol cy to retry t  enqueue
+      // attempts  n t  case of deferredrpc appl cat on fa lures.
       val enqueueRetryHandler =
-        FutureEffect[E](_ => enqueueRetry(tweetService, action))
-          .retry(RetryHandler.failuresOnly(enqueueRetryPolicy, timer, stats.scope("enqueue_retry")))
+        FutureEffect[E](_ => enqueueRetry(t etServ ce, act on))
+          .retry(RetryHandler.fa luresOnly(enqueueRetryPol cy, t  r, stats.scope("enqueue_retry")))
 
       handler.rescue {
         case ex =>
-          TweetStore.log.warning(ex, s"will retry $action")
-          retryInitCounter.incr()
+          T etStore.log.warn ng(ex, s"w ll retry $act on")
+          retry n Counter. ncr()
           enqueueRetryHandler
       }
     }
 
-    private def localRetryThenScribeFailure[E <: TweetStoreEvent](
+    pr vate def localRetryT nScr beFa lure[E <: T etStoreEvent](
       handler: FutureEffect[E],
-      toFailedAsyncWrite: AsyncWriteAction => FailedAsyncWrite
+      toFa ledAsyncWr e: AsyncWr eAct on => Fa ledAsyncWr e
     ): FutureEffect[E] = {
-      val exhaustedCounter = stats.counter("retries_exhausted")
+      val exhaustedCounter = stats.counter("retr es_exhausted")
 
-      // scribe events that failed after exhausting all retries
-      val scribeEventHandler =
-        FutureEffect[E](_ => scribe(toFailedAsyncWrite(action)))
+      // scr be events that fa led after exhaust ng all retr es
+      val scr beEventHandler =
+        FutureEffect[E](_ => scr be(toFa ledAsyncWr e(act on)))
 
-      // wraps `handle` with a retry policy to retry failures with a backoff. if we exhaust
-      // all retries, then we pass the event to `scribeEventStore` to scribe the failure.
+      // wraps `handle` w h a retry pol cy to retry fa lures w h a backoff.  f   exhaust
+      // all retr es, t n   pass t  event to `scr beEventStore` to scr be t  fa lure.
       handler
-        .retry(RetryHandler.failuresOnly(localRetryPolicy, timer, stats))
+        .retry(RetryHandler.fa luresOnly(localRetryPol cy, t  r, stats))
         .rescue {
           case ex =>
-            TweetStore.log.warning(ex, s"exhausted retries on $action")
-            exhaustedCounter.incr()
-            scribeEventHandler
+            T etStore.log.warn ng(ex, s"exhausted retr es on $act on")
+            exhaustedCounter. ncr()
+            scr beEventHandler
         }
     }
   }
 
   /**
-   * Parent trait for defining a "module" that defines a TweetStoreEvent type and corresponding
-   * TweetStore and TweetStoreWrapper types.
+   * Parent tra  for def n ng a "module" that def nes a T etStoreEvent type and correspond ng
+   * T etStore and T etStoreWrapper types.
    */
-  sealed trait Module {
+  sealed tra  Module {
     type Store
     type StoreWrapper <: Store
   }
 
   /**
-   * Parent trait for defining a "module" that defines a sync TweetStoreEvent.
+   * Parent tra  for def n ng a "module" that def nes a sync T etStoreEvent.
    */
-  trait SyncModule extends Module {
-    type Event <: SyncTweetStoreEvent
+  tra  SyncModule extends Module {
+    type Event <: SyncT etStoreEvent
   }
 
   /**
-   * Parent trait for defining a "module" that defines an async TweetStoreEvent and a
-   * TweetStoreRetryEvent.
+   * Parent tra  for def n ng a "module" that def nes an async T etStoreEvent and a
+   * T etStoreRetryEvent.
    */
-  trait AsyncModule extends Module {
-    type Event <: AsyncTweetStoreEvent
-    type RetryEvent <: TweetStoreRetryEvent[Event]
+  tra  AsyncModule extends Module {
+    type Event <: AsyncT etStoreEvent
+    type RetryEvent <: T etStoreRetryEvent[Event]
   }
 
   /**
-   * Parent trait for defining a "module" that defines a replicated TweetStoreEvent.
+   * Parent tra  for def n ng a "module" that def nes a repl cated T etStoreEvent.
    */
-  trait ReplicatedModule extends Module {
-    type Event <: ReplicatedTweetStoreEvent
+  tra  Repl catedModule extends Module {
+    type Event <: Repl catedT etStoreEvent
   }
 }
 
 /**
- * Trait for TweetStore implementations that support handler wrapping.
+ * Tra  for T etStore  mple ntat ons that support handler wrapp ng.
  */
-trait TweetStoreBase[Self] {
-  import TweetStore._
+tra  T etStoreBase[Self] {
+   mport T etStore._
 
   /**
-   * Returns a new store of type Self with Wrap applied to each event handler in this instance.
+   * Returns a new store of type Self w h Wrap appl ed to each event handler  n t   nstance.
    */
   def wrap(w: Wrap): Self
 
   /**
-   * Applies the Tracked Wrap operation to the store.
+   * Appl es t  Tracked Wrap operat on to t  store.
    */
-  def tracked(stats: StatsReceiver): Self = wrap(Tracked(stats))
+  def tracked(stats: StatsRece ver): Self = wrap(Tracked(stats))
 
   /**
-   * Applies the Gated Wrap operation to the store.
+   * Appl es t  Gated Wrap operat on to t  store.
    */
-  def enabledBy(gate: Gate[Unit]): Self = wrap(Gated(gate))
+  def enabledBy(gate: Gate[Un ]): Self = wrap(Gated(gate))
 
   /**
-   * Applies the IgnoreFailures Wrap operation to the store.
+   * Appl es t   gnoreFa lures Wrap operat on to t  store.
    */
-  def ignoreFailures: Self = wrap(IgnoreFailures)
+  def  gnoreFa lures: Self = wrap( gnoreFa lures)
 
   /**
-   * Applies the IgnoreFailuresUponCompletion Wrap operation to the store.
+   * Appl es t   gnoreFa luresUponComplet on Wrap operat on to t  store.
    */
-  def ignoreFailuresUponCompletion: Self = wrap(IgnoreFailuresUponCompletion)
+  def  gnoreFa luresUponComplet on: Self = wrap( gnoreFa luresUponComplet on)
 
   /**
-   * Applies a RetryHandler to each event handler.
+   * Appl es a RetryHandler to each event handler.
    */
-  def retry(retryHandler: RetryHandler[Unit]): Self = wrap(Retry(retryHandler))
+  def retry(retryHandler: RetryHandler[Un ]): Self = wrap(Retry(retryHandler))
 
   /**
-   * Applies a RetryHandler to replicated event handlers.
+   * Appl es a RetryHandler to repl cated event handlers.
    */
-  def replicatedRetry(retryHandler: RetryHandler[Unit]): Self =
-    wrap(ReplicatedEventRetry(retryHandler))
+  def repl catedRetry(retryHandler: RetryHandler[Un ]): Self =
+    wrap(Repl catedEventRetry(retryHandler))
 
   /**
-   * Applies the AsyncRetryConfig Wrap operation to the store.
+   * Appl es t  AsyncRetryConf g Wrap operat on to t  store.
    */
   def asyncRetry(cfg: AsyncRetry): Self = wrap(cfg)
 }
 
 /**
- * An abstract base class for tweet store instances that wrap another tweet store instance.
- * You can mix event-specific store wrapper traits into this class to automatically
- * have the event-specific handlers wrapped.
+ * An abstract base class for t et store  nstances that wrap anot r t et store  nstance.
+ *   can m x event-spec f c store wrapper tra s  nto t  class to automat cally
+ * have t  event-spec f c handlers wrapped.
  */
-abstract class TweetStoreWrapper[+T](
-  protected val wrap: TweetStore.Wrap,
-  protected val underlying: T)
+abstract class T etStoreWrapper[+T](
+  protected val wrap: T etStore.Wrap,
+  protected val underly ng: T)
 
 /**
- * A TweetStore that has a handler for all possible TweetStoreEvents.
+ * A T etStore that has a handler for all poss ble T etStoreEvents.
  */
-trait TotalTweetStore
-    extends AsyncDeleteAdditionalFields.Store
-    with AsyncDeleteTweet.Store
-    with AsyncIncrBookmarkCount.Store
-    with AsyncIncrFavCount.Store
-    with AsyncInsertTweet.Store
-    with AsyncSetAdditionalFields.Store
-    with AsyncSetRetweetVisibility.Store
-    with AsyncTakedown.Store
-    with AsyncUndeleteTweet.Store
-    with AsyncUpdatePossiblySensitiveTweet.Store
-    with DeleteAdditionalFields.Store
-    with DeleteTweet.Store
-    with Flush.Store
-    with IncrBookmarkCount.Store
-    with IncrFavCount.Store
-    with InsertTweet.Store
-    with QuotedTweetDelete.Store
-    with QuotedTweetTakedown.Store
-    with ReplicatedDeleteAdditionalFields.Store
-    with ReplicatedDeleteTweet.Store
-    with ReplicatedIncrBookmarkCount.Store
-    with ReplicatedIncrFavCount.Store
-    with ReplicatedInsertTweet.Store
-    with ReplicatedScrubGeo.Store
-    with ReplicatedSetAdditionalFields.Store
-    with ReplicatedSetRetweetVisibility.Store
-    with ReplicatedTakedown.Store
-    with ReplicatedUndeleteTweet.Store
-    with ReplicatedUpdatePossiblySensitiveTweet.Store
-    with ScrubGeo.Store
-    with ScrubGeoUpdateUserTimestamp.Store
-    with SetAdditionalFields.Store
-    with SetRetweetVisibility.Store
-    with Takedown.Store
-    with UndeleteTweet.Store
-    with UpdatePossiblySensitiveTweet.Store
+tra  TotalT etStore
+    extends AsyncDeleteAdd  onalF elds.Store
+    w h AsyncDeleteT et.Store
+    w h Async ncrBookmarkCount.Store
+    w h Async ncrFavCount.Store
+    w h Async nsertT et.Store
+    w h AsyncSetAdd  onalF elds.Store
+    w h AsyncSetRet etV s b l y.Store
+    w h AsyncTakedown.Store
+    w h AsyncUndeleteT et.Store
+    w h AsyncUpdatePoss blySens  veT et.Store
+    w h DeleteAdd  onalF elds.Store
+    w h DeleteT et.Store
+    w h Flush.Store
+    w h  ncrBookmarkCount.Store
+    w h  ncrFavCount.Store
+    w h  nsertT et.Store
+    w h QuotedT etDelete.Store
+    w h QuotedT etTakedown.Store
+    w h Repl catedDeleteAdd  onalF elds.Store
+    w h Repl catedDeleteT et.Store
+    w h Repl cated ncrBookmarkCount.Store
+    w h Repl cated ncrFavCount.Store
+    w h Repl cated nsertT et.Store
+    w h Repl catedScrubGeo.Store
+    w h Repl catedSetAdd  onalF elds.Store
+    w h Repl catedSetRet etV s b l y.Store
+    w h Repl catedTakedown.Store
+    w h Repl catedUndeleteT et.Store
+    w h Repl catedUpdatePoss blySens  veT et.Store
+    w h ScrubGeo.Store
+    w h ScrubGeoUpdateUserT  stamp.Store
+    w h SetAdd  onalF elds.Store
+    w h SetRet etV s b l y.Store
+    w h Takedown.Store
+    w h UndeleteT et.Store
+    w h UpdatePoss blySens  veT et.Store

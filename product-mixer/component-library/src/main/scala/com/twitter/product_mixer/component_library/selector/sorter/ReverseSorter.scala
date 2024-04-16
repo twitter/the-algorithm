@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.component_library.selector.sorter
+package com.tw ter.product_m xer.component_l brary.selector.sorter
 
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
 
 /**
- * Reverse candidates.
+ * Reverse cand dates.
  *
  * @example `UpdateSortResults(ReverseSorter())`
  */
-object ReverseSorter extends SorterProvider with Sorter {
+object ReverseSorter extends SorterProv der w h Sorter {
 
-  override def sort[Candidate <: CandidateWithDetails](candidates: Seq[Candidate]): Seq[Candidate] =
-    candidates.reverse
+  overr de def sort[Cand date <: Cand dateW hDeta ls](cand dates: Seq[Cand date]): Seq[Cand date] =
+    cand dates.reverse
 }

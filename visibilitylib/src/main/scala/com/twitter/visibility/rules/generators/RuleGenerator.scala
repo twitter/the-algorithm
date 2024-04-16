@@ -1,8 +1,8 @@
-package com.twitter.visibility.rules.generators
+package com.tw ter.v s b l y.rules.generators
 
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.rules.Rule
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.rules.Rule
 
-trait RuleGenerator {
+tra  RuleGenerator {
   def rulesForSurface(safetyLevel: SafetyLevel): Seq[Rule]
 }

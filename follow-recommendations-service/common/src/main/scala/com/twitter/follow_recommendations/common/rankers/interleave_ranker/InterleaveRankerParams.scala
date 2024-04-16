@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.rankers.interleave_ranker
+package com.tw ter.follow_recom ndat ons.common.rankers. nterleave_ranker
 
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
-object InterleaveRankerParams {
-  case object ScribeRankingInfoInInterleaveRanker
-      extends FSParam[Boolean]("interleave_ranker_scribe_ranking_info", true)
+object  nterleaveRankerParams {
+  case object Scr beRank ng nfo n nterleaveRanker
+      extends FSParam[Boolean](" nterleave_ranker_scr be_rank ng_ nfo", true)
 }

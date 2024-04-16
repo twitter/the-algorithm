@@ -1,485 +1,485 @@
-package com.twitter.servo.cache
+package com.tw ter.servo.cac 
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.partitioning.FailureAccrualException
-import com.twitter.finagle.Backoff
-import com.twitter.finagle.stats.{NullStatsReceiver, Stat, StatsReceiver}
-import com.twitter.logging.{Level, Logger}
-import com.twitter.servo.util.{ExceptionCounter, RateLimitingLogger}
-import com.twitter.util._
-import scala.util.control.NoStackTrace
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.serv ce.RetryPol cy
+ mport com.tw ter.f nagle.part  on ng.Fa lureAccrualExcept on
+ mport com.tw ter.f nagle.Backoff
+ mport com.tw ter.f nagle.stats.{NullStatsRece ver, Stat, StatsRece ver}
+ mport com.tw ter.logg ng.{Level, Logger}
+ mport com.tw ter.servo.ut l.{Except onCounter, RateL m  ngLogger}
+ mport com.tw ter.ut l._
+ mport scala.ut l.control.NoStackTrace
 
-object LockingCache {
-
-  /**
-   * first argument is value to store, second argument is value in cache,
-   * returns an Option of the value to be stored. None should be interpreted
-   * as "don't store anything"
-   */
-  type Picker[V] = (V, V) => Option[V]
+object Lock ngCac  {
 
   /**
-   * argument is value, if any, in cache.
-   * return type is value, if any, to be stored in cache.
-   * returning None means nothing will be done.
+   * f rst argu nt  s value to store, second argu nt  s value  n cac ,
+   * returns an Opt on of t  value to be stored. None should be  nterpreted
+   * as "don't store anyth ng"
    */
-  type Handler[V] = Option[V] => Option[V]
+  type P cker[V] = (V, V) => Opt on[V]
 
-  case class AlwaysSetHandler[V](value: Option[V]) extends Handler[V] {
-    override def apply(ignored: Option[V]) = value
+  /**
+   * argu nt  s value,  f any,  n cac .
+   * return type  s value,  f any, to be stored  n cac .
+   * return ng None  ans noth ng w ll be done.
+   */
+  type Handler[V] = Opt on[V] => Opt on[V]
+
+  case class AlwaysSetHandler[V](value: Opt on[V]) extends Handler[V] {
+    overr de def apply( gnored: Opt on[V]) = value
   }
 
-  case class PickingHandler[V](newValue: V, pick: Picker[V]) extends Handler[V] {
-    override def apply(inCache: Option[V]): Option[V] =
-      inCache match {
+  case class P ck ngHandler[V](newValue: V, p ck: P cker[V]) extends Handler[V] {
+    overr de def apply( nCac : Opt on[V]): Opt on[V] =
+       nCac  match {
         case None =>
-          // if nothing in cache, go ahead and store!
-          Some(newValue)
-        case Some(oldValue) =>
-          // if something in cache, store a picked value based on
-          // what's in cache and what's being stored
-          pick(newValue, oldValue)
+          //  f noth ng  n cac , go a ad and store!
+          So (newValue)
+        case So (oldValue) =>
+          //  f so th ng  n cac , store a p cked value based on
+          // what's  n cac  and what's be ng stored
+          p ck(newValue, oldValue)
       }
 
-    // apparently case classes that extend functions don't get pretty toString methods
-    override lazy val toString = "PickingHandler(%s, %s)".format(newValue, pick)
+    // apparently case classes that extend funct ons don't get pretty toStr ng  thods
+    overr de lazy val toStr ng = "P ck ngHandler(%s, %s)".format(newValue, p ck)
   }
 
-  case class UpdateOnlyPickingHandler[V](newValue: V, pick: Picker[V]) extends Handler[V] {
-    override def apply(inCache: Option[V]): Option[V] =
-      inCache match {
+  case class UpdateOnlyP ck ngHandler[V](newValue: V, p ck: P cker[V]) extends Handler[V] {
+    overr de def apply( nCac : Opt on[V]): Opt on[V] =
+       nCac  match {
         case None =>
-          // if nothing in cache, do not update
+          //  f noth ng  n cac , do not update
           None
-        case Some(oldValue) =>
-          // if something in cache, store a picked value based on
-          // what's in cache and what's being stored
-          pick(newValue, oldValue)
+        case So (oldValue) =>
+          //  f so th ng  n cac , store a p cked value based on
+          // what's  n cac  and what's be ng stored
+          p ck(newValue, oldValue)
       }
 
-    // apparently case classes that extend functions don't get pretty toString methods
-    override lazy val toString = "UpdateOnlyPickingHandler(%s, %s)".format(newValue, pick)
+    // apparently case classes that extend funct ons don't get pretty toStr ng  thods
+    overr de lazy val toStr ng = "UpdateOnlyP ck ngHandler(%s, %s)".format(newValue, p ck)
   }
 }
 
-trait LockingCacheFactory {
-  def apply[K, V](cache: Cache[K, V]): LockingCache[K, V]
-  def scope(scopes: String*): LockingCacheFactory
+tra  Lock ngCac Factory {
+  def apply[K, V](cac : Cac [K, V]): Lock ngCac [K, V]
+  def scope(scopes: Str ng*): Lock ngCac Factory
 }
 
 /**
- * A cache that enforces a consistent view of values between the time when a set
- * is initiated and when the value is actually updated in cache.
+ * A cac  that enforces a cons stent v ew of values bet en t  t   w n a set
+ *  s  n  ated and w n t  value  s actually updated  n cac .
  */
-trait LockingCache[K, V] extends Cache[K, V] {
+tra  Lock ngCac [K, V] extends Cac [K, V] {
 
   /**
-   * Look up a value and dispatch based on the result. The particular locking
-   * approach is defined by the implementing class. May call handler multiple
-   * times as part of more elaborate locking and retry looping.
+   * Look up a value and d spatch based on t  result. T  part cular lock ng
+   * approach  s def ned by t   mple nt ng class. May call handler mult ple
+   * t  s as part of more elaborate lock ng and retry loop ng.
    *
-   * Overview of semantics:
-   *   `handler(None)` is called if no value is present in cache.
-   *   `handler(Some(value))` is called if a value is present.
-   *   `handler(x)` should return None if nothing should be done and `Some(value)`
-   *   if a value should be set.
+   * Overv ew of semant cs:
+   *   `handler(None)`  s called  f no value  s present  n cac .
+   *   `handler(So (value))`  s called  f a value  s present.
+   *   `handler(x)` should return None  f noth ng should be done and `So (value)`
+   *    f a value should be set.
    *
-   * @return the value that was actually set
+   * @return t  value that was actually set
    */
-  def lockAndSet(key: K, handler: LockingCache.Handler[V]): Future[Option[V]]
+  def lockAndSet(key: K, handler: Lock ngCac .Handler[V]): Future[Opt on[V]]
 }
 
-class OptimisticLockingCacheObserver(statsReceiver: StatsReceiver) {
-  import OptimisticLockingCache._
+class Opt m st cLock ngCac Observer(statsRece ver: StatsRece ver) {
+   mport Opt m st cLock ngCac ._
 
-  private[this] val scopedReceiver = statsReceiver.scope("locking_cache")
+  pr vate[t ] val scopedRece ver = statsRece ver.scope("lock ng_cac ")
 
-  private[this] val successCounter = scopedReceiver.counter("success")
-  private[this] val failureCounter = scopedReceiver.counter("failure")
-  private[this] val exceptionCounter = new ExceptionCounter(scopedReceiver)
-  private[this] val lockAndSetStat = scopedReceiver.stat("lockAndSet")
+  pr vate[t ] val successCounter = scopedRece ver.counter("success")
+  pr vate[t ] val fa lureCounter = scopedRece ver.counter("fa lure")
+  pr vate[t ] val except onCounter = new Except onCounter(scopedRece ver)
+  pr vate[t ] val lockAndSetStat = scopedRece ver.stat("lockAndSet")
 
-  def time[V](f: => Future[Option[V]]): Future[Option[V]] = {
-    Stat.timeFuture(lockAndSetStat) {
+  def t  [V](f: => Future[Opt on[V]]): Future[Opt on[V]] = {
+    Stat.t  Future(lockAndSetStat) {
       f
     }
   }
 
-  def success(attempts: Seq[FailedAttempt]): Unit = {
-    successCounter.incr()
+  def success(attempts: Seq[Fa ledAttempt]): Un  = {
+    successCounter. ncr()
     countAttempts(attempts)
   }
 
-  def failure(attempts: Seq[FailedAttempt]): Unit = {
-    failureCounter.incr()
+  def fa lure(attempts: Seq[Fa ledAttempt]): Un  = {
+    fa lureCounter. ncr()
     countAttempts(attempts)
   }
 
-  def scope(s: String*): OptimisticLockingCacheObserver =
-    s.toList match {
-      case Nil => this
-      case head :: tail =>
-        new OptimisticLockingCacheObserver(statsReceiver.scope(head)).scope(tail: _*)
+  def scope(s: Str ng*): Opt m st cLock ngCac Observer =
+    s.toL st match {
+      case N l => t 
+      case  ad :: ta l =>
+        new Opt m st cLock ngCac Observer(statsRece ver.scope( ad)).scope(ta l: _*)
     }
 
-  private[this] def countAttempts(attempts: Seq[FailedAttempt]): Unit = {
+  pr vate[t ] def countAttempts(attempts: Seq[Fa ledAttempt]): Un  = {
     attempts foreach { attempt =>
-      val name = attempt.getClass.getSimpleName
-      scopedReceiver.counter(name).incr()
+      val na  = attempt.getClass.getS mpleNa 
+      scopedRece ver.counter(na ). ncr()
       attempt.maybeThrowable foreach { t =>
-        exceptionCounter(t)
-        scopedReceiver.scope(name).counter(t.getClass.getName).incr()
+        except onCounter(t)
+        scopedRece ver.scope(na ).counter(t.getClass.getNa ). ncr()
       }
     }
   }
 }
 
-case class OptimisticLockingCacheFactory(
+case class Opt m st cLock ngCac Factory(
   backoffs: Backoff,
-  observer: OptimisticLockingCacheObserver = new OptimisticLockingCacheObserver(NullStatsReceiver),
-  timer: Timer = new NullTimer,
-  // Enabling key logging may unintentionally cause inclusion of sensitive data
-  // in service logs and any accompanying log sinks such as Splunk. By default, this is disabled,
-  // however may be optionally enabled for the purpose of debugging. Caution is warranted.
-  enableKeyLogging: Boolean = false)
-    extends LockingCacheFactory {
-  def this(
+  observer: Opt m st cLock ngCac Observer = new Opt m st cLock ngCac Observer(NullStatsRece ver),
+  t  r: T  r = new NullT  r,
+  // Enabl ng key logg ng may un ntent onally cause  nclus on of sens  ve data
+  //  n serv ce logs and any accompany ng log s nks such as Splunk. By default, t   s d sabled,
+  // ho ver may be opt onally enabled for t  purpose of debugg ng. Caut on  s warranted.
+  enableKeyLogg ng: Boolean = false)
+    extends Lock ngCac Factory {
+  def t (
     backoffs: Backoff,
-    statsReceiver: StatsReceiver,
-    timer: Timer,
-    enableKeyLogging: Boolean
-  ) = this(backoffs, new OptimisticLockingCacheObserver(statsReceiver), timer, enableKeyLogging)
+    statsRece ver: StatsRece ver,
+    t  r: T  r,
+    enableKeyLogg ng: Boolean
+  ) = t (backoffs, new Opt m st cLock ngCac Observer(statsRece ver), t  r, enableKeyLogg ng)
 
-  override def apply[K, V](cache: Cache[K, V]): LockingCache[K, V] = {
-    new OptimisticLockingCache(cache, backoffs, observer, timer, enableKeyLogging)
+  overr de def apply[K, V](cac : Cac [K, V]): Lock ngCac [K, V] = {
+    new Opt m st cLock ngCac (cac , backoffs, observer, t  r, enableKeyLogg ng)
   }
 
-  override def scope(scopes: String*): LockingCacheFactory = {
-    new OptimisticLockingCacheFactory(backoffs, observer.scope(scopes: _*), timer)
+  overr de def scope(scopes: Str ng*): Lock ngCac Factory = {
+    new Opt m st cLock ngCac Factory(backoffs, observer.scope(scopes: _*), t  r)
   }
 }
 
-object OptimisticLockingCache {
-  private[this] val FutureNone = Future.value(None)
+object Opt m st cLock ngCac  {
+  pr vate[t ] val FutureNone = Future.value(None)
 
-  def emptyFutureNone[V] = FutureNone.asInstanceOf[Future[Option[V]]]
+  def emptyFutureNone[V] = FutureNone.as nstanceOf[Future[Opt on[V]]]
 
-  sealed abstract class FailedAttempt(val maybeThrowable: Option[Throwable])
-      extends Exception
-      with NoStackTrace
-  case class GetWithChecksumException(t: Throwable) extends FailedAttempt(Some(t))
-  case object GetWithChecksumEmpty extends FailedAttempt(None)
-  case object CheckAndSetFailed extends FailedAttempt(None)
-  case class CheckAndSetException(t: Throwable) extends FailedAttempt(Some(t))
-  case class AddException(t: Throwable) extends FailedAttempt(Some(t))
+  sealed abstract class Fa ledAttempt(val maybeThrowable: Opt on[Throwable])
+      extends Except on
+      w h NoStackTrace
+  case class GetW hC cksumExcept on(t: Throwable) extends Fa ledAttempt(So (t))
+  case object GetW hC cksumEmpty extends Fa ledAttempt(None)
+  case object C ckAndSetFa led extends Fa ledAttempt(None)
+  case class C ckAndSetExcept on(t: Throwable) extends Fa ledAttempt(So (t))
+  case class AddExcept on(t: Throwable) extends Fa ledAttempt(So (t))
 
-  case class LockAndSetFailure(str: String, attempts: Seq[FailedAttempt])
-      extends Exception(
+  case class LockAndSetFa lure(str: Str ng, attempts: Seq[Fa ledAttempt])
+      extends Except on(
         str,
-        // if the last exception was an RPC exception, try to recover the stack trace
-        attempts.lastOption.flatMap(_.maybeThrowable).orNull
+        //  f t  last except on was an RPC except on, try to recover t  stack trace
+        attempts.lastOpt on.flatMap(_.maybeThrowable).orNull
       )
 
-  private def retryPolicy(backoffs: Backoff): RetryPolicy[Try[Nothing]] =
-    RetryPolicy.backoff(backoffs) {
-      case Throw(_: FailureAccrualException) => false
+  pr vate def retryPol cy(backoffs: Backoff): RetryPol cy[Try[Noth ng]] =
+    RetryPol cy.backoff(backoffs) {
+      case Throw(_: Fa lureAccrualExcept on) => false
       case _ => true
     }
 }
 
 /**
- * Implementation of a LockingCache using add/getWithChecksum/checkAndSet.
+ *  mple ntat on of a Lock ngCac  us ng add/getW hC cksum/c ckAndSet.
  */
-class OptimisticLockingCache[K, V](
-  override val underlyingCache: Cache[K, V],
-  retryPolicy: RetryPolicy[Try[Nothing]],
-  observer: OptimisticLockingCacheObserver,
-  timer: Timer,
-  enableKeyLogging: Boolean)
-    extends LockingCache[K, V]
-    with CacheWrapper[K, V] {
-  import LockingCache._
-  import OptimisticLockingCache._
+class Opt m st cLock ngCac [K, V](
+  overr de val underly ngCac : Cac [K, V],
+  retryPol cy: RetryPol cy[Try[Noth ng]],
+  observer: Opt m st cLock ngCac Observer,
+  t  r: T  r,
+  enableKeyLogg ng: Boolean)
+    extends Lock ngCac [K, V]
+    w h Cac Wrapper[K, V] {
+   mport Lock ngCac ._
+   mport Opt m st cLock ngCac ._
 
-  def this(
-    underlyingCache: Cache[K, V],
-    retryPolicy: RetryPolicy[Try[Nothing]],
-    observer: OptimisticLockingCacheObserver,
-    timer: Timer,
+  def t (
+    underly ngCac : Cac [K, V],
+    retryPol cy: RetryPol cy[Try[Noth ng]],
+    observer: Opt m st cLock ngCac Observer,
+    t  r: T  r,
   ) =
-    this(
-      underlyingCache: Cache[K, V],
-      retryPolicy: RetryPolicy[Try[Nothing]],
-      observer: OptimisticLockingCacheObserver,
-      timer: Timer,
+    t (
+      underly ngCac : Cac [K, V],
+      retryPol cy: RetryPol cy[Try[Noth ng]],
+      observer: Opt m st cLock ngCac Observer,
+      t  r: T  r,
       false
     )
 
-  def this(
-    underlyingCache: Cache[K, V],
+  def t (
+    underly ngCac : Cac [K, V],
     backoffs: Backoff,
-    observer: OptimisticLockingCacheObserver,
-    timer: Timer
+    observer: Opt m st cLock ngCac Observer,
+    t  r: T  r
   ) =
-    this(
-      underlyingCache,
-      OptimisticLockingCache.retryPolicy(backoffs),
+    t (
+      underly ngCac ,
+      Opt m st cLock ngCac .retryPol cy(backoffs),
       observer,
-      timer,
+      t  r,
       false
     )
 
-  def this(
-    underlyingCache: Cache[K, V],
+  def t (
+    underly ngCac : Cac [K, V],
     backoffs: Backoff,
-    observer: OptimisticLockingCacheObserver,
-    timer: Timer,
-    enableKeyLogging: Boolean
+    observer: Opt m st cLock ngCac Observer,
+    t  r: T  r,
+    enableKeyLogg ng: Boolean
   ) =
-    this(
-      underlyingCache,
-      OptimisticLockingCache.retryPolicy(backoffs),
+    t (
+      underly ngCac ,
+      Opt m st cLock ngCac .retryPol cy(backoffs),
       observer,
-      timer,
-      enableKeyLogging
+      t  r,
+      enableKeyLogg ng
     )
 
-  private[this] val log = Logger.get("OptimisticLockingCache")
-  private[this] val rateLimitedLogger = new RateLimitingLogger(logger = log)
+  pr vate[t ] val log = Logger.get("Opt m st cLock ngCac ")
+  pr vate[t ] val rateL m edLogger = new RateL m  ngLogger(logger = log)
 
-  @deprecated("use RetryPolicy-based constructor", "0.1.2")
-  def this(underlyingCache: Cache[K, V], maxTries: Int = 10, enableKeyLogging: Boolean) = {
-    this(
-      underlyingCache,
-      Backoff.const(0.milliseconds).take(maxTries),
-      new OptimisticLockingCacheObserver(NullStatsReceiver),
-      new NullTimer,
-      enableKeyLogging
+  @deprecated("use RetryPol cy-based constructor", "0.1.2")
+  def t (underly ngCac : Cac [K, V], maxTr es:  nt = 10, enableKeyLogg ng: Boolean) = {
+    t (
+      underly ngCac ,
+      Backoff.const(0.m ll seconds).take(maxTr es),
+      new Opt m st cLock ngCac Observer(NullStatsRece ver),
+      new NullT  r,
+      enableKeyLogg ng
     )
   }
 
-  override def lockAndSet(key: K, handler: Handler[V]): Future[Option[V]] = {
-    observer.time {
-      dispatch(key, handler, retryPolicy, Nil)
+  overr de def lockAndSet(key: K, handler: Handler[V]): Future[Opt on[V]] = {
+    observer.t   {
+      d spatch(key, handler, retryPol cy, N l)
     }
   }
 
   /**
    * @param key
-   *   The key to look up in cache
+   *   T  key to look up  n cac 
    * @param handler
-   *   The handler that is applied to values from cache
-   * @param retryPolicy
-   *   Used to determine if more attempts should be made.
+   *   T  handler that  s appl ed to values from cac 
+   * @param retryPol cy
+   *   Used to determ ne  f more attempts should be made.
    * @param attempts
-   *   Contains representations of the causes of previous dispatch failures
+   *   Conta ns representat ons of t  causes of prev ous d spatch fa lures
    */
-  protected[this] def retry(
+  protected[t ] def retry(
     key: K,
-    failure: Try[Nothing],
+    fa lure: Try[Noth ng],
     handler: Handler[V],
-    retryPolicy: RetryPolicy[Try[Nothing]],
-    attempts: Seq[FailedAttempt]
-  ): Future[Option[V]] =
-    retryPolicy(failure) match {
+    retryPol cy: RetryPol cy[Try[Noth ng]],
+    attempts: Seq[Fa ledAttempt]
+  ): Future[Opt on[V]] =
+    retryPol cy(fa lure) match {
       case None =>
-        observer.failure(attempts)
-        if (enableKeyLogging) {
-          rateLimitedLogger.log(
-            s"failed attempts for ${key}:\n ${attempts.mkString("\n ")}",
-            level = Level.INFO)
-          Future.exception(LockAndSetFailure("lockAndSet failed for " + key, attempts))
+        observer.fa lure(attempts)
+         f (enableKeyLogg ng) {
+          rateL m edLogger.log(
+            s"fa led attempts for ${key}:\n ${attempts.mkStr ng("\n ")}",
+            level = Level. NFO)
+          Future.except on(LockAndSetFa lure("lockAndSet fa led for " + key, attempts))
         } else {
-          Future.exception(LockAndSetFailure("lockAndSet failed", attempts))
+          Future.except on(LockAndSetFa lure("lockAndSet fa led", attempts))
         }
 
-      case Some((backoff, tailPolicy)) =>
-        timer
+      case So ((backoff, ta lPol cy)) =>
+        t  r
           .doLater(backoff) {
-            dispatch(key, handler, tailPolicy, attempts)
+            d spatch(key, handler, ta lPol cy, attempts)
           }
           .flatten
     }
 
   /**
    * @param key
-   *   The key to look up in cache
+   *   T  key to look up  n cac 
    * @param handler
-   *   The handler that is applied to values from cache
-   * @param retryPolicy
-   *   Used to determine if more attempts should be made.
+   *   T  handler that  s appl ed to values from cac 
+   * @param retryPol cy
+   *   Used to determ ne  f more attempts should be made.
    * @param attempts
-   *   Contains representations of the causes of previous dispatch failures
+   *   Conta ns representat ons of t  causes of prev ous d spatch fa lures
    */
-  protected[this] def dispatch(
+  protected[t ] def d spatch(
     key: K,
     handler: Handler[V],
-    retryPolicy: RetryPolicy[Try[Nothing]],
-    attempts: Seq[FailedAttempt]
-  ): Future[Option[V]] = {
-    // get the value if nothing's there
+    retryPol cy: RetryPol cy[Try[Noth ng]],
+    attempts: Seq[Fa ledAttempt]
+  ): Future[Opt on[V]] = {
+    // get t  value  f noth ng's t re
     handler(None) match {
       case None =>
-        // if nothing should be done when missing, go straight to getAndConditionallySet,
-        // since there's nothing to attempt an add with
-        getAndConditionallySet(key, handler, retryPolicy, attempts)
+        //  f noth ng should be done w n m ss ng, go stra ght to getAndCond  onallySet,
+        // s nce t re's noth ng to attempt an add w h
+        getAndCond  onallySet(key, handler, retryPol cy, attempts)
 
-      case some @ Some(value) =>
-        // otherwise, try to do an atomic add, which will return false if something's there
-        underlyingCache.add(key, value) transform {
+      case so  @ So (value) =>
+        // ot rw se, try to do an atom c add, wh ch w ll return false  f so th ng's t re
+        underly ngCac .add(key, value) transform {
           case Return(added) =>
-            if (added) {
-              // if added, return the value
+             f (added) {
+              //  f added, return t  value
               observer.success(attempts)
-              Future.value(some)
+              Future.value(so )
             } else {
-              // otherwise, do a checkAndSet based on the current value
-              getAndConditionallySet(key, handler, retryPolicy, attempts)
+              // ot rw se, do a c ckAndSet based on t  current value
+              getAndCond  onallySet(key, handler, retryPol cy, attempts)
             }
 
           case Throw(t) =>
-            // count exception against retries
-            if (enableKeyLogging)
-              rateLimitedLogger.logThrowable(t, s"add($key) returned exception. will retry")
-            retry(key, Throw(t), handler, retryPolicy, attempts :+ AddException(t))
+            // count except on aga nst retr es
+             f (enableKeyLogg ng)
+              rateL m edLogger.logThrowable(t, s"add($key) returned except on. w ll retry")
+            retry(key, Throw(t), handler, retryPol cy, attempts :+ AddExcept on(t))
         }
     }
   }
 
   /**
    * @param key
-   *   The key to look up in cache
+   *   T  key to look up  n cac 
    * @param handler
-   *   The handler that is applied to values from cache
-   * @param retryPolicy
-   *   Used to determine if more attempts should be made.
+   *   T  handler that  s appl ed to values from cac 
+   * @param retryPol cy
+   *   Used to determ ne  f more attempts should be made.
    * @param attempts
-   *   Contains representations of the causes of previous dispatch failures
+   *   Conta ns representat ons of t  causes of prev ous d spatch fa lures
    */
-  protected[this] def getAndConditionallySet(
+  protected[t ] def getAndCond  onallySet(
     key: K,
     handler: Handler[V],
-    retryPolicy: RetryPolicy[Try[Nothing]],
-    attempts: Seq[FailedAttempt]
-  ): Future[Option[V]] = {
-    // look in the cache to see what's there
-    underlyingCache.getWithChecksum(Seq(key)) handle {
+    retryPol cy: RetryPol cy[Try[Noth ng]],
+    attempts: Seq[Fa ledAttempt]
+  ): Future[Opt on[V]] = {
+    // look  n t  cac  to see what's t re
+    underly ngCac .getW hC cksum(Seq(key)) handle {
       case t =>
-        // treat global failure as key-based failure
-        KeyValueResult(failed = Map(key -> t))
+        // treat global fa lure as key-based fa lure
+        KeyValueResult(fa led = Map(key -> t))
     } flatMap { lr =>
       lr(key) match {
         case Return.None =>
           handler(None) match {
-            case Some(_) =>
-              // if there's nothing in the cache now, but handler(None) return Some,
-              // that means something has changed since we attempted the add, so try again
-              val failure = GetWithChecksumEmpty
-              retry(key, Throw(failure), handler, retryPolicy, attempts :+ failure)
+            case So (_) =>
+              //  f t re's noth ng  n t  cac  now, but handler(None) return So ,
+              // that  ans so th ng has changed s nce   attempted t  add, so try aga n
+              val fa lure = GetW hC cksumEmpty
+              retry(key, Throw(fa lure), handler, retryPol cy, attempts :+ fa lure)
 
             case None =>
-              // if there's nothing in the cache now, but handler(None) returns None,
-              // that means we don't want to store anything when there's nothing already
-              // in cache, so return None
+              //  f t re's noth ng  n t  cac  now, but handler(None) returns None,
+              // that  ans   don't want to store anyth ng w n t re's noth ng already
+              //  n cac , so return None
               observer.success(attempts)
               emptyFutureNone
           }
 
-        case Return(Some((Return(current), checksum))) =>
-          // the cache entry is present
-          dispatchCheckAndSet(Some(current), checksum, key, handler, retryPolicy, attempts)
+        case Return(So ((Return(current), c cksum))) =>
+          // t  cac  entry  s present
+          d spatchC ckAndSet(So (current), c cksum, key, handler, retryPol cy, attempts)
 
-        case Return(Some((Throw(t), checksum))) =>
-          // the cache entry failed to deserialize; treat it as a None and overwrite.
-          if (enableKeyLogging)
-            rateLimitedLogger.logThrowable(
+        case Return(So ((Throw(t), c cksum))) =>
+          // t  cac  entry fa led to deser al ze; treat   as a None and overwr e.
+           f (enableKeyLogg ng)
+            rateL m edLogger.logThrowable(
               t,
-              s"getWithChecksum(${key}) returned a bad value. overwriting.")
-          dispatchCheckAndSet(None, checksum, key, handler, retryPolicy, attempts)
+              s"getW hC cksum(${key}) returned a bad value. overwr  ng.")
+          d spatchC ckAndSet(None, c cksum, key, handler, retryPol cy, attempts)
 
         case Throw(t) =>
-          // lookup failure counts against numTries
-          if (enableKeyLogging)
-            rateLimitedLogger.logThrowable(
+          // lookup fa lure counts aga nst numTr es
+           f (enableKeyLogg ng)
+            rateL m edLogger.logThrowable(
               t,
-              s"getWithChecksum(${key}) returned exception. will retry.")
-          retry(key, Throw(t), handler, retryPolicy, attempts :+ GetWithChecksumException(t))
+              s"getW hC cksum(${key}) returned except on. w ll retry.")
+          retry(key, Throw(t), handler, retryPol cy, attempts :+ GetW hC cksumExcept on(t))
       }
     }
   }
 
   /**
    * @param current
-   *   The value currently cached under key `key`, if any
-   * @param checksum
-   *   The checksum of the currently-cached value
+   *   T  value currently cac d under key `key`,  f any
+   * @param c cksum
+   *   T  c cksum of t  currently-cac d value
    * @param key
-   *   The key mapping to `current`
+   *   T  key mapp ng to `current`
    * @param handler
-   *   The handler that is applied to values from cache
-   * @param retryPolicy
-   *   Used to determine if more attempts should be made.
+   *   T  handler that  s appl ed to values from cac 
+   * @param retryPol cy
+   *   Used to determ ne  f more attempts should be made.
    * @param attempts
-   *   Contains representations of the causes of previous dispatch failures
+   *   Conta ns representat ons of t  causes of prev ous d spatch fa lures
    */
-  protected[this] def dispatchCheckAndSet(
-    current: Option[V],
-    checksum: Checksum,
+  protected[t ] def d spatchC ckAndSet(
+    current: Opt on[V],
+    c cksum: C cksum,
     key: K,
     handler: Handler[V],
-    retryPolicy: RetryPolicy[Try[Nothing]],
-    attempts: Seq[FailedAttempt]
-  ): Future[Option[V]] = {
+    retryPol cy: RetryPol cy[Try[Noth ng]],
+    attempts: Seq[Fa ledAttempt]
+  ): Future[Opt on[V]] = {
     handler(current) match {
       case None =>
-        // if nothing should be done based on the current value, don't do anything
+        //  f noth ng should be done based on t  current value, don't do anyth ng
         observer.success(attempts)
         emptyFutureNone
 
-      case some @ Some(value) =>
-        // otherwise, try a check and set with the checksum
-        underlyingCache.checkAndSet(key, value, checksum) transform {
+      case so  @ So (value) =>
+        // ot rw se, try a c ck and set w h t  c cksum
+        underly ngCac .c ckAndSet(key, value, c cksum) transform {
           case Return(added) =>
-            if (added) {
-              // if added, return the value
+             f (added) {
+              //  f added, return t  value
               observer.success(attempts)
-              Future.value(some)
+              Future.value(so )
             } else {
-              // otherwise, something has changed, try again
-              val failure = CheckAndSetFailed
-              retry(key, Throw(failure), handler, retryPolicy, attempts :+ failure)
+              // ot rw se, so th ng has changed, try aga n
+              val fa lure = C ckAndSetFa led
+              retry(key, Throw(fa lure), handler, retryPol cy, attempts :+ fa lure)
             }
 
           case Throw(t) =>
-            // count exception against retries
-            if (enableKeyLogging)
-              rateLimitedLogger.logThrowable(
+            // count except on aga nst retr es
+             f (enableKeyLogg ng)
+              rateL m edLogger.logThrowable(
                 t,
-                s"checkAndSet(${key}) returned exception. will retry.")
-            retry(key, Throw(t), handler, retryPolicy, attempts :+ CheckAndSetException(t))
+                s"c ckAndSet(${key}) returned except on. w ll retry.")
+            retry(key, Throw(t), handler, retryPol cy, attempts :+ C ckAndSetExcept on(t))
         }
     }
   }
 }
 
-object NonLockingCacheFactory extends LockingCacheFactory {
-  override def apply[K, V](cache: Cache[K, V]): LockingCache[K, V] = new NonLockingCache(cache)
-  override def scope(scopes: String*) = this
+object NonLock ngCac Factory extends Lock ngCac Factory {
+  overr de def apply[K, V](cac : Cac [K, V]): Lock ngCac [K, V] = new NonLock ngCac (cac )
+  overr de def scope(scopes: Str ng*) = t 
 }
 
-class NonLockingCache[K, V](override val underlyingCache: Cache[K, V])
-    extends LockingCache[K, V]
-    with CacheWrapper[K, V] {
-  override def lockAndSet(key: K, handler: LockingCache.Handler[V]): Future[Option[V]] = {
+class NonLock ngCac [K, V](overr de val underly ngCac : Cac [K, V])
+    extends Lock ngCac [K, V]
+    w h Cac Wrapper[K, V] {
+  overr de def lockAndSet(key: K, handler: Lock ngCac .Handler[V]): Future[Opt on[V]] = {
     handler(None) match {
       case None =>
-        // if nothing should be done when nothing's there, don't do anything
+        //  f noth ng should be done w n noth ng's t re, don't do anyth ng
         Future.value(None)
 
-      case some @ Some(value) =>
+      case so  @ So (value) =>
         set(key, value) map { _ =>
-          some
+          so 
         }
     }
   }

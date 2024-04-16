@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.generic_summary_item
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.gener c_summary_ em
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary.GenericSummaryAction
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.Cl entEvent nfoMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.UrlMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.gener c_summary.Gener cSummaryAct on
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class GenericSummaryActionMarshaller @Inject() (
+@S ngleton
+class Gener cSummaryAct onMarshaller @ nject() (
   urlMarshaller: UrlMarshaller,
-  clientEventInfoMarshaller: ClientEventInfoMarshaller) {
+  cl entEvent nfoMarshaller: Cl entEvent nfoMarshaller) {
 
-  def apply(genericSummaryItemAction: GenericSummaryAction): urt.GenericSummaryAction =
-    urt.GenericSummaryAction(
-      url = urlMarshaller(genericSummaryItemAction.url),
-      clientEventInfo = genericSummaryItemAction.clientEventInfo.map(clientEventInfoMarshaller(_))
+  def apply(gener cSummary emAct on: Gener cSummaryAct on): urt.Gener cSummaryAct on =
+    urt.Gener cSummaryAct on(
+      url = urlMarshaller(gener cSummary emAct on.url),
+      cl entEvent nfo = gener cSummary emAct on.cl entEvent nfo.map(cl entEvent nfoMarshaller(_))
     )
 }

@@ -1,53 +1,53 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .Param
 
-object ProducerBasedUserTweetGraphParams {
+object ProducerBasedUserT etGraphParams {
 
-  object MinCoOccurrenceParam
-      extends FSBoundedParam[Int](
-        name = "producer_based_user_tweet_graph_min_co_occurrence",
+  object M nCoOccurrenceParam
+      extends FSBoundedParam[ nt](
+        na  = "producer_based_user_t et_graph_m n_co_occurrence",
         default = 4,
-        min = 0,
+        m n = 0,
         max = 500
       )
 
-  object MinScoreParam
+  object M nScoreParam
       extends FSBoundedParam[Double](
-        name = "producer_based_user_tweet_graph_min_score",
+        na  = "producer_based_user_t et_graph_m n_score",
         default = 3.0,
-        min = 0.0,
+        m n = 0.0,
         max = 10.0
       )
 
-  object MaxNumFollowersParam
-      extends FSBoundedParam[Int](
-        name = "producer_based_user_tweet_graph_max_num_followers",
+  object MaxNumFollo rsParam
+      extends FSBoundedParam[ nt](
+        na  = "producer_based_user_t et_graph_max_num_follo rs",
         default = 500,
-        min = 100,
+        m n = 100,
         max = 1000
       )
 
-  val AllParams: Seq[Param[_] with FSName] =
-    Seq(MinCoOccurrenceParam, MaxNumFollowersParam, MinScoreParam)
+  val AllParams: Seq[Param[_] w h FSNa ] =
+    Seq(M nCoOccurrenceParam, MaxNumFollo rsParam, M nScoreParam)
 
-  lazy val config: BaseConfig = {
+  lazy val conf g: BaseConf g = {
 
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-      MinCoOccurrenceParam,
-      MaxNumFollowersParam,
+    val  ntOverr des = FeatureSw chOverr deUt l.getBounded ntFSOverr des(
+      M nCoOccurrenceParam,
+      MaxNumFollo rsParam,
     )
 
-    val doubleOverrides = FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(MinScoreParam)
+    val doubleOverr des = FeatureSw chOverr deUt l.getBoundedDoubleFSOverr des(M nScoreParam)
 
-    BaseConfigBuilder()
-      .set(intOverrides: _*)
-      .set(doubleOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set( ntOverr des: _*)
+      .set(doubleOverr des: _*)
+      .bu ld()
   }
 }

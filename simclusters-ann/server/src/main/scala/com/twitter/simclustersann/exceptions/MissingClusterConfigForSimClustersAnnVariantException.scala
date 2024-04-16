@@ -1,6 +1,6 @@
-package com.twitter.simclustersann.exceptions
+package com.tw ter.s mclustersann.except ons
 
-case class MissingClusterConfigForSimClustersAnnVariantException(sannServiceName: String)
-    extends IllegalStateException(
-      s"No cluster configuration found for service ($sannServiceName)",
+case class M ss ngClusterConf gForS mClustersAnnVar antExcept on(sannServ ceNa : Str ng)
+    extends  llegalStateExcept on(
+      s"No cluster conf gurat on found for serv ce ($sannServ ceNa )",
       null)

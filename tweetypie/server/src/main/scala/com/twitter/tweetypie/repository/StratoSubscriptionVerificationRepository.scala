@@ -1,19 +1,19 @@
-package com.twitter.tweetypie.repository
+package com.tw ter.t etyp e.repos ory
 
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.tweetypie.UserId
-import com.twitter.strato.client.{Client => StratoClient}
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.t etyp e.User d
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
 
-object StratoSubscriptionVerificationRepository {
-  type Type = (UserId, String) => Stitch[Boolean]
+object StratoSubscr pt onVer f cat onRepos ory {
+  type Type = (User d, Str ng) => St ch[Boolean]
 
-  val column = "subscription-services/subscription-verification/cacheProtectedHasAccess.User"
+  val column = "subscr pt on-serv ces/subscr pt on-ver f cat on/cac ProtectedHasAccess.User"
 
-  def apply(client: StratoClient): Type = {
-    val fetcher: Fetcher[UserId, Seq[String], Seq[String]] =
-      client.fetcher[UserId, Seq[String], Seq[String]](column)
+  def apply(cl ent: StratoCl ent): Type = {
+    val fetc r: Fetc r[User d, Seq[Str ng], Seq[Str ng]] =
+      cl ent.fetc r[User d, Seq[Str ng], Seq[Str ng]](column)
 
-    (userId, resource) => fetcher.fetch(userId, Seq(resource)).map(f => f.v.nonEmpty)
+    (user d, res ce) => fetc r.fetch(user d, Seq(res ce)).map(f => f.v.nonEmpty)
   }
 }

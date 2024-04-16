@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.metadata
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. tadata
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.stringcenter.Str
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.Frown
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SeeFewer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stringcenter.client.ExternalStringRegistry
-import com.twitter.stringcenter.client.StringCenter
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.str ngcenter.Str
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseFeedbackAct on nfoBu lder
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. con.Frown
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FeedbackAct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FeedbackAct on nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.SeeFe r
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.str ngcenter.cl ent.ExternalStr ngReg stry
+ mport com.tw ter.str ngcenter.cl ent.Str ngCenter
 
-case class WhoToFollowFeedbackActionInfoBuilder[
-  -Query <: PipelineQuery,
-  -Candidate <: UniversalNoun[Any]
+case class WhoToFollowFeedbackAct on nfoBu lder[
+  -Query <: P pel neQuery,
+  -Cand date <: Un versalNoun[Any]
 ](
-  externalStringRegistry: ExternalStringRegistry,
-  stringCenter: StringCenter,
-  encodedFeedbackRequest: Option[String])
-    extends BaseFeedbackActionInfoBuilder[Query, Candidate] {
+  externalStr ngReg stry: ExternalStr ngReg stry,
+  str ngCenter: Str ngCenter,
+  encodedFeedbackRequest: Opt on[Str ng])
+    extends BaseFeedbackAct on nfoBu lder[Query, Cand date] {
 
-  private val seeLessOftenFeedback =
-    externalStringRegistry.createProdString("Feedback.seeLessOften")
-  private val seeLessOftenConfirmationFeedback =
-    externalStringRegistry.createProdString("Feedback.seeLessOftenConfirmation")
+  pr vate val seeLessOftenFeedback =
+    externalStr ngReg stry.createProdStr ng("Feedback.seeLessOften")
+  pr vate val seeLessOftenConf rmat onFeedback =
+    externalStr ngReg stry.createProdStr ng("Feedback.seeLessOftenConf rmat on")
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): Option[FeedbackActionInfo] = Some(
-    FeedbackActionInfo(
-      feedbackActions = Seq(
-        FeedbackAction(
-          feedbackType = SeeFewer,
-          prompt = Some(
-            Str(seeLessOftenFeedback, stringCenter, None)
-              .apply(query, candidate, candidateFeatures)),
-          confirmation = Some(
-            Str(seeLessOftenConfirmationFeedback, stringCenter, None)
-              .apply(query, candidate, candidateFeatures)),
-          childFeedbackActions = None,
+    cand date: Cand date,
+    cand dateFeatures: FeatureMap
+  ): Opt on[FeedbackAct on nfo] = So (
+    FeedbackAct on nfo(
+      feedbackAct ons = Seq(
+        FeedbackAct on(
+          feedbackType = SeeFe r,
+          prompt = So (
+            Str(seeLessOftenFeedback, str ngCenter, None)
+              .apply(query, cand date, cand dateFeatures)),
+          conf rmat on = So (
+            Str(seeLessOftenConf rmat onFeedback, str ngCenter, None)
+              .apply(query, cand date, cand dateFeatures)),
+          ch ldFeedbackAct ons = None,
           feedbackUrl = None,
-          confirmationDisplayType = None,
-          clientEventInfo = None,
-          richBehavior = None,
+          conf rmat onD splayType = None,
+          cl entEvent nfo = None,
+          r chBehav or = None,
           subprompt = None,
-          icon = Some(Frown), // ignored by unsupported clients
-          hasUndoAction = Some(true),
+           con = So (Frown), //  gnored by unsupported cl ents
+          hasUndoAct on = So (true),
           encodedFeedbackRequest = encodedFeedbackRequest
         )
       ),
-      feedbackMetadata = None,
-      displayContext = None,
-      clientEventInfo = None
+      feedback tadata = None,
+      d splayContext = None,
+      cl entEvent nfo = None
     )
   )
 }

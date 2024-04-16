@@ -1,66 +1,66 @@
-package com.twitter.simclusters_v2.common.clustering
+package com.tw ter.s mclusters_v2.common.cluster ng
 
-import com.twitter.sbf.graph.ConnectedComponents
-import com.twitter.sbf.graph.Graph
-import com.twitter.util.Stopwatch
-import it.unimi.dsi.fastutil.ints.IntSet
-import scala.collection.SortedMap
-import scala.jdk.CollectionConverters._
+ mport com.tw ter.sbf.graph.ConnectedComponents
+ mport com.tw ter.sbf.graph.Graph
+ mport com.tw ter.ut l.Stopwatch
+ mport  .un m .ds .fastut l. nts. ntSet
+ mport scala.collect on.SortedMap
+ mport scala.jdk.Collect onConverters._
 
 /**
- * Aggregate entities into clusters such that a cluster contains all embeddings with a similarity
- * above a configurable threshold to any other embedding.
+ * Aggregate ent  es  nto clusters such that a cluster conta ns all embedd ngs w h a s m lar y
+ * above a conf gurable threshold to any ot r embedd ng.
  *
- * @param similarityThreshold: When building the edges between entities, edges with weight
- * less than or equal to this threshold will be filtered out.
+ * @param s m lar yThreshold: W n bu ld ng t  edges bet en ent  es, edges w h   ght
+ * less than or equal to t  threshold w ll be f ltered out.
  */
-class ConnectedComponentsClusteringMethod(
-  similarityThreshold: Double)
-    extends ClusteringMethod {
+class ConnectedComponentsCluster ng thod(
+  s m lar yThreshold: Double)
+    extends Cluster ng thod {
 
-  import ClusteringStatistics._
+   mport Cluster ngStat st cs._
 
   def cluster[T](
-    embeddings: Map[Long, T],
-    similarityFn: (T, T) => Double,
-    recordStatCallback: (String, Long) => Unit = (_, _) => ()
+    embedd ngs: Map[Long, T],
+    s m lar yFn: (T, T) => Double,
+    recordStatCallback: (Str ng, Long) => Un  = (_, _) => ()
   ): Set[Set[Long]] = {
 
-    val timeSinceGraphBuildStart = Stopwatch.start()
-    // com.twitter.sbf.graph.Graph expects neighbors to be sorted in ascending order.
-    val sourcesById = SortedMap(embeddings.zipWithIndex.map {
-      case (source, idx) => idx -> source
+    val t  S nceGraphBu ldStart = Stopwatch.start()
+    // com.tw ter.sbf.graph.Graph expects ne ghbors to be sorted  n ascend ng order.
+    val s cesBy d = SortedMap(embedd ngs.z pW h ndex.map {
+      case (s ce,  dx) =>  dx -> s ce
     }.toSeq: _*)
 
-    val neighbours = sourcesById.map {
-      case (srcIdx, (_, src)) =>
-        sourcesById
+    val ne ghb s = s cesBy d.map {
+      case (src dx, (_, src)) =>
+        s cesBy d
           .collect {
-            case (dstIdx, (_, dst)) if srcIdx != dstIdx => // avoid self-edges
-              val similarity = similarityFn(src, dst)
+            case (dst dx, (_, dst))  f src dx != dst dx => // avo d self-edges
+              val s m lar y = s m lar yFn(src, dst)
               recordStatCallback(
-                StatComputedSimilarityBeforeFilter,
-                (similarity * 100).toLong // preserve up to two decimal points
+                StatComputedS m lar yBeforeF lter,
+                (s m lar y * 100).toLong // preserve up to two dec mal po nts
               )
-              if (similarity > similarityThreshold)
-                Some(dstIdx)
+               f (s m lar y > s m lar yThreshold)
+                So (dst dx)
               else None
           }.flatten.toArray
     }.toArray
 
-    recordStatCallback(StatSimilarityGraphTotalBuildTime, timeSinceGraphBuildStart().inMilliseconds)
+    recordStatCallback(StatS m lar yGraphTotalBu ldT  , t  S nceGraphBu ldStart(). nM ll seconds)
 
-    val timeSinceClusteringAlgRunStart = Stopwatch.start()
-    val nEdges = neighbours.map(_.length).sum / 2 // Graph expects count of undirected edges
-    val graph = new Graph(sourcesById.size, nEdges, neighbours)
+    val t  S nceCluster ngAlgRunStart = Stopwatch.start()
+    val nEdges = ne ghb s.map(_.length).sum / 2 // Graph expects count of und rected edges
+    val graph = new Graph(s cesBy d.s ze, nEdges, ne ghb s)
 
     val clusters = ConnectedComponents
       .connectedComponents(graph).asScala.toSet
-      .map { i: IntSet => i.asScala.map(sourcesById(_)._1).toSet }
+      .map {  :  ntSet =>  .asScala.map(s cesBy d(_)._1).toSet }
 
     recordStatCallback(
-      StatClusteringAlgorithmRunTime,
-      timeSinceClusteringAlgRunStart().inMilliseconds)
+      StatCluster ngAlgor hmRunT  ,
+      t  S nceCluster ngAlgRunStart(). nM ll seconds)
 
     clusters
   }

@@ -1,23 +1,23 @@
-namespace java com.twitter.usersignalservice.thriftjava
-namespace py gen.twitter.usersignalservice.service
-#@namespace scala com.twitter.usersignalservice.thriftscala
-#@namespace strato com.twitter.usersignalservice.strato
+na space java com.tw ter.users gnalserv ce.thr ftjava
+na space py gen.tw ter.users gnalserv ce.serv ce
+#@na space scala com.tw ter.users gnalserv ce.thr ftscala
+#@na space strato com.tw ter.users gnalserv ce.strato
 
-include "signal.thrift"
-include "client_identifier.thrift"
+ nclude "s gnal.thr ft"
+ nclude "cl ent_ dent f er.thr ft"
 
-struct SignalRequest {
-  1: optional i64 maxResults
-  2: required signal.SignalType signalType
+struct S gnalRequest {
+  1: opt onal  64 maxResults
+  2: requ red s gnal.S gnalType s gnalType
 }
 
-struct BatchSignalRequest {
-  1: required i64 userId(personalDataType = "UserId")
-  2: required list<SignalRequest> signalRequest
-  # make sure to populate the clientId, otherwise the service would throw exceptions
-  3: optional client_identifier.ClientIdentifier clientId
+struct BatchS gnalRequest {
+  1: requ red  64 user d(personalDataType = "User d")
+  2: requ red l st<S gnalRequest> s gnalRequest
+  # make sure to populate t  cl ent d, ot rw se t  serv ce would throw except ons
+  3: opt onal cl ent_ dent f er.Cl ent dent f er cl ent d
 }(hasPersonalData='true')
 
-struct BatchSignalResponse {
-  1: required map<signal.SignalType, list<signal.Signal>> signalResponse
+struct BatchS gnalResponse {
+  1: requ red map<s gnal.S gnalType, l st<s gnal.S gnal>> s gnalResponse
 }

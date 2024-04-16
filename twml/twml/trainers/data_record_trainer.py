@@ -1,821 +1,821 @@
-# pylint: disable=arguments-differ, invalid-name
+# pyl nt: d sable=argu nts-d ffer,  nval d-na 
 """
-This module contains the ``DataRecordTrainer``.
-Unlike the parent ``Trainer`` class, the ``DataRecordTrainer``
-is used specifically for processing data records.
-It abstracts away a lot of the intricacies of working with DataRecords.
-`DataRecord <http://go/datarecord>`_ is the main piping format for data samples.
-The `DataRecordTrainer` assumes training data and production responses and requests
-to be organized as the `Thrift prediction service API
+T  module conta ns t  ``DataRecordTra ner``.
+Unl ke t  parent ``Tra ner`` class, t  ``DataRecordTra ner``
+ s used spec f cally for process ng data records.
+  abstracts away a lot of t   ntr cac es of work ng w h DataRecords.
+`DataRecord <http://go/datarecord>`_  s t  ma n p p ng format for data samples.
+T  `DataRecordTra ner` assu s tra n ng data and product on responses and requests
+to be organ zed as t  `Thr ft pred ct on serv ce AP 
 
-A ``DataRecord`` is a Thrift struct that defines how to encode the data:
+A ``DataRecord``  s a Thr ft struct that def nes how to encode t  data:
 
 ::
 
   struct DataRecord {
-    1: optional set<i64> binaryFeatures;                     // stores BINARY features
-    2: optional map<i64, double> continuousFeatures;         // stores CONTINUOUS features
-    3: optional map<i64, i64> discreteFeatures;              // stores DISCRETE features
-    4: optional map<i64, string> stringFeatures;             // stores STRING features
-    5: optional map<i64, set<string>> sparseBinaryFeatures;  // stores sparse BINARY features
-    6: optional map<i64, map<string, double>> sparseContinuousFeatures; // sparse CONTINUOUS feature
-    7: optional map<i64, binary> blobFeatures; // stores features as BLOBs (binary large objects)
-    8: optional map<i64, tensor.GeneralTensor> tensors; // stores TENSOR features
-    9: optional map<i64, tensor.SparseTensor> sparseTensors; // stores SPARSE_TENSOR features
+    1: opt onal set< 64> b naryFeatures;                     // stores B NARY features
+    2: opt onal map< 64, double> cont nuousFeatures;         // stores CONT NUOUS features
+    3: opt onal map< 64,  64> d screteFeatures;              // stores D SCRETE features
+    4: opt onal map< 64, str ng> str ngFeatures;             // stores STR NG features
+    5: opt onal map< 64, set<str ng>> sparseB naryFeatures;  // stores sparse B NARY features
+    6: opt onal map< 64, map<str ng, double>> sparseCont nuousFeatures; // sparse CONT NUOUS feature
+    7: opt onal map< 64, b nary> blobFeatures; // stores features as BLOBs (b nary large objects)
+    8: opt onal map< 64, tensor.GeneralTensor> tensors; // stores TENSOR features
+    9: opt onal map< 64, tensor.SparseTensor> sparseTensors; // stores SPARSE_TENSOR features
   }
 
 
-A significant portion of Twitter data is hydrated
-and then temporarily stored on HDFS as DataRecords.
-The files are compressed (.gz or .lzo) partitions of data records.
-These form supervised datasets. Each sample captures the relationship
-between input and output (cause and effect).
-To create your own dataset, please see https://github.com/twitter/elephant-bird.
+A s gn f cant port on of Tw ter data  s hydrated
+and t n temporar ly stored on HDFS as DataRecords.
+T  f les are compressed (.gz or .lzo) part  ons of data records.
+T se form superv sed datasets. Each sample captures t  relat onsh p
+bet en  nput and output (cause and effect).
+To create y  own dataset, please see https://g hub.com/tw ter/elephant-b rd.
 
-The default ``DataRecordTrainer.[train,evaluate,learn]()`` reads these datarecords.
-The data is a read from multiple ``part-*.[compression]`` files.
-The default behavior of ``DataRecordTrainer`` is to read sparse features from ``DataRecords``.
-This is a legacy default piping format at Twitter.
-The ``DataRecordTrainer`` is flexible enough for research and yet simple enough
-for a new beginner ML practioner.
+T  default ``DataRecordTra ner.[tra n,evaluate,learn]()`` reads t se datarecords.
+T  data  s a read from mult ple ``part-*.[compress on]`` f les.
+T  default behav or of ``DataRecordTra ner``  s to read sparse features from ``DataRecords``.
+T   s a legacy default p p ng format at Tw ter.
+T  ``DataRecordTra ner``  s flex ble enough for research and yet s mple enough
+for a new beg nner ML pract oner.
 
-By means of the feature string to key hashing function,
-the ``[train,eval]_feature_config`` constructor arguments
-control which features can be used as sample labels, sample weights,
+By  ans of t  feature str ng to key hash ng funct on,
+t  ``[tra n,eval]_feature_conf g`` constructor argu nts
+control wh ch features can be used as sample labels, sample   ghts,
 or sample features.
-Samples ids, and feature keys, feature values and feature weights
-can be skipped, included, excluded or used as labels, weights, or features.
-This allows you to easily define and control sparse distributions of
-named features.
+Samples  ds, and feature keys, feature values and feature   ghts
+can be sk pped,  ncluded, excluded or used as labels,   ghts, or features.
+T  allows   to eas ly def ne and control sparse d str but ons of
+na d features.
 
-Yet sparse data is difficult to work with. We are currently working to
-optimize the sparse operations due to inefficiencies in the gradient descent
-and parameter update processes. There are efforts underway
-to minimize the footprint of sparse data as it is inefficient to process.
+Yet sparse data  s d ff cult to work w h.   are currently work ng to
+opt m ze t  sparse operat ons due to  neff c enc es  n t  grad ent descent
+and para ter update processes. T re are efforts underway
+to m n m ze t  footpr nt of sparse data as    s  neff c ent to process.
 CPUs and GPUs much prefer dense tensor data.
 """
 
-import datetime
+ mport datet  
 
-import tensorflow.compat.v1 as tf
-from twitter.deepbird.io.dal import dal_to_hdfs_path, is_dal_path
-import twml
-from twml.trainers import Trainer
-from twml.contrib.feature_importances.feature_importances import (
-  compute_feature_importances,
+ mport tensorflow.compat.v1 as tf
+from tw ter.deepb rd. o.dal  mport dal_to_hdfs_path,  s_dal_path
+ mport twml
+from twml.tra ners  mport Tra ner
+from twml.contr b.feature_ mportances.feature_ mportances  mport (
+  compute_feature_ mportances,
   TREE,
-  write_feature_importances_to_hdfs,
-  write_feature_importances_to_ml_dash)
-from absl import logging
+  wr e_feature_ mportances_to_hdfs,
+  wr e_feature_ mportances_to_ml_dash)
+from absl  mport logg ng
 
 
-class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
+class DataRecordTra ner(Tra ner):  # pyl nt: d sable=abstract- thod
   """
-  The ``DataRecordTrainer`` implementation is intended to satisfy the most common use cases
-  at Twitter where only the build_graph methods needs to be overridden.
-  For this reason, ``Trainer.[train,eval]_input_fn`` methods
-  assume a DataRecord dataset partitioned into part files stored in compressed (e.g. gzip) format.
+  T  ``DataRecordTra ner``  mple ntat on  s  ntended to sat sfy t  most common use cases
+  at Tw ter w re only t  bu ld_graph  thods needs to be overr dden.
+  For t  reason, ``Tra ner.[tra n,eval]_ nput_fn``  thods
+  assu  a DataRecord dataset part  oned  nto part f les stored  n compressed (e.g. gz p) format.
 
-  For use-cases that differ from this common Twitter use-case,
-  further Trainer methods can be overridden.
-  If that still doesn't provide enough flexibility, the user can always
-  use the tf.estimator.Esimator or tf.session.run directly.
+  For use-cases that d ffer from t  common Tw ter use-case,
+  furt r Tra ner  thods can be overr dden.
+   f that st ll doesn't prov de enough flex b l y, t  user can always
+  use t  tf.est mator.Es mator or tf.sess on.run d rectly.
   """
 
-  def __init__(
-          self, name, params,
-          build_graph_fn,
-          feature_config=None,
+  def __ n __(
+          self, na , params,
+          bu ld_graph_fn,
+          feature_conf g=None,
           **kwargs):
     """
-    The DataRecordTrainer constructor builds a
-    ``tf.estimator.Estimator`` and stores it in self.estimator.
-    For this reason, DataRecordTrainer accepts the same Estimator constructor arguments.
-    It also accepts additional arguments to facilitate metric evaluation and multi-phase training
-    (init_from_dir, init_map).
+    T  DataRecordTra ner constructor bu lds a
+    ``tf.est mator.Est mator`` and stores    n self.est mator.
+    For t  reason, DataRecordTra ner accepts t  sa  Est mator constructor argu nts.
+      also accepts add  onal argu nts to fac l ate  tr c evaluat on and mult -phase tra n ng
+    ( n _from_d r,  n _map).
 
     Args:
-      parent arguments:
-        See the `Trainer constructor <#twml.trainers.Trainer.__init__>`_ documentation
-        for a full list of arguments accepted by the parent class.
-      name, params, build_graph_fn (and other parent class args):
-        see documentation for twml.Trainer doc.
-      feature_config:
-        An object of type FeatureConfig describing what features to decode.
-        Defaults to None. But it is needed in the following cases:
-          - `get_train_input_fn()` / `get_eval_input_fn()` is called without a `parse_fn`
-          - `learn()`, `train()`, `eval()`, `calibrate()` are called without providing `*input_fn`.
+      parent argu nts:
+        See t  `Tra ner constructor <#twml.tra ners.Tra ner.__ n __>`_ docu ntat on
+        for a full l st of argu nts accepted by t  parent class.
+      na , params, bu ld_graph_fn (and ot r parent class args):
+        see docu ntat on for twml.Tra ner doc.
+      feature_conf g:
+        An object of type FeatureConf g descr b ng what features to decode.
+        Defaults to None. But    s needed  n t  follow ng cases:
+          - `get_tra n_ nput_fn()` / `get_eval_ nput_fn()`  s called w hout a `parse_fn`
+          - `learn()`, `tra n()`, `eval()`, `cal brate()` are called w hout prov d ng `* nput_fn`.
 
       **kwargs:
-        further kwargs can be specified and passed to the Estimator constructor.
+        furt r kwargs can be spec f ed and passed to t  Est mator constructor.
     """
 
-    # NOTE: DO NOT MODIFY `params` BEFORE THIS CALL.
-    super(DataRecordTrainer, self).__init__(
-      name=name, params=params, build_graph_fn=build_graph_fn, **kwargs)
+    # NOTE: DO NOT MOD FY `params` BEFORE TH S CALL.
+    super(DataRecordTra ner, self).__ n __(
+      na =na , params=params, bu ld_graph_fn=bu ld_graph_fn, **kwargs)
 
-    self._feature_config = feature_config
+    self._feature_conf g = feature_conf g
 
-    # date range parameters common to both training and evaluation data:
-    hour_resolution = self.params.get("hour_resolution", 1)
+    # date range para ters common to both tra n ng and evaluat on data:
+    h _resolut on = self.params.get("h _resolut on", 1)
     data_threads = self.params.get("data_threads", 4)
-    datetime_format = self.params.get("datetime_format", "%Y/%m/%d")
+    datet  _format = self.params.get("datet  _format", "%Y/%m/%d")
 
-    # retrieve the desired training dataset files
-    self._train_files = self.build_files_list(
-      files_list_path=self.params.get("train_files_list", None),
-      data_dir=self.params.get("train_data_dir", None),
-      start_datetime=self.params.get("train_start_datetime", None),
-      end_datetime=self.params.get("train_end_datetime", None),
-      datetime_format=datetime_format, data_threads=data_threads,
-      hour_resolution=hour_resolution, maybe_save=self.is_chief(),
-      overwrite=self.params.get("train_overwrite_files_list", False),
+    # retr eve t  des red tra n ng dataset f les
+    self._tra n_f les = self.bu ld_f les_l st(
+      f les_l st_path=self.params.get("tra n_f les_l st", None),
+      data_d r=self.params.get("tra n_data_d r", None),
+      start_datet  =self.params.get("tra n_start_datet  ", None),
+      end_datet  =self.params.get("tra n_end_datet  ", None),
+      datet  _format=datet  _format, data_threads=data_threads,
+      h _resolut on=h _resolut on, maybe_save=self. s_ch ef(),
+      overwr e=self.params.get("tra n_overwr e_f les_l st", False),
     )
 
-    # retrieve the desired evaluation dataset files
-    eval_name = self.params.get("eval_name", None)
+    # retr eve t  des red evaluat on dataset f les
+    eval_na  = self.params.get("eval_na ", None)
 
-    if eval_name == "train":
-      self._eval_files = self._train_files
+     f eval_na  == "tra n":
+      self._eval_f les = self._tra n_f les
     else:
-      self._eval_files = self.build_files_list(
-        files_list_path=self.params.get("eval_files_list", None),
-        data_dir=self.params.get("eval_data_dir", None),
-        start_datetime=self.params.get("eval_start_datetime", None),
-        end_datetime=self.params.get("eval_end_datetime", None),
-        datetime_format=datetime_format, data_threads=data_threads,
-        hour_resolution=hour_resolution, maybe_save=self.is_chief(),
-        overwrite=self.params.get("eval_overwrite_files_list", False),
+      self._eval_f les = self.bu ld_f les_l st(
+        f les_l st_path=self.params.get("eval_f les_l st", None),
+        data_d r=self.params.get("eval_data_d r", None),
+        start_datet  =self.params.get("eval_start_datet  ", None),
+        end_datet  =self.params.get("eval_end_datet  ", None),
+        datet  _format=datet  _format, data_threads=data_threads,
+        h _resolut on=h _resolut on, maybe_save=self. s_ch ef(),
+        overwr e=self.params.get("eval_overwr e_f les_l st", False),
       )
 
-      if not self.params.get("allow_train_eval_overlap"):
-        # if there is overlap between train and eval, error out!
-        if self._train_files and self._eval_files:
-          overlap_files = set(self._train_files) & set(self._eval_files)
+       f not self.params.get("allow_tra n_eval_overlap"):
+        #  f t re  s overlap bet en tra n and eval, error out!
+         f self._tra n_f les and self._eval_f les:
+          overlap_f les = set(self._tra n_f les) & set(self._eval_f les)
         else:
-          overlap_files = set()
-        if overlap_files:
-          raise ValueError("There is an overlap between train and eval files:\n %s" %
-                           (overlap_files))
+          overlap_f les = set()
+         f overlap_f les:
+          ra se ValueError("T re  s an overlap bet en tra n and eval f les:\n %s" %
+                           (overlap_f les))
 
-  @staticmethod
-  def build_hdfs_files_list(
-      files_list_path, data_dir,
-      start_datetime, end_datetime, datetime_format,
-      data_threads, hour_resolution, maybe_save, overwrite):
-    if files_list_path:
-      files_list_path = twml.util.preprocess_path(files_list_path)
+  @stat c thod
+  def bu ld_hdfs_f les_l st(
+      f les_l st_path, data_d r,
+      start_datet  , end_datet  , datet  _format,
+      data_threads, h _resolut on, maybe_save, overwr e):
+     f f les_l st_path:
+      f les_l st_path = twml.ut l.preprocess_path(f les_l st_path)
 
-    if isinstance(start_datetime, datetime.datetime):
-      start_datetime = start_datetime.strftime(datetime_format)
-    if isinstance(end_datetime, datetime.datetime):
-      end_datetime = end_datetime.strftime(datetime_format)
+     f  s nstance(start_datet  , datet  .datet  ):
+      start_datet   = start_datet  .strft  (datet  _format)
+     f  s nstance(end_datet  , datet  .datet  ):
+      end_datet   = end_datet  .strft  (datet  _format)
 
-    list_files_by_datetime_args = {
-      "base_path": data_dir,
-      "start_datetime": start_datetime,
-      "end_datetime": end_datetime,
-      "datetime_prefix_format": datetime_format,
-      "extension": "lzo",
-      "parallelism": data_threads,
-      "hour_resolution": hour_resolution,
+    l st_f les_by_datet  _args = {
+      "base_path": data_d r,
+      "start_datet  ": start_datet  ,
+      "end_datet  ": end_datet  ,
+      "datet  _pref x_format": datet  _format,
+      "extens on": "lzo",
+      "parallel sm": data_threads,
+      "h _resolut on": h _resolut on,
       "sort": True,
     }
 
-    # no cache of data file paths, just get the list by scraping the directory
-    if not files_list_path or not tf.io.gfile.exists(files_list_path):
-      # twml.util.list_files_by_datetime returns None if data_dir is None.
-      # twml.util.list_files_by_datetime passes through data_dir if data_dir is a list
-      files_list = twml.util.list_files_by_datetime(**list_files_by_datetime_args)
+    # no cac  of data f le paths, just get t  l st by scrap ng t  d rectory
+     f not f les_l st_path or not tf. o.gf le.ex sts(f les_l st_path):
+      # twml.ut l.l st_f les_by_datet   returns None  f data_d r  s None.
+      # twml.ut l.l st_f les_by_datet   passes through data_d r  f data_d r  s a l st
+      f les_l st = twml.ut l.l st_f les_by_datet  (**l st_f les_by_datet  _args)
     else:
-      # the cached data file paths file exists.
-      files_info = twml.util.read_file(files_list_path, decode="json")
-      # use the cached list if data params match current params,
-      #  or if current params are None
-      # Not including None checks for datetime_format and hour_resolution,
-      #  since those are shared between eval and training.
-      if (all(param is None for param in [data_dir, start_datetime, end_datetime]) or
-          (files_info["data_dir"] == data_dir and
-           files_info["start_datetime"] == start_datetime and
-           files_info["end_datetime"] == end_datetime and
-           files_info["datetime_format"] == datetime_format and
-           files_info["hour_resolution"] == hour_resolution)):
-        files_list = files_info["files"]
-      elif overwrite:
+      # t  cac d data f le paths f le ex sts.
+      f les_ nfo = twml.ut l.read_f le(f les_l st_path, decode="json")
+      # use t  cac d l st  f data params match current params,
+      #  or  f current params are None
+      # Not  nclud ng None c cks for datet  _format and h _resolut on,
+      #  s nce those are shared bet en eval and tra n ng.
+       f (all(param  s None for param  n [data_d r, start_datet  , end_datet  ]) or
+          (f les_ nfo["data_d r"] == data_d r and
+           f les_ nfo["start_datet  "] == start_datet   and
+           f les_ nfo["end_datet  "] == end_datet   and
+           f les_ nfo["datet  _format"] == datet  _format and
+           f les_ nfo["h _resolut on"] == h _resolut on)):
+        f les_l st = f les_ nfo["f les"]
+      el f overwr e:
         # current params are not none and don't match saved params
-        # `overwrite` indicates we should thus update the list
-        files_list = twml.util.list_files_by_datetime(**list_files_by_datetime_args)
+        # `overwr e`  nd cates   should thus update t  l st
+        f les_l st = twml.ut l.l st_f les_by_datet  (**l st_f les_by_datet  _args)
       else:
-        # dont update the cached list
-        raise ValueError("Information in files_list is inconsistent with provided args.\n"
-                         "Did you intend to overwrite files_list using "
-                         "--train.overwrite_files_list or --eval.overwrite_files_list?\n"
-                         "If you instead want to use the paths in files_list, ensure that "
-                         "data_dir, start_datetime, and end_datetime are None.")
+        # dont update t  cac d l st
+        ra se ValueError(" nformat on  n f les_l st  s  ncons stent w h prov ded args.\n"
+                         "D d    ntend to overwr e f les_l st us ng "
+                         "--tra n.overwr e_f les_l st or --eval.overwr e_f les_l st?\n"
+                         " f    nstead want to use t  paths  n f les_l st, ensure that "
+                         "data_d r, start_datet  , and end_datet   are None.")
 
-    if maybe_save and files_list_path and (overwrite or not tf.io.gfile.exists(files_list_path)):
-      save_dict = {}
-      save_dict["files"] = files_list
-      save_dict["data_dir"] = data_dir
-      save_dict["start_datetime"] = start_datetime
-      save_dict["end_datetime"] = end_datetime
-      save_dict["datetime_format"] = datetime_format
-      save_dict["hour_resolution"] = hour_resolution
-      twml.util.write_file(files_list_path, save_dict, encode="json")
+     f maybe_save and f les_l st_path and (overwr e or not tf. o.gf le.ex sts(f les_l st_path)):
+      save_d ct = {}
+      save_d ct["f les"] = f les_l st
+      save_d ct["data_d r"] = data_d r
+      save_d ct["start_datet  "] = start_datet  
+      save_d ct["end_datet  "] = end_datet  
+      save_d ct["datet  _format"] = datet  _format
+      save_d ct["h _resolut on"] = h _resolut on
+      twml.ut l.wr e_f le(f les_l st_path, save_d ct, encode="json")
 
-    return files_list
+    return f les_l st
 
-  @staticmethod
-  def build_files_list(files_list_path, data_dir,
-                        start_datetime, end_datetime, datetime_format,
-                        data_threads, hour_resolution, maybe_save, overwrite):
+  @stat c thod
+  def bu ld_f les_l st(f les_l st_path, data_d r,
+                        start_datet  , end_datet  , datet  _format,
+                        data_threads, h _resolut on, maybe_save, overwr e):
     '''
-    When specifying DAL datasets, only data_dir, start_dateime, and end_datetime
-    should be given with the format:
+    W n spec fy ng DAL datasets, only data_d r, start_date  , and end_datet  
+    should be g ven w h t  format:
 
-    dal://{cluster}/{role}/{dataset_name}/{env}
+    dal://{cluster}/{role}/{dataset_na }/{env}
 
     '''
-    if not data_dir or not is_dal_path(data_dir):
-      logging.warn(f"Please consider specifying a dal:// dataset rather than passing a physical hdfs path.")
-      return DataRecordTrainer.build_hdfs_files_list(
-        files_list_path, data_dir,
-        start_datetime, end_datetime, datetime_format,
-        data_threads, hour_resolution, maybe_save, overwrite)
+     f not data_d r or not  s_dal_path(data_d r):
+      logg ng.warn(f"Please cons der spec fy ng a dal:// dataset rat r than pass ng a phys cal hdfs path.")
+      return DataRecordTra ner.bu ld_hdfs_f les_l st(
+        f les_l st_path, data_d r,
+        start_datet  , end_datet  , datet  _format,
+        data_threads, h _resolut on, maybe_save, overwr e)
 
-    del datetime_format
+    del datet  _format
     del data_threads
-    del hour_resolution
+    del h _resolut on
     del maybe_save
-    del overwrite
+    del overwr e
 
     return dal_to_hdfs_path(
-      path=data_dir,
-      start_datetime=start_datetime,
-      end_datetime=end_datetime,
+      path=data_d r,
+      start_datet  =start_datet  ,
+      end_datet  =end_datet  ,
     )
 
   @property
-  def train_files(self):
-    return self._train_files
+  def tra n_f les(self):
+    return self._tra n_f les
 
   @property
-  def eval_files(self):
-    return self._eval_files
+  def eval_f les(self):
+    return self._eval_f les
 
-  @staticmethod
-  def add_parser_arguments():
+  @stat c thod
+  def add_parser_argu nts():
     """
-    Add common commandline args to parse for the Trainer class.
-    Typically, the user calls this function and then parses cmd-line arguments
-    into an argparse.Namespace object which is then passed to the Trainer constructor
-    via the params argument.
+    Add common commandl ne args to parse for t  Tra ner class.
+    Typ cally, t  user calls t  funct on and t n parses cmd-l ne argu nts
+     nto an argparse.Na space object wh ch  s t n passed to t  Tra ner constructor
+    v a t  params argu nt.
 
-    See the `Trainer code <_modules/twml/trainers/trainer.html#Trainer.add_parser_arguments>`_
-    and `DataRecordTrainer code
-    <_modules/twml/trainers/trainer.html#DataRecordTrainer.add_parser_arguments>`_
-    for a list and description of all cmd-line arguments.
+    See t  `Tra ner code <_modules/twml/tra ners/tra ner.html#Tra ner.add_parser_argu nts>`_
+    and `DataRecordTra ner code
+    <_modules/twml/tra ners/tra ner.html#DataRecordTra ner.add_parser_argu nts>`_
+    for a l st and descr pt on of all cmd-l ne argu nts.
 
     Args:
-      learning_rate_decay:
-        Defaults to False. When True, parses learning rate decay arguments.
+      learn ng_rate_decay:
+        Defaults to False. W n True, parses learn ng rate decay argu nts.
 
     Returns:
-      argparse.ArgumentParser instance with some useful args already added.
+      argparse.Argu ntParser  nstance w h so  useful args already added.
     """
-    parser = super(DataRecordTrainer, DataRecordTrainer).add_parser_arguments()
-    parser.add_argument(
-      "--train.files_list", "--train_files_list", type=str, default=None,
-      dest="train_files_list",
-      help="Path for a json file storing information on training data.\n"
-           "Specifically, the file at files_list should contain the dataset parameters "
-           "for constructing the list of data files, and the list of data file paths.\n"
-           "If the json file does not exist, other args are used to construct the "
-           "training files list, and that list will be saved to the indicated json file.\n"
-           "If the json file does exist, and current args are consistent with "
-           "saved args, or are all None, then the saved files list will be used.\n"
-           "If current args are not consistent with the saved args, then error out "
-           "if train_overwrite_files_list==False, else overwrite files_list with "
-           "a newly constructed list.")
-    parser.add_argument(
-      "--train.overwrite_files_list", "--train_overwrite_files_list", action="store_true", default=False,
-      dest="train_overwrite_files_list",
-      help="When the --train.files_list param is used, indicates whether to "
-           "overwrite the existing --train.files_list when there are differences "
-           "between the current and saved dataset args. Default (False) is to "
-           "error out if files_list exists and differs from current params.")
-    parser.add_argument(
-      "--train.data_dir", "--train_data_dir", type=str, default=None,
-      dest="train_data_dir",
-      help="Path to the training data directory."
-           "Supports local, dal://{cluster}-{region}/{role}/{dataset_name}/{environment}, "
+    parser = super(DataRecordTra ner, DataRecordTra ner).add_parser_argu nts()
+    parser.add_argu nt(
+      "--tra n.f les_l st", "--tra n_f les_l st", type=str, default=None,
+      dest="tra n_f les_l st",
+       lp="Path for a json f le stor ng  nformat on on tra n ng data.\n"
+           "Spec f cally, t  f le at f les_l st should conta n t  dataset para ters "
+           "for construct ng t  l st of data f les, and t  l st of data f le paths.\n"
+           " f t  json f le does not ex st, ot r args are used to construct t  "
+           "tra n ng f les l st, and that l st w ll be saved to t   nd cated json f le.\n"
+           " f t  json f le does ex st, and current args are cons stent w h "
+           "saved args, or are all None, t n t  saved f les l st w ll be used.\n"
+           " f current args are not cons stent w h t  saved args, t n error out "
+           " f tra n_overwr e_f les_l st==False, else overwr e f les_l st w h "
+           "a newly constructed l st.")
+    parser.add_argu nt(
+      "--tra n.overwr e_f les_l st", "--tra n_overwr e_f les_l st", act on="store_true", default=False,
+      dest="tra n_overwr e_f les_l st",
+       lp="W n t  --tra n.f les_l st param  s used,  nd cates w t r to "
+           "overwr e t  ex st ng --tra n.f les_l st w n t re are d fferences "
+           "bet en t  current and saved dataset args. Default (False)  s to "
+           "error out  f f les_l st ex sts and d ffers from current params.")
+    parser.add_argu nt(
+      "--tra n.data_d r", "--tra n_data_d r", type=str, default=None,
+      dest="tra n_data_d r",
+       lp="Path to t  tra n ng data d rectory."
+           "Supports local, dal://{cluster}-{reg on}/{role}/{dataset_na }/{env ron nt}, "
            "and HDFS (hdfs://default/<path> ) paths.")
-    parser.add_argument(
-      "--train.start_date", "--train_start_datetime",
+    parser.add_argu nt(
+      "--tra n.start_date", "--tra n_start_datet  ",
       type=str, default=None,
-      dest="train_start_datetime",
-      help="Starting date for training inside the train data dir."
-           "The start datetime is inclusive."
+      dest="tra n_start_datet  ",
+       lp="Start ng date for tra n ng  ns de t  tra n data d r."
+           "T  start datet    s  nclus ve."
            "e.g. 2019/01/15")
-    parser.add_argument(
-      "--train.end_date", "--train_end_datetime", type=str, default=None,
-      dest="train_end_datetime",
-      help="Ending date for training inside the train data dir."
-           "The end datetime is inclusive."
+    parser.add_argu nt(
+      "--tra n.end_date", "--tra n_end_datet  ", type=str, default=None,
+      dest="tra n_end_datet  ",
+       lp="End ng date for tra n ng  ns de t  tra n data d r."
+           "T  end datet    s  nclus ve."
            "e.g. 2019/01/15")
-    parser.add_argument(
-      "--eval.files_list", "--eval_files_list", type=str, default=None,
-      dest="eval_files_list",
-      help="Path for a json file storing information on evaluation data.\n"
-           "Specifically, the file at files_list should contain the dataset parameters "
-           "for constructing the list of data files, and the list of data file paths.\n"
-           "If the json file does not exist, other args are used to construct the "
-           "evaluation files list, and that list will be saved to the indicated json file.\n"
-           "If the json file does exist, and current args are consistent with "
-           "saved args, or are all None, then the saved files list will be used.\n"
-           "If current args are not consistent with the saved args, then error out "
-           "if eval_overwrite_files_list==False, else overwrite files_list with "
-           "a newly constructed list.")
-    parser.add_argument(
-      "--eval.overwrite_files_list", "--eval_overwrite_files_list", action="store_true", default=False,
-      dest="eval_overwrite_files_list",
-      help="When the --eval.files_list param is used, indicates whether to "
-           "overwrite the existing --eval.files_list when there are differences "
-           "between the current and saved dataset args. Default (False) is to "
-           "error out if files_list exists and differs from current params.")
-    parser.add_argument(
-      "--eval.data_dir", "--eval_data_dir", type=str, default=None,
-      dest="eval_data_dir",
-      help="Path to the cross-validation data directory."
-           "Supports local, dal://{cluster}-{region}/{role}/{dataset_name}/{environment}, "
+    parser.add_argu nt(
+      "--eval.f les_l st", "--eval_f les_l st", type=str, default=None,
+      dest="eval_f les_l st",
+       lp="Path for a json f le stor ng  nformat on on evaluat on data.\n"
+           "Spec f cally, t  f le at f les_l st should conta n t  dataset para ters "
+           "for construct ng t  l st of data f les, and t  l st of data f le paths.\n"
+           " f t  json f le does not ex st, ot r args are used to construct t  "
+           "evaluat on f les l st, and that l st w ll be saved to t   nd cated json f le.\n"
+           " f t  json f le does ex st, and current args are cons stent w h "
+           "saved args, or are all None, t n t  saved f les l st w ll be used.\n"
+           " f current args are not cons stent w h t  saved args, t n error out "
+           " f eval_overwr e_f les_l st==False, else overwr e f les_l st w h "
+           "a newly constructed l st.")
+    parser.add_argu nt(
+      "--eval.overwr e_f les_l st", "--eval_overwr e_f les_l st", act on="store_true", default=False,
+      dest="eval_overwr e_f les_l st",
+       lp="W n t  --eval.f les_l st param  s used,  nd cates w t r to "
+           "overwr e t  ex st ng --eval.f les_l st w n t re are d fferences "
+           "bet en t  current and saved dataset args. Default (False)  s to "
+           "error out  f f les_l st ex sts and d ffers from current params.")
+    parser.add_argu nt(
+      "--eval.data_d r", "--eval_data_d r", type=str, default=None,
+      dest="eval_data_d r",
+       lp="Path to t  cross-val dat on data d rectory."
+           "Supports local, dal://{cluster}-{reg on}/{role}/{dataset_na }/{env ron nt}, "
            "and HDFS (hdfs://default/<path> ) paths.")
-    parser.add_argument(
-      "--eval.start_date", "--eval_start_datetime",
+    parser.add_argu nt(
+      "--eval.start_date", "--eval_start_datet  ",
       type=str, default=None,
-      dest="eval_start_datetime",
-      help="Starting date for evaluating inside the eval data dir."
-           "The start datetime is inclusive."
+      dest="eval_start_datet  ",
+       lp="Start ng date for evaluat ng  ns de t  eval data d r."
+           "T  start datet    s  nclus ve."
            "e.g. 2019/01/15")
-    parser.add_argument(
-      "--eval.end_date", "--eval_end_datetime", type=str, default=None,
-      dest="eval_end_datetime",
-      help="Ending date for evaluating inside the eval data dir."
-           "The end datetime is inclusive."
+    parser.add_argu nt(
+      "--eval.end_date", "--eval_end_datet  ", type=str, default=None,
+      dest="eval_end_datet  ",
+       lp="End ng date for evaluat ng  ns de t  eval data d r."
+           "T  end datet    s  nclus ve."
            "e.g. 2019/01/15")
-    parser.add_argument(
-      "--datetime_format", type=str, default="%Y/%m/%d",
-      help="Date format for training and evaluation datasets."
-           "Has to be a format that is understood by python datetime."
+    parser.add_argu nt(
+      "--datet  _format", type=str, default="%Y/%m/%d",
+       lp="Date format for tra n ng and evaluat on datasets."
+           "Has to be a format that  s understood by python datet  ."
            "e.g. %%Y/%%m/%%d for 2019/01/15."
-           "Used only if {train/eval}.{start/end}_date are provided.")
-    parser.add_argument(
-      "--hour_resolution", type=int, default=None,
-      help="Specify the hourly resolution of the stored data.")
-    parser.add_argument(
-      "--data_spec", type=str, required=True,
-      help="Path to data specification JSON file. This file is used to decode DataRecords")
-    parser.add_argument(
-      "--train.keep_rate", "--train_keep_rate", type=float, default=None,
-      dest="train_keep_rate",
-      help="A float value in (0.0, 1.0] that indicates to drop records according to the Bernoulli \
-      distribution with p = 1 - keep_rate.")
-    parser.add_argument(
+           "Used only  f {tra n/eval}.{start/end}_date are prov ded.")
+    parser.add_argu nt(
+      "--h _resolut on", type= nt, default=None,
+       lp="Spec fy t  h ly resolut on of t  stored data.")
+    parser.add_argu nt(
+      "--data_spec", type=str, requ red=True,
+       lp="Path to data spec f cat on JSON f le. T  f le  s used to decode DataRecords")
+    parser.add_argu nt(
+      "--tra n.keep_rate", "--tra n_keep_rate", type=float, default=None,
+      dest="tra n_keep_rate",
+       lp="A float value  n (0.0, 1.0] that  nd cates to drop records accord ng to t  Bernoull  \
+      d str but on w h p = 1 - keep_rate.")
+    parser.add_argu nt(
       "--eval.keep_rate", "--eval_keep_rate", type=float, default=None,
       dest="eval_keep_rate",
-      help="A float value in (0.0, 1.0] that indicates to drop records according to the Bernoulli \
-      distribution with p = 1 - keep_rate.")
-    parser.add_argument(
-      "--train.parts_downsampling_rate", "--train_parts_downsampling_rate",
-      dest="train_parts_downsampling_rate",
+       lp="A float value  n (0.0, 1.0] that  nd cates to drop records accord ng to t  Bernoull  \
+      d str but on w h p = 1 - keep_rate.")
+    parser.add_argu nt(
+      "--tra n.parts_downsampl ng_rate", "--tra n_parts_downsampl ng_rate",
+      dest="tra n_parts_downsampl ng_rate",
       type=float, default=None,
-      help="A float value in (0.0, 1.0] that indicates the factor by which to downsample part \
-      files. For example, a value of 0.2 means only 20 percent of part files become part of the \
+       lp="A float value  n (0.0, 1.0] that  nd cates t  factor by wh ch to downsample part \
+      f les. For example, a value of 0.2  ans only 20 percent of part f les beco  part of t  \
       dataset.")
-    parser.add_argument(
-      "--eval.parts_downsampling_rate", "--eval_parts_downsampling_rate",
-      dest="eval_parts_downsampling_rate",
+    parser.add_argu nt(
+      "--eval.parts_downsampl ng_rate", "--eval_parts_downsampl ng_rate",
+      dest="eval_parts_downsampl ng_rate",
       type=float, default=None,
-      help="A float value in (0.0, 1.0] that indicates the factor by which to downsample part \
-      files. For example, a value of 0.2 means only 20 percent of part files become part of the \
+       lp="A float value  n (0.0, 1.0] that  nd cates t  factor by wh ch to downsample part \
+      f les. For example, a value of 0.2  ans only 20 percent of part f les beco  part of t  \
       dataset.")
-    parser.add_argument(
-      "--allow_train_eval_overlap",
-      dest="allow_train_eval_overlap",
-      action="store_true",
-      help="Allow overlap between train and eval datasets."
+    parser.add_argu nt(
+      "--allow_tra n_eval_overlap",
+      dest="allow_tra n_eval_overlap",
+      act on="store_true",
+       lp="Allow overlap bet en tra n and eval datasets."
     )
-    parser.add_argument(
-      "--eval_name", type=str, default=None,
-      help="String denoting what we want to name the eval. If this is `train`, then we eval on \
-      the training dataset."
+    parser.add_argu nt(
+      "--eval_na ", type=str, default=None,
+       lp="Str ng denot ng what   want to na  t  eval.  f t   s `tra n`, t n   eval on \
+      t  tra n ng dataset."
     )
     return parser
 
-  def contrib_run_feature_importances(self, feature_importances_parse_fn=None, write_to_hdfs=True, extra_groups=None, datarecord_filter_fn=None, datarecord_filter_run_name=None):
-    """Compute feature importances on a trained model (this is a contrib feature)
+  def contr b_run_feature_ mportances(self, feature_ mportances_parse_fn=None, wr e_to_hdfs=True, extra_groups=None, datarecord_f lter_fn=None, datarecord_f lter_run_na =None):
+    """Compute feature  mportances on a tra ned model (t   s a contr b feature)
     Args:
-      feature_importances_parse_fn (fn): The same parse_fn that we use for training/evaluation.
-        Defaults to feature_config.get_parse_fn()
-      write_to_hdfs (bool): Setting this to True writes the feature importance metrics to HDFS
-    extra_groups (dict<str, list<str>>): A dictionary mapping the name of extra feature groups to the list of
-      the names of the features in the group
-    datarecord_filter_fn (function): a function takes a single data sample in com.twitter.ml.api.ttypes.DataRecord format
-        and return a boolean value, to indicate if this data record should be kept in feature importance module or not.
+      feature_ mportances_parse_fn (fn): T  sa  parse_fn that   use for tra n ng/evaluat on.
+        Defaults to feature_conf g.get_parse_fn()
+      wr e_to_hdfs (bool): Sett ng t  to True wr es t  feature  mportance  tr cs to HDFS
+    extra_groups (d ct<str, l st<str>>): A d ct onary mapp ng t  na  of extra feature groups to t  l st of
+      t  na s of t  features  n t  group
+    datarecord_f lter_fn (funct on): a funct on takes a s ngle data sample  n com.tw ter.ml.ap .ttypes.DataRecord format
+        and return a boolean value, to  nd cate  f t  data record should be kept  n feature  mportance module or not.
     """
-    logging.info("Computing feature importance")
-    algorithm = self._params.feature_importance_algorithm
+    logg ng. nfo("Comput ng feature  mportance")
+    algor hm = self._params.feature_ mportance_algor hm
 
     kwargs = {}
-    if algorithm == TREE:
-      kwargs["split_feature_group_on_period"] = self._params.split_feature_group_on_period
-      kwargs["stopping_metric"] = self._params.feature_importance_metric
-      kwargs["sensitivity"] = self._params.feature_importance_sensitivity
-      kwargs["dont_build_tree"] = self._params.dont_build_tree
+     f algor hm == TREE:
+      kwargs["spl _feature_group_on_per od"] = self._params.spl _feature_group_on_per od
+      kwargs["stopp ng_ tr c"] = self._params.feature_ mportance_ tr c
+      kwargs["sens  v y"] = self._params.feature_ mportance_sens  v y
+      kwargs["dont_bu ld_tree"] = self._params.dont_bu ld_tree
       kwargs["extra_groups"] = extra_groups
-      if self._params.feature_importance_is_metric_larger_the_better:
-        # The user has specified that the stopping metric is one where larger values are better (e.g. ROC_AUC)
-        kwargs["is_metric_larger_the_better"] = True
-      elif self._params.feature_importance_is_metric_smaller_the_better:
-        # The user has specified that the stopping metric is one where smaller values are better (e.g. LOSS)
-        kwargs["is_metric_larger_the_better"] = False
+       f self._params.feature_ mportance_ s_ tr c_larger_t _better:
+        # T  user has spec f ed that t  stopp ng  tr c  s one w re larger values are better (e.g. ROC_AUC)
+        kwargs[" s_ tr c_larger_t _better"] = True
+      el f self._params.feature_ mportance_ s_ tr c_smaller_t _better:
+        # T  user has spec f ed that t  stopp ng  tr c  s one w re smaller values are better (e.g. LOSS)
+        kwargs[" s_ tr c_larger_t _better"] = False
       else:
-        # The user has not specified which direction is better for the stopping metric
-        kwargs["is_metric_larger_the_better"] = None
-      logging.info("Using the tree algorithm with kwargs {}".format(kwargs))
+        # T  user has not spec f ed wh ch d rect on  s better for t  stopp ng  tr c
+        kwargs[" s_ tr c_larger_t _better"] = None
+      logg ng. nfo("Us ng t  tree algor hm w h kwargs {}".format(kwargs))
 
-    feature_importances = compute_feature_importances(
-      trainer=self,
-      data_dir=self._params.get('feature_importance_data_dir'),
-      feature_config=self._feature_config,
-      algorithm=algorithm,
-      record_count=self._params.feature_importance_example_count,
-      parse_fn=feature_importances_parse_fn,
-      datarecord_filter_fn=datarecord_filter_fn,
+    feature_ mportances = compute_feature_ mportances(
+      tra ner=self,
+      data_d r=self._params.get('feature_ mportance_data_d r'),
+      feature_conf g=self._feature_conf g,
+      algor hm=algor hm,
+      record_count=self._params.feature_ mportance_example_count,
+      parse_fn=feature_ mportances_parse_fn,
+      datarecord_f lter_fn=datarecord_f lter_fn,
       **kwargs)
 
-    if not feature_importances:
-      logging.info("Feature importances returned None")
+     f not feature_ mportances:
+      logg ng. nfo("Feature  mportances returned None")
     else:
-      if write_to_hdfs:
-        logging.info("Writing feature importance to HDFS")
-        write_feature_importances_to_hdfs(
-          trainer=self,
-          feature_importances=feature_importances,
-          output_path=datarecord_filter_run_name,
-          metric=self._params.get('feature_importance_metric'))
+       f wr e_to_hdfs:
+        logg ng. nfo("Wr  ng feature  mportance to HDFS")
+        wr e_feature_ mportances_to_hdfs(
+          tra ner=self,
+          feature_ mportances=feature_ mportances,
+          output_path=datarecord_f lter_run_na ,
+           tr c=self._params.get('feature_ mportance_ tr c'))
       else:
-        logging.info("Not writing feature importance to HDFS")
+        logg ng. nfo("Not wr  ng feature  mportance to HDFS")
 
-      logging.info("Writing feature importance to ML Metastore")
-      write_feature_importances_to_ml_dash(
-        trainer=self, feature_importances=feature_importances)
-    return feature_importances
+      logg ng. nfo("Wr  ng feature  mportance to ML  tastore")
+      wr e_feature_ mportances_to_ml_dash(
+        tra ner=self, feature_ mportances=feature_ mportances)
+    return feature_ mportances
 
-  def export_model(self, serving_input_receiver_fn=None,
+  def export_model(self, serv ng_ nput_rece ver_fn=None,
                    export_output_fn=None,
-                   export_dir=None, checkpoint_path=None,
+                   export_d r=None, c ckpo nt_path=None,
                    feature_spec=None):
     """
-    Export the model for prediction. Typically, the exported model
-    will later be run in production servers. This method is called
-    by the user to export the PREDICT graph to disk.
+    Export t  model for pred ct on. Typ cally, t  exported model
+    w ll later be run  n product on servers. T   thod  s called
+    by t  user to export t  PRED CT graph to d sk.
 
-    Internally, this method calls `tf.estimator.Estimator.export_savedmodel
-    <https://www.tensorflow.org/api_docs/python/tf/estimator/Estimator#export_savedmodel>`_.
+     nternally, t   thod calls `tf.est mator.Est mator.export_savedmodel
+    <https://www.tensorflow.org/ap _docs/python/tf/est mator/Est mator#export_savedmodel>`_.
 
     Args:
-      serving_input_receiver_fn (Function):
-        function preparing the model for inference requests.
-        If not set; defaults to the the serving input receiver fn set by the FeatureConfig.
-      export_output_fn (Function):
-        Function to export the graph_output (output of build_graph) for
-        prediction. Takes a graph_output dict as sole argument and returns
-        the export_output_fns dict.
-        Defaults to ``twml.export_output_fns.batch_prediction_continuous_output_fn``.
-      export_dir:
-        directory to export a SavedModel for prediction servers.
-        Defaults to ``[save_dir]/exported_models``.
-      checkpoint_path:
-        the checkpoint path to export. If None (the default), the most recent checkpoint
-        found within the model directory ``save_dir`` is chosen.
+      serv ng_ nput_rece ver_fn (Funct on):
+        funct on prepar ng t  model for  nference requests.
+         f not set; defaults to t  t  serv ng  nput rece ver fn set by t  FeatureConf g.
+      export_output_fn (Funct on):
+        Funct on to export t  graph_output (output of bu ld_graph) for
+        pred ct on. Takes a graph_output d ct as sole argu nt and returns
+        t  export_output_fns d ct.
+        Defaults to ``twml.export_output_fns.batch_pred ct on_cont nuous_output_fn``.
+      export_d r:
+        d rectory to export a SavedModel for pred ct on servers.
+        Defaults to ``[save_d r]/exported_models``.
+      c ckpo nt_path:
+        t  c ckpo nt path to export.  f None (t  default), t  most recent c ckpo nt
+        found w h n t  model d rectory ``save_d r``  s chosen.
 
     Returns:
-      The export directory where the PREDICT graph is saved.
+      T  export d rectory w re t  PRED CT graph  s saved.
     """
-    if serving_input_receiver_fn is None:
-      if self._feature_config is None:
-        raise ValueError("`feature_config` was not passed to `DataRecordTrainer`")
-      serving_input_receiver_fn = self._feature_config.get_serving_input_receiver_fn()
+     f serv ng_ nput_rece ver_fn  s None:
+       f self._feature_conf g  s None:
+        ra se ValueError("`feature_conf g` was not passed to `DataRecordTra ner`")
+      serv ng_ nput_rece ver_fn = self._feature_conf g.get_serv ng_ nput_rece ver_fn()
 
-    if feature_spec is None:
-      if self._feature_config is None:
-        raise ValueError("feature_spec can not be inferred."
-                         "Please pass feature_spec=feature_config.get_feature_spec() to the trainer.export_model method")
+     f feature_spec  s None:
+       f self._feature_conf g  s None:
+        ra se ValueError("feature_spec can not be  nferred."
+                         "Please pass feature_spec=feature_conf g.get_feature_spec() to t  tra ner.export_model  thod")
       else:
-        feature_spec = self._feature_config.get_feature_spec()
+        feature_spec = self._feature_conf g.get_feature_spec()
 
-    if isinstance(serving_input_receiver_fn, twml.feature_config.FeatureConfig):
-      raise ValueError("Cannot pass FeatureConfig as a parameter to serving_input_receiver_fn")
-    elif not callable(serving_input_receiver_fn):
-      raise ValueError("Expecting Function for serving_input_receiver_fn")
+     f  s nstance(serv ng_ nput_rece ver_fn, twml.feature_conf g.FeatureConf g):
+      ra se ValueError("Cannot pass FeatureConf g as a para ter to serv ng_ nput_rece ver_fn")
+    el f not callable(serv ng_ nput_rece ver_fn):
+      ra se ValueError("Expect ng Funct on for serv ng_ nput_rece ver_fn")
 
-    if export_output_fn is None:
-      export_output_fn = twml.export_output_fns.batch_prediction_continuous_output_fn
+     f export_output_fn  s None:
+      export_output_fn = twml.export_output_fns.batch_pred ct on_cont nuous_output_fn
 
-    return super(DataRecordTrainer, self).export_model(
-      export_dir=export_dir,
-      serving_input_receiver_fn=serving_input_receiver_fn,
-      checkpoint_path=checkpoint_path,
+    return super(DataRecordTra ner, self).export_model(
+      export_d r=export_d r,
+      serv ng_ nput_rece ver_fn=serv ng_ nput_rece ver_fn,
+      c ckpo nt_path=c ckpo nt_path,
       export_output_fn=export_output_fn,
       feature_spec=feature_spec,
     )
 
-  def get_train_input_fn(
-      self, parse_fn=None, repeat=None, shuffle=True, interleave=True, shuffle_files=None,
-      initializable=False, log_tf_data_summaries=False, **kwargs):
+  def get_tra n_ nput_fn(
+      self, parse_fn=None, repeat=None, shuffle=True,  nterleave=True, shuffle_f les=None,
+       n  al zable=False, log_tf_data_summar es=False, **kwargs):
     """
-    This method is used to create input function used by estimator.train().
+    T   thod  s used to create  nput funct on used by est mator.tra n().
 
     Args:
       parse_fn:
-        Function to parse a data record into a set of features.
-        Defaults to the parser returned by the FeatureConfig selected
-      repeat (optional):
-        Specifies if the dataset is to be repeated. Defaults to `params.train_steps > 0`.
-        This ensures the training is run for atleast `params.train_steps`.
-        Toggling this to `False` results in training finishing when one of the following happens:
-          - The entire dataset has been trained upon once.
-          - `params.train_steps` has been reached.
-      shuffle (optional):
-        Specifies if the files and records in the files need to be shuffled.
-        When `True`,  files are shuffled, and records of each files are shuffled.
-        When `False`, files are read in alpha-numerical order. Also when `False`
-        the dataset is sharded among workers for Hogwild and distributed training
-        if no sharding configuration is provided in `params.train_dataset_shards`.
+        Funct on to parse a data record  nto a set of features.
+        Defaults to t  parser returned by t  FeatureConf g selected
+      repeat (opt onal):
+        Spec f es  f t  dataset  s to be repeated. Defaults to `params.tra n_steps > 0`.
+        T  ensures t  tra n ng  s run for atleast `params.tra n_steps`.
+        Toggl ng t  to `False` results  n tra n ng f n sh ng w n one of t  follow ng happens:
+          - T  ent re dataset has been tra ned upon once.
+          - `params.tra n_steps` has been reac d.
+      shuffle (opt onal):
+        Spec f es  f t  f les and records  n t  f les need to be shuffled.
+        W n `True`,  f les are shuffled, and records of each f les are shuffled.
+        W n `False`, f les are read  n alpha-nu r cal order. Also w n `False`
+        t  dataset  s sharded among workers for Hogw ld and d str buted tra n ng
+         f no shard ng conf gurat on  s prov ded  n `params.tra n_dataset_shards`.
         Defaults to `True`.
-      interleave (optional):
-        Specifies if records from multiple files need to be interleaved in parallel.
+       nterleave (opt onal):
+        Spec f es  f records from mult ple f les need to be  nterleaved  n parallel.
         Defaults to `True`.
-      shuffle_files (optional):
-        Shuffle the list of files. Defaults to 'Shuffle' if not provided.
-      initializable (optional):
-        A boolean indicator. When the parsing function depends on some resource, e.g. a HashTable or
-        a Tensor, i.e. it's an initializable iterator, set it to True. Otherwise, default value
-        (false) is used for most plain iterators.
-      log_tf_data_summaries (optional):
-        A boolean indicator denoting whether to add a `tf.data.experimental.StatsAggregator` to the
-        tf.data pipeline. This adds summaries of pipeline utilization and buffer sizes to the output
-        events files. This requires that `initializable` is `True` above.
+      shuffle_f les (opt onal):
+        Shuffle t  l st of f les. Defaults to 'Shuffle'  f not prov ded.
+       n  al zable (opt onal):
+        A boolean  nd cator. W n t  pars ng funct on depends on so  res ce, e.g. a HashTable or
+        a Tensor,  .e.  's an  n  al zable  erator, set   to True. Ot rw se, default value
+        (false)  s used for most pla n  erators.
+      log_tf_data_summar es (opt onal):
+        A boolean  nd cator denot ng w t r to add a `tf.data.exper  ntal.StatsAggregator` to t 
+        tf.data p pel ne. T  adds summar es of p pel ne ut l zat on and buffer s zes to t  output
+        events f les. T  requ res that ` n  al zable`  s `True` above.
 
     Returns:
-      An input_fn that can be consumed by `estimator.train()`.
+      An  nput_fn that can be consu d by `est mator.tra n()`.
     """
-    if parse_fn is None:
-      if self._feature_config is None:
-        raise ValueError("`feature_config` was not passed to `DataRecordTrainer`")
-      parse_fn = self._feature_config.get_parse_fn()
+     f parse_fn  s None:
+       f self._feature_conf g  s None:
+        ra se ValueError("`feature_conf g` was not passed to `DataRecordTra ner`")
+      parse_fn = self._feature_conf g.get_parse_fn()
 
-    if not callable(parse_fn):
-      raise ValueError("Expecting parse_fn to be a function.")
+     f not callable(parse_fn):
+      ra se ValueError("Expect ng parse_fn to be a funct on.")
 
-    if log_tf_data_summaries and not initializable:
-      raise ValueError("Require `initializable` if `log_tf_data_summaries`.")
+     f log_tf_data_summar es and not  n  al zable:
+      ra se ValueError("Requ re ` n  al zable`  f `log_tf_data_summar es`.")
 
-    if repeat is None:
-      repeat = self.params.train_steps > 0 or self.params.get('distributed', False)
+     f repeat  s None:
+      repeat = self.params.tra n_steps > 0 or self.params.get('d str buted', False)
 
-    if not shuffle and self.num_workers > 1 and self.params.train_dataset_shards is None:
+     f not shuffle and self.num_workers > 1 and self.params.tra n_dataset_shards  s None:
       num_shards = self.num_workers
-      shard_index = self.worker_index
+      shard_ ndex = self.worker_ ndex
     else:
-      num_shards = self.params.train_dataset_shards
-      shard_index = self.params.train_dataset_shard_index
+      num_shards = self.params.tra n_dataset_shards
+      shard_ ndex = self.params.tra n_dataset_shard_ ndex
 
-    return lambda: twml.input_fns.default_input_fn(
-      files=self._train_files,
-      batch_size=self.params.train_batch_size,
+    return lambda: twml. nput_fns.default_ nput_fn(
+      f les=self._tra n_f les,
+      batch_s ze=self.params.tra n_batch_s ze,
       parse_fn=parse_fn,
       num_threads=self.params.num_threads,
       repeat=repeat,
-      keep_rate=self.params.train_keep_rate,
-      parts_downsampling_rate=self.params.train_parts_downsampling_rate,
+      keep_rate=self.params.tra n_keep_rate,
+      parts_downsampl ng_rate=self.params.tra n_parts_downsampl ng_rate,
       shards=num_shards,
-      shard_index=shard_index,
+      shard_ ndex=shard_ ndex,
       shuffle=shuffle,
-      shuffle_files=(shuffle if shuffle_files is None else shuffle_files),
-      interleave=interleave,
-      initializable=initializable,
-      log_tf_data_summaries=log_tf_data_summaries,
+      shuffle_f les=(shuffle  f shuffle_f les  s None else shuffle_f les),
+       nterleave= nterleave,
+       n  al zable= n  al zable,
+      log_tf_data_summar es=log_tf_data_summar es,
       **kwargs)
 
-  def get_eval_input_fn(
+  def get_eval_ nput_fn(
       self, parse_fn=None, repeat=None,
-      shuffle=True, interleave=True,
-      shuffle_files=None, initializable=False, log_tf_data_summaries=False, **kwargs):
+      shuffle=True,  nterleave=True,
+      shuffle_f les=None,  n  al zable=False, log_tf_data_summar es=False, **kwargs):
     """
-    This method is used to create input function used by estimator.eval().
+    T   thod  s used to create  nput funct on used by est mator.eval().
 
     Args:
       parse_fn:
-        Function to parse a data record into a set of features.
-        Defaults to twml.parsers.get_sparse_parse_fn(feature_config).
-      repeat (optional):
-        Specifies if the dataset is to be repeated. Defaults to `params.eval_steps > 0`.
-        This ensures the evaluation is run for atleast `params.eval_steps`.
-        Toggling this to `False` results in evaluation finishing when one of the following happens:
-          - The entire dataset has been evaled upon once.
-          - `params.eval_steps` has been reached.
-      shuffle (optional):
-        Specifies if the files and records in the files need to be shuffled.
-        When `False`, files are read in alpha-numerical order.
-        When `True`,  files are shuffled, and records of each files are shuffled.
+        Funct on to parse a data record  nto a set of features.
+        Defaults to twml.parsers.get_sparse_parse_fn(feature_conf g).
+      repeat (opt onal):
+        Spec f es  f t  dataset  s to be repeated. Defaults to `params.eval_steps > 0`.
+        T  ensures t  evaluat on  s run for atleast `params.eval_steps`.
+        Toggl ng t  to `False` results  n evaluat on f n sh ng w n one of t  follow ng happens:
+          - T  ent re dataset has been evaled upon once.
+          - `params.eval_steps` has been reac d.
+      shuffle (opt onal):
+        Spec f es  f t  f les and records  n t  f les need to be shuffled.
+        W n `False`, f les are read  n alpha-nu r cal order.
+        W n `True`,  f les are shuffled, and records of each f les are shuffled.
         Defaults to `True`.
-      interleave (optional):
-        Specifies if records from multiple files need to be interleaved in parallel.
+       nterleave (opt onal):
+        Spec f es  f records from mult ple f les need to be  nterleaved  n parallel.
         Defaults to `True`.
-      shuffle_files (optional):
-        Shuffles the list of files. Defaults to 'Shuffle' if not provided.
-      initializable (optional):
-        A boolean indicator. When the parsing function depends on some resource, e.g. a HashTable or
-        a Tensor, i.e. it's an initializable iterator, set it to True. Otherwise, default value
-        (false) is used for most plain iterators.
-      log_tf_data_summaries (optional):
-        A boolean indicator denoting whether to add a `tf.data.experimental.StatsAggregator` to the
-        tf.data pipeline. This adds summaries of pipeline utilization and buffer sizes to the output
-        events files. This requires that `initializable` is `True` above.
+      shuffle_f les (opt onal):
+        Shuffles t  l st of f les. Defaults to 'Shuffle'  f not prov ded.
+       n  al zable (opt onal):
+        A boolean  nd cator. W n t  pars ng funct on depends on so  res ce, e.g. a HashTable or
+        a Tensor,  .e.  's an  n  al zable  erator, set   to True. Ot rw se, default value
+        (false)  s used for most pla n  erators.
+      log_tf_data_summar es (opt onal):
+        A boolean  nd cator denot ng w t r to add a `tf.data.exper  ntal.StatsAggregator` to t 
+        tf.data p pel ne. T  adds summar es of p pel ne ut l zat on and buffer s zes to t  output
+        events f les. T  requ res that ` n  al zable`  s `True` above.
 
     Returns:
-      An input_fn that can be consumed by `estimator.eval()`.
+      An  nput_fn that can be consu d by `est mator.eval()`.
     """
-    if parse_fn is None:
-      if self._feature_config is None:
-        raise ValueError("`feature_config` was not passed to `DataRecordTrainer`")
-      parse_fn = self._feature_config.get_parse_fn()
+     f parse_fn  s None:
+       f self._feature_conf g  s None:
+        ra se ValueError("`feature_conf g` was not passed to `DataRecordTra ner`")
+      parse_fn = self._feature_conf g.get_parse_fn()
 
-    if not self._eval_files:
-      raise ValueError("`eval_files` was not present in `params` passed to `DataRecordTrainer`")
+     f not self._eval_f les:
+      ra se ValueError("`eval_f les` was not present  n `params` passed to `DataRecordTra ner`")
 
-    if not callable(parse_fn):
-      raise ValueError("Expecting parse_fn to be a function.")
+     f not callable(parse_fn):
+      ra se ValueError("Expect ng parse_fn to be a funct on.")
 
-    if log_tf_data_summaries and not initializable:
-      raise ValueError("Require `initializable` if `log_tf_data_summaries`.")
+     f log_tf_data_summar es and not  n  al zable:
+      ra se ValueError("Requ re ` n  al zable`  f `log_tf_data_summar es`.")
 
-    if repeat is None:
+     f repeat  s None:
       repeat = self.params.eval_steps > 0
 
-    return lambda: twml.input_fns.default_input_fn(
-      files=self._eval_files,
-      batch_size=self.params.eval_batch_size,
+    return lambda: twml. nput_fns.default_ nput_fn(
+      f les=self._eval_f les,
+      batch_s ze=self.params.eval_batch_s ze,
       parse_fn=parse_fn,
       num_threads=self.params.num_threads,
       repeat=repeat,
       keep_rate=self.params.eval_keep_rate,
-      parts_downsampling_rate=self.params.eval_parts_downsampling_rate,
+      parts_downsampl ng_rate=self.params.eval_parts_downsampl ng_rate,
       shuffle=shuffle,
-      shuffle_files=(shuffle if shuffle_files is None else shuffle_files),
-      interleave=interleave,
-      initializable=initializable,
-      log_tf_data_summaries=log_tf_data_summaries,
+      shuffle_f les=(shuffle  f shuffle_f les  s None else shuffle_f les),
+       nterleave= nterleave,
+       n  al zable= n  al zable,
+      log_tf_data_summar es=log_tf_data_summar es,
       **kwargs
     )
 
-  def _assert_train_files(self):
-    if not self._train_files:
-      raise ValueError("train.data_dir was not set in params passed to DataRecordTrainer.")
+  def _assert_tra n_f les(self):
+     f not self._tra n_f les:
+      ra se ValueError("tra n.data_d r was not set  n params passed to DataRecordTra ner.")
 
-  def _assert_eval_files(self):
-    if not self._eval_files:
-      raise ValueError("eval.data_dir was not set in params passed to DataRecordTrainer.")
+  def _assert_eval_f les(self):
+     f not self._eval_f les:
+      ra se ValueError("eval.data_d r was not set  n params passed to DataRecordTra ner.")
 
-  def train(self, input_fn=None, steps=None, hooks=None):
+  def tra n(self,  nput_fn=None, steps=None, hooks=None):
     """
-    Makes input functions optional. input_fn defaults to self.get_train_input_fn().
-    See Trainer for more detailed documentation documentation.
+    Makes  nput funct ons opt onal.  nput_fn defaults to self.get_tra n_ nput_fn().
+    See Tra ner for more deta led docu ntat on docu ntat on.
     """
-    if input_fn is None:
-      self._assert_train_files()
-    input_fn = input_fn if input_fn else self.get_train_input_fn()
-    super(DataRecordTrainer, self).train(input_fn=input_fn, steps=steps, hooks=hooks)
+     f  nput_fn  s None:
+      self._assert_tra n_f les()
+     nput_fn =  nput_fn  f  nput_fn else self.get_tra n_ nput_fn()
+    super(DataRecordTra ner, self).tra n( nput_fn= nput_fn, steps=steps, hooks=hooks)
 
-  def evaluate(self, input_fn=None, steps=None, hooks=None, name=None):
+  def evaluate(self,  nput_fn=None, steps=None, hooks=None, na =None):
     """
-    Makes input functions optional. input_fn defaults to self.get_eval_input_fn().
-    See Trainer for more detailed documentation.
+    Makes  nput funct ons opt onal.  nput_fn defaults to self.get_eval_ nput_fn().
+    See Tra ner for more deta led docu ntat on.
     """
-    if input_fn is None:
-      self._assert_eval_files()
-    input_fn = input_fn if input_fn else self.get_eval_input_fn(repeat=False)
-    return super(DataRecordTrainer, self).evaluate(
-      input_fn=input_fn,
+     f  nput_fn  s None:
+      self._assert_eval_f les()
+     nput_fn =  nput_fn  f  nput_fn else self.get_eval_ nput_fn(repeat=False)
+    return super(DataRecordTra ner, self).evaluate(
+       nput_fn= nput_fn,
       steps=steps,
       hooks=hooks,
-      name=name
+      na =na 
     )
 
-  def learn(self, train_input_fn=None, eval_input_fn=None, **kwargs):
+  def learn(self, tra n_ nput_fn=None, eval_ nput_fn=None, **kwargs):
     """
-    Overrides ``Trainer.learn`` to make ``input_fn`` functions optional.
-    Respectively, ``train_input_fn`` and ``eval_input_fn`` default to
-    ``self.train_input_fn`` and ``self.eval_input_fn``.
-    See ``Trainer.learn`` for more detailed documentation.
+    Overr des ``Tra ner.learn`` to make `` nput_fn`` funct ons opt onal.
+    Respect vely, ``tra n_ nput_fn`` and ``eval_ nput_fn`` default to
+    ``self.tra n_ nput_fn`` and ``self.eval_ nput_fn``.
+    See ``Tra ner.learn`` for more deta led docu ntat on.
     """
-    if train_input_fn is None:
-      self._assert_train_files()
-    if eval_input_fn is None:
-      self._assert_eval_files()
-    train_input_fn = train_input_fn if train_input_fn else self.get_train_input_fn()
-    eval_input_fn = eval_input_fn if eval_input_fn else self.get_eval_input_fn()
+     f tra n_ nput_fn  s None:
+      self._assert_tra n_f les()
+     f eval_ nput_fn  s None:
+      self._assert_eval_f les()
+    tra n_ nput_fn = tra n_ nput_fn  f tra n_ nput_fn else self.get_tra n_ nput_fn()
+    eval_ nput_fn = eval_ nput_fn  f eval_ nput_fn else self.get_eval_ nput_fn()
 
-    super(DataRecordTrainer, self).learn(
-      train_input_fn=train_input_fn,
-      eval_input_fn=eval_input_fn,
+    super(DataRecordTra ner, self).learn(
+      tra n_ nput_fn=tra n_ nput_fn,
+      eval_ nput_fn=eval_ nput_fn,
       **kwargs
     )
 
-  def train_and_evaluate(self,
-                         train_input_fn=None, eval_input_fn=None,
+  def tra n_and_evaluate(self,
+                         tra n_ nput_fn=None, eval_ nput_fn=None,
                           **kwargs):
     """
-    Overrides ``Trainer.train_and_evaluate`` to make ``input_fn`` functions optional.
-    Respectively, ``train_input_fn`` and ``eval_input_fn`` default to
-    ``self.train_input_fn`` and ``self.eval_input_fn``.
-    See ``Trainer.train_and_evaluate`` for detailed documentation.
+    Overr des ``Tra ner.tra n_and_evaluate`` to make `` nput_fn`` funct ons opt onal.
+    Respect vely, ``tra n_ nput_fn`` and ``eval_ nput_fn`` default to
+    ``self.tra n_ nput_fn`` and ``self.eval_ nput_fn``.
+    See ``Tra ner.tra n_and_evaluate`` for deta led docu ntat on.
     """
-    if train_input_fn is None:
-      self._assert_train_files()
-    if eval_input_fn is None:
-      self._assert_eval_files()
-    train_input_fn = train_input_fn if train_input_fn else self.get_train_input_fn()
-    eval_input_fn = eval_input_fn if eval_input_fn else self.get_eval_input_fn()
+     f tra n_ nput_fn  s None:
+      self._assert_tra n_f les()
+     f eval_ nput_fn  s None:
+      self._assert_eval_f les()
+    tra n_ nput_fn = tra n_ nput_fn  f tra n_ nput_fn else self.get_tra n_ nput_fn()
+    eval_ nput_fn = eval_ nput_fn  f eval_ nput_fn else self.get_eval_ nput_fn()
 
-    super(DataRecordTrainer, self).train_and_evaluate(
-      train_input_fn=train_input_fn,
-      eval_input_fn=eval_input_fn,
+    super(DataRecordTra ner, self).tra n_and_evaluate(
+      tra n_ nput_fn=tra n_ nput_fn,
+      eval_ nput_fn=eval_ nput_fn,
       **kwargs
     )
 
-  def _model_fn(self, features, labels, mode, params, config=None):
+  def _model_fn(self, features, labels, mode, params, conf g=None):
     """
-    Overrides the _model_fn to correct for the features shape of the sparse features
-    extracted with the contrib.FeatureConfig
+    Overr des t  _model_fn to correct for t  features shape of t  sparse features
+    extracted w h t  contr b.FeatureConf g
     """
-    if isinstance(self._feature_config, twml.contrib.feature_config.FeatureConfig):
-      # Fix the shape of the features. The features dictionary will be modified to
-      # contain the shape changes.
-      twml.util.fix_shape_sparse(features, self._feature_config)
-    return super(DataRecordTrainer, self)._model_fn(
+     f  s nstance(self._feature_conf g, twml.contr b.feature_conf g.FeatureConf g):
+      # F x t  shape of t  features. T  features d ct onary w ll be mod f ed to
+      # conta n t  shape changes.
+      twml.ut l.f x_shape_sparse(features, self._feature_conf g)
+    return super(DataRecordTra ner, self)._model_fn(
       features=features,
       labels=labels,
       mode=mode,
       params=params,
-      config=config
+      conf g=conf g
     )
 
-  def calibrate(self,
-                calibrator,
-                input_fn=None,
+  def cal brate(self,
+                cal brator,
+                 nput_fn=None,
                 steps=None,
-                save_calibrator=True,
+                save_cal brator=True,
                 hooks=None):
     """
-    Makes input functions optional. input_fn defaults to self.train_input_fn.
-    See Trainer for more detailed documentation.
+    Makes  nput funct ons opt onal.  nput_fn defaults to self.tra n_ nput_fn.
+    See Tra ner for more deta led docu ntat on.
     """
-    if input_fn is None:
-      self._assert_train_files()
-    input_fn = input_fn if input_fn else self.get_train_input_fn()
-    super(DataRecordTrainer, self).calibrate(calibrator=calibrator,
-                                             input_fn=input_fn,
+     f  nput_fn  s None:
+      self._assert_tra n_f les()
+     nput_fn =  nput_fn  f  nput_fn else self.get_tra n_ nput_fn()
+    super(DataRecordTra ner, self).cal brate(cal brator=cal brator,
+                                              nput_fn= nput_fn,
                                              steps=steps,
-                                             save_calibrator=save_calibrator,
+                                             save_cal brator=save_cal brator,
                                              hooks=hooks)
 
-  def save_checkpoints_and_export_model(self,
-                                        serving_input_receiver_fn,
+  def save_c ckpo nts_and_export_model(self,
+                                        serv ng_ nput_rece ver_fn,
                                         export_output_fn=None,
-                                        export_dir=None,
-                                        checkpoint_path=None,
-                                        input_fn=None):
+                                        export_d r=None,
+                                        c ckpo nt_path=None,
+                                         nput_fn=None):
     """
-    Exports saved module after saving checkpoint to save_dir.
-    Please note that to use this method, you need to assign a loss to the output
-    of the build_graph (for the train mode).
-    See export_model for more detailed information.
+    Exports saved module after sav ng c ckpo nt to save_d r.
+    Please note that to use t   thod,   need to ass gn a loss to t  output
+    of t  bu ld_graph (for t  tra n mode).
+    See export_model for more deta led  nformat on.
     """
-    self.train(input_fn=input_fn, steps=1)
-    self.export_model(serving_input_receiver_fn, export_output_fn, export_dir, checkpoint_path)
+    self.tra n( nput_fn= nput_fn, steps=1)
+    self.export_model(serv ng_ nput_rece ver_fn, export_output_fn, export_d r, c ckpo nt_path)
 
-  def save_checkpoints_and_evaluate(self,
-                                    input_fn=None,
+  def save_c ckpo nts_and_evaluate(self,
+                                     nput_fn=None,
                                     steps=None,
                                     hooks=None,
-                                    name=None):
+                                    na =None):
     """
-    Evaluates model after saving checkpoint to save_dir.
-    Please note that to use this method, you need to assign a loss to the output
-    of the build_graph (for the train mode).
-    See evaluate for more detailed information.
+    Evaluates model after sav ng c ckpo nt to save_d r.
+    Please note that to use t   thod,   need to ass gn a loss to t  output
+    of t  bu ld_graph (for t  tra n mode).
+    See evaluate for more deta led  nformat on.
     """
-    self.train(input_fn=input_fn, steps=1)
-    self.evaluate(input_fn, steps, hooks, name)
+    self.tra n( nput_fn= nput_fn, steps=1)
+    self.evaluate( nput_fn, steps, hooks, na )

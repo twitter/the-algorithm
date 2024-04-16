@@ -1,40 +1,40 @@
 # See
-# Checkout the README to see how to deploy the job
+# C ckout t  README to see how to deploy t  job
 
-class Profile(Struct):
-  project = Required(String)
-  date = Required(String)
-  environment = Default(String, 'prod')
-  machine= Default(String, 'n2-highmem-16')
+class Prof le(Struct):
+  project = Requ red(Str ng)
+  date = Requ red(Str ng)
+  env ron nt = Default(Str ng, 'prod')
+  mach ne= Default(Str ng, 'n2-h gh m-16')
 
 job = Job(
-  name='assemble-multi-type-graph-scio-batch-app',
-  project='{{profile.project}}',
-  staging_bucket='{{profile.project}}',
-  service_account='{{profile.user_name}}-shdw@twttr-dp-svc-accounts.iam.gserviceaccount.com',
-  region='us-central1',
-  worker_config=WorkerConfig(
+  na ='assemble-mult -type-graph-sc o-batch-app',
+  project='{{prof le.project}}',
+  stag ng_bucket='{{prof le.project}}',
+  serv ce_account='{{prof le.user_na }}-shdw@twttr-dp-svc-accounts. am.gserv ceaccount.com',
+  reg on='us-central1',
+  worker_conf g=WorkerConf g(
     num_workers=2,
-    worker_machine_type='{{profile.machine}}',
-    worker_disk_type=WorkerDiskType('HDD')
+    worker_mach ne_type='{{prof le.mach ne}}',
+    worker_d sk_type=WorkerD skType('HDD')
   ),
   extra_args={
-    "environment": '{{profile.environment}}',
-    "date": Quote('{{profile.date}}'),
+    "env ron nt": '{{prof le.env ron nt}}',
+    "date": Quote('{{prof le.date}}'),
   },
-  deployment_config=BatchDeploymentConfig(
-    role='{{profile.user_name}}',
-    build_target='src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/assemble_multi_type_graph:assemble-multi-type-graph-scio-batch-app',
-    gcp_deployment_credentials='/var/lib/tss/keys/{{profile.user_name}}/cloud/gcp/dp/shadow.json',
-    environment='prod',
-    statebird_config=StatebirdConfig(
-      batch_width='P1W',
-      first_time='{{profile.date}}'
+  deploy nt_conf g=BatchDeploy ntConf g(
+    role='{{prof le.user_na }}',
+    bu ld_target='src/scala/com/tw ter/s mclusters_v2/sc o/mult _type_graph/assemble_mult _type_graph:assemble-mult -type-graph-sc o-batch-app',
+    gcp_deploy nt_credent als='/var/l b/tss/keys/{{prof le.user_na }}/cloud/gcp/dp/shadow.json',
+    env ron nt='prod',
+    stateb rd_conf g=Stateb rdConf g(
+      batch_w dth='P1W',
+      f rst_t  ='{{prof le.date}}'
     ),
-    workflow_config=WorkflowConfig(
+    workflow_conf g=WorkflowConf g(
       play=True,
     ),
-    timeout='PT18H'
+    t  out='PT18H'
   )
 )
 

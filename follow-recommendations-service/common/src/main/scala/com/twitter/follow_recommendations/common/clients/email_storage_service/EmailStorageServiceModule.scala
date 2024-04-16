@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.clients.email_storage_service
+package com.tw ter.follow_recom ndat ons.common.cl ents.ema l_storage_serv ce
 
-import com.twitter.emailstorage.api.thriftscala.EmailStorageService
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.follow_recommendations.common.clients.common.BaseClientModule
+ mport com.tw ter.ema lstorage.ap .thr ftscala.Ema lStorageServ ce
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.common.BaseCl entModule
 
-object EmailStorageServiceModule
-    extends BaseClientModule[EmailStorageService.MethodPerEndpoint]
-    with MtlsClient {
-  override val label = "email-storage-service"
-  override val dest = "/s/email-server/email-server"
+object Ema lStorageServ ceModule
+    extends BaseCl entModule[Ema lStorageServ ce. thodPerEndpo nt]
+    w h MtlsCl ent {
+  overr de val label = "ema l-storage-serv ce"
+  overr de val dest = "/s/ema l-server/ema l-server"
 }

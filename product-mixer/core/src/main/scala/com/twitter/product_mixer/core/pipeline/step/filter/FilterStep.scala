@@ -1,64 +1,64 @@
-package com.twitter.product_mixer.core.pipeline.step.filter
+package com.tw ter.product_m xer.core.p pel ne.step.f lter
 
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithFeatures
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.filter_executor.FilterExecutor
-import com.twitter.product_mixer.core.service.filter_executor.FilterExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasCand datesW hFeatures
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasQuery
+ mport com.tw ter.product_m xer.core.p pel ne.step.Step
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.product_m xer.core.serv ce.f lter_executor.F lterExecutor
+ mport com.tw ter.product_m xer.core.serv ce.f lter_executor.F lterExecutorResult
+ mport com.tw ter.st ch.Arrow
+ mport javax. nject. nject
 
 /**
- * A candidate filter step, it takes the input list of candidates and the given filter and applies
- * the filters on the candidates in sequence, returning the final kept candidates list to State.
+ * A cand date f lter step,   takes t   nput l st of cand dates and t  g ven f lter and appl es
+ * t  f lters on t  cand dates  n sequence, return ng t  f nal kept cand dates l st to State.
  *
- * @param filterExecutor Filter Executor
- * @tparam Query Type of PipelineQuery domain model
- * @tparam Candidate Type of Candidates to filter
- * @tparam State The pipeline state domain model.
+ * @param f lterExecutor F lter Executor
+ * @tparam Query Type of P pel neQuery doma n model
+ * @tparam Cand date Type of Cand dates to f lter
+ * @tparam State T  p pel ne state doma n model.
  */
-case class FilterStep[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
-  State <: HasQuery[Query, State] with HasCandidatesWithFeatures[
-    Candidate,
+case class F lterStep[
+  Query <: P pel neQuery,
+  Cand date <: Un versalNoun[Any],
+  State <: HasQuery[Query, State] w h HasCand datesW hFeatures[
+    Cand date,
     State
-  ]] @Inject() (filterExecutor: FilterExecutor)
+  ]] @ nject() (f lterExecutor: F lterExecutor)
     extends Step[State, Seq[
-      Filter[Query, Candidate]
-    ], (Query, Seq[CandidateWithFeatures[Candidate]]), FilterExecutorResult[Candidate]] {
+      F lter[Query, Cand date]
+    ], (Query, Seq[Cand dateW hFeatures[Cand date]]), F lterExecutorResult[Cand date]] {
 
-  override def isEmpty(config: Seq[Filter[Query, Candidate]]): Boolean = config.isEmpty
+  overr de def  sEmpty(conf g: Seq[F lter[Query, Cand date]]): Boolean = conf g. sEmpty
 
-  override def adaptInput(
+  overr de def adapt nput(
     state: State,
-    config: Seq[Filter[Query, Candidate]]
-  ): (Query, Seq[CandidateWithFeatures[Candidate]]) =
-    (state.query, state.candidatesWithFeatures)
+    conf g: Seq[F lter[Query, Cand date]]
+  ): (Query, Seq[Cand dateW hFeatures[Cand date]]) =
+    (state.query, state.cand datesW hFeatures)
 
-  override def arrow(
-    config: Seq[Filter[Query, Candidate]],
+  overr de def arrow(
+    conf g: Seq[F lter[Query, Cand date]],
     context: Executor.Context
-  ): Arrow[(Query, Seq[CandidateWithFeatures[Candidate]]), FilterExecutorResult[Candidate]] =
-    filterExecutor.arrow(config, context)
+  ): Arrow[(Query, Seq[Cand dateW hFeatures[Cand date]]), F lterExecutorResult[Cand date]] =
+    f lterExecutor.arrow(conf g, context)
 
-  override def updateState(
+  overr de def updateState(
     state: State,
-    executorResult: FilterExecutorResult[Candidate],
-    config: Seq[Filter[Query, Candidate]]
+    executorResult: F lterExecutorResult[Cand date],
+    conf g: Seq[F lter[Query, Cand date]]
   ): State = {
-    val keptCandidates = executorResult.result
-    val candidatesMap = state.candidatesWithFeatures.map { candidatesWithFeatures =>
-      candidatesWithFeatures.candidate -> candidatesWithFeatures
+    val keptCand dates = executorResult.result
+    val cand datesMap = state.cand datesW hFeatures.map { cand datesW hFeatures =>
+      cand datesW hFeatures.cand date -> cand datesW hFeatures
     }.toMap
-    val newCandidates = keptCandidates.flatMap { candidate =>
-      candidatesMap.get(candidate)
+    val newCand dates = keptCand dates.flatMap { cand date =>
+      cand datesMap.get(cand date)
     }
-    state.updateCandidatesWithFeatures(newCandidates)
+    state.updateCand datesW hFeatures(newCand dates)
   }
 }

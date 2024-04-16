@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ConversationDetails
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Conversat onDeta ls
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ConversationDetailsMarshaller @Inject() (sectionMarshaller: ConversationSectionMarshaller) {
+@S ngleton
+class Conversat onDeta lsMarshaller @ nject() (sect onMarshaller: Conversat onSect onMarshaller) {
 
-  def apply(conversationDetails: ConversationDetails): urt.ConversationDetails =
-    urt.ConversationDetails(
-      conversationSection = conversationDetails.conversationSection.map(sectionMarshaller(_))
+  def apply(conversat onDeta ls: Conversat onDeta ls): urt.Conversat onDeta ls =
+    urt.Conversat onDeta ls(
+      conversat onSect on = conversat onDeta ls.conversat onSect on.map(sect onMarshaller(_))
     )
 }

@@ -1,20 +1,20 @@
-package com.twitter.unified_user_actions.kafka
+package com.tw ter.un f ed_user_act ons.kafka
 
-import com.twitter.app.Flaggable
-import org.apache.kafka.common.record.CompressionType
+ mport com.tw ter.app.Flaggable
+ mport org.apac .kafka.common.record.Compress onType
 
-case class CompressionTypeFlag(compressionType: CompressionType)
+case class Compress onTypeFlag(compress onType: Compress onType)
 
-object CompressionTypeFlag {
+object Compress onTypeFlag {
 
-  def fromString(s: String): CompressionType = s.toLowerCase match {
-    case "lz4" => CompressionType.LZ4
-    case "snappy" => CompressionType.SNAPPY
-    case "gzip" => CompressionType.GZIP
-    case "zstd" => CompressionType.ZSTD
-    case _ => CompressionType.NONE
+  def fromStr ng(s: Str ng): Compress onType = s.toLo rCase match {
+    case "lz4" => Compress onType.LZ4
+    case "snappy" => Compress onType.SNAPPY
+    case "gz p" => Compress onType.GZ P
+    case "zstd" => Compress onType.ZSTD
+    case _ => Compress onType.NONE
   }
 
-  implicit val flaggable: Flaggable[CompressionTypeFlag] =
-    Flaggable.mandatory(s => CompressionTypeFlag(fromString(s)))
+   mpl c  val flaggable: Flaggable[Compress onTypeFlag] =
+    Flaggable.mandatory(s => Compress onTypeFlag(fromStr ng(s)))
 }

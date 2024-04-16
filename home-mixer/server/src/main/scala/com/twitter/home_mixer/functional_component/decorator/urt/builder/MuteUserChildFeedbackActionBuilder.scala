@@ -1,51 +1,51 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.tw ter.ho _m xer.funct onal_component.decorator.urt.bu lder
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScreenNamesFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ChildFeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorToggleMuteUser
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.model.Ho Features.Author dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. sRet etFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.ScreenNa sFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.S ceUser dFeature
+ mport com.tw ter.ho _m xer.product.follow ng.model.Ho M xerExternalStr ngs
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. con
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Ch ldFeedbackAct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.R chBehav or
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.R chFeedbackBehav orToggleMuteUser
+ mport com.tw ter.product_m xer.core.product.gu ce.scope.ProductScoped
+ mport com.tw ter.str ngcenter.cl ent.Str ngCenter
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-case class MuteUserChildFeedbackActionBuilder @Inject() (
-  @ProductScoped stringCenter: StringCenter,
-  externalStrings: HomeMixerExternalStrings) {
+@S ngleton
+case class MuteUserCh ldFeedbackAct onBu lder @ nject() (
+  @ProductScoped str ngCenter: Str ngCenter,
+  externalStr ngs: Ho M xerExternalStr ngs) {
 
   def apply(
-    candidateFeatures: FeatureMap
-  ): Option[ChildFeedbackAction] = {
-    val userIdOpt =
-      if (candidateFeatures.getOrElse(IsRetweetFeature, false))
-        candidateFeatures.getOrElse(SourceUserIdFeature, None)
-      else candidateFeatures.getOrElse(AuthorIdFeature, None)
+    cand dateFeatures: FeatureMap
+  ): Opt on[Ch ldFeedbackAct on] = {
+    val user dOpt =
+       f (cand dateFeatures.getOrElse( sRet etFeature, false))
+        cand dateFeatures.getOrElse(S ceUser dFeature, None)
+      else cand dateFeatures.getOrElse(Author dFeature, None)
 
-    userIdOpt.flatMap { userId =>
-      val screenNamesMap = candidateFeatures.getOrElse(ScreenNamesFeature, Map.empty[Long, String])
-      val userScreenNameOpt = screenNamesMap.get(userId)
-      userScreenNameOpt.map { userScreenName =>
-        val prompt = stringCenter.prepare(
-          externalStrings.muteUserString,
-          Map("username" -> userScreenName)
+    user dOpt.flatMap { user d =>
+      val screenNa sMap = cand dateFeatures.getOrElse(ScreenNa sFeature, Map.empty[Long, Str ng])
+      val userScreenNa Opt = screenNa sMap.get(user d)
+      userScreenNa Opt.map { userScreenNa  =>
+        val prompt = str ngCenter.prepare(
+          externalStr ngs.muteUserStr ng,
+          Map("userna " -> userScreenNa )
         )
-        ChildFeedbackAction(
-          feedbackType = RichBehavior,
-          prompt = Some(prompt),
-          confirmation = None,
+        Ch ldFeedbackAct on(
+          feedbackType = R chBehav or,
+          prompt = So (prompt),
+          conf rmat on = None,
           feedbackUrl = None,
-          hasUndoAction = Some(true),
-          confirmationDisplayType = None,
-          clientEventInfo = None,
-          icon = Some(icon.SpeakerOff),
-          richBehavior = Some(RichFeedbackBehaviorToggleMuteUser(userId)),
+          hasUndoAct on = So (true),
+          conf rmat onD splayType = None,
+          cl entEvent nfo = None,
+           con = So ( con.SpeakerOff),
+          r chBehav or = So (R chFeedbackBehav orToggleMuteUser(user d)),
           subprompt = None
         )
       }

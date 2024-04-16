@@ -1,31 +1,31 @@
-package com.twitter.simclusters_v2.stores
+package com.tw ter.s mclusters_v2.stores
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.{
-  Long2BigEndian,
-  ScalaBinaryThrift
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.{
+  Long2B gEnd an,
+  ScalaB naryThr ft
 }
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.{Apollo, ManhattanRO, ManhattanROConfig}
-import com.twitter.storehaus_internal.util.{ApplicationID, DatasetName, HDFSPath}
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl entMtlsParams
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.storehaus_ nternal.manhattan.{Apollo, ManhattanRO, ManhattanROConf g}
+ mport com.tw ter.storehaus_ nternal.ut l.{Appl cat on D, DatasetNa , HDFSPath}
+ mport com.tw ter.wtf.cand date.thr ftscala.Cand dateSeq
 
 object WtfMbcgStore {
 
-  val appId = "recos_platform_apollo"
+  val app d = "recos_platform_apollo"
 
-  implicit val keyInj = Long2BigEndian
-  implicit val valInj = ScalaBinaryThrift(CandidateSeq)
+   mpl c  val key nj = Long2B gEnd an
+   mpl c  val val nj = ScalaB naryThr ft(Cand dateSeq)
 
   def getWtfMbcgStore(
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    datasetName: String
-  ): ReadableStore[Long, CandidateSeq] = {
-    ManhattanRO.getReadableStoreWithMtls[Long, CandidateSeq](
-      ManhattanROConfig(
+    mhMtlsParams: ManhattanKVCl entMtlsParams,
+    datasetNa : Str ng
+  ): ReadableStore[Long, Cand dateSeq] = {
+    ManhattanRO.getReadableStoreW hMtls[Long, Cand dateSeq](
+      ManhattanROConf g(
         HDFSPath(""),
-        ApplicationID(appId),
-        DatasetName(datasetName),
+        Appl cat on D(app d),
+        DatasetNa (datasetNa ),
         Apollo
       ),
       mhMtlsParams

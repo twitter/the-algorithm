@@ -1,37 +1,37 @@
-// Input used in serving APIs.  Based on the tensorflow.Example family of
-// feature representations.
+//  nput used  n serv ng AP s.  Based on t  tensorflow.Example fam ly of
+// feature representat ons.
 
 syntax = "proto3";
 
-option cc_enable_arenas = true;
+opt on cc_enable_arenas = true;
 
-import "tensorflow/core/example/example.proto";
+ mport "tensorflow/core/example/example.proto";
 
-package tensorflow.serving;
+package tensorflow.serv ng;
 
-// Specifies one or more fully independent input Examples.
+// Spec f es one or more fully  ndependent  nput Examples.
 // See examples at:
-//     https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/example/example.proto
-message ExampleList {
+//     https://g hub.com/tensorflow/tensorflow/blob/master/tensorflow/core/example/example.proto
+ ssage ExampleL st {
   repeated tensorflow.Example examples = 1;
 }
 
-// Specifies one or more independent input Examples, with a common context
+// Spec f es one or more  ndependent  nput Examples, w h a common context
 // Example.
 //
-// The common use case for context is to cleanly and optimally specify some
-// features that are common across multiple examples.
+// T  common use case for context  s to cleanly and opt mally spec fy so 
+// features that are common across mult ple examples.
 //
-// See example below with a search query as the context and multiple restaurants
-// to perform some inference on.
+// See example below w h a search query as t  context and mult ple restaurants
+// to perform so   nference on.
 //
 // context: {
 //   features: {
 //     feature: {
 //       key  : "query"
 //       value: {
-//         bytes_list: {
-//           value: [ "pizza" ]
+//         bytes_l st: {
+//           value: [ "p zza" ]
 //         }
 //       }
 //     }
@@ -40,10 +40,10 @@ message ExampleList {
 // examples: {
 //   features: {
 //     feature: {
-//       key  : "cuisine"
+//       key  : "cu s ne"
 //       value: {
-//         bytes_list: {
-//           value: [ "Pizzeria" ]
+//         bytes_l st: {
+//           value: [ "P zzer a" ]
 //         }
 //       }
 //     }
@@ -52,31 +52,31 @@ message ExampleList {
 // examples: {
 //   features: {
 //     feature: {
-//       key  : "cuisine"
+//       key  : "cu s ne"
 //       value: {
-//         bytes_list: {
-//           value: [ "Taqueria" ]
+//         bytes_l st: {
+//           value: [ "Taquer a" ]
 //         }
 //       }
 //     }
 //   }
 // }
 //
-// Implementations of ExampleListWithContext merge the context Example into each
-// of the Examples. Note that feature keys must not be duplicated between the
-// Examples and context Example, or the behavior is undefined.
+//  mple ntat ons of ExampleL stW hContext  rge t  context Example  nto each
+// of t  Examples. Note that feature keys must not be dupl cated bet en t 
+// Examples and context Example, or t  behav or  s undef ned.
 //
 // See also:
 //     tensorflow/core/example/example.proto
 //     https://developers.google.com/protocol-buffers/docs/proto3#maps
-message ExampleListWithContext {
+ ssage ExampleL stW hContext {
   repeated tensorflow.Example examples = 1;
   tensorflow.Example context = 2;
 }
 
-message Input {
-  oneof kind {
-    ExampleList example_list = 1 [lazy = true];
-    ExampleListWithContext example_list_with_context = 2 [lazy = true];
+ ssage  nput {
+  oneof k nd {
+    ExampleL st example_l st = 1 [lazy = true];
+    ExampleL stW hContext example_l st_w h_context = 2 [lazy = true];
   }
 }

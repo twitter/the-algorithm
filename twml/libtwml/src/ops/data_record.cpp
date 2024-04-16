@@ -1,1891 +1,1891 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+# nclude "tensorflow/core/fra work/op.h"
+# nclude "tensorflow/core/fra work/shape_ nference.h"
+# nclude "tensorflow/core/fra work/op_kernel.h"
 
-#include <twml.h>
-#include <twml/functions.h>
-#include <twml/utilities.h>
-#include "tensorflow_utils.h"
-#include "resource_utils.h"
+# nclude <twml.h>
+# nclude <twml/funct ons.h>
+# nclude <twml/ut l  es.h>
+# nclude "tensorflow_ut ls.h"
+# nclude "res ce_ut ls.h"
 
-#include <algorithm>
+# nclude <algor hm>
 
-using std::string;
+us ng std::str ng;
 
-REGISTER_OP("DecodeDataRecord")
-.Attr("InputType: {uint8, string}")
-.Attr("keep_features: list(int)")
-.Attr("keep_codes: list(int)")
-.Attr("label_features: list(int)")
-.Attr("weight_features: list(int) = []")
-.Input("input_bytes: InputType")
-.Output("data_record_handle: resource")
-.SetShapeFn(shape_inference::ScalarShape)
+REG STER_OP("DecodeDataRecord")
+.Attr(" nputType: {u nt8, str ng}")
+.Attr("keep_features: l st( nt)")
+.Attr("keep_codes: l st( nt)")
+.Attr("label_features: l st( nt)")
+.Attr("  ght_features: l st( nt) = []")
+. nput(" nput_bytes:  nputType")
+.Output("data_record_handle: res ce")
+.SetShapeFn(shape_ nference::ScalarShape)
 .Doc(R"doc(
-A tensorflow OP that creates a handle for the datarecord.
+A tensorflow OP that creates a handle for t  datarecord.
 
 Attr
-  keep_features: a list of int ids to keep.
-  keep_codes: their corresponding code.
-  label_features: list of feature ids representing the labels.
-  weight_features: list of feature ids representing the weights. Defaults to empty list.
-  shared_name: name used by the resource handle inside the resource manager.
-  container: name used by the container of the resources.
+  keep_features: a l st of  nt  ds to keep.
+  keep_codes: t  r correspond ng code.
+  label_features: l st of feature  ds represent ng t  labels.
+    ght_features: l st of feature  ds represent ng t    ghts. Defaults to empty l st.
+  shared_na : na  used by t  res ce handle  ns de t  res ce manager.
+  conta ner: na  used by t  conta ner of t  res ces.
 
-shared_name and container are required when inheriting from ResourceOpKernel.
+shared_na  and conta ner are requ red w n  n r  ng from Res ceOpKernel.
 
-Input
-  input_bytes: Input tensor containing the serialized batch of HashedDataRecords.
+ nput
+   nput_bytes:  nput tensor conta n ng t  ser al zed batch of Has dDataRecords.
 
 Outputs
-  data_record_handle: A resource handle to the DataRecord struct.
+  data_record_handle: A res ce handle to t  DataRecord struct.
 )doc");
 
-template<typename InputType>
-class DecodeDataRecord : public OpKernel {
- public:
-  explicit DecodeDataRecord(OpKernelConstruction* context)
+template<typena   nputType>
+class DecodeDataRecord : publ c OpKernel {
+ publ c:
+  expl c  DecodeDataRecord(OpKernelConstruct on* context)
       : OpKernel(context) {
-    std::vector<int64> keep_features;
-    std::vector<int64> keep_codes;
+    std::vector< nt64> keep_features;
+    std::vector< nt64> keep_codes;
 
-    std::vector<int64> label_features;
-    std::vector<int64> weight_features;
+    std::vector< nt64> label_features;
+    std::vector< nt64>   ght_features;
 
-    OP_REQUIRES_OK(context, context->GetAttr("keep_features", &keep_features));
-    OP_REQUIRES_OK(context, context->GetAttr("keep_codes", &keep_codes));
-    OP_REQUIRES_OK(context, context->GetAttr("label_features", &label_features));
-    OP_REQUIRES_OK(context, context->GetAttr("weight_features", &weight_features));
+    OP_REQU RES_OK(context, context->GetAttr("keep_features", &keep_features));
+    OP_REQU RES_OK(context, context->GetAttr("keep_codes", &keep_codes));
+    OP_REQU RES_OK(context, context->GetAttr("label_features", &label_features));
+    OP_REQU RES_OK(context, context->GetAttr("  ght_features", &  ght_features));
 
-    OP_REQUIRES(context, keep_features.size() == keep_codes.size(),
-                errors::InvalidArgument("keep keys and values must have same size."));
+    OP_REQU RES(context, keep_features.s ze() == keep_codes.s ze(),
+                errors:: nval dArgu nt("keep keys and values must have sa  s ze."));
 
-#ifdef USE_DENSE_HASH
+# fdef USE_DENSE_HASH
     m_keep_map.set_empty_key(0);
     m_labels_map.set_empty_key(0);
-    m_weights_map.set_empty_key(0);
-#endif  // USE_DENSE_HASH
+    m_  ghts_map.set_empty_key(0);
+#end f  // USE_DENSE_HASH
 
-    for (uint64_t i = 0; i < keep_features.size(); i++) {
-      m_keep_map[keep_features[i]] = keep_codes[i];
+    for (u nt64_t   = 0;   < keep_features.s ze();  ++) {
+      m_keep_map[keep_features[ ]] = keep_codes[ ];
     }
 
-    for (uint64_t i = 0; i < label_features.size(); i++) {
-      m_labels_map[label_features[i]] = i;
+    for (u nt64_t   = 0;   < label_features.s ze();  ++) {
+      m_labels_map[label_features[ ]] =  ;
     }
 
-    for (uint64_t i = 0; i < weight_features.size(); i++) {
-      m_weights_map[weight_features[i]] = i;
+    for (u nt64_t   = 0;   <   ght_features.s ze();  ++) {
+      m_  ghts_map[  ght_features[ ]] =  ;
     }
   }
 
- private:
-  twml::Map<int64_t, int64_t> m_keep_map;
-  twml::Map<int64_t, int64_t> m_labels_map;
-  twml::Map<int64_t, int64_t> m_weights_map;
+ pr vate:
+  twml::Map< nt64_t,  nt64_t> m_keep_map;
+  twml::Map< nt64_t,  nt64_t> m_labels_map;
+  twml::Map< nt64_t,  nt64_t> m_  ghts_map;
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      DataRecordResource *resource = nullptr;
-      OP_REQUIRES_OK(context, makeResourceHandle<DataRecordResource>(context, 0, &resource));
+      DataRecordRes ce *res ce = nullptr;
+      OP_REQU RES_OK(context, makeRes ceHandle<DataRecordRes ce>(context, 0, &res ce));
 
-      // Store the input bytes in the resource so it isnt freed before the resource.
-      // This is necessary because we are not copying the contents for tensors.
-      resource->input = context->input(0);
-      int batch_size = getBatchSize<InputType>(resource->input);
-      int num_labels = static_cast<int>(m_labels_map.size());
-      int num_weights = static_cast<int>(m_weights_map.size());
+      // Store t   nput bytes  n t  res ce so    snt freed before t  res ce.
+      // T   s necessary because   are not copy ng t  contents for tensors.
+      res ce-> nput = context-> nput(0);
+       nt batch_s ze = getBatchS ze< nputType>(res ce-> nput);
+       nt num_labels = stat c_cast< nt>(m_labels_map.s ze());
+       nt num_  ghts = stat c_cast< nt>(m_  ghts_map.s ze());
 
       twml::DataRecordReader reader;
       reader.setKeepMap(&m_keep_map);
       reader.setLabelsMap(&m_labels_map);
 
-      // Do not set weight map if it is empty. This will take a faster path.
-      if (num_weights != 0) {
-        reader.setWeightsMap(&m_weights_map);
+      // Do not set   ght map  f    s empty. T  w ll take a faster path.
+       f (num_  ghts != 0) {
+        reader.set  ghtsMap(&m_  ghts_map);
       }
 
-      resource->records.clear();
-      resource->records.reserve(batch_size);
-      for (int i = 0; i < batch_size; i++) {
-        resource->records.emplace_back(num_labels, num_weights);
+      res ce->records.clear();
+      res ce->records.reserve(batch_s ze);
+      for ( nt   = 0;   < batch_s ze;  ++) {
+        res ce->records.emplace_back(num_labels, num_  ghts);
       }
 
-      for (int64 id = 0; id < batch_size; id++) {
-        const uint8_t *input_bytes = getInputBytes<InputType>(resource->input, id);
-        reader.setBuffer(input_bytes);
-        // decode the reader
-        resource->records[id].decode(reader);
+      for ( nt64  d = 0;  d < batch_s ze;  d++) {
+        const u nt8_t * nput_bytes = get nputBytes< nputType>(res ce-> nput,  d);
+        reader.setBuffer( nput_bytes);
+        // decode t  reader
+        res ce->records[ d].decode(reader);
       }
-      // This should be fine because m_keep_map should never go out of scope.
-      resource->keep_map = &m_keep_map;
-      resource->num_weights = num_weights;
-      resource->num_labels = num_labels;
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      // T  should be f ne because m_keep_map should never go out of scope.
+      res ce->keep_map = &m_keep_map;
+      res ce->num_  ghts = num_  ghts;
+      res ce->num_labels = num_labels;
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-int64_t count_if_exists(const twml::DataRecord::BinaryFeatures &set,
-                        const twml::Map<int64_t, int64_t> *const keep_map) {
-  int64_t count = 0;
+ nt64_t count_ f_ex sts(const twml::DataRecord::B naryFeatures &set,
+                        const twml::Map< nt64_t,  nt64_t> *const keep_map) {
+   nt64_t count = 0;
   for (const auto &key : set) {
-    if (keep_map->find(key) == keep_map->end()) continue;
+     f (keep_map->f nd(key) == keep_map->end()) cont nue;
     count++;
   }
   return count;
 }
 
-// This works for continuous, discrete, and string features
-template<typename V>
-int64_t count_if_exists(const twml::Map<int64_t, V> &map,
-                        const twml::Map<int64_t, int64_t> *const keep_map) {
-  int64_t count = 0;
+// T  works for cont nuous, d screte, and str ng features
+template<typena  V>
+ nt64_t count_ f_ex sts(const twml::Map< nt64_t, V> &map,
+                        const twml::Map< nt64_t,  nt64_t> *const keep_map) {
+   nt64_t count = 0;
   for (const auto &elem : map) {
-    if (keep_map->find(elem.first) == keep_map->end()) continue;
+     f (keep_map->f nd(elem.f rst) == keep_map->end()) cont nue;
     count++;
   }
   return count;
 }
 
-int64_t count_if_exists(const twml::DataRecord::SparseBinaryFeatures &map,
-                        const twml::Map<int64_t, int64_t> *const keep_map) {
-  int64_t count = 0;
+ nt64_t count_ f_ex sts(const twml::DataRecord::SparseB naryFeatures &map,
+                        const twml::Map< nt64_t,  nt64_t> *const keep_map) {
+   nt64_t count = 0;
   for (const auto &elem : map) {
-    if (keep_map->find(elem.first) == keep_map->end()) continue;
-    count += elem.second.size();
+     f (keep_map->f nd(elem.f rst) == keep_map->end()) cont nue;
+    count += elem.second.s ze();
   }
   return count;
 }
 
-int64_t count_if_exists(const twml::DataRecord::SparseContinuousFeatures &map,
-                        const twml::Map<int64_t, int64_t> *const keep_map) {
-  int64_t count = 0;
+ nt64_t count_ f_ex sts(const twml::DataRecord::SparseCont nuousFeatures &map,
+                        const twml::Map< nt64_t,  nt64_t> *const keep_map) {
+   nt64_t count = 0;
   for (const auto &elem : map) {
-    if (keep_map->find(elem.first) == keep_map->end()) continue;
-    count += elem.second.size();
+     f (keep_map->f nd(elem.f rst) == keep_map->end()) cont nue;
+    count += elem.second.s ze();
   }
   return count;
 }
 
-REGISTER_OP("GetBinaryFeatures")
-.Input("data_record_handle: resource")
-.Output("ids: int64")
-.Output("keys: int64")
+REG STER_OP("GetB naryFeatures")
+. nput("data_record_handle: res ce")
+.Output(" ds:  nt64")
+.Output("keys:  nt64")
 .Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that reads binary features
-Input
-  data_record_handle: Resource handle to DataRecord
+A tensorflow OP that reads b nary features
+ nput
+  data_record_handle: Res ce handle to DataRecord
 
 Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
-  keys: DataRecord keys (int64)
+   ds:  ds spec f es t   ndex of t  records[ d]  n t  batch ( nt64)
+  keys: DataRecord keys ( nt64)
   values: always set to 1 (float)
 )doc");
 
-class GetBinaryFeatures : public OpKernel {
- public:
-  explicit GetBinaryFeatures(OpKernelConstruction* context)
+class GetB naryFeatures : publ c OpKernel {
+ publ c:
+  expl c  GetB naryFeatures(OpKernelConstruct on* context)
       : OpKernel(context) {}
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
+      auto handle = getHandle<DataRecordRes ce>(context, 0);
       const auto &records = handle->records;
       const auto &common = handle->common;
 
-      int64 common_binary_size = count_if_exists(common.getBinary(), handle->keep_map);
-      int64 total_binary_size = records.size() * common_binary_size;
-      for (int id = 0; id < records.size(); id++) {
-        total_binary_size += count_if_exists(handle->records[id].getBinary(), handle->keep_map);
+       nt64 common_b nary_s ze = count_ f_ex sts(common.getB nary(), handle->keep_map);
+       nt64 total_b nary_s ze = records.s ze() * common_b nary_s ze;
+      for ( nt  d = 0;  d < records.s ze();  d++) {
+        total_b nary_s ze += count_ f_ex sts(handle->records[ d].getB nary(), handle->keep_map);
       }
-      const int total_size = static_cast<int>(total_binary_size);
+      const  nt total_s ze = stat c_cast< nt>(total_b nary_s ze);
 
-      TensorShape shape = {total_size};
+      TensorShape shape = {total_s ze};
       Tensor* keys = nullptr;
-      Tensor* ids = nullptr;
+      Tensor*  ds = nullptr;
       Tensor* values = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-      OP_REQUIRES_OK(context, context->allocate_output(2, shape, &values));
+      OP_REQU RES_OK(context, context->allocate_output(0, shape, & ds));
+      OP_REQU RES_OK(context, context->allocate_output(1, shape, &keys));
+      OP_REQU RES_OK(context, context->allocate_output(2, shape, &values));
 
-      uint64_t offset = 0;
-      auto keys_flat = keys->flat<int64>();
-      auto ids_flat = ids->flat<int64>();
+      u nt64_t offset = 0;
+      auto keys_flat = keys->flat< nt64>();
+      auto  ds_flat =  ds->flat< nt64>();
       auto values_flat = values->flat<float>();
 
-      for (int64 id = 0; id < records.size(); id++) {
-        for (const auto &it : common.getBinary()) {
-          if (handle->keep_map->find(it) == handle->keep_map->end()) continue;
-          ids_flat(offset) = id;
-          keys_flat(offset) = it;
+      for ( nt64  d = 0;  d < records.s ze();  d++) {
+        for (const auto &  : common.getB nary()) {
+           f (handle->keep_map->f nd( ) == handle->keep_map->end()) cont nue;
+           ds_flat(offset) =  d;
+          keys_flat(offset) =  ;
           offset++;
         }
-        for (const auto &it : records[id].getBinary()) {
-          if (handle->keep_map->find(it) == handle->keep_map->end()) continue;
-          ids_flat(offset) = id;
-          keys_flat(offset) = it;
+        for (const auto &  : records[ d].getB nary()) {
+           f (handle->keep_map->f nd( ) == handle->keep_map->end()) cont nue;
+           ds_flat(offset) =  d;
+          keys_flat(offset) =  ;
           offset++;
         }
       }
-      // All the values for binary features are 1.
-      std::fill(values_flat.data(), values_flat.data() + total_size, 1);
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      // All t  values for b nary features are 1.
+      std::f ll(values_flat.data(), values_flat.data() + total_s ze, 1);
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-REGISTER_OP("GetContinuousFeatures")
-.Input("data_record_handle: resource")
-.Output("ids: int64")
-.Output("keys: int64")
+REG STER_OP("GetCont nuousFeatures")
+. nput("data_record_handle: res ce")
+.Output(" ds:  nt64")
+.Output("keys:  nt64")
 .Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that reads continuous features
-Input
-  data_record_handle: Resource handle to DataRecord
+A tensorflow OP that reads cont nuous features
+ nput
+  data_record_handle: Res ce handle to DataRecord
 
 Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
-  keys: Datarecord keys (int64)
+   ds:  ds spec f es t   ndex of t  records[ d]  n t  batch ( nt64)
+  keys: Datarecord keys ( nt64)
   values: Datarecord values(float)
 )doc");
 
-class GetContinuousFeatures : public OpKernel {
- public:
-  explicit GetContinuousFeatures(OpKernelConstruction* context)
+class GetCont nuousFeatures : publ c OpKernel {
+ publ c:
+  expl c  GetCont nuousFeatures(OpKernelConstruct on* context)
       : OpKernel(context) {}
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
+      auto handle = getHandle<DataRecordRes ce>(context, 0);
       const auto &records = handle->records;
       const auto &common = handle->common;
 
-      int64 common_continuous_size = count_if_exists(common.getContinuous(), handle->keep_map);
-      int64 total_continuous_size = records.size() * common_continuous_size;
-      for (int id = 0; id < records.size(); id++) {
-        total_continuous_size += count_if_exists(handle->records[id].getContinuous(),
+       nt64 common_cont nuous_s ze = count_ f_ex sts(common.getCont nuous(), handle->keep_map);
+       nt64 total_cont nuous_s ze = records.s ze() * common_cont nuous_s ze;
+      for ( nt  d = 0;  d < records.s ze();  d++) {
+        total_cont nuous_s ze += count_ f_ex sts(handle->records[ d].getCont nuous(),
                                                  handle->keep_map);
       }
-      const int total_size = static_cast<int>(total_continuous_size);
+      const  nt total_s ze = stat c_cast< nt>(total_cont nuous_s ze);
 
-      TensorShape shape = {total_size};
+      TensorShape shape = {total_s ze};
       Tensor* keys = nullptr;
       Tensor* values = nullptr;
-      Tensor* ids = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-      OP_REQUIRES_OK(context, context->allocate_output(2, shape, &values));
+      Tensor*  ds = nullptr;
+      OP_REQU RES_OK(context, context->allocate_output(0, shape, & ds));
+      OP_REQU RES_OK(context, context->allocate_output(1, shape, &keys));
+      OP_REQU RES_OK(context, context->allocate_output(2, shape, &values));
 
-      uint64_t offset = 0;
-      auto keys_flat = keys->flat<int64>();
+      u nt64_t offset = 0;
+      auto keys_flat = keys->flat< nt64>();
       auto values_flat = values->flat<float>();
-      auto ids_flat = ids->flat<int64>();
+      auto  ds_flat =  ds->flat< nt64>();
 
-      for (int64 id = 0; id < records.size(); id++) {
-        for (const auto &it : common.getContinuous()) {
-          if (handle->keep_map->find(it.first) == handle->keep_map->end()) continue;
-          ids_flat(offset) = id;
-          keys_flat(offset) = it.first;
-          values_flat(offset) = it.second;
+      for ( nt64  d = 0;  d < records.s ze();  d++) {
+        for (const auto &  : common.getCont nuous()) {
+           f (handle->keep_map->f nd( .f rst) == handle->keep_map->end()) cont nue;
+           ds_flat(offset) =  d;
+          keys_flat(offset) =  .f rst;
+          values_flat(offset) =  .second;
           offset++;
         }
-        for (const auto &it : records[id].getContinuous()) {
-          if (handle->keep_map->find(it.first) == handle->keep_map->end()) continue;
-          ids_flat(offset) = id;
-          keys_flat(offset) = it.first;
-          values_flat(offset) = it.second;
+        for (const auto &  : records[ d].getCont nuous()) {
+           f (handle->keep_map->f nd( .f rst) == handle->keep_map->end()) cont nue;
+           ds_flat(offset) =  d;
+          keys_flat(offset) =  .f rst;
+          values_flat(offset) =  .second;
           offset++;
         }
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-REGISTER_OP("GetDiscreteFeatures")
-.Input("data_record_handle: resource")
-.Output("ids: int64")
-.Output("keys: int64")
-.Output("values: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+REG STER_OP("GetD screteFeatures")
+. nput("data_record_handle: res ce")
+.Output(" ds:  nt64")
+.Output("keys:  nt64")
+.Output("values:  nt64")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that reads discrete features
-Input
-  data_record_handle: Resource handle to DataRecord
+A tensorflow OP that reads d screte features
+ nput
+  data_record_handle: Res ce handle to DataRecord
 
 Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
-  keys: DataRecord keys (int64)
-  values: DataRecord values(int64)
+   ds:  ds spec f es t   ndex of t  records[ d]  n t  batch ( nt64)
+  keys: DataRecord keys ( nt64)
+  values: DataRecord values( nt64)
 )doc");
 
-class GetDiscreteFeatures : public OpKernel {
- public:
-  explicit GetDiscreteFeatures(OpKernelConstruction* context)
+class GetD screteFeatures : publ c OpKernel {
+ publ c:
+  expl c  GetD screteFeatures(OpKernelConstruct on* context)
       : OpKernel(context) {}
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
+      auto handle = getHandle<DataRecordRes ce>(context, 0);
       const auto &records = handle->records;
       const auto &common = handle->common;
 
-      int64 common_discrete_size = count_if_exists(common.getDiscrete(), handle->keep_map);
-      int64 total_discrete_size = records.size() * common_discrete_size;
-      for (int id = 0; id < records.size(); id++) {
-        total_discrete_size += count_if_exists(handle->records[id].getDiscrete(),
+       nt64 common_d screte_s ze = count_ f_ex sts(common.getD screte(), handle->keep_map);
+       nt64 total_d screte_s ze = records.s ze() * common_d screte_s ze;
+      for ( nt  d = 0;  d < records.s ze();  d++) {
+        total_d screte_s ze += count_ f_ex sts(handle->records[ d].getD screte(),
                                                handle->keep_map);
       }
-      const int total_size = static_cast<int>(total_discrete_size);
+      const  nt total_s ze = stat c_cast< nt>(total_d screte_s ze);
 
-      TensorShape shape = {total_size};
+      TensorShape shape = {total_s ze};
       Tensor* keys = nullptr;
       Tensor* values = nullptr;
-      Tensor* ids = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-      OP_REQUIRES_OK(context, context->allocate_output(2, shape, &values));
+      Tensor*  ds = nullptr;
+      OP_REQU RES_OK(context, context->allocate_output(0, shape, & ds));
+      OP_REQU RES_OK(context, context->allocate_output(1, shape, &keys));
+      OP_REQU RES_OK(context, context->allocate_output(2, shape, &values));
 
-      uint64_t offset = 0;
-      auto keys_flat = keys->flat<int64>();
-      auto values_flat = values->flat<int64>();
-      auto ids_flat = ids->flat<int64>();
+      u nt64_t offset = 0;
+      auto keys_flat = keys->flat< nt64>();
+      auto values_flat = values->flat< nt64>();
+      auto  ds_flat =  ds->flat< nt64>();
 
-      for (int64 id = 0; id < records.size(); id++) {
-        for (const auto &it : common.getDiscrete()) {
-          if (handle->keep_map->find(it.first) == handle->keep_map->end()) continue;
-          ids_flat(offset) = id;
-          keys_flat(offset) = it.first;
-          values_flat(offset) = it.second;
+      for ( nt64  d = 0;  d < records.s ze();  d++) {
+        for (const auto &  : common.getD screte()) {
+           f (handle->keep_map->f nd( .f rst) == handle->keep_map->end()) cont nue;
+           ds_flat(offset) =  d;
+          keys_flat(offset) =  .f rst;
+          values_flat(offset) =  .second;
           offset++;
         }
-        for (const auto &it : records[id].getDiscrete()) {
-          if (handle->keep_map->find(it.first) == handle->keep_map->end()) continue;
-          ids_flat(offset) = id;
-          keys_flat(offset) = it.first;
-          values_flat(offset) = it.second;
+        for (const auto &  : records[ d].getD screte()) {
+           f (handle->keep_map->f nd( .f rst) == handle->keep_map->end()) cont nue;
+           ds_flat(offset) =  d;
+          keys_flat(offset) =  .f rst;
+          values_flat(offset) =  .second;
           offset++;
         }
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-REGISTER_OP("GetStringFeatures")
-.Input("data_record_handle: resource")
-.Output("ids: int64")
-.Output("keys: int64")
-.Output("names: string")
+REG STER_OP("GetStr ngFeatures")
+. nput("data_record_handle: res ce")
+.Output(" ds:  nt64")
+.Output("keys:  nt64")
+.Output("na s: str ng")
 .Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that reads string features
-Input
-  data_record_handle: Resource handle to DataRecord
+A tensorflow OP that reads str ng features
+ nput
+  data_record_handle: Res ce handle to DataRecord
 
 Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
-  keys: DataRecord keys (int64)
-  names: DataRecord values(string)
+   ds:  ds spec f es t   ndex of t  records[ d]  n t  batch ( nt64)
+  keys: DataRecord keys ( nt64)
+  na s: DataRecord values(str ng)
   values: always set to 1 (float)
 )doc");
 
-class GetStringFeatures : public OpKernel {
- public:
-  explicit GetStringFeatures(OpKernelConstruction* context)
+class GetStr ngFeatures : publ c OpKernel {
+ publ c:
+  expl c  GetStr ngFeatures(OpKernelConstruct on* context)
       : OpKernel(context) {}
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
+      auto handle = getHandle<DataRecordRes ce>(context, 0);
       const auto &records = handle->records;
       const auto &common = handle->common;
 
-      int64 common_string_size = count_if_exists(common.getString(), handle->keep_map);
-      int64 total_string_size = records.size() * common_string_size;
-      for (int id = 0; id < records.size(); id++) {
-        total_string_size += count_if_exists(handle->records[id].getString(),
+       nt64 common_str ng_s ze = count_ f_ex sts(common.getStr ng(), handle->keep_map);
+       nt64 total_str ng_s ze = records.s ze() * common_str ng_s ze;
+      for ( nt  d = 0;  d < records.s ze();  d++) {
+        total_str ng_s ze += count_ f_ex sts(handle->records[ d].getStr ng(),
                                              handle->keep_map);
       }
-      const int total_size = static_cast<int>(total_string_size);
+      const  nt total_s ze = stat c_cast< nt>(total_str ng_s ze);
 
-      TensorShape shape = {total_size};
+      TensorShape shape = {total_s ze};
       Tensor* keys = nullptr;
-      Tensor* names = nullptr;
-      Tensor* ids = nullptr;
+      Tensor* na s = nullptr;
+      Tensor*  ds = nullptr;
       Tensor*values = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-      OP_REQUIRES_OK(context, context->allocate_output(2, shape, &names));
-      OP_REQUIRES_OK(context, context->allocate_output(3, shape, &values));
+      OP_REQU RES_OK(context, context->allocate_output(0, shape, & ds));
+      OP_REQU RES_OK(context, context->allocate_output(1, shape, &keys));
+      OP_REQU RES_OK(context, context->allocate_output(2, shape, &na s));
+      OP_REQU RES_OK(context, context->allocate_output(3, shape, &values));
 
-      uint64_t offset = 0;
-      auto keys_flat = keys->flat<int64>();
-      auto names_flat = names->flat<string>();
-      auto ids_flat = ids->flat<int64>();
+      u nt64_t offset = 0;
+      auto keys_flat = keys->flat< nt64>();
+      auto na s_flat = na s->flat<str ng>();
+      auto  ds_flat =  ds->flat< nt64>();
       auto values_flat = values->flat<float>();
 
-      std::fill(values_flat.data(), values_flat.data() + total_size, 1);
-      for (int64 id = 0; id < records.size(); id++) {
-        for (const auto &it : common.getString()) {
-          if (handle->keep_map->find(it.first) == handle->keep_map->end()) continue;
-          ids_flat(offset) = id;
-          keys_flat(offset) = it.first;
-          names_flat(offset) = it.second;
+      std::f ll(values_flat.data(), values_flat.data() + total_s ze, 1);
+      for ( nt64  d = 0;  d < records.s ze();  d++) {
+        for (const auto &  : common.getStr ng()) {
+           f (handle->keep_map->f nd( .f rst) == handle->keep_map->end()) cont nue;
+           ds_flat(offset) =  d;
+          keys_flat(offset) =  .f rst;
+          na s_flat(offset) =  .second;
           offset++;
         }
-        for (const auto &it : records[id].getString()) {
-          if (handle->keep_map->find(it.first) == handle->keep_map->end()) continue;
-          ids_flat(offset) = id;
-          keys_flat(offset) = it.first;
-          names_flat(offset) = it.second;
+        for (const auto &  : records[ d].getStr ng()) {
+           f (handle->keep_map->f nd( .f rst) == handle->keep_map->end()) cont nue;
+           ds_flat(offset) =  d;
+          keys_flat(offset) =  .f rst;
+          na s_flat(offset) =  .second;
           offset++;
         }
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-REGISTER_OP("GetSparseBinaryFeatures")
-.Input("data_record_handle: resource")
-.Output("ids: int64")
-.Output("keys: int64")
-.Output("names: string")
+REG STER_OP("GetSparseB naryFeatures")
+. nput("data_record_handle: res ce")
+.Output(" ds:  nt64")
+.Output("keys:  nt64")
+.Output("na s: str ng")
 .Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that reads sparse binary features
-Input
-  data_record_handle: Resource handle to DataRecord
+A tensorflow OP that reads sparse b nary features
+ nput
+  data_record_handle: Res ce handle to DataRecord
 
 Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
-  keys: DataRecord keys (int64)
-  names: DataRecord values(string)
+   ds:  ds spec f es t   ndex of t  records[ d]  n t  batch ( nt64)
+  keys: DataRecord keys ( nt64)
+  na s: DataRecord values(str ng)
   values: always set to 1 (float)
 )doc");
 
-class GetSparseBinaryFeatures : public OpKernel {
- public:
-  explicit GetSparseBinaryFeatures(OpKernelConstruction* context)
+class GetSparseB naryFeatures : publ c OpKernel {
+ publ c:
+  expl c  GetSparseB naryFeatures(OpKernelConstruct on* context)
       : OpKernel(context) {}
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
+      auto handle = getHandle<DataRecordRes ce>(context, 0);
       const auto &records = handle->records;
       const auto &common = handle->common;
 
-      int64 common_sparse_binary_size = count_if_exists(common.getSparseBinary(), handle->keep_map);
-      int64 total_sparse_binary_size = records.size() * common_sparse_binary_size;
-      for (int id = 0; id < records.size(); id++) {
-        total_sparse_binary_size += count_if_exists(handle->records[id].getSparseBinary(),
+       nt64 common_sparse_b nary_s ze = count_ f_ex sts(common.getSparseB nary(), handle->keep_map);
+       nt64 total_sparse_b nary_s ze = records.s ze() * common_sparse_b nary_s ze;
+      for ( nt  d = 0;  d < records.s ze();  d++) {
+        total_sparse_b nary_s ze += count_ f_ex sts(handle->records[ d].getSparseB nary(),
                                                     handle->keep_map);
       }
-      const int total_size = static_cast<int>(total_sparse_binary_size);
+      const  nt total_s ze = stat c_cast< nt>(total_sparse_b nary_s ze);
 
-      TensorShape shape = {total_size};
+      TensorShape shape = {total_s ze};
       Tensor* keys = nullptr;
-      Tensor* names = nullptr;
-      Tensor* ids = nullptr;
+      Tensor* na s = nullptr;
+      Tensor*  ds = nullptr;
       Tensor* values = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-      OP_REQUIRES_OK(context, context->allocate_output(2, shape, &names));
-      OP_REQUIRES_OK(context, context->allocate_output(3, shape, &values));
+      OP_REQU RES_OK(context, context->allocate_output(0, shape, & ds));
+      OP_REQU RES_OK(context, context->allocate_output(1, shape, &keys));
+      OP_REQU RES_OK(context, context->allocate_output(2, shape, &na s));
+      OP_REQU RES_OK(context, context->allocate_output(3, shape, &values));
 
-      uint64_t offset = 0;
-      auto keys_flat = keys->flat<int64>();
-      auto names_flat = names->flat<string>();
-      auto ids_flat = ids->flat<int64>();
+      u nt64_t offset = 0;
+      auto keys_flat = keys->flat< nt64>();
+      auto na s_flat = na s->flat<str ng>();
+      auto  ds_flat =  ds->flat< nt64>();
       auto values_flat = values->flat<float>();
 
-      // All the values for sparse binary features are 1.
-      std::fill(values_flat.data(), values_flat.data() + total_size, 1);
-      for (int64 id = 0; id < records.size(); id++) {
-        for (const auto &it : common.getSparseBinary()) {
-          if (handle->keep_map->find(it.first) == handle->keep_map->end()) continue;
-          for (const auto &it_inner : it.second) {
-            ids_flat(offset) = id;
-            keys_flat(offset) = it.first;
-            names_flat(offset) = it_inner;
+      // All t  values for sparse b nary features are 1.
+      std::f ll(values_flat.data(), values_flat.data() + total_s ze, 1);
+      for ( nt64  d = 0;  d < records.s ze();  d++) {
+        for (const auto &  : common.getSparseB nary()) {
+           f (handle->keep_map->f nd( .f rst) == handle->keep_map->end()) cont nue;
+          for (const auto & _ nner :  .second) {
+             ds_flat(offset) =  d;
+            keys_flat(offset) =  .f rst;
+            na s_flat(offset) =  _ nner;
             offset++;
           }
         }
-        for (const auto &it : records[id].getSparseBinary()) {
-          if (handle->keep_map->find(it.first) == handle->keep_map->end()) continue;
-          for (const auto &it_inner : it.second) {
-            ids_flat(offset) = id;
-            keys_flat(offset) = it.first;
-            names_flat(offset) = it_inner;
+        for (const auto &  : records[ d].getSparseB nary()) {
+           f (handle->keep_map->f nd( .f rst) == handle->keep_map->end()) cont nue;
+          for (const auto & _ nner :  .second) {
+             ds_flat(offset) =  d;
+            keys_flat(offset) =  .f rst;
+            na s_flat(offset) =  _ nner;
             offset++;
           }
         }
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-REGISTER_OP("GetSparseContinuousFeatures")
-.Input("data_record_handle: resource")
-.Output("ids: int64")
-.Output("keys: int64")
+REG STER_OP("GetSparseCont nuousFeatures")
+. nput("data_record_handle: res ce")
+.Output(" ds:  nt64")
+.Output("keys:  nt64")
 .Output("values: float")
-.Output("names: string")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.Output("na s: str ng")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that reads sparse continuous features
-Input
-  data_record_handle: Resource handle to DataRecord
+A tensorflow OP that reads sparse cont nuous features
+ nput
+  data_record_handle: Res ce handle to DataRecord
 
 Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
-  keys: DataRecord keys (int64)
+   ds:  ds spec f es t   ndex of t  records[ d]  n t  batch ( nt64)
+  keys: DataRecord keys ( nt64)
   values: DataRecord values(float)
-  names: DataRecord values(string)
+  na s: DataRecord values(str ng)
 )doc");
 
-class GetSparseContinuousFeatures : public OpKernel {
- public:
-  explicit GetSparseContinuousFeatures(OpKernelConstruction* context)
+class GetSparseCont nuousFeatures : publ c OpKernel {
+ publ c:
+  expl c  GetSparseCont nuousFeatures(OpKernelConstruct on* context)
       : OpKernel(context) {}
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
+      auto handle = getHandle<DataRecordRes ce>(context, 0);
       const auto &records = handle->records;
       const auto &common = handle->common;
 
-      int64 common_sparse_continuous_size = count_if_exists(common.getSparseContinuous(),
+       nt64 common_sparse_cont nuous_s ze = count_ f_ex sts(common.getSparseCont nuous(),
                                                             handle->keep_map);
-      int64 total_sparse_continuous_size = records.size() * common_sparse_continuous_size;
-      for (int id = 0; id < records.size(); id++) {
-        total_sparse_continuous_size += count_if_exists(handle->records[id].getSparseContinuous(),
+       nt64 total_sparse_cont nuous_s ze = records.s ze() * common_sparse_cont nuous_s ze;
+      for ( nt  d = 0;  d < records.s ze();  d++) {
+        total_sparse_cont nuous_s ze += count_ f_ex sts(handle->records[ d].getSparseCont nuous(),
                                                         handle->keep_map);
       }
-      const int total_size = static_cast<int>(total_sparse_continuous_size);
+      const  nt total_s ze = stat c_cast< nt>(total_sparse_cont nuous_s ze);
 
-      TensorShape shape = {total_size};
+      TensorShape shape = {total_s ze};
       Tensor* keys = nullptr;
       Tensor* values = nullptr;
-      Tensor* names = nullptr;
-      Tensor* ids = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-      OP_REQUIRES_OK(context, context->allocate_output(2, shape, &values));
-      OP_REQUIRES_OK(context, context->allocate_output(3, shape, &names));
+      Tensor* na s = nullptr;
+      Tensor*  ds = nullptr;
+      OP_REQU RES_OK(context, context->allocate_output(0, shape, & ds));
+      OP_REQU RES_OK(context, context->allocate_output(1, shape, &keys));
+      OP_REQU RES_OK(context, context->allocate_output(2, shape, &values));
+      OP_REQU RES_OK(context, context->allocate_output(3, shape, &na s));
 
-      uint64_t offset = 0;
-      auto keys_flat = keys->flat<int64>();
+      u nt64_t offset = 0;
+      auto keys_flat = keys->flat< nt64>();
       auto values_flat = values->flat<float>();
-      auto names_flat = names->flat<string>();
-      auto ids_flat = ids->flat<int64>();
+      auto na s_flat = na s->flat<str ng>();
+      auto  ds_flat =  ds->flat< nt64>();
 
-      for (int64 id = 0; id < records.size(); id++) {
-        // copying the contents of the maps of maps
-        for (const auto &it : common.getSparseContinuous()) {
-          if (handle->keep_map->find(it.first) == handle->keep_map->end()) continue;
-          // for each id; iterate through the number of maps corresponding to that id
-          for (const auto &it_inner : it.second) {
-            ids_flat(offset) = id;
-            keys_flat(offset) = it.first;
-            names_flat(offset) = it_inner.first;
-            values_flat(offset) = it_inner.second;
+      for ( nt64  d = 0;  d < records.s ze();  d++) {
+        // copy ng t  contents of t  maps of maps
+        for (const auto &  : common.getSparseCont nuous()) {
+           f (handle->keep_map->f nd( .f rst) == handle->keep_map->end()) cont nue;
+          // for each  d;  erate through t  number of maps correspond ng to that  d
+          for (const auto & _ nner :  .second) {
+             ds_flat(offset) =  d;
+            keys_flat(offset) =  .f rst;
+            na s_flat(offset) =  _ nner.f rst;
+            values_flat(offset) =  _ nner.second;
             offset++;
           }
         }
-        // copying the contents of the maps of maps
-        for (const auto &it : records[id].getSparseContinuous()) {
-          if (handle->keep_map->find(it.first) == handle->keep_map->end()) continue;
-          // for each id; iterate through the number of maps corresponding to that id
-          for (const auto &it_inner : it.second) {
-            ids_flat(offset) = id;
-            keys_flat(offset) = it.first;
-            names_flat(offset) = it_inner.first;
-            values_flat(offset) = it_inner.second;
+        // copy ng t  contents of t  maps of maps
+        for (const auto &  : records[ d].getSparseCont nuous()) {
+           f (handle->keep_map->f nd( .f rst) == handle->keep_map->end()) cont nue;
+          // for each  d;  erate through t  number of maps correspond ng to that  d
+          for (const auto & _ nner :  .second) {
+             ds_flat(offset) =  d;
+            keys_flat(offset) =  .f rst;
+            na s_flat(offset) =  _ nner.f rst;
+            values_flat(offset) =  _ nner.second;
             offset++;
           }
         }
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-REGISTER_OP("GetBatchSizeFromDataRecord")
-.Input("data_record_handle: resource")
-.Output("batch_size: int64")
-.SetShapeFn(shape_inference::ScalarShape)
+REG STER_OP("GetBatchS zeFromDataRecord")
+. nput("data_record_handle: res ce")
+.Output("batch_s ze:  nt64")
+.SetShapeFn(shape_ nference::ScalarShape)
 .Doc(R"doc(
-A tensorflow OP that returns batch size from the data record.
-Input
-  data_record_handle: Resource handle to DataRecord
+A tensorflow OP that returns batch s ze from t  data record.
+ nput
+  data_record_handle: Res ce handle to DataRecord
 
 Outputs
-  batch_size: Number of records held in the handle.
+  batch_s ze: Number of records  ld  n t  handle.
 )doc");
 
-class GetBatchSizeFromDataRecord : public OpKernel {
- public:
-  explicit GetBatchSizeFromDataRecord(OpKernelConstruction* context)
+class GetBatchS zeFromDataRecord : publ c OpKernel {
+ publ c:
+  expl c  GetBatchS zeFromDataRecord(OpKernelConstruct on* context)
       : OpKernel(context) {}
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
+      auto handle = getHandle<DataRecordRes ce>(context, 0);
       Tensor *output;
-      OP_REQUIRES_OK(context, context->allocate_output(0, TensorShape({}), &output));
-      output->scalar<int64>()() = handle->records.size();
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      OP_REQU RES_OK(context, context->allocate_output(0, TensorShape({}), &output));
+      output->scalar< nt64>()() = handle->records.s ze();
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-REGISTER_OP("GetLabelsFromDataRecord")
-.Input("data_record_handle: resource")
+REG STER_OP("GetLabelsFromDataRecord")
+. nput("data_record_handle: res ce")
 .Output("labels: float")
 .Attr("default_label: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns labels from the data record.
+A tensorflow OP that returns labels from t  data record.
 
 Attr
-  default_label: The value used when a label is absent in a data record.
+  default_label: T  value used w n a label  s absent  n a data record.
 
-Input
-  data_record_handle: Resource handle to DataRecord
+ nput
+  data_record_handle: Res ce handle to DataRecord
 
 Outputs
-  labels: A 2D tensor of size [batch_size, num_labels] containing the label values.
+  labels: A 2D tensor of s ze [batch_s ze, num_labels] conta n ng t  label values.
 )doc");
 
-class GetLabelsFromDataRecord : public OpKernel {
- private:
+class GetLabelsFromDataRecord : publ c OpKernel {
+ pr vate:
   float default_label;
 
- public:
-  explicit GetLabelsFromDataRecord(OpKernelConstruction* context)
+ publ c:
+  expl c  GetLabelsFromDataRecord(OpKernelConstruct on* context)
       : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("default_label", &default_label));
+    OP_REQU RES_OK(context, context->GetAttr("default_label", &default_label));
   }
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
+      auto handle = getHandle<DataRecordRes ce>(context, 0);
       const auto &records = handle->records;
-      const int num_labels = static_cast<int>(handle->num_labels);
-      TensorShape shape = {static_cast<int64>(handle->records.size()), num_labels};
+      const  nt num_labels = stat c_cast< nt>(handle->num_labels);
+      TensorShape shape = {stat c_cast< nt64>(handle->records.s ze()), num_labels};
 
       Tensor *labels;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &labels));
+      OP_REQU RES_OK(context, context->allocate_output(0, shape, &labels));
 
-      // The default value of label is not present in data record is std::nanf
-      // For continuous labels, change that to a default_label or label.
-      auto func = [this](float label) -> float {
-        return std::isnan(label) ? default_label : label;
+      // T  default value of label  s not present  n data record  s std::nanf
+      // For cont nuous labels, change that to a default_label or label.
+      auto func = [t ](float label) -> float {
+        return std:: snan(label) ? default_label : label;
       };
 
       auto labels_data = labels->flat<float>().data();
       for (const auto &record : records) {
         const auto& rec_labels = record.labels();
-        labels_data = std::transform(rec_labels.begin(), rec_labels.end(), labels_data, func);
+        labels_data = std::transform(rec_labels.beg n(), rec_labels.end(), labels_data, func);
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-REGISTER_OP("GetWeightsFromDataRecord")
-.Input("data_record_handle: resource")
-.Output("weights: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+REG STER_OP("Get  ghtsFromDataRecord")
+. nput("data_record_handle: res ce")
+.Output("  ghts: float")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns weights from the data record.
-Input
-  data_record_handle: Resource handle to DataRecord
+A tensorflow OP that returns   ghts from t  data record.
+ nput
+  data_record_handle: Res ce handle to DataRecord
 
 Outputs
-  weights: A 2D tensor of size [batch_size, num_weights] containing the weight values.
+    ghts: A 2D tensor of s ze [batch_s ze, num_  ghts] conta n ng t    ght values.
 )doc");
 
-class GetWeightsFromDataRecord : public OpKernel {
- public:
-  explicit GetWeightsFromDataRecord(OpKernelConstruction* context)
+class Get  ghtsFromDataRecord : publ c OpKernel {
+ publ c:
+  expl c  Get  ghtsFromDataRecord(OpKernelConstruct on* context)
       : OpKernel(context) {}
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
+      auto handle = getHandle<DataRecordRes ce>(context, 0);
       const auto &records = handle->records;
-      const int num_weights = static_cast<int>(handle->num_weights);
-      TensorShape shape = {static_cast<int64>(handle->records.size()), num_weights};
+      const  nt num_  ghts = stat c_cast< nt>(handle->num_  ghts);
+      TensorShape shape = {stat c_cast< nt64>(handle->records.s ze()), num_  ghts};
 
-      Tensor *weights;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &weights));
+      Tensor *  ghts;
+      OP_REQU RES_OK(context, context->allocate_output(0, shape, &  ghts));
 
-      auto weights_data = weights->flat<float>().data();
+      auto   ghts_data =   ghts->flat<float>().data();
       for (const auto &record : records) {
-        const auto& rec_weights = record.weights();
-        weights_data = std::copy(rec_weights.begin(), rec_weights.end(), weights_data);
+        const auto& rec_  ghts = record.  ghts();
+          ghts_data = std::copy(rec_  ghts.beg n(), rec_  ghts.end(),   ghts_data);
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-template<typename ValueType, typename FeatureType, typename TensorType>
-void SetValueGroup(
+template<typena  ValueType, typena  FeatureType, typena  TensorType>
+vo d SetValueGroup(
 const FeatureType& type,
-const int64& feature_id,
-const int64& id,
+const  nt64& feature_ d,
+const  nt64&  d,
 const ValueType& default_value,
 TensorType values_flat) {
-  auto it = type.find(feature_id);
-  values_flat(id) = (it == type.end()) ? default_value : it->second;
+  auto   = type.f nd(feature_ d);
+  values_flat( d) = (  == type.end()) ? default_value :  ->second;
 }
 
-template<typename ValueType, typename TensorType>
-// overloading for BinaryFeatures; as it needs to set a value of 1
-void SetValueGroup(
-const twml::DataRecord::BinaryFeatures& type,
-const int64& feature_id,
-const int64& id,
+template<typena  ValueType, typena  TensorType>
+// overload ng for B naryFeatures; as   needs to set a value of 1
+vo d SetValueGroup(
+const twml::DataRecord::B naryFeatures& type,
+const  nt64& feature_ d,
+const  nt64&  d,
 const ValueType& default_value,
 TensorType values_flat) {
-  auto it = type.find(feature_id);
-  values_flat(id) = (it == type.end()) ? default_value : 1;
+  auto   = type.f nd(feature_ d);
+  values_flat( d) = (  == type.end()) ? default_value : 1;
 }
 
-// Helper for Group Extraction of Dense Features
-template<typename ValueType, typename FeatureType>
-void ComputeHelperGroupFeaturesAsTensors(
+//  lper for Group Extract on of Dense Features
+template<typena  ValueType, typena  FeatureType>
+vo d Compute lperGroupFeaturesAsTensors(
 OpKernelContext* context,
-const std::vector<int64>& feature_ids,
+const std::vector< nt64>& feature_ ds,
 ValueType& default_value,
-std::function<const FeatureType&(const twml::DataRecord&)> f) {
-  auto handle = getHandle<DataRecordResource>(context, 0);
+std::funct on<const FeatureType&(const twml::DataRecord&)> f) {
+  auto handle = getHandle<DataRecordRes ce>(context, 0);
   const auto &records = handle->records;
-  // Output shape is 2D; where the first dimension corresponds to the batch_size
-  // and the second corresponds to the number of features passed to the TF Op.
-  const int batch_size = static_cast<int64>(handle->records.size());
-  const int num_feature_ids = static_cast<int>(feature_ids.size());
-  TensorShape shape = {batch_size, num_feature_ids};
+  // Output shape  s 2D; w re t  f rst d  ns on corresponds to t  batch_s ze
+  // and t  second corresponds to t  number of features passed to t  TF Op.
+  const  nt batch_s ze = stat c_cast< nt64>(handle->records.s ze());
+  const  nt num_feature_ ds = stat c_cast< nt>(feature_ ds.s ze());
+  TensorShape shape = {batch_s ze, num_feature_ ds};
 
-  // Define the output
+  // Def ne t  output
   Tensor* values = nullptr;
-  OP_REQUIRES_OK(context, context->allocate_output(0, shape, &values));
+  OP_REQU RES_OK(context, context->allocate_output(0, shape, &values));
   auto values_flat = values->flat<ValueType>();
 
-  for (int64 id = 0; id < records.size(); id++) {
-    const auto &type = f(records[id]);
-    const auto id_offset = id * feature_ids.size();
-    for (int64 fid = 0; fid < feature_ids.size(); fid++) {
-      auto feature_id = feature_ids[fid];
-      // The value is set to default if it does not exist in the current DataRecord
-      SetValueGroup(type, feature_id, id_offset + fid, default_value, values_flat);
+  for ( nt64  d = 0;  d < records.s ze();  d++) {
+    const auto &type = f(records[ d]);
+    const auto  d_offset =  d * feature_ ds.s ze();
+    for ( nt64 f d = 0; f d < feature_ ds.s ze(); f d++) {
+      auto feature_ d = feature_ ds[f d];
+      // T  value  s set to default  f   does not ex st  n t  current DataRecord
+      SetValueGroup(type, feature_ d,  d_offset + f d, default_value, values_flat);
     }
   }
 }
 
-// Helper for Single Extraction of Dense Features
-template<typename ValueType, typename FeatureType>
-void ComputeHelperFeaturesAsTensors(
+//  lper for S ngle Extract on of Dense Features
+template<typena  ValueType, typena  FeatureType>
+vo d Compute lperFeaturesAsTensors(
 OpKernelContext* context,
 ValueType& default_value,
-int64 feature_id,
-std::function<const FeatureType&(const twml::DataRecord&)> f) {
-  auto handle = getHandle<DataRecordResource>(context, 0);
+ nt64 feature_ d,
+std::funct on<const FeatureType&(const twml::DataRecord&)> f) {
+  auto handle = getHandle<DataRecordRes ce>(context, 0);
   const auto &records = handle->records;
-  // Output shape is 2D; where the first dimension corresponds to the batch_size
-  // and the second corresponds to the number of features passed to the TF Op.
-  const int total_size = static_cast<int64>(handle->records.size());
-  TensorShape shape = {total_size};
+  // Output shape  s 2D; w re t  f rst d  ns on corresponds to t  batch_s ze
+  // and t  second corresponds to t  number of features passed to t  TF Op.
+  const  nt total_s ze = stat c_cast< nt64>(handle->records.s ze());
+  TensorShape shape = {total_s ze};
 
-  // Define the output
+  // Def ne t  output
   Tensor* values = nullptr;
-  OP_REQUIRES_OK(context, context->allocate_output(0, shape, &values));
+  OP_REQU RES_OK(context, context->allocate_output(0, shape, &values));
   auto values_flat = values->flat<ValueType>();
-  for (int64 id = 0; id < records.size(); id++) {
-    const auto &type = f(records[id]);
-    SetValueGroup(type, feature_id, id, default_value, values_flat);
+  for ( nt64  d = 0;  d < records.s ze();  d++) {
+    const auto &type = f(records[ d]);
+    SetValueGroup(type, feature_ d,  d, default_value, values_flat);
   }
 }
 
-REGISTER_OP("GetBinaryAsTensor")
-.Input("data_record_handle: resource")
-.Attr("feature_id: int")
+REG STER_OP("GetB naryAsTensor")
+. nput("data_record_handle: res ce")
+.Attr("feature_ d:  nt")
 .Attr("default_value: float")
 .Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns a Dense Tensor with the values of a particular feature_id.
-Input
-  data_record_handle: Resource handle to DataRecord
+A tensorflow OP that returns a Dense Tensor w h t  values of a part cular feature_ d.
+ nput
+  data_record_handle: Res ce handle to DataRecord
 Attr
-  feature_id: Id representing the feature whose values will be extracted.
-  default_value: default_value to be inputted if the values are missing from the current DataRecord.
+  feature_ d:  d represent ng t  feature whose values w ll be extracted.
+  default_value: default_value to be  nputted  f t  values are m ss ng from t  current DataRecord.
 Outputs
-  values: A Tensor corresponding to the value of the feature_id across multiple DataRecords
+  values: A Tensor correspond ng to t  value of t  feature_ d across mult ple DataRecords
 )doc");
 
-class GetBinaryAsTensor : public OpKernel {
- private:
-  int64 feature_id;
+class GetB naryAsTensor : publ c OpKernel {
+ pr vate:
+   nt64 feature_ d;
   float default_value;
 
- public:
-  explicit GetBinaryAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
-    OP_REQUIRES_OK(context, context->GetAttr("default_value", &default_value));
+ publ c:
+  expl c  GetB naryAsTensor(OpKernelConstruct on* context) : OpKernel(context) {
+    OP_REQU RES_OK(context, context->GetAttr("feature_ d", &feature_ d));
+    OP_REQU RES_OK(context, context->GetAttr("default_value", &default_value));
   }
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      std::function<const twml::DataRecord::BinaryFeatures &(const twml::DataRecord &)> f =
-       [](const twml::DataRecord& record) ->const twml::DataRecord::BinaryFeatures& { return record.getBinary(); };
-      ComputeHelperFeaturesAsTensors(context, default_value, feature_id, f);
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      std::funct on<const twml::DataRecord::B naryFeatures &(const twml::DataRecord &)> f =
+       [](const twml::DataRecord& record) ->const twml::DataRecord::B naryFeatures& { return record.getB nary(); };
+      Compute lperFeaturesAsTensors(context, default_value, feature_ d, f);
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-REGISTER_OP("GetContinuousAsTensor")
-.Input("data_record_handle: resource")
-.Attr("feature_id: int")
+REG STER_OP("GetCont nuousAsTensor")
+. nput("data_record_handle: res ce")
+.Attr("feature_ d:  nt")
 .Attr("default_value: float")
 .Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns a Dense Tensor with the values of a particular feature_id.
-Input
-  data_record_handle: Resource handle to DataRecord
+A tensorflow OP that returns a Dense Tensor w h t  values of a part cular feature_ d.
+ nput
+  data_record_handle: Res ce handle to DataRecord
 Attr
-  feature_id: Id representing the feature whose values will be extracted.
-  default_value: default_value to be inputted if the values are missing from the current DataRecord.
+  feature_ d:  d represent ng t  feature whose values w ll be extracted.
+  default_value: default_value to be  nputted  f t  values are m ss ng from t  current DataRecord.
 Outputs
-  values: A Tensor corresponding to the value of the feature_id across multiple DataRecords
+  values: A Tensor correspond ng to t  value of t  feature_ d across mult ple DataRecords
 )doc");
 
-class GetContinuousAsTensor : public OpKernel {
- private:
-  int64 feature_id;
+class GetCont nuousAsTensor : publ c OpKernel {
+ pr vate:
+   nt64 feature_ d;
   float default_value;
 
- public:
-  explicit GetContinuousAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
-    OP_REQUIRES_OK(context, context->GetAttr("default_value", &default_value));
+ publ c:
+  expl c  GetCont nuousAsTensor(OpKernelConstruct on* context) : OpKernel(context) {
+    OP_REQU RES_OK(context, context->GetAttr("feature_ d", &feature_ d));
+    OP_REQU RES_OK(context, context->GetAttr("default_value", &default_value));
   }
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      std::function<const twml::DataRecord::ContinuousFeatures &(const twml::DataRecord &)> f =
-       [](const twml::DataRecord& record) ->const twml::DataRecord::ContinuousFeatures& { return record.getContinuous(); };
-      ComputeHelperFeaturesAsTensors(context, default_value, feature_id, f);
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      std::funct on<const twml::DataRecord::Cont nuousFeatures &(const twml::DataRecord &)> f =
+       [](const twml::DataRecord& record) ->const twml::DataRecord::Cont nuousFeatures& { return record.getCont nuous(); };
+      Compute lperFeaturesAsTensors(context, default_value, feature_ d, f);
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-REGISTER_OP("GetDiscreteAsTensor")
-.Input("data_record_handle: resource")
-.Attr("feature_id: int")
-.Attr("default_value: int")
-.Output("values: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+REG STER_OP("GetD screteAsTensor")
+. nput("data_record_handle: res ce")
+.Attr("feature_ d:  nt")
+.Attr("default_value:  nt")
+.Output("values:  nt64")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns a Dense Tensor with the values of a particular feature_id.
-Input
-  data_record_handle: Resource handle to DataRecord
+A tensorflow OP that returns a Dense Tensor w h t  values of a part cular feature_ d.
+ nput
+  data_record_handle: Res ce handle to DataRecord
 Attr
-  feature_id: Id representing the feature whose values will be extracted.
-  default_value: default_value to be inputted if the values are missing from the current DataRecord.
+  feature_ d:  d represent ng t  feature whose values w ll be extracted.
+  default_value: default_value to be  nputted  f t  values are m ss ng from t  current DataRecord.
 Outputs
-  values: A Tensor corresponding to the value of the feature_id across multiple DataRecords
+  values: A Tensor correspond ng to t  value of t  feature_ d across mult ple DataRecords
 )doc");
 
-class GetDiscreteAsTensor : public OpKernel {
- private:
-  int64 feature_id;
-  int64 default_value;
+class GetD screteAsTensor : publ c OpKernel {
+ pr vate:
+   nt64 feature_ d;
+   nt64 default_value;
 
- public:
-  explicit GetDiscreteAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
-    OP_REQUIRES_OK(context, context->GetAttr("default_value", &default_value));
+ publ c:
+  expl c  GetD screteAsTensor(OpKernelConstruct on* context) : OpKernel(context) {
+    OP_REQU RES_OK(context, context->GetAttr("feature_ d", &feature_ d));
+    OP_REQU RES_OK(context, context->GetAttr("default_value", &default_value));
   }
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      std::function<const twml::DataRecord::DiscreteFeatures &(const twml::DataRecord &)> f =
-       [](const twml::DataRecord& record) ->const twml::DataRecord::DiscreteFeatures& { return record.getDiscrete(); };
-      ComputeHelperFeaturesAsTensors(context, default_value, feature_id, f);
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      std::funct on<const twml::DataRecord::D screteFeatures &(const twml::DataRecord &)> f =
+       [](const twml::DataRecord& record) ->const twml::DataRecord::D screteFeatures& { return record.getD screte(); };
+      Compute lperFeaturesAsTensors(context, default_value, feature_ d, f);
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-REGISTER_OP("GetStringAsTensor")
-.Input("data_record_handle: resource")
-.Attr("feature_id: int")
-.Attr("default_value: string")
-.Output("names: string")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+REG STER_OP("GetStr ngAsTensor")
+. nput("data_record_handle: res ce")
+.Attr("feature_ d:  nt")
+.Attr("default_value: str ng")
+.Output("na s: str ng")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns a Dense Tensor with the values of a particular feature_id.
-Input
-  data_record_handle: Resource handle to DataRecord
+A tensorflow OP that returns a Dense Tensor w h t  values of a part cular feature_ d.
+ nput
+  data_record_handle: Res ce handle to DataRecord
 Attr
-  feature_id: Id representing the feature whose values will be extracted.
-  default_value: default_value to be inputted if the values are missing from the current DataRecord.
+  feature_ d:  d represent ng t  feature whose values w ll be extracted.
+  default_value: default_value to be  nputted  f t  values are m ss ng from t  current DataRecord.
 Outputs
-  names: A Tensor corresponding to the value of the feature_id across multiple DataRecords
+  na s: A Tensor correspond ng to t  value of t  feature_ d across mult ple DataRecords
 )doc");
 
-class GetStringAsTensor : public OpKernel {
- private:
-  int64 feature_id;
-  string default_value;
+class GetStr ngAsTensor : publ c OpKernel {
+ pr vate:
+   nt64 feature_ d;
+  str ng default_value;
 
- public:
-  explicit GetStringAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
-    OP_REQUIRES_OK(context, context->GetAttr("default_value", &default_value));
+ publ c:
+  expl c  GetStr ngAsTensor(OpKernelConstruct on* context) : OpKernel(context) {
+    OP_REQU RES_OK(context, context->GetAttr("feature_ d", &feature_ d));
+    OP_REQU RES_OK(context, context->GetAttr("default_value", &default_value));
   }
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      std::function<const twml::DataRecord::StringFeatures &(const twml::DataRecord &)> f =
-       [](const twml::DataRecord& record) ->const twml::DataRecord::StringFeatures& { return record.getString(); };
-      ComputeHelperFeaturesAsTensors(context, default_value, feature_id, f);
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      std::funct on<const twml::DataRecord::Str ngFeatures &(const twml::DataRecord &)> f =
+       [](const twml::DataRecord& record) ->const twml::DataRecord::Str ngFeatures& { return record.getStr ng(); };
+      Compute lperFeaturesAsTensors(context, default_value, feature_ d, f);
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
 
-REGISTER_OP("GetBinaryGroupAsTensor")
-.Input("data_record_handle: resource")
-.Attr("feature_ids: list(int)")
+REG STER_OP("GetB naryGroupAsTensor")
+. nput("data_record_handle: res ce")
+.Attr("feature_ ds: l st( nt)")
 .Attr("default_value: float")
 .Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns a Dense Tensor with the values of a particular feature_id.
-Input
-  data_record_handle: Resource handle to DataRecord
+A tensorflow OP that returns a Dense Tensor w h t  values of a part cular feature_ d.
+ nput
+  data_record_handle: Res ce handle to DataRecord
 Attr
-  feature_ids: List of ids representing the features whose values will be extracted.
-  default_value: default_value to be inputted if the values are missing from the current DataRecord.
+  feature_ ds: L st of  ds represent ng t  features whose values w ll be extracted.
+  default_value: default_value to be  nputted  f t  values are m ss ng from t  current DataRecord.
 Outputs
-  values: A Tensor corresponding to the values of the feature_ids across multiple DataRecords
+  values: A Tensor correspond ng to t  values of t  feature_ ds across mult ple DataRecords
 )doc");
 
 
-class GetBinaryGroupAsTensor : public OpKernel {
- private:
+class GetB naryGroupAsTensor : publ c OpKernel {
+ pr vate:
   float default_value;
-  std::vector<int64> feature_ids;
+  std::vector< nt64> feature_ ds;
 
- public:
-  explicit GetBinaryGroupAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_ids", &feature_ids));
-    OP_REQUIRES_OK(context, context->GetAttr("default_value", &default_value));
+ publ c:
+  expl c  GetB naryGroupAsTensor(OpKernelConstruct on* context) : OpKernel(context) {
+    OP_REQU RES_OK(context, context->GetAttr("feature_ ds", &feature_ ds));
+    OP_REQU RES_OK(context, context->GetAttr("default_value", &default_value));
   }
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-       std::function<const twml::DataRecord::BinaryFeatures &(const twml::DataRecord &)> f =
-        [](const twml::DataRecord& record) ->const twml::DataRecord::BinaryFeatures& { return record.getBinary(); };
-       ComputeHelperGroupFeaturesAsTensors(context, feature_ids, default_value, f);
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+       std::funct on<const twml::DataRecord::B naryFeatures &(const twml::DataRecord &)> f =
+        [](const twml::DataRecord& record) ->const twml::DataRecord::B naryFeatures& { return record.getB nary(); };
+       Compute lperGroupFeaturesAsTensors(context, feature_ ds, default_value, f);
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
 
-REGISTER_OP("GetContinuousGroupAsTensor")
-.Input("data_record_handle: resource")
-.Attr("feature_ids: list(int)")
+REG STER_OP("GetCont nuousGroupAsTensor")
+. nput("data_record_handle: res ce")
+.Attr("feature_ ds: l st( nt)")
 .Attr("default_value: float")
 .Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns a Dense Tensor with the values of a particular feature_id.
-Input
-  data_record_handle: Resource handle to DataRecord
+A tensorflow OP that returns a Dense Tensor w h t  values of a part cular feature_ d.
+ nput
+  data_record_handle: Res ce handle to DataRecord
 Attr
-  feature_ids: List of ids representing the features whose values will be extracted.
-  default_value: default_value to be inputted if the values are missing from the current DataRecord.
+  feature_ ds: L st of  ds represent ng t  features whose values w ll be extracted.
+  default_value: default_value to be  nputted  f t  values are m ss ng from t  current DataRecord.
 Outputs
-  values: A Tensor corresponding to the values of the feature_ids across multiple DataRecords
+  values: A Tensor correspond ng to t  values of t  feature_ ds across mult ple DataRecords
 )doc");
 
-class GetContinuousGroupAsTensor : public OpKernel {
- private:
+class GetCont nuousGroupAsTensor : publ c OpKernel {
+ pr vate:
   float default_value;
-  std::vector<int64> feature_ids;
+  std::vector< nt64> feature_ ds;
 
- public:
-  explicit GetContinuousGroupAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_ids", &feature_ids));
-    OP_REQUIRES_OK(context, context->GetAttr("default_value", &default_value));
+ publ c:
+  expl c  GetCont nuousGroupAsTensor(OpKernelConstruct on* context) : OpKernel(context) {
+    OP_REQU RES_OK(context, context->GetAttr("feature_ ds", &feature_ ds));
+    OP_REQU RES_OK(context, context->GetAttr("default_value", &default_value));
   }
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      std::function<const twml::DataRecord::ContinuousFeatures &(const twml::DataRecord &)> f =
-       [](const twml::DataRecord& record) ->const twml::DataRecord::ContinuousFeatures& { return record.getContinuous(); };
-      ComputeHelperGroupFeaturesAsTensors(context, feature_ids, default_value, f);
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      std::funct on<const twml::DataRecord::Cont nuousFeatures &(const twml::DataRecord &)> f =
+       [](const twml::DataRecord& record) ->const twml::DataRecord::Cont nuousFeatures& { return record.getCont nuous(); };
+      Compute lperGroupFeaturesAsTensors(context, feature_ ds, default_value, f);
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-REGISTER_OP("GetDiscreteGroupAsTensor")
-.Input("data_record_handle: resource")
-.Attr("feature_ids: list(int)")
-.Attr("default_value: int")
-.Output("values: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+REG STER_OP("GetD screteGroupAsTensor")
+. nput("data_record_handle: res ce")
+.Attr("feature_ ds: l st( nt)")
+.Attr("default_value:  nt")
+.Output("values:  nt64")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns a Dense Tensor with the values of a particular feature_id.
-Input
-  data_record_handle: Resource handle to DataRecord
+A tensorflow OP that returns a Dense Tensor w h t  values of a part cular feature_ d.
+ nput
+  data_record_handle: Res ce handle to DataRecord
 Attr
-  feature_ids: List of ids representing the features whose values will be extracted.
-  default_value: default_value to be inputted if the values are missing from the current DataRecord.
+  feature_ ds: L st of  ds represent ng t  features whose values w ll be extracted.
+  default_value: default_value to be  nputted  f t  values are m ss ng from t  current DataRecord.
 Outputs
-  values: A Tensor corresponding to the values of the feature_ids across multiple DataRecords
+  values: A Tensor correspond ng to t  values of t  feature_ ds across mult ple DataRecords
 )doc");
 
-class GetDiscreteGroupAsTensor : public OpKernel {
- private:
-  std::vector<int64> feature_ids;
-  int64 default_value;
+class GetD screteGroupAsTensor : publ c OpKernel {
+ pr vate:
+  std::vector< nt64> feature_ ds;
+   nt64 default_value;
 
- public:
-  explicit GetDiscreteGroupAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_ids", &feature_ids));
-    OP_REQUIRES_OK(context, context->GetAttr("default_value", &default_value));
+ publ c:
+  expl c  GetD screteGroupAsTensor(OpKernelConstruct on* context) : OpKernel(context) {
+    OP_REQU RES_OK(context, context->GetAttr("feature_ ds", &feature_ ds));
+    OP_REQU RES_OK(context, context->GetAttr("default_value", &default_value));
   }
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      std::function<const twml::DataRecord::DiscreteFeatures &(const twml::DataRecord &)> f =
-       [](const twml::DataRecord& record) ->const twml::DataRecord::DiscreteFeatures& { return record.getDiscrete(); };
-      ComputeHelperGroupFeaturesAsTensors(context, feature_ids, default_value, f);
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      std::funct on<const twml::DataRecord::D screteFeatures &(const twml::DataRecord &)> f =
+       [](const twml::DataRecord& record) ->const twml::DataRecord::D screteFeatures& { return record.getD screte(); };
+      Compute lperGroupFeaturesAsTensors(context, feature_ ds, default_value, f);
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-REGISTER_OP("GetStringGroupAsTensor")
-.Input("data_record_handle: resource")
-.Attr("feature_ids: list(int)")
-.Attr("default_value: string")
-.Output("names: string")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+REG STER_OP("GetStr ngGroupAsTensor")
+. nput("data_record_handle: res ce")
+.Attr("feature_ ds: l st( nt)")
+.Attr("default_value: str ng")
+.Output("na s: str ng")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns a Dense Tensor with the values of a particular feature_id.
-Input
-  data_record_handle: Resource handle to DataRecord
+A tensorflow OP that returns a Dense Tensor w h t  values of a part cular feature_ d.
+ nput
+  data_record_handle: Res ce handle to DataRecord
 Attr
-  feature_ids: List of ids representing the features whose values will be extracted.
-  default_value: default_value to be inputted if the values are missing from the current DataRecord.
+  feature_ ds: L st of  ds represent ng t  features whose values w ll be extracted.
+  default_value: default_value to be  nputted  f t  values are m ss ng from t  current DataRecord.
 Outputs
-  names: A Tensor corresponding to the values of the feature_ids across multiple DataRecords
+  na s: A Tensor correspond ng to t  values of t  feature_ ds across mult ple DataRecords
 )doc");
 
-class GetStringGroupAsTensor : public OpKernel {
- private:
-  std::vector<int64> feature_ids;
-  string default_value;
+class GetStr ngGroupAsTensor : publ c OpKernel {
+ pr vate:
+  std::vector< nt64> feature_ ds;
+  str ng default_value;
 
- public:
-  explicit GetStringGroupAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_ids", &feature_ids));
-    OP_REQUIRES_OK(context, context->GetAttr("default_value", &default_value));
+ publ c:
+  expl c  GetStr ngGroupAsTensor(OpKernelConstruct on* context) : OpKernel(context) {
+    OP_REQU RES_OK(context, context->GetAttr("feature_ ds", &feature_ ds));
+    OP_REQU RES_OK(context, context->GetAttr("default_value", &default_value));
   }
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      std::function<const twml::DataRecord::StringFeatures &(const twml::DataRecord &)> f =
-       [](const twml::DataRecord& record) ->const twml::DataRecord::StringFeatures& { return record.getString(); };
-    ComputeHelperGroupFeaturesAsTensors(context, feature_ids, default_value, f);
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      std::funct on<const twml::DataRecord::Str ngFeatures &(const twml::DataRecord &)> f =
+       [](const twml::DataRecord& record) ->const twml::DataRecord::Str ngFeatures& { return record.getStr ng(); };
+    Compute lperGroupFeaturesAsTensors(context, feature_ ds, default_value, f);
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-REGISTER_OP("GetSparseBinaryAsTensor")
-.Input("data_record_handle: resource")
-.Attr("feature_id: int")
-.Output("ids: int64")
-.Output("keys: int64")
-.Output("names: string")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+REG STER_OP("GetSparseB naryAsTensor")
+. nput("data_record_handle: res ce")
+.Attr("feature_ d:  nt")
+.Output(" ds:  nt64")
+.Output("keys:  nt64")
+.Output("na s: str ng")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns tensors corresponding to the ids, keys and names of a particular
-feature_id.
-Input
-  data_record_handle: Resource handle to DataRecord
+A tensorflow OP that returns tensors correspond ng to t   ds, keys and na s of a part cular
+feature_ d.
+ nput
+  data_record_handle: Res ce handle to DataRecord
 Attr
-  feature_id: Id representing the feature whose values will be extracted.
+  feature_ d:  d represent ng t  feature whose values w ll be extracted.
 Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
-  keys: DataRecord keys (int64)
-  names: DataRecord values(string)
+   ds:  ds spec f es t   ndex of t  records[ d]  n t  batch ( nt64)
+  keys: DataRecord keys ( nt64)
+  na s: DataRecord values(str ng)
 )doc");
-class GetSparseBinaryAsTensor : public OpKernel {
- private:
-  int64 feature_id;
+class GetSparseB naryAsTensor : publ c OpKernel {
+ pr vate:
+   nt64 feature_ d;
 
- public:
-  explicit GetSparseBinaryAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
+ publ c:
+  expl c  GetSparseB naryAsTensor(OpKernelConstruct on* context) : OpKernel(context) {
+    OP_REQU RES_OK(context, context->GetAttr("feature_ d", &feature_ d));
   }
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      // We need two passes to the data:
-      // 1 to compute the output size of the tensor
-      // 2 to copy the values to the tensor
-      auto handle = getHandle<DataRecordResource>(context, 0);
+      //   need two passes to t  data:
+      // 1 to compute t  output s ze of t  tensor
+      // 2 to copy t  values to t  tensor
+      auto handle = getHandle<DataRecordRes ce>(context, 0);
       const auto &records = handle->records;
 
-      // Creating a vector we increment every time a key is found
-      std::vector<std::string> temp_names;
-      std::vector<int64> temp_ids;
+      // Creat ng a vector    ncre nt every t   a key  s found
+      std::vector<std::str ng> temp_na s;
+      std::vector< nt64> temp_ ds;
 
-      for (int64 id = 0; id < records.size(); id++) {
-        const auto &sparse_binary = records[id].getSparseBinary();
-        auto it = sparse_binary.find(feature_id);
-        // Find all instances of key in DataRecord
-        if (it != sparse_binary.end()) {
-          // insert to temp_names all the values in the dictionary value
-          temp_names.insert(temp_names.end(), it->second.begin(), it->second.end());
-          temp_ids.insert(temp_ids.end(), it->second.size(), id);
+      for ( nt64  d = 0;  d < records.s ze();  d++) {
+        const auto &sparse_b nary = records[ d].getSparseB nary();
+        auto   = sparse_b nary.f nd(feature_ d);
+        // F nd all  nstances of key  n DataRecord
+         f (  != sparse_b nary.end()) {
+          //  nsert to temp_na s all t  values  n t  d ct onary value
+          temp_na s. nsert(temp_na s.end(),  ->second.beg n(),  ->second.end());
+          temp_ ds. nsert(temp_ ds.end(),  ->second.s ze(),  d);
         }
       }
 
-      // The total_size will be the that of the saved vector
-      const int total_size = static_cast<int64>(temp_names.size());
-      TensorShape shape = {total_size};
-      Tensor* ids = nullptr;
+      // T  total_s ze w ll be t  that of t  saved vector
+      const  nt total_s ze = stat c_cast< nt64>(temp_na s.s ze());
+      TensorShape shape = {total_s ze};
+      Tensor*  ds = nullptr;
       Tensor* keys = nullptr;
-      Tensor* names = nullptr;
+      Tensor* na s = nullptr;
 
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-      OP_REQUIRES_OK(context, context->allocate_output(2, shape, &names));
+      OP_REQU RES_OK(context, context->allocate_output(0, shape, & ds));
+      OP_REQU RES_OK(context, context->allocate_output(1, shape, &keys));
+      OP_REQU RES_OK(context, context->allocate_output(2, shape, &na s));
 
-      auto keys_flat = keys->flat<int64>();
-      auto names_flat = names->flat<string>();
-      auto ids_flat = ids->flat<int64>();
+      auto keys_flat = keys->flat< nt64>();
+      auto na s_flat = na s->flat<str ng>();
+      auto  ds_flat =  ds->flat< nt64>();
 
-      // The feature id value will always be the same
-      std::fill(keys_flat.data(), keys_flat.data() + total_size, feature_id);
-      std::copy(temp_names.begin(), temp_names.end(), names_flat.data());
-      std::copy(temp_ids.begin(), temp_ids.end(), ids_flat.data());
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      // T  feature  d value w ll always be t  sa 
+      std::f ll(keys_flat.data(), keys_flat.data() + total_s ze, feature_ d);
+      std::copy(temp_na s.beg n(), temp_na s.end(), na s_flat.data());
+      std::copy(temp_ ds.beg n(), temp_ ds.end(),  ds_flat.data());
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-REGISTER_OP("GetSparseContinuousAsTensor")
-.Input("data_record_handle: resource")
-.Attr("feature_id: int")
-.Output("ids: int64")
-.Output("keys: int64")
-.Output("names: string")
+REG STER_OP("GetSparseCont nuousAsTensor")
+. nput("data_record_handle: res ce")
+.Attr("feature_ d:  nt")
+.Output(" ds:  nt64")
+.Output("keys:  nt64")
+.Output("na s: str ng")
 .Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns tensors corresponding to the ids, keys, names and values of a particular
-feature_id.
-Input
-  data_record_handle: Resource handle to DataRecord
+A tensorflow OP that returns tensors correspond ng to t   ds, keys, na s and values of a part cular
+feature_ d.
+ nput
+  data_record_handle: Res ce handle to DataRecord
 Attr
-  feature_id: Id representing the feature whose values will be extracted.
+  feature_ d:  d represent ng t  feature whose values w ll be extracted.
 Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
-  keys: DataRecord keys (int64)
-  names: DataRecord values(string)
+   ds:  ds spec f es t   ndex of t  records[ d]  n t  batch ( nt64)
+  keys: DataRecord keys ( nt64)
+  na s: DataRecord values(str ng)
   values: DataRecord values(float)
 )doc");
-class GetSparseContinuousAsTensor : public OpKernel {
- private:
-  int64 feature_id;
+class GetSparseCont nuousAsTensor : publ c OpKernel {
+ pr vate:
+   nt64 feature_ d;
 
- public:
-  explicit GetSparseContinuousAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
+ publ c:
+  expl c  GetSparseCont nuousAsTensor(OpKernelConstruct on* context) : OpKernel(context) {
+    OP_REQU RES_OK(context, context->GetAttr("feature_ d", &feature_ d));
   }
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      // We need two passes to the data:
-      // 1 to compute the output size of the tensor
-      // 2 to copy the values to the tensor
-      auto handle = getHandle<DataRecordResource>(context, 0);
+      //   need two passes to t  data:
+      // 1 to compute t  output s ze of t  tensor
+      // 2 to copy t  values to t  tensor
+      auto handle = getHandle<DataRecordRes ce>(context, 0);
       const auto &records = handle->records;
 
-      // Creating a vector we increment every time a key is found
-      std::vector<std::string> temp_names;
+      // Creat ng a vector    ncre nt every t   a key  s found
+      std::vector<std::str ng> temp_na s;
       std::vector<float> temp_values;
-      std::vector<int64> temp_ids;
+      std::vector< nt64> temp_ ds;
 
-      for (int64 id = 0; id < records.size(); id++) {
-        const auto &sparse_continuous = records[id].getSparseContinuous();
-        auto it = sparse_continuous.find(feature_id);
-        // Find all instances of key in DataRecord
-        if (it != sparse_continuous.end()) {
-          // insert to temp_names all the values in the dictionary value
-          auto value_map = it->second;
+      for ( nt64  d = 0;  d < records.s ze();  d++) {
+        const auto &sparse_cont nuous = records[ d].getSparseCont nuous();
+        auto   = sparse_cont nuous.f nd(feature_ d);
+        // F nd all  nstances of key  n DataRecord
+         f (  != sparse_cont nuous.end()) {
+          //  nsert to temp_na s all t  values  n t  d ct onary value
+          auto value_map =  ->second;
           for (auto& elem : value_map) {
-             temp_names.push_back(elem.first);
+             temp_na s.push_back(elem.f rst);
              temp_values.push_back(elem.second);
-             temp_ids.push_back(id);
+             temp_ ds.push_back( d);
           }
         }
       }
 
-      // The total_size will be the that of the saved vector
-      const int total_size = static_cast<int64>(temp_names.size());
-      TensorShape shape = {total_size};
-      Tensor* ids = nullptr;
+      // T  total_s ze w ll be t  that of t  saved vector
+      const  nt total_s ze = stat c_cast< nt64>(temp_na s.s ze());
+      TensorShape shape = {total_s ze};
+      Tensor*  ds = nullptr;
       Tensor* keys = nullptr;
-      Tensor* names = nullptr;
+      Tensor* na s = nullptr;
       Tensor* values = nullptr;
 
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-      OP_REQUIRES_OK(context, context->allocate_output(2, shape, &names));
-      OP_REQUIRES_OK(context, context->allocate_output(3, shape, &values));
+      OP_REQU RES_OK(context, context->allocate_output(0, shape, & ds));
+      OP_REQU RES_OK(context, context->allocate_output(1, shape, &keys));
+      OP_REQU RES_OK(context, context->allocate_output(2, shape, &na s));
+      OP_REQU RES_OK(context, context->allocate_output(3, shape, &values));
 
-      auto keys_flat = keys->flat<int64>();
-      auto names_flat = names->flat<string>();
-      auto ids_flat = ids->flat<int64>();
+      auto keys_flat = keys->flat< nt64>();
+      auto na s_flat = na s->flat<str ng>();
+      auto  ds_flat =  ds->flat< nt64>();
       auto values_flat = values->flat<float>();
 
-      // The feature id value will always be the same
-      std::fill(keys_flat.data(), keys_flat.data() + total_size, feature_id);
-      std::copy(temp_names.begin(), temp_names.end(), names_flat.data());
-      std::copy(temp_ids.begin(), temp_ids.end(), ids_flat.data());
-      std::copy(temp_values.begin(), temp_values.end(), values_flat.data());
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      // T  feature  d value w ll always be t  sa 
+      std::f ll(keys_flat.data(), keys_flat.data() + total_s ze, feature_ d);
+      std::copy(temp_na s.beg n(), temp_na s.end(), na s_flat.data());
+      std::copy(temp_ ds.beg n(), temp_ ds.end(),  ds_flat.data());
+      std::copy(temp_values.beg n(), temp_values.end(), values_flat.data());
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-// Helper function to add ids, keys and values to common vector
-inline void addIdsKeysValuesToVectors(
-  const int64 id,
-  const int64 key,
+//  lper funct on to add  ds, keys and values to common vector
+ nl ne vo d add dsKeysValuesToVectors(
+  const  nt64  d,
+  const  nt64 key,
   const double value,
-  std::vector<int64>& ids,
-  std::vector<int64>& keys,
+  std::vector< nt64>&  ds,
+  std::vector< nt64>& keys,
   std::vector<float>& values) {
-  ids.push_back(id);
+   ds.push_back( d);
   keys.push_back(key);
   values.push_back(value);
 }
 
 struct KeepFeatures {
   KeepFeatures() : vec(), set() {}
-  template<typename ContainerType>
-  KeepFeatures(const std::vector<int64> &keep_features,
-               const ContainerType *const container) {
-    vec.reserve(keep_features.size());
-#ifdef USE_DENSE_HASH
-    set.resize(keep_features.size());
+  template<typena  Conta nerType>
+  KeepFeatures(const std::vector< nt64> &keep_features,
+               const Conta nerType *const conta ner) {
+    vec.reserve(keep_features.s ze());
+# fdef USE_DENSE_HASH
+    set.res ze(keep_features.s ze());
     set.set_empty_key(0);
 #else
-    set.reserve(keep_features.size());
-#endif  // USE_DENSE_HASH
+    set.reserve(keep_features.s ze());
+#end f  // USE_DENSE_HASH
     set.max_load_factor(0.5);
     for (const auto &elem : keep_features) {
-      if (container->find(elem) == container->end()) continue;
+       f (conta ner->f nd(elem) == conta ner->end()) cont nue;
       vec.push_back(elem);
-      set.insert(elem);
+      set. nsert(elem);
     }
   }
-  size_t size() const {
-    return vec.size();
+  s ze_t s ze() const {
+    return vec.s ze();
   }
-  std::vector<int64> vec;
-  twml::Set<int64> set;
+  std::vector< nt64> vec;
+  twml::Set< nt64> set;
 };
 
-// Helper Function to Filter and Hash Feature for Binary Features
-void filterAndHashFeature(
-  const twml::DataRecord::BinaryFeatures& features,
-  const int64 current_id,
+//  lper Funct on to F lter and Hash Feature for B nary Features
+vo d f lterAndHashFeature(
+  const twml::DataRecord::B naryFeatures& features,
+  const  nt64 current_ d,
   const KeepFeatures &keep_features,
-  std::vector<int64>& ids,
-  std::vector<int64>& keys,
+  std::vector< nt64>&  ds,
+  std::vector< nt64>& keys,
   std::vector<float>& values) {
-  if (keep_features.size() < 2 * features.size()) {
+   f (keep_features.s ze() < 2 * features.s ze()) {
     for (const auto &f : keep_features.vec) {
-      const auto &iter = features.find(f);
-      if (iter == features.end()) continue;
-      addIdsKeysValuesToVectors(current_id, *iter, 1, ids, keys, values);
+      const auto & er = features.f nd(f);
+       f ( er == features.end()) cont nue;
+      add dsKeysValuesToVectors(current_ d, * er, 1,  ds, keys, values);
     }
   } else {
     for (const auto &elem : features) {
-      if (keep_features.set.find(elem) == keep_features.set.end()) continue;
-      addIdsKeysValuesToVectors(current_id, elem, 1, ids, keys, values);
+       f (keep_features.set.f nd(elem) == keep_features.set.end()) cont nue;
+      add dsKeysValuesToVectors(current_ d, elem, 1,  ds, keys, values);
     }
   }
 }
 
-// Helper Function to Filter and Hash Feature for Continuous Features
-void filterAndHashFeature(
-  const twml::DataRecord::ContinuousFeatures& features,
-  const int64 current_id,
+//  lper Funct on to F lter and Hash Feature for Cont nuous Features
+vo d f lterAndHashFeature(
+  const twml::DataRecord::Cont nuousFeatures& features,
+  const  nt64 current_ d,
   const KeepFeatures &keep_features,
-  std::vector<int64>& ids,
-  std::vector<int64>& keys,
+  std::vector< nt64>&  ds,
+  std::vector< nt64>& keys,
   std::vector<float>& values) {
-  if (keep_features.size() < 2 * features.size()) {
+   f (keep_features.s ze() < 2 * features.s ze()) {
     for (const auto &f : keep_features.vec) {
-      const auto &iter = features.find(f);
-      if (iter == features.end()) continue;
-      addIdsKeysValuesToVectors(current_id, iter->first, iter->second, ids, keys, values);
+      const auto & er = features.f nd(f);
+       f ( er == features.end()) cont nue;
+      add dsKeysValuesToVectors(current_ d,  er->f rst,  er->second,  ds, keys, values);
     }
   } else {
     for (const auto &elem : features) {
-      if (keep_features.set.find(elem.first) == keep_features.set.end()) continue;
-      addIdsKeysValuesToVectors(current_id, elem.first, elem.second, ids, keys, values);
+       f (keep_features.set.f nd(elem.f rst) == keep_features.set.end()) cont nue;
+      add dsKeysValuesToVectors(current_ d, elem.f rst, elem.second,  ds, keys, values);
     }
   }
 }
 
-// Helper Function to Filter and Hash Feature for Discrete Features
-void filterAndHashFeature(
-  const twml::DataRecord::DiscreteFeatures& features,
-  const int64 current_id,
+//  lper Funct on to F lter and Hash Feature for D screte Features
+vo d f lterAndHashFeature(
+  const twml::DataRecord::D screteFeatures& features,
+  const  nt64 current_ d,
   const KeepFeatures &keep_features,
-  std::vector<int64>& ids,
-  std::vector<int64>& keys,
+  std::vector< nt64>&  ds,
+  std::vector< nt64>& keys,
   std::vector<float>& values) {
-  if (keep_features.size() < 2 * features.size()) {
+   f (keep_features.s ze() < 2 * features.s ze()) {
     for (const auto &f : keep_features.vec) {
-      const auto &iter = features.find(f);
-      if (iter == features.end()) continue;
-      int64_t key = twml::mixDiscreteIdAndValue(iter->first, iter->second);
-      addIdsKeysValuesToVectors(current_id, key, 1, ids, keys, values);
+      const auto & er = features.f nd(f);
+       f ( er == features.end()) cont nue;
+       nt64_t key = twml::m xD screte dAndValue( er->f rst,  er->second);
+      add dsKeysValuesToVectors(current_ d, key, 1,  ds, keys, values);
     }
   } else {
     for (const auto &elem : features) {
-      if (keep_features.set.find(elem.first) == keep_features.set.end()) continue;
-      int64_t key = twml::mixDiscreteIdAndValue(elem.first, elem.second);
-      addIdsKeysValuesToVectors(current_id, key, 1, ids, keys, values);
+       f (keep_features.set.f nd(elem.f rst) == keep_features.set.end()) cont nue;
+       nt64_t key = twml::m xD screte dAndValue(elem.f rst, elem.second);
+      add dsKeysValuesToVectors(current_ d, key, 1,  ds, keys, values);
     }
   }
 }
 
-// Helper Function to Filter and Hash Feature for String Features
-void filterAndHashFeature(
-  const twml::DataRecord::StringFeatures& features,
-  const int64 current_id,
+//  lper Funct on to F lter and Hash Feature for Str ng Features
+vo d f lterAndHashFeature(
+  const twml::DataRecord::Str ngFeatures& features,
+  const  nt64 current_ d,
   const KeepFeatures &keep_features,
-  std::vector<int64>& ids,
-  std::vector<int64>& keys,
+  std::vector< nt64>&  ds,
+  std::vector< nt64>& keys,
   std::vector<float>& values) {
-  if (keep_features.size() < 2 * features.size()) {
+   f (keep_features.s ze() < 2 * features.s ze()) {
     for (const auto &f : keep_features.vec) {
-      const auto &iter = features.find(f);
-      if (iter == features.end()) continue;
-      int64_t key = twml::mixStringIdAndValue(
-        iter->first,
-        iter->second.size(),
-        reinterpret_cast<const uint8_t*>(iter->second.c_str()));
-      addIdsKeysValuesToVectors(current_id, key, 1, ids, keys, values);
+      const auto & er = features.f nd(f);
+       f ( er == features.end()) cont nue;
+       nt64_t key = twml::m xStr ng dAndValue(
+         er->f rst,
+         er->second.s ze(),
+        re nterpret_cast<const u nt8_t*>( er->second.c_str()));
+      add dsKeysValuesToVectors(current_ d, key, 1,  ds, keys, values);
     }
   } else {
     for (const auto &elem : features) {
-      if (keep_features.set.find(elem.first) == keep_features.set.end()) continue;
-      int64_t key = twml::mixStringIdAndValue(
-        elem.first,
-        elem.second.size(),
-        reinterpret_cast<const uint8_t*>(elem.second.c_str()));
-      addIdsKeysValuesToVectors(current_id, key, 1, ids, keys, values);
+       f (keep_features.set.f nd(elem.f rst) == keep_features.set.end()) cont nue;
+       nt64_t key = twml::m xStr ng dAndValue(
+        elem.f rst,
+        elem.second.s ze(),
+        re nterpret_cast<const u nt8_t*>(elem.second.c_str()));
+      add dsKeysValuesToVectors(current_ d, key, 1,  ds, keys, values);
     }
   }
 }
 
-// Helper Function to Filter and Hash Feature for Sparse Binary Features
-void filterAndHashFeature(
-  const twml::DataRecord::SparseBinaryFeatures& features,
-  const int64 current_id,
+//  lper Funct on to F lter and Hash Feature for Sparse B nary Features
+vo d f lterAndHashFeature(
+  const twml::DataRecord::SparseB naryFeatures& features,
+  const  nt64 current_ d,
   const KeepFeatures &keep_features,
-  std::vector<int64>& ids,
-  std::vector<int64>& keys,
+  std::vector< nt64>&  ds,
+  std::vector< nt64>& keys,
   std::vector<float>& values) {
-  if (keep_features.size() < 2 * features.size()) {
+   f (keep_features.s ze() < 2 * features.s ze()) {
     for (const auto &f : keep_features.vec) {
-      const auto &iter = features.find(f);
-      if (iter == features.end()) continue;
-      for (const auto &name : iter->second) {
-        int64_t key = twml::mixStringIdAndValue(iter->first, name.size(),
-                                                reinterpret_cast<const uint8_t*>(name.c_str()));
-        addIdsKeysValuesToVectors(current_id, key, 1, ids, keys, values);
+      const auto & er = features.f nd(f);
+       f ( er == features.end()) cont nue;
+      for (const auto &na  :  er->second) {
+         nt64_t key = twml::m xStr ng dAndValue( er->f rst, na .s ze(),
+                                                re nterpret_cast<const u nt8_t*>(na .c_str()));
+        add dsKeysValuesToVectors(current_ d, key, 1,  ds, keys, values);
       }
     }
   } else {
     for (const auto &elem : features) {
-      if (keep_features.set.find(elem.first) == keep_features.set.end()) continue;
-      for (const auto &name : elem.second) {
-        int64_t key = twml::mixStringIdAndValue(elem.first, name.size(),
-                                                reinterpret_cast<const uint8_t*>(name.c_str()));
-        addIdsKeysValuesToVectors(current_id, key, 1, ids, keys, values);
+       f (keep_features.set.f nd(elem.f rst) == keep_features.set.end()) cont nue;
+      for (const auto &na  : elem.second) {
+         nt64_t key = twml::m xStr ng dAndValue(elem.f rst, na .s ze(),
+                                                re nterpret_cast<const u nt8_t*>(na .c_str()));
+        add dsKeysValuesToVectors(current_ d, key, 1,  ds, keys, values);
       }
     }
   }
 }
 
-// Helper Function to Filter and Hash Feature for Sparse Continuous Features
-void filterAndHashFeature(
-  const twml::DataRecord::SparseContinuousFeatures& features,
-  const int64 current_id,
+//  lper Funct on to F lter and Hash Feature for Sparse Cont nuous Features
+vo d f lterAndHashFeature(
+  const twml::DataRecord::SparseCont nuousFeatures& features,
+  const  nt64 current_ d,
   const KeepFeatures &keep_features,
-  std::vector<int64>& ids,
-  std::vector<int64>& keys,
+  std::vector< nt64>&  ds,
+  std::vector< nt64>& keys,
   std::vector<float>& values) {
-  if (keep_features.size() < 2 * features.size()) {
+   f (keep_features.s ze() < 2 * features.s ze()) {
     for (const auto &f : keep_features.vec) {
-      const auto &iter = features.find(f);
-      if (iter == features.end()) continue;
-      for (const auto &map : iter->second) {
-        int64_t key = twml::mixStringIdAndValue(
-          iter->first,
-          map.first.size(),
-          reinterpret_cast<const uint8_t*>(map.first.c_str()));
-        addIdsKeysValuesToVectors(current_id, key, map.second, ids, keys, values);
+      const auto & er = features.f nd(f);
+       f ( er == features.end()) cont nue;
+      for (const auto &map :  er->second) {
+         nt64_t key = twml::m xStr ng dAndValue(
+           er->f rst,
+          map.f rst.s ze(),
+          re nterpret_cast<const u nt8_t*>(map.f rst.c_str()));
+        add dsKeysValuesToVectors(current_ d, key, map.second,  ds, keys, values);
       }
     }
   } else {
     for (const auto &elem : features) {
-      if (keep_features.set.find(elem.first) == keep_features.set.end()) continue;
+       f (keep_features.set.f nd(elem.f rst) == keep_features.set.end()) cont nue;
       for (const auto &map : elem.second) {
-        int64_t key = twml::mixStringIdAndValue(
-          elem.first,
-          map.first.size(),
-          reinterpret_cast<const uint8_t*>(map.first.c_str()));
-        addIdsKeysValuesToVectors(current_id, key, map.second, ids, keys, values);
+         nt64_t key = twml::m xStr ng dAndValue(
+          elem.f rst,
+          map.f rst.s ze(),
+          re nterpret_cast<const u nt8_t*>(map.f rst.c_str()));
+        add dsKeysValuesToVectors(current_ d, key, map.second,  ds, keys, values);
       }
     }
   }
 }
 
-// Helper Function to Filter and Hash Feature for Sparse Continuous Features
-void filterAndHashFeatureCompat(
-  const twml::DataRecord::SparseContinuousFeatures& features,
-  const int64 current_id,
+//  lper Funct on to F lter and Hash Feature for Sparse Cont nuous Features
+vo d f lterAndHashFeatureCompat(
+  const twml::DataRecord::SparseCont nuousFeatures& features,
+  const  nt64 current_ d,
   const KeepFeatures &keep_features,
-  std::vector<int64>& ids,
-  std::vector<int64>& keys,
+  std::vector< nt64>&  ds,
+  std::vector< nt64>& keys,
   std::vector<float>& values) {
-  if (keep_features.size() < 2 * features.size()) {
+   f (keep_features.s ze() < 2 * features.s ze()) {
     for (const auto &f : keep_features.vec) {
-      const auto &iter = features.find(f);
-      if (iter == features.end()) continue;
-      for (const auto &map : iter->second) {
-        int64_t key = twml::featureId(map.first);
-        addIdsKeysValuesToVectors(current_id, key, map.second, ids, keys, values);
+      const auto & er = features.f nd(f);
+       f ( er == features.end()) cont nue;
+      for (const auto &map :  er->second) {
+         nt64_t key = twml::feature d(map.f rst);
+        add dsKeysValuesToVectors(current_ d, key, map.second,  ds, keys, values);
       }
     }
   } else {
     for (const auto &elem : features) {
-      if (keep_features.set.find(elem.first) == keep_features.set.end()) continue;
+       f (keep_features.set.f nd(elem.f rst) == keep_features.set.end()) cont nue;
       for (const auto &map : elem.second) {
-        int64_t key = twml::featureId(map.first);
-        addIdsKeysValuesToVectors(current_id, key, map.second, ids, keys, values);
+         nt64_t key = twml::feature d(map.f rst);
+        add dsKeysValuesToVectors(current_ d, key, map.second,  ds, keys, values);
       }
     }
   }
 }
 
-void copy_if_exists(std::vector<int64>& out,
-                    const std::vector<int64>& in,
-                    const twml::Map<int64_t, int64_t> *const map) {
-  out.reserve(in.size());
-  for (const auto &elem : in) {
-    if (map->find(elem) == map->end()) continue;
+vo d copy_ f_ex sts(std::vector< nt64>& out,
+                    const std::vector< nt64>&  n,
+                    const twml::Map< nt64_t,  nt64_t> *const map) {
+  out.reserve( n.s ze());
+  for (const auto &elem :  n) {
+     f (map->f nd(elem) == map->end()) cont nue;
     out.push_back(elem);
   }
 }
 
-void ComputeHashedFeaturesAsTensor(OpKernelContext* context,
-                                   const DataRecordResource *const handle,
-                                   const KeepFeatures &binary_keep_features,
-                                   const KeepFeatures &continuous_keep_features,
-                                   const KeepFeatures &discrete_keep_features,
-                                   const KeepFeatures &string_keep_features,
-                                   const KeepFeatures &sparse_binary_keep_features,
-                                   const KeepFeatures &sparse_continuous_keep_features,
-                                   bool sparse_continuous_compatibility) {
+vo d ComputeHas dFeaturesAsTensor(OpKernelContext* context,
+                                   const DataRecordRes ce *const handle,
+                                   const KeepFeatures &b nary_keep_features,
+                                   const KeepFeatures &cont nuous_keep_features,
+                                   const KeepFeatures &d screte_keep_features,
+                                   const KeepFeatures &str ng_keep_features,
+                                   const KeepFeatures &sparse_b nary_keep_features,
+                                   const KeepFeatures &sparse_cont nuous_keep_features,
+                                   bool sparse_cont nuous_compat b l y) {
 
   const auto &records = handle->records;
-  uint64_t estimated_size = (binary_keep_features.size() + continuous_keep_features.size() +
-                             discrete_keep_features.size() + string_keep_features.size() +
-                             sparse_binary_keep_features.size() +
-                             sparse_continuous_keep_features.size());
+  u nt64_t est mated_s ze = (b nary_keep_features.s ze() + cont nuous_keep_features.s ze() +
+                             d screte_keep_features.s ze() + str ng_keep_features.s ze() +
+                             sparse_b nary_keep_features.s ze() +
+                             sparse_cont nuous_keep_features.s ze());
   // Construct temporary vectors for common features
-  std::vector<int64> common_ids, common_keys, temp_ids, temp_keys;
+  std::vector< nt64> common_ ds, common_keys, temp_ ds, temp_keys;
   std::vector<float> common_values, temp_values;
-  common_ids.reserve(estimated_size);
-  common_keys.reserve(estimated_size);
-  common_values.reserve(estimated_size);
+  common_ ds.reserve(est mated_s ze);
+  common_keys.reserve(est mated_s ze);
+  common_values.reserve(est mated_s ze);
 
-  const auto &common_binary = handle->common.getBinary();
-  const auto &common_continuous = handle->common.getContinuous();
-  const auto &common_discrete = handle->common.getDiscrete();
-  const auto &common_string = handle->common.getString();
-  const auto &common_sparse_binary = handle->common.getSparseBinary();
-  const auto &common_sparse_continuous = handle->common.getSparseContinuous();
+  const auto &common_b nary = handle->common.getB nary();
+  const auto &common_cont nuous = handle->common.getCont nuous();
+  const auto &common_d screte = handle->common.getD screte();
+  const auto &common_str ng = handle->common.getStr ng();
+  const auto &common_sparse_b nary = handle->common.getSparseB nary();
+  const auto &common_sparse_cont nuous = handle->common.getSparseCont nuous();
 
-  filterAndHashFeature(common_binary, 0, binary_keep_features,
-                       common_ids, common_keys, common_values);
-  filterAndHashFeature(common_continuous, 0, continuous_keep_features,
-                       common_ids, common_keys, common_values);
-  filterAndHashFeature(common_discrete, 0, discrete_keep_features,
-                       common_ids, common_keys, common_values);
-  filterAndHashFeature(common_string, 0, string_keep_features,
-                       common_ids, common_keys, common_values);
-  filterAndHashFeature(common_sparse_binary, 0, sparse_binary_keep_features,
-                       common_ids, common_keys, common_values);
-  if (sparse_continuous_compatibility) {
-    filterAndHashFeatureCompat(common_sparse_continuous, 0, sparse_continuous_keep_features,
-                               common_ids, common_keys, common_values);
+  f lterAndHashFeature(common_b nary, 0, b nary_keep_features,
+                       common_ ds, common_keys, common_values);
+  f lterAndHashFeature(common_cont nuous, 0, cont nuous_keep_features,
+                       common_ ds, common_keys, common_values);
+  f lterAndHashFeature(common_d screte, 0, d screte_keep_features,
+                       common_ ds, common_keys, common_values);
+  f lterAndHashFeature(common_str ng, 0, str ng_keep_features,
+                       common_ ds, common_keys, common_values);
+  f lterAndHashFeature(common_sparse_b nary, 0, sparse_b nary_keep_features,
+                       common_ ds, common_keys, common_values);
+   f (sparse_cont nuous_compat b l y) {
+    f lterAndHashFeatureCompat(common_sparse_cont nuous, 0, sparse_cont nuous_keep_features,
+                               common_ ds, common_keys, common_values);
   } else {
-    filterAndHashFeature(common_sparse_continuous, 0, sparse_continuous_keep_features,
-                         common_ids, common_keys, common_values);
+    f lterAndHashFeature(common_sparse_cont nuous, 0, sparse_cont nuous_keep_features,
+                         common_ ds, common_keys, common_values);
   }
-  common_ids.clear();
+  common_ ds.clear();
   // Construct temporary vectors for all features
-  estimated_size = (estimated_size + common_keys.size()) * records.size();
-  temp_ids.reserve(estimated_size);
-  temp_keys.reserve(estimated_size);
-  temp_values.reserve(estimated_size);
+  est mated_s ze = (est mated_s ze + common_keys.s ze()) * records.s ze();
+  temp_ ds.reserve(est mated_s ze);
+  temp_keys.reserve(est mated_s ze);
+  temp_values.reserve(est mated_s ze);
 
-  for (int64 id = 0; id < records.size(); id++) {
-    temp_ids.insert(temp_ids.end(), common_keys.size(), id);
-    temp_keys.insert(temp_keys.end(), common_keys.begin(), common_keys.end());
-    temp_values.insert(temp_values.end(), common_values.begin(), common_values.end());
-    const auto &binary = records[id].getBinary();
-    const auto &continuous = records[id].getContinuous();
-    const auto &discrete = records[id].getDiscrete();
-    const auto &str = records[id].getString();
-    const auto &sparse_binary = records[id].getSparseBinary();
-    const auto &sparse_continuous = records[id].getSparseContinuous();
+  for ( nt64  d = 0;  d < records.s ze();  d++) {
+    temp_ ds. nsert(temp_ ds.end(), common_keys.s ze(),  d);
+    temp_keys. nsert(temp_keys.end(), common_keys.beg n(), common_keys.end());
+    temp_values. nsert(temp_values.end(), common_values.beg n(), common_values.end());
+    const auto &b nary = records[ d].getB nary();
+    const auto &cont nuous = records[ d].getCont nuous();
+    const auto &d screte = records[ d].getD screte();
+    const auto &str = records[ d].getStr ng();
+    const auto &sparse_b nary = records[ d].getSparseB nary();
+    const auto &sparse_cont nuous = records[ d].getSparseCont nuous();
 
-    filterAndHashFeature(binary, id, binary_keep_features,
-                         temp_ids, temp_keys, temp_values);
-    filterAndHashFeature(continuous, id, continuous_keep_features,
-                         temp_ids, temp_keys, temp_values);
-    filterAndHashFeature(discrete, id, discrete_keep_features,
-                         temp_ids, temp_keys, temp_values);
-    filterAndHashFeature(str, id, string_keep_features,
-                         temp_ids, temp_keys, temp_values);
-    filterAndHashFeature(sparse_binary, id, sparse_binary_keep_features,
-                         temp_ids, temp_keys, temp_values);
-    if (sparse_continuous_compatibility) {
-      filterAndHashFeatureCompat(sparse_continuous, id, sparse_continuous_keep_features,
-                                 temp_ids, temp_keys, temp_values);
+    f lterAndHashFeature(b nary,  d, b nary_keep_features,
+                         temp_ ds, temp_keys, temp_values);
+    f lterAndHashFeature(cont nuous,  d, cont nuous_keep_features,
+                         temp_ ds, temp_keys, temp_values);
+    f lterAndHashFeature(d screte,  d, d screte_keep_features,
+                         temp_ ds, temp_keys, temp_values);
+    f lterAndHashFeature(str,  d, str ng_keep_features,
+                         temp_ ds, temp_keys, temp_values);
+    f lterAndHashFeature(sparse_b nary,  d, sparse_b nary_keep_features,
+                         temp_ ds, temp_keys, temp_values);
+     f (sparse_cont nuous_compat b l y) {
+      f lterAndHashFeatureCompat(sparse_cont nuous,  d, sparse_cont nuous_keep_features,
+                                 temp_ ds, temp_keys, temp_values);
     } else {
-      filterAndHashFeature(sparse_continuous, id, sparse_continuous_keep_features,
-                           temp_ids, temp_keys, temp_values);
+      f lterAndHashFeature(sparse_cont nuous,  d, sparse_cont nuous_keep_features,
+                           temp_ ds, temp_keys, temp_values);
     }
   }
 
-  // Copy the temporary vectors into the output Tensors
-  TensorShape shape = {static_cast<int64>(temp_ids.size())};
-  Tensor* ids = nullptr;
+  // Copy t  temporary vectors  nto t  output Tensors
+  TensorShape shape = {stat c_cast< nt64>(temp_ ds.s ze())};
+  Tensor*  ds = nullptr;
   Tensor* keys = nullptr;
   Tensor* values = nullptr;
-  OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-  OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-  OP_REQUIRES_OK(context, context->allocate_output(2, shape, &values));
-  auto ids_flat = ids->flat<int64>();
-  auto keys_flat = keys->flat<int64>();
+  OP_REQU RES_OK(context, context->allocate_output(0, shape, & ds));
+  OP_REQU RES_OK(context, context->allocate_output(1, shape, &keys));
+  OP_REQU RES_OK(context, context->allocate_output(2, shape, &values));
+  auto  ds_flat =  ds->flat< nt64>();
+  auto keys_flat = keys->flat< nt64>();
   auto values_flat = values->flat<float>();
-  std::copy(temp_ids.begin(), temp_ids.end(), ids_flat.data());
-  std::copy(temp_keys.begin(), temp_keys.end(), keys_flat.data());
-  std::copy(temp_values.begin(), temp_values.end(), values_flat.data());
+  std::copy(temp_ ds.beg n(), temp_ ds.end(),  ds_flat.data());
+  std::copy(temp_keys.beg n(), temp_keys.end(), keys_flat.data());
+  std::copy(temp_values.beg n(), temp_values.end(), values_flat.data());
 }
 
-REGISTER_OP("GetHashedFeaturesAsSparseTensor")
-.Input("data_record_handle: resource")
-.Attr("binary_keep_features: list(int)")
-.Attr("continuous_keep_features: list(int)")
-.Attr("discrete_keep_features: list(int)")
-.Attr("string_keep_features: list(int)")
-.Attr("sparse_binary_keep_features: list(int)")
-.Attr("sparse_continuous_keep_features: list(int)")
-.Output("ids: int64")
-.Output("keys: int64")
+REG STER_OP("GetHas dFeaturesAsSparseTensor")
+. nput("data_record_handle: res ce")
+.Attr("b nary_keep_features: l st( nt)")
+.Attr("cont nuous_keep_features: l st( nt)")
+.Attr("d screte_keep_features: l st( nt)")
+.Attr("str ng_keep_features: l st( nt)")
+.Attr("sparse_b nary_keep_features: l st( nt)")
+.Attr("sparse_cont nuous_keep_features: l st( nt)")
+.Output(" ds:  nt64")
+.Output("keys:  nt64")
 .Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
   return Status::OK();
 }).Doc(R"doc(
-A tensorflow OP for returning required features of different type as
-a single sparse tensor. Hashing trick is applied.
+A tensorflow OP for return ng requ red features of d fferent type as
+a s ngle sparse tensor. Hash ng tr ck  s appl ed.
 
-Input
-  data_record_handle: Resource handle to DataRecord
+ nput
+  data_record_handle: Res ce handle to DataRecord
 
 Outputs
-  ids: ids specifies the index of the records in the batch (int64)
-  keys: DataRecord keys (int64)
+   ds:  ds spec f es t   ndex of t  records  n t  batch ( nt64)
+  keys: DataRecord keys ( nt64)
   values: DataRecord values (float)
 )doc");
 
-class GetHashedFeaturesAsSparseTensor: public OpKernel {
- public:
-  explicit GetHashedFeaturesAsSparseTensor(OpKernelConstruction* context): OpKernel(context) {
-    // Get the list of features to keep for each feature type
-    OP_REQUIRES_OK(context, context->GetAttr("binary_keep_features", &binary_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("continuous_keep_features", &continuous_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("discrete_keep_features", &discrete_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("string_keep_features", &string_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("sparse_binary_keep_features", &sparse_binary_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("sparse_continuous_keep_features", &sparse_continuous_keep_features_));
+class GetHas dFeaturesAsSparseTensor: publ c OpKernel {
+ publ c:
+  expl c  GetHas dFeaturesAsSparseTensor(OpKernelConstruct on* context): OpKernel(context) {
+    // Get t  l st of features to keep for each feature type
+    OP_REQU RES_OK(context, context->GetAttr("b nary_keep_features", &b nary_keep_features_));
+    OP_REQU RES_OK(context, context->GetAttr("cont nuous_keep_features", &cont nuous_keep_features_));
+    OP_REQU RES_OK(context, context->GetAttr("d screte_keep_features", &d screte_keep_features_));
+    OP_REQU RES_OK(context, context->GetAttr("str ng_keep_features", &str ng_keep_features_));
+    OP_REQU RES_OK(context, context->GetAttr("sparse_b nary_keep_features", &sparse_b nary_keep_features_));
+    OP_REQU RES_OK(context, context->GetAttr("sparse_cont nuous_keep_features", &sparse_cont nuous_keep_features_));
   }
 
- private:
-  std::vector<int64> binary_keep_features_, continuous_keep_features_, discrete_keep_features_;
-  std::vector<int64> string_keep_features_, sparse_binary_keep_features_, sparse_continuous_keep_features_;
+ pr vate:
+  std::vector< nt64> b nary_keep_features_, cont nuous_keep_features_, d screte_keep_features_;
+  std::vector< nt64> str ng_keep_features_, sparse_b nary_keep_features_, sparse_cont nuous_keep_features_;
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
-      // Create a new list of keep features based on the original keep_set.
-      // This is to ensure compatibility with existing behavior such as:
-      //  - Ensure no new features are decoded in this op.
-      //  - Ensure labels or weights dont get included here.
-      // TODO: Should we return features requested by user here even if they are labels / weights?
-      KeepFeatures binary_keep_features(binary_keep_features_, handle->keep_map);
-      KeepFeatures continuous_keep_features(continuous_keep_features_, handle->keep_map);
-      KeepFeatures discrete_keep_features(discrete_keep_features_, handle->keep_map);
-      KeepFeatures string_keep_features(string_keep_features_, handle->keep_map);
-      KeepFeatures sparse_binary_keep_features(sparse_binary_keep_features_, handle->keep_map);
-      KeepFeatures sparse_continuous_keep_features(sparse_continuous_keep_features_, handle->keep_map);
-      ComputeHashedFeaturesAsTensor(context, handle.get(),
-                                    binary_keep_features,
-                                    continuous_keep_features,
-                                    discrete_keep_features,
-                                    string_keep_features,
-                                    sparse_binary_keep_features,
-                                    sparse_continuous_keep_features,
+      auto handle = getHandle<DataRecordRes ce>(context, 0);
+      // Create a new l st of keep features based on t  or g nal keep_set.
+      // T   s to ensure compat b l y w h ex st ng behav or such as:
+      //  - Ensure no new features are decoded  n t  op.
+      //  - Ensure labels or   ghts dont get  ncluded  re.
+      // TODO: Should   return features requested by user  re even  f t y are labels /   ghts?
+      KeepFeatures b nary_keep_features(b nary_keep_features_, handle->keep_map);
+      KeepFeatures cont nuous_keep_features(cont nuous_keep_features_, handle->keep_map);
+      KeepFeatures d screte_keep_features(d screte_keep_features_, handle->keep_map);
+      KeepFeatures str ng_keep_features(str ng_keep_features_, handle->keep_map);
+      KeepFeatures sparse_b nary_keep_features(sparse_b nary_keep_features_, handle->keep_map);
+      KeepFeatures sparse_cont nuous_keep_features(sparse_cont nuous_keep_features_, handle->keep_map);
+      ComputeHas dFeaturesAsTensor(context, handle.get(),
+                                    b nary_keep_features,
+                                    cont nuous_keep_features,
+                                    d screte_keep_features,
+                                    str ng_keep_features,
+                                    sparse_b nary_keep_features,
+                                    sparse_cont nuous_keep_features,
                                     false);
-    } catch(const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch(const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-REGISTER_OP("GetHashedFeaturesAsSparseTensorV2")
-.Input("data_record_handle: resource")
-.Attr("binary_keep_features: list(int)")
-.Attr("continuous_keep_features: list(int)")
-.Attr("discrete_keep_features: list(int)")
-.Attr("string_keep_features: list(int)")
-.Attr("sparse_binary_keep_features: list(int)")
-.Attr("sparse_continuous_keep_features: list(int)")
-.Attr("keep_features: list(int)")
-.Attr("keep_codes: list(int)")
-.Attr("decode_mode: int = 0")
-.Output("ids: int64")
-.Output("keys: int64")
+REG STER_OP("GetHas dFeaturesAsSparseTensorV2")
+. nput("data_record_handle: res ce")
+.Attr("b nary_keep_features: l st( nt)")
+.Attr("cont nuous_keep_features: l st( nt)")
+.Attr("d screte_keep_features: l st( nt)")
+.Attr("str ng_keep_features: l st( nt)")
+.Attr("sparse_b nary_keep_features: l st( nt)")
+.Attr("sparse_cont nuous_keep_features: l st( nt)")
+.Attr("keep_features: l st( nt)")
+.Attr("keep_codes: l st( nt)")
+.Attr("decode_mode:  nt = 0")
+.Output(" ds:  nt64")
+.Output("keys:  nt64")
 .Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
   return Status::OK();
 }).Doc(R"doc(
-A tensorflow OP for returning required features of different type as
-a single sparse tensor. Hashing trick is applied.
+A tensorflow OP for return ng requ red features of d fferent type as
+a s ngle sparse tensor. Hash ng tr ck  s appl ed.
 
-Input
-  data_record_handle: Resource handle to DataRecord
+ nput
+  data_record_handle: Res ce handle to DataRecord
 
 Outputs
-  ids: ids specifies the index of the records in the batch (int64)
-  keys: DataRecord keys (int64)
+   ds:  ds spec f es t   ndex of t  records  n t  batch ( nt64)
+  keys: DataRecord keys ( nt64)
   values: DataRecord values (float)
 )doc");
 
-class GetHashedFeaturesAsSparseTensorV2: public OpKernel {
- public:
-  explicit GetHashedFeaturesAsSparseTensorV2(OpKernelConstruction* context): OpKernel(context) {
-    std::vector<int64> keep_features;
-    std::vector<int64> keep_codes;
-    std::vector<int64> binary_keep_features_, continuous_keep_features_, discrete_keep_features_;
-    std::vector<int64> string_keep_features_, sparse_binary_keep_features_, sparse_continuous_keep_features_;
+class GetHas dFeaturesAsSparseTensorV2: publ c OpKernel {
+ publ c:
+  expl c  GetHas dFeaturesAsSparseTensorV2(OpKernelConstruct on* context): OpKernel(context) {
+    std::vector< nt64> keep_features;
+    std::vector< nt64> keep_codes;
+    std::vector< nt64> b nary_keep_features_, cont nuous_keep_features_, d screte_keep_features_;
+    std::vector< nt64> str ng_keep_features_, sparse_b nary_keep_features_, sparse_cont nuous_keep_features_;
 
-    // Get the list of features to keep for each feature type
-    OP_REQUIRES_OK(context, context->GetAttr("binary_keep_features", &binary_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("continuous_keep_features", &continuous_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("discrete_keep_features", &discrete_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("string_keep_features", &string_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("sparse_binary_keep_features", &sparse_binary_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("sparse_continuous_keep_features", &sparse_continuous_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("keep_features", &keep_features));
-    OP_REQUIRES_OK(context, context->GetAttr("keep_codes", &keep_codes));
-    OP_REQUIRES_OK(context, context->GetAttr("decode_mode", &m_decode_mode));
+    // Get t  l st of features to keep for each feature type
+    OP_REQU RES_OK(context, context->GetAttr("b nary_keep_features", &b nary_keep_features_));
+    OP_REQU RES_OK(context, context->GetAttr("cont nuous_keep_features", &cont nuous_keep_features_));
+    OP_REQU RES_OK(context, context->GetAttr("d screte_keep_features", &d screte_keep_features_));
+    OP_REQU RES_OK(context, context->GetAttr("str ng_keep_features", &str ng_keep_features_));
+    OP_REQU RES_OK(context, context->GetAttr("sparse_b nary_keep_features", &sparse_b nary_keep_features_));
+    OP_REQU RES_OK(context, context->GetAttr("sparse_cont nuous_keep_features", &sparse_cont nuous_keep_features_));
+    OP_REQU RES_OK(context, context->GetAttr("keep_features", &keep_features));
+    OP_REQU RES_OK(context, context->GetAttr("keep_codes", &keep_codes));
+    OP_REQU RES_OK(context, context->GetAttr("decode_mode", &m_decode_mode));
 
-    twml::Map<int64_t, int64_t> keep_map;
-#ifdef USE_DENSE_HASH
+    twml::Map< nt64_t,  nt64_t> keep_map;
+# fdef USE_DENSE_HASH
     keep_map.set_empty_key(0);
-#endif  // USE_DENSE_HASH
-    for (uint64_t i = 0; i < keep_features.size(); i++) {
-      keep_map[keep_features[i]] = keep_codes[i];
+#end f  // USE_DENSE_HASH
+    for (u nt64_t   = 0;   < keep_features.s ze();  ++) {
+      keep_map[keep_features[ ]] = keep_codes[ ];
     }
 
 
-    binary_keep_features = KeepFeatures(binary_keep_features_, &keep_map);
-    continuous_keep_features = KeepFeatures(continuous_keep_features_, &keep_map);
-    discrete_keep_features = KeepFeatures(discrete_keep_features_, &keep_map);
-    string_keep_features = KeepFeatures(string_keep_features_, &keep_map);
-    sparse_binary_keep_features = KeepFeatures(sparse_binary_keep_features_, &keep_map);
-    sparse_continuous_keep_features = KeepFeatures(sparse_continuous_keep_features_, &keep_map);
+    b nary_keep_features = KeepFeatures(b nary_keep_features_, &keep_map);
+    cont nuous_keep_features = KeepFeatures(cont nuous_keep_features_, &keep_map);
+    d screte_keep_features = KeepFeatures(d screte_keep_features_, &keep_map);
+    str ng_keep_features = KeepFeatures(str ng_keep_features_, &keep_map);
+    sparse_b nary_keep_features = KeepFeatures(sparse_b nary_keep_features_, &keep_map);
+    sparse_cont nuous_keep_features = KeepFeatures(sparse_cont nuous_keep_features_, &keep_map);
 
   }
 
- private:
-  KeepFeatures binary_keep_features, continuous_keep_features, discrete_keep_features;
-  KeepFeatures string_keep_features, sparse_binary_keep_features, sparse_continuous_keep_features;
-  int64 m_decode_mode;
+ pr vate:
+  KeepFeatures b nary_keep_features, cont nuous_keep_features, d screte_keep_features;
+  KeepFeatures str ng_keep_features, sparse_b nary_keep_features, sparse_cont nuous_keep_features;
+   nt64 m_decode_mode;
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
-      // Create a new list of keep features based on the original keep_set.
-      // This is to ensure compatibility with existing behavior such as:
-      //  - Ensure no new features are decoded in this op.
-      //  - Ensure labels or weights dont get included here.
-      // TODO: Should we return features requested by user here even if they are labels / weights?
-      ComputeHashedFeaturesAsTensor(context, handle.get(),
-                                    binary_keep_features,
-                                    continuous_keep_features,
-                                    discrete_keep_features,
-                                    string_keep_features,
-                                    sparse_binary_keep_features,
-                                    sparse_continuous_keep_features,
+      auto handle = getHandle<DataRecordRes ce>(context, 0);
+      // Create a new l st of keep features based on t  or g nal keep_set.
+      // T   s to ensure compat b l y w h ex st ng behav or such as:
+      //  - Ensure no new features are decoded  n t  op.
+      //  - Ensure labels or   ghts dont get  ncluded  re.
+      // TODO: Should   return features requested by user  re even  f t y are labels /   ghts?
+      ComputeHas dFeaturesAsTensor(context, handle.get(),
+                                    b nary_keep_features,
+                                    cont nuous_keep_features,
+                                    d screte_keep_features,
+                                    str ng_keep_features,
+                                    sparse_b nary_keep_features,
+                                    sparse_cont nuous_keep_features,
                                     m_decode_mode == 0);
-    } catch(const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch(const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
 
-#define REGISTER_DECODE_DATA_RECORD(InputType)  \
-  REGISTER_KERNEL_BUILDER(                      \
-    Name("DecodeDataRecord")                    \
-    .Device(DEVICE_CPU)                         \
-    .TypeConstraint<InputType>("InputType"),    \
-    DecodeDataRecord<InputType>);               \
+#def ne REG STER_DECODE_DATA_RECORD( nputType)  \
+  REG STER_KERNEL_BU LDER(                      \
+    Na ("DecodeDataRecord")                    \
+    .Dev ce(DEV CE_CPU)                         \
+    .TypeConstra nt< nputType>(" nputType"),    \
+    DecodeDataRecord< nputType>);               \
 
-REGISTER_DECODE_DATA_RECORD(uint8)
-REGISTER_DECODE_DATA_RECORD(string)
+REG STER_DECODE_DATA_RECORD(u nt8)
+REG STER_DECODE_DATA_RECORD(str ng)
 
-#define REGISTER_GETTER(FIELD)                  \
-  REGISTER_KERNEL_BUILDER(                      \
-    Name("Get" #FIELD "Features")               \
-    .Device(DEVICE_CPU),                        \
-    Get##FIELD##Features);                      \
+#def ne REG STER_GETTER(F ELD)                  \
+  REG STER_KERNEL_BU LDER(                      \
+    Na ("Get" #F ELD "Features")               \
+    .Dev ce(DEV CE_CPU),                        \
+    Get##F ELD##Features);                      \
 
-#define REGISTER_GETTER_FROM_DR(FIELD)          \
-  REGISTER_KERNEL_BUILDER(                      \
-    Name("Get" #FIELD "FromDataRecord")         \
-    .Device(DEVICE_CPU),                        \
-    Get##FIELD##FromDataRecord);                \
+#def ne REG STER_GETTER_FROM_DR(F ELD)          \
+  REG STER_KERNEL_BU LDER(                      \
+    Na ("Get" #F ELD "FromDataRecord")         \
+    .Dev ce(DEV CE_CPU),                        \
+    Get##F ELD##FromDataRecord);                \
 
-#define REGISTER_GETTER_AS_TENSOR(FIELD)        \
-  REGISTER_KERNEL_BUILDER(                      \
-    Name("Get" #FIELD "AsTensor")               \
-    .Device(DEVICE_CPU),                        \
-    Get##FIELD##AsTensor);                      \
+#def ne REG STER_GETTER_AS_TENSOR(F ELD)        \
+  REG STER_KERNEL_BU LDER(                      \
+    Na ("Get" #F ELD "AsTensor")               \
+    .Dev ce(DEV CE_CPU),                        \
+    Get##F ELD##AsTensor);                      \
 
 
-#define REGISTER_GETTER_GROUP_AS_TENSOR(FIELD)  \
-  REGISTER_KERNEL_BUILDER(                      \
-    Name("Get" #FIELD "GroupAsTensor")          \
-    .Device(DEVICE_CPU),                        \
-    Get##FIELD##GroupAsTensor);                 \
+#def ne REG STER_GETTER_GROUP_AS_TENSOR(F ELD)  \
+  REG STER_KERNEL_BU LDER(                      \
+    Na ("Get" #F ELD "GroupAsTensor")          \
+    .Dev ce(DEV CE_CPU),                        \
+    Get##F ELD##GroupAsTensor);                 \
 
-REGISTER_GETTER(Binary)
-REGISTER_GETTER(Continuous)
-REGISTER_GETTER(Discrete)
-REGISTER_GETTER(String)
-REGISTER_GETTER(SparseBinary)
-REGISTER_GETTER(SparseContinuous)
-REGISTER_GETTER_FROM_DR(BatchSize)
-REGISTER_GETTER_FROM_DR(Labels)
-REGISTER_GETTER_FROM_DR(Weights)
-REGISTER_GETTER_AS_TENSOR(Binary)
-REGISTER_GETTER_AS_TENSOR(Continuous)
-REGISTER_GETTER_AS_TENSOR(Discrete)
-REGISTER_GETTER_AS_TENSOR(String)
-REGISTER_GETTER_AS_TENSOR(SparseBinary)
-REGISTER_GETTER_AS_TENSOR(SparseContinuous)
-REGISTER_GETTER_GROUP_AS_TENSOR(Binary)
-REGISTER_GETTER_GROUP_AS_TENSOR(Continuous)
-REGISTER_GETTER_GROUP_AS_TENSOR(Discrete)
-REGISTER_GETTER_GROUP_AS_TENSOR(String)
-REGISTER_KERNEL_BUILDER(
-  Name("GetHashedFeaturesAsSparseTensor")
-  .Device(DEVICE_CPU),
-  GetHashedFeaturesAsSparseTensor);
-REGISTER_KERNEL_BUILDER(
-  Name("GetHashedFeaturesAsSparseTensorV2")
-  .Device(DEVICE_CPU),
-  GetHashedFeaturesAsSparseTensorV2);
+REG STER_GETTER(B nary)
+REG STER_GETTER(Cont nuous)
+REG STER_GETTER(D screte)
+REG STER_GETTER(Str ng)
+REG STER_GETTER(SparseB nary)
+REG STER_GETTER(SparseCont nuous)
+REG STER_GETTER_FROM_DR(BatchS ze)
+REG STER_GETTER_FROM_DR(Labels)
+REG STER_GETTER_FROM_DR(  ghts)
+REG STER_GETTER_AS_TENSOR(B nary)
+REG STER_GETTER_AS_TENSOR(Cont nuous)
+REG STER_GETTER_AS_TENSOR(D screte)
+REG STER_GETTER_AS_TENSOR(Str ng)
+REG STER_GETTER_AS_TENSOR(SparseB nary)
+REG STER_GETTER_AS_TENSOR(SparseCont nuous)
+REG STER_GETTER_GROUP_AS_TENSOR(B nary)
+REG STER_GETTER_GROUP_AS_TENSOR(Cont nuous)
+REG STER_GETTER_GROUP_AS_TENSOR(D screte)
+REG STER_GETTER_GROUP_AS_TENSOR(Str ng)
+REG STER_KERNEL_BU LDER(
+  Na ("GetHas dFeaturesAsSparseTensor")
+  .Dev ce(DEV CE_CPU),
+  GetHas dFeaturesAsSparseTensor);
+REG STER_KERNEL_BU LDER(
+  Na ("GetHas dFeaturesAsSparseTensorV2")
+  .Dev ce(DEV CE_CPU),
+  GetHas dFeaturesAsSparseTensorV2);

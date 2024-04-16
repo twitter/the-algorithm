@@ -1,17 +1,17 @@
 syntax = "proto3";
 
-package tensorflow.serving;
+package tensorflow.serv ng;
 
-import "tensorflow/core/protobuf/error_codes.proto";
+ mport "tensorflow/core/protobuf/error_codes.proto";
 
-option cc_enable_arenas = true;
+opt on cc_enable_arenas = true;
 
-// Status that corresponds to Status in
-// third_party/tensorflow/core/lib/core/status.h.
-message StatusProto {
+// Status that corresponds to Status  n
+// th rd_party/tensorflow/core/l b/core/status.h.
+ ssage StatusProto {
   // Error code.
-  error.Code error_code = 1 [json_name = "error_code"];
+  error.Code error_code = 1 [json_na  = "error_code"];
 
-  // Error message. Will only be set if an error was encountered.
-  string error_message = 2 [json_name = "error_message"];
+  // Error  ssage. W ll only be set  f an error was encountered.
+  str ng error_ ssage = 2 [json_na  = "error_ ssage"];
 }

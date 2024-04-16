@@ -1,31 +1,31 @@
-package com.twitter.tweetypie.store
+package com.tw ter.t etyp e.store
 
-import com.twitter.tweetypie.Tweet
-import com.twitter.tweetypie.serverutil.ExtendedTweetMetadataBuilder
-import com.twitter.tweetypie.thriftscala.EditControl
-import com.twitter.tweetypie.thriftscala.InitialTweetUpdateRequest
-import com.twitter.tweetypie.util.EditControlUtil
+ mport com.tw ter.t etyp e.T et
+ mport com.tw ter.t etyp e.serverut l.ExtendedT et tadataBu lder
+ mport com.tw ter.t etyp e.thr ftscala.Ed Control
+ mport com.tw ter.t etyp e.thr ftscala. n  alT etUpdateRequest
+ mport com.tw ter.t etyp e.ut l.Ed ControlUt l
 
-/* Logic to update the initial tweet with new information when that tweet is edited */
-object InitialTweetUpdate {
+/* Log c to update t   n  al t et w h new  nformat on w n that t et  s ed ed */
+object  n  alT etUpdate {
 
-  /* Given the initial tweet and update request, copy updated edit
-   * related fields onto it.
+  /* G ven t   n  al t et and update request, copy updated ed 
+   * related f elds onto  .
    */
-  def updateTweet(initialTweet: Tweet, request: InitialTweetUpdateRequest): Tweet = {
+  def updateT et( n  alT et: T et, request:  n  alT etUpdateRequest): T et = {
 
-    // compute a new edit control initial with updated list of edit tweet ids
-    val editControl: EditControl.Initial =
-      EditControlUtil.editControlForInitialTweet(initialTweet, request.editTweetId).get()
+    // compute a new ed  control  n  al w h updated l st of ed  t et  ds
+    val ed Control: Ed Control. n  al =
+      Ed ControlUt l.ed ControlFor n  alT et( n  alT et, request.ed T et d).get()
 
-    // compute the correct extended metadata for a permalink
-    val extendedTweetMetadata =
-      request.selfPermalink.map(link => ExtendedTweetMetadataBuilder(initialTweet, link))
+    // compute t  correct extended  tadata for a permal nk
+    val extendedT et tadata =
+      request.selfPermal nk.map(l nk => ExtendedT et tadataBu lder( n  alT et, l nk))
 
-    initialTweet.copy(
-      selfPermalink = initialTweet.selfPermalink.orElse(request.selfPermalink),
-      editControl = Some(editControl),
-      extendedTweetMetadata = initialTweet.extendedTweetMetadata.orElse(extendedTweetMetadata)
+     n  alT et.copy(
+      selfPermal nk =  n  alT et.selfPermal nk.orElse(request.selfPermal nk),
+      ed Control = So (ed Control),
+      extendedT et tadata =  n  alT et.extendedT et tadata.orElse(extendedT et tadata)
     )
   }
 }

@@ -1,55 +1,55 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .Param
 
-object ConsumerEmbeddingBasedCandidateGenerationParams {
+object Consu rEmbedd ngBasedCand dateGenerat onParams {
 
-  object EnableTwHINParam
+  object EnableTwH NParam
       extends FSParam[Boolean](
-        name = "consumer_embedding_based_candidate_generation_enable_twhin",
+        na  = "consu r_embedd ng_based_cand date_generat on_enable_twh n",
         default = false
       )
 
-  object EnableTwoTowerParam
+  object EnableTwoTo rParam
       extends FSParam[Boolean](
-        name = "consumer_embedding_based_candidate_generation_enable_two_tower",
+        na  = "consu r_embedd ng_based_cand date_generat on_enable_two_to r",
         default = false
       )
 
-  object EnableLogFavBasedSimClustersTripParam
+  object EnableLogFavBasedS mClustersTr pParam
       extends FSParam[Boolean](
-        name = "consumer_embedding_based_candidate_generation_enable_logfav_based_simclusters_trip",
+        na  = "consu r_embedd ng_based_cand date_generat on_enable_logfav_based_s mclusters_tr p",
         default = false
       )
 
-  object EnableFollowBasedSimClustersTripParam
+  object EnableFollowBasedS mClustersTr pParam
       extends FSParam[Boolean](
-        name = "consumer_embedding_based_candidate_generation_enable_follow_based_simclusters_trip",
+        na  = "consu r_embedd ng_based_cand date_generat on_enable_follow_based_s mclusters_tr p",
         default = false
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableTwHINParam,
-    EnableTwoTowerParam,
-    EnableFollowBasedSimClustersTripParam,
-    EnableLogFavBasedSimClustersTripParam
+  val AllParams: Seq[Param[_] w h FSNa ] = Seq(
+    EnableTwH NParam,
+    EnableTwoTo rParam,
+    EnableFollowBasedS mClustersTr pParam,
+    EnableLogFavBasedS mClustersTr pParam
   )
 
-  lazy val config: BaseConfig = {
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableTwHINParam,
-      EnableTwoTowerParam,
-      EnableFollowBasedSimClustersTripParam,
-      EnableLogFavBasedSimClustersTripParam
+  lazy val conf g: BaseConf g = {
+    val booleanOverr des = FeatureSw chOverr deUt l.getBooleanFSOverr des(
+      EnableTwH NParam,
+      EnableTwoTo rParam,
+      EnableFollowBasedS mClustersTr pParam,
+      EnableLogFavBasedS mClustersTr pParam
     )
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set(booleanOverr des: _*)
+      .bu ld()
   }
 }

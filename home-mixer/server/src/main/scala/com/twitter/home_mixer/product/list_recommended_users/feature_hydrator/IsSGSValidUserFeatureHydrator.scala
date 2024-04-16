@@ -1,64 +1,64 @@
-package com.twitter.home_mixer.product.list_recommended_users.feature_hydrator
+package com.tw ter.ho _m xer.product.l st_recom nded_users.feature_hydrator
 
-import com.twitter.home_mixer.model.request.HasListId
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersFeatures.IsSGSValidUserFeature
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.socialgraph.{thriftscala => sg}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
+ mport com.tw ter.ho _m xer.model.request.HasL st d
+ mport com.tw ter.ho _m xer.product.l st_recom nded_users.model.L stRecom ndedUsersFeatures. sSGSVal dUserFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.UserCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BulkCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.soc algraph.{thr ftscala => sg}
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.soc algraph.Soc alGraph
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class IsSGSValidUserFeatureHydrator @Inject() (socialGraph: SocialGraph)
-    extends BulkCandidateFeatureHydrator[PipelineQuery with HasListId, UserCandidate] {
+@S ngleton
+class  sSGSVal dUserFeatureHydrator @ nject() (soc alGraph: Soc alGraph)
+    extends BulkCand dateFeatureHydrator[P pel neQuery w h HasL st d, UserCand date] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("IsSGSValidUser")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er(" sSGSVal dUser")
 
-  override def features: Set[Feature[_, _]] = Set(IsSGSValidUserFeature)
+  overr de def features: Set[Feature[_, _]] = Set( sSGSVal dUserFeature)
 
-  override def apply(
-    query: PipelineQuery with HasListId,
-    candidates: Seq[CandidateWithFeatures[UserCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val sourceId = query.getRequiredUserId
-    val targetUserIds = candidates.map(_.candidate.id)
-    val request = sg.IdsRequest(
-      relationships = Seq(
-        sg.SrcRelationship(
-          source = sourceId,
-          relationshipType = sg.RelationshipType.Blocking,
-          hasRelationship = true,
-          targets = Some(targetUserIds)),
-        sg.SrcRelationship(
-          source = sourceId,
-          relationshipType = sg.RelationshipType.BlockedBy,
-          hasRelationship = true,
-          targets = Some(targetUserIds)),
-        sg.SrcRelationship(
-          source = sourceId,
-          relationshipType = sg.RelationshipType.Muting,
-          hasRelationship = true,
-          targets = Some(targetUserIds))
+  overr de def apply(
+    query: P pel neQuery w h HasL st d,
+    cand dates: Seq[Cand dateW hFeatures[UserCand date]]
+  ): St ch[Seq[FeatureMap]] = {
+    val s ce d = query.getRequ redUser d
+    val targetUser ds = cand dates.map(_.cand date. d)
+    val request = sg. dsRequest(
+      relat onsh ps = Seq(
+        sg.SrcRelat onsh p(
+          s ce = s ce d,
+          relat onsh pType = sg.Relat onsh pType.Block ng,
+          hasRelat onsh p = true,
+          targets = So (targetUser ds)),
+        sg.SrcRelat onsh p(
+          s ce = s ce d,
+          relat onsh pType = sg.Relat onsh pType.BlockedBy,
+          hasRelat onsh p = true,
+          targets = So (targetUser ds)),
+        sg.SrcRelat onsh p(
+          s ce = s ce d,
+          relat onsh pType = sg.Relat onsh pType.Mut ng,
+          hasRelat onsh p = true,
+          targets = So (targetUser ds))
       ),
-      pageRequest = Some(sg.PageRequest(selectAll = Some(true))),
-      context = Some(sg.LookupContext(performUnion = Some(true)))
+      pageRequest = So (sg.PageRequest(selectAll = So (true))),
+      context = So (sg.LookupContext(performUn on = So (true)))
     )
 
-    socialGraph.ids(request).map(_.ids).map(_.toSet).map { hasRelationshipUserIds =>
-      candidates.map { candidate =>
-        FeatureMapBuilder()
-          .add(IsSGSValidUserFeature, !hasRelationshipUserIds.contains(candidate.candidate.id))
-          .build()
+    soc alGraph. ds(request).map(_. ds).map(_.toSet).map { hasRelat onsh pUser ds =>
+      cand dates.map { cand date =>
+        FeatureMapBu lder()
+          .add( sSGSVal dUserFeature, !hasRelat onsh pUser ds.conta ns(cand date.cand date. d))
+          .bu ld()
       }
     }
   }

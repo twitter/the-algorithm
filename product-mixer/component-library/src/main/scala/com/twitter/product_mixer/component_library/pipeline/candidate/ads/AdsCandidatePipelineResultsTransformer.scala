@@ -1,39 +1,39 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+package com.tw ter.product_m xer.component_l brary.p pel ne.cand date.ads
 
-import com.twitter.adserver.thriftscala.AdImpression
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsTweetCandidate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.UnexpectedCandidateResult
+ mport com.tw ter.adserver.thr ftscala.Ad mpress on
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.ads.AdsCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.ads.AdsT etCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neResultsTransfor r
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.UnexpectedCand dateResult
 
-object AdsCandidatePipelineResultsTransformer
-    extends CandidatePipelineResultsTransformer[AdImpression, AdsCandidate] {
+object AdsCand dateP pel neResultsTransfor r
+    extends Cand dateP pel neResultsTransfor r[Ad mpress on, AdsCand date] {
 
-  override def transform(sourceResult: AdImpression): AdsCandidate =
-    (sourceResult.nativeRtbCreative, sourceResult.promotedTweetId) match {
-      case (None, Some(promotedTweetId)) =>
-        AdsTweetCandidate(
-          id = promotedTweetId,
-          adImpression = sourceResult
+  overr de def transform(s ceResult: Ad mpress on): AdsCand date =
+    (s ceResult.nat veRtbCreat ve, s ceResult.promotedT et d) match {
+      case (None, So (promotedT et d)) =>
+        AdsT etCand date(
+           d = promotedT et d,
+          ad mpress on = s ceResult
         )
-      case (Some(_), None) =>
-        throw unsupportedAdImpressionPipelineFailure(
-          impression = sourceResult,
-          reason = "Received ad impression with rtbCreative")
-      case (Some(_), Some(_)) =>
-        throw unsupportedAdImpressionPipelineFailure(
-          impression = sourceResult,
-          reason = "Received ad impression with both rtbCreative and promoted tweetId")
+      case (So (_), None) =>
+        throw unsupportedAd mpress onP pel neFa lure(
+           mpress on = s ceResult,
+          reason = "Rece ved ad  mpress on w h rtbCreat ve")
+      case (So (_), So (_)) =>
+        throw unsupportedAd mpress onP pel neFa lure(
+           mpress on = s ceResult,
+          reason = "Rece ved ad  mpress on w h both rtbCreat ve and promoted t et d")
       case (None, None) =>
-        throw unsupportedAdImpressionPipelineFailure(
-          impression = sourceResult,
-          reason = "Received ad impression with neither rtbCreative nor promoted tweetId")
+        throw unsupportedAd mpress onP pel neFa lure(
+           mpress on = s ceResult,
+          reason = "Rece ved ad  mpress on w h ne  r rtbCreat ve nor promoted t et d")
     }
 
-  private def unsupportedAdImpressionPipelineFailure(impression: AdImpression, reason: String) =
-    PipelineFailure(
-      UnexpectedCandidateResult,
+  pr vate def unsupportedAd mpress onP pel neFa lure( mpress on: Ad mpress on, reason: Str ng) =
+    P pel neFa lure(
+      UnexpectedCand dateResult,
       reason =
-        s"Unsupported AdImpression ($reason). impressionString: ${impression.impressionString}")
+        s"Unsupported Ad mpress on ($reason).  mpress onStr ng: ${ mpress on. mpress onStr ng}")
 }

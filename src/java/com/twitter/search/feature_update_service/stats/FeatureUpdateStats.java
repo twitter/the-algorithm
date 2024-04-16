@@ -1,111 +1,111 @@
-package com.twitter.search.feature_update_service.stats;
+package com.tw ter.search.feature_update_serv ce.stats;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+ mport java.ut l.concurrent.ConcurrentHashMap;
+ mport java.ut l.concurrent.ConcurrentMap;
 
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateResponseCode;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.feature_update_serv ce.thr ftjava.FeatureUpdateResponseCode;
 
-/** Stat tracking for the feature update ingester service. */
-public class FeatureUpdateStats {
-  public static final String PREFIX = "feature_update_service_";
+/** Stat track ng for t  feature update  ngester serv ce. */
+publ c class FeatureUpdateStats {
+  publ c stat c f nal Str ng PREF X = "feature_update_serv ce_";
 
-  private final SearchRateCounter requestRate = SearchRateCounter.export(
-      PREFIX + "requests");
+  pr vate f nal SearchRateCounter requestRate = SearchRateCounter.export(
+      PREF X + "requests");
 
-  private ConcurrentMap<String, SearchRateCounter> perClientRequestRate =
+  pr vate ConcurrentMap<Str ng, SearchRateCounter> perCl entRequestRate =
       new ConcurrentHashMap<>();
 
-  private ConcurrentMap<String, SearchRateCounter> responseCodeRate =
+  pr vate ConcurrentMap<Str ng, SearchRateCounter> responseCodeRate =
       new ConcurrentHashMap<>();
 
-  private ConcurrentMap<String, SearchRateCounter> preClientResponseCodeRate =
+  pr vate ConcurrentMap<Str ng, SearchRateCounter> preCl entResponseCodeRate =
       new ConcurrentHashMap<>();
 
   /**
-   * Record metrics for a single incoming request.
+   * Record  tr cs for a s ngle  ncom ng request.
    */
-  public void clientRequest(String clientID) {
-    // 1. Track total request rate. It's better to precompute than compute the per client sum at
-    // query time.
-    requestRate.increment();
+  publ c vo d cl entRequest(Str ng cl ent D) {
+    // 1. Track total request rate.  's better to precompute than compute t  per cl ent sum at
+    // query t  .
+    requestRate. ncre nt();
 
-    // 2. Track request rate per client.
-    incrementPerClientCounter(perClientRequestRate, clientRequestRateKey(clientID));
+    // 2. Track request rate per cl ent.
+     ncre ntPerCl entCounter(perCl entRequestRate, cl entRequestRateKey(cl ent D));
   }
 
   /**
-   * Record metrics for a single response.
+   * Record  tr cs for a s ngle response.
    */
-  public void clientResponse(String clientID, FeatureUpdateResponseCode responseCode) {
-    String code = responseCode.toString().toLowerCase();
+  publ c vo d cl entResponse(Str ng cl ent D, FeatureUpdateResponseCode responseCode) {
+    Str ng code = responseCode.toStr ng().toLo rCase();
 
     // 1. Track rates per response code.
-    incrementPerClientCounter(responseCodeRate, responseCodeKey(code));
+     ncre ntPerCl entCounter(responseCodeRate, responseCodeKey(code));
 
-    // 2. Track rates per client per response code.
-    incrementPerClientCounter(preClientResponseCodeRate, clientResponseCodeKey(clientID, code));
+    // 2. Track rates per cl ent per response code.
+     ncre ntPerCl entCounter(preCl entResponseCodeRate, cl entResponseCodeKey(cl ent D, code));
   }
 
   /**
-   * Returns the total number of requests.
+   * Returns t  total number of requests.
    */
-  public long getRequestRateCount() {
+  publ c long getRequestRateCount() {
     return requestRate.getCount();
   }
 
   /**
-   * Returns the total number of requests for the specified client.
+   * Returns t  total number of requests for t  spec f ed cl ent.
    */
-  public long getClientRequestCount(String clientID)  {
-    String key = clientRequestRateKey(clientID);
-    if (perClientRequestRate.containsKey(key)) {
-      return perClientRequestRate.get(key).getCount();
+  publ c long getCl entRequestCount(Str ng cl ent D)  {
+    Str ng key = cl entRequestRateKey(cl ent D);
+     f (perCl entRequestRate.conta nsKey(key)) {
+      return perCl entRequestRate.get(key).getCount();
     }
     return 0;
   }
 
   /**
-   * Returns the total number of responses with the specified code.
+   * Returns t  total number of responses w h t  spec f ed code.
    */
-  public long getResponseCodeCount(FeatureUpdateResponseCode responseCode) {
-    String code = responseCode.toString().toLowerCase();
-    String key = responseCodeKey(code);
-    if (responseCodeRate.containsKey(key)) {
+  publ c long getResponseCodeCount(FeatureUpdateResponseCode responseCode) {
+    Str ng code = responseCode.toStr ng().toLo rCase();
+    Str ng key = responseCodeKey(code);
+     f (responseCodeRate.conta nsKey(key)) {
       return responseCodeRate.get(key).getCount();
     }
     return 0;
   }
 
   /**
-   * Returns the total number of responses to the specified client with the specified code.
+   * Returns t  total number of responses to t  spec f ed cl ent w h t  spec f ed code.
    */
-  public long getClientResponseCodeCount(String clientID, FeatureUpdateResponseCode responseCode) {
-    String code = responseCode.toString().toLowerCase();
-    String key = clientResponseCodeKey(clientID, code);
-    if (preClientResponseCodeRate.containsKey(key)) {
-      return preClientResponseCodeRate.get(key).getCount();
+  publ c long getCl entResponseCodeCount(Str ng cl ent D, FeatureUpdateResponseCode responseCode) {
+    Str ng code = responseCode.toStr ng().toLo rCase();
+    Str ng key = cl entResponseCodeKey(cl ent D, code);
+     f (preCl entResponseCodeRate.conta nsKey(key)) {
+      return preCl entResponseCodeRate.get(key).getCount();
     }
     return 0;
   }
 
-  private static String clientRequestRateKey(String clientID) {
-    return String.format(PREFIX + "requests_for_client_id_%s", clientID);
+  pr vate stat c Str ng cl entRequestRateKey(Str ng cl ent D) {
+    return Str ng.format(PREF X + "requests_for_cl ent_ d_%s", cl ent D);
   }
 
-  private static String responseCodeKey(String responseCode) {
-    return String.format(PREFIX + "response_code_%s", responseCode);
+  pr vate stat c Str ng responseCodeKey(Str ng responseCode) {
+    return Str ng.format(PREF X + "response_code_%s", responseCode);
   }
 
-  private static String clientResponseCodeKey(String clientID, String responseCode) {
-    return String.format(PREFIX + "response_for_client_id_%s_code_%s", clientID, responseCode);
+  pr vate stat c Str ng cl entResponseCodeKey(Str ng cl ent D, Str ng responseCode) {
+    return Str ng.format(PREF X + "response_for_cl ent_ d_%s_code_%s", cl ent D, responseCode);
   }
 
-  private void incrementPerClientCounter(
-      ConcurrentMap<String, SearchRateCounter> rates,
-      String key
+  pr vate vo d  ncre ntPerCl entCounter(
+      ConcurrentMap<Str ng, SearchRateCounter> rates,
+      Str ng key
   ) {
-    rates.putIfAbsent(key, SearchRateCounter.export(key));
-    rates.get(key).increment();
+    rates.put fAbsent(key, SearchRateCounter.export(key));
+    rates.get(key). ncre nt();
   }
 }

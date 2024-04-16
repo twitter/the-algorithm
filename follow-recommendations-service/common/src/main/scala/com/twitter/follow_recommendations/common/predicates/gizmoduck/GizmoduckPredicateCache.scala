@@ -1,50 +1,50 @@
-package com.twitter.follow_recommendations.common.predicates.gizmoduck
+package com.tw ter.follow_recom ndat ons.common.pred cates.g zmoduck
 
-import java.util.concurrent.TimeUnit
+ mport java.ut l.concurrent.T  Un 
 
-import com.google.common.base.Ticker
-import com.google.common.cache.CacheBuilder
-import com.google.common.cache.Cache
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Time
-import com.twitter.util.Duration
+ mport com.google.common.base.T cker
+ mport com.google.common.cac .Cac Bu lder
+ mport com.google.common.cac .Cac 
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.ut l.Durat on
 
 /**
- * In-memory cache used for caching GizmoduckPredicate query calls in
- * com.twitter.follow_recommendations.common.predicates.gizmoduck.GizmoduckPredicate.
+ *  n- mory cac  used for cach ng G zmoduckPred cate query calls  n
+ * com.tw ter.follow_recom ndat ons.common.pred cates.g zmoduck.G zmoduckPred cate.
  * 
- * References the cache implementation in com.twitter.escherbird.util.stitchcache,
- * but without the underlying Stitch call.
+ * References t  cac   mple ntat on  n com.tw ter.esc rb rd.ut l.st chcac ,
+ * but w hout t  underly ng St ch call.
  */
-object GizmoduckPredicateCache {
+object G zmoduckPred cateCac  {
 
-  private[GizmoduckPredicateCache] class TimeTicker extends Ticker {
-    override def read(): Long = Time.now.inNanoseconds
+  pr vate[G zmoduckPred cateCac ] class T  T cker extends T cker {
+    overr de def read(): Long = T  .now. nNanoseconds
   }
 
   def apply[K, V](
-    maxCacheSize: Int,
-    ttl: Duration,
-    statsReceiver: StatsReceiver
-  ): Cache[K, V] = {
+    maxCac S ze:  nt,
+    ttl: Durat on,
+    statsRece ver: StatsRece ver
+  ): Cac [K, V] = {
 
-    val cache: Cache[K, V] =
-      CacheBuilder
-        .newBuilder()
-        .maximumSize(maxCacheSize)
-        .asInstanceOf[CacheBuilder[K, V]]
-        .expireAfterWrite(ttl.inSeconds, TimeUnit.SECONDS)
+    val cac : Cac [K, V] =
+      Cac Bu lder
+        .newBu lder()
+        .max mumS ze(maxCac S ze)
+        .as nstanceOf[Cac Bu lder[K, V]]
+        .exp reAfterWr e(ttl. nSeconds, T  Un .SECONDS)
         .recordStats()
-        .ticker(new TimeTicker())
-        .build()
+        .t cker(new T  T cker())
+        .bu ld()
 
-    // metrics for tracking cache usage
-    statsReceiver.provideGauge("cache_size") { cache.size.toFloat }
-    statsReceiver.provideGauge("cache_hits") { cache.stats.hitCount.toFloat }
-    statsReceiver.provideGauge("cache_misses") { cache.stats.missCount.toFloat }
-    statsReceiver.provideGauge("cache_hit_rate") { cache.stats.hitRate.toFloat }
-    statsReceiver.provideGauge("cache_evictions") { cache.stats.evictionCount.toFloat }
+    //  tr cs for track ng cac  usage
+    statsRece ver.prov deGauge("cac _s ze") { cac .s ze.toFloat }
+    statsRece ver.prov deGauge("cac _h s") { cac .stats.h Count.toFloat }
+    statsRece ver.prov deGauge("cac _m sses") { cac .stats.m ssCount.toFloat }
+    statsRece ver.prov deGauge("cac _h _rate") { cac .stats.h Rate.toFloat }
+    statsRece ver.prov deGauge("cac _ev ct ons") { cac .stats.ev ct onCount.toFloat }
 
-    cache
+    cac 
   }
 }

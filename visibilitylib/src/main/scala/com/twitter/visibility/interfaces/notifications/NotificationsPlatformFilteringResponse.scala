@@ -1,13 +1,13 @@
-package com.twitter.visibility.interfaces.notifications
+package com.tw ter.v s b l y. nterfaces.not f cat ons
 
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.rules.Action
+ mport com.tw ter.v s b l y.features.Feature
+ mport com.tw ter.v s b l y.rules.Act on
 
-trait NotificationsPlatformFilteringResponse
+tra  Not f cat onsPlatformF lter ngResponse
 
-case object AllowVerdict extends NotificationsPlatformFilteringResponse
+case object AllowVerd ct extends Not f cat onsPlatformF lter ngResponse
 
-case class FilteredVerdict(action: Action) extends NotificationsPlatformFilteringResponse
+case class F lteredVerd ct(act on: Act on) extends Not f cat onsPlatformF lter ngResponse
 
-case class FailedVerdict(featuresMap: Map[Feature[_], String])
-    extends NotificationsPlatformFilteringResponse
+case class Fa ledVerd ct(featuresMap: Map[Feature[_], Str ng])
+    extends Not f cat onsPlatformF lter ngResponse

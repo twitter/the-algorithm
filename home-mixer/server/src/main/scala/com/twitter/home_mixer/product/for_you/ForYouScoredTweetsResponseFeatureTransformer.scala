@@ -1,103 +1,103 @@
-package com.twitter.home_mixer.product.for_you
+package com.tw ter.ho _m xer.product.for_ 
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.home_mixer.product.for_you.candidate_source.ScoredTweetWithConversationMetadata
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.BasicTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RecWithEducationTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RecommendationTopicContextFunctionalityType
-import com.twitter.timelines.render.{thriftscala => tl}
-import com.twitter.timelineservice.suggests.{thriftscala => tls}
+ mport com.tw ter.ho _m xer.model.Ho Features._
+ mport com.tw ter.ho _m xer.product.for_ .cand date_s ce.ScoredT etW hConversat on tadata
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Transfor r dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Bas cTop cContextFunct onal yType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.RecW hEducat onTop cContextFunct onal yType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Recom ndat onTop cContextFunct onal yType
+ mport com.tw ter.t  l nes.render.{thr ftscala => tl}
+ mport com.tw ter.t  l neserv ce.suggests.{thr ftscala => tls}
 
-object ForYouScoredTweetsResponseFeatureTransformer
-    extends CandidateFeatureTransformer[ScoredTweetWithConversationMetadata] {
+object For ScoredT etsResponseFeatureTransfor r
+    extends Cand dateFeatureTransfor r[ScoredT etW hConversat on tadata] {
 
-  override val identifier: TransformerIdentifier =
-    TransformerIdentifier("ForYouScoredTweetsResponse")
+  overr de val  dent f er: Transfor r dent f er =
+    Transfor r dent f er("For ScoredT etsResponse")
 
-  override val features: Set[Feature[_, _]] = Set(
+  overr de val features: Set[Feature[_, _]] = Set(
     AncestorsFeature,
-    AuthorIdFeature,
-    AuthorIsBlueVerifiedFeature,
-    AuthorIsCreatorFeature,
-    AuthorIsGoldVerifiedFeature,
-    AuthorIsGrayVerifiedFeature,
-    AuthorIsLegacyVerifiedFeature,
-    ConversationModuleFocalTweetIdFeature,
-    ConversationModuleIdFeature,
-    DirectedAtUserIdFeature,
-    ExclusiveConversationAuthorIdFeature,
-    FullScoringSucceededFeature,
-    FavoritedByUserIdsFeature,
-    FollowedByUserIdsFeature,
-    InNetworkFeature,
-    InReplyToTweetIdFeature,
-    InReplyToUserIdFeature,
-    IsAncestorCandidateFeature,
-    IsReadFromCacheFeature,
-    IsRetweetFeature,
-    PerspectiveFilteredLikedByUserIdsFeature,
-    QuotedTweetIdFeature,
-    QuotedUserIdFeature,
-    SGSValidFollowedByUserIdsFeature,
-    SGSValidLikedByUserIdsFeature,
+    Author dFeature,
+    Author sBlueVer f edFeature,
+    Author sCreatorFeature,
+    Author sGoldVer f edFeature,
+    Author sGrayVer f edFeature,
+    Author sLegacyVer f edFeature,
+    Conversat onModuleFocalT et dFeature,
+    Conversat onModule dFeature,
+    D rectedAtUser dFeature,
+    Exclus veConversat onAuthor dFeature,
+    FullScor ngSucceededFeature,
+    Favor edByUser dsFeature,
+    Follo dByUser dsFeature,
+     nNetworkFeature,
+     nReplyToT et dFeature,
+     nReplyToUser dFeature,
+     sAncestorCand dateFeature,
+     sReadFromCac Feature,
+     sRet etFeature,
+    Perspect veF lteredL kedByUser dsFeature,
+    QuotedT et dFeature,
+    QuotedUser dFeature,
+    SGSVal dFollo dByUser dsFeature,
+    SGSVal dL kedByUser dsFeature,
     ScoreFeature,
-    SourceTweetIdFeature,
-    SourceUserIdFeature,
+    S ceT et dFeature,
+    S ceUser dFeature,
     StreamToKafkaFeature,
     SuggestTypeFeature,
-    TopicContextFunctionalityTypeFeature,
-    TopicIdSocialContextFeature
+    Top cContextFunct onal yTypeFeature,
+    Top c dSoc alContextFeature
   )
 
-  override def transform(input: ScoredTweetWithConversationMetadata): FeatureMap =
-    FeatureMapBuilder()
-      .add(AncestorsFeature, input.ancestors.getOrElse(Seq.empty))
-      .add(AuthorIdFeature, Some(input.authorId))
-      .add(AuthorIsBlueVerifiedFeature, input.authorIsBlueVerified.getOrElse(false))
-      .add(AuthorIsGoldVerifiedFeature, input.authorIsGoldVerified.getOrElse(false))
-      .add(AuthorIsGrayVerifiedFeature, input.authorIsGrayVerified.getOrElse(false))
-      .add(AuthorIsLegacyVerifiedFeature, input.authorIsLegacyVerified.getOrElse(false))
-      .add(AuthorIsCreatorFeature, input.authorIsCreator.getOrElse(false))
-      .add(ConversationModuleIdFeature, input.conversationId)
-      .add(ConversationModuleFocalTweetIdFeature, input.conversationFocalTweetId)
-      .add(DirectedAtUserIdFeature, input.directedAtUserId)
-      .add(ExclusiveConversationAuthorIdFeature, input.exclusiveConversationAuthorId)
-      .add(SGSValidLikedByUserIdsFeature, input.sgsValidLikedByUserIds.getOrElse(Seq.empty))
-      .add(SGSValidFollowedByUserIdsFeature, input.sgsValidFollowedByUserIds.getOrElse(Seq.empty))
-      .add(FavoritedByUserIdsFeature, input.sgsValidLikedByUserIds.getOrElse(Seq.empty))
-      .add(FollowedByUserIdsFeature, input.sgsValidFollowedByUserIds.getOrElse(Seq.empty))
-      .add(FullScoringSucceededFeature, true)
-      .add(InNetworkFeature, input.inNetwork.getOrElse(true))
-      .add(InReplyToTweetIdFeature, input.inReplyToTweetId)
-      .add(InReplyToUserIdFeature, input.inReplyToUserId)
-      .add(IsAncestorCandidateFeature, input.conversationFocalTweetId.exists(_ != input.tweetId))
-      .add(IsReadFromCacheFeature, input.isReadFromCache.getOrElse(false))
-      .add(IsRetweetFeature, input.sourceTweetId.isDefined)
+  overr de def transform( nput: ScoredT etW hConversat on tadata): FeatureMap =
+    FeatureMapBu lder()
+      .add(AncestorsFeature,  nput.ancestors.getOrElse(Seq.empty))
+      .add(Author dFeature, So ( nput.author d))
+      .add(Author sBlueVer f edFeature,  nput.author sBlueVer f ed.getOrElse(false))
+      .add(Author sGoldVer f edFeature,  nput.author sGoldVer f ed.getOrElse(false))
+      .add(Author sGrayVer f edFeature,  nput.author sGrayVer f ed.getOrElse(false))
+      .add(Author sLegacyVer f edFeature,  nput.author sLegacyVer f ed.getOrElse(false))
+      .add(Author sCreatorFeature,  nput.author sCreator.getOrElse(false))
+      .add(Conversat onModule dFeature,  nput.conversat on d)
+      .add(Conversat onModuleFocalT et dFeature,  nput.conversat onFocalT et d)
+      .add(D rectedAtUser dFeature,  nput.d rectedAtUser d)
+      .add(Exclus veConversat onAuthor dFeature,  nput.exclus veConversat onAuthor d)
+      .add(SGSVal dL kedByUser dsFeature,  nput.sgsVal dL kedByUser ds.getOrElse(Seq.empty))
+      .add(SGSVal dFollo dByUser dsFeature,  nput.sgsVal dFollo dByUser ds.getOrElse(Seq.empty))
+      .add(Favor edByUser dsFeature,  nput.sgsVal dL kedByUser ds.getOrElse(Seq.empty))
+      .add(Follo dByUser dsFeature,  nput.sgsVal dFollo dByUser ds.getOrElse(Seq.empty))
+      .add(FullScor ngSucceededFeature, true)
+      .add( nNetworkFeature,  nput. nNetwork.getOrElse(true))
+      .add( nReplyToT et dFeature,  nput. nReplyToT et d)
+      .add( nReplyToUser dFeature,  nput. nReplyToUser d)
+      .add( sAncestorCand dateFeature,  nput.conversat onFocalT et d.ex sts(_ !=  nput.t et d))
+      .add( sReadFromCac Feature,  nput. sReadFromCac .getOrElse(false))
+      .add( sRet etFeature,  nput.s ceT et d. sDef ned)
       .add(
-        PerspectiveFilteredLikedByUserIdsFeature,
-        input.perspectiveFilteredLikedByUserIds.getOrElse(Seq.empty))
-      .add(QuotedTweetIdFeature, input.quotedTweetId)
-      .add(QuotedUserIdFeature, input.quotedUserId)
-      .add(ScoreFeature, input.score)
-      .add(SourceTweetIdFeature, input.sourceTweetId)
-      .add(SourceUserIdFeature, input.sourceUserId)
-      .add(StreamToKafkaFeature, input.streamToKafka.getOrElse(false))
-      .add(SuggestTypeFeature, input.suggestType.orElse(Some(tls.SuggestType.Undefined)))
+        Perspect veF lteredL kedByUser dsFeature,
+         nput.perspect veF lteredL kedByUser ds.getOrElse(Seq.empty))
+      .add(QuotedT et dFeature,  nput.quotedT et d)
+      .add(QuotedUser dFeature,  nput.quotedUser d)
+      .add(ScoreFeature,  nput.score)
+      .add(S ceT et dFeature,  nput.s ceT et d)
+      .add(S ceUser dFeature,  nput.s ceUser d)
+      .add(StreamToKafkaFeature,  nput.streamToKafka.getOrElse(false))
+      .add(SuggestTypeFeature,  nput.suggestType.orElse(So (tls.SuggestType.Undef ned)))
       .add(
-        TopicContextFunctionalityTypeFeature,
-        input.topicFunctionalityType.collect {
-          case tl.TopicContextFunctionalityType.Basic => BasicTopicContextFunctionalityType
-          case tl.TopicContextFunctionalityType.Recommendation =>
-            RecommendationTopicContextFunctionalityType
-          case tl.TopicContextFunctionalityType.RecWithEducation =>
-            RecWithEducationTopicContextFunctionalityType
+        Top cContextFunct onal yTypeFeature,
+         nput.top cFunct onal yType.collect {
+          case tl.Top cContextFunct onal yType.Bas c => Bas cTop cContextFunct onal yType
+          case tl.Top cContextFunct onal yType.Recom ndat on =>
+            Recom ndat onTop cContextFunct onal yType
+          case tl.Top cContextFunct onal yType.RecW hEducat on =>
+            RecW hEducat onTop cContextFunct onal yType
         }
       )
-      .add(TopicIdSocialContextFeature, input.topicId)
-      .build()
+      .add(Top c dSoc alContextFeature,  nput.top c d)
+      .bu ld()
 }

@@ -1,130 +1,130 @@
-package com.twitter.product_mixer.core.pipeline.scoring
+package com.tw ter.product_m xer.core.p pel ne.scor ng
 
-import com.twitter.product_mixer.component_library.selector.InsertAppendResults
-import com.twitter.product_mixer.core.functional_component.common.AllPipelines
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.gate.BaseGate
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.model.common.identifier.ScoringPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineConfig
-import com.twitter.product_mixer.core.pipeline.PipelineConfigCompanion
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.decider.DeciderParam
+ mport com.tw ter.product_m xer.component_l brary.selector. nsertAppendResults
+ mport com.tw ter.product_m xer.core.funct onal_component.common.AllP pel nes
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BaseCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.BaseGate
+ mport com.tw ter.product_m xer.core.funct onal_component.scorer.Scorer
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f erStack
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Scor ngP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.P pel neStep dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neConf g
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neConf gCompan on
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .dec der.Dec derParam
 
 /**
- *  This is the configuration necessary to generate a Scoring Pipeline. Product code should create a
- *  ScoringPipelineConfig, and then use a ScoringPipelineBuilder to get the final ScoringPipeline which can
+ *  T   s t  conf gurat on necessary to generate a Scor ng P pel ne. Product code should create a
+ *  Scor ngP pel neConf g, and t n use a Scor ngP pel neBu lder to get t  f nal Scor ngP pel ne wh ch can
  *  process requests.
  *
- * @tparam Query - The domain model for the query or request
- * @tparam Candidate the domain model for the candidate being scored
+ * @tparam Query - T  doma n model for t  query or request
+ * @tparam Cand date t  doma n model for t  cand date be ng scored
  */
-trait ScoringPipelineConfig[-Query <: PipelineQuery, Candidate <: UniversalNoun[Any]]
-    extends PipelineConfig {
+tra  Scor ngP pel neConf g[-Query <: P pel neQuery, Cand date <: Un versalNoun[Any]]
+    extends P pel neConf g {
 
-  override val identifier: ScoringPipelineIdentifier
+  overr de val  dent f er: Scor ngP pel ne dent f er
 
   /**
-   * When these Params are defined, they will automatically be added as Gates in the pipeline
-   * by the CandidatePipelineBuilder
+   * W n t se Params are def ned, t y w ll automat cally be added as Gates  n t  p pel ne
+   * by t  Cand dateP pel neBu lder
    *
-   * The enabled decider param can to be used to quickly disable a Candidate Pipeline via Decider
+   * T  enabled dec der param can to be used to qu ckly d sable a Cand date P pel ne v a Dec der
    */
-  val enabledDeciderParam: Option[DeciderParam[Boolean]] = None
+  val enabledDec derParam: Opt on[Dec derParam[Boolean]] = None
 
   /**
-   * This supported client feature switch param can be used with a Feature Switch to control the
-   * rollout of a new Candidate Pipeline from dogfood to experiment to production
+   * T  supported cl ent feature sw ch param can be used w h a Feature Sw ch to control t 
+   * rollout of a new Cand date P pel ne from dogfood to exper  nt to product on
    */
-  val supportedClientParam: Option[FSParam[Boolean]] = None
+  val supportedCl entParam: Opt on[FSParam[Boolean]] = None
 
-  /** [[BaseGate]]s that are applied sequentially, the pipeline will only run if all the Gates are open */
+  /** [[BaseGate]]s that are appl ed sequent ally, t  p pel ne w ll only run  f all t  Gates are open */
   def gates: Seq[BaseGate[Query]] = Seq.empty
 
   /**
-   * Logic for selecting which candidates to score. Note, this doesn't drop the candidates from
-   * the final result, just whether to score it in this pipeline or not.
+   * Log c for select ng wh ch cand dates to score. Note, t  doesn't drop t  cand dates from
+   * t  f nal result, just w t r to score    n t  p pel ne or not.
    */
   def selectors: Seq[Selector[Query]]
 
   /**
-   * After selectors are run, you can fetch features for each candidate.
-   * The existing features from previous hydrations are passed in as inputs. You are not expected to
-   * put them into the resulting feature map yourself - they will be merged for you by the platform.
+   * After selectors are run,   can fetch features for each cand date.
+   * T  ex st ng features from prev ous hydrat ons are passed  n as  nputs.   are not expected to
+   * put t m  nto t  result ng feature map y self - t y w ll be  rged for   by t  platform.
    */
-  def preScoringFeatureHydrationPhase1: Seq[BaseCandidateFeatureHydrator[Query, Candidate, _]] =
+  def preScor ngFeatureHydrat onPhase1: Seq[BaseCand dateFeatureHydrator[Query, Cand date, _]] =
     Seq.empty
 
   /**
-   * A second phase of feature hydration that can be run after selection and after the first phase
-   * of pre-scoring feature hydration. You are not expected to put them into the resulting
-   * feature map yourself - they will be merged for you by the platform.
+   * A second phase of feature hydrat on that can be run after select on and after t  f rst phase
+   * of pre-scor ng feature hydrat on.   are not expected to put t m  nto t  result ng
+   * feature map y self - t y w ll be  rged for   by t  platform.
    */
-  def preScoringFeatureHydrationPhase2: Seq[BaseCandidateFeatureHydrator[Query, Candidate, _]] =
+  def preScor ngFeatureHydrat onPhase2: Seq[BaseCand dateFeatureHydrator[Query, Cand date, _]] =
     Seq.empty
 
   /**
-   * Ranker Function for candidates. Scorers are executed in parallel.
-   * Note: Order does not matter, this could be a Set if Set was covariant over it's type.
+   * Ranker Funct on for cand dates. Scorers are executed  n parallel.
+   * Note: Order does not matter, t  could be a Set  f Set was covar ant over  's type.
    */
-  def scorers: Seq[Scorer[Query, Candidate]]
+  def scorers: Seq[Scorer[Query, Cand date]]
 
   /**
-   * A pipeline can define a partial function to rescue failures here. They will be treated as failures
-   * from a monitoring standpoint, and cancellation exceptions will always be propagated (they cannot be caught here).
+   * A p pel ne can def ne a part al funct on to rescue fa lures  re. T y w ll be treated as fa lures
+   * from a mon or ng standpo nt, and cancellat on except ons w ll always be propagated (t y cannot be caught  re).
    */
-  def failureClassifier: PartialFunction[Throwable, PipelineFailure] = PartialFunction.empty
+  def fa lureClass f er: Part alFunct on[Throwable, P pel neFa lure] = Part alFunct on.empty
 
   /**
-   * Alerts can be used to indicate the pipeline's service level objectives. Alerts and
-   * dashboards will be automatically created based on this information.
+   * Alerts can be used to  nd cate t  p pel ne's serv ce level object ves. Alerts and
+   * dashboards w ll be automat cally created based on t   nformat on.
    */
   val alerts: Seq[Alert] = Seq.empty
 
   /**
-   * This method is used by the product mixer framework to build the pipeline.
+   * T   thod  s used by t  product m xer fra work to bu ld t  p pel ne.
    */
-  private[core] final def build(
-    parentComponentIdentifierStack: ComponentIdentifierStack,
-    builder: ScoringPipelineBuilderFactory
-  ): ScoringPipeline[Query, Candidate] =
-    builder.get.build(parentComponentIdentifierStack, this)
+  pr vate[core] f nal def bu ld(
+    parentComponent dent f erStack: Component dent f erStack,
+    bu lder: Scor ngP pel neBu lderFactory
+  ): Scor ngP pel ne[Query, Cand date] =
+    bu lder.get.bu ld(parentComponent dent f erStack, t )
 }
 
-object ScoringPipelineConfig extends PipelineConfigCompanion {
-  def apply[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-    scorer: Scorer[Query, Candidate]
-  ): ScoringPipelineConfig[Query, Candidate] = new ScoringPipelineConfig[Query, Candidate] {
-    override val identifier: ScoringPipelineIdentifier = ScoringPipelineIdentifier(
-      s"ScoreAll${scorer.identifier.name}")
+object Scor ngP pel neConf g extends P pel neConf gCompan on {
+  def apply[Query <: P pel neQuery, Cand date <: Un versalNoun[Any]](
+    scorer: Scorer[Query, Cand date]
+  ): Scor ngP pel neConf g[Query, Cand date] = new Scor ngP pel neConf g[Query, Cand date] {
+    overr de val  dent f er: Scor ngP pel ne dent f er = Scor ngP pel ne dent f er(
+      s"ScoreAll${scorer. dent f er.na }")
 
-    override val selectors: Seq[Selector[Query]] = Seq(InsertAppendResults(AllPipelines))
+    overr de val selectors: Seq[Selector[Query]] = Seq( nsertAppendResults(AllP pel nes))
 
-    override val scorers: Seq[Scorer[Query, Candidate]] = Seq(scorer)
+    overr de val scorers: Seq[Scorer[Query, Cand date]] = Seq(scorer)
   }
 
-  val gatesStep: PipelineStepIdentifier = PipelineStepIdentifier("Gates")
-  val selectorsStep: PipelineStepIdentifier = PipelineStepIdentifier("Selectors")
-  val preScoringFeatureHydrationPhase1Step: PipelineStepIdentifier =
-    PipelineStepIdentifier("PreScoringFeatureHydrationPhase1")
-  val preScoringFeatureHydrationPhase2Step: PipelineStepIdentifier =
-    PipelineStepIdentifier("PreScoringFeatureHydrationPhase2")
-  val scorersStep: PipelineStepIdentifier = PipelineStepIdentifier("Scorers")
-  val resultStep: PipelineStepIdentifier = PipelineStepIdentifier("Result")
+  val gatesStep: P pel neStep dent f er = P pel neStep dent f er("Gates")
+  val selectorsStep: P pel neStep dent f er = P pel neStep dent f er("Selectors")
+  val preScor ngFeatureHydrat onPhase1Step: P pel neStep dent f er =
+    P pel neStep dent f er("PreScor ngFeatureHydrat onPhase1")
+  val preScor ngFeatureHydrat onPhase2Step: P pel neStep dent f er =
+    P pel neStep dent f er("PreScor ngFeatureHydrat onPhase2")
+  val scorersStep: P pel neStep dent f er = P pel neStep dent f er("Scorers")
+  val resultStep: P pel neStep dent f er = P pel neStep dent f er("Result")
 
-  /** All the Steps which are executed by a [[ScoringPipeline]] in the order in which they are run */
-  override val stepsInOrder: Seq[PipelineStepIdentifier] = Seq(
+  /** All t  Steps wh ch are executed by a [[Scor ngP pel ne]]  n t  order  n wh ch t y are run */
+  overr de val steps nOrder: Seq[P pel neStep dent f er] = Seq(
     gatesStep,
     selectorsStep,
-    preScoringFeatureHydrationPhase1Step,
-    preScoringFeatureHydrationPhase2Step,
+    preScor ngFeatureHydrat onPhase1Step,
+    preScor ngFeatureHydrat onPhase2Step,
     scorersStep,
     resultStep
   )

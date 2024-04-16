@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.media
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. d a
 
-case class MediaKey(
-  id: Long,
-  category: Int)
+case class  d aKey(
+   d: Long,
+  category:  nt)

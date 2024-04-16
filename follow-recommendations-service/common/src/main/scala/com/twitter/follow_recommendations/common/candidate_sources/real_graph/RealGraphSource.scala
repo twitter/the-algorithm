@@ -1,40 +1,40 @@
-package com.twitter.follow_recommendations.common.candidate_sources.real_graph
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.real_graph
 
-import com.twitter.follow_recommendations.common.clients.real_time_real_graph.RealTimeRealGraphClient
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.real_t  _real_graph.RealT  RealGraphCl ent
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * This source gets the already followed edges from the real graph column as a candidate source.
+ * T  s ce gets t  already follo d edges from t  real graph column as a cand date s ce.
  */
-@Singleton
-class RealGraphSource @Inject() (
-  realGraph: RealTimeRealGraphClient)
-    extends CandidateSource[HasParams with HasClientContext, CandidateUser] {
-  override val identifier: CandidateSourceIdentifier = RealGraphSource.Identifier
+@S ngleton
+class RealGraphS ce @ nject() (
+  realGraph: RealT  RealGraphCl ent)
+    extends Cand dateS ce[HasParams w h HasCl entContext, Cand dateUser] {
+  overr de val  dent f er: Cand dateS ce dent f er = RealGraphS ce. dent f er
 
-  override def apply(request: HasParams with HasClientContext): Stitch[Seq[CandidateUser]] = {
-    request.getOptionalUserId
-      .map { userId =>
-        realGraph.getRealGraphWeights(userId).map { scoreMap =>
+  overr de def apply(request: HasParams w h HasCl entContext): St ch[Seq[Cand dateUser]] = {
+    request.getOpt onalUser d
+      .map { user d =>
+        realGraph.getRealGraph  ghts(user d).map { scoreMap =>
           scoreMap.map {
-            case (candidateId, realGraphScore) =>
-              CandidateUser(id = candidateId, score = Some(realGraphScore))
-                .withCandidateSource(identifier)
+            case (cand date d, realGraphScore) =>
+              Cand dateUser( d = cand date d, score = So (realGraphScore))
+                .w hCand dateS ce( dent f er)
           }.toSeq
         }
-      }.getOrElse(Stitch.Nil)
+      }.getOrElse(St ch.N l)
   }
 }
 
-object RealGraphSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.RealGraphFollowed.toString)
+object RealGraphS ce {
+  val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er(
+    Algor hm.RealGraphFollo d.toStr ng)
 }

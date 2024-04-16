@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.common.candidate_sources.socialgraph
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.soc algraph
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.conf gap .common.FeatureSw chConf g
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class RecentFollowingRecentFollowingExpansionSourceFSConfig @Inject() ()
-    extends FeatureSwitchConfig {
+@S ngleton
+class RecentFollow ngRecentFollow ngExpans onS ceFSConf g @ nject() ()
+    extends FeatureSw chConf g {
 
-  override val booleanFSParams: Seq[FSParam[Boolean] with FSName] = Seq(
-    RecentFollowingRecentFollowingExpansionSourceParams.CallSgsCachedColumn,
+  overr de val booleanFSParams: Seq[FSParam[Boolean] w h FSNa ] = Seq(
+    RecentFollow ngRecentFollow ngExpans onS ceParams.CallSgsCac dColumn,
   )
 }

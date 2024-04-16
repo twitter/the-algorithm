@@ -1,264 +1,264 @@
-package com.twitter.simclusters_v2
-package scio.bq_generation.ftr_tweet
+package com.tw ter.s mclusters_v2
+package sc o.bq_generat on.ftr_t et
 
-import com.google.api.services.bigquery.model.TimePartitioning
-import com.twitter.conversions.DurationOps.richDurationFromInt
-import com.spotify.scio.ScioContext
-import com.spotify.scio.coders.Coder
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.dal.DAL.PathLayout
-import com.twitter.simclusters_v2.scio.bq_generation.common.IndexGenerationUtil.parseClusterTopKTweetsFn
-import java.time.Instant
-import com.twitter.beam.job.DateRangeOptions
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scio_internal.coders.ThriftStructLazyBinaryScroogeCoder
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQTableDetails
-import com.twitter.simclusters_v2.thriftscala.ClusterIdToTopKTweetsWithScores
-import com.twitter.simclusters_v2.thriftscala.FullClusterId
-import com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores
-import com.twitter.tcdc.bqblaster.beam.syntax._
-import com.twitter.tcdc.bqblaster.core.avro.TypedProjection
-import com.twitter.tcdc.bqblaster.core.transform.RootTransform
-import com.twitter.wtf.beam.bq_embedding_export.BQQueryUtils
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
+ mport com.google.ap .serv ces.b gquery.model.T  Part  on ng
+ mport com.tw ter.convers ons.Durat onOps.r chDurat onFrom nt
+ mport com.spot fy.sc o.Sc oContext
+ mport com.spot fy.sc o.coders.Coder
+ mport com.tw ter.beam. o.dal.DAL
+ mport com.tw ter.beam. o.dal.DAL.PathLa t
+ mport com.tw ter.s mclusters_v2.sc o.bq_generat on.common. ndexGenerat onUt l.parseClusterTopKT etsFn
+ mport java.t  . nstant
+ mport com.tw ter.beam.job.DateRangeOpt ons
+ mport com.tw ter.dal.cl ent.dataset.KeyValDALDataset
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.sc o_ nternal.coders.Thr ftStructLazyB naryScroogeCoder
+ mport com.tw ter.sc o_ nternal.job.Sc oBeamJob
+ mport com.tw ter.scrooge.Thr ftStruct
+ mport com.tw ter.s mclusters_v2.sc o.bq_generat on.common.BQTableDeta ls
+ mport com.tw ter.s mclusters_v2.thr ftscala.Cluster dToTopKT etsW hScores
+ mport com.tw ter.s mclusters_v2.thr ftscala.FullCluster d
+ mport com.tw ter.s mclusters_v2.thr ftscala.TopKT etsW hScores
+ mport com.tw ter.tcdc.bqblaster.beam.syntax._
+ mport com.tw ter.tcdc.bqblaster.core.avro.TypedProject on
+ mport com.tw ter.tcdc.bqblaster.core.transform.RootTransform
+ mport com.tw ter.wtf.beam.bq_embedd ng_export.BQQueryUt ls
+ mport org.apac .beam.sdk. o.gcp.b gquery.B gQuery O
 
-trait FTRClusterToTweetIndexGenerationJob extends ScioBeamJob[DateRangeOptions] {
-  val isAdhoc: Boolean
+tra  FTRClusterToT et ndexGenerat onJob extends Sc oBeamJob[DateRangeOpt ons] {
+  val  sAdhoc: Boolean
 
-  val outputTable: BQTableDetails
-  val keyValDatasetOutputPath: String
-  val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
+  val outputTable: BQTableDeta ls
+  val keyValDatasetOutputPath: Str ng
+  val clusterToT et ndexSnapshotDataset: KeyValDALDataset[
+    KeyVal[FullCluster d, TopKT etsW hScores]
   ]
 
-  // Base configs
-  val projectId = "twttr-recos-ml-prod"
-  val environment: DAL.Env = if (isAdhoc) DAL.Environment.Dev else DAL.Environment.Prod
+  // Base conf gs
+  val project d = "twttr-recos-ml-prod"
+  val env ron nt: DAL.Env =  f ( sAdhoc) DAL.Env ron nt.Dev else DAL.Env ron nt.Prod
 
-  // Variables for Tweet Embedding SQL
-  val scoreKey: String
-  val scoreColumn: String
+  // Var ables for T et Embedd ng SQL
+  val scoreKey: Str ng
+  val scoreColumn: Str ng
 
-  // Variables for spam treatment
-  val maxTweetFTR: Double
+  // Var ables for spam treat nt
+  val maxT etFTR: Double
   val maxUserFTR: Double
 
-  // Tweet embeddings parameters
-  val tweetEmbeddingsLength: Int = Config.SimClustersTweetEmbeddingsGenerationEmbeddingLength
+  // T et embedd ngs para ters
+  val t etEmbedd ngsLength:  nt = Conf g.S mClustersT etEmbedd ngsGenerat onEmbedd ngLength
 
-  // Clusters-to-tweet index parameters
-  val clusterTopKTweets: Int = Config.clusterTopKTweets
-  val maxTweetAgeHours: Int = Config.maxTweetAgeHours
+  // Clusters-to-t et  ndex para ters
+  val clusterTopKT ets:  nt = Conf g.clusterTopKT ets
+  val maxT etAgeH s:  nt = Conf g.maxT etAgeH s
 
-  override implicit def scroogeCoder[T <: ThriftStruct: Manifest]: Coder[T] =
-    ThriftStructLazyBinaryScroogeCoder.scroogeCoder
+  overr de  mpl c  def scroogeCoder[T <: Thr ftStruct: Man fest]: Coder[T] =
+    Thr ftStructLazyB naryScroogeCoder.scroogeCoder
 
-  override def configurePipeline(sc: ScioContext, opts: DateRangeOptions): Unit = {
-    // The time when the job is scheduled
-    val queryTimestamp = opts.interval.getEnd
+  overr de def conf gureP pel ne(sc: Sc oContext, opts: DateRangeOpt ons): Un  = {
+    // T  t   w n t  job  s sc duled
+    val queryT  stamp = opts. nterval.getEnd
 
-    val tweetEmbeddingTemplateVariables =
+    val t etEmbedd ngTemplateVar ables =
       Map(
-        "START_TIME" -> queryTimestamp.minusDays(1).toString(),
-        "END_TIME" -> queryTimestamp.toString(),
-        "TWEET_SAMPLE_RATE" -> Config.TweetSampleRate.toString,
-        "ENG_SAMPLE_RATE" -> Config.EngSampleRate.toString,
-        "MIN_TWEET_FAVS" -> Config.MinTweetFavs.toString,
-        "MIN_TWEET_IMPS" -> Config.MinTweetImps.toString,
-        "MAX_TWEET_FTR" -> maxTweetFTR.toString,
-        "MAX_USER_LOG_N_IMPS" -> Config.MaxUserLogNImps.toString,
-        "MAX_USER_LOG_N_FAVS" -> Config.MaxUserLogNFavs.toString,
-        "MAX_USER_FTR" -> maxUserFTR.toString,
-        "TWEET_EMBEDDING_LENGTH" -> Config.SimClustersTweetEmbeddingsGenerationEmbeddingLength.toString,
-        "HALFLIFE" -> Config.SimClustersTweetEmbeddingsGenerationHalfLife.toString,
+        "START_T ME" -> queryT  stamp.m nusDays(1).toStr ng(),
+        "END_T ME" -> queryT  stamp.toStr ng(),
+        "TWEET_SAMPLE_RATE" -> Conf g.T etSampleRate.toStr ng,
+        "ENG_SAMPLE_RATE" -> Conf g.EngSampleRate.toStr ng,
+        "M N_TWEET_FAVS" -> Conf g.M nT etFavs.toStr ng,
+        "M N_TWEET_ MPS" -> Conf g.M nT et mps.toStr ng,
+        "MAX_TWEET_FTR" -> maxT etFTR.toStr ng,
+        "MAX_USER_LOG_N_ MPS" -> Conf g.MaxUserLogN mps.toStr ng,
+        "MAX_USER_LOG_N_FAVS" -> Conf g.MaxUserLogNFavs.toStr ng,
+        "MAX_USER_FTR" -> maxUserFTR.toStr ng,
+        "TWEET_EMBEDD NG_LENGTH" -> Conf g.S mClustersT etEmbedd ngsGenerat onEmbedd ngLength.toStr ng,
+        "HALFL FE" -> Conf g.S mClustersT etEmbedd ngsGenerat onHalfL fe.toStr ng,
         "SCORE_COLUMN" -> scoreColumn,
         "SCORE_KEY" -> scoreKey,
       )
-    val tweetEmbeddingSql = BQQueryUtils.getBQQueryFromSqlFile(
-      "/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/sql/ftr_tweet_embeddings.sql",
-      tweetEmbeddingTemplateVariables)
+    val t etEmbedd ngSql = BQQueryUt ls.getBQQueryFromSqlF le(
+      "/com/tw ter/s mclusters_v2/sc o/bq_generat on/ftr_t et/sql/ftr_t et_embedd ngs.sql",
+      t etEmbedd ngTemplateVar ables)
 
-    val clusterTopTweetsTemplateVariables =
+    val clusterTopT etsTemplateVar ables =
       Map(
-        "CLUSTER_TOP_K_TWEETS" -> Config.clusterTopKTweets.toString,
-        "TWEET_EMBEDDING_SQL" -> tweetEmbeddingSql
+        "CLUSTER_TOP_K_TWEETS" -> Conf g.clusterTopKT ets.toStr ng,
+        "TWEET_EMBEDD NG_SQL" -> t etEmbedd ngSql
       )
 
-    val clusterTopTweetsSql = BQQueryUtils.getBQQueryFromSqlFile(
-      "/com/twitter/simclusters_v2/scio/bq_generation/sql/cluster_top_tweets.sql",
-      clusterTopTweetsTemplateVariables
+    val clusterTopT etsSql = BQQueryUt ls.getBQQueryFromSqlF le(
+      "/com/tw ter/s mclusters_v2/sc o/bq_generat on/sql/cluster_top_t ets.sql",
+      clusterTopT etsTemplateVar ables
     )
 
-    // Generate SimClusters cluster-to-tweet index
-    val topKtweetsForClusterKey = sc.customInput(
-      s"SimClusters cluster-to-tweet index generation BQ job",
-      BigQueryIO
-        .read(parseClusterTopKTweetsFn(Config.TweetEmbeddingHalfLife))
-        .fromQuery(clusterTopTweetsSql)
-        .usingStandardSql()
+    // Generate S mClusters cluster-to-t et  ndex
+    val topKt etsForClusterKey = sc.custom nput(
+      s"S mClusters cluster-to-t et  ndex generat on BQ job",
+      B gQuery O
+        .read(parseClusterTopKT etsFn(Conf g.T etEmbedd ngHalfL fe))
+        .fromQuery(clusterTopT etsSql)
+        .us ngStandardSql()
     )
 
-    // Setup BQ writer
-    val ingestionTime = opts.getDate().value.getEnd.toDate
-    val bqFieldsTransform = RootTransform
-      .Builder()
-      .withPrependedFields("dateHour" -> TypedProjection.fromConstant(ingestionTime))
-    val timePartitioning = new TimePartitioning()
-      .setType("HOUR").setField("dateHour").setExpirationMs(3.days.inMilliseconds)
-    val bqWriter = BigQueryIO
-      .write[ClusterIdToTopKTweetsWithScores]
-      .to(outputTable.toString)
-      .withExtendedErrorInfo()
-      .withTimePartitioning(timePartitioning)
-      .withLoadJobProjectId(projectId)
-      .withThriftSupport(bqFieldsTransform.build(), AvroConverter.Legacy)
-      .withCreateDisposition(BigQueryIO.Write.CreateDisposition.CREATE_IF_NEEDED)
-      .withWriteDisposition(BigQueryIO.Write.WriteDisposition.WRITE_APPEND)
+    // Setup BQ wr er
+    val  ngest onT   = opts.getDate().value.getEnd.toDate
+    val bqF eldsTransform = RootTransform
+      .Bu lder()
+      .w hPrependedF elds("dateH " -> TypedProject on.fromConstant( ngest onT  ))
+    val t  Part  on ng = new T  Part  on ng()
+      .setType("HOUR").setF eld("dateH ").setExp rat onMs(3.days. nM ll seconds)
+    val bqWr er = B gQuery O
+      .wr e[Cluster dToTopKT etsW hScores]
+      .to(outputTable.toStr ng)
+      .w hExtendedError nfo()
+      .w hT  Part  on ng(t  Part  on ng)
+      .w hLoadJobProject d(project d)
+      .w hThr ftSupport(bqF eldsTransform.bu ld(), AvroConverter.Legacy)
+      .w hCreateD spos  on(B gQuery O.Wr e.CreateD spos  on.CREATE_ F_NEEDED)
+      .w hWr eD spos  on(B gQuery O.Wr e.Wr eD spos  on.WR TE_APPEND)
 
-    // Save SimClusters index to a BQ table
-    topKtweetsForClusterKey
-      .map { clusterIdToTopKTweets =>
+    // Save S mClusters  ndex to a BQ table
+    topKt etsForClusterKey
+      .map { cluster dToTopKT ets =>
         {
-          ClusterIdToTopKTweetsWithScores(
-            clusterId = clusterIdToTopKTweets.clusterId,
-            topKTweetsWithScores = clusterIdToTopKTweets.topKTweetsWithScores
+          Cluster dToTopKT etsW hScores(
+            cluster d = cluster dToTopKT ets.cluster d,
+            topKT etsW hScores = cluster dToTopKT ets.topKT etsW hScores
           )
         }
       }
-      .saveAsCustomOutput(s"WriteToBQTable - $outputTable", bqWriter)
+      .saveAsCustomOutput(s"Wr eToBQTable - $outputTable", bqWr er)
 
-    // Save SimClusters index as a KeyValSnapshotDataset
-    topKtweetsForClusterKey
-      .map { clusterIdToTopKTweets =>
-        KeyVal(clusterIdToTopKTweets.clusterId, clusterIdToTopKTweets.topKTweetsWithScores)
+    // Save S mClusters  ndex as a KeyValSnapshotDataset
+    topKt etsForClusterKey
+      .map { cluster dToTopKT ets =>
+        KeyVal(cluster dToTopKT ets.cluster d, cluster dToTopKT ets.topKT etsW hScores)
       }.saveAsCustomOutput(
-        name = s"WriteClusterToKeyIndexToKeyValDataset at $keyValDatasetOutputPath",
-        DAL.writeVersionedKeyVal(
-          clusterToTweetIndexSnapshotDataset,
-          PathLayout.VersionedPath(prefix =
-            ((if (!isAdhoc)
-                Config.FTRRootMHPath
+        na  = s"Wr eClusterToKey ndexToKeyValDataset at $keyValDatasetOutputPath",
+        DAL.wr eVers onedKeyVal(
+          clusterToT et ndexSnapshotDataset,
+          PathLa t.Vers onedPath(pref x =
+            (( f (! sAdhoc)
+                Conf g.FTRRootMHPath
               else
-                Config.FTRAdhocpath)
+                Conf g.FTRAdhocpath)
               + keyValDatasetOutputPath)),
-          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
-          environmentOverride = environment,
+           nstant =  nstant.ofEpochM ll (opts. nterval.getEndM ll s - 1L),
+          env ron ntOverr de = env ron nt,
         )
       )
   }
 }
 
-object FTRClusterToTweetIndexGenerationAdhoc extends FTRClusterToTweetIndexGenerationJob {
-  override val isAdhoc: Boolean = true
-  override val outputTable: BQTableDetails =
-    BQTableDetails(
+object FTRClusterToT et ndexGenerat onAdhoc extends FTRClusterToT et ndexGenerat onJob {
+  overr de val  sAdhoc: Boolean = true
+  overr de val outputTable: BQTableDeta ls =
+    BQTableDeta ls(
       "twttr-recos-ml-prod",
-      "simclusters",
-      "simcluster_adhoc_test_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath: String =
-    "ftr_tweets_adhoc/ftr_cluster_to_tweet_adhoc"
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
-  ] = SimclustersFtrAdhocClusterToTweetIndexScalaDataset
-  override val scoreColumn = "ftrat5_decayed_pop_bias_1000_rank_decay_1_1_embedding"
-  override val scoreKey = "ftrat5_decayed_pop_bias_1000_rank_decay_1_1"
-  override val maxUserFTR: Double = Config.MaxUserFTR
-  override val maxTweetFTR: Double = Config.MaxTweetFTR
+      "s mclusters",
+      "s mcluster_adhoc_test_cluster_to_t et_ ndex")
+  overr de val keyValDatasetOutputPath: Str ng =
+    "ftr_t ets_adhoc/ftr_cluster_to_t et_adhoc"
+  overr de val clusterToT et ndexSnapshotDataset: KeyValDALDataset[
+    KeyVal[FullCluster d, TopKT etsW hScores]
+  ] = S mclustersFtrAdhocClusterToT et ndexScalaDataset
+  overr de val scoreColumn = "ftrat5_decayed_pop_b as_1000_rank_decay_1_1_embedd ng"
+  overr de val scoreKey = "ftrat5_decayed_pop_b as_1000_rank_decay_1_1"
+  overr de val maxUserFTR: Double = Conf g.MaxUserFTR
+  overr de val maxT etFTR: Double = Conf g.MaxT etFTR
 
 }
 
-object OONFTRClusterToTweetIndexGenerationAdhoc extends FTRClusterToTweetIndexGenerationJob {
-  override val isAdhoc: Boolean = true
-  override val outputTable: BQTableDetails =
-    BQTableDetails(
+object OONFTRClusterToT et ndexGenerat onAdhoc extends FTRClusterToT et ndexGenerat onJob {
+  overr de val  sAdhoc: Boolean = true
+  overr de val outputTable: BQTableDeta ls =
+    BQTableDeta ls(
       "twttr-recos-ml-prod",
-      "simclusters",
-      "simcluster_adhoc_test_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath: String =
-    "oon_ftr_tweets_adhoc/oon_ftr_cluster_to_tweet_adhoc"
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
-  ] = SimclustersOonFtrAdhocClusterToTweetIndexScalaDataset
-  override val scoreColumn = "oon_ftrat5_decayed_pop_bias_1000_rank_decay_embedding"
-  override val scoreKey = "oon_ftrat5_decayed_pop_bias_1000_rank_decay"
-  override val maxUserFTR: Double = Config.MaxUserFTR
-  override val maxTweetFTR: Double = Config.MaxTweetFTR
+      "s mclusters",
+      "s mcluster_adhoc_test_cluster_to_t et_ ndex")
+  overr de val keyValDatasetOutputPath: Str ng =
+    "oon_ftr_t ets_adhoc/oon_ftr_cluster_to_t et_adhoc"
+  overr de val clusterToT et ndexSnapshotDataset: KeyValDALDataset[
+    KeyVal[FullCluster d, TopKT etsW hScores]
+  ] = S mclustersOonFtrAdhocClusterToT et ndexScalaDataset
+  overr de val scoreColumn = "oon_ftrat5_decayed_pop_b as_1000_rank_decay_embedd ng"
+  overr de val scoreKey = "oon_ftrat5_decayed_pop_b as_1000_rank_decay"
+  overr de val maxUserFTR: Double = Conf g.MaxUserFTR
+  overr de val maxT etFTR: Double = Conf g.MaxT etFTR
 }
 
-object FTRPop1000RankDecay11ClusterToTweetIndexGenerationBatch
-    extends FTRClusterToTweetIndexGenerationJob {
-  override val isAdhoc: Boolean = false
-  override val outputTable: BQTableDetails =
-    BQTableDetails(
+object FTRPop1000RankDecay11ClusterToT et ndexGenerat onBatch
+    extends FTRClusterToT et ndexGenerat onJob {
+  overr de val  sAdhoc: Boolean = false
+  overr de val outputTable: BQTableDeta ls =
+    BQTableDeta ls(
       "twttr-bq-cassowary-prod",
       "user",
-      "simclusters_ftr_pop1000_rnkdecay11_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath: String =
-    Config.FTRPop1000RankDecay11ClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
-  ] = SimclustersFtrPop1000Rnkdecay11ClusterToTweetIndexScalaDataset
-  override val scoreColumn = "ftrat5_decayed_pop_bias_1000_rank_decay_1_1_embedding"
-  override val scoreKey = "ftrat5_decayed_pop_bias_1000_rank_decay_1_1"
-  override val maxUserFTR: Double = Config.MaxUserFTR
-  override val maxTweetFTR: Double = Config.MaxTweetFTR
+      "s mclusters_ftr_pop1000_rnkdecay11_cluster_to_t et_ ndex")
+  overr de val keyValDatasetOutputPath: Str ng =
+    Conf g.FTRPop1000RankDecay11ClusterToT et ndexOutputPath
+  overr de val clusterToT et ndexSnapshotDataset: KeyValDALDataset[
+    KeyVal[FullCluster d, TopKT etsW hScores]
+  ] = S mclustersFtrPop1000Rnkdecay11ClusterToT et ndexScalaDataset
+  overr de val scoreColumn = "ftrat5_decayed_pop_b as_1000_rank_decay_1_1_embedd ng"
+  overr de val scoreKey = "ftrat5_decayed_pop_b as_1000_rank_decay_1_1"
+  overr de val maxUserFTR: Double = Conf g.MaxUserFTR
+  overr de val maxT etFTR: Double = Conf g.MaxT etFTR
 }
 
-object FTRPop10000RankDecay11ClusterToTweetIndexGenerationBatch
-    extends FTRClusterToTweetIndexGenerationJob {
-  override val isAdhoc: Boolean = false
-  override val outputTable: BQTableDetails =
-    BQTableDetails(
+object FTRPop10000RankDecay11ClusterToT et ndexGenerat onBatch
+    extends FTRClusterToT et ndexGenerat onJob {
+  overr de val  sAdhoc: Boolean = false
+  overr de val outputTable: BQTableDeta ls =
+    BQTableDeta ls(
       "twttr-bq-cassowary-prod",
       "user",
-      "simclusters_ftr_pop10000_rnkdecay11_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath: String =
-    Config.FTRPop10000RankDecay11ClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
-  ] = SimclustersFtrPop10000Rnkdecay11ClusterToTweetIndexScalaDataset
-  override val scoreColumn = "ftrat5_decayed_pop_bias_10000_rank_decay_1_1_embedding"
-  override val scoreKey = "ftrat5_decayed_pop_bias_10000_rank_decay_1_1"
-  override val maxUserFTR: Double = Config.MaxUserFTR
-  override val maxTweetFTR: Double = Config.MaxTweetFTR
+      "s mclusters_ftr_pop10000_rnkdecay11_cluster_to_t et_ ndex")
+  overr de val keyValDatasetOutputPath: Str ng =
+    Conf g.FTRPop10000RankDecay11ClusterToT et ndexOutputPath
+  overr de val clusterToT et ndexSnapshotDataset: KeyValDALDataset[
+    KeyVal[FullCluster d, TopKT etsW hScores]
+  ] = S mclustersFtrPop10000Rnkdecay11ClusterToT et ndexScalaDataset
+  overr de val scoreColumn = "ftrat5_decayed_pop_b as_10000_rank_decay_1_1_embedd ng"
+  overr de val scoreKey = "ftrat5_decayed_pop_b as_10000_rank_decay_1_1"
+  overr de val maxUserFTR: Double = Conf g.MaxUserFTR
+  overr de val maxT etFTR: Double = Conf g.MaxT etFTR
 }
 
-object OONFTRPop1000RankDecayClusterToTweetIndexGenerationBatch
-    extends FTRClusterToTweetIndexGenerationJob {
-  override val isAdhoc: Boolean = false
-  override val outputTable: BQTableDetails =
-    BQTableDetails(
+object OONFTRPop1000RankDecayClusterToT et ndexGenerat onBatch
+    extends FTRClusterToT et ndexGenerat onJob {
+  overr de val  sAdhoc: Boolean = false
+  overr de val outputTable: BQTableDeta ls =
+    BQTableDeta ls(
       "twttr-bq-cassowary-prod",
       "user",
-      "simclusters_oon_ftr_pop1000_rnkdecay_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath: String =
-    Config.OONFTRPop1000RankDecayClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
-  ] = SimclustersOonFtrPop1000RnkdecayClusterToTweetIndexScalaDataset
-  override val scoreColumn = "oon_ftrat5_decayed_pop_bias_1000_rank_decay_embedding"
-  override val scoreKey = "oon_ftrat5_decayed_pop_bias_1000_rank_decay"
-  override val maxUserFTR: Double = Config.MaxUserFTR
-  override val maxTweetFTR: Double = Config.MaxTweetFTR
+      "s mclusters_oon_ftr_pop1000_rnkdecay_cluster_to_t et_ ndex")
+  overr de val keyValDatasetOutputPath: Str ng =
+    Conf g.OONFTRPop1000RankDecayClusterToT et ndexOutputPath
+  overr de val clusterToT et ndexSnapshotDataset: KeyValDALDataset[
+    KeyVal[FullCluster d, TopKT etsW hScores]
+  ] = S mclustersOonFtrPop1000RnkdecayClusterToT et ndexScalaDataset
+  overr de val scoreColumn = "oon_ftrat5_decayed_pop_b as_1000_rank_decay_embedd ng"
+  overr de val scoreKey = "oon_ftrat5_decayed_pop_b as_1000_rank_decay"
+  overr de val maxUserFTR: Double = Conf g.MaxUserFTR
+  overr de val maxT etFTR: Double = Conf g.MaxT etFTR
 }
 
-object DecayedSumClusterToTweetIndexGenerationBatch extends FTRClusterToTweetIndexGenerationJob {
-  override val isAdhoc: Boolean = false
-  override val outputTable: BQTableDetails =
-    BQTableDetails(
+object DecayedSumClusterToT et ndexGenerat onBatch extends FTRClusterToT et ndexGenerat onJob {
+  overr de val  sAdhoc: Boolean = false
+  overr de val outputTable: BQTableDeta ls =
+    BQTableDeta ls(
       "twttr-bq-cassowary-prod",
       "user",
-      "simclusters_decayed_sum_cluster_to_tweet_index")
-  override val keyValDatasetOutputPath: String =
-    Config.DecayedSumClusterToTweetIndexOutputPath
-  override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
-    KeyVal[FullClusterId, TopKTweetsWithScores]
-  ] = SimclustersDecayedSumClusterToTweetIndexScalaDataset
-  override val scoreColumn = "dec_sum_logfavScoreClusterNormalizedOnly_embedding"
-  override val scoreKey = "dec_sum_logfavScoreClusterNormalizedOnly"
-  override val maxUserFTR = 1.0
-  override val maxTweetFTR = 1.0
+      "s mclusters_decayed_sum_cluster_to_t et_ ndex")
+  overr de val keyValDatasetOutputPath: Str ng =
+    Conf g.DecayedSumClusterToT et ndexOutputPath
+  overr de val clusterToT et ndexSnapshotDataset: KeyValDALDataset[
+    KeyVal[FullCluster d, TopKT etsW hScores]
+  ] = S mclustersDecayedSumClusterToT et ndexScalaDataset
+  overr de val scoreColumn = "dec_sum_logfavScoreClusterNormal zedOnly_embedd ng"
+  overr de val scoreKey = "dec_sum_logfavScoreClusterNormal zedOnly"
+  overr de val maxUserFTR = 1.0
+  overr de val maxT etFTR = 1.0
 }

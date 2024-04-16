@@ -1,48 +1,48 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.color
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color._
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.color._
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class RosettaColorMarshaller @Inject() () {
+@S ngleton
+class RosettaColorMarshaller @ nject() () {
 
   def apply(rosettaColor: RosettaColor): urt.RosettaColor = rosettaColor match {
-    case WhiteRosettaColor => urt.RosettaColor.White
+    case Wh eRosettaColor => urt.RosettaColor.Wh e
     case BlackRosettaColor => urt.RosettaColor.Black
     case ClearRosettaColor => urt.RosettaColor.Clear
     case TextBlackRosettaColor => urt.RosettaColor.TextBlack
     case TextBlueRosettaColor => urt.RosettaColor.TextBlue
     case DeepGrayRosettaColor => urt.RosettaColor.DeepGray
-    case MediumGrayRosettaColor => urt.RosettaColor.MediumGray
-    case LightGrayRosettaColor => urt.RosettaColor.LightGray
+    case  d umGrayRosettaColor => urt.RosettaColor. d umGray
+    case L ghtGrayRosettaColor => urt.RosettaColor.L ghtGray
     case FadedGrayRosettaColor => urt.RosettaColor.FadedGray
-    case FaintGrayRosettaColor => urt.RosettaColor.FaintGray
+    case Fa ntGrayRosettaColor => urt.RosettaColor.Fa ntGray
     case DeepOrangeRosettaColor => urt.RosettaColor.DeepOrange
-    case MediumOrangeRosettaColor => urt.RosettaColor.MediumOrange
-    case LightOrangeRosettaColor => urt.RosettaColor.LightOrange
+    case  d umOrangeRosettaColor => urt.RosettaColor. d umOrange
+    case L ghtOrangeRosettaColor => urt.RosettaColor.L ghtOrange
     case FadedOrangeRosettaColor => urt.RosettaColor.FadedOrange
     case DeepYellowRosettaColor => urt.RosettaColor.DeepYellow
-    case MediumYellowRosettaColor => urt.RosettaColor.MediumYellow
-    case LightYellowRosettaColor => urt.RosettaColor.LightYellow
+    case  d umYellowRosettaColor => urt.RosettaColor. d umYellow
+    case L ghtYellowRosettaColor => urt.RosettaColor.L ghtYellow
     case FadedYellowRosettaColor => urt.RosettaColor.FadedYellow
     case DeepGreenRosettaColor => urt.RosettaColor.DeepGreen
-    case MediumGreenRosettaColor => urt.RosettaColor.MediumGreen
-    case LightGreenRosettaColor => urt.RosettaColor.LightGreen
+    case  d umGreenRosettaColor => urt.RosettaColor. d umGreen
+    case L ghtGreenRosettaColor => urt.RosettaColor.L ghtGreen
     case FadedGreenRosettaColor => urt.RosettaColor.FadedGreen
     case DeepBlueRosettaColor => urt.RosettaColor.DeepBlue
-    case TwitterBlueRosettaColor => urt.RosettaColor.TwitterBlue
-    case LightBlueRosettaColor => urt.RosettaColor.LightBlue
+    case Tw terBlueRosettaColor => urt.RosettaColor.Tw terBlue
+    case L ghtBlueRosettaColor => urt.RosettaColor.L ghtBlue
     case FadedBlueRosettaColor => urt.RosettaColor.FadedBlue
-    case FaintBlueRosettaColor => urt.RosettaColor.FaintBlue
+    case Fa ntBlueRosettaColor => urt.RosettaColor.Fa ntBlue
     case DeepPurpleRosettaColor => urt.RosettaColor.DeepPurple
-    case MediumPurpleRosettaColor => urt.RosettaColor.MediumPurple
-    case LightPurpleRosettaColor => urt.RosettaColor.LightPurple
+    case  d umPurpleRosettaColor => urt.RosettaColor. d umPurple
+    case L ghtPurpleRosettaColor => urt.RosettaColor.L ghtPurple
     case FadedPurpleRosettaColor => urt.RosettaColor.FadedPurple
     case DeepRedRosettaColor => urt.RosettaColor.DeepRed
-    case MediumRedRosettaColor => urt.RosettaColor.MediumRed
-    case LightRedRosettaColor => urt.RosettaColor.LightRed
+    case  d umRedRosettaColor => urt.RosettaColor. d umRed
+    case L ghtRedRosettaColor => urt.RosettaColor.L ghtRed
     case FadedRedRosettaColor => urt.RosettaColor.FadedRed
   }
 }

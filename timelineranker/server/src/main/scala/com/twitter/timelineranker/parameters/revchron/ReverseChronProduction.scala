@@ -1,28 +1,28 @@
-package com.twitter.timelineranker.parameters.revchron
+package com.tw ter.t  l neranker.para ters.revchron
 
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.timelines.configapi._
+ mport com.tw ter.servo.dec der.Dec derGateBu lder
+ mport com.tw ter.t  l nes.conf gap ._
 
-object ReverseChronProduction {
-  val intFeatureSwitchParams = Seq(ReverseChronParams.MaxFollowedUsersParam)
-  val booleanFeatureSwitchParams = Seq(
-    ReverseChronParams.ReturnEmptyWhenOverMaxFollowsParam,
-    ReverseChronParams.DirectedAtNarrowcastingViaSearchParam,
-    ReverseChronParams.PostFilteringBasedOnSearchMetadataEnabledParam
+object ReverseChronProduct on {
+  val  ntFeatureSw chParams = Seq(ReverseChronParams.MaxFollo dUsersParam)
+  val booleanFeatureSw chParams = Seq(
+    ReverseChronParams.ReturnEmptyW nOverMaxFollowsParam,
+    ReverseChronParams.D rectedAtNarrowcast ngV aSearchParam,
+    ReverseChronParams.PostF lter ngBasedOnSearch tadataEnabledParam
   )
 }
 
-class ReverseChronProduction(deciderGateBuilder: DeciderGateBuilder) {
-  val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-    ReverseChronProduction.intFeatureSwitchParams: _*
+class ReverseChronProduct on(dec derGateBu lder: Dec derGateBu lder) {
+  val  ntOverr des = FeatureSw chOverr deUt l.getBounded ntFSOverr des(
+    ReverseChronProduct on. ntFeatureSw chParams: _*
   )
 
-  val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-    ReverseChronProduction.booleanFeatureSwitchParams: _*
+  val booleanOverr des = FeatureSw chOverr deUt l.getBooleanFSOverr des(
+    ReverseChronProduct on.booleanFeatureSw chParams: _*
   )
 
-  val config: BaseConfig = new BaseConfigBuilder()
-    .set(intOverrides: _*)
-    .set(booleanOverrides: _*)
-    .build(ReverseChronProduction.getClass.getSimpleName)
+  val conf g: BaseConf g = new BaseConf gBu lder()
+    .set( ntOverr des: _*)
+    .set(booleanOverr des: _*)
+    .bu ld(ReverseChronProduct on.getClass.getS mpleNa )
 }

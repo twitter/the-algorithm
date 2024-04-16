@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.core.model.common.presentation
+package com.tw ter.product_m xer.core.model.common.presentat on
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import scala.collection.immutable.ListSet
-
-/**
- * A list set of all the candidate pipelines a candidate originated from. This is typically a
- * single element set, but merging candidates across pipelines using
- * [[com.twitter.product_mixer.component_library.selector.CombineFeatureMapsCandidateMerger]]
- * will merge sets for the candidate. The last element of the set is the first pipeline identifier
- * as we prepend new ones since we want O(1) access for the last element.
- */
-object CandidatePipelines extends Feature[UniversalNoun[Any], ListSet[CandidatePipelineIdentifier]]
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport scala.collect on. mmutable.L stSet
 
 /**
- * A list set of all the candidate sources a candidate originated from. This is typically a
- * single element set, but merging candidates across pipelines using
- * [[com.twitter.product_mixer.component_library.selector.CombineFeatureMapsCandidateMerger]]
- * will merge sets for the candidate. The last element of the set is the first source identifier
- * as we prepend new ones since we want O(1) access for the last element.
+ * A l st set of all t  cand date p pel nes a cand date or g nated from. T   s typ cally a
+ * s ngle ele nt set, but  rg ng cand dates across p pel nes us ng
+ * [[com.tw ter.product_m xer.component_l brary.selector.Comb neFeatureMapsCand date rger]]
+ * w ll  rge sets for t  cand date. T  last ele nt of t  set  s t  f rst p pel ne  dent f er
+ * as   prepend new ones s nce   want O(1) access for t  last ele nt.
  */
-object CandidateSources extends Feature[UniversalNoun[Any], ListSet[CandidateSourceIdentifier]]
+object Cand dateP pel nes extends Feature[Un versalNoun[Any], L stSet[Cand dateP pel ne dent f er]]
 
 /**
- * The source position relative to all candidates the originating candidate source a candidate
- * came from. When merged with other candidates, the position from the first candidate source
- * takes priority.
+ * A l st set of all t  cand date s ces a cand date or g nated from. T   s typ cally a
+ * s ngle ele nt set, but  rg ng cand dates across p pel nes us ng
+ * [[com.tw ter.product_m xer.component_l brary.selector.Comb neFeatureMapsCand date rger]]
+ * w ll  rge sets for t  cand date. T  last ele nt of t  set  s t  f rst s ce  dent f er
+ * as   prepend new ones s nce   want O(1) access for t  last ele nt.
  */
-object CandidateSourcePosition extends Feature[UniversalNoun[Any], Int]
+object Cand dateS ces extends Feature[Un versalNoun[Any], L stSet[Cand dateS ce dent f er]]
+
+/**
+ * T  s ce pos  on relat ve to all cand dates t  or g nat ng cand date s ce a cand date
+ * ca  from. W n  rged w h ot r cand dates, t  pos  on from t  f rst cand date s ce
+ * takes pr or y.
+ */
+object Cand dateS cePos  on extends Feature[Un versalNoun[Any],  nt]

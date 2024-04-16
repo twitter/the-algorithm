@@ -1,112 +1,112 @@
-package com.twitter.tweetypie
-package util
+package com.tw ter.t etyp e
+package ut l
 
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.t etyp e.thr ftscala._
 
-object ConversationControls {
+object Conversat onControls {
   object Create {
-    def byInvitation(
-      inviteViaMention: Option[Boolean] = None
-    ): TweetCreateConversationControl.ByInvitation = TweetCreateConversationControl.ByInvitation(
-      TweetCreateConversationControlByInvitation(inviteViaMention = inviteViaMention)
+    def by nv at on(
+       nv eV a nt on: Opt on[Boolean] = None
+    ): T etCreateConversat onControl.By nv at on = T etCreateConversat onControl.By nv at on(
+      T etCreateConversat onControlBy nv at on( nv eV a nt on =  nv eV a nt on)
     )
 
-    def community(
-      inviteViaMention: Option[Boolean] = None
-    ): TweetCreateConversationControl.Community = TweetCreateConversationControl.Community(
-      TweetCreateConversationControlCommunity(inviteViaMention = inviteViaMention)
+    def commun y(
+       nv eV a nt on: Opt on[Boolean] = None
+    ): T etCreateConversat onControl.Commun y = T etCreateConversat onControl.Commun y(
+      T etCreateConversat onControlCommun y( nv eV a nt on =  nv eV a nt on)
     )
 
-    def followers(
-      inviteViaMention: Option[Boolean] = None
-    ): TweetCreateConversationControl.Followers = TweetCreateConversationControl.Followers(
-      TweetCreateConversationControlFollowers(inviteViaMention = inviteViaMention)
+    def follo rs(
+       nv eV a nt on: Opt on[Boolean] = None
+    ): T etCreateConversat onControl.Follo rs = T etCreateConversat onControl.Follo rs(
+      T etCreateConversat onControlFollo rs( nv eV a nt on =  nv eV a nt on)
     )
   }
 
-  object Scenario {
-    case class CommonScenario(
-      createConversationControl: TweetCreateConversationControl,
-      descriptionSuffix: String,
-      expectedConversationControl: (UserId, Seq[UserId]) => ConversationControl,
-      inviteViaMention: Option[Boolean])
+  object Scenar o {
+    case class CommonScenar o(
+      createConversat onControl: T etCreateConversat onControl,
+      descr pt onSuff x: Str ng,
+      expectedConversat onControl: (User d, Seq[User d]) => Conversat onControl,
+       nv eV a nt on: Opt on[Boolean])
 
-    def mkCommunityScenario(inviteViaMention: Option[Boolean]): CommonScenario =
-      CommonScenario(
-        Create.community(inviteViaMention = inviteViaMention),
-        "community",
-        expectedConversationControl = (authorId, userIds) => {
-          community(userIds, authorId, inviteViaMention)
+    def mkCommun yScenar o( nv eV a nt on: Opt on[Boolean]): CommonScenar o =
+      CommonScenar o(
+        Create.commun y( nv eV a nt on =  nv eV a nt on),
+        "commun y",
+        expectedConversat onControl = (author d, user ds) => {
+          commun y(user ds, author d,  nv eV a nt on)
         },
-        inviteViaMention
+         nv eV a nt on
       )
 
-    def mkByInvitationScenario(inviteViaMention: Option[Boolean]): CommonScenario =
-      CommonScenario(
-        Create.byInvitation(inviteViaMention = inviteViaMention),
-        "invited users",
-        expectedConversationControl = (authorId, userIds) => {
-          byInvitation(userIds, authorId, inviteViaMention)
+    def mkBy nv at onScenar o( nv eV a nt on: Opt on[Boolean]): CommonScenar o =
+      CommonScenar o(
+        Create.by nv at on( nv eV a nt on =  nv eV a nt on),
+        " nv ed users",
+        expectedConversat onControl = (author d, user ds) => {
+          by nv at on(user ds, author d,  nv eV a nt on)
         },
-        inviteViaMention
+         nv eV a nt on
       )
 
-    def mkFollowersScenario(inviteViaMention: Option[Boolean]): CommonScenario =
-      CommonScenario(
-        Create.followers(inviteViaMention = inviteViaMention),
-        "followers",
-        expectedConversationControl = (authorId, userIds) => {
-          followers(userIds, authorId, inviteViaMention)
+    def mkFollo rsScenar o( nv eV a nt on: Opt on[Boolean]): CommonScenar o =
+      CommonScenar o(
+        Create.follo rs( nv eV a nt on =  nv eV a nt on),
+        "follo rs",
+        expectedConversat onControl = (author d, user ds) => {
+          follo rs(user ds, author d,  nv eV a nt on)
         },
-        inviteViaMention
+         nv eV a nt on
       )
 
-    val communityScenario = mkCommunityScenario(None)
-    val communityInviteViaMentionScenario = mkCommunityScenario(Some(true))
+    val commun yScenar o = mkCommun yScenar o(None)
+    val commun y nv eV a nt onScenar o = mkCommun yScenar o(So (true))
 
-    val byInvitationScenario = mkByInvitationScenario(None)
-    val byInvitationInviteViaMentionScenario = mkByInvitationScenario(Some(true))
+    val by nv at onScenar o = mkBy nv at onScenar o(None)
+    val by nv at on nv eV a nt onScenar o = mkBy nv at onScenar o(So (true))
 
-    val followersScenario = mkFollowersScenario(None)
-    val followersInviteViaMentionScenario = mkFollowersScenario(Some(true))
+    val follo rsScenar o = mkFollo rsScenar o(None)
+    val follo rs nv eV a nt onScenar o = mkFollo rsScenar o(So (true))
   }
 
-  def byInvitation(
-    invitedUserIds: Seq[UserId],
-    conversationTweetAuthorId: UserId,
-    inviteViaMention: Option[Boolean] = None
-  ): ConversationControl =
-    ConversationControl.ByInvitation(
-      ConversationControlByInvitation(
-        conversationTweetAuthorId = conversationTweetAuthorId,
-        invitedUserIds = invitedUserIds,
-        inviteViaMention = inviteViaMention
+  def by nv at on(
+     nv edUser ds: Seq[User d],
+    conversat onT etAuthor d: User d,
+     nv eV a nt on: Opt on[Boolean] = None
+  ): Conversat onControl =
+    Conversat onControl.By nv at on(
+      Conversat onControlBy nv at on(
+        conversat onT etAuthor d = conversat onT etAuthor d,
+         nv edUser ds =  nv edUser ds,
+         nv eV a nt on =  nv eV a nt on
       )
     )
 
-  def community(
-    invitedUserIds: Seq[UserId],
-    conversationTweetAuthorId: UserId,
-    inviteViaMention: Option[Boolean] = None
-  ): ConversationControl =
-    ConversationControl.Community(
-      ConversationControlCommunity(
-        conversationTweetAuthorId = conversationTweetAuthorId,
-        invitedUserIds = invitedUserIds,
-        inviteViaMention = inviteViaMention
+  def commun y(
+     nv edUser ds: Seq[User d],
+    conversat onT etAuthor d: User d,
+     nv eV a nt on: Opt on[Boolean] = None
+  ): Conversat onControl =
+    Conversat onControl.Commun y(
+      Conversat onControlCommun y(
+        conversat onT etAuthor d = conversat onT etAuthor d,
+         nv edUser ds =  nv edUser ds,
+         nv eV a nt on =  nv eV a nt on
       )
     )
 
-  def followers(
-    invitedUserIds: Seq[UserId],
-    conversationTweetAuthorId: UserId,
-    inviteViaMention: Option[Boolean] = None
-  ): ConversationControl =
-    ConversationControl.Followers(
-      ConversationControlFollowers(
-        conversationTweetAuthorId = conversationTweetAuthorId,
-        invitedUserIds = invitedUserIds,
-        inviteViaMention = inviteViaMention
+  def follo rs(
+     nv edUser ds: Seq[User d],
+    conversat onT etAuthor d: User d,
+     nv eV a nt on: Opt on[Boolean] = None
+  ): Conversat onControl =
+    Conversat onControl.Follo rs(
+      Conversat onControlFollo rs(
+        conversat onT etAuthor d = conversat onT etAuthor d,
+         nv edUser ds =  nv edUser ds,
+         nv eV a nt on =  nv eV a nt on
       )
     )
 }

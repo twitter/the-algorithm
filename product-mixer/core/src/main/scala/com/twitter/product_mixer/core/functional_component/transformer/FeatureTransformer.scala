@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.core.functional_component.transformer
+package com.tw ter.product_m xer.core.funct onal_component.transfor r
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Transfor r dent f er
 
 /**
- * [[FeatureTransformer]] allow you to populate a [[com.twitter.product_mixer.core.feature.Feature]]s
- * value which is already available or can be derived without making an RPC.
+ * [[FeatureTransfor r]] allow   to populate a [[com.tw ter.product_m xer.core.feature.Feature]]s
+ * value wh ch  s already ava lable or can be der ved w hout mak ng an RPC.
  *
- * A [[FeatureTransformer]] transforms a given [[Inputs]] into a [[FeatureMap]].
- * The transformer must specify which [[com.twitter.product_mixer.core.feature.Feature]]s it will populate using the `features` field
- * and the returned [[FeatureMap]] must always have the specified [[com.twitter.product_mixer.core.feature.Feature]]s populated.
+ * A [[FeatureTransfor r]] transforms a g ven [[ nputs]]  nto a [[FeatureMap]].
+ * T  transfor r must spec fy wh ch [[com.tw ter.product_m xer.core.feature.Feature]]s   w ll populate us ng t  `features` f eld
+ * and t  returned [[FeatureMap]] must always have t  spec f ed [[com.tw ter.product_m xer.core.feature.Feature]]s populated.
  *
- * @note Unlike [[com.twitter.product_mixer.core.functional_component.feature_hydrator.FeatureHydrator]] implementations,
- *       an exception thrown in a [[FeatureTransformer]] will not be added to the [[FeatureMap]] and will instead be
- *       bubble up to the calling pipeline's [[com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureClassifier]].
+ * @note Unl ke [[com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.FeatureHydrator]]  mple ntat ons,
+ *       an except on thrown  n a [[FeatureTransfor r]] w ll not be added to t  [[FeatureMap]] and w ll  nstead be
+ *       bubble up to t  call ng p pel ne's [[com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lureClass f er]].
  */
-trait FeatureTransformer[-Inputs] extends Transformer[Inputs, FeatureMap] {
+tra  FeatureTransfor r[- nputs] extends Transfor r[ nputs, FeatureMap] {
 
   def features: Set[Feature[_, _]]
 
-  override val identifier: TransformerIdentifier
+  overr de val  dent f er: Transfor r dent f er
 
-  /** Hydrates a [[FeatureMap]] for a given [[Inputs]] */
-  override def transform(input: Inputs): FeatureMap
+  /** Hydrates a [[FeatureMap]] for a g ven [[ nputs]] */
+  overr de def transform( nput:  nputs): FeatureMap
 }

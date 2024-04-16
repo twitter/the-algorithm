@@ -1,24 +1,24 @@
-package com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.ppm _locale_follow
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.follow_recom ndat ons.conf gap .common.FeatureSw chConf g
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .Param
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class PPMILocaleFollowSourceFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] = Seq(
-    PPMILocaleFollowSourceParams.CandidateSourceEnabled,
+@S ngleton
+class PPM LocaleFollowS ceFSConf g @ nject() () extends FeatureSw chConf g {
+  overr de val booleanFSParams: Seq[Param[Boolean] w h FSNa ] = Seq(
+    PPM LocaleFollowS ceParams.Cand dateS ceEnabled,
   )
 
-  override val stringSeqFSParams: Seq[Param[Seq[String]] with FSName] = Seq(
-    PPMILocaleFollowSourceParams.LocaleToExcludeFromRecommendation,
+  overr de val str ngSeqFSParams: Seq[Param[Seq[Str ng]] w h FSNa ] = Seq(
+    PPM LocaleFollowS ceParams.LocaleToExcludeFromRecom ndat on,
   )
 
-  override val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
-    PPMILocaleFollowSourceParams.CandidateSourceWeight,
+  overr de val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
+    PPM LocaleFollowS ceParams.Cand dateS ce  ght,
   )
 }

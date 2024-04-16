@@ -1,213 +1,213 @@
-package com.twitter.recosinjector
+package com.tw ter.recos njector
 
-import com.twitter.app.Flag
-import com.twitter.finagle.http.HttpMuxer
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.ElfOwlFilter
-import com.twitter.recosinjector.clients.Gizmoduck
-import com.twitter.recosinjector.clients.RecosHoseEntitiesCache
-import com.twitter.recosinjector.clients.SocialGraph
-import com.twitter.recosinjector.clients.Tweetypie
-import com.twitter.recosinjector.clients.UrlResolver
-import com.twitter.recosinjector.config._
-import com.twitter.recosinjector.edges.SocialWriteEventToUserUserGraphBuilder
-import com.twitter.recosinjector.edges.TimelineEventToUserTweetEntityGraphBuilder
-import com.twitter.recosinjector.edges.TweetEventToUserTweetEntityGraphBuilder
-import com.twitter.recosinjector.edges.TweetEventToUserUserGraphBuilder
-import com.twitter.recosinjector.edges.UnifiedUserActionToUserVideoGraphBuilder
-import com.twitter.recosinjector.edges.UnifiedUserActionToUserAdGraphBuilder
-import com.twitter.recosinjector.edges.UnifiedUserActionToUserTweetGraphPlusBuilder
-import com.twitter.recosinjector.edges.UserTweetEntityEdgeBuilder
-import com.twitter.recosinjector.event_processors.SocialWriteEventProcessor
-import com.twitter.recosinjector.event_processors.TimelineEventProcessor
-import com.twitter.recosinjector.event_processors.TweetEventProcessor
-import com.twitter.recosinjector.publishers.KafkaEventPublisher
-import com.twitter.recosinjector.uua_processors.UnifiedUserActionProcessor
-import com.twitter.recosinjector.uua_processors.UnifiedUserActionsConsumer
-import com.twitter.server.logging.{Logging => JDK14Logging}
-import com.twitter.server.Deciderable
-import com.twitter.server.TwitterServer
-import com.twitter.socialgraph.thriftscala.WriteEvent
-import com.twitter.timelineservice.thriftscala.{Event => TimelineEvent}
-import com.twitter.tweetypie.thriftscala.TweetEvent
-import com.twitter.util.Await
-import com.twitter.util.Duration
-import java.util.concurrent.TimeUnit
+ mport com.tw ter.app.Flag
+ mport com.tw ter.f nagle.http.HttpMuxer
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.ut l.ElfOwlF lter
+ mport com.tw ter.recos njector.cl ents.G zmoduck
+ mport com.tw ter.recos njector.cl ents.RecosHoseEnt  esCac 
+ mport com.tw ter.recos njector.cl ents.Soc alGraph
+ mport com.tw ter.recos njector.cl ents.T etyp e
+ mport com.tw ter.recos njector.cl ents.UrlResolver
+ mport com.tw ter.recos njector.conf g._
+ mport com.tw ter.recos njector.edges.Soc alWr eEventToUserUserGraphBu lder
+ mport com.tw ter.recos njector.edges.T  l neEventToUserT etEnt yGraphBu lder
+ mport com.tw ter.recos njector.edges.T etEventToUserT etEnt yGraphBu lder
+ mport com.tw ter.recos njector.edges.T etEventToUserUserGraphBu lder
+ mport com.tw ter.recos njector.edges.Un f edUserAct onToUserV deoGraphBu lder
+ mport com.tw ter.recos njector.edges.Un f edUserAct onToUserAdGraphBu lder
+ mport com.tw ter.recos njector.edges.Un f edUserAct onToUserT etGraphPlusBu lder
+ mport com.tw ter.recos njector.edges.UserT etEnt yEdgeBu lder
+ mport com.tw ter.recos njector.event_processors.Soc alWr eEventProcessor
+ mport com.tw ter.recos njector.event_processors.T  l neEventProcessor
+ mport com.tw ter.recos njector.event_processors.T etEventProcessor
+ mport com.tw ter.recos njector.publ s rs.KafkaEventPubl s r
+ mport com.tw ter.recos njector.uua_processors.Un f edUserAct onProcessor
+ mport com.tw ter.recos njector.uua_processors.Un f edUserAct onsConsu r
+ mport com.tw ter.server.logg ng.{Logg ng => JDK14Logg ng}
+ mport com.tw ter.server.Dec derable
+ mport com.tw ter.server.Tw terServer
+ mport com.tw ter.soc algraph.thr ftscala.Wr eEvent
+ mport com.tw ter.t  l neserv ce.thr ftscala.{Event => T  l neEvent}
+ mport com.tw ter.t etyp e.thr ftscala.T etEvent
+ mport com.tw ter.ut l.Awa 
+ mport com.tw ter.ut l.Durat on
+ mport java.ut l.concurrent.T  Un 
 
-object Main extends TwitterServer with JDK14Logging with Deciderable { self =>
+object Ma n extends Tw terServer w h JDK14Logg ng w h Dec derable { self =>
 
-  implicit val stats: StatsReceiver = statsReceiver
+   mpl c  val stats: StatsRece ver = statsRece ver
 
-  private val dataCenter: Flag[String] = flag("service.cluster", "atla", "Data Center")
-  private val serviceRole: Flag[String] = flag("service.role", "Service Role")
-  private val serviceEnv: Flag[String] = flag("service.env", "Service Env")
-  private val serviceName: Flag[String] = flag("service.name", "Service Name")
-  private val shardId = flag("shardId", 0, "Shard ID")
-  private val numShards = flag("numShards", 1, "Number of shards for this service")
-  private val truststoreLocation =
-    flag[String]("truststore_location", "", "Truststore file location")
+  pr vate val dataCenter: Flag[Str ng] = flag("serv ce.cluster", "atla", "Data Center")
+  pr vate val serv ceRole: Flag[Str ng] = flag("serv ce.role", "Serv ce Role")
+  pr vate val serv ceEnv: Flag[Str ng] = flag("serv ce.env", "Serv ce Env")
+  pr vate val serv ceNa : Flag[Str ng] = flag("serv ce.na ", "Serv ce Na ")
+  pr vate val shard d = flag("shard d", 0, "Shard  D")
+  pr vate val numShards = flag("numShards", 1, "Number of shards for t  serv ce")
+  pr vate val truststoreLocat on =
+    flag[Str ng]("truststore_locat on", "", "Truststore f le locat on")
 
-  def main(): Unit = {
-    val serviceIdentifier = ServiceIdentifier(
-      role = serviceRole(),
-      service = serviceName(),
-      environment = serviceEnv(),
+  def ma n(): Un  = {
+    val serv ce dent f er = Serv ce dent f er(
+      role = serv ceRole(),
+      serv ce = serv ceNa (),
+      env ron nt = serv ceEnv(),
       zone = dataCenter()
     )
-    println("ServiceIdentifier = " + serviceIdentifier.toString)
-    log.info("ServiceIdentifier = " + serviceIdentifier.toString)
+    pr ntln("Serv ce dent f er = " + serv ce dent f er.toStr ng)
+    log. nfo("Serv ce dent f er = " + serv ce dent f er.toStr ng)
 
-    val shard = shardId()
+    val shard = shard d()
     val numOfShards = numShards()
-    val environment = serviceEnv()
+    val env ron nt = serv ceEnv()
 
-    implicit val config: DeployConfig = {
-      environment match {
-        case "prod" => ProdConfig(serviceIdentifier)(stats)
-        case "staging" | "devel" => StagingConfig(serviceIdentifier)
-        case env => throw new Exception(s"Unknown environment $env")
+     mpl c  val conf g: DeployConf g = {
+      env ron nt match {
+        case "prod" => ProdConf g(serv ce dent f er)(stats)
+        case "stag ng" | "devel" => Stag ngConf g(serv ce dent f er)
+        case env => throw new Except on(s"Unknown env ron nt $env")
       }
     }
 
-    // Initialize the config and wait for initialization to finish
-    Await.ready(config.init())
+    //  n  al ze t  conf g and wa  for  n  al zat on to f n sh
+    Awa .ready(conf g. n ())
 
-    log.info(
-      "Starting Recos Injector: environment %s, clientId %s",
-      environment,
-      config.recosInjectorThriftClientId
+    log. nfo(
+      "Start ng Recos  njector: env ron nt %s, cl ent d %s",
+      env ron nt,
+      conf g.recos njectorThr ftCl ent d
     )
-    log.info("Starting shard Id: %d of %d shards...".format(shard, numOfShards))
+    log. nfo("Start ng shard  d: %d of %d shards...".format(shard, numOfShards))
 
-    // Client wrappers
-    val cache = new RecosHoseEntitiesCache(config.recosInjectorCoreSvcsCacheClient)
-    val gizmoduck = new Gizmoduck(config.userStore)
-    val socialGraph = new SocialGraph(config.socialGraphIdStore)
-    val tweetypie = new Tweetypie(config.tweetyPieStore)
-    val urlResolver = new UrlResolver(config.urlInfoStore)
+    // Cl ent wrappers
+    val cac  = new RecosHoseEnt  esCac (conf g.recos njectorCoreSvcsCac Cl ent)
+    val g zmoduck = new G zmoduck(conf g.userStore)
+    val soc alGraph = new Soc alGraph(conf g.soc alGraph dStore)
+    val t etyp e = new T etyp e(conf g.t etyP eStore)
+    val urlResolver = new UrlResolver(conf g.url nfoStore)
 
-    // Edge builders
-    val userTweetEntityEdgeBuilder = new UserTweetEntityEdgeBuilder(cache, urlResolver)
+    // Edge bu lders
+    val userT etEnt yEdgeBu lder = new UserT etEnt yEdgeBu lder(cac , urlResolver)
 
-    // Publishers
-    val kafkaEventPublisher = KafkaEventPublisher(
-      "/s/kafka/recommendations:kafka-tls",
-      config.outputKafkaTopicPrefix,
-      config.recosInjectorThriftClientId,
-      truststoreLocation())
+    // Publ s rs
+    val kafkaEventPubl s r = KafkaEventPubl s r(
+      "/s/kafka/recom ndat ons:kafka-tls",
+      conf g.outputKafkaTop cPref x,
+      conf g.recos njectorThr ftCl ent d,
+      truststoreLocat on())
 
-    // Message Builders
-    val socialWriteToUserUserMessageBuilder =
-      new SocialWriteEventToUserUserGraphBuilder()(
-        statsReceiver.scope("SocialWriteEventToUserUserGraphBuilder")
+    //  ssage Bu lders
+    val soc alWr eToUserUser ssageBu lder =
+      new Soc alWr eEventToUserUserGraphBu lder()(
+        statsRece ver.scope("Soc alWr eEventToUserUserGraphBu lder")
       )
 
-    val timelineToUserTweetEntityMessageBuilder = new TimelineEventToUserTweetEntityGraphBuilder(
-      userTweetEntityEdgeBuilder = userTweetEntityEdgeBuilder
-    )(statsReceiver.scope("TimelineEventToUserTweetEntityGraphBuilder"))
+    val t  l neToUserT etEnt y ssageBu lder = new T  l neEventToUserT etEnt yGraphBu lder(
+      userT etEnt yEdgeBu lder = userT etEnt yEdgeBu lder
+    )(statsRece ver.scope("T  l neEventToUserT etEnt yGraphBu lder"))
 
-    val tweetEventToUserTweetEntityGraphBuilder = new TweetEventToUserTweetEntityGraphBuilder(
-      userTweetEntityEdgeBuilder = userTweetEntityEdgeBuilder,
-      tweetCreationStore = config.tweetCreationStore,
-      decider = config.recosInjectorDecider
-    )(statsReceiver.scope("TweetEventToUserTweetEntityGraphBuilder"))
+    val t etEventToUserT etEnt yGraphBu lder = new T etEventToUserT etEnt yGraphBu lder(
+      userT etEnt yEdgeBu lder = userT etEnt yEdgeBu lder,
+      t etCreat onStore = conf g.t etCreat onStore,
+      dec der = conf g.recos njectorDec der
+    )(statsRece ver.scope("T etEventToUserT etEnt yGraphBu lder"))
 
-    val socialWriteEventProcessor = new SocialWriteEventProcessor(
-      eventBusStreamName = s"recos_injector_social_write_event_$environment",
-      thriftStruct = WriteEvent,
-      serviceIdentifier = serviceIdentifier,
-      kafkaEventPublisher = kafkaEventPublisher,
-      userUserGraphTopic = KafkaEventPublisher.UserUserTopic,
-      userUserGraphMessageBuilder = socialWriteToUserUserMessageBuilder
-    )(statsReceiver.scope("SocialWriteEventProcessor"))
+    val soc alWr eEventProcessor = new Soc alWr eEventProcessor(
+      eventBusStreamNa  = s"recos_ njector_soc al_wr e_event_$env ron nt",
+      thr ftStruct = Wr eEvent,
+      serv ce dent f er = serv ce dent f er,
+      kafkaEventPubl s r = kafkaEventPubl s r,
+      userUserGraphTop c = KafkaEventPubl s r.UserUserTop c,
+      userUserGraph ssageBu lder = soc alWr eToUserUser ssageBu lder
+    )(statsRece ver.scope("Soc alWr eEventProcessor"))
 
-    val tweetToUserUserMessageBuilder = new TweetEventToUserUserGraphBuilder()(
-      statsReceiver.scope("TweetEventToUserUserGraphBuilder")
+    val t etToUserUser ssageBu lder = new T etEventToUserUserGraphBu lder()(
+      statsRece ver.scope("T etEventToUserUserGraphBu lder")
     )
 
-    val unifiedUserActionToUserVideoGraphBuilder = new UnifiedUserActionToUserVideoGraphBuilder(
-      userTweetEntityEdgeBuilder = userTweetEntityEdgeBuilder
-    )(statsReceiver.scope("UnifiedUserActionToUserVideoGraphBuilder"))
+    val un f edUserAct onToUserV deoGraphBu lder = new Un f edUserAct onToUserV deoGraphBu lder(
+      userT etEnt yEdgeBu lder = userT etEnt yEdgeBu lder
+    )(statsRece ver.scope("Un f edUserAct onToUserV deoGraphBu lder"))
 
-    val unifiedUserActionToUserAdGraphBuilder = new UnifiedUserActionToUserAdGraphBuilder(
-      userTweetEntityEdgeBuilder = userTweetEntityEdgeBuilder
-    )(statsReceiver.scope("UnifiedUserActionToUserAdGraphBuilder"))
+    val un f edUserAct onToUserAdGraphBu lder = new Un f edUserAct onToUserAdGraphBu lder(
+      userT etEnt yEdgeBu lder = userT etEnt yEdgeBu lder
+    )(statsRece ver.scope("Un f edUserAct onToUserAdGraphBu lder"))
 
-    val unifiedUserActionToUserTweetGraphPlusBuilder =
-      new UnifiedUserActionToUserTweetGraphPlusBuilder(
-        userTweetEntityEdgeBuilder = userTweetEntityEdgeBuilder
-      )(statsReceiver.scope("UnifiedUserActionToUserTweetGraphPlusBuilder"))
+    val un f edUserAct onToUserT etGraphPlusBu lder =
+      new Un f edUserAct onToUserT etGraphPlusBu lder(
+        userT etEnt yEdgeBu lder = userT etEnt yEdgeBu lder
+      )(statsRece ver.scope("Un f edUserAct onToUserT etGraphPlusBu lder"))
 
     // Processors
-    val tweetEventProcessor = new TweetEventProcessor(
-      eventBusStreamName = s"recos_injector_tweet_events_$environment",
-      thriftStruct = TweetEvent,
-      serviceIdentifier = serviceIdentifier,
-      userUserGraphMessageBuilder = tweetToUserUserMessageBuilder,
-      userUserGraphTopic = KafkaEventPublisher.UserUserTopic,
-      userTweetEntityGraphMessageBuilder = tweetEventToUserTweetEntityGraphBuilder,
-      userTweetEntityGraphTopic = KafkaEventPublisher.UserTweetEntityTopic,
-      kafkaEventPublisher = kafkaEventPublisher,
-      socialGraph = socialGraph,
-      tweetypie = tweetypie,
-      gizmoduck = gizmoduck
-    )(statsReceiver.scope("TweetEventProcessor"))
+    val t etEventProcessor = new T etEventProcessor(
+      eventBusStreamNa  = s"recos_ njector_t et_events_$env ron nt",
+      thr ftStruct = T etEvent,
+      serv ce dent f er = serv ce dent f er,
+      userUserGraph ssageBu lder = t etToUserUser ssageBu lder,
+      userUserGraphTop c = KafkaEventPubl s r.UserUserTop c,
+      userT etEnt yGraph ssageBu lder = t etEventToUserT etEnt yGraphBu lder,
+      userT etEnt yGraphTop c = KafkaEventPubl s r.UserT etEnt yTop c,
+      kafkaEventPubl s r = kafkaEventPubl s r,
+      soc alGraph = soc alGraph,
+      t etyp e = t etyp e,
+      g zmoduck = g zmoduck
+    )(statsRece ver.scope("T etEventProcessor"))
 
-    val timelineEventProcessor = new TimelineEventProcessor(
-      eventBusStreamName = s"recos_injector_timeline_events_prototype_$environment",
-      thriftStruct = TimelineEvent,
-      serviceIdentifier = serviceIdentifier,
-      kafkaEventPublisher = kafkaEventPublisher,
-      userTweetEntityGraphTopic = KafkaEventPublisher.UserTweetEntityTopic,
-      userTweetEntityGraphMessageBuilder = timelineToUserTweetEntityMessageBuilder,
-      decider = config.recosInjectorDecider,
-      gizmoduck = gizmoduck,
-      tweetypie = tweetypie
-    )(statsReceiver.scope("TimelineEventProcessor"))
+    val t  l neEventProcessor = new T  l neEventProcessor(
+      eventBusStreamNa  = s"recos_ njector_t  l ne_events_prototype_$env ron nt",
+      thr ftStruct = T  l neEvent,
+      serv ce dent f er = serv ce dent f er,
+      kafkaEventPubl s r = kafkaEventPubl s r,
+      userT etEnt yGraphTop c = KafkaEventPubl s r.UserT etEnt yTop c,
+      userT etEnt yGraph ssageBu lder = t  l neToUserT etEnt y ssageBu lder,
+      dec der = conf g.recos njectorDec der,
+      g zmoduck = g zmoduck,
+      t etyp e = t etyp e
+    )(statsRece ver.scope("T  l neEventProcessor"))
 
     val eventBusProcessors = Seq(
-      timelineEventProcessor,
-      socialWriteEventProcessor,
-      tweetEventProcessor
+      t  l neEventProcessor,
+      soc alWr eEventProcessor,
+      t etEventProcessor
     )
 
-    val uuaProcessor = new UnifiedUserActionProcessor(
-      gizmoduck = gizmoduck,
-      tweetypie = tweetypie,
-      kafkaEventPublisher = kafkaEventPublisher,
-      userVideoGraphTopic = KafkaEventPublisher.UserVideoTopic,
-      userVideoGraphBuilder = unifiedUserActionToUserVideoGraphBuilder,
-      userAdGraphTopic = KafkaEventPublisher.UserAdTopic,
-      userAdGraphBuilder = unifiedUserActionToUserAdGraphBuilder,
-      userTweetGraphPlusTopic = KafkaEventPublisher.UserTweetPlusTopic,
-      userTweetGraphPlusBuilder = unifiedUserActionToUserTweetGraphPlusBuilder)(
-      statsReceiver.scope("UnifiedUserActionProcessor"))
+    val uuaProcessor = new Un f edUserAct onProcessor(
+      g zmoduck = g zmoduck,
+      t etyp e = t etyp e,
+      kafkaEventPubl s r = kafkaEventPubl s r,
+      userV deoGraphTop c = KafkaEventPubl s r.UserV deoTop c,
+      userV deoGraphBu lder = un f edUserAct onToUserV deoGraphBu lder,
+      userAdGraphTop c = KafkaEventPubl s r.UserAdTop c,
+      userAdGraphBu lder = un f edUserAct onToUserAdGraphBu lder,
+      userT etGraphPlusTop c = KafkaEventPubl s r.UserT etPlusTop c,
+      userT etGraphPlusBu lder = un f edUserAct onToUserT etGraphPlusBu lder)(
+      statsRece ver.scope("Un f edUserAct onProcessor"))
 
-    val uuaConsumer = new UnifiedUserActionsConsumer(uuaProcessor, truststoreLocation())
+    val uuaConsu r = new Un f edUserAct onsConsu r(uuaProcessor, truststoreLocat on())
 
-    // Start-up init and graceful shutdown setup
+    // Start-up  n  and graceful shutdown setup
 
-    // wait a bit for services to be ready
+    // wa  a b  for serv ces to be ready
     Thread.sleep(5000L)
 
-    log.info("Starting the event processors")
+    log. nfo("Start ng t  event processors")
     eventBusProcessors.foreach(_.start())
 
-    log.info("Starting the uua processors")
-    uuaConsumer.atLeastOnceProcessor.start()
+    log. nfo("Start ng t  uua processors")
+    uuaConsu r.atLeastOnceProcessor.start()
 
-    this.addAdminRoute(ElfOwlFilter.getPostbackRoute())
+    t .addAdm nRoute(ElfOwlF lter.getPostbackRoute())
 
-    onExit {
-      log.info("Shutting down the event processors")
+    onEx  {
+      log. nfo("Shutt ng down t  event processors")
       eventBusProcessors.foreach(_.stop())
-      log.info("Shutting down the uua processors")
-      uuaConsumer.atLeastOnceProcessor.close()
-      log.info("done exit")
+      log. nfo("Shutt ng down t  uua processors")
+      uuaConsu r.atLeastOnceProcessor.close()
+      log. nfo("done ex ")
     }
 
-    // Wait on the thriftServer so that shutdownTimeout is respected.
-    Await.result(adminHttpServer)
+    // Wa  on t  thr ftServer so that shutdownT  out  s respected.
+    Awa .result(adm nHttpServer)
   }
 }

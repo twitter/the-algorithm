@@ -1,79 +1,79 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+package com.tw ter.follow_recom ndat ons.common.feature_hydrat on.s ces
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.ml.featurestore.catalog.datasets.core.UserMobileSdkDataset
-import com.twitter.ml.featurestore.catalog.datasets.core.UsersourceEntityDataset
-import com.twitter.ml.featurestore.catalog.datasets.customer_journey.PostNuxAlgorithmIdAggregateDataset
-import com.twitter.ml.featurestore.catalog.datasets.customer_journey.PostNuxAlgorithmTypeAggregateDataset
-import com.twitter.ml.featurestore.catalog.datasets.magicrecs.NotificationSummariesEntityDataset
-import com.twitter.ml.featurestore.catalog.datasets.onboarding.MetricCenterUserCountingFeaturesDataset
-import com.twitter.ml.featurestore.catalog.datasets.onboarding.UserWtfAlgorithmAggregateFeaturesDataset
-import com.twitter.ml.featurestore.catalog.datasets.onboarding.WhoToFollowPostNuxFeaturesDataset
-import com.twitter.ml.featurestore.catalog.datasets.rux.UserRecentReactivationTimeDataset
-import com.twitter.ml.featurestore.catalog.datasets.timelines.AuthorFeaturesEntityDataset
-import com.twitter.ml.featurestore.lib.dataset.DatasetParams
-import com.twitter.ml.featurestore.lib.dataset.online.BatchingPolicy
-import com.twitter.ml.featurestore.lib.params.FeatureStoreParams
-import com.twitter.strato.opcontext.Attribution.ManhattanAppId
-import com.twitter.strato.opcontext.ServeWithin
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.ml.featurestore.catalog.datasets.core.UserMob leSdkDataset
+ mport com.tw ter.ml.featurestore.catalog.datasets.core.Users ceEnt yDataset
+ mport com.tw ter.ml.featurestore.catalog.datasets.custo r_j ney.PostNuxAlgor hm dAggregateDataset
+ mport com.tw ter.ml.featurestore.catalog.datasets.custo r_j ney.PostNuxAlgor hmTypeAggregateDataset
+ mport com.tw ter.ml.featurestore.catalog.datasets.mag crecs.Not f cat onSummar esEnt yDataset
+ mport com.tw ter.ml.featurestore.catalog.datasets.onboard ng. tr cCenterUserCount ngFeaturesDataset
+ mport com.tw ter.ml.featurestore.catalog.datasets.onboard ng.UserWtfAlgor hmAggregateFeaturesDataset
+ mport com.tw ter.ml.featurestore.catalog.datasets.onboard ng.WhoToFollowPostNuxFeaturesDataset
+ mport com.tw ter.ml.featurestore.catalog.datasets.rux.UserRecentReact vat onT  Dataset
+ mport com.tw ter.ml.featurestore.catalog.datasets.t  l nes.AuthorFeaturesEnt yDataset
+ mport com.tw ter.ml.featurestore.l b.dataset.DatasetParams
+ mport com.tw ter.ml.featurestore.l b.dataset.onl ne.Batch ngPol cy
+ mport com.tw ter.ml.featurestore.l b.params.FeatureStoreParams
+ mport com.tw ter.strato.opcontext.Attr but on.ManhattanApp d
+ mport com.tw ter.strato.opcontext.ServeW h n
 
-object FeatureStoreParameters {
+object FeatureStorePara ters {
 
-  private val FeatureServiceBatchSize = 100
+  pr vate val FeatureServ ceBatchS ze = 100
 
   val featureStoreParams = FeatureStoreParams(
     global = DatasetParams(
-      serveWithin = Some(ServeWithin(duration = 240.millis, roundTripAllowance = None)),
-      attributions = Seq(
-        ManhattanAppId("omega", "wtf_impression_store"),
-        ManhattanAppId("athena", "wtf_athena"),
-        ManhattanAppId("starbuck", "wtf_starbuck"),
-        ManhattanAppId("apollo", "wtf_apollo")
+      serveW h n = So (ServeW h n(durat on = 240.m ll s, roundTr pAllowance = None)),
+      attr but ons = Seq(
+        ManhattanApp d("o ga", "wtf_ mpress on_store"),
+        ManhattanApp d("at na", "wtf_at na"),
+        ManhattanApp d("starbuck", "wtf_starbuck"),
+        ManhattanApp d("apollo", "wtf_apollo")
       ),
-      batchingPolicy = Some(BatchingPolicy.Isolated(FeatureServiceBatchSize))
+      batch ngPol cy = So (Batch ngPol cy. solated(FeatureServ ceBatchS ze))
     ),
     perDataset = Map(
-      MetricCenterUserCountingFeaturesDataset.id ->
+       tr cCenterUserCount ngFeaturesDataset. d ->
         DatasetParams(
-          stratoSuffix = Some("onboarding"),
-          batchingPolicy = Some(BatchingPolicy.Isolated(200))
+          stratoSuff x = So ("onboard ng"),
+          batch ngPol cy = So (Batch ngPol cy. solated(200))
         ),
-      UsersourceEntityDataset.id ->
+      Users ceEnt yDataset. d ->
         DatasetParams(
-          stratoSuffix = Some("onboarding")
+          stratoSuff x = So ("onboard ng")
         ),
-      WhoToFollowPostNuxFeaturesDataset.id ->
+      WhoToFollowPostNuxFeaturesDataset. d ->
         DatasetParams(
-          stratoSuffix = Some("onboarding"),
-          batchingPolicy = Some(BatchingPolicy.Isolated(200))
+          stratoSuff x = So ("onboard ng"),
+          batch ngPol cy = So (Batch ngPol cy. solated(200))
         ),
-      AuthorFeaturesEntityDataset.id ->
+      AuthorFeaturesEnt yDataset. d ->
         DatasetParams(
-          stratoSuffix = Some("onboarding"),
-          batchingPolicy = Some(BatchingPolicy.Isolated(10))
+          stratoSuff x = So ("onboard ng"),
+          batch ngPol cy = So (Batch ngPol cy. solated(10))
         ),
-      UserRecentReactivationTimeDataset.id -> DatasetParams(
-        stratoSuffix =
-          None // removed due to low hit rate. we should use a negative cache in the future
+      UserRecentReact vat onT  Dataset. d -> DatasetParams(
+        stratoSuff x =
+          None // removed due to low h  rate.   should use a negat ve cac   n t  future
       ),
-      UserWtfAlgorithmAggregateFeaturesDataset.id -> DatasetParams(
-        stratoSuffix = None
+      UserWtfAlgor hmAggregateFeaturesDataset. d -> DatasetParams(
+        stratoSuff x = None
       ),
-      NotificationSummariesEntityDataset.id -> DatasetParams(
-        stratoSuffix = Some("onboarding"),
-        serveWithin = Some(ServeWithin(duration = 45.millis, roundTripAllowance = None)),
-        batchingPolicy = Some(BatchingPolicy.Isolated(10))
+      Not f cat onSummar esEnt yDataset. d -> DatasetParams(
+        stratoSuff x = So ("onboard ng"),
+        serveW h n = So (ServeW h n(durat on = 45.m ll s, roundTr pAllowance = None)),
+        batch ngPol cy = So (Batch ngPol cy. solated(10))
       ),
-      UserMobileSdkDataset.id -> DatasetParams(
-        stratoSuffix = Some("onboarding")
+      UserMob leSdkDataset. d -> DatasetParams(
+        stratoSuff x = So ("onboard ng")
       ),
-      PostNuxAlgorithmIdAggregateDataset.id -> DatasetParams(
-        stratoSuffix = Some("onboarding")
+      PostNuxAlgor hm dAggregateDataset. d -> DatasetParams(
+        stratoSuff x = So ("onboard ng")
       ),
-      PostNuxAlgorithmTypeAggregateDataset.id -> DatasetParams(
-        stratoSuffix = Some("onboarding")
+      PostNuxAlgor hmTypeAggregateDataset. d -> DatasetParams(
+        stratoSuff x = So ("onboard ng")
       ),
     ),
-    enableFeatureGenerationStats = true
+    enableFeatureGenerat onStats = true
   )
 }

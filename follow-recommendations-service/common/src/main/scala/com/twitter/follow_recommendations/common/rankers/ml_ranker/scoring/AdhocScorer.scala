@@ -1,28 +1,28 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
+package com.tw ter.follow_recom ndat ons.common.rankers.ml_ranker.scor ng
 
-import com.twitter.follow_recommendations.common.rankers.common.AdhocScoreModificationType.AdhocScoreModificationType
-import com.twitter.follow_recommendations.common.models.Score
-import com.twitter.ml.api.DataRecord
-import com.twitter.stitch.Stitch
+ mport com.tw ter.follow_recom ndat ons.common.rankers.common.AdhocScoreMod f cat onType.AdhocScoreMod f cat onType
+ mport com.tw ter.follow_recom ndat ons.common.models.Score
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.st ch.St ch
 
-trait AdhocScorer extends Scorer {
+tra  AdhocScorer extends Scorer {
 
   /**
-   * NOTE: For instances of [[AdhocScorer]] this function SHOULD NOT be used.
+   * NOTE: For  nstances of [[AdhocScorer]] t  funct on SHOULD NOT be used.
    * Please use:
-   *   [[score(target: HasClientContext with HasParams, candidates: Seq[CandidateUser])]]
-   * instead.
+   *   [[score(target: HasCl entContext w h HasParams, cand dates: Seq[Cand dateUser])]]
+   *  nstead.
    */
   @Deprecated
-  override def score(records: Seq[DataRecord]): Stitch[Seq[Score]] =
-    throw new UnsupportedOperationException(
-      "For instances of AdhocScorer this operation is not defined. Please use " +
-        "`def score(target: HasClientContext with HasParams, candidates: Seq[CandidateUser])` " +
-        "instead.")
+  overr de def score(records: Seq[DataRecord]): St ch[Seq[Score]] =
+    throw new UnsupportedOperat onExcept on(
+      "For  nstances of AdhocScorer t  operat on  s not def ned. Please use " +
+        "`def score(target: HasCl entContext w h HasParams, cand dates: Seq[Cand dateUser])` " +
+        " nstead.")
 
   /**
-   * This helps us manage the extend of adhoc modification on candidates' score. There is a hard
-   * limit of applying ONLY ONE scorer of each type to a score.
+   * T   lps us manage t  extend of adhoc mod f cat on on cand dates' score. T re  s a hard
+   * l m  of apply ng ONLY ONE scorer of each type to a score.
    */
-  val scoreModificationType: AdhocScoreModificationType
+  val scoreMod f cat onType: AdhocScoreMod f cat onType
 }

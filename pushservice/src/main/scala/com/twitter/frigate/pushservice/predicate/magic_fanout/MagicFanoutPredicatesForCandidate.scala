@@ -1,525 +1,525 @@
-package com.twitter.frigate.pushservice.predicate.magic_fanout
+package com.tw ter.fr gate.pushserv ce.pred cate.mag c_fanout
 
-import com.twitter.audience_rewards.thriftscala.HasSuperFollowingRelationshipRequest
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.MagicFanoutCandidate
-import com.twitter.frigate.common.base.MagicFanoutCreatorEventCandidate
-import com.twitter.frigate.common.base.MagicFanoutProductLaunchCandidate
-import com.twitter.frigate.common.history.RecItems
-import com.twitter.frigate.common.predicate.FatiguePredicate.build
-import com.twitter.frigate.common.predicate.FatiguePredicate.productLaunchTypeRecTypesOnlyFilter
-import com.twitter.frigate.common.predicate.FatiguePredicate.recOnlyFilter
-import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContext
-import com.twitter.frigate.common.store.interests.SemanticCoreEntityId
-import com.twitter.frigate.common.util.IbisAppPushDeviceSettingsUtil
-import com.twitter.frigate.magic_events.thriftscala.CreatorFanoutType
-import com.twitter.frigate.magic_events.thriftscala.ProductType
-import com.twitter.frigate.magic_events.thriftscala.TargetID
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.MagicFanoutEventHydratedCandidate
-import com.twitter.frigate.pushservice.model.MagicFanoutEventPushCandidate
-import com.twitter.frigate.pushservice.model.MagicFanoutNewsEventPushCandidate
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.predicate.FatiguePredicate
-import com.twitter.frigate.pushservice.predicate.PredicatesForCandidate
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.frigate.thriftscala.NotificationDisplayLocation
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.interests.thriftscala.UserInterests
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
-import com.twitter.util.Future
+ mport com.tw ter.aud ence_rewards.thr ftscala.HasSuperFollow ngRelat onsh pRequest
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Mag cFanoutCand date
+ mport com.tw ter.fr gate.common.base.Mag cFanoutCreatorEventCand date
+ mport com.tw ter.fr gate.common.base.Mag cFanoutProductLaunchCand date
+ mport com.tw ter.fr gate.common. tory.Rec ems
+ mport com.tw ter.fr gate.common.pred cate.Fat guePred cate.bu ld
+ mport com.tw ter.fr gate.common.pred cate.Fat guePred cate.productLaunchTypeRecTypesOnlyF lter
+ mport com.tw ter.fr gate.common.pred cate.Fat guePred cate.recOnlyF lter
+ mport com.tw ter.fr gate.common.store. nterests. nterestsLookupRequestW hContext
+ mport com.tw ter.fr gate.common.store. nterests.Semant cCoreEnt y d
+ mport com.tw ter.fr gate.common.ut l. b sAppPushDev ceSett ngsUt l
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.CreatorFanoutType
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.ProductType
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.Target D
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.Mag cFanoutEventHydratedCand date
+ mport com.tw ter.fr gate.pushserv ce.model.Mag cFanoutEventPushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.Mag cFanoutNewsEventPushCand date
+ mport com.tw ter.fr gate.pushserv ce.conf g.Conf g
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.pred cate.Fat guePred cate
+ mport com.tw ter.fr gate.pushserv ce.pred cate.Pred catesForCand date
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
+ mport com.tw ter.fr gate.thr ftscala.Not f cat onD splayLocat on
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter. nterests.thr ftscala.User nterests
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
 
-object MagicFanoutPredicatesForCandidate {
+object Mag cFanoutPred catesForCand date {
 
   /**
-   * Check if Semantic Core reasons satisfy rank threshold ( for heavy users a non broad entity should satisfy the threshold)
+   * C ck  f Semant c Core reasons sat sfy rank threshold ( for  avy users a non broad ent y should sat sfy t  threshold)
    */
-  def magicFanoutErgInterestRankThresholdPredicate(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[MagicFanoutEventHydratedCandidate] = {
-    val name = "magicfanout_interest_erg_rank_threshold"
-    val scopedStatsReceiver = stats.scope(s"predicate_$name")
-    Predicate
-      .fromAsync { candidate: MagicFanoutEventHydratedCandidate =>
-        candidate.target.isHeavyUserState.map { isHeavyUser =>
+  def mag cFanoutErg nterestRankThresholdPred cate(
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[Mag cFanoutEventHydratedCand date] = {
+    val na  = "mag cfanout_ nterest_erg_rank_threshold"
+    val scopedStatsRece ver = stats.scope(s"pred cate_$na ")
+    Pred cate
+      .fromAsync { cand date: Mag cFanoutEventHydratedCand date =>
+        cand date.target. s avyUserState.map {  s avyUser =>
           lazy val rankThreshold =
-            if (isHeavyUser) {
-              candidate.target.params(PushFeatureSwitchParams.MagicFanoutRankErgThresholdHeavy)
+             f ( s avyUser) {
+              cand date.target.params(PushFeatureSw chParams.Mag cFanoutRankErgThreshold avy)
             } else {
-              candidate.target.params(PushFeatureSwitchParams.MagicFanoutRankErgThresholdNonHeavy)
+              cand date.target.params(PushFeatureSw chParams.Mag cFanoutRankErgThresholdNon avy)
             }
-          MagicFanoutPredicatesUtil
-            .checkIfValidErgScEntityReasonExists(
-              candidate.effectiveMagicEventsReasons,
+          Mag cFanoutPred catesUt l
+            .c ck fVal dErgScEnt yReasonEx sts(
+              cand date.effect veMag cEventsReasons,
               rankThreshold
             )
         }
       }
-      .withStats(scopedStatsReceiver)
-      .withName(name)
+      .w hStats(scopedStatsRece ver)
+      .w hNa (na )
   }
 
-  def newsNotificationFatigue(
+  def newsNot f cat onFat gue(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "news_notification_fatigue"
-    val scopedStatsReceiver = stats.scope(s"predicate_$name")
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        FatiguePredicate
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date] = {
+    val na  = "news_not f cat on_fat gue"
+    val scopedStatsRece ver = stats.scope(s"pred cate_$na ")
+    Pred cate
+      .fromAsync { cand date: PushCand date =>
+        Fat guePred cate
           .recTypeSetOnly(
-            notificationDisplayLocation = NotificationDisplayLocation.PushToMobileDevice,
-            recTypes = Set(CommonRecommendationType.MagicFanoutNewsEvent),
-            maxInInterval =
-              candidate.target.params(PushFeatureSwitchParams.MFMaxNumberOfPushesInInterval),
-            interval = candidate.target.params(PushFeatureSwitchParams.MFPushIntervalInHours),
-            minInterval = candidate.target.params(PushFeatureSwitchParams.MFMinIntervalFatigue)
+            not f cat onD splayLocat on = Not f cat onD splayLocat on.PushToMob leDev ce,
+            recTypes = Set(CommonRecom ndat onType.Mag cFanoutNewsEvent),
+            max n nterval =
+              cand date.target.params(PushFeatureSw chParams.MFMaxNumberOfPus s n nterval),
+             nterval = cand date.target.params(PushFeatureSw chParams.MFPush nterval nH s),
+            m n nterval = cand date.target.params(PushFeatureSw chParams.MFM n ntervalFat gue)
           )
-          .apply(Seq(candidate))
-          .map(_.headOption.getOrElse(false))
+          .apply(Seq(cand date))
+          .map(_. adOpt on.getOrElse(false))
 
       }
-      .withStats(scopedStatsReceiver)
-      .withName(name)
+      .w hStats(scopedStatsRece ver)
+      .w hNa (na )
   }
 
   /**
-   * Check if reason contains any optouted semantic core entity interests.
+   * C ck  f reason conta ns any optouted semant c core ent y  nterests.
    *
    * @param stats
    *
    * @return
    */
-  def magicFanoutNoOptoutInterestPredicate(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[MagicFanoutEventPushCandidate] = {
-    val name = "magicfanout_optout_interest_predicate"
-    val scopedStatsReceiver = stats.scope(s"predicate_$name")
-    val withOptOutInterestsCounter = stats.counter("with_optout_interests")
-    val withoutOptOutInterestsCounter = stats.counter("without_optout_interests")
-    Predicate
-      .fromAsync { candidate: MagicFanoutEventPushCandidate =>
-        candidate.target.optOutSemanticCoreInterests.map {
+  def mag cFanoutNoOptout nterestPred cate(
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[Mag cFanoutEventPushCand date] = {
+    val na  = "mag cfanout_optout_ nterest_pred cate"
+    val scopedStatsRece ver = stats.scope(s"pred cate_$na ")
+    val w hOptOut nterestsCounter = stats.counter("w h_optout_ nterests")
+    val w houtOptOut nterestsCounter = stats.counter("w hout_optout_ nterests")
+    Pred cate
+      .fromAsync { cand date: Mag cFanoutEventPushCand date =>
+        cand date.target.optOutSemant cCore nterests.map {
           case (
-                optOutUserInterests: Seq[SemanticCoreEntityId]
+                optOutUser nterests: Seq[Semant cCoreEnt y d]
               ) =>
-            withOptOutInterestsCounter.incr()
-            optOutUserInterests
-              .intersect(candidate.annotatedAndInferredSemanticCoreEntities).isEmpty
+            w hOptOut nterestsCounter. ncr()
+            optOutUser nterests
+              . ntersect(cand date.annotatedAnd nferredSemant cCoreEnt  es). sEmpty
           case _ =>
-            withoutOptOutInterestsCounter.incr()
+            w houtOptOut nterestsCounter. ncr()
             true
         }
       }
-      .withStats(scopedStatsReceiver)
-      .withName(name)
+      .w hStats(scopedStatsRece ver)
+      .w hNa (na )
   }
 
   /**
-   * Checks if the target has only one device language language,
-   * and that language is targeted for that event
+   * C cks  f t  target has only one dev ce language language,
+   * and that language  s targeted for that event
    *
-   * @param statsReceiver
+   * @param statsRece ver
    *
    * @return
    */
-  def inferredUserDeviceLanguagePredicate(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[MagicFanoutEventPushCandidate] = {
-    val name = "inferred_device_language"
-    val scopedStats = statsReceiver.scope(s"predicate_$name")
-    Predicate
-      .fromAsync { candidate: MagicFanoutEventPushCandidate =>
-        val target = candidate.target
-        target.deviceInfo.map {
-          _.flatMap { deviceInfo =>
-            val languages = deviceInfo.deviceLanguages.getOrElse(Seq.empty[String])
-            val distinctDeviceLanguages =
-              IbisAppPushDeviceSettingsUtil.distinctDeviceLanguages(languages)
+  def  nferredUserDev ceLanguagePred cate(
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[Mag cFanoutEventPushCand date] = {
+    val na  = " nferred_dev ce_language"
+    val scopedStats = statsRece ver.scope(s"pred cate_$na ")
+    Pred cate
+      .fromAsync { cand date: Mag cFanoutEventPushCand date =>
+        val target = cand date.target
+        target.dev ce nfo.map {
+          _.flatMap { dev ce nfo =>
+            val languages = dev ce nfo.dev ceLanguages.getOrElse(Seq.empty[Str ng])
+            val d st nctDev ceLanguages =
+               b sAppPushDev ceSett ngsUt l.d st nctDev ceLanguages(languages)
 
-            candidate.newsForYouMetadata.map { newsForYouMetadata =>
-              val eventLocales = newsForYouMetadata.locales.getOrElse(Seq.empty)
-              val eventLanguages = eventLocales.flatMap(_.language).map(_.toLowerCase).distinct
+            cand date.newsFor  tadata.map { newsFor  tadata =>
+              val eventLocales = newsFor  tadata.locales.getOrElse(Seq.empty)
+              val eventLanguages = eventLocales.flatMap(_.language).map(_.toLo rCase).d st nct
 
-              eventLanguages.intersect(distinctDeviceLanguages).nonEmpty
+              eventLanguages. ntersect(d st nctDev ceLanguages).nonEmpty
             }
           }.getOrElse(false)
         }
       }
-      .withStats(scopedStats)
-      .withName(name)
+      .w hStats(scopedStats)
+      .w hNa (na )
   }
 
   /**
-   * Bypass predicate if high priority push
+   * Bypass pred cate  f h gh pr or y push
    */
-  def highPriorityNewsEventExceptedPredicate(
-    predicate: NamedPredicate[MagicFanoutNewsEventPushCandidate]
+  def h ghPr or yNewsEventExceptedPred cate(
+    pred cate: Na dPred cate[Mag cFanoutNewsEventPushCand date]
   )(
-    implicit config: Config
-  ): NamedPredicate[MagicFanoutNewsEventPushCandidate] = {
-    PredicatesForCandidate.exceptedPredicate(
-      name = "high_priority_excepted_" + predicate.name,
-      fn = MagicFanoutPredicatesUtil.checkIfHighPriorityNewsEventForCandidate,
-      predicate
-    )(config.statsReceiver)
+     mpl c  conf g: Conf g
+  ): Na dPred cate[Mag cFanoutNewsEventPushCand date] = {
+    Pred catesForCand date.exceptedPred cate(
+      na  = "h gh_pr or y_excepted_" + pred cate.na ,
+      fn = Mag cFanoutPred catesUt l.c ck fH ghPr or yNewsEventForCand date,
+      pred cate
+    )(conf g.statsRece ver)
   }
 
   /**
-   * Bypass predicate if high priority push
+   * Bypass pred cate  f h gh pr or y push
    */
-  def highPriorityEventExceptedPredicate(
-    predicate: NamedPredicate[MagicFanoutEventPushCandidate]
+  def h ghPr or yEventExceptedPred cate(
+    pred cate: Na dPred cate[Mag cFanoutEventPushCand date]
   )(
-    implicit config: Config
-  ): NamedPredicate[MagicFanoutEventPushCandidate] = {
-    PredicatesForCandidate.exceptedPredicate(
-      name = "high_priority_excepted_" + predicate.name,
-      fn = MagicFanoutPredicatesUtil.checkIfHighPriorityEventForCandidate,
-      predicate
-    )(config.statsReceiver)
+     mpl c  conf g: Conf g
+  ): Na dPred cate[Mag cFanoutEventPushCand date] = {
+    Pred catesForCand date.exceptedPred cate(
+      na  = "h gh_pr or y_excepted_" + pred cate.na ,
+      fn = Mag cFanoutPred catesUt l.c ck fH ghPr or yEventForCand date,
+      pred cate
+    )(conf g.statsRece ver)
   }
 
-  def magicFanoutSimClusterTargetingPredicate(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[MagicFanoutEventPushCandidate] = {
-    val name = "simcluster_targeting"
-    val scopedStats = stats.scope(s"predicate_$name")
+  def mag cFanoutS mClusterTarget ngPred cate(
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[Mag cFanoutEventPushCand date] = {
+    val na  = "s mcluster_target ng"
+    val scopedStats = stats.scope(s"pred cate_$na ")
     val userStateCounters = scopedStats.scope("user_state")
-    Predicate
-      .fromAsync { candidate: MagicFanoutEventPushCandidate =>
-        candidate.target.isHeavyUserState.map { isHeavyUser =>
-          val simClusterEmbeddings = candidate.newsForYouMetadata.flatMap(
-            _.eventContextScribe.flatMap(_.simClustersEmbeddings))
-          val TopKSimClustersCount = 50
-          val eventSimClusterVectorOpt: Option[MagicFanoutPredicatesUtil.SimClusterScores] =
-            MagicFanoutPredicatesUtil.getEventSimClusterVector(
-              simClusterEmbeddings.map(_.toMap),
-              (ModelVersion.Model20m145kUpdated, EmbeddingType.FollowBasedTweet),
-              TopKSimClustersCount
+    Pred cate
+      .fromAsync { cand date: Mag cFanoutEventPushCand date =>
+        cand date.target. s avyUserState.map {  s avyUser =>
+          val s mClusterEmbedd ngs = cand date.newsFor  tadata.flatMap(
+            _.eventContextScr be.flatMap(_.s mClustersEmbedd ngs))
+          val TopKS mClustersCount = 50
+          val eventS mClusterVectorOpt: Opt on[Mag cFanoutPred catesUt l.S mClusterScores] =
+            Mag cFanoutPred catesUt l.getEventS mClusterVector(
+              s mClusterEmbedd ngs.map(_.toMap),
+              (ModelVers on.Model20m145kUpdated, Embedd ngType.FollowBasedT et),
+              TopKS mClustersCount
             )
-          val userSimClusterVectorOpt: Option[MagicFanoutPredicatesUtil.SimClusterScores] =
-            MagicFanoutPredicatesUtil.getUserSimClusterVector(candidate.effectiveMagicEventsReasons)
-          (eventSimClusterVectorOpt, userSimClusterVectorOpt) match {
+          val userS mClusterVectorOpt: Opt on[Mag cFanoutPred catesUt l.S mClusterScores] =
+            Mag cFanoutPred catesUt l.getUserS mClusterVector(cand date.effect veMag cEventsReasons)
+          (eventS mClusterVectorOpt, userS mClusterVectorOpt) match {
             case (
-                  Some(eventSimClusterVector: MagicFanoutPredicatesUtil.SimClusterScores),
-                  Some(userSimClusterVector)) =>
-              val score = eventSimClusterVector
-                .normedDotProduct(userSimClusterVector, eventSimClusterVector)
-              val threshold = if (isHeavyUser) {
-                candidate.target.params(
-                  PushFeatureSwitchParams.MagicFanoutSimClusterDotProductHeavyUserThreshold)
+                  So (eventS mClusterVector: Mag cFanoutPred catesUt l.S mClusterScores),
+                  So (userS mClusterVector)) =>
+              val score = eventS mClusterVector
+                .nor dDotProduct(userS mClusterVector, eventS mClusterVector)
+              val threshold =  f ( s avyUser) {
+                cand date.target.params(
+                  PushFeatureSw chParams.Mag cFanoutS mClusterDotProduct avyUserThreshold)
               } else {
-                candidate.target.params(
-                  PushFeatureSwitchParams.MagicFanoutSimClusterDotProductNonHeavyUserThreshold)
+                cand date.target.params(
+                  PushFeatureSw chParams.Mag cFanoutS mClusterDotProductNon avyUserThreshold)
               }
-              val isPassed = score >= threshold
-              userStateCounters.scope(isHeavyUser.toString).counter(s"$isPassed").incr()
-              isPassed
+              val  sPassed = score >= threshold
+              userStateCounters.scope( s avyUser.toStr ng).counter(s"$ sPassed"). ncr()
+               sPassed
 
-            case (None, Some(userSimClusterVector)) =>
-              candidate.commonRecType == CommonRecommendationType.MagicFanoutSportsEvent
+            case (None, So (userS mClusterVector)) =>
+              cand date.commonRecType == CommonRecom ndat onType.Mag cFanoutSportsEvent
 
             case _ => false
           }
         }
       }
-      .withStats(scopedStats)
-      .withName(name)
+      .w hStats(scopedStats)
+      .w hNa (na )
   }
 
-  def geoTargetingHoldback(
+  def geoTarget ngHoldback(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with MagicFanoutCandidate] = {
-    Predicate
-      .from[PushCandidate with MagicFanoutCandidate] { candidate =>
-        if (MagicFanoutPredicatesUtil.reasonsContainGeoTarget(
-            candidate.candidateMagicEventsReasons)) {
-          candidate.target.params(PushFeatureSwitchParams.EnableMfGeoTargeting)
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date w h Mag cFanoutCand date] = {
+    Pred cate
+      .from[PushCand date w h Mag cFanoutCand date] { cand date =>
+         f (Mag cFanoutPred catesUt l.reasonsConta nGeoTarget(
+            cand date.cand dateMag cEventsReasons)) {
+          cand date.target.params(PushFeatureSw chParams.EnableMfGeoTarget ng)
         } else true
       }
-      .withStats(stats.scope("geo_targeting_holdback"))
-      .withName("geo_targeting_holdback")
+      .w hStats(stats.scope("geo_target ng_holdback"))
+      .w hNa ("geo_target ng_holdback")
   }
 
-  def geoOptOutPredicate(
+  def geoOptOutPred cate(
     userStore: ReadableStore[Long, User]
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with MagicFanoutCandidate] = {
-    Predicate
-      .fromAsync[PushCandidate with MagicFanoutCandidate] { candidate =>
-        if (MagicFanoutPredicatesUtil.reasonsContainGeoTarget(
-            candidate.candidateMagicEventsReasons)) {
-          userStore.get(candidate.target.targetId).map { userOpt =>
-            val isGeoAllowed = userOpt
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date w h Mag cFanoutCand date] = {
+    Pred cate
+      .fromAsync[PushCand date w h Mag cFanoutCand date] { cand date =>
+         f (Mag cFanoutPred catesUt l.reasonsConta nGeoTarget(
+            cand date.cand dateMag cEventsReasons)) {
+          userStore.get(cand date.target.target d).map { userOpt =>
+            val  sGeoAllo d = userOpt
               .flatMap(_.account)
-              .exists(_.allowLocationHistoryPersonalization)
-            isGeoAllowed
+              .ex sts(_.allowLocat on toryPersonal zat on)
+             sGeoAllo d
           }
         } else {
           Future.True
         }
       }
-      .withStats(stats.scope("geo_opt_out_predicate"))
-      .withName("geo_opt_out_predicate")
+      .w hStats(stats.scope("geo_opt_out_pred cate"))
+      .w hNa ("geo_opt_out_pred cate")
   }
 
   /**
-   * Check if Semantic Core reasons contains valid utt reason & reason is within top k topics followed by user
+   * C ck  f Semant c Core reasons conta ns val d utt reason & reason  s w h n top k top cs follo d by user
    */
-  def magicFanoutTopicFollowsTargetingPredicate(
-    implicit stats: StatsReceiver,
-    interestsLookupStore: ReadableStore[InterestsLookupRequestWithContext, UserInterests]
-  ): NamedPredicate[MagicFanoutEventHydratedCandidate] = {
-    val name = "magicfanout_topic_follows_targeting"
-    val scopedStatsReceiver = stats.scope(s"predicate_$name")
-    Predicate
-      .fromAsync[PushCandidate with MagicFanoutEventHydratedCandidate] { candidate =>
-        candidate.followedTopicLocalizedEntities.map(_.nonEmpty)
+  def mag cFanoutTop cFollowsTarget ngPred cate(
+     mpl c  stats: StatsRece ver,
+     nterestsLookupStore: ReadableStore[ nterestsLookupRequestW hContext, User nterests]
+  ): Na dPred cate[Mag cFanoutEventHydratedCand date] = {
+    val na  = "mag cfanout_top c_follows_target ng"
+    val scopedStatsRece ver = stats.scope(s"pred cate_$na ")
+    Pred cate
+      .fromAsync[PushCand date w h Mag cFanoutEventHydratedCand date] { cand date =>
+        cand date.follo dTop cLocal zedEnt  es.map(_.nonEmpty)
       }
-      .withStats(scopedStatsReceiver)
-      .withName(name)
+      .w hStats(scopedStatsRece ver)
+      .w hNa (na )
   }
 
-  /** Requires the magicfanout candidate to have a UserID reason which ranks below the follow
-   * rank threshold. If no UserID target exists the candidate is dropped. */
+  /** Requ res t  mag cfanout cand date to have a User D reason wh ch ranks below t  follow
+   * rank threshold.  f no User D target ex sts t  cand date  s dropped. */
   def followRankThreshold(
-    threshold: Param[Int]
+    threshold: Param[ nt]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with MagicFanoutCandidate] = {
-    val name = "follow_rank_threshold"
-    Predicate
-      .from[PushCandidate with MagicFanoutCandidate] { c =>
-        c.candidateMagicEventsReasons.exists { fanoutReason =>
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date w h Mag cFanoutCand date] = {
+    val na  = "follow_rank_threshold"
+    Pred cate
+      .from[PushCand date w h Mag cFanoutCand date] { c =>
+        c.cand dateMag cEventsReasons.ex sts { fanoutReason =>
           fanoutReason.reason match {
-            case TargetID.UserID(_) =>
-              fanoutReason.rank.exists { rank =>
+            case Target D.User D(_) =>
+              fanoutReason.rank.ex sts { rank =>
                 rank <= c.target.params(threshold)
               }
             case _ => false
           }
         }
       }
-      .withStats(statsReceiver.scope(name))
-      .withName(name)
+      .w hStats(statsRece ver.scope(na ))
+      .w hNa (na )
   }
 
-  def userGeneratedEventsPredicate(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with MagicFanoutEventHydratedCandidate] = {
-    val name = "user_generated_moments"
-    val stats = statsReceiver.scope(name)
+  def userGeneratedEventsPred cate(
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date w h Mag cFanoutEventHydratedCand date] = {
+    val na  = "user_generated_mo nts"
+    val stats = statsRece ver.scope(na )
 
-    Predicate
-      .from { candidate: PushCandidate with MagicFanoutEventHydratedCandidate =>
-        val isUgmMoment = candidate.semanticCoreEntityTags.values.flatten.toSet
-          .contains(MagicFanoutPredicatesUtil.UgmMomentTag)
-        if (isUgmMoment) {
-          candidate.target.params(PushFeatureSwitchParams.MagicFanoutNewsUserGeneratedEventsEnable)
+    Pred cate
+      .from { cand date: PushCand date w h Mag cFanoutEventHydratedCand date =>
+        val  sUgmMo nt = cand date.semant cCoreEnt yTags.values.flatten.toSet
+          .conta ns(Mag cFanoutPred catesUt l.UgmMo ntTag)
+         f ( sUgmMo nt) {
+          cand date.target.params(PushFeatureSw chParams.Mag cFanoutNewsUserGeneratedEventsEnable)
         } else true
-      }.withStats(stats)
-      .withName(name)
+      }.w hStats(stats)
+      .w hNa (na )
   }
-  def escherbirdMagicfanoutEventParam(
+  def esc rb rdMag cfanoutEventParam(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with MagicFanoutEventPushCandidate] = {
-    val name = "magicfanout_escherbird_fs"
-    val scopedStatsReceiver = stats.scope(s"predicate_$name")
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date w h Mag cFanoutEventPushCand date] = {
+    val na  = "mag cfanout_esc rb rd_fs"
+    val scopedStatsRece ver = stats.scope(s"pred cate_$na ")
 
-    Predicate
-      .fromAsync[PushCandidate with MagicFanoutEventPushCandidate] { candidate =>
-        val candidateFrigateNotif = candidate.frigateNotification.magicFanoutEventNotification
-        val isEscherbirdEvent = candidateFrigateNotif.exists(_.isEscherbirdEvent.contains(true))
-        scopedStatsReceiver.counter(s"with_escherbird_flag_$isEscherbirdEvent").incr()
+    Pred cate
+      .fromAsync[PushCand date w h Mag cFanoutEventPushCand date] { cand date =>
+        val cand dateFr gateNot f = cand date.fr gateNot f cat on.mag cFanoutEventNot f cat on
+        val  sEsc rb rdEvent = cand dateFr gateNot f.ex sts(_. sEsc rb rdEvent.conta ns(true))
+        scopedStatsRece ver.counter(s"w h_esc rb rd_flag_$ sEsc rb rdEvent"). ncr()
 
-        if (isEscherbirdEvent) {
+         f ( sEsc rb rdEvent) {
 
-          val listOfEventsSemanticCoreDomainIds =
-            candidate.target.params(PushFeatureSwitchParams.ListOfEventSemanticCoreDomainIds)
+          val l stOfEventsSemant cCoreDoma n ds =
+            cand date.target.params(PushFeatureSw chParams.L stOfEventSemant cCoreDoma n ds)
 
-          val candScDomainEvent =
-            if (listOfEventsSemanticCoreDomainIds.nonEmpty) {
-              candidate.eventSemanticCoreDomainIds
-                .intersect(listOfEventsSemanticCoreDomainIds).nonEmpty
+          val candScDoma nEvent =
+             f (l stOfEventsSemant cCoreDoma n ds.nonEmpty) {
+              cand date.eventSemant cCoreDoma n ds
+                . ntersect(l stOfEventsSemant cCoreDoma n ds).nonEmpty
             } else {
               false
             }
-          scopedStatsReceiver
+          scopedStatsRece ver
             .counter(
-              s"with_escherbird_fs_in_list_of_event_semantic_core_domains_$candScDomainEvent").incr()
-          Future.value(candScDomainEvent)
+              s"w h_esc rb rd_fs_ n_l st_of_event_semant c_core_doma ns_$candScDoma nEvent"). ncr()
+          Future.value(candScDoma nEvent)
         } else {
           Future.True
         }
       }
-      .withStats(scopedStatsReceiver)
-      .withName(name)
+      .w hStats(scopedStatsRece ver)
+      .w hNa (na )
   }
 
   /**
-   *  Checks if the user has custom targeting enabled.If so, bucket the user in experiment. This custom targeting refers to adding
-   *  tweet authors as targets in the eventfanout service.
-   * @param stats [StatsReceiver]
-   * @return NamedPredicate[PushCandidate with MagicFanoutEventPushCandidate]
+   *  C cks  f t  user has custom target ng enabled. f so, bucket t  user  n exper  nt. T  custom target ng refers to add ng
+   *  t et authors as targets  n t  eventfanout serv ce.
+   * @param stats [StatsRece ver]
+   * @return Na dPred cate[PushCand date w h Mag cFanoutEventPushCand date]
    */
-  def hasCustomTargetingForNewsEventsParam(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with MagicFanoutEventPushCandidate] = {
-    val name = "magicfanout_hascustomtargeting"
-    val scopedStatsReceiver = stats.scope(s"predicate_$name")
+  def hasCustomTarget ngForNewsEventsParam(
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date w h Mag cFanoutEventPushCand date] = {
+    val na  = "mag cfanout_hascustomtarget ng"
+    val scopedStatsRece ver = stats.scope(s"pred cate_$na ")
 
-    Predicate
-      .from[PushCandidate with MagicFanoutEventPushCandidate] { candidate =>
-        candidate.candidateMagicEventsReasons.exists { fanoutReason =>
+    Pred cate
+      .from[PushCand date w h Mag cFanoutEventPushCand date] { cand date =>
+        cand date.cand dateMag cEventsReasons.ex sts { fanoutReason =>
           fanoutReason.reason match {
-            case userIdReason: TargetID.UserID =>
-              if (userIdReason.userID.hasCustomTargeting.contains(true)) {
-                candidate.target.params(
-                  PushFeatureSwitchParams.MagicFanoutEnableCustomTargetingNewsEvent)
+            case user dReason: Target D.User D =>
+               f (user dReason.user D.hasCustomTarget ng.conta ns(true)) {
+                cand date.target.params(
+                  PushFeatureSw chParams.Mag cFanoutEnableCustomTarget ngNewsEvent)
               } else true
             case _ => true
           }
         }
       }
-      .withStats(scopedStatsReceiver)
-      .withName(name)
+      .w hStats(scopedStatsRece ver)
+      .w hNa (na )
 
   }
 
-  def magicFanoutProductLaunchFatigue(
+  def mag cFanoutProductLaunchFat gue(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with MagicFanoutProductLaunchCandidate] = {
-    val name = "magic_fanout_product_launch_fatigue"
-    val scopedStatsReceiver = stats.scope(s"predicate_$name")
-    Predicate
-      .fromAsync { candidate: PushCandidate with MagicFanoutProductLaunchCandidate =>
-        val target = candidate.target
-        val (interval, maxInInterval, minInterval) = {
-          candidate.productLaunchType match {
-            case ProductType.BlueVerified =>
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date w h Mag cFanoutProductLaunchCand date] = {
+    val na  = "mag c_fanout_product_launch_fat gue"
+    val scopedStatsRece ver = stats.scope(s"pred cate_$na ")
+    Pred cate
+      .fromAsync { cand date: PushCand date w h Mag cFanoutProductLaunchCand date =>
+        val target = cand date.target
+        val ( nterval, max n nterval, m n nterval) = {
+          cand date.productLaunchType match {
+            case ProductType.BlueVer f ed =>
               (
-                target.params(PushFeatureSwitchParams.ProductLaunchPushIntervalInHours),
-                target.params(PushFeatureSwitchParams.ProductLaunchMaxNumberOfPushesInInterval),
-                target.params(PushFeatureSwitchParams.ProductLaunchMinIntervalFatigue))
+                target.params(PushFeatureSw chParams.ProductLaunchPush nterval nH s),
+                target.params(PushFeatureSw chParams.ProductLaunchMaxNumberOfPus s n nterval),
+                target.params(PushFeatureSw chParams.ProductLaunchM n ntervalFat gue))
             case _ =>
-              (Duration.fromDays(1), 0, Duration.Zero)
+              (Durat on.fromDays(1), 0, Durat on.Zero)
           }
         }
-        build(
-          interval = interval,
-          maxInInterval = maxInInterval,
-          minInterval = minInterval,
-          filterHistory = productLaunchTypeRecTypesOnlyFilter(
-            Set(CommonRecommendationType.MagicFanoutProductLaunch),
-            candidate.productLaunchType.toString),
-          notificationDisplayLocation = NotificationDisplayLocation.PushToMobileDevice
-        ).flatContraMap { candidate: PushCandidate => candidate.target.history }
-          .apply(Seq(candidate))
-          .map(_.headOption.getOrElse(false))
+        bu ld(
+           nterval =  nterval,
+          max n nterval = max n nterval,
+          m n nterval = m n nterval,
+          f lter tory = productLaunchTypeRecTypesOnlyF lter(
+            Set(CommonRecom ndat onType.Mag cFanoutProductLaunch),
+            cand date.productLaunchType.toStr ng),
+          not f cat onD splayLocat on = Not f cat onD splayLocat on.PushToMob leDev ce
+        ).flatContraMap { cand date: PushCand date => cand date.target. tory }
+          .apply(Seq(cand date))
+          .map(_. adOpt on.getOrElse(false))
       }
-      .withStats(scopedStatsReceiver)
-      .withName(name)
+      .w hStats(scopedStatsRece ver)
+      .w hNa (na )
   }
 
-  def creatorPushTargetIsNotCreator(
+  def creatorPushTarget sNotCreator(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with MagicFanoutCreatorEventCandidate] = {
-    val name = "magic_fanout_creator_is_self"
-    val scopedStatsReceiver = stats.scope(s"predicate_$name")
-    Predicate
-      .from { candidate: PushCandidate with MagicFanoutCreatorEventCandidate =>
-        candidate.target.targetId != candidate.creatorId
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date w h Mag cFanoutCreatorEventCand date] = {
+    val na  = "mag c_fanout_creator_ s_self"
+    val scopedStatsRece ver = stats.scope(s"pred cate_$na ")
+    Pred cate
+      .from { cand date: PushCand date w h Mag cFanoutCreatorEventCand date =>
+        cand date.target.target d != cand date.creator d
       }
-      .withStats(scopedStatsReceiver)
-      .withName(name)
+      .w hStats(scopedStatsRece ver)
+      .w hNa (na )
   }
 
-  def duplicateCreatorPredicate(
+  def dupl cateCreatorPred cate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with MagicFanoutCreatorEventCandidate] = {
-    val name = "magic_fanout_creator_duplicate_creator_id"
-    val scopedStatsReceiver = stats.scope(s"predicate_$name")
-    Predicate
-      .fromAsync { cand: PushCandidate with MagicFanoutCreatorEventCandidate =>
-        cand.target.pushRecItems.map { recItems: RecItems =>
-          !recItems.creatorIds.contains(cand.creatorId)
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date w h Mag cFanoutCreatorEventCand date] = {
+    val na  = "mag c_fanout_creator_dupl cate_creator_ d"
+    val scopedStatsRece ver = stats.scope(s"pred cate_$na ")
+    Pred cate
+      .fromAsync { cand: PushCand date w h Mag cFanoutCreatorEventCand date =>
+        cand.target.pushRec ems.map { rec ems: Rec ems =>
+          !rec ems.creator ds.conta ns(cand.creator d)
         }
       }
-      .withStats(scopedStatsReceiver)
-      .withName(name)
+      .w hStats(scopedStatsRece ver)
+      .w hNa (na )
   }
 
-  def isSuperFollowingCreator(
+  def  sSuperFollow ngCreator(
   )(
-    implicit config: Config,
-    stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with MagicFanoutCreatorEventCandidate] = {
-    val name = "magic_fanout_is_already_superfollowing_creator"
-    val scopedStatsReceiver = stats.scope(s"predicate_$name")
-    Predicate
-      .fromAsync { cand: PushCandidate with MagicFanoutCreatorEventCandidate =>
-        config.hasSuperFollowingRelationshipStore
+     mpl c  conf g: Conf g,
+    stats: StatsRece ver
+  ): Na dPred cate[PushCand date w h Mag cFanoutCreatorEventCand date] = {
+    val na  = "mag c_fanout_ s_already_superfollow ng_creator"
+    val scopedStatsRece ver = stats.scope(s"pred cate_$na ")
+    Pred cate
+      .fromAsync { cand: PushCand date w h Mag cFanoutCreatorEventCand date =>
+        conf g.hasSuperFollow ngRelat onsh pStore
           .get(
-            HasSuperFollowingRelationshipRequest(
-              sourceUserId = cand.target.targetId,
-              targetUserId = cand.creatorId)).map(_.getOrElse(false))
+            HasSuperFollow ngRelat onsh pRequest(
+              s ceUser d = cand.target.target d,
+              targetUser d = cand.creator d)).map(_.getOrElse(false))
       }
-      .withStats(scopedStatsReceiver)
-      .withName(name)
+      .w hStats(scopedStatsRece ver)
+      .w hNa (na )
   }
 
-  def magicFanoutCreatorPushFatiguePredicate(
+  def mag cFanoutCreatorPushFat guePred cate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with MagicFanoutCreatorEventCandidate] = {
-    val name = "magic_fanout_creator_fatigue"
-    val scopedStatsReceiver = stats.scope(s"predicate_$name")
-    Predicate
-      .fromAsync { candidate: PushCandidate with MagicFanoutCreatorEventCandidate =>
-        val target = candidate.target
-        val (interval, maxInInterval, minInterval) = {
-          candidate.creatorFanoutType match {
-            case CreatorFanoutType.UserSubscription =>
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date w h Mag cFanoutCreatorEventCand date] = {
+    val na  = "mag c_fanout_creator_fat gue"
+    val scopedStatsRece ver = stats.scope(s"pred cate_$na ")
+    Pred cate
+      .fromAsync { cand date: PushCand date w h Mag cFanoutCreatorEventCand date =>
+        val target = cand date.target
+        val ( nterval, max n nterval, m n nterval) = {
+          cand date.creatorFanoutType match {
+            case CreatorFanoutType.UserSubscr pt on =>
               (
-                target.params(PushFeatureSwitchParams.CreatorSubscriptionPushIntervalInHours),
+                target.params(PushFeatureSw chParams.CreatorSubscr pt onPush nterval nH s),
                 target.params(
-                  PushFeatureSwitchParams.CreatorSubscriptionPushMaxNumberOfPushesInInterval),
-                target.params(PushFeatureSwitchParams.CreatorSubscriptionPushhMinIntervalFatigue))
+                  PushFeatureSw chParams.CreatorSubscr pt onPushMaxNumberOfPus s n nterval),
+                target.params(PushFeatureSw chParams.CreatorSubscr pt onPushhM n ntervalFat gue))
             case CreatorFanoutType.NewCreator =>
               (
-                target.params(PushFeatureSwitchParams.NewCreatorPushIntervalInHours),
-                target.params(PushFeatureSwitchParams.NewCreatorPushMaxNumberOfPushesInInterval),
-                target.params(PushFeatureSwitchParams.NewCreatorPushMinIntervalFatigue))
+                target.params(PushFeatureSw chParams.NewCreatorPush nterval nH s),
+                target.params(PushFeatureSw chParams.NewCreatorPushMaxNumberOfPus s n nterval),
+                target.params(PushFeatureSw chParams.NewCreatorPushM n ntervalFat gue))
             case _ =>
-              (Duration.fromDays(1), 0, Duration.Zero)
+              (Durat on.fromDays(1), 0, Durat on.Zero)
           }
         }
-        build(
-          interval = interval,
-          maxInInterval = maxInInterval,
-          minInterval = minInterval,
-          filterHistory = recOnlyFilter(candidate.commonRecType),
-          notificationDisplayLocation = NotificationDisplayLocation.PushToMobileDevice
-        ).flatContraMap { candidate: PushCandidate => candidate.target.history }
-          .apply(Seq(candidate))
-          .map(_.headOption.getOrElse(false))
+        bu ld(
+           nterval =  nterval,
+          max n nterval = max n nterval,
+          m n nterval = m n nterval,
+          f lter tory = recOnlyF lter(cand date.commonRecType),
+          not f cat onD splayLocat on = Not f cat onD splayLocat on.PushToMob leDev ce
+        ).flatContraMap { cand date: PushCand date => cand date.target. tory }
+          .apply(Seq(cand date))
+          .map(_. adOpt on.getOrElse(false))
       }
-      .withStats(scopedStatsReceiver)
-      .withName(name)
+      .w hStats(scopedStatsRece ver)
+      .w hNa (na )
   }
 }

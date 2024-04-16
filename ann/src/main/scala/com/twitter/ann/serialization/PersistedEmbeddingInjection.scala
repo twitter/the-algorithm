@@ -1,28 +1,28 @@
-package com.twitter.ann.serialization
+package com.tw ter.ann.ser al zat on
 
-import com.twitter.ann.common.EntityEmbedding
-import com.twitter.ann.common.EmbeddingType._
-import com.twitter.ann.serialization.thriftscala.PersistedEmbedding
-import com.twitter.bijection.Injection
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec
-import java.nio.ByteBuffer
-import scala.util.Try
+ mport com.tw ter.ann.common.Ent yEmbedd ng
+ mport com.tw ter.ann.common.Embedd ngType._
+ mport com.tw ter.ann.ser al zat on.thr ftscala.Pers stedEmbedd ng
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter. d aserv ces.commons.codec.ArrayByteBufferCodec
+ mport java.n o.ByteBuffer
+ mport scala.ut l.Try
 
 /**
- * Injection that converts from the ann.common.Embedding to the thrift PersistedEmbedding.
+ *  nject on that converts from t  ann.common.Embedd ng to t  thr ft Pers stedEmbedd ng.
  */
-class PersistedEmbeddingInjection[T](
-  idByteInjection: Injection[T, Array[Byte]])
-    extends Injection[EntityEmbedding[T], PersistedEmbedding] {
-  override def apply(entity: EntityEmbedding[T]): PersistedEmbedding = {
-    val byteBuffer = ByteBuffer.wrap(idByteInjection(entity.id))
-    PersistedEmbedding(byteBuffer, embeddingSerDe.toThrift(entity.embedding))
+class Pers stedEmbedd ng nject on[T](
+   dByte nject on:  nject on[T, Array[Byte]])
+    extends  nject on[Ent yEmbedd ng[T], Pers stedEmbedd ng] {
+  overr de def apply(ent y: Ent yEmbedd ng[T]): Pers stedEmbedd ng = {
+    val byteBuffer = ByteBuffer.wrap( dByte nject on(ent y. d))
+    Pers stedEmbedd ng(byteBuffer, embedd ngSerDe.toThr ft(ent y.embedd ng))
   }
 
-  override def invert(persistedEmbedding: PersistedEmbedding): Try[EntityEmbedding[T]] = {
-    val idTry = idByteInjection.invert(ArrayByteBufferCodec.decode(persistedEmbedding.id))
-    idTry.map { id =>
-      EntityEmbedding(id, embeddingSerDe.fromThrift(persistedEmbedding.embedding))
+  overr de def  nvert(pers stedEmbedd ng: Pers stedEmbedd ng): Try[Ent yEmbedd ng[T]] = {
+    val  dTry =  dByte nject on. nvert(ArrayByteBufferCodec.decode(pers stedEmbedd ng. d))
+     dTry.map {  d =>
+      Ent yEmbedd ng( d, embedd ngSerDe.fromThr ft(pers stedEmbedd ng.embedd ng))
     }
   }
 }

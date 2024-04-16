@@ -1,45 +1,45 @@
-package com.twitter.follow_recommendations.models
+package com.tw ter.follow_recom ndat ons.models
 
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.models._
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.common.HasPreFetc dFeature
+ mport com.tw ter.follow_recom ndat ons.common.models._
+ mport com.tw ter.follow_recom ndat ons.logg ng.{thr ftscala => offl ne}
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Cl entContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport com.tw ter.t  l nes.conf gap .Params
 
-case class ScoringUserRequest(
-  override val clientContext: ClientContext,
-  override val displayLocation: DisplayLocation,
-  override val params: Params,
-  override val debugOptions: Option[DebugOptions] = None,
-  override val recentFollowedUserIds: Option[Seq[Long]],
-  override val recentFollowedByUserIds: Option[Seq[Long]],
-  override val wtfImpressions: Option[Seq[WtfImpression]],
-  override val similarToUserIds: Seq[Long],
-  candidates: Seq[CandidateUser],
-  debugParams: Option[DebugParams] = None,
-  isSoftUser: Boolean = false)
-    extends HasClientContext
-    with HasDisplayLocation
-    with HasParams
-    with HasDebugOptions
-    with HasPreFetchedFeature
-    with HasSimilarToContext {
-  def toOfflineThrift: offline.OfflineScoringUserRequest = offline.OfflineScoringUserRequest(
-    ClientContextConverter.toFRSOfflineClientContextThrift(clientContext),
-    displayLocation.toOfflineThrift,
-    candidates.map(_.toOfflineUserThrift)
+case class Scor ngUserRequest(
+  overr de val cl entContext: Cl entContext,
+  overr de val d splayLocat on: D splayLocat on,
+  overr de val params: Params,
+  overr de val debugOpt ons: Opt on[DebugOpt ons] = None,
+  overr de val recentFollo dUser ds: Opt on[Seq[Long]],
+  overr de val recentFollo dByUser ds: Opt on[Seq[Long]],
+  overr de val wtf mpress ons: Opt on[Seq[Wtf mpress on]],
+  overr de val s m larToUser ds: Seq[Long],
+  cand dates: Seq[Cand dateUser],
+  debugParams: Opt on[DebugParams] = None,
+   sSoftUser: Boolean = false)
+    extends HasCl entContext
+    w h HasD splayLocat on
+    w h HasParams
+    w h HasDebugOpt ons
+    w h HasPreFetc dFeature
+    w h HasS m larToContext {
+  def toOffl neThr ft: offl ne.Offl neScor ngUserRequest = offl ne.Offl neScor ngUserRequest(
+    Cl entContextConverter.toFRSOffl neCl entContextThr ft(cl entContext),
+    d splayLocat on.toOffl neThr ft,
+    cand dates.map(_.toOffl neUserThr ft)
   )
-  def toRecommendationRequest: RecommendationRequest = RecommendationRequest(
-    clientContext = clientContext,
-    displayLocation = displayLocation,
-    displayContext = None,
+  def toRecom ndat onRequest: Recom ndat onRequest = Recom ndat onRequest(
+    cl entContext = cl entContext,
+    d splayLocat on = d splayLocat on,
+    d splayContext = None,
     maxResults = None,
     cursor = None,
-    excludedIds = None,
+    excluded ds = None,
     fetchPromotedContent = None,
     debugParams = debugParams,
-    isSoftUser = isSoftUser
+     sSoftUser =  sSoftUser
   )
 }

@@ -1,47 +1,47 @@
-package com.twitter.search.earlybird.search.facets;
+package com.tw ter.search.earlyb rd.search.facets;
 
-import java.util.ArrayList;
-import java.util.List;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.L st;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
+ mport com.google.common.collect. mmutableL st;
+ mport com.google.common.collect.Sets;
 
-import org.apache.commons.lang.StringUtils;
+ mport org.apac .commons.lang.Str ngUt ls;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.earlybird.partition.AudioSpaceTable;
-import com.twitter.search.earlybird.thrift.AudioSpaceState;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultAudioSpace;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.earlyb rd.part  on.Aud oSpaceTable;
+ mport com.tw ter.search.earlyb rd.thr ft.Aud oSpaceState;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultAud oSpace;
 
-public class SpaceFacetCollector extends AbstractFacetTermCollector {
-  private final List<ThriftSearchResultAudioSpace> spaces = new ArrayList<>();
+publ c class SpaceFacetCollector extends AbstractFacetTermCollector {
+  pr vate f nal L st<Thr ftSearchResultAud oSpace> spaces = new ArrayL st<>();
 
-  private final AudioSpaceTable audioSpaceTable;
+  pr vate f nal Aud oSpaceTable aud oSpaceTable;
 
-  public SpaceFacetCollector(AudioSpaceTable audioSpaceTable) {
-    this.audioSpaceTable = audioSpaceTable;
+  publ c SpaceFacetCollector(Aud oSpaceTable aud oSpaceTable) {
+    t .aud oSpaceTable = aud oSpaceTable;
   }
 
-  @Override
-  public boolean collect(int docID, long termID, int fieldID) {
+  @Overr de
+  publ c boolean collect( nt doc D, long term D,  nt f eld D) {
 
-    String spaceId = getTermFromFacet(termID, fieldID,
-        Sets.newHashSet(EarlybirdFieldConstant.SPACES_FACET));
-    if (StringUtils.isEmpty(spaceId)) {
+    Str ng space d = getTermFromFacet(term D, f eld D,
+        Sets.newHashSet(Earlyb rdF eldConstant.SPACES_FACET));
+     f (Str ngUt ls. sEmpty(space d)) {
       return false;
     }
 
-    spaces.add(new ThriftSearchResultAudioSpace(spaceId,
-        audioSpaceTable.isRunning(spaceId) ? AudioSpaceState.RUNNING
-            : AudioSpaceState.ENDED));
+    spaces.add(new Thr ftSearchResultAud oSpace(space d,
+        aud oSpaceTable. sRunn ng(space d) ? Aud oSpaceState.RUNN NG
+            : Aud oSpaceState.ENDED));
 
     return true;
   }
 
-  @Override
-  public void fillResultAndClear(ThriftSearchResult result) {
-    getExtraMetadata(result).setSpaces(ImmutableList.copyOf(spaces));
+  @Overr de
+  publ c vo d f llResultAndClear(Thr ftSearchResult result) {
+    getExtra tadata(result).setSpaces( mmutableL st.copyOf(spaces));
     spaces.clear();
   }
 }

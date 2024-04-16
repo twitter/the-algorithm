@@ -3,22 +3,22 @@
 ## From master branch
 
 ```
-aurora workflow build unified_user_actions/service/deploy/uua-partitioner-staging.workflow
+aurora workflow bu ld un f ed_user_act ons/serv ce/deploy/uua-part  oner-stag ng.workflow
 ```
 
-## From your own branch
+## From y  own branch
 
 ```
-git push origin <LDAP>/<BRANCH>
-aurora workflow build  --build-branch=<LDAP>/<BRANCH> unified_user_actions/service/deploy/uua-partitioner-staging.workflow
+g  push or g n <LDAP>/<BRANCH>
+aurora workflow bu ld  --bu ld-branch=<LDAP>/<BRANCH> un f ed_user_act ons/serv ce/deploy/uua-part  oner-stag ng.workflow
 ```
 
-* Check build status:
+* C ck bu ld status:
   * Dev
-    * https://workflows.twitter.biz/workflow/discode/uua-partitioner-staging/
+    * https://workflows.tw ter.b z/workflow/d scode/uua-part  oner-stag ng/
 
-## Monitor output topic EPS 
+## Mon or output top c EPS 
   * Prod
-    * unified_user_actions: https://monitoring.twitter.biz/tiny/2942881
+    * un f ed_user_act ons: https://mon or ng.tw ter.b z/t ny/2942881
   * Dev
-    * unified_user_action_sample1: https://monitoring.twitter.biz/tiny/2942879
+    * un f ed_user_act on_sample1: https://mon or ng.tw ter.b z/t ny/2942879

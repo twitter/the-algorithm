@@ -1,187 +1,187 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.graphql.contextual_ref.ContextualTweetRefMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.graphql.contextual_ref.OuterTweetContextMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.graphql.contextual_ref.TweetHydrationContextMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.rtf.safety_level.SafetyLevelMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert.ShowAlertColorConfigurationMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert.ShowAlertDisplayLocationMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert.ShowAlertIconDisplayInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert.ShowAlertIconMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert.ShowAlertNavigationMetadataMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert.ShowAlertTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.button.ButtonStyleMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.button.CtaButtonMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.button.IconCtaButtonMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.button.TextCtaButtonMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color.ColorMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color.ColorPaletteMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color.RosettaColorMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.commerce.CommerceProductGroupItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.commerce.CommerceProductItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover.CoverContentMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover.CoverCtaBehaviorMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover.CoverCtaMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover.CoverImageMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover.FullCoverContentMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover.FullCoverDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover.HalfCoverContentMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover.HalfCoverDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.icon.HorizonIconMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.article.ArticleDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.article.ArticleItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.article.ArticleSeedTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.audio_space.AudioSpaceItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.card.CardDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.card.CardItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.conversation_annotation.ConversationAnnotationMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.conversation_annotation.ConversationAnnotationTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.event.EventSummaryDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.event.EventSummaryItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.forward_pivot.ForwardPivotDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.forward_pivot.ForwardPivotMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.forward_pivot.SoftInterventionDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.generic_summary_item.GenericSummaryActionMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.generic_summary_item.GenericSummaryContextMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.generic_summary_item.GenericSummaryDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.generic_summary_item.GenericSummaryItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.highlight.HighlightedSectionMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.icon_label.IconLabelItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.label.LabelDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.label.LabelItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message._
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.moment.MomentAnnotationItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.prompt._
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.suggestion.SpellingActionTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.suggestion.SpellingItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.suggestion.TextResultMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.thread.ThreadHeaderContentMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.thread.ThreadHeaderItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tile.CallToActionTileContentMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tile.StandardTileContentMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tile.TileContentMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tile.TileItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tombstone.TombstoneDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tombstone.TombstoneInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tombstone.TombstoneItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic.TopicDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic.TopicFollowPromptDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic.TopicFollowPromptItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic.TopicFunctionalityTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic.TopicItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.trend.TrendItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet.TimelinesScoreInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet.TweetDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet.TweetHighlightsMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet.TweetItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet_composer.TweetComposerDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet_composer.TweetComposerItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.twitter_list.TwitterListDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.twitter_list.TwitterListItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.user.UserDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.user.UserItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.user.UserReactiveTriggersMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.vertical_grid_item.VerticalGridItemContentMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.vertical_grid_item.VerticalGridItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.vertical_grid_item.VerticalGridItemTileStyleMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.vertical_grid_item.VerticalGridItemTopicFunctionalityTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.vertical_grid_item.VerticalGridItemTopicTileMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media.AspectRatioMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media.BroadcastIdMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media.MediaEntityMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media.MediaKeyMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media.MediaMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media.RectMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media.TweetMediaMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata._
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.operation.CursorDisplayTreatmentMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.operation.CursorItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.operation.CursorOperationMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.operation.CursorTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.AdMetadataContainerMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.CallToActionMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.ClickTrackingInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.DisclaimerTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.DisclosureTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.DynamicPrerollTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.MediaInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.PrerollMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.PrerollMetadataMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.PromotedMetadataMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.SkAdNetworkDataMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.SponsorshipTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.UrlOverrideTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.VideoVariantsMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.reaction.TimelineReactionMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.ReferenceObjectMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextAlignmentMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextEntityMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextFormatMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module._
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.graphql.contextual_ref.ContextualT etRefMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.graphql.contextual_ref.OuterT etContextMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.graphql.contextual_ref.T etHydrat onContextMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.rtf.safety_level.SafetyLevelMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.alert.ShowAlertColorConf gurat onMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.alert.ShowAlertD splayLocat onMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.alert.ShowAlert conD splay nfoMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.alert.ShowAlert conMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.alert.ShowAlertNav gat on tadataMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.alert.ShowAlertTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.button.ButtonStyleMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.button.CtaButtonMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.button. conCtaButtonMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.button.TextCtaButtonMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.color.ColorMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.color.ColorPaletteMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.color.RosettaColorMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.com rce.Com rceProductGroup emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.com rce.Com rceProduct emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.cover.CoverContentMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.cover.CoverCtaBehav orMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.cover.CoverCtaMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.cover.Cover mageMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.cover.FullCoverContentMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.cover.FullCoverD splayTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.cover.HalfCoverContentMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.cover.HalfCoverD splayTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. con.Hor zon conMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.art cle.Art cleD splayTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.art cle.Art cle emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.art cle.Art cleSeedTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.aud o_space.Aud oSpace emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.card.CardD splayTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.card.Card emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.conversat on_annotat on.Conversat onAnnotat onMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.conversat on_annotat on.Conversat onAnnotat onTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.event.EventSummaryD splayTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.event.EventSummary emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.forward_p vot.ForwardP votD splayTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.forward_p vot.ForwardP votMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.forward_p vot.Soft ntervent onD splayTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.gener c_summary_ em.Gener cSummaryAct onMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.gener c_summary_ em.Gener cSummaryContextMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.gener c_summary_ em.Gener cSummaryD splayTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.gener c_summary_ em.Gener cSummary emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.h ghl ght.H ghl ghtedSect onMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em. con_label. conLabel emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.label.LabelD splayTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.label.Label emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em. ssage._
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.mo nt.Mo ntAnnotat on emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.prompt._
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.suggest on.Spell ngAct onTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.suggest on.Spell ng emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.suggest on.TextResultMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.thread.Thread aderContentMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.thread.Thread ader emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.t le.CallToAct onT leContentMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.t le.StandardT leContentMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.t le.T leContentMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.t le.T le emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.tombstone.TombstoneD splayTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.tombstone.Tombstone nfoMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.tombstone.Tombstone emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.top c.Top cD splayTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.top c.Top cFollowPromptD splayTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.top c.Top cFollowPrompt emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.top c.Top cFunct onal yTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.top c.Top c emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.trend.Trend emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.t et.T  l nesScore nfoMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.t et.T etD splayTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.t et.T etH ghl ghtsMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.t et.T et emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.t et_composer.T etComposerD splayTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.t et_composer.T etComposer emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.tw ter_l st.Tw terL stD splayTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.tw ter_l st.Tw terL st emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.user.UserD splayTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.user.User emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.user.UserReact veTr ggersMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.vert cal_gr d_ em.Vert calGr d emContentMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.vert cal_gr d_ em.Vert calGr d emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.vert cal_gr d_ em.Vert calGr d emT leStyleMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.vert cal_gr d_ em.Vert calGr d emTop cFunct onal yTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.vert cal_gr d_ em.Vert calGr d emTop cT leMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. d a.AspectRat oMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. d a.Broadcast dMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. d a. d aEnt yMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. d a. d aKeyMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. d a. d aMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. d a.RectMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. d a.T et d aMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata._
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.operat on.CursorD splayTreat ntMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.operat on.Cursor emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.operat on.CursorOperat onMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.operat on.CursorTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted.Ad tadataConta nerMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted.CallToAct onMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted.Cl ckTrack ng nfoMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted.D scla  rTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted.D sclosureTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted.Dynam cPrerollTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted. d a nfoMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted.PrerollMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted.Preroll tadataMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted.Promoted tadataMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted.SkAdNetworkDataMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted.Sponsorsh pTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted.UrlOverr deTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted.V deoVar antsMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.react on.T  l neReact onMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.r chtext.ReferenceObjectMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.r chtext.R chTextAl gn ntMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.r chtext.R chTextEnt yMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.r chtext.R chTextFormatMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.r chtext.R chTextMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.t  l ne_module._
 
 /**
- * Convenience constructor for services not using dependency injection and unit tests. If using
- * dependency injection, instead `@Inject` an instance of [[UrtTransportMarshaller]] to construct.
+ * Conven ence constructor for serv ces not us ng dependency  nject on and un  tests.  f us ng
+ * dependency  nject on,  nstead `@ nject` an  nstance of [[UrtTransportMarshaller]] to construct.
  */
-object UrtTransportMarshallerBuilder {
-  val conversationSectionMarshaller = new ConversationSectionMarshaller
-  val conversationDetailsMarshaller = new ConversationDetailsMarshaller(
-    conversationSectionMarshaller)
-  val timelinesDetailsMarshaller = new TimelinesDetailsMarshaller
-  val articleDetailsMarshaller = new ArticleDetailsMarshaller
-  val liveEventDetailsMarshaller = new LiveEventDetailsMarshaller
-  val commerceDetailsMarshaller = new CommerceDetailsMarshaller
-  val clientEventDetailsMarshaller =
-    new ClientEventDetailsMarshaller(
-      conversationDetailsMarshaller,
-      timelinesDetailsMarshaller,
-      articleDetailsMarshaller,
-      liveEventDetailsMarshaller,
-      commerceDetailsMarshaller)
-  val clientEventInfoMarshaller = new ClientEventInfoMarshaller(clientEventDetailsMarshaller)
+object UrtTransportMarshallerBu lder {
+  val conversat onSect onMarshaller = new Conversat onSect onMarshaller
+  val conversat onDeta lsMarshaller = new Conversat onDeta lsMarshaller(
+    conversat onSect onMarshaller)
+  val t  l nesDeta lsMarshaller = new T  l nesDeta lsMarshaller
+  val art cleDeta lsMarshaller = new Art cleDeta lsMarshaller
+  val l veEventDeta lsMarshaller = new L veEventDeta lsMarshaller
+  val com rceDeta lsMarshaller = new Com rceDeta lsMarshaller
+  val cl entEventDeta lsMarshaller =
+    new Cl entEventDeta lsMarshaller(
+      conversat onDeta lsMarshaller,
+      t  l nesDeta lsMarshaller,
+      art cleDeta lsMarshaller,
+      l veEventDeta lsMarshaller,
+      com rceDeta lsMarshaller)
+  val cl entEvent nfoMarshaller = new Cl entEvent nfoMarshaller(cl entEventDeta lsMarshaller)
 
   val feedbackTypeMarshaller = new FeedbackTypeMarshaller
-  val confirmationDisplayTypeMarshaller = new ConfirmationDisplayTypeMarshaller
-  val horizonIconMarshaller = new HorizonIconMarshaller
-  val richFeedbackBehaviorMarshaller = new RichFeedbackBehaviorMarshaller
-  val childFeedbackActionMarshaller = new ChildFeedbackActionMarshaller(
+  val conf rmat onD splayTypeMarshaller = new Conf rmat onD splayTypeMarshaller
+  val hor zon conMarshaller = new Hor zon conMarshaller
+  val r chFeedbackBehav orMarshaller = new R chFeedbackBehav orMarshaller
+  val ch ldFeedbackAct onMarshaller = new Ch ldFeedbackAct onMarshaller(
     feedbackTypeMarshaller = feedbackTypeMarshaller,
-    confirmationDisplayTypeMarshaller = confirmationDisplayTypeMarshaller,
-    clientEventInfoMarshaller = clientEventInfoMarshaller,
-    horizonIconMarshaller = horizonIconMarshaller,
-    richFeedbackBehaviorMarshaller = richFeedbackBehaviorMarshaller
+    conf rmat onD splayTypeMarshaller = conf rmat onD splayTypeMarshaller,
+    cl entEvent nfoMarshaller = cl entEvent nfoMarshaller,
+    hor zon conMarshaller = hor zon conMarshaller,
+    r chFeedbackBehav orMarshaller = r chFeedbackBehav orMarshaller
   )
-  val feedbackActionMarshaller = new FeedbackActionMarshaller(
-    childFeedbackActionMarshaller = childFeedbackActionMarshaller,
+  val feedbackAct onMarshaller = new FeedbackAct onMarshaller(
+    ch ldFeedbackAct onMarshaller = ch ldFeedbackAct onMarshaller,
     feedbackTypeMarshaller = feedbackTypeMarshaller,
-    confirmationDisplayTypeMarshaller = confirmationDisplayTypeMarshaller,
-    clientEventInfoMarshaller = clientEventInfoMarshaller,
-    horizonIconMarshaller = horizonIconMarshaller,
-    richFeedbackBehaviorMarshaller = richFeedbackBehaviorMarshaller
+    conf rmat onD splayTypeMarshaller = conf rmat onD splayTypeMarshaller,
+    cl entEvent nfoMarshaller = cl entEvent nfoMarshaller,
+    hor zon conMarshaller = hor zon conMarshaller,
+    r chFeedbackBehav orMarshaller = r chFeedbackBehav orMarshaller
   )
-  val feedbackDisplayContextMarshaller = new FeedbackDisplayContextMarshaller
-  val feedbackInfoMarshaller = new FeedbackInfoMarshaller(
-    feedbackActionMarshaller = feedbackActionMarshaller,
-    feedbackDisplayContextMarshaller = feedbackDisplayContextMarshaller,
-    clientEventInfoMarshaller = clientEventInfoMarshaller
+  val feedbackD splayContextMarshaller = new FeedbackD splayContextMarshaller
+  val feedback nfoMarshaller = new Feedback nfoMarshaller(
+    feedbackAct onMarshaller = feedbackAct onMarshaller,
+    feedbackD splayContextMarshaller = feedbackD splayContextMarshaller,
+    cl entEvent nfoMarshaller = cl entEvent nfoMarshaller
   )
 
   val urlTypeMarshaller = new UrlTypeMarshaller
-  val urtEndpointOptionsMarshaller = new UrtEndpointOptionsMarshaller
+  val urtEndpo ntOpt onsMarshaller = new UrtEndpo ntOpt onsMarshaller
   val urlMarshaller = new UrlMarshaller(
     urlTypeMarshaller = urlTypeMarshaller,
-    urtEndpointOptionsMarshaller = urtEndpointOptionsMarshaller
+    urtEndpo ntOpt onsMarshaller = urtEndpo ntOpt onsMarshaller
   )
   val referenceObjectMarshaller = new ReferenceObjectMarshaller(urlMarshaller)
-  val richTextFormatMarshaller = new RichTextFormatMarshaller
-  val richTextEntityMarshaller =
-    new RichTextEntityMarshaller(referenceObjectMarshaller, richTextFormatMarshaller)
-  val richTextAlignmentMarshaller = new RichTextAlignmentMarshaller
-  val richTextMarshaller =
-    new RichTextMarshaller(richTextEntityMarshaller, richTextAlignmentMarshaller)
+  val r chTextFormatMarshaller = new R chTextFormatMarshaller
+  val r chTextEnt yMarshaller =
+    new R chTextEnt yMarshaller(referenceObjectMarshaller, r chTextFormatMarshaller)
+  val r chTextAl gn ntMarshaller = new R chTextAl gn ntMarshaller
+  val r chTextMarshaller =
+    new R chTextMarshaller(r chTextEnt yMarshaller, r chTextAl gn ntMarshaller)
 
-  val tombstoneInfoMarshaller = new TombstoneInfoMarshaller(richTextMarshaller = richTextMarshaller)
+  val tombstone nfoMarshaller = new Tombstone nfoMarshaller(r chTextMarshaller = r chTextMarshaller)
 
   val generalContextTypeMarshaller = new GeneralContextTypeMarshaller
   val generalContextMarshaller = new GeneralContextMarshaller(
@@ -189,523 +189,523 @@ object UrtTransportMarshallerBuilder {
     urlMarshaller = urlMarshaller
   )
 
-  val timelineReactionMarshaller = new TimelineReactionMarshaller
+  val t  l neReact onMarshaller = new T  l neReact onMarshaller
 
-  val topicContextMarshaller = new TopicContextMarshaller()
+  val top cContextMarshaller = new Top cContextMarshaller()
 
-  val socialContextMarshaller = new SocialContextMarshaller(
+  val soc alContextMarshaller = new Soc alContextMarshaller(
     generalContextMarshaller = generalContextMarshaller,
-    topicContextMarshaller = topicContextMarshaller
+    top cContextMarshaller = top cContextMarshaller
   )
 
-  val highlightedSectionMarshaller = new HighlightedSectionMarshaller()
-  val tweetHighlightsMarshaller = new TweetHighlightsMarshaller(highlightedSectionMarshaller)
+  val h ghl ghtedSect onMarshaller = new H ghl ghtedSect onMarshaller()
+  val t etH ghl ghtsMarshaller = new T etH ghl ghtsMarshaller(h ghl ghtedSect onMarshaller)
 
-  val topicDisplayTypeMarshaller = new TopicDisplayTypeMarshaller
-  val topicFunctionalityTypeMarshaller = new TopicFunctionalityTypeMarshaller
-  val topicItemMarshaller = new TopicItemMarshaller(
-    displayTypeMarshaller = topicDisplayTypeMarshaller,
-    functionalityTypeMarshaller = topicFunctionalityTypeMarshaller
+  val top cD splayTypeMarshaller = new Top cD splayTypeMarshaller
+  val top cFunct onal yTypeMarshaller = new Top cFunct onal yTypeMarshaller
+  val top c emMarshaller = new Top c emMarshaller(
+    d splayTypeMarshaller = top cD splayTypeMarshaller,
+    funct onal yTypeMarshaller = top cFunct onal yTypeMarshaller
   )
 
-  val topicFollowPromptDisplayTypeMarshaller = new TopicFollowPromptDisplayTypeMarshaller
-  val topicFollowPromptItemMarshaller = new TopicFollowPromptItemMarshaller(
-    displayTypeMarshaller = topicFollowPromptDisplayTypeMarshaller
+  val top cFollowPromptD splayTypeMarshaller = new Top cFollowPromptD splayTypeMarshaller
+  val top cFollowPrompt emMarshaller = new Top cFollowPrompt emMarshaller(
+    d splayTypeMarshaller = top cFollowPromptD splayTypeMarshaller
   )
 
   val rosettaColorMarshaller = new RosettaColorMarshaller()
   val badgeMarshaller = new BadgeMarshaller(
     rosettaColorMarshaller = rosettaColorMarshaller
   )
-  val iconCtaButtonMarshaller = new IconCtaButtonMarshaller(horizonIconMarshaller, urlMarshaller)
+  val  conCtaButtonMarshaller = new  conCtaButtonMarshaller(hor zon conMarshaller, urlMarshaller)
   val textCtaButtonMarshaller = new TextCtaButtonMarshaller(urlMarshaller)
   val ctaButtonMarshaller =
-    new CtaButtonMarshaller(iconCtaButtonMarshaller, textCtaButtonMarshaller)
+    new CtaButtonMarshaller( conCtaButtonMarshaller, textCtaButtonMarshaller)
 
-  val standardTileContentMarshaller = new StandardTileContentMarshaller(
+  val standardT leContentMarshaller = new StandardT leContentMarshaller(
     badgeMarshaller = badgeMarshaller
   )
-  val callToActionTileContentMarshaller = new CallToActionTileContentMarshaller(
+  val callToAct onT leContentMarshaller = new CallToAct onT leContentMarshaller(
     ctaButtonMarshaller = ctaButtonMarshaller,
-    richTextMarshaller = richTextMarshaller
+    r chTextMarshaller = r chTextMarshaller
   )
 
-  val tileContentMarshaller = new TileContentMarshaller(
-    standardTileContentMarshaller = standardTileContentMarshaller,
-    callToActionTileContentMarshaller = callToActionTileContentMarshaller
+  val t leContentMarshaller = new T leContentMarshaller(
+    standardT leContentMarshaller = standardT leContentMarshaller,
+    callToAct onT leContentMarshaller = callToAct onT leContentMarshaller
   )
   val colorMarshaller = new ColorMarshaller()
   val colorPaletteMarshaller = new ColorPaletteMarshaller(
     colorMarshaller = colorMarshaller
   )
-  val imageVariantMarshaller = new ImageVariantMarshaller(
+  val  mageVar antMarshaller = new  mageVar antMarshaller(
     colorPaletteMarshaller = colorPaletteMarshaller
   )
-  val imageDisplayTypeMarshaller = new ImageDisplayTypeMarshaller()
-  val imageAnimationTypeMarshaller = new ImageAnimationTypeMarshaller()
+  val  mageD splayTypeMarshaller = new  mageD splayTypeMarshaller()
+  val  mageAn mat onTypeMarshaller = new  mageAn mat onTypeMarshaller()
 
-  val softInterventionDisplayTypeMarshaller = new SoftInterventionDisplayTypeMarshaller
-  val forwardPivotDisplayTypeMarshaller = new ForwardPivotDisplayTypeMarshaller
-  val forwardPivotMarshaller = new ForwardPivotMarshaller(
+  val soft ntervent onD splayTypeMarshaller = new Soft ntervent onD splayTypeMarshaller
+  val forwardP votD splayTypeMarshaller = new ForwardP votD splayTypeMarshaller
+  val forwardP votMarshaller = new ForwardP votMarshaller(
     urlMarshaller = urlMarshaller,
-    richTextMarshaller = richTextMarshaller,
-    forwardPivotDisplayTypeMarshaller = forwardPivotDisplayTypeMarshaller,
-    imageVariantMarshaller = imageVariantMarshaller,
+    r chTextMarshaller = r chTextMarshaller,
+    forwardP votD splayTypeMarshaller = forwardP votD splayTypeMarshaller,
+     mageVar antMarshaller =  mageVar antMarshaller,
     badgeMarshaller = badgeMarshaller,
     rosettaColorMarshaller = rosettaColorMarshaller,
-    softInterventionDisplayTypeMarshaller = softInterventionDisplayTypeMarshaller
+    soft ntervent onD splayTypeMarshaller = soft ntervent onD splayTypeMarshaller
   )
 
-  val tweetDisplayTypeMarshaller = new TweetDisplayTypeMarshaller
-  val timelinesScoreInfoMarshaller = new TimelinesScoreInfoMarshaller
-  val disclosureTypeMarshaller = new DisclosureTypeMarshaller
-  val dynamicPrerollTypeMarshaller = new DynamicPrerollTypeMarshaller
-  val callToActionMarshaller = new CallToActionMarshaller
-  val videoVariantsMarshaller = new VideoVariantsMarshaller
-  val mediaInfoMarshaller = new MediaInfoMarshaller(
-    callToActionMarshaller = callToActionMarshaller,
-    videoVariantsMarshaller = videoVariantsMarshaller
+  val t etD splayTypeMarshaller = new T etD splayTypeMarshaller
+  val t  l nesScore nfoMarshaller = new T  l nesScore nfoMarshaller
+  val d sclosureTypeMarshaller = new D sclosureTypeMarshaller
+  val dynam cPrerollTypeMarshaller = new Dynam cPrerollTypeMarshaller
+  val callToAct onMarshaller = new CallToAct onMarshaller
+  val v deoVar antsMarshaller = new V deoVar antsMarshaller
+  val  d a nfoMarshaller = new  d a nfoMarshaller(
+    callToAct onMarshaller = callToAct onMarshaller,
+    v deoVar antsMarshaller = v deoVar antsMarshaller
   )
   val prerollMarshaller = new PrerollMarshaller(
-    dynamicPrerollTypeMarshaller = dynamicPrerollTypeMarshaller,
-    mediaInfoMarshaller = mediaInfoMarshaller
+    dynam cPrerollTypeMarshaller = dynam cPrerollTypeMarshaller,
+     d a nfoMarshaller =  d a nfoMarshaller
   )
-  val sponsorshipTypeMarshaller = new SponsorshipTypeMarshaller
-  val disclaimerTypeMarshaller = new DisclaimerTypeMarshaller
+  val sponsorsh pTypeMarshaller = new Sponsorsh pTypeMarshaller
+  val d scla  rTypeMarshaller = new D scla  rTypeMarshaller
   val skAdNetworkDataMarshaller = new SkAdNetworkDataMarshaller
-  val adMetadataContainerMarshaller = new AdMetadataContainerMarshaller(
-    sponsorshipTypeMarshaller = sponsorshipTypeMarshaller,
-    disclaimerTypeMarshaller = disclaimerTypeMarshaller,
+  val ad tadataConta nerMarshaller = new Ad tadataConta nerMarshaller(
+    sponsorsh pTypeMarshaller = sponsorsh pTypeMarshaller,
+    d scla  rTypeMarshaller = d scla  rTypeMarshaller,
     skAdNetworkDataMarshaller = skAdNetworkDataMarshaller
   )
-  val urlOverrideTypeMarshaller = new UrlOverrideTypeMarshaller
-  val clickTrackingInfoMarshaller = new ClickTrackingInfoMarshaller(
-    urlOverrideTypeMarshaller = urlOverrideTypeMarshaller
+  val urlOverr deTypeMarshaller = new UrlOverr deTypeMarshaller
+  val cl ckTrack ng nfoMarshaller = new Cl ckTrack ng nfoMarshaller(
+    urlOverr deTypeMarshaller = urlOverr deTypeMarshaller
   )
-  val promotedMetadataMarshaller = new PromotedMetadataMarshaller(
-    disclosureTypeMarshaller = disclosureTypeMarshaller,
-    adMetadataContainerMarshaller = adMetadataContainerMarshaller,
-    clickTrackingInfoMarshaller = clickTrackingInfoMarshaller
+  val promoted tadataMarshaller = new Promoted tadataMarshaller(
+    d sclosureTypeMarshaller = d sclosureTypeMarshaller,
+    ad tadataConta nerMarshaller = ad tadataConta nerMarshaller,
+    cl ckTrack ng nfoMarshaller = cl ckTrack ng nfoMarshaller
   )
 
-  val conversationAnnotationTypeMarshaller = new ConversationAnnotationTypeMarshaller
-  val conversationAnnotationMarshaller = new ConversationAnnotationMarshaller(
-    conversationAnnotationTypeMarshaller = conversationAnnotationTypeMarshaller,
-    richTextMarshaller = richTextMarshaller
+  val conversat onAnnotat onTypeMarshaller = new Conversat onAnnotat onTypeMarshaller
+  val conversat onAnnotat onMarshaller = new Conversat onAnnotat onMarshaller(
+    conversat onAnnotat onTypeMarshaller = conversat onAnnotat onTypeMarshaller,
+    r chTextMarshaller = r chTextMarshaller
   )
 
   val safetyLevelMarshaller = new SafetyLevelMarshaller
-  val outerTweetContextMarshaller = new OuterTweetContextMarshaller
-  val tweetHydrationContextMarshaller = new TweetHydrationContextMarshaller(
+  val outerT etContextMarshaller = new OuterT etContextMarshaller
+  val t etHydrat onContextMarshaller = new T etHydrat onContextMarshaller(
     safetyLevelMarshaller = safetyLevelMarshaller,
-    outerTweetContextMarshaller = outerTweetContextMarshaller
+    outerT etContextMarshaller = outerT etContextMarshaller
   )
-  val contextualTweetRefMarshaller = new ContextualTweetRefMarshaller(
-    tweetHydrationContextMarshaller = tweetHydrationContextMarshaller
+  val contextualT etRefMarshaller = new ContextualT etRefMarshaller(
+    t etHydrat onContextMarshaller = t etHydrat onContextMarshaller
   )
-  val prerollMetadataMarshaller = new PrerollMetadataMarshaller(
+  val preroll tadataMarshaller = new Preroll tadataMarshaller(
     prerollMarshaller = prerollMarshaller
   )
 
   val rectMarshaller = new RectMarshaller
-  val mediaKeyMarshaller = new MediaKeyMarshaller
-  val broadcastIdMarshaller = new BroadcastIdMarshaller
-  val tweetMediaMarshaller = new TweetMediaMarshaller
-  val mediaEntityMarshaller = new MediaEntityMarshaller(
-    tweetMediaMarshaller = tweetMediaMarshaller,
-    broadcastIdMarshaller = broadcastIdMarshaller,
-    imageVariantMarshaller = imageVariantMarshaller)
-  val aspectRatioMarshaller = new AspectRatioMarshaller
-  val mediaMarshaller = new MediaMarshaller(
-    mediaEntityMarshaller = mediaEntityMarshaller,
-    mediaKeyMarshaller = mediaKeyMarshaller,
+  val  d aKeyMarshaller = new  d aKeyMarshaller
+  val broadcast dMarshaller = new Broadcast dMarshaller
+  val t et d aMarshaller = new T et d aMarshaller
+  val  d aEnt yMarshaller = new  d aEnt yMarshaller(
+    t et d aMarshaller = t et d aMarshaller,
+    broadcast dMarshaller = broadcast dMarshaller,
+     mageVar antMarshaller =  mageVar antMarshaller)
+  val aspectRat oMarshaller = new AspectRat oMarshaller
+  val  d aMarshaller = new  d aMarshaller(
+     d aEnt yMarshaller =  d aEnt yMarshaller,
+     d aKeyMarshaller =  d aKeyMarshaller,
     rectMarshaller = rectMarshaller,
-    aspectRatioMarshaller = aspectRatioMarshaller)
+    aspectRat oMarshaller = aspectRat oMarshaller)
 
-  val tweetItemMarshaller = new TweetItemMarshaller(
-    tweetDisplayTypeMarshaller = tweetDisplayTypeMarshaller,
-    socialContextMarshaller = socialContextMarshaller,
-    tweetHighlightsMarshaller = tweetHighlightsMarshaller,
-    tombstoneInfoMarshaller = tombstoneInfoMarshaller,
-    timelinesScoreInfoMarshaller = timelinesScoreInfoMarshaller,
-    forwardPivotMarshaller = forwardPivotMarshaller,
-    promotedMetadataMarshaller = promotedMetadataMarshaller,
-    conversationAnnotationMarshaller = conversationAnnotationMarshaller,
-    contextualTweetRefMarshaller = contextualTweetRefMarshaller,
-    prerollMetadataMarshaller = prerollMetadataMarshaller,
+  val t et emMarshaller = new T et emMarshaller(
+    t etD splayTypeMarshaller = t etD splayTypeMarshaller,
+    soc alContextMarshaller = soc alContextMarshaller,
+    t etH ghl ghtsMarshaller = t etH ghl ghtsMarshaller,
+    tombstone nfoMarshaller = tombstone nfoMarshaller,
+    t  l nesScore nfoMarshaller = t  l nesScore nfoMarshaller,
+    forwardP votMarshaller = forwardP votMarshaller,
+    promoted tadataMarshaller = promoted tadataMarshaller,
+    conversat onAnnotat onMarshaller = conversat onAnnotat onMarshaller,
+    contextualT etRefMarshaller = contextualT etRefMarshaller,
+    preroll tadataMarshaller = preroll tadataMarshaller,
     badgeMarshaller = badgeMarshaller,
     urlMarshaller = urlMarshaller
   )
 
-  val eventSummaryDisplayTypeMarshaller = new EventSummaryDisplayTypeMarshaller
-  val eventSummaryItemMarshaller = new EventSummaryItemMarshaller(
-    eventSummaryDisplayTypeMarshaller = eventSummaryDisplayTypeMarshaller,
-    imageVariantMarshaller = imageVariantMarshaller,
+  val eventSummaryD splayTypeMarshaller = new EventSummaryD splayTypeMarshaller
+  val eventSummary emMarshaller = new EventSummary emMarshaller(
+    eventSummaryD splayTypeMarshaller = eventSummaryD splayTypeMarshaller,
+     mageVar antMarshaller =  mageVar antMarshaller,
     urlMarshaller = urlMarshaller
   )
 
-  val trendItemMarshaller = new TrendItemMarshaller(
-    promotedMetadataMarshaller = promotedMetadataMarshaller,
+  val trend emMarshaller = new Trend emMarshaller(
+    promoted tadataMarshaller = promoted tadataMarshaller,
     urlMarshaller = urlMarshaller
   )
 
-  val userDisplayTypeMarshaller = new UserDisplayTypeMarshaller
-  val userReactiveTriggersMarshaller = new UserReactiveTriggersMarshaller(
-    timelineReactionMarshaller)
-  val userItemMarshaller = new UserItemMarshaller(
-    userDisplayTypeMarshaller = userDisplayTypeMarshaller,
-    promotedMetadataMarshaller = promotedMetadataMarshaller,
-    socialContextMarshaller = socialContextMarshaller,
-    userReactiveTriggersMarshaller = userReactiveTriggersMarshaller,
+  val userD splayTypeMarshaller = new UserD splayTypeMarshaller
+  val userReact veTr ggersMarshaller = new UserReact veTr ggersMarshaller(
+    t  l neReact onMarshaller)
+  val user emMarshaller = new User emMarshaller(
+    userD splayTypeMarshaller = userD splayTypeMarshaller,
+    promoted tadataMarshaller = promoted tadataMarshaller,
+    soc alContextMarshaller = soc alContextMarshaller,
+    userReact veTr ggersMarshaller = userReact veTr ggersMarshaller,
   )
 
-  val verticalGridItemTileStyleMarshaller = new VerticalGridItemTileStyleMarshaller
-  val verticalGridItemTopicFunctionalityTypeMarshaller =
-    new VerticalGridItemTopicFunctionalityTypeMarshaller
+  val vert calGr d emT leStyleMarshaller = new Vert calGr d emT leStyleMarshaller
+  val vert calGr d emTop cFunct onal yTypeMarshaller =
+    new Vert calGr d emTop cFunct onal yTypeMarshaller
 
-  val verticalGridItemTopicTileMarshaller = new VerticalGridItemTopicTileMarshaller(
-    styleMarshaller = verticalGridItemTileStyleMarshaller,
-    functionalityTypeMarshaller = verticalGridItemTopicFunctionalityTypeMarshaller,
+  val vert calGr d emTop cT leMarshaller = new Vert calGr d emTop cT leMarshaller(
+    styleMarshaller = vert calGr d emT leStyleMarshaller,
+    funct onal yTypeMarshaller = vert calGr d emTop cFunct onal yTypeMarshaller,
     urlMarshaller = urlMarshaller
   )
 
-  val verticalGridItemContentMarshaller = new VerticalGridItemContentMarshaller(
-    verticalGridItemTopicTileMarshaller)
+  val vert calGr d emContentMarshaller = new Vert calGr d emContentMarshaller(
+    vert calGr d emTop cT leMarshaller)
 
-  val verticalGridItemMarshaller = new VerticalGridItemMarshaller(verticalGridItemContentMarshaller)
+  val vert calGr d emMarshaller = new Vert calGr d emMarshaller(vert calGr d emContentMarshaller)
 
-  val tombstoneDisplayTypeMarshaller = new TombstoneDisplayTypeMarshaller
-  val tombstoneItemMarshaller = new TombstoneItemMarshaller(
-    displayTypeMarshaller = tombstoneDisplayTypeMarshaller,
-    tombstoneInfoMarshaller = tombstoneInfoMarshaller,
-    tweetItemMarshaller = tweetItemMarshaller)
+  val tombstoneD splayTypeMarshaller = new TombstoneD splayTypeMarshaller
+  val tombstone emMarshaller = new Tombstone emMarshaller(
+    d splayTypeMarshaller = tombstoneD splayTypeMarshaller,
+    tombstone nfoMarshaller = tombstone nfoMarshaller,
+    t et emMarshaller = t et emMarshaller)
 
-  val iconLabelItemMarshaller = new IconLabelItemMarshaller(
-    richTextMarshaller,
-    horizonIconMarshaller
+  val  conLabel emMarshaller = new  conLabel emMarshaller(
+    r chTextMarshaller,
+    hor zon conMarshaller
   )
 
-  val labelDisplayTypeMarshaller = new LabelDisplayTypeMarshaller
-  val labelItemMarshaller = new LabelItemMarshaller(
-    displayTypeMarshaller = labelDisplayTypeMarshaller,
+  val labelD splayTypeMarshaller = new LabelD splayTypeMarshaller
+  val label emMarshaller = new Label emMarshaller(
+    d splayTypeMarshaller = labelD splayTypeMarshaller,
     urlMarshaller = urlMarshaller
   )
 
-  val tileItemMarshaller = new TileItemMarshaller(
-    tileContentMarshaller = tileContentMarshaller,
+  val t le emMarshaller = new T le emMarshaller(
+    t leContentMarshaller = t leContentMarshaller,
     urlMarshaller = urlMarshaller,
-    imageVariantMarshaller = imageVariantMarshaller
+     mageVar antMarshaller =  mageVar antMarshaller
   )
 
   val callbackMarshaller = new CallbackMarshaller
-  val messageActionMarshaller = new MessageActionMarshaller(
+  val  ssageAct onMarshaller = new  ssageAct onMarshaller(
     callbackMarshaller,
-    clientEventInfoMarshaller
+    cl entEvent nfoMarshaller
   )
-  val messageTextActionMarshaller = new MessageTextActionMarshaller(messageActionMarshaller)
-  val messageImageMarshaller = new MessageImageMarshaller(
-    imageVariantMarshaller
+  val  ssageTextAct onMarshaller = new  ssageTextAct onMarshaller( ssageAct onMarshaller)
+  val  ssage mageMarshaller = new  ssage mageMarshaller(
+     mageVar antMarshaller
   )
-  val userFacepileDisplayTypeMarshaller = new UserFacepileDisplayTypeMarshaller()
-  val messageActionTypeMarshaller = new MessageActionTypeMarshaller()
-  val userFacepileMarshaller = new UserFacepileMarshaller(
-    messageActionTypeMarshaller,
-    messageTextActionMarshaller,
-    userFacepileDisplayTypeMarshaller
+  val userFacep leD splayTypeMarshaller = new UserFacep leD splayTypeMarshaller()
+  val  ssageAct onTypeMarshaller = new  ssageAct onTypeMarshaller()
+  val userFacep leMarshaller = new UserFacep leMarshaller(
+     ssageAct onTypeMarshaller,
+     ssageTextAct onMarshaller,
+    userFacep leD splayTypeMarshaller
   )
-  val inlinePromptMessageContentMarshaller = new InlinePromptMessageContentMarshaller(
-    messageTextActionMarshaller = messageTextActionMarshaller,
-    richTextMarshaller = richTextMarshaller,
-    socialContextMarshaller = socialContextMarshaller,
-    userFacepileMarshaller = userFacepileMarshaller
+  val  nl nePrompt ssageContentMarshaller = new  nl nePrompt ssageContentMarshaller(
+     ssageTextAct onMarshaller =  ssageTextAct onMarshaller,
+    r chTextMarshaller = r chTextMarshaller,
+    soc alContextMarshaller = soc alContextMarshaller,
+    userFacep leMarshaller = userFacep leMarshaller
   )
-  val headerImagePromptMessageContentMarshaller = new HeaderImagePromptMessageContentMarshaller(
-    messageImageMarshaller = messageImageMarshaller,
-    messageTextActionMarshaller = messageTextActionMarshaller,
-    messageActionMarshaller = messageActionMarshaller,
-    richTextMarshaller = richTextMarshaller
+  val  ader magePrompt ssageContentMarshaller = new  ader magePrompt ssageContentMarshaller(
+     ssage mageMarshaller =  ssage mageMarshaller,
+     ssageTextAct onMarshaller =  ssageTextAct onMarshaller,
+     ssageAct onMarshaller =  ssageAct onMarshaller,
+    r chTextMarshaller = r chTextMarshaller
   )
-  val compactPromptMessageContentMarshaller = new CompactPromptMessageContentMarshaller(
-    messageTextActionMarshaller = messageTextActionMarshaller,
-    messageActionMarshaller = messageActionMarshaller,
-    richTextMarshaller = richTextMarshaller
+  val compactPrompt ssageContentMarshaller = new CompactPrompt ssageContentMarshaller(
+     ssageTextAct onMarshaller =  ssageTextAct onMarshaller,
+     ssageAct onMarshaller =  ssageAct onMarshaller,
+    r chTextMarshaller = r chTextMarshaller
   )
-  val messageContentMarshaller = new MessageContentMarshaller(
-    inlinePromptMessageContentMarshaller = inlinePromptMessageContentMarshaller,
-    headerImagePromptMessageContentMarshaller = headerImagePromptMessageContentMarshaller,
-    compactPromptMessageContentMarshaller = compactPromptMessageContentMarshaller
+  val  ssageContentMarshaller = new  ssageContentMarshaller(
+     nl nePrompt ssageContentMarshaller =  nl nePrompt ssageContentMarshaller,
+     ader magePrompt ssageContentMarshaller =  ader magePrompt ssageContentMarshaller,
+    compactPrompt ssageContentMarshaller = compactPrompt ssageContentMarshaller
   )
-  val messagePromptItemMarshaller = new MessagePromptItemMarshaller(
-    messageContentMarshaller = messageContentMarshaller,
+  val  ssagePrompt emMarshaller = new  ssagePrompt emMarshaller(
+     ssageContentMarshaller =  ssageContentMarshaller,
     callbackMarshaller = callbackMarshaller
   )
 
-  val tweetComposerDisplayTypeMarshaller = new TweetComposerDisplayTypeMarshaller
-  val tweetComposerItemMarshaller = new TweetComposerItemMarshaller(
-    tweetComposerDisplayTypeMarshaller = tweetComposerDisplayTypeMarshaller,
+  val t etComposerD splayTypeMarshaller = new T etComposerD splayTypeMarshaller
+  val t etComposer emMarshaller = new T etComposer emMarshaller(
+    t etComposerD splayTypeMarshaller = t etComposerD splayTypeMarshaller,
     urlMarshaller = urlMarshaller
   )
 
   val cursorTypeMarshaller = new CursorTypeMarshaller
-  val cursorDisplayTreatmentMarshaller = new CursorDisplayTreatmentMarshaller
-  val cursorItemMarshaller = new CursorItemMarshaller(
+  val cursorD splayTreat ntMarshaller = new CursorD splayTreat ntMarshaller
+  val cursor emMarshaller = new Cursor emMarshaller(
     cursorTypeMarshaller = cursorTypeMarshaller,
-    cursorDisplayTreatmentMarshaller = cursorDisplayTreatmentMarshaller)
-  val articleDisplayTypeMarshaller = new ArticleDisplayTypeMarshaller
-  val articleSeedTypeMarshaller = new ArticleSeedTypeMarshaller
-  val articleItemMarshaller =
-    new ArticleItemMarshaller(
-      articleDisplayTypeMarshaller,
-      socialContextMarshaller,
-      articleSeedTypeMarshaller)
-  val audioSpaceItemMarshaller = new AudioSpaceItemMarshaller
-  val cardDisplayTypeMarshaller = new CardDisplayTypeMarshaller
-  val cardItemMarshaller = new CardItemMarshaller(
-    cardDisplayTypeMarshaller = cardDisplayTypeMarshaller,
+    cursorD splayTreat ntMarshaller = cursorD splayTreat ntMarshaller)
+  val art cleD splayTypeMarshaller = new Art cleD splayTypeMarshaller
+  val art cleSeedTypeMarshaller = new Art cleSeedTypeMarshaller
+  val art cle emMarshaller =
+    new Art cle emMarshaller(
+      art cleD splayTypeMarshaller,
+      soc alContextMarshaller,
+      art cleSeedTypeMarshaller)
+  val aud oSpace emMarshaller = new Aud oSpace emMarshaller
+  val cardD splayTypeMarshaller = new CardD splayTypeMarshaller
+  val card emMarshaller = new Card emMarshaller(
+    cardD splayTypeMarshaller = cardD splayTypeMarshaller,
     urlMarshaller = urlMarshaller
   )
 
-  val twitterListDisplayTypeMarshaller = new TwitterListDisplayTypeMarshaller
-  val twitterListItemMarshaller = new TwitterListItemMarshaller(
-    twitterListDisplayTypeMarshaller = twitterListDisplayTypeMarshaller)
+  val tw terL stD splayTypeMarshaller = new Tw terL stD splayTypeMarshaller
+  val tw terL st emMarshaller = new Tw terL st emMarshaller(
+    tw terL stD splayTypeMarshaller = tw terL stD splayTypeMarshaller)
 
-  val threadHeaderItemMarshaller = new ThreadHeaderItemMarshaller(
-    threadHeaderContentMarshaller = new ThreadHeaderContentMarshaller
+  val thread ader emMarshaller = new Thread ader emMarshaller(
+    thread aderContentMarshaller = new Thread aderContentMarshaller
   )
 
-  val relevancePromptFollowUpTextInputMarshaller = new RelevancePromptFollowUpTextInputMarshaller(
+  val relevancePromptFollowUpText nputMarshaller = new RelevancePromptFollowUpText nputMarshaller(
     callbackMarshaller = callbackMarshaller
   )
   val relevancePromptFollowUpFeedbackTypeMarshaller =
     new RelevancePromptFollowUpFeedbackTypeMarshaller(
-      relevancePromptFollowUpTextInputMarshaller = relevancePromptFollowUpTextInputMarshaller
+      relevancePromptFollowUpText nputMarshaller = relevancePromptFollowUpText nputMarshaller
     )
-  val relevancePromptDisplayTypeMarshaller = new RelevancePromptDisplayTypeMarshaller
+  val relevancePromptD splayTypeMarshaller = new RelevancePromptD splayTypeMarshaller
   val relevancePromptContentMarshaller = new RelevancePromptContentMarshaller(
     callbackMarshaller = callbackMarshaller,
-    relevancePromptDisplayTypeMarshaller = relevancePromptDisplayTypeMarshaller,
+    relevancePromptD splayTypeMarshaller = relevancePromptD splayTypeMarshaller,
     relevancePromptFollowUpFeedbackTypeMarshaller = relevancePromptFollowUpFeedbackTypeMarshaller
   )
   val promptContentMarshaller = new PromptContentMarshaller(
     relevancePromptContentMarshaller = relevancePromptContentMarshaller
   )
-  val promptItemMarshaller = new PromptItemMarshaller(
+  val prompt emMarshaller = new Prompt emMarshaller(
     promptContentMarshaller = promptContentMarshaller,
-    clientEventInfoMarshaller = clientEventInfoMarshaller,
+    cl entEvent nfoMarshaller = cl entEvent nfoMarshaller,
     callbackMarshaller = callbackMarshaller
   )
 
-  val textResultMarshaller = new TextResultMarshaller(highlightedSectionMarshaller)
-  val spellingActionTypeMarshaller = new SpellingActionTypeMarshaller()
-  val spellingItemMarshaller = new SpellingItemMarshaller(
+  val textResultMarshaller = new TextResultMarshaller(h ghl ghtedSect onMarshaller)
+  val spell ngAct onTypeMarshaller = new Spell ngAct onTypeMarshaller()
+  val spell ng emMarshaller = new Spell ng emMarshaller(
     textResultMarshaller = textResultMarshaller,
-    spellingActionTypeMarshaller = spellingActionTypeMarshaller)
+    spell ngAct onTypeMarshaller = spell ngAct onTypeMarshaller)
 
-  val momentAnnotationItemMarshaller = new MomentAnnotationItemMarshaller(richTextMarshaller)
+  val mo ntAnnotat on emMarshaller = new Mo ntAnnotat on emMarshaller(r chTextMarshaller)
 
-  val genericSummaryDisplayTypeMarshaller = new GenericSummaryDisplayTypeMarshaller
-  val genericSummaryActionMarshaller = new GenericSummaryActionMarshaller(
+  val gener cSummaryD splayTypeMarshaller = new Gener cSummaryD splayTypeMarshaller
+  val gener cSummaryAct onMarshaller = new Gener cSummaryAct onMarshaller(
     urlMarshaller = urlMarshaller,
-    clientEventInfoMarshaller = clientEventInfoMarshaller)
-  val genericSummaryContextMarshaller = new GenericSummaryContextMarshaller(
-    richTextMarshaller = richTextMarshaller,
-    horizonIconMarshaller = horizonIconMarshaller
+    cl entEvent nfoMarshaller = cl entEvent nfoMarshaller)
+  val gener cSummaryContextMarshaller = new Gener cSummaryContextMarshaller(
+    r chTextMarshaller = r chTextMarshaller,
+    hor zon conMarshaller = hor zon conMarshaller
   )
-  val genericSummaryItemMarshaller = new GenericSummaryItemMarshaller(
-    genericSummaryDisplayTypeMarshaller = genericSummaryDisplayTypeMarshaller,
-    genericSummaryContextMarshaller = genericSummaryContextMarshaller,
-    genericSummaryActionMarshaller = genericSummaryActionMarshaller,
-    mediaMarshaller = mediaMarshaller,
-    promotedMetadataMarshaller = promotedMetadataMarshaller,
-    richTextMarshaller = richTextMarshaller
+  val gener cSummary emMarshaller = new Gener cSummary emMarshaller(
+    gener cSummaryD splayTypeMarshaller = gener cSummaryD splayTypeMarshaller,
+    gener cSummaryContextMarshaller = gener cSummaryContextMarshaller,
+    gener cSummaryAct onMarshaller = gener cSummaryAct onMarshaller,
+     d aMarshaller =  d aMarshaller,
+    promoted tadataMarshaller = promoted tadataMarshaller,
+    r chTextMarshaller = r chTextMarshaller
   )
 
-  val commerceProductItemMarshaller = new CommerceProductItemMarshaller
-  val commerceProductGroupItemMarshaller = new CommerceProductGroupItemMarshaller
+  val com rceProduct emMarshaller = new Com rceProduct emMarshaller
+  val com rceProductGroup emMarshaller = new Com rceProductGroup emMarshaller
 
-  val timelineItemMarshaller = new TimelineItemMarshaller(
-    timelineItemContentMarshaller = new TimelineItemContentMarshaller(
-      articleItemMarshaller = articleItemMarshaller,
-      audioSpaceItemMarshaller = audioSpaceItemMarshaller,
-      cardItemMarshaller = cardItemMarshaller,
-      cursorItemMarshaller = cursorItemMarshaller,
-      eventSummaryItemMarshaller = eventSummaryItemMarshaller,
-      iconLabelItemMarshaller = iconLabelItemMarshaller,
-      labelItemMarshaller = labelItemMarshaller,
-      messagePromptItemMarshaller = messagePromptItemMarshaller,
-      tileItemMarshaller = tileItemMarshaller,
-      tombstoneItemMarshaller = tombstoneItemMarshaller,
-      topicFollowPromptItemMarshaller = topicFollowPromptItemMarshaller,
-      topicItemMarshaller = topicItemMarshaller,
-      tweetComposerItemMarshaller = tweetComposerItemMarshaller,
-      tweetItemMarshaller = tweetItemMarshaller,
-      twitterListItemMarshaller = twitterListItemMarshaller,
-      userItemMarshaller = userItemMarshaller,
-      verticalGridItemMarshaller = verticalGridItemMarshaller,
-      threadHeaderItemMarshaller = threadHeaderItemMarshaller,
-      promptItemMarshaller = promptItemMarshaller,
-      spellingItemMarshaller = spellingItemMarshaller,
-      momentAnnotationItemMarshaller = momentAnnotationItemMarshaller,
-      genericSummaryItemMarshaller = genericSummaryItemMarshaller,
-      commerceProductItemMarshaller = commerceProductItemMarshaller,
-      commerceProductGroupItemMarshaller = commerceProductGroupItemMarshaller,
-      trendItemMarshaller = trendItemMarshaller
+  val t  l ne emMarshaller = new T  l ne emMarshaller(
+    t  l ne emContentMarshaller = new T  l ne emContentMarshaller(
+      art cle emMarshaller = art cle emMarshaller,
+      aud oSpace emMarshaller = aud oSpace emMarshaller,
+      card emMarshaller = card emMarshaller,
+      cursor emMarshaller = cursor emMarshaller,
+      eventSummary emMarshaller = eventSummary emMarshaller,
+       conLabel emMarshaller =  conLabel emMarshaller,
+      label emMarshaller = label emMarshaller,
+       ssagePrompt emMarshaller =  ssagePrompt emMarshaller,
+      t le emMarshaller = t le emMarshaller,
+      tombstone emMarshaller = tombstone emMarshaller,
+      top cFollowPrompt emMarshaller = top cFollowPrompt emMarshaller,
+      top c emMarshaller = top c emMarshaller,
+      t etComposer emMarshaller = t etComposer emMarshaller,
+      t et emMarshaller = t et emMarshaller,
+      tw terL st emMarshaller = tw terL st emMarshaller,
+      user emMarshaller = user emMarshaller,
+      vert calGr d emMarshaller = vert calGr d emMarshaller,
+      thread ader emMarshaller = thread ader emMarshaller,
+      prompt emMarshaller = prompt emMarshaller,
+      spell ng emMarshaller = spell ng emMarshaller,
+      mo ntAnnotat on emMarshaller = mo ntAnnotat on emMarshaller,
+      gener cSummary emMarshaller = gener cSummary emMarshaller,
+      com rceProduct emMarshaller = com rceProduct emMarshaller,
+      com rceProductGroup emMarshaller = com rceProductGroup emMarshaller,
+      trend emMarshaller = trend emMarshaller
     ),
-    clientEventInfoMarshaller = clientEventInfoMarshaller,
-    feedbackInfoMarshaller = feedbackInfoMarshaller
+    cl entEvent nfoMarshaller = cl entEvent nfoMarshaller,
+    feedback nfoMarshaller = feedback nfoMarshaller
   )
 
-  val moduleDisplayTypeMarshaller = new ModuleDisplayTypeMarshaller
-  val moduleItemTreeDisplayMarshaller =
-    new ModuleItemTreeDisplayMarshaller(moduleDisplayTypeMarshaller)
+  val moduleD splayTypeMarshaller = new ModuleD splayTypeMarshaller
+  val module emTreeD splayMarshaller =
+    new Module emTreeD splayMarshaller(moduleD splayTypeMarshaller)
 
-  val moduleItemMarshaller = new ModuleItemMarshaller(
-    timelineItemMarshaller = timelineItemMarshaller,
-    moduleItemTreeDisplayMarshaller = moduleItemTreeDisplayMarshaller)
+  val module emMarshaller = new Module emMarshaller(
+    t  l ne emMarshaller = t  l ne emMarshaller,
+    module emTreeD splayMarshaller = module emTreeD splayMarshaller)
 
-  val moduleHeaderDisplayTypeMarshaller = new ModuleHeaderDisplayTypeMarshaller
-  val moduleHeaderMarshaller = new ModuleHeaderMarshaller(
-    horizonIconMarshaller = horizonIconMarshaller,
-    imageVariantMarshaller = imageVariantMarshaller,
-    socialContextMarshaller = socialContextMarshaller,
-    moduleHeaderDisplayTypeMarshaller = moduleHeaderDisplayTypeMarshaller
+  val module aderD splayTypeMarshaller = new Module aderD splayTypeMarshaller
+  val module aderMarshaller = new Module aderMarshaller(
+    hor zon conMarshaller = hor zon conMarshaller,
+     mageVar antMarshaller =  mageVar antMarshaller,
+    soc alContextMarshaller = soc alContextMarshaller,
+    module aderD splayTypeMarshaller = module aderD splayTypeMarshaller
   )
   val moduleFooterMarshaller = new ModuleFooterMarshaller(urlMarshaller = urlMarshaller)
-  val adsMetadataMarshaller = new AdsMetadataMarshaller
-  val moduleConversationMetadataMarshaller = new ModuleConversationMetadataMarshaller(
-    socialContextMarshaller = socialContextMarshaller)
-  val gridCarouselMetadataMarshaller = new GridCarouselMetadataMarshaller
-  val moduleMetadataMarshaller = new ModuleMetadataMarshaller(
-    adsMetadataMarshaller = adsMetadataMarshaller,
-    moduleConversationMetadataMarshaller = moduleConversationMetadataMarshaller,
-    gridCarouselMetadataMarshaller = gridCarouselMetadataMarshaller
+  val ads tadataMarshaller = new Ads tadataMarshaller
+  val moduleConversat on tadataMarshaller = new ModuleConversat on tadataMarshaller(
+    soc alContextMarshaller = soc alContextMarshaller)
+  val gr dCarousel tadataMarshaller = new Gr dCarousel tadataMarshaller
+  val module tadataMarshaller = new Module tadataMarshaller(
+    ads tadataMarshaller = ads tadataMarshaller,
+    moduleConversat on tadataMarshaller = moduleConversat on tadataMarshaller,
+    gr dCarousel tadataMarshaller = gr dCarousel tadataMarshaller
   )
-  val moduleShowMoreBehaviorRevealByCountMarshaller =
-    new ModuleShowMoreBehaviorRevealByCountMarshaller
-  val moduleShowMoreBehaviorMarshaller = new ModuleShowMoreBehaviorMarshaller(
-    moduleShowMoreBehaviorRevealByCountMarshaller = moduleShowMoreBehaviorRevealByCountMarshaller
+  val moduleShowMoreBehav orRevealByCountMarshaller =
+    new ModuleShowMoreBehav orRevealByCountMarshaller
+  val moduleShowMoreBehav orMarshaller = new ModuleShowMoreBehav orMarshaller(
+    moduleShowMoreBehav orRevealByCountMarshaller = moduleShowMoreBehav orRevealByCountMarshaller
   )
-  val timelineModuleMarshaller = new TimelineModuleMarshaller(
-    moduleItemMarshaller = moduleItemMarshaller,
-    moduleDisplayTypeMarshaller = moduleDisplayTypeMarshaller,
-    moduleHeaderMarshaller = moduleHeaderMarshaller,
+  val t  l neModuleMarshaller = new T  l neModuleMarshaller(
+    module emMarshaller = module emMarshaller,
+    moduleD splayTypeMarshaller = moduleD splayTypeMarshaller,
+    module aderMarshaller = module aderMarshaller,
     moduleFooterMarshaller = moduleFooterMarshaller,
-    clientEventInfoMarshaller = clientEventInfoMarshaller,
-    feedbackInfoMarshaller = feedbackInfoMarshaller,
-    moduleMetadataMarshaller = moduleMetadataMarshaller,
-    moduleShowMoreBehaviorMarshaller = moduleShowMoreBehaviorMarshaller
+    cl entEvent nfoMarshaller = cl entEvent nfoMarshaller,
+    feedback nfoMarshaller = feedback nfoMarshaller,
+    module tadataMarshaller = module tadataMarshaller,
+    moduleShowMoreBehav orMarshaller = moduleShowMoreBehav orMarshaller
   )
 
-  val halfCoverDisplayTypeMarshaller = new HalfCoverDisplayTypeMarshaller()
-  val fullCoverDisplayTypeMarshaller = new FullCoverDisplayTypeMarshaller()
-  val coverCtaBehaviorMarshaller = new CoverCtaBehaviorMarshaller(richTextMarshaller, urlMarshaller)
+  val halfCoverD splayTypeMarshaller = new HalfCoverD splayTypeMarshaller()
+  val fullCoverD splayTypeMarshaller = new FullCoverD splayTypeMarshaller()
+  val coverCtaBehav orMarshaller = new CoverCtaBehav orMarshaller(r chTextMarshaller, urlMarshaller)
   val buttonStyleMarshaller = new ButtonStyleMarshaller()
   val coverCtaMarshaller = new CoverCtaMarshaller(
-    coverCtaBehaviorMarshaller,
+    coverCtaBehav orMarshaller,
     callbackMarshaller,
-    clientEventInfoMarshaller,
-    horizonIconMarshaller,
+    cl entEvent nfoMarshaller,
+    hor zon conMarshaller,
     buttonStyleMarshaller)
-  val coverImageMarshaller =
-    new CoverImageMarshaller(
-      imageVariantMarshaller,
-      imageDisplayTypeMarshaller,
-      imageAnimationTypeMarshaller)
-  val dismissInfoMarshaller = new DismissInfoMarshaller(callbackMarshaller)
+  val cover mageMarshaller =
+    new Cover mageMarshaller(
+       mageVar antMarshaller,
+       mageD splayTypeMarshaller,
+       mageAn mat onTypeMarshaller)
+  val d sm ss nfoMarshaller = new D sm ss nfoMarshaller(callbackMarshaller)
 
   val halfCoverContentMarshaller = new HalfCoverContentMarshaller(
-    halfCoverDisplayTypeMarshaller,
+    halfCoverD splayTypeMarshaller,
     coverCtaMarshaller,
-    richTextMarshaller,
-    coverImageMarshaller,
-    dismissInfoMarshaller,
+    r chTextMarshaller,
+    cover mageMarshaller,
+    d sm ss nfoMarshaller,
     callbackMarshaller)
   val fullCoverContentMarshaller = new FullCoverContentMarshaller(
-    fullCoverDisplayTypeMarshaller,
+    fullCoverD splayTypeMarshaller,
     coverCtaMarshaller,
-    richTextMarshaller,
-    imageVariantMarshaller,
-    dismissInfoMarshaller,
-    imageDisplayTypeMarshaller,
+    r chTextMarshaller,
+     mageVar antMarshaller,
+    d sm ss nfoMarshaller,
+     mageD splayTypeMarshaller,
     callbackMarshaller)
   val coverContentMarshaller =
     new CoverContentMarshaller(fullCoverContentMarshaller, halfCoverContentMarshaller)
-  val coverMarshaller = new CoverMarshaller(coverContentMarshaller, clientEventInfoMarshaller)
+  val coverMarshaller = new CoverMarshaller(coverContentMarshaller, cl entEvent nfoMarshaller)
 
-  val cursorOperationMarshaller = new CursorOperationMarshaller(
+  val cursorOperat onMarshaller = new CursorOperat onMarshaller(
     cursorTypeMarshaller = cursorTypeMarshaller,
-    cursorDisplayTreatmentMarshaller = cursorDisplayTreatmentMarshaller)
-  val timelineOperationMarshaller = new TimelineOperationMarshaller(
-    cursorOperationMarshaller = cursorOperationMarshaller)
+    cursorD splayTreat ntMarshaller = cursorD splayTreat ntMarshaller)
+  val t  l neOperat onMarshaller = new T  l neOperat onMarshaller(
+    cursorOperat onMarshaller = cursorOperat onMarshaller)
 
-  val timelineEntryMarshaller = new TimelineEntryMarshaller(
-    timelineEntryContentMarshaller = new TimelineEntryContentMarshaller(
-      timelineItemMarshaller = timelineItemMarshaller,
-      timelineModuleMarshaller = timelineModuleMarshaller,
-      timelineOperationMarshaller = timelineOperationMarshaller))
+  val t  l neEntryMarshaller = new T  l neEntryMarshaller(
+    t  l neEntryContentMarshaller = new T  l neEntryContentMarshaller(
+      t  l ne emMarshaller = t  l ne emMarshaller,
+      t  l neModuleMarshaller = t  l neModuleMarshaller,
+      t  l neOperat onMarshaller = t  l neOperat onMarshaller))
 
-  val addEntriesInstructionMarshaller = new AddEntriesInstructionMarshaller(
-    timelineEntryMarshaller = timelineEntryMarshaller)
+  val addEntr es nstruct onMarshaller = new AddEntr es nstruct onMarshaller(
+    t  l neEntryMarshaller = t  l neEntryMarshaller)
 
-  val markEntriesUnreadInstructionMarshaller = new MarkEntriesUnreadInstructionMarshaller()
+  val markEntr esUnread nstruct onMarshaller = new MarkEntr esUnread nstruct onMarshaller()
 
-  val addToModuleInstructionMarshaller = new AddToModuleInstructionMarshaller(
-    moduleItemMarshaller = moduleItemMarshaller)
+  val addToModule nstruct onMarshaller = new AddToModule nstruct onMarshaller(
+    module emMarshaller = module emMarshaller)
 
-  val replaceEntryInstructionMarshaller = new ReplaceEntryInstructionMarshaller(
-    timelineEntryMarshaller = timelineEntryMarshaller
+  val replaceEntry nstruct onMarshaller = new ReplaceEntry nstruct onMarshaller(
+    t  l neEntryMarshaller = t  l neEntryMarshaller
   )
 
-  val pinEntryInstructionMarshaller = new PinEntryInstructionMarshaller(
-    timelineEntryMarshaller = timelineEntryMarshaller
+  val p nEntry nstruct onMarshaller = new P nEntry nstruct onMarshaller(
+    t  l neEntryMarshaller = t  l neEntryMarshaller
   )
 
   val showAlertTypeMarshaller = new ShowAlertTypeMarshaller()
-  val showAlertIconMarshaller = new ShowAlertIconMarshaller()
-  val showAlertIconDisplayInfoMarshaller = new ShowAlertIconDisplayInfoMarshaller(
-    showAlertIconMarshaller = showAlertIconMarshaller,
+  val showAlert conMarshaller = new ShowAlert conMarshaller()
+  val showAlert conD splay nfoMarshaller = new ShowAlert conD splay nfoMarshaller(
+    showAlert conMarshaller = showAlert conMarshaller,
     rosettaColorMarshaller = rosettaColorMarshaller
   )
-  val showAlertColorConfigurationMarshaller = new ShowAlertColorConfigurationMarshaller(
+  val showAlertColorConf gurat onMarshaller = new ShowAlertColorConf gurat onMarshaller(
     rosettaColorMarshaller = rosettaColorMarshaller
   )
-  val showAlertDisplayLocationMarshaller = new ShowAlertDisplayLocationMarshaller()
-  val showAlertNavigationMetadataMarshaller = new ShowAlertNavigationMetadataMarshaller()
-  val showAlertInstructionMarshaller = new ShowAlertInstructionMarshaller(
+  val showAlertD splayLocat onMarshaller = new ShowAlertD splayLocat onMarshaller()
+  val showAlertNav gat on tadataMarshaller = new ShowAlertNav gat on tadataMarshaller()
+  val showAlert nstruct onMarshaller = new ShowAlert nstruct onMarshaller(
     showAlertTypeMarshaller = new ShowAlertTypeMarshaller(),
-    clientEventInfoMarshaller = clientEventInfoMarshaller,
-    richTextMarshaller = richTextMarshaller,
-    showAlertIconDisplayInfoMarshaller = showAlertIconDisplayInfoMarshaller,
-    showAlertColorConfigurationMarshaller = showAlertColorConfigurationMarshaller,
-    showAlertDisplayLocationMarshaller = showAlertDisplayLocationMarshaller,
-    showAlertNavigationMetadataMarshaller = showAlertNavigationMetadataMarshaller
+    cl entEvent nfoMarshaller = cl entEvent nfoMarshaller,
+    r chTextMarshaller = r chTextMarshaller,
+    showAlert conD splay nfoMarshaller = showAlert conD splay nfoMarshaller,
+    showAlertColorConf gurat onMarshaller = showAlertColorConf gurat onMarshaller,
+    showAlertD splayLocat onMarshaller = showAlertD splayLocat onMarshaller,
+    showAlertNav gat on tadataMarshaller = showAlertNav gat on tadataMarshaller
   )
 
-  val timelineInstructionMarshaller = new TimelineInstructionMarshaller(
-    addEntriesInstructionMarshaller = addEntriesInstructionMarshaller,
-    addToModuleInstructionMarshaller = addToModuleInstructionMarshaller,
-    markEntriesUnreadInstructionMarshaller = markEntriesUnreadInstructionMarshaller,
-    pinEntryInstructionMarshaller = pinEntryInstructionMarshaller,
-    replaceEntryInstructionMarshaller = replaceEntryInstructionMarshaller,
-    showAlertInstructionMarshaller = showAlertInstructionMarshaller,
-    terminateTimelineInstructionMarshaller = new TerminateTimelineInstructionMarshaller,
+  val t  l ne nstruct onMarshaller = new T  l ne nstruct onMarshaller(
+    addEntr es nstruct onMarshaller = addEntr es nstruct onMarshaller,
+    addToModule nstruct onMarshaller = addToModule nstruct onMarshaller,
+    markEntr esUnread nstruct onMarshaller = markEntr esUnread nstruct onMarshaller,
+    p nEntry nstruct onMarshaller = p nEntry nstruct onMarshaller,
+    replaceEntry nstruct onMarshaller = replaceEntry nstruct onMarshaller,
+    showAlert nstruct onMarshaller = showAlert nstruct onMarshaller,
+    term nateT  l ne nstruct onMarshaller = new Term nateT  l ne nstruct onMarshaller,
     coverMarshaller = coverMarshaller,
   )
 
-  val timelineScribeConfigMarshaller = new TimelineScribeConfigMarshaller
+  val t  l neScr beConf gMarshaller = new T  l neScr beConf gMarshaller
 
-  val readerModeConfigMarshaller = new ReaderModeConfigMarshaller(urlMarshaller)
+  val readerModeConf gMarshaller = new ReaderModeConf gMarshaller(urlMarshaller)
 
-  val timelineMetadataMarshaller = new TimelineMetadataMarshaller(
-    timelineScribeConfigMarshaller = timelineScribeConfigMarshaller,
-    readerModeConfigMarshaller = readerModeConfigMarshaller
+  val t  l ne tadataMarshaller = new T  l ne tadataMarshaller(
+    t  l neScr beConf gMarshaller = t  l neScr beConf gMarshaller,
+    readerModeConf gMarshaller = readerModeConf gMarshaller
   )
 
   val marshaller: UrtTransportMarshaller =
     new UrtTransportMarshaller(
-      timelineInstructionMarshaller = timelineInstructionMarshaller,
-      feedbackActionMarshaller = feedbackActionMarshaller,
-      childFeedbackActionMarshaller = childFeedbackActionMarshaller,
-      timelineMetadataMarshaller = timelineMetadataMarshaller
+      t  l ne nstruct onMarshaller = t  l ne nstruct onMarshaller,
+      feedbackAct onMarshaller = feedbackAct onMarshaller,
+      ch ldFeedbackAct onMarshaller = ch ldFeedbackAct onMarshaller,
+      t  l ne tadataMarshaller = t  l ne tadataMarshaller
     )
 }

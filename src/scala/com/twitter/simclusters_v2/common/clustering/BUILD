@@ -1,11 +1,11 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "eventdetection/common/src/main/java/com/twitter/eventdetection/common/louvain",
-        "eventdetection/common/src/main/java/com/twitter/eventdetection/common/model",
-        "src/java/com/twitter/sbf/graph",
-        "src/scala/com/twitter/simclusters_v2/scalding/common",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "eventdetect on/common/src/ma n/java/com/tw ter/eventdetect on/common/louva n",
+        "eventdetect on/common/src/ma n/java/com/tw ter/eventdetect on/common/model",
+        "src/java/com/tw ter/sbf/graph",
+        "src/scala/com/tw ter/s mclusters_v2/scald ng/common",
     ],
 )

@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.component_library.selector
+package com.tw ter.product_m xer.component_l brary.selector
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.SelectorResult
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * A selector that appends all candidates missing a specific feature to the results pool and keeps
- * the rest in the remaining candidates. This is useful for backfill scoring candidates without
- * a score from a previous scorer.
- * @param pipelineScope The pipeline scope to check
- * @param missingFeature The missing feature to check for.
+ * A selector that appends all cand dates m ss ng a spec f c feature to t  results pool and keeps
+ * t  rest  n t  rema n ng cand dates. T   s useful for backf ll scor ng cand dates w hout
+ * a score from a prev ous scorer.
+ * @param p pel neScope T  p pel ne scope to c ck
+ * @param m ss ngFeature T  m ss ng feature to c ck for.
  */
-case class InsertAppendWithoutFeatureResults(
-  override val pipelineScope: CandidateScope,
-  missingFeature: Feature[_, _])
-    extends Selector[PipelineQuery] {
+case class  nsertAppendW houtFeatureResults(
+  overr de val p pel neScope: Cand dateScope,
+  m ss ngFeature: Feature[_, _])
+    extends Selector[P pel neQuery] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+  overr de def apply(
+    query: P pel neQuery,
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
-    val (candidatesWithMissingFeature, candidatesWithFeature) = remainingCandidates.partition {
-      candidate =>
-        pipelineScope.contains(candidate) && !candidate.features.getSuccessfulFeatures
-          .contains(missingFeature)
+    val (cand datesW hM ss ngFeature, cand datesW hFeature) = rema n ngCand dates.part  on {
+      cand date =>
+        p pel neScope.conta ns(cand date) && !cand date.features.getSuccessfulFeatures
+          .conta ns(m ss ngFeature)
     }
-    val updatedResults = result ++ candidatesWithMissingFeature
-    SelectorResult(remainingCandidates = candidatesWithFeature, result = updatedResults)
+    val updatedResults = result ++ cand datesW hM ss ngFeature
+    SelectorResult(rema n ngCand dates = cand datesW hFeature, result = updatedResults)
   }
 }

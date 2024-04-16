@@ -1,59 +1,59 @@
-package com.twitter.search.common.query;
+package com.tw ter.search.common.query;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.Weight;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.search.Scorer;
+ mport org.apac .lucene.search.  ght;
 
 /**
- * Scorer implementation that adds attribute collection support for an underlying query.
- * Meant to be used in conjunction with {@link IdentifiableQuery}.
+ * Scorer  mple ntat on that adds attr bute collect on support for an underly ng query.
+ *  ant to be used  n conjunct on w h {@l nk  dent f ableQuery}.
  */
-public class IdentifiableQueryScorer extends FilteredScorer {
-  private final FieldRankHitInfo queryId;
-  private final HitAttributeCollector attrCollector;
+publ c class  dent f ableQueryScorer extends F lteredScorer {
+  pr vate f nal F eldRankH  nfo query d;
+  pr vate f nal H Attr buteCollector attrCollector;
 
-  public IdentifiableQueryScorer(Weight weight, Scorer inner, FieldRankHitInfo queryId,
-                                 HitAttributeCollector attrCollector) {
-    super(weight, inner);
-    this.queryId = queryId;
-    this.attrCollector = Preconditions.checkNotNull(attrCollector);
+  publ c  dent f ableQueryScorer(  ght   ght, Scorer  nner, F eldRankH  nfo query d,
+                                 H Attr buteCollector attrCollector) {
+    super(  ght,  nner);
+    t .query d = query d;
+    t .attrCollector = Precond  ons.c ckNotNull(attrCollector);
   }
 
-  @Override
-  public DocIdSetIterator iterator() {
-    final DocIdSetIterator superDISI = super.iterator();
+  @Overr de
+  publ c Doc dSet erator  erator() {
+    f nal Doc dSet erator superD S  = super. erator();
 
-    return new DocIdSetIterator() {
-      @Override
-      public int docID() {
-        return superDISI.docID();
+    return new Doc dSet erator() {
+      @Overr de
+      publ c  nt doc D() {
+        return superD S .doc D();
       }
 
-      @Override
-      public int nextDoc() throws IOException {
-        int docid = superDISI.nextDoc();
-        if (docid != NO_MORE_DOCS) {
-          attrCollector.collectScorerAttribution(docid, queryId);
+      @Overr de
+      publ c  nt nextDoc() throws  OExcept on {
+         nt doc d = superD S .nextDoc();
+         f (doc d != NO_MORE_DOCS) {
+          attrCollector.collectScorerAttr but on(doc d, query d);
         }
-        return docid;
+        return doc d;
       }
 
-      @Override
-      public int advance(int target) throws IOException {
-        int docid = superDISI.advance(target);
-        if (docid != NO_MORE_DOCS) {
-          attrCollector.collectScorerAttribution(docid, queryId);
+      @Overr de
+      publ c  nt advance( nt target) throws  OExcept on {
+         nt doc d = superD S .advance(target);
+         f (doc d != NO_MORE_DOCS) {
+          attrCollector.collectScorerAttr but on(doc d, query d);
         }
-        return docid;
+        return doc d;
       }
 
-      @Override
-      public long cost() {
-        return superDISI.cost();
+      @Overr de
+      publ c long cost() {
+        return superD S .cost();
       }
     };
   }

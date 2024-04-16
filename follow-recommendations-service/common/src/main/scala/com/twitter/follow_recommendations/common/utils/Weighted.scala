@@ -1,21 +1,21 @@
-package com.twitter.follow_recommendations.common.utils
+package com.tw ter.follow_recom ndat ons.common.ut ls
 
 /**
- * Typeclass for any Recommendation type that has a weight
+ * Typeclass for any Recom ndat on type that has a   ght
  *
  */
-trait Weighted[-Rec] {
+tra    ghted[-Rec] {
   def apply(rec: Rec): Double
 }
 
-object Weighted {
-  implicit object WeightedTuple extends Weighted[(_, Double)] {
-    override def apply(rec: (_, Double)): Double = rec._2
+object   ghted {
+   mpl c  object   ghtedTuple extends   ghted[(_, Double)] {
+    overr de def apply(rec: (_, Double)): Double = rec._2
   }
 
-  def fromFunction[Rec](f: Rec => Double): Weighted[Rec] = {
-    new Weighted[Rec] {
-      override def apply(rec: Rec): Double = f(rec)
+  def fromFunct on[Rec](f: Rec => Double):   ghted[Rec] = {
+    new   ghted[Rec] {
+      overr de def apply(rec: Rec): Double = f(rec)
     }
   }
 }

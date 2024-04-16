@@ -1,44 +1,44 @@
-package com.twitter.search.earlybird.common;
+package com.tw ter.search.earlyb rd.common;
 
-import org.apache.lucene.search.Query;
+ mport org.apac .lucene.search.Query;
 
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
 
-public class RequestResponsePair {
-  private final EarlybirdRequest request;
-  private final EarlybirdResponse response;
-  private final org.apache.lucene.search.Query luceneQuery;
+publ c class RequestResponsePa r {
+  pr vate f nal Earlyb rdRequest request;
+  pr vate f nal Earlyb rdResponse response;
+  pr vate f nal org.apac .lucene.search.Query luceneQuery;
 
-  // The serialized query in its final form, after various modifications have been applied to it.
-  // As a note, we have some code paths in which this can be null, but I don't really see them
-  // triggered in production right now.
-  private final com.twitter.search.queryparser.query.Query finalSerializedQuery;
+  // T  ser al zed query  n  s f nal form, after var ous mod f cat ons have been appl ed to  .
+  // As a note,   have so  code paths  n wh ch t  can be null, but   don't really see t m
+  // tr ggered  n product on r ght now.
+  pr vate f nal com.tw ter.search.queryparser.query.Query f nalSer al zedQuery;
 
-  public RequestResponsePair(
-      EarlybirdRequest request,
-      com.twitter.search.queryparser.query.Query finalSerializedQuery,
-      org.apache.lucene.search.Query luceneQuery,
-      EarlybirdResponse response) {
-    this.request = request;
-    this.luceneQuery = luceneQuery;
-    this.response = response;
-    this.finalSerializedQuery = finalSerializedQuery;
+  publ c RequestResponsePa r(
+      Earlyb rdRequest request,
+      com.tw ter.search.queryparser.query.Query f nalSer al zedQuery,
+      org.apac .lucene.search.Query luceneQuery,
+      Earlyb rdResponse response) {
+    t .request = request;
+    t .luceneQuery = luceneQuery;
+    t .response = response;
+    t .f nalSer al zedQuery = f nalSer al zedQuery;
   }
 
-  public String getFinalSerializedQuery() {
-    return finalSerializedQuery != null ? finalSerializedQuery.serialize() : "N/A";
+  publ c Str ng getF nalSer al zedQuery() {
+    return f nalSer al zedQuery != null ? f nalSer al zedQuery.ser al ze() : "N/A";
   }
 
-  public EarlybirdRequest getRequest() {
+  publ c Earlyb rdRequest getRequest() {
     return request;
   }
 
-  public EarlybirdResponse getResponse() {
+  publ c Earlyb rdResponse getResponse() {
     return response;
   }
 
-  public Query getLuceneQuery() {
+  publ c Query getLuceneQuery() {
     return luceneQuery;
   }
 }

@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.functional_component.common.alert.predicate
+package com.tw ter.product_m xer.core.funct onal_component.common.alert.pred cate
 
 /**
- * Used for building [[Predicate]]s
+ * Used for bu ld ng [[Pred cate]]s
  *
- * @see [[https://docbird.twitter.biz/mon/reference.html#predicate OPERATOR]]
+ * @see [[https://docb rd.tw ter.b z/mon/reference.html#pred cate OPERATOR]]
  */
-private[alert] sealed trait Operator
-private[alert] case object `>` extends Operator
-private[alert] case object `>=` extends Operator
-private[alert] case object `<` extends Operator
-private[alert] case object `<=` extends Operator
-private[alert] case object `!=` extends Operator
-private[alert] case object `=` extends Operator
+pr vate[alert] sealed tra  Operator
+pr vate[alert] case object `>` extends Operator
+pr vate[alert] case object `>=` extends Operator
+pr vate[alert] case object `<` extends Operator
+pr vate[alert] case object `<=` extends Operator
+pr vate[alert] case object `!=` extends Operator
+pr vate[alert] case object `=` extends Operator

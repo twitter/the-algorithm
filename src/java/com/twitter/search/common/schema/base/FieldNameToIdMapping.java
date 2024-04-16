@@ -1,27 +1,27 @@
-package com.twitter.search.common.schema.base;
+package com.tw ter.search.common.sc ma.base;
 
-import java.util.Map;
+ mport java.ut l.Map;
 
-import com.google.common.collect.ImmutableMap;
+ mport com.google.common.collect. mmutableMap;
 
 /**
- * Maps from fieldName to fieldIDs.
+ * Maps from f eldNa  to f eld Ds.
  */
-public abstract class FieldNameToIdMapping {
+publ c abstract class F eldNa To dMapp ng {
   /**
-   * Returns field ID for the given fieldName.
-   * Can throw unchecked exceptions is the fieldName is not known to Earlybird.
+   * Returns f eld  D for t  g ven f eldNa .
+   * Can throw unc cked except ons  s t  f eldNa   s not known to Earlyb rd.
    */
-  public abstract int getFieldID(String fieldName);
+  publ c abstract  nt getF eld D(Str ng f eldNa );
 
   /**
-   * Wrap the given map into a fieldNameToIdMapping instance.
+   * Wrap t  g ven map  nto a f eldNa To dMapp ng  nstance.
    */
-  public static FieldNameToIdMapping newFieldNameToIdMapping(Map<String, Integer> map) {
-    final ImmutableMap<String, Integer> immutableMap = ImmutableMap.copyOf(map);
-    return new FieldNameToIdMapping() {
-      @Override public int getFieldID(String fieldName) {
-        return immutableMap.get(fieldName);
+  publ c stat c F eldNa To dMapp ng newF eldNa To dMapp ng(Map<Str ng,  nteger> map) {
+    f nal  mmutableMap<Str ng,  nteger>  mmutableMap =  mmutableMap.copyOf(map);
+    return new F eldNa To dMapp ng() {
+      @Overr de publ c  nt getF eld D(Str ng f eldNa ) {
+        return  mmutableMap.get(f eldNa );
       }
     };
   }

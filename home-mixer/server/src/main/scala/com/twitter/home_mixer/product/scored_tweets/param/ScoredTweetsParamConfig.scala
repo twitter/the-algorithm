@@ -1,89 +1,89 @@
-package com.twitter.home_mixer.product.scored_tweets.param
+package com.tw ter.ho _m xer.product.scored_t ets.param
 
-import com.twitter.home_mixer.param.decider.DeciderKey
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam._
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.servo.decider.DeciderKeyName
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.param.dec der.Dec derKey
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParam._
+ mport com.tw ter.product_m xer.core.product.ProductParamConf g
+ mport com.tw ter.servo.dec der.Dec derKeyNa 
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ScoredTweetsParamConfig @Inject() () extends ProductParamConfig {
-  override val enabledDeciderKey: DeciderKeyName = DeciderKey.EnableScoredTweetsProduct
-  override val supportedClientFSName: String = SupportedClientFSName
+@S ngleton
+class ScoredT etsParamConf g @ nject() () extends ProductParamConf g {
+  overr de val enabledDec derKey: Dec derKeyNa  = Dec derKey.EnableScoredT etsProduct
+  overr de val supportedCl entFSNa : Str ng = SupportedCl entFSNa 
 
-  override val booleanDeciderOverrides = Seq(
-    CandidatePipeline.EnableBackfillParam,
-    CandidatePipeline.EnableTweetMixerParam,
-    CandidatePipeline.EnableFrsParam,
-    CandidatePipeline.EnableInNetworkParam,
-    CandidatePipeline.EnableListsParam,
-    CandidatePipeline.EnablePopularVideosParam,
-    CandidatePipeline.EnableUtegParam,
-    ScoredTweetsParam.EnableSimClustersSimilarityFeatureHydrationDeciderParam
+  overr de val booleanDec derOverr des = Seq(
+    Cand dateP pel ne.EnableBackf llParam,
+    Cand dateP pel ne.EnableT etM xerParam,
+    Cand dateP pel ne.EnableFrsParam,
+    Cand dateP pel ne.Enable nNetworkParam,
+    Cand dateP pel ne.EnableL stsParam,
+    Cand dateP pel ne.EnablePopularV deosParam,
+    Cand dateP pel ne.EnableUtegParam,
+    ScoredT etsParam.EnableS mClustersS m lar yFeatureHydrat onDec derParam
   )
 
-  override val booleanFSOverrides = Seq(
-    EnableBackfillCandidatePipelineParam,
-    EnableScribeScoredCandidatesParam
+  overr de val booleanFSOverr des = Seq(
+    EnableBackf llCand dateP pel neParam,
+    EnableScr beScoredCand datesParam
   )
 
-  override val boundedIntFSOverrides = Seq(
-    CachedScoredTweets.MinCachedTweetsParam,
-    MaxInNetworkResultsParam,
+  overr de val bounded ntFSOverr des = Seq(
+    Cac dScoredT ets.M nCac dT etsParam,
+    Max nNetworkResultsParam,
     MaxOutOfNetworkResultsParam,
-    QualityFactor.BackfillMaxTweetsToScoreParam,
-    QualityFactor.TweetMixerMaxTweetsToScoreParam,
-    QualityFactor.FrsMaxTweetsToScoreParam,
-    QualityFactor.InNetworkMaxTweetsToScoreParam,
-    QualityFactor.ListsMaxTweetsToScoreParam,
-    QualityFactor.PopularVideosMaxTweetsToScoreParam,
-    QualityFactor.UtegMaxTweetsToScoreParam,
+    Qual yFactor.Backf llMaxT etsToScoreParam,
+    Qual yFactor.T etM xerMaxT etsToScoreParam,
+    Qual yFactor.FrsMaxT etsToScoreParam,
+    Qual yFactor. nNetworkMaxT etsToScoreParam,
+    Qual yFactor.L stsMaxT etsToScoreParam,
+    Qual yFactor.PopularV deosMaxT etsToScoreParam,
+    Qual yFactor.UtegMaxT etsToScoreParam,
     ServerMaxResultsParam
   )
 
-  override val boundedDurationFSOverrides = Seq(
-    CachedScoredTweets.TTLParam
+  overr de val boundedDurat onFSOverr des = Seq(
+    Cac dScoredT ets.TTLParam
   )
 
-  override val stringFSOverrides = Seq(
-    Scoring.HomeModelParam,
-    EarlybirdTensorflowModel.InNetworkParam,
-    EarlybirdTensorflowModel.FrsParam,
-    EarlybirdTensorflowModel.UtegParam
+  overr de val str ngFSOverr des = Seq(
+    Scor ng.Ho ModelParam,
+    Earlyb rdTensorflowModel. nNetworkParam,
+    Earlyb rdTensorflowModel.FrsParam,
+    Earlyb rdTensorflowModel.UtegParam
   )
 
-  override val boundedDoubleFSOverrides = Seq(
-    BlueVerifiedAuthorInNetworkMultiplierParam,
-    BlueVerifiedAuthorOutOfNetworkMultiplierParam,
-    CreatorInNetworkMultiplierParam,
-    CreatorOutOfNetworkMultiplierParam,
+  overr de val boundedDoubleFSOverr des = Seq(
+    BlueVer f edAuthor nNetworkMult pl erParam,
+    BlueVer f edAuthorOutOfNetworkMult pl erParam,
+    Creator nNetworkMult pl erParam,
+    CreatorOutOfNetworkMult pl erParam,
     OutOfNetworkScaleFactorParam,
-    // Model Weights
-    Scoring.ModelWeights.FavParam,
-    Scoring.ModelWeights.ReplyParam,
-    Scoring.ModelWeights.RetweetParam,
-    Scoring.ModelWeights.GoodClickParam,
-    Scoring.ModelWeights.GoodClickV2Param,
-    Scoring.ModelWeights.GoodProfileClickParam,
-    Scoring.ModelWeights.ReplyEngagedByAuthorParam,
-    Scoring.ModelWeights.VideoPlayback50Param,
-    Scoring.ModelWeights.ReportParam,
-    Scoring.ModelWeights.NegativeFeedbackV2Param,
-    Scoring.ModelWeights.TweetDetailDwellParam,
-    Scoring.ModelWeights.ProfileDwelledParam,
-    Scoring.ModelWeights.BookmarkParam,
-    Scoring.ModelWeights.ShareParam,
-    Scoring.ModelWeights.ShareMenuClickParam,
-    Scoring.ModelWeights.StrongNegativeFeedbackParam,
-    Scoring.ModelWeights.WeakNegativeFeedbackParam
+    // Model   ghts
+    Scor ng.Model  ghts.FavParam,
+    Scor ng.Model  ghts.ReplyParam,
+    Scor ng.Model  ghts.Ret etParam,
+    Scor ng.Model  ghts.GoodCl ckParam,
+    Scor ng.Model  ghts.GoodCl ckV2Param,
+    Scor ng.Model  ghts.GoodProf leCl ckParam,
+    Scor ng.Model  ghts.ReplyEngagedByAuthorParam,
+    Scor ng.Model  ghts.V deoPlayback50Param,
+    Scor ng.Model  ghts.ReportParam,
+    Scor ng.Model  ghts.Negat veFeedbackV2Param,
+    Scor ng.Model  ghts.T etDeta lD llParam,
+    Scor ng.Model  ghts.Prof leD lledParam,
+    Scor ng.Model  ghts.BookmarkParam,
+    Scor ng.Model  ghts.ShareParam,
+    Scor ng.Model  ghts.Share nuCl ckParam,
+    Scor ng.Model  ghts.StrongNegat veFeedbackParam,
+    Scor ng.Model  ghts. akNegat veFeedbackParam
   )
 
-  override val longSetFSOverrides = Seq(
-    CompetitorSetParam
+  overr de val longSetFSOverr des = Seq(
+    Compet orSetParam
   )
 
-  override val stringSeqFSOverrides = Seq(
-    CompetitorURLSeqParam
+  overr de val str ngSeqFSOverr des = Seq(
+    Compet orURLSeqParam
   )
 }

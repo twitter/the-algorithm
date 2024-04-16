@@ -1,123 +1,123 @@
-package com.twitter.ann.annoy
+package com.tw ter.ann.annoy
 
-import com.spotify.annoy.jni.base.{Annoy => AnnoyLib}
-import com.twitter.ann.annoy.AnnoyCommon.IndexFileName
-import com.twitter.ann.annoy.AnnoyCommon.MetaDataFileName
-import com.twitter.ann.annoy.AnnoyCommon.MetadataCodec
-import com.twitter.ann.common.EmbeddingType._
-import com.twitter.ann.common._
-import com.twitter.ann.common.thriftscala.AnnoyIndexMetadata
-import com.twitter.concurrent.AsyncSemaphore
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.search.common.file.LocalFile
-import com.twitter.util.Future
-import com.twitter.util.FuturePool
-import java.io.File
-import java.nio.file.Files
-import org.apache.beam.sdk.io.fs.ResourceId
-import scala.collection.JavaConverters._
+ mport com.spot fy.annoy.jn .base.{Annoy => AnnoyL b}
+ mport com.tw ter.ann.annoy.AnnoyCommon. ndexF leNa 
+ mport com.tw ter.ann.annoy.AnnoyCommon. taDataF leNa 
+ mport com.tw ter.ann.annoy.AnnoyCommon. tadataCodec
+ mport com.tw ter.ann.common.Embedd ngType._
+ mport com.tw ter.ann.common._
+ mport com.tw ter.ann.common.thr ftscala.Annoy ndex tadata
+ mport com.tw ter.concurrent.AsyncSemaphore
+ mport com.tw ter. d aserv ces.commons.codec.ArrayByteBufferCodec
+ mport com.tw ter.search.common.f le.AbstractF le
+ mport com.tw ter.search.common.f le.LocalF le
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.FuturePool
+ mport java. o.F le
+ mport java.n o.f le.F les
+ mport org.apac .beam.sdk. o.fs.Res ce d
+ mport scala.collect on.JavaConverters._
 
-private[annoy] object RawAnnoyIndexBuilder {
-  private[annoy] def apply[D <: Distance[D]](
-    dimension: Int,
-    numOfTrees: Int,
-    metric: Metric[D],
+pr vate[annoy] object RawAnnoy ndexBu lder {
+  pr vate[annoy] def apply[D <: D stance[D]](
+    d  ns on:  nt,
+    numOfTrees:  nt,
+     tr c:  tr c[D],
     futurePool: FuturePool
-  ): RawAppendable[AnnoyRuntimeParams, D] with Serialization = {
-    val indexBuilder = AnnoyLib.newIndex(dimension, annoyMetric(metric))
-    new RawAnnoyIndexBuilder(dimension, numOfTrees, metric, indexBuilder, futurePool)
+  ): RawAppendable[AnnoyRunt  Params, D] w h Ser al zat on = {
+    val  ndexBu lder = AnnoyL b.new ndex(d  ns on, annoy tr c( tr c))
+    new RawAnnoy ndexBu lder(d  ns on, numOfTrees,  tr c,  ndexBu lder, futurePool)
   }
 
-  private[this] def annoyMetric(metric: Metric[_]): AnnoyLib.Metric = {
-    metric match {
-      case L2 => AnnoyLib.Metric.EUCLIDEAN
-      case Cosine => AnnoyLib.Metric.ANGULAR
-      case _ => throw new RuntimeException("Not supported: " + metric)
+  pr vate[t ] def annoy tr c( tr c:  tr c[_]): AnnoyL b. tr c = {
+     tr c match {
+      case L2 => AnnoyL b. tr c.EUCL DEAN
+      case Cos ne => AnnoyL b. tr c.ANGULAR
+      case _ => throw new Runt  Except on("Not supported: " +  tr c)
     }
   }
 }
 
-private[this] class RawAnnoyIndexBuilder[D <: Distance[D]](
-  dimension: Int,
-  numOfTrees: Int,
-  metric: Metric[D],
-  indexBuilder: AnnoyLib.Builder,
+pr vate[t ] class RawAnnoy ndexBu lder[D <: D stance[D]](
+  d  ns on:  nt,
+  numOfTrees:  nt,
+   tr c:  tr c[D],
+   ndexBu lder: AnnoyL b.Bu lder,
   futurePool: FuturePool)
-    extends RawAppendable[AnnoyRuntimeParams, D]
-    with Serialization {
-  private[this] var counter = 0
-  // Note: Only one thread can access the underlying index, multithreaded index building not supported
-  private[this] val semaphore = new AsyncSemaphore(1)
+    extends RawAppendable[AnnoyRunt  Params, D]
+    w h Ser al zat on {
+  pr vate[t ] var counter = 0
+  // Note: Only one thread can access t  underly ng  ndex, mult hreaded  ndex bu ld ng not supported
+  pr vate[t ] val semaphore = new AsyncSemaphore(1)
 
-  override def append(embedding: EmbeddingVector): Future[Long] =
-    semaphore.acquireAndRun({
+  overr de def append(embedd ng: Embedd ngVector): Future[Long] =
+    semaphore.acqu reAndRun({
       counter += 1
-      indexBuilder.addItem(
+       ndexBu lder.add em(
         counter,
-        embedding.toArray
+        embedd ng.toArray
           .map(float => float2Float(float))
-          .toList
+          .toL st
           .asJava
       )
 
       Future.value(counter)
     })
 
-  override def toQueryable: Queryable[Long, AnnoyRuntimeParams, D] = {
-    val tempDirParent = Files.createTempDirectory("raw_annoy_index").toFile
-    tempDirParent.deleteOnExit
-    val tempDir = new LocalFile(tempDirParent)
-    this.toDirectory(tempDir)
-    RawAnnoyQueryIndex(
-      dimension,
-      metric,
+  overr de def toQueryable: Queryable[Long, AnnoyRunt  Params, D] = {
+    val tempD rParent = F les.createTempD rectory("raw_annoy_ ndex").toF le
+    tempD rParent.deleteOnEx 
+    val tempD r = new LocalF le(tempD rParent)
+    t .toD rectory(tempD r)
+    RawAnnoyQuery ndex(
+      d  ns on,
+       tr c,
       futurePool,
-      tempDir
+      tempD r
     )
   }
 
-  override def toDirectory(directory: ResourceId): Unit = {
-    toDirectory(new IndexOutputFile(directory))
+  overr de def toD rectory(d rectory: Res ce d): Un  = {
+    toD rectory(new  ndexOutputF le(d rectory))
   }
 
   /**
-   * Serialize the annoy index in a directory.
-   * @param directory: Directory to save to.
+   * Ser al ze t  annoy  ndex  n a d rectory.
+   * @param d rectory: D rectory to save to.
    */
-  override def toDirectory(directory: AbstractFile): Unit = {
-    toDirectory(new IndexOutputFile(directory))
+  overr de def toD rectory(d rectory: AbstractF le): Un  = {
+    toD rectory(new  ndexOutputF le(d rectory))
   }
 
-  private def toDirectory(directory: IndexOutputFile): Unit = {
-    val indexFile = directory.createFile(IndexFileName)
-    saveIndex(indexFile)
+  pr vate def toD rectory(d rectory:  ndexOutputF le): Un  = {
+    val  ndexF le = d rectory.createF le( ndexF leNa )
+    save ndex( ndexF le)
 
-    val metaDataFile = directory.createFile(MetaDataFileName)
-    saveMetadata(metaDataFile)
+    val  taDataF le = d rectory.createF le( taDataF leNa )
+    save tadata( taDataF le)
   }
 
-  private[this] def saveIndex(indexFile: IndexOutputFile): Unit = {
-    val index = indexBuilder
-      .build(numOfTrees)
-    val temp = new LocalFile(File.createTempFile(IndexFileName, null))
-    index.save(temp.getPath)
-    indexFile.copyFrom(temp.getByteSource.openStream())
+  pr vate[t ] def save ndex( ndexF le:  ndexOutputF le): Un  = {
+    val  ndex =  ndexBu lder
+      .bu ld(numOfTrees)
+    val temp = new LocalF le(F le.createTempF le( ndexF leNa , null))
+     ndex.save(temp.getPath)
+     ndexF le.copyFrom(temp.getByteS ce.openStream())
     temp.delete()
   }
 
-  private[this] def saveMetadata(metadataFile: IndexOutputFile): Unit = {
-    val numberOfVectorsIndexed = counter
-    val metadata = AnnoyIndexMetadata(
-      dimension,
-      Metric.toThrift(metric),
+  pr vate[t ] def save tadata( tadataF le:  ndexOutputF le): Un  = {
+    val numberOfVectors ndexed = counter
+    val  tadata = Annoy ndex tadata(
+      d  ns on,
+       tr c.toThr ft( tr c),
       numOfTrees,
-      numberOfVectorsIndexed
+      numberOfVectors ndexed
     )
-    val bytes = ArrayByteBufferCodec.decode(MetadataCodec.encode(metadata))
-    val temp = new LocalFile(File.createTempFile(MetaDataFileName, null))
-    temp.getByteSink.write(bytes)
-    metadataFile.copyFrom(temp.getByteSource.openStream())
+    val bytes = ArrayByteBufferCodec.decode( tadataCodec.encode( tadata))
+    val temp = new LocalF le(F le.createTempF le( taDataF leNa , null))
+    temp.getByteS nk.wr e(bytes)
+     tadataF le.copyFrom(temp.getByteS ce.openStream())
     temp.delete()
   }
 }

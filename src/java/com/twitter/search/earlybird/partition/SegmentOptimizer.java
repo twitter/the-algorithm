@@ -1,58 +1,58 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.earlybird.EarlybirdStatus;
+ mport com.tw ter.search.earlyb rd.Earlyb rdStatus;
 
-public final class SegmentOptimizer {
-  private static final Logger LOG = LoggerFactory.getLogger(SegmentOptimizer.class);
+publ c f nal class Seg ntOpt m zer {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Seg ntOpt m zer.class);
 
-  private static final String OPTIMIZING_SEGMENT_EVENT_PATTERN = "optimizing segment %s";
-  private static final String OPTIMIZING_SEGMENT_GAUGE_PATTERN = "optimizing_segment_%s";
+  pr vate stat c f nal Str ng OPT M Z NG_SEGMENT_EVENT_PATTERN = "opt m z ng seg nt %s";
+  pr vate stat c f nal Str ng OPT M Z NG_SEGMENT_GAUGE_PATTERN = "opt m z ng_seg nt_%s";
 
-  private SegmentOptimizer() {
+  pr vate Seg ntOpt m zer() {
   }
 
   /**
-   * Optimize a segment. Returns whether optimization was successful.
+   * Opt m ze a seg nt. Returns w t r opt m zat on was successful.
    */
-  public static boolean optimize(SegmentInfo segmentInfo) {
+  publ c stat c boolean opt m ze(Seg nt nfo seg nt nfo) {
     try {
-      return optimizeThrowing(segmentInfo);
-    } catch (Exception e) {
-      // This is a bad situation, as earlybird can't run with too many un-optimized
-      // segments in memory.
-      LOG.error("Exception while optimizing segment " + segmentInfo.getSegmentName() + ": ", e);
-      segmentInfo.setFailedOptimize();
+      return opt m zeThrow ng(seg nt nfo);
+    } catch (Except on e) {
+      // T   s a bad s uat on, as earlyb rd can't run w h too many un-opt m zed
+      // seg nts  n  mory.
+      LOG.error("Except on wh le opt m z ng seg nt " + seg nt nfo.getSeg ntNa () + ": ", e);
+      seg nt nfo.setFa ledOpt m ze();
       return false;
     }
   }
 
-  public static boolean needsOptimization(SegmentInfo segmentInfo) {
-    return segmentInfo.isComplete() && !segmentInfo.isOptimized()
-        && !segmentInfo.isFailedOptimize() && !segmentInfo.isIndexing();
+  publ c stat c boolean needsOpt m zat on(Seg nt nfo seg nt nfo) {
+    return seg nt nfo. sComplete() && !seg nt nfo. sOpt m zed()
+        && !seg nt nfo. sFa ledOpt m ze() && !seg nt nfo. s ndex ng();
   }
 
-  private static boolean optimizeThrowing(SegmentInfo segmentInfo) throws IOException {
-    if (!needsOptimization(segmentInfo)) {
+  pr vate stat c boolean opt m zeThrow ng(Seg nt nfo seg nt nfo) throws  OExcept on {
+     f (!needsOpt m zat on(seg nt nfo)) {
       return false;
     }
 
-    String gaugeName =
-        String.format(OPTIMIZING_SEGMENT_GAUGE_PATTERN, segmentInfo.getSegmentName());
-    SearchIndexingMetricSet.StartupMetric metric =
-        new SearchIndexingMetricSet.StartupMetric(gaugeName);
+    Str ng gaugeNa  =
+        Str ng.format(OPT M Z NG_SEGMENT_GAUGE_PATTERN, seg nt nfo.getSeg ntNa ());
+    Search ndex ng tr cSet.Startup tr c  tr c =
+        new Search ndex ng tr cSet.Startup tr c(gaugeNa );
 
-    String eventName =
-        String.format(OPTIMIZING_SEGMENT_EVENT_PATTERN, segmentInfo.getSegmentName());
-    EarlybirdStatus.beginEvent(eventName, metric);
+    Str ng eventNa  =
+        Str ng.format(OPT M Z NG_SEGMENT_EVENT_PATTERN, seg nt nfo.getSeg ntNa ());
+    Earlyb rdStatus.beg nEvent(eventNa ,  tr c);
     try {
-      segmentInfo.getIndexSegment().optimizeIndexes();
-    } finally {
-      EarlybirdStatus.endEvent(eventName, metric);
+      seg nt nfo.get ndexSeg nt().opt m ze ndexes();
+    } f nally {
+      Earlyb rdStatus.endEvent(eventNa ,  tr c);
     }
 
     return true;

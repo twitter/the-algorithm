@@ -1,8 +1,8 @@
-scala_library(
-    sources = ["*.scala"],
+scala_l brary(
+    s ces = ["*.scala"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/scala/com/twitter/scalding_internal/job/analytics_batch",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "src/scala/com/tw ter/scald ng_ nternal/job/analyt cs_batch",
     ],
 )

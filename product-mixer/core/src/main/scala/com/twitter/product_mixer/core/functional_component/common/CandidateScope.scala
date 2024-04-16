@@ -1,98 +1,98 @@
-package com.twitter.product_mixer.core.functional_component.common
+package com.tw ter.product_m xer.core.funct onal_component.common
 
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.CandidatePipelines
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateP pel nes
 
 /**
- * Specifies whether a function component (e.g, [[Gate]] or [[Selector]])
- * should apply to a given [[CandidateWithDetails]]
+ * Spec f es w t r a funct on component (e.g, [[Gate]] or [[Selector]])
+ * should apply to a g ven [[Cand dateW hDeta ls]]
  */
-sealed trait CandidateScope {
+sealed tra  Cand dateScope {
 
   /**
-   * returns True if the provided `candidate` is in scope
+   * returns True  f t  prov ded `cand date`  s  n scope
    */
-  def contains(candidate: CandidateWithDetails): Boolean
+  def conta ns(cand date: Cand dateW hDeta ls): Boolean
 
-  /** partitions `candidates` into those that this scope [[contains]] and those it does not */
-  final def partition(
-    candidates: Seq[CandidateWithDetails]
-  ): CandidateScope.PartitionedCandidates = {
-    val (candidatesInScope, candidatesOutOfScope) = candidates.partition(contains)
-    CandidateScope.PartitionedCandidates(candidatesInScope, candidatesOutOfScope)
+  /** part  ons `cand dates`  nto those that t  scope [[conta ns]] and those   does not */
+  f nal def part  on(
+    cand dates: Seq[Cand dateW hDeta ls]
+  ): Cand dateScope.Part  onedCand dates = {
+    val (cand dates nScope, cand datesOutOfScope) = cand dates.part  on(conta ns)
+    Cand dateScope.Part  onedCand dates(cand dates nScope, cand datesOutOfScope)
   }
 }
 
-object CandidateScope {
-  case class PartitionedCandidates(
-    candidatesInScope: Seq[CandidateWithDetails],
-    candidatesOutOfScope: Seq[CandidateWithDetails])
+object Cand dateScope {
+  case class Part  onedCand dates(
+    cand dates nScope: Seq[Cand dateW hDeta ls],
+    cand datesOutOfScope: Seq[Cand dateW hDeta ls])
 }
 
 /**
- * A [[CandidateScope]] that applies the given functional component
- * to all candidates regardless of which pipeline is their [[com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails.source]].
+ * A [[Cand dateScope]] that appl es t  g ven funct onal component
+ * to all cand dates regardless of wh ch p pel ne  s t  r [[com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls.s ce]].
  */
-case object AllPipelines extends CandidateScope {
-  override def contains(candidate: CandidateWithDetails): Boolean = true
+case object AllP pel nes extends Cand dateScope {
+  overr de def conta ns(cand date: Cand dateW hDeta ls): Boolean = true
 }
 
 /**
- * A [[CandidateScope]] that applies the given [[com.twitter.product_mixer.core.functional_component.selector.Selector]]
- * only to candidates whose [[com.twitter.product_mixer.core.model.common.presentation.CandidatePipelines]]
- * has an Identifier in the [[pipelines]] Set.
- * In most cases where candidates are not pre-merged, the Set contains the candidate pipeline identifier the candidate
- * came from. In the case where a candidate's feature maps were merged using [[CombineFeatureMapsCandidateMerger]], the
- * set contains all candidate pipelines the merged candidate came from and this scope will include the candidate if any
- * of the pipelines match.
+ * A [[Cand dateScope]] that appl es t  g ven [[com.tw ter.product_m xer.core.funct onal_component.selector.Selector]]
+ * only to cand dates whose [[com.tw ter.product_m xer.core.model.common.presentat on.Cand dateP pel nes]]
+ * has an  dent f er  n t  [[p pel nes]] Set.
+ *  n most cases w re cand dates are not pre- rged, t  Set conta ns t  cand date p pel ne  dent f er t  cand date
+ * ca  from.  n t  case w re a cand date's feature maps  re  rged us ng [[Comb neFeatureMapsCand date rger]], t 
+ * set conta ns all cand date p pel nes t   rged cand date ca  from and t  scope w ll  nclude t  cand date  f any
+ * of t  p pel nes match.
  */
-case class SpecificPipelines(pipelines: Set[CandidatePipelineIdentifier]) extends CandidateScope {
+case class Spec f cP pel nes(p pel nes: Set[Cand dateP pel ne dent f er]) extends Cand dateScope {
 
-  require(
-    pipelines.nonEmpty,
-    "Expected `SpecificPipelines` have a non-empty Set of CandidatePipelineIdentifiers.")
+  requ re(
+    p pel nes.nonEmpty,
+    "Expected `Spec f cP pel nes` have a non-empty Set of Cand dateP pel ne dent f ers.")
 
-  override def contains(candidate: CandidateWithDetails): Boolean = {
-    candidate.features.get(CandidatePipelines).exists(pipelines.contains)
+  overr de def conta ns(cand date: Cand dateW hDeta ls): Boolean = {
+    cand date.features.get(Cand dateP pel nes).ex sts(p pel nes.conta ns)
   }
 }
 
 /**
- * A [[CandidateScope]] that applies the given [[com.twitter.product_mixer.core.functional_component.selector.Selector]]
- * only to candidates whose [[com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails.source]]
- * is [[pipeline]].
+ * A [[Cand dateScope]] that appl es t  g ven [[com.tw ter.product_m xer.core.funct onal_component.selector.Selector]]
+ * only to cand dates whose [[com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls.s ce]]
+ *  s [[p pel ne]].
  */
-case class SpecificPipeline(pipeline: CandidatePipelineIdentifier) extends CandidateScope {
+case class Spec f cP pel ne(p pel ne: Cand dateP pel ne dent f er) extends Cand dateScope {
 
-  override def contains(candidate: CandidateWithDetails): Boolean = candidate.features
-    .get(CandidatePipelines).contains(pipeline)
+  overr de def conta ns(cand date: Cand dateW hDeta ls): Boolean = cand date.features
+    .get(Cand dateP pel nes).conta ns(p pel ne)
 }
 
-object SpecificPipelines {
+object Spec f cP pel nes {
   def apply(
-    pipeline: CandidatePipelineIdentifier,
-    pipelines: CandidatePipelineIdentifier*
-  ): CandidateScope = {
-    if (pipelines.isEmpty)
-      SpecificPipeline(pipeline)
+    p pel ne: Cand dateP pel ne dent f er,
+    p pel nes: Cand dateP pel ne dent f er*
+  ): Cand dateScope = {
+     f (p pel nes. sEmpty)
+      Spec f cP pel ne(p pel ne)
     else
-      SpecificPipelines((pipeline +: pipelines).toSet)
+      Spec f cP pel nes((p pel ne +: p pel nes).toSet)
   }
 }
 
 /**
- * A [[CandidateScope]] that applies the given [[com.twitter.product_mixer.core.functional_component.selector.Selector]]
- * to all candidates except for the candidates whose [[com.twitter.product_mixer.core.model.common.presentation.CandidatePipelines]]
- * has an Identifier in the [[pipelinesToExclude]] Set.
- * In most cases where candidates are not pre-merged, the Set contains the candidate pipeline identifier the candidate
- * came from. In the case where a candidate's feature maps were merged using [[CombineFeatureMapsCandidateMerger]], the
- * set contains all candidate pipelines the merged candidate came from and this scope will include the candidate if any
- * of the pipelines match.
+ * A [[Cand dateScope]] that appl es t  g ven [[com.tw ter.product_m xer.core.funct onal_component.selector.Selector]]
+ * to all cand dates except for t  cand dates whose [[com.tw ter.product_m xer.core.model.common.presentat on.Cand dateP pel nes]]
+ * has an  dent f er  n t  [[p pel nesToExclude]] Set.
+ *  n most cases w re cand dates are not pre- rged, t  Set conta ns t  cand date p pel ne  dent f er t  cand date
+ * ca  from.  n t  case w re a cand date's feature maps  re  rged us ng [[Comb neFeatureMapsCand date rger]], t 
+ * set conta ns all cand date p pel nes t   rged cand date ca  from and t  scope w ll  nclude t  cand date  f any
+ * of t  p pel nes match.
  */
-case class AllExceptPipelines(
-  pipelinesToExclude: Set[CandidatePipelineIdentifier])
-    extends CandidateScope {
-  override def contains(candidate: CandidateWithDetails): Boolean = !candidate.features
-    .get(CandidatePipelines).exists(pipelinesToExclude.contains)
+case class AllExceptP pel nes(
+  p pel nesToExclude: Set[Cand dateP pel ne dent f er])
+    extends Cand dateScope {
+  overr de def conta ns(cand date: Cand dateW hDeta ls): Boolean = !cand date.features
+    .get(Cand dateP pel nes).ex sts(p pel nesToExclude.conta ns)
 }

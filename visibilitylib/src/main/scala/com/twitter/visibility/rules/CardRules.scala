@@ -1,52 +1,52 @@
-package com.twitter.visibility.rules
+package com.tw ter.v s b l y.rules
 
-import com.twitter.visibility.configapi.params.FSRuleParams.CardUriRootDomainDenyListParam
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableCardUriRootDomainCardDenylistRule
-import com.twitter.visibility.configapi.params.RuleParams.EnableCommunityNonMemberPollCardRule
-import com.twitter.visibility.configapi.params.RuleParams.EnableCommunityNonMemberPollCardRuleFailClosed
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.CardUriHasRootDomain
-import com.twitter.visibility.rules.Condition.CommunityTweetCommunityVisible
-import com.twitter.visibility.rules.Condition.IsPollCard
-import com.twitter.visibility.rules.Condition.LoggedOutOrViewerNotFollowingAuthor
-import com.twitter.visibility.rules.Condition.Not
-import com.twitter.visibility.rules.Condition.Or
-import com.twitter.visibility.rules.Condition.ProtectedAuthor
-import com.twitter.visibility.rules.Condition.TweetIsCommunityTweet
-import com.twitter.visibility.rules.Condition.ViewerIsCommunityMember
+ mport com.tw ter.v s b l y.conf gap .params.FSRuleParams.CardUr RootDoma nDenyL stParam
+ mport com.tw ter.v s b l y.conf gap .params.RuleParam
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams.EnableCardUr RootDoma nCardDenyl stRule
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams.EnableCommun yNon mberPollCardRule
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams.EnableCommun yNon mberPollCardRuleFa lClosed
+ mport com.tw ter.v s b l y.rules.Cond  on.And
+ mport com.tw ter.v s b l y.rules.Cond  on.CardUr HasRootDoma n
+ mport com.tw ter.v s b l y.rules.Cond  on.Commun yT etCommun yV s ble
+ mport com.tw ter.v s b l y.rules.Cond  on. sPollCard
+ mport com.tw ter.v s b l y.rules.Cond  on.LoggedOutOrV e rNotFollow ngAuthor
+ mport com.tw ter.v s b l y.rules.Cond  on.Not
+ mport com.tw ter.v s b l y.rules.Cond  on.Or
+ mport com.tw ter.v s b l y.rules.Cond  on.ProtectedAuthor
+ mport com.tw ter.v s b l y.rules.Cond  on.T et sCommun yT et
+ mport com.tw ter.v s b l y.rules.Cond  on.V e r sCommun y mber
 
 object DropProtectedAuthorPollCardRule
-    extends RuleWithConstantAction(
+    extends RuleW hConstantAct on(
       Drop(Reason.ProtectedAuthor),
       And(
-        IsPollCard,
+         sPollCard,
         ProtectedAuthor,
-        LoggedOutOrViewerNotFollowingAuthor,
+        LoggedOutOrV e rNotFollow ngAuthor,
       )
     )
 
-object DropCardUriRootDomainDenylistRule
-    extends RuleWithConstantAction(
-      Drop(Reason.Unspecified),
-      And(CardUriHasRootDomain(CardUriRootDomainDenyListParam))
+object DropCardUr RootDoma nDenyl stRule
+    extends RuleW hConstantAct on(
+      Drop(Reason.Unspec f ed),
+      And(CardUr HasRootDoma n(CardUr RootDoma nDenyL stParam))
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableCardUriRootDomainCardDenylistRule)
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(EnableCardUr RootDoma nCardDenyl stRule)
 }
 
-object DropCommunityNonMemberPollCardRule
-    extends RuleWithConstantAction(
-      Drop(Reason.CommunityNotAMember),
+object DropCommun yNon mberPollCardRule
+    extends RuleW hConstantAct on(
+      Drop(Reason.Commun yNotA mber),
       And(
-        IsPollCard,
-        TweetIsCommunityTweet,
+         sPollCard,
+        T et sCommun yT et,
         Or(
-          Not(ViewerIsCommunityMember),
-          Not(CommunityTweetCommunityVisible),
+          Not(V e r sCommun y mber),
+          Not(Commun yT etCommun yV s ble),
         )
       ),
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableCommunityNonMemberPollCardRule)
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(
-    EnableCommunityNonMemberPollCardRuleFailClosed)
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(EnableCommun yNon mberPollCardRule)
+  overr de def enableFa lClosed: Seq[RuleParam[Boolean]] = Seq(
+    EnableCommun yNon mberPollCardRuleFa lClosed)
 }

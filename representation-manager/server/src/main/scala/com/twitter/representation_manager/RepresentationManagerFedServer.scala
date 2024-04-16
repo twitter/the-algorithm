@@ -1,40 +1,40 @@
-package com.twitter.representation_manager
+package com.tw ter.representat on_manager
 
-import com.google.inject.Module
-import com.twitter.inject.thrift.modules.ThriftClientIdModule
-import com.twitter.representation_manager.columns.topic.LocaleEntityIdSimClustersEmbeddingCol
-import com.twitter.representation_manager.columns.topic.TopicIdSimClustersEmbeddingCol
-import com.twitter.representation_manager.columns.tweet.TweetSimClustersEmbeddingCol
-import com.twitter.representation_manager.columns.user.UserSimClustersEmbeddingCol
-import com.twitter.representation_manager.modules.CacheModule
-import com.twitter.representation_manager.modules.InterestsThriftClientModule
-import com.twitter.representation_manager.modules.LegacyRMSConfigModule
-import com.twitter.representation_manager.modules.StoreModule
-import com.twitter.representation_manager.modules.TimerModule
-import com.twitter.representation_manager.modules.UttClientModule
-import com.twitter.strato.fed._
-import com.twitter.strato.fed.server._
+ mport com.google. nject.Module
+ mport com.tw ter. nject.thr ft.modules.Thr ftCl ent dModule
+ mport com.tw ter.representat on_manager.columns.top c.LocaleEnt y dS mClustersEmbedd ngCol
+ mport com.tw ter.representat on_manager.columns.top c.Top c dS mClustersEmbedd ngCol
+ mport com.tw ter.representat on_manager.columns.t et.T etS mClustersEmbedd ngCol
+ mport com.tw ter.representat on_manager.columns.user.UserS mClustersEmbedd ngCol
+ mport com.tw ter.representat on_manager.modules.Cac Module
+ mport com.tw ter.representat on_manager.modules. nterestsThr ftCl entModule
+ mport com.tw ter.representat on_manager.modules.LegacyRMSConf gModule
+ mport com.tw ter.representat on_manager.modules.StoreModule
+ mport com.tw ter.representat on_manager.modules.T  rModule
+ mport com.tw ter.representat on_manager.modules.UttCl entModule
+ mport com.tw ter.strato.fed._
+ mport com.tw ter.strato.fed.server._
 
-object RepresentationManagerFedServerMain extends RepresentationManagerFedServer
+object Representat onManagerFedServerMa n extends Representat onManagerFedServer
 
-trait RepresentationManagerFedServer extends StratoFedServer {
-  override def dest: String = "/s/representation-manager/representation-manager"
-  override val modules: Seq[Module] =
+tra  Representat onManagerFedServer extends StratoFedServer {
+  overr de def dest: Str ng = "/s/representat on-manager/representat on-manager"
+  overr de val modules: Seq[Module] =
     Seq(
-      CacheModule,
-      InterestsThriftClientModule,
-      LegacyRMSConfigModule,
+      Cac Module,
+       nterestsThr ftCl entModule,
+      LegacyRMSConf gModule,
       StoreModule,
-      ThriftClientIdModule,
-      TimerModule,
-      UttClientModule
+      Thr ftCl ent dModule,
+      T  rModule,
+      UttCl entModule
     )
 
-  override def columns: Seq[Class[_ <: StratoFed.Column]] =
+  overr de def columns: Seq[Class[_ <: StratoFed.Column]] =
     Seq(
-      classOf[TweetSimClustersEmbeddingCol],
-      classOf[UserSimClustersEmbeddingCol],
-      classOf[TopicIdSimClustersEmbeddingCol],
-      classOf[LocaleEntityIdSimClustersEmbeddingCol]
+      classOf[T etS mClustersEmbedd ngCol],
+      classOf[UserS mClustersEmbedd ngCol],
+      classOf[Top c dS mClustersEmbedd ngCol],
+      classOf[LocaleEnt y dS mClustersEmbedd ngCol]
     )
 }

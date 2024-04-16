@@ -1,161 +1,161 @@
-package com.twitter.search.earlybird_root.quota;
+package com.tw ter.search.earlyb rd_root.quota;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.atomic.AtomicReference;
+ mport java. o. OExcept on;
+ mport java. o. nputStream;
+ mport java.n o.charset.StandardCharsets;
+ mport java.ut l. erator;
+ mport java.ut l.Map;
+ mport java.ut l.Opt onal;
+ mport java.ut l.concurrent.Sc duledExecutorServ ce;
+ mport java.ut l.concurrent.atom c.Atom cReference;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.collect. mmutableMap;
+ mport com.google.common.collect.Maps;
 
-import org.apache.commons.io.IOUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
+ mport org.apac .commons. o. OUt ls;
+ mport org.json.JSONExcept on;
+ mport org.json.JSONObject;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.util.io.periodic.PeriodicFileLoader;
-import com.twitter.search.common.util.json.JSONParsingUtil;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
+ mport com.tw ter.search.common.ut l. o.per od c.Per od cF leLoader;
+ mport com.tw ter.search.common.ut l.json.JSONPars ngUt l;
 
 /**
- * Periodically loads a json serialized map that contains the quota information indexed by
- * client id.
+ * Per od cally loads a json ser al zed map that conta ns t  quota  nformat on  ndexed by
+ * cl ent  d.
  *
- * Each json object from the map is required to have an int property that represents a client's quota.
- * The key for the quota property is passed to this class.
+ * Each json object from t  map  s requ red to have an  nt property that represents a cl ent's quota.
+ * T  key for t  quota property  s passed to t  class.
  *
- * Optionally it can have a <b>should_enforce</b> property of type boolean
+ * Opt onally   can have a <b>should_enforce</b> property of type boolean
  *
- * If this two properties are not present an exception will be thrown.
+ *  f t  two propert es are not present an except on w ll be thrown.
  */
-public class ConfigBasedQuotaConfig extends PeriodicFileLoader {
-  private static final String UNSET_EMAIL = "unset";
+publ c class Conf gBasedQuotaConf g extends Per od cF leLoader {
+  pr vate stat c f nal Str ng UNSET_EMA L = "unset";
 
-  private static final String PER_CLIENT_QUOTA_GAUGE_NAME_PATTERN =
-      "config_based_quota_for_client_id_%s";
-  private static final String PER_EMAIL_QUOTA_GAUGE_NAME_PATTERN =
-      "config_based_quota_for_email_%s";
+  pr vate stat c f nal Str ng PER_CL ENT_QUOTA_GAUGE_NAME_PATTERN =
+      "conf g_based_quota_for_cl ent_ d_%s";
+  pr vate stat c f nal Str ng PER_EMA L_QUOTA_GAUGE_NAME_PATTERN =
+      "conf g_based_quota_for_ema l_%s";
 
-  @VisibleForTesting
-  static final SearchLongGauge TOTAL_QUOTA =
-     SearchLongGauge.export("total_config_based_quota");
+  @V s bleForTest ng
+  stat c f nal SearchLongGauge TOTAL_QUOTA =
+     SearchLongGauge.export("total_conf g_based_quota");
 
-  @VisibleForTesting
-  static final SearchLongGauge ENTRIES_COUNT =
-      SearchLongGauge.export("config_repo_quota_config_entries_count");
+  @V s bleForTest ng
+  stat c f nal SearchLongGauge ENTR ES_COUNT =
+      SearchLongGauge.export("conf g_repo_quota_conf g_entr es_count");
 
-  private final AtomicReference<ImmutableMap<String, QuotaInfo>> clientQuotas =
-    new AtomicReference<>();
+  pr vate f nal Atom cReference< mmutableMap<Str ng, Quota nfo>> cl entQuotas =
+    new Atom cReference<>();
 
-  private String clientQuotaKey;
-  private boolean requireQuotaConfigForClients;
+  pr vate Str ng cl entQuotaKey;
+  pr vate boolean requ reQuotaConf gForCl ents;
 
   /**
-   * Creates the object that manages loads the config from: quotaConfigPath. It periodically
-   * reloads the config file using the given executor service.
+   * Creates t  object that manages loads t  conf g from: quotaConf gPath.   per od cally
+   * reloads t  conf g f le us ng t  g ven executor serv ce.
    *
-   * @param quotaConfigPath Path to configuration file.
-   * @param executorService ScheduledExecutorService to be used for periodically reloading the file.
-   * @param clientQuotaKey The key that will be used to extract client quotas.
-   * @param requireQuotaConfigForClients Determines whether a client can be skipped
-   * if the associated object is missing the quota key
-   * (ie a client that is a SuperRoot client but the current service is Archive)
+   * @param quotaConf gPath Path to conf gurat on f le.
+   * @param executorServ ce Sc duledExecutorServ ce to be used for per od cally reload ng t  f le.
+   * @param cl entQuotaKey T  key that w ll be used to extract cl ent quotas.
+   * @param requ reQuotaConf gForCl ents Determ nes w t r a cl ent can be sk pped
+   *  f t  assoc ated object  s m ss ng t  quota key
+   * ( e a cl ent that  s a SuperRoot cl ent but t  current serv ce  s Arch ve)
    */
-  public static ConfigBasedQuotaConfig newConfigBasedQuotaConfig(
-      String quotaConfigPath,
-      String clientQuotaKey,
-      boolean requireQuotaConfigForClients,
-      ScheduledExecutorService executorService,
+  publ c stat c Conf gBasedQuotaConf g newConf gBasedQuotaConf g(
+      Str ng quotaConf gPath,
+      Str ng cl entQuotaKey,
+      boolean requ reQuotaConf gForCl ents,
+      Sc duledExecutorServ ce executorServ ce,
       Clock clock
-  ) throws Exception {
-    ConfigBasedQuotaConfig configLoader = new ConfigBasedQuotaConfig(
-        quotaConfigPath,
-        clientQuotaKey,
-        requireQuotaConfigForClients,
-        executorService,
+  ) throws Except on {
+    Conf gBasedQuotaConf g conf gLoader = new Conf gBasedQuotaConf g(
+        quotaConf gPath,
+        cl entQuotaKey,
+        requ reQuotaConf gForCl ents,
+        executorServ ce,
         clock
     );
-    configLoader.init();
-    return configLoader;
+    conf gLoader. n ();
+    return conf gLoader;
   }
 
-  public ConfigBasedQuotaConfig(
-      String quotaConfigPath,
-      String clientQuotaKey,
-      boolean requireQuotaConfigForClients,
-      ScheduledExecutorService executorService,
+  publ c Conf gBasedQuotaConf g(
+      Str ng quotaConf gPath,
+      Str ng cl entQuotaKey,
+      boolean requ reQuotaConf gForCl ents,
+      Sc duledExecutorServ ce executorServ ce,
       Clock clock
-  ) throws Exception {
-    super("quotaConfig", quotaConfigPath, executorService, clock);
-    this.clientQuotaKey = clientQuotaKey;
-    this.requireQuotaConfigForClients = requireQuotaConfigForClients;
+  ) throws Except on {
+    super("quotaConf g", quotaConf gPath, executorServ ce, clock);
+    t .cl entQuotaKey = cl entQuotaKey;
+    t .requ reQuotaConf gForCl ents = requ reQuotaConf gForCl ents;
   }
 
   /**
-   * Returns the quota information for a specific client id.
+   * Returns t  quota  nformat on for a spec f c cl ent  d.
    */
-  public Optional<QuotaInfo> getQuotaForClient(String clientId) {
-    return Optional.ofNullable(clientQuotas.get().get(clientId));
+  publ c Opt onal<Quota nfo> getQuotaForCl ent(Str ng cl ent d) {
+    return Opt onal.ofNullable(cl entQuotas.get().get(cl ent d));
   }
 
   /**
-   * Load the json format and store it in a map.
+   * Load t  json format and store    n a map.
    */
-  @Override
-  protected void accept(InputStream fileStream) throws JSONException, IOException {
-    String fileContents = IOUtils.toString(fileStream, StandardCharsets.UTF_8);
-    JSONObject quotaConfig = new JSONObject(JSONParsingUtil.stripComments(fileContents));
+  @Overr de
+  protected vo d accept( nputStream f leStream) throws JSONExcept on,  OExcept on {
+    Str ng f leContents =  OUt ls.toStr ng(f leStream, StandardCharsets.UTF_8);
+    JSONObject quotaConf g = new JSONObject(JSONPars ngUt l.str pCom nts(f leContents));
 
-    Map<String, Integer> perEmailQuotas = Maps.newHashMap();
-    ImmutableMap.Builder<String, QuotaInfo> quotasBuilder = new ImmutableMap.Builder<>();
-    Iterator<String> clientIds = quotaConfig.keys();
+    Map<Str ng,  nteger> perEma lQuotas = Maps.newHashMap();
+     mmutableMap.Bu lder<Str ng, Quota nfo> quotasBu lder = new  mmutableMap.Bu lder<>();
+     erator<Str ng> cl ent ds = quotaConf g.keys();
 
     long totalQuota = 0;
-    while (clientIds.hasNext()) {
-      String clientId = clientIds.next();
-      JSONObject clientQuota = quotaConfig.getJSONObject(clientId);
+    wh le (cl ent ds.hasNext()) {
+      Str ng cl ent d = cl ent ds.next();
+      JSONObject cl entQuota = quotaConf g.getJSONObject(cl ent d);
 
-      // Skip clients that don't send requests to this service.
-      // (ie some SuperRoot clients are not Archive clients)
-      if (!requireQuotaConfigForClients && !clientQuota.has(clientQuotaKey)) {
-        continue;
+      // Sk p cl ents that don't send requests to t  serv ce.
+      // ( e so  SuperRoot cl ents are not Arch ve cl ents)
+       f (!requ reQuotaConf gForCl ents && !cl entQuota.has(cl entQuotaKey)) {
+        cont nue;
       }
 
-      int quotaValue = clientQuota.getInt(clientQuotaKey);
-      boolean shouldEnforce = clientQuota.optBoolean("should_enforce", false);
-      String tierValue = clientQuota.optString("tier", QuotaInfo.DEFAULT_TIER_VALUE);
-      boolean archiveAccess = clientQuota.optBoolean("archive_access",
-          QuotaInfo.DEFAULT_ARCHIVE_ACCESS_VALUE);
-      String email = clientQuota.optString("email", UNSET_EMAIL);
+       nt quotaValue = cl entQuota.get nt(cl entQuotaKey);
+      boolean shouldEnforce = cl entQuota.optBoolean("should_enforce", false);
+      Str ng t erValue = cl entQuota.optStr ng("t er", Quota nfo.DEFAULT_T ER_VALUE);
+      boolean arch veAccess = cl entQuota.optBoolean("arch ve_access",
+          Quota nfo.DEFAULT_ARCH VE_ACCESS_VALUE);
+      Str ng ema l = cl entQuota.optStr ng("ema l", UNSET_EMA L);
 
-      quotasBuilder.put(
-          clientId,
-          new QuotaInfo(clientId, email, quotaValue, shouldEnforce, tierValue, archiveAccess));
+      quotasBu lder.put(
+          cl ent d,
+          new Quota nfo(cl ent d, ema l, quotaValue, shouldEnforce, t erValue, arch veAccess));
 
-      SearchLongGauge perClientQuota = SearchLongGauge.export(
-          String.format(PER_CLIENT_QUOTA_GAUGE_NAME_PATTERN, clientId));
-      perClientQuota.set(quotaValue);
+      SearchLongGauge perCl entQuota = SearchLongGauge.export(
+          Str ng.format(PER_CL ENT_QUOTA_GAUGE_NAME_PATTERN, cl ent d));
+      perCl entQuota.set(quotaValue);
       totalQuota += quotaValue;
 
-      Integer emailQuota = perEmailQuotas.get(email);
-      if (emailQuota == null) {
-        emailQuota = 0;
+       nteger ema lQuota = perEma lQuotas.get(ema l);
+       f (ema lQuota == null) {
+        ema lQuota = 0;
       }
-      perEmailQuotas.put(email, emailQuota + quotaValue);
+      perEma lQuotas.put(ema l, ema lQuota + quotaValue);
     }
 
-    clientQuotas.set(quotasBuilder.build());
+    cl entQuotas.set(quotasBu lder.bu ld());
     TOTAL_QUOTA.set(totalQuota);
-    ENTRIES_COUNT.set(clientQuotas.get().size());
+    ENTR ES_COUNT.set(cl entQuotas.get().s ze());
 
-    for (String email : perEmailQuotas.keySet()) {
-      SearchLongGauge.export(String.format(PER_EMAIL_QUOTA_GAUGE_NAME_PATTERN, email)).set(
-          perEmailQuotas.get(email));
+    for (Str ng ema l : perEma lQuotas.keySet()) {
+      SearchLongGauge.export(Str ng.format(PER_EMA L_QUOTA_GAUGE_NAME_PATTERN, ema l)).set(
+          perEma lQuotas.get(ema l));
     }
   }
 }

@@ -1,6 +1,6 @@
-package com.twitter.timelineranker.config
+package com.tw ter.t  l neranker.conf g
 
-import com.twitter.finagle.stats.StatsReceiver
+ mport com.tw ter.f nagle.stats.StatsRece ver
 
-class StagingUnderlyingClientConfiguration(flags: TimelineRankerFlags, statsReceiver: StatsReceiver)
-    extends DefaultUnderlyingClientConfiguration(flags, statsReceiver)
+class Stag ngUnderly ngCl entConf gurat on(flags: T  l neRankerFlags, statsRece ver: StatsRece ver)
+    extends DefaultUnderly ngCl entConf gurat on(flags, statsRece ver)

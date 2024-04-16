@@ -1,160 +1,160 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.StoredTweetResult._
-import com.twitter.tweetypie.core.StoredTweetResult
-import com.twitter.tweetypie.core.TweetResult
-import com.twitter.tweetypie.FieldId
-import com.twitter.tweetypie.FutureArrow
-import com.twitter.tweetypie.repository.CacheControl
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.repository.TweetResultRepository
-import com.twitter.tweetypie.thriftscala.{BounceDeleted => BounceDeletedState}
-import com.twitter.tweetypie.thriftscala.{ForceAdded => ForceAddedState}
-import com.twitter.tweetypie.thriftscala.GetStoredTweetsRequest
-import com.twitter.tweetypie.thriftscala.GetStoredTweetsOptions
-import com.twitter.tweetypie.thriftscala.GetStoredTweetsResult
-import com.twitter.tweetypie.thriftscala.{HardDeleted => HardDeletedState}
-import com.twitter.tweetypie.thriftscala.{NotFound => NotFoundState}
-import com.twitter.tweetypie.thriftscala.{SoftDeleted => SoftDeletedState}
-import com.twitter.tweetypie.thriftscala.StatusCounts
-import com.twitter.tweetypie.thriftscala.StoredTweetError
-import com.twitter.tweetypie.thriftscala.StoredTweetInfo
-import com.twitter.tweetypie.thriftscala.StoredTweetState
-import com.twitter.tweetypie.thriftscala.{Undeleted => UndeletedState}
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.core.StoredT etResult._
+ mport com.tw ter.t etyp e.core.StoredT etResult
+ mport com.tw ter.t etyp e.core.T etResult
+ mport com.tw ter.t etyp e.F eld d
+ mport com.tw ter.t etyp e.FutureArrow
+ mport com.tw ter.t etyp e.repos ory.Cac Control
+ mport com.tw ter.t etyp e.repos ory.T etQuery
+ mport com.tw ter.t etyp e.repos ory.T etResultRepos ory
+ mport com.tw ter.t etyp e.thr ftscala.{BounceDeleted => BounceDeletedState}
+ mport com.tw ter.t etyp e.thr ftscala.{ForceAdded => ForceAddedState}
+ mport com.tw ter.t etyp e.thr ftscala.GetStoredT etsRequest
+ mport com.tw ter.t etyp e.thr ftscala.GetStoredT etsOpt ons
+ mport com.tw ter.t etyp e.thr ftscala.GetStoredT etsResult
+ mport com.tw ter.t etyp e.thr ftscala.{HardDeleted => HardDeletedState}
+ mport com.tw ter.t etyp e.thr ftscala.{NotFound => NotFoundState}
+ mport com.tw ter.t etyp e.thr ftscala.{SoftDeleted => SoftDeletedState}
+ mport com.tw ter.t etyp e.thr ftscala.StatusCounts
+ mport com.tw ter.t etyp e.thr ftscala.StoredT etError
+ mport com.tw ter.t etyp e.thr ftscala.StoredT et nfo
+ mport com.tw ter.t etyp e.thr ftscala.StoredT etState
+ mport com.tw ter.t etyp e.thr ftscala.{Undeleted => UndeletedState}
 
-object GetStoredTweetsHandler {
-  type Type = FutureArrow[GetStoredTweetsRequest, Seq[GetStoredTweetsResult]]
+object GetStoredT etsHandler {
+  type Type = FutureArrow[GetStoredT etsRequest, Seq[GetStoredT etsResult]]
 
-  def apply(tweetRepo: TweetResultRepository.Type): Type = {
-    FutureArrow[GetStoredTweetsRequest, Seq[GetStoredTweetsResult]] { request =>
-      val requestOptions: GetStoredTweetsOptions =
-        request.options.getOrElse(GetStoredTweetsOptions())
-      val queryOptions = toTweetQueryOptions(requestOptions)
+  def apply(t etRepo: T etResultRepos ory.Type): Type = {
+    FutureArrow[GetStoredT etsRequest, Seq[GetStoredT etsResult]] { request =>
+      val requestOpt ons: GetStoredT etsOpt ons =
+        request.opt ons.getOrElse(GetStoredT etsOpt ons())
+      val queryOpt ons = toT etQueryOpt ons(requestOpt ons)
 
-      val result = Stitch
-        .traverse(request.tweetIds) { tweetId =>
-          tweetRepo(tweetId, queryOptions)
-            .map(toStoredTweetInfo)
-            .map(GetStoredTweetsResult(_))
+      val result = St ch
+        .traverse(request.t et ds) { t et d =>
+          t etRepo(t et d, queryOpt ons)
+            .map(toStoredT et nfo)
+            .map(GetStoredT etsResult(_))
             .handle {
               case _ =>
-                GetStoredTweetsResult(
-                  StoredTweetInfo(
-                    tweetId = tweetId,
-                    errors = Seq(StoredTweetError.FailedFetch)
+                GetStoredT etsResult(
+                  StoredT et nfo(
+                    t et d = t et d,
+                    errors = Seq(StoredT etError.Fa ledFetch)
                   )
                 )
             }
         }
 
-      Stitch.run(result)
+      St ch.run(result)
     }
   }
 
-  private def toTweetQueryOptions(options: GetStoredTweetsOptions): TweetQuery.Options = {
-    val countsFields: Set[FieldId] = Set(
-      StatusCounts.FavoriteCountField.id,
-      StatusCounts.ReplyCountField.id,
-      StatusCounts.RetweetCountField.id,
-      StatusCounts.QuoteCountField.id
+  pr vate def toT etQueryOpt ons(opt ons: GetStoredT etsOpt ons): T etQuery.Opt ons = {
+    val countsF elds: Set[F eld d] = Set(
+      StatusCounts.Favor eCountF eld. d,
+      StatusCounts.ReplyCountF eld. d,
+      StatusCounts.Ret etCountF eld. d,
+      StatusCounts.QuoteCountF eld. d
     )
 
-    TweetQuery.Options(
-      include = GetTweetsHandler.BaseInclude.also(
-        tweetFields = Set(Tweet.CountsField.id) ++ options.additionalFieldIds,
-        countsFields = countsFields
+    T etQuery.Opt ons(
+       nclude = GetT etsHandler.Base nclude.also(
+        t etF elds = Set(T et.CountsF eld. d) ++ opt ons.add  onalF eld ds,
+        countsF elds = countsF elds
       ),
-      cacheControl = CacheControl.NoCache,
-      enforceVisibilityFiltering = !options.bypassVisibilityFiltering,
-      forUserId = options.forUserId,
-      requireSourceTweet = false,
-      fetchStoredTweets = true
+      cac Control = Cac Control.NoCac ,
+      enforceV s b l yF lter ng = !opt ons.bypassV s b l yF lter ng,
+      forUser d = opt ons.forUser d,
+      requ reS ceT et = false,
+      fetchStoredT ets = true
     )
   }
 
-  private def toStoredTweetInfo(tweetResult: TweetResult): StoredTweetInfo = {
-    def translateErrors(errors: Seq[StoredTweetResult.Error]): Seq[StoredTweetError] = {
+  pr vate def toStoredT et nfo(t etResult: T etResult): StoredT et nfo = {
+    def translateErrors(errors: Seq[StoredT etResult.Error]): Seq[StoredT etError] = {
       errors.map {
-        case StoredTweetResult.Error.Corrupt => StoredTweetError.Corrupt
-        case StoredTweetResult.Error.FieldsMissingOrInvalid =>
-          StoredTweetError.FieldsMissingOrInvalid
-        case StoredTweetResult.Error.ScrubbedFieldsPresent => StoredTweetError.ScrubbedFieldsPresent
-        case StoredTweetResult.Error.ShouldBeHardDeleted => StoredTweetError.ShouldBeHardDeleted
+        case StoredT etResult.Error.Corrupt => StoredT etError.Corrupt
+        case StoredT etResult.Error.F eldsM ss ngOr nval d =>
+          StoredT etError.F eldsM ss ngOr nval d
+        case StoredT etResult.Error.ScrubbedF eldsPresent => StoredT etError.ScrubbedF eldsPresent
+        case StoredT etResult.Error.ShouldBeHardDeleted => StoredT etError.ShouldBeHardDeleted
       }
     }
 
-    val tweetData = tweetResult.value
+    val t etData = t etResult.value
 
-    tweetData.storedTweetResult match {
-      case Some(storedTweetResult) => {
-        val (tweet, storedTweetState, errors) = storedTweetResult match {
-          case Present(errors, _) => (Some(tweetData.tweet), None, translateErrors(errors))
+    t etData.storedT etResult match {
+      case So (storedT etResult) => {
+        val (t et, storedT etState, errors) = storedT etResult match {
+          case Present(errors, _) => (So (t etData.t et), None, translateErrors(errors))
           case HardDeleted(softDeletedAtMsec, hardDeletedAtMsec) =>
             (
-              Some(tweetData.tweet),
-              Some(
-                StoredTweetState.HardDeleted(
+              So (t etData.t et),
+              So (
+                StoredT etState.HardDeleted(
                   HardDeletedState(softDeletedAtMsec, hardDeletedAtMsec))),
               Seq()
             )
           case SoftDeleted(softDeletedAtMsec, errors, _) =>
             (
-              Some(tweetData.tweet),
-              Some(StoredTweetState.SoftDeleted(SoftDeletedState(softDeletedAtMsec))),
+              So (t etData.t et),
+              So (StoredT etState.SoftDeleted(SoftDeletedState(softDeletedAtMsec))),
               translateErrors(errors)
             )
           case BounceDeleted(deletedAtMsec, errors, _) =>
             (
-              Some(tweetData.tweet),
-              Some(StoredTweetState.BounceDeleted(BounceDeletedState(deletedAtMsec))),
+              So (t etData.t et),
+              So (StoredT etState.BounceDeleted(BounceDeletedState(deletedAtMsec))),
               translateErrors(errors)
             )
           case Undeleted(undeletedAtMsec, errors, _) =>
             (
-              Some(tweetData.tweet),
-              Some(StoredTweetState.Undeleted(UndeletedState(undeletedAtMsec))),
+              So (t etData.t et),
+              So (StoredT etState.Undeleted(UndeletedState(undeletedAtMsec))),
               translateErrors(errors)
             )
           case ForceAdded(addedAtMsec, errors, _) =>
             (
-              Some(tweetData.tweet),
-              Some(StoredTweetState.ForceAdded(ForceAddedState(addedAtMsec))),
+              So (t etData.t et),
+              So (StoredT etState.ForceAdded(ForceAddedState(addedAtMsec))),
               translateErrors(errors)
             )
-          case Failed(errors) => (None, None, translateErrors(errors))
-          case NotFound => (None, Some(StoredTweetState.NotFound(NotFoundState())), Seq())
+          case Fa led(errors) => (None, None, translateErrors(errors))
+          case NotFound => (None, So (StoredT etState.NotFound(NotFoundState())), Seq())
         }
 
-        StoredTweetInfo(
-          tweetId = tweetData.tweet.id,
-          tweet = tweet.map(sanitizeNullMediaFields),
-          storedTweetState = storedTweetState,
+        StoredT et nfo(
+          t et d = t etData.t et. d,
+          t et = t et.map(san  zeNull d aF elds),
+          storedT etState = storedT etState,
           errors = errors
         )
       }
 
       case None =>
-        StoredTweetInfo(
-          tweetId = tweetData.tweet.id,
-          tweet = Some(sanitizeNullMediaFields(tweetData.tweet))
+        StoredT et nfo(
+          t et d = t etData.t et. d,
+          t et = So (san  zeNull d aF elds(t etData.t et))
         )
     }
   }
 
-  private def sanitizeNullMediaFields(tweet: Tweet): Tweet = {
-    // Some media fields are initialized as `null` at the storage layer.
-    // If the Tweet is meant to be hard deleted, or is not hydrated for
-    // some other reason but the media entities still exist, we sanitize
-    // these fields to allow serialization.
-    tweet.copy(media = tweet.media.map(_.map { mediaEntity =>
-      mediaEntity.copy(
-        url = Option(mediaEntity.url).getOrElse(""),
-        mediaUrl = Option(mediaEntity.mediaUrl).getOrElse(""),
-        mediaUrlHttps = Option(mediaEntity.mediaUrlHttps).getOrElse(""),
-        displayUrl = Option(mediaEntity.displayUrl).getOrElse(""),
-        expandedUrl = Option(mediaEntity.expandedUrl).getOrElse(""),
+  pr vate def san  zeNull d aF elds(t et: T et): T et = {
+    // So   d a f elds are  n  al zed as `null` at t  storage layer.
+    //  f t  T et  s  ant to be hard deleted, or  s not hydrated for
+    // so  ot r reason but t   d a ent  es st ll ex st,   san  ze
+    // t se f elds to allow ser al zat on.
+    t et.copy( d a = t et. d a.map(_.map {  d aEnt y =>
+       d aEnt y.copy(
+        url = Opt on( d aEnt y.url).getOrElse(""),
+         d aUrl = Opt on( d aEnt y. d aUrl).getOrElse(""),
+         d aUrlHttps = Opt on( d aEnt y. d aUrlHttps).getOrElse(""),
+        d splayUrl = Opt on( d aEnt y.d splayUrl).getOrElse(""),
+        expandedUrl = Opt on( d aEnt y.expandedUrl).getOrElse(""),
       )
     }))
   }

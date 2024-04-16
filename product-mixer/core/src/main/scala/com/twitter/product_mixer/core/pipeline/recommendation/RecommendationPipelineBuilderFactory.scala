@@ -1,67 +1,67 @@
-package com.twitter.product_mixer.core.pipeline.recommendation
+package com.tw ter.product_m xer.core.p pel ne.recom ndat on
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineBuilderFactory
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipelineBuilderFactory
-import com.twitter.product_mixer.core.service.candidate_decorator_executor.CandidateDecoratorExecutor
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutor
-import com.twitter.product_mixer.core.service.candidate_pipeline_executor.CandidatePipelineExecutor
-import com.twitter.product_mixer.core.service.domain_marshaller_executor.DomainMarshallerExecutor
-import com.twitter.product_mixer.core.service.filter_executor.FilterExecutor
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutor
-import com.twitter.product_mixer.core.service.pipeline_result_side_effect_executor.PipelineResultSideEffectExecutor
-import com.twitter.product_mixer.core.service.async_feature_map_executor.AsyncFeatureMapExecutor
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor
-import com.twitter.product_mixer.core.service.scoring_pipeline_executor.ScoringPipelineExecutor
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutor
-import com.twitter.product_mixer.core.service.transport_marshaller_executor.TransportMarshallerExecutor
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.HasMarshall ng
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neBu lderFactory
+ mport com.tw ter.product_m xer.core.p pel ne.scor ng.Scor ngP pel neBu lderFactory
+ mport com.tw ter.product_m xer.core.serv ce.cand date_decorator_executor.Cand dateDecoratorExecutor
+ mport com.tw ter.product_m xer.core.serv ce.cand date_feature_hydrator_executor.Cand dateFeatureHydratorExecutor
+ mport com.tw ter.product_m xer.core.serv ce.cand date_p pel ne_executor.Cand dateP pel neExecutor
+ mport com.tw ter.product_m xer.core.serv ce.doma n_marshaller_executor.Doma nMarshallerExecutor
+ mport com.tw ter.product_m xer.core.serv ce.f lter_executor.F lterExecutor
+ mport com.tw ter.product_m xer.core.serv ce.gate_executor.GateExecutor
+ mport com.tw ter.product_m xer.core.serv ce.p pel ne_result_s de_effect_executor.P pel neResultS deEffectExecutor
+ mport com.tw ter.product_m xer.core.serv ce.async_feature_map_executor.AsyncFeatureMapExecutor
+ mport com.tw ter.product_m xer.core.serv ce.query_feature_hydrator_executor.QueryFeatureHydratorExecutor
+ mport com.tw ter.product_m xer.core.serv ce.scor ng_p pel ne_executor.Scor ngP pel neExecutor
+ mport com.tw ter.product_m xer.core.serv ce.selector_executor.SelectorExecutor
+ mport com.tw ter.product_m xer.core.serv ce.transport_marshaller_executor.TransportMarshallerExecutor
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class RecommendationPipelineBuilderFactory @Inject() (
-  candidatePipelineExecutor: CandidatePipelineExecutor,
+@S ngleton
+class Recom ndat onP pel neBu lderFactory @ nject() (
+  cand dateP pel neExecutor: Cand dateP pel neExecutor,
   gateExecutor: GateExecutor,
   selectorExecutor: SelectorExecutor,
   queryFeatureHydratorExecutor: QueryFeatureHydratorExecutor,
   asyncFeatureMapExecutor: AsyncFeatureMapExecutor,
-  candidateFeatureHydratorExecutor: CandidateFeatureHydratorExecutor,
-  filterExecutor: FilterExecutor,
-  scoringPipelineExecutor: ScoringPipelineExecutor,
-  candidateDecoratorExecutor: CandidateDecoratorExecutor,
-  domainMarshallerExecutor: DomainMarshallerExecutor,
+  cand dateFeatureHydratorExecutor: Cand dateFeatureHydratorExecutor,
+  f lterExecutor: F lterExecutor,
+  scor ngP pel neExecutor: Scor ngP pel neExecutor,
+  cand dateDecoratorExecutor: Cand dateDecoratorExecutor,
+  doma nMarshallerExecutor: Doma nMarshallerExecutor,
   transportMarshallerExecutor: TransportMarshallerExecutor,
-  pipelineResultSideEffectExecutor: PipelineResultSideEffectExecutor,
-  candidatePipelineBuilderFactory: CandidatePipelineBuilderFactory,
-  scoringPipelineBuilderFactory: ScoringPipelineBuilderFactory,
-  statsReceiver: StatsReceiver) {
+  p pel neResultS deEffectExecutor: P pel neResultS deEffectExecutor,
+  cand dateP pel neBu lderFactory: Cand dateP pel neBu lderFactory,
+  scor ngP pel neBu lderFactory: Scor ngP pel neBu lderFactory,
+  statsRece ver: StatsRece ver) {
 
   def get[
-    Query <: PipelineQuery,
-    Candidate <: UniversalNoun[Any],
-    DomainResultType <: HasMarshalling,
+    Query <: P pel neQuery,
+    Cand date <: Un versalNoun[Any],
+    Doma nResultType <: HasMarshall ng,
     Result
-  ]: RecommendationPipelineBuilder[Query, Candidate, DomainResultType, Result] = {
-    new RecommendationPipelineBuilder[Query, Candidate, DomainResultType, Result](
-      candidatePipelineExecutor,
+  ]: Recom ndat onP pel neBu lder[Query, Cand date, Doma nResultType, Result] = {
+    new Recom ndat onP pel neBu lder[Query, Cand date, Doma nResultType, Result](
+      cand dateP pel neExecutor,
       gateExecutor,
       selectorExecutor,
       queryFeatureHydratorExecutor,
       asyncFeatureMapExecutor,
-      candidateFeatureHydratorExecutor,
-      filterExecutor,
-      scoringPipelineExecutor,
-      candidateDecoratorExecutor,
-      domainMarshallerExecutor,
+      cand dateFeatureHydratorExecutor,
+      f lterExecutor,
+      scor ngP pel neExecutor,
+      cand dateDecoratorExecutor,
+      doma nMarshallerExecutor,
       transportMarshallerExecutor,
-      pipelineResultSideEffectExecutor,
-      candidatePipelineBuilderFactory,
-      scoringPipelineBuilderFactory,
-      statsReceiver
+      p pel neResultS deEffectExecutor,
+      cand dateP pel neBu lderFactory,
+      scor ngP pel neBu lderFactory,
+      statsRece ver
     )
   }
 }

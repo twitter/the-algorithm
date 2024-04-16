@@ -1,25 +1,25 @@
-package com.twitter.follow_recommendations.common.clients.socialgraph
+package com.tw ter.follow_recom ndat ons.common.cl ents.soc algraph
 
-import com.google.inject.Provides
-import com.twitter.finagle.ThriftMux
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.follow_recommendations.common.clients.common.BaseClientModule
-import com.twitter.socialgraph.thriftscala.SocialGraphService
-import com.twitter.stitch.socialgraph.SocialGraph
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.f nagle.Thr ftMux
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.common.BaseCl entModule
+ mport com.tw ter.soc algraph.thr ftscala.Soc alGraphServ ce
+ mport com.tw ter.st ch.soc algraph.Soc alGraph
+ mport javax. nject.S ngleton
 
-object SocialGraphModule
-    extends BaseClientModule[SocialGraphService.MethodPerEndpoint]
-    with MtlsClient {
-  override val label = "social-graph-service"
-  override val dest = "/s/socialgraph/socialgraph"
+object Soc alGraphModule
+    extends BaseCl entModule[Soc alGraphServ ce. thodPerEndpo nt]
+    w h MtlsCl ent {
+  overr de val label = "soc al-graph-serv ce"
+  overr de val dest = "/s/soc algraph/soc algraph"
 
-  override def configureThriftMuxClient(client: ThriftMux.Client): ThriftMux.Client =
-    client.withSessionQualifier.noFailFast
+  overr de def conf gureThr ftMuxCl ent(cl ent: Thr ftMux.Cl ent): Thr ftMux.Cl ent =
+    cl ent.w hSess onQual f er.noFa lFast
 
-  @Provides
-  @Singleton
-  def providesStitchClient(futureIface: SocialGraphService.MethodPerEndpoint): SocialGraph = {
-    SocialGraph(futureIface)
+  @Prov des
+  @S ngleton
+  def prov desSt chCl ent(future face: Soc alGraphServ ce. thodPerEndpo nt): Soc alGraph = {
+    Soc alGraph(future face)
   }
 }

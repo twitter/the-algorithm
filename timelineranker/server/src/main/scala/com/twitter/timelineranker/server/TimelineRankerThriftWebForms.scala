@@ -1,46 +1,46 @@
-package com.twitter.timelineranker.server
+package com.tw ter.t  l neranker.server
 
-import com.twitter.thriftwebforms.MethodOptions
-import com.twitter.thriftwebforms.view.ServiceResponseView
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.util.Future
+ mport com.tw ter.thr ft bforms. thodOpt ons
+ mport com.tw ter.thr ft bforms.v ew.Serv ceResponseV ew
+ mport com.tw ter.t  l neranker.{thr ftscala => thr ft}
+ mport com.tw ter.ut l.Future
 
-object TimelineRankerThriftWebForms {
+object T  l neRankerThr ft bForms {
 
-  private def renderTweetIds(tweetIDs: Seq[Long]): Future[ServiceResponseView] = {
-    val html = tweetIDs.map { tweetID =>
-      s"""<blockquote class="twitter-tweet"><a href="https://twitter.com/tweet/statuses/$tweetID"></a></blockquote>"""
-    }.mkString
+  pr vate def renderT et ds(t et Ds: Seq[Long]): Future[Serv ceResponseV ew] = {
+    val html = t et Ds.map { t et D =>
+      s"""<blockquote class="tw ter-t et"><a href="https://tw ter.com/t et/statuses/$t et D"></a></blockquote>"""
+    }.mkStr ng
     Future.value(
-      ServiceResponseView(
-        "Tweets",
+      Serv ceResponseV ew(
+        "T ets",
         html,
-        Seq("//platform.twitter.com/widgets.js")
+        Seq("//platform.tw ter.com/w dgets.js")
       )
     )
   }
 
-  private def renderGetCandidateTweetsResponse(r: AnyRef): Future[ServiceResponseView] = {
-    val responses = r.asInstanceOf[Seq[thrift.GetCandidateTweetsResponse]]
-    val tweetIds = responses.flatMap(
-      _.candidates.map(_.flatMap(_.tweet.map(_.id))).getOrElse(Nil)
+  pr vate def renderGetCand dateT etsResponse(r: AnyRef): Future[Serv ceResponseV ew] = {
+    val responses = r.as nstanceOf[Seq[thr ft.GetCand dateT etsResponse]]
+    val t et ds = responses.flatMap(
+      _.cand dates.map(_.flatMap(_.t et.map(_. d))).getOrElse(N l)
     )
-    renderTweetIds(tweetIds)
+    renderT et ds(t et ds)
   }
 
-  def methodOptions: Map[String, MethodOptions] =
+  def  thodOpt ons: Map[Str ng,  thodOpt ons] =
     Map(
-      thrift.TimelineRanker.GetRecycledTweetCandidates.name -> MethodOptions(
-        responseRenderers = Seq(renderGetCandidateTweetsResponse)
+      thr ft.T  l neRanker.GetRecycledT etCand dates.na  ->  thodOpt ons(
+        responseRenderers = Seq(renderGetCand dateT etsResponse)
       ),
-      thrift.TimelineRanker.HydrateTweetCandidates.name -> MethodOptions(
-        responseRenderers = Seq(renderGetCandidateTweetsResponse)
+      thr ft.T  l neRanker.HydrateT etCand dates.na  ->  thodOpt ons(
+        responseRenderers = Seq(renderGetCand dateT etsResponse)
       ),
-      thrift.TimelineRanker.GetRecapCandidatesFromAuthors.name -> MethodOptions(
-        responseRenderers = Seq(renderGetCandidateTweetsResponse)
+      thr ft.T  l neRanker.GetRecapCand datesFromAuthors.na  ->  thodOpt ons(
+        responseRenderers = Seq(renderGetCand dateT etsResponse)
       ),
-      thrift.TimelineRanker.GetEntityTweetCandidates.name -> MethodOptions(
-        responseRenderers = Seq(renderGetCandidateTweetsResponse)
+      thr ft.T  l neRanker.GetEnt yT etCand dates.na  ->  thodOpt ons(
+        responseRenderers = Seq(renderGetCand dateT etsResponse)
       )
     )
 }

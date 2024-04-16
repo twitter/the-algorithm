@@ -1,23 +1,23 @@
-package com.twitter.search.earlybird.exception;
+package com.tw ter.search.earlyb rd.except on;
 
-import com.twitter.util.AbstractMonitor;
+ mport com.tw ter.ut l.AbstractMon or;
 
-public class UncaughtExceptionHandler extends AbstractMonitor {
-  private final CriticalExceptionHandler criticalExceptionHandler;
+publ c class UncaughtExcept onHandler extends AbstractMon or {
+  pr vate f nal Cr  calExcept onHandler cr  calExcept onHandler;
 
-  public UncaughtExceptionHandler() {
-    this.criticalExceptionHandler = new CriticalExceptionHandler();
+  publ c UncaughtExcept onHandler() {
+    t .cr  calExcept onHandler = new Cr  calExcept onHandler();
   }
 
-  public void setShutdownHook(Runnable shutdown) {
-    this.criticalExceptionHandler.setShutdownHook(shutdown);
+  publ c vo d setShutdownHook(Runnable shutdown) {
+    t .cr  calExcept onHandler.setShutdownHook(shutdown);
   }
 
-  @Override
-  public boolean handle(Throwable e) {
-    criticalExceptionHandler.handle(this, e);
+  @Overr de
+  publ c boolean handle(Throwable e) {
+    cr  calExcept onHandler.handle(t , e);
 
-    // We return true here because we handle all exceptions.
+    //   return true  re because   handle all except ons.
     return true;
   }
 }

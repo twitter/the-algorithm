@@ -1,45 +1,45 @@
-package com.twitter.product_mixer.core.functional_component.candidate_source.strato
+package com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.strato
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.cl ent.Fetc r
 
 /**
- * A [[CandidateSource]] for getting Candidates from Strato where the
- * Strato column's View is [[Unit]] and the Value is a [[StratoValue]]
+ * A [[Cand dateS ce]] for gett ng Cand dates from Strato w re t 
+ * Strato column's V ew  s [[Un ]] and t  Value  s a [[StratoValue]]
  *
- * A `stratoResultTransformer` must be defined to convert the [[StratoValue]] into a Seq of [[Candidate]]
+ * A `stratoResultTransfor r` must be def ned to convert t  [[StratoValue]]  nto a Seq of [[Cand date]]
  *
- * If you need to extract features from the [[StratoValue]] (like a cursor),
- * use [[StratoKeyFetcherWithSourceFeaturesSource]] instead.
+ *  f   need to extract features from t  [[StratoValue]] (l ke a cursor),
+ * use [[StratoKeyFetc rW hS ceFeaturesS ce]]  nstead.
  *
- * @tparam StratoKey the column's Key type
- * @tparam StratoValue the column's Value type
+ * @tparam StratoKey t  column's Key type
+ * @tparam StratoValue t  column's Value type
  */
-trait StratoKeyFetcherSource[StratoKey, StratoValue, Candidate]
-    extends CandidateSource[StratoKey, Candidate] {
+tra  StratoKeyFetc rS ce[StratoKey, StratoValue, Cand date]
+    extends Cand dateS ce[StratoKey, Cand date] {
 
-  val fetcher: Fetcher[StratoKey, Unit, StratoValue]
+  val fetc r: Fetc r[StratoKey, Un , StratoValue]
 
   /**
-   * Transforms the value type returned by Strato into a Seq[Candidate].
+   * Transforms t  value type returned by Strato  nto a Seq[Cand date].
    *
-   * This might be as simple as `Seq(stratoResult)` if you're always returning a single candidate.
+   * T  m ght be as s mple as `Seq(stratoResult)`  f   always return ng a s ngle cand date.
    *
-   * Often, it just extracts a Seq from within a larger wrapper object.
+   * Often,   just extracts a Seq from w h n a larger wrapper object.
    *
-   * If there is global metadata that you need to include, you can zip it with the candidates,
-   * returning something like Seq((candiate, metadata), (candidate, metadata)) etc.
+   *  f t re  s global  tadata that   need to  nclude,   can z p   w h t  cand dates,
+   * return ng so th ng l ke Seq((cand ate,  tadata), (cand date,  tadata)) etc.
    */
-  protected def stratoResultTransformer(stratoResult: StratoValue): Seq[Candidate]
+  protected def stratoResultTransfor r(stratoResult: StratoValue): Seq[Cand date]
 
-  override def apply(key: StratoKey): Stitch[Seq[Candidate]] = {
-    fetcher
+  overr de def apply(key: StratoKey): St ch[Seq[Cand date]] = {
+    fetc r
       .fetch(key)
       .map { result =>
         result.v
-          .map(stratoResultTransformer)
+          .map(stratoResultTransfor r)
           .getOrElse(Seq.empty)
-      }.rescue(StratoErrCategorizer.CategorizeStratoException)
+      }.rescue(StratoErrCategor zer.Categor zeStratoExcept on)
   }
 }

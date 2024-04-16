@@ -1,56 +1,56 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.tw ter.cr_m xer.s m lar y_eng ne
 
-import com.twitter.cr_mixer.model.TweetWithAuthor
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.search.earlybird.thriftscala.EarlybirdRequest
-import com.twitter.search.earlybird.thriftscala.EarlybirdResponseCode
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter.cr_m xer.model.T etW hAuthor
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.search.earlyb rd.thr ftscala.Earlyb rdRequest
+ mport com.tw ter.search.earlyb rd.thr ftscala.Earlyb rdResponseCode
+ mport com.tw ter.search.earlyb rd.thr ftscala.Earlyb rdServ ce
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
 /**
- * This trait is a base trait for Earlybird similarity engines. All Earlybird similarity
- * engines extend from it and override the construction method for EarlybirdRequest
+ * T  tra   s a base tra  for Earlyb rd s m lar y eng nes. All Earlyb rd s m lar y
+ * eng nes extend from   and overr de t  construct on  thod for Earlyb rdRequest
  */
-trait EarlybirdSimilarityEngineBase[EarlybirdSearchQuery]
-    extends ReadableStore[EarlybirdSearchQuery, Seq[TweetWithAuthor]] {
-  def earlybirdSearchClient: EarlybirdService.MethodPerEndpoint
+tra  Earlyb rdS m lar yEng neBase[Earlyb rdSearchQuery]
+    extends ReadableStore[Earlyb rdSearchQuery, Seq[T etW hAuthor]] {
+  def earlyb rdSearchCl ent: Earlyb rdServ ce. thodPerEndpo nt
 
-  def statsReceiver: StatsReceiver
+  def statsRece ver: StatsRece ver
 
-  def getEarlybirdRequest(query: EarlybirdSearchQuery): Option[EarlybirdRequest]
+  def getEarlyb rdRequest(query: Earlyb rdSearchQuery): Opt on[Earlyb rdRequest]
 
-  override def get(query: EarlybirdSearchQuery): Future[Option[Seq[TweetWithAuthor]]] = {
-    getEarlybirdRequest(query)
-      .map { earlybirdRequest =>
-        earlybirdSearchClient
-          .search(earlybirdRequest).map { response =>
+  overr de def get(query: Earlyb rdSearchQuery): Future[Opt on[Seq[T etW hAuthor]]] = {
+    getEarlyb rdRequest(query)
+      .map { earlyb rdRequest =>
+        earlyb rdSearchCl ent
+          .search(earlyb rdRequest).map { response =>
             response.responseCode match {
-              case EarlybirdResponseCode.Success =>
-                val earlybirdSearchResult =
+              case Earlyb rdResponseCode.Success =>
+                val earlyb rdSearchResult =
                   response.searchResults
                     .map(
                       _.results
                         .map(searchResult =>
-                          TweetWithAuthor(
-                            searchResult.id,
-                            // fromUserId should be there since MetadataOptions.getFromUserId = true
-                            searchResult.metadata.map(_.fromUserId).getOrElse(0))).toSeq)
-                statsReceiver.scope("result").stat("size").add(earlybirdSearchResult.size)
-                earlybirdSearchResult
+                          T etW hAuthor(
+                            searchResult. d,
+                            // fromUser d should be t re s nce  tadataOpt ons.getFromUser d = true
+                            searchResult. tadata.map(_.fromUser d).getOrElse(0))).toSeq)
+                statsRece ver.scope("result").stat("s ze").add(earlyb rdSearchResult.s ze)
+                earlyb rdSearchResult
               case e =>
-                statsReceiver.scope("failures").counter(e.getClass.getSimpleName).incr()
-                Some(Seq.empty)
+                statsRece ver.scope("fa lures").counter(e.getClass.getS mpleNa ). ncr()
+                So (Seq.empty)
             }
           }
       }.getOrElse(Future.None)
   }
 }
 
-object EarlybirdSimilarityEngineBase {
-  trait EarlybirdSearchQuery {
-    def seedUserIds: Seq[UserId]
-    def maxNumTweets: Int
+object Earlyb rdS m lar yEng neBase {
+  tra  Earlyb rdSearchQuery {
+    def seedUser ds: Seq[User d]
+    def maxNumT ets:  nt
   }
 }

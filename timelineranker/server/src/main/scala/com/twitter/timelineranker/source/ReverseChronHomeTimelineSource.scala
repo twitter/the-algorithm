@@ -1,142 +1,142 @@
-package com.twitter.timelineranker.source
+package com.tw ter.t  l neranker.s ce
 
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.timelineranker.core.FollowGraphData
-import com.twitter.timelineranker.model._
-import com.twitter.timelineranker.parameters.revchron.ReverseChronTimelineQueryContext
-import com.twitter.timelineranker.util.TweetFiltersBasedOnSearchMetadata
-import com.twitter.timelineranker.util.TweetsPostFilterBasedOnSearchMetadata
-import com.twitter.timelineranker.util.SearchResultWithVisibilityActors
-import com.twitter.timelineranker.visibility.FollowGraphDataProvider
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.util.stats.RequestStats
-import com.twitter.timelines.util.stats.RequestStatsReceiver
-import com.twitter.timelines.visibility.VisibilityEnforcer
-import com.twitter.timelineservice.model.TimelineId
-import com.twitter.timelineservice.model.core.TimelineKind
-import com.twitter.util.Future
+ mport com.google.common.annotat ons.V s bleForTest ng
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.search.earlyb rd.thr ftscala.Thr ftSearchResult
+ mport com.tw ter.t  l neranker.core.FollowGraphData
+ mport com.tw ter.t  l neranker.model._
+ mport com.tw ter.t  l neranker.para ters.revchron.ReverseChronT  l neQueryContext
+ mport com.tw ter.t  l neranker.ut l.T etF ltersBasedOnSearch tadata
+ mport com.tw ter.t  l neranker.ut l.T etsPostF lterBasedOnSearch tadata
+ mport com.tw ter.t  l neranker.ut l.SearchResultW hV s b l yActors
+ mport com.tw ter.t  l neranker.v s b l y.FollowGraphDataProv der
+ mport com.tw ter.t  l nes.cl ents.relevance_search.SearchCl ent
+ mport com.tw ter.t  l nes.model.T et d
+ mport com.tw ter.t  l nes.model.User d
+ mport com.tw ter.t  l nes.ut l.stats.RequestStats
+ mport com.tw ter.t  l nes.ut l.stats.RequestStatsRece ver
+ mport com.tw ter.t  l nes.v s b l y.V s b l yEnforcer
+ mport com.tw ter.t  l neserv ce.model.T  l ne d
+ mport com.tw ter.t  l neserv ce.model.core.T  l neK nd
+ mport com.tw ter.ut l.Future
 
-object ReverseChronHomeTimelineSource {
+object ReverseChronHo T  l neS ce {
 
-  // Post search filters applied to tweets using metadata included in search results.
-  val FiltersBasedOnSearchMetadata: TweetFiltersBasedOnSearchMetadata.ValueSet =
-    TweetFiltersBasedOnSearchMetadata.ValueSet(
-      TweetFiltersBasedOnSearchMetadata.DuplicateRetweets,
-      TweetFiltersBasedOnSearchMetadata.DuplicateTweets
+  // Post search f lters appl ed to t ets us ng  tadata  ncluded  n search results.
+  val F ltersBasedOnSearch tadata: T etF ltersBasedOnSearch tadata.ValueSet =
+    T etF ltersBasedOnSearch tadata.ValueSet(
+      T etF ltersBasedOnSearch tadata.Dupl cateRet ets,
+      T etF ltersBasedOnSearch tadata.Dupl cateT ets
     )
 
-  object GetTweetsResult {
-    val Empty: GetTweetsResult = GetTweetsResult(0, 0L, Nil)
-    val EmptyFuture: Future[GetTweetsResult] = Future.value(Empty)
+  object GetT etsResult {
+    val Empty: GetT etsResult = GetT etsResult(0, 0L, N l)
+    val EmptyFuture: Future[GetT etsResult] = Future.value(Empty)
   }
 
-  case class GetTweetsResult(
-    // numSearchResults is the result count before filtering so may not match tweets.size
-    numSearchResults: Int,
-    minTweetIdFromSearch: TweetId,
-    tweets: Seq[Tweet])
+  case class GetT etsResult(
+    // numSearchResults  s t  result count before f lter ng so may not match t ets.s ze
+    numSearchResults:  nt,
+    m nT et dFromSearch: T et d,
+    t ets: Seq[T et])
 }
 
 /**
- * Timeline source that enables materializing reverse chron timelines
- * using search infrastructure.
+ * T  l ne s ce that enables mater al z ng reverse chron t  l nes
+ * us ng search  nfrastructure.
  */
-class ReverseChronHomeTimelineSource(
-  searchClient: SearchClient,
-  followGraphDataProvider: FollowGraphDataProvider,
-  visibilityEnforcer: VisibilityEnforcer,
-  statsReceiver: StatsReceiver)
+class ReverseChronHo T  l neS ce(
+  searchCl ent: SearchCl ent,
+  followGraphDataProv der: FollowGraphDataProv der,
+  v s b l yEnforcer: V s b l yEnforcer,
+  statsRece ver: StatsRece ver)
     extends RequestStats {
 
-  import ReverseChronHomeTimelineSource._
+   mport ReverseChronHo T  l neS ce._
 
-  private[this] val logger = Logger.get("ReverseChronHomeTimelineSource")
-  private[this] val scope = statsReceiver.scope("reverseChronSource")
-  private[this] val stats = RequestStatsReceiver(scope)
-  private[this] val emptyTimelineReturnedCounter =
-    scope.counter("emptyTimelineReturnedDueToMaxFollows")
-  private[this] val maxCountStat = scope.stat("maxCount")
-  private[this] val numTweetsStat = scope.stat("numTweets")
-  private[this] val requestedAdditionalTweetsAfterFilter =
-    scope.counter("requestedAdditionalTweetsAfterFilter")
-  private[this] val emptyTimelines = scope.counter("emptyTimelines")
-  private[this] val emptyTimelinesWithSignificantFollowing =
-    scope.counter("emptyTimelinesWithSignificantFollowing")
+  pr vate[t ] val logger = Logger.get("ReverseChronHo T  l neS ce")
+  pr vate[t ] val scope = statsRece ver.scope("reverseChronS ce")
+  pr vate[t ] val stats = RequestStatsRece ver(scope)
+  pr vate[t ] val emptyT  l neReturnedCounter =
+    scope.counter("emptyT  l neReturnedDueToMaxFollows")
+  pr vate[t ] val maxCountStat = scope.stat("maxCount")
+  pr vate[t ] val numT etsStat = scope.stat("numT ets")
+  pr vate[t ] val requestedAdd  onalT etsAfterF lter =
+    scope.counter("requestedAdd  onalT etsAfterF lter")
+  pr vate[t ] val emptyT  l nes = scope.counter("emptyT  l nes")
+  pr vate[t ] val emptyT  l nesW hS gn f cantFollow ng =
+    scope.counter("emptyT  l nesW hS gn f cantFollow ng")
 
-  // Threshold to use to determine if a user has a significant followings list size
-  private[this] val SignificantFollowingThreshold = 20
+  // Threshold to use to determ ne  f a user has a s gn f cant follow ngs l st s ze
+  pr vate[t ] val S gn f cantFollow ngThreshold = 20
 
-  def get(contexts: Seq[ReverseChronTimelineQueryContext]): Seq[Future[Timeline]] = {
+  def get(contexts: Seq[ReverseChronT  l neQueryContext]): Seq[Future[T  l ne]] = {
     contexts.map(get)
   }
 
-  def get(context: ReverseChronTimelineQueryContext): Future[Timeline] = {
+  def get(context: ReverseChronT  l neQueryContext): Future[T  l ne] = {
     stats.addEventStats {
-      val query: ReverseChronTimelineQuery = context.query
+      val query: ReverseChronT  l neQuery = context.query
 
-      // We only support Tweet ID range at present.
-      val tweetIdRange =
-        query.range.map(TweetIdRange.fromTimelineRange).getOrElse(TweetIdRange.default)
+      //   only support T et  D range at present.
+      val t et dRange =
+        query.range.map(T et dRange.fromT  l neRange).getOrElse(T et dRange.default)
 
-      val userId = query.userId
-      val timelineId = TimelineId(userId, TimelineKind.home)
-      val maxFollowingCount = context.maxFollowedUsers()
+      val user d = query.user d
+      val t  l ne d = T  l ne d(user d, T  l neK nd.ho )
+      val maxFollow ngCount = context.maxFollo dUsers()
 
-      followGraphDataProvider
+      followGraphDataProv der
         .get(
-          userId,
-          maxFollowingCount
+          user d,
+          maxFollow ngCount
         )
         .flatMap { followGraphData =>
-          // We return an empty timeline if a given user follows more than the limit
-          // on the number of users. This is because, such a user's timeline will quickly
-          // fill up displacing materialized tweets wasting the materialation work.
-          // This behavior can be disabled via featureswitches to support non-materialization
-          // use cases when we should always return a timeline.
-          if (followGraphData.filteredFollowedUserIds.isEmpty ||
-            (followGraphData.followedUserIds.size >= maxFollowingCount && context
-              .returnEmptyWhenOverMaxFollows())) {
-            if (followGraphData.followedUserIds.size >= maxFollowingCount) {
-              emptyTimelineReturnedCounter.incr()
+          //   return an empty t  l ne  f a g ven user follows more than t  l m 
+          // on t  number of users. T   s because, such a user's t  l ne w ll qu ckly
+          // f ll up d splac ng mater al zed t ets wast ng t  mater alat on work.
+          // T  behav or can be d sabled v a featuresw c s to support non-mater al zat on
+          // use cases w n   should always return a t  l ne.
+           f (followGraphData.f lteredFollo dUser ds. sEmpty ||
+            (followGraphData.follo dUser ds.s ze >= maxFollow ngCount && context
+              .returnEmptyW nOverMaxFollows())) {
+             f (followGraphData.follo dUser ds.s ze >= maxFollow ngCount) {
+              emptyT  l neReturnedCounter. ncr()
             }
-            Future.value(Timeline.empty(timelineId))
+            Future.value(T  l ne.empty(t  l ne d))
           } else {
             val maxCount = getMaxCount(context)
-            val numEntriesToRequest = (maxCount * context.maxCountMultiplier()).toInt
-            maxCountStat.add(numEntriesToRequest)
+            val numEntr esToRequest = (maxCount * context.maxCountMult pl er()).to nt
+            maxCountStat.add(numEntr esToRequest)
 
-            val allUserIds = followGraphData.followedUserIds :+ userId
-            getTweets(
-              userId,
-              allUserIds,
+            val allUser ds = followGraphData.follo dUser ds :+ user d
+            getT ets(
+              user d,
+              allUser ds,
               followGraphData,
-              numEntriesToRequest,
-              tweetIdRange,
+              numEntr esToRequest,
+              t et dRange,
               context
-            ).map { tweets =>
-              if (tweets.isEmpty) {
-                emptyTimelines.incr()
-                if (followGraphData.followedUserIds.size >= SignificantFollowingThreshold) {
-                  emptyTimelinesWithSignificantFollowing.incr()
+            ).map { t ets =>
+               f (t ets. sEmpty) {
+                emptyT  l nes. ncr()
+                 f (followGraphData.follo dUser ds.s ze >= S gn f cantFollow ngThreshold) {
+                  emptyT  l nesW hS gn f cantFollow ng. ncr()
                   logger.debug(
-                    "Search returned empty home timeline for user %s (follow count %s), query: %s",
-                    userId,
-                    followGraphData.followedUserIds.size,
+                    "Search returned empty ho  t  l ne for user %s (follow count %s), query: %s",
+                    user d,
+                    followGraphData.follo dUser ds.s ze,
                     query)
                 }
               }
-              // If we had requested more entries than maxCount (due to multiplier being > 1.0)
-              // then we need to trim it back to maxCount.
-              val truncatedTweets = tweets.take(maxCount)
-              numTweetsStat.add(truncatedTweets.size)
-              Timeline(
-                timelineId,
-                truncatedTweets.map(tweet => TimelineEntryEnvelope(tweet))
+              //  f   had requested more entr es than maxCount (due to mult pl er be ng > 1.0)
+              // t n   need to tr m   back to maxCount.
+              val truncatedT ets = t ets.take(maxCount)
+              numT etsStat.add(truncatedT ets.s ze)
+              T  l ne(
+                t  l ne d,
+                truncatedT ets.map(t et => T  l neEntryEnvelope(t et))
               )
             }
           }
@@ -145,183 +145,183 @@ class ReverseChronHomeTimelineSource(
   }
 
   /**
-   * Gets tweets from search and performs post-filtering.
+   * Gets t ets from search and performs post-f lter ng.
    *
-   * If we do not end up with sufficient tweets after post-filtering,
-   * we issue a second call to search to get more tweets if:
-   * -- such behavior is enabled by setting backfillFilteredEntries to true.
-   * -- the original call to search returned requested number of tweets.
-   * -- after post-filtering, the percentage of filtered out tweets
-   *    exceeds the value of tweetsFilteringLossageThresholdPercent.
+   *  f   do not end up w h suff c ent t ets after post-f lter ng,
+   *    ssue a second call to search to get more t ets  f:
+   * -- such behav or  s enabled by sett ng backf llF lteredEntr es to true.
+   * -- t  or g nal call to search returned requested number of t ets.
+   * -- after post-f lter ng, t  percentage of f ltered out t ets
+   *    exceeds t  value of t etsF lter ngLossageThresholdPercent.
    */
-  private def getTweets(
-    userId: UserId,
-    allUserIds: Seq[UserId],
+  pr vate def getT ets(
+    user d: User d,
+    allUser ds: Seq[User d],
     followGraphData: FollowGraphData,
-    numEntriesToRequest: Int,
-    tweetIdRange: TweetIdRange,
-    context: ReverseChronTimelineQueryContext
-  ): Future[Seq[Tweet]] = {
-    getTweetsHelper(
-      userId,
-      allUserIds,
+    numEntr esToRequest:  nt,
+    t et dRange: T et dRange,
+    context: ReverseChronT  l neQueryContext
+  ): Future[Seq[T et]] = {
+    getT ets lper(
+      user d,
+      allUser ds,
       followGraphData,
-      numEntriesToRequest,
-      tweetIdRange,
-      context.directedAtNarrowcastingViaSearch(),
-      context.postFilteringBasedOnSearchMetadataEnabled(),
-      context.getTweetsFromArchiveIndex()
+      numEntr esToRequest,
+      t et dRange,
+      context.d rectedAtNarrowcast ngV aSearch(),
+      context.postF lter ngBasedOnSearch tadataEnabled(),
+      context.getT etsFromArch ve ndex()
     ).flatMap { result =>
-      val numAdditionalTweetsToRequest = getNumAdditionalTweetsToRequest(
-        numEntriesToRequest,
+      val numAdd  onalT etsToRequest = getNumAdd  onalT etsToRequest(
+        numEntr esToRequest,
         result.numSearchResults,
-        result.numSearchResults - result.tweets.size,
+        result.numSearchResults - result.t ets.s ze,
         context
       )
 
-      if (numAdditionalTweetsToRequest > 0) {
-        requestedAdditionalTweetsAfterFilter.incr()
-        val updatedRange = tweetIdRange.copy(toId = Some(result.minTweetIdFromSearch))
-        getTweetsHelper(
-          userId,
-          allUserIds,
+       f (numAdd  onalT etsToRequest > 0) {
+        requestedAdd  onalT etsAfterF lter. ncr()
+        val updatedRange = t et dRange.copy(to d = So (result.m nT et dFromSearch))
+        getT ets lper(
+          user d,
+          allUser ds,
           followGraphData,
-          numAdditionalTweetsToRequest,
+          numAdd  onalT etsToRequest,
           updatedRange,
-          context.directedAtNarrowcastingViaSearch(),
-          context.postFilteringBasedOnSearchMetadataEnabled(),
-          context.getTweetsFromArchiveIndex()
-        ).map { result2 => result.tweets ++ result2.tweets }
+          context.d rectedAtNarrowcast ngV aSearch(),
+          context.postF lter ngBasedOnSearch tadataEnabled(),
+          context.getT etsFromArch ve ndex()
+        ).map { result2 => result.t ets ++ result2.t ets }
       } else {
-        Future.value(result.tweets)
+        Future.value(result.t ets)
       }
     }
   }
 
-  private[source] def getNumAdditionalTweetsToRequest(
-    numTweetsRequested: Int,
-    numTweetsFoundBySearch: Int,
-    numTweetsFilteredOut: Int,
-    context: ReverseChronTimelineQueryContext
-  ): Int = {
-    require(numTweetsFoundBySearch <= numTweetsRequested)
+  pr vate[s ce] def getNumAdd  onalT etsToRequest(
+    numT etsRequested:  nt,
+    numT etsFoundBySearch:  nt,
+    numT etsF lteredOut:  nt,
+    context: ReverseChronT  l neQueryContext
+  ):  nt = {
+    requ re(numT etsFoundBySearch <= numT etsRequested)
 
-    if (!context.backfillFilteredEntries() || (numTweetsFoundBySearch < numTweetsRequested)) {
-      // If multiple calls are not enabled or if search did not find enough tweets,
-      // there is no point in making another call to get more.
+     f (!context.backf llF lteredEntr es() || (numT etsFoundBySearch < numT etsRequested)) {
+      //  f mult ple calls are not enabled or  f search d d not f nd enough t ets,
+      // t re  s no po nt  n mak ng anot r call to get more.
       0
     } else {
-      val numTweetsFilteredOutPercent = numTweetsFilteredOut * 100.0 / numTweetsFoundBySearch
-      if (numTweetsFilteredOutPercent > context.tweetsFilteringLossageThresholdPercent()) {
+      val numT etsF lteredOutPercent = numT etsF lteredOut * 100.0 / numT etsFoundBySearch
+       f (numT etsF lteredOutPercent > context.t etsF lter ngLossageThresholdPercent()) {
 
-        // We assume that the next call will also have lossage percentage similar to the first call.
-        // Therefore, we proactively request proportionately more tweets so that we do not
-        // end up needing a third call.
-        // In any case, regardless of what we get in the second call, we do not make any subsequent calls.
-        val adjustedFilteredOutPercent =
-          math.min(numTweetsFilteredOutPercent, context.tweetsFilteringLossageLimitPercent())
-        val numTweetsToRequestMultiplier = 100 / (100 - adjustedFilteredOutPercent)
-        val numTweetsToRequest = (numTweetsFilteredOut * numTweetsToRequestMultiplier).toInt
+        //   assu  that t  next call w ll also have lossage percentage s m lar to t  f rst call.
+        // T refore,   proact vely request proport onately more t ets so that   do not
+        // end up need ng a th rd call.
+        //  n any case, regardless of what   get  n t  second call,   do not make any subsequent calls.
+        val adjustedF lteredOutPercent =
+          math.m n(numT etsF lteredOutPercent, context.t etsF lter ngLossageL m Percent())
+        val numT etsToRequestMult pl er = 100 / (100 - adjustedF lteredOutPercent)
+        val numT etsToRequest = (numT etsF lteredOut * numT etsToRequestMult pl er).to nt
 
-        numTweetsToRequest
+        numT etsToRequest
       } else {
-        // Did not have sufficient lossage to warrant an extra call.
+        // D d not have suff c ent lossage to warrant an extra call.
         0
       }
     }
   }
 
-  private def getClientId(subClientId: String): String = {
-    // Hacky: Extract the environment from the existing clientId set by TimelineRepositoryBuilder
-    val env = searchClient.clientId.split('.').last
+  pr vate def getCl ent d(subCl ent d: Str ng): Str ng = {
+    // Hacky: Extract t  env ron nt from t  ex st ng cl ent d set by T  l neRepos oryBu lder
+    val env = searchCl ent.cl ent d.spl ('.').last
 
-    s"timelineranker.$subClientId.$env"
+    s"t  l neranker.$subCl ent d.$env"
   }
 
-  private def getTweetsHelper(
-    userId: UserId,
-    allUserIds: Seq[UserId],
+  pr vate def getT ets lper(
+    user d: User d,
+    allUser ds: Seq[User d],
     followGraphData: FollowGraphData,
-    maxCount: Int,
-    tweetIdRange: TweetIdRange,
-    withDirectedAtNarrowcasting: Boolean,
-    postFilteringBasedOnSearchMetadataEnabled: Boolean,
-    getTweetsFromArchiveIndex: Boolean
-  ): Future[GetTweetsResult] = {
-    val beforeTweetIdExclusive = tweetIdRange.toId
-    val afterTweetIdExclusive = tweetIdRange.fromId
-    val searchClientId: Option[String] = if (!getTweetsFromArchiveIndex) {
-      // Set a custom clientId which has different QPS quota and access.
-      // Used for notify we are fetching from realtime only.
+    maxCount:  nt,
+    t et dRange: T et dRange,
+    w hD rectedAtNarrowcast ng: Boolean,
+    postF lter ngBasedOnSearch tadataEnabled: Boolean,
+    getT etsFromArch ve ndex: Boolean
+  ): Future[GetT etsResult] = {
+    val beforeT et dExclus ve = t et dRange.to d
+    val afterT et dExclus ve = t et dRange.from d
+    val searchCl ent d: Opt on[Str ng] =  f (!getT etsFromArch ve ndex) {
+      // Set a custom cl ent d wh ch has d fferent QPS quota and access.
+      // Used for not fy   are fetch ng from realt   only.
       // see: SEARCH-42651
-      Some(getClientId("home_materialization_realtime_only"))
+      So (getCl ent d("ho _mater al zat on_realt  _only"))
     } else {
-      // Let the searchClient derive its clientId for the regular case of fetching from archive
+      // Let t  searchCl ent der ve  s cl ent d for t  regular case of fetch ng from arch ve
       None
     }
 
-    searchClient
-      .getUsersTweetsReverseChron(
-        userId = userId,
-        followedUserIds = allUserIds.toSet,
-        retweetsMutedUserIds = followGraphData.retweetsMutedUserIds,
+    searchCl ent
+      .getUsersT etsReverseChron(
+        user d = user d,
+        follo dUser ds = allUser ds.toSet,
+        ret etsMutedUser ds = followGraphData.ret etsMutedUser ds,
         maxCount = maxCount,
-        beforeTweetIdExclusive = beforeTweetIdExclusive,
-        afterTweetIdExclusive = afterTweetIdExclusive,
-        withDirectedAtNarrowcasting = withDirectedAtNarrowcasting,
-        postFilteringBasedOnSearchMetadataEnabled = postFilteringBasedOnSearchMetadataEnabled,
-        getTweetsFromArchiveIndex = getTweetsFromArchiveIndex,
-        searchClientId = searchClientId
+        beforeT et dExclus ve = beforeT et dExclus ve,
+        afterT et dExclus ve = afterT et dExclus ve,
+        w hD rectedAtNarrowcast ng = w hD rectedAtNarrowcast ng,
+        postF lter ngBasedOnSearch tadataEnabled = postF lter ngBasedOnSearch tadataEnabled,
+        getT etsFromArch ve ndex = getT etsFromArch ve ndex,
+        searchCl ent d = searchCl ent d
       )
       .flatMap { searchResults =>
-        if (searchResults.nonEmpty) {
-          val minTweetId = searchResults.last.id
-          val filteredTweetsFuture = filterTweets(
-            userId,
-            followGraphData.inNetworkUserIds,
+         f (searchResults.nonEmpty) {
+          val m nT et d = searchResults.last. d
+          val f lteredT etsFuture = f lterT ets(
+            user d,
+            followGraphData. nNetworkUser ds,
             searchResults,
-            FiltersBasedOnSearchMetadata,
-            postFilteringBasedOnSearchMetadataEnabled = postFilteringBasedOnSearchMetadataEnabled,
-            visibilityEnforcer
+            F ltersBasedOnSearch tadata,
+            postF lter ngBasedOnSearch tadataEnabled = postF lter ngBasedOnSearch tadataEnabled,
+            v s b l yEnforcer
           )
-          filteredTweetsFuture.map(tweets =>
-            GetTweetsResult(searchResults.size, minTweetId, tweets))
+          f lteredT etsFuture.map(t ets =>
+            GetT etsResult(searchResults.s ze, m nT et d, t ets))
         } else {
-          GetTweetsResult.EmptyFuture
+          GetT etsResult.EmptyFuture
         }
       }
   }
 
-  def filterTweets(
-    userId: UserId,
-    inNetworkUserIds: Seq[UserId],
-    searchResults: Seq[ThriftSearchResult],
-    filtersBasedOnSearchMetadata: TweetFiltersBasedOnSearchMetadata.ValueSet,
-    postFilteringBasedOnSearchMetadataEnabled: Boolean = true,
-    visibilityEnforcer: VisibilityEnforcer
-  ): Future[Seq[Tweet]] = {
-    val filteredTweets = if (postFilteringBasedOnSearchMetadataEnabled) {
-      val tweetsPostFilterBasedOnSearchMetadata =
-        new TweetsPostFilterBasedOnSearchMetadata(filtersBasedOnSearchMetadata, logger, scope)
-      tweetsPostFilterBasedOnSearchMetadata.apply(userId, inNetworkUserIds, searchResults)
+  def f lterT ets(
+    user d: User d,
+     nNetworkUser ds: Seq[User d],
+    searchResults: Seq[Thr ftSearchResult],
+    f ltersBasedOnSearch tadata: T etF ltersBasedOnSearch tadata.ValueSet,
+    postF lter ngBasedOnSearch tadataEnabled: Boolean = true,
+    v s b l yEnforcer: V s b l yEnforcer
+  ): Future[Seq[T et]] = {
+    val f lteredT ets =  f (postF lter ngBasedOnSearch tadataEnabled) {
+      val t etsPostF lterBasedOnSearch tadata =
+        new T etsPostF lterBasedOnSearch tadata(f ltersBasedOnSearch tadata, logger, scope)
+      t etsPostF lterBasedOnSearch tadata.apply(user d,  nNetworkUser ds, searchResults)
     } else {
       searchResults
     }
-    visibilityEnforcer
-      .apply(Some(userId), filteredTweets.map(SearchResultWithVisibilityActors(_, scope)))
+    v s b l yEnforcer
+      .apply(So (user d), f lteredT ets.map(SearchResultW hV s b l yActors(_, scope)))
       .map(_.map { searchResult =>
-        new Tweet(
-          id = searchResult.tweetId,
-          userId = Some(searchResult.userId),
-          sourceTweetId = searchResult.sourceTweetId,
-          sourceUserId = searchResult.sourceUserId)
+        new T et(
+           d = searchResult.t et d,
+          user d = So (searchResult.user d),
+          s ceT et d = searchResult.s ceT et d,
+          s ceUser d = searchResult.s ceUser d)
       })
   }
 
-  @VisibleForTesting
-  private[source] def getMaxCount(context: ReverseChronTimelineQueryContext): Int = {
-    val maxCountFromQuery = ReverseChronTimelineQueryContext.MaxCount(context.query.maxCount)
+  @V s bleForTest ng
+  pr vate[s ce] def getMaxCount(context: ReverseChronT  l neQueryContext):  nt = {
+    val maxCountFromQuery = ReverseChronT  l neQueryContext.MaxCount(context.query.maxCount)
     val maxCountFromContext = context.maxCount()
-    math.min(maxCountFromQuery, maxCountFromContext)
+    math.m n(maxCountFromQuery, maxCountFromContext)
   }
 }

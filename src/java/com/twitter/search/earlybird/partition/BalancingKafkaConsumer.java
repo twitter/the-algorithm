@@ -1,117 +1,117 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.Collections;
+ mport java.t  .Durat on;
+ mport java.ut l.Arrays;
+ mport java.ut l.Collect ons;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.TopicPartition;
+ mport org.apac .kafka.cl ents.consu r.Consu rRecord;
+ mport org.apac .kafka.cl ents.consu r.Consu rRecords;
+ mport org.apac .kafka.cl ents.consu r.KafkaConsu r;
+ mport org.apac .kafka.common.Top cPart  on;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchRateCounter;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftVers onedEvents;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
 
 /**
- * BalancingKafkaConsumer is designed to read from the tweets and updates streams in proportion to
- * the rates that those streams are written to, i.e. both topics should have nearly the same amount
- * of lag. This is important because if one stream gets too far ahead of the other, we could end up
- * in a situation where:
- * 1. If the tweet stream is ahead of the updates stream, we couldn't apply an update because a
- *    segment has been optimized, and one of those fields became frozen.
- * 2. If the updates stream is ahead of the tweet stream, we might drop updates because they are
- *    more than a minute old, but the tweets might still not be indexed.
+ * Balanc ngKafkaConsu r  s des gned to read from t  t ets and updates streams  n proport on to
+ * t  rates that those streams are wr ten to,  .e. both top cs should have nearly t  sa  amount
+ * of lag. T   s  mportant because  f one stream gets too far a ad of t  ot r,   could end up
+ *  n a s uat on w re:
+ * 1.  f t  t et stream  s a ad of t  updates stream,   couldn't apply an update because a
+ *    seg nt has been opt m zed, and one of those f elds beca  frozen.
+ * 2.  f t  updates stream  s a ad of t  t et stream,   m ght drop updates because t y are
+ *    more than a m nute old, but t  t ets m ght st ll not be  ndexed.
  *
- * Also see 'Consumption Flow Control' in
- * https://kafka.apache.org/23/javadoc/index.html?org/apache/kafka/clients/consumer/KafkaConsumer.html
+ * Also see 'Consumpt on Flow Control'  n
+ * https://kafka.apac .org/23/javadoc/ ndex.html?org/apac /kafka/cl ents/consu r/KafkaConsu r.html
  */
-public class BalancingKafkaConsumer {
-  // If one of the topic-partitions lags the other by more than 10 seconds,
-  // it's worth it to pause the faster one and let the slower one catch up.
-  private static final long BALANCE_THRESHOLD_MS = Duration.ofSeconds(10).toMillis();
-  private final KafkaConsumer<Long, ThriftVersionedEvents> kafkaConsumer;
-  private final TopicPartition tweetTopic;
-  private final TopicPartition updateTopic;
-  private final SearchRateCounter tweetsPaused;
-  private final SearchRateCounter updatesPaused;
-  private final SearchRateCounter resumed;
+publ c class Balanc ngKafkaConsu r {
+  //  f one of t  top c-part  ons lags t  ot r by more than 10 seconds,
+  //  's worth   to pause t  faster one and let t  slo r one catch up.
+  pr vate stat c f nal long BALANCE_THRESHOLD_MS = Durat on.ofSeconds(10).toM ll s();
+  pr vate f nal KafkaConsu r<Long, Thr ftVers onedEvents> kafkaConsu r;
+  pr vate f nal Top cPart  on t etTop c;
+  pr vate f nal Top cPart  on updateTop c;
+  pr vate f nal SearchRateCounter t etsPaused;
+  pr vate f nal SearchRateCounter updatesPaused;
+  pr vate f nal SearchRateCounter resu d;
 
-  private long tweetTimestamp = 0;
-  private long updateTimestamp = 0;
-  private long pausedAt = 0;
-  private boolean paused = false;
+  pr vate long t etT  stamp = 0;
+  pr vate long updateT  stamp = 0;
+  pr vate long pausedAt = 0;
+  pr vate boolean paused = false;
 
-  public BalancingKafkaConsumer(
-      KafkaConsumer<Long, ThriftVersionedEvents> kafkaConsumer,
-      TopicPartition tweetTopic,
-      TopicPartition updateTopic
+  publ c Balanc ngKafkaConsu r(
+      KafkaConsu r<Long, Thr ftVers onedEvents> kafkaConsu r,
+      Top cPart  on t etTop c,
+      Top cPart  on updateTop c
   ) {
-    this.kafkaConsumer = kafkaConsumer;
-    this.tweetTopic = tweetTopic;
-    this.updateTopic = updateTopic;
+    t .kafkaConsu r = kafkaConsu r;
+    t .t etTop c = t etTop c;
+    t .updateTop c = updateTop c;
 
-    String prefix = "balancing_kafka_";
-    String suffix = "_topic_paused";
+    Str ng pref x = "balanc ng_kafka_";
+    Str ng suff x = "_top c_paused";
 
-    tweetsPaused = SearchRateCounter.export(prefix + tweetTopic.topic() + suffix);
-    updatesPaused = SearchRateCounter.export(prefix + updateTopic.topic() + suffix);
-    resumed = SearchRateCounter.export(prefix + "topics_resumed");
+    t etsPaused = SearchRateCounter.export(pref x + t etTop c.top c() + suff x);
+    updatesPaused = SearchRateCounter.export(pref x + updateTop c.top c() + suff x);
+    resu d = SearchRateCounter.export(pref x + "top cs_resu d");
   }
 
   /**
-   * Calls poll on the underlying consumer and pauses topics as necessary.
+   * Calls poll on t  underly ng consu r and pauses top cs as necessary.
    */
-  public ConsumerRecords<Long, ThriftVersionedEvents> poll(Duration timeout) {
-    ConsumerRecords<Long, ThriftVersionedEvents> records = kafkaConsumer.poll(timeout);
-    topicFlowControl(records);
+  publ c Consu rRecords<Long, Thr ftVers onedEvents> poll(Durat on t  out) {
+    Consu rRecords<Long, Thr ftVers onedEvents> records = kafkaConsu r.poll(t  out);
+    top cFlowControl(records);
     return records;
   }
 
-  private void topicFlowControl(ConsumerRecords<Long, ThriftVersionedEvents> records) {
-    for (ConsumerRecord<Long, ThriftVersionedEvents> record : records) {
-      long timestamp = record.timestamp();
+  pr vate vo d top cFlowControl(Consu rRecords<Long, Thr ftVers onedEvents> records) {
+    for (Consu rRecord<Long, Thr ftVers onedEvents> record : records) {
+      long t  stamp = record.t  stamp();
 
-      if (updateTopic.topic().equals(record.topic())) {
-        updateTimestamp = Math.max(updateTimestamp, timestamp);
-      } else if (tweetTopic.topic().equals(record.topic())) {
-        tweetTimestamp = Math.max(tweetTimestamp, timestamp);
+       f (updateTop c.top c().equals(record.top c())) {
+        updateT  stamp = Math.max(updateT  stamp, t  stamp);
+      } else  f (t etTop c.top c().equals(record.top c())) {
+        t etT  stamp = Math.max(t etT  stamp, t  stamp);
       } else {
-        throw new IllegalStateException(
-            "Unexpected partition " + record.topic() + " in BalancingKafkaConsumer");
+        throw new  llegalStateExcept on(
+            "Unexpected part  on " + record.top c() + "  n Balanc ngKafkaConsu r");
       }
     }
 
-    if (paused) {
-      // If we paused and one of the streams is still below the pausedAt point, we want to continue
-      // reading from just the lagging stream.
-      if (tweetTimestamp >= pausedAt && updateTimestamp >= pausedAt) {
-        // We caught up, resume reading from both topics.
+     f (paused) {
+      //  f   paused and one of t  streams  s st ll below t  pausedAt po nt,   want to cont nue
+      // read ng from just t  lagg ng stream.
+       f (t etT  stamp >= pausedAt && updateT  stamp >= pausedAt) {
+        //   caught up, resu  read ng from both top cs.
         paused = false;
-        kafkaConsumer.resume(Arrays.asList(tweetTopic, updateTopic));
-        resumed.increment();
+        kafkaConsu r.resu (Arrays.asL st(t etTop c, updateTop c));
+        resu d. ncre nt();
       }
     } else {
-      long difference = Math.abs(tweetTimestamp - updateTimestamp);
+      long d fference = Math.abs(t etT  stamp - updateT  stamp);
 
-      if (difference < BALANCE_THRESHOLD_MS) {
-        // The streams have approximately the same lag, so no need to pause anything.
+       f (d fference < BALANCE_THRESHOLD_MS) {
+        // T  streams have approx mately t  sa  lag, so no need to pause anyth ng.
         return;
       }
-      // The difference is too great, one of the streams is lagging behind the other so we need to
-      // pause one topic so the other can catch up.
+      // T  d fference  s too great, one of t  streams  s lagg ng beh nd t  ot r so   need to
+      // pause one top c so t  ot r can catch up.
       paused = true;
-      pausedAt = Math.max(updateTimestamp, tweetTimestamp);
-      if (tweetTimestamp > updateTimestamp) {
-        kafkaConsumer.pause(Collections.singleton(tweetTopic));
-        tweetsPaused.increment();
+      pausedAt = Math.max(updateT  stamp, t etT  stamp);
+       f (t etT  stamp > updateT  stamp) {
+        kafkaConsu r.pause(Collect ons.s ngleton(t etTop c));
+        t etsPaused. ncre nt();
       } else {
-        kafkaConsumer.pause(Collections.singleton(updateTopic));
-        updatesPaused.increment();
+        kafkaConsu r.pause(Collect ons.s ngleton(updateTop c));
+        updatesPaused. ncre nt();
       }
     }
   }
 
-  public void close() {
-    kafkaConsumer.close();
+  publ c vo d close() {
+    kafkaConsu r.close();
   }
 }

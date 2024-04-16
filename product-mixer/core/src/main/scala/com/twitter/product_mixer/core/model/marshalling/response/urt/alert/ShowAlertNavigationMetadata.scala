@@ -1,3 +1,3 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.alert
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.alert
 
-case class ShowAlertNavigationMetadata(navigateToEntryId: String)
+case class ShowAlertNav gat on tadata(nav gateToEntry d: Str ng)

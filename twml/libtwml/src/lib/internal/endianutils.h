@@ -1,137 +1,137 @@
 //
-//  endian_fix.h
-//  ImageCore
+//  end an_f x.h
+//   mageCore
 //
-//  For OSes that use glibc < 2.9 (like RHEL5)
+//  For OSes that use gl bc < 2.9 (l ke RHEL5)
 //
 #pragma once
 
-#ifdef __APPLE__
-#include <libkern/OSByteOrder.h>
-#define htobe16(x) OSSwapHostToBigInt16(x)
-#define htole16(x) OSSwapHostToLittleInt16(x)
-#define betoh16(x) OSSwapBigToHostInt16(x)
-#define letoh16(x) OSSwapLittleToHostInt16(x)
-#define htobe32(x) OSSwapHostToBigInt32(x)
-#define htole32(x) OSSwapHostToLittleInt32(x)
-#define betoh32(x) OSSwapBigToHostInt32(x)
-#define letoh32(x) OSSwapLittleToHostInt32(x)
-#define htobe64(x) OSSwapHostToBigInt64(x)
-#define htole64(x) OSSwapHostToLittleInt64(x)
-#define betoh64(x) OSSwapBigToHostInt64(x)
-#define letoh64(x) OSSwapLittleToHostInt64(x)
+# fdef __APPLE__
+# nclude <l bkern/OSByteOrder.h>
+#def ne htobe16(x) OSSwapHostToB g nt16(x)
+#def ne htole16(x) OSSwapHostToL tle nt16(x)
+#def ne betoh16(x) OSSwapB gToHost nt16(x)
+#def ne letoh16(x) OSSwapL tleToHost nt16(x)
+#def ne htobe32(x) OSSwapHostToB g nt32(x)
+#def ne htole32(x) OSSwapHostToL tle nt32(x)
+#def ne betoh32(x) OSSwapB gToHost nt32(x)
+#def ne letoh32(x) OSSwapL tleToHost nt32(x)
+#def ne htobe64(x) OSSwapHostToB g nt64(x)
+#def ne htole64(x) OSSwapHostToL tle nt64(x)
+#def ne betoh64(x) OSSwapB gToHost nt64(x)
+#def ne letoh64(x) OSSwapL tleToHost nt64(x)
 #else
-#include <endian.h>
-#ifdef __USE_BSD
-/* Conversion interfaces.  */
-#include <byteswap.h>
+# nclude <end an.h>
+# fdef __USE_BSD
+/* Convers on  nterfaces.  */
+# nclude <byteswap.h>
 
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-#ifndef htobe16
-#define htobe16(x) __bswap_16(x)
-#endif
-#ifndef htole16
-#define htole16(x) (x)
-#endif
-#ifndef betoh16
-#define betoh16(x) __bswap_16(x)
-#endif
-#ifndef letoh16
-#define letoh16(x) (x)
-#endif
+# f __BYTE_ORDER == __L TTLE_END AN
+# fndef htobe16
+#def ne htobe16(x) __bswap_16(x)
+#end f
+# fndef htole16
+#def ne htole16(x) (x)
+#end f
+# fndef betoh16
+#def ne betoh16(x) __bswap_16(x)
+#end f
+# fndef letoh16
+#def ne letoh16(x) (x)
+#end f
 
-#ifndef htobe32
-#define htobe32(x) __bswap_32(x)
-#endif
-#ifndef htole32
-#define htole32(x) (x)
-#endif
-#ifndef betoh32
-#define betoh32(x) __bswap_32(x)
-#endif
-#ifndef letoh32
-#define letoh32(x) (x)
-#endif
+# fndef htobe32
+#def ne htobe32(x) __bswap_32(x)
+#end f
+# fndef htole32
+#def ne htole32(x) (x)
+#end f
+# fndef betoh32
+#def ne betoh32(x) __bswap_32(x)
+#end f
+# fndef letoh32
+#def ne letoh32(x) (x)
+#end f
 
-#ifndef htobe64
-#define htobe64(x) __bswap_64(x)
-#endif
-#ifndef htole64
-#define htole64(x) (x)
-#endif
-#ifndef betoh64
-#define betoh64(x) __bswap_64(x)
-#endif
-#ifndef letoh64
-#define letoh64(x) (x)
-#endif
+# fndef htobe64
+#def ne htobe64(x) __bswap_64(x)
+#end f
+# fndef htole64
+#def ne htole64(x) (x)
+#end f
+# fndef betoh64
+#def ne betoh64(x) __bswap_64(x)
+#end f
+# fndef letoh64
+#def ne letoh64(x) (x)
+#end f
 
-#else /* __BYTE_ORDER == __LITTLE_ENDIAN */
-#ifndef htobe16
-#define htobe16(x) (x)
-#endif
-#ifndef htole16
-#define htole16(x) __bswap_16(x)
-#endif
-#ifndef be16toh
-#define be16toh(x) (x)
-#endif
-#ifndef le16toh
-#define le16toh(x) __bswap_16(x)
-#endif
+#else /* __BYTE_ORDER == __L TTLE_END AN */
+# fndef htobe16
+#def ne htobe16(x) (x)
+#end f
+# fndef htole16
+#def ne htole16(x) __bswap_16(x)
+#end f
+# fndef be16toh
+#def ne be16toh(x) (x)
+#end f
+# fndef le16toh
+#def ne le16toh(x) __bswap_16(x)
+#end f
 
-#ifndef htobe32
-#define htobe32(x) (x)
-#endif
-#ifndef htole32
-#define htole32(x) __bswap_32(x)
-#endif
-#ifndef betoh32
-#define betoh32(x) (x)
-#endif
-#ifndef letoh32
-#define letoh32(x) __bswap_32(x)
-#endif
+# fndef htobe32
+#def ne htobe32(x) (x)
+#end f
+# fndef htole32
+#def ne htole32(x) __bswap_32(x)
+#end f
+# fndef betoh32
+#def ne betoh32(x) (x)
+#end f
+# fndef letoh32
+#def ne letoh32(x) __bswap_32(x)
+#end f
 
-#ifndef htobe64
-#define htobe64(x) (x)
-#endif
-#ifndef htole64
-#define htole64(x) __bswap_64(x)
-#endif
-#ifndef betoh64
-#define betoh64(x) (x)
-#endif
-#ifndef letoh64
-#define letoh64(x) __bswap_64(x)
-#endif
+# fndef htobe64
+#def ne htobe64(x) (x)
+#end f
+# fndef htole64
+#def ne htole64(x) __bswap_64(x)
+#end f
+# fndef betoh64
+#def ne betoh64(x) (x)
+#end f
+# fndef letoh64
+#def ne letoh64(x) __bswap_64(x)
+#end f
 
-#endif /* __BYTE_ORDER == __LITTLE_ENDIAN */
+#end f /* __BYTE_ORDER == __L TTLE_END AN */
 
 #else  /* __USE_BSD */
-#ifndef betoh16
-#define betoh16 be16toh
-#endif
+# fndef betoh16
+#def ne betoh16 be16toh
+#end f
 
-#ifndef betoh32
-#define betoh32 be32toh
-#endif
+# fndef betoh32
+#def ne betoh32 be32toh
+#end f
 
-#ifndef betoh64
-#define betoh64 be64toh
-#endif
+# fndef betoh64
+#def ne betoh64 be64toh
+#end f
 
-#ifndef letoh16
-#define letoh16 le16toh
-#endif
+# fndef letoh16
+#def ne letoh16 le16toh
+#end f
 
-#ifndef letoh32
-#define letoh32 le32toh
-#endif
+# fndef letoh32
+#def ne letoh32 le32toh
+#end f
 
-#ifndef letoh64
-#define letoh64 le64toh
-#endif
+# fndef letoh64
+#def ne letoh64 le64toh
+#end f
 
-#endif /* __USE_BSD */
-#endif /* __APPLE__ */
+#end f /* __USE_BSD */
+#end f /* __APPLE__ */

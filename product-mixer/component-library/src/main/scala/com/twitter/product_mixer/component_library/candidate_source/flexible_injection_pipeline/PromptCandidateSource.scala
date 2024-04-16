@@ -1,50 +1,50 @@
-package com.twitter.product_mixer.component_library.candidate_source.flexible_injection_pipeline
+package com.tw ter.product_m xer.component_l brary.cand date_s ce.flex ble_ nject on_p pel ne
 
-import com.twitter.inject.Logging
-import com.twitter.onboarding.injections.{thriftscala => injectionsthrift}
-import com.twitter.onboarding.task.service.{thriftscala => servicethrift}
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter. nject.Logg ng
+ mport com.tw ter.onboard ng. nject ons.{thr ftscala =>  nject onsthr ft}
+ mport com.tw ter.onboard ng.task.serv ce.{thr ftscala => serv cethr ft}
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.st ch.St ch
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * Returns a list of prompts to insert into a user's timeline (inline prompt, cover modals, etc)
- * from go/flip (the prompting platform for Twitter).
+ * Returns a l st of prompts to  nsert  nto a user's t  l ne ( nl ne prompt, cover modals, etc)
+ * from go/fl p (t  prompt ng platform for Tw ter).
  */
-@Singleton
-class PromptCandidateSource @Inject() (taskService: servicethrift.TaskService.MethodPerEndpoint)
-    extends CandidateSource[servicethrift.GetInjectionsRequest, IntermediatePrompt]
-    with Logging {
+@S ngleton
+class PromptCand dateS ce @ nject() (taskServ ce: serv cethr ft.TaskServ ce. thodPerEndpo nt)
+    extends Cand dateS ce[serv cethr ft.Get nject onsRequest,  nter d atePrompt]
+    w h Logg ng {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    "InjectionPipelinePrompts")
+  overr de val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er(
+    " nject onP pel nePrompts")
 
-  override def apply(
-    request: servicethrift.GetInjectionsRequest
-  ): Stitch[Seq[IntermediatePrompt]] = {
-    Stitch
-      .callFuture(taskService.getInjections(request)).map {
-        _.injections.flatMap {
-          // The entire carousel is getting added to each IntermediatePrompt item with a
-          // corresponding index to be unpacked later on to populate its TimelineEntry counterpart.
-          case injection: injectionsthrift.Injection.TilesCarousel =>
-            injection.tilesCarousel.tiles.zipWithIndex.map {
-              case (tile: injectionsthrift.Tile, index: Int) =>
-                IntermediatePrompt(injection, Some(index), Some(tile))
+  overr de def apply(
+    request: serv cethr ft.Get nject onsRequest
+  ): St ch[Seq[ nter d atePrompt]] = {
+    St ch
+      .callFuture(taskServ ce.get nject ons(request)).map {
+        _. nject ons.flatMap {
+          // T  ent re carousel  s gett ng added to each  nter d atePrompt  em w h a
+          // correspond ng  ndex to be unpacked later on to populate  s T  l neEntry counterpart.
+          case  nject on:  nject onsthr ft. nject on.T lesCarousel =>
+             nject on.t lesCarousel.t les.z pW h ndex.map {
+              case (t le:  nject onsthr ft.T le,  ndex:  nt) =>
+                 nter d atePrompt( nject on, So ( ndex), So (t le))
             }
-          case injection => Seq(IntermediatePrompt(injection, None, None))
+          case  nject on => Seq( nter d atePrompt( nject on, None, None))
         }
       }
   }
 }
 
 /**
- * Gives an intermediate step to help 'explosion' of tile carousel tiles due to TimelineModule
- * not being an extension of TimelineItem
+ * G ves an  nter d ate step to  lp 'explos on' of t le carousel t les due to T  l neModule
+ * not be ng an extens on of T  l ne em
  */
-case class IntermediatePrompt(
-  injection: injectionsthrift.Injection,
-  offsetInModule: Option[Int],
-  carouselTile: Option[injectionsthrift.Tile])
+case class  nter d atePrompt(
+   nject on:  nject onsthr ft. nject on,
+  offset nModule: Opt on[ nt],
+  carouselT le: Opt on[ nject onsthr ft.T le])

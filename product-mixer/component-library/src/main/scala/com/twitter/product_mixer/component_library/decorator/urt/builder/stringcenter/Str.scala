@@ -1,36 +1,36 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.stringcenter
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.str ngcenter
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.stringcenter.BaseStringCenterPlaceholderBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.stringcenter.client.core.ExternalString
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseStr
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.str ngcenter.BaseStr ngCenterPlaceholderBu lder
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.str ngcenter.cl ent.Str ngCenter
+ mport com.tw ter.str ngcenter.cl ent.core.ExternalStr ng
 
-case class StrStatic(
-  text: String)
-    extends BaseStr[PipelineQuery, UniversalNoun[Any]] {
+case class StrStat c(
+  text: Str ng)
+    extends BaseStr[P pel neQuery, Un versalNoun[Any]] {
   def apply(
-    query: PipelineQuery,
-    candidate: UniversalNoun[Any],
-    candidateFeatures: FeatureMap
-  ): String = text
+    query: P pel neQuery,
+    cand date: Un versalNoun[Any],
+    cand dateFeatures: FeatureMap
+  ): Str ng = text
 }
 
-case class Str[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  text: ExternalString,
-  stringCenter: StringCenter,
-  stringCenterPlaceholderBuilder: Option[BaseStringCenterPlaceholderBuilder[Query, Candidate]] =
+case class Str[-Query <: P pel neQuery, -Cand date <: Un versalNoun[Any]](
+  text: ExternalStr ng,
+  str ngCenter: Str ngCenter,
+  str ngCenterPlaceholderBu lder: Opt on[BaseStr ngCenterPlaceholderBu lder[Query, Cand date]] =
     None)
-    extends BaseStr[Query, Candidate] {
+    extends BaseStr[Query, Cand date] {
 
-  def apply(query: Query, candidate: Candidate, candidateFeatures: FeatureMap): String = {
+  def apply(query: Query, cand date: Cand date, cand dateFeatures: FeatureMap): Str ng = {
     val placeholderMapOpt =
-      stringCenterPlaceholderBuilder.map(_.apply(query, candidate, candidateFeatures))
-    stringCenter.prepare(
-      externalString = text,
-      placeholders = placeholderMapOpt.getOrElse(Map.empty[String, Any])
+      str ngCenterPlaceholderBu lder.map(_.apply(query, cand date, cand dateFeatures))
+    str ngCenter.prepare(
+      externalStr ng = text,
+      placeholders = placeholderMapOpt.getOrElse(Map.empty[Str ng, Any])
     )
   }
 }

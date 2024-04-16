@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.component_library.selector.sorter
+package com.tw ter.product_m xer.component_l brary.selector.sorter
 
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import scala.util.Random
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport scala.ut l.Random
 
 /**
- * Randomly shuffles candidates using the provided [[random]]
+ * Randomly shuffles cand dates us ng t  prov ded [[random]]
  *
  * @example `UpdateSortResults(RandomShuffleSorter())`
- * @param random used to set the seed and for ease of testing, in most cases leaving it as the default is fine.
+ * @param random used to set t  seed and for ease of test ng,  n most cases leav ng   as t  default  s f ne.
  */
-case class RandomShuffleSorter(random: Random = new Random(0)) extends SorterProvider with Sorter {
+case class RandomShuffleSorter(random: Random = new Random(0)) extends SorterProv der w h Sorter {
 
-  override def sort[Candidate <: CandidateWithDetails](candidates: Seq[Candidate]): Seq[Candidate] =
-    random.shuffle(candidates)
+  overr de def sort[Cand date <: Cand dateW hDeta ls](cand dates: Seq[Cand date]): Seq[Cand date] =
+    random.shuffle(cand dates)
 }

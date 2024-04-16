@@ -1,51 +1,51 @@
-package com.twitter.unified_user_actions.adapter.tweetypie_event
+package com.tw ter.un f ed_user_act ons.adapter.t etyp e_event
 
-import com.twitter.tweetypie.thriftscala.TweetEventFlags
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.EventMetadata
-import com.twitter.unified_user_actions.thriftscala.Item
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
-import com.twitter.unified_user_actions.thriftscala.UserIdentifier
+ mport com.tw ter.t etyp e.thr ftscala.T etEventFlags
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Act onType
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Event tadata
+ mport com.tw ter.un f ed_user_act ons.thr ftscala. em
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Un f edUserAct on
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.User dent f er
 
 /**
- * Base class for Tweetypie Tweet Event.
- * Extends this class if you need to implement the parser for a new Tweetypie Tweet Event Type.
- * @see https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/thrift/com/twitter/tweetypie/tweet_events.thrift?L225
+ * Base class for T etyp e T et Event.
+ * Extends t  class  f   need to  mple nt t  parser for a new T etyp e T et Event Type.
+ * @see https://s cegraph.tw ter.b z/g .tw ter.b z/s ce/-/blob/src/thr ft/com/tw ter/t etyp e/t et_events.thr ft?L225
  */
-trait BaseTweetypieTweetEvent[T] {
+tra  BaseT etyp eT etEvent[T] {
 
   /**
-   * Returns an Optional UnifiedUserAction from the event.
+   * Returns an Opt onal Un f edUserAct on from t  event.
    */
-  def getUnifiedUserAction(event: T, flags: TweetEventFlags): Option[UnifiedUserAction]
+  def getUn f edUserAct on(event: T, flags: T etEventFlags): Opt on[Un f edUserAct on]
 
   /**
-   * Returns UnifiedUserAction.ActionType for each type of event.
+   * Returns Un f edUserAct on.Act onType for each type of event.
    */
-  protected def actionType: ActionType
+  protected def act onType: Act onType
 
   /**
-   * Output type of the predicate. Could be an input of getItem.
+   * Output type of t  pred cate. Could be an  nput of get em.
    */
   type ExtractedEvent
 
   /**
-   * Returns Some(ExtractedEvent) if the event is valid and None otherwise.
+   * Returns So (ExtractedEvent)  f t  event  s val d and None ot rw se.
    */
-  protected def extract(event: T): Option[ExtractedEvent]
+  protected def extract(event: T): Opt on[ExtractedEvent]
 
   /**
-   * Get the UnifiedUserAction.Item from the event.
+   * Get t  Un f edUserAct on. em from t  event.
    */
-  protected def getItem(extractedEvent: ExtractedEvent, event: T): Item
+  protected def get em(extractedEvent: ExtractedEvent, event: T):  em
 
   /**
-   * Get the UnifiedUserAction.UserIdentifier from the event.
+   * Get t  Un f edUserAct on.User dent f er from t  event.
    */
-  protected def getUserIdentifier(event: T): UserIdentifier
+  protected def getUser dent f er(event: T): User dent f er
 
   /**
-   * Get UnifiedUserAction.EventMetadata from the event.
+   * Get Un f edUserAct on.Event tadata from t  event.
    */
-  protected def getEventMetadata(event: T, flags: TweetEventFlags): EventMetadata
+  protected def getEvent tadata(event: T, flags: T etEventFlags): Event tadata
 }

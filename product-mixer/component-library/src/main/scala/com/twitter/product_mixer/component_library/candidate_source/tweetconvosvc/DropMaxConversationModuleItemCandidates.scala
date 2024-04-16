@@ -1,55 +1,55 @@
-package com.twitter.product_mixer.component_library.candidate_source.tweetconvosvc
+package com.tw ter.product_m xer.component_l brary.cand date_s ce.t etconvosvc
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.SelectorResult
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on.ModuleCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * Takes a conversation module item and truncates it to be at most the focal tweet, the focal tweet's
- * in reply to tweet and optionally, the root conversation tweet if desired.
- * @param pipelineScope What pipeline scopes to include in this.
- * @param includeRootTweet Whether to include the root tweet at the top of the conversation or not.
+ * Takes a conversat on module  em and truncates   to be at most t  focal t et, t  focal t et's
+ *  n reply to t et and opt onally, t  root conversat on t et  f des red.
+ * @param p pel neScope What p pel ne scopes to  nclude  n t .
+ * @param  ncludeRootT et W t r to  nclude t  root t et at t  top of t  conversat on or not.
  * @tparam Query
  */
-case class DropMaxConversationModuleItemCandidates[-Query <: PipelineQuery](
-  override val pipelineScope: CandidateScope,
-  includeRootTweet: Boolean)
+case class DropMaxConversat onModule emCand dates[-Query <: P pel neQuery](
+  overr de val p pel neScope: Cand dateScope,
+   ncludeRootT et: Boolean)
     extends Selector[Query] {
-  override def apply(
+  overr de def apply(
     query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
-    val updatedCandidates = remainingCandidates.collect {
-      case moduleCandidate: ModuleCandidateWithDetails if pipelineScope.contains(moduleCandidate) =>
-        updateConversationModule(moduleCandidate, includeRootTweet)
-      case candidates => candidates
+    val updatedCand dates = rema n ngCand dates.collect {
+      case moduleCand date: ModuleCand dateW hDeta ls  f p pel neScope.conta ns(moduleCand date) =>
+        updateConversat onModule(moduleCand date,  ncludeRootT et)
+      case cand dates => cand dates
     }
-    SelectorResult(remainingCandidates = updatedCandidates, result = result)
+    SelectorResult(rema n ngCand dates = updatedCand dates, result = result)
   }
 
-  private def updateConversationModule(
-    module: ModuleCandidateWithDetails,
-    includeRootTweet: Boolean
-  ): ModuleCandidateWithDetails = {
-    // If the thread is only the root tweet & a focal tweet replying to it, no truncation can be done.
-    if (module.candidates.length <= 2) {
+  pr vate def updateConversat onModule(
+    module: ModuleCand dateW hDeta ls,
+     ncludeRootT et: Boolean
+  ): ModuleCand dateW hDeta ls = {
+    //  f t  thread  s only t  root t et & a focal t et reply ng to  , no truncat on can be done.
+     f (module.cand dates.length <= 2) {
       module
     } else {
-      // If a thread is more 3 or more tweets, we optionally keep the root tweet if desired, and take
-      // the focal tweet tweet and its direct ancestor (the one it would have replied to) and return
+      //  f a thread  s more 3 or more t ets,   opt onally keep t  root t et  f des red, and take
+      // t  focal t et t et and  s d rect ancestor (t  one   would have repl ed to) and return
       // those.
-      val tweetCandidates = module.candidates
-      val replyAndFocalTweet = tweetCandidates.takeRight(2)
-      val updatedConversation = if (includeRootTweet) {
-        tweetCandidates.headOption ++ replyAndFocalTweet
+      val t etCand dates = module.cand dates
+      val replyAndFocalT et = t etCand dates.takeR ght(2)
+      val updatedConversat on =  f ( ncludeRootT et) {
+        t etCand dates. adOpt on ++ replyAndFocalT et
       } else {
-        replyAndFocalTweet
+        replyAndFocalT et
       }
-      module.copy(candidates = updatedConversation.toSeq)
+      module.copy(cand dates = updatedConversat on.toSeq)
     }
   }
 }

@@ -1,18 +1,18 @@
-package com.twitter.tweetypie.util
+package com.tw ter.t etyp e.ut l
 
-import com.twitter.tweetutil.TweetPermalink
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.t etut l.T etPermal nk
+ mport com.tw ter.t etyp e.thr ftscala._
 
-object TweetPermalinkUtil {
-  def lastQuotedTweetPermalink(tweet: Tweet): Option[(UrlEntity, TweetPermalink)] =
-    lastQuotedTweetPermalink(TweetLenses.urls.get(tweet))
+object T etPermal nkUt l {
+  def lastQuotedT etPermal nk(t et: T et): Opt on[(UrlEnt y, T etPermal nk)] =
+    lastQuotedT etPermal nk(T etLenses.urls.get(t et))
 
-  def lastQuotedTweetPermalink(urls: Seq[UrlEntity]): Option[(UrlEntity, TweetPermalink)] =
-    urls.flatMap(matchQuotedTweetPermalink).lastOption
+  def lastQuotedT etPermal nk(urls: Seq[UrlEnt y]): Opt on[(UrlEnt y, T etPermal nk)] =
+    urls.flatMap(matchQuotedT etPermal nk).lastOpt on
 
-  def matchQuotedTweetPermalink(entity: UrlEntity): Option[(UrlEntity, TweetPermalink)] =
+  def matchQuotedT etPermal nk(ent y: UrlEnt y): Opt on[(UrlEnt y, T etPermal nk)] =
     for {
-      expanded <- entity.expanded
-      permalink <- TweetPermalink.parse(expanded)
-    } yield (entity, permalink)
+      expanded <- ent y.expanded
+      permal nk <- T etPermal nk.parse(expanded)
+    } y eld (ent y, permal nk)
 }

@@ -1,10 +1,10 @@
-package com.twitter.search.earlybird_root.common;
+package com.tw ter.search.earlyb rd_root.common;
 
-public final class InjectionNames {
+publ c f nal class  nject onNa s {
 
-  public static final String FULL_ARCHIVE = "full_archive";
-  public static final String REALTIME = "realtime";
-  public static final String PROTECTED = "protected";
+  publ c stat c f nal Str ng FULL_ARCH VE = "full_arch ve";
+  publ c stat c f nal Str ng REALT ME = "realt  ";
+  publ c stat c f nal Str ng PROTECTED = "protected";
 
-  private InjectionNames() { }
+  pr vate  nject onNa s() { }
 }

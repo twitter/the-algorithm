@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.contextual_ref
 
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.SafetyLevel
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.rtf.safety_level.SafetyLevel
 
-case class TweetHydrationContext(
-  safetyLevelOverride: Option[SafetyLevel],
-  outerTweetContext: Option[OuterTweetContext])
+case class T etHydrat onContext(
+  safetyLevelOverr de: Opt on[SafetyLevel],
+  outerT etContext: Opt on[OuterT etContext])

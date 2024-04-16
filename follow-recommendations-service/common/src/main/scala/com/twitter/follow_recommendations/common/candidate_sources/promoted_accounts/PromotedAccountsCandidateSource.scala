@@ -1,111 +1,111 @@
-package com.twitter.follow_recommendations.common.candidate_sources.promoted_accounts
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.promoted_accounts
 
-import com.twitter.adserver.thriftscala.AdServerException
-import com.twitter.adserver.{thriftscala => adthrift}
-import com.twitter.finagle.TimeoutException
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.clients.adserver.AdRequest
-import com.twitter.follow_recommendations.common.clients.adserver.AdserverClient
-import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.hermit.model.Algorithm
-import com.twitter.inject.Logging
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.adserver.thr ftscala.AdServerExcept on
+ mport com.tw ter.adserver.{thr ftscala => adthr ft}
+ mport com.tw ter.f nagle.T  outExcept on
+ mport com.tw ter.f nagle.stats.Counter
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.adserver.AdRequest
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.adserver.AdserverCl ent
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.soc algraph.Soc alGraphCl ent
+ mport com.tw ter.follow_recom ndat ons.common.models.FollowProof
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter. nject.Logg ng
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.st ch.St ch
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-case class PromotedCandidateUser(
-  id: Long,
-  position: Int,
-  adImpression: adthrift.AdImpression,
+case class PromotedCand dateUser(
+   d: Long,
+  pos  on:  nt,
+  ad mpress on: adthr ft.Ad mpress on,
   followProof: FollowProof,
-  primaryCandidateSource: Option[CandidateSourceIdentifier])
+  pr maryCand dateS ce: Opt on[Cand dateS ce dent f er])
 
-@Singleton
-class PromotedAccountsCandidateSource @Inject() (
-  adserverClient: AdserverClient,
-  sgsClient: SocialGraphClient,
-  statsReceiver: StatsReceiver)
-    extends CandidateSource[AdRequest, PromotedCandidateUser]
-    with Logging {
+@S ngleton
+class PromotedAccountsCand dateS ce @ nject() (
+  adserverCl ent: AdserverCl ent,
+  sgsCl ent: Soc alGraphCl ent,
+  statsRece ver: StatsRece ver)
+    extends Cand dateS ce[AdRequest, PromotedCand dateUser]
+    w h Logg ng {
 
-  override val identifier: CandidateSourceIdentifier =
-    PromotedAccountsCandidateSource.Identifier
+  overr de val  dent f er: Cand dateS ce dent f er =
+    PromotedAccountsCand dateS ce. dent f er
 
-  val stats: StatsReceiver = statsReceiver.scope(identifier.name)
-  val failureStat: StatsReceiver = stats.scope("failures")
-  val adServerExceptionsCounter: Counter = failureStat.counter("AdServerException")
-  val timeoutCounter: Counter = failureStat.counter("TimeoutException")
+  val stats: StatsRece ver = statsRece ver.scope( dent f er.na )
+  val fa lureStat: StatsRece ver = stats.scope("fa lures")
+  val adServerExcept onsCounter: Counter = fa lureStat.counter("AdServerExcept on")
+  val t  outCounter: Counter = fa lureStat.counter("T  outExcept on")
 
-  def apply(request: AdRequest): Stitch[Seq[PromotedCandidateUser]] = {
-    adserverClient
-      .getAdImpressions(request)
+  def apply(request: AdRequest): St ch[Seq[PromotedCand dateUser]] = {
+    adserverCl ent
+      .getAd mpress ons(request)
       .rescue {
-        case e: TimeoutException =>
-          timeoutCounter.incr()
-          logger.warn("Timeout on Adserver", e)
-          Stitch.Nil
-        case e: AdServerException =>
-          adServerExceptionsCounter.incr()
-          logger.warn("Failed to fetch ads", e)
-          Stitch.Nil
+        case e: T  outExcept on =>
+          t  outCounter. ncr()
+          logger.warn("T  out on Adserver", e)
+          St ch.N l
+        case e: AdServerExcept on =>
+          adServerExcept onsCounter. ncr()
+          logger.warn("Fa led to fetch ads", e)
+          St ch.N l
       }
-      .flatMap { adImpressions: Seq[adthrift.AdImpression] =>
-        profileNumResults(adImpressions.size, "results_from_ad_server")
-        val idToImpMap = (for {
-          imp <- adImpressions
-          promotedAccountId <- imp.promotedAccountId
-        } yield promotedAccountId -> imp).toMap
-        request.clientContext.userId
-          .map { userId =>
-            sgsClient
-              .getIntersections(
-                userId,
-                adImpressions.filter(shouldShowSocialContext).flatMap(_.promotedAccountId),
-                PromotedAccountsCandidateSource.NumIntersections
-              ).map { promotedAccountWithIntersections =>
-                idToImpMap.map {
-                  case (promotedAccountId, imp) =>
-                    PromotedCandidateUser(
-                      promotedAccountId,
-                      imp.insertionPosition
-                        .map(_.toInt).getOrElse(
-                          getInsertionPositionDefaultValue(request.isTest.getOrElse(false))
+      .flatMap { ad mpress ons: Seq[adthr ft.Ad mpress on] =>
+        prof leNumResults(ad mpress ons.s ze, "results_from_ad_server")
+        val  dTo mpMap = (for {
+           mp <- ad mpress ons
+          promotedAccount d <-  mp.promotedAccount d
+        } y eld promotedAccount d ->  mp).toMap
+        request.cl entContext.user d
+          .map { user d =>
+            sgsCl ent
+              .get ntersect ons(
+                user d,
+                ad mpress ons.f lter(shouldShowSoc alContext).flatMap(_.promotedAccount d),
+                PromotedAccountsCand dateS ce.Num ntersect ons
+              ).map { promotedAccountW h ntersect ons =>
+                 dTo mpMap.map {
+                  case (promotedAccount d,  mp) =>
+                    PromotedCand dateUser(
+                      promotedAccount d,
+                       mp. nsert onPos  on
+                        .map(_.to nt).getOrElse(
+                          get nsert onPos  onDefaultValue(request. sTest.getOrElse(false))
                         ),
-                      imp,
-                      promotedAccountWithIntersections
-                        .getOrElse(promotedAccountId, FollowProof(Nil, 0)),
-                      Some(identifier)
+                       mp,
+                      promotedAccountW h ntersect ons
+                        .getOrElse(promotedAccount d, FollowProof(N l, 0)),
+                      So ( dent f er)
                     )
                 }.toSeq
-              }.onSuccess(result => profileNumResults(result.size, "final_results"))
-          }.getOrElse(Stitch.Nil)
+              }.onSuccess(result => prof leNumResults(result.s ze, "f nal_results"))
+          }.getOrElse(St ch.N l)
       }
   }
 
-  private def shouldShowSocialContext(imp: adthrift.AdImpression): Boolean =
-    imp.experimentValues.exists { expValues =>
-      expValues.get("display.display_style").contains("show_social_context")
+  pr vate def shouldShowSoc alContext( mp: adthr ft.Ad mpress on): Boolean =
+     mp.exper  ntValues.ex sts { expValues =>
+      expValues.get("d splay.d splay_style").conta ns("show_soc al_context")
     }
 
-  private def getInsertionPositionDefaultValue(isTest: Boolean): Int = {
-    if (isTest) 0 else -1
+  pr vate def get nsert onPos  onDefaultValue( sTest: Boolean):  nt = {
+     f ( sTest) 0 else -1
   }
 
-  private def profileNumResults(resultsSize: Int, statName: String): Unit = {
-    if (resultsSize <= 5) {
-      stats.scope(statName).counter(resultsSize.toString).incr()
+  pr vate def prof leNumResults(resultsS ze:  nt, statNa : Str ng): Un  = {
+     f (resultsS ze <= 5) {
+      stats.scope(statNa ).counter(resultsS ze.toStr ng). ncr()
     } else {
-      stats.scope(statName).counter("more_than_5").incr()
+      stats.scope(statNa ).counter("more_than_5"). ncr()
     }
   }
 }
 
-object PromotedAccountsCandidateSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.PromotedAccount.toString)
-  val NumIntersections = 3
+object PromotedAccountsCand dateS ce {
+  val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er(
+    Algor hm.PromotedAccount.toStr ng)
+  val Num ntersect ons = 3
 }

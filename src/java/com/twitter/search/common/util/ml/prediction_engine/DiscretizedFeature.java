@@ -1,44 +1,44 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+package com.tw ter.search.common.ut l.ml.pred ct on_eng ne;
 
-import java.util.Arrays;
+ mport java.ut l.Arrays;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
 /**
- * Represents a continuous feature that has been discretized into a set of disjoint ranges.
+ * Represents a cont nuous feature that has been d scret zed  nto a set of d sjo nt ranges.
  *
- * Each range [a, b) is represented by the lower split point (a) and its associated weight.
+ * Each range [a, b)  s represented by t  lo r spl  po nt (a) and  s assoc ated   ght.
  */
-class DiscretizedFeature {
+class D scret zedFeature {
 
-  protected final double[] splitPoints;
-  protected final double[] weights;
+  protected f nal double[] spl Po nts;
+  protected f nal double[]   ghts;
 
   /**
-   * Creates an instance from a list of split points and their corresponding weights.
+   * Creates an  nstance from a l st of spl  po nts and t  r correspond ng   ghts.
    *
-   * @param splitPoints Lower values of the ranges. The first entry must be Double.NEGATIVE_INFINITY
-   *  They must be sorted (in ascending order).
-   * @param  weights Weights for the splits.
+   * @param spl Po nts Lo r values of t  ranges. T  f rst entry must be Double.NEGAT VE_ NF N TY
+   *  T y must be sorted ( n ascend ng order).
+   * @param    ghts   ghts for t  spl s.
    */
-  protected DiscretizedFeature(double[] splitPoints, double[] weights) {
-    Preconditions.checkArgument(splitPoints.length == weights.length);
-    Preconditions.checkArgument(splitPoints.length > 1);
-    Preconditions.checkArgument(splitPoints[0] == Double.NEGATIVE_INFINITY,
-        "First split point must be Double.NEGATIVE_INFINITY");
-    this.splitPoints = splitPoints;
-    this.weights = weights;
+  protected D scret zedFeature(double[] spl Po nts, double[]   ghts) {
+    Precond  ons.c ckArgu nt(spl Po nts.length ==   ghts.length);
+    Precond  ons.c ckArgu nt(spl Po nts.length > 1);
+    Precond  ons.c ckArgu nt(spl Po nts[0] == Double.NEGAT VE_ NF N TY,
+        "F rst spl  po nt must be Double.NEGAT VE_ NF N TY");
+    t .spl Po nts = spl Po nts;
+    t .  ghts =   ghts;
   }
 
-  public double getWeight(double value) {
-    // binarySearch returns (- insertionPoint - 1)
-    int index = Math.abs(Arrays.binarySearch(splitPoints, value) + 1) - 1;
-    return weights[index];
+  publ c double get  ght(double value) {
+    // b narySearch returns (-  nsert onPo nt - 1)
+     nt  ndex = Math.abs(Arrays.b narySearch(spl Po nts, value) + 1) - 1;
+    return   ghts[ ndex];
   }
 
-  public boolean allValuesBelowThreshold(double minWeight) {
-    for (double weight : weights) {
-      if (Math.abs(weight) > minWeight) {
+  publ c boolean allValuesBelowThreshold(double m n  ght) {
+    for (double   ght :   ghts) {
+       f (Math.abs(  ght) > m n  ght) {
         return false;
       }
     }

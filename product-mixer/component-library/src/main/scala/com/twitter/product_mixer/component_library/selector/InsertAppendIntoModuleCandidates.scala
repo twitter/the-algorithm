@@ -1,56 +1,56 @@
-package com.twitter.product_mixer.component_library.selector
+package com.tw ter.product_m xer.component_l brary.selector
 
-import com.twitter.product_mixer.component_library.selector.InsertIntoModule.ModuleAndIndex
-import com.twitter.product_mixer.component_library.selector.InsertIntoModule.ModuleWithItemsToAddAndOtherCandidates
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.selector. nsert ntoModule.ModuleAnd ndex
+ mport com.tw ter.product_m xer.component_l brary.selector. nsert ntoModule.ModuleW h emsToAddAndOt rCand dates
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Spec f cP pel nes
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.SelectorResult
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * Append all candidates from [[candidatePipeline]] into a module from [[targetModuleCandidatePipeline]].
- * If the results contain multiple modules from the target candidate pipeline,
- * then the candidates will be inserted into the first module.
+ * Append all cand dates from [[cand dateP pel ne]]  nto a module from [[targetModuleCand dateP pel ne]].
+ *  f t  results conta n mult ple modules from t  target cand date p pel ne,
+ * t n t  cand dates w ll be  nserted  nto t  f rst module.
  *
- * @note this will throw an [[UnsupportedOperationException]] if the [[candidatePipeline]] contains any modules.
+ * @note t  w ll throw an [[UnsupportedOperat onExcept on]]  f t  [[cand dateP pel ne]] conta ns any modules.
  *
- * @note this updates the module in the `remainingCandidates`
+ * @note t  updates t  module  n t  `rema n ngCand dates`
  */
-case class InsertAppendIntoModuleCandidates(
-  candidatePipeline: CandidatePipelineIdentifier,
-  targetModuleCandidatePipeline: CandidatePipelineIdentifier)
-    extends Selector[PipelineQuery] {
+case class  nsertAppend ntoModuleCand dates(
+  cand dateP pel ne: Cand dateP pel ne dent f er,
+  targetModuleCand dateP pel ne: Cand dateP pel ne dent f er)
+    extends Selector[P pel neQuery] {
 
-  override val pipelineScope: CandidateScope =
-    SpecificPipelines(candidatePipeline, targetModuleCandidatePipeline)
+  overr de val p pel neScope: Cand dateScope =
+    Spec f cP pel nes(cand dateP pel ne, targetModuleCand dateP pel ne)
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+  overr de def apply(
+    query: P pel neQuery,
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
 
-    val ModuleWithItemsToAddAndOtherCandidates(
-      moduleToUpdateAndIndex,
-      itemsToInsertIntoModule,
-      otherCandidates) =
-      InsertIntoModule.moduleToUpdate(
-        candidatePipeline,
-        targetModuleCandidatePipeline,
-        remainingCandidates)
+    val ModuleW h emsToAddAndOt rCand dates(
+      moduleToUpdateAnd ndex,
+       emsTo nsert ntoModule,
+      ot rCand dates) =
+       nsert ntoModule.moduleToUpdate(
+        cand dateP pel ne,
+        targetModuleCand dateP pel ne,
+        rema n ngCand dates)
 
-    val updatedRemainingCandidates = moduleToUpdateAndIndex match {
-      case None => remainingCandidates
-      case _ if itemsToInsertIntoModule.isEmpty => remainingCandidates
-      case Some(ModuleAndIndex(moduleToUpdate, indexOfModuleInOtherCandidates)) =>
-        val updatedModuleItems = moduleToUpdate.candidates ++ itemsToInsertIntoModule
-        val updatedModule = moduleToUpdate.copy(candidates = updatedModuleItems)
-        otherCandidates.updated(indexOfModuleInOtherCandidates, updatedModule)
+    val updatedRema n ngCand dates = moduleToUpdateAnd ndex match {
+      case None => rema n ngCand dates
+      case _  f  emsTo nsert ntoModule. sEmpty => rema n ngCand dates
+      case So (ModuleAnd ndex(moduleToUpdate,  ndexOfModule nOt rCand dates)) =>
+        val updatedModule ems = moduleToUpdate.cand dates ++  emsTo nsert ntoModule
+        val updatedModule = moduleToUpdate.copy(cand dates = updatedModule ems)
+        ot rCand dates.updated( ndexOfModule nOt rCand dates, updatedModule)
     }
 
-    SelectorResult(remainingCandidates = updatedRemainingCandidates, result = result)
+    SelectorResult(rema n ngCand dates = updatedRema n ngCand dates, result = result)
   }
 }

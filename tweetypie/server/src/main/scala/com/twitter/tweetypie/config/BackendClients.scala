@@ -1,795 +1,795 @@
-package com.twitter.tweetypie
-package config
+package com.tw ter.t etyp e
+package conf g
 
-import com.twitter.ads.internal.pcl.service.CallbackPromotedContentLogger
-import com.twitter.ads.loggingclient.AdsLoggingClient
-import com.twitter.adserver.thriftscala.AdCallbackEvent
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.container.{thriftscala => ccs}
-import com.twitter.deferredrpc.client.DeferredThriftService
-import com.twitter.deferredrpc.thrift.Datacenter
-import com.twitter.deferredrpc.thrift.DeferredRPC
-import com.twitter.deferredrpc.thrift.Target
-import com.twitter.escherbird.thriftscala.TweetEntityAnnotationService$FinagleClient
-import com.twitter.escherbird.thriftscala.{
-  TweetEntityAnnotationService => TweetEntityAnnotationScroogeIface
+ mport com.tw ter.ads. nternal.pcl.serv ce.CallbackPromotedContentLogger
+ mport com.tw ter.ads.logg ngcl ent.AdsLogg ngCl ent
+ mport com.tw ter.adserver.thr ftscala.AdCallbackEvent
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.convers ons.PercentOps._
+ mport com.tw ter.conta ner.{thr ftscala => ccs}
+ mport com.tw ter.deferredrpc.cl ent.DeferredThr ftServ ce
+ mport com.tw ter.deferredrpc.thr ft.Datacenter
+ mport com.tw ter.deferredrpc.thr ft.DeferredRPC
+ mport com.tw ter.deferredrpc.thr ft.Target
+ mport com.tw ter.esc rb rd.thr ftscala.T etEnt yAnnotat onServ ce$F nagleCl ent
+ mport com.tw ter.esc rb rd.thr ftscala.{
+  T etEnt yAnnotat onServ ce => T etEnt yAnnotat onScrooge face
 }
-import com.twitter.eventbus.client.EventBusPublisher
-import com.twitter.eventbus.client.EventBusPublisherBuilder
-import com.twitter.expandodo.thriftscala.CardsService$FinagleClient
-import com.twitter.expandodo.thriftscala.{CardsService => CardsScroogeIface}
-import com.twitter.finagle._
-import com.twitter.finagle.builder.ClientBuilder
-import com.twitter.finagle.client.Transporter
-import com.twitter.finagle.factory.TimeoutFactory
-import com.twitter.finagle.liveness.FailureAccrualFactory
-import com.twitter.finagle.loadbalancer.Balancers
-import com.twitter.finagle.mtls.authentication.EmptyServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsClientBuilder._
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.partitioning.param
-import com.twitter.finagle.service.TimeoutFilter.PropagateDeadlines
-import com.twitter.finagle.service._
-import com.twitter.finagle.ssl.OpportunisticTls
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ThriftClientRequest
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finagle.tracing.DefaultTracer
-import com.twitter.flockdb.client.thriftscala.FlockDB
-import com.twitter.flockdb.client.FlockResponse
-import com.twitter.flockdb.client.TFlockClient
-import com.twitter.flockdb.client.UserTimelineGraph
-import com.twitter.geoduck.backend.hydration.thriftscala.{Hydration => GeoduckHydration}
-import com.twitter.geoduck.backend.relevance.thriftscala.Relevance
-import com.twitter.geoduck.backend.relevance.thriftscala.Relevance$FinagleClient
-import com.twitter.geoduck.backend.relevance.thriftscala.RelevanceContext
-import com.twitter.geoduck.service.common.clientmodules.GeoduckGeohashLocate
-import com.twitter.geoduck.thriftscala.ReverseGeocoder
-import com.twitter.geoduck.util.service.GeoduckLocate
-import com.twitter.gizmoduck.thriftscala.UserService
-import com.twitter.hashing.KeyHasher
-import com.twitter.limiter.client.LimiterClientFactory
-import com.twitter.mediainfo.server.thriftscala.MediaInfoService$FinagleClient
-import com.twitter.mediainfo.server.thriftscala.{MediaInfoService => MediaInfoScroogeIface}
-import com.twitter.merlin.thriftscala.UserRolesService
-import com.twitter.passbird.thriftscala.PassbirdService
-import com.twitter.passbird.thriftscala.PassbirdService$FinagleClient
-import com.twitter.service.gen.scarecrow.thriftscala.ScarecrowService$FinagleClient
-import com.twitter.service.gen.scarecrow.thriftscala.{ScarecrowService => ScarecrowScroogeIface}
-import com.twitter.service.talon.thriftscala.Talon$FinagleClient
-import com.twitter.service.talon.thriftscala.{Talon => TalonScroogeIface}
-import com.twitter.snowflake.client.SnowflakeClient
-import com.twitter.snowflake.thriftscala.Snowflake
-import com.twitter.socialgraph.thriftscala.SocialGraphService$FinagleClient
-import com.twitter.socialgraph.thriftscala.{SocialGraphService => SocialGraphScroogeIface}
-import com.twitter.storage.client.manhattan.kv.Experiments
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClient
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storage.client.manhattan.kv.NoMtlsParams
-import com.twitter.strato.client.Strato
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.timelineservice.fanout.thriftscala.FanoutService
-import com.twitter.timelineservice.fanout.thriftscala.FanoutService$FinagleClient
-import com.twitter.timelineservice.{thriftscala => tls}
-import com.twitter.tweetypie.backends._
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.media.MediaClient
-import com.twitter.tweetypie.service.ReplicatingTweetService.GatedReplicationClient
-import com.twitter.tweetypie.storage.ManhattanTweetStorageClient
-import com.twitter.tweetypie.storage.TweetStorageClient
-import com.twitter.tweetypie.store._
-import com.twitter.tweetypie.thriftscala.DeleteLocationData
-import com.twitter.tweetypie.thriftscala.RetweetArchivalEvent
-import com.twitter.tweetypie.thriftscala.TweetEvent
-import com.twitter.tweetypie.thriftscala.TweetServiceInternal$FinagleClient
-import com.twitter.user_image_service.thriftscala.UserImageService$FinagleClient
-import com.twitter.user_image_service.thriftscala.{UserImageService => UserImageScroogeIface}
-import com.twitter.util.Throw
-import com.twitter.util.Timer
-import com.twitter.util.{TimeoutException => UtilTimeoutException}
-import scala.util.Random
+ mport com.tw ter.eventbus.cl ent.EventBusPubl s r
+ mport com.tw ter.eventbus.cl ent.EventBusPubl s rBu lder
+ mport com.tw ter.expandodo.thr ftscala.CardsServ ce$F nagleCl ent
+ mport com.tw ter.expandodo.thr ftscala.{CardsServ ce => CardsScrooge face}
+ mport com.tw ter.f nagle._
+ mport com.tw ter.f nagle.bu lder.Cl entBu lder
+ mport com.tw ter.f nagle.cl ent.Transporter
+ mport com.tw ter.f nagle.factory.T  outFactory
+ mport com.tw ter.f nagle.l veness.Fa lureAccrualFactory
+ mport com.tw ter.f nagle.loadbalancer.Balancers
+ mport com.tw ter.f nagle.mtls.aut nt cat on.EmptyServ ce dent f er
+ mport com.tw ter.f nagle.mtls.cl ent.MtlsCl entBu lder._
+ mport com.tw ter.f nagle.mtls.cl ent.MtlsStackCl ent._
+ mport com.tw ter.f nagle.part  on ng.param
+ mport com.tw ter.f nagle.serv ce.T  outF lter.PropagateDeadl nes
+ mport com.tw ter.f nagle.serv ce._
+ mport com.tw ter.f nagle.ssl.Opportun st cTls
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.thr ft.Thr ftCl entRequest
+ mport com.tw ter.f nagle.thr ftmux. thodBu lder
+ mport com.tw ter.f nagle.trac ng.DefaultTracer
+ mport com.tw ter.flockdb.cl ent.thr ftscala.FlockDB
+ mport com.tw ter.flockdb.cl ent.FlockResponse
+ mport com.tw ter.flockdb.cl ent.TFlockCl ent
+ mport com.tw ter.flockdb.cl ent.UserT  l neGraph
+ mport com.tw ter.geoduck.backend.hydrat on.thr ftscala.{Hydrat on => GeoduckHydrat on}
+ mport com.tw ter.geoduck.backend.relevance.thr ftscala.Relevance
+ mport com.tw ter.geoduck.backend.relevance.thr ftscala.Relevance$F nagleCl ent
+ mport com.tw ter.geoduck.backend.relevance.thr ftscala.RelevanceContext
+ mport com.tw ter.geoduck.serv ce.common.cl entmodules.GeoduckGeohashLocate
+ mport com.tw ter.geoduck.thr ftscala.ReverseGeocoder
+ mport com.tw ter.geoduck.ut l.serv ce.GeoduckLocate
+ mport com.tw ter.g zmoduck.thr ftscala.UserServ ce
+ mport com.tw ter.hash ng.KeyHas r
+ mport com.tw ter.l m er.cl ent.L m erCl entFactory
+ mport com.tw ter. d a nfo.server.thr ftscala. d a nfoServ ce$F nagleCl ent
+ mport com.tw ter. d a nfo.server.thr ftscala.{ d a nfoServ ce =>  d a nfoScrooge face}
+ mport com.tw ter. rl n.thr ftscala.UserRolesServ ce
+ mport com.tw ter.passb rd.thr ftscala.Passb rdServ ce
+ mport com.tw ter.passb rd.thr ftscala.Passb rdServ ce$F nagleCl ent
+ mport com.tw ter.serv ce.gen.scarecrow.thr ftscala.ScarecrowServ ce$F nagleCl ent
+ mport com.tw ter.serv ce.gen.scarecrow.thr ftscala.{ScarecrowServ ce => ScarecrowScrooge face}
+ mport com.tw ter.serv ce.talon.thr ftscala.Talon$F nagleCl ent
+ mport com.tw ter.serv ce.talon.thr ftscala.{Talon => TalonScrooge face}
+ mport com.tw ter.snowflake.cl ent.SnowflakeCl ent
+ mport com.tw ter.snowflake.thr ftscala.Snowflake
+ mport com.tw ter.soc algraph.thr ftscala.Soc alGraphServ ce$F nagleCl ent
+ mport com.tw ter.soc algraph.thr ftscala.{Soc alGraphServ ce => Soc alGraphScrooge face}
+ mport com.tw ter.storage.cl ent.manhattan.kv.Exper  nts
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl ent
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl entMtlsParams
+ mport com.tw ter.storage.cl ent.manhattan.kv.NoMtlsParams
+ mport com.tw ter.strato.cl ent.Strato
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.t  l neserv ce.fanout.thr ftscala.FanoutServ ce
+ mport com.tw ter.t  l neserv ce.fanout.thr ftscala.FanoutServ ce$F nagleCl ent
+ mport com.tw ter.t  l neserv ce.{thr ftscala => tls}
+ mport com.tw ter.t etyp e.backends._
+ mport com.tw ter.t etyp e.cl ent_ d.Cl ent d lper
+ mport com.tw ter.t etyp e. d a. d aCl ent
+ mport com.tw ter.t etyp e.serv ce.Repl cat ngT etServ ce.GatedRepl cat onCl ent
+ mport com.tw ter.t etyp e.storage.ManhattanT etStorageCl ent
+ mport com.tw ter.t etyp e.storage.T etStorageCl ent
+ mport com.tw ter.t etyp e.store._
+ mport com.tw ter.t etyp e.thr ftscala.DeleteLocat onData
+ mport com.tw ter.t etyp e.thr ftscala.Ret etArch valEvent
+ mport com.tw ter.t etyp e.thr ftscala.T etEvent
+ mport com.tw ter.t etyp e.thr ftscala.T etServ ce nternal$F nagleCl ent
+ mport com.tw ter.user_ mage_serv ce.thr ftscala.User mageServ ce$F nagleCl ent
+ mport com.tw ter.user_ mage_serv ce.thr ftscala.{User mageServ ce => User mageScrooge face}
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.T  r
+ mport com.tw ter.ut l.{T  outExcept on => Ut lT  outExcept on}
+ mport scala.ut l.Random
 
-trait BackendClients {
+tra  BackendCl ents {
 
-  /** returns all the finagle.Names created while building clients */
-  def referencedNames: Seq[Name]
+  /** returns all t  f nagle.Na s created wh le bu ld ng cl ents */
+  def referencedNa s: Seq[Na ]
 
-  val asyncRetryTweetService: ThriftTweetService
-  val asyncTweetDeletionService: ThriftTweetService
-  val asyncTweetService: ThriftTweetService
-  val configBus: ConfigBus
-  val creativesContainerService: CreativesContainerService
-  val darkTrafficClient: Service[Array[Byte], Array[Byte]]
-  val deleteLocationDataPublisher: EventBusPublisher[DeleteLocationData]
-  val escherbird: Escherbird
+  val asyncRetryT etServ ce: Thr ftT etServ ce
+  val asyncT etDelet onServ ce: Thr ftT etServ ce
+  val asyncT etServ ce: Thr ftT etServ ce
+  val conf gBus: Conf gBus
+  val creat vesConta nerServ ce: Creat vesConta nerServ ce
+  val darkTraff cCl ent: Serv ce[Array[Byte], Array[Byte]]
+  val deleteLocat onDataPubl s r: EventBusPubl s r[DeleteLocat onData]
+  val esc rb rd: Esc rb rd
   val expandodo: Expandodo
-  val fanoutServiceClient: FanoutService.MethodPerEndpoint
-  val geoHydrationLocate: GeoduckLocate
-  val geoRelevance: Relevance.MethodPerEndpoint
+  val fanoutServ ceCl ent: FanoutServ ce. thodPerEndpo nt
+  val geoHydrat onLocate: GeoduckLocate
+  val geoRelevance: Relevance. thodPerEndpo nt
   val geoScrubEventStore: GeoScrubEventStore
   val geoduckGeohashLocate: GeoduckGeohashLocate
-  val gizmoduck: Gizmoduck
-  val gnipEnricherator: GnipEnricherator
+  val g zmoduck: G zmoduck
+  val gn pEnr c rator: Gn pEnr c rator
   val guano: Guano
-  val limiterService: LimiterService
-  val lowQoSReplicationClients: Seq[GatedReplicationClient]
-  val mediaClient: MediaClient
-  val mediaInfoService: MediaInfoService
-  val memcacheClient: memcached.Client
-  val merlin: UserRolesService.MethodPerEndpoint
-  val passbirdClient: PassbirdService.MethodPerEndpoint
-  val replicationClient: ThriftTweetService
-  val retweetArchivalEventPublisher: EventBusPublisher[RetweetArchivalEvent]
+  val l m erServ ce: L m erServ ce
+  val lowQoSRepl cat onCl ents: Seq[GatedRepl cat onCl ent]
+  val  d aCl ent:  d aCl ent
+  val  d a nfoServ ce:  d a nfoServ ce
+  val  mcac Cl ent:  mcac d.Cl ent
+  val  rl n: UserRolesServ ce. thodPerEndpo nt
+  val passb rdCl ent: Passb rdServ ce. thodPerEndpo nt
+  val repl cat onCl ent: Thr ftT etServ ce
+  val ret etArch valEventPubl s r: EventBusPubl s r[Ret etArch valEvent]
   val scarecrow: Scarecrow
-  val snowflakeClient: SnowflakeClient.SnowflakeClient
-  val socialGraphService: SocialGraphService
-  val stratoserverClient: StratoClient
+  val snowflakeCl ent: SnowflakeCl ent.SnowflakeCl ent
+  val soc alGraphServ ce: Soc alGraphServ ce
+  val stratoserverCl ent: StratoCl ent
   val talon: Talon
-  val tflockReadClient: TFlockClient
-  val tflockWriteClient: TFlockClient
-  val timelineService: TimelineService
-  val tweetEventsPublisher: EventBusPublisher[TweetEvent]
-  val tweetStorageClient: TweetStorageClient
-  val userImageService: UserImageService
+  val tflockReadCl ent: TFlockCl ent
+  val tflockWr eCl ent: TFlockCl ent
+  val t  l neServ ce: T  l neServ ce
+  val t etEventsPubl s r: EventBusPubl s r[T etEvent]
+  val t etStorageCl ent: T etStorageCl ent
+  val user mageServ ce: User mageServ ce
   val callbackPromotedContentLogger: CallbackPromotedContentLogger
 }
 
 /**
- * default implementation of BackendClients that connects to real, remote
- * backend services.
+ * default  mple ntat on of BackendCl ents that connects to real, remote
+ * backend serv ces.
  */
-object BackendClients {
-  // for most services, tweetypie typically maintains only a single connection to
-  // each host in the cluster, and that is enough for normal steady-state work.
-  // to prevent ddos'ing backends during unusual traffic influxes, we set the host
-  // connection limit to be 2-3x the steady-state daily peak, giving plenty of head
-  // room but without allowing an excessive number of connections.
-  private val defaultHostConnectionLimit = 3
+object BackendCl ents {
+  // for most serv ces, t etyp e typ cally ma nta ns only a s ngle connect on to
+  // each host  n t  cluster, and that  s enough for normal steady-state work.
+  // to prevent ddos' ng backends dur ng unusual traff c  nfluxes,   set t  host
+  // connect on l m  to be 2-3x t  steady-state da ly peak, g v ng plenty of  ad
+  // room but w hout allow ng an excess ve number of connect ons.
+  pr vate val defaultHostConnect onL m  = 3
 
-  // 100ms is greater than most gc pauses; smaller values cause more timeouts
-  private val defaultConnectTimeout = 100.milliseconds
-  // tcpConnect timeout is less than half of defaultConnectTimeout, to allow at least
-  // two tries (except when there is a GC pause)
-  private val defaultTcpConnectTimeout = 20.milliseconds
+  // 100ms  s greater than most gc pauses; smaller values cause more t  outs
+  pr vate val defaultConnectT  out = 100.m ll seconds
+  // tcpConnect t  out  s less than half of defaultConnectT  out, to allow at least
+  // two tr es (except w n t re  s a GC pause)
+  pr vate val defaultTcpConnectT  out = 20.m ll seconds
 
-  private val WriteExceptionsOnly: PartialFunction[Try[Nothing], Boolean] =
-    RetryPolicy.WriteExceptionsOnly
+  pr vate val Wr eExcept onsOnly: Part alFunct on[Try[Noth ng], Boolean] =
+    RetryPol cy.Wr eExcept onsOnly
 
-  private val ClosedExceptionsOnly: PartialFunction[Try[Nothing], Boolean] = {
-    case Throw(_: ChannelClosedException) => true
+  pr vate val ClosedExcept onsOnly: Part alFunct on[Try[Noth ng], Boolean] = {
+    case Throw(_: ChannelClosedExcept on) => true
   }
 
-  private val TimeoutExceptionsOnly: PartialFunction[Try[Nothing], Boolean] = {
-    case Throw(_: TimeoutException) => true
-    case Throw(_: UtilTimeoutException) => true
+  pr vate val T  outExcept onsOnly: Part alFunct on[Try[Noth ng], Boolean] = {
+    case Throw(_: T  outExcept on) => true
+    case Throw(_: Ut lT  outExcept on) => true
   }
 
-  private val NoBackoff = Backoff.const(0.second)
+  pr vate val NoBackoff = Backoff.const(0.second)
 
-  private def retry(writeExceptions: Int = 100, closedExceptions: Int = 2, timeouts: Int = 0) =
-    RetryPolicy.combine(
-      RetryPolicy.backoff(NoBackoff.take(writeExceptions))(WriteExceptionsOnly),
-      RetryPolicy.backoff(NoBackoff.take(closedExceptions))(ClosedExceptionsOnly),
-      RetryPolicy.backoff(NoBackoff.take(timeouts))(TimeoutExceptionsOnly)
+  pr vate def retry(wr eExcept ons:  nt = 100, closedExcept ons:  nt = 2, t  outs:  nt = 0) =
+    RetryPol cy.comb ne(
+      RetryPol cy.backoff(NoBackoff.take(wr eExcept ons))(Wr eExcept onsOnly),
+      RetryPol cy.backoff(NoBackoff.take(closedExcept ons))(ClosedExcept onsOnly),
+      RetryPol cy.backoff(NoBackoff.take(t  outs))(T  outExcept onsOnly)
     )
 
-  implicit val warmup: Warmup[BackendClients] = {
-    // Use a random string so that the keys are likely to hash to
-    // different memcache instances. Request multiple keys at a time so
-    // that we don't consider the backend warm just because we can get a
-    // bunch of successful responses to one cache.
-    val cacheGet = (_: memcached.Client).get(Seq.fill(20)(Random.nextLong.toString))
+   mpl c  val warmup: Warmup[BackendCl ents] = {
+    // Use a random str ng so that t  keys are l kely to hash to
+    // d fferent  mcac   nstances. Request mult ple keys at a t   so
+    // that   don't cons der t  backend warm just because   can get a
+    // bunch of successful responses to one cac .
+    val cac Get = (_:  mcac d.Cl ent).get(Seq.f ll(20)(Random.nextLong.toStr ng))
 
     Warmup
-      .empty[BackendClients]
-      .warmField(_.expandodo)
-      .warmField(_.gizmoduck)
-      .warmField(_.memcacheClient)(Warmup("memcache")(cacheGet))
-      .warmField(_.talon)
-      .warmField(_.tweetStorageClient)(Warmup("tweetstorage")(_.ping()))
-      .warmField(_.tflockReadClient)(Warmup("tflock")(_.contains(UserTimelineGraph, 0, 0)))
-      .warmField(_.scarecrow)
-      .warmField(_.socialGraphService)
-      .warmField(_.timelineService)
-      .warmField(_.geoRelevance)(Warmup("geo_relevance")(_.placeSearch(RelevanceContext())))
+      .empty[BackendCl ents]
+      .warmF eld(_.expandodo)
+      .warmF eld(_.g zmoduck)
+      .warmF eld(_. mcac Cl ent)(Warmup(" mcac ")(cac Get))
+      .warmF eld(_.talon)
+      .warmF eld(_.t etStorageCl ent)(Warmup("t etstorage")(_.p ng()))
+      .warmF eld(_.tflockReadCl ent)(Warmup("tflock")(_.conta ns(UserT  l neGraph, 0, 0)))
+      .warmF eld(_.scarecrow)
+      .warmF eld(_.soc alGraphServ ce)
+      .warmF eld(_.t  l neServ ce)
+      .warmF eld(_.geoRelevance)(Warmup("geo_relevance")(_.placeSearch(RelevanceContext())))
   }
 
   def apply(
-    settings: TweetServiceSettings,
-    deciderGates: TweetypieDeciderGates,
-    statsReceiver: StatsReceiver,
-    hostStatsReceiver: StatsReceiver,
-    timer: Timer,
-    clientIdHelper: ClientIdHelper,
-  ): BackendClients = {
-    val thriftClientId = settings.thriftClientId
+    sett ngs: T etServ ceSett ngs,
+    dec derGates: T etyp eDec derGates,
+    statsRece ver: StatsRece ver,
+    hostStatsRece ver: StatsRece ver,
+    t  r: T  r,
+    cl ent d lper: Cl ent d lper,
+  ): BackendCl ents = {
+    val thr ftCl ent d = sett ngs.thr ftCl ent d
     val tracer = DefaultTracer
 
-    val env = settings.env.toString
-    val zone = settings.zone
+    val env = sett ngs.env.toStr ng
+    val zone = sett ngs.zone
     val log = Logger(getClass)
-    val backendsScope = statsReceiver.scope("backends")
+    val backendsScope = statsRece ver.scope("backends")
 
-    /** a Seq builder of finagle.Names loaded via getName */
-    val referencedNamesBuilder = Seq.newBuilder[Name]
+    /** a Seq bu lder of f nagle.Na s loaded v a getNa  */
+    val referencedNa sBu lder = Seq.newBu lder[Na ]
 
-    /** the default set of exceptions we believe are safe for Tweetypie to retry */
-    val defaultResponseClassifier: ResponseClassifier =
-      ResponseClassifier.RetryOnChannelClosed.orElse(ResponseClassifier.RetryOnTimeout)
+    /** t  default set of except ons   bel eve are safe for T etyp e to retry */
+    val defaultResponseClass f er: ResponseClass f er =
+      ResponseClass f er.RetryOnChannelClosed.orElse(ResponseClass f er.RetryOnT  out)
 
     /**
-     * Resolve a string into a Finagle Name and record it
-     * in referencedNames.
+     * Resolve a str ng  nto a F nagle Na  and record  
+     *  n referencedNa s.
      */
-    def eval(address: String): Name = {
-      val name = Resolver.eval(address)
-      referencedNamesBuilder += name
-      name
+    def eval(address: Str ng): Na  = {
+      val na  = Resolver.eval(address)
+      referencedNa sBu lder += na 
+      na 
     }
 
-    def backendContext(name: String) =
-      Backend.Context(timer, backendsScope.scope(name))
+    def backendContext(na : Str ng) =
+      Backend.Context(t  r, backendsScope.scope(na ))
 
-    // by default, retries on most exceptions (see defaultRetryExceptions).  if an rpc is not
-    // idempotent, it should use a different retry policy.
-    def clientBuilder(name: String) = {
-      ClientBuilder()
-        .name(name)
-        .reportTo(statsReceiver)
-        .reportHostStats(hostStatsReceiver)
+    // by default, retr es on most except ons (see defaultRetryExcept ons).   f an rpc  s not
+    //  dempotent,   should use a d fferent retry pol cy.
+    def cl entBu lder(na : Str ng) = {
+      Cl entBu lder()
+        .na (na )
+        .reportTo(statsRece ver)
+        .reportHostStats(hostStatsRece ver)
         .tracer(tracer)
         .daemon(true)
-        .tcpConnectTimeout(defaultTcpConnectTimeout)
-        .connectTimeout(defaultConnectTimeout)
-        .retryPolicy(retry())
+        .tcpConnectT  out(defaultTcpConnectT  out)
+        .connectT  out(defaultConnectT  out)
+        .retryPol cy(retry())
     }
 
-    def thriftMuxClientBuilder(name: String, address: String, clazz: Class[_]) = {
-      clientBuilder(name)
+    def thr ftMuxCl entBu lder(na : Str ng, address: Str ng, clazz: Class[_]) = {
+      cl entBu lder(na )
         .stack(
-          ThriftMux.client
-            .withClientId(thriftClientId)
-            .withOpportunisticTls(OpportunisticTls.Required)
-            .withServiceClass(clazz))
+          Thr ftMux.cl ent
+            .w hCl ent d(thr ftCl ent d)
+            .w hOpportun st cTls(Opportun st cTls.Requ red)
+            .w hServ ceClass(clazz))
         .loadBalancer(balancer())
         .dest(eval(address))
-        .mutualTls(settings.serviceIdentifier)
+        .mutualTls(sett ngs.serv ce dent f er)
     }
 
-    // Our base ThriftMux.Client
-    // Prefer using thriftMuxMethodBuilder below but
-    // can be used to build custom clients (re: darkTrafficClient)
-    def thriftMuxClient(name: String, propagateDeadlines: Boolean = true): ThriftMux.Client = {
-      ThriftMux.client
-        .withClientId(thriftClientId)
-        .withLabel(name)
-        .withStatsReceiver(statsReceiver)
-        .withTracer(tracer)
-        .withTransport.connectTimeout(defaultTcpConnectTimeout)
-        .withSession.acquisitionTimeout(defaultConnectTimeout)
-        .withMutualTls(settings.serviceIdentifier)
-        .withOpportunisticTls(OpportunisticTls.Required)
-        .configured(PropagateDeadlines(enabled = propagateDeadlines))
+    //   base Thr ftMux.Cl ent
+    // Prefer us ng thr ftMux thodBu lder below but
+    // can be used to bu ld custom cl ents (re: darkTraff cCl ent)
+    def thr ftMuxCl ent(na : Str ng, propagateDeadl nes: Boolean = true): Thr ftMux.Cl ent = {
+      Thr ftMux.cl ent
+        .w hCl ent d(thr ftCl ent d)
+        .w hLabel(na )
+        .w hStatsRece ver(statsRece ver)
+        .w hTracer(tracer)
+        .w hTransport.connectT  out(defaultTcpConnectT  out)
+        .w hSess on.acqu s  onT  out(defaultConnectT  out)
+        .w hMutualTls(sett ngs.serv ce dent f er)
+        .w hOpportun st cTls(Opportun st cTls.Requ red)
+        .conf gured(PropagateDeadl nes(enabled = propagateDeadl nes))
     }
 
-    // If an endpoint is non-idempotent you should add .nonidempotent and
-    // leave off any ResponseClassifiers (it will remove any placed before but not after)
-    // If it is unequivocally idempotent you should add .idempotent and
-    // leave off any ResponseClassifiers (it will retry on all Throws).  This will also
+    //  f an endpo nt  s non- dempotent   should add .non dempotent and
+    // leave off any ResponseClass f ers (  w ll remove any placed before but not after)
+    //  f    s unequ vocally  dempotent   should add . dempotent and
+    // leave off any ResponseClass f ers (  w ll retry on all Throws).  T  w ll also
     // enable backup requests
-    def thriftMuxMethodBuilder(
-      name: String,
-      dest: String,
-    ): MethodBuilder = {
-      thriftMuxClient(name)
-        .withLoadBalancer(balancer(minAperture = 2))
-        .methodBuilder(dest)
-        .withRetryForClassifier(defaultResponseClassifier)
-        .withTimeoutTotal(2.seconds) // total timeout including 1st attempt and up to 2 retries
+    def thr ftMux thodBu lder(
+      na : Str ng,
+      dest: Str ng,
+    ):  thodBu lder = {
+      thr ftMuxCl ent(na )
+        .w hLoadBalancer(balancer(m nAperture = 2))
+        . thodBu lder(dest)
+        .w hRetryForClass f er(defaultResponseClass f er)
+        .w hT  outTotal(2.seconds) // total t  out  nclud ng 1st attempt and up to 2 retr es
     }
 
-    def balancer(minAperture: Int = 2) = Balancers.aperture(minAperture = minAperture)
+    def balancer(m nAperture:  nt = 2) = Balancers.aperture(m nAperture = m nAperture)
 
-    val eventBusPublisherBuilder =
-      EventBusPublisherBuilder()
-        .dest(eval("/s/eventbus/provisioning"))
-        .clientId(settings.thriftClientId)
-        // eventbus stats are further scoped by stream, so put all
-        // publishers under the same stats namespace
-        .statsReceiver(backendsScope.scope("event_bus"))
-        // This makes the underlying kps-client to be resolved over WilyNs vs DNS
-        .serviceIdentifier(settings.serviceIdentifier)
+    val eventBusPubl s rBu lder =
+      EventBusPubl s rBu lder()
+        .dest(eval("/s/eventbus/prov s on ng"))
+        .cl ent d(sett ngs.thr ftCl ent d)
+        // eventbus stats are furt r scoped by stream, so put all
+        // publ s rs under t  sa  stats na space
+        .statsRece ver(backendsScope.scope("event_bus"))
+        // T  makes t  underly ng kps-cl ent to be resolved over W lyNs vs DNS
+        .serv ce dent f er(sett ngs.serv ce dent f er)
 
-    new BackendClients {
-      def referencedNames: Seq[Name] = referencedNamesBuilder.result()
+    new BackendCl ents {
+      def referencedNa s: Seq[Na ] = referencedNa sBu lder.result()
 
-      val memcacheClient: memcached.Client =
-        Memcached.client
-          .withMutualTls(settings.serviceIdentifier)
-          .connectionsPerEndpoint(2)
-          .configured(param.KeyHasher(KeyHasher.FNV1_32))
-          .configured(Transporter.ConnectTimeout(100.milliseconds))
-          .configured(TimeoutFilter.Param(200.milliseconds))
-          .configured(TimeoutFactory.Param(200.milliseconds))
-          .configured(param.EjectFailedHost(false))
-          .configured(FailureAccrualFactory.Param(numFailures = 20, markDeadFor = 30.second))
-          .configured(
-            PendingRequestFilter.Param(limit = Some(settings.cacheClientPendingRequestLimit))
+      val  mcac Cl ent:  mcac d.Cl ent =
+         mcac d.cl ent
+          .w hMutualTls(sett ngs.serv ce dent f er)
+          .connect onsPerEndpo nt(2)
+          .conf gured(param.KeyHas r(KeyHas r.FNV1_32))
+          .conf gured(Transporter.ConnectT  out(100.m ll seconds))
+          .conf gured(T  outF lter.Param(200.m ll seconds))
+          .conf gured(T  outFactory.Param(200.m ll seconds))
+          .conf gured(param.EjectFa ledHost(false))
+          .conf gured(Fa lureAccrualFactory.Param(numFa lures = 20, markDeadFor = 30.second))
+          .conf gured(
+            Pend ngRequestF lter.Param(l m  = So (sett ngs.cac Cl entPend ngRequestL m ))
           )
-          .filtered(new MemcacheExceptionLoggingFilter)
-          .newRichClient(dest = eval(settings.twemcacheDest), label = "memcache")
+          .f ltered(new  mcac Except onLogg ngF lter)
+          .newR chCl ent(dest = eval(sett ngs.t mcac Dest), label = " mcac ")
 
-      /* clients */
-      val tweetStorageClient: TweetStorageClient =
-        Manhattan.fromClient(
-          new ManhattanTweetStorageClient(
-            settings.tweetStorageConfig,
-            statsReceiver = backendsScope.scope("tweet_storage"),
-            clientIdHelper = clientIdHelper,
+      /* cl ents */
+      val t etStorageCl ent: T etStorageCl ent =
+        Manhattan.fromCl ent(
+          new ManhattanT etStorageCl ent(
+            sett ngs.t etStorageConf g,
+            statsRece ver = backendsScope.scope("t et_storage"),
+            cl ent d lper = cl ent d lper,
           )
         )
 
-      val socialGraphService: SocialGraphService = {
-        val finagleClient =
-          new SocialGraphService$FinagleClient(
-            thriftMuxClientBuilder(
-              "socialgraph",
-              "/s/socialgraph/socialgraph",
-              classOf[SocialGraphScroogeIface.MethodPerEndpoint]
-            ).loadBalancer(Balancers.aperturePeakEwma(minAperture = 16))
-              .build()
+      val soc alGraphServ ce: Soc alGraphServ ce = {
+        val f nagleCl ent =
+          new Soc alGraphServ ce$F nagleCl ent(
+            thr ftMuxCl entBu lder(
+              "soc algraph",
+              "/s/soc algraph/soc algraph",
+              classOf[Soc alGraphScrooge face. thodPerEndpo nt]
+            ).loadBalancer(Balancers.aperturePeakEwma(m nAperture = 16))
+              .bu ld()
           )
 
-        settings.socialGraphSeviceConfig(
-          SocialGraphService.fromClient(finagleClient),
-          backendContext("socialgraph")
+        sett ngs.soc alGraphSev ceConf g(
+          Soc alGraphServ ce.fromCl ent(f nagleCl ent),
+          backendContext("soc algraph")
         )
       }
 
-      val tflockClient =
-        new FlockDB.FinagledClient(
-          thriftMuxClientBuilder("tflock", "/s/tflock/tflock", classOf[FlockDB.MethodPerEndpoint])
-            .loadBalancer(balancer(minAperture = 5))
-            .responseClassifier(FlockResponse.classifier)
-            .build(),
-          serviceName = "tflock",
-          stats = statsReceiver
+      val tflockCl ent =
+        new FlockDB.F nagledCl ent(
+          thr ftMuxCl entBu lder("tflock", "/s/tflock/tflock", classOf[FlockDB. thodPerEndpo nt])
+            .loadBalancer(balancer(m nAperture = 5))
+            .responseClass f er(FlockResponse.class f er)
+            .bu ld(),
+          serv ceNa  = "tflock",
+          stats = statsRece ver
         )
 
-      val tflockReadClient: TFlockClient =
-        settings.tflockReadConfig(tflockClient, backendContext("tflock"))
+      val tflockReadCl ent: TFlockCl ent =
+        sett ngs.tflockReadConf g(tflockCl ent, backendContext("tflock"))
 
-      val tflockWriteClient: TFlockClient =
-        settings.tflockWriteConfig(tflockClient, backendContext("tflock"))
+      val tflockWr eCl ent: TFlockCl ent =
+        sett ngs.tflockWr eConf g(tflockCl ent, backendContext("tflock"))
 
-      val gizmoduck: Gizmoduck = {
-        val clientBuilder =
-          thriftMuxClientBuilder(
-            "gizmoduck",
-            "/s/gizmoduck/gizmoduck",
-            classOf[UserService.MethodPerEndpoint])
-            .loadBalancer(balancer(minAperture = 63))
-        val mb = MethodBuilder
-          .from(clientBuilder)
-          .idempotent(maxExtraLoad = 1.percent)
-          .servicePerEndpoint[UserService.ServicePerEndpoint]
+      val g zmoduck: G zmoduck = {
+        val cl entBu lder =
+          thr ftMuxCl entBu lder(
+            "g zmoduck",
+            "/s/g zmoduck/g zmoduck",
+            classOf[UserServ ce. thodPerEndpo nt])
+            .loadBalancer(balancer(m nAperture = 63))
+        val mb =  thodBu lder
+          .from(cl entBu lder)
+          . dempotent(maxExtraLoad = 1.percent)
+          .serv cePerEndpo nt[UserServ ce.Serv cePerEndpo nt]
 
-        val gizmoduckClient = ThriftMux.Client.methodPerEndpoint(mb)
-        settings.gizmoduckConfig(Gizmoduck.fromClient(gizmoduckClient), backendContext("gizmoduck"))
+        val g zmoduckCl ent = Thr ftMux.Cl ent. thodPerEndpo nt(mb)
+        sett ngs.g zmoduckConf g(G zmoduck.fromCl ent(g zmoduckCl ent), backendContext("g zmoduck"))
       }
 
-      val merlin: UserRolesService.MethodPerEndpoint = {
-        val thriftClient = thriftMuxMethodBuilder("merlin", "/s/merlin/merlin")
-          .withTimeoutPerRequest(100.milliseconds)
-          .withTimeoutTotal(400.milliseconds)
-          .idempotent(0.01)
-          .servicePerEndpoint[UserRolesService.ServicePerEndpoint]
+      val  rl n: UserRolesServ ce. thodPerEndpo nt = {
+        val thr ftCl ent = thr ftMux thodBu lder(" rl n", "/s/ rl n/ rl n")
+          .w hT  outPerRequest(100.m ll seconds)
+          .w hT  outTotal(400.m ll seconds)
+          . dempotent(0.01)
+          .serv cePerEndpo nt[UserRolesServ ce.Serv cePerEndpo nt]
 
-        ThriftMux.Client.methodPerEndpoint(thriftClient)
+        Thr ftMux.Cl ent. thodPerEndpo nt(thr ftCl ent)
       }
 
       val talon: Talon = {
-        val talonClient =
-          new Talon$FinagleClient(
-            thriftMuxClientBuilder(
+        val talonCl ent =
+          new Talon$F nagleCl ent(
+            thr ftMuxCl entBu lder(
               "talon",
               "/s/talon/backend",
-              classOf[TalonScroogeIface.MethodPerEndpoint])
-              .build()
+              classOf[TalonScrooge face. thodPerEndpo nt])
+              .bu ld()
           )
 
-        settings.talonConfig(Talon.fromClient(talonClient), backendContext("talon"))
+        sett ngs.talonConf g(Talon.fromCl ent(talonCl ent), backendContext("talon"))
       }
 
       val guano = Guano()
 
-      val mediaInfoService: MediaInfoService = {
-        val finagleClient =
-          new MediaInfoService$FinagleClient(
-            thriftMuxClientBuilder(
-              "mediainfo",
-              "/s/photurkey/mediainfo",
-              classOf[MediaInfoScroogeIface.MethodPerEndpoint])
-              .loadBalancer(balancer(minAperture = 75))
-              .build()
+      val  d a nfoServ ce:  d a nfoServ ce = {
+        val f nagleCl ent =
+          new  d a nfoServ ce$F nagleCl ent(
+            thr ftMuxCl entBu lder(
+              " d a nfo",
+              "/s/photurkey/ d a nfo",
+              classOf[ d a nfoScrooge face. thodPerEndpo nt])
+              .loadBalancer(balancer(m nAperture = 75))
+              .bu ld()
           )
 
-        settings.mediaInfoServiceConfig(
-          MediaInfoService.fromClient(finagleClient),
-          backendContext("mediainfo")
+        sett ngs. d a nfoServ ceConf g(
+           d a nfoServ ce.fromCl ent(f nagleCl ent),
+          backendContext(" d a nfo")
         )
       }
 
-      val userImageService: UserImageService = {
-        val finagleClient =
-          new UserImageService$FinagleClient(
-            thriftMuxClientBuilder(
-              "userImage",
-              "/s/user-image-service/uis",
-              classOf[UserImageScroogeIface.MethodPerEndpoint])
-              .build()
+      val user mageServ ce: User mageServ ce = {
+        val f nagleCl ent =
+          new User mageServ ce$F nagleCl ent(
+            thr ftMuxCl entBu lder(
+              "user mage",
+              "/s/user- mage-serv ce/u s",
+              classOf[User mageScrooge face. thodPerEndpo nt])
+              .bu ld()
           )
 
-        settings.userImageServiceConfig(
-          UserImageService.fromClient(finagleClient),
-          backendContext("userImage")
+        sett ngs.user mageServ ceConf g(
+          User mageServ ce.fromCl ent(f nagleCl ent),
+          backendContext("user mage")
         )
       }
 
-      val mediaClient: MediaClient =
-        MediaClient.fromBackends(
-          userImageService = userImageService,
-          mediaInfoService = mediaInfoService
+      val  d aCl ent:  d aCl ent =
+         d aCl ent.fromBackends(
+          user mageServ ce = user mageServ ce,
+           d a nfoServ ce =  d a nfoServ ce
         )
 
-      val timelineService: TimelineService = {
-        val timelineServiceClient =
-          new tls.TimelineService$FinagleClient(
-            thriftMuxClientBuilder(
-              "timelineService",
-              "/s/timelineservice/timelineservice",
-              classOf[tls.TimelineService.MethodPerEndpoint])
-              .loadBalancer(balancer(minAperture = 13))
-              .build()
+      val t  l neServ ce: T  l neServ ce = {
+        val t  l neServ ceCl ent =
+          new tls.T  l neServ ce$F nagleCl ent(
+            thr ftMuxCl entBu lder(
+              "t  l neServ ce",
+              "/s/t  l neserv ce/t  l neserv ce",
+              classOf[tls.T  l neServ ce. thodPerEndpo nt])
+              .loadBalancer(balancer(m nAperture = 13))
+              .bu ld()
           )
 
-        settings.timelineServiceConfig(
-          TimelineService.fromClient(timelineServiceClient),
-          backendContext("timelineService")
+        sett ngs.t  l neServ ceConf g(
+          T  l neServ ce.fromCl ent(t  l neServ ceCl ent),
+          backendContext("t  l neServ ce")
         )
       }
 
       val expandodo: Expandodo = {
-        val cardsServiceClient =
-          new CardsService$FinagleClient(
-            thriftMuxClientBuilder(
+        val cardsServ ceCl ent =
+          new CardsServ ce$F nagleCl ent(
+            thr ftMuxCl entBu lder(
               "expandodo",
               "/s/expandodo/server",
-              classOf[CardsScroogeIface.MethodPerEndpoint])
-              .loadBalancer(balancer(minAperture = 6))
-              .build()
+              classOf[CardsScrooge face. thodPerEndpo nt])
+              .loadBalancer(balancer(m nAperture = 6))
+              .bu ld()
           )
 
-        settings.expandodoConfig(
-          Expandodo.fromClient(cardsServiceClient),
+        sett ngs.expandodoConf g(
+          Expandodo.fromCl ent(cardsServ ceCl ent),
           backendContext("expandodo")
         )
       }
 
-      val creativesContainerService: CreativesContainerService = {
-        val mb = thriftMuxMethodBuilder(
-          "creativesContainerService",
-          "/s/creatives-container/creatives-container",
-        ).withTimeoutTotal(300.milliseconds)
-          .idempotent(maxExtraLoad = 1.percent)
-          .servicePerEndpoint[ccs.CreativesContainerService.ServicePerEndpoint]
+      val creat vesConta nerServ ce: Creat vesConta nerServ ce = {
+        val mb = thr ftMux thodBu lder(
+          "creat vesConta nerServ ce",
+          "/s/creat ves-conta ner/creat ves-conta ner",
+        ).w hT  outTotal(300.m ll seconds)
+          . dempotent(maxExtraLoad = 1.percent)
+          .serv cePerEndpo nt[ccs.Creat vesConta nerServ ce.Serv cePerEndpo nt]
 
-        settings.creativesContainerServiceConfig(
-          CreativesContainerService.fromClient(ccs.CreativesContainerService.MethodPerEndpoint(mb)),
-          backendContext("creativesContainerService")
+        sett ngs.creat vesConta nerServ ceConf g(
+          Creat vesConta nerServ ce.fromCl ent(ccs.Creat vesConta nerServ ce. thodPerEndpo nt(mb)),
+          backendContext("creat vesConta nerServ ce")
         )
       }
 
       val scarecrow: Scarecrow = {
-        val scarecrowClient = new ScarecrowService$FinagleClient(
-          thriftMuxClientBuilder(
+        val scarecrowCl ent = new ScarecrowServ ce$F nagleCl ent(
+          thr ftMuxCl entBu lder(
             "scarecrow",
             "/s/abuse/scarecrow",
-            classOf[ScarecrowScroogeIface.MethodPerEndpoint])
-            .loadBalancer(balancer(minAperture = 6))
-            .build(),
-          serviceName = "scarecrow",
-          stats = statsReceiver
+            classOf[ScarecrowScrooge face. thodPerEndpo nt])
+            .loadBalancer(balancer(m nAperture = 6))
+            .bu ld(),
+          serv ceNa  = "scarecrow",
+          stats = statsRece ver
         )
 
-        settings.scarecrowConfig(Scarecrow.fromClient(scarecrowClient), backendContext("scarecrow"))
+        sett ngs.scarecrowConf g(Scarecrow.fromCl ent(scarecrowCl ent), backendContext("scarecrow"))
       }
 
-      val snowflakeClient: Snowflake.MethodPerEndpoint = {
-        eval("/s/snowflake/snowflake") // eagerly resolve the serverset
-        val mb = thriftMuxMethodBuilder(
+      val snowflakeCl ent: Snowflake. thodPerEndpo nt = {
+        eval("/s/snowflake/snowflake") // eagerly resolve t  serverset
+        val mb = thr ftMux thodBu lder(
           "snowflake",
           "/s/snowflake/snowflake"
-        ).withTimeoutTotal(300.milliseconds)
-          .withTimeoutPerRequest(100.milliseconds)
-          .idempotent(maxExtraLoad = 1.percent)
+        ).w hT  outTotal(300.m ll seconds)
+          .w hT  outPerRequest(100.m ll seconds)
+          . dempotent(maxExtraLoad = 1.percent)
 
-        SnowflakeClient.snowflakeClient(mb)
+        SnowflakeCl ent.snowflakeCl ent(mb)
       }
 
-      val deferredRpcClient =
-        new DeferredRPC.FinagledClient(
-          thriftMuxClientBuilder(
+      val deferredRpcCl ent =
+        new DeferredRPC.F nagledCl ent(
+          thr ftMuxCl entBu lder(
             "deferredrpc",
-            "/s/kafka-shared/krpc-server-main",
-            classOf[DeferredRPC.MethodPerEndpoint])
-            .requestTimeout(200.milliseconds)
-            .retryPolicy(retry(timeouts = 3))
-            .build(),
-          serviceName = "deferredrpc",
-          stats = statsReceiver
+            "/s/kafka-shared/krpc-server-ma n",
+            classOf[DeferredRPC. thodPerEndpo nt])
+            .requestT  out(200.m ll seconds)
+            .retryPol cy(retry(t  outs = 3))
+            .bu ld(),
+          serv ceNa  = "deferredrpc",
+          stats = statsRece ver
         )
 
-      def deferredTweetypie(target: Target): ThriftTweetService = {
-        // When deferring back to the local datacenter, preserve the finagle
-        // context and dtabs. This will ensure that developer dtabs are honored
-        // and that context is preserved in eventbus. (eventbus enqueues only
-        // happen in async requests within the same datacenter.)
+      def deferredT etyp e(target: Target): Thr ftT etServ ce = {
+        // W n deferr ng back to t  local datacenter, preserve t  f nagle
+        // context and dtabs. T  w ll ensure that developer dtabs are honored
+        // and that context  s preserved  n eventbus. (eventbus enqueues only
+        // happen  n async requests w h n t  sa  datacenter.)
         //
-        // Effectively, this means we consider deferredrpc requests within the
-        // same datacenter to be part of the same request, but replicated
+        // Effect vely, t   ans   cons der deferredrpc requests w h n t 
+        // sa  datacenter to be part of t  sa  request, but repl cated
         // requests are not.
-        val isLocal: Boolean = target.datacenter == Datacenter.Local
+        val  sLocal: Boolean = target.datacenter == Datacenter.Local
 
-        val deferredThriftService: Service[ThriftClientRequest, Array[Byte]] =
-          new DeferredThriftService(
-            deferredRpcClient,
+        val deferredThr ftServ ce: Serv ce[Thr ftCl entRequest, Array[Byte]] =
+          new DeferredThr ftServ ce(
+            deferredRpcCl ent,
             target,
-            serializeFinagleContexts = isLocal,
-            serializeFinagleDtabs = isLocal
+            ser al zeF nagleContexts =  sLocal,
+            ser al zeF nagleDtabs =  sLocal
           )
 
-        new TweetServiceInternal$FinagleClient(deferredThriftService)
+        new T etServ ce nternal$F nagleCl ent(deferredThr ftServ ce)
       }
 
-      val replicationClient: ThriftTweetService =
-        deferredTweetypie(Target(Datacenter.AllOthers, "tweetypie-replication"))
+      val repl cat onCl ent: Thr ftT etServ ce =
+        deferredT etyp e(Target(Datacenter.AllOt rs, "t etyp e-repl cat on"))
 
-      // used for read endpoints replication
-      val lowQoSReplicationClients: Seq[GatedReplicationClient] = {
-        val rampUpGate = Gate.linearRampUp(Time.now, settings.forkingRampUp)
+      // used for read endpo nts repl cat on
+      val lowQoSRepl cat onCl ents: Seq[GatedRepl cat onCl ent] = {
+        val rampUpGate = Gate.l nearRampUp(T  .now, sett ngs.fork ngRampUp)
 
-        // Gates to avoid sending replicated reads from a cluster to itself
-        val inATLA = if (settings.zone == "atla") Gate.True else Gate.False
-        val inPDXA = if (settings.zone == "pdxa") Gate.True else Gate.False
+        // Gates to avo d send ng repl cated reads from a cluster to  self
+        val  nATLA =  f (sett ngs.zone == "atla") Gate.True else Gate.False
+        val  nPDXA =  f (sett ngs.zone == "pdxa") Gate.True else Gate.False
 
         Seq(
-          GatedReplicationClient(
-            client = deferredTweetypie(Target(Datacenter.Atla, "tweetypie-lowqos")),
-            gate = rampUpGate & deciderGates.replicateReadsToATLA & !inATLA
+          GatedRepl cat onCl ent(
+            cl ent = deferredT etyp e(Target(Datacenter.Atla, "t etyp e-lowqos")),
+            gate = rampUpGate & dec derGates.repl cateReadsToATLA & ! nATLA
           ),
-          GatedReplicationClient(
-            client = deferredTweetypie(Target(Datacenter.Pdxa, "tweetypie-lowqos")),
-            gate = rampUpGate & deciderGates.replicateReadsToPDXA & !inPDXA
+          GatedRepl cat onCl ent(
+            cl ent = deferredT etyp e(Target(Datacenter.Pdxa, "t etyp e-lowqos")),
+            gate = rampUpGate & dec derGates.repl cateReadsToPDXA & ! nPDXA
           )
         )
       }
 
-      // used for async operations in the write path
-      val asyncTweetService: ThriftTweetService =
-        deferredTweetypie(Target(Datacenter.Local, "tweetypie"))
+      // used for async operat ons  n t  wr e path
+      val asyncT etServ ce: Thr ftT etServ ce =
+        deferredT etyp e(Target(Datacenter.Local, "t etyp e"))
 
-      // used to trigger asyncEraseUserTweetsRequest
-      val asyncTweetDeletionService: ThriftTweetService =
-        deferredTweetypie(Target(Datacenter.Local, "tweetypie-retweet-deletion"))
+      // used to tr gger asyncEraseUserT etsRequest
+      val asyncT etDelet onServ ce: Thr ftT etServ ce =
+        deferredT etyp e(Target(Datacenter.Local, "t etyp e-ret et-delet on"))
 
-      // used for async retries
-      val asyncRetryTweetService: ThriftTweetService =
-        deferredTweetypie(Target(Datacenter.Local, "tweetypie-async-retry"))
+      // used for async retr es
+      val asyncRetryT etServ ce: Thr ftT etServ ce =
+        deferredT etyp e(Target(Datacenter.Local, "t etyp e-async-retry"))
 
-      val darkTrafficClient: Service[Array[Byte], Array[Byte]] = {
-        val thriftService =
-          thriftMuxClient(
-            "tweetypie.dark",
-            propagateDeadlines = false
-          ).withRequestTimeout(100.milliseconds)
-            .newService("/s/tweetypie/proxy")
+      val darkTraff cCl ent: Serv ce[Array[Byte], Array[Byte]] = {
+        val thr ftServ ce =
+          thr ftMuxCl ent(
+            "t etyp e.dark",
+            propagateDeadl nes = false
+          ).w hRequestT  out(100.m ll seconds)
+            .newServ ce("/s/t etyp e/proxy")
 
-        val transformer =
-          new Filter[Array[Byte], Array[Byte], ThriftClientRequest, Array[Byte]] {
-            override def apply(
+        val transfor r =
+          new F lter[Array[Byte], Array[Byte], Thr ftCl entRequest, Array[Byte]] {
+            overr de def apply(
               request: Array[Byte],
-              service: Service[ThriftClientRequest, Array[Byte]]
+              serv ce: Serv ce[Thr ftCl entRequest, Array[Byte]]
             ): Future[Array[Byte]] =
-              service(new ThriftClientRequest(request, false))
+              serv ce(new Thr ftCl entRequest(request, false))
           }
 
-        transformer andThen thriftService
+        transfor r andT n thr ftServ ce
       }
 
-      val geoHydrationClient: GeoduckHydration.MethodPerEndpoint = {
-        val mb = thriftMuxMethodBuilder("geoduck_hydration", "/s/geo/hydration")
-          .withTimeoutPerRequest(100.millis)
-          .idempotent(maxExtraLoad = 1.percent)
-        ThriftMux.Client.methodPerEndpoint(
-          mb.servicePerEndpoint[GeoduckHydration.ServicePerEndpoint])
+      val geoHydrat onCl ent: GeoduckHydrat on. thodPerEndpo nt = {
+        val mb = thr ftMux thodBu lder("geoduck_hydrat on", "/s/geo/hydrat on")
+          .w hT  outPerRequest(100.m ll s)
+          . dempotent(maxExtraLoad = 1.percent)
+        Thr ftMux.Cl ent. thodPerEndpo nt(
+          mb.serv cePerEndpo nt[GeoduckHydrat on.Serv cePerEndpo nt])
       }
 
-      val geoHydrationLocate: GeoduckLocate = geoHydrationClient.locate
+      val geoHydrat onLocate: GeoduckLocate = geoHydrat onCl ent.locate
 
-      val geoReverseGeocoderClient: ReverseGeocoder.MethodPerEndpoint = {
-        val mb = thriftMuxMethodBuilder("geoduck_reversegeocoder", "/s/geo/geoduck_reversegeocoder")
-          .withTimeoutPerRequest(100.millis)
-          .idempotent(maxExtraLoad = 1.percent)
-        ThriftMux.Client.methodPerEndpoint(
-          mb.servicePerEndpoint[ReverseGeocoder.ServicePerEndpoint])
+      val geoReverseGeocoderCl ent: ReverseGeocoder. thodPerEndpo nt = {
+        val mb = thr ftMux thodBu lder("geoduck_reversegeocoder", "/s/geo/geoduck_reversegeocoder")
+          .w hT  outPerRequest(100.m ll s)
+          . dempotent(maxExtraLoad = 1.percent)
+        Thr ftMux.Cl ent. thodPerEndpo nt(
+          mb.serv cePerEndpo nt[ReverseGeocoder.Serv cePerEndpo nt])
       }
 
       val geoduckGeohashLocate: GeoduckGeohashLocate = {
         new GeoduckGeohashLocate(
-          reverseGeocoderClient = geoReverseGeocoderClient,
-          hydrationClient = geoHydrationClient,
-          classScopedStatsReceiver = statsReceiver.scope("geo_geohash_locate"))
+          reverseGeocoderCl ent = geoReverseGeocoderCl ent,
+          hydrat onCl ent = geoHydrat onCl ent,
+          classScopedStatsRece ver = statsRece ver.scope("geo_geohash_locate"))
       }
 
       val geoRelevance =
-        new Relevance$FinagleClient(
-          thriftMuxClientBuilder(
+        new Relevance$F nagleCl ent(
+          thr ftMuxCl entBu lder(
             "geoduck_relevance",
             "/s/geo/relevance",
-            classOf[Relevance.MethodPerEndpoint])
-            .requestTimeout(100.milliseconds)
-            .retryPolicy(retry(timeouts = 1))
-            .build(),
-          stats = statsReceiver
+            classOf[Relevance. thodPerEndpo nt])
+            .requestT  out(100.m ll seconds)
+            .retryPol cy(retry(t  outs = 1))
+            .bu ld(),
+          stats = statsRece ver
         )
 
-      val fanoutServiceClient =
-        new FanoutService$FinagleClient(
-          new DeferredThriftService(deferredRpcClient, Target(Datacenter.Local, "fanoutservice")),
-          serviceName = "fanoutservice",
-          stats = statsReceiver
+      val fanoutServ ceCl ent =
+        new FanoutServ ce$F nagleCl ent(
+          new DeferredThr ftServ ce(deferredRpcCl ent, Target(Datacenter.Local, "fanoutserv ce")),
+          serv ceNa  = "fanoutserv ce",
+          stats = statsRece ver
         )
 
-      val limiterService: LimiterService = {
-        val limiterClient =
-          new LimiterClientFactory(
-            name = "limiter",
-            clientId = thriftClientId,
+      val l m erServ ce: L m erServ ce = {
+        val l m erCl ent =
+          new L m erCl entFactory(
+            na  = "l m er",
+            cl ent d = thr ftCl ent d,
             tracer = tracer,
-            statsReceiver = statsReceiver,
-            serviceIdentifier = settings.serviceIdentifier,
-            opportunisticTlsLevel = OpportunisticTls.Required,
-            daemonize = true
-          )(eval("/s/limiter/limiter"))
+            statsRece ver = statsRece ver,
+            serv ce dent f er = sett ngs.serv ce dent f er,
+            opportun st cTlsLevel = Opportun st cTls.Requ red,
+            daemon ze = true
+          )(eval("/s/l m er/l m er"))
 
-        val limiterBackend = settings.limiterBackendConfig(
-          LimiterBackend.fromClient(limiterClient),
-          backendContext("limiter")
+        val l m erBackend = sett ngs.l m erBackendConf g(
+          L m erBackend.fromCl ent(l m erCl ent),
+          backendContext("l m er")
         )
 
-        LimiterService.fromBackend(
-          limiterBackend.incrementFeature,
-          limiterBackend.getFeatureUsage,
-          getAppId,
-          backendsScope.scope("limiter")
+        L m erServ ce.fromBackend(
+          l m erBackend. ncre ntFeature,
+          l m erBackend.getFeatureUsage,
+          getApp d,
+          backendsScope.scope("l m er")
         )
       }
 
-      val passbirdClient =
-        new PassbirdService$FinagleClient(
-          thriftMuxClientBuilder(
-            "passbird",
-            "/s/passbird/passbird",
-            classOf[PassbirdService.MethodPerEndpoint])
-            .requestTimeout(100.milliseconds)
-            .retryPolicy(retry(timeouts = 1))
-            .build(),
-          serviceName = "passbird",
-          stats = statsReceiver
+      val passb rdCl ent =
+        new Passb rdServ ce$F nagleCl ent(
+          thr ftMuxCl entBu lder(
+            "passb rd",
+            "/s/passb rd/passb rd",
+            classOf[Passb rdServ ce. thodPerEndpo nt])
+            .requestT  out(100.m ll seconds)
+            .retryPol cy(retry(t  outs = 1))
+            .bu ld(),
+          serv ceNa  = "passb rd",
+          stats = statsRece ver
         )
 
-      val escherbird: Escherbird = {
-        val escherbirdClient =
-          new TweetEntityAnnotationService$FinagleClient(
-            thriftMuxClientBuilder(
-              "escherbird",
-              "/s/escherbird/annotationservice",
-              classOf[TweetEntityAnnotationScroogeIface.MethodPerEndpoint])
-              .build()
+      val esc rb rd: Esc rb rd = {
+        val esc rb rdCl ent =
+          new T etEnt yAnnotat onServ ce$F nagleCl ent(
+            thr ftMuxCl entBu lder(
+              "esc rb rd",
+              "/s/esc rb rd/annotat onserv ce",
+              classOf[T etEnt yAnnotat onScrooge face. thodPerEndpo nt])
+              .bu ld()
           )
-        settings.escherbirdConfig(
-          Escherbird.fromClient(escherbirdClient),
-          backendContext("escherbird")
+        sett ngs.esc rb rdConf g(
+          Esc rb rd.fromCl ent(esc rb rdCl ent),
+          backendContext("esc rb rd")
         )
       }
 
       val geoScrubEventStore: GeoScrubEventStore = {
         val mhMtlsParams =
-          if (settings.serviceIdentifier == EmptyServiceIdentifier) NoMtlsParams
+           f (sett ngs.serv ce dent f er == EmptyServ ce dent f er) NoMtlsParams
           else
-            ManhattanKVClientMtlsParams(
-              serviceIdentifier = settings.serviceIdentifier,
-              opportunisticTls = OpportunisticTls.Required)
+            ManhattanKVCl entMtlsParams(
+              serv ce dent f er = sett ngs.serv ce dent f er,
+              opportun st cTls = Opportun st cTls.Requ red)
 
-        val mhClient =
-          new ManhattanKVClient(
-            appId = "geoduck_scrub_datastore",
-            dest = "/s/manhattan/omega.native-thrift",
+        val mhCl ent =
+          new ManhattanKVCl ent(
+            app d = "geoduck_scrub_datastore",
+            dest = "/s/manhattan/o ga.nat ve-thr ft",
             mtlsParams = mhMtlsParams,
-            label = "mh_omega",
-            Seq(Experiments.ApertureLoadBalancer)
+            label = "mh_o ga",
+            Seq(Exper  nts.ApertureLoadBalancer)
           )
 
         GeoScrubEventStore(
-          mhClient,
-          settings.geoScrubEventStoreConfig,
+          mhCl ent,
+          sett ngs.geoScrubEventStoreConf g,
           backendContext("geoScrubEventStore")
         )
       }
 
-      val tweetEventsPublisher: EventBusPublisher[TweetEvent] =
-        eventBusPublisherBuilder
-          .streamName("tweet_events")
-          .thriftStruct(TweetEvent)
-          .publishTimeout(500.milliseconds)
-          .serializeFinagleDtabs(true)
-          .build()
+      val t etEventsPubl s r: EventBusPubl s r[T etEvent] =
+        eventBusPubl s rBu lder
+          .streamNa ("t et_events")
+          .thr ftStruct(T etEvent)
+          .publ shT  out(500.m ll seconds)
+          .ser al zeF nagleDtabs(true)
+          .bu ld()
 
-      val deleteLocationDataPublisher: EventBusPublisher[DeleteLocationData] =
-        eventBusPublisherBuilder
-          .streamName("tweetypie_delete_location_data_prod")
-          .thriftStruct(DeleteLocationData)
-          // deleteLocationData is relatively rare, and publishing to
-          // eventbus is all that the endpoint does. This means that it
-          // is much more likely that we will have to make a connection,
-          // which has much greater latency, and also makes us more
-          // tolerant of slow requests, so we choose a long timeout.
-          .publishTimeout(2.seconds)
-          .build()
+      val deleteLocat onDataPubl s r: EventBusPubl s r[DeleteLocat onData] =
+        eventBusPubl s rBu lder
+          .streamNa ("t etyp e_delete_locat on_data_prod")
+          .thr ftStruct(DeleteLocat onData)
+          // deleteLocat onData  s relat vely rare, and publ sh ng to
+          // eventbus  s all that t  endpo nt does. T   ans that  
+          //  s much more l kely that   w ll have to make a connect on,
+          // wh ch has much greater latency, and also makes us more
+          // tolerant of slow requests, so   choose a long t  out.
+          .publ shT  out(2.seconds)
+          .bu ld()
 
-      val retweetArchivalEventPublisher: EventBusPublisher[RetweetArchivalEvent] =
-        eventBusPublisherBuilder
-          .streamName("retweet_archival_events")
-          .thriftStruct(RetweetArchivalEvent)
-          .publishTimeout(500.milliseconds)
-          .build()
+      val ret etArch valEventPubl s r: EventBusPubl s r[Ret etArch valEvent] =
+        eventBusPubl s rBu lder
+          .streamNa ("ret et_arch val_events")
+          .thr ftStruct(Ret etArch valEvent)
+          .publ shT  out(500.m ll seconds)
+          .bu ld()
 
-      val gnipEnricherator: GnipEnricherator = {
-        val gnipEnricherator =
-          thriftMuxMethodBuilder(
-            "enricherator",
-            "/s/datadelivery-enrichments/enricherator"
+      val gn pEnr c rator: Gn pEnr c rator = {
+        val gn pEnr c rator =
+          thr ftMux thodBu lder(
+            "enr c rator",
+            "/s/datadel very-enr ch nts/enr c rator"
           )
-        GnipEnricherator.fromMethod(gnipEnricherator)
+        Gn pEnr c rator.from thod(gn pEnr c rator)
       }
 
-      val stratoserverClient: StratoClient = Strato.client
-        .withMutualTls(
-          serviceIdentifier = settings.serviceIdentifier,
-          opportunisticLevel = OpportunisticTls.Required)
-        .withLabel("stratoserver")
-        .withRequestTimeout(100.milliseconds)
-        .build()
+      val stratoserverCl ent: StratoCl ent = Strato.cl ent
+        .w hMutualTls(
+          serv ce dent f er = sett ngs.serv ce dent f er,
+          opportun st cLevel = Opportun st cTls.Requ red)
+        .w hLabel("stratoserver")
+        .w hRequestT  out(100.m ll seconds)
+        .bu ld()
 
-      val configBus: ConfigBus =
-        ConfigBus(backendsScope.scope("config_bus"), settings.instanceId, settings.instanceCount)
+      val conf gBus: Conf gBus =
+        Conf gBus(backendsScope.scope("conf g_bus"), sett ngs. nstance d, sett ngs. nstanceCount)
 
       val callbackPromotedContentLogger: CallbackPromotedContentLogger = {
-        val publisher =
-          eventBusPublisherBuilder
-            .streamName(settings.adsLoggingClientTopicName)
-            .thriftStruct(AdCallbackEvent)
-            .publishTimeout(500.milliseconds)
-            .serializeFinagleDtabs(true)
+        val publ s r =
+          eventBusPubl s rBu lder
+            .streamNa (sett ngs.adsLogg ngCl entTop cNa )
+            .thr ftStruct(AdCallbackEvent)
+            .publ shT  out(500.m ll seconds)
+            .ser al zeF nagleDtabs(true)
             .maxQueuedEvents(1000)
             .kafkaDest("/s/kafka/ads-callback:kafka-tls")
-            .build()
+            .bu ld()
 
         val stats = backendsScope.scope("promoted_content")
-        val adsLoggingClient = AdsLoggingClient(publisher, stats, "Tweetypie")
-        new CallbackPromotedContentLogger(adsLoggingClient, stats)
+        val adsLogg ngCl ent = AdsLogg ngCl ent(publ s r, stats, "T etyp e")
+        new CallbackPromotedContentLogger(adsLogg ngCl ent, stats)
       }
     }
   }

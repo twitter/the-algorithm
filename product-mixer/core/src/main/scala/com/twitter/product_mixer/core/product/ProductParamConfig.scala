@@ -1,36 +1,36 @@
-package com.twitter.product_mixer.core.product
+package com.tw ter.product_m xer.core.product
 
-import com.twitter.product_mixer.core.functional_component.configapi.registry.ParamConfig
-import com.twitter.servo.decider.DeciderKeyName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.decider.BooleanDeciderParam
+ mport com.tw ter.product_m xer.core.funct onal_component.conf gap .reg stry.ParamConf g
+ mport com.tw ter.servo.dec der.Dec derKeyNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .dec der.BooleanDec derParam
 
-trait ProductParamConfig extends ParamConfig with ProductParamConfigBuilder {
-
-  /**
-   * This enabled decider param can to be used to quickly disable a Product via Decider
-   *
-   * This value must correspond to the deciders configured in the `resources/config/decider.yml` file
-   */
-  val enabledDeciderKey: DeciderKeyName
+tra  ProductParamConf g extends ParamConf g w h ProductParamConf gBu lder {
 
   /**
-   * This supported client feature switch param can be used with a Feature Switch to control the
-   * rollout of a new Product from dogfood to experiment to production
+   * T  enabled dec der param can to be used to qu ckly d sable a Product v a Dec der
    *
-   * FeatureSwitches are configured by defining both a [[com.twitter.timelines.configapi.Param]] in code
-   * and in an associated `.yml` file in the __config repo__.
-   *
-   * The `.yml` file path is determined by the `feature_switches_path` in your aurora file and tge Product name
-   * so the resulting path in the __config repo__ is essentially `s"{feature_switches_path}/{snakeCase(Product.identifier)}"`
+   * T  value must correspond to t  dec ders conf gured  n t  `res ces/conf g/dec der.yml` f le
    */
-  val supportedClientFSName: String
+  val enabledDec derKey: Dec derKeyNa 
 
-  object EnabledDeciderParam extends BooleanDeciderParam(enabledDeciderKey)
+  /**
+   * T  supported cl ent feature sw ch param can be used w h a Feature Sw ch to control t 
+   * rollout of a new Product from dogfood to exper  nt to product on
+   *
+   * FeatureSw c s are conf gured by def n ng both a [[com.tw ter.t  l nes.conf gap .Param]]  n code
+   * and  n an assoc ated `.yml` f le  n t  __conf g repo__.
+   *
+   * T  `.yml` f le path  s determ ned by t  `feature_sw c s_path`  n y  aurora f le and tge Product na 
+   * so t  result ng path  n t  __conf g repo__  s essent ally `s"{feature_sw c s_path}/{snakeCase(Product. dent f er)}"`
+   */
+  val supportedCl entFSNa : Str ng
 
-  object SupportedClientParam
+  object EnabledDec derParam extends BooleanDec derParam(enabledDec derKey)
+
+  object SupportedCl entParam
       extends FSParam(
-        name = supportedClientFSName,
+        na  = supportedCl entFSNa ,
         default = false
       )
 }

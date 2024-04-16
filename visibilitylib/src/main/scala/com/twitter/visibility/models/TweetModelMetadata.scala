@@ -1,23 +1,23 @@
-package com.twitter.visibility.models
+package com.tw ter.v s b l y.models
 
-import com.twitter.spam.rtf.{thriftscala => s}
+ mport com.tw ter.spam.rtf.{thr ftscala => s}
 
-case class TweetModelMetadata(
-  version: Option[Int] = None,
-  calibratedLanguage: Option[String] = None)
+case class T etModel tadata(
+  vers on: Opt on[ nt] = None,
+  cal bratedLanguage: Opt on[Str ng] = None)
 
-object TweetModelMetadata {
+object T etModel tadata {
 
-  def fromThrift(metadata: s.ModelMetadata): Option[TweetModelMetadata] = {
-    metadata match {
-      case s.ModelMetadata.ModelMetadataV1(s.ModelMetadataV1(version, calibratedLanguage)) =>
-        Some(TweetModelMetadata(version, calibratedLanguage))
+  def fromThr ft( tadata: s.Model tadata): Opt on[T etModel tadata] = {
+     tadata match {
+      case s.Model tadata.Model tadataV1(s.Model tadataV1(vers on, cal bratedLanguage)) =>
+        So (T etModel tadata(vers on, cal bratedLanguage))
       case _ => None
     }
   }
 
-  def toThrift(metadata: TweetModelMetadata): s.ModelMetadata = {
-    s.ModelMetadata.ModelMetadataV1(
-      s.ModelMetadataV1(metadata.version, metadata.calibratedLanguage))
+  def toThr ft( tadata: T etModel tadata): s.Model tadata = {
+    s.Model tadata.Model tadataV1(
+      s.Model tadataV1( tadata.vers on,  tadata.cal bratedLanguage))
   }
 }

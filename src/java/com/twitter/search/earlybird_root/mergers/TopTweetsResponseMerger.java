@@ -1,65 +1,65 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.tw ter.search.earlyb rd_root. rgers;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.L st;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.collectors.RelevanceMergeCollector;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchQuery;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchRank ngMode;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResults;
+ mport com.tw ter.search.earlyb rd_root.collectors.Relevance rgeCollector;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.ut l.Future;
 
 /**
- * Merger class to merge toptweets EarlybirdResponse objects
+ *  rger class to  rge topt ets Earlyb rdResponse objects
  */
-public class TopTweetsResponseMerger extends EarlybirdResponseMerger {
+publ c class TopT etsResponse rger extends Earlyb rdResponse rger {
 
-  private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 0.9;
+  pr vate stat c f nal double SUCCESSFUL_RESPONSE_THRESHOLD = 0.9;
 
-  private static final SearchTimerStats TIMER =
-      SearchTimerStats.export("merge_top_tweets", TimeUnit.NANOSECONDS, false, true);
+  pr vate stat c f nal SearchT  rStats T MER =
+      SearchT  rStats.export(" rge_top_t ets", T  Un .NANOSECONDS, false, true);
 
-  public TopTweetsResponseMerger(EarlybirdRequestContext requestContext,
-                                 List<Future<EarlybirdResponse>> responses,
+  publ c TopT etsResponse rger(Earlyb rdRequestContext requestContext,
+                                 L st<Future<Earlyb rdResponse>> responses,
                                  ResponseAccumulator mode) {
     super(requestContext, responses, mode);
   }
 
-  @Override
-  protected SearchTimerStats getMergedResponseTimer() {
-    return TIMER;
+  @Overr de
+  protected SearchT  rStats get rgedResponseT  r() {
+    return T MER;
   }
 
-  @Override
+  @Overr de
   protected double getDefaultSuccessResponseThreshold() {
     return SUCCESSFUL_RESPONSE_THRESHOLD;
   }
 
-  @Override
-  protected EarlybirdResponse internalMerge(EarlybirdResponse mergedResponse) {
-    final ThriftSearchQuery searchQuery = requestContext.getRequest().getSearchQuery();
+  @Overr de
+  protected Earlyb rdResponse  nternal rge(Earlyb rdResponse  rgedResponse) {
+    f nal Thr ftSearchQuery searchQuery = requestContext.getRequest().getSearchQuery();
 
-    Preconditions.checkNotNull(searchQuery);
-    Preconditions.checkState(searchQuery.isSetRankingMode());
-    Preconditions.checkState(searchQuery.getRankingMode() == ThriftSearchRankingMode.TOPTWEETS);
+    Precond  ons.c ckNotNull(searchQuery);
+    Precond  ons.c ckState(searchQuery. sSetRank ngMode());
+    Precond  ons.c ckState(searchQuery.getRank ngMode() == Thr ftSearchRank ngMode.TOPTWEETS);
 
-    int numResultsRequested = computeNumResultsToKeep();
+     nt numResultsRequested = computeNumResultsToKeep();
 
-    RelevanceMergeCollector collector = new RelevanceMergeCollector(responses.size());
+    Relevance rgeCollector collector = new Relevance rgeCollector(responses.s ze());
 
     addResponsesToCollector(collector);
-    ThriftSearchResults searchResults = collector.getAllSearchResults();
-    if (numResultsRequested < searchResults.getResults().size()) {
-      searchResults.setResults(searchResults.getResults().subList(0, numResultsRequested));
+    Thr ftSearchResults searchResults = collector.getAllSearchResults();
+     f (numResultsRequested < searchResults.getResults().s ze()) {
+      searchResults.setResults(searchResults.getResults().subL st(0, numResultsRequested));
     }
 
-    mergedResponse.setSearchResults(searchResults);
+     rgedResponse.setSearchResults(searchResults);
 
-    return mergedResponse;
+    return  rgedResponse;
   }
 }

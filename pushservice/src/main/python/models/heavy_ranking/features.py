@@ -1,138 +1,138 @@
-import os
-from typing import Dict
+ mport os
+from typ ng  mport D ct
 
-from twitter.deepbird.projects.magic_recs.libs.model_utils import filter_nans_and_infs
-import twml
-from twml.layers import full_sparse, sparse_max_norm
+from tw ter.deepb rd.projects.mag c_recs.l bs.model_ut ls  mport f lter_nans_and_ nfs
+ mport twml
+from twml.layers  mport full_sparse, sparse_max_norm
 
-from .params import FeaturesParams, GraphParams, SparseFeaturesParams
+from .params  mport FeaturesParams, GraphParams, SparseFeaturesParams
 
-import tensorflow as tf
-from tensorflow import Tensor
-import tensorflow.compat.v1 as tf1
+ mport tensorflow as tf
+from tensorflow  mport Tensor
+ mport tensorflow.compat.v1 as tf1
 
 
-FEAT_CONFIG_DEFAULT_VAL = 0
-DEFAULT_FEATURE_LIST_PATH = "./feature_list_default.yaml"
-FEATURE_LIST_DEFAULT_PATH = os.path.join(
-  os.path.dirname(os.path.realpath(__file__)), DEFAULT_FEATURE_LIST_PATH
+FEAT_CONF G_DEFAULT_VAL = 0
+DEFAULT_FEATURE_L ST_PATH = "./feature_l st_default.yaml"
+FEATURE_L ST_DEFAULT_PATH = os.path.jo n(
+  os.path.d rna (os.path.realpath(__f le__)), DEFAULT_FEATURE_L ST_PATH
 )
 
 
-def get_feature_config(data_spec_path=None, feature_list_provided=[], params: GraphParams = None):
+def get_feature_conf g(data_spec_path=None, feature_l st_prov ded=[], params: GraphParams = None):
 
-  a_string_feat_list = [feat for feat, feat_type in feature_list_provided if feat_type != "S"]
+  a_str ng_feat_l st = [feat for feat, feat_type  n feature_l st_prov ded  f feat_type != "S"]
 
-  builder = twml.contrib.feature_config.FeatureConfigBuilder(
+  bu lder = twml.contr b.feature_conf g.FeatureConf gBu lder(
     data_spec_path=data_spec_path, debug=False
   )
 
-  builder = builder.extract_feature_group(
-    feature_regexes=a_string_feat_list,
-    group_name="continuous_features",
-    default_value=FEAT_CONFIG_DEFAULT_VAL,
-    type_filter=["CONTINUOUS"],
+  bu lder = bu lder.extract_feature_group(
+    feature_regexes=a_str ng_feat_l st,
+    group_na ="cont nuous_features",
+    default_value=FEAT_CONF G_DEFAULT_VAL,
+    type_f lter=["CONT NUOUS"],
   )
 
-  builder = builder.extract_feature_group(
-    feature_regexes=a_string_feat_list,
-    group_name="binary_features",
-    type_filter=["BINARY"],
+  bu lder = bu lder.extract_feature_group(
+    feature_regexes=a_str ng_feat_l st,
+    group_na ="b nary_features",
+    type_f lter=["B NARY"],
   )
 
-  if params.model.features.sparse_features:
-    builder = builder.extract_features_as_hashed_sparse(
-      feature_regexes=a_string_feat_list,
-      hash_space_size_bits=params.model.features.sparse_features.bits,
-      type_filter=["DISCRETE", "STRING", "SPARSE_BINARY"],
-      output_tensor_name="sparse_not_continuous",
+   f params.model.features.sparse_features:
+    bu lder = bu lder.extract_features_as_has d_sparse(
+      feature_regexes=a_str ng_feat_l st,
+      hash_space_s ze_b s=params.model.features.sparse_features.b s,
+      type_f lter=["D SCRETE", "STR NG", "SPARSE_B NARY"],
+      output_tensor_na ="sparse_not_cont nuous",
     )
 
-    builder = builder.extract_features_as_hashed_sparse(
-      feature_regexes=[feat for feat, feat_type in feature_list_provided if feat_type == "S"],
-      hash_space_size_bits=params.model.features.sparse_features.bits,
-      type_filter=["SPARSE_CONTINUOUS"],
-      output_tensor_name="sparse_continuous",
+    bu lder = bu lder.extract_features_as_has d_sparse(
+      feature_regexes=[feat for feat, feat_type  n feature_l st_prov ded  f feat_type == "S"],
+      hash_space_s ze_b s=params.model.features.sparse_features.b s,
+      type_f lter=["SPARSE_CONT NUOUS"],
+      output_tensor_na ="sparse_cont nuous",
     )
 
-  builder = builder.add_labels([task.label for task in params.tasks] + ["label.ntabDislike"])
+  bu lder = bu lder.add_labels([task.label for task  n params.tasks] + ["label.ntabD sl ke"])
 
-  if params.weight:
-    builder = builder.define_weight(params.weight)
+   f params.  ght:
+    bu lder = bu lder.def ne_  ght(params.  ght)
 
-  return builder.build()
+  return bu lder.bu ld()
 
 
-def dense_features(features: Dict[str, Tensor], training: bool) -> Tensor:
+def dense_features(features: D ct[str, Tensor], tra n ng: bool) -> Tensor:
   """
-  Performs feature transformations on the raw dense features (continuous and binary).
+  Performs feature transformat ons on t  raw dense features (cont nuous and b nary).
   """
-  with tf.name_scope("dense_features"):
-    x = filter_nans_and_infs(features["continuous_features"])
+  w h tf.na _scope("dense_features"):
+    x = f lter_nans_and_ nfs(features["cont nuous_features"])
 
-    x = tf.sign(x) * tf.math.log(tf.abs(x) + 1)
-    x = tf1.layers.batch_normalization(
-      x, momentum=0.9999, training=training, renorm=training, axis=1
+    x = tf.s gn(x) * tf.math.log(tf.abs(x) + 1)
+    x = tf1.layers.batch_normal zat on(
+      x, mo ntum=0.9999, tra n ng=tra n ng, renorm=tra n ng, ax s=1
     )
-    x = tf.clip_by_value(x, -5, 5)
+    x = tf.cl p_by_value(x, -5, 5)
 
-    transformed_continous_features = tf.where(tf.math.is_nan(x), tf.zeros_like(x), x)
+    transfor d_cont nous_features = tf.w re(tf.math. s_nan(x), tf.zeros_l ke(x), x)
 
-    binary_features = filter_nans_and_infs(features["binary_features"])
-    binary_features = tf.dtypes.cast(binary_features, tf.float32)
+    b nary_features = f lter_nans_and_ nfs(features["b nary_features"])
+    b nary_features = tf.dtypes.cast(b nary_features, tf.float32)
 
-    output = tf.concat([transformed_continous_features, binary_features], axis=1)
+    output = tf.concat([transfor d_cont nous_features, b nary_features], ax s=1)
 
   return output
 
 
 def sparse_features(
-  features: Dict[str, Tensor], training: bool, params: SparseFeaturesParams
+  features: D ct[str, Tensor], tra n ng: bool, params: SparseFeaturesParams
 ) -> Tensor:
   """
-  Performs feature transformations on the raw sparse features.
+  Performs feature transformat ons on t  raw sparse features.
   """
 
-  with tf.name_scope("sparse_features"):
-    with tf.name_scope("sparse_not_continuous"):
-      sparse_not_continuous = full_sparse(
-        inputs=features["sparse_not_continuous"],
-        output_size=params.embedding_size,
-        use_sparse_grads=training,
-        use_binary_values=False,
+  w h tf.na _scope("sparse_features"):
+    w h tf.na _scope("sparse_not_cont nuous"):
+      sparse_not_cont nuous = full_sparse(
+         nputs=features["sparse_not_cont nuous"],
+        output_s ze=params.embedd ng_s ze,
+        use_sparse_grads=tra n ng,
+        use_b nary_values=False,
       )
 
-    with tf.name_scope("sparse_continuous"):
-      shape_enforced_input = twml.util.limit_sparse_tensor_size(
-        sparse_tf=features["sparse_continuous"], input_size_bits=params.bits, mask_indices=False
+    w h tf.na _scope("sparse_cont nuous"):
+      shape_enforced_ nput = twml.ut l.l m _sparse_tensor_s ze(
+        sparse_tf=features["sparse_cont nuous"],  nput_s ze_b s=params.b s, mask_ nd ces=False
       )
 
-      normalized_continuous_sparse = sparse_max_norm(
-        inputs=shape_enforced_input, is_training=training
+      normal zed_cont nuous_sparse = sparse_max_norm(
+         nputs=shape_enforced_ nput,  s_tra n ng=tra n ng
       )
 
-      sparse_continuous = full_sparse(
-        inputs=normalized_continuous_sparse,
-        output_size=params.embedding_size,
-        use_sparse_grads=training,
-        use_binary_values=False,
+      sparse_cont nuous = full_sparse(
+         nputs=normal zed_cont nuous_sparse,
+        output_s ze=params.embedd ng_s ze,
+        use_sparse_grads=tra n ng,
+        use_b nary_values=False,
       )
 
-    output = tf.concat([sparse_not_continuous, sparse_continuous], axis=1)
+    output = tf.concat([sparse_not_cont nuous, sparse_cont nuous], ax s=1)
 
   return output
 
 
-def get_features(features: Dict[str, Tensor], training: bool, params: FeaturesParams) -> Tensor:
+def get_features(features: D ct[str, Tensor], tra n ng: bool, params: FeaturesParams) -> Tensor:
   """
-  Performs feature transformations on the dense and sparse features and combine the resulting
-  tensors into a single one.
+  Performs feature transformat ons on t  dense and sparse features and comb ne t  result ng
+  tensors  nto a s ngle one.
   """
-  with tf.name_scope("features"):
-    x = dense_features(features, training)
-    tf1.logging.info(f"Dense features: {x.shape}")
+  w h tf.na _scope("features"):
+    x = dense_features(features, tra n ng)
+    tf1.logg ng. nfo(f"Dense features: {x.shape}")
 
-    if params.sparse_features:
-      x = tf.concat([x, sparse_features(features, training, params.sparse_features)], axis=1)
+     f params.sparse_features:
+      x = tf.concat([x, sparse_features(features, tra n ng, params.sparse_features)], ax s=1)
 
   return x

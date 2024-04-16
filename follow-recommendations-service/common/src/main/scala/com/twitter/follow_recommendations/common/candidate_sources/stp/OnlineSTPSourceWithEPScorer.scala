@@ -1,58 +1,58 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.stp
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.stp.OnlineSTPSourceParams.SetPredictionDetails
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.onboarding.relevance.features.strongtie.{
-  StrongTieFeatures => StrongTieFeaturesWrapper
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.stp.Onl neSTPS ceParams.SetPred ct onDeta ls
+ mport com.tw ter.follow_recom ndat ons.common.models.AccountProof
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.FollowProof
+ mport com.tw ter.follow_recom ndat ons.common.models.HasRecentFollo dUser ds
+ mport com.tw ter.follow_recom ndat ons.common.models.Reason
+ mport com.tw ter.onboard ng.relevance.features.strongt e.{
+  StrongT eFeatures => StrongT eFeaturesWrapper
 }
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.logging.Logging
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.STPRecord
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport com.tw ter.wtf.scald ng.jobs.strong_t e_pred ct on.STPRecord
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class OnlineSTPSourceWithEPScorer @Inject() (
+@S ngleton
+class Onl neSTPS ceW hEPScorer @ nject() (
   epStpScorer: EpStpScorer,
-  stpGraphBuilder: STPGraphBuilder,
-  baseStatReceiver: StatsReceiver)
-    extends BaseOnlineSTPSource(stpGraphBuilder, baseStatReceiver)
-    with Logging {
-  private val epScorerUsedCounter = statsReceiver.counter("ep_scorer_used")
+  stpGraphBu lder: STPGraphBu lder,
+  baseStatRece ver: StatsRece ver)
+    extends BaseOnl neSTPS ce(stpGraphBu lder, baseStatRece ver)
+    w h Logg ng {
+  pr vate val epScorerUsedCounter = statsRece ver.counter("ep_scorer_used")
 
-  override def getCandidates(
+  overr de def getCand dates(
     records: Seq[STPRecord],
-    request: HasClientContext with HasParams with HasRecentFollowedUserIds,
-  ): Stitch[Seq[CandidateUser]] = {
-    epScorerUsedCounter.incr()
+    request: HasCl entContext w h HasParams w h HasRecentFollo dUser ds,
+  ): St ch[Seq[Cand dateUser]] = {
+    epScorerUsedCounter. ncr()
 
-    val possibleCandidates: Seq[Stitch[Option[CandidateUser]]] = records.map { trainingRecord =>
+    val poss bleCand dates: Seq[St ch[Opt on[Cand dateUser]]] = records.map { tra n ngRecord =>
       val scoredResponse =
-        epStpScorer.getScoredResponse(trainingRecord.record, request.params(SetPredictionDetails))
+        epStpScorer.getScoredResponse(tra n ngRecord.record, request.params(SetPred ct onDeta ls))
       scoredResponse.map(_.map { response: ScoredResponse =>
         logger.debug(response)
-        CandidateUser(
-          id = trainingRecord.destinationId,
-          score = Some(response.score),
-          reason = Some(
+        Cand dateUser(
+           d = tra n ngRecord.dest nat on d,
+          score = So (response.score),
+          reason = So (
             Reason(
-              Some(
+              So (
                 AccountProof(followProof =
-                  Some(FollowProof(trainingRecord.socialProof, trainingRecord.socialProof.size)))
+                  So (FollowProof(tra n ngRecord.soc alProof, tra n ngRecord.soc alProof.s ze)))
               )))
-        ).withCandidateSourceAndFeatures(
-          identifier,
-          Seq(StrongTieFeaturesWrapper(trainingRecord.features)))
+        ).w hCand dateS ceAndFeatures(
+           dent f er,
+          Seq(StrongT eFeaturesWrapper(tra n ngRecord.features)))
       })
     }
 
-    Stitch.collect(possibleCandidates).map { _.flatten.sortBy(-_.score.getOrElse(0.0)) }
+    St ch.collect(poss bleCand dates).map { _.flatten.sortBy(-_.score.getOrElse(0.0)) }
   }
 }

@@ -1,72 +1,72 @@
-package com.twitter.simclusters_v2.scalding.common
+package com.tw ter.s mclusters_v2.scald ng.common
 
-import com.twitter.algebird._
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.{Execution, Stat, UniqueID}
+ mport com.tw ter.algeb rd._
+ mport com.tw ter.scald ng.typed.TypedP pe
+ mport com.tw ter.scald ng.{Execut on, Stat, Un que D}
 
 /**
- * A richer version of TypedPipe.
+ * A r c r vers on of TypedP pe.
  */
-class TypedRichPipe[V](pipe: TypedPipe[V]) {
+class TypedR chP pe[V](p pe: TypedP pe[V]) {
 
-  def count(counterName: String)(implicit uniqueID: UniqueID): TypedPipe[V] = {
-    val stat = Stat(counterName)
-    pipe.map { v =>
-      stat.inc()
+  def count(counterNa : Str ng)( mpl c  un que D: Un que D): TypedP pe[V] = {
+    val stat = Stat(counterNa )
+    p pe.map { v =>
+      stat. nc()
       v
     }
   }
 
   /**
-   * Print a summary of the TypedPipe with total size and some randomly selected records
+   * Pr nt a summary of t  TypedP pe w h total s ze and so  randomly selected records
    */
-  def getSummary(numRecords: Int = 100): Execution[Option[(Long, String)]] = {
-    val randomSample = Aggregator.reservoirSample[V](numRecords)
+  def getSummary(numRecords:  nt = 100): Execut on[Opt on[(Long, Str ng)]] = {
+    val randomSample = Aggregator.reservo rSample[V](numRecords)
 
-    // more aggregator can be added here
-    pipe
-      .aggregate(randomSample.join(Aggregator.size))
+    // more aggregator can be added  re
+    p pe
+      .aggregate(randomSample.jo n(Aggregator.s ze))
       .map {
-        case (randomSamples, size) =>
+        case (randomSamples, s ze) =>
           val samplesStr = randomSamples
             .map { sample =>
-              Util.prettyJsonMapper
-                .writeValueAsString(sample)
+              Ut l.prettyJsonMapper
+                .wr eValueAsStr ng(sample)
                 .replaceAll("\n", " ")
             }
-            .mkString("\n\t")
+            .mkStr ng("\n\t")
 
-          (size, samplesStr)
+          (s ze, samplesStr)
       }
-      .toOptionExecution
+      .toOpt onExecut on
   }
 
-  def getSummaryString(name: String, numRecords: Int = 100): Execution[String] = {
+  def getSummaryStr ng(na : Str ng, numRecords:  nt = 100): Execut on[Str ng] = {
     getSummary(numRecords)
       .map {
-        case Some((size, string)) =>
-          s"TypedPipeName: $name \nTotal size: $size. \nSample records: \n$string"
-        case None => s"TypedPipeName: $name is empty"
+        case So ((s ze, str ng)) =>
+          s"TypedP peNa : $na  \nTotal s ze: $s ze. \nSample records: \n$str ng"
+        case None => s"TypedP peNa : $na   s empty"
       }
 
   }
 
   /**
-   * Print a summary of the TypedPipe with total size and some randomly selected records
+   * Pr nt a summary of t  TypedP pe w h total s ze and so  randomly selected records
    */
-  def printSummary(name: String, numRecords: Int = 100): Execution[Unit] = {
-    getSummaryString(name, numRecords).map { s => println(s) }
+  def pr ntSummary(na : Str ng, numRecords:  nt = 100): Execut on[Un ] = {
+    getSummaryStr ng(na , numRecords).map { s => pr ntln(s) }
   }
 }
 
-object TypedRichPipe extends java.io.Serializable {
-  import scala.language.implicitConversions
+object TypedR chP pe extends java. o.Ser al zable {
+   mport scala.language. mpl c Convers ons
 
-  implicit def typedPipeToRichPipe[V](
-    pipe: TypedPipe[V]
+   mpl c  def typedP peToR chP pe[V](
+    p pe: TypedP pe[V]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedRichPipe[V] = {
-    new TypedRichPipe(pipe)
+     mpl c  un que D: Un que D
+  ): TypedR chP pe[V] = {
+    new TypedR chP pe(p pe)
   }
 }

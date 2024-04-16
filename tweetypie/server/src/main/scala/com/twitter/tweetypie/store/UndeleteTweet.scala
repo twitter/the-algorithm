@@ -1,236 +1,236 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
-import com.twitter.tweetypie.store.TweetEventDataScrubber.scrub
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.t etyp e.store.T etEventDataScrubber.scrub
+ mport com.tw ter.t etyp e.thr ftscala._
 
-object UndeleteTweet extends TweetStore.SyncModule {
+object UndeleteT et extends T etStore.SyncModule {
 
   /**
-   * A TweetStoreEvent for Undeletion.
+   * A T etStoreEvent for Undelet on.
    */
   case class Event(
-    tweet: Tweet,
+    t et: T et,
     user: User,
-    timestamp: Time,
-    hydrateOptions: WritePathHydrationOptions,
-    _internalTweet: Option[CachedTweet] = None,
-    deletedAt: Option[Time],
-    sourceTweet: Option[Tweet] = None,
-    sourceUser: Option[User] = None,
-    quotedTweet: Option[Tweet] = None,
-    quotedUser: Option[User] = None,
-    parentUserId: Option[UserId] = None,
-    quoterHasAlreadyQuotedTweet: Boolean = false)
-      extends SyncTweetStoreEvent("undelete_tweet")
-      with QuotedTweetOps {
-    def internalTweet: CachedTweet =
-      _internalTweet.getOrElse(
-        throw new IllegalStateException(
-          s"internalTweet should have been set in WritePathHydration, ${this}"
+    t  stamp: T  ,
+    hydrateOpt ons: Wr ePathHydrat onOpt ons,
+    _ nternalT et: Opt on[Cac dT et] = None,
+    deletedAt: Opt on[T  ],
+    s ceT et: Opt on[T et] = None,
+    s ceUser: Opt on[User] = None,
+    quotedT et: Opt on[T et] = None,
+    quotedUser: Opt on[User] = None,
+    parentUser d: Opt on[User d] = None,
+    quoterHasAlreadyQuotedT et: Boolean = false)
+      extends SyncT etStoreEvent("undelete_t et")
+      w h QuotedT etOps {
+    def  nternalT et: Cac dT et =
+      _ nternalT et.getOrElse(
+        throw new  llegalStateExcept on(
+          s" nternalT et should have been set  n Wr ePathHydrat on, ${t }"
         )
       )
 
-    def toAsyncUndeleteTweetRequest: AsyncUndeleteTweetRequest =
-      AsyncUndeleteTweetRequest(
-        tweet = tweet,
-        cachedTweet = internalTweet,
+    def toAsyncUndeleteT etRequest: AsyncUndeleteT etRequest =
+      AsyncUndeleteT etRequest(
+        t et = t et,
+        cac dT et =  nternalT et,
         user = user,
-        timestamp = timestamp.inMillis,
-        deletedAt = deletedAt.map(_.inMillis),
-        sourceTweet = sourceTweet,
-        sourceUser = sourceUser,
-        quotedTweet = quotedTweet,
+        t  stamp = t  stamp. nM ll s,
+        deletedAt = deletedAt.map(_. nM ll s),
+        s ceT et = s ceT et,
+        s ceUser = s ceUser,
+        quotedT et = quotedT et,
         quotedUser = quotedUser,
-        parentUserId = parentUserId,
-        quoterHasAlreadyQuotedTweet = Some(quoterHasAlreadyQuotedTweet)
+        parentUser d = parentUser d,
+        quoterHasAlreadyQuotedT et = So (quoterHasAlreadyQuotedT et)
       )
   }
 
-  trait Store {
-    val undeleteTweet: FutureEffect[Event]
+  tra  Store {
+    val undeleteT et: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val undeleteTweet: FutureEffect[Event] = wrap(underlying.undeleteTweet)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val undeleteT et: FutureEffect[Event] = wrap(underly ng.undeleteT et)
   }
 
   object Store {
     def apply(
       logLensStore: LogLensStore,
-      cachingTweetStore: CachingTweetStore,
-      tweetCountsUpdatingStore: TweetCountsCacheUpdatingStore,
+      cach ngT etStore: Cach ngT etStore,
+      t etCountsUpdat ngStore: T etCountsCac Updat ngStore,
       asyncEnqueueStore: AsyncEnqueueStore
     ): Store =
       new Store {
-        override val undeleteTweet: FutureEffect[Event] =
-          FutureEffect.inParallel(
-            logLensStore.undeleteTweet,
-            // ignore failures writing to cache, will be retried in async-path
-            cachingTweetStore.ignoreFailures.undeleteTweet,
-            tweetCountsUpdatingStore.undeleteTweet,
-            asyncEnqueueStore.undeleteTweet
+        overr de val undeleteT et: FutureEffect[Event] =
+          FutureEffect. nParallel(
+            logLensStore.undeleteT et,
+            //  gnore fa lures wr  ng to cac , w ll be retr ed  n async-path
+            cach ngT etStore. gnoreFa lures.undeleteT et,
+            t etCountsUpdat ngStore.undeleteT et,
+            asyncEnqueueStore.undeleteT et
           )
       }
   }
 }
 
-object AsyncUndeleteTweet extends TweetStore.AsyncModule {
+object AsyncUndeleteT et extends T etStore.AsyncModule {
 
   object Event {
-    def fromAsyncRequest(request: AsyncUndeleteTweetRequest): TweetStoreEventOrRetry[Event] =
-      TweetStoreEventOrRetry(
-        AsyncUndeleteTweet.Event(
-          tweet = request.tweet,
-          cachedTweet = request.cachedTweet,
+    def fromAsyncRequest(request: AsyncUndeleteT etRequest): T etStoreEventOrRetry[Event] =
+      T etStoreEventOrRetry(
+        AsyncUndeleteT et.Event(
+          t et = request.t et,
+          cac dT et = request.cac dT et,
           user = request.user,
-          optUser = Some(request.user),
-          timestamp = Time.fromMilliseconds(request.timestamp),
-          deletedAt = request.deletedAt.map(Time.fromMilliseconds),
-          sourceTweet = request.sourceTweet,
-          sourceUser = request.sourceUser,
-          quotedTweet = request.quotedTweet,
+          optUser = So (request.user),
+          t  stamp = T  .fromM ll seconds(request.t  stamp),
+          deletedAt = request.deletedAt.map(T  .fromM ll seconds),
+          s ceT et = request.s ceT et,
+          s ceUser = request.s ceUser,
+          quotedT et = request.quotedT et,
           quotedUser = request.quotedUser,
-          parentUserId = request.parentUserId,
-          quoterHasAlreadyQuotedTweet = request.quoterHasAlreadyQuotedTweet.getOrElse(false)
+          parentUser d = request.parentUser d,
+          quoterHasAlreadyQuotedT et = request.quoterHasAlreadyQuotedT et.getOrElse(false)
         ),
-        request.retryAction,
+        request.retryAct on,
         RetryEvent
       )
   }
 
   case class Event(
-    tweet: Tweet,
-    cachedTweet: CachedTweet,
+    t et: T et,
+    cac dT et: Cac dT et,
     user: User,
-    optUser: Option[User],
-    timestamp: Time,
-    deletedAt: Option[Time],
-    sourceTweet: Option[Tweet],
-    sourceUser: Option[User],
-    quotedTweet: Option[Tweet],
-    quotedUser: Option[User],
-    parentUserId: Option[UserId] = None,
-    quoterHasAlreadyQuotedTweet: Boolean = false)
-      extends AsyncTweetStoreEvent("async_undelete_tweet")
-      with QuotedTweetOps
-      with TweetStoreTweetEvent {
+    optUser: Opt on[User],
+    t  stamp: T  ,
+    deletedAt: Opt on[T  ],
+    s ceT et: Opt on[T et],
+    s ceUser: Opt on[User],
+    quotedT et: Opt on[T et],
+    quotedUser: Opt on[User],
+    parentUser d: Opt on[User d] = None,
+    quoterHasAlreadyQuotedT et: Boolean = false)
+      extends AsyncT etStoreEvent("async_undelete_t et")
+      w h QuotedT etOps
+      w h T etStoreT etEvent {
 
     /**
-     * Convert this event into an AsyncUndeleteTweetRequest thrift request object
+     * Convert t  event  nto an AsyncUndeleteT etRequest thr ft request object
      */
-    def toAsyncRequest(retryAction: Option[AsyncWriteAction] = None): AsyncUndeleteTweetRequest =
-      AsyncUndeleteTweetRequest(
-        tweet = tweet,
-        cachedTweet = cachedTweet,
+    def toAsyncRequest(retryAct on: Opt on[AsyncWr eAct on] = None): AsyncUndeleteT etRequest =
+      AsyncUndeleteT etRequest(
+        t et = t et,
+        cac dT et = cac dT et,
         user = user,
-        timestamp = timestamp.inMillis,
-        retryAction = retryAction,
-        deletedAt = deletedAt.map(_.inMillis),
-        sourceTweet = sourceTweet,
-        sourceUser = sourceUser,
-        quotedTweet = quotedTweet,
+        t  stamp = t  stamp. nM ll s,
+        retryAct on = retryAct on,
+        deletedAt = deletedAt.map(_. nM ll s),
+        s ceT et = s ceT et,
+        s ceUser = s ceUser,
+        quotedT et = quotedT et,
         quotedUser = quotedUser,
-        parentUserId = parentUserId,
-        quoterHasAlreadyQuotedTweet = Some(quoterHasAlreadyQuotedTweet)
+        parentUser d = parentUser d,
+        quoterHasAlreadyQuotedT et = So (quoterHasAlreadyQuotedT et)
       )
 
-    override def toTweetEventData: Seq[TweetEventData] =
+    overr de def toT etEventData: Seq[T etEventData] =
       Seq(
-        TweetEventData.TweetUndeleteEvent(
-          TweetUndeleteEvent(
-            tweet = scrub(tweet),
-            user = Some(user),
-            sourceTweet = sourceTweet.map(scrub),
-            sourceUser = sourceUser,
-            retweetParentUserId = parentUserId,
-            quotedTweet = publicQuotedTweet.map(scrub),
-            quotedUser = publicQuotedUser,
-            deletedAtMsec = deletedAt.map(_.inMilliseconds)
+        T etEventData.T etUndeleteEvent(
+          T etUndeleteEvent(
+            t et = scrub(t et),
+            user = So (user),
+            s ceT et = s ceT et.map(scrub),
+            s ceUser = s ceUser,
+            ret etParentUser d = parentUser d,
+            quotedT et = publ cQuotedT et.map(scrub),
+            quotedUser = publ cQuotedUser,
+            deletedAtMsec = deletedAt.map(_. nM ll seconds)
           )
         )
       )
 
-    override def enqueueRetry(service: ThriftTweetService, action: AsyncWriteAction): Future[Unit] =
-      service.asyncUndeleteTweet(toAsyncRequest(Some(action)))
+    overr de def enqueueRetry(serv ce: Thr ftT etServ ce, act on: AsyncWr eAct on): Future[Un ] =
+      serv ce.asyncUndeleteT et(toAsyncRequest(So (act on)))
   }
 
-  case class RetryEvent(action: AsyncWriteAction, event: Event)
-      extends TweetStoreRetryEvent[Event] {
+  case class RetryEvent(act on: AsyncWr eAct on, event: Event)
+      extends T etStoreRetryEvent[Event] {
 
-    override val eventType: AsyncWriteEventType.Undelete.type = AsyncWriteEventType.Undelete
-    override val scribedTweetOnFailure: Option[Tweet] = Some(event.tweet)
+    overr de val eventType: AsyncWr eEventType.Undelete.type = AsyncWr eEventType.Undelete
+    overr de val scr bedT etOnFa lure: Opt on[T et] = So (event.t et)
   }
 
-  trait Store {
-    val asyncUndeleteTweet: FutureEffect[Event]
-    val retryAsyncUndeleteTweet: FutureEffect[TweetStoreRetryEvent[Event]]
+  tra  Store {
+    val asyncUndeleteT et: FutureEffect[Event]
+    val retryAsyncUndeleteT et: FutureEffect[T etStoreRetryEvent[Event]]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val asyncUndeleteTweet: FutureEffect[Event] = wrap(underlying.asyncUndeleteTweet)
-    override val retryAsyncUndeleteTweet: FutureEffect[TweetStoreRetryEvent[Event]] = wrap(
-      underlying.retryAsyncUndeleteTweet)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val asyncUndeleteT et: FutureEffect[Event] = wrap(underly ng.asyncUndeleteT et)
+    overr de val retryAsyncUndeleteT et: FutureEffect[T etStoreRetryEvent[Event]] = wrap(
+      underly ng.retryAsyncUndeleteT et)
   }
 
   object Store {
     def apply(
-      cachingTweetStore: CachingTweetStore,
-      eventBusEnqueueStore: TweetEventBusStore,
-      indexingStore: TweetIndexingStore,
-      replicatingStore: ReplicatingTweetStore,
-      mediaServiceStore: MediaServiceStore,
-      timelineUpdatingStore: TlsTimelineUpdatingStore
+      cach ngT etStore: Cach ngT etStore,
+      eventBusEnqueueStore: T etEventBusStore,
+       ndex ngStore: T et ndex ngStore,
+      repl cat ngStore: Repl cat ngT etStore,
+       d aServ ceStore:  d aServ ceStore,
+      t  l neUpdat ngStore: TlsT  l neUpdat ngStore
     ): Store = {
       val stores: Seq[Store] =
         Seq(
-          cachingTweetStore,
+          cach ngT etStore,
           eventBusEnqueueStore,
-          indexingStore,
-          replicatingStore,
-          mediaServiceStore,
-          timelineUpdatingStore
+           ndex ngStore,
+          repl cat ngStore,
+           d aServ ceStore,
+          t  l neUpdat ngStore
         )
 
-      def build[E <: TweetStoreEvent](extract: Store => FutureEffect[E]): FutureEffect[E] =
-        FutureEffect.inParallel[E](stores.map(extract): _*)
+      def bu ld[E <: T etStoreEvent](extract: Store => FutureEffect[E]): FutureEffect[E] =
+        FutureEffect. nParallel[E](stores.map(extract): _*)
 
       new Store {
-        override val asyncUndeleteTweet: FutureEffect[Event] = build(_.asyncUndeleteTweet)
-        override val retryAsyncUndeleteTweet: FutureEffect[TweetStoreRetryEvent[Event]] = build(
-          _.retryAsyncUndeleteTweet)
+        overr de val asyncUndeleteT et: FutureEffect[Event] = bu ld(_.asyncUndeleteT et)
+        overr de val retryAsyncUndeleteT et: FutureEffect[T etStoreRetryEvent[Event]] = bu ld(
+          _.retryAsyncUndeleteT et)
       }
     }
   }
 }
 
-object ReplicatedUndeleteTweet extends TweetStore.ReplicatedModule {
+object Repl catedUndeleteT et extends T etStore.Repl catedModule {
 
   case class Event(
-    tweet: Tweet,
-    cachedTweet: CachedTweet,
-    quoterHasAlreadyQuotedTweet: Boolean = false)
-      extends ReplicatedTweetStoreEvent("replicated_undelete_tweet")
+    t et: T et,
+    cac dT et: Cac dT et,
+    quoterHasAlreadyQuotedT et: Boolean = false)
+      extends Repl catedT etStoreEvent("repl cated_undelete_t et")
 
-  trait Store {
-    val replicatedUndeleteTweet: FutureEffect[Event]
+  tra  Store {
+    val repl catedUndeleteT et: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val replicatedUndeleteTweet: FutureEffect[Event] = wrap(
-      underlying.replicatedUndeleteTweet)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val repl catedUndeleteT et: FutureEffect[Event] = wrap(
+      underly ng.repl catedUndeleteT et)
   }
 
   object Store {
     def apply(
-      cachingTweetStore: CachingTweetStore,
-      tweetCountsUpdatingStore: TweetCountsCacheUpdatingStore
+      cach ngT etStore: Cach ngT etStore,
+      t etCountsUpdat ngStore: T etCountsCac Updat ngStore
     ): Store =
       new Store {
-        override val replicatedUndeleteTweet: FutureEffect[Event] =
-          FutureEffect.inParallel(
-            cachingTweetStore.replicatedUndeleteTweet.ignoreFailures,
-            tweetCountsUpdatingStore.replicatedUndeleteTweet.ignoreFailures
+        overr de val repl catedUndeleteT et: FutureEffect[Event] =
+          FutureEffect. nParallel(
+            cach ngT etStore.repl catedUndeleteT et. gnoreFa lures,
+            t etCountsUpdat ngStore.repl catedUndeleteT et. gnoreFa lures
           )
       }
   }

@@ -1,77 +1,77 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.scalding.sources
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.scald ng.s ces
 
-import com.twitter.ml.api.DailySuffixFeatureSource
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FixedPathFeatureSource
-import com.twitter.ml.api.HourlySuffixFeatureSource
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.statebird.v2.thriftscala.Environment
-import com.twitter.summingbird._
-import com.twitter.summingbird.scalding.Scalding.pipeFactoryExact
-import com.twitter.summingbird.scalding._
-import com.twitter.summingbird_internal.sources.SourceFactory
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.OfflineAggregateSource
-import java.lang.{Long => JLong}
+ mport com.tw ter.ml.ap .Da lySuff xFeatureS ce
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .F xedPathFeatureS ce
+ mport com.tw ter.ml.ap .H lySuff xFeatureS ce
+ mport com.tw ter.ml.ap .ut l.SR chDataRecord
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.AllowCrossClusterSa DC
+ mport com.tw ter.stateb rd.v2.thr ftscala.Env ron nt
+ mport com.tw ter.summ ngb rd._
+ mport com.tw ter.summ ngb rd.scald ng.Scald ng.p peFactoryExact
+ mport com.tw ter.summ ngb rd.scald ng._
+ mport com.tw ter.summ ngb rd_ nternal.s ces.S ceFactory
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.Offl neAggregateS ce
+ mport java.lang.{Long => JLong}
 
 /*
- * Summingbird offline HDFS source that reads from data records on HDFS.
+ * Summ ngb rd offl ne HDFS s ce that reads from data records on HDFS.
  *
- * @param offlineSource Underlying offline source that contains
- *   all the config info to build this platform-specific (scalding) source.
+ * @param offl neS ce Underly ng offl ne s ce that conta ns
+ *   all t  conf g  nfo to bu ld t  platform-spec f c (scald ng) s ce.
  */
-case class ScaldingAggregateSource(offlineSource: OfflineAggregateSource)
-    extends SourceFactory[Scalding, DataRecord] {
+case class Scald ngAggregateS ce(offl neS ce: Offl neAggregateS ce)
+    extends S ceFactory[Scald ng, DataRecord] {
 
-  val hdfsPath: String = offlineSource.scaldingHdfsPath.getOrElse("")
-  val suffixType: String = offlineSource.scaldingSuffixType.getOrElse("daily")
-  val withValidation: Boolean = offlineSource.withValidation
-  def name: String = offlineSource.name
-  def description: String =
-    "Summingbird offline source that reads from data records at: " + hdfsPath
+  val hdfsPath: Str ng = offl neS ce.scald ngHdfsPath.getOrElse("")
+  val suff xType: Str ng = offl neS ce.scald ngSuff xType.getOrElse("da ly")
+  val w hVal dat on: Boolean = offl neS ce.w hVal dat on
+  def na : Str ng = offl neS ce.na 
+  def descr pt on: Str ng =
+    "Summ ngb rd offl ne s ce that reads from data records at: " + hdfsPath
 
-  implicit val timeExtractor: TimeExtractor[DataRecord] = TimeExtractor((record: DataRecord) =>
-    SRichDataRecord(record).getFeatureValue[JLong, JLong](offlineSource.timestampFeature))
+   mpl c  val t  Extractor: T  Extractor[DataRecord] = T  Extractor((record: DataRecord) =>
+    SR chDataRecord(record).getFeatureValue[JLong, JLong](offl neS ce.t  stampFeature))
 
-  def getSourceForDateRange(dateRange: DateRange) = {
-    suffixType match {
-      case "daily" => DailySuffixFeatureSource(hdfsPath)(dateRange).source
-      case "hourly" => HourlySuffixFeatureSource(hdfsPath)(dateRange).source
-      case "fixed_path" => FixedPathFeatureSource(hdfsPath).source
+  def getS ceForDateRange(dateRange: DateRange) = {
+    suff xType match {
+      case "da ly" => Da lySuff xFeatureS ce(hdfsPath)(dateRange).s ce
+      case "h ly" => H lySuff xFeatureS ce(hdfsPath)(dateRange).s ce
+      case "f xed_path" => F xedPathFeatureS ce(hdfsPath).s ce
       case "dal" =>
-        offlineSource.dalDataSet match {
-          case Some(dataset) =>
+        offl neS ce.dalDataSet match {
+          case So (dataset) =>
             DAL
               .read(dataset, dateRange)
-              .withRemoteReadPolicy(AllowCrossClusterSameDC)
-              .withEnvironment(Environment.Prod)
-              .toTypedSource
+              .w hRemoteReadPol cy(AllowCrossClusterSa DC)
+              .w hEnv ron nt(Env ron nt.Prod)
+              .toTypedS ce
           case _ =>
-            throw new IllegalArgumentException(
-              "cannot provide an empty dataset when defining DAL as the suffix type"
+            throw new  llegalArgu ntExcept on(
+              "cannot prov de an empty dataset w n def n ng DAL as t  suff x type"
             )
         }
     }
   }
 
   /**
-   * This method is similar to [[Scalding.sourceFromMappable]] except that this uses [[pipeFactoryExact]]
-   * instead of [[pipeFactory]]. [[pipeFactoryExact]] also invokes [[FileSource.validateTaps]] on the source.
-   * The validation ensures the presence of _SUCCESS file before processing. For more details, please refer to
-   * https://jira.twitter.biz/browse/TQ-10618
+   * T   thod  s s m lar to [[Scald ng.s ceFromMappable]] except that t  uses [[p peFactoryExact]]
+   *  nstead of [[p peFactory]]. [[p peFactoryExact]] also  nvokes [[F leS ce.val dateTaps]] on t  s ce.
+   * T  val dat on ensures t  presence of _SUCCESS f le before process ng. For more deta ls, please refer to
+   * https://j ra.tw ter.b z/browse/TQ-10618
    */
-  def sourceFromMappableWithValidation[T: TimeExtractor: Manifest](
+  def s ceFromMappableW hVal dat on[T: T  Extractor: Man fest](
     factory: (DateRange) => Mappable[T]
-  ): Producer[Scalding, T] = {
-    Producer.source[Scalding, T](pipeFactoryExact(factory))
+  ): Producer[Scald ng, T] = {
+    Producer.s ce[Scald ng, T](p peFactoryExact(factory))
   }
 
-  def source: Producer[Scalding, DataRecord] = {
-    if (withValidation)
-      sourceFromMappableWithValidation(getSourceForDateRange)
+  def s ce: Producer[Scald ng, DataRecord] = {
+     f (w hVal dat on)
+      s ceFromMappableW hVal dat on(getS ceForDateRange)
     else
-      Scalding.sourceFromMappable(getSourceForDateRange)
+      Scald ng.s ceFromMappable(getS ceForDateRange)
   }
 }

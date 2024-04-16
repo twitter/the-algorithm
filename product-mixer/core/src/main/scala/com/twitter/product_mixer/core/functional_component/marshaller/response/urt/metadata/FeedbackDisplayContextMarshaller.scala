@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackDisplayContext
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FeedbackD splayContext
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class FeedbackDisplayContextMarshaller @Inject() () {
+@S ngleton
+class FeedbackD splayContextMarshaller @ nject() () {
 
-  def apply(displayContext: FeedbackDisplayContext): urt.FeedbackDisplayContext =
-    urt.FeedbackDisplayContext(
-      reason = displayContext.reason
+  def apply(d splayContext: FeedbackD splayContext): urt.FeedbackD splayContext =
+    urt.FeedbackD splayContext(
+      reason = d splayContext.reason
     )
 }

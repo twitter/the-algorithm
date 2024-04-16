@@ -1,236 +1,236 @@
-package com.twitter.simclusters_v2.common.clustering
+package com.tw ter.s mclusters_v2.common.cluster ng
 
-import com.twitter.eventdetection.common.louvain.LouvainDriver
-import com.twitter.eventdetection.common.louvain.NetworkFactory
-import com.twitter.eventdetection.common.model.Entity
-import com.twitter.eventdetection.common.model.NetworkInput
-import com.twitter.eventdetection.common.model.TextEntityValue
-import com.twitter.util.Stopwatch
-import scala.collection.JavaConverters._
-import scala.math.max
+ mport com.tw ter.eventdetect on.common.louva n.Louva nDr ver
+ mport com.tw ter.eventdetect on.common.louva n.NetworkFactory
+ mport com.tw ter.eventdetect on.common.model.Ent y
+ mport com.tw ter.eventdetect on.common.model.Network nput
+ mport com.tw ter.eventdetect on.common.model.TextEnt yValue
+ mport com.tw ter.ut l.Stopwatch
+ mport scala.collect on.JavaConverters._
+ mport scala.math.max
 
 /**
- * Groups entities by the Louvain clustering method.
- * @param similarityThreshold: When building the edges between entities, edges with weight
- * less than or equal to this threshold will be filtered out.
- * @param appliedResolutionFactor: If present, will be used to multiply the applied resolution
- * parameter of the Louvain method by this factor.
- * Note that the DEFAULT_MAX_RESOLUTION will not be applied.
+ * Groups ent  es by t  Louva n cluster ng  thod.
+ * @param s m lar yThreshold: W n bu ld ng t  edges bet en ent  es, edges w h   ght
+ * less than or equal to t  threshold w ll be f ltered out.
+ * @param appl edResolut onFactor:  f present, w ll be used to mult ply t  appl ed resolut on
+ * para ter of t  Louva n  thod by t  factor.
+ * Note that t  DEFAULT_MAX_RESOLUT ON w ll not be appl ed.
  */
-class LouvainClusteringMethod(
-  similarityThreshold: Double,
-  appliedResolutionFactor: Option[Double])
-    extends ClusteringMethod {
+class Louva nCluster ng thod(
+  s m lar yThreshold: Double,
+  appl edResolut onFactor: Opt on[Double])
+    extends Cluster ng thod {
 
-  import ClusteringStatistics._
+   mport Cluster ngStat st cs._
 
   def cluster[T](
-    embeddings: Map[Long, T],
-    similarityFn: (T, T) => Double,
-    recordStatCallback: (String, Long) => Unit = (_, _) => ()
+    embedd ngs: Map[Long, T],
+    s m lar yFn: (T, T) => Double,
+    recordStatCallback: (Str ng, Long) => Un  = (_, _) => ()
   ): Set[Set[Long]] = {
 
-    // 1. Build the graph on which to run Louvain:
-    //   - Weigh edges by the similarity between the 2 embeddings,
-    //   - Filter out edges with weight <= threshold.
-    val timeSinceGraphBuildStart = Stopwatch.start()
-    val edges: Seq[((Long, Long), Double)] = embeddings.toSeq
-      .combinations(2)
-      .map { pair: Seq[(Long, T)] => // pair of 2
-        val (user1, embedding1) = pair.head
-        val (user2, embedding2) = pair(1)
-        val similarity = similarityFn(embedding1, embedding2)
+    // 1. Bu ld t  graph on wh ch to run Louva n:
+    //   -   gh edges by t  s m lar y bet en t  2 embedd ngs,
+    //   - F lter out edges w h   ght <= threshold.
+    val t  S nceGraphBu ldStart = Stopwatch.start()
+    val edges: Seq[((Long, Long), Double)] = embedd ngs.toSeq
+      .comb nat ons(2)
+      .map { pa r: Seq[(Long, T)] => // pa r of 2
+        val (user1, embedd ng1) = pa r. ad
+        val (user2, embedd ng2) = pa r(1)
+        val s m lar y = s m lar yFn(embedd ng1, embedd ng2)
 
         recordStatCallback(
-          StatComputedSimilarityBeforeFilter,
-          (similarity * 100).toLong // preserve up to two decimal places
+          StatComputedS m lar yBeforeF lter,
+          (s m lar y * 100).toLong // preserve up to two dec mal places
         )
 
-        ((user1, user2), similarity)
+        ((user1, user2), s m lar y)
       }
-      .filter(_._2 > similarityThreshold)
+      .f lter(_._2 > s m lar yThreshold)
       .toSeq
 
-    recordStatCallback(StatSimilarityGraphTotalBuildTime, timeSinceGraphBuildStart().inMilliseconds)
+    recordStatCallback(StatS m lar yGraphTotalBu ldT  , t  S nceGraphBu ldStart(). nM ll seconds)
 
-    // check if some entities do not have any incoming / outgoing edge
-    // these are size-1 clusters (i.e. their own)
-    val individualClusters: Set[Long] = embeddings.keySet -- edges.flatMap {
+    // c ck  f so  ent  es do not have any  ncom ng / outgo ng edge
+    // t se are s ze-1 clusters ( .e. t  r own)
+    val  nd v dualClusters: Set[Long] = embedd ngs.keySet -- edges.flatMap {
       case ((user1, user2), _) => Set(user1, user2)
     }.toSet
 
-    // 2. LouvainDriver uses "Entity" as input, so build 2 mappings
-    // - Long (entity id) -> Entity
-    // - Entity -> Long (entity id)
-    val embeddingIdToEntity: Map[Long, Entity] = embeddings.map {
-      case (id, _) => id -> Entity(TextEntityValue(id.toString, Some(id.toString)), None)
+    // 2. Louva nDr ver uses "Ent y" as  nput, so bu ld 2 mapp ngs
+    // - Long (ent y  d) -> Ent y
+    // - Ent y -> Long (ent y  d)
+    val embedd ng dToEnt y: Map[Long, Ent y] = embedd ngs.map {
+      case ( d, _) =>  d -> Ent y(TextEnt yValue( d.toStr ng, So ( d.toStr ng)), None)
     }
-    val entityToEmbeddingId: Map[Entity, Long] = embeddingIdToEntity.map {
-      case (id, e) => e -> id
+    val ent yToEmbedd ng d: Map[Ent y, Long] = embedd ng dToEnt y.map {
+      case ( d, e) => e ->  d
     }
 
-    // 3. Create the list of NetworkInput on which to run LouvainDriver
-    val networkInputList = edges
+    // 3. Create t  l st of Network nput on wh ch to run Louva nDr ver
+    val network nputL st = edges
       .map {
-        case ((fromUserId: Long, toUserId: Long), weight: Double) =>
-          new NetworkInput(embeddingIdToEntity(fromUserId), embeddingIdToEntity(toUserId), weight)
-      }.toList.asJava
+        case ((fromUser d: Long, toUser d: Long),   ght: Double) =>
+          new Network nput(embedd ng dToEnt y(fromUser d), embedd ng dToEnt y(toUser d),   ght)
+      }.toL st.asJava
 
-    val timeSinceClusteringAlgRunStart = Stopwatch.start()
-    val networkDictionary = NetworkFactory.buildDictionary(networkInputList)
-    val network = NetworkFactory.buildNetwork(networkInputList, networkDictionary)
+    val t  S nceCluster ngAlgRunStart = Stopwatch.start()
+    val networkD ct onary = NetworkFactory.bu ldD ct onary(network nputL st)
+    val network = NetworkFactory.bu ldNetwork(network nputL st, networkD ct onary)
 
-    if (networkInputList.size() == 0) {
-      // handle case if no edge at all (only one entity or all entities are too far apart)
-      embeddings.keySet.map(e => Set(e))
+     f (network nputL st.s ze() == 0) {
+      // handle case  f no edge at all (only one ent y or all ent  es are too far apart)
+      embedd ngs.keySet.map(e => Set(e))
     } else {
-      // 4. Run clustering algorithm
-      val clusteredIds = appliedResolutionFactor match {
-        case Some(res) =>
-          LouvainDriver.clusterAppliedResolutionFactor(network, networkDictionary, res)
-        case None => LouvainDriver.cluster(network, networkDictionary)
+      // 4. Run cluster ng algor hm
+      val clustered ds = appl edResolut onFactor match {
+        case So (res) =>
+          Louva nDr ver.clusterAppl edResolut onFactor(network, networkD ct onary, res)
+        case None => Louva nDr ver.cluster(network, networkD ct onary)
       }
 
       recordStatCallback(
-        StatClusteringAlgorithmRunTime,
-        timeSinceClusteringAlgRunStart().inMilliseconds)
+        StatCluster ngAlgor hmRunT  ,
+        t  S nceCluster ngAlgRunStart(). nM ll seconds)
 
-      // 5. Post-processing
-      val atLeast2MembersClusters: Set[Set[Long]] = clusteredIds.asScala
+      // 5. Post-process ng
+      val atLeast2 mbersClusters: Set[Set[Long]] = clustered ds.asScala
         .groupBy(_._2)
-        .mapValues(_.map { case (e, _) => entityToEmbeddingId(e) }.toSet)
+        .mapValues(_.map { case (e, _) => ent yToEmbedd ng d(e) }.toSet)
         .values.toSet
 
-      atLeast2MembersClusters ++ individualClusters.map { e => Set(e) }
+      atLeast2 mbersClusters ++  nd v dualClusters.map { e => Set(e) }
 
     }
   }
 
-  def clusterWithSilhouette[T](
-    embeddings: Map[Long, T],
-    similarityFn: (T, T) => Double,
-    similarityFnForSil: (T, T) => Double,
-    recordStatCallback: (String, Long) => Unit = (_, _) => ()
+  def clusterW hS lhouette[T](
+    embedd ngs: Map[Long, T],
+    s m lar yFn: (T, T) => Double,
+    s m lar yFnForS l: (T, T) => Double,
+    recordStatCallback: (Str ng, Long) => Un  = (_, _) => ()
   ): (Set[Set[Long]], Set[Set[(Long, Double)]]) = {
 
-    // 1. Build the graph on which to run Louvain:
-    //   - Weigh edges by the similarity between the 2 embeddings,
-    //   - Filter out edges with weight <= threshold.
-    val timeSinceGraphBuildStart = Stopwatch.start()
-    val edgesSimilarityMap = collection.mutable.Map[(Long, Long), Double]()
+    // 1. Bu ld t  graph on wh ch to run Louva n:
+    //   -   gh edges by t  s m lar y bet en t  2 embedd ngs,
+    //   - F lter out edges w h   ght <= threshold.
+    val t  S nceGraphBu ldStart = Stopwatch.start()
+    val edgesS m lar yMap = collect on.mutable.Map[(Long, Long), Double]()
 
-    val edges: Seq[((Long, Long), Double)] = embeddings.toSeq
-      .combinations(2)
-      .map { pair: Seq[(Long, T)] => // pair of 2
-        val (user1, embedding1) = pair.head
-        val (user2, embedding2) = pair(1)
-        val similarity = similarityFn(embedding1, embedding2)
-        val similarityForSil = similarityFnForSil(embedding1, embedding2)
-        edgesSimilarityMap.put((user1, user2), similarityForSil)
-        edgesSimilarityMap.put((user2, user1), similarityForSil)
+    val edges: Seq[((Long, Long), Double)] = embedd ngs.toSeq
+      .comb nat ons(2)
+      .map { pa r: Seq[(Long, T)] => // pa r of 2
+        val (user1, embedd ng1) = pa r. ad
+        val (user2, embedd ng2) = pa r(1)
+        val s m lar y = s m lar yFn(embedd ng1, embedd ng2)
+        val s m lar yForS l = s m lar yFnForS l(embedd ng1, embedd ng2)
+        edgesS m lar yMap.put((user1, user2), s m lar yForS l)
+        edgesS m lar yMap.put((user2, user1), s m lar yForS l)
 
         recordStatCallback(
-          StatComputedSimilarityBeforeFilter,
-          (similarity * 100).toLong // preserve up to two decimal places
+          StatComputedS m lar yBeforeF lter,
+          (s m lar y * 100).toLong // preserve up to two dec mal places
         )
 
-        ((user1, user2), similarity)
+        ((user1, user2), s m lar y)
       }
-      .filter(_._2 > similarityThreshold)
+      .f lter(_._2 > s m lar yThreshold)
       .toSeq
 
-    recordStatCallback(StatSimilarityGraphTotalBuildTime, timeSinceGraphBuildStart().inMilliseconds)
+    recordStatCallback(StatS m lar yGraphTotalBu ldT  , t  S nceGraphBu ldStart(). nM ll seconds)
 
-    // check if some entities do not have any incoming / outgoing edge
-    // these are size-1 clusters (i.e. their own)
-    val individualClusters: Set[Long] = embeddings.keySet -- edges.flatMap {
+    // c ck  f so  ent  es do not have any  ncom ng / outgo ng edge
+    // t se are s ze-1 clusters ( .e. t  r own)
+    val  nd v dualClusters: Set[Long] = embedd ngs.keySet -- edges.flatMap {
       case ((user1, user2), _) => Set(user1, user2)
     }.toSet
 
-    // 2. LouvainDriver uses "Entity" as input, so build 2 mappings
-    // - Long (entity id) -> Entity
-    // - Entity -> Long (entity id)
-    val embeddingIdToEntity: Map[Long, Entity] = embeddings.map {
-      case (id, _) => id -> Entity(TextEntityValue(id.toString, Some(id.toString)), None)
+    // 2. Louva nDr ver uses "Ent y" as  nput, so bu ld 2 mapp ngs
+    // - Long (ent y  d) -> Ent y
+    // - Ent y -> Long (ent y  d)
+    val embedd ng dToEnt y: Map[Long, Ent y] = embedd ngs.map {
+      case ( d, _) =>  d -> Ent y(TextEnt yValue( d.toStr ng, So ( d.toStr ng)), None)
     }
-    val entityToEmbeddingId: Map[Entity, Long] = embeddingIdToEntity.map {
-      case (id, e) => e -> id
+    val ent yToEmbedd ng d: Map[Ent y, Long] = embedd ng dToEnt y.map {
+      case ( d, e) => e ->  d
     }
 
-    // 3. Create the list of NetworkInput on which to run LouvainDriver
-    val networkInputList = edges
+    // 3. Create t  l st of Network nput on wh ch to run Louva nDr ver
+    val network nputL st = edges
       .map {
-        case ((fromUserId: Long, toUserId: Long), weight: Double) =>
-          new NetworkInput(embeddingIdToEntity(fromUserId), embeddingIdToEntity(toUserId), weight)
-      }.toList.asJava
+        case ((fromUser d: Long, toUser d: Long),   ght: Double) =>
+          new Network nput(embedd ng dToEnt y(fromUser d), embedd ng dToEnt y(toUser d),   ght)
+      }.toL st.asJava
 
-    val timeSinceClusteringAlgRunStart = Stopwatch.start()
-    val networkDictionary = NetworkFactory.buildDictionary(networkInputList)
-    val network = NetworkFactory.buildNetwork(networkInputList, networkDictionary)
+    val t  S nceCluster ngAlgRunStart = Stopwatch.start()
+    val networkD ct onary = NetworkFactory.bu ldD ct onary(network nputL st)
+    val network = NetworkFactory.bu ldNetwork(network nputL st, networkD ct onary)
 
-    val clusters = if (networkInputList.size() == 0) {
-      // handle case if no edge at all (only one entity or all entities are too far apart)
-      embeddings.keySet.map(e => Set(e))
+    val clusters =  f (network nputL st.s ze() == 0) {
+      // handle case  f no edge at all (only one ent y or all ent  es are too far apart)
+      embedd ngs.keySet.map(e => Set(e))
     } else {
-      // 4. Run clustering algorithm
-      val clusteredIds = appliedResolutionFactor match {
-        case Some(res) =>
-          LouvainDriver.clusterAppliedResolutionFactor(network, networkDictionary, res)
-        case None => LouvainDriver.cluster(network, networkDictionary)
+      // 4. Run cluster ng algor hm
+      val clustered ds = appl edResolut onFactor match {
+        case So (res) =>
+          Louva nDr ver.clusterAppl edResolut onFactor(network, networkD ct onary, res)
+        case None => Louva nDr ver.cluster(network, networkD ct onary)
       }
 
       recordStatCallback(
-        StatClusteringAlgorithmRunTime,
-        timeSinceClusteringAlgRunStart().inMilliseconds)
+        StatCluster ngAlgor hmRunT  ,
+        t  S nceCluster ngAlgRunStart(). nM ll seconds)
 
-      // 5. Post-processing
-      val atLeast2MembersClusters: Set[Set[Long]] = clusteredIds.asScala
+      // 5. Post-process ng
+      val atLeast2 mbersClusters: Set[Set[Long]] = clustered ds.asScala
         .groupBy(_._2)
-        .mapValues(_.map { case (e, _) => entityToEmbeddingId(e) }.toSet)
+        .mapValues(_.map { case (e, _) => ent yToEmbedd ng d(e) }.toSet)
         .values.toSet
 
-      atLeast2MembersClusters ++ individualClusters.map { e => Set(e) }
+      atLeast2 mbersClusters ++  nd v dualClusters.map { e => Set(e) }
 
     }
 
-    // Calculate silhouette metrics
-    val contactIdWithSilhouette = clusters.map {
+    // Calculate s lhouette  tr cs
+    val contact dW hS lhouette = clusters.map {
       case cluster =>
-        val otherClusters = clusters - cluster
+        val ot rClusters = clusters - cluster
 
         cluster.map {
-          case contactId =>
-            if (otherClusters.isEmpty) {
-              (contactId, 0.0)
+          case contact d =>
+             f (ot rClusters. sEmpty) {
+              (contact d, 0.0)
             } else {
-              val otherSameClusterContacts = cluster - contactId
+              val ot rSa ClusterContacts = cluster - contact d
 
-              if (otherSameClusterContacts.isEmpty) {
-                (contactId, 0.0)
+               f (ot rSa ClusterContacts. sEmpty) {
+                (contact d, 0.0)
               } else {
-                // calculate similarity of given userId with all other users in the same cluster
-                val a_i = otherSameClusterContacts.map {
-                  case sameClusterContact =>
-                    edgesSimilarityMap((contactId, sameClusterContact))
-                }.sum / otherSameClusterContacts.size
+                // calculate s m lar y of g ven user d w h all ot r users  n t  sa  cluster
+                val a_  = ot rSa ClusterContacts.map {
+                  case sa ClusterContact =>
+                    edgesS m lar yMap((contact d, sa ClusterContact))
+                }.sum / ot rSa ClusterContacts.s ze
 
-                // calculate similarity of given userId to all other clusters, find the best nearest cluster
-                val b_i = otherClusters.map {
-                  case otherCluster =>
-                    otherCluster.map {
-                      case otherClusterContact =>
-                        edgesSimilarityMap((contactId, otherClusterContact))
-                    }.sum / otherCluster.size
+                // calculate s m lar y of g ven user d to all ot r clusters, f nd t  best nearest cluster
+                val b_  = ot rClusters.map {
+                  case ot rCluster =>
+                    ot rCluster.map {
+                      case ot rClusterContact =>
+                        edgesS m lar yMap((contact d, ot rClusterContact))
+                    }.sum / ot rCluster.s ze
                 }.max
 
-                // silhouette (value) of one userId i
-                val s_i = (a_i - b_i) / max(a_i, b_i)
-                (contactId, s_i)
+                // s lhouette (value) of one user d  
+                val s_  = (a_  - b_ ) / max(a_ , b_ )
+                (contact d, s_ )
               }
             }
         }
     }
 
-    (clusters, contactIdWithSilhouette)
+    (clusters, contact dW hS lhouette)
   }
 }

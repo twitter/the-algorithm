@@ -1,14 +1,14 @@
-scala_library(
-    name = "interests_service",
-    sources = ["InterestServiceClient.scala"],
+scala_l brary(
+    na  = " nterests_serv ce",
+    s ces = [" nterestServ ceCl ent.scala"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/store/interests",
-        "interests-service/thrift/src/main/thrift:thrift-scala",
-        "strato/src/main/scala/com/twitter/strato/catalog",
-        "strato/src/main/scala/com/twitter/strato/client",
-        "strato/src/main/scala/com/twitter/strato/data",
-        "strato/src/main/scala/com/twitter/strato/thrift",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "fr gate/fr gate-common/src/ma n/scala/com/tw ter/fr gate/common/store/ nterests",
+        " nterests-serv ce/thr ft/src/ma n/thr ft:thr ft-scala",
+        "strato/src/ma n/scala/com/tw ter/strato/catalog",
+        "strato/src/ma n/scala/com/tw ter/strato/cl ent",
+        "strato/src/ma n/scala/com/tw ter/strato/data",
+        "strato/src/ma n/scala/com/tw ter/strato/thr ft",
     ],
 )

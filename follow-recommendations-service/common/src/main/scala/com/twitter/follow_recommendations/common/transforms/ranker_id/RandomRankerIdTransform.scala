@@ -1,24 +1,24 @@
-package com.twitter.follow_recommendations.common.transforms.ranker_id
+package com.tw ter.follow_recom ndat ons.common.transforms.ranker_ d
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.common.base.GatedTransform
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.Score
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+ mport com.google. nject. nject
+ mport com.google. nject.S ngleton
+ mport com.tw ter.follow_recom ndat ons.common.base.GatedTransform
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.Score
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
 
 /**
- * This class appends each candidate's rankerIds with the RandomRankerId.
- * This is primarily for determining if a candidate was generated via random shuffling.
+ * T  class appends each cand date's ranker ds w h t  RandomRanker d.
+ * T   s pr mar ly for determ n ng  f a cand date was generated v a random shuffl ng.
  */
-@Singleton
-class RandomRankerIdTransform @Inject() () extends GatedTransform[HasParams, CandidateUser] {
+@S ngleton
+class RandomRanker dTransform @ nject() () extends GatedTransform[HasParams, Cand dateUser] {
 
-  override def transform(
+  overr de def transform(
     target: HasParams,
-    candidates: Seq[CandidateUser]
-  ): Stitch[Seq[CandidateUser]] = {
-    Stitch.value(candidates.map(_.addScore(Score.RandomScore)))
+    cand dates: Seq[Cand dateUser]
+  ): St ch[Seq[Cand dateUser]] = {
+    St ch.value(cand dates.map(_.addScore(Score.RandomScore)))
   }
 }

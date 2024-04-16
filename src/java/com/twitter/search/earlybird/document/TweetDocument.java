@@ -1,52 +1,52 @@
-package com.twitter.search.earlybird.document;
+package com.tw ter.search.earlyb rd.docu nt;
 
-import org.apache.lucene.document.Document;
+ mport org.apac .lucene.docu nt.Docu nt;
 
 /**
- * TweetDocument is a record produced by DocumentReader and TweetIndexUpdateReader
- * for consumption by the partition indexer.
+ * T etDocu nt  s a record produced by Docu ntReader and T et ndexUpdateReader
+ * for consumpt on by t  part  on  ndexer.
  */
-public final class TweetDocument {
-  private final long tweetID;
-  private final long timeSliceID;
-  private final long eventTimeMs;
-  private final Document document;
+publ c f nal class T etDocu nt {
+  pr vate f nal long t et D;
+  pr vate f nal long t  Sl ce D;
+  pr vate f nal long eventT  Ms;
+  pr vate f nal Docu nt docu nt;
 
-  public TweetDocument(
-      long tweetID,
-      long timeSliceID,
-      long eventTimeMs,
-      Document document
+  publ c T etDocu nt(
+      long t et D,
+      long t  Sl ce D,
+      long eventT  Ms,
+      Docu nt docu nt
   ) {
-    this.tweetID = tweetID;
-    this.timeSliceID = timeSliceID;
-    this.eventTimeMs = eventTimeMs;
-    this.document = document;
+    t .t et D = t et D;
+    t .t  Sl ce D = t  Sl ce D;
+    t .eventT  Ms = eventT  Ms;
+    t .docu nt = docu nt;
   }
 
-  public long getTweetID() {
-    return tweetID;
+  publ c long getT et D() {
+    return t et D;
   }
 
-  public long getTimeSliceID() {
-    return timeSliceID;
+  publ c long getT  Sl ce D() {
+    return t  Sl ce D;
   }
 
-  public long getEventTimeMs() {
-    return eventTimeMs;
+  publ c long getEventT  Ms() {
+    return eventT  Ms;
   }
 
-  public Document getDocument() {
-    return document;
+  publ c Docu nt getDocu nt() {
+    return docu nt;
   }
 
-  @Override
-  public String toString() {
-    return "TweetDocument{"
-        + "tweetID=" + tweetID
-        + ", timeSliceID=" + timeSliceID
-        + ", eventTimeMs=" + eventTimeMs
-        + ", document=" + document
+  @Overr de
+  publ c Str ng toStr ng() {
+    return "T etDocu nt{"
+        + "t et D=" + t et D
+        + ", t  Sl ce D=" + t  Sl ce D
+        + ", eventT  Ms=" + eventT  Ms
+        + ", docu nt=" + docu nt
         + '}';
   }
 }

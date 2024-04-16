@@ -1,109 +1,109 @@
-package com.twitter.search.ingester.pipeline.util;
+package com.tw ter.search. ngester.p pel ne.ut l;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Collect on;
+ mport java.ut l. erator;
+ mport java.ut l.L st;
+ mport java.ut l.Opt onal;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftGeoLocationSource;
-import com.twitter.search.common.indexing.thriftjava.ThriftGeoPoint;
-import com.twitter.search.common.indexing.thriftjava.ThriftGeocodeRecord;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.relevance.entities.GeoObject;
-import com.twitter.search.common.util.geocoding.ManhattanGeocodeRecordStore;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.stitch.Stitch;
-import com.twitter.storage.client.manhattan.kv.JavaManhattanKVEndpoint;
-import com.twitter.storage.client.manhattan.kv.ManhattanValue;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftGeoLocat onS ce;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftGeoPo nt;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftGeocodeRecord;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.relevance.ent  es.GeoObject;
+ mport com.tw ter.search.common.ut l.geocod ng.ManhattanGeocodeRecordStore;
+ mport com.tw ter.search. ngester.model. ngesterTw ter ssage;
+ mport com.tw ter.st ch.St ch;
+ mport com.tw ter.storage.cl ent.manhattan.kv.JavaManhattanKVEndpo nt;
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanValue;
+ mport com.tw ter.ut l.Funct on;
+ mport com.tw ter.ut l.Future;
 
 
-public final class ManhattanCodedLocationProvider {
+publ c f nal class ManhattanCodedLocat onProv der {
 
-  private final ManhattanGeocodeRecordStore store;
-  private final SearchCounter locationsCounter;
+  pr vate f nal ManhattanGeocodeRecordStore store;
+  pr vate f nal SearchCounter locat onsCounter;
 
-  private static final String LOCATIONS_POPULATED_STAT_NAME = "_locations_populated_count";
+  pr vate stat c f nal Str ng LOCAT ONS_POPULATED_STAT_NAME = "_locat ons_populated_count";
 
-  public static ManhattanCodedLocationProvider createWithEndpoint(
-      JavaManhattanKVEndpoint endpoint, String metricsPrefix, String datasetName) {
-    return new ManhattanCodedLocationProvider(
-        ManhattanGeocodeRecordStore.create(endpoint, datasetName), metricsPrefix);
+  publ c stat c ManhattanCodedLocat onProv der createW hEndpo nt(
+      JavaManhattanKVEndpo nt endpo nt, Str ng  tr csPref x, Str ng datasetNa ) {
+    return new ManhattanCodedLocat onProv der(
+        ManhattanGeocodeRecordStore.create(endpo nt, datasetNa ),  tr csPref x);
   }
 
-  private ManhattanCodedLocationProvider(ManhattanGeocodeRecordStore store, String metricPrefix) {
-    this.locationsCounter = SearchCounter.export(metricPrefix + LOCATIONS_POPULATED_STAT_NAME);
-    this.store = store;
+  pr vate ManhattanCodedLocat onProv der(ManhattanGeocodeRecordStore store, Str ng  tr cPref x) {
+    t .locat onsCounter = SearchCounter.export( tr cPref x + LOCAT ONS_POPULATED_STAT_NAME);
+    t .store = store;
   }
 
   /**
-   * Iterates through all given messages, and for each message that has a location set, retrieves
-   * the coordinates of that location from Manhattan and sets them back on that message.
+   *  erates through all g ven  ssages, and for each  ssage that has a locat on set, retr eves
+   * t  coord nates of that locat on from Manhattan and sets t m back on that  ssage.
    */
-  public Future<Collection<IngesterTwitterMessage>> populateCodedLatLon(
-      Collection<IngesterTwitterMessage> messages) {
-    if (messages.isEmpty()) {
-      return Future.value(messages);
+  publ c Future<Collect on< ngesterTw ter ssage>> populateCodedLatLon(
+      Collect on< ngesterTw ter ssage>  ssages) {
+     f ( ssages. sEmpty()) {
+      return Future.value( ssages);
     }
 
     // Batch read requests
-    List<Stitch<Optional<ManhattanValue<ThriftGeocodeRecord>>>> readRequests =
-        new ArrayList<>(messages.size());
-    for (IngesterTwitterMessage message : messages) {
-      readRequests.add(store.asyncReadFromManhattan(message.getLocation()));
+    L st<St ch<Opt onal<ManhattanValue<Thr ftGeocodeRecord>>>> readRequests =
+        new ArrayL st<>( ssages.s ze());
+    for ( ngesterTw ter ssage  ssage :  ssages) {
+      readRequests.add(store.asyncReadFromManhattan( ssage.getLocat on()));
     }
-    Future<List<Optional<ManhattanValue<ThriftGeocodeRecord>>>> batchedRequest =
-        Stitch.run(Stitch.collect(readRequests));
+    Future<L st<Opt onal<ManhattanValue<Thr ftGeocodeRecord>>>> batc dRequest =
+        St ch.run(St ch.collect(readRequests));
 
-    return batchedRequest.map(Function.func(optGeoLocations -> {
-      // Iterate over messages and responses simultaneously
-      Preconditions.checkState(messages.size() == optGeoLocations.size());
-      Iterator<IngesterTwitterMessage> messageIterator = messages.iterator();
-      Iterator<Optional<ManhattanValue<ThriftGeocodeRecord>>> optGeoLocationIterator =
-          optGeoLocations.iterator();
-      while (messageIterator.hasNext() && optGeoLocationIterator.hasNext()) {
-        IngesterTwitterMessage message = messageIterator.next();
-        Optional<ManhattanValue<ThriftGeocodeRecord>> optGeoLocation =
-            optGeoLocationIterator.next();
-        if (setGeoLocationForMessage(message, optGeoLocation)) {
-          locationsCounter.increment();
+    return batc dRequest.map(Funct on.func(optGeoLocat ons -> {
+      //  erate over  ssages and responses s multaneously
+      Precond  ons.c ckState( ssages.s ze() == optGeoLocat ons.s ze());
+       erator< ngesterTw ter ssage>  ssage erator =  ssages. erator();
+       erator<Opt onal<ManhattanValue<Thr ftGeocodeRecord>>> optGeoLocat on erator =
+          optGeoLocat ons. erator();
+      wh le ( ssage erator.hasNext() && optGeoLocat on erator.hasNext()) {
+         ngesterTw ter ssage  ssage =  ssage erator.next();
+        Opt onal<ManhattanValue<Thr ftGeocodeRecord>> optGeoLocat on =
+            optGeoLocat on erator.next();
+         f (setGeoLocat onFor ssage( ssage, optGeoLocat on)) {
+          locat onsCounter. ncre nt();
         }
       }
-      return messages;
+      return  ssages;
     }));
   }
 
   /**
-   * Returns whether a valid geolocation was successfully found and saved in the message.
+   * Returns w t r a val d geolocat on was successfully found and saved  n t   ssage.
    */
-  private boolean setGeoLocationForMessage(
-      IngesterTwitterMessage message,
-      Optional<ManhattanValue<ThriftGeocodeRecord>> optGeoLocation) {
-    if (optGeoLocation.isPresent()) {
-      ThriftGeocodeRecord geoLocation = optGeoLocation.get().contents();
-      ThriftGeoPoint geoTags = geoLocation.getGeoPoint();
+  pr vate boolean setGeoLocat onFor ssage(
+       ngesterTw ter ssage  ssage,
+      Opt onal<ManhattanValue<Thr ftGeocodeRecord>> optGeoLocat on) {
+     f (optGeoLocat on. sPresent()) {
+      Thr ftGeocodeRecord geoLocat on = optGeoLocat on.get().contents();
+      Thr ftGeoPo nt geoTags = geoLocat on.getGeoPo nt();
 
-      if ((geoTags.getLatitude() == GeoObject.DOUBLE_FIELD_NOT_PRESENT)
-          && (geoTags.getLongitude() == GeoObject.DOUBLE_FIELD_NOT_PRESENT)) {
-        // This case indicates that we have "negative cache" in coded_locations table, so
-        // don't try to geocode again.
-        message.setUncodeableLocation();
+       f ((geoTags.getLat ude() == GeoObject.DOUBLE_F ELD_NOT_PRESENT)
+          && (geoTags.getLong ude() == GeoObject.DOUBLE_F ELD_NOT_PRESENT)) {
+        // T  case  nd cates that   have "negat ve cac "  n coded_locat ons table, so
+        // don't try to geocode aga n.
+         ssage.setUncodeableLocat on();
         return false;
       } else {
         GeoObject code = new GeoObject(
-            geoTags.getLatitude(),
-            geoTags.getLongitude(),
+            geoTags.getLat ude(),
+            geoTags.getLong ude(),
             geoTags.getAccuracy(),
-            ThriftGeoLocationSource.USER_PROFILE);
-        message.setGeoLocation(code);
+            Thr ftGeoLocat onS ce.USER_PROF LE);
+         ssage.setGeoLocat on(code);
         return true;
       }
     } else {
-      message.setGeocodeRequired();
+       ssage.setGeocodeRequ red();
       return false;
     }
   }

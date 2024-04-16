@@ -1,147 +1,147 @@
-package com.twitter.cr_mixer.module.thrift_client
+package com.tw ter.cr_m xer.module.thr ft_cl ent
 
-import com.google.inject.Provides
-import com.twitter.conversions.PercentOps._
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.inject.TwitterModule
-import com.twitter.simclustersann.{thriftscala => t}
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.convers ons.PercentOps._
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.cr_m xer.conf g.T  outConf g
+ mport com.tw ter.f nagle.Thr ftMux
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.mtls.cl ent.MtlsStackCl ent._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.s mclustersann.{thr ftscala => t}
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-object SimClustersAnnServiceClientModule extends TwitterModule {
+object S mClustersAnnServ ceCl entModule extends Tw terModule {
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.ProdSimClustersANNServiceClientName)
-  def providesProdSimClustersANNServiceClient(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-  ): t.SimClustersANNService.MethodPerEndpoint = {
-    val label = "simclusters-ann-server"
-    val dest = "/s/simclusters-ann/simclusters-ann"
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.ProdS mClustersANNServ ceCl entNa )
+  def prov desProdS mClustersANNServ ceCl ent(
+    serv ce dent f er: Serv ce dent f er,
+    cl ent d: Cl ent d,
+    t  outConf g: T  outConf g,
+    statsRece ver: StatsRece ver,
+  ): t.S mClustersANNServ ce. thodPerEndpo nt = {
+    val label = "s mclusters-ann-server"
+    val dest = "/s/s mclusters-ann/s mclusters-ann"
 
-    buildClient(serviceIdentifier, clientId, timeoutConfig, statsReceiver, dest, label)
+    bu ldCl ent(serv ce dent f er, cl ent d, t  outConf g, statsRece ver, dest, label)
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.ExperimentalSimClustersANNServiceClientName)
-  def providesExperimentalSimClustersANNServiceClient(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-  ): t.SimClustersANNService.MethodPerEndpoint = {
-    val label = "simclusters-ann-experimental-server"
-    val dest = "/s/simclusters-ann/simclusters-ann-experimental"
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.Exper  ntalS mClustersANNServ ceCl entNa )
+  def prov desExper  ntalS mClustersANNServ ceCl ent(
+    serv ce dent f er: Serv ce dent f er,
+    cl ent d: Cl ent d,
+    t  outConf g: T  outConf g,
+    statsRece ver: StatsRece ver,
+  ): t.S mClustersANNServ ce. thodPerEndpo nt = {
+    val label = "s mclusters-ann-exper  ntal-server"
+    val dest = "/s/s mclusters-ann/s mclusters-ann-exper  ntal"
 
-    buildClient(serviceIdentifier, clientId, timeoutConfig, statsReceiver, dest, label)
+    bu ldCl ent(serv ce dent f er, cl ent d, t  outConf g, statsRece ver, dest, label)
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.SimClustersANNServiceClientName1)
-  def providesSimClustersANNServiceClient1(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-  ): t.SimClustersANNService.MethodPerEndpoint = {
-    val label = "simclusters-ann-server-1"
-    val dest = "/s/simclusters-ann/simclusters-ann-1"
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.S mClustersANNServ ceCl entNa 1)
+  def prov desS mClustersANNServ ceCl ent1(
+    serv ce dent f er: Serv ce dent f er,
+    cl ent d: Cl ent d,
+    t  outConf g: T  outConf g,
+    statsRece ver: StatsRece ver,
+  ): t.S mClustersANNServ ce. thodPerEndpo nt = {
+    val label = "s mclusters-ann-server-1"
+    val dest = "/s/s mclusters-ann/s mclusters-ann-1"
 
-    buildClient(serviceIdentifier, clientId, timeoutConfig, statsReceiver, dest, label)
+    bu ldCl ent(serv ce dent f er, cl ent d, t  outConf g, statsRece ver, dest, label)
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.SimClustersANNServiceClientName2)
-  def providesSimClustersANNServiceClient2(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-  ): t.SimClustersANNService.MethodPerEndpoint = {
-    val label = "simclusters-ann-server-2"
-    val dest = "/s/simclusters-ann/simclusters-ann-2"
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.S mClustersANNServ ceCl entNa 2)
+  def prov desS mClustersANNServ ceCl ent2(
+    serv ce dent f er: Serv ce dent f er,
+    cl ent d: Cl ent d,
+    t  outConf g: T  outConf g,
+    statsRece ver: StatsRece ver,
+  ): t.S mClustersANNServ ce. thodPerEndpo nt = {
+    val label = "s mclusters-ann-server-2"
+    val dest = "/s/s mclusters-ann/s mclusters-ann-2"
 
-    buildClient(serviceIdentifier, clientId, timeoutConfig, statsReceiver, dest, label)
+    bu ldCl ent(serv ce dent f er, cl ent d, t  outConf g, statsRece ver, dest, label)
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.SimClustersANNServiceClientName3)
-  def providesSimClustersANNServiceClient3(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-  ): t.SimClustersANNService.MethodPerEndpoint = {
-    val label = "simclusters-ann-server-3"
-    val dest = "/s/simclusters-ann/simclusters-ann-3"
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.S mClustersANNServ ceCl entNa 3)
+  def prov desS mClustersANNServ ceCl ent3(
+    serv ce dent f er: Serv ce dent f er,
+    cl ent d: Cl ent d,
+    t  outConf g: T  outConf g,
+    statsRece ver: StatsRece ver,
+  ): t.S mClustersANNServ ce. thodPerEndpo nt = {
+    val label = "s mclusters-ann-server-3"
+    val dest = "/s/s mclusters-ann/s mclusters-ann-3"
 
-    buildClient(serviceIdentifier, clientId, timeoutConfig, statsReceiver, dest, label)
+    bu ldCl ent(serv ce dent f er, cl ent d, t  outConf g, statsRece ver, dest, label)
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.SimClustersANNServiceClientName5)
-  def providesSimClustersANNServiceClient5(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-  ): t.SimClustersANNService.MethodPerEndpoint = {
-    val label = "simclusters-ann-server-5"
-    val dest = "/s/simclusters-ann/simclusters-ann-5"
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.S mClustersANNServ ceCl entNa 5)
+  def prov desS mClustersANNServ ceCl ent5(
+    serv ce dent f er: Serv ce dent f er,
+    cl ent d: Cl ent d,
+    t  outConf g: T  outConf g,
+    statsRece ver: StatsRece ver,
+  ): t.S mClustersANNServ ce. thodPerEndpo nt = {
+    val label = "s mclusters-ann-server-5"
+    val dest = "/s/s mclusters-ann/s mclusters-ann-5"
 
-    buildClient(serviceIdentifier, clientId, timeoutConfig, statsReceiver, dest, label)
+    bu ldCl ent(serv ce dent f er, cl ent d, t  outConf g, statsRece ver, dest, label)
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.SimClustersANNServiceClientName4)
-  def providesSimClustersANNServiceClient4(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-  ): t.SimClustersANNService.MethodPerEndpoint = {
-    val label = "simclusters-ann-server-4"
-    val dest = "/s/simclusters-ann/simclusters-ann-4"
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.S mClustersANNServ ceCl entNa 4)
+  def prov desS mClustersANNServ ceCl ent4(
+    serv ce dent f er: Serv ce dent f er,
+    cl ent d: Cl ent d,
+    t  outConf g: T  outConf g,
+    statsRece ver: StatsRece ver,
+  ): t.S mClustersANNServ ce. thodPerEndpo nt = {
+    val label = "s mclusters-ann-server-4"
+    val dest = "/s/s mclusters-ann/s mclusters-ann-4"
 
-    buildClient(serviceIdentifier, clientId, timeoutConfig, statsReceiver, dest, label)
+    bu ldCl ent(serv ce dent f er, cl ent d, t  outConf g, statsRece ver, dest, label)
   }
-  private def buildClient(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-    dest: String,
-    label: String
-  ): t.SimClustersANNService.MethodPerEndpoint = {
-    val stats = statsReceiver.scope("clnt")
+  pr vate def bu ldCl ent(
+    serv ce dent f er: Serv ce dent f er,
+    cl ent d: Cl ent d,
+    t  outConf g: T  outConf g,
+    statsRece ver: StatsRece ver,
+    dest: Str ng,
+    label: Str ng
+  ): t.S mClustersANNServ ce. thodPerEndpo nt = {
+    val stats = statsRece ver.scope("clnt")
 
-    val thriftClient = ThriftMux.client
-      .withMutualTls(serviceIdentifier)
-      .withClientId(clientId)
-      .withLabel(label)
-      .withStatsReceiver(stats)
-      .methodBuilder(dest)
-      .idempotent(5.percent)
-      .withTimeoutPerRequest(timeoutConfig.annServiceClientTimeout)
-      .withRetryDisabled
-      .servicePerEndpoint[t.SimClustersANNService.ServicePerEndpoint]
+    val thr ftCl ent = Thr ftMux.cl ent
+      .w hMutualTls(serv ce dent f er)
+      .w hCl ent d(cl ent d)
+      .w hLabel(label)
+      .w hStatsRece ver(stats)
+      . thodBu lder(dest)
+      . dempotent(5.percent)
+      .w hT  outPerRequest(t  outConf g.annServ ceCl entT  out)
+      .w hRetryD sabled
+      .serv cePerEndpo nt[t.S mClustersANNServ ce.Serv cePerEndpo nt]
 
-    ThriftMux.Client.methodPerEndpoint(thriftClient)
+    Thr ftMux.Cl ent. thodPerEndpo nt(thr ftCl ent)
   }
 
 }

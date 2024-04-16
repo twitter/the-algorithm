@@ -1,156 +1,156 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import java.io.IOException;
-import java.util.Arrays;
+ mport java. o. OExcept on;
+ mport java.ut l.Arrays;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
+ mport com.tw ter.search.common.ut l. o.flushable.DataDeser al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.DataSer al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.common.ut l. o.flushable.Flushable;
 
-// Modeled after TwitterCharBlockPool, with a lot of simplification.
-public class IntBlockPool implements Flushable {
-  private static final SearchLongGauge INT_BLOCK_POOL_MAX_LENGTH =
-      SearchLongGauge.export("twitter_int_block_pool_max_size");
-  private static final String STAT_PREFIX = "twitter_int_block_pool_size_";
+// Modeled after Tw terCharBlockPool, w h a lot of s mpl f cat on.
+publ c class  ntBlockPool  mple nts Flushable {
+  pr vate stat c f nal SearchLongGauge  NT_BLOCK_POOL_MAX_LENGTH =
+      SearchLongGauge.export("tw ter_ nt_block_pool_max_s ze");
+  pr vate stat c f nal Str ng STAT_PREF X = "tw ter_ nt_block_pool_s ze_";
 
-  private static final int BLOCK_SHIFT = 14;
-  public static final int BLOCK_SIZE = 1 << BLOCK_SHIFT;
-  private static final int BLOCK_MASK = BLOCK_SIZE - 1;
+  pr vate stat c f nal  nt BLOCK_SH FT = 14;
+  publ c stat c f nal  nt BLOCK_S ZE = 1 << BLOCK_SH FT;
+  pr vate stat c f nal  nt BLOCK_MASK = BLOCK_S ZE - 1;
 
-  // We can address up to 2^31 elements with an int. We use 1 << 14 bits for the block offset,
-  // so we can use the remaining 17 bits for the blocks index. Therefore the maximum number of
-  // addressable blocks is 1 << 17 or maxInt >> 14.
-  private static final int MAX_NUM_BLOCKS = Integer.MAX_VALUE >> BLOCK_SHIFT;
+  //   can address up to 2^31 ele nts w h an  nt.   use 1 << 14 b s for t  block offset,
+  // so   can use t  rema n ng 17 b s for t  blocks  ndex. T refore t  max mum number of
+  // addressable blocks  s 1 << 17 or max nt >> 14.
+  pr vate stat c f nal  nt MAX_NUM_BLOCKS =  nteger.MAX_VALUE >> BLOCK_SH FT;
 
-  // Initial value written into the blocks.
-  private final int initialValue;
+  //  n  al value wr ten  nto t  blocks.
+  pr vate f nal  nt  n  alValue;
 
-  // Extra object with final array is necessary to guarantee visibility
-  // to other threads without synchronization / volatiles.  See comment
-  // in TwitterCharBlockPool.
-  public static final class Pool {
-    public final int[][] blocks;
-    Pool(int[][] blocks) {
-      this.blocks = blocks;
+  // Extra object w h f nal array  s necessary to guarantee v s b l y
+  // to ot r threads w hout synchron zat on / volat les.  See com nt
+  //  n Tw terCharBlockPool.
+  publ c stat c f nal class Pool {
+    publ c f nal  nt[][] blocks;
+    Pool( nt[][] blocks) {
+      t .blocks = blocks;
 
-      // Adjust max size if exceeded maximum value.
-      synchronized (INT_BLOCK_POOL_MAX_LENGTH) {
-        if (this.blocks != null) {
-          final long currentSize = (long) (this.blocks.length * BLOCK_SIZE);
-          if (currentSize > INT_BLOCK_POOL_MAX_LENGTH.get()) {
-            INT_BLOCK_POOL_MAX_LENGTH.set(currentSize);
+      // Adjust max s ze  f exceeded max mum value.
+      synchron zed ( NT_BLOCK_POOL_MAX_LENGTH) {
+         f (t .blocks != null) {
+          f nal long currentS ze = (long) (t .blocks.length * BLOCK_S ZE);
+           f (currentS ze >  NT_BLOCK_POOL_MAX_LENGTH.get()) {
+             NT_BLOCK_POOL_MAX_LENGTH.set(currentS ze);
           }
         }
       }
     }
   }
-  public Pool pool;
+  publ c Pool pool;
 
-  private int currBlockIndex;   // Index into blocks array.
-  private int[] currBlock = null;
-  private int currBlockOffset;  // Index into current block.
-  private final String poolName;
-  private final SearchLongGauge sizeGauge;
+  pr vate  nt currBlock ndex;   //  ndex  nto blocks array.
+  pr vate  nt[] currBlock = null;
+  pr vate  nt currBlockOffset;  //  ndex  nto current block.
+  pr vate f nal Str ng poolNa ;
+  pr vate f nal SearchLongGauge s zeGauge;
 
-  public IntBlockPool(String poolName) {
-    this(0, poolName);
+  publ c  ntBlockPool(Str ng poolNa ) {
+    t (0, poolNa );
   }
 
-  public IntBlockPool(int initialValue, String poolName) {
-    // Start with room for 16 initial blocks (does not allocate these blocks).
-    this.pool = new Pool(new int[16][]);
-    this.initialValue = initialValue;
+  publ c  ntBlockPool( nt  n  alValue, Str ng poolNa ) {
+    // Start w h room for 16  n  al blocks (does not allocate t se blocks).
+    t .pool = new Pool(new  nt[16][]);
+    t . n  alValue =  n  alValue;
 
-    // Start at the end of a previous, non-existent blocks.
-    this.currBlockIndex = -1;
-    this.currBlock = null;
-    this.currBlockOffset = BLOCK_SIZE;
-    this.poolName = poolName;
-    this.sizeGauge = createGauge(poolName, pool);
+    // Start at t  end of a prev ous, non-ex stent blocks.
+    t .currBlock ndex = -1;
+    t .currBlock = null;
+    t .currBlockOffset = BLOCK_S ZE;
+    t .poolNa  = poolNa ;
+    t .s zeGauge = createGauge(poolNa , pool);
   }
 
   // Constructor for FlushHandler.
-  protected IntBlockPool(
-      int currBlockIndex,
-      int currBlockOffset,
-      int[][]blocks,
-      String poolName) {
-    this.initialValue = 0;
-    this.pool = new Pool(blocks);
-    this.currBlockIndex = currBlockIndex;
-    this.currBlockOffset = currBlockOffset;
-    if (currBlockIndex >= 0) {
-      this.currBlock = this.pool.blocks[currBlockIndex];
+  protected  ntBlockPool(
+       nt currBlock ndex,
+       nt currBlockOffset,
+       nt[][]blocks,
+      Str ng poolNa ) {
+    t . n  alValue = 0;
+    t .pool = new Pool(blocks);
+    t .currBlock ndex = currBlock ndex;
+    t .currBlockOffset = currBlockOffset;
+     f (currBlock ndex >= 0) {
+      t .currBlock = t .pool.blocks[currBlock ndex];
     }
-    this.poolName = poolName;
-    this.sizeGauge = createGauge(poolName, pool);
+    t .poolNa  = poolNa ;
+    t .s zeGauge = createGauge(poolNa , pool);
   }
 
-  private static SearchLongGauge createGauge(String suffix, Pool pool) {
-    SearchLongGauge gauge = SearchLongGauge.export(STAT_PREFIX + suffix);
-    if (pool.blocks != null) {
-      gauge.set(pool.blocks.length * BLOCK_SIZE);
+  pr vate stat c SearchLongGauge createGauge(Str ng suff x, Pool pool) {
+    SearchLongGauge gauge = SearchLongGauge.export(STAT_PREF X + suff x);
+     f (pool.blocks != null) {
+      gauge.set(pool.blocks.length * BLOCK_S ZE);
     }
     return gauge;
   }
 
   /**
-   * Adds an int to the current block and returns it's overall index.
+   * Adds an  nt to t  current block and returns  's overall  ndex.
    */
-  public int add(int value) {
-    if (currBlockOffset == BLOCK_SIZE) {
+  publ c  nt add( nt value) {
+     f (currBlockOffset == BLOCK_S ZE) {
       newBlock();
     }
     currBlock[currBlockOffset++] = value;
-    return (currBlockIndex << BLOCK_SHIFT) + currBlockOffset - 1;
+    return (currBlock ndex << BLOCK_SH FT) + currBlockOffset - 1;
   }
 
-  // Returns number of ints in this blocks
-  public int length() {
-    return currBlockOffset + currBlockIndex * BLOCK_SIZE;
+  // Returns number of  nts  n t  blocks
+  publ c  nt length() {
+    return currBlockOffset + currBlock ndex * BLOCK_S ZE;
   }
 
-  // Gets an int from the specified index.
-  public final int get(int index) {
-    return getBlock(index)[getOffsetInBlock(index)];
+  // Gets an  nt from t  spec f ed  ndex.
+  publ c f nal  nt get( nt  ndex) {
+    return getBlock( ndex)[getOffset nBlock( ndex)];
   }
 
-  public static int getBlockStart(int index) {
-    return (index >>> BLOCK_SHIFT) * BLOCK_SIZE;
+  publ c stat c  nt getBlockStart( nt  ndex) {
+    return ( ndex >>> BLOCK_SH FT) * BLOCK_S ZE;
   }
 
-  public static int getOffsetInBlock(int index) {
-    return index & BLOCK_MASK;
+  publ c stat c  nt getOffset nBlock( nt  ndex) {
+    return  ndex & BLOCK_MASK;
   }
 
-  public final int[] getBlock(int index) {
-    final int blockIndex = index >>> BLOCK_SHIFT;
-    return pool.blocks[blockIndex];
+  publ c f nal  nt[] getBlock( nt  ndex) {
+    f nal  nt block ndex =  ndex >>> BLOCK_SH FT;
+    return pool.blocks[block ndex];
   }
 
-  // Sets an int value at the specified index.
-  public void set(int index, int value) {
-    final int blockIndex = index >>> BLOCK_SHIFT;
-    final int offset = index & BLOCK_MASK;
-    pool.blocks[blockIndex][offset] = value;
+  // Sets an  nt value at t  spec f ed  ndex.
+  publ c vo d set( nt  ndex,  nt value) {
+    f nal  nt block ndex =  ndex >>> BLOCK_SH FT;
+    f nal  nt offset =  ndex & BLOCK_MASK;
+    pool.blocks[block ndex][offset] = value;
   }
 
   /**
-   * Evaluates whether two instances of IntBlockPool are equal by value. It is
-   * slow because it has to check every element in the pool.
+   * Evaluates w t r two  nstances of  ntBlockPool are equal by value.    s
+   * slow because   has to c ck every ele nt  n t  pool.
    */
-  @VisibleForTesting
-  public boolean verySlowEqualsForTests(IntBlockPool that) {
-    if (length() != that.length()) {
+  @V s bleForTest ng
+  publ c boolean verySlowEqualsForTests( ntBlockPool that) {
+     f (length() != that.length()) {
       return false;
     }
 
-    for (int i = 0; i < length(); i++) {
-      if (get(i) != that.get(i)) {
+    for ( nt   = 0;   < length();  ++) {
+       f (get( ) != that.get( )) {
         return false;
       }
     }
@@ -158,68 +158,68 @@ public class IntBlockPool implements Flushable {
     return true;
   }
 
-  private void newBlock() {
-    final int newBlockIndex = 1 + currBlockIndex;
-    if (newBlockIndex >= MAX_NUM_BLOCKS) {
-      throw new RuntimeException(
-          "Too many blocks, would overflow int index for blocks " + poolName);
+  pr vate vo d newBlock() {
+    f nal  nt newBlock ndex = 1 + currBlock ndex;
+     f (newBlock ndex >= MAX_NUM_BLOCKS) {
+      throw new Runt  Except on(
+          "Too many blocks, would overflow  nt  ndex for blocks " + poolNa );
     }
-    if (newBlockIndex == pool.blocks.length) {
-      // Blocks array is too small to add a new block.  Resize.
-      int[][] newBlocks = new int[pool.blocks.length * 2][];
+     f (newBlock ndex == pool.blocks.length) {
+      // Blocks array  s too small to add a new block.  Res ze.
+       nt[][] newBlocks = new  nt[pool.blocks.length * 2][];
       System.arraycopy(pool.blocks, 0, newBlocks, 0, pool.blocks.length);
       pool = new Pool(newBlocks);
 
-      sizeGauge.set(pool.blocks.length * BLOCK_SIZE);
+      s zeGauge.set(pool.blocks.length * BLOCK_S ZE);
     }
 
-    currBlock = pool.blocks[newBlockIndex] = allocateBlock();
+    currBlock = pool.blocks[newBlock ndex] = allocateBlock();
     currBlockOffset = 0;
-    currBlockIndex = newBlockIndex;
+    currBlock ndex = newBlock ndex;
   }
 
-  private int[] allocateBlock() {
-    int[] block = new int[BLOCK_SIZE];
-    Arrays.fill(block, initialValue);
+  pr vate  nt[] allocateBlock() {
+     nt[] block = new  nt[BLOCK_S ZE];
+    Arrays.f ll(block,  n  alValue);
     return block;
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @SuppressWarn ngs("unc cked")
+  @Overr de
+  publ c FlushHandler getFlushHandler() {
+    return new FlushHandler(t );
   }
 
-  public static final class FlushHandler extends Flushable.Handler<IntBlockPool> {
-    private static final String CURRENT_BLOCK_INDEX_PROP_NAME = "currentBlockIndex";
-    private static final String CURRENT_BLOCK_OFFSET_PROP_NAME = "currentBlockOffset";
-    private static final String POOL_NAME = "poolName";
+  publ c stat c f nal class FlushHandler extends Flushable.Handler< ntBlockPool> {
+    pr vate stat c f nal Str ng CURRENT_BLOCK_ NDEX_PROP_NAME = "currentBlock ndex";
+    pr vate stat c f nal Str ng CURRENT_BLOCK_OFFSET_PROP_NAME = "currentBlockOffset";
+    pr vate stat c f nal Str ng POOL_NAME = "poolNa ";
 
-    public FlushHandler() {
+    publ c FlushHandler() {
       super();
     }
 
-    public FlushHandler(IntBlockPool objToFlush) {
+    publ c FlushHandler( ntBlockPool objToFlush) {
       super(objToFlush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      IntBlockPool pool = getObjectToFlush();
-      flushInfo.addIntProperty(CURRENT_BLOCK_INDEX_PROP_NAME, pool.currBlockIndex);
-      flushInfo.addIntProperty(CURRENT_BLOCK_OFFSET_PROP_NAME, pool.currBlockOffset);
-      flushInfo.addStringProperty(POOL_NAME, pool.poolName);
-      out.writeIntArray2D(pool.pool.blocks, pool.currBlockIndex + 1);
+    @Overr de
+    protected vo d doFlush(Flush nfo flush nfo, DataSer al zer out) throws  OExcept on {
+       ntBlockPool pool = getObjectToFlush();
+      flush nfo.add ntProperty(CURRENT_BLOCK_ NDEX_PROP_NAME, pool.currBlock ndex);
+      flush nfo.add ntProperty(CURRENT_BLOCK_OFFSET_PROP_NAME, pool.currBlockOffset);
+      flush nfo.addStr ngProperty(POOL_NAME, pool.poolNa );
+      out.wr e ntArray2D(pool.pool.blocks, pool.currBlock ndex + 1);
     }
 
-    @Override
-    protected IntBlockPool doLoad(FlushInfo flushInfo, DataDeserializer in) throws IOException {
-      String poolName = flushInfo.getStringProperty(POOL_NAME);
-      return new IntBlockPool(
-          flushInfo.getIntProperty(CURRENT_BLOCK_INDEX_PROP_NAME),
-          flushInfo.getIntProperty(CURRENT_BLOCK_OFFSET_PROP_NAME),
-          in.readIntArray2D(),
-          poolName);
+    @Overr de
+    protected  ntBlockPool doLoad(Flush nfo flush nfo, DataDeser al zer  n) throws  OExcept on {
+      Str ng poolNa  = flush nfo.getStr ngProperty(POOL_NAME);
+      return new  ntBlockPool(
+          flush nfo.get ntProperty(CURRENT_BLOCK_ NDEX_PROP_NAME),
+          flush nfo.get ntProperty(CURRENT_BLOCK_OFFSET_PROP_NAME),
+           n.read ntArray2D(),
+          poolNa );
     }
   }
 }

@@ -1,10 +1,10 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+package com.tw ter.search.earlyb rd.arch ve.seg ntbu lder;
 
-public final class SegmentBuilderMain {
+publ c f nal class Seg ntBu lderMa n {
 
-  private SegmentBuilderMain() { }
+  pr vate Seg ntBu lderMa n() { }
 
-  public static void main(String[] args) {
-    new SegmentBuilderApp().main(args);
+  publ c stat c vo d ma n(Str ng[] args) {
+    new Seg ntBu lderApp().ma n(args);
   }
 }

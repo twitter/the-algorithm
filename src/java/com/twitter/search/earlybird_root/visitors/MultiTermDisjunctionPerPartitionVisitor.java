@@ -1,136 +1,136 @@
-package com.twitter.search.earlybird_root.visitors;
+package com.tw ter.search.earlyb rd_root.v s ors;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+ mport java.ut l.Collect ons;
+ mport java.ut l.L st;
+ mport java.ut l.stream.Collectors;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+ mport com.google.common.collect. mmutableL st;
+ mport com.google.common.collect.L sts;
 
-import com.twitter.search.common.partitioning.base.PartitionDataType;
-import com.twitter.search.common.partitioning.base.PartitionMappingManager;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.queryparser.query.Conjunction;
-import com.twitter.search.queryparser.query.Disjunction;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.Query.Occur;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.search.SearchOperator;
-import com.twitter.search.queryparser.query.search.SearchQueryTransformer;
+ mport com.tw ter.search.common.part  on ng.base.Part  onDataType;
+ mport com.tw ter.search.common.part  on ng.base.Part  onMapp ngManager;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants;
+ mport com.tw ter.search.queryparser.query.Conjunct on;
+ mport com.tw ter.search.queryparser.query.D sjunct on;
+ mport com.tw ter.search.queryparser.query.Query;
+ mport com.tw ter.search.queryparser.query.Query.Occur;
+ mport com.tw ter.search.queryparser.query.QueryParserExcept on;
+ mport com.tw ter.search.queryparser.query.search.SearchOperator;
+ mport com.tw ter.search.queryparser.query.search.SearchQueryTransfor r;
 
 /**
- * Truncate user id or id lists in [multi_term_disjunction from_user_id/id] queries.
- * Return null if query has incorrect operators or looked at wrong field.
+ * Truncate user  d or  d l sts  n [mult _term_d sjunct on from_user_ d/ d] quer es.
+ * Return null  f query has  ncorrect operators or looked at wrong f eld.
  */
-public class MultiTermDisjunctionPerPartitionVisitor extends SearchQueryTransformer {
-  private final PartitionMappingManager partitionMappingManager;
-  private final int partitionId;
-  private final String targetFieldName;
+publ c class Mult TermD sjunct onPerPart  onV s or extends SearchQueryTransfor r {
+  pr vate f nal Part  onMapp ngManager part  onMapp ngManager;
+  pr vate f nal  nt part  on d;
+  pr vate f nal Str ng targetF eldNa ;
 
-  public static final Conjunction NO_MATCH_CONJUNCTION =
-      new Conjunction(Occur.MUST_NOT, Collections.emptyList(), Collections.emptyList());
+  publ c stat c f nal Conjunct on NO_MATCH_CONJUNCT ON =
+      new Conjunct on(Occur.MUST_NOT, Collect ons.emptyL st(), Collect ons.emptyL st());
 
-  public MultiTermDisjunctionPerPartitionVisitor(
-      PartitionMappingManager partitionMappingManager,
-      int partitionId) {
-    this.partitionMappingManager = partitionMappingManager;
-    this.partitionId = partitionId;
-    this.targetFieldName =
-        partitionMappingManager.getPartitionDataType() == PartitionDataType.USER_ID
-            ? EarlybirdFieldConstants.EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName()
-            : EarlybirdFieldConstants.EarlybirdFieldConstant.ID_FIELD.getFieldName();
+  publ c Mult TermD sjunct onPerPart  onV s or(
+      Part  onMapp ngManager part  onMapp ngManager,
+       nt part  on d) {
+    t .part  onMapp ngManager = part  onMapp ngManager;
+    t .part  on d = part  on d;
+    t .targetF eldNa  =
+        part  onMapp ngManager.getPart  onDataType() == Part  onDataType.USER_ D
+            ? Earlyb rdF eldConstants.Earlyb rdF eldConstant.FROM_USER_ D_F ELD.getF eldNa ()
+            : Earlyb rdF eldConstants.Earlyb rdF eldConstant. D_F ELD.getF eldNa ();
   }
 
-  private boolean isTargetedQuery(Query query) {
-    if (query instanceof SearchOperator) {
+  pr vate boolean  sTargetedQuery(Query query) {
+     f (query  nstanceof SearchOperator) {
       SearchOperator operator = (SearchOperator) query;
-      return operator.getOperatorType() == SearchOperator.Type.MULTI_TERM_DISJUNCTION
-          && operator.getOperand().equals(targetFieldName);
+      return operator.getOperatorType() == SearchOperator.Type.MULT _TERM_D SJUNCT ON
+          && operator.getOperand().equals(targetF eldNa );
     } else {
       return false;
     }
   }
 
-  @Override
-  public Query visit(Conjunction query) throws QueryParserException {
-    boolean modified = false;
-    ImmutableList.Builder<Query> children = ImmutableList.builder();
-    for (Query child : query.getChildren()) {
-      Query newChild = child.accept(this);
-      if (newChild != null) {
-        // For conjunction case, if any child is "multi_term_disjunction from_user_id" and returns
-        // Conjunction.NO_MATCH_CONJUNCTION, it should be considered same as match no docs. And
-        // caller should decide how to deal with it.
-        if (isTargetedQuery(child) && newChild == NO_MATCH_CONJUNCTION) {
-          return NO_MATCH_CONJUNCTION;
+  @Overr de
+  publ c Query v s (Conjunct on query) throws QueryParserExcept on {
+    boolean mod f ed = false;
+     mmutableL st.Bu lder<Query> ch ldren =  mmutableL st.bu lder();
+    for (Query ch ld : query.getCh ldren()) {
+      Query newCh ld = ch ld.accept(t );
+       f (newCh ld != null) {
+        // For conjunct on case,  f any ch ld  s "mult _term_d sjunct on from_user_ d" and returns
+        // Conjunct on.NO_MATCH_CONJUNCT ON,   should be cons dered sa  as match no docs. And
+        // caller should dec de how to deal w h  .
+         f ( sTargetedQuery(ch ld) && newCh ld == NO_MATCH_CONJUNCT ON) {
+          return NO_MATCH_CONJUNCT ON;
         }
-        if (newChild != Conjunction.EMPTY_CONJUNCTION
-            && newChild != Disjunction.EMPTY_DISJUNCTION) {
-          children.add(newChild);
+         f (newCh ld != Conjunct on.EMPTY_CONJUNCT ON
+            && newCh ld != D sjunct on.EMPTY_D SJUNCT ON) {
+          ch ldren.add(newCh ld);
         }
       }
-      if (newChild != child) {
-        modified = true;
+       f (newCh ld != ch ld) {
+        mod f ed = true;
       }
     }
-    return modified ? query.newBuilder().setChildren(children.build()).build() : query;
+    return mod f ed ? query.newBu lder().setCh ldren(ch ldren.bu ld()).bu ld() : query;
   }
 
-  @Override
-  public Query visit(Disjunction disjunction) throws QueryParserException {
-    boolean modified = false;
-    ImmutableList.Builder<Query> children = ImmutableList.builder();
-    for (Query child : disjunction.getChildren()) {
-      Query newChild = child.accept(this);
-      if (newChild != null
-          && newChild != Conjunction.EMPTY_CONJUNCTION
-          && newChild != Disjunction.EMPTY_DISJUNCTION
-          && newChild != NO_MATCH_CONJUNCTION) {
-        children.add(newChild);
+  @Overr de
+  publ c Query v s (D sjunct on d sjunct on) throws QueryParserExcept on {
+    boolean mod f ed = false;
+     mmutableL st.Bu lder<Query> ch ldren =  mmutableL st.bu lder();
+    for (Query ch ld : d sjunct on.getCh ldren()) {
+      Query newCh ld = ch ld.accept(t );
+       f (newCh ld != null
+          && newCh ld != Conjunct on.EMPTY_CONJUNCT ON
+          && newCh ld != D sjunct on.EMPTY_D SJUNCT ON
+          && newCh ld != NO_MATCH_CONJUNCT ON) {
+        ch ldren.add(newCh ld);
       }
-      if (newChild != child) {
-        modified = true;
+       f (newCh ld != ch ld) {
+        mod f ed = true;
       }
     }
-    return modified ? disjunction.newBuilder().setChildren(children.build()).build() : disjunction;
+    return mod f ed ? d sjunct on.newBu lder().setCh ldren(ch ldren.bu ld()).bu ld() : d sjunct on;
   }
 
-  @Override
-  public Query visit(SearchOperator operator) throws QueryParserException {
-    if (isTargetedQuery(operator)) {
-      List<Long> ids = extractIds(operator);
-      if (ids.size() > 0) {
-        List<String> operands = Lists.newArrayList(targetFieldName);
-        for (long id : ids) {
-          operands.add(String.valueOf(id));
+  @Overr de
+  publ c Query v s (SearchOperator operator) throws QueryParserExcept on {
+     f ( sTargetedQuery(operator)) {
+      L st<Long>  ds = extract ds(operator);
+       f ( ds.s ze() > 0) {
+        L st<Str ng> operands = L sts.newArrayL st(targetF eldNa );
+        for (long  d :  ds) {
+          operands.add(Str ng.valueOf( d));
         }
-        return operator.newBuilder().setOperands(operands).build();
+        return operator.newBu lder().setOperands(operands).bu ld();
       } else {
-        // If the [multi_term_disjunction from_user_id] is a negation (i.e., occur == MUST_NOT),
-        // and there is no user id left, the whole sub query node does not do anything; if it is
-        // NOT a negation, then sub query matches nothing.
-        if (operator.getOccur() == Query.Occur.MUST_NOT) {
-          return Conjunction.EMPTY_CONJUNCTION;
+        //  f t  [mult _term_d sjunct on from_user_ d]  s a negat on ( .e., occur == MUST_NOT),
+        // and t re  s no user  d left, t  whole sub query node does not do anyth ng;  f    s
+        // NOT a negat on, t n sub query matc s noth ng.
+         f (operator.getOccur() == Query.Occur.MUST_NOT) {
+          return Conjunct on.EMPTY_CONJUNCT ON;
         } else {
-          return NO_MATCH_CONJUNCTION;
+          return NO_MATCH_CONJUNCT ON;
         }
       }
     }
     return operator;
   }
 
-  private List<Long> extractIds(SearchOperator operator) throws QueryParserException {
-    if (EarlybirdFieldConstants.EarlybirdFieldConstant.ID_FIELD
-        .getFieldName().equals(targetFieldName)) {
-      return operator.getOperands().subList(1, operator.getNumOperands()).stream()
+  pr vate L st<Long> extract ds(SearchOperator operator) throws QueryParserExcept on {
+     f (Earlyb rdF eldConstants.Earlyb rdF eldConstant. D_F ELD
+        .getF eldNa ().equals(targetF eldNa )) {
+      return operator.getOperands().subL st(1, operator.getNumOperands()).stream()
           .map(Long::valueOf)
-          .filter(id -> partitionMappingManager.getPartitionIdForTweetId(id) == partitionId)
-          .collect(Collectors.toList());
+          .f lter( d -> part  onMapp ngManager.getPart  on dForT et d( d) == part  on d)
+          .collect(Collectors.toL st());
     } else {
-      return operator.getOperands().subList(1, operator.getNumOperands()).stream()
+      return operator.getOperands().subL st(1, operator.getNumOperands()).stream()
           .map(Long::valueOf)
-          .filter(id -> partitionMappingManager.getPartitionIdForUserId(id) == partitionId)
-          .collect(Collectors.toList());
+          .f lter( d -> part  onMapp ngManager.getPart  on dForUser d( d) == part  on d)
+          .collect(Collectors.toL st());
     }
   }
 }

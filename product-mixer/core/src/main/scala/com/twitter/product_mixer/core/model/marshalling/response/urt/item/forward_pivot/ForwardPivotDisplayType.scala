@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.forward_p vot
 
-sealed trait ForwardPivotDisplayType
+sealed tra  ForwardP votD splayType
 
-case object LiveEvent extends ForwardPivotDisplayType
-case object SoftIntervention extends ForwardPivotDisplayType
-case object CommunityNotes extends ForwardPivotDisplayType
+case object L veEvent extends ForwardP votD splayType
+case object Soft ntervent on extends ForwardP votD splayType
+case object Commun yNotes extends ForwardP votD splayType

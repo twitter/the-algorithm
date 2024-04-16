@@ -1,16 +1,16 @@
 """
-This module is responsible for running tensorboard.
+T  module  s respons ble for runn ng tensorboard.
 """
-import logging
-import re
-import sys
+ mport logg ng
+ mport re
+ mport sys
 
-from tensorboard.main import run_main
+from tensorboard.ma n  mport run_ma n
 
 
-if __name__ == '__main__':
-  # Tensorboard relies on werkzeug for its HTTP server which logs at info level
+ f __na __ == '__ma n__':
+  # Tensorboard rel es on  rkzeug for  s HTTP server wh ch logs at  nfo level
   # by default
-  logging.getLogger('werkzeug').setLevel(logging.WARNING)
-  sys.argv[0] = re.sub(r'(-script\.pyw?|\.exe)?$', '', sys.argv[0])
-  sys.exit(run_main())
+  logg ng.getLogger(' rkzeug').setLevel(logg ng.WARN NG)
+  sys.argv[0] = re.sub(r'(-scr pt\.pyw?|\.exe)?$', '', sys.argv[0])
+  sys.ex (run_ma n())

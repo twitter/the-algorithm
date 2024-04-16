@@ -1,81 +1,81 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+# nclude "tensorflow/core/fra work/op.h"
+# nclude "tensorflow/core/fra work/shape_ nference.h"
+# nclude "tensorflow/core/fra work/op_kernel.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
+# nclude <twml.h>
+# nclude "tensorflow_ut ls.h"
 
-using namespace tensorflow;
+us ng na space tensorflow;
 
-REGISTER_OP("DataRecordTensorWriter")
-.Attr("T: list({string, int32, int64, float, double, bool})")
-.Input("keys: int64")
-.Input("values: T")
-.Output("result: uint8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+REG STER_OP("DataRecordTensorWr er")
+.Attr("T: l st({str ng,  nt32,  nt64, float, double, bool})")
+. nput("keys:  nt64")
+. nput("values: T")
+.Output("result: u nt8")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
   return Status::OK();
   }).Doc(R"doc(
 
-A tensorflow OP that packages keys and dense tensors into a DataRecord.
+A tensorflow OP that packages keys and dense tensors  nto a DataRecord.
 
-values: list of tensors
-keys: feature ids from the original DataRecord (int64)
+values: l st of tensors
+keys: feature  ds from t  or g nal DataRecord ( nt64)
 
 Outputs
-  bytes: output DataRecord serialized using Thrift into a uint8 tensor.
+  bytes: output DataRecord ser al zed us ng Thr ft  nto a u nt8 tensor.
 )doc");
 
-class DataRecordTensorWriter : public OpKernel {
- public:
-  explicit DataRecordTensorWriter(OpKernelConstruction* context)
+class DataRecordTensorWr er : publ c OpKernel {
+ publ c:
+  expl c  DataRecordTensorWr er(OpKernelConstruct on* context)
   : OpKernel(context) {}
 
-  void Compute(OpKernelContext* context) override {
-    const Tensor& keys = context->input(0);
+  vo d Compute(OpKernelContext* context) overr de {
+    const Tensor& keys = context-> nput(0);
 
     try {
       // set keys as twml::Tensor
-      const twml::Tensor in_keys_ = TFTensor_to_twml_tensor(keys);
+      const twml::Tensor  n_keys_ = TFTensor_to_twml_tensor(keys);
 
-      // check sizes
-      uint64_t num_keys = in_keys_.getNumElements();
-      uint64_t num_values = context->num_inputs() - 1;
+      // c ck s zes
+      u nt64_t num_keys =  n_keys_.getNumEle nts();
+      u nt64_t num_values = context->num_ nputs() - 1;
 
-      OP_REQUIRES(context, num_keys == num_values,
-        errors::InvalidArgument("Number of dense keys and dense tensors do not match"));
+      OP_REQU RES(context, num_keys == num_values,
+        errors:: nval dArgu nt("Number of dense keys and dense tensors do not match"));
 
       // populate DataRecord object
-      const int64_t *keys = in_keys_.getData<int64_t>();
+      const  nt64_t *keys =  n_keys_.getData< nt64_t>();
       twml::DataRecord record = twml::DataRecord();
 
-      for (int i = 1; i < context->num_inputs(); i++) {
-        const twml::RawTensor& value = TFTensor_to_twml_raw_tensor(context->input(i));
-        record.addRawTensor(keys[i-1], value);
+      for ( nt   = 1;   < context->num_ nputs();  ++) {
+        const twml::RawTensor& value = TFTensor_to_twml_raw_tensor(context-> nput( ));
+        record.addRawTensor(keys[ -1], value);
       }
 
-      // determine the length of the encoded result (no memory is copied)
-      twml::ThriftWriter thrift_dry_writer = twml::ThriftWriter(nullptr, 0, true);
-      twml::DataRecordWriter record_dry_writer = twml::DataRecordWriter(thrift_dry_writer);
-      record_dry_writer.write(record);
-      int len = thrift_dry_writer.getBytesWritten();
+      // determ ne t  length of t  encoded result (no  mory  s cop ed)
+      twml::Thr ftWr er thr ft_dry_wr er = twml::Thr ftWr er(nullptr, 0, true);
+      twml::DataRecordWr er record_dry_wr er = twml::DataRecordWr er(thr ft_dry_wr er);
+      record_dry_wr er.wr e(record);
+       nt len = thr ft_dry_wr er.getBytesWr ten();
       TensorShape result_shape = {1, len};
 
       // allocate output tensor
       Tensor* result = NULL;
-      OP_REQUIRES_OK(context, context->allocate_output(0, result_shape, &result));
+      OP_REQU RES_OK(context, context->allocate_output(0, result_shape, &result));
       twml::Tensor out_result = TFTensor_to_twml_tensor(*result);
 
-      // write to output tensor
-      uint8_t *buffer = out_result.getData<uint8_t>();
-      twml::ThriftWriter thrift_writer = twml::ThriftWriter(buffer, len, false);
-      twml::DataRecordWriter record_writer = twml::DataRecordWriter(thrift_writer);
-      record_writer.write(record);
-    } catch(const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      // wr e to output tensor
+      u nt8_t *buffer = out_result.getData<u nt8_t>();
+      twml::Thr ftWr er thr ft_wr er = twml::Thr ftWr er(buffer, len, false);
+      twml::DataRecordWr er record_wr er = twml::DataRecordWr er(thr ft_wr er);
+      record_wr er.wr e(record);
+    } catch(const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-REGISTER_KERNEL_BUILDER(
-    Name("DataRecordTensorWriter").Device(DEVICE_CPU),
-    DataRecordTensorWriter);
+REG STER_KERNEL_BU LDER(
+    Na ("DataRecordTensorWr er").Dev ce(DEV CE_CPU),
+    DataRecordTensorWr er);

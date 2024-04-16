@@ -1,17 +1,17 @@
-package com.twitter.timelines.prediction.common.aggregates
+package com.tw ter.t  l nes.pred ct on.common.aggregates
 
-import com.twitter.ml.api.Feature
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import com.twitter.timelines.prediction.features.engagement_features.EngagementDataRecordFeatures
-import com.twitter.timelines.prediction.features.real_graph.RealGraphDataRecordFeatures
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
-import com.twitter.timelines.prediction.features.time_features.TimeDataRecordFeatures
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.t  l nes.pred ct on.features.common.T  l nesSharedFeatures
+ mport com.tw ter.t  l nes.pred ct on.features.engage nt_features.Engage ntDataRecordFeatures
+ mport com.tw ter.t  l nes.pred ct on.features.real_graph.RealGraphDataRecordFeatures
+ mport com.tw ter.t  l nes.pred ct on.features.recap.RecapFeatures
+ mport com.tw ter.t  l nes.pred ct on.features.t  _features.T  DataRecordFeatures
 
-object RecapUserFeatureAggregation {
-  val RecapFeaturesForAggregation: Set[Feature[_]] =
+object RecapUserFeatureAggregat on {
+  val RecapFeaturesForAggregat on: Set[Feature[_]] =
     Set(
-      RecapFeatures.HAS_IMAGE,
-      RecapFeatures.HAS_VIDEO,
+      RecapFeatures.HAS_ MAGE,
+      RecapFeatures.HAS_V DEO,
       RecapFeatures.FROM_MUTUAL_FOLLOW,
       RecapFeatures.HAS_CARD,
       RecapFeatures.HAS_NEWS,
@@ -19,397 +19,397 @@ object RecapUserFeatureAggregation {
       RecapFeatures.FAV_COUNT,
       RecapFeatures.RETWEET_COUNT,
       RecapFeatures.BLENDER_SCORE,
-      RecapFeatures.CONVERSATIONAL_COUNT,
-      RecapFeatures.IS_BUSINESS_SCORE,
-      RecapFeatures.CONTAINS_MEDIA,
+      RecapFeatures.CONVERSAT ONAL_COUNT,
+      RecapFeatures. S_BUS NESS_SCORE,
+      RecapFeatures.CONTA NS_MED A,
       RecapFeatures.RETWEET_SEARCHER,
       RecapFeatures.REPLY_SEARCHER,
-      RecapFeatures.MENTION_SEARCHER,
+      RecapFeatures.MENT ON_SEARCHER,
       RecapFeatures.REPLY_OTHER,
       RecapFeatures.RETWEET_OTHER,
-      RecapFeatures.MATCH_UI_LANG,
-      RecapFeatures.MATCH_SEARCHER_MAIN_LANG,
+      RecapFeatures.MATCH_U _LANG,
+      RecapFeatures.MATCH_SEARCHER_MA N_LANG,
       RecapFeatures.MATCH_SEARCHER_LANGS,
-      RecapFeatures.TWEET_COUNT_FROM_USER_IN_SNAPSHOT,
+      RecapFeatures.TWEET_COUNT_FROM_USER_ N_SNAPSHOT,
       RecapFeatures.TEXT_SCORE,
       RealGraphDataRecordFeatures.NUM_RETWEETS_EWMA,
       RealGraphDataRecordFeatures.NUM_RETWEETS_NON_ZERO_DAYS,
       RealGraphDataRecordFeatures.NUM_RETWEETS_ELAPSED_DAYS,
-      RealGraphDataRecordFeatures.NUM_RETWEETS_DAYS_SINCE_LAST,
-      RealGraphDataRecordFeatures.NUM_FAVORITES_EWMA,
-      RealGraphDataRecordFeatures.NUM_FAVORITES_NON_ZERO_DAYS,
-      RealGraphDataRecordFeatures.NUM_FAVORITES_ELAPSED_DAYS,
-      RealGraphDataRecordFeatures.NUM_FAVORITES_DAYS_SINCE_LAST,
-      RealGraphDataRecordFeatures.NUM_MENTIONS_EWMA,
-      RealGraphDataRecordFeatures.NUM_MENTIONS_NON_ZERO_DAYS,
-      RealGraphDataRecordFeatures.NUM_MENTIONS_ELAPSED_DAYS,
-      RealGraphDataRecordFeatures.NUM_MENTIONS_DAYS_SINCE_LAST,
-      RealGraphDataRecordFeatures.NUM_TWEET_CLICKS_EWMA,
-      RealGraphDataRecordFeatures.NUM_TWEET_CLICKS_NON_ZERO_DAYS,
-      RealGraphDataRecordFeatures.NUM_TWEET_CLICKS_ELAPSED_DAYS,
-      RealGraphDataRecordFeatures.NUM_TWEET_CLICKS_DAYS_SINCE_LAST,
-      RealGraphDataRecordFeatures.NUM_PROFILE_VIEWS_EWMA,
-      RealGraphDataRecordFeatures.NUM_PROFILE_VIEWS_NON_ZERO_DAYS,
-      RealGraphDataRecordFeatures.NUM_PROFILE_VIEWS_ELAPSED_DAYS,
-      RealGraphDataRecordFeatures.NUM_PROFILE_VIEWS_DAYS_SINCE_LAST,
-      RealGraphDataRecordFeatures.TOTAL_DWELL_TIME_EWMA,
-      RealGraphDataRecordFeatures.TOTAL_DWELL_TIME_NON_ZERO_DAYS,
-      RealGraphDataRecordFeatures.TOTAL_DWELL_TIME_ELAPSED_DAYS,
-      RealGraphDataRecordFeatures.TOTAL_DWELL_TIME_DAYS_SINCE_LAST,
-      RealGraphDataRecordFeatures.NUM_INSPECTED_TWEETS_EWMA,
-      RealGraphDataRecordFeatures.NUM_INSPECTED_TWEETS_NON_ZERO_DAYS,
-      RealGraphDataRecordFeatures.NUM_INSPECTED_TWEETS_ELAPSED_DAYS,
-      RealGraphDataRecordFeatures.NUM_INSPECTED_TWEETS_DAYS_SINCE_LAST
+      RealGraphDataRecordFeatures.NUM_RETWEETS_DAYS_S NCE_LAST,
+      RealGraphDataRecordFeatures.NUM_FAVOR TES_EWMA,
+      RealGraphDataRecordFeatures.NUM_FAVOR TES_NON_ZERO_DAYS,
+      RealGraphDataRecordFeatures.NUM_FAVOR TES_ELAPSED_DAYS,
+      RealGraphDataRecordFeatures.NUM_FAVOR TES_DAYS_S NCE_LAST,
+      RealGraphDataRecordFeatures.NUM_MENT ONS_EWMA,
+      RealGraphDataRecordFeatures.NUM_MENT ONS_NON_ZERO_DAYS,
+      RealGraphDataRecordFeatures.NUM_MENT ONS_ELAPSED_DAYS,
+      RealGraphDataRecordFeatures.NUM_MENT ONS_DAYS_S NCE_LAST,
+      RealGraphDataRecordFeatures.NUM_TWEET_CL CKS_EWMA,
+      RealGraphDataRecordFeatures.NUM_TWEET_CL CKS_NON_ZERO_DAYS,
+      RealGraphDataRecordFeatures.NUM_TWEET_CL CKS_ELAPSED_DAYS,
+      RealGraphDataRecordFeatures.NUM_TWEET_CL CKS_DAYS_S NCE_LAST,
+      RealGraphDataRecordFeatures.NUM_PROF LE_V EWS_EWMA,
+      RealGraphDataRecordFeatures.NUM_PROF LE_V EWS_NON_ZERO_DAYS,
+      RealGraphDataRecordFeatures.NUM_PROF LE_V EWS_ELAPSED_DAYS,
+      RealGraphDataRecordFeatures.NUM_PROF LE_V EWS_DAYS_S NCE_LAST,
+      RealGraphDataRecordFeatures.TOTAL_DWELL_T ME_EWMA,
+      RealGraphDataRecordFeatures.TOTAL_DWELL_T ME_NON_ZERO_DAYS,
+      RealGraphDataRecordFeatures.TOTAL_DWELL_T ME_ELAPSED_DAYS,
+      RealGraphDataRecordFeatures.TOTAL_DWELL_T ME_DAYS_S NCE_LAST,
+      RealGraphDataRecordFeatures.NUM_ NSPECTED_TWEETS_EWMA,
+      RealGraphDataRecordFeatures.NUM_ NSPECTED_TWEETS_NON_ZERO_DAYS,
+      RealGraphDataRecordFeatures.NUM_ NSPECTED_TWEETS_ELAPSED_DAYS,
+      RealGraphDataRecordFeatures.NUM_ NSPECTED_TWEETS_DAYS_S NCE_LAST
     )
 
-  val RecapLabelsForAggregation: Set[Feature.Binary] =
+  val RecapLabelsForAggregat on: Set[Feature.B nary] =
     Set(
-      RecapFeatures.IS_FAVORITED,
-      RecapFeatures.IS_RETWEETED,
-      RecapFeatures.IS_CLICKED,
-      RecapFeatures.IS_PROFILE_CLICKED,
-      RecapFeatures.IS_OPEN_LINKED
+      RecapFeatures. S_FAVOR TED,
+      RecapFeatures. S_RETWEETED,
+      RecapFeatures. S_CL CKED,
+      RecapFeatures. S_PROF LE_CL CKED,
+      RecapFeatures. S_OPEN_L NKED
     )
 
-  val DwellDuration: Set[Feature[_]] =
+  val D llDurat on: Set[Feature[_]] =
     Set(
-      TimelinesSharedFeatures.DWELL_TIME_MS,
+      T  l nesSharedFeatures.DWELL_T ME_MS,
     )
 
-  val UserFeaturesV2: Set[Feature[_]] = RecapFeaturesForAggregation ++ Set(
-    RecapFeatures.HAS_VINE,
-    RecapFeatures.HAS_PERISCOPE,
-    RecapFeatures.HAS_PRO_VIDEO,
-    RecapFeatures.HAS_VISIBLE_LINK,
-    RecapFeatures.BIDIRECTIONAL_FAV_COUNT,
-    RecapFeatures.UNIDIRECTIONAL_FAV_COUNT,
-    RecapFeatures.BIDIRECTIONAL_REPLY_COUNT,
-    RecapFeatures.UNIDIRECTIONAL_REPLY_COUNT,
-    RecapFeatures.BIDIRECTIONAL_RETWEET_COUNT,
-    RecapFeatures.UNIDIRECTIONAL_RETWEET_COUNT,
+  val UserFeaturesV2: Set[Feature[_]] = RecapFeaturesForAggregat on ++ Set(
+    RecapFeatures.HAS_V NE,
+    RecapFeatures.HAS_PER SCOPE,
+    RecapFeatures.HAS_PRO_V DEO,
+    RecapFeatures.HAS_V S BLE_L NK,
+    RecapFeatures.B D RECT ONAL_FAV_COUNT,
+    RecapFeatures.UN D RECT ONAL_FAV_COUNT,
+    RecapFeatures.B D RECT ONAL_REPLY_COUNT,
+    RecapFeatures.UN D RECT ONAL_REPLY_COUNT,
+    RecapFeatures.B D RECT ONAL_RETWEET_COUNT,
+    RecapFeatures.UN D RECT ONAL_RETWEET_COUNT,
     RecapFeatures.EMBEDS_URL_COUNT,
-    RecapFeatures.EMBEDS_IMPRESSION_COUNT,
-    RecapFeatures.VIDEO_VIEW_COUNT,
-    RecapFeatures.IS_RETWEET,
-    RecapFeatures.IS_REPLY,
-    RecapFeatures.IS_EXTENDED_REPLY,
-    RecapFeatures.HAS_LINK,
+    RecapFeatures.EMBEDS_ MPRESS ON_COUNT,
+    RecapFeatures.V DEO_V EW_COUNT,
+    RecapFeatures. S_RETWEET,
+    RecapFeatures. S_REPLY,
+    RecapFeatures. S_EXTENDED_REPLY,
+    RecapFeatures.HAS_L NK,
     RecapFeatures.HAS_TREND,
-    RecapFeatures.LINK_LANGUAGE,
+    RecapFeatures.L NK_LANGUAGE,
     RecapFeatures.NUM_HASHTAGS,
-    RecapFeatures.NUM_MENTIONS,
-    RecapFeatures.IS_SENSITIVE,
-    RecapFeatures.HAS_MULTIPLE_MEDIA,
+    RecapFeatures.NUM_MENT ONS,
+    RecapFeatures. S_SENS T VE,
+    RecapFeatures.HAS_MULT PLE_MED A,
     RecapFeatures.USER_REP,
     RecapFeatures.FAV_COUNT_V2,
     RecapFeatures.RETWEET_COUNT_V2,
     RecapFeatures.REPLY_COUNT_V2,
-    RecapFeatures.LINK_COUNT,
-    EngagementDataRecordFeatures.InNetworkFavoritesCount,
-    EngagementDataRecordFeatures.InNetworkRetweetsCount,
-    EngagementDataRecordFeatures.InNetworkRepliesCount
+    RecapFeatures.L NK_COUNT,
+    Engage ntDataRecordFeatures. nNetworkFavor esCount,
+    Engage ntDataRecordFeatures. nNetworkRet etsCount,
+    Engage ntDataRecordFeatures. nNetworkRepl esCount
   )
 
   val UserAuthorFeaturesV2: Set[Feature[_]] = Set(
-    RecapFeatures.HAS_IMAGE,
-    RecapFeatures.HAS_VINE,
-    RecapFeatures.HAS_PERISCOPE,
-    RecapFeatures.HAS_PRO_VIDEO,
-    RecapFeatures.HAS_VIDEO,
+    RecapFeatures.HAS_ MAGE,
+    RecapFeatures.HAS_V NE,
+    RecapFeatures.HAS_PER SCOPE,
+    RecapFeatures.HAS_PRO_V DEO,
+    RecapFeatures.HAS_V DEO,
     RecapFeatures.HAS_CARD,
     RecapFeatures.HAS_NEWS,
-    RecapFeatures.HAS_VISIBLE_LINK,
+    RecapFeatures.HAS_V S BLE_L NK,
     RecapFeatures.REPLY_COUNT,
     RecapFeatures.FAV_COUNT,
     RecapFeatures.RETWEET_COUNT,
     RecapFeatures.BLENDER_SCORE,
-    RecapFeatures.CONVERSATIONAL_COUNT,
-    RecapFeatures.IS_BUSINESS_SCORE,
-    RecapFeatures.CONTAINS_MEDIA,
+    RecapFeatures.CONVERSAT ONAL_COUNT,
+    RecapFeatures. S_BUS NESS_SCORE,
+    RecapFeatures.CONTA NS_MED A,
     RecapFeatures.RETWEET_SEARCHER,
     RecapFeatures.REPLY_SEARCHER,
-    RecapFeatures.MENTION_SEARCHER,
+    RecapFeatures.MENT ON_SEARCHER,
     RecapFeatures.REPLY_OTHER,
     RecapFeatures.RETWEET_OTHER,
-    RecapFeatures.MATCH_UI_LANG,
-    RecapFeatures.MATCH_SEARCHER_MAIN_LANG,
+    RecapFeatures.MATCH_U _LANG,
+    RecapFeatures.MATCH_SEARCHER_MA N_LANG,
     RecapFeatures.MATCH_SEARCHER_LANGS,
-    RecapFeatures.TWEET_COUNT_FROM_USER_IN_SNAPSHOT,
+    RecapFeatures.TWEET_COUNT_FROM_USER_ N_SNAPSHOT,
     RecapFeatures.TEXT_SCORE,
-    RecapFeatures.BIDIRECTIONAL_FAV_COUNT,
-    RecapFeatures.UNIDIRECTIONAL_FAV_COUNT,
-    RecapFeatures.BIDIRECTIONAL_REPLY_COUNT,
-    RecapFeatures.UNIDIRECTIONAL_REPLY_COUNT,
-    RecapFeatures.BIDIRECTIONAL_RETWEET_COUNT,
-    RecapFeatures.UNIDIRECTIONAL_RETWEET_COUNT,
+    RecapFeatures.B D RECT ONAL_FAV_COUNT,
+    RecapFeatures.UN D RECT ONAL_FAV_COUNT,
+    RecapFeatures.B D RECT ONAL_REPLY_COUNT,
+    RecapFeatures.UN D RECT ONAL_REPLY_COUNT,
+    RecapFeatures.B D RECT ONAL_RETWEET_COUNT,
+    RecapFeatures.UN D RECT ONAL_RETWEET_COUNT,
     RecapFeatures.EMBEDS_URL_COUNT,
-    RecapFeatures.EMBEDS_IMPRESSION_COUNT,
-    RecapFeatures.VIDEO_VIEW_COUNT,
-    RecapFeatures.IS_RETWEET,
-    RecapFeatures.IS_REPLY,
-    RecapFeatures.HAS_LINK,
+    RecapFeatures.EMBEDS_ MPRESS ON_COUNT,
+    RecapFeatures.V DEO_V EW_COUNT,
+    RecapFeatures. S_RETWEET,
+    RecapFeatures. S_REPLY,
+    RecapFeatures.HAS_L NK,
     RecapFeatures.HAS_TREND,
-    RecapFeatures.LINK_LANGUAGE,
+    RecapFeatures.L NK_LANGUAGE,
     RecapFeatures.NUM_HASHTAGS,
-    RecapFeatures.NUM_MENTIONS,
-    RecapFeatures.IS_SENSITIVE,
-    RecapFeatures.HAS_MULTIPLE_MEDIA,
+    RecapFeatures.NUM_MENT ONS,
+    RecapFeatures. S_SENS T VE,
+    RecapFeatures.HAS_MULT PLE_MED A,
     RecapFeatures.FAV_COUNT_V2,
     RecapFeatures.RETWEET_COUNT_V2,
     RecapFeatures.REPLY_COUNT_V2,
-    RecapFeatures.LINK_COUNT,
-    EngagementDataRecordFeatures.InNetworkFavoritesCount,
-    EngagementDataRecordFeatures.InNetworkRetweetsCount,
-    EngagementDataRecordFeatures.InNetworkRepliesCount
+    RecapFeatures.L NK_COUNT,
+    Engage ntDataRecordFeatures. nNetworkFavor esCount,
+    Engage ntDataRecordFeatures. nNetworkRet etsCount,
+    Engage ntDataRecordFeatures. nNetworkRepl esCount
   )
 
   val UserAuthorFeaturesV2Count: Set[Feature[_]] = Set(
-    RecapFeatures.HAS_IMAGE,
-    RecapFeatures.HAS_VINE,
-    RecapFeatures.HAS_PERISCOPE,
-    RecapFeatures.HAS_PRO_VIDEO,
-    RecapFeatures.HAS_VIDEO,
+    RecapFeatures.HAS_ MAGE,
+    RecapFeatures.HAS_V NE,
+    RecapFeatures.HAS_PER SCOPE,
+    RecapFeatures.HAS_PRO_V DEO,
+    RecapFeatures.HAS_V DEO,
     RecapFeatures.HAS_CARD,
     RecapFeatures.HAS_NEWS,
-    RecapFeatures.HAS_VISIBLE_LINK,
+    RecapFeatures.HAS_V S BLE_L NK,
     RecapFeatures.FAV_COUNT,
-    RecapFeatures.CONTAINS_MEDIA,
+    RecapFeatures.CONTA NS_MED A,
     RecapFeatures.RETWEET_SEARCHER,
     RecapFeatures.REPLY_SEARCHER,
-    RecapFeatures.MENTION_SEARCHER,
+    RecapFeatures.MENT ON_SEARCHER,
     RecapFeatures.REPLY_OTHER,
     RecapFeatures.RETWEET_OTHER,
-    RecapFeatures.MATCH_UI_LANG,
-    RecapFeatures.MATCH_SEARCHER_MAIN_LANG,
+    RecapFeatures.MATCH_U _LANG,
+    RecapFeatures.MATCH_SEARCHER_MA N_LANG,
     RecapFeatures.MATCH_SEARCHER_LANGS,
-    RecapFeatures.IS_RETWEET,
-    RecapFeatures.IS_REPLY,
-    RecapFeatures.HAS_LINK,
+    RecapFeatures. S_RETWEET,
+    RecapFeatures. S_REPLY,
+    RecapFeatures.HAS_L NK,
     RecapFeatures.HAS_TREND,
-    RecapFeatures.IS_SENSITIVE,
-    RecapFeatures.HAS_MULTIPLE_MEDIA,
-    EngagementDataRecordFeatures.InNetworkFavoritesCount
+    RecapFeatures. S_SENS T VE,
+    RecapFeatures.HAS_MULT PLE_MED A,
+    Engage ntDataRecordFeatures. nNetworkFavor esCount
   )
 
-  val UserTopicFeaturesV2Count: Set[Feature[_]] = Set(
-    RecapFeatures.HAS_IMAGE,
-    RecapFeatures.HAS_VIDEO,
+  val UserTop cFeaturesV2Count: Set[Feature[_]] = Set(
+    RecapFeatures.HAS_ MAGE,
+    RecapFeatures.HAS_V DEO,
     RecapFeatures.HAS_CARD,
     RecapFeatures.HAS_NEWS,
     RecapFeatures.FAV_COUNT,
-    RecapFeatures.CONTAINS_MEDIA,
+    RecapFeatures.CONTA NS_MED A,
     RecapFeatures.RETWEET_SEARCHER,
     RecapFeatures.REPLY_SEARCHER,
-    RecapFeatures.MENTION_SEARCHER,
+    RecapFeatures.MENT ON_SEARCHER,
     RecapFeatures.REPLY_OTHER,
     RecapFeatures.RETWEET_OTHER,
-    RecapFeatures.MATCH_UI_LANG,
-    RecapFeatures.MATCH_SEARCHER_MAIN_LANG,
+    RecapFeatures.MATCH_U _LANG,
+    RecapFeatures.MATCH_SEARCHER_MA N_LANG,
     RecapFeatures.MATCH_SEARCHER_LANGS,
-    RecapFeatures.IS_RETWEET,
-    RecapFeatures.IS_REPLY,
-    RecapFeatures.HAS_LINK,
+    RecapFeatures. S_RETWEET,
+    RecapFeatures. S_REPLY,
+    RecapFeatures.HAS_L NK,
     RecapFeatures.HAS_TREND,
-    RecapFeatures.IS_SENSITIVE,
-    EngagementDataRecordFeatures.InNetworkFavoritesCount,
-    EngagementDataRecordFeatures.InNetworkRetweetsCount,
-    TimelinesSharedFeatures.NUM_CAPS,
-    TimelinesSharedFeatures.ASPECT_RATIO_DEN,
-    TimelinesSharedFeatures.NUM_NEWLINES,
-    TimelinesSharedFeatures.IS_360,
-    TimelinesSharedFeatures.IS_MANAGED,
-    TimelinesSharedFeatures.IS_MONETIZABLE,
-    TimelinesSharedFeatures.HAS_SELECTED_PREVIEW_IMAGE,
-    TimelinesSharedFeatures.HAS_TITLE,
-    TimelinesSharedFeatures.HAS_DESCRIPTION,
-    TimelinesSharedFeatures.HAS_VISIT_SITE_CALL_TO_ACTION,
-    TimelinesSharedFeatures.HAS_WATCH_NOW_CALL_TO_ACTION
+    RecapFeatures. S_SENS T VE,
+    Engage ntDataRecordFeatures. nNetworkFavor esCount,
+    Engage ntDataRecordFeatures. nNetworkRet etsCount,
+    T  l nesSharedFeatures.NUM_CAPS,
+    T  l nesSharedFeatures.ASPECT_RAT O_DEN,
+    T  l nesSharedFeatures.NUM_NEWL NES,
+    T  l nesSharedFeatures. S_360,
+    T  l nesSharedFeatures. S_MANAGED,
+    T  l nesSharedFeatures. S_MONET ZABLE,
+    T  l nesSharedFeatures.HAS_SELECTED_PREV EW_ MAGE,
+    T  l nesSharedFeatures.HAS_T TLE,
+    T  l nesSharedFeatures.HAS_DESCR PT ON,
+    T  l nesSharedFeatures.HAS_V S T_S TE_CALL_TO_ACT ON,
+    T  l nesSharedFeatures.HAS_WATCH_NOW_CALL_TO_ACT ON
   )
 
-  val UserFeaturesV5Continuous: Set[Feature[_]] = Set(
-    TimelinesSharedFeatures.QUOTE_COUNT,
-    TimelinesSharedFeatures.VISIBLE_TOKEN_RATIO,
-    TimelinesSharedFeatures.WEIGHTED_FAV_COUNT,
-    TimelinesSharedFeatures.WEIGHTED_RETWEET_COUNT,
-    TimelinesSharedFeatures.WEIGHTED_REPLY_COUNT,
-    TimelinesSharedFeatures.WEIGHTED_QUOTE_COUNT,
-    TimelinesSharedFeatures.EMBEDS_IMPRESSION_COUNT_V2,
-    TimelinesSharedFeatures.EMBEDS_URL_COUNT_V2,
-    TimelinesSharedFeatures.DECAYED_FAVORITE_COUNT,
-    TimelinesSharedFeatures.DECAYED_RETWEET_COUNT,
-    TimelinesSharedFeatures.DECAYED_REPLY_COUNT,
-    TimelinesSharedFeatures.DECAYED_QUOTE_COUNT,
-    TimelinesSharedFeatures.FAKE_FAVORITE_COUNT,
-    TimelinesSharedFeatures.FAKE_RETWEET_COUNT,
-    TimelinesSharedFeatures.FAKE_REPLY_COUNT,
-    TimelinesSharedFeatures.FAKE_QUOTE_COUNT,
-    TimeDataRecordFeatures.LAST_FAVORITE_SINCE_CREATION_HRS,
-    TimeDataRecordFeatures.LAST_RETWEET_SINCE_CREATION_HRS,
-    TimeDataRecordFeatures.LAST_REPLY_SINCE_CREATION_HRS,
-    TimeDataRecordFeatures.LAST_QUOTE_SINCE_CREATION_HRS,
-    TimeDataRecordFeatures.TIME_SINCE_LAST_FAVORITE_HRS,
-    TimeDataRecordFeatures.TIME_SINCE_LAST_RETWEET_HRS,
-    TimeDataRecordFeatures.TIME_SINCE_LAST_REPLY_HRS,
-    TimeDataRecordFeatures.TIME_SINCE_LAST_QUOTE_HRS
+  val UserFeaturesV5Cont nuous: Set[Feature[_]] = Set(
+    T  l nesSharedFeatures.QUOTE_COUNT,
+    T  l nesSharedFeatures.V S BLE_TOKEN_RAT O,
+    T  l nesSharedFeatures.WE GHTED_FAV_COUNT,
+    T  l nesSharedFeatures.WE GHTED_RETWEET_COUNT,
+    T  l nesSharedFeatures.WE GHTED_REPLY_COUNT,
+    T  l nesSharedFeatures.WE GHTED_QUOTE_COUNT,
+    T  l nesSharedFeatures.EMBEDS_ MPRESS ON_COUNT_V2,
+    T  l nesSharedFeatures.EMBEDS_URL_COUNT_V2,
+    T  l nesSharedFeatures.DECAYED_FAVOR TE_COUNT,
+    T  l nesSharedFeatures.DECAYED_RETWEET_COUNT,
+    T  l nesSharedFeatures.DECAYED_REPLY_COUNT,
+    T  l nesSharedFeatures.DECAYED_QUOTE_COUNT,
+    T  l nesSharedFeatures.FAKE_FAVOR TE_COUNT,
+    T  l nesSharedFeatures.FAKE_RETWEET_COUNT,
+    T  l nesSharedFeatures.FAKE_REPLY_COUNT,
+    T  l nesSharedFeatures.FAKE_QUOTE_COUNT,
+    T  DataRecordFeatures.LAST_FAVOR TE_S NCE_CREAT ON_HRS,
+    T  DataRecordFeatures.LAST_RETWEET_S NCE_CREAT ON_HRS,
+    T  DataRecordFeatures.LAST_REPLY_S NCE_CREAT ON_HRS,
+    T  DataRecordFeatures.LAST_QUOTE_S NCE_CREAT ON_HRS,
+    T  DataRecordFeatures.T ME_S NCE_LAST_FAVOR TE_HRS,
+    T  DataRecordFeatures.T ME_S NCE_LAST_RETWEET_HRS,
+    T  DataRecordFeatures.T ME_S NCE_LAST_REPLY_HRS,
+    T  DataRecordFeatures.T ME_S NCE_LAST_QUOTE_HRS
   )
 
   val UserFeaturesV5Boolean: Set[Feature[_]] = Set(
-    TimelinesSharedFeatures.LABEL_ABUSIVE_FLAG,
-    TimelinesSharedFeatures.LABEL_ABUSIVE_HI_RCL_FLAG,
-    TimelinesSharedFeatures.LABEL_DUP_CONTENT_FLAG,
-    TimelinesSharedFeatures.LABEL_NSFW_HI_PRC_FLAG,
-    TimelinesSharedFeatures.LABEL_NSFW_HI_RCL_FLAG,
-    TimelinesSharedFeatures.LABEL_SPAM_FLAG,
-    TimelinesSharedFeatures.LABEL_SPAM_HI_RCL_FLAG,
-    TimelinesSharedFeatures.PERISCOPE_EXISTS,
-    TimelinesSharedFeatures.PERISCOPE_IS_LIVE,
-    TimelinesSharedFeatures.PERISCOPE_HAS_BEEN_FEATURED,
-    TimelinesSharedFeatures.PERISCOPE_IS_CURRENTLY_FEATURED,
-    TimelinesSharedFeatures.PERISCOPE_IS_FROM_QUALITY_SOURCE,
-    TimelinesSharedFeatures.HAS_QUOTE
+    T  l nesSharedFeatures.LABEL_ABUS VE_FLAG,
+    T  l nesSharedFeatures.LABEL_ABUS VE_H _RCL_FLAG,
+    T  l nesSharedFeatures.LABEL_DUP_CONTENT_FLAG,
+    T  l nesSharedFeatures.LABEL_NSFW_H _PRC_FLAG,
+    T  l nesSharedFeatures.LABEL_NSFW_H _RCL_FLAG,
+    T  l nesSharedFeatures.LABEL_SPAM_FLAG,
+    T  l nesSharedFeatures.LABEL_SPAM_H _RCL_FLAG,
+    T  l nesSharedFeatures.PER SCOPE_EX STS,
+    T  l nesSharedFeatures.PER SCOPE_ S_L VE,
+    T  l nesSharedFeatures.PER SCOPE_HAS_BEEN_FEATURED,
+    T  l nesSharedFeatures.PER SCOPE_ S_CURRENTLY_FEATURED,
+    T  l nesSharedFeatures.PER SCOPE_ S_FROM_QUAL TY_SOURCE,
+    T  l nesSharedFeatures.HAS_QUOTE
   )
 
   val UserAuthorFeaturesV5: Set[Feature[_]] = Set(
-    TimelinesSharedFeatures.HAS_QUOTE,
-    TimelinesSharedFeatures.LABEL_ABUSIVE_FLAG,
-    TimelinesSharedFeatures.LABEL_ABUSIVE_HI_RCL_FLAG,
-    TimelinesSharedFeatures.LABEL_DUP_CONTENT_FLAG,
-    TimelinesSharedFeatures.LABEL_NSFW_HI_PRC_FLAG,
-    TimelinesSharedFeatures.LABEL_NSFW_HI_RCL_FLAG,
-    TimelinesSharedFeatures.LABEL_SPAM_FLAG,
-    TimelinesSharedFeatures.LABEL_SPAM_HI_RCL_FLAG
+    T  l nesSharedFeatures.HAS_QUOTE,
+    T  l nesSharedFeatures.LABEL_ABUS VE_FLAG,
+    T  l nesSharedFeatures.LABEL_ABUS VE_H _RCL_FLAG,
+    T  l nesSharedFeatures.LABEL_DUP_CONTENT_FLAG,
+    T  l nesSharedFeatures.LABEL_NSFW_H _PRC_FLAG,
+    T  l nesSharedFeatures.LABEL_NSFW_H _RCL_FLAG,
+    T  l nesSharedFeatures.LABEL_SPAM_FLAG,
+    T  l nesSharedFeatures.LABEL_SPAM_H _RCL_FLAG
   )
 
-  val UserTweetSourceFeaturesV1Continuous: Set[Feature[_]] = Set(
-    TimelinesSharedFeatures.NUM_CAPS,
-    TimelinesSharedFeatures.NUM_WHITESPACES,
-    TimelinesSharedFeatures.TWEET_LENGTH,
-    TimelinesSharedFeatures.ASPECT_RATIO_DEN,
-    TimelinesSharedFeatures.ASPECT_RATIO_NUM,
-    TimelinesSharedFeatures.BIT_RATE,
-    TimelinesSharedFeatures.HEIGHT_1,
-    TimelinesSharedFeatures.HEIGHT_2,
-    TimelinesSharedFeatures.HEIGHT_3,
-    TimelinesSharedFeatures.HEIGHT_4,
-    TimelinesSharedFeatures.VIDEO_DURATION,
-    TimelinesSharedFeatures.WIDTH_1,
-    TimelinesSharedFeatures.WIDTH_2,
-    TimelinesSharedFeatures.WIDTH_3,
-    TimelinesSharedFeatures.WIDTH_4,
-    TimelinesSharedFeatures.NUM_MEDIA_TAGS
+  val UserT etS ceFeaturesV1Cont nuous: Set[Feature[_]] = Set(
+    T  l nesSharedFeatures.NUM_CAPS,
+    T  l nesSharedFeatures.NUM_WH TESPACES,
+    T  l nesSharedFeatures.TWEET_LENGTH,
+    T  l nesSharedFeatures.ASPECT_RAT O_DEN,
+    T  l nesSharedFeatures.ASPECT_RAT O_NUM,
+    T  l nesSharedFeatures.B T_RATE,
+    T  l nesSharedFeatures.HE GHT_1,
+    T  l nesSharedFeatures.HE GHT_2,
+    T  l nesSharedFeatures.HE GHT_3,
+    T  l nesSharedFeatures.HE GHT_4,
+    T  l nesSharedFeatures.V DEO_DURAT ON,
+    T  l nesSharedFeatures.W DTH_1,
+    T  l nesSharedFeatures.W DTH_2,
+    T  l nesSharedFeatures.W DTH_3,
+    T  l nesSharedFeatures.W DTH_4,
+    T  l nesSharedFeatures.NUM_MED A_TAGS
   )
 
-  val UserTweetSourceFeaturesV1Boolean: Set[Feature[_]] = Set(
-    TimelinesSharedFeatures.HAS_QUESTION,
-    TimelinesSharedFeatures.RESIZE_METHOD_1,
-    TimelinesSharedFeatures.RESIZE_METHOD_2,
-    TimelinesSharedFeatures.RESIZE_METHOD_3,
-    TimelinesSharedFeatures.RESIZE_METHOD_4
+  val UserT etS ceFeaturesV1Boolean: Set[Feature[_]] = Set(
+    T  l nesSharedFeatures.HAS_QUEST ON,
+    T  l nesSharedFeatures.RES ZE_METHOD_1,
+    T  l nesSharedFeatures.RES ZE_METHOD_2,
+    T  l nesSharedFeatures.RES ZE_METHOD_3,
+    T  l nesSharedFeatures.RES ZE_METHOD_4
   )
 
-  val UserTweetSourceFeaturesV2Continuous: Set[Feature[_]] = Set(
-    TimelinesSharedFeatures.NUM_EMOJIS,
-    TimelinesSharedFeatures.NUM_EMOTICONS,
-    TimelinesSharedFeatures.NUM_NEWLINES,
-    TimelinesSharedFeatures.NUM_STICKERS,
-    TimelinesSharedFeatures.NUM_FACES,
-    TimelinesSharedFeatures.NUM_COLOR_PALLETTE_ITEMS,
-    TimelinesSharedFeatures.VIEW_COUNT,
-    TimelinesSharedFeatures.TWEET_LENGTH_TYPE
+  val UserT etS ceFeaturesV2Cont nuous: Set[Feature[_]] = Set(
+    T  l nesSharedFeatures.NUM_EMOJ S,
+    T  l nesSharedFeatures.NUM_EMOT CONS,
+    T  l nesSharedFeatures.NUM_NEWL NES,
+    T  l nesSharedFeatures.NUM_ST CKERS,
+    T  l nesSharedFeatures.NUM_FACES,
+    T  l nesSharedFeatures.NUM_COLOR_PALLETTE_ TEMS,
+    T  l nesSharedFeatures.V EW_COUNT,
+    T  l nesSharedFeatures.TWEET_LENGTH_TYPE
   )
 
-  val UserTweetSourceFeaturesV2Boolean: Set[Feature[_]] = Set(
-    TimelinesSharedFeatures.IS_360,
-    TimelinesSharedFeatures.IS_MANAGED,
-    TimelinesSharedFeatures.IS_MONETIZABLE,
-    TimelinesSharedFeatures.IS_EMBEDDABLE,
-    TimelinesSharedFeatures.HAS_SELECTED_PREVIEW_IMAGE,
-    TimelinesSharedFeatures.HAS_TITLE,
-    TimelinesSharedFeatures.HAS_DESCRIPTION,
-    TimelinesSharedFeatures.HAS_VISIT_SITE_CALL_TO_ACTION,
-    TimelinesSharedFeatures.HAS_WATCH_NOW_CALL_TO_ACTION
+  val UserT etS ceFeaturesV2Boolean: Set[Feature[_]] = Set(
+    T  l nesSharedFeatures. S_360,
+    T  l nesSharedFeatures. S_MANAGED,
+    T  l nesSharedFeatures. S_MONET ZABLE,
+    T  l nesSharedFeatures. S_EMBEDDABLE,
+    T  l nesSharedFeatures.HAS_SELECTED_PREV EW_ MAGE,
+    T  l nesSharedFeatures.HAS_T TLE,
+    T  l nesSharedFeatures.HAS_DESCR PT ON,
+    T  l nesSharedFeatures.HAS_V S T_S TE_CALL_TO_ACT ON,
+    T  l nesSharedFeatures.HAS_WATCH_NOW_CALL_TO_ACT ON
   )
 
-  val UserAuthorTweetSourceFeaturesV1: Set[Feature[_]] = Set(
-    TimelinesSharedFeatures.HAS_QUESTION,
-    TimelinesSharedFeatures.TWEET_LENGTH,
-    TimelinesSharedFeatures.VIDEO_DURATION,
-    TimelinesSharedFeatures.NUM_MEDIA_TAGS
+  val UserAuthorT etS ceFeaturesV1: Set[Feature[_]] = Set(
+    T  l nesSharedFeatures.HAS_QUEST ON,
+    T  l nesSharedFeatures.TWEET_LENGTH,
+    T  l nesSharedFeatures.V DEO_DURAT ON,
+    T  l nesSharedFeatures.NUM_MED A_TAGS
   )
 
-  val UserAuthorTweetSourceFeaturesV2: Set[Feature[_]] = Set(
-    TimelinesSharedFeatures.NUM_CAPS,
-    TimelinesSharedFeatures.NUM_WHITESPACES,
-    TimelinesSharedFeatures.ASPECT_RATIO_DEN,
-    TimelinesSharedFeatures.ASPECT_RATIO_NUM,
-    TimelinesSharedFeatures.BIT_RATE,
-    TimelinesSharedFeatures.TWEET_LENGTH_TYPE,
-    TimelinesSharedFeatures.NUM_EMOJIS,
-    TimelinesSharedFeatures.NUM_EMOTICONS,
-    TimelinesSharedFeatures.NUM_NEWLINES,
-    TimelinesSharedFeatures.NUM_STICKERS,
-    TimelinesSharedFeatures.NUM_FACES,
-    TimelinesSharedFeatures.IS_360,
-    TimelinesSharedFeatures.IS_MANAGED,
-    TimelinesSharedFeatures.IS_MONETIZABLE,
-    TimelinesSharedFeatures.HAS_SELECTED_PREVIEW_IMAGE,
-    TimelinesSharedFeatures.HAS_TITLE,
-    TimelinesSharedFeatures.HAS_DESCRIPTION,
-    TimelinesSharedFeatures.HAS_VISIT_SITE_CALL_TO_ACTION,
-    TimelinesSharedFeatures.HAS_WATCH_NOW_CALL_TO_ACTION
+  val UserAuthorT etS ceFeaturesV2: Set[Feature[_]] = Set(
+    T  l nesSharedFeatures.NUM_CAPS,
+    T  l nesSharedFeatures.NUM_WH TESPACES,
+    T  l nesSharedFeatures.ASPECT_RAT O_DEN,
+    T  l nesSharedFeatures.ASPECT_RAT O_NUM,
+    T  l nesSharedFeatures.B T_RATE,
+    T  l nesSharedFeatures.TWEET_LENGTH_TYPE,
+    T  l nesSharedFeatures.NUM_EMOJ S,
+    T  l nesSharedFeatures.NUM_EMOT CONS,
+    T  l nesSharedFeatures.NUM_NEWL NES,
+    T  l nesSharedFeatures.NUM_ST CKERS,
+    T  l nesSharedFeatures.NUM_FACES,
+    T  l nesSharedFeatures. S_360,
+    T  l nesSharedFeatures. S_MANAGED,
+    T  l nesSharedFeatures. S_MONET ZABLE,
+    T  l nesSharedFeatures.HAS_SELECTED_PREV EW_ MAGE,
+    T  l nesSharedFeatures.HAS_T TLE,
+    T  l nesSharedFeatures.HAS_DESCR PT ON,
+    T  l nesSharedFeatures.HAS_V S T_S TE_CALL_TO_ACT ON,
+    T  l nesSharedFeatures.HAS_WATCH_NOW_CALL_TO_ACT ON
   )
 
-  val UserAuthorTweetSourceFeaturesV2Count: Set[Feature[_]] = Set(
-    TimelinesSharedFeatures.NUM_CAPS,
-    TimelinesSharedFeatures.ASPECT_RATIO_DEN,
-    TimelinesSharedFeatures.NUM_NEWLINES,
-    TimelinesSharedFeatures.IS_360,
-    TimelinesSharedFeatures.IS_MANAGED,
-    TimelinesSharedFeatures.IS_MONETIZABLE,
-    TimelinesSharedFeatures.HAS_SELECTED_PREVIEW_IMAGE,
-    TimelinesSharedFeatures.HAS_TITLE,
-    TimelinesSharedFeatures.HAS_DESCRIPTION,
-    TimelinesSharedFeatures.HAS_VISIT_SITE_CALL_TO_ACTION,
-    TimelinesSharedFeatures.HAS_WATCH_NOW_CALL_TO_ACTION
+  val UserAuthorT etS ceFeaturesV2Count: Set[Feature[_]] = Set(
+    T  l nesSharedFeatures.NUM_CAPS,
+    T  l nesSharedFeatures.ASPECT_RAT O_DEN,
+    T  l nesSharedFeatures.NUM_NEWL NES,
+    T  l nesSharedFeatures. S_360,
+    T  l nesSharedFeatures. S_MANAGED,
+    T  l nesSharedFeatures. S_MONET ZABLE,
+    T  l nesSharedFeatures.HAS_SELECTED_PREV EW_ MAGE,
+    T  l nesSharedFeatures.HAS_T TLE,
+    T  l nesSharedFeatures.HAS_DESCR PT ON,
+    T  l nesSharedFeatures.HAS_V S T_S TE_CALL_TO_ACT ON,
+    T  l nesSharedFeatures.HAS_WATCH_NOW_CALL_TO_ACT ON
   )
 
-  val LabelsV2: Set[Feature.Binary] = RecapLabelsForAggregation ++ Set(
-    RecapFeatures.IS_REPLIED,
-    RecapFeatures.IS_PHOTO_EXPANDED,
-    RecapFeatures.IS_VIDEO_PLAYBACK_50
+  val LabelsV2: Set[Feature.B nary] = RecapLabelsForAggregat on ++ Set(
+    RecapFeatures. S_REPL ED,
+    RecapFeatures. S_PHOTO_EXPANDED,
+    RecapFeatures. S_V DEO_PLAYBACK_50
   )
 
-  val TwitterWideFeatures: Set[Feature[_]] = Set(
-    RecapFeatures.IS_REPLY,
-    TimelinesSharedFeatures.HAS_QUOTE,
-    RecapFeatures.HAS_MENTION,
+  val Tw terW deFeatures: Set[Feature[_]] = Set(
+    RecapFeatures. S_REPLY,
+    T  l nesSharedFeatures.HAS_QUOTE,
+    RecapFeatures.HAS_MENT ON,
     RecapFeatures.HAS_HASHTAG,
-    RecapFeatures.HAS_LINK,
+    RecapFeatures.HAS_L NK,
     RecapFeatures.HAS_CARD,
-    RecapFeatures.CONTAINS_MEDIA
+    RecapFeatures.CONTA NS_MED A
   )
 
-  val TwitterWideLabels: Set[Feature.Binary] = Set(
-    RecapFeatures.IS_FAVORITED,
-    RecapFeatures.IS_RETWEETED,
-    RecapFeatures.IS_REPLIED
+  val Tw terW deLabels: Set[Feature.B nary] = Set(
+    RecapFeatures. S_FAVOR TED,
+    RecapFeatures. S_RETWEETED,
+    RecapFeatures. S_REPL ED
   )
 
-  val ReciprocalLabels: Set[Feature.Binary] = Set(
-    RecapFeatures.IS_REPLIED_REPLY_IMPRESSED_BY_AUTHOR,
-    RecapFeatures.IS_REPLIED_REPLY_REPLIED_BY_AUTHOR,
-    RecapFeatures.IS_REPLIED_REPLY_FAVORITED_BY_AUTHOR
+  val Rec procalLabels: Set[Feature.B nary] = Set(
+    RecapFeatures. S_REPL ED_REPLY_ MPRESSED_BY_AUTHOR,
+    RecapFeatures. S_REPL ED_REPLY_REPL ED_BY_AUTHOR,
+    RecapFeatures. S_REPL ED_REPLY_FAVOR TED_BY_AUTHOR
   )
 
-  val NegativeEngagementLabels: Set[Feature.Binary] = Set(
-    RecapFeatures.IS_REPORT_TWEET_CLICKED,
-    RecapFeatures.IS_BLOCK_CLICKED,
-    RecapFeatures.IS_MUTE_CLICKED,
-    RecapFeatures.IS_DONT_LIKE
+  val Negat veEngage ntLabels: Set[Feature.B nary] = Set(
+    RecapFeatures. S_REPORT_TWEET_CL CKED,
+    RecapFeatures. S_BLOCK_CL CKED,
+    RecapFeatures. S_MUTE_CL CKED,
+    RecapFeatures. S_DONT_L KE
   )
 
-  val GoodClickLabels: Set[Feature.Binary] = Set(
-    RecapFeatures.IS_GOOD_CLICKED_CONVO_DESC_V1,
-    RecapFeatures.IS_GOOD_CLICKED_CONVO_DESC_V2,
+  val GoodCl ckLabels: Set[Feature.B nary] = Set(
+    RecapFeatures. S_GOOD_CL CKED_CONVO_DESC_V1,
+    RecapFeatures. S_GOOD_CL CKED_CONVO_DESC_V2,
   )
 }

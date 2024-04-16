@@ -1,52 +1,52 @@
-package com.twitter.unified_user_actions.adapter.tweetypie_event
+package com.tw ter.un f ed_user_act ons.adapter.t etyp e_event
 
-import com.twitter.tweetypie.thriftscala.EditControl
-import com.twitter.tweetypie.thriftscala.EditControlEdit
-import com.twitter.tweetypie.thriftscala.Tweet
+ mport com.tw ter.t etyp e.thr ftscala.Ed Control
+ mport com.tw ter.t etyp e.thr ftscala.Ed ControlEd 
+ mport com.tw ter.t etyp e.thr ftscala.T et
 
-sealed trait TweetypieTweetType
-object TweetTypeDefault extends TweetypieTweetType
-object TweetTypeReply extends TweetypieTweetType
-object TweetTypeRetweet extends TweetypieTweetType
-object TweetTypeQuote extends TweetypieTweetType
-object TweetTypeEdit extends TweetypieTweetType
+sealed tra  T etyp eT etType
+object T etTypeDefault extends T etyp eT etType
+object T etTypeReply extends T etyp eT etType
+object T etTypeRet et extends T etyp eT etType
+object T etTypeQuote extends T etyp eT etType
+object T etTypeEd  extends T etyp eT etType
 
-object TweetypieEventUtils {
-  def editedTweetIdFromTweet(tweet: Tweet): Option[Long] = tweet.editControl.flatMap {
-    case EditControl.Edit(EditControlEdit(initialTweetId, _)) => Some(initialTweetId)
+object T etyp eEventUt ls {
+  def ed edT et dFromT et(t et: T et): Opt on[Long] = t et.ed Control.flatMap {
+    case Ed Control.Ed (Ed ControlEd ( n  alT et d, _)) => So ( n  alT et d)
     case _ => None
   }
 
-  def tweetTypeFromTweet(tweet: Tweet): Option[TweetypieTweetType] = {
-    val data = tweet.coreData
-    val inReplyingToStatusIdOpt = data.flatMap(_.reply).flatMap(_.inReplyToStatusId)
+  def t etTypeFromT et(t et: T et): Opt on[T etyp eT etType] = {
+    val data = t et.coreData
+    val  nReply ngToStatus dOpt = data.flatMap(_.reply).flatMap(_. nReplyToStatus d)
     val shareOpt = data.flatMap(_.share)
-    val quotedTweetOpt = tweet.quotedTweet
-    val editedTweetIdOpt = editedTweetIdFromTweet(tweet)
+    val quotedT etOpt = t et.quotedT et
+    val ed edT et dOpt = ed edT et dFromT et(t et)
 
-    (inReplyingToStatusIdOpt, shareOpt, quotedTweetOpt, editedTweetIdOpt) match {
+    ( nReply ngToStatus dOpt, shareOpt, quotedT etOpt, ed edT et dOpt) match {
       // Reply
-      case (Some(_), None, _, None) =>
-        Some(TweetTypeReply)
-      // For any kind of retweet (be it retweet of quote tweet or retweet of a regular tweet)
-      // we only need to look at the `share` field
-      // https://confluence.twitter.biz/pages/viewpage.action?spaceKey=CSVC&title=TweetyPie+FAQ#TweetypieFAQ-HowdoItellifaTweetisaRetweet
-      case (None, Some(_), _, None) =>
-        Some(TweetTypeRetweet)
+      case (So (_), None, _, None) =>
+        So (T etTypeReply)
+      // For any k nd of ret et (be   ret et of quote t et or ret et of a regular t et)
+      //   only need to look at t  `share` f eld
+      // https://confluence.tw ter.b z/pages/v ewpage.act on?spaceKey=CSVC&t le=T etyP e+FAQ#T etyp eFAQ-Howdo ell faT et saRet et
+      case (None, So (_), _, None) =>
+        So (T etTypeRet et)
       // quote
-      case (None, None, Some(_), None) =>
-        Some(TweetTypeQuote)
+      case (None, None, So (_), None) =>
+        So (T etTypeQuote)
       // create
       case (None, None, None, None) =>
-        Some(TweetTypeDefault)
-      // edit
-      case (None, None, _, Some(_)) =>
-        Some(TweetTypeEdit)
-      // reply and retweet shouldn't be present at the same time
-      case (Some(_), Some(_), _, _) =>
+        So (T etTypeDefault)
+      // ed 
+      case (None, None, _, So (_)) =>
+        So (T etTypeEd )
+      // reply and ret et shouldn't be present at t  sa  t  
+      case (So (_), So (_), _, _) =>
         None
-      // reply and edit / retweet and edit shouldn't be present at the same time
-      case (Some(_), None, _, Some(_)) | (None, Some(_), _, Some(_)) =>
+      // reply and ed  / ret et and ed  shouldn't be present at t  sa  t  
+      case (So (_), None, _, So (_)) | (None, So (_), _, So (_)) =>
         None
     }
   }

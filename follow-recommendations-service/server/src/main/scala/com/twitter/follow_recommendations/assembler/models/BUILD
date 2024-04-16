@@ -1,11 +1,11 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
-        "follow-recommendations-service/thrift/src/main/thrift:thrift-scala",
-        "stringcenter/client",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "follow-recom ndat ons-serv ce/common/src/ma n/scala/com/tw ter/follow_recom ndat ons/common/models",
+        "follow-recom ndat ons-serv ce/thr ft/src/ma n/thr ft:thr ft-scala",
+        "str ngcenter/cl ent",
     ],
     exports = [
     ],

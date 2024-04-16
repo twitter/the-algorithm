@@ -1,61 +1,61 @@
-package com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1
+package com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.featurestorev1
 
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.data.DatasetErrorsById
-import com.twitter.ml.featurestore.lib.data.HydrationError
-import com.twitter.ml.featurestore.lib.dataset.DatasetId
-import com.twitter.product_mixer.core.feature.featurestorev1.BaseFeatureStoreV1Feature
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.ml.featurestore.l b.Ent y d
+ mport com.tw ter.ml.featurestore.l b.data.DatasetErrorsBy d
+ mport com.tw ter.ml.featurestore.l b.data.Hydrat onError
+ mport com.tw ter.ml.featurestore.l b.dataset.Dataset d
+ mport com.tw ter.product_m xer.core.feature.featurestorev1.BaseFeatureStoreV1Feature
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 object FeatureStoreDatasetErrorHandler {
 
   /**
-   * This function takes a set of feature store features and constructs a mapping from the underlying
-   * feature store dataset back to the features. This is useful for looking up what ProMix features
-   * failed based off of a failed feature store dataset at request time. A ProMix feature can be
-   * powered by multiple feature store datasets, and conversely, a dataset can be used by many features.
+   * T  funct on takes a set of feature store features and constructs a mapp ng from t  underly ng
+   * feature store dataset back to t  features. T   s useful for look ng up what ProM x features
+   * fa led based off of a fa led feature store dataset at request t  . A ProM x feature can be
+   * po red by mult ple feature store datasets, and conversely, a dataset can be used by many features.
    */
-  def datasetToFeaturesMapping[
-    Query <: PipelineQuery,
-    Input,
-    FeatureType <: BaseFeatureStoreV1Feature[Query, Input, _ <: EntityId, _]
+  def datasetToFeaturesMapp ng[
+    Query <: P pel neQuery,
+     nput,
+    FeatureType <: BaseFeatureStoreV1Feature[Query,  nput, _ <: Ent y d, _]
   ](
     features: Set[FeatureType]
-  ): Map[DatasetId, Set[FeatureType]] = {
-    val datasetsAndFeatures: Set[(DatasetId, FeatureType)] = features
+  ): Map[Dataset d, Set[FeatureType]] = {
+    val datasetsAndFeatures: Set[(Dataset d, FeatureType)] = features
       .flatMap { feature: FeatureType =>
-        feature.boundFeatureSet.sourceDatasets.map(_.id).map { datasetId: DatasetId =>
-          datasetId -> feature
+        feature.boundFeatureSet.s ceDatasets.map(_. d).map { dataset d: Dataset d =>
+          dataset d -> feature
         }
       }
 
     datasetsAndFeatures
-      .groupBy { case (datasetId, _) => datasetId }.mapValues(_.map {
+      .groupBy { case (dataset d, _) => dataset d }.mapValues(_.map {
         case (_, feature) => feature
       })
   }
 
   /**
-   * This takes a mapping of Feature Store Dataset => ProMix Features, as well as the dataset errors
-   * from PredictionRecord and computing a final, deduped mapping from ProMix Feature to Exceptions.
+   * T  takes a mapp ng of Feature Store Dataset => ProM x Features, as  ll as t  dataset errors
+   * from Pred ct onRecord and comput ng a f nal, deduped mapp ng from ProM x Feature to Except ons.
    */
-  def featureToHydrationErrors[
-    Query <: PipelineQuery,
-    Input,
-    FeatureType <: BaseFeatureStoreV1Feature[Query, Input, _ <: EntityId, _]
+  def featureToHydrat onErrors[
+    Query <: P pel neQuery,
+     nput,
+    FeatureType <: BaseFeatureStoreV1Feature[Query,  nput, _ <: Ent y d, _]
   ](
-    datasetToFeatures: Map[DatasetId, Set[
+    datasetToFeatures: Map[Dataset d, Set[
       FeatureType
     ]],
-    errorsByDatasetId: DatasetErrorsById
-  ): Map[FeatureType, Set[HydrationError]] = {
-    val hasError = errorsByDatasetId.datasets.nonEmpty
-    if (hasError) {
-      val featuresAndErrors: Set[(FeatureType, Set[HydrationError])] = errorsByDatasetId.datasets
-        .flatMap { id: DatasetId =>
-          val errors: Set[HydrationError] = errorsByDatasetId.get(id).values.toSet
-          if (errors.nonEmpty) {
-            val datasetFeatures: Set[FeatureType] = datasetToFeatures.getOrElse(id, Set.empty)
+    errorsByDataset d: DatasetErrorsBy d
+  ): Map[FeatureType, Set[Hydrat onError]] = {
+    val hasError = errorsByDataset d.datasets.nonEmpty
+     f (hasError) {
+      val featuresAndErrors: Set[(FeatureType, Set[Hydrat onError])] = errorsByDataset d.datasets
+        .flatMap {  d: Dataset d =>
+          val errors: Set[Hydrat onError] = errorsByDataset d.get( d).values.toSet
+           f (errors.nonEmpty) {
+            val datasetFeatures: Set[FeatureType] = datasetToFeatures.getOrElse( d, Set.empty)
             datasetFeatures.map { feature =>
               feature -> errors
             }.toSeq
@@ -65,7 +65,7 @@ object FeatureStoreDatasetErrorHandler {
         }
       featuresAndErrors
         .groupBy { case (feature, _) => feature }.mapValues(_.flatMap {
-          case (_, errors: Set[HydrationError]) => errors
+          case (_, errors: Set[Hydrat onError]) => errors
         })
     } else {
       Map.empty

@@ -1,170 +1,170 @@
-package com.twitter.search.core.earlybird.index;
+package com.tw ter.search.core.earlyb rd. ndex;
 
-import java.io.File;
-import java.io.IOException;
+ mport java. o.F le;
+ mport java. o. OExcept on;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.L sts;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
+ mport org.slf4j.Marker;
+ mport org.slf4j.MarkerFactory;
 
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.store.LockObtainFailedException;
+ mport org.apac .lucene.docu nt.Docu nt;
+ mport org.apac .lucene. ndex. ndexWr er;
+ mport org.apac .lucene. ndex. ndexWr erConf g;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .lucene.store.D rectory;
+ mport org.apac .lucene.store.FSD rectory;
+ mport org.apac .lucene.store.LockObta nFa ledExcept on;
 
 /**
- * EarlybirdIndexWriter implementation that's a wrapper around Lucene's {@link IndexWriter}
- * and writes Lucene segments into a {@link Directory}.
+ * Earlyb rd ndexWr er  mple ntat on that's a wrapper around Lucene's {@l nk  ndexWr er}
+ * and wr es Lucene seg nts  nto a {@l nk D rectory}.
  */
-public class EarlybirdLuceneIndexSegmentWriter extends EarlybirdIndexSegmentWriter {
-  private static final Logger LOG =
-    LoggerFactory.getLogger(EarlybirdLuceneIndexSegmentWriter.class);
-  private static final Marker FATAL = MarkerFactory.getMarker("FATAL");
+publ c class Earlyb rdLucene ndexSeg ntWr er extends Earlyb rd ndexSeg ntWr er {
+  pr vate stat c f nal Logger LOG =
+    LoggerFactory.getLogger(Earlyb rdLucene ndexSeg ntWr er.class);
+  pr vate stat c f nal Marker FATAL = MarkerFactory.getMarker("FATAL");
 
-  private final EarlybirdLuceneIndexSegmentData segmentData;
-  private final IndexWriter indexWriter;
+  pr vate f nal Earlyb rdLucene ndexSeg ntData seg ntData;
+  pr vate f nal  ndexWr er  ndexWr er;
 
-  @Override
-  public EarlybirdIndexSegmentData getSegmentData() {
-    return segmentData;
+  @Overr de
+  publ c Earlyb rd ndexSeg ntData getSeg ntData() {
+    return seg ntData;
   }
 
   /**
-   * Construct a lucene IndexWriter-based Earlybird segment writer.
-   * This will open a Lucene IndexWriter on segmentData.getLuceneDirectory().
-   * This constructor will throw LockObtainFailedException if it cannot obtain the "write.lock"
-   * inside the directory segmentData.getLuceneDirectory().
+   * Construct a lucene  ndexWr er-based Earlyb rd seg nt wr er.
+   * T  w ll open a Lucene  ndexWr er on seg ntData.getLuceneD rectory().
+   * T  constructor w ll throw LockObta nFa ledExcept on  f   cannot obta n t  "wr e.lock"
+   *  ns de t  d rectory seg ntData.getLuceneD rectory().
    *
-   * Don't add public constructors to this class. EarlybirdLuceneIndexSegmentWriter instances should
-   * be created only by calling EarlybirdLuceneIndexSegmentData.createEarlybirdIndexSegmentWriter(),
-   * to make sure everything is set up properly (such as CSF readers).
+   * Don't add publ c constructors to t  class. Earlyb rdLucene ndexSeg ntWr er  nstances should
+   * be created only by call ng Earlyb rdLucene ndexSeg ntData.createEarlyb rd ndexSeg ntWr er(),
+   * to make sure everyth ng  s set up properly (such as CSF readers).
    */
-  EarlybirdLuceneIndexSegmentWriter(
-      EarlybirdLuceneIndexSegmentData segmentData,
-      IndexWriterConfig indexWriterConfig) throws IOException {
-    Preconditions.checkNotNull(segmentData);
-    this.segmentData = segmentData;
+  Earlyb rdLucene ndexSeg ntWr er(
+      Earlyb rdLucene ndexSeg ntData seg ntData,
+       ndexWr erConf g  ndexWr erConf g) throws  OExcept on {
+    Precond  ons.c ckNotNull(seg ntData);
+    t .seg ntData = seg ntData;
     try {
-      this.indexWriter = new IndexWriter(segmentData.getLuceneDirectory(), indexWriterConfig);
-    } catch (LockObtainFailedException e) {
-      logDebuggingInfoUponFailureToObtainLuceneWriteLock(segmentData, e);
-      // Rethrow the exception, and this Earlybird will trigger critical alerts
+      t . ndexWr er = new  ndexWr er(seg ntData.getLuceneD rectory(),  ndexWr erConf g);
+    } catch (LockObta nFa ledExcept on e) {
+      logDebugg ng nfoUponFa lureToObta nLuceneWr eLock(seg ntData, e);
+      // Rethrow t  except on, and t  Earlyb rd w ll tr gger cr  cal alerts
       throw e;
     }
   }
 
-  private void logDebuggingInfoUponFailureToObtainLuceneWriteLock(
-      EarlybirdLuceneIndexSegmentData luceneIndexSegmentData,
-      LockObtainFailedException e) throws IOException {
-    // Every day, we create a new Lucene dir---we do not append into existing Lucene dirs.
-    // Supposedly, we should never fail to obtain the write lock from a fresh and empty
-    // Lucene directory.
-    // Adding debugging information for SEARCH-4454, where a timeslice roll failed because
-    // Earlybird failed to get the write lock for a new timeslice.
-    Directory dir = luceneIndexSegmentData.getLuceneDirectory();
+  pr vate vo d logDebugg ng nfoUponFa lureToObta nLuceneWr eLock(
+      Earlyb rdLucene ndexSeg ntData lucene ndexSeg ntData,
+      LockObta nFa ledExcept on e) throws  OExcept on {
+    // Every day,   create a new Lucene d r---  do not append  nto ex st ng Lucene d rs.
+    // Supposedly,   should never fa l to obta n t  wr e lock from a fresh and empty
+    // Lucene d rectory.
+    // Add ng debugg ng  nformat on for SEARCH-4454, w re a t  sl ce roll fa led because
+    // Earlyb rd fa led to get t  wr e lock for a new t  sl ce.
+    D rectory d r = lucene ndexSeg ntData.getLuceneD rectory();
     LOG.error(
       FATAL,
-      "Unable to obtain write.lock for Lucene directory. The Lucene directory is: " + dir,
+      "Unable to obta n wr e.lock for Lucene d rectory. T  Lucene d rectory  s: " + d r,
       e);
 
-    if (dir instanceof FSDirectory) { // this check should always be true in our current setup.
-      FSDirectory fsDir = (FSDirectory) dir;
-      // Log if the underlying directory on disk does not exist.
-      File underlyingDir = fsDir.getDirectory().toFile();
-      if (underlyingDir.exists()) {
-        LOG.info("Lucene directory contains the following files: "
-            + Lists.newArrayList(fsDir.listAll()));
+     f (d r  nstanceof FSD rectory) { // t  c ck should always be true  n   current setup.
+      FSD rectory fsD r = (FSD rectory) d r;
+      // Log  f t  underly ng d rectory on d sk does not ex st.
+      F le underly ngD r = fsD r.getD rectory().toF le();
+       f (underly ngD r.ex sts()) {
+        LOG. nfo("Lucene d rectory conta ns t  follow ng f les: "
+            + L sts.newArrayL st(fsD r.l stAll()));
       } else {
         LOG.error(
           FATAL,
-          "Directory " + underlyingDir + " does not exist on disk.",
+          "D rectory " + underly ngD r + " does not ex st on d sk.",
           e);
       }
 
-      if (!underlyingDir.canWrite()) {
+       f (!underly ngD r.canWr e()) {
         LOG.error(
           FATAL,
-          "Cannot write into directory " + underlyingDir,
+          "Cannot wr e  nto d rectory " + underly ngD r,
           e);
       }
 
-      File writeLockFile = new File(underlyingDir, "write.lock");
-      if (writeLockFile.exists()) {
+      F le wr eLockF le = new F le(underly ngD r, "wr e.lock");
+       f (wr eLockF le.ex sts()) {
         LOG.error(
           FATAL,
-          "Write lock file " + writeLockFile + " already exists.",
+          "Wr e lock f le " + wr eLockF le + " already ex sts.",
           e);
       }
 
-      if (!writeLockFile.canWrite()) {
+       f (!wr eLockF le.canWr e()) {
         LOG.error(
           FATAL,
-          "No write access to lock file: " + writeLockFile
-            + " Usable space: " + underlyingDir.getUsableSpace(),
+          "No wr e access to lock f le: " + wr eLockF le
+            + " Usable space: " + underly ngD r.getUsableSpace(),
           e);
       }
 
-      // List all files in the segment directory
-      File segmentDir = underlyingDir.getParentFile();
-      LOG.warn("Segment directory contains the following files: "
-          + Lists.newArrayList(segmentDir.list()));
+      // L st all f les  n t  seg nt d rectory
+      F le seg ntD r = underly ngD r.getParentF le();
+      LOG.warn("Seg nt d rectory conta ns t  follow ng f les: "
+          + L sts.newArrayL st(seg ntD r.l st()));
     } else {
-      LOG.warn("Unable to log debugging info upon failing to acquire Lucene write lock."
-          + "The class of the directory is: " + dir.getClass().getName());
+      LOG.warn("Unable to log debugg ng  nfo upon fa l ng to acqu re Lucene wr e lock."
+          + "T  class of t  d rectory  s: " + d r.getClass().getNa ());
     }
   }
 
-  @Override
-  public void addDocument(Document doc) throws IOException {
-    indexWriter.addDocument(doc);
+  @Overr de
+  publ c vo d addDocu nt(Docu nt doc) throws  OExcept on {
+     ndexWr er.addDocu nt(doc);
   }
 
-  @Override
-  public void addTweet(Document doc, long tweetId, boolean docIdOffensive) throws IOException {
-    indexWriter.addDocument(doc);
+  @Overr de
+  publ c vo d addT et(Docu nt doc, long t et d, boolean doc dOffens ve) throws  OExcept on {
+     ndexWr er.addDocu nt(doc);
   }
 
-  @Override
-  protected void appendOutOfOrder(Document doc, int docId) throws IOException {
-    throw new UnsupportedOperationException("This Lucene-based IndexWriter does not support "
+  @Overr de
+  protected vo d appendOutOfOrder(Docu nt doc,  nt doc d) throws  OExcept on {
+    throw new UnsupportedOperat onExcept on("T  Lucene-based  ndexWr er does not support "
             + "updates and out-of-order appends.");
   }
 
-  @Override
-  public int numDocs() {
-    return indexWriter.getDocStats().maxDoc;
+  @Overr de
+  publ c  nt numDocs() {
+    return  ndexWr er.getDocStats().maxDoc;
   }
 
-  @Override
-  public int numDocsNoDelete() throws IOException {
+  @Overr de
+  publ c  nt numDocsNoDelete() throws  OExcept on {
     return numDocs();
   }
 
-  @Override
-  public void deleteDocuments(Query query) throws IOException {
-    super.deleteDocuments(query);
-    indexWriter.deleteDocuments(query);
+  @Overr de
+  publ c vo d deleteDocu nts(Query query) throws  OExcept on {
+    super.deleteDocu nts(query);
+     ndexWr er.deleteDocu nts(query);
   }
 
-  @Override
-  public void addIndexes(Directory... dirs) throws IOException {
-    indexWriter.addIndexes(dirs);
+  @Overr de
+  publ c vo d add ndexes(D rectory... d rs) throws  OExcept on {
+     ndexWr er.add ndexes(d rs);
   }
 
-  @Override
-  public void forceMerge() throws IOException {
-    indexWriter.forceMerge(1);
+  @Overr de
+  publ c vo d force rge() throws  OExcept on {
+     ndexWr er.force rge(1);
   }
 
-  @Override
-  public void close() throws IOException {
-    indexWriter.close();
+  @Overr de
+  publ c vo d close() throws  OExcept on {
+     ndexWr er.close();
   }
 }

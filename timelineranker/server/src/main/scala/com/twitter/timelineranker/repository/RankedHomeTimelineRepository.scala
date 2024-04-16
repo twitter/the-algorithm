@@ -1,16 +1,16 @@
-package com.twitter.timelineranker.repository
+package com.tw ter.t  l neranker.repos ory
 
-import com.twitter.timelineranker.model.Timeline
-import com.twitter.timelineranker.model.TimelineQuery
-import com.twitter.util.Future
+ mport com.tw ter.t  l neranker.model.T  l ne
+ mport com.tw ter.t  l neranker.model.T  l neQuery
+ mport com.tw ter.ut l.Future
 
 /**
- * A repository of ranked home timelines.
+ * A repos ory of ranked ho  t  l nes.
  */
-class RankedHomeTimelineRepository extends TimelineRepository {
-  def get(queries: Seq[TimelineQuery]): Seq[Future[Timeline]] = {
-    queries.map { _ =>
-      Future.exception(new UnsupportedOperationException("ranked timelines are not yet supported."))
+class RankedHo T  l neRepos ory extends T  l neRepos ory {
+  def get(quer es: Seq[T  l neQuery]): Seq[Future[T  l ne]] = {
+    quer es.map { _ =>
+      Future.except on(new UnsupportedOperat onExcept on("ranked t  l nes are not yet supported."))
     }
   }
 }

@@ -1,60 +1,60 @@
-package com.twitter.follow_recommendations.common.clients.geoduck
+package com.tw ter.follow_recom ndat ons.common.cl ents.geoduck
 
-import com.twitter.follow_recommendations.common.models.GeohashAndCountryCode
-import com.twitter.geoduck.common.thriftscala.LocationSource
-import com.twitter.geoduck.common.thriftscala.PlaceQuery
-import com.twitter.geoduck.common.thriftscala.TransactionLocation
-import com.twitter.geoduck.common.thriftscala.UserLocationRequest
-import com.twitter.geoduck.thriftscala.LocationService
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.common.models.GeohashAndCountryCode
+ mport com.tw ter.geoduck.common.thr ftscala.Locat onS ce
+ mport com.tw ter.geoduck.common.thr ftscala.PlaceQuery
+ mport com.tw ter.geoduck.common.thr ftscala.Transact onLocat on
+ mport com.tw ter.geoduck.common.thr ftscala.UserLocat onRequest
+ mport com.tw ter.geoduck.thr ftscala.Locat onServ ce
+ mport com.tw ter.st ch.St ch
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class LocationServiceClient @Inject() (locationService: LocationService.MethodPerEndpoint) {
-  def getGeohashAndCountryCode(userId: Long): Stitch[GeohashAndCountryCode] = {
-    Stitch
+@S ngleton
+class Locat onServ ceCl ent @ nject() (locat onServ ce: Locat onServ ce. thodPerEndpo nt) {
+  def getGeohashAndCountryCode(user d: Long): St ch[GeohashAndCountryCode] = {
+    St ch
       .callFuture {
-        locationService
-          .userLocation(
-            UserLocationRequest(
-              Seq(userId),
-              Some(PlaceQuery(allPlaceTypes = Some(true))),
-              simpleReverseGeocode = true))
-          .map(_.found.get(userId)).map { transactionLocationOpt =>
-            val geohashOpt = transactionLocationOpt.flatMap(getGeohashFromTransactionLocation)
+        locat onServ ce
+          .userLocat on(
+            UserLocat onRequest(
+              Seq(user d),
+              So (PlaceQuery(allPlaceTypes = So (true))),
+              s mpleReverseGeocode = true))
+          .map(_.found.get(user d)).map { transact onLocat onOpt =>
+            val geohashOpt = transact onLocat onOpt.flatMap(getGeohashFromTransact onLocat on)
             val countryCodeOpt =
-              transactionLocationOpt.flatMap(_.simpleRgcResult.flatMap(_.countryCodeAlpha2))
+              transact onLocat onOpt.flatMap(_.s mpleRgcResult.flatMap(_.countryCodeAlpha2))
             GeohashAndCountryCode(geohashOpt, countryCodeOpt)
           }
       }
   }
 
-  private[this] def getGeohashFromTransactionLocation(
-    transactionLocation: TransactionLocation
-  ): Option[String] = {
-    transactionLocation.geohash.flatMap { geohash =>
-      val geohashPrefixLength = transactionLocation.locationSource match {
-        // if location source is logical, keep the first 4 chars in geohash
-        case Some(LocationSource.Logical) => Some(4)
-        // if location source is physical, keep the prefix according to accuracy
-        // accuracy is the accuracy of GPS readings in the unit of meter
-        case Some(LocationSource.Physical) =>
-          transactionLocation.coordinate.flatMap { coordinate =>
-            coordinate.accuracy match {
-              case Some(accuracy) if (accuracy < 50) => Some(7)
-              case Some(accuracy) if (accuracy < 200) => Some(6)
-              case Some(accuracy) if (accuracy < 1000) => Some(5)
-              case Some(accuracy) if (accuracy < 50000) => Some(4)
-              case Some(accuracy) if (accuracy < 100000) => Some(3)
+  pr vate[t ] def getGeohashFromTransact onLocat on(
+    transact onLocat on: Transact onLocat on
+  ): Opt on[Str ng] = {
+    transact onLocat on.geohash.flatMap { geohash =>
+      val geohashPref xLength = transact onLocat on.locat onS ce match {
+        //  f locat on s ce  s log cal, keep t  f rst 4 chars  n geohash
+        case So (Locat onS ce.Log cal) => So (4)
+        //  f locat on s ce  s phys cal, keep t  pref x accord ng to accuracy
+        // accuracy  s t  accuracy of GPS read ngs  n t  un  of  ter
+        case So (Locat onS ce.Phys cal) =>
+          transact onLocat on.coord nate.flatMap { coord nate =>
+            coord nate.accuracy match {
+              case So (accuracy)  f (accuracy < 50) => So (7)
+              case So (accuracy)  f (accuracy < 200) => So (6)
+              case So (accuracy)  f (accuracy < 1000) => So (5)
+              case So (accuracy)  f (accuracy < 50000) => So (4)
+              case So (accuracy)  f (accuracy < 100000) => So (3)
               case _ => None
             }
           }
-        case Some(LocationSource.Model) => Some(4)
+        case So (Locat onS ce.Model) => So (4)
         case _ => None
       }
-      geohashPrefixLength match {
-        case Some(l: Int) => geohash.stringGeohash.map(_.take(l))
+      geohashPref xLength match {
+        case So (l:  nt) => geohash.str ngGeohash.map(_.take(l))
         case _ => None
       }
     }

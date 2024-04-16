@@ -1,73 +1,73 @@
-package com.twitter.usersignalservice.base
+package com.tw ter.users gnalserv ce.base
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.Stats
-import com.twitter.storehaus.ReadableStore
-import com.twitter.usersignalservice.thriftscala.Signal
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.util.Future
-import com.twitter.util.Timer
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Stats
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.users gnalserv ce.thr ftscala.S gnal
+ mport com.tw ter.users gnalserv ce.thr ftscala.S gnalType
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  r
 
 /**
- * Combine a BaseSignalFetcher with a map of negative signalFetchers. Filter out the negative
- * signals from the signals from BaseSignalFetcher.
+ * Comb ne a BaseS gnalFetc r w h a map of negat ve s gnalFetc rs. F lter out t  negat ve
+ * s gnals from t  s gnals from BaseS gnalFetc r.
  */
-case class FilteredSignalFetcherController(
-  backingSignalFetcher: BaseSignalFetcher,
-  originSignalType: SignalType,
-  stats: StatsReceiver,
-  timer: Timer,
-  filterSignalFetchers: Map[SignalType, BaseSignalFetcher] =
-    Map.empty[SignalType, BaseSignalFetcher])
-    extends ReadableStore[Query, Seq[Signal]] {
-  val statsReceiver: StatsReceiver = stats.scope(this.getClass.getCanonicalName)
+case class F lteredS gnalFetc rController(
+  back ngS gnalFetc r: BaseS gnalFetc r,
+  or g nS gnalType: S gnalType,
+  stats: StatsRece ver,
+  t  r: T  r,
+  f lterS gnalFetc rs: Map[S gnalType, BaseS gnalFetc r] =
+    Map.empty[S gnalType, BaseS gnalFetc r])
+    extends ReadableStore[Query, Seq[S gnal]] {
+  val statsRece ver: StatsRece ver = stats.scope(t .getClass.getCanon calNa )
 
-  override def get(query: Query): Future[Option[Seq[Signal]]] = {
-    val clientStatsReceiver = statsReceiver.scope(query.signalType.name).scope(query.clientId.name)
+  overr de def get(query: Query): Future[Opt on[Seq[S gnal]]] = {
+    val cl entStatsRece ver = statsRece ver.scope(query.s gnalType.na ).scope(query.cl ent d.na )
     Stats
-      .trackItems(clientStatsReceiver) {
-        val backingSignals =
-          backingSignalFetcher.get(Query(query.userId, originSignalType, None, query.clientId))
-        val filteredSignals = filter(query, backingSignals)
-        filteredSignals
-      }.raiseWithin(BaseSignalFetcher.Timeout)(timer).handle {
+      .track ems(cl entStatsRece ver) {
+        val back ngS gnals =
+          back ngS gnalFetc r.get(Query(query.user d, or g nS gnalType, None, query.cl ent d))
+        val f lteredS gnals = f lter(query, back ngS gnals)
+        f lteredS gnals
+      }.ra seW h n(BaseS gnalFetc r.T  out)(t  r).handle {
         case e =>
-          clientStatsReceiver.scope("FetcherExceptions").counter(e.getClass.getCanonicalName).incr()
-          BaseSignalFetcher.EmptyResponse
+          cl entStatsRece ver.scope("Fetc rExcept ons").counter(e.getClass.getCanon calNa ). ncr()
+          BaseS gnalFetc r.EmptyResponse
       }
   }
 
-  def filter(
+  def f lter(
     query: Query,
-    rawSignals: Future[Option[Seq[Signal]]]
-  ): Future[Option[Seq[Signal]]] = {
+    rawS gnals: Future[Opt on[Seq[S gnal]]]
+  ): Future[Opt on[Seq[S gnal]]] = {
     Stats
-      .trackItems(statsReceiver) {
-        val originSignals = rawSignals.map(_.getOrElse(Seq.empty[Signal]))
-        val filterSignals =
+      .track ems(statsRece ver) {
+        val or g nS gnals = rawS gnals.map(_.getOrElse(Seq.empty[S gnal]))
+        val f lterS gnals =
           Future
             .collect {
-              filterSignalFetchers.map {
-                case (signalType, signalFetcher) =>
-                  signalFetcher
-                    .get(Query(query.userId, signalType, None, query.clientId))
+              f lterS gnalFetc rs.map {
+                case (s gnalType, s gnalFetc r) =>
+                  s gnalFetc r
+                    .get(Query(query.user d, s gnalType, None, query.cl ent d))
                     .map(_.getOrElse(Seq.empty))
               }.toSeq
             }.map(_.flatten.toSet)
-        val filterSignalsSet = filterSignals
-          .map(_.flatMap(_.targetInternalId))
+        val f lterS gnalsSet = f lterS gnals
+          .map(_.flatMap(_.target nternal d))
 
-        val originSignalsWithId =
-          originSignals.map(_.map(signal => (signal, signal.targetInternalId)))
-        Future.join(originSignalsWithId, filterSignalsSet).map {
-          case (originSignalsWithId, filterSignalsSet) =>
-            Some(
-              originSignalsWithId
+        val or g nS gnalsW h d =
+          or g nS gnals.map(_.map(s gnal => (s gnal, s gnal.target nternal d)))
+        Future.jo n(or g nS gnalsW h d, f lterS gnalsSet).map {
+          case (or g nS gnalsW h d, f lterS gnalsSet) =>
+            So (
+              or g nS gnalsW h d
                 .collect {
-                  case (signal, internalIdOpt)
-                      if internalIdOpt.nonEmpty && !filterSignalsSet.contains(internalIdOpt.get) =>
-                    signal
-                }.take(query.maxResults.getOrElse(Int.MaxValue)))
+                  case (s gnal,  nternal dOpt)
+                       f  nternal dOpt.nonEmpty && !f lterS gnalsSet.conta ns( nternal dOpt.get) =>
+                    s gnal
+                }.take(query.maxResults.getOrElse( nt.MaxValue)))
         }
       }
   }

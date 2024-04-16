@@ -1,12 +1,12 @@
-package com.twitter.tweetypie
-package service
+package com.tw ter.t etyp e
+package serv ce
 
-import com.twitter.util.Try
+ mport com.tw ter.ut l.Try
 
 package object observer {
 
   /**
-   * Generic Request/Result observer container for making observations on both requests/results.
+   * Gener c Request/Result observer conta ner for mak ng observat ons on both requests/results.
    */
   type ObserveExchange[Req, Res] = (Req, Try[Res])
 

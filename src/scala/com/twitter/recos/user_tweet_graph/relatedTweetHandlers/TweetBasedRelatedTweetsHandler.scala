@@ -1,93 +1,93 @@
-package com.twitter.recos.user_tweet_graph.relatedTweetHandlers
+package com.tw ter.recos.user_t et_graph.relatedT etHandlers
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphjet.bipartite.api.BipartiteGraph
-import com.twitter.recos.features.tweet.thriftscala.GraphFeaturesForQuery
-import com.twitter.recos.user_tweet_graph.thriftscala._
-import com.twitter.recos.user_tweet_graph.util.FilterUtil
-import com.twitter.recos.user_tweet_graph.util.FetchRHSTweetsUtil
-import com.twitter.recos.user_tweet_graph.util.GetAllInternalTweetIdsUtil
-import com.twitter.recos.user_tweet_graph.util.GetRelatedTweetCandidatesUtil
-import com.twitter.recos.user_tweet_graph.util.SampleLHSUsersUtil
-import com.twitter.recos.util.Action
-import com.twitter.recos.util.Stats._
-import com.twitter.servo.request._
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import scala.concurrent.duration.HOURS
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.graphjet.b part e.ap .B part eGraph
+ mport com.tw ter.recos.features.t et.thr ftscala.GraphFeaturesForQuery
+ mport com.tw ter.recos.user_t et_graph.thr ftscala._
+ mport com.tw ter.recos.user_t et_graph.ut l.F lterUt l
+ mport com.tw ter.recos.user_t et_graph.ut l.FetchRHST etsUt l
+ mport com.tw ter.recos.user_t et_graph.ut l.GetAll nternalT et dsUt l
+ mport com.tw ter.recos.user_t et_graph.ut l.GetRelatedT etCand datesUt l
+ mport com.tw ter.recos.user_t et_graph.ut l.SampleLHSUsersUt l
+ mport com.tw ter.recos.ut l.Act on
+ mport com.tw ter.recos.ut l.Stats._
+ mport com.tw ter.servo.request._
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport scala.concurrent.durat on.HOURS
 
 /**
- * Implementation of the Thrift-defined service interface for tweetBasedRelatedTweets.
+ *  mple ntat on of t  Thr ft-def ned serv ce  nterface for t etBasedRelatedT ets.
  *
  */
-class TweetBasedRelatedTweetsHandler(bipartiteGraph: BipartiteGraph, statsReceiver: StatsReceiver)
-    extends RequestHandler[TweetBasedRelatedTweetRequest, RelatedTweetResponse] {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
+class T etBasedRelatedT etsHandler(b part eGraph: B part eGraph, statsRece ver: StatsRece ver)
+    extends RequestHandler[T etBasedRelatedT etRequest, RelatedT etResponse] {
+  pr vate val stats = statsRece ver.scope(t .getClass.getS mpleNa )
 
-  override def apply(request: TweetBasedRelatedTweetRequest): Future[RelatedTweetResponse] = {
+  overr de def apply(request: T etBasedRelatedT etRequest): Future[RelatedT etResponse] = {
     trackFutureBlockStats(stats) {
-      val internalQueryTweetIds =
-        GetAllInternalTweetIdsUtil.getAllInternalTweetIds(request.tweetId, bipartiteGraph)
+      val  nternalQueryT et ds =
+        GetAll nternalT et dsUt l.getAll nternalT et ds(request.t et d, b part eGraph)
 
-      val response = internalQueryTweetIds match {
-        case head +: Nil => getRelatedTweets(request, head)
-        case _ => RelatedTweetResponse()
+      val response =  nternalQueryT et ds match {
+        case  ad +: N l => getRelatedT ets(request,  ad)
+        case _ => RelatedT etResponse()
       }
       Future.value(response)
     }
   }
 
-  private def getRelatedTweets(
-    request: TweetBasedRelatedTweetRequest,
-    maskedTweetId: Long
-  ): RelatedTweetResponse = {
+  pr vate def getRelatedT ets(
+    request: T etBasedRelatedT etRequest,
+    maskedT et d: Long
+  ): RelatedT etResponse = {
 
-    val maxNumSamplesPerNeighbor = request.maxNumSamplesPerNeighbor.getOrElse(100)
+    val maxNumSamplesPerNe ghbor = request.maxNumSamplesPerNe ghbor.getOrElse(100)
     val maxResults = request.maxResults.getOrElse(200)
-    val minScore = request.minScore.getOrElse(0.5)
-    val maxTweetAge = request.maxTweetAgeInHours.getOrElse(48)
-    val minResultDegree = request.minResultDegree.getOrElse(50)
-    val minQueryDegree = request.minQueryDegree.getOrElse(10)
-    val minCooccurrence = request.minCooccurrence.getOrElse(3)
-    val excludeTweetIds = request.excludeTweetIds.getOrElse(Seq.empty).toSet
+    val m nScore = request.m nScore.getOrElse(0.5)
+    val maxT etAge = request.maxT etAge nH s.getOrElse(48)
+    val m nResultDegree = request.m nResultDegree.getOrElse(50)
+    val m nQueryDegree = request.m nQueryDegree.getOrElse(10)
+    val m nCooccurrence = request.m nCooccurrence.getOrElse(3)
+    val excludeT et ds = request.excludeT et ds.getOrElse(Seq.empty).toSet
 
-    val queryTweetDegree = bipartiteGraph.getRightNodeDegree(maskedTweetId)
-    stats.stat("queryTweetDegree").add(queryTweetDegree)
+    val queryT etDegree = b part eGraph.getR ghtNodeDegree(maskedT et d)
+    stats.stat("queryT etDegree").add(queryT etDegree)
 
-    if (queryTweetDegree < minQueryDegree) {
-      stats.counter("queryTweetDegreeLessThanMinQueryDegree").incr()
-      RelatedTweetResponse()
+     f (queryT etDegree < m nQueryDegree) {
+      stats.counter("queryT etDegreeLessThanM nQueryDegree"). ncr()
+      RelatedT etResponse()
     } else {
 
-      val sampledLHSuserIds =
-        SampleLHSUsersUtil.sampleLHSUsers(maskedTweetId, maxNumSamplesPerNeighbor, bipartiteGraph)
+      val sampledLHSuser ds =
+        SampleLHSUsersUt l.sampleLHSUsers(maskedT et d, maxNumSamplesPerNe ghbor, b part eGraph)
 
-      val rHStweetIds = FetchRHSTweetsUtil.fetchRHSTweets(
-        sampledLHSuserIds,
-        bipartiteGraph,
-        Set(Action.Favorite, Action.Retweet)
+      val rHSt et ds = FetchRHST etsUt l.fetchRHST ets(
+        sampledLHSuser ds,
+        b part eGraph,
+        Set(Act on.Favor e, Act on.Ret et)
       )
 
       val scorePreFactor =
-        queryTweetDegree / math.log(queryTweetDegree) / sampledLHSuserIds.distinct.size
-      val relatedTweetCandidates = GetRelatedTweetCandidatesUtil.getRelatedTweetCandidates(
-        rHStweetIds,
-        minCooccurrence,
-        minResultDegree,
+        queryT etDegree / math.log(queryT etDegree) / sampledLHSuser ds.d st nct.s ze
+      val relatedT etCand dates = GetRelatedT etCand datesUt l.getRelatedT etCand dates(
+        rHSt et ds,
+        m nCooccurrence,
+        m nResultDegree,
         scorePreFactor,
-        bipartiteGraph)
+        b part eGraph)
 
-      val relatedTweets = relatedTweetCandidates
-        .filter(relatedTweet =>
-          FilterUtil.tweetAgeFilter(
-            relatedTweet.tweetId,
-            Duration(maxTweetAge, HOURS)) && (relatedTweet.score > minScore) && (!excludeTweetIds
-            .contains(relatedTweet.tweetId))).take(maxResults)
+      val relatedT ets = relatedT etCand dates
+        .f lter(relatedT et =>
+          F lterUt l.t etAgeF lter(
+            relatedT et.t et d,
+            Durat on(maxT etAge, HOURS)) && (relatedT et.score > m nScore) && (!excludeT et ds
+            .conta ns(relatedT et.t et d))).take(maxResults)
 
-      stats.stat("response_size").add(relatedTweets.size)
-      RelatedTweetResponse(
-        tweets = relatedTweets,
-        queryTweetGraphFeatures = Some(GraphFeaturesForQuery(degree = Some(queryTweetDegree))))
+      stats.stat("response_s ze").add(relatedT ets.s ze)
+      RelatedT etResponse(
+        t ets = relatedT ets,
+        queryT etGraphFeatures = So (GraphFeaturesForQuery(degree = So (queryT etDegree))))
     }
   }
 }

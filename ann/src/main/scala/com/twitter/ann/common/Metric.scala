@@ -1,290 +1,290 @@
-package com.twitter.ann.common
+package com.tw ter.ann.common
 
-import com.google.common.collect.ImmutableBiMap
-import com.twitter.ann.common.EmbeddingType._
-import com.twitter.ann.common.thriftscala.DistanceMetric
-import com.twitter.ann.common.thriftscala.{CosineDistance => ServiceCosineDistance}
-import com.twitter.ann.common.thriftscala.{Distance => ServiceDistance}
-import com.twitter.ann.common.thriftscala.{InnerProductDistance => ServiceInnerProductDistance}
-import com.twitter.ann.common.thriftscala.{EditDistance => ServiceEditDistance}
-import com.twitter.ann.common.thriftscala.{L2Distance => ServiceL2Distance}
-import com.twitter.bijection.Injection
-import scala.util.Failure
-import scala.util.Success
-import scala.util.Try
+ mport com.google.common.collect. mmutableB Map
+ mport com.tw ter.ann.common.Embedd ngType._
+ mport com.tw ter.ann.common.thr ftscala.D stance tr c
+ mport com.tw ter.ann.common.thr ftscala.{Cos neD stance => Serv ceCos neD stance}
+ mport com.tw ter.ann.common.thr ftscala.{D stance => Serv ceD stance}
+ mport com.tw ter.ann.common.thr ftscala.{ nnerProductD stance => Serv ce nnerProductD stance}
+ mport com.tw ter.ann.common.thr ftscala.{Ed D stance => Serv ceEd D stance}
+ mport com.tw ter.ann.common.thr ftscala.{L2D stance => Serv ceL2D stance}
+ mport com.tw ter.b ject on. nject on
+ mport scala.ut l.Fa lure
+ mport scala.ut l.Success
+ mport scala.ut l.Try
 
-// Ann distance metrics
-trait Distance[D] extends Any with Ordered[D] {
-  def distance: Float
+// Ann d stance  tr cs
+tra  D stance[D] extends Any w h Ordered[D] {
+  def d stance: Float
 }
 
-case class L2Distance(distance: Float) extends AnyVal with Distance[L2Distance] {
-  override def compare(that: L2Distance): Int =
-    Ordering.Float.compare(this.distance, that.distance)
+case class L2D stance(d stance: Float) extends AnyVal w h D stance[L2D stance] {
+  overr de def compare(that: L2D stance):  nt =
+    Order ng.Float.compare(t .d stance, that.d stance)
 }
 
-case class CosineDistance(distance: Float) extends AnyVal with Distance[CosineDistance] {
-  override def compare(that: CosineDistance): Int =
-    Ordering.Float.compare(this.distance, that.distance)
+case class Cos neD stance(d stance: Float) extends AnyVal w h D stance[Cos neD stance] {
+  overr de def compare(that: Cos neD stance):  nt =
+    Order ng.Float.compare(t .d stance, that.d stance)
 }
 
-case class InnerProductDistance(distance: Float)
+case class  nnerProductD stance(d stance: Float)
     extends AnyVal
-    with Distance[InnerProductDistance] {
-  override def compare(that: InnerProductDistance): Int =
-    Ordering.Float.compare(this.distance, that.distance)
+    w h D stance[ nnerProductD stance] {
+  overr de def compare(that:  nnerProductD stance):  nt =
+    Order ng.Float.compare(t .d stance, that.d stance)
 }
 
-case class EditDistance(distance: Float) extends AnyVal with Distance[EditDistance] {
-  override def compare(that: EditDistance): Int =
-    Ordering.Float.compare(this.distance, that.distance)
+case class Ed D stance(d stance: Float) extends AnyVal w h D stance[Ed D stance] {
+  overr de def compare(that: Ed D stance):  nt =
+    Order ng.Float.compare(t .d stance, that.d stance)
 }
 
-object Metric {
-  private[this] val thriftMetricMapping = ImmutableBiMap.of(
+object  tr c {
+  pr vate[t ] val thr ft tr cMapp ng =  mmutableB Map.of(
     L2,
-    DistanceMetric.L2,
-    Cosine,
-    DistanceMetric.Cosine,
-    InnerProduct,
-    DistanceMetric.InnerProduct,
-    Edit,
-    DistanceMetric.EditDistance
+    D stance tr c.L2,
+    Cos ne,
+    D stance tr c.Cos ne,
+     nnerProduct,
+    D stance tr c. nnerProduct,
+    Ed ,
+    D stance tr c.Ed D stance
   )
 
-  def fromThrift(metric: DistanceMetric): Metric[_ <: Distance[_]] = {
-    thriftMetricMapping.inverse().get(metric)
+  def fromThr ft( tr c: D stance tr c):  tr c[_ <: D stance[_]] = {
+    thr ft tr cMapp ng. nverse().get( tr c)
   }
 
-  def toThrift(metric: Metric[_ <: Distance[_]]): DistanceMetric = {
-    thriftMetricMapping.get(metric)
+  def toThr ft( tr c:  tr c[_ <: D stance[_]]): D stance tr c = {
+    thr ft tr cMapp ng.get( tr c)
   }
 
-  def fromString(metricName: String): Metric[_ <: Distance[_]]
-    with Injection[_, ServiceDistance] = {
-    metricName match {
-      case "Cosine" => Cosine
+  def fromStr ng( tr cNa : Str ng):  tr c[_ <: D stance[_]]
+    w h  nject on[_, Serv ceD stance] = {
+     tr cNa  match {
+      case "Cos ne" => Cos ne
       case "L2" => L2
-      case "InnerProduct" => InnerProduct
-      case "EditDistance" => Edit
+      case " nnerProduct" =>  nnerProduct
+      case "Ed D stance" => Ed 
       case _ =>
-        throw new IllegalArgumentException(s"No Metric with the name $metricName")
+        throw new  llegalArgu ntExcept on(s"No  tr c w h t  na  $ tr cNa ")
     }
   }
 }
 
-sealed trait Metric[D <: Distance[D]] {
-  def distance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
+sealed tra   tr c[D <: D stance[D]] {
+  def d stance(
+    embedd ng1: Embedd ngVector,
+    embedd ng2: Embedd ngVector
   ): D
-  def absoluteDistance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
+  def absoluteD stance(
+    embedd ng1: Embedd ngVector,
+    embedd ng2: Embedd ngVector
   ): Float
-  def fromAbsoluteDistance(distance: Float): D
+  def fromAbsoluteD stance(d stance: Float): D
 }
 
-case object L2 extends Metric[L2Distance] with Injection[L2Distance, ServiceDistance] {
-  override def distance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): L2Distance = {
-    fromAbsoluteDistance(MetricUtil.l2distance(embedding1, embedding2).toFloat)
+case object L2 extends  tr c[L2D stance] w h  nject on[L2D stance, Serv ceD stance] {
+  overr de def d stance(
+    embedd ng1: Embedd ngVector,
+    embedd ng2: Embedd ngVector
+  ): L2D stance = {
+    fromAbsoluteD stance( tr cUt l.l2d stance(embedd ng1, embedd ng2).toFloat)
   }
 
-  override def fromAbsoluteDistance(distance: Float): L2Distance = {
-    L2Distance(distance)
+  overr de def fromAbsoluteD stance(d stance: Float): L2D stance = {
+    L2D stance(d stance)
   }
 
-  override def absoluteDistance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): Float = distance(embedding1, embedding2).distance
+  overr de def absoluteD stance(
+    embedd ng1: Embedd ngVector,
+    embedd ng2: Embedd ngVector
+  ): Float = d stance(embedd ng1, embedd ng2).d stance
 
-  override def apply(scalaDistance: L2Distance): ServiceDistance = {
-    ServiceDistance.L2Distance(ServiceL2Distance(scalaDistance.distance))
+  overr de def apply(scalaD stance: L2D stance): Serv ceD stance = {
+    Serv ceD stance.L2D stance(Serv ceL2D stance(scalaD stance.d stance))
   }
 
-  override def invert(serviceDistance: ServiceDistance): Try[L2Distance] = {
-    serviceDistance match {
-      case ServiceDistance.L2Distance(l2Distance) =>
-        Success(L2Distance(l2Distance.distance.toFloat))
-      case distance =>
-        Failure(new IllegalArgumentException(s"Expected an l2 distance but got $distance"))
+  overr de def  nvert(serv ceD stance: Serv ceD stance): Try[L2D stance] = {
+    serv ceD stance match {
+      case Serv ceD stance.L2D stance(l2D stance) =>
+        Success(L2D stance(l2D stance.d stance.toFloat))
+      case d stance =>
+        Fa lure(new  llegalArgu ntExcept on(s"Expected an l2 d stance but got $d stance"))
     }
   }
 }
 
-case object Cosine extends Metric[CosineDistance] with Injection[CosineDistance, ServiceDistance] {
-  override def distance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): CosineDistance = {
-    fromAbsoluteDistance(1 - MetricUtil.cosineSimilarity(embedding1, embedding2))
+case object Cos ne extends  tr c[Cos neD stance] w h  nject on[Cos neD stance, Serv ceD stance] {
+  overr de def d stance(
+    embedd ng1: Embedd ngVector,
+    embedd ng2: Embedd ngVector
+  ): Cos neD stance = {
+    fromAbsoluteD stance(1 -  tr cUt l.cos neS m lar y(embedd ng1, embedd ng2))
   }
 
-  override def fromAbsoluteDistance(distance: Float): CosineDistance = {
-    CosineDistance(distance)
+  overr de def fromAbsoluteD stance(d stance: Float): Cos neD stance = {
+    Cos neD stance(d stance)
   }
 
-  override def absoluteDistance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): Float = distance(embedding1, embedding2).distance
+  overr de def absoluteD stance(
+    embedd ng1: Embedd ngVector,
+    embedd ng2: Embedd ngVector
+  ): Float = d stance(embedd ng1, embedd ng2).d stance
 
-  override def apply(scalaDistance: CosineDistance): ServiceDistance = {
-    ServiceDistance.CosineDistance(ServiceCosineDistance(scalaDistance.distance))
+  overr de def apply(scalaD stance: Cos neD stance): Serv ceD stance = {
+    Serv ceD stance.Cos neD stance(Serv ceCos neD stance(scalaD stance.d stance))
   }
 
-  override def invert(serviceDistance: ServiceDistance): Try[CosineDistance] = {
-    serviceDistance match {
-      case ServiceDistance.CosineDistance(cosineDistance) =>
-        Success(CosineDistance(cosineDistance.distance.toFloat))
-      case distance =>
-        Failure(new IllegalArgumentException(s"Expected a cosine distance but got $distance"))
+  overr de def  nvert(serv ceD stance: Serv ceD stance): Try[Cos neD stance] = {
+    serv ceD stance match {
+      case Serv ceD stance.Cos neD stance(cos neD stance) =>
+        Success(Cos neD stance(cos neD stance.d stance.toFloat))
+      case d stance =>
+        Fa lure(new  llegalArgu ntExcept on(s"Expected a cos ne d stance but got $d stance"))
     }
   }
 }
 
-case object InnerProduct
-    extends Metric[InnerProductDistance]
-    with Injection[InnerProductDistance, ServiceDistance] {
-  override def distance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): InnerProductDistance = {
-    fromAbsoluteDistance(1 - MetricUtil.dot(embedding1, embedding2))
+case object  nnerProduct
+    extends  tr c[ nnerProductD stance]
+    w h  nject on[ nnerProductD stance, Serv ceD stance] {
+  overr de def d stance(
+    embedd ng1: Embedd ngVector,
+    embedd ng2: Embedd ngVector
+  ):  nnerProductD stance = {
+    fromAbsoluteD stance(1 -  tr cUt l.dot(embedd ng1, embedd ng2))
   }
 
-  override def fromAbsoluteDistance(distance: Float): InnerProductDistance = {
-    InnerProductDistance(distance)
+  overr de def fromAbsoluteD stance(d stance: Float):  nnerProductD stance = {
+     nnerProductD stance(d stance)
   }
 
-  override def absoluteDistance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): Float = distance(embedding1, embedding2).distance
+  overr de def absoluteD stance(
+    embedd ng1: Embedd ngVector,
+    embedd ng2: Embedd ngVector
+  ): Float = d stance(embedd ng1, embedd ng2).d stance
 
-  override def apply(scalaDistance: InnerProductDistance): ServiceDistance = {
-    ServiceDistance.InnerProductDistance(ServiceInnerProductDistance(scalaDistance.distance))
+  overr de def apply(scalaD stance:  nnerProductD stance): Serv ceD stance = {
+    Serv ceD stance. nnerProductD stance(Serv ce nnerProductD stance(scalaD stance.d stance))
   }
 
-  override def invert(
-    serviceDistance: ServiceDistance
-  ): Try[InnerProductDistance] = {
-    serviceDistance match {
-      case ServiceDistance.InnerProductDistance(cosineDistance) =>
-        Success(InnerProductDistance(cosineDistance.distance.toFloat))
-      case distance =>
-        Failure(
-          new IllegalArgumentException(s"Expected a inner product distance but got $distance")
+  overr de def  nvert(
+    serv ceD stance: Serv ceD stance
+  ): Try[ nnerProductD stance] = {
+    serv ceD stance match {
+      case Serv ceD stance. nnerProductD stance(cos neD stance) =>
+        Success( nnerProductD stance(cos neD stance.d stance.toFloat))
+      case d stance =>
+        Fa lure(
+          new  llegalArgu ntExcept on(s"Expected a  nner product d stance but got $d stance")
         )
     }
   }
 }
 
-case object Edit extends Metric[EditDistance] with Injection[EditDistance, ServiceDistance] {
+case object Ed  extends  tr c[Ed D stance] w h  nject on[Ed D stance, Serv ceD stance] {
 
-  private def intDistance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector,
-    pos1: Int,
-    pos2: Int,
-    precomputedDistances: scala.collection.mutable.Map[(Int, Int), Int]
-  ): Int = {
-    // return the remaining characters of other String
-    if (pos1 == 0) return pos2
-    if (pos2 == 0) return pos1
+  pr vate def  ntD stance(
+    embedd ng1: Embedd ngVector,
+    embedd ng2: Embedd ngVector,
+    pos1:  nt,
+    pos2:  nt,
+    precomputedD stances: scala.collect on.mutable.Map[( nt,  nt),  nt]
+  ):  nt = {
+    // return t  rema n ng characters of ot r Str ng
+     f (pos1 == 0) return pos2
+     f (pos2 == 0) return pos1
 
-    // To check if the recursive tree
-    // for given n & m has already been executed
-    precomputedDistances.getOrElse(
+    // To c ck  f t  recurs ve tree
+    // for g ven n & m has already been executed
+    precomputedD stances.getOrElse(
       (pos1, pos2), {
-        // We might want to change this so that capitals are considered the same.
-        // Also maybe some characters that look similar should also be the same.
-        val computed = if (embedding1(pos1 - 1) == embedding2(pos2 - 1)) {
-          intDistance(embedding1, embedding2, pos1 - 1, pos2 - 1, precomputedDistances)
-        } else { // If characters are nt equal, we need to
-          // find the minimum cost out of all 3 operations.
-          val insert = intDistance(embedding1, embedding2, pos1, pos2 - 1, precomputedDistances)
-          val del = intDistance(embedding1, embedding2, pos1 - 1, pos2, precomputedDistances)
+        //   m ght want to change t  so that cap als are cons dered t  sa .
+        // Also maybe so  characters that look s m lar should also be t  sa .
+        val computed =  f (embedd ng1(pos1 - 1) == embedd ng2(pos2 - 1)) {
+           ntD stance(embedd ng1, embedd ng2, pos1 - 1, pos2 - 1, precomputedD stances)
+        } else { //  f characters are nt equal,   need to
+          // f nd t  m n mum cost out of all 3 operat ons.
+          val  nsert =  ntD stance(embedd ng1, embedd ng2, pos1, pos2 - 1, precomputedD stances)
+          val del =  ntD stance(embedd ng1, embedd ng2, pos1 - 1, pos2, precomputedD stances)
           val replace =
-            intDistance(embedding1, embedding2, pos1 - 1, pos2 - 1, precomputedDistances)
-          1 + Math.min(insert, Math.min(del, replace))
+             ntD stance(embedd ng1, embedd ng2, pos1 - 1, pos2 - 1, precomputedD stances)
+          1 + Math.m n( nsert, Math.m n(del, replace))
         }
-        precomputedDistances.put((pos1, pos2), computed)
+        precomputedD stances.put((pos1, pos2), computed)
         computed
       }
     )
   }
 
-  override def distance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): EditDistance = {
-    val editDistance = intDistance(
-      embedding1,
-      embedding2,
-      embedding1.length,
-      embedding2.length,
-      scala.collection.mutable.Map[(Int, Int), Int]()
+  overr de def d stance(
+    embedd ng1: Embedd ngVector,
+    embedd ng2: Embedd ngVector
+  ): Ed D stance = {
+    val ed D stance =  ntD stance(
+      embedd ng1,
+      embedd ng2,
+      embedd ng1.length,
+      embedd ng2.length,
+      scala.collect on.mutable.Map[( nt,  nt),  nt]()
     )
-    EditDistance(editDistance)
+    Ed D stance(ed D stance)
   }
 
-  override def fromAbsoluteDistance(distance: Float): EditDistance = {
-    EditDistance(distance.toInt)
+  overr de def fromAbsoluteD stance(d stance: Float): Ed D stance = {
+    Ed D stance(d stance.to nt)
   }
 
-  override def absoluteDistance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): Float = distance(embedding1, embedding2).distance
+  overr de def absoluteD stance(
+    embedd ng1: Embedd ngVector,
+    embedd ng2: Embedd ngVector
+  ): Float = d stance(embedd ng1, embedd ng2).d stance
 
-  override def apply(scalaDistance: EditDistance): ServiceDistance = {
-    ServiceDistance.EditDistance(ServiceEditDistance(scalaDistance.distance.toInt))
+  overr de def apply(scalaD stance: Ed D stance): Serv ceD stance = {
+    Serv ceD stance.Ed D stance(Serv ceEd D stance(scalaD stance.d stance.to nt))
   }
 
-  override def invert(
-    serviceDistance: ServiceDistance
-  ): Try[EditDistance] = {
-    serviceDistance match {
-      case ServiceDistance.EditDistance(cosineDistance) =>
-        Success(EditDistance(cosineDistance.distance.toFloat))
-      case distance =>
-        Failure(
-          new IllegalArgumentException(s"Expected a inner product distance but got $distance")
+  overr de def  nvert(
+    serv ceD stance: Serv ceD stance
+  ): Try[Ed D stance] = {
+    serv ceD stance match {
+      case Serv ceD stance.Ed D stance(cos neD stance) =>
+        Success(Ed D stance(cos neD stance.d stance.toFloat))
+      case d stance =>
+        Fa lure(
+          new  llegalArgu ntExcept on(s"Expected a  nner product d stance but got $d stance")
         )
     }
   }
 }
 
-object MetricUtil {
-  private[ann] def dot(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
+object  tr cUt l {
+  pr vate[ann] def dot(
+    embedd ng1: Embedd ngVector,
+    embedd ng2: Embedd ngVector
   ): Float = {
-    math.dotProduct(embedding1, embedding2)
+    math.dotProduct(embedd ng1, embedd ng2)
   }
 
-  private[ann] def l2distance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
+  pr vate[ann] def l2d stance(
+    embedd ng1: Embedd ngVector,
+    embedd ng2: Embedd ngVector
   ): Double = {
-    math.l2Distance(embedding1, embedding2)
+    math.l2D stance(embedd ng1, embedd ng2)
   }
 
-  private[ann] def cosineSimilarity(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
+  pr vate[ann] def cos neS m lar y(
+    embedd ng1: Embedd ngVector,
+    embedd ng2: Embedd ngVector
   ): Float = {
-    math.cosineSimilarity(embedding1, embedding2).toFloat
+    math.cos neS m lar y(embedd ng1, embedd ng2).toFloat
   }
 
-  private[ann] def norm(
-    embedding: EmbeddingVector
-  ): EmbeddingVector = {
-    math.normalize(embedding)
+  pr vate[ann] def norm(
+    embedd ng: Embedd ngVector
+  ): Embedd ngVector = {
+    math.normal ze(embedd ng)
   }
 }

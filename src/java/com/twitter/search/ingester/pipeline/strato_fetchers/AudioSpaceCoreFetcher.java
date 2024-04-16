@@ -1,54 +1,54 @@
-package com.twitter.search.ingester.pipeline.strato_fetchers;
+package com.tw ter.search. ngester.p pel ne.strato_fetc rs;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+ mport java.ut l.L st;
+ mport java.ut l.Set;
+ mport java.ut l.stream.Collectors;
 
-import com.twitter.periscope.api.thriftjava.AudioSpacesLookupContext;
-import com.twitter.stitch.Stitch;
-import com.twitter.strato.catalog.Fetch;
-import com.twitter.strato.client.Client;
-import com.twitter.strato.client.Fetcher;
-import com.twitter.strato.data.Conv;
-import com.twitter.strato.thrift.TBaseConv;
-import com.twitter.ubs.thriftjava.AudioSpace;
-import com.twitter.util.Future;
-import com.twitter.util.Try;
+ mport com.tw ter.per scope.ap .thr ftjava.Aud oSpacesLookupContext;
+ mport com.tw ter.st ch.St ch;
+ mport com.tw ter.strato.catalog.Fetch;
+ mport com.tw ter.strato.cl ent.Cl ent;
+ mport com.tw ter.strato.cl ent.Fetc r;
+ mport com.tw ter.strato.data.Conv;
+ mport com.tw ter.strato.thr ft.TBaseConv;
+ mport com.tw ter.ubs.thr ftjava.Aud oSpace;
+ mport com.tw ter.ut l.Future;
+ mport com.tw ter.ut l.Try;
 
 /**
- * Fetches from the audio space core strato column.
+ * Fetc s from t  aud o space core strato column.
  */
-public class AudioSpaceCoreFetcher {
-  private static final String CORE_STRATO_COLUMN = "";
+publ c class Aud oSpaceCoreFetc r {
+  pr vate stat c f nal Str ng CORE_STRATO_COLUMN = "";
 
-  private static final AudioSpacesLookupContext
-      EMPTY_AUDIO_LOOKUP_CONTEXT = new AudioSpacesLookupContext();
+  pr vate stat c f nal Aud oSpacesLookupContext
+      EMPTY_AUD O_LOOKUP_CONTEXT = new Aud oSpacesLookupContext();
 
-  private final Fetcher<String, AudioSpacesLookupContext, AudioSpace> fetcher;
+  pr vate f nal Fetc r<Str ng, Aud oSpacesLookupContext, Aud oSpace> fetc r;
 
-  public AudioSpaceCoreFetcher(Client stratoClient) {
-    fetcher = stratoClient.fetcher(
+  publ c Aud oSpaceCoreFetc r(Cl ent stratoCl ent) {
+    fetc r = stratoCl ent.fetc r(
         CORE_STRATO_COLUMN,
-        true, // enables checking types against catalog
-        Conv.stringConv(),
-        TBaseConv.forClass(AudioSpacesLookupContext.class),
-        TBaseConv.forClass(AudioSpace.class));
+        true, // enables c ck ng types aga nst catalog
+        Conv.str ngConv(),
+        TBaseConv.forClass(Aud oSpacesLookupContext.class),
+        TBaseConv.forClass(Aud oSpace.class));
   }
 
-  public Future<Fetch.Result<AudioSpace>> fetch(String spaceId) {
-    return Stitch.run(fetcher.fetch(spaceId, EMPTY_AUDIO_LOOKUP_CONTEXT));
+  publ c Future<Fetch.Result<Aud oSpace>> fetch(Str ng space d) {
+    return St ch.run(fetc r.fetch(space d, EMPTY_AUD O_LOOKUP_CONTEXT));
   }
 
   /**
-   * Use stitch to fetch mulitiple AudioSpace Objects at once
+   * Use st ch to fetch mul  ple Aud oSpace Objects at once
    */
-  public Future<List<Try<Fetch.Result<AudioSpace>>>> fetchBulkSpaces(Set<String> spaceIds) {
-    return Stitch.run(
-        Stitch.collectToTry(
-            spaceIds
+  publ c Future<L st<Try<Fetch.Result<Aud oSpace>>>> fetchBulkSpaces(Set<Str ng> space ds) {
+    return St ch.run(
+        St ch.collectToTry(
+            space ds
                 .stream()
-                .map(spaceId -> fetcher.fetch(spaceId, EMPTY_AUDIO_LOOKUP_CONTEXT))
-                .collect(Collectors.toList())
+                .map(space d -> fetc r.fetch(space d, EMPTY_AUD O_LOOKUP_CONTEXT))
+                .collect(Collectors.toL st())
         )
     );
   }

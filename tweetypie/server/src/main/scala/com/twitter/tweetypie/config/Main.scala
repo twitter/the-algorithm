@@ -1,314 +1,314 @@
-package com.twitter.tweetypie
-package config
+package com.tw ter.t etyp e
+package conf g
 
-import com.twitter.app.Flag
-import com.twitter.app.Flaggable
-import com.twitter.app.Flags
-import com.twitter.finagle.http.HttpMuxer
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.authorization.server.MtlsServerSessionTrackerFilter
-import com.twitter.finagle.mtls.server.MtlsStackServer._
-import com.twitter.finagle.param.Reporter
-import com.twitter.finagle.ssl.OpportunisticTls
-import com.twitter.finagle.util.NullReporterFactory
-import com.twitter.finagle.Thrift
-import com.twitter.finagle.ThriftMux
-import com.twitter.flockdb.client.thriftscala.Priority
-import com.twitter.inject.Injector
-import com.twitter.inject.annotations.{Flags => InjectFlags}
-import com.twitter.scrooge.ThriftEnum
-import com.twitter.scrooge.ThriftEnumObject
-import com.twitter.server.handler.IndexHandler
-import com.twitter.strato.catalog.Catalog
-import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.fed.server.StratoFedServer
-import com.twitter.strato.util.Ref
-import com.twitter.strato.warmup.Warmer
-import com.twitter.tweetypie.federated.StratoCatalogBuilder
-import com.twitter.tweetypie.federated.warmups.StratoCatalogWarmups
-import com.twitter.tweetypie.serverutil.ActivityService
-import java.net.InetSocketAddress
-import scala.reflect.ClassTag
+ mport com.tw ter.app.Flag
+ mport com.tw ter.app.Flaggable
+ mport com.tw ter.app.Flags
+ mport com.tw ter.f nagle.http.HttpMuxer
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.mtls.author zat on.server.MtlsServerSess onTrackerF lter
+ mport com.tw ter.f nagle.mtls.server.MtlsStackServer._
+ mport com.tw ter.f nagle.param.Reporter
+ mport com.tw ter.f nagle.ssl.Opportun st cTls
+ mport com.tw ter.f nagle.ut l.NullReporterFactory
+ mport com.tw ter.f nagle.Thr ft
+ mport com.tw ter.f nagle.Thr ftMux
+ mport com.tw ter.flockdb.cl ent.thr ftscala.Pr or y
+ mport com.tw ter. nject. njector
+ mport com.tw ter. nject.annotat ons.{Flags =>  njectFlags}
+ mport com.tw ter.scrooge.Thr ftEnum
+ mport com.tw ter.scrooge.Thr ftEnumObject
+ mport com.tw ter.server.handler. ndexHandler
+ mport com.tw ter.strato.catalog.Catalog
+ mport com.tw ter.strato.fed.StratoFed
+ mport com.tw ter.strato.fed.server.StratoFedServer
+ mport com.tw ter.strato.ut l.Ref
+ mport com.tw ter.strato.warmup.War r
+ mport com.tw ter.t etyp e.federated.StratoCatalogBu lder
+ mport com.tw ter.t etyp e.federated.warmups.StratoCatalogWarmups
+ mport com.tw ter.t etyp e.serverut l.Act v yServ ce
+ mport java.net. netSocketAddress
+ mport scala.reflect.ClassTag
 
-object Env extends Enumeration {
+object Env extends Enu rat on {
   val dev: Env.Value = Value
-  val staging: Env.Value = Value
+  val stag ng: Env.Value = Value
   val prod: Env.Value = Value
 }
 
-class TweetServiceFlags(flag: Flags, injector: => Injector) {
-  implicit object EnvFlaggable extends Flaggable[Env.Value] {
-    def parse(s: String): Env.Value =
+class T etServ ceFlags(flag: Flags,  njector: =>  njector) {
+   mpl c  object EnvFlaggable extends Flaggable[Env.Value] {
+    def parse(s: Str ng): Env.Value =
       s match {
-        // Handle Aurora env names that are different from tweetypie's names
+        // Handle Aurora env na s that are d fferent from t etyp e's na s
         case "devel" => Env.dev
-        case "test" => Env.staging
-        // Handle Tweetypie env names
-        case other => Env.withName(other)
+        case "test" => Env.stag ng
+        // Handle T etyp e env na s
+        case ot r => Env.w hNa (ot r)
       }
   }
 
-  val zone: Flag[String] =
+  val zone: Flag[Str ng] =
     flag("zone", "localhost", "One of: atla, pdxa, localhost, etc.")
 
   val env: Flag[Env.Value] =
-    flag("env", Env.dev, "One of: testbox, dev, staging, prod")
+    flag("env", Env.dev, "One of: testbox, dev, stag ng, prod")
 
-  val twemcacheDest: Flag[String] =
+  val t mcac Dest: Flag[Str ng] =
     flag(
-      "twemcacheDest",
-      "/s/cache/tweetypie:twemcaches",
-      "The Name for the tweetypie cache cluster."
+      "t mcac Dest",
+      "/s/cac /t etyp e:t mcac s",
+      "T  Na  for t  t etyp e cac  cluster."
     )
 
-  val deciderOverrides: Flag[Map[String, Boolean]] =
+  val dec derOverr des: Flag[Map[Str ng, Boolean]] =
     flag(
-      "deciderOverrides",
-      Map.empty[String, Boolean],
-      "Set deciders to constant values, overriding decider configuration files."
+      "dec derOverr des",
+      Map.empty[Str ng, Boolean],
+      "Set dec ders to constant values, overr d ng dec der conf gurat on f les."
     )(
-      // Unfortunately, the implicit Flaggable[Boolean] has a default
-      // value and Flaggable.ofMap[K, V] requires that the implicit
-      // Flaggable[V] not have a default. Even less fortunately, it
-      // doesn't say why. We're stuck with this.
-      Flaggable.ofMap(implicitly, Flaggable.mandatory(_.toBoolean))
+      // Unfortunately, t   mpl c  Flaggable[Boolean] has a default
+      // value and Flaggable.ofMap[K, V] requ res that t   mpl c 
+      // Flaggable[V] not have a default. Even less fortunately,  
+      // doesn't say why.  're stuck w h t .
+      Flaggable.ofMap( mpl c ly, Flaggable.mandatory(_.toBoolean))
     )
 
-  // "/decider.yml" comes from the resources included at
-  // "tweetypie/server/config", so you should not normally need to
-  // override this value. This flag is defined as a step toward making
-  // our command-line usage more similar to the standard
-  // twitter-server-internal flags.
-  def deciderBase(): String =
-    injector.instance[String](InjectFlags.named("decider.base"))
+  // "/dec der.yml" co s from t  res ces  ncluded at
+  // "t etyp e/server/conf g", so   should not normally need to
+  // overr de t  value. T  flag  s def ned as a step toward mak ng
+  //   command-l ne usage more s m lar to t  standard
+  // tw ter-server- nternal flags.
+  def dec derBase(): Str ng =
+     njector. nstance[Str ng]( njectFlags.na d("dec der.base"))
 
-  // Omitting a value for decider overlay flag causes the server to use
-  // only the static decider.
-  def deciderOverlay(): String =
-    injector.instance[String](InjectFlags.named("decider.overlay"))
+  // Om t ng a value for dec der overlay flag causes t  server to use
+  // only t  stat c dec der.
+  def dec derOverlay(): Str ng =
+     njector. nstance[Str ng]( njectFlags.na d("dec der.overlay"))
 
-  // Omitting a value for the VF decider overlay flag causes the server
-  // to use only the static decider.
-  val vfDeciderOverlay: Flag[String] =
+  // Om t ng a value for t  VF dec der overlay flag causes t  server
+  // to use only t  stat c dec der.
+  val vfDec derOverlay: Flag[Str ng] =
     flag(
-      "vf.decider.overlay",
-      "The location of the overlay decider configuration for Visibility Filtering")
+      "vf.dec der.overlay",
+      "T  locat on of t  overlay dec der conf gurat on for V s b l y F lter ng")
 
   /**
-   * Warmup Requests happen as part of the initialization process, before any real requests are
-   * processed. This prevents real requests from ever being served from a competely cold state
+   * Warmup Requests happen as part of t   n  al zat on process, before any real requests are
+   * processed. T  prevents real requests from ever be ng served from a competely cold state
    */
   val enableWarmupRequests: Flag[Boolean] =
     flag(
       "enableWarmupRequests",
       true,
-      """| warms up Tweetypie service by generating random requests
-         | to Tweetypie that are processed prior to the actual client requests """.stripMargin
+      """| warms up T etyp e serv ce by generat ng random requests
+         | to T etyp e that are processed pr or to t  actual cl ent requests """.str pMarg n
     )
 
-  val grayListRateLimit: Flag[Double] =
-    flag("graylistRateLimit", 5.0, "rate-limit for non-allowlisted clients")
+  val grayL stRateL m : Flag[Double] =
+    flag("grayl stRateL m ", 5.0, "rate-l m  for non-allowl sted cl ents")
 
-  val servicePort: Flag[InetSocketAddress] =
-    flag("service.port", "port for tweet-service thrift interface")
+  val serv cePort: Flag[ netSocketAddress] =
+    flag("serv ce.port", "port for t et-serv ce thr ft  nterface")
 
-  val clientId: Flag[String] =
-    flag("clientId", "tweetypie.staging", "clientId to send in requests")
+  val cl ent d: Flag[Str ng] =
+    flag("cl ent d", "t etyp e.stag ng", "cl ent d to send  n requests")
 
-  val allowlist: Flag[Boolean] =
-    flag("allowlist", true, "enforce client allowlist")
+  val allowl st: Flag[Boolean] =
+    flag("allowl st", true, "enforce cl ent allowl st")
 
-  val clientHostStats: Flag[Boolean] =
-    flag("clientHostStats", false, "enable per client host stats")
+  val cl entHostStats: Flag[Boolean] =
+    flag("cl entHostStats", false, "enable per cl ent host stats")
 
-  val withCache: Flag[Boolean] =
-    flag("withCache", true, "if set to false, Tweetypie will launch without memcache")
+  val w hCac : Flag[Boolean] =
+    flag("w hCac ", true, " f set to false, T etyp e w ll launch w hout  mcac ")
 
   /**
-   * Make any [[ThriftEnum]] value parseable as a [[Flag]] value. This
-   * will parse case-insensitive values that match the unqualified
-   * names of the values of the enumeration, in the manner of
-   * [[ThriftEnum]]'s `valueOf` method.
+   * Make any [[Thr ftEnum]] value parseable as a [[Flag]] value. T 
+   * w ll parse case- nsens  ve values that match t  unqual f ed
+   * na s of t  values of t  enu rat on,  n t  manner of
+   * [[Thr ftEnum]]'s `valueOf`  thod.
    *
-   * Consider a [[ThriftEnum]] generated from the following Thrift IDL snippet:
+   * Cons der a [[Thr ftEnum]] generated from t  follow ng Thr ft  DL sn ppet:
    *
    * {{{
-   * enum Priority {
+   * enum Pr or y {
    *   Low = 1
    *   Throttled = 2
-   *   High = 3
+   *   H gh = 3
    * }
    * }}}
    *
-   * To enable defining flags that specify one of these enum values:
+   * To enable def n ng flags that spec fy one of t se enum values:
    *
    * {{{
-   * implicit val flaggablePriority: Flaggable[Priority] = flaggableThriftEnum(Priority)
+   *  mpl c  val flaggablePr or y: Flaggable[Pr or y] = flaggableThr ftEnum(Pr or y)
    * }}}
    *
-   * In this example, the enumeration value `Priority.Low` can be
-   * represented as the string "Low", "low", or "LOW".
+   *  n t  example, t  enu rat on value `Pr or y.Low` can be
+   * represented as t  str ng "Low", "low", or "LOW".
    */
-  def flaggableThriftEnum[T <: ThriftEnum: ClassTag](enum: ThriftEnumObject[T]): Flaggable[T] =
-    Flaggable.mandatory[T] { stringValue: String =>
+  def flaggableThr ftEnum[T <: Thr ftEnum: ClassTag](enum: Thr ftEnumObject[T]): Flaggable[T] =
+    Flaggable.mandatory[T] { str ngValue: Str ng =>
       enum
-        .valueOf(stringValue)
+        .valueOf(str ngValue)
         .getOrElse {
-          val validValues = enum.list.map(_.name).mkString(", ")
-          throw new IllegalArgumentException(
-            s"Invalid value ${stringValue}. Valid values include: ${validValues}"
+          val val dValues = enum.l st.map(_.na ).mkStr ng(", ")
+          throw new  llegalArgu ntExcept on(
+            s" nval d value ${str ngValue}. Val d values  nclude: ${val dValues}"
           )
         }
     }
 
-  implicit val flaggablePriority: Flaggable[Priority] = flaggableThriftEnum(Priority)
+   mpl c  val flaggablePr or y: Flaggable[Pr or y] = flaggableThr ftEnum(Pr or y)
 
-  val backgroundIndexingPriority: Flag[Priority] =
+  val background ndex ngPr or y: Flag[Pr or y] =
     flag(
-      "backgroundIndexingPriority",
-      Priority.Low,
-      "specifies the queue to use for \"background\" tflock operations, such as removing edges " +
-        "for deleted Tweets. This exists for testing scenarios, when it is useful to see the " +
-        "effects of background indexing operations sooner. In production, this should always be " +
-        "set to \"low\" (the default)."
+      "background ndex ngPr or y",
+      Pr or y.Low,
+      "spec f es t  queue to use for \"background\" tflock operat ons, such as remov ng edges " +
+        "for deleted T ets. T  ex sts for test ng scenar os, w n    s useful to see t  " +
+        "effects of background  ndex ng operat ons sooner.  n product on, t  should always be " +
+        "set to \"low\" (t  default)."
     )
 
-  val tflockPageSize: Flag[Int] =
-    flag("tflockPageSize", 1000, "Number of items to return in each page when querying tflock")
+  val tflockPageS ze: Flag[ nt] =
+    flag("tflockPageS ze", 1000, "Number of  ems to return  n each page w n query ng tflock")
 
-  val enableInProcessCache: Flag[Boolean] =
+  val enable nProcessCac : Flag[Boolean] =
     flag(
-      "enableInProcessCache",
+      "enable nProcessCac ",
       true,
-      "if set to false, Tweetypie will not use the in-process cache"
+      " f set to false, T etyp e w ll not use t   n-process cac "
     )
 
-  val inProcessCacheSize: Flag[Int] =
-    flag("inProcessCacheSize", 1700, "maximum items in in-process cache")
+  val  nProcessCac S ze: Flag[ nt] =
+    flag(" nProcessCac S ze", 1700, "max mum  ems  n  n-process cac ")
 
-  val inProcessCacheTtlMs: Flag[Int] =
-    flag("inProcessCacheTtlMs", 10000, "milliseconds that hot keys are stored in memory")
+  val  nProcessCac TtlMs: Flag[ nt] =
+    flag(" nProcessCac TtlMs", 10000, "m ll seconds that hot keys are stored  n  mory")
 
-  val memcachePendingRequestLimit: Flag[Int] =
+  val  mcac Pend ngRequestL m : Flag[ nt] =
     flag(
-      "memcachePendingRequestLimit",
+      " mcac Pend ngRequestL m ",
       100,
-      "Number of requests that can be queued on a single memcache connection (4 per cache server)"
+      "Number of requests that can be queued on a s ngle  mcac  connect on (4 per cac  server)"
     )
 
-  val instanceId: Flag[Int] =
+  val  nstance d: Flag[ nt] =
     flag(
-      "configbus.instanceId",
+      "conf gbus. nstance d",
       -1,
-      "InstanceId of the tweetypie service instance for staged configuration distribution"
+      " nstance d of t  t etyp e serv ce  nstance for staged conf gurat on d str but on"
     )
 
-  val instanceCount: Flag[Int] =
+  val  nstanceCount: Flag[ nt] =
     flag(
-      "configbus.instanceCount",
+      "conf gbus. nstanceCount",
       -1,
-      "Total number of tweetypie service instances for staged configuration distribution"
+      "Total number of t etyp e serv ce  nstances for staged conf gurat on d str but on"
     )
 
-  def serviceIdentifier(): ServiceIdentifier =
-    injector.instance[ServiceIdentifier]
+  def serv ce dent f er(): Serv ce dent f er =
+     njector. nstance[Serv ce dent f er]
 
-  val enableReplication: Flag[Boolean] =
+  val enableRepl cat on: Flag[Boolean] =
     flag(
-      "enableReplication",
+      "enableRepl cat on",
       true,
-      "Enable replication of reads (configurable via tweetypie_replicate_reads decider) and writes (100%) via DRPC"
+      "Enable repl cat on of reads (conf gurable v a t etyp e_repl cate_reads dec der) and wr es (100%) v a DRPC"
     )
 
-  val simulateDeferredrpcCallbacks: Flag[Boolean] =
+  val s mulateDeferredrpcCallbacks: Flag[Boolean] =
     flag(
-      "simulateDeferredrpcCallbacks",
+      "s mulateDeferredrpcCallbacks",
       false,
-      """|For async write path, call back into current instance instead of via DRPC.
-         |This is used for test and devel instances so we can ensure the test traffic
-         |is going to the test instance.""".stripMargin
+      """|For async wr e path, call back  nto current  nstance  nstead of v a DRPC.
+         |T   s used for test and devel  nstances so   can ensure t  test traff c
+         | s go ng to t  test  nstance.""".str pMarg n
     )
 
-  val shortCircuitLikelyPartialTweetReadsMs: Flag[Int] =
+  val shortC rcu L kelyPart alT etReadsMs: Flag[ nt] =
     flag(
-      "shortCircuitLikelyPartialTweetReadsMs",
+      "shortC rcu L kelyPart alT etReadsMs",
       1500,
-      """|Specifies a number of milliseconds before which we will short-circuit likely
-         |partial reads from MH and return a NotFound tweet response state. After
-         |experimenting we went with 1500 ms.""".stripMargin
+      """|Spec f es a number of m ll seconds before wh ch   w ll short-c rcu  l kely
+         |part al reads from MH and return a NotFound t et response state. After
+         |exper  nt ng    nt w h 1500 ms.""".str pMarg n
     )
 
-  val stringCenterProjects: Flag[Seq[String]] =
+  val str ngCenterProjects: Flag[Seq[Str ng]] =
     flag(
-      "stringcenter.projects",
-      Seq.empty[String],
-      "String Center project names, comma separated")(Flaggable.ofSeq(Flaggable.ofString))
+      "str ngcenter.projects",
+      Seq.empty[Str ng],
+      "Str ng Center project na s, comma separated")(Flaggable.ofSeq(Flaggable.ofStr ng))
 
-  val languagesConfig: Flag[String] =
-    flag("international.languages", "Supported languages config file")
+  val languagesConf g: Flag[Str ng] =
+    flag(" nternat onal.languages", "Supported languages conf g f le")
 }
 
-class TweetypieMain extends StratoFedServer {
-  override def dest: String = "/s/tweetypie/tweetypie:federated"
+class T etyp eMa n extends StratoFedServer {
+  overr de def dest: Str ng = "/s/t etyp e/t etyp e:federated"
 
-  val tweetServiceFlags: TweetServiceFlags = new TweetServiceFlags(flag, injector)
+  val t etServ ceFlags: T etServ ceFlags = new T etServ ceFlags(flag,  njector)
 
-  // display all the registered HttpMuxer handlers
-  HttpMuxer.addHandler("", new IndexHandler)
+  // d splay all t  reg stered HttpMuxer handlers
+  HttpMuxer.addHandler("", new  ndexHandler)
 
-  private[this] lazy val serverBuilder = {
-    val settings = new TweetServiceSettings(tweetServiceFlags)
-    val serverBuilder = new TweetServerBuilder(settings)
+  pr vate[t ] lazy val serverBu lder = {
+    val sett ngs = new T etServ ceSett ngs(t etServ ceFlags)
+    val serverBu lder = new T etServerBu lder(sett ngs)
 
-    val mtlsSessionTrackerFilter =
-      new MtlsServerSessionTrackerFilter[Array[Byte], Array[Byte]](statsReceiver)
+    val mtlsSess onTrackerF lter =
+      new MtlsServerSess onTrackerF lter[Array[Byte], Array[Byte]](statsRece ver)
 
-    val mtlsTrackedService = mtlsSessionTrackerFilter.andThen(ActivityService(serverBuilder.build))
+    val mtlsTrackedServ ce = mtlsSess onTrackerF lter.andT n(Act v yServ ce(serverBu lder.bu ld))
 
-    val thriftMuxServer = ThriftMux.server
-    // by default, finagle logs exceptions to chickadee, which is deprecated and
-    // basically unused.  to avoid wasted overhead, we explicitly disable the reporter.
-      .configured(Reporter(NullReporterFactory))
-      .withLabel("tweetypie")
-      .withMutualTls(tweetServiceFlags.serviceIdentifier())
-      .withOpportunisticTls(OpportunisticTls.Required)
-      .configured(Thrift.param.ServiceClass(Some(classOf[ThriftTweetService])))
-      .serve(tweetServiceFlags.servicePort(), mtlsTrackedService)
+    val thr ftMuxServer = Thr ftMux.server
+    // by default, f nagle logs except ons to ch ckadee, wh ch  s deprecated and
+    // bas cally unused.  to avo d wasted over ad,   expl c ly d sable t  reporter.
+      .conf gured(Reporter(NullReporterFactory))
+      .w hLabel("t etyp e")
+      .w hMutualTls(t etServ ceFlags.serv ce dent f er())
+      .w hOpportun st cTls(Opportun st cTls.Requ red)
+      .conf gured(Thr ft.param.Serv ceClass(So (classOf[Thr ftT etServ ce])))
+      .serve(t etServ ceFlags.serv cePort(), mtlsTrackedServ ce)
 
-    closeOnExit(thriftMuxServer)
-    await(thriftMuxServer)
+    closeOnEx (thr ftMuxServer)
+    awa (thr ftMuxServer)
 
-    serverBuilder
+    serverBu lder
   }
 
-  override def configureRefCatalog(
+  overr de def conf gureRefCatalog(
     catalog: Ref[Catalog[StratoFed.Column]]
   ): Ref[Catalog[StratoFed.Column]] =
     catalog
-      .join {
+      .jo n {
         Ref(
-          serverBuilder.stratoTweetService.flatMap { tweetService =>
-            StratoCatalogBuilder.catalog(
-              tweetService,
-              serverBuilder.backendClients.stratoserverClient,
-              serverBuilder.backendClients.gizmoduck.getById,
-              serverBuilder.backendClients.callbackPromotedContentLogger,
-              statsReceiver,
-              serverBuilder.deciderGates.enableCommunityTweetCreates,
+          serverBu lder.stratoT etServ ce.flatMap { t etServ ce =>
+            StratoCatalogBu lder.catalog(
+              t etServ ce,
+              serverBu lder.backendCl ents.stratoserverCl ent,
+              serverBu lder.backendCl ents.g zmoduck.getBy d,
+              serverBu lder.backendCl ents.callbackPromotedContentLogger,
+              statsRece ver,
+              serverBu lder.dec derGates.enableCommun yT etCreates,
             )
           }
         )
       }
       .map { case (l, r) => l ++ r }
 
-  override def configureWarmer(warmer: Warmer): Unit = {
-    new TweetServiceSettings(tweetServiceFlags).warmupRequestsSettings.foreach { warmupSettings =>
-      warmer.add(
-        "tweetypie strato catalog",
-        () => StratoCatalogWarmups.warmup(warmupSettings, composedOps)
+  overr de def conf gureWar r(war r: War r): Un  = {
+    new T etServ ceSett ngs(t etServ ceFlags).warmupRequestsSett ngs.foreach { warmupSett ngs =>
+      war r.add(
+        "t etyp e strato catalog",
+        () => StratoCatalogWarmups.warmup(warmupSett ngs, composedOps)
       )
     }
   }
 }
 
-object Main extends TweetypieMain
+object Ma n extends T etyp eMa n

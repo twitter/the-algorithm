@@ -1,22 +1,22 @@
-package com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.ppm _locale_follow
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
-class PPMILocaleFollowSourceParams {}
-object PPMILocaleFollowSourceParams {
-  case object LocaleToExcludeFromRecommendation
-      extends FSParam[Seq[String]](
-        "ppmilocale_follow_source_locales_to_exclude_from_recommendation",
+class PPM LocaleFollowS ceParams {}
+object PPM LocaleFollowS ceParams {
+  case object LocaleToExcludeFromRecom ndat on
+      extends FSParam[Seq[Str ng]](
+        "ppm locale_follow_s ce_locales_to_exclude_from_recom ndat on",
         default = Seq.empty)
 
-  case object CandidateSourceEnabled
-      extends FSParam[Boolean]("ppmilocale_follow_source_enabled", true)
+  case object Cand dateS ceEnabled
+      extends FSParam[Boolean]("ppm locale_follow_s ce_enabled", true)
 
-  case object CandidateSourceWeight
+  case object Cand dateS ce  ght
       extends FSBoundedParam[Double](
-        "ppmilocale_follow_source_candidate_source_weight",
+        "ppm locale_follow_s ce_cand date_s ce_  ght",
         default = 1,
-        min = 0.001,
+        m n = 0.001,
         max = 2000)
 }

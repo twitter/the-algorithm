@@ -1,5 +1,5 @@
-package com.twitter.unified_user_actions.service.module
+package com.tw ter.un f ed_user_act ons.serv ce.module
 
-case class TopicsMapping(
-  all: String = "unified_user_actions",
-  engagementsOnly: String = "unified_user_actions_engagements")
+case class Top csMapp ng(
+  all: Str ng = "un f ed_user_act ons",
+  engage ntsOnly: Str ng = "un f ed_user_act ons_engage nts")

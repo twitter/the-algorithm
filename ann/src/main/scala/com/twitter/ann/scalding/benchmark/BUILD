@@ -1,56 +1,56 @@
-scala_library(
-    name = "benchmark",
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    na  = "benchmark",
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":user_item_knn-scala",
-        "3rdparty/src/jvm/com/twitter/scalding:args",
-        "3rdparty/src/jvm/com/twitter/scalding:core",
-        "3rdparty/src/jvm/com/twitter/scalding:date",
-        "ann/src/main/scala/com/twitter/ann/common",
-        "ann/src/main/scala/com/twitter/ann/scalding/offline",
-        "src/scala/com/twitter/scalding_internal/dalv2",
-        "src/scala/com/twitter/scalding_internal/job",
-        "src/scala/com/twitter/scalding_internal/job/analytics_batch",
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
+    dependenc es = [
+        ":user_ em_knn-scala",
+        "3rdparty/src/jvm/com/tw ter/scald ng:args",
+        "3rdparty/src/jvm/com/tw ter/scald ng:core",
+        "3rdparty/src/jvm/com/tw ter/scald ng:date",
+        "ann/src/ma n/scala/com/tw ter/ann/common",
+        "ann/src/ma n/scala/com/tw ter/ann/scald ng/offl ne",
+        "src/scala/com/tw ter/scald ng_ nternal/dalv2",
+        "src/scala/com/tw ter/scald ng_ nternal/job",
+        "src/scala/com/tw ter/scald ng_ nternal/job/analyt cs_batch",
+        "src/scala/com/tw ter/scald ng_ nternal/mult format/format",
     ],
 )
 
-hadoop_binary(
-    name = "benchmark-adhoc",
-    main = "com.twitter.scalding.Tool",
+hadoop_b nary(
+    na  = "benchmark-adhoc",
+    ma n = "com.tw ter.scald ng.Tool",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
+    dependenc es = [
         ":benchmark",
         "3rdparty/jvm/org/slf4j:slf4j-jdk14",
     ],
 )
 
 create_datasets(
-    base_name = "user_item_knn",
-    description = "List of the top recommendations per search entity (user)",
-    java_schema = "com.twitter.ann.knn.thriftjava.Knn",
+    base_na  = "user_ em_knn",
+    descr pt on = "L st of t  top recom ndat ons per search ent y (user)",
+    java_sc ma = "com.tw ter.ann.knn.thr ftjava.Knn",
     platform = "java8",
     role = "cortex-mlx",
-    scala_schema = "com.twitter.ann.knn.thriftscala.Knn",
-    segment_type = "partitioned",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "ann/src/main/thrift/com/twitter/ann/knn:thrift-java",
+    scala_sc ma = "com.tw ter.ann.knn.thr ftscala.Knn",
+    seg nt_type = "part  oned",
+    tags = ["bazel-compat ble"],
+    java_dependenc es = [
+        "ann/src/ma n/thr ft/com/tw ter/ann/knn:thr ft-java",
     ],
-    scala_dependencies = [
-        "ann/src/main/thrift/com/twitter/ann/knn:thrift-scala",
+    scala_dependenc es = [
+        "ann/src/ma n/thr ft/com/tw ter/ann/knn:thr ft-scala",
     ],
 )

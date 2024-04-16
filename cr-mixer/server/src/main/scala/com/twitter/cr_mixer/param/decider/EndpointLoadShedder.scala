@@ -1,57 +1,57 @@
-package com.twitter.cr_mixer.param.decider
+package com.tw ter.cr_m xer.param.dec der
 
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Future
-import javax.inject.Inject
-import scala.util.control.NoStackTrace
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.dec der.RandomRec p ent
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ut l.Future
+ mport javax. nject. nject
+ mport scala.ut l.control.NoStackTrace
 
 /*
-  Provides deciders-controlled load shedding for a given Product from a given endpoint.
-  The format of the decider keys is:
+  Prov des dec ders-controlled load s dd ng for a g ven Product from a g ven endpo nt.
+  T  format of t  dec der keys  s:
 
-    enable_loadshedding_<endpoint name>_<product name>
+    enable_loads dd ng_<endpo nt na >_<product na >
   E.g.:
-    enable_loadshedding_getTweetRecommendations_Notifications
+    enable_loads dd ng_getT etRecom ndat ons_Not f cat ons
 
-  Deciders are fractional, so a value of 50.00 will drop 50% of responses. If a decider key is not
-  defined for a particular endpoint/product combination, those requests will always be
+  Dec ders are fract onal, so a value of 50.00 w ll drop 50% of responses.  f a dec der key  s not
+  def ned for a part cular endpo nt/product comb nat on, those requests w ll always be
   served.
 
-  We should therefore aim to define keys for the endpoints/product we care most about in decider.yml,
-  so that we can control them during incidents.
+    should t refore a m to def ne keys for t  endpo nts/product   care most about  n dec der.yml,
+  so that   can control t m dur ng  nc dents.
  */
-case class EndpointLoadShedder @Inject() (
-  decider: Decider,
-  statsReceiver: StatsReceiver) {
-  import EndpointLoadShedder._
+case class Endpo ntLoadS dder @ nject() (
+  dec der: Dec der,
+  statsRece ver: StatsRece ver) {
+   mport Endpo ntLoadS dder._
 
-  // Fall back to False for any undefined key
-  private val deciderWithFalseFallback: Decider = decider.orElse(Decider.False)
-  private val keyPrefix = "enable_loadshedding"
-  private val scopedStats = statsReceiver.scope("EndpointLoadShedder")
+  // Fall back to False for any undef ned key
+  pr vate val dec derW hFalseFallback: Dec der = dec der.orElse(Dec der.False)
+  pr vate val keyPref x = "enable_loads dd ng"
+  pr vate val scopedStats = statsRece ver.scope("Endpo ntLoadS dder")
 
-  def apply[T](endpointName: String, product: String)(serve: => Future[T]): Future[T] = {
+  def apply[T](endpo ntNa : Str ng, product: Str ng)(serve: => Future[T]): Future[T] = {
     /*
-    Checks if either per-product or top-level load shedding is enabled
-    If both are enabled at different percentages, load shedding will not be perfectly calculable due
-    to salting of hash (i.e. 25% load shed for Product x + 25% load shed for overall does not
-    result in 50% load shed for x)
+    C cks  f e  r per-product or top-level load s dd ng  s enabled
+     f both are enabled at d fferent percentages, load s dd ng w ll not be perfectly calculable due
+    to salt ng of hash ( .e. 25% load s d for Product x + 25% load s d for overall does not
+    result  n 50% load s d for x)
      */
-    val keyTyped = s"${keyPrefix}_${endpointName}_$product"
-    val keyTopLevel = s"${keyPrefix}_${endpointName}"
+    val keyTyped = s"${keyPref x}_${endpo ntNa }_$product"
+    val keyTopLevel = s"${keyPref x}_${endpo ntNa }"
 
-    if (deciderWithFalseFallback.isAvailable(keyTopLevel, recipient = Some(RandomRecipient))) {
-      scopedStats.counter(keyTopLevel).incr
-      Future.exception(LoadSheddingException)
-    } else if (deciderWithFalseFallback.isAvailable(keyTyped, recipient = Some(RandomRecipient))) {
-      scopedStats.counter(keyTyped).incr
-      Future.exception(LoadSheddingException)
+     f (dec derW hFalseFallback. sAva lable(keyTopLevel, rec p ent = So (RandomRec p ent))) {
+      scopedStats.counter(keyTopLevel). ncr
+      Future.except on(LoadS dd ngExcept on)
+    } else  f (dec derW hFalseFallback. sAva lable(keyTyped, rec p ent = So (RandomRec p ent))) {
+      scopedStats.counter(keyTyped). ncr
+      Future.except on(LoadS dd ngExcept on)
     } else serve
   }
 }
 
-object EndpointLoadShedder {
-  object LoadSheddingException extends Exception with NoStackTrace
+object Endpo ntLoadS dder {
+  object LoadS dd ngExcept on extends Except on w h NoStackTrace
 }

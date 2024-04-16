@@ -1,19 +1,19 @@
-package com.twitter.search.ingester.pipeline.util;
+package com.tw ter.search. ngester.p pel ne.ut l;
 
-public class PipelineStageException extends Exception {
-  public PipelineStageException(Object location, String message, Throwable cause) {
-    super(message + " In Stage : " + location.getClass(), cause);
+publ c class P pel neStageExcept on extends Except on {
+  publ c P pel neStageExcept on(Object locat on, Str ng  ssage, Throwable cause) {
+    super( ssage + "  n Stage : " + locat on.getClass(), cause);
   }
 
-  public PipelineStageException(Throwable cause) {
+  publ c P pel neStageExcept on(Throwable cause) {
     super(cause);
   }
 
-  public PipelineStageException(String message) {
-    super(message);
+  publ c P pel neStageExcept on(Str ng  ssage) {
+    super( ssage);
   }
 
-  public PipelineStageException(Object location, String message) {
-    super(message + " In Stage : " + location.getClass());
+  publ c P pel neStageExcept on(Object locat on, Str ng  ssage) {
+    super( ssage + "  n Stage : " + locat on.getClass());
   }
 }

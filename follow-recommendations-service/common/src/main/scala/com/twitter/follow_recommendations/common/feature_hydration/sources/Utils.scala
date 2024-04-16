@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+package com.tw ter.follow_recom ndat ons.common.feature_hydrat on.s ces
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.IRecordOneToOneAdapter
-import scala.util.Random
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap . RecordOneToOneAdapter
+ mport scala.ut l.Random
 
 /**
- * Helper functions for FeatureStoreSource operations in FRS are available here.
+ *  lper funct ons for FeatureStoreS ce operat ons  n FRS are ava lable  re.
  */
-object Utils {
+object Ut ls {
 
-  private val EarlyExpiration = 0.2
+  pr vate val EarlyExp rat on = 0.2
 
-  private[common] def adaptAdditionalFeaturesToDataRecord(
+  pr vate[common] def adaptAdd  onalFeaturesToDataRecord(
     record: DataRecord,
-    adapterStats: StatsReceiver,
-    featureAdapters: Seq[IRecordOneToOneAdapter[DataRecord]]
+    adapterStats: StatsRece ver,
+    featureAdapters: Seq[ RecordOneToOneAdapter[DataRecord]]
   ): DataRecord = {
-    featureAdapters.foldRight(record) { (adapter, record) =>
-      adapterStats.counter(adapter.getClass.getSimpleName).incr()
+    featureAdapters.foldR ght(record) { (adapter, record) =>
+      adapterStats.counter(adapter.getClass.getS mpleNa ). ncr()
       adapter.adaptToDataRecord(record)
     }
   }
 
-  // To avoid a cache stampede. See https://en.wikipedia.org/wiki/Cache_stampede
-  private[common] def randomizedTTL(ttl: Long): Long = {
-    (ttl - ttl * EarlyExpiration * Random.nextDouble()).toLong
+  // To avo d a cac  stampede. See https://en.w k ped a.org/w k /Cac _stampede
+  pr vate[common] def random zedTTL(ttl: Long): Long = {
+    (ttl - ttl * EarlyExp rat on * Random.nextDouble()).toLong
   }
 }

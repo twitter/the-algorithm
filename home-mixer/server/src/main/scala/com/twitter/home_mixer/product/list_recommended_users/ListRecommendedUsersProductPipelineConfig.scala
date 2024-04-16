@@ -1,102 +1,102 @@
-package com.twitter.home_mixer.product.list_recommended_users
+package com.tw ter.ho _m xer.product.l st_recom nded_users
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.marshaller.timelines.RecommendedUsersCursorUnmarshaller
-import com.twitter.home_mixer.model.request.HomeMixerRequest
-import com.twitter.home_mixer.model.request.ListRecommendedUsersProduct
-import com.twitter.home_mixer.model.request.ListRecommendedUsersProductContext
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersQuery
-import com.twitter.home_mixer.product.list_recommended_users.param.ListRecommendedUsersParam.ServerMaxResultsParam
-import com.twitter.home_mixer.product.list_recommended_users.param.ListRecommendedUsersParamConfig
-import com.twitter.home_mixer.service.HomeMixerAccessPolicy.DefaultHomeMixerAccessPolicy
-import com.twitter.home_mixer.service.HomeMixerAlertConfig.DefaultNotificationGroup
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfBelow
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfLatencyAbove
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.common.alert.LatencyAlert
-import com.twitter.product_mixer.core.functional_component.common.alert.P99
-import com.twitter.product_mixer.core.functional_component.common.alert.SuccessRateAlert
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request
-import com.twitter.product_mixer.core.pipeline.PipelineConfig
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineConfig
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.timelines.configapi.Params
-import com.twitter.timelines.render.{thriftscala => urt}
-import com.twitter.timelines.util.RequestCursorSerializer
-import com.twitter.util.Try
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.ho _m xer.marshaller.t  l nes.Recom ndedUsersCursorUnmarshaller
+ mport com.tw ter.ho _m xer.model.request.Ho M xerRequest
+ mport com.tw ter.ho _m xer.model.request.L stRecom ndedUsersProduct
+ mport com.tw ter.ho _m xer.model.request.L stRecom ndedUsersProductContext
+ mport com.tw ter.ho _m xer.product.l st_recom nded_users.model.L stRecom ndedUsersQuery
+ mport com.tw ter.ho _m xer.product.l st_recom nded_users.param.L stRecom ndedUsersParam.ServerMaxResultsParam
+ mport com.tw ter.ho _m xer.product.l st_recom nded_users.param.L stRecom ndedUsersParamConf g
+ mport com.tw ter.ho _m xer.serv ce.Ho M xerAccessPol cy.DefaultHo M xerAccessPol cy
+ mport com.tw ter.ho _m xer.serv ce.Ho M xerAlertConf g.DefaultNot f cat onGroup
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.cursor.UrtCursorSer al zer
+ mport com.tw ter.product_m xer.core.funct onal_component.common.access_pol cy.AccessPol cy
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.pred cate.Tr gger fBelow
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.pred cate.Tr gger fLatencyAbove
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.LatencyAlert
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.P99
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.SuccessRateAlert
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.ProductP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.request
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neConf g
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.BadRequest
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.product.ProductP pel neConf g
+ mport com.tw ter.product_m xer.core.product.ProductParamConf g
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport com.tw ter.t  l nes.ut l.RequestCursorSer al zer
+ mport com.tw ter.ut l.Try
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ListRecommendedUsersProductPipelineConfig @Inject() (
-  listRecommendedUsersMixerPipelineConfig: ListRecommendedUsersMixerPipelineConfig,
-  listRecommendedUsersParamConfig: ListRecommendedUsersParamConfig)
-    extends ProductPipelineConfig[
-      HomeMixerRequest,
-      ListRecommendedUsersQuery,
-      urt.TimelineResponse
+@S ngleton
+class L stRecom ndedUsersProductP pel neConf g @ nject() (
+  l stRecom ndedUsersM xerP pel neConf g: L stRecom ndedUsersM xerP pel neConf g,
+  l stRecom ndedUsersParamConf g: L stRecom ndedUsersParamConf g)
+    extends ProductP pel neConf g[
+      Ho M xerRequest,
+      L stRecom ndedUsersQuery,
+      urt.T  l neResponse
     ] {
 
-  override val identifier: ProductPipelineIdentifier =
-    ProductPipelineIdentifier("ListRecommendedUsers")
-  override val product: request.Product = ListRecommendedUsersProduct
-  override val paramConfig: ProductParamConfig = listRecommendedUsersParamConfig
+  overr de val  dent f er: ProductP pel ne dent f er =
+    ProductP pel ne dent f er("L stRecom ndedUsers")
+  overr de val product: request.Product = L stRecom ndedUsersProduct
+  overr de val paramConf g: ProductParamConf g = l stRecom ndedUsersParamConf g
 
-  override def pipelineQueryTransformer(
-    request: HomeMixerRequest,
+  overr de def p pel neQueryTransfor r(
+    request: Ho M xerRequest,
     params: Params
-  ): ListRecommendedUsersQuery = {
+  ): L stRecom ndedUsersQuery = {
     val context = request.productContext match {
-      case Some(context: ListRecommendedUsersProductContext) => context
-      case _ => throw PipelineFailure(BadRequest, "ListRecommendedUsersProductContext not found")
+      case So (context: L stRecom ndedUsersProductContext) => context
+      case _ => throw P pel neFa lure(BadRequest, "L stRecom ndedUsersProductContext not found")
     }
 
-    val debugOptions = request.debugParams.flatMap(_.debugOptions)
+    val debugOpt ons = request.debugParams.flatMap(_.debugOpt ons)
 
-    val pipelineCursor = request.serializedRequestCursor.flatMap { cursor =>
-      Try(UrtCursorSerializer.deserializeUnorderedExcludeIdsCursor(cursor))
-        .getOrElse(RecommendedUsersCursorUnmarshaller(RequestCursorSerializer.deserialize(cursor)))
+    val p pel neCursor = request.ser al zedRequestCursor.flatMap { cursor =>
+      Try(UrtCursorSer al zer.deser al zeUnorderedExclude dsCursor(cursor))
+        .getOrElse(Recom ndedUsersCursorUnmarshaller(RequestCursorSer al zer.deser al ze(cursor)))
     }
 
-    ListRecommendedUsersQuery(
-      listId = context.listId,
+    L stRecom ndedUsersQuery(
+      l st d = context.l st d,
       params = params,
-      clientContext = request.clientContext,
+      cl entContext = request.cl entContext,
       features = None,
-      pipelineCursor = pipelineCursor,
-      requestedMaxResults = Some(params(ServerMaxResultsParam)),
-      debugOptions = debugOptions,
-      selectedUserIds = context.selectedUserIds,
-      excludedUserIds = context.excludedUserIds,
-      listName = context.listName
+      p pel neCursor = p pel neCursor,
+      requestedMaxResults = So (params(ServerMaxResultsParam)),
+      debugOpt ons = debugOpt ons,
+      selectedUser ds = context.selectedUser ds,
+      excludedUser ds = context.excludedUser ds,
+      l stNa  = context.l stNa 
     )
   }
 
-  override def pipelines: Seq[PipelineConfig] = Seq(listRecommendedUsersMixerPipelineConfig)
+  overr de def p pel nes: Seq[P pel neConf g] = Seq(l stRecom ndedUsersM xerP pel neConf g)
 
-  override def pipelineSelector(query: ListRecommendedUsersQuery): ComponentIdentifier =
-    listRecommendedUsersMixerPipelineConfig.identifier
+  overr de def p pel neSelector(query: L stRecom ndedUsersQuery): Component dent f er =
+    l stRecom ndedUsersM xerP pel neConf g. dent f er
 
-  override val alerts: Seq[Alert] = Seq(
+  overr de val alerts: Seq[Alert] = Seq(
     SuccessRateAlert(
-      notificationGroup = DefaultNotificationGroup,
-      warnPredicate = TriggerIfBelow(99.9, 20, 30),
-      criticalPredicate = TriggerIfBelow(99.9, 30, 30),
+      not f cat onGroup = DefaultNot f cat onGroup,
+      warnPred cate = Tr gger fBelow(99.9, 20, 30),
+      cr  calPred cate = Tr gger fBelow(99.9, 30, 30),
     ),
     LatencyAlert(
-      notificationGroup = DefaultNotificationGroup,
-      percentile = P99,
-      warnPredicate = TriggerIfLatencyAbove(1000.millis, 15, 30),
-      criticalPredicate = TriggerIfLatencyAbove(1500.millis, 15, 30)
+      not f cat onGroup = DefaultNot f cat onGroup,
+      percent le = P99,
+      warnPred cate = Tr gger fLatencyAbove(1000.m ll s, 15, 30),
+      cr  calPred cate = Tr gger fLatencyAbove(1500.m ll s, 15, 30)
     )
   )
 
-  override val debugAccessPolicies: Set[AccessPolicy] = DefaultHomeMixerAccessPolicy
+  overr de val debugAccessPol c es: Set[AccessPol cy] = DefaultHo M xerAccessPol cy
 }

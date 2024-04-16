@@ -1,32 +1,32 @@
-namespace java com.twitter.tweetypie.thriftjava.federated
-#@namespace scala com.twitter.tweetypie.thriftscala.federated
-#@namespace strato com.twitter.tweetypie.federated
+na space java com.tw ter.t etyp e.thr ftjava.federated
+#@na space scala com.tw ter.t etyp e.thr ftscala.federated
+#@na space strato com.tw ter.t etyp e.federated
 
-include "com/twitter/tweetypie/stored_tweet_info.thrift"
+ nclude "com/tw ter/t etyp e/stored_t et_ nfo.thr ft"
 
-typedef i16 FieldId
+typedef  16 F eld d
 
-struct GetStoredTweetsView {
-  1: bool bypass_visibility_filtering = 0
-  2: optional i64 for_user_id
-  3: list<FieldId> additional_field_ids = []
+struct GetStoredT etsV ew {
+  1: bool bypass_v s b l y_f lter ng = 0
+  2: opt onal  64 for_user_ d
+  3: l st<F eld d> add  onal_f eld_ ds = []
 }
 
-struct GetStoredTweetsResponse {
-  1: stored_tweet_info.StoredTweetInfo stored_tweet
+struct GetStoredT etsResponse {
+  1: stored_t et_ nfo.StoredT et nfo stored_t et
 }
 
-struct GetStoredTweetsByUserView {
-  1: bool bypass_visibility_filtering = 0
-  2: bool set_for_user_id = 0
-  3: optional i64 start_time_msec
-  4: optional i64 end_time_msec
-  5: optional i64 cursor
+struct GetStoredT etsByUserV ew {
+  1: bool bypass_v s b l y_f lter ng = 0
+  2: bool set_for_user_ d = 0
+  3: opt onal  64 start_t  _msec
+  4: opt onal  64 end_t  _msec
+  5: opt onal  64 cursor
   6: bool start_from_oldest = 0
-  7: list<FieldId> additional_field_ids = []
+  7: l st<F eld d> add  onal_f eld_ ds = []
 }
 
-struct GetStoredTweetsByUserResponse {
-  1: required list<stored_tweet_info.StoredTweetInfo> stored_tweets
-  2: optional i64 cursor
+struct GetStoredT etsByUserResponse {
+  1: requ red l st<stored_t et_ nfo.StoredT et nfo> stored_t ets
+  2: opt onal  64 cursor
 }

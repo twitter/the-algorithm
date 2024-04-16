@@ -1,36 +1,36 @@
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
-cmake_policy(VERSION 2.8)
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_D R})
+cmake_m n mum_requ red(VERS ON 2.8 FATAL_ERROR)
+cmake_pol cy(VERS ON 2.8)
 
 
-set(TWML_VERSION "2.0.0")
-string(REPLACE "." ";" TWML_VERSION_LIST ${TWML_VERSION})
-list(GET TWML_VERSION_LIST 0 TWML_SOVERSION)
+set(TWML_VERS ON "2.0.0")
+str ng(REPLACE "." ";" TWML_VERS ON_L ST ${TWML_VERS ON})
+l st(GET TWML_VERS ON_L ST 0 TWML_SOVERS ON)
 
 execute_process(
   COMMAND
-  $ENV{LIBTWML_HOME}/src/ops/scripts/get_inc.sh
-  RESULT_VARIABLE
+  $ENV{L BTWML_HOME}/src/ops/scr pts/get_ nc.sh
+  RESULT_VAR ABLE
   TF_RES
-  OUTPUT_VARIABLE
-  TF_INC)
+  OUTPUT_VAR ABLE
+  TF_ NC)
 
-file(GLOB_RECURSE sources *.cpp)
+f le(GLOB_RECURSE s ces *.cpp)
 
-set (CMAKE_CXX_FLAGS "-Wall -std=c++11 ${CMAKE_CXX_FLAGS} -fPIC")
+set (CMAKE_CXX_FLAGS "-Wall -std=c++11 ${CMAKE_CXX_FLAGS} -fP C")
 
-add_library(twml STATIC ${sources})
+add_l brary(twml STAT C ${s ces})
 
-target_include_directories(
+target_ nclude_d rector es(
   twml
-  PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../include
-  PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${TF_INC}  # Absail dependency from tensorflow
+  PUBL C
+  ${CMAKE_CURRENT_SOURCE_D R}/../../ nclude
+  PR VATE
+  ${CMAKE_CURRENT_SOURCE_D R}
+  ${TF_ NC}  # Absa l dependency from tensorflow
   )
 
-set_target_properties(twml PROPERTIES
-  VERSION "${TWML_VERSION}"
-  SOVERSION "${TWML_SOVERSION}"
+set_target_propert es(twml PROPERT ES
+  VERS ON "${TWML_VERS ON}"
+  SOVERS ON "${TWML_SOVERS ON}"
   )

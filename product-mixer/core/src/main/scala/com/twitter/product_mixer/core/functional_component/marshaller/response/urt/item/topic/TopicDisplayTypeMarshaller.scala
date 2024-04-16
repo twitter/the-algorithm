@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.top c
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.BasicTopicDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.NoIconTopicDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.PillTopicDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.PillWithoutActionIconDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicDisplayType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.top c.Bas cTop cD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.top c.No conTop cD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.top c.P llTop cD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.top c.P llW houtAct on conD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.top c.Top cD splayType
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TopicDisplayTypeMarshaller @Inject() () {
+@S ngleton
+class Top cD splayTypeMarshaller @ nject() () {
 
-  def apply(topicDisplayType: TopicDisplayType): urt.TopicDisplayType = topicDisplayType match {
-    case BasicTopicDisplayType => urt.TopicDisplayType.Basic
-    case PillTopicDisplayType => urt.TopicDisplayType.Pill
-    case NoIconTopicDisplayType => urt.TopicDisplayType.NoIcon
-    case PillWithoutActionIconDisplayType => urt.TopicDisplayType.PillWithoutActionIcon
+  def apply(top cD splayType: Top cD splayType): urt.Top cD splayType = top cD splayType match {
+    case Bas cTop cD splayType => urt.Top cD splayType.Bas c
+    case P llTop cD splayType => urt.Top cD splayType.P ll
+    case No conTop cD splayType => urt.Top cD splayType.No con
+    case P llW houtAct on conD splayType => urt.Top cD splayType.P llW houtAct on con
   }
 }

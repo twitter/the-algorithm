@@ -1,119 +1,119 @@
-package com.twitter.search.earlybird.common;
+package com.tw ter.search.earlyb rd.common;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.thrift.TException;
-import org.apache.thrift.TSerializer;
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.slf4j.Logger;
+ mport org.apac .commons.codec.b nary.Base64;
+ mport org.apac .thr ft.TExcept on;
+ mport org.apac .thr ft.TSer al zer;
+ mport org.apac .thr ft.protocol.TB naryProtocol;
+ mport org.slf4j.Logger;
 
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
 
-public final class Base64RequestResponseForLogging {
-  private static final Logger GENERAL_LOG = org.slf4j.LoggerFactory.getLogger(
-      Base64RequestResponseForLogging.class);
-  private static final Logger FAILED_REQUEST_LOG = org.slf4j.LoggerFactory.getLogger(
-      Base64RequestResponseForLogging.class.getName() + ".FailedRequests");
-  private static final Logger RANDOM_REQUEST_LOG = org.slf4j.LoggerFactory.getLogger(
-      Base64RequestResponseForLogging.class.getName() + ".RandomRequests");
-  private static final Logger SLOW_REQUEST_LOG = org.slf4j.LoggerFactory.getLogger(
-      Base64RequestResponseForLogging.class.getName() + ".SlowRequests");
+publ c f nal class Base64RequestResponseForLogg ng {
+  pr vate stat c f nal Logger GENERAL_LOG = org.slf4j.LoggerFactory.getLogger(
+      Base64RequestResponseForLogg ng.class);
+  pr vate stat c f nal Logger FA LED_REQUEST_LOG = org.slf4j.LoggerFactory.getLogger(
+      Base64RequestResponseForLogg ng.class.getNa () + ".Fa ledRequests");
+  pr vate stat c f nal Logger RANDOM_REQUEST_LOG = org.slf4j.LoggerFactory.getLogger(
+      Base64RequestResponseForLogg ng.class.getNa () + ".RandomRequests");
+  pr vate stat c f nal Logger SLOW_REQUEST_LOG = org.slf4j.LoggerFactory.getLogger(
+      Base64RequestResponseForLogg ng.class.getNa () + ".SlowRequests");
 
-  private enum LogType {
-    FAILED,
+  pr vate enum LogType {
+    FA LED,
     RANDOM,
     SLOW,
   };
 
-  private final LogType logtype;
-  private final String logLine;
-  private final EarlybirdRequest request;
-  private final EarlybirdResponse response;
-  private final Base64 base64 = new Base64();
+  pr vate f nal LogType logtype;
+  pr vate f nal Str ng logL ne;
+  pr vate f nal Earlyb rdRequest request;
+  pr vate f nal Earlyb rdResponse response;
+  pr vate f nal Base64 base64 = new Base64();
 
-  // TSerializer is not threadsafe, so create a new one for each request
-  private final TSerializer serializer = new TSerializer(new TBinaryProtocol.Factory());
+  // TSer al zer  s not threadsafe, so create a new one for each request
+  pr vate f nal TSer al zer ser al zer = new TSer al zer(new TB naryProtocol.Factory());
 
-  private Base64RequestResponseForLogging(
-      LogType logType, String logLine, EarlybirdRequest request, EarlybirdResponse response) {
-    this.logtype = logType;
-    this.logLine = logLine;
-    this.request = request;
-    this.response = response;
+  pr vate Base64RequestResponseForLogg ng(
+      LogType logType, Str ng logL ne, Earlyb rdRequest request, Earlyb rdResponse response) {
+    t .logtype = logType;
+    t .logL ne = logL ne;
+    t .request = request;
+    t .response = response;
   }
 
-  public static Base64RequestResponseForLogging randomRequest(
-      String logLine, EarlybirdRequest request, EarlybirdResponse response) {
-    return new Base64RequestResponseForLogging(LogType.RANDOM, logLine, request, response);
+  publ c stat c Base64RequestResponseForLogg ng randomRequest(
+      Str ng logL ne, Earlyb rdRequest request, Earlyb rdResponse response) {
+    return new Base64RequestResponseForLogg ng(LogType.RANDOM, logL ne, request, response);
   }
 
-  public static Base64RequestResponseForLogging failedRequest(
-      String logLine, EarlybirdRequest request, EarlybirdResponse response) {
-    return new Base64RequestResponseForLogging(LogType.FAILED, logLine, request, response);
+  publ c stat c Base64RequestResponseForLogg ng fa ledRequest(
+      Str ng logL ne, Earlyb rdRequest request, Earlyb rdResponse response) {
+    return new Base64RequestResponseForLogg ng(LogType.FA LED, logL ne, request, response);
   }
 
-  public static Base64RequestResponseForLogging slowRequest(
-      String logLine, EarlybirdRequest request, EarlybirdResponse response) {
-    return new Base64RequestResponseForLogging(LogType.SLOW, logLine, request, response);
+  publ c stat c Base64RequestResponseForLogg ng slowRequest(
+      Str ng logL ne, Earlyb rdRequest request, Earlyb rdResponse response) {
+    return new Base64RequestResponseForLogg ng(LogType.SLOW, logL ne, request, response);
   }
 
-  private String asBase64(EarlybirdRequest clearedRequest) {
+  pr vate Str ng asBase64(Earlyb rdRequest clearedRequest) {
     try {
-      // The purpose of this log is to make it easy to re-issue requests in formz to reproduce
-      // issues. If queries are re-issued as is they will be treated as late-arriving queries and
-      // dropped due to the clientRequestTimeMs being set to the original query time. For ease of
-      // use purposes we clear clientRequestTimeMs and log it out separately for the rare case it
-      // is needed.
-      clearedRequest.unsetClientRequestTimeMs();
-      return base64.encodeToString(serializer.serialize(clearedRequest));
-    } catch (TException e) {
-      GENERAL_LOG.error("Failed to serialize request for logging.", e);
-      return "failed_to_serialize";
+      // T  purpose of t  log  s to make   easy to re- ssue requests  n formz to reproduce
+      //  ssues.  f quer es are re- ssued as  s t y w ll be treated as late-arr v ng quer es and
+      // dropped due to t  cl entRequestT  Ms be ng set to t  or g nal query t  . For ease of
+      // use purposes   clear cl entRequestT  Ms and log   out separately for t  rare case  
+      //  s needed.
+      clearedRequest.unsetCl entRequestT  Ms();
+      return base64.encodeToStr ng(ser al zer.ser al ze(clearedRequest));
+    } catch (TExcept on e) {
+      GENERAL_LOG.error("Fa led to ser al ze request for logg ng.", e);
+      return "fa led_to_ser al ze";
     }
   }
 
-  private String asBase64(EarlybirdResponse earlybirdResponse) {
+  pr vate Str ng asBase64(Earlyb rdResponse earlyb rdResponse) {
     try {
-      return base64.encodeToString(serializer.serialize(earlybirdResponse));
-    } catch (TException e) {
-      GENERAL_LOG.error("Failed to serialize response for logging.", e);
-      return "failed_to_serialize";
+      return base64.encodeToStr ng(ser al zer.ser al ze(earlyb rdResponse));
+    } catch (TExcept on e) {
+      GENERAL_LOG.error("Fa led to ser al ze response for logg ng.", e);
+      return "fa led_to_ser al ze";
     }
   }
 
-  private String getFormattedMessage() {
-    String base64Request = asBase64(
-        EarlybirdRequestUtil.copyAndClearUnnecessaryValuesForLogging(request));
-    String base64Response = asBase64(response);
-    return logLine + ", clientRequestTimeMs: " + request.getClientRequestTimeMs()
+  pr vate Str ng getFormatted ssage() {
+    Str ng base64Request = asBase64(
+        Earlyb rdRequestUt l.copyAndClearUnnecessaryValuesForLogg ng(request));
+    Str ng base64Response = asBase64(response);
+    return logL ne + ", cl entRequestT  Ms: " + request.getCl entRequestT  Ms()
         + ", " + base64Request + ", " + base64Response;
   }
 
   /**
-   * Logs the Base64-encoded request and response to the success or failure log.
+   * Logs t  Base64-encoded request and response to t  success or fa lure log.
    */
-  public void log() {
-    // Do the serializing/concatting this way so it happens on the background thread for
-    // async logging
+  publ c vo d log() {
+    // Do t  ser al z ng/concatt ng t  way so   happens on t  background thread for
+    // async logg ng
     Object logObject = new Object() {
-      @Override
-      public String toString() {
-        return getFormattedMessage();
+      @Overr de
+      publ c Str ng toStr ng() {
+        return getFormatted ssage();
       }
     };
 
-    switch (logtype) {
-      case FAILED:
-        FAILED_REQUEST_LOG.info("{}", logObject);
+    sw ch (logtype) {
+      case FA LED:
+        FA LED_REQUEST_LOG. nfo("{}", logObject);
         break;
       case RANDOM:
-        RANDOM_REQUEST_LOG.info("{}", logObject);
+        RANDOM_REQUEST_LOG. nfo("{}", logObject);
         break;
       case SLOW:
-        SLOW_REQUEST_LOG.info("{}", logObject);
+        SLOW_REQUEST_LOG. nfo("{}", logObject);
         break;
       default:
-        // Not logging anything for other log types.
+        // Not logg ng anyth ng for ot r log types.
         break;
     }
   }

@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-trait HasRecommendationFlowIdentifier {
-  def recommendationFlowIdentifier: Option[String]
+tra  HasRecom ndat onFlow dent f er {
+  def recom ndat onFlow dent f er: Opt on[Str ng]
 }

@@ -1,31 +1,31 @@
-package com.twitter.ann.util
+package com.tw ter.ann.ut l
 
-import com.twitter.ann.common.{Appendable, EntityEmbedding}
-import com.twitter.concurrent.AsyncStream
-import com.twitter.logging.Logger
-import com.twitter.util.Future
-import java.util.concurrent.atomic.AtomicInteger
+ mport com.tw ter.ann.common.{Appendable, Ent yEmbedd ng}
+ mport com.tw ter.concurrent.AsyncStream
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.ut l.Future
+ mport java.ut l.concurrent.atom c.Atom c nteger
 
-object IndexBuilderUtils {
+object  ndexBu lderUt ls {
   val Log = Logger.apply()
 
-  def addToIndex[T](
+  def addTo ndex[T](
     appendable: Appendable[T, _, _],
-    embeddings: Seq[EntityEmbedding[T]],
-    concurrencyLevel: Int
-  ): Future[Int] = {
-    val count = new AtomicInteger()
-    // Async stream allows us to procss at most concurrentLevel futures at a time.
-    Future.Unit.before {
-      val stream = AsyncStream.fromSeq(embeddings)
-      val appendStream = stream.mapConcurrent(concurrencyLevel) { annEmbedding =>
-        val processed = count.incrementAndGet()
-        if (processed % 10000 == 0) {
-          Log.info(s"Performed $processed updates")
+    embedd ngs: Seq[Ent yEmbedd ng[T]],
+    concurrencyLevel:  nt
+  ): Future[ nt] = {
+    val count = new Atom c nteger()
+    // Async stream allows us to procss at most concurrentLevel futures at a t  .
+    Future.Un .before {
+      val stream = AsyncStream.fromSeq(embedd ngs)
+      val appendStream = stream.mapConcurrent(concurrencyLevel) { annEmbedd ng =>
+        val processed = count. ncre ntAndGet()
+         f (processed % 10000 == 0) {
+          Log. nfo(s"Perfor d $processed updates")
         }
-        appendable.append(annEmbedding)
+        appendable.append(annEmbedd ng)
       }
-      appendStream.size
+      appendStream.s ze
     }
   }
 }

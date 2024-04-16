@@ -1,30 +1,30 @@
-package com.twitter.recos.user_user_graph
+package com.tw ter.recos.user_user_graph
 
-import com.twitter.graphjet.bipartite.api.EdgeTypeMask
-import com.twitter.recos.recos_common.thriftscala.UserSocialProofType
+ mport com.tw ter.graphjet.b part e.ap .EdgeTypeMask
+ mport com.tw ter.recos.recos_common.thr ftscala.UserSoc alProofType
 
 /**
- * The bit mask is used to encode edge types in the top bits of an integer,
- * e.g. Follow, Mention, and Mediatag. Under current segment configuration, each segment
- * stores up to 128M edges. Assuming that each node on one side is unique, each segment
- * stores up to 128M unique nodes on one side, which occupies the lower 27 bits of an integer.
- * This leaves five bits to encode the edge types, which at max can store 32 edge types.
- * The following implementation utilizes the top four bits and leaves one free bit out.
+ * T  b  mask  s used to encode edge types  n t  top b s of an  nteger,
+ * e.g. Follow,  nt on, and  d atag. Under current seg nt conf gurat on, each seg nt
+ * stores up to 128M edges. Assum ng that each node on one s de  s un que, each seg nt
+ * stores up to 128M un que nodes on one s de, wh ch occup es t  lo r 27 b s of an  nteger.
+ * T  leaves f ve b s to encode t  edge types, wh ch at max can store 32 edge types.
+ * T  follow ng  mple ntat on ut l zes t  top f  b s and leaves one free b  out.
  */
 class UserEdgeTypeMask extends EdgeTypeMask {
-  import UserEdgeTypeMask._
-  override def encode(node: Int, edgeType: Byte): Int = {
-    require(
-      edgeType == FOLLOW || edgeType == MENTION || edgeType == MEDIATAG,
-      s"encode: Illegal edge type argument $edgeType")
+   mport UserEdgeTypeMask._
+  overr de def encode(node:  nt, edgeType: Byte):  nt = {
+    requ re(
+      edgeType == FOLLOW || edgeType == MENT ON || edgeType == MED ATAG,
+      s"encode:  llegal edge type argu nt $edgeType")
     node | EDGEARRAY(edgeType)
   }
 
-  override def edgeType(node: Int): Byte = {
+  overr de def edgeType(node:  nt): Byte = {
     (node >> 28).toByte
   }
 
-  override def restore(node: Int): Int = {
+  overr de def restore(node:  nt):  nt = {
     node & MASK
   }
 }
@@ -32,14 +32,14 @@ class UserEdgeTypeMask extends EdgeTypeMask {
 object UserEdgeTypeMask {
 
   /**
-   * Reserve the top four bits of each integer to encode the edge type information.
+   * Reserve t  top f  b s of each  nteger to encode t  edge type  nformat on.
    */
-  val MASK: Int =
-    Integer.parseInt("00001111111111111111111111111111", 2)
+  val MASK:  nt =
+     nteger.parse nt("00001111111111111111111111111111", 2)
   val FOLLOW: Byte = 0
-  val MENTION: Byte = 1
-  val MEDIATAG: Byte = 2
-  val SIZE: Byte = 3
+  val MENT ON: Byte = 1
+  val MED ATAG: Byte = 2
+  val S ZE: Byte = 3
   val UNUSED3: Byte = 3
   val UNUSED4: Byte = 4
   val UNUSED5: Byte = 5
@@ -53,7 +53,7 @@ object UserEdgeTypeMask {
   val UNUSED13: Byte = 13
   val UNUSED14: Byte = 14
   val UNUSED15: Byte = 15
-  val EDGEARRAY: Array[Int] = Array(
+  val EDGEARRAY: Array[ nt] = Array(
     0,
     1 << 28,
     2 << 28,
@@ -73,19 +73,19 @@ object UserEdgeTypeMask {
   )
 
   /**
-   * Map valid social proof types specified by clients to an array of bytes. If clients do not
-   * specify any social proof types in thrift, it will return all available social types by
+   * Map val d soc al proof types spec f ed by cl ents to an array of bytes.  f cl ents do not
+   * spec fy any soc al proof types  n thr ft,   w ll return all ava lable soc al types by
    * default.
    *
-   * @param socialProofTypes are the valid socialProofTypes specified by clients
-   * @return an array of bytes representing valid social proof types
+   * @param soc alProofTypes are t  val d soc alProofTypes spec f ed by cl ents
+   * @return an array of bytes represent ng val d soc al proof types
    */
-  def getUserUserGraphSocialProofTypes(
-    socialProofTypes: Option[Seq[UserSocialProofType]]
+  def getUserUserGraphSoc alProofTypes(
+    soc alProofTypes: Opt on[Seq[UserSoc alProofType]]
   ): Array[Byte] = {
-    socialProofTypes
+    soc alProofTypes
       .map { _.map { _.getValue }.toArray }
-      .getOrElse((0 until SIZE).toArray)
+      .getOrElse((0 unt l S ZE).toArray)
       .map { _.toByte }
   }
 }

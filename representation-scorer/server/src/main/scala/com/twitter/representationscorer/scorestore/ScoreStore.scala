@@ -1,168 +1,168 @@
-package com.twitter.representationscorer.scorestore
+package com.tw ter.representat onscorer.scorestore
 
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hashing.KeyHasher
-import com.twitter.hermit.store.common.ObservedCachedReadableStore
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.relevance_platform.common.injection.LZ4Injection
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.score.ScoreFacadeStore
-import com.twitter.simclusters_v2.score.SimClustersEmbeddingPairScoreStore
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType.FavTfgTopic
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType.LogFavBasedKgoApeTopic
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType.LogFavBasedTweet
-import com.twitter.simclusters_v2.thriftscala.ModelVersion.Model20m145kUpdated
-import com.twitter.simclusters_v2.thriftscala.Score
-import com.twitter.simclusters_v2.thriftscala.ScoreId
-import com.twitter.simclusters_v2.thriftscala.ScoringAlgorithm
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.stitch.storehaus.StitchOfReadableStore
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.topic_recos.stores.CertoTweetTopicScoresStore
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.b ject on.scrooge.B naryScalaCodec
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle. mcac d.Cl ent
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.hash ng.KeyHas r
+ mport com.tw ter. rm .store.common.ObservedCac dReadableStore
+ mport com.tw ter. rm .store.common.Observed mcac dReadableStore
+ mport com.tw ter. rm .store.common.ObservedReadableStore
+ mport com.tw ter.relevance_platform.common. nject on.LZ4 nject on
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.score.ScoreFacadeStore
+ mport com.tw ter.s mclusters_v2.score.S mClustersEmbedd ngPa rScoreStore
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType.FavTfgTop c
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType.LogFavBasedKgoApeTop c
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType.LogFavBasedT et
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on.Model20m145kUpdated
+ mport com.tw ter.s mclusters_v2.thr ftscala.Score
+ mport com.tw ter.s mclusters_v2.thr ftscala.Score d
+ mport com.tw ter.s mclusters_v2.thr ftscala.Scor ngAlgor hm
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng d
+ mport com.tw ter.st ch.storehaus.St chOfReadableStore
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.top c_recos.stores.CertoT etTop cScoresStore
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton()
-class ScoreStore @Inject() (
-  simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding],
-  stratoClient: StratoClient,
-  representationScorerCacheClient: Client,
-  stats: StatsReceiver) {
+@S ngleton()
+class ScoreStore @ nject() (
+  s mClustersEmbedd ngStore: ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng],
+  stratoCl ent: StratoCl ent,
+  representat onScorerCac Cl ent: Cl ent,
+  stats: StatsRece ver) {
 
-  private val keyHasher = KeyHasher.FNV1A_64
-  private val statsReceiver = stats.scope("score_store")
+  pr vate val keyHas r = KeyHas r.FNV1A_64
+  pr vate val statsRece ver = stats.scope("score_store")
 
   /** ** Score Store *****/
-  private val simClustersEmbeddingCosineSimilarityScoreStore =
+  pr vate val s mClustersEmbedd ngCos neS m lar yScoreStore =
     ObservedReadableStore(
-      SimClustersEmbeddingPairScoreStore
-        .buildCosineSimilarityStore(simClustersEmbeddingStore)
-        .toThriftStore
-    )(statsReceiver.scope("simClusters_embedding_cosine_similarity_score_store"))
+      S mClustersEmbedd ngPa rScoreStore
+        .bu ldCos neS m lar yStore(s mClustersEmbedd ngStore)
+        .toThr ftStore
+    )(statsRece ver.scope("s mClusters_embedd ng_cos ne_s m lar y_score_store"))
 
-  private val simClustersEmbeddingDotProductScoreStore =
+  pr vate val s mClustersEmbedd ngDotProductScoreStore =
     ObservedReadableStore(
-      SimClustersEmbeddingPairScoreStore
-        .buildDotProductStore(simClustersEmbeddingStore)
-        .toThriftStore
-    )(statsReceiver.scope("simClusters_embedding_dot_product_score_store"))
+      S mClustersEmbedd ngPa rScoreStore
+        .bu ldDotProductStore(s mClustersEmbedd ngStore)
+        .toThr ftStore
+    )(statsRece ver.scope("s mClusters_embedd ng_dot_product_score_store"))
 
-  private val simClustersEmbeddingJaccardSimilarityScoreStore =
+  pr vate val s mClustersEmbedd ngJaccardS m lar yScoreStore =
     ObservedReadableStore(
-      SimClustersEmbeddingPairScoreStore
-        .buildJaccardSimilarityStore(simClustersEmbeddingStore)
-        .toThriftStore
-    )(statsReceiver.scope("simClusters_embedding_jaccard_similarity_score_store"))
+      S mClustersEmbedd ngPa rScoreStore
+        .bu ldJaccardS m lar yStore(s mClustersEmbedd ngStore)
+        .toThr ftStore
+    )(statsRece ver.scope("s mClusters_embedd ng_jaccard_s m lar y_score_store"))
 
-  private val simClustersEmbeddingEuclideanDistanceScoreStore =
+  pr vate val s mClustersEmbedd ngEucl deanD stanceScoreStore =
     ObservedReadableStore(
-      SimClustersEmbeddingPairScoreStore
-        .buildEuclideanDistanceStore(simClustersEmbeddingStore)
-        .toThriftStore
-    )(statsReceiver.scope("simClusters_embedding_euclidean_distance_score_store"))
+      S mClustersEmbedd ngPa rScoreStore
+        .bu ldEucl deanD stanceStore(s mClustersEmbedd ngStore)
+        .toThr ftStore
+    )(statsRece ver.scope("s mClusters_embedd ng_eucl dean_d stance_score_store"))
 
-  private val simClustersEmbeddingManhattanDistanceScoreStore =
+  pr vate val s mClustersEmbedd ngManhattanD stanceScoreStore =
     ObservedReadableStore(
-      SimClustersEmbeddingPairScoreStore
-        .buildManhattanDistanceStore(simClustersEmbeddingStore)
-        .toThriftStore
-    )(statsReceiver.scope("simClusters_embedding_manhattan_distance_score_store"))
+      S mClustersEmbedd ngPa rScoreStore
+        .bu ldManhattanD stanceStore(s mClustersEmbedd ngStore)
+        .toThr ftStore
+    )(statsRece ver.scope("s mClusters_embedd ng_manhattan_d stance_score_store"))
 
-  private val simClustersEmbeddingLogCosineSimilarityScoreStore =
+  pr vate val s mClustersEmbedd ngLogCos neS m lar yScoreStore =
     ObservedReadableStore(
-      SimClustersEmbeddingPairScoreStore
-        .buildLogCosineSimilarityStore(simClustersEmbeddingStore)
-        .toThriftStore
-    )(statsReceiver.scope("simClusters_embedding_log_cosine_similarity_score_store"))
+      S mClustersEmbedd ngPa rScoreStore
+        .bu ldLogCos neS m lar yStore(s mClustersEmbedd ngStore)
+        .toThr ftStore
+    )(statsRece ver.scope("s mClusters_embedd ng_log_cos ne_s m lar y_score_store"))
 
-  private val simClustersEmbeddingExpScaledCosineSimilarityScoreStore =
+  pr vate val s mClustersEmbedd ngExpScaledCos neS m lar yScoreStore =
     ObservedReadableStore(
-      SimClustersEmbeddingPairScoreStore
-        .buildExpScaledCosineSimilarityStore(simClustersEmbeddingStore)
-        .toThriftStore
-    )(statsReceiver.scope("simClusters_embedding_exp_scaled_cosine_similarity_score_store"))
+      S mClustersEmbedd ngPa rScoreStore
+        .bu ldExpScaledCos neS m lar yStore(s mClustersEmbedd ngStore)
+        .toThr ftStore
+    )(statsRece ver.scope("s mClusters_embedd ng_exp_scaled_cos ne_s m lar y_score_store"))
 
-  // Use the default setting
-  private val topicTweetRankingScoreStore =
-    TopicTweetRankingScoreStore.buildTopicTweetRankingStore(
-      FavTfgTopic,
-      LogFavBasedKgoApeTopic,
-      LogFavBasedTweet,
+  // Use t  default sett ng
+  pr vate val top cT etRank ngScoreStore =
+    Top cT etRank ngScoreStore.bu ldTop cT etRank ngStore(
+      FavTfgTop c,
+      LogFavBasedKgoApeTop c,
+      LogFavBasedT et,
       Model20m145kUpdated,
-      consumerEmbeddingMultiplier = 1.0,
-      producerEmbeddingMultiplier = 1.0
+      consu rEmbedd ngMult pl er = 1.0,
+      producerEmbedd ngMult pl er = 1.0
     )
 
-  private val topicTweetsCortexThresholdStore = TopicTweetsCosineSimilarityAggregateStore(
-    TopicTweetsCosineSimilarityAggregateStore.DefaultScoreKeys,
-    statsReceiver.scope("topic_tweets_cortex_threshold_store")
+  pr vate val top cT etsCortexThresholdStore = Top cT etsCos neS m lar yAggregateStore(
+    Top cT etsCos neS m lar yAggregateStore.DefaultScoreKeys,
+    statsRece ver.scope("top c_t ets_cortex_threshold_store")
   )
 
-  val topicTweetCertoScoreStore: ObservedCachedReadableStore[ScoreId, Score] = {
-    val underlyingStore = ObservedReadableStore(
-      TopicTweetCertoScoreStore(CertoTweetTopicScoresStore.prodStore(stratoClient))
-    )(statsReceiver.scope("topic_tweet_certo_score_store"))
+  val top cT etCertoScoreStore: ObservedCac dReadableStore[Score d, Score] = {
+    val underly ngStore = ObservedReadableStore(
+      Top cT etCertoScoreStore(CertoT etTop cScoresStore.prodStore(stratoCl ent))
+    )(statsRece ver.scope("top c_t et_certo_score_store"))
 
-    val memcachedStore = ObservedMemcachedReadableStore
-      .fromCacheClient(
-        backingStore = underlyingStore,
-        cacheClient = representationScorerCacheClient,
-        ttl = 10.minutes
+    val  mcac dStore = Observed mcac dReadableStore
+      .fromCac Cl ent(
+        back ngStore = underly ngStore,
+        cac Cl ent = representat onScorerCac Cl ent,
+        ttl = 10.m nutes
       )(
-        valueInjection = LZ4Injection.compose(BinaryScalaCodec(Score)),
-        statsReceiver = statsReceiver.scope("topic_tweet_certo_store_memcache"),
-        keyToString = { k: ScoreId =>
-          s"certocs:${keyHasher.hashKey(k.toString.getBytes)}"
+        value nject on = LZ4 nject on.compose(B naryScalaCodec(Score)),
+        statsRece ver = statsRece ver.scope("top c_t et_certo_store_ mcac "),
+        keyToStr ng = { k: Score d =>
+          s"certocs:${keyHas r.hashKey(k.toStr ng.getBytes)}"
         }
       )
 
-    ObservedCachedReadableStore.from[ScoreId, Score](
-      memcachedStore,
-      ttl = 5.minutes,
+    ObservedCac dReadableStore.from[Score d, Score](
+       mcac dStore,
+      ttl = 5.m nutes,
       maxKeys = 1000000,
-      cacheName = "topic_tweet_certo_store_cache",
-      windowSize = 10000L
-    )(statsReceiver.scope("topic_tweet_certo_store_cache"))
+      cac Na  = "top c_t et_certo_store_cac ",
+      w ndowS ze = 10000L
+    )(statsRece ver.scope("top c_t et_certo_store_cac "))
   }
 
-  val uniformScoringStore: ReadableStore[ScoreId, Score] =
-    ScoreFacadeStore.buildWithMetrics(
+  val un formScor ngStore: ReadableStore[Score d, Score] =
+    ScoreFacadeStore.bu ldW h tr cs(
       readableStores = Map(
-        ScoringAlgorithm.PairEmbeddingCosineSimilarity ->
-          simClustersEmbeddingCosineSimilarityScoreStore,
-        ScoringAlgorithm.PairEmbeddingDotProduct ->
-          simClustersEmbeddingDotProductScoreStore,
-        ScoringAlgorithm.PairEmbeddingJaccardSimilarity ->
-          simClustersEmbeddingJaccardSimilarityScoreStore,
-        ScoringAlgorithm.PairEmbeddingEuclideanDistance ->
-          simClustersEmbeddingEuclideanDistanceScoreStore,
-        ScoringAlgorithm.PairEmbeddingManhattanDistance ->
-          simClustersEmbeddingManhattanDistanceScoreStore,
-        ScoringAlgorithm.PairEmbeddingLogCosineSimilarity ->
-          simClustersEmbeddingLogCosineSimilarityScoreStore,
-        ScoringAlgorithm.PairEmbeddingExpScaledCosineSimilarity ->
-          simClustersEmbeddingExpScaledCosineSimilarityScoreStore,
-        // Certo normalized cosine score between topic-tweet pairs
-        ScoringAlgorithm.CertoNormalizedCosineScore
-          -> topicTweetCertoScoreStore,
-        // Certo normalized dot-product score between topic-tweet pairs
-        ScoringAlgorithm.CertoNormalizedDotProductScore
-          -> topicTweetCertoScoreStore
+        Scor ngAlgor hm.Pa rEmbedd ngCos neS m lar y ->
+          s mClustersEmbedd ngCos neS m lar yScoreStore,
+        Scor ngAlgor hm.Pa rEmbedd ngDotProduct ->
+          s mClustersEmbedd ngDotProductScoreStore,
+        Scor ngAlgor hm.Pa rEmbedd ngJaccardS m lar y ->
+          s mClustersEmbedd ngJaccardS m lar yScoreStore,
+        Scor ngAlgor hm.Pa rEmbedd ngEucl deanD stance ->
+          s mClustersEmbedd ngEucl deanD stanceScoreStore,
+        Scor ngAlgor hm.Pa rEmbedd ngManhattanD stance ->
+          s mClustersEmbedd ngManhattanD stanceScoreStore,
+        Scor ngAlgor hm.Pa rEmbedd ngLogCos neS m lar y ->
+          s mClustersEmbedd ngLogCos neS m lar yScoreStore,
+        Scor ngAlgor hm.Pa rEmbedd ngExpScaledCos neS m lar y ->
+          s mClustersEmbedd ngExpScaledCos neS m lar yScoreStore,
+        // Certo normal zed cos ne score bet en top c-t et pa rs
+        Scor ngAlgor hm.CertoNormal zedCos neScore
+          -> top cT etCertoScoreStore,
+        // Certo normal zed dot-product score bet en top c-t et pa rs
+        Scor ngAlgor hm.CertoNormal zedDotProductScore
+          -> top cT etCertoScoreStore
       ),
       aggregatedStores = Map(
-        ScoringAlgorithm.WeightedSumTopicTweetRanking ->
-          topicTweetRankingScoreStore,
-        ScoringAlgorithm.CortexTopicTweetLabel ->
-          topicTweetsCortexThresholdStore,
+        Scor ngAlgor hm.  ghtedSumTop cT etRank ng ->
+          top cT etRank ngScoreStore,
+        Scor ngAlgor hm.CortexTop cT etLabel ->
+          top cT etsCortexThresholdStore,
       ),
-      statsReceiver = stats
+      statsRece ver = stats
     )
 
-  val uniformScoringStoreStitch: ScoreId => com.twitter.stitch.Stitch[Score] =
-    StitchOfReadableStore(uniformScoringStore)
+  val un formScor ngStoreSt ch: Score d => com.tw ter.st ch.St ch[Score] =
+    St chOfReadableStore(un formScor ngStore)
 }

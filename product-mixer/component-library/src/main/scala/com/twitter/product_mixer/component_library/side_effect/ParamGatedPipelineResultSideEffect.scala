@@ -1,76 +1,76 @@
-package com.twitter.product_mixer.component_library.side_effect
+package com.tw ter.product_m xer.component_l brary.s de_effect
 
-import com.twitter.product_mixer.component_library.side_effect.ParamGatedPipelineResultSideEffect.IdentifierPrefix
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.side_effect.ExecuteSynchronously
-import com.twitter.product_mixer.core.functional_component.side_effect.FailOpen
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.product_m xer.component_l brary.s de_effect.ParamGatedP pel neResultS deEffect. dent f erPref x
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.funct onal_component.s de_effect.ExecuteSynchronously
+ mport com.tw ter.product_m xer.core.funct onal_component.s de_effect.Fa lOpen
+ mport com.tw ter.product_m xer.core.funct onal_component.s de_effect.P pel neResultS deEffect
+ mport com.tw ter.product_m xer.core.model.common.Cond  onally
+ mport com.tw ter.product_m xer.core.model.common. dent f er.S deEffect dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.marshall ng.HasMarshall ng
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .Param
 
 /**
- * A [[PipelineResultSideEffect]] with [[Conditionally]] based on a [[Param]]
+ * A [[P pel neResultS deEffect]] w h [[Cond  onally]] based on a [[Param]]
  *
- * @param enabledParam the param to turn this filter on and off
- * @param sideEffect the underlying side effect to run when `enabledParam` is true
- * @tparam Query The domain model for the query or request
+ * @param enabledParam t  param to turn t  f lter on and off
+ * @param s deEffect t  underly ng s de effect to run w n `enabledParam`  s true
+ * @tparam Query T  doma n model for t  query or request
  */
-sealed case class ParamGatedPipelineResultSideEffect[
-  -Query <: PipelineQuery,
-  ResultType <: HasMarshalling
-] private (
+sealed case class ParamGatedP pel neResultS deEffect[
+  -Query <: P pel neQuery,
+  ResultType <: HasMarshall ng
+] pr vate (
   enabledParam: Param[Boolean],
-  sideEffect: PipelineResultSideEffect[Query, ResultType])
-    extends PipelineResultSideEffect[Query, ResultType]
-    with PipelineResultSideEffect.Conditionally[Query, ResultType] {
-  override val identifier: SideEffectIdentifier = SideEffectIdentifier(
-    IdentifierPrefix + sideEffect.identifier.name)
-  override val alerts: Seq[Alert] = sideEffect.alerts
-  override def onlyIf(
+  s deEffect: P pel neResultS deEffect[Query, ResultType])
+    extends P pel neResultS deEffect[Query, ResultType]
+    w h P pel neResultS deEffect.Cond  onally[Query, ResultType] {
+  overr de val  dent f er: S deEffect dent f er = S deEffect dent f er(
+     dent f erPref x + s deEffect. dent f er.na )
+  overr de val alerts: Seq[Alert] = s deEffect.alerts
+  overr de def only f(
     query: Query,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
+    selectedCand dates: Seq[Cand dateW hDeta ls],
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    droppedCand dates: Seq[Cand dateW hDeta ls],
     response: ResultType
   ): Boolean =
-    Conditionally.and(
-      PipelineResultSideEffect
-        .Inputs(query, selectedCandidates, remainingCandidates, droppedCandidates, response),
-      sideEffect,
+    Cond  onally.and(
+      P pel neResultS deEffect
+        . nputs(query, selectedCand dates, rema n ngCand dates, droppedCand dates, response),
+      s deEffect,
       query.params(enabledParam))
-  override def apply(inputs: PipelineResultSideEffect.Inputs[Query, ResultType]): Stitch[Unit] =
-    sideEffect.apply(inputs)
+  overr de def apply( nputs: P pel neResultS deEffect. nputs[Query, ResultType]): St ch[Un ] =
+    s deEffect.apply( nputs)
 }
 
-object ParamGatedPipelineResultSideEffect {
+object ParamGatedP pel neResultS deEffect {
 
-  val IdentifierPrefix = "ParamGated"
+  val  dent f erPref x = "ParamGated"
 
   /**
-   * A [[PipelineResultSideEffect]] with [[Conditionally]] based on a [[Param]]
+   * A [[P pel neResultS deEffect]] w h [[Cond  onally]] based on a [[Param]]
    *
-   * @param enabledParam the param to turn this filter on and off
-   * @param sideEffect the underlying side effect to run when `enabledParam` is true
-   * @tparam Query The domain model for the query or request
+   * @param enabledParam t  param to turn t  f lter on and off
+   * @param s deEffect t  underly ng s de effect to run w n `enabledParam`  s true
+   * @tparam Query T  doma n model for t  query or request
    */
-  def apply[Query <: PipelineQuery, ResultType <: HasMarshalling](
+  def apply[Query <: P pel neQuery, ResultType <: HasMarshall ng](
     enabledParam: Param[Boolean],
-    sideEffect: PipelineResultSideEffect[Query, ResultType]
-  ): ParamGatedPipelineResultSideEffect[Query, ResultType] = {
-    sideEffect match {
-      case _: FailOpen =>
-        new ParamGatedPipelineResultSideEffect(enabledParam, sideEffect)
-          with ExecuteSynchronously
-          with FailOpen
+    s deEffect: P pel neResultS deEffect[Query, ResultType]
+  ): ParamGatedP pel neResultS deEffect[Query, ResultType] = {
+    s deEffect match {
+      case _: Fa lOpen =>
+        new ParamGatedP pel neResultS deEffect(enabledParam, s deEffect)
+          w h ExecuteSynchronously
+          w h Fa lOpen
       case _: ExecuteSynchronously =>
-        new ParamGatedPipelineResultSideEffect(enabledParam, sideEffect) with ExecuteSynchronously
+        new ParamGatedP pel neResultS deEffect(enabledParam, s deEffect) w h ExecuteSynchronously
       case _ =>
-        new ParamGatedPipelineResultSideEffect(enabledParam, sideEffect)
+        new ParamGatedP pel neResultS deEffect(enabledParam, s deEffect)
     }
   }
 }

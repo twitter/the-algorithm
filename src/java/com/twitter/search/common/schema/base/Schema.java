@@ -1,230 +1,230 @@
-package com.twitter.search.common.schema.base;
+package com.tw ter.search.common.sc ma.base;
 
-import java.util.Collection;
-import java.util.Map;
+ mport java.ut l.Collect on;
+ mport java.ut l.Map;
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableMap;
+ mport com.google.common.base.Pred cate;
+ mport com.google.common.collect. mmutableCollect on;
+ mport com.google.common.collect. mmutableMap;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.facet.FacetsConfig;
-import org.apache.lucene.index.FieldInfos;
+ mport org.apac .lucene.analys s.Analyzer;
+ mport org.apac .lucene.facet.FacetsConf g;
+ mport org.apac .lucene. ndex.F eld nfos;
 
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchema;
-import com.twitter.search.common.schema.thriftjava.ThriftAnalyzer;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldConfiguration;
+ mport com.tw ter.search.common.features.thr ft.Thr ftSearchFeatureSc ma;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftAnalyzer;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftCSFType;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftF eldConf gurat on;
 
 /**
- * Search Schema.
+ * Search Sc ma.
  */
-public interface Schema {
+publ c  nterface Sc ma {
   /**
-   * Certain Schema implementations can evolve at run time.  This call returns a snapshot of
-   * of the schema which is guaranteed to not change.
+   * Certa n Sc ma  mple ntat ons can evolve at run t  .  T  call returns a snapshot of
+   * of t  sc ma wh ch  s guaranteed to not change.
    */
-  ImmutableSchemaInterface getSchemaSnapshot();
+   mmutableSc ma nterface getSc maSnapshot();
 
   /**
-   * Returns a string describing the current schema version.
+   * Returns a str ng descr b ng t  current sc ma vers on.
    */
-  String getVersionDescription();
+  Str ng getVers onDescr pt on();
 
   /**
-   * Returns whether the schema version is official. Only official segments are uploaded to HDFS.
+   * Returns w t r t  sc ma vers on  s off c al. Only off c al seg nts are uploaded to HDFS.
    */
-  boolean isVersionOfficial();
+  boolean  sVers onOff c al();
 
   /**
-   * Returns the schema's major version.
+   * Returns t  sc ma's major vers on.
    */
-  int getMajorVersionNumber();
+   nt getMajorVers onNumber();
 
   /**
-   * Returns the schema's minor version.
+   * Returns t  sc ma's m nor vers on.
    */
-  int getMinorVersionNumber();
+   nt getM norVers onNumber();
 
   /**
-   * Returns the default analyzer. This analyzer is used when none is specified on the field info.
+   * Returns t  default analyzer. T  analyzer  s used w n none  s spec f ed on t  f eld  nfo.
    */
-  Analyzer getDefaultAnalyzer(ThriftAnalyzer override);
+  Analyzer getDefaultAnalyzer(Thr ftAnalyzer overr de);
 
   /**
-   * Returns whether the given field is configured in the schema.
+   * Returns w t r t  g ven f eld  s conf gured  n t  sc ma.
    */
-  boolean hasField(int fieldConfigId);
+  boolean hasF eld( nt f eldConf g d);
 
   /**
-   * Returns whether the given field is configured in the schema.
+   * Returns w t r t  g ven f eld  s conf gured  n t  sc ma.
    */
-  boolean hasField(String fieldName);
+  boolean hasF eld(Str ng f eldNa );
 
   /**
-   * Get the field name corresponding to the given field id.
+   * Get t  f eld na  correspond ng to t  g ven f eld  d.
    */
-  String getFieldName(int fieldConfigId);
+  Str ng getF eldNa ( nt f eldConf g d);
 
   /**
-   * Return the FieldInfo of all fields.
+   * Return t  F eld nfo of all f elds.
    */
-  ImmutableCollection<FieldInfo> getFieldInfos();
+   mmutableCollect on<F eld nfo> getF eld nfos();
 
   /**
-   * Get the field info for the given field id. If an override is given, attempt to merge the
-   * base field info with the override config.
+   * Get t  f eld  nfo for t  g ven f eld  d.  f an overr de  s g ven, attempt to  rge t 
+   * base f eld  nfo w h t  overr de conf g.
    */
-  FieldInfo getFieldInfo(int fieldConfigId, ThriftFieldConfiguration override);
+  F eld nfo getF eld nfo( nt f eldConf g d, Thr ftF eldConf gurat on overr de);
 
 
   /**
-   * Get the field info for the given field id. No override.
-   */
-  @Nullable
-  FieldInfo getFieldInfo(int fieldConfigId);
-
-  /**
-   * Get the field info for the given field name. No override.
+   * Get t  f eld  nfo for t  g ven f eld  d. No overr de.
    */
   @Nullable
-  FieldInfo getFieldInfo(String fieldName);
+  F eld nfo getF eld nfo( nt f eldConf g d);
 
   /**
-   * Builds a lucene FieldInfos instance, usually used for indexing.
-   */
-  FieldInfos getLuceneFieldInfos(Predicate<String> acceptedFields);
-
-  /**
-   * Returns the number of facet fields in this schema.
-   */
-  int getNumFacetFields();
-
-  /**
-   * Return facet configurations.
-   */
-  FacetsConfig getFacetsConfig();
-
-  /**
-   * Get the facet field's field info by facet name.
-   */
-  FieldInfo getFacetFieldByFacetName(String facetName);
-
-  /**
-   * Get the facet field's field info by field name.
-   */
-  FieldInfo getFacetFieldByFieldName(String fieldName);
-
-  /**
-   * Get the field infos for all facet fields.
-   */
-  Collection<FieldInfo> getFacetFields();
-
-  /**
-   * Get the field infos for all facet fields backed by column stride fields.
-   */
-  Collection<FieldInfo> getCsfFacetFields();
-
-  /**
-   * Get the field weight map for text searchable fields.
-   */
-  Map<String, FieldWeightDefault> getFieldWeightMap();
-
-  /**
-   * Get scoring feature configuration by feature name.
-   */
-  FeatureConfiguration getFeatureConfigurationByName(String featureName);
-
-  /**
-   * Get scoring feature configuration by feature field id.  The feature configuration is
-   * guaranteed to be not null, or a NullPointerException will be thrown out.
-   */
-  FeatureConfiguration getFeatureConfigurationById(int featureFieldId);
-
-  /**
-   * Returns the ThriftCSFType for a CSF field.
-   * Note: for non-CSF field, null will be returned.
+   * Get t  f eld  nfo for t  g ven f eld na . No overr de.
    */
   @Nullable
-  ThriftCSFType getCSFFieldType(String fieldName);
+  F eld nfo getF eld nfo(Str ng f eldNa );
 
   /**
-   * Get the search result feature schema for all possible features in all search results.
+   * Bu lds a lucene F eld nfos  nstance, usually used for  ndex ng.
+   */
+  F eld nfos getLuceneF eld nfos(Pred cate<Str ng> acceptedF elds);
+
+  /**
+   * Returns t  number of facet f elds  n t  sc ma.
+   */
+   nt getNumFacetF elds();
+
+  /**
+   * Return facet conf gurat ons.
+   */
+  FacetsConf g getFacetsConf g();
+
+  /**
+   * Get t  facet f eld's f eld  nfo by facet na .
+   */
+  F eld nfo getFacetF eldByFacetNa (Str ng facetNa );
+
+  /**
+   * Get t  facet f eld's f eld  nfo by f eld na .
+   */
+  F eld nfo getFacetF eldByF eldNa (Str ng f eldNa );
+
+  /**
+   * Get t  f eld  nfos for all facet f elds.
+   */
+  Collect on<F eld nfo> getFacetF elds();
+
+  /**
+   * Get t  f eld  nfos for all facet f elds backed by column str de f elds.
+   */
+  Collect on<F eld nfo> getCsfFacetF elds();
+
+  /**
+   * Get t  f eld   ght map for text searchable f elds.
+   */
+  Map<Str ng, F eld  ghtDefault> getF eld  ghtMap();
+
+  /**
+   * Get scor ng feature conf gurat on by feature na .
+   */
+  FeatureConf gurat on getFeatureConf gurat onByNa (Str ng featureNa );
+
+  /**
+   * Get scor ng feature conf gurat on by feature f eld  d.  T  feature conf gurat on  s
+   * guaranteed to be not null, or a NullPo nterExcept on w ll be thrown out.
+   */
+  FeatureConf gurat on getFeatureConf gurat onBy d( nt featureF eld d);
+
+  /**
+   * Returns t  Thr ftCSFType for a CSF f eld.
+   * Note: for non-CSF f eld, null w ll be returned.
+   */
+  @Nullable
+  Thr ftCSFType getCSFF eldType(Str ng f eldNa );
+
+  /**
+   * Get t  search result feature sc ma for all poss ble features  n all search results.
    *
-   * The returned value is not really immutable (because it's a pre-generated thrift struct).
-   * We want to return it directly because we want to pre-build it once and return with the thrift
-   * search results as is.
+   * T  returned value  s not really  mmutable (because  's a pre-generated thr ft struct).
+   *   want to return   d rectly because   want to pre-bu ld   once and return w h t  thr ft
+   * search results as  s.
    */
-  ThriftSearchFeatureSchema getSearchFeatureSchema();
+  Thr ftSearchFeatureSc ma getSearchFeatureSc ma();
 
   /**
-   * Get the mapping from feature id to feature configuration.
+   * Get t  mapp ng from feature  d to feature conf gurat on.
    */
-  ImmutableMap<Integer, FeatureConfiguration> getFeatureIdToFeatureConfig();
+   mmutableMap< nteger, FeatureConf gurat on> getFeature dToFeatureConf g();
 
   /**
-   * Get the mapping from feature name to feature configuration.
+   * Get t  mapp ng from feature na  to feature conf gurat on.
    */
-  ImmutableMap<String, FeatureConfiguration> getFeatureNameToFeatureConfig();
+   mmutableMap<Str ng, FeatureConf gurat on> getFeatureNa ToFeatureConf g();
 
   /**
-   * Field configuration for a single field.
+   * F eld conf gurat on for a s ngle f eld.
    */
-  final class FieldInfo {
-    private final int fieldId;
-    private final String name;
-    private final EarlybirdFieldType luceneFieldType;
+  f nal class F eld nfo {
+    pr vate f nal  nt f eld d;
+    pr vate f nal Str ng na ;
+    pr vate f nal Earlyb rdF eldType luceneF eldType;
 
-    public FieldInfo(int fieldId, String name, EarlybirdFieldType luceneFieldType) {
-      this.fieldId = fieldId;
-      this.name = name;
-      this.luceneFieldType = luceneFieldType;
+    publ c F eld nfo( nt f eld d, Str ng na , Earlyb rdF eldType luceneF eldType) {
+      t .f eld d = f eld d;
+      t .na  = na ;
+      t .luceneF eldType = luceneF eldType;
     }
 
-    public int getFieldId() {
-      return fieldId;
+    publ c  nt getF eld d() {
+      return f eld d;
     }
 
-    public String getName() {
-      return name;
+    publ c Str ng getNa () {
+      return na ;
     }
 
-    public EarlybirdFieldType getFieldType() {
-      return luceneFieldType;
+    publ c Earlyb rdF eldType getF eldType() {
+      return luceneF eldType;
     }
 
-    public String getDescription() {
-      return String.format(
-          "(FieldInfo [fieldId: %d, name: %s, luceneFieldType: %s])",
-          fieldId, name, luceneFieldType.getFacetName()
+    publ c Str ng getDescr pt on() {
+      return Str ng.format(
+          "(F eld nfo [f eld d: %d, na : %s, luceneF eldType: %s])",
+          f eld d, na , luceneF eldType.getFacetNa ()
       );
     }
 
-    @Override
-    public boolean equals(Object obj) {
-      if (!(obj instanceof FieldInfo)) {
+    @Overr de
+    publ c boolean equals(Object obj) {
+       f (!(obj  nstanceof F eld nfo)) {
         return false;
       }
-      return fieldId == ((FieldInfo) obj).fieldId;
+      return f eld d == ((F eld nfo) obj).f eld d;
     }
 
-    @Override
-    public int hashCode() {
-      return fieldId;
+    @Overr de
+    publ c  nt hashCode() {
+      return f eld d;
     }
   }
 
   /**
-   * Exception thrown when errors or inconsistences are detected in a search schema.
+   * Except on thrown w n errors or  ncons stences are detected  n a search sc ma.
    */
-  final class SchemaValidationException extends Exception {
-    public SchemaValidationException(String msg) {
+  f nal class Sc maVal dat onExcept on extends Except on {
+    publ c Sc maVal dat onExcept on(Str ng msg) {
       super(msg);
     }
 
-    public SchemaValidationException(String msg, Exception e) {
+    publ c Sc maVal dat onExcept on(Str ng msg, Except on e) {
       super(msg, e);
     }
   }

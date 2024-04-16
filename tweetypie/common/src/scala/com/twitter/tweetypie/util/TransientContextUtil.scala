@@ -1,17 +1,17 @@
-package com.twitter.tweetypie.util
+package com.tw ter.t etyp e.ut l
 
-import com.twitter.tweetypie.thriftscala.TransientCreateContext
-import com.twitter.tweetypie.thriftscala.TweetCreateContextKey
-import com.twitter.tweetypie.thriftscala.TweetCreateContextKey.PeriscopeCreatorId
-import com.twitter.tweetypie.thriftscala.TweetCreateContextKey.PeriscopeIsLive
+ mport com.tw ter.t etyp e.thr ftscala.Trans entCreateContext
+ mport com.tw ter.t etyp e.thr ftscala.T etCreateContextKey
+ mport com.tw ter.t etyp e.thr ftscala.T etCreateContextKey.Per scopeCreator d
+ mport com.tw ter.t etyp e.thr ftscala.T etCreateContextKey.Per scope sL ve
 
-object TransientContextUtil {
+object Trans entContextUt l {
 
-  def toAdditionalContext(context: TransientCreateContext): Map[TweetCreateContextKey, String] =
+  def toAdd  onalContext(context: Trans entCreateContext): Map[T etCreateContextKey, Str ng] =
     Seq
       .concat(
-        context.periscopeIsLive.map(PeriscopeIsLive -> _.toString), // "true" or "false"
-        context.periscopeCreatorId.map(PeriscopeCreatorId -> _.toString) // userId
+        context.per scope sL ve.map(Per scope sL ve -> _.toStr ng), // "true" or "false"
+        context.per scopeCreator d.map(Per scopeCreator d -> _.toStr ng) // user d
       )
       .toMap
 }

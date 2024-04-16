@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.assembler.models
+package com.tw ter.follow_recom ndat ons.assembler.models
 
-import com.twitter.follow_recommendations.{thriftscala => t}
+ mport com.tw ter.follow_recom ndat ons.{thr ftscala => t}
 
-case class Title(text: String) {
-  lazy val toThrift: t.Title = {
-    t.Title(text)
+case class T le(text: Str ng) {
+  lazy val toThr ft: t.T le = {
+    t.T le(text)
   }
 }

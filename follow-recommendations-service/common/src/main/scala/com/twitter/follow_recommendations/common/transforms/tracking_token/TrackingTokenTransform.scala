@@ -1,76 +1,76 @@
-package com.twitter.follow_recommendations.common.transforms.tracking_token
+package com.tw ter.follow_recom ndat ons.common.transforms.track ng_token
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.Session
-import com.twitter.follow_recommendations.common.models.TrackingToken
-import com.twitter.hermit.constants.AlgorithmFeedbackTokens.AlgorithmToFeedbackTokenMap
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.util.logging.Logging
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.base.Transform
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.HasD splayLocat on
+ mport com.tw ter.follow_recom ndat ons.common.models.Sess on
+ mport com.tw ter.follow_recom ndat ons.common.models.Track ngToken
+ mport com.tw ter. rm .constants.Algor hmFeedbackTokens.Algor hmToFeedbackTokenMap
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.ut l.logg ng.Logg ng
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * This transform adds the tracking token for all candidates
- * Since this happens in the same request, we use the same trace-id for all candidates
- * There are no RPC calls in this transform so it's safe to chain it with `andThen` at the end of
- * all other product-specific transforms
+ * T  transform adds t  track ng token for all cand dates
+ * S nce t  happens  n t  sa  request,   use t  sa  trace- d for all cand dates
+ * T re are no RPC calls  n t  transform so  's safe to cha n   w h `andT n` at t  end of
+ * all ot r product-spec f c transforms
  */
-@Singleton
-class TrackingTokenTransform @Inject() (baseStatsReceiver: StatsReceiver)
-    extends Transform[HasDisplayLocation with HasClientContext, CandidateUser]
-    with Logging {
+@S ngleton
+class Track ngTokenTransform @ nject() (baseStatsRece ver: StatsRece ver)
+    extends Transform[HasD splayLocat on w h HasCl entContext, Cand dateUser]
+    w h Logg ng {
 
-  def profileResults(
-    target: HasDisplayLocation with HasClientContext,
-    candidates: Seq[CandidateUser]
+  def prof leResults(
+    target: HasD splayLocat on w h HasCl entContext,
+    cand dates: Seq[Cand dateUser]
   ) = {
-    // Metrics to track # results per candidate source
-    val stats = baseStatsReceiver.scope(target.displayLocation.toString + "/final_results")
-    stats.stat("total").add(candidates.size)
+    //  tr cs to track # results per cand date s ce
+    val stats = baseStatsRece ver.scope(target.d splayLocat on.toStr ng + "/f nal_results")
+    stats.stat("total").add(cand dates.s ze)
 
-    stats.counter(target.displayLocation.toString).incr()
+    stats.counter(target.d splayLocat on.toStr ng). ncr()
 
-    val flattenedCandidates: Seq[(CandidateSourceIdentifier, CandidateUser)] = for {
-      candidate <- candidates
-      identifier <- candidate.getPrimaryCandidateSource
-    } yield (identifier, candidate)
-    val candidatesGroupedBySource: Map[CandidateSourceIdentifier, Seq[CandidateUser]] =
-      flattenedCandidates.groupBy(_._1).mapValues(_.map(_._2))
-    candidatesGroupedBySource map {
-      case (source, candidates) => stats.stat(source.name).add(candidates.size)
+    val flattenedCand dates: Seq[(Cand dateS ce dent f er, Cand dateUser)] = for {
+      cand date <- cand dates
+       dent f er <- cand date.getPr maryCand dateS ce
+    } y eld ( dent f er, cand date)
+    val cand datesGroupedByS ce: Map[Cand dateS ce dent f er, Seq[Cand dateUser]] =
+      flattenedCand dates.groupBy(_._1).mapValues(_.map(_._2))
+    cand datesGroupedByS ce map {
+      case (s ce, cand dates) => stats.stat(s ce.na ).add(cand dates.s ze)
     }
   }
 
-  override def transform(
-    target: HasDisplayLocation with HasClientContext,
-    candidates: Seq[CandidateUser]
-  ): Stitch[Seq[CandidateUser]] = {
-    profileResults(target, candidates)
+  overr de def transform(
+    target: HasD splayLocat on w h HasCl entContext,
+    cand dates: Seq[Cand dateUser]
+  ): St ch[Seq[Cand dateUser]] = {
+    prof leResults(target, cand dates)
 
-    Stitch.value(
-      target.getOptionalUserId
+    St ch.value(
+      target.getOpt onalUser d
         .map { _ =>
-          candidates.map {
-            candidate =>
-              val token = Some(TrackingToken(
-                sessionId = Session.getSessionId,
-                displayLocation = Some(target.displayLocation),
+          cand dates.map {
+            cand date =>
+              val token = So (Track ngToken(
+                sess on d = Sess on.getSess on d,
+                d splayLocat on = So (target.d splayLocat on),
                 controllerData = None,
-                algorithmId = candidate.userCandidateSourceDetails.flatMap(_.primaryCandidateSource
-                  .flatMap { identifier =>
-                    Algorithm.withNameOpt(identifier.name).flatMap(AlgorithmToFeedbackTokenMap.get)
+                algor hm d = cand date.userCand dateS ceDeta ls.flatMap(_.pr maryCand dateS ce
+                  .flatMap {  dent f er =>
+                    Algor hm.w hNa Opt( dent f er.na ).flatMap(Algor hmToFeedbackTokenMap.get)
                   })
               ))
-              candidate.copy(trackingToken = token)
+              cand date.copy(track ngToken = token)
           }
-        }.getOrElse(candidates))
+        }.getOrElse(cand dates))
 
   }
 }

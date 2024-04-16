@@ -1,27 +1,27 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work
 
-import com.twitter.ml.api.DataRecord
+ mport com.tw ter.ml.ap .DataRecord
 
 /**
- * Keyed record that is used to reprsent the aggregation type and its corresponding data record.
+ * Keyed record that  s used to reprsent t  aggregat on type and  s correspond ng data record.
  *
  * @constructor creates a new keyed record.
  *
- * @param aggregateType the aggregate type
- * @param record the data record associated with the key
+ * @param aggregateType t  aggregate type
+ * @param record t  data record assoc ated w h t  key
   **/
 case class KeyedRecord(aggregateType: AggregateType.Value, record: DataRecord)
 
 /**
- * Keyed record map with multiple data record.
+ * Keyed record map w h mult ple data record.
  *
  * @constructor creates a new keyed record map.
  *
- * @param aggregateType the aggregate type
- * @param recordMap a map with key of type Long and value of type DataRecord
- *  where the key indicates the index and the value indicating the record
+ * @param aggregateType t  aggregate type
+ * @param recordMap a map w h key of type Long and value of type DataRecord
+ *  w re t  key  nd cates t   ndex and t  value  nd cat ng t  record
  *
   **/
 case class KeyedRecordMap(
   aggregateType: AggregateType.Value,
-  recordMap: scala.collection.Map[Long, DataRecord])
+  recordMap: scala.collect on.Map[Long, DataRecord])

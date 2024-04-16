@@ -1,6 +1,6 @@
 test_value:
-  comment: Test Value
-  default_availability: 10000
-dark_traffic_percent:
-  comment: Percentage of traffic to send to dark traffic destination
-  default_availability: 0
+  com nt: Test Value
+  default_ava lab l y: 10000
+dark_traff c_percent:
+  com nt: Percentage of traff c to send to dark traff c dest nat on
+  default_ava lab l y: 0

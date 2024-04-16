@@ -1,17 +1,17 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.io.Closeable;
+ mport java. o.Closeable;
 
-import com.twitter.search.earlybird.exception.EarlybirdStartupException;
+ mport com.tw ter.search.earlyb rd.except on.Earlyb rdStartupExcept on;
 
 /**
- * Handles starting and indexing data for an Earlybird.
+ * Handles start ng and  ndex ng data for an Earlyb rd.
  */
-@FunctionalInterface
-public interface EarlybirdStartup {
+@Funct onal nterface
+publ c  nterface Earlyb rdStartup {
   /**
-   * Handles indexing Tweets, Tweet Updates and user updates. Blocks until current, and forks a
-   * thread to keep the index current.
+   * Handles  ndex ng T ets, T et Updates and user updates. Blocks unt l current, and forks a
+   * thread to keep t   ndex current.
    */
-  Closeable start() throws EarlybirdStartupException;
+  Closeable start() throws Earlyb rdStartupExcept on;
 }

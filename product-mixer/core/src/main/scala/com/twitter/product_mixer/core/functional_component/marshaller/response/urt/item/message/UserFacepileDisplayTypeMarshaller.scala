@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em. ssage
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.LargeUserFacepileDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.CompactUserFacepileDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.UserFacepileDisplayType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage.LargeUserFacep leD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage.CompactUserFacep leD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage.UserFacep leD splayType
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class UserFacepileDisplayTypeMarshaller @Inject() () {
+@S ngleton
+class UserFacep leD splayTypeMarshaller @ nject() () {
 
-  def apply(userFacepileDisplayType: UserFacepileDisplayType): urt.UserFacepileDisplayType =
-    userFacepileDisplayType match {
-      case LargeUserFacepileDisplayType => urt.UserFacepileDisplayType.Large
-      case CompactUserFacepileDisplayType => urt.UserFacepileDisplayType.Compact
+  def apply(userFacep leD splayType: UserFacep leD splayType): urt.UserFacep leD splayType =
+    userFacep leD splayType match {
+      case LargeUserFacep leD splayType => urt.UserFacep leD splayType.Large
+      case CompactUserFacep leD splayType => urt.UserFacep leD splayType.Compact
     }
 }

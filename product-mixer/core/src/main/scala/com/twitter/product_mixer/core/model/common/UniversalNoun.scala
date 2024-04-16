@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.common
+package com.tw ter.product_m xer.core.model.common
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo
+ mport com.fasterxml.jackson.annotat on.JsonType nfo
 
-@JsonTypeInfo(include = JsonTypeInfo.As.PROPERTY, use = JsonTypeInfo.Id.NAME)
-trait UniversalNoun[+T] extends Equals {
-  def id: T
+@JsonType nfo( nclude = JsonType nfo.As.PROPERTY, use = JsonType nfo. d.NAME)
+tra  Un versalNoun[+T] extends Equals {
+  def  d: T
 }

@@ -1,65 +1,65 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.candidate.decay
+package com.tw ter.product_m xer.component_l brary.feature_hydrator.cand date.decay
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.configapi.StaticParam
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.conf gap .Stat cParam
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.Cand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.ut l.Durat on
 
-object DecayScore extends Feature[UniversalNoun[Long], Double]
+object DecayScore extends Feature[Un versalNoun[Long], Double]
 
 /**
- * Hydrates snowflake ID candidates with a decay score:
+ * Hydrates snowflake  D cand dates w h a decay score:
  *
- * It is using exponential decay formula to calculate the score
+ *    s us ng exponent al decay formula to calculate t  score
  * exp(k * age)
- * where k = ln(0.5) / half-life
+ * w re k = ln(0.5) / half-l fe
  *
- * Here is an example for half-life = 1 day
- * For the brand new tweet it will be exp((ln(0.5)/1)*0) = 1
- * For the tweet which was created 1 day ago it will be exp((ln(0.5)/1)*1) = 0.5
- * For the tweet which was created 10 day ago it will be exp((ln(0.5)/1)*10) = 0.00097
+ *  re  s an example for half-l fe = 1 day
+ * For t  brand new t et   w ll be exp((ln(0.5)/1)*0) = 1
+ * For t  t et wh ch was created 1 day ago   w ll be exp((ln(0.5)/1)*1) = 0.5
+ * For t  t et wh ch was created 10 day ago   w ll be exp((ln(0.5)/1)*10) = 0.00097
  *
- * Reference: https://www.cuemath.com/exponential-decay-formula/
+ * Reference: https://www.cuemath.com/exponent al-decay-formula/
  *
- * @note This penalizes but does not filter out the candidate, so "stale" candidates can still appear.
+ * @note T  penal zes but does not f lter out t  cand date, so "stale" cand dates can st ll appear.
  */
-case class DecayCandidateFeatureHydrator[Candidate <: UniversalNoun[Long]](
-  halfLife: Param[Duration] = StaticParam[Duration](2.days),
-  resultFeature: Feature[UniversalNoun[Long], Double] = DecayScore)
-    extends CandidateFeatureHydrator[PipelineQuery, Candidate] {
+case class DecayCand dateFeatureHydrator[Cand date <: Un versalNoun[Long]](
+  halfL fe: Param[Durat on] = Stat cParam[Durat on](2.days),
+  resultFeature: Feature[Un versalNoun[Long], Double] = DecayScore)
+    extends Cand dateFeatureHydrator[P pel neQuery, Cand date] {
 
-  override val features: Set[Feature[_, _]] = Set(resultFeature)
+  overr de val features: Set[Feature[_, _]] = Set(resultFeature)
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("Decay")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("Decay")
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: Candidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = {
-    val halfLifeInMillis = query.params(halfLife).inMillis
+  overr de def apply(
+    query: P pel neQuery,
+    cand date: Cand date,
+    ex st ngFeatures: FeatureMap
+  ): St ch[FeatureMap] = {
+    val halfL fe nM ll s = query.params(halfL fe). nM ll s
 
-    val creationTime = SnowflakeId.timeFromId(candidate.id)
-    val ageInMillis = creationTime.untilNow.inMilliseconds
+    val creat onT   = Snowflake d.t  From d(cand date. d)
+    val age nM ll s = creat onT  .unt lNow. nM ll seconds
 
-    // it is using a exponential decay formula:  e^(k * tweetAge)
-    // where k = ln(0.5) / half-life
-    val k = math.log(0.5D) / halfLifeInMillis
-    val decayScore = math.exp(k * ageInMillis)
+    //    s us ng a exponent al decay formula:  e^(k * t etAge)
+    // w re k = ln(0.5) / half-l fe
+    val k = math.log(0.5D) / halfL fe nM ll s
+    val decayScore = math.exp(k * age nM ll s)
 
-    Stitch.value(
-      FeatureMapBuilder()
+    St ch.value(
+      FeatureMapBu lder()
         .add(resultFeature, decayScore)
-        .build())
+        .bu ld())
   }
 }

@@ -1,27 +1,27 @@
-package com.twitter.unified_user_actions.service.module
+package com.tw ter.un f ed_user_act ons.serv ce.module
 
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.dec der.RandomRec p ent
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Act onType
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Un f edUserAct on
 
-sealed trait DeciderUtils {
-  def shouldPublish(decider: Decider, uua: UnifiedUserAction, sinkTopic: String): Boolean
+sealed tra  Dec derUt ls {
+  def shouldPubl sh(dec der: Dec der, uua: Un f edUserAct on, s nkTop c: Str ng): Boolean
 }
 
-object DefaultDeciderUtils extends DeciderUtils {
-  override def shouldPublish(decider: Decider, uua: UnifiedUserAction, sinkTopic: String): Boolean =
-    decider.isAvailable(feature = s"Publish${uua.actionType}", Some(RandomRecipient))
+object DefaultDec derUt ls extends Dec derUt ls {
+  overr de def shouldPubl sh(dec der: Dec der, uua: Un f edUserAct on, s nkTop c: Str ng): Boolean =
+    dec der. sAva lable(feature = s"Publ sh${uua.act onType}", So (RandomRec p ent))
 }
 
-object ClientEventDeciderUtils extends DeciderUtils {
-  override def shouldPublish(decider: Decider, uua: UnifiedUserAction, sinkTopic: String): Boolean =
-    decider.isAvailable(
-      feature = s"Publish${uua.actionType}",
-      Some(RandomRecipient)) && (uua.actionType match {
-      // for heavy impressions UUA only publishes to the "all" topic, not the engagementsOnly topic.
-      case ActionType.ClientTweetLingerImpression | ActionType.ClientTweetRenderImpression =>
-        sinkTopic == TopicsMapping().all
+object Cl entEventDec derUt ls extends Dec derUt ls {
+  overr de def shouldPubl sh(dec der: Dec der, uua: Un f edUserAct on, s nkTop c: Str ng): Boolean =
+    dec der. sAva lable(
+      feature = s"Publ sh${uua.act onType}",
+      So (RandomRec p ent)) && (uua.act onType match {
+      // for  avy  mpress ons UUA only publ s s to t  "all" top c, not t  engage ntsOnly top c.
+      case Act onType.Cl entT etL nger mpress on | Act onType.Cl entT etRender mpress on =>
+        s nkTop c == Top csMapp ng().all
       case _ => true
     })
 }

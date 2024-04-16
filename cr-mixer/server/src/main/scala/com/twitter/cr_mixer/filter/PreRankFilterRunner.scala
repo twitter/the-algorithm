@@ -1,98 +1,98 @@
-package com.twitter.cr_mixer.filter
+package com.tw ter.cr_m xer.f lter
 
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.cr_m xer.model.Cand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model. n  alCand date
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ut l.Future
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class PreRankFilterRunner @Inject() (
-  impressedTweetListFilter: ImpressedTweetlistFilter,
-  tweetAgeFilter: TweetAgeFilter,
-  videoTweetFilter: VideoTweetFilter,
-  tweetReplyFilter: ReplyFilter,
-  globalStats: StatsReceiver) {
+@S ngleton
+class PreRankF lterRunner @ nject() (
+   mpressedT etL stF lter:  mpressedT etl stF lter,
+  t etAgeF lter: T etAgeF lter,
+  v deoT etF lter: V deoT etF lter,
+  t etReplyF lter: ReplyF lter,
+  globalStats: StatsRece ver) {
 
-  private val scopedStats = globalStats.scope(this.getClass.getCanonicalName)
+  pr vate val scopedStats = globalStats.scope(t .getClass.getCanon calNa )
 
   /***
-   * The order of the filters does not matter as long as we do not apply .take(N) truncation
-   * across all filters. In other words, it is fine that we first do tweetAgeFilter, and then
-   * we do impressedTweetListFilter, or the other way around.
-   * Same idea applies to the signal based filter - it is ok that we apply signal based filters
-   * before impressedTweetListFilter.
+   * T  order of t  f lters does not matter as long as   do not apply .take(N) truncat on
+   * across all f lters.  n ot r words,    s f ne that   f rst do t etAgeF lter, and t n
+   *   do  mpressedT etL stF lter, or t  ot r way around.
+   * Sa   dea appl es to t  s gnal based f lter -    s ok that   apply s gnal based f lters
+   * before  mpressedT etL stF lter.
    *
-   * We move all signal based filters before tweetAgeFilter and impressedTweetListFilter
-   * as a set of early filters.
+   *   move all s gnal based f lters before t etAgeF lter and  mpressedT etL stF lter
+   * as a set of early f lters.
    */
-  val orderedFilters = Seq(
-    tweetAgeFilter,
-    impressedTweetListFilter,
-    videoTweetFilter,
-    tweetReplyFilter
+  val orderedF lters = Seq(
+    t etAgeF lter,
+     mpressedT etL stF lter,
+    v deoT etF lter,
+    t etReplyF lter
   )
 
-  def runSequentialFilters[CGQueryType <: CandidateGeneratorQuery](
+  def runSequent alF lters[CGQueryType <: Cand dateGeneratorQuery](
     request: CGQueryType,
-    candidates: Seq[Seq[InitialCandidate]],
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    PreRankFilterRunner.runSequentialFilters(
+    cand dates: Seq[Seq[ n  alCand date]],
+  ): Future[Seq[Seq[ n  alCand date]]] = {
+    PreRankF lterRunner.runSequent alF lters(
       request,
-      candidates,
-      orderedFilters,
+      cand dates,
+      orderedF lters,
       scopedStats
     )
   }
 
 }
 
-object PreRankFilterRunner {
-  private def recordCandidateStatsBeforeFilter(
-    candidates: Seq[Seq[InitialCandidate]],
-    statsReceiver: StatsReceiver
-  ): Unit = {
-    statsReceiver
-      .counter("empty_sources", "before").incr(
-        candidates.count { _.isEmpty }
+object PreRankF lterRunner {
+  pr vate def recordCand dateStatsBeforeF lter(
+    cand dates: Seq[Seq[ n  alCand date]],
+    statsRece ver: StatsRece ver
+  ): Un  = {
+    statsRece ver
+      .counter("empty_s ces", "before"). ncr(
+        cand dates.count { _. sEmpty }
       )
-    candidates.foreach { candidate =>
-      statsReceiver.counter("candidates", "before").incr(candidate.size)
+    cand dates.foreach { cand date =>
+      statsRece ver.counter("cand dates", "before"). ncr(cand date.s ze)
     }
   }
 
-  private def recordCandidateStatsAfterFilter(
-    candidates: Seq[Seq[InitialCandidate]],
-    statsReceiver: StatsReceiver
-  ): Unit = {
-    statsReceiver
-      .counter("empty_sources", "after").incr(
-        candidates.count { _.isEmpty }
+  pr vate def recordCand dateStatsAfterF lter(
+    cand dates: Seq[Seq[ n  alCand date]],
+    statsRece ver: StatsRece ver
+  ): Un  = {
+    statsRece ver
+      .counter("empty_s ces", "after"). ncr(
+        cand dates.count { _. sEmpty }
       )
-    candidates.foreach { candidate =>
-      statsReceiver.counter("candidates", "after").incr(candidate.size)
+    cand dates.foreach { cand date =>
+      statsRece ver.counter("cand dates", "after"). ncr(cand date.s ze)
     }
   }
 
   /*
-  Helper function for running some candidates through a sequence of filters
+   lper funct on for runn ng so  cand dates through a sequence of f lters
    */
-  private[filter] def runSequentialFilters[CGQueryType <: CandidateGeneratorQuery](
+  pr vate[f lter] def runSequent alF lters[CGQueryType <: Cand dateGeneratorQuery](
     request: CGQueryType,
-    candidates: Seq[Seq[InitialCandidate]],
-    filters: Seq[FilterBase],
-    statsReceiver: StatsReceiver
-  ): Future[Seq[Seq[InitialCandidate]]] =
-    filters.foldLeft(Future.value(candidates)) {
-      case (candsFut, filter) =>
+    cand dates: Seq[Seq[ n  alCand date]],
+    f lters: Seq[F lterBase],
+    statsRece ver: StatsRece ver
+  ): Future[Seq[Seq[ n  alCand date]]] =
+    f lters.foldLeft(Future.value(cand dates)) {
+      case (candsFut, f lter) =>
         candsFut.flatMap { cands =>
-          recordCandidateStatsBeforeFilter(cands, statsReceiver.scope(filter.name))
-          filter
-            .filter(cands, filter.requestToConfig(request))
-            .map { filteredCands =>
-              recordCandidateStatsAfterFilter(filteredCands, statsReceiver.scope(filter.name))
-              filteredCands
+          recordCand dateStatsBeforeF lter(cands, statsRece ver.scope(f lter.na ))
+          f lter
+            .f lter(cands, f lter.requestToConf g(request))
+            .map { f lteredCands =>
+              recordCand dateStatsAfterF lter(f lteredCands, statsRece ver.scope(f lter.na ))
+              f lteredCands
             }
         }
     }

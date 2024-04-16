@@ -1,19 +1,19 @@
-package com.twitter.follow_recommendations.configapi.candidates
+package com.tw ter.follow_recom ndat ons.conf gap .cand dates
 
-import com.twitter.timelines.configapi.BaseRequestContext
-import com.twitter.timelines.configapi.FeatureContext
-import com.twitter.timelines.configapi.NullFeatureContext
-import com.twitter.timelines.configapi.WithFeatureContext
-import com.twitter.timelines.configapi.WithUserId
+ mport com.tw ter.t  l nes.conf gap .BaseRequestContext
+ mport com.tw ter.t  l nes.conf gap .FeatureContext
+ mport com.tw ter.t  l nes.conf gap .NullFeatureContext
+ mport com.tw ter.t  l nes.conf gap .W hFeatureContext
+ mport com.tw ter.t  l nes.conf gap .W hUser d
 
 /**
- * represent the context for a recommendation candidate (producer side)
- * @param userId id of the recommended user
+ * represent t  context for a recom ndat on cand date (producer s de)
+ * @param user d  d of t  recom nded user
  * @param featureContext feature context
  */
-case class CandidateUserContext(
-  override val userId: Option[Long],
+case class Cand dateUserContext(
+  overr de val user d: Opt on[Long],
   featureContext: FeatureContext = NullFeatureContext)
     extends BaseRequestContext
-    with WithUserId
-    with WithFeatureContext
+    w h W hUser d
+    w h W hFeatureContext

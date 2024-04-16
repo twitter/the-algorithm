@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-trait HasExcludedUserIds {
-  // user ids that are going to be excluded from recommendations
-  def excludedUserIds: Seq[Long]
+tra  HasExcludedUser ds {
+  // user  ds that are go ng to be excluded from recom ndat ons
+  def excludedUser ds: Seq[Long]
 }

@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.component_library.module
+package com.tw ter.product_m xer.component_l brary.module
 
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.thrift.service.Filterable
-import com.twitter.finagle.thrift.service.ReqRepServicePerEndpointBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.annotations.Flags
-import com.twitter.inject.thrift.modules.ReqRepDarkTrafficFilterModule
-import scala.reflect.ClassTag
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.dec der.RandomRec p ent
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.f nagle.thr ft.serv ce.F lterable
+ mport com.tw ter.f nagle.thr ft.serv ce.ReqRepServ cePerEndpo ntBu lder
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport com.tw ter. nject. njector
+ mport com.tw ter. nject.annotat ons.Flags
+ mport com.tw ter. nject.thr ft.modules.ReqRepDarkTraff cF lterModule
+ mport scala.reflect.ClassTag
 
-class DarkTrafficFilterModule[MethodIface <: Filterable[MethodIface]: ClassTag](
-  implicit serviceBuilder: ReqRepServicePerEndpointBuilder[MethodIface])
-    extends ReqRepDarkTrafficFilterModule
-    with MtlsClient {
+class DarkTraff cF lterModule[ thod face <: F lterable[ thod face]: ClassTag](
+   mpl c  serv ceBu lder: ReqRepServ cePerEndpo ntBu lder[ thod face])
+    extends ReqRepDarkTraff cF lterModule
+    w h MtlsCl ent {
 
-  override protected def enableSampling(injector: Injector): Any => Boolean = _ => {
-    val decider = injector.instance[Decider]
-    val deciderKey =
-      injector.instance[String](Flags.named("thrift.dark.traffic.filter.decider_key"))
-    val fromProxy = ClientId.current
-      .map(_.name).exists(name => name.contains("diffy") || name.contains("darktraffic"))
-    !fromProxy && decider.isAvailable(deciderKey, recipient = Some(RandomRecipient))
+  overr de protected def enableSampl ng( njector:  njector): Any => Boolean = _ => {
+    val dec der =  njector. nstance[Dec der]
+    val dec derKey =
+       njector. nstance[Str ng](Flags.na d("thr ft.dark.traff c.f lter.dec der_key"))
+    val fromProxy = Cl ent d.current
+      .map(_.na ).ex sts(na  => na .conta ns("d ffy") || na .conta ns("darktraff c"))
+    !fromProxy && dec der. sAva lable(dec derKey, rec p ent = So (RandomRec p ent))
   }
 }

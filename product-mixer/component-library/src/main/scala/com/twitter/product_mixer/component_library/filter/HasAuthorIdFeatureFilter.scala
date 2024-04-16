@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.component_library.filter
+package com.tw ter.product_m xer.component_l brary.f lter
 
-import com.twitter.product_mixer.component_library.model.candidate.TweetAuthorIdFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etAuthor dFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lterResult
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
 /**
- * A filter that checks for presence of a successfully hydrated [[TweetAuthorIdFeature]]
+ * A f lter that c cks for presence of a successfully hydrated [[T etAuthor dFeature]]
  */
-case class HasAuthorIdFeatureFilter[Candidate <: TweetCandidate]()
-    extends Filter[PipelineQuery, Candidate] {
+case class HasAuthor dFeatureF lter[Cand date <: T etCand date]()
+    extends F lter[P pel neQuery, Cand date] {
 
-  override val identifier = FilterIdentifier("HasAuthorIdFeature")
+  overr de val  dent f er = F lter dent f er("HasAuthor dFeature")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
-    val (kept, removed) = candidates.partition(_.features.getTry(TweetAuthorIdFeature).isReturn)
-    Stitch.value(FilterResult(kept.map(_.candidate), removed.map(_.candidate)))
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): St ch[F lterResult[Cand date]] = {
+    val (kept, removed) = cand dates.part  on(_.features.getTry(T etAuthor dFeature). sReturn)
+    St ch.value(F lterResult(kept.map(_.cand date), removed.map(_.cand date)))
   }
 }

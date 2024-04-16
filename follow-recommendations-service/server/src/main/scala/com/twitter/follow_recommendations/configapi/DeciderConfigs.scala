@@ -1,52 +1,52 @@
-package com.twitter.follow_recommendations.configapi
+package com.tw ter.follow_recom ndat ons.conf gap 
 
-import com.twitter.decider.Recipient
-import com.twitter.decider.SimpleRecipient
-import com.twitter.follow_recommendations.configapi.deciders.DeciderKey
-import com.twitter.follow_recommendations.configapi.deciders.DeciderParams
-import com.twitter.follow_recommendations.products.home_timeline_tweet_recs.configapi.HomeTimelineTweetRecsParams
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.timelines.configapi._
-import com.twitter.timelines.configapi.decider.DeciderSwitchOverrideValue
-import com.twitter.timelines.configapi.decider.GuestRecipient
-import com.twitter.timelines.configapi.decider.RecipientBuilder
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.dec der.Rec p ent
+ mport com.tw ter.dec der.S mpleRec p ent
+ mport com.tw ter.follow_recom ndat ons.conf gap .dec ders.Dec derKey
+ mport com.tw ter.follow_recom ndat ons.conf gap .dec ders.Dec derParams
+ mport com.tw ter.follow_recom ndat ons.products.ho _t  l ne_t et_recs.conf gap .Ho T  l neT etRecsParams
+ mport com.tw ter.servo.dec der.Dec derGateBu lder
+ mport com.tw ter.t  l nes.conf gap ._
+ mport com.tw ter.t  l nes.conf gap .dec der.Dec derSw chOverr deValue
+ mport com.tw ter.t  l nes.conf gap .dec der.GuestRec p ent
+ mport com.tw ter.t  l nes.conf gap .dec der.Rec p entBu lder
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class DeciderConfigs @Inject() (deciderGateBuilder: DeciderGateBuilder) {
-  val overrides: Seq[OptionalOverride[_]] = DeciderConfigs.ParamsToDeciderMap.map {
-    case (params, deciderKey) =>
-      params.optionalOverrideValue(
-        DeciderSwitchOverrideValue(
-          feature = deciderGateBuilder.keyToFeature(deciderKey),
+@S ngleton
+class Dec derConf gs @ nject() (dec derGateBu lder: Dec derGateBu lder) {
+  val overr des: Seq[Opt onalOverr de[_]] = Dec derConf gs.ParamsToDec derMap.map {
+    case (params, dec derKey) =>
+      params.opt onalOverr deValue(
+        Dec derSw chOverr deValue(
+          feature = dec derGateBu lder.keyToFeature(dec derKey),
           enabledValue = true,
-          recipientBuilder = DeciderConfigs.UserOrGuestOrRequest
+          rec p entBu lder = Dec derConf gs.UserOrGuestOrRequest
         )
       )
   }.toSeq
 
-  val config: BaseConfig = BaseConfigBuilder(overrides).build("FollowRecommendationServiceDeciders")
+  val conf g: BaseConf g = BaseConf gBu lder(overr des).bu ld("FollowRecom ndat onServ ceDec ders")
 }
 
-object DeciderConfigs {
-  val ParamsToDeciderMap = Map(
-    DeciderParams.EnableRecommendations -> DeciderKey.EnableRecommendations,
-    DeciderParams.EnableScoreUserCandidates -> DeciderKey.EnableScoreUserCandidates,
-    HomeTimelineTweetRecsParams.EnableProduct -> DeciderKey.EnableHomeTimelineTweetRecsProduct,
+object Dec derConf gs {
+  val ParamsToDec derMap = Map(
+    Dec derParams.EnableRecom ndat ons -> Dec derKey.EnableRecom ndat ons,
+    Dec derParams.EnableScoreUserCand dates -> Dec derKey.EnableScoreUserCand dates,
+    Ho T  l neT etRecsParams.EnableProduct -> Dec derKey.EnableHo T  l neT etRecsProduct,
   )
 
-  object UserOrGuestOrRequest extends RecipientBuilder {
+  object UserOrGuestOrRequest extends Rec p entBu lder {
 
-    def apply(requestContext: BaseRequestContext): Option[Recipient] = requestContext match {
-      case c: WithUserId if c.userId.isDefined =>
-        c.userId.map(SimpleRecipient)
-      case c: WithGuestId if c.guestId.isDefined =>
-        c.guestId.map(GuestRecipient)
-      case c: WithGuestId =>
-        RecipientBuilder.Request(c)
+    def apply(requestContext: BaseRequestContext): Opt on[Rec p ent] = requestContext match {
+      case c: W hUser d  f c.user d. sDef ned =>
+        c.user d.map(S mpleRec p ent)
+      case c: W hGuest d  f c.guest d. sDef ned =>
+        c.guest d.map(GuestRec p ent)
+      case c: W hGuest d =>
+        Rec p entBu lder.Request(c)
       case _ =>
-        throw new UndefinedUserIdNorGuestIDException(requestContext)
+        throw new Undef nedUser dNorGuest DExcept on(requestContext)
     }
   }
 }

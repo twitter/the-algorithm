@@ -1,116 +1,116 @@
-package com.twitter.follow_recommendations.flows.content_recommender_flow
+package com.tw ter.follow_recom ndat ons.flows.content_recom nder_flow
 
-import com.twitter.timelines.configapi.FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
 
-object ContentRecommenderFlowCandidateSourceWeightsParams {
-  // Social based
-  case object ForwardPhoneBookSourceWeight
+object ContentRecom nderFlowCand dateS ce  ghtsParams {
+  // Soc al based
+  case object ForwardPhoneBookS ce  ght
       extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.ForwardPhoneBookSourceWeight,
+        ContentRecom nderFlowFeatureSw chKeys.ForwardPhoneBookS ce  ght,
         1d,
         0d,
         1000d)
-  case object ForwardEmailBookSourceWeight
+  case object ForwardEma lBookS ce  ght
       extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.ForwardEmailBookSourceWeight,
+        ContentRecom nderFlowFeatureSw chKeys.ForwardEma lBookS ce  ght,
         1d,
         0d,
         1000d)
-  case object ReversePhoneBookSourceWeight
+  case object ReversePhoneBookS ce  ght
       extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.ReversePhoneBookSourceWeight,
+        ContentRecom nderFlowFeatureSw chKeys.ReversePhoneBookS ce  ght,
         1d,
         0d,
         1000d)
-  case object ReverseEmailBookSourceWeight
+  case object ReverseEma lBookS ce  ght
       extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.ReverseEmailBookSourceWeight,
+        ContentRecom nderFlowFeatureSw chKeys.ReverseEma lBookS ce  ght,
         1d,
         0d,
         1000d)
-  case object OfflineStrongTiePredictionSourceWeight
+  case object Offl neStrongT ePred ct onS ce  ght
       extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.OfflineStrongTiePredictionSourceWeight,
+        ContentRecom nderFlowFeatureSw chKeys.Offl neStrongT ePred ct onS ce  ght,
         1d,
         0d,
         1000d)
-  case object TriangularLoopsSourceWeight
+  case object Tr angularLoopsS ce  ght
       extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.TriangularLoopsSourceWeight,
+        ContentRecom nderFlowFeatureSw chKeys.Tr angularLoopsS ce  ght,
         1d,
         0d,
         1000d)
-  case object UserUserGraphSourceWeight
+  case object UserUserGraphS ce  ght
       extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.UserUserGraphSourceWeight,
+        ContentRecom nderFlowFeatureSw chKeys.UserUserGraphS ce  ght,
         1d,
         0d,
         1000d)
-  case object NewFollowingNewFollowingExpansionSourceWeight
+  case object NewFollow ngNewFollow ngExpans onS ce  ght
       extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.NewFollowingNewFollowingExpansionSourceWeight,
+        ContentRecom nderFlowFeatureSw chKeys.NewFollow ngNewFollow ngExpans onS ce  ght,
         1d,
         0d,
         1000d)
-  // Activity based
-  case object NewFollowingSimilarUserSourceWeight
+  // Act v y based
+  case object NewFollow ngS m larUserS ce  ght
       extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.NewFollowingSimilarUserSourceWeight,
+        ContentRecom nderFlowFeatureSw chKeys.NewFollow ngS m larUserS ce  ght,
         1d,
         0d,
         1000d)
-  case object RecentEngagementSimilarUserSourceWeight
+  case object RecentEngage ntS m larUserS ce  ght
       extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.RecentEngagementSimilarUserSourceWeight,
+        ContentRecom nderFlowFeatureSw chKeys.RecentEngage ntS m larUserS ce  ght,
         1d,
         0d,
         1000d)
-  case object RepeatedProfileVisitsSourceWeight
+  case object RepeatedProf leV s sS ce  ght
       extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.RepeatedProfileVisitsSourceWeight,
+        ContentRecom nderFlowFeatureSw chKeys.RepeatedProf leV s sS ce  ght,
         1d,
         0d,
         1000d)
-  case object RealGraphOonSourceWeight
+  case object RealGraphOonS ce  ght
       extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.RealGraphOonSourceWeight,
+        ContentRecom nderFlowFeatureSw chKeys.RealGraphOonS ce  ght,
         1d,
         0d,
         1000d)
   // Geo based
-  case object PopCountrySourceWeight
+  case object PopCountryS ce  ght
       extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.PopCountrySourceWeight,
+        ContentRecom nderFlowFeatureSw chKeys.PopCountryS ce  ght,
         1d,
         0d,
         1000d)
-  case object PopGeohashSourceWeight
+  case object PopGeohashS ce  ght
       extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.PopGeohashSourceWeight,
+        ContentRecom nderFlowFeatureSw chKeys.PopGeohashS ce  ght,
         1d,
         0d,
         1000d)
-  case object PopCountryBackfillSourceWeight
+  case object PopCountryBackf llS ce  ght
       extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.PopCountryBackfillSourceWeight,
+        ContentRecom nderFlowFeatureSw chKeys.PopCountryBackf llS ce  ght,
         1d,
         0d,
         1000d)
-  case object PPMILocaleFollowSourceWeight
+  case object PPM LocaleFollowS ce  ght
       extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.PPMILocaleFollowSourceWeight,
+        ContentRecom nderFlowFeatureSw chKeys.PPM LocaleFollowS ce  ght,
         1d,
         0d,
         1000d)
-  case object TopOrganicFollowsAccountsSourceWeight
+  case object TopOrgan cFollowsAccountsS ce  ght
       extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.TopOrganicFollowsAccountsSourceWeight,
+        ContentRecom nderFlowFeatureSw chKeys.TopOrgan cFollowsAccountsS ce  ght,
         1d,
         0d,
         1000d)
-  case object CrowdSearchAccountSourceWeight
+  case object CrowdSearchAccountS ce  ght
       extends FSBoundedParam[Double](
-        ContentRecommenderFlowFeatureSwitchKeys.CrowdSearchAccountSourceWeight,
+        ContentRecom nderFlowFeatureSw chKeys.CrowdSearchAccountS ce  ght,
         1d,
         0d,
         1000d)

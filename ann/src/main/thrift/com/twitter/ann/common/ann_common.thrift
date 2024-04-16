@@ -1,150 +1,150 @@
-namespace java com.twitter.ann.common.thriftjava
-#@namespace scala com.twitter.ann.common.thriftscala
-#@namespace strato com.twitter.ann.common
-namespace py gen.twitter.ann.common
+na space java com.tw ter.ann.common.thr ftjava
+#@na space scala com.tw ter.ann.common.thr ftscala
+#@na space strato com.tw ter.ann.common
+na space py gen.tw ter.ann.common
 
-include "com/twitter/mediaservices/commons/ServerCommon.thrift"
-include "com/twitter/ml/api/embedding.thrift"
+ nclude "com/tw ter/ d aserv ces/commons/ServerCommon.thr ft"
+ nclude "com/tw ter/ml/ap /embedd ng.thr ft"
 
 /**
-* Thrift schema for storing file based Index mapping
+* Thr ft sc ma for stor ng f le based  ndex mapp ng
 */
-struct FileBasedIndexIdStore {
-  1: optional map<i64, binary> indexIdMap
+struct F leBased ndex dStore {
+  1: opt onal map< 64, b nary>  ndex dMap
 }
 
-enum DistanceMetric {
-  L2, Cosine, InnerProduct, 
-  RESERVED_4, RESERVED_5, RESERVED_6, RESERVED_7, EditDistance
-} (persisted = 'true',  strato.graphql.typename='DistanceMetric')
+enum D stance tr c {
+  L2, Cos ne,  nnerProduct, 
+  RESERVED_4, RESERVED_5, RESERVED_6, RESERVED_7, Ed D stance
+} (pers sted = 'true',  strato.graphql.typena ='D stance tr c')
 
-struct AnnoyIndexMetadata {
-  1: i32 dimension
-  2: DistanceMetric distanceMetric
-  3: i32 numOfTrees
-  4: i64 numOfVectorsIndexed
-} (persisted = 'true',  strato.graphql.typename='AnnoyIndexMetadata')
+struct Annoy ndex tadata {
+  1:  32 d  ns on
+  2: D stance tr c d stance tr c
+  3:  32 numOfTrees
+  4:  64 numOfVectors ndexed
+} (pers sted = 'true',  strato.graphql.typena ='Annoy ndex tadata')
 
-struct AnnoyRuntimeParam {
-  /* Number of vectors to evaluate while searching. A larger value will give more accurate results, but will take longer time to return.
-   * Default value would be numberOfTrees*numberOfNeigboursRequested
+struct AnnoyRunt  Param {
+  /* Number of vectors to evaluate wh le search ng. A larger value w ll g ve more accurate results, but w ll take longer t   to return.
+   * Default value would be numberOfTrees*numberOfNe gb sRequested
    */
-  1: optional i32 numOfNodesToExplore
+  1: opt onal  32 numOfNodesToExplore
 }
 
-struct HnswRuntimeParam {
-  // More the value of ef better the recall with but at cost of latency.
-  // Set it greater than equal to number of neighbours required.
-  1: i32 ef
+struct HnswRunt  Param {
+  // More t  value of ef better t  recall w h but at cost of latency.
+  // Set   greater than equal to number of ne ghb s requ red.
+  1:  32 ef
 }
 
-// These options are subset of all possible parameters, defined by
-// https://github.com/facebookresearch/faiss/blob/36f2998a6469280cef3b0afcde2036935a29aa1f/faiss/AutoTune.cpp#L444
-// quantizer_ prefix changes IndexIVF.quantizer parameters instead
-struct FaissRuntimeParam {
-  // How many cells to visit in IVFPQ. Higher is slower / more precise.
-  1: optional i32 nprobe
-  // Depth of search in HNSW. Higher is slower / more precise.
-  2: optional i32 quantizer_ef
-  // How many times more neighbours are requested from underlying index by IndexRefine.
-  3: optional i32 quantizer_kfactor_rf
-  // Same as 1: but for quantizer
-  4: optional i32 quantizer_nprobe
-  // Hamming distance threshold to filter neighbours when searching.
-  5: optional i32 ht
+// T se opt ons are subset of all poss ble para ters, def ned by
+// https://g hub.com/facebookresearch/fa ss/blob/36f2998a6469280cef3b0afcde2036935a29aa1f/fa ss/AutoTune.cpp#L444
+// quant zer_ pref x changes  ndex VF.quant zer para ters  nstead
+struct Fa ssRunt  Param {
+  // How many cells to v s   n  VFPQ. H g r  s slo r / more prec se.
+  1: opt onal  32 nprobe
+  // Depth of search  n HNSW. H g r  s slo r / more prec se.
+  2: opt onal  32 quant zer_ef
+  // How many t  s more ne ghb s are requested from underly ng  ndex by  ndexRef ne.
+  3: opt onal  32 quant zer_kfactor_rf
+  // Sa  as 1: but for quant zer
+  4: opt onal  32 quant zer_nprobe
+  // Hamm ng d stance threshold to f lter ne ghb s w n search ng.
+  5: opt onal  32 ht
 }
 
-// Every ANN index will have this metadata and it'll be used by the query service for validation.
-struct AnnIndexMetadata {
- 1: optional i64 timestamp
- 2: optional i32 index_size
- 3: optional bool withGroups
- 4: optional i32 numGroups
-} (persisted = 'true')
+// Every ANN  ndex w ll have t   tadata and  'll be used by t  query serv ce for val dat on.
+struct Ann ndex tadata {
+ 1: opt onal  64 t  stamp
+ 2: opt onal  32  ndex_s ze
+ 3: opt onal bool w hGroups
+ 4: opt onal  32 numGroups
+} (pers sted = 'true')
 
-struct HnswIndexMetadata {
- 1: i32 dimension
- 2: DistanceMetric distanceMetric
- 3: i32 numElements
-} (persisted = 'true')
+struct Hnsw ndex tadata {
+ 1:  32 d  ns on
+ 2: D stance tr c d stance tr c
+ 3:  32 numEle nts
+} (pers sted = 'true')
 
-struct HnswInternalIndexMetadata {
- 1: i32 maxLevel
- 2: optional binary entryPoint
- 3: i32 efConstruction
- 4: i32 maxM
- 5: i32 numElements
-} (persisted = 'true')
+struct Hnsw nternal ndex tadata {
+ 1:  32 maxLevel
+ 2: opt onal b nary entryPo nt
+ 3:  32 efConstruct on
+ 4:  32 maxM
+ 5:  32 numEle nts
+} (pers sted = 'true')
 
 struct HnswGraphEntry {
-  1: i32 level
-  2: binary key
-  3: list<binary> neighbours
-} (persisted = 'true', strato.graphql.typename='HnswGraphEntry')
+  1:  32 level
+  2: b nary key
+  3: l st<b nary> ne ghb s
+} (pers sted = 'true', strato.graphql.typena ='HnswGraphEntry')
 
-enum IndexType {
+enum  ndexType {
    TWEET, 
    USER, 
    WORD, 
    LONG, 
-   INT, 
-   STRING, 
+    NT, 
+   STR NG, 
    RESERVED_7, RESERVED_8, RESERVED_9, RESERVED_10
-} (persisted = 'true',  strato.graphql.typename='IndexType')
+} (pers sted = 'true',  strato.graphql.typena =' ndexType')
 
-struct CosineDistance {
-  1: required double distance
+struct Cos neD stance {
+  1: requ red double d stance
 }
 
-struct L2Distance {
-  1: required double distance
+struct L2D stance {
+  1: requ red double d stance
 }
 
-struct InnerProductDistance {
-  1: required double distance
+struct  nnerProductD stance {
+  1: requ red double d stance
 }
 
-struct EditDistance {
-  1: required i32 distance
+struct Ed D stance {
+  1: requ red  32 d stance
 }
 
-union Distance {
-  1: CosineDistance cosineDistance
-  2: L2Distance l2Distance
-  3: InnerProductDistance innerProductDistance
-  4: EditDistance editDistance
+un on D stance {
+  1: Cos neD stance cos neD stance
+  2: L2D stance l2D stance
+  3:  nnerProductD stance  nnerProductD stance
+  4: Ed D stance ed D stance
 }
 
-struct NearestNeighbor {
-  1: required binary id
-  2: optional Distance distance
+struct NearestNe ghbor {
+  1: requ red b nary  d
+  2: opt onal D stance d stance
 }
 
-struct NearestNeighborResult {
-  // This list is ordered from nearest to furthest neighbor
-  1: required list<NearestNeighbor> nearestNeighbors
+struct NearestNe ghborResult {
+  // T  l st  s ordered from nearest to furt st ne ghbor
+  1: requ red l st<NearestNe ghbor> nearestNe ghbors
 }
 
-// Different runtime/tuning params while querying for indexes to control accuracy/latency etc..
-union RuntimeParams {
-  1: AnnoyRuntimeParam annoyParam
-  2: HnswRuntimeParam hnswParam
-  3: FaissRuntimeParam faissParam
+// D fferent runt  /tun ng params wh le query ng for  ndexes to control accuracy/latency etc..
+un on Runt  Params {
+  1: AnnoyRunt  Param annoyParam
+  2: HnswRunt  Param hnswParam
+  3: Fa ssRunt  Param fa ssParam
 }
 
-struct NearestNeighborQuery {
-  1: required embedding.Embedding embedding
-  2: required bool with_distance
-  3: required RuntimeParams runtimeParams,
-  4: required i32 numberOfNeighbors,
-  // The purpose of the key here is to load the index in memory as a map of Option[key] to index
-  // If the key is not specified in the query, the map value corresponding to None key will be used
-  // as the queryable index to perform Nearest Neighbor search on
-  5: optional string key
+struct NearestNe ghborQuery {
+  1: requ red embedd ng.Embedd ng embedd ng
+  2: requ red bool w h_d stance
+  3: requ red Runt  Params runt  Params,
+  4: requ red  32 numberOfNe ghbors,
+  // T  purpose of t  key  re  s to load t   ndex  n  mory as a map of Opt on[key] to  ndex
+  //  f t  key  s not spec f ed  n t  query, t  map value correspond ng to None key w ll be used
+  // as t  queryable  ndex to perform Nearest Ne ghbor search on
+  5: opt onal str ng key
 }
 
 enum BadRequestCode {
-  VECTOR_DIMENSION_MISMATCH,
+  VECTOR_D MENS ON_M SMATCH,
   RESERVED_2,
   RESERVED_3,
   RESERVED_4,
@@ -155,15 +155,15 @@ enum BadRequestCode {
   RESERVED_9
 }
 
-exception BadRequest {
-  1: string message
-  2: required BadRequestCode code
+except on BadRequest {
+  1: str ng  ssage
+  2: requ red BadRequestCode code
 }
 
-service AnnQueryService {
+serv ce AnnQueryServ ce {
   /**
-  * Get approximate nearest neighbor for a given vector
+  * Get approx mate nearest ne ghbor for a g ven vector
   */
-  NearestNeighborResult query(1: NearestNeighborQuery query)
+  NearestNe ghborResult query(1: NearestNe ghborQuery query)
     throws (1: ServerCommon.ServerError serverError, 2: BadRequest badRequest)
 }

@@ -1,161 +1,161 @@
-# pylint: disable=missing-docstring, bare-except, pointless-statement,
-# pointless-string-statement, redundant-unittest-assert, no-else-return,
-# no-member, old-style-class, dangerous-default-value, protected-access,
-# too-few-public-methods
+# pyl nt: d sable=m ss ng-docstr ng, bare-except, po ntless-state nt,
+# po ntless-str ng-state nt, redundant-un test-assert, no-else-return,
+# no- mber, old-style-class, dangerous-default-value, protected-access,
+# too-few-publ c- thods
 
-import os
+ mport os
 
-import numpy as np
-import yaml
+ mport numpy as np
+ mport yaml
 
 
 """
-Utility to load tensors serialized by Deepbird V1.
+Ut l y to load tensors ser al zed by Deepb rd V1.
 
-Note that Deepbird V1 serialize tensor names as \"weight\".\'1\'.
-For user-friendliness, the quotes are removed from the tensor names.
+Note that Deepb rd V1 ser al ze tensor na s as \"  ght\".\'1\'.
+For user-fr endl ness, t  quotes are removed from t  tensor na s.
 """
 
 
-# helper class used to assist hierarchical key access by remembering intermediate keys.
+#  lper class used to ass st h erarch cal key access by re mber ng  nter d ate keys.
 class _KeyRecorder(object):
-  def __init__(self, tensorio, keys=[]):
-    self.tensorio = tensorio
+  def __ n __(self, tensor o, keys=[]):
+    self.tensor o = tensor o
     self.keys = keys
 
-  def __getitem__(self, k):
+  def __get em__(self, k):
     new_keys = self.keys + [str(k)]
-    prefix = ".".join(new_keys)
+    pref x = ".".jo n(new_keys)
 
-    key_list = self.tensorio.list_tensors()
+    key_l st = self.tensor o.l st_tensors()
 
-    # if we have a complete key, load the tensor.
-    if prefix in key_list:
-      return self.tensorio._load(prefix)
+    #  f   have a complete key, load t  tensor.
+     f pref x  n key_l st:
+      return self.tensor o._load(pref x)
 
-    # we don't have a complete key yet, but at least one tensor should start with this prefix.
-    for k_value in key_list:
-      if k_value.startswith(prefix):
-        return _KeyRecorder(self.tensorio, new_keys)
+    #   don't have a complete key yet, but at least one tensor should start w h t  pref x.
+    for k_value  n key_l st:
+       f k_value.startsw h(pref x):
+        return _KeyRecorder(self.tensor o, new_keys)
 
-    # if no key starts with the prefix, this _key_recorder is not valid.
-    raise ValueError("Key not found: " + prefix)
+    #  f no key starts w h t  pref x, t  _key_recorder  s not val d.
+    ra se ValueError("Key not found: " + pref x)
 
 
-# convert tensorio tensor type to numpy data type.
-# also returns element size in bytes.
+# convert tensor o tensor type to numpy data type.
+# also returns ele nt s ze  n bytes.
 def _get_data_type(data_type):
-  if data_type == 'Double':
+   f data_type == 'Double':
     return (np.float64, 8)
 
-  if data_type == 'Float':
+   f data_type == 'Float':
     return (np.float32, 4)
 
-  if data_type == 'Int':
-    return (np.int32, 4)
+   f data_type == ' nt':
+    return (np. nt32, 4)
 
-  if data_type == 'Long':
-    return (np.int64, 8)
+   f data_type == 'Long':
+    return (np. nt64, 8)
 
-  if data_type == 'Byte':
-    return (np.int8, 1)
+   f data_type == 'Byte':
+    return (np. nt8, 1)
 
-  raise ValueError('Unexpected tensorio data type: ' + data_type)
+  ra se ValueError('Unexpected tensor o data type: ' + data_type)
 
 
-class TensorIO(object):
+class Tensor O(object):
   """
-  Construct a TensorIO class.
-  tensorio_path: a directory containing tensors serialized using tensorio. tar file not supported.
+  Construct a Tensor O class.
+  tensor o_path: a d rectory conta n ng tensors ser al zed us ng tensor o. tar f le not supported.
   mmap_tensor:
     By default, loaded tensors use mmap storage.
-    Set this to false to not use mmap. Useful when loading multiple tensors.
+    Set t  to false to not use mmap. Useful w n load ng mult ple tensors.
   """
 
-  def __init__(self, tensorio_path, mmap_tensor=True):
-    self._tensorio_path = tensorio_path
+  def __ n __(self, tensor o_path, mmap_tensor=True):
+    self._tensor o_path = tensor o_path
     self._mmap_tensor = mmap_tensor
 
-    # Make sure we can locate spec.yaml.
-    yaml_file = os.path.join(tensorio_path, 'spec.yaml')
-    if not os.path.exists(yaml_file):
-      raise ValueError('Invalid tensorio path: no spec.yaml found.')
+    # Make sure   can locate spec.yaml.
+    yaml_f le = os.path.jo n(tensor o_path, 'spec.yaml')
+     f not os.path.ex sts(yaml_f le):
+      ra se ValueError(' nval d tensor o path: no spec.yaml found.')
 
     # load spec.yaml.
-    with open(yaml_file, 'r') as file_open:
-      # Note that tensor names in the yaml are like this: \"weight\".\'1\'
-      # For user-friendliness, we remove the quotes.
-      _spec = yaml.safe_load(file_open)
-      self._spec = {k.replace("'", '').replace('"', ''): v for (k, v) in _spec.items()}
+    w h open(yaml_f le, 'r') as f le_open:
+      # Note that tensor na s  n t  yaml are l ke t : \"  ght\".\'1\'
+      # For user-fr endl ness,   remove t  quotes.
+      _spec = yaml.safe_load(f le_open)
+      self._spec = {k.replace("'", '').replace('"', ''): v for (k, v)  n _spec. ems()}
 
-  def list_tensors(self):
+  def l st_tensors(self):
     """
-    Returns a list of tensors saved in the given path.
+    Returns a l st of tensors saved  n t  g ven path.
     """
     return self._spec.keys()
 
-  def _load_tensor(self, name):
+  def _load_tensor(self, na ):
     """
-    Load Tensor with the given name.
-    Raise value error if the named tensor is not found.
-    Returns a numpy array if the named tensor is found.
+    Load Tensor w h t  g ven na .
+    Ra se value error  f t  na d tensor  s not found.
+    Returns a numpy array  f t  na d tensor  s found.
     """
-    tensor_info = self._spec[name]
-    if tensor_info['type'] != 'tensor':
-      raise ValueError('Trying to load a tensor of unknown type: ' + tensor_info['type'])
+    tensor_ nfo = self._spec[na ]
+     f tensor_ nfo['type'] != 'tensor':
+      ra se ValueError('Try ng to load a tensor of unknown type: ' + tensor_ nfo['type'])
 
-    filename = os.path.join(self._tensorio_path, tensor_info['filename'])
-    (data_type, element_size) = _get_data_type(tensor_info['tensorType'])
+    f lena  = os.path.jo n(self._tensor o_path, tensor_ nfo['f lena '])
+    (data_type, ele nt_s ze) = _get_data_type(tensor_ nfo['tensorType'])
 
-    np_array = np.memmap(
-      filename,
+    np_array = np. mmap(
+      f lena ,
       dtype=data_type,
       mode='r',
-      # -1 because lua offset is 1 based.
-      offset=(tensor_info['offset'] - 1) * element_size,
-      shape=tuple(tensor_info['size']),
+      # -1 because lua offset  s 1 based.
+      offset=(tensor_ nfo['offset'] - 1) * ele nt_s ze,
+      shape=tuple(tensor_ nfo['s ze']),
       order='C',
     )
 
-    return np_array if self._mmap_tensor else np_array[:].copy()
+    return np_array  f self._mmap_tensor else np_array[:].copy()
 
-  def _load_nontensor_data(self, name):
+  def _load_nontensor_data(self, na ):
     """
-    Load non-tensor data with the given name.
-    Returns a python string.
+    Load non-tensor data w h t  g ven na .
+    Returns a python str ng.
     """
-    tensor_info = self._spec[name]
-    return tensor_info['data']
+    tensor_ nfo = self._spec[na ]
+    return tensor_ nfo['data']
 
-  def _load(self, name):
+  def _load(self, na ):
     """
-    Load data serialized under the given name, it could be a tensor or regular data.
+    Load data ser al zed under t  g ven na ,   could be a tensor or regular data.
     """
-    if name not in self._spec:
-      raise ValueError('The specified key {} is not found in {}'.format(name, self._tensorio_path))
+     f na  not  n self._spec:
+      ra se ValueError('T  spec f ed key {}  s not found  n {}'.format(na , self._tensor o_path))
 
-    data_type = self._spec[name]['type']
-    if data_type == 'tensor':
-      return self._load_tensor(name)
+    data_type = self._spec[na ]['type']
+     f data_type == 'tensor':
+      return self._load_tensor(na )
     else:
-      return self._load_nontensor_data(name)
+      return self._load_nontensor_data(na )
 
   def load_all(self):
     """
-    Load all tensors stored in the tensorio directory.
-    Returns a dictionary from tensor name to numpy arrays.
+    Load all tensors stored  n t  tensor o d rectory.
+    Returns a d ct onary from tensor na  to numpy arrays.
     """
-    return {k: self._load(k) for k in self._spec}
+    return {k: self._load(k) for k  n self._spec}
 
   ###########################################
-  # The below are utilities for convenience #
+  # T  below are ut l  es for conven ence #
   ###########################################
-  def __getitem__(self, k):
+  def __get em__(self, k):
     """
-    Shorthand for _load_tensor, but also supports hierarchical access like: tensorio['a']['b']['1']
+    Shorthand for _load_tensor, but also supports h erarch cal access l ke: tensor o['a']['b']['1']
     """
-    if k in self._spec:
-      # We have a full tensor name, directly load it.
+     f k  n self._spec:
+      #   have a full tensor na , d rectly load  .
       return self._load_tensor(k)
     else:
       return _KeyRecorder(self)[k]

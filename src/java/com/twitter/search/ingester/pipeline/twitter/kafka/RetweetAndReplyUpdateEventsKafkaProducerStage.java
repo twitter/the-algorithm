@@ -1,24 +1,24 @@
-package com.twitter.search.ingester.pipeline.twitter.kafka;
+package com.tw ter.search. ngester.p pel ne.tw ter.kafka;
 
-import org.apache.commons.pipeline.validation.ConsumedTypes;
+ mport org.apac .commons.p pel ne.val dat on.Consu dTypes;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.ingester.model.IngesterThriftVersionedEvents;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftVers onedEvents;
+ mport com.tw ter.search. ngester.model. ngesterThr ftVers onedEvents;
 
-@ConsumedTypes(ThriftVersionedEvents.class)
-public class RetweetAndReplyUpdateEventsKafkaProducerStage extends KafkaProducerStage
-    <IngesterThriftVersionedEvents> {
-  public RetweetAndReplyUpdateEventsKafkaProducerStage(String kafkaTopic, String clientId,
-                                            String clusterPath) {
-    super(kafkaTopic, clientId, clusterPath);
+@Consu dTypes(Thr ftVers onedEvents.class)
+publ c class Ret etAndReplyUpdateEventsKafkaProducerStage extends KafkaProducerStage
+    < ngesterThr ftVers onedEvents> {
+  publ c Ret etAndReplyUpdateEventsKafkaProducerStage(Str ng kafkaTop c, Str ng cl ent d,
+                                            Str ng clusterPath) {
+    super(kafkaTop c, cl ent d, clusterPath);
   }
 
-  public RetweetAndReplyUpdateEventsKafkaProducerStage() {
+  publ c Ret etAndReplyUpdateEventsKafkaProducerStage() {
     super();
   }
 
-  @Override
-  protected void innerRunFinalStageOfBranchV2(IngesterThriftVersionedEvents events) {
+  @Overr de
+  protected vo d  nnerRunF nalStageOfBranchV2( ngesterThr ftVers onedEvents events) {
     super.tryToSendEventsToKafka(events);
   }
 }

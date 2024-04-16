@@ -1,34 +1,34 @@
-package com.twitter.timelineranker.observe
+package com.tw ter.t  l neranker.observe
 
-import com.twitter.servo.util.Gate
-import com.twitter.timelineranker.model.TimelineQuery
-import com.twitter.timelines.features.Features
-import com.twitter.timelines.features.UserList
-import com.twitter.timelines.observe.DebugObserver
-import com.twitter.timelineranker.{thriftscala => thrift}
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.t  l neranker.model.T  l neQuery
+ mport com.tw ter.t  l nes.features.Features
+ mport com.tw ter.t  l nes.features.UserL st
+ mport com.tw ter.t  l nes.observe.DebugObserver
+ mport com.tw ter.t  l neranker.{thr ftscala => thr ft}
 
 /**
- * Builds the DebugObserver that is attached to thrift requests.
- * This class exists to centralize the gates that determine whether or not
- * to enable debug transcripts for a particular request.
+ * Bu lds t  DebugObserver that  s attac d to thr ft requests.
+ * T  class ex sts to central ze t  gates that determ ne w t r or not
+ * to enable debug transcr pts for a part cular request.
  */
-class DebugObserverBuilder(whitelist: UserList) {
+class DebugObserverBu lder(wh el st: UserL st) {
 
-  lazy val observer: DebugObserver = build()
+  lazy val observer: DebugObserver = bu ld()
 
-  private[this] def build(): DebugObserver = {
+  pr vate[t ] def bu ld(): DebugObserver = {
     new DebugObserver(queryGate)
   }
 
-  private[observe] def queryGate: Gate[Any] = {
-    val shouldEnableDebug = whitelist.userIdGate(Features.DebugTranscript)
+  pr vate[observe] def queryGate: Gate[Any] = {
+    val shouldEnableDebug = wh el st.user dGate(Features.DebugTranscr pt)
 
     Gate { a: Any =>
       a match {
-        case q: thrift.EngagedTweetsQuery => shouldEnableDebug(q.userId)
-        case q: thrift.RecapHydrationQuery => shouldEnableDebug(q.userId)
-        case q: thrift.RecapQuery => shouldEnableDebug(q.userId)
-        case q: TimelineQuery => shouldEnableDebug(q.userId)
+        case q: thr ft.EngagedT etsQuery => shouldEnableDebug(q.user d)
+        case q: thr ft.RecapHydrat onQuery => shouldEnableDebug(q.user d)
+        case q: thr ft.RecapQuery => shouldEnableDebug(q.user d)
+        case q: T  l neQuery => shouldEnableDebug(q.user d)
         case _ => false
       }
     }

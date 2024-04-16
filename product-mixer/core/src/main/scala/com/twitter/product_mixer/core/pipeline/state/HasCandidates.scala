@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.pipeline.state
+package com.tw ter.product_m xer.core.p pel ne.state
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
 
-trait HasCandidates[Candidate <: UniversalNoun[Any], T] {
-  def candidates: Seq[Candidate]
-  def updateCandidates(newCandidates: Seq[Candidate]): T
+tra  HasCand dates[Cand date <: Un versalNoun[Any], T] {
+  def cand dates: Seq[Cand date]
+  def updateCand dates(newCand dates: Seq[Cand date]): T
 }

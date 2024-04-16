@@ -1,113 +1,113 @@
-package com.twitter.follow_recommendations.products.home_timeline
+package com.tw ter.follow_recom ndat ons.products.ho _t  l ne
 
-import com.twitter.follow_recommendations.assembler.models.ActionConfig
-import com.twitter.follow_recommendations.assembler.models.FollowedByUsersProof
-import com.twitter.follow_recommendations.assembler.models.FooterConfig
-import com.twitter.follow_recommendations.assembler.models.GeoContextProof
-import com.twitter.follow_recommendations.assembler.models.HeaderConfig
-import com.twitter.follow_recommendations.assembler.models.Layout
-import com.twitter.follow_recommendations.assembler.models.TitleConfig
-import com.twitter.follow_recommendations.assembler.models.UserListLayout
-import com.twitter.follow_recommendations.assembler.models.UserListOptions
-import com.twitter.follow_recommendations.common.base.BaseRecommendationFlow
-import com.twitter.follow_recommendations.common.base.IdentityTransform
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.flows.ads.PromotedAccountsFlow
-import com.twitter.follow_recommendations.flows.ads.PromotedAccountsFlowRequest
-import com.twitter.follow_recommendations.blenders.PromotedAccountsBlender
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.common.models.Recommendation
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlFlow
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlRequestBuilder
-import com.twitter.follow_recommendations.products.common.Product
-import com.twitter.follow_recommendations.products.common.ProductRequest
-import com.twitter.follow_recommendations.products.home_timeline.configapi.HomeTimelineParams._
-import com.twitter.inject.Injector
-import com.twitter.product_mixer.core.model.marshalling.request
-import com.twitter.product_mixer.core.product.guice.ProductScope
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.assembler.models.Act onConf g
+ mport com.tw ter.follow_recom ndat ons.assembler.models.Follo dByUsersProof
+ mport com.tw ter.follow_recom ndat ons.assembler.models.FooterConf g
+ mport com.tw ter.follow_recom ndat ons.assembler.models.GeoContextProof
+ mport com.tw ter.follow_recom ndat ons.assembler.models. aderConf g
+ mport com.tw ter.follow_recom ndat ons.assembler.models.La t
+ mport com.tw ter.follow_recom ndat ons.assembler.models.T leConf g
+ mport com.tw ter.follow_recom ndat ons.assembler.models.UserL stLa t
+ mport com.tw ter.follow_recom ndat ons.assembler.models.UserL stOpt ons
+ mport com.tw ter.follow_recom ndat ons.common.base.BaseRecom ndat onFlow
+ mport com.tw ter.follow_recom ndat ons.common.base. dent yTransform
+ mport com.tw ter.follow_recom ndat ons.common.base.Transform
+ mport com.tw ter.follow_recom ndat ons.flows.ads.PromotedAccountsFlow
+ mport com.tw ter.follow_recom ndat ons.flows.ads.PromotedAccountsFlowRequest
+ mport com.tw ter.follow_recom ndat ons.blenders.PromotedAccountsBlender
+ mport com.tw ter.follow_recom ndat ons.common.models.D splayLocat on
+ mport com.tw ter.follow_recom ndat ons.common.models.Recom ndat on
+ mport com.tw ter.follow_recom ndat ons.flows.post_nux_ml.PostNuxMlFlow
+ mport com.tw ter.follow_recom ndat ons.flows.post_nux_ml.PostNuxMlRequestBu lder
+ mport com.tw ter.follow_recom ndat ons.products.common.Product
+ mport com.tw ter.follow_recom ndat ons.products.common.ProductRequest
+ mport com.tw ter.follow_recom ndat ons.products.ho _t  l ne.conf gap .Ho T  l neParams._
+ mport com.tw ter. nject. njector
+ mport com.tw ter.product_m xer.core.model.marshall ng.request
+ mport com.tw ter.product_m xer.core.product.gu ce.ProductScope
+ mport com.tw ter.st ch.St ch
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class HomeTimelineProduct @Inject() (
+@S ngleton
+class Ho T  l neProduct @ nject() (
   postNuxMlFlow: PostNuxMlFlow,
-  postNuxMlRequestBuilder: PostNuxMlRequestBuilder,
+  postNuxMlRequestBu lder: PostNuxMlRequestBu lder,
   promotedAccountsFlow: PromotedAccountsFlow,
   promotedAccountsBlender: PromotedAccountsBlender,
   productScope: ProductScope,
-  injector: Injector,
+   njector:  njector,
 ) extends Product {
 
-  override val name: String = "Home Timeline"
+  overr de val na : Str ng = "Ho  T  l ne"
 
-  override val identifier: String = "home-timeline"
+  overr de val  dent f er: Str ng = "ho -t  l ne"
 
-  override val displayLocation: DisplayLocation = DisplayLocation.HomeTimeline
+  overr de val d splayLocat on: D splayLocat on = D splayLocat on.Ho T  l ne
 
-  override def selectWorkflows(
+  overr de def selectWorkflows(
     request: ProductRequest
-  ): Stitch[Seq[BaseRecommendationFlow[ProductRequest, _ <: Recommendation]]] = {
-    postNuxMlRequestBuilder.build(request).map { postNuxMlRequest =>
+  ): St ch[Seq[BaseRecom ndat onFlow[ProductRequest, _ <: Recom ndat on]]] = {
+    postNuxMlRequestBu lder.bu ld(request).map { postNuxMlRequest =>
       Seq(
         postNuxMlFlow.mapKey({ request: ProductRequest => postNuxMlRequest }),
         promotedAccountsFlow.mapKey(mkPromotedAccountsRequest))
     }
   }
 
-  override val blender: Transform[ProductRequest, Recommendation] = {
+  overr de val blender: Transform[ProductRequest, Recom ndat on] = {
     promotedAccountsBlender.mapTarget[ProductRequest](getMaxResults)
   }
 
-  private val identityTransform = new IdentityTransform[ProductRequest, Recommendation]
+  pr vate val  dent yTransform = new  dent yTransform[ProductRequest, Recom ndat on]
 
-  override def resultsTransformer(
+  overr de def resultsTransfor r(
     request: ProductRequest
-  ): Stitch[Transform[ProductRequest, Recommendation]] = Stitch.value(identityTransform)
+  ): St ch[Transform[ProductRequest, Recom ndat on]] = St ch.value( dent yTransform)
 
-  override def enabled(request: ProductRequest): Stitch[Boolean] =
-    Stitch.value(request.params(EnableProduct))
+  overr de def enabled(request: ProductRequest): St ch[Boolean] =
+    St ch.value(request.params(EnableProduct))
 
-  override def layout: Option[Layout] = {
-    productMixerProduct.map { product =>
-      val homeTimelineStrings = productScope.let(product) {
-        injector.instance[HomeTimelineStrings]
+  overr de def la t: Opt on[La t] = {
+    productM xerProduct.map { product =>
+      val ho T  l neStr ngs = productScope.let(product) {
+         njector. nstance[Ho T  l neStr ngs]
       }
-      UserListLayout(
-        header = Some(HeaderConfig(TitleConfig(homeTimelineStrings.whoToFollowModuleTitle))),
-        userListOptions = UserListOptions(userBioEnabled = true, userBioTruncated = true, None),
-        socialProofs = Some(
+      UserL stLa t(
+         ader = So ( aderConf g(T leConf g(ho T  l neStr ngs.whoToFollowModuleT le))),
+        userL stOpt ons = UserL stOpt ons(userB oEnabled = true, userB oTruncated = true, None),
+        soc alProofs = So (
           Seq(
-            FollowedByUsersProof(
-              homeTimelineStrings.whoToFollowFollowedByManyUserSingleString,
-              homeTimelineStrings.whoToFollowFollowedByManyUserDoubleString,
-              homeTimelineStrings.whoToFollowFollowedByManyUserMultipleString
+            Follo dByUsersProof(
+              ho T  l neStr ngs.whoToFollowFollo dByManyUserS ngleStr ng,
+              ho T  l neStr ngs.whoToFollowFollo dByManyUserDoubleStr ng,
+              ho T  l neStr ngs.whoToFollowFollo dByManyUserMult pleStr ng
             ),
-            GeoContextProof(homeTimelineStrings.whoToFollowPopularInCountryKey)
+            GeoContextProof(ho T  l neStr ngs.whoToFollowPopular nCountryKey)
           )),
-        footer = Some(
-          FooterConfig(
-            Some(ActionConfig(homeTimelineStrings.whoToFollowModuleFooter, "http://twitter.com"))))
+        footer = So (
+          FooterConf g(
+            So (Act onConf g(ho T  l neStr ngs.whoToFollowModuleFooter, "http://tw ter.com"))))
       )
     }
   }
 
-  override def productMixerProduct: Option[request.Product] = Some(HTLProductMixer)
+  overr de def productM xerProduct: Opt on[request.Product] = So (HTLProductM xer)
 
-  private[home_timeline] def mkPromotedAccountsRequest(
+  pr vate[ho _t  l ne] def mkPromotedAccountsRequest(
     req: ProductRequest
   ): PromotedAccountsFlowRequest = {
     PromotedAccountsFlowRequest(
-      req.recommendationRequest.clientContext,
+      req.recom ndat onRequest.cl entContext,
       req.params,
-      req.recommendationRequest.displayLocation,
+      req.recom ndat onRequest.d splayLocat on,
       None,
-      req.recommendationRequest.excludedIds.getOrElse(Nil)
+      req.recom ndat onRequest.excluded ds.getOrElse(N l)
     )
   }
 
-  private[home_timeline] def getMaxResults(req: ProductRequest): Int = {
-    req.recommendationRequest.maxResults.getOrElse(
+  pr vate[ho _t  l ne] def getMaxResults(req: ProductRequest):  nt = {
+    req.recom ndat onRequest.maxResults.getOrElse(
       req.params(DefaultMaxResults)
     )
   }

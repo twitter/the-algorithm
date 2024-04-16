@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet_composer
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t et_composer
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEvent nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FeedbackAct on nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Url
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.EntryNa space
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne em
 
-object TweetComposerItem {
-  val TweetComposerEntryNameSpace = EntryNamespace("tweetcomposer")
+object T etComposer em {
+  val T etComposerEntryNa Space = EntryNa space("t etcomposer")
 }
 
-case class TweetComposerItem(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  displayType: TweetComposerDisplayType,
-  text: String,
+case class T etComposer em(
+  overr de val  d: Long,
+  overr de val sort ndex: Opt on[Long],
+  overr de val cl entEvent nfo: Opt on[Cl entEvent nfo],
+  overr de val feedbackAct on nfo: Opt on[FeedbackAct on nfo],
+  d splayType: T etComposerD splayType,
+  text: Str ng,
   url: Url)
-    extends TimelineItem {
-  override val entryNamespace: EntryNamespace = TweetComposerItem.TweetComposerEntryNameSpace
+    extends T  l ne em {
+  overr de val entryNa space: EntryNa space = T etComposer em.T etComposerEntryNa Space
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  overr de def w hSort ndex(sort ndex: Long): T  l neEntry = copy(sort ndex = So (sort ndex))
 }

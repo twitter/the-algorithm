@@ -1,47 +1,47 @@
-package com.twitter.product_mixer.component_library.module
+package com.tw ter.product_m xer.component_l brary.module
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.gizmoduck.thriftscala.UserService
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.stitch.gizmoduck.Gizmoduck
-import com.twitter.util.Duration
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.convers ons.PercentOps._
+ mport com.tw ter.f nagle.thr ftmux. thodBu lder
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport com.tw ter.g zmoduck.thr ftscala.UserServ ce
+ mport com.tw ter. nject. njector
+ mport com.tw ter. nject.thr ft.modules.Thr ft thodBu lderCl entModule
+ mport com.tw ter.st ch.g zmoduck.G zmoduck
+ mport com.tw ter.ut l.Durat on
+ mport javax. nject.S ngleton
 
 /**
- * Implementation with reasonable defaults for an idempotent Gizmoduck Thrift and Stitch client.
+ *  mple ntat on w h reasonable defaults for an  dempotent G zmoduck Thr ft and St ch cl ent.
  *
- * Note that the per request and total timeouts configured in this module are meant to represent a
- * reasonable starting point only. These were selected based on common practice, and should not be
- * assumed to be optimal for any particular use case. If you are interested in further tuning the
- * settings in this module, it is recommended to create local copy for your service.
+ * Note that t  per request and total t  outs conf gured  n t  module are  ant to represent a
+ * reasonable start ng po nt only. T se  re selected based on common pract ce, and should not be
+ * assu d to be opt mal for any part cular use case.  f   are  nterested  n furt r tun ng t 
+ * sett ngs  n t  module,    s recom nded to create local copy for y  serv ce.
  */
-object GizmoduckClientModule
-    extends ThriftMethodBuilderClientModule[
-      UserService.ServicePerEndpoint,
-      UserService.MethodPerEndpoint
+object G zmoduckCl entModule
+    extends Thr ft thodBu lderCl entModule[
+      UserServ ce.Serv cePerEndpo nt,
+      UserServ ce. thodPerEndpo nt
     ]
-    with MtlsClient {
-  override val label: String = "gizmoduck"
-  override val dest: String = "/s/gizmoduck/gizmoduck"
+    w h MtlsCl ent {
+  overr de val label: Str ng = "g zmoduck"
+  overr de val dest: Str ng = "/s/g zmoduck/g zmoduck"
 
-  @Singleton
-  @Provides
-  def provideGizmoduckStitchClient(userService: UserService.MethodPerEndpoint): Gizmoduck =
-    new Gizmoduck(userService)
+  @S ngleton
+  @Prov des
+  def prov deG zmoduckSt chCl ent(userServ ce: UserServ ce. thodPerEndpo nt): G zmoduck =
+    new G zmoduck(userServ ce)
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder =
-    methodBuilder
-      .withTimeoutPerRequest(200.milliseconds)
-      .withTimeoutTotal(400.milliseconds)
-      .idempotent(1.percent)
+  overr de protected def conf gure thodBu lder(
+     njector:  njector,
+     thodBu lder:  thodBu lder
+  ):  thodBu lder =
+     thodBu lder
+      .w hT  outPerRequest(200.m ll seconds)
+      .w hT  outTotal(400.m ll seconds)
+      . dempotent(1.percent)
 
-  override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+  overr de protected def sess onAcqu s  onT  out: Durat on = 500.m ll seconds
 }

@@ -1,100 +1,100 @@
-package com.twitter.search.earlybird.common.userupdates;
+package com.tw ter.search.earlyb rd.common.userupdates;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.concurrent.ConcurrentHashMap;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.tweetypie.thriftjava.UserScrubGeoEvent;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchCustomGauge;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
+ mport com.tw ter.search.common.part  on ng.snowflakeparser.Snowflake dParser;
+ mport com.tw ter.t etyp e.thr ftjava.UserScrubGeoEvent;
 
 /**
- * Map of users who have actioned to delete location data from their tweets. UserID's are mapped
- * to the maxTweetId that will eventually be scrubbed from the index (userId -> maxTweetId).
+ * Map of users who have act oned to delete locat on data from t  r t ets. User D's are mapped
+ * to t  maxT et d that w ll eventually be scrubbed from t   ndex (user d -> maxT et d).
  *
- * ConcurrentHashMap is thread safe without synchronizing the whole map. Reads can happen very fast
- * while writes are done with a lock. This is ideal since many Earlybird Searcher threads could
- * be reading from the map at once, whereas we will only be adding to the map via kafka.
+ * ConcurrentHashMap  s thread safe w hout synchron z ng t  whole map. Reads can happen very fast
+ * wh le wr es are done w h a lock. T   s  deal s nce many Earlyb rd Searc r threads could
+ * be read ng from t  map at once, w reas   w ll only be add ng to t  map v a kafka.
  *
- * This map is checked against to filter out tweets that should not be returned to geo queries.
- * See: go/realtime-geo-filtering
+ * T  map  s c cked aga nst to f lter out t ets that should not be returned to geo quer es.
+ * See: go/realt  -geo-f lter ng
  */
-public class UserScrubGeoMap {
-  // The number of geo events that contain a user ID already present in the map. This count is used
-  // to verify the number of users in the map against the number of events consumed from kafka.
-  private static final SearchCounter USER_SCRUB_GEO_EVENT_EXISTING_USER_COUNT =
-      SearchCounter.export("user_scrub_geo_event_existing_user_count");
-  public static final SearchTimerStats USER_SCRUB_GEO_EVENT_LAG_STAT =
-      SearchTimerStats.export("user_scrub_geo_event_lag",
-          TimeUnit.MILLISECONDS,
+publ c class UserScrubGeoMap {
+  // T  number of geo events that conta n a user  D already present  n t  map. T  count  s used
+  // to ver fy t  number of users  n t  map aga nst t  number of events consu d from kafka.
+  pr vate stat c f nal SearchCounter USER_SCRUB_GEO_EVENT_EX ST NG_USER_COUNT =
+      SearchCounter.export("user_scrub_geo_event_ex st ng_user_count");
+  publ c stat c f nal SearchT  rStats USER_SCRUB_GEO_EVENT_LAG_STAT =
+      SearchT  rStats.export("user_scrub_geo_event_lag",
+          T  Un .M LL SECONDS,
           false,
           true);
-  private ConcurrentHashMap<Long, Long> map;
+  pr vate ConcurrentHashMap<Long, Long> map;
 
-  public UserScrubGeoMap() {
+  publ c UserScrubGeoMap() {
     map = new ConcurrentHashMap<>();
-    SearchCustomGauge.export("num_users_in_geo_map", this::getNumUsersInMap);
+    SearchCustomGauge.export("num_users_ n_geo_map", t ::getNumUsers nMap);
   }
 
   /**
-   * Ensure that the max_tweet_id in the userScrubGeoEvent is greater than the one already stored
-   * in the map for the given user id (if any) before updating the entry for this user.
-   * This will protect Earlybirds from potential issues where out of date UserScrubGeoEvents
-   * appear in the incoming Kafka stream.
+   * Ensure that t  max_t et_ d  n t  userScrubGeoEvent  s greater than t  one already stored
+   *  n t  map for t  g ven user  d ( f any) before updat ng t  entry for t  user.
+   * T  w ll protect Earlyb rds from potent al  ssues w re out of date UserScrubGeoEvents
+   * appear  n t   ncom ng Kafka stream.
    *
    * @param userScrubGeoEvent
    */
-  public void indexUserScrubGeoEvent(UserScrubGeoEvent userScrubGeoEvent) {
-    long userId = userScrubGeoEvent.getUser_id();
-    long newMaxTweetId = userScrubGeoEvent.getMax_tweet_id();
-    long oldMaxTweetId = map.getOrDefault(userId, 0L);
-    if (map.containsKey(userId)) {
-      USER_SCRUB_GEO_EVENT_EXISTING_USER_COUNT.increment();
+  publ c vo d  ndexUserScrubGeoEvent(UserScrubGeoEvent userScrubGeoEvent) {
+    long user d = userScrubGeoEvent.getUser_ d();
+    long newMaxT et d = userScrubGeoEvent.getMax_t et_ d();
+    long oldMaxT et d = map.getOrDefault(user d, 0L);
+     f (map.conta nsKey(user d)) {
+      USER_SCRUB_GEO_EVENT_EX ST NG_USER_COUNT. ncre nt();
     }
-    map.put(userId, Math.max(oldMaxTweetId, newMaxTweetId));
-    USER_SCRUB_GEO_EVENT_LAG_STAT.timerIncrement(computeEventLag(newMaxTweetId));
+    map.put(user d, Math.max(oldMaxT et d, newMaxT et d));
+    USER_SCRUB_GEO_EVENT_LAG_STAT.t  r ncre nt(computeEventLag(newMaxT et d));
   }
 
   /**
-   * A tweet is geo scrubbed if it is older than the max tweet id that is scrubbed for the tweet's
+   * A t et  s geo scrubbed  f    s older than t  max t et  d that  s scrubbed for t  t et's
    * author.
-   * If there is no entry for the tweet's author in the map, then the tweet is not geo scrubbed.
+   *  f t re  s no entry for t  t et's author  n t  map, t n t  t et  s not geo scrubbed.
    *
-   * @param tweetId
-   * @param fromUserId
+   * @param t et d
+   * @param fromUser d
    * @return
    */
-  public boolean isTweetGeoScrubbed(long tweetId, long fromUserId) {
-    return tweetId <= map.getOrDefault(fromUserId, 0L);
+  publ c boolean  sT etGeoScrubbed(long t et d, long fromUser d) {
+    return t et d <= map.getOrDefault(fromUser d, 0L);
   }
 
   /**
-   * The lag (in milliseconds) from when a UserScrubGeoEvent is created, until it is applied to the
-   * UserScrubGeoMap. Take the maxTweetId found in the current event and convert it to a timestamp.
-   * The maxTweetId will give us a timestamp closest to when Tweetypie processes macaw-geo requests.
+   * T  lag ( n m ll seconds) from w n a UserScrubGeoEvent  s created, unt l    s appl ed to t 
+   * UserScrubGeoMap. Take t  maxT et d found  n t  current event and convert   to a t  stamp.
+   * T  maxT et d w ll g ve us a t  stamp closest to w n T etyp e processes macaw-geo requests.
    *
-   * @param maxTweetId
+   * @param maxT et d
    * @return
    */
-  private long computeEventLag(long maxTweetId) {
-    long eventCreatedAtTime = SnowflakeIdParser.getTimestampFromTweetId(maxTweetId);
-    return System.currentTimeMillis() - eventCreatedAtTime;
+  pr vate long computeEventLag(long maxT et d) {
+    long eventCreatedAtT   = Snowflake dParser.getT  stampFromT et d(maxT et d);
+    return System.currentT  M ll s() - eventCreatedAtT  ;
   }
 
-  public long getNumUsersInMap() {
-    return map.size();
+  publ c long getNumUsers nMap() {
+    return map.s ze();
   }
 
-  public ConcurrentHashMap<Long, Long> getMap() {
+  publ c ConcurrentHashMap<Long, Long> getMap() {
     return map;
   }
 
-  public boolean isEmpty() {
-    return map.isEmpty();
+  publ c boolean  sEmpty() {
+    return map. sEmpty();
   }
 
-  public boolean isSet(long userId) {
-    return map.containsKey(userId);
+  publ c boolean  sSet(long user d) {
+    return map.conta nsKey(user d);
   }
 }

@@ -1,26 +1,26 @@
-package com.twitter.home_mixer.product.scored_tweets.candidate_source
+package com.tw ter.ho _m xer.product.scored_t ets.cand date_s ce
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.timelineservice.TimelineService
-import com.twitter.timelineservice.{thriftscala => tls}
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.t  l neserv ce.T  l neServ ce
+ mport com.tw ter.t  l neserv ce.{thr ftscala => tls}
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ListsCandidateSource @Inject() (timelineService: TimelineService)
-    extends CandidateSource[Seq[tls.TimelineQuery], tls.Tweet] {
+@S ngleton
+class L stsCand dateS ce @ nject() (t  l neServ ce: T  l neServ ce)
+    extends Cand dateS ce[Seq[tls.T  l neQuery], tls.T et] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("Lists")
+  overr de val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er("L sts")
 
-  override def apply(requests: Seq[tls.TimelineQuery]): Stitch[Seq[tls.Tweet]] = {
-    val timelines = Stitch.traverse(requests) { request => timelineService.getTimeline(request) }
+  overr de def apply(requests: Seq[tls.T  l neQuery]): St ch[Seq[tls.T et]] = {
+    val t  l nes = St ch.traverse(requests) { request => t  l neServ ce.getT  l ne(request) }
 
-    timelines.map {
+    t  l nes.map {
       _.flatMap {
-        _.entries.collect { case tls.TimelineEntry.Tweet(tweet) => tweet }
+        _.entr es.collect { case tls.T  l neEntry.T et(t et) => t et }
       }
     }
   }

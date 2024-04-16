@@ -1,15 +1,15 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "dspbidder/thrift/src/main/thrift/com/twitter/dspbidder/commons:thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/request",
-        "timelineservice/common:model",
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "dspb dder/thr ft/src/ma n/thr ft/com/tw ter/dspb dder/commons:thr ft-scala",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/common",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/marshall ng/request",
+        "t  l neserv ce/common:model",
     ],
     exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/request",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/marshall ng/request",
     ],
 )

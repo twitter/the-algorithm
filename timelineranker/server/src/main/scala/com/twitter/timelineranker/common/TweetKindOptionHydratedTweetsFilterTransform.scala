@@ -1,85 +1,85 @@
-package com.twitter.timelineranker.common
+package com.tw ter.t  l neranker.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.servo.util.Gate
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelineranker.parameters.recap.RecapParams
-import com.twitter.timelineranker.parameters.uteg_liked_by_tweets.UtegLikedByTweetsParams
-import com.twitter.timelineranker.util.TweetFilters
-import com.twitter.timelines.common.model.TweetKindOption
-import com.twitter.util.Future
-import scala.collection.mutable
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.t  l neranker.core.Cand dateEnvelope
+ mport com.tw ter.t  l neranker.model.RecapQuery
+ mport com.tw ter.t  l neranker.para ters.recap.RecapParams
+ mport com.tw ter.t  l neranker.para ters.uteg_l ked_by_t ets.UtegL kedByT etsParams
+ mport com.tw ter.t  l neranker.ut l.T etF lters
+ mport com.tw ter.t  l nes.common.model.T etK ndOpt on
+ mport com.tw ter.ut l.Future
+ mport scala.collect on.mutable
 
-object TweetKindOptionHydratedTweetsFilterTransform {
-  private[common] val enableExpandedExtendedRepliesGate: Gate[RecapQuery] =
-    RecapQuery.paramGate(RecapParams.EnableExpandedExtendedRepliesFilterParam)
+object T etK ndOpt onHydratedT etsF lterTransform {
+  pr vate[common] val enableExpandedExtendedRepl esGate: Gate[RecapQuery] =
+    RecapQuery.paramGate(RecapParams.EnableExpandedExtendedRepl esF lterParam)
 
-  private[common] val excludeRecommendedRepliesToNonFollowedUsersGate: Gate[RecapQuery] =
+  pr vate[common] val excludeRecom ndedRepl esToNonFollo dUsersGate: Gate[RecapQuery] =
     RecapQuery.paramGate(
-      UtegLikedByTweetsParams.UTEGRecommendationsFilter.ExcludeRecommendedRepliesToNonFollowedUsersParam)
+      UtegL kedByT etsParams.UTEGRecom ndat onsF lter.ExcludeRecom ndedRepl esToNonFollo dUsersParam)
 }
 
 /**
- * Filter hydrated tweets dynamically based on TweetKindOptions in the query.
+ * F lter hydrated t ets dynam cally based on T etK ndOpt ons  n t  query.
  */
-class TweetKindOptionHydratedTweetsFilterTransform(
+class T etK ndOpt onHydratedT etsF lterTransform(
   useFollowGraphData: Boolean,
-  useSourceTweets: Boolean,
-  statsReceiver: StatsReceiver)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  import TweetKindOptionHydratedTweetsFilterTransform._
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val filters = convertToFilters(envelope)
+  useS ceT ets: Boolean,
+  statsRece ver: StatsRece ver)
+    extends FutureArrow[Cand dateEnvelope, Cand dateEnvelope] {
+   mport T etK ndOpt onHydratedT etsF lterTransform._
+  overr de def apply(envelope: Cand dateEnvelope): Future[Cand dateEnvelope] = {
+    val f lters = convertToF lters(envelope)
 
-    val filterTransform = if (filters == TweetFilters.ValueSet.empty) {
-      FutureArrow.identity[CandidateEnvelope]
+    val f lterTransform =  f (f lters == T etF lters.ValueSet.empty) {
+      FutureArrow. dent y[Cand dateEnvelope]
     } else {
-      new HydratedTweetsFilterTransform(
-        outerFilters = filters,
-        innerFilters = TweetFilters.None,
+      new HydratedT etsF lterTransform(
+        outerF lters = f lters,
+         nnerF lters = T etF lters.None,
         useFollowGraphData = useFollowGraphData,
-        useSourceTweets = useSourceTweets,
-        statsReceiver = statsReceiver,
-        numRetweetsAllowed = HydratedTweetsFilterTransform.NumDuplicateRetweetsAllowed
+        useS ceT ets = useS ceT ets,
+        statsRece ver = statsRece ver,
+        numRet etsAllo d = HydratedT etsF lterTransform.NumDupl cateRet etsAllo d
       )
     }
 
-    filterTransform.apply(envelope)
+    f lterTransform.apply(envelope)
   }
 
   /**
-   * Converts the given query options to equivalent TweetFilter values.
+   * Converts t  g ven query opt ons to equ valent T etF lter values.
    *
    * Note:
-   * -- The semantic of TweetKindOption is opposite of that of TweetFilters.
-   *    TweetKindOption values are of the form IncludeX. That is, they result in X being added.
-   *    TweetFilters values specify what to exclude.
-   * -- IncludeExtendedReplies requires IncludeReplies to be also specified to be effective.
+   * -- T  semant c of T etK ndOpt on  s oppos e of that of T etF lters.
+   *    T etK ndOpt on values are of t  form  ncludeX. That  s, t y result  n X be ng added.
+   *    T etF lters values spec fy what to exclude.
+   * --  ncludeExtendedRepl es requ res  ncludeRepl es to be also spec f ed to be effect ve.
    */
-  private[common] def convertToFilters(envelope: CandidateEnvelope): TweetFilters.ValueSet = {
-    val queryOptions = envelope.query.options
-    val filters = mutable.Set.empty[TweetFilters.Value]
-    if (queryOptions.contains(TweetKindOption.IncludeReplies)) {
-      if (excludeRecommendedRepliesToNonFollowedUsersGate(
-          envelope.query) && envelope.query.utegLikedByTweetsOptions.isDefined) {
-        filters += TweetFilters.RecommendedRepliesToNotFollowedUsers
-      } else if (queryOptions.contains(TweetKindOption.IncludeExtendedReplies)) {
-        if (enableExpandedExtendedRepliesGate(envelope.query)) {
-          filters += TweetFilters.NotValidExpandedExtendedReplies
+  pr vate[common] def convertToF lters(envelope: Cand dateEnvelope): T etF lters.ValueSet = {
+    val queryOpt ons = envelope.query.opt ons
+    val f lters = mutable.Set.empty[T etF lters.Value]
+     f (queryOpt ons.conta ns(T etK ndOpt on. ncludeRepl es)) {
+       f (excludeRecom ndedRepl esToNonFollo dUsersGate(
+          envelope.query) && envelope.query.utegL kedByT etsOpt ons. sDef ned) {
+        f lters += T etF lters.Recom ndedRepl esToNotFollo dUsers
+      } else  f (queryOpt ons.conta ns(T etK ndOpt on. ncludeExtendedRepl es)) {
+         f (enableExpandedExtendedRepl esGate(envelope.query)) {
+          f lters += T etF lters.NotVal dExpandedExtendedRepl es
         } else {
-          filters += TweetFilters.NotQualifiedExtendedReplies
+          f lters += T etF lters.NotQual f edExtendedRepl es
         }
       } else {
-        filters += TweetFilters.ExtendedReplies
+        f lters += T etF lters.ExtendedRepl es
       }
     } else {
-      filters += TweetFilters.Replies
+      f lters += T etF lters.Repl es
     }
-    if (!queryOptions.contains(TweetKindOption.IncludeRetweets)) {
-      filters += TweetFilters.Retweets
+     f (!queryOpt ons.conta ns(T etK ndOpt on. ncludeRet ets)) {
+      f lters += T etF lters.Ret ets
     }
-    TweetFilters.ValueSet.empty ++ filters
+    T etF lters.ValueSet.empty ++ f lters
   }
 }

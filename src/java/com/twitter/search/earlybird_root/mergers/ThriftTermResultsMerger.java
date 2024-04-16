@@ -1,305 +1,305 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.tw ter.search.earlyb rd_root. rgers;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Collect on;
+ mport java.ut l.Collect ons;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nonnull;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.L sts;
+ mport com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.earlybird.FacetsResultsUtils;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftHistogramSettings;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftTermRequest;
-import com.twitter.search.earlybird.thrift.ThriftTermResults;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsResults;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.ut l.earlyb rd.FacetsResultsUt ls;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ft togramSett ngs;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResults;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftTermRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftTermResults;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftTermStat st csResults;
 
 /**
- * Takes multiple successful EarlybirdResponses and merges them.
+ * Takes mult ple successful Earlyb rdResponses and  rges t m.
  */
-public class ThriftTermResultsMerger {
-  private static final Logger LOG = LoggerFactory.getLogger(ThriftTermResultsMerger.class);
+publ c class Thr ftTermResults rger {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Thr ftTermResults rger.class);
 
-  private static final SearchCounter BIN_ID_GAP_COUNTER =
-      SearchCounter.export("thrift_term_results_merger_found_gap_in_bin_ids");
-  private static final SearchCounter MIN_COMPLETE_BIN_ID_ADJUSTED_NULL =
-      SearchCounter.export("thrift_term_results_merger_min_complete_bin_id_adjusted_null");
-  private static final SearchCounter MIN_COMPLETE_BIN_ID_NULL_WITHOUT_BINS =
-      SearchCounter.export("thrift_term_results_merger_min_complete_bin_id_null_without_bins");
-  private static final SearchCounter MIN_COMPLETE_BIN_ID_OUT_OF_RANGE =
-      SearchCounter.export("thrift_term_results_merger_min_complete_bin_id_out_of_range");
-  private static final SearchCounter RESPONSE_WITHOUT_DRIVING_QUERY_HIT =
-      SearchCounter.export("response_without_driving_query_hit");
+  pr vate stat c f nal SearchCounter B N_ D_GAP_COUNTER =
+      SearchCounter.export("thr ft_term_results_ rger_found_gap_ n_b n_ ds");
+  pr vate stat c f nal SearchCounter M N_COMPLETE_B N_ D_ADJUSTED_NULL =
+      SearchCounter.export("thr ft_term_results_ rger_m n_complete_b n_ d_adjusted_null");
+  pr vate stat c f nal SearchCounter M N_COMPLETE_B N_ D_NULL_W THOUT_B NS =
+      SearchCounter.export("thr ft_term_results_ rger_m n_complete_b n_ d_null_w hout_b ns");
+  pr vate stat c f nal SearchCounter M N_COMPLETE_B N_ D_OUT_OF_RANGE =
+      SearchCounter.export("thr ft_term_results_ rger_m n_complete_b n_ d_out_of_range");
+  pr vate stat c f nal SearchCounter RESPONSE_W THOUT_DR V NG_QUERY_H T =
+      SearchCounter.export("response_w hout_dr v ng_query_h ");
 
-  private static final ThriftTermRequest GLOBAL_COUNT_REQUEST =
-      new ThriftTermRequest().setFieldName("").setTerm("");
+  pr vate stat c f nal Thr ftTermRequest GLOBAL_COUNT_REQUEST =
+      new Thr ftTermRequest().setF eldNa ("").setTerm("");
 
   /**
-   * Sorted list of the most recent (and contiguous) numBins binIds across all responses.
-   * Expected to be an empty list if this request did not ask for histograms, or if it
-   * did ask for histograms for 0 numBins.
+   * Sorted l st of t  most recent (and cont guous) numB ns b n ds across all responses.
+   * Expected to be an empty l st  f t  request d d not ask for  tograms, or  f  
+   * d d ask for  tograms for 0 numB ns.
    */
   @Nonnull
-  private final List<Integer> mostRecentBinIds;
+  pr vate f nal L st< nteger> mostRecentB n ds;
   /**
-   * The first binId in the {@link #mostRecentBinIds} list. This value is not meant to be used in
-   * case mostRecentBinIds is an empty list.
+   * T  f rst b n d  n t  {@l nk #mostRecentB n ds} l st. T  value  s not  ant to be used  n
+   * case mostRecentB n ds  s an empty l st.
    */
-  private final int firstBinId;
+  pr vate f nal  nt f rstB n d;
 
   /**
-   * For each unique ThriftTermRequest, stores an array of the total counts for all the binIds
-   * that we will return, summed up across all earlybird responses.
+   * For each un que Thr ftTermRequest, stores an array of t  total counts for all t  b n ds
+   * that   w ll return, sum d up across all earlyb rd responses.
    *
-   * The values in each totalCounts array correspond to the binIds in the
-   * {@link #mostRecentBinIds} list.
+   * T  values  n each totalCounts array correspond to t  b n ds  n t 
+   * {@l nk #mostRecentB n ds} l st.
    *
-   * Key: thrift term request.
-   * Value: array of the total counts summed up across all earlybird responses for the key's
-   * term request, corresponding to the binIds in {@link #mostRecentBinIds}.
+   * Key: thr ft term request.
+   * Value: array of t  total counts sum d up across all earlyb rd responses for t  key's
+   * term request, correspond ng to t  b n ds  n {@l nk #mostRecentB n ds}.
    */
-  private final Map<ThriftTermRequest, int[]> mergedTermRequestTotalCounts = Maps.newHashMap();
+  pr vate f nal Map<Thr ftTermRequest,  nt[]>  rgedTermRequestTotalCounts = Maps.newHashMap();
   /**
-   * The set of all unique binIds that we are merging.
+   * T  set of all un que b n ds that   are  rg ng.
    */
-  private final Map<ThriftTermRequest, ThriftTermResults> termResultsMap = Maps.newHashMap();
-  private final ThriftHistogramSettings histogramSettings;
+  pr vate f nal Map<Thr ftTermRequest, Thr ftTermResults> termResultsMap = Maps.newHashMap();
+  pr vate f nal Thr ft togramSett ngs  togramSett ngs;
 
   /**
-   * Only relevant for merging responses with histogram settings.
-   * This will be null either if (1) the request is not asking for histograms at all, or if
-   * (2) numBins was set to 0 (and no bin can be considered complete).
-   * If not null, the minCompleteBinId will be computed as the max over all merged responses'
-   * minCompleteBinId's.
+   * Only relevant for  rg ng responses w h  togram sett ngs.
+   * T  w ll be null e  r  f (1) t  request  s not ask ng for  tograms at all, or  f
+   * (2) numB ns was set to 0 (and no b n can be cons dered complete).
+   *  f not null, t  m nCompleteB n d w ll be computed as t  max over all  rged responses'
+   * m nCompleteB n d's.
    */
   @Nullable
-  private final Integer minCompleteBinId;
+  pr vate f nal  nteger m nCompleteB n d;
 
   /**
-   * Create merger with collections of results to merge
+   * Create  rger w h collect ons of results to  rge
    */
-  public ThriftTermResultsMerger(Collection<EarlybirdResponse> termStatsResults,
-                                 ThriftHistogramSettings histogramSettings) {
-    this.histogramSettings = histogramSettings;
+  publ c Thr ftTermResults rger(Collect on<Earlyb rdResponse> termStatsResults,
+                                 Thr ft togramSett ngs  togramSett ngs) {
+    t . togramSett ngs =  togramSett ngs;
 
-    Collection<EarlybirdResponse> filteredTermStatsResults =
-        filterOutEmptyEarlybirdResponses(termStatsResults);
+    Collect on<Earlyb rdResponse> f lteredTermStatsResults =
+        f lterOutEmptyEarlyb rdResponses(termStatsResults);
 
-    this.mostRecentBinIds = findMostRecentBinIds(histogramSettings, filteredTermStatsResults);
-    this.firstBinId = mostRecentBinIds.isEmpty()
-        ? Integer.MAX_VALUE // Should not be used if mostRecentBinIds is empty.
-        : mostRecentBinIds.get(0);
+    t .mostRecentB n ds = f ndMostRecentB n ds( togramSett ngs, f lteredTermStatsResults);
+    t .f rstB n d = mostRecentB n ds. sEmpty()
+        ?  nteger.MAX_VALUE // Should not be used  f mostRecentB n ds  s empty.
+        : mostRecentB n ds.get(0);
 
-    List<Integer> minCompleteBinIds =
-        Lists.newArrayListWithCapacity(filteredTermStatsResults.size());
-    for (EarlybirdResponse response : filteredTermStatsResults) {
-      Preconditions.checkState(response.getResponseCode() == EarlybirdResponseCode.SUCCESS,
-          "Unsuccessful responses should not be given to ThriftTermResultsMerger.");
-      Preconditions.checkState(response.getTermStatisticsResults() != null,
-          "Response given to ThriftTermResultsMerger has no termStatisticsResults.");
+    L st< nteger> m nCompleteB n ds =
+        L sts.newArrayL stW hCapac y(f lteredTermStatsResults.s ze());
+    for (Earlyb rdResponse response : f lteredTermStatsResults) {
+      Precond  ons.c ckState(response.getResponseCode() == Earlyb rdResponseCode.SUCCESS,
+          "Unsuccessful responses should not be g ven to Thr ftTermResults rger.");
+      Precond  ons.c ckState(response.getTermStat st csResults() != null,
+          "Response g ven to Thr ftTermResults rger has no termStat st csResults.");
 
-      ThriftTermStatisticsResults termStatisticsResults = response.getTermStatisticsResults();
-      List<Integer> binIds = termStatisticsResults.getBinIds();
+      Thr ftTermStat st csResults termStat st csResults = response.getTermStat st csResults();
+      L st< nteger> b n ds = termStat st csResults.getB n ds();
 
-      for (Map.Entry<ThriftTermRequest, ThriftTermResults> entry
-          : termStatisticsResults.getTermResults().entrySet()) {
-        ThriftTermRequest termRequest = entry.getKey();
-        ThriftTermResults termResults = entry.getValue();
+      for (Map.Entry<Thr ftTermRequest, Thr ftTermResults> entry
+          : termStat st csResults.getTermResults().entrySet()) {
+        Thr ftTermRequest termRequest = entry.getKey();
+        Thr ftTermResults termResults = entry.getValue();
 
-        adjustTotalCount(termResults, binIds);
+        adjustTotalCount(termResults, b n ds);
         addTotalCountData(termRequest, termResults);
 
-        if (histogramSettings != null) {
-          Preconditions.checkState(termStatisticsResults.isSetBinIds());
-          addHistogramData(termRequest, termResults, termStatisticsResults.getBinIds());
+         f ( togramSett ngs != null) {
+          Precond  ons.c ckState(termStat st csResults. sSetB n ds());
+          add togramData(termRequest, termResults, termStat st csResults.getB n ds());
         }
       }
 
-      if (histogramSettings != null) {
-        addMinCompleteBinId(minCompleteBinIds, response);
+       f ( togramSett ngs != null) {
+        addM nCompleteB n d(m nCompleteB n ds, response);
       }
     }
 
-    minCompleteBinId = minCompleteBinIds.isEmpty() ? null : Collections.max(minCompleteBinIds);
+    m nCompleteB n d = m nCompleteB n ds. sEmpty() ? null : Collect ons.max(m nCompleteB n ds);
   }
 
   /**
-   * Take out any earlybird responses that we know did not match anything relevant to the query,
-   * and may have erroneous binIds.
+   * Take out any earlyb rd responses that   know d d not match anyth ng relevant to t  query,
+   * and may have erroneous b n ds.
    */
-  private Collection<EarlybirdResponse> filterOutEmptyEarlybirdResponses(
-      Collection<EarlybirdResponse> termStatsResults) {
-    List<EarlybirdResponse> emptyResponses = Lists.newArrayList();
-    List<EarlybirdResponse> nonEmptyResponses = Lists.newArrayList();
-    for (EarlybirdResponse response : termStatsResults) {
-      // Guard against erroneously merging and returning 0 counts when we actually have data to
-      // return from other partitions.
-      // When a query doesn't match anything at all on an earlybird, the binIds that are returned
-      // do not correspond at all to the actual query, and are just based on the data range on the
-      // earlybird itself.
-      // We can identify these responses as (1) being non-early terminated, and (2) having 0
-      // hits processed.
-      if (isTermStatResponseEmpty(response)) {
+  pr vate Collect on<Earlyb rdResponse> f lterOutEmptyEarlyb rdResponses(
+      Collect on<Earlyb rdResponse> termStatsResults) {
+    L st<Earlyb rdResponse> emptyResponses = L sts.newArrayL st();
+    L st<Earlyb rdResponse> nonEmptyResponses = L sts.newArrayL st();
+    for (Earlyb rdResponse response : termStatsResults) {
+      // Guard aga nst erroneously  rg ng and return ng 0 counts w n   actually have data to
+      // return from ot r part  ons.
+      // W n a query doesn't match anyth ng at all on an earlyb rd, t  b n ds that are returned
+      // do not correspond at all to t  actual query, and are just based on t  data range on t 
+      // earlyb rd  self.
+      //   can  dent fy t se responses as (1) be ng non-early term nated, and (2) hav ng 0
+      // h s processed.
+       f ( sTermStatResponseEmpty(response)) {
         emptyResponses.add(response);
       } else {
         nonEmptyResponses.add(response);
       }
     }
 
-    // If all responses were "empty", we will just use those to merge into a new set of empty
-    // responses, using the binIds provided.
-    return nonEmptyResponses.isEmpty() ? emptyResponses : nonEmptyResponses;
+    //  f all responses  re "empty",   w ll just use those to  rge  nto a new set of empty
+    // responses, us ng t  b n ds prov ded.
+    return nonEmptyResponses. sEmpty() ? emptyResponses : nonEmptyResponses;
   }
 
-  private boolean isTermStatResponseEmpty(EarlybirdResponse response) {
-    return response.isSetSearchResults()
-        && (response.getSearchResults().getNumHitsProcessed() == 0
-            || drivingQueryHasNoHits(response))
-        && response.isSetEarlyTerminationInfo()
-        && !response.getEarlyTerminationInfo().isEarlyTerminated();
+  pr vate boolean  sTermStatResponseEmpty(Earlyb rdResponse response) {
+    return response. sSetSearchResults()
+        && (response.getSearchResults().getNumH sProcessed() == 0
+            || dr v ngQueryHasNoH s(response))
+        && response. sSetEarlyTerm nat on nfo()
+        && !response.getEarlyTerm nat on nfo(). sEarlyTerm nated();
   }
 
   /**
-   * If the global count bins are all 0, then we know the driving query has no hits.
-   * This check is added as a short term solution for SEARCH-5476. This short term fix requires
-   * the client to set the includeGlobalCounts to kick in.
+   *  f t  global count b ns are all 0, t n   know t  dr v ng query has no h s.
+   * T  c ck  s added as a short term solut on for SEARCH-5476. T  short term f x requ res
+   * t  cl ent to set t   ncludeGlobalCounts to k ck  n.
    */
-  private boolean drivingQueryHasNoHits(EarlybirdResponse response) {
-    ThriftTermStatisticsResults termStatisticsResults = response.getTermStatisticsResults();
-    if (termStatisticsResults == null || termStatisticsResults.getTermResults() == null) {
-      // If there's no term stats response, be conservative and return false.
+  pr vate boolean dr v ngQueryHasNoH s(Earlyb rdResponse response) {
+    Thr ftTermStat st csResults termStat st csResults = response.getTermStat st csResults();
+     f (termStat st csResults == null || termStat st csResults.getTermResults() == null) {
+      //  f t re's no term stats response, be conservat ve and return false.
       return false;
     } else {
-      ThriftTermResults globalCounts =
-          termStatisticsResults.getTermResults().get(GLOBAL_COUNT_REQUEST);
-      if (globalCounts == null) {
-        // We cannot tell if driving query has no hits, be conservative and return false.
+      Thr ftTermResults globalCounts =
+          termStat st csResults.getTermResults().get(GLOBAL_COUNT_REQUEST);
+       f (globalCounts == null) {
+        //   cannot tell  f dr v ng query has no h s, be conservat ve and return false.
         return false;
       } else {
-        for (Integer i : globalCounts.getHistogramBins()) {
-          if (i > 0) {
+        for ( nteger   : globalCounts.get togramB ns()) {
+           f (  > 0) {
             return false;
           }
         }
-        RESPONSE_WITHOUT_DRIVING_QUERY_HIT.increment();
+        RESPONSE_W THOUT_DR V NG_QUERY_H T. ncre nt();
         return true;
       }
     }
   }
 
-  private static List<Integer> findMostRecentBinIds(
-      ThriftHistogramSettings histogramSettings,
-      Collection<EarlybirdResponse> filteredTermStatsResults) {
-    Integer largestFirstBinId = null;
-    List<Integer> binIdsToUse = null;
+  pr vate stat c L st< nteger> f ndMostRecentB n ds(
+      Thr ft togramSett ngs  togramSett ngs,
+      Collect on<Earlyb rdResponse> f lteredTermStatsResults) {
+     nteger largestF rstB n d = null;
+    L st< nteger> b n dsToUse = null;
 
-    if (histogramSettings != null) {
-      int numBins = histogramSettings.getNumBins();
-      for (EarlybirdResponse response : filteredTermStatsResults) {
-        ThriftTermStatisticsResults termStatisticsResults = response.getTermStatisticsResults();
-        Preconditions.checkState(termStatisticsResults.getBinIds().size() == numBins,
-            "expected all results to have the same numBins. "
-                + "request numBins: %s, response numBins: %s",
-            numBins, termStatisticsResults.getBinIds().size());
+     f ( togramSett ngs != null) {
+       nt numB ns =  togramSett ngs.getNumB ns();
+      for (Earlyb rdResponse response : f lteredTermStatsResults) {
+        Thr ftTermStat st csResults termStat st csResults = response.getTermStat st csResults();
+        Precond  ons.c ckState(termStat st csResults.getB n ds().s ze() == numB ns,
+            "expected all results to have t  sa  numB ns. "
+                + "request numB ns: %s, response numB ns: %s",
+            numB ns, termStat st csResults.getB n ds().s ze());
 
-        if (termStatisticsResults.getBinIds().size() > 0) {
-          Integer firstBinId = termStatisticsResults.getBinIds().get(0);
-          if (largestFirstBinId == null
-              || largestFirstBinId.intValue() < firstBinId.intValue()) {
-            largestFirstBinId = firstBinId;
-            binIdsToUse = termStatisticsResults.getBinIds();
+         f (termStat st csResults.getB n ds().s ze() > 0) {
+           nteger f rstB n d = termStat st csResults.getB n ds().get(0);
+           f (largestF rstB n d == null
+              || largestF rstB n d. ntValue() < f rstB n d. ntValue()) {
+            largestF rstB n d = f rstB n d;
+            b n dsToUse = termStat st csResults.getB n ds();
           }
         }
       }
     }
-    return binIdsToUse == null
-        ? Collections.<Integer>emptyList()
-        // Just in case, make a copy of the binIds so that we don't reuse the same list from one
-        // of the responses we're merging.
-        : Lists.newArrayList(binIdsToUse);
+    return b n dsToUse == null
+        ? Collect ons.< nteger>emptyL st()
+        // Just  n case, make a copy of t  b n ds so that   don't reuse t  sa  l st from one
+        // of t  responses  're  rg ng.
+        : L sts.newArrayL st(b n dsToUse);
   }
 
-  private void addMinCompleteBinId(List<Integer> minCompleteBinIds,
-                                   EarlybirdResponse response) {
-    Preconditions.checkNotNull(histogramSettings);
-    ThriftTermStatisticsResults termStatisticsResults = response.getTermStatisticsResults();
+  pr vate vo d addM nCompleteB n d(L st< nteger> m nCompleteB n ds,
+                                   Earlyb rdResponse response) {
+    Precond  ons.c ckNotNull( togramSett ngs);
+    Thr ftTermStat st csResults termStat st csResults = response.getTermStat st csResults();
 
-    if (termStatisticsResults.isSetMinCompleteBinId()) {
-      // This is the base case. Early terminated or not, this is the proper minCompleteBinId
-      // that we're told to use for this response.
-      minCompleteBinIds.add(termStatisticsResults.getMinCompleteBinId());
-    } else if (termStatisticsResults.getBinIds().size() > 0) {
-      // This is the case where no bins were complete. For the purposes of merging, we need to
-      // mark all the binIds in this response as non-complete by marking the "max(binId)+1" as the
-      // last complete bin.
-      // When returning the merged response, we still have a guard for the resulting
-      // minCompleteBinId being outside of the binIds range, and will set the returned
-      // minCompleteBinId value to null, if this response's binIds end up being used as the most
-      // recent ones, and we need to signify that none of the bins are complete.
-      int binSize = termStatisticsResults.getBinIds().size();
-      Integer maxBinId = termStatisticsResults.getBinIds().get(binSize - 1);
-      minCompleteBinIds.add(maxBinId + 1);
+     f (termStat st csResults. sSetM nCompleteB n d()) {
+      // T   s t  base case. Early term nated or not, t   s t  proper m nCompleteB n d
+      // that  're told to use for t  response.
+      m nCompleteB n ds.add(termStat st csResults.getM nCompleteB n d());
+    } else  f (termStat st csResults.getB n ds().s ze() > 0) {
+      // T   s t  case w re no b ns  re complete. For t  purposes of  rg ng,   need to
+      // mark all t  b n ds  n t  response as non-complete by mark ng t  "max(b n d)+1" as t 
+      // last complete b n.
+      // W n return ng t   rged response,   st ll have a guard for t  result ng
+      // m nCompleteB n d be ng outs de of t  b n ds range, and w ll set t  returned
+      // m nCompleteB n d value to null,  f t  response's b n ds end up be ng used as t  most
+      // recent ones, and   need to s gn fy that none of t  b ns are complete.
+       nt b nS ze = termStat st csResults.getB n ds().s ze();
+       nteger maxB n d = termStat st csResults.getB n ds().get(b nS ze - 1);
+      m nCompleteB n ds.add(maxB n d + 1);
 
-      LOG.debug("Adjusting null minCompleteBinId for response: {}, histogramSettings {}",
-          response, histogramSettings);
-      MIN_COMPLETE_BIN_ID_ADJUSTED_NULL.increment();
+      LOG.debug("Adjust ng null m nCompleteB n d for response: {},  togramSett ngs {}",
+          response,  togramSett ngs);
+      M N_COMPLETE_B N_ D_ADJUSTED_NULL. ncre nt();
     } else {
-      // This should only happen in the case where numBins is set to 0.
-      Preconditions.checkState(histogramSettings.getNumBins() == 0,
-          "Expected numBins set to 0. response: %s", response);
-      Preconditions.checkState(minCompleteBinIds.isEmpty(),
-          "minCompleteBinIds: %s", minCompleteBinIds);
+      // T  should only happen  n t  case w re numB ns  s set to 0.
+      Precond  ons.c ckState( togramSett ngs.getNumB ns() == 0,
+          "Expected numB ns set to 0. response: %s", response);
+      Precond  ons.c ckState(m nCompleteB n ds. sEmpty(),
+          "m nCompleteB n ds: %s", m nCompleteB n ds);
 
-      LOG.debug("Got null minCompleteBinId with no bins for response: {}, histogramSettings {}",
-          response, histogramSettings);
-      MIN_COMPLETE_BIN_ID_NULL_WITHOUT_BINS.increment();
+      LOG.debug("Got null m nCompleteB n d w h no b ns for response: {},  togramSett ngs {}",
+          response,  togramSett ngs);
+      M N_COMPLETE_B N_ D_NULL_W THOUT_B NS. ncre nt();
     }
   }
 
-  private void addTotalCountData(ThriftTermRequest request, ThriftTermResults results) {
-    ThriftTermResults termResults = termResultsMap.get(request);
-    if (termResults == null) {
+  pr vate vo d addTotalCountData(Thr ftTermRequest request, Thr ftTermResults results) {
+    Thr ftTermResults termResults = termResultsMap.get(request);
+     f (termResults == null) {
       termResultsMap.put(request, results);
     } else {
       termResults.setTotalCount(termResults.getTotalCount() + results.getTotalCount());
-      if (termResults.isSetMetadata()) {
-        termResults.setMetadata(
-            FacetsResultsUtils.mergeFacetMetadata(termResults.getMetadata(),
-                results.getMetadata(), null));
+       f (termResults. sSet tadata()) {
+        termResults.set tadata(
+            FacetsResultsUt ls. rgeFacet tadata(termResults.get tadata(),
+                results.get tadata(), null));
       }
     }
   }
 
   /**
-   * Set results.totalCount to the sum of hits in only the bins that will be returned in
-   * the merged response.
+   * Set results.totalCount to t  sum of h s  n only t  b ns that w ll be returned  n
+   * t   rged response.
    */
-  private void adjustTotalCount(ThriftTermResults results, List<Integer> binIds) {
-    int adjustedTotalCount = 0;
-    List<Integer> histogramBins = results.getHistogramBins();
-    if ((binIds != null) && (histogramBins != null)) {
-      Preconditions.checkState(
-          histogramBins.size() == binIds.size(),
-          "Expected ThriftTermResults to have the same number of histogramBins as binIds set in "
-          + " ThriftTermStatisticsResults. ThriftTermResults.histogramBins: %s, "
-          + " ThriftTermStatisticsResults.binIds: %s.",
-          histogramBins, binIds);
-      for (int i = 0; i < binIds.size(); ++i) {
-        if (binIds.get(i) >= firstBinId) {
-          adjustedTotalCount += histogramBins.get(i);
+  pr vate vo d adjustTotalCount(Thr ftTermResults results, L st< nteger> b n ds) {
+     nt adjustedTotalCount = 0;
+    L st< nteger>  togramB ns = results.get togramB ns();
+     f ((b n ds != null) && ( togramB ns != null)) {
+      Precond  ons.c ckState(
+           togramB ns.s ze() == b n ds.s ze(),
+          "Expected Thr ftTermResults to have t  sa  number of  togramB ns as b n ds set  n "
+          + " Thr ftTermStat st csResults. Thr ftTermResults. togramB ns: %s, "
+          + " Thr ftTermStat st csResults.b n ds: %s.",
+           togramB ns, b n ds);
+      for ( nt   = 0;   < b n ds.s ze(); ++ ) {
+         f (b n ds.get( ) >= f rstB n d) {
+          adjustedTotalCount +=  togramB ns.get( );
         }
       }
     }
@@ -307,54 +307,54 @@ public class ThriftTermResultsMerger {
     results.setTotalCount(adjustedTotalCount);
   }
 
-  private void addHistogramData(ThriftTermRequest request,
-                                ThriftTermResults results,
-                                List<Integer> binIds) {
+  pr vate vo d add togramData(Thr ftTermRequest request,
+                                Thr ftTermResults results,
+                                L st< nteger> b n ds) {
 
-    int[] requestTotalCounts = mergedTermRequestTotalCounts.get(request);
-    if (requestTotalCounts == null) {
-      requestTotalCounts = new int[mostRecentBinIds.size()];
-      mergedTermRequestTotalCounts.put(request, requestTotalCounts);
+     nt[] requestTotalCounts =  rgedTermRequestTotalCounts.get(request);
+     f (requestTotalCounts == null) {
+      requestTotalCounts = new  nt[mostRecentB n ds.s ze()];
+       rgedTermRequestTotalCounts.put(request, requestTotalCounts);
     }
 
-    // Only consider these results if they fall into the mostRecentBinIds range.
+    // Only cons der t se results  f t y fall  nto t  mostRecentB n ds range.
     //
-    // The list of returned binIds is expected to be both sorted (in ascending order), and
-    // contiguous, which allows us to use firstBinId to check if it overlaps with the
-    // mostRecentBinIds range.
-    if (binIds.size() > 0 && binIds.get(binIds.size() - 1) >= firstBinId) {
-      int firstBinIndex;
-      if (binIds.get(0) == firstBinId) {
-        // This should be the common case when all partitions have the same binIds,
-        // no need to do a binary search.
-        firstBinIndex = 0;
+    // T  l st of returned b n ds  s expected to be both sorted ( n ascend ng order), and
+    // cont guous, wh ch allows us to use f rstB n d to c ck  f   overlaps w h t 
+    // mostRecentB n ds range.
+     f (b n ds.s ze() > 0 && b n ds.get(b n ds.s ze() - 1) >= f rstB n d) {
+       nt f rstB n ndex;
+       f (b n ds.get(0) == f rstB n d) {
+        // T  should be t  common case w n all part  ons have t  sa  b n ds,
+        // no need to do a b nary search.
+        f rstB n ndex = 0;
       } else {
-        // The firstBinId must be in the binIds range. We can find it using binary search since
-        // binIds are sorted.
-        firstBinIndex = Collections.binarySearch(binIds, firstBinId);
-        Preconditions.checkState(firstBinIndex >= 0,
-            "Expected to find firstBinId (%s) in the result binIds: %s, "
-                + "histogramSettings: %s, termRequest: %s",
-            firstBinId, binIds, histogramSettings, request);
+        // T  f rstB n d must be  n t  b n ds range.   can f nd   us ng b nary search s nce
+        // b n ds are sorted.
+        f rstB n ndex = Collect ons.b narySearch(b n ds, f rstB n d);
+        Precond  ons.c ckState(f rstB n ndex >= 0,
+            "Expected to f nd f rstB n d (%s)  n t  result b n ds: %s, "
+                + " togramSett ngs: %s, termRequest: %s",
+            f rstB n d, b n ds,  togramSett ngs, request);
       }
 
-      // Skip binIds that are before the smallest binId that we will use in the merged results.
-      for (int i = firstBinIndex; i < binIds.size(); i++) {
-        final Integer currentBinValue = results.getHistogramBins().get(i);
-        requestTotalCounts[i - firstBinIndex] += currentBinValue.intValue();
+      // Sk p b n ds that are before t  smallest b n d that   w ll use  n t   rged results.
+      for ( nt   = f rstB n ndex;   < b n ds.s ze();  ++) {
+        f nal  nteger currentB nValue = results.get togramB ns().get( );
+        requestTotalCounts[  - f rstB n ndex] += currentB nValue. ntValue();
       }
     }
   }
 
   /**
-   * Return a new ThriftTermStatisticsResults with the total counts merged, and if enabled,
-   * histogram bins merged.
+   * Return a new Thr ftTermStat st csResults w h t  total counts  rged, and  f enabled,
+   *  togram b ns  rged.
    */
-  public ThriftTermStatisticsResults merge() {
-    ThriftTermStatisticsResults results = new ThriftTermStatisticsResults(termResultsMap);
+  publ c Thr ftTermStat st csResults  rge() {
+    Thr ftTermStat st csResults results = new Thr ftTermStat st csResults(termResultsMap);
 
-    if (histogramSettings != null) {
-      mergeHistogramBins(results);
+     f ( togramSett ngs != null) {
+       rge togramB ns(results);
     }
 
     return results;
@@ -362,111 +362,111 @@ public class ThriftTermResultsMerger {
 
 
   /**
-   * Takes multiple histogram results and merges them so:
-   * 1) Counts for the same binId (represents the time) and term are summed
-   * 2) All results are re-indexed to use the most recent bins found from the union of all bins
+   * Takes mult ple  togram results and  rges t m so:
+   * 1) Counts for t  sa  b n d (represents t  t  ) and term are sum d
+   * 2) All results are re- ndexed to use t  most recent b ns found from t  un on of all b ns
    */
-  private void mergeHistogramBins(ThriftTermStatisticsResults mergedResults) {
+  pr vate vo d  rge togramB ns(Thr ftTermStat st csResults  rgedResults) {
 
-    mergedResults.setBinIds(mostRecentBinIds);
-    mergedResults.setHistogramSettings(histogramSettings);
+     rgedResults.setB n ds(mostRecentB n ds);
+     rgedResults.set togramSett ngs( togramSett ngs);
 
-    setMinCompleteBinId(mergedResults);
+    setM nCompleteB n d( rgedResults);
 
-    useMostRecentBinsForEachThriftTermResults();
+    useMostRecentB nsForEachThr ftTermResults();
   }
 
-  private void setMinCompleteBinId(ThriftTermStatisticsResults mergedResults) {
-    if (mostRecentBinIds.isEmpty()) {
-      Preconditions.checkState(minCompleteBinId == null);
-      // This is the case where the requested numBins is set to 0. We don't have any binIds,
-      // and the minCompleteBinId has to be unset.
-      LOG.debug("Empty binIds returned for mergedResults: {}", mergedResults);
+  pr vate vo d setM nCompleteB n d(Thr ftTermStat st csResults  rgedResults) {
+     f (mostRecentB n ds. sEmpty()) {
+      Precond  ons.c ckState(m nCompleteB n d == null);
+      // T   s t  case w re t  requested numB ns  s set to 0.   don't have any b n ds,
+      // and t  m nCompleteB n d has to be unset.
+      LOG.debug("Empty b n ds returned for  rgedResults: {}",  rgedResults);
     } else {
-      Preconditions.checkNotNull(minCompleteBinId);
+      Precond  ons.c ckNotNull(m nCompleteB n d);
 
-      Integer maxBinId = mostRecentBinIds.get(mostRecentBinIds.size() - 1);
-      if (minCompleteBinId <= maxBinId) {
-        mergedResults.setMinCompleteBinId(minCompleteBinId);
+       nteger maxB n d = mostRecentB n ds.get(mostRecentB n ds.s ze() - 1);
+       f (m nCompleteB n d <= maxB n d) {
+         rgedResults.setM nCompleteB n d(m nCompleteB n d);
       } else {
-        // Leaving the minCompleteBinId unset as it is outside the range of the returned binIds.
-        LOG.debug("Computed minCompleteBinId: {} is out of maxBinId: {} for mergedResults: {}",
-            minCompleteBinId, mergedResults);
-        MIN_COMPLETE_BIN_ID_OUT_OF_RANGE.increment();
+        // Leav ng t  m nCompleteB n d unset as    s outs de t  range of t  returned b n ds.
+        LOG.debug("Computed m nCompleteB n d: {}  s out of maxB n d: {} for  rgedResults: {}",
+            m nCompleteB n d,  rgedResults);
+        M N_COMPLETE_B N_ D_OUT_OF_RANGE. ncre nt();
       }
     }
   }
 
   /**
-   * Check that the binIds we are using are contiguous. Increment the provided stat if we find
-   * a gap, as we don't expect to find any.
+   * C ck that t  b n ds   are us ng are cont guous.  ncre nt t  prov ded stat  f   f nd
+   * a gap, as   don't expect to f nd any.
    * See: SEARCH-4362
    *
-   * @param sortedBinIds most recent numBins sorted binIds.
-   * @param binIdGapCounter stat to increment if we see a gap in the binId range.
+   * @param sortedB n ds most recent numB ns sorted b n ds.
+   * @param b n dGapCounter stat to  ncre nt  f   see a gap  n t  b n d range.
    */
-  @VisibleForTesting
-  static void checkForBinIdGaps(List<Integer> sortedBinIds, SearchCounter binIdGapCounter) {
-    for (int i = sortedBinIds.size() - 1; i > 0; i--) {
-      final Integer currentBinId = sortedBinIds.get(i);
-      final Integer previousBinId = sortedBinIds.get(i - 1);
+  @V s bleForTest ng
+  stat c vo d c ckForB n dGaps(L st< nteger> sortedB n ds, SearchCounter b n dGapCounter) {
+    for ( nt   = sortedB n ds.s ze() - 1;   > 0;  --) {
+      f nal  nteger currentB n d = sortedB n ds.get( );
+      f nal  nteger prev ousB n d = sortedB n ds.get(  - 1);
 
-      if (previousBinId < currentBinId - 1) {
-        binIdGapCounter.increment();
+       f (prev ousB n d < currentB n d - 1) {
+        b n dGapCounter. ncre nt();
         break;
       }
     }
   }
 
   /**
-   * Returns a view containing only the last N items from the list
+   * Returns a v ew conta n ng only t  last N  ems from t  l st
    */
-  private static <E> List<E> takeLastN(List<E> lst, int n) {
-    Preconditions.checkArgument(n <= lst.size(),
-        "Attempting to take more elements than the list has. List size: %s, n: %s", lst.size(), n);
-    return lst.subList(lst.size() - n, lst.size());
+  pr vate stat c <E> L st<E> takeLastN(L st<E> lst,  nt n) {
+    Precond  ons.c ckArgu nt(n <= lst.s ze(),
+        "Attempt ng to take more ele nts than t  l st has. L st s ze: %s, n: %s", lst.s ze(), n);
+    return lst.subL st(lst.s ze() - n, lst.s ze());
   }
 
-  private void useMostRecentBinsForEachThriftTermResults() {
-    for (Map.Entry<ThriftTermRequest, ThriftTermResults> entry : termResultsMap.entrySet()) {
-      ThriftTermRequest request = entry.getKey();
-      ThriftTermResults results = entry.getValue();
+  pr vate vo d useMostRecentB nsForEachThr ftTermResults() {
+    for (Map.Entry<Thr ftTermRequest, Thr ftTermResults> entry : termResultsMap.entrySet()) {
+      Thr ftTermRequest request = entry.getKey();
+      Thr ftTermResults results = entry.getValue();
 
-      List<Integer> histogramBins = Lists.newArrayList();
-      results.setHistogramBins(histogramBins);
+      L st< nteger>  togramB ns = L sts.newArrayL st();
+      results.set togramB ns( togramB ns);
 
-      int[] requestTotalCounts = mergedTermRequestTotalCounts.get(request);
-      Preconditions.checkNotNull(requestTotalCounts);
+       nt[] requestTotalCounts =  rgedTermRequestTotalCounts.get(request);
+      Precond  ons.c ckNotNull(requestTotalCounts);
 
-      for (int totalCount : requestTotalCounts) {
-        histogramBins.add(totalCount);
+      for ( nt totalCount : requestTotalCounts) {
+         togramB ns.add(totalCount);
       }
     }
   }
 
   /**
-   * Merges search stats from several earlybird responses and puts them in
-   * {@link ThriftSearchResults} structure.
+   *  rges search stats from several earlyb rd responses and puts t m  n
+   * {@l nk Thr ftSearchResults} structure.
    *
-   * @param responses earlybird responses to merge the search stats from
-   * @return merged search stats inside of {@link ThriftSearchResults} structure
+   * @param responses earlyb rd responses to  rge t  search stats from
+   * @return  rged search stats  ns de of {@l nk Thr ftSearchResults} structure
    */
-  public static ThriftSearchResults mergeSearchStats(Collection<EarlybirdResponse> responses) {
-    int numHitsProcessed = 0;
-    int numPartitionsEarlyTerminated = 0;
+  publ c stat c Thr ftSearchResults  rgeSearchStats(Collect on<Earlyb rdResponse> responses) {
+     nt numH sProcessed = 0;
+     nt numPart  onsEarlyTerm nated = 0;
 
-    for (EarlybirdResponse response : responses) {
-      ThriftSearchResults searchResults = response.getSearchResults();
+    for (Earlyb rdResponse response : responses) {
+      Thr ftSearchResults searchResults = response.getSearchResults();
 
-      if (searchResults != null) {
-        numHitsProcessed += searchResults.getNumHitsProcessed();
-        numPartitionsEarlyTerminated += searchResults.getNumPartitionsEarlyTerminated();
+       f (searchResults != null) {
+        numH sProcessed += searchResults.getNumH sProcessed();
+        numPart  onsEarlyTerm nated += searchResults.getNumPart  onsEarlyTerm nated();
       }
     }
 
-    ThriftSearchResults searchResults = new ThriftSearchResults(new ArrayList<>());
-    searchResults.setNumHitsProcessed(numHitsProcessed);
-    searchResults.setNumPartitionsEarlyTerminated(numPartitionsEarlyTerminated);
+    Thr ftSearchResults searchResults = new Thr ftSearchResults(new ArrayL st<>());
+    searchResults.setNumH sProcessed(numH sProcessed);
+    searchResults.setNumPart  onsEarlyTerm nated(numPart  onsEarlyTerm nated);
     return searchResults;
   }
 }

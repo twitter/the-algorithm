@@ -1,34 +1,34 @@
-package com.twitter.tweetypie.storage
+package com.tw ter.t etyp e.storage
 
-import scala.util.control.NoStackTrace
+ mport scala.ut l.control.NoStackTrace
 
-sealed abstract class TweetStorageException(message: String, cause: Throwable)
-    extends Exception(message, cause)
-
-/**
- * The request was not properly formed and failed an assertion present in the code. Should not be
- * retried without modification.
- */
-case class ClientError(message: String, cause: Throwable)
-    extends TweetStorageException(message, cause)
-    with NoStackTrace
+sealed abstract class T etStorageExcept on( ssage: Str ng, cause: Throwable)
+    extends Except on( ssage, cause)
 
 /**
- * Request was rejected by Manhattan or the in-process rate limiter. Should not be retried.
+ * T  request was not properly for d and fa led an assert on present  n t  code. Should not be
+ * retr ed w hout mod f cat on.
  */
-case class RateLimited(message: String, cause: Throwable)
-    extends TweetStorageException(message, cause)
-    with NoStackTrace
+case class Cl entError( ssage: Str ng, cause: Throwable)
+    extends T etStorageExcept on( ssage, cause)
+    w h NoStackTrace
 
 /**
- * Corrupt tweets were requested from Manhattan
+ * Request was rejected by Manhattan or t   n-process rate l m er. Should not be retr ed.
  */
-case class VersionMismatchError(message: String, cause: Throwable = null)
-    extends TweetStorageException(message, cause)
-    with NoStackTrace
+case class RateL m ed( ssage: Str ng, cause: Throwable)
+    extends T etStorageExcept on( ssage, cause)
+    w h NoStackTrace
 
 /**
- * All other unhandled exceptions.
+ * Corrupt t ets  re requested from Manhattan
  */
-case class InternalError(message: String, cause: Throwable = null)
-    extends TweetStorageException(message, cause)
+case class Vers onM smatchError( ssage: Str ng, cause: Throwable = null)
+    extends T etStorageExcept on( ssage, cause)
+    w h NoStackTrace
+
+/**
+ * All ot r unhandled except ons.
+ */
+case class  nternalError( ssage: Str ng, cause: Throwable = null)
+    extends T etStorageExcept on( ssage, cause)

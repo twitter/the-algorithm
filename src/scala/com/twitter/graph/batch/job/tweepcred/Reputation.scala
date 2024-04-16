@@ -1,48 +1,48 @@
-package com.twitter.graph.batch.job.tweepcred
+package com.tw ter.graph.batch.job.t epcred
 
 /**
- * helper class to calculate reputation, borrowed from repo reputations
+ *  lper class to calculate reputat on, borro d from repo reputat ons
  */
-object Reputation {
+object Reputat on {
 
   /**
-   * convert pagerank to tweepcred between 0 and 100,
-   * take from repo reputations, util/Utils.scala
+   * convert pagerank to t epcred bet en 0 and 100,
+   * take from repo reputat ons, ut l/Ut ls.scala
    */
-  def scaledReputation(raw: Double): Byte = {
-    if (raw == 0 || (raw < 1.0e-20)) {
+  def scaledReputat on(raw: Double): Byte = {
+     f (raw == 0 || (raw < 1.0e-20)) {
       0
     } else {
-      // convert log(pagerank) to a number between 0 and 100
-      // the two parameters are from a linear fit by converting
+      // convert log(pagerank) to a number bet en 0 and 100
+      // t  two para ters are from a l near f  by convert ng
       // max pagerank -> 95
-      // min pagerank -> 15
-      val e: Double = 130d + 5.21 * scala.math.log(raw) // log to the base e
-      val pos = scala.math.rint(e)
-      val v = if (pos > 100) 100.0 else if (pos < 0) 0.0 else pos
+      // m n pagerank -> 15
+      val e: Double = 130d + 5.21 * scala.math.log(raw) // log to t  base e
+      val pos = scala.math.r nt(e)
+      val v =  f (pos > 100) 100.0 else  f (pos < 0) 0.0 else pos
       v.toByte
     }
   }
 
-  // these constants are take from repo reputations, config/production.conf
-  private val threshAbsNumFriendsReps = 2500
-  private val constantDivisionFactorGt_threshFriendsToFollowersRatioReps = 3.0
-  private val threshFriendsToFollowersRatioUMass = 0.6
-  private val maxDivFactorReps = 50
+  // t se constants are take from repo reputat ons, conf g/product on.conf
+  pr vate val threshAbsNumFr endsReps = 2500
+  pr vate val constantD v s onFactorGt_threshFr endsToFollo rsRat oReps = 3.0
+  pr vate val threshFr endsToFollo rsRat oUMass = 0.6
+  pr vate val maxD vFactorReps = 50
 
   /**
-   * reduce pagerank of users with low followers but high followings
+   * reduce pagerank of users w h low follo rs but h gh follow ngs
    */
-  def adjustReputationsPostCalculation(mass: Double, numFollowers: Int, numFollowings: Int) = {
-    if (numFollowings > threshAbsNumFriendsReps) {
-      val friendsToFollowersRatio = (1.0 + numFollowings) / (1.0 + numFollowers)
-      val divFactor =
+  def adjustReputat onsPostCalculat on(mass: Double, numFollo rs:  nt, numFollow ngs:  nt) = {
+     f (numFollow ngs > threshAbsNumFr endsReps) {
+      val fr endsToFollo rsRat o = (1.0 + numFollow ngs) / (1.0 + numFollo rs)
+      val d vFactor =
         scala.math.exp(
-          constantDivisionFactorGt_threshFriendsToFollowersRatioReps *
-            (friendsToFollowersRatio - threshFriendsToFollowersRatioUMass) *
-            scala.math.log(scala.math.log(numFollowings))
+          constantD v s onFactorGt_threshFr endsToFollo rsRat oReps *
+            (fr endsToFollo rsRat o - threshFr endsToFollo rsRat oUMass) *
+            scala.math.log(scala.math.log(numFollow ngs))
         )
-      mass / ((divFactor min maxDivFactorReps) max 1.0)
+      mass / ((d vFactor m n maxD vFactorReps) max 1.0)
     } else {
       mass
     }

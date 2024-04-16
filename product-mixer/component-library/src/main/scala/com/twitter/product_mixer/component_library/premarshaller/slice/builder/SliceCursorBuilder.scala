@@ -1,23 +1,23 @@
-package com.twitter.product_mixer.component_library.premarshaller.slice.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.sl ce.bu lder
 
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorItem
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorType
-import com.twitter.product_mixer.core.model.marshalling.response.slice.SliceItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.sl ce.Cursor em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.sl ce.CursorType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.sl ce.Sl ce em
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-trait SliceCursorBuilder[-Query <: PipelineQuery] {
+tra  Sl ceCursorBu lder[-Query <: P pel neQuery] {
 
-  val includeOperation: ShouldInclude[Query] = AlwaysInclude
+  val  ncludeOperat on: Should nclude[Query] = Always nclude
 
-  def cursorValue(query: Query, items: Seq[SliceItem]): String
+  def cursorValue(query: Query,  ems: Seq[Sl ce em]): Str ng
   def cursorType: CursorType
 
-  def build(query: Query, entries: Seq[SliceItem]): Option[CursorItem] = {
-    if (includeOperation(query, entries)) {
-      Some(
-        CursorItem(
+  def bu ld(query: Query, entr es: Seq[Sl ce em]): Opt on[Cursor em] = {
+     f ( ncludeOperat on(query, entr es)) {
+      So (
+        Cursor em(
           cursorType = cursorType,
-          value = cursorValue(query, entries)
+          value = cursorValue(query, entr es)
         ))
     } else None
   }

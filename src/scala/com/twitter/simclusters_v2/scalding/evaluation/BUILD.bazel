@@ -1,72 +1,72 @@
-scala_library(
-    sources = ["*.scala"],
+scala_l brary(
+    s ces = ["*.scala"],
     platform = "java8",
     tags = [
-        "bazel-compatible",
+        "bazel-compat ble",
         "bazel-only",
     ],
-    dependencies = [
-        "src/scala/com/twitter/simclusters_v2/scalding/common",
-        "src/scala/com/twitter/simclusters_v2/scalding/offline_job",
+    dependenc es = [
+        "src/scala/com/tw ter/s mclusters_v2/scald ng/common",
+        "src/scala/com/tw ter/s mclusters_v2/scald ng/offl ne_job",
     ],
 )
 
-hadoop_binary(
-    name = "tweet_evaluation_dummy_candidate_adhoc",
-    main = "com.twitter.simclusters_v2.scalding.DummyCandidateGenerationAdhocJob",
+hadoop_b nary(
+    na  = "t et_evaluat on_dum _cand date_adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.Dum Cand dateGenerat onAdhocJob",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":evaluation",
+    dependenc es = [
+        ":evaluat on",
     ],
 )
 
-hadoop_binary(
-    name = "tweet_evaluation_timelines_reference_adhoc",
-    main = "com.twitter.simclusters_v2.scalding.evaluation.AdhocTimelinesDataExtraction",
+hadoop_b nary(
+    na  = "t et_evaluat on_t  l nes_reference_adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.evaluat on.AdhocT  l nesDataExtract on",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":evaluation",
+    dependenc es = [
+        ":evaluat on",
     ],
 )
 
-hadoop_binary(
-    name = "tweet_evaluation_timelines_reference_batch",
-    main = "com.twitter.simclusters_v2.scalding.evaluation.ScheduledTimelinesDataExtractionBatch",
+hadoop_b nary(
+    na  = "t et_evaluat on_t  l nes_reference_batch",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.evaluat on.Sc duledT  l nesDataExtract onBatch",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":evaluation",
+    dependenc es = [
+        ":evaluat on",
     ],
 )
 
-hadoop_binary(
-    name = "simcluster_offline_eval_adhoc",
-    main = "com.twitter.simclusters_v2.scalding.evaluation.SimClustersEvaluationAdhocApp",
+hadoop_b nary(
+    na  = "s mcluster_offl ne_eval_adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.evaluat on.S mClustersEvaluat onAdhocApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":evaluation",
+    dependenc es = [
+        ":evaluat on",
     ],
 )

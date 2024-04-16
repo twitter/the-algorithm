@@ -1,13 +1,13 @@
-package com.twitter.search.ingester.model;
+package com.tw ter.search. ngester.model;
 
-import com.twitter.search.common.debug.DebugEventAccumulator;
+ mport com.tw ter.search.common.debug.DebugEventAccumulator;
 
 /**
- * Interface used for stages that process both TwitterMessages and ThriftVersionedEvents.
+ *  nterface used for stages that process both Tw ter ssages and Thr ftVers onedEvents.
  */
-public interface IndexerStatus extends DebugEventAccumulator {
+publ c  nterface  ndexerStatus extends DebugEventAccumulator {
   /**
-   * Needed by the SortStage.
+   * Needed by t  SortStage.
    */
-  long getId();
+  long get d();
 }

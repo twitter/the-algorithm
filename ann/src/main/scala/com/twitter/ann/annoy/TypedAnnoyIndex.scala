@@ -1,55 +1,55 @@
-package com.twitter.ann.annoy
+package com.tw ter.ann.annoy
 
-import com.twitter.ann.common._
-import com.twitter.bijection.Injection
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.util.FuturePool
+ mport com.tw ter.ann.common._
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.search.common.f le.AbstractF le
+ mport com.tw ter.ut l.FuturePool
 
-// Class to provide Annoy based ann index.
-object TypedAnnoyIndex {
+// Class to prov de Annoy based ann  ndex.
+object TypedAnnoy ndex {
 
   /**
-   * Create Annoy based typed index builder that serializes index to a directory (HDFS/Local file system).
-   * It cannot be used in scalding as it leverage C/C++ jni bindings, whose build conflicts with version of some libs installed on hadoop.
-   * You can use it on aurora or with IndexBuilding job which triggers scalding job but then streams data to aurora machine for building index.
-   * @param dimension dimension of embedding
-   * @param numOfTrees builds a forest of numOfTrees trees.
-   *                   More trees gives higher precision when querying at the cost of increased memory and disk storage requirement at the build time.
-   *                   At runtime the index will be memory mapped, so memory wont be an issue but disk storage would be needed.
-   * @param metric     distance metric for nearest neighbour search
-   * @param injection Injection to convert bytes to Id.
-   * @tparam T Type of Id for embedding
-   * @tparam D Typed Distance
-   * @return Serializable AnnoyIndex
+   * Create Annoy based typed  ndex bu lder that ser al zes  ndex to a d rectory (HDFS/Local f le system).
+   *   cannot be used  n scald ng as   leverage C/C++ jn  b nd ngs, whose bu ld confl cts w h vers on of so  l bs  nstalled on hadoop.
+   *   can use   on aurora or w h  ndexBu ld ng job wh ch tr ggers scald ng job but t n streams data to aurora mach ne for bu ld ng  ndex.
+   * @param d  ns on d  ns on of embedd ng
+   * @param numOfTrees bu lds a forest of numOfTrees trees.
+   *                   More trees g ves h g r prec s on w n query ng at t  cost of  ncreased  mory and d sk storage requ re nt at t  bu ld t  .
+   *                   At runt   t   ndex w ll be  mory mapped, so  mory wont be an  ssue but d sk storage would be needed.
+   * @param  tr c     d stance  tr c for nearest ne ghb  search
+   * @param  nject on  nject on to convert bytes to  d.
+   * @tparam T Type of  d for embedd ng
+   * @tparam D Typed D stance
+   * @return Ser al zable Annoy ndex
    */
-  def indexBuilder[T, D <: Distance[D]](
-    dimension: Int,
-    numOfTrees: Int,
-    metric: Metric[D],
-    injection: Injection[T, Array[Byte]],
+  def  ndexBu lder[T, D <: D stance[D]](
+    d  ns on:  nt,
+    numOfTrees:  nt,
+     tr c:  tr c[D],
+     nject on:  nject on[T, Array[Byte]],
     futurePool: FuturePool
-  ): Appendable[T, AnnoyRuntimeParams, D] with Serialization = {
-    TypedAnnoyIndexBuilderWithFile(dimension, numOfTrees, metric, injection, futurePool)
+  ): Appendable[T, AnnoyRunt  Params, D] w h Ser al zat on = {
+    TypedAnnoy ndexBu lderW hF le(d  ns on, numOfTrees,  tr c,  nject on, futurePool)
   }
 
   /**
-   * Load Annoy based queryable index from a directory
-   * @param dimension dimension of embedding
-   * @param metric distance metric for nearest neighbour search
-   * @param injection Injection to convert bytes to Id.
+   * Load Annoy based queryable  ndex from a d rectory
+   * @param d  ns on d  ns on of embedd ng
+   * @param  tr c d stance  tr c for nearest ne ghb  search
+   * @param  nject on  nject on to convert bytes to  d.
    * @param futurePool FuturePool
-   * @param directory Directory (HDFS/Local file system) where serialized index is stored.
-   * @tparam T Type of Id for embedding
-   * @tparam D Typed Distance
-   * @return Typed Queryable AnnoyIndex
+   * @param d rectory D rectory (HDFS/Local f le system) w re ser al zed  ndex  s stored.
+   * @tparam T Type of  d for embedd ng
+   * @tparam D Typed D stance
+   * @return Typed Queryable Annoy ndex
    */
-  def loadQueryableIndex[T, D <: Distance[D]](
-    dimension: Int,
-    metric: Metric[D],
-    injection: Injection[T, Array[Byte]],
+  def loadQueryable ndex[T, D <: D stance[D]](
+    d  ns on:  nt,
+     tr c:  tr c[D],
+     nject on:  nject on[T, Array[Byte]],
     futurePool: FuturePool,
-    directory: AbstractFile
-  ): Queryable[T, AnnoyRuntimeParams, D] = {
-    TypedAnnoyQueryIndexWithFile(dimension, metric, injection, futurePool, directory)
+    d rectory: AbstractF le
+  ): Queryable[T, AnnoyRunt  Params, D] = {
+    TypedAnnoyQuery ndexW hF le(d  ns on,  tr c,  nject on, futurePool, d rectory)
   }
 }

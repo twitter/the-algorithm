@@ -1,112 +1,112 @@
-package com.twitter.visibility.builder
+package com.tw ter.v s b l y.bu lder
 
-import com.twitter.spam.rtf.thriftscala.SafetyResult
-import com.twitter.visibility.common.actions.converter.scala.DropReasonConverter
-import com.twitter.visibility.rules.ComposableActions._
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.rules._
-import com.twitter.visibility.{thriftscala => t}
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyResult
+ mport com.tw ter.v s b l y.common.act ons.converter.scala.DropReasonConverter
+ mport com.tw ter.v s b l y.rules.ComposableAct ons._
+ mport com.tw ter.v s b l y.features.Feature
+ mport com.tw ter.v s b l y.features.FeatureMap
+ mport com.tw ter.v s b l y.models.Content d
+ mport com.tw ter.v s b l y.rules._
+ mport com.tw ter.v s b l y.{thr ftscala => t}
 
-case class VisibilityResult(
-  contentId: ContentId,
+case class V s b l yResult(
+  content d: Content d,
   featureMap: FeatureMap = FeatureMap.empty,
   ruleResultMap: Map[Rule, RuleResult] = Map.empty,
-  verdict: Action = Allow,
-  finished: Boolean = false,
-  actingRule: Option[Rule] = None,
-  secondaryActingRules: Seq[Rule] = Seq(),
-  secondaryVerdicts: Seq[Action] = Seq(),
+  verd ct: Act on = Allow,
+  f n s d: Boolean = false,
+  act ngRule: Opt on[Rule] = None,
+  secondaryAct ngRules: Seq[Rule] = Seq(),
+  secondaryVerd cts: Seq[Act on] = Seq(),
   resolvedFeatureMap: Map[Feature[_], Any] = Map.empty) {
 
   def getSafetyResult: SafetyResult =
-    verdict match {
-      case InterstitialLimitedEngagements(reason: Reason, _, _, _)
-          if PublicInterest.Reasons
-            .contains(reason) =>
+    verd ct match {
+      case  nterst  alL m edEngage nts(reason: Reason, _, _, _)
+           f Publ c nterest.Reasons
+            .conta ns(reason) =>
         SafetyResult(
-          Some(PublicInterest.ReasonToSafetyResultReason(reason)),
-          verdict.toActionThrift()
+          So (Publ c nterest.ReasonToSafetyResultReason(reason)),
+          verd ct.toAct onThr ft()
         )
-      case ComposableActionsWithInterstitialLimitedEngagements(tweetInterstitial)
-          if PublicInterest.Reasons.contains(tweetInterstitial.reason) =>
+      case ComposableAct onsW h nterst  alL m edEngage nts(t et nterst  al)
+           f Publ c nterest.Reasons.conta ns(t et nterst  al.reason) =>
         SafetyResult(
-          Some(PublicInterest.ReasonToSafetyResultReason(tweetInterstitial.reason)),
-          verdict.toActionThrift()
+          So (Publ c nterest.ReasonToSafetyResultReason(t et nterst  al.reason)),
+          verd ct.toAct onThr ft()
         )
       case FreedomOfSpeechNotReachReason(appealableReason) =>
         SafetyResult(
-          Some(FreedomOfSpeechNotReach.reasonToSafetyResultReason(appealableReason)),
-          verdict.toActionThrift()
+          So (FreedomOfSpeechNotReach.reasonToSafetyResultReason(appealableReason)),
+          verd ct.toAct onThr ft()
         )
-      case _ => SafetyResult(None, verdict.toActionThrift())
+      case _ => SafetyResult(None, verd ct.toAct onThr ft())
     }
 
-  def getUserVisibilityResult: Option[t.UserVisibilityResult] =
-    (verdict match {
+  def getUserV s b l yResult: Opt on[t.UserV s b l yResult] =
+    (verd ct match {
       case Drop(reason, _) =>
-        Some(
-          t.UserAction.Drop(t.Drop(Reason.toDropReason(reason).map(DropReasonConverter.toThrift))))
+        So (
+          t.UserAct on.Drop(t.Drop(Reason.toDropReason(reason).map(DropReasonConverter.toThr ft))))
       case _ => None
-    }).map(userAction => t.UserVisibilityResult(Some(userAction)))
+    }).map(userAct on => t.UserV s b l yResult(So (userAct on)))
 }
 
-object VisibilityResult {
-  class Builder {
+object V s b l yResult {
+  class Bu lder {
     var featureMap: FeatureMap = FeatureMap.empty
     var ruleResultMap: Map[Rule, RuleResult] = Map.empty
-    var verdict: Action = Allow
-    var finished: Boolean = false
-    var actingRule: Option[Rule] = None
-    var secondaryActingRules: Seq[Rule] = Seq()
-    var secondaryVerdicts: Seq[Action] = Seq()
+    var verd ct: Act on = Allow
+    var f n s d: Boolean = false
+    var act ngRule: Opt on[Rule] = None
+    var secondaryAct ngRules: Seq[Rule] = Seq()
+    var secondaryVerd cts: Seq[Act on] = Seq()
     var resolvedFeatureMap: Map[Feature[_], Any] = Map.empty
 
-    def withFeatureMap(featureMapBld: FeatureMap) = {
+    def w hFeatureMap(featureMapBld: FeatureMap) = {
       featureMap = featureMapBld
-      this
+      t 
     }
 
-    def withRuleResultMap(ruleResultMapBld: Map[Rule, RuleResult]) = {
+    def w hRuleResultMap(ruleResultMapBld: Map[Rule, RuleResult]) = {
       ruleResultMap = ruleResultMapBld
-      this
+      t 
     }
 
-    def withVerdict(verdictBld: Action) = {
-      verdict = verdictBld
-      this
+    def w hVerd ct(verd ctBld: Act on) = {
+      verd ct = verd ctBld
+      t 
     }
 
-    def withFinished(finishedBld: Boolean) = {
-      finished = finishedBld
-      this
+    def w hF n s d(f n s dBld: Boolean) = {
+      f n s d = f n s dBld
+      t 
     }
 
-    def withActingRule(actingRuleBld: Option[Rule]) = {
-      actingRule = actingRuleBld
-      this
+    def w hAct ngRule(act ngRuleBld: Opt on[Rule]) = {
+      act ngRule = act ngRuleBld
+      t 
     }
 
-    def withSecondaryActingRules(secondaryActingRulesBld: Seq[Rule]) = {
-      secondaryActingRules = secondaryActingRulesBld
-      this
+    def w hSecondaryAct ngRules(secondaryAct ngRulesBld: Seq[Rule]) = {
+      secondaryAct ngRules = secondaryAct ngRulesBld
+      t 
     }
 
-    def withSecondaryVerdicts(secondaryVerdictsBld: Seq[Action]) = {
-      secondaryVerdicts = secondaryVerdictsBld
-      this
+    def w hSecondaryVerd cts(secondaryVerd ctsBld: Seq[Act on]) = {
+      secondaryVerd cts = secondaryVerd ctsBld
+      t 
     }
 
-    def build(contentId: ContentId) = VisibilityResult(
-      contentId,
+    def bu ld(content d: Content d) = V s b l yResult(
+      content d,
       featureMap,
       ruleResultMap,
-      verdict,
-      finished,
-      actingRule,
-      secondaryActingRules,
-      secondaryVerdicts,
+      verd ct,
+      f n s d,
+      act ngRule,
+      secondaryAct ngRules,
+      secondaryVerd cts,
       resolvedFeatureMap)
   }
 }

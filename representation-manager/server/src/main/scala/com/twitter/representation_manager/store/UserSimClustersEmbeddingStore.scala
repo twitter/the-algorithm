@@ -1,601 +1,601 @@
-package com.twitter.representation_manager.store
+package com.tw ter.representat on_manager.store
 
-import com.twitter.contentrecommender.twistly
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.representation_manager.common.MemCacheConfig
-import com.twitter.representation_manager.common.RepresentationManagerDecider
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.stores.SimClustersEmbeddingStore
-import com.twitter.simclusters_v2.summingbird.stores.ProducerClusterEmbeddingReadableStores
-import com.twitter.simclusters_v2.summingbird.stores.UserInterestedInReadableStore
-import com.twitter.simclusters_v2.summingbird.stores.UserInterestedInReadableStore.getStore
-import com.twitter.simclusters_v2.summingbird.stores.UserInterestedInReadableStore.modelVersionToDatasetMap
-import com.twitter.simclusters_v2.summingbird.stores.UserInterestedInReadableStore.knownModelVersions
-import com.twitter.simclusters_v2.summingbird.stores.UserInterestedInReadableStore.toSimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType._
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.ModelVersion._
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.Apollo
-import com.twitter.storehaus_internal.manhattan.ManhattanCluster
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.tweetypie.util.UserId
-import com.twitter.util.Future
-import javax.inject.Inject
+ mport com.tw ter.contentrecom nder.tw stly
+ mport com.tw ter.f nagle. mcac d.Cl ent
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.store.strato.StratoFetchableStore
+ mport com.tw ter. rm .store.common.ObservedReadableStore
+ mport com.tw ter.representat on_manager.common. mCac Conf g
+ mport com.tw ter.representat on_manager.common.Representat onManagerDec der
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.stores.S mClustersEmbedd ngStore
+ mport com.tw ter.s mclusters_v2.summ ngb rd.stores.ProducerClusterEmbedd ngReadableStores
+ mport com.tw ter.s mclusters_v2.summ ngb rd.stores.User nterested nReadableStore
+ mport com.tw ter.s mclusters_v2.summ ngb rd.stores.User nterested nReadableStore.getStore
+ mport com.tw ter.s mclusters_v2.summ ngb rd.stores.User nterested nReadableStore.modelVers onToDatasetMap
+ mport com.tw ter.s mclusters_v2.summ ngb rd.stores.User nterested nReadableStore.knownModelVers ons
+ mport com.tw ter.s mclusters_v2.summ ngb rd.stores.User nterested nReadableStore.toS mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.thr ftscala.ClustersUser s nterested n
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType._
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on._
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng d
+ mport com.tw ter.s mclusters_v2.thr ftscala.{S mClustersEmbedd ng => Thr ftS mClustersEmbedd ng}
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl entMtlsParams
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.storehaus_ nternal.manhattan.Apollo
+ mport com.tw ter.storehaus_ nternal.manhattan.ManhattanCluster
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.strato.thr ft.ScroogeConv mpl c s._
+ mport com.tw ter.t etyp e.ut l.User d
+ mport com.tw ter.ut l.Future
+ mport javax. nject. nject
 
-class UserSimClustersEmbeddingStore @Inject() (
-  stratoClient: StratoClient,
-  cacheClient: Client,
-  globalStats: StatsReceiver,
-  mhMtlsParams: ManhattanKVClientMtlsParams,
-  rmsDecider: RepresentationManagerDecider) {
+class UserS mClustersEmbedd ngStore @ nject() (
+  stratoCl ent: StratoCl ent,
+  cac Cl ent: Cl ent,
+  globalStats: StatsRece ver,
+  mhMtlsParams: ManhattanKVCl entMtlsParams,
+  rmsDec der: Representat onManagerDec der) {
 
-  private val stats = globalStats.scope(this.getClass.getSimpleName)
+  pr vate val stats = globalStats.scope(t .getClass.getS mpleNa )
 
-  private val favBasedProducer20M145KUpdatedEmbeddingStore: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  pr vate val favBasedProducer20M145KUpdatedEmbedd ngStore: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    val rawStore = ProducerClusterEmbeddingReadableStores
-      .getProducerTopKSimClustersEmbeddingsStore(
+    val rawStore = ProducerClusterEmbedd ngReadableStores
+      .getProducerTopKS mClustersEmbedd ngsStore(
         mhMtlsParams
-      ).mapValues { topSimClustersWithScore =>
-        ThriftSimClustersEmbedding(topSimClustersWithScore.topClusters)
-      }.composeKeyMapping[SimClustersEmbeddingId] {
-        case SimClustersEmbeddingId(_, _, InternalId.UserId(userId)) =>
-          userId
+      ).mapValues { topS mClustersW hScore =>
+        Thr ftS mClustersEmbedd ng(topS mClustersW hScore.topClusters)
+      }.composeKeyMapp ng[S mClustersEmbedd ng d] {
+        case S mClustersEmbedd ng d(_, _,  nternal d.User d(user d)) =>
+          user d
       }
 
-    buildMemCacheStore(rawStore, FavBasedProducer, Model20m145kUpdated)
+    bu ld mCac Store(rawStore, FavBasedProducer, Model20m145kUpdated)
   }
 
-  private val favBasedProducer20M145K2020EmbeddingStore: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  pr vate val favBasedProducer20M145K2020Embedd ngStore: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    val rawStore = ProducerClusterEmbeddingReadableStores
-      .getProducerTopKSimClusters2020EmbeddingsStore(
+    val rawStore = ProducerClusterEmbedd ngReadableStores
+      .getProducerTopKS mClusters2020Embedd ngsStore(
         mhMtlsParams
-      ).mapValues { topSimClustersWithScore =>
-        ThriftSimClustersEmbedding(topSimClustersWithScore.topClusters)
-      }.composeKeyMapping[SimClustersEmbeddingId] {
-        case SimClustersEmbeddingId(_, _, InternalId.UserId(userId)) =>
-          userId
+      ).mapValues { topS mClustersW hScore =>
+        Thr ftS mClustersEmbedd ng(topS mClustersW hScore.topClusters)
+      }.composeKeyMapp ng[S mClustersEmbedd ng d] {
+        case S mClustersEmbedd ng d(_, _,  nternal d.User d(user d)) =>
+          user d
       }
 
-    buildMemCacheStore(rawStore, FavBasedProducer, Model20m145k2020)
+    bu ld mCac Store(rawStore, FavBasedProducer, Model20m145k2020)
   }
 
-  private val followBasedProducer20M145K2020EmbeddingStore: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  pr vate val followBasedProducer20M145K2020Embedd ngStore: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    val rawStore = ProducerClusterEmbeddingReadableStores
-      .getProducerTopKSimClustersEmbeddingsByFollowStore(
+    val rawStore = ProducerClusterEmbedd ngReadableStores
+      .getProducerTopKS mClustersEmbedd ngsByFollowStore(
         mhMtlsParams
-      ).mapValues { topSimClustersWithScore =>
-        ThriftSimClustersEmbedding(topSimClustersWithScore.topClusters)
-      }.composeKeyMapping[SimClustersEmbeddingId] {
-        case SimClustersEmbeddingId(_, _, InternalId.UserId(userId)) =>
-          userId
+      ).mapValues { topS mClustersW hScore =>
+        Thr ftS mClustersEmbedd ng(topS mClustersW hScore.topClusters)
+      }.composeKeyMapp ng[S mClustersEmbedd ng d] {
+        case S mClustersEmbedd ng d(_, _,  nternal d.User d(user d)) =>
+          user d
       }
 
-    buildMemCacheStore(rawStore, FollowBasedProducer, Model20m145k2020)
+    bu ld mCac Store(rawStore, FollowBasedProducer, Model20m145k2020)
   }
 
-  private val logFavBasedApe20M145K2020EmbeddingStore: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  pr vate val logFavBasedApe20M145K2020Embedd ngStore: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
     val rawStore = StratoFetchableStore
-      .withUnitView[SimClustersEmbeddingId, ThriftSimClustersEmbedding](
-        stratoClient,
-        "recommendations/simclusters_v2/embeddings/logFavBasedAPE20M145K2020")
-      .mapValues(embedding => SimClustersEmbedding(embedding, truncate = 50).toThrift)
+      .w hUn V ew[S mClustersEmbedd ng d, Thr ftS mClustersEmbedd ng](
+        stratoCl ent,
+        "recom ndat ons/s mclusters_v2/embedd ngs/logFavBasedAPE20M145K2020")
+      .mapValues(embedd ng => S mClustersEmbedd ng(embedd ng, truncate = 50).toThr ft)
 
-    buildMemCacheStore(rawStore, AggregatableLogFavBasedProducer, Model20m145k2020)
+    bu ld mCac Store(rawStore, AggregatableLogFavBasedProducer, Model20m145k2020)
   }
 
-  private val rawRelaxedLogFavBasedApe20M145K2020EmbeddingStore: ReadableStore[
-    SimClustersEmbeddingId,
-    ThriftSimClustersEmbedding
+  pr vate val rawRelaxedLogFavBasedApe20M145K2020Embedd ngStore: ReadableStore[
+    S mClustersEmbedd ng d,
+    Thr ftS mClustersEmbedd ng
   ] = {
     StratoFetchableStore
-      .withUnitView[SimClustersEmbeddingId, ThriftSimClustersEmbedding](
-        stratoClient,
-        "recommendations/simclusters_v2/embeddings/logFavBasedAPERelaxedFavEngagementThreshold20M145K2020")
-      .mapValues(embedding => SimClustersEmbedding(embedding, truncate = 50).toThrift)
+      .w hUn V ew[S mClustersEmbedd ng d, Thr ftS mClustersEmbedd ng](
+        stratoCl ent,
+        "recom ndat ons/s mclusters_v2/embedd ngs/logFavBasedAPERelaxedFavEngage ntThreshold20M145K2020")
+      .mapValues(embedd ng => S mClustersEmbedd ng(embedd ng, truncate = 50).toThr ft)
   }
 
-  private val relaxedLogFavBasedApe20M145K2020EmbeddingStore: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  pr vate val relaxedLogFavBasedApe20M145K2020Embedd ngStore: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    buildMemCacheStore(
-      rawRelaxedLogFavBasedApe20M145K2020EmbeddingStore,
+    bu ld mCac Store(
+      rawRelaxedLogFavBasedApe20M145K2020Embedd ngStore,
       RelaxedAggregatableLogFavBasedProducer,
       Model20m145k2020)
   }
 
-  private val relaxedLogFavBasedApe20m145kUpdatedEmbeddingStore: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  pr vate val relaxedLogFavBasedApe20m145kUpdatedEmbedd ngStore: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    val rawStore = rawRelaxedLogFavBasedApe20M145K2020EmbeddingStore
-      .composeKeyMapping[SimClustersEmbeddingId] {
-        case SimClustersEmbeddingId(
+    val rawStore = rawRelaxedLogFavBasedApe20M145K2020Embedd ngStore
+      .composeKeyMapp ng[S mClustersEmbedd ng d] {
+        case S mClustersEmbedd ng d(
               RelaxedAggregatableLogFavBasedProducer,
               Model20m145kUpdated,
-              internalId) =>
-          SimClustersEmbeddingId(
+               nternal d) =>
+          S mClustersEmbedd ng d(
             RelaxedAggregatableLogFavBasedProducer,
             Model20m145k2020,
-            internalId)
+             nternal d)
       }
 
-    buildMemCacheStore(rawStore, RelaxedAggregatableLogFavBasedProducer, Model20m145kUpdated)
+    bu ld mCac Store(rawStore, RelaxedAggregatableLogFavBasedProducer, Model20m145kUpdated)
   }
 
-  private val logFavBasedInterestedInFromAPE20M145K2020Store: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  pr vate val logFavBased nterested nFromAPE20M145K2020Store: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    buildUserInterestedInStore(
-      UserInterestedInReadableStore.defaultIIAPESimClustersEmbeddingStoreWithMtls,
-      LogFavBasedUserInterestedInFromAPE,
+    bu ldUser nterested nStore(
+      User nterested nReadableStore.default  APES mClustersEmbedd ngStoreW hMtls,
+      LogFavBasedUser nterested nFromAPE,
       Model20m145k2020)
   }
 
-  private val followBasedInterestedInFromAPE20M145K2020Store: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  pr vate val followBased nterested nFromAPE20M145K2020Store: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    buildUserInterestedInStore(
-      UserInterestedInReadableStore.defaultIIAPESimClustersEmbeddingStoreWithMtls,
-      FollowBasedUserInterestedInFromAPE,
+    bu ldUser nterested nStore(
+      User nterested nReadableStore.default  APES mClustersEmbedd ngStoreW hMtls,
+      FollowBasedUser nterested nFromAPE,
       Model20m145k2020)
   }
 
-  private val favBasedUserInterestedIn20M145KUpdatedStore: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  pr vate val favBasedUser nterested n20M145KUpdatedStore: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    buildUserInterestedInStore(
-      UserInterestedInReadableStore.defaultSimClustersEmbeddingStoreWithMtls,
-      FavBasedUserInterestedIn,
+    bu ldUser nterested nStore(
+      User nterested nReadableStore.defaultS mClustersEmbedd ngStoreW hMtls,
+      FavBasedUser nterested n,
       Model20m145kUpdated)
   }
 
-  private val favBasedUserInterestedIn20M145K2020Store: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  pr vate val favBasedUser nterested n20M145K2020Store: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    buildUserInterestedInStore(
-      UserInterestedInReadableStore.defaultSimClustersEmbeddingStoreWithMtls,
-      FavBasedUserInterestedIn,
+    bu ldUser nterested nStore(
+      User nterested nReadableStore.defaultS mClustersEmbedd ngStoreW hMtls,
+      FavBasedUser nterested n,
       Model20m145k2020)
   }
 
-  private val followBasedUserInterestedIn20M145K2020Store: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  pr vate val followBasedUser nterested n20M145K2020Store: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    buildUserInterestedInStore(
-      UserInterestedInReadableStore.defaultSimClustersEmbeddingStoreWithMtls,
-      FollowBasedUserInterestedIn,
+    bu ldUser nterested nStore(
+      User nterested nReadableStore.defaultS mClustersEmbedd ngStoreW hMtls,
+      FollowBasedUser nterested n,
       Model20m145k2020)
   }
 
-  private val logFavBasedUserInterestedIn20M145K2020Store: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  pr vate val logFavBasedUser nterested n20M145K2020Store: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    buildUserInterestedInStore(
-      UserInterestedInReadableStore.defaultSimClustersEmbeddingStoreWithMtls,
-      LogFavBasedUserInterestedIn,
+    bu ldUser nterested nStore(
+      User nterested nReadableStore.defaultS mClustersEmbedd ngStoreW hMtls,
+      LogFavBasedUser nterested n,
       Model20m145k2020)
   }
 
-  private val favBasedUserInterestedInFromPE20M145KUpdatedStore: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  pr vate val favBasedUser nterested nFromPE20M145KUpdatedStore: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    buildUserInterestedInStore(
-      UserInterestedInReadableStore.defaultIIPESimClustersEmbeddingStoreWithMtls,
-      FavBasedUserInterestedInFromPE,
+    bu ldUser nterested nStore(
+      User nterested nReadableStore.default  PES mClustersEmbedd ngStoreW hMtls,
+      FavBasedUser nterested nFromPE,
       Model20m145kUpdated)
   }
 
-  private val twistlyUserInterestedInStore: ReadableStore[
-    SimClustersEmbeddingId,
-    ThriftSimClustersEmbedding
+  pr vate val tw stlyUser nterested nStore: ReadableStore[
+    S mClustersEmbedd ng d,
+    Thr ftS mClustersEmbedd ng
   ] = {
-    val interestedIn20M145KUpdatedStore = {
-      UserInterestedInReadableStore.defaultStoreWithMtls(
+    val  nterested n20M145KUpdatedStore = {
+      User nterested nReadableStore.defaultStoreW hMtls(
         mhMtlsParams,
-        modelVersion = ModelVersions.Model20M145KUpdated
+        modelVers on = ModelVers ons.Model20M145KUpdated
       )
     }
-    val interestedIn20M145K2020Store = {
-      UserInterestedInReadableStore.defaultStoreWithMtls(
+    val  nterested n20M145K2020Store = {
+      User nterested nReadableStore.defaultStoreW hMtls(
         mhMtlsParams,
-        modelVersion = ModelVersions.Model20M145K2020
+        modelVers on = ModelVers ons.Model20M145K2020
       )
     }
-    val interestedInFromPE20M145KUpdatedStore = {
-      UserInterestedInReadableStore.defaultIIPEStoreWithMtls(
+    val  nterested nFromPE20M145KUpdatedStore = {
+      User nterested nReadableStore.default  PEStoreW hMtls(
         mhMtlsParams,
-        modelVersion = ModelVersions.Model20M145KUpdated)
+        modelVers on = ModelVers ons.Model20M145KUpdated)
     }
-    val simClustersInterestedInStore: ReadableStore[
-      (UserId, ModelVersion),
-      ClustersUserIsInterestedIn
+    val s mClusters nterested nStore: ReadableStore[
+      (User d, ModelVers on),
+      ClustersUser s nterested n
     ] = {
-      new ReadableStore[(UserId, ModelVersion), ClustersUserIsInterestedIn] {
-        override def get(k: (UserId, ModelVersion)): Future[Option[ClustersUserIsInterestedIn]] = {
+      new ReadableStore[(User d, ModelVers on), ClustersUser s nterested n] {
+        overr de def get(k: (User d, ModelVers on)): Future[Opt on[ClustersUser s nterested n]] = {
           k match {
-            case (userId, Model20m145kUpdated) =>
-              interestedIn20M145KUpdatedStore.get(userId)
-            case (userId, Model20m145k2020) =>
-              interestedIn20M145K2020Store.get(userId)
+            case (user d, Model20m145kUpdated) =>
+               nterested n20M145KUpdatedStore.get(user d)
+            case (user d, Model20m145k2020) =>
+               nterested n20M145K2020Store.get(user d)
             case _ =>
               Future.None
           }
         }
       }
     }
-    val simClustersInterestedInFromProducerEmbeddingsStore: ReadableStore[
-      (UserId, ModelVersion),
-      ClustersUserIsInterestedIn
+    val s mClusters nterested nFromProducerEmbedd ngsStore: ReadableStore[
+      (User d, ModelVers on),
+      ClustersUser s nterested n
     ] = {
-      new ReadableStore[(UserId, ModelVersion), ClustersUserIsInterestedIn] {
-        override def get(k: (UserId, ModelVersion)): Future[Option[ClustersUserIsInterestedIn]] = {
+      new ReadableStore[(User d, ModelVers on), ClustersUser s nterested n] {
+        overr de def get(k: (User d, ModelVers on)): Future[Opt on[ClustersUser s nterested n]] = {
           k match {
-            case (userId, ModelVersion.Model20m145kUpdated) =>
-              interestedInFromPE20M145KUpdatedStore.get(userId)
+            case (user d, ModelVers on.Model20m145kUpdated) =>
+               nterested nFromPE20M145KUpdatedStore.get(user d)
             case _ =>
               Future.None
           }
         }
       }
     }
-    new twistly.interestedin.EmbeddingStore(
-      interestedInStore = simClustersInterestedInStore,
-      interestedInFromProducerEmbeddingStore = simClustersInterestedInFromProducerEmbeddingsStore,
-      statsReceiver = stats
-    ).mapValues(_.toThrift)
+    new tw stly. nterested n.Embedd ngStore(
+       nterested nStore = s mClusters nterested nStore,
+       nterested nFromProducerEmbedd ngStore = s mClusters nterested nFromProducerEmbedd ngsStore,
+      statsRece ver = stats
+    ).mapValues(_.toThr ft)
   }
 
-  private val userNextInterestedIn20m145k2020Store: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  pr vate val userNext nterested n20m145k2020Store: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    buildUserInterestedInStore(
-      UserInterestedInReadableStore.defaultNextInterestedInStoreWithMtls,
-      UserNextInterestedIn,
+    bu ldUser nterested nStore(
+      User nterested nReadableStore.defaultNext nterested nStoreW hMtls,
+      UserNext nterested n,
       Model20m145k2020)
   }
 
-  private val filteredUserInterestedIn20m145kUpdatedStore: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  pr vate val f lteredUser nterested n20m145kUpdatedStore: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    buildMemCacheStore(twistlyUserInterestedInStore, FilteredUserInterestedIn, Model20m145kUpdated)
+    bu ld mCac Store(tw stlyUser nterested nStore, F lteredUser nterested n, Model20m145kUpdated)
   }
 
-  private val filteredUserInterestedIn20m145k2020Store: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  pr vate val f lteredUser nterested n20m145k2020Store: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    buildMemCacheStore(twistlyUserInterestedInStore, FilteredUserInterestedIn, Model20m145k2020)
+    bu ld mCac Store(tw stlyUser nterested nStore, F lteredUser nterested n, Model20m145k2020)
   }
 
-  private val filteredUserInterestedInFromPE20m145kUpdatedStore: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  pr vate val f lteredUser nterested nFromPE20m145kUpdatedStore: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    buildMemCacheStore(
-      twistlyUserInterestedInStore,
-      FilteredUserInterestedInFromPE,
+    bu ld mCac Store(
+      tw stlyUser nterested nStore,
+      F lteredUser nterested nFromPE,
       Model20m145kUpdated)
   }
 
-  private val unfilteredUserInterestedIn20m145kUpdatedStore: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  pr vate val unf lteredUser nterested n20m145kUpdatedStore: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    buildMemCacheStore(
-      twistlyUserInterestedInStore,
-      UnfilteredUserInterestedIn,
+    bu ld mCac Store(
+      tw stlyUser nterested nStore,
+      Unf lteredUser nterested n,
       Model20m145kUpdated)
   }
 
-  private val unfilteredUserInterestedIn20m145k2020Store: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  pr vate val unf lteredUser nterested n20m145k2020Store: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    buildMemCacheStore(twistlyUserInterestedInStore, UnfilteredUserInterestedIn, Model20m145k2020)
+    bu ld mCac Store(tw stlyUser nterested nStore, Unf lteredUser nterested n, Model20m145k2020)
   }
 
-  // [Experimental] User InterestedIn, generated by aggregating IIAPE embedding from AddressBook
+  // [Exper  ntal] User  nterested n, generated by aggregat ng   APE embedd ng from AddressBook
 
-  private val logFavBasedInterestedMaxpoolingAddressBookFromIIAPE20M145K2020Store: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  pr vate val logFavBased nterestedMaxpool ngAddressBookFrom  APE20M145K2020Store: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    val datasetName = "addressbook_sims_embedding_iiape_maxpooling"
-    val appId = "wtf_embedding_apollo"
-    buildUserInterestedInStoreGeneric(
-      simClustersEmbeddingStoreWithMtls,
-      LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE,
+    val datasetNa  = "addressbook_s ms_embedd ng_  ape_maxpool ng"
+    val app d = "wtf_embedd ng_apollo"
+    bu ldUser nterested nStoreGener c(
+      s mClustersEmbedd ngStoreW hMtls,
+      LogFavBasedUser nterestedMaxpool ngAddressBookFrom  APE,
       Model20m145k2020,
-      datasetName = datasetName,
-      appId = appId,
+      datasetNa  = datasetNa ,
+      app d = app d,
       manhattanCluster = Apollo
     )
   }
 
-  private val logFavBasedInterestedAverageAddressBookFromIIAPE20M145K2020Store: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  pr vate val logFavBased nterestedAverageAddressBookFrom  APE20M145K2020Store: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    val datasetName = "addressbook_sims_embedding_iiape_average"
-    val appId = "wtf_embedding_apollo"
-    buildUserInterestedInStoreGeneric(
-      simClustersEmbeddingStoreWithMtls,
-      LogFavBasedUserInterestedAverageAddressBookFromIIAPE,
+    val datasetNa  = "addressbook_s ms_embedd ng_  ape_average"
+    val app d = "wtf_embedd ng_apollo"
+    bu ldUser nterested nStoreGener c(
+      s mClustersEmbedd ngStoreW hMtls,
+      LogFavBasedUser nterestedAverageAddressBookFrom  APE,
       Model20m145k2020,
-      datasetName = datasetName,
-      appId = appId,
+      datasetNa  = datasetNa ,
+      app d = app d,
       manhattanCluster = Apollo
     )
   }
 
-  private val logFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE20M145K2020Store: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  pr vate val logFavBasedUser nterestedBooktypeMaxpool ngAddressBookFrom  APE20M145K2020Store: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    val datasetName = "addressbook_sims_embedding_iiape_booktype_maxpooling"
-    val appId = "wtf_embedding_apollo"
-    buildUserInterestedInStoreGeneric(
-      simClustersEmbeddingStoreWithMtls,
-      LogFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE,
+    val datasetNa  = "addressbook_s ms_embedd ng_  ape_booktype_maxpool ng"
+    val app d = "wtf_embedd ng_apollo"
+    bu ldUser nterested nStoreGener c(
+      s mClustersEmbedd ngStoreW hMtls,
+      LogFavBasedUser nterestedBooktypeMaxpool ngAddressBookFrom  APE,
       Model20m145k2020,
-      datasetName = datasetName,
-      appId = appId,
+      datasetNa  = datasetNa ,
+      app d = app d,
       manhattanCluster = Apollo
     )
   }
 
-  private val logFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE20M145K2020Store: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  pr vate val logFavBasedUser nterestedLargestD mMaxpool ngAddressBookFrom  APE20M145K2020Store: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    val datasetName = "addressbook_sims_embedding_iiape_largestdim_maxpooling"
-    val appId = "wtf_embedding_apollo"
-    buildUserInterestedInStoreGeneric(
-      simClustersEmbeddingStoreWithMtls,
-      LogFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE,
+    val datasetNa  = "addressbook_s ms_embedd ng_  ape_largestd m_maxpool ng"
+    val app d = "wtf_embedd ng_apollo"
+    bu ldUser nterested nStoreGener c(
+      s mClustersEmbedd ngStoreW hMtls,
+      LogFavBasedUser nterestedLargestD mMaxpool ngAddressBookFrom  APE,
       Model20m145k2020,
-      datasetName = datasetName,
-      appId = appId,
+      datasetNa  = datasetNa ,
+      app d = app d,
       manhattanCluster = Apollo
     )
   }
 
-  private val logFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE20M145K2020Store: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  pr vate val logFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE20M145K2020Store: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    val datasetName = "addressbook_sims_embedding_iiape_louvain_maxpooling"
-    val appId = "wtf_embedding_apollo"
-    buildUserInterestedInStoreGeneric(
-      simClustersEmbeddingStoreWithMtls,
-      LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE,
+    val datasetNa  = "addressbook_s ms_embedd ng_  ape_louva n_maxpool ng"
+    val app d = "wtf_embedd ng_apollo"
+    bu ldUser nterested nStoreGener c(
+      s mClustersEmbedd ngStoreW hMtls,
+      LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE,
       Model20m145k2020,
-      datasetName = datasetName,
-      appId = appId,
+      datasetNa  = datasetNa ,
+      app d = app d,
       manhattanCluster = Apollo
     )
   }
 
-  private val logFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE20M145K2020Store: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  pr vate val logFavBasedUser nterestedConnectedMaxpool ngAddressBookFrom  APE20M145K2020Store: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    val datasetName = "addressbook_sims_embedding_iiape_connected_maxpooling"
-    val appId = "wtf_embedding_apollo"
-    buildUserInterestedInStoreGeneric(
-      simClustersEmbeddingStoreWithMtls,
-      LogFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE,
+    val datasetNa  = "addressbook_s ms_embedd ng_  ape_connected_maxpool ng"
+    val app d = "wtf_embedd ng_apollo"
+    bu ldUser nterested nStoreGener c(
+      s mClustersEmbedd ngStoreW hMtls,
+      LogFavBasedUser nterestedConnectedMaxpool ngAddressBookFrom  APE,
       Model20m145k2020,
-      datasetName = datasetName,
-      appId = appId,
+      datasetNa  = datasetNa ,
+      app d = app d,
       manhattanCluster = Apollo
     )
   }
 
   /**
-   * Helper func to build a readable store for some UserInterestedIn embeddings with
-   *    1. A storeFunc from UserInterestedInReadableStore
-   *    2. EmbeddingType
-   *    3. ModelVersion
-   *    4. MemCacheConfig
+   *  lper func to bu ld a readable store for so  User nterested n embedd ngs w h
+   *    1. A storeFunc from User nterested nReadableStore
+   *    2. Embedd ngType
+   *    3. ModelVers on
+   *    4.  mCac Conf g
    * */
-  private def buildUserInterestedInStore(
-    storeFunc: (ManhattanKVClientMtlsParams, EmbeddingType, ModelVersion) => ReadableStore[
-      SimClustersEmbeddingId,
-      SimClustersEmbedding
+  pr vate def bu ldUser nterested nStore(
+    storeFunc: (ManhattanKVCl entMtlsParams, Embedd ngType, ModelVers on) => ReadableStore[
+      S mClustersEmbedd ng d,
+      S mClustersEmbedd ng
     ],
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion
+    embedd ngType: Embedd ngType,
+    modelVers on: ModelVers on
   ): ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    val rawStore = storeFunc(mhMtlsParams, embeddingType, modelVersion)
-      .mapValues(_.toThrift)
+    val rawStore = storeFunc(mhMtlsParams, embedd ngType, modelVers on)
+      .mapValues(_.toThr ft)
     val observedStore = ObservedReadableStore(
       store = rawStore
-    )(stats.scope(embeddingType.name).scope(modelVersion.name))
+    )(stats.scope(embedd ngType.na ).scope(modelVers on.na ))
 
-    MemCacheConfig.buildMemCacheStoreForSimClustersEmbedding(
+     mCac Conf g.bu ld mCac StoreForS mClustersEmbedd ng(
       observedStore,
-      cacheClient,
-      embeddingType,
-      modelVersion,
+      cac Cl ent,
+      embedd ngType,
+      modelVers on,
       stats
     )
   }
 
-  private def buildUserInterestedInStoreGeneric(
-    storeFunc: (ManhattanKVClientMtlsParams, EmbeddingType, ModelVersion, String, String,
+  pr vate def bu ldUser nterested nStoreGener c(
+    storeFunc: (ManhattanKVCl entMtlsParams, Embedd ngType, ModelVers on, Str ng, Str ng,
       ManhattanCluster) => ReadableStore[
-      SimClustersEmbeddingId,
-      SimClustersEmbedding
+      S mClustersEmbedd ng d,
+      S mClustersEmbedd ng
     ],
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion,
-    datasetName: String,
-    appId: String,
+    embedd ngType: Embedd ngType,
+    modelVers on: ModelVers on,
+    datasetNa : Str ng,
+    app d: Str ng,
     manhattanCluster: ManhattanCluster
   ): ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
     val rawStore =
-      storeFunc(mhMtlsParams, embeddingType, modelVersion, datasetName, appId, manhattanCluster)
-        .mapValues(_.toThrift)
+      storeFunc(mhMtlsParams, embedd ngType, modelVers on, datasetNa , app d, manhattanCluster)
+        .mapValues(_.toThr ft)
     val observedStore = ObservedReadableStore(
       store = rawStore
-    )(stats.scope(embeddingType.name).scope(modelVersion.name))
+    )(stats.scope(embedd ngType.na ).scope(modelVers on.na ))
 
-    MemCacheConfig.buildMemCacheStoreForSimClustersEmbedding(
+     mCac Conf g.bu ld mCac StoreForS mClustersEmbedd ng(
       observedStore,
-      cacheClient,
-      embeddingType,
-      modelVersion,
+      cac Cl ent,
+      embedd ngType,
+      modelVers on,
       stats
     )
   }
 
-  private def simClustersEmbeddingStoreWithMtls(
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion,
-    datasetName: String,
-    appId: String,
+  pr vate def s mClustersEmbedd ngStoreW hMtls(
+    mhMtlsParams: ManhattanKVCl entMtlsParams,
+    embedd ngType: Embedd ngType,
+    modelVers on: ModelVers on,
+    datasetNa : Str ng,
+    app d: Str ng,
     manhattanCluster: ManhattanCluster
-  ): ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] = {
+  ): ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng] = {
 
-    if (!modelVersionToDatasetMap.contains(ModelVersions.toKnownForModelVersion(modelVersion))) {
-      throw new IllegalArgumentException(
-        "Unknown model version: " + modelVersion + ". Known model versions: " + knownModelVersions)
+     f (!modelVers onToDatasetMap.conta ns(ModelVers ons.toKnownForModelVers on(modelVers on))) {
+      throw new  llegalArgu ntExcept on(
+        "Unknown model vers on: " + modelVers on + ". Known model vers ons: " + knownModelVers ons)
     }
-    getStore(appId, mhMtlsParams, datasetName, manhattanCluster)
-      .composeKeyMapping[SimClustersEmbeddingId] {
-        case SimClustersEmbeddingId(theEmbeddingType, theModelVersion, InternalId.UserId(userId))
-            if theEmbeddingType == embeddingType && theModelVersion == modelVersion =>
-          userId
-      }.mapValues(toSimClustersEmbedding(_, embeddingType))
+    getStore(app d, mhMtlsParams, datasetNa , manhattanCluster)
+      .composeKeyMapp ng[S mClustersEmbedd ng d] {
+        case S mClustersEmbedd ng d(t Embedd ngType, t ModelVers on,  nternal d.User d(user d))
+             f t Embedd ngType == embedd ngType && t ModelVers on == modelVers on =>
+          user d
+      }.mapValues(toS mClustersEmbedd ng(_, embedd ngType))
   }
 
-  private def buildMemCacheStore(
-    rawStore: ReadableStore[SimClustersEmbeddingId, ThriftSimClustersEmbedding],
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion
-  ): ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] = {
+  pr vate def bu ld mCac Store(
+    rawStore: ReadableStore[S mClustersEmbedd ng d, Thr ftS mClustersEmbedd ng],
+    embedd ngType: Embedd ngType,
+    modelVers on: ModelVers on
+  ): ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng] = {
     val observedStore = ObservedReadableStore(
       store = rawStore
-    )(stats.scope(embeddingType.name).scope(modelVersion.name))
+    )(stats.scope(embedd ngType.na ).scope(modelVers on.na ))
 
-    MemCacheConfig.buildMemCacheStoreForSimClustersEmbedding(
+     mCac Conf g.bu ld mCac StoreForS mClustersEmbedd ng(
       observedStore,
-      cacheClient,
-      embeddingType,
-      modelVersion,
+      cac Cl ent,
+      embedd ngType,
+      modelVers on,
       stats
     )
   }
 
-  private val underlyingStores: Map[
-    (EmbeddingType, ModelVersion),
-    ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
+  pr vate val underly ngStores: Map[
+    (Embedd ngType, ModelVers on),
+    ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng]
   ] = Map(
-    // KnownFor Embeddings
-    (FavBasedProducer, Model20m145kUpdated) -> favBasedProducer20M145KUpdatedEmbeddingStore,
-    (FavBasedProducer, Model20m145k2020) -> favBasedProducer20M145K2020EmbeddingStore,
-    (FollowBasedProducer, Model20m145k2020) -> followBasedProducer20M145K2020EmbeddingStore,
-    (AggregatableLogFavBasedProducer, Model20m145k2020) -> logFavBasedApe20M145K2020EmbeddingStore,
+    // KnownFor Embedd ngs
+    (FavBasedProducer, Model20m145kUpdated) -> favBasedProducer20M145KUpdatedEmbedd ngStore,
+    (FavBasedProducer, Model20m145k2020) -> favBasedProducer20M145K2020Embedd ngStore,
+    (FollowBasedProducer, Model20m145k2020) -> followBasedProducer20M145K2020Embedd ngStore,
+    (AggregatableLogFavBasedProducer, Model20m145k2020) -> logFavBasedApe20M145K2020Embedd ngStore,
     (
       RelaxedAggregatableLogFavBasedProducer,
-      Model20m145kUpdated) -> relaxedLogFavBasedApe20m145kUpdatedEmbeddingStore,
+      Model20m145kUpdated) -> relaxedLogFavBasedApe20m145kUpdatedEmbedd ngStore,
     (
       RelaxedAggregatableLogFavBasedProducer,
-      Model20m145k2020) -> relaxedLogFavBasedApe20M145K2020EmbeddingStore,
-    // InterestedIn Embeddings
+      Model20m145k2020) -> relaxedLogFavBasedApe20M145K2020Embedd ngStore,
+    //  nterested n Embedd ngs
     (
-      LogFavBasedUserInterestedInFromAPE,
-      Model20m145k2020) -> logFavBasedInterestedInFromAPE20M145K2020Store,
+      LogFavBasedUser nterested nFromAPE,
+      Model20m145k2020) -> logFavBased nterested nFromAPE20M145K2020Store,
     (
-      FollowBasedUserInterestedInFromAPE,
-      Model20m145k2020) -> followBasedInterestedInFromAPE20M145K2020Store,
-    (FavBasedUserInterestedIn, Model20m145kUpdated) -> favBasedUserInterestedIn20M145KUpdatedStore,
-    (FavBasedUserInterestedIn, Model20m145k2020) -> favBasedUserInterestedIn20M145K2020Store,
-    (FollowBasedUserInterestedIn, Model20m145k2020) -> followBasedUserInterestedIn20M145K2020Store,
-    (LogFavBasedUserInterestedIn, Model20m145k2020) -> logFavBasedUserInterestedIn20M145K2020Store,
+      FollowBasedUser nterested nFromAPE,
+      Model20m145k2020) -> followBased nterested nFromAPE20M145K2020Store,
+    (FavBasedUser nterested n, Model20m145kUpdated) -> favBasedUser nterested n20M145KUpdatedStore,
+    (FavBasedUser nterested n, Model20m145k2020) -> favBasedUser nterested n20M145K2020Store,
+    (FollowBasedUser nterested n, Model20m145k2020) -> followBasedUser nterested n20M145K2020Store,
+    (LogFavBasedUser nterested n, Model20m145k2020) -> logFavBasedUser nterested n20M145K2020Store,
     (
-      FavBasedUserInterestedInFromPE,
-      Model20m145kUpdated) -> favBasedUserInterestedInFromPE20M145KUpdatedStore,
-    (FilteredUserInterestedIn, Model20m145kUpdated) -> filteredUserInterestedIn20m145kUpdatedStore,
-    (FilteredUserInterestedIn, Model20m145k2020) -> filteredUserInterestedIn20m145k2020Store,
+      FavBasedUser nterested nFromPE,
+      Model20m145kUpdated) -> favBasedUser nterested nFromPE20M145KUpdatedStore,
+    (F lteredUser nterested n, Model20m145kUpdated) -> f lteredUser nterested n20m145kUpdatedStore,
+    (F lteredUser nterested n, Model20m145k2020) -> f lteredUser nterested n20m145k2020Store,
     (
-      FilteredUserInterestedInFromPE,
-      Model20m145kUpdated) -> filteredUserInterestedInFromPE20m145kUpdatedStore,
+      F lteredUser nterested nFromPE,
+      Model20m145kUpdated) -> f lteredUser nterested nFromPE20m145kUpdatedStore,
     (
-      UnfilteredUserInterestedIn,
-      Model20m145kUpdated) -> unfilteredUserInterestedIn20m145kUpdatedStore,
-    (UnfilteredUserInterestedIn, Model20m145k2020) -> unfilteredUserInterestedIn20m145k2020Store,
-    (UserNextInterestedIn, Model20m145k2020) -> userNextInterestedIn20m145k2020Store,
+      Unf lteredUser nterested n,
+      Model20m145kUpdated) -> unf lteredUser nterested n20m145kUpdatedStore,
+    (Unf lteredUser nterested n, Model20m145k2020) -> unf lteredUser nterested n20m145k2020Store,
+    (UserNext nterested n, Model20m145k2020) -> userNext nterested n20m145k2020Store,
     (
-      LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE,
-      Model20m145k2020) -> logFavBasedInterestedMaxpoolingAddressBookFromIIAPE20M145K2020Store,
+      LogFavBasedUser nterestedMaxpool ngAddressBookFrom  APE,
+      Model20m145k2020) -> logFavBased nterestedMaxpool ngAddressBookFrom  APE20M145K2020Store,
     (
-      LogFavBasedUserInterestedAverageAddressBookFromIIAPE,
-      Model20m145k2020) -> logFavBasedInterestedAverageAddressBookFromIIAPE20M145K2020Store,
+      LogFavBasedUser nterestedAverageAddressBookFrom  APE,
+      Model20m145k2020) -> logFavBased nterestedAverageAddressBookFrom  APE20M145K2020Store,
     (
-      LogFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE,
-      Model20m145k2020) -> logFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE20M145K2020Store,
+      LogFavBasedUser nterestedBooktypeMaxpool ngAddressBookFrom  APE,
+      Model20m145k2020) -> logFavBasedUser nterestedBooktypeMaxpool ngAddressBookFrom  APE20M145K2020Store,
     (
-      LogFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE,
-      Model20m145k2020) -> logFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE20M145K2020Store,
+      LogFavBasedUser nterestedLargestD mMaxpool ngAddressBookFrom  APE,
+      Model20m145k2020) -> logFavBasedUser nterestedLargestD mMaxpool ngAddressBookFrom  APE20M145K2020Store,
     (
-      LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE,
-      Model20m145k2020) -> logFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE20M145K2020Store,
+      LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE,
+      Model20m145k2020) -> logFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE20M145K2020Store,
     (
-      LogFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE,
-      Model20m145k2020) -> logFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE20M145K2020Store,
+      LogFavBasedUser nterestedConnectedMaxpool ngAddressBookFrom  APE,
+      Model20m145k2020) -> logFavBasedUser nterestedConnectedMaxpool ngAddressBookFrom  APE20M145K2020Store,
   )
 
-  val userSimClustersEmbeddingStore: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  val userS mClustersEmbedd ngStore: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    SimClustersEmbeddingStore.buildWithDecider(
-      underlyingStores = underlyingStores,
-      decider = rmsDecider.decider,
-      statsReceiver = stats
+    S mClustersEmbedd ngStore.bu ldW hDec der(
+      underly ngStores = underly ngStores,
+      dec der = rmsDec der.dec der,
+      statsRece ver = stats
     )
   }
 

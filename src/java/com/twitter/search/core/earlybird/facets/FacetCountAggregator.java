@@ -1,89 +1,89 @@
-package com.twitter.search.core.earlybird.facets;
+package com.tw ter.search.core.earlyb rd.facets;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.Map.Entry;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.Maps;
 
-import org.apache.lucene.facet.FacetResult;
+ mport org.apac .lucene.facet.FacetResult;
 
-import com.twitter.search.common.facets.CountFacetSearchParam;
-import com.twitter.search.common.facets.FacetSearchParam;
-import com.twitter.search.common.facets.thriftjava.FacetFieldRequest;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
+ mport com.tw ter.search.common.facets.CountFacetSearchParam;
+ mport com.tw ter.search.common.facets.FacetSearchParam;
+ mport com.tw ter.search.common.facets.thr ftjava.FacetF eldRequest;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted. nverted ndex;
 
 /**
- * Global facet aggregator across all fields.
+ * Global facet aggregator across all f elds.
  *
  */
-public class FacetCountAggregator implements FacetTermCollector {
+publ c class FacetCountAggregator  mple nts FacetTermCollector {
 
-  // keys for the following aggregators are fieldIds
-  private final Map<Integer, PerfieldFacetCountAggregator> aggregators;
-  private final Map<Integer, FacetSearchParam> facetSearchParamMap;
+  // keys for t  follow ng aggregators are f eld ds
+  pr vate f nal Map< nteger, Perf eldFacetCountAggregator> aggregators;
+  pr vate f nal Map< nteger, FacetSearchParam> facetSearchParamMap;
 
   /**
    * Creates a new facet aggregator.
    */
-  public FacetCountAggregator(
-      List<FacetSearchParam> facetSearchParams,
-      Schema schema,
-      FacetIDMap facetIDMap,
-      Map<String, InvertedIndex> labelProviderMap) {
+  publ c FacetCountAggregator(
+      L st<FacetSearchParam> facetSearchParams,
+      Sc ma sc ma,
+      Facet DMap facet DMap,
+      Map<Str ng,  nverted ndex> labelProv derMap) {
 
     aggregators = Maps.newHashMap();
     facetSearchParamMap = Maps.newHashMap();
 
-    // Check params:
+    // C ck params:
     for (FacetSearchParam facetSearchParam : facetSearchParams) {
-      if (!(facetSearchParam instanceof CountFacetSearchParam)) {
-        throw new IllegalArgumentException(
-            "this collector only supports CountFacetSearchParam; got " + facetSearchParam);
+       f (!(facetSearchParam  nstanceof CountFacetSearchParam)) {
+        throw new  llegalArgu ntExcept on(
+            "t  collector only supports CountFacetSearchParam; got " + facetSearchParam);
       }
-      if (facetSearchParam.getFacetFieldRequest().getPath() != null
-          && !facetSearchParam.getFacetFieldRequest().getPath().isEmpty()) {
-        throw new IllegalArgumentException(
-            "this collector dosen't support hierarchical facets: "
-            + facetSearchParam.getFacetFieldRequest().getPath());
-      }
-
-      String field = facetSearchParam.getFacetFieldRequest().getField();
-      Schema.FieldInfo facetField =
-          schema == null ? null : schema.getFacetFieldByFacetName(field);
-
-      if (facetField == null || !labelProviderMap.containsKey(facetField.getName())) {
-        throw new IllegalStateException("facet field: " + field + " is not defined");
+       f (facetSearchParam.getFacetF eldRequest().getPath() != null
+          && !facetSearchParam.getFacetF eldRequest().getPath(). sEmpty()) {
+        throw new  llegalArgu ntExcept on(
+            "t  collector dosen't support h erarch cal facets: "
+            + facetSearchParam.getFacetF eldRequest().getPath());
       }
 
-      int fieldId = facetIDMap.getFacetField(facetField).getFacetId();
-      Preconditions.checkState(!aggregators.containsKey(fieldId));
-      Preconditions.checkState(!facetSearchParamMap.containsKey(fieldId));
-      aggregators.put(fieldId, new PerfieldFacetCountAggregator(field,
-          labelProviderMap.get(facetField.getName())));
-      facetSearchParamMap.put(fieldId, facetSearchParam);
+      Str ng f eld = facetSearchParam.getFacetF eldRequest().getF eld();
+      Sc ma.F eld nfo facetF eld =
+          sc ma == null ? null : sc ma.getFacetF eldByFacetNa (f eld);
+
+       f (facetF eld == null || !labelProv derMap.conta nsKey(facetF eld.getNa ())) {
+        throw new  llegalStateExcept on("facet f eld: " + f eld + "  s not def ned");
+      }
+
+       nt f eld d = facet DMap.getFacetF eld(facetF eld).getFacet d();
+      Precond  ons.c ckState(!aggregators.conta nsKey(f eld d));
+      Precond  ons.c ckState(!facetSearchParamMap.conta nsKey(f eld d));
+      aggregators.put(f eld d, new Perf eldFacetCountAggregator(f eld,
+          labelProv derMap.get(facetF eld.getNa ())));
+      facetSearchParamMap.put(f eld d, facetSearchParam);
     }
   }
 
   /**
-   * Returns the top facets.
+   * Returns t  top facets.
    */
-  public Map<FacetFieldRequest, FacetResult> getTop() {
-    Map<FacetFieldRequest, FacetResult> map = Maps.newHashMap();
-    for (Entry<Integer, PerfieldFacetCountAggregator> entry : aggregators.entrySet()) {
+  publ c Map<FacetF eldRequest, FacetResult> getTop() {
+    Map<FacetF eldRequest, FacetResult> map = Maps.newHashMap();
+    for (Entry< nteger, Perf eldFacetCountAggregator> entry : aggregators.entrySet()) {
       FacetSearchParam facetSearchParam = facetSearchParamMap.get(entry.getKey());
-      map.put(facetSearchParam.getFacetFieldRequest(), entry.getValue().getTop(facetSearchParam));
+      map.put(facetSearchParam.getFacetF eldRequest(), entry.getValue().getTop(facetSearchParam));
     }
     return map;
   }
 
-  @Override
-  public boolean collect(int docID, long termID, int fieldID) {
-    PerfieldFacetCountAggregator perfieldAggregator = aggregators.get(fieldID);
-    if (perfieldAggregator != null) {
-      perfieldAggregator.collect((int) termID);
+  @Overr de
+  publ c boolean collect( nt doc D, long term D,  nt f eld D) {
+    Perf eldFacetCountAggregator perf eldAggregator = aggregators.get(f eld D);
+     f (perf eldAggregator != null) {
+      perf eldAggregator.collect(( nt) term D);
       return true;
     } else {
       return false;

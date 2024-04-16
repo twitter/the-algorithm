@@ -1,121 +1,121 @@
-package com.twitter.follow_recommendations.common.clients.cache
+package com.tw ter.follow_recom ndat ons.common.cl ents.cac 
 
-import com.twitter.bijection.Bijection
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.Memcached.Client
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.io.Buf
-import com.twitter.stitch.Stitch
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
-import java.security.MessageDigest
+ mport com.tw ter.b ject on.B ject on
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle. mcac d.Cl ent
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.ut l.DefaultT  r
+ mport com.tw ter. o.Buf
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
+ mport java.secur y. ssageD gest
 
-object MemcacheClient {
+object  mcac Cl ent {
   def apply[V](
-    client: Client,
-    dest: String,
-    valueBijection: Bijection[Buf, V],
-    ttl: Duration,
-    statsReceiver: StatsReceiver
-  ): MemcacheClient[V] = {
-    new MemcacheClient(client, dest, valueBijection, ttl, statsReceiver)
+    cl ent: Cl ent,
+    dest: Str ng,
+    valueB ject on: B ject on[Buf, V],
+    ttl: Durat on,
+    statsRece ver: StatsRece ver
+  ):  mcac Cl ent[V] = {
+    new  mcac Cl ent(cl ent, dest, valueB ject on, ttl, statsRece ver)
   }
 }
 
-class MemcacheClient[V](
-  client: Client,
-  dest: String,
-  valueBijection: Bijection[Buf, V],
-  ttl: Duration,
-  statsReceiver: StatsReceiver) {
-  val cache = client.newRichClient(dest).adapt[V](valueBijection)
-  val cacheTtl = Time.fromSeconds(ttl.inSeconds)
+class  mcac Cl ent[V](
+  cl ent: Cl ent,
+  dest: Str ng,
+  valueB ject on: B ject on[Buf, V],
+  ttl: Durat on,
+  statsRece ver: StatsRece ver) {
+  val cac  = cl ent.newR chCl ent(dest).adapt[V](valueB ject on)
+  val cac Ttl = T  .fromSeconds(ttl. nSeconds)
 
   /**
-   * If cache contains key, return value from cache. Otherwise, run the underlying call
-   * to fetch the value, store it in cache, and then return the value.
+   *  f cac  conta ns key, return value from cac . Ot rw se, run t  underly ng call
+   * to fetch t  value, store    n cac , and t n return t  value.
    */
   def readThrough(
-    key: String,
-    underlyingCall: () => Stitch[V]
-  ): Stitch[V] = {
-    val cachedResult: Stitch[Option[V]] = Stitch
-      .callFuture(getIfPresent(key))
-      .within(70.millisecond)(DefaultTimer)
+    key: Str ng,
+    underly ngCall: () => St ch[V]
+  ): St ch[V] = {
+    val cac dResult: St ch[Opt on[V]] = St ch
+      .callFuture(get fPresent(key))
+      .w h n(70.m ll second)(DefaultT  r)
       .rescue {
-        case e: Exception =>
-          statsReceiver.scope("rescued").counter(e.getClass.getSimpleName).incr()
-          Stitch(None)
+        case e: Except on =>
+          statsRece ver.scope("rescued").counter(e.getClass.getS mpleNa ). ncr()
+          St ch(None)
       }
-    val resultStitch = cachedResult.map { resultOption =>
-      resultOption match {
-        case Some(cacheValue) => Stitch.value(cacheValue)
+    val resultSt ch = cac dResult.map { resultOpt on =>
+      resultOpt on match {
+        case So (cac Value) => St ch.value(cac Value)
         case None =>
-          val underlyingCallStitch = profileStitch(
-            underlyingCall(),
-            statsReceiver.scope("underlyingCall")
+          val underly ngCallSt ch = prof leSt ch(
+            underly ngCall(),
+            statsRece ver.scope("underly ngCall")
           )
-          underlyingCallStitch.map { result =>
+          underly ngCallSt ch.map { result =>
             put(key, result)
             result
           }
       }
     }.flatten
-    // profile the overall Stitch, and return the result
-    profileStitch(resultStitch, statsReceiver.scope("readThrough"))
+    // prof le t  overall St ch, and return t  result
+    prof leSt ch(resultSt ch, statsRece ver.scope("readThrough"))
   }
 
-  def getIfPresent(key: String): Future[Option[V]] = {
-    cache
-      .get(hashString(key))
+  def get fPresent(key: Str ng): Future[Opt on[V]] = {
+    cac 
+      .get(hashStr ng(key))
       .onSuccess {
-        case Some(value) => statsReceiver.counter("cache_hits").incr()
-        case None => statsReceiver.counter("cache_misses").incr()
+        case So (value) => statsRece ver.counter("cac _h s"). ncr()
+        case None => statsRece ver.counter("cac _m sses"). ncr()
       }
-      .onFailure {
-        case e: Exception =>
-          statsReceiver.counter("cache_misses").incr()
-          statsReceiver.scope("rescued").counter(e.getClass.getSimpleName).incr()
+      .onFa lure {
+        case e: Except on =>
+          statsRece ver.counter("cac _m sses"). ncr()
+          statsRece ver.scope("rescued").counter(e.getClass.getS mpleNa ). ncr()
       }
       .rescue {
         case _ => Future.None
       }
   }
 
-  def put(key: String, value: V): Future[Unit] = {
-    cache.set(hashString(key), 0, cacheTtl, value)
+  def put(key: Str ng, value: V): Future[Un ] = {
+    cac .set(hashStr ng(key), 0, cac Ttl, value)
   }
 
   /**
-   * Hash the input key string to a fixed length format using SHA-256 hash function.
+   * Hash t   nput key str ng to a f xed length format us ng SHA-256 hash funct on.
    */
-  def hashString(input: String): String = {
-    val bytes = MessageDigest.getInstance("SHA-256").digest(input.getBytes("UTF-8"))
-    bytes.map("%02x".format(_)).mkString
+  def hashStr ng( nput: Str ng): Str ng = {
+    val bytes =  ssageD gest.get nstance("SHA-256").d gest( nput.getBytes("UTF-8"))
+    bytes.map("%02x".format(_)).mkStr ng
   }
 
   /**
-   * Helper function for timing a stitch, returning the original stitch.
+   *  lper funct on for t m ng a st ch, return ng t  or g nal st ch.
    *
-   * Defining the profiling function here to keep the dependencies of this class
-   * generic and easy to export (i.e. copy-and-paste) into other services or packages.
+   * Def n ng t  prof l ng funct on  re to keep t  dependenc es of t  class
+   * gener c and easy to export ( .e. copy-and-paste)  nto ot r serv ces or packages.
    */
-  def profileStitch[T](stitch: Stitch[T], stat: StatsReceiver): Stitch[T] = {
-    Stitch
-      .time(stitch)
+  def prof leSt ch[T](st ch: St ch[T], stat: StatsRece ver): St ch[T] = {
+    St ch
+      .t  (st ch)
       .map {
-        case (response, stitchRunDuration) =>
-          stat.counter("requests").incr()
-          stat.stat("latency_ms").add(stitchRunDuration.inMilliseconds)
+        case (response, st chRunDurat on) =>
+          stat.counter("requests"). ncr()
+          stat.stat("latency_ms").add(st chRunDurat on. nM ll seconds)
           response
-            .onSuccess { _ => stat.counter("success").incr() }
-            .onFailure { e =>
-              stat.counter("failures").incr()
-              stat.scope("failures").counter(e.getClass.getSimpleName).incr()
+            .onSuccess { _ => stat.counter("success"). ncr() }
+            .onFa lure { e =>
+              stat.counter("fa lures"). ncr()
+              stat.scope("fa lures").counter(e.getClass.getS mpleNa ). ncr()
             }
       }
-      .lowerFromTry
+      .lo rFromTry
   }
 }

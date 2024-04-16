@@ -1,18 +1,18 @@
-namespace java com.twitter.tweetypie.thriftjava
-#@namespace scala com.twitter.tweetypie.thriftscala
-#@namespace strato com.twitter.tweetypie
-namespace py gen.twitter.tweetypie.api_fields
-namespace rb TweetyPie
-// Specific namespace to avoid golang circular import
-namespace go tweetypie.tweet
+na space java com.tw ter.t etyp e.thr ftjava
+#@na space scala com.tw ter.t etyp e.thr ftscala
+#@na space strato com.tw ter.t etyp e
+na space py gen.tw ter.t etyp e.ap _f elds
+na space rb T etyP e
+// Spec f c na space to avo d golang c rcular  mport
+na space go t etyp e.t et
 
-// Structs used specifically for rendering through graphql.
+// Structs used spec f cally for render ng through graphql.
 
 /**
- * Perspective of a Tweet from the point of view of a User.
+ * Perspect ve of a T et from t  po nt of v ew of a User.
  */
-struct TweetPerspective {
-  1: bool favorited
-  2: bool retweeted
-  3: optional bool bookmarked
-}(persisted='true', hasPersonalData = 'false', strato.graphql.typename='TweetPerspective')
+struct T etPerspect ve {
+  1: bool favor ed
+  2: bool ret eted
+  3: opt onal bool bookmarked
+}(pers sted='true', hasPersonalData = 'false', strato.graphql.typena ='T etPerspect ve')

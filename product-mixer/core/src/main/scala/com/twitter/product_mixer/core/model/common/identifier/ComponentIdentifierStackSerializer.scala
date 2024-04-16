@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.model.common.identifier
+package com.tw ter.product_m xer.core.model.common. dent f er
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
+ mport com.fasterxml.jackson.core.JsonGenerator
+ mport com.fasterxml.jackson.datab nd.JsonSer al zer
+ mport com.fasterxml.jackson.datab nd.Ser al zerProv der
 
-private[identifier] class ComponentIdentifierStackSerializer()
-    extends JsonSerializer[ComponentIdentifierStack] {
-  override def serialize(
-    componentIdentifierStack: ComponentIdentifierStack,
+pr vate[ dent f er] class Component dent f erStackSer al zer()
+    extends JsonSer al zer[Component dent f erStack] {
+  overr de def ser al ze(
+    component dent f erStack: Component dent f erStack,
     gen: JsonGenerator,
-    serializers: SerializerProvider
-  ): Unit = serializers.defaultSerializeValue(componentIdentifierStack.componentIdentifiers, gen)
+    ser al zers: Ser al zerProv der
+  ): Un  = ser al zers.defaultSer al zeValue(component dent f erStack.component dent f ers, gen)
 }

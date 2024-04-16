@@ -1,421 +1,421 @@
-package com.twitter.follow_recommendations.common.clients.socialgraph
+package com.tw ter.follow_recom ndat ons.common.cl ents.soc algraph
 
-import com.twitter.escherbird.util.stitchcache.StitchCache
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.common.models.UserIdWithTimestamp
-import com.twitter.inject.Logging
-import com.twitter.socialgraph.thriftscala.EdgesRequest
-import com.twitter.socialgraph.thriftscala.IdsRequest
-import com.twitter.socialgraph.thriftscala.IdsResult
-import com.twitter.socialgraph.thriftscala.LookupContext
-import com.twitter.socialgraph.thriftscala.OverCapacity
-import com.twitter.socialgraph.thriftscala.PageRequest
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.socialgraph.thriftscala.SrcRelationship
-import com.twitter.socialgraph.util.ByteBufferUtil
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.onboarding.socialGraphService.IdsClientColumn
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import java.nio.ByteBuffer
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.esc rb rd.ut l.st chcac .St chCac 
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.base.StatsUt l
+ mport com.tw ter.follow_recom ndat ons.common.models.FollowProof
+ mport com.tw ter.follow_recom ndat ons.common.models.User dW hT  stamp
+ mport com.tw ter. nject.Logg ng
+ mport com.tw ter.soc algraph.thr ftscala.EdgesRequest
+ mport com.tw ter.soc algraph.thr ftscala. dsRequest
+ mport com.tw ter.soc algraph.thr ftscala. dsResult
+ mport com.tw ter.soc algraph.thr ftscala.LookupContext
+ mport com.tw ter.soc algraph.thr ftscala.OverCapac y
+ mport com.tw ter.soc algraph.thr ftscala.PageRequest
+ mport com.tw ter.soc algraph.thr ftscala.Relat onsh pType
+ mport com.tw ter.soc algraph.thr ftscala.SrcRelat onsh p
+ mport com.tw ter.soc algraph.ut l.ByteBufferUt l
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.soc algraph.Soc alGraph
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.strato.generated.cl ent.onboard ng.soc alGraphServ ce. dsCl entColumn
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.T  
+ mport java.n o.ByteBuffer
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 case class RecentEdgesQuery(
-  userId: Long,
-  relations: Seq[RelationshipType],
-  // prefer to default value to better utilize the caching function of stitch
-  count: Option[Int] = Some(SocialGraphClient.MaxQuerySize),
-  performUnion: Boolean = true,
-  recentEdgesWindowOpt: Option[Duration] = None,
-  targets: Option[Seq[Long]] = None)
+  user d: Long,
+  relat ons: Seq[Relat onsh pType],
+  // prefer to default value to better ut l ze t  cach ng funct on of st ch
+  count: Opt on[ nt] = So (Soc alGraphCl ent.MaxQueryS ze),
+  performUn on: Boolean = true,
+  recentEdgesW ndowOpt: Opt on[Durat on] = None,
+  targets: Opt on[Seq[Long]] = None)
 
 case class EdgeRequestQuery(
-  userId: Long,
-  relation: RelationshipType,
-  count: Option[Int] = Some(SocialGraphClient.MaxQuerySize),
-  performUnion: Boolean = true,
-  recentEdgesWindowOpt: Option[Duration] = None,
-  targets: Option[Seq[Long]] = None)
+  user d: Long,
+  relat on: Relat onsh pType,
+  count: Opt on[ nt] = So (Soc alGraphCl ent.MaxQueryS ze),
+  performUn on: Boolean = true,
+  recentEdgesW ndowOpt: Opt on[Durat on] = None,
+  targets: Opt on[Seq[Long]] = None)
 
-@Singleton
-class SocialGraphClient @Inject() (
-  socialGraph: SocialGraph,
-  idsClientColumn: IdsClientColumn,
-  statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends Logging {
+@S ngleton
+class Soc alGraphCl ent @ nject() (
+  soc alGraph: Soc alGraph,
+   dsCl entColumn:  dsCl entColumn,
+  statsRece ver: StatsRece ver = NullStatsRece ver)
+    extends Logg ng {
 
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val cacheStats = stats.scope("cache")
-  private val getIntersectionsStats = stats.scope("getIntersections")
-  private val getIntersectionsFromCachedColumnStats =
-    stats.scope("getIntersectionsFromCachedColumn")
-  private val getRecentEdgesStats = stats.scope("getRecentEdges")
-  private val getRecentEdgesCachedStats = stats.scope("getRecentEdgesCached")
-  private val getRecentEdgesFromCachedColumnStats = stats.scope("getRecentEdgesFromCachedColumn")
-  private val getRecentEdgesCachedInternalStats = stats.scope("getRecentEdgesCachedInternal")
-  private val getRecentEdgesWithTimeStats = stats.scope("getRecentEdgesWithTime")
+  pr vate val stats = statsRece ver.scope(t .getClass.getS mpleNa )
+  pr vate val cac Stats = stats.scope("cac ")
+  pr vate val get ntersect onsStats = stats.scope("get ntersect ons")
+  pr vate val get ntersect onsFromCac dColumnStats =
+    stats.scope("get ntersect onsFromCac dColumn")
+  pr vate val getRecentEdgesStats = stats.scope("getRecentEdges")
+  pr vate val getRecentEdgesCac dStats = stats.scope("getRecentEdgesCac d")
+  pr vate val getRecentEdgesFromCac dColumnStats = stats.scope("getRecentEdgesFromCac dColumn")
+  pr vate val getRecentEdgesCac d nternalStats = stats.scope("getRecentEdgesCac d nternal")
+  pr vate val getRecentEdgesW hT  Stats = stats.scope("getRecentEdgesW hT  ")
 
-  val sgsIdsFetcher: Fetcher[IdsRequest, Unit, IdsResult] = idsClientColumn.fetcher
+  val sgs dsFetc r: Fetc r[ dsRequest, Un ,  dsResult] =  dsCl entColumn.fetc r
 
-  private val recentEdgesCache = StitchCache[RecentEdgesQuery, Seq[Long]](
-    maxCacheSize = SocialGraphClient.MaxCacheSize,
-    ttl = SocialGraphClient.CacheTTL,
-    statsReceiver = cacheStats,
-    underlyingCall = getRecentEdges
+  pr vate val recentEdgesCac  = St chCac [RecentEdgesQuery, Seq[Long]](
+    maxCac S ze = Soc alGraphCl ent.MaxCac S ze,
+    ttl = Soc alGraphCl ent.Cac TTL,
+    statsRece ver = cac Stats,
+    underly ngCall = getRecentEdges
   )
 
-  def getRecentEdgesCached(
+  def getRecentEdgesCac d(
     rq: RecentEdgesQuery,
-    useCachedStratoColumn: Boolean = true
-  ): Stitch[Seq[Long]] = {
-    getRecentEdgesCachedStats.counter("requests").incr()
-    if (useCachedStratoColumn) {
-      getRecentEdgesFromCachedColumn(rq)
+    useCac dStratoColumn: Boolean = true
+  ): St ch[Seq[Long]] = {
+    getRecentEdgesCac dStats.counter("requests"). ncr()
+     f (useCac dStratoColumn) {
+      getRecentEdgesFromCac dColumn(rq)
     } else {
-      StatsUtil.profileStitch(
-        getRecentEdgesCachedInternal(rq),
-        getRecentEdgesCachedInternalStats
+      StatsUt l.prof leSt ch(
+        getRecentEdgesCac d nternal(rq),
+        getRecentEdgesCac d nternalStats
       )
     }
   }
 
-  def getRecentEdgesCachedInternal(rq: RecentEdgesQuery): Stitch[Seq[Long]] = {
-    recentEdgesCache.readThrough(rq)
+  def getRecentEdgesCac d nternal(rq: RecentEdgesQuery): St ch[Seq[Long]] = {
+    recentEdgesCac .readThrough(rq)
   }
 
-  def getRecentEdgesFromCachedColumn(rq: RecentEdgesQuery): Stitch[Seq[Long]] = {
-    val pageRequest = rq.recentEdgesWindowOpt match {
-      case Some(recentEdgesWindow) =>
+  def getRecentEdgesFromCac dColumn(rq: RecentEdgesQuery): St ch[Seq[Long]] = {
+    val pageRequest = rq.recentEdgesW ndowOpt match {
+      case So (recentEdgesW ndow) =>
         PageRequest(
           count = rq.count,
-          cursor = Some(getEdgeCursor(recentEdgesWindow)),
-          selectAll = Some(true)
+          cursor = So (getEdgeCursor(recentEdgesW ndow)),
+          selectAll = So (true)
         )
       case _ => PageRequest(count = rq.count)
     }
-    val idsRequest = IdsRequest(
-      rq.relations.map { relationshipType =>
-        SrcRelationship(
-          source = rq.userId,
-          relationshipType = relationshipType,
+    val  dsRequest =  dsRequest(
+      rq.relat ons.map { relat onsh pType =>
+        SrcRelat onsh p(
+          s ce = rq.user d,
+          relat onsh pType = relat onsh pType,
           targets = rq.targets
         )
       },
-      pageRequest = Some(pageRequest),
-      context = Some(LookupContext(performUnion = Some(rq.performUnion)))
+      pageRequest = So (pageRequest),
+      context = So (LookupContext(performUn on = So (rq.performUn on)))
     )
 
-    val socialGraphStitch = sgsIdsFetcher
-      .fetch(idsRequest, Unit)
+    val soc alGraphSt ch = sgs dsFetc r
+      .fetch( dsRequest, Un )
       .map(_.v)
       .map { result =>
         result
-          .map { idResult =>
-            val userIds: Seq[Long] = idResult.ids
-            getRecentEdgesFromCachedColumnStats.stat("num_edges").add(userIds.size)
-            userIds
+          .map {  dResult =>
+            val user ds: Seq[Long] =  dResult. ds
+            getRecentEdgesFromCac dColumnStats.stat("num_edges").add(user ds.s ze)
+            user ds
           }.getOrElse(Seq.empty)
       }
       .rescue {
-        case e: Exception =>
-          stats.counter(e.getClass.getSimpleName).incr()
-          Stitch.Nil
+        case e: Except on =>
+          stats.counter(e.getClass.getS mpleNa ). ncr()
+          St ch.N l
       }
 
-    StatsUtil.profileStitch(
-      socialGraphStitch,
-      getRecentEdgesFromCachedColumnStats
+    StatsUt l.prof leSt ch(
+      soc alGraphSt ch,
+      getRecentEdgesFromCac dColumnStats
     )
   }
 
-  def getRecentEdges(rq: RecentEdgesQuery): Stitch[Seq[Long]] = {
-    val pageRequest = rq.recentEdgesWindowOpt match {
-      case Some(recentEdgesWindow) =>
+  def getRecentEdges(rq: RecentEdgesQuery): St ch[Seq[Long]] = {
+    val pageRequest = rq.recentEdgesW ndowOpt match {
+      case So (recentEdgesW ndow) =>
         PageRequest(
           count = rq.count,
-          cursor = Some(getEdgeCursor(recentEdgesWindow)),
-          selectAll = Some(true)
+          cursor = So (getEdgeCursor(recentEdgesW ndow)),
+          selectAll = So (true)
         )
       case _ => PageRequest(count = rq.count)
     }
-    val socialGraphStitch = socialGraph
-      .ids(
-        IdsRequest(
-          rq.relations.map { relationshipType =>
-            SrcRelationship(
-              source = rq.userId,
-              relationshipType = relationshipType,
+    val soc alGraphSt ch = soc alGraph
+      . ds(
+         dsRequest(
+          rq.relat ons.map { relat onsh pType =>
+            SrcRelat onsh p(
+              s ce = rq.user d,
+              relat onsh pType = relat onsh pType,
               targets = rq.targets
             )
           },
-          pageRequest = Some(pageRequest),
-          context = Some(LookupContext(performUnion = Some(rq.performUnion)))
+          pageRequest = So (pageRequest),
+          context = So (LookupContext(performUn on = So (rq.performUn on)))
         )
       )
-      .map { idsResult =>
-        val userIds: Seq[Long] = idsResult.ids
-        getRecentEdgesStats.stat("num_edges").add(userIds.size)
-        userIds
+      .map {  dsResult =>
+        val user ds: Seq[Long] =  dsResult. ds
+        getRecentEdgesStats.stat("num_edges").add(user ds.s ze)
+        user ds
       }
       .rescue {
-        case e: OverCapacity =>
-          stats.counter(e.getClass.getSimpleName).incr()
-          logger.warn("SGS Over Capacity", e)
-          Stitch.Nil
+        case e: OverCapac y =>
+          stats.counter(e.getClass.getS mpleNa ). ncr()
+          logger.warn("SGS Over Capac y", e)
+          St ch.N l
       }
-    StatsUtil.profileStitch(
-      socialGraphStitch,
+    StatsUt l.prof leSt ch(
+      soc alGraphSt ch,
       getRecentEdgesStats
     )
   }
 
-  // This method return recent edges of (userId, timeInMs)
-  def getRecentEdgesWithTime(rq: EdgeRequestQuery): Stitch[Seq[UserIdWithTimestamp]] = {
-    val pageRequest = rq.recentEdgesWindowOpt match {
-      case Some(recentEdgesWindow) =>
+  // T   thod return recent edges of (user d, t   nMs)
+  def getRecentEdgesW hT  (rq: EdgeRequestQuery): St ch[Seq[User dW hT  stamp]] = {
+    val pageRequest = rq.recentEdgesW ndowOpt match {
+      case So (recentEdgesW ndow) =>
         PageRequest(
           count = rq.count,
-          cursor = Some(getEdgeCursor(recentEdgesWindow)),
-          selectAll = Some(true)
+          cursor = So (getEdgeCursor(recentEdgesW ndow)),
+          selectAll = So (true)
         )
       case _ => PageRequest(count = rq.count)
     }
 
-    val socialGraphStitch = socialGraph
+    val soc alGraphSt ch = soc alGraph
       .edges(
         EdgesRequest(
-          SrcRelationship(
-            source = rq.userId,
-            relationshipType = rq.relation,
+          SrcRelat onsh p(
+            s ce = rq.user d,
+            relat onsh pType = rq.relat on,
             targets = rq.targets
           ),
-          pageRequest = Some(pageRequest),
-          context = Some(LookupContext(performUnion = Some(rq.performUnion)))
+          pageRequest = So (pageRequest),
+          context = So (LookupContext(performUn on = So (rq.performUn on)))
         )
       )
       .map { edgesResult =>
-        val userIds = edgesResult.edges.map { socialEdge =>
-          UserIdWithTimestamp(socialEdge.target, socialEdge.updatedAt)
+        val user ds = edgesResult.edges.map { soc alEdge =>
+          User dW hT  stamp(soc alEdge.target, soc alEdge.updatedAt)
         }
-        getRecentEdgesWithTimeStats.stat("num_edges").add(userIds.size)
-        userIds
+        getRecentEdgesW hT  Stats.stat("num_edges").add(user ds.s ze)
+        user ds
       }
       .rescue {
-        case e: OverCapacity =>
-          stats.counter(e.getClass.getSimpleName).incr()
-          logger.warn("SGS Over Capacity", e)
-          Stitch.Nil
+        case e: OverCapac y =>
+          stats.counter(e.getClass.getS mpleNa ). ncr()
+          logger.warn("SGS Over Capac y", e)
+          St ch.N l
       }
-    StatsUtil.profileStitch(
-      socialGraphStitch,
-      getRecentEdgesWithTimeStats
+    StatsUt l.prof leSt ch(
+      soc alGraphSt ch,
+      getRecentEdgesW hT  Stats
     )
   }
 
-  // This method returns the cursor for a time duration, such that all the edges returned by SGS will be created
-  // in the range (now-window, now)
-  def getEdgeCursor(window: Duration): ByteBuffer = {
-    val cursorInLong = (-(Time.now - window).inMilliseconds) << 20
-    ByteBufferUtil.fromLong(cursorInLong)
+  // T   thod returns t  cursor for a t   durat on, such that all t  edges returned by SGS w ll be created
+  //  n t  range (now-w ndow, now)
+  def getEdgeCursor(w ndow: Durat on): ByteBuffer = {
+    val cursor nLong = (-(T  .now - w ndow). nM ll seconds) << 20
+    ByteBufferUt l.fromLong(cursor nLong)
   }
 
-  // notice that this is more expensive but more realtime than the GFS one
-  def getIntersections(
-    userId: Long,
-    candidateIds: Seq[Long],
-    numIntersectionIds: Int
-  ): Stitch[Map[Long, FollowProof]] = {
-    val socialGraphStitch: Stitch[Map[Long, FollowProof]] = Stitch
-      .collect(candidateIds.map { candidateId =>
-        socialGraph
-          .ids(
-            IdsRequest(
+  // not ce that t   s more expens ve but more realt   than t  GFS one
+  def get ntersect ons(
+    user d: Long,
+    cand date ds: Seq[Long],
+    num ntersect on ds:  nt
+  ): St ch[Map[Long, FollowProof]] = {
+    val soc alGraphSt ch: St ch[Map[Long, FollowProof]] = St ch
+      .collect(cand date ds.map { cand date d =>
+        soc alGraph
+          . ds(
+             dsRequest(
               Seq(
-                SrcRelationship(userId, RelationshipType.Following),
-                SrcRelationship(candidateId, RelationshipType.FollowedBy)
+                SrcRelat onsh p(user d, Relat onsh pType.Follow ng),
+                SrcRelat onsh p(cand date d, Relat onsh pType.Follo dBy)
               ),
-              pageRequest = Some(PageRequest(count = Some(numIntersectionIds)))
+              pageRequest = So (PageRequest(count = So (num ntersect on ds)))
             )
-          ).map { idsResult =>
-            getIntersectionsStats.stat("num_edges").add(idsResult.ids.size)
-            (candidateId -> FollowProof(idsResult.ids, idsResult.ids.size))
+          ).map {  dsResult =>
+            get ntersect onsStats.stat("num_edges").add( dsResult. ds.s ze)
+            (cand date d -> FollowProof( dsResult. ds,  dsResult. ds.s ze))
           }
       }).map(_.toMap)
       .rescue {
-        case e: OverCapacity =>
-          stats.counter(e.getClass.getSimpleName).incr()
-          logger.warn("social graph over capacity in hydrating social proof", e)
-          Stitch.value(Map.empty)
+        case e: OverCapac y =>
+          stats.counter(e.getClass.getS mpleNa ). ncr()
+          logger.warn("soc al graph over capac y  n hydrat ng soc al proof", e)
+          St ch.value(Map.empty)
       }
-    StatsUtil.profileStitch(
-      socialGraphStitch,
-      getIntersectionsStats
+    StatsUt l.prof leSt ch(
+      soc alGraphSt ch,
+      get ntersect onsStats
     )
   }
 
-  def getIntersectionsFromCachedColumn(
-    userId: Long,
-    candidateIds: Seq[Long],
-    numIntersectionIds: Int
-  ): Stitch[Map[Long, FollowProof]] = {
-    val socialGraphStitch: Stitch[Map[Long, FollowProof]] = Stitch
-      .collect(candidateIds.map { candidateId =>
-        val idsRequest = IdsRequest(
+  def get ntersect onsFromCac dColumn(
+    user d: Long,
+    cand date ds: Seq[Long],
+    num ntersect on ds:  nt
+  ): St ch[Map[Long, FollowProof]] = {
+    val soc alGraphSt ch: St ch[Map[Long, FollowProof]] = St ch
+      .collect(cand date ds.map { cand date d =>
+        val  dsRequest =  dsRequest(
           Seq(
-            SrcRelationship(userId, RelationshipType.Following),
-            SrcRelationship(candidateId, RelationshipType.FollowedBy)
+            SrcRelat onsh p(user d, Relat onsh pType.Follow ng),
+            SrcRelat onsh p(cand date d, Relat onsh pType.Follo dBy)
           ),
-          pageRequest = Some(PageRequest(count = Some(numIntersectionIds)))
+          pageRequest = So (PageRequest(count = So (num ntersect on ds)))
         )
 
-        sgsIdsFetcher
-          .fetch(idsRequest, Unit)
+        sgs dsFetc r
+          .fetch( dsRequest, Un )
           .map(_.v)
           .map { resultOpt =>
-            resultOpt.map { idsResult =>
-              getIntersectionsFromCachedColumnStats.stat("num_edges").add(idsResult.ids.size)
-              candidateId -> FollowProof(idsResult.ids, idsResult.ids.size)
+            resultOpt.map {  dsResult =>
+              get ntersect onsFromCac dColumnStats.stat("num_edges").add( dsResult. ds.s ze)
+              cand date d -> FollowProof( dsResult. ds,  dsResult. ds.s ze)
             }
           }
       }).map(_.flatten.toMap)
       .rescue {
-        case e: Exception =>
-          stats.counter(e.getClass.getSimpleName).incr()
-          Stitch.value(Map.empty)
+        case e: Except on =>
+          stats.counter(e.getClass.getS mpleNa ). ncr()
+          St ch.value(Map.empty)
       }
-    StatsUtil.profileStitch(
-      socialGraphStitch,
-      getIntersectionsFromCachedColumnStats
+    StatsUt l.prof leSt ch(
+      soc alGraphSt ch,
+      get ntersect onsFromCac dColumnStats
     )
   }
 
-  def getInvalidRelationshipUserIds(
-    userId: Long,
-    maxNumRelationship: Int = SocialGraphClient.MaxNumInvalidRelationship
-  ): Stitch[Seq[Long]] = {
+  def get nval dRelat onsh pUser ds(
+    user d: Long,
+    maxNumRelat onsh p:  nt = Soc alGraphCl ent.MaxNum nval dRelat onsh p
+  ): St ch[Seq[Long]] = {
     getRecentEdges(
       RecentEdgesQuery(
-        userId,
-        SocialGraphClient.InvalidRelationshipTypes,
-        Some(maxNumRelationship)
+        user d,
+        Soc alGraphCl ent. nval dRelat onsh pTypes,
+        So (maxNumRelat onsh p)
       )
     )
   }
 
-  def getInvalidRelationshipUserIdsFromCachedColumn(
-    userId: Long,
-    maxNumRelationship: Int = SocialGraphClient.MaxNumInvalidRelationship
-  ): Stitch[Seq[Long]] = {
-    getRecentEdgesFromCachedColumn(
+  def get nval dRelat onsh pUser dsFromCac dColumn(
+    user d: Long,
+    maxNumRelat onsh p:  nt = Soc alGraphCl ent.MaxNum nval dRelat onsh p
+  ): St ch[Seq[Long]] = {
+    getRecentEdgesFromCac dColumn(
       RecentEdgesQuery(
-        userId,
-        SocialGraphClient.InvalidRelationshipTypes,
-        Some(maxNumRelationship)
+        user d,
+        Soc alGraphCl ent. nval dRelat onsh pTypes,
+        So (maxNumRelat onsh p)
       )
     )
   }
 
-  def getRecentFollowedUserIds(userId: Long): Stitch[Seq[Long]] = {
+  def getRecentFollo dUser ds(user d: Long): St ch[Seq[Long]] = {
     getRecentEdges(
       RecentEdgesQuery(
-        userId,
-        Seq(RelationshipType.Following)
+        user d,
+        Seq(Relat onsh pType.Follow ng)
       )
     )
   }
 
-  def getRecentFollowedUserIdsFromCachedColumn(userId: Long): Stitch[Seq[Long]] = {
-    getRecentEdgesFromCachedColumn(
+  def getRecentFollo dUser dsFromCac dColumn(user d: Long): St ch[Seq[Long]] = {
+    getRecentEdgesFromCac dColumn(
       RecentEdgesQuery(
-        userId,
-        Seq(RelationshipType.Following)
+        user d,
+        Seq(Relat onsh pType.Follow ng)
       )
     )
   }
 
-  def getRecentFollowedUserIdsWithTime(userId: Long): Stitch[Seq[UserIdWithTimestamp]] = {
-    getRecentEdgesWithTime(
+  def getRecentFollo dUser dsW hT  (user d: Long): St ch[Seq[User dW hT  stamp]] = {
+    getRecentEdgesW hT  (
       EdgeRequestQuery(
-        userId,
-        RelationshipType.Following
+        user d,
+        Relat onsh pType.Follow ng
       )
     )
   }
 
-  def getRecentFollowedByUserIds(userId: Long): Stitch[Seq[Long]] = {
+  def getRecentFollo dByUser ds(user d: Long): St ch[Seq[Long]] = {
     getRecentEdges(
       RecentEdgesQuery(
-        userId,
-        Seq(RelationshipType.FollowedBy)
+        user d,
+        Seq(Relat onsh pType.Follo dBy)
       )
     )
   }
 
-  def getRecentFollowedByUserIdsFromCachedColumn(userId: Long): Stitch[Seq[Long]] = {
-    getRecentEdgesFromCachedColumn(
+  def getRecentFollo dByUser dsFromCac dColumn(user d: Long): St ch[Seq[Long]] = {
+    getRecentEdgesFromCac dColumn(
       RecentEdgesQuery(
-        userId,
-        Seq(RelationshipType.FollowedBy)
+        user d,
+        Seq(Relat onsh pType.Follo dBy)
       )
     )
   }
 
-  def getRecentFollowedUserIdsWithTimeWindow(
-    userId: Long,
-    timeWindow: Duration
-  ): Stitch[Seq[Long]] = {
+  def getRecentFollo dUser dsW hT  W ndow(
+    user d: Long,
+    t  W ndow: Durat on
+  ): St ch[Seq[Long]] = {
     getRecentEdges(
       RecentEdgesQuery(
-        userId,
-        Seq(RelationshipType.Following),
-        recentEdgesWindowOpt = Some(timeWindow)
+        user d,
+        Seq(Relat onsh pType.Follow ng),
+        recentEdgesW ndowOpt = So (t  W ndow)
       )
     )
   }
 }
 
-object SocialGraphClient {
+object Soc alGraphCl ent {
 
-  val MaxQuerySize: Int = 500
-  val MaxCacheSize: Int = 5000000
-  // Ref: src/thrift/com/twitter/socialgraph/social_graph_service.thrift
-  val MaxNumInvalidRelationship: Int = 5000
-  val CacheTTL: Duration = Duration.fromHours(24)
+  val MaxQueryS ze:  nt = 500
+  val MaxCac S ze:  nt = 5000000
+  // Ref: src/thr ft/com/tw ter/soc algraph/soc al_graph_serv ce.thr ft
+  val MaxNum nval dRelat onsh p:  nt = 5000
+  val Cac TTL: Durat on = Durat on.fromH s(24)
 
-  val InvalidRelationshipTypes: Seq[RelationshipType] = Seq(
-    RelationshipType.HideRecommendations,
-    RelationshipType.Blocking,
-    RelationshipType.BlockedBy,
-    RelationshipType.Muting,
-    RelationshipType.MutedBy,
-    RelationshipType.ReportedAsSpam,
-    RelationshipType.ReportedAsSpamBy,
-    RelationshipType.ReportedAsAbuse,
-    RelationshipType.ReportedAsAbuseBy,
-    RelationshipType.FollowRequestOutgoing,
-    RelationshipType.Following,
-    RelationshipType.UsedToFollow,
+  val  nval dRelat onsh pTypes: Seq[Relat onsh pType] = Seq(
+    Relat onsh pType.H deRecom ndat ons,
+    Relat onsh pType.Block ng,
+    Relat onsh pType.BlockedBy,
+    Relat onsh pType.Mut ng,
+    Relat onsh pType.MutedBy,
+    Relat onsh pType.ReportedAsSpam,
+    Relat onsh pType.ReportedAsSpamBy,
+    Relat onsh pType.ReportedAsAbuse,
+    Relat onsh pType.ReportedAsAbuseBy,
+    Relat onsh pType.FollowRequestOutgo ng,
+    Relat onsh pType.Follow ng,
+    Relat onsh pType.UsedToFollow,
   )
 
   /**
    *
-   * Whether to call SGS to validate each candidate based on the number of invalid relationship users
-   * prefetched during request building step. This aims to not omit any invalid candidates that are
-   * not filtered out in previous steps.
-   *   If the number is 0, this might be a fail-opened SGS call.
-   *   If the number is larger or equal to 5000, this could hit SGS page size limit.
-   * Both cases account for a small percentage of the total traffic (<5%).
+   * W t r to call SGS to val date each cand date based on t  number of  nval d relat onsh p users
+   * prefetc d dur ng request bu ld ng step. T  a ms to not om  any  nval d cand dates that are
+   * not f ltered out  n prev ous steps.
+   *    f t  number  s 0, t  m ght be a fa l-opened SGS call.
+   *    f t  number  s larger or equal to 5000, t  could h  SGS page s ze l m .
+   * Both cases account for a small percentage of t  total traff c (<5%).
    *
-   * @param numInvalidRelationshipUsers number of invalid relationship users fetched from getInvalidRelationshipUserIds
-   * @return whether to enable post-ranker SGS predicate
+   * @param num nval dRelat onsh pUsers number of  nval d relat onsh p users fetc d from get nval dRelat onsh pUser ds
+   * @return w t r to enable post-ranker SGS pred cate
    */
-  def enablePostRankerSgsPredicate(numInvalidRelationshipUsers: Int): Boolean = {
-    numInvalidRelationshipUsers == 0 || numInvalidRelationshipUsers >= MaxNumInvalidRelationship
+  def enablePostRankerSgsPred cate(num nval dRelat onsh pUsers:  nt): Boolean = {
+    num nval dRelat onsh pUsers == 0 || num nval dRelat onsh pUsers >= MaxNum nval dRelat onsh p
   }
 }

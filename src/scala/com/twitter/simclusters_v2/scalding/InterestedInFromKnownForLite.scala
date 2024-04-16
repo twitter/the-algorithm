@@ -1,354 +1,354 @@
-package com.twitter.simclusters_v2.scalding
+package com.tw ter.s mclusters_v2.scald ng
 
-import com.twitter.algebird.Semigroup
-import com.twitter.bijection.Injection
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite.{D, WriteExtension}
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch.{
-  AnalyticsBatchExecution,
-  AnalyticsBatchExecutionArgs,
-  BatchDescription,
-  BatchFirstTime,
-  BatchIncrement,
-  TwitterScheduledExecutionApp
+ mport com.tw ter.algeb rd.Sem group
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.dal.cl ent.dataset.KeyValDALDataset
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e.{D, Wr eExtens on}
+ mport com.tw ter.scald ng_ nternal.job.Tw terExecut onApp
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.{
+  Analyt csBatchExecut on,
+  Analyt csBatchExecut onArgs,
+  BatchDescr pt on,
+  BatchF rstT  ,
+  Batch ncre nt,
+  Tw terSc duledExecut onApp
 }
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.{ClusterId, ModelVersions, UserId}
-import com.twitter.simclusters_v2.hdfs_sources.{
-  AdhocKeyValSources,
-  InternalDataPaths,
-  SimclustersV2KnownFor20M145K2020ScalaDataset,
-  SimclustersV2RawInterestedInLite20M145K2020ScalaDataset,
-  SimclustersV2RawInterestedIn20M145KUpdatedScalaDataset,
-  UserAndNeighborsFixedPathSource,
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.common.{Cluster d, ModelVers ons, User d}
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.{
+  AdhocKeyValS ces,
+   nternalDataPaths,
+  S mclustersV2KnownFor20M145K2020ScalaDataset,
+  S mclustersV2Raw nterested nL e20M145K2020ScalaDataset,
+  S mclustersV2Raw nterested n20M145KUpdatedScalaDataset,
+  UserAndNe ghborsF xedPathS ce,
   UserUserGraphScalaDataset
 }
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.{
-  ClustersUserIsInterestedIn,
-  ClustersUserIsKnownFor,
-  UserAndNeighbors,
-  UserToInterestedInClusterScores
+ mport com.tw ter.s mclusters_v2.scald ng.common.Ut l
+ mport com.tw ter.s mclusters_v2.thr ftscala.{
+  ClustersUser s nterested n,
+  ClustersUser sKnownFor,
+  UserAndNe ghbors,
+  UserTo nterested nClusterScores
 }
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import java.util.TimeZone
+ mport com.tw ter.wtf.scald ng.jobs.common.AdhocExecut onApp
+ mport java.ut l.T  Zone
 
 /**
- * This file implements the job for computing users' interestedIn vector from KnownFor data set.
+ * T  f le  mple nts t  job for comput ng users'  nterested n vector from KnownFor data set.
  *
- * It reads the UserUserGraphScalaDataset to get user-user follow + fav graph, and then
- * based on the known-for clusters of each followed/faved user, we calculate how much a user is
- * interestedIn a cluster.
+ *   reads t  UserUserGraphScalaDataset to get user-user follow + fav graph, and t n
+ * based on t  known-for clusters of each follo d/faved user,   calculate how much a user  s
+ *  nterested n a cluster.
  *
- * The main differences of the InterestedInFromKnownForLite compared to InterestedInFromKnownFor are
- * the following:
- * - We read the UserUserGraph dataset that doesnot contain the producer normalized scores
- * - We donot compute the cluster normalized scores for the clusters per user
- * - For social proof thresholding, we donot keep track of the entire list of follow and
- * fav social proofs but rather make use of numFollowSocial and numFavSocial (this introduces
- * some noise if follow and fav social proof contain the same users)
- * - Store 200 clusters per user compared to 50 in IIKF
- * - Runs more frequently compared to weekly in IIKF
+ * T  ma n d fferences of t   nterested nFromKnownForL e compared to  nterested nFromKnownFor are
+ * t  follow ng:
+ * -   read t  UserUserGraph dataset that doesnot conta n t  producer normal zed scores
+ * -   donot compute t  cluster normal zed scores for t  clusters per user
+ * - For soc al proof threshold ng,   donot keep track of t  ent re l st of follow and
+ * fav soc al proofs but rat r make use of numFollowSoc al and numFavSoc al (t   ntroduces
+ * so  no se  f follow and fav soc al proof conta n t  sa  users)
+ * - Store 200 clusters per user compared to 50  n   KF
+ * - Runs more frequently compared to  ekly  n   KF
  */
 /**
- * Production job for computing interestedIn data set for the model version 20M145K2020.
+ * Product on job for comput ng  nterested n data set for t  model vers on 20M145K2020.
  *
- * To deploy the job:
+ * To deploy t  job:
  *
- * capesospy-v2 update --build_locally --start_cron interested_in_lite_for_20M_145k_2020 \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+ * capesospy-v2 update --bu ld_locally --start_cron  nterested_ n_l e_for_20M_145k_2020 \
+ src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc.yaml
  */
-object InterestedInFromKnownForLite20M145K2020 extends InterestedInFromKnownForLite {
-  override val firstTime: String = "2021-04-24"
-  override val outputKVDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsInterestedIn]] =
-    SimclustersV2RawInterestedInLite20M145K2020ScalaDataset
-  override val outputPath: String = InternalDataPaths.RawInterestedInLite2020Path
-  override val knownForModelVersion: String = ModelVersions.Model20M145K2020
-  override val knownForDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]] =
-    SimclustersV2KnownFor20M145K2020ScalaDataset
+object  nterested nFromKnownForL e20M145K2020 extends  nterested nFromKnownForL e {
+  overr de val f rstT  : Str ng = "2021-04-24"
+  overr de val outputKVDataset: KeyValDALDataset[KeyVal[Long, ClustersUser s nterested n]] =
+    S mclustersV2Raw nterested nL e20M145K2020ScalaDataset
+  overr de val outputPath: Str ng =  nternalDataPaths.Raw nterested nL e2020Path
+  overr de val knownForModelVers on: Str ng = ModelVers ons.Model20M145K2020
+  overr de val knownForDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUser sKnownFor]] =
+    S mclustersV2KnownFor20M145K2020ScalaDataset
 }
-trait InterestedInFromKnownForLite extends TwitterScheduledExecutionApp {
-  implicit val tz = DateOps.UTC
-  implicit val parser = DateParser.default
+tra   nterested nFromKnownForL e extends Tw terSc duledExecut onApp {
+   mpl c  val tz = DateOps.UTC
+   mpl c  val parser = DateParser.default
 
-  def firstTime: String
-  val batchIncrement: Duration = Days(2)
-  val lookBackDays: Duration = Days(30)
+  def f rstT  : Str ng
+  val batch ncre nt: Durat on = Days(2)
+  val lookBackDays: Durat on = Days(30)
 
-  def outputKVDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsInterestedIn]]
-  def outputPath: String
-  def knownForModelVersion: String
-  def knownForDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]]
+  def outputKVDataset: KeyValDALDataset[KeyVal[Long, ClustersUser s nterested n]]
+  def outputPath: Str ng
+  def knownForModelVers on: Str ng
+  def knownForDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUser sKnownFor]]
 
-  private lazy val execArgs = AnalyticsBatchExecutionArgs(
-    batchDesc = BatchDescription(this.getClass.getName.replace("$", "")),
-    firstTime = BatchFirstTime(RichDate(firstTime)),
-    lastTime = None,
-    batchIncrement = BatchIncrement(batchIncrement)
+  pr vate lazy val execArgs = Analyt csBatchExecut onArgs(
+    batchDesc = BatchDescr pt on(t .getClass.getNa .replace("$", "")),
+    f rstT   = BatchF rstT  (R chDate(f rstT  )),
+    lastT   = None,
+    batch ncre nt = Batch ncre nt(batch ncre nt)
   )
 
-  override def scheduledJob: Execution[Unit] = AnalyticsBatchExecution(execArgs) {
-    implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        Execution.withArgs { args =>
+  overr de def sc duledJob: Execut on[Un ] = Analyt csBatchExecut on(execArgs) {
+     mpl c  dateRange =>
+      Execut on.w h d {  mpl c  un que d =>
+        Execut on.w hArgs { args =>
           val userUserGraph =
-            DAL.readMostRecentSnapshot(UserUserGraphScalaDataset).toTypedPipe
-          val knownFor = KnownForSources.fromKeyVal(
-            DAL.readMostRecentSnapshot(knownForDALDataset, dateRange.extend(Days(30))).toTypedPipe,
-            knownForModelVersion
+            DAL.readMostRecentSnapshot(UserUserGraphScalaDataset).toTypedP pe
+          val knownFor = KnownForS ces.fromKeyVal(
+            DAL.readMostRecentSnapshot(knownForDALDataset, dateRange.extend(Days(30))).toTypedP pe,
+            knownForModelVers on
           )
 
-          val socialProofThreshold = args.int("socialProofThreshold", 2)
-          val maxClustersPerUser = args.int("maxClustersPerUser", 200)
+          val soc alProofThreshold = args. nt("soc alProofThreshold", 2)
+          val maxClustersPerUser = args. nt("maxClustersPerUser", 200)
 
-          val result = InterestedInFromKnownForLite
+          val result =  nterested nFromKnownForL e
             .run(
               userUserGraph,
               knownFor,
-              socialProofThreshold,
+              soc alProofThreshold,
               maxClustersPerUser,
-              knownForModelVersion
+              knownForModelVers on
             )
 
-          val writeKeyValResultExec = result
+          val wr eKeyValResultExec = result
             .map {
-              case (userId, clusters) => KeyVal(userId, clusters)
-            }.writeDALVersionedKeyValExecution(
+              case (user d, clusters) => KeyVal(user d, clusters)
+            }.wr eDALVers onedKeyValExecut on(
               outputKVDataset,
-              D.Suffix(outputPath)
+              D.Suff x(outputPath)
             )
-          Util.printCounters(writeKeyValResultExec)
+          Ut l.pr ntCounters(wr eKeyValResultExec)
         }
       }
   }
 }
 
 /**
- * Adhoc job to compute user interestedIn.
+ * Adhoc job to compute user  nterested n.
  *
- * scalding remote run \
- * --target src/scala/com/twitter/simclusters_v2/scalding:interested_in_lite_20m_145k_2020-adhoc \
- * --main-class com.twitter.simclusters_v2.scalding.InterestedInFromKnownForLite20M145K2020Adhoc \
- * --user cassowary --cluster bluebird-qus1 \
- * --keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
- * --principal service_acoount@TWITTER.BIZ \
+ * scald ng remote run \
+ * --target src/scala/com/tw ter/s mclusters_v2/scald ng: nterested_ n_l e_20m_145k_2020-adhoc \
+ * --ma n-class com.tw ter.s mclusters_v2.scald ng. nterested nFromKnownForL e20M145K2020Adhoc \
+ * --user cassowary --cluster blueb rd-qus1 \
+ * --keytab /var/l b/tss/keys/fluffy/keytabs/cl ent/cassowary.keytab \
+ * --pr nc pal serv ce_acoount@TW TTER.B Z \
  * -- \
- * --outputDir /gcs/user/cassowary/adhoc/interested_in_from_knownfor_lite/ \
+ * --outputD r /gcs/user/cassowary/adhoc/ nterested_ n_from_knownfor_l e/ \
  * --date 2020-08-25
  */
-object InterestedInFromKnownForLite20M145K2020Adhoc extends AdhocExecutionApp {
-  override def runOnDateRange(
+object  nterested nFromKnownForL e20M145K2020Adhoc extends AdhocExecut onApp {
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val userUserGraph = DAL.readMostRecentSnapshot(UserUserGraphScalaDataset).toTypedPipe
-    val socialProofThreshold = args.int("socialProofThreshold", 2)
-    val maxClustersPerUser = args.int("maxClustersPerUser", 200)
-    val knownForModelVersion = ModelVersions.Model20M145K2020
-    val knownFor = KnownForSources.fromKeyVal(
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
+    val userUserGraph = DAL.readMostRecentSnapshot(UserUserGraphScalaDataset).toTypedP pe
+    val soc alProofThreshold = args. nt("soc alProofThreshold", 2)
+    val maxClustersPerUser = args. nt("maxClustersPerUser", 200)
+    val knownForModelVers on = ModelVers ons.Model20M145K2020
+    val knownFor = KnownForS ces.fromKeyVal(
       DAL
         .readMostRecentSnapshotNoOlderThan(
-          SimclustersV2KnownFor20M145K2020ScalaDataset,
-          Days(30)).toTypedPipe,
-      knownForModelVersion
+          S mclustersV2KnownFor20M145K2020ScalaDataset,
+          Days(30)).toTypedP pe,
+      knownForModelVers on
     )
 
-    val outputSink = AdhocKeyValSources.interestedInSource(args("outputDir"))
-    Util.printCounters(
-      InterestedInFromKnownForLite
+    val outputS nk = AdhocKeyValS ces. nterested nS ce(args("outputD r"))
+    Ut l.pr ntCounters(
+       nterested nFromKnownForL e
         .run(
           userUserGraph,
           knownFor,
-          socialProofThreshold,
+          soc alProofThreshold,
           maxClustersPerUser,
-          knownForModelVersion
-        ).writeExecution(outputSink)
+          knownForModelVers on
+        ).wr eExecut on(outputS nk)
     )
   }
 
 }
 
-object InterestedInFromKnownForLite {
-  private def ifNanMake0(x: Double): Double = if (x.isNaN) 0.0 else x
+object  nterested nFromKnownForL e {
+  pr vate def  fNanMake0(x: Double): Double =  f (x. sNaN) 0.0 else x
 
-  case class SrcClusterIntermediateInfo(
+  case class SrcCluster nter d ate nfo(
     followScore: Double,
     favScore: Double,
     logFavScore: Double,
-    numFollowed: Int,
-    numFaved: Int) {
+    numFollo d:  nt,
+    numFaved:  nt) {
 
-    // helper function used for test cases
-    override def equals(obj: scala.Any): Boolean = {
+    //  lper funct on used for test cases
+    overr de def equals(obj: scala.Any): Boolean = {
       obj match {
-        case that: SrcClusterIntermediateInfo =>
+        case that: SrcCluster nter d ate nfo =>
           math.abs(followScore - that.followScore) < 1e-5 &&
             math.abs(favScore - that.favScore) < 1e-5 &&
             math.abs(logFavScore - that.logFavScore) < 1e-5 &&
-            numFollowed == that.numFollowed &&
+            numFollo d == that.numFollo d &&
             numFaved == that.numFaved
         case _ => false
       }
     }
   }
 
-  implicit object SrcClusterIntermediateInfoSemigroup
-      extends Semigroup[SrcClusterIntermediateInfo] {
-    override def plus(
-      left: SrcClusterIntermediateInfo,
-      right: SrcClusterIntermediateInfo
-    ): SrcClusterIntermediateInfo = {
-      SrcClusterIntermediateInfo(
-        followScore = left.followScore + right.followScore,
-        favScore = left.favScore + right.favScore,
-        logFavScore = left.logFavScore + right.logFavScore,
-        numFollowed = left.numFollowed + right.numFollowed,
-        numFaved = left.numFaved + right.numFaved
+   mpl c  object SrcCluster nter d ate nfoSem group
+      extends Sem group[SrcCluster nter d ate nfo] {
+    overr de def plus(
+      left: SrcCluster nter d ate nfo,
+      r ght: SrcCluster nter d ate nfo
+    ): SrcCluster nter d ate nfo = {
+      SrcCluster nter d ate nfo(
+        followScore = left.followScore + r ght.followScore,
+        favScore = left.favScore + r ght.favScore,
+        logFavScore = left.logFavScore + r ght.logFavScore,
+        numFollo d = left.numFollo d + r ght.numFollo d,
+        numFaved = left.numFaved + r ght.numFaved
       )
     }
   }
 
   def run(
-    adjacencyLists: TypedPipe[UserAndNeighbors],
-    knownFor: TypedPipe[(UserId, Array[(ClusterId, Float)])],
-    socialProofThreshold: Int,
-    maxClustersPerUser: Int,
-    knownForModelVersion: String
+    adjacencyL sts: TypedP pe[UserAndNe ghbors],
+    knownFor: TypedP pe[(User d, Array[(Cluster d, Float)])],
+    soc alProofThreshold:  nt,
+    maxClustersPerUser:  nt,
+    knownForModelVers on: Str ng
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
-    InterestedInFromKnownFor.keepOnlyTopClusters(
+     mpl c  un que d: Un que D
+  ): TypedP pe[(User d, ClustersUser s nterested n)] = {
+     nterested nFromKnownFor.keepOnlyTopClusters(
       groupClusterScores(
-        userClusterPairs(
-          adjacencyLists,
+        userClusterPa rs(
+          adjacencyL sts,
           knownFor,
-          socialProofThreshold
+          soc alProofThreshold
         )
       ),
       maxClustersPerUser,
-      knownForModelVersion
+      knownForModelVers on
     )
   }
 
-  def userClusterPairs(
-    adjacencyLists: TypedPipe[UserAndNeighbors],
-    knownFor: TypedPipe[(Long, Array[(Int, Float)])],
-    socialProofThreshold: Int
+  def userClusterPa rs(
+    adjacencyL sts: TypedP pe[UserAndNe ghbors],
+    knownFor: TypedP pe[(Long, Array[( nt, Float)])],
+    soc alProofThreshold:  nt
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[((Long, Int), SrcClusterIntermediateInfo)] = {
-    val edgesToUsersWithKnownFor = Stat("num_edges_to_users_with_known_for")
-    val srcDestClusterTriples = Stat("num_src_dest_cluster_triples")
-    val srcClusterPairsBeforeSocialProofThresholding =
-      Stat("num_src_cluster_pairs_before_social_proof_thresholding")
-    val srcClusterPairsAfterSocialProofThresholding =
-      Stat("num_src_cluster_pairs_after_social_proof_thresholding")
+     mpl c  un que d: Un que D
+  ): TypedP pe[((Long,  nt), SrcCluster nter d ate nfo)] = {
+    val edgesToUsersW hKnownFor = Stat("num_edges_to_users_w h_known_for")
+    val srcDestClusterTr ples = Stat("num_src_dest_cluster_tr ples")
+    val srcClusterPa rsBeforeSoc alProofThreshold ng =
+      Stat("num_src_cluster_pa rs_before_soc al_proof_threshold ng")
+    val srcClusterPa rsAfterSoc alProofThreshold ng =
+      Stat("num_src_cluster_pa rs_after_soc al_proof_threshold ng")
 
-    val edges = adjacencyLists.flatMap {
-      case UserAndNeighbors(srcId, neighborsWithWeights) =>
-        neighborsWithWeights.map { neighborWithWeights =>
+    val edges = adjacencyL sts.flatMap {
+      case UserAndNe ghbors(src d, ne ghborsW h  ghts) =>
+        ne ghborsW h  ghts.map { ne ghborW h  ghts =>
           (
-            neighborWithWeights.neighborId,
-            neighborWithWeights.copy(neighborId = srcId)
+            ne ghborW h  ghts.ne ghbor d,
+            ne ghborW h  ghts.copy(ne ghbor d = src d)
           )
         }
     }
 
-    implicit val l2b: Long => Array[Byte] = Injection.long2BigEndian
+     mpl c  val l2b: Long => Array[Byte] =  nject on.long2B gEnd an
 
     edges
       .sketch(4000)
-      .join(knownFor)
+      .jo n(knownFor)
       .flatMap {
-        case (destId, (srcWithWeights, clusterArray)) =>
-          edgesToUsersWithKnownFor.inc()
-          clusterArray.toList.map {
-            case (clusterId, knownForScoreF) =>
+        case (dest d, (srcW h  ghts, clusterArray)) =>
+          edgesToUsersW hKnownFor. nc()
+          clusterArray.toL st.map {
+            case (cluster d, knownForScoreF) =>
               val knownForScore = math.max(0.0, knownForScoreF.toDouble)
 
-              srcDestClusterTriples.inc()
+              srcDestClusterTr ples. nc()
               val followScore =
-                if (srcWithWeights.isFollowed.contains(true)) knownForScore else 0.0
+                 f (srcW h  ghts. sFollo d.conta ns(true)) knownForScore else 0.0
               val favScore =
-                srcWithWeights.favScoreHalfLife100Days.getOrElse(0.0) * knownForScore
-              val logFavScore = srcWithWeights.logFavScore.getOrElse(0.0) * knownForScore
-              val numFollowed = if (srcWithWeights.isFollowed.contains(true)) {
+                srcW h  ghts.favScoreHalfL fe100Days.getOrElse(0.0) * knownForScore
+              val logFavScore = srcW h  ghts.logFavScore.getOrElse(0.0) * knownForScore
+              val numFollo d =  f (srcW h  ghts. sFollo d.conta ns(true)) {
                 1
               } else 0
 
-              val numFaved = if (srcWithWeights.favScoreHalfLife100Days.exists(_ > 0)) {
+              val numFaved =  f (srcW h  ghts.favScoreHalfL fe100Days.ex sts(_ > 0)) {
                 1
               } else 0
 
               (
-                (srcWithWeights.neighborId, clusterId),
-                SrcClusterIntermediateInfo(
+                (srcW h  ghts.ne ghbor d, cluster d),
+                SrcCluster nter d ate nfo(
                   followScore,
                   favScore,
                   logFavScore,
-                  numFollowed,
+                  numFollo d,
                   numFaved
                 )
               )
           }
       }
       .sumByKey
-      .withReducers(10000)
-      .filter {
-        case ((_, _), SrcClusterIntermediateInfo(_, _, _, numFollowed, numFaved)) =>
-          srcClusterPairsBeforeSocialProofThresholding.inc()
-          // we donot remove duplicates
-          val socialProofSize = numFollowed + numFaved
-          val result = socialProofSize >= socialProofThreshold
-          if (result) {
-            srcClusterPairsAfterSocialProofThresholding.inc()
+      .w hReducers(10000)
+      .f lter {
+        case ((_, _), SrcCluster nter d ate nfo(_, _, _, numFollo d, numFaved)) =>
+          srcClusterPa rsBeforeSoc alProofThreshold ng. nc()
+          //   donot remove dupl cates
+          val soc alProofS ze = numFollo d + numFaved
+          val result = soc alProofS ze >= soc alProofThreshold
+           f (result) {
+            srcClusterPa rsAfterSoc alProofThreshold ng. nc()
           }
           result
       }
   }
 
   def groupClusterScores(
-    intermediate: TypedPipe[((Long, Int), SrcClusterIntermediateInfo)]
+     nter d ate: TypedP pe[((Long,  nt), SrcCluster nter d ate nfo)]
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[(Long, List[(Int, UserToInterestedInClusterScores)])] = {
+     mpl c  un que d: Un que D
+  ): TypedP pe[(Long, L st[( nt, UserTo nterested nClusterScores)])] = {
 
-    implicit val i2b: Int => Array[Byte] = Injection.int2BigEndian
+     mpl c  val  2b:  nt => Array[Byte] =  nject on. nt2B gEnd an
 
-    intermediate
+     nter d ate
       .map {
         case (
-              (srcId, clusterId),
-              SrcClusterIntermediateInfo(
+              (src d, cluster d),
+              SrcCluster nter d ate nfo(
                 followScore,
                 favScore,
                 logFavScore,
-                numFollowed,
+                numFollo d,
                 numFaved
               )) =>
           (
-            srcId,
-            List(
+            src d,
+            L st(
               (
-                clusterId,
-                UserToInterestedInClusterScores(
-                  followScore = Some(ifNanMake0(followScore)),
-                  favScore = Some(ifNanMake0(favScore)),
-                  logFavScore = Some(ifNanMake0(logFavScore)),
-                  numUsersBeingFollowed = Some(numFollowed),
-                  numUsersThatWereFaved = Some(numFaved)
+                cluster d,
+                UserTo nterested nClusterScores(
+                  followScore = So ( fNanMake0(followScore)),
+                  favScore = So ( fNanMake0(favScore)),
+                  logFavScore = So ( fNanMake0(logFavScore)),
+                  numUsersBe ngFollo d = So (numFollo d),
+                  numUsersThat reFaved = So (numFaved)
                 ))
             )
           )
       }
       .sumByKey
-      //      .withReducers(1000)
-      .toTypedPipe
+      //      .w hReducers(1000)
+      .toTypedP pe
   }
 }

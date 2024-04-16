@@ -1,121 +1,121 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work
 
-import com.twitter.algebird.ScMapMonoid
-import com.twitter.algebird.Semigroup
-import com.twitter.ml.api._
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureType
-import com.twitter.ml.api.util.SRichDataRecord
-import java.lang.{Long => JLong}
-import scala.collection.{Map => ScMap}
+ mport com.tw ter.algeb rd.ScMapMono d
+ mport com.tw ter.algeb rd.Sem group
+ mport com.tw ter.ml.ap ._
+ mport com.tw ter.ml.ap .constant.SharedFeatures
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.ml.ap .FeatureType
+ mport com.tw ter.ml.ap .ut l.SR chDataRecord
+ mport java.lang.{Long => JLong}
+ mport scala.collect on.{Map => ScMap}
 
-object Utils {
-  val dataRecordMerger: DataRecordMerger = new DataRecordMerger
+object Ut ls {
+  val dataRecord rger: DataRecord rger = new DataRecord rger
   def EmptyDataRecord: DataRecord = new DataRecord()
 
-  private val random = scala.util.Random
-  private val keyedDataRecordMapMonoid = {
-    val dataRecordMergerSg = new Semigroup[DataRecord] {
-      override def plus(x: DataRecord, y: DataRecord): DataRecord = {
-        dataRecordMerger.merge(x, y)
+  pr vate val random = scala.ut l.Random
+  pr vate val keyedDataRecordMapMono d = {
+    val dataRecord rgerSg = new Sem group[DataRecord] {
+      overr de def plus(x: DataRecord, y: DataRecord): DataRecord = {
+        dataRecord rger. rge(x, y)
         x
       }
     }
-    new ScMapMonoid[Long, DataRecord]()(dataRecordMergerSg)
+    new ScMapMono d[Long, DataRecord]()(dataRecord rgerSg)
   }
 
   def keyFromLong(record: DataRecord, feature: Feature[JLong]): Long =
-    SRichDataRecord(record).getFeatureValue(feature).longValue
+    SR chDataRecord(record).getFeatureValue(feature).longValue
 
-  def keyFromString(record: DataRecord, feature: Feature[String]): Long =
+  def keyFromStr ng(record: DataRecord, feature: Feature[Str ng]): Long =
     try {
-      SRichDataRecord(record).getFeatureValue(feature).toLong
+      SR chDataRecord(record).getFeatureValue(feature).toLong
     } catch {
-      case _: NumberFormatException => 0L
+      case _: NumberFormatExcept on => 0L
     }
 
-  def keyFromHash(record: DataRecord, feature: Feature[String]): Long =
-    SRichDataRecord(record).getFeatureValue(feature).hashCode.toLong
+  def keyFromHash(record: DataRecord, feature: Feature[Str ng]): Long =
+    SR chDataRecord(record).getFeatureValue(feature).hashCode.toLong
 
   def extractSecondary[T](
     record: DataRecord,
     secondaryKey: Feature[T],
     shouldHash: Boolean = false
   ): Long = secondaryKey.getFeatureType match {
-    case FeatureType.STRING =>
-      if (shouldHash) keyFromHash(record, secondaryKey.asInstanceOf[Feature[String]])
-      else keyFromString(record, secondaryKey.asInstanceOf[Feature[String]])
-    case FeatureType.DISCRETE => keyFromLong(record, secondaryKey.asInstanceOf[Feature[JLong]])
-    case f => throw new IllegalArgumentException(s"Feature type $f is not supported.")
+    case FeatureType.STR NG =>
+       f (shouldHash) keyFromHash(record, secondaryKey.as nstanceOf[Feature[Str ng]])
+      else keyFromStr ng(record, secondaryKey.as nstanceOf[Feature[Str ng]])
+    case FeatureType.D SCRETE => keyFromLong(record, secondaryKey.as nstanceOf[Feature[JLong]])
+    case f => throw new  llegalArgu ntExcept on(s"Feature type $f  s not supported.")
   }
 
-  def mergeKeyedRecordOpts(args: Option[KeyedRecord]*): Option[KeyedRecord] = {
+  def  rgeKeyedRecordOpts(args: Opt on[KeyedRecord]*): Opt on[KeyedRecord] = {
     val keyedRecords = args.flatten
-    if (keyedRecords.isEmpty) {
+     f (keyedRecords. sEmpty) {
       None
     } else {
       val keys = keyedRecords.map(_.aggregateType)
-      require(keys.toSet.size == 1, "All merged records must have the same aggregate key.")
-      val mergedRecord = mergeRecords(keyedRecords.map(_.record): _*)
-      Some(KeyedRecord(keys.head, mergedRecord))
+      requ re(keys.toSet.s ze == 1, "All  rged records must have t  sa  aggregate key.")
+      val  rgedRecord =  rgeRecords(keyedRecords.map(_.record): _*)
+      So (KeyedRecord(keys. ad,  rgedRecord))
     }
   }
 
-  private def mergeRecords(args: DataRecord*): DataRecord =
-    if (args.isEmpty) EmptyDataRecord
+  pr vate def  rgeRecords(args: DataRecord*): DataRecord =
+     f (args. sEmpty) EmptyDataRecord
     else {
-      // can just do foldLeft(new DataRecord) for both cases, but try reusing the EmptyDataRecord singleton as much as possible
-      args.tail.foldLeft(args.head) { (merged, record) =>
-        dataRecordMerger.merge(merged, record)
-        merged
+      // can just do foldLeft(new DataRecord) for both cases, but try reus ng t  EmptyDataRecord s ngleton as much as poss ble
+      args.ta l.foldLeft(args. ad) { ( rged, record) =>
+        dataRecord rger. rge( rged, record)
+         rged
       }
     }
 
-  def mergeKeyedRecordMapOpts(
-    opt1: Option[KeyedRecordMap],
-    opt2: Option[KeyedRecordMap],
-    maxSize: Int = Int.MaxValue
-  ): Option[KeyedRecordMap] = {
-    if (opt1.isEmpty && opt2.isEmpty) {
+  def  rgeKeyedRecordMapOpts(
+    opt1: Opt on[KeyedRecordMap],
+    opt2: Opt on[KeyedRecordMap],
+    maxS ze:  nt =  nt.MaxValue
+  ): Opt on[KeyedRecordMap] = {
+     f (opt1. sEmpty && opt2. sEmpty) {
       None
     } else {
       val keys = Seq(opt1, opt2).flatten.map(_.aggregateType)
-      require(keys.toSet.size == 1, "All merged records must have the same aggregate key.")
-      val mergedRecordMap = mergeMapOpts(opt1.map(_.recordMap), opt2.map(_.recordMap), maxSize)
-      Some(KeyedRecordMap(keys.head, mergedRecordMap))
+      requ re(keys.toSet.s ze == 1, "All  rged records must have t  sa  aggregate key.")
+      val  rgedRecordMap =  rgeMapOpts(opt1.map(_.recordMap), opt2.map(_.recordMap), maxS ze)
+      So (KeyedRecordMap(keys. ad,  rgedRecordMap))
     }
   }
 
-  private def mergeMapOpts(
-    opt1: Option[ScMap[Long, DataRecord]],
-    opt2: Option[ScMap[Long, DataRecord]],
-    maxSize: Int = Int.MaxValue
+  pr vate def  rgeMapOpts(
+    opt1: Opt on[ScMap[Long, DataRecord]],
+    opt2: Opt on[ScMap[Long, DataRecord]],
+    maxS ze:  nt =  nt.MaxValue
   ): ScMap[Long, DataRecord] = {
-    require(maxSize >= 0)
+    requ re(maxS ze >= 0)
     val keySet = opt1.map(_.keySet).getOrElse(Set.empty) ++ opt2.map(_.keySet).getOrElse(Set.empty)
-    val totalSize = keySet.size
-    val rate = if (totalSize <= maxSize) 1.0 else maxSize.toDouble / totalSize
+    val totalS ze = keySet.s ze
+    val rate =  f (totalS ze <= maxS ze) 1.0 else maxS ze.toDouble / totalS ze
     val prunedOpt1 = opt1.map(downsample(_, rate))
     val prunedOpt2 = opt2.map(downsample(_, rate))
     Seq(prunedOpt1, prunedOpt2).flatten
-      .foldLeft(keyedDataRecordMapMonoid.zero)(keyedDataRecordMapMonoid.plus)
+      .foldLeft(keyedDataRecordMapMono d.zero)(keyedDataRecordMapMono d.plus)
   }
 
-  def downsample[K, T](m: ScMap[K, T], samplingRate: Double): ScMap[K, T] = {
-    if (samplingRate >= 1.0) {
+  def downsample[K, T](m: ScMap[K, T], sampl ngRate: Double): ScMap[K, T] = {
+     f (sampl ngRate >= 1.0) {
       m
-    } else if (samplingRate <= 0) {
+    } else  f (sampl ngRate <= 0) {
       Map.empty
     } else {
-      m.filter {
+      m.f lter {
         case (key, _) =>
-          // It is important that the same user with the same sampling rate be deterministically
-          // selected or rejected. Otherwise, mergeMapOpts will choose different keys for the
-          // two input maps and their union will be larger than the limit we want.
-          random.setSeed((key.hashCode, samplingRate.hashCode).hashCode)
-          random.nextDouble < samplingRate
+          //    s  mportant that t  sa  user w h t  sa  sampl ng rate be determ n st cally
+          // selected or rejected. Ot rw se,  rgeMapOpts w ll choose d fferent keys for t 
+          // two  nput maps and t  r un on w ll be larger than t  l m    want.
+          random.setSeed((key.hashCode, sampl ngRate.hashCode).hashCode)
+          random.nextDouble < sampl ngRate
       }
     }
   }

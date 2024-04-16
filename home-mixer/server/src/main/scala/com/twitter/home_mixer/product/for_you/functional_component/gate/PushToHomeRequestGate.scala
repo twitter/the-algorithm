@@ -1,16 +1,16 @@
-package com.twitter.home_mixer.product.for_you.functional_component.gate
+package com.tw ter.ho _m xer.product.for_ .funct onal_component.gate
 
-import com.twitter.home_mixer.product.for_you.model.ForYouQuery
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.stitch.Stitch
+ mport com.tw ter.ho _m xer.product.for_ .model.For Query
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.Gate
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Gate dent f er
+ mport com.tw ter.st ch.St ch
 
 /**
- * Continues when the request is a Push-To-Home notification request
+ * Cont nues w n t  request  s a Push-To-Ho  not f cat on request
  */
-object PushToHomeRequestGate extends Gate[ForYouQuery] {
-  override val identifier: GateIdentifier = GateIdentifier("PushToHomeRequest")
+object PushToHo RequestGate extends Gate[For Query] {
+  overr de val  dent f er: Gate dent f er = Gate dent f er("PushToHo Request")
 
-  override def shouldContinue(query: ForYouQuery): Stitch[Boolean] =
-    Stitch.value(query.pushToHomeTweetId.isDefined)
+  overr de def shouldCont nue(query: For Query): St ch[Boolean] =
+    St ch.value(query.pushToHo T et d. sDef ned)
 }

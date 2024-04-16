@@ -1,6 +1,6 @@
-package com.twitter.home_mixer.product.scored_tweets.model
+package com.tw ter.ho _m xer.product.scored_t ets.model
 
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.marshall ng.HasMarshall ng
 
-case class ScoredTweetsResponse(scoredTweets: Seq[CandidateWithDetails]) extends HasMarshalling
+case class ScoredT etsResponse(scoredT ets: Seq[Cand dateW hDeta ls]) extends HasMarshall ng

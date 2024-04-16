@@ -1,136 +1,136 @@
-package com.twitter.frigate.pushservice.model
+package com.tw ter.fr gate.pushserv ce.model
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.HydratedMagicFanoutCreatorEventCandidate
-import com.twitter.frigate.common.base.MagicFanoutCreatorEventCandidate
-import com.twitter.frigate.magic_events.thriftscala.CreatorFanoutType
-import com.twitter.frigate.magic_events.thriftscala.MagicEventsReason
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.frigate.pushservice.model.ibis.MagicFanoutCreatorEventIbis2Hydrator
-import com.twitter.frigate.pushservice.model.ntab.MagicFanoutCreatorEventNtabRequestHydrator
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.predicate.PredicatesForCandidate
-import com.twitter.frigate.pushservice.predicate.magic_fanout.MagicFanoutPredicatesForCandidate
-import com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue.MagicFanoutNtabCaretFatiguePredicate
-import com.twitter.frigate.pushservice.take.predicates.BasicSendHandlerPredicates
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.frigate.thriftscala.FrigateNotification
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.UserId
-import com.twitter.util.Future
-import scala.util.control.NoStackTrace
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.HydratedMag cFanoutCreatorEventCand date
+ mport com.tw ter.fr gate.common.base.Mag cFanoutCreatorEventCand date
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.CreatorFanoutType
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.Mag cEventsReason
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.conf g.Conf g
+ mport com.tw ter.fr gate.pushserv ce.ml.PushMLModelScorer
+ mport com.tw ter.fr gate.pushserv ce.model.cand date.Copy ds
+ mport com.tw ter.fr gate.pushserv ce.model. b s.Mag cFanoutCreatorEvent b s2Hydrator
+ mport com.tw ter.fr gate.pushserv ce.model.ntab.Mag cFanoutCreatorEventNtabRequestHydrator
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.pred cate.Pred catesForCand date
+ mport com.tw ter.fr gate.pushserv ce.pred cate.mag c_fanout.Mag cFanoutPred catesForCand date
+ mport com.tw ter.fr gate.pushserv ce.pred cate.ntab_caret_fat gue.Mag cFanoutNtabCaretFat guePred cate
+ mport com.tw ter.fr gate.pushserv ce.take.pred cates.Bas cSendHandlerPred cates
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
+ mport com.tw ter.fr gate.thr ftscala.Fr gateNot f cat on
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.strato.cl ent.User d
+ mport com.tw ter.ut l.Future
+ mport scala.ut l.control.NoStackTrace
 
-class MagicFanoutCreatorEventPushCandidateHydratorException(private val message: String)
-    extends Exception(message)
-    with NoStackTrace
+class Mag cFanoutCreatorEventPushCand dateHydratorExcept on(pr vate val  ssage: Str ng)
+    extends Except on( ssage)
+    w h NoStackTrace
 
-class MagicFanoutCreatorEventPushCandidate(
-  candidate: RawCandidate with MagicFanoutCreatorEventCandidate,
-  creatorUser: Option[User],
-  copyIds: CopyIds,
-  creatorTweetCountStore: ReadableStore[UserId, Int]
+class Mag cFanoutCreatorEventPushCand date(
+  cand date: RawCand date w h Mag cFanoutCreatorEventCand date,
+  creatorUser: Opt on[User],
+  copy ds: Copy ds,
+  creatorT etCountStore: ReadableStore[User d,  nt]
 )(
-  implicit val statsScoped: StatsReceiver,
+   mpl c  val statsScoped: StatsRece ver,
   pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
-    with MagicFanoutCreatorEventIbis2Hydrator
-    with MagicFanoutCreatorEventNtabRequestHydrator
-    with MagicFanoutCreatorEventCandidate
-    with HydratedMagicFanoutCreatorEventCandidate {
-  override def creatorId: Long = candidate.creatorId
+    extends PushCand date
+    w h Mag cFanoutCreatorEvent b s2Hydrator
+    w h Mag cFanoutCreatorEventNtabRequestHydrator
+    w h Mag cFanoutCreatorEventCand date
+    w h HydratedMag cFanoutCreatorEventCand date {
+  overr de def creator d: Long = cand date.creator d
 
-  override def hydratedCreator: Option[User] = creatorUser
+  overr de def hydratedCreator: Opt on[User] = creatorUser
 
-  override lazy val numberOfTweetsFut: Future[Option[Int]] =
-    creatorTweetCountStore.get(UserId(creatorId))
+  overr de lazy val numberOfT etsFut: Future[Opt on[ nt]] =
+    creatorT etCountStore.get(User d(creator d))
 
-  lazy val userProfile = hydratedCreator
-    .flatMap(_.profile).getOrElse(
-      throw new MagicFanoutCreatorEventPushCandidateHydratorException(
-        s"Unable to get user profile to generate tapThrough for userId: $creatorId"))
+  lazy val userProf le = hydratedCreator
+    .flatMap(_.prof le).getOrElse(
+      throw new Mag cFanoutCreatorEventPushCand dateHydratorExcept on(
+        s"Unable to get user prof le to generate tapThrough for user d: $creator d"))
 
-  override val frigateNotification: FrigateNotification = candidate.frigateNotification
+  overr de val fr gateNot f cat on: Fr gateNot f cat on = cand date.fr gateNot f cat on
 
-  override def subscriberId: Option[Long] = candidate.subscriberId
+  overr de def subscr ber d: Opt on[Long] = cand date.subscr ber d
 
-  override def creatorFanoutType: CreatorFanoutType = candidate.creatorFanoutType
+  overr de def creatorFanoutType: CreatorFanoutType = cand date.creatorFanoutType
 
-  override def target: PushTypes.Target = candidate.target
+  overr de def target: PushTypes.Target = cand date.target
 
-  override def pushId: Long = candidate.pushId
+  overr de def push d: Long = cand date.push d
 
-  override def candidateMagicEventsReasons: Seq[MagicEventsReason] =
-    candidate.candidateMagicEventsReasons
+  overr de def cand dateMag cEventsReasons: Seq[Mag cEventsReason] =
+    cand date.cand dateMag cEventsReasons
 
-  override def statsReceiver: StatsReceiver = statsScoped
+  overr de def statsRece ver: StatsRece ver = statsScoped
 
-  override def pushCopyId: Option[Int] = copyIds.pushCopyId
+  overr de def pushCopy d: Opt on[ nt] = copy ds.pushCopy d
 
-  override def ntabCopyId: Option[Int] = copyIds.ntabCopyId
+  overr de def ntabCopy d: Opt on[ nt] = copy ds.ntabCopy d
 
-  override def copyAggregationId: Option[String] = copyIds.aggregationId
+  overr de def copyAggregat on d: Opt on[Str ng] = copy ds.aggregat on d
 
-  override def commonRecType: CommonRecommendationType = candidate.commonRecType
+  overr de def commonRecType: CommonRecom ndat onType = cand date.commonRecType
 
-  override def weightedOpenOrNtabClickModelScorer: PushMLModelScorer = pushModelScorer
+  overr de def   ghtedOpenOrNtabCl ckModelScorer: PushMLModelScorer = pushModelScorer
 
 }
 
-case class MagicFanouCreatorSubscriptionEventPushPredicates(config: Config)
-    extends BasicSendHandlerPredicates[MagicFanoutCreatorEventPushCandidate] {
+case class Mag cFanouCreatorSubscr pt onEventPushPred cates(conf g: Conf g)
+    extends Bas cSendHandlerPred cates[Mag cFanoutCreatorEventPushCand date] {
 
-  implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
+   mpl c  val statsRece ver: StatsRece ver = conf g.statsRece ver.scope(getClass.getS mpleNa )
 
-  override val preCandidateSpecificPredicates: List[
-    NamedPredicate[MagicFanoutCreatorEventPushCandidate]
+  overr de val preCand dateSpec f cPred cates: L st[
+    Na dPred cate[Mag cFanoutCreatorEventPushCand date]
   ] =
-    List(
-      PredicatesForCandidate.paramPredicate(
-        PushFeatureSwitchParams.EnableCreatorSubscriptionPush
+    L st(
+      Pred catesForCand date.paramPred cate(
+        PushFeatureSw chParams.EnableCreatorSubscr pt onPush
       ),
-      PredicatesForCandidate.isDeviceEligibleForCreatorPush,
-      MagicFanoutPredicatesForCandidate.creatorPushTargetIsNotCreator(),
-      MagicFanoutPredicatesForCandidate.duplicateCreatorPredicate,
-      MagicFanoutPredicatesForCandidate.magicFanoutCreatorPushFatiguePredicate(),
+      Pred catesForCand date. sDev ceEl g bleForCreatorPush,
+      Mag cFanoutPred catesForCand date.creatorPushTarget sNotCreator(),
+      Mag cFanoutPred catesForCand date.dupl cateCreatorPred cate,
+      Mag cFanoutPred catesForCand date.mag cFanoutCreatorPushFat guePred cate(),
     )
 
-  override val postCandidateSpecificPredicates: List[
-    NamedPredicate[MagicFanoutCreatorEventPushCandidate]
+  overr de val postCand dateSpec f cPred cates: L st[
+    Na dPred cate[Mag cFanoutCreatorEventPushCand date]
   ] =
-    List(
-      MagicFanoutNtabCaretFatiguePredicate(),
-      MagicFanoutPredicatesForCandidate.isSuperFollowingCreator()(config, statsReceiver).flip
+    L st(
+      Mag cFanoutNtabCaretFat guePred cate(),
+      Mag cFanoutPred catesForCand date. sSuperFollow ngCreator()(conf g, statsRece ver).fl p
     )
 }
 
-case class MagicFanoutNewCreatorEventPushPredicates(config: Config)
-    extends BasicSendHandlerPredicates[MagicFanoutCreatorEventPushCandidate] {
+case class Mag cFanoutNewCreatorEventPushPred cates(conf g: Conf g)
+    extends Bas cSendHandlerPred cates[Mag cFanoutCreatorEventPushCand date] {
 
-  implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
+   mpl c  val statsRece ver: StatsRece ver = conf g.statsRece ver.scope(getClass.getS mpleNa )
 
-  override val preCandidateSpecificPredicates: List[
-    NamedPredicate[MagicFanoutCreatorEventPushCandidate]
+  overr de val preCand dateSpec f cPred cates: L st[
+    Na dPred cate[Mag cFanoutCreatorEventPushCand date]
   ] =
-    List(
-      PredicatesForCandidate.paramPredicate(
-        PushFeatureSwitchParams.EnableNewCreatorPush
+    L st(
+      Pred catesForCand date.paramPred cate(
+        PushFeatureSw chParams.EnableNewCreatorPush
       ),
-      PredicatesForCandidate.isDeviceEligibleForCreatorPush,
-      MagicFanoutPredicatesForCandidate.duplicateCreatorPredicate,
-      MagicFanoutPredicatesForCandidate.magicFanoutCreatorPushFatiguePredicate,
+      Pred catesForCand date. sDev ceEl g bleForCreatorPush,
+      Mag cFanoutPred catesForCand date.dupl cateCreatorPred cate,
+      Mag cFanoutPred catesForCand date.mag cFanoutCreatorPushFat guePred cate,
     )
 
-  override val postCandidateSpecificPredicates: List[
-    NamedPredicate[MagicFanoutCreatorEventPushCandidate]
+  overr de val postCand dateSpec f cPred cates: L st[
+    Na dPred cate[Mag cFanoutCreatorEventPushCand date]
   ] =
-    List(
-      MagicFanoutNtabCaretFatiguePredicate(),
-      MagicFanoutPredicatesForCandidate.isSuperFollowingCreator()(config, statsReceiver).flip
+    L st(
+      Mag cFanoutNtabCaretFat guePred cate(),
+      Mag cFanoutPred catesForCand date. sSuperFollow ngCreator()(conf g, statsRece ver).fl p
     )
 }

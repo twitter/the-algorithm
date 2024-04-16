@@ -1,249 +1,249 @@
-package com.twitter.simclusters_v2.common
+package com.tw ter.s mclusters_v2.common
 
-object CosineSimilarityUtil {
+object Cos neS m lar yUt l {
 
   /**
-   * Sum of squared elements for a given vector v
+   * Sum of squared ele nts for a g ven vector v
    */
   def sumOfSquares[T](v: Map[T, Double]): Double = {
     v.values.foldLeft(0.0) { (sum, value) => sum + value * value }
   }
 
   /**
-   * Sum of squared elements for a given vector v
+   * Sum of squared ele nts for a g ven vector v
    */
   def sumOfSquaresArray(v: Array[Double]): Double = {
     v.foldLeft(0.0) { (sum, value) => sum + value * value }
   }
 
   /**
-   * Calculate the l2Norm score
+   * Calculate t  l2Norm score
    */
   def norm[T](v: Map[T, Double]): Double = {
     math.sqrt(sumOfSquares(v))
   }
 
   /**
-   * Calculate the l2Norm score
+   * Calculate t  l2Norm score
    */
   def normArray(v: Array[Double]): Double = {
     math.sqrt(sumOfSquaresArray(v))
   }
 
   /**
-   * Calculate the logNorm score
+   * Calculate t  logNorm score
    */
   def logNorm[T](v: Map[T, Double]): Double = {
     math.log(sumOfSquares(v) + 1)
   }
 
   /**
-   * Calculate the logNorm score
+   * Calculate t  logNorm score
    */
   def logNormArray(v: Array[Double]): Double = {
     math.log(sumOfSquaresArray(v) + 1)
   }
 
   /**
-   * Calculate the exp scaled norm score
+   * Calculate t  exp scaled norm score
    * */
   def expScaledNorm[T](v: Map[T, Double], exponent: Double): Double = {
     math.pow(sumOfSquares(v), exponent)
   }
 
   /**
-   * Calculate the exp scaled norm score
+   * Calculate t  exp scaled norm score
    * */
   def expScaledNormArray(v: Array[Double], exponent: Double): Double = {
     math.pow(sumOfSquaresArray(v), exponent)
   }
 
   /**
-   * Calculate the l1Norm score
+   * Calculate t  l1Norm score
    */
   def l1Norm[T](v: Map[T, Double]): Double = {
     v.values.foldLeft(0.0) { (sum, value) => sum + Math.abs(value) }
   }
 
   /**
-   * Calculate the l1Norm score
+   * Calculate t  l1Norm score
    */
   def l1NormArray(v: Array[Double]): Double = {
     v.foldLeft(0.0) { (sum, value) => sum + Math.abs(value) }
   }
 
   /**
-   * Divide the weight vector with the applied norm
-   * Return the original object if the norm is 0
+   * D v de t    ght vector w h t  appl ed norm
+   * Return t  or g nal object  f t  norm  s 0
    *
-   * @param v    a map from cluster id to its weight
-   * @param norm a calculated norm from the given map v
+   * @param v    a map from cluster  d to  s   ght
+   * @param norm a calculated norm from t  g ven map v
    *
-   * @return a map with normalized weight
+   * @return a map w h normal zed   ght
    */
   def applyNorm[T](v: Map[T, Double], norm: Double): Map[T, Double] = {
-    if (norm == 0) v else v.mapValues(x => x / norm)
+     f (norm == 0) v else v.mapValues(x => x / norm)
   }
 
   /**
-   * Divide the weight vector with the applied norm
-   * Return the original object if the norm is 0
+   * D v de t    ght vector w h t  appl ed norm
+   * Return t  or g nal object  f t  norm  s 0
    *
-   * @param v    a an array of weights
-   * @param norm a calculated norm from the given array v
+   * @param v    a an array of   ghts
+   * @param norm a calculated norm from t  g ven array v
    *
-   * @return an array with normalized weight in the same order as v
+   * @return an array w h normal zed   ght  n t  sa  order as v
    */
   def applyNormArray(v: Array[Double], norm: Double): Array[Double] = {
-    if (norm == 0) v else v.map(_ / norm)
+     f (norm == 0) v else v.map(_ / norm)
   }
 
   /**
-   * Normalize the weight vector for easy cosine similarity calculation. If the input weight vector
-   * is empty or its norm is 0, return the original map.
+   * Normal ze t    ght vector for easy cos ne s m lar y calculat on.  f t   nput   ght vector
+   *  s empty or  s norm  s 0, return t  or g nal map.
    *
-   * @param v a map from cluster id to its weight
+   * @param v a map from cluster  d to  s   ght
    *
-   * @return a map with normalized weight (the norm of the weight vector is 1)
+   * @return a map w h normal zed   ght (t  norm of t    ght vector  s 1)
    */
-  def normalize[T](v: Map[T, Double], maybeNorm: Option[Double] = None): Map[T, Double] = {
-    val norm = maybeNorm.getOrElse(CosineSimilarityUtil.norm(v))
+  def normal ze[T](v: Map[T, Double], maybeNorm: Opt on[Double] = None): Map[T, Double] = {
+    val norm = maybeNorm.getOrElse(Cos neS m lar yUt l.norm(v))
     applyNorm(v, norm)
   }
 
   /**
-   * Normalize the weight vector for easy cosine similarity calculation. If the input weight vector
-   * is empty or its norm is 0, return the original array.
+   * Normal ze t    ght vector for easy cos ne s m lar y calculat on.  f t   nput   ght vector
+   *  s empty or  s norm  s 0, return t  or g nal array.
    *
-   * @param v an array of weights
+   * @param v an array of   ghts
    *
-   * @return an array with normalized weight (the norm of the weight vector is 1), in the same order as v
+   * @return an array w h normal zed   ght (t  norm of t    ght vector  s 1),  n t  sa  order as v
    */
-  def normalizeArray(
+  def normal zeArray(
     v: Array[Double],
-    maybeNorm: Option[Double] = None
+    maybeNorm: Opt on[Double] = None
   ): Array[Double] = {
-    val norm = maybeNorm.getOrElse(CosineSimilarityUtil.normArray(v))
+    val norm = maybeNorm.getOrElse(Cos neS m lar yUt l.normArray(v))
     applyNormArray(v, norm)
   }
 
   /**
-   * Normalize the weight vector with log norm. If the input weight vector
-   * is empty or its norm is 0, return the original map.
+   * Normal ze t    ght vector w h log norm.  f t   nput   ght vector
+   *  s empty or  s norm  s 0, return t  or g nal map.
    *
-   * @param v a map from cluster id to its weight
+   * @param v a map from cluster  d to  s   ght
    *
-   * @return a map with log normalized weight
+   * @return a map w h log normal zed   ght
    * */
-  def logNormalize[T](v: Map[T, Double], maybeNorm: Option[Double] = None): Map[T, Double] = {
-    val norm = maybeNorm.getOrElse(CosineSimilarityUtil.logNorm(v))
+  def logNormal ze[T](v: Map[T, Double], maybeNorm: Opt on[Double] = None): Map[T, Double] = {
+    val norm = maybeNorm.getOrElse(Cos neS m lar yUt l.logNorm(v))
     applyNorm(v, norm)
   }
 
   /**
-   * Normalize the weight vector with log norm. If the input weight vector
-   * is empty or its norm is 0, return the original array.
+   * Normal ze t    ght vector w h log norm.  f t   nput   ght vector
+   *  s empty or  s norm  s 0, return t  or g nal array.
    *
-   * @param v an array of weights
+   * @param v an array of   ghts
    *
-   * @return an array with log normalized weight, in the same order as v
+   * @return an array w h log normal zed   ght,  n t  sa  order as v
    * */
-  def logNormalizeArray(
+  def logNormal zeArray(
     v: Array[Double],
-    maybeNorm: Option[Double] = None
+    maybeNorm: Opt on[Double] = None
   ): Array[Double] = {
-    val norm = maybeNorm.getOrElse(CosineSimilarityUtil.logNormArray(v))
+    val norm = maybeNorm.getOrElse(Cos neS m lar yUt l.logNormArray(v))
     applyNormArray(v, norm)
   }
 
   /**
-   * Normalize the weight vector with exponentially scaled norm. If the input weight vector
-   * is empty or its norm is 0, return the original map.
+   * Normal ze t    ght vector w h exponent ally scaled norm.  f t   nput   ght vector
+   *  s empty or  s norm  s 0, return t  or g nal map.
    *
-   * @param v        a map from cluster id to its weight
-   * @param exponent the exponent we apply to the weight vector's norm
+   * @param v        a map from cluster  d to  s   ght
+   * @param exponent t  exponent   apply to t    ght vector's norm
    *
-   * @return a map with exp scaled normalized weight
+   * @return a map w h exp scaled normal zed   ght
    * */
-  def expScaledNormalize[T](
+  def expScaledNormal ze[T](
     v: Map[T, Double],
-    exponent: Option[Double] = None,
-    maybeNorm: Option[Double] = None
+    exponent: Opt on[Double] = None,
+    maybeNorm: Opt on[Double] = None
   ): Map[T, Double] = {
-    val norm = maybeNorm.getOrElse(CosineSimilarityUtil.expScaledNorm(v, exponent.getOrElse(0.3)))
+    val norm = maybeNorm.getOrElse(Cos neS m lar yUt l.expScaledNorm(v, exponent.getOrElse(0.3)))
     applyNorm(v, norm)
   }
 
   /**
-   * Normalize the weight vector with exponentially scaled norm. If the input weight vector
-   * is empty or its norm is 0, return the original map.
+   * Normal ze t    ght vector w h exponent ally scaled norm.  f t   nput   ght vector
+   *  s empty or  s norm  s 0, return t  or g nal map.
    *
-   * @param v        an array of weights
-   * @param exponent the exponent we apply to the weight vector's norm
+   * @param v        an array of   ghts
+   * @param exponent t  exponent   apply to t    ght vector's norm
    *
-   * @return an array with exp scaled normalized weight, in the same order as v
+   * @return an array w h exp scaled normal zed   ght,  n t  sa  order as v
    * */
-  def expScaledNormalizeArray(
+  def expScaledNormal zeArray(
     v: Array[Double],
     exponent: Double,
-    maybeNorm: Option[Double] = None
+    maybeNorm: Opt on[Double] = None
   ): Array[Double] = {
-    val norm = maybeNorm.getOrElse(CosineSimilarityUtil.expScaledNormArray(v, exponent))
+    val norm = maybeNorm.getOrElse(Cos neS m lar yUt l.expScaledNormArray(v, exponent))
     applyNormArray(v, norm)
   }
 
   /**
-   * Given two sparse vectors, calculate its dot product.
+   * G ven two sparse vectors, calculate  s dot product.
    *
-   * @param v1 the first map from cluster id to its weight
-   * @param v2 the second map from cluster id to its weight
+   * @param v1 t  f rst map from cluster  d to  s   ght
+   * @param v2 t  second map from cluster  d to  s   ght
    *
-   * @return the dot product of above two sparse vector
+   * @return t  dot product of above two sparse vector
    */
   def dotProduct[T](v1: Map[T, Double], v2: Map[T, Double]): Double = {
-    val comparer = v1.size - v2.size
-    val smaller = if (comparer > 0) v2 else v1
-    val bigger = if (comparer > 0) v1 else v2
+    val comparer = v1.s ze - v2.s ze
+    val smaller =  f (comparer > 0) v2 else v1
+    val b gger =  f (comparer > 0) v1 else v2
 
     smaller.foldLeft(0.0) {
-      case (sum, (id, value)) =>
-        sum + bigger.getOrElse(id, 0.0) * value
+      case (sum, ( d, value)) =>
+        sum + b gger.getOrElse( d, 0.0) * value
     }
   }
 
   /**
-   * Given two sparse vectors, calculate its dot product.
+   * G ven two sparse vectors, calculate  s dot product.
    *
-   * @param v1C an array of cluster ids. Must be sorted in ascending order
-   * @param v1S an array of corresponding cluster scores, of the same length and order as v1c
-   * @param v2C an array of cluster ids. Must be sorted in ascending order
-   * @param v2S an array of corresponding cluster scores, of the same length and order as v2c
+   * @param v1C an array of cluster  ds. Must be sorted  n ascend ng order
+   * @param v1S an array of correspond ng cluster scores, of t  sa  length and order as v1c
+   * @param v2C an array of cluster  ds. Must be sorted  n ascend ng order
+   * @param v2S an array of correspond ng cluster scores, of t  sa  length and order as v2c
    *
-   * @return the dot product of above two sparse vector
+   * @return t  dot product of above two sparse vector
    */
   def dotProductForSortedClusterAndScores(
-    v1C: Array[Int],
+    v1C: Array[ nt],
     v1S: Array[Double],
-    v2C: Array[Int],
+    v2C: Array[ nt],
     v2S: Array[Double]
   ): Double = {
-    require(v1C.size == v1S.size)
-    require(v2C.size == v2S.size)
-    var i1 = 0
-    var i2 = 0
+    requ re(v1C.s ze == v1S.s ze)
+    requ re(v2C.s ze == v2S.s ze)
+    var  1 = 0
+    var  2 = 0
     var product: Double = 0.0
 
-    while (i1 < v1C.size && i2 < v2C.size) {
-      if (v1C(i1) == v2C(i2)) {
-        product += v1S(i1) * v2S(i2)
-        i1 += 1
-        i2 += 1
-      } else if (v1C(i1) > v2C(i2)) {
-        // v2 cluster is lower. Increment it to see if the next one matches v1's
-        i2 += 1
+    wh le ( 1 < v1C.s ze &&  2 < v2C.s ze) {
+       f (v1C( 1) == v2C( 2)) {
+        product += v1S( 1) * v2S( 2)
+         1 += 1
+         2 += 1
+      } else  f (v1C( 1) > v2C( 2)) {
+        // v2 cluster  s lo r.  ncre nt   to see  f t  next one matc s v1's
+         2 += 1
       } else {
-        // v1 cluster is lower. Increment it to see if the next one matches v2's
-        i1 += 1
+        // v1 cluster  s lo r.  ncre nt   to see  f t  next one matc s v2's
+         1 += 1
       }
     }
     product

@@ -1,22 +1,22 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-import com.twitter.hermit.model.Algorithm.Algorithm
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.FirstDegreeEdge
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.FirstDegreeEdgeInfo
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.SecondDegreeEdge
+ mport com.tw ter. rm .model.Algor hm.Algor hm
+ mport com.tw ter.wtf.scald ng.jobs.strong_t e_pred ct on.F rstDegreeEdge
+ mport com.tw ter.wtf.scald ng.jobs.strong_t e_pred ct on.F rstDegreeEdge nfo
+ mport com.tw ter.wtf.scald ng.jobs.strong_t e_pred ct on.SecondDegreeEdge
 
-case class PotentialFirstDegreeEdge(
-  userId: Long,
-  connectingId: Long,
-  algorithm: Algorithm,
+case class Potent alF rstDegreeEdge(
+  user d: Long,
+  connect ng d: Long,
+  algor hm: Algor hm,
   score: Double,
-  edgeInfo: FirstDegreeEdgeInfo)
+  edge nfo: F rstDegreeEdge nfo)
 
-case class IntermediateSecondDegreeEdge(
-  connectingId: Long,
-  candidateId: Long,
-  edgeInfo: FirstDegreeEdgeInfo)
+case class  nter d ateSecondDegreeEdge(
+  connect ng d: Long,
+  cand date d: Long,
+  edge nfo: F rstDegreeEdge nfo)
 
 case class STPGraph(
-  firstDegreeEdgeInfoList: List[FirstDegreeEdge],
-  secondDegreeEdgeInfoList: List[SecondDegreeEdge])
+  f rstDegreeEdge nfoL st: L st[F rstDegreeEdge],
+  secondDegreeEdge nfoL st: L st[SecondDegreeEdge])

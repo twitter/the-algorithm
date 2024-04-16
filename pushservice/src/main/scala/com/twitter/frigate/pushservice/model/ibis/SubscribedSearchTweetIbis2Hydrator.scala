@@ -1,33 +1,33 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.tw ter.fr gate.pushserv ce.model. b s
 
-import com.twitter.frigate.pushservice.model.SubscribedSearchTweetPushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.util.InlineActionUtil
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.pushserv ce.model.Subscr bedSearchT etPushCand date
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.ut l. nl neAct onUt l
+ mport com.tw ter.ut l.Future
 
-trait SubscribedSearchTweetIbis2Hydrator extends TweetCandidateIbis2Hydrator {
-  self: SubscribedSearchTweetPushCandidate =>
+tra  Subscr bedSearchT et b s2Hydrator extends T etCand date b s2Hydrator {
+  self: Subscr bedSearchT etPushCand date =>
 
-  override lazy val tweetDynamicInlineActionsModelValues = {
-    if (target.params(PushFeatureSwitchParams.EnableOONGeneratedInlineActions)) {
-      val actions = target.params(PushFeatureSwitchParams.TweetDynamicInlineActionsList)
-      InlineActionUtil.getGeneratedTweetInlineActions(target, statsReceiver, actions)
-    } else Map.empty[String, String]
+  overr de lazy val t etDynam c nl neAct onsModelValues = {
+     f (target.params(PushFeatureSw chParams.EnableOONGenerated nl neAct ons)) {
+      val act ons = target.params(PushFeatureSw chParams.T etDynam c nl neAct onsL st)
+       nl neAct onUt l.getGeneratedT et nl neAct ons(target, statsRece ver, act ons)
+    } else Map.empty[Str ng, Str ng]
   }
 
-  private lazy val searchTermValue: Map[String, String] =
+  pr vate lazy val searchTermValue: Map[Str ng, Str ng] =
     Map(
       "search_term" -> searchTerm,
-      "search_url" -> pushLandingUrl
+      "search_url" -> pushLand ngUrl
     )
 
-  private lazy val searchModelValues = searchTermValue ++ tweetDynamicInlineActionsModelValues
+  pr vate lazy val searchModelValues = searchTermValue ++ t etDynam c nl neAct onsModelValues
 
-  override lazy val tweetModelValues: Future[Map[String, String]] =
+  overr de lazy val t etModelValues: Future[Map[Str ng, Str ng]] =
     for {
-      superModelValues <- super.tweetModelValues
-      tweetInlineModelValues <- tweetInlineActionModelValue
-    } yield {
-      superModelValues ++ mediaModelValue ++ searchModelValues ++ tweetInlineModelValues ++ inlineVideoMediaMap
+      superModelValues <- super.t etModelValues
+      t et nl neModelValues <- t et nl neAct onModelValue
+    } y eld {
+      superModelValues ++  d aModelValue ++ searchModelValues ++ t et nl neModelValues ++  nl neV deo d aMap
     }
 }

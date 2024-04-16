@@ -1,314 +1,314 @@
-package com.twitter.search.common.schema.earlybird;
+package com.tw ter.search.common.sc ma.earlyb rd;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
+ mport java. o. OExcept on;
+ mport java.ut l. erator;
+ mport java.ut l.L st;
 
-import com.google.common.collect.ImmutableList;
+ mport com.google.common.collect. mmutableL st;
 
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.ThriftDocumentUtil;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftField;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldData;
-import com.twitter.search.common.util.analysis.IntTermAttributeSerializer;
-import com.twitter.search.common.util.analysis.TwitterNormalizedMinEngagementTokenStream;
+ mport com.tw ter.common.text.ut l.TokenStreamSer al zer;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.base.Thr ftDocu ntUt l;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftDocu nt;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftF eld;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftF eldData;
+ mport com.tw ter.search.common.ut l.analys s. ntTermAttr buteSer al zer;
+ mport com.tw ter.search.common.ut l.analys s.Tw terNormal zedM nEngage ntTokenStream;
 
 /**
- * Utility APIs for ThriftDocument used in Earlybird.
+ * Ut l y AP s for Thr ftDocu nt used  n Earlyb rd.
  */
-public final class EarlybirdThriftDocumentUtil {
-  private static final EarlybirdFieldConstants ID_MAPPING = new EarlybirdFieldConstants();
+publ c f nal class Earlyb rdThr ftDocu ntUt l {
+  pr vate stat c f nal Earlyb rdF eldConstants  D_MAPP NG = new Earlyb rdF eldConstants();
 
-  private static final String FILTER_FORMAT_STRING = "__filter_%s";
+  pr vate stat c f nal Str ng F LTER_FORMAT_STR NG = "__f lter_%s";
 
   /**
-   * Used to check whether a thrift document has filter nullcast internal field set.
-   * @see #isNullcastFilterSet(ThriftDocument)
+   * Used to c ck w t r a thr ft docu nt has f lter nullcast  nternal f eld set.
+   * @see # sNullcastF lterSet(Thr ftDocu nt)
    */
-  private static final String NULLCAST_FILTER_TERM =
-      formatFilter(EarlybirdFieldConstant.NULLCAST_FILTER_TERM);
+  pr vate stat c f nal Str ng NULLCAST_F LTER_TERM =
+      formatF lter(Earlyb rdF eldConstant.NULLCAST_F LTER_TERM);
 
-  private static final String SELF_THREAD_FILTER_TERM =
-      formatFilter(EarlybirdFieldConstant.SELF_THREAD_FILTER_TERM);
+  pr vate stat c f nal Str ng SELF_THREAD_F LTER_TERM =
+      formatF lter(Earlyb rdF eldConstant.SELF_THREAD_F LTER_TERM);
 
-  private static final String DIRECTED_AT_FILTER_TERM =
-      formatFilter(EarlybirdFieldConstant.DIRECTED_AT_FILTER_TERM);
+  pr vate stat c f nal Str ng D RECTED_AT_F LTER_TERM =
+      formatF lter(Earlyb rdF eldConstant.D RECTED_AT_F LTER_TERM);
 
-  private EarlybirdThriftDocumentUtil() {
-    // Cannot instantiate.
+  pr vate Earlyb rdThr ftDocu ntUt l() {
+    // Cannot  nstant ate.
   }
 
   /**
-   * Formats a regular, simple filter term. The 'filter' argument should correspond to a constant
-   * from the Operator class, matching the operand (filter:links -> "links").
+   * Formats a regular, s mple f lter term. T  'f lter' argu nt should correspond to a constant
+   * from t  Operator class, match ng t  operand (f lter:l nks -> "l nks").
    */
-  public static final String formatFilter(String filter) {
-    return String.format(FILTER_FORMAT_STRING, filter);
+  publ c stat c f nal Str ng formatF lter(Str ng f lter) {
+    return Str ng.format(F LTER_FORMAT_STR NG, f lter);
   }
 
   /**
-   * Get status id.
+   * Get status  d.
    */
-  public static long getID(ThriftDocument document) {
-    return ThriftDocumentUtil.getLongValue(
-        document, EarlybirdFieldConstant.ID_FIELD.getFieldName(), ID_MAPPING);
+  publ c stat c long get D(Thr ftDocu nt docu nt) {
+    return Thr ftDocu ntUt l.getLongValue(
+        docu nt, Earlyb rdF eldConstant. D_F ELD.getF eldNa (),  D_MAPP NG);
   }
 
   /**
-   * Get Card name.
+   * Get Card na .
    */
-  public static String getCardName(ThriftDocument document) {
-    return ThriftDocumentUtil.getStringValue(
-        document, EarlybirdFieldConstant.CARD_NAME_FIELD.getFieldName(), ID_MAPPING);
+  publ c stat c Str ng getCardNa (Thr ftDocu nt docu nt) {
+    return Thr ftDocu ntUt l.getStr ngValue(
+        docu nt, Earlyb rdF eldConstant.CARD_NAME_F ELD.getF eldNa (),  D_MAPP NG);
   }
 
   /**
    * Get Card language.
    */
-  public static String getCardLang(ThriftDocument document) {
-    return ThriftDocumentUtil.getStringValue(
-        document, EarlybirdFieldConstant.CARD_LANG.getFieldName(), ID_MAPPING);
+  publ c stat c Str ng getCardLang(Thr ftDocu nt docu nt) {
+    return Thr ftDocu ntUt l.getStr ngValue(
+        docu nt, Earlyb rdF eldConstant.CARD_LANG.getF eldNa (),  D_MAPP NG);
   }
 
   /**
    * Get Card language CSF.
    *
-   * card language CSF is represented internally as an integer ID for a ThriftLanguage.
+   * card language CSF  s represented  nternally as an  nteger  D for a Thr ftLanguage.
    */
-  public static int getCardLangCSF(ThriftDocument document) {
-    return ThriftDocumentUtil.getIntValue(
-        document, EarlybirdFieldConstant.CARD_LANG_CSF.getFieldName(), ID_MAPPING);
+  publ c stat c  nt getCardLangCSF(Thr ftDocu nt docu nt) {
+    return Thr ftDocu ntUt l.get ntValue(
+        docu nt, Earlyb rdF eldConstant.CARD_LANG_CSF.getF eldNa (),  D_MAPP NG);
   }
 
   /**
-   * Get quoted tweet id.
+   * Get quoted t et  d.
    */
-  public static long getQuotedTweetID(ThriftDocument document) {
-    return ThriftDocumentUtil.getLongValue(
-        document, EarlybirdFieldConstant.QUOTED_TWEET_ID_FIELD.getFieldName(), ID_MAPPING);
+  publ c stat c long getQuotedT et D(Thr ftDocu nt docu nt) {
+    return Thr ftDocu ntUt l.getLongValue(
+        docu nt, Earlyb rdF eldConstant.QUOTED_TWEET_ D_F ELD.getF eldNa (),  D_MAPP NG);
   }
 
   /**
-   * Get quoted tweet user id.
+   * Get quoted t et user  d.
    */
-  public static long getQuotedUserID(ThriftDocument document) {
-    return ThriftDocumentUtil.getLongValue(
-        document, EarlybirdFieldConstant.QUOTED_USER_ID_FIELD.getFieldName(), ID_MAPPING);
+  publ c stat c long getQuotedUser D(Thr ftDocu nt docu nt) {
+    return Thr ftDocu ntUt l.getLongValue(
+        docu nt, Earlyb rdF eldConstant.QUOTED_USER_ D_F ELD.getF eldNa (),  D_MAPP NG);
   }
 
   /**
-   * Get directed at user id.
+   * Get d rected at user  d.
    */
-  public static long getDirectedAtUserId(ThriftDocument document) {
-    return ThriftDocumentUtil.getLongValue(
-        document, EarlybirdFieldConstant.DIRECTED_AT_USER_ID_FIELD.getFieldName(), ID_MAPPING);
+  publ c stat c long getD rectedAtUser d(Thr ftDocu nt docu nt) {
+    return Thr ftDocu ntUt l.getLongValue(
+        docu nt, Earlyb rdF eldConstant.D RECTED_AT_USER_ D_F ELD.getF eldNa (),  D_MAPP NG);
   }
 
   /**
-   * Get directed at user id CSF.
+   * Get d rected at user  d CSF.
    */
-  public static long getDirectedAtUserIdCSF(ThriftDocument document) {
-    return ThriftDocumentUtil.getLongValue(
-        document, EarlybirdFieldConstant.DIRECTED_AT_USER_ID_CSF.getFieldName(), ID_MAPPING);
+  publ c stat c long getD rectedAtUser dCSF(Thr ftDocu nt docu nt) {
+    return Thr ftDocu ntUt l.getLongValue(
+        docu nt, Earlyb rdF eldConstant.D RECTED_AT_USER_ D_CSF.getF eldNa (),  D_MAPP NG);
   }
 
   /**
-   * Get reference author id CSF.
+   * Get reference author  d CSF.
    */
-  public static long getReferenceAuthorIdCSF(ThriftDocument document) {
-    return ThriftDocumentUtil.getLongValue(
-        document, EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_CSF.getFieldName(), ID_MAPPING);
+  publ c stat c long getReferenceAuthor dCSF(Thr ftDocu nt docu nt) {
+    return Thr ftDocu ntUt l.getLongValue(
+        docu nt, Earlyb rdF eldConstant.REFERENCE_AUTHOR_ D_CSF.getF eldNa (),  D_MAPP NG);
   }
 
   /**
-   * Get links.
+   * Get l nks.
    */
-  public static List<String> getLinks(ThriftDocument document) {
-    return getStringValues(document, EarlybirdFieldConstant.LINKS_FIELD);
+  publ c stat c L st<Str ng> getL nks(Thr ftDocu nt docu nt) {
+    return getStr ngValues(docu nt, Earlyb rdF eldConstant.L NKS_F ELD);
   }
 
   /**
-   * Get created at timestamp in sec.
+   * Get created at t  stamp  n sec.
    */
-  public static int getCreatedAtSec(ThriftDocument document) {
-    return ThriftDocumentUtil.getIntValue(
-        document, EarlybirdFieldConstant.CREATED_AT_FIELD.getFieldName(), ID_MAPPING);
+  publ c stat c  nt getCreatedAtSec(Thr ftDocu nt docu nt) {
+    return Thr ftDocu ntUt l.get ntValue(
+        docu nt, Earlyb rdF eldConstant.CREATED_AT_F ELD.getF eldNa (),  D_MAPP NG);
   }
 
   /**
-   * Get created at timestamp in ms.
+   * Get created at t  stamp  n ms.
    */
-  public static long getCreatedAtMs(ThriftDocument document) {
-    long createdAtSec = (long) getCreatedAtSec(document);
+  publ c stat c long getCreatedAtMs(Thr ftDocu nt docu nt) {
+    long createdAtSec = (long) getCreatedAtSec(docu nt);
     return createdAtSec * 1000L;
   }
 
   /**
-   * Get from user id.
+   * Get from user  d.
    */
-  public static long getFromUserID(ThriftDocument document) {
-    return ThriftDocumentUtil.getLongValue(
-        document, EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName(), ID_MAPPING);
+  publ c stat c long getFromUser D(Thr ftDocu nt docu nt) {
+    return Thr ftDocu ntUt l.getLongValue(
+        docu nt, Earlyb rdF eldConstant.FROM_USER_ D_F ELD.getF eldNa (),  D_MAPP NG);
   }
 
   /**
    * Get from user.
    */
-  public static String getFromUser(ThriftDocument document) {
-    return ThriftDocumentUtil.getStringValue(
-        document, EarlybirdFieldConstant.FROM_USER_FIELD.getFieldName(), ID_MAPPING);
+  publ c stat c Str ng getFromUser(Thr ftDocu nt docu nt) {
+    return Thr ftDocu ntUt l.getStr ngValue(
+        docu nt, Earlyb rdF eldConstant.FROM_USER_F ELD.getF eldNa (),  D_MAPP NG);
   }
 
   /**
-   * Get tokenized from user display name.
+   * Get token zed from user d splay na .
    */
-  public static String getFromUserDisplayName(ThriftDocument document) {
-    return ThriftDocumentUtil.getStringValue(
-        document, EarlybirdFieldConstant.TOKENIZED_USER_NAME_FIELD.getFieldName(), ID_MAPPING);
+  publ c stat c Str ng getFromUserD splayNa (Thr ftDocu nt docu nt) {
+    return Thr ftDocu ntUt l.getStr ngValue(
+        docu nt, Earlyb rdF eldConstant.TOKEN ZED_USER_NAME_F ELD.getF eldNa (),  D_MAPP NG);
   }
 
   /**
-   * Get tokenized from user.
+   * Get token zed from user.
    */
-  public static String getTokenizedFromUser(ThriftDocument document) {
-    return ThriftDocumentUtil.getStringValue(
-        document, EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName(), ID_MAPPING);
+  publ c stat c Str ng getToken zedFromUser(Thr ftDocu nt docu nt) {
+    return Thr ftDocu ntUt l.getStr ngValue(
+        docu nt, Earlyb rdF eldConstant.TOKEN ZED_FROM_USER_F ELD.getF eldNa (),  D_MAPP NG);
   }
 
   /**
-   * Get resolved links text.
+   * Get resolved l nks text.
    */
-  public static String getResolvedLinksText(ThriftDocument document) {
-    return ThriftDocumentUtil.getStringValue(
-        document, EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName(), ID_MAPPING);
+  publ c stat c Str ng getResolvedL nksText(Thr ftDocu nt docu nt) {
+    return Thr ftDocu ntUt l.getStr ngValue(
+        docu nt, Earlyb rdF eldConstant.RESOLVED_L NKS_TEXT_F ELD.getF eldNa (),  D_MAPP NG);
   }
 
   /**
-   * Get iso language code.
+   * Get  so language code.
    */
-  public static List<String> getISOLanguage(ThriftDocument document) {
-    return ThriftDocumentUtil.getStringValues(
-        document, EarlybirdFieldConstant.ISO_LANGUAGE_FIELD.getFieldName(), ID_MAPPING);
+  publ c stat c L st<Str ng> get SOLanguage(Thr ftDocu nt docu nt) {
+    return Thr ftDocu ntUt l.getStr ngValues(
+        docu nt, Earlyb rdF eldConstant. SO_LANGUAGE_F ELD.getF eldNa (),  D_MAPP NG);
   }
 
   /**
-   * First remove the old timestamp if they exist.
-   * Then add the created at and created at csf fields to the given thrift document.
+   * F rst remove t  old t  stamp  f t y ex st.
+   * T n add t  created at and created at csf f elds to t  g ven thr ft docu nt.
    */
-  public static void replaceCreatedAtAndCreatedAtCSF(ThriftDocument document, int value) {
-    removeField(document, EarlybirdFieldConstant.CREATED_AT_FIELD);
-    removeField(document, EarlybirdFieldConstant.CREATED_AT_CSF_FIELD);
+  publ c stat c vo d replaceCreatedAtAndCreatedAtCSF(Thr ftDocu nt docu nt,  nt value) {
+    removeF eld(docu nt, Earlyb rdF eldConstant.CREATED_AT_F ELD);
+    removeF eld(docu nt, Earlyb rdF eldConstant.CREATED_AT_CSF_F ELD);
 
-    addIntField(document, EarlybirdFieldConstant.CREATED_AT_FIELD, value);
-    addIntField(document, EarlybirdFieldConstant.CREATED_AT_CSF_FIELD, value);
+    add ntF eld(docu nt, Earlyb rdF eldConstant.CREATED_AT_F ELD, value);
+    add ntF eld(docu nt, Earlyb rdF eldConstant.CREATED_AT_CSF_F ELD, value);
   }
 
   /**
-   * Add the given int value as the given field into the given document.
+   * Add t  g ven  nt value as t  g ven f eld  nto t  g ven docu nt.
    */
-  public static ThriftDocument addIntField(
-      ThriftDocument document, EarlybirdFieldConstant fieldConstant, int value) {
-    ThriftFieldData fieldData = new ThriftFieldData().setIntValue(value);
-    ThriftField field =
-        new ThriftField().setFieldConfigId(fieldConstant.getFieldId()).setFieldData(fieldData);
-    document.addToFields(field);
-    return document;
+  publ c stat c Thr ftDocu nt add ntF eld(
+      Thr ftDocu nt docu nt, Earlyb rdF eldConstant f eldConstant,  nt value) {
+    Thr ftF eldData f eldData = new Thr ftF eldData().set ntValue(value);
+    Thr ftF eld f eld =
+        new Thr ftF eld().setF eldConf g d(f eldConstant.getF eld d()).setF eldData(f eldData);
+    docu nt.addToF elds(f eld);
+    return docu nt;
   }
 
-  private static EarlybirdFieldConstant getFeatureField(EarlybirdFieldConstant field) {
-    if (field.getFieldName().startsWith(
-        EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD.getFieldName())) {
-      return EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD;
-    } else if (field.getFieldName().startsWith(
-        EarlybirdFieldConstant.EXTENDED_ENCODED_TWEET_FEATURES_FIELD.getFieldName())) {
-      return EarlybirdFieldConstant.EXTENDED_ENCODED_TWEET_FEATURES_FIELD;
+  pr vate stat c Earlyb rdF eldConstant getFeatureF eld(Earlyb rdF eldConstant f eld) {
+     f (f eld.getF eldNa ().startsW h(
+        Earlyb rdF eldConstant.ENCODED_TWEET_FEATURES_F ELD.getF eldNa ())) {
+      return Earlyb rdF eldConstant.ENCODED_TWEET_FEATURES_F ELD;
+    } else  f (f eld.getF eldNa ().startsW h(
+        Earlyb rdF eldConstant.EXTENDED_ENCODED_TWEET_FEATURES_F ELD.getF eldNa ())) {
+      return Earlyb rdF eldConstant.EXTENDED_ENCODED_TWEET_FEATURES_F ELD;
     } else {
-      throw new IllegalArgumentException("Not a feature field: " + field);
+      throw new  llegalArgu ntExcept on("Not a feature f eld: " + f eld);
     }
   }
 
   /**
-   * Get the feature value of a field.
+   * Get t  feature value of a f eld.
    */
-  public static int getFeatureValue(
-      ImmutableSchemaInterface schema,
-      ThriftDocument document,
-      EarlybirdFieldConstant field) {
+  publ c stat c  nt getFeatureValue(
+       mmutableSc ma nterface sc ma,
+      Thr ftDocu nt docu nt,
+      Earlyb rdF eldConstant f eld) {
 
-    EarlybirdFieldConstant featureField = getFeatureField(field);
+    Earlyb rdF eldConstant featureF eld = getFeatureF eld(f eld);
 
     byte[] encodedFeaturesBytes =
-        ThriftDocumentUtil.getBytesValue(document, featureField.getFieldName(), ID_MAPPING);
+        Thr ftDocu ntUt l.getBytesValue(docu nt, featureF eld.getF eldNa (),  D_MAPP NG);
 
-    if (encodedFeaturesBytes == null) {
-      // Treat the feature value as 0 if there is no encoded feature field.
+     f (encodedFeaturesBytes == null) {
+      // Treat t  feature value as 0  f t re  s no encoded feature f eld.
       return 0;
     } else {
-      EarlybirdEncodedFeatures encodedFeatures = EarlybirdEncodedFeaturesUtil.fromBytes(
-          schema, featureField, encodedFeaturesBytes, 0);
-      return encodedFeatures.getFeatureValue(field);
+      Earlyb rdEncodedFeatures encodedFeatures = Earlyb rdEncodedFeaturesUt l.fromBytes(
+          sc ma, featureF eld, encodedFeaturesBytes, 0);
+      return encodedFeatures.getFeatureValue(f eld);
     }
   }
 
   /**
-   * Check whether the feature flag is set.
+   * C ck w t r t  feature flag  s set.
    */
-  public static boolean isFeatureBitSet(
-      ImmutableSchemaInterface schema,
-      ThriftDocument document,
-      EarlybirdFieldConstant field) {
+  publ c stat c boolean  sFeatureB Set(
+       mmutableSc ma nterface sc ma,
+      Thr ftDocu nt docu nt,
+      Earlyb rdF eldConstant f eld) {
 
-    EarlybirdFieldConstant featureField = getFeatureField(field);
+    Earlyb rdF eldConstant featureF eld = getFeatureF eld(f eld);
 
     byte[] encodedFeaturesBytes =
-        ThriftDocumentUtil.getBytesValue(document, featureField.getFieldName(), ID_MAPPING);
+        Thr ftDocu ntUt l.getBytesValue(docu nt, featureF eld.getF eldNa (),  D_MAPP NG);
 
-    if (encodedFeaturesBytes == null) {
-      // Treat the bit as not set if there is no encoded feature field.
+     f (encodedFeaturesBytes == null) {
+      // Treat t  b  as not set  f t re  s no encoded feature f eld.
       return false;
     } else {
-      EarlybirdEncodedFeatures encodedFeatures = EarlybirdEncodedFeaturesUtil.fromBytes(
-          schema, featureField, encodedFeaturesBytes, 0);
-      return encodedFeatures.isFlagSet(field);
+      Earlyb rdEncodedFeatures encodedFeatures = Earlyb rdEncodedFeaturesUt l.fromBytes(
+          sc ma, featureF eld, encodedFeaturesBytes, 0);
+      return encodedFeatures. sFlagSet(f eld);
     }
   }
 
   /**
-   * Check whether nullcast flag is set in the encoded features field.
+   * C ck w t r nullcast flag  s set  n t  encoded features f eld.
    */
-  public static boolean isNullcastBitSet(ImmutableSchemaInterface schema, ThriftDocument document) {
-    return isFeatureBitSet(schema, document, EarlybirdFieldConstant.IS_NULLCAST_FLAG);
+  publ c stat c boolean  sNullcastB Set( mmutableSc ma nterface sc ma, Thr ftDocu nt docu nt) {
+    return  sFeatureB Set(sc ma, docu nt, Earlyb rdF eldConstant. S_NULLCAST_FLAG);
   }
 
   /**
-   * Remove all fields with the given field constant in a document.
+   * Remove all f elds w h t  g ven f eld constant  n a docu nt.
    */
-  public static void removeField(ThriftDocument document, EarlybirdFieldConstant fieldConstant) {
-    List<ThriftField> fields = document.getFields();
-    if (fields != null) {
-      Iterator<ThriftField> fieldsIterator = fields.iterator();
-      while (fieldsIterator.hasNext()) {
-        if (fieldsIterator.next().getFieldConfigId() == fieldConstant.getFieldId()) {
-          fieldsIterator.remove();
+  publ c stat c vo d removeF eld(Thr ftDocu nt docu nt, Earlyb rdF eldConstant f eldConstant) {
+    L st<Thr ftF eld> f elds = docu nt.getF elds();
+     f (f elds != null) {
+       erator<Thr ftF eld> f elds erator = f elds. erator();
+      wh le (f elds erator.hasNext()) {
+         f (f elds erator.next().getF eldConf g d() == f eldConstant.getF eld d()) {
+          f elds erator.remove();
         }
       }
     }
   }
 
   /**
-   * Remove a string field with given fieldConstant and value.
+   * Remove a str ng f eld w h g ven f eldConstant and value.
    */
-  public static void removeStringField(
-      ThriftDocument document, EarlybirdFieldConstant fieldConstant, String value) {
-    List<ThriftField> fields = document.getFields();
-    if (fields != null) {
-      for (ThriftField field : fields) {
-        if (field.getFieldConfigId() == fieldConstant.getFieldId()
-            && field.getFieldData().getStringValue().equals(value)) {
-          fields.remove(field);
+  publ c stat c vo d removeStr ngF eld(
+      Thr ftDocu nt docu nt, Earlyb rdF eldConstant f eldConstant, Str ng value) {
+    L st<Thr ftF eld> f elds = docu nt.getF elds();
+     f (f elds != null) {
+      for (Thr ftF eld f eld : f elds) {
+         f (f eld.getF eldConf g d() == f eldConstant.getF eld d()
+            && f eld.getF eldData().getStr ngValue().equals(value)) {
+          f elds.remove(f eld);
           return;
         }
       }
@@ -316,59 +316,59 @@ public final class EarlybirdThriftDocumentUtil {
   }
 
   /**
-   * Adds a new TokenStream field for each engagement counter if normalizedNumEngagements >= 1.
+   * Adds a new TokenStream f eld for each engage nt counter  f normal zedNumEngage nts >= 1.
    */
-  public static void addNormalizedMinEngagementField(
-      ThriftDocument doc,
-      String fieldName,
-      int normalizedNumEngagements) throws IOException {
-    if (normalizedNumEngagements < 1) {
+  publ c stat c vo d addNormal zedM nEngage ntF eld(
+      Thr ftDocu nt doc,
+      Str ng f eldNa ,
+       nt normal zedNumEngage nts) throws  OExcept on {
+     f (normal zedNumEngage nts < 1) {
       return;
     }
-    TokenStreamSerializer serializer =
-        new TokenStreamSerializer(ImmutableList.of(new IntTermAttributeSerializer()));
-    TwitterNormalizedMinEngagementTokenStream stream = new
-        TwitterNormalizedMinEngagementTokenStream(normalizedNumEngagements);
-    byte[] serializedStream = serializer.serialize(stream);
-    ThriftFieldData fieldData = new ThriftFieldData().setTokenStreamValue(serializedStream);
-    ThriftField field = new ThriftField().setFieldConfigId(ID_MAPPING.getFieldID(fieldName))
-        .setFieldData(fieldData);
-    doc.addToFields(field);
+    TokenStreamSer al zer ser al zer =
+        new TokenStreamSer al zer( mmutableL st.of(new  ntTermAttr buteSer al zer()));
+    Tw terNormal zedM nEngage ntTokenStream stream = new
+        Tw terNormal zedM nEngage ntTokenStream(normal zedNumEngage nts);
+    byte[] ser al zedStream = ser al zer.ser al ze(stream);
+    Thr ftF eldData f eldData = new Thr ftF eldData().setTokenStreamValue(ser al zedStream);
+    Thr ftF eld f eld = new Thr ftF eld().setF eldConf g d( D_MAPP NG.getF eld D(f eldNa ))
+        .setF eldData(f eldData);
+    doc.addToF elds(f eld);
   }
 
-  public static List<String> getStringValues(
-      ThriftDocument document, EarlybirdFieldConstant field) {
-    return ThriftDocumentUtil.getStringValues(document, field.getFieldName(), ID_MAPPING);
+  publ c stat c L st<Str ng> getStr ngValues(
+      Thr ftDocu nt docu nt, Earlyb rdF eldConstant f eld) {
+    return Thr ftDocu ntUt l.getStr ngValues(docu nt, f eld.getF eldNa (),  D_MAPP NG);
   }
 
-  public static boolean isNullcastFilterSet(ThriftDocument document) {
-    return isFilterSet(document, NULLCAST_FILTER_TERM);
+  publ c stat c boolean  sNullcastF lterSet(Thr ftDocu nt docu nt) {
+    return  sF lterSet(docu nt, NULLCAST_F LTER_TERM);
   }
 
-  public static boolean isSelfThreadFilterSet(ThriftDocument document) {
-    return isFilterSet(document, SELF_THREAD_FILTER_TERM);
+  publ c stat c boolean  sSelfThreadF lterSet(Thr ftDocu nt docu nt) {
+    return  sF lterSet(docu nt, SELF_THREAD_F LTER_TERM);
   }
 
-  public static String getSelfThreadFilterTerm() {
-    return SELF_THREAD_FILTER_TERM;
+  publ c stat c Str ng getSelfThreadF lterTerm() {
+    return SELF_THREAD_F LTER_TERM;
   }
 
-  public static String getDirectedAtFilterTerm() {
-    return DIRECTED_AT_FILTER_TERM;
+  publ c stat c Str ng getD rectedAtF lterTerm() {
+    return D RECTED_AT_F LTER_TERM;
   }
 
-  public static boolean isDirectedAtFilterSet(ThriftDocument document) {
-    return isFilterSet(document, DIRECTED_AT_FILTER_TERM);
+  publ c stat c boolean  sD rectedAtF lterSet(Thr ftDocu nt docu nt) {
+    return  sF lterSet(docu nt, D RECTED_AT_F LTER_TERM);
   }
 
   /**
-   * Check whether given filter is set in the internal field.
+   * C ck w t r g ven f lter  s set  n t   nternal f eld.
    */
-  private static boolean isFilterSet(ThriftDocument document, String filter) {
-    List<String> terms = ThriftDocumentUtil.getStringValues(
-        document, EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(), ID_MAPPING);
-    for (String term : terms) {
-      if (filter.equals(term)) {
+  pr vate stat c boolean  sF lterSet(Thr ftDocu nt docu nt, Str ng f lter) {
+    L st<Str ng> terms = Thr ftDocu ntUt l.getStr ngValues(
+        docu nt, Earlyb rdF eldConstant. NTERNAL_F ELD.getF eldNa (),  D_MAPP NG);
+    for (Str ng term : terms) {
+       f (f lter.equals(term)) {
         return true;
       }
     }

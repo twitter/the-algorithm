@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/b n/env bash
 
-JOB=representation-scorer bazel run --ui_event_filters=-info,-stdout,-stderr --noshow_progress \
-	//relevance-platform/src/main/python/deploy -- "$@"
+JOB=representat on-scorer bazel run --u _event_f lters=- nfo,-stdout,-stderr --noshow_progress \
+	//relevance-platform/src/ma n/python/deploy -- "$@"

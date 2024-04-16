@@ -1,15 +1,15 @@
-package com.twitter.simclustersann.modules
+package com.tw ter.s mclustersann.modules
 
-import com.google.inject.Provides
-import com.twitter.inject.TwitterModule
-import com.twitter.relevance_platform.simclustersann.multicluster.ServiceNameMapper
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.relevance_platform.s mclustersann.mult cluster.Serv ceNa Mapper
+ mport javax. nject.S ngleton
 
-object ServiceNameMapperModule extends TwitterModule {
-  @Singleton
-  @Provides
-  def providesServiceNameMapper(
-  ): ServiceNameMapper = {
-    ServiceNameMapper
+object Serv ceNa MapperModule extends Tw terModule {
+  @S ngleton
+  @Prov des
+  def prov desServ ceNa Mapper(
+  ): Serv ceNa Mapper = {
+    Serv ceNa Mapper
   }
 }

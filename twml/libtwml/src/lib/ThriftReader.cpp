@@ -1,33 +1,33 @@
-#include "internal/endianutils.h"
+# nclude " nternal/end anut ls.h"
 
-#include <twml/ThriftReader.h>
-#include <twml/Error.h>
+# nclude <twml/Thr ftReader.h>
+# nclude <twml/Error.h>
 
-#include <cstring>
+# nclude <cstr ng>
 
-namespace twml {
+na space twml {
 
-uint8_t ThriftReader::readByte() {
-  return readDirect<uint8_t>();
+u nt8_t Thr ftReader::readByte() {
+  return readD rect<u nt8_t>();
 }
 
-int16_t ThriftReader::readInt16() {
-  return betoh16(readDirect<int16_t>());
+ nt16_t Thr ftReader::read nt16() {
+  return betoh16(readD rect< nt16_t>());
 }
 
-int32_t ThriftReader::readInt32() {
-  return betoh32(readDirect<int32_t>());
+ nt32_t Thr ftReader::read nt32() {
+  return betoh32(readD rect< nt32_t>());
 }
 
-int64_t ThriftReader::readInt64() {
-  return betoh64(readDirect<int64_t>());
+ nt64_t Thr ftReader::read nt64() {
+  return betoh64(readD rect< nt64_t>());
 }
 
-double ThriftReader::readDouble() {
+double Thr ftReader::readDouble() {
   double val;
-  int64_t *val_proxy = reinterpret_cast<int64_t*>(&val);
-  *val_proxy = readInt64();
+   nt64_t *val_proxy = re nterpret_cast< nt64_t*>(&val);
+  *val_proxy = read nt64();
   return val;
 }
 
-}  // namespace twml
+}  // na space twml

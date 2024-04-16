@@ -1,102 +1,102 @@
-package com.twitter.search.common.query;
+package com.tw ter.search.common.query;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.funct on.Funct on;
 
-import com.google.common.collect.Maps;
+ mport com.google.common.collect.Maps;
 
-import com.twitter.search.queryparser.query.Query;
+ mport com.tw ter.search.queryparser.query.Query;
 
-import static com.twitter.search.common.query.FieldRankHitInfo.UNSET_DOC_ID;
+ mport stat c com.tw ter.search.common.query.F eldRankH  nfo.UNSET_DOC_ D;
 
 /**
- * Generic helper class containing the data needed to set up and collect field hit attributions.
+ * Gener c  lper class conta n ng t  data needed to set up and collect f eld h  attr but ons.
  */
-public class HitAttributeHelper implements HitAttributeProvider {
-  private final HitAttributeCollector collector;
-  private final Function<Integer, String> fieldIdsToFieldNames;
+publ c class H Attr bute lper  mple nts H Attr buteProv der {
+  pr vate f nal H Attr buteCollector collector;
+  pr vate f nal Funct on< nteger, Str ng> f eld dsToF eldNa s;
 
-  // This is a mapping of type T query nodes to rank id
-  private final Map<Query, Integer> nodeToRankMap;
+  // T   s a mapp ng of type T query nodes to rank  d
+  pr vate f nal Map<Query,  nteger> nodeToRankMap;
 
-  // This is meant to expand individual Query nodes into multiple ranks,
-  // for example, expanding a multi_term_disjunction to include a rank for each disjunction value.
-  private final Map<Query, List<Integer>> expandedNodeToRankMap;
+  // T   s  ant to expand  nd v dual Query nodes  nto mult ple ranks,
+  // for example, expand ng a mult _term_d sjunct on to  nclude a rank for each d sjunct on value.
+  pr vate f nal Map<Query, L st< nteger>> expandedNodeToRankMap;
 
-  // A single-entry cache for hit attribution, so we can reuse the immediate result. Will be used
-  // only when lastDocId matches
-  private ThreadLocal<Map<Integer, List<String>>> lastHitAttrHolder = new ThreadLocal<>();
-  private ThreadLocal<Integer> lastDocIdHolder = ThreadLocal.withInitial(() -> UNSET_DOC_ID);
+  // A s ngle-entry cac  for h  attr but on, so   can reuse t   m d ate result. W ll be used
+  // only w n lastDoc d matc s
+  pr vate ThreadLocal<Map< nteger, L st<Str ng>>> lastH AttrHolder = new ThreadLocal<>();
+  pr vate ThreadLocal< nteger> lastDoc dHolder = ThreadLocal.w h n  al(() -> UNSET_DOC_ D);
 
-  protected HitAttributeHelper(
-      HitAttributeCollector collector,
-      Function<Integer, String> fieldIdsToFieldNames,
-      Map<Query, Integer> nodeToRankMap,
-      Map<Query, List<Integer>> expandedNodeToRankMap) {
-    this.collector = collector;
-    this.fieldIdsToFieldNames = fieldIdsToFieldNames;
-    this.nodeToRankMap = nodeToRankMap;
-    this.expandedNodeToRankMap = expandedNodeToRankMap;
+  protected H Attr bute lper(
+      H Attr buteCollector collector,
+      Funct on< nteger, Str ng> f eld dsToF eldNa s,
+      Map<Query,  nteger> nodeToRankMap,
+      Map<Query, L st< nteger>> expandedNodeToRankMap) {
+    t .collector = collector;
+    t .f eld dsToF eldNa s = f eld dsToF eldNa s;
+    t .nodeToRankMap = nodeToRankMap;
+    t .expandedNodeToRankMap = expandedNodeToRankMap;
   }
 
   /**
-   * Constructs a new {@code HitAttributeHelper} with the specified {@code HitAttributeCollector}
-   * instance and fields.
+   * Constructs a new {@code H Attr bute lper} w h t  spec f ed {@code H Attr buteCollector}
+   *  nstance and f elds.
    *
-   * @param collector a collector instance
-   * @param fieldIdsToFieldNames a list of field names indexed by id
+   * @param collector a collector  nstance
+   * @param f eld dsToF eldNa s a l st of f eld na s  ndexed by  d
    */
-  public HitAttributeHelper(HitAttributeCollector collector, String[] fieldIdsToFieldNames) {
-    this(collector,
-        (fieldId) -> fieldIdsToFieldNames[fieldId],
+  publ c H Attr bute lper(H Attr buteCollector collector, Str ng[] f eld dsToF eldNa s) {
+    t (collector,
+        (f eld d) -> f eld dsToF eldNa s[f eld d],
         Maps.newHashMap(),
         Maps.newHashMap());
   }
 
-  public HitAttributeCollector getFieldRankHitAttributeCollector() {
+  publ c H Attr buteCollector getF eldRankH Attr buteCollector() {
     return collector;
   }
 
   /**
-   * Returns hit attribution information indexed by node rank
+   * Returns h  attr but on  nformat on  ndexed by node rank
    *
-   * @param docId the document id
-   * @return a mapping from the query's node rank to a list of field names that were hit.
+   * @param doc d t  docu nt  d
+   * @return a mapp ng from t  query's node rank to a l st of f eld na s that  re h .
    */
-  public Map<Integer, List<String>> getHitAttribution(int docId) {
-    // check cache first so we don't have to recompute the same thing.
-    if (lastDocIdHolder.get() == docId) {
-      return lastHitAttrHolder.get();
+  publ c Map< nteger, L st<Str ng>> getH Attr but on( nt doc d) {
+    // c ck cac  f rst so   don't have to recompute t  sa  th ng.
+     f (lastDoc dHolder.get() == doc d) {
+      return lastH AttrHolder.get();
     }
 
-    lastDocIdHolder.set(docId);
-    Map<Integer, List<String>> hitAttribution =
-        collector.getHitAttribution(docId, fieldIdsToFieldNames);
-    lastHitAttrHolder.set(hitAttribution);
-    return hitAttribution;
+    lastDoc dHolder.set(doc d);
+    Map< nteger, L st<Str ng>> h Attr but on =
+        collector.getH Attr but on(doc d, f eld dsToF eldNa s);
+    lastH AttrHolder.set(h Attr but on);
+    return h Attr but on;
   }
 
   /**
-   * Adds a new node and its respective rank to the helper's node-to-rank map
-   * Will throw an exception if attempting to add/update an existing node
+   * Adds a new node and  s respect ve rank to t   lper's node-to-rank map
+   * W ll throw an except on  f attempt ng to add/update an ex st ng node
    *
-   * @param node the query node
-   * @param rank the rank associated with the node
+   * @param node t  query node
+   * @param rank t  rank assoc ated w h t  node
    */
-  public void addNodeRank(Query node, int rank) {
-    // if there are two of the same terms, just map them to the first rank, they should get the same
-    // hits back
-    if (!nodeToRankMap.containsKey(node)) {
+  publ c vo d addNodeRank(Query node,  nt rank) {
+    //  f t re are two of t  sa  terms, just map t m to t  f rst rank, t y should get t  sa 
+    // h s back
+     f (!nodeToRankMap.conta nsKey(node)) {
       nodeToRankMap.put(node, rank);
     }
   }
 
-  public Map<Query, Integer> getNodeToRankMap() {
+  publ c Map<Query,  nteger> getNodeToRankMap() {
     return nodeToRankMap;
   }
 
-  public Map<Query, List<Integer>> getExpandedNodeToRankMap() {
+  publ c Map<Query, L st< nteger>> getExpandedNodeToRankMap() {
     return expandedNodeToRankMap;
   }
 }

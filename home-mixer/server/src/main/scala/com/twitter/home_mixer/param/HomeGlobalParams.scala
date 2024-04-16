@@ -1,86 +1,86 @@
-package com.twitter.home_mixer.param
+package com.tw ter.ho _m xer.param
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
 /**
- * Instantiate Params that do not relate to a specific product.
+ *  nstant ate Params that do not relate to a spec f c product.
  *
- * @see [[com.twitter.product_mixer.core.product.ProductParamConfig.supportedClientFSName]]
+ * @see [[com.tw ter.product_m xer.core.product.ProductParamConf g.supportedCl entFSNa ]]
  */
-object HomeGlobalParams {
+object Ho GlobalParams {
 
   /**
-   * This param is used to disable ads injection for timelines served by home-mixer.
-   * It is currently used to maintain user-role based no-ads lists for automation accounts,
-   * and should NOT be used for other purposes.
+   * T  param  s used to d sable ads  nject on for t  l nes served by ho -m xer.
+   *    s currently used to ma nta n user-role based no-ads l sts for automat on accounts,
+   * and should NOT be used for ot r purposes.
    */
-  object AdsDisableInjectionBasedOnUserRoleParam
-      extends FSParam("home_mixer_ads_disable_injection_based_on_user_role", false)
+  object AdsD sable nject onBasedOnUserRoleParam
+      extends FSParam("ho _m xer_ads_d sable_ nject on_based_on_user_role", false)
 
-  object EnableSendScoresToClient
+  object EnableSendScoresToCl ent
       extends FSParam[Boolean](
-        name = "home_mixer_enable_send_scores_to_client",
+        na  = "ho _m xer_enable_send_scores_to_cl ent",
         default = false
       )
 
-  object EnableNahFeedbackInfoParam
+  object EnableNahFeedback nfoParam
       extends FSParam[Boolean](
-        name = "home_mixer_enable_nah_feedback_info",
+        na  = "ho _m xer_enable_nah_feedback_ nfo",
         default = false
       )
 
-  object MaxNumberReplaceInstructionsParam
-      extends FSBoundedParam[Int](
-        name = "home_mixer_max_number_replace_instructions",
+  object MaxNumberReplace nstruct onsParam
+      extends FSBoundedParam[ nt](
+        na  = "ho _m xer_max_number_replace_ nstruct ons",
         default = 100,
-        min = 0,
+        m n = 0,
         max = 200
       )
 
-  object TimelinesPersistenceStoreMaxEntriesPerClient
-      extends FSBoundedParam[Int](
-        name = "home_mixer_timelines_persistence_store_max_entries_per_client",
+  object T  l nesPers stenceStoreMaxEntr esPerCl ent
+      extends FSBoundedParam[ nt](
+        na  = "ho _m xer_t  l nes_pers stence_store_max_entr es_per_cl ent",
         default = 1800,
-        min = 500,
+        m n = 500,
         max = 5000
       )
 
-  object EnableNewTweetsPillAvatarsParam
+  object EnableNewT etsP llAvatarsParam
       extends FSParam[Boolean](
-        name = "home_mixer_enable_new_tweets_pill_avatars",
+        na  = "ho _m xer_enable_new_t ets_p ll_avatars",
         default = true
       )
 
-  object EnableSocialContextParam
+  object EnableSoc alContextParam
       extends FSParam[Boolean](
-        name = "home_mixer_enable_social_context",
+        na  = "ho _m xer_enable_soc al_context",
         default = true
       )
 
-  object EnableAdvertiserBrandSafetySettingsFeatureHydratorParam
+  object EnableAdvert serBrandSafetySett ngsFeatureHydratorParam
       extends FSParam[Boolean](
-        name = "home_mixer_enable_advertiser_brand_safety_settings_feature_hydrator",
+        na  = "ho _m xer_enable_advert ser_brand_safety_sett ngs_feature_hydrator",
         default = true
       )
 
-  object EnableImpressionBloomFilter
+  object Enable mpress onBloomF lter
       extends FSParam[Boolean](
-        name = "home_mixer_enable_impression_bloom_filter",
+        na  = "ho _m xer_enable_ mpress on_bloom_f lter",
         default = false
       )
 
-  object ImpressionBloomFilterFalsePositiveRateParam
+  object  mpress onBloomF lterFalsePos  veRateParam
       extends FSBoundedParam[Double](
-        name = "home_mixer_impression_bloom_filter_false_positive_rate",
+        na  = "ho _m xer_ mpress on_bloom_f lter_false_pos  ve_rate",
         default = 0.005,
-        min = 0.001,
+        m n = 0.001,
         max = 0.01
       )
 
-  object EnableScribeServedCandidatesParam
+  object EnableScr beServedCand datesParam
       extends FSParam[Boolean](
-        name = "home_mixer_served_tweets_enable_scribing",
+        na  = "ho _m xer_served_t ets_enable_scr b ng",
         default = true
       )
 }

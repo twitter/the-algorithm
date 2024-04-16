@@ -1,64 +1,64 @@
-package com.twitter.product_mixer.component_library.filter
+package com.tw ter.product_m xer.component_l brary.f lter
 
-import com.twitter.product_mixer.component_library.filter.FeatureConditionalFilter.IdentifierInfix
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.component_l brary.f lter.FeatureCond  onalF lter. dent f er nf x
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lterResult
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
 /**
- * Predicate to apply to candidate feature, to determine whether to apply filter.
- * True indicates we will apply the filter. False indicates to keep candidate and not apply filter.
+ * Pred cate to apply to cand date feature, to determ ne w t r to apply f lter.
+ * True  nd cates   w ll apply t  f lter. False  nd cates to keep cand date and not apply f lter.
  * @tparam FeatureValue
  */
-trait ShouldApplyFilter[FeatureValue] {
+tra  ShouldApplyF lter[FeatureValue] {
   def apply(feature: FeatureValue): Boolean
 }
 
 /**
- * A filter that applies the [[filter]] for candidates for which [[shouldApplyFilter]] is true, and keeps the others
- * @param feature feature to determine whether to apply underyling filter
- * @param shouldApplyFilter function to determine whether to apply filter
- * @param filter the actual filter to apply if shouldApplyFilter is True
- * @tparam Query The domain model for the query or request
- * @tparam Candidate The type of the candidates
+ * A f lter that appl es t  [[f lter]] for cand dates for wh ch [[shouldApplyF lter]]  s true, and keeps t  ot rs
+ * @param feature feature to determ ne w t r to apply underyl ng f lter
+ * @param shouldApplyF lter funct on to determ ne w t r to apply f lter
+ * @param f lter t  actual f lter to apply  f shouldApplyF lter  s True
+ * @tparam Query T  doma n model for t  query or request
+ * @tparam Cand date T  type of t  cand dates
  * @tparam FeatureValueType
  */
-case class FeatureValueConditionalFilter[
-  -Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
+case class FeatureValueCond  onalF lter[
+  -Query <: P pel neQuery,
+  Cand date <: Un versalNoun[Any],
   FeatureValueType
 ](
-  feature: Feature[Candidate, FeatureValueType],
-  shouldApplyFilter: ShouldApplyFilter[FeatureValueType],
-  filter: Filter[Query, Candidate])
-    extends Filter[Query, Candidate] {
-  override val identifier: FilterIdentifier = FilterIdentifier(
-    feature.toString + IdentifierInfix + filter.identifier.name
+  feature: Feature[Cand date, FeatureValueType],
+  shouldApplyF lter: ShouldApplyF lter[FeatureValueType],
+  f lter: F lter[Query, Cand date])
+    extends F lter[Query, Cand date] {
+  overr de val  dent f er: F lter dent f er = F lter dent f er(
+    feature.toStr ng +  dent f er nf x + f lter. dent f er.na 
   )
 
-  override val alerts: Seq[Alert] = filter.alerts
+  overr de val alerts: Seq[Alert] = f lter.alerts
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
-    val (candidatesToFilter, candidatesToKeep) = candidates.partition { candidate =>
-      shouldApplyFilter(candidate.features.get(feature))
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): St ch[F lterResult[Cand date]] = {
+    val (cand datesToF lter, cand datesToKeep) = cand dates.part  on { cand date =>
+      shouldApplyF lter(cand date.features.get(feature))
     }
-    filter.apply(query, candidatesToFilter).map { filterResult =>
-      FilterResult(
-        kept = filterResult.kept ++ candidatesToKeep.map(_.candidate),
-        removed = filterResult.removed)
+    f lter.apply(query, cand datesToF lter).map { f lterResult =>
+      F lterResult(
+        kept = f lterResult.kept ++ cand datesToKeep.map(_.cand date),
+        removed = f lterResult.removed)
     }
   }
 }
 
-object FeatureConditionalFilter {
-  val IdentifierInfix = "FeatureConditional"
+object FeatureCond  onalF lter {
+  val  dent f er nf x = "FeatureCond  onal"
 }

@@ -1,942 +1,942 @@
 """
-This module contains utility functions for twml.
+T  module conta ns ut l y funct ons for twml.
 """
 
-import argparse
-from datetime import datetime
-import itertools
-import json
-import logging as _logging
-import os
-import re
+ mport argparse
+from datet    mport datet  
+ mport  ertools
+ mport json
+ mport logg ng as _logg ng
+ mport os
+ mport re
 
-from twitter.ml.common.resources import AuroraPath
-from twitter.deepbird.hparam import HParams
-from twitter.deepbird.io.util import (
-  _get_feature_id,  # noqa: F401
-  feature_id,  # noqa: F401
+from tw ter.ml.common.res ces  mport AuroraPath
+from tw ter.deepb rd.hparam  mport HParams
+from tw ter.deepb rd. o.ut l  mport (
+  _get_feature_ d,  # noqa: F401
+  feature_ d,  # noqa: F401
   preprocess_feature_regex,  # noqa: F401
   preprocess_path,  # noqa: F401
-  sanitize_hdfs_path,  # noqa: F401
-  is_string,  # noqa: F401
-  list_files,  # noqa: F401
-  match_files,  # noqa: F401
+  san  ze_hdfs_path,  # noqa: F401
+   s_str ng,  # noqa: F401
+  l st_f les,  # noqa: F401
+  match_f les,  # noqa: F401
 )
-from twitter.deepbird.io.legacy.util import (
+from tw ter.deepb rd. o.legacy.ut l  mport (
   batch_apply,  # noqa: F401
   boolean_mask,  # noqa: F401
-  fixed_length_tensor,  # noqa: F401
+  f xed_length_tensor,  # noqa: F401
 )
-from twitter.deepbird.sparse.util import (
+from tw ter.deepb rd.sparse.ut l  mport (
   convert_to_sparse,  # noqa: F401
-  limit_bits,  # noqa: F401
+  l m _b s,  # noqa: F401
 )
 
-from dateutil import rrule
-from joblib import delayed, Parallel
-from six import string_types
+from dateut l  mport rrule
+from jobl b  mport delayed, Parallel
+from s x  mport str ng_types
 
-from absl import logging
-from libtwml import CLIB, OPLIB  # noqa: F401
-import tensorflow.compat.v1 as tf
-from tensorflow.python.platform import tf_logging
-import twml
-from twml.feature_config import FeatureConfigBuilder
-
-
-# big_prime is less than 2**32
-# This just needs to be co-prime with powers of 2
-# any large prime is sufficient, but it's not necessary.
-HASHING_PRIME = 2479700537
+from absl  mport logg ng
+from l btwml  mport CL B, OPL B  # noqa: F401
+ mport tensorflow.compat.v1 as tf
+from tensorflow.python.platform  mport tf_logg ng
+ mport twml
+from twml.feature_conf g  mport FeatureConf gBu lder
 
 
-def multiplicative_hash(input, hash_constant=HASHING_PRIME):
-  return input * hash_constant
+# b g_pr    s less than 2**32
+# T  just needs to be co-pr   w h po rs of 2
+# any large pr    s suff c ent, but  's not necessary.
+HASH NG_PR ME = 2479700537
 
 
-def _return_tensors_from_checkpoint_folder(init_dir, model_name=None):
-  """Returns tensors list from a checkpoint folder
+def mult pl cat ve_hash( nput, hash_constant=HASH NG_PR ME):
+  return  nput * hash_constant
+
+
+def _return_tensors_from_c ckpo nt_folder( n _d r, model_na =None):
+  """Returns tensors l st from a c ckpo nt folder
 
   Args:
-    init_dir: Name of the checkpoint directory.
-    model_name: the model which we will use to obtain the checkpoint
-      (e.g. model.ckpt-50000) if set to None it will default to the
-      latest model saved in the checkpont file.
+     n _d r: Na  of t  c ckpo nt d rectory.
+    model_na : t  model wh ch   w ll use to obta n t  c ckpo nt
+      (e.g. model.ckpt-50000)  f set to None   w ll default to t 
+      latest model saved  n t  c ckpont f le.
 
   """
-  if model_name is None:
-    # gets the most recently generated model.cpkt file
-    model_path = tf.train.latest_checkpoint(init_dir)
-    if model_path is None:
-      raise ValueError("Could not find a valid model checkpoint inside the directory")
+   f model_na   s None:
+    # gets t  most recently generated model.cpkt f le
+    model_path = tf.tra n.latest_c ckpo nt( n _d r)
+     f model_path  s None:
+      ra se ValueError("Could not f nd a val d model c ckpo nt  ns de t  d rectory")
   else:
-    model_path = os.path.join(init_dir, model_name)
-  reader = tf.train.NewCheckpointReader(model_path)
+    model_path = os.path.jo n( n _d r, model_na )
+  reader = tf.tra n.NewC ckpo ntReader(model_path)
   try:
-    return (reader.debug_string().decode("utf-8"))
+    return (reader.debug_str ng().decode("utf-8"))
   except OSError:
-    logging.error('Could not decode the string')
+    logg ng.error('Could not decode t  str ng')
 
 
-def get_scope_dict(init_dir, incoming_scope_name, current_scope_name, model_name=None):
-  """Returns tensors map from a checkpoint file.
+def get_scope_d ct( n _d r,  ncom ng_scope_na , current_scope_na , model_na =None):
+  """Returns tensors map from a c ckpo nt f le.
 
   Args:
-    file_name:
-      Name of the checkpoint directory.
-    incoming_scope_name:
-      scope name of the previous phase
-    current_scope_name:
-      scope name of current phase
-    model_name:
-      the model which we will use to obtain the checkpoint
-      (e.g. model.ckpt-50000) if set to None it will default
-      to the latest model saved in the checkpoint file.
+    f le_na :
+      Na  of t  c ckpo nt d rectory.
+     ncom ng_scope_na :
+      scope na  of t  prev ous phase
+    current_scope_na :
+      scope na  of current phase
+    model_na :
+      t  model wh ch   w ll use to obta n t  c ckpo nt
+      (e.g. model.ckpt-50000)  f set to None   w ll default
+      to t  latest model saved  n t  c ckpo nt f le.
   Returns:
-    init_map:
-      init_map which will be inputted to the checkpoint
+     n _map:
+       n _map wh ch w ll be  nputted to t  c ckpo nt
   """
-  init_map = {}
-  reader_dump = _return_tensors_from_checkpoint_folder(init_dir=init_dir,
-                                                       model_name=model_name).splitlines()
-  for member in reader_dump:
-    # remove global_step since it is not necessary
-    if 'global_step' not in member:
-      saved_variables = str(member.split(" ")[0])
-      saved_scope = saved_variables.rsplit('/', 1)[0] + "/"
-      new_scope = saved_scope.replace(incoming_scope_name, current_scope_name, 1)
-      # create key in init_map
-      if saved_scope not in init_map.keys():  # pylint: disable=dict-keys-not-iterating
-        init_map[saved_scope] = new_scope
-  return init_map
+   n _map = {}
+  reader_dump = _return_tensors_from_c ckpo nt_folder( n _d r= n _d r,
+                                                       model_na =model_na ).spl l nes()
+  for  mber  n reader_dump:
+    # remove global_step s nce    s not necessary
+     f 'global_step' not  n  mber:
+      saved_var ables = str( mber.spl (" ")[0])
+      saved_scope = saved_var ables.rspl ('/', 1)[0] + "/"
+      new_scope = saved_scope.replace( ncom ng_scope_na , current_scope_na , 1)
+      # create key  n  n _map
+       f saved_scope not  n  n _map.keys():  # pyl nt: d sable=d ct-keys-not- erat ng
+         n _map[saved_scope] = new_scope
+  return  n _map
 
 
-def get_init_map(
-        init_from_dir,
-        exclude_var_names=None,
-        exclude_name_scopes=None,
-        name_scope_to_remove=None,
-        name_scope_to_prepend=None):
+def get_ n _map(
+         n _from_d r,
+        exclude_var_na s=None,
+        exclude_na _scopes=None,
+        na _scope_to_remove=None,
+        na _scope_to_prepend=None):
   """
-  Builds a map for initializing from a checkpoint (see tf.train.init_from_checkpoint).
+  Bu lds a map for  n  al z ng from a c ckpo nt (see tf.tra n. n _from_c ckpo nt).
 
-  It assumes that the latter part of the variable names are consistent between the checkpoint and
-  the new model, but their name_scopes may be different. If the checkpoint model has variable names
-  of the form old/scope/var/foo, and the corresponding variable names for the new model should be
-  my/new/scope/var/foo, then you should set name_scope_to_remove = 'old/' and
-  name_scope_to_prepend = 'my/new/'.
+    assu s that t  latter part of t  var able na s are cons stent bet en t  c ckpo nt and
+  t  new model, but t  r na _scopes may be d fferent.  f t  c ckpo nt model has var able na s
+  of t  form old/scope/var/foo, and t  correspond ng var able na s for t  new model should be
+   /new/scope/var/foo, t n   should set na _scope_to_remove = 'old/' and
+  na _scope_to_prepend = ' /new/'.
 
-  This function can be used to
+  T  funct on can be used to
 
-  1. Generate an ``init_map`` map that can be passed to the ``Trainer`` init or
-  2. Used to generate an ``init_map`` directly inside ``build_graph_fn``, in
-     which case it should be passed directly to ``tf.train.init_from_checkpoint`` inside
-     ``build_graph_fn``, in which case you do not also need to specify the ``init_map`` argument to
-     the trainer.
+  1. Generate an `` n _map`` map that can be passed to t  ``Tra ner``  n  or
+  2. Used to generate an `` n _map`` d rectly  ns de ``bu ld_graph_fn``,  n
+     wh ch case   should be passed d rectly to ``tf.tra n. n _from_c ckpo nt``  ns de
+     ``bu ld_graph_fn``,  n wh ch case   do not also need to spec fy t  `` n _map`` argu nt to
+     t  tra ner.
 
-  Parameters
+  Para ters
   ----------
-  init_from_dir: Directory containing checkpoint
-  exclude_var_names: list[str]
-    List of variables in the checkpoint that should be excluded from the map.
-  exclude_name_scopes: list[str]
-    List of name_scopes in the checkpoint model that should be excluded from the map.
-  name_scope_to_remove: str
-    portion of name_scope for checkpoint variables that should not be included in variable names
+   n _from_d r: D rectory conta n ng c ckpo nt
+  exclude_var_na s: l st[str]
+    L st of var ables  n t  c ckpo nt that should be excluded from t  map.
+  exclude_na _scopes: l st[str]
+    L st of na _scopes  n t  c ckpo nt model that should be excluded from t  map.
+  na _scope_to_remove: str
+    port on of na _scope for c ckpo nt var ables that should not be  ncluded  n var able na s
     for new model.
-  name_scope_to_prepend: str
-    name_scope to prepend to variable names in checkpoint to give variable names for new model.
+  na _scope_to_prepend: str
+    na _scope to prepend to var able na s  n c ckpo nt to g ve var able na s for new model.
 
   Returns
   -------
-  dict
-    keys are variable names in the checkpoint and values are variable names in the new model,
-    into which the checkpoint parameters should be loaded.
+  d ct
+    keys are var able na s  n t  c ckpo nt and values are var able na s  n t  new model,
+     nto wh ch t  c ckpo nt para ters should be loaded.
   """
-  vars_to_restore = get_checkpoint_variable_names(
-    init_from_dir,
-    exclude_var_names=exclude_var_names,
-    exclude_scopes=exclude_name_scopes,
+  vars_to_restore = get_c ckpo nt_var able_na s(
+     n _from_d r,
+    exclude_var_na s=exclude_var_na s,
+    exclude_scopes=exclude_na _scopes,
   )
 
-  if name_scope_to_prepend is not None:
-    if not name_scope_to_prepend.endswith('/'):
-      name_scope_to_prepend += '/'
+   f na _scope_to_prepend  s not None:
+     f not na _scope_to_prepend.endsw h('/'):
+      na _scope_to_prepend += '/'
 
-  if name_scope_to_remove is not None:
-    if not name_scope_to_remove.endswith('/'):
-      name_scope_to_remove += '/'
+   f na _scope_to_remove  s not None:
+     f not na _scope_to_remove.endsw h('/'):
+      na _scope_to_remove += '/'
 
-  init_map = {}
+   n _map = {}
 
-  for var_name in vars_to_restore:
-    var_name_checkpoint = var_name
+  for var_na   n vars_to_restore:
+    var_na _c ckpo nt = var_na 
 
-    if name_scope_to_remove is not None:
-      var_name = var_name.replace(name_scope_to_remove, '')
+     f na _scope_to_remove  s not None:
+      var_na  = var_na .replace(na _scope_to_remove, '')
 
-    var_name_new_model = var_name
+    var_na _new_model = var_na 
 
-    if name_scope_to_prepend is not None:
-      var_name_new_model = name_scope_to_prepend + var_name_new_model
+     f na _scope_to_prepend  s not None:
+      var_na _new_model = na _scope_to_prepend + var_na _new_model
 
-    init_map[var_name_checkpoint] = var_name_new_model
+     n _map[var_na _c ckpo nt] = var_na _new_model
 
-  return init_map
+  return  n _map
 
 
-def get_checkpoint_variable_names(model_dir, exclude_var_names=None, exclude_scopes=None):
+def get_c ckpo nt_var able_na s(model_d r, exclude_var_na s=None, exclude_scopes=None):
   """
-  Gets a list of variable names from the latest checkpoint in model_dir.
-  Removes variables with scope defined by exclude_scopes, and/or with names defined by
-  exclude_var_names.
+  Gets a l st of var able na s from t  latest c ckpo nt  n model_d r.
+  Removes var ables w h scope def ned by exclude_scopes, and/or w h na s def ned by
+  exclude_var_na s.
 
   Args:
-    model_dir (str): Directory containing checkpoint file for the pre-trained model
-    exclude_var_names (list): Optional variable names to exclude (can include full/partial scope)
-    exclude_scopes (list): Optional scopes to exclude
+    model_d r (str): D rectory conta n ng c ckpo nt f le for t  pre-tra ned model
+    exclude_var_na s (l st): Opt onal var able na s to exclude (can  nclude full/part al scope)
+    exclude_scopes (l st): Opt onal scopes to exclude
 
   Returns:
-    list: variable names
+    l st: var able na s
   """
-  checkpoint_path = tf.train.latest_checkpoint(model_dir)
-  variables_and_shapes = tf.train.list_variables(checkpoint_path)
+  c ckpo nt_path = tf.tra n.latest_c ckpo nt(model_d r)
+  var ables_and_shapes = tf.tra n.l st_var ables(c ckpo nt_path)
 
-  def _keep(name):
-    if exclude_scopes and any(name.startswith(exc_scope) for exc_scope in exclude_scopes):
+  def _keep(na ):
+     f exclude_scopes and any(na .startsw h(exc_scope) for exc_scope  n exclude_scopes):
       return False
-    if exclude_var_names and any(name.endswith(exc_var) for exc_var in exclude_var_names):
+     f exclude_var_na s and any(na .endsw h(exc_var) for exc_var  n exclude_var_na s):
       return False
     return True
 
-  names = [x[0] for x in variables_and_shapes if _keep(x[0])]
+  na s = [x[0] for x  n var ables_and_shapes  f _keep(x[0])]
 
-  return names
+  return na s
 
 
-def to_snake_case(name):
+def to_snake_case(na ):
   """
-  Changes name to snake case
+  Changes na  to snake case
   """
-  intermediate = re.sub('(.)([A-Z][a-z0-9]+)', r'\1_\2', name)
-  insecure = re.sub('([a-z])([A-Z])', r'\1_\2', intermediate).lower()
-  # If the class is private the name starts with "_" which is not secure
-  # for creating scopes. We prefix the name with "private" in this case.
-  if insecure[0] != '_':
-    return insecure
-  return 'private' + insecure
+   nter d ate = re.sub('(.)([A-Z][a-z0-9]+)', r'\1_\2', na )
+   nsecure = re.sub('([a-z])([A-Z])', r'\1_\2',  nter d ate).lo r()
+  #  f t  class  s pr vate t  na  starts w h "_" wh ch  s not secure
+  # for creat ng scopes.   pref x t  na  w h "pr vate"  n t  case.
+   f  nsecure[0] != '_':
+    return  nsecure
+  return 'pr vate' +  nsecure
 
 
-def copy_phase_inputs(init_dir, dest_dir):
-  """Automatically copies the .json.tf from the init_dir to save_dir
-  so we can load multiple parameters at the same time.
+def copy_phase_ nputs( n _d r, dest_d r):
+  """Automat cally cop es t  .json.tf from t   n _d r to save_d r
+  so   can load mult ple para ters at t  sa  t  .
 
   Args:
-    init_dir:
-      Name of the checkpoint directory.
-    dest_dir:
-      Name of the output directory.
+     n _d r:
+      Na  of t  c ckpo nt d rectory.
+    dest_d r:
+      Na  of t  output d rectory.
   """
-  if init_dir is not None:
-    # we are using tf.io.gfile so we can use it with both local and hdfs paths
-    for files in tf.io.gfile.listdir(init_dir):
-      if files.endswith(".json.tf"):
-        src_file = os.path.join(init_dir, files)
-        dest_file = os.path.join(dest_dir, files)
-        if not tf.io.gfile.exists(dest_dir):
-          # creates the folder
+   f  n _d r  s not None:
+    #   are us ng tf. o.gf le so   can use   w h both local and hdfs paths
+    for f les  n tf. o.gf le.l std r( n _d r):
+       f f les.endsw h(".json.tf"):
+        src_f le = os.path.jo n( n _d r, f les)
+        dest_f le = os.path.jo n(dest_d r, f les)
+         f not tf. o.gf le.ex sts(dest_d r):
+          # creates t  folder
           try:
-            tf.io.gfile.makedirs(dest_dir)
-          # to prevent racing condition
+            tf. o.gf le.maked rs(dest_d r)
+          # to prevent rac ng cond  on
           except OSError:
-            if not tf.io.gfile.isdir(dest_dir):
-              raise
-        # dest_file may be old if it exists and
-        # dest_file gets copied several times in distributed training
-        tf.io.gfile.copy(src_file, dest_file, overwrite=True)
+             f not tf. o.gf le. sd r(dest_d r):
+              ra se
+        # dest_f le may be old  f   ex sts and
+        # dest_f le gets cop ed several t  s  n d str buted tra n ng
+        tf. o.gf le.copy(src_f le, dest_f le, overwr e=True)
 
 
-def rehash_sparse_features_nbits(sp_a, nbits, hash_fn=multiplicative_hash):
+def rehash_sparse_features_nb s(sp_a, nb s, hash_fn=mult pl cat ve_hash):
   """
-  Rehash the feature ids of the sparse tensor,
-  and limit the output to n bits.
+  Rehash t  feature  ds of t  sparse tensor,
+  and l m  t  output to n b s.
 
-  This is useful for making the distribution of
-  feature_ids more uniform, which may improve performance
-  in some situations.
+  T   s useful for mak ng t  d str but on of
+  feature_ ds more un form, wh ch may  mprove performance
+   n so  s uat ons.
 
-  This would typically be used on the output of
-  PercentileDiscretizer, since it assigns many
-  bins to low-valued output feature ids.
+  T  would typ cally be used on t  output of
+  Percent leD scret zer, s nce   ass gns many
+  b ns to low-valued output feature  ds.
 
-  Input feature IDs should take values less than 2**32,
-  and nbits should be less than 32
+   nput feature  Ds should take values less than 2**32,
+  and nb s should be less than 32
 
   Args:
     sp_a:
       a tf.SparseTensor object
-    nbits:
-      integer number of bits to mask output feature_ids
+    nb s:
+       nteger number of b s to mask output feature_ ds
     hash_fn:
-      Function that takes integer values and returns hashes of these values.
-      The output does not need to be masked to the desired number of bits,
-      as this masking will be taken care of. Default value = multiplicative_hash.
+      Funct on that takes  nteger values and returns has s of t se values.
+      T  output does not need to be masked to t  des red number of b s,
+      as t  mask ng w ll be taken care of. Default value = mult pl cat ve_hash.
 
   Returns:
     a new tf.SparseTensor
   """
 
-  feature_ids = sp_a.indices[:, 1]
-  feature_ids = hash_fn(feature_ids)
+  feature_ ds = sp_a. nd ces[:, 1]
+  feature_ ds = hash_fn(feature_ ds)
 
-  sample_ids = sp_a.indices[:, 0]
+  sample_ ds = sp_a. nd ces[:, 0]
   values = sp_a.values
   dense_shape = sp_a.dense_shape
 
-  indices = tf.stack([sample_ids, feature_ids], axis=1)
+   nd ces = tf.stack([sample_ ds, feature_ ds], ax s=1)
 
-  sp_a = tf.SparseTensor(indices, values, dense_shape)
+  sp_a = tf.SparseTensor( nd ces, values, dense_shape)
 
-  # note - we need 2**nbits >= batch size
-  # otherwise, sample_ids will be squashed by the mask.
-  return limit_sparse_tensor_size(sp_a, nbits)
+  # note -   need 2**nb s >= batch s ze
+  # ot rw se, sample_ ds w ll be squas d by t  mask.
+  return l m _sparse_tensor_s ze(sp_a, nb s)
 
 
 def convert_to_hparams(opt):
   """
-  Converts argparse.Namespace object to twitter.deepbird.hparam.hparam.HParams.
-  Note that tensorflow.contrib.training.HParams is gone in TF 2.x, and we forward ported
-  tensorflow.contrib.training.HParams to twitter.deepbird.hparam.hapram.HParams.
+  Converts argparse.Na space object to tw ter.deepb rd.hparam.hparam.HParams.
+  Note that tensorflow.contr b.tra n ng.HParams  s gone  n TF 2.x, and   forward ported
+  tensorflow.contr b.tra n ng.HParams to tw ter.deepb rd.hparam.hapram.HParams.
 
-  NOTE: If you are using estimators, please don't call this method and directly pass python dict
-  to TensorFlow estimator. Starting TensorFlow 2.0, Estimator will only accept dicts.
+  NOTE:  f   are us ng est mators, please don't call t   thod and d rectly pass python d ct
+  to TensorFlow est mator. Start ng TensorFlow 2.0, Est mator w ll only accept d cts.
   """
 
-  # Convert to dict so we can iterate through it cleanly.
-  if isinstance(opt, argparse.Namespace):
-    params_dict = vars(opt)
-  elif isinstance(opt, dict):
-    params_dict = opt
-  elif isinstance(opt, HParams):
-    logging.warning('If you are using Estimator, please pass python dict directly to Estimator.')
-    params_dict = opt.values()
+  # Convert to d ct so   can  erate through   cleanly.
+   f  s nstance(opt, argparse.Na space):
+    params_d ct = vars(opt)
+  el f  s nstance(opt, d ct):
+    params_d ct = opt
+  el f  s nstance(opt, HParams):
+    logg ng.warn ng(' f   are us ng Est mator, please pass python d ct d rectly to Est mator.')
+    params_d ct = opt.values()
   else:
-    raise ValueError("Input can not be of type %s. "
-                     "It can be one of { argparse.Namespace, dict, "
-                     "twitter.deepbird.hparam.HParams}."
+    ra se ValueError(" nput can not be of type %s. "
+                     "  can be one of { argparse.Na space, d ct, "
+                     "tw ter.deepb rd.hparam.HParams}."
                      % type(opt))
 
   params = HParams()
-  # Hack to convert all parameters from hdfs:/// format to hdfs://default/
-  # Note: .items() makes a copy in python 2.7, but that is fine since the performance isn't critical.
-  for key, val in params_dict.items():
-    val = params_dict[key]
-    # Fix the path if the value is a string
-    if isinstance(val, str):
-      params.add_hparam(key, sanitize_hdfs_path(val))
+  # Hack to convert all para ters from hdfs:/// format to hdfs://default/
+  # Note: . ems() makes a copy  n python 2.7, but that  s f ne s nce t  performance  sn't cr  cal.
+  for key, val  n params_d ct. ems():
+    val = params_d ct[key]
+    # F x t  path  f t  value  s a str ng
+     f  s nstance(val, str):
+      params.add_hparam(key, san  ze_hdfs_path(val))
     else:
       params.add_hparam(key, val)
 
   return params
 
 
-def dynamic_partition(features, partitions, num_partitions=2, name=None):
+def dynam c_part  on(features, part  ons, num_part  ons=2, na =None):
   """
-  Partitions each of the tensor in features using the provided mask.
+  Part  ons each of t  tensor  n features us ng t  prov ded mask.
 
   Args:
     features:
-      A single tensor or an iterable of tensors (list, tuple, dict)
-    partitions:
-      A bool or integer tensor representing the partitions.
+      A s ngle tensor or an  erable of tensors (l st, tuple, d ct)
+    part  ons:
+      A bool or  nteger tensor represent ng t  part  ons.
 
-  Returns partitioned outputs as a list. Each element of the list is the same type as features.
+  Returns part  oned outputs as a l st. Each ele nt of t  l st  s t  sa  type as features.
 
-  This uses tf.dynamic_partition but adds the following niceties:
-    - features can be a list or dict of different tensor types.
-    - only a partition tensor is used to partition all the feature tensors recursively.
-    - the partition tensor is automatically converted into an integer tensor.
-    - defaults to num_partitions == 2
+  T  uses tf.dynam c_part  on but adds t  follow ng n cet es:
+    - features can be a l st or d ct of d fferent tensor types.
+    - only a part  on tensor  s used to part  on all t  feature tensors recurs vely.
+    - t  part  on tensor  s automat cally converted  nto an  nteger tensor.
+    - defaults to num_part  ons == 2
   """
 
-  if not isinstance(features, (dict, list, tuple, tf.Tensor)):
-    raise AssertionError("features container must be a dict, list, or tuple, tf.Tensor")
+   f not  s nstance(features, (d ct, l st, tuple, tf.Tensor)):
+    ra se Assert onError("features conta ner must be a d ct, l st, or tuple, tf.Tensor")
 
-  if isinstance(partitions, tf.Tensor):
-    partitions = tf.cast(partitions, tf.int32)
+   f  s nstance(part  ons, tf.Tensor):
+    part  ons = tf.cast(part  ons, tf. nt32)
 
-  if isinstance(features, tf.Tensor):
-    return tf.dynamic_partition(features, partitions, num_partitions, name)
+   f  s nstance(features, tf.Tensor):
+    return tf.dynam c_part  on(features, part  ons, num_part  ons, na )
 
   outputs = []
-  for _ in range(num_partitions):
-    if isinstance(features, (tuple, list)):
-      # Create an empty list of lists first, will be converted to right type afterwards.
-      outputs.append([None for _ in range(len(features))])
+  for _  n range(num_part  ons):
+     f  s nstance(features, (tuple, l st)):
+      # Create an empty l st of l sts f rst, w ll be converted to r ght type afterwards.
+      outputs.append([None for _  n range(len(features))])
     else:
-      outputs.append(dict())
+      outputs.append(d ct())
 
-  iterable = features.items() if isinstance(features, dict) else enumerate(features)
+   erable = features. ems()  f  s nstance(features, d ct) else enu rate(features)
 
-  # Handling partitions of nested classes handled here:
-  # Recursively call dynamic_partition for containers
-  for key, feature in iterable:
-    name_key = None if name is None else name + "_" + str(key)
-    if isinstance(partitions, tf.Tensor):
-      results = tf.dynamic_partition(feature, partitions, num_partitions, name_key)
+  # Handl ng part  ons of nested classes handled  re:
+  # Recurs vely call dynam c_part  on for conta ners
+  for key, feature  n  erable:
+    na _key = None  f na   s None else na  + "_" + str(key)
+     f  s nstance(part  ons, tf.Tensor):
+      results = tf.dynam c_part  on(feature, part  ons, num_part  ons, na _key)
     else:
-      results = tf.dynamic_partition(feature, partitions[key], num_partitions[key], name_key)
-      # Append the result to the proper output container
-    for idx, result in enumerate(results):
-      outputs[idx][key] = result
+      results = tf.dynam c_part  on(feature, part  ons[key], num_part  ons[key], na _key)
+      # Append t  result to t  proper output conta ner
+    for  dx, result  n enu rate(results):
+      outputs[ dx][key] = result
 
-  # if input is tuple, convert list of lists back to list of tuples
-  if isinstance(features, tuple):
-    outputs = [type(features)(output) for output in outputs]
+  #  f  nput  s tuple, convert l st of l sts back to l st of tuples
+   f  s nstance(features, tuple):
+    outputs = [type(features)(output) for output  n outputs]
 
   return outputs
 
 
-def write_file(filename, contents, encode=False):
+def wr e_f le(f lena , contents, encode=False):
   '''
-  Optionally encodes contents and writes contents to a file.
+  Opt onally encodes contents and wr es contents to a f le.
 
-  Arguments:
-    filename:
-      path to file where the contents will be saved.
+  Argu nts:
+    f lena :
+      path to f le w re t  contents w ll be saved.
       Accepts HDFS and local paths.
     contents:
-      contents to save to the file.
-      Must be a string when encode is False.
+      contents to save to t  f le.
+      Must be a str ng w n encode  s False.
     encode:
-      False | 'json'. When encode='json', contents is encoded
-      with json.dumps.
+      False | 'json'. W n encode='json', contents  s encoded
+      w h json.dumps.
   '''
-  if encode == 'json':
+   f encode == 'json':
     contents = json.dumps(contents)
-  elif not is_string(contents):
-    raise ValueError("Expecting string for encode=False")
+  el f not  s_str ng(contents):
+    ra se ValueError("Expect ng str ng for encode=False")
 
   graph = tf.Graph()
-  with graph.as_default():
-    write = tf.write_file(filename, contents)
+  w h graph.as_default():
+    wr e = tf.wr e_f le(f lena , contents)
 
-  with tf.Session(graph=graph) as sess:
-    sess.run(write)
+  w h tf.Sess on(graph=graph) as sess:
+    sess.run(wr e)
 
 
-def read_file(filename, decode=False):
+def read_f le(f lena , decode=False):
   '''
-  Reads contents from a file and optionally decodes it.
+  Reads contents from a f le and opt onally decodes  .
 
-  Arguments:
-    filename:
-      path to file where the contents will be loaded from.
+  Argu nts:
+    f lena :
+      path to f le w re t  contents w ll be loaded from.
       Accepts HDFS and local paths.
     decode:
-      False | 'json'. When decode='json', contents is decoded
-      with json.loads. When False, contents is returned as is.
+      False | 'json'. W n decode='json', contents  s decoded
+      w h json.loads. W n False, contents  s returned as  s.
 
   Returns:
     contents
   '''
   graph = tf.Graph()
-  with graph.as_default():
-    read = tf.read_file(filename)
+  w h graph.as_default():
+    read = tf.read_f le(f lena )
 
-  with tf.Session(graph=graph) as sess:
+  w h tf.Sess on(graph=graph) as sess:
     contents = (sess.run(read))
-    # particular version of TF and/or Python may or may not perform decoding step from utf-8 to str
-    if not isinstance(contents, str):
+    # part cular vers on of TF and/or Python may or may not perform decod ng step from utf-8 to str
+     f not  s nstance(contents, str):
       contents = contents.decode()
 
-  if decode == 'json':
+   f decode == 'json':
     contents = json.loads(contents)
 
   return contents
 
-def setup_tf_logging_formatter():
-  formatter = _logging.Formatter(
-      '%(asctime)s [%(levelname)s] %(name)s: %(message)s',
+def setup_tf_logg ng_formatter():
+  formatter = _logg ng.Formatter(
+      '%(asct  )s [%(levelna )s] %(na )s: %( ssage)s',
       None)
-  # Setting up absl logging verbosity
-  logging.set_verbosity('info')
-  logging.set_stderrthreshold('info')
-  logging.get_absl_handler().setFormatter(formatter)
-  tf.logging.set_verbosity(tf.logging.INFO)
-  # Set tensorflow logging handler format
-  if len(tf_logging.get_logger().handlers) > 0:
-    tf_logging.get_logger().handlers[0].setFormatter(formatter)
+  # Sett ng up absl logg ng verbos y
+  logg ng.set_verbos y(' nfo')
+  logg ng.set_stderrthreshold(' nfo')
+  logg ng.get_absl_handler().setFormatter(formatter)
+  tf.logg ng.set_verbos y(tf.logg ng. NFO)
+  # Set tensorflow logg ng handler format
+   f len(tf_logg ng.get_logger().handlers) > 0:
+    tf_logg ng.get_logger().handlers[0].setFormatter(formatter)
 
 
 def set_tensorflow_log_level(log_level):
   """
-  Sets tensorflow's default logging level.
+  Sets tensorflow's default logg ng level.
 
   0. all logs are shown.
-  1. filter out INFO logs.
-  2. filter out WARNINGs and INFOs.
-  3. filter out ERRORs, WARNINGs, and INFOs.
+  1. f lter out  NFO logs.
+  2. f lter out WARN NGs and  NFOs.
+  3. f lter out ERRORs, WARN NGs, and  NFOs.
 
-  Note that tf.Print output are INFO logs, so setting log_level above 0 would hide
-  output from tf.Print.
+  Note that tf.Pr nt output are  NFO logs, so sett ng log_level above 0 would h de
+  output from tf.Pr nt.
   """
-  assert isinstance(log_level, int) and log_level >= 0 and log_level <= 3
-  os.environ['TF_CPP_MIN_LOG_LEVEL'] = str(log_level)
+  assert  s nstance(log_level,  nt) and log_level >= 0 and log_level <= 3
+  os.env ron['TF_CPP_M N_LOG_LEVEL'] = str(log_level)
 
 
-def weighted_average(values, weights):
+def   ghted_average(values,   ghts):
   """
-  Compute a weighted average using the given values and weights.
-  E.g. this is usually used to compute a weighted loss given sample weights.
+  Compute a   ghted average us ng t  g ven values and   ghts.
+  E.g. t   s usually used to compute a   ghted loss g ven sample   ghts.
   """
-  return tf.reduce_sum(tf.multiply(values, weights)) / tf.reduce_sum(weights)
+  return tf.reduce_sum(tf.mult ply(values,   ghts)) / tf.reduce_sum(  ghts)
 
 
-def backup_checkpoint(checkpoint_path_prefix,
+def backup_c ckpo nt(c ckpo nt_path_pref x,
                       backup_path='backup',
                       empty_backup=True):
   """
-  Creates a backup copy of a checkpoint in backup_dir.
-  This function is used by the Trainer for early-stopping.
+  Creates a backup copy of a c ckpo nt  n backup_d r.
+  T  funct on  s used by t  Tra ner for early-stopp ng.
 
-  Arguments:
-    checkpoint_path_prefix:
-      Prefix of the path to the checkpoint files.
+  Argu nts:
+    c ckpo nt_path_pref x:
+      Pref x of t  path to t  c ckpo nt f les.
     backup_path:
-      path to a directory where checkpoint files will be backed up.
+      path to a d rectory w re c ckpo nt f les w ll be backed up.
     empty_backup:
-      When True (the default), the current contents of the backup directory
-      are removed before the backup is performed.
+      W n True (t  default), t  current contents of t  backup d rectory
+      are removed before t  backup  s perfor d.
 
   Returns:
-    The number of backed up files.
+    T  number of backed up f les.
   """
-  checkpoint_file_prefix = os.path.basename(checkpoint_path_prefix)
+  c ckpo nt_f le_pref x = os.path.basena (c ckpo nt_path_pref x)
 
-  if tf.io.gfile.exists(backup_path) and empty_backup:
-    tf.io.gfile.rmtree(backup_path)
+   f tf. o.gf le.ex sts(backup_path) and empty_backup:
+    tf. o.gf le.rmtree(backup_path)
 
-  tf.io.gfile.mkdir(backup_path)
+  tf. o.gf le.mkd r(backup_path)
 
   n_backup = 0
-  # copy all checkpoint files to backup directory (TODO use gfile.glob instead)
+  # copy all c ckpo nt f les to backup d rectory (TODO use gf le.glob  nstead)
   try:
-    checkpoint_files = tf.io.gfile.glob(checkpoint_path_prefix + "*")
-    if len(checkpoint_files) == 0:
-      raise twml.errors.CheckpointNotFoundError("%s not found" % checkpoint_path_prefix)
-    for filename in checkpoint_files:
+    c ckpo nt_f les = tf. o.gf le.glob(c ckpo nt_path_pref x + "*")
+     f len(c ckpo nt_f les) == 0:
+      ra se twml.errors.C ckpo ntNotFoundError("%s not found" % c ckpo nt_path_pref x)
+    for f lena   n c ckpo nt_f les:
       n_backup += 1
-      tf.io.gfile.copy(
-        src=filename,
-        dst=os.path.join(backup_path, os.path.basename(filename))
+      tf. o.gf le.copy(
+        src=f lena ,
+        dst=os.path.jo n(backup_path, os.path.basena (f lena ))
       )
   except tf.errors.OpError as ex:
-    raise twml.errors.CheckpointNotFoundError(
-      f"{str(ex)}\n {checkpoint_path_prefix} not found."
+    ra se twml.errors.C ckpo ntNotFoundError(
+      f"{str(ex)}\n {c ckpo nt_path_pref x} not found."
     )
 
-  # tf.train.latest_checkpoint needs the 'checkpoint' file.
-  with tf.io.gfile.GFile(os.path.join(backup_path, 'checkpoint'), 'w') as f:
-    f.write('model_checkpoint_path: "%s"\n' % checkpoint_file_prefix)
+  # tf.tra n.latest_c ckpo nt needs t  'c ckpo nt' f le.
+  w h tf. o.gf le.GF le(os.path.jo n(backup_path, 'c ckpo nt'), 'w') as f:
+    f.wr e('model_c ckpo nt_path: "%s"\n' % c ckpo nt_f le_pref x)
 
   return n_backup
 
 
-def set_only_checkpoint(source_path, dest_path, remove_source=True):
+def set_only_c ckpo nt(s ce_path, dest_path, remove_s ce=True):
   """
-  Removes the checkpoint and model.ckpt* files from dest_path.
-  Moves the latest checkpoint from source_path to dest_path.
+  Removes t  c ckpo nt and model.ckpt* f les from dest_path.
+  Moves t  latest c ckpo nt from s ce_path to dest_path.
 
-  Arguments:
-    source_path:
-      path to directory containing the latest checkpoint.
-      Should contain a valid checkpoint file and model.ckpt files.
-      For early-stopping, this should be the save_dir/best_checkpoint dir.
+  Argu nts:
+    s ce_path:
+      path to d rectory conta n ng t  latest c ckpo nt.
+      Should conta n a val d c ckpo nt f le and model.ckpt f les.
+      For early-stopp ng, t  should be t  save_d r/best_c ckpo nt d r.
     dest_path:
-      path to directory where the latest checkpoint files will be moved.
-      All its checkpoint and model.ckpt* files will be removed.
-      For early-stopping, this should be the save_dir.
-    remove_source:
-      When True (the default), deletes the source directory.
-      Note that even when False, its checkpoint files are moved to
+      path to d rectory w re t  latest c ckpo nt f les w ll be moved.
+      All  s c ckpo nt and model.ckpt* f les w ll be removed.
+      For early-stopp ng, t  should be t  save_d r.
+    remove_s ce:
+      W n True (t  default), deletes t  s ce d rectory.
+      Note that even w n False,  s c ckpo nt f les are moved to
       dest_path anyway.
-      This deletes the source directory (and any remaining contents).
+      T  deletes t  s ce d rectory (and any rema n ng contents).
   """
-  # make it so that source_path checkpoint is the only checkpoint
-  source_path_prefix = tf.train.latest_checkpoint(source_path)
-  if source_path_prefix is not None:
-    # remove intermediate checkpoints
-    for filename in tf.io.gfile.listdir(dest_path):
-      if filename.startswith("model.ckpt"):
-        tf.io.gfile.Remove(os.path.join(dest_path, filename))
-    # move contents of source_path to dest_path
-    for filename in tf.io.gfile.listdir(source_path):
-      tf.io.gfile.rename(
-        oldname=os.path.join(source_path, filename),
-        newname=os.path.join(dest_path, filename),
-        overwrite=True)  # overwrite "checkpoint" file
-    # delete the source_path dir
-    if remove_source:
-      tf.io.gfile.rmtree(source_path)
+  # make   so that s ce_path c ckpo nt  s t  only c ckpo nt
+  s ce_path_pref x = tf.tra n.latest_c ckpo nt(s ce_path)
+   f s ce_path_pref x  s not None:
+    # remove  nter d ate c ckpo nts
+    for f lena   n tf. o.gf le.l std r(dest_path):
+       f f lena .startsw h("model.ckpt"):
+        tf. o.gf le.Remove(os.path.jo n(dest_path, f lena ))
+    # move contents of s ce_path to dest_path
+    for f lena   n tf. o.gf le.l std r(s ce_path):
+      tf. o.gf le.rena (
+        oldna =os.path.jo n(s ce_path, f lena ),
+        newna =os.path.jo n(dest_path, f lena ),
+        overwr e=True)  # overwr e "c ckpo nt" f le
+    # delete t  s ce_path d r
+     f remove_s ce:
+      tf. o.gf le.rmtree(s ce_path)
 
 
-def list_files_by_datetime(
+def l st_f les_by_datet  (
   base_path,
-  start_datetime,
-  end_datetime=None,
-  datetime_prefix_format='%Y/%m/%d/%H',
-  extension='lzo',
-  parallelism=1,
-  hour_resolution=1,
+  start_datet  ,
+  end_datet  =None,
+  datet  _pref x_format='%Y/%m/%d/%H',
+  extens on='lzo',
+  parallel sm=1,
+  h _resolut on=1,
   sort=False
 ):
-  """List files matching `base_path/dt_prefix_format/*.extension` for the requested datetime range.
+  """L st f les match ng `base_path/dt_pref x_format/*.extens on` for t  requested datet   range.
 
   Args:
     base_path:
-      The base path. If `None`, returns `None`.
-    start_datetime:
-      A `datetime.datetime` or string representing the start of the range (inclusive).
-      If `None`, it returns `list_files(base_path, extension, sort)`.
-    end_datetime:
-      A `datetime.datetime` or string representing the end of the range (inclusive).
-      If `None`, assumed to be the same as start_datetime.
-    datetime_prefix_format:
-      Format compatible with `datetime.datetime.strftime`
-      (https://docs.python.org/2/library/datetime.html#strftime-and-strptime-behavior).
-    extension:
-      The extension of the files composing the dataset (e.g. 'lzo').
-    parallelism:
-      The number of threads used to process list patterns (this is mostly useful
-      when dealing with filesystems such as HDFS in which listing files is a potentially expensive
-      operation).
-    hour_resolution:
-      The separation between consecutive hours. The default value is 1.
+      T  base path.  f `None`, returns `None`.
+    start_datet  :
+      A `datet  .datet  ` or str ng represent ng t  start of t  range ( nclus ve).
+       f `None`,   returns `l st_f les(base_path, extens on, sort)`.
+    end_datet  :
+      A `datet  .datet  ` or str ng represent ng t  end of t  range ( nclus ve).
+       f `None`, assu d to be t  sa  as start_datet  .
+    datet  _pref x_format:
+      Format compat ble w h `datet  .datet  .strft  `
+      (https://docs.python.org/2/l brary/datet  .html#strft  -and-strpt  -behav or).
+    extens on:
+      T  extens on of t  f les compos ng t  dataset (e.g. 'lzo').
+    parallel sm:
+      T  number of threads used to process l st patterns (t   s mostly useful
+      w n deal ng w h f lesystems such as HDFS  n wh ch l st ng f les  s a potent ally expens ve
+      operat on).
+    h _resolut on:
+      T  separat on bet en consecut ve h s. T  default value  s 1.
     sort:
-      bool, whether to return a sorted list of files. Default False.
+      bool, w t r to return a sorted l st of f les. Default False.
 
   Returns:
-    A list with all the matching files.
+    A l st w h all t  match ng f les.
 
-  Raises:
-    errors.OpError: If there are filesystem / directory listing errors.
+  Ra ses:
+    errors.OpError:  f t re are f lesystem / d rectory l st ng errors.
   """
-  if hour_resolution is None:
-    hour_resolution = 1
+   f h _resolut on  s None:
+    h _resolut on = 1
 
-  if base_path is None:
+   f base_path  s None:
     return None
 
-  if start_datetime is None:
-    return list_files(base_path, extension, sort)
+   f start_datet    s None:
+    return l st_f les(base_path, extens on, sort)
 
-  # Do this in case people want to use a single day for training.
-  if end_datetime is None:
-    end_datetime = start_datetime
+  # Do t   n case people want to use a s ngle day for tra n ng.
+   f end_datet    s None:
+    end_datet   = start_datet  
 
-  assert parallelism > 0
-  assert start_datetime <= end_datetime
+  assert parallel sm > 0
+  assert start_datet   <= end_datet  
 
-  if isinstance(start_datetime, str):
-    start_datetime = datetime.strptime(start_datetime, datetime_prefix_format)
+   f  s nstance(start_datet  , str):
+    start_datet   = datet  .strpt  (start_datet  , datet  _pref x_format)
 
-  if isinstance(end_datetime, str):
-    end_datetime = datetime.strptime(end_datetime, datetime_prefix_format)
+   f  s nstance(end_datet  , str):
+    end_datet   = datet  .strpt  (end_datet  , datet  _pref x_format)
 
-  assert isinstance(start_datetime, datetime)
-  assert isinstance(end_datetime, datetime)
+  assert  s nstance(start_datet  , datet  )
+  assert  s nstance(end_datet  , datet  )
 
   base_path = preprocess_path(base_path)
 
-  def _handle_missing_globs(pattern):
+  def _handle_m ss ng_globs(pattern):
     try:
-      return tf.io.gfile.glob(pattern)
+      return tf. o.gf le.glob(pattern)
     except tf.errors.NotFoundError as e:
-      tf.logging.warning(e.message)
+      tf.logg ng.warn ng(e. ssage)
       return []
 
-  # a set is used because there might be some repeated globs depending on dt_prefix_format
+  # a set  s used because t re m ght be so  repeated globs depend ng on dt_pref x_format
   globs = {
-    os.path.join(base_path, dt.strftime(datetime_prefix_format), '*.%s' % extension)
-    for dt in rrule.rrule(
-      freq=rrule.HOURLY, interval=hour_resolution, dtstart=start_datetime, until=end_datetime)
+    os.path.jo n(base_path, dt.strft  (datet  _pref x_format), '*.%s' % extens on)
+    for dt  n rrule.rrule(
+      freq=rrule.HOURLY,  nterval=h _resolut on, dtstart=start_datet  , unt l=end_datet  )
   }
-  nested_files = Parallel(n_jobs=parallelism, backend='threading')(
-    delayed(_handle_missing_globs)(p) for p in globs
+  nested_f les = Parallel(n_jobs=parallel sm, backend='thread ng')(
+    delayed(_handle_m ss ng_globs)(p) for p  n globs
   )
-  flattened_files = list(itertools.chain.from_iterable(nested_files))
+  flattened_f les = l st( ertools.cha n.from_ erable(nested_f les))
 
-  if not flattened_files:
-    error_msg = "Files list is empty: base_path={base_path}, start_datetime={start_datetime}, end_datetime={end_datetime}".format(
-      base_path=base_path, start_datetime=start_datetime, end_datetime=end_datetime
+   f not flattened_f les:
+    error_msg = "F les l st  s empty: base_path={base_path}, start_datet  ={start_datet  }, end_datet  ={end_datet  }".format(
+      base_path=base_path, start_datet  =start_datet  , end_datet  =end_datet  
     )
-    raise OSError(error_msg)
+    ra se OSError(error_msg)
 
-  if sort:
-    flattened_files = sorted(flattened_files)
+   f sort:
+    flattened_f les = sorted(flattened_f les)
 
-  return flattened_files
+  return flattened_f les
 
 
-def limit_sparse_tensor_size(sparse_tf, input_size_bits, mask_indices=True):
+def l m _sparse_tensor_s ze(sparse_tf,  nput_s ze_b s, mask_ nd ces=True):
   """
-  Returns a ``tf.SparseTensor`` which is the input SparseTensor
-  limited to the specified input_size_bits
+  Returns a ``tf.SparseTensor`` wh ch  s t   nput SparseTensor
+  l m ed to t  spec f ed  nput_s ze_b s
 
   Args:
     sparse_tf:
       twml.SparseTensor or tf.SparseTensor
-    input_size_bits:
-      The number of bits allocated to the input size.
-      Input size will be power(2,input_size_bits).
-      Note that twml.limit_bits truncates any feature keys that
-      exceed the input size.
-    mask_indices:
-      If mask indices is False; only the shape is changed. Defaults to True.
+     nput_s ze_b s:
+      T  number of b s allocated to t   nput s ze.
+       nput s ze w ll be po r(2, nput_s ze_b s).
+      Note that twml.l m _b s truncates any feature keys that
+      exceed t   nput s ze.
+    mask_ nd ces:
+       f mask  nd ces  s False; only t  shape  s changed. Defaults to True.
   """
-  if isinstance(sparse_tf, twml.SparseTensor):
+   f  s nstance(sparse_tf, twml.SparseTensor):
     sparse_tf = sparse_tf.to_tf()
-  if not isinstance(sparse_tf, tf.SparseTensor):
-    raise TypeError('Input argument `sparse_tf` should either be of type'
+   f not  s nstance(sparse_tf, tf.SparseTensor):
+    ra se TypeError(' nput argu nt `sparse_tf` should e  r be of type'
                     'twml.SparseTensor of tf.SparseTensor. Found type: {}'.
                     format(type(sparse_tf)))
-  if mask_indices:
-    indices = twml.limit_bits(sparse_tf.indices, input_size_bits)
+   f mask_ nd ces:
+     nd ces = twml.l m _b s(sparse_tf. nd ces,  nput_s ze_b s)
   else:
-    indices = sparse_tf.indices
-  dense_shape = tf.stack([sparse_tf.dense_shape[0], 1 << input_size_bits])
-  return tf.SparseTensor(indices=indices, values=sparse_tf.values,
+     nd ces = sparse_tf. nd ces
+  dense_shape = tf.stack([sparse_tf.dense_shape[0], 1 <<  nput_s ze_b s])
+  return tf.SparseTensor( nd ces= nd ces, values=sparse_tf.values,
                          dense_shape=dense_shape)
 
 
-def create_module_spec(mlp_fn, mode, params, drop_collections=None):
+def create_module_spec(mlp_fn, mode, params, drop_collect ons=None):
   """
-  Creates a standard tags_and_args which should be passed to the create_module_spec
+  Creates a standard tags_and_args wh ch should be passed to t  create_module_spec
   spec = hub.create_module_spec(mlp_fn, tags_and_args=tags_and_args).
 
   Args:
     module_fn:
-      a function to build a graph for the Module.
+      a funct on to bu ld a graph for t  Module.
     mode:
-      mode in which the Estimator is run
+      mode  n wh ch t  Est mator  s run
     params:
-      parameters passed to the Estimator
+      para ters passed to t  Est mator
   """
-  import tensorflow_hub as hub # noqa: F402
-  tags_and_args = [(set(), {"params": params, "mode": mode}),  # serving graph
-                   ({"train"}, {"params": params, "mode": mode})  # training graph
+   mport tensorflow_hub as hub # noqa: F402
+  tags_and_args = [(set(), {"params": params, "mode": mode}),  # serv ng graph
+                   ({"tra n"}, {"params": params, "mode": mode})  # tra n ng graph
                    ]
-  spec = hub.create_module_spec(mlp_fn, tags_and_args=tags_and_args, drop_collections=drop_collections)
+  spec = hub.create_module_spec(mlp_fn, tags_and_args=tags_and_args, drop_collect ons=drop_collect ons)
   return spec
 
 
-def change_name_scope_from_dir(init_scope_name, final_scope_name, save_dir):
+def change_na _scope_from_d r( n _scope_na , f nal_scope_na , save_d r):
   """
-  Changes the name of the saved scope to the desired name and saves it
-  to the same save_dir.
+  Changes t  na  of t  saved scope to t  des red na  and saves  
+  to t  sa  save_d r.
 
   Args:
-    init_scope_name:
-      initial scope name
-    final_scope_name:
-      desired (final) scope name
-    save_dir:
-      directory which the scopes are saved
+     n _scope_na :
+       n  al scope na 
+    f nal_scope_na :
+      des red (f nal) scope na 
+    save_d r:
+      d rectory wh ch t  scopes are saved
 
-  In the follwing section we:
-    - Read all the variables from the latest checkpoint.
-    - Make a copy of the variables with new name scope.
-    - Store both sets of variables into the latest checkpoint.
-  This essentially doubles up the size of the checkpoint.
-  But when a job is restarted after this part is done, the checkpoint size doubles again.
-  To avoid doing this, we create a copy in backup if a backup isn't found.
-  This allows us always read (from backup) and write same sized checkpoint files.
+   n t  follw ng sect on  :
+    - Read all t  var ables from t  latest c ckpo nt.
+    - Make a copy of t  var ables w h new na  scope.
+    - Store both sets of var ables  nto t  latest c ckpo nt.
+  T  essent ally doubles up t  s ze of t  c ckpo nt.
+  But w n a job  s restarted after t  part  s done, t  c ckpo nt s ze doubles aga n.
+  To avo d do ng t ,   create a copy  n backup  f a backup  sn't found.
+  T  allows us always read (from backup) and wr e sa  s zed c ckpo nt f les.
   """
 
-  # Create a backup_checkpoints dir
-  backup_dir = os.path.join(save_dir, "change_name_scope_backups")
-  tf.io.gfile.makedirs(backup_dir)
+  # Create a backup_c ckpo nts d r
+  backup_d r = os.path.jo n(save_d r, "change_na _scope_backups")
+  tf. o.gf le.maked rs(backup_d r)
 
-  latest_checkpoint = tf.train.latest_checkpoint(save_dir)
+  latest_c ckpo nt = tf.tra n.latest_c ckpo nt(save_d r)
 
-  if latest_checkpoint is None:
-    raise OSError("No checkpoints found in save_dir: %s" % save_dir)
+   f latest_c ckpo nt  s None:
+    ra se OSError("No c ckpo nts found  n save_d r: %s" % save_d r)
 
-  latest_backup_checkpoint = tf.train.latest_checkpoint(backup_dir)
+  latest_backup_c ckpo nt = tf.tra n.latest_c ckpo nt(backup_d r)
 
-  if (latest_backup_checkpoint is None or
-      (os.path.basename(latest_checkpoint) !=
-       os.path.basename(latest_backup_checkpoint))):
-    backup_checkpoint(latest_checkpoint, backup_dir, empty_backup=False)
+   f (latest_backup_c ckpo nt  s None or
+      (os.path.basena (latest_c ckpo nt) !=
+       os.path.basena (latest_backup_c ckpo nt))):
+    backup_c ckpo nt(latest_c ckpo nt, backup_d r, empty_backup=False)
 
-  variables = tf.train.list_variables(backup_dir)
-  with tf.Graph().as_default(), tf.Session().as_default() as sess:
-    new_variables = []
-    for name, _ in variables:
-      var = tf.train.load_variable(backup_dir, name)
-      # Append both the rename and the original variable
-      new_variables.append(
-        tf.Variable(var, name=name.replace(init_scope_name, final_scope_name)))
-      new_variables.append(tf.Variable(var, name=name))
-    # Save this to the checkpoint in the save_dir
-    saver = tf.train.Saver(new_variables)
-    sess.run(tf.global_variables_initializer())
-    saver.save(sess, latest_checkpoint)  # pylint: disable=no-member
+  var ables = tf.tra n.l st_var ables(backup_d r)
+  w h tf.Graph().as_default(), tf.Sess on().as_default() as sess:
+    new_var ables = []
+    for na , _  n var ables:
+      var = tf.tra n.load_var able(backup_d r, na )
+      # Append both t  rena  and t  or g nal var able
+      new_var ables.append(
+        tf.Var able(var, na =na .replace( n _scope_na , f nal_scope_na )))
+      new_var ables.append(tf.Var able(var, na =na ))
+    # Save t  to t  c ckpo nt  n t  save_d r
+    saver = tf.tra n.Saver(new_var ables)
+    sess.run(tf.global_var ables_ n  al zer())
+    saver.save(sess, latest_c ckpo nt)  # pyl nt: d sable=no- mber
 
 
-def hub_import(input, module, module_name, trainable=False):
+def hub_ mport( nput, module, module_na , tra nable=False):
   """
   Loads exported hub module.
 
   Args:
-    input:
-      input to hub module
+     nput:
+       nput to hub module
     module:
       module path
-    module_name:
-      signature of the exported hub module
+    module_na :
+      s gnature of t  exported hub module
   """
-  import tensorflow_hub as hub # noqa: F402
-  hub_module = hub.Module(module, trainable=trainable)
-  output = hub_module(input, signature=module_name)
+   mport tensorflow_hub as hub # noqa: F402
+  hub_module = hub.Module(module, tra nable=tra nable)
+  output = hub_module( nput, s gnature=module_na )
   return output
 
 
-def _extract_hash_space_bits(feature_config):
+def _extract_hash_space_b s(feature_conf g):
   """
-  Extract Sparse Shapes for contrib.FeatureConfig.
-  Arguments:
-    feature_config:
-      Feature Configuration of the type contrib.FeatureConfig
+  Extract Sparse Shapes for contr b.FeatureConf g.
+  Argu nts:
+    feature_conf g:
+      Feature Conf gurat on of t  type contr b.FeatureConf g
   Returns:
-    Dictionary of tensor names and hash space bits.
+    D ct onary of tensor na s and hash space b s.
   """
-  if not isinstance(feature_config, twml.contrib.feature_config.FeatureConfig):
-    fc_type = type(feature_config)
-    raise TypeError(f"Feature config must be of type contrib.FeatureConfig: {fc_type}")
-  sparse_shapes_dict = {}
-  for config in feature_config.sparse_extraction_configs:
-    sparse_shapes_dict[config.output_name] = config.hash_space_bits
-  return sparse_shapes_dict
+   f not  s nstance(feature_conf g, twml.contr b.feature_conf g.FeatureConf g):
+    fc_type = type(feature_conf g)
+    ra se TypeError(f"Feature conf g must be of type contr b.FeatureConf g: {fc_type}")
+  sparse_shapes_d ct = {}
+  for conf g  n feature_conf g.sparse_extract on_conf gs:
+    sparse_shapes_d ct[conf g.output_na ] = conf g.hash_space_b s
+  return sparse_shapes_d ct
 
 
-def fix_shape_sparse(features, feature_config):
+def f x_shape_sparse(features, feature_conf g):
   """
-  Modifies the shape of features which are extracted using the hashing trick.
-  Features itself is changed by this function.
-  Arguments:
+  Mod f es t  shape of features wh ch are extracted us ng t  hash ng tr ck.
+  Features  self  s changed by t  funct on.
+  Argu nts:
     features:
-      Feature dictionary extracted by the feature config
-    feature_config:
-      Feature Configuration of the type contrib.FeatureConfig
+      Feature d ct onary extracted by t  feature conf g
+    feature_conf g:
+      Feature Conf gurat on of t  type contr b.FeatureConf g
   """
-  if not isinstance(feature_config, twml.contrib.feature_config.FeatureConfig):
-    raise TypeError(f"Feature config must be of type contrib.FeatureConfig, currently of {type(feature_config)}")
-  sparse_shape = _extract_hash_space_bits(feature_config)
-  if not isinstance(features, dict):
-    raise TypeError(f"features must be of dictionary type, it is of {type(features)} type")
-  for key in set(features) & set(sparse_shape):
-    features[key] = limit_sparse_tensor_size(features[key], sparse_shape[key], mask_indices=False)
+   f not  s nstance(feature_conf g, twml.contr b.feature_conf g.FeatureConf g):
+    ra se TypeError(f"Feature conf g must be of type contr b.FeatureConf g, currently of {type(feature_conf g)}")
+  sparse_shape = _extract_hash_space_b s(feature_conf g)
+   f not  s nstance(features, d ct):
+    ra se TypeError(f"features must be of d ct onary type,    s of {type(features)} type")
+  for key  n set(features) & set(sparse_shape):
+    features[key] = l m _sparse_tensor_s ze(features[key], sparse_shape[key], mask_ nd ces=False)
 
 
-def touch_file_in_dir(directory, filename):
+def touch_f le_ n_d r(d rectory, f lena ):
   """
-  Creates a file named filename in directory.
+  Creates a f le na d f lena   n d rectory.
 
-  Arguments:
-    filename: (str)
-    directory: (str)
+  Argu nts:
+    f lena : (str)
+    d rectory: (str)
   """
-  file_path = os.path.join(directory, filename)
-  with tf.io.gfile.GFile(file_path, "w") as f:
-    f.write("")
+  f le_path = os.path.jo n(d rectory, f lena )
+  w h tf. o.gf le.GF le(f le_path, "w") as f:
+    f.wr e("")
 
 
-def file_exist_in_dir(directory: str, filename: str) -> bool:
-  file_path = os.path.join(directory, filename)
-  return tf.io.gfile.exists(file_path)
+def f le_ex st_ n_d r(d rectory: str, f lena : str) -> bool:
+  f le_path = os.path.jo n(d rectory, f lena )
+  return tf. o.gf le.ex sts(f le_path)
 
 
-def copy_to_local(remote, local, filename, overwrite=False):
-  """Function to file from remote directory to local directory."""
-  assert "hdfs://" not in local
-  tf.io.gfile.makedirs(local)
-  return tf.io.gfile.copy(
-    os.path.join(remote, filename),
-    os.path.join(local, filename),
-    overwrite=overwrite,
+def copy_to_local(remote, local, f lena , overwr e=False):
+  """Funct on to f le from remote d rectory to local d rectory."""
+  assert "hdfs://" not  n local
+  tf. o.gf le.maked rs(local)
+  return tf. o.gf le.copy(
+    os.path.jo n(remote, f lena ),
+    os.path.jo n(local, f lena ),
+    overwr e=overwr e,
   )
 
 
-def copy_recursive(src, dst, overwrite=False):
+def copy_recurs ve(src, dst, overwr e=False):
   """
-  Function to copy a directory recursively.
+  Funct on to copy a d rectory recurs vely.
 
-  Arguments:
-    src: Source directory.
-    dst: Destination directory.
-    overwrite: Specifies if files are to be overwritten if they exist.
+  Argu nts:
+    src: S ce d rectory.
+    dst: Dest nat on d rectory.
+    overwr e: Spec f es  f f les are to be overwr ten  f t y ex st.
   """
 
-  src = src.rstrip("/")
-  dst = dst.rstrip("/")
+  src = src.rstr p("/")
+  dst = dst.rstr p("/")
 
-  for dirname, subdirs, files in tf.io.gfile.walk(src):
-    dst_dirname = dirname.replace(src, dst)
-    tf.io.gfile.makedirs(dst_dirname)
+  for d rna , subd rs, f les  n tf. o.gf le.walk(src):
+    dst_d rna  = d rna .replace(src, dst)
+    tf. o.gf le.maked rs(dst_d rna )
 
-    for f in files:
-      src_f = os.path.join(dirname, f)
-      dst_f = os.path.join(dst_dirname, f)
+    for f  n f les:
+      src_f = os.path.jo n(d rna , f)
+      dst_f = os.path.jo n(dst_d rna , f)
 
-      tf.logging.info(f"Copying {src_f} to {dst_f}")
-      tf.io.gfile.copy(src_f, dst_f, overwrite=overwrite)
+      tf.logg ng. nfo(f"Copy ng {src_f} to {dst_f}")
+      tf. o.gf le.copy(src_f, dst_f, overwr e=overwr e)
 
 
-def delete_file_or_dir(path):
+def delete_f le_or_d r(path):
   """
-  Delete the file or directory given by `path`
-  Arguments:
+  Delete t  f le or d rectory g ven by `path`
+  Argu nts:
     path:
-      string indicating path of file or directory to remove
+      str ng  nd cat ng path of f le or d rectory to remove
   """
-  if tf.io.gfile.isdir(path):
-    tf.io.gfile.rmtree(path)
+   f tf. o.gf le. sd r(path):
+    tf. o.gf le.rmtree(path)
   else:
-    tf.io.gfile.remove(path)
+    tf. o.gf le.remove(path)
 
 
-def get_distributed_training_job_path():
+def get_d str buted_tra n ng_job_path():
   """
-  Function to get distributed training job path.
-  Note: distributed training has three jobs, one parameter server job,
-  one worker job and one evaluator job. All of these three jobs' name
-  share a common base job name.
+  Funct on to get d str buted tra n ng job path.
+  Note: d str buted tra n ng has three jobs, one para ter server job,
+  one worker job and one evaluator job. All of t se three jobs' na 
+  share a common base job na .
   """
-  job_path = AuroraPath(dc=os.environ.get("TWML_JOB_CLUSTER"),
-    role=os.environ.get("TWML_JOB_ROLE"),
-    env=os.environ.get("TWML_JOB_ENV"),
-    job_name=os.environ.get("TWML_DISTRIBUTED_BASE_JOBNAME"))
+  job_path = AuroraPath(dc=os.env ron.get("TWML_JOB_CLUSTER"),
+    role=os.env ron.get("TWML_JOB_ROLE"),
+    env=os.env ron.get("TWML_JOB_ENV"),
+    job_na =os.env ron.get("TWML_D STR BUTED_BASE_JOBNAME"))
   return job_path
 
-def do_every_n_steps(action, num_steps):
+def do_every_n_steps(act on, num_steps):
   """
-  Execute a sequence of TensorFlow operations only once in a while.
-  Specifically, `action` is performed if `global_step` is a
-    multiple of `num_steps`
+  Execute a sequence of TensorFlow operat ons only once  n a wh le.
+  Spec f cally, `act on`  s perfor d  f `global_step`  s a
+    mult ple of `num_steps`
 
   Args:
-    action: callable to be performed at regular intervals. This callable
-      must return a TF op with no output tensors.
-    num_steps: period of performing the action, as measured
-      in number of training steps
+    act on: callable to be perfor d at regular  ntervals. T  callable
+      must return a TF op w h no output tensors.
+    num_steps: per od of perform ng t  act on, as  asured
+       n number of tra n ng steps
 
   Returns:
-    A TensorFlow op with no output tensors, like a tf.print() or tf.no_op().
-    You must use tf.control_dependencies() to execute the op.
+    A TensorFlow op w h no output tensors, l ke a tf.pr nt() or tf.no_op().
+      must use tf.control_dependenc es() to execute t  op.
 
   """
-  global_step = tf.train.get_or_create_global_step()
-  condition = tf.math.equal(tf.math.floormod(global_step, num_steps), 0)
-  return tf.cond(condition, action, lambda: tf.no_op())
+  global_step = tf.tra n.get_or_create_global_step()
+  cond  on = tf.math.equal(tf.math.floormod(global_step, num_steps), 0)
+  return tf.cond(cond  on, act on, lambda: tf.no_op())

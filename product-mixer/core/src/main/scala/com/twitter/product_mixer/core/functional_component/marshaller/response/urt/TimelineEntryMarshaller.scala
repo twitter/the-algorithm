@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TimelineEntryMarshaller @Inject() (
-  timelineEntryContentMarshaller: TimelineEntryContentMarshaller) {
+@S ngleton
+class T  l neEntryMarshaller @ nject() (
+  t  l neEntryContentMarshaller: T  l neEntryContentMarshaller) {
 
-  def apply(entry: TimelineEntry): urt.TimelineEntry =
-    urt.TimelineEntry(
-      entryId = entry.entryIdentifier,
-      sortIndex = entry.sortIndex.getOrElse(throw new TimelineEntryMissingSortIndexException),
-      content = timelineEntryContentMarshaller(entry),
-      expiryTime = entry.expirationTimeInMillis
+  def apply(entry: T  l neEntry): urt.T  l neEntry =
+    urt.T  l neEntry(
+      entry d = entry.entry dent f er,
+      sort ndex = entry.sort ndex.getOrElse(throw new T  l neEntryM ss ngSort ndexExcept on),
+      content = t  l neEntryContentMarshaller(entry),
+      exp ryT   = entry.exp rat onT   nM ll s
     )
 }
 
-class TimelineEntryMissingSortIndexException
-    extends UnsupportedOperationException("Timeline entry missing sort index")
+class T  l neEntryM ss ngSort ndexExcept on
+    extends UnsupportedOperat onExcept on("T  l ne entry m ss ng sort  ndex")

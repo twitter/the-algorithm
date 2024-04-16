@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.ranking
+package com.tw ter.follow_recom ndat ons.common.rankers.ml_ranker.rank ng
 
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.follow_recom ndat ons.common.rankers.common.Ranker d
+ mport com.tw ter.t  l nes.conf gap .FSEnumParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
 /**
- * When adding Producer side experiments, make sure to register the FS Key in [[ProducerFeatureFilter]]
- * in [[FeatureSwitchesModule]], otherwise, the FS will not work.
+ * W n add ng Producer s de exper  nts, make sure to reg ster t  FS Key  n [[ProducerFeatureF lter]]
+ *  n [[FeatureSw c sModule]], ot rw se, t  FS w ll not work.
  */
 object MlRankerParams {
-  // which ranker to use by default for the given request
-  case object RequestScorerIdParam
-      extends FSEnumParam[RankerId.type](
-        name = "post_nux_ml_flow_ml_ranker_id",
-        default = RankerId.PostNuxProdRanker,
-        enum = RankerId
+  // wh ch ranker to use by default for t  g ven request
+  case object RequestScorer dParam
+      extends FSEnumParam[Ranker d.type](
+        na  = "post_nux_ml_flow_ml_ranker_ d",
+        default = Ranker d.PostNuxProdRanker,
+        enum = Ranker d
       )
 
-  // which ranker to use for the given candidate
-  case object CandidateScorerIdParam
-      extends FSEnumParam[RankerId.type](
-        name = "post_nux_ml_flow_candidate_user_scorer_id",
-        default = RankerId.None,
-        enum = RankerId
+  // wh ch ranker to use for t  g ven cand date
+  case object Cand dateScorer dParam
+      extends FSEnumParam[Ranker d.type](
+        na  = "post_nux_ml_flow_cand date_user_scorer_ d",
+        default = Ranker d.None,
+        enum = Ranker d
       )
 
-  case object ScribeRankingInfoInMlRanker
-      extends FSParam[Boolean]("post_nux_ml_flow_scribe_ranking_info_in_ml_ranker", true)
+  case object Scr beRank ng nfo nMlRanker
+      extends FSParam[Boolean]("post_nux_ml_flow_scr be_rank ng_ nfo_ n_ml_ranker", true)
 }

@@ -1,49 +1,49 @@
-package com.twitter.search.earlybird.util;
+package com.tw ter.search.earlyb rd.ut l;
 
-import java.util.concurrent.Callable;
+ mport java.ut l.concurrent.Callable;
 
-import com.google.common.base.Stopwatch;
+ mport com.google.common.base.Stopwatch;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-public final class ActionLogger {
-  private static final Logger LOG = LoggerFactory.getLogger(ActionLogger.class);
+publ c f nal class Act onLogger {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Act onLogger.class);
 
-  private ActionLogger() {
+  pr vate Act onLogger() {
   }
 
   /**
-   * Run a function, logging a message at the start and end, and the time it took.
+   * Run a funct on, logg ng a  ssage at t  start and end, and t  t     took.
    */
-  public static <T> T call(String message, Callable<T> fn) throws Exception {
-    LOG.info("Action starting: '{}'.", message);
+  publ c stat c <T> T call(Str ng  ssage, Callable<T> fn) throws Except on {
+    LOG. nfo("Act on start ng: '{}'.",  ssage);
     Stopwatch stopwatch = Stopwatch.createStarted();
     try {
       return fn.call();
     } catch (Throwable e) {
-      LOG.error("Action failed: '{}'.", message, e);
+      LOG.error("Act on fa led: '{}'.",  ssage, e);
       throw e;
-    } finally {
-      LOG.info("Action finished in {} '{}'.", stopwatch, message);
+    } f nally {
+      LOG. nfo("Act on f n s d  n {} '{}'.", stopwatch,  ssage);
     }
   }
 
   /**
-   * Run a function, logging a message at the start and end, and the time it took.
+   * Run a funct on, logg ng a  ssage at t  start and end, and t  t     took.
    */
-  public static void run(String message, CheckedRunnable fn) throws Exception {
-    call(message, () -> {
+  publ c stat c vo d run(Str ng  ssage, C ckedRunnable fn) throws Except on {
+    call( ssage, () -> {
       fn.run();
       return null;
     });
   }
 
-  @FunctionalInterface
-  public interface CheckedRunnable {
+  @Funct onal nterface
+  publ c  nterface C ckedRunnable {
     /**
-     * A nullary function that throws checked exceptions.
+     * A nullary funct on that throws c cked except ons.
      */
-    void run() throws Exception;
+    vo d run() throws Except on;
   }
 }

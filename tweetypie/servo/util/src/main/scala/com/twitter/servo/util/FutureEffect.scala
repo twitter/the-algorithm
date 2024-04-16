@@ -1,92 +1,92 @@
-package com.twitter.servo.util
+package com.tw ter.servo.ut l
 
-import com.twitter.finagle.stats.{StatsReceiver, Stat}
-import com.twitter.logging.{Logger, NullLogger}
-import com.twitter.util._
+ mport com.tw ter.f nagle.stats.{StatsRece ver, Stat}
+ mport com.tw ter.logg ng.{Logger, NullLogger}
+ mport com.tw ter.ut l._
 
 object FutureEffect {
-  private[this] val _unit = FutureEffect[Any] { _ =>
-    Future.Unit
+  pr vate[t ] val _un  = FutureEffect[Any] { _ =>
+    Future.Un 
   }
 
   /**
    * A FutureEffect that always succeeds.
    */
-  def unit[T]: FutureEffect[T] =
-    _unit.asInstanceOf[FutureEffect[T]]
+  def un [T]: FutureEffect[T] =
+    _un .as nstanceOf[FutureEffect[T]]
 
   /**
-   * A FutureEffect that always fails with the given exception.
+   * A FutureEffect that always fa ls w h t  g ven except on.
    */
-  def fail[T](ex: Throwable): FutureEffect[T] =
+  def fa l[T](ex: Throwable): FutureEffect[T] =
     FutureEffect[T] { _ =>
-      Future.exception(ex)
+      Future.except on(ex)
     }
 
   /**
-   * Lift a function returning a Future to a FutureEffect.
+   * L ft a funct on return ng a Future to a FutureEffect.
    */
-  def apply[T](f: T => Future[Unit]) =
+  def apply[T](f: T => Future[Un ]) =
     new FutureEffect[T] {
-      override def apply(x: T) = f(x)
+      overr de def apply(x: T) = f(x)
     }
 
   /**
-   * Performs all of the effects in order. If any effect fails, the
-   * whole operation fails, and the subsequent effects are not
+   * Performs all of t  effects  n order.  f any effect fa ls, t 
+   * whole operat on fa ls, and t  subsequent effects are not
    * attempted.
    */
-  def sequentially[T](effects: FutureEffect[T]*): FutureEffect[T] =
-    effects.foldLeft[FutureEffect[T]](unit[T])(_ andThen _)
+  def sequent ally[T](effects: FutureEffect[T]*): FutureEffect[T] =
+    effects.foldLeft[FutureEffect[T]](un [T])(_ andT n _)
 
   /**
-   * Perform all of the effects concurrently. If any effect fails, the
-   * whole operation fails, but any of the effects may or may not have
+   * Perform all of t  effects concurrently.  f any effect fa ls, t 
+   * whole operat on fa ls, but any of t  effects may or may not have
    * taken place.
    */
-  def inParallel[T](effects: FutureEffect[T]*): FutureEffect[T] =
+  def  nParallel[T](effects: FutureEffect[T]*): FutureEffect[T] =
     FutureEffect[T] { t =>
-      Future.join(effects map { _(t) })
+      Future.jo n(effects map { _(t) })
     }
 
-  def fromPartial[T](f: PartialFunction[T, Future[Unit]]) =
+  def fromPart al[T](f: Part alFunct on[T, Future[Un ]]) =
     FutureEffect[T] { x =>
-      if (f.isDefinedAt(x)) f(x) else Future.Unit
+       f (f. sDef nedAt(x)) f(x) else Future.Un 
     }
 
   /**
-   * Combines two FutureEffects into one that dispatches according to a gate.  If the gate is
-   * true, use `a`, otherwise, use `b`.
+   * Comb nes two FutureEffects  nto one that d spatc s accord ng to a gate.   f t  gate  s
+   * true, use `a`, ot rw se, use `b`.
    */
-  def selected[T](condition: Gate[Unit], a: FutureEffect[T], b: FutureEffect[T]): FutureEffect[T] =
-    selected(() => condition(), a, b)
+  def selected[T](cond  on: Gate[Un ], a: FutureEffect[T], b: FutureEffect[T]): FutureEffect[T] =
+    selected(() => cond  on(), a, b)
 
   /**
-   * Combines two FutureEffects into one that dispatches according to a nullary boolean function.
-   * If the function returns true, use `a`, otherwise, use `b`.
+   * Comb nes two FutureEffects  nto one that d spatc s accord ng to a nullary boolean funct on.
+   *  f t  funct on returns true, use `a`, ot rw se, use `b`.
    */
   def selected[T](f: () => Boolean, a: FutureEffect[T], b: FutureEffect[T]): FutureEffect[T] =
     FutureEffect[T] { t =>
-      if (f()) a(t) else b(t)
+       f (f()) a(t) else b(t)
     }
 }
 
 /**
- * A function whose only result is a future effect. This wrapper
- * provides convenient combinators.
+ * A funct on whose only result  s a future effect. T  wrapper
+ * prov des conven ent comb nators.
  */
-trait FutureEffect[T] extends (T => Future[Unit]) { self =>
+tra  FutureEffect[T] extends (T => Future[Un ]) { self =>
 
   /**
-   * Simplified version of `apply` when type is `Unit`.
+   * S mpl f ed vers on of `apply` w n type  s `Un `.
    */
-  def apply()(implicit ev: Unit <:< T): Future[Unit] = self(())
+  def apply()( mpl c  ev: Un  <:< T): Future[Un ] = self(())
 
   /**
-   * Combines two Future effects, performing this one first and
-   * performing the next one if this one succeeds.
+   * Comb nes two Future effects, perform ng t  one f rst and
+   * perform ng t  next one  f t  one succeeds.
    */
-  def andThen(next: FutureEffect[T]): FutureEffect[T] =
+  def andT n(next: FutureEffect[T]): FutureEffect[T] =
     FutureEffect[T] { x =>
       self(x) flatMap { _ =>
         next(x)
@@ -94,286 +94,286 @@ trait FutureEffect[T] extends (T => Future[Unit]) { self =>
     }
 
   /**
-   * Wraps this FutureEffect with a failure handling function that will be chained to
-   * the Future returned by this FutureEffect.
+   * Wraps t  FutureEffect w h a fa lure handl ng funct on that w ll be cha ned to
+   * t  Future returned by t  FutureEffect.
    */
   def rescue(
-    handler: PartialFunction[Throwable, FutureEffect[T]]
+    handler: Part alFunct on[Throwable, FutureEffect[T]]
   ): FutureEffect[T] =
     FutureEffect[T] { x =>
       self(x) rescue {
-        case t if handler.isDefinedAt(t) =>
+        case t  f handler. sDef nedAt(t) =>
           handler(t)(x)
       }
     }
 
   /**
-   * Combines two future effects, performing them both simultaneously.
-   * If either effect fails, the result will be failure, but the other
-   * effects will have occurred.
+   * Comb nes two future effects, perform ng t m both s multaneously.
+   *  f e  r effect fa ls, t  result w ll be fa lure, but t  ot r
+   * effects w ll have occurred.
    */
-  def inParallel(other: FutureEffect[T]) =
+  def  nParallel(ot r: FutureEffect[T]) =
     FutureEffect[T] { x =>
-      Future.join(Seq(self(x), other(x)))
+      Future.jo n(Seq(self(x), ot r(x)))
     }
 
   /**
-   * Perform this effect only if the provided gate returns true.
+   * Perform t  effect only  f t  prov ded gate returns true.
    */
-  def enabledBy(enabled: Gate[Unit]): FutureEffect[T] =
+  def enabledBy(enabled: Gate[Un ]): FutureEffect[T] =
     enabledBy(() => enabled())
 
   /**
-   * Perform this effect only if the provided gate returns true.
+   * Perform t  effect only  f t  prov ded gate returns true.
    */
   def enabledBy(enabled: () => Boolean): FutureEffect[T] =
-    onlyIf { _ =>
+    only f { _ =>
       enabled()
     }
 
   /**
-   * Perform this effect only if the provided predicate returns true
-   * for the input.
+   * Perform t  effect only  f t  prov ded pred cate returns true
+   * for t   nput.
    */
-  def onlyIf(predicate: T => Boolean) =
+  def only f(pred cate: T => Boolean) =
     FutureEffect[T] { x =>
-      if (predicate(x)) self(x) else Future.Unit
+       f (pred cate(x)) self(x) else Future.Un 
     }
 
   /**
-   *  Perform this effect with arg only if the condition is true. Otherwise just return Future Unit
+   *  Perform t  effect w h arg only  f t  cond  on  s true. Ot rw se just return Future Un 
    */
-  def when(condition: Boolean)(arg: => T): Future[Unit] =
-    if (condition) self(arg) else Future.Unit
+  def w n(cond  on: Boolean)(arg: => T): Future[Un ] =
+     f (cond  on) self(arg) else Future.Un 
 
   /**
-   * Adapt this effect to take a different input via the provided conversion.
+   * Adapt t  effect to take a d fferent  nput v a t  prov ded convers on.
    *
-   * (Contravariant map)
+   * (Contravar ant map)
    */
   def contramap[U](g: U => T) = FutureEffect[U] { u =>
     self(g(u))
   }
 
   /**
-   * Adapt this effect to take a different input via the provided conversion.
+   * Adapt t  effect to take a d fferent  nput v a t  prov ded convers on.
    *
-   * (Contravariant map)
+   * (Contravar ant map)
    */
   def contramapFuture[U](g: U => Future[T]) = FutureEffect[U] { u =>
     g(u) flatMap self
   }
 
   /**
-   * Adapt this effect to take a different input via the provided conversion.
-   * If the output value of the given function is None, the effect is a no-op.
+   * Adapt t  effect to take a d fferent  nput v a t  prov ded convers on.
+   *  f t  output value of t  g ven funct on  s None, t  effect  s a no-op.
    */
-  def contramapOption[U](g: U => Option[T]) =
+  def contramapOpt on[U](g: U => Opt on[T]) =
     FutureEffect[U] {
-      g andThen {
-        case None => Future.Unit
-        case Some(t) => self(t)
+      g andT n {
+        case None => Future.Un 
+        case So (t) => self(t)
       }
     }
 
   /**
-   * Adapt this effect to take a different input via the provided conversion.
-   * If the output value of the given function is future-None, the effect is a no-op.
-   * (Contravariant map)
+   * Adapt t  effect to take a d fferent  nput v a t  prov ded convers on.
+   *  f t  output value of t  g ven funct on  s future-None, t  effect  s a no-op.
+   * (Contravar ant map)
    */
-  def contramapFutureOption[U](g: U => Future[Option[T]]) =
+  def contramapFutureOpt on[U](g: U => Future[Opt on[T]]) =
     FutureEffect[U] { u =>
       g(u) flatMap {
-        case None => Future.Unit
-        case Some(x) => self(x)
+        case None => Future.Un 
+        case So (x) => self(x)
       }
     }
 
   /**
-   * Adapt this effect to take a sequence of input values.
+   * Adapt t  effect to take a sequence of  nput values.
    */
-  def liftSeq: FutureEffect[Seq[T]] =
+  def l ftSeq: FutureEffect[Seq[T]] =
     FutureEffect[Seq[T]] { seqT =>
-      Future.join(seqT.map(self))
+      Future.jo n(seqT.map(self))
     }
 
   /**
-   * Allow the effect to fail, but immediately return success. The
-   * effect is not guaranteed to have finished when its future is
-   * available.
+   * Allow t  effect to fa l, but  m d ately return success. T 
+   * effect  s not guaranteed to have f n s d w n  s future  s
+   * ava lable.
    */
-  def ignoreFailures: FutureEffect[T] =
+  def  gnoreFa lures: FutureEffect[T] =
     FutureEffect[T] { x =>
-      Try(self(x)); Future.Unit
+      Try(self(x)); Future.Un 
     }
 
   /**
-   * Allow the effect to fail but always return success.  Unlike ignoreFailures, the
-   * effect is guaranteed to have finished when its future is available.
+   * Allow t  effect to fa l but always return success.  Unl ke  gnoreFa lures, t 
+   * effect  s guaranteed to have f n s d w n  s future  s ava lable.
    */
-  def ignoreFailuresUponCompletion: FutureEffect[T] =
+  def  gnoreFa luresUponComplet on: FutureEffect[T] =
     FutureEffect[T] { x =>
       Try(self(x)) match {
         case Return(f) => f.handle { case _ => () }
-        case Throw(_) => Future.Unit
+        case Throw(_) => Future.Un 
       }
     }
 
   /**
-   * Returns a chained FutureEffect in which the given function will be called for any
-   * input that succeeds.
+   * Returns a cha ned FutureEffect  n wh ch t  g ven funct on w ll be called for any
+   *  nput that succeeds.
    */
-  def onSuccess(f: T => Unit): FutureEffect[T] =
+  def onSuccess(f: T => Un ): FutureEffect[T] =
     FutureEffect[T] { x =>
       self(x).onSuccess(_ => f(x))
     }
 
   /**
-   * Returns a chained FutureEffect in which the given function will be called for any
-   * input that fails.
+   * Returns a cha ned FutureEffect  n wh ch t  g ven funct on w ll be called for any
+   *  nput that fa ls.
    */
-  def onFailure(f: (T, Throwable) => Unit): FutureEffect[T] =
+  def onFa lure(f: (T, Throwable) => Un ): FutureEffect[T] =
     FutureEffect[T] { x =>
-      self(x).onFailure(t => f(x, t))
+      self(x).onFa lure(t => f(x, t))
     }
 
   /**
-   * Translate exception returned by a FutureEffect according to a
-   * PartialFunction.
+   * Translate except on returned by a FutureEffect accord ng to a
+   * Part alFunct on.
    */
-  def translateExceptions(
-    translateException: PartialFunction[Throwable, Throwable]
+  def translateExcept ons(
+    translateExcept on: Part alFunct on[Throwable, Throwable]
   ): FutureEffect[T] =
     FutureEffect[T] { request =>
       self(request) rescue {
-        case t if translateException.isDefinedAt(t) => Future.exception(translateException(t))
-        case t => Future.exception(t)
+        case t  f translateExcept on. sDef nedAt(t) => Future.except on(translateExcept on(t))
+        case t => Future.except on(t)
       }
     }
 
   /**
-   * Wraps an effect with retry logic.  Will retry against any failure.
+   * Wraps an effect w h retry log c.  W ll retry aga nst any fa lure.
    */
-  def retry(backoffs: Stream[Duration], timer: Timer, stats: StatsReceiver): FutureEffect[T] =
-    retry(RetryHandler.failuresOnly(backoffs, timer, stats))
+  def retry(backoffs: Stream[Durat on], t  r: T  r, stats: StatsRece ver): FutureEffect[T] =
+    retry(RetryHandler.fa luresOnly(backoffs, t  r, stats))
 
   /**
-   * Returns a new FutureEffect that executes the effect within the given RetryHandler, which
-   * may retry the operation on failures.
+   * Returns a new FutureEffect that executes t  effect w h n t  g ven RetryHandler, wh ch
+   * may retry t  operat on on fa lures.
    */
-  def retry(handler: RetryHandler[Unit]): FutureEffect[T] =
+  def retry(handler: RetryHandler[Un ]): FutureEffect[T] =
     FutureEffect[T](handler.wrap(self))
 
-  @deprecated("use trackOutcome", "2.11.1")
-  def countExceptions(stats: StatsReceiver, getScope: T => String) = {
-    val exceptionCounterFactory = new MemoizedExceptionCounterFactory(stats)
+  @deprecated("use trackOutco ", "2.11.1")
+  def countExcept ons(stats: StatsRece ver, getScope: T => Str ng) = {
+    val except onCounterFactory = new  mo zedExcept onCounterFactory(stats)
     FutureEffect[T] { t =>
-      exceptionCounterFactory(getScope(t)) { self(t) }
+      except onCounterFactory(getScope(t)) { self(t) }
     }
   }
 
   /**
-   * Produces a FutureEffect that tracks the latency of the underlying operation.
+   * Produces a FutureEffect that tracks t  latency of t  underly ng operat on.
    */
-  def trackLatency(stats: StatsReceiver, extractName: T => String): FutureEffect[T] =
+  def trackLatency(stats: StatsRece ver, extractNa : T => Str ng): FutureEffect[T] =
     FutureEffect[T] { t =>
-      Stat.timeFuture(stats.stat(extractName(t), "latency_ms")) { self(t) }
+      Stat.t  Future(stats.stat(extractNa (t), "latency_ms")) { self(t) }
     }
 
-  def trackOutcome(
-    stats: StatsReceiver,
-    extractName: T => String,
+  def trackOutco (
+    stats: StatsRece ver,
+    extractNa : T => Str ng,
     logger: Logger = NullLogger
-  ): FutureEffect[T] = trackOutcome(stats, extractName, logger, _ => None)
+  ): FutureEffect[T] = trackOutco (stats, extractNa , logger, _ => None)
 
   /**
-   * Produces a FutureEffect that tracks the outcome (i.e. success vs failure) of
-   * requests, including counting exceptions by classname.
+   * Produces a FutureEffect that tracks t  outco  ( .e. success vs fa lure) of
+   * requests,  nclud ng count ng except ons by classna .
    */
-  def trackOutcome(
-    stats: StatsReceiver,
-    extractName: T => String,
+  def trackOutco (
+    stats: StatsRece ver,
+    extractNa : T => Str ng,
     logger: Logger,
-    exceptionCategorizer: Throwable => Option[String]
+    except onCategor zer: Throwable => Opt on[Str ng]
   ): FutureEffect[T] =
     FutureEffect[T] { t =>
-      val name = extractName(t)
-      val scope = stats.scope(name)
+      val na  = extractNa (t)
+      val scope = stats.scope(na )
 
       self(t) respond { r =>
-        scope.counter("requests").incr()
+        scope.counter("requests"). ncr()
 
         r match {
           case Return(_) =>
-            scope.counter("success").incr()
+            scope.counter("success"). ncr()
 
           case Throw(t) =>
-            val category = exceptionCategorizer(t).getOrElse("failures")
-            scope.counter(category).incr()
-            scope.scope(category).counter(ThrowableHelper.sanitizeClassnameChain(t): _*).incr()
-            logger.warning(t, s"failure in $name")
+            val category = except onCategor zer(t).getOrElse("fa lures")
+            scope.counter(category). ncr()
+            scope.scope(category).counter(Throwable lper.san  zeClassna Cha n(t): _*). ncr()
+            logger.warn ng(t, s"fa lure  n $na ")
         }
       }
     }
 
   /**
    * Observe latency and success rate for any FutureEffect
-   * @param statsScope a function to produce a parent stats scope from the argument
-   * to the FutureEffect
-   * @param exceptionCategorizer a function to assign different Throwables with custom stats scopes.
+   * @param statsScope a funct on to produce a parent stats scope from t  argu nt
+   * to t  FutureEffect
+   * @param except onCategor zer a funct on to ass gn d fferent Throwables w h custom stats scopes.
    */
   def observed(
-    statsReceiver: StatsReceiver,
-    statsScope: T => String,
+    statsRece ver: StatsRece ver,
+    statsScope: T => Str ng,
     logger: Logger = NullLogger,
-    exceptionCategorizer: Throwable => Option[String] = _ => None
+    except onCategor zer: Throwable => Opt on[Str ng] = _ => None
   ): FutureEffect[T] =
     self
-      .trackLatency(statsReceiver, statsScope)
-      .trackOutcome(statsReceiver, statsScope, logger, exceptionCategorizer)
+      .trackLatency(statsRece ver, statsScope)
+      .trackOutco (statsRece ver, statsScope, logger, except onCategor zer)
 
   /**
-   * Produces a new FutureEffect where the given function is applied to the result of this
+   * Produces a new FutureEffect w re t  g ven funct on  s appl ed to t  result of t 
    * FutureEffect.
    */
-  def mapResult(f: Future[Unit] => Future[Unit]): FutureEffect[T] =
+  def mapResult(f: Future[Un ] => Future[Un ]): FutureEffect[T] =
     FutureEffect[T] { x =>
       f(self(x))
     }
 
   /**
-   * Produces a new FutureEffect where the returned Future must complete within the specified
-   * timeout, otherwise the Future fails with a com.twitter.util.TimeoutException.
+   * Produces a new FutureEffect w re t  returned Future must complete w h n t  spec f ed
+   * t  out, ot rw se t  Future fa ls w h a com.tw ter.ut l.T  outExcept on.
    *
-   * ''Note'': On timeout, the underlying future is NOT interrupted.
+   * ''Note'': On t  out, t  underly ng future  s NOT  nterrupted.
    */
-  def withTimeout(timer: Timer, timeout: Duration): FutureEffect[T] =
-    mapResult(_.within(timer, timeout))
+  def w hT  out(t  r: T  r, t  out: Durat on): FutureEffect[T] =
+    mapResult(_.w h n(t  r, t  out))
 
   /**
-   * Produces a new FutureEffect where the returned Future must complete within the specified
-   * timeout, otherwise the Future fails with the specified Throwable.
+   * Produces a new FutureEffect w re t  returned Future must complete w h n t  spec f ed
+   * t  out, ot rw se t  Future fa ls w h t  spec f ed Throwable.
    *
-   * ''Note'': On timeout, the underlying future is NOT interrupted.
+   * ''Note'': On t  out, t  underly ng future  s NOT  nterrupted.
    */
-  def withTimeout(timer: Timer, timeout: Duration, exc: => Throwable): FutureEffect[T] =
-    mapResult(_.within(timer, timeout, exc))
+  def w hT  out(t  r: T  r, t  out: Durat on, exc: => Throwable): FutureEffect[T] =
+    mapResult(_.w h n(t  r, t  out, exc))
 
   /**
-   * Produces a new FutureEffect where the returned Future must complete within the specified
-   * timeout, otherwise the Future fails with a com.twitter.util.TimeoutException.
+   * Produces a new FutureEffect w re t  returned Future must complete w h n t  spec f ed
+   * t  out, ot rw se t  Future fa ls w h a com.tw ter.ut l.T  outExcept on.
    *
-   * ''Note'': On timeout, the underlying future is interrupted.
+   * ''Note'': On t  out, t  underly ng future  s  nterrupted.
    */
-  def raiseWithin(timer: Timer, timeout: Duration): FutureEffect[T] =
-    mapResult(_.raiseWithin(timeout)(timer))
+  def ra seW h n(t  r: T  r, t  out: Durat on): FutureEffect[T] =
+    mapResult(_.ra seW h n(t  out)(t  r))
 
   /**
-   * Produces a new FutureEffect where the returned Future must complete within the specified
-   * timeout, otherwise the Future fails with the specified Throwable.
+   * Produces a new FutureEffect w re t  returned Future must complete w h n t  spec f ed
+   * t  out, ot rw se t  Future fa ls w h t  spec f ed Throwable.
    *
-   * ''Note'': On timeout, the underlying future is interrupted.
+   * ''Note'': On t  out, t  underly ng future  s  nterrupted.
    */
-  def raiseWithin(timer: Timer, timeout: Duration, exc: => Throwable): FutureEffect[T] =
-    mapResult(_.raiseWithin(timer, timeout, exc))
+  def ra seW h n(t  r: T  r, t  out: Durat on, exc: => Throwable): FutureEffect[T] =
+    mapResult(_.ra seW h n(t  r, t  out, exc))
 }

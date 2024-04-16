@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.base
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.conf gap .common.FeatureSw chConf g
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .HasDurat onConvers on
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.ut l.Durat on
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class SocialProofEnforcedCandidateSourceFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] =
+@S ngleton
+class Soc alProofEnforcedCand dateS ceFSConf g @ nject() () extends FeatureSw chConf g {
+  overr de val booleanFSParams: Seq[Param[Boolean] w h FSNa ] =
     Seq(
-      SocialProofEnforcedCandidateSourceParams.MustCallSgs,
-      SocialProofEnforcedCandidateSourceParams.CallSgsCachedColumn,
+      Soc alProofEnforcedCand dateS ceParams.MustCallSgs,
+      Soc alProofEnforcedCand dateS ceParams.CallSgsCac dColumn,
     )
-  override val intFSParams: Seq[FSBoundedParam[Int]] =
+  overr de val  ntFSParams: Seq[FSBoundedParam[ nt]] =
     Seq(
-      SocialProofEnforcedCandidateSourceParams.QueryIntersectionIdsNum,
-      SocialProofEnforcedCandidateSourceParams.MaxNumCandidatesToAnnotate,
-      SocialProofEnforcedCandidateSourceParams.GfsIntersectionIdsNum,
-      SocialProofEnforcedCandidateSourceParams.SgsIntersectionIdsNum,
+      Soc alProofEnforcedCand dateS ceParams.Query ntersect on dsNum,
+      Soc alProofEnforcedCand dateS ceParams.MaxNumCand datesToAnnotate,
+      Soc alProofEnforcedCand dateS ceParams.Gfs ntersect on dsNum,
+      Soc alProofEnforcedCand dateS ceParams.Sgs ntersect on dsNum,
     )
 
-  override val durationFSParams: Seq[FSBoundedParam[Duration] with HasDurationConversion] = Seq(
-    SocialProofEnforcedCandidateSourceParams.GfsLagDurationInDays
+  overr de val durat onFSParams: Seq[FSBoundedParam[Durat on] w h HasDurat onConvers on] = Seq(
+    Soc alProofEnforcedCand dateS ceParams.GfsLagDurat on nDays
   )
 }

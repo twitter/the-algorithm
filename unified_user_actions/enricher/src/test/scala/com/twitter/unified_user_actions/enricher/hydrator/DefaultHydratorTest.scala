@@ -1,49 +1,49 @@
-package com.twitter.unified_user_actions.enricher.hydrator
+package com.tw ter.un f ed_user_act ons.enr c r.hydrator
 
-import com.google.common.cache.CacheBuilder
-import com.twitter.dynmap.DynMap
-import com.twitter.graphql.thriftscala.GraphQlRequest
-import com.twitter.graphql.thriftscala.GraphQlResponse
-import com.twitter.graphql.thriftscala.GraphqlExecutionService
-import com.twitter.inject.Test
-import com.twitter.unified_user_actions.enricher.EnricherFixture
-import com.twitter.unified_user_actions.enricher.FatalException
-import com.twitter.unified_user_actions.enricher.hcache.LocalCache
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentEnvelop
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentIdType
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentKey
-import com.twitter.unified_user_actions.thriftscala.AuthorInfo
-import com.twitter.util.Await
-import com.twitter.util.Future
-import org.mockito.ArgumentMatchers
-import org.mockito.MockitoSugar
+ mport com.google.common.cac .Cac Bu lder
+ mport com.tw ter.dynmap.DynMap
+ mport com.tw ter.graphql.thr ftscala.GraphQlRequest
+ mport com.tw ter.graphql.thr ftscala.GraphQlResponse
+ mport com.tw ter.graphql.thr ftscala.GraphqlExecut onServ ce
+ mport com.tw ter. nject.Test
+ mport com.tw ter.un f ed_user_act ons.enr c r.Enr c rF xture
+ mport com.tw ter.un f ed_user_act ons.enr c r.FatalExcept on
+ mport com.tw ter.un f ed_user_act ons.enr c r.hcac .LocalCac 
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntEnvelop
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch nt dType
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch nt nstruct on
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntKey
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Author nfo
+ mport com.tw ter.ut l.Awa 
+ mport com.tw ter.ut l.Future
+ mport org.mock o.Argu ntMatc rs
+ mport org.mock o.Mock oSugar
 
-class DefaultHydratorTest extends Test with MockitoSugar {
+class DefaultHydratorTest extends Test w h Mock oSugar {
 
-  trait Fixtures extends EnricherFixture {
-    val cache = new LocalCache[EnrichmentKey, DynMap](
-      underlying = CacheBuilder
-        .newBuilder()
-        .maximumSize(10)
-        .build[EnrichmentKey, Future[DynMap]]())
+  tra  F xtures extends Enr c rF xture {
+    val cac  = new LocalCac [Enr ch ntKey, DynMap](
+      underly ng = Cac Bu lder
+        .newBu lder()
+        .max mumS ze(10)
+        .bu ld[Enr ch ntKey, Future[DynMap]]())
 
-    val client = mock[GraphqlExecutionService.FinagledClient]
-    val key = EnrichmentKey(EnrichmentIdType.TweetId, 1L)
-    val envelop = EnrichmentEnvelop(123L, mkUUATweetEvent(1L), tweetInfoEnrichmentPlan)
+    val cl ent = mock[GraphqlExecut onServ ce.F nagledCl ent]
+    val key = Enr ch ntKey(Enr ch nt dType.T et d, 1L)
+    val envelop = Enr ch ntEnvelop(123L, mkUUAT etEvent(1L), t et nfoEnr ch ntPlan)
 
-    def mkGraphQLResponse(authorId: Long): GraphQlResponse =
+    def mkGraphQLResponse(author d: Long): GraphQlResponse =
       GraphQlResponse(
-        Some(
+        So (
           s"""
            |{
            |  "data": {
-           |    "tweet_result_by_rest_id": {
+           |    "t et_result_by_rest_ d": {
            |      "result": {
            |        "core": {
            |          "user": {
            |            "legacy": {
-           |              "id_str": "$authorId"
+           |              " d_str": "$author d"
            |            }
            |          }
            |        }
@@ -51,66 +51,66 @@ class DefaultHydratorTest extends Test with MockitoSugar {
            |    }
            |  }
            |}
-           |""".stripMargin
+           |""".str pMarg n
         ))
   }
 
   test("non-fatal errors should proceed as normal") {
-    new Fixtures {
-      val hydrator = new DefaultHydrator(cache, client)
+    new F xtures {
+      val hydrator = new DefaultHydrator(cac , cl ent)
 
-      // when graphql client encounter any exception
-      when(client.graphql(ArgumentMatchers.any[GraphQlRequest]))
-        .thenReturn(Future.exception(new IllegalStateException("any exception")))
+      // w n graphql cl ent encounter any except on
+      w n(cl ent.graphql(Argu ntMatc rs.any[GraphQlRequest]))
+        .t nReturn(Future.except on(new  llegalStateExcept on("any except on")))
 
       val actual =
-        Await.result(hydrator.hydrate(EnrichmentInstruction.TweetEnrichment, Some(key), envelop))
+        Awa .result(hydrator.hydrate(Enr ch nt nstruct on.T etEnr ch nt, So (key), envelop))
 
-      // then the original envelop is expected
+      // t n t  or g nal envelop  s expected
       assert(envelop == actual)
     }
   }
 
-  test("fatal errors should return a future exception") {
-    new Fixtures {
-      val hydrator = new DefaultHydrator(cache, client)
+  test("fatal errors should return a future except on") {
+    new F xtures {
+      val hydrator = new DefaultHydrator(cac , cl ent)
 
-      // when graphql client encounter a fatal exception
-      when(client.graphql(ArgumentMatchers.any[GraphQlRequest]))
-        .thenReturn(Future.exception(new FatalException("fatal exception") {}))
+      // w n graphql cl ent encounter a fatal except on
+      w n(cl ent.graphql(Argu ntMatc rs.any[GraphQlRequest]))
+        .t nReturn(Future.except on(new FatalExcept on("fatal except on") {}))
 
-      val actual = hydrator.hydrate(EnrichmentInstruction.TweetEnrichment, Some(key), envelop)
+      val actual = hydrator.hydrate(Enr ch nt nstruct on.T etEnr ch nt, So (key), envelop)
 
-      // then a failed future is expected
-      assertFailedFuture[FatalException](actual)
+      // t n a fa led future  s expected
+      assertFa ledFuture[FatalExcept on](actual)
     }
   }
 
-  test("author_id should be hydrated from graphql respond") {
-    new Fixtures {
-      val hydrator = new DefaultHydrator(cache, client)
+  test("author_ d should be hydrated from graphql respond") {
+    new F xtures {
+      val hydrator = new DefaultHydrator(cac , cl ent)
 
-      when(client.graphql(ArgumentMatchers.any[GraphQlRequest]))
-        .thenReturn(Future.value(mkGraphQLResponse(888L)))
+      w n(cl ent.graphql(Argu ntMatc rs.any[GraphQlRequest]))
+        .t nReturn(Future.value(mkGraphQLResponse(888L)))
 
-      val actual = hydrator.hydrate(EnrichmentInstruction.TweetEnrichment, Some(key), envelop)
+      val actual = hydrator.hydrate(Enr ch nt nstruct on.T etEnr ch nt, So (key), envelop)
 
       assertFutureValue(
         actual,
-        envelop.copy(uua = mkUUATweetEvent(1L, Some(AuthorInfo(Some(888L))))))
+        envelop.copy(uua = mkUUAT etEvent(1L, So (Author nfo(So (888L))))))
     }
   }
 
-  test("when AuthorInfo is populated, there should be no hydration") {
-    new Fixtures {
-      val hydrator = new DefaultHydrator(cache, client)
+  test("w n Author nfo  s populated, t re should be no hydrat on") {
+    new F xtures {
+      val hydrator = new DefaultHydrator(cac , cl ent)
 
-      when(client.graphql(ArgumentMatchers.any[GraphQlRequest]))
-        .thenReturn(Future.value(mkGraphQLResponse(333L)))
+      w n(cl ent.graphql(Argu ntMatc rs.any[GraphQlRequest]))
+        .t nReturn(Future.value(mkGraphQLResponse(333L)))
 
       val expected = envelop.copy(uua =
-        mkUUATweetEvent(tweetId = 3L, author = Some(AuthorInfo(authorId = Some(222)))))
-      val actual = hydrator.hydrate(EnrichmentInstruction.TweetEnrichment, Some(key), expected)
+        mkUUAT etEvent(t et d = 3L, author = So (Author nfo(author d = So (222)))))
+      val actual = hydrator.hydrate(Enr ch nt nstruct on.T etEnr ch nt, So (key), expected)
 
       assertFutureValue(actual, expected)
     }

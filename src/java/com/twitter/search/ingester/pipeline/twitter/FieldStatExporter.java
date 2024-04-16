@@ -1,150 +1,150 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.tw ter.search. ngester.p pel ne.tw ter;
 
-import java.util.List;
-import java.util.Set;
+ mport java.ut l.L st;
+ mport java.ut l.Set;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Sets;
-import com.google.common.collect.Table;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.HashBasedTable;
+ mport com.google.common.collect.Sets;
+ mport com.google.common.collect.Table;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.schema.SchemaBuilder;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdEncodedFeatures;
-import com.twitter.search.common.schema.earlybird.EarlybirdEncodedFeaturesUtil;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.schema.thriftjava.ThriftField;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers on;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftVers onedEvents;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common.sc ma.Sc maBu lder;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdEncodedFeatures;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdEncodedFeaturesUt l;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftF eld;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ft ndex ngEvent;
 
 /**
- * This class exports counts of fields that are present on processed tweets. It is used to ensure
- * that we are not missing important fields. It is not threadsafe.
+ * T  class exports counts of f elds that are present on processed t ets.    s used to ensure
+ * that   are not m ss ng  mportant f elds.    s not threadsafe.
  */
-public class FieldStatExporter {
-  private static final String STAT_FORMAT = "%s_penguin_%d_documents_with_field_%s";
-  private static final String UNKNOWN_FIELD = "%s_penguin_%d_documents_with_unknown_field_%d";
-  private final String statPrefix;
-  private final Schema schema;
-  private final Table<PenguinVersion, Integer, SearchRateCounter> fieldCounters
+publ c class F eldStatExporter {
+  pr vate stat c f nal Str ng STAT_FORMAT = "%s_pengu n_%d_docu nts_w h_f eld_%s";
+  pr vate stat c f nal Str ng UNKNOWN_F ELD = "%s_pengu n_%d_docu nts_w h_unknown_f eld_%d";
+  pr vate f nal Str ng statPref x;
+  pr vate f nal Sc ma sc ma;
+  pr vate f nal Table<Pengu nVers on,  nteger, SearchRateCounter> f eldCounters
       = HashBasedTable.create();
-  private final Set<EarlybirdFieldConstant> encodedTweetFeaturesFields;
-  private final Set<EarlybirdFieldConstant> extendedEncodedTweetFeaturesFields;
+  pr vate f nal Set<Earlyb rdF eldConstant> encodedT etFeaturesF elds;
+  pr vate f nal Set<Earlyb rdF eldConstant> extendedEncodedT etFeaturesF elds;
 
-  private List<PenguinVersion> penguinVersions;
+  pr vate L st<Pengu nVers on> pengu nVers ons;
 
-  FieldStatExporter(String statPrefix, Schema schema, List<PenguinVersion> penguinVersions) {
-    this.statPrefix = statPrefix;
-    this.schema = schema;
-    this.penguinVersions = penguinVersions;
-    this.encodedTweetFeaturesFields =
-        getEncodedTweetFeaturesFields(EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD);
-    this.extendedEncodedTweetFeaturesFields =
-        getEncodedTweetFeaturesFields(EarlybirdFieldConstant.EXTENDED_ENCODED_TWEET_FEATURES_FIELD);
+  F eldStatExporter(Str ng statPref x, Sc ma sc ma, L st<Pengu nVers on> pengu nVers ons) {
+    t .statPref x = statPref x;
+    t .sc ma = sc ma;
+    t .pengu nVers ons = pengu nVers ons;
+    t .encodedT etFeaturesF elds =
+        getEncodedT etFeaturesF elds(Earlyb rdF eldConstant.ENCODED_TWEET_FEATURES_F ELD);
+    t .extendedEncodedT etFeaturesF elds =
+        getEncodedT etFeaturesF elds(Earlyb rdF eldConstant.EXTENDED_ENCODED_TWEET_FEATURES_F ELD);
 
-    for (PenguinVersion version : penguinVersions) {
-      for (Schema.FieldInfo info : schema.getFieldInfos()) {
-        String name =
-            String.format(STAT_FORMAT, statPrefix, version.getByteValue(), info.getName());
-        SearchRateCounter counter = SearchRateCounter.export(name);
-        fieldCounters.put(version, info.getFieldId(), counter);
+    for (Pengu nVers on vers on : pengu nVers ons) {
+      for (Sc ma.F eld nfo  nfo : sc ma.getF eld nfos()) {
+        Str ng na  =
+            Str ng.format(STAT_FORMAT, statPref x, vers on.getByteValue(),  nfo.getNa ());
+        SearchRateCounter counter = SearchRateCounter.export(na );
+        f eldCounters.put(vers on,  nfo.getF eld d(), counter);
       }
     }
   }
 
   /**
-   * Exports stats counting the number of fields that are present on each document.
+   * Exports stats count ng t  number of f elds that are present on each docu nt.
    */
-  public void addFieldStats(ThriftVersionedEvents event) {
-    for (PenguinVersion penguinVersion : penguinVersions) {
-      byte version = penguinVersion.getByteValue();
-      ThriftIndexingEvent indexingEvent = event.getVersionedEvents().get(version);
-      Preconditions.checkNotNull(indexingEvent);
+  publ c vo d addF eldStats(Thr ftVers onedEvents event) {
+    for (Pengu nVers on pengu nVers on : pengu nVers ons) {
+      byte vers on = pengu nVers on.getByteValue();
+      Thr ft ndex ngEvent  ndex ngEvent = event.getVers onedEvents().get(vers on);
+      Precond  ons.c ckNotNull( ndex ngEvent);
 
-      // We only want to count each field once per tweet.
-      Set<Integer> seenFields = Sets.newHashSet();
-      for (ThriftField field : indexingEvent.getDocument().getFields()) {
-        int fieldId = field.getFieldConfigId();
-        if (seenFields.add(fieldId)) {
-          if (fieldId == EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD.getFieldId()) {
-            exportEncodedFeaturesStats(EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD,
-                                       encodedTweetFeaturesFields,
-                                       penguinVersion,
-                                       field);
-          } else if (fieldId
-                     == EarlybirdFieldConstant.EXTENDED_ENCODED_TWEET_FEATURES_FIELD.getFieldId()) {
-            exportEncodedFeaturesStats(EarlybirdFieldConstant.EXTENDED_ENCODED_TWEET_FEATURES_FIELD,
-                                       extendedEncodedTweetFeaturesFields,
-                                       penguinVersion,
-                                       field);
-          } else if (isFeatureField(field)) {
-            updateCounterForFeatureField(
-                field.getFieldConfigId(), field.getFieldData().getIntValue(), penguinVersion);
+      //   only want to count each f eld once per t et.
+      Set< nteger> seenF elds = Sets.newHashSet();
+      for (Thr ftF eld f eld :  ndex ngEvent.getDocu nt().getF elds()) {
+         nt f eld d = f eld.getF eldConf g d();
+         f (seenF elds.add(f eld d)) {
+           f (f eld d == Earlyb rdF eldConstant.ENCODED_TWEET_FEATURES_F ELD.getF eld d()) {
+            exportEncodedFeaturesStats(Earlyb rdF eldConstant.ENCODED_TWEET_FEATURES_F ELD,
+                                       encodedT etFeaturesF elds,
+                                       pengu nVers on,
+                                       f eld);
+          } else  f (f eld d
+                     == Earlyb rdF eldConstant.EXTENDED_ENCODED_TWEET_FEATURES_F ELD.getF eld d()) {
+            exportEncodedFeaturesStats(Earlyb rdF eldConstant.EXTENDED_ENCODED_TWEET_FEATURES_F ELD,
+                                       extendedEncodedT etFeaturesF elds,
+                                       pengu nVers on,
+                                       f eld);
+          } else  f ( sFeatureF eld(f eld)) {
+            updateCounterForFeatureF eld(
+                f eld.getF eldConf g d(), f eld.getF eldData().get ntValue(), pengu nVers on);
           } else {
-            SearchRateCounter counter = fieldCounters.get(penguinVersion, fieldId);
-            if (counter == null) {
+            SearchRateCounter counter = f eldCounters.get(pengu nVers on, f eld d);
+             f (counter == null) {
               counter = SearchRateCounter.export(
-                  String.format(UNKNOWN_FIELD, statPrefix, version, fieldId));
-              fieldCounters.put(penguinVersion, fieldId, counter);
+                  Str ng.format(UNKNOWN_F ELD, statPref x, vers on, f eld d));
+              f eldCounters.put(pengu nVers on, f eld d, counter);
             }
-            counter.increment();
+            counter. ncre nt();
           }
         }
       }
     }
   }
 
-  private boolean isFeatureField(ThriftField field) {
-    String fieldName =
-        EarlybirdFieldConstants.getFieldConstant(field.getFieldConfigId()).getFieldName();
-    return fieldName.startsWith(EarlybirdFieldConstants.ENCODED_TWEET_FEATURES_FIELD_NAME
-                                + SchemaBuilder.CSF_VIEW_NAME_SEPARATOR)
-        || fieldName.startsWith(EarlybirdFieldConstants.EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME
-                                + SchemaBuilder.CSF_VIEW_NAME_SEPARATOR);
+  pr vate boolean  sFeatureF eld(Thr ftF eld f eld) {
+    Str ng f eldNa  =
+        Earlyb rdF eldConstants.getF eldConstant(f eld.getF eldConf g d()).getF eldNa ();
+    return f eldNa .startsW h(Earlyb rdF eldConstants.ENCODED_TWEET_FEATURES_F ELD_NAME
+                                + Sc maBu lder.CSF_V EW_NAME_SEPARATOR)
+        || f eldNa .startsW h(Earlyb rdF eldConstants.EXTENDED_ENCODED_TWEET_FEATURES_F ELD_NAME
+                                + Sc maBu lder.CSF_V EW_NAME_SEPARATOR);
   }
 
-  private Set<EarlybirdFieldConstant> getEncodedTweetFeaturesFields(
-      EarlybirdFieldConstant featuresField) {
-    Set<EarlybirdFieldConstant> schemaFeatureFields = Sets.newHashSet();
-    String baseFieldNamePrefix =
-        featuresField.getFieldName() + SchemaBuilder.CSF_VIEW_NAME_SEPARATOR;
-    for (EarlybirdFieldConstant field : EarlybirdFieldConstant.values()) {
-      if (field.getFieldName().startsWith(baseFieldNamePrefix)) {
-        schemaFeatureFields.add(field);
+  pr vate Set<Earlyb rdF eldConstant> getEncodedT etFeaturesF elds(
+      Earlyb rdF eldConstant featuresF eld) {
+    Set<Earlyb rdF eldConstant> sc maFeatureF elds = Sets.newHashSet();
+    Str ng baseF eldNa Pref x =
+        featuresF eld.getF eldNa () + Sc maBu lder.CSF_V EW_NAME_SEPARATOR;
+    for (Earlyb rdF eldConstant f eld : Earlyb rdF eldConstant.values()) {
+       f (f eld.getF eldNa ().startsW h(baseF eldNa Pref x)) {
+        sc maFeatureF elds.add(f eld);
       }
     }
-    return schemaFeatureFields;
+    return sc maFeatureF elds;
   }
 
-  private void exportEncodedFeaturesStats(EarlybirdFieldConstant featuresField,
-                                          Set<EarlybirdFieldConstant> schemaFeatureFields,
-                                          PenguinVersion penguinVersion,
-                                          ThriftField thriftField) {
-    byte[] encodedFeaturesBytes = thriftField.getFieldData().getBytesValue();
-    EarlybirdEncodedFeatures encodedTweetFeatures = EarlybirdEncodedFeaturesUtil.fromBytes(
-        schema.getSchemaSnapshot(), featuresField, encodedFeaturesBytes, 0);
-    for (EarlybirdFieldConstant field : schemaFeatureFields) {
-      updateCounterForFeatureField(
-          field.getFieldId(), encodedTweetFeatures.getFeatureValue(field), penguinVersion);
+  pr vate vo d exportEncodedFeaturesStats(Earlyb rdF eldConstant featuresF eld,
+                                          Set<Earlyb rdF eldConstant> sc maFeatureF elds,
+                                          Pengu nVers on pengu nVers on,
+                                          Thr ftF eld thr ftF eld) {
+    byte[] encodedFeaturesBytes = thr ftF eld.getF eldData().getBytesValue();
+    Earlyb rdEncodedFeatures encodedT etFeatures = Earlyb rdEncodedFeaturesUt l.fromBytes(
+        sc ma.getSc maSnapshot(), featuresF eld, encodedFeaturesBytes, 0);
+    for (Earlyb rdF eldConstant f eld : sc maFeatureF elds) {
+      updateCounterForFeatureF eld(
+          f eld.getF eld d(), encodedT etFeatures.getFeatureValue(f eld), pengu nVers on);
     }
   }
 
-  private void updateCounterForFeatureField(int fieldId, int value, PenguinVersion penguinVersion) {
-    if (value != 0) {
-      SearchRateCounter counter = fieldCounters.get(penguinVersion, fieldId);
-      if (counter == null) {
+  pr vate vo d updateCounterForFeatureF eld( nt f eld d,  nt value, Pengu nVers on pengu nVers on) {
+     f (value != 0) {
+      SearchRateCounter counter = f eldCounters.get(pengu nVers on, f eld d);
+       f (counter == null) {
         counter = SearchRateCounter.export(
-            String.format(UNKNOWN_FIELD, statPrefix, penguinVersion, fieldId));
-        fieldCounters.put(penguinVersion, fieldId, counter);
+            Str ng.format(UNKNOWN_F ELD, statPref x, pengu nVers on, f eld d));
+        f eldCounters.put(pengu nVers on, f eld d, counter);
       }
-      counter.increment();
+      counter. ncre nt();
     }
   }
 
-  public void updatePenguinVersions(List<PenguinVersion> updatedPenguinVersions) {
-    penguinVersions = updatedPenguinVersions;
+  publ c vo d updatePengu nVers ons(L st<Pengu nVers on> updatedPengu nVers ons) {
+    pengu nVers ons = updatedPengu nVers ons;
   }
 }

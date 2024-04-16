@@ -1,38 +1,38 @@
-package com.twitter.home_mixer.module
+package com.tw ter.ho _m xer.module
 
-import com.google.inject.Provides
-import com.google.inject.name.Named
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hashing.KeyHasher
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.StaleTweetsCache
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.shared_library.memcached_client.MemcachedClientBuilder
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.google. nject.na .Na d
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle. mcac d.{Cl ent =>  mcac dCl ent}
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.hash ng.KeyHas r
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.StaleT etsCac 
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.product_m xer.shared_l brary. mcac d_cl ent. mcac dCl entBu lder
+ mport javax. nject.S ngleton
 
-object StaleTweetsCacheModule extends TwitterModule {
+object StaleT etsCac Module extends Tw terModule {
 
-  @Singleton
-  @Provides
-  @Named(StaleTweetsCache)
-  def providesCache(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): MemcachedClient = {
-    MemcachedClientBuilder.buildMemcachedClient(
-      destName = "/srv#/prod/local/cache/staletweetscache:twemcaches",
-      numTries = 3,
-      numConnections = 1,
-      requestTimeout = 200.milliseconds,
-      globalTimeout = 500.milliseconds,
-      connectTimeout = 200.milliseconds,
-      acquisitionTimeout = 200.milliseconds,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver,
-      failureAccrualPolicy = None,
-      keyHasher = Some(KeyHasher.FNV1_32)
+  @S ngleton
+  @Prov des
+  @Na d(StaleT etsCac )
+  def prov desCac (
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver
+  ):  mcac dCl ent = {
+     mcac dCl entBu lder.bu ld mcac dCl ent(
+      destNa  = "/srv#/prod/local/cac /stalet etscac :t mcac s",
+      numTr es = 3,
+      numConnect ons = 1,
+      requestT  out = 200.m ll seconds,
+      globalT  out = 500.m ll seconds,
+      connectT  out = 200.m ll seconds,
+      acqu s  onT  out = 200.m ll seconds,
+      serv ce dent f er = serv ce dent f er,
+      statsRece ver = statsRece ver,
+      fa lureAccrualPol cy = None,
+      keyHas r = So (KeyHas r.FNV1_32)
     )
   }
 }

@@ -1,139 +1,139 @@
-package com.twitter.product_mixer.component_library.selector
+package com.tw ter.product_m xer.component_l brary.selector
 
-import com.twitter.product_mixer.component_library.selector.InsertRandomPositionResults.randomIndices
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope.PartitionedCandidates
-import com.twitter.product_mixer.core.functional_component.configapi.StaticParam
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.product_m xer.component_l brary.selector. nsertRandomPos  onResults.random nd ces
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope.Part  onedCand dates
+ mport com.tw ter.product_m xer.core.funct onal_component.conf gap .Stat cParam
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.SelectorResult
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes.conf gap .Param
 
-import scala.collection.mutable
-import scala.util.Random
+ mport scala.collect on.mutable
+ mport scala.ut l.Random
 
-object InsertRandomPositionResults {
+object  nsertRandomPos  onResults {
 
   /**
-   * Iterator containing random index between `startIndex` and `endIndex` + `n`
-   * where `n` is the number of times `next` has been called on the iterator
-   * without duplication
+   *  erator conta n ng random  ndex bet en `start ndex` and `end ndex` + `n`
+   * w re `n`  s t  number of t  s `next` has been called on t   erator
+   * w hout dupl cat on
    */
-  private[selector] def randomIndices(
-    resultLength: Int,
-    startIndex: Int,
-    endIndex: Int,
+  pr vate[selector] def random nd ces(
+    resultLength:  nt,
+    start ndex:  nt,
+    end ndex:  nt,
     random: Random
-  ): Iterator[Int] = {
+  ):  erator[ nt] = {
 
-    /** exclusive because [[Random.nextInt]]'s bound is exclusive */
-    val indexUpperBound = Math.min(endIndex, resultLength)
-
-    /**
-     * keep track of the available indices, `O(n)` space where `n` is `min(endIndex, resultLength) - max(startIndex, 0)`
-     * this ensures fairness which duplicate indices could otherwise skew
-     */
-    val values = mutable.ArrayBuffer(Math.max(0, startIndex) to indexUpperBound: _*)
+    /** exclus ve because [[Random.next nt]]'s bound  s exclus ve */
+    val  ndexUpperBound = Math.m n(end ndex, resultLength)
 
     /**
-     * Iterator that starts at 1 above the last valid index, [[indexUpperBound]] + 1, and increments monotonically
-     * representing the new highest index possible in the results for the next call
+     * keep track of t  ava lable  nd ces, `O(n)` space w re `n`  s `m n(end ndex, resultLength) - max(start ndex, 0)`
+     * t  ensures fa rness wh ch dupl cate  nd ces could ot rw se skew
      */
-    Iterator
-      .from(indexUpperBound + 1)
-      .map { indexUpperBound =>
+    val values = mutable.ArrayBuffer(Math.max(0, start ndex) to  ndexUpperBound: _*)
+
+    /**
+     *  erator that starts at 1 above t  last val d  ndex, [[ ndexUpperBound]] + 1, and  ncre nts monoton cally
+     * represent ng t  new h g st  ndex poss ble  n t  results for t  next call
+     */
+     erator
+      .from( ndexUpperBound + 1)
+      .map {  ndexUpperBound =>
         /**
-         * pick a random index-to-insert-candidate-into-results from [[values]] replacing the value at
-         * the chosen index with the new highest index from [[indexUpperBound]], this results in
-         * constant time for picking the random index and adding the new highest valid index instead
-         * of removing the item from the middle and appending the new, which would be `O(n)` to shift
-         * all indices after the removal point
+         * p ck a random  ndex-to- nsert-cand date- nto-results from [[values]] replac ng t  value at
+         * t  chosen  ndex w h t  new h g st  ndex from [[ ndexUpperBound]], t  results  n
+         * constant t   for p ck ng t  random  ndex and add ng t  new h g st val d  ndex  nstead
+         * of remov ng t   em from t  m ddle and append ng t  new, wh ch would be `O(n)` to sh ft
+         * all  nd ces after t  removal po nt
          */
-        val i = random.nextInt(values.length)
-        val randomIndexToUse = values(i)
-        // override the value at i with the new `upperBoundExclusive` to account for the new index value in the next iteration
-        values(i) = indexUpperBound
+        val   = random.next nt(values.length)
+        val random ndexToUse = values( )
+        // overr de t  value at   w h t  new `upperBoundExclus ve` to account for t  new  ndex value  n t  next  erat on
+        values( ) =  ndexUpperBound
 
-        randomIndexToUse
+        random ndexToUse
       }
   }
 }
 
-sealed trait InsertedCandidateOrder
+sealed tra   nsertedCand dateOrder
 
 /**
- * Candidates from the `remainingCandidates` side will be inserted in a random order into the `result`
+ * Cand dates from t  `rema n ngCand dates` s de w ll be  nserted  n a random order  nto t  `result`
  *
- * @example if inserting `[ x, y, z ]` into the `result` then the relative positions of `x`, `y` and `z`
- *          to each other is random, e.g. `y` could come before `x` in the result.
+ * @example  f  nsert ng `[ x, y, z ]`  nto t  `result` t n t  relat ve pos  ons of `x`, `y` and `z`
+ *          to each ot r  s random, e.g. `y` could co  before `x`  n t  result.
  */
-case object UnstableOrderingOfInsertedCandidates extends InsertedCandidateOrder
+case object UnstableOrder ngOf nsertedCand dates extends  nsertedCand dateOrder
 
 /**
- * Candidates from the `remainingCandidates` side will be inserted in their original order into the `result`
+ * Cand dates from t  `rema n ngCand dates` s de w ll be  nserted  n t  r or g nal order  nto t  `result`
  *
- * @example if inserting `[ x, y, z ]` into the `result` then the relative positions of `x`, `y` and `z`
- *          to each other will remain the same, e.g. `x` is always before `y` is always before `z` in the final result
+ * @example  f  nsert ng `[ x, y, z ]`  nto t  `result` t n t  relat ve pos  ons of `x`, `y` and `z`
+ *          to each ot r w ll rema n t  sa , e.g. `x`  s always before `y`  s always before `z`  n t  f nal result
  */
-case object StableOrderingOfInsertedCandidates extends InsertedCandidateOrder
+case object StableOrder ngOf nsertedCand dates extends  nsertedCand dateOrder
 
 /**
- * Insert `remainingCandidates` into a random position between the specified indices (inclusive)
+ *  nsert `rema n ngCand dates`  nto a random pos  on bet en t  spec f ed  nd ces ( nclus ve)
  *
- * @example let `result` = `[ a, b, c, d ]` and we want to insert randomly `[ x, y, z ]`
- *          with `startIndex` =  1, `endIndex` = 2, and [[UnstableOrderingOfInsertedCandidates]].
- *          We can expect a result that looks like `[ a, ... , d ]` where `...` is
- *          a random insertion of `x`, `y`, and `z` into  `[ b, c ]`. So this could look like
- *          `[ a, y, b, x, c, z, d ]`, note that the inserted elements are randomly distributed
- *          among the elements that were originally between the specified indices.
- *          This functions like taking a slice of the original `result` between the indices,
- *          e.g. `[ b, c ]`, then randomly inserting into the slice, e.g. `[ y, b, x, c, z ]`,
- *          before reassembling the `result`, e.g. `[ a ] ++ [ y, b, x, c, z ] ++ [ d ]`.
+ * @example let `result` = `[ a, b, c, d ]` and   want to  nsert randomly `[ x, y, z ]`
+ *          w h `start ndex` =  1, `end ndex` = 2, and [[UnstableOrder ngOf nsertedCand dates]].
+ *            can expect a result that looks l ke `[ a, ... , d ]` w re `...`  s
+ *          a random  nsert on of `x`, `y`, and `z`  nto  `[ b, c ]`. So t  could look l ke
+ *          `[ a, y, b, x, c, z, d ]`, note that t   nserted ele nts are randomly d str buted
+ *          among t  ele nts that  re or g nally bet en t  spec f ed  nd ces.
+ *          T  funct ons l ke tak ng a sl ce of t  or g nal `result` bet en t   nd ces,
+ *          e.g. `[ b, c ]`, t n randomly  nsert ng  nto t  sl ce, e.g. `[ y, b, x, c, z ]`,
+ *          before reassembl ng t  `result`, e.g. `[ a ] ++ [ y, b, x, c, z ] ++ [ d ]`.
  *
- * @example let `result` = `[ a, b, c, d ]` and we want to insert randomly `[ x, y, z ]`
- *          with `startIndex` =  1, `endIndex` = 2, and [[StableOrderingOfInsertedCandidates]].
- *          We can expect a result that looks something like `[ a, x, b, y, c, z, d ]`,
- *          where `x` is before `y` which is before `z`
+ * @example let `result` = `[ a, b, c, d ]` and   want to  nsert randomly `[ x, y, z ]`
+ *          w h `start ndex` =  1, `end ndex` = 2, and [[StableOrder ngOf nsertedCand dates]].
+ *            can expect a result that looks so th ng l ke `[ a, x, b, y, c, z, d ]`,
+ *          w re `x`  s before `y` wh ch  s before `z`
  *
- * @param startIndex an inclusive index which starts the range where the candidates will be inserted
- * @param endIndex an inclusive index which ends the range where the candidates will be inserted
+ * @param start ndex an  nclus ve  ndex wh ch starts t  range w re t  cand dates w ll be  nserted
+ * @param end ndex an  nclus ve  ndex wh ch ends t  range w re t  cand dates w ll be  nserted
  */
-case class InsertRandomPositionResults[-Query <: PipelineQuery](
-  pipelineScope: CandidateScope,
-  remainingCandidateOrder: InsertedCandidateOrder,
-  startIndex: Param[Int] = StaticParam(0),
-  endIndex: Param[Int] = StaticParam(Int.MaxValue),
+case class  nsertRandomPos  onResults[-Query <: P pel neQuery](
+  p pel neScope: Cand dateScope,
+  rema n ngCand dateOrder:  nsertedCand dateOrder,
+  start ndex: Param[ nt] = Stat cParam(0),
+  end ndex: Param[ nt] = Stat cParam( nt.MaxValue),
   random: Random = new Random(0))
     extends Selector[Query] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
 
-    val PartitionedCandidates(candidatesInScope, candidatesOutOfScope) =
-      pipelineScope.partition(remainingCandidates)
+    val Part  onedCand dates(cand dates nScope, cand datesOutOfScope) =
+      p pel neScope.part  on(rema n ngCand dates)
 
-    val randomIndexIterator = {
-      val randomIndexIterator =
-        randomIndices(result.length, query.params(startIndex), query.params(endIndex), random)
+    val random ndex erator = {
+      val random ndex erator =
+        random nd ces(result.length, query.params(start ndex), query.params(end ndex), random)
 
-      remainingCandidateOrder match {
-        case StableOrderingOfInsertedCandidates =>
-          randomIndexIterator.take(candidatesInScope.length).toSeq.sorted.iterator
-        case UnstableOrderingOfInsertedCandidates =>
-          randomIndexIterator
+      rema n ngCand dateOrder match {
+        case StableOrder ngOf nsertedCand dates =>
+          random ndex erator.take(cand dates nScope.length).toSeq.sorted. erator
+        case UnstableOrder ngOf nsertedCand dates =>
+          random ndex erator
       }
     }
 
-    val mergedResult = DynamicPositionSelector.mergeByIndexIntoResult(
-      candidatesToInsertByIndex = randomIndexIterator.zip(candidatesInScope.iterator).toSeq,
+    val  rgedResult = Dynam cPos  onSelector. rgeBy ndex ntoResult(
+      cand datesTo nsertBy ndex = random ndex erator.z p(cand dates nScope. erator).toSeq,
       result = result,
-      DynamicPositionSelector.AbsoluteIndices
+      Dynam cPos  onSelector.Absolute nd ces
     )
 
-    SelectorResult(remainingCandidates = candidatesOutOfScope, result = mergedResult)
+    SelectorResult(rema n ngCand dates = cand datesOutOfScope, result =  rgedResult)
   }
 }

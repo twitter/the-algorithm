@@ -1,14 +1,14 @@
-package com.twitter.unified_user_actions.enricher.hydrator
+package com.tw ter.un f ed_user_act ons.enr c r.hydrator
 
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentEnvelop
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentKey
-import com.twitter.util.Future
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntEnvelop
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch nt nstruct on
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntKey
+ mport com.tw ter.ut l.Future
 
-trait Hydrator {
+tra  Hydrator {
   def hydrate(
-    instruction: EnrichmentInstruction,
-    key: Option[EnrichmentKey],
-    envelop: EnrichmentEnvelop
-  ): Future[EnrichmentEnvelop]
+     nstruct on: Enr ch nt nstruct on,
+    key: Opt on[Enr ch ntKey],
+    envelop: Enr ch ntEnvelop
+  ): Future[Enr ch ntEnvelop]
 }

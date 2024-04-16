@@ -1,25 +1,25 @@
-package com.twitter.visibility.models
+package com.tw ter.v s b l y.models
 
-import com.twitter.guano.commons.thriftscala.PolicyInViolation
-import com.twitter.spam.rtf.{thriftscala => s}
+ mport com.tw ter.guano.commons.thr ftscala.Pol cy nV olat on
+ mport com.tw ter.spam.rtf.{thr ftscala => s}
 
-case class SafetyLabelMetadata(
-  policyInViolation: Option[PolicyInViolation] = None,
-  policyUrl: Option[String] = None) {
+case class SafetyLabel tadata(
+  pol cy nV olat on: Opt on[Pol cy nV olat on] = None,
+  pol cyUrl: Opt on[Str ng] = None) {
 
-  def toThrift: s.SafetyLabelMetadata = {
-    s.SafetyLabelMetadata(
-      policyInViolation,
-      policyUrl
+  def toThr ft: s.SafetyLabel tadata = {
+    s.SafetyLabel tadata(
+      pol cy nV olat on,
+      pol cyUrl
     )
   }
 }
 
-object SafetyLabelMetadata {
-  def fromThrift(metadata: s.SafetyLabelMetadata): SafetyLabelMetadata = {
-    SafetyLabelMetadata(
-      metadata.policyInViolation,
-      metadata.policyUrl
+object SafetyLabel tadata {
+  def fromThr ft( tadata: s.SafetyLabel tadata): SafetyLabel tadata = {
+    SafetyLabel tadata(
+       tadata.pol cy nV olat on,
+       tadata.pol cyUrl
     )
   }
 }

@@ -1,119 +1,119 @@
-package com.twitter.simclusters_v2.scio.bq_generation
-package tweets_ann
+package com.tw ter.s mclusters_v2.sc o.bq_generat on
+package t ets_ann
 
-import com.google.api.services.bigquery.model.TimePartitioning
-import com.spotify.scio.ScioContext
-import com.spotify.scio.coders.Coder
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.fs.multiformat.PathLayout
-import com.twitter.beam.job.DateRangeOptions
-import com.twitter.conversions.DurationOps.richDurationFromInt
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scio_internal.coders.ThriftStructLazyBinaryScroogeCoder
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getMTSConsumerEmbeddingsFav90P20MSQL
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getInterestedIn2020SQL
-import com.twitter.simclusters_v2.scio.bq_generation.tweets_ann.TweetsANNFromBQ.getTweetRecommendationsBQ
-import com.twitter.simclusters_v2.hdfs_sources.OfflineTweetRecommendationsFromInterestedIn20M145K2020ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl0El15ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl2El15ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl2El50ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl8El50ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.OfflineTweetRecommendationsFromMtsConsumerEmbeddingsScalaDataset
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQTableDetails
-import com.twitter.simclusters_v2.thriftscala.CandidateTweets
-import com.twitter.simclusters_v2.thriftscala.CandidateTweetsList
-import com.twitter.tcdc.bqblaster.beam.syntax.BigQueryIOHelpers
-import com.twitter.tcdc.bqblaster.beam.BQBlasterIO.AvroConverter
-import com.twitter.tcdc.bqblaster.core.avro.TypedProjection
-import com.twitter.tcdc.bqblaster.core.transform.RootTransform
-import java.time.Instant
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
-import org.joda.time.DateTime
+ mport com.google.ap .serv ces.b gquery.model.T  Part  on ng
+ mport com.spot fy.sc o.Sc oContext
+ mport com.spot fy.sc o.coders.Coder
+ mport com.tw ter.beam. o.dal.DAL
+ mport com.tw ter.beam. o.fs.mult format.PathLa t
+ mport com.tw ter.beam.job.DateRangeOpt ons
+ mport com.tw ter.convers ons.Durat onOps.r chDurat onFrom nt
+ mport com.tw ter.dal.cl ent.dataset.KeyValDALDataset
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.sc o_ nternal.coders.Thr ftStructLazyB naryScroogeCoder
+ mport com.tw ter.sc o_ nternal.job.Sc oBeamJob
+ mport com.tw ter.scrooge.Thr ftStruct
+ mport com.tw ter.s mclusters_v2.sc o.bq_generat on.common.BQGenerat onUt l.getMTSConsu rEmbedd ngsFav90P20MSQL
+ mport com.tw ter.s mclusters_v2.sc o.bq_generat on.common.BQGenerat onUt l.get nterested n2020SQL
+ mport com.tw ter.s mclusters_v2.sc o.bq_generat on.t ets_ann.T etsANNFromBQ.getT etRecom ndat onsBQ
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.Offl neT etRecom ndat onsFrom nterested n20M145K2020ScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.Offl neT etRecom ndat onsFrom nterested n20M145K2020Hl0El15ScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.Offl neT etRecom ndat onsFrom nterested n20M145K2020Hl2El15ScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.Offl neT etRecom ndat onsFrom nterested n20M145K2020Hl2El50ScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.Offl neT etRecom ndat onsFrom nterested n20M145K2020Hl8El50ScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.Offl neT etRecom ndat onsFromMtsConsu rEmbedd ngsScalaDataset
+ mport com.tw ter.s mclusters_v2.sc o.bq_generat on.common.BQTableDeta ls
+ mport com.tw ter.s mclusters_v2.thr ftscala.Cand dateT ets
+ mport com.tw ter.s mclusters_v2.thr ftscala.Cand dateT etsL st
+ mport com.tw ter.tcdc.bqblaster.beam.syntax.B gQuery O lpers
+ mport com.tw ter.tcdc.bqblaster.beam.BQBlaster O.AvroConverter
+ mport com.tw ter.tcdc.bqblaster.core.avro.TypedProject on
+ mport com.tw ter.tcdc.bqblaster.core.transform.RootTransform
+ mport java.t  . nstant
+ mport org.apac .beam.sdk. o.gcp.b gquery.B gQuery O
+ mport org.joda.t  .DateT  
 
-trait TweetsANNJob extends ScioBeamJob[DateRangeOptions] {
-  // Configs to set for different type of embeddings and jobs
-  val isAdhoc: Boolean
-  val getConsumerEmbeddingsSQLFunc: (DateTime, Int) => String
-  val outputTable: BQTableDetails
-  val keyValDatasetOutputPath: String
-  val tweetRecommentationsSnapshotDataset: KeyValDALDataset[KeyVal[Long, CandidateTweetsList]]
-  val tweetEmbeddingsGenerationHalfLife: Int = Config.SimClustersTweetEmbeddingsGenerationHalfLife
-  val tweetEmbeddingsGenerationEmbeddingLength: Int =
-    Config.SimClustersTweetEmbeddingsGenerationEmbeddingLength
+tra  T etsANNJob extends Sc oBeamJob[DateRangeOpt ons] {
+  // Conf gs to set for d fferent type of embedd ngs and jobs
+  val  sAdhoc: Boolean
+  val getConsu rEmbedd ngsSQLFunc: (DateT  ,  nt) => Str ng
+  val outputTable: BQTableDeta ls
+  val keyValDatasetOutputPath: Str ng
+  val t etRecom ntat onsSnapshotDataset: KeyValDALDataset[KeyVal[Long, Cand dateT etsL st]]
+  val t etEmbedd ngsGenerat onHalfL fe:  nt = Conf g.S mClustersT etEmbedd ngsGenerat onHalfL fe
+  val t etEmbedd ngsGenerat onEmbedd ngLength:  nt =
+    Conf g.S mClustersT etEmbedd ngsGenerat onEmbedd ngLength
 
-  // Base configs
-  val projectId = "twttr-recos-ml-prod"
-  val environment: DAL.Env = if (isAdhoc) DAL.Environment.Dev else DAL.Environment.Prod
+  // Base conf gs
+  val project d = "twttr-recos-ml-prod"
+  val env ron nt: DAL.Env =  f ( sAdhoc) DAL.Env ron nt.Dev else DAL.Env ron nt.Prod
 
-  override implicit def scroogeCoder[T <: ThriftStruct: Manifest]: Coder[T] =
-    ThriftStructLazyBinaryScroogeCoder.scroogeCoder
+  overr de  mpl c  def scroogeCoder[T <: Thr ftStruct: Man fest]: Coder[T] =
+    Thr ftStructLazyB naryScroogeCoder.scroogeCoder
 
-  override def configurePipeline(sc: ScioContext, opts: DateRangeOptions): Unit = {
-    // The time when the job is scheduled
-    val queryTimestamp = opts.interval.getEnd
+  overr de def conf gureP pel ne(sc: Sc oContext, opts: DateRangeOpt ons): Un  = {
+    // T  t   w n t  job  s sc duled
+    val queryT  stamp = opts. nterval.getEnd
 
-    // Read consumer embeddings SQL
-    val consumerEmbeddingsSQL = getConsumerEmbeddingsSQLFunc(queryTimestamp, 14)
+    // Read consu r embedd ngs SQL
+    val consu rEmbedd ngsSQL = getConsu rEmbedd ngsSQLFunc(queryT  stamp, 14)
 
-    // Generate tweet embeddings and tweet ANN results
-    val tweetRecommendations =
-      getTweetRecommendationsBQ(
+    // Generate t et embedd ngs and t et ANN results
+    val t etRecom ndat ons =
+      getT etRecom ndat onsBQ(
         sc,
-        queryTimestamp,
-        consumerEmbeddingsSQL,
-        tweetEmbeddingsGenerationHalfLife,
-        tweetEmbeddingsGenerationEmbeddingLength
+        queryT  stamp,
+        consu rEmbedd ngsSQL,
+        t etEmbedd ngsGenerat onHalfL fe,
+        t etEmbedd ngsGenerat onEmbedd ngLength
       )
 
-    // Setup BQ writer
-    val ingestionTime = opts.getDate().value.getEnd.toDate
-    val bqFieldsTransform = RootTransform
-      .Builder()
-      .withPrependedFields("ingestionTime" -> TypedProjection.fromConstant(ingestionTime))
-    val timePartitioning = new TimePartitioning()
-      .setType("HOUR").setField("ingestionTime").setExpirationMs(3.days.inMilliseconds)
-    val bqWriter = BigQueryIO
-      .write[CandidateTweets]
-      .to(outputTable.toString)
-      .withExtendedErrorInfo()
-      .withTimePartitioning(timePartitioning)
-      .withLoadJobProjectId(projectId)
-      .withThriftSupport(bqFieldsTransform.build(), AvroConverter.Legacy)
-      .withCreateDisposition(BigQueryIO.Write.CreateDisposition.CREATE_IF_NEEDED)
-      .withWriteDisposition(BigQueryIO.Write.WriteDisposition.WRITE_APPEND)
+    // Setup BQ wr er
+    val  ngest onT   = opts.getDate().value.getEnd.toDate
+    val bqF eldsTransform = RootTransform
+      .Bu lder()
+      .w hPrependedF elds(" ngest onT  " -> TypedProject on.fromConstant( ngest onT  ))
+    val t  Part  on ng = new T  Part  on ng()
+      .setType("HOUR").setF eld(" ngest onT  ").setExp rat onMs(3.days. nM ll seconds)
+    val bqWr er = B gQuery O
+      .wr e[Cand dateT ets]
+      .to(outputTable.toStr ng)
+      .w hExtendedError nfo()
+      .w hT  Part  on ng(t  Part  on ng)
+      .w hLoadJobProject d(project d)
+      .w hThr ftSupport(bqF eldsTransform.bu ld(), AvroConverter.Legacy)
+      .w hCreateD spos  on(B gQuery O.Wr e.CreateD spos  on.CREATE_ F_NEEDED)
+      .w hWr eD spos  on(B gQuery O.Wr e.Wr eD spos  on.WR TE_APPEND)
 
-    // Save Tweet ANN results to BQ
-    tweetRecommendations
-      .map { userToTweetRecommendations =>
+    // Save T et ANN results to BQ
+    t etRecom ndat ons
+      .map { userToT etRecom ndat ons =>
         {
-          CandidateTweets(
-            targetUserId = userToTweetRecommendations.userId,
-            recommendedTweets = userToTweetRecommendations.tweetCandidates)
+          Cand dateT ets(
+            targetUser d = userToT etRecom ndat ons.user d,
+            recom ndedT ets = userToT etRecom ndat ons.t etCand dates)
         }
       }
-      .saveAsCustomOutput(s"WriteToBQTable - ${outputTable}", bqWriter)
+      .saveAsCustomOutput(s"Wr eToBQTable - ${outputTable}", bqWr er)
 
-    // Save Tweet ANN results as KeyValSnapshotDataset
-    tweetRecommendations
-      .map { userToTweetRecommendations =>
+    // Save T et ANN results as KeyValSnapshotDataset
+    t etRecom ndat ons
+      .map { userToT etRecom ndat ons =>
         KeyVal(
-          userToTweetRecommendations.userId,
-          CandidateTweetsList(userToTweetRecommendations.tweetCandidates))
+          userToT etRecom ndat ons.user d,
+          Cand dateT etsL st(userToT etRecom ndat ons.t etCand dates))
       }.saveAsCustomOutput(
-        name = "WriteTweetRecommendationsToKeyValDataset",
-        DAL.writeVersionedKeyVal(
-          tweetRecommentationsSnapshotDataset,
-          PathLayout.VersionedPath(prefix =
-            ((if (!isAdhoc)
-                Config.RootMHPath
+        na  = "Wr eT etRecom ndat onsToKeyValDataset",
+        DAL.wr eVers onedKeyVal(
+          t etRecom ntat onsSnapshotDataset,
+          PathLa t.Vers onedPath(pref x =
+            (( f (! sAdhoc)
+                Conf g.RootMHPath
               else
-                Config.AdhocRootPath)
+                Conf g.AdhocRootPath)
               + keyValDatasetOutputPath)),
-          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
-          environmentOverride = environment,
+           nstant =  nstant.ofEpochM ll (opts. nterval.getEndM ll s - 1L),
+          env ron ntOverr de = env ron nt,
         )
       )
   }
@@ -121,177 +121,177 @@ trait TweetsANNJob extends ScioBeamJob[DateRangeOptions] {
 }
 
 /**
- * Scio job for adhoc run for tweet recommendations from IIKF 2020
+ * Sc o job for adhoc run for t et recom ndat ons from   KF 2020
  */
-object IIKF2020TweetsANNBQAdhocJob extends TweetsANNJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val outputTable = BQTableDetails(
+object   KF2020T etsANNBQAdhocJob extends T etsANNJob {
+  overr de val  sAdhoc = true
+  overr de val getConsu rEmbedd ngsSQLFunc = get nterested n2020SQL
+  overr de val outputTable = BQTableDeta ls(
     "twttr-recos-ml-prod",
-    "multi_type_simclusters",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020_adhoc")
-  override val keyValDatasetOutputPath = Config.IIKFANNOutputPath
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+    "mult _type_s mclusters",
+    "offl ne_t et_recom ndat ons_from_ nterested_ n_20M_145K_2020_adhoc")
+  overr de val keyValDatasetOutputPath = Conf g.  KFANNOutputPath
+  overr de val t etRecom ntat onsSnapshotDataset: KeyValDALDataset[
+    KeyVal[Long, Cand dateT etsL st]
   ] =
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020ScalaDataset
+    Offl neT etRecom ndat onsFrom nterested n20M145K2020ScalaDataset
 }
 
 /**
- * Scio job for adhoc run for tweet recommendations from IIKF 2020 with
- * - Half life = 8hrs
- * - Embedding Length = 50
+ * Sc o job for adhoc run for t et recom ndat ons from   KF 2020 w h
+ * - Half l fe = 8hrs
+ * - Embedd ng Length = 50
  */
-object IIKF2020Hl8El50TweetsANNBQAdhocJob extends TweetsANNJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val outputTable = BQTableDetails(
+object   KF2020Hl8El50T etsANNBQAdhocJob extends T etsANNJob {
+  overr de val  sAdhoc = true
+  overr de val getConsu rEmbedd ngsSQLFunc = get nterested n2020SQL
+  overr de val outputTable = BQTableDeta ls(
     "twttr-recos-ml-prod",
-    "multi_type_simclusters",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_8_EL_50_adhoc")
-  override val keyValDatasetOutputPath = Config.IIKFHL8EL50ANNOutputPath
-  override val tweetEmbeddingsGenerationEmbeddingLength: Int = 50
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+    "mult _type_s mclusters",
+    "offl ne_t et_recom ndat ons_from_ nterested_ n_20M_145K_2020_HL_8_EL_50_adhoc")
+  overr de val keyValDatasetOutputPath = Conf g.  KFHL8EL50ANNOutputPath
+  overr de val t etEmbedd ngsGenerat onEmbedd ngLength:  nt = 50
+  overr de val t etRecom ntat onsSnapshotDataset: KeyValDALDataset[
+    KeyVal[Long, Cand dateT etsL st]
   ] = {
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl8El50ScalaDataset
+    Offl neT etRecom ndat onsFrom nterested n20M145K2020Hl8El50ScalaDataset
   }
 }
 
 /**
- * Scio job for adhoc run for tweet recommendations from MTS Consumer Embeddings
+ * Sc o job for adhoc run for t et recom ndat ons from MTS Consu r Embedd ngs
  */
-object MTSConsumerEmbeddingsTweetsANNBQAdhocJob extends TweetsANNJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getMTSConsumerEmbeddingsFav90P20MSQL
-  override val outputTable = BQTableDetails(
+object MTSConsu rEmbedd ngsT etsANNBQAdhocJob extends T etsANNJob {
+  overr de val  sAdhoc = true
+  overr de val getConsu rEmbedd ngsSQLFunc = getMTSConsu rEmbedd ngsFav90P20MSQL
+  overr de val outputTable = BQTableDeta ls(
     "twttr-recos-ml-prod",
-    "multi_type_simclusters",
-    "offline_tweet_recommendations_from_mts_consumer_embeddings_adhoc")
-  override val keyValDatasetOutputPath = Config.MTSConsumerEmbeddingsANNOutputPath
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+    "mult _type_s mclusters",
+    "offl ne_t et_recom ndat ons_from_mts_consu r_embedd ngs_adhoc")
+  overr de val keyValDatasetOutputPath = Conf g.MTSConsu rEmbedd ngsANNOutputPath
+  overr de val t etRecom ntat onsSnapshotDataset: KeyValDALDataset[
+    KeyVal[Long, Cand dateT etsL st]
   ] =
-    OfflineTweetRecommendationsFromMtsConsumerEmbeddingsScalaDataset
+    Offl neT etRecom ndat onsFromMtsConsu rEmbedd ngsScalaDataset
 }
 
 /**
-Scio job for batch run for tweet recommendations from IIKF 2020
-The schedule cmd needs to be run only if there is any change in the config
+Sc o job for batch run for t et recom ndat ons from   KF 2020
+T  sc dule cmd needs to be run only  f t re  s any change  n t  conf g
  */
-object IIKF2020TweetsANNBQBatchJob extends TweetsANNJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val outputTable = BQTableDetails(
+object   KF2020T etsANNBQBatchJob extends T etsANNJob {
+  overr de val  sAdhoc = false
+  overr de val getConsu rEmbedd ngsSQLFunc = get nterested n2020SQL
+  overr de val outputTable = BQTableDeta ls(
     "twttr-bq-cassowary-prod",
     "user",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020")
-  override val keyValDatasetOutputPath = Config.IIKFANNOutputPath
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+    "offl ne_t et_recom ndat ons_from_ nterested_ n_20M_145K_2020")
+  overr de val keyValDatasetOutputPath = Conf g.  KFANNOutputPath
+  overr de val t etRecom ntat onsSnapshotDataset: KeyValDALDataset[
+    KeyVal[Long, Cand dateT etsL st]
   ] =
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020ScalaDataset
+    Offl neT etRecom ndat onsFrom nterested n20M145K2020ScalaDataset
 }
 
 /**
-Scio job for batch run for tweet recommendations from IIKF 2020 with parameter setup:
- - Half Life: None, no decay, direct sum
- - Embedding Length: 15
-The schedule cmd needs to be run only if there is any change in the config
+Sc o job for batch run for t et recom ndat ons from   KF 2020 w h para ter setup:
+ - Half L fe: None, no decay, d rect sum
+ - Embedd ng Length: 15
+T  sc dule cmd needs to be run only  f t re  s any change  n t  conf g
  */
-object IIKF2020Hl0El15TweetsANNBQBatchJob extends TweetsANNJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val outputTable = BQTableDetails(
+object   KF2020Hl0El15T etsANNBQBatchJob extends T etsANNJob {
+  overr de val  sAdhoc = false
+  overr de val getConsu rEmbedd ngsSQLFunc = get nterested n2020SQL
+  overr de val outputTable = BQTableDeta ls(
     "twttr-bq-cassowary-prod",
     "user",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_0_EL_15")
-  override val keyValDatasetOutputPath = Config.IIKFHL0EL15ANNOutputPath
-  override val tweetEmbeddingsGenerationHalfLife: Int = -1
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+    "offl ne_t et_recom ndat ons_from_ nterested_ n_20M_145K_2020_HL_0_EL_15")
+  overr de val keyValDatasetOutputPath = Conf g.  KFHL0EL15ANNOutputPath
+  overr de val t etEmbedd ngsGenerat onHalfL fe:  nt = -1
+  overr de val t etRecom ntat onsSnapshotDataset: KeyValDALDataset[
+    KeyVal[Long, Cand dateT etsL st]
   ] =
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl0El15ScalaDataset
+    Offl neT etRecom ndat onsFrom nterested n20M145K2020Hl0El15ScalaDataset
 }
 
 /**
-Scio job for batch run for tweet recommendations from IIKF 2020 with parameter setup:
- - Half Life: 2hrs
- - Embedding Length: 15
-The schedule cmd needs to be run only if there is any change in the config
+Sc o job for batch run for t et recom ndat ons from   KF 2020 w h para ter setup:
+ - Half L fe: 2hrs
+ - Embedd ng Length: 15
+T  sc dule cmd needs to be run only  f t re  s any change  n t  conf g
  */
-object IIKF2020Hl2El15TweetsANNBQBatchJob extends TweetsANNJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val outputTable = BQTableDetails(
+object   KF2020Hl2El15T etsANNBQBatchJob extends T etsANNJob {
+  overr de val  sAdhoc = false
+  overr de val getConsu rEmbedd ngsSQLFunc = get nterested n2020SQL
+  overr de val outputTable = BQTableDeta ls(
     "twttr-bq-cassowary-prod",
     "user",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_2_EL_15")
-  override val keyValDatasetOutputPath = Config.IIKFHL2EL15ANNOutputPath
-  override val tweetEmbeddingsGenerationHalfLife: Int = 7200000 // 2hrs in ms
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+    "offl ne_t et_recom ndat ons_from_ nterested_ n_20M_145K_2020_HL_2_EL_15")
+  overr de val keyValDatasetOutputPath = Conf g.  KFHL2EL15ANNOutputPath
+  overr de val t etEmbedd ngsGenerat onHalfL fe:  nt = 7200000 // 2hrs  n ms
+  overr de val t etRecom ntat onsSnapshotDataset: KeyValDALDataset[
+    KeyVal[Long, Cand dateT etsL st]
   ] =
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl2El15ScalaDataset
+    Offl neT etRecom ndat onsFrom nterested n20M145K2020Hl2El15ScalaDataset
 }
 
 /**
-Scio job for batch run for tweet recommendations from IIKF 2020 with parameter setup:
- - Half Life: 2hrs
- - Embedding Length: 50
-The schedule cmd needs to be run only if there is any change in the config
+Sc o job for batch run for t et recom ndat ons from   KF 2020 w h para ter setup:
+ - Half L fe: 2hrs
+ - Embedd ng Length: 50
+T  sc dule cmd needs to be run only  f t re  s any change  n t  conf g
  */
-object IIKF2020Hl2El50TweetsANNBQBatchJob extends TweetsANNJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val outputTable = BQTableDetails(
+object   KF2020Hl2El50T etsANNBQBatchJob extends T etsANNJob {
+  overr de val  sAdhoc = false
+  overr de val getConsu rEmbedd ngsSQLFunc = get nterested n2020SQL
+  overr de val outputTable = BQTableDeta ls(
     "twttr-bq-cassowary-prod",
     "user",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_2_EL_50")
-  override val keyValDatasetOutputPath = Config.IIKFHL2EL50ANNOutputPath
-  override val tweetEmbeddingsGenerationHalfLife: Int = 7200000 // 2hrs in ms
-  override val tweetEmbeddingsGenerationEmbeddingLength: Int = 50
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+    "offl ne_t et_recom ndat ons_from_ nterested_ n_20M_145K_2020_HL_2_EL_50")
+  overr de val keyValDatasetOutputPath = Conf g.  KFHL2EL50ANNOutputPath
+  overr de val t etEmbedd ngsGenerat onHalfL fe:  nt = 7200000 // 2hrs  n ms
+  overr de val t etEmbedd ngsGenerat onEmbedd ngLength:  nt = 50
+  overr de val t etRecom ntat onsSnapshotDataset: KeyValDALDataset[
+    KeyVal[Long, Cand dateT etsL st]
   ] =
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl2El50ScalaDataset
+    Offl neT etRecom ndat onsFrom nterested n20M145K2020Hl2El50ScalaDataset
 }
 
 /**
-Scio job for batch run for tweet recommendations from IIKF 2020 with parameter setup:
- - Half Life: 8hrs
- - Embedding Length: 50
-The schedule cmd needs to be run only if there is any change in the config
+Sc o job for batch run for t et recom ndat ons from   KF 2020 w h para ter setup:
+ - Half L fe: 8hrs
+ - Embedd ng Length: 50
+T  sc dule cmd needs to be run only  f t re  s any change  n t  conf g
  */
-object IIKF2020Hl8El50TweetsANNBQBatchJob extends TweetsANNJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val outputTable = BQTableDetails(
+object   KF2020Hl8El50T etsANNBQBatchJob extends T etsANNJob {
+  overr de val  sAdhoc = false
+  overr de val getConsu rEmbedd ngsSQLFunc = get nterested n2020SQL
+  overr de val outputTable = BQTableDeta ls(
     "twttr-bq-cassowary-prod",
     "user",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_8_EL_50")
-  override val keyValDatasetOutputPath = Config.IIKFHL8EL50ANNOutputPath
-  override val tweetEmbeddingsGenerationEmbeddingLength: Int = 50
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+    "offl ne_t et_recom ndat ons_from_ nterested_ n_20M_145K_2020_HL_8_EL_50")
+  overr de val keyValDatasetOutputPath = Conf g.  KFHL8EL50ANNOutputPath
+  overr de val t etEmbedd ngsGenerat onEmbedd ngLength:  nt = 50
+  overr de val t etRecom ntat onsSnapshotDataset: KeyValDALDataset[
+    KeyVal[Long, Cand dateT etsL st]
   ] =
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl8El50ScalaDataset
+    Offl neT etRecom ndat onsFrom nterested n20M145K2020Hl8El50ScalaDataset
 }
 
 /**
-Scio job for batch run for tweet recommendations from MTS Consumer Embeddings
-The schedule cmd needs to be run only if there is any change in the config
+Sc o job for batch run for t et recom ndat ons from MTS Consu r Embedd ngs
+T  sc dule cmd needs to be run only  f t re  s any change  n t  conf g
  */
-object MTSConsumerEmbeddingsTweetsANNBQBatchJob extends TweetsANNJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getMTSConsumerEmbeddingsFav90P20MSQL
-  override val outputTable = BQTableDetails(
+object MTSConsu rEmbedd ngsT etsANNBQBatchJob extends T etsANNJob {
+  overr de val  sAdhoc = false
+  overr de val getConsu rEmbedd ngsSQLFunc = getMTSConsu rEmbedd ngsFav90P20MSQL
+  overr de val outputTable = BQTableDeta ls(
     "twttr-bq-cassowary-prod",
     "user",
-    "offline_tweet_recommendations_from_mts_consumer_embeddings")
-  override val keyValDatasetOutputPath = Config.MTSConsumerEmbeddingsANNOutputPath
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+    "offl ne_t et_recom ndat ons_from_mts_consu r_embedd ngs")
+  overr de val keyValDatasetOutputPath = Conf g.MTSConsu rEmbedd ngsANNOutputPath
+  overr de val t etRecom ntat onsSnapshotDataset: KeyValDALDataset[
+    KeyVal[Long, Cand dateT etsL st]
   ] =
-    OfflineTweetRecommendationsFromMtsConsumerEmbeddingsScalaDataset
+    Offl neT etRecom ndat onsFromMtsConsu rEmbedd ngsScalaDataset
 }

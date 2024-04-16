@@ -1,89 +1,89 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.tw ter.cr_m xer.s m lar y_eng ne
 
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.param.ConsumersBasedUserVideoGraphParams
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.user_video_graph.thriftscala.ConsumersBasedRelatedTweetRequest
-import com.twitter.recos.user_video_graph.thriftscala.RelatedTweetResponse
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.util.Future
-import javax.inject.Singleton
+ mport com.tw ter.cr_m xer.model.S m lar yEng ne nfo
+ mport com.tw ter.cr_m xer.model.T etW hScore
+ mport com.tw ter.cr_m xer.param.Consu rsBasedUserV deoGraphParams
+ mport com.tw ter.cr_m xer.param.GlobalParams
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.recos.user_v deo_graph.thr ftscala.Consu rsBasedRelatedT etRequest
+ mport com.tw ter.recos.user_v deo_graph.thr ftscala.RelatedT etResponse
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.conf gap 
+ mport com.tw ter.ut l.Future
+ mport javax. nject.S ngleton
 
 /**
- * This store uses the graph based input (a list of userIds)
- * to query consumersBasedUserVideoGraph and get their top engaged tweets
+ * T  store uses t  graph based  nput (a l st of user ds)
+ * to query consu rsBasedUserV deoGraph and get t  r top engaged t ets
  */
-@Singleton
-case class ConsumersBasedUserVideoGraphSimilarityEngine(
-  consumersBasedUserVideoGraphStore: ReadableStore[
-    ConsumersBasedRelatedTweetRequest,
-    RelatedTweetResponse
+@S ngleton
+case class Consu rsBasedUserV deoGraphS m lar yEng ne(
+  consu rsBasedUserV deoGraphStore: ReadableStore[
+    Consu rsBasedRelatedT etRequest,
+    RelatedT etResponse
   ],
-  statsReceiver: StatsReceiver)
+  statsRece ver: StatsRece ver)
     extends ReadableStore[
-      ConsumersBasedUserVideoGraphSimilarityEngine.Query,
-      Seq[TweetWithScore]
+      Consu rsBasedUserV deoGraphS m lar yEng ne.Query,
+      Seq[T etW hScore]
     ] {
 
-  override def get(
-    query: ConsumersBasedUserVideoGraphSimilarityEngine.Query
-  ): Future[Option[Seq[TweetWithScore]]] = {
-    val consumersBasedRelatedTweetRequest =
-      ConsumersBasedRelatedTweetRequest(
-        query.seedWithScores.keySet.toSeq,
-        maxResults = Some(query.maxResults),
-        minCooccurrence = Some(query.minCooccurrence),
-        minScore = Some(query.minScore),
-        maxTweetAgeInHours = Some(query.maxTweetAgeInHours)
+  overr de def get(
+    query: Consu rsBasedUserV deoGraphS m lar yEng ne.Query
+  ): Future[Opt on[Seq[T etW hScore]]] = {
+    val consu rsBasedRelatedT etRequest =
+      Consu rsBasedRelatedT etRequest(
+        query.seedW hScores.keySet.toSeq,
+        maxResults = So (query.maxResults),
+        m nCooccurrence = So (query.m nCooccurrence),
+        m nScore = So (query.m nScore),
+        maxT etAge nH s = So (query.maxT etAge nH s)
       )
-    consumersBasedUserVideoGraphStore
-      .get(consumersBasedRelatedTweetRequest)
-      .map { relatedTweetResponseOpt =>
-        relatedTweetResponseOpt.map { relatedTweetResponse =>
-          relatedTweetResponse.tweets.map { tweet =>
-            TweetWithScore(tweet.tweetId, tweet.score)
+    consu rsBasedUserV deoGraphStore
+      .get(consu rsBasedRelatedT etRequest)
+      .map { relatedT etResponseOpt =>
+        relatedT etResponseOpt.map { relatedT etResponse =>
+          relatedT etResponse.t ets.map { t et =>
+            T etW hScore(t et.t et d, t et.score)
           }
         }
       }
   }
 }
 
-object ConsumersBasedUserVideoGraphSimilarityEngine {
+object Consu rsBasedUserV deoGraphS m lar yEng ne {
 
   case class Query(
-    seedWithScores: Map[UserId, Double],
-    maxResults: Int,
-    minCooccurrence: Int,
-    minScore: Double,
-    maxTweetAgeInHours: Int)
+    seedW hScores: Map[User d, Double],
+    maxResults:  nt,
+    m nCooccurrence:  nt,
+    m nScore: Double,
+    maxT etAge nH s:  nt)
 
-  def toSimilarityEngineInfo(
+  def toS m lar yEng ne nfo(
     score: Double
-  ): SimilarityEngineInfo = {
-    SimilarityEngineInfo(
-      similarityEngineType = SimilarityEngineType.ConsumersBasedUserVideoGraph,
-      modelId = None,
-      score = Some(score))
+  ): S m lar yEng ne nfo = {
+    S m lar yEng ne nfo(
+      s m lar yEng neType = S m lar yEng neType.Consu rsBasedUserV deoGraph,
+      model d = None,
+      score = So (score))
   }
 
-  def fromParamsForRealGraphIn(
-    seedWithScores: Map[UserId, Double],
-    params: configapi.Params,
-  ): EngineQuery[Query] = {
+  def fromParamsForRealGraph n(
+    seedW hScores: Map[User d, Double],
+    params: conf gap .Params,
+  ): Eng neQuery[Query] = {
 
-    EngineQuery(
+    Eng neQuery(
       Query(
-        seedWithScores = seedWithScores,
-        maxResults = params(GlobalParams.MaxCandidateNumPerSourceKeyParam),
-        minCooccurrence =
-          params(ConsumersBasedUserVideoGraphParams.RealGraphInMinCoOccurrenceParam),
-        minScore = params(ConsumersBasedUserVideoGraphParams.RealGraphInMinScoreParam),
-        maxTweetAgeInHours = params(GlobalParams.MaxTweetAgeHoursParam).inHours
+        seedW hScores = seedW hScores,
+        maxResults = params(GlobalParams.MaxCand dateNumPerS ceKeyParam),
+        m nCooccurrence =
+          params(Consu rsBasedUserV deoGraphParams.RealGraph nM nCoOccurrenceParam),
+        m nScore = params(Consu rsBasedUserV deoGraphParams.RealGraph nM nScoreParam),
+        maxT etAge nH s = params(GlobalParams.MaxT etAgeH sParam). nH s
       ),
       params
     )

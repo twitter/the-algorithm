@@ -1,59 +1,59 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import java.util.Map;
+ mport java.ut l.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.finagle.Service;
-import com.twitter.search.common.root.ScatterGatherService;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ExperimentCluster;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.search.common.root.ScatterGat rServ ce;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd.thr ft.Exper  ntCluster;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.ut l.Future;
 
-public class ScatterGatherWithExperimentRedirectsService
-    extends Service<EarlybirdRequestContext, EarlybirdResponse> {
-  private final Service<EarlybirdRequestContext, EarlybirdResponse>
-      controlScatterGatherService;
+publ c class ScatterGat rW hExper  ntRed rectsServ ce
+    extends Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> {
+  pr vate f nal Serv ce<Earlyb rdRequestContext, Earlyb rdResponse>
+      controlScatterGat rServ ce;
 
-  private final Map<ExperimentCluster,
-      ScatterGatherService<EarlybirdRequestContext, EarlybirdResponse>>
-      experimentScatterGatherServices;
+  pr vate f nal Map<Exper  ntCluster,
+      ScatterGat rServ ce<Earlyb rdRequestContext, Earlyb rdResponse>>
+      exper  ntScatterGat rServ ces;
 
-  private static final Logger LOG =
-      LoggerFactory.getLogger(ScatterGatherWithExperimentRedirectsService.class);
+  pr vate stat c f nal Logger LOG =
+      LoggerFactory.getLogger(ScatterGat rW hExper  ntRed rectsServ ce.class);
 
-  public ScatterGatherWithExperimentRedirectsService(
-      Service<EarlybirdRequestContext, EarlybirdResponse> controlScatterGatherService,
-      Map<ExperimentCluster,
-          ScatterGatherService<EarlybirdRequestContext, EarlybirdResponse>>
-          experimentScatterGatherServices
+  publ c ScatterGat rW hExper  ntRed rectsServ ce(
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> controlScatterGat rServ ce,
+      Map<Exper  ntCluster,
+          ScatterGat rServ ce<Earlyb rdRequestContext, Earlyb rdResponse>>
+          exper  ntScatterGat rServ ces
   ) {
-    this.controlScatterGatherService = controlScatterGatherService;
-    this.experimentScatterGatherServices = experimentScatterGatherServices;
+    t .controlScatterGat rServ ce = controlScatterGat rServ ce;
+    t .exper  ntScatterGat rServ ces = exper  ntScatterGat rServ ces;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequestContext request) {
-    if (request.getRequest().isSetExperimentClusterToUse()) {
-      ExperimentCluster cluster = request.getRequest().getExperimentClusterToUse();
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(Earlyb rdRequestContext request) {
+     f (request.getRequest(). sSetExper  ntClusterToUse()) {
+      Exper  ntCluster cluster = request.getRequest().getExper  ntClusterToUse();
 
-      if (!experimentScatterGatherServices.containsKey(cluster)) {
-        String error = String.format(
-            "Received invalid experiment cluster: %s", cluster.name());
+       f (!exper  ntScatterGat rServ ces.conta nsKey(cluster)) {
+        Str ng error = Str ng.format(
+            "Rece ved  nval d exper  nt cluster: %s", cluster.na ());
 
         LOG.error("{} Request: {}", error, request.getRequest());
 
-        return Future.value(new EarlybirdResponse()
-            .setResponseCode(EarlybirdResponseCode.CLIENT_ERROR)
-            .setDebugString(error));
+        return Future.value(new Earlyb rdResponse()
+            .setResponseCode(Earlyb rdResponseCode.CL ENT_ERROR)
+            .setDebugStr ng(error));
       }
 
-      return experimentScatterGatherServices.get(cluster).apply(request);
+      return exper  ntScatterGat rServ ces.get(cluster).apply(request);
     }
 
-    return controlScatterGatherService.apply(request);
+    return controlScatterGat rServ ce.apply(request);
   }
 }

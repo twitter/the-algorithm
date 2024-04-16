@@ -1,421 +1,421 @@
-package com.twitter.tweetypie
-package service
+package com.tw ter.t etyp e
+package serv ce
 
-import com.twitter.servo.exception.thriftscala.ClientError
-import com.twitter.servo.util.SynchronizedHashMap
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.service.observer._
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.finagle.tracing.Trace
+ mport com.tw ter.servo.except on.thr ftscala.Cl entError
+ mport com.tw ter.servo.ut l.Synchron zedHashMap
+ mport com.tw ter.t etyp e.cl ent_ d.Cl ent d lper
+ mport com.tw ter.t etyp e.serv ce.observer._
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport com.tw ter.f nagle.trac ng.Trace
 
 /**
- * Wraps an underlying TweetService, observing requests and results.
+ * Wraps an underly ng T etServ ce, observ ng requests and results.
  */
-class ObservedTweetService(
-  protected val underlying: ThriftTweetService,
-  stats: StatsReceiver,
-  clientIdHelper: ClientIdHelper)
-    extends TweetServiceProxy {
+class ObservedT etServ ce(
+  protected val underly ng: Thr ftT etServ ce,
+  stats: StatsRece ver,
+  cl ent d lper: Cl ent d lper)
+    extends T etServ ceProxy {
 
-  private[this] val asyncEventOrRetryScope = stats.scope("async_event_or_retry")
-  private[this] val deleteFieldsScope = stats.scope("delete_additional_fields")
-  private[this] val deleteTweetsScope = stats.scope("delete_tweets")
-  private[this] val getDeletedTweetsScope = stats.scope("get_deleted_tweets")
-  private[this] val getTweetCountsScope = stats.scope("get_tweet_counts")
-  private[this] val getTweetsScope = stats.scope("get_tweets")
-  private[this] val getTweetFieldsScope = stats.scope("get_tweet_fields")
-  private[this] val postTweetScope = stats.scope("post_tweet")
-  private[this] val replicatedInsertTweet2Scope = stats.scope("replicated_insert_tweet2")
-  private[this] val retweetScope = stats.scope("post_retweet")
-  private[this] val scrubGeoScope = stats.scope("scrub_geo")
-  private[this] val setFieldsScope = stats.scope("set_additional_fields")
-  private[this] val setRetweetVisibilityScope = stats.scope("set_retweet_visibility")
-  private[this] val getStoredTweetsScope = stats.scope("get_stored_tweets")
-  private[this] val getStoredTweetsByUserScope = stats.scope("get_stored_tweets_by_user")
+  pr vate[t ] val asyncEventOrRetryScope = stats.scope("async_event_or_retry")
+  pr vate[t ] val deleteF eldsScope = stats.scope("delete_add  onal_f elds")
+  pr vate[t ] val deleteT etsScope = stats.scope("delete_t ets")
+  pr vate[t ] val getDeletedT etsScope = stats.scope("get_deleted_t ets")
+  pr vate[t ] val getT etCountsScope = stats.scope("get_t et_counts")
+  pr vate[t ] val getT etsScope = stats.scope("get_t ets")
+  pr vate[t ] val getT etF eldsScope = stats.scope("get_t et_f elds")
+  pr vate[t ] val postT etScope = stats.scope("post_t et")
+  pr vate[t ] val repl cated nsertT et2Scope = stats.scope("repl cated_ nsert_t et2")
+  pr vate[t ] val ret etScope = stats.scope("post_ret et")
+  pr vate[t ] val scrubGeoScope = stats.scope("scrub_geo")
+  pr vate[t ] val setF eldsScope = stats.scope("set_add  onal_f elds")
+  pr vate[t ] val setRet etV s b l yScope = stats.scope("set_ret et_v s b l y")
+  pr vate[t ] val getStoredT etsScope = stats.scope("get_stored_t ets")
+  pr vate[t ] val getStoredT etsByUserScope = stats.scope("get_stored_t ets_by_user")
 
-  private[this] val defaultGetTweetsRequestOptions = GetTweetOptions()
+  pr vate[t ] val defaultGetT etsRequestOpt ons = GetT etOpt ons()
 
-  /** Increments the appropriate write success/failure counter */
-  private[this] val observeWriteResult: Effect[Try[_]] = {
-    withAndWithoutClientId(stats) { (stats, _) =>
-      val successCounter = stats.counter("write_successes")
-      val failureCounter = stats.counter("write_failures")
-      val clientErrorCounter = stats.counter("write_client_errors")
+  /**  ncre nts t  appropr ate wr e success/fa lure counter */
+  pr vate[t ] val observeWr eResult: Effect[Try[_]] = {
+    w hAndW houtCl ent d(stats) { (stats, _) =>
+      val successCounter = stats.counter("wr e_successes")
+      val fa lureCounter = stats.counter("wr e_fa lures")
+      val cl entErrorCounter = stats.counter("wr e_cl ent_errors")
       Effect[Try[_]] {
-        case Return(_) => successCounter.incr()
-        case Throw(ClientError(_, _)) | Throw(AccessDenied(_, _)) => clientErrorCounter.incr()
-        case Throw(_) => failureCounter.incr()
+        case Return(_) => successCounter. ncr()
+        case Throw(Cl entError(_, _)) | Throw(AccessDen ed(_, _)) => cl entErrorCounter. ncr()
+        case Throw(_) => fa lureCounter. ncr()
       }
     }
   }
 
-  /** Increments the tweet_creates counter on future success. */
-  private[this] val observeTweetWriteSuccess: Effect[Any] = {
-    withAndWithoutClientId(stats) { (stats, _) =>
-      val counter = stats.counter("tweet_writes")
-      Effect[Any] { _ => counter.incr() }
+  /**  ncre nts t  t et_creates counter on future success. */
+  pr vate[t ] val observeT etWr eSuccess: Effect[Any] = {
+    w hAndW houtCl ent d(stats) { (stats, _) =>
+      val counter = stats.counter("t et_wr es")
+      Effect[Any] { _ => counter. ncr() }
     }
   }
 
-  private[this] val observeGetTweetsRequest =
-    withAndWithoutClientId(getTweetsScope) {
-      GetTweetsObserver.observeRequest
+  pr vate[t ] val observeGetT etsRequest =
+    w hAndW houtCl ent d(getT etsScope) {
+      GetT etsObserver.observeRequest
     }
 
-  private[this] val observeGetTweetFieldsRequest =
-    withAndWithoutClientId(getTweetFieldsScope) {
-      GetTweetFieldsObserver.observeRequest
+  pr vate[t ] val observeGetT etF eldsRequest =
+    w hAndW houtCl ent d(getT etF eldsScope) {
+      GetT etF eldsObserver.observeRequest
     }
 
-  private[this] val observeGetTweetCountsRequest =
-    withAndWithoutClientId(getTweetCountsScope) { (s, _) =>
-      GetTweetCountsObserver.observeRequest(s)
+  pr vate[t ] val observeGetT etCountsRequest =
+    w hAndW houtCl ent d(getT etCountsScope) { (s, _) =>
+      GetT etCountsObserver.observeRequest(s)
     }
 
-  private[this] val observeRetweetRequest: Effect[RetweetRequest] =
-    withAndWithoutClientId(retweetScope) { (s, _) => Observer.observeRetweetRequest(s) }
+  pr vate[t ] val observeRet etRequest: Effect[Ret etRequest] =
+    w hAndW houtCl ent d(ret etScope) { (s, _) => Observer.observeRet etRequest(s) }
 
-  private[this] val observeDeleteTweetsRequest =
-    withAndWithoutClientId(deleteTweetsScope) { (s, _) => Observer.observeDeleteTweetsRequest(s) }
+  pr vate[t ] val observeDeleteT etsRequest =
+    w hAndW houtCl ent d(deleteT etsScope) { (s, _) => Observer.observeDeleteT etsRequest(s) }
 
-  private[this] val observeSetFieldsRequest: Effect[SetAdditionalFieldsRequest] =
-    withAndWithoutClientId(setFieldsScope) { (s, _) => Observer.observeSetFieldsRequest(s) }
+  pr vate[t ] val observeSetF eldsRequest: Effect[SetAdd  onalF eldsRequest] =
+    w hAndW houtCl ent d(setF eldsScope) { (s, _) => Observer.observeSetF eldsRequest(s) }
 
-  private[this] val observeSetRetweetVisibilityRequest: Effect[SetRetweetVisibilityRequest] =
-    withAndWithoutClientId(setRetweetVisibilityScope) { (s, _) =>
-      Observer.observeSetRetweetVisibilityRequest(s)
+  pr vate[t ] val observeSetRet etV s b l yRequest: Effect[SetRet etV s b l yRequest] =
+    w hAndW houtCl ent d(setRet etV s b l yScope) { (s, _) =>
+      Observer.observeSetRet etV s b l yRequest(s)
     }
 
-  private[this] val observeDeleteFieldsRequest: Effect[DeleteAdditionalFieldsRequest] =
-    withAndWithoutClientId(deleteFieldsScope) { (s, _) => Observer.observeDeleteFieldsRequest(s) }
+  pr vate[t ] val observeDeleteF eldsRequest: Effect[DeleteAdd  onalF eldsRequest] =
+    w hAndW houtCl ent d(deleteF eldsScope) { (s, _) => Observer.observeDeleteF eldsRequest(s) }
 
-  private[this] val observePostTweetAdditionals: Effect[Tweet] =
-    withAndWithoutClientId(postTweetScope) { (s, _) => Observer.observeAdditionalFields(s) }
+  pr vate[t ] val observePostT etAdd  onals: Effect[T et] =
+    w hAndW houtCl ent d(postT etScope) { (s, _) => Observer.observeAdd  onalF elds(s) }
 
-  private[this] val observePostTweetRequest: Effect[PostTweetRequest] =
-    withAndWithoutClientId(postTweetScope) { (s, _) => PostTweetObserver.observerRequest(s) }
+  pr vate[t ] val observePostT etRequest: Effect[PostT etRequest] =
+    w hAndW houtCl ent d(postT etScope) { (s, _) => PostT etObserver.observerRequest(s) }
 
-  private[this] val observeGetTweetResults =
-    withAndWithoutClientId(getTweetsScope) {
-      GetTweetsObserver.observeResults
+  pr vate[t ] val observeGetT etResults =
+    w hAndW houtCl ent d(getT etsScope) {
+      GetT etsObserver.observeResults
     }
 
-  private[this] val observeGetTweetFieldsResults: Effect[Seq[GetTweetFieldsResult]] =
-    GetTweetFieldsObserver.observeResults(getTweetFieldsScope)
+  pr vate[t ] val observeGetT etF eldsResults: Effect[Seq[GetT etF eldsResult]] =
+    GetT etF eldsObserver.observeResults(getT etF eldsScope)
 
-  private[this] val observeTweetCountsResults =
-    GetTweetCountsObserver.observeResults(getTweetCountsScope)
+  pr vate[t ] val observeT etCountsResults =
+    GetT etCountsObserver.observeResults(getT etCountsScope)
 
-  private[this] val observeScrubGeoRequest =
+  pr vate[t ] val observeScrubGeoRequest =
     Observer.observeScrubGeo(scrubGeoScope)
 
-  private[this] val observeRetweetResponse =
-    PostTweetObserver.observeResults(retweetScope, byClient = false)
+  pr vate[t ] val observeRet etResponse =
+    PostT etObserver.observeResults(ret etScope, byCl ent = false)
 
-  private[this] val observePostTweetResponse =
-    PostTweetObserver.observeResults(postTweetScope, byClient = false)
+  pr vate[t ] val observePostT etResponse =
+    PostT etObserver.observeResults(postT etScope, byCl ent = false)
 
-  private[this] val observeAsyncInsertRequest =
-    Observer.observeAsyncInsertRequest(asyncEventOrRetryScope)
+  pr vate[t ] val observeAsync nsertRequest =
+    Observer.observeAsync nsertRequest(asyncEventOrRetryScope)
 
-  private[this] val observeAsyncSetAdditionalFieldsRequest =
-    Observer.observeAsyncSetAdditionalFieldsRequest(asyncEventOrRetryScope)
+  pr vate[t ] val observeAsyncSetAdd  onalF eldsRequest =
+    Observer.observeAsyncSetAdd  onalF eldsRequest(asyncEventOrRetryScope)
 
-  private[this] val observeAsyncSetRetweetVisibilityRequest =
-    Observer.observeAsyncSetRetweetVisibilityRequest(asyncEventOrRetryScope)
+  pr vate[t ] val observeAsyncSetRet etV s b l yRequest =
+    Observer.observeAsyncSetRet etV s b l yRequest(asyncEventOrRetryScope)
 
-  private[this] val observeAsyncUndeleteTweetRequest =
-    Observer.observeAsyncUndeleteTweetRequest(asyncEventOrRetryScope)
+  pr vate[t ] val observeAsyncUndeleteT etRequest =
+    Observer.observeAsyncUndeleteT etRequest(asyncEventOrRetryScope)
 
-  private[this] val observeAsyncDeleteTweetRequest =
-    Observer.observeAsyncDeleteTweetRequest(asyncEventOrRetryScope)
+  pr vate[t ] val observeAsyncDeleteT etRequest =
+    Observer.observeAsyncDeleteT etRequest(asyncEventOrRetryScope)
 
-  private[this] val observeAsyncDeleteAdditionalFieldsRequest =
-    Observer.observeAsyncDeleteAdditionalFieldsRequest(asyncEventOrRetryScope)
+  pr vate[t ] val observeAsyncDeleteAdd  onalF eldsRequest =
+    Observer.observeAsyncDeleteAdd  onalF eldsRequest(asyncEventOrRetryScope)
 
-  private[this] val observeAsyncTakedownRequest =
+  pr vate[t ] val observeAsyncTakedownRequest =
     Observer.observeAsyncTakedownRequest(asyncEventOrRetryScope)
 
-  private[this] val observeAsyncUpdatePossiblySensitiveTweetRequest =
-    Observer.observeAsyncUpdatePossiblySensitiveTweetRequest(asyncEventOrRetryScope)
+  pr vate[t ] val observeAsyncUpdatePoss blySens  veT etRequest =
+    Observer.observeAsyncUpdatePoss blySens  veT etRequest(asyncEventOrRetryScope)
 
-  private[this] val observedReplicatedInsertTweet2Request =
-    Observer.observeReplicatedInsertTweetRequest(replicatedInsertTweet2Scope)
+  pr vate[t ] val observedRepl cated nsertT et2Request =
+    Observer.observeRepl cated nsertT etRequest(repl cated nsertT et2Scope)
 
-  private[this] val observeGetTweetFieldsResultState: Effect[GetTweetFieldsObserver.Type] =
-    withAndWithoutClientId(getTweetFieldsScope) { (statsReceiver, _) =>
-      GetTweetFieldsObserver.observeExchange(statsReceiver)
+  pr vate[t ] val observeGetT etF eldsResultState: Effect[GetT etF eldsObserver.Type] =
+    w hAndW houtCl ent d(getT etF eldsScope) { (statsRece ver, _) =>
+      GetT etF eldsObserver.observeExchange(statsRece ver)
     }
 
-  private[this] val observeGetTweetsResultState: Effect[GetTweetsObserver.Type] =
-    withAndWithoutClientId(getTweetsScope) { (statsReceiver, _) =>
-      GetTweetsObserver.observeExchange(statsReceiver)
+  pr vate[t ] val observeGetT etsResultState: Effect[GetT etsObserver.Type] =
+    w hAndW houtCl ent d(getT etsScope) { (statsRece ver, _) =>
+      GetT etsObserver.observeExchange(statsRece ver)
     }
 
-  private[this] val observeGetTweetCountsResultState: Effect[GetTweetCountsObserver.Type] =
-    withAndWithoutClientId(getTweetCountsScope) { (statsReceiver, _) =>
-      GetTweetCountsObserver.observeExchange(statsReceiver)
+  pr vate[t ] val observeGetT etCountsResultState: Effect[GetT etCountsObserver.Type] =
+    w hAndW houtCl ent d(getT etCountsScope) { (statsRece ver, _) =>
+      GetT etCountsObserver.observeExchange(statsRece ver)
     }
 
-  private[this] val observeGetDeletedTweetsResultState: Effect[GetDeletedTweetsObserver.Type] =
-    withAndWithoutClientId(getDeletedTweetsScope) { (statsReceiver, _) =>
-      GetDeletedTweetsObserver.observeExchange(statsReceiver)
+  pr vate[t ] val observeGetDeletedT etsResultState: Effect[GetDeletedT etsObserver.Type] =
+    w hAndW houtCl ent d(getDeletedT etsScope) { (statsRece ver, _) =>
+      GetDeletedT etsObserver.observeExchange(statsRece ver)
     }
 
-  private[this] val observeGetStoredTweetsRequest: Effect[GetStoredTweetsRequest] =
-    GetStoredTweetsObserver.observeRequest(getStoredTweetsScope)
+  pr vate[t ] val observeGetStoredT etsRequest: Effect[GetStoredT etsRequest] =
+    GetStoredT etsObserver.observeRequest(getStoredT etsScope)
 
-  private[this] val observeGetStoredTweetsResult: Effect[Seq[GetStoredTweetsResult]] =
-    GetStoredTweetsObserver.observeResult(getStoredTweetsScope)
+  pr vate[t ] val observeGetStoredT etsResult: Effect[Seq[GetStoredT etsResult]] =
+    GetStoredT etsObserver.observeResult(getStoredT etsScope)
 
-  private[this] val observeGetStoredTweetsResultState: Effect[GetStoredTweetsObserver.Type] =
-    GetStoredTweetsObserver.observeExchange(getStoredTweetsScope)
+  pr vate[t ] val observeGetStoredT etsResultState: Effect[GetStoredT etsObserver.Type] =
+    GetStoredT etsObserver.observeExchange(getStoredT etsScope)
 
-  private[this] val observeGetStoredTweetsByUserRequest: Effect[GetStoredTweetsByUserRequest] =
-    GetStoredTweetsByUserObserver.observeRequest(getStoredTweetsByUserScope)
+  pr vate[t ] val observeGetStoredT etsByUserRequest: Effect[GetStoredT etsByUserRequest] =
+    GetStoredT etsByUserObserver.observeRequest(getStoredT etsByUserScope)
 
-  private[this] val observeGetStoredTweetsByUserResult: Effect[GetStoredTweetsByUserResult] =
-    GetStoredTweetsByUserObserver.observeResult(getStoredTweetsByUserScope)
+  pr vate[t ] val observeGetStoredT etsByUserResult: Effect[GetStoredT etsByUserResult] =
+    GetStoredT etsByUserObserver.observeResult(getStoredT etsByUserScope)
 
-  private[this] val observeGetStoredTweetsByUserResultState: Effect[
-    GetStoredTweetsByUserObserver.Type
+  pr vate[t ] val observeGetStoredT etsByUserResultState: Effect[
+    GetStoredT etsByUserObserver.Type
   ] =
-    GetStoredTweetsByUserObserver.observeExchange(getStoredTweetsByUserScope)
+    GetStoredT etsByUserObserver.observeExchange(getStoredT etsByUserScope)
 
-  override def getTweets(request: GetTweetsRequest): Future[Seq[GetTweetResult]] = {
+  overr de def getT ets(request: GetT etsRequest): Future[Seq[GetT etResult]] = {
     val actualRequest =
-      if (request.options.nonEmpty) request
-      else request.copy(options = Some(defaultGetTweetsRequestOptions))
-    observeGetTweetsRequest(actualRequest)
-    Trace.recordBinary("query_width", request.tweetIds.length)
+       f (request.opt ons.nonEmpty) request
+      else request.copy(opt ons = So (defaultGetT etsRequestOpt ons))
+    observeGetT etsRequest(actualRequest)
+    Trace.recordB nary("query_w dth", request.t et ds.length)
     super
-      .getTweets(request)
-      .onSuccess(observeGetTweetResults)
-      .respond(response => observeGetTweetsResultState((request, response)))
+      .getT ets(request)
+      .onSuccess(observeGetT etResults)
+      .respond(response => observeGetT etsResultState((request, response)))
   }
 
-  override def getTweetFields(request: GetTweetFieldsRequest): Future[Seq[GetTweetFieldsResult]] = {
-    observeGetTweetFieldsRequest(request)
-    Trace.recordBinary("query_width", request.tweetIds.length)
+  overr de def getT etF elds(request: GetT etF eldsRequest): Future[Seq[GetT etF eldsResult]] = {
+    observeGetT etF eldsRequest(request)
+    Trace.recordB nary("query_w dth", request.t et ds.length)
     super
-      .getTweetFields(request)
-      .onSuccess(observeGetTweetFieldsResults)
-      .respond(response => observeGetTweetFieldsResultState((request, response)))
+      .getT etF elds(request)
+      .onSuccess(observeGetT etF eldsResults)
+      .respond(response => observeGetT etF eldsResultState((request, response)))
   }
 
-  override def getTweetCounts(request: GetTweetCountsRequest): Future[Seq[GetTweetCountsResult]] = {
-    observeGetTweetCountsRequest(request)
-    Trace.recordBinary("query_width", request.tweetIds.length)
+  overr de def getT etCounts(request: GetT etCountsRequest): Future[Seq[GetT etCountsResult]] = {
+    observeGetT etCountsRequest(request)
+    Trace.recordB nary("query_w dth", request.t et ds.length)
     super
-      .getTweetCounts(request)
-      .onSuccess(observeTweetCountsResults)
-      .respond(response => observeGetTweetCountsResultState((request, response)))
+      .getT etCounts(request)
+      .onSuccess(observeT etCountsResults)
+      .respond(response => observeGetT etCountsResultState((request, response)))
   }
 
-  override def getDeletedTweets(
-    request: GetDeletedTweetsRequest
-  ): Future[Seq[GetDeletedTweetResult]] = {
-    Trace.recordBinary("query_width", request.tweetIds.length)
+  overr de def getDeletedT ets(
+    request: GetDeletedT etsRequest
+  ): Future[Seq[GetDeletedT etResult]] = {
+    Trace.recordB nary("query_w dth", request.t et ds.length)
     super
-      .getDeletedTweets(request)
-      .respond(response => observeGetDeletedTweetsResultState((request, response)))
+      .getDeletedT ets(request)
+      .respond(response => observeGetDeletedT etsResultState((request, response)))
   }
 
-  override def postTweet(request: PostTweetRequest): Future[PostTweetResult] = {
-    observePostTweetRequest(request)
-    request.additionalFields.foreach(observePostTweetAdditionals)
+  overr de def postT et(request: PostT etRequest): Future[PostT etResult] = {
+    observePostT etRequest(request)
+    request.add  onalF elds.foreach(observePostT etAdd  onals)
     super
-      .postTweet(request)
-      .onSuccess(observePostTweetResponse)
-      .onSuccess(observeTweetWriteSuccess)
-      .respond(observeWriteResult)
+      .postT et(request)
+      .onSuccess(observePostT etResponse)
+      .onSuccess(observeT etWr eSuccess)
+      .respond(observeWr eResult)
   }
 
-  override def postRetweet(request: RetweetRequest): Future[PostTweetResult] = {
-    observeRetweetRequest(request)
+  overr de def postRet et(request: Ret etRequest): Future[PostT etResult] = {
+    observeRet etRequest(request)
     super
-      .postRetweet(request)
-      .onSuccess(observeRetweetResponse)
-      .onSuccess(observeTweetWriteSuccess)
-      .respond(observeWriteResult)
+      .postRet et(request)
+      .onSuccess(observeRet etResponse)
+      .onSuccess(observeT etWr eSuccess)
+      .respond(observeWr eResult)
   }
 
-  override def setAdditionalFields(request: SetAdditionalFieldsRequest): Future[Unit] = {
-    observeSetFieldsRequest(request)
+  overr de def setAdd  onalF elds(request: SetAdd  onalF eldsRequest): Future[Un ] = {
+    observeSetF eldsRequest(request)
     super
-      .setAdditionalFields(request)
-      .respond(observeWriteResult)
+      .setAdd  onalF elds(request)
+      .respond(observeWr eResult)
   }
 
-  override def setRetweetVisibility(request: SetRetweetVisibilityRequest): Future[Unit] = {
-    observeSetRetweetVisibilityRequest(request)
+  overr de def setRet etV s b l y(request: SetRet etV s b l yRequest): Future[Un ] = {
+    observeSetRet etV s b l yRequest(request)
     super
-      .setRetweetVisibility(request)
-      .respond(observeWriteResult)
+      .setRet etV s b l y(request)
+      .respond(observeWr eResult)
   }
 
-  override def deleteAdditionalFields(request: DeleteAdditionalFieldsRequest): Future[Unit] = {
-    observeDeleteFieldsRequest(request)
+  overr de def deleteAdd  onalF elds(request: DeleteAdd  onalF eldsRequest): Future[Un ] = {
+    observeDeleteF eldsRequest(request)
     super
-      .deleteAdditionalFields(request)
-      .respond(observeWriteResult)
+      .deleteAdd  onalF elds(request)
+      .respond(observeWr eResult)
   }
 
-  override def updatePossiblySensitiveTweet(
-    request: UpdatePossiblySensitiveTweetRequest
-  ): Future[Unit] =
+  overr de def updatePoss blySens  veT et(
+    request: UpdatePoss blySens  veT etRequest
+  ): Future[Un ] =
     super
-      .updatePossiblySensitiveTweet(request)
-      .respond(observeWriteResult)
+      .updatePoss blySens  veT et(request)
+      .respond(observeWr eResult)
 
-  override def deleteLocationData(request: DeleteLocationDataRequest): Future[Unit] =
+  overr de def deleteLocat onData(request: DeleteLocat onDataRequest): Future[Un ] =
     super
-      .deleteLocationData(request)
-      .respond(observeWriteResult)
+      .deleteLocat onData(request)
+      .respond(observeWr eResult)
 
-  override def scrubGeo(geoScrub: GeoScrub): Future[Unit] = {
+  overr de def scrubGeo(geoScrub: GeoScrub): Future[Un ] = {
     observeScrubGeoRequest(geoScrub)
     super
       .scrubGeo(geoScrub)
-      .respond(observeWriteResult)
+      .respond(observeWr eResult)
   }
 
-  override def scrubGeoUpdateUserTimestamp(request: DeleteLocationData): Future[Unit] =
-    super.scrubGeoUpdateUserTimestamp(request).respond(observeWriteResult)
+  overr de def scrubGeoUpdateUserT  stamp(request: DeleteLocat onData): Future[Un ] =
+    super.scrubGeoUpdateUserT  stamp(request).respond(observeWr eResult)
 
-  override def takedown(request: TakedownRequest): Future[Unit] =
+  overr de def takedown(request: TakedownRequest): Future[Un ] =
     super
       .takedown(request)
-      .respond(observeWriteResult)
+      .respond(observeWr eResult)
 
-  override def setTweetUserTakedown(request: SetTweetUserTakedownRequest): Future[Unit] =
+  overr de def setT etUserTakedown(request: SetT etUserTakedownRequest): Future[Un ] =
     super
-      .setTweetUserTakedown(request)
-      .respond(observeWriteResult)
+      .setT etUserTakedown(request)
+      .respond(observeWr eResult)
 
-  override def incrTweetFavCount(request: IncrTweetFavCountRequest): Future[Unit] =
+  overr de def  ncrT etFavCount(request:  ncrT etFavCountRequest): Future[Un ] =
     super
-      .incrTweetFavCount(request)
-      .respond(observeWriteResult)
+      . ncrT etFavCount(request)
+      .respond(observeWr eResult)
 
-  override def incrTweetBookmarkCount(request: IncrTweetBookmarkCountRequest): Future[Unit] =
+  overr de def  ncrT etBookmarkCount(request:  ncrT etBookmarkCountRequest): Future[Un ] =
     super
-      .incrTweetBookmarkCount(request)
-      .respond(observeWriteResult)
+      . ncrT etBookmarkCount(request)
+      .respond(observeWr eResult)
 
-  override def deleteTweets(request: DeleteTweetsRequest): Future[Seq[DeleteTweetResult]] = {
-    observeDeleteTweetsRequest(request)
+  overr de def deleteT ets(request: DeleteT etsRequest): Future[Seq[DeleteT etResult]] = {
+    observeDeleteT etsRequest(request)
     super
-      .deleteTweets(request)
-      .respond(observeWriteResult)
+      .deleteT ets(request)
+      .respond(observeWr eResult)
   }
 
-  override def cascadedDeleteTweet(request: CascadedDeleteTweetRequest): Future[Unit] =
+  overr de def cascadedDeleteT et(request: CascadedDeleteT etRequest): Future[Un ] =
     super
-      .cascadedDeleteTweet(request)
-      .respond(observeWriteResult)
+      .cascadedDeleteT et(request)
+      .respond(observeWr eResult)
 
-  override def asyncInsert(request: AsyncInsertRequest): Future[Unit] = {
-    observeAsyncInsertRequest(request)
+  overr de def async nsert(request: Async nsertRequest): Future[Un ] = {
+    observeAsync nsertRequest(request)
     super
-      .asyncInsert(request)
-      .respond(observeWriteResult)
+      .async nsert(request)
+      .respond(observeWr eResult)
   }
 
-  override def asyncSetAdditionalFields(request: AsyncSetAdditionalFieldsRequest): Future[Unit] = {
-    observeAsyncSetAdditionalFieldsRequest(request)
+  overr de def asyncSetAdd  onalF elds(request: AsyncSetAdd  onalF eldsRequest): Future[Un ] = {
+    observeAsyncSetAdd  onalF eldsRequest(request)
     super
-      .asyncSetAdditionalFields(request)
-      .respond(observeWriteResult)
+      .asyncSetAdd  onalF elds(request)
+      .respond(observeWr eResult)
   }
 
-  override def asyncSetRetweetVisibility(
-    request: AsyncSetRetweetVisibilityRequest
-  ): Future[Unit] = {
-    observeAsyncSetRetweetVisibilityRequest(request)
+  overr de def asyncSetRet etV s b l y(
+    request: AsyncSetRet etV s b l yRequest
+  ): Future[Un ] = {
+    observeAsyncSetRet etV s b l yRequest(request)
     super
-      .asyncSetRetweetVisibility(request)
-      .respond(observeWriteResult)
+      .asyncSetRet etV s b l y(request)
+      .respond(observeWr eResult)
   }
 
-  override def asyncUndeleteTweet(request: AsyncUndeleteTweetRequest): Future[Unit] = {
-    observeAsyncUndeleteTweetRequest(request)
+  overr de def asyncUndeleteT et(request: AsyncUndeleteT etRequest): Future[Un ] = {
+    observeAsyncUndeleteT etRequest(request)
     super
-      .asyncUndeleteTweet(request)
-      .respond(observeWriteResult)
+      .asyncUndeleteT et(request)
+      .respond(observeWr eResult)
   }
 
-  override def asyncDelete(request: AsyncDeleteRequest): Future[Unit] = {
-    observeAsyncDeleteTweetRequest(request)
+  overr de def asyncDelete(request: AsyncDeleteRequest): Future[Un ] = {
+    observeAsyncDeleteT etRequest(request)
     super
       .asyncDelete(request)
-      .respond(observeWriteResult)
+      .respond(observeWr eResult)
   }
 
-  override def asyncDeleteAdditionalFields(
-    request: AsyncDeleteAdditionalFieldsRequest
-  ): Future[Unit] = {
-    observeAsyncDeleteAdditionalFieldsRequest(request)
+  overr de def asyncDeleteAdd  onalF elds(
+    request: AsyncDeleteAdd  onalF eldsRequest
+  ): Future[Un ] = {
+    observeAsyncDeleteAdd  onalF eldsRequest(request)
     super
-      .asyncDeleteAdditionalFields(request)
-      .respond(observeWriteResult)
+      .asyncDeleteAdd  onalF elds(request)
+      .respond(observeWr eResult)
   }
 
-  override def asyncTakedown(request: AsyncTakedownRequest): Future[Unit] = {
+  overr de def asyncTakedown(request: AsyncTakedownRequest): Future[Un ] = {
     observeAsyncTakedownRequest(request)
     super
       .asyncTakedown(request)
-      .respond(observeWriteResult)
+      .respond(observeWr eResult)
   }
 
-  override def asyncUpdatePossiblySensitiveTweet(
-    request: AsyncUpdatePossiblySensitiveTweetRequest
-  ): Future[Unit] = {
-    observeAsyncUpdatePossiblySensitiveTweetRequest(request)
+  overr de def asyncUpdatePoss blySens  veT et(
+    request: AsyncUpdatePoss blySens  veT etRequest
+  ): Future[Un ] = {
+    observeAsyncUpdatePoss blySens  veT etRequest(request)
     super
-      .asyncUpdatePossiblySensitiveTweet(request)
-      .respond(observeWriteResult)
+      .asyncUpdatePoss blySens  veT et(request)
+      .respond(observeWr eResult)
   }
 
-  override def replicatedInsertTweet2(request: ReplicatedInsertTweet2Request): Future[Unit] = {
-    observedReplicatedInsertTweet2Request(request.cachedTweet.tweet)
-    super.replicatedInsertTweet2(request)
+  overr de def repl cated nsertT et2(request: Repl cated nsertT et2Request): Future[Un ] = {
+    observedRepl cated nsertT et2Request(request.cac dT et.t et)
+    super.repl cated nsertT et2(request)
   }
 
-  override def getStoredTweets(
-    request: GetStoredTweetsRequest
-  ): Future[Seq[GetStoredTweetsResult]] = {
-    observeGetStoredTweetsRequest(request)
+  overr de def getStoredT ets(
+    request: GetStoredT etsRequest
+  ): Future[Seq[GetStoredT etsResult]] = {
+    observeGetStoredT etsRequest(request)
     super
-      .getStoredTweets(request)
-      .onSuccess(observeGetStoredTweetsResult)
-      .respond(response => observeGetStoredTweetsResultState((request, response)))
+      .getStoredT ets(request)
+      .onSuccess(observeGetStoredT etsResult)
+      .respond(response => observeGetStoredT etsResultState((request, response)))
   }
 
-  override def getStoredTweetsByUser(
-    request: GetStoredTweetsByUserRequest
-  ): Future[GetStoredTweetsByUserResult] = {
-    observeGetStoredTweetsByUserRequest(request)
+  overr de def getStoredT etsByUser(
+    request: GetStoredT etsByUserRequest
+  ): Future[GetStoredT etsByUserResult] = {
+    observeGetStoredT etsByUserRequest(request)
     super
-      .getStoredTweetsByUser(request)
-      .onSuccess(observeGetStoredTweetsByUserResult)
-      .respond(response => observeGetStoredTweetsByUserResultState((request, response)))
+      .getStoredT etsByUser(request)
+      .onSuccess(observeGetStoredT etsByUserResult)
+      .respond(response => observeGetStoredT etsByUserResultState((request, response)))
   }
 
-  private def withAndWithoutClientId[A](
-    stats: StatsReceiver
+  pr vate def w hAndW houtCl ent d[A](
+    stats: StatsRece ver
   )(
-    f: (StatsReceiver, Boolean) => Effect[A]
+    f: (StatsRece ver, Boolean) => Effect[A]
   ) =
-    f(stats, false).also(withClientId(stats)(f))
+    f(stats, false).also(w hCl ent d(stats)(f))
 
-  private def withClientId[A](stats: StatsReceiver)(f: (StatsReceiver, Boolean) => Effect[A]) = {
-    val map = new SynchronizedHashMap[String, Effect[A]]
+  pr vate def w hCl ent d[A](stats: StatsRece ver)(f: (StatsRece ver, Boolean) => Effect[A]) = {
+    val map = new Synchron zedHashMap[Str ng, Effect[A]]
 
     Effect[A] { value =>
-      clientIdHelper.effectiveClientIdRoot.foreach { clientId =>
-        val clientObserver = map.getOrElseUpdate(clientId, f(stats.scope(clientId), true))
-        clientObserver(value)
+      cl ent d lper.effect veCl ent dRoot.foreach { cl ent d =>
+        val cl entObserver = map.getOrElseUpdate(cl ent d, f(stats.scope(cl ent d), true))
+        cl entObserver(value)
       }
     }
   }

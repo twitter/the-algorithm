@@ -1,12 +1,12 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.tw ter.fr gate.pushserv ce.model. b s
 
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.util.InlineActionUtil
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.ut l. nl neAct onUt l
+ mport com.tw ter.ut l.Future
 
-trait InlineActionIbis2Hydrator {
-  self: PushCandidate =>
+tra   nl neAct on b s2Hydrator {
+  self: PushCand date =>
 
-  lazy val tweetInlineActionModelValue: Future[Map[String, String]] =
-    InlineActionUtil.getTweetInlineActionValue(target)
+  lazy val t et nl neAct onModelValue: Future[Map[Str ng, Str ng]] =
+     nl neAct onUt l.getT et nl neAct onValue(target)
 }

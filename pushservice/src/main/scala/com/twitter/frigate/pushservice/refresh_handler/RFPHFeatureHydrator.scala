@@ -1,69 +1,69 @@
-package com.twitter.frigate.pushservice.refresh_handler
+package com.tw ter.fr gate.pushserv ce.refresh_handler
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.common.base.FeatureMap
-import com.twitter.frigate.data_pipeline.features_common.MrRequestContextForFeatureStore
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.ml.HydrationContextBuilder
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.frigate.pushservice.util.MrUserStateUtil
-import com.twitter.nrel.heavyranker.FeatureHydrator
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Cand dateDeta ls
+ mport com.tw ter.fr gate.common.base.FeatureMap
+ mport com.tw ter.fr gate.data_p pel ne.features_common.MrRequestContextForFeatureStore
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.ml.Hydrat onContextBu lder
+ mport com.tw ter.fr gate.pushserv ce.params.PushParams
+ mport com.tw ter.fr gate.pushserv ce.ut l.MrUserStateUt l
+ mport com.tw ter.nrel. avyranker.FeatureHydrator
+ mport com.tw ter.ut l.Future
 
 class RFPHFeatureHydrator(
   featureHydrator: FeatureHydrator
 )(
-  implicit globalStats: StatsReceiver) {
+   mpl c  globalStats: StatsRece ver) {
 
-  implicit val statsReceiver: StatsReceiver =
+   mpl c  val statsRece ver: StatsRece ver =
     globalStats.scope("RefreshForPushHandler")
 
-  //stat for feature hydration
-  private val featureHydrationEnabledCounter = statsReceiver.counter("featureHydrationEnabled")
-  private val mrUserStateStat = statsReceiver.scope("mr_user_state")
+  //stat for feature hydrat on
+  pr vate val featureHydrat onEnabledCounter = statsRece ver.counter("featureHydrat onEnabled")
+  pr vate val mrUserStateStat = statsRece ver.scope("mr_user_state")
 
-  private def hydrateFromRelevanceHydrator(
-    candidateDetails: Seq[CandidateDetails[PushCandidate]],
+  pr vate def hydrateFromRelevanceHydrator(
+    cand dateDeta ls: Seq[Cand dateDeta ls[PushCand date]],
     mrRequestContextForFeatureStore: MrRequestContextForFeatureStore
-  ): Future[Unit] = {
-    val pushCandidates = candidateDetails.map(_.candidate)
-    val candidatesAndContextsFut = Future.collect(pushCandidates.map { pc =>
-      val contextFut = HydrationContextBuilder.build(pc)
+  ): Future[Un ] = {
+    val pushCand dates = cand dateDeta ls.map(_.cand date)
+    val cand datesAndContextsFut = Future.collect(pushCand dates.map { pc =>
+      val contextFut = Hydrat onContextBu lder.bu ld(pc)
       contextFut.map { ctx => (pc, ctx) }
     })
-    candidatesAndContextsFut.flatMap { candidatesAndContexts =>
-      val contexts = candidatesAndContexts.map(_._2)
-      val resultsFut = featureHydrator.hydrateCandidate(contexts, mrRequestContextForFeatureStore)
-      resultsFut.map { hydrationResult =>
-        candidatesAndContexts.foreach {
-          case (pushCandidate, context) =>
-            val resultFeatures = hydrationResult.getOrElse(context, FeatureMap())
-            pushCandidate.mergeFeatures(resultFeatures)
+    cand datesAndContextsFut.flatMap { cand datesAndContexts =>
+      val contexts = cand datesAndContexts.map(_._2)
+      val resultsFut = featureHydrator.hydrateCand date(contexts, mrRequestContextForFeatureStore)
+      resultsFut.map { hydrat onResult =>
+        cand datesAndContexts.foreach {
+          case (pushCand date, context) =>
+            val resultFeatures = hydrat onResult.getOrElse(context, FeatureMap())
+            pushCand date. rgeFeatures(resultFeatures)
         }
       }
     }
   }
 
-  def candidateFeatureHydration(
-    candidateDetails: Seq[CandidateDetails[PushCandidate]],
+  def cand dateFeatureHydrat on(
+    cand dateDeta ls: Seq[Cand dateDeta ls[PushCand date]],
     mrRequestContextForFeatureStore: MrRequestContextForFeatureStore
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
-    candidateDetails.headOption match {
-      case Some(cand) =>
-        val target = cand.candidate.target
-        MrUserStateUtil.updateMrUserStateStats(target)(mrUserStateStat)
-        if (target.params(PushParams.DisableAllRelevanceParam)) {
-          Future.value(candidateDetails)
+  ): Future[Seq[Cand dateDeta ls[PushCand date]]] = {
+    cand dateDeta ls. adOpt on match {
+      case So (cand) =>
+        val target = cand.cand date.target
+        MrUserStateUt l.updateMrUserStateStats(target)(mrUserStateStat)
+         f (target.params(PushParams.D sableAllRelevanceParam)) {
+          Future.value(cand dateDeta ls)
         } else {
-          featureHydrationEnabledCounter.incr()
+          featureHydrat onEnabledCounter. ncr()
           for {
-            _ <- hydrateFromRelevanceHydrator(candidateDetails, mrRequestContextForFeatureStore)
-          } yield {
-            candidateDetails
+            _ <- hydrateFromRelevanceHydrator(cand dateDeta ls, mrRequestContextForFeatureStore)
+          } y eld {
+            cand dateDeta ls
           }
         }
-      case _ => Future.Nil
+      case _ => Future.N l
     }
   }
 }

@@ -1,39 +1,39 @@
 {
-  "role": "discode",
-  "name": "uua-retweet-archival-events-staging",
-  "config-files": [
-    "uua-retweet-archival-events.aurora"
+  "role": "d scode",
+  "na ": "uua-ret et-arch val-events-stag ng",
+  "conf g-f les": [
+    "uua-ret et-arch val-events.aurora"
   ],
-  "build": {
+  "bu ld": {
     "play": true,
-    "dependencies": [
+    "dependenc es": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "na ": "packer-cl ent-no-pex",
+        "vers on": "latest"
       }
     ],
     "steps": [
       {
         "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-retweet-archival-events"
+        "na ": "bundle",
+        "target": "un f ed_user_act ons/serv ce/src/ma n/scala:uua-ret et-arch val-events"
       },
       {
         "type": "packer",
-        "name": "uua-retweet-archival-events-staging",
-        "artifact": "./dist/uua-retweet-archival-events.zip"
+        "na ": "uua-ret et-arch val-events-stag ng",
+        "art fact": "./d st/uua-ret et-arch val-events.z p"
       }
     ]
   },
   "targets": [
     {
       "type": "group",
-      "name": "staging",
+      "na ": "stag ng",
       "targets": [
         {
-          "name": "uua-retweet-archival-events-staging-pdxa",
-          "key": "pdxa/discode/staging/uua-retweet-archival-events"
+          "na ": "uua-ret et-arch val-events-stag ng-pdxa",
+          "key": "pdxa/d scode/stag ng/uua-ret et-arch val-events"
         }
       ]
     }

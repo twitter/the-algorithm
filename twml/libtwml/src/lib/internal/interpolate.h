@@ -1,74 +1,74 @@
 #pragma once
 
-#ifdef __cplusplus
-#include <twml/optim.h>
-namespace twml {
+# fdef __cplusplus
+# nclude <twml/opt m.h>
+na space twml {
 
-  enum InterpolationMode {LINEAR, NEAREST};
+  enum  nterpolat onMode {L NEAR, NEAREST};
 
-  template<typename Tx, typename Ty>
-  static Tx interpolation(const Tx *xsData, const int64_t xsStride,
-                 const Ty *ysData, const int64_t ysStride,
-                 const Tx val, const int64_t mainSize,
-                 const InterpolationMode mode,
-                 const int64_t lowest,
-                 const bool return_local_index = false) {
-    int64_t left = 0;
-    int64_t right = mainSize-1;
+  template<typena  Tx, typena  Ty>
+  stat c Tx  nterpolat on(const Tx *xsData, const  nt64_t xsStr de,
+                 const Ty *ysData, const  nt64_t ysStr de,
+                 const Tx val, const  nt64_t ma nS ze,
+                 const  nterpolat onMode mode,
+                 const  nt64_t lo st,
+                 const bool return_local_ ndex = false) {
+     nt64_t left = 0;
+     nt64_t r ght = ma nS ze-1;
 
-    if (val <= xsData[0]) {
-      right = 0;
-    } else if (val >= xsData[right*xsStride]) {
-      left = right;
+     f (val <= xsData[0]) {
+      r ght = 0;
+    } else  f (val >= xsData[r ght*xsStr de]) {
+      left = r ght;
     } else {
-      while (left < right) {
-        int64_t middle = (left+right)/2;
+      wh le (left < r ght) {
+         nt64_t m ddle = (left+r ght)/2;
 
-        if (middle < mainSize - 1 &&
-          val >= xsData[middle*xsStride] &&
-          val <= xsData[(middle+1)*xsStride]) {
-          left = middle;
-          right = middle + 1;
+         f (m ddle < ma nS ze - 1 &&
+          val >= xsData[m ddle*xsStr de] &&
+          val <= xsData[(m ddle+1)*xsStr de]) {
+          left = m ddle;
+          r ght = m ddle + 1;
           break;
-        } else if (val > xsData[middle*xsStride]) {
-          left = middle;
+        } else  f (val > xsData[m ddle*xsStr de]) {
+          left = m ddle;
         } else {
-          right = middle;
+          r ght = m ddle;
         }
       }
-      if (lowest) {
-        while (left > 0 &&
-             val >= xsData[(left - 1) * xsStride] &&
-             val == xsData[left * xsStride]) {
+       f (lo st) {
+        wh le (left > 0 &&
+             val >= xsData[(left - 1) * xsStr de] &&
+             val == xsData[left * xsStr de]) {
           left--;
-          right--;
+          r ght--;
         }
       }
     }
 
     Ty out = 0;
-    if (return_local_index) {
+     f (return_local_ ndex) {
         out = left;
-    } else if (mode == NEAREST) {
-      out = ysData[left*ysStride];
+    } else  f (mode == NEAREST) {
+      out = ysData[left*ysStr de];
     } else {
-      int64_t leftys = left*ysStride;
-      int64_t rightys = right*ysStride;
-      int64_t leftxs = left*xsStride;
-      int64_t rightxs = right*xsStride;
-      if (right != left+1 ||
-        xsData[leftxs] == xsData[rightxs]) {
+       nt64_t leftys = left*ysStr de;
+       nt64_t r ghtys = r ght*ysStr de;
+       nt64_t leftxs = left*xsStr de;
+       nt64_t r ghtxs = r ght*xsStr de;
+       f (r ght != left+1 ||
+        xsData[leftxs] == xsData[r ghtxs]) {
         out = ysData[leftys];
       } else {
         Tx xLeft = xsData[leftxs];
-        Tx xRight = xsData[rightxs];
+        Tx xR ght = xsData[r ghtxs];
         Tx yLeft = ysData[leftys];
-        Tx ratio = (val - xLeft) / (xRight - xLeft);
-        out = ratio*(ysData[rightys] - yLeft) + yLeft;
+        Tx rat o = (val - xLeft) / (xR ght - xLeft);
+        out = rat o*(ysData[r ghtys] - yLeft) + yLeft;
       }
     }
     return out;
   }
 
-}  // namespace twml
-#endif
+}  // na space twml
+#end f

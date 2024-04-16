@@ -1,51 +1,51 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.entity
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+na space java com.tw ter.s mclusters_v2.thr ftjava
+na space py gen.tw ter.s mclusters_v2.ent y
+#@na space scala com.tw ter.s mclusters_v2.thr ftscala
+#@na space strato com.tw ter.s mclusters_v2
 
-include "com/twitter/algebird_internal/algebird.thrift"
+ nclude "com/tw ter/algeb rd_ nternal/algeb rd.thr ft"
 
 /**
- * Penguin text entity. All fields are required as this is used as a part of a memcache key.
+ * Pengu n text ent y. All f elds are requ red as t   s used as a part of a  mcac  key.
  **/
-struct PenguinKey {
-  1: required string textEntity
+struct Pengu nKey {
+  1: requ red str ng textEnt y
 }(hasPersonalData = 'false')
 
 /**
- * NER text entity. All fields are required as this is used as a part of a memcache key.
+ * NER text ent y. All f elds are requ red as t   s used as a part of a  mcac  key.
  **/
 struct NerKey {
-  1: required string textEntity
-  2: required i32 wholeEntityType
+  1: requ red str ng textEnt y
+  2: requ red  32 wholeEnt yType
 }(hasPersonalData = 'false')
 
 /**
- * Semantic Core text entity. All fields are required as this is used as a part of a memcache key.
+ * Semant c Core text ent y. All f elds are requ red as t   s used as a part of a  mcac  key.
  **/
-struct SemanticCoreKey {
-  1: required i64 entityId(personalDataType = 'SemanticcoreClassification')
+struct Semant cCoreKey {
+  1: requ red  64 ent y d(personalDataType = 'Semant ccoreClass f cat on')
 }(hasPersonalData = 'true')
 
 /**
- * Represents an entity extracted from a tweet.
+ * Represents an ent y extracted from a t et.
  **/
-union TweetTextEntity {
-  1: string hashtag
-  2: PenguinKey penguin
+un on T etTextEnt y {
+  1: str ng hashtag
+  2: Pengu nKey pengu n
   3: NerKey ner
-  4: SemanticCoreKey semanticCore
+  4: Semant cCoreKey semant cCore
 }(hasPersonalData = 'true')
 
-struct SpaceId {
-  1: string id
+struct Space d {
+  1: str ng  d
 }(hasPersonalData = 'true')
 
 /**
- * All possible entities that simclusters are associated with.
+ * All poss ble ent  es that s mclusters are assoc ated w h.
  **/
-union SimClusterEntity {
-  1: i64 tweetId(personalDataType = 'TweetId')
-  2: TweetTextEntity tweetEntity
-  3: SpaceId spaceId
+un on S mClusterEnt y {
+  1:  64 t et d(personalDataType = 'T et d')
+  2: T etTextEnt y t etEnt y
+  3: Space d space d
 }(hasPersonalData = 'true')

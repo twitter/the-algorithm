@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.assembler.models
+package com.tw ter.follow_recom ndat ons.assembler.models
 
-import com.twitter.stringcenter.client.core.ExternalString
+ mport com.tw ter.str ngcenter.cl ent.core.ExternalStr ng
 
-case class HeaderConfig(title: TitleConfig)
-case class TitleConfig(text: ExternalString)
-case class FooterConfig(actionConfig: Option[ActionConfig])
-case class ActionConfig(footerText: ExternalString, actionURL: String)
+case class  aderConf g(t le: T leConf g)
+case class T leConf g(text: ExternalStr ng)
+case class FooterConf g(act onConf g: Opt on[Act onConf g])
+case class Act onConf g(footerText: ExternalStr ng, act onURL: Str ng)

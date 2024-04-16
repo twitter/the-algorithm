@@ -1,12 +1,12 @@
-scala_library(
-    sources = ["*.scala"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/graphjet",
-        "snowflake:id",
-        "snowflake/src/main/scala/com/twitter/snowflake/id",
-        "src/scala/com/twitter/recos/util:recos-util",
-        "src/scala/com/twitter/simclusters_v2/common",
-        "src/thrift/com/twitter/recos/user_tweet_graph:user_tweet_graph-scala",
+scala_l brary(
+    s ces = ["*.scala"],
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/com/tw ter/graphjet",
+        "snowflake: d",
+        "snowflake/src/ma n/scala/com/tw ter/snowflake/ d",
+        "src/scala/com/tw ter/recos/ut l:recos-ut l",
+        "src/scala/com/tw ter/s mclusters_v2/common",
+        "src/thr ft/com/tw ter/recos/user_t et_graph:user_t et_graph-scala",
     ],
 )

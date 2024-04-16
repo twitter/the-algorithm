@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.query.logged_in_only
+package com.tw ter.product_m xer.component_l brary.feature_hydrator.query.logged_ n_only
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cond  onally
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
 /**
- * A [[QueryFeatureHydrator]] with [[Conditionally]] to run only for logged in users
+ * A [[QueryFeatureHydrator]] w h [[Cond  onally]] to run only for logged  n users
  *
- * @param queryFeatureHydrator the underlying [[QueryFeatureHydrator]] to run when query.isLoggedOut is false
- * @tparam Query The domain model for the query or request
- * @tparam Result The type of the candidates
+ * @param queryFeatureHydrator t  underly ng [[QueryFeatureHydrator]] to run w n query. sLoggedOut  s false
+ * @tparam Query T  doma n model for t  query or request
+ * @tparam Result T  type of t  cand dates
  */
-case class LoggedInOnlyQueryFeatureHydrator[-Query <: PipelineQuery, Result <: UniversalNoun[Any]](
+case class Logged nOnlyQueryFeatureHydrator[-Query <: P pel neQuery, Result <: Un versalNoun[Any]](
   queryFeatureHydrator: QueryFeatureHydrator[Query])
     extends QueryFeatureHydrator[Query]
-    with Conditionally[Query] {
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    "LoggedInOnly" + queryFeatureHydrator.identifier.name)
-  override val alerts: Seq[Alert] = queryFeatureHydrator.alerts
-  override val features: Set[Feature[_, _]] = queryFeatureHydrator.features
-  override def onlyIf(query: Query): Boolean =
-    Conditionally.and(query, queryFeatureHydrator, !query.isLoggedOut)
-  override def hydrate(query: Query): Stitch[FeatureMap] = queryFeatureHydrator.hydrate(query)
+    w h Cond  onally[Query] {
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er(
+    "Logged nOnly" + queryFeatureHydrator. dent f er.na )
+  overr de val alerts: Seq[Alert] = queryFeatureHydrator.alerts
+  overr de val features: Set[Feature[_, _]] = queryFeatureHydrator.features
+  overr de def only f(query: Query): Boolean =
+    Cond  onally.and(query, queryFeatureHydrator, !query. sLoggedOut)
+  overr de def hydrate(query: Query): St ch[FeatureMap] = queryFeatureHydrator.hydrate(query)
 }

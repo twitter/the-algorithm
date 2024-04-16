@@ -1,71 +1,71 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.score
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+na space java com.tw ter.s mclusters_v2.thr ftjava
+na space py gen.tw ter.s mclusters_v2.score
+#@na space scala com.tw ter.s mclusters_v2.thr ftscala
+#@na space strato com.tw ter.s mclusters_v2
 
-include "com/twitter/simclusters_v2/embedding.thrift"
-include "com/twitter/simclusters_v2/identifier.thrift"
+ nclude "com/tw ter/s mclusters_v2/embedd ng.thr ft"
+ nclude "com/tw ter/s mclusters_v2/ dent f er.thr ft"
 
 /**
-  * The algorithm type to identify the score algorithm.
-  * Assume that a algorithm support and only support one kind
-  * of [[ScoreInternalId]]
+  * T  algor hm type to  dent fy t  score algor hm.
+  * Assu  that a algor hm support and only support one k nd
+  * of [[Score nternal d]]
   **/
-enum ScoringAlgorithm {
-	// Reserve 0001 - 999 for Basic Pairwise Scoring Calculation
-	PairEmbeddingDotProduct = 1,
-	PairEmbeddingCosineSimilarity = 2,
-	PairEmbeddingJaccardSimilarity = 3,
-	PairEmbeddingEuclideanDistance = 4,
-	PairEmbeddingManhattanDistance = 5,
-  PairEmbeddingLogCosineSimilarity = 6,
-  PairEmbeddingExpScaledCosineSimilarity = 7,
+enum Scor ngAlgor hm {
+	// Reserve 0001 - 999 for Bas c Pa rw se Scor ng Calculat on
+	Pa rEmbedd ngDotProduct = 1,
+	Pa rEmbedd ngCos neS m lar y = 2,
+	Pa rEmbedd ngJaccardS m lar y = 3,
+	Pa rEmbedd ngEucl deanD stance = 4,
+	Pa rEmbedd ngManhattanD stance = 5,
+  Pa rEmbedd ngLogCos neS m lar y = 6,
+  Pa rEmbedd ngExpScaledCos neS m lar y = 7,
 
-	// Reserve 1000 - 1999 for Tweet Similarity Model
-  TagSpaceCosineSimilarity = 1000,
-	WeightedSumTagSpaceRankingExperiment1 = 1001, //deprecated
-	WeightedSumTagSpaceRankingExperiment2 = 1002, //deprecated
-  WeightedSumTagSpaceANNExperiment = 1003,      //deprecated 
+	// Reserve 1000 - 1999 for T et S m lar y Model
+  TagSpaceCos neS m lar y = 1000,
+	  ghtedSumTagSpaceRank ngExper  nt1 = 1001, //deprecated
+	  ghtedSumTagSpaceRank ngExper  nt2 = 1002, //deprecated
+    ghtedSumTagSpaceANNExper  nt = 1003,      //deprecated 
 
-	// Reserved for 10001 - 20000 for Aggregate scoring
-	WeightedSumTopicTweetRanking = 10001,
-	CortexTopicTweetLabel = 10002,
-	// Reserved 20001 - 30000 for Topic Tweet scores 
-	CertoNormalizedDotProductScore = 20001,
-	CertoNormalizedCosineScore = 20002
+	// Reserved for 10001 - 20000 for Aggregate scor ng
+	  ghtedSumTop cT etRank ng = 10001,
+	CortexTop cT etLabel = 10002,
+	// Reserved 20001 - 30000 for Top c T et scores 
+	CertoNormal zedDotProductScore = 20001,
+	CertoNormal zedCos neScore = 20002
 }(hasPersonalData = 'false')
 
 /**
-  * The identifier type for the score between a pair of SimClusters Embedding.
-  * Used as the persistent key of a SimClustersEmbedding score.
-  * Support score between different [[EmbeddingType]] / [[ModelVersion]]
+  * T   dent f er type for t  score bet en a pa r of S mClusters Embedd ng.
+  * Used as t  pers stent key of a S mClustersEmbedd ng score.
+  * Support score bet en d fferent [[Embedd ngType]] / [[ModelVers on]]
   **/
-struct SimClustersEmbeddingPairScoreId {
-  1: required identifier.SimClustersEmbeddingId id1
-  2: required identifier.SimClustersEmbeddingId id2
+struct S mClustersEmbedd ngPa rScore d {
+  1: requ red  dent f er.S mClustersEmbedd ng d  d1
+  2: requ red  dent f er.S mClustersEmbedd ng d  d2
 }(hasPersonalData = 'true')
 
 /**
-  * The identifier type for the score between a pair of InternalId.
+  * T   dent f er type for t  score bet en a pa r of  nternal d.
   **/
-struct GenericPairScoreId {
-  1: required identifier.InternalId id1
-  2: required identifier.InternalId id2
+struct Gener cPa rScore d {
+  1: requ red  dent f er. nternal d  d1
+  2: requ red  dent f er. nternal d  d2
 }(hasPersonalData = 'true')
 
-union ScoreInternalId {
-  1: GenericPairScoreId genericPairScoreId
-  2: SimClustersEmbeddingPairScoreId simClustersEmbeddingPairScoreId
+un on Score nternal d {
+  1: Gener cPa rScore d gener cPa rScore d
+  2: S mClustersEmbedd ngPa rScore d s mClustersEmbedd ngPa rScore d
 }
 
 /**
-  * A uniform Identifier type for all kinds of Calculation Score
+  * A un form  dent f er type for all k nds of Calculat on Score
   **/
-struct ScoreId {
-  1: required ScoringAlgorithm algorithm
-  2: required ScoreInternalId internalId
+struct Score d {
+  1: requ red Scor ngAlgor hm algor hm
+  2: requ red Score nternal d  nternal d
 }(hasPersonalData = 'true')
 
 struct Score {
-  1: required double score
+  1: requ red double score
 }(hasPersonalData = 'false')

@@ -1,52 +1,52 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.CardReferenceUriExtractor
-import com.twitter.tweetypie.core.NonTombstone
-import com.twitter.tweetypie.core.Tombstone
-import com.twitter.tweetypie.repository.CardUsersRepository
-import com.twitter.tweetypie.repository.CardUsersRepository.Context
-import com.twitter.tweetypie.thriftscala.CardReference
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.core.CardReferenceUr Extractor
+ mport com.tw ter.t etyp e.core.NonTombstone
+ mport com.tw ter.t etyp e.core.Tombstone
+ mport com.tw ter.t etyp e.repos ory.CardUsersRepos ory
+ mport com.tw ter.t etyp e.repos ory.CardUsersRepos ory.Context
+ mport com.tw ter.t etyp e.thr ftscala.CardReference
 
 /**
- * Finds a set of UserId that may be mentioned when replying to a tweet that has a card.
+ * F nds a set of User d that may be  nt oned w n reply ng to a t et that has a card.
  *
- * Replies created without 'auto_populate_reply_metadata' include both 'site' and 'author' users to
- * have a more exhaustive list of mentions to match against.  This is needed because iOS and Android
- * have had different implementations client-side for years.
+ * Repl es created w hout 'auto_populate_reply_ tadata'  nclude both 's e' and 'author' users to
+ * have a more exhaust ve l st of  nt ons to match aga nst.  T   s needed because  OS and Andro d
+ * have had d fferent  mple ntat ons cl ent-s de for years.
  */
-object CardUsersFinder {
+object CardUsersF nder {
 
   case class Request(
-    cardReference: Option[CardReference],
-    urls: Seq[String],
-    perspectiveUserId: UserId) {
-    val uris: Seq[String] = cardReference match {
-      case Some(CardReferenceUriExtractor(cardUri)) =>
-        cardUri match {
-          case NonTombstone(uri) => Seq(uri)
-          case Tombstone => Nil
+    cardReference: Opt on[CardReference],
+    urls: Seq[Str ng],
+    perspect veUser d: User d) {
+    val ur s: Seq[Str ng] = cardReference match {
+      case So (CardReferenceUr Extractor(cardUr )) =>
+        cardUr  match {
+          case NonTombstone(ur ) => Seq(ur )
+          case Tombstone => N l
         }
       case _ => urls
     }
 
-    val context: CardUsersRepository.Context = Context(perspectiveUserId)
+    val context: CardUsersRepos ory.Context = Context(perspect veUser d)
   }
 
-  type Type = Request => Stitch[Set[UserId]]
+  type Type = Request => St ch[Set[User d]]
 
   /**
-   * From a card-related arguments in [[Request]] select the set of user ids associated with the
+   * From a card-related argu nts  n [[Request]] select t  set of user  ds assoc ated w h t 
    * card.
    *
-   * Note that this uses the same "which card do I use?" logic from Card2Hydrator which
-   * prioritizes CardReferenceUri and then falls back to the last resolvable (non-None) url entity.
+   * Note that t  uses t  sa  "wh ch card do   use?" log c from Card2Hydrator wh ch
+   * pr or  zes CardReferenceUr  and t n falls back to t  last resolvable (non-None) url ent y.
    */
-  def apply(cardUserRepo: CardUsersRepository.Type): Type =
+  def apply(cardUserRepo: CardUsersRepos ory.Type): Type =
     request =>
-      Stitch
-        .traverse(request.uris) { uri => cardUserRepo(uri, request.context) }
-        // select the last, non-None Set of users ids
-        .map(r => r.flatten.reverse.headOption.getOrElse(Set.empty))
+      St ch
+        .traverse(request.ur s) { ur  => cardUserRepo(ur , request.context) }
+        // select t  last, non-None Set of users  ds
+        .map(r => r.flatten.reverse. adOpt on.getOrElse(Set.empty))
 }

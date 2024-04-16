@@ -1,42 +1,42 @@
-package com.twitter.frigate.pushservice.util
+package com.tw ter.fr gate.pushserv ce.ut l
 
-import com.twitter.finagle.stats.BroadcastStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.thriftscala.PushResponse
-import com.twitter.frigate.pushservice.thriftscala.PushStatus
-import com.twitter.frigate.thriftscala.CommonRecommendationType
+ mport com.tw ter.f nagle.stats.BroadcastStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.thr ftscala.PushResponse
+ mport com.tw ter.fr gate.pushserv ce.thr ftscala.PushStatus
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
 
-object ResponseStatsTrackUtils {
+object ResponseStatsTrackUt ls {
   def trackStatsForResponseToRequest(
-    crt: CommonRecommendationType,
+    crt: CommonRecom ndat onType,
     target: Target,
     response: PushResponse,
-    receivers: Seq[StatsReceiver]
+    rece vers: Seq[StatsRece ver]
   )(
-    originalStats: StatsReceiver
-  ): Unit = {
-    val newReceivers = Seq(
-      originalStats
-        .scope("is_model_training_data")
-        .scope(target.isModelTrainingData.toString),
-      originalStats.scope("scribe_target").scope(IbisScribeTargets.crtToScribeTarget(crt))
+    or g nalStats: StatsRece ver
+  ): Un  = {
+    val newRece vers = Seq(
+      or g nalStats
+        .scope(" s_model_tra n ng_data")
+        .scope(target. sModelTra n ngData.toStr ng),
+      or g nalStats.scope("scr be_target").scope( b sScr beTargets.crtToScr beTarget(crt))
     )
 
-    val broadcastStats = BroadcastStatsReceiver(receivers)
-    val broadcastStatsWithExpts = BroadcastStatsReceiver(newReceivers ++ receivers)
+    val broadcastStats = BroadcastStatsRece ver(rece vers)
+    val broadcastStatsW hExpts = BroadcastStatsRece ver(newRece vers ++ rece vers)
 
-    if (response.status == PushStatus.Sent) {
-      if (target.isModelTrainingData) {
-        broadcastStats.counter("num_training_data_recs_sent").incr()
+     f (response.status == PushStatus.Sent) {
+       f (target. sModelTra n ngData) {
+        broadcastStats.counter("num_tra n ng_data_recs_sent"). ncr()
       }
     }
-    broadcastStatsWithExpts.counter(response.status.toString).incr()
-    if (response.status == PushStatus.Filtered) {
+    broadcastStatsW hExpts.counter(response.status.toStr ng). ncr()
+     f (response.status == PushStatus.F ltered) {
       broadcastStats
-        .scope(response.status.toString)
-        .counter(response.filteredBy.getOrElse("None"))
-        .incr()
+        .scope(response.status.toStr ng)
+        .counter(response.f lteredBy.getOrElse("None"))
+        . ncr()
     }
   }
 }

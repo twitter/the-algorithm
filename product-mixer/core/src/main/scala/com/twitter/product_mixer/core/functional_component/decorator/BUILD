@@ -1,37 +1,37 @@
-scala_library(
-    name = "decoration",
-    sources = ["Decoration.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    na  = "decorat on",
+    s ces = ["Decorat on.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common/presentation",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/common/presentat on",
     ],
     exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common/presentation",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/common/presentat on",
     ],
 )
 
-scala_library(
-    sources = [
-        "!Decoration.scala",
+scala_l brary(
+    s ces = [
+        "!Decorat on.scala",
         "*.scala",
     ],
-    compiler_option_sets = ["fatal_warnings"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":decoration",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common/presentation",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        ":decorat on",
+        "3rdparty/jvm/javax/ nject:javax. nject",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/common/presentat on",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/p pel ne",
     ],
     exports = [
-        ":decoration",
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common/presentation",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
+        ":decorat on",
+        "3rdparty/jvm/javax/ nject:javax. nject",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/common/presentat on",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/p pel ne",
     ],
 )

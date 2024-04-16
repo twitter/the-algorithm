@@ -1,93 +1,93 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.flockdb.client._
-import com.twitter.stitch.SeqGroup
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.compat.LegacySeqGroup
+ mport com.tw ter.flockdb.cl ent._
+ mport com.tw ter.st ch.SeqGroup
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.compat.LegacySeqGroup
 
-case class ConversationIdKey(tweetId: TweetId, parentId: TweetId)
+case class Conversat on dKey(t et d: T et d, parent d: T et d)
 
-object ConversationIdRepository {
-  type Type = ConversationIdKey => Stitch[TweetId]
+object Conversat on dRepos ory {
+  type Type = Conversat on dKey => St ch[T et d]
 
-  def apply(multiSelectOne: Iterable[Select[StatusGraph]] => Future[Seq[Option[Long]]]): Type =
-    key => Stitch.call(key, Group(multiSelectOne))
+  def apply(mult SelectOne:  erable[Select[StatusGraph]] => Future[Seq[Opt on[Long]]]): Type =
+    key => St ch.call(key, Group(mult SelectOne))
 
-  private case class Group(
-    multiSelectOne: Iterable[Select[StatusGraph]] => Future[Seq[Option[Long]]])
-      extends SeqGroup[ConversationIdKey, TweetId] {
+  pr vate case class Group(
+    mult SelectOne:  erable[Select[StatusGraph]] => Future[Seq[Opt on[Long]]])
+      extends SeqGroup[Conversat on dKey, T et d] {
 
-    private[this] def getConversationIds(
-      keys: Seq[ConversationIdKey],
-      getLookupId: ConversationIdKey => TweetId
-    ): Future[Map[ConversationIdKey, TweetId]] = {
-      val distinctIds = keys.map(getLookupId).distinct
-      val tflockQueries = distinctIds.map(ConversationGraph.to)
-      if (tflockQueries.isEmpty) {
-        Future.value(Map[ConversationIdKey, TweetId]())
+    pr vate[t ] def getConversat on ds(
+      keys: Seq[Conversat on dKey],
+      getLookup d: Conversat on dKey => T et d
+    ): Future[Map[Conversat on dKey, T et d]] = {
+      val d st nct ds = keys.map(getLookup d).d st nct
+      val tflockQuer es = d st nct ds.map(Conversat onGraph.to)
+       f (tflockQuer es. sEmpty) {
+        Future.value(Map[Conversat on dKey, T et d]())
       } else {
-        multiSelectOne(tflockQueries).map { results =>
-          // first, we need to match up the distinct ids requested with the corresponding result
+        mult SelectOne(tflockQuer es).map { results =>
+          // f rst,   need to match up t  d st nct  ds requested w h t  correspond ng result
           val resultMap =
-            distinctIds
-              .zip(results)
+            d st nct ds
+              .z p(results)
               .collect {
-                case (id, Some(conversationId)) => id -> conversationId
+                case ( d, So (conversat on d)) =>  d -> conversat on d
               }
               .toMap
 
-          // then we need to map keys into the above map
-          keys.flatMap { key => resultMap.get(getLookupId(key)).map(key -> _) }.toMap
+          // t n   need to map keys  nto t  above map
+          keys.flatMap { key => resultMap.get(getLookup d(key)).map(key -> _) }.toMap
         }
       }
     }
 
     /**
-     * Returns a key-value result that maps keys to the tweet's conversation IDs.
+     * Returns a key-value result that maps keys to t  t et's conversat on  Ds.
      *
      * Example:
-     * Tweet B is a reply to tweet A with conversation ID c.
-     * We want to get B's conversation ID. Then, for the request
+     * T et B  s a reply to t et A w h conversat on  D c.
+     *   want to get B's conversat on  D. T n, for t  request
      *
-     *   ConversationIdRequest(B.id, A.id)
+     *   Conversat on dRequest(B. d, A. d)
      *
-     * our key-value result's "found" map will contain a pair (B.id -> c).
+     *   key-value result's "found" map w ll conta n a pa r (B. d -> c).
      */
-    protected override def run(keys: Seq[ConversationIdKey]): Future[Seq[Try[TweetId]]] =
-      LegacySeqGroup.liftToSeqTry(
+    protected overr de def run(keys: Seq[Conversat on dKey]): Future[Seq[Try[T et d]]] =
+      LegacySeqGroup.l ftToSeqTry(
         for {
-          // Try to get the conversation IDs for the parent tweets
-          convIdsFromParent <- getConversationIds(keys, _.parentId)
+          // Try to get t  conversat on  Ds for t  parent t ets
+          conv dsFromParent <- getConversat on ds(keys, _.parent d)
 
-          // Collect the tweet IDs whose parents' conversation IDs couldn't be found.
-          // We assume that happened in one of two cases:
-          //  * for a tweet whose parent has been deleted
-          //  * for a tweet whose parent is the root of a conversation
-          // Note: In either case, we will try to look up the conversation ID of the tweet whose parent
-          // couldn't be found. If that can't be found either, we will eventually return the parent ID.
-          tweetsWhoseParentsDontHaveConvoIds = keys.toSet -- convIdsFromParent.keys
+          // Collect t  t et  Ds whose parents' conversat on  Ds couldn't be found.
+          //   assu  that happened  n one of two cases:
+          //  * for a t et whose parent has been deleted
+          //  * for a t et whose parent  s t  root of a conversat on
+          // Note:  n e  r case,   w ll try to look up t  conversat on  D of t  t et whose parent
+          // couldn't be found.  f that can't be found e  r,   w ll eventually return t  parent  D.
+          t etsWhoseParentsDontHaveConvo ds = keys.toSet -- conv dsFromParent.keys
 
-          // Collect the conversation IDs for the tweets whose parents have not been found, now using the
-          // tweets' own IDs.
-          convIdsFromTweet <-
-            getConversationIds(tweetsWhoseParentsDontHaveConvoIds.toSeq, _.tweetId)
+          // Collect t  conversat on  Ds for t  t ets whose parents have not been found, now us ng t 
+          // t ets' own  Ds.
+          conv dsFromT et <-
+            getConversat on ds(t etsWhoseParentsDontHaveConvo ds.toSeq, _.t et d)
 
-          // Combine the by-parent-ID and by-tweet-ID results.
-          convIdMap = convIdsFromParent ++ convIdsFromTweet
+          // Comb ne t  by-parent- D and by-t et- D results.
+          conv dMap = conv dsFromParent ++ conv dsFromT et
 
-          // Assign conversation IDs to all not-found tweet IDs.
-          // A tweet might not have received a conversation ID if
-          //  * the parent of the tweet is the root of the conversation, and we are in the write path
-          //    for creating the tweet. In that case, the conversation ID should be the tweet's parent
-          //    ID.
-          //  * it had been created before TFlock started handling conversation IDs. In that case, the
-          //    conversation ID will just point to the parent tweet so that we can have a conversation of
-          //    at least two tweets.
-          // So in both cases, we want to return the tweet's parent ID.
-        } yield {
+          // Ass gn conversat on  Ds to all not-found t et  Ds.
+          // A t et m ght not have rece ved a conversat on  D  f
+          //  * t  parent of t  t et  s t  root of t  conversat on, and   are  n t  wr e path
+          //    for creat ng t  t et.  n that case, t  conversat on  D should be t  t et's parent
+          //     D.
+          //  *   had been created before TFlock started handl ng conversat on  Ds.  n that case, t 
+          //    conversat on  D w ll just po nt to t  parent t et so that   can have a conversat on of
+          //    at least two t ets.
+          // So  n both cases,   want to return t  t et's parent  D.
+        } y eld {
           keys.map {
-            case k @ ConversationIdKey(t, p) => convIdMap.getOrElse(k, p)
+            case k @ Conversat on dKey(t, p) => conv dMap.getOrElse(k, p)
           }
         }
       )

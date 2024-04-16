@@ -1,88 +1,88 @@
 syntax = "proto3";
 
-package tensorflow.serving;
+package tensorflow.serv ng;
 
-// Config proto for FileSystemStoragePathSource.
-message FileSystemStoragePathSourceConfig {
-  // A policy that dictates which version(s) of a servable should be served.
-  message ServableVersionPolicy {
-    // Serve the latest versions (i.e. the ones with the highest version
-    // numbers), among those found on disk.
+// Conf g proto for F leSystemStoragePathS ce.
+ ssage F leSystemStoragePathS ceConf g {
+  // A pol cy that d ctates wh ch vers on(s) of a servable should be served.
+   ssage ServableVers onPol cy {
+    // Serve t  latest vers ons ( .e. t  ones w h t  h g st vers on
+    // numbers), among those found on d sk.
     //
-    // This is the default policy, with the default number of versions as 1.
-    message Latest {
-      // Number of latest versions to serve. (The default is 1.)
-      uint32 num_versions = 1;
+    // T   s t  default pol cy, w h t  default number of vers ons as 1.
+     ssage Latest {
+      // Number of latest vers ons to serve. (T  default  s 1.)
+      u nt32 num_vers ons = 1;
     }
 
-    // Serve all versions found on disk.
-    message All {
+    // Serve all vers ons found on d sk.
+     ssage All {
     }
 
-    // Serve a specific version (or set of versions).
+    // Serve a spec f c vers on (or set of vers ons).
     //
-    // This policy is useful for rolling back to a specific version, or for
-    // canarying a specific version while still serving a separate stable
-    // version.
-    message Specific {
-      // The version numbers to serve.
-      repeated int64 versions = 1;
+    // T  pol cy  s useful for roll ng back to a spec f c vers on, or for
+    // canary ng a spec f c vers on wh le st ll serv ng a separate stable
+    // vers on.
+     ssage Spec f c {
+      // T  vers on numbers to serve.
+      repeated  nt64 vers ons = 1;
     }
 
-    oneof policy_choice {
+    oneof pol cy_cho ce {
       Latest latest = 100;
       All all = 101;
-      Specific specific = 102;
+      Spec f c spec f c = 102;
     }
   }
 
-  // A servable name and base path to look for versions of the servable.
-  message ServableToMonitor {
-    // The servable name to supply in aspired-versions callback calls. Child
-    // paths of 'base_path' are considered to be versions of this servable.
-    string servable_name = 1;
+  // A servable na  and base path to look for vers ons of t  servable.
+   ssage ServableToMon or {
+    // T  servable na  to supply  n asp red-vers ons callback calls. Ch ld
+    // paths of 'base_path' are cons dered to be vers ons of t  servable.
+    str ng servable_na  = 1;
 
-    // The path to monitor, i.e. look for child paths of the form base_path/123.
-    string base_path = 2;
+    // T  path to mon or,  .e. look for ch ld paths of t  form base_path/123.
+    str ng base_path = 2;
 
-    // The policy to determines the number of versions of the servable to be
-    // served at the same time.
-    tensorflow.serving.FileSystemStoragePathSourceConfig.ServableVersionPolicy
-        servable_version_policy = 4;
+    // T  pol cy to determ nes t  number of vers ons of t  servable to be
+    // served at t  sa  t  .
+    tensorflow.serv ng.F leSystemStoragePathS ceConf g.ServableVers onPol cy
+        servable_vers on_pol cy = 4;
 
-    reserved 3;  // Legacy version_policy definition.
+    reserved 3;  // Legacy vers on_pol cy def n  on.
   }
 
-  // The servables to monitor for new versions, and aspire.
-  repeated ServableToMonitor servables = 5;
+  // T  servables to mon or for new vers ons, and asp re.
+  repeated ServableToMon or servables = 5;
 
-  // A single servable name/base_path pair to monitor.
-  // DEPRECATED: Use 'servables' instead.
-  // TODO(b/30898016): Stop using these fields, and ultimately remove them here.
-  string servable_name = 1 [deprecated = true];
-  string base_path = 2 [deprecated = true];
+  // A s ngle servable na /base_path pa r to mon or.
+  // DEPRECATED: Use 'servables'  nstead.
+  // TODO(b/30898016): Stop us ng t se f elds, and ult mately remove t m  re.
+  str ng servable_na  = 1 [deprecated = true];
+  str ng base_path = 2 [deprecated = true];
 
-  // How long to wait between file-system polling to look for children of
-  // 'base_path', in seconds.
+  // How long to wa  bet en f le-system poll ng to look for ch ldren of
+  // 'base_path',  n seconds.
   //
-  // If set to zero, filesystem will be polled exactly once. If set to a
-  // negative value (for testing use only), polling will be entirely disabled.
-  int64 file_system_poll_wait_seconds = 3;
+  //  f set to zero, f lesystem w ll be polled exactly once.  f set to a
+  // negat ve value (for test ng use only), poll ng w ll be ent rely d sabled.
+   nt64 f le_system_poll_wa _seconds = 3;
 
-  // If true, then FileSystemStoragePathSource::Create() and ::UpdateConfig()
-  // fail if, for any configured servables, the file system doesn't currently
-  // contain at least one version under the base path.
-  // (Otherwise, it will emit a warning and keep pinging the file system to
-  // check for a version to appear later.)
-  // DEPRECATED: Use 'servable_versions_always_present' instead, which includes
-  // this behavior.
+  //  f true, t n F leSystemStoragePathS ce::Create() and ::UpdateConf g()
+  // fa l  f, for any conf gured servables, t  f le system doesn't currently
+  // conta n at least one vers on under t  base path.
+  // (Ot rw se,   w ll em  a warn ng and keep p ng ng t  f le system to
+  // c ck for a vers on to appear later.)
+  // DEPRECATED: Use 'servable_vers ons_always_present'  nstead, wh ch  ncludes
+  // t  behav or.
   // TODO(b/30898016): Remove 2019-10-31 or later.
-  bool fail_if_zero_versions_at_startup = 4 [deprecated = true];
+  bool fa l_ f_zero_vers ons_at_startup = 4 [deprecated = true];
 
-  // If true, the servable is always expected to exist on the underlying
-  // filesystem. FileSystemStoragePathSource::Create() and ::UpdateConfig() will
-  // fail if, for any configured servables, the file system doesn't currently
-  // contain at least one version under the base path. In addition, if a polling
-  // loop find the base path empty, it will not unload existing servables.
-  bool servable_versions_always_present = 6;
+  //  f true, t  servable  s always expected to ex st on t  underly ng
+  // f lesystem. F leSystemStoragePathS ce::Create() and ::UpdateConf g() w ll
+  // fa l  f, for any conf gured servables, t  f le system doesn't currently
+  // conta n at least one vers on under t  base path.  n add  on,  f a poll ng
+  // loop f nd t  base path empty,   w ll not unload ex st ng servables.
+  bool servable_vers ons_always_present = 6;
 }

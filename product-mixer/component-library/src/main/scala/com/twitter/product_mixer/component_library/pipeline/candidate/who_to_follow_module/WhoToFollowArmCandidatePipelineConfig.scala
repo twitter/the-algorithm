@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+package com.tw ter.product_m xer.component_l brary.p pel ne.cand date.who_to_follow_module
 
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
 
-object WhoToFollowArmCandidatePipelineConfig {
-  val MinCandidatesSize = 3
-  val MaxCandidatesSize = 20
+object WhoToFollowArmCand dateP pel neConf g {
+  val M nCand datesS ze = 3
+  val MaxCand datesS ze = 20
 
-  val identifier: CandidatePipelineIdentifier = CandidatePipelineIdentifier("WhoToFollowArm")
+  val  dent f er: Cand dateP pel ne dent f er = Cand dateP pel ne dent f er("WhoToFollowArm")
 }

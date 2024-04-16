@@ -1,306 +1,306 @@
-package com.twitter.frigate.pushservice.model.candidate
+package com.tw ter.fr gate.pushserv ce.model.cand date
 
-import com.twitter.frigate.common.base.FeatureMap
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.ml.HydrationContextBuilder
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.PushMLModel
-import com.twitter.frigate.pushservice.params.WeightedOpenOrNtabClickModel
-import com.twitter.nrel.hydration.push.HydrationContext
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.util.Future
-import java.util.concurrent.ConcurrentHashMap
-import scala.collection.concurrent.{Map => CMap}
-import scala.collection.convert.decorateAsScala._
+ mport com.tw ter.fr gate.common.base.FeatureMap
+ mport com.tw ter.fr gate.common.rec_types.RecTypes
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.ml.Hydrat onContextBu lder
+ mport com.tw ter.fr gate.pushserv ce.ml.PushMLModelScorer
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.params.PushMLModel
+ mport com.tw ter.fr gate.pushserv ce.params.  ghtedOpenOrNtabCl ckModel
+ mport com.tw ter.nrel.hydrat on.push.Hydrat onContext
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.ut l.Future
+ mport java.ut l.concurrent.ConcurrentHashMap
+ mport scala.collect on.concurrent.{Map => CMap}
+ mport scala.collect on.convert.decorateAsScala._
 
-trait MLScores {
+tra  MLScores {
 
-  self: PushCandidate =>
+  self: PushCand date =>
 
-  lazy val candidateHydrationContext: Future[HydrationContext] = HydrationContextBuilder.build(self)
+  lazy val cand dateHydrat onContext: Future[Hydrat onContext] = Hydrat onContextBu lder.bu ld(self)
 
-  def weightedOpenOrNtabClickModelScorer: PushMLModelScorer
+  def   ghtedOpenOrNtabCl ckModelScorer: PushMLModelScorer
 
-  // Used to store the scores and avoid duplicate prediction
-  private val qualityModelScores: CMap[
-    (PushMLModel.Value, WeightedOpenOrNtabClickModel.ModelNameType),
-    Future[Option[Double]]
+  // Used to store t  scores and avo d dupl cate pred ct on
+  pr vate val qual yModelScores: CMap[
+    (PushMLModel.Value,   ghtedOpenOrNtabCl ckModel.ModelNa Type),
+    Future[Opt on[Double]]
   ] =
-    new ConcurrentHashMap[(PushMLModel.Value, WeightedOpenOrNtabClickModel.ModelNameType), Future[
-      Option[Double]
+    new ConcurrentHashMap[(PushMLModel.Value,   ghtedOpenOrNtabCl ckModel.ModelNa Type), Future[
+      Opt on[Double]
     ]]().asScala
 
-  def populateQualityModelScore(
+  def populateQual yModelScore(
     pushMLModel: PushMLModel.Value,
-    modelVersion: WeightedOpenOrNtabClickModel.ModelNameType,
-    prob: Future[Option[Double]]
+    modelVers on:   ghtedOpenOrNtabCl ckModel.ModelNa Type,
+    prob: Future[Opt on[Double]]
   ) = {
-    val modelAndVersion = (pushMLModel, modelVersion)
-    if (!qualityModelScores.contains(modelAndVersion)) {
-      qualityModelScores += modelAndVersion -> prob
+    val modelAndVers on = (pushMLModel, modelVers on)
+     f (!qual yModelScores.conta ns(modelAndVers on)) {
+      qual yModelScores += modelAndVers on -> prob
     }
   }
 
-  // The ML scores that also depend on other candidates and are only available after all candidates are processed
-  // For example, the likelihood info for Importance Sampling
-  private lazy val crossCandidateMlScores: CMap[String, Double] =
-    new ConcurrentHashMap[String, Double]().asScala
+  // T  ML scores that also depend on ot r cand dates and are only ava lable after all cand dates are processed
+  // For example, t  l kel hood  nfo for  mportance Sampl ng
+  pr vate lazy val crossCand dateMlScores: CMap[Str ng, Double] =
+    new ConcurrentHashMap[Str ng, Double]().asScala
 
-  def populateCrossCandidateMlScores(scoreName: String, score: Double): Unit = {
-    if (crossCandidateMlScores.contains(scoreName)) {
-      throw new Exception(
-        s"$scoreName has been populated in the CrossCandidateMlScores!\n" +
-          s"Existing crossCandidateMlScores are ${crossCandidateMlScores}\n"
+  def populateCrossCand dateMlScores(scoreNa : Str ng, score: Double): Un  = {
+     f (crossCand dateMlScores.conta ns(scoreNa )) {
+      throw new Except on(
+        s"$scoreNa  has been populated  n t  CrossCand dateMlScores!\n" +
+          s"Ex st ng crossCand dateMlScores are ${crossCand dateMlScores}\n"
       )
     }
-    crossCandidateMlScores += scoreName -> score
+    crossCand dateMlScores += scoreNa  -> score
   }
 
   def getMLModelScore(
     pushMLModel: PushMLModel.Value,
-    modelVersion: WeightedOpenOrNtabClickModel.ModelNameType
-  ): Future[Option[Double]] = {
-    qualityModelScores.getOrElseUpdate(
-      (pushMLModel, modelVersion),
-      weightedOpenOrNtabClickModelScorer
-        .singlePredicationForModelVersion(modelVersion, self, Some(pushMLModel))
+    modelVers on:   ghtedOpenOrNtabCl ckModel.ModelNa Type
+  ): Future[Opt on[Double]] = {
+    qual yModelScores.getOrElseUpdate(
+      (pushMLModel, modelVers on),
+        ghtedOpenOrNtabCl ckModelScorer
+        .s nglePred cat onForModelVers on(modelVers on, self, So (pushMLModel))
     )
   }
 
-  def getMLModelScoreWithoutUpdate(
+  def getMLModelScoreW houtUpdate(
     pushMLModel: PushMLModel.Value,
-    modelVersion: WeightedOpenOrNtabClickModel.ModelNameType
-  ): Future[Option[Double]] = {
-    qualityModelScores.getOrElse(
-      (pushMLModel, modelVersion),
+    modelVers on:   ghtedOpenOrNtabCl ckModel.ModelNa Type
+  ): Future[Opt on[Double]] = {
+    qual yModelScores.getOrElse(
+      (pushMLModel, modelVers on),
       Future.None
     )
   }
 
-  def getWeightedOpenOrNtabClickModelScore(
-    weightedOONCModelParam: FSParam[WeightedOpenOrNtabClickModel.ModelNameType]
-  ): Future[Option[Double]] = {
+  def get  ghtedOpenOrNtabCl ckModelScore(
+      ghtedOONCModelParam: FSParam[  ghtedOpenOrNtabCl ckModel.ModelNa Type]
+  ): Future[Opt on[Double]] = {
     getMLModelScore(
-      PushMLModel.WeightedOpenOrNtabClickProbability,
-      target.params(weightedOONCModelParam)
+      PushMLModel.  ghtedOpenOrNtabCl ckProbab l y,
+      target.params(  ghtedOONCModelParam)
     )
   }
 
-  /* After we unify the ranking and filtering models, we follow the iteration process below
-     When improving the WeightedOONC model,
-     1) Run experiment which only replace the ranking model
-     2) Make decisions according to the experiment results
-     3) Use the ranking model for filtering
-     4) Adjust percentile thresholds if necessary
+  /* After   un fy t  rank ng and f lter ng models,   follow t   erat on process below
+     W n  mprov ng t    ghtedOONC model,
+     1) Run exper  nt wh ch only replace t  rank ng model
+     2) Make dec s ons accord ng to t  exper  nt results
+     3) Use t  rank ng model for f lter ng
+     4) Adjust percent le thresholds  f necessary
    */
-  lazy val mrWeightedOpenOrNtabClickRankingProbability: Future[Option[Double]] =
-    target.rankingModelParam.flatMap { modelParam =>
-      getWeightedOpenOrNtabClickModelScore(modelParam)
+  lazy val mr  ghtedOpenOrNtabCl ckRank ngProbab l y: Future[Opt on[Double]] =
+    target.rank ngModelParam.flatMap { modelParam =>
+      get  ghtedOpenOrNtabCl ckModelScore(modelParam)
     }
 
-  def getBigFilteringScore(
+  def getB gF lter ngScore(
     pushMLModel: PushMLModel.Value,
-    modelVersion: WeightedOpenOrNtabClickModel.ModelNameType
-  ): Future[Option[Double]] = {
-    mrWeightedOpenOrNtabClickRankingProbability.flatMap {
-      case Some(rankingScore) =>
-        // Adds ranking score to feature map (we must ensure the feature key is also in the feature context)
-        mergeFeatures(
+    modelVers on:   ghtedOpenOrNtabCl ckModel.ModelNa Type
+  ): Future[Opt on[Double]] = {
+    mr  ghtedOpenOrNtabCl ckRank ngProbab l y.flatMap {
+      case So (rank ngScore) =>
+        // Adds rank ng score to feature map (  must ensure t  feature key  s also  n t  feature context)
+         rgeFeatures(
           FeatureMap(
-            numericFeatures = Map("scribe.WeightedOpenOrNtabClickProbability" -> rankingScore)
+            nu r cFeatures = Map("scr be.  ghtedOpenOrNtabCl ckProbab l y" -> rank ngScore)
           )
         )
-        getMLModelScore(pushMLModel, modelVersion)
+        getMLModelScore(pushMLModel, modelVers on)
       case _ => Future.None
     }
   }
 
-  def getWeightedOpenOrNtabClickScoreForScribing(): Seq[Future[Map[String, Double]]] = {
+  def get  ghtedOpenOrNtabCl ckScoreForScr b ng(): Seq[Future[Map[Str ng, Double]]] = {
     Seq(
-      mrWeightedOpenOrNtabClickRankingProbability.map {
-        case Some(score) => Map(PushMLModel.WeightedOpenOrNtabClickProbability.toString -> score)
-        case _ => Map.empty[String, Double]
+      mr  ghtedOpenOrNtabCl ckRank ngProbab l y.map {
+        case So (score) => Map(PushMLModel.  ghtedOpenOrNtabCl ckProbab l y.toStr ng -> score)
+        case _ => Map.empty[Str ng, Double]
       },
       Future
-        .join(
-          target.rankingModelParam,
-          mrWeightedOpenOrNtabClickRankingProbability
+        .jo n(
+          target.rank ngModelParam,
+          mr  ghtedOpenOrNtabCl ckRank ngProbab l y
         ).map {
-          case (rankingModelParam, Some(score)) =>
-            Map(target.params(rankingModelParam).toString -> score)
-          case _ => Map.empty[String, Double]
+          case (rank ngModelParam, So (score)) =>
+            Map(target.params(rank ngModelParam).toStr ng -> score)
+          case _ => Map.empty[Str ng, Double]
         }
     )
   }
 
-  def getNsfwScoreForScribing(): Seq[Future[Map[String, Double]]] = {
-    val nsfwScoreFut = getMLModelScoreWithoutUpdate(
-      PushMLModel.HealthNsfwProbability,
-      target.params(PushFeatureSwitchParams.BqmlHealthModelTypeParam))
+  def getNsfwScoreForScr b ng(): Seq[Future[Map[Str ng, Double]]] = {
+    val nsfwScoreFut = getMLModelScoreW houtUpdate(
+      PushMLModel. althNsfwProbab l y,
+      target.params(PushFeatureSw chParams.Bqml althModelTypeParam))
     Seq(nsfwScoreFut.map { nsfwScoreOpt =>
       nsfwScoreOpt
-        .map(nsfwScore => Map(PushMLModel.HealthNsfwProbability.toString -> nsfwScore)).getOrElse(
-          Map.empty[String, Double])
+        .map(nsfwScore => Map(PushMLModel. althNsfwProbab l y.toStr ng -> nsfwScore)).getOrElse(
+          Map.empty[Str ng, Double])
     })
   }
 
-  def getBigFilteringSupervisedScoresForScribing(): Seq[Future[Map[String, Double]]] = {
-    if (target.params(
-        PushFeatureSwitchParams.EnableMrRequestScribingBigFilteringSupervisedScores)) {
+  def getB gF lter ngSuperv sedScoresForScr b ng(): Seq[Future[Map[Str ng, Double]]] = {
+     f (target.params(
+        PushFeatureSw chParams.EnableMrRequestScr b ngB gF lter ngSuperv sedScores)) {
       Seq(
-        mrBigFilteringSupervisedSendingScore.map {
-          case Some(score) =>
-            Map(PushMLModel.BigFilteringSupervisedSendingModel.toString -> score)
-          case _ => Map.empty[String, Double]
+        mrB gF lter ngSuperv sedSend ngScore.map {
+          case So (score) =>
+            Map(PushMLModel.B gF lter ngSuperv sedSend ngModel.toStr ng -> score)
+          case _ => Map.empty[Str ng, Double]
         },
-        mrBigFilteringSupervisedWithoutSendingScore.map {
-          case Some(score) =>
-            Map(PushMLModel.BigFilteringSupervisedWithoutSendingModel.toString -> score)
-          case _ => Map.empty[String, Double]
+        mrB gF lter ngSuperv sedW houtSend ngScore.map {
+          case So (score) =>
+            Map(PushMLModel.B gF lter ngSuperv sedW houtSend ngModel.toStr ng -> score)
+          case _ => Map.empty[Str ng, Double]
         }
       )
-    } else Seq.empty[Future[Map[String, Double]]]
+    } else Seq.empty[Future[Map[Str ng, Double]]]
   }
 
-  def getBigFilteringRLScoresForScribing(): Seq[Future[Map[String, Double]]] = {
-    if (target.params(PushFeatureSwitchParams.EnableMrRequestScribingBigFilteringRLScores)) {
+  def getB gF lter ngRLScoresForScr b ng(): Seq[Future[Map[Str ng, Double]]] = {
+     f (target.params(PushFeatureSw chParams.EnableMrRequestScr b ngB gF lter ngRLScores)) {
       Seq(
-        mrBigFilteringRLSendingScore.map {
-          case Some(score) => Map(PushMLModel.BigFilteringRLSendingModel.toString -> score)
-          case _ => Map.empty[String, Double]
+        mrB gF lter ngRLSend ngScore.map {
+          case So (score) => Map(PushMLModel.B gF lter ngRLSend ngModel.toStr ng -> score)
+          case _ => Map.empty[Str ng, Double]
         },
-        mrBigFilteringRLWithoutSendingScore.map {
-          case Some(score) => Map(PushMLModel.BigFilteringRLWithoutSendingModel.toString -> score)
-          case _ => Map.empty[String, Double]
+        mrB gF lter ngRLW houtSend ngScore.map {
+          case So (score) => Map(PushMLModel.B gF lter ngRLW houtSend ngModel.toStr ng -> score)
+          case _ => Map.empty[Str ng, Double]
         }
       )
-    } else Seq.empty[Future[Map[String, Double]]]
+    } else Seq.empty[Future[Map[Str ng, Double]]]
   }
 
-  def buildModelScoresSeqForScribing(): Seq[Future[Map[String, Double]]] = {
-    getWeightedOpenOrNtabClickScoreForScribing() ++
-      getBigFilteringSupervisedScoresForScribing() ++
-      getBigFilteringRLScoresForScribing() ++
-      getNsfwScoreForScribing()
+  def bu ldModelScoresSeqForScr b ng(): Seq[Future[Map[Str ng, Double]]] = {
+    get  ghtedOpenOrNtabCl ckScoreForScr b ng() ++
+      getB gF lter ngSuperv sedScoresForScr b ng() ++
+      getB gF lter ngRLScoresForScr b ng() ++
+      getNsfwScoreForScr b ng()
   }
 
-  lazy val mrBigFilteringSupervisedSendingScore: Future[Option[Double]] =
-    getBigFilteringScore(
-      PushMLModel.BigFilteringSupervisedSendingModel,
-      target.params(PushFeatureSwitchParams.BigFilteringSupervisedSendingModelParam)
+  lazy val mrB gF lter ngSuperv sedSend ngScore: Future[Opt on[Double]] =
+    getB gF lter ngScore(
+      PushMLModel.B gF lter ngSuperv sedSend ngModel,
+      target.params(PushFeatureSw chParams.B gF lter ngSuperv sedSend ngModelParam)
     )
 
-  lazy val mrBigFilteringSupervisedWithoutSendingScore: Future[Option[Double]] =
-    getBigFilteringScore(
-      PushMLModel.BigFilteringSupervisedWithoutSendingModel,
-      target.params(PushFeatureSwitchParams.BigFilteringSupervisedWithoutSendingModelParam)
+  lazy val mrB gF lter ngSuperv sedW houtSend ngScore: Future[Opt on[Double]] =
+    getB gF lter ngScore(
+      PushMLModel.B gF lter ngSuperv sedW houtSend ngModel,
+      target.params(PushFeatureSw chParams.B gF lter ngSuperv sedW houtSend ngModelParam)
     )
 
-  lazy val mrBigFilteringRLSendingScore: Future[Option[Double]] =
-    getBigFilteringScore(
-      PushMLModel.BigFilteringRLSendingModel,
-      target.params(PushFeatureSwitchParams.BigFilteringRLSendingModelParam)
+  lazy val mrB gF lter ngRLSend ngScore: Future[Opt on[Double]] =
+    getB gF lter ngScore(
+      PushMLModel.B gF lter ngRLSend ngModel,
+      target.params(PushFeatureSw chParams.B gF lter ngRLSend ngModelParam)
     )
 
-  lazy val mrBigFilteringRLWithoutSendingScore: Future[Option[Double]] =
-    getBigFilteringScore(
-      PushMLModel.BigFilteringRLWithoutSendingModel,
-      target.params(PushFeatureSwitchParams.BigFilteringRLWithoutSendingModelParam)
+  lazy val mrB gF lter ngRLW houtSend ngScore: Future[Opt on[Double]] =
+    getB gF lter ngScore(
+      PushMLModel.B gF lter ngRLW houtSend ngModel,
+      target.params(PushFeatureSw chParams.B gF lter ngRLW houtSend ngModelParam)
     )
 
-  lazy val mrWeightedOpenOrNtabClickFilteringProbability: Future[Option[Double]] =
-    getWeightedOpenOrNtabClickModelScore(
-      target.filteringModelParam
+  lazy val mr  ghtedOpenOrNtabCl ckF lter ngProbab l y: Future[Opt on[Double]] =
+    get  ghtedOpenOrNtabCl ckModelScore(
+      target.f lter ngModelParam
     )
 
-  lazy val mrQualityUprankingProbability: Future[Option[Double]] =
+  lazy val mrQual yUprank ngProbab l y: Future[Opt on[Double]] =
     getMLModelScore(
-      PushMLModel.FilteringProbability,
-      target.params(PushFeatureSwitchParams.QualityUprankingModelTypeParam)
+      PushMLModel.F lter ngProbab l y,
+      target.params(PushFeatureSw chParams.Qual yUprank ngModelTypeParam)
     )
 
-  lazy val mrNsfwScore: Future[Option[Double]] =
-    getMLModelScoreWithoutUpdate(
-      PushMLModel.HealthNsfwProbability,
-      target.params(PushFeatureSwitchParams.BqmlHealthModelTypeParam)
+  lazy val mrNsfwScore: Future[Opt on[Double]] =
+    getMLModelScoreW houtUpdate(
+      PushMLModel. althNsfwProbab l y,
+      target.params(PushFeatureSw chParams.Bqml althModelTypeParam)
     )
 
-  // MR quality upranking param
-  private val qualityUprankingBoost: String = "QualityUprankingBoost"
-  private val producerQualityUprankingBoost: String = "ProducerQualityUprankingBoost"
-  private val qualityUprankingInfo: CMap[String, Double] =
-    new ConcurrentHashMap[String, Double]().asScala
+  // MR qual y uprank ng param
+  pr vate val qual yUprank ngBoost: Str ng = "Qual yUprank ngBoost"
+  pr vate val producerQual yUprank ngBoost: Str ng = "ProducerQual yUprank ngBoost"
+  pr vate val qual yUprank ng nfo: CMap[Str ng, Double] =
+    new ConcurrentHashMap[Str ng, Double]().asScala
 
-  lazy val mrQualityUprankingBoost: Option[Double] =
-    qualityUprankingInfo.get(qualityUprankingBoost)
-  lazy val mrProducerQualityUprankingBoost: Option[Double] =
-    qualityUprankingInfo.get(producerQualityUprankingBoost)
+  lazy val mrQual yUprank ngBoost: Opt on[Double] =
+    qual yUprank ng nfo.get(qual yUprank ngBoost)
+  lazy val mrProducerQual yUprank ngBoost: Opt on[Double] =
+    qual yUprank ng nfo.get(producerQual yUprank ngBoost)
 
-  def setQualityUprankingBoost(boost: Double) =
-    if (qualityUprankingInfo.contains(qualityUprankingBoost)) {
-      qualityUprankingInfo(qualityUprankingBoost) = boost
+  def setQual yUprank ngBoost(boost: Double) =
+     f (qual yUprank ng nfo.conta ns(qual yUprank ngBoost)) {
+      qual yUprank ng nfo(qual yUprank ngBoost) = boost
     } else {
-      qualityUprankingInfo += qualityUprankingBoost -> boost
+      qual yUprank ng nfo += qual yUprank ngBoost -> boost
     }
-  def setProducerQualityUprankingBoost(boost: Double) =
-    if (qualityUprankingInfo.contains(producerQualityUprankingBoost)) {
-      qualityUprankingInfo(producerQualityUprankingBoost) = boost
+  def setProducerQual yUprank ngBoost(boost: Double) =
+     f (qual yUprank ng nfo.conta ns(producerQual yUprank ngBoost)) {
+      qual yUprank ng nfo(producerQual yUprank ngBoost) = boost
     } else {
-      qualityUprankingInfo += producerQualityUprankingBoost -> boost
+      qual yUprank ng nfo += producerQual yUprank ngBoost -> boost
     }
 
-  private lazy val mrModelScoresFut: Future[Map[String, Double]] = {
-    if (self.target.isLoggedOutUser) {
-      Future.value(Map.empty[String, Double])
+  pr vate lazy val mrModelScoresFut: Future[Map[Str ng, Double]] = {
+     f (self.target. sLoggedOutUser) {
+      Future.value(Map.empty[Str ng, Double])
     } else {
       Future
         .collectToTry {
-          buildModelScoresSeqForScribing()
+          bu ldModelScoresSeqForScr b ng()
         }.map { scoreTrySeq =>
           scoreTrySeq
             .collect {
-              case result if result.isReturn => result.get()
+              case result  f result. sReturn => result.get()
             }.reduce(_ ++ _)
         }
     }
   }
 
-  // Internal model scores (scores that are independent of other candidates) for scribing
-  lazy val modelScores: Future[Map[String, Double]] =
-    target.dauProbability.flatMap { dauProbabilityOpt =>
-      val dauProbScoreMap = dauProbabilityOpt
-        .map(_.probability).map { dauProb =>
-          PushMLModel.DauProbability.toString -> dauProb
+  //  nternal model scores (scores that are  ndependent of ot r cand dates) for scr b ng
+  lazy val modelScores: Future[Map[Str ng, Double]] =
+    target.dauProbab l y.flatMap { dauProbab l yOpt =>
+      val dauProbScoreMap = dauProbab l yOpt
+        .map(_.probab l y).map { dauProb =>
+          PushMLModel.DauProbab l y.toStr ng -> dauProb
         }.toMap
 
-      // Avoid unnecessary MR model scribing
-      if (target.isDarkWrite) {
+      // Avo d unnecessary MR model scr b ng
+       f (target. sDarkWr e) {
         mrModelScoresFut.map(dauProbScoreMap ++ _)
-      } else if (RecTypes.isSendHandlerType(commonRecType) && !RecTypes
-          .sendHandlerTypesUsingMrModel(commonRecType)) {
+      } else  f (RecTypes. sSendHandlerType(commonRecType) && !RecTypes
+          .sendHandlerTypesUs ngMrModel(commonRecType)) {
         Future.value(dauProbScoreMap)
       } else {
         mrModelScoresFut.map(dauProbScoreMap ++ _)
       }
     }
 
-  // We will scribe both internal ML scores and cross-Candidate scores
-  def getModelScoresforScribing(): Future[Map[String, Double]] = {
-    if (RecTypes.notEligibleForModelScoreTracking(commonRecType) || self.target.isLoggedOutUser) {
-      Future.value(Map.empty[String, Double])
+  //   w ll scr be both  nternal ML scores and cross-Cand date scores
+  def getModelScoresforScr b ng(): Future[Map[Str ng, Double]] = {
+     f (RecTypes.notEl g bleForModelScoreTrack ng(commonRecType) || self.target. sLoggedOutUser) {
+      Future.value(Map.empty[Str ng, Double])
     } else {
-      modelScores.map { internalScores =>
-        if (internalScores.keySet.intersect(crossCandidateMlScores.keySet).nonEmpty) {
-          throw new Exception(
-            "crossCandidateMlScores overlap internalModelScores\n" +
-              s"internalScores keySet: ${internalScores.keySet}\n" +
-              s"crossCandidateScores keySet: ${crossCandidateMlScores.keySet}\n"
+      modelScores.map {  nternalScores =>
+         f ( nternalScores.keySet. ntersect(crossCand dateMlScores.keySet).nonEmpty) {
+          throw new Except on(
+            "crossCand dateMlScores overlap  nternalModelScores\n" +
+              s" nternalScores keySet: ${ nternalScores.keySet}\n" +
+              s"crossCand dateScores keySet: ${crossCand dateMlScores.keySet}\n"
           )
         }
 
-        internalScores ++ crossCandidateMlScores
+         nternalScores ++ crossCand dateMlScores
       }
     }
   }

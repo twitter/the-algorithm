@@ -1,25 +1,25 @@
-package com.twitter.frigate.pushservice.predicate
+package com.tw ter.fr gate.pushserv ce.pred cate
 
-import com.twitter.decider.Decider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .pred cate.Pred cate
 
-object CrtDeciderPredicate {
-  val name = "crt_decider"
+object CrtDec derPred cate {
+  val na  = "crt_dec der"
   def apply(
-    decider: Decider
+    dec der: Dec der
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    Predicate
-      .from { (candidate: PushCandidate) =>
-        val prefix = "frigate_pushservice_"
-        val deciderKey = prefix + candidate.commonRecType
-        decider.feature(deciderKey).isAvailable
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date] = {
+    Pred cate
+      .from { (cand date: PushCand date) =>
+        val pref x = "fr gate_pushserv ce_"
+        val dec derKey = pref x + cand date.commonRecType
+        dec der.feature(dec derKey). sAva lable
       }
-      .withStats(statsReceiver.scope(s"predicate_$name"))
-      .withName(name)
+      .w hStats(statsRece ver.scope(s"pred cate_$na "))
+      .w hNa (na )
   }
 }

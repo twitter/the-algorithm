@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.products.common
+package com.tw ter.follow_recom ndat ons.products.common
 
-import com.twitter.follow_recommendations.common.models.DisplayLocation
+ mport com.tw ter.follow_recom ndat ons.common.models.D splayLocat on
 
-trait ProductRegistry {
+tra  ProductReg stry {
   def products: Seq[Product]
-  def displayLocationProductMap: Map[DisplayLocation, Product]
-  def getProductByDisplayLocation(displayLocation: DisplayLocation): Product
+  def d splayLocat onProductMap: Map[D splayLocat on, Product]
+  def getProductByD splayLocat on(d splayLocat on: D splayLocat on): Product
 }

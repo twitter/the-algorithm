@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.controllers
+package com.tw ter.product_m xer.core.controllers
 
-// Bounds here are inclusive
-case class QualityFactorMonitoringConfig(
-  boundMin: Double,
+// Bounds  re are  nclus ve
+case class Qual yFactorMon or ngConf g(
+  boundM n: Double,
   boundMax: Double)

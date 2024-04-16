@@ -1,185 +1,185 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.tw ter.search. ngester.p pel ne.tw ter;
 
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.concurrent.T  Un ;
 
-import javax.naming.NamingException;
+ mport javax.nam ng.Nam ngExcept on;
 
-import scala.runtime.BoxedUnit;
+ mport scala.runt  .BoxedUn ;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.commons.pipeline.Pipeline;
-import org.apache.commons.pipeline.StageDriver;
-import org.apache.thrift.TBase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons.p pel ne.P pel ne;
+ mport org.apac .commons.p pel ne.StageDr ver;
+ mport org.apac .thr ft.TBase;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.eventbus.client.EventBusSubscriber;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.ingester.model.PromiseContainer;
-import com.twitter.search.ingester.pipeline.util.PipelineUtil;
-import com.twitter.util.Await;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
-import com.twitter.util.Promise;
+ mport com.tw ter.eventbus.cl ent.EventBusSubscr ber;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search. ngester.model.Prom seConta ner;
+ mport com.tw ter.search. ngester.p pel ne.ut l.P pel neUt l;
+ mport com.tw ter.ut l.Awa ;
+ mport com.tw ter.ut l.Funct on;
+ mport com.tw ter.ut l.Future;
+ mport com.tw ter.ut l.Prom se;
 
-public abstract class EventBusReaderStage<T extends TBase<?, ?>> extends TwitterBaseStage
-    <Void, Void> {
-  private static final Logger LOG = LoggerFactory.getLogger(EventBusReaderStage.class);
+publ c abstract class EventBusReaderStage<T extends TBase<?, ?>> extends Tw terBaseStage
+    <Vo d, Vo d> {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(EventBusReaderStage.class);
 
-  private static final int DECIDER_POLL_INTERVAL_IN_SECS = 5;
+  pr vate stat c f nal  nt DEC DER_POLL_ NTERVAL_ N_SECS = 5;
 
-  private SearchCounter totalEventsCount;
+  pr vate SearchCounter totalEventsCount;
 
-  private String environment = null;
-  private String eventBusReaderEnabledDeciderKey;
+  pr vate Str ng env ron nt = null;
+  pr vate Str ng eventBusReaderEnabledDec derKey;
 
-  private StageDriver stageDriver;
+  pr vate StageDr ver stageDr ver;
 
-  private EventBusSubscriber<T> eventBusSubscriber = null;
+  pr vate EventBusSubscr ber<T> eventBusSubscr ber = null;
 
-  // XML configuration options
-  private String eventBusSubscriberId;
-  private int maxConcurrentEvents;
-  private SearchDecider searchDecider;
+  // XML conf gurat on opt ons
+  pr vate Str ng eventBusSubscr ber d;
+  pr vate  nt maxConcurrentEvents;
+  pr vate SearchDec der searchDec der;
 
   protected EventBusReaderStage() {
   }
 
-  @Override
-  protected void initStats() {
-    super.initStats();
-    totalEventsCount = SearchCounter.export(getStageNamePrefix() + "_total_events_count");
+  @Overr de
+  protected vo d  n Stats() {
+    super. n Stats();
+    totalEventsCount = SearchCounter.export(getStageNa Pref x() + "_total_events_count");
   }
 
-  @Override
-  protected void doInnerPreprocess() throws NamingException {
-    searchDecider = new SearchDecider(decider);
+  @Overr de
+  protected vo d do nnerPreprocess() throws Nam ngExcept on {
+    searchDec der = new SearchDec der(dec der);
 
-    if (stageDriver == null) {
-      stageDriver = ((Pipeline) stageContext).getStageDriver(this);
+     f (stageDr ver == null) {
+      stageDr ver = ((P pel ne) stageContext).getStageDr ver(t );
     }
 
-    eventBusReaderEnabledDeciderKey = String.format(
-        getDeciderKeyTemplate(),
-        earlybirdCluster.getNameForStats(),
-        environment);
+    eventBusReaderEnabledDec derKey = Str ng.format(
+        getDec derKeyTemplate(),
+        earlyb rdCluster.getNa ForStats(),
+        env ron nt);
 
-    PipelineUtil.feedStartObjectToStage(this);
+    P pel neUt l.feedStartObjectToStage(t );
   }
 
-  protected abstract PromiseContainer<BoxedUnit, T> eventAndPromiseToContainer(
-      T incomingEvent,
-      Promise<BoxedUnit> p);
+  protected abstract Prom seConta ner<BoxedUn , T> eventAndProm seToConta ner(
+      T  ncom ngEvent,
+      Prom se<BoxedUn > p);
 
-  private Future<BoxedUnit> processEvent(T incomingEvent) {
-    Promise<BoxedUnit> p = new Promise<>();
-    PromiseContainer<BoxedUnit, T> promiseContainer = eventAndPromiseToContainer(incomingEvent, p);
-    totalEventsCount.increment();
-    emitAndCount(promiseContainer);
+  pr vate Future<BoxedUn > processEvent(T  ncom ngEvent) {
+    Prom se<BoxedUn > p = new Prom se<>();
+    Prom seConta ner<BoxedUn , T> prom seConta ner = eventAndProm seToConta ner( ncom ngEvent, p);
+    totalEventsCount. ncre nt();
+    em AndCount(prom seConta ner);
     return p;
   }
 
-  private void closeEventBusSubscriber() throws Exception {
-    if (eventBusSubscriber != null) {
-      Await.result(eventBusSubscriber.close());
-      eventBusSubscriber = null;
+  pr vate vo d closeEventBusSubscr ber() throws Except on {
+     f (eventBusSubscr ber != null) {
+      Awa .result(eventBusSubscr ber.close());
+      eventBusSubscr ber = null;
     }
   }
 
-  protected abstract Class<T> getThriftClass();
+  protected abstract Class<T> getThr ftClass();
 
-  protected abstract String getDeciderKeyTemplate();
+  protected abstract Str ng getDec derKeyTemplate();
 
-  private void startUpEventBusSubscriber() {
-    // Start reading from eventbus if it is null
-    if (eventBusSubscriber == null) {
-      //noinspection unchecked
-      eventBusSubscriber = wireModule.createEventBusSubscriber(
-          Function.func(this::processEvent),
-          getThriftClass(),
-          eventBusSubscriberId,
+  pr vate vo d startUpEventBusSubscr ber() {
+    // Start read ng from eventbus  f    s null
+     f (eventBusSubscr ber == null) {
+      //no nspect on unc cked
+      eventBusSubscr ber = w reModule.createEventBusSubscr ber(
+          Funct on.func(t ::processEvent),
+          getThr ftClass(),
+          eventBusSubscr ber d,
           maxConcurrentEvents);
 
     }
-    Preconditions.checkNotNull(eventBusSubscriber);
+    Precond  ons.c ckNotNull(eventBusSubscr ber);
   }
 
   /**
-   * This is only kicked off once with a start object which is ignored. Then we loop
-   * checking the decider. If it turns off then we close the eventbus reader,
-   * and if it turns on, then we create a new eventbus reader.
+   * T   s only k cked off once w h a start object wh ch  s  gnored. T n   loop
+   * c ck ng t  dec der.  f   turns off t n   close t  eventbus reader,
+   * and  f   turns on, t n   create a new eventbus reader.
    *
-   * @param obj ignored
+   * @param obj  gnored
    */
-  @Override
-  public void innerProcess(Object obj) {
-    boolean interrupted = false;
+  @Overr de
+  publ c vo d  nnerProcess(Object obj) {
+    boolean  nterrupted = false;
 
-    Preconditions.checkNotNull("The environment is not set.", environment);
+    Precond  ons.c ckNotNull("T  env ron nt  s not set.", env ron nt);
 
-    int previousEventBusReaderEnabledAvailability = 0;
-    while (stageDriver.getState() == StageDriver.State.RUNNING) {
-      int eventBusReaderEnabledAvailability =
-          searchDecider.getAvailability(eventBusReaderEnabledDeciderKey);
-      if (previousEventBusReaderEnabledAvailability != eventBusReaderEnabledAvailability) {
-        LOG.info("EventBusReaderStage availability decider changed from {} to {}.",
-                 previousEventBusReaderEnabledAvailability, eventBusReaderEnabledAvailability);
+     nt prev ousEventBusReaderEnabledAva lab l y = 0;
+    wh le (stageDr ver.getState() == StageDr ver.State.RUNN NG) {
+       nt eventBusReaderEnabledAva lab l y =
+          searchDec der.getAva lab l y(eventBusReaderEnabledDec derKey);
+       f (prev ousEventBusReaderEnabledAva lab l y != eventBusReaderEnabledAva lab l y) {
+        LOG. nfo("EventBusReaderStage ava lab l y dec der changed from {} to {}.",
+                 prev ousEventBusReaderEnabledAva lab l y, eventBusReaderEnabledAva lab l y);
 
-        // If the availability is 0 then disable the reader, otherwise read from EventBus.
-        if (eventBusReaderEnabledAvailability == 0) {
+        //  f t  ava lab l y  s 0 t n d sable t  reader, ot rw se read from EventBus.
+         f (eventBusReaderEnabledAva lab l y == 0) {
           try {
-            closeEventBusSubscriber();
-          } catch (Exception e) {
-            LOG.warn("Exception while closing eventbus subscriber", e);
+            closeEventBusSubscr ber();
+          } catch (Except on e) {
+            LOG.warn("Except on wh le clos ng eventbus subscr ber", e);
           }
         } else {
-          startUpEventBusSubscriber();
+          startUpEventBusSubscr ber();
         }
       }
-      previousEventBusReaderEnabledAvailability = eventBusReaderEnabledAvailability;
+      prev ousEventBusReaderEnabledAva lab l y = eventBusReaderEnabledAva lab l y;
 
       try {
-        clock.waitFor(TimeUnit.SECONDS.toMillis(DECIDER_POLL_INTERVAL_IN_SECS));
-      } catch (InterruptedException e) {
-        interrupted = true;
+        clock.wa For(T  Un .SECONDS.toM ll s(DEC DER_POLL_ NTERVAL_ N_SECS));
+      } catch ( nterruptedExcept on e) {
+         nterrupted = true;
       }
     }
-    LOG.info("StageDriver is not RUNNING anymore, closing EventBus subscriber");
+    LOG. nfo("StageDr ver  s not RUNN NG anymore, clos ng EventBus subscr ber");
     try {
-      closeEventBusSubscriber();
-    } catch (InterruptedException e) {
-      interrupted = true;
-    } catch (Exception e) {
-      LOG.warn("Exception while closing eventbus subscriber", e);
-    } finally {
-      if (interrupted) {
-        Thread.currentThread().interrupt();
+      closeEventBusSubscr ber();
+    } catch ( nterruptedExcept on e) {
+       nterrupted = true;
+    } catch (Except on e) {
+      LOG.warn("Except on wh le clos ng eventbus subscr ber", e);
+    } f nally {
+       f ( nterrupted) {
+        Thread.currentThread(). nterrupt();
       }
     }
   }
 
-  // This is needed to set the value from XML config.
-  public void setEventBusSubscriberId(String eventBusSubscriberId) {
-    this.eventBusSubscriberId = eventBusSubscriberId;
-    LOG.info("EventBusReaderStage with eventBusSubscriberId: {}", eventBusSubscriberId);
+  // T   s needed to set t  value from XML conf g.
+  publ c vo d setEventBusSubscr ber d(Str ng eventBusSubscr ber d) {
+    t .eventBusSubscr ber d = eventBusSubscr ber d;
+    LOG. nfo("EventBusReaderStage w h eventBusSubscr ber d: {}", eventBusSubscr ber d);
   }
 
-  // This is needed to set the value from XML config.
-  public void setEnvironment(String environment) {
-    this.environment = environment;
-    LOG.info("Ingester is running in {}", environment);
+  // T   s needed to set t  value from XML conf g.
+  publ c vo d setEnv ron nt(Str ng env ron nt) {
+    t .env ron nt = env ron nt;
+    LOG. nfo(" ngester  s runn ng  n {}", env ron nt);
   }
 
-  // This is needed to set the value from XML config.
-  public void setMaxConcurrentEvents(int maxConcurrentEvents) {
-    this.maxConcurrentEvents = maxConcurrentEvents;
+  // T   s needed to set t  value from XML conf g.
+  publ c vo d setMaxConcurrentEvents( nt maxConcurrentEvents) {
+    t .maxConcurrentEvents = maxConcurrentEvents;
   }
 
-  @VisibleForTesting
-  public void setStageDriver(StageDriver stageDriver) {
-    this.stageDriver = stageDriver;
+  @V s bleForTest ng
+  publ c vo d setStageDr ver(StageDr ver stageDr ver) {
+    t .stageDr ver = stageDr ver;
   }
 }

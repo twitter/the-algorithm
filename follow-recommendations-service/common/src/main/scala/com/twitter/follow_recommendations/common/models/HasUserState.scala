@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
+ mport com.tw ter.core_workflows.user_model.thr ftscala.UserState
 
-trait HasUserState {
-  def userState: Option[UserState]
+tra  HasUserState {
+  def userState: Opt on[UserState]
 }

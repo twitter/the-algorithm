@@ -1,187 +1,187 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
+ mport java.t  .Durat on;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.concurrent.atom c.Atom cBoolean;
+ mport java.ut l.stream.Collectors;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Verify;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Ver fy;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.OffsetAndTimestamp;
-import org.apache.kafka.common.PartitionInfo;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.errors.WakeupException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .kafka.cl ents.consu r.Consu rRecord;
+ mport org.apac .kafka.cl ents.consu r.Consu rRecords;
+ mport org.apac .kafka.cl ents.consu r.KafkaConsu r;
+ mport org.apac .kafka.cl ents.consu r.OffsetAndT  stamp;
+ mport org.apac .kafka.common.Part  on nfo;
+ mport org.apac .kafka.common.Top cPart  on;
+ mport org.apac .kafka.common.errors.WakeupExcept on;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.earlybird.common.NonPagingAssert;
-import com.twitter.search.earlybird.exception.MissingKafkaTopicException;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.earlyb rd.common.NonPag ngAssert;
+ mport com.tw ter.search.earlyb rd.except on.M ss ngKafkaTop cExcept on;
 
 /**
- * Abstract base class for processing events from Kafka with the goal of indexing them and
- * keeping Earlybirds up to date with the latest events. Indexing is defined by the
- * implementation.
+ * Abstract base class for process ng events from Kafka w h t  goal of  ndex ng t m and
+ * keep ng Earlyb rds up to date w h t  latest events.  ndex ng  s def ned by t 
+ *  mple ntat on.
  *
- * NOTE: {@link EarlybirdKafkaConsumer} (tweet/tweet events consumer) is doing this in its
- * own way, we might merge in the future.
+ * NOTE: {@l nk Earlyb rdKafkaConsu r} (t et/t et events consu r)  s do ng t   n  s
+ * own way,   m ght  rge  n t  future.
  *
  * @param <K> (Long)
- * @param <V> (Event/Thrift type to be consumed)
+ * @param <V> (Event/Thr ft type to be consu d)
  */
-public abstract class SimpleStreamIndexer<K, V> {
-  private static final Logger LOG = LoggerFactory.getLogger(SimpleStreamIndexer.class);
+publ c abstract class S mpleStream ndexer<K, V> {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(S mpleStream ndexer.class);
 
-  private static final Duration POLL_TIMEOUT = Duration.ofMillis(250);
-  private static final Duration CAUGHT_UP_FRESHNESS = Duration.ofSeconds(5);
+  pr vate stat c f nal Durat on POLL_T MEOUT = Durat on.ofM ll s(250);
+  pr vate stat c f nal Durat on CAUGHT_UP_FRESHNESS = Durat on.ofSeconds(5);
 
-  protected static final int MAX_POLL_RECORDS = 1000;
+  protected stat c f nal  nt MAX_POLL_RECORDS = 1000;
 
-  private final SearchCounter numPollErrors;
-  protected SearchRateCounter indexingSuccesses;
-  protected SearchRateCounter indexingFailures;
+  pr vate f nal SearchCounter numPollErrors;
+  protected SearchRateCounter  ndex ngSuccesses;
+  protected SearchRateCounter  ndex ngFa lures;
 
-  protected List<TopicPartition> topicPartitionList;
-  protected final KafkaConsumer<K, V> kafkaConsumer;
-  private final AtomicBoolean running = new AtomicBoolean(true);
-  private final String topic;
+  protected L st<Top cPart  on> top cPart  onL st;
+  protected f nal KafkaConsu r<K, V> kafkaConsu r;
+  pr vate f nal Atom cBoolean runn ng = new Atom cBoolean(true);
+  pr vate f nal Str ng top c;
 
-  private boolean isCaughtUp = false;
+  pr vate boolean  sCaughtUp = false;
 
   /**
-   * Create a simple stream indexer.
+   * Create a s mple stream  ndexer.
    *
-   * @throws MissingKafkaTopicException - this shouldn't happen, but in case some
-   * external stream is not present, we want to have the caller decide how to
-   * handle it. Some missing streams might be fatal, for others it might not be
-   * justified to block startup. There's no point in constructing this object if
-   * a stream is missing, so we don't allow that to happen.
+   * @throws M ss ngKafkaTop cExcept on - t  shouldn't happen, but  n case so 
+   * external stream  s not present,   want to have t  caller dec de how to
+   * handle  . So  m ss ng streams m ght be fatal, for ot rs   m ght not be
+   * just f ed to block startup. T re's no po nt  n construct ng t  object  f
+   * a stream  s m ss ng, so   don't allow that to happen.
    */
-  public SimpleStreamIndexer(KafkaConsumer<K, V> kafkaConsumer,
-                             String topic) throws MissingKafkaTopicException {
-    this.kafkaConsumer = kafkaConsumer;
-    this.topic = topic;
-    List<PartitionInfo> partitionInfos = this.kafkaConsumer.partitionsFor(topic);
+  publ c S mpleStream ndexer(KafkaConsu r<K, V> kafkaConsu r,
+                             Str ng top c) throws M ss ngKafkaTop cExcept on {
+    t .kafkaConsu r = kafkaConsu r;
+    t .top c = top c;
+    L st<Part  on nfo> part  on nfos = t .kafkaConsu r.part  onsFor(top c);
 
-    if (partitionInfos == null) {
-      LOG.error("Ooops, no partitions for {}", topic);
-      NonPagingAssert.assertFailed("missing_topic_" + topic);
-      throw new MissingKafkaTopicException(topic);
+     f (part  on nfos == null) {
+      LOG.error("Ooops, no part  ons for {}", top c);
+      NonPag ngAssert.assertFa led("m ss ng_top c_" + top c);
+      throw new M ss ngKafkaTop cExcept on(top c);
     }
-    LOG.info("Discovered {} partitions for topic: {}", partitionInfos.size(), topic);
+    LOG. nfo("D scovered {} part  ons for top c: {}", part  on nfos.s ze(), top c);
 
-    numPollErrors = SearchCounter.export("stream_indexer_poll_errors_" + topic);
+    numPollErrors = SearchCounter.export("stream_ ndexer_poll_errors_" + top c);
 
-    this.topicPartitionList = partitionInfos
+    t .top cPart  onL st = part  on nfos
         .stream()
-        .map(info -> new TopicPartition(topic, info.partition()))
-        .collect(Collectors.toList());
-    this.kafkaConsumer.assign(topicPartitionList);
+        .map( nfo -> new Top cPart  on(top c,  nfo.part  on()))
+        .collect(Collectors.toL st());
+    t .kafkaConsu r.ass gn(top cPart  onL st);
   }
 
   /**
-   * Consume updates on startup until current (eg. until we've seen a record within 5 seconds
-   * of current time.)
+   * Consu  updates on startup unt l current (eg. unt l  've seen a record w h n 5 seconds
+   * of current t  .)
    */
-  public void readRecordsUntilCurrent() {
+  publ c vo d readRecordsUnt lCurrent() {
     do {
-      ConsumerRecords<K, V> records = poll();
+      Consu rRecords<K, V> records = poll();
 
-      for (ConsumerRecord<K, V> record : records) {
-        if (record.timestamp() > System.currentTimeMillis() - CAUGHT_UP_FRESHNESS.toMillis()) {
-          isCaughtUp = true;
+      for (Consu rRecord<K, V> record : records) {
+         f (record.t  stamp() > System.currentT  M ll s() - CAUGHT_UP_FRESHNESS.toM ll s()) {
+           sCaughtUp = true;
         }
-        validateAndIndexRecord(record);
+        val dateAnd ndexRecord(record);
       }
-    } while (!isCaughtUp());
+    } wh le (! sCaughtUp());
   }
 
   /**
-   * Run the consumer, indexing record values directly into their respective structures.
+   * Run t  consu r,  ndex ng record values d rectly  nto t  r respect ve structures.
    */
-  public void run() {
+  publ c vo d run() {
     try {
-      while (running.get()) {
-        for (ConsumerRecord<K, V> record : poll()) {
-          validateAndIndexRecord(record);
+      wh le (runn ng.get()) {
+        for (Consu rRecord<K, V> record : poll()) {
+          val dateAnd ndexRecord(record);
         }
       }
-    } catch (WakeupException e) {
-      if (running.get()) {
-        LOG.error("Caught wakeup exception while running", e);
+    } catch (WakeupExcept on e) {
+       f (runn ng.get()) {
+        LOG.error("Caught wakeup except on wh le runn ng", e);
       }
-    } finally {
-      kafkaConsumer.close();
-      LOG.info("Consumer closed.");
+    } f nally {
+      kafkaConsu r.close();
+      LOG. nfo("Consu r closed.");
     }
   }
 
-  public boolean isCaughtUp() {
-    return isCaughtUp;
+  publ c boolean  sCaughtUp() {
+    return  sCaughtUp;
   }
 
   /**
-   * For every partition in the topic, seek to an offset that has a timestamp greater
-   * than or equal to the given timestamp.
-   * @param timestamp
+   * For every part  on  n t  top c, seek to an offset that has a t  stamp greater
+   * than or equal to t  g ven t  stamp.
+   * @param t  stamp
    */
-  public void seekToTimestamp(Long timestamp) {
-    Map<TopicPartition, Long> partitionTimestampMap = topicPartitionList.stream()
-        .collect(Collectors.toMap(tp -> tp, tp -> timestamp));
-    Map<TopicPartition, OffsetAndTimestamp> partitionOffsetMap =
-        kafkaConsumer.offsetsForTimes(partitionTimestampMap);
+  publ c vo d seekToT  stamp(Long t  stamp) {
+    Map<Top cPart  on, Long> part  onT  stampMap = top cPart  onL st.stream()
+        .collect(Collectors.toMap(tp -> tp, tp -> t  stamp));
+    Map<Top cPart  on, OffsetAndT  stamp> part  onOffsetMap =
+        kafkaConsu r.offsetsForT  s(part  onT  stampMap);
 
-    partitionOffsetMap.forEach((tp, offsetAndTimestamp) -> {
-      Verify.verify(offsetAndTimestamp != null,
-        "Couldn't find records after timestamp: " + timestamp);
+    part  onOffsetMap.forEach((tp, offsetAndT  stamp) -> {
+      Ver fy.ver fy(offsetAndT  stamp != null,
+        "Couldn't f nd records after t  stamp: " + t  stamp);
 
-      kafkaConsumer.seek(tp, offsetAndTimestamp.offset());
+      kafkaConsu r.seek(tp, offsetAndT  stamp.offset());
     });
   }
 
   /**
-   * Seeks the kafka consumer to the beginning.
+   * Seeks t  kafka consu r to t  beg nn ng.
    */
-  public void seekToBeginning() {
-    kafkaConsumer.seekToBeginning(topicPartitionList);
+  publ c vo d seekToBeg nn ng() {
+    kafkaConsu r.seekToBeg nn ng(top cPart  onL st);
   }
 
   /**
    * Polls and returns at most MAX_POLL_RECORDS records.
    * @return
    */
-  @VisibleForTesting
-  protected ConsumerRecords<K, V> poll() {
-    ConsumerRecords<K, V> records;
+  @V s bleForTest ng
+  protected Consu rRecords<K, V> poll() {
+    Consu rRecords<K, V> records;
     try {
-      records = kafkaConsumer.poll(POLL_TIMEOUT);
-    } catch (Exception e) {
-      records = ConsumerRecords.empty();
-      if (e instanceof WakeupException) {
+      records = kafkaConsu r.poll(POLL_T MEOUT);
+    } catch (Except on e) {
+      records = Consu rRecords.empty();
+       f (e  nstanceof WakeupExcept on) {
         throw e;
       } else {
-        LOG.warn("Error polling from {} kafka topic.", topic, e);
-        numPollErrors.increment();
+        LOG.warn("Error poll ng from {} kafka top c.", top c, e);
+        numPollErrors. ncre nt();
       }
     }
     return records;
   }
 
-  protected abstract void validateAndIndexRecord(ConsumerRecord<K, V> record);
+  protected abstract vo d val dateAnd ndexRecord(Consu rRecord<K, V> record);
 
-  // Shutdown hook which can be called from a seperate thread. Calling consumer.wakeup() interrupts
-  // the running indexer and causes it to first stop polling for new records before gracefully
-  // closing the consumer.
-  public void close() {
-    LOG.info("Shutting down stream indexer for topic {}", topic);
-    running.set(false);
-    kafkaConsumer.wakeup();
+  // Shutdown hook wh ch can be called from a seperate thread. Call ng consu r.wakeup()  nterrupts
+  // t  runn ng  ndexer and causes   to f rst stop poll ng for new records before gracefully
+  // clos ng t  consu r.
+  publ c vo d close() {
+    LOG. nfo("Shutt ng down stream  ndexer for top c {}", top c);
+    runn ng.set(false);
+    kafkaConsu r.wakeup();
   }
 }
 

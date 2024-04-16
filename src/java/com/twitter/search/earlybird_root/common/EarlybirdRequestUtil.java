@@ -1,107 +1,107 @@
-package com.twitter.search.earlybird_root.common;
+package com.tw ter.search.earlyb rd_root.common;
 
-import com.google.common.base.Optional;
+ mport com.google.common.base.Opt onal;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.util.IdTimeRanges;
+ mport com.tw ter.search.common.part  on ng.snowflakeparser.Snowflake dParser;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.queryparser.query.Query;
+ mport com.tw ter.search.queryparser.query.QueryParserExcept on;
+ mport com.tw ter.search.queryparser.ut l. dT  Ranges;
 
-public final class EarlybirdRequestUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdRequestUtil.class);
+publ c f nal class Earlyb rdRequestUt l {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rdRequestUt l.class);
 
-  private EarlybirdRequestUtil() {
+  pr vate Earlyb rdRequestUt l() {
   }
 
   /**
-   * Returns the max ID specified in the query. The max ID is determined based on the max_id
-   * operator, and the returned value is an inclusive max ID (that is, the returned response is
-   * allowed to have a tweet with this ID).
+   * Returns t  max  D spec f ed  n t  query. T  max  D  s determ ned based on t  max_ d
+   * operator, and t  returned value  s an  nclus ve max  D (that  s, t  returned response  s
+   * allo d to have a t et w h t   D).
    *
-   * If the query is null, could not be parsed or does not have a max_id operator, Optional.absent()
-   * is returned.
+   *  f t  query  s null, could not be parsed or does not have a max_ d operator, Opt onal.absent()
+   *  s returned.
    *
-   * @param query The query.
-   * @return The max ID specified in the given query (based on the max_id operator).
+   * @param query T  query.
+   * @return T  max  D spec f ed  n t  g ven query (based on t  max_ d operator).
    */
-  public static Optional<Long> getRequestMaxId(Query query) {
-    if (query == null) {
-      return Optional.absent();
+  publ c stat c Opt onal<Long> getRequestMax d(Query query) {
+     f (query == null) {
+      return Opt onal.absent();
     }
 
-    IdTimeRanges idTimeRanges = null;
+     dT  Ranges  dT  Ranges = null;
     try {
-      idTimeRanges = IdTimeRanges.fromQuery(query);
-    } catch (QueryParserException e) {
-      LOG.warn("Exception while getting max_id/until_time from query: " + query, e);
+       dT  Ranges =  dT  Ranges.fromQuery(query);
+    } catch (QueryParserExcept on e) {
+      LOG.warn("Except on wh le gett ng max_ d/unt l_t   from query: " + query, e);
     }
 
-    if (idTimeRanges == null) {
-      // An exception was thrown or the query doesn't accept the boundary operators.
-      return Optional.absent();
+     f ( dT  Ranges == null) {
+      // An except on was thrown or t  query doesn't accept t  boundary operators.
+      return Opt onal.absent();
     }
 
-    return idTimeRanges.getMaxIDInclusive();
+    return  dT  Ranges.getMax D nclus ve();
   }
 
   /**
-   * Returns the max ID specified in the query, based on the until_time operator. The returned ID
-   * is inclusive (that is, the returned response is allowed to have a tweet with this ID).
+   * Returns t  max  D spec f ed  n t  query, based on t  unt l_t   operator. T  returned  D
+   *  s  nclus ve (that  s, t  returned response  s allo d to have a t et w h t   D).
    *
-   * If the query is null, could not be parsed or does not have an until_time operator,
-   * Optional.absent() is returned.
+   *  f t  query  s null, could not be parsed or does not have an unt l_t   operator,
+   * Opt onal.absent()  s returned.
    *
-   * @param query The query.
-   * @return The max ID specified in the given query (based on the until_time operator).
+   * @param query T  query.
+   * @return T  max  D spec f ed  n t  g ven query (based on t  unt l_t   operator).
    */
-  public static Optional<Long> getRequestMaxIdFromUntilTime(Query query) {
-    if (query == null) {
-      return Optional.absent();
+  publ c stat c Opt onal<Long> getRequestMax dFromUnt lT  (Query query) {
+     f (query == null) {
+      return Opt onal.absent();
     }
 
-    IdTimeRanges idTimeRanges = null;
+     dT  Ranges  dT  Ranges = null;
     try {
-      idTimeRanges = IdTimeRanges.fromQuery(query);
-    } catch (QueryParserException e) {
-      LOG.warn("Exception while getting max_id/until_time from query: " + query, e);
+       dT  Ranges =  dT  Ranges.fromQuery(query);
+    } catch (QueryParserExcept on e) {
+      LOG.warn("Except on wh le gett ng max_ d/unt l_t   from query: " + query, e);
     }
 
-    if (idTimeRanges == null) {
-      // An exception was thrown or the query doesn't accept the boundary operators.
-      return Optional.absent();
+     f ( dT  Ranges == null) {
+      // An except on was thrown or t  query doesn't accept t  boundary operators.
+      return Opt onal.absent();
     }
 
-    Optional<Integer> queryUntilTimeExclusive = idTimeRanges.getUntilTimeExclusive();
-    Optional<Long> maxId = Optional.absent();
-    if (queryUntilTimeExclusive.isPresent()) {
-      long timestampMillis = queryUntilTimeExclusive.get() * 1000L;
-      if (SnowflakeIdParser.isUsableSnowflakeTimestamp(timestampMillis)) {
-        // Convert timestampMillis to an ID, and subtract 1, because the until_time operator is
-        // exclusive, and we need to return an inclusive max ID.
-        maxId = Optional.of(SnowflakeIdParser.generateValidStatusId(timestampMillis, 0) - 1);
+    Opt onal< nteger> queryUnt lT  Exclus ve =  dT  Ranges.getUnt lT  Exclus ve();
+    Opt onal<Long> max d = Opt onal.absent();
+     f (queryUnt lT  Exclus ve. sPresent()) {
+      long t  stampM ll s = queryUnt lT  Exclus ve.get() * 1000L;
+       f (Snowflake dParser. sUsableSnowflakeT  stamp(t  stampM ll s)) {
+        // Convert t  stampM ll s to an  D, and subtract 1, because t  unt l_t   operator  s
+        // exclus ve, and   need to return an  nclus ve max  D.
+        max d = Opt onal.of(Snowflake dParser.generateVal dStatus d(t  stampM ll s, 0) - 1);
       }
     }
-    return maxId;
+    return max d;
   }
 
   /**
-   * Creates a copy of the given EarlybirdRequest and unsets all fields that are used
-   * only by the SuperRoot.
+   * Creates a copy of t  g ven Earlyb rdRequest and unsets all f elds that are used
+   * only by t  SuperRoot.
    */
-  public static EarlybirdRequest unsetSuperRootFields(
-      EarlybirdRequest request, boolean unsetFollowedUserIds) {
-    EarlybirdRequest newRequest = request.deepCopy();
+  publ c stat c Earlyb rdRequest unsetSuperRootF elds(
+      Earlyb rdRequest request, boolean unsetFollo dUser ds) {
+    Earlyb rdRequest newRequest = request.deepCopy();
     newRequest.unsetGetOlderResults();
-    newRequest.unsetGetProtectedTweetsOnly();
-    if (unsetFollowedUserIds) {
-      newRequest.unsetFollowedUserIds();
+    newRequest.unsetGetProtectedT etsOnly();
+     f (unsetFollo dUser ds) {
+      newRequest.unsetFollo dUser ds();
     }
     newRequest.unsetAdjustedProtectedRequestParams();
-    newRequest.unsetAdjustedFullArchiveRequestParams();
+    newRequest.unsetAdjustedFullArch veRequestParams();
     return newRequest;
   }
 }

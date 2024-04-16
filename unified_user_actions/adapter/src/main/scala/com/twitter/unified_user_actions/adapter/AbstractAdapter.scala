@@ -1,19 +1,19 @@
-package com.twitter.unified_user_actions.adapter
+package com.tw ter.un f ed_user_act ons.adapter
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
 
-trait AbstractAdapter[INPUT, OUTK, OUTV] extends Serializable {
+tra  AbstractAdapter[ NPUT, OUTK, OUTV] extends Ser al zable {
 
   /**
-   * The basic input -> seq[output] adapter which concrete adapters should extend from
-   * @param input a single INPUT
-   * @return A list of (OUTK, OUTV) tuple. The OUTK is the output key mainly for publishing to Kafka (or Pubsub).
-   *         If other processing, e.g. offline batch processing, doesn't require the output key then it can drop it
-   *         like source.adaptOneToKeyedMany.map(_._2)
+   * T  bas c  nput -> seq[output] adapter wh ch concrete adapters should extend from
+   * @param  nput a s ngle  NPUT
+   * @return A l st of (OUTK, OUTV) tuple. T  OUTK  s t  output key ma nly for publ sh ng to Kafka (or Pubsub).
+   *          f ot r process ng, e.g. offl ne batch process ng, doesn't requ re t  output key t n   can drop  
+   *         l ke s ce.adaptOneToKeyedMany.map(_._2)
    */
   def adaptOneToKeyedMany(
-    input: INPUT,
-    statsReceiver: StatsReceiver = NullStatsReceiver
+     nput:  NPUT,
+    statsRece ver: StatsRece ver = NullStatsRece ver
   ): Seq[(OUTK, OUTV)]
 }

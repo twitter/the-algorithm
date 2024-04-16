@@ -1,60 +1,60 @@
-package com.twitter.follow_recommendations.common.clients.dismiss_store
+package com.tw ter.follow_recom ndat ons.common.cl ents.d sm ss_store
 
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.onboarding.relevance.store.thriftscala.WhoToFollowDismissEventDetails
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.Scan.Slice
-import com.twitter.strato.client.Scanner
-import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.common.constants.Gu ceNa dConstants
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.onboard ng.relevance.store.thr ftscala.WhoToFollowD sm ssEventDeta ls
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.catalog.Scan.Sl ce
+ mport com.tw ter.strato.cl ent.Scanner
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport javax. nject. nject
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
 /**
- * this store gets the list of dismissed candidates since a certain time
- * primarily used for filtering out accounts that a user has explicitly dismissed
+ * t  store gets t  l st of d sm ssed cand dates s nce a certa n t  
+ * pr mar ly used for f lter ng out accounts that a user has expl c ly d sm ssed
  *
- * we fail open on timeouts, but loudly on other errors
+ *   fa l open on t  outs, but loudly on ot r errors
  */
-@Singleton
-class DismissStore @Inject() (
-  @Named(GuiceNamedConstants.DISMISS_STORE_SCANNER)
-  scanner: Scanner[(Long, Slice[
+@S ngleton
+class D sm ssStore @ nject() (
+  @Na d(Gu ceNa dConstants.D SM SS_STORE_SCANNER)
+  scanner: Scanner[(Long, Sl ce[
       (Long, Long)
-    ]), Unit, (Long, (Long, Long)), WhoToFollowDismissEventDetails],
-  stats: StatsReceiver)
-    extends Logging {
+    ]), Un , (Long, (Long, Long)), WhoToFollowD sm ssEventDeta ls],
+  stats: StatsRece ver)
+    extends Logg ng {
 
-  private val MaxCandidatesToReturn = 100
+  pr vate val MaxCand datesToReturn = 100
 
-  // gets a list of dismissed candidates. if numCandidatesToFetchOption is none, we will fetch the default number of candidates
+  // gets a l st of d sm ssed cand dates.  f numCand datesToFetchOpt on  s none,   w ll fetch t  default number of cand dates
   def get(
-    userId: Long,
-    negStartTimeMs: Long,
-    maxCandidatesToFetchOption: Option[Int]
-  ): Stitch[Seq[Long]] = {
+    user d: Long,
+    negStartT  Ms: Long,
+    maxCand datesToFetchOpt on: Opt on[ nt]
+  ): St ch[Seq[Long]] = {
 
-    val maxCandidatesToFetch = maxCandidatesToFetchOption.getOrElse(MaxCandidatesToReturn)
+    val maxCand datesToFetch = maxCand datesToFetchOpt on.getOrElse(MaxCand datesToReturn)
 
     scanner
       .scan(
         (
-          userId,
-          Slice(
+          user d,
+          Sl ce(
             from = None,
-            to = Some((negStartTimeMs, Long.MaxValue)),
-            limit = Some(maxCandidatesToFetch)
+            to = So ((negStartT  Ms, Long.MaxValue)),
+            l m  = So (maxCand datesToFetch)
           )
         )
       )
       .map {
-        case s: Seq[((Long, (Long, Long)), WhoToFollowDismissEventDetails)] if s.nonEmpty =>
+        case s: Seq[((Long, (Long, Long)), WhoToFollowD sm ssEventDeta ls)]  f s.nonEmpty =>
           s.map {
-            case ((_: Long, (_: Long, candidateId: Long)), _: WhoToFollowDismissEventDetails) =>
-              candidateId
+            case ((_: Long, (_: Long, cand date d: Long)), _: WhoToFollowD sm ssEventDeta ls) =>
+              cand date d
           }
-        case _ => Nil
+        case _ => N l
       }
   }
 }

@@ -1,254 +1,254 @@
-package com.twitter.search.common.util.ml.models_manager;
+package com.tw ter.search.common.ut l.ml.models_manager;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
+ mport java. o.BufferedReader;
+ mport java. o. OExcept on;
+ mport java. o.Unc cked OExcept on;
+ mport java.ut l.Collect ons;
+ mport java.ut l.Date;
+ mport java.ut l.HashMap;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.Opt onal;
+ mport java.ut l.Set;
+ mport java.ut l.concurrent.ConcurrentHashMap;
+ mport java.ut l.concurrent.Executors;
+ mport java.ut l.concurrent.T  Un ;
+ mport java.ut l.funct on.Funct on;
+ mport java.ut l.funct on.Suppl er;
+ mport java.ut l.stream.Collectors;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.base.Str ngs;
+ mport com.google.common.collect. mmutableL st;
+ mport com.google.common.collect.Sets;
+ mport com.google.common.ut l.concurrent.ThreadFactoryBu lder;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.Yaml;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
+ mport org.yaml.snakeyaml.Yaml;
 
-import com.twitter.search.common.file.AbstractFile;
-import com.twitter.search.common.file.FileUtils;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
+ mport com.tw ter.search.common.f le.AbstractF le;
+ mport com.tw ter.search.common.f le.F leUt ls;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
 
 /**
- * Loads models from HDFS and provides an interface for reloading them periodically.
+ * Loads models from HDFS and prov des an  nterface for reload ng t m per od cally.
  *
- * There are 2 possible ways of detecting the active models:
+ * T re are 2 poss ble ways of detect ng t  act ve models:
  *
- * - DirectorySupplier: Uses all the subdirectories of a base path
- * - ConfigSupplier: Gets the list from from a configuration file
+ * - D rectorySuppl er: Uses all t  subd rector es of a base path
+ * - Conf gSuppl er: Gets t  l st from from a conf gurat on f le
  *
- * Models can be updated or added. Depending on the selected method, existing models can be removed
- * if they are no longer active.
+ * Models can be updated or added. Depend ng on t  selected  thod, ex st ng models can be removed
+ *  f t y are no longer act ve.
  */
-public abstract class BaseModelsManager<T> implements Runnable {
-  private static final Logger LOG = LoggerFactory.getLogger(BaseModelsManager.class);
+publ c abstract class BaseModelsManager<T>  mple nts Runnable {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(BaseModelsManager.class);
 
-  protected final Map<String, Long> lastModifiedMsByModel = new ConcurrentHashMap<>();
-  protected final Map<String, T> loadedModels = new ConcurrentHashMap<>();
-  protected final Supplier<Map<String, AbstractFile>> activeModelsSupplier;
+  protected f nal Map<Str ng, Long> lastMod f edMsByModel = new ConcurrentHashMap<>();
+  protected f nal Map<Str ng, T> loadedModels = new ConcurrentHashMap<>();
+  protected f nal Suppl er<Map<Str ng, AbstractF le>> act veModelsSuppl er;
 
-  protected Map<String, T> prevLoadedModels = new ConcurrentHashMap<>();
+  protected Map<Str ng, T> prevLoadedModels = new ConcurrentHashMap<>();
 
-  // This flag determines whether models are unloaded immediately when they're removed from
-  // activeModelsSupplier. If false, old models stay in memory until the process is restarted.
-  // This may be useful to safely change model configuration without restarting.
-  protected final boolean shouldUnloadInactiveModels;
+  // T  flag determ nes w t r models are unloaded  m d ately w n t y're removed from
+  // act veModelsSuppl er.  f false, old models stay  n  mory unt l t  process  s restarted.
+  // T  may be useful to safely change model conf gurat on w hout restart ng.
+  protected f nal boolean shouldUnload nact veModels;
 
-  protected final SearchLongGauge numModels;
-  protected final SearchCounter numErrors;
-  protected final SearchLongGauge lastLoadedMs;
+  protected f nal SearchLongGauge numModels;
+  protected f nal SearchCounter numErrors;
+  protected f nal SearchLongGauge lastLoadedMs;
 
-  protected Supplier<Boolean> shouldServeModels;
-  protected Supplier<Boolean> shouldLoadModels;
+  protected Suppl er<Boolean> shouldServeModels;
+  protected Suppl er<Boolean> shouldLoadModels;
 
-  public BaseModelsManager(
-      Supplier<Map<String, AbstractFile>> activeModelsSupplier,
-      boolean shouldUnloadInactiveModels,
-      String statsPrefix
+  publ c BaseModelsManager(
+      Suppl er<Map<Str ng, AbstractF le>> act veModelsSuppl er,
+      boolean shouldUnload nact veModels,
+      Str ng statsPref x
   ) {
-    this(
-      activeModelsSupplier,
-      shouldUnloadInactiveModels,
-      statsPrefix,
+    t (
+      act veModelsSuppl er,
+      shouldUnload nact veModels,
+      statsPref x,
       () -> true,
       () -> true
     );
   }
 
-  public BaseModelsManager(
-      Supplier<Map<String, AbstractFile>> activeModelsSupplier,
-      boolean shouldUnloadInactiveModels,
-      String statsPrefix,
-      Supplier<Boolean> shouldServeModels,
-      Supplier<Boolean> shouldLoadModels
+  publ c BaseModelsManager(
+      Suppl er<Map<Str ng, AbstractF le>> act veModelsSuppl er,
+      boolean shouldUnload nact veModels,
+      Str ng statsPref x,
+      Suppl er<Boolean> shouldServeModels,
+      Suppl er<Boolean> shouldLoadModels
   ) {
-    this.activeModelsSupplier = activeModelsSupplier;
-    this.shouldUnloadInactiveModels = shouldUnloadInactiveModels;
+    t .act veModelsSuppl er = act veModelsSuppl er;
+    t .shouldUnload nact veModels = shouldUnload nact veModels;
 
-    this.shouldServeModels = shouldServeModels;
-    this.shouldLoadModels = shouldLoadModels;
+    t .shouldServeModels = shouldServeModels;
+    t .shouldLoadModels = shouldLoadModels;
 
     numModels = SearchLongGauge.export(
-        String.format("model_loader_%s_num_models", statsPrefix));
+        Str ng.format("model_loader_%s_num_models", statsPref x));
     numErrors = SearchCounter.export(
-        String.format("model_loader_%s_num_errors", statsPrefix));
+        Str ng.format("model_loader_%s_num_errors", statsPref x));
     lastLoadedMs = SearchLongGauge.export(
-        String.format("model_loader_%s_last_loaded_timestamp_ms", statsPrefix));
+        Str ng.format("model_loader_%s_last_loaded_t  stamp_ms", statsPref x));
   }
 
   /**
-   *  Retrieves a particular model.
+   *  Retr eves a part cular model.
    */
-  public Optional<T> getModel(String name) {
-    if (shouldServeModels.get()) {
-      return Optional.ofNullable(loadedModels.get(name));
+  publ c Opt onal<T> getModel(Str ng na ) {
+     f (shouldServeModels.get()) {
+      return Opt onal.ofNullable(loadedModels.get(na ));
     } else {
-      return Optional.empty();
+      return Opt onal.empty();
     }
   }
 
   /**
-   * Reads a model instance from the directory file instance.
+   * Reads a model  nstance from t  d rectory f le  nstance.
    *
-   * @param modelBaseDir AbstractFile instance representing the directory.
-   * @return Model instance parsed from the directory.
+   * @param modelBaseD r AbstractF le  nstance represent ng t  d rectory.
+   * @return Model  nstance parsed from t  d rectory.
    */
-  public abstract T readModelFromDirectory(AbstractFile modelBaseDir) throws Exception;
+  publ c abstract T readModelFromD rectory(AbstractF le modelBaseD r) throws Except on;
 
   /**
-   * Cleans up any resources used by the model instance.
-   * This method is called after removing the model from the in-memory map.
-   * Sub-classes can provide custom overridden implementation as required.
+   * Cleans up any res ces used by t  model  nstance.
+   * T   thod  s called after remov ng t  model from t   n- mory map.
+   * Sub-classes can prov de custom overr dden  mple ntat on as requ red.
    *
-   * @param unloadedModel Model instance that would be unloaded from the manager.
+   * @param unloadedModel Model  nstance that would be unloaded from t  manager.
    */
-  protected void cleanUpUnloadedModel(T unloadedModel) { }
+  protected vo d cleanUpUnloadedModel(T unloadedModel) { }
 
-  @Override
-  public void run() {
-    // Get available models, either from the config file or by listing the base directory
-    final Map<String, AbstractFile> modelPathsFromConfig;
-    if (!shouldLoadModels.get()) {
-      LOG.info("Loading models is currently disabled.");
+  @Overr de
+  publ c vo d run() {
+    // Get ava lable models, e  r from t  conf g f le or by l st ng t  base d rectory
+    f nal Map<Str ng, AbstractF le> modelPathsFromConf g;
+     f (!shouldLoadModels.get()) {
+      LOG. nfo("Load ng models  s currently d sabled.");
       return;
     }
 
-    modelPathsFromConfig = activeModelsSupplier.get();
-    for (Map.Entry<String, AbstractFile> nameAndPath : modelPathsFromConfig.entrySet()) {
-      String modelName = nameAndPath.getKey();
+    modelPathsFromConf g = act veModelsSuppl er.get();
+    for (Map.Entry<Str ng, AbstractF le> na AndPath : modelPathsFromConf g.entrySet()) {
+      Str ng modelNa  = na AndPath.getKey();
       try {
-        AbstractFile modelDirectory = nameAndPath.getValue();
-        if (!modelDirectory.exists() && loadedModels.containsKey(modelName)) {
-          LOG.warn("Loaded model '{}' no longer exists at HDFS path {}, keeping loaded version; "
-              + "replace directory in HDFS to update model.", modelName, modelDirectory);
-          continue;
+        AbstractF le modelD rectory = na AndPath.getValue();
+         f (!modelD rectory.ex sts() && loadedModels.conta nsKey(modelNa )) {
+          LOG.warn("Loaded model '{}' no longer ex sts at HDFS path {}, keep ng loaded vers on; "
+              + "replace d rectory  n HDFS to update model.", modelNa , modelD rectory);
+          cont nue;
         }
 
-        long previousModifiedTimestamp = lastModifiedMsByModel.getOrDefault(modelName, 0L);
-        long lastModifiedMs = modelDirectory.getLastModified();
-        if (previousModifiedTimestamp == lastModifiedMs) {
-          continue;
+        long prev ousMod f edT  stamp = lastMod f edMsByModel.getOrDefault(modelNa , 0L);
+        long lastMod f edMs = modelD rectory.getLastMod f ed();
+         f (prev ousMod f edT  stamp == lastMod f edMs) {
+          cont nue;
         }
 
-        LOG.info("Starting to load model. name={} path={}", modelName, modelDirectory.getPath());
-        T model = Preconditions.checkNotNull(readModelFromDirectory(modelDirectory));
-        LOG.info("Model initialized: {}. Last modified: {} ({})",
-                 modelName, lastModifiedMs, new Date(lastModifiedMs));
-        T previousModel = loadedModels.put(modelName, model);
-        lastModifiedMsByModel.put(modelName, lastModifiedMs);
+        LOG. nfo("Start ng to load model. na ={} path={}", modelNa , modelD rectory.getPath());
+        T model = Precond  ons.c ckNotNull(readModelFromD rectory(modelD rectory));
+        LOG. nfo("Model  n  al zed: {}. Last mod f ed: {} ({})",
+                 modelNa , lastMod f edMs, new Date(lastMod f edMs));
+        T prev ousModel = loadedModels.put(modelNa , model);
+        lastMod f edMsByModel.put(modelNa , lastMod f edMs);
 
-        if (previousModel != null) {
-          cleanUpUnloadedModel(previousModel);
+         f (prev ousModel != null) {
+          cleanUpUnloadedModel(prev ousModel);
         }
-      } catch (Exception e) {
-        numErrors.increment();
-        LOG.error("Error initializing model: {}", modelName, e);
+      } catch (Except on e) {
+        numErrors. ncre nt();
+        LOG.error("Error  n  al z ng model: {}", modelNa , e);
       }
     }
 
-    // Remove any currently loaded models not present in the latest list
-    if (shouldUnloadInactiveModels) {
-      Set<String> inactiveModels =
-          Sets.difference(loadedModels.keySet(), modelPathsFromConfig.keySet()).immutableCopy();
+    // Remove any currently loaded models not present  n t  latest l st
+     f (shouldUnload nact veModels) {
+      Set<Str ng>  nact veModels =
+          Sets.d fference(loadedModels.keySet(), modelPathsFromConf g.keySet()). mmutableCopy();
 
-      for (String modelName : inactiveModels) {
-        T modelToUnload = loadedModels.get(modelName);
-        loadedModels.remove(modelName);
+      for (Str ng modelNa  :  nact veModels) {
+        T modelToUnload = loadedModels.get(modelNa );
+        loadedModels.remove(modelNa );
 
-        if (modelToUnload != null) {
-          // We could have an inactive model key without a model (value) if the
-          // initial readModelFromDirectory failed for the model entry.
-          // Checking for null to avoid exception.
+         f (modelToUnload != null) {
+          //   could have an  nact ve model key w hout a model (value)  f t 
+          //  n  al readModelFromD rectory fa led for t  model entry.
+          // C ck ng for null to avo d except on.
           cleanUpUnloadedModel(modelToUnload);
         }
-        LOG.info("Unloaded model that is no longer active: {}", modelName);
+        LOG. nfo("Unloaded model that  s no longer act ve: {}", modelNa );
       }
     }
 
-    if (!prevLoadedModels.keySet().equals(loadedModels.keySet())) {
-      LOG.info("Finished loading models: {}", loadedModels.keySet());
+     f (!prevLoadedModels.keySet().equals(loadedModels.keySet())) {
+      LOG. nfo("F n s d load ng models: {}", loadedModels.keySet());
     }
     prevLoadedModels = loadedModels;
-    numModels.set(loadedModels.size());
-    lastLoadedMs.set(System.currentTimeMillis());
+    numModels.set(loadedModels.s ze());
+    lastLoadedMs.set(System.currentT  M ll s());
   }
 
   /**
-   * Schedules the loader to run periodically.
-   * @param period Period between executions
-   * @param timeUnit The time unit the period parameter.
+   * Sc dules t  loader to run per od cally.
+   * @param per od Per od bet en execut ons
+   * @param t  Un  T  t   un  t  per od para ter.
    */
-  public final void scheduleAtFixedRate(
-      long period, TimeUnit timeUnit, String builderThreadName) {
-    Executors.newSingleThreadScheduledExecutor(
-        new ThreadFactoryBuilder()
+  publ c f nal vo d sc duleAtF xedRate(
+      long per od, T  Un  t  Un , Str ng bu lderThreadNa ) {
+    Executors.newS ngleThreadSc duledExecutor(
+        new ThreadFactoryBu lder()
             .setDaemon(true)
-            .setNameFormat(builderThreadName)
-            .build())
-        .scheduleAtFixedRate(this, 0, period, timeUnit);
+            .setNa Format(bu lderThreadNa )
+            .bu ld())
+        .sc duleAtF xedRate(t , 0, per od, t  Un );
   }
 
   /**
-   * Gets the active list of models from the subdirectories in a base directory.
+   * Gets t  act ve l st of models from t  subd rector es  n a base d rectory.
    *
-   * Each model is identified by the name of the subdirectory.
+   * Each model  s  dent f ed by t  na  of t  subd rectory.
    */
-  @VisibleForTesting
-  public static class DirectorySupplier implements Supplier<Map<String, AbstractFile>> {
-    private static final Logger LOG = LoggerFactory.getLogger(DirectorySupplier.class);
-    private final AbstractFile baseDir;
+  @V s bleForTest ng
+  publ c stat c class D rectorySuppl er  mple nts Suppl er<Map<Str ng, AbstractF le>> {
+    pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(D rectorySuppl er.class);
+    pr vate f nal AbstractF le baseD r;
 
-    public DirectorySupplier(AbstractFile baseDir) {
-      this.baseDir = baseDir;
+    publ c D rectorySuppl er(AbstractF le baseD r) {
+      t .baseD r = baseD r;
     }
 
-    @Override
-    public Map<String, AbstractFile> get() {
+    @Overr de
+    publ c Map<Str ng, AbstractF le> get() {
       try {
-        LOG.info("Loading models from the directories in: {}", baseDir.getPath());
-        List<AbstractFile> modelDirs =
-            ImmutableList.copyOf(baseDir.listFiles(AbstractFile.IS_DIRECTORY));
-        LOG.info("Found {} model directories: {}", modelDirs.size(), modelDirs);
-        return modelDirs.stream()
+        LOG. nfo("Load ng models from t  d rector es  n: {}", baseD r.getPath());
+        L st<AbstractF le> modelD rs =
+             mmutableL st.copyOf(baseD r.l stF les(AbstractF le. S_D RECTORY));
+        LOG. nfo("Found {} model d rector es: {}", modelD rs.s ze(), modelD rs);
+        return modelD rs.stream()
             .collect(Collectors.toMap(
-                AbstractFile::getName,
-                Function.identity()
+                AbstractF le::getNa ,
+                Funct on. dent y()
             ));
-      } catch (IOException e) {
-        throw new UncheckedIOException(e);
+      } catch ( OExcept on e) {
+        throw new Unc cked OExcept on(e);
       }
     }
   }
 
   /**
-   * Gets the active list of models by reading a YAML config file.
+   * Gets t  act ve l st of models by read ng a YAML conf g f le.
    *
-   * The keys are the model names, the values are dictionaries with a single entry for the path
-   * of the model in HDFS (without the HDFS name node prefix). For example:
+   * T  keys are t  model na s, t  values are d ct onar es w h a s ngle entry for t  path
+   * of t  model  n HDFS (w hout t  HDFS na  node pref x). For example:
    *
    *    model_a:
    *        path: /path/to/model_a
@@ -256,37 +256,37 @@ public abstract class BaseModelsManager<T> implements Runnable {
    *        path: /path/to/model_b
    *
    */
-  @VisibleForTesting
-  public static class ConfigSupplier implements Supplier<Map<String, AbstractFile>> {
+  @V s bleForTest ng
+  publ c stat c class Conf gSuppl er  mple nts Suppl er<Map<Str ng, AbstractF le>> {
 
-    private final AbstractFile configFile;
+    pr vate f nal AbstractF le conf gF le;
 
-    public ConfigSupplier(AbstractFile configFile) {
-      this.configFile = configFile;
+    publ c Conf gSuppl er(AbstractF le conf gF le) {
+      t .conf gF le = conf gF le;
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public Map<String, AbstractFile> get() {
-      try (BufferedReader configReader = configFile.getCharSource().openBufferedStream()) {
+    @SuppressWarn ngs("unc cked")
+    @Overr de
+    publ c Map<Str ng, AbstractF le> get() {
+      try (BufferedReader conf gReader = conf gF le.getCharS ce().openBufferedStream()) {
         Yaml yamlParser = new Yaml();
-        //noinspection unchecked
-        Map<String, Map<String, String>> config =
-            (Map<String, Map<String, String>>) yamlParser.load(configReader);
+        //no nspect on unc cked
+        Map<Str ng, Map<Str ng, Str ng>> conf g =
+            (Map<Str ng, Map<Str ng, Str ng>>) yamlParser.load(conf gReader);
 
-        if (config == null || config.isEmpty()) {
-          return Collections.emptyMap();
+         f (conf g == null || conf g. sEmpty()) {
+          return Collect ons.emptyMap();
         }
 
-        Map<String, AbstractFile> modelPaths = new HashMap<>();
-        for (Map.Entry<String, Map<String, String>> nameAndConfig : config.entrySet()) {
-          String path = Strings.emptyToNull(nameAndConfig.getValue().get("path"));
-          Preconditions.checkNotNull(path, "Missing path for model: %s", nameAndConfig.getKey());
-          modelPaths.put(nameAndConfig.getKey(), FileUtils.getHdfsFileHandle(path));
+        Map<Str ng, AbstractF le> modelPaths = new HashMap<>();
+        for (Map.Entry<Str ng, Map<Str ng, Str ng>> na AndConf g : conf g.entrySet()) {
+          Str ng path = Str ngs.emptyToNull(na AndConf g.getValue().get("path"));
+          Precond  ons.c ckNotNull(path, "M ss ng path for model: %s", na AndConf g.getKey());
+          modelPaths.put(na AndConf g.getKey(), F leUt ls.getHdfsF leHandle(path));
         }
         return modelPaths;
-      } catch (IOException e) {
-        throw new UncheckedIOException(e);
+      } catch ( OExcept on e) {
+        throw new Unc cked OExcept on(e);
       }
     }
   }

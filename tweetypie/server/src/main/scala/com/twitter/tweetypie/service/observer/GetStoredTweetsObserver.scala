@@ -1,51 +1,51 @@
-package com.twitter.tweetypie
-package service
+package com.tw ter.t etyp e
+package serv ce
 package observer
 
-import com.twitter.tweetypie.thriftscala.GetStoredTweetsRequest
-import com.twitter.tweetypie.thriftscala.GetStoredTweetsResult
+ mport com.tw ter.t etyp e.thr ftscala.GetStoredT etsRequest
+ mport com.tw ter.t etyp e.thr ftscala.GetStoredT etsResult
 
-private[service] object GetStoredTweetsObserver extends StoredTweetsObserver {
-  type Type = ObserveExchange[GetStoredTweetsRequest, Seq[GetStoredTweetsResult]]
+pr vate[serv ce] object GetStoredT etsObserver extends StoredT etsObserver {
+  type Type = ObserveExchange[GetStoredT etsRequest, Seq[GetStoredT etsResult]]
 
-  def observeRequest(stats: StatsReceiver): Effect[GetStoredTweetsRequest] = {
-    val requestSizeStat = stats.stat("request_size")
+  def observeRequest(stats: StatsRece ver): Effect[GetStoredT etsRequest] = {
+    val requestS zeStat = stats.stat("request_s ze")
 
-    val optionsScope = stats.scope("options")
-    val bypassVisibilityFilteringCounter = optionsScope.counter("bypass_visibility_filtering")
-    val forUserIdCounter = optionsScope.counter("for_user_id")
-    val additionalFieldsScope = optionsScope.scope("additional_fields")
+    val opt onsScope = stats.scope("opt ons")
+    val bypassV s b l yF lter ngCounter = opt onsScope.counter("bypass_v s b l y_f lter ng")
+    val forUser dCounter = opt onsScope.counter("for_user_ d")
+    val add  onalF eldsScope = opt onsScope.scope("add  onal_f elds")
 
     Effect { request =>
-      requestSizeStat.add(request.tweetIds.size)
+      requestS zeStat.add(request.t et ds.s ze)
 
-      if (request.options.isDefined) {
-        val options = request.options.get
-        if (options.bypassVisibilityFiltering) bypassVisibilityFilteringCounter.incr()
-        if (options.forUserId.isDefined) forUserIdCounter.incr()
-        options.additionalFieldIds.foreach { id =>
-          additionalFieldsScope.counter(id.toString).incr()
+       f (request.opt ons. sDef ned) {
+        val opt ons = request.opt ons.get
+         f (opt ons.bypassV s b l yF lter ng) bypassV s b l yF lter ngCounter. ncr()
+         f (opt ons.forUser d. sDef ned) forUser dCounter. ncr()
+        opt ons.add  onalF eld ds.foreach {  d =>
+          add  onalF eldsScope.counter( d.toStr ng). ncr()
         }
       }
     }
   }
 
-  def observeResult(stats: StatsReceiver): Effect[Seq[GetStoredTweetsResult]] = {
+  def observeResult(stats: StatsRece ver): Effect[Seq[GetStoredT etsResult]] = {
     val resultScope = stats.scope("result")
 
     Effect { result =>
-      observeStoredTweets(result.map(_.storedTweet), resultScope)
+      observeStoredT ets(result.map(_.storedT et), resultScope)
     }
   }
 
-  def observeExchange(stats: StatsReceiver): Effect[Type] = {
+  def observeExchange(stats: StatsRece ver): Effect[Type] = {
     val resultStateStats = ResultStateStats(stats)
 
     Effect {
       case (request, response) =>
         response match {
-          case Return(_) => resultStateStats.success(request.tweetIds.size)
-          case Throw(_) => resultStateStats.failed(request.tweetIds.size)
+          case Return(_) => resultStateStats.success(request.t et ds.s ze)
+          case Throw(_) => resultStateStats.fa led(request.t et ds.s ze)
         }
     }
   }

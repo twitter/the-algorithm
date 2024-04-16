@@ -1,81 +1,81 @@
-package com.twitter.visibility.builder.tweets
+package com.tw ter.v s b l y.bu lder.t ets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.builder.users.ViewerVerbsAuthor
-import com.twitter.visibility.common.UserId
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.features._
-import com.twitter.visibility.models.TweetSafetyLabel
-import com.twitter.visibility.models.ViolationLevel
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.bu lder.users.V e rVerbsAuthor
+ mport com.tw ter.v s b l y.common.User d
+ mport com.tw ter.v s b l y.common.UserRelat onsh pS ce
+ mport com.tw ter.v s b l y.features._
+ mport com.tw ter.v s b l y.models.T etSafetyLabel
+ mport com.tw ter.v s b l y.models.V olat onLevel
 
-class FosnrPefetchedLabelsRelationshipFeatures(
-  userRelationshipSource: UserRelationshipSource,
-  statsReceiver: StatsReceiver) {
+class FosnrPefetc dLabelsRelat onsh pFeatures(
+  userRelat onsh pS ce: UserRelat onsh pS ce,
+  statsRece ver: StatsRece ver) {
 
-  private[this] val scopedStatsReceiver =
-    statsReceiver.scope("fonsr_prefetched_relationship_features")
+  pr vate[t ] val scopedStatsRece ver =
+    statsRece ver.scope("fonsr_prefetc d_relat onsh p_features")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  pr vate[t ] val requests = scopedStatsRece ver.counter("requests")
 
-  private[this] val viewerFollowsAuthorOfViolatingTweet =
-    scopedStatsReceiver.scope(ViewerFollowsAuthorOfViolatingTweet.name).counter("requests")
+  pr vate[t ] val v e rFollowsAuthorOfV olat ngT et =
+    scopedStatsRece ver.scope(V e rFollowsAuthorOfV olat ngT et.na ).counter("requests")
 
-  private[this] val viewerDoesNotFollowAuthorOfViolatingTweet =
-    scopedStatsReceiver.scope(ViewerDoesNotFollowAuthorOfViolatingTweet.name).counter("requests")
+  pr vate[t ] val v e rDoesNotFollowAuthorOfV olat ngT et =
+    scopedStatsRece ver.scope(V e rDoesNotFollowAuthorOfV olat ngT et.na ).counter("requests")
 
-  def forNonFosnr(): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
-    _.withConstantFeature(ViewerFollowsAuthorOfViolatingTweet, false)
-      .withConstantFeature(ViewerDoesNotFollowAuthorOfViolatingTweet, false)
+  def forNonFosnr(): FeatureMapBu lder => FeatureMapBu lder = {
+    requests. ncr()
+    _.w hConstantFeature(V e rFollowsAuthorOfV olat ngT et, false)
+      .w hConstantFeature(V e rDoesNotFollowAuthorOfV olat ngT et, false)
   }
-  def forTweetWithSafetyLabelsAndAuthorId(
-    safetyLabels: Seq[TweetSafetyLabel],
-    authorId: Long,
-    viewerId: Option[Long]
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
-    _.withFeature(
-      ViewerFollowsAuthorOfViolatingTweet,
-      viewerFollowsAuthorOfViolatingTweet(safetyLabels, authorId, viewerId))
-      .withFeature(
-        ViewerDoesNotFollowAuthorOfViolatingTweet,
-        viewerDoesNotFollowAuthorOfViolatingTweet(safetyLabels, authorId, viewerId))
+  def forT etW hSafetyLabelsAndAuthor d(
+    safetyLabels: Seq[T etSafetyLabel],
+    author d: Long,
+    v e r d: Opt on[Long]
+  ): FeatureMapBu lder => FeatureMapBu lder = {
+    requests. ncr()
+    _.w hFeature(
+      V e rFollowsAuthorOfV olat ngT et,
+      v e rFollowsAuthorOfV olat ngT et(safetyLabels, author d, v e r d))
+      .w hFeature(
+        V e rDoesNotFollowAuthorOfV olat ngT et,
+        v e rDoesNotFollowAuthorOfV olat ngT et(safetyLabels, author d, v e r d))
   }
-  def viewerFollowsAuthorOfViolatingTweet(
-    safetyLabels: Seq[TweetSafetyLabel],
-    authorId: UserId,
-    viewerId: Option[UserId]
-  ): Stitch[Boolean] = {
-    if (safetyLabels
-        .map(ViolationLevel.fromTweetSafetyLabelOpt).collect {
-          case Some(level) => level
-        }.isEmpty) {
-      return Stitch.False
+  def v e rFollowsAuthorOfV olat ngT et(
+    safetyLabels: Seq[T etSafetyLabel],
+    author d: User d,
+    v e r d: Opt on[User d]
+  ): St ch[Boolean] = {
+     f (safetyLabels
+        .map(V olat onLevel.fromT etSafetyLabelOpt).collect {
+          case So (level) => level
+        }. sEmpty) {
+      return St ch.False
     }
-    ViewerVerbsAuthor(
-      authorId,
-      viewerId,
-      userRelationshipSource.follows,
-      viewerFollowsAuthorOfViolatingTweet)
+    V e rVerbsAuthor(
+      author d,
+      v e r d,
+      userRelat onsh pS ce.follows,
+      v e rFollowsAuthorOfV olat ngT et)
   }
-  def viewerDoesNotFollowAuthorOfViolatingTweet(
-    safetyLabels: Seq[TweetSafetyLabel],
-    authorId: UserId,
-    viewerId: Option[UserId]
-  ): Stitch[Boolean] = {
-    if (safetyLabels
-        .map(ViolationLevel.fromTweetSafetyLabelOpt).collect {
-          case Some(level) => level
-        }.isEmpty) {
-      return Stitch.False
+  def v e rDoesNotFollowAuthorOfV olat ngT et(
+    safetyLabels: Seq[T etSafetyLabel],
+    author d: User d,
+    v e r d: Opt on[User d]
+  ): St ch[Boolean] = {
+     f (safetyLabels
+        .map(V olat onLevel.fromT etSafetyLabelOpt).collect {
+          case So (level) => level
+        }. sEmpty) {
+      return St ch.False
     }
-    ViewerVerbsAuthor(
-      authorId,
-      viewerId,
-      userRelationshipSource.follows,
-      viewerDoesNotFollowAuthorOfViolatingTweet).map(following => !following)
+    V e rVerbsAuthor(
+      author d,
+      v e r d,
+      userRelat onsh pS ce.follows,
+      v e rDoesNotFollowAuthorOfV olat ngT et).map(follow ng => !follow ng)
   }
 
 }

@@ -1,74 +1,74 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.content
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.adapters.content
 
-import com.twitter.home_mixer.model.ContentFeatures
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.ml.api.util.DataRecordConverters.RichDataRecordWrapper
-import com.twitter.timelines.prediction.common.adapters.TimelinesMutatingAdapterBase
-import com.twitter.timelines.prediction.features.common.InReplyToTweetTimelinesSharedFeatures
+ mport com.tw ter.ho _m xer.model.ContentFeatures
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ml.ap .R chDataRecord
+ mport com.tw ter.ml.ap .ut l.DataRecordConverters.R chDataRecordWrapper
+ mport com.tw ter.t  l nes.pred ct on.common.adapters.T  l nesMutat ngAdapterBase
+ mport com.tw ter.t  l nes.pred ct on.features.common. nReplyToT etT  l nesSharedFeatures
 
-object InReplyToContentFeatureAdapter
-    extends TimelinesMutatingAdapterBase[Option[ContentFeatures]] {
+object  nReplyToContentFeatureAdapter
+    extends T  l nesMutat ngAdapterBase[Opt on[ContentFeatures]] {
 
-  override val getFeatureContext: FeatureContext = new FeatureContext(
-    // Media Features
-    InReplyToTweetTimelinesSharedFeatures.ASPECT_RATIO_DEN,
-    InReplyToTweetTimelinesSharedFeatures.ASPECT_RATIO_NUM,
-    InReplyToTweetTimelinesSharedFeatures.HEIGHT_1,
-    InReplyToTweetTimelinesSharedFeatures.HEIGHT_2,
-    InReplyToTweetTimelinesSharedFeatures.VIDEO_DURATION,
+  overr de val getFeatureContext: FeatureContext = new FeatureContext(
+    //  d a Features
+     nReplyToT etT  l nesSharedFeatures.ASPECT_RAT O_DEN,
+     nReplyToT etT  l nesSharedFeatures.ASPECT_RAT O_NUM,
+     nReplyToT etT  l nesSharedFeatures.HE GHT_1,
+     nReplyToT etT  l nesSharedFeatures.HE GHT_2,
+     nReplyToT etT  l nesSharedFeatures.V DEO_DURAT ON,
     // TextFeatures
-    InReplyToTweetTimelinesSharedFeatures.NUM_CAPS,
-    InReplyToTweetTimelinesSharedFeatures.TWEET_LENGTH,
-    InReplyToTweetTimelinesSharedFeatures.HAS_QUESTION,
+     nReplyToT etT  l nesSharedFeatures.NUM_CAPS,
+     nReplyToT etT  l nesSharedFeatures.TWEET_LENGTH,
+     nReplyToT etT  l nesSharedFeatures.HAS_QUEST ON,
   )
 
-  override val commonFeatures: Set[Feature[_]] = Set.empty
+  overr de val commonFeatures: Set[Feature[_]] = Set.empty
 
-  override def setFeatures(
-    contentFeatures: Option[ContentFeatures],
-    richDataRecord: RichDataRecord
-  ): Unit = {
-    if (contentFeatures.nonEmpty) {
+  overr de def setFeatures(
+    contentFeatures: Opt on[ContentFeatures],
+    r chDataRecord: R chDataRecord
+  ): Un  = {
+     f (contentFeatures.nonEmpty) {
       val features = contentFeatures.get
-      richDataRecord.setFeatureValueFromOption(
-        InReplyToTweetTimelinesSharedFeatures.ASPECT_RATIO_DEN,
-        features.aspectRatioNum.map(_.toDouble)
+      r chDataRecord.setFeatureValueFromOpt on(
+         nReplyToT etT  l nesSharedFeatures.ASPECT_RAT O_DEN,
+        features.aspectRat oNum.map(_.toDouble)
       )
 
-      richDataRecord.setFeatureValueFromOption(
-        InReplyToTweetTimelinesSharedFeatures.ASPECT_RATIO_NUM,
-        features.aspectRatioNum.map(_.toDouble)
+      r chDataRecord.setFeatureValueFromOpt on(
+         nReplyToT etT  l nesSharedFeatures.ASPECT_RAT O_NUM,
+        features.aspectRat oNum.map(_.toDouble)
       )
 
-      richDataRecord.setFeatureValueFromOption(
-        InReplyToTweetTimelinesSharedFeatures.HEIGHT_1,
-        features.heights.flatMap(_.lift(0)).map(_.toDouble)
+      r chDataRecord.setFeatureValueFromOpt on(
+         nReplyToT etT  l nesSharedFeatures.HE GHT_1,
+        features.  ghts.flatMap(_.l ft(0)).map(_.toDouble)
       )
-      richDataRecord.setFeatureValueFromOption(
-        InReplyToTweetTimelinesSharedFeatures.HEIGHT_2,
-        features.heights.flatMap(_.lift(1)).map(_.toDouble)
-      )
-
-      richDataRecord.setFeatureValueFromOption(
-        InReplyToTweetTimelinesSharedFeatures.VIDEO_DURATION,
-        features.videoDurationMs.map(_.toDouble)
+      r chDataRecord.setFeatureValueFromOpt on(
+         nReplyToT etT  l nesSharedFeatures.HE GHT_2,
+        features.  ghts.flatMap(_.l ft(1)).map(_.toDouble)
       )
 
-      richDataRecord.setFeatureValueFromOption(
-        InReplyToTweetTimelinesSharedFeatures.NUM_CAPS,
-        Some(features.numCaps.toDouble)
+      r chDataRecord.setFeatureValueFromOpt on(
+         nReplyToT etT  l nesSharedFeatures.V DEO_DURAT ON,
+        features.v deoDurat onMs.map(_.toDouble)
       )
 
-      richDataRecord.setFeatureValueFromOption(
-        InReplyToTweetTimelinesSharedFeatures.TWEET_LENGTH,
-        Some(features.length.toDouble)
+      r chDataRecord.setFeatureValueFromOpt on(
+         nReplyToT etT  l nesSharedFeatures.NUM_CAPS,
+        So (features.numCaps.toDouble)
       )
 
-      richDataRecord.setFeatureValueFromOption(
-        InReplyToTweetTimelinesSharedFeatures.HAS_QUESTION,
-        Some(features.hasQuestion)
+      r chDataRecord.setFeatureValueFromOpt on(
+         nReplyToT etT  l nesSharedFeatures.TWEET_LENGTH,
+        So (features.length.toDouble)
+      )
+
+      r chDataRecord.setFeatureValueFromOpt on(
+         nReplyToT etT  l nesSharedFeatures.HAS_QUEST ON,
+        So (features.hasQuest on)
       )
     }
   }

@@ -1,37 +1,37 @@
-package com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph
+package com.tw ter.s mclusters_v2.sc o.mult _type_graph.assemble_mult _type_graph
 
-import com.twitter.simclusters_v2.thriftscala.RightNodeType
+ mport com.tw ter.s mclusters_v2.thr ftscala.R ghtNodeType
 
-object Config {
-  val RootMHPath: String = "manhattan_sequence_files/multi_type_graph/"
-  val RootThriftPath: String = "processed/multi_type_graph/"
-  val AdhocRootPath = "adhoc/multi_type_graph/"
-  val truncatedMultiTypeGraphMHOutputDir: String = "truncated_graph_mh"
-  val truncatedMultiTypeGraphThriftOutputDir: String = "truncated_graph_thrift"
-  val topKRightNounsMHOutputDir: String = "top_k_right_nouns_mh"
-  val topKRightNounsOutputDir: String = "top_k_right_nouns"
-  val fullMultiTypeGraphThriftOutputDir: String = "full_graph_thrift"
-  val HalfLifeInDaysForFavScore = 100
-  val NumTopNounsForUnknownRightNodeType = 20
-  val GlobalDefaultMinFrequencyOfRightNodeType = 100
-  val TopKRightNounsForMHDump = 1000
+object Conf g {
+  val RootMHPath: Str ng = "manhattan_sequence_f les/mult _type_graph/"
+  val RootThr ftPath: Str ng = "processed/mult _type_graph/"
+  val AdhocRootPath = "adhoc/mult _type_graph/"
+  val truncatedMult TypeGraphMHOutputD r: Str ng = "truncated_graph_mh"
+  val truncatedMult TypeGraphThr ftOutputD r: Str ng = "truncated_graph_thr ft"
+  val topKR ghtNounsMHOutputD r: Str ng = "top_k_r ght_nouns_mh"
+  val topKR ghtNounsOutputD r: Str ng = "top_k_r ght_nouns"
+  val fullMult TypeGraphThr ftOutputD r: Str ng = "full_graph_thr ft"
+  val HalfL fe nDaysForFavScore = 100
+  val NumTopNounsForUnknownR ghtNodeType = 20
+  val GlobalDefaultM nFrequencyOfR ghtNodeType = 100
+  val TopKR ghtNounsForMHDump = 1000
 
-  // the topK most frequent nouns for each engagement type
-  val TopKConfig: Map[RightNodeType, Int] = Map(
-    RightNodeType.FollowUser -> 10000000, // 10M, current simclusters_v2 has this value set to 20M, providing this the most weight
-    RightNodeType.FavUser -> 5000000,
-    RightNodeType.BlockUser -> 1000000,
-    RightNodeType.AbuseReportUser -> 1000000,
-    RightNodeType.SpamReportUser -> 1000000,
-    RightNodeType.FollowTopic -> 5000,
-    RightNodeType.SignUpCountry -> 200,
-    RightNodeType.ConsumedLanguage -> 50,
-    RightNodeType.FavTweet -> 500000,
-    RightNodeType.ReplyTweet -> 500000,
-    RightNodeType.RetweetTweet -> 500000,
-    RightNodeType.NotifOpenOrClickTweet -> 500000,
-    RightNodeType.SearchQuery -> 500000
+  // t  topK most frequent nouns for each engage nt type
+  val TopKConf g: Map[R ghtNodeType,  nt] = Map(
+    R ghtNodeType.FollowUser -> 10000000, // 10M, current s mclusters_v2 has t  value set to 20M, prov d ng t  t  most   ght
+    R ghtNodeType.FavUser -> 5000000,
+    R ghtNodeType.BlockUser -> 1000000,
+    R ghtNodeType.AbuseReportUser -> 1000000,
+    R ghtNodeType.SpamReportUser -> 1000000,
+    R ghtNodeType.FollowTop c -> 5000,
+    R ghtNodeType.S gnUpCountry -> 200,
+    R ghtNodeType.Consu dLanguage -> 50,
+    R ghtNodeType.FavT et -> 500000,
+    R ghtNodeType.ReplyT et -> 500000,
+    R ghtNodeType.Ret etT et -> 500000,
+    R ghtNodeType.Not fOpenOrCl ckT et -> 500000,
+    R ghtNodeType.SearchQuery -> 500000
   )
-  val SampledEmployeeIds: Set[Long] =
+  val SampledEmployee ds: Set[Long] =
     Set()
 }

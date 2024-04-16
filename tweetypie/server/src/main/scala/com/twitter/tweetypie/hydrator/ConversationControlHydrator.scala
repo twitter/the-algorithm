@@ -1,107 +1,107 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.ValueState
-import com.twitter.tweetypie.repository.ConversationControlRepository
-import com.twitter.tweetypie.serverutil.ExceptionCounter
-import com.twitter.tweetypie.thriftscala.ConversationControl
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.core.ValueState
+ mport com.tw ter.t etyp e.repos ory.Conversat onControlRepos ory
+ mport com.tw ter.t etyp e.serverut l.Except onCounter
+ mport com.tw ter.t etyp e.thr ftscala.Conversat onControl
 
-private object ReplyTweetConversationControlHydrator {
-  type Type = ConversationControlHydrator.Type
-  type Ctx = ConversationControlHydrator.Ctx
+pr vate object ReplyT etConversat onControlHydrator {
+  type Type = Conversat onControlHydrator.Type
+  type Ctx = Conversat onControlHydrator.Ctx
 
-  // The conversation control thrift field was added Feb 17th, 2020.
-  // No conversation before this will have a conversation control field to hydrate.
-  // We explicitly short circuit to save resources from querying for tweets we
-  // know do not have conversation control fields set.
-  val FirstValidDate: Time = Time.fromMilliseconds(1554076800000L) // 2020-02-17
+  // T  conversat on control thr ft f eld was added Feb 17th, 2020.
+  // No conversat on before t  w ll have a conversat on control f eld to hydrate.
+  //   expl c ly short c rcu  to save res ces from query ng for t ets  
+  // know do not have conversat on control f elds set.
+  val F rstVal dDate: T   = T  .fromM ll seconds(1554076800000L) // 2020-02-17
 
   def apply(
-    repo: ConversationControlRepository.Type,
-    stats: StatsReceiver
+    repo: Conversat onControlRepos ory.Type,
+    stats: StatsRece ver
   ): Type = {
-    val exceptionCounter = ExceptionCounter(stats)
+    val except onCounter = Except onCounter(stats)
 
-    ValueHydrator[Option[ConversationControl], Ctx] { (curr, ctx) =>
-      repo(ctx.conversationId.get, ctx.opts.cacheControl).liftToTry.map {
-        case Return(conversationControl) =>
-          ValueState.delta(curr, conversationControl)
-        case Throw(exception) => {
-          // In the case where we get an exception, we want to count the
-          // exception but fail open.
-          exceptionCounter(exception)
+    ValueHydrator[Opt on[Conversat onControl], Ctx] { (curr, ctx) =>
+      repo(ctx.conversat on d.get, ctx.opts.cac Control).l ftToTry.map {
+        case Return(conversat onControl) =>
+          ValueState.delta(curr, conversat onControl)
+        case Throw(except on) => {
+          //  n t  case w re   get an except on,   want to count t 
+          // except on but fa l open.
+          except onCounter(except on)
 
-          // Reply Tweet Tweet.ConversationControlField hydration should fail open.
-          // Ideally we would return ValueState.partial here to notify Tweetypie the caller
-          // that requested the Tweet.ConversationControlField field was not hydrated.
-          // We cannot do so because GetTweetFields will return TweetFieldsResultFailed
-          // for partial results which would fail closed.
-          ValueState.unmodified(curr)
+          // Reply T et T et.Conversat onControlF eld hydrat on should fa l open.
+          //  deally   would return ValueState.part al  re to not fy T etyp e t  caller
+          // that requested t  T et.Conversat onControlF eld f eld was not hydrated.
+          //   cannot do so because GetT etF elds w ll return T etF eldsResultFa led
+          // for part al results wh ch would fa l closed.
+          ValueState.unmod f ed(curr)
         }
       }
-    }.onlyIf { (_, ctx) =>
-      // This hydrator is specifically for replies so only run when Tweet is a reply
-      ctx.inReplyToTweetId.isDefined &&
-      // See comment for FirstValidDate
-      ctx.createdAt > FirstValidDate &&
-      // We need conversation id to get ConversationControl
-      ctx.conversationId.isDefined &&
-      // Only run if the ConversationControl was requested
-      ctx.tweetFieldRequested(Tweet.ConversationControlField)
+    }.only f { (_, ctx) =>
+      // T  hydrator  s spec f cally for repl es so only run w n T et  s a reply
+      ctx. nReplyToT et d. sDef ned &&
+      // See com nt for F rstVal dDate
+      ctx.createdAt > F rstVal dDate &&
+      //   need conversat on  d to get Conversat onControl
+      ctx.conversat on d. sDef ned &&
+      // Only run  f t  Conversat onControl was requested
+      ctx.t etF eldRequested(T et.Conversat onControlF eld)
     }
   }
 }
 
 /**
- * ConversationControlHydrator is used to hydrate the conversationControl field.
- * For root Tweets, this hydrator just passes through the existing conversationControl.
- * For reply Tweets, it loads the conversationControl from the root Tweet of the conversation.
- * Only root Tweets in a conversation (i.e. the Tweet pointed to by conversationId) have
- * a persisted conversationControl, so we have to hydrate that field for all replies in order
- * to know if a Tweet in a conversation can be replied to.
+ * Conversat onControlHydrator  s used to hydrate t  conversat onControl f eld.
+ * For root T ets, t  hydrator just passes through t  ex st ng conversat onControl.
+ * For reply T ets,   loads t  conversat onControl from t  root T et of t  conversat on.
+ * Only root T ets  n a conversat on ( .e. t  T et po nted to by conversat on d) have
+ * a pers sted conversat onControl, so   have to hydrate that f eld for all repl es  n order
+ * to know  f a T et  n a conversat on can be repl ed to.
  */
-object ConversationControlHydrator {
-  type Type = ValueHydrator[Option[ConversationControl], Ctx]
+object Conversat onControlHydrator {
+  type Type = ValueHydrator[Opt on[Conversat onControl], Ctx]
 
-  case class Ctx(conversationId: Option[ConversationId], underlyingTweetCtx: TweetCtx)
-      extends TweetCtx.Proxy
+  case class Ctx(conversat on d: Opt on[Conversat on d], underly ngT etCtx: T etCtx)
+      extends T etCtx.Proxy
 
-  private def scrubInviteViaMention(
-    ccOpt: Option[ConversationControl]
-  ): Option[ConversationControl] = {
+  pr vate def scrub nv eV a nt on(
+    ccOpt: Opt on[Conversat onControl]
+  ): Opt on[Conversat onControl] = {
     ccOpt collect {
-      case ConversationControl.ByInvitation(byInvitation) =>
-        ConversationControl.ByInvitation(byInvitation.copy(inviteViaMention = None))
-      case ConversationControl.Community(community) =>
-        ConversationControl.Community(community.copy(inviteViaMention = None))
-      case ConversationControl.Followers(followers) =>
-        ConversationControl.Followers(followers.copy(inviteViaMention = None))
+      case Conversat onControl.By nv at on(by nv at on) =>
+        Conversat onControl.By nv at on(by nv at on.copy( nv eV a nt on = None))
+      case Conversat onControl.Commun y(commun y) =>
+        Conversat onControl.Commun y(commun y.copy( nv eV a nt on = None))
+      case Conversat onControl.Follo rs(follo rs) =>
+        Conversat onControl.Follo rs(follo rs.copy( nv eV a nt on = None))
     }
   }
 
   def apply(
-    repo: ConversationControlRepository.Type,
-    disableInviteViaMention: Gate[Unit],
-    stats: StatsReceiver
+    repo: Conversat onControlRepos ory.Type,
+    d sable nv eV a nt on: Gate[Un ],
+    stats: StatsRece ver
   ): Type = {
-    val replyTweetConversationControlHydrator = ReplyTweetConversationControlHydrator(
+    val replyT etConversat onControlHydrator = ReplyT etConversat onControlHydrator(
       repo,
       stats
     )
 
-    ValueHydrator[Option[ConversationControl], Ctx] { (curr, ctx) =>
-      val ccUpdated = if (disableInviteViaMention()) {
-        scrubInviteViaMention(curr)
+    ValueHydrator[Opt on[Conversat onControl], Ctx] { (curr, ctx) =>
+      val ccUpdated =  f (d sable nv eV a nt on()) {
+        scrub nv eV a nt on(curr)
       } else {
         curr
       }
 
-      if (ctx.inReplyToTweetId.isEmpty) {
-        // For non-reply tweets, pass through the existing conversation control
-        Stitch.value(ValueState.delta(curr, ccUpdated))
+       f (ctx. nReplyToT et d. sEmpty) {
+        // For non-reply t ets, pass through t  ex st ng conversat on control
+        St ch.value(ValueState.delta(curr, ccUpdated))
       } else {
-        replyTweetConversationControlHydrator(ccUpdated, ctx)
+        replyT etConversat onControlHydrator(ccUpdated, ctx)
       }
     }
   }

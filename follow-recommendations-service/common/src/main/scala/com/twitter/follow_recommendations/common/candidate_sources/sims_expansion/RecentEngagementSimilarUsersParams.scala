@@ -1,17 +1,17 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms_expans on
 
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.t  l nes.conf gap .FSEnumParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
-object RecentEngagementSimilarUsersParams {
+object RecentEngage ntS m larUsersParams {
 
-  case object FirstDegreeSortEnabled
+  case object F rstDegreeSortEnabled
       extends FSParam[Boolean](
-        name = "sims_expansion_recent_engagement_first_degree_sort",
+        na  = "s ms_expans on_recent_engage nt_f rst_degree_sort",
         default = true)
   case object Aggregator
-      extends FSEnumParam[SimsExpansionSourceAggregatorId.type](
-        name = "sims_expansion_recent_engagement_aggregator_id",
-        default = SimsExpansionSourceAggregatorId.Sum,
-        enum = SimsExpansionSourceAggregatorId)
+      extends FSEnumParam[S msExpans onS ceAggregator d.type](
+        na  = "s ms_expans on_recent_engage nt_aggregator_ d",
+        default = S msExpans onS ceAggregator d.Sum,
+        enum = S msExpans onS ceAggregator d)
 }

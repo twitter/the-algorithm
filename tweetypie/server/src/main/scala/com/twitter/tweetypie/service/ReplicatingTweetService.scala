@@ -1,47 +1,47 @@
-package com.twitter.tweetypie
-package service
+package com.tw ter.t etyp e
+package serv ce
 
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.servo.forked.Forked
-import com.twitter.tweetypie.service.ReplicatingTweetService.GatedReplicationClient
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport com.tw ter.servo.forked.Forked
+ mport com.tw ter.t etyp e.serv ce.Repl cat ngT etServ ce.GatedRepl cat onCl ent
 
 /**
- * Wraps an underlying ThriftTweetService, transforming external requests to replicated requests.
+ * Wraps an underly ng Thr ftT etServ ce, transform ng external requests to repl cated requests.
  */
-object ReplicatingTweetService {
-  // Can be used to associate replication client with a gate that determines
-  // if a replication request should be performed.
-  case class GatedReplicationClient(client: ThriftTweetService, gate: Gate[Unit]) {
-    def execute(executor: Forked.Executor, action: ThriftTweetService => Unit): Unit = {
-      if (gate()) executor { () => action(client) }
+object Repl cat ngT etServ ce {
+  // Can be used to assoc ate repl cat on cl ent w h a gate that determ nes
+  //  f a repl cat on request should be perfor d.
+  case class GatedRepl cat onCl ent(cl ent: Thr ftT etServ ce, gate: Gate[Un ]) {
+    def execute(executor: Forked.Executor, act on: Thr ftT etServ ce => Un ): Un  = {
+       f (gate()) executor { () => act on(cl ent) }
     }
   }
 }
 
-class ReplicatingTweetService(
-  protected val underlying: ThriftTweetService,
-  replicationTargets: Seq[GatedReplicationClient],
+class Repl cat ngT etServ ce(
+  protected val underly ng: Thr ftT etServ ce,
+  repl cat onTargets: Seq[GatedRepl cat onCl ent],
   executor: Forked.Executor,
-) extends TweetServiceProxy {
-  private[this] def replicateRead(action: ThriftTweetService => Unit): Unit =
-    replicationTargets.foreach(_.execute(executor, action))
+) extends T etServ ceProxy {
+  pr vate[t ] def repl cateRead(act on: Thr ftT etServ ce => Un ): Un  =
+    repl cat onTargets.foreach(_.execute(executor, act on))
 
-  override def getTweetCounts(request: GetTweetCountsRequest): Future[Seq[GetTweetCountsResult]] = {
-    replicateRead(_.replicatedGetTweetCounts(request))
-    underlying.getTweetCounts(request)
+  overr de def getT etCounts(request: GetT etCountsRequest): Future[Seq[GetT etCountsResult]] = {
+    repl cateRead(_.repl catedGetT etCounts(request))
+    underly ng.getT etCounts(request)
   }
 
-  override def getTweetFields(request: GetTweetFieldsRequest): Future[Seq[GetTweetFieldsResult]] = {
-    if (!request.options.doNotCache) {
-      replicateRead(_.replicatedGetTweetFields(request))
+  overr de def getT etF elds(request: GetT etF eldsRequest): Future[Seq[GetT etF eldsResult]] = {
+     f (!request.opt ons.doNotCac ) {
+      repl cateRead(_.repl catedGetT etF elds(request))
     }
-    underlying.getTweetFields(request)
+    underly ng.getT etF elds(request)
   }
 
-  override def getTweets(request: GetTweetsRequest): Future[Seq[GetTweetResult]] = {
-    if (!request.options.exists(_.doNotCache)) {
-      replicateRead(_.replicatedGetTweets(request))
+  overr de def getT ets(request: GetT etsRequest): Future[Seq[GetT etResult]] = {
+     f (!request.opt ons.ex sts(_.doNotCac )) {
+      repl cateRead(_.repl catedGetT ets(request))
     }
-    underlying.getTweets(request)
+    underly ng.getT ets(request)
   }
 }

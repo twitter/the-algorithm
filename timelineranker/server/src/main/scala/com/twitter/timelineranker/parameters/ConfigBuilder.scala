@@ -1,60 +1,60 @@
-package com.twitter.timelineranker.parameters
+package com.tw ter.t  l neranker.para ters
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.timelineranker.parameters.entity_tweets.EntityTweetsProduction
-import com.twitter.timelineranker.parameters.recap.RecapProduction
-import com.twitter.timelineranker.parameters.recap_author.RecapAuthorProduction
-import com.twitter.timelineranker.parameters.recap_hydration.RecapHydrationProduction
-import com.twitter.timelineranker.parameters.in_network_tweets.InNetworkTweetProduction
-import com.twitter.timelineranker.parameters.revchron.ReverseChronProduction
-import com.twitter.timelineranker.parameters.uteg_liked_by_tweets.UtegLikedByTweetsProduction
-import com.twitter.timelineranker.parameters.monitoring.MonitoringProduction
-import com.twitter.timelines.configapi.CompositeConfig
-import com.twitter.timelines.configapi.Config
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.servo.dec der.Dec derGateBu lder
+ mport com.tw ter.t  l neranker.para ters.ent y_t ets.Ent yT etsProduct on
+ mport com.tw ter.t  l neranker.para ters.recap.RecapProduct on
+ mport com.tw ter.t  l neranker.para ters.recap_author.RecapAuthorProduct on
+ mport com.tw ter.t  l neranker.para ters.recap_hydrat on.RecapHydrat onProduct on
+ mport com.tw ter.t  l neranker.para ters. n_network_t ets. nNetworkT etProduct on
+ mport com.tw ter.t  l neranker.para ters.revchron.ReverseChronProduct on
+ mport com.tw ter.t  l neranker.para ters.uteg_l ked_by_t ets.UtegL kedByT etsProduct on
+ mport com.tw ter.t  l neranker.para ters.mon or ng.Mon or ngProduct on
+ mport com.tw ter.t  l nes.conf gap .Compos eConf g
+ mport com.tw ter.t  l nes.conf gap .Conf g
 
 /**
- * Builds global composite config containing prioritized "layers" of parameter overrides
- * based on whitelists, experiments, and deciders. Generated config can be used in tests with
- * mocked decider and whitelist.
+ * Bu lds global compos e conf g conta n ng pr or  zed "layers" of para ter overr des
+ * based on wh el sts, exper  nts, and dec ders. Generated conf g can be used  n tests w h
+ * mocked dec der and wh el st.
  */
-class ConfigBuilder(deciderGateBuilder: DeciderGateBuilder, statsReceiver: StatsReceiver) {
+class Conf gBu lder(dec derGateBu lder: Dec derGateBu lder, statsRece ver: StatsRece ver) {
 
   /**
-   * Production config which includes all configs which contribute to production behavior. At
-   * minimum, it should include all configs containing decider-based param overrides.
+   * Product on conf g wh ch  ncludes all conf gs wh ch contr bute to product on behav or. At
+   * m n mum,   should  nclude all conf gs conta n ng dec der-based param overr des.
    *
-   * It is important that the production config include all production param overrides as it is
-   * used to build holdback experiment configs; If the production config doesn't include all param
-   * overrides supporting production behavior then holdback experiment "production" buckets will
-   * not reflect production behavior.
+   *    s  mportant that t  product on conf g  nclude all product on param overr des as    s
+   * used to bu ld holdback exper  nt conf gs;  f t  product on conf g doesn't  nclude all param
+   * overr des support ng product on behav or t n holdback exper  nt "product on" buckets w ll
+   * not reflect product on behav or.
    */
-  val prodConfig: Config = new CompositeConfig(
+  val prodConf g: Conf g = new Compos eConf g(
     Seq(
-      new RecapProduction(deciderGateBuilder, statsReceiver).config,
-      new InNetworkTweetProduction(deciderGateBuilder).config,
-      new ReverseChronProduction(deciderGateBuilder).config,
-      new EntityTweetsProduction(deciderGateBuilder).config,
-      new RecapAuthorProduction(deciderGateBuilder).config,
-      new RecapHydrationProduction(deciderGateBuilder).config,
-      new UtegLikedByTweetsProduction(deciderGateBuilder).config,
-      MonitoringProduction.config
+      new RecapProduct on(dec derGateBu lder, statsRece ver).conf g,
+      new  nNetworkT etProduct on(dec derGateBu lder).conf g,
+      new ReverseChronProduct on(dec derGateBu lder).conf g,
+      new Ent yT etsProduct on(dec derGateBu lder).conf g,
+      new RecapAuthorProduct on(dec derGateBu lder).conf g,
+      new RecapHydrat onProduct on(dec derGateBu lder).conf g,
+      new UtegL kedByT etsProduct on(dec derGateBu lder).conf g,
+      Mon or ngProduct on.conf g
     ),
-    "prodConfig"
+    "prodConf g"
   )
 
-  val whitelistConfig: Config = new CompositeConfig(
+  val wh el stConf g: Conf g = new Compos eConf g(
     Seq(
-      // No whitelists configured at present.
+      // No wh el sts conf gured at present.
     ),
-    "whitelistConfig"
+    "wh el stConf g"
   )
 
-  val rootConfig: Config = new CompositeConfig(
+  val rootConf g: Conf g = new Compos eConf g(
     Seq(
-      whitelistConfig,
-      prodConfig
+      wh el stConf g,
+      prodConf g
     ),
-    "rootConfig"
+    "rootConf g"
   )
 }

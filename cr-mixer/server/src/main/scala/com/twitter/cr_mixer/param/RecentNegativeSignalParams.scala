@@ -1,39 +1,39 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .Param
 
-object RecentNegativeSignalParams {
-  object EnableSourceParam
+object RecentNegat veS gnalParams {
+  object EnableS ceParam
       extends FSParam[Boolean](
-        name = "twistly_recentnegativesignals_enable_source",
+        na  = "tw stly_recentnegat ves gnals_enable_s ce",
         default = false
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableSourceParam
+  val AllParams: Seq[Param[_] w h FSNa ] = Seq(
+    EnableS ceParam
   )
 
-  lazy val config: BaseConfig = {
-    val enumOverrides = FeatureSwitchOverrideUtil.getEnumFSOverrides(
-      NullStatsReceiver,
+  lazy val conf g: BaseConf g = {
+    val enumOverr des = FeatureSw chOverr deUt l.getEnumFSOverr des(
+      NullStatsRece ver,
       Logger(getClass),
     )
 
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableSourceParam
+    val booleanOverr des = FeatureSw chOverr deUt l.getBooleanFSOverr des(
+      EnableS ceParam
     )
 
-    val doubleOverrides =
-      FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides()
+    val doubleOverr des =
+      FeatureSw chOverr deUt l.getBoundedDoubleFSOverr des()
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*).set(doubleOverrides: _*).set(enumOverrides: _*).build()
+    BaseConf gBu lder()
+      .set(booleanOverr des: _*).set(doubleOverr des: _*).set(enumOverr des: _*).bu ld()
   }
 }

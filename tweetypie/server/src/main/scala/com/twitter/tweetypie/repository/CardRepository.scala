@@ -1,28 +1,28 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.expandodo.thriftscala._
-import com.twitter.stitch.MapGroup
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.backends.Expandodo
+ mport com.tw ter.expandodo.thr ftscala._
+ mport com.tw ter.st ch.MapGroup
+ mport com.tw ter.st ch.NotFound
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.backends.Expandodo
 
-object CardRepository {
-  type Type = String => Stitch[Seq[Card]]
+object CardRepos ory {
+  type Type = Str ng => St ch[Seq[Card]]
 
-  def apply(getCards: Expandodo.GetCards, maxRequestSize: Int): Type = {
-    object RequestGroup extends MapGroup[String, Seq[Card]] {
-      override def run(urls: Seq[String]): Future[String => Try[Seq[Card]]] =
+  def apply(getCards: Expandodo.GetCards, maxRequestS ze:  nt): Type = {
+    object RequestGroup extends MapGroup[Str ng, Seq[Card]] {
+      overr de def run(urls: Seq[Str ng]): Future[Str ng => Try[Seq[Card]]] =
         getCards(urls.toSet).map { responseMap => url =>
           responseMap.get(url) match {
             case None => Throw(NotFound)
-            case Some(r) => Return(r.cards.getOrElse(Nil))
+            case So (r) => Return(r.cards.getOrElse(N l))
           }
         }
 
-      override def maxSize: Int = maxRequestSize
+      overr de def maxS ze:  nt = maxRequestS ze
     }
 
-    url => Stitch.call(url, RequestGroup)
+    url => St ch.call(url, RequestGroup)
   }
 }

@@ -1,65 +1,65 @@
-package com.twitter.home_mixer.product.list_recommended_users.feature_hydrator
+package com.tw ter.ho _m xer.product.l st_recom nded_users.feature_hydrator
 
-import com.twitter.gizmoduck.{thriftscala => gt}
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersFeatures.IsGizmoduckValidUserFeature
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.spam.rtf.{thriftscala => rtf}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.gizmoduck.Gizmoduck
-import com.twitter.util.Return
+ mport com.tw ter.g zmoduck.{thr ftscala => gt}
+ mport com.tw ter.ho _m xer.product.l st_recom nded_users.model.L stRecom ndedUsersFeatures. sG zmoduckVal dUserFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.UserCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BulkCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.spam.rtf.{thr ftscala => rtf}
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.g zmoduck.G zmoduck
+ mport com.tw ter.ut l.Return
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class IsGizmoduckValidUserFeatureHydrator @Inject() (gizmoduck: Gizmoduck)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, UserCandidate] {
+@S ngleton
+class  sG zmoduckVal dUserFeatureHydrator @ nject() (g zmoduck: G zmoduck)
+    extends BulkCand dateFeatureHydrator[P pel neQuery, UserCand date] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("IsGizmoduckValidUser")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er(" sG zmoduckVal dUser")
 
-  override val features: Set[Feature[_, _]] = Set(IsGizmoduckValidUserFeature)
+  overr de val features: Set[Feature[_, _]] = Set( sG zmoduckVal dUserFeature)
 
-  private val queryFields: Set[gt.QueryFields] = Set(gt.QueryFields.Safety)
+  pr vate val queryF elds: Set[gt.QueryF elds] = Set(gt.QueryF elds.Safety)
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[UserCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[UserCand date]]
+  ): St ch[Seq[FeatureMap]] = {
     val context = gt.LookupContext(
-      forUserId = query.getOptionalUserId,
-      includeProtected = true,
-      safetyLevel = Some(rtf.SafetyLevel.Recommendations)
+      forUser d = query.getOpt onalUser d,
+       ncludeProtected = true,
+      safetyLevel = So (rtf.SafetyLevel.Recom ndat ons)
     )
-    val userIds = candidates.map(_.candidate.id)
+    val user ds = cand dates.map(_.cand date. d)
 
-    Stitch
+    St ch
       .collectToTry(
-        userIds.map(userId => gizmoduck.getUserById(userId, queryFields, context))).map {
+        user ds.map(user d => g zmoduck.getUserBy d(user d, queryF elds, context))).map {
         userResults =>
-          val idToUserSafetyMap = userResults
+          val  dToUserSafetyMap = userResults
             .collect {
               case Return(user) => user
-            }.map(user => user.id -> user.safety).toMap
+            }.map(user => user. d -> user.safety).toMap
 
-          candidates.map { candidate =>
-            val safety = idToUserSafetyMap.getOrElse(candidate.candidate.id, None)
-            val isValidUser = safety.isDefined &&
-              !safety.exists(_.deactivated) &&
-              !safety.exists(_.suspended) &&
-              !safety.exists(_.isProtected) &&
+          cand dates.map { cand date =>
+            val safety =  dToUserSafetyMap.getOrElse(cand date.cand date. d, None)
+            val  sVal dUser = safety. sDef ned &&
+              !safety.ex sts(_.deact vated) &&
+              !safety.ex sts(_.suspended) &&
+              !safety.ex sts(_. sProtected) &&
               !safety.flatMap(_.offboarded).getOrElse(false)
 
-            FeatureMapBuilder()
-              .add(IsGizmoduckValidUserFeature, isValidUser)
-              .build()
+            FeatureMapBu lder()
+              .add( sG zmoduckVal dUserFeature,  sVal dUser)
+              .bu ld()
           }
       }
   }

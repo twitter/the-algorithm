@@ -1,19 +1,19 @@
-package com.twitter.follow_recommendations.flows.ads
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+package com.tw ter.follow_recom ndat ons.flows.ads
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.ut l.Durat on
 
 abstract class PromotedAccountsFlowParams[A](default: A) extends Param[A](default) {
-  override val statName: String = "ads/" + this.getClass.getSimpleName
+  overr de val statNa : Str ng = "ads/" + t .getClass.getS mpleNa 
 }
 
 object PromotedAccountsFlowParams {
 
-  // number of total slots returned to the end user, available to put ads
-  case object TargetEligibility extends PromotedAccountsFlowParams[Boolean](true)
-  case object ResultSizeParam extends PromotedAccountsFlowParams[Int](Int.MaxValue)
-  case object BatchSizeParam extends PromotedAccountsFlowParams[Int](Int.MaxValue)
-  case object FetchCandidateSourceBudget
-      extends PromotedAccountsFlowParams[Duration](1000.millisecond)
+  // number of total slots returned to t  end user, ava lable to put ads
+  case object TargetEl g b l y extends PromotedAccountsFlowParams[Boolean](true)
+  case object ResultS zeParam extends PromotedAccountsFlowParams[ nt]( nt.MaxValue)
+  case object BatchS zeParam extends PromotedAccountsFlowParams[ nt]( nt.MaxValue)
+  case object FetchCand dateS ceBudget
+      extends PromotedAccountsFlowParams[Durat on](1000.m ll second)
 
 }

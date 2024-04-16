@@ -1,146 +1,146 @@
-package com.twitter.follow_recommendations.common.predicates.sgs
+package com.tw ter.follow_recom ndat ons.common.pred cates.sgs
 
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasProfileId
-import com.twitter.follow_recommendations.common.models.FilterReason.FailOpen
-import com.twitter.follow_recommendations.common.models.FilterReason.InvalidRelationshipTypes
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.socialgraph.thriftscala.ExistsRequest
-import com.twitter.socialgraph.thriftscala.ExistsResult
-import com.twitter.socialgraph.thriftscala.LookupContext
-import com.twitter.socialgraph.thriftscala.Relationship
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.TimeoutException
-import com.twitter.util.logging.Logging
+ mport com.google.common.annotat ons.V s bleForTest ng
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.base.Pred cate
+ mport com.tw ter.follow_recom ndat ons.common.base.Pred cateResult
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.HasProf le d
+ mport com.tw ter.follow_recom ndat ons.common.models.F lterReason.Fa lOpen
+ mport com.tw ter.follow_recom ndat ons.common.models.F lterReason. nval dRelat onsh pTypes
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.soc algraph.thr ftscala.Ex stsRequest
+ mport com.tw ter.soc algraph.thr ftscala.Ex stsResult
+ mport com.tw ter.soc algraph.thr ftscala.LookupContext
+ mport com.tw ter.soc algraph.thr ftscala.Relat onsh p
+ mport com.tw ter.soc algraph.thr ftscala.Relat onsh pType
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.soc algraph.Soc alGraph
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport com.tw ter.ut l.T  outExcept on
+ mport com.tw ter.ut l.logg ng.Logg ng
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-case class RelationshipMapping(
-  relationshipType: RelationshipType,
-  includeBasedOnRelationship: Boolean)
+case class Relat onsh pMapp ng(
+  relat onsh pType: Relat onsh pType,
+   ncludeBasedOnRelat onsh p: Boolean)
 
-class SgsRelationshipsPredicate(
-  socialGraph: SocialGraph,
-  relationshipMappings: Seq[RelationshipMapping],
-  statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends Predicate[(HasClientContext with HasParams, CandidateUser)]
-    with Logging {
+class SgsRelat onsh psPred cate(
+  soc alGraph: Soc alGraph,
+  relat onsh pMapp ngs: Seq[Relat onsh pMapp ng],
+  statsRece ver: StatsRece ver = NullStatsRece ver)
+    extends Pred cate[(HasCl entContext w h HasParams, Cand dateUser)]
+    w h Logg ng {
 
-  private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getSimpleName)
+  pr vate val stats: StatsRece ver = statsRece ver.scope(t .getClass.getS mpleNa )
 
-  override def apply(
-    pair: (HasClientContext with HasParams, CandidateUser)
-  ): Stitch[PredicateResult] = {
-    val (target, candidate) = pair
-    val timeout = target.params(SgsPredicateParams.SgsRelationshipsPredicateTimeout)
-    SgsRelationshipsPredicate
-      .extractUserId(target)
-      .map { id =>
-        val relationships = relationshipMappings.map { relationshipMapping: RelationshipMapping =>
-          Relationship(
-            relationshipMapping.relationshipType,
-            relationshipMapping.includeBasedOnRelationship)
+  overr de def apply(
+    pa r: (HasCl entContext w h HasParams, Cand dateUser)
+  ): St ch[Pred cateResult] = {
+    val (target, cand date) = pa r
+    val t  out = target.params(SgsPred cateParams.SgsRelat onsh psPred cateT  out)
+    SgsRelat onsh psPred cate
+      .extractUser d(target)
+      .map {  d =>
+        val relat onsh ps = relat onsh pMapp ngs.map { relat onsh pMapp ng: Relat onsh pMapp ng =>
+          Relat onsh p(
+            relat onsh pMapp ng.relat onsh pType,
+            relat onsh pMapp ng. ncludeBasedOnRelat onsh p)
         }
-        val existsRequest = ExistsRequest(
-          id,
-          candidate.id,
-          relationships = relationships,
-          context = SgsRelationshipsPredicate.UnionLookupContext
+        val ex stsRequest = Ex stsRequest(
+           d,
+          cand date. d,
+          relat onsh ps = relat onsh ps,
+          context = SgsRelat onsh psPred cate.Un onLookupContext
         )
-        socialGraph
-          .exists(existsRequest).map { existsResult: ExistsResult =>
-            if (existsResult.exists) {
-              PredicateResult.Invalid(Set(InvalidRelationshipTypes(relationshipMappings
-                .map { relationshipMapping: RelationshipMapping =>
-                  relationshipMapping.relationshipType
-                }.mkString(", "))))
+        soc alGraph
+          .ex sts(ex stsRequest).map { ex stsResult: Ex stsResult =>
+             f (ex stsResult.ex sts) {
+              Pred cateResult. nval d(Set( nval dRelat onsh pTypes(relat onsh pMapp ngs
+                .map { relat onsh pMapp ng: Relat onsh pMapp ng =>
+                  relat onsh pMapp ng.relat onsh pType
+                }.mkStr ng(", "))))
             } else {
-              PredicateResult.Valid
+              Pred cateResult.Val d
             }
           }
-          .within(timeout)(com.twitter.finagle.util.DefaultTimer)
+          .w h n(t  out)(com.tw ter.f nagle.ut l.DefaultT  r)
       }
-      // if no user id is present, return true by default
-      .getOrElse(Stitch.value(PredicateResult.Valid))
+      //  f no user  d  s present, return true by default
+      .getOrElse(St ch.value(Pred cateResult.Val d))
       .rescue {
-        case e: TimeoutException =>
-          stats.counter("timeout").incr()
-          Stitch(PredicateResult.Invalid(Set(FailOpen)))
-        case e: Exception =>
-          stats.counter(e.getClass.getSimpleName).incr()
-          Stitch(PredicateResult.Invalid(Set(FailOpen)))
+        case e: T  outExcept on =>
+          stats.counter("t  out"). ncr()
+          St ch(Pred cateResult. nval d(Set(Fa lOpen)))
+        case e: Except on =>
+          stats.counter(e.getClass.getS mpleNa ). ncr()
+          St ch(Pred cateResult. nval d(Set(Fa lOpen)))
       }
 
   }
 }
 
-object SgsRelationshipsPredicate {
-  // OR Operation
-  @VisibleForTesting
-  private[follow_recommendations] val UnionLookupContext = Some(
-    LookupContext(performUnion = Some(true)))
+object SgsRelat onsh psPred cate {
+  // OR Operat on
+  @V s bleForTest ng
+  pr vate[follow_recom ndat ons] val Un onLookupContext = So (
+    LookupContext(performUn on = So (true)))
 
-  private def extractUserId(target: HasClientContext with HasParams): Option[Long] = target match {
-    case profRequest: HasProfileId => Some(profRequest.profileId)
-    case userRequest: HasClientContext with HasParams => userRequest.getOptionalUserId
+  pr vate def extractUser d(target: HasCl entContext w h HasParams): Opt on[Long] = target match {
+    case profRequest: HasProf le d => So (profRequest.prof le d)
+    case userRequest: HasCl entContext w h HasParams => userRequest.getOpt onalUser d
     case _ => None
   }
 }
 
-@Singleton
-class InvalidTargetCandidateRelationshipTypesPredicate @Inject() (
-  socialGraph: SocialGraph)
-    extends SgsRelationshipsPredicate(
-      socialGraph,
-      InvalidRelationshipTypesPredicate.InvalidRelationshipTypes) {}
+@S ngleton
+class  nval dTargetCand dateRelat onsh pTypesPred cate @ nject() (
+  soc alGraph: Soc alGraph)
+    extends SgsRelat onsh psPred cate(
+      soc alGraph,
+       nval dRelat onsh pTypesPred cate. nval dRelat onsh pTypes) {}
 
-@Singleton
-class NoteworthyAccountsSgsPredicate @Inject() (
-  socialGraph: SocialGraph)
-    extends SgsRelationshipsPredicate(
-      socialGraph,
-      InvalidRelationshipTypesPredicate.NoteworthyAccountsInvalidRelationshipTypes)
+@S ngleton
+class NoteworthyAccountsSgsPred cate @ nject() (
+  soc alGraph: Soc alGraph)
+    extends SgsRelat onsh psPred cate(
+      soc alGraph,
+       nval dRelat onsh pTypesPred cate.NoteworthyAccounts nval dRelat onsh pTypes)
 
-object InvalidRelationshipTypesPredicate {
+object  nval dRelat onsh pTypesPred cate {
 
-  val InvalidRelationshipTypesExcludeFollowing: Seq[RelationshipMapping] = Seq(
-    RelationshipMapping(RelationshipType.HideRecommendations, true),
-    RelationshipMapping(RelationshipType.Blocking, true),
-    RelationshipMapping(RelationshipType.BlockedBy, true),
-    RelationshipMapping(RelationshipType.Muting, true),
-    RelationshipMapping(RelationshipType.MutedBy, true),
-    RelationshipMapping(RelationshipType.ReportedAsSpam, true),
-    RelationshipMapping(RelationshipType.ReportedAsSpamBy, true),
-    RelationshipMapping(RelationshipType.ReportedAsAbuse, true),
-    RelationshipMapping(RelationshipType.ReportedAsAbuseBy, true)
+  val  nval dRelat onsh pTypesExcludeFollow ng: Seq[Relat onsh pMapp ng] = Seq(
+    Relat onsh pMapp ng(Relat onsh pType.H deRecom ndat ons, true),
+    Relat onsh pMapp ng(Relat onsh pType.Block ng, true),
+    Relat onsh pMapp ng(Relat onsh pType.BlockedBy, true),
+    Relat onsh pMapp ng(Relat onsh pType.Mut ng, true),
+    Relat onsh pMapp ng(Relat onsh pType.MutedBy, true),
+    Relat onsh pMapp ng(Relat onsh pType.ReportedAsSpam, true),
+    Relat onsh pMapp ng(Relat onsh pType.ReportedAsSpamBy, true),
+    Relat onsh pMapp ng(Relat onsh pType.ReportedAsAbuse, true),
+    Relat onsh pMapp ng(Relat onsh pType.ReportedAsAbuseBy, true)
   )
 
-  val InvalidRelationshipTypes: Seq[RelationshipMapping] = Seq(
-    RelationshipMapping(RelationshipType.FollowRequestOutgoing, true),
-    RelationshipMapping(RelationshipType.Following, true),
-    RelationshipMapping(
-      RelationshipType.UsedToFollow,
+  val  nval dRelat onsh pTypes: Seq[Relat onsh pMapp ng] = Seq(
+    Relat onsh pMapp ng(Relat onsh pType.FollowRequestOutgo ng, true),
+    Relat onsh pMapp ng(Relat onsh pType.Follow ng, true),
+    Relat onsh pMapp ng(
+      Relat onsh pType.UsedToFollow,
       true
-    ) // this data is accessible for 90 days.
-  ) ++ InvalidRelationshipTypesExcludeFollowing
+    ) // t  data  s access ble for 90 days.
+  ) ++  nval dRelat onsh pTypesExcludeFollow ng
 
-  val NoteworthyAccountsInvalidRelationshipTypes: Seq[RelationshipMapping] = Seq(
-    RelationshipMapping(RelationshipType.Blocking, true),
-    RelationshipMapping(RelationshipType.BlockedBy, true),
-    RelationshipMapping(RelationshipType.Muting, true),
-    RelationshipMapping(RelationshipType.MutedBy, true),
-    RelationshipMapping(RelationshipType.ReportedAsSpam, true),
-    RelationshipMapping(RelationshipType.ReportedAsSpamBy, true),
-    RelationshipMapping(RelationshipType.ReportedAsAbuse, true),
-    RelationshipMapping(RelationshipType.ReportedAsAbuseBy, true)
+  val NoteworthyAccounts nval dRelat onsh pTypes: Seq[Relat onsh pMapp ng] = Seq(
+    Relat onsh pMapp ng(Relat onsh pType.Block ng, true),
+    Relat onsh pMapp ng(Relat onsh pType.BlockedBy, true),
+    Relat onsh pMapp ng(Relat onsh pType.Mut ng, true),
+    Relat onsh pMapp ng(Relat onsh pType.MutedBy, true),
+    Relat onsh pMapp ng(Relat onsh pType.ReportedAsSpam, true),
+    Relat onsh pMapp ng(Relat onsh pType.ReportedAsSpamBy, true),
+    Relat onsh pMapp ng(Relat onsh pType.ReportedAsAbuse, true),
+    Relat onsh pMapp ng(Relat onsh pType.ReportedAsAbuseBy, true)
   )
 }

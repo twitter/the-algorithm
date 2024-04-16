@@ -1,39 +1,39 @@
-package com.twitter.visibility.builder.users
+package com.tw ter.v s b l y.bu lder.users
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.UserDeviceSource
-import com.twitter.visibility.features.AuthorHasConfirmedEmail
-import com.twitter.visibility.features.AuthorHasVerifiedPhone
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.common.UserDev ceS ce
+ mport com.tw ter.v s b l y.features.AuthorHasConf r dEma l
+ mport com.tw ter.v s b l y.features.AuthorHasVer f edPhone
 
-class AuthorDeviceFeatures(userDeviceSource: UserDeviceSource, statsReceiver: StatsReceiver) {
-  private[this] val scopedStatsReceiver = statsReceiver.scope("author_device_features")
+class AuthorDev ceFeatures(userDev ceS ce: UserDev ceS ce, statsRece ver: StatsRece ver) {
+  pr vate[t ] val scopedStatsRece ver = statsRece ver.scope("author_dev ce_features")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  pr vate[t ] val requests = scopedStatsRece ver.counter("requests")
 
-  private[this] val authorHasConfirmedEmailRequests =
-    scopedStatsReceiver.scope(AuthorHasConfirmedEmail.name).counter("requests")
-  private[this] val authorHasVerifiedPhoneRequests =
-    scopedStatsReceiver.scope(AuthorHasVerifiedPhone.name).counter("requests")
+  pr vate[t ] val authorHasConf r dEma lRequests =
+    scopedStatsRece ver.scope(AuthorHasConf r dEma l.na ).counter("requests")
+  pr vate[t ] val authorHasVer f edPhoneRequests =
+    scopedStatsRece ver.scope(AuthorHasVer f edPhone.na ).counter("requests")
 
-  def forAuthor(author: User): FeatureMapBuilder => FeatureMapBuilder = forAuthorId(author.id)
+  def forAuthor(author: User): FeatureMapBu lder => FeatureMapBu lder = forAuthor d(author. d)
 
-  def forAuthorId(authorId: Long): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
+  def forAuthor d(author d: Long): FeatureMapBu lder => FeatureMapBu lder = {
+    requests. ncr()
 
-    _.withFeature(AuthorHasConfirmedEmail, authorHasConfirmedEmail(authorId))
-      .withFeature(AuthorHasVerifiedPhone, authorHasVerifiedPhone(authorId))
+    _.w hFeature(AuthorHasConf r dEma l, authorHasConf r dEma l(author d))
+      .w hFeature(AuthorHasVer f edPhone, authorHasVer f edPhone(author d))
   }
 
-  def authorHasConfirmedEmail(authorId: Long): Stitch[Boolean] = {
-    authorHasConfirmedEmailRequests.incr()
-    userDeviceSource.hasConfirmedEmail(authorId)
+  def authorHasConf r dEma l(author d: Long): St ch[Boolean] = {
+    authorHasConf r dEma lRequests. ncr()
+    userDev ceS ce.hasConf r dEma l(author d)
   }
 
-  def authorHasVerifiedPhone(authorId: Long): Stitch[Boolean] = {
-    authorHasVerifiedPhoneRequests.incr()
-    userDeviceSource.hasConfirmedPhone(authorId)
+  def authorHasVer f edPhone(author d: Long): St ch[Boolean] = {
+    authorHasVer f edPhoneRequests. ncr()
+    userDev ceS ce.hasConf r dPhone(author d)
   }
 }

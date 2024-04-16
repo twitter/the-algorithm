@@ -2,151 +2,151 @@ syntax = "proto3";
 
 package tensorflow.error;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "ErrorCodesProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "ErrorCodesProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.fra work";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
-// The canonical error codes for TensorFlow APIs.
+// T  canon cal error codes for TensorFlow AP s.
 //
-// Warnings:
+// Warn ngs:
 //
-// -   Do not change any numeric assignments.
-// -   Changes to this list should only be made if there is a compelling
-//     need that can't be satisfied in another way.  Such changes
+// -   Do not change any nu r c ass gn nts.
+// -   Changes to t  l st should only be made  f t re  s a compell ng
+//     need that can't be sat sf ed  n anot r way.  Such changes
 //     must be approved by at least two OWNERS.
-// -   These error codes must match gRPC and protobuf error codes (except for
-//     DO_NOT_USE_RESERVED_FOR_FUTURE_EXPANSION_USE_DEFAULT_IN_SWITCH_INSTEAD_).
+// -   T se error codes must match gRPC and protobuf error codes (except for
+//     DO_NOT_USE_RESERVED_FOR_FUTURE_EXPANS ON_USE_DEFAULT_ N_SW TCH_ NSTEAD_).
 //
-// Sometimes multiple error codes may apply.  Services should return
-// the most specific error code that applies.  For example, prefer
-// OUT_OF_RANGE over FAILED_PRECONDITION if both codes apply.
-// Similarly prefer NOT_FOUND or ALREADY_EXISTS over FAILED_PRECONDITION.
+// So t  s mult ple error codes may apply.  Serv ces should return
+// t  most spec f c error code that appl es.  For example, prefer
+// OUT_OF_RANGE over FA LED_PRECOND T ON  f both codes apply.
+// S m larly prefer NOT_FOUND or ALREADY_EX STS over FA LED_PRECOND T ON.
 enum Code {
   // Not an error; returned on success
   OK = 0;
 
-  // The operation was cancelled (typically by the caller).
+  // T  operat on was cancelled (typ cally by t  caller).
   CANCELLED = 1;
 
-  // Unknown error.  An example of where this error may be returned is
-  // if a Status value received from another address space belongs to
-  // an error-space that is not known in this address space.  Also
-  // errors raised by APIs that do not return enough error information
-  // may be converted to this error.
+  // Unknown error.  An example of w re t  error may be returned  s
+  //  f a Status value rece ved from anot r address space belongs to
+  // an error-space that  s not known  n t  address space.  Also
+  // errors ra sed by AP s that do not return enough error  nformat on
+  // may be converted to t  error.
   UNKNOWN = 2;
 
-  // Client specified an invalid argument.  Note that this differs
-  // from FAILED_PRECONDITION.  INVALID_ARGUMENT indicates arguments
-  // that are problematic regardless of the state of the system
-  // (e.g., a malformed file name).
-  INVALID_ARGUMENT = 3;
+  // Cl ent spec f ed an  nval d argu nt.  Note that t  d ffers
+  // from FA LED_PRECOND T ON.   NVAL D_ARGUMENT  nd cates argu nts
+  // that are problemat c regardless of t  state of t  system
+  // (e.g., a malfor d f le na ).
+   NVAL D_ARGUMENT = 3;
 
-  // Deadline expired before operation could complete.  For operations
-  // that change the state of the system, this error may be returned
-  // even if the operation has completed successfully.  For example, a
+  // Deadl ne exp red before operat on could complete.  For operat ons
+  // that change t  state of t  system, t  error may be returned
+  // even  f t  operat on has completed successfully.  For example, a
   // successful response from a server could have been delayed long
-  // enough for the deadline to expire.
-  DEADLINE_EXCEEDED = 4;
+  // enough for t  deadl ne to exp re.
+  DEADL NE_EXCEEDED = 4;
 
-  // Some requested entity (e.g., file or directory) was not found.
-  // For privacy reasons, this code *may* be returned when the client
-  // does not have the access right to the entity.
+  // So  requested ent y (e.g., f le or d rectory) was not found.
+  // For pr vacy reasons, t  code *may* be returned w n t  cl ent
+  // does not have t  access r ght to t  ent y.
   NOT_FOUND = 5;
 
-  // Some entity that we attempted to create (e.g., file or directory)
-  // already exists.
-  ALREADY_EXISTS = 6;
+  // So  ent y that   attempted to create (e.g., f le or d rectory)
+  // already ex sts.
+  ALREADY_EX STS = 6;
 
-  // The caller does not have permission to execute the specified
-  // operation.  PERMISSION_DENIED must not be used for rejections
-  // caused by exhausting some resource (use RESOURCE_EXHAUSTED
-  // instead for those errors).  PERMISSION_DENIED must not be
-  // used if the caller can not be identified (use UNAUTHENTICATED
-  // instead for those errors).
-  PERMISSION_DENIED = 7;
+  // T  caller does not have perm ss on to execute t  spec f ed
+  // operat on.  PERM SS ON_DEN ED must not be used for reject ons
+  // caused by exhaust ng so  res ce (use RESOURCE_EXHAUSTED
+  //  nstead for those errors).  PERM SS ON_DEN ED must not be
+  // used  f t  caller can not be  dent f ed (use UNAUTHENT CATED
+  //  nstead for those errors).
+  PERM SS ON_DEN ED = 7;
 
-  // The request does not have valid authentication credentials for the
-  // operation.
-  UNAUTHENTICATED = 16;
+  // T  request does not have val d aut nt cat on credent als for t 
+  // operat on.
+  UNAUTHENT CATED = 16;
 
-  // Some resource has been exhausted, perhaps a per-user quota, or
-  // perhaps the entire file system is out of space.
+  // So  res ce has been exhausted, perhaps a per-user quota, or
+  // perhaps t  ent re f le system  s out of space.
   RESOURCE_EXHAUSTED = 8;
 
-  // Operation was rejected because the system is not in a state
-  // required for the operation's execution.  For example, directory
-  // to be deleted may be non-empty, an rmdir operation is applied to
-  // a non-directory, etc.
+  // Operat on was rejected because t  system  s not  n a state
+  // requ red for t  operat on's execut on.  For example, d rectory
+  // to be deleted may be non-empty, an rmd r operat on  s appl ed to
+  // a non-d rectory, etc.
   //
-  // A litmus test that may help a service implementor in deciding
-  // between FAILED_PRECONDITION, ABORTED, and UNAVAILABLE:
-  //  (a) Use UNAVAILABLE if the client can retry just the failing call.
-  //  (b) Use ABORTED if the client should retry at a higher-level
-  //      (e.g., restarting a read-modify-write sequence).
-  //  (c) Use FAILED_PRECONDITION if the client should not retry until
-  //      the system state has been explicitly fixed.  E.g., if an "rmdir"
-  //      fails because the directory is non-empty, FAILED_PRECONDITION
-  //      should be returned since the client should not retry unless
-  //      they have first fixed up the directory by deleting files from it.
-  //  (d) Use FAILED_PRECONDITION if the client performs conditional
-  //      REST Get/Update/Delete on a resource and the resource on the
-  //      server does not match the condition. E.g., conflicting
-  //      read-modify-write on the same resource.
-  FAILED_PRECONDITION = 9;
+  // A l mus test that may  lp a serv ce  mple ntor  n dec d ng
+  // bet en FA LED_PRECOND T ON, ABORTED, and UNAVA LABLE:
+  //  (a) Use UNAVA LABLE  f t  cl ent can retry just t  fa l ng call.
+  //  (b) Use ABORTED  f t  cl ent should retry at a h g r-level
+  //      (e.g., restart ng a read-mod fy-wr e sequence).
+  //  (c) Use FA LED_PRECOND T ON  f t  cl ent should not retry unt l
+  //      t  system state has been expl c ly f xed.  E.g.,  f an "rmd r"
+  //      fa ls because t  d rectory  s non-empty, FA LED_PRECOND T ON
+  //      should be returned s nce t  cl ent should not retry unless
+  //      t y have f rst f xed up t  d rectory by delet ng f les from  .
+  //  (d) Use FA LED_PRECOND T ON  f t  cl ent performs cond  onal
+  //      REST Get/Update/Delete on a res ce and t  res ce on t 
+  //      server does not match t  cond  on. E.g., confl ct ng
+  //      read-mod fy-wr e on t  sa  res ce.
+  FA LED_PRECOND T ON = 9;
 
-  // The operation was aborted, typically due to a concurrency issue
-  // like sequencer check failures, transaction aborts, etc.
+  // T  operat on was aborted, typ cally due to a concurrency  ssue
+  // l ke sequencer c ck fa lures, transact on aborts, etc.
   //
-  // See litmus test above for deciding between FAILED_PRECONDITION,
-  // ABORTED, and UNAVAILABLE.
+  // See l mus test above for dec d ng bet en FA LED_PRECOND T ON,
+  // ABORTED, and UNAVA LABLE.
   ABORTED = 10;
 
-  // Operation tried to iterate past the valid input range.  E.g., seeking or
-  // reading past end of file.
+  // Operat on tr ed to  erate past t  val d  nput range.  E.g., seek ng or
+  // read ng past end of f le.
   //
-  // Unlike INVALID_ARGUMENT, this error indicates a problem that may
-  // be fixed if the system state changes. For example, a 32-bit file
-  // system will generate INVALID_ARGUMENT if asked to read at an
-  // offset that is not in the range [0,2^32-1], but it will generate
-  // OUT_OF_RANGE if asked to read from an offset past the current
-  // file size.
+  // Unl ke  NVAL D_ARGUMENT, t  error  nd cates a problem that may
+  // be f xed  f t  system state changes. For example, a 32-b  f le
+  // system w ll generate  NVAL D_ARGUMENT  f asked to read at an
+  // offset that  s not  n t  range [0,2^32-1], but   w ll generate
+  // OUT_OF_RANGE  f asked to read from an offset past t  current
+  // f le s ze.
   //
-  // There is a fair bit of overlap between FAILED_PRECONDITION and
-  // OUT_OF_RANGE.  We recommend using OUT_OF_RANGE (the more specific
-  // error) when it applies so that callers who are iterating through
-  // a space can easily look for an OUT_OF_RANGE error to detect when
-  // they are done.
+  // T re  s a fa r b  of overlap bet en FA LED_PRECOND T ON and
+  // OUT_OF_RANGE.    recom nd us ng OUT_OF_RANGE (t  more spec f c
+  // error) w n   appl es so that callers who are  erat ng through
+  // a space can eas ly look for an OUT_OF_RANGE error to detect w n
+  // t y are done.
   OUT_OF_RANGE = 11;
 
-  // Operation is not implemented or not supported/enabled in this service.
-  UNIMPLEMENTED = 12;
+  // Operat on  s not  mple nted or not supported/enabled  n t  serv ce.
+  UN MPLEMENTED = 12;
 
-  // Internal errors.  Means some invariant expected by the underlying
-  // system has been broken.  If you see one of these errors,
-  // something is very broken.
-  INTERNAL = 13;
+  //  nternal errors.   ans so   nvar ant expected by t  underly ng
+  // system has been broken.   f   see one of t se errors,
+  // so th ng  s very broken.
+   NTERNAL = 13;
 
-  // The service is currently unavailable.  This is a most likely a
-  // transient condition and may be corrected by retrying with
+  // T  serv ce  s currently unava lable.  T   s a most l kely a
+  // trans ent cond  on and may be corrected by retry ng w h
   // a backoff.
   //
-  // See litmus test above for deciding between FAILED_PRECONDITION,
-  // ABORTED, and UNAVAILABLE.
-  UNAVAILABLE = 14;
+  // See l mus test above for dec d ng bet en FA LED_PRECOND T ON,
+  // ABORTED, and UNAVA LABLE.
+  UNAVA LABLE = 14;
 
-  // Unrecoverable data loss or corruption.
+  // Unrecoverable data loss or corrupt on.
   DATA_LOSS = 15;
 
-  // An extra enum entry to prevent people from writing code that
-  // fails to compile when a new code is added.
+  // An extra enum entry to prevent people from wr  ng code that
+  // fa ls to comp le w n a new code  s added.
   //
-  // Nobody should ever reference this enumeration entry. In particular,
-  // if you write C++ code that switches on this enumeration, add a default:
-  // case instead of a case that mentions this enumeration entry.
+  // Nobody should ever reference t  enu rat on entry.  n part cular,
+  //  f   wr e C++ code that sw c s on t  enu rat on, add a default:
+  // case  nstead of a case that  nt ons t  enu rat on entry.
   //
-  // Nobody should rely on the value (currently 20) listed here.  It
-  // may change in the future.
-  DO_NOT_USE_RESERVED_FOR_FUTURE_EXPANSION_USE_DEFAULT_IN_SWITCH_INSTEAD_ = 20;
+  // Nobody should rely on t  value (currently 20) l sted  re.   
+  // may change  n t  future.
+  DO_NOT_USE_RESERVED_FOR_FUTURE_EXPANS ON_USE_DEFAULT_ N_SW TCH_ NSTEAD_ = 20;
 }

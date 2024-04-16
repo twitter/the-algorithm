@@ -1,686 +1,686 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+package com.tw ter.search.earlyb rd.search.relevance.scor ng;
 
-import java.io.IOException;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import javax.annotation.Nullable;
+ mport java. o. OExcept on;
+ mport java.ut l.EnumSet;
+ mport java.ut l.HashMap;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
+ mport java.ut l.concurrent.T  Un ;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.primitives.Ints;
-import com.google.common.primitives.Longs;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect. mmutableSet;
+ mport com.google.common.collect. erables;
+ mport com.google.common.collect.L sts;
+ mport com.google.common.collect.Maps;
+ mport com.google.common.pr m  ves. nts;
+ mport com.google.common.pr m  ves.Longs;
 
-import org.apache.lucene.search.Explanation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .lucene.search.Explanat on;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common_internal.bloomfilter.BloomFilter;
-import com.twitter.search.common.constants.SearchCardType;
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.features.ExternalTweetFeature;
-import com.twitter.search.common.features.FeatureHandler;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchemaEntry;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureType;
-import com.twitter.search.common.features.thrift.ThriftSearchResultFeatures;
-import com.twitter.search.common.query.QueryCommonFieldHitsVisitor;
-import com.twitter.search.common.ranking.thriftjava.ThriftRankingParams;
-import com.twitter.search.common.relevance.features.AgeDecay;
-import com.twitter.search.common.relevance.features.RelevanceSignalConstants;
-import com.twitter.search.common.relevance.text.VisibleTokenRatioNormalizer;
-import com.twitter.search.common.results.thriftjava.FieldHitList;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.util.LongIntConverter;
-import com.twitter.search.common.util.lang.ThriftLanguageUtil;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.search.AntiGamingFilter;
-import com.twitter.search.earlybird.search.relevance.LinearScoringData;
-import com.twitter.search.earlybird.search.relevance.LinearScoringData.SkipReason;
-import com.twitter.search.earlybird.search.relevance.LinearScoringParams;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultExtraMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadataOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
-import com.twitter.search.earlybird.thrift.ThriftSocialFilterType;
+ mport com.tw ter.common_ nternal.bloomf lter.BloomF lter;
+ mport com.tw ter.search.common.constants.SearchCardType;
+ mport com.tw ter.search.common.constants.thr ftjava.Thr ftLanguage;
+ mport com.tw ter.search.common.database.DatabaseConf g;
+ mport com.tw ter.search.common.features.ExternalT etFeature;
+ mport com.tw ter.search.common.features.FeatureHandler;
+ mport com.tw ter.search.common.features.thr ft.Thr ftSearchFeatureSc maEntry;
+ mport com.tw ter.search.common.features.thr ft.Thr ftSearchFeatureType;
+ mport com.tw ter.search.common.features.thr ft.Thr ftSearchResultFeatures;
+ mport com.tw ter.search.common.query.QueryCommonF eldH sV s or;
+ mport com.tw ter.search.common.rank ng.thr ftjava.Thr ftRank ngParams;
+ mport com.tw ter.search.common.relevance.features.AgeDecay;
+ mport com.tw ter.search.common.relevance.features.RelevanceS gnalConstants;
+ mport com.tw ter.search.common.relevance.text.V s bleTokenRat oNormal zer;
+ mport com.tw ter.search.common.results.thr ftjava.F eldH L st;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.common.ut l.Long ntConverter;
+ mport com.tw ter.search.common.ut l.lang.Thr ftLanguageUt l;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserTable;
+ mport com.tw ter.search.earlyb rd.search.Ant Gam ngF lter;
+ mport com.tw ter.search.earlyb rd.search.relevance.L nearScor ngData;
+ mport com.tw ter.search.earlyb rd.search.relevance.L nearScor ngData.Sk pReason;
+ mport com.tw ter.search.earlyb rd.search.relevance.L nearScor ngParams;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchQuery;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultExtra tadata;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult tadata;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult tadataOpt ons;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultType;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultsRelevanceStats;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSoc alF lterType;
 
 /**
- * Base class for scoring functions that rely on the extracted features stored in LinearScoringData.
+ * Base class for scor ng funct ons that rely on t  extracted features stored  n L nearScor ngData.
  *
- * Extensions of this class must implement 2 methods:
+ * Extens ons of t  class must  mple nt 2  thods:
  *
  * - computeScore
- * - generateExplanationForScoring
+ * - generateExplanat onForScor ng
  *
- * They are called for scoring and generating the debug information of the document that it's
- * currently being evaluated. The field 'data' holds the features of the document.
+ * T y are called for scor ng and generat ng t  debug  nformat on of t  docu nt that  's
+ * currently be ng evaluated. T  f eld 'data' holds t  features of t  docu nt.
  */
-public abstract class FeatureBasedScoringFunction extends ScoringFunction {
-  private static final Logger LOG = LoggerFactory.getLogger(FeatureBasedScoringFunction.class);
+publ c abstract class FeatureBasedScor ngFunct on extends Scor ngFunct on {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(FeatureBasedScor ngFunct on.class);
 
-  // A multiplier that's applied to all scores to avoid scores too low.
-  public static final float SCORE_ADJUSTER = 100.0f;
+  // A mult pl er that's appl ed to all scores to avo d scores too low.
+  publ c stat c f nal float SCORE_ADJUSTER = 100.0f;
 
-  private static final VisibleTokenRatioNormalizer VISIBLE_TOKEN_RATIO_NORMALIZER =
-      VisibleTokenRatioNormalizer.createInstance();
+  pr vate stat c f nal V s bleTokenRat oNormal zer V S BLE_TOKEN_RAT O_NORMAL ZER =
+      V s bleTokenRat oNormal zer.create nstance();
 
-  // Allow default values only for numeric types.
-  private static final Set<ThriftSearchFeatureType> ALLOWED_TYPES_FOR_DEFAULT_FEATURE_VALUES =
-      EnumSet.of(ThriftSearchFeatureType.INT32_VALUE,
-                 ThriftSearchFeatureType.LONG_VALUE,
-                 ThriftSearchFeatureType.DOUBLE_VALUE);
+  // Allow default values only for nu r c types.
+  pr vate stat c f nal Set<Thr ftSearchFeatureType> ALLOWED_TYPES_FOR_DEFAULT_FEATURE_VALUES =
+      EnumSet.of(Thr ftSearchFeatureType. NT32_VALUE,
+                 Thr ftSearchFeatureType.LONG_VALUE,
+                 Thr ftSearchFeatureType.DOUBLE_VALUE);
 
-  private static final Set<Integer> NUMERIC_FEATURES_FOR_WHICH_DEFAULTS_SHOULD_NOT_BE_SET =
-      ImmutableSet.of(EarlybirdFieldConstant.TWEET_SIGNATURE.getFieldId(),
-                      EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_LEAST_SIGNIFICANT_INT.getFieldId(),
-                      EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_MOST_SIGNIFICANT_INT.getFieldId());
+  pr vate stat c f nal Set< nteger> NUMER C_FEATURES_FOR_WH CH_DEFAULTS_SHOULD_NOT_BE_SET =
+       mmutableSet.of(Earlyb rdF eldConstant.TWEET_S GNATURE.getF eld d(),
+                      Earlyb rdF eldConstant.REFERENCE_AUTHOR_ D_LEAST_S GN F CANT_ NT.getF eld d(),
+                      Earlyb rdF eldConstant.REFERENCE_AUTHOR_ D_MOST_S GN F CANT_ NT.getF eld d());
 
-  // Name of the scoring function. Used for generating explanations.
-  private final String functionName;
+  // Na  of t  scor ng funct on. Used for generat ng explanat ons.
+  pr vate f nal Str ng funct onNa ;
 
-  private final BloomFilter trustedFilter;
-  private final BloomFilter followFilter;
+  pr vate f nal BloomF lter trustedF lter;
+  pr vate f nal BloomF lter followF lter;
 
-  // Current timestamp in seconds. Overridable by unit test or by timestamp set in search query.
-  private int now;
+  // Current t  stamp  n seconds. Overr dable by un  test or by t  stamp set  n search query.
+  pr vate  nt now;
 
-  private final AntiGamingFilter antiGamingFilter;
+  pr vate f nal Ant Gam ngF lter ant Gam ngF lter;
 
   @Nullable
-  private final AgeDecay ageDecay;
+  pr vate f nal AgeDecay ageDecay;
 
-  protected final LinearScoringParams params;  // Parameters and query-dependent values.
+  protected f nal L nearScor ngParams params;  // Para ters and query-dependent values.
 
-  // In order for the API calls to retrieve the correct `LinearScoringData`
-  // for the passed `docId`, we need to maintain a map of `docId` -> `LinearScoringData`
-  // NOTE: THIS CAN ONLY BE REFERENCED AT HIT COLLECTION TIME, SINCE DOC IDS ARE NOT UNIQUE
-  // ACROSS SEGMENTS. IT'S NOT USABLE DURING BATCH SCORING.
-  private final Map<Integer, LinearScoringData> docIdToScoringData;
+  //  n order for t  AP  calls to retr eve t  correct `L nearScor ngData`
+  // for t  passed `doc d`,   need to ma nta n a map of `doc d` -> `L nearScor ngData`
+  // NOTE: TH S CAN ONLY BE REFERENCED AT H T COLLECT ON T ME, S NCE DOC  DS ARE NOT UN QUE
+  // ACROSS SEGMENTS.  T'S NOT USABLE DUR NG BATCH SCOR NG.
+  pr vate f nal Map< nteger, L nearScor ngData> doc dToScor ngData;
 
-  private final ThriftSearchResultType searchResultType;
+  pr vate f nal Thr ftSearchResultType searchResultType;
 
-  private final UserTable userTable;
+  pr vate f nal UserTable userTable;
 
-  @VisibleForTesting
-  void setNow(int fakeNow) {
+  @V s bleForTest ng
+  vo d setNow( nt fakeNow) {
     now = fakeNow;
   }
 
-  public FeatureBasedScoringFunction(
-      String functionName,
-      ImmutableSchemaInterface schema,
-      ThriftSearchQuery searchQuery,
-      AntiGamingFilter antiGamingFilter,
-      ThriftSearchResultType searchResultType,
-      UserTable userTable) throws IOException {
-    super(schema);
+  publ c FeatureBasedScor ngFunct on(
+      Str ng funct onNa ,
+       mmutableSc ma nterface sc ma,
+      Thr ftSearchQuery searchQuery,
+      Ant Gam ngF lter ant Gam ngF lter,
+      Thr ftSearchResultType searchResultType,
+      UserTable userTable) throws  OExcept on {
+    super(sc ma);
 
-    this.functionName = functionName;
-    this.searchResultType = searchResultType;
-    this.userTable = userTable;
+    t .funct onNa  = funct onNa ;
+    t .searchResultType = searchResultType;
+    t .userTable = userTable;
 
-    Preconditions.checkNotNull(searchQuery.getRelevanceOptions());
-    ThriftRankingParams rankingParams = searchQuery.getRelevanceOptions().getRankingParams();
-    Preconditions.checkNotNull(rankingParams);
+    Precond  ons.c ckNotNull(searchQuery.getRelevanceOpt ons());
+    Thr ftRank ngParams rank ngParams = searchQuery.getRelevanceOpt ons().getRank ngParams();
+    Precond  ons.c ckNotNull(rank ngParams);
 
-    params = new LinearScoringParams(searchQuery, rankingParams);
-    docIdToScoringData = new HashMap<>();
+    params = new L nearScor ngParams(searchQuery, rank ngParams);
+    doc dToScor ngData = new HashMap<>();
 
-    long timestamp = searchQuery.isSetTimestampMsecs() && searchQuery.getTimestampMsecs() > 0
-        ? searchQuery.getTimestampMsecs() : System.currentTimeMillis();
-    now = Ints.checkedCast(TimeUnit.MILLISECONDS.toSeconds(timestamp));
+    long t  stamp = searchQuery. sSetT  stampMsecs() && searchQuery.getT  stampMsecs() > 0
+        ? searchQuery.getT  stampMsecs() : System.currentT  M ll s();
+    now =  nts.c ckedCast(T  Un .M LL SECONDS.toSeconds(t  stamp));
 
-    this.antiGamingFilter = antiGamingFilter;
+    t .ant Gam ngF lter = ant Gam ngF lter;
 
-    this.ageDecay = params.useAgeDecay
-        ? new AgeDecay(params.ageDecayBase, params.ageDecayHalflife, params.ageDecaySlope)
+    t .ageDecay = params.useAgeDecay
+        ? new AgeDecay(params.ageDecayBase, params.ageDecayHalfl fe, params.ageDecaySlope)
         : null;
 
-    if (searchQuery.isSetTrustedFilter()) {
-      trustedFilter = new BloomFilter(searchQuery.getTrustedFilter());
+     f (searchQuery. sSetTrustedF lter()) {
+      trustedF lter = new BloomF lter(searchQuery.getTrustedF lter());
     } else {
-      trustedFilter = null;
+      trustedF lter = null;
     }
 
-    if (searchQuery.isSetDirectFollowFilter()) {
-      followFilter = new BloomFilter(searchQuery.getDirectFollowFilter());
+     f (searchQuery. sSetD rectFollowF lter()) {
+      followF lter = new BloomF lter(searchQuery.getD rectFollowF lter());
     } else {
-      followFilter = null;
+      followF lter = null;
     }
   }
 
-  @VisibleForTesting
-  final LinearScoringParams getScoringParams() {
+  @V s bleForTest ng
+  f nal L nearScor ngParams getScor ngParams() {
     return params;
   }
 
   /**
-   * Returns the LinearScoringData instance associated with the current doc ID. If it doesn't exist,
-   * an empty LinearScoringData is created.
+   * Returns t  L nearScor ngData  nstance assoc ated w h t  current doc  D.  f   doesn't ex st,
+   * an empty L nearScor ngData  s created.
    */
-  @Override
-  public LinearScoringData getScoringDataForCurrentDocument() {
-    LinearScoringData data = docIdToScoringData.get(getCurrentDocID());
-    if (data == null) {
-      data = new LinearScoringData();
-      docIdToScoringData.put(getCurrentDocID(), data);
+  @Overr de
+  publ c L nearScor ngData getScor ngDataForCurrentDocu nt() {
+    L nearScor ngData data = doc dToScor ngData.get(getCurrentDoc D());
+     f (data == null) {
+      data = new L nearScor ngData();
+      doc dToScor ngData.put(getCurrentDoc D(), data);
     }
     return data;
   }
 
-  @Override
-  public void setDebugMode(int debugMode) {
+  @Overr de
+  publ c vo d setDebugMode( nt debugMode) {
     super.setDebugMode(debugMode);
   }
 
   /**
-   * Normal the lucene score, which was unbounded, to a range of [1.0, maxLuceneScoreBoost].
-   * The normalized value increases almost linearly in the lucene score range 2.0 ~ 7.0, where
-   * most queries fall in. For rare long tail queries, like some hashtags, they have high idf and
-   * thus high lucene score, the normalized value won't have much difference between tweets.
-   * The normalization function is:
+   * Normal t  lucene score, wh ch was unbounded, to a range of [1.0, maxLuceneScoreBoost].
+   * T  normal zed value  ncreases almost l nearly  n t  lucene score range 2.0 ~ 7.0, w re
+   * most quer es fall  n. For rare long ta l quer es, l ke so  hashtags, t y have h gh  df and
+   * thus h gh lucene score, t  normal zed value won't have much d fference bet en t ets.
+   * T  normal zat on funct on  s:
    *   ls = luceneScore
-   *   norm = min(max, 1 + (max - 1.0) / 2.4 * ln(1 + ls)
+   *   norm = m n(max, 1 + (max - 1.0) / 2.4 * ln(1 + ls)
    */
-  static float normalizeLuceneScore(float luceneScore, float maxBoost) {
-    return (float) Math.min(maxBoost, 1.0 + (maxBoost - 1.0) / 2.4 * Math.log1p(luceneScore));
+  stat c float normal zeLuceneScore(float luceneScore, float maxBoost) {
+    return (float) Math.m n(maxBoost, 1.0 + (maxBoost - 1.0) / 2.4 * Math.log1p(luceneScore));
   }
 
-  @Override
-  protected float score(float luceneQueryScore) throws IOException {
-    return scoreInternal(luceneQueryScore, null);
+  @Overr de
+  protected float score(float luceneQueryScore) throws  OExcept on {
+    return score nternal(luceneQueryScore, null);
   }
 
-  protected LinearScoringData updateLinearScoringData(float luceneQueryScore) throws IOException {
-    // Reset the data for each tweet!!!
-    LinearScoringData data = new LinearScoringData();
-    docIdToScoringData.put(getCurrentDocID(), data);
+  protected L nearScor ngData updateL nearScor ngData(float luceneQueryScore) throws  OExcept on {
+    // Reset t  data for each t et!!!
+    L nearScor ngData data = new L nearScor ngData();
+    doc dToScor ngData.put(getCurrentDoc D(), data);
 
-    // Set proper version for engagement counters for this request.
-    data.skipReason = SkipReason.NOT_SKIPPED;
+    // Set proper vers on for engage nt counters for t  request.
+    data.sk pReason = Sk pReason.NOT_SK PPED;
     data.luceneScore = luceneQueryScore;
-    data.userRep = (byte) documentFeatures.getFeatureValue(EarlybirdFieldConstant.USER_REPUTATION);
+    data.userRep = (byte) docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.USER_REPUTAT ON);
 
-    if (antiGamingFilter != null && !antiGamingFilter.accept(getCurrentDocID())) {
-      data.skipReason = SkipReason.ANTIGAMING;
+     f (ant Gam ngF lter != null && !ant Gam ngF lter.accept(getCurrentDoc D())) {
+      data.sk pReason = Sk pReason.ANT GAM NG;
       return data;
     }
 
-    data.textScore = (byte) documentFeatures.getFeatureValue(EarlybirdFieldConstant.TEXT_SCORE);
-    data.tokenAt140DividedByNumTokensBucket = VISIBLE_TOKEN_RATIO_NORMALIZER.denormalize(
-        (byte) documentFeatures.getFeatureValue(EarlybirdFieldConstant.VISIBLE_TOKEN_RATIO));
-    data.fromUserId = documentFeatures.getFeatureValue(EarlybirdFieldConstant.FROM_USER_ID_CSF);
-    data.isFollow = followFilter != null
-        && followFilter.contains(Longs.toByteArray(data.fromUserId));
-    data.isTrusted = trustedFilter != null
-        && trustedFilter.contains(Longs.toByteArray(data.fromUserId));
-    data.isFromVerifiedAccount = documentFeatures.isFlagSet(
-        EarlybirdFieldConstant.FROM_VERIFIED_ACCOUNT_FLAG);
-    data.isFromBlueVerifiedAccount = documentFeatures.isFlagSet(
-        EarlybirdFieldConstant.FROM_BLUE_VERIFIED_ACCOUNT_FLAG);
-    data.isSelfTweet = data.fromUserId == params.searcherId;
-    // v1 engagement counters, note that the first three values are post-log2 version
-    // of the original unnormalized values.
-    data.retweetCountPostLog2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.RETWEET_COUNT);
-    data.replyCountPostLog2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.REPLY_COUNT);
-    data.favCountPostLog2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.FAVORITE_COUNT);
-    data.embedsImpressionCount = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EMBEDS_IMPRESSION_COUNT);
-    data.embedsUrlCount = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EMBEDS_URL_COUNT);
-    data.videoViewCount = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.VIDEO_VIEW_COUNT);
-    // v2 engagement counters
-    data.retweetCountV2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.RETWEET_COUNT_V2);
-    data.replyCountV2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.REPLY_COUNT_V2);
-    data.favCountV2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.FAVORITE_COUNT_V2);
-    // other v2 engagement counters
-    data.embedsImpressionCountV2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EMBEDS_IMPRESSION_COUNT_V2);
-    data.embedsUrlCountV2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EMBEDS_URL_COUNT_V2);
-    data.videoViewCountV2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.VIDEO_VIEW_COUNT_V2);
-    // pure v2 engagement counters without v1 counterpart
-    data.quotedCount = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.QUOTE_COUNT);
-    data.weightedRetweetCount = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.WEIGHTED_RETWEET_COUNT);
-    data.weightedReplyCount = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.WEIGHTED_REPLY_COUNT);
-    data.weightedFavCount = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.WEIGHTED_FAVORITE_COUNT);
-    data.weightedQuoteCount = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.WEIGHTED_QUOTE_COUNT);
+    data.textScore = (byte) docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.TEXT_SCORE);
+    data.tokenAt140D v dedByNumTokensBucket = V S BLE_TOKEN_RAT O_NORMAL ZER.denormal ze(
+        (byte) docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.V S BLE_TOKEN_RAT O));
+    data.fromUser d = docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.FROM_USER_ D_CSF);
+    data. sFollow = followF lter != null
+        && followF lter.conta ns(Longs.toByteArray(data.fromUser d));
+    data. sTrusted = trustedF lter != null
+        && trustedF lter.conta ns(Longs.toByteArray(data.fromUser d));
+    data. sFromVer f edAccount = docu ntFeatures. sFlagSet(
+        Earlyb rdF eldConstant.FROM_VER F ED_ACCOUNT_FLAG);
+    data. sFromBlueVer f edAccount = docu ntFeatures. sFlagSet(
+        Earlyb rdF eldConstant.FROM_BLUE_VER F ED_ACCOUNT_FLAG);
+    data. sSelfT et = data.fromUser d == params.searc r d;
+    // v1 engage nt counters, note that t  f rst three values are post-log2 vers on
+    // of t  or g nal unnormal zed values.
+    data.ret etCountPostLog2 = docu ntFeatures.getUnnormal zedFeatureValue(
+        Earlyb rdF eldConstant.RETWEET_COUNT);
+    data.replyCountPostLog2 = docu ntFeatures.getUnnormal zedFeatureValue(
+        Earlyb rdF eldConstant.REPLY_COUNT);
+    data.favCountPostLog2 = docu ntFeatures.getUnnormal zedFeatureValue(
+        Earlyb rdF eldConstant.FAVOR TE_COUNT);
+    data.embeds mpress onCount = docu ntFeatures.getUnnormal zedFeatureValue(
+        Earlyb rdF eldConstant.EMBEDS_ MPRESS ON_COUNT);
+    data.embedsUrlCount = docu ntFeatures.getUnnormal zedFeatureValue(
+        Earlyb rdF eldConstant.EMBEDS_URL_COUNT);
+    data.v deoV ewCount = docu ntFeatures.getUnnormal zedFeatureValue(
+        Earlyb rdF eldConstant.V DEO_V EW_COUNT);
+    // v2 engage nt counters
+    data.ret etCountV2 = docu ntFeatures.getUnnormal zedFeatureValue(
+        Earlyb rdF eldConstant.RETWEET_COUNT_V2);
+    data.replyCountV2 = docu ntFeatures.getUnnormal zedFeatureValue(
+        Earlyb rdF eldConstant.REPLY_COUNT_V2);
+    data.favCountV2 = docu ntFeatures.getUnnormal zedFeatureValue(
+        Earlyb rdF eldConstant.FAVOR TE_COUNT_V2);
+    // ot r v2 engage nt counters
+    data.embeds mpress onCountV2 = docu ntFeatures.getUnnormal zedFeatureValue(
+        Earlyb rdF eldConstant.EMBEDS_ MPRESS ON_COUNT_V2);
+    data.embedsUrlCountV2 = docu ntFeatures.getUnnormal zedFeatureValue(
+        Earlyb rdF eldConstant.EMBEDS_URL_COUNT_V2);
+    data.v deoV ewCountV2 = docu ntFeatures.getUnnormal zedFeatureValue(
+        Earlyb rdF eldConstant.V DEO_V EW_COUNT_V2);
+    // pure v2 engage nt counters w hout v1 counterpart
+    data.quotedCount = docu ntFeatures.getUnnormal zedFeatureValue(
+        Earlyb rdF eldConstant.QUOTE_COUNT);
+    data.  ghtedRet etCount = docu ntFeatures.getUnnormal zedFeatureValue(
+        Earlyb rdF eldConstant.WE GHTED_RETWEET_COUNT);
+    data.  ghtedReplyCount = docu ntFeatures.getUnnormal zedFeatureValue(
+        Earlyb rdF eldConstant.WE GHTED_REPLY_COUNT);
+    data.  ghtedFavCount = docu ntFeatures.getUnnormal zedFeatureValue(
+        Earlyb rdF eldConstant.WE GHTED_FAVOR TE_COUNT);
+    data.  ghtedQuoteCount = docu ntFeatures.getUnnormal zedFeatureValue(
+        Earlyb rdF eldConstant.WE GHTED_QUOTE_COUNT);
 
-    Double querySpecificScoreAdjustment = params.querySpecificScoreAdjustments == null ? null
-        : params.querySpecificScoreAdjustments.get(tweetIDMapper.getTweetID(getCurrentDocID()));
-    data.querySpecificScore =
-        querySpecificScoreAdjustment == null ? 0.0 : querySpecificScoreAdjustment;
+    Double querySpec f cScoreAdjust nt = params.querySpec f cScoreAdjust nts == null ? null
+        : params.querySpec f cScoreAdjust nts.get(t et DMapper.getT et D(getCurrentDoc D()));
+    data.querySpec f cScore =
+        querySpec f cScoreAdjust nt == null ? 0.0 : querySpec f cScoreAdjust nt;
 
-    data.authorSpecificScore = params.authorSpecificScoreAdjustments == null
+    data.authorSpec f cScore = params.authorSpec f cScoreAdjust nts == null
         ? 0.0
-        : params.authorSpecificScoreAdjustments.getOrDefault(data.fromUserId, 0.0);
+        : params.authorSpec f cScoreAdjust nts.getOrDefault(data.fromUser d, 0.0);
 
-    // respect social filter type
-    if (params.socialFilterType != null && !data.isSelfTweet) {
-      if ((params.socialFilterType == ThriftSocialFilterType.ALL
-              && !data.isFollow && !data.isTrusted)
-          || (params.socialFilterType == ThriftSocialFilterType.TRUSTED && !data.isTrusted)
-          || (params.socialFilterType == ThriftSocialFilterType.FOLLOWS && !data.isFollow)) {
-        // we can skip this hit as we only want social results in this mode.
-        data.skipReason = SkipReason.SOCIAL_FILTER;
+    // respect soc al f lter type
+     f (params.soc alF lterType != null && !data. sSelfT et) {
+       f ((params.soc alF lterType == Thr ftSoc alF lterType.ALL
+              && !data. sFollow && !data. sTrusted)
+          || (params.soc alF lterType == Thr ftSoc alF lterType.TRUSTED && !data. sTrusted)
+          || (params.soc alF lterType == Thr ftSoc alF lterType.FOLLOWS && !data. sFollow)) {
+        //   can sk p t  h  as   only want soc al results  n t  mode.
+        data.sk pReason = Sk pReason.SOC AL_F LTER;
         return data;
       }
     }
 
-    // 1. first apply all the filters to only non-follow tweets and non-verified accounts,
-    //    but be tender to sentinel values
-    // unless you specifically asked to apply filters regardless
-    if (params.applyFiltersAlways
-            || (!data.isSelfTweet && !data.isFollow && !data.isFromVerifiedAccount
-                && !data.isFromBlueVerifiedAccount)) {
-      if (data.userRep < params.reputationMinVal
-          // don't filter unset userreps, we give them the benefit of doubt and let it
-          // continue to scoring. userrep is unset when either user just signed up or
-          // during ingestion time we had trouble getting userrep from reputation service.
-          && data.userRep != RelevanceSignalConstants.UNSET_REPUTATION_SENTINEL) {
-        data.skipReason = SkipReason.LOW_REPUTATION;
+    // 1. f rst apply all t  f lters to only non-follow t ets and non-ver f ed accounts,
+    //    but be tender to sent nel values
+    // unless   spec f cally asked to apply f lters regardless
+     f (params.applyF ltersAlways
+            || (!data. sSelfT et && !data. sFollow && !data. sFromVer f edAccount
+                && !data. sFromBlueVer f edAccount)) {
+       f (data.userRep < params.reputat onM nVal
+          // don't f lter unset userreps,   g ve t m t  benef  of doubt and let  
+          // cont nue to scor ng. userrep  s unset w n e  r user just s gned up or
+          // dur ng  ngest on t     had trouble gett ng userrep from reputat on serv ce.
+          && data.userRep != RelevanceS gnalConstants.UNSET_REPUTAT ON_SENT NEL) {
+        data.sk pReason = Sk pReason.LOW_REPUTAT ON;
         return data;
-      } else if (data.textScore < params.textScoreMinVal
-                 // don't filter unset text scores, use goodwill value
-                 && data.textScore != RelevanceSignalConstants.UNSET_TEXT_SCORE_SENTINEL) {
-        data.skipReason = SkipReason.LOW_TEXT_SCORE;
+      } else  f (data.textScore < params.textScoreM nVal
+                 // don't f lter unset text scores, use goodw ll value
+                 && data.textScore != RelevanceS gnalConstants.UNSET_TEXT_SCORE_SENT NEL) {
+        data.sk pReason = Sk pReason.LOW_TEXT_SCORE;
         return data;
-      } else if (data.retweetCountPostLog2 != LinearScoringData.UNSET_SIGNAL_VALUE
-                 && data.retweetCountPostLog2 < params.retweetMinVal) {
-        data.skipReason = SkipReason.LOW_RETWEET_COUNT;
+      } else  f (data.ret etCountPostLog2 != L nearScor ngData.UNSET_S GNAL_VALUE
+                 && data.ret etCountPostLog2 < params.ret etM nVal) {
+        data.sk pReason = Sk pReason.LOW_RETWEET_COUNT;
         return data;
-      } else if (data.favCountPostLog2 != LinearScoringData.UNSET_SIGNAL_VALUE
-                 && data.favCountPostLog2 < params.favMinVal) {
-        data.skipReason = SkipReason.LOW_FAV_COUNT;
+      } else  f (data.favCountPostLog2 != L nearScor ngData.UNSET_S GNAL_VALUE
+                 && data.favCountPostLog2 < params.favM nVal) {
+        data.sk pReason = Sk pReason.LOW_FAV_COUNT;
         return data;
       }
     }
 
-    // if sentinel value is set, assume goodwill score and let scoring continue.
-    if (data.textScore == RelevanceSignalConstants.UNSET_TEXT_SCORE_SENTINEL) {
-      data.textScore = RelevanceSignalConstants.GOODWILL_TEXT_SCORE;
+    //  f sent nel value  s set, assu  goodw ll score and let scor ng cont nue.
+     f (data.textScore == RelevanceS gnalConstants.UNSET_TEXT_SCORE_SENT NEL) {
+      data.textScore = RelevanceS gnalConstants.GOODW LL_TEXT_SCORE;
     }
-    if (data.userRep == RelevanceSignalConstants.UNSET_REPUTATION_SENTINEL) {
-      data.userRep = RelevanceSignalConstants.GOODWILL_REPUTATION;
-    }
-
-    data.tweetAgeInSeconds = now - timeMapper.getTime(getCurrentDocID());
-    if (data.tweetAgeInSeconds < 0) {
-      data.tweetAgeInSeconds = 0; // Age cannot be negative
+     f (data.userRep == RelevanceS gnalConstants.UNSET_REPUTAT ON_SENT NEL) {
+      data.userRep = RelevanceS gnalConstants.GOODW LL_REPUTAT ON;
     }
 
-    // The PARUS_SCORE feature should be read as is.
-    data.parusScore = documentFeatures.getFeatureValue(EarlybirdFieldConstant.PARUS_SCORE);
+    data.t etAge nSeconds = now - t  Mapper.getT  (getCurrentDoc D());
+     f (data.t etAge nSeconds < 0) {
+      data.t etAge nSeconds = 0; // Age cannot be negat ve
+    }
 
-    data.isNullcast = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_NULLCAST_FLAG);
-    data.hasUrl =  documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_LINK_FLAG);
-    data.hasImageUrl = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_IMAGE_URL_FLAG);
-    data.hasVideoUrl = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_VIDEO_URL_FLAG);
-    data.hasNewsUrl = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_NEWS_URL_FLAG);
-    data.isReply =  documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_REPLY_FLAG);
-    data.isRetweet = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_RETWEET_FLAG);
-    data.isOffensive = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_OFFENSIVE_FLAG);
-    data.hasTrend = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_TREND_FLAG);
-    data.hasMultipleHashtagsOrTrends =
-        documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_MULTIPLE_HASHTAGS_OR_TRENDS_FLAG);
-    data.isUserSpam = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_USER_SPAM_FLAG);
-    data.isUserNSFW = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_USER_NSFW_FLAG)
-        || userTable.isSet(data.fromUserId, UserTable.NSFW_BIT);
-    data.isUserAntiSocial =
-        userTable.isSet(data.fromUserId, UserTable.ANTISOCIAL_BIT);
-    data.isUserBot = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_USER_BOT_FLAG);
-    data.hasCard = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_CARD_FLAG);
+    // T  PARUS_SCORE feature should be read as  s.
+    data.parusScore = docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.PARUS_SCORE);
+
+    data. sNullcast = docu ntFeatures. sFlagSet(Earlyb rdF eldConstant. S_NULLCAST_FLAG);
+    data.hasUrl =  docu ntFeatures. sFlagSet(Earlyb rdF eldConstant.HAS_L NK_FLAG);
+    data.has mageUrl = docu ntFeatures. sFlagSet(Earlyb rdF eldConstant.HAS_ MAGE_URL_FLAG);
+    data.hasV deoUrl = docu ntFeatures. sFlagSet(Earlyb rdF eldConstant.HAS_V DEO_URL_FLAG);
+    data.hasNewsUrl = docu ntFeatures. sFlagSet(Earlyb rdF eldConstant.HAS_NEWS_URL_FLAG);
+    data. sReply =  docu ntFeatures. sFlagSet(Earlyb rdF eldConstant. S_REPLY_FLAG);
+    data. sRet et = docu ntFeatures. sFlagSet(Earlyb rdF eldConstant. S_RETWEET_FLAG);
+    data. sOffens ve = docu ntFeatures. sFlagSet(Earlyb rdF eldConstant. S_OFFENS VE_FLAG);
+    data.hasTrend = docu ntFeatures. sFlagSet(Earlyb rdF eldConstant.HAS_TREND_FLAG);
+    data.hasMult pleHashtagsOrTrends =
+        docu ntFeatures. sFlagSet(Earlyb rdF eldConstant.HAS_MULT PLE_HASHTAGS_OR_TRENDS_FLAG);
+    data. sUserSpam = docu ntFeatures. sFlagSet(Earlyb rdF eldConstant. S_USER_SPAM_FLAG);
+    data. sUserNSFW = docu ntFeatures. sFlagSet(Earlyb rdF eldConstant. S_USER_NSFW_FLAG)
+        || userTable. sSet(data.fromUser d, UserTable.NSFW_B T);
+    data. sUserAnt Soc al =
+        userTable. sSet(data.fromUser d, UserTable.ANT SOC AL_B T);
+    data. sUserBot = docu ntFeatures. sFlagSet(Earlyb rdF eldConstant. S_USER_BOT_FLAG);
+    data.hasCard = docu ntFeatures. sFlagSet(Earlyb rdF eldConstant.HAS_CARD_FLAG);
     data.cardType = SearchCardType.UNKNOWN.getByteValue();
-    if (data.hasCard) {
+     f (data.hasCard) {
       data.cardType =
-          (byte) documentFeatures.getFeatureValue(EarlybirdFieldConstant.CARD_TYPE_CSF_FIELD);
+          (byte) docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.CARD_TYPE_CSF_F ELD);
     }
-    data.hasVisibleLink = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_VISIBLE_LINK_FLAG);
+    data.hasV s bleL nk = docu ntFeatures. sFlagSet(Earlyb rdF eldConstant.HAS_V S BLE_L NK_FLAG);
 
-    data.hasConsumerVideo =
-        documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_CONSUMER_VIDEO_FLAG);
-    data.hasProVideo = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_PRO_VIDEO_FLAG);
-    data.hasVine = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_VINE_FLAG);
-    data.hasPeriscope = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_PERISCOPE_FLAG);
-    data.hasNativeImage = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_NATIVE_IMAGE_FLAG);
-    data.hasQuote = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_QUOTE_FLAG);
-    data.isComposerSourceCamera =
-        documentFeatures.isFlagSet(EarlybirdFieldConstant.COMPOSER_SOURCE_IS_CAMERA_FLAG);
+    data.hasConsu rV deo =
+        docu ntFeatures. sFlagSet(Earlyb rdF eldConstant.HAS_CONSUMER_V DEO_FLAG);
+    data.hasProV deo = docu ntFeatures. sFlagSet(Earlyb rdF eldConstant.HAS_PRO_V DEO_FLAG);
+    data.hasV ne = docu ntFeatures. sFlagSet(Earlyb rdF eldConstant.HAS_V NE_FLAG);
+    data.hasPer scope = docu ntFeatures. sFlagSet(Earlyb rdF eldConstant.HAS_PER SCOPE_FLAG);
+    data.hasNat ve mage = docu ntFeatures. sFlagSet(Earlyb rdF eldConstant.HAS_NAT VE_ MAGE_FLAG);
+    data.hasQuote = docu ntFeatures. sFlagSet(Earlyb rdF eldConstant.HAS_QUOTE_FLAG);
+    data. sComposerS ceCa ra =
+        docu ntFeatures. sFlagSet(Earlyb rdF eldConstant.COMPOSER_SOURCE_ S_CAMERA_FLAG);
 
-    // Only read the shared status if the isRetweet or isReply bit is true (minor optimization).
-    if (data.isRetweet || (params.getInReplyToStatusId && data.isReply)) {
-      data.sharedStatusId =
-          documentFeatures.getFeatureValue(EarlybirdFieldConstant.SHARED_STATUS_ID_CSF);
+    // Only read t  shared status  f t   sRet et or  sReply b   s true (m nor opt m zat on).
+     f (data. sRet et || (params.get nReplyToStatus d && data. sReply)) {
+      data.sharedStatus d =
+          docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.SHARED_STATUS_ D_CSF);
     }
 
-    // Only read the reference tweet author ID if the isRetweet or isReply bit
-    // is true (minor optimization).
-    if (data.isRetweet || data.isReply) {
-      // the REFERENCE_AUTHOR_ID_CSF stores the source tweet author id for all retweets
-      long referenceAuthorId =
-          documentFeatures.getFeatureValue(EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_CSF);
-      if (referenceAuthorId > 0) {
-        data.referenceAuthorId = referenceAuthorId;
+    // Only read t  reference t et author  D  f t   sRet et or  sReply b 
+    //  s true (m nor opt m zat on).
+     f (data. sRet et || data. sReply) {
+      // t  REFERENCE_AUTHOR_ D_CSF stores t  s ce t et author  d for all ret ets
+      long referenceAuthor d =
+          docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.REFERENCE_AUTHOR_ D_CSF);
+       f (referenceAuthor d > 0) {
+        data.referenceAuthor d = referenceAuthor d;
       } else {
-        // we also store the reference author id for retweets, directed at tweets, and self threaded
-        // tweets separately on Realtime/Protected Earlybirds. This data will be moved to the
-        // REFERENCE_AUTHOR_ID_CSF and these fields will be deprecated in SEARCH-34958.
-        referenceAuthorId = LongIntConverter.convertTwoIntToOneLong(
-            (int) documentFeatures.getFeatureValue(
-                EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_MOST_SIGNIFICANT_INT),
-            (int) documentFeatures.getFeatureValue(
-                EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_LEAST_SIGNIFICANT_INT));
-        if (referenceAuthorId > 0) {
-          data.referenceAuthorId = referenceAuthorId;
+        //   also store t  reference author  d for ret ets, d rected at t ets, and self threaded
+        // t ets separately on Realt  /Protected Earlyb rds. T  data w ll be moved to t 
+        // REFERENCE_AUTHOR_ D_CSF and t se f elds w ll be deprecated  n SEARCH-34958.
+        referenceAuthor d = Long ntConverter.convertTwo ntToOneLong(
+            ( nt) docu ntFeatures.getFeatureValue(
+                Earlyb rdF eldConstant.REFERENCE_AUTHOR_ D_MOST_S GN F CANT_ NT),
+            ( nt) docu ntFeatures.getFeatureValue(
+                Earlyb rdF eldConstant.REFERENCE_AUTHOR_ D_LEAST_S GN F CANT_ NT));
+         f (referenceAuthor d > 0) {
+          data.referenceAuthor d = referenceAuthor d;
         }
       }
     }
 
-    // Convert language to a thrift language and then back to an int in order to
-    // ensure a value compatible with our current ThriftLanguage definition.
-    ThriftLanguage tweetLang = ThriftLanguageUtil.safeFindByValue(
-        (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.LANGUAGE));
-    data.tweetLangId = tweetLang.getValue();
-    // Set the language-related features here so that they can be later used in promotion/demotion
-    // and also be transferred to ThriftSearchResultMetadata
-    data.userLangMult = computeUserLangMultiplier(data, params);
-    data.hasDifferentLang = params.uiLangId != ThriftLanguage.UNKNOWN.getValue()
-        && params.uiLangId != data.tweetLangId;
-    data.hasEnglishTweetAndDifferentUILang = data.hasDifferentLang
-        && data.tweetLangId == ThriftLanguage.ENGLISH.getValue();
-    data.hasEnglishUIAndDifferentTweetLang = data.hasDifferentLang
-        && params.uiLangId == ThriftLanguage.ENGLISH.getValue();
+    // Convert language to a thr ft language and t n back to an  nt  n order to
+    // ensure a value compat ble w h   current Thr ftLanguage def n  on.
+    Thr ftLanguage t etLang = Thr ftLanguageUt l.safeF ndByValue(
+        ( nt) docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.LANGUAGE));
+    data.t etLang d = t etLang.getValue();
+    // Set t  language-related features  re so that t y can be later used  n promot on/demot on
+    // and also be transferred to Thr ftSearchResult tadata
+    data.userLangMult = computeUserLangMult pl er(data, params);
+    data.hasD fferentLang = params.u Lang d != Thr ftLanguage.UNKNOWN.getValue()
+        && params.u Lang d != data.t etLang d;
+    data.hasEngl shT etAndD fferentU Lang = data.hasD fferentLang
+        && data.t etLang d == Thr ftLanguage.ENGL SH.getValue();
+    data.hasEngl shU AndD fferentT etLang = data.hasD fferentLang
+        && params.u Lang d == Thr ftLanguage.ENGL SH.getValue();
 
-    // Exposed all these features for the clients.
-    data.isSensitiveContent =
-        documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_SENSITIVE_CONTENT);
-    data.hasMultipleMediaFlag =
-        documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_MULTIPLE_MEDIA_FLAG);
-    data.profileIsEggFlag = documentFeatures.isFlagSet(EarlybirdFieldConstant.PROFILE_IS_EGG_FLAG);
-    data.isUserNewFlag = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_USER_NEW_FLAG);
-    data.numMentions = (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.NUM_MENTIONS);
-    data.numHashtags = (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.NUM_HASHTAGS);
-    data.linkLanguage =
-        (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.LINK_LANGUAGE);
-    data.prevUserTweetEngagement =
-        (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.PREV_USER_TWEET_ENGAGEMENT);
+    // Exposed all t se features for t  cl ents.
+    data. sSens  veContent =
+        docu ntFeatures. sFlagSet(Earlyb rdF eldConstant. S_SENS T VE_CONTENT);
+    data.hasMult ple d aFlag =
+        docu ntFeatures. sFlagSet(Earlyb rdF eldConstant.HAS_MULT PLE_MED A_FLAG);
+    data.prof le sEggFlag = docu ntFeatures. sFlagSet(Earlyb rdF eldConstant.PROF LE_ S_EGG_FLAG);
+    data. sUserNewFlag = docu ntFeatures. sFlagSet(Earlyb rdF eldConstant. S_USER_NEW_FLAG);
+    data.num nt ons = ( nt) docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.NUM_MENT ONS);
+    data.numHashtags = ( nt) docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.NUM_HASHTAGS);
+    data.l nkLanguage =
+        ( nt) docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.L NK_LANGUAGE);
+    data.prevUserT etEngage nt =
+        ( nt) docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.PREV_USER_TWEET_ENGAGEMENT);
 
-    // health model scores by HML
-    data.toxicityScore = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.TOXICITY_SCORE);
-    data.pBlockScore = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.PBLOCK_SCORE);
-    data.pSpammyTweetScore = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.P_SPAMMY_TWEET_SCORE);
-    data.pReportedTweetScore = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.P_REPORTED_TWEET_SCORE);
-    data.spammyTweetContentScore = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.SPAMMY_TWEET_CONTENT_SCORE
+    //  alth model scores by HML
+    data.tox c yScore = docu ntFeatures.getUnnormal zedFeatureValue(
+        Earlyb rdF eldConstant.TOX C TY_SCORE);
+    data.pBlockScore = docu ntFeatures.getUnnormal zedFeatureValue(
+        Earlyb rdF eldConstant.PBLOCK_SCORE);
+    data.pSpam T etScore = docu ntFeatures.getUnnormal zedFeatureValue(
+        Earlyb rdF eldConstant.P_SPAMMY_TWEET_SCORE);
+    data.pReportedT etScore = docu ntFeatures.getUnnormal zedFeatureValue(
+        Earlyb rdF eldConstant.P_REPORTED_TWEET_SCORE);
+    data.spam T etContentScore = docu ntFeatures.getUnnormal zedFeatureValue(
+        Earlyb rdF eldConstant.SPAMMY_TWEET_CONTENT_SCORE
     );
-    data.experimentalHealthModelScore1 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_1);
-    data.experimentalHealthModelScore2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_2);
-    data.experimentalHealthModelScore3 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_3);
-    data.experimentalHealthModelScore4 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_4);
+    data.exper  ntal althModelScore1 = docu ntFeatures.getUnnormal zedFeatureValue(
+        Earlyb rdF eldConstant.EXPER MENTAL_HEALTH_MODEL_SCORE_1);
+    data.exper  ntal althModelScore2 = docu ntFeatures.getUnnormal zedFeatureValue(
+        Earlyb rdF eldConstant.EXPER MENTAL_HEALTH_MODEL_SCORE_2);
+    data.exper  ntal althModelScore3 = docu ntFeatures.getUnnormal zedFeatureValue(
+        Earlyb rdF eldConstant.EXPER MENTAL_HEALTH_MODEL_SCORE_3);
+    data.exper  ntal althModelScore4 = docu ntFeatures.getUnnormal zedFeatureValue(
+        Earlyb rdF eldConstant.EXPER MENTAL_HEALTH_MODEL_SCORE_4);
 
     return data;
   }
 
-  protected float scoreInternal(
-      float luceneQueryScore, ExplanationWrapper explanation) throws IOException {
-    LinearScoringData data = updateLinearScoringData(luceneQueryScore);
-    if (data.skipReason != null && data.skipReason != SkipReason.NOT_SKIPPED) {
-      return finalizeScore(data, explanation, SKIP_HIT);
+  protected float score nternal(
+      float luceneQueryScore, Explanat onWrapper explanat on) throws  OExcept on {
+    L nearScor ngData data = updateL nearScor ngData(luceneQueryScore);
+     f (data.sk pReason != null && data.sk pReason != Sk pReason.NOT_SK PPED) {
+      return f nal zeScore(data, explanat on, SK P_H T);
     }
 
-    double score = computeScore(data, explanation != null);
-    return postScoreComputation(data, score, true, explanation);
+    double score = computeScore(data, explanat on != null);
+    return postScoreComputat on(data, score, true, explanat on);
   }
 
-  protected float postScoreComputation(
-      LinearScoringData data,
+  protected float postScoreComputat on(
+      L nearScor ngData data,
       double score,
-      boolean boostScoreWithHitAttribution,
-      ExplanationWrapper explanation) throws IOException {
-    double modifiedScore = score;
-    data.scoreBeforeBoost = modifiedScore;
-    if (params.applyBoosts) {
-      modifiedScore =
-          applyBoosts(data, modifiedScore, boostScoreWithHitAttribution, explanation != null);
+      boolean boostScoreW hH Attr but on,
+      Explanat onWrapper explanat on) throws  OExcept on {
+    double mod f edScore = score;
+    data.scoreBeforeBoost = mod f edScore;
+     f (params.applyBoosts) {
+      mod f edScore =
+          applyBoosts(data, mod f edScore, boostScoreW hH Attr but on, explanat on != null);
     }
-    // Final adjustment to avoid too-low scores.
-    modifiedScore *= SCORE_ADJUSTER;
-    data.scoreAfterBoost = modifiedScore;
+    // F nal adjust nt to avo d too-low scores.
+    mod f edScore *= SCORE_ADJUSTER;
+    data.scoreAfterBoost = mod f edScore;
 
-    // 3. final score filter
-    data.scoreFinal = modifiedScore;
-    if ((params.applyFiltersAlways || (!data.isSelfTweet && !data.isFollow))
-        && modifiedScore < params.minScore) {
-      data.skipReason = SkipReason.LOW_FINAL_SCORE;
-      modifiedScore = SKIP_HIT;
+    // 3. f nal score f lter
+    data.scoreF nal = mod f edScore;
+     f ((params.applyF ltersAlways || (!data. sSelfT et && !data. sFollow))
+        && mod f edScore < params.m nScore) {
+      data.sk pReason = Sk pReason.LOW_F NAL_SCORE;
+      mod f edScore = SK P_H T;
     }
 
-    // clear field hits
-    this.fieldHitAttribution = null;
-    return finalizeScore(data, explanation, modifiedScore);
+    // clear f eld h s
+    t .f eldH Attr but on = null;
+    return f nal zeScore(data, explanat on, mod f edScore);
   }
 
   /**
-   * Applying promotion/demotion to the scores generated by feature-based scoring functions
+   * Apply ng promot on/demot on to t  scores generated by feature-based scor ng funct ons
    *
-   * @param data Original LinearScoringData (to be modified with boosts here)
-   * @param score Score generated by the feature-based scoring function
-   * @param withHitAttribution Determines if hit attribution data should be included.
-   * @param forExplanation Indicates if the score will be computed for generating the explanation.
-   * @return Score after applying promotion/demotion
+   * @param data Or g nal L nearScor ngData (to be mod f ed w h boosts  re)
+   * @param score Score generated by t  feature-based scor ng funct on
+   * @param w hH Attr but on Determ nes  f h  attr but on data should be  ncluded.
+   * @param forExplanat on  nd cates  f t  score w ll be computed for generat ng t  explanat on.
+   * @return Score after apply ng promot on/demot on
    */
-  private double applyBoosts(
-      LinearScoringData data,
+  pr vate double applyBoosts(
+      L nearScor ngData data,
       double score,
-      boolean withHitAttribution,
-      boolean forExplanation) {
+      boolean w hH Attr but on,
+      boolean forExplanat on) {
     double boostedScore = score;
 
-    if (params.useLuceneScoreAsBoost) {
-      data.normalizedLuceneScore = normalizeLuceneScore(
+     f (params.useLuceneScoreAsBoost) {
+      data.normal zedLuceneScore = normal zeLuceneScore(
           (float) data.luceneScore, (float) params.maxLuceneScoreBoost);
-      boostedScore *= data.normalizedLuceneScore;
+      boostedScore *= data.normal zedLuceneScore;
     }
-    if (data.isOffensive) {
-      boostedScore *= params.offensiveDamping;
+     f (data. sOffens ve) {
+      boostedScore *= params.offens veDamp ng;
     }
-    if (data.isUserSpam && params.spamUserDamping != LinearScoringData.NO_BOOST_VALUE) {
-      data.spamUserDampApplied = true;
-      boostedScore *= params.spamUserDamping;
+     f (data. sUserSpam && params.spamUserDamp ng != L nearScor ngData.NO_BOOST_VALUE) {
+      data.spamUserDampAppl ed = true;
+      boostedScore *= params.spamUserDamp ng;
     }
-    if (data.isUserNSFW && params.nsfwUserDamping != LinearScoringData.NO_BOOST_VALUE) {
-      data.nsfwUserDampApplied = true;
-      boostedScore *= params.nsfwUserDamping;
+     f (data. sUserNSFW && params.nsfwUserDamp ng != L nearScor ngData.NO_BOOST_VALUE) {
+      data.nsfwUserDampAppl ed = true;
+      boostedScore *= params.nsfwUserDamp ng;
     }
-    if (data.isUserBot && params.botUserDamping != LinearScoringData.NO_BOOST_VALUE) {
-      data.botUserDampApplied = true;
-      boostedScore *= params.botUserDamping;
+     f (data. sUserBot && params.botUserDamp ng != L nearScor ngData.NO_BOOST_VALUE) {
+      data.botUserDampAppl ed = true;
+      boostedScore *= params.botUserDamp ng;
     }
 
     // cards
-    if (data.hasCard && params.hasCardBoosts[data.cardType] != LinearScoringData.NO_BOOST_VALUE) {
+     f (data.hasCard && params.hasCardBoosts[data.cardType] != L nearScor ngData.NO_BOOST_VALUE) {
       boostedScore *= params.hasCardBoosts[data.cardType];
-      data.hasCardBoostApplied = true;
+      data.hasCardBoostAppl ed = true;
     }
 
     // trends
-    if (data.hasMultipleHashtagsOrTrends) {
-      boostedScore *= params.multipleHashtagsOrTrendsDamping;
-    } else if (data.hasTrend) {
-      data.tweetHasTrendsBoostApplied = true;
-      boostedScore *= params.tweetHasTrendBoost;
+     f (data.hasMult pleHashtagsOrTrends) {
+      boostedScore *= params.mult pleHashtagsOrTrendsDamp ng;
+    } else  f (data.hasTrend) {
+      data.t etHasTrendsBoostAppl ed = true;
+      boostedScore *= params.t etHasTrendBoost;
     }
 
-    // Media/News url boosts.
-    if (data.hasImageUrl || data.hasVideoUrl) {
-      data.hasMedialUrlBoostApplied = true;
-      boostedScore *= params.tweetHasMediaUrlBoost;
+    //  d a/News url boosts.
+     f (data.has mageUrl || data.hasV deoUrl) {
+      data.has d alUrlBoostAppl ed = true;
+      boostedScore *= params.t etHas d aUrlBoost;
     }
-    if (data.hasNewsUrl) {
-      data.hasNewsUrlBoostApplied = true;
-      boostedScore *= params.tweetHasNewsUrlBoost;
-    }
-
-    if (data.isFromVerifiedAccount) {
-      data.tweetFromVerifiedAccountBoostApplied = true;
-      boostedScore *= params.tweetFromVerifiedAccountBoost;
+     f (data.hasNewsUrl) {
+      data.hasNewsUrlBoostAppl ed = true;
+      boostedScore *= params.t etHasNewsUrlBoost;
     }
 
-    if (data.isFromBlueVerifiedAccount) {
-      data.tweetFromBlueVerifiedAccountBoostApplied = true;
-      boostedScore *= params.tweetFromBlueVerifiedAccountBoost;
+     f (data. sFromVer f edAccount) {
+      data.t etFromVer f edAccountBoostAppl ed = true;
+      boostedScore *= params.t etFromVer f edAccountBoost;
     }
 
-    if (data.isFollow) {
-      // direct follow, so boost both replies and non-replies.
-      data.directFollowBoostApplied = true;
-      boostedScore *= params.directFollowBoost;
-    } else if (data.isTrusted) {
-      // trusted circle
-      if (!data.isReply) {
-        // non-at-reply, in trusted network
-        data.trustedCircleBoostApplied = true;
-        boostedScore *= params.trustedCircleBoost;
+     f (data. sFromBlueVer f edAccount) {
+      data.t etFromBlueVer f edAccountBoostAppl ed = true;
+      boostedScore *= params.t etFromBlueVer f edAccountBoost;
+    }
+
+     f (data. sFollow) {
+      // d rect follow, so boost both repl es and non-repl es.
+      data.d rectFollowBoostAppl ed = true;
+      boostedScore *= params.d rectFollowBoost;
+    } else  f (data. sTrusted) {
+      // trusted c rcle
+       f (!data. sReply) {
+        // non-at-reply,  n trusted network
+        data.trustedC rcleBoostAppl ed = true;
+        boostedScore *= params.trustedC rcleBoost;
       }
-    } else if (data.isReply) {
-      // at-reply out of my network
-      data.outOfNetworkReplyPenaltyApplied = true;
+    } else  f (data. sReply) {
+      // at-reply out of   network
+      data.outOfNetworkReplyPenaltyAppl ed = true;
       boostedScore -= params.outOfNetworkReplyPenalty;
     }
 
-    if (data.isSelfTweet) {
-      data.selfTweetBoostApplied = true;
-      data.selfTweetMult = params.selfTweetBoost;
-      boostedScore *= params.selfTweetBoost;
+     f (data. sSelfT et) {
+      data.selfT etBoostAppl ed = true;
+      data.selfT etMult = params.selfT etBoost;
+      boostedScore *= params.selfT etBoost;
     }
 
-    // Language Demotion
-    // User language based demotion
-    // The data.userLangMult is set in scoreInternal(), and this setting step is always before
-    // the applying boosts step
-    if (params.useUserLanguageInfo) {
+    // Language Demot on
+    // User language based demot on
+    // T  data.userLangMult  s set  n score nternal(), and t  sett ng step  s always before
+    // t  apply ng boosts step
+     f (params.useUserLanguage nfo) {
       boostedScore *= data.userLangMult;
     }
-    // UI language based demotion
-    if (params.uiLangId != ThriftLanguage.UNKNOWN.getValue()
-        && params.uiLangId != data.tweetLangId) {
-      if (data.tweetLangId == ThriftLanguage.ENGLISH.getValue()) {
-        data.uiLangMult = params.langEnglishTweetDemote;
-      } else if (params.uiLangId == ThriftLanguage.ENGLISH.getValue()) {
-        data.uiLangMult = params.langEnglishUIDemote;
+    // U  language based demot on
+     f (params.u Lang d != Thr ftLanguage.UNKNOWN.getValue()
+        && params.u Lang d != data.t etLang d) {
+       f (data.t etLang d == Thr ftLanguage.ENGL SH.getValue()) {
+        data.u LangMult = params.langEngl shT etDemote;
+      } else  f (params.u Lang d == Thr ftLanguage.ENGL SH.getValue()) {
+        data.u LangMult = params.langEngl shU Demote;
       } else {
-        data.uiLangMult = params.langDefaultDemote;
+        data.u LangMult = params.langDefaultDemote;
       }
     } else {
-      data.uiLangMult = LinearScoringData.NO_BOOST_VALUE;
+      data.u LangMult = L nearScor ngData.NO_BOOST_VALUE;
     }
-    boostedScore *= data.uiLangMult;
+    boostedScore *= data.u LangMult;
 
-    if (params.useAgeDecay) {
-      // shallow sigmoid with an inflection point at ageDecayHalflife
-      data.ageDecayMult = ageDecay.getAgeDecayMultiplier(data.tweetAgeInSeconds);
+     f (params.useAgeDecay) {
+      // shallow s gmo d w h an  nflect on po nt at ageDecayHalfl fe
+      data.ageDecayMult = ageDecay.getAgeDecayMult pl er(data.t etAge nSeconds);
       boostedScore *= data.ageDecayMult;
     }
 
-    // Hit Attribute Demotion
-    // Scoring is currently based on tokenized user name, text, and url in the tweet
-    // If hit attribute collection is enabled, we demote score based on these fields
-    if (hitAttributeHelper != null && params.enableHitDemotion) {
+    // H  Attr bute Demot on
+    // Scor ng  s currently based on token zed user na , text, and url  n t  t et
+    //  f h  attr bute collect on  s enabled,   demote score based on t se f elds
+     f (h Attr bute lper != null && params.enableH Demot on) {
 
-      Map<Integer, List<String>> hitMap;
-      if (forExplanation && fieldHitAttribution != null) {
-        // if this scoring call is for generating an explanation,
-        // we'll use the fieldHitAttribution found in the search result's metadata because
-        // collectors are not called during the debug workflow
-        hitMap = Maps.transformValues(fieldHitAttribution.getHitMap(), FieldHitList::getHitFields);
-      } else if (withHitAttribution) {
-        hitMap = hitAttributeHelper.getHitAttribution(getCurrentDocID());
+      Map< nteger, L st<Str ng>> h Map;
+       f (forExplanat on && f eldH Attr but on != null) {
+        //  f t  scor ng call  s for generat ng an explanat on,
+        //  'll use t  f eldH Attr but on found  n t  search result's  tadata because
+        // collectors are not called dur ng t  debug workflow
+        h Map = Maps.transformValues(f eldH Attr but on.getH Map(), F eldH L st::getH F elds);
+      } else  f (w hH Attr but on) {
+        h Map = h Attr bute lper.getH Attr but on(getCurrentDoc D());
       } else {
-        hitMap = Maps.newHashMap();
+        h Map = Maps.newHashMap();
       }
-      Set<String> uniqueFieldHits = ImmutableSet.copyOf(Iterables.concat(hitMap.values()));
+      Set<Str ng> un queF eldH s =  mmutableSet.copyOf( erables.concat(h Map.values()));
 
-      data.hitFields.addAll(uniqueFieldHits);
-      // there should always be fields that are hit
-      // if there aren't, we assume this is a call from 'explain' in debug mode
-      // do not override hit attribute data if in debug mode
-      if (!uniqueFieldHits.isEmpty()) {
-        // demotions based strictly on field hits
-        if (uniqueFieldHits.size() == 1) {
-          if (uniqueFieldHits.contains(
-                  EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName())) {
-            // if url was the only field that was hit, demote
-            data.hasUrlOnlyHitDemotionApplied = true;
-            boostedScore *= params.urlOnlyHitDemotion;
-          } else if (uniqueFieldHits.contains(
-                         EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName())) {
-            // if name was the only field that was hit, demote
-            data.hasNameOnlyHitDemotionApplied = true;
-            boostedScore *= params.nameOnlyHitDemotion;
+      data.h F elds.addAll(un queF eldH s);
+      // t re should always be f elds that are h 
+      //  f t re aren't,   assu  t   s a call from 'expla n'  n debug mode
+      // do not overr de h  attr bute data  f  n debug mode
+       f (!un queF eldH s. sEmpty()) {
+        // demot ons based str ctly on f eld h s
+         f (un queF eldH s.s ze() == 1) {
+           f (un queF eldH s.conta ns(
+                  Earlyb rdF eldConstant.RESOLVED_L NKS_TEXT_F ELD.getF eldNa ())) {
+            //  f url was t  only f eld that was h , demote
+            data.hasUrlOnlyH Demot onAppl ed = true;
+            boostedScore *= params.urlOnlyH Demot on;
+          } else  f (un queF eldH s.conta ns(
+                         Earlyb rdF eldConstant.TOKEN ZED_FROM_USER_F ELD.getF eldNa ())) {
+            //  f na  was t  only f eld that was h , demote
+            data.hasNa OnlyH Demot onAppl ed = true;
+            boostedScore *= params.na OnlyH Demot on;
           }
-        } else if (!uniqueFieldHits.contains(EarlybirdFieldConstant.TEXT_FIELD.getFieldName())
-            && !uniqueFieldHits.contains(EarlybirdFieldConstant.MENTIONS_FIELD.getFieldName())
-            && !uniqueFieldHits.contains(EarlybirdFieldConstant.HASHTAGS_FIELD.getFieldName())
-            && !uniqueFieldHits.contains(EarlybirdFieldConstant.STOCKS_FIELD.getFieldName())) {
-          // if text or special text was never hit, demote
-          data.hasNoTextHitDemotionApplied = true;
-          boostedScore *= params.noTextHitDemotion;
-        } else if (uniqueFieldHits.size() == 2) {
-          // demotions based on field hit combinations
-          // want to demote if we only hit two of the fields (one being text)
-          // but with separate terms
-          Set<String> fieldIntersections = QueryCommonFieldHitsVisitor.findIntersection(
-              hitAttributeHelper.getNodeToRankMap(),
-              hitMap,
+        } else  f (!un queF eldH s.conta ns(Earlyb rdF eldConstant.TEXT_F ELD.getF eldNa ())
+            && !un queF eldH s.conta ns(Earlyb rdF eldConstant.MENT ONS_F ELD.getF eldNa ())
+            && !un queF eldH s.conta ns(Earlyb rdF eldConstant.HASHTAGS_F ELD.getF eldNa ())
+            && !un queF eldH s.conta ns(Earlyb rdF eldConstant.STOCKS_F ELD.getF eldNa ())) {
+          //  f text or spec al text was never h , demote
+          data.hasNoTextH Demot onAppl ed = true;
+          boostedScore *= params.noTextH Demot on;
+        } else  f (un queF eldH s.s ze() == 2) {
+          // demot ons based on f eld h  comb nat ons
+          // want to demote  f   only h  two of t  f elds (one be ng text)
+          // but w h separate terms
+          Set<Str ng> f eld ntersect ons = QueryCommonF eldH sV s or.f nd ntersect on(
+              h Attr bute lper.getNodeToRankMap(),
+              h Map,
               query);
 
-          if (fieldIntersections.isEmpty()) {
-            if (uniqueFieldHits.contains(
-                    EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName())) {
-              // if name is hit but has no hits in common with text, demote
-              // want to demote cases where we hit part of the person's name
-              // and tweet text separately
-              data.hasSeparateTextAndNameHitDemotionApplied = true;
-              boostedScore *= params.separateTextAndNameHitDemotion;
-            } else if (uniqueFieldHits.contains(
-                           EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName())) {
-              // if url is hit but has no hits in common with text, demote
-              // want to demote cases where we hit a potential domain keyword
-              // and tweet text separately
-              data.hasSeparateTextAndUrlHitDemotionApplied = true;
-              boostedScore *= params.separateTextAndUrlHitDemotion;
+           f (f eld ntersect ons. sEmpty()) {
+             f (un queF eldH s.conta ns(
+                    Earlyb rdF eldConstant.TOKEN ZED_FROM_USER_F ELD.getF eldNa ())) {
+              //  f na   s h  but has no h s  n common w h text, demote
+              // want to demote cases w re   h  part of t  person's na 
+              // and t et text separately
+              data.hasSeparateTextAndNa H Demot onAppl ed = true;
+              boostedScore *= params.separateTextAndNa H Demot on;
+            } else  f (un queF eldH s.conta ns(
+                           Earlyb rdF eldConstant.RESOLVED_L NKS_TEXT_F ELD.getF eldNa ())) {
+              //  f url  s h  but has no h s  n common w h text, demote
+              // want to demote cases w re   h  a potent al doma n keyword
+              // and t et text separately
+              data.hasSeparateTextAndUrlH Demot onAppl ed = true;
+              boostedScore *= params.separateTextAndUrlH Demot on;
             }
           }
         }
@@ -691,670 +691,670 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
   }
 
   /**
-   * Compute the user language based demotion multiplier
+   * Compute t  user language based demot on mult pl er
    */
-  private static double computeUserLangMultiplier(
-      LinearScoringData data, LinearScoringParams params) {
-    if (data.tweetLangId == params.uiLangId
-        && data.tweetLangId != ThriftLanguage.UNKNOWN.getValue()) {
-      // Effectively the uiLang is considered a language that user knows with 1.0 confidence.
-      return LinearScoringData.NO_BOOST_VALUE;
+  pr vate stat c double computeUserLangMult pl er(
+      L nearScor ngData data, L nearScor ngParams params) {
+     f (data.t etLang d == params.u Lang d
+        && data.t etLang d != Thr ftLanguage.UNKNOWN.getValue()) {
+      // Effect vely t  u Lang  s cons dered a language that user knows w h 1.0 conf dence.
+      return L nearScor ngData.NO_BOOST_VALUE;
     }
 
-    if (params.userLangs[data.tweetLangId] > 0.0) {
-      return params.userLangs[data.tweetLangId];
+     f (params.userLangs[data.t etLang d] > 0.0) {
+      return params.userLangs[data.t etLang d];
     }
 
     return params.unknownLanguageBoost;
   }
 
   /**
-   * Computes the score of the document that it's currently being evaluated.
+   * Computes t  score of t  docu nt that  's currently be ng evaluated.
    *
-   * The extracted features from the document are available in the field 'data'.
+   * T  extracted features from t  docu nt are ava lable  n t  f eld 'data'.
    *
-   * @param data The LinearScoringData instance that will store the document features.
-   * @param forExplanation Indicates if the score will be computed for generating the explanation.
+   * @param data T  L nearScor ngData  nstance that w ll store t  docu nt features.
+   * @param forExplanat on  nd cates  f t  score w ll be computed for generat ng t  explanat on.
    */
   protected abstract double computeScore(
-      LinearScoringData data, boolean forExplanation) throws IOException;
+      L nearScor ngData data, boolean forExplanat on) throws  OExcept on;
 
-  private float finalizeScore(
-      LinearScoringData scoringData,
-      ExplanationWrapper explanation,
-      double score) throws IOException {
-    scoringData.scoreReturned = score;
-    if (explanation != null) {
-      explanation.explanation = generateExplanation(scoringData);
+  pr vate float f nal zeScore(
+      L nearScor ngData scor ngData,
+      Explanat onWrapper explanat on,
+      double score) throws  OExcept on {
+    scor ngData.scoreReturned = score;
+     f (explanat on != null) {
+      explanat on.explanat on = generateExplanat on(scor ngData);
     }
     return (float) score;
   }
 
-  @Override
-  protected void initializeNextSegment(EarlybirdIndexSegmentAtomicReader reader)
-      throws IOException {
-    if (antiGamingFilter != null) {
-      antiGamingFilter.startSegment(reader);
+  @Overr de
+  protected vo d  n  al zeNextSeg nt(Earlyb rd ndexSeg ntAtom cReader reader)
+      throws  OExcept on {
+     f (ant Gam ngF lter != null) {
+      ant Gam ngF lter.startSeg nt(reader);
     }
   }
 
   /*
-   * Generate the scoring explanation for debug.
+   * Generate t  scor ng explanat on for debug.
    */
-  private Explanation generateExplanation(LinearScoringData scoringData) throws IOException {
-    final List<Explanation> details = Lists.newArrayList();
+  pr vate Explanat on generateExplanat on(L nearScor ngData scor ngData) throws  OExcept on {
+    f nal L st<Explanat on> deta ls = L sts.newArrayL st();
 
-    details.add(Explanation.match(0.0f, "[PROPERTIES] "
-        + scoringData.getPropertyExplanation()));
+    deta ls.add(Explanat on.match(0.0f, "[PROPERT ES] "
+        + scor ngData.getPropertyExplanat on()));
 
-    // 1. Filters
-    boolean isHit = scoringData.skipReason == SkipReason.NOT_SKIPPED;
-    if (scoringData.skipReason == SkipReason.ANTIGAMING) {
-      details.add(Explanation.noMatch("SKIPPED for antigaming"));
+    // 1. F lters
+    boolean  sH  = scor ngData.sk pReason == Sk pReason.NOT_SK PPED;
+     f (scor ngData.sk pReason == Sk pReason.ANT GAM NG) {
+      deta ls.add(Explanat on.noMatch("SK PPED for ant gam ng"));
     }
-    if (scoringData.skipReason == SkipReason.LOW_REPUTATION) {
-      details.add(Explanation.noMatch(
-          String.format("SKIPPED for low reputation: %.3f < %.3f",
-              scoringData.userRep, params.reputationMinVal)));
+     f (scor ngData.sk pReason == Sk pReason.LOW_REPUTAT ON) {
+      deta ls.add(Explanat on.noMatch(
+          Str ng.format("SK PPED for low reputat on: %.3f < %.3f",
+              scor ngData.userRep, params.reputat onM nVal)));
     }
-    if (scoringData.skipReason == SkipReason.LOW_TEXT_SCORE) {
-      details.add(Explanation.noMatch(
-          String.format("SKIPPED for low text score: %.3f < %.3f",
-              scoringData.textScore, params.textScoreMinVal)));
+     f (scor ngData.sk pReason == Sk pReason.LOW_TEXT_SCORE) {
+      deta ls.add(Explanat on.noMatch(
+          Str ng.format("SK PPED for low text score: %.3f < %.3f",
+              scor ngData.textScore, params.textScoreM nVal)));
     }
-    if (scoringData.skipReason == SkipReason.LOW_RETWEET_COUNT) {
-      details.add(Explanation.noMatch(
-          String.format("SKIPPED for low retweet count: %.3f < %.3f",
-              scoringData.retweetCountPostLog2, params.retweetMinVal)));
+     f (scor ngData.sk pReason == Sk pReason.LOW_RETWEET_COUNT) {
+      deta ls.add(Explanat on.noMatch(
+          Str ng.format("SK PPED for low ret et count: %.3f < %.3f",
+              scor ngData.ret etCountPostLog2, params.ret etM nVal)));
     }
-    if (scoringData.skipReason == SkipReason.LOW_FAV_COUNT) {
-      details.add(Explanation.noMatch(
-          String.format("SKIPPED for low fav count: %.3f < %.3f",
-              scoringData.favCountPostLog2, params.favMinVal)));
+     f (scor ngData.sk pReason == Sk pReason.LOW_FAV_COUNT) {
+      deta ls.add(Explanat on.noMatch(
+          Str ng.format("SK PPED for low fav count: %.3f < %.3f",
+              scor ngData.favCountPostLog2, params.favM nVal)));
     }
-    if (scoringData.skipReason == SkipReason.SOCIAL_FILTER) {
-      details.add(Explanation.noMatch("SKIPPED for not in the right social circle"));
-    }
-
-    // 2. Explanation depending on the scoring type
-    generateExplanationForScoring(scoringData, isHit, details);
-
-    // 3. Explanation depending on boosts
-    if (params.applyBoosts) {
-      generateExplanationForBoosts(scoringData, isHit, details);
+     f (scor ngData.sk pReason == Sk pReason.SOC AL_F LTER) {
+      deta ls.add(Explanat on.noMatch("SK PPED for not  n t  r ght soc al c rcle"));
     }
 
-    // 4. Final score filter.
-    if (scoringData.skipReason == SkipReason.LOW_FINAL_SCORE) {
-      details.add(Explanation.noMatch("SKIPPED for low final score: " + scoringData.scoreFinal));
-      isHit = false;
+    // 2. Explanat on depend ng on t  scor ng type
+    generateExplanat onForScor ng(scor ngData,  sH , deta ls);
+
+    // 3. Explanat on depend ng on boosts
+     f (params.applyBoosts) {
+      generateExplanat onForBoosts(scor ngData,  sH , deta ls);
     }
 
-    String hostAndSegment = String.format("%s host = %s  segment = %s",
-        functionName, DatabaseConfig.getLocalHostname(), DatabaseConfig.getDatabase());
-    if (isHit) {
-      return Explanation.match((float) scoringData.scoreFinal, hostAndSegment, details);
+    // 4. F nal score f lter.
+     f (scor ngData.sk pReason == Sk pReason.LOW_F NAL_SCORE) {
+      deta ls.add(Explanat on.noMatch("SK PPED for low f nal score: " + scor ngData.scoreF nal));
+       sH  = false;
+    }
+
+    Str ng hostAndSeg nt = Str ng.format("%s host = %s  seg nt = %s",
+        funct onNa , DatabaseConf g.getLocalHostna (), DatabaseConf g.getDatabase());
+     f ( sH ) {
+      return Explanat on.match((float) scor ngData.scoreF nal, hostAndSeg nt, deta ls);
     } else {
-      return Explanation.noMatch(hostAndSegment, details);
+      return Explanat on.noMatch(hostAndSeg nt, deta ls);
     }
   }
 
   /**
-   * Generates the explanation for the document that is currently being evaluated.
+   * Generates t  explanat on for t  docu nt that  s currently be ng evaluated.
    *
-   * Implementations of this method must use the 'details' parameter to collect its output.
+   *  mple ntat ons of t   thod must use t  'deta ls' para ter to collect  s output.
    *
-   * @param scoringData Scoring components for the document
-   * @param isHit Indicates whether the document is not skipped
-   * @param details Details of the explanation. Used to collect the output.
+   * @param scor ngData Scor ng components for t  docu nt
+   * @param  sH   nd cates w t r t  docu nt  s not sk pped
+   * @param deta ls Deta ls of t  explanat on. Used to collect t  output.
    */
-  protected abstract void generateExplanationForScoring(
-      LinearScoringData scoringData, boolean isHit, List<Explanation> details) throws IOException;
+  protected abstract vo d generateExplanat onForScor ng(
+      L nearScor ngData scor ngData, boolean  sH , L st<Explanat on> deta ls) throws  OExcept on;
 
   /**
-   * Generates the boosts part of the explanation for the document that is currently
-   * being evaluated.
+   * Generates t  boosts part of t  explanat on for t  docu nt that  s currently
+   * be ng evaluated.
    */
-  private void generateExplanationForBoosts(
-      LinearScoringData scoringData,
-      boolean isHit,
-      List<Explanation> details) {
-    List<Explanation> boostDetails = Lists.newArrayList();
+  pr vate vo d generateExplanat onForBoosts(
+      L nearScor ngData scor ngData,
+      boolean  sH ,
+      L st<Explanat on> deta ls) {
+    L st<Explanat on> boostDeta ls = L sts.newArrayL st();
 
-    boostDetails.add(Explanation.match((float) scoringData.scoreBeforeBoost, "Score before boost"));
+    boostDeta ls.add(Explanat on.match((float) scor ngData.scoreBeforeBoost, "Score before boost"));
 
 
     // Lucene score boost
-    if (params.useLuceneScoreAsBoost) {
-      boostDetails.add(Explanation.match(
-          (float) scoringData.normalizedLuceneScore,
-          String.format("[x] Lucene score boost, luceneScore=%.3f",
-              scoringData.luceneScore)));
+     f (params.useLuceneScoreAsBoost) {
+      boostDeta ls.add(Explanat on.match(
+          (float) scor ngData.normal zedLuceneScore,
+          Str ng.format("[x] Lucene score boost, luceneScore=%.3f",
+              scor ngData.luceneScore)));
     }
 
     // card boost
-    if (scoringData.hasCardBoostApplied) {
-      boostDetails.add(Explanation.match((float) params.hasCardBoosts[scoringData.cardType],
-          "[x] card boost for type " + SearchCardType.cardTypeFromByteValue(scoringData.cardType)));
+     f (scor ngData.hasCardBoostAppl ed) {
+      boostDeta ls.add(Explanat on.match((float) params.hasCardBoosts[scor ngData.cardType],
+          "[x] card boost for type " + SearchCardType.cardTypeFromByteValue(scor ngData.cardType)));
     }
 
-    // Offensive
-    if (scoringData.isOffensive) {
-      boostDetails.add(Explanation.match((float) params.offensiveDamping, "[x] Offensive damping"));
+    // Offens ve
+     f (scor ngData. sOffens ve) {
+      boostDeta ls.add(Explanat on.match((float) params.offens veDamp ng, "[x] Offens ve damp ng"));
     } else {
-      boostDetails.add(Explanation.match(LinearScoringData.NO_BOOST_VALUE,
-          String.format("Not Offensive, damping=%.3f", params.offensiveDamping)));
+      boostDeta ls.add(Explanat on.match(L nearScor ngData.NO_BOOST_VALUE,
+          Str ng.format("Not Offens ve, damp ng=%.3f", params.offens veDamp ng)));
     }
 
     // Spam
-    if (scoringData.spamUserDampApplied) {
-      boostDetails.add(Explanation.match((float) params.spamUserDamping, "[x] Spam"));
+     f (scor ngData.spamUserDampAppl ed) {
+      boostDeta ls.add(Explanat on.match((float) params.spamUserDamp ng, "[x] Spam"));
     }
     // NSFW
-    if (scoringData.nsfwUserDampApplied) {
-      boostDetails.add(Explanation.match((float) params.nsfwUserDamping, "[X] NSFW"));
+     f (scor ngData.nsfwUserDampAppl ed) {
+      boostDeta ls.add(Explanat on.match((float) params.nsfwUserDamp ng, "[X] NSFW"));
     }
     // Bot
-    if (scoringData.botUserDampApplied) {
-      boostDetails.add(Explanation.match((float) params.botUserDamping, "[X] Bot"));
+     f (scor ngData.botUserDampAppl ed) {
+      boostDeta ls.add(Explanat on.match((float) params.botUserDamp ng, "[X] Bot"));
     }
 
-    // Multiple hashtags or trends
-    if (scoringData.hasMultipleHashtagsOrTrends) {
-      boostDetails.add(Explanation.match((float) params.multipleHashtagsOrTrendsDamping,
-          "[x] Multiple hashtags or trends boost"));
+    // Mult ple hashtags or trends
+     f (scor ngData.hasMult pleHashtagsOrTrends) {
+      boostDeta ls.add(Explanat on.match((float) params.mult pleHashtagsOrTrendsDamp ng,
+          "[x] Mult ple hashtags or trends boost"));
     } else {
-      boostDetails.add(Explanation.match(LinearScoringData.NO_BOOST_VALUE,
-          String.format("No multiple hashtags or trends, damping=%.3f",
-              params.multipleHashtagsOrTrendsDamping)));
+      boostDeta ls.add(Explanat on.match(L nearScor ngData.NO_BOOST_VALUE,
+          Str ng.format("No mult ple hashtags or trends, damp ng=%.3f",
+              params.mult pleHashtagsOrTrendsDamp ng)));
     }
 
-    if (scoringData.tweetHasTrendsBoostApplied) {
-      boostDetails.add(Explanation.match(
-          (float) params.tweetHasTrendBoost, "[x] Tweet has trend boost"));
+     f (scor ngData.t etHasTrendsBoostAppl ed) {
+      boostDeta ls.add(Explanat on.match(
+          (float) params.t etHasTrendBoost, "[x] T et has trend boost"));
     }
 
-    if (scoringData.hasMedialUrlBoostApplied) {
-      boostDetails.add(Explanation.match(
-          (float) params.tweetHasMediaUrlBoost, "[x] Media url boost"));
+     f (scor ngData.has d alUrlBoostAppl ed) {
+      boostDeta ls.add(Explanat on.match(
+          (float) params.t etHas d aUrlBoost, "[x]  d a url boost"));
     }
 
-    if (scoringData.hasNewsUrlBoostApplied) {
-      boostDetails.add(Explanation.match(
-          (float) params.tweetHasNewsUrlBoost, "[x] News url boost"));
+     f (scor ngData.hasNewsUrlBoostAppl ed) {
+      boostDeta ls.add(Explanat on.match(
+          (float) params.t etHasNewsUrlBoost, "[x] News url boost"));
     }
 
-    boostDetails.add(Explanation.match(0.0f, "[FIELDS HIT] " + scoringData.hitFields));
+    boostDeta ls.add(Explanat on.match(0.0f, "[F ELDS H T] " + scor ngData.h F elds));
 
-    if (scoringData.hasNoTextHitDemotionApplied) {
-      boostDetails.add(Explanation.match(
-          (float) params.noTextHitDemotion, "[x] No text hit demotion"));
+     f (scor ngData.hasNoTextH Demot onAppl ed) {
+      boostDeta ls.add(Explanat on.match(
+          (float) params.noTextH Demot on, "[x] No text h  demot on"));
     }
 
-    if (scoringData.hasUrlOnlyHitDemotionApplied) {
-      boostDetails.add(Explanation.match(
-          (float) params.urlOnlyHitDemotion, "[x] URL only hit demotion"));
+     f (scor ngData.hasUrlOnlyH Demot onAppl ed) {
+      boostDeta ls.add(Explanat on.match(
+          (float) params.urlOnlyH Demot on, "[x] URL only h  demot on"));
     }
 
-    if (scoringData.hasNameOnlyHitDemotionApplied) {
-      boostDetails.add(Explanation.match(
-          (float) params.nameOnlyHitDemotion, "[x] Name only hit demotion"));
+     f (scor ngData.hasNa OnlyH Demot onAppl ed) {
+      boostDeta ls.add(Explanat on.match(
+          (float) params.na OnlyH Demot on, "[x] Na  only h  demot on"));
     }
 
-    if (scoringData.hasSeparateTextAndNameHitDemotionApplied) {
-      boostDetails.add(Explanation.match((float) params.separateTextAndNameHitDemotion,
-          "[x] Separate text/name demotion"));
+     f (scor ngData.hasSeparateTextAndNa H Demot onAppl ed) {
+      boostDeta ls.add(Explanat on.match((float) params.separateTextAndNa H Demot on,
+          "[x] Separate text/na  demot on"));
     }
 
-    if (scoringData.hasSeparateTextAndUrlHitDemotionApplied) {
-      boostDetails.add(Explanation.match((float) params.separateTextAndUrlHitDemotion,
-          "[x] Separate text/url demotion"));
+     f (scor ngData.hasSeparateTextAndUrlH Demot onAppl ed) {
+      boostDeta ls.add(Explanat on.match((float) params.separateTextAndUrlH Demot on,
+          "[x] Separate text/url demot on"));
     }
 
-    if (scoringData.tweetFromVerifiedAccountBoostApplied) {
-      boostDetails.add(Explanation.match((float) params.tweetFromVerifiedAccountBoost,
-          "[x] Verified account boost"));
+     f (scor ngData.t etFromVer f edAccountBoostAppl ed) {
+      boostDeta ls.add(Explanat on.match((float) params.t etFromVer f edAccountBoost,
+          "[x] Ver f ed account boost"));
     }
 
-    if (scoringData.tweetFromBlueVerifiedAccountBoostApplied) {
-      boostDetails.add(Explanation.match((float) params.tweetFromBlueVerifiedAccountBoost,
-          "[x] Blue-verified account boost"));
+     f (scor ngData.t etFromBlueVer f edAccountBoostAppl ed) {
+      boostDeta ls.add(Explanat on.match((float) params.t etFromBlueVer f edAccountBoost,
+          "[x] Blue-ver f ed account boost"));
     }
 
-    if (scoringData.selfTweetBoostApplied) {
-      boostDetails.add(Explanation.match((float) params.selfTweetBoost,
-          "[x] Self tweet boost"));
+     f (scor ngData.selfT etBoostAppl ed) {
+      boostDeta ls.add(Explanat on.match((float) params.selfT etBoost,
+          "[x] Self t et boost"));
     }
 
-    if (scoringData.skipReason == LinearScoringData.SkipReason.SOCIAL_FILTER) {
-      boostDetails.add(Explanation.noMatch("SKIPPED for social filter"));
+     f (scor ngData.sk pReason == L nearScor ngData.Sk pReason.SOC AL_F LTER) {
+      boostDeta ls.add(Explanat on.noMatch("SK PPED for soc al f lter"));
     } else {
-      if (scoringData.directFollowBoostApplied) {
-        boostDetails.add(Explanation.match((float) params.directFollowBoost,
-            "[x] Direct follow boost"));
+       f (scor ngData.d rectFollowBoostAppl ed) {
+        boostDeta ls.add(Explanat on.match((float) params.d rectFollowBoost,
+            "[x] D rect follow boost"));
       }
-      if (scoringData.trustedCircleBoostApplied) {
-        boostDetails.add(Explanation.match((float) params.trustedCircleBoost,
-            "[x] Trusted circle boost"));
+       f (scor ngData.trustedC rcleBoostAppl ed) {
+        boostDeta ls.add(Explanat on.match((float) params.trustedC rcleBoost,
+            "[x] Trusted c rcle boost"));
       }
-      if (scoringData.outOfNetworkReplyPenaltyApplied) {
-        boostDetails.add(Explanation.match((float) params.outOfNetworkReplyPenalty,
+       f (scor ngData.outOfNetworkReplyPenaltyAppl ed) {
+        boostDeta ls.add(Explanat on.match((float) params.outOfNetworkReplyPenalty,
             "[-] Out of network reply penalty"));
       }
     }
 
-    // Language demotions
-    String langDetails = String.format(
-        "tweetLang=[%s] uiLang=[%s]",
-        ThriftLanguageUtil.getLocaleOf(
-            ThriftLanguage.findByValue(scoringData.tweetLangId)).getLanguage(),
-        ThriftLanguageUtil.getLocaleOf(ThriftLanguage.findByValue(params.uiLangId)).getLanguage());
-    if (scoringData.uiLangMult == 1.0) {
-      boostDetails.add(Explanation.match(
-          LinearScoringData.NO_BOOST_VALUE, "No UI Language demotion: " + langDetails));
+    // Language demot ons
+    Str ng langDeta ls = Str ng.format(
+        "t etLang=[%s] u Lang=[%s]",
+        Thr ftLanguageUt l.getLocaleOf(
+            Thr ftLanguage.f ndByValue(scor ngData.t etLang d)).getLanguage(),
+        Thr ftLanguageUt l.getLocaleOf(Thr ftLanguage.f ndByValue(params.u Lang d)).getLanguage());
+     f (scor ngData.u LangMult == 1.0) {
+      boostDeta ls.add(Explanat on.match(
+          L nearScor ngData.NO_BOOST_VALUE, "No U  Language demot on: " + langDeta ls));
     } else {
-      boostDetails.add(Explanation.match(
-          (float) scoringData.uiLangMult, "[x] UI LangMult: " + langDetails));
+      boostDeta ls.add(Explanat on.match(
+          (float) scor ngData.u LangMult, "[x] U  LangMult: " + langDeta ls));
     }
-    StringBuilder userLangDetails = new StringBuilder();
-    userLangDetails.append("userLang=[");
-    for (int i = 0; i < params.userLangs.length; i++) {
-      if (params.userLangs[i] > 0.0) {
-        String lang = ThriftLanguageUtil.getLocaleOf(ThriftLanguage.findByValue(i)).getLanguage();
-        userLangDetails.append(String.format("%s:%.3f,", lang, params.userLangs[i]));
+    Str ngBu lder userLangDeta ls = new Str ngBu lder();
+    userLangDeta ls.append("userLang=[");
+    for ( nt   = 0;   < params.userLangs.length;  ++) {
+       f (params.userLangs[ ] > 0.0) {
+        Str ng lang = Thr ftLanguageUt l.getLocaleOf(Thr ftLanguage.f ndByValue( )).getLanguage();
+        userLangDeta ls.append(Str ng.format("%s:%.3f,", lang, params.userLangs[ ]));
       }
     }
-    userLangDetails.append("]");
-    if (!params.useUserLanguageInfo) {
-      boostDetails.add(Explanation.noMatch(
-          "No User Language Demotion: " + userLangDetails.toString()));
+    userLangDeta ls.append("]");
+     f (!params.useUserLanguage nfo) {
+      boostDeta ls.add(Explanat on.noMatch(
+          "No User Language Demot on: " + userLangDeta ls.toStr ng()));
     } else {
-      boostDetails.add(Explanation.match(
-          (float) scoringData.userLangMult,
-          "[x] User LangMult: " + userLangDetails.toString()));
+      boostDeta ls.add(Explanat on.match(
+          (float) scor ngData.userLangMult,
+          "[x] User LangMult: " + userLangDeta ls.toStr ng()));
     }
 
     // Age decay
-    String ageDecayDetails = String.format(
-        "age=%d seconds, slope=%.3f, base=%.1f, half-life=%.0f",
-        scoringData.tweetAgeInSeconds, params.ageDecaySlope,
-        params.ageDecayBase, params.ageDecayHalflife);
-    if (params.useAgeDecay) {
-      boostDetails.add(Explanation.match(
-          (float) scoringData.ageDecayMult, "[x] AgeDecay: " + ageDecayDetails));
+    Str ng ageDecayDeta ls = Str ng.format(
+        "age=%d seconds, slope=%.3f, base=%.1f, half-l fe=%.0f",
+        scor ngData.t etAge nSeconds, params.ageDecaySlope,
+        params.ageDecayBase, params.ageDecayHalfl fe);
+     f (params.useAgeDecay) {
+      boostDeta ls.add(Explanat on.match(
+          (float) scor ngData.ageDecayMult, "[x] AgeDecay: " + ageDecayDeta ls));
     } else {
-      boostDetails.add(Explanation.match(1.0f, "Age decay disabled: " + ageDecayDetails));
+      boostDeta ls.add(Explanat on.match(1.0f, "Age decay d sabled: " + ageDecayDeta ls));
     }
 
     // Score adjuster
-    boostDetails.add(Explanation.match(SCORE_ADJUSTER, "[x] score adjuster"));
+    boostDeta ls.add(Explanat on.match(SCORE_ADJUSTER, "[x] score adjuster"));
 
-    Explanation boostCombo = isHit
-        ? Explanation.match((float) scoringData.scoreAfterBoost,
-          "(MATCH) After Boosts and Demotions:", boostDetails)
-        : Explanation.noMatch("After Boosts and Demotions:", boostDetails);
+    Explanat on boostCombo =  sH 
+        ? Explanat on.match((float) scor ngData.scoreAfterBoost,
+          "(MATCH) After Boosts and Demot ons:", boostDeta ls)
+        : Explanat on.noMatch("After Boosts and Demot ons:", boostDeta ls);
 
-    details.add(boostCombo);
+    deta ls.add(boostCombo);
   }
 
-  @Override
-  protected Explanation doExplain(float luceneQueryScore) throws IOException {
-    // Run the scorer again and get the explanation.
-    ExplanationWrapper explanation = new ExplanationWrapper();
-    scoreInternal(luceneQueryScore, explanation);
-    return explanation.explanation;
+  @Overr de
+  protected Explanat on doExpla n(float luceneQueryScore) throws  OExcept on {
+    // Run t  scorer aga n and get t  explanat on.
+    Explanat onWrapper explanat on = new Explanat onWrapper();
+    score nternal(luceneQueryScore, explanat on);
+    return explanat on.explanat on;
   }
 
-  @Override
-  public void populateResultMetadataBasedOnScoringData(
-      ThriftSearchResultMetadataOptions options,
-      ThriftSearchResultMetadata metadata,
-      LinearScoringData data) throws IOException {
-    metadata.setResultType(searchResultType);
-    metadata.setScore(data.scoreReturned);
-    metadata.setFromUserId(data.fromUserId);
+  @Overr de
+  publ c vo d populateResult tadataBasedOnScor ngData(
+      Thr ftSearchResult tadataOpt ons opt ons,
+      Thr ftSearchResult tadata  tadata,
+      L nearScor ngData data) throws  OExcept on {
+     tadata.setResultType(searchResultType);
+     tadata.setScore(data.scoreReturned);
+     tadata.setFromUser d(data.fromUser d);
 
-    if (data.isTrusted) {
-      metadata.setIsTrusted(true);
+     f (data. sTrusted) {
+       tadata.set sTrusted(true);
     }
-    if (data.isFollow) {
-      metadata.setIsFollow(true);
+     f (data. sFollow) {
+       tadata.set sFollow(true);
     }
-    if (data.skipReason != SkipReason.NOT_SKIPPED) {
-      metadata.setSkipped(true);
+     f (data.sk pReason != Sk pReason.NOT_SK PPED) {
+       tadata.setSk pped(true);
     }
-    if ((data.isRetweet || (params.getInReplyToStatusId && data.isReply))
-        && data.sharedStatusId != LinearScoringData.UNSET_SIGNAL_VALUE) {
-      metadata.setSharedStatusId(data.sharedStatusId);
+     f ((data. sRet et || (params.get nReplyToStatus d && data. sReply))
+        && data.sharedStatus d != L nearScor ngData.UNSET_S GNAL_VALUE) {
+       tadata.setSharedStatus d(data.sharedStatus d);
     }
-    if (data.hasCard) {
-      metadata.setCardType(data.cardType);
-    }
-
-    // Optional features.  Note: other optional metadata is populated by
-    // AbstractRelevanceCollector, not the scoring function.
-
-    if (options.isGetLuceneScore()) {
-      metadata.setLuceneScore(data.luceneScore);
-    }
-    if (options.isGetReferencedTweetAuthorId()
-        && data.referenceAuthorId != LinearScoringData.UNSET_SIGNAL_VALUE) {
-      metadata.setReferencedTweetAuthorId(data.referenceAuthorId);
+     f (data.hasCard) {
+       tadata.setCardType(data.cardType);
     }
 
-    if (options.isGetMediaBits()) {
-      metadata.setHasConsumerVideo(data.hasConsumerVideo);
-      metadata.setHasProVideo(data.hasProVideo);
-      metadata.setHasVine(data.hasVine);
-      metadata.setHasPeriscope(data.hasPeriscope);
-      boolean hasNativeVideo =
-          data.hasConsumerVideo || data.hasProVideo || data.hasVine || data.hasPeriscope;
-      metadata.setHasNativeVideo(hasNativeVideo);
-      metadata.setHasNativeImage(data.hasNativeImage);
+    // Opt onal features.  Note: ot r opt onal  tadata  s populated by
+    // AbstractRelevanceCollector, not t  scor ng funct on.
+
+     f (opt ons. sGetLuceneScore()) {
+       tadata.setLuceneScore(data.luceneScore);
+    }
+     f (opt ons. sGetReferencedT etAuthor d()
+        && data.referenceAuthor d != L nearScor ngData.UNSET_S GNAL_VALUE) {
+       tadata.setReferencedT etAuthor d(data.referenceAuthor d);
     }
 
-    metadata
-        .setIsOffensive(data.isOffensive)
-        .setIsReply(data.isReply)
-        .setIsRetweet(data.isRetweet)
-        .setHasLink(data.hasUrl)
+     f (opt ons. sGet d aB s()) {
+       tadata.setHasConsu rV deo(data.hasConsu rV deo);
+       tadata.setHasProV deo(data.hasProV deo);
+       tadata.setHasV ne(data.hasV ne);
+       tadata.setHasPer scope(data.hasPer scope);
+      boolean hasNat veV deo =
+          data.hasConsu rV deo || data.hasProV deo || data.hasV ne || data.hasPer scope;
+       tadata.setHasNat veV deo(hasNat veV deo);
+       tadata.setHasNat ve mage(data.hasNat ve mage);
+    }
+
+     tadata
+        .set sOffens ve(data. sOffens ve)
+        .set sReply(data. sReply)
+        .set sRet et(data. sRet et)
+        .setHasL nk(data.hasUrl)
         .setHasTrend(data.hasTrend)
-        .setHasMultipleHashtagsOrTrends(data.hasMultipleHashtagsOrTrends)
-        .setRetweetCount((int) data.retweetCountPostLog2)
-        .setFavCount((int) data.favCountPostLog2)
-        .setReplyCount((int) data.replyCountPostLog2)
-        .setEmbedsImpressionCount((int) data.embedsImpressionCount)
-        .setEmbedsUrlCount((int) data.embedsUrlCount)
-        .setVideoViewCount((int) data.videoViewCount)
+        .setHasMult pleHashtagsOrTrends(data.hasMult pleHashtagsOrTrends)
+        .setRet etCount(( nt) data.ret etCountPostLog2)
+        .setFavCount(( nt) data.favCountPostLog2)
+        .setReplyCount(( nt) data.replyCountPostLog2)
+        .setEmbeds mpress onCount(( nt) data.embeds mpress onCount)
+        .setEmbedsUrlCount(( nt) data.embedsUrlCount)
+        .setV deoV ewCount(( nt) data.v deoV ewCount)
         .setResultType(searchResultType)
-        .setFromVerifiedAccount(data.isFromVerifiedAccount)
-        .setIsUserSpam(data.isUserSpam)
-        .setIsUserNSFW(data.isUserNSFW)
-        .setIsUserBot(data.isUserBot)
-        .setHasImage(data.hasImageUrl)
-        .setHasVideo(data.hasVideoUrl)
+        .setFromVer f edAccount(data. sFromVer f edAccount)
+        .set sUserSpam(data. sUserSpam)
+        .set sUserNSFW(data. sUserNSFW)
+        .set sUserBot(data. sUserBot)
+        .setHas mage(data.has mageUrl)
+        .setHasV deo(data.hasV deoUrl)
         .setHasNews(data.hasNewsUrl)
         .setHasCard(data.hasCard)
-        .setHasVisibleLink(data.hasVisibleLink)
+        .setHasV s bleL nk(data.hasV s bleL nk)
         .setParusScore(data.parusScore)
         .setTextScore(data.textScore)
         .setUserRep(data.userRep)
-        .setTokenAt140DividedByNumTokensBucket(data.tokenAt140DividedByNumTokensBucket);
+        .setTokenAt140D v dedByNumTokensBucket(data.tokenAt140D v dedByNumTokensBucket);
 
-    if (!metadata.isSetExtraMetadata()) {
-      metadata.setExtraMetadata(new ThriftSearchResultExtraMetadata());
+     f (! tadata. sSetExtra tadata()) {
+       tadata.setExtra tadata(new Thr ftSearchResultExtra tadata());
     }
-    ThriftSearchResultExtraMetadata extraMetadata = metadata.getExtraMetadata();
+    Thr ftSearchResultExtra tadata extra tadata =  tadata.getExtra tadata();
 
-    // Promotion/Demotion features
-    extraMetadata.setUserLangScore(data.userLangMult)
-        .setHasDifferentLang(data.hasDifferentLang)
-        .setHasEnglishTweetAndDifferentUILang(data.hasEnglishTweetAndDifferentUILang)
-        .setHasEnglishUIAndDifferentTweetLang(data.hasEnglishUIAndDifferentTweetLang)
+    // Promot on/Demot on features
+    extra tadata.setUserLangScore(data.userLangMult)
+        .setHasD fferentLang(data.hasD fferentLang)
+        .setHasEngl shT etAndD fferentU Lang(data.hasEngl shT etAndD fferentU Lang)
+        .setHasEngl shU AndD fferentT etLang(data.hasEngl shU AndD fferentT etLang)
         .setHasQuote(data.hasQuote)
-        .setQuotedCount((int) data.quotedCount)
-        .setWeightedRetweetCount((int) data.weightedRetweetCount)
-        .setWeightedReplyCount((int) data.weightedReplyCount)
-        .setWeightedFavCount((int) data.weightedFavCount)
-        .setWeightedQuoteCount((int) data.weightedQuoteCount)
-        .setQuerySpecificScore(data.querySpecificScore)
-        .setAuthorSpecificScore(data.authorSpecificScore)
-        .setRetweetCountV2((int) data.retweetCountV2)
-        .setFavCountV2((int) data.favCountV2)
-        .setReplyCountV2((int) data.replyCountV2)
-        .setIsComposerSourceCamera(data.isComposerSourceCamera)
-        .setFromBlueVerifiedAccount(data.isFromBlueVerifiedAccount);
+        .setQuotedCount(( nt) data.quotedCount)
+        .set  ghtedRet etCount(( nt) data.  ghtedRet etCount)
+        .set  ghtedReplyCount(( nt) data.  ghtedReplyCount)
+        .set  ghtedFavCount(( nt) data.  ghtedFavCount)
+        .set  ghtedQuoteCount(( nt) data.  ghtedQuoteCount)
+        .setQuerySpec f cScore(data.querySpec f cScore)
+        .setAuthorSpec f cScore(data.authorSpec f cScore)
+        .setRet etCountV2(( nt) data.ret etCountV2)
+        .setFavCountV2(( nt) data.favCountV2)
+        .setReplyCountV2(( nt) data.replyCountV2)
+        .set sComposerS ceCa ra(data. sComposerS ceCa ra)
+        .setFromBlueVer f edAccount(data. sFromBlueVer f edAccount);
 
-    // Health model scores features
-    extraMetadata
-        .setToxicityScore(data.toxicityScore)
+    //  alth model scores features
+    extra tadata
+        .setTox c yScore(data.tox c yScore)
         .setPBlockScore(data.pBlockScore)
-        .setPSpammyTweetScore(data.pSpammyTweetScore)
-        .setPReportedTweetScore(data.pReportedTweetScore)
-        .setSpammyTweetContentScore(data.spammyTweetContentScore)
-        .setExperimentalHealthModelScore1(data.experimentalHealthModelScore1)
-        .setExperimentalHealthModelScore2(data.experimentalHealthModelScore2)
-        .setExperimentalHealthModelScore3(data.experimentalHealthModelScore3)
-        .setExperimentalHealthModelScore4(data.experimentalHealthModelScore4);
+        .setPSpam T etScore(data.pSpam T etScore)
+        .setPReportedT etScore(data.pReportedT etScore)
+        .setSpam T etContentScore(data.spam T etContentScore)
+        .setExper  ntal althModelScore1(data.exper  ntal althModelScore1)
+        .setExper  ntal althModelScore2(data.exper  ntal althModelScore2)
+        .setExper  ntal althModelScore3(data.exper  ntal althModelScore3)
+        .setExper  ntal althModelScore4(data.exper  ntal althModelScore4);
 
-    // Return all extra features for clients to consume.
-    if (options.isGetAllFeatures()) {
-      extraMetadata.setIsSensitiveContent(data.isSensitiveContent)
-          .setHasMultipleMediaFlag(data.hasMultipleMediaFlag)
-          .setProfileIsEggFlag(data.profileIsEggFlag)
-          .setIsUserNewFlag(data.isUserNewFlag)
-          .setNumMentions(data.numMentions)
+    // Return all extra features for cl ents to consu .
+     f (opt ons. sGetAllFeatures()) {
+      extra tadata.set sSens  veContent(data. sSens  veContent)
+          .setHasMult ple d aFlag(data.hasMult ple d aFlag)
+          .setProf le sEggFlag(data.prof le sEggFlag)
+          .set sUserNewFlag(data. sUserNewFlag)
+          .setNum nt ons(data.num nt ons)
           .setNumHashtags(data.numHashtags)
-          .setLinkLanguage(data.linkLanguage)
-          .setPrevUserTweetEngagement(data.prevUserTweetEngagement);
+          .setL nkLanguage(data.l nkLanguage)
+          .setPrevUserT etEngage nt(data.prevUserT etEngage nt);
     }
 
-    // Set features in new Feature Access API format, in the future this will be the only part
-    // needed in this method, we don't need to set any other metadata fields any more.
-    if (options.isReturnSearchResultFeatures()) {
-      // If the features are unset, and they were requested, then we can retrieve them. If they are
-      // already set, then we don't need to re-read the document features, and the reader
-      // is probably positioned over the wrong document so it will return incorrect results.
-      if (!extraMetadata.isSetFeatures()) {
-        // We ignore all features with default values when returning them in the response,
-        // because it saves a lot of network bandwidth.
-        ThriftSearchResultFeatures features = createFeaturesForDocument(data, true).getFeatures();
-        extraMetadata.setFeatures(features);
+    // Set features  n new Feature Access AP  format,  n t  future t  w ll be t  only part
+    // needed  n t   thod,   don't need to set any ot r  tadata f elds any more.
+     f (opt ons. sReturnSearchResultFeatures()) {
+      //  f t  features are unset, and t y  re requested, t n   can retr eve t m.  f t y are
+      // already set, t n   don't need to re-read t  docu nt features, and t  reader
+      //  s probably pos  oned over t  wrong docu nt so   w ll return  ncorrect results.
+       f (!extra tadata. sSetFeatures()) {
+        //    gnore all features w h default values w n return ng t m  n t  response,
+        // because   saves a lot of network bandw dth.
+        Thr ftSearchResultFeatures features = createFeaturesForDocu nt(data, true).getFeatures();
+        extra tadata.setFeatures(features);
       }
 
-      // The raw score may have changed since we created the features, so we should update it.
-      extraMetadata.getFeatures().getDoubleValues()
-          .put(ExternalTweetFeature.RAW_EARLYBIRD_SCORE.getId(), data.scoreFinal);
+      // T  raw score may have changed s nce   created t  features, so   should update  .
+      extra tadata.getFeatures().getDoubleValues()
+          .put(ExternalT etFeature.RAW_EARLYB RD_SCORE.get d(), data.scoreF nal);
     }
 
-    metadata
-        .setIsSelfTweet(data.isSelfTweet)
-        .setIsUserAntiSocial(data.isUserAntiSocial);
+     tadata
+        .set sSelfT et(data. sSelfT et)
+        .set sUserAnt Soc al(data. sUserAnt Soc al);
   }
 
   /**
-   * Create earlybird basic features and dervied features for current document.
-   * @return a FeatureHandler object where you can keep adding extra feature values, or you can
-   * call .getFeatures() on it to get a Thrift object to return.
+   * Create earlyb rd bas c features and derv ed features for current docu nt.
+   * @return a FeatureHandler object w re   can keep add ng extra feature values, or   can
+   * call .getFeatures() on   to get a Thr ft object to return.
    */
-  protected FeatureHandler createFeaturesForDocument(
-      LinearScoringData data, boolean ignoreDefaultValues) throws IOException {
-    ThriftSearchResultFeatures features = documentFeatures.getSearchResultFeatures(getSchema());
-    if (!ignoreDefaultValues) {
+  protected FeatureHandler createFeaturesForDocu nt(
+      L nearScor ngData data, boolean  gnoreDefaultValues) throws  OExcept on {
+    Thr ftSearchResultFeatures features = docu ntFeatures.getSearchResultFeatures(getSc ma());
+     f (! gnoreDefaultValues) {
       setDefaultFeatureValues(features);
     }
 
-    // add derived features
-    return new FeatureHandler(features, ignoreDefaultValues)
-        .addDouble(ExternalTweetFeature.LUCENE_SCORE, data.luceneScore)
-        .addInt(ExternalTweetFeature.TWEET_AGE_IN_SECS, data.tweetAgeInSeconds)
-        .addBoolean(ExternalTweetFeature.IS_SELF_TWEET, data.isSelfTweet)
-        .addBoolean(ExternalTweetFeature.IS_FOLLOW_RETWEET, data.isFollow && data.isRetweet)
-        .addBoolean(ExternalTweetFeature.IS_TRUSTED_RETWEET, data.isTrusted && data.isRetweet)
-        .addBoolean(ExternalTweetFeature.AUTHOR_IS_FOLLOW, data.isFollow)
-        .addBoolean(ExternalTweetFeature.AUTHOR_IS_TRUSTED, data.isTrusted)
-        .addBoolean(ExternalTweetFeature.AUTHOR_IS_ANTISOCIAL, data.isUserAntiSocial)
-        .addBoolean(ExternalTweetFeature.HAS_DIFF_LANG, data.hasDifferentLang)
-        .addBoolean(ExternalTweetFeature.HAS_ENGLISH_TWEET_DIFF_UI_LANG,
-            data.hasEnglishTweetAndDifferentUILang)
-        .addBoolean(ExternalTweetFeature.HAS_ENGLISH_UI_DIFF_TWEET_LANG,
-            data.hasEnglishUIAndDifferentTweetLang)
-        .addDouble(ExternalTweetFeature.SEARCHER_LANG_SCORE, data.userLangMult)
-        .addDouble(ExternalTweetFeature.QUERY_SPECIFIC_SCORE, data.querySpecificScore)
-        .addDouble(ExternalTweetFeature.AUTHOR_SPECIFIC_SCORE, data.authorSpecificScore);
+    // add der ved features
+    return new FeatureHandler(features,  gnoreDefaultValues)
+        .addDouble(ExternalT etFeature.LUCENE_SCORE, data.luceneScore)
+        .add nt(ExternalT etFeature.TWEET_AGE_ N_SECS, data.t etAge nSeconds)
+        .addBoolean(ExternalT etFeature. S_SELF_TWEET, data. sSelfT et)
+        .addBoolean(ExternalT etFeature. S_FOLLOW_RETWEET, data. sFollow && data. sRet et)
+        .addBoolean(ExternalT etFeature. S_TRUSTED_RETWEET, data. sTrusted && data. sRet et)
+        .addBoolean(ExternalT etFeature.AUTHOR_ S_FOLLOW, data. sFollow)
+        .addBoolean(ExternalT etFeature.AUTHOR_ S_TRUSTED, data. sTrusted)
+        .addBoolean(ExternalT etFeature.AUTHOR_ S_ANT SOC AL, data. sUserAnt Soc al)
+        .addBoolean(ExternalT etFeature.HAS_D FF_LANG, data.hasD fferentLang)
+        .addBoolean(ExternalT etFeature.HAS_ENGL SH_TWEET_D FF_U _LANG,
+            data.hasEngl shT etAndD fferentU Lang)
+        .addBoolean(ExternalT etFeature.HAS_ENGL SH_U _D FF_TWEET_LANG,
+            data.hasEngl shU AndD fferentT etLang)
+        .addDouble(ExternalT etFeature.SEARCHER_LANG_SCORE, data.userLangMult)
+        .addDouble(ExternalT etFeature.QUERY_SPEC F C_SCORE, data.querySpec f cScore)
+        .addDouble(ExternalT etFeature.AUTHOR_SPEC F C_SCORE, data.authorSpec f cScore);
   }
 
   /**
-   * Adds default values for most numeric features that do not have a value set yet in the given
-   * ThriftSearchResultFeatures instance.
+   * Adds default values for most nu r c features that do not have a value set yet  n t  g ven
+   * Thr ftSearchResultFeatures  nstance.
    *
-   * This method is needed because some models do not work properly with missing features. Instead,
-   * they expect all features to be present even if they are unset (their values are 0).
+   * T   thod  s needed because so  models do not work properly w h m ss ng features.  nstead,
+   * t y expect all features to be present even  f t y are unset (t  r values are 0).
    */
-  protected void setDefaultFeatureValues(ThriftSearchResultFeatures features) {
-    for (Map.Entry<Integer, ThriftSearchFeatureSchemaEntry> entry
-             : getSchema().getSearchFeatureSchema().getEntries().entrySet()) {
-      int featureId = entry.getKey();
-      ThriftSearchFeatureSchemaEntry schemaEntry = entry.getValue();
-      if (shouldSetDefaultValueForFeature(schemaEntry.getFeatureType(), featureId)) {
-        switch (schemaEntry.getFeatureType()) {
-          case INT32_VALUE:
-            features.getIntValues().putIfAbsent(featureId, 0);
+  protected vo d setDefaultFeatureValues(Thr ftSearchResultFeatures features) {
+    for (Map.Entry< nteger, Thr ftSearchFeatureSc maEntry> entry
+             : getSc ma().getSearchFeatureSc ma().getEntr es().entrySet()) {
+       nt feature d = entry.getKey();
+      Thr ftSearchFeatureSc maEntry sc maEntry = entry.getValue();
+       f (shouldSetDefaultValueForFeature(sc maEntry.getFeatureType(), feature d)) {
+        sw ch (sc maEntry.getFeatureType()) {
+          case  NT32_VALUE:
+            features.get ntValues().put fAbsent(feature d, 0);
             break;
           case LONG_VALUE:
-            features.getLongValues().putIfAbsent(featureId, 0L);
+            features.getLongValues().put fAbsent(feature d, 0L);
             break;
           case DOUBLE_VALUE:
-            features.getDoubleValues().putIfAbsent(featureId, 0.0);
+            features.getDoubleValues().put fAbsent(feature d, 0.0);
             break;
           default:
-            throw new IllegalArgumentException(
-                "Should set default values only for integer, long or double features. Instead, "
-                + "found feature " + featureId + " of type " + schemaEntry.getFeatureType());
+            throw new  llegalArgu ntExcept on(
+                "Should set default values only for  nteger, long or double features.  nstead, "
+                + "found feature " + feature d + " of type " + sc maEntry.getFeatureType());
         }
       }
     }
   }
 
-  protected void overrideFeatureValues(ThriftSearchResultFeatures features,
-                                       ThriftSearchResultFeatures overrideFeatures) {
-    LOG.info("Features before override {}", features);
-    if (overrideFeatures.isSetIntValues()) {
-      overrideFeatures.getIntValues().forEach(features::putToIntValues);
+  protected vo d overr deFeatureValues(Thr ftSearchResultFeatures features,
+                                       Thr ftSearchResultFeatures overr deFeatures) {
+    LOG. nfo("Features before overr de {}", features);
+     f (overr deFeatures. sSet ntValues()) {
+      overr deFeatures.get ntValues().forEach(features::putTo ntValues);
     }
-    if (overrideFeatures.isSetLongValues()) {
-      overrideFeatures.getLongValues().forEach(features::putToLongValues);
+     f (overr deFeatures. sSetLongValues()) {
+      overr deFeatures.getLongValues().forEach(features::putToLongValues);
     }
-    if (overrideFeatures.isSetDoubleValues()) {
-      overrideFeatures.getDoubleValues().forEach(features::putToDoubleValues);
+     f (overr deFeatures. sSetDoubleValues()) {
+      overr deFeatures.getDoubleValues().forEach(features::putToDoubleValues);
     }
-    if (overrideFeatures.isSetBoolValues()) {
-      overrideFeatures.getBoolValues().forEach(features::putToBoolValues);
+     f (overr deFeatures. sSetBoolValues()) {
+      overr deFeatures.getBoolValues().forEach(features::putToBoolValues);
     }
-    if (overrideFeatures.isSetStringValues()) {
-      overrideFeatures.getStringValues().forEach(features::putToStringValues);
+     f (overr deFeatures. sSetStr ngValues()) {
+      overr deFeatures.getStr ngValues().forEach(features::putToStr ngValues);
     }
-    if (overrideFeatures.isSetBytesValues()) {
-      overrideFeatures.getBytesValues().forEach(features::putToBytesValues);
+     f (overr deFeatures. sSetBytesValues()) {
+      overr deFeatures.getBytesValues().forEach(features::putToBytesValues);
     }
-    if (overrideFeatures.isSetFeatureStoreDiscreteValues()) {
-      overrideFeatures.getFeatureStoreDiscreteValues().forEach(
-          features::putToFeatureStoreDiscreteValues);
+     f (overr deFeatures. sSetFeatureStoreD screteValues()) {
+      overr deFeatures.getFeatureStoreD screteValues().forEach(
+          features::putToFeatureStoreD screteValues);
     }
-    if (overrideFeatures.isSetSparseBinaryValues()) {
-      overrideFeatures.getSparseBinaryValues().forEach(features::putToSparseBinaryValues);
+     f (overr deFeatures. sSetSparseB naryValues()) {
+      overr deFeatures.getSparseB naryValues().forEach(features::putToSparseB naryValues);
     }
-    if (overrideFeatures.isSetSparseContinuousValues()) {
-      overrideFeatures.getSparseContinuousValues().forEach(features::putToSparseContinuousValues);
+     f (overr deFeatures. sSetSparseCont nuousValues()) {
+      overr deFeatures.getSparseCont nuousValues().forEach(features::putToSparseCont nuousValues);
     }
-    if (overrideFeatures.isSetGeneralTensorValues()) {
-      overrideFeatures.getGeneralTensorValues().forEach(features::putToGeneralTensorValues);
+     f (overr deFeatures. sSetGeneralTensorValues()) {
+      overr deFeatures.getGeneralTensorValues().forEach(features::putToGeneralTensorValues);
     }
-    if (overrideFeatures.isSetStringTensorValues()) {
-      overrideFeatures.getStringTensorValues().forEach(features::putToStringTensorValues);
+     f (overr deFeatures. sSetStr ngTensorValues()) {
+      overr deFeatures.getStr ngTensorValues().forEach(features::putToStr ngTensorValues);
     }
-    LOG.info("Features after override {}", features);
+    LOG. nfo("Features after overr de {}", features);
   }
 
   /**
-   * Check if a feature is eligible to have its default value automatically set when absent.
-   * We have a similar logic for building data record.
+   * C ck  f a feature  s el g ble to have  s default value automat cally set w n absent.
+   *   have a s m lar log c for bu ld ng data record.
    */
-  private static boolean shouldSetDefaultValueForFeature(
-      ThriftSearchFeatureType type, int featureId) {
-    return ALLOWED_TYPES_FOR_DEFAULT_FEATURE_VALUES.contains(type)
-        && !NUMERIC_FEATURES_FOR_WHICH_DEFAULTS_SHOULD_NOT_BE_SET.contains(featureId)
-        && (ExternalTweetFeature.EARLYBIRD_INDEXED_FEATURE_IDS.contains(featureId)
-            || ExternalTweetFeature.EARLYBIRD_DERIVED_FEATURE_IDS.contains(featureId));
+  pr vate stat c boolean shouldSetDefaultValueForFeature(
+      Thr ftSearchFeatureType type,  nt feature d) {
+    return ALLOWED_TYPES_FOR_DEFAULT_FEATURE_VALUES.conta ns(type)
+        && !NUMER C_FEATURES_FOR_WH CH_DEFAULTS_SHOULD_NOT_BE_SET.conta ns(feature d)
+        && (ExternalT etFeature.EARLYB RD_ NDEXED_FEATURE_ DS.conta ns(feature d)
+            || ExternalT etFeature.EARLYB RD_DER VED_FEATURE_ DS.conta ns(feature d));
   }
 
-  @Override
-  public void updateRelevanceStats(ThriftSearchResultsRelevanceStats relevanceStats) {
-    if (relevanceStats == null) {
+  @Overr de
+  publ c vo d updateRelevanceStats(Thr ftSearchResultsRelevanceStats relevanceStats) {
+     f (relevanceStats == null) {
       return;
     }
 
-    LinearScoringData data = getScoringDataForCurrentDocument();
+    L nearScor ngData data = getScor ngDataForCurrentDocu nt();
 
-    if (data.tweetAgeInSeconds > relevanceStats.getOldestScoredTweetAgeInSeconds()) {
-      relevanceStats.setOldestScoredTweetAgeInSeconds(data.tweetAgeInSeconds);
+     f (data.t etAge nSeconds > relevanceStats.getOldestScoredT etAge nSeconds()) {
+      relevanceStats.setOldestScoredT etAge nSeconds(data.t etAge nSeconds);
     }
     relevanceStats.setNumScored(relevanceStats.getNumScored() + 1);
-    if (data.scoreReturned == SKIP_HIT) {
-      relevanceStats.setNumSkipped(relevanceStats.getNumSkipped() + 1);
-      switch(data.skipReason) {
-        case ANTIGAMING:
-          relevanceStats.setNumSkippedForAntiGaming(
-              relevanceStats.getNumSkippedForAntiGaming() + 1);
+     f (data.scoreReturned == SK P_H T) {
+      relevanceStats.setNumSk pped(relevanceStats.getNumSk pped() + 1);
+      sw ch(data.sk pReason) {
+        case ANT GAM NG:
+          relevanceStats.setNumSk ppedForAnt Gam ng(
+              relevanceStats.getNumSk ppedForAnt Gam ng() + 1);
           break;
-        case LOW_REPUTATION:
-          relevanceStats.setNumSkippedForLowReputation(
-              relevanceStats.getNumSkippedForLowReputation() + 1);
+        case LOW_REPUTAT ON:
+          relevanceStats.setNumSk ppedForLowReputat on(
+              relevanceStats.getNumSk ppedForLowReputat on() + 1);
           break;
         case LOW_TEXT_SCORE:
-          relevanceStats.setNumSkippedForLowTextScore(
-              relevanceStats.getNumSkippedForLowTextScore() + 1);
+          relevanceStats.setNumSk ppedForLowTextScore(
+              relevanceStats.getNumSk ppedForLowTextScore() + 1);
           break;
-        case SOCIAL_FILTER:
-          relevanceStats.setNumSkippedForSocialFilter(
-              relevanceStats.getNumSkippedForSocialFilter() + 1);
+        case SOC AL_F LTER:
+          relevanceStats.setNumSk ppedForSoc alF lter(
+              relevanceStats.getNumSk ppedForSoc alF lter() + 1);
           break;
-        case LOW_FINAL_SCORE:
-          relevanceStats.setNumSkippedForLowFinalScore(
-              relevanceStats.getNumSkippedForLowFinalScore() + 1);
+        case LOW_F NAL_SCORE:
+          relevanceStats.setNumSk ppedForLowF nalScore(
+              relevanceStats.getNumSk ppedForLowF nalScore() + 1);
           break;
         case LOW_RETWEET_COUNT:
           break;
         default:
-          LOG.warn("Unknown SkipReason: " + data.skipReason);
+          LOG.warn("Unknown Sk pReason: " + data.sk pReason);
       }
     }
 
-    if (data.isFollow) {
-      relevanceStats.setNumFromDirectFollows(relevanceStats.getNumFromDirectFollows() + 1);
+     f (data. sFollow) {
+      relevanceStats.setNumFromD rectFollows(relevanceStats.getNumFromD rectFollows() + 1);
     }
-    if (data.isTrusted) {
-      relevanceStats.setNumFromTrustedCircle(relevanceStats.getNumFromTrustedCircle() + 1);
+     f (data. sTrusted) {
+      relevanceStats.setNumFromTrustedC rcle(relevanceStats.getNumFromTrustedC rcle() + 1);
     }
-    if (data.isReply) {
-      relevanceStats.setNumReplies(relevanceStats.getNumReplies() + 1);
-      if (data.isTrusted) {
-        relevanceStats.setNumRepliesTrusted(relevanceStats.getNumRepliesTrusted() + 1);
-      } else if (!data.isFollow) {
-        relevanceStats.setNumRepliesOutOfNetwork(relevanceStats.getNumRepliesOutOfNetwork() + 1);
+     f (data. sReply) {
+      relevanceStats.setNumRepl es(relevanceStats.getNumRepl es() + 1);
+       f (data. sTrusted) {
+        relevanceStats.setNumRepl esTrusted(relevanceStats.getNumRepl esTrusted() + 1);
+      } else  f (!data. sFollow) {
+        relevanceStats.setNumRepl esOutOfNetwork(relevanceStats.getNumRepl esOutOfNetwork() + 1);
       }
     }
-    if (data.isSelfTweet) {
-      relevanceStats.setNumSelfTweets(relevanceStats.getNumSelfTweets() + 1);
+     f (data. sSelfT et) {
+      relevanceStats.setNumSelfT ets(relevanceStats.getNumSelfT ets() + 1);
     }
-    if (data.hasImageUrl || data.hasVideoUrl) {
-      relevanceStats.setNumWithMedia(relevanceStats.getNumWithMedia() + 1);
+     f (data.has mageUrl || data.hasV deoUrl) {
+      relevanceStats.setNumW h d a(relevanceStats.getNumW h d a() + 1);
     }
-    if (data.hasNewsUrl) {
-      relevanceStats.setNumWithNews(relevanceStats.getNumWithNews() + 1);
+     f (data.hasNewsUrl) {
+      relevanceStats.setNumW hNews(relevanceStats.getNumW hNews() + 1);
     }
-    if (data.isUserSpam) {
+     f (data. sUserSpam) {
       relevanceStats.setNumSpamUser(relevanceStats.getNumSpamUser() + 1);
     }
-    if (data.isUserNSFW) {
-      relevanceStats.setNumOffensive(relevanceStats.getNumOffensive() + 1);
+     f (data. sUserNSFW) {
+      relevanceStats.setNumOffens ve(relevanceStats.getNumOffens ve() + 1);
     }
-    if (data.isUserBot) {
+     f (data. sUserBot) {
       relevanceStats.setNumBot(relevanceStats.getNumBot() + 1);
     }
   }
 
-  @VisibleForTesting
-  static final class ExplanationWrapper {
-    private Explanation explanation;
+  @V s bleForTest ng
+  stat c f nal class Explanat onWrapper {
+    pr vate Explanat on explanat on;
 
-    public Explanation getExplanation() {
-      return explanation;
+    publ c Explanat on getExplanat on() {
+      return explanat on;
     }
 
-    @Override
-    public String toString() {
-      return explanation.toString();
+    @Overr de
+    publ c Str ng toStr ng() {
+      return explanat on.toStr ng();
     }
   }
 }

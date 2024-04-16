@@ -1,32 +1,32 @@
-package com.twitter.search.common.search.termination;
+package com.tw ter.search.common.search.term nat on;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common.search.Term nat onTracker;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
 
-public class QueryTimeoutFactory {
+publ c class QueryT  outFactory {
   /**
-   * Creates a QueryTimeout instance for a given EarlybirdRequest and TerminationTracker, if the
-   * required conditions for leaf-level timeout checking are met. Returns null otherwise.
+   * Creates a QueryT  out  nstance for a g ven Earlyb rdRequest and Term nat onTracker,  f t 
+   * requ red cond  ons for leaf-level t  out c ck ng are  t. Returns null ot rw se.
    *
-   * The conditions are:
-   *   1) CollectorTerminationParams.isEnforceQueryTimeout()
-   *   2) CollectorTerminationParams.isSetTimeoutMs()
+   * T  cond  ons are:
+   *   1) CollectorTerm nat onParams. sEnforceQueryT  out()
+   *   2) CollectorTerm nat onParams. sSetT  outMs()
    */
-  public QueryTimeout createQueryTimeout(
-      EarlybirdRequest request,
-      TerminationTracker tracker,
+  publ c QueryT  out createQueryT  out(
+      Earlyb rdRequest request,
+      Term nat onTracker tracker,
       Clock clock) {
-    if (tracker != null
+     f (tracker != null
         && request != null
-        && request.isSetSearchQuery()
-        && request.getSearchQuery().isSetCollectorParams()
-        && request.getSearchQuery().getCollectorParams().isSetTerminationParams()
-        && request.getSearchQuery().getCollectorParams().getTerminationParams()
-            .isEnforceQueryTimeout()
-        && request.getSearchQuery().getCollectorParams().getTerminationParams()
-            .isSetTimeoutMs()) {
-      return new QueryTimeoutImpl(request.getClientId(), tracker, clock);
+        && request. sSetSearchQuery()
+        && request.getSearchQuery(). sSetCollectorParams()
+        && request.getSearchQuery().getCollectorParams(). sSetTerm nat onParams()
+        && request.getSearchQuery().getCollectorParams().getTerm nat onParams()
+            . sEnforceQueryT  out()
+        && request.getSearchQuery().getCollectorParams().getTerm nat onParams()
+            . sSetT  outMs()) {
+      return new QueryT  out mpl(request.getCl ent d(), tracker, clock);
     } else {
       return null;
     }

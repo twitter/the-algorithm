@@ -1,41 +1,41 @@
-package com.twitter.search.earlybird_root.caching;
+package com.tw ter.search.earlyb rd_root.cach ng;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.caching.Cache;
-import com.twitter.search.common.caching.TopTweetsCacheUtil;
-import com.twitter.search.common.caching.filter.ServicePostProcessor;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+ mport com.tw ter.search.common.cach ng.Cac ;
+ mport com.tw ter.search.common.cach ng.TopT etsCac Ut l;
+ mport com.tw ter.search.common.cach ng.f lter.Serv cePostProcessor;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+ mport stat c com.google.common.base.Precond  ons.c ckNotNull;
 
-public class TopTweetsServicePostProcessor
-    extends ServicePostProcessor<EarlybirdRequestContext, EarlybirdResponse> {
-  private static final Logger LOG = LoggerFactory.getLogger(TopTweetsServicePostProcessor.class);
+publ c class TopT etsServ cePostProcessor
+    extends Serv cePostProcessor<Earlyb rdRequestContext, Earlyb rdResponse> {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(TopT etsServ cePostProcessor.class);
 
-  public static final int CACHE_AGE_IN_MS = 600000;
-  public static final int NO_RESULT_CACHE_AGE_IN_MS = 300000;
+  publ c stat c f nal  nt CACHE_AGE_ N_MS = 600000;
+  publ c stat c f nal  nt NO_RESULT_CACHE_AGE_ N_MS = 300000;
 
-  private final Cache<EarlybirdRequest, EarlybirdResponse> cache;
+  pr vate f nal Cac <Earlyb rdRequest, Earlyb rdResponse> cac ;
 
-  public TopTweetsServicePostProcessor(Cache<EarlybirdRequest, EarlybirdResponse> cache) {
-    this.cache = checkNotNull(cache);
+  publ c TopT etsServ cePostProcessor(Cac <Earlyb rdRequest, Earlyb rdResponse> cac ) {
+    t .cac  = c ckNotNull(cac );
   }
 
-  @Override
-  public void processServiceResponse(EarlybirdRequestContext requestContext,
-                                     EarlybirdResponse serviceResponse) {
+  @Overr de
+  publ c vo d processServ ceResponse(Earlyb rdRequestContext requestContext,
+                                     Earlyb rdResponse serv ceResponse) {
 
-    EarlybirdRequest originalRequest = requestContext.getRequest();
-    LOG.debug("Writing to top tweets cache. Request: {}, Response: {}",
-        originalRequest, serviceResponse);
-    TopTweetsCacheUtil.cacheResults(originalRequest,
-        serviceResponse,
-        cache,
-        CACHE_AGE_IN_MS,
-        NO_RESULT_CACHE_AGE_IN_MS);
+    Earlyb rdRequest or g nalRequest = requestContext.getRequest();
+    LOG.debug("Wr  ng to top t ets cac . Request: {}, Response: {}",
+        or g nalRequest, serv ceResponse);
+    TopT etsCac Ut l.cac Results(or g nalRequest,
+        serv ceResponse,
+        cac ,
+        CACHE_AGE_ N_MS,
+        NO_RESULT_CACHE_AGE_ N_MS);
   }
 }

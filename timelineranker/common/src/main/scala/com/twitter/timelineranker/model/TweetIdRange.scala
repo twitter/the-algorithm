@@ -1,52 +1,52 @@
-package com.twitter.timelineranker.model
+package com.tw ter.t  l neranker.model
 
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelines.model.TweetId
+ mport com.tw ter.t  l neranker.{thr ftscala => thr ft}
+ mport com.tw ter.t  l nes.model.T et d
 
-object TweetIdRange {
-  val default: TweetIdRange = TweetIdRange(None, None)
-  val empty: TweetIdRange = TweetIdRange(Some(0L), Some(0L))
+object T et dRange {
+  val default: T et dRange = T et dRange(None, None)
+  val empty: T et dRange = T et dRange(So (0L), So (0L))
 
-  def fromThrift(range: thrift.TweetIdRange): TweetIdRange = {
-    TweetIdRange(fromId = range.fromId, toId = range.toId)
+  def fromThr ft(range: thr ft.T et dRange): T et dRange = {
+    T et dRange(from d = range.from d, to d = range.to d)
   }
 
-  def fromTimelineRange(range: TimelineRange): TweetIdRange = {
+  def fromT  l neRange(range: T  l neRange): T et dRange = {
     range match {
-      case r: TweetIdRange => r
+      case r: T et dRange => r
       case _ =>
-        throw new IllegalArgumentException(s"Only Tweet ID range is supported. Found: $range")
+        throw new  llegalArgu ntExcept on(s"Only T et  D range  s supported. Found: $range")
     }
   }
 }
 
 /**
- * A range of Tweet IDs with exclusive bounds.
+ * A range of T et  Ds w h exclus ve bounds.
  */
-case class TweetIdRange(fromId: Option[TweetId] = None, toId: Option[TweetId] = None)
-    extends TimelineRange {
+case class T et dRange(from d: Opt on[T et d] = None, to d: Opt on[T et d] = None)
+    extends T  l neRange {
 
-  throwIfInvalid()
+  throw f nval d()
 
-  def throwIfInvalid(): Unit = {
-    (fromId, toId) match {
-      case (Some(fromTweetId), Some(toTweetId)) =>
-        require(fromTweetId <= toTweetId, "fromId must be less than or equal to toId.")
-      case _ => // valid, do nothing.
+  def throw f nval d(): Un  = {
+    (from d, to d) match {
+      case (So (fromT et d), So (toT et d)) =>
+        requ re(fromT et d <= toT et d, "from d must be less than or equal to to d.")
+      case _ => // val d, do noth ng.
     }
   }
 
-  def toThrift: thrift.TweetIdRange = {
-    thrift.TweetIdRange(fromId = fromId, toId = toId)
+  def toThr ft: thr ft.T et dRange = {
+    thr ft.T et dRange(from d = from d, to d = to d)
   }
 
-  def toTimelineRangeThrift: thrift.TimelineRange = {
-    thrift.TimelineRange.TweetIdRange(toThrift)
+  def toT  l neRangeThr ft: thr ft.T  l neRange = {
+    thr ft.T  l neRange.T et dRange(toThr ft)
   }
 
-  def isEmpty: Boolean = {
-    (fromId, toId) match {
-      case (Some(fromId), Some(toId)) if fromId == toId => true
+  def  sEmpty: Boolean = {
+    (from d, to d) match {
+      case (So (from d), So (to d))  f from d == to d => true
       case _ => false
     }
   }

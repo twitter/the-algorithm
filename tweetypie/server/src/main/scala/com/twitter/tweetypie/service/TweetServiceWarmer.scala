@@ -1,88 +1,88 @@
-package com.twitter.tweetypie
-package service
+package com.tw ter.t etyp e
+package serv ce
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.util.Await
-import scala.util.control.NonFatal
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport com.tw ter.ut l.Awa 
+ mport scala.ut l.control.NonFatal
 
 /**
- * Settings for the artificial tweet fetching requests that are sent to warmup the
- * server before authentic requests are processed.
+ * Sett ngs for t  art f c al t et fetch ng requests that are sent to warmup t 
+ * server before aut nt c requests are processed.
  */
-case class WarmupQueriesSettings(
-  realTweetRequestCycles: Int = 100,
-  requestTimeout: Duration = 3.seconds,
-  clientId: ClientId = ClientId("tweetypie.warmup"),
-  requestTimeRange: Duration = 10.minutes,
-  maxConcurrency: Int = 20)
+case class WarmupQuer esSett ngs(
+  realT etRequestCycles:  nt = 100,
+  requestT  out: Durat on = 3.seconds,
+  cl ent d: Cl ent d = Cl ent d("t etyp e.warmup"),
+  requestT  Range: Durat on = 10.m nutes,
+  maxConcurrency:  nt = 20)
 
-object TweetServiceWarmer {
+object T etServ ceWar r {
 
   /**
-   * Load info from perspective of TLS test account with short favorites timeline.
+   * Load  nfo from perspect ve of TLS test account w h short favor es t  l ne.
    */
-  val ForUserId = 3511687034L // @mikestltestact1
+  val ForUser d = 3511687034L // @m kestltestact1
 }
 
 /**
- * Generates requests to getTweets for the purpose of warming up the code paths used
- * in fetching tweets.
+ * Generates requests to getT ets for t  purpose of warm ng up t  code paths used
+ *  n fetch ng t ets.
  */
-class TweetServiceWarmer(
-  warmupSettings: WarmupQueriesSettings,
-  requestOptions: GetTweetOptions = GetTweetOptions(includePlaces = true,
-    includeRetweetCount = true, includeReplyCount = true, includeFavoriteCount = true,
-    includeCards = true, cardsPlatformKey = Some("iPhone-13"), includePerspectivals = true,
-    includeQuotedTweet = true, forUserId = Some(TweetServiceWarmer.ForUserId)))
-    extends (ThriftTweetService => Unit) {
-  import warmupSettings._
+class T etServ ceWar r(
+  warmupSett ngs: WarmupQuer esSett ngs,
+  requestOpt ons: GetT etOpt ons = GetT etOpt ons( ncludePlaces = true,
+     ncludeRet etCount = true,  ncludeReplyCount = true,  ncludeFavor eCount = true,
+     ncludeCards = true, cardsPlatformKey = So (" Phone-13"),  ncludePerspect vals = true,
+     ncludeQuotedT et = true, forUser d = So (T etServ ceWar r.ForUser d)))
+    extends (Thr ftT etServ ce => Un ) {
+   mport warmupSett ngs._
 
-  private val realTweetIds =
+  pr vate val realT et ds =
     Seq(
-      20L, // just setting up my twttr
-      456190426412617728L, // protected user tweet
-      455477977715707904L, // suspended user tweet
-      440322224407314432L, // ellen oscar selfie
-      372173241290612736L, // gaga mentions 1d
-      456965485179838464L, // media tagged tweet
-      525421442918121473L, // tweet with card
-      527214829807759360L, // tweet with annotation
-      472788687571677184L // tweet with quote tweet
+      20L, // just sett ng up   twttr
+      456190426412617728L, // protected user t et
+      455477977715707904L, // suspended user t et
+      440322224407314432L, // ellen oscar self e
+      372173241290612736L, // gaga  nt ons 1d
+      456965485179838464L, //  d a tagged t et
+      525421442918121473L, // t et w h card
+      527214829807759360L, // t et w h annotat on
+      472788687571677184L // t et w h quote t et
     )
 
-  private val log = Logger(getClass)
+  pr vate val log = Logger(getClass)
 
   /**
-   * Executes the warmup queries, waiting for them to complete or until
-   * the warmupTimeout occurs.
+   * Executes t  warmup quer es, wa  ng for t m to complete or unt l
+   * t  warmupT  out occurs.
    */
-  def apply(service: ThriftTweetService): Unit = {
-    val warmupStart = Time.now
-    log.info("warming up...")
-    warmup(service)
-    val warmupDuration = Time.now.since(warmupStart)
-    log.info("warmup took " + warmupDuration)
+  def apply(serv ce: Thr ftT etServ ce): Un  = {
+    val warmupStart = T  .now
+    log. nfo("warm ng up...")
+    warmup(serv ce)
+    val warmupDurat on = T  .now.s nce(warmupStart)
+    log. nfo("warmup took " + warmupDurat on)
   }
 
   /**
-   * Executes the warmup queries, returning when all responses have completed or timed-out.
+   * Executes t  warmup quer es, return ng w n all responses have completed or t  d-out.
    */
-  private[this] def warmup(service: ThriftTweetService): Unit =
-    clientId.asCurrent {
-      val request = GetTweetsRequest(realTweetIds, options = Some(requestOptions))
-      val requests = Seq.fill(realTweetRequestCycles)(request)
+  pr vate[t ] def warmup(serv ce: Thr ftT etServ ce): Un  =
+    cl ent d.asCurrent {
+      val request = GetT etsRequest(realT et ds, opt ons = So (requestOpt ons))
+      val requests = Seq.f ll(realT etRequestCycles)(request)
       val requestGroups = requests.grouped(maxConcurrency)
 
       for (requests <- requestGroups) {
-        val responses = requests.map(service.getTweets(_))
+        val responses = requests.map(serv ce.getT ets(_))
         try {
-          Await.ready(Future.join(responses), requestTimeout)
+          Awa .ready(Future.jo n(responses), requestT  out)
         } catch {
-          // Await.ready throws exceptions on timeouts and
-          // interruptions. This prevents those exceptions from
-          // bubbling up.
+          // Awa .ready throws except ons on t  outs and
+          //  nterrupt ons. T  prevents those except ons from
+          // bubbl ng up.
           case NonFatal(_) =>
         }
       }

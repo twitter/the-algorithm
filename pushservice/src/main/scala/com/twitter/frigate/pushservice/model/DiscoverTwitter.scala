@@ -1,89 +1,89 @@
-package com.twitter.frigate.pushservice.model
+package com.tw ter.fr gate.pushserv ce.model
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.DiscoverTwitterCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.frigate.pushservice.model.ibis.DiscoverTwitterPushIbis2Hydrator
-import com.twitter.frigate.pushservice.model.ntab.DiscoverTwitterNtabRequestHydrator
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.predicate.PredicatesForCandidate
-import com.twitter.frigate.pushservice.take.predicates.BasicRFPHPredicates
-import com.twitter.frigate.pushservice.take.predicates.OutOfNetworkTweetPredicates
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.hermit.predicate.NamedPredicate
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.D scoverTw terCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.conf g.Conf g
+ mport com.tw ter.fr gate.pushserv ce.ml.PushMLModelScorer
+ mport com.tw ter.fr gate.pushserv ce.model.cand date.Copy ds
+ mport com.tw ter.fr gate.pushserv ce.model. b s.D scoverTw terPush b s2Hydrator
+ mport com.tw ter.fr gate.pushserv ce.model.ntab.D scoverTw terNtabRequestHydrator
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.pred cate.Pred catesForCand date
+ mport com.tw ter.fr gate.pushserv ce.take.pred cates.Bas cRFPHPred cates
+ mport com.tw ter.fr gate.pushserv ce.take.pred cates.OutOfNetworkT etPred cates
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
+ mport com.tw ter. rm .pred cate.Na dPred cate
 
-class DiscoverTwitterPushCandidate(
-  candidate: RawCandidate with DiscoverTwitterCandidate,
-  copyIds: CopyIds,
+class D scoverTw terPushCand date(
+  cand date: RawCand date w h D scoverTw terCand date,
+  copy ds: Copy ds,
 )(
-  implicit val statsScoped: StatsReceiver,
+   mpl c  val statsScoped: StatsRece ver,
   pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
-    with DiscoverTwitterCandidate
-    with DiscoverTwitterPushIbis2Hydrator
-    with DiscoverTwitterNtabRequestHydrator {
+    extends PushCand date
+    w h D scoverTw terCand date
+    w h D scoverTw terPush b s2Hydrator
+    w h D scoverTw terNtabRequestHydrator {
 
-  override val pushCopyId: Option[Int] = copyIds.pushCopyId
+  overr de val pushCopy d: Opt on[ nt] = copy ds.pushCopy d
 
-  override val ntabCopyId: Option[Int] = copyIds.ntabCopyId
+  overr de val ntabCopy d: Opt on[ nt] = copy ds.ntabCopy d
 
-  override val copyAggregationId: Option[String] = copyIds.aggregationId
+  overr de val copyAggregat on d: Opt on[Str ng] = copy ds.aggregat on d
 
-  override val target: Target = candidate.target
+  overr de val target: Target = cand date.target
 
-  override lazy val commonRecType: CommonRecommendationType = candidate.commonRecType
+  overr de lazy val commonRecType: CommonRecom ndat onType = cand date.commonRecType
 
-  override val weightedOpenOrNtabClickModelScorer: PushMLModelScorer = pushModelScorer
+  overr de val   ghtedOpenOrNtabCl ckModelScorer: PushMLModelScorer = pushModelScorer
 
-  override val statsReceiver: StatsReceiver =
-    statsScoped.scope("DiscoverTwitterPushCandidate")
+  overr de val statsRece ver: StatsRece ver =
+    statsScoped.scope("D scoverTw terPushCand date")
 }
 
-case class AddressBookPushCandidatePredicates(config: Config)
-    extends BasicRFPHPredicates[DiscoverTwitterPushCandidate] {
+case class AddressBookPushCand datePred cates(conf g: Conf g)
+    extends Bas cRFPHPred cates[D scoverTw terPushCand date] {
 
-  implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
+   mpl c  val statsRece ver: StatsRece ver = conf g.statsRece ver.scope(getClass.getS mpleNa )
 
-  override val predicates: List[
-    NamedPredicate[DiscoverTwitterPushCandidate]
+  overr de val pred cates: L st[
+    Na dPred cate[D scoverTw terPushCand date]
   ] =
-    List(
-      PredicatesForCandidate.paramPredicate(
-        PushFeatureSwitchParams.EnableAddressBookPush
+    L st(
+      Pred catesForCand date.paramPred cate(
+        PushFeatureSw chParams.EnableAddressBookPush
       )
     )
 }
 
-case class CompleteOnboardingPushCandidatePredicates(config: Config)
-    extends BasicRFPHPredicates[DiscoverTwitterPushCandidate] {
+case class CompleteOnboard ngPushCand datePred cates(conf g: Conf g)
+    extends Bas cRFPHPred cates[D scoverTw terPushCand date] {
 
-  implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
+   mpl c  val statsRece ver: StatsRece ver = conf g.statsRece ver.scope(getClass.getS mpleNa )
 
-  override val predicates: List[
-    NamedPredicate[DiscoverTwitterPushCandidate]
+  overr de val pred cates: L st[
+    Na dPred cate[D scoverTw terPushCand date]
   ] =
-    List(
-      PredicatesForCandidate.paramPredicate(
-        PushFeatureSwitchParams.EnableCompleteOnboardingPush
+    L st(
+      Pred catesForCand date.paramPred cate(
+        PushFeatureSw chParams.EnableCompleteOnboard ngPush
       )
     )
 }
 
-case class PopGeoTweetCandidatePredicates(override val config: Config)
-    extends OutOfNetworkTweetPredicates[OutOfNetworkTweetPushCandidate] {
+case class PopGeoT etCand datePred cates(overr de val conf g: Conf g)
+    extends OutOfNetworkT etPred cates[OutOfNetworkT etPushCand date] {
 
-  implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
+   mpl c  val statsRece ver: StatsRece ver = conf g.statsRece ver.scope(getClass.getS mpleNa )
 
-  override def postCandidateSpecificPredicates: List[
-    NamedPredicate[OutOfNetworkTweetPushCandidate]
-  ] = List(
-    PredicatesForCandidate.htlFatiguePredicate(
-      PushFeatureSwitchParams.NewUserPlaybookAllowedLastLoginHours
+  overr de def postCand dateSpec f cPred cates: L st[
+    Na dPred cate[OutOfNetworkT etPushCand date]
+  ] = L st(
+    Pred catesForCand date.htlFat guePred cate(
+      PushFeatureSw chParams.NewUserPlaybookAllo dLastLog nH s
     )
   )
 }

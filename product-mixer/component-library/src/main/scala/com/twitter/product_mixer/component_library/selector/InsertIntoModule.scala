@@ -1,69 +1,69 @@
-package com.twitter.product_mixer.component_library.selector
+package com.tw ter.product_m xer.component_l brary.selector
 
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import scala.collection.immutable.Queue
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on. emCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on.ModuleCand dateW hDeta ls
+ mport scala.collect on. mmutable.Queue
 
-private[selector] object InsertIntoModule {
-  case class ModuleAndIndex(
-    moduleToInsertInto: ModuleCandidateWithDetails,
-    indexOfModuleInOtherCandidates: Int)
+pr vate[selector] object  nsert ntoModule {
+  case class ModuleAnd ndex(
+    moduleTo nsert nto: ModuleCand dateW hDeta ls,
+     ndexOfModule nOt rCand dates:  nt)
 
-  case class ModuleWithItemsToAddAndOtherCandidates(
-    moduleToUpdateAndIndex: Option[ModuleAndIndex],
-    itemsToInsertIntoModule: Queue[ItemCandidateWithDetails],
-    otherCandidates: Queue[CandidateWithDetails])
+  case class ModuleW h emsToAddAndOt rCand dates(
+    moduleToUpdateAnd ndex: Opt on[ModuleAnd ndex],
+     emsTo nsert ntoModule: Queue[ emCand dateW hDeta ls],
+    ot rCand dates: Queue[Cand dateW hDeta ls])
 
   /**
-   * Given a Seq of `candidates`, returns the first module with it's index that matches the
-   * `targetModuleCandidatePipeline` with all the [[ItemCandidateWithDetails]] that match the
-   * `candidatePipeline` added to the `itemsToInsert` and the remaining candidates, including the
-   * module, in the `otherCandidates`
+   * G ven a Seq of `cand dates`, returns t  f rst module w h  's  ndex that matc s t 
+   * `targetModuleCand dateP pel ne` w h all t  [[ emCand dateW hDeta ls]] that match t 
+   * `cand dateP pel ne` added to t  ` emsTo nsert` and t  rema n ng cand dates,  nclud ng t 
+   * module,  n t  `ot rCand dates`
    */
   def moduleToUpdate(
-    candidatePipeline: CandidatePipelineIdentifier,
-    targetModuleCandidatePipeline: CandidatePipelineIdentifier,
-    candidates: Seq[CandidateWithDetails]
-  ): ModuleWithItemsToAddAndOtherCandidates = {
-    candidates.foldLeft[ModuleWithItemsToAddAndOtherCandidates](
-      ModuleWithItemsToAddAndOtherCandidates(None, Queue.empty, Queue.empty)) {
+    cand dateP pel ne: Cand dateP pel ne dent f er,
+    targetModuleCand dateP pel ne: Cand dateP pel ne dent f er,
+    cand dates: Seq[Cand dateW hDeta ls]
+  ): ModuleW h emsToAddAndOt rCand dates = {
+    cand dates.foldLeft[ModuleW h emsToAddAndOt rCand dates](
+      ModuleW h emsToAddAndOt rCand dates(None, Queue.empty, Queue.empty)) {
       case (
-            state @ ModuleWithItemsToAddAndOtherCandidates(_, itemsToInsertIntoModule, _),
-            selectedItem: ItemCandidateWithDetails) if selectedItem.source == candidatePipeline =>
-        state.copy(itemsToInsertIntoModule = itemsToInsertIntoModule :+ selectedItem)
+            state @ ModuleW h emsToAddAndOt rCand dates(_,  emsTo nsert ntoModule, _),
+            selected em:  emCand dateW hDeta ls)  f selected em.s ce == cand dateP pel ne =>
+        state.copy( emsTo nsert ntoModule =  emsTo nsert ntoModule :+ selected em)
 
       case (
-            state @ ModuleWithItemsToAddAndOtherCandidates(None, _, otherCandidates),
-            module: ModuleCandidateWithDetails) if module.source == targetModuleCandidatePipeline =>
-        val insertionIndex = otherCandidates.length
-        val moduleAndIndex = Some(
-          ModuleAndIndex(
-            moduleToInsertInto = module,
-            indexOfModuleInOtherCandidates = insertionIndex))
-        val otherCandidatesWithModuleAppended = otherCandidates :+ module
+            state @ ModuleW h emsToAddAndOt rCand dates(None, _, ot rCand dates),
+            module: ModuleCand dateW hDeta ls)  f module.s ce == targetModuleCand dateP pel ne =>
+        val  nsert on ndex = ot rCand dates.length
+        val moduleAnd ndex = So (
+          ModuleAnd ndex(
+            moduleTo nsert nto = module,
+             ndexOfModule nOt rCand dates =  nsert on ndex))
+        val ot rCand datesW hModuleAppended = ot rCand dates :+ module
         state.copy(
-          moduleToUpdateAndIndex = moduleAndIndex,
-          otherCandidates = otherCandidatesWithModuleAppended)
+          moduleToUpdateAnd ndex = moduleAnd ndex,
+          ot rCand dates = ot rCand datesW hModuleAppended)
 
-      case (_, invalidModule: ModuleCandidateWithDetails)
-          if invalidModule.source == candidatePipeline =>
+      case (_,  nval dModule: ModuleCand dateW hDeta ls)
+           f  nval dModule.s ce == cand dateP pel ne =>
         /**
-         * while not exactly an illegal state, its most likely an incorrectly configured candidate pipeline
-         * that returned a module instead of returning the candidates the module contains. Since you can't
-         * nest a module inside of a module, we can either throw or ignore it and we choose to ignore it
-         * to catch a potential bug a customer may do accidentally.
+         * wh le not exactly an  llegal state,  s most l kely an  ncorrectly conf gured cand date p pel ne
+         * that returned a module  nstead of return ng t  cand dates t  module conta ns. S nce   can't
+         * nest a module  ns de of a module,   can e  r throw or  gnore   and   choose to  gnore  
+         * to catch a potent al bug a custo r may do acc dentally.
          */
-        throw new UnsupportedOperationException(
-          s"Expected the candidatePipeline $candidatePipeline to contain items to put into the module from the targetModuleCandidatePipeline $targetModuleCandidatePipeline, but not contain modules itself. " +
-            s"This can occur if your $candidatePipeline was incorrectly configured and returns a module when you intended to return the candidates the module contained."
+        throw new UnsupportedOperat onExcept on(
+          s"Expected t  cand dateP pel ne $cand dateP pel ne to conta n  ems to put  nto t  module from t  targetModuleCand dateP pel ne $targetModuleCand dateP pel ne, but not conta n modules  self. " +
+            s"T  can occur  f y  $cand dateP pel ne was  ncorrectly conf gured and returns a module w n    ntended to return t  cand dates t  module conta ned."
         )
 
       case (
-            state @ ModuleWithItemsToAddAndOtherCandidates(_, _, otherCandidates),
-            unselectedCandidate) =>
-        state.copy(otherCandidates = otherCandidates :+ unselectedCandidate)
+            state @ ModuleW h emsToAddAndOt rCand dates(_, _, ot rCand dates),
+            unselectedCand date) =>
+        state.copy(ot rCand dates = ot rCand dates :+ unselectedCand date)
     }
   }
 

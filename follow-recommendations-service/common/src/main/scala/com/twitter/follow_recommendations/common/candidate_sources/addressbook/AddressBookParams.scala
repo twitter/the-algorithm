@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.candidate_sources.addressbook
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.addressbook
 
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
 object AddressBookParams {
-  // Used by display locations that want only to read from the ABV2 Client and ignore Manhattan
-  // Currently the only display location that does this is the ABUploadInjection DisplayLocation
+  // Used by d splay locat ons that want only to read from t  ABV2 Cl ent and  gnore Manhattan
+  // Currently t  only d splay locat on that does t   s t  ABUpload nject on D splayLocat on
   object ReadFromABV2Only extends FSParam[Boolean]("addressbook_read_only_from_abv2", false)
 }

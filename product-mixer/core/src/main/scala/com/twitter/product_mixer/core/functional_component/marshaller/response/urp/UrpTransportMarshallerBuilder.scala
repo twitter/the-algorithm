@@ -1,65 +1,65 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urp
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.TimelineScribeConfigMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ArticleDetailsMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventDetailsMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.CommerceDetailsMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ConversationDetailsMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ConversationSectionMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.LiveEventDetailsMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.TimelinesDetailsMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrtEndpointOptionsMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.T  l neScr beConf gMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.Art cleDeta lsMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.Cl entEventDeta lsMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.Cl entEvent nfoMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.Com rceDeta lsMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.Conversat onDeta lsMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.Conversat onSect onMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.L veEventDeta lsMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.T  l nesDeta lsMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.UrlMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.UrlTypeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.UrtEndpo ntOpt onsMarshaller
 
-object UrpTransportMarshallerBuilder {
-  // Convenience constructor for services not using dependency injection and unit tests. If using
-  // dependency injection, instead @Inject an instance of UrpTransportMarshaller to construct.
+object UrpTransportMarshallerBu lder {
+  // Conven ence constructor for serv ces not us ng dependency  nject on and un  tests.  f us ng
+  // dependency  nject on,  nstead @ nject an  nstance of UrpTransportMarshaller to construct.
 
-  val timelineKeyMarshaller = new TimelineKeyMarshaller
-  val timelineScribeConfigMarshaller = new TimelineScribeConfigMarshaller
-  val urlMarshaller = new UrlMarshaller(new UrlTypeMarshaller, new UrtEndpointOptionsMarshaller)
-  val clientEventInfoMarshaller = new ClientEventInfoMarshaller(
-    new ClientEventDetailsMarshaller(
-      new ConversationDetailsMarshaller(new ConversationSectionMarshaller),
-      new TimelinesDetailsMarshaller,
-      new ArticleDetailsMarshaller,
-      new LiveEventDetailsMarshaller,
-      new CommerceDetailsMarshaller)
+  val t  l neKeyMarshaller = new T  l neKeyMarshaller
+  val t  l neScr beConf gMarshaller = new T  l neScr beConf gMarshaller
+  val urlMarshaller = new UrlMarshaller(new UrlTypeMarshaller, new UrtEndpo ntOpt onsMarshaller)
+  val cl entEvent nfoMarshaller = new Cl entEvent nfoMarshaller(
+    new Cl entEventDeta lsMarshaller(
+      new Conversat onDeta lsMarshaller(new Conversat onSect onMarshaller),
+      new T  l nesDeta lsMarshaller,
+      new Art cleDeta lsMarshaller,
+      new L veEventDeta lsMarshaller,
+      new Com rceDeta lsMarshaller)
   )
 
-  val segmentedTimelineMarshaller =
-    new SegmentedTimelineMarshaller(timelineKeyMarshaller, timelineScribeConfigMarshaller)
-  val segmentedTimelinesMarshaller = new SegmentedTimelinesMarshaller(segmentedTimelineMarshaller)
+  val seg ntedT  l neMarshaller =
+    new Seg ntedT  l neMarshaller(t  l neKeyMarshaller, t  l neScr beConf gMarshaller)
+  val seg ntedT  l nesMarshaller = new Seg ntedT  l nesMarshaller(seg ntedT  l neMarshaller)
 
   val pageBodyMarshaller: PageBodyMarshaller = new PageBodyMarshaller(
-    timelineKeyMarshaller,
-    segmentedTimelinesMarshaller
+    t  l neKeyMarshaller,
+    seg ntedT  l nesMarshaller
   )
 
-  val topicPageHeaderFacepileMarshaller = new TopicPageHeaderFacepileMarshaller(urlMarshaller)
-  val topicPageHeaderDisplayTypeMarshaller = new TopicPageHeaderDisplayTypeMarshaller
-  val topicPageHeaderMarshaller = new TopicPageHeaderMarshaller(
-    topicPageHeaderFacepileMarshaller,
-    clientEventInfoMarshaller,
-    topicPageHeaderDisplayTypeMarshaller
+  val top cPage aderFacep leMarshaller = new Top cPage aderFacep leMarshaller(urlMarshaller)
+  val top cPage aderD splayTypeMarshaller = new Top cPage aderD splayTypeMarshaller
+  val top cPage aderMarshaller = new Top cPage aderMarshaller(
+    top cPage aderFacep leMarshaller,
+    cl entEvent nfoMarshaller,
+    top cPage aderD splayTypeMarshaller
   )
-  val pageHeaderMarshaller: PageHeaderMarshaller = new PageHeaderMarshaller(
-    topicPageHeaderMarshaller)
+  val page aderMarshaller: Page aderMarshaller = new Page aderMarshaller(
+    top cPage aderMarshaller)
 
-  val topicPageNavBarMarshaller = new TopicPageNavBarMarshaller(clientEventInfoMarshaller)
-  val titleNavBarMarshaller = new TitleNavBarMarshaller(clientEventInfoMarshaller)
+  val top cPageNavBarMarshaller = new Top cPageNavBarMarshaller(cl entEvent nfoMarshaller)
+  val t leNavBarMarshaller = new T leNavBarMarshaller(cl entEvent nfoMarshaller)
   val pageNavBarMarshaller: PageNavBarMarshaller = new PageNavBarMarshaller(
-    topicPageNavBarMarshaller,
-    titleNavBarMarshaller
+    top cPageNavBarMarshaller,
+    t leNavBarMarshaller
   )
 
   val marshaller: UrpTransportMarshaller =
     new UrpTransportMarshaller(
       pageBodyMarshaller = pageBodyMarshaller,
-      timelineScribeConfigMarshaller = timelineScribeConfigMarshaller,
-      pageHeaderMarshaller = pageHeaderMarshaller,
+      t  l neScr beConf gMarshaller = t  l neScr beConf gMarshaller,
+      page aderMarshaller = page aderMarshaller,
       pageNavBarMarshaller = pageNavBarMarshaller
     )
 }

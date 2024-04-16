@@ -1,1 +1,1 @@
-# This prevents SQ query from grabbing //:all since it traverses up once to find a BUILD
+# T  prevents SQ query from grabb ng //:all s nce   traverses up once to f nd a BU LD

@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+package com.tw ter.product_m xer.component_l brary.p pel ne.cand date.who_to_follow_module
 
-import com.twitter.hermit.{thriftscala => h}
-import com.twitter.account_recommendations_mixer.{thriftscala => t}
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+ mport com.tw ter. rm .{thr ftscala => h}
+ mport com.tw ter.account_recom ndat ons_m xer.{thr ftscala => t}
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.UserCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Transfor r dent f er
 
-object ContextTypeFeature extends Feature[UserCandidate, Option[t.ContextType]]
+object ContextTypeFeature extends Feature[UserCand date, Opt on[t.ContextType]]
 
-object WhoToFollowArmResponseFeatureTransformer
-    extends CandidateFeatureTransformer[t.RecommendedUser] {
+object WhoToFollowArmResponseFeatureTransfor r
+    extends Cand dateFeatureTransfor r[t.Recom ndedUser] {
 
-  override val identifier: TransformerIdentifier = TransformerIdentifier("WhoToFollowArmResponse")
+  overr de val  dent f er: Transfor r dent f er = Transfor r dent f er("WhoToFollowArmResponse")
 
-  override val features: Set[Feature[_, _]] =
+  overr de val features: Set[Feature[_, _]] =
     Set(
-      AdImpressionFeature,
+      Ad mpress onFeature,
       ContextTypeFeature,
-      HermitContextTypeFeature,
-      SocialTextFeature,
-      TrackingTokenFeature,
+       rm ContextTypeFeature,
+      Soc alTextFeature,
+      Track ngTokenFeature,
       ScoreFeature)
 
-  override def transform(input: t.RecommendedUser): FeatureMap = FeatureMapBuilder()
-    .add(AdImpressionFeature, input.adImpression)
-    .add(ContextTypeFeature, input.contextType)
+  overr de def transform( nput: t.Recom ndedUser): FeatureMap = FeatureMapBu lder()
+    .add(Ad mpress onFeature,  nput.ad mpress on)
+    .add(ContextTypeFeature,  nput.contextType)
     .add(
-      HermitContextTypeFeature,
-      input.contextType.map(contextType => h.ContextType(contextType.value)))
-    .add(SocialTextFeature, input.socialText)
-    .add(TrackingTokenFeature, input.trackingToken)
-    .add(ScoreFeature, input.mlPredictionScore)
-    .build()
+       rm ContextTypeFeature,
+       nput.contextType.map(contextType => h.ContextType(contextType.value)))
+    .add(Soc alTextFeature,  nput.soc alText)
+    .add(Track ngTokenFeature,  nput.track ngToken)
+    .add(ScoreFeature,  nput.mlPred ct onScore)
+    .bu ld()
 }

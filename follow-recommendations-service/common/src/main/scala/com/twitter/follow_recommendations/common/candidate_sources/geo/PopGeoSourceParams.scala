@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.candidate_sources.geo
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.geo
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
-object PopGeoSourceParams {
-  case object PopGeoSourceGeoHashMinPrecision
-      extends FSBoundedParam[Int](
-        "pop_geo_source_geo_hash_min_precision",
+object PopGeoS ceParams {
+  case object PopGeoS ceGeoHashM nPrec s on
+      extends FSBoundedParam[ nt](
+        "pop_geo_s ce_geo_hash_m n_prec s on",
         default = 2,
-        min = 0,
+        m n = 0,
         max = 10)
 
-  case object PopGeoSourceGeoHashMaxPrecision
-      extends FSBoundedParam[Int](
-        "pop_geo_source_geo_hash_max_precision",
+  case object PopGeoS ceGeoHashMaxPrec s on
+      extends FSBoundedParam[ nt](
+        "pop_geo_s ce_geo_hash_max_prec s on",
         default = 4,
-        min = 0,
+        m n = 0,
         max = 10)
 
-  case object PopGeoSourceReturnFromAllPrecisions
-      extends FSParam[Boolean]("pop_geo_source_return_from_all_precisions", default = false)
+  case object PopGeoS ceReturnFromAllPrec s ons
+      extends FSParam[Boolean]("pop_geo_s ce_return_from_all_prec s ons", default = false)
 
-  case object PopGeoSourceMaxResultsPerPrecision
-      extends FSBoundedParam[Int](
-        "pop_geo_source_max_results_per_precision",
+  case object PopGeoS ceMaxResultsPerPrec s on
+      extends FSBoundedParam[ nt](
+        "pop_geo_s ce_max_results_per_prec s on",
         default = 200,
-        min = 0,
+        m n = 0,
         max = 1000)
 }

@@ -1,62 +1,62 @@
-package com.twitter.simclusters_v2.scalding.inferred_entities
+package com.tw ter.s mclusters_v2.scald ng. nferred_ent  es
 
-import com.twitter.escherbird.metadata.thriftscala.FullMetadata
-import com.twitter.scalding._
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.wtf.entity_real_graph.scalding.common.{DataSources => ERGDataSources}
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+ mport com.tw ter.esc rb rd. tadata.thr ftscala.Full tadata
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng.typed.TypedP pe
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e._
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.common.Cluster d
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.s mclusters_v2.hdfs_s ces._
+ mport com.tw ter.s mclusters_v2.scald ng.common.Ut l
+ mport com.tw ter.s mclusters_v2.thr ftscala._
+ mport com.tw ter.wtf.ent y_real_graph.scald ng.common.{DataS ces => ERGDataS ces}
+ mport com.tw ter.wtf.scald ng.jobs.common.AdhocExecut onApp
+ mport com.tw ter.wtf.scald ng.jobs.common.Sc duledExecut onApp
+ mport java.ut l.T  Zone
 
 /**
- * Infer Known-For entities based on users' different variations of SimClusters Known-Fors.
- * The basic idea is to look at the Known-For datasets (User, Cluster) and the entity embeddings
- * (Cluster, Entities) to derive the (User, Entities).
+ *  nfer Known-For ent  es based on users' d fferent var at ons of S mClusters Known-Fors.
+ * T  bas c  dea  s to look at t  Known-For datasets (User, Cluster) and t  ent y embedd ngs
+ * (Cluster, Ent  es) to der ve t  (User, Ent  es).
  */
-object InferredSemanticCoreEntitiesFromKnownFor {
+object  nferredSemant cCoreEnt  esFromKnownFor {
 
   /**
-   * Given a (user, cluster) and (cluster, entity) mappings, generate (user, entity) mappings
+   * G ven a (user, cluster) and (cluster, ent y) mapp ngs, generate (user, ent y) mapp ngs
    */
-  def getUserToEntities(
-    userToClusters: TypedPipe[(UserId, Seq[SimClusterWithScore])],
-    clusterToEntities: TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])],
-    inferredFromCluster: Option[SimClustersSource],
-    inferredFromEntity: Option[EntitySource],
-    minEntityScore: Double
-  ): TypedPipe[(UserId, Seq[InferredEntity])] = {
+  def getUserToEnt  es(
+    userToClusters: TypedP pe[(User d, Seq[S mClusterW hScore])],
+    clusterToEnt  es: TypedP pe[(Cluster d, Seq[Semant cCoreEnt yW hScore])],
+     nferredFromCluster: Opt on[S mClustersS ce],
+     nferredFromEnt y: Opt on[Ent yS ce],
+    m nEnt yScore: Double
+  ): TypedP pe[(User d, Seq[ nferredEnt y])] = {
 
-    val validClusterToEntities = clusterToEntities.flatMap {
-      case (clusterId, entities) =>
-        entities.collect {
-          case entity if entity.score >= minEntityScore =>
-            (clusterId, (entity.entityId, entity.score))
+    val val dClusterToEnt  es = clusterToEnt  es.flatMap {
+      case (cluster d, ent  es) =>
+        ent  es.collect {
+          case ent y  f ent y.score >= m nEnt yScore =>
+            (cluster d, (ent y.ent y d, ent y.score))
         }
     }
 
     userToClusters
       .flatMap {
-        case (userId, clusters) =>
-          clusters.map { cluster => (cluster.clusterId, userId) }
+        case (user d, clusters) =>
+          clusters.map { cluster => (cluster.cluster d, user d) }
       }
-      .join(validClusterToEntities)
+      .jo n(val dClusterToEnt  es)
       .map {
-        case (clusterId, (userId, (entityId, score))) =>
-          ((userId, entityId), score)
+        case (cluster d, (user d, (ent y d, score))) =>
+          ((user d, ent y d), score)
       }
-      // If a user is known for the same entity through multiple cluster-entity mappings, sum the scores
+      //  f a user  s known for t  sa  ent y through mult ple cluster-ent y mapp ngs, sum t  scores
       .sumByKey
       .map {
-        case ((userId, entityId), score) =>
-          (userId, Seq(InferredEntity(entityId, score, inferredFromCluster, inferredFromEntity)))
+        case ((user d, ent y d), score) =>
+          (user d, Seq( nferredEnt y(ent y d, score,  nferredFromCluster,  nferredFromEnt y)))
       }
       .sumByKey
   }
@@ -64,181 +64,181 @@ object InferredSemanticCoreEntitiesFromKnownFor {
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
-  inferred_entities_from_known_for \
-  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+capesospy-v2 update --bu ld_locally --start_cron \
+   nferred_ent  es_from_known_for \
+  src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc.yaml
  */
-object InferredKnownForSemanticCoreEntitiesBatchApp extends ScheduledExecutionApp {
+object  nferredKnownForSemant cCoreEnt  esBatchApp extends Sc duledExecut onApp {
 
-  import InferredSemanticCoreEntitiesFromKnownFor._
+   mport  nferredSemant cCoreEnt  esFromKnownFor._
 
-  override def firstTime: RichDate = RichDate("2023-01-23")
+  overr de def f rstT  : R chDate = R chDate("2023-01-23")
 
-  override def batchIncrement: Duration = Days(1)
+  overr de def batch ncre nt: Durat on = Days(1)
 
-  private val outputPath = InferredEntities.MHRootPath + "/known_for"
+  pr vate val outputPath =  nferredEnt  es.MHRootPath + "/known_for"
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
 
-    val clusterToEntities = EntityEmbeddingsSources
-      .getReverseIndexedSemanticCoreEntityEmbeddingsSource(
-        EmbeddingType.FavBasedSematicCoreEntity,
-        ModelVersions.Model20M145K2020,
-        dateRange.embiggen(Days(7)) // read 7 days before & after to give buffer
+    val clusterToEnt  es = Ent yEmbedd ngsS ces
+      .getReverse ndexedSemant cCoreEnt yEmbedd ngsS ce(
+        Embedd ngType.FavBasedSemat cCoreEnt y,
+        ModelVers ons.Model20M145K2020,
+        dateRange.emb ggen(Days(7)) // read 7 days before & after to g ve buffer
       )
-      .forceToDisk
+      .forceToD sk
 
-    val userToEntities2020 = getUserToEntities(
-      ProdSources.getUpdatedKnownFor,
-      clusterToEntities,
-      Some(InferredEntities.KnownFor2020),
-      Some(EntitySource.SimClusters20M145K2020EntityEmbeddingsByFavScore),
-      InferredEntities.MinLegibleEntityScore
+    val userToEnt  es2020 = getUserToEnt  es(
+      ProdS ces.getUpdatedKnownFor,
+      clusterToEnt  es,
+      So ( nferredEnt  es.KnownFor2020),
+      So (Ent yS ce.S mClusters20M145K2020Ent yEmbedd ngsByFavScore),
+       nferredEnt  es.M nLeg bleEnt yScore
     )
 
-    val userToEntities = InferredEntities.combineResults(userToEntities2020)
+    val userToEnt  es =  nferredEnt  es.comb neResults(userToEnt  es2020)
 
-    userToEntities
-      .map { case (userId, entities) => KeyVal(userId, entities) }
-      .writeDALVersionedKeyValExecution(
-        SimclustersInferredEntitiesFromKnownForScalaDataset,
-        D.Suffix(outputPath)
+    userToEnt  es
+      .map { case (user d, ent  es) => KeyVal(user d, ent  es) }
+      .wr eDALVers onedKeyValExecut on(
+        S mclusters nferredEnt  esFromKnownForScalaDataset,
+        D.Suff x(outputPath)
       )
   }
 }
 
 /**
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/inferred_entities:inferred_entities_from_known_for-adhoc && \
- oscar hdfs --user recos-platform --screen --tee your_ldap-logs/ \
-  --bundle inferred_entities_from_known_for-adhoc \
-  --tool com.twitter.simclusters_v2.scalding.inferred_entities.InferredSemanticCoreEntitiesFromKnownForAdhocApp \
-  -- --date 2019-11-02 --email your_ldap@twitter.com
+./bazel bundle src/scala/com/tw ter/s mclusters_v2/scald ng/ nferred_ent  es: nferred_ent  es_from_known_for-adhoc && \
+ oscar hdfs --user recos-platform --screen --tee y _ldap-logs/ \
+  --bundle  nferred_ent  es_from_known_for-adhoc \
+  --tool com.tw ter.s mclusters_v2.scald ng. nferred_ent  es. nferredSemant cCoreEnt  esFromKnownForAdhocApp \
+  -- --date 2019-11-02 --ema l y _ldap@tw ter.com
  */
-object InferredSemanticCoreEntitiesFromKnownForAdhocApp extends AdhocExecutionApp {
+object  nferredSemant cCoreEnt  esFromKnownForAdhocApp extends AdhocExecut onApp {
 
-  private def readEntityEmbeddingsFromPath(
-    path: String
-  ): TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])] = {
-    TypedPipe
-      .from(AdhocKeyValSources.clusterToEntitiesSource(path))
+  pr vate def readEnt yEmbedd ngsFromPath(
+    path: Str ng
+  ): TypedP pe[(Cluster d, Seq[Semant cCoreEnt yW hScore])] = {
+    TypedP pe
+      .from(AdhocKeyValS ces.clusterToEnt  esS ce(path))
       .map {
-        case (embeddingId, embedding) =>
-          embeddingId.internalId match {
-            case InternalId.ClusterId(clusterId) =>
-              val semanticCoreEntities = embedding.embedding.map {
-                case InternalIdWithScore(InternalId.EntityId(entityId), score) =>
-                  SemanticCoreEntityWithScore(entityId, score)
+        case (embedd ng d, embedd ng) =>
+          embedd ng d. nternal d match {
+            case  nternal d.Cluster d(cluster d) =>
+              val semant cCoreEnt  es = embedd ng.embedd ng.map {
+                case  nternal dW hScore( nternal d.Ent y d(ent y d), score) =>
+                  Semant cCoreEnt yW hScore(ent y d, score)
                 case _ =>
-                  throw new IllegalArgumentException(
-                    "The value to the entity embeddings dataset isn't entityId"
+                  throw new  llegalArgu ntExcept on(
+                    "T  value to t  ent y embedd ngs dataset  sn't ent y d"
                   )
               }
-              (clusterId, semanticCoreEntities)
+              (cluster d, semant cCoreEnt  es)
             case _ =>
-              throw new IllegalArgumentException(
-                "The key to the entity embeddings dataset isn't clusterId"
+              throw new  llegalArgu ntExcept on(
+                "T  key to t  ent y embedd ngs dataset  sn't cluster d"
               )
           }
       }
   }
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    import InferredSemanticCoreEntitiesFromKnownFor._
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
+     mport  nferredSemant cCoreEnt  esFromKnownFor._
 
-    val entityIdToString: TypedPipe[(Long, String)] =
-      ERGDataSources.semanticCoreMetadataSource
+    val ent y dToStr ng: TypedP pe[(Long, Str ng)] =
+      ERGDataS ces.semant cCore tadataS ce
         .collect {
-          case FullMetadata(domainId, entityId, Some(basicMetadata), _, _, _)
-              if domainId == 131L && !basicMetadata.indexableFields.exists(
-                _.tags.exists(_.contains("utt:sensitive_interest"))) =>
-            entityId -> basicMetadata.name
-        }.distinctBy(_._1)
+          case Full tadata(doma n d, ent y d, So (bas c tadata), _, _, _)
+               f doma n d == 131L && !bas c tadata. ndexableF elds.ex sts(
+                _.tags.ex sts(_.conta ns("utt:sens  ve_ nterest"))) =>
+            ent y d -> bas c tadata.na 
+        }.d st nctBy(_._1)
 
-    val clusterToEntitiesUpdated = EntityEmbeddingsSources
-      .getReverseIndexedSemanticCoreEntityEmbeddingsSource(
-        EmbeddingType.FavBasedSematicCoreEntity,
-        ModelVersions.Model20M145KUpdated,
-        dateRange.embiggen(Days(4)) // read 4 days before & after to give buffer
+    val clusterToEnt  esUpdated = Ent yEmbedd ngsS ces
+      .getReverse ndexedSemant cCoreEnt yEmbedd ngsS ce(
+        Embedd ngType.FavBasedSemat cCoreEnt y,
+        ModelVers ons.Model20M145KUpdated,
+        dateRange.emb ggen(Days(4)) // read 4 days before & after to g ve buffer
       )
-      .forceToDisk
+      .forceToD sk
 
-    // Inferred entities based on Updated version's entity embeddings
-    val dec11UserToUpdatedEntities = getUserToEntities(
-      ProdSources.getDec11KnownFor,
-      clusterToEntitiesUpdated,
-      Some(InferredEntities.Dec11KnownFor),
-      Some(EntitySource.SimClusters20M145KUpdatedEntityEmbeddingsByFavScore),
-      InferredEntities.MinLegibleEntityScore
+    //  nferred ent  es based on Updated vers on's ent y embedd ngs
+    val dec11UserToUpdatedEnt  es = getUserToEnt  es(
+      ProdS ces.getDec11KnownFor,
+      clusterToEnt  esUpdated,
+      So ( nferredEnt  es.Dec11KnownFor),
+      So (Ent yS ce.S mClusters20M145KUpdatedEnt yEmbedd ngsByFavScore),
+       nferredEnt  es.M nLeg bleEnt yScore
     )
 
-    val updatedUserToUpdatedEntities = getUserToEntities(
-      ProdSources.getUpdatedKnownFor,
-      clusterToEntitiesUpdated,
-      Some(InferredEntities.UpdatedKnownFor),
-      Some(EntitySource.SimClusters20M145KUpdatedEntityEmbeddingsByFavScore),
-      InferredEntities.MinLegibleEntityScore
+    val updatedUserToUpdatedEnt  es = getUserToEnt  es(
+      ProdS ces.getUpdatedKnownFor,
+      clusterToEnt  esUpdated,
+      So ( nferredEnt  es.UpdatedKnownFor),
+      So (Ent yS ce.S mClusters20M145KUpdatedEnt yEmbedd ngsByFavScore),
+       nferredEnt  es.M nLeg bleEnt yScore
     )
 
-    // Updated entities data
-    val entitiesPipe = (
-      dec11UserToUpdatedEntities ++ updatedUserToUpdatedEntities
+    // Updated ent  es data
+    val ent  esP pe = (
+      dec11UserToUpdatedEnt  es ++ updatedUserToUpdatedEnt  es
     ).sumByKey
 
-    val userToEntitiesWithString = entitiesPipe
+    val userToEnt  esW hStr ng = ent  esP pe
       .flatMap {
-        case (userId, entities) =>
-          entities.map { entity => (entity.entityId, (userId, entity)) }
+        case (user d, ent  es) =>
+          ent  es.map { ent y => (ent y.ent y d, (user d, ent y)) }
       }
-      .hashJoin(entityIdToString)
+      .hashJo n(ent y dToStr ng)
       .map {
-        case (entityId, ((userId, inferredEntity), entityStr)) =>
-          (userId, Seq((entityStr, inferredEntity)))
+        case (ent y d, ((user d,  nferredEnt y), ent yStr)) =>
+          (user d, Seq((ent yStr,  nferredEnt y)))
       }
       .sumByKey
 
-    val outputPath = "/user/recos-platform/adhoc/known_for_inferred_entities_updated"
+    val outputPath = "/user/recos-platform/adhoc/known_for_ nferred_ent  es_updated"
 
-    val scoreDistribution = Util
-      .printSummaryOfNumericColumn(
-        entitiesPipe.flatMap { case (k, v) => v.map(_.score) },
-        Some("Distributions of scores, Updated version")
+    val scoreD str but on = Ut l
+      .pr ntSummaryOfNu r cColumn(
+        ent  esP pe.flatMap { case (k, v) => v.map(_.score) },
+        So ("D str but ons of scores, Updated vers on")
       ).map { results =>
-        Util.sendEmail(
+        Ut l.sendEma l(
           results,
-          "Distributions of scores, Updated version",
-          args.getOrElse("email", "")
+          "D str but ons of scores, Updated vers on",
+          args.getOrElse("ema l", "")
         )
       }
 
-    val coverageDistribution = Util
-      .printSummaryOfNumericColumn(
-        entitiesPipe.map { case (k, v) => v.size },
-        Some("# of knownFor entities per user, Updated version")
+    val coverageD str but on = Ut l
+      .pr ntSummaryOfNu r cColumn(
+        ent  esP pe.map { case (k, v) => v.s ze },
+        So ("# of knownFor ent  es per user, Updated vers on")
       ).map { results =>
-        Util.sendEmail(
+        Ut l.sendEma l(
           results,
-          "# of knownFor entities per user, Updated version",
-          args.getOrElse("email", "")
+          "# of knownFor ent  es per user, Updated vers on",
+          args.getOrElse("ema l", "")
         )
       }
 
-    Execution
-      .zip(
-        userToEntitiesWithString.writeExecution(TypedTsv(outputPath)),
-        scoreDistribution,
-        coverageDistribution
-      ).unit
+    Execut on
+      .z p(
+        userToEnt  esW hStr ng.wr eExecut on(TypedTsv(outputPath)),
+        scoreD str but on,
+        coverageD str but on
+      ).un 
   }
 }

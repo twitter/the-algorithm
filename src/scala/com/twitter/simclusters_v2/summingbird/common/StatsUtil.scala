@@ -1,20 +1,20 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.tw ter.s mclusters_v2.summ ngb rd.common
 
-import com.twitter.summingbird.{Counter, Group, Name, Platform, Producer}
-import com.twitter.summingbird.option.JobId
+ mport com.tw ter.summ ngb rd.{Counter, Group, Na , Platform, Producer}
+ mport com.tw ter.summ ngb rd.opt on.Job d
 
-object StatsUtil {
+object StatsUt l {
 
-  // for adding stats in Producer.
-  // this enables us to add new stats by just calling producer.observer("name")
-  implicit class EnrichedProducer[P <: Platform[P], T](
+  // for add ng stats  n Producer.
+  // t  enables us to add new stats by just call ng producer.observer("na ")
+   mpl c  class Enr c dProducer[P <: Platform[P], T](
     producer: Producer[P, T]
   )(
-    implicit jobId: JobId) {
-    def observe(counter: String): Producer[P, T] = {
-      val stat = Counter(Group(jobId.get), Name(counter))
+     mpl c  job d: Job d) {
+    def observe(counter: Str ng): Producer[P, T] = {
+      val stat = Counter(Group(job d.get), Na (counter))
       producer.map { v =>
-        stat.incr()
+        stat. ncr()
         v
       }
     }

@@ -1,39 +1,39 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.metadata
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. tadata
 
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleMetadataBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.GridCarouselMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleMetadata
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.t  l ne_module.BaseModule tadataBu lder
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Gr dCarousel tadata
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Module tadata
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes.conf gap .Param
 
-object TopicsToFollowModuleMetadataBuilder {
+object Top csToFollowModule tadataBu lder {
 
-  val TopicsPerRow = 7
+  val Top csPerRow = 7
 
   /*
-   * rows = min(MAX_NUM_ROWS, # topics / TOPICS_PER_ROW)
-   * where TOPICS_PER_ROW = 7
+   * rows = m n(MAX_NUM_ROWS, # top cs / TOP CS_PER_ROW)
+   * w re TOP CS_PER_ROW = 7
    */
-  def getCarouselRowCount(topicsCount: Int, maxCarouselRows: Int): Int =
-    Math.min(maxCarouselRows, (topicsCount / TopicsPerRow) + 1)
+  def getCarouselRowCount(top csCount:  nt, maxCarouselRows:  nt):  nt =
+    Math.m n(maxCarouselRows, (top csCount / Top csPerRow) + 1)
 }
 
-case class TopicsToFollowModuleMetadataBuilder(maxCarouselRowsParam: Param[Int])
-    extends BaseModuleMetadataBuilder[PipelineQuery, UniversalNoun[Any]] {
+case class Top csToFollowModule tadataBu lder(maxCarouselRowsParam: Param[ nt])
+    extends BaseModule tadataBu lder[P pel neQuery, Un versalNoun[Any]] {
 
-  import TopicsToFollowModuleMetadataBuilder._
+   mport Top csToFollowModule tadataBu lder._
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[UniversalNoun[Any]]]
-  ): ModuleMetadata = {
-    val rowCount = getCarouselRowCount(candidates.size, query.params(maxCarouselRowsParam))
-    ModuleMetadata(
-      adsMetadata = None,
-      conversationMetadata = None,
-      gridCarouselMetadata = Some(GridCarouselMetadata(numRows = Some(rowCount)))
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[Un versalNoun[Any]]]
+  ): Module tadata = {
+    val rowCount = getCarouselRowCount(cand dates.s ze, query.params(maxCarouselRowsParam))
+    Module tadata(
+      ads tadata = None,
+      conversat on tadata = None,
+      gr dCarousel tadata = So (Gr dCarousel tadata(numRows = So (rowCount)))
     )
   }
 }

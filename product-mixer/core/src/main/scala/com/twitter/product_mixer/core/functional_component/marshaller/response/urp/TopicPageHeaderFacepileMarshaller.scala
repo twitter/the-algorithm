@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urp
 
-import com.twitter.pages.render.{thriftscala => urp}
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urp.TopicPageHeaderFacepile
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.pages.render.{thr ftscala => urp}
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.UrlMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urp.Top cPage aderFacep le
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TopicPageHeaderFacepileMarshaller @Inject() (
+@S ngleton
+class Top cPage aderFacep leMarshaller @ nject() (
   urlMarshaller: UrlMarshaller) {
 
-  def apply(topicPageHeaderFacepile: TopicPageHeaderFacepile): urp.TopicPageHeaderFacepile =
-    urp.TopicPageHeaderFacepile(
-      userIds = topicPageHeaderFacepile.userIds,
-      facepileUrl = topicPageHeaderFacepile.facepileUrl.map(urlMarshaller(_))
+  def apply(top cPage aderFacep le: Top cPage aderFacep le): urp.Top cPage aderFacep le =
+    urp.Top cPage aderFacep le(
+      user ds = top cPage aderFacep le.user ds,
+      facep leUrl = top cPage aderFacep le.facep leUrl.map(urlMarshaller(_))
     )
 }

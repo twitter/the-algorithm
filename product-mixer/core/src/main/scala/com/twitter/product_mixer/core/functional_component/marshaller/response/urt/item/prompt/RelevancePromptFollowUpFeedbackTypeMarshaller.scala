@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.prompt
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.prompt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt._
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.prompt._
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class RelevancePromptFollowUpFeedbackTypeMarshaller @Inject() (
-  relevancePromptFollowUpTextInputMarshaller: RelevancePromptFollowUpTextInputMarshaller) {
+@S ngleton
+class RelevancePromptFollowUpFeedbackTypeMarshaller @ nject() (
+  relevancePromptFollowUpText nputMarshaller: RelevancePromptFollowUpText nputMarshaller) {
 
   def apply(
     relevancePromptFollowUpFeedbackType: RelevancePromptFollowUpFeedbackType
   ): urt.RelevancePromptFollowUpFeedbackType = relevancePromptFollowUpFeedbackType match {
-    case relevancePromptFollowUpTextInput: RelevancePromptFollowUpTextInput =>
-      urt.RelevancePromptFollowUpFeedbackType.FollowUpTextInput(
-        relevancePromptFollowUpTextInputMarshaller(relevancePromptFollowUpTextInput))
+    case relevancePromptFollowUpText nput: RelevancePromptFollowUpText nput =>
+      urt.RelevancePromptFollowUpFeedbackType.FollowUpText nput(
+        relevancePromptFollowUpText nputMarshaller(relevancePromptFollowUpText nput))
   }
 }

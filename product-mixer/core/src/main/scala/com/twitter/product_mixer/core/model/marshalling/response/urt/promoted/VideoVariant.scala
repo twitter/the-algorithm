@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted
 
-case class VideoVariant(
-  url: Option[String],
-  contentType: Option[String],
-  bitrate: Option[Int])
+case class V deoVar ant(
+  url: Opt on[Str ng],
+  contentType: Opt on[Str ng],
+  b rate: Opt on[ nt])

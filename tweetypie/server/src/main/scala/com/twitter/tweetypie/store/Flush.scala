@@ -1,33 +1,33 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
-object Flush extends TweetStore.SyncModule {
+object Flush extends T etStore.SyncModule {
 
   case class Event(
-    tweetIds: Seq[TweetId],
-    flushTweets: Boolean = true,
+    t et ds: Seq[T et d],
+    flushT ets: Boolean = true,
     flushCounts: Boolean = true,
-    logExisting: Boolean = true)
-      extends SyncTweetStoreEvent("flush")
+    logEx st ng: Boolean = true)
+      extends SyncT etStoreEvent("flush")
 
-  trait Store {
+  tra  Store {
     val flush: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val flush: FutureEffect[Event] = wrap(underlying.flush)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val flush: FutureEffect[Event] = wrap(underly ng.flush)
   }
 
   object Store {
     def apply(
-      cachingTweetStore: CachingTweetStore,
-      tweetCountsUpdatingStore: TweetCountsCacheUpdatingStore
+      cach ngT etStore: Cach ngT etStore,
+      t etCountsUpdat ngStore: T etCountsCac Updat ngStore
     ): Store =
       new Store {
-        override val flush: FutureEffect[Event] =
-          FutureEffect.inParallel(
-            cachingTweetStore.flush,
-            tweetCountsUpdatingStore.flush
+        overr de val flush: FutureEffect[Event] =
+          FutureEffect. nParallel(
+            cach ngT etStore.flush,
+            t etCountsUpdat ngStore.flush
           )
       }
   }

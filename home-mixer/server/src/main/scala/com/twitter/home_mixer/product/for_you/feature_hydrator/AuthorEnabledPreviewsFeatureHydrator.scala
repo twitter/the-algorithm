@@ -1,70 +1,70 @@
-package com.twitter.home_mixer.product.for_you.feature_hydrator
+package com.tw ter.ho _m xer.product.for_ .feature_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorEnabledPreviewsFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.audiencerewards.audienceRewardsService.GetCreatorPreferencesOnUserClientColumn
+ mport com.tw ter.ho _m xer.model.Ho Features.Author dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.AuthorEnabledPrev ewsFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BulkCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.generated.cl ent.aud encerewards.aud enceRewardsServ ce.GetCreatorPreferencesOnUserCl entColumn
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * Hydrates the `AuthorEnabledPreviews` feature for tweets authored by creators by querying the
- * `GetCreatorPreferences` Strato column. This feature corresponds to the `previews_enabled` field of that column.
- * Given a tweet from a creator, this feature indicates whether that creator has enabled previews
- * on their profile.
+ * Hydrates t  `AuthorEnabledPrev ews` feature for t ets authored by creators by query ng t 
+ * `GetCreatorPreferences` Strato column. T  feature corresponds to t  `prev ews_enabled` f eld of that column.
+ * G ven a t et from a creator, t  feature  nd cates w t r that creator has enabled prev ews
+ * on t  r prof le.
  */
-@Singleton
-class AuthorEnabledPreviewsFeatureHydrator @Inject() (
-  getCreatorPreferencesOnUserClientColumn: GetCreatorPreferencesOnUserClientColumn)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@S ngleton
+class AuthorEnabledPrev ewsFeatureHydrator @ nject() (
+  getCreatorPreferencesOnUserCl entColumn: GetCreatorPreferencesOnUserCl entColumn)
+    extends BulkCand dateFeatureHydrator[P pel neQuery, T etCand date] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("AuthorEnabledPreviews")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("AuthorEnabledPrev ews")
 
-  override val features: Set[Feature[_, _]] = Set(AuthorEnabledPreviewsFeature)
+  overr de val features: Set[Feature[_, _]] = Set(AuthorEnabledPrev ewsFeature)
 
-  private val fetcher = getCreatorPreferencesOnUserClientColumn.fetcher
+  pr vate val fetc r = getCreatorPreferencesOnUserCl entColumn.fetc r
 
-  private val DefaultAuthorEnabledPreviewsValue = true
+  pr vate val DefaultAuthorEnabledPrev ewsValue = true
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val candidateAuthors = candidates
-      .map(_.features.getOrElse(AuthorIdFeature, None))
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[Seq[FeatureMap]] = {
+    val cand dateAuthors = cand dates
+      .map(_.features.getOrElse(Author dFeature, None))
       .toSet
       .flatten
 
-    // Build a map of creator -> authorEnabledPreviews, then use it to populate candidate features
-    val authorIdToFeatureStitch = Stitch.collect {
-      candidateAuthors
+    // Bu ld a map of creator -> authorEnabledPrev ews, t n use   to populate cand date features
+    val author dToFeatureSt ch = St ch.collect {
+      cand dateAuthors
         .map { author =>
-          val isAuthorEnabledPreviews = fetcher.fetch(author).map {
-              _.v.map(_.previewsEnabled).getOrElse(DefaultAuthorEnabledPreviewsValue)
+          val  sAuthorEnabledPrev ews = fetc r.fetch(author).map {
+              _.v.map(_.prev ewsEnabled).getOrElse(DefaultAuthorEnabledPrev ewsValue)
           }
-          (author, isAuthorEnabledPreviews)
+          (author,  sAuthorEnabledPrev ews)
         }.toMap
     }
 
-    authorIdToFeatureStitch.map { authorIdToFeatureMap =>
-      candidates.map {
-        _.features.getOrElse(AuthorIdFeature, None) match {
-          case Some(authorId) => FeatureMapBuilder()
-            .add(AuthorEnabledPreviewsFeature, authorIdToFeatureMap(authorId))
-            .build()
-          case _ => FeatureMapBuilder()
-            .add(AuthorEnabledPreviewsFeature, DefaultAuthorEnabledPreviewsValue)
-            .build()
+    author dToFeatureSt ch.map { author dToFeatureMap =>
+      cand dates.map {
+        _.features.getOrElse(Author dFeature, None) match {
+          case So (author d) => FeatureMapBu lder()
+            .add(AuthorEnabledPrev ewsFeature, author dToFeatureMap(author d))
+            .bu ld()
+          case _ => FeatureMapBu lder()
+            .add(AuthorEnabledPrev ewsFeature, DefaultAuthorEnabledPrev ewsValue)
+            .bu ld()
         }
       }
     }

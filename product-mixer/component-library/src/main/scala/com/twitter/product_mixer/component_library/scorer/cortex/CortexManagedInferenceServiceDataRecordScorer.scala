@@ -1,135 +1,135 @@
-package com.twitter.product_mixer.component_library.scorer.cortex
+package com.tw ter.product_m xer.component_l brary.scorer.cortex
 
-import com.google.protobuf.ByteString
-import com.twitter.ml.prediction_service.BatchPredictionRequest
-import com.twitter.ml.prediction_service.BatchPredictionResponse
-import com.twitter.product_mixer.component_library.scorer.common.ManagedModelClient
-import com.twitter.product_mixer.component_library.scorer.common.ModelSelector
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.datarecord.BaseDataRecordFeature
-import com.twitter.product_mixer.core.feature.datarecord.TensorDataRecordCompatible
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.datarecord.DataRecordConverter
-import com.twitter.product_mixer.core.feature.featuremap.datarecord.DataRecordExtractor
-import com.twitter.product_mixer.core.feature.featuremap.datarecord.FeaturesScope
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import inference.GrpcService
-import inference.GrpcService.ModelInferRequest
-import inference.GrpcService.ModelInferResponse
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.stitch.Stitch
-import org.apache.thrift.TDeserializer
-import org.apache.thrift.TSerializer
-import scala.collection.JavaConverters._
+ mport com.google.protobuf.ByteStr ng
+ mport com.tw ter.ml.pred ct on_serv ce.BatchPred ct onRequest
+ mport com.tw ter.ml.pred ct on_serv ce.BatchPred ct onResponse
+ mport com.tw ter.product_m xer.component_l brary.scorer.common.ManagedModelCl ent
+ mport com.tw ter.product_m xer.component_l brary.scorer.common.ModelSelector
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.datarecord.BaseDataRecordFeature
+ mport com.tw ter.product_m xer.core.feature.datarecord.TensorDataRecordCompat ble
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.datarecord.DataRecordConverter
+ mport com.tw ter.product_m xer.core.feature.featuremap.datarecord.DataRecordExtractor
+ mport com.tw ter.product_m xer.core.feature.featuremap.datarecord.FeaturesScope
+ mport com.tw ter.product_m xer.core.funct onal_component.scorer.Scorer
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Scorer dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure. llegalStateFa lure
+ mport  nference.GrpcServ ce
+ mport  nference.GrpcServ ce.Model nferRequest
+ mport  nference.GrpcServ ce.Model nferResponse
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.st ch.St ch
+ mport org.apac .thr ft.TDeser al zer
+ mport org.apac .thr ft.TSer al zer
+ mport scala.collect on.JavaConverters._
 
-private[cortex] class CortexManagedDataRecordScorer[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
+pr vate[cortex] class CortexManagedDataRecordScorer[
+  Query <: P pel neQuery,
+  Cand date <: Un versalNoun[Any],
   QueryFeatures <: BaseDataRecordFeature[Query, _],
-  CandidateFeatures <: BaseDataRecordFeature[Candidate, _],
-  ResultFeatures <: BaseDataRecordFeature[Candidate, _] with TensorDataRecordCompatible[_]
+  Cand dateFeatures <: BaseDataRecordFeature[Cand date, _],
+  ResultFeatures <: BaseDataRecordFeature[Cand date, _] w h TensorDataRecordCompat ble[_]
 ](
-  override val identifier: ScorerIdentifier,
-  modelSignature: String,
+  overr de val  dent f er: Scorer dent f er,
+  modelS gnature: Str ng,
   modelSelector: ModelSelector[Query],
-  modelClient: ManagedModelClient,
+  modelCl ent: ManagedModelCl ent,
   queryFeatures: FeaturesScope[QueryFeatures],
-  candidateFeatures: FeaturesScope[CandidateFeatures],
+  cand dateFeatures: FeaturesScope[Cand dateFeatures],
   resultFeatures: Set[ResultFeatures])
-    extends Scorer[Query, Candidate] {
+    extends Scorer[Query, Cand date] {
 
-  require(resultFeatures.nonEmpty, "Result features cannot be empty")
-  override val features: Set[Feature[_, _]] = resultFeatures.asInstanceOf[Set[Feature[_, _]]]
+  requ re(resultFeatures.nonEmpty, "Result features cannot be empty")
+  overr de val features: Set[Feature[_, _]] = resultFeatures.as nstanceOf[Set[Feature[_, _]]]
 
-  private val queryDataRecordAdapter = new DataRecordConverter(queryFeatures)
-  private val candidatesDataRecordAdapter = new DataRecordConverter(candidateFeatures)
-  private val resultDataRecordExtractor = new DataRecordExtractor(resultFeatures)
+  pr vate val queryDataRecordAdapter = new DataRecordConverter(queryFeatures)
+  pr vate val cand datesDataRecordAdapter = new DataRecordConverter(cand dateFeatures)
+  pr vate val resultDataRecordExtractor = new DataRecordExtractor(resultFeatures)
 
-  private val localTSerializer = new ThreadLocal[TSerializer] {
-    override protected def initialValue: TSerializer = new TSerializer()
+  pr vate val localTSer al zer = new ThreadLocal[TSer al zer] {
+    overr de protected def  n  alValue: TSer al zer = new TSer al zer()
   }
 
-  private val localTDeserializer = new ThreadLocal[TDeserializer] {
-    override protected def initialValue: TDeserializer = new TDeserializer()
+  pr vate val localTDeser al zer = new ThreadLocal[TDeser al zer] {
+    overr de protected def  n  alValue: TDeser al zer = new TDeser al zer()
   }
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    modelClient.score(buildRequest(query, candidates)).map(buildResponse(candidates, _))
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): St ch[Seq[FeatureMap]] = {
+    modelCl ent.score(bu ldRequest(query, cand dates)).map(bu ldResponse(cand dates, _))
   }
 
   /**
-   * Takes candidates to be scored and converts it to a ModelInferRequest that can be passed to the
-   * managed ML service
+   * Takes cand dates to be scored and converts   to a Model nferRequest that can be passed to t 
+   * managed ML serv ce
    */
-  private def buildRequest(
+  pr vate def bu ldRequest(
     query: Query,
-    scorerCandidates: Seq[CandidateWithFeatures[Candidate]]
-  ): ModelInferRequest = {
-    // Convert the feature maps to thrift data records and construct thrift request.
-    val thriftDataRecords = scorerCandidates.map { candidate =>
-      candidatesDataRecordAdapter.toDataRecord(candidate.features)
+    scorerCand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): Model nferRequest = {
+    // Convert t  feature maps to thr ft data records and construct thr ft request.
+    val thr ftDataRecords = scorerCand dates.map { cand date =>
+      cand datesDataRecordAdapter.toDataRecord(cand date.features)
     }
-    val batchRequest = new BatchPredictionRequest(thriftDataRecords.asJava)
+    val batchRequest = new BatchPred ct onRequest(thr ftDataRecords.asJava)
     query.features.foreach { featureMap =>
       batchRequest.setCommonFeatures(queryDataRecordAdapter.toDataRecord(featureMap))
     }
-    val serializedBatchRequest = localTSerializer.get().serialize(batchRequest)
+    val ser al zedBatchRequest = localTSer al zer.get().ser al ze(batchRequest)
 
-    // Build Tensor Request
-    val requestBuilder = ModelInferRequest
-      .newBuilder()
+    // Bu ld Tensor Request
+    val requestBu lder = Model nferRequest
+      .newBu lder()
 
-    modelSelector.apply(query).foreach { modelName =>
-      requestBuilder.setModelName(modelName) // model name in the model config
+    modelSelector.apply(query).foreach { modelNa  =>
+      requestBu lder.setModelNa (modelNa ) // model na   n t  model conf g
     }
 
-    val inputTensorBuilder = ModelInferRequest.InferInputTensor
-      .newBuilder()
-      .setName("request")
-      .setDatatype("UINT8")
-      .addShape(serializedBatchRequest.length)
+    val  nputTensorBu lder = Model nferRequest. nfer nputTensor
+      .newBu lder()
+      .setNa ("request")
+      .setDatatype("U NT8")
+      .addShape(ser al zedBatchRequest.length)
 
-    val inferParameter = GrpcService.InferParameter
-      .newBuilder()
-      .setStringParam(modelSignature) // signature of exported tf function
-      .build()
+    val  nferPara ter = GrpcServ ce. nferPara ter
+      .newBu lder()
+      .setStr ngParam(modelS gnature) // s gnature of exported tf funct on
+      .bu ld()
 
-    requestBuilder
-      .addInputs(inputTensorBuilder)
-      .addRawInputContents(ByteString.copyFrom(serializedBatchRequest))
-      .putParameters("signature_name", inferParameter)
-      .build()
+    requestBu lder
+      .add nputs( nputTensorBu lder)
+      .addRaw nputContents(ByteStr ng.copyFrom(ser al zedBatchRequest))
+      .putPara ters("s gnature_na ",  nferPara ter)
+      .bu ld()
   }
 
-  private def buildResponse(
-    scorerCandidates: Seq[CandidateWithFeatures[Candidate]],
-    response: ModelInferResponse
+  pr vate def bu ldResponse(
+    scorerCand dates: Seq[Cand dateW hFeatures[Cand date]],
+    response: Model nferResponse
   ): Seq[FeatureMap] = {
 
-    val responseByteString = if (response.getRawOutputContentsList.isEmpty()) {
-      throw PipelineFailure(
-        IllegalStateFailure,
-        "Model inference response has empty raw outputContents")
+    val responseByteStr ng =  f (response.getRawOutputContentsL st. sEmpty()) {
+      throw P pel neFa lure(
+         llegalStateFa lure,
+        "Model  nference response has empty raw outputContents")
     } else {
       response.getRawOutputContents(0)
     }
-    val batchPredictionResponse: BatchPredictionResponse = new BatchPredictionResponse()
-    localTDeserializer.get().deserialize(batchPredictionResponse, responseByteString.toByteArray)
+    val batchPred ct onResponse: BatchPred ct onResponse = new BatchPred ct onResponse()
+    localTDeser al zer.get().deser al ze(batchPred ct onResponse, responseByteStr ng.toByteArray)
 
-    // get the prediction values from the batch prediction response
+    // get t  pred ct on values from t  batch pred ct on response
     val resultScoreMaps =
-      batchPredictionResponse.predictions.asScala.map(resultDataRecordExtractor.fromDataRecord)
+      batchPred ct onResponse.pred ct ons.asScala.map(resultDataRecordExtractor.fromDataRecord)
 
-    if (resultScoreMaps.size != scorerCandidates.size) {
-      throw PipelineFailure(IllegalStateFailure, "Result Size mismatched candidates size")
+     f (resultScoreMaps.s ze != scorerCand dates.s ze) {
+      throw P pel neFa lure( llegalStateFa lure, "Result S ze m smatc d cand dates s ze")
     }
 
     resultScoreMaps

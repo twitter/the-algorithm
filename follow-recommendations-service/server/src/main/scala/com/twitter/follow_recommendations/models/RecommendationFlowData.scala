@@ -1,103 +1,103 @@
-package com.twitter.follow_recommendations.models
+package com.tw ter.follow_recom ndat ons.models
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.ClientContextConverter
-import com.twitter.follow_recommendations.common.models.HasUserState
-import com.twitter.follow_recommendations.common.utils.UserSignupUtil
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.RecommendationPipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.util.Time
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.Cl entContextConverter
+ mport com.tw ter.follow_recom ndat ons.common.models.HasUserState
+ mport com.tw ter.follow_recom ndat ons.common.ut ls.UserS gnupUt l
+ mport com.tw ter.follow_recom ndat ons.logg ng.{thr ftscala => offl ne}
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Recom ndat onP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.HasMarshall ng
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.ut l.T  
 
-case class RecommendationFlowData[Target <: HasClientContext](
+case class Recom ndat onFlowData[Target <: HasCl entContext](
   request: Target,
-  recommendationFlowIdentifier: RecommendationPipelineIdentifier,
-  candidateSources: Seq[CandidateSource[Target, CandidateUser]],
-  candidatesFromCandidateSources: Seq[CandidateUser],
-  mergedCandidates: Seq[CandidateUser],
-  filteredCandidates: Seq[CandidateUser],
-  rankedCandidates: Seq[CandidateUser],
-  transformedCandidates: Seq[CandidateUser],
-  truncatedCandidates: Seq[CandidateUser],
-  results: Seq[CandidateUser])
-    extends HasMarshalling {
+  recom ndat onFlow dent f er: Recom ndat onP pel ne dent f er,
+  cand dateS ces: Seq[Cand dateS ce[Target, Cand dateUser]],
+  cand datesFromCand dateS ces: Seq[Cand dateUser],
+   rgedCand dates: Seq[Cand dateUser],
+  f lteredCand dates: Seq[Cand dateUser],
+  rankedCand dates: Seq[Cand dateUser],
+  transfor dCand dates: Seq[Cand dateUser],
+  truncatedCand dates: Seq[Cand dateUser],
+  results: Seq[Cand dateUser])
+    extends HasMarshall ng {
 
-  import RecommendationFlowData._
+   mport Recom ndat onFlowData._
 
-  lazy val toRecommendationFlowLogOfflineThrift: offline.RecommendationFlowLog = {
-    val userMetadata = userToOfflineRecommendationFlowUserMetadata(request)
-    val signals = userToOfflineRecommendationFlowSignals(request)
-    val filteredCandidateSourceCandidates =
-      candidatesToOfflineRecommendationFlowCandidateSourceCandidates(
-        candidateSources,
-        filteredCandidates
+  lazy val toRecom ndat onFlowLogOffl neThr ft: offl ne.Recom ndat onFlowLog = {
+    val user tadata = userToOffl neRecom ndat onFlowUser tadata(request)
+    val s gnals = userToOffl neRecom ndat onFlowS gnals(request)
+    val f lteredCand dateS ceCand dates =
+      cand datesToOffl neRecom ndat onFlowCand dateS ceCand dates(
+        cand dateS ces,
+        f lteredCand dates
       )
-    val rankedCandidateSourceCandidates =
-      candidatesToOfflineRecommendationFlowCandidateSourceCandidates(
-        candidateSources,
-        rankedCandidates
+    val rankedCand dateS ceCand dates =
+      cand datesToOffl neRecom ndat onFlowCand dateS ceCand dates(
+        cand dateS ces,
+        rankedCand dates
       )
-    val truncatedCandidateSourceCandidates =
-      candidatesToOfflineRecommendationFlowCandidateSourceCandidates(
-        candidateSources,
-        truncatedCandidates
+    val truncatedCand dateS ceCand dates =
+      cand datesToOffl neRecom ndat onFlowCand dateS ceCand dates(
+        cand dateS ces,
+        truncatedCand dates
       )
 
-    offline.RecommendationFlowLog(
-      ClientContextConverter.toFRSOfflineClientContextThrift(request.clientContext),
-      userMetadata,
-      signals,
-      Time.now.inMillis,
-      recommendationFlowIdentifier.name,
-      Some(filteredCandidateSourceCandidates),
-      Some(rankedCandidateSourceCandidates),
-      Some(truncatedCandidateSourceCandidates)
+    offl ne.Recom ndat onFlowLog(
+      Cl entContextConverter.toFRSOffl neCl entContextThr ft(request.cl entContext),
+      user tadata,
+      s gnals,
+      T  .now. nM ll s,
+      recom ndat onFlow dent f er.na ,
+      So (f lteredCand dateS ceCand dates),
+      So (rankedCand dateS ceCand dates),
+      So (truncatedCand dateS ceCand dates)
     )
   }
 }
 
-object RecommendationFlowData {
-  def userToOfflineRecommendationFlowUserMetadata[Target <: HasClientContext](
+object Recom ndat onFlowData {
+  def userToOffl neRecom ndat onFlowUser tadata[Target <: HasCl entContext](
     request: Target
-  ): Option[offline.OfflineRecommendationFlowUserMetadata] = {
-    val userSignupAge = UserSignupUtil.userSignupAge(request).map(_.inDays)
+  ): Opt on[offl ne.Offl neRecom ndat onFlowUser tadata] = {
+    val userS gnupAge = UserS gnupUt l.userS gnupAge(request).map(_. nDays)
     val userState = request match {
-      case req: HasUserState => req.userState.map(_.name)
+      case req: HasUserState => req.userState.map(_.na )
       case _ => None
     }
-    Some(offline.OfflineRecommendationFlowUserMetadata(userSignupAge, userState))
+    So (offl ne.Offl neRecom ndat onFlowUser tadata(userS gnupAge, userState))
   }
 
-  def userToOfflineRecommendationFlowSignals[Target <: HasClientContext](
+  def userToOffl neRecom ndat onFlowS gnals[Target <: HasCl entContext](
     request: Target
-  ): Option[offline.OfflineRecommendationFlowSignals] = {
+  ): Opt on[offl ne.Offl neRecom ndat onFlowS gnals] = {
     val countryCode = request.getCountryCode
-    Some(offline.OfflineRecommendationFlowSignals(countryCode))
+    So (offl ne.Offl neRecom ndat onFlowS gnals(countryCode))
   }
 
-  def candidatesToOfflineRecommendationFlowCandidateSourceCandidates[Target <: HasClientContext](
-    candidateSources: Seq[CandidateSource[Target, CandidateUser]],
-    candidates: Seq[CandidateUser],
-  ): Seq[offline.OfflineRecommendationFlowCandidateSourceCandidates] = {
-    val candidatesGroupedByCandidateSources =
-      candidates.groupBy(
-        _.getPrimaryCandidateSource.getOrElse(CandidateSourceIdentifier("NoCandidateSource")))
+  def cand datesToOffl neRecom ndat onFlowCand dateS ceCand dates[Target <: HasCl entContext](
+    cand dateS ces: Seq[Cand dateS ce[Target, Cand dateUser]],
+    cand dates: Seq[Cand dateUser],
+  ): Seq[offl ne.Offl neRecom ndat onFlowCand dateS ceCand dates] = {
+    val cand datesGroupedByCand dateS ces =
+      cand dates.groupBy(
+        _.getPr maryCand dateS ce.getOrElse(Cand dateS ce dent f er("NoCand dateS ce")))
 
-    candidateSources.map(candidateSource => {
-      val candidates =
-        candidatesGroupedByCandidateSources.get(candidateSource.identifier).toSeq.flatten
-      val candidateUserIds = candidates.map(_.id)
-      val candidateUserScores = candidates.map(_.score).exists(_.nonEmpty) match {
-        case true => Some(candidates.map(_.score.getOrElse(-1.0)))
+    cand dateS ces.map(cand dateS ce => {
+      val cand dates =
+        cand datesGroupedByCand dateS ces.get(cand dateS ce. dent f er).toSeq.flatten
+      val cand dateUser ds = cand dates.map(_. d)
+      val cand dateUserScores = cand dates.map(_.score).ex sts(_.nonEmpty) match {
+        case true => So (cand dates.map(_.score.getOrElse(-1.0)))
         case false => None
       }
-      offline.OfflineRecommendationFlowCandidateSourceCandidates(
-        candidateSource.identifier.name,
-        candidateUserIds,
-        candidateUserScores
+      offl ne.Offl neRecom ndat onFlowCand dateS ceCand dates(
+        cand dateS ce. dent f er.na ,
+        cand dateUser ds,
+        cand dateUserScores
       )
     })
   }

@@ -1,84 +1,84 @@
-package com.twitter.home_mixer.candidate_pipeline
+package com.tw ter.ho _m xer.cand date_p pel ne
 
-import com.twitter.home_mixer.functional_component.candidate_source.StaleTweetsCacheCandidateSource
-import com.twitter.home_mixer.functional_component.decorator.urt.builder.HomeFeedbackActionInfoBuilder
-import com.twitter.home_mixer.functional_component.feature_hydrator.NamesFeatureHydrator
-import com.twitter.home_mixer.functional_component.query_transformer.EditedTweetsCandidatePipelineQueryTransformer
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.builder.contextual_ref.ContextualTweetRefBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.tweet.TweetCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.metadata.EmptyClientEventInfoBuilder
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.TimelineFocalTweetSafetyLevel
-import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.TweetHydrationContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.DependentCandidatePipelineConfig
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.funct onal_component.cand date_s ce.StaleT etsCac Cand dateS ce
+ mport com.tw ter.ho _m xer.funct onal_component.decorator.urt.bu lder.Ho FeedbackAct on nfoBu lder
+ mport com.tw ter.ho _m xer.funct onal_component.feature_hydrator.Na sFeatureHydrator
+ mport com.tw ter.ho _m xer.funct onal_component.query_transfor r.Ed edT etsCand dateP pel neQueryTransfor r
+ mport com.tw ter.ho _m xer.serv ce.Ho M xerAlertConf g
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.Urt emCand dateDecorator
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.contextual_ref.ContextualT etRefBu lder
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.t et.T etCand dateUrt emBu lder
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. tadata.EmptyCl entEvent nfoBu lder
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.BaseCand dateS ce
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Cand dateDecorator
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BaseCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neResultsTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.rtf.safety_level.T  l neFocalT etSafetyLevel
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.contextual_ref.T etHydrat onContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t et.T et em
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.DependentCand dateP pel neConf g
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * Candidate Pipeline Config that fetches edited tweets from the Stale Tweets Cache
+ * Cand date P pel ne Conf g that fetc s ed ed t ets from t  Stale T ets Cac 
  */
-@Singleton
-case class EditedTweetsCandidatePipelineConfig @Inject() (
-  staleTweetsCacheCandidateSource: StaleTweetsCacheCandidateSource,
-  namesFeatureHydrator: NamesFeatureHydrator,
-  homeFeedbackActionInfoBuilder: HomeFeedbackActionInfoBuilder)
-    extends DependentCandidatePipelineConfig[
-      PipelineQuery,
+@S ngleton
+case class Ed edT etsCand dateP pel neConf g @ nject() (
+  staleT etsCac Cand dateS ce: StaleT etsCac Cand dateS ce,
+  na sFeatureHydrator: Na sFeatureHydrator,
+  ho FeedbackAct on nfoBu lder: Ho FeedbackAct on nfoBu lder)
+    extends DependentCand dateP pel neConf g[
+      P pel neQuery,
       Seq[Long],
       Long,
-      TweetCandidate
+      T etCand date
     ] {
 
-  override val identifier: CandidatePipelineIdentifier = CandidatePipelineIdentifier("EditedTweets")
+  overr de val  dent f er: Cand dateP pel ne dent f er = Cand dateP pel ne dent f er("Ed edT ets")
 
-  override val candidateSource: BaseCandidateSource[Seq[Long], Long] =
-    staleTweetsCacheCandidateSource
+  overr de val cand dateS ce: BaseCand dateS ce[Seq[Long], Long] =
+    staleT etsCac Cand dateS ce
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    PipelineQuery,
+  overr de val queryTransfor r: Cand dateP pel neQueryTransfor r[
+    P pel neQuery,
     Seq[Long]
-  ] = EditedTweetsCandidatePipelineQueryTransformer
+  ] = Ed edT etsCand dateP pel neQueryTransfor r
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
+  overr de val resultTransfor r: Cand dateP pel neResultsTransfor r[
     Long,
-    TweetCandidate
-  ] = { candidate => TweetCandidate(id = candidate) }
+    T etCand date
+  ] = { cand date => T etCand date( d = cand date) }
 
-  override val postFilterFeatureHydration: Seq[
-    BaseCandidateFeatureHydrator[PipelineQuery, TweetCandidate, _]
-  ] = Seq(namesFeatureHydrator)
+  overr de val postF lterFeatureHydrat on: Seq[
+    BaseCand dateFeatureHydrator[P pel neQuery, T etCand date, _]
+  ] = Seq(na sFeatureHydrator)
 
-  override val decorator: Option[CandidateDecorator[PipelineQuery, TweetCandidate]] = {
-    val tweetItemBuilder = TweetCandidateUrtItemBuilder[PipelineQuery, TweetCandidate](
-      clientEventInfoBuilder = EmptyClientEventInfoBuilder,
-      entryIdToReplaceBuilder = Some((_, candidate, _) =>
-        Some(s"${TweetItem.TweetEntryNamespace}-${candidate.id.toString}")),
-      contextualTweetRefBuilder = Some(
-        ContextualTweetRefBuilder(
-          TweetHydrationContext(
-            // Apply safety level that includes canonical VF treatments that apply regardless of context.
-            safetyLevelOverride = Some(TimelineFocalTweetSafetyLevel),
-            outerTweetContext = None
+  overr de val decorator: Opt on[Cand dateDecorator[P pel neQuery, T etCand date]] = {
+    val t et emBu lder = T etCand dateUrt emBu lder[P pel neQuery, T etCand date](
+      cl entEvent nfoBu lder = EmptyCl entEvent nfoBu lder,
+      entry dToReplaceBu lder = So ((_, cand date, _) =>
+        So (s"${T et em.T etEntryNa space}-${cand date. d.toStr ng}")),
+      contextualT etRefBu lder = So (
+        ContextualT etRefBu lder(
+          T etHydrat onContext(
+            // Apply safety level that  ncludes canon cal VF treat nts that apply regardless of context.
+            safetyLevelOverr de = So (T  l neFocalT etSafetyLevel),
+            outerT etContext = None
           )
         )
       ),
-      feedbackActionInfoBuilder = Some(homeFeedbackActionInfoBuilder)
+      feedbackAct on nfoBu lder = So (ho FeedbackAct on nfoBu lder)
     )
 
-    Some(UrtItemCandidateDecorator(tweetItemBuilder))
+    So (Urt emCand dateDecorator(t et emBu lder))
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.5, 50, 60, 60)
+  overr de val alerts = Seq(
+    Ho M xerAlertConf g.Bus nessH s.defaultSuccessRateAlert(99.5, 50, 60, 60)
   )
 }

@@ -1,128 +1,128 @@
-package com.twitter.tweetypie.util
+package com.tw ter.t etyp e.ut l
 
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.t etyp e.thr ftscala._
 
-object TweetTransformer {
-  def toStatus(tweet: Tweet): Status = {
-    assert(tweet.coreData.nonEmpty, "tweet core data is missing")
-    val coreData = tweet.coreData.get
+object T etTransfor r {
+  def toStatus(t et: T et): Status = {
+    assert(t et.coreData.nonEmpty, "t et core data  s m ss ng")
+    val coreData = t et.coreData.get
 
-    val toGeo: Option[Geo] =
-      coreData.coordinates match {
-        case Some(coords) =>
-          Some(
+    val toGeo: Opt on[Geo] =
+      coreData.coord nates match {
+        case So (coords) =>
+          So (
             Geo(
-              latitude = coords.latitude,
-              longitude = coords.longitude,
-              geoPrecision = coords.geoPrecision,
-              entityId = if (coords.display) 2 else 0,
-              name = coreData.placeId,
-              place = tweet.place,
-              placeId = coreData.placeId,
-              coordinates = Some(coords)
+              lat ude = coords.lat ude,
+              long ude = coords.long ude,
+              geoPrec s on = coords.geoPrec s on,
+              ent y d =  f (coords.d splay) 2 else 0,
+              na  = coreData.place d,
+              place = t et.place,
+              place d = coreData.place d,
+              coord nates = So (coords)
             )
           )
         case _ =>
-          coreData.placeId match {
+          coreData.place d match {
             case None => None
-            case Some(_) =>
-              Some(Geo(name = coreData.placeId, place = tweet.place, placeId = coreData.placeId))
+            case So (_) =>
+              So (Geo(na  = coreData.place d, place = t et.place, place d = coreData.place d))
           }
       }
 
     Status(
-      id = tweet.id,
-      userId = coreData.userId,
+       d = t et. d,
+      user d = coreData.user d,
       text = coreData.text,
-      createdVia = coreData.createdVia,
+      createdV a = coreData.createdV a,
       createdAt = coreData.createdAtSecs,
-      urls = tweet.urls.getOrElse(Seq.empty),
-      mentions = tweet.mentions.getOrElse(Seq.empty),
-      hashtags = tweet.hashtags.getOrElse(Seq.empty),
-      cashtags = tweet.cashtags.getOrElse(Seq.empty),
-      media = tweet.media.getOrElse(Seq.empty),
-      reply = tweet.coreData.flatMap(_.reply),
-      directedAtUser = tweet.coreData.flatMap(_.directedAtUser),
-      share = tweet.coreData.flatMap(_.share),
-      quotedTweet = tweet.quotedTweet,
+      urls = t et.urls.getOrElse(Seq.empty),
+       nt ons = t et. nt ons.getOrElse(Seq.empty),
+      hashtags = t et.hashtags.getOrElse(Seq.empty),
+      cashtags = t et.cashtags.getOrElse(Seq.empty),
+       d a = t et. d a.getOrElse(Seq.empty),
+      reply = t et.coreData.flatMap(_.reply),
+      d rectedAtUser = t et.coreData.flatMap(_.d rectedAtUser),
+      share = t et.coreData.flatMap(_.share),
+      quotedT et = t et.quotedT et,
       geo = toGeo,
       hasTakedown = coreData.hasTakedown,
       nsfwUser = coreData.nsfwUser,
-      nsfwAdmin = coreData.nsfwAdmin,
-      counts = tweet.counts,
-      deviceSource = tweet.deviceSource,
+      nsfwAdm n = coreData.nsfwAdm n,
+      counts = t et.counts,
+      dev ceS ce = t et.dev ceS ce,
       narrowcast = coreData.narrowcast,
-      takedownCountryCodes = tweet.takedownCountryCodes,
-      perspective = tweet.perspective,
-      cards = tweet.cards,
-      card2 = tweet.card2,
+      takedownCountryCodes = t et.takedownCountryCodes,
+      perspect ve = t et.perspect ve,
+      cards = t et.cards,
+      card2 = t et.card2,
       nullcast = coreData.nullcast,
-      conversationId = coreData.conversationId,
-      language = tweet.language,
-      trackingId = coreData.trackingId,
-      spamLabels = tweet.spamLabels,
-      hasMedia = coreData.hasMedia,
-      contributor = tweet.contributor,
-      mediaTags = tweet.mediaTags
+      conversat on d = coreData.conversat on d,
+      language = t et.language,
+      track ng d = coreData.track ng d,
+      spamLabels = t et.spamLabels,
+      has d a = coreData.has d a,
+      contr butor = t et.contr butor,
+       d aTags = t et. d aTags
     )
   }
 
-  def toTweet(status: Status): Tweet = {
+  def toT et(status: Status): T et = {
     val coreData =
-      TweetCoreData(
-        userId = status.userId,
+      T etCoreData(
+        user d = status.user d,
         text = status.text,
-        createdVia = status.createdVia,
+        createdV a = status.createdV a,
         createdAtSecs = status.createdAt,
         reply = status.reply,
-        directedAtUser = status.directedAtUser,
+        d rectedAtUser = status.d rectedAtUser,
         share = status.share,
         hasTakedown = status.hasTakedown,
         nsfwUser = status.nsfwUser,
-        nsfwAdmin = status.nsfwAdmin,
+        nsfwAdm n = status.nsfwAdm n,
         nullcast = status.nullcast,
         narrowcast = status.narrowcast,
-        trackingId = status.trackingId,
-        conversationId = status.conversationId,
-        hasMedia = status.hasMedia,
-        coordinates = toCoords(status),
-        placeId = status.geo.flatMap(_.placeId)
+        track ng d = status.track ng d,
+        conversat on d = status.conversat on d,
+        has d a = status.has d a,
+        coord nates = toCoords(status),
+        place d = status.geo.flatMap(_.place d)
       )
 
-    Tweet(
-      id = status.id,
-      coreData = Some(coreData),
-      urls = Some(status.urls),
-      mentions = Some(status.mentions),
-      hashtags = Some(status.hashtags),
-      cashtags = Some(status.cashtags),
-      media = Some(status.media),
+    T et(
+       d = status. d,
+      coreData = So (coreData),
+      urls = So (status.urls),
+       nt ons = So (status. nt ons),
+      hashtags = So (status.hashtags),
+      cashtags = So (status.cashtags),
+       d a = So (status. d a),
       place = status.geo.flatMap(_.place),
-      quotedTweet = status.quotedTweet,
+      quotedT et = status.quotedT et,
       takedownCountryCodes = status.takedownCountryCodes,
       counts = status.counts,
-      deviceSource = status.deviceSource,
-      perspective = status.perspective,
+      dev ceS ce = status.dev ceS ce,
+      perspect ve = status.perspect ve,
       cards = status.cards,
       card2 = status.card2,
       language = status.language,
       spamLabels = status.spamLabels,
-      contributor = status.contributor,
-      mediaTags = status.mediaTags
+      contr butor = status.contr butor,
+       d aTags = status. d aTags
     )
   }
 
-  private def toCoords(status: Status): Option[GeoCoordinates] =
+  pr vate def toCoords(status: Status): Opt on[GeoCoord nates] =
     status.geo.map { geo =>
-      if (geo.coordinates.nonEmpty) geo.coordinates.get
-      // Status from monorail have the coordinates as the top level fields in Geo,
-      // while the nested struct is empty. So we need to copy from the flat fields.
+       f (geo.coord nates.nonEmpty) geo.coord nates.get
+      // Status from monora l have t  coord nates as t  top level f elds  n Geo,
+      // wh le t  nested struct  s empty. So   need to copy from t  flat f elds.
       else
-        GeoCoordinates(
-          latitude = geo.latitude,
-          longitude = geo.longitude,
-          geoPrecision = geo.geoPrecision,
-          display = geo.entityId == 2
+        GeoCoord nates(
+          lat ude = geo.lat ude,
+          long ude = geo.long ude,
+          geoPrec s on = geo.geoPrec s on,
+          d splay = geo.ent y d == 2
         )
     }
 }

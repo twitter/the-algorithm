@@ -1,68 +1,68 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms
 
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.common.candidate_sources.sims.Follow2vecNearestNeighborsStore.NearestNeighborParamsType
-import com.twitter.hermit.candidate.thriftscala.Candidate
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.Fetch
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.recommendations.follow2vec.LinearRegressionFollow2vecNearestNeighborsClientColumn
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import javax.inject.Inject
+ mport com.google. nject.S ngleton
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms.Follow2vecNearestNe ghborsStore.NearestNe ghborParamsType
+ mport com.tw ter. rm .cand date.thr ftscala.Cand date
+ mport com.tw ter. rm .cand date.thr ftscala.Cand dates
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.catalog.Fetch
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.strato.generated.cl ent.recom ndat ons.follow2vec.L nearRegress onFollow2vecNearestNe ghborsCl entColumn
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport javax. nject. nject
 
-@Singleton
-class LinearRegressionFollow2vecNearestNeighborsStore @Inject() (
-  linearRegressionFollow2vecNearestNeighborsClientColumn: LinearRegressionFollow2vecNearestNeighborsClientColumn)
-    extends StratoBasedSimsCandidateSource[NearestNeighborParamsType](
-      Follow2vecNearestNeighborsStore.convertFetcher(
-        linearRegressionFollow2vecNearestNeighborsClientColumn.fetcher),
-      view = Follow2vecNearestNeighborsStore.defaultSearchParams,
-      identifier = Follow2vecNearestNeighborsStore.IdentifierF2vLinearRegression
+@S ngleton
+class L nearRegress onFollow2vecNearestNe ghborsStore @ nject() (
+  l nearRegress onFollow2vecNearestNe ghborsCl entColumn: L nearRegress onFollow2vecNearestNe ghborsCl entColumn)
+    extends StratoBasedS msCand dateS ce[NearestNe ghborParamsType](
+      Follow2vecNearestNe ghborsStore.convertFetc r(
+        l nearRegress onFollow2vecNearestNe ghborsCl entColumn.fetc r),
+      v ew = Follow2vecNearestNe ghborsStore.defaultSearchParams,
+       dent f er = Follow2vecNearestNe ghborsStore. dent f erF2vL nearRegress on
     )
 
-object Follow2vecNearestNeighborsStore {
-  // (userid, feature store version for data)
-  type NearestNeighborKeyType = (Long, Long)
-  // (neighbors to be returned, ef value: accuracy / latency tradeoff, distance for filtering)
-  type NearestNeighborParamsType = (Option[Int], Option[Int], Option[Double])
-  // (seq(found neighbor id, score), distance for filtering)
-  type NearestNeighborValueType = (Seq[(Long, Option[Double])], Option[Double])
+object Follow2vecNearestNe ghborsStore {
+  // (user d, feature store vers on for data)
+  type NearestNe ghborKeyType = (Long, Long)
+  // (ne ghbors to be returned, ef value: accuracy / latency tradeoff, d stance for f lter ng)
+  type NearestNe ghborParamsType = (Opt on[ nt], Opt on[ nt], Opt on[Double])
+  // (seq(found ne ghbor  d, score), d stance for f lter ng)
+  type NearestNe ghborValueType = (Seq[(Long, Opt on[Double])], Opt on[Double])
 
-  val IdentifierF2vLinearRegression: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.LinearRegressionFollow2VecNearestNeighbors.toString)
+  val  dent f erF2vL nearRegress on: Cand dateS ce dent f er = Cand dateS ce dent f er(
+    Algor hm.L nearRegress onFollow2VecNearestNe ghbors.toStr ng)
 
-  val defaultFeatureStoreVersion: Long = 20210708
-  val defaultSearchParams: NearestNeighborParamsType = (None, None, None)
+  val defaultFeatureStoreVers on: Long = 20210708
+  val defaultSearchParams: NearestNe ghborParamsType = (None, None, None)
 
-  def convertFetcher(
-    fetcher: Fetcher[NearestNeighborKeyType, NearestNeighborParamsType, NearestNeighborValueType]
-  ): Fetcher[Long, NearestNeighborParamsType, Candidates] = {
-    (key: Long, view: NearestNeighborParamsType) =>
+  def convertFetc r(
+    fetc r: Fetc r[NearestNe ghborKeyType, NearestNe ghborParamsType, NearestNe ghborValueType]
+  ): Fetc r[Long, NearestNe ghborParamsType, Cand dates] = {
+    (key: Long, v ew: NearestNe ghborParamsType) =>
       {
-        def toCandidates(
-          results: Option[NearestNeighborValueType]
-        ): Option[Candidates] = {
+        def toCand dates(
+          results: Opt on[NearestNe ghborValueType]
+        ): Opt on[Cand dates] = {
           results.flatMap { r =>
-            Some(
-              Candidates(
+            So (
+              Cand dates(
                 key,
-                r._1.map { neighbor =>
-                  Candidate(neighbor._1, neighbor._2.getOrElse(0))
+                r._1.map { ne ghbor =>
+                  Cand date(ne ghbor._1, ne ghbor._2.getOrElse(0))
                 }
               )
             )
           }
         }
 
-        val results: Stitch[Fetch.Result[NearestNeighborValueType]] =
-          fetcher.fetch(key = (key, defaultFeatureStoreVersion), view = view)
+        val results: St ch[Fetch.Result[NearestNe ghborValueType]] =
+          fetc r.fetch(key = (key, defaultFeatureStoreVers on), v ew = v ew)
         results.transform {
-          case Return(r) => Stitch.value(Fetch.Result(toCandidates(r.v)))
-          case Throw(e) => Stitch.exception(e)
+          case Return(r) => St ch.value(Fetch.Result(toCand dates(r.v)))
+          case Throw(e) => St ch.except on(e)
         }
       }
   }

@@ -1,21 +1,21 @@
-create_thrift_libraries(
-    base_name = "thrift",
-    sources = ["*.thrift"],
+create_thr ft_l brar es(
+    base_na  = "thr ft",
+    s ces = ["*.thr ft"],
     platform = "java8",
     tags = [
-        "bazel-compatible",
+        "bazel-compat ble",
     ],
     dependency_roots = [
-        "content-recommender/thrift/src/main/thrift",
-        "content-recommender/thrift/src/main/thrift:content-recommender-common",
-        "interests-service/thrift/src/main/thrift",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift",
+        "content-recom nder/thr ft/src/ma n/thr ft",
+        "content-recom nder/thr ft/src/ma n/thr ft:content-recom nder-common",
+        " nterests-serv ce/thr ft/src/ma n/thr ft",
+        "src/thr ft/com/tw ter/s mclusters_v2:s mclusters_v2-thr ft",
     ],
     generate_languages = [
         "java",
         "scala",
         "strato",
     ],
-    provides_java_name = "tsp-thrift-java",
-    provides_scala_name = "tsp-thrift-scala",
+    prov des_java_na  = "tsp-thr ft-java",
+    prov des_scala_na  = "tsp-thr ft-scala",
 )

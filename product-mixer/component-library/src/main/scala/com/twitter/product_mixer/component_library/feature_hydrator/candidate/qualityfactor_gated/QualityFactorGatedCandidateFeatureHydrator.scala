@@ -1,59 +1,59 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.candidate.qualityfactor_gated
+package com.tw ter.product_m xer.component_l brary.feature_hydrator.cand date.qual yfactor_gated
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.Cand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cond  onally
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.qual y_factor.HasQual yFactorStatus
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .Param
 
-object QualityFactorGatedCandidateFeatureHydrator {
-  val IdentifierPrefix = "QfGated"
+object Qual yFactorGatedCand dateFeatureHydrator {
+  val  dent f erPref x = "QfGated"
 }
 
 /**
- * A [[CandidateFeatureHydrator]] with [[Conditionally]] based on a qualityFactor threshold.
- * @param pipelineIdentifier identifier of the pipeline that associated with observed quality factor
- * @param qualityFactorInclusiveThreshold the inclusive threshold of quality factor that value below it results in
- *                                        the underlying hydrator being turned off
- * @param candidateFeatureHydrator the underlying [[CandidateFeatureHydrator]] to run when quality factor value
- *                                 is above the given inclusive threshold
- * @tparam Query The domain model for the query or request
- * @tparam Result The type of the candidates
+ * A [[Cand dateFeatureHydrator]] w h [[Cond  onally]] based on a qual yFactor threshold.
+ * @param p pel ne dent f er  dent f er of t  p pel ne that assoc ated w h observed qual y factor
+ * @param qual yFactor nclus veThreshold t   nclus ve threshold of qual y factor that value below   results  n
+ *                                        t  underly ng hydrator be ng turned off
+ * @param cand dateFeatureHydrator t  underly ng [[Cand dateFeatureHydrator]] to run w n qual y factor value
+ *                                  s above t  g ven  nclus ve threshold
+ * @tparam Query T  doma n model for t  query or request
+ * @tparam Result T  type of t  cand dates
  */
-case class QualityFactorGatedCandidateFeatureHydrator[
-  -Query <: PipelineQuery with HasQualityFactorStatus,
-  Result <: UniversalNoun[Any]
+case class Qual yFactorGatedCand dateFeatureHydrator[
+  -Query <: P pel neQuery w h HasQual yFactorStatus,
+  Result <: Un versalNoun[Any]
 ](
-  pipelineIdentifier: ComponentIdentifier,
-  qualityFactorInclusiveThreshold: Param[Double],
-  candidateFeatureHydrator: CandidateFeatureHydrator[Query, Result])
-    extends CandidateFeatureHydrator[Query, Result]
-    with Conditionally[Query] {
-  import QualityFactorGatedCandidateFeatureHydrator._
+  p pel ne dent f er: Component dent f er,
+  qual yFactor nclus veThreshold: Param[Double],
+  cand dateFeatureHydrator: Cand dateFeatureHydrator[Query, Result])
+    extends Cand dateFeatureHydrator[Query, Result]
+    w h Cond  onally[Query] {
+   mport Qual yFactorGatedCand dateFeatureHydrator._
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    IdentifierPrefix + candidateFeatureHydrator.identifier.name)
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er(
+     dent f erPref x + cand dateFeatureHydrator. dent f er.na )
 
-  override val alerts: Seq[Alert] = candidateFeatureHydrator.alerts
+  overr de val alerts: Seq[Alert] = cand dateFeatureHydrator.alerts
 
-  override val features: Set[Feature[_, _]] = candidateFeatureHydrator.features
+  overr de val features: Set[Feature[_, _]] = cand dateFeatureHydrator.features
 
-  override def onlyIf(query: Query): Boolean = Conditionally.and(
+  overr de def only f(query: Query): Boolean = Cond  onally.and(
     query,
-    candidateFeatureHydrator,
-    query.getQualityFactorCurrentValue(pipelineIdentifier) >= query.params(
-      qualityFactorInclusiveThreshold))
+    cand dateFeatureHydrator,
+    query.getQual yFactorCurrentValue(p pel ne dent f er) >= query.params(
+      qual yFactor nclus veThreshold))
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidate: Result,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = candidateFeatureHydrator.apply(query, candidate, existingFeatures)
+    cand date: Result,
+    ex st ngFeatures: FeatureMap
+  ): St ch[FeatureMap] = cand dateFeatureHydrator.apply(query, cand date, ex st ngFeatures)
 }

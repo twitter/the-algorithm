@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.gener c_summary
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEvent nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Url
 
-case class GenericSummaryAction(
+case class Gener cSummaryAct on(
   url: Url,
-  clientEventInfo: Option[ClientEventInfo])
+  cl entEvent nfo: Opt on[Cl entEvent nfo])

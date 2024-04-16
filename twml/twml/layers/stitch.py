@@ -1,54 +1,54 @@
-# pylint: disable=useless-super-delegation
+# pyl nt: d sable=useless-super-delegat on
 """
-Implementing Stitch Layer
+ mple nt ng St ch Layer
 """
 
 
-from .layer import Layer
+from .layer  mport Layer
 
-import tensorflow.compat.v1 as tf
+ mport tensorflow.compat.v1 as tf
 
 
-class Stitch(Layer):
+class St ch(Layer):
   """
-  This layer is responsible for stitching a partioned layer together.
+  T  layer  s respons ble for st ch ng a part oned layer toget r.
 
   Output:
-    A layer that performs stitching
+    A layer that performs st ch ng
   """
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  def compute_output_shape(self,  nput_shape):
+    """Computes t  output shape of t  layer g ven t   nput shape.
 
     Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+       nput_shape: A (poss bly nested tuple of) `TensorShape`.    need not
+        be fully def ned (e.g. t  batch s ze may be unknown).
 
-    Raises NotImplementedError.
+    Ra ses Not mple ntedError.
 
     """
-    raise NotImplementedError
+    ra se Not mple ntedError
 
-  def call(self, partioned_val, partioned_keys,
-           partioned_indices, **kwargs):  # pylint: disable=unused-argument, arguments-differ
+  def call(self, part oned_val, part oned_keys,
+           part oned_ nd ces, **kwargs):  # pyl nt: d sable=unused-argu nt, argu nts-d ffer
     """
-    This layer is responsible for stitching a partioned layer together.
+    T  layer  s respons ble for st ch ng a part oned layer toget r.
 
-    Input:
-      partioned_val:
-        a list of partioned Tensors which represent the vals of the hashmap
-      partioned_keys:
-        a list of partioned Tensors which represent the keys of the hashmap
-      partioned_indices:
-        a list of partioned Tensors which represent the indices of the hashmap
+     nput:
+      part oned_val:
+        a l st of part oned Tensors wh ch represent t  vals of t  hashmap
+      part oned_keys:
+        a l st of part oned Tensors wh ch represent t  keys of t  hashmap
+      part oned_ nd ces:
+        a l st of part oned Tensors wh ch represent t   nd ces of t  hashmap
     Output:
-      List which contains: [output_vals, output_keys]
+      L st wh ch conta ns: [output_vals, output_keys]
         output_vals:
-          Values of the HashMap (float)
+          Values of t  HashMap (float)
         output_keys:
           Keys of HashMap (float)
     """
-    indices = [tf.to_int32(index) for index in partioned_indices]
-    concat_keys = tf.dynamic_stitch(indices, partioned_keys)
-    concat_vals = tf.dynamic_stitch(indices, partioned_val)
+     nd ces = [tf.to_ nt32( ndex) for  ndex  n part oned_ nd ces]
+    concat_keys = tf.dynam c_st ch( nd ces, part oned_keys)
+    concat_vals = tf.dynam c_st ch( nd ces, part oned_val)
     return [concat_vals, concat_keys]

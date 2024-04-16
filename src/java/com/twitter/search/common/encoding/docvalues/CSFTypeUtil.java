@@ -1,14 +1,14 @@
-package com.twitter.search.common.encoding.docvalues;
+package com.tw ter.search.common.encod ng.docvalues;
 
-public final class CSFTypeUtil {
-  private CSFTypeUtil() {
+publ c f nal class CSFTypeUt l {
+  pr vate CSFTypeUt l() {
   }
 
   /**
-   * Convert a long into a byte array, stored into dest.
+   * Convert a long  nto a byte array, stored  nto dest.
    */
-  public static void convertToBytes(byte[] dest, int valueIndex, int value) {
-    int offset = valueIndex * Integer.BYTES;
+  publ c stat c vo d convertToBytes(byte[] dest,  nt value ndex,  nt value) {
+     nt offset = value ndex *  nteger.BYTES;
     dest[offset] = (byte) (value >>> 24);
     dest[offset + 1] = (byte) (value >>> 16);
     dest[offset + 2] = (byte) (value >>> 8);
@@ -16,16 +16,16 @@ public final class CSFTypeUtil {
   }
 
   /**
-   * Convert bytes into a long value. Inverse function of convertToBytes.
+   * Convert bytes  nto a long value.  nverse funct on of convertToBytes.
    */
-  public static int convertFromBytes(byte[] data, int startOffset, int valueIndex) {
-    // This should rarely happen, eg. when we get a corrupt ThriftIndexingEvent, we insert a new
-    // Document which is blank. Such a document results in a length 0 BytesRef.
-    if (data.length == 0) {
+  publ c stat c  nt convertFromBytes(byte[] data,  nt startOffset,  nt value ndex) {
+    // T  should rarely happen, eg. w n   get a corrupt Thr ft ndex ngEvent,    nsert a new
+    // Docu nt wh ch  s blank. Such a docu nt results  n a length 0 BytesRef.
+     f (data.length == 0) {
       return 0;
     }
 
-    int offset = startOffset + valueIndex * Integer.BYTES;
+     nt offset = startOffset + value ndex *  nteger.BYTES;
     return ((data[offset] & 0xFF) << 24)
         | ((data[offset + 1] & 0xFF) << 16)
         | ((data[offset + 2] & 0xFF) << 8)

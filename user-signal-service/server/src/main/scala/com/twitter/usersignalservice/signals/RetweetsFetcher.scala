@@ -1,74 +1,74 @@
-package com.twitter.usersignalservice.signals
+package com.tw ter.users gnalserv ce.s gnals
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.strato.client.Client
-import com.twitter.strato.data.Conv
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.twistly.common.TwistlyProfile
-import com.twitter.twistly.thriftscala.EngagementMetadata.RetweetMetadata
-import com.twitter.twistly.thriftscala.RecentEngagedTweet
-import com.twitter.twistly.thriftscala.UserRecentEngagedTweets
-import com.twitter.usersignalservice.base.Query
-import com.twitter.usersignalservice.base.StratoSignalFetcher
-import com.twitter.usersignalservice.thriftscala.Signal
-import com.twitter.util.Future
-import com.twitter.util.Timer
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.strato.cl ent.Cl ent
+ mport com.tw ter.strato.data.Conv
+ mport com.tw ter.strato.thr ft.ScroogeConv
+ mport com.tw ter.tw stly.common.Tw stlyProf le
+ mport com.tw ter.tw stly.thr ftscala.Engage nt tadata.Ret et tadata
+ mport com.tw ter.tw stly.thr ftscala.RecentEngagedT et
+ mport com.tw ter.tw stly.thr ftscala.UserRecentEngagedT ets
+ mport com.tw ter.users gnalserv ce.base.Query
+ mport com.tw ter.users gnalserv ce.base.StratoS gnalFetc r
+ mport com.tw ter.users gnalserv ce.thr ftscala.S gnal
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  r
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-case class RetweetsFetcher @Inject() (
-  stratoClient: Client,
-  timer: Timer,
-  stats: StatsReceiver)
-    extends StratoSignalFetcher[(UserId, Long), Unit, UserRecentEngagedTweets] {
-  import RetweetsFetcher._
-  override type RawSignalType = RecentEngagedTweet
-  override val name: String = this.getClass.getCanonicalName
-  override val statsReceiver: StatsReceiver = stats.scope(name)
+@S ngleton
+case class Ret etsFetc r @ nject() (
+  stratoCl ent: Cl ent,
+  t  r: T  r,
+  stats: StatsRece ver)
+    extends StratoS gnalFetc r[(User d, Long), Un , UserRecentEngagedT ets] {
+   mport Ret etsFetc r._
+  overr de type RawS gnalType = RecentEngagedT et
+  overr de val na : Str ng = t .getClass.getCanon calNa 
+  overr de val statsRece ver: StatsRece ver = stats.scope(na )
 
-  override val stratoColumnPath: String =
-    TwistlyProfile.TwistlyProdProfile.userRecentEngagedStorePath
-  override val stratoView: Unit = None
+  overr de val stratoColumnPath: Str ng =
+    Tw stlyProf le.Tw stlyProdProf le.userRecentEngagedStorePath
+  overr de val stratoV ew: Un  = None
 
-  override protected val keyConv: Conv[(UserId, Long)] = Conv.ofType
-  override protected val viewConv: Conv[Unit] = Conv.ofType
-  override protected val valueConv: Conv[UserRecentEngagedTweets] =
-    ScroogeConv.fromStruct[UserRecentEngagedTweets]
+  overr de protected val keyConv: Conv[(User d, Long)] = Conv.ofType
+  overr de protected val v ewConv: Conv[Un ] = Conv.ofType
+  overr de protected val valueConv: Conv[UserRecentEngagedT ets] =
+    ScroogeConv.fromStruct[UserRecentEngagedT ets]
 
-  override protected def toStratoKey(userId: UserId): (UserId, Long) = (userId, DefaultVersion)
+  overr de protected def toStratoKey(user d: User d): (User d, Long) = (user d, DefaultVers on)
 
-  override protected def toRawSignals(
-    userRecentEngagedTweets: UserRecentEngagedTweets
-  ): Seq[RawSignalType] =
-    userRecentEngagedTweets.recentEngagedTweets
+  overr de protected def toRawS gnals(
+    userRecentEngagedT ets: UserRecentEngagedT ets
+  ): Seq[RawS gnalType] =
+    userRecentEngagedT ets.recentEngagedT ets
 
-  override def process(
+  overr de def process(
     query: Query,
-    rawSignals: Future[Option[Seq[RawSignalType]]]
-  ): Future[Option[Seq[Signal]]] = {
-    rawSignals.map {
-      _.map { signals =>
-        val lookBackWindowFilteredSignals =
-          SignalFilter.lookBackWindow90DayFilter(signals, query.signalType)
-        lookBackWindowFilteredSignals
-          .filter { recentEngagedTweet =>
-            recentEngagedTweet.features.statusCounts
-              .flatMap(_.favoriteCount).exists(_ >= MinFavCount)
+    rawS gnals: Future[Opt on[Seq[RawS gnalType]]]
+  ): Future[Opt on[Seq[S gnal]]] = {
+    rawS gnals.map {
+      _.map { s gnals =>
+        val lookBackW ndowF lteredS gnals =
+          S gnalF lter.lookBackW ndow90DayF lter(s gnals, query.s gnalType)
+        lookBackW ndowF lteredS gnals
+          .f lter { recentEngagedT et =>
+            recentEngagedT et.features.statusCounts
+              .flatMap(_.favor eCount).ex sts(_ >= M nFavCount)
           }.collect {
-            case RecentEngagedTweet(tweetId, engagedAt, _: RetweetMetadata, _) =>
-              Signal(query.signalType, engagedAt, Some(InternalId.TweetId(tweetId)))
-          }.take(query.maxResults.getOrElse(Int.MaxValue))
+            case RecentEngagedT et(t et d, engagedAt, _: Ret et tadata, _) =>
+              S gnal(query.s gnalType, engagedAt, So ( nternal d.T et d(t et d)))
+          }.take(query.maxResults.getOrElse( nt.MaxValue))
       }
     }
   }
 
 }
 
-object RetweetsFetcher {
-  private val MinFavCount = 10
-  // see com.twitter.twistly.store.UserRecentEngagedTweetsStore
-  private val DefaultVersion = 0
+object Ret etsFetc r {
+  pr vate val M nFavCount = 10
+  // see com.tw ter.tw stly.store.UserRecentEngagedT etsStore
+  pr vate val DefaultVers on = 0
 }

@@ -1,185 +1,185 @@
-package com.twitter.tweetypie.client_id
+package com.tw ter.t etyp e.cl ent_ d
 
-import com.twitter.finagle.mtls.authentication.EmptyServiceIdentifier
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.transport.S2STransport
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.servo.util.Gate
-import com.twitter.strato.access.Access
-import com.twitter.strato.access.Access.ForwardedServiceIdentifier
+ mport com.tw ter.f nagle.mtls.aut nt cat on.EmptyServ ce dent f er
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.mtls.transport.S2STransport
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.strato.access.Access
+ mport com.tw ter.strato.access.Access.ForwardedServ ce dent f er
 
-object ClientIdHelper {
+object Cl ent d lper {
 
-  val UnknownClientId = "unknown"
+  val UnknownCl ent d = "unknown"
 
-  def default: ClientIdHelper = new ClientIdHelper(UseTransportServiceIdentifier)
+  def default: Cl ent d lper = new Cl ent d lper(UseTransportServ ce dent f er)
 
   /**
-   * Trims off the last .element, which is usually .prod or .staging
+   * Tr ms off t  last .ele nt, wh ch  s usually .prod or .stag ng
    */
-  def getClientIdRoot(clientId: String): String =
-    clientId.lastIndexOf('.') match {
-      case -1 => clientId
-      case idx => clientId.substring(0, idx)
+  def getCl ent dRoot(cl ent d: Str ng): Str ng =
+    cl ent d.last ndexOf('.') match {
+      case -1 => cl ent d
+      case  dx => cl ent d.substr ng(0,  dx)
     }
 
   /**
-   * Returns the last .element without the '.'
+   * Returns t  last .ele nt w hout t  '.'
    */
-  def getClientIdEnv(clientId: String): String =
-    clientId.lastIndexOf('.') match {
-      case -1 => clientId
-      case idx => clientId.substring(idx + 1)
+  def getCl ent dEnv(cl ent d: Str ng): Str ng =
+    cl ent d.last ndexOf('.') match {
+      case -1 => cl ent d
+      case  dx => cl ent d.substr ng( dx + 1)
     }
 
-  private[client_id] def asClientId(s: ServiceIdentifier): String = s"${s.service}.${s.environment}"
+  pr vate[cl ent_ d] def asCl ent d(s: Serv ce dent f er): Str ng = s"${s.serv ce}.${s.env ron nt}"
 }
 
-class ClientIdHelper(serviceIdentifierStrategy: ServiceIdentifierStrategy) {
+class Cl ent d lper(serv ce dent f erStrategy: Serv ce dent f erStrategy) {
 
-  private[client_id] val ProcessPathPrefix = "/p/"
+  pr vate[cl ent_ d] val ProcessPathPref x = "/p/"
 
   /**
-   * The effective client id is used for request authorization and metrics
-   * attribution. For calls to Tweetypie's thrift API, the thrift ClientId
-   * is used and is expected in the form of "service-name.env". Federated
-   * Strato clients don't support configured ClientIds and instead provide
-   * a "process path" containing instance-specific information. So for
-   * calls to the federated API, we compute an effective client id from
-   * the ServiceIdentifier, if present, in Strato's Access principles. The
-   * implementation avoids computing this identifier unless necessary,
-   * since this method is invoked on every request.
+   * T  effect ve cl ent  d  s used for request author zat on and  tr cs
+   * attr but on. For calls to T etyp e's thr ft AP , t  thr ft Cl ent d
+   *  s used and  s expected  n t  form of "serv ce-na .env". Federated
+   * Strato cl ents don't support conf gured Cl ent ds and  nstead prov de
+   * a "process path" conta n ng  nstance-spec f c  nformat on. So for
+   * calls to t  federated AP ,   compute an effect ve cl ent  d from
+   * t  Serv ce dent f er,  f present,  n Strato's Access pr nc ples. T 
+   *  mple ntat on avo ds comput ng t   dent f er unless necessary,
+   * s nce t   thod  s  nvoked on every request.
    */
-  def effectiveClientId: Option[String] = {
-    val clientId: Option[String] = ClientId.current.map(_.name)
-    clientId
-    // Exclude process paths because they are instance-specific and aren't
-    // supported by tweetypie for authorization or metrics purposes.
-      .filterNot(_.startsWith(ProcessPathPrefix))
-      // Try computing a value from the ServiceId if the thrift
-      // ClientId is undefined or unsupported.
-      .orElse(serviceIdentifierStrategy.serviceIdentifier.map(ClientIdHelper.asClientId))
-      // Ultimately fall back to the ClientId value, even when given an
-      // unsupported format, so that error text and debug logs include
-      // the value passed by the caller.
-      .orElse(clientId)
+  def effect veCl ent d: Opt on[Str ng] = {
+    val cl ent d: Opt on[Str ng] = Cl ent d.current.map(_.na )
+    cl ent d
+    // Exclude process paths because t y are  nstance-spec f c and aren't
+    // supported by t etyp e for author zat on or  tr cs purposes.
+      .f lterNot(_.startsW h(ProcessPathPref x))
+      // Try comput ng a value from t  Serv ce d  f t  thr ft
+      // Cl ent d  s undef ned or unsupported.
+      .orElse(serv ce dent f erStrategy.serv ce dent f er.map(Cl ent d lper.asCl ent d))
+      // Ult mately fall back to t  Cl ent d value, even w n g ven an
+      // unsupported format, so that error text and debug logs  nclude
+      // t  value passed by t  caller.
+      .orElse(cl ent d)
   }
 
-  def effectiveClientIdRoot: Option[String] = effectiveClientId.map(ClientIdHelper.getClientIdRoot)
+  def effect veCl ent dRoot: Opt on[Str ng] = effect veCl ent d.map(Cl ent d lper.getCl ent dRoot)
 
-  def effectiveServiceIdentifier: Option[ServiceIdentifier] =
-    serviceIdentifierStrategy.serviceIdentifier
+  def effect veServ ce dent f er: Opt on[Serv ce dent f er] =
+    serv ce dent f erStrategy.serv ce dent f er
 }
 
-/** Logic how to find a [[ServiceIdentifier]] for the purpose of crafting a client ID. */
-trait ServiceIdentifierStrategy {
-  def serviceIdentifier: Option[ServiceIdentifier]
+/** Log c how to f nd a [[Serv ce dent f er]] for t  purpose of craft ng a cl ent  D. */
+tra  Serv ce dent f erStrategy {
+  def serv ce dent f er: Opt on[Serv ce dent f er]
 
   /**
-   * Returns the only element of given [[Set]] or [[None]].
+   * Returns t  only ele nt of g ven [[Set]] or [[None]].
    *
-   * This utility is used defensively against a set of principals collected
-   * from [[Access.getPrincipals]]. While the contract is that there should be at most one
-   * instance of each principal kind present in that set, in practice that has not been the case
-   * always. The safest strategy to in that case is to abandon a set completely if more than
-   * one principals are competing.
+   * T  ut l y  s used defens vely aga nst a set of pr nc pals collected
+   * from [[Access.getPr nc pals]]. Wh le t  contract  s that t re should be at most one
+   *  nstance of each pr nc pal k nd present  n that set,  n pract ce that has not been t  case
+   * always. T  safest strategy to  n that case  s to abandon a set completely  f more than
+   * one pr nc pals are compet ng.
    */
-  final protected def onlyElement[T](set: Set[T]): Option[T] =
-    if (set.size <= 1) {
-      set.headOption
+  f nal protected def onlyEle nt[T](set: Set[T]): Opt on[T] =
+     f (set.s ze <= 1) {
+      set. adOpt on
     } else {
       None
     }
 }
 
 /**
- * Picks [[ServiceIdentifier]] from Finagle SSL Transport, if one exists.
+ * P cks [[Serv ce dent f er]] from F nagle SSL Transport,  f one ex sts.
  *
- * This works for both Thrift API calls as well as StratoFed API calls. Strato's
- * [[Access#getPrincipals]] collection, which would typically be consulted by StratoFed
- * column logic, contains the same [[ServiceIdentifier]] derived from the Finagle SSL
- * transport, so there's no need to have separate strategies for Thrift vs StratoFed
+ * T  works for both Thr ft AP  calls as  ll as StratoFed AP  calls. Strato's
+ * [[Access#getPr nc pals]] collect on, wh ch would typ cally be consulted by StratoFed
+ * column log c, conta ns t  sa  [[Serv ce dent f er]] der ved from t  F nagle SSL
+ * transport, so t re's no need to have separate strateg es for Thr ft vs StratoFed
  * calls.
  *
- * This is the default behavior of using [[ServiceIdentifier]] for computing client ID.
+ * T   s t  default behav or of us ng [[Serv ce dent f er]] for comput ng cl ent  D.
  */
-private[client_id] class UseTransportServiceIdentifier(
-  // overridable for testing
-  getPeerServiceIdentifier: => ServiceIdentifier,
-) extends ServiceIdentifierStrategy {
-  override def serviceIdentifier: Option[ServiceIdentifier] =
-    getPeerServiceIdentifier match {
-      case EmptyServiceIdentifier => None
-      case si => Some(si)
+pr vate[cl ent_ d] class UseTransportServ ce dent f er(
+  // overr dable for test ng
+  getPeerServ ce dent f er: => Serv ce dent f er,
+) extends Serv ce dent f erStrategy {
+  overr de def serv ce dent f er: Opt on[Serv ce dent f er] =
+    getPeerServ ce dent f er match {
+      case EmptyServ ce dent f er => None
+      case s  => So (s )
     }
 }
 
-object UseTransportServiceIdentifier
-    extends UseTransportServiceIdentifier(S2STransport.peerServiceIdentifier)
+object UseTransportServ ce dent f er
+    extends UseTransportServ ce dent f er(S2STransport.peerServ ce dent f er)
 
 /**
- * Picks [[ForwardedServiceIdentifier]] from Strato principals for client ID
- * if [[ServiceIdentifier]] points at call coming from Strato.
- * If not present, falls back to [[UseTransportServiceIdentifier]] behavior.
+ * P cks [[ForwardedServ ce dent f er]] from Strato pr nc pals for cl ent  D
+ *  f [[Serv ce dent f er]] po nts at call com ng from Strato.
+ *  f not present, falls back to [[UseTransportServ ce dent f er]] behav or.
  *
- * Tweetypie utilizes the strategy to pick [[ServiceIdentifier]] for the purpose
- * of generating a client ID when the client ID is absent or unknown.
- * [[PreferForwardedServiceIdentifierForStrato]] looks for the [[ForwardedServiceIdentifier]]
+ * T etyp e ut l zes t  strategy to p ck [[Serv ce dent f er]] for t  purpose
+ * of generat ng a cl ent  D w n t  cl ent  D  s absent or unknown.
+ * [[PreferForwardedServ ce dent f erForStrato]] looks for t  [[ForwardedServ ce dent f er]]
  * values set by stratoserver request.
- * The reason is, stratoserver is effectively a conduit, forwarding the [[ServiceIdentifier]]
- * of the _actual client_ that is calling stratoserver.
- * Any direct callers not going through stratoserver will default to [[ServiceIdentfier]].
+ * T  reason  s, stratoserver  s effect vely a condu , forward ng t  [[Serv ce dent f er]]
+ * of t  _actual cl ent_ that  s call ng stratoserver.
+ * Any d rect callers not go ng through stratoserver w ll default to [[Serv ce dentf er]].
  */
-private[client_id] class PreferForwardedServiceIdentifierForStrato(
-  // overridable for testing
-  getPeerServiceIdentifier: => ServiceIdentifier,
-) extends ServiceIdentifierStrategy {
-  val useTransportServiceIdentifier =
-    new UseTransportServiceIdentifier(getPeerServiceIdentifier)
+pr vate[cl ent_ d] class PreferForwardedServ ce dent f erForStrato(
+  // overr dable for test ng
+  getPeerServ ce dent f er: => Serv ce dent f er,
+) extends Serv ce dent f erStrategy {
+  val useTransportServ ce dent f er =
+    new UseTransportServ ce dent f er(getPeerServ ce dent f er)
 
-  override def serviceIdentifier: Option[ServiceIdentifier] =
-    useTransportServiceIdentifier.serviceIdentifier match {
-      case Some(serviceIdentifier) if isStrato(serviceIdentifier) =>
-        onlyElement(
-          Access.getPrincipals
+  overr de def serv ce dent f er: Opt on[Serv ce dent f er] =
+    useTransportServ ce dent f er.serv ce dent f er match {
+      case So (serv ce dent f er)  f  sStrato(serv ce dent f er) =>
+        onlyEle nt(
+          Access.getPr nc pals
             .collect {
-              case forwarded: ForwardedServiceIdentifier =>
-                forwarded.serviceIdentifier.serviceIdentifier
+              case forwarded: ForwardedServ ce dent f er =>
+                forwarded.serv ce dent f er.serv ce dent f er
             }
-        ).orElse(useTransportServiceIdentifier.serviceIdentifier)
-      case other => other
+        ).orElse(useTransportServ ce dent f er.serv ce dent f er)
+      case ot r => ot r
     }
 
   /**
-   * Strato uses various service names like "stratoserver" and "stratoserver-patient".
-   * They all do start with "stratoserver" though, so at the point of implementing,
-   * the safest bet to recognize strato is to look for this prefix.
+   * Strato uses var ous serv ce na s l ke "stratoserver" and "stratoserver-pat ent".
+   * T y all do start w h "stratoserver" though, so at t  po nt of  mple nt ng,
+   * t  safest bet to recogn ze strato  s to look for t  pref x.
    *
-   * This also works for staged strato instances (which it should), despite allowing
-   * for technically any caller to force this strategy, by creating service certificate
-   * with this service name.
+   * T  also works for staged strato  nstances (wh ch   should), desp e allow ng
+   * for techn cally any caller to force t  strategy, by creat ng serv ce cert f cate
+   * w h t  serv ce na .
    */
-  private def isStrato(serviceIdentifier: ServiceIdentifier): Boolean =
-    serviceIdentifier.service.startsWith("stratoserver")
+  pr vate def  sStrato(serv ce dent f er: Serv ce dent f er): Boolean =
+    serv ce dent f er.serv ce.startsW h("stratoserver")
 }
 
-object PreferForwardedServiceIdentifierForStrato
-    extends PreferForwardedServiceIdentifierForStrato(S2STransport.peerServiceIdentifier)
+object PreferForwardedServ ce dent f erForStrato
+    extends PreferForwardedServ ce dent f erForStrato(S2STransport.peerServ ce dent f er)
 
 /**
- * [[ServiceIdentifierStrategy]] which dispatches between two delegates based on the value
- * of a unitary decider every time [[serviceIdentifier]] is called.
+ * [[Serv ce dent f erStrategy]] wh ch d spatc s bet en two delegates based on t  value
+ * of a un ary dec der every t   [[serv ce dent f er]]  s called.
  */
-class ConditionalServiceIdentifierStrategy(
-  private val condition: Gate[Unit],
-  private val ifTrue: ServiceIdentifierStrategy,
-  private val ifFalse: ServiceIdentifierStrategy)
-    extends ServiceIdentifierStrategy {
+class Cond  onalServ ce dent f erStrategy(
+  pr vate val cond  on: Gate[Un ],
+  pr vate val  fTrue: Serv ce dent f erStrategy,
+  pr vate val  fFalse: Serv ce dent f erStrategy)
+    extends Serv ce dent f erStrategy {
 
-  override def serviceIdentifier: Option[ServiceIdentifier] =
-    if (condition()) {
-      ifTrue.serviceIdentifier
+  overr de def serv ce dent f er: Opt on[Serv ce dent f er] =
+     f (cond  on()) {
+       fTrue.serv ce dent f er
     } else {
-      ifFalse.serviceIdentifier
+       fFalse.serv ce dent f er
     }
 }

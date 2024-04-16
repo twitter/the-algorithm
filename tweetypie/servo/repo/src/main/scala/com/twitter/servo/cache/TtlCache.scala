@@ -1,95 +1,95 @@
-package com.twitter.servo.cache
+package com.tw ter.servo.cac 
 
-import com.twitter.util.{Duration, Future}
+ mport com.tw ter.ut l.{Durat on, Future}
 
 /**
- * a Cache that takes a TTL per set
+ * a Cac  that takes a TTL per set
  */
-trait TtlCache[K, V] extends ReadCache[K, V] {
-  def add(key: K, value: V, ttl: Duration): Future[Boolean]
+tra  TtlCac [K, V] extends ReadCac [K, V] {
+  def add(key: K, value: V, ttl: Durat on): Future[Boolean]
 
-  def checkAndSet(key: K, value: V, checksum: Checksum, ttl: Duration): Future[Boolean]
+  def c ckAndSet(key: K, value: V, c cksum: C cksum, ttl: Durat on): Future[Boolean]
 
-  def set(key: K, value: V, ttl: Duration): Future[Unit]
+  def set(key: K, value: V, ttl: Durat on): Future[Un ]
 
   /**
-   * Replaces the value for an existing key.  If the key doesn't exist, this has no effect.
-   * @return true if replaced, false if not found
+   * Replaces t  value for an ex st ng key.   f t  key doesn't ex st, t  has no effect.
+   * @return true  f replaced, false  f not found
    */
-  def replace(key: K, value: V, ttl: Duration): Future[Boolean]
+  def replace(key: K, value: V, ttl: Durat on): Future[Boolean]
 
   /**
-   * Deletes a value from cache.
-   * @return true if deleted, false if not found
+   * Deletes a value from cac .
+   * @return true  f deleted, false  f not found
    */
   def delete(key: K): Future[Boolean]
 }
 
 /**
- * allows one TtlCache to wrap another
+ * allows one TtlCac  to wrap anot r
  */
-trait TtlCacheWrapper[K, V] extends TtlCache[K, V] with ReadCacheWrapper[K, V, TtlCache[K, V]] {
-  override def add(key: K, value: V, ttl: Duration) = underlyingCache.add(key, value, ttl)
+tra  TtlCac Wrapper[K, V] extends TtlCac [K, V] w h ReadCac Wrapper[K, V, TtlCac [K, V]] {
+  overr de def add(key: K, value: V, ttl: Durat on) = underly ngCac .add(key, value, ttl)
 
-  override def checkAndSet(key: K, value: V, checksum: Checksum, ttl: Duration) =
-    underlyingCache.checkAndSet(key, value, checksum, ttl)
+  overr de def c ckAndSet(key: K, value: V, c cksum: C cksum, ttl: Durat on) =
+    underly ngCac .c ckAndSet(key, value, c cksum, ttl)
 
-  override def set(key: K, value: V, ttl: Duration) = underlyingCache.set(key, value, ttl)
+  overr de def set(key: K, value: V, ttl: Durat on) = underly ngCac .set(key, value, ttl)
 
-  override def replace(key: K, value: V, ttl: Duration) = underlyingCache.replace(key, value, ttl)
+  overr de def replace(key: K, value: V, ttl: Durat on) = underly ngCac .replace(key, value, ttl)
 
-  override def delete(key: K) = underlyingCache.delete(key)
+  overr de def delete(key: K) = underly ngCac .delete(key)
 }
 
-class PerturbedTtlCache[K, V](
-  override val underlyingCache: TtlCache[K, V],
-  perturbTtl: Duration => Duration)
-    extends TtlCacheWrapper[K, V] {
-  override def add(key: K, value: V, ttl: Duration) =
-    underlyingCache.add(key, value, perturbTtl(ttl))
+class PerturbedTtlCac [K, V](
+  overr de val underly ngCac : TtlCac [K, V],
+  perturbTtl: Durat on => Durat on)
+    extends TtlCac Wrapper[K, V] {
+  overr de def add(key: K, value: V, ttl: Durat on) =
+    underly ngCac .add(key, value, perturbTtl(ttl))
 
-  override def checkAndSet(key: K, value: V, checksum: Checksum, ttl: Duration) =
-    underlyingCache.checkAndSet(key, value, checksum, perturbTtl(ttl))
+  overr de def c ckAndSet(key: K, value: V, c cksum: C cksum, ttl: Durat on) =
+    underly ngCac .c ckAndSet(key, value, c cksum, perturbTtl(ttl))
 
-  override def set(key: K, value: V, ttl: Duration) =
-    underlyingCache.set(key, value, perturbTtl(ttl))
+  overr de def set(key: K, value: V, ttl: Durat on) =
+    underly ngCac .set(key, value, perturbTtl(ttl))
 
-  override def replace(key: K, value: V, ttl: Duration) =
-    underlyingCache.replace(key, value, perturbTtl(ttl))
-}
-
-/**
- * an adaptor to wrap a Cache[K, V] interface around a TtlCache[K, V]
- */
-class TtlCacheToCache[K, V](override val underlyingCache: TtlCache[K, V], ttl: (K, V) => Duration)
-    extends Cache[K, V]
-    with ReadCacheWrapper[K, V, TtlCache[K, V]] {
-  override def add(key: K, value: V) = underlyingCache.add(key, value, ttl(key, value))
-
-  override def checkAndSet(key: K, value: V, checksum: Checksum) =
-    underlyingCache.checkAndSet(key, value, checksum, ttl(key, value))
-
-  override def set(key: K, value: V) = underlyingCache.set(key, value, ttl(key, value))
-
-  override def replace(key: K, value: V) = underlyingCache.replace(key, value, ttl(key, value))
-
-  override def delete(key: K) = underlyingCache.delete(key)
+  overr de def replace(key: K, value: V, ttl: Durat on) =
+    underly ngCac .replace(key, value, perturbTtl(ttl))
 }
 
 /**
- * use a single TTL for all objects
+ * an adaptor to wrap a Cac [K, V]  nterface around a TtlCac [K, V]
  */
-class SimpleTtlCacheToCache[K, V](underlyingTtlCache: TtlCache[K, V], ttl: Duration)
-    extends TtlCacheToCache[K, V](underlyingTtlCache, (k: K, v: V) => ttl)
+class TtlCac ToCac [K, V](overr de val underly ngCac : TtlCac [K, V], ttl: (K, V) => Durat on)
+    extends Cac [K, V]
+    w h ReadCac Wrapper[K, V, TtlCac [K, V]] {
+  overr de def add(key: K, value: V) = underly ngCac .add(key, value, ttl(key, value))
+
+  overr de def c ckAndSet(key: K, value: V, c cksum: C cksum) =
+    underly ngCac .c ckAndSet(key, value, c cksum, ttl(key, value))
+
+  overr de def set(key: K, value: V) = underly ngCac .set(key, value, ttl(key, value))
+
+  overr de def replace(key: K, value: V) = underly ngCac .replace(key, value, ttl(key, value))
+
+  overr de def delete(key: K) = underly ngCac .delete(key)
+}
 
 /**
- * use a value-based TTL function
+ * use a s ngle TTL for all objects
  */
-class ValueBasedTtlCacheToCache[K, V](underlyingTtlCache: TtlCache[K, V], ttl: V => Duration)
-    extends TtlCacheToCache[K, V](underlyingTtlCache, (k: K, v: V) => ttl(v))
+class S mpleTtlCac ToCac [K, V](underly ngTtlCac : TtlCac [K, V], ttl: Durat on)
+    extends TtlCac ToCac [K, V](underly ngTtlCac , (k: K, v: V) => ttl)
 
 /**
- * use a key-based TTL function
+ * use a value-based TTL funct on
  */
-class KeyBasedTtlCacheToCache[K, V](underlyingTtlCache: TtlCache[K, V], ttl: K => Duration)
-    extends TtlCacheToCache[K, V](underlyingTtlCache, (k: K, v: V) => ttl(k))
+class ValueBasedTtlCac ToCac [K, V](underly ngTtlCac : TtlCac [K, V], ttl: V => Durat on)
+    extends TtlCac ToCac [K, V](underly ngTtlCac , (k: K, v: V) => ttl(v))
+
+/**
+ * use a key-based TTL funct on
+ */
+class KeyBasedTtlCac ToCac [K, V](underly ngTtlCac : TtlCac [K, V], ttl: K => Durat on)
+    extends TtlCac ToCac [K, V](underly ngTtlCac , (k: K, v: V) => ttl(k))

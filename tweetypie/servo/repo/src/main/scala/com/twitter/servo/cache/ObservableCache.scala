@@ -1,419 +1,419 @@
-package com.twitter.servo.cache
+package com.tw ter.servo.cac 
 
-import com.twitter.finagle.stats.{Stat, StatsReceiver}
-import com.twitter.logging.{Level, Logger}
-import com.twitter.servo.util.{ExceptionCounter, WindowedAverage}
-import com.twitter.util._
+ mport com.tw ter.f nagle.stats.{Stat, StatsRece ver}
+ mport com.tw ter.logg ng.{Level, Logger}
+ mport com.tw ter.servo.ut l.{Except onCounter, W ndo dAverage}
+ mport com.tw ter.ut l._
 
 /**
- * track hits and misses in caches, time reads and writes
+ * track h s and m sses  n cac s, t   reads and wr es
  */
-trait CacheObserver {
+tra  Cac Observer {
 
   /**
-   * register a hit
+   * reg ster a h 
    */
-  def hit(key: String): Unit
+  def h (key: Str ng): Un 
 
   /**
-   * register a miss
+   * reg ster a m ss
    */
-  def miss(key: String): Unit
+  def m ss(key: Str ng): Un 
 
   /**
-   * time the read, and automatically handle hits and misses from the KeyValueResult
+   * t   t  read, and automat cally handle h s and m sses from t  KeyValueResult
    */
   def read[K, T](
-    name: String,
+    na : Str ng,
     keys: Seq[K]
   )(
     f: => Future[KeyValueResult[K, T]]
   ): Future[KeyValueResult[K, T]]
 
   /**
-   * time the write
+   * t   t  wr e
    */
-  def write[K, T](name: String, key: K)(f: => Future[T]): Future[T]
+  def wr e[K, T](na : Str ng, key: K)(f: => Future[T]): Future[T]
 
   /**
-   * time the incr, and record the success/failure
+   * t   t   ncr, and record t  success/fa lure
    */
-  def incr[K](name: String, key: Seq[K])(f: => Future[Option[Long]]): Future[Option[Long]]
+  def  ncr[K](na : Str ng, key: Seq[K])(f: => Future[Opt on[Long]]): Future[Opt on[Long]]
 
   /**
-   * produce a new CacheObserver with a nested scope
+   * produce a new Cac Observer w h a nested scope
    */
-  def scope(s: String*): CacheObserver
+  def scope(s: Str ng*): Cac Observer
 
   /**
-   * increment a counter tracking the number of expirations.
+   *  ncre nt a counter track ng t  number of exp rat ons.
    */
-  def expired(delta: Int = 1): Unit
+  def exp red(delta:  nt = 1): Un 
 
   /**
-   * Increment a counter tracking the number of failures.
+   *  ncre nt a counter track ng t  number of fa lures.
    */
-  def failure(delta: Int = 1): Unit
+  def fa lure(delta:  nt = 1): Un 
 
   /**
-   * Increment a counter tracking the number of tombstones.
+   *  ncre nt a counter track ng t  number of tombstones.
    */
-  def tombstone(delta: Int = 1): Unit
+  def tombstone(delta:  nt = 1): Un 
 
   /**
-   * Increment a counter tracking the number of not cached.
+   *  ncre nt a counter track ng t  number of not cac d.
    */
-  def noCache(delta: Int = 1): Unit
+  def noCac (delta:  nt = 1): Un 
 }
 
-object NullCacheObserver extends CacheObserver {
-  override def hit(key: String) = ()
-  override def miss(key: String) = ()
-  override def read[K, T](name: String, keys: Seq[K])(f: => Future[KeyValueResult[K, T]]) = f
-  override def write[K, T](name: String, key: K)(f: => Future[T]) = f
-  override def incr[K](name: String, key: Seq[K])(f: => Future[Option[Long]]) = f
-  override def scope(s: String*) = this
-  override def expired(delta: Int = 1) = ()
-  override def failure(delta: Int = 1): Unit = {}
-  override def tombstone(delta: Int = 1): Unit = {}
-  override def noCache(delta: Int = 1): Unit = {}
+object NullCac Observer extends Cac Observer {
+  overr de def h (key: Str ng) = ()
+  overr de def m ss(key: Str ng) = ()
+  overr de def read[K, T](na : Str ng, keys: Seq[K])(f: => Future[KeyValueResult[K, T]]) = f
+  overr de def wr e[K, T](na : Str ng, key: K)(f: => Future[T]) = f
+  overr de def  ncr[K](na : Str ng, key: Seq[K])(f: => Future[Opt on[Long]]) = f
+  overr de def scope(s: Str ng*) = t 
+  overr de def exp red(delta:  nt = 1) = ()
+  overr de def fa lure(delta:  nt = 1): Un  = {}
+  overr de def tombstone(delta:  nt = 1): Un  = {}
+  overr de def noCac (delta:  nt = 1): Un  = {}
 }
 
 /**
- * A CacheObserver that writes to a StatsReceiver
+ * A Cac Observer that wr es to a StatsRece ver
  */
-class StatsReceiverCacheObserver(
-  stats: StatsReceiver,
-  windowSize: Long,
+class StatsRece verCac Observer(
+  stats: StatsRece ver,
+  w ndowS ze: Long,
   log: Logger,
-  disableLogging: Boolean = false)
-    extends CacheObserver {
+  d sableLogg ng: Boolean = false)
+    extends Cac Observer {
 
-  def this(
-    statsReceiver: StatsReceiver,
-    windowSize: Long,
-    scope: String
+  def t (
+    statsRece ver: StatsRece ver,
+    w ndowS ze: Long,
+    scope: Str ng
   ) =
-    this(
-      statsReceiver.scope(scope),
-      windowSize,
-      Logger.get(scope.replaceAll("([a-z]+)([A-Z])", "$1_$2").toLowerCase)
+    t (
+      statsRece ver.scope(scope),
+      w ndowS ze,
+      Logger.get(scope.replaceAll("([a-z]+)([A-Z])", "$1_$2").toLo rCase)
     )
 
-  def this(
-    statsReceiver: StatsReceiver,
-    windowSize: Long,
-    scope: String,
-    disableLogging: Boolean
+  def t (
+    statsRece ver: StatsRece ver,
+    w ndowS ze: Long,
+    scope: Str ng,
+    d sableLogg ng: Boolean
   ) =
-    this(
-      statsReceiver.scope(scope),
-      windowSize,
-      Logger.get(scope.replaceAll("([a-z]+)([A-Z])", "$1_$2").toLowerCase),
-      disableLogging
+    t (
+      statsRece ver.scope(scope),
+      w ndowS ze,
+      Logger.get(scope.replaceAll("([a-z]+)([A-Z])", "$1_$2").toLo rCase),
+      d sableLogg ng
     )
 
-  protected[this] val expirationCounter = stats.counter("expirations")
+  protected[t ] val exp rat onCounter = stats.counter("exp rat ons")
 
-  // needed to make sure we hand out the same observer for each scope,
-  // so that the hit rates are properly calculated
-  protected[this] val children = Memoize {
-    new StatsReceiverCacheObserver(stats, windowSize, _: String, disableLogging)
+  // needed to make sure   hand out t  sa  observer for each scope,
+  // so that t  h  rates are properly calculated
+  protected[t ] val ch ldren =  mo ze {
+    new StatsRece verCac Observer(stats, w ndowS ze, _: Str ng, d sableLogg ng)
   }
 
-  protected[this] val exceptionCounter = new ExceptionCounter(stats)
-  private[this] val hitCounter = stats.counter("hits")
-  private[this] val missCounter = stats.counter("misses")
-  private[this] val failuresCounter = stats.counter("failures")
-  private[this] val tombstonesCounter = stats.counter("tombstones")
-  private[this] val noCacheCounter = stats.counter("noCache")
+  protected[t ] val except onCounter = new Except onCounter(stats)
+  pr vate[t ] val h Counter = stats.counter("h s")
+  pr vate[t ] val m ssCounter = stats.counter("m sses")
+  pr vate[t ] val fa luresCounter = stats.counter("fa lures")
+  pr vate[t ] val tombstonesCounter = stats.counter("tombstones")
+  pr vate[t ] val noCac Counter = stats.counter("noCac ")
 
-  private[this] val windowedHitRate = new WindowedAverage(windowSize)
-  private[this] val windowedIncrHitRate = new WindowedAverage(windowSize)
+  pr vate[t ] val w ndo dH Rate = new W ndo dAverage(w ndowS ze)
+  pr vate[t ] val w ndo d ncrH Rate = new W ndo dAverage(w ndowS ze)
 
-  private[this] val hitRateGauge = stats.addGauge("hit_rate") {
-    windowedHitRate.value.getOrElse(1.0).toFloat
+  pr vate[t ] val h RateGauge = stats.addGauge("h _rate") {
+    w ndo dH Rate.value.getOrElse(1.0).toFloat
   }
 
-  private[this] val incrHitRateGauge = stats.addGauge("incr_hit_rate") {
-    windowedIncrHitRate.value.getOrElse(1.0).toFloat
+  pr vate[t ] val  ncrH RateGauge = stats.addGauge(" ncr_h _rate") {
+    w ndo d ncrH Rate.value.getOrElse(1.0).toFloat
   }
 
-  protected[this] def handleThrowable[K](name: String, t: Throwable, key: Option[K]): Unit = {
-    stats.counter(name + "_failures").incr()
-    exceptionCounter(t)
-    if (!disableLogging) {
-      lazy val suffix = key
+  protected[t ] def handleThrowable[K](na : Str ng, t: Throwable, key: Opt on[K]): Un  = {
+    stats.counter(na  + "_fa lures"). ncr()
+    except onCounter(t)
+     f (!d sableLogg ng) {
+      lazy val suff x = key
         .map { k =>
-          "(" + k.toString + ")"
+          "(" + k.toStr ng + ")"
         }
         .getOrElse("")
-      log.warning("%s%s caught: %s", name, suffix, t.getClass.getName)
+      log.warn ng("%s%s caught: %s", na , suff x, t.getClass.getNa )
       log.trace(t, "stack trace was: ")
     }
   }
 
-  override def hit(key: String): Unit = {
-    hits(1)
-    if (!disableLogging)
-      log.trace("cache hit: %s", key)
+  overr de def h (key: Str ng): Un  = {
+    h s(1)
+     f (!d sableLogg ng)
+      log.trace("cac  h : %s", key)
   }
 
-  private[this] def hits(n: Int): Unit = {
-    windowedHitRate.record(n.toDouble, n.toDouble)
-    hitCounter.incr(n)
+  pr vate[t ] def h s(n:  nt): Un  = {
+    w ndo dH Rate.record(n.toDouble, n.toDouble)
+    h Counter. ncr(n)
   }
 
-  override def miss(key: String): Unit = {
-    misses(1)
-    if (!disableLogging)
-      log.trace("cache miss: %s", key)
+  overr de def m ss(key: Str ng): Un  = {
+    m sses(1)
+     f (!d sableLogg ng)
+      log.trace("cac  m ss: %s", key)
   }
 
-  private[this] def misses(n: Int): Unit = {
-    windowedHitRate.record(0.0F, n.toDouble)
-    missCounter.incr(n)
+  pr vate[t ] def m sses(n:  nt): Un  = {
+    w ndo dH Rate.record(0.0F, n.toDouble)
+    m ssCounter. ncr(n)
   }
 
-  override def read[K, T](
-    name: String,
+  overr de def read[K, T](
+    na : Str ng,
     keys: Seq[K]
   )(
     f: => Future[KeyValueResult[K, T]]
   ): Future[KeyValueResult[K, T]] =
     Stat
-      .timeFuture(stats.stat(name)) {
-        stats.counter(name).incr()
+      .t  Future(stats.stat(na )) {
+        stats.counter(na ). ncr()
         f
       }
       .respond {
         case Return(lr) =>
-          if (log.isLoggable(Level.TRACE)) {
+           f (log. sLoggable(Level.TRACE)) {
             lr.found.keys.foreach { k =>
-              hit(k.toString)
+              h (k.toStr ng)
             }
             lr.notFound.foreach { k =>
-              miss(k.toString)
+              m ss(k.toStr ng)
             }
           } else {
-            hits(lr.found.keys.size)
-            misses(lr.notFound.size)
+            h s(lr.found.keys.s ze)
+            m sses(lr.notFound.s ze)
           }
-          lr.failed foreach {
+          lr.fa led foreach {
             case (k, t) =>
-              handleThrowable(name, t, Some(k))
-              // count failures as misses
-              miss(k.toString)
-              failuresCounter.incr()
+              handleThrowable(na , t, So (k))
+              // count fa lures as m sses
+              m ss(k.toStr ng)
+              fa luresCounter. ncr()
           }
         case Throw(t) =>
-          handleThrowable(name, t, None)
-          // count failures as misses
+          handleThrowable(na , t, None)
+          // count fa lures as m sses
           keys.foreach { k =>
-            miss(k.toString)
+            m ss(k.toStr ng)
           }
-          failuresCounter.incr()
+          fa luresCounter. ncr()
       }
 
-  override def write[K, T](name: String, key: K)(f: => Future[T]): Future[T] =
-    Stat.timeFuture(stats.stat(name)) {
-      stats.counter(name).incr()
+  overr de def wr e[K, T](na : Str ng, key: K)(f: => Future[T]): Future[T] =
+    Stat.t  Future(stats.stat(na )) {
+      stats.counter(na ). ncr()
       f
-    } onFailure {
-      handleThrowable(name, _, Some(key))
+    } onFa lure {
+      handleThrowable(na , _, So (key))
     }
 
-  override def incr[K](name: String, key: Seq[K])(f: => Future[Option[Long]]) =
-    Stat.timeFuture(stats.stat(name)) {
-      stats.counter(name).incr()
+  overr de def  ncr[K](na : Str ng, key: Seq[K])(f: => Future[Opt on[Long]]) =
+    Stat.t  Future(stats.stat(na )) {
+      stats.counter(na ). ncr()
       f
     } onSuccess { optVal =>
-      val hit = optVal.isDefined
-      windowedIncrHitRate.record(if (hit) 1F else 0F)
-      stats.counter(name + (if (hit) "_hits" else "_misses")).incr()
+      val h  = optVal. sDef ned
+      w ndo d ncrH Rate.record( f (h ) 1F else 0F)
+      stats.counter(na  + ( f (h ) "_h s" else "_m sses")). ncr()
     }
 
-  override def scope(s: String*) =
-    s.toList match {
-      case Nil => this
-      case head :: tail => children(head).scope(tail: _*)
+  overr de def scope(s: Str ng*) =
+    s.toL st match {
+      case N l => t 
+      case  ad :: ta l => ch ldren( ad).scope(ta l: _*)
     }
 
-  override def expired(delta: Int = 1): Unit = { expirationCounter.incr(delta) }
-  override def failure(delta: Int = 1): Unit = { failuresCounter.incr(delta) }
-  override def tombstone(delta: Int = 1): Unit = { tombstonesCounter.incr(delta) }
-  override def noCache(delta: Int = 1): Unit = { noCacheCounter.incr(delta) }
+  overr de def exp red(delta:  nt = 1): Un  = { exp rat onCounter. ncr(delta) }
+  overr de def fa lure(delta:  nt = 1): Un  = { fa luresCounter. ncr(delta) }
+  overr de def tombstone(delta:  nt = 1): Un  = { tombstonesCounter. ncr(delta) }
+  overr de def noCac (delta:  nt = 1): Un  = { noCac Counter. ncr(delta) }
 
 }
 
 /**
- * Wraps an underlying cache with calls to a CacheObserver
+ * Wraps an underly ng cac  w h calls to a Cac Observer
  */
-class ObservableReadCache[K, V](underlyingCache: ReadCache[K, V], observer: CacheObserver)
-    extends ReadCache[K, V] {
-  override def get(keys: Seq[K]): Future[KeyValueResult[K, V]] = {
+class ObservableReadCac [K, V](underly ngCac : ReadCac [K, V], observer: Cac Observer)
+    extends ReadCac [K, V] {
+  overr de def get(keys: Seq[K]): Future[KeyValueResult[K, V]] = {
     observer.read("get", keys) {
-      underlyingCache.get(keys)
+      underly ngCac .get(keys)
     }
   }
 
-  override def getWithChecksum(keys: Seq[K]): Future[CsKeyValueResult[K, V]] = {
-    observer.read[K, (Try[V], Checksum)]("get_with_checksum", keys) {
-      underlyingCache.getWithChecksum(keys)
+  overr de def getW hC cksum(keys: Seq[K]): Future[CsKeyValueResult[K, V]] = {
+    observer.read[K, (Try[V], C cksum)]("get_w h_c cksum", keys) {
+      underly ngCac .getW hC cksum(keys)
     }
   }
 
-  override def release() = underlyingCache.release()
+  overr de def release() = underly ngCac .release()
 }
 
-object ObservableCache {
+object ObservableCac  {
   def apply[K, V](
-    underlyingCache: Cache[K, V],
-    statsReceiver: StatsReceiver,
-    windowSize: Long,
-    name: String
-  ): Cache[K, V] =
-    new ObservableCache(
-      underlyingCache,
-      new StatsReceiverCacheObserver(statsReceiver, windowSize, name)
+    underly ngCac : Cac [K, V],
+    statsRece ver: StatsRece ver,
+    w ndowS ze: Long,
+    na : Str ng
+  ): Cac [K, V] =
+    new ObservableCac (
+      underly ngCac ,
+      new StatsRece verCac Observer(statsRece ver, w ndowS ze, na )
     )
 
   def apply[K, V](
-    underlyingCache: Cache[K, V],
-    statsReceiver: StatsReceiver,
-    windowSize: Long,
-    name: String,
-    disableLogging: Boolean
-  ): Cache[K, V] =
-    new ObservableCache(
-      underlyingCache,
-      new StatsReceiverCacheObserver(
-        statsReceiver = statsReceiver,
-        windowSize = windowSize,
-        scope = name,
-        disableLogging = disableLogging)
+    underly ngCac : Cac [K, V],
+    statsRece ver: StatsRece ver,
+    w ndowS ze: Long,
+    na : Str ng,
+    d sableLogg ng: Boolean
+  ): Cac [K, V] =
+    new ObservableCac (
+      underly ngCac ,
+      new StatsRece verCac Observer(
+        statsRece ver = statsRece ver,
+        w ndowS ze = w ndowS ze,
+        scope = na ,
+        d sableLogg ng = d sableLogg ng)
     )
 
   def apply[K, V](
-    underlyingCache: Cache[K, V],
-    statsReceiver: StatsReceiver,
-    windowSize: Long,
+    underly ngCac : Cac [K, V],
+    statsRece ver: StatsRece ver,
+    w ndowS ze: Long,
     log: Logger
-  ): Cache[K, V] =
-    new ObservableCache(
-      underlyingCache,
-      new StatsReceiverCacheObserver(statsReceiver, windowSize, log)
+  ): Cac [K, V] =
+    new ObservableCac (
+      underly ngCac ,
+      new StatsRece verCac Observer(statsRece ver, w ndowS ze, log)
     )
 }
 
 /**
- * Wraps an underlying Cache with calls to a CacheObserver
+ * Wraps an underly ng Cac  w h calls to a Cac Observer
  */
-class ObservableCache[K, V](underlyingCache: Cache[K, V], observer: CacheObserver)
-    extends ObservableReadCache(underlyingCache, observer)
-    with Cache[K, V] {
-  override def add(key: K, value: V): Future[Boolean] =
-    observer.write("add", key) {
-      underlyingCache.add(key, value)
+class ObservableCac [K, V](underly ngCac : Cac [K, V], observer: Cac Observer)
+    extends ObservableReadCac (underly ngCac , observer)
+    w h Cac [K, V] {
+  overr de def add(key: K, value: V): Future[Boolean] =
+    observer.wr e("add", key) {
+      underly ngCac .add(key, value)
     }
 
-  override def checkAndSet(key: K, value: V, checksum: Checksum): Future[Boolean] =
-    observer.write("check_and_set", key) {
-      underlyingCache.checkAndSet(key, value, checksum)
+  overr de def c ckAndSet(key: K, value: V, c cksum: C cksum): Future[Boolean] =
+    observer.wr e("c ck_and_set", key) {
+      underly ngCac .c ckAndSet(key, value, c cksum)
     }
 
-  override def set(key: K, value: V): Future[Unit] =
-    observer.write("set", key) {
-      underlyingCache.set(key, value)
+  overr de def set(key: K, value: V): Future[Un ] =
+    observer.wr e("set", key) {
+      underly ngCac .set(key, value)
     }
 
-  override def replace(key: K, value: V): Future[Boolean] =
-    observer.write("replace", key) {
-      underlyingCache.replace(key, value)
+  overr de def replace(key: K, value: V): Future[Boolean] =
+    observer.wr e("replace", key) {
+      underly ngCac .replace(key, value)
     }
 
-  override def delete(key: K): Future[Boolean] =
-    observer.write("delete", key) {
-      underlyingCache.delete(key)
+  overr de def delete(key: K): Future[Boolean] =
+    observer.wr e("delete", key) {
+      underly ngCac .delete(key)
     }
 }
 
-object ObservableTtlCache {
+object ObservableTtlCac  {
   def apply[K, V](
-    underlyingCache: TtlCache[K, V],
-    statsReceiver: StatsReceiver,
-    windowSize: Long,
-    name: String
-  ): TtlCache[K, V] =
-    new ObservableTtlCache(
-      underlyingCache,
-      new StatsReceiverCacheObserver(statsReceiver, windowSize, name)
+    underly ngCac : TtlCac [K, V],
+    statsRece ver: StatsRece ver,
+    w ndowS ze: Long,
+    na : Str ng
+  ): TtlCac [K, V] =
+    new ObservableTtlCac (
+      underly ngCac ,
+      new StatsRece verCac Observer(statsRece ver, w ndowS ze, na )
     )
 }
 
 /**
- * Wraps an underlying TtlCache with calls to a CacheObserver
+ * Wraps an underly ng TtlCac  w h calls to a Cac Observer
  */
-class ObservableTtlCache[K, V](underlyingCache: TtlCache[K, V], observer: CacheObserver)
-    extends ObservableReadCache(underlyingCache, observer)
-    with TtlCache[K, V] {
-  override def add(key: K, value: V, ttl: Duration): Future[Boolean] =
-    observer.write("add", key) {
-      underlyingCache.add(key, value, ttl)
+class ObservableTtlCac [K, V](underly ngCac : TtlCac [K, V], observer: Cac Observer)
+    extends ObservableReadCac (underly ngCac , observer)
+    w h TtlCac [K, V] {
+  overr de def add(key: K, value: V, ttl: Durat on): Future[Boolean] =
+    observer.wr e("add", key) {
+      underly ngCac .add(key, value, ttl)
     }
 
-  override def checkAndSet(key: K, value: V, checksum: Checksum, ttl: Duration): Future[Boolean] =
-    observer.write("check_and_set", key) {
-      underlyingCache.checkAndSet(key, value, checksum, ttl)
+  overr de def c ckAndSet(key: K, value: V, c cksum: C cksum, ttl: Durat on): Future[Boolean] =
+    observer.wr e("c ck_and_set", key) {
+      underly ngCac .c ckAndSet(key, value, c cksum, ttl)
     }
 
-  override def set(key: K, value: V, ttl: Duration): Future[Unit] =
-    observer.write("set", key) {
-      underlyingCache.set(key, value, ttl)
+  overr de def set(key: K, value: V, ttl: Durat on): Future[Un ] =
+    observer.wr e("set", key) {
+      underly ngCac .set(key, value, ttl)
     }
 
-  override def replace(key: K, value: V, ttl: Duration): Future[Boolean] =
-    observer.write("replace", key) {
-      underlyingCache.replace(key, value, ttl)
+  overr de def replace(key: K, value: V, ttl: Durat on): Future[Boolean] =
+    observer.wr e("replace", key) {
+      underly ngCac .replace(key, value, ttl)
     }
 
-  override def delete(key: K): Future[Boolean] =
-    observer.write("delete", key) {
-      underlyingCache.delete(key)
+  overr de def delete(key: K): Future[Boolean] =
+    observer.wr e("delete", key) {
+      underly ngCac .delete(key)
     }
 }
 
-case class ObservableMemcacheFactory(memcacheFactory: MemcacheFactory, cacheObserver: CacheObserver)
-    extends MemcacheFactory {
+case class Observable mcac Factory( mcac Factory:  mcac Factory, cac Observer: Cac Observer)
+    extends  mcac Factory {
 
-  override def apply() =
-    new ObservableMemcache(memcacheFactory(), cacheObserver)
+  overr de def apply() =
+    new Observable mcac ( mcac Factory(), cac Observer)
 }
 
-@deprecated("use ObservableMemcacheFactory or ObservableMemcache directly", "0.1.2")
-object ObservableMemcache {
+@deprecated("use Observable mcac Factory or Observable mcac  d rectly", "0.1.2")
+object Observable mcac  {
   def apply(
-    underlyingCache: Memcache,
-    statsReceiver: StatsReceiver,
-    windowSize: Long,
-    name: String
-  ): Memcache =
-    new ObservableMemcache(
-      underlyingCache,
-      new StatsReceiverCacheObserver(statsReceiver, windowSize, name)
+    underly ngCac :  mcac ,
+    statsRece ver: StatsRece ver,
+    w ndowS ze: Long,
+    na : Str ng
+  ):  mcac  =
+    new Observable mcac (
+      underly ngCac ,
+      new StatsRece verCac Observer(statsRece ver, w ndowS ze, na )
     )
 }
 
-class ObservableMemcache(underlyingCache: Memcache, observer: CacheObserver)
-    extends ObservableTtlCache[String, Array[Byte]](underlyingCache, observer)
-    with Memcache {
-  def incr(key: String, delta: Long = 1): Future[Option[Long]] =
-    observer.incr("incr", key) {
-      underlyingCache.incr(key, delta)
+class Observable mcac (underly ngCac :  mcac , observer: Cac Observer)
+    extends ObservableTtlCac [Str ng, Array[Byte]](underly ngCac , observer)
+    w h  mcac  {
+  def  ncr(key: Str ng, delta: Long = 1): Future[Opt on[Long]] =
+    observer. ncr(" ncr", key) {
+      underly ngCac . ncr(key, delta)
     }
 
-  def decr(key: String, delta: Long = 1): Future[Option[Long]] =
-    observer.incr("decr", key) {
-      underlyingCache.decr(key, delta)
+  def decr(key: Str ng, delta: Long = 1): Future[Opt on[Long]] =
+    observer. ncr("decr", key) {
+      underly ngCac .decr(key, delta)
     }
 }

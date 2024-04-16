@@ -1,110 +1,110 @@
-package com.twitter.visibility.rules
+package com.tw ter.v s b l y.rules
 
-import com.twitter.guano.commons.thriftscala.PolicyInViolation
-import com.twitter.spam.rtf.thriftscala.SafetyResultReason
-import com.twitter.util.Memoize
-import com.twitter.util.Time
-import com.twitter.visibility.common.actions.ComplianceTweetNoticeEventType
-import com.twitter.visibility.common.actions.LimitedEngagementReason
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableSearchIpiSafeSearchWithoutUserInQueryDropRule
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.features.TweetSafetyLabels
-import com.twitter.visibility.models.TweetSafetyLabel
-import com.twitter.visibility.models.TweetSafetyLabelType
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.LoggedOutOrViewerOptInFiltering
-import com.twitter.visibility.rules.Condition.Not
-import com.twitter.visibility.rules.Condition.Or
-import com.twitter.visibility.rules.Condition.SearchQueryHasUser
-import com.twitter.visibility.rules.Condition.TweetComposedAfter
-import com.twitter.visibility.rules.Condition.TweetHasLabel
-import com.twitter.visibility.rules.Reason._
-import com.twitter.visibility.rules.State.Evaluated
+ mport com.tw ter.guano.commons.thr ftscala.Pol cy nV olat on
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyResultReason
+ mport com.tw ter.ut l. mo ze
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.v s b l y.common.act ons.Compl anceT etNot ceEventType
+ mport com.tw ter.v s b l y.common.act ons.L m edEngage ntReason
+ mport com.tw ter.v s b l y.conf gap .params.RuleParam
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams.EnableSearch p SafeSearchW houtUser nQueryDropRule
+ mport com.tw ter.v s b l y.features.Feature
+ mport com.tw ter.v s b l y.features.T etSafetyLabels
+ mport com.tw ter.v s b l y.models.T etSafetyLabel
+ mport com.tw ter.v s b l y.models.T etSafetyLabelType
+ mport com.tw ter.v s b l y.rules.Cond  on.And
+ mport com.tw ter.v s b l y.rules.Cond  on.LoggedOutOrV e rOpt nF lter ng
+ mport com.tw ter.v s b l y.rules.Cond  on.Not
+ mport com.tw ter.v s b l y.rules.Cond  on.Or
+ mport com.tw ter.v s b l y.rules.Cond  on.SearchQueryHasUser
+ mport com.tw ter.v s b l y.rules.Cond  on.T etComposedAfter
+ mport com.tw ter.v s b l y.rules.Cond  on.T etHasLabel
+ mport com.tw ter.v s b l y.rules.Reason._
+ mport com.tw ter.v s b l y.rules.State.Evaluated
 
-object PublicInterest {
-  object PolicyConfig {
-    val LowQualityProxyLabelStart: Time = Time.fromMilliseconds(1554076800000L)
-    val DefaultReason: (Reason, Option[LimitedEngagementReason]) =
-      (OneOff, Some(LimitedEngagementReason.NonCompliant))
-    val DefaultPolicyInViolation: PolicyInViolation = PolicyInViolation.OneOff
+object Publ c nterest {
+  object Pol cyConf g {
+    val LowQual yProxyLabelStart: T   = T  .fromM ll seconds(1554076800000L)
+    val DefaultReason: (Reason, Opt on[L m edEngage ntReason]) =
+      (OneOff, So (L m edEngage ntReason.NonCompl ant))
+    val DefaultPol cy nV olat on: Pol cy nV olat on = Pol cy nV olat on.OneOff
   }
 
-  val policyInViolationToReason: Map[PolicyInViolation, Reason] = Map(
-    PolicyInViolation.AbusePolicyEpisodic -> AbuseEpisodic,
-    PolicyInViolation.AbusePolicyEpisodicEncourageSelfharm -> AbuseEpisodicEncourageSelfHarm,
-    PolicyInViolation.AbusePolicyEpisodicHatefulConduct -> AbuseEpisodicHatefulConduct,
-    PolicyInViolation.AbusePolicyGratuitousGore -> AbuseGratuitousGore,
-    PolicyInViolation.AbusePolicyGlorificationofViolence -> AbuseGlorificationOfViolence,
-    PolicyInViolation.AbusePolicyEncourageMobHarassment -> AbuseMobHarassment,
-    PolicyInViolation.AbusePolicyMomentofDeathDeceasedUser -> AbuseMomentOfDeathOrDeceasedUser,
-    PolicyInViolation.AbusePolicyPrivateInformation -> AbusePrivateInformation,
-    PolicyInViolation.AbusePolicyRighttoPrivacy -> AbuseRightToPrivacy,
-    PolicyInViolation.AbusePolicyThreattoExpose -> AbuseThreatToExpose,
-    PolicyInViolation.AbusePolicyViolentSexualConduct -> AbuseViolentSexualConduct,
-    PolicyInViolation.AbusePolicyViolentThreatsHatefulConduct -> AbuseViolentThreatHatefulConduct,
-    PolicyInViolation.AbusePolicyViolentThreatorBounty -> AbuseViolentThreatOrBounty,
-    PolicyInViolation.OneOff -> OneOff,
-    PolicyInViolation.AbusePolicyElectionInterference -> VotingMisinformation,
-    PolicyInViolation.MisinformationVoting -> VotingMisinformation,
-    PolicyInViolation.HackedMaterials -> HackedMaterials,
-    PolicyInViolation.Scam -> Scams,
-    PolicyInViolation.PlatformManipulation -> PlatformManipulation,
-    PolicyInViolation.MisinformationCivic -> MisinfoCivic,
-    PolicyInViolation.AbusePolicyUkraineCrisisMisinformation -> MisinfoCrisis,
-    PolicyInViolation.MisinformationGeneric -> MisinfoGeneric,
-    PolicyInViolation.MisinformationMedical -> MisinfoMedical,
+  val pol cy nV olat onToReason: Map[Pol cy nV olat on, Reason] = Map(
+    Pol cy nV olat on.AbusePol cyEp sod c -> AbuseEp sod c,
+    Pol cy nV olat on.AbusePol cyEp sod cEnc ageSelfharm -> AbuseEp sod cEnc ageSelfHarm,
+    Pol cy nV olat on.AbusePol cyEp sod cHatefulConduct -> AbuseEp sod cHatefulConduct,
+    Pol cy nV olat on.AbusePol cyGratu ousGore -> AbuseGratu ousGore,
+    Pol cy nV olat on.AbusePol cyGlor f cat onofV olence -> AbuseGlor f cat onOfV olence,
+    Pol cy nV olat on.AbusePol cyEnc ageMobHarass nt -> AbuseMobHarass nt,
+    Pol cy nV olat on.AbusePol cyMo ntofDeathDeceasedUser -> AbuseMo ntOfDeathOrDeceasedUser,
+    Pol cy nV olat on.AbusePol cyPr vate nformat on -> AbusePr vate nformat on,
+    Pol cy nV olat on.AbusePol cyR ghttoPr vacy -> AbuseR ghtToPr vacy,
+    Pol cy nV olat on.AbusePol cyThreattoExpose -> AbuseThreatToExpose,
+    Pol cy nV olat on.AbusePol cyV olentSexualConduct -> AbuseV olentSexualConduct,
+    Pol cy nV olat on.AbusePol cyV olentThreatsHatefulConduct -> AbuseV olentThreatHatefulConduct,
+    Pol cy nV olat on.AbusePol cyV olentThreatorBounty -> AbuseV olentThreatOrBounty,
+    Pol cy nV olat on.OneOff -> OneOff,
+    Pol cy nV olat on.AbusePol cyElect on nterference -> Vot ngM s nformat on,
+    Pol cy nV olat on.M s nformat onVot ng -> Vot ngM s nformat on,
+    Pol cy nV olat on.HackedMater als -> HackedMater als,
+    Pol cy nV olat on.Scam -> Scams,
+    Pol cy nV olat on.PlatformMan pulat on -> PlatformMan pulat on,
+    Pol cy nV olat on.M s nformat onC v c -> M s nfoC v c,
+    Pol cy nV olat on.AbusePol cyUkra neCr s sM s nformat on -> M s nfoCr s s,
+    Pol cy nV olat on.M s nformat onGener c -> M s nfoGener c,
+    Pol cy nV olat on.M s nformat on d cal -> M s nfo d cal,
   )
 
-  val reasonToPolicyInViolation: Map[Reason, PolicyInViolation] = Map(
-    AbuseEpisodic -> PolicyInViolation.AbusePolicyEpisodic,
-    AbuseEpisodicEncourageSelfHarm -> PolicyInViolation.AbusePolicyEpisodicEncourageSelfharm,
-    AbuseEpisodicHatefulConduct -> PolicyInViolation.AbusePolicyEpisodicHatefulConduct,
-    AbuseGratuitousGore -> PolicyInViolation.AbusePolicyGratuitousGore,
-    AbuseGlorificationOfViolence -> PolicyInViolation.AbusePolicyGlorificationofViolence,
-    AbuseMobHarassment -> PolicyInViolation.AbusePolicyEncourageMobHarassment,
-    AbuseMomentOfDeathOrDeceasedUser -> PolicyInViolation.AbusePolicyMomentofDeathDeceasedUser,
-    AbusePrivateInformation -> PolicyInViolation.AbusePolicyPrivateInformation,
-    AbuseRightToPrivacy -> PolicyInViolation.AbusePolicyRighttoPrivacy,
-    AbuseThreatToExpose -> PolicyInViolation.AbusePolicyThreattoExpose,
-    AbuseViolentSexualConduct -> PolicyInViolation.AbusePolicyViolentSexualConduct,
-    AbuseViolentThreatHatefulConduct -> PolicyInViolation.AbusePolicyViolentThreatsHatefulConduct,
-    AbuseViolentThreatOrBounty -> PolicyInViolation.AbusePolicyViolentThreatorBounty,
-    OneOff -> PolicyInViolation.OneOff,
-    VotingMisinformation -> PolicyInViolation.MisinformationVoting,
-    HackedMaterials -> PolicyInViolation.HackedMaterials,
-    Scams -> PolicyInViolation.Scam,
-    PlatformManipulation -> PolicyInViolation.PlatformManipulation,
-    MisinfoCivic -> PolicyInViolation.MisinformationCivic,
-    MisinfoCrisis -> PolicyInViolation.AbusePolicyUkraineCrisisMisinformation,
-    MisinfoGeneric -> PolicyInViolation.MisinformationGeneric,
-    MisinfoMedical -> PolicyInViolation.MisinformationMedical,
+  val reasonToPol cy nV olat on: Map[Reason, Pol cy nV olat on] = Map(
+    AbuseEp sod c -> Pol cy nV olat on.AbusePol cyEp sod c,
+    AbuseEp sod cEnc ageSelfHarm -> Pol cy nV olat on.AbusePol cyEp sod cEnc ageSelfharm,
+    AbuseEp sod cHatefulConduct -> Pol cy nV olat on.AbusePol cyEp sod cHatefulConduct,
+    AbuseGratu ousGore -> Pol cy nV olat on.AbusePol cyGratu ousGore,
+    AbuseGlor f cat onOfV olence -> Pol cy nV olat on.AbusePol cyGlor f cat onofV olence,
+    AbuseMobHarass nt -> Pol cy nV olat on.AbusePol cyEnc ageMobHarass nt,
+    AbuseMo ntOfDeathOrDeceasedUser -> Pol cy nV olat on.AbusePol cyMo ntofDeathDeceasedUser,
+    AbusePr vate nformat on -> Pol cy nV olat on.AbusePol cyPr vate nformat on,
+    AbuseR ghtToPr vacy -> Pol cy nV olat on.AbusePol cyR ghttoPr vacy,
+    AbuseThreatToExpose -> Pol cy nV olat on.AbusePol cyThreattoExpose,
+    AbuseV olentSexualConduct -> Pol cy nV olat on.AbusePol cyV olentSexualConduct,
+    AbuseV olentThreatHatefulConduct -> Pol cy nV olat on.AbusePol cyV olentThreatsHatefulConduct,
+    AbuseV olentThreatOrBounty -> Pol cy nV olat on.AbusePol cyV olentThreatorBounty,
+    OneOff -> Pol cy nV olat on.OneOff,
+    Vot ngM s nformat on -> Pol cy nV olat on.M s nformat onVot ng,
+    HackedMater als -> Pol cy nV olat on.HackedMater als,
+    Scams -> Pol cy nV olat on.Scam,
+    PlatformMan pulat on -> Pol cy nV olat on.PlatformMan pulat on,
+    M s nfoC v c -> Pol cy nV olat on.M s nformat onC v c,
+    M s nfoCr s s -> Pol cy nV olat on.AbusePol cyUkra neCr s sM s nformat on,
+    M s nfoGener c -> Pol cy nV olat on.M s nformat onGener c,
+    M s nfo d cal -> Pol cy nV olat on.M s nformat on d cal,
   )
 
   val ReasonToSafetyResultReason: Map[Reason, SafetyResultReason] = Map(
-    AbuseEpisodic -> SafetyResultReason.Episodic,
-    AbuseEpisodicEncourageSelfHarm -> SafetyResultReason.AbuseEpisodicEncourageSelfHarm,
-    AbuseEpisodicHatefulConduct -> SafetyResultReason.AbuseEpisodicHatefulConduct,
-    AbuseGratuitousGore -> SafetyResultReason.AbuseGratuitousGore,
-    AbuseGlorificationOfViolence -> SafetyResultReason.AbuseGlorificationOfViolence,
-    AbuseMobHarassment -> SafetyResultReason.AbuseMobHarassment,
-    AbuseMomentOfDeathOrDeceasedUser -> SafetyResultReason.AbuseMomentOfDeathOrDeceasedUser,
-    AbusePrivateInformation -> SafetyResultReason.AbusePrivateInformation,
-    AbuseRightToPrivacy -> SafetyResultReason.AbuseRightToPrivacy,
+    AbuseEp sod c -> SafetyResultReason.Ep sod c,
+    AbuseEp sod cEnc ageSelfHarm -> SafetyResultReason.AbuseEp sod cEnc ageSelfHarm,
+    AbuseEp sod cHatefulConduct -> SafetyResultReason.AbuseEp sod cHatefulConduct,
+    AbuseGratu ousGore -> SafetyResultReason.AbuseGratu ousGore,
+    AbuseGlor f cat onOfV olence -> SafetyResultReason.AbuseGlor f cat onOfV olence,
+    AbuseMobHarass nt -> SafetyResultReason.AbuseMobHarass nt,
+    AbuseMo ntOfDeathOrDeceasedUser -> SafetyResultReason.AbuseMo ntOfDeathOrDeceasedUser,
+    AbusePr vate nformat on -> SafetyResultReason.AbusePr vate nformat on,
+    AbuseR ghtToPr vacy -> SafetyResultReason.AbuseR ghtToPr vacy,
     AbuseThreatToExpose -> SafetyResultReason.AbuseThreatToExpose,
-    AbuseViolentSexualConduct -> SafetyResultReason.AbuseViolentSexualConduct,
-    AbuseViolentThreatHatefulConduct -> SafetyResultReason.AbuseViolentThreatHatefulConduct,
-    AbuseViolentThreatOrBounty -> SafetyResultReason.AbuseViolentThreatOrBounty,
+    AbuseV olentSexualConduct -> SafetyResultReason.AbuseV olentSexualConduct,
+    AbuseV olentThreatHatefulConduct -> SafetyResultReason.AbuseV olentThreatHatefulConduct,
+    AbuseV olentThreatOrBounty -> SafetyResultReason.AbuseV olentThreatOrBounty,
     OneOff -> SafetyResultReason.OneOff,
-    VotingMisinformation -> SafetyResultReason.VotingMisinformation,
-    HackedMaterials -> SafetyResultReason.HackedMaterials,
+    Vot ngM s nformat on -> SafetyResultReason.Vot ngM s nformat on,
+    HackedMater als -> SafetyResultReason.HackedMater als,
     Scams -> SafetyResultReason.Scams,
-    PlatformManipulation -> SafetyResultReason.PlatformManipulation,
-    MisinfoCivic -> SafetyResultReason.MisinfoCivic,
-    MisinfoCrisis -> SafetyResultReason.MisinfoCrisis,
-    MisinfoGeneric -> SafetyResultReason.MisinfoGeneric,
-    MisinfoMedical -> SafetyResultReason.MisinfoMedical,
-    IpiDevelopmentOnly -> SafetyResultReason.DevelopmentOnlyPublicInterest
+    PlatformMan pulat on -> SafetyResultReason.PlatformMan pulat on,
+    M s nfoC v c -> SafetyResultReason.M s nfoC v c,
+    M s nfoCr s s -> SafetyResultReason.M s nfoCr s s,
+    M s nfoGener c -> SafetyResultReason.M s nfoGener c,
+    M s nfo d cal -> SafetyResultReason.M s nfo d cal,
+     p Develop ntOnly -> SafetyResultReason.Develop ntOnlyPubl c nterest
   )
 
   val Reasons: Set[Reason] = ReasonToSafetyResultReason.keySet
@@ -113,158 +113,158 @@ object PublicInterest {
   val SafetyResultReasonToReason: Map[SafetyResultReason, Reason] =
     ReasonToSafetyResultReason.map(t => t._2 -> t._1)
 
-  val EligibleTweetSafetyLabelTypes: Seq[TweetSafetyLabelType] = Seq(
-    TweetSafetyLabelType.LowQuality,
-    TweetSafetyLabelType.MisinfoCivic,
-    TweetSafetyLabelType.MisinfoGeneric,
-    TweetSafetyLabelType.MisinfoMedical,
-    TweetSafetyLabelType.MisinfoCrisis,
-    TweetSafetyLabelType.IpiDevelopmentOnly
+  val El g bleT etSafetyLabelTypes: Seq[T etSafetyLabelType] = Seq(
+    T etSafetyLabelType.LowQual y,
+    T etSafetyLabelType.M s nfoC v c,
+    T etSafetyLabelType.M s nfoGener c,
+    T etSafetyLabelType.M s nfo d cal,
+    T etSafetyLabelType.M s nfoCr s s,
+    T etSafetyLabelType. p Develop ntOnly
   )
 
-  private val EligibleTweetSafetyLabelTypesSet = EligibleTweetSafetyLabelTypes.toSet
+  pr vate val El g bleT etSafetyLabelTypesSet = El g bleT etSafetyLabelTypes.toSet
 
-  def extractTweetSafetyLabel(featureMap: Map[Feature[_], _]): Option[TweetSafetyLabel] = {
-    val tweetSafetyLabels = featureMap(TweetSafetyLabels)
-      .asInstanceOf[Seq[TweetSafetyLabel]]
+  def extractT etSafetyLabel(featureMap: Map[Feature[_], _]): Opt on[T etSafetyLabel] = {
+    val t etSafetyLabels = featureMap(T etSafetyLabels)
+      .as nstanceOf[Seq[T etSafetyLabel]]
       .flatMap { tsl =>
-        if (PublicInterest.EligibleTweetSafetyLabelTypesSet.contains(tsl.labelType)) {
-          Some(tsl.labelType -> tsl)
+         f (Publ c nterest.El g bleT etSafetyLabelTypesSet.conta ns(tsl.labelType)) {
+          So (tsl.labelType -> tsl)
         } else {
           None
         }
       }
       .toMap
 
-    PublicInterest.EligibleTweetSafetyLabelTypes.flatMap(tweetSafetyLabels.get).headOption
+    Publ c nterest.El g bleT etSafetyLabelTypes.flatMap(t etSafetyLabels.get). adOpt on
   }
 
-  def policyToReason(policy: PolicyInViolation): Reason =
-    policyInViolationToReason.get(policy).getOrElse(PolicyConfig.DefaultReason._1)
+  def pol cyToReason(pol cy: Pol cy nV olat on): Reason =
+    pol cy nV olat onToReason.get(pol cy).getOrElse(Pol cyConf g.DefaultReason._1)
 
-  def reasonToPolicy(reason: Reason): PolicyInViolation =
-    reasonToPolicyInViolation.get(reason).getOrElse(PolicyConfig.DefaultPolicyInViolation)
+  def reasonToPol cy(reason: Reason): Pol cy nV olat on =
+    reasonToPol cy nV olat on.get(reason).getOrElse(Pol cyConf g.DefaultPol cy nV olat on)
 }
 
-class PublicInterestActionBuilder[T <: Action]() extends ActionBuilder[T] {
-  def actionType: Class[_] = classOf[InterstitialLimitedEngagements]
+class Publ c nterestAct onBu lder[T <: Act on]() extends Act onBu lder[T] {
+  def act onType: Class[_] = classOf[ nterst  alL m edEngage nts]
 
-  override val actionSeverity = 11
-  def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-    val (reason, limitedEngagementReason) =
-      PublicInterest.extractTweetSafetyLabel(featureMap).map { tweetSafetyLabel =>
-        (tweetSafetyLabel.labelType, tweetSafetyLabel.source)
+  overr de val act onSever y = 11
+  def bu ld(evaluat onContext: Evaluat onContext, featureMap: Map[Feature[_], _]): RuleResult = {
+    val (reason, l m edEngage ntReason) =
+      Publ c nterest.extractT etSafetyLabel(featureMap).map { t etSafetyLabel =>
+        (t etSafetyLabel.labelType, t etSafetyLabel.s ce)
       } match {
-        case Some((TweetSafetyLabelType.LowQuality, source)) =>
-          source match {
-            case Some(source) =>
-              SafetyResultReason.valueOf(source.name) match {
-                case Some(matchedReason)
-                    if PublicInterest.SafetyResultReasonToReason.contains(matchedReason) =>
+        case So ((T etSafetyLabelType.LowQual y, s ce)) =>
+          s ce match {
+            case So (s ce) =>
+              SafetyResultReason.valueOf(s ce.na ) match {
+                case So (matc dReason)
+                     f Publ c nterest.SafetyResultReasonToReason.conta ns(matc dReason) =>
                   (
-                    PublicInterest.SafetyResultReasonToReason(matchedReason),
-                    Some(LimitedEngagementReason.NonCompliant))
-                case _ => PublicInterest.PolicyConfig.DefaultReason
+                    Publ c nterest.SafetyResultReasonToReason(matc dReason),
+                    So (L m edEngage ntReason.NonCompl ant))
+                case _ => Publ c nterest.Pol cyConf g.DefaultReason
               }
-            case _ => PublicInterest.PolicyConfig.DefaultReason
+            case _ => Publ c nterest.Pol cyConf g.DefaultReason
           }
 
 
-        case Some((TweetSafetyLabelType.MisinfoCivic, source)) =>
-          (Reason.MisinfoCivic, LimitedEngagementReason.fromString(source.map(_.name)))
+        case So ((T etSafetyLabelType.M s nfoC v c, s ce)) =>
+          (Reason.M s nfoC v c, L m edEngage ntReason.fromStr ng(s ce.map(_.na )))
 
-        case Some((TweetSafetyLabelType.MisinfoCrisis, source)) =>
-          (Reason.MisinfoCrisis, LimitedEngagementReason.fromString(source.map(_.name)))
+        case So ((T etSafetyLabelType.M s nfoCr s s, s ce)) =>
+          (Reason.M s nfoCr s s, L m edEngage ntReason.fromStr ng(s ce.map(_.na )))
 
-        case Some((TweetSafetyLabelType.MisinfoGeneric, source)) =>
-          (Reason.MisinfoGeneric, LimitedEngagementReason.fromString(source.map(_.name)))
+        case So ((T etSafetyLabelType.M s nfoGener c, s ce)) =>
+          (Reason.M s nfoGener c, L m edEngage ntReason.fromStr ng(s ce.map(_.na )))
 
-        case Some((TweetSafetyLabelType.MisinfoMedical, source)) =>
-          (Reason.MisinfoMedical, LimitedEngagementReason.fromString(source.map(_.name)))
+        case So ((T etSafetyLabelType.M s nfo d cal, s ce)) =>
+          (Reason.M s nfo d cal, L m edEngage ntReason.fromStr ng(s ce.map(_.na )))
 
-        case Some((TweetSafetyLabelType.IpiDevelopmentOnly, _)) =>
-          (Reason.IpiDevelopmentOnly, Some(LimitedEngagementReason.NonCompliant))
+        case So ((T etSafetyLabelType. p Develop ntOnly, _)) =>
+          (Reason. p Develop ntOnly, So (L m edEngage ntReason.NonCompl ant))
 
         case _ =>
-          PublicInterest.PolicyConfig.DefaultReason
+          Publ c nterest.Pol cyConf g.DefaultReason
       }
 
-    RuleResult(InterstitialLimitedEngagements(reason, limitedEngagementReason), Evaluated)
+    RuleResult( nterst  alL m edEngage nts(reason, l m edEngage ntReason), Evaluated)
   }
 }
 
-class PublicInterestComplianceTweetNoticeActionBuilder
-    extends ActionBuilder[ComplianceTweetNoticePreEnrichment] {
+class Publ c nterestCompl anceT etNot ceAct onBu lder
+    extends Act onBu lder[Compl anceT etNot cePreEnr ch nt] {
 
-  override def actionType: Class[_] = classOf[ComplianceTweetNoticePreEnrichment]
+  overr de def act onType: Class[_] = classOf[Compl anceT etNot cePreEnr ch nt]
 
-  override val actionSeverity = 2
-  def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
+  overr de val act onSever y = 2
+  def bu ld(evaluat onContext: Evaluat onContext, featureMap: Map[Feature[_], _]): RuleResult = {
     val reason =
-      PublicInterest.extractTweetSafetyLabel(featureMap).map { tweetSafetyLabel =>
-        (tweetSafetyLabel.labelType, tweetSafetyLabel.source)
+      Publ c nterest.extractT etSafetyLabel(featureMap).map { t etSafetyLabel =>
+        (t etSafetyLabel.labelType, t etSafetyLabel.s ce)
       } match {
-        case Some((TweetSafetyLabelType.LowQuality, source)) =>
-          source match {
-            case Some(source) =>
-              SafetyResultReason.valueOf(source.name) match {
-                case Some(matchedReason)
-                    if PublicInterest.SafetyResultReasonToReason.contains(matchedReason) =>
-                  PublicInterest.SafetyResultReasonToReason(matchedReason)
-                case _ => PublicInterest.PolicyConfig.DefaultReason._1
+        case So ((T etSafetyLabelType.LowQual y, s ce)) =>
+          s ce match {
+            case So (s ce) =>
+              SafetyResultReason.valueOf(s ce.na ) match {
+                case So (matc dReason)
+                     f Publ c nterest.SafetyResultReasonToReason.conta ns(matc dReason) =>
+                  Publ c nterest.SafetyResultReasonToReason(matc dReason)
+                case _ => Publ c nterest.Pol cyConf g.DefaultReason._1
               }
-            case _ => PublicInterest.PolicyConfig.DefaultReason._1
+            case _ => Publ c nterest.Pol cyConf g.DefaultReason._1
           }
 
 
-        case Some((TweetSafetyLabelType.MisinfoCivic, _)) =>
-          Reason.MisinfoCivic
+        case So ((T etSafetyLabelType.M s nfoC v c, _)) =>
+          Reason.M s nfoC v c
 
-        case Some((TweetSafetyLabelType.MisinfoCrisis, _)) =>
-          Reason.MisinfoCrisis
+        case So ((T etSafetyLabelType.M s nfoCr s s, _)) =>
+          Reason.M s nfoCr s s
 
-        case Some((TweetSafetyLabelType.MisinfoGeneric, _)) =>
-          Reason.MisinfoGeneric
+        case So ((T etSafetyLabelType.M s nfoGener c, _)) =>
+          Reason.M s nfoGener c
 
-        case Some((TweetSafetyLabelType.MisinfoMedical, _)) =>
-          Reason.MisinfoMedical
+        case So ((T etSafetyLabelType.M s nfo d cal, _)) =>
+          Reason.M s nfo d cal
 
-        case Some((TweetSafetyLabelType.IpiDevelopmentOnly, _)) =>
-          Reason.IpiDevelopmentOnly
+        case So ((T etSafetyLabelType. p Develop ntOnly, _)) =>
+          Reason. p Develop ntOnly
 
         case _ =>
-          PublicInterest.PolicyConfig.DefaultReason._1
+          Publ c nterest.Pol cyConf g.DefaultReason._1
       }
 
     RuleResult(
-      ComplianceTweetNoticePreEnrichment(reason, ComplianceTweetNoticeEventType.PublicInterest),
+      Compl anceT etNot cePreEnr ch nt(reason, Compl anceT etNot ceEventType.Publ c nterest),
       Evaluated)
   }
 }
 
-class PublicInterestDropActionBuilder extends ActionBuilder[Drop] {
+class Publ c nterestDropAct onBu lder extends Act onBu lder[Drop] {
 
-  override def actionType: Class[_] = classOf[Drop]
+  overr de def act onType: Class[_] = classOf[Drop]
 
-  override val actionSeverity = 16
-  private def toRuleResult: Reason => RuleResult = Memoize { r => RuleResult(Drop(r), Evaluated) }
+  overr de val act onSever y = 16
+  pr vate def toRuleResult: Reason => RuleResult =  mo ze { r => RuleResult(Drop(r), Evaluated) }
 
-  def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-    val reason = PublicInterest.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-      case Some(TweetSafetyLabelType.LowQuality) =>
+  def bu ld(evaluat onContext: Evaluat onContext, featureMap: Map[Feature[_], _]): RuleResult = {
+    val reason = Publ c nterest.extractT etSafetyLabel(featureMap).map(_.labelType) match {
+      case So (T etSafetyLabelType.LowQual y) =>
         Reason.OneOff
 
-      case Some(TweetSafetyLabelType.MisinfoCivic) =>
-        Reason.MisinfoCivic
+      case So (T etSafetyLabelType.M s nfoC v c) =>
+        Reason.M s nfoC v c
 
-      case Some(TweetSafetyLabelType.MisinfoCrisis) =>
-        Reason.MisinfoCrisis
+      case So (T etSafetyLabelType.M s nfoCr s s) =>
+        Reason.M s nfoCr s s
 
-      case Some(TweetSafetyLabelType.MisinfoGeneric) =>
-        Reason.MisinfoGeneric
+      case So (T etSafetyLabelType.M s nfoGener c) =>
+        Reason.M s nfoGener c
 
-      case Some(TweetSafetyLabelType.MisinfoMedical) =>
-        Reason.MisinfoMedical
+      case So (T etSafetyLabelType.M s nfo d cal) =>
+        Reason.M s nfo d cal
 
       case _ =>
         Reason.OneOff
@@ -274,54 +274,54 @@ class PublicInterestDropActionBuilder extends ActionBuilder[Drop] {
   }
 }
 
-object PublicInterestRules {
+object Publ c nterestRules {
 
-  object AbusePolicyEpisodicTweetLabelInterstitialRule
+  object AbusePol cyEp sod cT etLabel nterst  alRule
       extends Rule(
-        new PublicInterestActionBuilder(),
+        new Publ c nterestAct onBu lder(),
         And(
-          TweetComposedAfter(PublicInterest.PolicyConfig.LowQualityProxyLabelStart),
+          T etComposedAfter(Publ c nterest.Pol cyConf g.LowQual yProxyLabelStart),
           Or(
-            PublicInterest.EligibleTweetSafetyLabelTypes.map(TweetHasLabel(_)): _*
+            Publ c nterest.El g bleT etSafetyLabelTypes.map(T etHasLabel(_)): _*
           )
         )
       )
 
-  object AbusePolicyEpisodicTweetLabelComplianceTweetNoticeRule
+  object AbusePol cyEp sod cT etLabelCompl anceT etNot ceRule
       extends Rule(
-        new PublicInterestComplianceTweetNoticeActionBuilder(),
+        new Publ c nterestCompl anceT etNot ceAct onBu lder(),
         And(
-          TweetComposedAfter(PublicInterest.PolicyConfig.LowQualityProxyLabelStart),
+          T etComposedAfter(Publ c nterest.Pol cyConf g.LowQual yProxyLabelStart),
           Or(
-            PublicInterest.EligibleTweetSafetyLabelTypes.map(TweetHasLabel(_)): _*
+            Publ c nterest.El g bleT etSafetyLabelTypes.map(T etHasLabel(_)): _*
           )
         )
       )
 
-  object AbusePolicyEpisodicTweetLabelDropRule
+  object AbusePol cyEp sod cT etLabelDropRule
       extends Rule(
-        new PublicInterestDropActionBuilder(),
+        new Publ c nterestDropAct onBu lder(),
         And(
-          TweetComposedAfter(PublicInterest.PolicyConfig.LowQualityProxyLabelStart),
+          T etComposedAfter(Publ c nterest.Pol cyConf g.LowQual yProxyLabelStart),
           Or(
-            PublicInterest.EligibleTweetSafetyLabelTypes.map(TweetHasLabel(_)): _*
+            Publ c nterest.El g bleT etSafetyLabelTypes.map(T etHasLabel(_)): _*
           )
         )
       )
 
-  object SearchIpiSafeSearchWithoutUserInQueryDropRule
+  object Search p SafeSearchW houtUser nQueryDropRule
       extends Rule(
-        new PublicInterestDropActionBuilder(),
+        new Publ c nterestDropAct onBu lder(),
         And(
-          TweetComposedAfter(PublicInterest.PolicyConfig.LowQualityProxyLabelStart),
+          T etComposedAfter(Publ c nterest.Pol cyConf g.LowQual yProxyLabelStart),
           Or(
-            PublicInterest.EligibleTweetSafetyLabelTypes.map(TweetHasLabel(_)): _*
+            Publ c nterest.El g bleT etSafetyLabelTypes.map(T etHasLabel(_)): _*
           ),
-          LoggedOutOrViewerOptInFiltering,
+          LoggedOutOrV e rOpt nF lter ng,
           Not(SearchQueryHasUser)
         )
       ) {
-    override def enabled: Seq[RuleParam[Boolean]] = Seq(
-      EnableSearchIpiSafeSearchWithoutUserInQueryDropRule)
+    overr de def enabled: Seq[RuleParam[Boolean]] = Seq(
+      EnableSearch p SafeSearchW houtUser nQueryDropRule)
   }
 }

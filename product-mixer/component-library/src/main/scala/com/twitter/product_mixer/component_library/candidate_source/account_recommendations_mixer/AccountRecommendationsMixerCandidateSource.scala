@@ -1,57 +1,57 @@
-package com.twitter.product_mixer.component_library.candidate_source.account_recommendations_mixer
+package com.tw ter.product_m xer.component_l brary.cand date_s ce.account_recom ndat ons_m xer
 
-import com.twitter.account_recommendations_mixer.{thriftscala => t}
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.account_recom ndat ons_m xer.{thr ftscala => t}
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.UserCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ceW hExtractedFeatures
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand datesW hS ceFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.st ch.St ch
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-object WhoToFollowModuleHeaderFeature extends Feature[UserCandidate, t.Header]
-object WhoToFollowModuleFooterFeature extends Feature[UserCandidate, Option[t.Footer]]
-object WhoToFollowModuleDisplayOptionsFeature
-    extends Feature[UserCandidate, Option[t.DisplayOptions]]
+object WhoToFollowModule aderFeature extends Feature[UserCand date, t. ader]
+object WhoToFollowModuleFooterFeature extends Feature[UserCand date, Opt on[t.Footer]]
+object WhoToFollowModuleD splayOpt onsFeature
+    extends Feature[UserCand date, Opt on[t.D splayOpt ons]]
 
-@Singleton
-class AccountRecommendationsMixerCandidateSource @Inject() (
-  accountRecommendationsMixer: t.AccountRecommendationsMixer.MethodPerEndpoint)
-    extends CandidateSourceWithExtractedFeatures[
-      t.AccountRecommendationsMixerRequest,
-      t.RecommendedUser
+@S ngleton
+class AccountRecom ndat onsM xerCand dateS ce @ nject() (
+  accountRecom ndat onsM xer: t.AccountRecom ndat onsM xer. thodPerEndpo nt)
+    extends Cand dateS ceW hExtractedFeatures[
+      t.AccountRecom ndat onsM xerRequest,
+      t.Recom ndedUser
     ] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier(name = "AccountRecommendationsMixer")
+  overr de val  dent f er: Cand dateS ce dent f er =
+    Cand dateS ce dent f er(na  = "AccountRecom ndat onsM xer")
 
-  override def apply(
-    request: t.AccountRecommendationsMixerRequest
-  ): Stitch[CandidatesWithSourceFeatures[t.RecommendedUser]] = {
-    Stitch
-      .callFuture(accountRecommendationsMixer.getWtfRecommendations(request))
+  overr de def apply(
+    request: t.AccountRecom ndat onsM xerRequest
+  ): St ch[Cand datesW hS ceFeatures[t.Recom ndedUser]] = {
+    St ch
+      .callFuture(accountRecom ndat onsM xer.getWtfRecom ndat ons(request))
       .map { response: t.WhoToFollowResponse =>
-        responseToCandidatesWithSourceFeatures(
-          response.userRecommendations,
-          response.header,
+        responseToCand datesW hS ceFeatures(
+          response.userRecom ndat ons,
+          response. ader,
           response.footer,
-          response.displayOptions)
+          response.d splayOpt ons)
       }
   }
 
-  private def responseToCandidatesWithSourceFeatures(
-    userRecommendations: Seq[t.RecommendedUser],
-    header: t.Header,
-    footer: Option[t.Footer],
-    displayOptions: Option[t.DisplayOptions],
-  ): CandidatesWithSourceFeatures[t.RecommendedUser] = {
-    val features = FeatureMapBuilder()
-      .add(WhoToFollowModuleHeaderFeature, header)
+  pr vate def responseToCand datesW hS ceFeatures(
+    userRecom ndat ons: Seq[t.Recom ndedUser],
+     ader: t. ader,
+    footer: Opt on[t.Footer],
+    d splayOpt ons: Opt on[t.D splayOpt ons],
+  ): Cand datesW hS ceFeatures[t.Recom ndedUser] = {
+    val features = FeatureMapBu lder()
+      .add(WhoToFollowModule aderFeature,  ader)
       .add(WhoToFollowModuleFooterFeature, footer)
-      .add(WhoToFollowModuleDisplayOptionsFeature, displayOptions)
-      .build()
-    CandidatesWithSourceFeatures(userRecommendations, features)
+      .add(WhoToFollowModuleD splayOpt onsFeature, d splayOpt ons)
+      .bu ld()
+    Cand datesW hS ceFeatures(userRecom ndat ons, features)
   }
 }

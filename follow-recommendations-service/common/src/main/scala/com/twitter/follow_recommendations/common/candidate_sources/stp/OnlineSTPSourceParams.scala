@@ -1,19 +1,19 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.stp
 
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .Param
 
-object OnlineSTPSourceParams {
-  // This replaces the old scorer module, located at EpStpScorer.scala, with the new scorer, located
+object Onl neSTPS ceParams {
+  // T  replaces t  old scorer module, located at EpStpScorer.scala, w h t  new scorer, located
   // at Dbv2StpScorer.scala.
   case object UseDBv2Scorer
-      extends FSParam[Boolean]("online_stp_source_dbv2_scorer_enabled", default = false)
+      extends FSParam[Boolean]("onl ne_stp_s ce_dbv2_scorer_enabled", default = false)
 
-  // For experiments that test the impact of an improved OnlineSTP source, this controls the usage
-  // of the PostNux heavy-ranker. Note that this FS should *NOT* trigger bucket impressions.
-  case object DisableHeavyRanker
-      extends FSParam[Boolean]("online_stp_source_disable_heavy_ranker", default = false)
+  // For exper  nts that test t   mpact of an  mproved Onl neSTP s ce, t  controls t  usage
+  // of t  PostNux  avy-ranker. Note that t  FS should *NOT* tr gger bucket  mpress ons.
+  case object D sable avyRanker
+      extends FSParam[Boolean]("onl ne_stp_s ce_d sable_ avy_ranker", default = false)
 
-  case object SetPredictionDetails extends Param[Boolean](default = false)
+  case object SetPred ct onDeta ls extends Param[Boolean](default = false)
 
 }

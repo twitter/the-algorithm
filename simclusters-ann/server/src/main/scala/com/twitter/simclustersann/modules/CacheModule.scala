@@ -1,34 +1,34 @@
-package com.twitter.simclustersann.modules
+package com.tw ter.s mclustersann.modules
 
-import com.google.inject.Provides
-import com.twitter.finagle.memcached.Client
-import javax.inject.Singleton
-import com.twitter.conversions.DurationOps._
-import com.twitter.inject.TwitterModule
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.annotations.Flag
-import com.twitter.simclustersann.common.FlagNames
-import com.twitter.storehaus_internal.memcache.MemcacheStore
-import com.twitter.storehaus_internal.util.ClientName
-import com.twitter.storehaus_internal.util.ZkEndPoint
+ mport com.google. nject.Prov des
+ mport com.tw ter.f nagle. mcac d.Cl ent
+ mport javax. nject.S ngleton
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.s mclustersann.common.FlagNa s
+ mport com.tw ter.storehaus_ nternal. mcac . mcac Store
+ mport com.tw ter.storehaus_ nternal.ut l.Cl entNa 
+ mport com.tw ter.storehaus_ nternal.ut l.ZkEndPo nt
 
-object CacheModule extends TwitterModule {
+object Cac Module extends Tw terModule {
 
-  @Singleton
-  @Provides
-  def providesCache(
-    @Flag(FlagNames.CacheDest) cacheDest: String,
-    @Flag(FlagNames.CacheTimeout) cacheTimeout: Int,
-    serviceIdentifier: ServiceIdentifier,
-    stats: StatsReceiver
-  ): Client =
-    MemcacheStore.memcachedClient(
-      name = ClientName("memcache_simclusters_ann"),
-      dest = ZkEndPoint(cacheDest),
-      timeout = cacheTimeout.milliseconds,
-      retries = 0,
-      statsReceiver = stats.scope("cache_client"),
-      serviceIdentifier = serviceIdentifier
+  @S ngleton
+  @Prov des
+  def prov desCac (
+    @Flag(FlagNa s.Cac Dest) cac Dest: Str ng,
+    @Flag(FlagNa s.Cac T  out) cac T  out:  nt,
+    serv ce dent f er: Serv ce dent f er,
+    stats: StatsRece ver
+  ): Cl ent =
+     mcac Store. mcac dCl ent(
+      na  = Cl entNa (" mcac _s mclusters_ann"),
+      dest = ZkEndPo nt(cac Dest),
+      t  out = cac T  out.m ll seconds,
+      retr es = 0,
+      statsRece ver = stats.scope("cac _cl ent"),
+      serv ce dent f er = serv ce dent f er
     )
 }

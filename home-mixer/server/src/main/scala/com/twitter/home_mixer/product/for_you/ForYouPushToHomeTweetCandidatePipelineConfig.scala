@@ -1,81 +1,81 @@
-package com.twitter.home_mixer.product.for_you
+package com.tw ter.ho _m xer.product.for_ 
 
-import com.twitter.home_mixer.functional_component.decorator.builder.HomeClientEventInfoBuilder
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.product.for_you.functional_component.gate.PushToHomeRequestGate
-import com.twitter.home_mixer.product.for_you.model.ForYouQuery
-import com.twitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.tweet.TweetCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.functional_component.candidate_source.PassthroughCandidateSource
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.timelineservice.suggests.{thriftscala => st}
+ mport com.tw ter.ho _m xer.funct onal_component.decorator.bu lder.Ho Cl entEvent nfoBu lder
+ mport com.tw ter.ho _m xer.model.Ho Features.SuggestTypeFeature
+ mport com.tw ter.ho _m xer.product.for_ .funct onal_component.gate.PushToHo RequestGate
+ mport com.tw ter.ho _m xer.product.for_ .model.For Query
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.Urt emCand dateDecorator
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.t et.T etCand dateUrt emBu lder
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.PassthroughCand dateS ce
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Cand dateDecorator
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.Gate
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neResultsTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Transfor r dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neConf g
+ mport com.tw ter.t  l neserv ce.suggests.{thr ftscala => st}
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ForYouPushToHomeTweetCandidatePipelineConfig @Inject() ()
-    extends CandidatePipelineConfig[
-      ForYouQuery,
-      ForYouQuery,
-      TweetCandidate,
-      TweetCandidate
+@S ngleton
+class For PushToHo T etCand dateP pel neConf g @ nject() ()
+    extends Cand dateP pel neConf g[
+      For Query,
+      For Query,
+      T etCand date,
+      T etCand date
     ] {
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("ForYouPushToHomeTweet")
+  overr de val  dent f er: Cand dateP pel ne dent f er =
+    Cand dateP pel ne dent f er("For PushToHo T et")
 
-  override val gates: Seq[Gate[ForYouQuery]] = Seq(PushToHomeRequestGate)
+  overr de val gates: Seq[Gate[For Query]] = Seq(PushToHo RequestGate)
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    ForYouQuery,
-    ForYouQuery
-  ] = identity
+  overr de val queryTransfor r: Cand dateP pel neQueryTransfor r[
+    For Query,
+    For Query
+  ] =  dent y
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[TweetCandidate]
-  ] = Seq(new CandidateFeatureTransformer[TweetCandidate] {
-    override def features: Set[Feature[_, _]] = Set(SuggestTypeFeature)
+  overr de val featuresFromCand dateS ceTransfor rs: Seq[
+    Cand dateFeatureTransfor r[T etCand date]
+  ] = Seq(new Cand dateFeatureTransfor r[T etCand date] {
+    overr de def features: Set[Feature[_, _]] = Set(SuggestTypeFeature)
 
-    override val identifier: TransformerIdentifier =
-      TransformerIdentifier("ForYouPushToHomeTweet")
+    overr de val  dent f er: Transfor r dent f er =
+      Transfor r dent f er("For PushToHo T et")
 
-    override def transform(input: TweetCandidate): FeatureMap =
-      FeatureMapBuilder().add(SuggestTypeFeature, Some(st.SuggestType.Magicrec)).build()
+    overr de def transform( nput: T etCand date): FeatureMap =
+      FeatureMapBu lder().add(SuggestTypeFeature, So (st.SuggestType.Mag crec)).bu ld()
   })
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    TweetCandidate,
-    TweetCandidate
-  ] = identity
+  overr de val resultTransfor r: Cand dateP pel neResultsTransfor r[
+    T etCand date,
+    T etCand date
+  ] =  dent y
 
-  override val candidateSource: CandidateSource[
-    ForYouQuery,
-    TweetCandidate
-  ] = PassthroughCandidateSource(
-    CandidateSourceIdentifier("PushToHomeTweet"),
-    { query => query.pushToHomeTweetId.toSeq.map(TweetCandidate(_)) }
+  overr de val cand dateS ce: Cand dateS ce[
+    For Query,
+    T etCand date
+  ] = PassthroughCand dateS ce(
+    Cand dateS ce dent f er("PushToHo T et"),
+    { query => query.pushToHo T et d.toSeq.map(T etCand date(_)) }
   )
 
-  override val decorator: Option[
-    CandidateDecorator[ForYouQuery, TweetCandidate]
+  overr de val decorator: Opt on[
+    Cand dateDecorator[For Query, T etCand date]
   ] = {
-    val tweetItemBuilder = TweetCandidateUrtItemBuilder(
-      clientEventInfoBuilder = HomeClientEventInfoBuilder()
+    val t et emBu lder = T etCand dateUrt emBu lder(
+      cl entEvent nfoBu lder = Ho Cl entEvent nfoBu lder()
     )
-    Some(UrtItemCandidateDecorator(tweetItemBuilder))
+    So (Urt emCand dateDecorator(t et emBu lder))
   }
 }

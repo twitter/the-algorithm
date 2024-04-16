@@ -1,172 +1,172 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.t etyp e.thr ftscala._
 
-object SetRetweetVisibility extends TweetStore.SyncModule {
+object SetRet etV s b l y extends T etStore.SyncModule {
 
   case class Event(
-    retweetId: TweetId,
-    visible: Boolean,
-    srcId: TweetId,
-    retweetUserId: UserId,
-    srcTweetUserId: UserId,
-    timestamp: Time)
-      extends SyncTweetStoreEvent("set_retweet_visibility") {
-    def toAsyncRequest: AsyncSetRetweetVisibilityRequest =
-      AsyncSetRetweetVisibilityRequest(
-        retweetId = retweetId,
-        visible = visible,
-        srcId = srcId,
-        retweetUserId = retweetUserId,
-        sourceTweetUserId = srcTweetUserId,
-        timestamp = timestamp.inMillis
+    ret et d: T et d,
+    v s ble: Boolean,
+    src d: T et d,
+    ret etUser d: User d,
+    srcT etUser d: User d,
+    t  stamp: T  )
+      extends SyncT etStoreEvent("set_ret et_v s b l y") {
+    def toAsyncRequest: AsyncSetRet etV s b l yRequest =
+      AsyncSetRet etV s b l yRequest(
+        ret et d = ret et d,
+        v s ble = v s ble,
+        src d = src d,
+        ret etUser d = ret etUser d,
+        s ceT etUser d = srcT etUser d,
+        t  stamp = t  stamp. nM ll s
       )
   }
 
-  trait Store {
-    val setRetweetVisibility: FutureEffect[Event]
+  tra  Store {
+    val setRet etV s b l y: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    val setRetweetVisibility: FutureEffect[Event] = wrap(underlying.setRetweetVisibility)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    val setRet etV s b l y: FutureEffect[Event] = wrap(underly ng.setRet etV s b l y)
   }
 
   object Store {
 
     /**
-     * [[AsyncEnqueueStore]] - use this store to call the asyncSetRetweetVisibility endpoint.
+     * [[AsyncEnqueueStore]] - use t  store to call t  asyncSetRet etV s b l y endpo nt.
      *
-     * @see [[AsyncSetRetweetVisibility.Store.apply]]
+     * @see [[AsyncSetRet etV s b l y.Store.apply]]
      */
     def apply(asyncEnqueueStore: AsyncEnqueueStore): Store =
       new Store {
-        override val setRetweetVisibility: FutureEffect[Event] =
-          asyncEnqueueStore.setRetweetVisibility
+        overr de val setRet etV s b l y: FutureEffect[Event] =
+          asyncEnqueueStore.setRet etV s b l y
       }
   }
 }
 
-object AsyncSetRetweetVisibility extends TweetStore.AsyncModule {
+object AsyncSetRet etV s b l y extends T etStore.AsyncModule {
 
   case class Event(
-    retweetId: TweetId,
-    visible: Boolean,
-    srcId: TweetId,
-    retweetUserId: UserId,
-    srcTweetUserId: UserId,
-    timestamp: Time)
-      extends AsyncTweetStoreEvent("async_set_retweet_visibility") {
-    def toAsyncRequest(action: Option[AsyncWriteAction] = None): AsyncSetRetweetVisibilityRequest =
-      AsyncSetRetweetVisibilityRequest(
-        retweetId = retweetId,
-        visible = visible,
-        srcId = srcId,
-        retweetUserId = retweetUserId,
-        sourceTweetUserId = srcTweetUserId,
-        retryAction = action,
-        timestamp = timestamp.inMillis
+    ret et d: T et d,
+    v s ble: Boolean,
+    src d: T et d,
+    ret etUser d: User d,
+    srcT etUser d: User d,
+    t  stamp: T  )
+      extends AsyncT etStoreEvent("async_set_ret et_v s b l y") {
+    def toAsyncRequest(act on: Opt on[AsyncWr eAct on] = None): AsyncSetRet etV s b l yRequest =
+      AsyncSetRet etV s b l yRequest(
+        ret et d = ret et d,
+        v s ble = v s ble,
+        src d = src d,
+        ret etUser d = ret etUser d,
+        s ceT etUser d = srcT etUser d,
+        retryAct on = act on,
+        t  stamp = t  stamp. nM ll s
       )
 
-    override def enqueueRetry(service: ThriftTweetService, action: AsyncWriteAction): Future[Unit] =
-      service.asyncSetRetweetVisibility(toAsyncRequest(Some(action)))
+    overr de def enqueueRetry(serv ce: Thr ftT etServ ce, act on: AsyncWr eAct on): Future[Un ] =
+      serv ce.asyncSetRet etV s b l y(toAsyncRequest(So (act on)))
   }
 
   object Event {
-    def fromAsyncRequest(req: AsyncSetRetweetVisibilityRequest): TweetStoreEventOrRetry[Event] =
-      TweetStoreEventOrRetry(
-        AsyncSetRetweetVisibility.Event(
-          retweetId = req.retweetId,
-          visible = req.visible,
-          srcId = req.srcId,
-          retweetUserId = req.retweetUserId,
-          srcTweetUserId = req.sourceTweetUserId,
-          timestamp = Time.fromMilliseconds(req.timestamp)
+    def fromAsyncRequest(req: AsyncSetRet etV s b l yRequest): T etStoreEventOrRetry[Event] =
+      T etStoreEventOrRetry(
+        AsyncSetRet etV s b l y.Event(
+          ret et d = req.ret et d,
+          v s ble = req.v s ble,
+          src d = req.src d,
+          ret etUser d = req.ret etUser d,
+          srcT etUser d = req.s ceT etUser d,
+          t  stamp = T  .fromM ll seconds(req.t  stamp)
         ),
-        req.retryAction,
+        req.retryAct on,
         RetryEvent
       )
   }
 
-  case class RetryEvent(action: AsyncWriteAction, event: Event)
-      extends TweetStoreRetryEvent[Event] {
+  case class RetryEvent(act on: AsyncWr eAct on, event: Event)
+      extends T etStoreRetryEvent[Event] {
 
-    override val eventType: AsyncWriteEventType.SetRetweetVisibility.type =
-      AsyncWriteEventType.SetRetweetVisibility
-    override val scribedTweetOnFailure: None.type = None
+    overr de val eventType: AsyncWr eEventType.SetRet etV s b l y.type =
+      AsyncWr eEventType.SetRet etV s b l y
+    overr de val scr bedT etOnFa lure: None.type = None
   }
 
-  trait Store {
-    val asyncSetRetweetVisibility: FutureEffect[Event]
-    val retryAsyncSetRetweetVisibility: FutureEffect[TweetStoreRetryEvent[Event]]
+  tra  Store {
+    val asyncSetRet etV s b l y: FutureEffect[Event]
+    val retryAsyncSetRet etV s b l y: FutureEffect[T etStoreRetryEvent[Event]]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    val asyncSetRetweetVisibility: FutureEffect[Event] = wrap(underlying.asyncSetRetweetVisibility)
-    val retryAsyncSetRetweetVisibility: FutureEffect[TweetStoreRetryEvent[Event]] = wrap(
-      underlying.retryAsyncSetRetweetVisibility)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    val asyncSetRet etV s b l y: FutureEffect[Event] = wrap(underly ng.asyncSetRet etV s b l y)
+    val retryAsyncSetRet etV s b l y: FutureEffect[T etStoreRetryEvent[Event]] = wrap(
+      underly ng.retryAsyncSetRet etV s b l y)
   }
 
   object Store {
 
     /**
-     * [[TweetIndexingStore]] - archive or unarchive a retweet edge in TFlock RetweetGraph
-     * [[TweetCountsCacheUpdatingStore]] - modify the retweet count directly in cache.
-     * [[ReplicatingTweetStore]] - replicate this [[Event]] in the other DC.
-     * [[RetweetArchivalEnqueueStore]] - publish RetweetArchivalEvent to "retweet_archival_events" event stream.
+     * [[T et ndex ngStore]] - arch ve or unarch ve a ret et edge  n TFlock Ret etGraph
+     * [[T etCountsCac Updat ngStore]] - mod fy t  ret et count d rectly  n cac .
+     * [[Repl cat ngT etStore]] - repl cate t  [[Event]]  n t  ot r DC.
+     * [[Ret etArch valEnqueueStore]] - publ sh Ret etArch valEvent to "ret et_arch val_events" event stream.
      *
-     * @see [[ReplicatedSetRetweetVisibility.Store.apply]]
+     * @see [[Repl catedSetRet etV s b l y.Store.apply]]
      */
     def apply(
-      tweetIndexingStore: TweetIndexingStore,
-      tweetCountsCacheUpdatingStore: TweetCountsCacheUpdatingStore,
-      replicatingTweetStore: ReplicatingTweetStore,
-      retweetArchivalEnqueueStore: RetweetArchivalEnqueueStore
+      t et ndex ngStore: T et ndex ngStore,
+      t etCountsCac Updat ngStore: T etCountsCac Updat ngStore,
+      repl cat ngT etStore: Repl cat ngT etStore,
+      ret etArch valEnqueueStore: Ret etArch valEnqueueStore
     ): Store = {
       val stores: Seq[Store] =
         Seq(
-          tweetIndexingStore,
-          tweetCountsCacheUpdatingStore,
-          replicatingTweetStore,
-          retweetArchivalEnqueueStore
+          t et ndex ngStore,
+          t etCountsCac Updat ngStore,
+          repl cat ngT etStore,
+          ret etArch valEnqueueStore
         )
 
-      def build[E <: TweetStoreEvent, S](extract: Store => FutureEffect[E]): FutureEffect[E] =
-        FutureEffect.inParallel[E](stores.map(extract): _*)
+      def bu ld[E <: T etStoreEvent, S](extract: Store => FutureEffect[E]): FutureEffect[E] =
+        FutureEffect. nParallel[E](stores.map(extract): _*)
 
       new Store {
-        override val asyncSetRetweetVisibility: FutureEffect[Event] = build(
-          _.asyncSetRetweetVisibility)
-        override val retryAsyncSetRetweetVisibility: FutureEffect[TweetStoreRetryEvent[Event]] =
-          build(_.retryAsyncSetRetweetVisibility)
+        overr de val asyncSetRet etV s b l y: FutureEffect[Event] = bu ld(
+          _.asyncSetRet etV s b l y)
+        overr de val retryAsyncSetRet etV s b l y: FutureEffect[T etStoreRetryEvent[Event]] =
+          bu ld(_.retryAsyncSetRet etV s b l y)
       }
     }
   }
 }
 
-object ReplicatedSetRetweetVisibility extends TweetStore.ReplicatedModule {
+object Repl catedSetRet etV s b l y extends T etStore.Repl catedModule {
 
-  case class Event(srcId: TweetId, visible: Boolean)
-      extends ReplicatedTweetStoreEvent("replicated_set_retweet_visibility")
+  case class Event(src d: T et d, v s ble: Boolean)
+      extends Repl catedT etStoreEvent("repl cated_set_ret et_v s b l y")
 
-  trait Store {
-    val replicatedSetRetweetVisibility: FutureEffect[Event]
+  tra  Store {
+    val repl catedSetRet etV s b l y: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val replicatedSetRetweetVisibility: FutureEffect[Event] =
-      wrap(underlying.replicatedSetRetweetVisibility)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val repl catedSetRet etV s b l y: FutureEffect[Event] =
+      wrap(underly ng.repl catedSetRet etV s b l y)
   }
 
   object Store {
 
     /**
-     * [[TweetCountsCacheUpdatingStore]] - replicate modifying the retweet count directly in cache.
+     * [[T etCountsCac Updat ngStore]] - repl cate mod fy ng t  ret et count d rectly  n cac .
      */
-    def apply(tweetCountsCacheUpdatingStore: TweetCountsCacheUpdatingStore): Store =
+    def apply(t etCountsCac Updat ngStore: T etCountsCac Updat ngStore): Store =
       new Store {
-        override val replicatedSetRetweetVisibility: FutureEffect[Event] =
-          tweetCountsCacheUpdatingStore.replicatedSetRetweetVisibility
+        overr de val repl catedSetRet etV s b l y: FutureEffect[Event] =
+          t etCountsCac Updat ngStore.repl catedSetRet etV s b l y
       }
   }
 }

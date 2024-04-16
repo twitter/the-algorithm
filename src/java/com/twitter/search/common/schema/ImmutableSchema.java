@@ -1,902 +1,902 @@
-package com.twitter.search.common.schema;
+package com.tw ter.search.common.sc ma;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicLong;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
-import javax.annotation.concurrent.ThreadSafe;
+ mport java. o. OExcept on;
+ mport java. o.ObjectOutputStream;
+ mport java.ut l.Collect on;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
+ mport java.ut l.SortedMap;
+ mport java.ut l.TreeMap;
+ mport java.ut l.concurrent.atom c.Atom cLong;
+ mport javax.annotat on.Nullable;
+ mport javax.annotat on.concurrent. mmutable;
+ mport javax.annotat on.concurrent.ThreadSafe;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.base.Pred cate;
+ mport com.google.common.collect. mmutableCollect on;
+ mport com.google.common.collect. mmutableMap;
+ mport com.google.common.collect. mmutableSet;
+ mport com.google.common.collect. mmutableSortedMap;
+ mport com.google.common.collect.L sts;
+ mport com.google.common.collect.Maps;
+ mport com.google.common.collect.Sets;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.facet.FacetsConfig;
-import org.apache.lucene.index.DocValuesType;
-import org.apache.lucene.index.FieldInfos;
-import org.apache.lucene.index.IndexOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .lucene.analys s.Analyzer;
+ mport org.apac .lucene.facet.FacetsConf g;
+ mport org.apac .lucene. ndex.DocValuesType;
+ mport org.apac .lucene. ndex.F eld nfos;
+ mport org.apac .lucene. ndex. ndexOpt ons;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.search.common.features.ExternalTweetFeature;
-import com.twitter.search.common.features.SearchResultFeature;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchema;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchemaEntry;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchemaSpecifier;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureType;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.FieldWeightDefault;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.IndexedNumericFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftAnalyzer;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFViewSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftFacetFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldConfiguration;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexedFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftSchema;
-import com.twitter.search.common.schema.thriftjava.ThriftSearchFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftTokenStreamSerializer;
+ mport com.tw ter.common.collect ons.Pa r;
+ mport com.tw ter.common.text.ut l.TokenStreamSer al zer;
+ mport com.tw ter.search.common.features.ExternalT etFeature;
+ mport com.tw ter.search.common.features.SearchResultFeature;
+ mport com.tw ter.search.common.features.thr ft.Thr ftSearchFeatureSc ma;
+ mport com.tw ter.search.common.features.thr ft.Thr ftSearchFeatureSc maEntry;
+ mport com.tw ter.search.common.features.thr ft.Thr ftSearchFeatureSc maSpec f er;
+ mport com.tw ter.search.common.features.thr ft.Thr ftSearchFeatureType;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
+ mport com.tw ter.search.common.sc ma.base.Earlyb rdF eldType;
+ mport com.tw ter.search.common.sc ma.base.FeatureConf gurat on;
+ mport com.tw ter.search.common.sc ma.base.F eld  ghtDefault;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.base. ndexedNu r cF eldSett ngs;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftAnalyzer;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftCSFF eldSett ngs;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftCSFType;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftCSFV ewSett ngs;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftFacetF eldSett ngs;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftF eldConf gurat on;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftF eldSett ngs;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ft ndexedF eldSett ngs;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftSc ma;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftSearchF eldSett ngs;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftTokenStreamSer al zer;
 
 /**
- * A schema instance that does not change at run time.
+ * A sc ma  nstance that does not change at run t  .
  */
-@Immutable @ThreadSafe
-public class ImmutableSchema implements ImmutableSchemaInterface {
-  private static final Logger LOG = LoggerFactory.getLogger(ImmutableSchema.class);
-  private static final ImmutableSet<ThriftCSFType> CAN_FACET_ON_CSF_TYPES =
-      ImmutableSet.<ThriftCSFType>builder()
-          .add(ThriftCSFType.BYTE)
-          .add(ThriftCSFType.INT)
-          .add(ThriftCSFType.LONG)
-          .build();
+@ mmutable @ThreadSafe
+publ c class  mmutableSc ma  mple nts  mmutableSc ma nterface {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger( mmutableSc ma.class);
+  pr vate stat c f nal  mmutableSet<Thr ftCSFType> CAN_FACET_ON_CSF_TYPES =
+       mmutableSet.<Thr ftCSFType>bu lder()
+          .add(Thr ftCSFType.BYTE)
+          .add(Thr ftCSFType. NT)
+          .add(Thr ftCSFType.LONG)
+          .bu ld();
 
-  private static final SearchCounter FEATURES_EXISTED_IN_OLD_SCHEMA =
-      SearchCounter.export("features_existed_in_old_schema");
+  pr vate stat c f nal SearchCounter FEATURES_EX STED_ N_OLD_SCHEMA =
+      SearchCounter.export("features_ex sted_ n_old_sc ma");
 
-  // Currently our index uses 4 bits to store the facet field id.
-  public static final int MAX_FACET_FIELD_ID = 15;
+  // Currently    ndex uses 4 b s to store t  facet f eld  d.
+  publ c stat c f nal  nt MAX_FACET_F ELD_ D = 15;
 
-  public static final String HF_TERM_PAIRS_FIELD = "hf_term_pairs";
-  public static final String HF_PHRASE_PAIRS_FIELD = "hf_phrase_pairs";
+  publ c stat c f nal Str ng HF_TERM_PA RS_F ELD = "hf_term_pa rs";
+  publ c stat c f nal Str ng HF_PHRASE_PA RS_F ELD = "hf_phrase_pa rs";
 
-  private final ImmutableMap<Integer, FieldInfo> fieldSettingsMapById;
-  private final ImmutableMap<String, FieldInfo> fieldSettingsMapByName;
-  private final ImmutableMap<String, FeatureConfiguration> featureConfigMapByName;
-  private final ImmutableMap<Integer, FeatureConfiguration> featureConfigMapById;
+  pr vate f nal  mmutableMap< nteger, F eld nfo> f eldSett ngsMapBy d;
+  pr vate f nal  mmutableMap<Str ng, F eld nfo> f eldSett ngsMapByNa ;
+  pr vate f nal  mmutableMap<Str ng, FeatureConf gurat on> featureConf gMapByNa ;
+  pr vate f nal  mmutableMap< nteger, FeatureConf gurat on> featureConf gMapBy d;
 
   @Nullable
-  private final ThriftAnalyzer defaultAnalyzer;
-  private final AnalyzerFactory analyzerFactory;
+  pr vate f nal Thr ftAnalyzer defaultAnalyzer;
+  pr vate f nal AnalyzerFactory analyzerFactory;
 
-  private final ImmutableMap<String, FieldWeightDefault> fieldWeightMap;
-  private final Map<String, FieldInfo> facetNameToFieldMap = Maps.newHashMap();
-  private final int numFacetFields;
-  private final ImmutableSet<FieldInfo> csfFacetFields;
+  pr vate f nal  mmutableMap<Str ng, F eld  ghtDefault> f eld  ghtMap;
+  pr vate f nal Map<Str ng, F eld nfo> facetNa ToF eldMap = Maps.newHashMap();
+  pr vate f nal  nt numFacetF elds;
+  pr vate f nal  mmutableSet<F eld nfo> csfFacetF elds;
 
-  // This is the search result feature schema - it has the definition for all the column stride
-  // view fields.
-  private final ThriftSearchFeatureSchema searchFeatureSchema;
+  // T   s t  search result feature sc ma -   has t  def n  on for all t  column str de
+  // v ew f elds.
+  pr vate f nal Thr ftSearchFeatureSc ma searchFeatureSc ma;
 
-  private final int majorVersionNumber;
-  private final int minorVersionNumber;
-  private final String versionDesc;
-  private final boolean isVersionOfficial;
+  pr vate f nal  nt majorVers onNumber;
+  pr vate f nal  nt m norVers onNumber;
+  pr vate f nal Str ng vers onDesc;
+  pr vate f nal boolean  sVers onOff c al;
 
   /**
-   * Construct a Schema instance with the given ThriftSchema and AnalyzerFactory.
+   * Construct a Sc ma  nstance w h t  g ven Thr ftSc ma and AnalyzerFactory.
    */
-  public ImmutableSchema(ThriftSchema thriftSchema,
+  publ c  mmutableSc ma(Thr ftSc ma thr ftSc ma,
                          AnalyzerFactory analyzerFactory,
-                         String featureSchemaVersionPrefix) throws SchemaValidationException {
-    Pair<Integer, String> versionPair = parseVersionString(thriftSchema.getVersion());
-    this.majorVersionNumber = thriftSchema.getMajorVersionNumber();
-    this.minorVersionNumber = thriftSchema.getMinorVersionNumber();
-    this.versionDesc = versionPair.getSecond();
-    this.isVersionOfficial = thriftSchema.isVersionIsOfficial();
+                         Str ng featureSc maVers onPref x) throws Sc maVal dat onExcept on {
+    Pa r< nteger, Str ng> vers onPa r = parseVers onStr ng(thr ftSc ma.getVers on());
+    t .majorVers onNumber = thr ftSc ma.getMajorVers onNumber();
+    t .m norVers onNumber = thr ftSc ma.getM norVers onNumber();
+    t .vers onDesc = vers onPa r.getSecond();
+    t . sVers onOff c al = thr ftSc ma. sVers on sOff c al();
 
-    this.analyzerFactory = analyzerFactory;
+    t .analyzerFactory = analyzerFactory;
 
-    Map<Integer, FieldInfo> tmpMap = Maps.newLinkedHashMap();
-    Set<FieldInfo> tmpSet = Sets.newHashSet();
+    Map< nteger, F eld nfo> tmpMap = Maps.newL nkedHashMap();
+    Set<F eld nfo> tmpSet = Sets.newHashSet();
 
-    if (thriftSchema.isSetDefaultAnalyzer()) {
-      this.defaultAnalyzer = thriftSchema.getDefaultAnalyzer().deepCopy();
+     f (thr ftSc ma. sSetDefaultAnalyzer()) {
+      t .defaultAnalyzer = thr ftSc ma.getDefaultAnalyzer().deepCopy();
     } else {
-      this.defaultAnalyzer = null;
+      t .defaultAnalyzer = null;
     }
 
-    Map<Integer, ThriftFieldConfiguration> configs = thriftSchema.getFieldConfigs();
+    Map< nteger, Thr ftF eldConf gurat on> conf gs = thr ftSc ma.getF eldConf gs();
 
-    // Collect all the CSF Views, so that we can later verify that they are appropriately
-    // configured once we've processed all the other field settings.
-    Map<Integer, ThriftFieldConfiguration> csfViewFields = Maps.newHashMap();
-    boolean requiresHfPairFields = false;
-    boolean hasHfTermPairField = false;
-    boolean hasHfPhrasePairField = false;
-    int numFacets = 0;
-    for (Map.Entry<Integer, ThriftFieldConfiguration> entry : configs.entrySet()) {
-      int fieldId = entry.getKey();
+    // Collect all t  CSF V ews, so that   can later ver fy that t y are appropr ately
+    // conf gured once  've processed all t  ot r f eld sett ngs.
+    Map< nteger, Thr ftF eldConf gurat on> csfV ewF elds = Maps.newHashMap();
+    boolean requ resHfPa rF elds = false;
+    boolean hasHfTermPa rF eld = false;
+    boolean hasHfPhrasePa rF eld = false;
+     nt numFacets = 0;
+    for (Map.Entry< nteger, Thr ftF eldConf gurat on> entry : conf gs.entrySet()) {
+       nt f eld d = entry.getKey();
 
-      if (tmpMap.containsKey(fieldId)) {
-        throw new SchemaValidationException("Duplicate field id " + fieldId);
+       f (tmpMap.conta nsKey(f eld d)) {
+        throw new Sc maVal dat onExcept on("Dupl cate f eld  d " + f eld d);
       }
 
-      ThriftFieldConfiguration config = entry.getValue();
-      FieldInfo fieldInfo = parseThriftFieldSettings(fieldId, config, csfViewFields);
-      validate(fieldInfo);
-      if (fieldInfo.getFieldType().isFacetField()) {
-        if (numFacets > MAX_FACET_FIELD_ID) {
-          throw new SchemaValidationException(
-              "Maximum supported facet field ID is:  " + MAX_FACET_FIELD_ID);
+      Thr ftF eldConf gurat on conf g = entry.getValue();
+      F eld nfo f eld nfo = parseThr ftF eldSett ngs(f eld d, conf g, csfV ewF elds);
+      val date(f eld nfo);
+       f (f eld nfo.getF eldType(). sFacetF eld()) {
+         f (numFacets > MAX_FACET_F ELD_ D) {
+          throw new Sc maVal dat onExcept on(
+              "Max mum supported facet f eld  D  s:  " + MAX_FACET_F ELD_ D);
         }
         numFacets++;
-        facetNameToFieldMap.put(fieldInfo.getFieldType().getFacetName(), fieldInfo);
+        facetNa ToF eldMap.put(f eld nfo.getF eldType().getFacetNa (), f eld nfo);
 
-        if (fieldInfo.getFieldType().isUseCSFForFacetCounting()) {
-          tmpSet.add(fieldInfo);
+         f (f eld nfo.getF eldType(). sUseCSFForFacetCount ng()) {
+          tmpSet.add(f eld nfo);
         }
       }
 
-      tmpMap.put(fieldId, fieldInfo);
+      tmpMap.put(f eld d, f eld nfo);
 
-      if (fieldInfo.getFieldType().isIndexHFTermPairs()) {
-        requiresHfPairFields = true;
+       f (f eld nfo.getF eldType(). s ndexHFTermPa rs()) {
+        requ resHfPa rF elds = true;
       }
-      if (fieldInfo.getName().equals(HF_TERM_PAIRS_FIELD)) {
-        hasHfTermPairField = true;
+       f (f eld nfo.getNa ().equals(HF_TERM_PA RS_F ELD)) {
+        hasHfTermPa rF eld = true;
       }
-      if (fieldInfo.getName().equals(HF_PHRASE_PAIRS_FIELD)) {
-        hasHfPhrasePairField = true;
-      }
-    }
-
-    this.numFacetFields = numFacets;
-    this.csfFacetFields = ImmutableSet.copyOf(tmpSet);
-
-    // If any field requires high frequency term/phrase pair fields, make sure they exist
-    if (requiresHfPairFields) {
-      if (!hasHfTermPairField || !hasHfPhrasePairField) {
-        throw new SchemaValidationException(
-            "High frequency term/phrase pair fields do not exist in the schema.");
+       f (f eld nfo.getNa ().equals(HF_PHRASE_PA RS_F ELD)) {
+        hasHfPhrasePa rF eld = true;
       }
     }
 
-    this.fieldSettingsMapById = ImmutableMap.copyOf(tmpMap);
+    t .numFacetF elds = numFacets;
+    t .csfFacetF elds =  mmutableSet.copyOf(tmpSet);
 
-    Pair<ImmutableMap<String, FeatureConfiguration>, ImmutableMap<Integer, FeatureConfiguration>>
-        featureConfigMapPair = buildFeatureMaps(csfViewFields);
-    this.featureConfigMapByName = featureConfigMapPair.getFirst();
-    this.featureConfigMapById = featureConfigMapPair.getSecond();
-
-    for (ThriftFieldConfiguration csfViewField : csfViewFields.values()) {
-      SchemaBuilder.verifyCSFViewSettings(configs, csfViewField);
-    }
-
-    ImmutableMap.Builder<String, FieldInfo> builder = ImmutableMap.builder();
-
-    for (FieldInfo info : fieldSettingsMapById.values()) {
-      info.getFieldType().freeze();
-      builder.put(info.getName(), info);
-    }
-    this.fieldSettingsMapByName = builder.build();
-
-    ImmutableMap.Builder<String, FieldWeightDefault> fieldWeightMapBuilder = ImmutableMap.builder();
-
-    for (FieldInfo fi : getFieldInfos()) {
-      // CSF fields are not searchable. All other fields are.
-      if (fi.getFieldType().isIndexedField()) {
-        fieldWeightMapBuilder.put(
-            fi.getName(),
-            new FieldWeightDefault(
-                fi.getFieldType().isTextSearchableByDefault(),
-                fi.getFieldType().getTextSearchableFieldWeight()));
+    //  f any f eld requ res h gh frequency term/phrase pa r f elds, make sure t y ex st
+     f (requ resHfPa rF elds) {
+       f (!hasHfTermPa rF eld || !hasHfPhrasePa rF eld) {
+        throw new Sc maVal dat onExcept on(
+            "H gh frequency term/phrase pa r f elds do not ex st  n t  sc ma.");
       }
     }
 
-    this.fieldWeightMap = fieldWeightMapBuilder.build();
-    // Create features with extra Earlybird derived fields, extra fields won't change the version
-    // but they do change the checksum.
-    this.searchFeatureSchema = createSearchResultFeatureSchema(
-        featureSchemaVersionPrefix, fieldSettingsMapByName, featureConfigMapByName);
+    t .f eldSett ngsMapBy d =  mmutableMap.copyOf(tmpMap);
+
+    Pa r< mmutableMap<Str ng, FeatureConf gurat on>,  mmutableMap< nteger, FeatureConf gurat on>>
+        featureConf gMapPa r = bu ldFeatureMaps(csfV ewF elds);
+    t .featureConf gMapByNa  = featureConf gMapPa r.getF rst();
+    t .featureConf gMapBy d = featureConf gMapPa r.getSecond();
+
+    for (Thr ftF eldConf gurat on csfV ewF eld : csfV ewF elds.values()) {
+      Sc maBu lder.ver fyCSFV ewSett ngs(conf gs, csfV ewF eld);
+    }
+
+     mmutableMap.Bu lder<Str ng, F eld nfo> bu lder =  mmutableMap.bu lder();
+
+    for (F eld nfo  nfo : f eldSett ngsMapBy d.values()) {
+       nfo.getF eldType().freeze();
+      bu lder.put( nfo.getNa (),  nfo);
+    }
+    t .f eldSett ngsMapByNa  = bu lder.bu ld();
+
+     mmutableMap.Bu lder<Str ng, F eld  ghtDefault> f eld  ghtMapBu lder =  mmutableMap.bu lder();
+
+    for (F eld nfo f  : getF eld nfos()) {
+      // CSF f elds are not searchable. All ot r f elds are.
+       f (f .getF eldType(). s ndexedF eld()) {
+        f eld  ghtMapBu lder.put(
+            f .getNa (),
+            new F eld  ghtDefault(
+                f .getF eldType(). sTextSearchableByDefault(),
+                f .getF eldType().getTextSearchableF eld  ght()));
+      }
+    }
+
+    t .f eld  ghtMap = f eld  ghtMapBu lder.bu ld();
+    // Create features w h extra Earlyb rd der ved f elds, extra f elds won't change t  vers on
+    // but t y do change t  c cksum.
+    t .searchFeatureSc ma = createSearchResultFeatureSc ma(
+        featureSc maVers onPref x, f eldSett ngsMapByNa , featureConf gMapByNa );
   }
 
   /**
-   * Add a set of features to a schema if they don't exist yet, and update the schema checksum.
-   * if there's conflict, RuntimeException will be thrown.
-   * Old map won't be touched, a new map will be returned will old and new data combined.
+   * Add a set of features to a sc ma  f t y don't ex st yet, and update t  sc ma c cksum.
+   *  f t re's confl ct, Runt  Except on w ll be thrown.
+   * Old map won't be touc d, a new map w ll be returned w ll old and new data comb ned.
    */
-  public static Map<Integer, ThriftSearchFeatureSchemaEntry> appendToFeatureSchema(
-      Map<Integer, ThriftSearchFeatureSchemaEntry> oldEntryMap,
-      Set<? extends SearchResultFeature> features) throws SchemaValidationException {
-    if (oldEntryMap == null) {
-      throw new SchemaValidationException(
-          "Cannot append features to schema, the entryMap is null");
+  publ c stat c Map< nteger, Thr ftSearchFeatureSc maEntry> appendToFeatureSc ma(
+      Map< nteger, Thr ftSearchFeatureSc maEntry> oldEntryMap,
+      Set<? extends SearchResultFeature> features) throws Sc maVal dat onExcept on {
+     f (oldEntryMap == null) {
+      throw new Sc maVal dat onExcept on(
+          "Cannot append features to sc ma, t  entryMap  s null");
     }
-    // make a copy of the existing map
-    ImmutableMap.Builder<Integer, ThriftSearchFeatureSchemaEntry> builder =
-        ImmutableSortedMap.<Integer, ThriftSearchFeatureSchemaEntry>naturalOrder()
+    // make a copy of t  ex st ng map
+     mmutableMap.Bu lder< nteger, Thr ftSearchFeatureSc maEntry> bu lder =
+         mmutableSortedMap.< nteger, Thr ftSearchFeatureSc maEntry>naturalOrder()
             .putAll(oldEntryMap);
 
     for (SearchResultFeature feature : features) {
-      if (oldEntryMap.containsKey(feature.getId())) {
-        FEATURES_EXISTED_IN_OLD_SCHEMA.increment();
+       f (oldEntryMap.conta nsKey(feature.get d())) {
+        FEATURES_EX STED_ N_OLD_SCHEMA. ncre nt();
       } else {
-        builder.put(feature.getId(), new ThriftSearchFeatureSchemaEntry()
-            .setFeatureName(feature.getName())
+        bu lder.put(feature.get d(), new Thr ftSearchFeatureSc maEntry()
+            .setFeatureNa (feature.getNa ())
             .setFeatureType(feature.getType()));
       }
     }
-    return builder.build();
+    return bu lder.bu ld();
   }
 
   /**
-   * Append external features to create a new schema.
-   * @param oldSchema The old schema to build on top of
-   * @param features a list of features to be appended to the schema
-   * @param versionSuffix the version suffix, if not-null, it will be attached to the end of
-   * original schema's version.
-   * @return A new schema object with the appended fields
-   * @throws SchemaValidationException thrown when the checksum cannot be computed
+   * Append external features to create a new sc ma.
+   * @param oldSc ma T  old sc ma to bu ld on top of
+   * @param features a l st of features to be appended to t  sc ma
+   * @param vers onSuff x t  vers on suff x,  f not-null,   w ll be attac d to t  end of
+   * or g nal sc ma's vers on.
+   * @return A new sc ma object w h t  appended f elds
+   * @throws Sc maVal dat onExcept on thrown w n t  c cksum cannot be computed
    */
-  public static ThriftSearchFeatureSchema appendToCreateNewFeatureSchema(
-      ThriftSearchFeatureSchema oldSchema,
-      Set<ExternalTweetFeature> features,
-      @Nullable String versionSuffix) throws SchemaValidationException {
+  publ c stat c Thr ftSearchFeatureSc ma appendToCreateNewFeatureSc ma(
+      Thr ftSearchFeatureSc ma oldSc ma,
+      Set<ExternalT etFeature> features,
+      @Nullable Str ng vers onSuff x) throws Sc maVal dat onExcept on {
 
-    ThriftSearchFeatureSchema newSchema = new ThriftSearchFeatureSchema();
-    // copy over all the entries plus the new ones
-    newSchema.setEntries(appendToFeatureSchema(oldSchema.getEntries(), features));
+    Thr ftSearchFeatureSc ma newSc ma = new Thr ftSearchFeatureSc ma();
+    // copy over all t  entr es plus t  new ones
+    newSc ma.setEntr es(appendToFeatureSc ma(oldSc ma.getEntr es(), features));
 
-    ThriftSearchFeatureSchemaSpecifier spec = new ThriftSearchFeatureSchemaSpecifier();
-    // the version is directly inherited or with a suffix
-    Preconditions.checkArgument(versionSuffix == null || !versionSuffix.isEmpty());
-    spec.setVersion(versionSuffix == null
-        ? oldSchema.getSchemaSpecifier().getVersion()
-        : oldSchema.getSchemaSpecifier().getVersion() + versionSuffix);
-    spec.setChecksum(getChecksum(newSchema.getEntries()));
-    newSchema.setSchemaSpecifier(spec);
-    return newSchema;
+    Thr ftSearchFeatureSc maSpec f er spec = new Thr ftSearchFeatureSc maSpec f er();
+    // t  vers on  s d rectly  n r ed or w h a suff x
+    Precond  ons.c ckArgu nt(vers onSuff x == null || !vers onSuff x. sEmpty());
+    spec.setVers on(vers onSuff x == null
+        ? oldSc ma.getSc maSpec f er().getVers on()
+        : oldSc ma.getSc maSpec f er().getVers on() + vers onSuff x);
+    spec.setC cksum(getC cksum(newSc ma.getEntr es()));
+    newSc ma.setSc maSpec f er(spec);
+    return newSc ma;
   }
 
-  @Override
-  public FieldInfos getLuceneFieldInfos(Predicate<String> acceptedFields) {
-    List<org.apache.lucene.index.FieldInfo> acceptedFieldInfos = Lists.newArrayList();
-    for (FieldInfo fi : getFieldInfos()) {
-      if (acceptedFields == null || acceptedFields.apply(fi.getName())) {
-        acceptedFieldInfos.add(convert(fi.getName(), fi.getFieldId(), fi.getFieldType()));
+  @Overr de
+  publ c F eld nfos getLuceneF eld nfos(Pred cate<Str ng> acceptedF elds) {
+    L st<org.apac .lucene. ndex.F eld nfo> acceptedF eld nfos = L sts.newArrayL st();
+    for (F eld nfo f  : getF eld nfos()) {
+       f (acceptedF elds == null || acceptedF elds.apply(f .getNa ())) {
+        acceptedF eld nfos.add(convert(f .getNa (), f .getF eld d(), f .getF eldType()));
       }
     }
-    return new FieldInfos(acceptedFieldInfos.toArray(
-        new org.apache.lucene.index.FieldInfo[acceptedFieldInfos.size()]));
+    return new F eld nfos(acceptedF eld nfos.toArray(
+        new org.apac .lucene. ndex.F eld nfo[acceptedF eld nfos.s ze()]));
   }
 
-  private FieldInfo parseThriftFieldSettings(int fieldId, ThriftFieldConfiguration fieldConfig,
-                                             Map<Integer, ThriftFieldConfiguration> csfViewFields)
-      throws SchemaValidationException {
-    FieldInfo fieldInfo
-        = new FieldInfo(fieldId, fieldConfig.getFieldName(), new EarlybirdFieldType());
-    ThriftFieldSettings fieldSettings = fieldConfig.getSettings();
+  pr vate F eld nfo parseThr ftF eldSett ngs( nt f eld d, Thr ftF eldConf gurat on f eldConf g,
+                                             Map< nteger, Thr ftF eldConf gurat on> csfV ewF elds)
+      throws Sc maVal dat onExcept on {
+    F eld nfo f eld nfo
+        = new F eld nfo(f eld d, f eldConf g.getF eldNa (), new Earlyb rdF eldType());
+    Thr ftF eldSett ngs f eldSett ngs = f eldConf g.getSett ngs();
 
 
-    boolean settingFound = false;
+    boolean sett ngFound = false;
 
-    if (fieldSettings.isSetIndexedFieldSettings()) {
-      if (fieldSettings.isSetCsfFieldSettings() || fieldSettings.isSetCsfViewSettings()) {
-        throw new SchemaValidationException("ThriftFieldSettings: Only one of "
-            + "'indexedFieldSettings', 'csfFieldSettings', 'csfViewSettings' can be set.");
+     f (f eldSett ngs. sSet ndexedF eldSett ngs()) {
+       f (f eldSett ngs. sSetCsfF eldSett ngs() || f eldSett ngs. sSetCsfV ewSett ngs()) {
+        throw new Sc maVal dat onExcept on("Thr ftF eldSett ngs: Only one of "
+            + "' ndexedF eldSett ngs', 'csfF eldSett ngs', 'csfV ewSett ngs' can be set.");
       }
 
-      applyIndexedFieldSettings(fieldInfo, fieldSettings.getIndexedFieldSettings());
-      settingFound = true;
+      apply ndexedF eldSett ngs(f eld nfo, f eldSett ngs.get ndexedF eldSett ngs());
+      sett ngFound = true;
     }
 
-    if (fieldSettings.isSetCsfFieldSettings()) {
-      if (fieldSettings.isSetIndexedFieldSettings() || fieldSettings.isSetCsfViewSettings()) {
-        throw new SchemaValidationException("ThriftFieldSettings: Only one of "
-            + "'indexedFieldSettings', 'csfFieldSettings', 'csfViewSettings' can be set.");
+     f (f eldSett ngs. sSetCsfF eldSett ngs()) {
+       f (f eldSett ngs. sSet ndexedF eldSett ngs() || f eldSett ngs. sSetCsfV ewSett ngs()) {
+        throw new Sc maVal dat onExcept on("Thr ftF eldSett ngs: Only one of "
+            + "' ndexedF eldSett ngs', 'csfF eldSett ngs', 'csfV ewSett ngs' can be set.");
       }
 
-      applyCsfFieldSettings(fieldInfo, fieldSettings.getCsfFieldSettings());
-      settingFound = true;
+      applyCsfF eldSett ngs(f eld nfo, f eldSett ngs.getCsfF eldSett ngs());
+      sett ngFound = true;
     }
 
-    if (fieldSettings.isSetFacetFieldSettings()) {
-      if (!fieldSettings.isSetIndexedFieldSettings() && !(fieldSettings.isSetCsfFieldSettings()
-          && fieldSettings.getFacetFieldSettings().isUseCSFForFacetCounting()
-          && CAN_FACET_ON_CSF_TYPES.contains(fieldSettings.getCsfFieldSettings().getCsfType()))) {
-        throw new SchemaValidationException("ThriftFieldSettings: 'facetFieldSettings' can only be "
-            + "used in combination with 'indexedFieldSettings' or with 'csfFieldSettings' "
-            + "where 'isUseCSFForFacetCounting' was set to true and ThriftCSFType is a type that "
+     f (f eldSett ngs. sSetFacetF eldSett ngs()) {
+       f (!f eldSett ngs. sSet ndexedF eldSett ngs() && !(f eldSett ngs. sSetCsfF eldSett ngs()
+          && f eldSett ngs.getFacetF eldSett ngs(). sUseCSFForFacetCount ng()
+          && CAN_FACET_ON_CSF_TYPES.conta ns(f eldSett ngs.getCsfF eldSett ngs().getCsfType()))) {
+        throw new Sc maVal dat onExcept on("Thr ftF eldSett ngs: 'facetF eldSett ngs' can only be "
+            + "used  n comb nat on w h ' ndexedF eldSett ngs' or w h 'csfF eldSett ngs' "
+            + "w re ' sUseCSFForFacetCount ng' was set to true and Thr ftCSFType  s a type that "
             + "can be faceted on.");
       }
 
-      applyFacetFieldSettings(fieldInfo, fieldSettings.getFacetFieldSettings());
-      settingFound = true;
+      applyFacetF eldSett ngs(f eld nfo, f eldSett ngs.getFacetF eldSett ngs());
+      sett ngFound = true;
     }
 
-    if (fieldSettings.isSetCsfViewSettings()) {
-      if (fieldSettings.isSetIndexedFieldSettings() || fieldSettings.isSetCsfFieldSettings()) {
-        throw new SchemaValidationException("ThriftFieldSettings: Only one of "
-            + "'indexedFieldSettings', 'csfFieldSettings', 'csfViewSettings' can be set.");
+     f (f eldSett ngs. sSetCsfV ewSett ngs()) {
+       f (f eldSett ngs. sSet ndexedF eldSett ngs() || f eldSett ngs. sSetCsfF eldSett ngs()) {
+        throw new Sc maVal dat onExcept on("Thr ftF eldSett ngs: Only one of "
+            + "' ndexedF eldSett ngs', 'csfF eldSett ngs', 'csfV ewSett ngs' can be set.");
       }
 
-      // add this field now, but apply settings later to make sure the base field was added properly
+      // add t  f eld now, but apply sett ngs later to make sure t  base f eld was added properly
       // before
-      csfViewFields.put(fieldId, fieldConfig);
-      settingFound = true;
+      csfV ewF elds.put(f eld d, f eldConf g);
+      sett ngFound = true;
     }
 
-    if (!settingFound) {
-      throw new SchemaValidationException("ThriftFieldSettings: One of 'indexedFieldSettings', "
-          + "'csfFieldSettings' or 'facetFieldSettings' must be set.");
+     f (!sett ngFound) {
+      throw new Sc maVal dat onExcept on("Thr ftF eldSett ngs: One of ' ndexedF eldSett ngs', "
+          + "'csfF eldSett ngs' or 'facetF eldSett ngs' must be set.");
     }
 
-    // search field settings are optional
-    if (fieldSettings.isSetSearchFieldSettings()) {
-      if (!fieldSettings.isSetIndexedFieldSettings()) {
-        throw new SchemaValidationException(
-            "ThriftFieldSettings: 'searchFieldSettings' can only be "
-                + "used in combination with 'indexedFieldSettings'");
+    // search f eld sett ngs are opt onal
+     f (f eldSett ngs. sSetSearchF eldSett ngs()) {
+       f (!f eldSett ngs. sSet ndexedF eldSett ngs()) {
+        throw new Sc maVal dat onExcept on(
+            "Thr ftF eldSett ngs: 'searchF eldSett ngs' can only be "
+                + "used  n comb nat on w h ' ndexedF eldSett ngs'");
       }
 
-      applySearchFieldSettings(fieldInfo, fieldSettings.getSearchFieldSettings());
+      applySearchF eldSett ngs(f eld nfo, f eldSett ngs.getSearchF eldSett ngs());
     }
 
-    return fieldInfo;
+    return f eld nfo;
   }
 
-  private void applyCsfFieldSettings(FieldInfo fieldInfo, ThriftCSFFieldSettings settings)
-      throws SchemaValidationException {
-    // csfType is required - no need to check if it's set
-    fieldInfo.getFieldType().setDocValuesType(DocValuesType.NUMERIC);
-    fieldInfo.getFieldType().setCsfType(settings.getCsfType());
+  pr vate vo d applyCsfF eldSett ngs(F eld nfo f eld nfo, Thr ftCSFF eldSett ngs sett ngs)
+      throws Sc maVal dat onExcept on {
+    // csfType  s requ red - no need to c ck  f  's set
+    f eld nfo.getF eldType().setDocValuesType(DocValuesType.NUMER C);
+    f eld nfo.getF eldType().setCsfType(sett ngs.getCsfType());
 
-    if (settings.isVariableLength()) {
-      fieldInfo.getFieldType().setDocValuesType(DocValuesType.BINARY);
-      fieldInfo.getFieldType().setCsfVariableLength();
+     f (sett ngs. sVar ableLength()) {
+      f eld nfo.getF eldType().setDocValuesType(DocValuesType.B NARY);
+      f eld nfo.getF eldType().setCsfVar ableLength();
     } else {
-      if (settings.isSetFixedLengthSettings()) {
-        fieldInfo.getFieldType().setCsfFixedLengthSettings(
-            settings.getFixedLengthSettings().getNumValuesPerDoc(),
-            settings.getFixedLengthSettings().isUpdateable());
-        if (settings.getFixedLengthSettings().getNumValuesPerDoc() > 1) {
-          fieldInfo.getFieldType().setDocValuesType(DocValuesType.BINARY);
+       f (sett ngs. sSetF xedLengthSett ngs()) {
+        f eld nfo.getF eldType().setCsfF xedLengthSett ngs(
+            sett ngs.getF xedLengthSett ngs().getNumValuesPerDoc(),
+            sett ngs.getF xedLengthSett ngs(). sUpdateable());
+         f (sett ngs.getF xedLengthSett ngs().getNumValuesPerDoc() > 1) {
+          f eld nfo.getF eldType().setDocValuesType(DocValuesType.B NARY);
         }
       } else {
-        throw new SchemaValidationException(
-            "ThriftCSFFieldSettings: Either variableLength should be set to 'true', "
-                + "or fixedLengthSettings should be set.");
+        throw new Sc maVal dat onExcept on(
+            "Thr ftCSFF eldSett ngs: E  r var ableLength should be set to 'true', "
+                + "or f xedLengthSett ngs should be set.");
       }
     }
 
-    fieldInfo.getFieldType().setCsfLoadIntoRam(settings.isLoadIntoRAM());
-    if (settings.isSetDefaultValue()) {
-      fieldInfo.getFieldType().setCsfDefaultValue(settings.getDefaultValue());
+    f eld nfo.getF eldType().setCsfLoad ntoRam(sett ngs. sLoad ntoRAM());
+     f (sett ngs. sSetDefaultValue()) {
+      f eld nfo.getF eldType().setCsfDefaultValue(sett ngs.getDefaultValue());
     }
   }
 
-  private void applyCsfViewFieldSettings(FieldInfo fieldInfo, FieldInfo baseField,
-                                         ThriftCSFViewSettings settings)
-      throws SchemaValidationException {
-    // csfType is required - no need to check if it's set
-    fieldInfo.getFieldType().setDocValuesType(DocValuesType.NUMERIC);
-    fieldInfo.getFieldType().setCsfType(settings.getCsfType());
+  pr vate vo d applyCsfV ewF eldSett ngs(F eld nfo f eld nfo, F eld nfo baseF eld,
+                                         Thr ftCSFV ewSett ngs sett ngs)
+      throws Sc maVal dat onExcept on {
+    // csfType  s requ red - no need to c ck  f  's set
+    f eld nfo.getF eldType().setDocValuesType(DocValuesType.NUMER C);
+    f eld nfo.getF eldType().setCsfType(sett ngs.getCsfType());
 
-    fieldInfo.getFieldType().setCsfFixedLengthSettings(1 /* numValuesPerDoc*/,
+    f eld nfo.getF eldType().setCsfF xedLengthSett ngs(1 /* numValuesPerDoc*/,
         false /* updateable*/);
 
-    fieldInfo.getFieldType().setCsfViewSettings(fieldInfo.getName(), settings, baseField);
+    f eld nfo.getF eldType().setCsfV ewSett ngs(f eld nfo.getNa (), sett ngs, baseF eld);
   }
 
-  private void applyFacetFieldSettings(FieldInfo fieldInfo, ThriftFacetFieldSettings settings) {
-    if (settings.isSetFacetName()) {
-      fieldInfo.getFieldType().setFacetName(settings.getFacetName());
+  pr vate vo d applyFacetF eldSett ngs(F eld nfo f eld nfo, Thr ftFacetF eldSett ngs sett ngs) {
+     f (sett ngs. sSetFacetNa ()) {
+      f eld nfo.getF eldType().setFacetNa (sett ngs.getFacetNa ());
     } else {
-      // fall back to field name if no facet name is explicitly provided
-      fieldInfo.getFieldType().setFacetName(fieldInfo.getName());
+      // fall back to f eld na   f no facet na   s expl c ly prov ded
+      f eld nfo.getF eldType().setFacetNa (f eld nfo.getNa ());
     }
-    fieldInfo.getFieldType().setStoreFacetSkiplist(settings.isStoreSkiplist());
-    fieldInfo.getFieldType().setStoreFacetOffensiveCounters(settings.isStoreOffensiveCounters());
-    fieldInfo.getFieldType().setUseCSFForFacetCounting(settings.isUseCSFForFacetCounting());
+    f eld nfo.getF eldType().setStoreFacetSk pl st(sett ngs. sStoreSk pl st());
+    f eld nfo.getF eldType().setStoreFacetOffens veCounters(sett ngs. sStoreOffens veCounters());
+    f eld nfo.getF eldType().setUseCSFForFacetCount ng(sett ngs. sUseCSFForFacetCount ng());
   }
 
-  private void applyIndexedFieldSettings(FieldInfo fieldInfo, ThriftIndexedFieldSettings settings)
-      throws SchemaValidationException {
-    fieldInfo.getFieldType().setIndexedField(true);
-    fieldInfo.getFieldType().setStored(settings.isStored());
-    fieldInfo.getFieldType().setTokenized(settings.isTokenized());
-    fieldInfo.getFieldType().setStoreTermVectors(settings.isStoreTermVectors());
-    fieldInfo.getFieldType().setStoreTermVectorOffsets(settings.isStoreTermVectorOffsets());
-    fieldInfo.getFieldType().setStoreTermVectorPositions(settings.isStoreTermVectorPositions());
-    fieldInfo.getFieldType().setStoreTermVectorPayloads(settings.isStoreTermVectorPayloads());
-    fieldInfo.getFieldType().setOmitNorms(settings.isOmitNorms());
-    fieldInfo.getFieldType().setIndexHFTermPairs(settings.isIndexHighFreqTermPairs());
-    fieldInfo.getFieldType().setUseTweetSpecificNormalization(
-        settings.deprecated_performTweetSpecificNormalizations);
+  pr vate vo d apply ndexedF eldSett ngs(F eld nfo f eld nfo, Thr ft ndexedF eldSett ngs sett ngs)
+      throws Sc maVal dat onExcept on {
+    f eld nfo.getF eldType().set ndexedF eld(true);
+    f eld nfo.getF eldType().setStored(sett ngs. sStored());
+    f eld nfo.getF eldType().setToken zed(sett ngs. sToken zed());
+    f eld nfo.getF eldType().setStoreTermVectors(sett ngs. sStoreTermVectors());
+    f eld nfo.getF eldType().setStoreTermVectorOffsets(sett ngs. sStoreTermVectorOffsets());
+    f eld nfo.getF eldType().setStoreTermVectorPos  ons(sett ngs. sStoreTermVectorPos  ons());
+    f eld nfo.getF eldType().setStoreTermVectorPayloads(sett ngs. sStoreTermVectorPayloads());
+    f eld nfo.getF eldType().setOm Norms(sett ngs. sOm Norms());
+    f eld nfo.getF eldType().set ndexHFTermPa rs(sett ngs. s ndexH ghFreqTermPa rs());
+    f eld nfo.getF eldType().setUseT etSpec f cNormal zat on(
+        sett ngs.deprecated_performT etSpec f cNormal zat ons);
 
-    if (settings.isSetIndexOptions()) {
-      switch (settings.getIndexOptions()) {
+     f (sett ngs. sSet ndexOpt ons()) {
+      sw ch (sett ngs.get ndexOpt ons()) {
         case DOCS_ONLY :
-          fieldInfo.getFieldType().setIndexOptions(IndexOptions.DOCS);
+          f eld nfo.getF eldType().set ndexOpt ons( ndexOpt ons.DOCS);
           break;
         case DOCS_AND_FREQS :
-          fieldInfo.getFieldType().setIndexOptions(IndexOptions.DOCS_AND_FREQS);
+          f eld nfo.getF eldType().set ndexOpt ons( ndexOpt ons.DOCS_AND_FREQS);
           break;
-        case DOCS_AND_FREQS_AND_POSITIONS :
-          fieldInfo.getFieldType().setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+        case DOCS_AND_FREQS_AND_POS T ONS :
+          f eld nfo.getF eldType().set ndexOpt ons( ndexOpt ons.DOCS_AND_FREQS_AND_POS T ONS);
           break;
-        case DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS :
-          fieldInfo.getFieldType().setIndexOptions(
-              IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
+        case DOCS_AND_FREQS_AND_POS T ONS_AND_OFFSETS :
+          f eld nfo.getF eldType().set ndexOpt ons(
+               ndexOpt ons.DOCS_AND_FREQS_AND_POS T ONS_AND_OFFSETS);
           break;
         default:
-          throw new SchemaValidationException("Unknown value for IndexOptions: "
-              + settings.getIndexOptions());
+          throw new Sc maVal dat onExcept on("Unknown value for  ndexOpt ons: "
+              + sett ngs.get ndexOpt ons());
       }
-    } else if (settings.isIndexed()) {
-      // default for backward-compatibility
-      fieldInfo.getFieldType().setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+    } else  f (sett ngs. s ndexed()) {
+      // default for backward-compat b l y
+      f eld nfo.getF eldType().set ndexOpt ons( ndexOpt ons.DOCS_AND_FREQS_AND_POS T ONS);
     }
 
-    fieldInfo.getFieldType().setStorePerPositionPayloads(settings.isStorePerPositionPayloads());
-    fieldInfo.getFieldType().setDefaultPayloadLength(
-        settings.getDefaultPerPositionPayloadLength());
-    fieldInfo.getFieldType().setBecomesImmutable(!settings.isSupportOutOfOrderAppends());
-    fieldInfo.getFieldType().setSupportOrderedTerms(settings.isSupportOrderedTerms());
-    fieldInfo.getFieldType().setSupportTermTextLookup(settings.isSupportTermTextLookup());
+    f eld nfo.getF eldType().setStorePerPos  onPayloads(sett ngs. sStorePerPos  onPayloads());
+    f eld nfo.getF eldType().setDefaultPayloadLength(
+        sett ngs.getDefaultPerPos  onPayloadLength());
+    f eld nfo.getF eldType().setBeco s mmutable(!sett ngs. sSupportOutOfOrderAppends());
+    f eld nfo.getF eldType().setSupportOrderedTerms(sett ngs. sSupportOrderedTerms());
+    f eld nfo.getF eldType().setSupportTermTextLookup(sett ngs. sSupportTermTextLookup());
 
-    if (settings.isSetNumericFieldSettings()) {
-      fieldInfo.getFieldType().setNumericFieldSettings(
-          new IndexedNumericFieldSettings(settings.getNumericFieldSettings()));
+     f (sett ngs. sSetNu r cF eldSett ngs()) {
+      f eld nfo.getF eldType().setNu r cF eldSett ngs(
+          new  ndexedNu r cF eldSett ngs(sett ngs.getNu r cF eldSett ngs()));
     }
 
-    if (settings.isSetTokenStreamSerializer()) {
-      fieldInfo.getFieldType().setTokenStreamSerializerBuilder(
-          buildTokenStreamSerializerProvider(settings.getTokenStreamSerializer()));
+     f (sett ngs. sSetTokenStreamSer al zer()) {
+      f eld nfo.getF eldType().setTokenStreamSer al zerBu lder(
+          bu ldTokenStreamSer al zerProv der(sett ngs.getTokenStreamSer al zer()));
     }
   }
 
-  private void applySearchFieldSettings(FieldInfo fieldInfo, ThriftSearchFieldSettings settings)
-      throws SchemaValidationException {
-    fieldInfo.getFieldType().setTextSearchableFieldWeight(
-        (float) settings.getTextSearchableFieldWeight());
-    fieldInfo.getFieldType().setTextSearchableByDefault(settings.isTextDefaultSearchable());
+  pr vate vo d applySearchF eldSett ngs(F eld nfo f eld nfo, Thr ftSearchF eldSett ngs sett ngs)
+      throws Sc maVal dat onExcept on {
+    f eld nfo.getF eldType().setTextSearchableF eld  ght(
+        (float) sett ngs.getTextSearchableF eld  ght());
+    f eld nfo.getF eldType().setTextSearchableByDefault(sett ngs. sTextDefaultSearchable());
   }
 
-  private void validate(FieldInfo fieldInfo) throws SchemaValidationException {
+  pr vate vo d val date(F eld nfo f eld nfo) throws Sc maVal dat onExcept on {
   }
 
-  private TokenStreamSerializer.Builder buildTokenStreamSerializerProvider(
-      final ThriftTokenStreamSerializer settings) {
-    TokenStreamSerializer.Builder builder = TokenStreamSerializer.builder();
-    for (String serializerName : settings.getAttributeSerializerClassNames()) {
+  pr vate TokenStreamSer al zer.Bu lder bu ldTokenStreamSer al zerProv der(
+      f nal Thr ftTokenStreamSer al zer sett ngs) {
+    TokenStreamSer al zer.Bu lder bu lder = TokenStreamSer al zer.bu lder();
+    for (Str ng ser al zerNa  : sett ngs.getAttr buteSer al zerClassNa s()) {
       try {
-        builder.add((TokenStreamSerializer.AttributeSerializer) Class.forName(serializerName)
-            .newInstance());
-      } catch (InstantiationException e) {
-        throw new RuntimeException(
-            "Unable to instantiate AttributeSerializer for name " + serializerName);
-      } catch (IllegalAccessException e) {
-        throw new RuntimeException(
-            "Unable to instantiate AttributeSerializer for name " + serializerName);
-      } catch (ClassNotFoundException e) {
-        throw new RuntimeException(
-            "Unable to instantiate AttributeSerializer for name " + serializerName);
+        bu lder.add((TokenStreamSer al zer.Attr buteSer al zer) Class.forNa (ser al zerNa )
+            .new nstance());
+      } catch ( nstant at onExcept on e) {
+        throw new Runt  Except on(
+            "Unable to  nstant ate Attr buteSer al zer for na  " + ser al zerNa );
+      } catch ( llegalAccessExcept on e) {
+        throw new Runt  Except on(
+            "Unable to  nstant ate Attr buteSer al zer for na  " + ser al zerNa );
+      } catch (ClassNotFoundExcept on e) {
+        throw new Runt  Except on(
+            "Unable to  nstant ate Attr buteSer al zer for na  " + ser al zerNa );
       }
     }
-    return builder;
+    return bu lder;
   }
 
-  @Override
-  public FacetsConfig getFacetsConfig() {
-    FacetsConfig facetsConfig = new FacetsConfig();
+  @Overr de
+  publ c FacetsConf g getFacetsConf g() {
+    FacetsConf g facetsConf g = new FacetsConf g();
 
-    for (String facetName : facetNameToFieldMap.keySet()) {
-      // set multiValued = true as default, since we're using SortedSetDocValues facet, in which,
-      // there is no difference between multiValued true or false for the real facet, but only the
-      // checking of the values.
-      facetsConfig.setMultiValued(facetName, true);
+    for (Str ng facetNa  : facetNa ToF eldMap.keySet()) {
+      // set mult Valued = true as default, s nce  're us ng SortedSetDocValues facet,  n wh ch,
+      // t re  s no d fference bet en mult Valued true or false for t  real facet, but only t 
+      // c ck ng of t  values.
+      facetsConf g.setMult Valued(facetNa , true);
     }
 
-    return facetsConfig;
+    return facetsConf g;
   }
 
-  @Override
-  public Analyzer getDefaultAnalyzer(ThriftAnalyzer override) {
-    if (override != null) {
-      return analyzerFactory.getAnalyzer(override);
+  @Overr de
+  publ c Analyzer getDefaultAnalyzer(Thr ftAnalyzer overr de) {
+     f (overr de != null) {
+      return analyzerFactory.getAnalyzer(overr de);
     }
 
-    if (defaultAnalyzer != null) {
+     f (defaultAnalyzer != null) {
       return analyzerFactory.getAnalyzer(defaultAnalyzer);
     }
 
-    return new SearchWhitespaceAnalyzer();
+    return new SearchWh espaceAnalyzer();
   }
 
-  @Override
-  public ImmutableCollection<FieldInfo> getFieldInfos() {
-    return fieldSettingsMapById.values();
-  }
-
-  /**
-   * This is the preferred method to check whether a field configuration is in schema.
-   * One can also use getFieldInfo and do null checks, but should be careful about excessive
-   * warning logging resulting from looking up fields not in schema.
-   */
-  @Override
-  public boolean hasField(int fieldConfigId) {
-    return fieldSettingsMapById.containsKey(fieldConfigId);
+  @Overr de
+  publ c  mmutableCollect on<F eld nfo> getF eld nfos() {
+    return f eldSett ngsMapBy d.values();
   }
 
   /**
-   * This is the preferred method to check whether a field configuration is in schema.
-   * One can also use getFieldInfo and do null checks, but should be careful about excessive
-   * warning logging resulting from looking up fields not in schema.
+   * T   s t  preferred  thod to c ck w t r a f eld conf gurat on  s  n sc ma.
+   * One can also use getF eld nfo and do null c cks, but should be careful about excess ve
+   * warn ng logg ng result ng from look ng up f elds not  n sc ma.
    */
-  @Override
-  public boolean hasField(String fieldName) {
-    return fieldSettingsMapByName.containsKey(fieldName);
+  @Overr de
+  publ c boolean hasF eld( nt f eldConf g d) {
+    return f eldSett ngsMapBy d.conta nsKey(f eldConf g d);
   }
 
   /**
-   * Get FieldInfo for the given field id.
-   * If the goal is to check whether a field is in the schema, use {@link #hasField(int)} instead.
-   * This method logs a warning whenever it returns null.
+   * T   s t  preferred  thod to c ck w t r a f eld conf gurat on  s  n sc ma.
+   * One can also use getF eld nfo and do null c cks, but should be careful about excess ve
+   * warn ng logg ng result ng from look ng up f elds not  n sc ma.
    */
-  @Override
+  @Overr de
+  publ c boolean hasF eld(Str ng f eldNa ) {
+    return f eldSett ngsMapByNa .conta nsKey(f eldNa );
+  }
+
+  /**
+   * Get F eld nfo for t  g ven f eld  d.
+   *  f t  goal  s to c ck w t r a f eld  s  n t  sc ma, use {@l nk #hasF eld( nt)}  nstead.
+   * T   thod logs a warn ng w never   returns null.
+   */
+  @Overr de
   @Nullable
-  public FieldInfo getFieldInfo(int fieldConfigId) {
-    return getFieldInfo(fieldConfigId, null);
+  publ c F eld nfo getF eld nfo( nt f eldConf g d) {
+    return getF eld nfo(f eldConf g d, null);
   }
 
-  private org.apache.lucene.index.FieldInfo convert(String fieldName,
-                                                    int index,
-                                                    EarlybirdFieldType type) {
-    return new org.apache.lucene.index.FieldInfo(
-        fieldName,                          // String name
-        index,                              // int number
+  pr vate org.apac .lucene. ndex.F eld nfo convert(Str ng f eldNa ,
+                                                     nt  ndex,
+                                                    Earlyb rdF eldType type) {
+    return new org.apac .lucene. ndex.F eld nfo(
+        f eldNa ,                          // Str ng na 
+         ndex,                              //  nt number
         type.storeTermVectors(),            // boolean storeTermVector
-        type.omitNorms(),                   // boolean omitNorms
-        type.isStorePerPositionPayloads(),  // boolean storePayloads
-        type.indexOptions(),                // IndexOptions indexOptions
+        type.om Norms(),                   // boolean om Norms
+        type. sStorePerPos  onPayloads(),  // boolean storePayloads
+        type. ndexOpt ons(),                //  ndexOpt ons  ndexOpt ons
         type.docValuesType(),               // DocValuesType docValues
         -1,                                 // long dvGen
-        Maps.<String, String>newHashMap(),  // Map<String, String> attributes
-        0,                                  // int pointDataDimensionCount
-        0,                                  // int pointIndexDimensionCount
-        0,                                  // int pointNumBytes
-        false);                             // boolean softDeletesField
+        Maps.<Str ng, Str ng>newHashMap(),  // Map<Str ng, Str ng> attr butes
+        0,                                  //  nt po ntDataD  ns onCount
+        0,                                  //  nt po nt ndexD  ns onCount
+        0,                                  //  nt po ntNumBytes
+        false);                             // boolean softDeletesF eld
   }
 
   /**
-   * Get FieldInfo for the given field name, or null if the field does not exist.
+   * Get F eld nfo for t  g ven f eld na , or null  f t  f eld does not ex st.
    */
-  @Override
+  @Overr de
   @Nullable
-  public FieldInfo getFieldInfo(String fieldName) {
-    return fieldSettingsMapByName.get(fieldName);
+  publ c F eld nfo getF eld nfo(Str ng f eldNa ) {
+    return f eldSett ngsMapByNa .get(f eldNa );
   }
 
-  @Override
-  public String getFieldName(int fieldConfigId) {
-    FieldInfo fieldInfo = fieldSettingsMapById.get(fieldConfigId);
-    return fieldInfo != null ? fieldInfo.getName() : null;
+  @Overr de
+  publ c Str ng getF eldNa ( nt f eldConf g d) {
+    F eld nfo f eld nfo = f eldSett ngsMapBy d.get(f eldConf g d);
+    return f eld nfo != null ? f eld nfo.getNa () : null;
   }
 
-  @Override
-  public FieldInfo getFieldInfo(int fieldConfigId, ThriftFieldConfiguration override) {
-    FieldInfo fieldInfo = fieldSettingsMapById.get(fieldConfigId);
-    if (fieldInfo == null) {
-      // This method is used to check the availability of fields by IDs,
-      // so no warning is logged here (would be too verbose otherwise).
+  @Overr de
+  publ c F eld nfo getF eld nfo( nt f eldConf g d, Thr ftF eldConf gurat on overr de) {
+    F eld nfo f eld nfo = f eldSett ngsMapBy d.get(f eldConf g d);
+     f (f eld nfo == null) {
+      // T   thod  s used to c ck t  ava lab l y of f elds by  Ds,
+      // so no warn ng  s logged  re (would be too verbose ot rw se).
       return null;
     }
 
-    if (override != null) {
+     f (overr de != null) {
       try {
-        return merge(fieldConfigId, fieldInfo, override);
-      } catch (SchemaValidationException e) {
-        throw new RuntimeException(e);
+        return  rge(f eldConf g d, f eld nfo, overr de);
+      } catch (Sc maVal dat onExcept on e) {
+        throw new Runt  Except on(e);
       }
     }
 
-    return fieldInfo;
+    return f eld nfo;
   }
 
-  @Override
-  public int getNumFacetFields() {
-    return numFacetFields;
+  @Overr de
+  publ c  nt getNumFacetF elds() {
+    return numFacetF elds;
   }
 
-  @Override
-  public FieldInfo getFacetFieldByFacetName(String facetName) {
-    return facetNameToFieldMap.get(facetName);
+  @Overr de
+  publ c F eld nfo getFacetF eldByFacetNa (Str ng facetNa ) {
+    return facetNa ToF eldMap.get(facetNa );
   }
 
-  @Override
-  public FieldInfo getFacetFieldByFieldName(String fieldName) {
-    FieldInfo fieldInfo = getFieldInfo(fieldName);
-    return fieldInfo != null && fieldInfo.getFieldType().isFacetField() ? fieldInfo : null;
+  @Overr de
+  publ c F eld nfo getFacetF eldByF eldNa (Str ng f eldNa ) {
+    F eld nfo f eld nfo = getF eld nfo(f eldNa );
+    return f eld nfo != null && f eld nfo.getF eldType(). sFacetF eld() ? f eld nfo : null;
   }
 
-  @Override
-  public Collection<FieldInfo> getFacetFields() {
-    return facetNameToFieldMap.values();
+  @Overr de
+  publ c Collect on<F eld nfo> getFacetF elds() {
+    return facetNa ToF eldMap.values();
   }
 
-  @Override
-  public Collection<FieldInfo> getCsfFacetFields() {
-    return csfFacetFields;
+  @Overr de
+  publ c Collect on<F eld nfo> getCsfFacetF elds() {
+    return csfFacetF elds;
   }
 
-  @Override
-  public String getVersionDescription() {
-    return versionDesc;
+  @Overr de
+  publ c Str ng getVers onDescr pt on() {
+    return vers onDesc;
   }
 
-  @Override
-  public int getMajorVersionNumber() {
-    return majorVersionNumber;
+  @Overr de
+  publ c  nt getMajorVers onNumber() {
+    return majorVers onNumber;
   }
 
-  @Override
-  public int getMinorVersionNumber() {
-    return minorVersionNumber;
+  @Overr de
+  publ c  nt getM norVers onNumber() {
+    return m norVers onNumber;
   }
 
-  @Override
-  public boolean isVersionOfficial() {
-    return isVersionOfficial;
+  @Overr de
+  publ c boolean  sVers onOff c al() {
+    return  sVers onOff c al;
   }
 
   /**
-   * Parses a version string like "16: renamed field x into y" into a version number and
-   * a string description.
-   * @return a Pair of the version number and the description
+   * Parses a vers on str ng l ke "16: rena d f eld x  nto y"  nto a vers on number and
+   * a str ng descr pt on.
+   * @return a Pa r of t  vers on number and t  descr pt on
    */
-  private static Pair<Integer, String> parseVersionString(String version)
-      throws SchemaValidationException {
-    Preconditions.checkNotNull(version, "Schema must have a version number and description.");
-    int colonIndex = version.indexOf(':');
-    if (colonIndex == -1) {
-      throw new SchemaValidationException("Malformed version string: " + version);
+  pr vate stat c Pa r< nteger, Str ng> parseVers onStr ng(Str ng vers on)
+      throws Sc maVal dat onExcept on {
+    Precond  ons.c ckNotNull(vers on, "Sc ma must have a vers on number and descr pt on.");
+     nt colon ndex = vers on. ndexOf(':');
+     f (colon ndex == -1) {
+      throw new Sc maVal dat onExcept on("Malfor d vers on str ng: " + vers on);
     }
     try {
-      int versionNumber = Integer.parseInt(version.substring(0, colonIndex));
-      String versionDesc = version.substring(colonIndex + 1);
-      return Pair.of(versionNumber, versionDesc);
-    } catch (Exception e) {
-      throw new SchemaValidationException("Malformed version string: " + version, e);
+       nt vers onNumber =  nteger.parse nt(vers on.substr ng(0, colon ndex));
+      Str ng vers onDesc = vers on.substr ng(colon ndex + 1);
+      return Pa r.of(vers onNumber, vers onDesc);
+    } catch (Except on e) {
+      throw new Sc maVal dat onExcept on("Malfor d vers on str ng: " + vers on, e);
     }
   }
 
-  @Override
-  public Map<String, FieldWeightDefault> getFieldWeightMap() {
-    return fieldWeightMap;
+  @Overr de
+  publ c Map<Str ng, F eld  ghtDefault> getF eld  ghtMap() {
+    return f eld  ghtMap;
   }
 
   /**
-   * Build the feature maps so that we can use feature name to get the feature configuration.
-   * @return: an immutable map keyed on fieldName.
+   * Bu ld t  feature maps so that   can use feature na  to get t  feature conf gurat on.
+   * @return: an  mmutable map keyed on f eldNa .
    */
-  private Pair<ImmutableMap<String, FeatureConfiguration>,
-      ImmutableMap<Integer, FeatureConfiguration>> buildFeatureMaps(
-      final Map<Integer, ThriftFieldConfiguration> csvViewFields)
-      throws SchemaValidationException {
+  pr vate Pa r< mmutableMap<Str ng, FeatureConf gurat on>,
+       mmutableMap< nteger, FeatureConf gurat on>> bu ldFeatureMaps(
+      f nal Map< nteger, Thr ftF eldConf gurat on> csvV ewF elds)
+      throws Sc maVal dat onExcept on {
 
-    final ImmutableMap.Builder<String, FeatureConfiguration> featureConfigMapByNameBuilder =
-        ImmutableMap.builder();
-    final ImmutableMap.Builder<Integer, FeatureConfiguration> featureConfigMapByIdBuilder =
-        ImmutableMap.builder();
+    f nal  mmutableMap.Bu lder<Str ng, FeatureConf gurat on> featureConf gMapByNa Bu lder =
+         mmutableMap.bu lder();
+    f nal  mmutableMap.Bu lder< nteger, FeatureConf gurat on> featureConf gMapBy dBu lder =
+         mmutableMap.bu lder();
 
-    for (final Map.Entry<Integer, ThriftFieldConfiguration> entry : csvViewFields.entrySet()) {
-      ThriftFieldSettings fieldSettings = entry.getValue().getSettings();
-      FieldInfo fieldInfo = getFieldInfo(entry.getKey());
-      FieldInfo baseFieldInfo =
-          getFieldInfo(fieldSettings.getCsfViewSettings().getBaseFieldConfigId());
-      if (baseFieldInfo == null) {
-        throw new SchemaValidationException("Base field (id="
-            + fieldSettings.getCsfViewSettings().getBaseFieldConfigId() + ") not found.");
+    for (f nal Map.Entry< nteger, Thr ftF eldConf gurat on> entry : csvV ewF elds.entrySet()) {
+      Thr ftF eldSett ngs f eldSett ngs = entry.getValue().getSett ngs();
+      F eld nfo f eld nfo = getF eld nfo(entry.getKey());
+      F eld nfo baseF eld nfo =
+          getF eld nfo(f eldSett ngs.getCsfV ewSett ngs().getBaseF eldConf g d());
+       f (baseF eld nfo == null) {
+        throw new Sc maVal dat onExcept on("Base f eld ( d="
+            + f eldSett ngs.getCsfV ewSett ngs().getBaseF eldConf g d() + ") not found.");
       }
-      applyCsfViewFieldSettings(fieldInfo, baseFieldInfo, fieldSettings.getCsfViewSettings());
+      applyCsfV ewF eldSett ngs(f eld nfo, baseF eld nfo, f eldSett ngs.getCsfV ewSett ngs());
 
-      FeatureConfiguration featureConfig = fieldInfo.getFieldType()
-          .getCsfViewFeatureConfiguration();
-      if (featureConfig != null) {
-        featureConfigMapByNameBuilder.put(fieldInfo.getName(), featureConfig);
-        featureConfigMapByIdBuilder.put(fieldInfo.getFieldId(), featureConfig);
+      FeatureConf gurat on featureConf g = f eld nfo.getF eldType()
+          .getCsfV ewFeatureConf gurat on();
+       f (featureConf g != null) {
+        featureConf gMapByNa Bu lder.put(f eld nfo.getNa (), featureConf g);
+        featureConf gMapBy dBu lder.put(f eld nfo.getF eld d(), featureConf g);
       }
     }
 
-    return Pair.of(featureConfigMapByNameBuilder.build(), featureConfigMapByIdBuilder.build());
+    return Pa r.of(featureConf gMapByNa Bu lder.bu ld(), featureConf gMapBy dBu lder.bu ld());
   }
 
-  @Override
-  public FeatureConfiguration getFeatureConfigurationByName(String featureName) {
-    return featureConfigMapByName.get(featureName);
+  @Overr de
+  publ c FeatureConf gurat on getFeatureConf gurat onByNa (Str ng featureNa ) {
+    return featureConf gMapByNa .get(featureNa );
   }
 
-  @Override
-  public FeatureConfiguration getFeatureConfigurationById(int featureFieldId) {
-    return Preconditions.checkNotNull(featureConfigMapById.get(featureFieldId),
-        "Field ID: " + featureFieldId);
+  @Overr de
+  publ c FeatureConf gurat on getFeatureConf gurat onBy d( nt featureF eld d) {
+    return Precond  ons.c ckNotNull(featureConf gMapBy d.get(featureF eld d),
+        "F eld  D: " + featureF eld d);
   }
 
-  @Override
+  @Overr de
   @Nullable
-  public ThriftCSFType getCSFFieldType(String fieldName) {
-    FieldInfo fieldInfo = getFieldInfo(fieldName);
-    if (fieldInfo == null) {
+  publ c Thr ftCSFType getCSFF eldType(Str ng f eldNa ) {
+    F eld nfo f eld nfo = getF eld nfo(f eldNa );
+     f (f eld nfo == null) {
       return null;
     }
 
-    EarlybirdFieldType fieldType = fieldInfo.getFieldType();
-    if (fieldType.docValuesType() != org.apache.lucene.index.DocValuesType.NUMERIC) {
+    Earlyb rdF eldType f eldType = f eld nfo.getF eldType();
+     f (f eldType.docValuesType() != org.apac .lucene. ndex.DocValuesType.NUMER C) {
       return null;
     }
 
-    return fieldType.getCsfType();
+    return f eldType.getCsfType();
   }
 
-  @Override
-  public ImmutableSchemaInterface getSchemaSnapshot() {
-    return this;
+  @Overr de
+  publ c  mmutableSc ma nterface getSc maSnapshot() {
+    return t ;
   }
 
-  private FieldInfo merge(int fieldConfigId,
-                          FieldInfo fieldInfo,
-                          ThriftFieldConfiguration overrideConfig)
-      throws SchemaValidationException {
+  pr vate F eld nfo  rge( nt f eldConf g d,
+                          F eld nfo f eld nfo,
+                          Thr ftF eldConf gurat on overr deConf g)
+      throws Sc maVal dat onExcept on {
 
-    throw new UnsupportedOperationException("Field override config not supported");
+    throw new UnsupportedOperat onExcept on("F eld overr de conf g not supported");
   }
 
-  @Override
-  public ThriftSearchFeatureSchema getSearchFeatureSchema() {
-    return searchFeatureSchema;
+  @Overr de
+  publ c Thr ftSearchFeatureSc ma getSearchFeatureSc ma() {
+    return searchFeatureSc ma;
   }
 
-  @Override
-  public ImmutableMap<Integer, FeatureConfiguration> getFeatureIdToFeatureConfig() {
-    return featureConfigMapById;
+  @Overr de
+  publ c  mmutableMap< nteger, FeatureConf gurat on> getFeature dToFeatureConf g() {
+    return featureConf gMapBy d;
   }
 
-  @Override
-  public ImmutableMap<String, FeatureConfiguration> getFeatureNameToFeatureConfig() {
-    return featureConfigMapByName;
+  @Overr de
+  publ c  mmutableMap<Str ng, FeatureConf gurat on> getFeatureNa ToFeatureConf g() {
+    return featureConf gMapByNa ;
   }
 
-  private ThriftSearchFeatureSchema createSearchResultFeatureSchema(
-      String featureSchemaVersionPrefix,
-      Map<String, FieldInfo> allFieldSettings,
-      Map<String, FeatureConfiguration> featureConfigurations) throws SchemaValidationException {
-    final ImmutableMap.Builder<Integer, ThriftSearchFeatureSchemaEntry> builder =
-        new ImmutableMap.Builder<>();
+  pr vate Thr ftSearchFeatureSc ma createSearchResultFeatureSc ma(
+      Str ng featureSc maVers onPref x,
+      Map<Str ng, F eld nfo> allF eldSett ngs,
+      Map<Str ng, FeatureConf gurat on> featureConf gurat ons) throws Sc maVal dat onExcept on {
+    f nal  mmutableMap.Bu lder< nteger, Thr ftSearchFeatureSc maEntry> bu lder =
+        new  mmutableMap.Bu lder<>();
 
-    for (Map.Entry<String, FieldInfo> field : allFieldSettings.entrySet()) {
-      FeatureConfiguration featureConfig = featureConfigurations.get(field.getKey());
-      if (featureConfig == null) {
-        // This is either a not csf related field or a csf field.
-        continue;
+    for (Map.Entry<Str ng, F eld nfo> f eld : allF eldSett ngs.entrySet()) {
+      FeatureConf gurat on featureConf g = featureConf gurat ons.get(f eld.getKey());
+       f (featureConf g == null) {
+        // T   s e  r a not csf related f eld or a csf f eld.
+        cont nue;
       }
 
-      // This is a csfView field.
-      if (featureConfig.getOutputType() == null) {
-        LOG.info("Skip unused fieldschemas: {} for search feature schema.", field.getKey());
-        continue;
+      // T   s a csfV ew f eld.
+       f (featureConf g.getOutputType() == null) {
+        LOG. nfo("Sk p unused f eldsc mas: {} for search feature sc ma.", f eld.getKey());
+        cont nue;
       }
 
-      ThriftSearchFeatureType featureType = getResultFeatureType(featureConfig.getOutputType());
-      if (featureType != null) {
-        builder.put(
-            field.getValue().getFieldId(),
-            new ThriftSearchFeatureSchemaEntry(field.getKey(), featureType));
+      Thr ftSearchFeatureType featureType = getResultFeatureType(featureConf g.getOutputType());
+       f (featureType != null) {
+        bu lder.put(
+            f eld.getValue().getF eld d(),
+            new Thr ftSearchFeatureSc maEntry(f eld.getKey(), featureType));
       } else {
-        LOG.error("Invalid CSFType encountered for csf field: {}", field.getKey());
+        LOG.error(" nval d CSFType encountered for csf f eld: {}", f eld.getKey());
       }
     }
-    Map<Integer, ThriftSearchFeatureSchemaEntry> indexOnlySchemaEntries = builder.build();
+    Map< nteger, Thr ftSearchFeatureSc maEntry>  ndexOnlySc maEntr es = bu lder.bu ld();
 
-    // Add earlybird derived features, they are defined in ExternalTweetFeatures and used in the
-    // scoring function. They are no different from those auto-generated index-based features
-    // viewed from outside Earlybird.
-    Map<Integer, ThriftSearchFeatureSchemaEntry> entriesWithEBFeatures =
-        appendToFeatureSchema(
-            indexOnlySchemaEntries, ExternalTweetFeature.EARLYBIRD_DERIVED_FEATURES);
+    // Add earlyb rd der ved features, t y are def ned  n ExternalT etFeatures and used  n t 
+    // scor ng funct on. T y are no d fferent from those auto-generated  ndex-based features
+    // v e d from outs de Earlyb rd.
+    Map< nteger, Thr ftSearchFeatureSc maEntry> entr esW hEBFeatures =
+        appendToFeatureSc ma(
+             ndexOnlySc maEntr es, ExternalT etFeature.EARLYB RD_DER VED_FEATURES);
 
-    // Add other features needed for tweet ranking from EarlybirdRankingDerivedFeature.
-    Map<Integer, ThriftSearchFeatureSchemaEntry> allSchemaEntries = appendToFeatureSchema(
-        entriesWithEBFeatures, ExternalTweetFeature.EARLYBIRD_RANKING_DERIVED_FEATURES);
+    // Add ot r features needed for t et rank ng from Earlyb rdRank ngDer vedFeature.
+    Map< nteger, Thr ftSearchFeatureSc maEntry> allSc maEntr es = appendToFeatureSc ma(
+        entr esW hEBFeatures, ExternalT etFeature.EARLYB RD_RANK NG_DER VED_FEATURES);
 
-    long schemaEntriesChecksum = getChecksum(allSchemaEntries);
-    SearchLongGauge.export("feature_schema_checksum", new AtomicLong(schemaEntriesChecksum));
+    long sc maEntr esC cksum = getC cksum(allSc maEntr es);
+    SearchLongGauge.export("feature_sc ma_c cksum", new Atom cLong(sc maEntr esC cksum));
 
-    String schemaVersion = String.format(
-        "%s.%d.%d", featureSchemaVersionPrefix, majorVersionNumber, minorVersionNumber);
-    ThriftSearchFeatureSchemaSpecifier schemaSpecifier =
-        new ThriftSearchFeatureSchemaSpecifier(schemaVersion, schemaEntriesChecksum);
+    Str ng sc maVers on = Str ng.format(
+        "%s.%d.%d", featureSc maVers onPref x, majorVers onNumber, m norVers onNumber);
+    Thr ftSearchFeatureSc maSpec f er sc maSpec f er =
+        new Thr ftSearchFeatureSc maSpec f er(sc maVers on, sc maEntr esC cksum);
 
-    ThriftSearchFeatureSchema schema = new ThriftSearchFeatureSchema();
-    schema.setSchemaSpecifier(schemaSpecifier);
-    schema.setEntries(allSchemaEntries);
+    Thr ftSearchFeatureSc ma sc ma = new Thr ftSearchFeatureSc ma();
+    sc ma.setSc maSpec f er(sc maSpec f er);
+    sc ma.setEntr es(allSc maEntr es);
 
-    return schema;
+    return sc ma;
   }
 
-  // Serializes schemaEntries to a byte array, and computes a CRC32 checksum of the array.
-  // The serialization needs to be stable: if schemaEntries1.equals(schemaEntries2), we want
-  // this method to produce the same checksum for schemaEntrie1 and schemaEntrie2, even if
-  // the checksums are computed in different JVMs, etc.
-  private static long getChecksum(Map<Integer, ThriftSearchFeatureSchemaEntry> schemaEntries)
-      throws SchemaValidationException {
-    SortedMap<Integer, ThriftSearchFeatureSchemaEntry> sortedSchemaEntries =
-        new TreeMap<Integer, ThriftSearchFeatureSchemaEntry>(schemaEntries);
+  // Ser al zes sc maEntr es to a byte array, and computes a CRC32 c cksum of t  array.
+  // T  ser al zat on needs to be stable:  f sc maEntr es1.equals(sc maEntr es2),   want
+  // t   thod to produce t  sa  c cksum for sc maEntr e1 and sc maEntr e2, even  f
+  // t  c cksums are computed  n d fferent JVMs, etc.
+  pr vate stat c long getC cksum(Map< nteger, Thr ftSearchFeatureSc maEntry> sc maEntr es)
+      throws Sc maVal dat onExcept on {
+    SortedMap< nteger, Thr ftSearchFeatureSc maEntry> sortedSc maEntr es =
+        new TreeMap< nteger, Thr ftSearchFeatureSc maEntry>(sc maEntr es);
 
     CRC32OutputStream crc32OutputStream = new CRC32OutputStream();
     ObjectOutputStream objectOutputStream = null;
     try {
       objectOutputStream = new ObjectOutputStream(crc32OutputStream);
-      for (Integer fieldId : sortedSchemaEntries.keySet()) {
-        objectOutputStream.writeObject(fieldId);
-        ThriftSearchFeatureSchemaEntry schemaEntry = sortedSchemaEntries.get(fieldId);
-        objectOutputStream.writeObject(schemaEntry.getFeatureName());
-        objectOutputStream.writeObject(schemaEntry.getFeatureType());
+      for ( nteger f eld d : sortedSc maEntr es.keySet()) {
+        objectOutputStream.wr eObject(f eld d);
+        Thr ftSearchFeatureSc maEntry sc maEntry = sortedSc maEntr es.get(f eld d);
+        objectOutputStream.wr eObject(sc maEntry.getFeatureNa ());
+        objectOutputStream.wr eObject(sc maEntry.getFeatureType());
       }
       objectOutputStream.flush();
       return crc32OutputStream.getValue();
-    } catch (IOException e) {
-      throw new SchemaValidationException("Could not serialize feature schema entries.", e);
-    } finally {
-      Preconditions.checkNotNull(objectOutputStream);
+    } catch ( OExcept on e) {
+      throw new Sc maVal dat onExcept on("Could not ser al ze feature sc ma entr es.", e);
+    } f nally {
+      Precond  ons.c ckNotNull(objectOutputStream);
       try {
         objectOutputStream.close();
-      } catch (IOException e) {
-        throw new SchemaValidationException("Could not close ObjectOutputStream.", e);
+      } catch ( OExcept on e) {
+        throw new Sc maVal dat onExcept on("Could not close ObjectOutputStream.", e);
       }
     }
   }
 
   /**
-   * Get the search feature type based on the csf type.
-   * @param csfType the column stride field type for the data
-   * @return the corresponding search feature type
+   * Get t  search feature type based on t  csf type.
+   * @param csfType t  column str de f eld type for t  data
+   * @return t  correspond ng search feature type
    */
-  @VisibleForTesting
-  public static ThriftSearchFeatureType getResultFeatureType(ThriftCSFType csfType) {
-    switch (csfType) {
-      case INT:
+  @V s bleForTest ng
+  publ c stat c Thr ftSearchFeatureType getResultFeatureType(Thr ftCSFType csfType) {
+    sw ch (csfType) {
+      case  NT:
       case BYTE:
-        return ThriftSearchFeatureType.INT32_VALUE;
+        return Thr ftSearchFeatureType. NT32_VALUE;
       case BOOLEAN:
-        return ThriftSearchFeatureType.BOOLEAN_VALUE;
+        return Thr ftSearchFeatureType.BOOLEAN_VALUE;
       case FLOAT:
       case DOUBLE:
-        return ThriftSearchFeatureType.DOUBLE_VALUE;
+        return Thr ftSearchFeatureType.DOUBLE_VALUE;
       case LONG:
-        return ThriftSearchFeatureType.LONG_VALUE;
+        return Thr ftSearchFeatureType.LONG_VALUE;
       default:
         return null;
     }

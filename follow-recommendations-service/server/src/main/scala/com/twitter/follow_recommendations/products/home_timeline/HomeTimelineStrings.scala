@@ -1,26 +1,26 @@
-package com.twitter.follow_recommendations.products.home_timeline
+package com.tw ter.follow_recom ndat ons.products.ho _t  l ne
 
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.ExternalStringRegistry
-import com.twitter.stringcenter.client.core.ExternalString
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.product.gu ce.scope.ProductScoped
+ mport com.tw ter.str ngcenter.cl ent.ExternalStr ngReg stry
+ mport com.tw ter.str ngcenter.cl ent.core.ExternalStr ng
+ mport javax. nject. nject
+ mport javax. nject.Prov der
+ mport javax. nject.S ngleton
 
-@Singleton
-class HomeTimelineStrings @Inject() (
-  @ProductScoped externalStringRegistryProvider: Provider[ExternalStringRegistry]) {
-  private val externalStringRegistry = externalStringRegistryProvider.get()
-  val whoToFollowFollowedByManyUserSingleString: ExternalString =
-    externalStringRegistry.createProdString("WtfRecommendationContext.followedByManyUserSingle")
-  val whoToFollowFollowedByManyUserDoubleString: ExternalString =
-    externalStringRegistry.createProdString("WtfRecommendationContext.followedByManyUserDouble")
-  val whoToFollowFollowedByManyUserMultipleString: ExternalString =
-    externalStringRegistry.createProdString("WtfRecommendationContext.followedByManyUserMultiple")
-  val whoToFollowPopularInCountryKey: ExternalString =
-    externalStringRegistry.createProdString("WtfRecommendationContext.popularInCountry")
-  val whoToFollowModuleTitle: ExternalString =
-    externalStringRegistry.createProdString("WhoToFollowModule.title")
-  val whoToFollowModuleFooter: ExternalString =
-    externalStringRegistry.createProdString("WhoToFollowModule.pivot")
+@S ngleton
+class Ho T  l neStr ngs @ nject() (
+  @ProductScoped externalStr ngReg stryProv der: Prov der[ExternalStr ngReg stry]) {
+  pr vate val externalStr ngReg stry = externalStr ngReg stryProv der.get()
+  val whoToFollowFollo dByManyUserS ngleStr ng: ExternalStr ng =
+    externalStr ngReg stry.createProdStr ng("WtfRecom ndat onContext.follo dByManyUserS ngle")
+  val whoToFollowFollo dByManyUserDoubleStr ng: ExternalStr ng =
+    externalStr ngReg stry.createProdStr ng("WtfRecom ndat onContext.follo dByManyUserDouble")
+  val whoToFollowFollo dByManyUserMult pleStr ng: ExternalStr ng =
+    externalStr ngReg stry.createProdStr ng("WtfRecom ndat onContext.follo dByManyUserMult ple")
+  val whoToFollowPopular nCountryKey: ExternalStr ng =
+    externalStr ngReg stry.createProdStr ng("WtfRecom ndat onContext.popular nCountry")
+  val whoToFollowModuleT le: ExternalStr ng =
+    externalStr ngReg stry.createProdStr ng("WhoToFollowModule.t le")
+  val whoToFollowModuleFooter: ExternalStr ng =
+    externalStr ngReg stry.createProdStr ng("WhoToFollowModule.p vot")
 }

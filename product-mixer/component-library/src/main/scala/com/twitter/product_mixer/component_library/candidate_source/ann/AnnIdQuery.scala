@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.component_library.candidate_source.ann
+package com.tw ter.product_m xer.component_l brary.cand date_s ce.ann
 
-import com.twitter.ann.common._
+ mport com.tw ter.ann.common._
 
 /**
- * A [[AnnIdQuery]] is a query class which defines the ann entities with runtime params and number of neighbors requested
+ * A [[Ann dQuery]]  s a query class wh ch def nes t  ann ent  es w h runt   params and number of ne ghbors requested
  *
- * @param ids Sequence of queries
- * @param numOfNeighbors Number of neighbors requested
- * @param runtimeParams ANN Runtime Params
- * @param batchSize Batch size to the stitch client
+ * @param  ds Sequence of quer es
+ * @param numOfNe ghbors Number of ne ghbors requested
+ * @param runt  Params ANN Runt   Params
+ * @param batchS ze Batch s ze to t  st ch cl ent
  * @tparam T type of  query.
- * @tparam P  runtime parameters supported by the index.
+ * @tparam P  runt   para ters supported by t   ndex.
  */
-case class AnnIdQuery[T, P <: RuntimeParams](
-  ids: Seq[T],
-  numOfNeighbors: Int,
-  runtimeParams: P)
+case class Ann dQuery[T, P <: Runt  Params](
+   ds: Seq[T],
+  numOfNe ghbors:  nt,
+  runt  Params: P)

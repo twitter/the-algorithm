@@ -1,224 +1,224 @@
-package com.twitter.visibility.builder.common
+package com.tw ter.v s b l y.bu lder.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.MuteOption
-import com.twitter.gizmoduck.thriftscala.MuteSurface
-import com.twitter.gizmoduck.thriftscala.{MutedKeyword => GdMutedKeyword}
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common._
-import com.twitter.visibility.features._
-import com.twitter.visibility.models.{MutedKeyword => VfMutedKeyword}
-import java.util.Locale
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.g zmoduck.thr ftscala.MuteOpt on
+ mport com.tw ter.g zmoduck.thr ftscala.MuteSurface
+ mport com.tw ter.g zmoduck.thr ftscala.{MutedKeyword => GdMutedKeyword}
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.common._
+ mport com.tw ter.v s b l y.features._
+ mport com.tw ter.v s b l y.models.{MutedKeyword => VfMutedKeyword}
+ mport java.ut l.Locale
 
 class MutedKeywordFeatures(
-  userSource: UserSource,
-  userRelationshipSource: UserRelationshipSource,
-  keywordMatcher: KeywordMatcher.Matcher = KeywordMatcher.TestMatcher,
-  statsReceiver: StatsReceiver,
-  enableFollowCheckInMutedKeyword: Gate[Unit] = Gate.False) {
+  userS ce: UserS ce,
+  userRelat onsh pS ce: UserRelat onsh pS ce,
+  keywordMatc r: KeywordMatc r.Matc r = KeywordMatc r.TestMatc r,
+  statsRece ver: StatsRece ver,
+  enableFollowC ck nMutedKeyword: Gate[Un ] = Gate.False) {
 
-  private[this] val scopedStatsReceiver: StatsReceiver =
-    statsReceiver.scope("muted_keyword_features")
+  pr vate[t ] val scopedStatsRece ver: StatsRece ver =
+    statsRece ver.scope("muted_keyword_features")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  pr vate[t ] val requests = scopedStatsRece ver.counter("requests")
 
-  private[this] val viewerMutesKeywordInTweetForHomeTimeline =
-    scopedStatsReceiver.scope(ViewerMutesKeywordInTweetForHomeTimeline.name).counter("requests")
-  private[this] val viewerMutesKeywordInTweetForTweetReplies =
-    scopedStatsReceiver.scope(ViewerMutesKeywordInTweetForTweetReplies.name).counter("requests")
-  private[this] val viewerMutesKeywordInTweetForNotifications =
-    scopedStatsReceiver.scope(ViewerMutesKeywordInTweetForNotifications.name).counter("requests")
-  private[this] val excludeFollowingForMutedKeywordsRequests =
-    scopedStatsReceiver.scope("exclude_following").counter("requests")
-  private[this] val viewerMutesKeywordInTweetForAllSurfaces =
-    scopedStatsReceiver.scope(ViewerMutesKeywordInTweetForAllSurfaces.name).counter("requests")
+  pr vate[t ] val v e rMutesKeyword nT etForHo T  l ne =
+    scopedStatsRece ver.scope(V e rMutesKeyword nT etForHo T  l ne.na ).counter("requests")
+  pr vate[t ] val v e rMutesKeyword nT etForT etRepl es =
+    scopedStatsRece ver.scope(V e rMutesKeyword nT etForT etRepl es.na ).counter("requests")
+  pr vate[t ] val v e rMutesKeyword nT etForNot f cat ons =
+    scopedStatsRece ver.scope(V e rMutesKeyword nT etForNot f cat ons.na ).counter("requests")
+  pr vate[t ] val excludeFollow ngForMutedKeywordsRequests =
+    scopedStatsRece ver.scope("exclude_follow ng").counter("requests")
+  pr vate[t ] val v e rMutesKeyword nT etForAllSurfaces =
+    scopedStatsRece ver.scope(V e rMutesKeyword nT etForAllSurfaces.na ).counter("requests")
 
-  def forTweet(
-    tweet: Tweet,
-    viewerId: Option[Long],
-    authorId: Long
-  ): FeatureMapBuilder => FeatureMapBuilder = { featureMapBuilder =>
-    requests.incr()
-    viewerMutesKeywordInTweetForHomeTimeline.incr()
-    viewerMutesKeywordInTweetForTweetReplies.incr()
-    viewerMutesKeywordInTweetForNotifications.incr()
-    viewerMutesKeywordInTweetForAllSurfaces.incr()
+  def forT et(
+    t et: T et,
+    v e r d: Opt on[Long],
+    author d: Long
+  ): FeatureMapBu lder => FeatureMapBu lder = { featureMapBu lder =>
+    requests. ncr()
+    v e rMutesKeyword nT etForHo T  l ne. ncr()
+    v e rMutesKeyword nT etForT etRepl es. ncr()
+    v e rMutesKeyword nT etForNot f cat ons. ncr()
+    v e rMutesKeyword nT etForAllSurfaces. ncr()
 
-    val keywordsBySurface = allMutedKeywords(viewerId)
+    val keywordsBySurface = allMutedKeywords(v e r d)
 
-    val keywordsWithoutDefinedSurface = allMutedKeywordsWithoutDefinedSurface(viewerId)
+    val keywordsW houtDef nedSurface = allMutedKeywordsW houtDef nedSurface(v e r d)
 
-    featureMapBuilder
-      .withFeature(
-        ViewerMutesKeywordInTweetForHomeTimeline,
-        tweetContainsMutedKeyword(
-          tweet,
+    featureMapBu lder
+      .w hFeature(
+        V e rMutesKeyword nT etForHo T  l ne,
+        t etConta nsMutedKeyword(
+          t et,
           keywordsBySurface,
-          MuteSurface.HomeTimeline,
-          viewerId,
-          authorId
+          MuteSurface.Ho T  l ne,
+          v e r d,
+          author d
         )
       )
-      .withFeature(
-        ViewerMutesKeywordInTweetForTweetReplies,
-        tweetContainsMutedKeyword(
-          tweet,
+      .w hFeature(
+        V e rMutesKeyword nT etForT etRepl es,
+        t etConta nsMutedKeyword(
+          t et,
           keywordsBySurface,
-          MuteSurface.TweetReplies,
-          viewerId,
-          authorId
+          MuteSurface.T etRepl es,
+          v e r d,
+          author d
         )
       )
-      .withFeature(
-        ViewerMutesKeywordInTweetForNotifications,
-        tweetContainsMutedKeyword(
-          tweet,
+      .w hFeature(
+        V e rMutesKeyword nT etForNot f cat ons,
+        t etConta nsMutedKeyword(
+          t et,
           keywordsBySurface,
-          MuteSurface.Notifications,
-          viewerId,
-          authorId
+          MuteSurface.Not f cat ons,
+          v e r d,
+          author d
         )
       )
-      .withFeature(
-        ViewerMutesKeywordInTweetForAllSurfaces,
-        tweetContainsMutedKeywordWithoutDefinedSurface(
-          tweet,
-          keywordsWithoutDefinedSurface,
-          viewerId,
-          authorId
+      .w hFeature(
+        V e rMutesKeyword nT etForAllSurfaces,
+        t etConta nsMutedKeywordW houtDef nedSurface(
+          t et,
+          keywordsW houtDef nedSurface,
+          v e r d,
+          author d
         )
       )
   }
 
-  def allMutedKeywords(viewerId: Option[Long]): Stitch[Map[MuteSurface, Seq[GdMutedKeyword]]] =
-    viewerId
-      .map { id => userSource.getAllMutedKeywords(id) }.getOrElse(Stitch.value(Map.empty))
+  def allMutedKeywords(v e r d: Opt on[Long]): St ch[Map[MuteSurface, Seq[GdMutedKeyword]]] =
+    v e r d
+      .map {  d => userS ce.getAllMutedKeywords( d) }.getOrElse(St ch.value(Map.empty))
 
-  def allMutedKeywordsWithoutDefinedSurface(viewerId: Option[Long]): Stitch[Seq[GdMutedKeyword]] =
-    viewerId
-      .map { id => userSource.getAllMutedKeywordsWithoutDefinedSurface(id) }.getOrElse(
-        Stitch.value(Seq.empty))
+  def allMutedKeywordsW houtDef nedSurface(v e r d: Opt on[Long]): St ch[Seq[GdMutedKeyword]] =
+    v e r d
+      .map {  d => userS ce.getAllMutedKeywordsW houtDef nedSurface( d) }.getOrElse(
+        St ch.value(Seq.empty))
 
-  private def mutingKeywordsText(
+  pr vate def mut ngKeywordsText(
     mutedKeywords: Seq[GdMutedKeyword],
     muteSurface: MuteSurface,
-    viewerIdOpt: Option[Long],
-    authorId: Long
-  ): Stitch[Option[String]] = {
-    if (muteSurface == MuteSurface.HomeTimeline && mutedKeywords.nonEmpty) {
-      Stitch.value(Some(mutedKeywords.map(_.keyword).mkString(",")))
+    v e r dOpt: Opt on[Long],
+    author d: Long
+  ): St ch[Opt on[Str ng]] = {
+     f (muteSurface == MuteSurface.Ho T  l ne && mutedKeywords.nonEmpty) {
+      St ch.value(So (mutedKeywords.map(_.keyword).mkStr ng(",")))
     } else {
-      mutedKeywords.partition(kw =>
-        kw.muteOptions.contains(MuteOption.ExcludeFollowingAccounts)) match {
-        case (_, mutedKeywordsFromAnyone) if mutedKeywordsFromAnyone.nonEmpty =>
-          Stitch.value(Some(mutedKeywordsFromAnyone.map(_.keyword).mkString(",")))
-        case (mutedKeywordsExcludeFollowing, _)
-            if mutedKeywordsExcludeFollowing.nonEmpty && enableFollowCheckInMutedKeyword() =>
-          excludeFollowingForMutedKeywordsRequests.incr()
-          viewerIdOpt match {
-            case Some(viewerId) =>
-              userRelationshipSource.follows(viewerId, authorId).map {
+      mutedKeywords.part  on(kw =>
+        kw.muteOpt ons.conta ns(MuteOpt on.ExcludeFollow ngAccounts)) match {
+        case (_, mutedKeywordsFromAnyone)  f mutedKeywordsFromAnyone.nonEmpty =>
+          St ch.value(So (mutedKeywordsFromAnyone.map(_.keyword).mkStr ng(",")))
+        case (mutedKeywordsExcludeFollow ng, _)
+             f mutedKeywordsExcludeFollow ng.nonEmpty && enableFollowC ck nMutedKeyword() =>
+          excludeFollow ngForMutedKeywordsRequests. ncr()
+          v e r dOpt match {
+            case So (v e r d) =>
+              userRelat onsh pS ce.follows(v e r d, author d).map {
                 case true =>
-                case false => Some(mutedKeywordsExcludeFollowing.map(_.keyword).mkString(","))
+                case false => So (mutedKeywordsExcludeFollow ng.map(_.keyword).mkStr ng(","))
               }
-            case _ => Stitch.None
+            case _ => St ch.None
           }
-        case (_, _) => Stitch.None
+        case (_, _) => St ch.None
       }
     }
   }
 
-  private def mutingKeywordsTextWithoutDefinedSurface(
+  pr vate def mut ngKeywordsTextW houtDef nedSurface(
     mutedKeywords: Seq[GdMutedKeyword],
-    viewerIdOpt: Option[Long],
-    authorId: Long
-  ): Stitch[Option[String]] = {
-    mutedKeywords.partition(kw =>
-      kw.muteOptions.contains(MuteOption.ExcludeFollowingAccounts)) match {
-      case (_, mutedKeywordsFromAnyone) if mutedKeywordsFromAnyone.nonEmpty =>
-        Stitch.value(Some(mutedKeywordsFromAnyone.map(_.keyword).mkString(",")))
-      case (mutedKeywordsExcludeFollowing, _)
-          if mutedKeywordsExcludeFollowing.nonEmpty && enableFollowCheckInMutedKeyword() =>
-        excludeFollowingForMutedKeywordsRequests.incr()
-        viewerIdOpt match {
-          case Some(viewerId) =>
-            userRelationshipSource.follows(viewerId, authorId).map {
+    v e r dOpt: Opt on[Long],
+    author d: Long
+  ): St ch[Opt on[Str ng]] = {
+    mutedKeywords.part  on(kw =>
+      kw.muteOpt ons.conta ns(MuteOpt on.ExcludeFollow ngAccounts)) match {
+      case (_, mutedKeywordsFromAnyone)  f mutedKeywordsFromAnyone.nonEmpty =>
+        St ch.value(So (mutedKeywordsFromAnyone.map(_.keyword).mkStr ng(",")))
+      case (mutedKeywordsExcludeFollow ng, _)
+           f mutedKeywordsExcludeFollow ng.nonEmpty && enableFollowC ck nMutedKeyword() =>
+        excludeFollow ngForMutedKeywordsRequests. ncr()
+        v e r dOpt match {
+          case So (v e r d) =>
+            userRelat onsh pS ce.follows(v e r d, author d).map {
               case true =>
-              case false => Some(mutedKeywordsExcludeFollowing.map(_.keyword).mkString(","))
+              case false => So (mutedKeywordsExcludeFollow ng.map(_.keyword).mkStr ng(","))
             }
-          case _ => Stitch.None
+          case _ => St ch.None
         }
-      case (_, _) => Stitch.None
+      case (_, _) => St ch.None
     }
   }
 
-  def tweetContainsMutedKeyword(
-    tweet: Tweet,
-    mutedKeywordMap: Stitch[Map[MuteSurface, Seq[GdMutedKeyword]]],
+  def t etConta nsMutedKeyword(
+    t et: T et,
+    mutedKeywordMap: St ch[Map[MuteSurface, Seq[GdMutedKeyword]]],
     muteSurface: MuteSurface,
-    viewerIdOpt: Option[Long],
-    authorId: Long
-  ): Stitch[VfMutedKeyword] = {
+    v e r dOpt: Opt on[Long],
+    author d: Long
+  ): St ch[VfMutedKeyword] = {
     mutedKeywordMap.flatMap { keywordMap =>
-      if (keywordMap.isEmpty) {
-        Stitch.value(VfMutedKeyword(None))
+       f (keywordMap. sEmpty) {
+        St ch.value(VfMutedKeyword(None))
       } else {
-        val mutedKeywords = keywordMap.getOrElse(muteSurface, Nil)
-        val matchTweetFn: KeywordMatcher.MatchTweet = keywordMatcher(mutedKeywords)
-        val locale = tweet.language.map(l => Locale.forLanguageTag(l.language))
-        val text = tweet.coreData.get.text
+        val mutedKeywords = keywordMap.getOrElse(muteSurface, N l)
+        val matchT etFn: KeywordMatc r.MatchT et = keywordMatc r(mutedKeywords)
+        val locale = t et.language.map(l => Locale.forLanguageTag(l.language))
+        val text = t et.coreData.get.text
 
-        matchTweetFn(locale, text).flatMap { results =>
-          mutingKeywordsText(results, muteSurface, viewerIdOpt, authorId).map(VfMutedKeyword)
+        matchT etFn(locale, text).flatMap { results =>
+          mut ngKeywordsText(results, muteSurface, v e r dOpt, author d).map(VfMutedKeyword)
         }
       }
     }
   }
 
-  def tweetContainsMutedKeywordWithoutDefinedSurface(
-    tweet: Tweet,
-    mutedKeywordSeq: Stitch[Seq[GdMutedKeyword]],
-    viewerIdOpt: Option[Long],
-    authorId: Long
-  ): Stitch[VfMutedKeyword] = {
+  def t etConta nsMutedKeywordW houtDef nedSurface(
+    t et: T et,
+    mutedKeywordSeq: St ch[Seq[GdMutedKeyword]],
+    v e r dOpt: Opt on[Long],
+    author d: Long
+  ): St ch[VfMutedKeyword] = {
     mutedKeywordSeq.flatMap { mutedKeyword =>
-      if (mutedKeyword.isEmpty) {
-        Stitch.value(VfMutedKeyword(None))
+       f (mutedKeyword. sEmpty) {
+        St ch.value(VfMutedKeyword(None))
       } else {
-        val matchTweetFn: KeywordMatcher.MatchTweet = keywordMatcher(mutedKeyword)
-        val locale = tweet.language.map(l => Locale.forLanguageTag(l.language))
-        val text = tweet.coreData.get.text
+        val matchT etFn: KeywordMatc r.MatchT et = keywordMatc r(mutedKeyword)
+        val locale = t et.language.map(l => Locale.forLanguageTag(l.language))
+        val text = t et.coreData.get.text
 
-        matchTweetFn(locale, text).flatMap { results =>
-          mutingKeywordsTextWithoutDefinedSurface(results, viewerIdOpt, authorId).map(
+        matchT etFn(locale, text).flatMap { results =>
+          mut ngKeywordsTextW houtDef nedSurface(results, v e r dOpt, author d).map(
             VfMutedKeyword
           )
         }
       }
     }
   }
-  def spaceTitleContainsMutedKeyword(
-    spaceTitle: String,
-    spaceLanguageOpt: Option[String],
-    mutedKeywordMap: Stitch[Map[MuteSurface, Seq[GdMutedKeyword]]],
+  def spaceT leConta nsMutedKeyword(
+    spaceT le: Str ng,
+    spaceLanguageOpt: Opt on[Str ng],
+    mutedKeywordMap: St ch[Map[MuteSurface, Seq[GdMutedKeyword]]],
     muteSurface: MuteSurface,
-  ): Stitch[VfMutedKeyword] = {
+  ): St ch[VfMutedKeyword] = {
     mutedKeywordMap.flatMap { keywordMap =>
-      if (keywordMap.isEmpty) {
-        Stitch.value(VfMutedKeyword(None))
+       f (keywordMap. sEmpty) {
+        St ch.value(VfMutedKeyword(None))
       } else {
-        val mutedKeywords = keywordMap.getOrElse(muteSurface, Nil)
-        val matchTweetFn: KeywordMatcher.MatchTweet = keywordMatcher(mutedKeywords)
+        val mutedKeywords = keywordMap.getOrElse(muteSurface, N l)
+        val matchT etFn: KeywordMatc r.MatchT et = keywordMatc r(mutedKeywords)
 
         val locale = spaceLanguageOpt.map(l => Locale.forLanguageTag(l))
-        matchTweetFn(locale, spaceTitle).flatMap { results =>
-          if (results.nonEmpty) {
-            Stitch.value(Some(results.map(_.keyword).mkString(","))).map(VfMutedKeyword)
+        matchT etFn(locale, spaceT le).flatMap { results =>
+           f (results.nonEmpty) {
+            St ch.value(So (results.map(_.keyword).mkStr ng(","))).map(VfMutedKeyword)
           } else {
-            Stitch.None.map(VfMutedKeyword)
+            St ch.None.map(VfMutedKeyword)
           }
         }
       }

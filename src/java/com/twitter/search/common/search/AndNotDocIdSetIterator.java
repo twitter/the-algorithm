@@ -1,71 +1,71 @@
-package com.twitter.search.common.search;
+package com.tw ter.search.common.search;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.apache.lucene.search.DocIdSetIterator;
+ mport org.apac .lucene.search.Doc dSet erator;
 
-public class AndNotDocIdSetIterator extends DocIdSetIterator {
-  private int nextDelDoc;
-  private final DocIdSetIterator baseIter;
-  private final DocIdSetIterator notIter;
-  private int currID;
+publ c class AndNotDoc dSet erator extends Doc dSet erator {
+  pr vate  nt nextDelDoc;
+  pr vate f nal Doc dSet erator base er;
+  pr vate f nal Doc dSet erator not er;
+  pr vate  nt curr D;
 
-  /** Creates a new AndNotDocIdSetIterator instance. */
-  public AndNotDocIdSetIterator(DocIdSetIterator baseIter, DocIdSetIterator notIter)
-          throws IOException {
-    nextDelDoc = notIter.nextDoc();
-    this.baseIter = baseIter;
-    this.notIter = notIter;
-    currID = -1;
+  /** Creates a new AndNotDoc dSet erator  nstance. */
+  publ c AndNotDoc dSet erator(Doc dSet erator base er, Doc dSet erator not er)
+          throws  OExcept on {
+    nextDelDoc = not er.nextDoc();
+    t .base er = base er;
+    t .not er = not er;
+    curr D = -1;
   }
 
-  @Override
-  public int advance(int target) throws IOException {
-    currID = baseIter.advance(target);
-    if (currID == DocIdSetIterator.NO_MORE_DOCS) {
-      return currID;
+  @Overr de
+  publ c  nt advance( nt target) throws  OExcept on {
+    curr D = base er.advance(target);
+     f (curr D == Doc dSet erator.NO_MORE_DOCS) {
+      return curr D;
     }
 
-    if (nextDelDoc != DocIdSetIterator.NO_MORE_DOCS) {
-      if (currID < nextDelDoc) {
-        return currID;
-      } else if (currID == nextDelDoc) {
+     f (nextDelDoc != Doc dSet erator.NO_MORE_DOCS) {
+       f (curr D < nextDelDoc) {
+        return curr D;
+      } else  f (curr D == nextDelDoc) {
         return nextDoc();
       } else {
-        nextDelDoc = notIter.advance(currID);
-        if (currID == nextDelDoc) {
+        nextDelDoc = not er.advance(curr D);
+         f (curr D == nextDelDoc) {
           return nextDoc();
         }
       }
     }
-    return currID;
+    return curr D;
   }
 
-  @Override
-  public int docID() {
-    return currID;
+  @Overr de
+  publ c  nt doc D() {
+    return curr D;
   }
 
-  @Override
-  public int nextDoc() throws IOException {
-    currID = baseIter.nextDoc();
-    if (nextDelDoc != DocIdSetIterator.NO_MORE_DOCS) {
-      while (currID != DocIdSetIterator.NO_MORE_DOCS) {
-        if (currID < nextDelDoc) {
-          return currID;
+  @Overr de
+  publ c  nt nextDoc() throws  OExcept on {
+    curr D = base er.nextDoc();
+     f (nextDelDoc != Doc dSet erator.NO_MORE_DOCS) {
+      wh le (curr D != Doc dSet erator.NO_MORE_DOCS) {
+         f (curr D < nextDelDoc) {
+          return curr D;
         } else {
-          if (currID == nextDelDoc) {
-            currID = baseIter.nextDoc();
+           f (curr D == nextDelDoc) {
+            curr D = base er.nextDoc();
           }
-          nextDelDoc = notIter.advance(currID);
+          nextDelDoc = not er.advance(curr D);
         }
       }
     }
-    return currID;
+    return curr D;
   }
 
-  @Override
-  public long cost() {
-    return baseIter.cost();
+  @Overr de
+  publ c long cost() {
+    return base er.cost();
   }
 }

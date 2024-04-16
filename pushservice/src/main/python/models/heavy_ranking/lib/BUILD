@@ -1,42 +1,42 @@
-python3_library(
-    name = "params_lib",
-    sources = [
+python3_l brary(
+    na  = "params_l b",
+    s ces = [
         "params.py",
     ],
     tags = [
-        "bazel-compatible",
-        "no-mypy",
+        "bazel-compat ble",
+        "no- py",
     ],
-    dependencies = [
-        "3rdparty/python/pydantic:default",
+    dependenc es = [
+        "3rdparty/python/pydant c:default",
     ],
 )
 
-python3_library(
-    name = "layers_lib",
-    sources = [
+python3_l brary(
+    na  = "layers_l b",
+    s ces = [
         "layers.py",
     ],
     tags = [
-        "bazel-compatible",
-        "no-mypy",
+        "bazel-compat ble",
+        "no- py",
     ],
-    dependencies = [
+    dependenc es = [
     ],
 )
 
-python3_library(
-    name = "model_lib",
-    sources = [
+python3_l brary(
+    na  = "model_l b",
+    s ces = [
         "model.py",
     ],
     tags = [
-        "bazel-compatible",
-        "no-mypy",
+        "bazel-compat ble",
+        "no- py",
     ],
-    dependencies = [
-        ":layers_lib",
-        ":params_lib",
+    dependenc es = [
+        ":layers_l b",
+        ":params_l b",
         "3rdparty/python/absl-py:default",
     ],
 )

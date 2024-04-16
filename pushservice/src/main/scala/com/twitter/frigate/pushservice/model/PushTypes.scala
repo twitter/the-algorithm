@@ -1,61 +1,61 @@
-package com.twitter.frigate.pushservice.model
+package com.tw ter.fr gate.pushserv ce.model
 
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.candidate.UserLanguage
-import com.twitter.frigate.common.candidate._
-import com.twitter.frigate.data_pipeline.features_common.RequestContextForFeatureStore
-import com.twitter.frigate.pushservice.model.candidate.CopyInfo
-import com.twitter.frigate.pushservice.model.candidate.MLScores
-import com.twitter.frigate.pushservice.model.candidate.QualityScribing
-import com.twitter.frigate.pushservice.model.candidate.Scriber
-import com.twitter.frigate.pushservice.model.ibis.Ibis2HydratorForCandidate
-import com.twitter.frigate.pushservice.model.ntab.NTabRequest
-import com.twitter.frigate.pushservice.take.ChannelForCandidate
-import com.twitter.frigate.pushservice.target._
-import com.twitter.util.Time
+ mport com.tw ter.fr gate.common.base._
+ mport com.tw ter.fr gate.common.cand date.UserLanguage
+ mport com.tw ter.fr gate.common.cand date._
+ mport com.tw ter.fr gate.data_p pel ne.features_common.RequestContextForFeatureStore
+ mport com.tw ter.fr gate.pushserv ce.model.cand date.Copy nfo
+ mport com.tw ter.fr gate.pushserv ce.model.cand date.MLScores
+ mport com.tw ter.fr gate.pushserv ce.model.cand date.Qual yScr b ng
+ mport com.tw ter.fr gate.pushserv ce.model.cand date.Scr ber
+ mport com.tw ter.fr gate.pushserv ce.model. b s. b s2HydratorForCand date
+ mport com.tw ter.fr gate.pushserv ce.model.ntab.NTabRequest
+ mport com.tw ter.fr gate.pushserv ce.take.ChannelForCand date
+ mport com.tw ter.fr gate.pushserv ce.target._
+ mport com.tw ter.ut l.T  
 
 object PushTypes {
 
-  trait Target
+  tra  Target
       extends TargetUser
-      with UserDetails
-      with TargetWithPushContext
-      with TargetDecider
-      with TargetABDecider
-      with FrigateHistory
-      with PushTargeting
-      with TargetScoringDetails
-      with TweetImpressionHistory
-      with CustomConfigForExpt
-      with CaretFeedbackHistory
-      with NotificationFeedbackHistory
-      with PromptFeedbackHistory
-      with HTLVisitHistory
-      with MaxTweetAge
-      with NewUserDetails
-      with ResurrectedUserDetails
-      with TargetWithSeedUsers
-      with MagicFanoutHistory
-      with OptOutUserInterests
-      with RequestContextForFeatureStore
-      with TargetAppPermissions
-      with UserLanguage
-      with InlineActionHistory
-      with TargetPlaces
+      w h UserDeta ls
+      w h TargetW hPushContext
+      w h TargetDec der
+      w h TargetABDec der
+      w h Fr gate tory
+      w h PushTarget ng
+      w h TargetScor ngDeta ls
+      w h T et mpress on tory
+      w h CustomConf gForExpt
+      w h CaretFeedback tory
+      w h Not f cat onFeedback tory
+      w h PromptFeedback tory
+      w h HTLV s  tory
+      w h MaxT etAge
+      w h NewUserDeta ls
+      w h ResurrectedUserDeta ls
+      w h TargetW hSeedUsers
+      w h Mag cFanout tory
+      w h OptOutUser nterests
+      w h RequestContextForFeatureStore
+      w h TargetAppPerm ss ons
+      w h UserLanguage
+      w h  nl neAct on tory
+      w h TargetPlaces
 
-  trait RawCandidate extends Candidate with TargetInfo[PushTypes.Target] with RecommendationType {
+  tra  RawCand date extends Cand date w h Target nfo[PushTypes.Target] w h Recom ndat onType {
 
-    val createdAt: Time = Time.now
+    val createdAt: T   = T  .now
   }
 
-  trait PushCandidate
-      extends RawCandidate
-      with CandidateScoringDetails
-      with MLScores
-      with QualityScribing
-      with CopyInfo
-      with Scriber
-      with Ibis2HydratorForCandidate
-      with NTabRequest
-      with ChannelForCandidate
+  tra  PushCand date
+      extends RawCand date
+      w h Cand dateScor ngDeta ls
+      w h MLScores
+      w h Qual yScr b ng
+      w h Copy nfo
+      w h Scr ber
+      w h  b s2HydratorForCand date
+      w h NTabRequest
+      w h ChannelForCand date
 }

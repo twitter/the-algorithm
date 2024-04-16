@@ -1,54 +1,54 @@
-package com.twitter.product_mixer.core.pipeline.step.domain_marshaller
+package com.tw ter.product_m xer.core.p pel ne.step.doma n_marshaller
 
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithDetails
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.domain_marshaller_executor.DomainMarshallerExecutor
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+ mport com.tw ter.product_m xer.core.funct onal_component.premarshaller.Doma nMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.HasMarshall ng
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasCand datesW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasQuery
+ mport com.tw ter.product_m xer.core.p pel ne.step.Step
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.product_m xer.core.serv ce.doma n_marshaller_executor.Doma nMarshallerExecutor
+ mport com.tw ter.st ch.Arrow
+ mport javax. nject. nject
 
 /**
- * A domain marshaller step, it takes the input list of candidates and the given
- * domain marshaller and executes its to return a marshalled result. The [[State]] object is
- * responsible for keeping a reference of the built Response.
+ * A doma n marshaller step,   takes t   nput l st of cand dates and t  g ven
+ * doma n marshaller and executes  s to return a marshalled result. T  [[State]] object  s
+ * respons ble for keep ng a reference of t  bu lt Response.
  *
- * @param domainMarshallerExecutor Domain Marshaller executor.
- * @tparam Query Type of PipelineQuery domain model
- * @tparam ResponseType the domain marshalling type expected to be returned.
- * @tparam State The pipeline state domain model.
+ * @param doma nMarshallerExecutor Doma n Marshaller executor.
+ * @tparam Query Type of P pel neQuery doma n model
+ * @tparam ResponseType t  doma n marshall ng type expected to be returned.
+ * @tparam State T  p pel ne state doma n model.
  */
-case class DomainMarshallerStep[
-  Query <: PipelineQuery,
-  ResponseType <: HasMarshalling,
-  State <: HasQuery[Query, State] with HasCandidatesWithDetails[State]] @Inject() (
-  domainMarshallerExecutor: DomainMarshallerExecutor)
-    extends Step[State, DomainMarshaller[Query, ResponseType], DomainMarshallerExecutor.Inputs[
+case class Doma nMarshallerStep[
+  Query <: P pel neQuery,
+  ResponseType <: HasMarshall ng,
+  State <: HasQuery[Query, State] w h HasCand datesW hDeta ls[State]] @ nject() (
+  doma nMarshallerExecutor: Doma nMarshallerExecutor)
+    extends Step[State, Doma nMarshaller[Query, ResponseType], Doma nMarshallerExecutor. nputs[
       Query
-    ], DomainMarshallerExecutor.Result[ResponseType]] {
+    ], Doma nMarshallerExecutor.Result[ResponseType]] {
 
-  override def isEmpty(config: DomainMarshaller[Query, ResponseType]): Boolean = false
+  overr de def  sEmpty(conf g: Doma nMarshaller[Query, ResponseType]): Boolean = false
 
-  override def adaptInput(
+  overr de def adapt nput(
     state: State,
-    config: DomainMarshaller[Query, ResponseType]
-  ): DomainMarshallerExecutor.Inputs[Query] =
-    DomainMarshallerExecutor.Inputs(state.query, state.candidatesWithDetails)
+    conf g: Doma nMarshaller[Query, ResponseType]
+  ): Doma nMarshallerExecutor. nputs[Query] =
+    Doma nMarshallerExecutor. nputs(state.query, state.cand datesW hDeta ls)
 
-  override def arrow(
-    config: DomainMarshaller[Query, ResponseType],
+  overr de def arrow(
+    conf g: Doma nMarshaller[Query, ResponseType],
     context: Executor.Context
-  ): Arrow[DomainMarshallerExecutor.Inputs[Query], DomainMarshallerExecutor.Result[ResponseType]] =
-    domainMarshallerExecutor.arrow(config, context)
+  ): Arrow[Doma nMarshallerExecutor. nputs[Query], Doma nMarshallerExecutor.Result[ResponseType]] =
+    doma nMarshallerExecutor.arrow(conf g, context)
 
-  // Noop since the pipeline updates the executor results for us
-  override def updateState(
+  // Noop s nce t  p pel ne updates t  executor results for us
+  overr de def updateState(
     state: State,
-    executorResult: DomainMarshallerExecutor.Result[ResponseType],
-    config: DomainMarshaller[Query, ResponseType]
+    executorResult: Doma nMarshallerExecutor.Result[ResponseType],
+    conf g: Doma nMarshaller[Query, ResponseType]
   ): State = state
 
 }

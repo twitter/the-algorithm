@@ -1,5 +1,5 @@
-(SELECT * FROM ML.FEATURE_IMPORTANCE(MODEL `twttr-recos-ml-prod.realgraph.prod`)
-ORDER BY importance_gain DESC)
-UNION ALL
-(SELECT * FROM ML.FEATURE_IMPORTANCE(MODEL `twttr-recos-ml-prod.realgraph.prod_explicit`)
-ORDER BY importance_gain DESC)
+(SELECT * FROM ML.FEATURE_ MPORTANCE(MODEL `twttr-recos-ml-prod.realgraph.prod`)
+ORDER BY  mportance_ga n DESC)
+UN ON ALL
+(SELECT * FROM ML.FEATURE_ MPORTANCE(MODEL `twttr-recos-ml-prod.realgraph.prod_expl c `)
+ORDER BY  mportance_ga n DESC)

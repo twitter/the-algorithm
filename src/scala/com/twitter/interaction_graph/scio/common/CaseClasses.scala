@@ -1,21 +1,21 @@
-package com.twitter.interaction_graph.scio.common
+package com.tw ter. nteract on_graph.sc o.common
 
-import com.twitter.interaction_graph.thriftscala.FeatureName
+ mport com.tw ter. nteract on_graph.thr ftscala.FeatureNa 
 
-/** Interaction Graph Raw Input type defines a common type for edge / vertex feature calculation
- * It has fields: (source Id, destination Id, Feature Name, age of this relationship (in days),
+/**  nteract on Graph Raw  nput type def nes a common type for edge / vertex feature calculat on
+ *   has f elds: (s ce  d, dest nat on  d, Feature Na , age of t  relat onsh p ( n days),
  * and value to be aggregated)
  */
-case class InteractionGraphRawInput(
+case class  nteract onGraphRaw nput(
   src: Long,
   dst: Long,
-  name: FeatureName,
-  age: Int,
+  na : FeatureNa ,
+  age:  nt,
   featureValue: Double)
 
 case class FeatureKey(
   src: Long,
   dest: Long,
-  name: FeatureName)
+  na : FeatureNa )
 
-case class Tweepcred(userId: Long, tweepcred: Short)
+case class T epcred(user d: Long, t epcred: Short)

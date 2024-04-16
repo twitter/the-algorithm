@@ -1,22 +1,22 @@
-package com.twitter.search.earlybird_root.validators;
+package com.tw ter.search.earlyb rd_root.val dators;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.ut l.Future;
 
-public class TermStatsResultsValidator implements ServiceResponseValidator<EarlybirdResponse> {
-  private final EarlybirdCluster cluster;
+publ c class TermStatsResultsVal dator  mple nts Serv ceResponseVal dator<Earlyb rdResponse> {
+  pr vate f nal Earlyb rdCluster cluster;
 
-  public TermStatsResultsValidator(EarlybirdCluster cluster) {
-    this.cluster = cluster;
+  publ c TermStatsResultsVal dator(Earlyb rdCluster cluster) {
+    t .cluster = cluster;
   }
 
-  @Override
-  public Future<EarlybirdResponse> validate(EarlybirdResponse response) {
-    if (!response.isSetTermStatisticsResults()
-        || !response.getTermStatisticsResults().isSetTermResults()) {
-      return Future.exception(
-          new IllegalStateException(cluster + " returned null term statistics results."));
+  @Overr de
+  publ c Future<Earlyb rdResponse> val date(Earlyb rdResponse response) {
+     f (!response. sSetTermStat st csResults()
+        || !response.getTermStat st csResults(). sSetTermResults()) {
+      return Future.except on(
+          new  llegalStateExcept on(cluster + " returned null term stat st cs results."));
     }
     return Future.value(response);
   }

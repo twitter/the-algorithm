@@ -1,56 +1,56 @@
-package com.twitter.timelineranker.common
+package com.tw ter.t  l neranker.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.util.SourceTweetsUtil
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t  l neranker.core.Cand dateEnvelope
+ mport com.tw ter.t  l neranker.model.RecapQuery.DependencyProv der
+ mport com.tw ter.t  l neranker.ut l.S ceT etsUt l
+ mport com.tw ter.ut l.Future
 
 /**
- * trims elements of the envelope other than the searchResults
- * (i.e. sourceSearchResults, hydratedTweets, sourceHydratedTweets) to match with searchResults.
+ * tr ms ele nts of t  envelope ot r than t  searchResults
+ * ( .e. s ceSearchResults, hydratedT ets, s ceHydratedT ets) to match w h searchResults.
  */
-class TrimToMatchSearchResultsTransform(
-  hydrateReplyRootTweetProvider: DependencyProvider[Boolean],
-  statsReceiver: StatsReceiver)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+class Tr mToMatchSearchResultsTransform(
+  hydrateReplyRootT etProv der: DependencyProv der[Boolean],
+  statsRece ver: StatsRece ver)
+    extends FutureArrow[Cand dateEnvelope, Cand dateEnvelope] {
 
-  private val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
+  pr vate val scopedStatsRece ver = statsRece ver.scope(getClass.getS mpleNa )
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
+  overr de def apply(envelope: Cand dateEnvelope): Future[Cand dateEnvelope] = {
     val searchResults = envelope.searchResults
-    val searchResultsIds = searchResults.map(_.id).toSet
+    val searchResults ds = searchResults.map(_. d).toSet
 
-    // Trim rest of the seqs to match top search results.
-    val hydratedTweets = envelope.hydratedTweets.outerTweets
-    val topHydratedTweets = hydratedTweets.filter(ht => searchResultsIds.contains(ht.tweetId))
+    // Tr m rest of t  seqs to match top search results.
+    val hydratedT ets = envelope.hydratedT ets.outerT ets
+    val topHydratedT ets = hydratedT ets.f lter(ht => searchResults ds.conta ns(ht.t et d))
 
-    envelope.followGraphData.followedUserIdsFuture.map { followedUserIds =>
-      val sourceTweetIdsOfTopResults =
-        SourceTweetsUtil
-          .getSourceTweetIds(
+    envelope.followGraphData.follo dUser dsFuture.map { follo dUser ds =>
+      val s ceT et dsOfTopResults =
+        S ceT etsUt l
+          .getS ceT et ds(
             searchResults = searchResults,
-            searchResultsTweetIds = searchResultsIds,
-            followedUserIds = followedUserIds,
-            shouldIncludeReplyRootTweets = hydrateReplyRootTweetProvider(envelope.query),
-            statsReceiver = scopedStatsReceiver
+            searchResultsT et ds = searchResults ds,
+            follo dUser ds = follo dUser ds,
+            should ncludeReplyRootT ets = hydrateReplyRootT etProv der(envelope.query),
+            statsRece ver = scopedStatsRece ver
           ).toSet
-      val sourceTweetSearchResultsForTopN =
-        envelope.sourceSearchResults.filter(r => sourceTweetIdsOfTopResults.contains(r.id))
-      val hydratedSourceTweetsForTopN =
-        envelope.sourceHydratedTweets.outerTweets.filter(ht =>
-          sourceTweetIdsOfTopResults.contains(ht.tweetId))
+      val s ceT etSearchResultsForTopN =
+        envelope.s ceSearchResults.f lter(r => s ceT et dsOfTopResults.conta ns(r. d))
+      val hydratedS ceT etsForTopN =
+        envelope.s ceHydratedT ets.outerT ets.f lter(ht =>
+          s ceT et dsOfTopResults.conta ns(ht.t et d))
 
-      val hydratedTweetsForEnvelope = envelope.hydratedTweets.copy(outerTweets = topHydratedTweets)
-      val hydratedSourceTweetsForEnvelope =
-        envelope.sourceHydratedTweets.copy(outerTweets = hydratedSourceTweetsForTopN)
+      val hydratedT etsForEnvelope = envelope.hydratedT ets.copy(outerT ets = topHydratedT ets)
+      val hydratedS ceT etsForEnvelope =
+        envelope.s ceHydratedT ets.copy(outerT ets = hydratedS ceT etsForTopN)
 
       envelope.copy(
-        hydratedTweets = hydratedTweetsForEnvelope,
+        hydratedT ets = hydratedT etsForEnvelope,
         searchResults = searchResults,
-        sourceHydratedTweets = hydratedSourceTweetsForEnvelope,
-        sourceSearchResults = sourceTweetSearchResultsForTopN
+        s ceHydratedT ets = hydratedS ceT etsForEnvelope,
+        s ceSearchResults = s ceT etSearchResultsForTopN
       )
     }
   }

@@ -1,56 +1,56 @@
-package com.twitter.search.core.earlybird.facets;
+package com.tw ter.search.core.earlyb rd.facets;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.index.NumericDocValues;
+ mport org.apac .lucene. ndex.Nu r cDocValues;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
 
 /**
- * An iterator that looks up the termID from the appropriate CSF
+ * An  erator that looks up t  term D from t  appropr ate CSF
  */
-public class CSFFacetCountIterator extends FacetCountIterator {
-  private final int fieldID;
-  private final NumericDocValues numericDocValues;
+publ c class CSFFacetCount erator extends FacetCount erator {
+  pr vate f nal  nt f eld D;
+  pr vate f nal Nu r cDocValues nu r cDocValues;
 
   /**
-   * Creates a new iterator for the given facet csf field.
+   * Creates a new  erator for t  g ven facet csf f eld.
    */
-  public CSFFacetCountIterator(
-      EarlybirdIndexSegmentAtomicReader reader,
-      Schema.FieldInfo facetFieldInfo) throws IOException {
-    FacetIDMap.FacetField facetField = reader.getFacetIDMap().getFacetField(facetFieldInfo);
-    Preconditions.checkNotNull(facetField);
-    this.fieldID = facetField.getFacetId();
-    numericDocValues = reader.getNumericDocValues(facetFieldInfo.getName());
-    Preconditions.checkNotNull(numericDocValues);
+  publ c CSFFacetCount erator(
+      Earlyb rd ndexSeg ntAtom cReader reader,
+      Sc ma.F eld nfo facetF eld nfo) throws  OExcept on {
+    Facet DMap.FacetF eld facetF eld = reader.getFacet DMap().getFacetF eld(facetF eld nfo);
+    Precond  ons.c ckNotNull(facetF eld);
+    t .f eld D = facetF eld.getFacet d();
+    nu r cDocValues = reader.getNu r cDocValues(facetF eld nfo.getNa ());
+    Precond  ons.c ckNotNull(nu r cDocValues);
   }
 
-  @Override
-  public void collect(int internalDocID) throws IOException {
-    if (numericDocValues.advanceExact(internalDocID)) {
-      long termID = numericDocValues.longValue();
-      if (shouldCollect(internalDocID, termID)) {
-        collect(internalDocID, termID, fieldID);
+  @Overr de
+  publ c vo d collect( nt  nternalDoc D) throws  OExcept on {
+     f (nu r cDocValues.advanceExact( nternalDoc D)) {
+      long term D = nu r cDocValues.longValue();
+       f (shouldCollect( nternalDoc D, term D)) {
+        collect( nternalDoc D, term D, f eld D);
       }
     }
   }
 
   /**
-   * Subclasses should override if they need to restrict the docs or termIDs
-   * that they collect on. For example, these may need to override if
-   *  1) Not all docs set this field, so we should not collect on
-   *     the default value of 0
-   *  2) The same CSF field means different things (in particular, shared_status_id means
-   *     retweet OR reply parent id) so we need to do some other check to determine if we should
+   * Subclasses should overr de  f t y need to restr ct t  docs or term Ds
+   * that t y collect on. For example, t se may need to overr de  f
+   *  1) Not all docs set t  f eld, so   should not collect on
+   *     t  default value of 0
+   *  2) T  sa  CSF f eld  ans d fferent th ngs ( n part cular, shared_status_ d  ans
+   *     ret et OR reply parent  d) so   need to do so  ot r c ck to determ ne  f   should
    *     collect
    *
-   * @return whether we should collect on this doc/termID
+   * @return w t r   should collect on t  doc/term D
    */
-  protected boolean shouldCollect(int internalDocID, long termID) throws IOException {
+  protected boolean shouldCollect( nt  nternalDoc D, long term D) throws  OExcept on {
     return true;
   }
 }

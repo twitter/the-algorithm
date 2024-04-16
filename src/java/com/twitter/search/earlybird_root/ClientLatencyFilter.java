@@ -1,45 +1,45 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import java.util.concurrent.ConcurrentHashMap;
+ mport java.ut l.concurrent.ConcurrentHashMap;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.clientstats.RequestCounters;
-import com.twitter.search.common.clientstats.RequestCountersEventListener;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.filters.EarlybirdSuccessfulResponseHandler;
-import com.twitter.util.Future;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.common.cl entstats.RequestCounters;
+ mport com.tw ter.search.common.cl entstats.RequestCountersEventL stener;
+ mport com.tw ter.search.earlyb rd.common.Cl ent dUt l;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd_root.f lters.Earlyb rdSuccessfulResponseHandler;
+ mport com.tw ter.ut l.Future;
 
-public class ClientLatencyFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  // _client_latency_stats_for_ is intended to measure the latency of requests to services that this
-  // root depends on. This can be used to measure how long a request takes in transit between when
-  // it leaves a root and when a root receives the response, in case this latency is significantly
-  // different than Earlybird measured latency. We break it down by client, so that we can tell
-  // which customers are being hit by this latency.
-  private static final String STAT_FORMAT = "%s_client_latency_stats_for_%s";
+publ c class Cl entLatencyF lter extends S mpleF lter<Earlyb rdRequest, Earlyb rdResponse> {
+  // _cl ent_latency_stats_for_  s  ntended to  asure t  latency of requests to serv ces that t 
+  // root depends on. T  can be used to  asure how long a request takes  n trans  bet en w n
+  //   leaves a root and w n a root rece ves t  response,  n case t  latency  s s gn f cantly
+  // d fferent than Earlyb rd  asured latency.   break   down by cl ent, so that   can tell
+  // wh ch custo rs are be ng h  by t  latency.
+  pr vate stat c f nal Str ng STAT_FORMAT = "%s_cl ent_latency_stats_for_%s";
 
-  private final ConcurrentHashMap<String, RequestCounters> requestCounterForClient =
+  pr vate f nal ConcurrentHashMap<Str ng, RequestCounters> requestCounterForCl ent =
       new ConcurrentHashMap<>();
-  private final String prefix;
+  pr vate f nal Str ng pref x;
 
-  public ClientLatencyFilter(String prefix) {
-    this.prefix = prefix;
+  publ c Cl entLatencyF lter(Str ng pref x) {
+    t .pref x = pref x;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(Earlyb rdRequest request,
+                                         Serv ce<Earlyb rdRequest, Earlyb rdResponse> serv ce) {
 
-    RequestCounters requestCounters = requestCounterForClient.computeIfAbsent(
-        ClientIdUtil.getClientIdFromRequest(request), client ->
-            new RequestCounters(String.format(STAT_FORMAT, prefix, client)));
+    RequestCounters requestCounters = requestCounterForCl ent.compute fAbsent(
+        Cl ent dUt l.getCl ent dFromRequest(request), cl ent ->
+            new RequestCounters(Str ng.format(STAT_FORMAT, pref x, cl ent)));
 
-    RequestCountersEventListener<EarlybirdResponse> requestCountersEventListener =
-        new RequestCountersEventListener<>(requestCounters, Clock.SYSTEM_CLOCK,
-            EarlybirdSuccessfulResponseHandler.INSTANCE);
-    return service.apply(request).addEventListener(requestCountersEventListener);
+    RequestCountersEventL stener<Earlyb rdResponse> requestCountersEventL stener =
+        new RequestCountersEventL stener<>(requestCounters, Clock.SYSTEM_CLOCK,
+            Earlyb rdSuccessfulResponseHandler. NSTANCE);
+    return serv ce.apply(request).addEventL stener(requestCountersEventL stener);
   }
 }

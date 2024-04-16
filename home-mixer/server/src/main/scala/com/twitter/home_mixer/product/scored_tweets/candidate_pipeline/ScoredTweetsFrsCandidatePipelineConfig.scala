@@ -1,72 +1,72 @@
-package com.twitter.home_mixer.product.scored_tweets.candidate_pipeline
+package com.tw ter.ho _m xer.product.scored_t ets.cand date_p pel ne
 
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.FrsSeedUsersQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.gate.MinCachedTweetsGate
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CachedScoredTweets
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CandidatePipeline
-import com.twitter.home_mixer.product.scored_tweets.query_transformer.TimelineRankerFrsQueryTransformer
-import com.twitter.home_mixer.product.scored_tweets.response_transformer.ScoredTweetsFrsResponseFeatureTransformer
-import com.twitter.product_mixer.component_library.candidate_source.timeline_ranker.TimelineRankerRecapCandidateSource
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseQueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.timelineranker.{thriftscala => tlr}
-import com.twitter.timelines.configapi.decider.DeciderParam
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.FrsSeedUsersQueryFeatureHydrator
+ mport com.tw ter.ho _m xer.product.scored_t ets.gate.M nCac dT etsGate
+ mport com.tw ter.ho _m xer.product.scored_t ets.model.ScoredT etsQuery
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParam.Cac dScoredT ets
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParam.Cand dateP pel ne
+ mport com.tw ter.ho _m xer.product.scored_t ets.query_transfor r.T  l neRankerFrsQueryTransfor r
+ mport com.tw ter.ho _m xer.product.scored_t ets.response_transfor r.ScoredT etsFrsResponseFeatureTransfor r
+ mport com.tw ter.product_m xer.component_l brary.cand date_s ce.t  l ne_ranker.T  l neRankerRecapCand dateS ce
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.BaseCand dateS ce
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BaseQueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.Gate
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neResultsTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neConf g
+ mport com.tw ter.t  l neranker.{thr ftscala => tlr}
+ mport com.tw ter.t  l nes.conf gap .dec der.Dec derParam
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * Candidate Pipeline Config that takes user recommendations from Follow Recommendation Service (FRS)
- * and makes a TimelineRanker->Earlybird query for tweet candidates from those users.
- * Additionally, the candidate pipeline hydrates followedByUserIds so that followed-by social proof
+ * Cand date P pel ne Conf g that takes user recom ndat ons from Follow Recom ndat on Serv ce (FRS)
+ * and makes a T  l neRanker->Earlyb rd query for t et cand dates from those users.
+ * Add  onally, t  cand date p pel ne hydrates follo dByUser ds so that follo d-by soc al proof
  * can be used.
  */
-@Singleton
-class ScoredTweetsFrsCandidatePipelineConfig @Inject() (
-  timelineRankerRecapCandidateSource: TimelineRankerRecapCandidateSource,
+@S ngleton
+class ScoredT etsFrsCand dateP pel neConf g @ nject() (
+  t  l neRankerRecapCand dateS ce: T  l neRankerRecapCand dateS ce,
   frsSeedUsersQueryFeatureHydrator: FrsSeedUsersQueryFeatureHydrator)
-    extends CandidatePipelineConfig[
-      ScoredTweetsQuery,
+    extends Cand dateP pel neConf g[
+      ScoredT etsQuery,
       tlr.RecapQuery,
-      tlr.CandidateTweet,
-      TweetCandidate
+      tlr.Cand dateT et,
+      T etCand date
     ] {
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("ScoredTweetsFrs")
+  overr de val  dent f er: Cand dateP pel ne dent f er =
+    Cand dateP pel ne dent f er("ScoredT etsFrs")
 
-  override val enabledDeciderParam: Option[DeciderParam[Boolean]] =
-    Some(CandidatePipeline.EnableFrsParam)
+  overr de val enabledDec derParam: Opt on[Dec derParam[Boolean]] =
+    So (Cand dateP pel ne.EnableFrsParam)
 
-  override val gates: Seq[Gate[ScoredTweetsQuery]] = Seq(
-    MinCachedTweetsGate(identifier, CachedScoredTweets.MinCachedTweetsParam)
+  overr de val gates: Seq[Gate[ScoredT etsQuery]] = Seq(
+    M nCac dT etsGate( dent f er, Cac dScoredT ets.M nCac dT etsParam)
   )
 
-  override val queryFeatureHydration: Seq[
-    BaseQueryFeatureHydrator[ScoredTweetsQuery, _]
+  overr de val queryFeatureHydrat on: Seq[
+    BaseQueryFeatureHydrator[ScoredT etsQuery, _]
   ] = Seq(frsSeedUsersQueryFeatureHydrator)
 
-  override val candidateSource: BaseCandidateSource[tlr.RecapQuery, tlr.CandidateTweet] =
-    timelineRankerRecapCandidateSource
+  overr de val cand dateS ce: BaseCand dateS ce[tlr.RecapQuery, tlr.Cand dateT et] =
+    t  l neRankerRecapCand dateS ce
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    ScoredTweetsQuery,
+  overr de val queryTransfor r: Cand dateP pel neQueryTransfor r[
+    ScoredT etsQuery,
     tlr.RecapQuery
-  ] = TimelineRankerFrsQueryTransformer(identifier)
+  ] = T  l neRankerFrsQueryTransfor r( dent f er)
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[tlr.CandidateTweet]
-  ] = Seq(ScoredTweetsFrsResponseFeatureTransformer)
+  overr de val featuresFromCand dateS ceTransfor rs: Seq[
+    Cand dateFeatureTransfor r[tlr.Cand dateT et]
+  ] = Seq(ScoredT etsFrsResponseFeatureTransfor r)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    tlr.CandidateTweet,
-    TweetCandidate
-  ] = { candidate => TweetCandidate(candidate.tweet.get.id) }
+  overr de val resultTransfor r: Cand dateP pel neResultsTransfor r[
+    tlr.Cand dateT et,
+    T etCand date
+  ] = { cand date => T etCand date(cand date.t et.get. d) }
 }

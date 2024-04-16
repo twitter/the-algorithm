@@ -2,57 +2,57 @@ syntax = "proto3";
 
 package tensorflow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "DeviceAttributesProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/device_attributes_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "Dev ceAttr butesProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.fra work";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/fra work/dev ce_attr butes_go_proto";
 
-message InterconnectLink {
-  int32 device_id = 1;
-  string type = 2;
-  int32 strength = 3;
+ ssage  nterconnectL nk {
+   nt32 dev ce_ d = 1;
+  str ng type = 2;
+   nt32 strength = 3;
 }
 
-message LocalLinks {
-  repeated InterconnectLink link = 1;
+ ssage LocalL nks {
+  repeated  nterconnectL nk l nk = 1;
 }
 
-message DeviceLocality {
-  // Optional bus locality of device.  Default value of 0 means
-  // no specific locality.  Specific localities are indexed from 1.
-  int32 bus_id = 1;
+ ssage Dev ceLocal y {
+  // Opt onal bus local y of dev ce.  Default value of 0  ans
+  // no spec f c local y.  Spec f c local  es are  ndexed from 1.
+   nt32 bus_ d = 1;
 
-  // Optional NUMA locality of device.
-  int32 numa_node = 2;
+  // Opt onal NUMA local y of dev ce.
+   nt32 numa_node = 2;
 
-  // Optional local interconnect links to other devices.
-  LocalLinks links = 3;
+  // Opt onal local  nterconnect l nks to ot r dev ces.
+  LocalL nks l nks = 3;
 }
 
-message DeviceAttributes {
-  // Fully specified name of the device within a cluster.
-  string name = 1;
+ ssage Dev ceAttr butes {
+  // Fully spec f ed na  of t  dev ce w h n a cluster.
+  str ng na  = 1;
 
-  // String representation of device_type.
-  string device_type = 2;
+  // Str ng representat on of dev ce_type.
+  str ng dev ce_type = 2;
 
-  // Memory capacity of device in bytes.
-  int64 memory_limit = 4;
+  //  mory capac y of dev ce  n bytes.
+   nt64  mory_l m  = 4;
 
-  // Platform-specific data about device that may be useful
-  // for supporting efficient data transfers.
-  DeviceLocality locality = 5;
+  // Platform-spec f c data about dev ce that may be useful
+  // for support ng eff c ent data transfers.
+  Dev ceLocal y local y = 5;
 
-  // A device is assigned a global unique number each time it is
-  // initialized. "incarnation" should never be 0.
-  fixed64 incarnation = 6;
+  // A dev ce  s ass gned a global un que number each t      s
+  //  n  al zed. " ncarnat on" should never be 0.
+  f xed64  ncarnat on = 6;
 
-  // String representation of the physical device that this device maps to.
-  string physical_device_desc = 7;
+  // Str ng representat on of t  phys cal dev ce that t  dev ce maps to.
+  str ng phys cal_dev ce_desc = 7;
 
-  // A physical device ID for use in XLA DeviceAssignments, unique across
-  // clients in a multi-client setup. Set to -1 if unavailable, non-negative
-  // otherwise.
-  int64 xla_global_id = 8;
+  // A phys cal dev ce  D for use  n XLA Dev ceAss gn nts, un que across
+  // cl ents  n a mult -cl ent setup. Set to -1  f unava lable, non-negat ve
+  // ot rw se.
+   nt64 xla_global_ d = 8;
 }

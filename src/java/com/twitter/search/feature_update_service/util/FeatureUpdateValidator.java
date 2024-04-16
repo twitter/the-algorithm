@@ -1,41 +1,41 @@
-package com.twitter.search.feature_update_service.util;
+package com.tw ter.search.feature_update_serv ce.ut l;
 
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
-import com.twitter.search.common.schema.base.ThriftDocumentUtil;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateRequest;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateResponse;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateResponseCode;
+ mport com.tw ter.search.common.sc ma.base.Thr ftDocu ntUt l;
+ mport com.tw ter.search.feature_update_serv ce.thr ftjava.FeatureUpdateRequest;
+ mport com.tw ter.search.feature_update_serv ce.thr ftjava.FeatureUpdateResponse;
+ mport com.tw ter.search.feature_update_serv ce.thr ftjava.FeatureUpdateResponseCode;
 
-public final class FeatureUpdateValidator {
+publ c f nal class FeatureUpdateVal dator {
 
-  private FeatureUpdateValidator() { }
+  pr vate FeatureUpdateVal dator() { }
 
   /**
-   * Validates FeatureUpdateRequest
-   * @param featureUpdate instance of FeatureUpdateRequest with ThriftIndexingEvent
-   * @return null if valid, instance of FeatureUpdateResponse if not.
-   * Response will have appropriate error code and message set.
+   * Val dates FeatureUpdateRequest
+   * @param featureUpdate  nstance of FeatureUpdateRequest w h Thr ft ndex ngEvent
+   * @return null  f val d,  nstance of FeatureUpdateResponse  f not.
+   * Response w ll have appropr ate error code and  ssage set.
    */
   @Nullable
-  public static FeatureUpdateResponse validate(FeatureUpdateRequest featureUpdate) {
+  publ c stat c FeatureUpdateResponse val date(FeatureUpdateRequest featureUpdate) {
 
-    if (ThriftDocumentUtil.hasDuplicateFields(featureUpdate.getEvent().getDocument())) {
+     f (Thr ftDocu ntUt l.hasDupl cateF elds(featureUpdate.getEvent().getDocu nt())) {
       return createResponse(
-          String.format("duplicate document fields: %s", featureUpdate.toString()));
+          Str ng.format("dupl cate docu nt f elds: %s", featureUpdate.toStr ng()));
     }
-    if (!featureUpdate.getEvent().isSetUid()) {
-      return createResponse(String.format("unset uid: %s", featureUpdate.toString()));
+     f (!featureUpdate.getEvent(). sSetU d()) {
+      return createResponse(Str ng.format("unset u d: %s", featureUpdate.toStr ng()));
     }
 
     return null;
   }
 
-  private static FeatureUpdateResponse createResponse(String errorMsg) {
-    FeatureUpdateResponseCode responseCode = FeatureUpdateResponseCode.CLIENT_ERROR;
+  pr vate stat c FeatureUpdateResponse createResponse(Str ng errorMsg) {
+    FeatureUpdateResponseCode responseCode = FeatureUpdateResponseCode.CL ENT_ERROR;
     FeatureUpdateResponse response = new FeatureUpdateResponse(responseCode);
-    response.setDetailMessage(errorMsg);
+    response.setDeta l ssage(errorMsg);
     return response;
   }
 }

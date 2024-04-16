@@ -1,13 +1,13 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finagle/finagle-core/src/main",
-        "finatra/inject/inject-app/src/main/java/com/twitter/inject/annotations",
-        "finatra/inject/inject-core/src/main/scala",
-        "relevance-platform/src/main/scala/com/twitter/relevance_platform/simclustersann/multicluster",
-        "scrooge/scrooge-core/src/main/scala",
-        "simclusters-ann/server/src/main/scala/com/twitter/simclustersann/exceptions",
-        "simclusters-ann/thrift/src/main/thrift:thrift-scala",
+scala_l brary(
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "f nagle/f nagle-core/src/ma n",
+        "f natra/ nject/ nject-app/src/ma n/java/com/tw ter/ nject/annotat ons",
+        "f natra/ nject/ nject-core/src/ma n/scala",
+        "relevance-platform/src/ma n/scala/com/tw ter/relevance_platform/s mclustersann/mult cluster",
+        "scrooge/scrooge-core/src/ma n/scala",
+        "s mclusters-ann/server/src/ma n/scala/com/tw ter/s mclustersann/except ons",
+        "s mclusters-ann/thr ft/src/ma n/thr ft:thr ft-scala",
     ],
 )

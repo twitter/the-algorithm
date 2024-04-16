@@ -1,57 +1,57 @@
-package com.twitter.simclusters_v2.scalding.mbcg
+package com.tw ter.s mclusters_v2.scald ng.mbcg
 
-import com.google.common.collect.ImmutableSet
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType._
-import com.twitter.ml.api.DataType
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.Feature.SparseContinuous
-import com.twitter.ml.api.Feature.Tensor
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.constant.SharedFeatures
-import java.util.{Map => JMap}
+ mport com.google.common.collect. mmutableSet
+ mport com.tw ter.dal.personal_data.thr ftjava.PersonalDataType._
+ mport com.tw ter.ml.ap .DataType
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.ml.ap .Feature.SparseCont nuous
+ mport com.tw ter.ml.ap .Feature.Tensor
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ml.ap .constant.SharedFeatures
+ mport java.ut l.{Map => JMap}
 
 /*
-Features used for model-based candidate generation
+Features used for model-based cand date generat on
  */
-object TweetAllFeatures {
-  val tweetId = SharedFeatures.TWEET_ID
-  val tweetSimclusters =
-    new SparseContinuous(
-      "tweet.simcluster.log_fav_based_embedding.20m_145k_2020",
-      ImmutableSet.of(InferredInterests))
-      .asInstanceOf[Feature[JMap[String, Double]]]
-  val authorF2vProducerEmbedding =
+object T etAllFeatures {
+  val t et d = SharedFeatures.TWEET_ D
+  val t etS mclusters =
+    new SparseCont nuous(
+      "t et.s mcluster.log_fav_based_embedd ng.20m_145k_2020",
+       mmutableSet.of( nferred nterests))
+      .as nstanceOf[Feature[JMap[Str ng, Double]]]
+  val authorF2vProducerEmbedd ng =
     new Tensor(
-      "tweet.author_follow2vec.producer_embedding_200",
+      "t et.author_follow2vec.producer_embedd ng_200",
       DataType.FLOAT
     )
 
-  private val allFeatures: Seq[Feature[_]] = Seq(
-    tweetId,
-    tweetSimclusters,
-    authorF2vProducerEmbedding
+  pr vate val allFeatures: Seq[Feature[_]] = Seq(
+    t et d,
+    t etS mclusters,
+    authorF2vProducerEmbedd ng
   )
 
   val featureContext = new FeatureContext(allFeatures: _*)
 }
 
 object UserAllFeatures {
-  val userId = SharedFeatures.USER_ID
-  val userSimclusters =
-    new SparseContinuous(
-      "user.iiape.log_fav_based_embedding.20m_145k_2020",
-      ImmutableSet.of(InferredInterests))
-      .asInstanceOf[Feature[JMap[String, Double]]]
-  val userF2vConsumerEmbedding =
+  val user d = SharedFeatures.USER_ D
+  val userS mclusters =
+    new SparseCont nuous(
+      "user.  ape.log_fav_based_embedd ng.20m_145k_2020",
+       mmutableSet.of( nferred nterests))
+      .as nstanceOf[Feature[JMap[Str ng, Double]]]
+  val userF2vConsu rEmbedd ng =
     new Tensor(
-      "user.follow2vec.consumer_avg_fol_emb_200",
+      "user.follow2vec.consu r_avg_fol_emb_200",
       DataType.FLOAT
     )
 
-  private val allFeatures: Seq[Feature[_]] = Seq(
-    userId,
-    userSimclusters,
-    userF2vConsumerEmbedding
+  pr vate val allFeatures: Seq[Feature[_]] = Seq(
+    user d,
+    userS mclusters,
+    userF2vConsu rEmbedd ng
   )
 
   val featureContext = new FeatureContext(allFeatures: _*)

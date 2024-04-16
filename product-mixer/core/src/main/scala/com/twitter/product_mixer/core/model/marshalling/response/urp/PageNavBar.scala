@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urp
+package com.tw ter.product_m xer.core.model.marshall ng.response.urp
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.HasClientEventInfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEvent nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.HasCl entEvent nfo
 
-sealed trait PageNavBar
+sealed tra  PageNavBar
 
-case class TopicPageNavBar(
-  topicId: String,
-  override val clientEventInfo: Option[ClientEventInfo] = None)
+case class Top cPageNavBar(
+  top c d: Str ng,
+  overr de val cl entEvent nfo: Opt on[Cl entEvent nfo] = None)
     extends PageNavBar
-    with HasClientEventInfo
+    w h HasCl entEvent nfo
 
-case class TitleNavBar(
-  title: String,
-  subtitle: Option[String] = None,
-  override val clientEventInfo: Option[ClientEventInfo] = None)
+case class T leNavBar(
+  t le: Str ng,
+  subt le: Opt on[Str ng] = None,
+  overr de val cl entEvent nfo: Opt on[Cl entEvent nfo] = None)
     extends PageNavBar
-    with HasClientEventInfo
+    w h HasCl entEvent nfo

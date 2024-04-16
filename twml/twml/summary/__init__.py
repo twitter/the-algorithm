@@ -1,6 +1,6 @@
-from tensorflow.python.ops.summary_ops_v2 import flush  # noqa: F401
+from tensorflow.python.ops.summary_ops_v2  mport flush  # noqa: F401
 
 """
-NOTE: Using `from tensorflow.python.ops.summary_ops_v2 import flush` in the code works.
-This stub exists because it was easier to refactor code because twml is widely used.
+NOTE: Us ng `from tensorflow.python.ops.summary_ops_v2  mport flush`  n t  code works.
+T  stub ex sts because   was eas er to refactor code because twml  s w dely used.
 """

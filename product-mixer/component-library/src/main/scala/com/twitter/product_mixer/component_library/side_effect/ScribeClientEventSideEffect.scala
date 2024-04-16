@@ -1,118 +1,118 @@
-package com.twitter.product_mixer.component_library.side_effect
+package com.tw ter.product_m xer.component_l brary.s de_effect
 
-import com.twitter.abdecider.ScribingABDeciderUtil
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.scribelib.marshallers
-import com.twitter.scribelib.marshallers.ClientDataProvider
-import com.twitter.scribelib.marshallers.LogEventMarshaller
+ mport com.tw ter.abdec der.Scr b ngABDec derUt l
+ mport com.tw ter.cl entapp.thr ftscala.LogEvent
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.marshall ng.HasMarshall ng
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.scr bel b.marshallers
+ mport com.tw ter.scr bel b.marshallers.Cl entDataProv der
+ mport com.tw ter.scr bel b.marshallers.LogEventMarshaller
 
 /**
- * Side effect to log client events server-side. Create an implementation of this trait by
- * defining the `buildClientEvents` method, and the `page` val.
- * The ClientEvent will be automatically converted into a [[LogEvent]] and scribed.
+ * S de effect to log cl ent events server-s de. Create an  mple ntat on of t  tra  by
+ * def n ng t  `bu ldCl entEvents`  thod, and t  `page` val.
+ * T  Cl entEvent w ll be automat cally converted  nto a [[LogEvent]] and scr bed.
  */
-trait ScribeClientEventSideEffect[
-  Query <: PipelineQuery,
-  UnmarshalledResponseType <: HasMarshalling]
-    extends ScribeLogEventSideEffect[LogEvent, Query, UnmarshalledResponseType] {
+tra  Scr beCl entEventS deEffect[
+  Query <: P pel neQuery,
+  UnmarshalledResponseType <: HasMarshall ng]
+    extends Scr beLogEventS deEffect[LogEvent, Query, UnmarshalledResponseType] {
 
   /**
-   * The page which will be defined in the namespace. This is typically the service name that's scribing
+   * T  page wh ch w ll be def ned  n t  na space. T   s typ cally t  serv ce na  that's scr b ng
    */
-  val page: String
+  val page: Str ng
 
   /**
-   * Build the client events from query, selections and response
+   * Bu ld t  cl ent events from query, select ons and response
    *
-   * @param query PipelineQuery
-   * @param selectedCandidates Result after Selectors are executed
-   * @param remainingCandidates Candidates which were not selected
-   * @param droppedCandidates Candidates dropped during selection
-   * @param response Result after Unmarshalling
+   * @param query P pel neQuery
+   * @param selectedCand dates Result after Selectors are executed
+   * @param rema n ngCand dates Cand dates wh ch  re not selected
+   * @param droppedCand dates Cand dates dropped dur ng select on
+   * @param response Result after Unmarshall ng
    */
-  def buildClientEvents(
+  def bu ldCl entEvents(
     query: Query,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
+    selectedCand dates: Seq[Cand dateW hDeta ls],
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    droppedCand dates: Seq[Cand dateW hDeta ls],
     response: UnmarshalledResponseType
-  ): Seq[ScribeClientEventSideEffect.ClientEvent]
+  ): Seq[Scr beCl entEventS deEffect.Cl entEvent]
 
-  final override def buildLogEvents(
+  f nal overr de def bu ldLogEvents(
     query: Query,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
+    selectedCand dates: Seq[Cand dateW hDeta ls],
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    droppedCand dates: Seq[Cand dateW hDeta ls],
     response: UnmarshalledResponseType
   ): Seq[LogEvent] = {
-    buildClientEvents(
+    bu ldCl entEvents(
       query = query,
-      selectedCandidates = selectedCandidates,
-      remainingCandidates = remainingCandidates,
-      droppedCandidates = droppedCandidates,
+      selectedCand dates = selectedCand dates,
+      rema n ngCand dates = rema n ngCand dates,
+      droppedCand dates = droppedCand dates,
       response = response).flatMap { event =>
-      val clientData = clientContextToClientDataProvider(query)
+      val cl entData = cl entContextToCl entDataProv der(query)
 
-      val clientName = ScribingABDeciderUtil.clientForAppId(clientData.clientApplicationId)
+      val cl entNa  = Scr b ngABDec derUt l.cl entForApp d(cl entData.cl entAppl cat on d)
 
-      val namespaceMap: Map[String, String] = Map(
-        "client" -> Some(clientName),
-        "page" -> Some(page),
-        "section" -> event.namespace.section,
-        "component" -> event.namespace.component,
-        "element" -> event.namespace.element,
-        "action" -> event.namespace.action
-      ).collect { case (k, Some(v)) => k -> v }
+      val na spaceMap: Map[Str ng, Str ng] = Map(
+        "cl ent" -> So (cl entNa ),
+        "page" -> So (page),
+        "sect on" -> event.na space.sect on,
+        "component" -> event.na space.component,
+        "ele nt" -> event.na space.ele nt,
+        "act on" -> event.na space.act on
+      ).collect { case (k, So (v)) => k -> v }
 
       val data: Map[Any, Any] = Seq(
         event.eventValue.map("event_value" -> _),
         event.latencyMs.map("latency_ms" -> _)
       ).flatten.toMap
 
-      val clientEventData = data +
-        ("event_namespace" -> namespaceMap) +
-        (marshallers.CategoryKey -> "client_event")
+      val cl entEventData = data +
+        ("event_na space" -> na spaceMap) +
+        (marshallers.CategoryKey -> "cl ent_event")
 
       LogEventMarshaller.marshal(
-        data = clientEventData,
-        clientData = clientData
+        data = cl entEventData,
+        cl entData = cl entData
       )
     }
   }
 
   /**
-   * Makes a [[ClientDataProvider]] from the [[PipelineQuery.clientContext]] from the [[query]]
+   * Makes a [[Cl entDataProv der]] from t  [[P pel neQuery.cl entContext]] from t  [[query]]
    */
-  private def clientContextToClientDataProvider(query: Query): ClientDataProvider = {
-    new ClientDataProvider {
-      override val userId = query.clientContext.userId
-      override val guestId = query.clientContext.guestId
-      override val personalizationId = None
-      override val deviceId = query.clientContext.deviceId
-      override val clientApplicationId = query.clientContext.appId
-      override val parentApplicationId = None
-      override val countryCode = query.clientContext.countryCode
-      override val languageCode = query.clientContext.languageCode
-      override val userAgent = query.clientContext.userAgent
-      override val isSsl = None
-      override val referer = None
-      override val externalReferer = None
+  pr vate def cl entContextToCl entDataProv der(query: Query): Cl entDataProv der = {
+    new Cl entDataProv der {
+      overr de val user d = query.cl entContext.user d
+      overr de val guest d = query.cl entContext.guest d
+      overr de val personal zat on d = None
+      overr de val dev ce d = query.cl entContext.dev ce d
+      overr de val cl entAppl cat on d = query.cl entContext.app d
+      overr de val parentAppl cat on d = None
+      overr de val countryCode = query.cl entContext.countryCode
+      overr de val languageCode = query.cl entContext.languageCode
+      overr de val userAgent = query.cl entContext.userAgent
+      overr de val  sSsl = None
+      overr de val referer = None
+      overr de val externalReferer = None
     }
   }
 }
 
-object ScribeClientEventSideEffect {
-  case class EventNamespace(
-    section: Option[String] = None,
-    component: Option[String] = None,
-    element: Option[String] = None,
-    action: Option[String] = None)
+object Scr beCl entEventS deEffect {
+  case class EventNa space(
+    sect on: Opt on[Str ng] = None,
+    component: Opt on[Str ng] = None,
+    ele nt: Opt on[Str ng] = None,
+    act on: Opt on[Str ng] = None)
 
-  case class ClientEvent(
-    namespace: EventNamespace,
-    eventValue: Option[Long] = None,
-    latencyMs: Option[Long] = None)
+  case class Cl entEvent(
+    na space: EventNa space,
+    eventValue: Opt on[Long] = None,
+    latencyMs: Opt on[Long] = None)
 }

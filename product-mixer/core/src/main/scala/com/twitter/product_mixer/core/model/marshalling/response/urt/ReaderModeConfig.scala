@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt
 
-import metadata.Url
+ mport  tadata.Url
 
-case class ReaderModeConfig(isReaderModeAvailable: Boolean, landingUrl: Url)
+case class ReaderModeConf g( sReaderModeAva lable: Boolean, land ngUrl: Url)

@@ -1,47 +1,47 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package backends
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.limiter.thriftscala.FeatureRequest
-import com.twitter.tweetypie.backends.LimiterBackend.GetFeatureUsage
-import com.twitter.tweetypie.backends.LimiterBackend.IncrementFeature
-import com.twitter.tweetypie.backends.LimiterService.Feature
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.l m er.thr ftscala.FeatureRequest
+ mport com.tw ter.t etyp e.backends.L m erBackend.GetFeatureUsage
+ mport com.tw ter.t etyp e.backends.L m erBackend. ncre ntFeature
+ mport com.tw ter.t etyp e.backends.L m erServ ce.Feature
 
 /**
- * Why does LimiterService exist?
+ * Why does L m erServ ce ex st?
  *
- * The underlying Limiter thrift service doesn't support batching. This trait and implementation
- * basically exist to allow a batch like interface to the Limiter. This keeps us from having to
- * spread batching throughout our code base.
+ * T  underly ng L m er thr ft serv ce doesn't support batch ng. T  tra  and  mple ntat on
+ * bas cally ex st to allow a batch l ke  nterface to t  L m er. T  keeps us from hav ng to
+ * spread batch ng throughout   code base.
  *
- * Why is LimiterService in the backends package?
+ * Why  s L m erServ ce  n t  backends package?
  *
- * In some ways it is like a backend if the backend supports batching. There is a modest amount of
- * business logic LimiterService, but that logic exists here to allow easier consumption throughout
- * the tweetypie code base. We did look at moving LimiterService to another package, but all likely
- * candidates (service, serverutil) caused circular dependencies.
+ *  n so  ways    s l ke a backend  f t  backend supports batch ng. T re  s a modest amount of
+ * bus ness log c L m erServ ce, but that log c ex sts  re to allow eas er consumpt on throughout
+ * t  t etyp e code base.   d d look at mov ng L m erServ ce to anot r package, but all l kely
+ * cand dates (serv ce, serverut l) caused c rcular dependenc es.
  *
- * When I need to add functionality, should I add it to LimiterBackend or LimiterService?
+ * W n   need to add funct onal y, should   add   to L m erBackend or L m erServ ce?
  *
- * LimiterBackend is used as a simple wrapper around the Limiter thrift client. The LimiterBackend
- * should be kept as dumb as possible. You will most likely want to add the functionality in
- * LimiterService.
+ * L m erBackend  s used as a s mple wrapper around t  L m er thr ft cl ent. T  L m erBackend
+ * should be kept as dumb as poss ble.   w ll most l kely want to add t  funct onal y  n
+ * L m erServ ce.
  */
-object LimiterService {
-  type MinRemaining = (UserId, Option[UserId]) => Future[Int]
-  type HasRemaining = (UserId, Option[UserId]) => Future[Boolean]
-  type Increment = (UserId, Option[UserId], Int) => Future[Unit]
-  type IncrementByOne = (UserId, Option[UserId]) => Future[Unit]
+object L m erServ ce {
+  type M nRema n ng = (User d, Opt on[User d]) => Future[ nt]
+  type HasRema n ng = (User d, Opt on[User d]) => Future[Boolean]
+  type  ncre nt = (User d, Opt on[User d],  nt) => Future[Un ]
+  type  ncre ntByOne = (User d, Opt on[User d]) => Future[Un ]
 
-  sealed abstract class Feature(val name: String, val hasPerApp: Boolean = false) {
-    def forUser(userId: UserId): FeatureRequest = FeatureRequest(name, userId = Some(userId))
-    def forApp(appId: AppId): Option[FeatureRequest] =
-      if (hasPerApp) {
-        Some(
+  sealed abstract class Feature(val na : Str ng, val hasPerApp: Boolean = false) {
+    def forUser(user d: User d): FeatureRequest = FeatureRequest(na , user d = So (user d))
+    def forApp(app d: App d): Opt on[FeatureRequest] =
+       f (hasPerApp) {
+        So (
           FeatureRequest(
-            s"${name}_per_app",
-            applicationId = Some(appId),
-            identifier = Some(appId.toString)
+            s"${na }_per_app",
+            appl cat on d = So (app d),
+             dent f er = So (app d.toStr ng)
           )
         )
       } else {
@@ -50,144 +50,144 @@ object LimiterService {
   }
   object Feature {
     case object Updates extends Feature("updates", hasPerApp = true)
-    case object MediaTagCreate extends Feature("media_tag_create")
-    case object TweetCreateFailure extends Feature("tweet_creation_failure")
+    case object  d aTagCreate extends Feature(" d a_tag_create")
+    case object T etCreateFa lure extends Feature("t et_creat on_fa lure")
   }
 
   def fromBackend(
-    incrementFeature: IncrementFeature,
+     ncre ntFeature:  ncre ntFeature,
     getFeatureUsage: GetFeatureUsage,
-    getAppId: => Option[
-      AppId
-    ], // the call-by-name here to invoke per request to get the current request's app id
-    stats: StatsReceiver = NullStatsReceiver
-  ): LimiterService =
-    new LimiterService {
-      def increment(
+    getApp d: => Opt on[
+      App d
+    ], // t  call-by-na   re to  nvoke per request to get t  current request's app  d
+    stats: StatsRece ver = NullStatsRece ver
+  ): L m erServ ce =
+    new L m erServ ce {
+      def  ncre nt(
         feature: Feature
       )(
-        userId: UserId,
-        contributorUserId: Option[UserId],
-        amount: Int
-      ): Future[Unit] = {
-        Future.when(amount > 0) {
-          def increment(req: FeatureRequest): Future[Unit] = incrementFeature((req, amount))
+        user d: User d,
+        contr butorUser d: Opt on[User d],
+        amount:  nt
+      ): Future[Un ] = {
+        Future.w n(amount > 0) {
+          def  ncre nt(req: FeatureRequest): Future[Un ] =  ncre ntFeature((req, amount))
 
-          val incrementUser: Option[Future[Unit]] =
-            Some(increment(feature.forUser(userId)))
+          val  ncre ntUser: Opt on[Future[Un ]] =
+            So ( ncre nt(feature.forUser(user d)))
 
-          val incrementContributor: Option[Future[Unit]] =
+          val  ncre ntContr butor: Opt on[Future[Un ]] =
             for {
-              id <- contributorUserId
-              if id != userId
-            } yield increment(feature.forUser(id))
+               d <- contr butorUser d
+               f  d != user d
+            } y eld  ncre nt(feature.forUser( d))
 
-          val incrementPerApp: Option[Future[Unit]] =
+          val  ncre ntPerApp: Opt on[Future[Un ]] =
             for {
-              appId <- getAppId
-              req <- feature.forApp(appId)
-            } yield increment(req)
+              app d <- getApp d
+              req <- feature.forApp(app d)
+            } y eld  ncre nt(req)
 
-          Future.collect(Seq(incrementUser, incrementContributor, incrementPerApp).flatten)
+          Future.collect(Seq( ncre ntUser,  ncre ntContr butor,  ncre ntPerApp).flatten)
         }
       }
 
-      def minRemaining(
+      def m nRema n ng(
         feature: Feature
       )(
-        userId: UserId,
-        contributorUserId: Option[UserId]
-      ): Future[Int] = {
-        def getRemaining(req: FeatureRequest): Future[Int] = getFeatureUsage(req).map(_.remaining)
+        user d: User d,
+        contr butorUser d: Opt on[User d]
+      ): Future[ nt] = {
+        def getRema n ng(req: FeatureRequest): Future[ nt] = getFeatureUsage(req).map(_.rema n ng)
 
-        val getUserRemaining: Option[Future[Int]] =
-          Some(getRemaining(feature.forUser(userId)))
+        val getUserRema n ng: Opt on[Future[ nt]] =
+          So (getRema n ng(feature.forUser(user d)))
 
-        val getContributorRemaining: Option[Future[Int]] =
-          contributorUserId.map(id => getRemaining(feature.forUser(id)))
+        val getContr butorRema n ng: Opt on[Future[ nt]] =
+          contr butorUser d.map( d => getRema n ng(feature.forUser( d)))
 
-        val getPerAppRemaining: Option[Future[Int]] =
+        val getPerAppRema n ng: Opt on[Future[ nt]] =
           for {
-            appId <- getAppId
-            req <- feature.forApp(appId)
-          } yield getRemaining(req)
+            app d <- getApp d
+            req <- feature.forApp(app d)
+          } y eld getRema n ng(req)
 
         Future
-          .collect(Seq(getUserRemaining, getContributorRemaining, getPerAppRemaining).flatten)
-          .map(_.min)
+          .collect(Seq(getUserRema n ng, getContr butorRema n ng, getPerAppRema n ng).flatten)
+          .map(_.m n)
       }
     }
 }
 
-trait LimiterService {
+tra  L m erServ ce {
 
   /**
-   * Increment the feature count for both the user and the contributor. If either increment fails,
-   * the resulting future will be the first exception encountered.
+   *  ncre nt t  feature count for both t  user and t  contr butor.  f e  r  ncre nt fa ls,
+   * t  result ng future w ll be t  f rst except on encountered.
    *
-   * @param feature The feature that is incremented
-   * @param userId The current user tied to the current request
-   * @param contributorUserId The contributor, if one exists, tied to the current request
-   * @param amount The amount that each feature should be incremented.
+   * @param feature T  feature that  s  ncre nted
+   * @param user d T  current user t ed to t  current request
+   * @param contr butorUser d T  contr butor,  f one ex sts, t ed to t  current request
+   * @param amount T  amount that each feature should be  ncre nted.
    */
-  def increment(
+  def  ncre nt(
     feature: Feature
   )(
-    userId: UserId,
-    contributorUserId: Option[UserId],
-    amount: Int
-  ): Future[Unit]
+    user d: User d,
+    contr butorUser d: Opt on[User d],
+    amount:  nt
+  ): Future[Un ]
 
   /**
-   * Increment the feature count, by one, for both the user and the contributor. If either
-   * increment fails, the resulting future will be the first exception encountered.
+   *  ncre nt t  feature count, by one, for both t  user and t  contr butor.  f e  r
+   *  ncre nt fa ls, t  result ng future w ll be t  f rst except on encountered.
    *
-   * @param feature The feature that is incremented
-   * @param userId The current user tied to the current request
-   * @param contributorUserId The contributor, if one exists, tied to the current request
+   * @param feature T  feature that  s  ncre nted
+   * @param user d T  current user t ed to t  current request
+   * @param contr butorUser d T  contr butor,  f one ex sts, t ed to t  current request
    *
-   * @see [[increment]] if you want to increment a feature by a specified amount
+   * @see [[ ncre nt]]  f   want to  ncre nt a feature by a spec f ed amount
    */
-  def incrementByOne(
+  def  ncre ntByOne(
     feature: Feature
   )(
-    userId: UserId,
-    contributorUserId: Option[UserId]
-  ): Future[Unit] =
-    increment(feature)(userId, contributorUserId, 1)
+    user d: User d,
+    contr butorUser d: Opt on[User d]
+  ): Future[Un ] =
+     ncre nt(feature)(user d, contr butorUser d, 1)
 
   /**
-   * The minimum remaining limit between the user and contributor. If an exception occurs, then the
-   * resulting Future will be the first exception encountered.
+   * T  m n mum rema n ng l m  bet en t  user and contr butor.  f an except on occurs, t n t 
+   * result ng Future w ll be t  f rst except on encountered.
    *
-   * @param feature The feature that is queried
-   * @param userId The current user tied to the current request
-   * @param contributorUserId The contributor, if one exists, tied to the current request
+   * @param feature T  feature that  s quer ed
+   * @param user d T  current user t ed to t  current request
+   * @param contr butorUser d T  contr butor,  f one ex sts, t ed to t  current request
    *
-   * @return a `Future[Int]` with the minimum limit left between the user and contributor
+   * @return a `Future[ nt]` w h t  m n mum l m  left bet en t  user and contr butor
    */
-  def minRemaining(feature: Feature)(userId: UserId, contributorUserId: Option[UserId]): Future[Int]
+  def m nRema n ng(feature: Feature)(user d: User d, contr butorUser d: Opt on[User d]): Future[ nt]
 
   /**
-   * Can the user and contributor increment the given feature. If the result cannot be determined
-   * because of an exception, then we assume they can increment. This will allow us to continue
-   * servicing requests even if the limiter service isn't responding.
+   * Can t  user and contr butor  ncre nt t  g ven feature.  f t  result cannot be determ ned
+   * because of an except on, t n   assu  t y can  ncre nt. T  w ll allow us to cont nue
+   * serv c ng requests even  f t  l m er serv ce  sn't respond ng.
    *
-   * @param feature The feature that is queried
-   * @param userId The current user tied to the current request
-   * @param contributorUserId The contributor, if one exists, tied to the current request
-   * @return a `Future[Boolean]` with true if both the user and contributor have remaining limit
+   * @param feature T  feature that  s quer ed
+   * @param user d T  current user t ed to t  current request
+   * @param contr butorUser d T  contr butor,  f one ex sts, t ed to t  current request
+   * @return a `Future[Boolean]` w h true  f both t  user and contr butor have rema n ng l m 
    * cap.
    *
-   * @see [[minRemaining]] if you would like to handle any exceptions that occur on your own
+   * @see [[m nRema n ng]]  f   would l ke to handle any except ons that occur on y  own
    */
-  def hasRemaining(
+  def hasRema n ng(
     feature: Feature
   )(
-    userId: UserId,
-    contributorUserId: Option[UserId]
+    user d: User d,
+    contr butorUser d: Opt on[User d]
   ): Future[Boolean] =
-    minRemaining(feature)(userId, contributorUserId)
+    m nRema n ng(feature)(user d, contr butorUser d)
       .map(_ > 0)
       .handle { case _ => true }
 }

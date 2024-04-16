@@ -1,34 +1,34 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.repository.TweetRepository
-import com.twitter.tweetypie.store.QuotedTweetTakedown
-import com.twitter.tweetypie.thriftscala.QuotedTweetTakedownRequest
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.repos ory.T etQuery
+ mport com.tw ter.t etyp e.repos ory.T etRepos ory
+ mport com.tw ter.t etyp e.store.QuotedT etTakedown
+ mport com.tw ter.t etyp e.thr ftscala.QuotedT etTakedownRequest
 
 /**
- * Create the appropriate QuotedTweetTakedown.Event for a QuotedTweetTakedown request.
+ * Create t  appropr ate QuotedT etTakedown.Event for a QuotedT etTakedown request.
  */
-object QuotedTweetTakedownEventBuilder {
-  type Type = QuotedTweetTakedownRequest => Future[Option[QuotedTweetTakedown.Event]]
+object QuotedT etTakedownEventBu lder {
+  type Type = QuotedT etTakedownRequest => Future[Opt on[QuotedT etTakedown.Event]]
 
-  val queryOptions: TweetQuery.Options =
-    TweetQuery.Options(GetTweetsHandler.BaseInclude)
+  val queryOpt ons: T etQuery.Opt ons =
+    T etQuery.Opt ons(GetT etsHandler.Base nclude)
 
-  def apply(tweetRepo: TweetRepository.Optional): Type =
+  def apply(t etRepo: T etRepos ory.Opt onal): Type =
     request =>
-      Stitch.run(
-        tweetRepo(request.quotingTweetId, queryOptions).map {
-          _.map { quotingTweet =>
-            QuotedTweetTakedown.Event(
-              quotingTweetId = request.quotingTweetId,
-              quotingUserId = getUserId(quotingTweet),
-              quotedTweetId = request.quotedTweetId,
-              quotedUserId = request.quotedUserId,
+      St ch.run(
+        t etRepo(request.quot ngT et d, queryOpt ons).map {
+          _.map { quot ngT et =>
+            QuotedT etTakedown.Event(
+              quot ngT et d = request.quot ngT et d,
+              quot ngUser d = getUser d(quot ngT et),
+              quotedT et d = request.quotedT et d,
+              quotedUser d = request.quotedUser d,
               takedownCountryCodes = request.takedownCountryCodes,
               takedownReasons = request.takedownReasons,
-              timestamp = Time.now
+              t  stamp = T  .now
             )
           }
         }

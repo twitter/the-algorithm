@@ -1,23 +1,23 @@
-package com.twitter.unified_user_actions.adapter.client_event
+package com.tw ter.un f ed_user_act ons.adapter.cl ent_event
 
-import com.twitter.clientapp.thriftscala.ItemType
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.clientapp.thriftscala.{Item => LogEventItem}
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.Item
-import com.twitter.unified_user_actions.thriftscala.TopicInfo
+ mport com.tw ter.cl entapp.thr ftscala. emType
+ mport com.tw ter.cl entapp.thr ftscala.LogEvent
+ mport com.tw ter.cl entapp.thr ftscala.{ em => LogEvent em}
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Act onType
+ mport com.tw ter.un f ed_user_act ons.thr ftscala. em
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Top c nfo
 
-abstract class BaseTopicClientEvent(actionType: ActionType)
-    extends BaseClientEvent(actionType = actionType) {
-  override def isItemTypeValid(itemTypeOpt: Option[ItemType]): Boolean =
-    ItemTypeFilterPredicates.isItemTypeTopic(itemTypeOpt)
+abstract class BaseTop cCl entEvent(act onType: Act onType)
+    extends BaseCl entEvent(act onType = act onType) {
+  overr de def  s emTypeVal d( emTypeOpt: Opt on[ emType]): Boolean =
+     emTypeF lterPred cates. s emTypeTop c( emTypeOpt)
 
-  override def getUuaItem(
-    ceItem: LogEventItem,
+  overr de def getUua em(
+    ce em: LogEvent em,
     logEvent: LogEvent
-  ): Option[Item] =
-    for (actionTopicId <- ClientEventCommonUtils.getTopicId(
-        ceItem = ceItem,
-        ceNamespaceOpt = logEvent.eventNamespace))
-      yield Item.TopicInfo(TopicInfo(actionTopicId = actionTopicId))
+  ): Opt on[ em] =
+    for (act onTop c d <- Cl entEventCommonUt ls.getTop c d(
+        ce em = ce em,
+        ceNa spaceOpt = logEvent.eventNa space))
+      y eld  em.Top c nfo(Top c nfo(act onTop c d = act onTop c d))
 }

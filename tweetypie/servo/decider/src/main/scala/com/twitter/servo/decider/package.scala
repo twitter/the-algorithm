@@ -1,5 +1,5 @@
-package com.twitter.servo
+package com.tw ter.servo
 
-package object decider {
-  type DeciderKeyName = DeciderKeyEnum#Value
+package object dec der {
+  type Dec derKeyNa  = Dec derKeyEnum#Value
 }

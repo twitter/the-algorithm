@@ -1,47 +1,47 @@
-package com.twitter.product_mixer.component_library.candidate_source.timeline_service
+package com.tw ter.product_m xer.component_l brary.cand date_s ce.t  l ne_serv ce
 
-import com.twitter.product_mixer.component_library.model.cursor.NextCursorFeature
-import com.twitter.product_mixer.component_library.model.cursor.PreviousCursorFeature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.timelineservice.TimelineService
-import com.twitter.timelineservice.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.component_l brary.model.cursor.NextCursorFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cursor.Prev ousCursorFeature
+ mport com.tw ter.product_m xer.core.feature.FeatureW hDefaultOnFa lure
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ceW hExtractedFeatures
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand datesW hS ceFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.t  l neserv ce.T  l neServ ce
+ mport com.tw ter.t  l neserv ce.{thr ftscala => t}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-case object TimelineServiceResponseWasTruncatedFeature
-    extends FeatureWithDefaultOnFailure[PipelineQuery, Boolean] {
-  override val defaultValue: Boolean = false
+case object T  l neServ ceResponseWasTruncatedFeature
+    extends FeatureW hDefaultOnFa lure[P pel neQuery, Boolean] {
+  overr de val defaultValue: Boolean = false
 }
 
-@Singleton
-class TimelineServiceTweetCandidateSource @Inject() (
-  timelineService: TimelineService)
-    extends CandidateSourceWithExtractedFeatures[t.TimelineQuery, t.Tweet] {
+@S ngleton
+class T  l neServ ceT etCand dateS ce @ nject() (
+  t  l neServ ce: T  l neServ ce)
+    extends Cand dateS ceW hExtractedFeatures[t.T  l neQuery, t.T et] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier("TimelineServiceTweet")
+  overr de val  dent f er: Cand dateS ce dent f er =
+    Cand dateS ce dent f er("T  l neServ ceT et")
 
-  override def apply(request: t.TimelineQuery): Stitch[CandidatesWithSourceFeatures[t.Tweet]] = {
-    timelineService
-      .getTimeline(request).map { timeline =>
-        val candidates = timeline.entries.collect {
-          case t.TimelineEntry.Tweet(tweet) => tweet
+  overr de def apply(request: t.T  l neQuery): St ch[Cand datesW hS ceFeatures[t.T et]] = {
+    t  l neServ ce
+      .getT  l ne(request).map { t  l ne =>
+        val cand dates = t  l ne.entr es.collect {
+          case t.T  l neEntry.T et(t et) => t et
         }
 
-        val candidateSourceFeatures =
-          FeatureMapBuilder()
-            .add(TimelineServiceResponseWasTruncatedFeature, timeline.wasTruncated.getOrElse(false))
-            .add(PreviousCursorFeature, timeline.responseCursor.flatMap(_.top).getOrElse(""))
-            .add(NextCursorFeature, timeline.responseCursor.flatMap(_.bottom).getOrElse(""))
-            .build()
+        val cand dateS ceFeatures =
+          FeatureMapBu lder()
+            .add(T  l neServ ceResponseWasTruncatedFeature, t  l ne.wasTruncated.getOrElse(false))
+            .add(Prev ousCursorFeature, t  l ne.responseCursor.flatMap(_.top).getOrElse(""))
+            .add(NextCursorFeature, t  l ne.responseCursor.flatMap(_.bottom).getOrElse(""))
+            .bu ld()
 
-        CandidatesWithSourceFeatures(candidates = candidates, features = candidateSourceFeatures)
+        Cand datesW hS ceFeatures(cand dates = cand dates, features = cand dateS ceFeatures)
       }
   }
 

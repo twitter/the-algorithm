@@ -1,39 +1,39 @@
-package com.twitter.tweetypie.core
+package com.tw ter.t etyp e.core
 
-import com.twitter.bouncer.thriftscala.Bounce
-import com.twitter.tweetypie.TweetId
-import com.twitter.incentives.jiminy.thriftscala.TweetNudge
-import com.twitter.tweetypie.thriftscala.PostTweetResult
-import com.twitter.tweetypie.thriftscala.TweetCreateState
+ mport com.tw ter.bouncer.thr ftscala.Bounce
+ mport com.tw ter.t etyp e.T et d
+ mport com.tw ter. ncent ves.j m ny.thr ftscala.T etNudge
+ mport com.tw ter.t etyp e.thr ftscala.PostT etResult
+ mport com.tw ter.t etyp e.thr ftscala.T etCreateState
 
-sealed abstract class TweetCreateFailure extends Exception {
-  def toPostTweetResult: PostTweetResult
+sealed abstract class T etCreateFa lure extends Except on {
+  def toPostT etResult: PostT etResult
 }
 
-object TweetCreateFailure {
-  case class Bounced(bounce: Bounce) extends TweetCreateFailure {
-    override def toPostTweetResult: PostTweetResult =
-      PostTweetResult(state = TweetCreateState.Bounce, bounce = Some(bounce))
+object T etCreateFa lure {
+  case class Bounced(bounce: Bounce) extends T etCreateFa lure {
+    overr de def toPostT etResult: PostT etResult =
+      PostT etResult(state = T etCreateState.Bounce, bounce = So (bounce))
   }
 
-  case class AlreadyRetweeted(retweetId: TweetId) extends TweetCreateFailure {
-    override def toPostTweetResult: PostTweetResult =
-      PostTweetResult(state = TweetCreateState.AlreadyRetweeted)
+  case class AlreadyRet eted(ret et d: T et d) extends T etCreateFa lure {
+    overr de def toPostT etResult: PostT etResult =
+      PostT etResult(state = T etCreateState.AlreadyRet eted)
   }
 
-  case class Nudged(nudge: TweetNudge) extends TweetCreateFailure {
-    override def toPostTweetResult: PostTweetResult =
-      PostTweetResult(state = TweetCreateState.Nudge, nudge = Some(nudge))
+  case class Nudged(nudge: T etNudge) extends T etCreateFa lure {
+    overr de def toPostT etResult: PostT etResult =
+      PostT etResult(state = T etCreateState.Nudge, nudge = So (nudge))
   }
 
-  case class State(state: TweetCreateState, reason: Option[String] = None)
-      extends TweetCreateFailure {
-    require(state != TweetCreateState.Bounce)
-    require(state != TweetCreateState.Ok)
-    require(state != TweetCreateState.Nudge)
+  case class State(state: T etCreateState, reason: Opt on[Str ng] = None)
+      extends T etCreateFa lure {
+    requ re(state != T etCreateState.Bounce)
+    requ re(state != T etCreateState.Ok)
+    requ re(state != T etCreateState.Nudge)
 
-    override def toPostTweetResult: PostTweetResult =
-      PostTweetResult(state = state, failureReason = reason)
-    override def toString: String = s"TweetCreateFailure$$State($state, $reason)"
+    overr de def toPostT etResult: PostT etResult =
+      PostT etResult(state = state, fa lureReason = reason)
+    overr de def toStr ng: Str ng = s"T etCreateFa lure$$State($state, $reason)"
   }
 }

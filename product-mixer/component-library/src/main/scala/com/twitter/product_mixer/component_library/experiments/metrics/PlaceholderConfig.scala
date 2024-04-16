@@ -1,37 +1,37 @@
-package com.twitter.product_mixer.component_library.experiments.metrics
+package com.tw ter.product_m xer.component_l brary.exper  nts. tr cs
 
-// Base trait for all placeholder values
-sealed trait Named {
-  def name: String
+// Base tra  for all placeholder values
+sealed tra  Na d {
+  def na : Str ng
 }
 
-case class Const(override val name: String) extends Named
+case class Const(overr de val na : Str ng) extends Na d
 
-// contains only client event patterns
+// conta ns only cl ent event patterns
 case class CEPattern(
-  override val name: String,
-  client: String = "",
-  page: String = "",
-  section: String = "",
-  component: String = "",
-  element: String = "",
-  action: String = "",
-  strainer: String = "")
-    extends Named {
+  overr de val na : Str ng,
+  cl ent: Str ng = "",
+  page: Str ng = "",
+  sect on: Str ng = "",
+  component: Str ng = "",
+  ele nt: Str ng = "",
+  act on: Str ng = "",
+  stra ner: Str ng = "")
+    extends Na d {
 
-  override def toString: String = {
-    "\"" + client + ":" + page + ":" + section + ":" + component + ":" + element + ":" + action + "\""
+  overr de def toStr ng: Str ng = {
+    "\"" + cl ent + ":" + page + ":" + sect on + ":" + component + ":" + ele nt + ":" + act on + "\""
   }
 
 }
 
-case class Topic(
-  override val name: String,
-  topicId: String = "")
-    extends Named
+case class Top c(
+  overr de val na : Str ng,
+  top c d: Str ng = "")
+    extends Na d
 
-object PlaceholderConfig {
-  type PlaceholderKey = String
-  type Placeholder = Seq[Named]
+object PlaceholderConf g {
+  type PlaceholderKey = Str ng
+  type Placeholder = Seq[Na d]
   type PlaceholdersMap = Map[PlaceholderKey, Placeholder]
 }

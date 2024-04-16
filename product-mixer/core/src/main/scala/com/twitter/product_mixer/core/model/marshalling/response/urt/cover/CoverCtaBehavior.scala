@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.cover
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Url
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chText
 
-sealed trait CoverCtaBehavior
+sealed tra  CoverCtaBehav or
 
-case class CoverBehaviorNavigate(url: Url) extends CoverCtaBehavior
-case class CoverBehaviorDismiss(feedbackMessage: Option[RichText]) extends CoverCtaBehavior
+case class CoverBehav orNav gate(url: Url) extends CoverCtaBehav or
+case class CoverBehav orD sm ss(feedback ssage: Opt on[R chText]) extends CoverCtaBehav or

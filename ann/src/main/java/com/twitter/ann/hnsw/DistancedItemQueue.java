@@ -1,196 +1,196 @@
-package com.twitter.ann.hnsw;
+package com.tw ter.ann.hnsw;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.PriorityQueue;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Comparator;
+ mport java.ut l. erator;
+ mport java.ut l.L st;
+ mport java.ut l.Pr or yQueue;
 
 /**
- * Container for items with their distance.
+ * Conta ner for  ems w h t  r d stance.
  *
- * @param <U> Type of origin/reference element.
- * @param <T> Type of element that the queue will hold
+ * @param <U> Type of or g n/reference ele nt.
+ * @param <T> Type of ele nt that t  queue w ll hold
  */
-public class DistancedItemQueue<U, T> implements Iterable<DistancedItem<T>> {
-  private final U origin;
-  private final DistanceFunction<U, T> distFn;
-  private final PriorityQueue<DistancedItem<T>> queue;
-  private final boolean minQueue;
+publ c class D stanced emQueue<U, T>  mple nts  erable<D stanced em<T>> {
+  pr vate f nal U or g n;
+  pr vate f nal D stanceFunct on<U, T> d stFn;
+  pr vate f nal Pr or yQueue<D stanced em<T>> queue;
+  pr vate f nal boolean m nQueue;
   /**
-   * Creates ontainer for items with their distances.
+   * Creates onta ner for  ems w h t  r d stances.
    *
-   * @param origin Origin (reference) point
-   * @param initial Initial list of elements to add in the structure
-   * @param minQueue True for min queue, False for max queue
-   * @param distFn Distance function
+   * @param or g n Or g n (reference) po nt
+   * @param  n  al  n  al l st of ele nts to add  n t  structure
+   * @param m nQueue True for m n queue, False for max queue
+   * @param d stFn D stance funct on
    */
-  public DistancedItemQueue(
-      U origin,
-      List<T> initial,
-      boolean minQueue,
-      DistanceFunction<U, T> distFn
+  publ c D stanced emQueue(
+      U or g n,
+      L st<T>  n  al,
+      boolean m nQueue,
+      D stanceFunct on<U, T> d stFn
   ) {
-    this.origin = origin;
-    this.distFn = distFn;
-    this.minQueue = minQueue;
-    final Comparator<DistancedItem<T>> cmp;
-    if (minQueue) {
-      cmp = (o1, o2) -> Float.compare(o1.getDistance(), o2.getDistance());
+    t .or g n = or g n;
+    t .d stFn = d stFn;
+    t .m nQueue = m nQueue;
+    f nal Comparator<D stanced em<T>> cmp;
+     f (m nQueue) {
+      cmp = (o1, o2) -> Float.compare(o1.getD stance(), o2.getD stance());
     } else {
-      cmp = (o1, o2) -> Float.compare(o2.getDistance(), o1.getDistance());
+      cmp = (o1, o2) -> Float.compare(o2.getD stance(), o1.getD stance());
     }
-    this.queue = new PriorityQueue<>(cmp);
-    enqueueAll(initial);
-    new DistancedItemQueue<>(origin, distFn, queue, minQueue);
+    t .queue = new Pr or yQueue<>(cmp);
+    enqueueAll( n  al);
+    new D stanced emQueue<>(or g n, d stFn, queue, m nQueue);
   }
 
-  private DistancedItemQueue(
-      U origin,
-      DistanceFunction<U, T> distFn,
-      PriorityQueue<DistancedItem<T>> queue,
-      boolean minQueue
+  pr vate D stanced emQueue(
+      U or g n,
+      D stanceFunct on<U, T> d stFn,
+      Pr or yQueue<D stanced em<T>> queue,
+      boolean m nQueue
   ) {
-    this.origin = origin;
-    this.distFn = distFn;
-    this.queue = queue;
-    this.minQueue = minQueue;
+    t .or g n = or g n;
+    t .d stFn = d stFn;
+    t .queue = queue;
+    t .m nQueue = m nQueue;
   }
 
   /**
-   * Enqueues all the items into the queue.
+   * Enqueues all t   ems  nto t  queue.
    */
-  public void enqueueAll(List<T> list) {
-    for (T t : list) {
+  publ c vo d enqueueAll(L st<T> l st) {
+    for (T t : l st) {
       enqueue(t);
     }
   }
 
   /**
-   * Return if queue is non empty or not
+   * Return  f queue  s non empty or not
    *
-   * @return true if queue is not empty else false
+   * @return true  f queue  s not empty else false
    */
-  public boolean nonEmpty() {
-    return !queue.isEmpty();
+  publ c boolean nonEmpty() {
+    return !queue. sEmpty();
   }
 
   /**
-   * Return root of the queue
+   * Return root of t  queue
    *
-   * @return root of the queue i.e min/max element depending upon min-max queue
+   * @return root of t  queue  .e m n/max ele nt depend ng upon m n-max queue
    */
-  public DistancedItem<T> peek() {
+  publ c D stanced em<T> peek() {
     return queue.peek();
   }
 
   /**
-   * Dequeue root of the queue.
+   * Dequeue root of t  queue.
    *
-   * @return remove and return root of the queue i.e min/max element depending upon min-max queue
+   * @return remove and return root of t  queue  .e m n/max ele nt depend ng upon m n-max queue
    */
-  public DistancedItem<T> dequeue() {
+  publ c D stanced em<T> dequeue() {
     return queue.poll();
   }
 
   /**
-   * Dequeue all the elements from queueu with ordering mantained
+   * Dequeue all t  ele nts from queueu w h order ng manta ned
    *
-   * @return remove all the elements in the order of the queue i.e min/max queue.
+   * @return remove all t  ele nts  n t  order of t  queue  .e m n/max queue.
    */
-  public List<DistancedItem<T>> dequeueAll() {
-    final List<DistancedItem<T>> list = new ArrayList<>(queue.size());
-    while (!queue.isEmpty()) {
-      list.add(queue.poll());
+  publ c L st<D stanced em<T>> dequeueAll() {
+    f nal L st<D stanced em<T>> l st = new ArrayL st<>(queue.s ze());
+    wh le (!queue. sEmpty()) {
+      l st.add(queue.poll());
     }
 
-    return list;
+    return l st;
   }
 
   /**
-   * Convert queue to list
+   * Convert queue to l st
    *
-   * @return list of elements of queue with distance and without any specific ordering
+   * @return l st of ele nts of queue w h d stance and w hout any spec f c order ng
    */
-  public List<DistancedItem<T>> toList() {
-    return new ArrayList<>(queue);
+  publ c L st<D stanced em<T>> toL st() {
+    return new ArrayL st<>(queue);
   }
 
   /**
-   * Convert queue to list
+   * Convert queue to l st
    *
-   * @return list of elements of queue without any specific ordering
+   * @return l st of ele nts of queue w hout any spec f c order ng
    */
-  List<T> toListWithItem() {
-    List<T> list = new ArrayList<>(queue.size());
-    Iterator<DistancedItem<T>> itr = iterator();
-    while (itr.hasNext()) {
-      list.add(itr.next().getItem());
+  L st<T> toL stW h em() {
+    L st<T> l st = new ArrayL st<>(queue.s ze());
+     erator<D stanced em<T>>  r =  erator();
+    wh le ( r.hasNext()) {
+      l st.add( r.next().get em());
     }
-    return list;
+    return l st;
   }
 
   /**
-   * Enqueue an item into the queue
+   * Enqueue an  em  nto t  queue
    */
-  public void enqueue(T item) {
-    queue.add(new DistancedItem<>(item, distFn.distance(origin, item)));
+  publ c vo d enqueue(T  em) {
+    queue.add(new D stanced em<>( em, d stFn.d stance(or g n,  em)));
   }
 
   /**
-   * Enqueue an item into the queue with its distance.
+   * Enqueue an  em  nto t  queue w h  s d stance.
    */
-  public void enqueue(T item, float distance) {
-    queue.add(new DistancedItem<>(item, distance));
+  publ c vo d enqueue(T  em, float d stance) {
+    queue.add(new D stanced em<>( em, d stance));
   }
 
   /**
-   * Size
+   * S ze
    *
-   * @return size of the queue
+   * @return s ze of t  queue
    */
-  public int size() {
-    return queue.size();
+  publ c  nt s ze() {
+    return queue.s ze();
   }
 
   /**
-   * Is Min queue
+   *  s M n queue
    *
-   * @return true if min queue else false
+   * @return true  f m n queue else false
    */
-  public boolean isMinQueue() {
-    return minQueue;
+  publ c boolean  sM nQueue() {
+    return m nQueue;
   }
 
   /**
-   * Returns origin (base element) of the queue
+   * Returns or g n (base ele nt) of t  queue
    *
-   * @return origin of the queue
+   * @return or g n of t  queue
    */
-  public U getOrigin() {
-    return origin;
+  publ c U getOr g n() {
+    return or g n;
   }
 
   /**
-   * Return a new queue with ordering reversed.
+   * Return a new queue w h order ng reversed.
    */
-  public DistancedItemQueue<U, T> reverse() {
-    final PriorityQueue<DistancedItem<T>> rqueue =
-        new PriorityQueue<>(queue.comparator().reversed());
-    if (queue.isEmpty()) {
-      return new DistancedItemQueue<>(origin, distFn, rqueue, !isMinQueue());
-    }
-
-    final Iterator<DistancedItem<T>> itr = iterator();
-    while (itr.hasNext()) {
-      rqueue.add(itr.next());
+  publ c D stanced emQueue<U, T> reverse() {
+    f nal Pr or yQueue<D stanced em<T>> rqueue =
+        new Pr or yQueue<>(queue.comparator().reversed());
+     f (queue. sEmpty()) {
+      return new D stanced emQueue<>(or g n, d stFn, rqueue, ! sM nQueue());
     }
 
-    return new DistancedItemQueue<>(origin, distFn, rqueue, !isMinQueue());
+    f nal  erator<D stanced em<T>>  r =  erator();
+    wh le ( r.hasNext()) {
+      rqueue.add( r.next());
+    }
+
+    return new D stanced emQueue<>(or g n, d stFn, rqueue, ! sM nQueue());
   }
 
-  @Override
-  public Iterator<DistancedItem<T>> iterator() {
-    return queue.iterator();
+  @Overr de
+  publ c  erator<D stanced em<T>>  erator() {
+    return queue. erator();
   }
 }

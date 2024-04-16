@@ -1,21 +1,21 @@
-package com.twitter.search.ingester.pipeline.util;
+package com.tw ter.search. ngester.p pel ne.ut l;
 
-import java.util.concurrent.CompletableFuture;
+ mport java.ut l.concurrent.CompletableFuture;
 
-public class BatchedElement<T, R> {
-  private CompletableFuture<R> completableFuture;
-  private T item;
+publ c class Batc dEle nt<T, R> {
+  pr vate CompletableFuture<R> completableFuture;
+  pr vate T  em;
 
-  public BatchedElement(T item, CompletableFuture<R> completableFuture) {
-    this.item = item;
-    this.completableFuture = completableFuture;
+  publ c Batc dEle nt(T  em, CompletableFuture<R> completableFuture) {
+    t . em =  em;
+    t .completableFuture = completableFuture;
   }
 
-  public T getItem() {
-    return item;
+  publ c T get em() {
+    return  em;
   }
 
-  public CompletableFuture<R> getCompletableFuture() {
+  publ c CompletableFuture<R> getCompletableFuture() {
     return completableFuture;
   }
 }

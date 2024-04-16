@@ -1,103 +1,103 @@
-package com.twitter.search.core.earlybird.facets;
+package com.tw ter.search.core.earlyb rd.facets;
 
-import java.util.Arrays;
-import java.util.Map;
+ mport java.ut l.Arrays;
+ mport java.ut l.Map;
 
-import com.google.common.collect.ImmutableMap;
+ mport com.google.common.collect. mmutableMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
+ mport com.tw ter.search.common.constants.thr ftjava.Thr ftLanguage;
 
 /**
- * A util class to build a language histogram
+ * A ut l class to bu ld a language  togram
  */
-public class LanguageHistogram {
-  private static final Logger LOG = LoggerFactory.getLogger(LanguageHistogram.class);
+publ c class Language togram {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Language togram.class);
 
-  public static final LanguageHistogram EMPTY_HISTOGRAM = new LanguageHistogram() {
-    // Let's make this immutable for safety.
-    @Override public void clear() {
-      throw new UnsupportedOperationException();
+  publ c stat c f nal Language togram EMPTY_H STOGRAM = new Language togram() {
+    // Let's make t   mmutable for safety.
+    @Overr de publ c vo d clear() {
+      throw new UnsupportedOperat onExcept on();
     }
 
-    @Override public void increment(int languageID) {
-      throw new UnsupportedOperationException();
+    @Overr de publ c vo d  ncre nt( nt language D) {
+      throw new UnsupportedOperat onExcept on();
     }
 
-    @Override public void add(int languageID, int value) {
-      throw new UnsupportedOperationException();
+    @Overr de publ c vo d add( nt language D,  nt value) {
+      throw new UnsupportedOperat onExcept on();
     }
 
-    @Override public void addAll(LanguageHistogram histogram) {
-      throw new UnsupportedOperationException();
+    @Overr de publ c vo d addAll(Language togram  togram) {
+      throw new UnsupportedOperat onExcept on();
     }
   };
 
-  private final int[] languageHistogram = new int[ThriftLanguage.values().length];
+  pr vate f nal  nt[] language togram = new  nt[Thr ftLanguage.values().length];
 
-  public int[] getLanguageHistogram() {
-    return languageHistogram;
+  publ c  nt[] getLanguage togram() {
+    return language togram;
   }
 
   /**
-   * Returns this histogram represented as a language->count map.
+   * Returns t   togram represented as a language->count map.
    */
-  public Map<ThriftLanguage, Integer> getLanguageHistogramAsMap() {
-    ImmutableMap.Builder<ThriftLanguage, Integer> builder = ImmutableMap.builder();
-    for (int i = 0; i < languageHistogram.length; i++) {
-      // ThriftLanguage.findByValue() might return null, which should fall back to UNKNOWN.
-      ThriftLanguage lang = ThriftLanguage.findByValue(i);
-      lang = lang == null ? ThriftLanguage.UNKNOWN : lang;
-      builder.put(lang, languageHistogram[i]);
+  publ c Map<Thr ftLanguage,  nteger> getLanguage togramAsMap() {
+     mmutableMap.Bu lder<Thr ftLanguage,  nteger> bu lder =  mmutableMap.bu lder();
+    for ( nt   = 0;   < language togram.length;  ++) {
+      // Thr ftLanguage.f ndByValue() m ght return null, wh ch should fall back to UNKNOWN.
+      Thr ftLanguage lang = Thr ftLanguage.f ndByValue( );
+      lang = lang == null ? Thr ftLanguage.UNKNOWN : lang;
+      bu lder.put(lang, language togram[ ]);
     }
-    return builder.build();
+    return bu lder.bu ld();
   }
 
-  public void clear() {
-    Arrays.fill(languageHistogram, 0);
+  publ c vo d clear() {
+    Arrays.f ll(language togram, 0);
   }
 
-  public void increment(int languageId) {
-    if (isValidLanguageId(languageId)) {
-      languageHistogram[languageId]++;
-    }
-  }
-
-  public void increment(ThriftLanguage language) {
-    increment(language.getValue());
-  }
-
-  public void add(int languageId, int value) {
-    if (isValidLanguageId(languageId)) {
-      languageHistogram[languageId] += value;
+  publ c vo d  ncre nt( nt language d) {
+     f ( sVal dLanguage d(language d)) {
+      language togram[language d]++;
     }
   }
 
-  public void add(ThriftLanguage language, int value) {
+  publ c vo d  ncre nt(Thr ftLanguage language) {
+     ncre nt(language.getValue());
+  }
+
+  publ c vo d add( nt language d,  nt value) {
+     f ( sVal dLanguage d(language d)) {
+      language togram[language d] += value;
+    }
+  }
+
+  publ c vo d add(Thr ftLanguage language,  nt value) {
     add(language.getValue(), value);
   }
 
   /**
-   * Adds all entries from the provided histogram to this histogram.
+   * Adds all entr es from t  prov ded  togram to t   togram.
    */
-  public void addAll(LanguageHistogram histogram) {
-    if (histogram == EMPTY_HISTOGRAM) {
+  publ c vo d addAll(Language togram  togram) {
+     f ( togram == EMPTY_H STOGRAM) {
       return;
     }
-    for (int i = 0; i < languageHistogram.length; i++) {
-      languageHistogram[i] += histogram.languageHistogram[i];
+    for ( nt   = 0;   < language togram.length;  ++) {
+      language togram[ ] +=  togram.language togram[ ];
     }
   }
 
-  // Check for out of bound languages.  If a language is out of bounds, we don't want it
-  // to cause the entire search to fail.
-  private boolean isValidLanguageId(int languageId) {
-    if (languageId < languageHistogram.length) {
+  // C ck for out of bound languages.   f a language  s out of bounds,   don't want  
+  // to cause t  ent re search to fa l.
+  pr vate boolean  sVal dLanguage d( nt language d) {
+     f (language d < language togram.length) {
       return true;
     } else {
-      LOG.error("Language id " + languageId + " out of range");
+      LOG.error("Language  d " + language d + " out of range");
       return false;
     }
   }

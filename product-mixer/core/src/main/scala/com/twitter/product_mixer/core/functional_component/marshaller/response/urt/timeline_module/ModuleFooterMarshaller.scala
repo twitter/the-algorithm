@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.t  l ne_module
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleFooter
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.timelines.render.{thriftscala => urt}
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.UrlMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.ModuleFooter
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
 
-@Singleton
-class ModuleFooterMarshaller @Inject() (urlMarshaller: UrlMarshaller) {
+@S ngleton
+class ModuleFooterMarshaller @ nject() (urlMarshaller: UrlMarshaller) {
 
   def apply(footer: ModuleFooter): urt.ModuleFooter = urt.ModuleFooter(
     text = footer.text,
-    landingUrl = footer.landingUrl.map(urlMarshaller(_))
+    land ngUrl = footer.land ngUrl.map(urlMarshaller(_))
   )
 }

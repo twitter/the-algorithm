@@ -1,49 +1,49 @@
-# Pre-requisites
+# Pre-requ s es
 
-## Tutorial
-Follow the tutorial Batch Job on Dataflow Quickstart on how to run a simple batch job on Dataflow.
+## Tutor al
+Follow t  tutor al Batch Job on Dataflow Qu ckstart on how to run a s mple batch job on Dataflow.
 
 ## GCP setup
 
-Ensure `gcloud` CLI is installed and `application_default_credentials.json` has been generated.
+Ensure `gcloud` CL   s  nstalled and `appl cat on_default_credent als.json` has been generated.
 
 ## Data access
 
-If you want to run an adhoc job with your ldap, you will need access to multiple LDAP groups to read the datasets.
+ f   want to run an adhoc job w h y  ldap,   w ll need access to mult ple LDAP groups to read t  datasets.
 
-# Running the job
+# Runn ng t  job
 
-### Running an adhoc job
+### Runn ng an adhoc job
 
 ```bash
 export GCP_PROJECT_NAME='twttr-recos-ml-prod'
 
-./bazel bundle src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/assemble_multi_type_graph:assemble-multi-type-graph-scio-adhoc-app
+./bazel bundle src/scala/com/tw ter/s mclusters_v2/sc o/mult _type_graph/assemble_mult _type_graph:assemble-mult -type-graph-sc o-adhoc-app
 
-bin/d6w create \
-  ${GCP_PROJECT_NAME}/us-central1/assemble-multi-type-graph-scio-adhoc-app \
-  src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/assemble_multi_type_graph/assemble-multi-type-graph-scio-adhoc.d6w \
-  --jar dist/assemble-multi-type-graph-scio-adho-app.jar \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=${USER} \
-  --bind=profile.date="2021-11-04" \
-  --bind=profile.machine="n2-highmem-16"
+b n/d6w create \
+  ${GCP_PROJECT_NAME}/us-central1/assemble-mult -type-graph-sc o-adhoc-app \
+  src/scala/com/tw ter/s mclusters_v2/sc o/mult _type_graph/assemble_mult _type_graph/assemble-mult -type-graph-sc o-adhoc.d6w \
+  --jar d st/assemble-mult -type-graph-sc o-adho-app.jar \
+  --b nd=prof le.project=${GCP_PROJECT_NAME} \
+  --b nd=prof le.user_na =${USER} \
+  --b nd=prof le.date="2021-11-04" \
+  --b nd=prof le.mach ne="n2-h gh m-16"
 ```
 
-### Scheduling the job on Workflow
+### Sc dul ng t  job on Workflow
 
-Scheduling a job will require a service account as `recos-platform`. 
-Remember this account will need permissions to read all the required dataset. 
+Sc dul ng a job w ll requ re a serv ce account as `recos-platform`. 
+Re mber t  account w ll need perm ss ons to read all t  requ red dataset. 
 
 ```bash
-export SERVICE_ACCOUNT='recos-platform'
+export SERV CE_ACCOUNT='recos-platform'
 export GCP_PROJECT_NAME='twttr-recos-ml-prod'
 
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/assemble-multi-type-graph-scio-batch-app \
-  src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/assemble_multi_type_graph/assemble-multi-type-graph-scio-batch.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name="recos-platform" \
-  --bind=profile.date="2021-11-04" \
-  --bind=profile.machine="n2-highmem-16"
+b n/d6w sc dule \
+  ${GCP_PROJECT_NAME}/us-central1/assemble-mult -type-graph-sc o-batch-app \
+  src/scala/com/tw ter/s mclusters_v2/sc o/mult _type_graph/assemble_mult _type_graph/assemble-mult -type-graph-sc o-batch.d6w \
+  --b nd=prof le.project=${GCP_PROJECT_NAME} \
+  --b nd=prof le.user_na ="recos-platform" \
+  --b nd=prof le.date="2021-11-04" \
+  --b nd=prof le.mach ne="n2-h gh m-16"
 ```

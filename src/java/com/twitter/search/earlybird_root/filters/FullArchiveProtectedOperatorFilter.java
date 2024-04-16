@@ -1,166 +1,166 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import java.util.List;
+ mport java.ut l.L st;
 
-import javax.inject.Inject;
+ mport javax. nject. nject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdDebugInfo;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryNodeUtils;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.search.SearchOperator;
-import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
-import com.twitter.search.queryparser.visitors.DropAllProtectedOperatorVisitor;
-import com.twitter.search.queryparser.visitors.QueryTreeIndex;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdDebug nfo;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.queryparser.query.Query;
+ mport com.tw ter.search.queryparser.query.QueryNodeUt ls;
+ mport com.tw ter.search.queryparser.query.QueryParserExcept on;
+ mport com.tw ter.search.queryparser.query.search.SearchOperator;
+ mport com.tw ter.search.queryparser.query.search.SearchOperatorConstants;
+ mport com.tw ter.search.queryparser.v s ors.DropAllProtectedOperatorV s or;
+ mport com.tw ter.search.queryparser.v s ors.QueryTree ndex;
+ mport com.tw ter.ut l.Future;
 
 /**
- * Full archive service filter validates requests with a protected operator, appends the
- * '[exclude protected]' operator by default, and appends '[filter protected]' operator instead if
- * 'getProtectedTweetsOnly' request param is set. A client error response is returned if any of the
- * following rules is violated.
- *   1. There is at most one 'protected' operator in the query.
- *   2. If there is a 'protected' operator, it must be in the query root node.
- *   3. The parent node of the 'protected' operator must not be negated and must be a conjunction.
- *   4. If there is a positive 'protected' operator, 'followedUserIds' and 'searcherId' request
+ * Full arch ve serv ce f lter val dates requests w h a protected operator, appends t 
+ * '[exclude protected]' operator by default, and appends '[f lter protected]' operator  nstead  f
+ * 'getProtectedT etsOnly' request param  s set. A cl ent error response  s returned  f any of t 
+ * follow ng rules  s v olated.
+ *   1. T re  s at most one 'protected' operator  n t  query.
+ *   2.  f t re  s a 'protected' operator,   must be  n t  query root node.
+ *   3. T  parent node of t  'protected' operator must not be negated and must be a conjunct on.
+ *   4.  f t re  s a pos  ve 'protected' operator, 'follo dUser ds' and 'searc r d' request
  *   params must be set.
  */
-public class FullArchiveProtectedOperatorFilter extends
-    SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(FullArchiveProtectedOperatorFilter.class);
-  private static final SearchOperator EXCLUDE_PROTECTED_OPERATOR =
+publ c class FullArch veProtectedOperatorF lter extends
+    S mpleF lter<Earlyb rdRequestContext, Earlyb rdResponse> {
+  pr vate stat c f nal Logger LOG =
+      LoggerFactory.getLogger(FullArch veProtectedOperatorF lter.class);
+  pr vate stat c f nal SearchOperator EXCLUDE_PROTECTED_OPERATOR =
       new SearchOperator(SearchOperator.Type.EXCLUDE, SearchOperatorConstants.PROTECTED);
-  private static final SearchOperator FILTER_PROTECTED_OPERATOR =
-      new SearchOperator(SearchOperator.Type.FILTER, SearchOperatorConstants.PROTECTED);
-  private static final SearchCounter QUERY_PARSER_FAILURE_COUNT =
-      SearchCounter.export("protected_operator_filter_query_parser_failure_count");
+  pr vate stat c f nal SearchOperator F LTER_PROTECTED_OPERATOR =
+      new SearchOperator(SearchOperator.Type.F LTER, SearchOperatorConstants.PROTECTED);
+  pr vate stat c f nal SearchCounter QUERY_PARSER_FA LURE_COUNT =
+      SearchCounter.export("protected_operator_f lter_query_parser_fa lure_count");
 
-  private final DropAllProtectedOperatorVisitor dropProtectedOperatorVisitor;
-  private final SearchDecider decider;
+  pr vate f nal DropAllProtectedOperatorV s or dropProtectedOperatorV s or;
+  pr vate f nal SearchDec der dec der;
 
-  @Inject
-  public FullArchiveProtectedOperatorFilter(
-      DropAllProtectedOperatorVisitor dropProtectedOperatorVisitor,
-      SearchDecider decider) {
-    this.dropProtectedOperatorVisitor = dropProtectedOperatorVisitor;
-    this.decider = decider;
+  @ nject
+  publ c FullArch veProtectedOperatorF lter(
+      DropAllProtectedOperatorV s or dropProtectedOperatorV s or,
+      SearchDec der dec der) {
+    t .dropProtectedOperatorV s or = dropProtectedOperatorV s or;
+    t .dec der = dec der;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(
+      Earlyb rdRequestContext requestContext,
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> serv ce) {
     Query query = requestContext.getParsedQuery();
-    if (query == null) {
-      return service.apply(requestContext);
+     f (query == null) {
+      return serv ce.apply(requestContext);
     }
 
-    QueryTreeIndex queryTreeIndex = QueryTreeIndex.buildFor(query);
-    List<Query> nodeList = queryTreeIndex.getNodeList();
-    // try to find a protected operator, returns error response if more than one protected
-    // operator is detected
+    QueryTree ndex queryTree ndex = QueryTree ndex.bu ldFor(query);
+    L st<Query> nodeL st = queryTree ndex.getNodeL st();
+    // try to f nd a protected operator, returns error response  f more than one protected
+    // operator  s detected
     SearchOperator protectedOperator = null;
-    for (Query node : nodeList) {
-      if (node instanceof SearchOperator) {
+    for (Query node : nodeL st) {
+       f (node  nstanceof SearchOperator) {
         SearchOperator searchOp = (SearchOperator) node;
-        if (SearchOperatorConstants.PROTECTED.equals(searchOp.getOperand())) {
-          if (protectedOperator == null) {
+         f (SearchOperatorConstants.PROTECTED.equals(searchOp.getOperand())) {
+           f (protectedOperator == null) {
             protectedOperator = searchOp;
           } else {
-            return createErrorResponse("Only one 'protected' operator is expected.");
+            return createErrorResponse("Only one 'protected' operator  s expected.");
           }
         }
       }
     }
 
     Query processedQuery;
-    if (protectedOperator == null) {
-      // no protected operator is detected, append '[exclude protected]' by default
-      processedQuery = QueryNodeUtils.appendAsConjunction(query, EXCLUDE_PROTECTED_OPERATOR);
+     f (protectedOperator == null) {
+      // no protected operator  s detected, append '[exclude protected]' by default
+      processedQuery = QueryNodeUt ls.appendAsConjunct on(query, EXCLUDE_PROTECTED_OPERATOR);
     } else {
-      // protected operator must be in the query root node
-      if (queryTreeIndex.getParentOf(protectedOperator) != query) {
-        return createErrorResponse("'protected' operator must be in the query root node");
+      // protected operator must be  n t  query root node
+       f (queryTree ndex.getParentOf(protectedOperator) != query) {
+        return createErrorResponse("'protected' operator must be  n t  query root node");
       }
-      // the query node that contains protected operator must not be negated
-      if (query.mustNotOccur()) {
-        return createErrorResponse("The query node that contains a 'protected' operator must not"
+      // t  query node that conta ns protected operator must not be negated
+       f (query.mustNotOccur()) {
+        return createErrorResponse("T  query node that conta ns a 'protected' operator must not"
             + " be negated.");
       }
-      // the query node that contains protected operator must be a conjunction
-      if (!query.isTypeOf(Query.QueryType.CONJUNCTION)) {
-        return createErrorResponse("The query node that contains a 'protected' operator must"
-            + " be a conjunction.");
+      // t  query node that conta ns protected operator must be a conjunct on
+       f (!query. sTypeOf(Query.QueryType.CONJUNCT ON)) {
+        return createErrorResponse("T  query node that conta ns a 'protected' operator must"
+            + " be a conjunct on.");
       }
-      // check the existence of 'followedUserIds' and 'searcherId' if it is a positive operator
-      if (isPositive(protectedOperator)) {
-        if (!validateRequestParam(requestContext.getRequest())) {
-          return createErrorResponse("'followedUserIds' and 'searcherId' are required "
-              + "by positive 'protected' operator.");
+      // c ck t  ex stence of 'follo dUser ds' and 'searc r d'  f    s a pos  ve operator
+       f ( sPos  ve(protectedOperator)) {
+         f (!val dateRequestParam(requestContext.getRequest())) {
+          return createErrorResponse("'follo dUser ds' and 'searc r d' are requ red "
+              + "by pos  ve 'protected' operator.");
         }
       }
       processedQuery = query;
     }
-    // update processedQuery if 'getProtectedTweetsOnly' is set to true, it takes precedence over
-    // the existing protected operators
-    if (requestContext.getRequest().isGetProtectedTweetsOnly()) {
-      if (!validateRequestParam(requestContext.getRequest())) {
-        return createErrorResponse("'followedUserIds' and 'searcherId' are required "
-            + "when 'getProtectedTweetsOnly' is set to true.");
+    // update processedQuery  f 'getProtectedT etsOnly'  s set to true,   takes precedence over
+    // t  ex st ng protected operators
+     f (requestContext.getRequest(). sGetProtectedT etsOnly()) {
+       f (!val dateRequestParam(requestContext.getRequest())) {
+        return createErrorResponse("'follo dUser ds' and 'searc r d' are requ red "
+            + "w n 'getProtectedT etsOnly'  s set to true.");
       }
       try {
-        processedQuery = processedQuery.accept(dropProtectedOperatorVisitor);
-      } catch (QueryParserException e) {
-        // this should not happen since we already have a parsed query
-        QUERY_PARSER_FAILURE_COUNT.increment();
+        processedQuery = processedQuery.accept(dropProtectedOperatorV s or);
+      } catch (QueryParserExcept on e) {
+        // t  should not happen s nce   already have a parsed query
+        QUERY_PARSER_FA LURE_COUNT. ncre nt();
         LOG.warn(
-            "Failed to drop protected operator for serialized query: " + query.serialize(), e);
+            "Fa led to drop protected operator for ser al zed query: " + query.ser al ze(), e);
       }
       processedQuery =
-          QueryNodeUtils.appendAsConjunction(processedQuery, FILTER_PROTECTED_OPERATOR);
+          QueryNodeUt ls.appendAsConjunct on(processedQuery, F LTER_PROTECTED_OPERATOR);
     }
 
-    if (processedQuery == query) {
-      return service.apply(requestContext);
+     f (processedQuery == query) {
+      return serv ce.apply(requestContext);
     } else {
-      EarlybirdRequestContext clonedRequestContext =
-          EarlybirdRequestContext.copyRequestContext(requestContext, processedQuery);
-      return service.apply(clonedRequestContext);
+      Earlyb rdRequestContext clonedRequestContext =
+          Earlyb rdRequestContext.copyRequestContext(requestContext, processedQuery);
+      return serv ce.apply(clonedRequestContext);
     }
   }
 
-  private boolean validateRequestParam(EarlybirdRequest request) {
-    List<Long> followedUserIds = request.followedUserIds;
-    Long searcherId = (request.searchQuery != null && request.searchQuery.isSetSearcherId())
-        ? request.searchQuery.getSearcherId() : null;
-    return followedUserIds != null && !followedUserIds.isEmpty() && searcherId != null;
+  pr vate boolean val dateRequestParam(Earlyb rdRequest request) {
+    L st<Long> follo dUser ds = request.follo dUser ds;
+    Long searc r d = (request.searchQuery != null && request.searchQuery. sSetSearc r d())
+        ? request.searchQuery.getSearc r d() : null;
+    return follo dUser ds != null && !follo dUser ds. sEmpty() && searc r d != null;
   }
 
-  private boolean isPositive(SearchOperator searchOp) {
-    boolean isNegateExclude = searchOp.mustNotOccur()
+  pr vate boolean  sPos  ve(SearchOperator searchOp) {
+    boolean  sNegateExclude = searchOp.mustNotOccur()
         && searchOp.getOperatorType() == SearchOperator.Type.EXCLUDE;
-    boolean isPositive = !searchOp.mustNotOccur()
-        && (searchOp.getOperatorType() == SearchOperator.Type.INCLUDE
-        || searchOp.getOperatorType() == SearchOperator.Type.FILTER);
-    return isNegateExclude || isPositive;
+    boolean  sPos  ve = !searchOp.mustNotOccur()
+        && (searchOp.getOperatorType() == SearchOperator.Type. NCLUDE
+        || searchOp.getOperatorType() == SearchOperator.Type.F LTER);
+    return  sNegateExclude ||  sPos  ve;
   }
 
-  private Future<EarlybirdResponse> createErrorResponse(String errorMsg) {
-    EarlybirdResponse response = new EarlybirdResponse(EarlybirdResponseCode.CLIENT_ERROR, 0);
-    response.setDebugInfo(new EarlybirdDebugInfo().setHost("full_archive_root"));
-    response.setDebugString(errorMsg);
+  pr vate Future<Earlyb rdResponse> createErrorResponse(Str ng errorMsg) {
+    Earlyb rdResponse response = new Earlyb rdResponse(Earlyb rdResponseCode.CL ENT_ERROR, 0);
+    response.setDebug nfo(new Earlyb rdDebug nfo().setHost("full_arch ve_root"));
+    response.setDebugStr ng(errorMsg);
     return Future.value(response);
   }
 

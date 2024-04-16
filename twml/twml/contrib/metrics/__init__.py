@@ -1,5 +1,5 @@
-# pylint: disable=wildcard-import
-"""This module contains experimental metric(s) for search and ranking"""
+# pyl nt: d sable=w ldcard- mport
+"""T  module conta ns exper  ntal  tr c(s) for search and rank ng"""
 
-from .search_metrics import get_search_metric_fn, ndcg  # noqa: F401
-from .metrics import *  # noqa: F401
+from .search_ tr cs  mport get_search_ tr c_fn, ndcg  # noqa: F401
+from . tr cs  mport *  # noqa: F401

@@ -1,20 +1,20 @@
-package com.twitter.search.earlybird_root.common;
+package com.tw ter.search.earlyb rd_root.common;
 
-import javax.inject.Singleton;
+ mport javax. nject.S ngleton;
 
-import scala.Option;
+ mport scala.Opt on;
 
-import com.twitter.context.TwitterContext;
-import com.twitter.context.thriftscala.Viewer;
-import com.twitter.search.TwitterContextPermit;
+ mport com.tw ter.context.Tw terContext;
+ mport com.tw ter.context.thr ftscala.V e r;
+ mport com.tw ter.search.Tw terContextPerm ;
 
 /**
- * This class is needed to provide an easy way for unit tests to "inject"
- * a TwitterContext Viewer
+ * T  class  s needed to prov de an easy way for un  tests to " nject"
+ * a Tw terContext V e r
  */
-@Singleton
-public class TwitterContextProvider {
-  public Option<Viewer> get() {
-    return TwitterContext.acquire(TwitterContextPermit.get()).apply();
+@S ngleton
+publ c class Tw terContextProv der {
+  publ c Opt on<V e r> get() {
+    return Tw terContext.acqu re(Tw terContextPerm .get()).apply();
   }
 }

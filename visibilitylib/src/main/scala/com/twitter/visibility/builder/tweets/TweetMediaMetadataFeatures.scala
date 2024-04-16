@@ -1,130 +1,130 @@
-package com.twitter.visibility.builder.tweets
+package com.tw ter.v s b l y.bu lder.t ets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.mediaservices.commons.mediainformation.thriftscala.AdditionalMetadata
-import com.twitter.mediaservices.media_util.GenericMediaKey
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.TweetMediaMetadataSource
-import com.twitter.visibility.features.HasDmcaMediaFeature
-import com.twitter.visibility.features.MediaGeoRestrictionsAllowList
-import com.twitter.visibility.features.MediaGeoRestrictionsDenyList
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. d aserv ces.commons. d a nformat on.thr ftscala.Add  onal tadata
+ mport com.tw ter. d aserv ces. d a_ut l.Gener c d aKey
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.common.T et d a tadataS ce
+ mport com.tw ter.v s b l y.features.HasDmca d aFeature
+ mport com.tw ter.v s b l y.features. d aGeoRestr ct onsAllowL st
+ mport com.tw ter.v s b l y.features. d aGeoRestr ct onsDenyL st
 
-class TweetMediaMetadataFeatures(
-  mediaMetadataSource: TweetMediaMetadataSource,
-  statsReceiver: StatsReceiver) {
+class T et d a tadataFeatures(
+   d a tadataS ce: T et d a tadataS ce,
+  statsRece ver: StatsRece ver) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("tweet_media_metadata_features")
-  private[this] val reportedStats = scopedStatsReceiver.scope("dmcaStats")
+  pr vate[t ] val scopedStatsRece ver = statsRece ver.scope("t et_ d a_ tadata_features")
+  pr vate[t ] val reportedStats = scopedStatsRece ver.scope("dmcaStats")
 
-  def forTweet(
-    tweet: Tweet,
-    mediaKeys: Seq[GenericMediaKey],
-    enableFetchMediaMetadata: Boolean
-  ): FeatureMapBuilder => FeatureMapBuilder = { featureMapBuilder =>
-    featureMapBuilder.withFeature(
-      HasDmcaMediaFeature,
-      mediaIsDmca(tweet, mediaKeys, enableFetchMediaMetadata))
-    featureMapBuilder.withFeature(
-      MediaGeoRestrictionsAllowList,
-      allowlist(tweet, mediaKeys, enableFetchMediaMetadata))
-    featureMapBuilder.withFeature(
-      MediaGeoRestrictionsDenyList,
-      denylist(tweet, mediaKeys, enableFetchMediaMetadata))
+  def forT et(
+    t et: T et,
+     d aKeys: Seq[Gener c d aKey],
+    enableFetch d a tadata: Boolean
+  ): FeatureMapBu lder => FeatureMapBu lder = { featureMapBu lder =>
+    featureMapBu lder.w hFeature(
+      HasDmca d aFeature,
+       d a sDmca(t et,  d aKeys, enableFetch d a tadata))
+    featureMapBu lder.w hFeature(
+       d aGeoRestr ct onsAllowL st,
+      allowl st(t et,  d aKeys, enableFetch d a tadata))
+    featureMapBu lder.w hFeature(
+       d aGeoRestr ct onsDenyL st,
+      denyl st(t et,  d aKeys, enableFetch d a tadata))
   }
 
-  private def mediaIsDmca(
-    tweet: Tweet,
-    mediaKeys: Seq[GenericMediaKey],
-    enableFetchMediaMetadata: Boolean
-  ) = getMediaAdditionalMetadata(tweet, mediaKeys, enableFetchMediaMetadata)
-    .map(_.exists(_.restrictions.exists(_.isDmca)))
+  pr vate def  d a sDmca(
+    t et: T et,
+     d aKeys: Seq[Gener c d aKey],
+    enableFetch d a tadata: Boolean
+  ) = get d aAdd  onal tadata(t et,  d aKeys, enableFetch d a tadata)
+    .map(_.ex sts(_.restr ct ons.ex sts(_. sDmca)))
 
-  private def allowlist(
-    tweet: Tweet,
-    mediaKeys: Seq[GenericMediaKey],
-    enableFetchMediaMetadata: Boolean
-  ) = getMediaGeoRestrictions(tweet, mediaKeys, enableFetchMediaMetadata)
-    .map(_.flatMap(_.whitelistedCountryCodes))
+  pr vate def allowl st(
+    t et: T et,
+     d aKeys: Seq[Gener c d aKey],
+    enableFetch d a tadata: Boolean
+  ) = get d aGeoRestr ct ons(t et,  d aKeys, enableFetch d a tadata)
+    .map(_.flatMap(_.wh el stedCountryCodes))
 
-  private def denylist(
-    tweet: Tweet,
-    mediaKeys: Seq[GenericMediaKey],
-    enableFetchMediaMetadata: Boolean
-  ) = getMediaGeoRestrictions(tweet, mediaKeys, enableFetchMediaMetadata)
-    .map(_.flatMap(_.blacklistedCountryCodes))
+  pr vate def denyl st(
+    t et: T et,
+     d aKeys: Seq[Gener c d aKey],
+    enableFetch d a tadata: Boolean
+  ) = get d aGeoRestr ct ons(t et,  d aKeys, enableFetch d a tadata)
+    .map(_.flatMap(_.blackl stedCountryCodes))
 
-  private def getMediaGeoRestrictions(
-    tweet: Tweet,
-    mediaKeys: Seq[GenericMediaKey],
-    enableFetchMediaMetadata: Boolean
+  pr vate def get d aGeoRestr ct ons(
+    t et: T et,
+     d aKeys: Seq[Gener c d aKey],
+    enableFetch d a tadata: Boolean
   ) = {
-    getMediaAdditionalMetadata(tweet, mediaKeys, enableFetchMediaMetadata)
-      .map(additionalMetadatasSeq => {
+    get d aAdd  onal tadata(t et,  d aKeys, enableFetch d a tadata)
+      .map(add  onal tadatasSeq => {
         for {
-          additionalMetadata <- additionalMetadatasSeq
-          restrictions <- additionalMetadata.restrictions
-          geoRestrictions <- restrictions.geoRestrictions
-        } yield {
-          geoRestrictions
+          add  onal tadata <- add  onal tadatasSeq
+          restr ct ons <- add  onal tadata.restr ct ons
+          geoRestr ct ons <- restr ct ons.geoRestr ct ons
+        } y eld {
+          geoRestr ct ons
         }
       })
   }
 
-  private def getMediaAdditionalMetadata(
-    tweet: Tweet,
-    mediaKeys: Seq[GenericMediaKey],
-    enableFetchMediaMetadata: Boolean
-  ): Stitch[Seq[AdditionalMetadata]] = {
-    if (mediaKeys.isEmpty) {
-      reportedStats.counter("empty").incr()
-      Stitch.value(Seq.empty)
+  pr vate def get d aAdd  onal tadata(
+    t et: T et,
+     d aKeys: Seq[Gener c d aKey],
+    enableFetch d a tadata: Boolean
+  ): St ch[Seq[Add  onal tadata]] = {
+     f ( d aKeys. sEmpty) {
+      reportedStats.counter("empty"). ncr()
+      St ch.value(Seq.empty)
     } else {
-      tweet.media.flatMap { mediaEntities =>
-        val alreadyHydratedMetadata = mediaEntities
-          .filter(_.mediaKey.isDefined)
-          .flatMap(_.additionalMetadata)
+      t et. d a.flatMap {  d aEnt  es =>
+        val alreadyHydrated tadata =  d aEnt  es
+          .f lter(_. d aKey. sDef ned)
+          .flatMap(_.add  onal tadata)
 
-        if (alreadyHydratedMetadata.nonEmpty) {
-          Some(alreadyHydratedMetadata)
+         f (alreadyHydrated tadata.nonEmpty) {
+          So (alreadyHydrated tadata)
         } else {
           None
         }
       } match {
-        case Some(additionalMetadata) =>
-          reportedStats.counter("already_hydrated").incr()
-          Stitch.value(additionalMetadata)
+        case So (add  onal tadata) =>
+          reportedStats.counter("already_hydrated"). ncr()
+          St ch.value(add  onal tadata)
         case None =>
-          Stitch
+          St ch
             .collect(
-              mediaKeys.map(fetchAdditionalMetadata(tweet.id, _, enableFetchMediaMetadata))
-            ).map(maybeMetadatas => {
-              maybeMetadatas
-                .filter(_.isDefined)
+               d aKeys.map(fetchAdd  onal tadata(t et. d, _, enableFetch d a tadata))
+            ).map(maybe tadatas => {
+              maybe tadatas
+                .f lter(_. sDef ned)
                 .map(_.get)
             })
       }
     }
   }
 
-  private def fetchAdditionalMetadata(
-    tweetId: Long,
-    genericMediaKey: GenericMediaKey,
-    enableFetchMediaMetadata: Boolean
-  ): Stitch[Option[AdditionalMetadata]] =
-    if (enableFetchMediaMetadata) {
-      genericMediaKey.toThriftMediaKey() match {
-        case Some(mediaKey) =>
-          reportedStats.counter("request").incr()
-          mediaMetadataSource.fetch(tweetId, mediaKey)
+  pr vate def fetchAdd  onal tadata(
+    t et d: Long,
+    gener c d aKey: Gener c d aKey,
+    enableFetch d a tadata: Boolean
+  ): St ch[Opt on[Add  onal tadata]] =
+     f (enableFetch d a tadata) {
+      gener c d aKey.toThr ft d aKey() match {
+        case So ( d aKey) =>
+          reportedStats.counter("request"). ncr()
+           d a tadataS ce.fetch(t et d,  d aKey)
         case None =>
-          reportedStats.counter("empty_key").incr()
-          Stitch.None
+          reportedStats.counter("empty_key"). ncr()
+          St ch.None
       }
     } else {
-      reportedStats.counter("light_request").incr()
-      Stitch.None
+      reportedStats.counter("l ght_request"). ncr()
+      St ch.None
     }
 
 }

@@ -1,14 +1,14 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. tr cs
 
-import com.twitter.util.Time
+ mport com.tw ter.ut l.T  
 
 /**
- * Case class wrapping a (value, timestamp) tuple.
- * All aggregate metrics must operate over this class
- * to ensure we can implement decay and half lives for them.
- * This is translated to an algebird DecayedValue under the hood.
+ * Case class wrapp ng a (value, t  stamp) tuple.
+ * All aggregate  tr cs must operate over t  class
+ * to ensure   can  mple nt decay and half l ves for t m.
+ * T   s translated to an algeb rd DecayedValue under t  hood.
  *
- * @param value Value being wrapped
- * @param timestamp Time after epoch at which value is being measured
+ * @param value Value be ng wrapped
+ * @param t  stamp T   after epoch at wh ch value  s be ng  asured
  */
-case class TimedValue[T](value: T, timestamp: Time)
+case class T  dValue[T](value: T, t  stamp: T  )

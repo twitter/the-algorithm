@@ -1,15 +1,15 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finatra/inject/inject-app/src/main/java/com/twitter/inject/annotations",
-        "finatra/inject/inject-core/src/main/scala",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "f natra/ nject/ nject-app/src/ma n/java/com/tw ter/ nject/annotat ons",
+        "f natra/ nject/ nject-core/src/ma n/scala",
     ],
     exports = [
-        "finatra/inject/inject-app/src/main/java/com/twitter/inject/annotations",
-        "finatra/inject/inject-core/src/main/scala",
+        "f natra/ nject/ nject-app/src/ma n/java/com/tw ter/ nject/annotat ons",
+        "f natra/ nject/ nject-core/src/ma n/scala",
     ],
 )

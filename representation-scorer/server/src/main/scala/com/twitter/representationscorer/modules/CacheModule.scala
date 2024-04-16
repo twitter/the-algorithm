@@ -1,34 +1,34 @@
-package com.twitter.representationscorer.modules
+package com.tw ter.representat onscorer.modules
 
-import com.google.inject.Provides
-import com.twitter.finagle.memcached.Client
-import javax.inject.Singleton
-import com.twitter.conversions.DurationOps._
-import com.twitter.inject.TwitterModule
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus_internal.memcache.MemcacheStore
-import com.twitter.storehaus_internal.util.ClientName
-import com.twitter.storehaus_internal.util.ZkEndPoint
+ mport com.google. nject.Prov des
+ mport com.tw ter.f nagle. mcac d.Cl ent
+ mport javax. nject.S ngleton
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.storehaus_ nternal. mcac . mcac Store
+ mport com.tw ter.storehaus_ nternal.ut l.Cl entNa 
+ mport com.tw ter.storehaus_ nternal.ut l.ZkEndPo nt
 
-object CacheModule extends TwitterModule {
+object Cac Module extends Tw terModule {
 
-  private val cacheDest = flag[String]("cache_module.dest", "Path to memcache service")
-  private val timeout = flag[Int]("memcache.timeout", "Memcache client timeout")
-  private val retries = flag[Int]("memcache.retries", "Memcache timeout retries")
+  pr vate val cac Dest = flag[Str ng]("cac _module.dest", "Path to  mcac  serv ce")
+  pr vate val t  out = flag[ nt](" mcac .t  out", " mcac  cl ent t  out")
+  pr vate val retr es = flag[ nt](" mcac .retr es", " mcac  t  out retr es")
 
-  @Singleton
-  @Provides
-  def providesCache(
-    serviceIdentifier: ServiceIdentifier,
-    stats: StatsReceiver
-  ): Client =
-    MemcacheStore.memcachedClient(
-      name = ClientName("memcache_representation_manager"),
-      dest = ZkEndPoint(cacheDest()),
-      timeout = timeout().milliseconds,
-      retries = retries(),
-      statsReceiver = stats.scope("cache_client"),
-      serviceIdentifier = serviceIdentifier
+  @S ngleton
+  @Prov des
+  def prov desCac (
+    serv ce dent f er: Serv ce dent f er,
+    stats: StatsRece ver
+  ): Cl ent =
+     mcac Store. mcac dCl ent(
+      na  = Cl entNa (" mcac _representat on_manager"),
+      dest = ZkEndPo nt(cac Dest()),
+      t  out = t  out().m ll seconds,
+      retr es = retr es(),
+      statsRece ver = stats.scope("cac _cl ent"),
+      serv ce dent f er = serv ce dent f er
     )
 }

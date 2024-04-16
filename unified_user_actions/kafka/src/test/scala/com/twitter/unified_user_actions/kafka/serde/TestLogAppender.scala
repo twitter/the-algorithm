@@ -1,19 +1,19 @@
-package com.twitter.unified_user_actions.kafka.serde
+package com.tw ter.un f ed_user_act ons.kafka.serde
 
-import ch.qos.logback.classic.spi.ILoggingEvent
-import ch.qos.logback.core.AppenderBase
-import scala.collection.mutable.ArrayBuffer
+ mport ch.qos.logback.class c.sp . Logg ngEvent
+ mport ch.qos.logback.core.AppenderBase
+ mport scala.collect on.mutable.ArrayBuffer
 
-class TestLogAppender extends AppenderBase[ILoggingEvent] {
-  import TestLogAppender._
+class TestLogAppender extends AppenderBase[ Logg ngEvent] {
+   mport TestLogAppender._
 
-  override def append(eventObject: ILoggingEvent): Unit =
+  overr de def append(eventObject:  Logg ngEvent): Un  =
     recordLog(eventObject)
 }
 
 object TestLogAppender {
-  val events: ArrayBuffer[ILoggingEvent] = ArrayBuffer()
+  val events: ArrayBuffer[ Logg ngEvent] = ArrayBuffer()
 
-  def recordLog(event: ILoggingEvent): Unit =
+  def recordLog(event:  Logg ngEvent): Un  =
     events += event
 }

@@ -1,48 +1,48 @@
-package com.twitter.follow_recommendations.controllers
+package com.tw ter.follow_recom ndat ons.controllers
 
-import com.twitter.decider.Decider
-import com.twitter.decider.SimpleRecipient
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.follow_recommendations.configapi.deciders.DeciderKey
-import com.twitter.gizmoduck.thriftscala.LookupContext
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.gizmoduck.Gizmoduck
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.dec der.S mpleRec p ent
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.base.StatsUt l
+ mport com.tw ter.follow_recom ndat ons.conf gap .dec ders.Dec derKey
+ mport com.tw ter.g zmoduck.thr ftscala.LookupContext
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.g zmoduck.G zmoduck
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class RequestBuilderUserFetcher @Inject() (
-  gizmoduck: Gizmoduck,
-  statsReceiver: StatsReceiver,
-  decider: Decider) {
-  private val scopedStats = statsReceiver.scope(this.getClass.getSimpleName)
+@S ngleton
+class RequestBu lderUserFetc r @ nject() (
+  g zmoduck: G zmoduck,
+  statsRece ver: StatsRece ver,
+  dec der: Dec der) {
+  pr vate val scopedStats = statsRece ver.scope(t .getClass.getS mpleNa )
 
-  def fetchUser(userIdOpt: Option[Long]): Stitch[Option[User]] = {
-    userIdOpt match {
-      case Some(userId) if enableDecider(userId) =>
-        val stitch = gizmoduck
-          .getUserById(
-            userId = userId,
+  def fetchUser(user dOpt: Opt on[Long]): St ch[Opt on[User]] = {
+    user dOpt match {
+      case So (user d)  f enableDec der(user d) =>
+        val st ch = g zmoduck
+          .getUserBy d(
+            user d = user d,
             context = LookupContext(
-              forUserId = Some(userId),
-              includeProtected = true,
-              includeSoftUsers = true
+              forUser d = So (user d),
+               ncludeProtected = true,
+               ncludeSoftUsers = true
             )
-          ).map(user => Some(user))
-        StatsUtil
-          .profileStitch(stitch, scopedStats)
+          ).map(user => So (user))
+        StatsUt l
+          .prof leSt ch(st ch, scopedStats)
           .handle {
             case _: Throwable => None
           }
-      case _ => Stitch.None
+      case _ => St ch.None
     }
   }
 
-  private def enableDecider(userId: Long): Boolean = {
-    decider.isAvailable(
-      DeciderKey.EnableFetchUserInRequestBuilder.toString,
-      Some(SimpleRecipient(userId)))
+  pr vate def enableDec der(user d: Long): Boolean = {
+    dec der. sAva lable(
+      Dec derKey.EnableFetchUser nRequestBu lder.toStr ng,
+      So (S mpleRec p ent(user d)))
   }
 }

@@ -1,61 +1,61 @@
-package com.twitter.home_mixer.product.scored_tweets.filter
+package com.tw ter.ho _m xer.product.scored_t ets.f lter
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelineservice.suggests.{thriftscala => st}
+ mport com.tw ter.ho _m xer.model.Ho Features._
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lterResult
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l neserv ce.suggests.{thr ftscala => st}
 
-object ScoredTweetsSocialContextFilter extends Filter[PipelineQuery, TweetCandidate] {
+object ScoredT etsSoc alContextF lter extends F lter[P pel neQuery, T etCand date] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("ScoredTweetsSocialContext")
+  overr de val  dent f er: F lter dent f er = F lter dent f er("ScoredT etsSoc alContext")
 
-  // Tweets from candidate sources which don't need generic like/follow/topic proof
-  private val AllowedSources: Set[st.SuggestType] = Set(
-    st.SuggestType.RankedListTweet,
-    st.SuggestType.RecommendedTrendTweet,
-    st.SuggestType.MediaTweet
+  // T ets from cand date s ces wh ch don't need gener c l ke/follow/top c proof
+  pr vate val Allo dS ces: Set[st.SuggestType] = Set(
+    st.SuggestType.RankedL stT et,
+    st.SuggestType.Recom ndedTrendT et,
+    st.SuggestType. d aT et
   )
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = {
-    val validTweetIds = candidates
-      .filter { candidate =>
-        candidate.features.getOrElse(InNetworkFeature, true) ||
-        candidate.features.getOrElse(SuggestTypeFeature, None).exists(AllowedSources.contains) ||
-        candidate.features.getOrElse(InReplyToTweetIdFeature, None).isDefined ||
-        hasLikedBySocialContext(candidate.features) ||
-        hasFollowedBySocialContext(candidate.features) ||
-        hasTopicSocialContext(candidate.features)
-      }.map(_.candidate.id).toSet
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[F lterResult[T etCand date]] = {
+    val val dT et ds = cand dates
+      .f lter { cand date =>
+        cand date.features.getOrElse( nNetworkFeature, true) ||
+        cand date.features.getOrElse(SuggestTypeFeature, None).ex sts(Allo dS ces.conta ns) ||
+        cand date.features.getOrElse( nReplyToT et dFeature, None). sDef ned ||
+        hasL kedBySoc alContext(cand date.features) ||
+        hasFollo dBySoc alContext(cand date.features) ||
+        hasTop cSoc alContext(cand date.features)
+      }.map(_.cand date. d).toSet
 
     val (kept, removed) =
-      candidates.map(_.candidate).partition(candidate => validTweetIds.contains(candidate.id))
+      cand dates.map(_.cand date).part  on(cand date => val dT et ds.conta ns(cand date. d))
 
-    Stitch.value(FilterResult(kept = kept, removed = removed))
+    St ch.value(F lterResult(kept = kept, removed = removed))
   }
 
-  private def hasLikedBySocialContext(candidateFeatures: FeatureMap): Boolean =
-    candidateFeatures
-      .getOrElse(SGSValidLikedByUserIdsFeature, Seq.empty)
-      .exists(
-        candidateFeatures
-          .getOrElse(PerspectiveFilteredLikedByUserIdsFeature, Seq.empty)
-          .toSet.contains
+  pr vate def hasL kedBySoc alContext(cand dateFeatures: FeatureMap): Boolean =
+    cand dateFeatures
+      .getOrElse(SGSVal dL kedByUser dsFeature, Seq.empty)
+      .ex sts(
+        cand dateFeatures
+          .getOrElse(Perspect veF lteredL kedByUser dsFeature, Seq.empty)
+          .toSet.conta ns
       )
 
-  private def hasFollowedBySocialContext(candidateFeatures: FeatureMap): Boolean =
-    candidateFeatures.getOrElse(SGSValidFollowedByUserIdsFeature, Seq.empty).nonEmpty
+  pr vate def hasFollo dBySoc alContext(cand dateFeatures: FeatureMap): Boolean =
+    cand dateFeatures.getOrElse(SGSVal dFollo dByUser dsFeature, Seq.empty).nonEmpty
 
-  private def hasTopicSocialContext(candidateFeatures: FeatureMap): Boolean = {
-    candidateFeatures.getOrElse(TopicIdSocialContextFeature, None).isDefined &&
-    candidateFeatures.getOrElse(TopicContextFunctionalityTypeFeature, None).isDefined
+  pr vate def hasTop cSoc alContext(cand dateFeatures: FeatureMap): Boolean = {
+    cand dateFeatures.getOrElse(Top c dSoc alContextFeature, None). sDef ned &&
+    cand dateFeatures.getOrElse(Top cContextFunct onal yTypeFeature, None). sDef ned
   }
 }

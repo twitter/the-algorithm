@@ -1,25 +1,25 @@
-package com.twitter.recosinjector.clients
+package com.tw ter.recos njector.cl ents
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.logging.Logger
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
-class Gizmoduck(
+class G zmoduck(
   userStore: ReadableStore[Long, User]
 )(
-  implicit statsReceiver: StatsReceiver) {
-  private val log = Logger()
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
+   mpl c  statsRece ver: StatsRece ver) {
+  pr vate val log = Logger()
+  pr vate val stats = statsRece ver.scope(t .getClass.getS mpleNa )
 
-  def getUser(userId: Long): Future[Option[User]] = {
+  def getUser(user d: Long): Future[Opt on[User]] = {
     userStore
-      .get(userId)
+      .get(user d)
       .rescue {
         case e =>
-          stats.scope("getUserFailure").counter(e.getClass.getSimpleName).incr()
-          log.error(s"Failed with message ${e.toString}")
+          stats.scope("getUserFa lure").counter(e.getClass.getS mpleNa ). ncr()
+          log.error(s"Fa led w h  ssage ${e.toStr ng}")
           Future.None
       }
   }

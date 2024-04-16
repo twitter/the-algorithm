@@ -1,41 +1,41 @@
-package com.twitter.tsp.modules
+package com.tw ter.tsp.modules
 
-import com.google.inject.Provides
-import com.twitter.escherbird.util.uttclient.CacheConfigV2
-import com.twitter.escherbird.util.uttclient.CachedUttClientV2
-import com.twitter.escherbird.util.uttclient.UttClientCacheConfigsV2
-import com.twitter.escherbird.utt.strato.thriftscala.Environment
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.strato.client.Client
-import com.twitter.topiclisting.clients.utt.UttClient
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.esc rb rd.ut l.uttcl ent.Cac Conf gV2
+ mport com.tw ter.esc rb rd.ut l.uttcl ent.Cac dUttCl entV2
+ mport com.tw ter.esc rb rd.ut l.uttcl ent.UttCl entCac Conf gsV2
+ mport com.tw ter.esc rb rd.utt.strato.thr ftscala.Env ron nt
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.strato.cl ent.Cl ent
+ mport com.tw ter.top cl st ng.cl ents.utt.UttCl ent
+ mport javax. nject.S ngleton
 
-object UttClientModule extends TwitterModule {
+object UttCl entModule extends Tw terModule {
 
-  @Provides
-  @Singleton
-  def providesUttClient(
-    stratoClient: Client,
-    statsReceiver: StatsReceiver
-  ): UttClient = {
+  @Prov des
+  @S ngleton
+  def prov desUttCl ent(
+    stratoCl ent: Cl ent,
+    statsRece ver: StatsRece ver
+  ): UttCl ent = {
 
-    // Save 2 ^ 18 UTTs. Promising 100% cache rate
-    lazy val defaultCacheConfigV2: CacheConfigV2 = CacheConfigV2(262143)
-    lazy val uttClientCacheConfigsV2: UttClientCacheConfigsV2 = UttClientCacheConfigsV2(
-      getTaxonomyConfig = defaultCacheConfigV2,
-      getUttTaxonomyConfig = defaultCacheConfigV2,
-      getLeafIds = defaultCacheConfigV2,
-      getLeafUttEntities = defaultCacheConfigV2
+    // Save 2 ^ 18 UTTs. Prom s ng 100% cac  rate
+    lazy val defaultCac Conf gV2: Cac Conf gV2 = Cac Conf gV2(262143)
+    lazy val uttCl entCac Conf gsV2: UttCl entCac Conf gsV2 = UttCl entCac Conf gsV2(
+      getTaxono Conf g = defaultCac Conf gV2,
+      getUttTaxono Conf g = defaultCac Conf gV2,
+      getLeaf ds = defaultCac Conf gV2,
+      getLeafUttEnt  es = defaultCac Conf gV2
     )
 
-    // CachedUttClient to use StratoClient
-    lazy val cachedUttClientV2: CachedUttClientV2 = new CachedUttClientV2(
-      stratoClient = stratoClient,
-      env = Environment.Prod,
-      cacheConfigs = uttClientCacheConfigsV2,
-      statsReceiver = statsReceiver.scope("CachedUttClient")
+    // Cac dUttCl ent to use StratoCl ent
+    lazy val cac dUttCl entV2: Cac dUttCl entV2 = new Cac dUttCl entV2(
+      stratoCl ent = stratoCl ent,
+      env = Env ron nt.Prod,
+      cac Conf gs = uttCl entCac Conf gsV2,
+      statsRece ver = statsRece ver.scope("Cac dUttCl ent")
     )
-    new UttClient(cachedUttClientV2, statsReceiver)
+    new UttCl ent(cac dUttCl entV2, statsRece ver)
   }
 }

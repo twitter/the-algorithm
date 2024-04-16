@@ -1,23 +1,23 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ModuleItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.Module em
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ModuleItemMarshaller @Inject() (
-  timelineItemMarshaller: TimelineItemMarshaller,
-  moduleItemTreeDisplayMarshaller: ModuleItemTreeDisplayMarshaller) {
+@S ngleton
+class Module emMarshaller @ nject() (
+  t  l ne emMarshaller: T  l ne emMarshaller,
+  module emTreeD splayMarshaller: Module emTreeD splayMarshaller) {
 
-  def apply(moduleItem: ModuleItem, moduleEntryId: String): urt.ModuleItem = urt.ModuleItem(
-    /* Module items have an identifier comprising both the module entry id and the module item id.
-    Some URT clients will deduplicate globally across different modules.
-    Using the entry id as a prefix ensures that deduplication only happens within a single module,
-    which we believe better aligns with engineers' intentions. */
-    entryId = moduleEntryId + "-" + moduleItem.item.entryIdentifier,
-    item = timelineItemMarshaller(moduleItem.item),
-    dispensable = moduleItem.dispensable,
-    treeDisplay = moduleItem.treeDisplay.map(moduleItemTreeDisplayMarshaller.apply)
+  def apply(module em: Module em, moduleEntry d: Str ng): urt.Module em = urt.Module em(
+    /* Module  ems have an  dent f er compr s ng both t  module entry  d and t  module  em  d.
+    So  URT cl ents w ll dedupl cate globally across d fferent modules.
+    Us ng t  entry  d as a pref x ensures that dedupl cat on only happens w h n a s ngle module,
+    wh ch   bel eve better al gns w h eng neers'  ntent ons. */
+    entry d = moduleEntry d + "-" + module em. em.entry dent f er,
+     em = t  l ne emMarshaller(module em. em),
+    d spensable = module em.d spensable,
+    treeD splay = module em.treeD splay.map(module emTreeD splayMarshaller.apply)
   )
 }

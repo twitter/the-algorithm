@@ -1,47 +1,47 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.tw ter.s mclusters_v2.hdfs_s ces. nject ons
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaBinaryThrift
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.ml.api.thriftscala.Embedding
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaCompactThrift
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.ScalaB naryThr ft
+ mport com.tw ter.s mclusters_v2.thr ftscala._
+ mport com.tw ter.ml.ap .thr ftscala.Embedd ng
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.Long2B gEnd an
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.ScalaCompactThr ft
 
-object EntityEmbeddingsInjections {
+object Ent yEmbedd ngs nject ons {
 
-  final val EntitySimClustersEmbeddingInjection: KeyValInjection[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  f nal val Ent yS mClustersEmbedd ng nject on: KeyVal nject on[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] =
-    KeyValInjection(
-      ScalaBinaryThrift(SimClustersEmbeddingId),
-      ScalaBinaryThrift(SimClustersEmbedding)
+    KeyVal nject on(
+      ScalaB naryThr ft(S mClustersEmbedd ng d),
+      ScalaB naryThr ft(S mClustersEmbedd ng)
     )
 
-  final val InternalIdEmbeddingInjection: KeyValInjection[
-    SimClustersEmbeddingId,
-    InternalIdEmbedding
+  f nal val  nternal dEmbedd ng nject on: KeyVal nject on[
+    S mClustersEmbedd ng d,
+     nternal dEmbedd ng
   ] =
-    KeyValInjection(
-      ScalaBinaryThrift(SimClustersEmbeddingId),
-      ScalaBinaryThrift(InternalIdEmbedding)
+    KeyVal nject on(
+      ScalaB naryThr ft(S mClustersEmbedd ng d),
+      ScalaB naryThr ft( nternal dEmbedd ng)
     )
 
-  final val EntitySimClustersMultiEmbeddingInjection: KeyValInjection[
-    SimClustersMultiEmbeddingId,
-    SimClustersMultiEmbedding
+  f nal val Ent yS mClustersMult Embedd ng nject on: KeyVal nject on[
+    S mClustersMult Embedd ng d,
+    S mClustersMult Embedd ng
   ] =
-    KeyValInjection(
-      ScalaBinaryThrift(SimClustersMultiEmbeddingId),
-      ScalaBinaryThrift(SimClustersMultiEmbedding)
+    KeyVal nject on(
+      ScalaB naryThr ft(S mClustersMult Embedd ng d),
+      ScalaB naryThr ft(S mClustersMult Embedd ng)
     )
 
-  final val UserMbcgEmbeddingInjection: KeyValInjection[
+  f nal val UserMbcgEmbedd ng nject on: KeyVal nject on[
     Long,
-    Embedding
+    Embedd ng
   ] =
-    KeyValInjection[Long, Embedding](
-      Long2BigEndian,
-      ScalaCompactThrift(Embedding)
+    KeyVal nject on[Long, Embedd ng](
+      Long2B gEnd an,
+      ScalaCompactThr ft(Embedd ng)
     )
 }

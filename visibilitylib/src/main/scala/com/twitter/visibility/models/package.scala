@@ -1,5 +1,5 @@
-package com.twitter.visibility
+package com.tw ter.v s b l y
 
 package object models {
-  type CommunityId = Long
+  type Commun y d = Long
 }

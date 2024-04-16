@@ -1,38 +1,38 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.tw ter.fr gate.pushserv ce.model.ntab
 
-import com.twitter.frigate.common.base.SocialContextActions
-import com.twitter.frigate.common.base.SocialContextUserDetails
-import com.twitter.frigate.common.base.TweetAuthor
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.common.base.TweetCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.take.NotificationServiceSender
-import com.twitter.notificationservice.thriftscala.DisplayTextEntity
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.common.base.Soc alContextAct ons
+ mport com.tw ter.fr gate.common.base.Soc alContextUserDeta ls
+ mport com.tw ter.fr gate.common.base.T etAuthor
+ mport com.tw ter.fr gate.common.base.T etAuthorDeta ls
+ mport com.tw ter.fr gate.common.base.T etCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.take.Not f cat onServ ceSender
+ mport com.tw ter.not f cat onserv ce.thr ftscala.D splayTextEnt y
+ mport com.tw ter.ut l.Future
 
-trait TweetRetweetNTabRequestHydrator extends TweetNTabRequestHydrator with NTabSocialContext {
-  self: PushCandidate
-    with TweetCandidate
-    with TweetAuthor
-    with TweetAuthorDetails
-    with SocialContextActions
-    with SocialContextUserDetails =>
+tra  T etRet etNTabRequestHydrator extends T etNTabRequestHydrator w h NTabSoc alContext {
+  self: PushCand date
+    w h T etCand date
+    w h T etAuthor
+    w h T etAuthorDeta ls
+    w h Soc alContextAct ons
+    w h Soc alContextUserDeta ls =>
 
-  override lazy val displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] = {
+  overr de lazy val d splayTextEnt  esFut: Future[Seq[D splayTextEnt y]] = {
     Future
-      .join(
-        NotificationServiceSender
-          .getDisplayTextEntityFromUser(tweetAuthor, "tweetAuthorName", isBold = false),
-        NotificationServiceSender
-          .generateSocialContextTextEntities(
-            rankedNtabDisplayNamesAndIds(defaultToRecency = false),
-            otherCount)
+      .jo n(
+        Not f cat onServ ceSender
+          .getD splayTextEnt yFromUser(t etAuthor, "t etAuthorNa ",  sBold = false),
+        Not f cat onServ ceSender
+          .generateSoc alContextTextEnt  es(
+            rankedNtabD splayNa sAnd ds(defaultToRecency = false),
+            ot rCount)
       )
       .map {
-        case (authorDisplay, socialContextDisplay) =>
-          socialContextDisplay ++ authorDisplay
+        case (authorD splay, soc alContextD splay) =>
+          soc alContextD splay ++ authorD splay
       }
   }
 
-  override lazy val facepileUsersFut: Future[Seq[Long]] = Future.value(socialContextUserIds)
+  overr de lazy val facep leUsersFut: Future[Seq[Long]] = Future.value(soc alContextUser ds)
 }

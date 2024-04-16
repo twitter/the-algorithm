@@ -1,46 +1,46 @@
-package com.twitter.cr_mixer.ranker
+package com.tw ter.cr_m xer.ranker
 
-import com.twitter.cr_mixer.model.BlendedCandidate
-import com.twitter.cr_mixer.model.CrCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Future
-import com.twitter.util.JavaTimer
-import com.twitter.util.Time
-import com.twitter.util.Timer
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.cr_m xer.model.BlendedCand date
+ mport com.tw ter.cr_m xer.model.CrCand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model.RankedCand date
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.JavaT  r
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.ut l.T  r
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * CR-Mixer internal ranker
+ * CR-M xer  nternal ranker
  */
-@Singleton
-class SwitchRanker @Inject() (
+@S ngleton
+class Sw chRanker @ nject() (
   defaultRanker: DefaultRanker,
-  globalStats: StatsReceiver) {
-  private val stats: StatsReceiver = globalStats.scope(this.getClass.getCanonicalName)
-  implicit val timer: Timer = new JavaTimer(true)
+  globalStats: StatsRece ver) {
+  pr vate val stats: StatsRece ver = globalStats.scope(t .getClass.getCanon calNa )
+   mpl c  val t  r: T  r = new JavaT  r(true)
 
   def rank(
-    query: CrCandidateGeneratorQuery,
-    candidates: Seq[BlendedCandidate],
-  ): Future[Seq[RankedCandidate]] = {
-    defaultRanker.rank(candidates)
+    query: CrCand dateGeneratorQuery,
+    cand dates: Seq[BlendedCand date],
+  ): Future[Seq[RankedCand date]] = {
+    defaultRanker.rank(cand dates)
   }
 
 }
 
-object SwitchRanker {
+object Sw chRanker {
 
-  /** Prefers candidates generated from sources with the latest timestamps.
-   * The newer the source signal, the higher a candidate ranks.
-   * This ordering biases against consumer-based candidates because their timestamp defaults to 0
+  /** Prefers cand dates generated from s ces w h t  latest t  stamps.
+   * T  ne r t  s ce s gnal, t  h g r a cand date ranks.
+   * T  order ng b ases aga nst consu r-based cand dates because t  r t  stamp defaults to 0
    */
-  val TimestampOrder: Ordering[RankedCandidate] =
-    math.Ordering
-      .by[RankedCandidate, Time](
-        _.reasonChosen.sourceInfoOpt
-          .flatMap(_.sourceEventTime)
-          .getOrElse(Time.fromMilliseconds(0L)))
+  val T  stampOrder: Order ng[RankedCand date] =
+    math.Order ng
+      .by[RankedCand date, T  ](
+        _.reasonChosen.s ce nfoOpt
+          .flatMap(_.s ceEventT  )
+          .getOrElse(T  .fromM ll seconds(0L)))
       .reverse
 }

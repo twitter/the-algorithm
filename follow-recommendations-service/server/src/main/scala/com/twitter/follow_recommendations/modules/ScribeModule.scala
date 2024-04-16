@@ -1,95 +1,95 @@
-package com.twitter.follow_recommendations.modules
+package com.tw ter.follow_recom ndat ons.modules
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.google.inject.name.Named
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.inject.TwitterModule
-import com.twitter.logging.BareFormatter
-import com.twitter.logging.HandlerFactory
-import com.twitter.logging.Level
-import com.twitter.logging.LoggerFactory
-import com.twitter.logging.NullHandler
-import com.twitter.logging.QueueingHandler
-import com.twitter.logging.ScribeHandler
+ mport com.google. nject.Prov des
+ mport com.google. nject.S ngleton
+ mport com.google. nject.na .Na d
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.constants.Gu ceNa dConstants
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.logg ng.BareFormatter
+ mport com.tw ter.logg ng.HandlerFactory
+ mport com.tw ter.logg ng.Level
+ mport com.tw ter.logg ng.LoggerFactory
+ mport com.tw ter.logg ng.NullHandler
+ mport com.tw ter.logg ng.Queue ngHandler
+ mport com.tw ter.logg ng.Scr beHandler
 
-object ScribeModule extends TwitterModule {
+object Scr beModule extends Tw terModule {
   val useProdLogger = flag(
-    name = "scribe.use_prod_loggers",
+    na  = "scr be.use_prod_loggers",
     default = false,
-    help = "whether to use production logging for service"
+     lp = "w t r to use product on logg ng for serv ce"
   )
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.CLIENT_EVENT_LOGGER)
-  def provideClientEventsLoggerFactory(stats: StatsReceiver): LoggerFactory = {
-    val loggerCategory = "client_event"
-    val clientEventsHandler: HandlerFactory = if (useProdLogger()) {
-      QueueingHandler(
-        maxQueueSize = 10000,
-        handler = ScribeHandler(
+  @Prov des
+  @S ngleton
+  @Na d(Gu ceNa dConstants.CL ENT_EVENT_LOGGER)
+  def prov deCl entEventsLoggerFactory(stats: StatsRece ver): LoggerFactory = {
+    val loggerCategory = "cl ent_event"
+    val cl entEventsHandler: HandlerFactory =  f (useProdLogger()) {
+      Queue ngHandler(
+        maxQueueS ze = 10000,
+        handler = Scr beHandler(
           category = loggerCategory,
           formatter = BareFormatter,
-          level = Some(Level.INFO),
-          statsReceiver = stats.scope("client_event_scribe")
+          level = So (Level. NFO),
+          statsRece ver = stats.scope("cl ent_event_scr be")
         )
       )
     } else { () => NullHandler }
     LoggerFactory(
-      node = "abdecider",
-      level = Some(Level.INFO),
+      node = "abdec der",
+      level = So (Level. NFO),
       useParents = false,
-      handlers = clientEventsHandler :: Nil
+      handlers = cl entEventsHandler :: N l
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.REQUEST_LOGGER)
-  def provideFollowRecommendationsLoggerFactory(stats: StatsReceiver): LoggerFactory = {
-    val loggerCategory = "follow_recommendations_logs"
-    val handlerFactory: HandlerFactory = if (useProdLogger()) {
-      QueueingHandler(
-        maxQueueSize = 10000,
-        handler = ScribeHandler(
+  @Prov des
+  @S ngleton
+  @Na d(Gu ceNa dConstants.REQUEST_LOGGER)
+  def prov deFollowRecom ndat onsLoggerFactory(stats: StatsRece ver): LoggerFactory = {
+    val loggerCategory = "follow_recom ndat ons_logs"
+    val handlerFactory: HandlerFactory =  f (useProdLogger()) {
+      Queue ngHandler(
+        maxQueueS ze = 10000,
+        handler = Scr beHandler(
           category = loggerCategory,
           formatter = BareFormatter,
-          level = Some(Level.INFO),
-          statsReceiver = stats.scope("follow_recommendations_logs_scribe")
+          level = So (Level. NFO),
+          statsRece ver = stats.scope("follow_recom ndat ons_logs_scr be")
         )
       )
     } else { () => NullHandler }
     LoggerFactory(
       node = loggerCategory,
-      level = Some(Level.INFO),
+      level = So (Level. NFO),
       useParents = false,
-      handlers = handlerFactory :: Nil
+      handlers = handlerFactory :: N l
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.FLOW_LOGGER)
-  def provideFrsRecommendationFlowLoggerFactory(stats: StatsReceiver): LoggerFactory = {
-    val loggerCategory = "frs_recommendation_flow_logs"
-    val handlerFactory: HandlerFactory = if (useProdLogger()) {
-      QueueingHandler(
-        maxQueueSize = 10000,
-        handler = ScribeHandler(
+  @Prov des
+  @S ngleton
+  @Na d(Gu ceNa dConstants.FLOW_LOGGER)
+  def prov deFrsRecom ndat onFlowLoggerFactory(stats: StatsRece ver): LoggerFactory = {
+    val loggerCategory = "frs_recom ndat on_flow_logs"
+    val handlerFactory: HandlerFactory =  f (useProdLogger()) {
+      Queue ngHandler(
+        maxQueueS ze = 10000,
+        handler = Scr beHandler(
           category = loggerCategory,
           formatter = BareFormatter,
-          level = Some(Level.INFO),
-          statsReceiver = stats.scope("frs_recommendation_flow_logs_scribe")
+          level = So (Level. NFO),
+          statsRece ver = stats.scope("frs_recom ndat on_flow_logs_scr be")
         )
       )
     } else { () => NullHandler }
     LoggerFactory(
       node = loggerCategory,
-      level = Some(Level.INFO),
+      level = So (Level. NFO),
       useParents = false,
-      handlers = handlerFactory :: Nil
+      handlers = handlerFactory :: N l
     )
   }
 }

@@ -1,16 +1,16 @@
-package com.twitter.visibility.models
+package com.tw ter.v s b l y.models
 
-trait UnitOfDiversion {
+tra  Un OfD vers on {
 
-  def apply: (String, Any)
+  def apply: (Str ng, Any)
 }
 
-object UnitOfDiversion {
-  case class ConversationId(conversationId: Long) extends UnitOfDiversion {
-    override def apply: (String, Any) = ("conversation_id", conversationId)
+object Un OfD vers on {
+  case class Conversat on d(conversat on d: Long) extends Un OfD vers on {
+    overr de def apply: (Str ng, Any) = ("conversat on_ d", conversat on d)
   }
 
-  case class TweetId(tweetId: Long) extends UnitOfDiversion {
-    override def apply: (String, Any) = ("tweet_id", tweetId)
+  case class T et d(t et d: Long) extends Un OfD vers on {
+    overr de def apply: (Str ng, Any) = ("t et_ d", t et d)
   }
 }

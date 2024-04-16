@@ -1,22 +1,22 @@
-package com.twitter.follow_recommendations.common.utils
+package com.tw ter.follow_recom ndat ons.common.ut ls
 
-object CollectionUtil {
+object Collect onUt l {
 
   /**
-   * Transposes a sequence of sequences. As opposed to the Scala collection library version
-   * of transpose, the sequences do not have to have the same length.
+   * Transposes a sequence of sequences. As opposed to t  Scala collect on l brary vers on
+   * of transpose, t  sequences do not have to have t  sa  length.
    *
    * Example:
-   * transpose(immutable.Seq(immutable.Seq(1,2,3), immutable.Seq(4,5), immutable.Seq(6,7)))
-   *   => immutable.Seq(immutable.Seq(1, 4, 6), immutable.Seq(2, 5, 7), immutable.Seq(3))
+   * transpose( mmutable.Seq( mmutable.Seq(1,2,3),  mmutable.Seq(4,5),  mmutable.Seq(6,7)))
+   *   =>  mmutable.Seq( mmutable.Seq(1, 4, 6),  mmutable.Seq(2, 5, 7),  mmutable.Seq(3))
    *
    * @param seq a sequence of sequences
-   * @tparam A the type of elements in the seq
-   * @return the transposed sequence of sequences
+   * @tparam A t  type of ele nts  n t  seq
+   * @return t  transposed sequence of sequences
    */
   def transposeLazy[A](seq: Seq[Seq[A]]): Stream[Seq[A]] =
-    seq.filter(_.nonEmpty) match {
-      case Nil => Stream.empty
-      case ys => ys.map(_.head) #:: transposeLazy(ys.map(_.tail))
+    seq.f lter(_.nonEmpty) match {
+      case N l => Stream.empty
+      case ys => ys.map(_. ad) #:: transposeLazy(ys.map(_.ta l))
     }
 }

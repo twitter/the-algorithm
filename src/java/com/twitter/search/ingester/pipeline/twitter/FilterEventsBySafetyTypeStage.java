@@ -1,278 +1,278 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.tw ter.search. ngester.p pel ne.tw ter;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-import javax.annotation.Nonnull;
+ mport java.ut l.Map;
+ mport java.ut l.concurrent.ConcurrentHashMap;
+ mport java.ut l.concurrent.T  Un ;
+ mport javax.annotat on.Nonnull;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducedTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons.p pel ne.StageExcept on;
+ mport org.apac .commons.p pel ne.val dat on.Consu dTypes;
+ mport org.apac .commons.p pel ne.val dat on.ProducedTypes;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchDelayStats;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.ingester.model.IngesterTweetEvent;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
-import com.twitter.tweetypie.thriftjava.Tweet;
-import com.twitter.tweetypie.thriftjava.TweetCreateEvent;
-import com.twitter.tweetypie.thriftjava.TweetEvent;
-import com.twitter.tweetypie.thriftjava.TweetEventData;
-import com.twitter.tweetypie.thriftjava.TweetEventFlags;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchDelayStats;
+ mport com.tw ter.search.common.part  on ng.snowflakeparser.Snowflake dParser;
+ mport com.tw ter.search. ngester.model. ngesterT etEvent;
+ mport com.tw ter.search. ngester.p pel ne.ut l.P pel neStageRunt  Except on;
+ mport com.tw ter.t etyp e.thr ftjava.T et;
+ mport com.tw ter.t etyp e.thr ftjava.T etCreateEvent;
+ mport com.tw ter.t etyp e.thr ftjava.T etEvent;
+ mport com.tw ter.t etyp e.thr ftjava.T etEventData;
+ mport com.tw ter.t etyp e.thr ftjava.T etEventFlags;
 
 /**
- * Only lets through the create events that match the specified safety type.
+ * Only lets through t  create events that match t  spec f ed safety type.
  * Also lets through all delete events.
  */
-@ConsumedTypes(IngesterTweetEvent.class)
-@ProducedTypes(IngesterTweetEvent.class)
-public class FilterEventsBySafetyTypeStage extends TwitterBaseStage
-        <IngesterTweetEvent, IngesterTweetEvent> {
-  private static final Logger LOG = LoggerFactory.getLogger(FilterEventsBySafetyTypeStage.class);
+@Consu dTypes( ngesterT etEvent.class)
+@ProducedTypes( ngesterT etEvent.class)
+publ c class F lterEventsBySafetyTypeStage extends Tw terBaseStage
+        < ngesterT etEvent,  ngesterT etEvent> {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(F lterEventsBySafetyTypeStage.class);
 
-  private SearchCounter totalEventsCount;
-  private SearchCounter createEventsCount;
-  private SearchCounter createPublicEventsCount;
-  private SearchCounter createProtectedEventsCount;
-  private SearchCounter createRestrictedEventsCount;
-  private SearchCounter createInvalidSafetyTypeCount;
-  private SearchCounter deleteEventsCount;
-  private SearchCounter deletePublicEventsCount;
-  private SearchCounter deleteProtectedEventsCount;
-  private SearchCounter deleteRestrictedEventsCount;
-  private SearchCounter deleteInvalidSafetyTypeCount;
-  private SearchCounter otherEventsCount;
+  pr vate SearchCounter totalEventsCount;
+  pr vate SearchCounter createEventsCount;
+  pr vate SearchCounter createPubl cEventsCount;
+  pr vate SearchCounter createProtectedEventsCount;
+  pr vate SearchCounter createRestr ctedEventsCount;
+  pr vate SearchCounter create nval dSafetyTypeCount;
+  pr vate SearchCounter deleteEventsCount;
+  pr vate SearchCounter deletePubl cEventsCount;
+  pr vate SearchCounter deleteProtectedEventsCount;
+  pr vate SearchCounter deleteRestr ctedEventsCount;
+  pr vate SearchCounter delete nval dSafetyTypeCount;
+  pr vate SearchCounter ot rEventsCount;
 
-  private SearchDelayStats tweetCreateDelayStats;
+  pr vate SearchDelayStats t etCreateDelayStats;
 
-  private long tweetCreateLatencyLogThresholdMillis = -1;
-  private SafetyType safetyType = null;
-  private Map<String, Map<String, SearchCounter>> invalidSafetyTypeByEventTypeStatMap =
+  pr vate long t etCreateLatencyLogThresholdM ll s = -1;
+  pr vate SafetyType safetyType = null;
+  pr vate Map<Str ng, Map<Str ng, SearchCounter>>  nval dSafetyTypeByEventTypeStatMap =
           new ConcurrentHashMap<>();
 
-  public FilterEventsBySafetyTypeStage() { }
+  publ c F lterEventsBySafetyTypeStage() { }
 
-  public FilterEventsBySafetyTypeStage(String safetyType, long tweetCreateLatencyThresholdMillis) {
+  publ c F lterEventsBySafetyTypeStage(Str ng safetyType, long t etCreateLatencyThresholdM ll s) {
     setSafetyType(safetyType);
-    this.tweetCreateLatencyLogThresholdMillis = tweetCreateLatencyThresholdMillis;
+    t .t etCreateLatencyLogThresholdM ll s = t etCreateLatencyThresholdM ll s;
   }
 
   /**
-   * To be called by XML config. Can be made private after we delete ACP code.
+   * To be called by XML conf g. Can be made pr vate after   delete ACP code.
    */
-  public void setSafetyType(@Nonnull String safetyTypeString) {
-    this.safetyType = SafetyType.valueOf(safetyTypeString);
-    if (this.safetyType == SafetyType.INVALID) {
-      throw new UnsupportedOperationException(
-              "Can't create a stage that permits 'INVALID' safetytypes");
+  publ c vo d setSafetyType(@Nonnull Str ng safetyTypeStr ng) {
+    t .safetyType = SafetyType.valueOf(safetyTypeStr ng);
+     f (t .safetyType == SafetyType. NVAL D) {
+      throw new UnsupportedOperat onExcept on(
+              "Can't create a stage that perm s ' NVAL D' safetytypes");
     }
   }
 
-  @Override
-  protected void initStats() {
-    super.initStats();
-    innerSetupStats();
+  @Overr de
+  protected vo d  n Stats() {
+    super. n Stats();
+     nnerSetupStats();
   }
 
-  @Override
-  protected void innerSetupStats() {
-    totalEventsCount = SearchCounter.export(getStageNamePrefix() + "_total_events_count");
-    createEventsCount = SearchCounter.export(getStageNamePrefix() + "_create_events_count");
-    createPublicEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_create_public_events_count");
+  @Overr de
+  protected vo d  nnerSetupStats() {
+    totalEventsCount = SearchCounter.export(getStageNa Pref x() + "_total_events_count");
+    createEventsCount = SearchCounter.export(getStageNa Pref x() + "_create_events_count");
+    createPubl cEventsCount =
+            SearchCounter.export(getStageNa Pref x() + "_create_publ c_events_count");
     createProtectedEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_create_protected_events_count");
-    createRestrictedEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_create_restricted_events_count");
-    createInvalidSafetyTypeCount =
-            SearchCounter.export(getStageNamePrefix() + "_create_missing_or_unknown_safetytype");
+            SearchCounter.export(getStageNa Pref x() + "_create_protected_events_count");
+    createRestr ctedEventsCount =
+            SearchCounter.export(getStageNa Pref x() + "_create_restr cted_events_count");
+    create nval dSafetyTypeCount =
+            SearchCounter.export(getStageNa Pref x() + "_create_m ss ng_or_unknown_safetytype");
     deleteEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_delete_events_count");
-    deletePublicEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_delete_public_events_count");
+            SearchCounter.export(getStageNa Pref x() + "_delete_events_count");
+    deletePubl cEventsCount =
+            SearchCounter.export(getStageNa Pref x() + "_delete_publ c_events_count");
     deleteProtectedEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_delete_protected_events_count");
-    deleteRestrictedEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_delete_restricted_events_count");
-    deleteInvalidSafetyTypeCount =
-            SearchCounter.export(getStageNamePrefix() + "_delete_missing_or_unknown_safetytype");
-    otherEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_other_events_count");
+            SearchCounter.export(getStageNa Pref x() + "_delete_protected_events_count");
+    deleteRestr ctedEventsCount =
+            SearchCounter.export(getStageNa Pref x() + "_delete_restr cted_events_count");
+    delete nval dSafetyTypeCount =
+            SearchCounter.export(getStageNa Pref x() + "_delete_m ss ng_or_unknown_safetytype");
+    ot rEventsCount =
+            SearchCounter.export(getStageNa Pref x() + "_ot r_events_count");
 
-    tweetCreateDelayStats = SearchDelayStats.export(
-            "create_histogram_" + getStageNamePrefix(), 90,
-            TimeUnit.SECONDS, TimeUnit.MILLISECONDS);
+    t etCreateDelayStats = SearchDelayStats.export(
+            "create_ togram_" + getStageNa Pref x(), 90,
+            T  Un .SECONDS, T  Un .M LL SECONDS);
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (obj instanceof IngesterTweetEvent) {
-      IngesterTweetEvent tweetEvent = (IngesterTweetEvent) obj;
-      if (tryToRecordCreateLatency(tweetEvent)) {
-        emitAndCount(tweetEvent);
+  @Overr de
+  publ c vo d  nnerProcess(Object obj) throws StageExcept on {
+     f (obj  nstanceof  ngesterT etEvent) {
+       ngesterT etEvent t etEvent = ( ngesterT etEvent) obj;
+       f (tryToRecordCreateLatency(t etEvent)) {
+        em AndCount(t etEvent);
       }
     } else {
-      throw new StageException(this, "Object is not a IngesterTweetEvent: " + obj);
+      throw new StageExcept on(t , "Object  s not a  ngesterT etEvent: " + obj);
     }
   }
 
-  @Override
-  protected IngesterTweetEvent innerRunStageV2(IngesterTweetEvent tweetEvent) {
-    if (!tryToRecordCreateLatency(tweetEvent)) {
-      throw new PipelineStageRuntimeException("Event does not have to pass to the next stage.");
+  @Overr de
+  protected  ngesterT etEvent  nnerRunStageV2( ngesterT etEvent t etEvent) {
+     f (!tryToRecordCreateLatency(t etEvent)) {
+      throw new P pel neStageRunt  Except on("Event does not have to pass to t  next stage.");
     }
-    return tweetEvent;
+    return t etEvent;
   }
 
-  private boolean tryToRecordCreateLatency(IngesterTweetEvent tweetEvent) {
-    incrementCounters(tweetEvent);
-    boolean shouldEmit = shouldEmit(tweetEvent);
-    if (shouldEmit) {
-      if (isCreateEvent(tweetEvent.getData())) {
-        recordCreateLatency(tweetEvent.getData().getTweet_create_event());
+  pr vate boolean tryToRecordCreateLatency( ngesterT etEvent t etEvent) {
+     ncre ntCounters(t etEvent);
+    boolean shouldEm  = shouldEm (t etEvent);
+     f (shouldEm ) {
+       f ( sCreateEvent(t etEvent.getData())) {
+        recordCreateLatency(t etEvent.getData().getT et_create_event());
       }
     }
-    return shouldEmit;
+    return shouldEm ;
   }
 
-  private void incrementCounters(@Nonnull TweetEvent tweetEvent) {
-    totalEventsCount.increment();
-    SafetyType eventSafetyType = getEventSafetyType(tweetEvent);
+  pr vate vo d  ncre ntCounters(@Nonnull T etEvent t etEvent) {
+    totalEventsCount. ncre nt();
+    SafetyType eventSafetyType = getEventSafetyType(t etEvent);
 
-    if (isCreateEvent(tweetEvent.getData())) {
-      createEventsCount.increment();
-      switch (eventSafetyType) {
-        case PUBLIC:
-          createPublicEventsCount.increment();
+     f ( sCreateEvent(t etEvent.getData())) {
+      createEventsCount. ncre nt();
+      sw ch (eventSafetyType) {
+        case PUBL C:
+          createPubl cEventsCount. ncre nt();
           break;
         case PROTECTED:
-          createProtectedEventsCount.increment();
+          createProtectedEventsCount. ncre nt();
           break;
-        case RESTRICTED:
-          createRestrictedEventsCount.increment();
+        case RESTR CTED:
+          createRestr ctedEventsCount. ncre nt();
           break;
         default:
-          createInvalidSafetyTypeCount.increment();
-          incrementInvalidSafetyTypeStatMap(tweetEvent, "create");
+          create nval dSafetyTypeCount. ncre nt();
+           ncre nt nval dSafetyTypeStatMap(t etEvent, "create");
       }
-    } else if (isDeleteEvent(tweetEvent.getData())) {
-      deleteEventsCount.increment();
-      switch (eventSafetyType) {
-        case PUBLIC:
-          deletePublicEventsCount.increment();
+    } else  f ( sDeleteEvent(t etEvent.getData())) {
+      deleteEventsCount. ncre nt();
+      sw ch (eventSafetyType) {
+        case PUBL C:
+          deletePubl cEventsCount. ncre nt();
           break;
         case PROTECTED:
-          deleteProtectedEventsCount.increment();
+          deleteProtectedEventsCount. ncre nt();
           break;
-        case RESTRICTED:
-          deleteRestrictedEventsCount.increment();
+        case RESTR CTED:
+          deleteRestr ctedEventsCount. ncre nt();
           break;
         default:
-          deleteInvalidSafetyTypeCount.increment();
-          incrementInvalidSafetyTypeStatMap(tweetEvent, "delete");
+          delete nval dSafetyTypeCount. ncre nt();
+           ncre nt nval dSafetyTypeStatMap(t etEvent, "delete");
       }
     } else {
-      otherEventsCount.increment();
+      ot rEventsCount. ncre nt();
     }
   }
 
-  private void incrementInvalidSafetyTypeStatMap(TweetEvent tweetEvent, String eventType) {
-    com.twitter.tweetypie.thriftjava.SafetyType thriftSafetyType =
-            tweetEvent.getFlags().getSafety_type();
-    String safetyTypeString =
-            thriftSafetyType == null ? "null" : thriftSafetyType.toString().toLowerCase();
-    invalidSafetyTypeByEventTypeStatMap.putIfAbsent(eventType, new ConcurrentHashMap<>());
-    SearchCounter stat = invalidSafetyTypeByEventTypeStatMap.get(eventType).computeIfAbsent(
-            safetyTypeString,
+  pr vate vo d  ncre nt nval dSafetyTypeStatMap(T etEvent t etEvent, Str ng eventType) {
+    com.tw ter.t etyp e.thr ftjava.SafetyType thr ftSafetyType =
+            t etEvent.getFlags().getSafety_type();
+    Str ng safetyTypeStr ng =
+            thr ftSafetyType == null ? "null" : thr ftSafetyType.toStr ng().toLo rCase();
+     nval dSafetyTypeByEventTypeStatMap.put fAbsent(eventType, new ConcurrentHashMap<>());
+    SearchCounter stat =  nval dSafetyTypeByEventTypeStatMap.get(eventType).compute fAbsent(
+            safetyTypeStr ng,
             safetyTypeStr -> SearchCounter.export(
-                    getStageNamePrefix()
-                            + String.format("_%s_missing_or_unknown_safetytype_%s",
+                    getStageNa Pref x()
+                            + Str ng.format("_%s_m ss ng_or_unknown_safetytype_%s",
                             eventType, safetyTypeStr)));
-    stat.increment();
+    stat. ncre nt();
   }
 
-  @VisibleForTesting
-  boolean shouldEmit(@Nonnull TweetEvent tweetEvent) {
-    // Do not emit any undelete events.
-    if (isUndeleteEvent(tweetEvent.getData())) {
+  @V s bleForTest ng
+  boolean shouldEm (@Nonnull T etEvent t etEvent) {
+    // Do not em  any undelete events.
+     f ( sUndeleteEvent(t etEvent.getData())) {
       return false;
     }
 
-    SafetyType eventSafetyType = getEventSafetyType(tweetEvent);
-    // Custom logic for REALTIME_CG cluster
-    if (safetyType == SafetyType.PUBLIC_OR_PROTECTED) {
-      return eventSafetyType == SafetyType.PUBLIC || eventSafetyType == SafetyType.PROTECTED;
+    SafetyType eventSafetyType = getEventSafetyType(t etEvent);
+    // Custom log c for REALT ME_CG cluster
+     f (safetyType == SafetyType.PUBL C_OR_PROTECTED) {
+      return eventSafetyType == SafetyType.PUBL C || eventSafetyType == SafetyType.PROTECTED;
     } else {
       return eventSafetyType == safetyType;
     }
   }
 
-  private SafetyType getEventSafetyType(@Nonnull TweetEvent tweetEvent) {
-    TweetEventFlags tweetEventFlags = tweetEvent.getFlags();
-    return SafetyType.fromThriftSafetyType(tweetEventFlags.getSafety_type());
+  pr vate SafetyType getEventSafetyType(@Nonnull T etEvent t etEvent) {
+    T etEventFlags t etEventFlags = t etEvent.getFlags();
+    return SafetyType.fromThr ftSafetyType(t etEventFlags.getSafety_type());
   }
 
-  private boolean isCreateEvent(@Nonnull TweetEventData tweetEventData) {
-    return tweetEventData.isSet(TweetEventData._Fields.TWEET_CREATE_EVENT);
+  pr vate boolean  sCreateEvent(@Nonnull T etEventData t etEventData) {
+    return t etEventData. sSet(T etEventData._F elds.TWEET_CREATE_EVENT);
   }
 
-  private boolean isDeleteEvent(@Nonnull TweetEventData tweetEventData) {
-    return tweetEventData.isSet(TweetEventData._Fields.TWEET_DELETE_EVENT);
+  pr vate boolean  sDeleteEvent(@Nonnull T etEventData t etEventData) {
+    return t etEventData. sSet(T etEventData._F elds.TWEET_DELETE_EVENT);
   }
 
-  private boolean isUndeleteEvent(@Nonnull TweetEventData tweetEventData) {
-    return tweetEventData.isSet(TweetEventData._Fields.TWEET_UNDELETE_EVENT);
+  pr vate boolean  sUndeleteEvent(@Nonnull T etEventData t etEventData) {
+    return t etEventData. sSet(T etEventData._F elds.TWEET_UNDELETE_EVENT);
   }
 
-  private void recordCreateLatency(TweetCreateEvent tweetCreateEvent) {
-    Tweet tweet = tweetCreateEvent.getTweet();
-    if (tweet != null) {
-      long tweetCreateLatency =
-              clock.nowMillis() - SnowflakeIdParser.getTimestampFromTweetId(tweet.getId());
-      tweetCreateDelayStats.recordLatency(tweetCreateLatency, TimeUnit.MILLISECONDS);
-      if (tweetCreateLatency < 0) {
-        LOG.warn("Received a tweet created in the future: {}", tweet);
-      } else if (tweetCreateLatencyLogThresholdMillis > 0
-              && tweetCreateLatency > tweetCreateLatencyLogThresholdMillis) {
-        LOG.debug("Found late incoming tweet: {}. Create latency: {}ms. Tweet: {}",
-                tweet.getId(), tweetCreateLatency, tweet);
+  pr vate vo d recordCreateLatency(T etCreateEvent t etCreateEvent) {
+    T et t et = t etCreateEvent.getT et();
+     f (t et != null) {
+      long t etCreateLatency =
+              clock.nowM ll s() - Snowflake dParser.getT  stampFromT et d(t et.get d());
+      t etCreateDelayStats.recordLatency(t etCreateLatency, T  Un .M LL SECONDS);
+       f (t etCreateLatency < 0) {
+        LOG.warn("Rece ved a t et created  n t  future: {}", t et);
+      } else  f (t etCreateLatencyLogThresholdM ll s > 0
+              && t etCreateLatency > t etCreateLatencyLogThresholdM ll s) {
+        LOG.debug("Found late  ncom ng t et: {}. Create latency: {}ms. T et: {}",
+                t et.get d(), t etCreateLatency, t et);
       }
     }
   }
 
-  public void setTweetCreateLatencyLogThresholdMillis(long tweetCreateLatencyLogThresholdMillis) {
-    LOG.info("Setting tweetCreateLatencyLogThresholdMillis to {}.",
-            tweetCreateLatencyLogThresholdMillis);
-    this.tweetCreateLatencyLogThresholdMillis = tweetCreateLatencyLogThresholdMillis;
+  publ c vo d setT etCreateLatencyLogThresholdM ll s(long t etCreateLatencyLogThresholdM ll s) {
+    LOG. nfo("Sett ng t etCreateLatencyLogThresholdM ll s to {}.",
+            t etCreateLatencyLogThresholdM ll s);
+    t .t etCreateLatencyLogThresholdM ll s = t etCreateLatencyLogThresholdM ll s;
   }
 
-  public enum SafetyType {
-    PUBLIC,
+  publ c enum SafetyType {
+    PUBL C,
     PROTECTED,
-    RESTRICTED,
-    PUBLIC_OR_PROTECTED,
-    INVALID;
+    RESTR CTED,
+    PUBL C_OR_PROTECTED,
+     NVAL D;
 
-    /** Converts a tweetypie SafetyType instance to an instance of this enum. */
+    /** Converts a t etyp e SafetyType  nstance to an  nstance of t  enum. */
     @Nonnull
-    public static SafetyType fromThriftSafetyType(
-            com.twitter.tweetypie.thriftjava.SafetyType safetyType) {
-      if (safetyType == null) {
-        return INVALID;
+    publ c stat c SafetyType fromThr ftSafetyType(
+            com.tw ter.t etyp e.thr ftjava.SafetyType safetyType) {
+       f (safetyType == null) {
+        return  NVAL D;
       }
-      switch(safetyType) {
-        case PRIVATE:
+      sw ch(safetyType) {
+        case PR VATE:
           return PROTECTED;
-        case PUBLIC:
-          return PUBLIC;
-        case RESTRICTED:
-          return RESTRICTED;
+        case PUBL C:
+          return PUBL C;
+        case RESTR CTED:
+          return RESTR CTED;
         default:
-          return INVALID;
+          return  NVAL D;
       }
     }
   }

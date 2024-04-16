@@ -1,39 +1,39 @@
-package com.twitter.timelineranker.clients.content_features_cache
+package com.tw ter.t  l neranker.cl ents.content_features_cac 
 
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.Store
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelines.clients.memcache_common._
-import com.twitter.timelines.content_features.{thriftscala => thrift}
-import com.twitter.timelines.model.TweetId
-import com.twitter.util.Duration
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.b ject on.scrooge.CompactScalaCodec
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.storehaus.Store
+ mport com.tw ter.t  l neranker.recap.model.ContentFeatures
+ mport com.tw ter.t  l nes.cl ents. mcac _common._
+ mport com.tw ter.t  l nes.content_features.{thr ftscala => thr ft}
+ mport com.tw ter.t  l nes.model.T et d
+ mport com.tw ter.ut l.Durat on
 
 /**
- * Content features will be stored by tweetId
+ * Content features w ll be stored by t et d
  */
-class ContentFeaturesMemcacheBuilder(
-  config: StorehausMemcacheConfig,
-  ttl: Duration,
-  statsReceiver: StatsReceiver) {
-  private[this] val scalaToThriftInjection: Injection[ContentFeatures, thrift.ContentFeatures] =
-    Injection.build[ContentFeatures, thrift.ContentFeatures](_.toThrift)(
-      ContentFeatures.tryFromThrift)
+class ContentFeatures mcac Bu lder(
+  conf g: Storehaus mcac Conf g,
+  ttl: Durat on,
+  statsRece ver: StatsRece ver) {
+  pr vate[t ] val scalaToThr ft nject on:  nject on[ContentFeatures, thr ft.ContentFeatures] =
+     nject on.bu ld[ContentFeatures, thr ft.ContentFeatures](_.toThr ft)(
+      ContentFeatures.tryFromThr ft)
 
-  private[this] val thriftToBytesInjection: Injection[thrift.ContentFeatures, Array[Byte]] =
-    CompactScalaCodec(thrift.ContentFeatures)
+  pr vate[t ] val thr ftToBytes nject on:  nject on[thr ft.ContentFeatures, Array[Byte]] =
+    CompactScalaCodec(thr ft.ContentFeatures)
 
-  private[this] implicit val valueInjection: Injection[ContentFeatures, Array[Byte]] =
-    scalaToThriftInjection.andThen(thriftToBytesInjection)
+  pr vate[t ]  mpl c  val value nject on:  nject on[ContentFeatures, Array[Byte]] =
+    scalaToThr ft nject on.andT n(thr ftToBytes nject on)
 
-  private[this] val underlyingBuilder =
-    new MemcacheStoreBuilder[TweetId, ContentFeatures](
-      config = config,
-      scopeName = "contentFeaturesCache",
-      statsReceiver = statsReceiver,
+  pr vate[t ] val underly ngBu lder =
+    new  mcac StoreBu lder[T et d, ContentFeatures](
+      conf g = conf g,
+      scopeNa  = "contentFeaturesCac ",
+      statsRece ver = statsRece ver,
       ttl = ttl
     )
 
-  def build(): Store[TweetId, ContentFeatures] = underlyingBuilder.build()
+  def bu ld(): Store[T et d, ContentFeatures] = underly ngBu lder.bu ld()
 }

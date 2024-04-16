@@ -1,74 +1,74 @@
-package com.twitter.product_mixer.core.module.product_mixer_flags
+package com.tw ter.product_m xer.core.module.product_m xer_flags
 
-import com.twitter.inject.annotations.Flags
-import com.twitter.inject.Injector
-import com.twitter.inject.TwitterModule
-import com.twitter.util.Duration
+ mport com.tw ter. nject.annotat ons.Flags
+ mport com.tw ter. nject. njector
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.ut l.Durat on
 
-object ProductMixerFlagModule extends TwitterModule {
-  final val ServiceLocal = "service.local"
-  final val ConfigRepoLocalPath = "configrepo.local_path"
-  final val FeatureSwitchesPath = "feature_switches.path"
-  final val StratoLocalRequestTimeout = "strato.local.request_timeout"
-  final val ScribeABImpressions = "scribe.ab_impressions"
-  final val PipelineExecutionLoggerAllowList = "pipeline_execution_logger.allow_list"
+object ProductM xerFlagModule extends Tw terModule {
+  f nal val Serv ceLocal = "serv ce.local"
+  f nal val Conf gRepoLocalPath = "conf grepo.local_path"
+  f nal val FeatureSw c sPath = "feature_sw c s.path"
+  f nal val StratoLocalRequestT  out = "strato.local.request_t  out"
+  f nal val Scr beAB mpress ons = "scr be.ab_ mpress ons"
+  f nal val P pel neExecut onLoggerAllowL st = "p pel ne_execut on_logger.allow_l st"
 
   flag[Boolean](
-    name = ServiceLocal,
+    na  = Serv ceLocal,
     default = false,
-    help = "Is the server running locally or in a DC")
+     lp = " s t  server runn ng locally or  n a DC")
 
-  flag[String](
-    name = ConfigRepoLocalPath,
-    default = System.getProperty("user.home") + "/workspace/config",
-    help = "Path to your local config repo"
+  flag[Str ng](
+    na  = Conf gRepoLocalPath,
+    default = System.getProperty("user.ho ") + "/workspace/conf g",
+     lp = "Path to y  local conf g repo"
   )
 
   flag[Boolean](
-    name = ScribeABImpressions,
-    help = "Enable scribing of AB impressions"
+    na  = Scr beAB mpress ons,
+     lp = "Enable scr b ng of AB  mpress ons"
   )
 
-  flag[String](
-    name = FeatureSwitchesPath,
-    help = "Path to your local config repo"
+  flag[Str ng](
+    na  = FeatureSw c sPath,
+     lp = "Path to y  local conf g repo"
   )
 
-  flag[Duration](
-    name = StratoLocalRequestTimeout,
-    help = "Override the request timeout for Strato when running locally"
+  flag[Durat on](
+    na  = StratoLocalRequestT  out,
+     lp = "Overr de t  request t  out for Strato w n runn ng locally"
   )
 
-  flag[Seq[String]](
-    name = PipelineExecutionLoggerAllowList,
+  flag[Seq[Str ng]](
+    na  = P pel neExecut onLoggerAllowL st,
     default = Seq.empty,
-    help =
-      "Specify user role(s) for which detailed log messages (containing PII) can be made. Accepts a single role or a comma separated list 'a,b,c'"
+     lp =
+      "Spec fy user role(s) for wh ch deta led log  ssages (conta n ng P  ) can be made. Accepts a s ngle role or a comma separated l st 'a,b,c'"
   )
 
   /**
-   * Invoked at the end of server startup.
+   *  nvoked at t  end of server startup.
    *
-   * If we're running locally, we display a nice message and a link to the admin page
+   *  f  're runn ng locally,   d splay a n ce  ssage and a l nk to t  adm n page
    */
-  override def singletonPostWarmupComplete(injector: Injector): Unit = {
-    val isLocalService = injector.instance[Boolean](Flags.named(ServiceLocal))
-    if (isLocalService) {
-      // Extract service name from clientId since there isn't a specific flag for that
-      val clientId = injector.instance[String](Flags.named("thrift.clientId"))
-      val name = clientId.split("\\.")(0)
+  overr de def s ngletonPostWarmupComplete( njector:  njector): Un  = {
+    val  sLocalServ ce =  njector. nstance[Boolean](Flags.na d(Serv ceLocal))
+     f ( sLocalServ ce) {
+      // Extract serv ce na  from cl ent d s nce t re  sn't a spec f c flag for that
+      val cl ent d =  njector. nstance[Str ng](Flags.na d("thr ft.cl ent d"))
+      val na  = cl ent d.spl ("\\.")(0)
 
-      val adminPort = injector.instance[String](Flags.named("admin.port"))
-      val url = s"http://localhost$adminPort/"
+      val adm nPort =  njector. nstance[Str ng](Flags.na d("adm n.port"))
+      val url = s"http://localhost$adm nPort/"
 
-      // Print instead of log, so it goes on stdout and doesn't get the logging decorations.
-      // Update our local development recipe (local-development.rst) if making changes to this
-      // message.
-      println("===============================================================================")
-      println(s"Welcome to a Product Mixer Service, $name")
-      println(s"You can view the admin endpoint and thrift web forms at $url")
-      println("Looking for support? Have questions? #product-mixer on Slack.")
-      println("===============================================================================")
+      // Pr nt  nstead of log, so   goes on stdout and doesn't get t  logg ng decorat ons.
+      // Update   local develop nt rec pe (local-develop nt.rst)  f mak ng changes to t 
+      //  ssage.
+      pr ntln("===============================================================================")
+      pr ntln(s" lco  to a Product M xer Serv ce, $na ")
+      pr ntln(s"  can v ew t  adm n endpo nt and thr ft  b forms at $url")
+      pr ntln("Look ng for support? Have quest ons? #product-m xer on Slack.")
+      pr ntln("===============================================================================")
     }
   }
 }

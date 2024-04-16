@@ -1,19 +1,19 @@
-package com.twitter.timelines.data_processing.ml_util
+package com.tw ter.t  l nes.data_process ng.ml_ut l
 
-import com.twitter.ml.api.DataRecord
+ mport com.tw ter.ml.ap .DataRecord
 
-package object aggregation_framework {
-  object AggregateType extends Enumeration {
+package object aggregat on_fra work {
+  object AggregateType extends Enu rat on {
     type AggregateType = Value
-    val User, UserAuthor, UserEngager, UserMention, UserRequestHour, UserRequestDow,
-      UserOriginalAuthor, UserList, UserTopic, UserInferredTopic, UserMediaUnderstandingAnnotation =
+    val User, UserAuthor, UserEngager, User nt on, UserRequestH , UserRequestDow,
+      UserOr g nalAuthor, UserL st, UserTop c, User nferredTop c, User d aUnderstand ngAnnotat on =
       Value
   }
 
-  type AggregateUserEntityKey = (Long, AggregateType.Value, Option[Long])
+  type AggregateUserEnt yKey = (Long, AggregateType.Value, Opt on[Long])
 
-  case class MergedRecordsDescriptor(
-    userId: Long,
-    keyedRecords: Map[AggregateType.Value, Option[KeyedRecord]],
-    keyedRecordMaps: Map[AggregateType.Value, Option[KeyedRecordMap]])
+  case class  rgedRecordsDescr ptor(
+    user d: Long,
+    keyedRecords: Map[AggregateType.Value, Opt on[KeyedRecord]],
+    keyedRecordMaps: Map[AggregateType.Value, Opt on[KeyedRecordMap]])
 }

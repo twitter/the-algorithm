@@ -1,53 +1,53 @@
-package com.twitter.visibility.models
+package com.tw ter.v s b l y.models
 
-import com.twitter.context.TwitterContext
-import com.twitter.context.thriftscala.Viewer
-import com.twitter.featureswitches.{UserAgent => FSUserAgent}
-import com.twitter.finatra.request.util.AddressUtils
+ mport com.tw ter.context.Tw terContext
+ mport com.tw ter.context.thr ftscala.V e r
+ mport com.tw ter.featuresw c s.{UserAgent => FSUserAgent}
+ mport com.tw ter.f natra.request.ut l.AddressUt ls
 
-case class ViewerContext(
-  userId: Option[Long] = None,
-  guestId: Option[Long] = None,
-  userAgentStr: Option[String] = None,
-  clientApplicationId: Option[Long] = None,
-  auditIp: String = "0.0.0.0",
-  requestCountryCode: Option[String] = None,
-  requestLanguageCode: Option[String] = None,
-  deviceId: Option[String] = None,
-  ipTags: Set[String] = Set.empty,
-  isVerifiedCrawler: Boolean = false,
-  userRoles: Option[Set[String]] = None) {
-  val fsUserAgent: Option[FSUserAgent] = userAgentStr.flatMap(ua => FSUserAgent(userAgent = ua))
+case class V e rContext(
+  user d: Opt on[Long] = None,
+  guest d: Opt on[Long] = None,
+  userAgentStr: Opt on[Str ng] = None,
+  cl entAppl cat on d: Opt on[Long] = None,
+  aud  p: Str ng = "0.0.0.0",
+  requestCountryCode: Opt on[Str ng] = None,
+  requestLanguageCode: Opt on[Str ng] = None,
+  dev ce d: Opt on[Str ng] = None,
+   pTags: Set[Str ng] = Set.empty,
+   sVer f edCrawler: Boolean = false,
+  userRoles: Opt on[Set[Str ng]] = None) {
+  val fsUserAgent: Opt on[FSUserAgent] = userAgentStr.flatMap(ua => FSUserAgent(userAgent = ua))
 
-  val isTwOffice: Boolean = ipTags.contains(AddressUtils.TwofficeIpTag)
+  val  sTwOff ce: Boolean =  pTags.conta ns(AddressUt ls.Twoff ce pTag)
 }
 
-object ViewerContext {
-  def fromContext: ViewerContext = viewerContext.getOrElse(ViewerContext())
+object V e rContext {
+  def fromContext: V e rContext = v e rContext.getOrElse(V e rContext())
 
-  def fromContextWithViewerIdFallback(viewerId: Option[Long]): ViewerContext =
-    viewerContext
-      .map { viewer =>
-        if (viewer.userId.isEmpty) {
-          viewer.copy(userId = viewerId)
+  def fromContextW hV e r dFallback(v e r d: Opt on[Long]): V e rContext =
+    v e rContext
+      .map { v e r =>
+         f (v e r.user d. sEmpty) {
+          v e r.copy(user d = v e r d)
         } else {
-          viewer
+          v e r
         }
-      }.getOrElse(ViewerContext(viewerId))
+      }.getOrElse(V e rContext(v e r d))
 
-  private def viewerContext: Option[ViewerContext] =
-    TwitterContext(TwitterContextPermit)().map(apply)
+  pr vate def v e rContext: Opt on[V e rContext] =
+    Tw terContext(Tw terContextPerm )().map(apply)
 
-  def apply(viewer: Viewer): ViewerContext = new ViewerContext(
-    userId = viewer.userId,
-    guestId = viewer.guestId,
-    userAgentStr = viewer.userAgent,
-    clientApplicationId = viewer.clientApplicationId,
-    auditIp = viewer.auditIp.getOrElse("0.0.0.0"),
-    requestCountryCode = viewer.requestCountryCode collect { case value => value.toLowerCase },
-    requestLanguageCode = viewer.requestLanguageCode collect { case value => value.toLowerCase },
-    deviceId = viewer.deviceId,
-    ipTags = viewer.ipTags.toSet,
-    isVerifiedCrawler = viewer.isVerifiedCrawler.getOrElse(false)
+  def apply(v e r: V e r): V e rContext = new V e rContext(
+    user d = v e r.user d,
+    guest d = v e r.guest d,
+    userAgentStr = v e r.userAgent,
+    cl entAppl cat on d = v e r.cl entAppl cat on d,
+    aud  p = v e r.aud  p.getOrElse("0.0.0.0"),
+    requestCountryCode = v e r.requestCountryCode collect { case value => value.toLo rCase },
+    requestLanguageCode = v e r.requestLanguageCode collect { case value => value.toLo rCase },
+    dev ce d = v e r.dev ce d,
+     pTags = v e r. pTags.toSet,
+     sVer f edCrawler = v e r. sVer f edCrawler.getOrElse(false)
   )
 }

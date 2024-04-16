@@ -1,18 +1,18 @@
-package com.twitter.recos.user_user_graph
+package com.tw ter.recos.user_user_graph
 
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.tracing.{Trace, TraceId}
-import com.twitter.recos.user_user_graph.thriftscala._
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.f nagle.trac ng.{Trace, Trace d}
+ mport com.tw ter.recos.user_user_graph.thr ftscala._
+ mport com.tw ter.ut l.Future
 
 object UserUserGraph {
-  def traceId: TraceId = Trace.id
-  def clientId: Option[ClientId] = ClientId.current
+  def trace d: Trace d = Trace. d
+  def cl ent d: Opt on[Cl ent d] = Cl ent d.current
 }
 
-class UserUserGraph(recommendUsersHandler: RecommendUsersHandler)
-    extends thriftscala.UserUserGraph.MethodPerEndpoint {
+class UserUserGraph(recom ndUsersHandler: Recom ndUsersHandler)
+    extends thr ftscala.UserUserGraph. thodPerEndpo nt {
 
-  override def recommendUsers(request: RecommendUserRequest): Future[RecommendUserResponse] =
-    recommendUsersHandler(request)
+  overr de def recom ndUsers(request: Recom ndUserRequest): Future[Recom ndUserResponse] =
+    recom ndUsersHandler(request)
 }

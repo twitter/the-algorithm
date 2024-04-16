@@ -2,43 +2,43 @@ syntax = "proto3";
 
 package tensorflow;
 
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/types.proto";
+ mport "tensorflow/core/fra work/tensor_shape.proto";
+ mport "tensorflow/core/fra work/types.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "ResourceHandle";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/resource_handle_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "Res ceHandle";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.fra work";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/fra work/res ce_handle_go_proto";
 
-// Protocol buffer representing a handle to a tensorflow resource. Handles are
-// not valid across executions, but can be serialized back and forth from within
-// a single run.
-message ResourceHandleProto {
-  // Unique name for the device containing the resource.
-  string device = 1;
+// Protocol buffer represent ng a handle to a tensorflow res ce. Handles are
+// not val d across execut ons, but can be ser al zed back and forth from w h n
+// a s ngle run.
+ ssage Res ceHandleProto {
+  // Un que na  for t  dev ce conta n ng t  res ce.
+  str ng dev ce = 1;
 
-  // Container in which this resource is placed.
-  string container = 2;
+  // Conta ner  n wh ch t  res ce  s placed.
+  str ng conta ner = 2;
 
-  // Unique name of this resource.
-  string name = 3;
+  // Un que na  of t  res ce.
+  str ng na  = 3;
 
-  // Hash code for the type of the resource. Is only valid in the same device
-  // and in the same execution.
-  uint64 hash_code = 4;
+  // Hash code for t  type of t  res ce.  s only val d  n t  sa  dev ce
+  // and  n t  sa  execut on.
+  u nt64 hash_code = 4;
 
-  // For debug-only, the name of the type pointed to by this handle, if
-  // available.
-  string maybe_type_name = 5;
+  // For debug-only, t  na  of t  type po nted to by t  handle,  f
+  // ava lable.
+  str ng maybe_type_na  = 5;
 
-  // Protocol buffer representing a pair of (data type, tensor shape).
-  message DtypeAndShape {
+  // Protocol buffer represent ng a pa r of (data type, tensor shape).
+   ssage DtypeAndShape {
     DataType dtype = 1;
     TensorShapeProto shape = 2;
   }
 
-  // Data types and shapes for the underlying resource.
+  // Data types and shapes for t  underly ng res ce.
   repeated DtypeAndShape dtypes_and_shapes = 6;
 
   reserved 7;

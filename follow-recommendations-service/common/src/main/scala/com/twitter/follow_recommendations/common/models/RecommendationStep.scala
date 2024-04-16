@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
+ mport com.tw ter.follow_recom ndat ons.{thr ftscala => t}
+ mport com.tw ter.follow_recom ndat ons.logg ng.{thr ftscala => offl ne}
 
-case class RecommendationStep(
-  recommendations: Seq[FlowRecommendation],
-  followedUserIds: Set[Long]) {
+case class Recom ndat onStep(
+  recom ndat ons: Seq[FlowRecom ndat on],
+  follo dUser ds: Set[Long]) {
 
-  def toThrift: t.RecommendationStep = t.RecommendationStep(
-    recommendations = recommendations.map(_.toThrift),
-    followedUserIds = followedUserIds
+  def toThr ft: t.Recom ndat onStep = t.Recom ndat onStep(
+    recom ndat ons = recom ndat ons.map(_.toThr ft),
+    follo dUser ds = follo dUser ds
   )
 
-  def toOfflineThrift: offline.OfflineRecommendationStep =
-    offline.OfflineRecommendationStep(
-      recommendations = recommendations.map(_.toOfflineThrift),
-      followedUserIds = followedUserIds)
+  def toOffl neThr ft: offl ne.Offl neRecom ndat onStep =
+    offl ne.Offl neRecom ndat onStep(
+      recom ndat ons = recom ndat ons.map(_.toOffl neThr ft),
+      follo dUser ds = follo dUser ds)
 
 }
 
-object RecommendationStep {
+object Recom ndat onStep {
 
-  def fromThrift(recommendationStep: t.RecommendationStep): RecommendationStep = {
-    RecommendationStep(
-      recommendations = recommendationStep.recommendations.map(FlowRecommendation.fromThrift),
-      followedUserIds = recommendationStep.followedUserIds.toSet)
+  def fromThr ft(recom ndat onStep: t.Recom ndat onStep): Recom ndat onStep = {
+    Recom ndat onStep(
+      recom ndat ons = recom ndat onStep.recom ndat ons.map(FlowRecom ndat on.fromThr ft),
+      follo dUser ds = recom ndat onStep.follo dUser ds.toSet)
   }
 
 }

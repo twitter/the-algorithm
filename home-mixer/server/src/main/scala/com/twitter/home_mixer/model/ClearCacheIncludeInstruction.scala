@@ -1,43 +1,43 @@
-package com.twitter.home_mixer.model
+package com.tw ter.ho _m xer.model
 
-import com.twitter.home_mixer.model.request.DeviceContext.RequestContext
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.IncludeInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.ho _m xer.model.request.Dev ceContext.RequestContext
+ mport com.tw ter.ho _m xer.model.request.HasDev ceContext
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder. nclude nstruct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neModule
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t et.T et em
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
 /**
- * Include a clear cache timeline instruction when we satisfy these criteria:
- * - Request Provenance is "pull to refresh"
- * - Atleast N non-ad tweet entries in the response
+ *  nclude a clear cac  t  l ne  nstruct on w n   sat sfy t se cr er a:
+ * - Request Provenance  s "pull to refresh"
+ * - Atleast N non-ad t et entr es  n t  response
  *
- * This is to ensure that we have sufficient new content to justify jumping users to the
- * top of the new timelines response and don't add unnecessary load to backend systems
+ * T   s to ensure that   have suff c ent new content to just fy jump ng users to t 
+ * top of t  new t  l nes response and don't add unnecessary load to backend systems
  */
-case class ClearCacheIncludeInstruction(
+case class ClearCac  nclude nstruct on(
   enableParam: FSParam[Boolean],
-  minEntriesParam: FSBoundedParam[Int])
-    extends IncludeInstruction[PipelineQuery with HasDeviceContext] {
+  m nEntr esParam: FSBoundedParam[ nt])
+    extends  nclude nstruct on[P pel neQuery w h HasDev ceContext] {
 
-  override def apply(
-    query: PipelineQuery with HasDeviceContext,
-    entries: Seq[TimelineEntry]
+  overr de def apply(
+    query: P pel neQuery w h HasDev ceContext,
+    entr es: Seq[T  l neEntry]
   ): Boolean = {
     val enabled = query.params(enableParam)
 
     val ptr =
-      query.deviceContext.flatMap(_.requestContextValue).contains(RequestContext.PullToRefresh)
+      query.dev ceContext.flatMap(_.requestContextValue).conta ns(RequestContext.PullToRefresh)
 
-    val minTweets = query.params(minEntriesParam) <= entries.collect {
-      case item: TweetItem if item.promotedMetadata.isEmpty => 1
-      case module: TimelineModule if module.items.head.item.isInstanceOf[TweetItem] =>
-        module.items.size
+    val m nT ets = query.params(m nEntr esParam) <= entr es.collect {
+      case  em: T et em  f  em.promoted tadata. sEmpty => 1
+      case module: T  l neModule  f module. ems. ad. em. s nstanceOf[T et em] =>
+        module. ems.s ze
     }.sum
 
-    enabled && ptr && minTweets
+    enabled && ptr && m nT ets
   }
 }

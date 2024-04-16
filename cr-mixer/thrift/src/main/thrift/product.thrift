@@ -1,19 +1,19 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+na space java com.tw ter.cr_m xer.thr ftjava
+#@na space scala com.tw ter.cr_m xer.thr ftscala
+#@na space strato com.tw ter.cr_m xer
 
-# In CrMixer, one org should only have one Product
+#  n CrM xer, one org should only have one Product
 enum Product {
-  Home = 1
-  Notifications = 2
-  Email = 3
-  MoreTweetsModule = 4 # aka RUX
-  ImmersiveMediaViewer = 5
-  VideoCarousel = 6
-  ExploreTopics = 7
+  Ho  = 1
+  Not f cat ons = 2
+  Ema l = 3
+  MoreT etsModule = 4 # aka RUX
+   m rs ve d aV e r = 5
+  V deoCarousel = 6
+  ExploreTop cs = 7
   Ads = 8
-  HomeRealTime = 9 // Home Real-Time Tab is considered as a different Product surface to Home Tab. It's in early experiment phase.
-  TopicLandingPage = 10
-  HomeTopicsBackfill = 11
-  TopicTweetsStrato = 12
+  Ho RealT   = 9 // Ho  Real-T   Tab  s cons dered as a d fferent Product surface to Ho  Tab.  's  n early exper  nt phase.
+  Top cLand ngPage = 10
+  Ho Top csBackf ll = 11
+  Top cT etsStrato = 12
 }

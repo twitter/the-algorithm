@@ -1,40 +1,40 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.t  l ne_module
 
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.icon.BaseHorizonIconBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseModuleSocialContextBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleHeaderBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleHeaderDisplayTypeBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Classic
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleHeader
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. con.BaseHor zon conBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseStr
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.soc al_context.BaseModuleSoc alContextBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.t  l ne_module.BaseModule aderBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.t  l ne_module.BaseModule aderD splayTypeBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Class c
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata. mageVar ant
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Module ader
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-case class ModuleHeaderBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  textBuilder: BaseStr[Query, Candidate],
-  isSticky: Option[Boolean] = None,
-  moduleHeaderIconBuilder: Option[BaseHorizonIconBuilder[Query, Candidate]] = None,
-  customIcon: Option[ImageVariant] = None,
-  moduleSocialContextBuilder: Option[BaseModuleSocialContextBuilder[Query, Candidate]] = None,
-  moduleHeaderDisplayTypeBuilder: BaseModuleHeaderDisplayTypeBuilder[Query, Candidate] =
-    ModuleHeaderDisplayTypeBuilder(Classic))
-    extends BaseModuleHeaderBuilder[Query, Candidate] {
+case class Module aderBu lder[-Query <: P pel neQuery, -Cand date <: Un versalNoun[Any]](
+  textBu lder: BaseStr[Query, Cand date],
+   sSt cky: Opt on[Boolean] = None,
+  module ader conBu lder: Opt on[BaseHor zon conBu lder[Query, Cand date]] = None,
+  custom con: Opt on[ mageVar ant] = None,
+  moduleSoc alContextBu lder: Opt on[BaseModuleSoc alContextBu lder[Query, Cand date]] = None,
+  module aderD splayTypeBu lder: BaseModule aderD splayTypeBu lder[Query, Cand date] =
+    Module aderD splayTypeBu lder(Class c))
+    extends BaseModule aderBu lder[Query, Cand date] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Option[ModuleHeader] = {
-    val firstCandidate = candidates.head
-    Some(
-      ModuleHeader(
-        text = textBuilder(query, firstCandidate.candidate, firstCandidate.features),
-        sticky = isSticky,
-        customIcon = customIcon,
-        socialContext = moduleSocialContextBuilder.flatMap(_.apply(query, candidates)),
-        icon = moduleHeaderIconBuilder.flatMap(_.apply(query, candidates)),
-        moduleHeaderDisplayType = moduleHeaderDisplayTypeBuilder(query, candidates),
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): Opt on[Module ader] = {
+    val f rstCand date = cand dates. ad
+    So (
+      Module ader(
+        text = textBu lder(query, f rstCand date.cand date, f rstCand date.features),
+        st cky =  sSt cky,
+        custom con = custom con,
+        soc alContext = moduleSoc alContextBu lder.flatMap(_.apply(query, cand dates)),
+         con = module ader conBu lder.flatMap(_.apply(query, cand dates)),
+        module aderD splayType = module aderD splayTypeBu lder(query, cand dates),
       )
     )
   }

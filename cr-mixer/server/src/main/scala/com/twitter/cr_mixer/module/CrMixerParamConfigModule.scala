@@ -1,16 +1,16 @@
-package com.twitter.cr_mixer.module
+package com.tw ter.cr_m xer.module
 
-import com.google.inject.Provides
-import com.twitter.timelines.configapi.Config
-import com.twitter.cr_mixer.param.CrMixerParamConfig
-import com.twitter.inject.TwitterModule
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.t  l nes.conf gap .Conf g
+ mport com.tw ter.cr_m xer.param.CrM xerParamConf g
+ mport com.tw ter. nject.Tw terModule
+ mport javax. nject.S ngleton
 
-object CrMixerParamConfigModule extends TwitterModule {
+object CrM xerParamConf gModule extends Tw terModule {
 
-  @Provides
-  @Singleton
-  def provideConfig(): Config = {
-    CrMixerParamConfig.config
+  @Prov des
+  @S ngleton
+  def prov deConf g(): Conf g = {
+    CrM xerParamConf g.conf g
   }
 }

@@ -1,44 +1,44 @@
-package com.twitter.visibility.rules
+package com.tw ter.v s b l y.rules
 
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.IsFocalTweet
-import com.twitter.visibility.rules.Condition.Not
+ mport com.tw ter.v s b l y.rules.Cond  on.And
+ mport com.tw ter.v s b l y.rules.Cond  on. sFocalT et
+ mport com.tw ter.v s b l y.rules.Cond  on.Not
 
-object TombstoneIf {
+object Tombstone f {
 
-  object AuthorIsProtected
-      extends RuleWithConstantAction(
-        Tombstone(Epitaph.Protected),
+  object Author sProtected
+      extends RuleW hConstantAct on(
+        Tombstone(Ep aph.Protected),
         And(
-          Condition.LoggedOutOrViewerNotFollowingAuthor,
-          Condition.ProtectedAuthor
+          Cond  on.LoggedOutOrV e rNotFollow ngAuthor,
+          Cond  on.ProtectedAuthor
         )
       )
 
-  object ReplyIsModeratedByRootAuthor
-      extends RuleWithConstantAction(
-        Tombstone(Epitaph.Moderated),
+  object Reply sModeratedByRootAuthor
+      extends RuleW hConstantAct on(
+        Tombstone(Ep aph.Moderated),
         And(
-          Not(IsFocalTweet),
-          Condition.Moderated
+          Not( sFocalT et),
+          Cond  on.Moderated
         )
       )
 
-  object ViewerIsBlockedByAuthor
-      extends OnlyWhenNotAuthorViewerRule(
-        Tombstone(Epitaph.BlockedBy),
-        Condition.AuthorBlocksViewer
+  object V e r sBlockedByAuthor
+      extends OnlyW nNotAuthorV e rRule(
+        Tombstone(Ep aph.BlockedBy),
+        Cond  on.AuthorBlocksV e r
       )
 
-  object AuthorIsDeactivated
-      extends RuleWithConstantAction(
-        Tombstone(Epitaph.Deactivated),
-        Condition.DeactivatedAuthor
+  object Author sDeact vated
+      extends RuleW hConstantAct on(
+        Tombstone(Ep aph.Deact vated),
+        Cond  on.Deact vatedAuthor
       )
 
-  object AuthorIsSuspended
-      extends RuleWithConstantAction(
-        Tombstone(Epitaph.Suspended),
-        Condition.SuspendedAuthor
+  object Author sSuspended
+      extends RuleW hConstantAct on(
+        Tombstone(Ep aph.Suspended),
+        Cond  on.SuspendedAuthor
       )
 }

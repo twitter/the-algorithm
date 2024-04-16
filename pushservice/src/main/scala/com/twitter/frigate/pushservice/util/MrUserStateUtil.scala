@@ -1,16 +1,16 @@
-package com.twitter.frigate.pushservice.util
+package com.tw ter.fr gate.pushserv ce.ut l
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.TargetUser
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.TargetUser
 
-object MrUserStateUtil {
-  def updateMrUserStateStats(target: TargetUser)(implicit statsReceiver: StatsReceiver) = {
-    statsReceiver.counter("AllUserStates").incr()
+object MrUserStateUt l {
+  def updateMrUserStateStats(target: TargetUser)( mpl c  statsRece ver: StatsRece ver) = {
+    statsRece ver.counter("AllUserStates"). ncr()
     target.targetMrUserState.map {
-      case Some(state) =>
-        statsReceiver.counter(state.name).incr()
+      case So (state) =>
+        statsRece ver.counter(state.na ). ncr()
       case _ =>
-        statsReceiver.counter("UnknownUserState").incr()
+        statsRece ver.counter("UnknownUserState"). ncr()
     }
   }
 }

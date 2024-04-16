@@ -1,119 +1,119 @@
-package com.twitter.home_mixer.product.scored_tweets.response_transformer
+package com.tw ter.ho _m xer.product.scored_t ets.response_transfor r
 
-import com.twitter.home_mixer.marshaller.timelines.TopicContextFunctionalityTypeUnmarshaller
-import com.twitter.home_mixer.model.HomeFeatures.AncestorsFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIsBlueVerifiedFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIsCreatorFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIsGoldVerifiedFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIsGrayVerifiedFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIsLegacyVerifiedFeature
-import com.twitter.home_mixer.model.HomeFeatures.CachedCandidatePipelineIdentifierFeature
-import com.twitter.home_mixer.model.HomeFeatures.DirectedAtUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ExclusiveConversationAuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsReadFromCacheFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.LastScoredTimestampMsFeature
-import com.twitter.home_mixer.model.HomeFeatures.PerspectiveFilteredLikedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidFollowedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidLikedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.StreamToKafkaFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.model.HomeFeatures.TopicContextFunctionalityTypeFeature
-import com.twitter.home_mixer.model.HomeFeatures.TopicIdSocialContextFeature
-import com.twitter.home_mixer.model.HomeFeatures.TweetUrlsFeature
-import com.twitter.home_mixer.model.HomeFeatures.WeightedModelScoreFeature
-import com.twitter.home_mixer.{thriftscala => hmt}
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+ mport com.tw ter.ho _m xer.marshaller.t  l nes.Top cContextFunct onal yTypeUnmarshaller
+ mport com.tw ter.ho _m xer.model.Ho Features.AncestorsFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Author dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Author sBlueVer f edFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Author sCreatorFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Author sGoldVer f edFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Author sGrayVer f edFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Author sLegacyVer f edFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Cac dCand dateP pel ne dent f erFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.D rectedAtUser dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Exclus veConversat onAuthor dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nNetworkFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nReplyToT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nReplyToUser dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. sReadFromCac Feature
+ mport com.tw ter.ho _m xer.model.Ho Features. sRet etFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.LastScoredT  stampMsFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Perspect veF lteredL kedByUser dsFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.QuotedT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.QuotedUser dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.SGSVal dFollo dByUser dsFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.SGSVal dL kedByUser dsFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.ScoreFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.S ceT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.S ceUser dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.StreamToKafkaFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.SuggestTypeFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Top cContextFunct onal yTypeFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Top c dSoc alContextFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.T etUrlsFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.  ghtedModelScoreFeature
+ mport com.tw ter.ho _m xer.{thr ftscala => hmt}
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Transfor r dent f er
 
-object CachedScoredTweetsResponseFeatureTransformer
-    extends CandidateFeatureTransformer[hmt.ScoredTweet] {
+object Cac dScoredT etsResponseFeatureTransfor r
+    extends Cand dateFeatureTransfor r[hmt.ScoredT et] {
 
-  override val identifier: TransformerIdentifier =
-    TransformerIdentifier("CachedScoredTweetsResponse")
+  overr de val  dent f er: Transfor r dent f er =
+    Transfor r dent f er("Cac dScoredT etsResponse")
 
-  override val features: Set[Feature[_, _]] = Set(
+  overr de val features: Set[Feature[_, _]] = Set(
     AncestorsFeature,
-    AuthorIdFeature,
-    AuthorIsBlueVerifiedFeature,
-    AuthorIsCreatorFeature,
-    AuthorIsGoldVerifiedFeature,
-    AuthorIsGrayVerifiedFeature,
-    AuthorIsLegacyVerifiedFeature,
-    CachedCandidatePipelineIdentifierFeature,
-    DirectedAtUserIdFeature,
-    ExclusiveConversationAuthorIdFeature,
-    InNetworkFeature,
-    InReplyToTweetIdFeature,
-    InReplyToUserIdFeature,
-    IsReadFromCacheFeature,
-    IsRetweetFeature,
-    LastScoredTimestampMsFeature,
-    PerspectiveFilteredLikedByUserIdsFeature,
-    QuotedTweetIdFeature,
-    QuotedUserIdFeature,
-    SGSValidFollowedByUserIdsFeature,
-    SGSValidLikedByUserIdsFeature,
+    Author dFeature,
+    Author sBlueVer f edFeature,
+    Author sCreatorFeature,
+    Author sGoldVer f edFeature,
+    Author sGrayVer f edFeature,
+    Author sLegacyVer f edFeature,
+    Cac dCand dateP pel ne dent f erFeature,
+    D rectedAtUser dFeature,
+    Exclus veConversat onAuthor dFeature,
+     nNetworkFeature,
+     nReplyToT et dFeature,
+     nReplyToUser dFeature,
+     sReadFromCac Feature,
+     sRet etFeature,
+    LastScoredT  stampMsFeature,
+    Perspect veF lteredL kedByUser dsFeature,
+    QuotedT et dFeature,
+    QuotedUser dFeature,
+    SGSVal dFollo dByUser dsFeature,
+    SGSVal dL kedByUser dsFeature,
     ScoreFeature,
-    SourceTweetIdFeature,
-    SourceUserIdFeature,
+    S ceT et dFeature,
+    S ceUser dFeature,
     StreamToKafkaFeature,
     SuggestTypeFeature,
-    TopicContextFunctionalityTypeFeature,
-    TopicIdSocialContextFeature,
-    TweetUrlsFeature,
-    WeightedModelScoreFeature
+    Top cContextFunct onal yTypeFeature,
+    Top c dSoc alContextFeature,
+    T etUrlsFeature,
+      ghtedModelScoreFeature
   )
 
-  override def transform(candidate: hmt.ScoredTweet): FeatureMap =
-    FeatureMapBuilder()
-      .add(AncestorsFeature, candidate.ancestors.getOrElse(Seq.empty))
-      .add(AuthorIdFeature, Some(candidate.authorId))
-      .add(AuthorIsBlueVerifiedFeature, candidate.authorMetadata.exists(_.blueVerified))
-      .add(AuthorIsGoldVerifiedFeature, candidate.authorMetadata.exists(_.goldVerified))
-      .add(AuthorIsGrayVerifiedFeature, candidate.authorMetadata.exists(_.grayVerified))
-      .add(AuthorIsLegacyVerifiedFeature, candidate.authorMetadata.exists(_.legacyVerified))
-      .add(AuthorIsCreatorFeature, candidate.authorMetadata.exists(_.creator))
-      .add(CachedCandidatePipelineIdentifierFeature, candidate.candidatePipelineIdentifier)
-      .add(DirectedAtUserIdFeature, candidate.directedAtUserId)
-      .add(ExclusiveConversationAuthorIdFeature, candidate.exclusiveConversationAuthorId)
-      .add(InNetworkFeature, candidate.inNetwork.getOrElse(true))
-      .add(InReplyToTweetIdFeature, candidate.inReplyToTweetId)
-      .add(InReplyToUserIdFeature, candidate.inReplyToUserId)
-      .add(IsReadFromCacheFeature, true)
-      .add(IsRetweetFeature, candidate.sourceTweetId.isDefined)
-      .add(LastScoredTimestampMsFeature, candidate.lastScoredTimestampMs)
+  overr de def transform(cand date: hmt.ScoredT et): FeatureMap =
+    FeatureMapBu lder()
+      .add(AncestorsFeature, cand date.ancestors.getOrElse(Seq.empty))
+      .add(Author dFeature, So (cand date.author d))
+      .add(Author sBlueVer f edFeature, cand date.author tadata.ex sts(_.blueVer f ed))
+      .add(Author sGoldVer f edFeature, cand date.author tadata.ex sts(_.goldVer f ed))
+      .add(Author sGrayVer f edFeature, cand date.author tadata.ex sts(_.grayVer f ed))
+      .add(Author sLegacyVer f edFeature, cand date.author tadata.ex sts(_.legacyVer f ed))
+      .add(Author sCreatorFeature, cand date.author tadata.ex sts(_.creator))
+      .add(Cac dCand dateP pel ne dent f erFeature, cand date.cand dateP pel ne dent f er)
+      .add(D rectedAtUser dFeature, cand date.d rectedAtUser d)
+      .add(Exclus veConversat onAuthor dFeature, cand date.exclus veConversat onAuthor d)
+      .add( nNetworkFeature, cand date. nNetwork.getOrElse(true))
+      .add( nReplyToT et dFeature, cand date. nReplyToT et d)
+      .add( nReplyToUser dFeature, cand date. nReplyToUser d)
+      .add( sReadFromCac Feature, true)
+      .add( sRet etFeature, cand date.s ceT et d. sDef ned)
+      .add(LastScoredT  stampMsFeature, cand date.lastScoredT  stampMs)
       .add(
-        PerspectiveFilteredLikedByUserIdsFeature,
-        candidate.perspectiveFilteredLikedByUserIds.getOrElse(Seq.empty))
-      .add(QuotedTweetIdFeature, candidate.quotedTweetId)
-      .add(QuotedUserIdFeature, candidate.quotedUserId)
-      .add(ScoreFeature, candidate.score)
-      .add(SGSValidLikedByUserIdsFeature, candidate.sgsValidLikedByUserIds.getOrElse(Seq.empty))
+        Perspect veF lteredL kedByUser dsFeature,
+        cand date.perspect veF lteredL kedByUser ds.getOrElse(Seq.empty))
+      .add(QuotedT et dFeature, cand date.quotedT et d)
+      .add(QuotedUser dFeature, cand date.quotedUser d)
+      .add(ScoreFeature, cand date.score)
+      .add(SGSVal dL kedByUser dsFeature, cand date.sgsVal dL kedByUser ds.getOrElse(Seq.empty))
       .add(
-        SGSValidFollowedByUserIdsFeature,
-        candidate.sgsValidFollowedByUserIds.getOrElse(Seq.empty))
-      .add(SourceTweetIdFeature, candidate.sourceTweetId)
-      .add(SourceUserIdFeature, candidate.sourceUserId)
+        SGSVal dFollo dByUser dsFeature,
+        cand date.sgsVal dFollo dByUser ds.getOrElse(Seq.empty))
+      .add(S ceT et dFeature, cand date.s ceT et d)
+      .add(S ceUser dFeature, cand date.s ceUser d)
       .add(StreamToKafkaFeature, false)
-      .add(SuggestTypeFeature, candidate.suggestType)
+      .add(SuggestTypeFeature, cand date.suggestType)
       .add(
-        TopicContextFunctionalityTypeFeature,
-        candidate.topicFunctionalityType.map(TopicContextFunctionalityTypeUnmarshaller(_)))
-      .add(TopicIdSocialContextFeature, candidate.topicId)
-      .add(TweetUrlsFeature, candidate.tweetUrls.getOrElse(Seq.empty))
-      .add(WeightedModelScoreFeature, candidate.score)
-      .build()
+        Top cContextFunct onal yTypeFeature,
+        cand date.top cFunct onal yType.map(Top cContextFunct onal yTypeUnmarshaller(_)))
+      .add(Top c dSoc alContextFeature, cand date.top c d)
+      .add(T etUrlsFeature, cand date.t etUrls.getOrElse(Seq.empty))
+      .add(  ghtedModelScoreFeature, cand date.score)
+      .bu ld()
 }

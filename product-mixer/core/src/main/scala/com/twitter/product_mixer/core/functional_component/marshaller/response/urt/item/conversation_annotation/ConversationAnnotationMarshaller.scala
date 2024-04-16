@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.conversation_annotation
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.conversat on_annotat on
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.conversation_annotation.ConversationAnnotation
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.conversat on_annotat on.Conversat onAnnotat on
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.r chtext.R chTextMarshaller
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ConversationAnnotationMarshaller @Inject() (
-  conversationAnnotationTypeMarshaller: ConversationAnnotationTypeMarshaller,
-  richTextMarshaller: RichTextMarshaller) {
+@S ngleton
+class Conversat onAnnotat onMarshaller @ nject() (
+  conversat onAnnotat onTypeMarshaller: Conversat onAnnotat onTypeMarshaller,
+  r chTextMarshaller: R chTextMarshaller) {
 
-  def apply(conversationAnnotation: ConversationAnnotation): urt.ConversationAnnotation = {
-    urt.ConversationAnnotation(
-      conversationAnnotationType =
-        conversationAnnotationTypeMarshaller(conversationAnnotation.conversationAnnotationType),
-      header = conversationAnnotation.header.map(richTextMarshaller(_)),
-      description = conversationAnnotation.description.map(richTextMarshaller(_))
+  def apply(conversat onAnnotat on: Conversat onAnnotat on): urt.Conversat onAnnotat on = {
+    urt.Conversat onAnnotat on(
+      conversat onAnnotat onType =
+        conversat onAnnotat onTypeMarshaller(conversat onAnnotat on.conversat onAnnotat onType),
+       ader = conversat onAnnotat on. ader.map(r chTextMarshaller(_)),
+      descr pt on = conversat onAnnotat on.descr pt on.map(r chTextMarshaller(_))
     )
   }
 }

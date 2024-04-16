@@ -1,32 +1,32 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.cr_mixer.model.ModelConfig.TwoTowerFavALL20220808
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.cr_m xer.model.ModelConf g.TwoTo rFavALL20220808
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .Param
 
-object ConsumerEmbeddingBasedTwoTowerParams {
-  object ModelIdParam
-      extends FSParam[String](
-        name = "consumer_embedding_based_two_tower_model_id",
-        default = TwoTowerFavALL20220808,
-      ) // Note: this default value does not match with ModelIds yet. This FS is a placeholder
+object Consu rEmbedd ngBasedTwoTo rParams {
+  object Model dParam
+      extends FSParam[Str ng](
+        na  = "consu r_embedd ng_based_two_to r_model_ d",
+        default = TwoTo rFavALL20220808,
+      ) // Note: t  default value does not match w h Model ds yet. T  FS  s a placeholder
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    ModelIdParam
+  val AllParams: Seq[Param[_] w h FSNa ] = Seq(
+    Model dParam
   )
 
-  lazy val config: BaseConfig = {
-    val stringFSOverrides =
-      FeatureSwitchOverrideUtil.getStringFSOverrides(
-        ModelIdParam
+  lazy val conf g: BaseConf g = {
+    val str ngFSOverr des =
+      FeatureSw chOverr deUt l.getStr ngFSOverr des(
+        Model dParam
       )
 
-    BaseConfigBuilder()
-      .set(stringFSOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set(str ngFSOverr des: _*)
+      .bu ld()
   }
 }

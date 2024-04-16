@@ -1,278 +1,278 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
+ mport java.ut l.Collect ons;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.SortedSet;
+ mport java.ut l.TreeSet;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
+ mport javax. nject. nject;
+ mport javax. nject.Na d;
+ mport javax. nject.S ngleton;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.L sts;
+ mport com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.finagle.stats.StatsReceiver;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.root.PartitionConfig;
-import com.twitter.search.common.root.PartitionLoggingSupport;
-import com.twitter.search.common.root.RequestSuccessStats;
-import com.twitter.search.common.root.RootClientServiceBuilder;
-import com.twitter.search.common.root.ScatterGatherService;
-import com.twitter.search.common.root.ScatterGatherSupport;
-import com.twitter.search.common.root.SearchRootModule;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.config.TierConfig;
-import com.twitter.search.earlybird.config.TierInfo;
-import com.twitter.search.earlybird.config.TierInfoSource;
-import com.twitter.search.earlybird.config.TierInfoUtil;
-import com.twitter.search.earlybird.config.TierInfoWrapper;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.EarlybirdService.ServiceIface;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
-import com.twitter.search.earlybird_root.filters.RequestContextToEarlybirdRequestFilter;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.f nagle.stats.StatsRece ver;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.root.Part  onConf g;
+ mport com.tw ter.search.common.root.Part  onLogg ngSupport;
+ mport com.tw ter.search.common.root.RequestSuccessStats;
+ mport com.tw ter.search.common.root.RootCl entServ ceBu lder;
+ mport com.tw ter.search.common.root.ScatterGat rServ ce;
+ mport com.tw ter.search.common.root.ScatterGat rSupport;
+ mport com.tw ter.search.common.root.SearchRootModule;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.earlyb rd.conf g.T erConf g;
+ mport com.tw ter.search.earlyb rd.conf g.T er nfo;
+ mport com.tw ter.search.earlyb rd.conf g.T er nfoS ce;
+ mport com.tw ter.search.earlyb rd.conf g.T er nfoUt l;
+ mport com.tw ter.search.earlyb rd.conf g.T er nfoWrapper;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdServ ce.Serv ce face;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResults;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.earlyb rd_root.f lters.Earlyb rdT  RangeF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters.RequestContextToEarlyb rdRequestF lter;
+ mport com.tw ter.ut l.Funct on;
+ mport com.tw ter.ut l.Future;
 
-@Singleton
-public class EarlybirdServiceChainBuilder {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdServiceChainBuilder.class);
+@S ngleton
+publ c class Earlyb rdServ ceCha nBu lder {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rdServ ceCha nBu lder.class);
 
-  private static final String SEARCH_METHOD_NAME = "search";
+  pr vate stat c f nal Str ng SEARCH_METHOD_NAME = "search";
 
-  private static final EarlybirdResponse TIER_SKIPPED_RESPONSE =
-      new EarlybirdResponse(EarlybirdResponseCode.TIER_SKIPPED, 0)
-          .setSearchResults(new ThriftSearchResults())
-          .setDebugString("Request to cluster dropped by decider, or sent as dark read.");
+  pr vate stat c f nal Earlyb rdResponse T ER_SK PPED_RESPONSE =
+      new Earlyb rdResponse(Earlyb rdResponseCode.T ER_SK PPED, 0)
+          .setSearchResults(new Thr ftSearchResults())
+          .setDebugStr ng("Request to cluster dropped by dec der, or sent as dark read.");
 
-  private final EarlybirdTierThrottleDeciders tierThrottleDeciders;
+  pr vate f nal Earlyb rdT erThrottleDec ders t erThrottleDec ders;
 
-  private final RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter;
+  pr vate f nal RequestContextToEarlyb rdRequestF lter requestContextToEarlyb rdRequestF lter;
 
-  private final SearchDecider decider;
-  private final String normalizedSearchRootName;
-  private final RootClientServiceBuilder<ServiceIface> clientServiceBuilder;
-  private final String partitionPath;
-  private final int numPartitions;
-  private final SortedSet<TierInfo> tierInfos;
-  private final PartitionAccessController partitionAccessController;
-  private final StatsReceiver statsReceiver;
+  pr vate f nal SearchDec der dec der;
+  pr vate f nal Str ng normal zedSearchRootNa ;
+  pr vate f nal RootCl entServ ceBu lder<Serv ce face> cl entServ ceBu lder;
+  pr vate f nal Str ng part  onPath;
+  pr vate f nal  nt numPart  ons;
+  pr vate f nal SortedSet<T er nfo> t er nfos;
+  pr vate f nal Part  onAccessController part  onAccessController;
+  pr vate f nal StatsRece ver statsRece ver;
 
   /**
-   * Construct a ScatterGatherServiceChain, by loading configurations from earlybird-tiers.yml.
+   * Construct a ScatterGat rServ ceCha n, by load ng conf gurat ons from earlyb rd-t ers.yml.
    */
-  @Inject
-  public EarlybirdServiceChainBuilder(
-      PartitionConfig partitionConfig,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
-      EarlybirdTierThrottleDeciders tierThrottleDeciders,
-      @Named(SearchRootModule.NAMED_NORMALIZED_SEARCH_ROOT_NAME) String normalizedSearchRootName,
-      SearchDecider decider,
-      TierInfoSource tierConfig,
-      RootClientServiceBuilder<ServiceIface> clientServiceBuilder,
-      PartitionAccessController partitionAccessController,
-      StatsReceiver statsReceiver) {
-    this.partitionAccessController = partitionAccessController;
-    this.tierThrottleDeciders = Preconditions.checkNotNull(tierThrottleDeciders);
-    this.requestContextToEarlybirdRequestFilter = requestContextToEarlybirdRequestFilter;
-    this.normalizedSearchRootName = normalizedSearchRootName;
-    this.decider = decider;
-    this.statsReceiver = statsReceiver;
+  @ nject
+  publ c Earlyb rdServ ceCha nBu lder(
+      Part  onConf g part  onConf g,
+      RequestContextToEarlyb rdRequestF lter requestContextToEarlyb rdRequestF lter,
+      Earlyb rdT erThrottleDec ders t erThrottleDec ders,
+      @Na d(SearchRootModule.NAMED_NORMAL ZED_SEARCH_ROOT_NAME) Str ng normal zedSearchRootNa ,
+      SearchDec der dec der,
+      T er nfoS ce t erConf g,
+      RootCl entServ ceBu lder<Serv ce face> cl entServ ceBu lder,
+      Part  onAccessController part  onAccessController,
+      StatsRece ver statsRece ver) {
+    t .part  onAccessController = part  onAccessController;
+    t .t erThrottleDec ders = Precond  ons.c ckNotNull(t erThrottleDec ders);
+    t .requestContextToEarlyb rdRequestF lter = requestContextToEarlyb rdRequestF lter;
+    t .normal zedSearchRootNa  = normal zedSearchRootNa ;
+    t .dec der = dec der;
+    t .statsRece ver = statsRece ver;
 
-    List<TierInfo> tierInformation = tierConfig.getTierInformation();
-    if (tierInformation == null || tierInformation.isEmpty()) {
+    L st<T er nfo> t er nformat on = t erConf g.getT er nformat on();
+     f (t er nformat on == null || t er nformat on. sEmpty()) {
       LOG.error(
-          "No tier found in config file {} Did you set SEARCH_ENV correctly?",
-          tierConfig.getConfigFileType());
-      throw new RuntimeException("No tier found in tier config file.");
+          "No t er found  n conf g f le {} D d   set SEARCH_ENV correctly?",
+          t erConf g.getConf gF leType());
+      throw new Runt  Except on("No t er found  n t er conf g f le.");
     }
 
-    // Get the tier info from the tier config yml file
-    TreeSet<TierInfo> infos = new TreeSet<>(TierInfoUtil.TIER_COMPARATOR);
-    infos.addAll(tierInformation);
-    this.tierInfos = Collections.unmodifiableSortedSet(infos);
-    this.clientServiceBuilder = clientServiceBuilder;
-    this.partitionPath = partitionConfig.getPartitionPath();
-    this.numPartitions = partitionConfig.getNumPartitions();
+    // Get t  t er  nfo from t  t er conf g yml f le
+    TreeSet<T er nfo>  nfos = new TreeSet<>(T er nfoUt l.T ER_COMPARATOR);
+     nfos.addAll(t er nformat on);
+    t .t er nfos = Collect ons.unmod f ableSortedSet( nfos);
+    t .cl entServ ceBu lder = cl entServ ceBu lder;
+    t .part  onPath = part  onConf g.getPart  onPath();
+    t .numPart  ons = part  onConf g.getNumPart  ons();
 
-    LOG.info("Found the following tiers from config: {}", tierInfos);
+    LOG. nfo("Found t  follow ng t ers from conf g: {}", t er nfos);
   }
 
-  /** Builds the chain of services that should be queried on each request. */
-  public List<Service<EarlybirdRequestContext, EarlybirdResponse>> buildServiceChain(
-      ScatterGatherSupport<EarlybirdRequestContext, EarlybirdResponse> support,
-      PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport) {
-    // Make sure the tier serving ranges do not overlap and do not have gaps.
-    TierInfoUtil.checkTierServingRanges(tierInfos);
+  /** Bu lds t  cha n of serv ces that should be quer ed on each request. */
+  publ c L st<Serv ce<Earlyb rdRequestContext, Earlyb rdResponse>> bu ldServ ceCha n(
+      ScatterGat rSupport<Earlyb rdRequestContext, Earlyb rdResponse> support,
+      Part  onLogg ngSupport<Earlyb rdRequestContext> part  onLogg ngSupport) {
+    // Make sure t  t er serv ng ranges do not overlap and do not have gaps.
+    T er nfoUt l.c ckT erServ ngRanges(t er nfos);
 
-    List<Service<EarlybirdRequestContext, EarlybirdResponse>> chain = Lists.newArrayList();
+    L st<Serv ce<Earlyb rdRequestContext, Earlyb rdResponse>> cha n = L sts.newArrayL st();
 
-    for (TierInfo tierInfo : tierInfos) {
-      String tierName = tierInfo.getTierName();
-      if (tierInfo.isEnabled()) {
-        String rewrittenPartitionPath = partitionPath;
-        // This rewriting rule must match the rewriting rule inside
-        // EarlybirdServer#joinServerSet().
-        if (!TierConfig.DEFAULT_TIER_NAME.equals(tierName)) {
-          rewrittenPartitionPath = partitionPath + "/" + tierName;
+    for (T er nfo t er nfo : t er nfos) {
+      Str ng t erNa  = t er nfo.getT erNa ();
+       f (t er nfo. sEnabled()) {
+        Str ng rewr tenPart  onPath = part  onPath;
+        // T  rewr  ng rule must match t  rewr  ng rule  ns de
+        // Earlyb rdServer#jo nServerSet().
+         f (!T erConf g.DEFAULT_T ER_NAME.equals(t erNa )) {
+          rewr tenPart  onPath = part  onPath + "/" + t erNa ;
         }
 
-        clientServiceBuilder.initializeWithPathSuffix(
-            tierInfo.getTierName(),
-            numPartitions,
-            rewrittenPartitionPath);
+        cl entServ ceBu lder. n  al zeW hPathSuff x(
+            t er nfo.getT erNa (),
+            numPart  ons,
+            rewr tenPart  onPath);
 
         try {
-          chain.add(createTierService(
-                        support, tierInfo, clientServiceBuilder, partitionLoggingSupport));
-        } catch (Exception e) {
-          LOG.error("Failed to build clients for tier: {}", tierInfo.getTierName());
-          throw new RuntimeException(e);
+          cha n.add(createT erServ ce(
+                        support, t er nfo, cl entServ ceBu lder, part  onLogg ngSupport));
+        } catch (Except on e) {
+          LOG.error("Fa led to bu ld cl ents for t er: {}", t er nfo.getT erNa ());
+          throw new Runt  Except on(e);
         }
 
       } else {
-        LOG.info("Skipped disabled tier: {}", tierName);
+        LOG. nfo("Sk pped d sabled t er: {}", t erNa );
       }
     }
 
-    return chain;
+    return cha n;
   }
 
-  private Service<EarlybirdRequestContext, EarlybirdResponse> createTierService(
-      ScatterGatherSupport<EarlybirdRequestContext, EarlybirdResponse> support,
-      final TierInfo tierInfo,
-      RootClientServiceBuilder<ServiceIface> builder,
-      PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport) {
+  pr vate Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> createT erServ ce(
+      ScatterGat rSupport<Earlyb rdRequestContext, Earlyb rdResponse> support,
+      f nal T er nfo t er nfo,
+      RootCl entServ ceBu lder<Serv ce face> bu lder,
+      Part  onLogg ngSupport<Earlyb rdRequestContext> part  onLogg ngSupport) {
 
-    final String tierName = tierInfo.getTierName();
-    RequestSuccessStats stats = new RequestSuccessStats(tierName);
+    f nal Str ng t erNa  = t er nfo.getT erNa ();
+    RequestSuccessStats stats = new RequestSuccessStats(t erNa );
 
-    List<Service<EarlybirdRequest, EarlybirdResponse>> services =
-        builder.safeBuildServiceList(SEARCH_METHOD_NAME);
+    L st<Serv ce<Earlyb rdRequest, Earlyb rdResponse>> serv ces =
+        bu lder.safeBu ldServ ceL st(SEARCH_METHOD_NAME);
 
-    // Get the client list for this tier, and apply the degradationTrackerFilter to each response.
+    // Get t  cl ent l st for t  t er, and apply t  degradat onTrackerF lter to each response.
     //
-    // We currently do this only for the EarlybirdSearchMultiTierAdaptor (the full archive cluster).
-    // If we want to do this for all clusters (or if we want to apply any other filter to all
-    // earlybird responses, for other clusters), we should change ScatterGatherService's constructor
-    // to take in a filter, and apply it there.
-    ClientBackupFilter backupFilter = new ClientBackupFilter(
-        "root_" + EarlybirdCluster.FULL_ARCHIVE.getNameForStats(),
-        tierName,
-        statsReceiver,
-        decider);
-    List<Service<EarlybirdRequestContext, EarlybirdResponse>> clients = Lists.newArrayList();
-    ClientLatencyFilter latencyFilter = new ClientLatencyFilter(tierName);
-    for (Service<EarlybirdRequest, EarlybirdResponse> client : services) {
-        clients.add(requestContextToEarlybirdRequestFilter
-            .andThen(backupFilter)
-            .andThen(latencyFilter)
-            .andThen(client));
+    //   currently do t  only for t  Earlyb rdSearchMult T erAdaptor (t  full arch ve cluster).
+    //  f   want to do t  for all clusters (or  f   want to apply any ot r f lter to all
+    // earlyb rd responses, for ot r clusters),   should change ScatterGat rServ ce's constructor
+    // to take  n a f lter, and apply   t re.
+    Cl entBackupF lter backupF lter = new Cl entBackupF lter(
+        "root_" + Earlyb rdCluster.FULL_ARCH VE.getNa ForStats(),
+        t erNa ,
+        statsRece ver,
+        dec der);
+    L st<Serv ce<Earlyb rdRequestContext, Earlyb rdResponse>> cl ents = L sts.newArrayL st();
+    Cl entLatencyF lter latencyF lter = new Cl entLatencyF lter(t erNa );
+    for (Serv ce<Earlyb rdRequest, Earlyb rdResponse> cl ent : serv ces) {
+        cl ents.add(requestContextToEarlyb rdRequestF lter
+            .andT n(backupF lter)
+            .andT n(latencyF lter)
+            .andT n(cl ent));
     }
 
-    clients = SkipPartitionFilter.wrapServices(tierName, clients, partitionAccessController);
+    cl ents = Sk pPart  onF lter.wrapServ ces(t erNa , cl ents, part  onAccessController);
 
-    // Build the scatter gather service for this tier.
-    // Each tier has their own stats.
-    ScatterGatherService<EarlybirdRequestContext, EarlybirdResponse> scatterGatherService =
-        new ScatterGatherService<>(
-            support, clients, stats, partitionLoggingSupport);
+    // Bu ld t  scatter gat r serv ce for t  t er.
+    // Each t er has t  r own stats.
+    ScatterGat rServ ce<Earlyb rdRequestContext, Earlyb rdResponse> scatterGat rServ ce =
+        new ScatterGat rServ ce<>(
+            support, cl ents, stats, part  onLogg ngSupport);
 
-    SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> tierThrottleFilter =
-        getTierThrottleFilter(tierInfo, tierName);
+    S mpleF lter<Earlyb rdRequestContext, Earlyb rdResponse> t erThrottleF lter =
+        getT erThrottleF lter(t er nfo, t erNa );
 
-    EarlybirdTimeRangeFilter timeRangeFilter =
-        EarlybirdTimeRangeFilter.newTimeRangeFilterWithQueryRewriter(
-            (requestContext, userOverride) -> new TierInfoWrapper(tierInfo, userOverride),
-            decider);
+    Earlyb rdT  RangeF lter t  RangeF lter =
+        Earlyb rdT  RangeF lter.newT  RangeF lterW hQueryRewr er(
+            (requestContext, userOverr de) -> new T er nfoWrapper(t er nfo, userOverr de),
+            dec der);
 
-    return tierThrottleFilter
-        .andThen(timeRangeFilter)
-        .andThen(scatterGatherService);
+    return t erThrottleF lter
+        .andT n(t  RangeF lter)
+        .andT n(scatterGat rServ ce);
   }
 
-  private SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> getTierThrottleFilter(
-      final TierInfo tierInfo,
-      final String tierName) {
+  pr vate S mpleF lter<Earlyb rdRequestContext, Earlyb rdResponse> getT erThrottleF lter(
+      f nal T er nfo t er nfo,
+      f nal Str ng t erNa ) {
 
-    // A filter that throttles request rate.
-    final String tierThrottleDeciderKey = tierThrottleDeciders.getTierThrottleDeciderKey(
-        normalizedSearchRootName, tierName);
+    // A f lter that throttles request rate.
+    f nal Str ng t erThrottleDec derKey = t erThrottleDec ders.getT erThrottleDec derKey(
+        normal zedSearchRootNa , t erNa );
 
-    SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> tierThrottleFilter =
-        new SimpleFilter<EarlybirdRequestContext, EarlybirdResponse>() {
-          private final Map<TierInfo.RequestReadType, SearchCounter> readCounts =
+    S mpleF lter<Earlyb rdRequestContext, Earlyb rdResponse> t erThrottleF lter =
+        new S mpleF lter<Earlyb rdRequestContext, Earlyb rdResponse>() {
+          pr vate f nal Map<T er nfo.RequestReadType, SearchCounter> readCounts =
               getReadCountsMap();
 
-          private Map<TierInfo.RequestReadType, SearchCounter> getReadCountsMap() {
-            Map<TierInfo.RequestReadType, SearchCounter> readCountsMap =
-                Maps.newEnumMap(TierInfo.RequestReadType.class);
-            for (TierInfo.RequestReadType readType : TierInfo.RequestReadType.values()) {
+          pr vate Map<T er nfo.RequestReadType, SearchCounter> getReadCountsMap() {
+            Map<T er nfo.RequestReadType, SearchCounter> readCountsMap =
+                Maps.newEnumMap(T er nfo.RequestReadType.class);
+            for (T er nfo.RequestReadType readType : T er nfo.RequestReadType.values()) {
               readCountsMap.put(readType,
-                  SearchCounter.export("earlybird_tier_" + tierName + "_"
-                      + readType.name().toLowerCase() + "_read_count"));
+                  SearchCounter.export("earlyb rd_t er_" + t erNa  + "_"
+                      + readType.na ().toLo rCase() + "_read_count"));
             }
-            return Collections.unmodifiableMap(readCountsMap);
+            return Collect ons.unmod f ableMap(readCountsMap);
           }
 
-          private final SearchCounter tierRequestDroppedByDeciderCount =
-              SearchCounter.export("earlybird_tier_" + tierName
-                  + "_request_dropped_by_decider_count");
+          pr vate f nal SearchCounter t erRequestDroppedByDec derCount =
+              SearchCounter.export("earlyb rd_t er_" + t erNa 
+                  + "_request_dropped_by_dec der_count");
 
-          @Override
-          public Future<EarlybirdResponse> apply(
-              EarlybirdRequestContext requestContext,
-              Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+          @Overr de
+          publ c Future<Earlyb rdResponse> apply(
+              Earlyb rdRequestContext requestContext,
+              Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> serv ce) {
 
-            // a blank response is returned when a request is dropped by decider, or
-            // a request is sent as a dark read.
-            final Future<EarlybirdResponse> blankTierResponse = Future.value(TIER_SKIPPED_RESPONSE);
-            if (tierThrottleDeciders.shouldSendRequestToTier(tierThrottleDeciderKey)) {
-              TierInfoWrapper tierInfoWrapper =
-                  new TierInfoWrapper(tierInfo, requestContext.useOverrideTierConfig());
+            // a blank response  s returned w n a request  s dropped by dec der, or
+            // a request  s sent as a dark read.
+            f nal Future<Earlyb rdResponse> blankT erResponse = Future.value(T ER_SK PPED_RESPONSE);
+             f (t erThrottleDec ders.shouldSendRequestToT er(t erThrottleDec derKey)) {
+              T er nfoWrapper t er nfoWrapper =
+                  new T er nfoWrapper(t er nfo, requestContext.useOverr deT erConf g());
 
-              TierInfo.RequestReadType readType = tierInfoWrapper.getReadType();
-              readCounts.get(readType).increment();
-              switch (readType) {
+              T er nfo.RequestReadType readType = t er nfoWrapper.getReadType();
+              readCounts.get(readType). ncre nt();
+              sw ch (readType) {
                 case DARK:
-                  // dark read: call backend but do not wait for results
-                  service.apply(requestContext);
-                  return blankTierResponse;
+                  // dark read: call backend but do not wa  for results
+                  serv ce.apply(requestContext);
+                  return blankT erResponse;
                 case GREY:
-                  // grey read: call backend, wait for results, but discard results.
-                  return service.apply(requestContext).flatMap(
-                      new Function<EarlybirdResponse, Future<EarlybirdResponse>>() {
-                        @Override
-                        public Future<EarlybirdResponse> apply(EarlybirdResponse v1) {
-                          // No matter what's returned, always return blankTierResponse.
-                          return blankTierResponse;
+                  // grey read: call backend, wa  for results, but d scard results.
+                  return serv ce.apply(requestContext).flatMap(
+                      new Funct on<Earlyb rdResponse, Future<Earlyb rdResponse>>() {
+                        @Overr de
+                        publ c Future<Earlyb rdResponse> apply(Earlyb rdResponse v1) {
+                          // No matter what's returned, always return blankT erResponse.
+                          return blankT erResponse;
                         }
                       });
-                case LIGHT:
-                  // light read: return the future from the backend service.
-                  return service.apply(requestContext);
+                case L GHT:
+                  // l ght read: return t  future from t  backend serv ce.
+                  return serv ce.apply(requestContext);
                 default:
-                  throw new RuntimeException("Unknown read type: " + readType);
+                  throw new Runt  Except on("Unknown read type: " + readType);
               }
             } else {
-              // Request is dropped by throttle decider
-              tierRequestDroppedByDeciderCount.increment();
-              return blankTierResponse;
+              // Request  s dropped by throttle dec der
+              t erRequestDroppedByDec derCount. ncre nt();
+              return blankT erResponse;
             }
           }
         };
-    return tierThrottleFilter;
+    return t erThrottleF lter;
   }
 }

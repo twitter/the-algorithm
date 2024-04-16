@@ -1,71 +1,71 @@
-package com.twitter.frigate.pushservice.predicate
+package com.tw ter.fr gate.pushserv ce.pred cate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.params.PushParams
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter.ut l.Future
 
-object MlModelsHoldbackExperimentPredicate {
+object MlModelsHoldbackExper  ntPred cate {
 
-  val name = "MlModelsHoldbackExperimentPredicate"
+  val na  = "MlModelsHoldbackExper  ntPred cate"
 
-  private val alwaysTruePred = PredicatesForCandidate.alwaysTruePushCandidatePredicate
+  pr vate val alwaysTruePred = Pred catesForCand date.alwaysTruePushCand datePred cate
 
-  def getPredicateBasedOnCandidate(
-    pc: PushCandidate,
-    treatmentPred: Predicate[PushCandidate]
+  def getPred cateBasedOnCand date(
+    pc: PushCand date,
+    treat ntPred: Pred cate[PushCand date]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): Future[Predicate[PushCandidate]] = {
+     mpl c  statsRece ver: StatsRece ver
+  ): Future[Pred cate[PushCand date]] = {
 
     Future
-      .join(Future.value(pc.target.skipFilters), pc.target.isInModelExclusionList)
+      .jo n(Future.value(pc.target.sk pF lters), pc.target. s nModelExclus onL st)
       .map {
-        case (skipFilters, isInModelExclusionList) =>
-          if (skipFilters ||
-            isInModelExclusionList ||
-            pc.target.params(PushParams.DisableMlInFilteringParam) ||
-            pc.target.params(PushFeatureSwitchParams.DisableMlInFilteringFeatureSwitchParam) ||
-            pc.target.params(PushParams.DisableAllRelevanceParam) ||
-            pc.target.params(PushParams.DisableHeavyRankingParam)) {
+        case (sk pF lters,  s nModelExclus onL st) =>
+           f (sk pF lters ||
+             s nModelExclus onL st ||
+            pc.target.params(PushParams.D sableMl nF lter ngParam) ||
+            pc.target.params(PushFeatureSw chParams.D sableMl nF lter ngFeatureSw chParam) ||
+            pc.target.params(PushParams.D sableAllRelevanceParam) ||
+            pc.target.params(PushParams.D sable avyRank ngParam)) {
             alwaysTruePred
           } else {
-            treatmentPred
+            treat ntPred
           }
       }
   }
 
-  def apply()(implicit statsReceiver: StatsReceiver): NamedPredicate[PushCandidate] = {
-    val stats = statsReceiver.scope(s"predicate_$name")
+  def apply()( mpl c  statsRece ver: StatsRece ver): Na dPred cate[PushCand date] = {
+    val stats = statsRece ver.scope(s"pred cate_$na ")
     val statsProd = stats.scope("prod")
     val counterAcceptedByModel = statsProd.counter("accepted")
     val counterRejectedByModel = statsProd.counter("rejected")
     val counterHoldback = stats.scope("holdback").counter("all")
-    val jointDauQualityPredicate = JointDauAndQualityModelPredicate()
+    val jo ntDauQual yPred cate = Jo ntDauAndQual yModelPred cate()
 
-    new Predicate[PushCandidate] {
-      def apply(items: Seq[PushCandidate]): Future[Seq[Boolean]] = {
-        val boolFuts = items.map { item =>
-          getPredicateBasedOnCandidate(item, jointDauQualityPredicate)(statsReceiver)
-            .flatMap { predicate =>
-              val predictionFut = predicate.apply(Seq(item)).map(_.headOption.getOrElse(false))
-              predictionFut.foreach { prediction =>
-                if (item.target.params(PushParams.DisableMlInFilteringParam) || item.target.params(
-                    PushFeatureSwitchParams.DisableMlInFilteringFeatureSwitchParam)) {
-                  counterHoldback.incr()
+    new Pred cate[PushCand date] {
+      def apply( ems: Seq[PushCand date]): Future[Seq[Boolean]] = {
+        val boolFuts =  ems.map {  em =>
+          getPred cateBasedOnCand date( em, jo ntDauQual yPred cate)(statsRece ver)
+            .flatMap { pred cate =>
+              val pred ct onFut = pred cate.apply(Seq( em)).map(_. adOpt on.getOrElse(false))
+              pred ct onFut.foreach { pred ct on =>
+                 f ( em.target.params(PushParams.D sableMl nF lter ngParam) ||  em.target.params(
+                    PushFeatureSw chParams.D sableMl nF lter ngFeatureSw chParam)) {
+                  counterHoldback. ncr()
                 } else {
-                  if (prediction) counterAcceptedByModel.incr() else counterRejectedByModel.incr()
+                   f (pred ct on) counterAcceptedByModel. ncr() else counterRejectedByModel. ncr()
                 }
               }
-              predictionFut
+              pred ct onFut
             }
         }
         Future.collect(boolFuts)
       }
-    }.withStats(stats)
-      .withName(name)
+    }.w hStats(stats)
+      .w hNa (na )
   }
 }

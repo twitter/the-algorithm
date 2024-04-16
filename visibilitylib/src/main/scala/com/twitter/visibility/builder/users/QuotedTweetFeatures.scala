@@ -1,52 +1,52 @@
-package com.twitter.visibility.builder.users
+package com.tw ter.v s b l y.bu lder.users
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.features.AuthorBlocksOuterAuthor
-import com.twitter.visibility.features.OuterAuthorFollowsAuthor
-import com.twitter.visibility.features.OuterAuthorId
-import com.twitter.visibility.features.OuterAuthorIsInnerAuthor
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.features.AuthorBlocksOuterAuthor
+ mport com.tw ter.v s b l y.features.OuterAuthorFollowsAuthor
+ mport com.tw ter.v s b l y.features.OuterAuthor d
+ mport com.tw ter.v s b l y.features.OuterAuthor s nnerAuthor
 
-class QuotedTweetFeatures(
-  relationshipFeatures: RelationshipFeatures,
-  statsReceiver: StatsReceiver) {
+class QuotedT etFeatures(
+  relat onsh pFeatures: Relat onsh pFeatures,
+  statsRece ver: StatsRece ver) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("quoted_tweet_features")
+  pr vate[t ] val scopedStatsRece ver = statsRece ver.scope("quoted_t et_features")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  pr vate[t ] val requests = scopedStatsRece ver.counter("requests")
 
-  private[this] val outerAuthorIdStat =
-    scopedStatsReceiver.scope(OuterAuthorId.name).counter("requests")
-  private[this] val authorBlocksOuterAuthor =
-    scopedStatsReceiver.scope(AuthorBlocksOuterAuthor.name).counter("requests")
-  private[this] val outerAuthorFollowsAuthor =
-    scopedStatsReceiver.scope(OuterAuthorFollowsAuthor.name).counter("requests")
-  private[this] val outerAuthorIsInnerAuthor =
-    scopedStatsReceiver.scope(OuterAuthorIsInnerAuthor.name).counter("requests")
+  pr vate[t ] val outerAuthor dStat =
+    scopedStatsRece ver.scope(OuterAuthor d.na ).counter("requests")
+  pr vate[t ] val authorBlocksOuterAuthor =
+    scopedStatsRece ver.scope(AuthorBlocksOuterAuthor.na ).counter("requests")
+  pr vate[t ] val outerAuthorFollowsAuthor =
+    scopedStatsRece ver.scope(OuterAuthorFollowsAuthor.na ).counter("requests")
+  pr vate[t ] val outerAuthor s nnerAuthor =
+    scopedStatsRece ver.scope(OuterAuthor s nnerAuthor.na ).counter("requests")
 
   def forOuterAuthor(
-    outerAuthorId: Long,
-    innerAuthorId: Long
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
+    outerAuthor d: Long,
+     nnerAuthor d: Long
+  ): FeatureMapBu lder => FeatureMapBu lder = {
+    requests. ncr()
 
-    outerAuthorIdStat.incr()
-    authorBlocksOuterAuthor.incr()
-    outerAuthorFollowsAuthor.incr()
-    outerAuthorIsInnerAuthor.incr()
+    outerAuthor dStat. ncr()
+    authorBlocksOuterAuthor. ncr()
+    outerAuthorFollowsAuthor. ncr()
+    outerAuthor s nnerAuthor. ncr()
 
-    val viewer = Some(outerAuthorId)
+    val v e r = So (outerAuthor d)
 
-    _.withConstantFeature(OuterAuthorId, outerAuthorId)
-      .withFeature(
+    _.w hConstantFeature(OuterAuthor d, outerAuthor d)
+      .w hFeature(
         AuthorBlocksOuterAuthor,
-        relationshipFeatures.authorBlocksViewer(innerAuthorId, viewer))
-      .withFeature(
+        relat onsh pFeatures.authorBlocksV e r( nnerAuthor d, v e r))
+      .w hFeature(
         OuterAuthorFollowsAuthor,
-        relationshipFeatures.viewerFollowsAuthor(innerAuthorId, viewer))
-      .withConstantFeature(
-        OuterAuthorIsInnerAuthor,
-        innerAuthorId == outerAuthorId
+        relat onsh pFeatures.v e rFollowsAuthor( nnerAuthor d, v e r))
+      .w hConstantFeature(
+        OuterAuthor s nnerAuthor,
+         nnerAuthor d == outerAuthor d
       )
   }
 }

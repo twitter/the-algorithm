@@ -1,58 +1,58 @@
-package com.twitter.frigate.pushservice.store
+package com.tw ter.fr gate.pushserv ce.store
 
-import com.twitter.cr_mixer.thriftscala.CrMixer
-import com.twitter.cr_mixer.thriftscala.CrMixerTweetRequest
-import com.twitter.cr_mixer.thriftscala.CrMixerTweetResponse
-import com.twitter.cr_mixer.thriftscala.FrsTweetRequest
-import com.twitter.cr_mixer.thriftscala.FrsTweetResponse
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Future
+ mport com.tw ter.cr_m xer.thr ftscala.CrM xer
+ mport com.tw ter.cr_m xer.thr ftscala.CrM xerT etRequest
+ mport com.tw ter.cr_m xer.thr ftscala.CrM xerT etResponse
+ mport com.tw ter.cr_m xer.thr ftscala.FrsT etRequest
+ mport com.tw ter.cr_m xer.thr ftscala.FrsT etResponse
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.Stat
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ut l.Future
 
 /**
- * Store to get content recs from content recommender.
+ * Store to get content recs from content recom nder.
  */
-case class CrMixerTweetStore(
-  crMixer: CrMixer.MethodPerEndpoint
+case class CrM xerT etStore(
+  crM xer: CrM xer. thodPerEndpo nt
 )(
-  implicit statsReceiver: StatsReceiver = NullStatsReceiver) {
+   mpl c  statsRece ver: StatsRece ver = NullStatsRece ver) {
 
-  private val requestsCounter = statsReceiver.counter("requests")
-  private val successCounter = statsReceiver.counter("success")
-  private val failuresCounter = statsReceiver.counter("failures")
-  private val nonEmptyCounter = statsReceiver.counter("non_empty")
-  private val emptyCounter = statsReceiver.counter("empty")
-  private val failuresScope = statsReceiver.scope("failures")
-  private val latencyStat = statsReceiver.stat("latency")
+  pr vate val requestsCounter = statsRece ver.counter("requests")
+  pr vate val successCounter = statsRece ver.counter("success")
+  pr vate val fa luresCounter = statsRece ver.counter("fa lures")
+  pr vate val nonEmptyCounter = statsRece ver.counter("non_empty")
+  pr vate val emptyCounter = statsRece ver.counter("empty")
+  pr vate val fa luresScope = statsRece ver.scope("fa lures")
+  pr vate val latencyStat = statsRece ver.stat("latency")
 
-  private def updateStats[T](f: => Future[Option[T]]): Future[Option[T]] = {
-    requestsCounter.incr()
+  pr vate def updateStats[T](f: => Future[Opt on[T]]): Future[Opt on[T]] = {
+    requestsCounter. ncr()
     Stat
-      .timeFuture(latencyStat)(f)
+      .t  Future(latencyStat)(f)
       .onSuccess { r =>
-        if (r.isDefined) nonEmptyCounter.incr() else emptyCounter.incr()
-        successCounter.incr()
+         f (r. sDef ned) nonEmptyCounter. ncr() else emptyCounter. ncr()
+        successCounter. ncr()
       }
-      .onFailure { e =>
+      .onFa lure { e =>
         {
-          failuresCounter.incr()
-          failuresScope.counter(e.getClass.getName).incr()
+          fa luresCounter. ncr()
+          fa luresScope.counter(e.getClass.getNa ). ncr()
         }
       }
   }
 
-  def getTweetRecommendations(
-    request: CrMixerTweetRequest
-  ): Future[Option[CrMixerTweetResponse]] = {
-    updateStats(crMixer.getTweetRecommendations(request).map { response =>
-      Some(response)
+  def getT etRecom ndat ons(
+    request: CrM xerT etRequest
+  ): Future[Opt on[CrM xerT etResponse]] = {
+    updateStats(crM xer.getT etRecom ndat ons(request).map { response =>
+      So (response)
     })
   }
 
-  def getFRSTweetCandidates(request: FrsTweetRequest): Future[Option[FrsTweetResponse]] = {
-    updateStats(crMixer.getFrsBasedTweetRecommendations(request).map { response =>
-      Some(response)
+  def getFRST etCand dates(request: FrsT etRequest): Future[Opt on[FrsT etResponse]] = {
+    updateStats(crM xer.getFrsBasedT etRecom ndat ons(request).map { response =>
+      So (response)
     })
   }
 }

@@ -1,83 +1,83 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ChildFeedbackActionMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.FeedbackActionMarshaller
-import com.twitter.product_mixer.core.model.common.identifier.TransportMarshallerIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ContainsFeedbackActionInfos
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackAction
-import com.twitter.timelines.render.thriftscala.TimelineResponse
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.TransportMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.Ch ldFeedbackAct onMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.FeedbackAct onMarshaller
+ mport com.tw ter.product_m xer.core.model.common. dent f er.TransportMarshaller dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne nstruct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Conta nsFeedbackAct on nfos
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FeedbackAct on
+ mport com.tw ter.t  l nes.render.thr ftscala.T  l neResponse
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
  * [[TransportMarshaller]] for URT types
  *
- * @note to make an instance of a [[UrtTransportMarshaller]] you can use [[UrtTransportMarshallerBuilder.marshaller]]
+ * @note to make an  nstance of a [[UrtTransportMarshaller]]   can use [[UrtTransportMarshallerBu lder.marshaller]]
  */
-@Singleton
-class UrtTransportMarshaller @Inject() (
-  timelineInstructionMarshaller: TimelineInstructionMarshaller,
-  feedbackActionMarshaller: FeedbackActionMarshaller,
-  childFeedbackActionMarshaller: ChildFeedbackActionMarshaller,
-  timelineMetadataMarshaller: TimelineMetadataMarshaller)
-    extends TransportMarshaller[Timeline, urt.TimelineResponse] {
+@S ngleton
+class UrtTransportMarshaller @ nject() (
+  t  l ne nstruct onMarshaller: T  l ne nstruct onMarshaller,
+  feedbackAct onMarshaller: FeedbackAct onMarshaller,
+  ch ldFeedbackAct onMarshaller: Ch ldFeedbackAct onMarshaller,
+  t  l ne tadataMarshaller: T  l ne tadataMarshaller)
+    extends TransportMarshaller[T  l ne, urt.T  l neResponse] {
 
-  override val identifier: TransportMarshallerIdentifier =
-    TransportMarshallerIdentifier("UnifiedRichTimeline")
+  overr de val  dent f er: TransportMarshaller dent f er =
+    TransportMarshaller dent f er("Un f edR chT  l ne")
 
-  override def apply(timeline: Timeline): urt.TimelineResponse = {
-    val feedbackActions: Option[Map[String, urt.FeedbackAction]] = {
-      collectAndMarshallFeedbackActions(timeline.instructions)
+  overr de def apply(t  l ne: T  l ne): urt.T  l neResponse = {
+    val feedbackAct ons: Opt on[Map[Str ng, urt.FeedbackAct on]] = {
+      collectAndMarshallFeedbackAct ons(t  l ne. nstruct ons)
     }
-    urt.TimelineResponse(
-      state = urt.TimelineState.Ok,
-      timeline = urt.Timeline(
-        id = timeline.id,
-        instructions = timeline.instructions.map(timelineInstructionMarshaller(_)),
+    urt.T  l neResponse(
+      state = urt.T  l neState.Ok,
+      t  l ne = urt.T  l ne(
+         d = t  l ne. d,
+         nstruct ons = t  l ne. nstruct ons.map(t  l ne nstruct onMarshaller(_)),
         responseObjects =
-          feedbackActions.map(actions => urt.ResponseObjects(feedbackActions = Some(actions))),
-        metadata = timeline.metadata.map(timelineMetadataMarshaller(_))
+          feedbackAct ons.map(act ons => urt.ResponseObjects(feedbackAct ons = So (act ons))),
+         tadata = t  l ne. tadata.map(t  l ne tadataMarshaller(_))
       )
     )
   }
 
-  // Currently, feedbackActionInfo at the URT TimelineItem level is supported, which covers almost all
-  // existing use cases. However, if additional feedbackActionInfos are defined on the URT
-  // TimelineItemContent level for "compound" URT types (see deprecated TopicCollection /
-  // TopicCollectionData), this is not supported. If "compound" URT types are added in the future,
-  // support must be added within that type (see ModuleItem) to handle the collection and marshalling
-  // of these feedbackActionInfos.
+  // Currently, feedbackAct on nfo at t  URT T  l ne em level  s supported, wh ch covers almost all
+  // ex st ng use cases. Ho ver,  f add  onal feedbackAct on nfos are def ned on t  URT
+  // T  l ne emContent level for "compound" URT types (see deprecated Top cCollect on /
+  // Top cCollect onData), t   s not supported.  f "compound" URT types are added  n t  future,
+  // support must be added w h n that type (see Module em) to handle t  collect on and marshall ng
+  // of t se feedbackAct on nfos.
 
-  private[this] def collectAndMarshallFeedbackActions(
-    instructions: Seq[TimelineInstruction]
-  ): Option[Map[String, urt.FeedbackAction]] = {
-    val feedbackActions: Seq[FeedbackAction] = for {
-      feedbackActionInfos <- instructions.collect {
-        case c: ContainsFeedbackActionInfos => c.feedbackActionInfos
+  pr vate[t ] def collectAndMarshallFeedbackAct ons(
+     nstruct ons: Seq[T  l ne nstruct on]
+  ): Opt on[Map[Str ng, urt.FeedbackAct on]] = {
+    val feedbackAct ons: Seq[FeedbackAct on] = for {
+      feedbackAct on nfos <-  nstruct ons.collect {
+        case c: Conta nsFeedbackAct on nfos => c.feedbackAct on nfos
       }
-      feedbackInfoOpt <- feedbackActionInfos
-      feedbackInfo <- feedbackInfoOpt.toSeq
-      feedbackAction <- feedbackInfo.feedbackActions
-    } yield feedbackAction
+      feedback nfoOpt <- feedbackAct on nfos
+      feedback nfo <- feedback nfoOpt.toSeq
+      feedbackAct on <- feedback nfo.feedbackAct ons
+    } y eld feedbackAct on
 
-    if (feedbackActions.nonEmpty) {
-      val urtFeedbackActions = feedbackActions.map(feedbackActionMarshaller(_))
+     f (feedbackAct ons.nonEmpty) {
+      val urtFeedbackAct ons = feedbackAct ons.map(feedbackAct onMarshaller(_))
 
-      val urtChildFeedbackActions: Seq[urt.FeedbackAction] = for {
-        feedbackAction <- feedbackActions
-        childFeedbackActions <- feedbackAction.childFeedbackActions.toSeq
-        childFeedbackAction <- childFeedbackActions
-      } yield childFeedbackActionMarshaller(childFeedbackAction)
+      val urtCh ldFeedbackAct ons: Seq[urt.FeedbackAct on] = for {
+        feedbackAct on <- feedbackAct ons
+        ch ldFeedbackAct ons <- feedbackAct on.ch ldFeedbackAct ons.toSeq
+        ch ldFeedbackAct on <- ch ldFeedbackAct ons
+      } y eld ch ldFeedbackAct onMarshaller(ch ldFeedbackAct on)
 
-      val allUrtFeedbackActions = urtFeedbackActions ++ urtChildFeedbackActions
+      val allUrtFeedbackAct ons = urtFeedbackAct ons ++ urtCh ldFeedbackAct ons
 
-      Some(
-        allUrtFeedbackActions.map { urtAction =>
-          FeedbackActionMarshaller.generateKey(urtAction) -> urtAction
+      So (
+        allUrtFeedbackAct ons.map { urtAct on =>
+          FeedbackAct onMarshaller.generateKey(urtAct on) -> urtAct on
         }.toMap
       )
     } else {
@@ -87,14 +87,14 @@ class UrtTransportMarshaller @Inject() (
 }
 
 object UrtTransportMarshaller {
-  def unavailable(timelineId: String): TimelineResponse = {
-    urt.TimelineResponse(
-      state = urt.TimelineState.Unavailable,
-      timeline = urt.Timeline(
-        id = timelineId,
-        instructions = Seq.empty,
+  def unava lable(t  l ne d: Str ng): T  l neResponse = {
+    urt.T  l neResponse(
+      state = urt.T  l neState.Unava lable,
+      t  l ne = urt.T  l ne(
+         d = t  l ne d,
+         nstruct ons = Seq.empty,
         responseObjects = None,
-        metadata = None
+         tadata = None
       )
     )
   }

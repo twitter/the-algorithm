@@ -1,37 +1,37 @@
-package com.twitter.simclusters_v2.tweet_similarity
+package com.tw ter.s mclusters_v2.t et_s m lar y
 
-import com.twitter.ml.api.{DataRecord, DataRecordMerger}
-import com.twitter.simclusters_v2.common.ml.{
-  SimClustersEmbeddingAdapter,
-  NormalizedSimClustersEmbeddingAdapter
+ mport com.tw ter.ml.ap .{DataRecord, DataRecord rger}
+ mport com.tw ter.s mclusters_v2.common.ml.{
+  S mClustersEmbedd ngAdapter,
+  Normal zedS mClustersEmbedd ngAdapter
 }
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
 
-object ModelBasedTweetSimilaritySimClustersEmbeddingAdapter {
-  val QueryEmbAdapter = new SimClustersEmbeddingAdapter(TweetSimilarityFeatures.QueryTweetEmbedding)
-  val CandidateEmbAdapter = new SimClustersEmbeddingAdapter(
-    TweetSimilarityFeatures.CandidateTweetEmbedding)
+object ModelBasedT etS m lar yS mClustersEmbedd ngAdapter {
+  val QueryEmbAdapter = new S mClustersEmbedd ngAdapter(T etS m lar yFeatures.QueryT etEmbedd ng)
+  val Cand dateEmbAdapter = new S mClustersEmbedd ngAdapter(
+    T etS m lar yFeatures.Cand dateT etEmbedd ng)
 
-  val NormalizedQueryEmbAdapter = new NormalizedSimClustersEmbeddingAdapter(
-    TweetSimilarityFeatures.QueryTweetEmbedding,
-    TweetSimilarityFeatures.QueryTweetEmbeddingNorm)
-  val NormalizedCandidateEmbAdapter = new NormalizedSimClustersEmbeddingAdapter(
-    TweetSimilarityFeatures.CandidateTweetEmbedding,
-    TweetSimilarityFeatures.CandidateTweetEmbeddingNorm)
+  val Normal zedQueryEmbAdapter = new Normal zedS mClustersEmbedd ngAdapter(
+    T etS m lar yFeatures.QueryT etEmbedd ng,
+    T etS m lar yFeatures.QueryT etEmbedd ngNorm)
+  val Normal zedCand dateEmbAdapter = new Normal zedS mClustersEmbedd ngAdapter(
+    T etS m lar yFeatures.Cand dateT etEmbedd ng,
+    T etS m lar yFeatures.Cand dateT etEmbedd ngNorm)
 
-  def adaptEmbeddingPairToDataRecord(
-    queryEmbedding: SimClustersEmbedding,
-    candidateEmbedding: SimClustersEmbedding,
-    normalized: Boolean
+  def adaptEmbedd ngPa rToDataRecord(
+    queryEmbedd ng: S mClustersEmbedd ng,
+    cand dateEmbedd ng: S mClustersEmbedd ng,
+    normal zed: Boolean
   ): DataRecord = {
-    val DataRecordMerger = new DataRecordMerger()
-    val queryAdapter = if (normalized) NormalizedQueryEmbAdapter else QueryEmbAdapter
-    val candidateAdapter = if (normalized) NormalizedCandidateEmbAdapter else CandidateEmbAdapter
+    val DataRecord rger = new DataRecord rger()
+    val queryAdapter =  f (normal zed) Normal zedQueryEmbAdapter else QueryEmbAdapter
+    val cand dateAdapter =  f (normal zed) Normal zedCand dateEmbAdapter else Cand dateEmbAdapter
 
-    val featureDataRecord = queryAdapter.adaptToDataRecord(queryEmbedding)
-    DataRecordMerger.merge(
+    val featureDataRecord = queryAdapter.adaptToDataRecord(queryEmbedd ng)
+    DataRecord rger. rge(
       featureDataRecord,
-      candidateAdapter.adaptToDataRecord(candidateEmbedding))
+      cand dateAdapter.adaptToDataRecord(cand dateEmbedd ng))
     featureDataRecord
   }
 }

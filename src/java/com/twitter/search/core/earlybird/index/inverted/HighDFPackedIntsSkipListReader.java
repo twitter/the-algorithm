@@ -1,200 +1,200 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import org.apache.lucene.search.DocIdSetIterator;
+ mport org.apac .lucene.search.Doc dSet erator;
 
 /**
- * A skip list reader of a single term used {@link HighDFPackedIntsDocsEnum}.
- * @see HighDFPackedIntsPostingLists
+ * A sk p l st reader of a s ngle term used {@l nk H ghDFPacked ntsDocsEnum}.
+ * @see H ghDFPacked ntsPost ngL sts
  */
-class HighDFPackedIntsSkipListReader {
-  /** Skip lists int pool. */
-  private final IntBlockPool skipLists;
+class H ghDFPacked ntsSk pL stReader {
+  /** Sk p l sts  nt pool. */
+  pr vate f nal  ntBlockPool sk pL sts;
 
-  /** Whether positions are omitted in the posting list having the read skip list. */
-  private final boolean omitPositions;
+  /** W t r pos  ons are om ted  n t  post ng l st hav ng t  read sk p l st. */
+  pr vate f nal boolean om Pos  ons;
 
   /**
-   * Last doc in the previous slice relative to the current delta-freq slice. This value is 0 if
-   * the current slice is the first delta-freq slice.
+   * Last doc  n t  prev ous sl ce relat ve to t  current delta-freq sl ce. T  value  s 0  f
+   * t  current sl ce  s t  f rst delta-freq sl ce.
    */
-  private int previousDocIDCurrentSlice;
+  pr vate  nt prev ousDoc DCurrentSl ce;
 
-  /** Encoded metadata of the current delta-freq slice.*/
-  private int encodedMetadataCurrentSlice;
+  /** Encoded  tadata of t  current delta-freq sl ce.*/
+  pr vate  nt encoded tadataCurrentSl ce;
 
   /**
-   * Pointer to the first int (contains the position slice header) of the position slice that has
-   * the first position of the first doc in the current delta-freq slice.
+   * Po nter to t  f rst  nt (conta ns t  pos  on sl ce  ader) of t  pos  on sl ce that has
+   * t  f rst pos  on of t  f rst doc  n t  current delta-freq sl ce.
    */
-  private int positionCurrentSliceIndex;
+  pr vate  nt pos  onCurrentSl ce ndex;
 
-  /** Pointer to the first int in the current delta-freq slice. */
-  private int deltaFreqCurrentSlicePointer;
+  /** Po nter to t  f rst  nt  n t  current delta-freq sl ce. */
+  pr vate  nt deltaFreqCurrentSl cePo nter;
 
-  /** Data of next slice. */
-  private int previousDocIDNextSlice;
-  private int encodedMetadataNextSlice;
-  private int positionNextSliceIndex;
-  private int deltaFreqNextSlicePointer;
+  /** Data of next sl ce. */
+  pr vate  nt prev ousDoc DNextSl ce;
+  pr vate  nt encoded tadataNextSl ce;
+  pr vate  nt pos  onNextSl ce ndex;
+  pr vate  nt deltaFreqNextSl cePo nter;
 
-  /** Used to load blocks and read ints from skip lists int pool. */
-  private int[] currentSkipListBlock;
-  private int skipListBlockStart;
-  private int skipListBlockIndex;
+  /** Used to load blocks and read  nts from sk p l sts  nt pool. */
+  pr vate  nt[] currentSk pL stBlock;
+  pr vate  nt sk pL stBlockStart;
+  pr vate  nt sk pL stBlock ndex;
 
-  /** Number of remaining skip entries for the read skip list. */
-  private int numSkipListEntriesRemaining;
+  /** Number of rema n ng sk p entr es for t  read sk p l st. */
+  pr vate  nt numSk pL stEntr esRema n ng;
 
-  /** Largest doc ID in the posting list having the read skip list. */
-  private final int largestDocID;
+  /** Largest doc  D  n t  post ng l st hav ng t  read sk p l st. */
+  pr vate f nal  nt largestDoc D;
 
-  /** Pointer to the first int in the first slice that stores positions for this term. */
-  private final int positionListPointer;
+  /** Po nter to t  f rst  nt  n t  f rst sl ce that stores pos  ons for t  term. */
+  pr vate f nal  nt pos  onL stPo nter;
 
-  /** Total number of docs in the posting list having the read skip list. */
-  private final int numDocsTotal;
+  /** Total number of docs  n t  post ng l st hav ng t  read sk p l st. */
+  pr vate f nal  nt numDocsTotal;
 
   /**
-   * Create a skip list reader specified by the given skip list pointer in the given skip lists int
+   * Create a sk p l st reader spec f ed by t  g ven sk p l st po nter  n t  g ven sk p l sts  nt
    * pool.
    *
-   * @param skipLists int pool where the read skip list exists
-   * @param skipListPointer pointer to the read skip list
-   * @param omitPositions whether positions are omitted in the positing list to which the read skip
-   *                      list belongs
+   * @param sk pL sts  nt pool w re t  read sk p l st ex sts
+   * @param sk pL stPo nter po nter to t  read sk p l st
+   * @param om Pos  ons w t r pos  ons are om ted  n t  pos  ng l st to wh ch t  read sk p
+   *                      l st belongs
    */
-  public HighDFPackedIntsSkipListReader(
-      final IntBlockPool skipLists,
-      final int skipListPointer,
-      final boolean omitPositions) {
-    this.skipLists = skipLists;
-    this.omitPositions = omitPositions;
+  publ c H ghDFPacked ntsSk pL stReader(
+      f nal  ntBlockPool sk pL sts,
+      f nal  nt sk pL stPo nter,
+      f nal boolean om Pos  ons) {
+    t .sk pL sts = sk pL sts;
+    t .om Pos  ons = om Pos  ons;
 
-    this.skipListBlockStart = IntBlockPool.getBlockStart(skipListPointer);
-    this.skipListBlockIndex = IntBlockPool.getOffsetInBlock(skipListPointer);
-    this.currentSkipListBlock = skipLists.getBlock(skipListBlockStart);
+    t .sk pL stBlockStart =  ntBlockPool.getBlockStart(sk pL stPo nter);
+    t .sk pL stBlock ndex =  ntBlockPool.getOffset nBlock(sk pL stPo nter);
+    t .currentSk pL stBlock = sk pL sts.getBlock(sk pL stBlockStart);
 
-    // Read skip list header.
-    this.numSkipListEntriesRemaining = readNextValueFromSkipListBlock();
-    this.largestDocID = readNextValueFromSkipListBlock();
-    this.numDocsTotal = readNextValueFromSkipListBlock();
-    int deltaFreqListPointer = readNextValueFromSkipListBlock();
-    this.positionListPointer = omitPositions ? -1 : readNextValueFromSkipListBlock();
+    // Read sk p l st  ader.
+    t .numSk pL stEntr esRema n ng = readNextValueFromSk pL stBlock();
+    t .largestDoc D = readNextValueFromSk pL stBlock();
+    t .numDocsTotal = readNextValueFromSk pL stBlock();
+     nt deltaFreqL stPo nter = readNextValueFromSk pL stBlock();
+    t .pos  onL stPo nter = om Pos  ons ? -1 : readNextValueFromSk pL stBlock();
 
-    // Set it back by one slice for fetchNextSkipEntry() to advance correctly.
-    this.deltaFreqNextSlicePointer = deltaFreqListPointer - HighDFPackedIntsPostingLists.SLICE_SIZE;
-    fetchNextSkipEntry();
+    // Set   back by one sl ce for fetchNextSk pEntry() to advance correctly.
+    t .deltaFreqNextSl cePo nter = deltaFreqL stPo nter - H ghDFPacked ntsPost ngL sts.SL CE_S ZE;
+    fetchNextSk pEntry();
   }
 
   /**
-   * Load already fetched data in next skip entry into current data variables, and pre-fetch again.
+   * Load already fetc d data  n next sk p entry  nto current data var ables, and pre-fetch aga n.
    */
-  public void getNextSkipEntry() {
-    previousDocIDCurrentSlice = previousDocIDNextSlice;
-    encodedMetadataCurrentSlice = encodedMetadataNextSlice;
-    positionCurrentSliceIndex = positionNextSliceIndex;
-    deltaFreqCurrentSlicePointer = deltaFreqNextSlicePointer;
-    fetchNextSkipEntry();
+  publ c vo d getNextSk pEntry() {
+    prev ousDoc DCurrentSl ce = prev ousDoc DNextSl ce;
+    encoded tadataCurrentSl ce = encoded tadataNextSl ce;
+    pos  onCurrentSl ce ndex = pos  onNextSl ce ndex;
+    deltaFreqCurrentSl cePo nter = deltaFreqNextSl cePo nter;
+    fetchNextSk pEntry();
   }
 
   /**
-   * Fetch data for next skip entry if skip list is not exhausted; otherwise, set docIDNextSlice
+   * Fetch data for next sk p entry  f sk p l st  s not exhausted; ot rw se, set doc DNextSl ce
    * to NO_MORE_DOCS.
    */
-  private void fetchNextSkipEntry() {
-    if (numSkipListEntriesRemaining == 0) {
-      previousDocIDNextSlice = DocIdSetIterator.NO_MORE_DOCS;
+  pr vate vo d fetchNextSk pEntry() {
+     f (numSk pL stEntr esRema n ng == 0) {
+      prev ousDoc DNextSl ce = Doc dSet erator.NO_MORE_DOCS;
       return;
     }
 
-    previousDocIDNextSlice = readNextValueFromSkipListBlock();
-    encodedMetadataNextSlice = readNextValueFromSkipListBlock();
-    if (!omitPositions) {
-      positionNextSliceIndex = readNextValueFromSkipListBlock();
+    prev ousDoc DNextSl ce = readNextValueFromSk pL stBlock();
+    encoded tadataNextSl ce = readNextValueFromSk pL stBlock();
+     f (!om Pos  ons) {
+      pos  onNextSl ce ndex = readNextValueFromSk pL stBlock();
     }
-    deltaFreqNextSlicePointer += HighDFPackedIntsPostingLists.SLICE_SIZE;
-    numSkipListEntriesRemaining--;
+    deltaFreqNextSl cePo nter += H ghDFPacked ntsPost ngL sts.SL CE_S ZE;
+    numSk pL stEntr esRema n ng--;
   }
 
   /**************************************
-   * Getters of data in skip list entry *
+   * Getters of data  n sk p l st entry *
    **************************************/
 
   /**
-   * In the context of a current slice, this is the docID of the last document in the previous
-   * slice (or 0 if the current slice is the first slice).
+   *  n t  context of a current sl ce, t   s t  doc D of t  last docu nt  n t  prev ous
+   * sl ce (or 0  f t  current sl ce  s t  f rst sl ce).
    *
-   * @see HighDFPackedIntsPostingLists#SKIPLIST_ENTRY_SIZE
+   * @see H ghDFPacked ntsPost ngL sts#SK PL ST_ENTRY_S ZE
    */
-  public int getPreviousDocIDCurrentSlice() {
-    return previousDocIDCurrentSlice;
+  publ c  nt getPrev ousDoc DCurrentSl ce() {
+    return prev ousDoc DCurrentSl ce;
   }
 
   /**
-   * Get the encoded metadata of the current delta-freq slice.
+   * Get t  encoded  tadata of t  current delta-freq sl ce.
    *
-   * @see HighDFPackedIntsPostingLists#SKIPLIST_ENTRY_SIZE
+   * @see H ghDFPacked ntsPost ngL sts#SK PL ST_ENTRY_S ZE
    */
-  public int getEncodedMetadataCurrentSlice() {
-    return encodedMetadataCurrentSlice;
+  publ c  nt getEncoded tadataCurrentSl ce() {
+    return encoded tadataCurrentSl ce;
   }
 
   /**
-   * Get the pointer to the first int, WHICH CONTAINS THE POSITION SLICE HEADER, of the position
-   * slice that contains the first position of the first doc in the delta-freq slice that
-   * is corresponding to the current skip list entry.
+   * Get t  po nter to t  f rst  nt, WH CH CONTA NS THE POS T ON SL CE HEADER, of t  pos  on
+   * sl ce that conta ns t  f rst pos  on of t  f rst doc  n t  delta-freq sl ce that
+   *  s correspond ng to t  current sk p l st entry.
    *
-   * @see HighDFPackedIntsPostingLists#SKIPLIST_ENTRY_SIZE
+   * @see H ghDFPacked ntsPost ngL sts#SK PL ST_ENTRY_S ZE
    */
-  public int getPositionCurrentSlicePointer() {
-    assert !omitPositions;
-    return positionListPointer
-        + positionCurrentSliceIndex * HighDFPackedIntsPostingLists.SLICE_SIZE;
+  publ c  nt getPos  onCurrentSl cePo nter() {
+    assert !om Pos  ons;
+    return pos  onL stPo nter
+        + pos  onCurrentSl ce ndex * H ghDFPacked ntsPost ngL sts.SL CE_S ZE;
   }
 
   /**
-   * Get the pointer to the first int in the current delta-freq slice.
+   * Get t  po nter to t  f rst  nt  n t  current delta-freq sl ce.
    */
-  public int getDeltaFreqCurrentSlicePointer() {
-    return deltaFreqCurrentSlicePointer;
+  publ c  nt getDeltaFreqCurrentSl cePo nter() {
+    return deltaFreqCurrentSl cePo nter;
   }
 
   /**
-   * In the context of next slice, get the last doc ID in the previous slice. This is used to skip
-   * over slices.
+   *  n t  context of next sl ce, get t  last doc  D  n t  prev ous sl ce. T   s used to sk p
+   * over sl ces.
    *
-   * @see HighDFPackedIntsDocsEnum#skipTo(int)
+   * @see H ghDFPacked ntsDocsEnum#sk pTo( nt)
    */
-  public int peekPreviousDocIDNextSlice() {
-    return previousDocIDNextSlice;
+  publ c  nt peekPrev ousDoc DNextSl ce() {
+    return prev ousDoc DNextSl ce;
   }
 
   /***************************************
-   * Getters of data in skip list header *
+   * Getters of data  n sk p l st  ader *
    ***************************************/
 
-  public int getLargestDocID() {
-    return largestDocID;
+  publ c  nt getLargestDoc D() {
+    return largestDoc D;
   }
 
-  public int getNumDocsTotal() {
+  publ c  nt getNumDocsTotal() {
     return numDocsTotal;
   }
 
   /***************************************************
-   * Methods helping loading int block and read ints *
+   *  thods  lp ng load ng  nt block and read  nts *
    ***************************************************/
 
-  private int readNextValueFromSkipListBlock() {
-    if (skipListBlockIndex == IntBlockPool.BLOCK_SIZE) {
-      loadSkipListBlock();
+  pr vate  nt readNextValueFromSk pL stBlock() {
+     f (sk pL stBlock ndex ==  ntBlockPool.BLOCK_S ZE) {
+      loadSk pL stBlock();
     }
-    return currentSkipListBlock[skipListBlockIndex++];
+    return currentSk pL stBlock[sk pL stBlock ndex++];
   }
 
-  private void loadSkipListBlock() {
-    skipListBlockStart += IntBlockPool.BLOCK_SIZE;
-    currentSkipListBlock = skipLists.getBlock(skipListBlockStart);
-    skipListBlockIndex = 0;
+  pr vate vo d loadSk pL stBlock() {
+    sk pL stBlockStart +=  ntBlockPool.BLOCK_S ZE;
+    currentSk pL stBlock = sk pL sts.getBlock(sk pL stBlockStart);
+    sk pL stBlock ndex = 0;
   }
 }

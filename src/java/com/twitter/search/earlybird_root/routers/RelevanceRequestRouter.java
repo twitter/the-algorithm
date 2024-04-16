@@ -1,96 +1,96 @@
-package com.twitter.search.earlybird_root.routers;
+package com.tw ter.search.earlyb rd_root.routers;
 
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.concurrent.T  Un ;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+ mport javax. nject. nject;
+ mport javax. nject.Na d;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.query.thriftjava.CollectorTerminationParams;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.InjectionNames;
-import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.common.part  on ng.snowflakeparser.Snowflake dParser;
+ mport com.tw ter.search.common.query.thr ftjava.CollectorTerm nat onParams;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchRank ngMode;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdFeatureSc ma rger;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.earlyb rd_root.common. nject onNa s;
+ mport com.tw ter.search.earlyb rd_root.f lters.Earlyb rdT  RangeF lter;
 
-public class RelevanceRequestRouter extends AbstractRecencyAndRelevanceRequestRouter {
-  private static final long MILLIS_IN_ONE_DAY = TimeUnit.DAYS.toMillis(1);
+publ c class RelevanceRequestRouter extends AbstractRecencyAndRelevanceRequestRouter {
+  pr vate stat c f nal long M LL S_ N_ONE_DAY = T  Un .DAYS.toM ll s(1);
 
-  @Inject
-  public RelevanceRequestRouter(
-      @Named(InjectionNames.REALTIME)
-      Service<EarlybirdRequestContext, EarlybirdResponse> realtime,
-      @Named(InjectionNames.PROTECTED)
-      Service<EarlybirdRequestContext, EarlybirdResponse> protectedRealtime,
-      @Named(InjectionNames.FULL_ARCHIVE)
-      Service<EarlybirdRequestContext, EarlybirdResponse> fullArchive,
-      @Named(RelevanceRequestRouterModule.REALTIME_TIME_RANGE_FILTER)
-      EarlybirdTimeRangeFilter realtimeTimeRangeFilter,
-      @Named(RelevanceRequestRouterModule.PROTECTED_TIME_RANGE_FILTER)
-      EarlybirdTimeRangeFilter protectedTimeRangeFilter,
-      @Named(RelevanceRequestRouterModule.FULL_ARCHIVE_TIME_RANGE_FILTER)
-      EarlybirdTimeRangeFilter fullArchiveTimeRangeFilter,
+  @ nject
+  publ c RelevanceRequestRouter(
+      @Na d( nject onNa s.REALT ME)
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> realt  ,
+      @Na d( nject onNa s.PROTECTED)
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> protectedRealt  ,
+      @Na d( nject onNa s.FULL_ARCH VE)
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> fullArch ve,
+      @Na d(RelevanceRequestRouterModule.REALT ME_T ME_RANGE_F LTER)
+      Earlyb rdT  RangeF lter realt  T  RangeF lter,
+      @Na d(RelevanceRequestRouterModule.PROTECTED_T ME_RANGE_F LTER)
+      Earlyb rdT  RangeF lter protectedT  RangeF lter,
+      @Na d(RelevanceRequestRouterModule.FULL_ARCH VE_T ME_RANGE_F LTER)
+      Earlyb rdT  RangeF lter fullArch veT  RangeF lter,
       Clock clock,
-      SearchDecider decider,
-      EarlybirdFeatureSchemaMerger featureSchemaMerger) {
-    super(realtime,
-          protectedRealtime,
-          fullArchive,
-          realtimeTimeRangeFilter,
-          protectedTimeRangeFilter,
-          fullArchiveTimeRangeFilter,
-          ThriftSearchRankingMode.RELEVANCE,
+      SearchDec der dec der,
+      Earlyb rdFeatureSc ma rger featureSc ma rger) {
+    super(realt  ,
+          protectedRealt  ,
+          fullArch ve,
+          realt  T  RangeF lter,
+          protectedT  RangeF lter,
+          fullArch veT  RangeF lter,
+          Thr ftSearchRank ngMode.RELEVANCE,
           clock,
-          decider,
-          featureSchemaMerger);
+          dec der,
+          featureSc ma rger);
   }
 
-  @Override
-  protected boolean shouldSendRequestToFullArchiveCluster(
-      EarlybirdRequest request, EarlybirdResponse realtimeResponse) {
-    int numResultsRequested = request.getSearchQuery().getNumResults();
-    int numHitsProcessed = realtimeResponse.getSearchResults().isSetNumHitsProcessed()
-        ? realtimeResponse.getSearchResults().getNumHitsProcessed()
+  @Overr de
+  protected boolean shouldSendRequestToFullArch veCluster(
+      Earlyb rdRequest request, Earlyb rdResponse realt  Response) {
+     nt numResultsRequested = request.getSearchQuery().getNumResults();
+     nt numH sProcessed = realt  Response.getSearchResults(). sSetNumH sProcessed()
+        ? realt  Response.getSearchResults().getNumH sProcessed()
         : -1;
-    if (numHitsProcessed < numResultsRequested) {
-      // Send query to the full archive cluster, if we went through fewer hits in the realtime
-      // cluster than the requested number of results.
+     f (numH sProcessed < numResultsRequested) {
+      // Send query to t  full arch ve cluster,  f    nt through fe r h s  n t  realt  
+      // cluster than t  requested number of results.
       return true;
     }
 
-    // If we have enough hits, don't query the full archive cluster yet.
-    int numSuccessfulPartitions = realtimeResponse.getNumSuccessfulPartitions();
-    CollectorTerminationParams terminationParams =
-        request.getSearchQuery().getCollectorParams().getTerminationParams();
+    //  f   have enough h s, don't query t  full arch ve cluster yet.
+     nt numSuccessfulPart  ons = realt  Response.getNumSuccessfulPart  ons();
+    CollectorTerm nat onParams term nat onParams =
+        request.getSearchQuery().getCollectorParams().getTerm nat onParams();
 
-    Preconditions.checkArgument(terminationParams.isSetMaxHitsToProcess());
-    int maxHits = terminationParams.getMaxHitsToProcess() * numSuccessfulPartitions;
+    Precond  ons.c ckArgu nt(term nat onParams. sSetMaxH sToProcess());
+     nt maxH s = term nat onParams.getMaxH sToProcess() * numSuccessfulPart  ons;
 
-    if (numHitsProcessed >= maxHits) {
+     f (numH sProcessed >= maxH s) {
       return false;
     }
 
-    // Check if there is a gap between the last result and the min status ID of current search.
-    // If the difference is larger than one day, then we can still get more tweets from the realtime
-    // cluster, so there's no need to query the full archive cluster just yet. If we don't check
-    // this, then we might end up with a big gap in the returned results.
-    int numReturnedResults = realtimeResponse.getSearchResults().getResultsSize();
-    if (numReturnedResults > 0) {
-      ThriftSearchResult lastResult =
-          realtimeResponse.getSearchResults().getResults().get(numReturnedResults - 1);
-      long lastResultTimeMillis = SnowflakeIdParser.getTimestampFromTweetId(lastResult.getId());
-      long minSearchedStatusID = realtimeResponse.getSearchResults().getMinSearchedStatusID();
-      long minSearchedStatusIDTimeMillis =
-          SnowflakeIdParser.getTimestampFromTweetId(minSearchedStatusID);
-      if (lastResultTimeMillis - minSearchedStatusIDTimeMillis > MILLIS_IN_ONE_DAY) {
+    // C ck  f t re  s a gap bet en t  last result and t  m n status  D of current search.
+    //  f t  d fference  s larger than one day, t n   can st ll get more t ets from t  realt  
+    // cluster, so t re's no need to query t  full arch ve cluster just yet.  f   don't c ck
+    // t , t n   m ght end up w h a b g gap  n t  returned results.
+     nt numReturnedResults = realt  Response.getSearchResults().getResultsS ze();
+     f (numReturnedResults > 0) {
+      Thr ftSearchResult lastResult =
+          realt  Response.getSearchResults().getResults().get(numReturnedResults - 1);
+      long lastResultT  M ll s = Snowflake dParser.getT  stampFromT et d(lastResult.get d());
+      long m nSearc dStatus D = realt  Response.getSearchResults().getM nSearc dStatus D();
+      long m nSearc dStatus DT  M ll s =
+          Snowflake dParser.getT  stampFromT et d(m nSearc dStatus D);
+       f (lastResultT  M ll s - m nSearc dStatus DT  M ll s > M LL S_ N_ONE_DAY) {
         return false;
       }
     }

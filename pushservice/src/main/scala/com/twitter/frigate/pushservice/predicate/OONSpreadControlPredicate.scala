@@ -1,116 +1,116 @@
-package com.twitter.frigate.pushservice.predicate
+package com.tw ter.fr gate.pushserv ce.pred cate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushConstants._
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.util.CandidateUtil
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base._
+ mport com.tw ter.fr gate.common.rec_types.RecTypes
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.params.PushConstants._
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.ut l.Cand dateUt l
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter.ut l.Future
 
-object OONSpreadControlPredicate {
+object OONSpreadControlPred cate {
 
-  def oonTweetSpreadControlPredicate(
+  def oonT etSpreadControlPred cate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[
-    PushCandidate with TweetCandidate with RecommendationType
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[
+    PushCand date w h T etCand date w h Recom ndat onType
   ] = {
-    val name = "oon_tweet_spread_control_predicate"
-    val scopedStatsReceiver = stats.scope(name)
-    val allOonCandidatesCounter = scopedStatsReceiver.counter("all_oon_candidates")
-    val filteredCandidatesCounter =
-      scopedStatsReceiver.counter("filtered_oon_candidates")
+    val na  = "oon_t et_spread_control_pred cate"
+    val scopedStatsRece ver = stats.scope(na )
+    val allOonCand datesCounter = scopedStatsRece ver.counter("all_oon_cand dates")
+    val f lteredCand datesCounter =
+      scopedStatsRece ver.counter("f ltered_oon_cand dates")
 
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetCandidate with RecommendationType =>
-        val target = candidate.target
-        val crt = candidate.commonRecType
-        val isOonCandidate = RecTypes.isOutOfNetworkTweetRecType(crt) ||
-          RecTypes.outOfNetworkTopicTweetTypes.contains(crt)
+    Pred cate
+      .fromAsync { cand date: PushCand date w h T etCand date w h Recom ndat onType =>
+        val target = cand date.target
+        val crt = cand date.commonRecType
+        val  sOonCand date = RecTypes. sOutOfNetworkT etRecType(crt) ||
+          RecTypes.outOfNetworkTop cT etTypes.conta ns(crt)
 
-        lazy val minTweetSendsThreshold =
-          target.params(PushFeatureSwitchParams.MinTweetSendsThresholdParam)
-        lazy val spreadControlRatio =
-          target.params(PushFeatureSwitchParams.SpreadControlRatioParam)
+        lazy val m nT etSendsThreshold =
+          target.params(PushFeatureSw chParams.M nT etSendsThresholdParam)
+        lazy val spreadControlRat o =
+          target.params(PushFeatureSw chParams.SpreadControlRat oParam)
         lazy val favOverSendThreshold =
-          target.params(PushFeatureSwitchParams.FavOverSendThresholdParam)
+          target.params(PushFeatureSw chParams.FavOverSendThresholdParam)
 
-        lazy val sentCount = candidate.numericFeatures.getOrElse(sentFeatureName, 0.0)
-        lazy val followerCount =
-          candidate.numericFeatures.getOrElse(authorActiveFollowerFeatureName, 0.0)
-        lazy val favCount = candidate.numericFeatures.getOrElse(favFeatureName, 0.0)
+        lazy val sentCount = cand date.nu r cFeatures.getOrElse(sentFeatureNa , 0.0)
+        lazy val follo rCount =
+          cand date.nu r cFeatures.getOrElse(authorAct veFollo rFeatureNa , 0.0)
+        lazy val favCount = cand date.nu r cFeatures.getOrElse(favFeatureNa , 0.0)
         lazy val favOverSends = favCount / (sentCount + 1.0)
 
-        if (CandidateUtil.shouldApplyHealthQualityFilters(candidate) && isOonCandidate) {
-          allOonCandidatesCounter.incr()
-          if (sentCount > minTweetSendsThreshold &&
-            sentCount > spreadControlRatio * followerCount &&
+         f (Cand dateUt l.shouldApply althQual yF lters(cand date) &&  sOonCand date) {
+          allOonCand datesCounter. ncr()
+           f (sentCount > m nT etSendsThreshold &&
+            sentCount > spreadControlRat o * follo rCount &&
             favOverSends < favOverSendThreshold) {
-            filteredCandidatesCounter.incr()
+            f lteredCand datesCounter. ncr()
             Future.False
           } else Future.True
         } else Future.True
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .w hStats(stats.scope(na ))
+      .w hNa (na )
   }
 
-  def oonAuthorSpreadControlPredicate(
+  def oonAuthorSpreadControlPred cate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[
-    PushCandidate with TweetCandidate with RecommendationType
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[
+    PushCand date w h T etCand date w h Recom ndat onType
   ] = {
-    val name = "oon_author_spread_control_predicate"
-    val scopedStatsReceiver = stats.scope(name)
-    val allOonCandidatesCounter = scopedStatsReceiver.counter("all_oon_candidates")
-    val filteredCandidatesCounter =
-      scopedStatsReceiver.counter("filtered_oon_candidates")
+    val na  = "oon_author_spread_control_pred cate"
+    val scopedStatsRece ver = stats.scope(na )
+    val allOonCand datesCounter = scopedStatsRece ver.counter("all_oon_cand dates")
+    val f lteredCand datesCounter =
+      scopedStatsRece ver.counter("f ltered_oon_cand dates")
 
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetCandidate with RecommendationType =>
-        val target = candidate.target
-        val crt = candidate.commonRecType
-        val isOonCandidate = RecTypes.isOutOfNetworkTweetRecType(crt) ||
-          RecTypes.outOfNetworkTopicTweetTypes.contains(crt)
+    Pred cate
+      .fromAsync { cand date: PushCand date w h T etCand date w h Recom ndat onType =>
+        val target = cand date.target
+        val crt = cand date.commonRecType
+        val  sOonCand date = RecTypes. sOutOfNetworkT etRecType(crt) ||
+          RecTypes.outOfNetworkTop cT etTypes.conta ns(crt)
 
-        lazy val minAuthorSendsThreshold =
-          target.params(PushFeatureSwitchParams.MinAuthorSendsThresholdParam)
-        lazy val spreadControlRatio =
-          target.params(PushFeatureSwitchParams.SpreadControlRatioParam)
+        lazy val m nAuthorSendsThreshold =
+          target.params(PushFeatureSw chParams.M nAuthorSendsThresholdParam)
+        lazy val spreadControlRat o =
+          target.params(PushFeatureSw chParams.SpreadControlRat oParam)
         lazy val reportRateThreshold =
-          target.params(PushFeatureSwitchParams.AuthorReportRateThresholdParam)
-        lazy val dislikeRateThreshold =
-          target.params(PushFeatureSwitchParams.AuthorDislikeRateThresholdParam)
+          target.params(PushFeatureSw chParams.AuthorReportRateThresholdParam)
+        lazy val d sl keRateThreshold =
+          target.params(PushFeatureSw chParams.AuthorD sl keRateThresholdParam)
 
         lazy val authorSentCount =
-          candidate.numericFeatures.getOrElse(authorSendCountFeatureName, 0.0)
+          cand date.nu r cFeatures.getOrElse(authorSendCountFeatureNa , 0.0)
         lazy val authorReportCount =
-          candidate.numericFeatures.getOrElse(authorReportCountFeatureName, 0.0)
-        lazy val authorDislikeCount =
-          candidate.numericFeatures.getOrElse(authorDislikeCountFeatureName, 0.0)
-        lazy val followerCount = candidate.numericFeatures
-          .getOrElse(authorActiveFollowerFeatureName, 0.0)
+          cand date.nu r cFeatures.getOrElse(authorReportCountFeatureNa , 0.0)
+        lazy val authorD sl keCount =
+          cand date.nu r cFeatures.getOrElse(authorD sl keCountFeatureNa , 0.0)
+        lazy val follo rCount = cand date.nu r cFeatures
+          .getOrElse(authorAct veFollo rFeatureNa , 0.0)
         lazy val reportRate =
           authorReportCount / (authorSentCount + 1.0)
-        lazy val dislikeRate =
-          authorDislikeCount / (authorSentCount + 1.0)
+        lazy val d sl keRate =
+          authorD sl keCount / (authorSentCount + 1.0)
 
-        if (CandidateUtil.shouldApplyHealthQualityFilters(candidate) && isOonCandidate) {
-          allOonCandidatesCounter.incr()
-          if (authorSentCount > minAuthorSendsThreshold &&
-            authorSentCount > spreadControlRatio * followerCount &&
-            (reportRate > reportRateThreshold || dislikeRate > dislikeRateThreshold)) {
-            filteredCandidatesCounter.incr()
+         f (Cand dateUt l.shouldApply althQual yF lters(cand date) &&  sOonCand date) {
+          allOonCand datesCounter. ncr()
+           f (authorSentCount > m nAuthorSendsThreshold &&
+            authorSentCount > spreadControlRat o * follo rCount &&
+            (reportRate > reportRateThreshold || d sl keRate > d sl keRateThreshold)) {
+            f lteredCand datesCounter. ncr()
             Future.False
           } else Future.True
         } else Future.True
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .w hStats(stats.scope(na ))
+      .w hNa (na )
   }
 }

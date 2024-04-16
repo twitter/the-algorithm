@@ -1,77 +1,77 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.tw ter.search. ngester.p pel ne.tw ter;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
+ mport org.apac .commons.p pel ne.StageExcept on;
+ mport org.apac .commons.p pel ne.val dat on.Consu dTypes;
+ mport org.apac .commons.p pel ne.val dat on.ProducesConsu d;
 
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.ingester.pipeline.twitter.filters.IngesterValidMessageFilter;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common.relevance.ent  es.Tw ter ssage;
+ mport com.tw ter.search. ngester.p pel ne.tw ter.f lters. ngesterVal d ssageF lter;
+ mport com.tw ter.search. ngester.p pel ne.ut l.P pel neStageRunt  Except on;
 
 /**
- * Filter out Twitter messages meeting some filtering rule.
+ * F lter out Tw ter  ssages  et ng so  f lter ng rule.
  */
-@ConsumedTypes(TwitterMessage.class)
-@ProducesConsumed
-public class FilterTwitterMessageStage extends TwitterBaseStage
-    <TwitterMessage, TwitterMessage> {
-  private IngesterValidMessageFilter filter = null;
-  private SearchRateCounter validMessages;
-  private SearchRateCounter invalidMessages;
+@Consu dTypes(Tw ter ssage.class)
+@ProducesConsu d
+publ c class F lterTw ter ssageStage extends Tw terBaseStage
+    <Tw ter ssage, Tw ter ssage> {
+  pr vate  ngesterVal d ssageF lter f lter = null;
+  pr vate SearchRateCounter val d ssages;
+  pr vate SearchRateCounter  nval d ssages;
 
-  @Override
-  protected void initStats() {
-    super.initStats();
-    innerSetupStats();
+  @Overr de
+  protected vo d  n Stats() {
+    super. n Stats();
+     nnerSetupStats();
   }
 
-  @Override
-  protected void innerSetupStats() {
-    validMessages = SearchRateCounter.export(getStageNamePrefix() + "_valid_messages");
-    invalidMessages = SearchRateCounter.export(getStageNamePrefix() + "_filtered_messages");
+  @Overr de
+  protected vo d  nnerSetupStats() {
+    val d ssages = SearchRateCounter.export(getStageNa Pref x() + "_val d_ ssages");
+     nval d ssages = SearchRateCounter.export(getStageNa Pref x() + "_f ltered_ ssages");
   }
 
-  @Override
-  protected void doInnerPreprocess() {
-    innerSetup();
+  @Overr de
+  protected vo d do nnerPreprocess() {
+     nnerSetup();
   }
 
-  @Override
-  protected void innerSetup() {
-    filter = new IngesterValidMessageFilter(decider);
+  @Overr de
+  protected vo d  nnerSetup() {
+    f lter = new  ngesterVal d ssageF lter(dec der);
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof TwitterMessage)) {
-      throw new StageException(this, "Object is not a IngesterTwitterMessage: "
+  @Overr de
+  publ c vo d  nnerProcess(Object obj) throws StageExcept on {
+     f (!(obj  nstanceof Tw ter ssage)) {
+      throw new StageExcept on(t , "Object  s not a  ngesterTw ter ssage: "
       + obj);
     }
 
-    TwitterMessage message = (TwitterMessage) obj;
-    if (tryToFilter(message)) {
-      emitAndCount(message);
+    Tw ter ssage  ssage = (Tw ter ssage) obj;
+     f (tryToF lter( ssage)) {
+      em AndCount( ssage);
     }
   }
 
-  @Override
-  protected TwitterMessage innerRunStageV2(TwitterMessage message) {
-    if (!tryToFilter(message)) {
-      throw new PipelineStageRuntimeException("Failed to filter, does not have to "
-      + "pass to the next stage");
+  @Overr de
+  protected Tw ter ssage  nnerRunStageV2(Tw ter ssage  ssage) {
+     f (!tryToF lter( ssage)) {
+      throw new P pel neStageRunt  Except on("Fa led to f lter, does not have to "
+      + "pass to t  next stage");
     }
-    return message;
+    return  ssage;
   }
 
-  private boolean tryToFilter(TwitterMessage message) {
-    boolean ableToFilter = false;
-    if (message != null && filter.accepts(message)) {
-      validMessages.increment();
-      ableToFilter = true;
+  pr vate boolean tryToF lter(Tw ter ssage  ssage) {
+    boolean ableToF lter = false;
+     f ( ssage != null && f lter.accepts( ssage)) {
+      val d ssages. ncre nt();
+      ableToF lter = true;
     } else {
-      invalidMessages.increment();
+       nval d ssages. ncre nt();
     }
-    return ableToFilter;
+    return ableToF lter;
   }
 }

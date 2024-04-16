@@ -1,37 +1,37 @@
-package com.twitter.search.earlybird.search.relevance;
+package com.tw ter.search.earlyb rd.search.relevance;
 
-import com.twitter.search.earlybird.search.Hit;
-import com.twitter.search.earlybird.search.SimpleSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
+ mport com.tw ter.search.earlyb rd.search.H ;
+ mport com.tw ter.search.earlyb rd.search.S mpleSearchResults;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult tadata;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultsRelevanceStats;
 
-public class RelevanceSearchResults extends SimpleSearchResults {
-  public final ThriftSearchResultMetadata[] resultMetadata;
-  private ThriftSearchResultsRelevanceStats relevanceStats = null;
-  private long scoringTimeNanos = 0;
+publ c class RelevanceSearchResults extends S mpleSearchResults {
+  publ c f nal Thr ftSearchResult tadata[] result tadata;
+  pr vate Thr ftSearchResultsRelevanceStats relevanceStats = null;
+  pr vate long scor ngT  Nanos = 0;
 
-  public RelevanceSearchResults(int size) {
-    super(size);
-    this.resultMetadata = new ThriftSearchResultMetadata[size];
+  publ c RelevanceSearchResults( nt s ze) {
+    super(s ze);
+    t .result tadata = new Thr ftSearchResult tadata[s ze];
   }
 
-  public void setHit(Hit hit, int hitIndex) {
-    hits[hitIndex] = hit;
-    resultMetadata[hitIndex] = hit.getMetadata();
+  publ c vo d setH (H  h ,  nt h  ndex) {
+    h s[h  ndex] = h ;
+    result tadata[h  ndex] = h .get tadata();
   }
 
-  public void setRelevanceStats(ThriftSearchResultsRelevanceStats relevanceStats) {
-    this.relevanceStats = relevanceStats;
+  publ c vo d setRelevanceStats(Thr ftSearchResultsRelevanceStats relevanceStats) {
+    t .relevanceStats = relevanceStats;
   }
-  public ThriftSearchResultsRelevanceStats getRelevanceStats() {
+  publ c Thr ftSearchResultsRelevanceStats getRelevanceStats() {
     return relevanceStats;
   }
 
-  public void setScoringTimeNanos(long scoringTimeNanos) {
-    this.scoringTimeNanos = scoringTimeNanos;
+  publ c vo d setScor ngT  Nanos(long scor ngT  Nanos) {
+    t .scor ngT  Nanos = scor ngT  Nanos;
   }
 
-  public long getScoringTimeNanos() {
-    return scoringTimeNanos;
+  publ c long getScor ngT  Nanos() {
+    return scor ngT  Nanos;
   }
 }

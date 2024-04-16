@@ -1,40 +1,40 @@
-package com.twitter.representation_manager.modules
+package com.tw ter.representat on_manager.modules
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsThriftMuxClientSyntax
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.service.ReqRep
-import com.twitter.finagle.service.ResponseClass
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.inject.TwitterModule
-import com.twitter.interests.thriftscala.InterestsThriftService
-import com.twitter.util.Throw
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.Thr ftMux
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.mtls.cl ent.MtlsStackCl ent.MtlsThr ftMuxCl entSyntax
+ mport com.tw ter.f nagle.mux.Cl entD scardedRequestExcept on
+ mport com.tw ter.f nagle.serv ce.ReqRep
+ mport com.tw ter.f nagle.serv ce.ResponseClass
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nterests.thr ftscala. nterestsThr ftServ ce
+ mport com.tw ter.ut l.Throw
+ mport javax. nject.S ngleton
 
-object InterestsThriftClientModule extends TwitterModule {
+object  nterestsThr ftCl entModule extends Tw terModule {
 
-  @Singleton
-  @Provides
-  def providesInterestsThriftClient(
-    clientId: ClientId,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): InterestsThriftService.MethodPerEndpoint = {
-    ThriftMux.client
-      .withClientId(clientId)
-      .withMutualTls(serviceIdentifier)
-      .withRequestTimeout(450.milliseconds)
-      .withStatsReceiver(statsReceiver.scope("InterestsThriftClient"))
-      .withResponseClassifier {
-        case ReqRep(_, Throw(_: ClientDiscardedRequestException)) => ResponseClass.Ignorable
+  @S ngleton
+  @Prov des
+  def prov des nterestsThr ftCl ent(
+    cl ent d: Cl ent d,
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver
+  ):  nterestsThr ftServ ce. thodPerEndpo nt = {
+    Thr ftMux.cl ent
+      .w hCl ent d(cl ent d)
+      .w hMutualTls(serv ce dent f er)
+      .w hRequestT  out(450.m ll seconds)
+      .w hStatsRece ver(statsRece ver.scope(" nterestsThr ftCl ent"))
+      .w hResponseClass f er {
+        case ReqRep(_, Throw(_: Cl entD scardedRequestExcept on)) => ResponseClass. gnorable
       }
-      .build[InterestsThriftService.MethodPerEndpoint](
-        dest = "/s/interests-thrift-service/interests-thrift-service",
-        label = "interests_thrift_service"
+      .bu ld[ nterestsThr ftServ ce. thodPerEndpo nt](
+        dest = "/s/ nterests-thr ft-serv ce/ nterests-thr ft-serv ce",
+        label = " nterests_thr ft_serv ce"
       )
   }
 }

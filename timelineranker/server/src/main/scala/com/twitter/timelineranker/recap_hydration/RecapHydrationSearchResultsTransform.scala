@@ -1,15 +1,15 @@
-package com.twitter.timelineranker.recap_hydration
+package com.tw ter.t  l neranker.recap_hydrat on
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.timelineranker.common.RecapHydrationSearchResultsTransformBase
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.model.TweetId
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.t  l neranker.common.RecapHydrat onSearchResultsTransformBase
+ mport com.tw ter.t  l neranker.core.Cand dateEnvelope
+ mport com.tw ter.t  l nes.cl ents.relevance_search.SearchCl ent
+ mport com.tw ter.t  l nes.model.T et d
 
-class RecapHydrationSearchResultsTransform(
-  override protected val searchClient: SearchClient,
-  override protected val statsReceiver: StatsReceiver)
-    extends RecapHydrationSearchResultsTransformBase {
-  override def tweetIdsToHydrate(envelope: CandidateEnvelope): Seq[TweetId] =
-    envelope.query.tweetIds.get
+class RecapHydrat onSearchResultsTransform(
+  overr de protected val searchCl ent: SearchCl ent,
+  overr de protected val statsRece ver: StatsRece ver)
+    extends RecapHydrat onSearchResultsTransformBase {
+  overr de def t et dsToHydrate(envelope: Cand dateEnvelope): Seq[T et d] =
+    envelope.query.t et ds.get
 }

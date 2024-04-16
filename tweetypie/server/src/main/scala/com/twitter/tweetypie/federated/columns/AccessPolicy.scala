@@ -1,40 +1,40 @@
-package com.twitter.tweetypie.federated.columns
+package com.tw ter.t etyp e.federated.columns
 
-import com.twitter.passbird.bitfield.clientprivileges.thriftscala.{Constants => ClientAppPrivileges}
-import com.twitter.strato.access.Access.AuthenticatedTwitterUserNotSuspended
-import com.twitter.strato.access.Access.ClientApplicationPrivilege
-import com.twitter.strato.access.Access.TwitterUserNotSuspended
-import com.twitter.strato.access.ClientApplicationPrivilegeVariant
-import com.twitter.strato.config._
+ mport com.tw ter.passb rd.b f eld.cl entpr v leges.thr ftscala.{Constants => Cl entAppPr v leges}
+ mport com.tw ter.strato.access.Access.Aut nt catedTw terUserNotSuspended
+ mport com.tw ter.strato.access.Access.Cl entAppl cat onPr v lege
+ mport com.tw ter.strato.access.Access.Tw terUserNotSuspended
+ mport com.tw ter.strato.access.Cl entAppl cat onPr v legeVar ant
+ mport com.tw ter.strato.conf g._
 
-object AccessPolicy {
+object AccessPol cy {
 
   /**
-   * All Tweet Mutation operations require all of:
-   *   - Twitter user authentication
-   *   - Twitter user is not suspended
-   *   - Contributor user, if provided, is not suspended
-   *   - "Teams Access": user is acting their own behalf, or is a
-   *      contributor using a client with ClientAppPriviledges.CONTRIBUTORS
-   *   - Write privileges
+   * All T et Mutat on operat ons requ re all of:
+   *   - Tw ter user aut nt cat on
+   *   - Tw ter user  s not suspended
+   *   - Contr butor user,  f prov ded,  s not suspended
+   *   - "Teams Access": user  s act ng t  r own behalf, or  s a
+   *      contr butor us ng a cl ent w h Cl entAppPr v ledges.CONTR BUTORS
+   *   - Wr e pr v leges
    */
-  val TweetMutationCommonAccessPolicies: Policy =
+  val T etMutat onCommonAccessPol c es: Pol cy =
     AllOf(
       Seq(
-        AllowTwitterUserId,
+        AllowTw terUser d,
         Has(
-          TwitterUserNotSuspended
+          Tw terUserNotSuspended
         ),
         Has(
-          AuthenticatedTwitterUserNotSuspended
+          Aut nt catedTw terUserNotSuspended
         ),
         AnyOf(
           Seq(
-            TwitterUserContributingAsSelf,
-            Has(principal = ClientApplicationPrivilege(ClientApplicationPrivilegeVariant
-              .byId(ClientAppPrivileges.CONTRIBUTORS.toShort).get))
+            Tw terUserContr but ngAsSelf,
+            Has(pr nc pal = Cl entAppl cat onPr v lege(Cl entAppl cat onPr v legeVar ant
+              .by d(Cl entAppPr v leges.CONTR BUTORS.toShort).get))
           )),
-        AllowWritableAccessToken
+        AllowWr ableAccessToken
       )
     )
 

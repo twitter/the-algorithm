@@ -1,55 +1,55 @@
-package com.twitter.search.earlybird.common;
+package com.tw ter.search.earlyb rd.common;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+ mport java.ut l.concurrent.atom c.Atom cBoolean;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.metrics.SearchCustomGauge;
+ mport com.tw ter.search.common. tr cs.SearchCustomGauge;
 
 /**
- * A monitor which enforces the condition that a single thread's work is caught up, and allows
- * other threads to wait to be notified when the work is complete. An AtomicBoolean ensures the
- * current status is visible to all threads.
+ * A mon or wh ch enforces t  cond  on that a s ngle thread's work  s caught up, and allows
+ * ot r threads to wa  to be not f ed w n t  work  s complete. An Atom cBoolean ensures t 
+ * current status  s v s ble to all threads.
  */
-public class CaughtUpMonitor {
-  private static final Logger LOG = LoggerFactory.getLogger(CaughtUpMonitor.class);
+publ c class CaughtUpMon or {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(CaughtUpMon or.class);
 
-  protected final AtomicBoolean isCaughtUp = new AtomicBoolean(false);
+  protected f nal Atom cBoolean  sCaughtUp = new Atom cBoolean(false);
 
-  public CaughtUpMonitor(String statPrefix) {
-    SearchCustomGauge.export(statPrefix + "_is_caught_up", () -> isCaughtUp() ? 1 : 0);
+  publ c CaughtUpMon or(Str ng statPref x) {
+    SearchCustomGauge.export(statPref x + "_ s_caught_up", () ->  sCaughtUp() ? 1 : 0);
   }
 
-  public boolean isCaughtUp() {
-    return isCaughtUp.get();
+  publ c boolean  sCaughtUp() {
+    return  sCaughtUp.get();
   }
 
   /**
-   * Set caught up state, and notify waiting threads if caught up.
+   * Set caught up state, and not fy wa  ng threads  f caught up.
    */
-  public synchronized void setAndNotify(boolean caughtUp) {
-    isCaughtUp.set(caughtUp);
-    if (caughtUp) {
-      // Readers are caught up, notify waiting threads
-      notifyAll();
+  publ c synchron zed vo d setAndNot fy(boolean caughtUp) {
+     sCaughtUp.set(caughtUp);
+     f (caughtUp) {
+      // Readers are caught up, not fy wa  ng threads
+      not fyAll();
     }
   }
 
   /**
-   * Wait using Object.wait() until caught up or until thread is interrupted.
+   * Wa  us ng Object.wa () unt l caught up or unt l thread  s  nterrupted.
    */
-  public synchronized void resetAndWaitUntilCaughtUp() {
-    LOG.info("Waiting to catch up.");
-    // Explicitly set isCaughtUp to false before waiting
-    isCaughtUp.set(false);
+  publ c synchron zed vo d resetAndWa Unt lCaughtUp() {
+    LOG. nfo("Wa  ng to catch up.");
+    // Expl c ly set  sCaughtUp to false before wa  ng
+     sCaughtUp.set(false);
     try {
-      while (!isCaughtUp()) {
-        wait();
+      wh le (! sCaughtUp()) {
+        wa ();
       }
-    } catch (InterruptedException e) {
-      LOG.error("{} was interrupted while waiting to catch up", Thread.currentThread());
+    } catch ( nterruptedExcept on e) {
+      LOG.error("{} was  nterrupted wh le wa  ng to catch up", Thread.currentThread());
     }
-    LOG.info("Caught up.");
+    LOG. nfo("Caught up.");
   }
 }

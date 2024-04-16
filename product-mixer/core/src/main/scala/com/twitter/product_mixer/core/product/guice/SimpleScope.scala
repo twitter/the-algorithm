@@ -1,48 +1,48 @@
-package com.twitter.product_mixer.core.product.guice
+package com.tw ter.product_m xer.core.product.gu ce
 
-import com.google.inject.Key
-import com.google.inject.OutOfScopeException
-import com.google.inject.Provider
-import com.google.inject.Scope
-import com.google.inject.Scopes
-import com.twitter.util.Local
-import scala.collection.concurrent
-import scala.collection.mutable
+ mport com.google. nject.Key
+ mport com.google. nject.OutOfScopeExcept on
+ mport com.google. nject.Prov der
+ mport com.google. nject.Scope
+ mport com.google. nject.Scopes
+ mport com.tw ter.ut l.Local
+ mport scala.collect on.concurrent
+ mport scala.collect on.mutable
 
 /**
- * A scala-esque implementation of SimpleScope: https://github.com/google/guice/wiki/CustomScopes#implementing-scope
+ * A scala-esque  mple ntat on of S mpleScope: https://g hub.com/google/gu ce/w k /CustomScopes# mple nt ng-scope
  *
- * Scopes the execution of a single block of code via `let`
+ * Scopes t  execut on of a s ngle block of code v a `let`
  */
-class SimpleScope extends Scope {
+class S mpleScope extends Scope {
 
-  private val values = new Local[concurrent.Map[Key[_], Any]]()
+  pr vate val values = new Local[concurrent.Map[Key[_], Any]]()
 
   /**
-   * Execute a block with a fresh scope.
+   * Execute a block w h a fresh scope.
    *
-   * You can optionally supply a map of initialObjects to 'seed' the new scope.
+   *   can opt onally supply a map of  n  alObjects to 'seed' t  new scope.
    */
-  def let[T](initialObjects: Map[Key[_], Any] = Map.empty)(f: => T): T = {
-    val newMap: concurrent.Map[Key[_], Any] = concurrent.TrieMap.empty
+  def let[T]( n  alObjects: Map[Key[_], Any] = Map.empty)(f: => T): T = {
+    val newMap: concurrent.Map[Key[_], Any] = concurrent.Tr eMap.empty
 
-    initialObjects.foreach { case (key, value) => newMap.put(key, value) }
+     n  alObjects.foreach { case (key, value) => newMap.put(key, value) }
 
     values.let(newMap)(f)
   }
 
-  override def scope[T](
+  overr de def scope[T](
     key: Key[T],
-    unscoped: Provider[T]
-  ): Provider[T] = () => {
+    unscoped: Prov der[T]
+  ): Prov der[T] = () => {
     val scopedObjects: mutable.Map[Key[T], Any] = getScopedObjectMap(key)
 
     scopedObjects
-      .get(key).map(_.asInstanceOf[T]).getOrElse {
+      .get(key).map(_.as nstanceOf[T]).getOrElse {
         val objectFromUnscoped: T = unscoped.get()
 
-        if (Scopes.isCircularProxy(objectFromUnscoped)) {
-          objectFromUnscoped // Don't remember proxies
+         f (Scopes. sC rcularProxy(objectFromUnscoped)) {
+          objectFromUnscoped // Don't re mber prox es
         } else {
           scopedObjects.put(key, objectFromUnscoped)
           objectFromUnscoped
@@ -53,16 +53,16 @@ class SimpleScope extends Scope {
   def getScopedObjectMap[T](key: Key[T]): concurrent.Map[Key[T], Any] = {
     values()
       .getOrElse(
-        throw new OutOfScopeException(s"Cannot access $key outside of a scoping block")
-      ).asInstanceOf[concurrent.Map[Key[T], Any]]
+        throw new OutOfScopeExcept on(s"Cannot access $key outs de of a scop ng block")
+      ).as nstanceOf[concurrent.Map[Key[T], Any]]
   }
 }
 
-object SimpleScope {
+object S mpleScope {
 
-  val SEEDED_KEY_PROVIDER: Provider[Nothing] = () =>
-    throw new IllegalStateException(
-      """If you got here then it means that your code asked for scoped object which should have
-      | been explicitly seeded in this scope by calling SimpleScope.seed(),
-      | but was not.""".stripMargin)
+  val SEEDED_KEY_PROV DER: Prov der[Noth ng] = () =>
+    throw new  llegalStateExcept on(
+      """ f   got  re t n    ans that y  code asked for scoped object wh ch should have
+      | been expl c ly seeded  n t  scope by call ng S mpleScope.seed(),
+      | but was not.""".str pMarg n)
 }

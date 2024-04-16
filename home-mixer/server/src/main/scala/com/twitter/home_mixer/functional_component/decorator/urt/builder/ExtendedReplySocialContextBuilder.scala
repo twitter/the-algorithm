@@ -1,71 +1,71 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.tw ter.ho _m xer.funct onal_component.decorator.urt.bu lder
 
-import com.twitter.home_mixer.model.HomeFeatures.FocalTweetAuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.FocalTweetInNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.FocalTweetRealNamesFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.model.Ho Features.FocalT etAuthor dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.FocalT et nNetworkFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.FocalT etRealNa sFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nNetworkFeature
+ mport com.tw ter.ho _m xer.product.follow ng.model.Ho M xerExternalStr ngs
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.soc al_context.BaseSoc alContextBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Soc alContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata._
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.product.gu ce.scope.ProductScoped
+ mport com.tw ter.str ngcenter.cl ent.Str ngCenter
+ mport javax. nject. nject
+ mport javax. nject.Prov der
+ mport javax. nject.S ngleton
 
 /**
- * Use '@A replied' when the root tweet is out-of-network and the reply is in network.
+ * Use '@A repl ed' w n t  root t et  s out-of-network and t  reply  s  n network.
  *
- * This function should only be called for the root Tweet of convo modules. This is enforced by
- * [[HomeTweetSocialContextBuilder]].
+ * T  funct on should only be called for t  root T et of convo modules. T   s enforced by
+ * [[Ho T etSoc alContextBu lder]].
  */
-@Singleton
-case class ExtendedReplySocialContextBuilder @Inject() (
-  externalStrings: HomeMixerExternalStrings,
-  @ProductScoped stringCenterProvider: Provider[StringCenter])
-    extends BaseSocialContextBuilder[PipelineQuery, TweetCandidate] {
+@S ngleton
+case class ExtendedReplySoc alContextBu lder @ nject() (
+  externalStr ngs: Ho M xerExternalStr ngs,
+  @ProductScoped str ngCenterProv der: Prov der[Str ngCenter])
+    extends BaseSoc alContextBu lder[P pel neQuery, T etCand date] {
 
-  private val stringCenter = stringCenterProvider.get()
-  private val extendedReplyString = externalStrings.socialContextExtendedReply
+  pr vate val str ngCenter = str ngCenterProv der.get()
+  pr vate val extendedReplyStr ng = externalStr ngs.soc alContextExtendedReply
 
   def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[SocialContext] = {
+    query: P pel neQuery,
+    cand date: T etCand date,
+    cand dateFeatures: FeatureMap
+  ): Opt on[Soc alContext] = {
 
-    // If these values are missing default to not showing an extended reply banner
-    val inNetworkRoot = candidateFeatures.getOrElse(InNetworkFeature, true)
+    //  f t se values are m ss ng default to not show ng an extended reply banner
+    val  nNetworkRoot = cand dateFeatures.getOrElse( nNetworkFeature, true)
 
-    val inNetworkFocalTweet =
-      candidateFeatures.getOrElse(FocalTweetInNetworkFeature, None).getOrElse(false)
+    val  nNetworkFocalT et =
+      cand dateFeatures.getOrElse(FocalT et nNetworkFeature, None).getOrElse(false)
 
-    if (!inNetworkRoot && inNetworkFocalTweet) {
+     f (! nNetworkRoot &&  nNetworkFocalT et) {
 
-      val focalTweetAuthorIdOpt = candidateFeatures.getOrElse(FocalTweetAuthorIdFeature, None)
-      val focalTweetRealNames =
-        candidateFeatures
-          .getOrElse(FocalTweetRealNamesFeature, None).getOrElse(Map.empty[Long, String])
-      val focalTweetAuthorNameOpt = focalTweetAuthorIdOpt.flatMap(focalTweetRealNames.get)
+      val focalT etAuthor dOpt = cand dateFeatures.getOrElse(FocalT etAuthor dFeature, None)
+      val focalT etRealNa s =
+        cand dateFeatures
+          .getOrElse(FocalT etRealNa sFeature, None).getOrElse(Map.empty[Long, Str ng])
+      val focalT etAuthorNa Opt = focalT etAuthor dOpt.flatMap(focalT etRealNa s.get)
 
-      (focalTweetAuthorIdOpt, focalTweetAuthorNameOpt) match {
-        case (Some(focalTweetAuthorId), Some(focalTweetAuthorName)) =>
-          Some(
+      (focalT etAuthor dOpt, focalT etAuthorNa Opt) match {
+        case (So (focalT etAuthor d), So (focalT etAuthorNa )) =>
+          So (
             GeneralContext(
-              contextType = ConversationGeneralContextType,
-              text = stringCenter
-                .prepare(extendedReplyString, placeholders = Map("user1" -> focalTweetAuthorName)),
+              contextType = Conversat onGeneralContextType,
+              text = str ngCenter
+                .prepare(extendedReplyStr ng, placeholders = Map("user1" -> focalT etAuthorNa )),
               url = None,
-              contextImageUrls = None,
-              landingUrl = Some(
+              context mageUrls = None,
+              land ngUrl = So (
                 Url(
-                  urlType = DeepLink,
+                  urlType = DeepL nk,
                   url = "",
-                  urtEndpointOptions = None
+                  urtEndpo ntOpt ons = None
                 ))
             ))
         case _ =>

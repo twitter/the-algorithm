@@ -1,447 +1,447 @@
-package com.twitter.search.earlybird.util;
+package com.tw ter.search.earlyb rd.ut l;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
+ mport java. o. OExcept on;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Calendar;
+ mport java.ut l.Date;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.concurrent.T  Un ;
+ mport java.ut l.concurrent.atom c.Atom c nteger;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Maps;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.collect.Maps;
 
-import org.apache.commons.lang.mutable.MutableInt;
-import org.apache.commons.lang.mutable.MutableLong;
-import org.apache.lucene.index.IndexOptions;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons.lang.mutable.Mutable nt;
+ mport org.apac .commons.lang.mutable.MutableLong;
+ mport org.apac .lucene. ndex. ndexOpt ons;
+ mport org.apac .lucene. ndex.Post ngsEnum;
+ mport org.apac .lucene. ndex.Terms;
+ mport org.apac .lucene. ndex.TermsEnum;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentManager;
+ mport com.tw ter.common.collect ons.Pa r;
+ mport com.tw ter.search.common.concurrent.Sc duledExecutorServ ceFactory;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
+ mport com.tw ter.search.common. tr cs.SearchStatsRece ver;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
+ mport com.tw ter.search.common.part  on ng.base.Seg nt;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.core.earlyb rd. ndex.Doc DToT et DMapper;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
+ mport com.tw ter.search.core.earlyb rd. ndex.T  Mapper;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.except on.Cr  calExcept onHandler;
+ mport com.tw ter.search.earlyb rd. ndex.Earlyb rdS ngleSeg ntSearc r;
+ mport com.tw ter.search.earlyb rd.part  on.Seg nt nfo;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntManager;
 
 /**
- * A background task that periodically gets and exports the number of tweets per hour that are
- * indexed on this earlybird.
- * Specifically used for making sure that we are not missing data for any hours in the search
- * archives.
- * The task loops though all the segments that are indexed by this earlybird, and for each segment
- * looks at all the createdAt dates for all of the documents in that segment.
+ * A background task that per od cally gets and exports t  number of t ets per h  that are
+ *  ndexed on t  earlyb rd.
+ * Spec f cally used for mak ng sure that   are not m ss ng data for any h s  n t  search
+ * arch ves.
+ * T  task loops though all t  seg nts that are  ndexed by t  earlyb rd, and for each seg nt
+ * looks at all t  createdAt dates for all of t  docu nts  n that seg nt.
  *
- * Also keeps track off an exposes as a stat the number of hours that do not have any tweets in the
- * min/max range of data that IS indexed on this earlybird. i.e if we only have data for
- * 2006/01/01:02 and 2006/01/01:04, it will consider 2006/01/01:03 as a missing hour.
- * Hours before 2006/01/01:02 or after 2006/01/01:04 will not be considered as missing.
+ * Also keeps track off an exposes as a stat t  number of h s that do not have any t ets  n t 
+ * m n/max range of data that  S  ndexed on t  earlyb rd.  .e  f   only have data for
+ * 2006/01/01:02 and 2006/01/01:04,   w ll cons der 2006/01/01:03 as a m ss ng h .
+ * H s before 2006/01/01:02 or after 2006/01/01:04 w ll not be cons dered as m ss ng.
  */
-public class TweetCountMonitor extends OneTaskScheduledExecutorManager {
-  private static final Logger LOG = LoggerFactory.getLogger(TweetCountMonitor.class);
+publ c class T etCountMon or extends OneTaskSc duledExecutorManager {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(T etCountMon or.class);
 
-  private static final String THREAD_NAME_FORMAT = "TweetCountMonitor-%d";
-  private static final boolean THREAD_IS_DAEMON = true;
+  pr vate stat c f nal Str ng THREAD_NAME_FORMAT = "T etCountMon or-%d";
+  pr vate stat c f nal boolean THREAD_ S_DAEMON = true;
 
-  public static final String RUN_INTERVAL_MINUTES_CONFIG_NAME =
-      "tweet_count_monitor_run_interval_minutes";
-  public static final String START_CHECK_HOUR_CONFIG_NAME =
-      "tweet_count_monitor_start_check_hour";
-  public static final String HOURLY_MIN_COUNT_CONFIG_NAME =
-      "tweet_count_monitor_hourly_min_count";
-  public static final String DAILY_MIN_COUNT_CONFIG_NAME =
-      "tweet_count_monitor_daily_min_count";
+  publ c stat c f nal Str ng RUN_ NTERVAL_M NUTES_CONF G_NAME =
+      "t et_count_mon or_run_ nterval_m nutes";
+  publ c stat c f nal Str ng START_CHECK_HOUR_CONF G_NAME =
+      "t et_count_mon or_start_c ck_h ";
+  publ c stat c f nal Str ng HOURLY_M N_COUNT_CONF G_NAME =
+      "t et_count_mon or_h ly_m n_count";
+  publ c stat c f nal Str ng DA LY_M N_COUNT_CONF G_NAME =
+      "t et_count_mon or_da ly_m n_count";
 
-  @VisibleForTesting
-  public static final AtomicInteger INSTANCE_COUNTER = new AtomicInteger(0);
+  @V s bleForTest ng
+  publ c stat c f nal Atom c nteger  NSTANCE_COUNTER = new Atom c nteger(0);
 
-  private static final long MILLIS_IN_A_DAY = TimeUnit.DAYS.toMillis(1);
+  pr vate stat c f nal long M LL S_ N_A_DAY = T  Un .DAYS.toM ll s(1);
 
-  private final SegmentManager segmentManager;
+  pr vate f nal Seg ntManager seg ntManager;
 
-  private final SearchStatsReceiver searchStatsReceiver;
-  private final int instanceCounter;
+  pr vate f nal SearchStatsRece ver searchStatsRece ver;
+  pr vate f nal  nt  nstanceCounter;
 
-  // The first date in format "YYYYMMDDHH" that we want to check counts for.
-  private final int startCheckHour;
-  // The last date in format "YYYYMMDDHH" that we want to check counts for.
-  private final int endCheckHour;
-  //Smallest number of docs we expect to have for each day.
-  private final int dailyMinCount;
-  // Smallest number of docs we expect to have for each hour.
-  private final int hourlyMinCount;
-  // Binary stat, set to 0 when the monitor is running
-  private final SearchLongGauge isRunningStat;
-  // How long each iteration takes
-  private final SearchTimerStats checkTimeStat;
+  // T  f rst date  n format "YYYYMMDDHH" that   want to c ck counts for.
+  pr vate f nal  nt startC ckH ;
+  // T  last date  n format "YYYYMMDDHH" that   want to c ck counts for.
+  pr vate f nal  nt endC ckH ;
+  //Smallest number of docs   expect to have for each day.
+  pr vate f nal  nt da lyM nCount;
+  // Smallest number of docs   expect to have for each h .
+  pr vate f nal  nt h lyM nCount;
+  // B nary stat, set to 0 w n t  mon or  s runn ng
+  pr vate f nal SearchLongGauge  sRunn ngStat;
+  // How long each  erat on takes
+  pr vate f nal SearchT  rStats c ckT  Stat;
 
-  private final Map<String, FieldTermCounter> fieldTermCounters;
-  private final Map<String, SearchTimerStats> fieldCheckTimeStats;
+  pr vate f nal Map<Str ng, F eldTermCounter> f eldTermCounters;
+  pr vate f nal Map<Str ng, SearchT  rStats> f eldC ckT  Stats;
 
   /**
-   * Create a TweetCountMonitor to monitor all segments in the given segmentManager
+   * Create a T etCountMon or to mon or all seg nts  n t  g ven seg ntManager
    */
-  public TweetCountMonitor(
-      SegmentManager segmentManager,
-      ScheduledExecutorServiceFactory executorServiceFactory,
-      long shutdownWaitDuration,
-      TimeUnit shutdownWaitUnit,
-      SearchStatsReceiver searchStatsReceiver,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    this(segmentManager,
-        EarlybirdConfig.getInt(START_CHECK_HOUR_CONFIG_NAME, 0),
-        EarlybirdConfig.getInt(RUN_INTERVAL_MINUTES_CONFIG_NAME, -1),
-        EarlybirdConfig.getInt(HOURLY_MIN_COUNT_CONFIG_NAME, 0),
-        EarlybirdConfig.getInt(DAILY_MIN_COUNT_CONFIG_NAME, 0),
-        executorServiceFactory,
-        shutdownWaitDuration,
-        shutdownWaitUnit,
-        searchStatsReceiver,
-        criticalExceptionHandler);
+  publ c T etCountMon or(
+      Seg ntManager seg ntManager,
+      Sc duledExecutorServ ceFactory executorServ ceFactory,
+      long shutdownWa Durat on,
+      T  Un  shutdownWa Un ,
+      SearchStatsRece ver searchStatsRece ver,
+      Cr  calExcept onHandler cr  calExcept onHandler) {
+    t (seg ntManager,
+        Earlyb rdConf g.get nt(START_CHECK_HOUR_CONF G_NAME, 0),
+        Earlyb rdConf g.get nt(RUN_ NTERVAL_M NUTES_CONF G_NAME, -1),
+        Earlyb rdConf g.get nt(HOURLY_M N_COUNT_CONF G_NAME, 0),
+        Earlyb rdConf g.get nt(DA LY_M N_COUNT_CONF G_NAME, 0),
+        executorServ ceFactory,
+        shutdownWa Durat on,
+        shutdownWa Un ,
+        searchStatsRece ver,
+        cr  calExcept onHandler);
   }
 
-  @VisibleForTesting
-  TweetCountMonitor(
-      SegmentManager segmentManager,
-      int startCheckHourFromConfig,
-      int schedulePeriodMinutes,
-      int hourlyMinCount,
-      int dailyMinCount,
-      ScheduledExecutorServiceFactory executorServiceFactory,
-      long shutdownWaitDuration,
-      TimeUnit shutdownWaitUnit,
-      SearchStatsReceiver searchStatsReceiver,
-      CriticalExceptionHandler criticalExceptionHandler) {
+  @V s bleForTest ng
+  T etCountMon or(
+      Seg ntManager seg ntManager,
+       nt startC ckH FromConf g,
+       nt sc dulePer odM nutes,
+       nt h lyM nCount,
+       nt da lyM nCount,
+      Sc duledExecutorServ ceFactory executorServ ceFactory,
+      long shutdownWa Durat on,
+      T  Un  shutdownWa Un ,
+      SearchStatsRece ver searchStatsRece ver,
+      Cr  calExcept onHandler cr  calExcept onHandler) {
     super(
-      executorServiceFactory,
+      executorServ ceFactory,
       THREAD_NAME_FORMAT,
-      THREAD_IS_DAEMON,
-      PeriodicActionParams.atFixedRate(
-        schedulePeriodMinutes,
-        TimeUnit.MINUTES
+      THREAD_ S_DAEMON,
+      Per od cAct onParams.atF xedRate(
+        sc dulePer odM nutes,
+        T  Un .M NUTES
       ),
-      new ShutdownWaitTimeParams(
-        shutdownWaitDuration,
-        shutdownWaitUnit
+      new ShutdownWa T  Params(
+        shutdownWa Durat on,
+        shutdownWa Un 
       ),
-      searchStatsReceiver,
-        criticalExceptionHandler);
-    this.segmentManager = segmentManager;
-    this.searchStatsReceiver = searchStatsReceiver;
-    this.instanceCounter = INSTANCE_COUNTER.incrementAndGet();
-    this.hourlyMinCount = hourlyMinCount;
-    this.dailyMinCount = dailyMinCount;
+      searchStatsRece ver,
+        cr  calExcept onHandler);
+    t .seg ntManager = seg ntManager;
+    t .searchStatsRece ver = searchStatsRece ver;
+    t . nstanceCounter =  NSTANCE_COUNTER. ncre ntAndGet();
+    t .h lyM nCount = h lyM nCount;
+    t .da lyM nCount = da lyM nCount;
 
-    String isRunningStatName = "tweet_count_monitor_is_running_v_" + this.instanceCounter;
-    this.isRunningStat = SearchLongGauge.export(isRunningStatName);
-    String checkTimeStatName = "tweet_count_monitor_check_time_v_" + this.instanceCounter;
-    this.checkTimeStat = SearchTimerStats.export(checkTimeStatName, TimeUnit.MILLISECONDS, true);
+    Str ng  sRunn ngStatNa  = "t et_count_mon or_ s_runn ng_v_" + t . nstanceCounter;
+    t . sRunn ngStat = SearchLongGauge.export( sRunn ngStatNa );
+    Str ng c ckT  StatNa  = "t et_count_mon or_c ck_t  _v_" + t . nstanceCounter;
+    t .c ckT  Stat = SearchT  rStats.export(c ckT  StatNa , T  Un .M LL SECONDS, true);
 
-    this.startCheckHour = Math.max(
-        startCheckHourFromConfig,
-        dateToHourValue(segmentManager.getPartitionConfig().getTierStartDate()));
-    this.endCheckHour = dateToHourValue(segmentManager.getPartitionConfig().getTierEndDate());
+    t .startC ckH  = Math.max(
+        startC ckH FromConf g,
+        dateToH Value(seg ntManager.getPart  onConf g().getT erStartDate()));
+    t .endC ckH  = dateToH Value(seg ntManager.getPart  onConf g().getT erEndDate());
 
-    this.fieldTermCounters = Maps.newHashMap();
-    this.fieldTermCounters.put(
-        FieldTermCounter.TWEET_COUNT_KEY,
-        new FieldTermCounter(
-            FieldTermCounter.TWEET_COUNT_KEY,
-            instanceCounter,
-            startCheckHour,
-            endCheckHour,
-            hourlyMinCount,
-            dailyMinCount));
-    this.fieldCheckTimeStats = Maps.newHashMap();
+    t .f eldTermCounters = Maps.newHashMap();
+    t .f eldTermCounters.put(
+        F eldTermCounter.TWEET_COUNT_KEY,
+        new F eldTermCounter(
+            F eldTermCounter.TWEET_COUNT_KEY,
+             nstanceCounter,
+            startC ckH ,
+            endC ckH ,
+            h lyM nCount,
+            da lyM nCount));
+    t .f eldC ckT  Stats = Maps.newHashMap();
   }
 
-  private int dateToHourValue(Date date) {
-    Calendar cal = Calendar.getInstance(FieldTermCounter.TIME_ZONE);
-    cal.setTime(date);
-    return FieldTermCounter.getHourValue(cal);
+  pr vate  nt dateToH Value(Date date) {
+    Calendar cal = Calendar.get nstance(F eldTermCounter.T ME_ZONE);
+    cal.setT  (date);
+    return F eldTermCounter.getH Value(cal);
   }
 
-  private void updateHourlyCounts() {
-    // Iterate the current index to count all tweets anf field hits.
-    Map<String, Map<Integer, MutableInt>> newCountMap = getNewTweetCountMap();
+  pr vate vo d updateH lyCounts() {
+    //  erate t  current  ndex to count all t ets anf f eld h s.
+    Map<Str ng, Map< nteger, Mutable nt>> newCountMap = getNewT etCountMap();
 
-    for (Map.Entry<String, Map<Integer, MutableInt>> newCounts : newCountMap.entrySet()) {
-      final String fieldName = newCounts.getKey();
-      FieldTermCounter termCounter = fieldTermCounters.get(fieldName);
-      if (termCounter == null) {
-        termCounter = new FieldTermCounter(
-            fieldName,
-            instanceCounter,
-            startCheckHour,
-            endCheckHour,
-            hourlyMinCount,
-            dailyMinCount);
-        fieldTermCounters.put(fieldName, termCounter);
+    for (Map.Entry<Str ng, Map< nteger, Mutable nt>> newCounts : newCountMap.entrySet()) {
+      f nal Str ng f eldNa  = newCounts.getKey();
+      F eldTermCounter termCounter = f eldTermCounters.get(f eldNa );
+       f (termCounter == null) {
+        termCounter = new F eldTermCounter(
+            f eldNa ,
+             nstanceCounter,
+            startC ckH ,
+            endC ckH ,
+            h lyM nCount,
+            da lyM nCount);
+        f eldTermCounters.put(f eldNa , termCounter);
       }
-      termCounter.runWithNewCounts(newCounts.getValue());
+      termCounter.runW hNewCounts(newCounts.getValue());
     }
   }
 
   /**
-   * Loops through all segments, and all documents in each segment, and for each document
-   * gets the createdAt timestamp (in seconds) from the TimeMapper.
-   * Based on that, returns a map with the count of:
-   * . the number of tweets for each hour
-   * . the number of tweets corresponding to each field for each hour
+   * Loops through all seg nts, and all docu nts  n each seg nt, and for each docu nt
+   * gets t  createdAt t  stamp ( n seconds) from t  T  Mapper.
+   * Based on that, returns a map w h t  count of:
+   * . t  number of t ets for each h 
+   * . t  number of t ets correspond ng to each f eld for each h 
    */
-  private Map<String, Map<Integer, MutableInt>> getNewTweetCountMap() {
-    Iterable<SegmentInfo> segmentInfos = segmentManager.getSegmentInfos(
-        SegmentManager.Filter.Enabled, SegmentManager.Order.NEW_TO_OLD);
-    Map<String, Map<Integer, MutableInt>> newCountMap = Maps.newHashMap();
+  pr vate Map<Str ng, Map< nteger, Mutable nt>> getNewT etCountMap() {
+     erable<Seg nt nfo> seg nt nfos = seg ntManager.getSeg nt nfos(
+        Seg ntManager.F lter.Enabled, Seg ntManager.Order.NEW_TO_OLD);
+    Map<Str ng, Map< nteger, Mutable nt>> newCountMap = Maps.newHashMap();
 
-    Map<Integer, MutableInt> newCounts = Maps.newHashMap();
-    newCountMap.put(FieldTermCounter.TWEET_COUNT_KEY, newCounts);
+    Map< nteger, Mutable nt> newCounts = Maps.newHashMap();
+    newCountMap.put(F eldTermCounter.TWEET_COUNT_KEY, newCounts);
 
-    ImmutableSchemaInterface schemaSnapshot =
-        segmentManager.getEarlybirdIndexConfig().getSchema().getSchemaSnapshot();
-    Calendar cal = Calendar.getInstance(FieldTermCounter.TIME_ZONE);
-    for (SegmentInfo segmentInfo : segmentInfos) {
+     mmutableSc ma nterface sc maSnapshot =
+        seg ntManager.getEarlyb rd ndexConf g().getSc ma().getSc maSnapshot();
+    Calendar cal = Calendar.get nstance(F eldTermCounter.T ME_ZONE);
+    for (Seg nt nfo seg nt nfo : seg nt nfos) {
       try {
-        EarlybirdSingleSegmentSearcher searcher = segmentManager.getSearcher(
-            segmentInfo.getTimeSliceID(), schemaSnapshot);
-        if (searcher != null) {
-          EarlybirdIndexSegmentAtomicReader reader = searcher.getTwitterIndexReader();
-          TimeMapper timeMapper = reader.getSegmentData().getTimeMapper();
-          List<Pair<String, Integer>> outsideEndDateRangeDocList = new ArrayList<>();
+        Earlyb rdS ngleSeg ntSearc r searc r = seg ntManager.getSearc r(
+            seg nt nfo.getT  Sl ce D(), sc maSnapshot);
+         f (searc r != null) {
+          Earlyb rd ndexSeg ntAtom cReader reader = searc r.getTw ter ndexReader();
+          T  Mapper t  Mapper = reader.getSeg ntData().getT  Mapper();
+          L st<Pa r<Str ng,  nteger>> outs deEndDateRangeDocL st = new ArrayL st<>();
 
-          // Get the number of tweets for each hour.
-          int docsOutsideEndDateRange = getNewTweetCountsForSegment(
-              segmentInfo, reader, timeMapper, cal, newCounts);
-          if (docsOutsideEndDateRange > 0) {
-            outsideEndDateRangeDocList.add(new Pair<>(
-                FieldTermCounter.TWEET_COUNT_KEY, docsOutsideEndDateRange));
+          // Get t  number of t ets for each h .
+           nt docsOuts deEndDateRange = getNewT etCountsForSeg nt(
+              seg nt nfo, reader, t  Mapper, cal, newCounts);
+           f (docsOuts deEndDateRange > 0) {
+            outs deEndDateRangeDocL st.add(new Pa r<>(
+                F eldTermCounter.TWEET_COUNT_KEY, docsOuts deEndDateRange));
           }
 
-          // Get the number of tweets with corresponding field for each hour.
-          for (Schema.FieldInfo fieldInfo : schemaSnapshot.getFieldInfos()) {
-            if (fieldInfo.getFieldType().indexOptions() == IndexOptions.NONE) {
-              continue;
+          // Get t  number of t ets w h correspond ng f eld for each h .
+          for (Sc ma.F eld nfo f eld nfo : sc maSnapshot.getF eld nfos()) {
+             f (f eld nfo.getF eldType(). ndexOpt ons() ==  ndexOpt ons.NONE) {
+              cont nue;
             }
 
-            String fieldName = fieldInfo.getName();
-            docsOutsideEndDateRange = getNewFieldTweetCountsForSegment(
-                segmentInfo, reader, timeMapper, cal, fieldName, newCountMap);
-            if (docsOutsideEndDateRange > 0) {
-              outsideEndDateRangeDocList.add(new Pair<>(fieldName, docsOutsideEndDateRange));
+            Str ng f eldNa  = f eld nfo.getNa ();
+            docsOuts deEndDateRange = getNewF eldT etCountsForSeg nt(
+                seg nt nfo, reader, t  Mapper, cal, f eldNa , newCountMap);
+             f (docsOuts deEndDateRange > 0) {
+              outs deEndDateRangeDocL st.add(new Pa r<>(f eldNa , docsOuts deEndDateRange));
             }
           }
 
-          LOG.info("Inspected segment: " + segmentInfo + " found "
-              + outsideEndDateRangeDocList.size()
-              + " fields with documents outside of segment end date.");
-          for (Pair<String, Integer> outsideEndRange : outsideEndDateRangeDocList) {
-            LOG.info("  outside end date range - segment: " + segmentInfo.getSegmentName()
-                + " field: " + outsideEndRange.toString());
+          LOG. nfo(" nspected seg nt: " + seg nt nfo + " found "
+              + outs deEndDateRangeDocL st.s ze()
+              + " f elds w h docu nts outs de of seg nt end date.");
+          for (Pa r<Str ng,  nteger> outs deEndRange : outs deEndDateRangeDocL st) {
+            LOG. nfo("  outs de end date range - seg nt: " + seg nt nfo.getSeg ntNa ()
+                + " f eld: " + outs deEndRange.toStr ng());
           }
         }
-      } catch (IOException e) {
-        LOG.error("Exception getting daily tweet counts for timeslice: " + segmentInfo, e);
+      } catch ( OExcept on e) {
+        LOG.error("Except on gett ng da ly t et counts for t  sl ce: " + seg nt nfo, e);
       }
     }
     return newCountMap;
   }
 
-  private void incrementNumDocsWithIllegalTimeCounter(String segmentName, String fieldSuffix) {
-    String statName = String.format(
-        "num_docs_with_illegal_time_for_segment_%s%s_counter", segmentName, fieldSuffix);
-    SearchCounter counter = SearchCounter.export(statName);
-    counter.increment();
+  pr vate vo d  ncre ntNumDocsW h llegalT  Counter(Str ng seg ntNa , Str ng f eldSuff x) {
+    Str ng statNa  = Str ng.format(
+        "num_docs_w h_ llegal_t  _for_seg nt_%s%s_counter", seg ntNa , f eldSuff x);
+    SearchCounter counter = SearchCounter.export(statNa );
+    counter. ncre nt();
   }
 
-  private int getNewTweetCountsForSegment(
-      SegmentInfo segmentInfo,
-      EarlybirdIndexSegmentAtomicReader reader,
-      TimeMapper timeMapper,
+  pr vate  nt getNewT etCountsForSeg nt(
+      Seg nt nfo seg nt nfo,
+      Earlyb rd ndexSeg ntAtom cReader reader,
+      T  Mapper t  Mapper,
       Calendar cal,
-      Map<Integer, MutableInt> newTweetCounts) {
-    DocIDToTweetIDMapper tweetIdMapper = reader.getSegmentData().getDocIDToTweetIDMapper();
-    long dataEndTimeExclusiveMillis = getDataEndTimeExclusiveMillis(segmentInfo);
-    int docsOutsideEndDateRange = 0;
-    int docId = Integer.MIN_VALUE;
-    while ((docId = tweetIdMapper.getNextDocID(docId)) != DocIDToTweetIDMapper.ID_NOT_FOUND) {
+      Map< nteger, Mutable nt> newT etCounts) {
+    Doc DToT et DMapper t et dMapper = reader.getSeg ntData().getDoc DToT et DMapper();
+    long dataEndT  Exclus veM ll s = getDataEndT  Exclus veM ll s(seg nt nfo);
+     nt docsOuts deEndDateRange = 0;
+     nt doc d =  nteger.M N_VALUE;
+    wh le ((doc d = t et dMapper.getNextDoc D(doc d)) != Doc DToT et DMapper. D_NOT_FOUND) {
       UpdateCountType updateCountType =
-          updateTweetCount(timeMapper, docId, dataEndTimeExclusiveMillis, cal, newTweetCounts);
-      if (updateCountType == UpdateCountType.ILLEGAL_TIME) {
-        incrementNumDocsWithIllegalTimeCounter(segmentInfo.getSegmentName(), "");
-      } else if (updateCountType == UpdateCountType.OUT_OF_RANGE_TIME) {
-        docsOutsideEndDateRange++;
+          updateT etCount(t  Mapper, doc d, dataEndT  Exclus veM ll s, cal, newT etCounts);
+       f (updateCountType == UpdateCountType. LLEGAL_T ME) {
+         ncre ntNumDocsW h llegalT  Counter(seg nt nfo.getSeg ntNa (), "");
+      } else  f (updateCountType == UpdateCountType.OUT_OF_RANGE_T ME) {
+        docsOuts deEndDateRange++;
       }
     }
-    return docsOutsideEndDateRange;
+    return docsOuts deEndDateRange;
   }
 
-  private int getNewFieldTweetCountsForSegment(
-      SegmentInfo segmentInfo,
-      EarlybirdIndexSegmentAtomicReader reader,
-      TimeMapper timeMapper,
+  pr vate  nt getNewF eldT etCountsForSeg nt(
+      Seg nt nfo seg nt nfo,
+      Earlyb rd ndexSeg ntAtom cReader reader,
+      T  Mapper t  Mapper,
       Calendar cal,
-      String field,
-      Map<String, Map<Integer, MutableInt>> newCountMap) throws IOException {
-    int docsOutsideEndDateRange = 0;
-    Map<Integer, MutableInt> fieldTweetCounts =
-        newCountMap.computeIfAbsent(field, k -> Maps.newHashMap());
+      Str ng f eld,
+      Map<Str ng, Map< nteger, Mutable nt>> newCountMap) throws  OExcept on {
+     nt docsOuts deEndDateRange = 0;
+    Map< nteger, Mutable nt> f eldT etCounts =
+        newCountMap.compute fAbsent(f eld, k -> Maps.newHashMap());
 
-    Terms terms = reader.terms(field);
-    if (terms == null) {
-      LOG.warn("Field <" + field + "> is missing terms in segment: "
-          + segmentInfo.getSegmentName());
+    Terms terms = reader.terms(f eld);
+     f (terms == null) {
+      LOG.warn("F eld <" + f eld + ">  s m ss ng terms  n seg nt: "
+          + seg nt nfo.getSeg ntNa ());
       return 0;
     }
-    long startTimeMillis = System.currentTimeMillis();
+    long startT  M ll s = System.currentT  M ll s();
 
-    long dataEndTimeExclusiveMillis = getDataEndTimeExclusiveMillis(segmentInfo);
-    for (TermsEnum termsEnum = terms.iterator(); termsEnum.next() != null;) {
-      DocIdSetIterator docsIterator = termsEnum.postings(null, PostingsEnum.NONE);
-      for (int docId = docsIterator.nextDoc();
-           docId != DocIdSetIterator.NO_MORE_DOCS; docId = docsIterator.nextDoc()) {
-        UpdateCountType updateCountType = updateTweetCount(
-            timeMapper, docId, dataEndTimeExclusiveMillis, cal, fieldTweetCounts);
-        if (updateCountType == UpdateCountType.ILLEGAL_TIME) {
-          incrementNumDocsWithIllegalTimeCounter(
-              segmentInfo.getSegmentName(), "_and_field_" + field);
-        } else if (updateCountType == UpdateCountType.OUT_OF_RANGE_TIME) {
-          docsOutsideEndDateRange++;
+    long dataEndT  Exclus veM ll s = getDataEndT  Exclus veM ll s(seg nt nfo);
+    for (TermsEnum termsEnum = terms. erator(); termsEnum.next() != null;) {
+      Doc dSet erator docs erator = termsEnum.post ngs(null, Post ngsEnum.NONE);
+      for ( nt doc d = docs erator.nextDoc();
+           doc d != Doc dSet erator.NO_MORE_DOCS; doc d = docs erator.nextDoc()) {
+        UpdateCountType updateCountType = updateT etCount(
+            t  Mapper, doc d, dataEndT  Exclus veM ll s, cal, f eldT etCounts);
+         f (updateCountType == UpdateCountType. LLEGAL_T ME) {
+           ncre ntNumDocsW h llegalT  Counter(
+              seg nt nfo.getSeg ntNa (), "_and_f eld_" + f eld);
+        } else  f (updateCountType == UpdateCountType.OUT_OF_RANGE_T ME) {
+          docsOuts deEndDateRange++;
         }
       }
     }
-    updateFieldRunTimeStats(field, System.currentTimeMillis() - startTimeMillis);
+    updateF eldRunT  Stats(f eld, System.currentT  M ll s() - startT  M ll s);
 
-    return docsOutsideEndDateRange;
+    return docsOuts deEndDateRange;
   }
 
-  private enum UpdateCountType {
-    OK_TIME,
-    ILLEGAL_TIME,
-    OUT_OF_RANGE_TIME,
+  pr vate enum UpdateCountType {
+    OK_T ME,
+     LLEGAL_T ME,
+    OUT_OF_RANGE_T ME,
   }
 
-  private static UpdateCountType updateTweetCount(
-      TimeMapper timeMapper,
-      int docId,
-      long dataEndTimeExclusiveMillis,
+  pr vate stat c UpdateCountType updateT etCount(
+      T  Mapper t  Mapper,
+       nt doc d,
+      long dataEndT  Exclus veM ll s,
       Calendar cal,
-      Map<Integer, MutableInt> newTweetCounts) {
-    int timeSecs = timeMapper.getTime(docId);
-    if (timeSecs == TimeMapper.ILLEGAL_TIME) {
-      return UpdateCountType.ILLEGAL_TIME;
+      Map< nteger, Mutable nt> newT etCounts) {
+     nt t  Secs = t  Mapper.getT  (doc d);
+     f (t  Secs == T  Mapper. LLEGAL_T ME) {
+      return UpdateCountType. LLEGAL_T ME;
     }
-    if (dataEndTimeExclusiveMillis == Segment.NO_DATA_END_TIME
-        || timeSecs * 1000L < dataEndTimeExclusiveMillis) {
-      Integer hourlyValue = FieldTermCounter.getHourValue(cal, timeSecs);
-      MutableInt count = newTweetCounts.get(hourlyValue);
-      if (count == null) {
-        count = new MutableInt(0);
-        newTweetCounts.put(hourlyValue, count);
+     f (dataEndT  Exclus veM ll s == Seg nt.NO_DATA_END_T ME
+        || t  Secs * 1000L < dataEndT  Exclus veM ll s) {
+       nteger h lyValue = F eldTermCounter.getH Value(cal, t  Secs);
+      Mutable nt count = newT etCounts.get(h lyValue);
+       f (count == null) {
+        count = new Mutable nt(0);
+        newT etCounts.put(h lyValue, count);
       }
-      count.increment();
-      return UpdateCountType.OK_TIME;
+      count. ncre nt();
+      return UpdateCountType.OK_T ME;
     } else {
-      return UpdateCountType.OUT_OF_RANGE_TIME;
+      return UpdateCountType.OUT_OF_RANGE_T ME;
     }
   }
 
   /**
-   * If a segment has an end date, return the last timestamp (exclusive, and in millis) for which
-   * we expect it to have data.
-   * @return Segment.NO_DATA_END_TIME if the segment does not have an end date.
+   *  f a seg nt has an end date, return t  last t  stamp (exclus ve, and  n m ll s) for wh ch
+   *   expect   to have data.
+   * @return Seg nt.NO_DATA_END_T ME  f t  seg nt does not have an end date.
    */
-  private long getDataEndTimeExclusiveMillis(SegmentInfo segmentInfo) {
-    long dataEndDate = segmentInfo.getSegment().getDataEndDateInclusiveMillis();
-    if (dataEndDate == Segment.NO_DATA_END_TIME) {
-      return Segment.NO_DATA_END_TIME;
+  pr vate long getDataEndT  Exclus veM ll s(Seg nt nfo seg nt nfo) {
+    long dataEndDate = seg nt nfo.getSeg nt().getDataEndDate nclus veM ll s();
+     f (dataEndDate == Seg nt.NO_DATA_END_T ME) {
+      return Seg nt.NO_DATA_END_T ME;
     } else {
-      return dataEndDate + MILLIS_IN_A_DAY;
+      return dataEndDate + M LL S_ N_A_DAY;
     }
   }
 
-  private void updateFieldRunTimeStats(String fieldName, long runTimeMs) {
-    SearchTimerStats timerStats = fieldCheckTimeStats.get(fieldName);
-    if (timerStats == null) {
-      final String statName = "tweet_count_monitor_check_time_field_" + fieldName;
-      timerStats = searchStatsReceiver.getTimerStats(
-          statName, TimeUnit.MILLISECONDS, false, false, false);
-      fieldCheckTimeStats.put(fieldName, timerStats);
+  pr vate vo d updateF eldRunT  Stats(Str ng f eldNa , long runT  Ms) {
+    SearchT  rStats t  rStats = f eldC ckT  Stats.get(f eldNa );
+     f (t  rStats == null) {
+      f nal Str ng statNa  = "t et_count_mon or_c ck_t  _f eld_" + f eldNa ;
+      t  rStats = searchStatsRece ver.getT  rStats(
+          statNa , T  Un .M LL SECONDS, false, false, false);
+      f eldC ckT  Stats.put(f eldNa , t  rStats);
     }
-    timerStats.timerIncrement(runTimeMs);
+    t  rStats.t  r ncre nt(runT  Ms);
   }
 
-  @VisibleForTesting
-  String getStatName(String fieldName, Integer date) {
-    return FieldTermCounter.getStatName(fieldName, instanceCounter, date);
+  @V s bleForTest ng
+  Str ng getStatNa (Str ng f eldNa ,  nteger date) {
+    return F eldTermCounter.getStatNa (f eldNa ,  nstanceCounter, date);
   }
 
-  @VisibleForTesting
-  Map<Integer, AtomicInteger> getExportedCounts(String fieldName) {
-    if (fieldTermCounters.get(fieldName) == null) {
+  @V s bleForTest ng
+  Map< nteger, Atom c nteger> getExportedCounts(Str ng f eldNa ) {
+     f (f eldTermCounters.get(f eldNa ) == null) {
       return null;
     } else {
-      return fieldTermCounters.get(fieldName).getExportedCounts();
+      return f eldTermCounters.get(f eldNa ).getExportedCounts();
     }
   }
 
-  @VisibleForTesting
-  Map<Integer, MutableLong> getDailyCounts(String fieldName) {
-    if (fieldTermCounters.get(fieldName) == null) {
+  @V s bleForTest ng
+  Map< nteger, MutableLong> getDa lyCounts(Str ng f eldNa ) {
+     f (f eldTermCounters.get(f eldNa ) == null) {
       return null;
     } else {
-      return fieldTermCounters.get(fieldName).getDailyCounts();
+      return f eldTermCounters.get(f eldNa ).getDa lyCounts();
     }
   }
 
-  @VisibleForTesting
-  long getHoursWithNoTweets(String fieldName) {
-    return fieldTermCounters.get(fieldName).getHoursWithNoTweets();
+  @V s bleForTest ng
+  long getH sW hNoT ets(Str ng f eldNa ) {
+    return f eldTermCounters.get(f eldNa ).getH sW hNoT ets();
   }
 
-  @VisibleForTesting
-  long getDaysWithNoTweets(String fieldName) {
-    return fieldTermCounters.get(fieldName).getDaysWithNoTweets();
+  @V s bleForTest ng
+  long getDaysW hNoT ets(Str ng f eldNa ) {
+    return f eldTermCounters.get(f eldNa ).getDaysW hNoT ets();
   }
 
-  @VisibleForTesting
-  Map<String, SearchLongGauge> getExportedHourlyCountStats(String fieldName) {
-    return fieldTermCounters.get(fieldName).getExportedHourlyCountStats();
+  @V s bleForTest ng
+  Map<Str ng, SearchLongGauge> getExportedH lyCountStats(Str ng f eldNa ) {
+    return f eldTermCounters.get(f eldNa ).getExportedH lyCountStats();
   }
 
-  @Override
-  protected void runOneIteration() {
-    LOG.info("Starting to get hourly tweet counts");
-    final long startTimeMillis = System.currentTimeMillis();
+  @Overr de
+  protected vo d runOne erat on() {
+    LOG. nfo("Start ng to get h ly t et counts");
+    f nal long startT  M ll s = System.currentT  M ll s();
 
-    isRunningStat.set(1);
+     sRunn ngStat.set(1);
     try {
-      updateHourlyCounts();
-    } catch (Exception ex) {
-      LOG.error("Unexpected exception while getting hourly tweet counts", ex);
-    } finally {
-      isRunningStat.set(0);
+      updateH lyCounts();
+    } catch (Except on ex) {
+      LOG.error("Unexpected except on wh le gett ng h ly t et counts", ex);
+    } f nally {
+       sRunn ngStat.set(0);
 
-      long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
-      checkTimeStat.timerIncrement(elapsedTimeMillis);
-      LOG.info("Done getting daily tweet counts. Hours without tweets: "
-          + getHoursWithNoTweets(FieldTermCounter.TWEET_COUNT_KEY));
-      LOG.info("Updating tweet count takes " + (elapsedTimeMillis / 1000) + " secs.");
+      long elapsedT  M ll s = System.currentT  M ll s() - startT  M ll s;
+      c ckT  Stat.t  r ncre nt(elapsedT  M ll s);
+      LOG. nfo("Done gett ng da ly t et counts. H s w hout t ets: "
+          + getH sW hNoT ets(F eldTermCounter.TWEET_COUNT_KEY));
+      LOG. nfo("Updat ng t et count takes " + (elapsedT  M ll s / 1000) + " secs.");
     }
   }
 }

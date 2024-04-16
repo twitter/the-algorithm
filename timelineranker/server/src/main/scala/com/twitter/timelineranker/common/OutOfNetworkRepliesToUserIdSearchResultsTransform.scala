@@ -1,46 +1,46 @@
-package com.twitter.timelineranker.common
+package com.tw ter.t  l neranker.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t  l neranker.core.Cand dateEnvelope
+ mport com.tw ter.t  l nes.cl ents.relevance_search.SearchCl ent
+ mport com.tw ter.ut l.Future
 
-object OutOfNetworkRepliesToUserIdSearchResultsTransform {
-  val DefaultMaxTweetCount = 100
+object OutOfNetworkRepl esToUser dSearchResultsTransform {
+  val DefaultMaxT etCount = 100
 }
 
-// Requests search results for out-of-network replies to a user Id
-class OutOfNetworkRepliesToUserIdSearchResultsTransform(
-  searchClient: SearchClient,
-  statsReceiver: StatsReceiver,
-  logSearchDebugInfo: Boolean = true)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  private[this] val maxCountStat = statsReceiver.stat("maxCount")
-  private[this] val numResultsFromSearchStat = statsReceiver.stat("numResultsFromSearch")
-  private[this] val earlybirdScoreX100Stat = statsReceiver.stat("earlybirdScoreX100")
+// Requests search results for out-of-network repl es to a user  d
+class OutOfNetworkRepl esToUser dSearchResultsTransform(
+  searchCl ent: SearchCl ent,
+  statsRece ver: StatsRece ver,
+  logSearchDebug nfo: Boolean = true)
+    extends FutureArrow[Cand dateEnvelope, Cand dateEnvelope] {
+  pr vate[t ] val maxCountStat = statsRece ver.stat("maxCount")
+  pr vate[t ] val numResultsFromSearchStat = statsRece ver.stat("numResultsFromSearch")
+  pr vate[t ] val earlyb rdScoreX100Stat = statsRece ver.stat("earlyb rdScoreX100")
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
+  overr de def apply(envelope: Cand dateEnvelope): Future[Cand dateEnvelope] = {
     val maxCount = envelope.query.maxCount
-      .getOrElse(OutOfNetworkRepliesToUserIdSearchResultsTransform.DefaultMaxTweetCount)
+      .getOrElse(OutOfNetworkRepl esToUser dSearchResultsTransform.DefaultMaxT etCount)
     maxCountStat.add(maxCount)
 
-    envelope.followGraphData.followedUserIdsFuture
+    envelope.followGraphData.follo dUser dsFuture
       .flatMap {
-        case followedIds =>
-          searchClient
-            .getOutOfNetworkRepliesToUserId(
-              userId = envelope.query.userId,
-              followedUserIds = followedIds.toSet,
+        case follo d ds =>
+          searchCl ent
+            .getOutOfNetworkRepl esToUser d(
+              user d = envelope.query.user d,
+              follo dUser ds = follo d ds.toSet,
               maxCount = maxCount,
-              earlybirdOptions = envelope.query.earlybirdOptions,
-              logSearchDebugInfo
+              earlyb rdOpt ons = envelope.query.earlyb rdOpt ons,
+              logSearchDebug nfo
             ).map { results =>
-              numResultsFromSearchStat.add(results.size)
+              numResultsFromSearchStat.add(results.s ze)
               results.foreach { result =>
-                val earlybirdScoreX100 =
-                  result.metadata.flatMap(_.score).getOrElse(0.0).toFloat * 100
-                earlybirdScoreX100Stat.add(earlybirdScoreX100)
+                val earlyb rdScoreX100 =
+                  result. tadata.flatMap(_.score).getOrElse(0.0).toFloat * 100
+                earlyb rdScoreX100Stat.add(earlyb rdScoreX100)
               }
               envelope.copy(searchResults = results)
             }

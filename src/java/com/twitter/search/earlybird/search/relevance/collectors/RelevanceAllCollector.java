@@ -1,70 +1,70 @@
-package com.twitter.search.earlybird.search.relevance.collectors;
+package com.tw ter.search.earlyb rd.search.relevance.collectors;
 
-import java.io.IOException;
-import java.util.List;
+ mport java. o. OExcept on;
+ mport java.ut l.L st;
 
-import com.google.common.collect.Lists;
+ mport com.google.common.collect.L sts;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.relevance.features.TweetIntegerShingleSignature;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.search.relevance.RelevanceHit;
-import com.twitter.search.earlybird.search.relevance.RelevanceSearchRequestInfo;
-import com.twitter.search.earlybird.search.relevance.RelevanceSearchResults;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunction;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common.relevance.features.T et ntegerSh ngleS gnature;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserTable;
+ mport com.tw ter.search.earlyb rd.search.relevance.RelevanceH ;
+ mport com.tw ter.search.earlyb rd.search.relevance.RelevanceSearchRequest nfo;
+ mport com.tw ter.search.earlyb rd.search.relevance.RelevanceSearchResults;
+ mport com.tw ter.search.earlyb rd.search.relevance.scor ng.Scor ngFunct on;
+ mport com.tw ter.search.earlyb rd.stats.Earlyb rdSearc rStats;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult tadata;
 
 /**
- * RelevanceAllCollector is a results collector that collects all results sorted by score,
- * including signature-duplicates and results skipped by the scoring function.
+ * RelevanceAllCollector  s a results collector that collects all results sorted by score,
+ *  nclud ng s gnature-dupl cates and results sk pped by t  scor ng funct on.
  */
-public class RelevanceAllCollector extends AbstractRelevanceCollector {
+publ c class RelevanceAllCollector extends AbstractRelevanceCollector {
   // All results.
-  protected final List<RelevanceHit> results;
+  protected f nal L st<RelevanceH > results;
 
-  public RelevanceAllCollector(
-      ImmutableSchemaInterface schema,
-      RelevanceSearchRequestInfo searchRequestInfo,
-      ScoringFunction scoringFunction,
-      EarlybirdSearcherStats searcherStats,
-      EarlybirdCluster cluster,
+  publ c RelevanceAllCollector(
+       mmutableSc ma nterface sc ma,
+      RelevanceSearchRequest nfo searchRequest nfo,
+      Scor ngFunct on scor ngFunct on,
+      Earlyb rdSearc rStats searc rStats,
+      Earlyb rdCluster cluster,
       UserTable userTable,
       Clock clock,
-      int requestDebugMode) {
-    super(schema, searchRequestInfo, scoringFunction, searcherStats, cluster, userTable, clock,
+       nt requestDebugMode) {
+    super(sc ma, searchRequest nfo, scor ngFunct on, searc rStats, cluster, userTable, clock,
         requestDebugMode);
-    this.results = Lists.newArrayList();
+    t .results = L sts.newArrayL st();
   }
 
-  @Override
-  protected void doCollectWithScore(long tweetID, float score) throws IOException {
-    ThriftSearchResultMetadata metadata = collectMetadata();
-    scoringFunction.populateResultMetadataBasedOnScoringData(
-        searchRequestInfo.getSearchQuery().getResultMetadataOptions(),
-        metadata,
-        scoringFunction.getScoringDataForCurrentDocument());
-    results.add(new RelevanceHit(
-        currTimeSliceID,
-        tweetID,
-        TweetIntegerShingleSignature.deserialize(metadata.getSignature()),
-        metadata));
+  @Overr de
+  protected vo d doCollectW hScore(long t et D, float score) throws  OExcept on {
+    Thr ftSearchResult tadata  tadata = collect tadata();
+    scor ngFunct on.populateResult tadataBasedOnScor ngData(
+        searchRequest nfo.getSearchQuery().getResult tadataOpt ons(),
+         tadata,
+        scor ngFunct on.getScor ngDataForCurrentDocu nt());
+    results.add(new RelevanceH (
+        currT  Sl ce D,
+        t et D,
+        T et ntegerSh ngleS gnature.deser al ze( tadata.getS gnature()),
+         tadata));
   }
 
-  @Override
+  @Overr de
   protected RelevanceSearchResults doGetRelevanceResults() {
-    final int numResults = results.size();
+    f nal  nt numResults = results.s ze();
     RelevanceSearchResults searchResults = new RelevanceSearchResults(numResults);
 
-    // Insert hits in decreasing order by score.
-    results.sort(RelevanceHit.COMPARATOR_BY_SCORE);
-    for (int i = 0; i < numResults; i++) {
-      searchResults.setHit(results.get(i), i);
+    //  nsert h s  n decreas ng order by score.
+    results.sort(RelevanceH .COMPARATOR_BY_SCORE);
+    for ( nt   = 0;   < numResults;  ++) {
+      searchResults.setH (results.get( ),  );
     }
     searchResults.setRelevanceStats(getRelevanceStats());
-    searchResults.setNumHits(numResults);
+    searchResults.setNumH s(numResults);
     return searchResults;
   }
 }

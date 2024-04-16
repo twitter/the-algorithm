@@ -1,19 +1,19 @@
-package com.twitter.visibility.interfaces.push_service
+package com.tw ter.v s b l y. nterfaces.push_serv ce
 
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.models.V e rContext
 
-case class PushServiceVisibilityRequest(
-  tweet: Tweet,
+case class PushServ ceV s b l yRequest(
+  t et: T et,
   author: User,
-  viewerContext: ViewerContext,
+  v e rContext: V e rContext,
   safetyLevel: SafetyLevel,
-  sourceTweet: Option[Tweet] = None,
-  quotedTweet: Option[Tweet] = None,
-  isRetweet: Boolean = false,
-  isInnerQuotedTweet: Boolean = false,
-  isSourceTweet: Boolean = false,
-  isOutOfNetworkTweet: Boolean = true,
+  s ceT et: Opt on[T et] = None,
+  quotedT et: Opt on[T et] = None,
+   sRet et: Boolean = false,
+   s nnerQuotedT et: Boolean = false,
+   sS ceT et: Boolean = false,
+   sOutOfNetworkT et: Boolean = true,
 )

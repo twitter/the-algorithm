@@ -1,1380 +1,1380 @@
 """
-This module contains custom tensorflow metrics used at Twitter.
-Its components conform to conventions used by the ``tf.metrics`` module.
+T  module conta ns custom tensorflow  tr cs used at Tw ter.
+ s components conform to convent ons used by t  ``tf. tr cs`` module.
 
 """
 
-from collections import OrderedDict
-from functools import partial
+from collect ons  mport OrderedD ct
+from functools  mport part al
 
-import numpy as np
-import tensorboard as tb
-import tensorflow.compat.v1 as tf
-
-
-CLAMP_EPSILON = 0.00001
+ mport numpy as np
+ mport tensorboard as tb
+ mport tensorflow.compat.v1 as tf
 
 
-def total_weight_metric(
+CLAMP_EPS LON = 0.00001
+
+
+def total_  ght_ tr c(
     labels,
-    predictions,
-    weights=None,
-    metrics_collections=None,
-    updates_collections=None,
-    name=None):
-  with tf.variable_scope(name, 'total_weight', (labels, predictions, weights)):
-    total_weight = _metric_variable(name='total_weight', shape=[], dtype=tf.float64)
+    pred ct ons,
+      ghts=None,
+     tr cs_collect ons=None,
+    updates_collect ons=None,
+    na =None):
+  w h tf.var able_scope(na , 'total_  ght', (labels, pred ct ons,   ghts)):
+    total_  ght = _ tr c_var able(na ='total_  ght', shape=[], dtype=tf.float64)
 
-    if weights is None:
-      weights = tf.cast(tf.size(labels), total_weight.dtype, name="default_weight")
+     f   ghts  s None:
+        ghts = tf.cast(tf.s ze(labels), total_  ght.dtype, na ="default_  ght")
     else:
-      weights = tf.cast(weights, total_weight.dtype)
+        ghts = tf.cast(  ghts, total_  ght.dtype)
 
-    # add up the weights to get total weight of the eval set
-    update_total_weight = tf.assign_add(total_weight, tf.reduce_sum(weights), name="update_op")
+    # add up t    ghts to get total   ght of t  eval set
+    update_total_  ght = tf.ass gn_add(total_  ght, tf.reduce_sum(  ghts), na ="update_op")
 
-    value_op = tf.identity(total_weight)
-    update_op = tf.identity(update_total_weight)
+    value_op = tf. dent y(total_  ght)
+    update_op = tf. dent y(update_total_  ght)
 
-    if metrics_collections:
-      tf.add_to_collections(metrics_collections, value_op)
+     f  tr cs_collect ons:
+      tf.add_to_collect ons( tr cs_collect ons, value_op)
 
-    if updates_collections:
-      tf.add_to_collections(updates_collections, update_op)
+     f updates_collect ons:
+      tf.add_to_collect ons(updates_collect ons, update_op)
 
     return value_op, update_op
 
 
-def num_samples_metric(
+def num_samples_ tr c(
     labels,
-    predictions,
-    weights=None,
-    metrics_collections=None,
-    updates_collections=None,
-    name=None):
-  with tf.variable_scope(name, 'num_samples', (labels, predictions, weights)):
-    num_samples = _metric_variable(name='num_samples', shape=[], dtype=tf.float64)
-    update_num_samples = tf.assign_add(num_samples, tf.cast(tf.size(labels), num_samples.dtype), name="update_op")
+    pred ct ons,
+      ghts=None,
+     tr cs_collect ons=None,
+    updates_collect ons=None,
+    na =None):
+  w h tf.var able_scope(na , 'num_samples', (labels, pred ct ons,   ghts)):
+    num_samples = _ tr c_var able(na ='num_samples', shape=[], dtype=tf.float64)
+    update_num_samples = tf.ass gn_add(num_samples, tf.cast(tf.s ze(labels), num_samples.dtype), na ="update_op")
 
-    value_op = tf.identity(num_samples)
-    update_op = tf.identity(update_num_samples)
+    value_op = tf. dent y(num_samples)
+    update_op = tf. dent y(update_num_samples)
 
-    if metrics_collections:
-      tf.add_to_collections(metrics_collections, value_op)
+     f  tr cs_collect ons:
+      tf.add_to_collect ons( tr cs_collect ons, value_op)
 
-    if updates_collections:
-      tf.add_to_collections(updates_collections, update_op)
+     f updates_collect ons:
+      tf.add_to_collect ons(updates_collect ons, update_op)
 
     return value_op, update_op
 
 
-def ctr(labels, predictions,
-        weights=None,
-        metrics_collections=None,
-        updates_collections=None,
-        name=None):
-  # pylint: disable=unused-argument
+def ctr(labels, pred ct ons,
+          ghts=None,
+         tr cs_collect ons=None,
+        updates_collect ons=None,
+        na =None):
+  # pyl nt: d sable=unused-argu nt
   """
-  Compute the weighted average positive sample ratio based on labels
-  (i.e. weighted average percentage of positive labels).
-  The name `ctr` (click-through-rate) is from legacy.
+  Compute t    ghted average pos  ve sample rat o based on labels
+  ( .e.   ghted average percentage of pos  ve labels).
+  T  na  `ctr` (cl ck-through-rate)  s from legacy.
 
   Args:
-    labels: the ground truth value.
-    predictions: the predicted values, whose shape must match labels. Ignored for CTR computation.
-    weights: optional weights, whose shape must match labels . Weight is 1 if not set.
-    metrics_collections: optional list of collections to add this metric into.
-    updates_collections: optional list of collections to add the associated update_op into.
-    name: an optional variable_scope name.
+    labels: t  ground truth value.
+    pred ct ons: t  pred cted values, whose shape must match labels.  gnored for CTR computat on.
+      ghts: opt onal   ghts, whose shape must match labels .   ght  s 1  f not set.
+     tr cs_collect ons: opt onal l st of collect ons to add t   tr c  nto.
+    updates_collect ons: opt onal l st of collect ons to add t  assoc ated update_op  nto.
+    na : an opt onal var able_scope na .
 
   Return:
-    ctr: A `Tensor` representing positive sample ratio.
-    update_op: A update operation used to accumulate data into this metric.
+    ctr: A `Tensor` represent ng pos  ve sample rat o.
+    update_op: A update operat on used to accumulate data  nto t   tr c.
   """
-  return tf.metrics.mean(
+  return tf. tr cs. an(
     values=labels,
-    weights=weights,
-    metrics_collections=metrics_collections,
-    updates_collections=updates_collections,
-    name=name)
+      ghts=  ghts,
+     tr cs_collect ons= tr cs_collect ons,
+    updates_collect ons=updates_collect ons,
+    na =na )
 
 
-def predicted_ctr(labels, predictions,
-                  weights=None,
-                  metrics_collections=None,
-                  updates_collections=None,
-                  name=None):
-  # pylint: disable=unused-argument
+def pred cted_ctr(labels, pred ct ons,
+                    ghts=None,
+                   tr cs_collect ons=None,
+                  updates_collect ons=None,
+                  na =None):
+  # pyl nt: d sable=unused-argu nt
   """
-  Compute the weighted average positive ratio based on predictions,
-  (i.e. weighted averaged predicted positive probability).
-  The name `ctr` (click-through-rate) is from legacy.
+  Compute t    ghted average pos  ve rat o based on pred ct ons,
+  ( .e.   ghted averaged pred cted pos  ve probab l y).
+  T  na  `ctr` (cl ck-through-rate)  s from legacy.
 
   Args:
-    labels: the ground truth value.
-    predictions: the predicted values, whose shape must match labels. Ignored for CTR computation.
-    weights: optional weights, whose shape must match labels . Weight is 1 if not set.
-    metrics_collections: optional list of collections to add this metric into.
-    updates_collections: optional list of collections to add the associated update_op into.
-    name: an optional variable_scope name.
+    labels: t  ground truth value.
+    pred ct ons: t  pred cted values, whose shape must match labels.  gnored for CTR computat on.
+      ghts: opt onal   ghts, whose shape must match labels .   ght  s 1  f not set.
+     tr cs_collect ons: opt onal l st of collect ons to add t   tr c  nto.
+    updates_collect ons: opt onal l st of collect ons to add t  assoc ated update_op  nto.
+    na : an opt onal var able_scope na .
 
   Return:
-    predicted_ctr: A `Tensor` representing the predicted positive ratio.
-    update_op: A update operation used to accumulate data into this metric.
+    pred cted_ctr: A `Tensor` represent ng t  pred cted pos  ve rat o.
+    update_op: A update operat on used to accumulate data  nto t   tr c.
   """
-  return tf.metrics.mean(
-    values=predictions,
-    weights=weights,
-    metrics_collections=metrics_collections,
-    updates_collections=updates_collections,
-    name=name)
+  return tf. tr cs. an(
+    values=pred ct ons,
+      ghts=  ghts,
+     tr cs_collect ons= tr cs_collect ons,
+    updates_collect ons=updates_collect ons,
+    na =na )
 
 
-def prediction_std_dev(labels, predictions,
-                       weights=None,
-                       metrics_collections=None,
-                       updates_collections=None,
-                       name=None):
+def pred ct on_std_dev(labels, pred ct ons,
+                         ghts=None,
+                        tr cs_collect ons=None,
+                       updates_collect ons=None,
+                       na =None):
   """
-  Compute the weighted standard deviation of the predictions.
-  Note - this is not a confidence interval metric.
+  Compute t    ghted standard dev at on of t  pred ct ons.
+  Note - t   s not a conf dence  nterval  tr c.
 
   Args:
-    labels: the ground truth value.
-    predictions: the predicted values, whose shape must match labels. Ignored for CTR computation.
-    weights: optional weights, whose shape must match labels . Weight is 1 if not set.
-    metrics_collections: optional list of collections to add this metric into.
-    updates_collections: optional list of collections to add the associated update_op into.
-    name: an optional variable_scope name.
+    labels: t  ground truth value.
+    pred ct ons: t  pred cted values, whose shape must match labels.  gnored for CTR computat on.
+      ghts: opt onal   ghts, whose shape must match labels .   ght  s 1  f not set.
+     tr cs_collect ons: opt onal l st of collect ons to add t   tr c  nto.
+    updates_collect ons: opt onal l st of collect ons to add t  assoc ated update_op  nto.
+    na : an opt onal var able_scope na .
 
   Return:
-    metric value: A `Tensor` representing the value of the metric on the data accumulated so far.
-    update_op: A update operation used to accumulate data into this metric.
+     tr c value: A `Tensor` represent ng t  value of t   tr c on t  data accumulated so far.
+    update_op: A update operat on used to accumulate data  nto t   tr c.
   """
-  with tf.variable_scope(name, 'pred_std_dev', (labels, predictions, weights)):
+  w h tf.var able_scope(na , 'pred_std_dev', (labels, pred ct ons,   ghts)):
     labels = tf.cast(labels, tf.float64)
-    predictions = tf.cast(predictions, tf.float64)
+    pred ct ons = tf.cast(pred ct ons, tf.float64)
 
-    if weights is None:
-      weights = tf.ones(shape=tf.shape(labels), dtype=tf.float64, name="default_weight")
+     f   ghts  s None:
+        ghts = tf.ones(shape=tf.shape(labels), dtype=tf.float64, na ="default_  ght")
     else:
-      weights = tf.cast(weights, tf.float64)
+        ghts = tf.cast(  ghts, tf.float64)
 
-    # State kept during streaming of examples
-    total_weighted_preds = _metric_variable(
-        name='total_weighted_preds', shape=[], dtype=tf.float64)
-    total_weighted_preds_sq = _metric_variable(
-        name='total_weighted_preds_sq', shape=[], dtype=tf.float64)
-    total_weights = _metric_variable(
-        name='total_weights', shape=[], dtype=tf.float64)
+    # State kept dur ng stream ng of examples
+    total_  ghted_preds = _ tr c_var able(
+        na ='total_  ghted_preds', shape=[], dtype=tf.float64)
+    total_  ghted_preds_sq = _ tr c_var able(
+        na ='total_  ghted_preds_sq', shape=[], dtype=tf.float64)
+    total_  ghts = _ tr c_var able(
+        na ='total_  ghts', shape=[], dtype=tf.float64)
 
     # Update state
-    update_total_weighted_preds = tf.assign_add(total_weighted_preds, tf.reduce_sum(weights * predictions))
-    update_total_weighted_preds_sq = tf.assign_add(total_weighted_preds_sq, tf.reduce_sum(weights * predictions * predictions))
-    update_total_weights = tf.assign_add(total_weights, tf.reduce_sum(weights))
+    update_total_  ghted_preds = tf.ass gn_add(total_  ghted_preds, tf.reduce_sum(  ghts * pred ct ons))
+    update_total_  ghted_preds_sq = tf.ass gn_add(total_  ghted_preds_sq, tf.reduce_sum(  ghts * pred ct ons * pred ct ons))
+    update_total_  ghts = tf.ass gn_add(total_  ghts, tf.reduce_sum(  ghts))
 
     # Compute output
     def compute_output(tot_w, tot_wp, tot_wpp):
       return tf.math.sqrt(tot_wpp / tot_w - (tot_wp / tot_w) ** 2)
-    std_dev_est = compute_output(total_weights, total_weighted_preds, total_weighted_preds_sq)
-    update_std_dev_est = compute_output(update_total_weights, update_total_weighted_preds, update_total_weighted_preds_sq)
+    std_dev_est = compute_output(total_  ghts, total_  ghted_preds, total_  ghted_preds_sq)
+    update_std_dev_est = compute_output(update_total_  ghts, update_total_  ghted_preds, update_total_  ghted_preds_sq)
 
-    if metrics_collections:
-      tf.add_to_collections(metrics_collections, std_dev_est)
+     f  tr cs_collect ons:
+      tf.add_to_collect ons( tr cs_collect ons, std_dev_est)
 
-    if updates_collections:
-      tf.add_to_collections(updates_collections, update_std_dev_est)
+     f updates_collect ons:
+      tf.add_to_collect ons(updates_collect ons, update_std_dev_est)
 
     return std_dev_est, update_std_dev_est
 
 
-def _get_arce_predictions(predictions, weights, label_weighted, labels,
-                         up_weight, deprecated_rce,
-                         total_positive, update_total_positive):
+def _get_arce_pred ct ons(pred ct ons,   ghts, label_  ghted, labels,
+                         up_  ght, deprecated_rce,
+                         total_pos  ve, update_total_pos  ve):
   """
-  Returns the ARCE predictions, total_positive, update_total_positive and weights
-  used by the rest of the twml.metrics.rce metric computation.
+  Returns t  ARCE pred ct ons, total_pos  ve, update_total_pos  ve and   ghts
+  used by t  rest of t  twml. tr cs.rce  tr c computat on.
   """
-  predictions_weighted = tf.multiply(predictions, weights, name="weighted_preds")
-  label_weighted_comp = tf.subtract(tf.reduce_sum(weights), tf.reduce_sum(label_weighted))
-  pred_weight_comp = tf.subtract(tf.reduce_sum(weights), tf.reduce_sum(predictions_weighted))
-  normalizer_comp = label_weighted_comp / pred_weight_comp
+  pred ct ons_  ghted = tf.mult ply(pred ct ons,   ghts, na ="  ghted_preds")
+  label_  ghted_comp = tf.subtract(tf.reduce_sum(  ghts), tf.reduce_sum(label_  ghted))
+  pred_  ght_comp = tf.subtract(tf.reduce_sum(  ghts), tf.reduce_sum(pred ct ons_  ghted))
+  normal zer_comp = label_  ghted_comp / pred_  ght_comp
 
-  if up_weight is False:
-    total_positive_unweighted = _metric_variable(
-      name='total_positive_unweighted', shape=[], dtype=tf.float32)
+   f up_  ght  s False:
+    total_pos  ve_un  ghted = _ tr c_var able(
+      na ='total_pos  ve_un  ghted', shape=[], dtype=tf.float32)
 
-    update_total_positive_unweighted = tf.assign_add(
-      total_positive_unweighted, tf.reduce_sum(labels),
-      name="total_positive_unweighted_update")
+    update_total_pos  ve_un  ghted = tf.ass gn_add(
+      total_pos  ve_un  ghted, tf.reduce_sum(labels),
+      na ="total_pos  ve_un  ghted_update")
 
-    if deprecated_rce:
-      normalizer = tf.reduce_sum(labels) / tf.reduce_sum(label_weighted)
+     f deprecated_rce:
+      normal zer = tf.reduce_sum(labels) / tf.reduce_sum(label_  ghted)
     else:
-      # sum of labels / sum of weighted labels
-      normalizer = update_total_positive_unweighted / update_total_positive
+      # sum of labels / sum of   ghted labels
+      normal zer = update_total_pos  ve_un  ghted / update_total_pos  ve
 
-    label_comp = tf.subtract(tf.to_float(tf.size(labels)), tf.reduce_sum(labels))
-    normalizer_comp = label_comp / label_weighted_comp
+    label_comp = tf.subtract(tf.to_float(tf.s ze(labels)), tf.reduce_sum(labels))
+    normal zer_comp = label_comp / label_  ghted_comp
 
-    # note that up_weight=True changes these for the rest of the twml.metric.rce computation
-    weights = tf.ones(shape=tf.shape(labels), dtype=tf.float32, name="default_weight")
-    total_positive = total_positive_unweighted
-    update_total_positive = update_total_positive_unweighted
+    # note that up_  ght=True changes t se for t  rest of t  twml. tr c.rce computat on
+      ghts = tf.ones(shape=tf.shape(labels), dtype=tf.float32, na ="default_  ght")
+    total_pos  ve = total_pos  ve_un  ghted
+    update_total_pos  ve = update_total_pos  ve_un  ghted
   else:
-    if deprecated_rce:
-      normalizer = tf.reduce_sum(label_weighted) / tf.reduce_sum(predictions_weighted)
+     f deprecated_rce:
+      normal zer = tf.reduce_sum(label_  ghted) / tf.reduce_sum(pred ct ons_  ghted)
     else:
-      # normalizer used for NRCE (and ARCE with up_weight=True)
-      total_prediction = _metric_variable(name='total_prediction', shape=[], dtype=tf.float32)
+      # normal zer used for NRCE (and ARCE w h up_  ght=True)
+      total_pred ct on = _ tr c_var able(na ='total_pred ct on', shape=[], dtype=tf.float32)
 
-      # update the variable holding the sum of weighted predictions
-      update_total_prediction = tf.assign_add(
-        total_prediction, tf.reduce_sum(predictions_weighted), name="total_prediction_update")
+      # update t  var able hold ng t  sum of   ghted pred ct ons
+      update_total_pred ct on = tf.ass gn_add(
+        total_pred ct on, tf.reduce_sum(pred ct ons_  ghted), na ="total_pred ct on_update")
 
-      # this used to be tf.reduce_sum(label_weighted) / tf.reduce_sum(predictions_weighted)
-      # but it measure normalizer over batch was too flawed an approximation.
-      normalizer = update_total_positive / update_total_prediction
+      # t  used to be tf.reduce_sum(label_  ghted) / tf.reduce_sum(pred ct ons_  ghted)
+      # but    asure normal zer over batch was too fla d an approx mat on.
+      normal zer = update_total_pos  ve / update_total_pred ct on
 
-  pred_comp = tf.subtract(tf.ones(shape=tf.shape(labels), dtype=tf.float32), predictions)
-  pred_comp_norm = tf.multiply(pred_comp, normalizer_comp, name="normalized_predictions_comp")
-  pred_num = tf.multiply(predictions, normalizer, name="normalized_pred_numerator")
-  pred_denom = tf.add(pred_num, pred_comp_norm, name="normalized_pred_denominator")
-  predictions = pred_num / pred_denom
+  pred_comp = tf.subtract(tf.ones(shape=tf.shape(labels), dtype=tf.float32), pred ct ons)
+  pred_comp_norm = tf.mult ply(pred_comp, normal zer_comp, na ="normal zed_pred ct ons_comp")
+  pred_num = tf.mult ply(pred ct ons, normal zer, na ="normal zed_pred_nu rator")
+  pred_denom = tf.add(pred_num, pred_comp_norm, na ="normal zed_pred_denom nator")
+  pred ct ons = pred_num / pred_denom
 
-  return predictions, total_positive, update_total_positive, weights
+  return pred ct ons, total_pos  ve, update_total_pos  ve,   ghts
 
 
-def rce(labels, predictions,
-        weights=None,
-        normalize=False,
+def rce(labels, pred ct ons,
+          ghts=None,
+        normal ze=False,
         arce=False,
-        up_weight=True,
-        metrics_collections=None,
-        updates_collections=None,
-        name=None,
+        up_  ght=True,
+         tr cs_collect ons=None,
+        updates_collect ons=None,
+        na =None,
         deprecated_rce=False):
   """
-  Compute the relative cross entropy (RCE).
-  The RCE is a relative measurement compared to the baseline model's performance.
-  The baseline model always predicts average click-through-rate (CTR).
-  The RCE measures, in percentage, how much better the predictions are, compared
-  to the baseline model, in terms of cross entropy loss.
+  Compute t  relat ve cross entropy (RCE).
+  T  RCE  s a relat ve  asure nt compared to t  basel ne model's performance.
+  T  basel ne model always pred cts average cl ck-through-rate (CTR).
+  T  RCE  asures,  n percentage, how much better t  pred ct ons are, compared
+  to t  basel ne model,  n terms of cross entropy loss.
 
-  y = label; p = prediction;
-  binary cross entropy = y * log(p) + (1-y) * log(1-p)
+  y = label; p = pred ct on;
+  b nary cross entropy = y * log(p) + (1-y) * log(1-p)
 
   Args:
     labels:
-      the ground true value.
-    predictions:
-      the predicted values, whose shape must match labels.
-    weights:
-      optional weights, whose shape must match labels . Weight is 1 if not set.
-    normalize:
-      if set to true, produce NRCEs used at Twitter. (normalize preds by weights first)
-      NOTE: if you don't understand what NRCE is, please don't use it.
+      t  ground true value.
+    pred ct ons:
+      t  pred cted values, whose shape must match labels.
+      ghts:
+      opt onal   ghts, whose shape must match labels .   ght  s 1  f not set.
+    normal ze:
+       f set to true, produce NRCEs used at Tw ter. (normal ze preds by   ghts f rst)
+      NOTE:  f   don't understand what NRCE  s, please don't use  .
     arce:
-      if set to true, produces `ARCE <http://go/arce>`_.
-      This can only be activated if `normalize=True`.
-    up_weight:
-      if set to true, produces arce in the up_weighted space (considers CTR after up_weighting
-      data), while False gives arce in the original space (only considers CTR before up_weighting).
-      In the actual version, this flag can only be activated if arce is True.
-      Notice that the actual version of NRCE corresponds to up_weight=True.
-    metrics_collections:
-      optional list of collections to add this metric into.
-    updates_collections:
-      optional list of collections to add the associated update_op into.
-    name:
-      an optional variable_scope name.
+       f set to true, produces `ARCE <http://go/arce>`_.
+      T  can only be act vated  f `normal ze=True`.
+    up_  ght:
+       f set to true, produces arce  n t  up_  ghted space (cons ders CTR after up_  ght ng
+      data), wh le False g ves arce  n t  or g nal space (only cons ders CTR before up_  ght ng).
+       n t  actual vers on, t  flag can only be act vated  f arce  s True.
+      Not ce that t  actual vers on of NRCE corresponds to up_  ght=True.
+     tr cs_collect ons:
+      opt onal l st of collect ons to add t   tr c  nto.
+    updates_collect ons:
+      opt onal l st of collect ons to add t  assoc ated update_op  nto.
+    na :
+      an opt onal var able_scope na .
     deprecated_rce:
-      enables the previous NRCE/ARCE calculations which calculated some label metrics
-      on the batch instead of on all batches seen so far. Note that the older metric
-      calculation is less stable, especially for smaller batch sizes. You should probably
-      never have to set this to True.
+      enables t  prev ous NRCE/ARCE calculat ons wh ch calculated so  label  tr cs
+      on t  batch  nstead of on all batc s seen so far. Note that t  older  tr c
+      calculat on  s less stable, espec ally for smaller batch s zes.   should probably
+      never have to set t  to True.
 
   Return:
     rce_value:
-      A ``Tensor`` representing the RCE.
+      A ``Tensor`` represent ng t  RCE.
     update_op:
-      A update operation used to accumulate data into this metric.
+      A update operat on used to accumulate data  nto t   tr c.
 
-  .. note:: Must have at least 1 positive and 1 negative sample accumulated,
-     or RCE will come out as NaN.
+  .. note:: Must have at least 1 pos  ve and 1 negat ve sample accumulated,
+     or RCE w ll co  out as NaN.
   """
-  with tf.variable_scope(name, 'rce', (labels, predictions, weights)):
-    labels = tf.to_float(labels, name="label_to_float")
-    predictions = tf.to_float(predictions, name="predictions_to_float")
+  w h tf.var able_scope(na , 'rce', (labels, pred ct ons,   ghts)):
+    labels = tf.to_float(labels, na ="label_to_float")
+    pred ct ons = tf.to_float(pred ct ons, na ="pred ct ons_to_float")
 
-    if weights is None:
-      weights = tf.ones(shape=tf.shape(labels), dtype=tf.float32, name="default_weight")
+     f   ghts  s None:
+        ghts = tf.ones(shape=tf.shape(labels), dtype=tf.float32, na ="default_  ght")
     else:
-      weights = tf.to_float(weights, name="weight_to_float")
+        ghts = tf.to_float(  ghts, na ="  ght_to_float")
 
-    total_positive = _metric_variable(name='total_positive', shape=[], dtype=tf.float32)
-    total_loss = _metric_variable(name='total_loss', shape=[], dtype=tf.float32)
-    total_weight = _metric_variable(name='total_weight', shape=[], dtype=tf.float32)
+    total_pos  ve = _ tr c_var able(na ='total_pos  ve', shape=[], dtype=tf.float32)
+    total_loss = _ tr c_var able(na ='total_loss', shape=[], dtype=tf.float32)
+    total_  ght = _ tr c_var able(na ='total_  ght', shape=[], dtype=tf.float32)
 
-    label_weighted = tf.multiply(labels, weights, name="weighted_label")
+    label_  ghted = tf.mult ply(labels,   ghts, na ="  ghted_label")
 
-    update_total_positive = tf.assign_add(
-      total_positive, tf.reduce_sum(label_weighted), name="total_pos_update")
+    update_total_pos  ve = tf.ass gn_add(
+      total_pos  ve, tf.reduce_sum(label_  ghted), na ="total_pos_update")
 
-    if arce:
-      if normalize is False:
-        raise ValueError('This configuration of parameters is not actually allowed')
+     f arce:
+       f normal ze  s False:
+        ra se ValueError('T  conf gurat on of para ters  s not actually allo d')
 
-      predictions, total_positive, update_total_positive, weights = _get_arce_predictions(
-        predictions=predictions, weights=weights, deprecated_rce=deprecated_rce,
-        label_weighted=label_weighted, labels=labels, up_weight=up_weight,
-        total_positive=total_positive, update_total_positive=update_total_positive)
+      pred ct ons, total_pos  ve, update_total_pos  ve,   ghts = _get_arce_pred ct ons(
+        pred ct ons=pred ct ons,   ghts=  ghts, deprecated_rce=deprecated_rce,
+        label_  ghted=label_  ghted, labels=labels, up_  ght=up_  ght,
+        total_pos  ve=total_pos  ve, update_total_pos  ve=update_total_pos  ve)
 
-    elif normalize:
-      predictions_weighted = tf.multiply(predictions, weights, name="weighted_preds")
+    el f normal ze:
+      pred ct ons_  ghted = tf.mult ply(pred ct ons,   ghts, na ="  ghted_preds")
 
-      if deprecated_rce:
-        normalizer = tf.reduce_sum(label_weighted) / tf.reduce_sum(predictions_weighted)
+       f deprecated_rce:
+        normal zer = tf.reduce_sum(label_  ghted) / tf.reduce_sum(pred ct ons_  ghted)
       else:
-        total_prediction = _metric_variable(name='total_prediction', shape=[], dtype=tf.float32)
+        total_pred ct on = _ tr c_var able(na ='total_pred ct on', shape=[], dtype=tf.float32)
 
-        # update the variable holding the sum of weighted predictions
-        update_total_prediction = tf.assign_add(
-          total_prediction, tf.reduce_sum(predictions_weighted), name="total_prediction_update")
+        # update t  var able hold ng t  sum of   ghted pred ct ons
+        update_total_pred ct on = tf.ass gn_add(
+          total_pred ct on, tf.reduce_sum(pred ct ons_  ghted), na ="total_pred ct on_update")
 
-        # this used to be tf.reduce_sum(label_weighted) / tf.reduce_sum(predictions_weighted)
-        # but it measure normalizer over batch was too flawed an approximation.
-        normalizer = update_total_positive / update_total_prediction
+        # t  used to be tf.reduce_sum(label_  ghted) / tf.reduce_sum(pred ct ons_  ghted)
+        # but    asure normal zer over batch was too fla d an approx mat on.
+        normal zer = update_total_pos  ve / update_total_pred ct on
 
       # NRCE
-      predictions = tf.multiply(predictions, normalizer, name="normalized_predictions")
+      pred ct ons = tf.mult ply(pred ct ons, normal zer, na ="normal zed_pred ct ons")
 
-    # clamp predictions to keep log(p) stable
-    clip_p = tf.clip_by_value(predictions, CLAMP_EPSILON, 1.0 - CLAMP_EPSILON, name="clip_p")
-    logloss = _binary_cross_entropy(pred=clip_p, target=labels, name="logloss")
+    # clamp pred ct ons to keep log(p) stable
+    cl p_p = tf.cl p_by_value(pred ct ons, CLAMP_EPS LON, 1.0 - CLAMP_EPS LON, na ="cl p_p")
+    logloss = _b nary_cross_entropy(pred=cl p_p, target=labels, na ="logloss")
 
-    logloss_weighted = tf.multiply(logloss, weights, name="weighted_logloss")
+    logloss_  ghted = tf.mult ply(logloss,   ghts, na ="  ghted_logloss")
 
-    update_total_loss = tf.assign_add(
-      total_loss, tf.reduce_sum(logloss_weighted), name="total_loss_update")
-    update_total_weight = tf.assign_add(
-      total_weight, tf.reduce_sum(weights), name="total_weight_update")
+    update_total_loss = tf.ass gn_add(
+      total_loss, tf.reduce_sum(logloss_  ghted), na ="total_loss_update")
+    update_total_  ght = tf.ass gn_add(
+      total_  ght, tf.reduce_sum(  ghts), na ="total_  ght_update")
 
-    # metric value retrieval subgraph
-    ctr1 = tf.truediv(total_positive, total_weight, name="ctr")
-    # Note: we don't have to keep running averages for computing baseline CE. Because the prediction
-    # is constant for every sample, we can simplify it to the formula below.
-    baseline_ce = _binary_cross_entropy(pred=ctr1, target=ctr1, name="baseline_ce")
-    pred_ce = tf.truediv(total_loss, total_weight, name="pred_ce")
+    #  tr c value retr eval subgraph
+    ctr1 = tf.trued v(total_pos  ve, total_  ght, na ="ctr")
+    # Note:   don't have to keep runn ng averages for comput ng basel ne CE. Because t  pred ct on
+    #  s constant for every sample,   can s mpl fy   to t  formula below.
+    basel ne_ce = _b nary_cross_entropy(pred=ctr1, target=ctr1, na ="basel ne_ce")
+    pred_ce = tf.trued v(total_loss, total_  ght, na ="pred_ce")
 
-    rce_t = tf.multiply(
-      1.0 - tf.truediv(pred_ce, baseline_ce),
+    rce_t = tf.mult ply(
+      1.0 - tf.trued v(pred_ce, basel ne_ce),
       100,
-      name="rce")
+      na ="rce")
 
-    # metric update subgraph
-    ctr2 = tf.truediv(update_total_positive, update_total_weight, name="ctr_update")
-    # Note: we don't have to keep running averages for computing baseline CE. Because the prediction
-    # is constant for every sample, we can simplify it to the formula below.
-    baseline_ce2 = _binary_cross_entropy(pred=ctr2, target=ctr2, name="baseline_ce_update")
-    pred_ce2 = tf.truediv(update_total_loss, update_total_weight, name="pred_ce_update")
+    #  tr c update subgraph
+    ctr2 = tf.trued v(update_total_pos  ve, update_total_  ght, na ="ctr_update")
+    # Note:   don't have to keep runn ng averages for comput ng basel ne CE. Because t  pred ct on
+    #  s constant for every sample,   can s mpl fy   to t  formula below.
+    basel ne_ce2 = _b nary_cross_entropy(pred=ctr2, target=ctr2, na ="basel ne_ce_update")
+    pred_ce2 = tf.trued v(update_total_loss, update_total_  ght, na ="pred_ce_update")
 
-    update_op = tf.multiply(
-      1.0 - tf.truediv(pred_ce2, baseline_ce2),
+    update_op = tf.mult ply(
+      1.0 - tf.trued v(pred_ce2, basel ne_ce2),
       100,
-      name="update_op")
+      na ="update_op")
 
-    if metrics_collections:
-      tf.add_to_collections(metrics_collections, rce_t)
+     f  tr cs_collect ons:
+      tf.add_to_collect ons( tr cs_collect ons, rce_t)
 
-    if updates_collections:
-      tf.add_to_collections(updates_collections, update_op)
+     f updates_collect ons:
+      tf.add_to_collect ons(updates_collect ons, update_op)
 
     return rce_t, update_op
 
 
 def ce(p_true, p_est=None):
-  if p_est is None:
+   f p_est  s None:
     p_est = p_true
-  return _binary_cross_entropy(pred=p_est, target=p_true, name=None)
+  return _b nary_cross_entropy(pred=p_est, target=p_true, na =None)
 
 
-def rce_transform(outputs, labels, weights):
+def rce_transform(outputs, labels,   ghts):
   '''
-  Construct an OrderedDict of quantities to aggregate over eval batches
-  outputs, labels, weights are TensorFlow tensors, and are assumed to
-    be of shape [N] for batch_size = N
-  Each entry in the output OrderedDict should also be of shape [N]
+  Construct an OrderedD ct of quant  es to aggregate over eval batc s
+  outputs, labels,   ghts are TensorFlow tensors, and are assu d to
+    be of shape [N] for batch_s ze = N
+  Each entry  n t  output OrderedD ct should also be of shape [N]
   '''
-  out_vals = OrderedDict()
-  out_vals['weighted_loss'] = weights * ce(p_true=labels, p_est=outputs)
-  out_vals['weighted_labels'] = labels * weights
-  out_vals['weight'] = weights
+  out_vals = OrderedD ct()
+  out_vals['  ghted_loss'] =   ghts * ce(p_true=labels, p_est=outputs)
+  out_vals['  ghted_labels'] = labels *   ghts
+  out_vals['  ght'] =   ghts
   return out_vals
 
 
-def rce_metric(aggregates):
+def rce_ tr c(aggregates):
   '''
-  input ``aggregates`` is an OrderedDict with the same keys as those created
-    by rce_transform(). The dict values are the aggregates (reduce_sum)
-    of the values produced by rce_transform(), and should be scalars.
-  output is the value of RCE
+   nput ``aggregates``  s an OrderedD ct w h t  sa  keys as those created
+    by rce_transform(). T  d ct values are t  aggregates (reduce_sum)
+    of t  values produced by rce_transform(), and should be scalars.
+  output  s t  value of RCE
   '''
-  # cummulative weighted loss of model predictions
-  total_weighted_loss = aggregates['weighted_loss']
-  total_weighted_labels = aggregates['weighted_labels']
-  total_weight = aggregates['weight']
+  # cummulat ve   ghted loss of model pred ct ons
+  total_  ghted_loss = aggregates['  ghted_loss']
+  total_  ghted_labels = aggregates['  ghted_labels']
+  total_  ght = aggregates['  ght']
 
-  model_average_loss = total_weighted_loss / total_weight
-  baseline_average_loss = ce(total_weighted_labels / total_weight)
-  return 100.0 * (1 - model_average_loss / baseline_average_loss)
+  model_average_loss = total_  ghted_loss / total_  ght
+  basel ne_average_loss = ce(total_  ghted_labels / total_  ght)
+  return 100.0 * (1 - model_average_loss / basel ne_average_loss)
 
 
-def metric_std_err(labels, predictions,
-                   weights=None,
-                   transform=rce_transform, metric=rce_metric,
-                   metrics_collections=None,
-                   updates_collections=None,
-                   name='rce_std_err'):
+def  tr c_std_err(labels, pred ct ons,
+                     ghts=None,
+                   transform=rce_transform,  tr c=rce_ tr c,
+                    tr cs_collect ons=None,
+                   updates_collect ons=None,
+                   na ='rce_std_err'):
   """
-  Compute the weighted standard error of the RCE metric on this eval set.
-  This can be used for confidence intervals and unpaired hypothesis tests.
+  Compute t    ghted standard error of t  RCE  tr c on t  eval set.
+  T  can be used for conf dence  ntervals and unpa red hypot s s tests.
 
   Args:
-    labels: the ground truth value.
-    predictions: the predicted values, whose shape must match labels.
-    weights: optional weights, whose shape must match labels . Weight is 1 if not set.
-    transform: a function of the following form:
+    labels: t  ground truth value.
+    pred ct ons: t  pred cted values, whose shape must match labels.
+      ghts: opt onal   ghts, whose shape must match labels .   ght  s 1  f not set.
+    transform: a funct on of t  follow ng form:
 
       .. code-block:: python
 
-        def transform(outputs, labels, weights):
-          out_vals = OrderedDict()
+        def transform(outputs, labels,   ghts):
+          out_vals = OrderedD ct()
           ...
           return out_vals
 
-      where outputs, labels, and weights are all tensors of shape [eval_batch_size].
-      The returned OrderedDict() should have values that are tensors of shape  [eval_batch_size].
-      These will be aggregated across many batches in the eval dataset, to produce
+      w re outputs, labels, and   ghts are all tensors of shape [eval_batch_s ze].
+      T  returned OrderedD ct() should have values that are tensors of shape  [eval_batch_s ze].
+      T se w ll be aggregated across many batc s  n t  eval dataset, to produce
       one scalar value per key of out_vals.
-    metric: a function of the following form
+     tr c: a funct on of t  follow ng form
 
       .. code-block:: python
 
-        def metric(aggregates):
+        def  tr c(aggregates):
           ...
-          return metric_value
+          return  tr c_value
 
-      where aggregates is an OrderedDict() having the same keys created by transform().
-      Each of the corresponding dict values is the reduce_sum of the values produced by
-      transform(), and is a TF scalar. The return value should be a scalar representing
-      the value of the desired metric.
-    metrics_collections: optional list of collections to add this metric into.
-    updates_collections: optional list of collections to add the associated update_op into.
-    name: an optional variable_scope name.
+      w re aggregates  s an OrderedD ct() hav ng t  sa  keys created by transform().
+      Each of t  correspond ng d ct values  s t  reduce_sum of t  values produced by
+      transform(), and  s a TF scalar. T  return value should be a scalar represent ng
+      t  value of t  des red  tr c.
+     tr cs_collect ons: opt onal l st of collect ons to add t   tr c  nto.
+    updates_collect ons: opt onal l st of collect ons to add t  assoc ated update_op  nto.
+    na : an opt onal var able_scope na .
 
   Return:
-    metric value: A `Tensor` representing the value of the metric on the data accumulated so far.
-    update_op: A update operation used to accumulate data into this metric.
+     tr c value: A `Tensor` represent ng t  value of t   tr c on t  data accumulated so far.
+    update_op: A update operat on used to accumulate data  nto t   tr c.
   """
-  with tf.variable_scope(name, 'metric_std_err', (labels, predictions, weights)):
+  w h tf.var able_scope(na , ' tr c_std_err', (labels, pred ct ons,   ghts)):
     labels = tf.cast(labels, tf.float64)
-    predictions = tf.cast(predictions, tf.float64)
+    pred ct ons = tf.cast(pred ct ons, tf.float64)
 
-    if weights is None:
-      weights = tf.ones_like(labels, dtype=tf.float64, name="default_weight")
+     f   ghts  s None:
+        ghts = tf.ones_l ke(labels, dtype=tf.float64, na ="default_  ght")
     else:
-      weights = tf.cast(weights, tf.float64)
+        ghts = tf.cast(  ghts, tf.float64)
 
     labels = tf.reshape(labels, [-1])
-    predictions = tf.reshape(predictions, [-1])
-    predictions = tf.clip_by_value(predictions, CLAMP_EPSILON, 1.0 - CLAMP_EPSILON, name="clip_p")
-    weights = tf.reshape(weights, [-1])
+    pred ct ons = tf.reshape(pred ct ons, [-1])
+    pred ct ons = tf.cl p_by_value(pred ct ons, CLAMP_EPS LON, 1.0 - CLAMP_EPS LON, na ="cl p_p")
+      ghts = tf.reshape(  ghts, [-1])
 
-    # first apply the supplied transform function to the output, label, weight data
-    # returns an OrderedDict of 1xN tensors for N input samples
+    # f rst apply t  suppl ed transform funct on to t  output, label,   ght data
+    # returns an OrderedD ct of 1xN tensors for N  nput samples
     # for each sample, compute f = transform(pred, l, w)
-    transformed = transform(predictions, labels, weights)
+    transfor d = transform(pred ct ons, labels,   ghts)
 
-    # we track 3 types of aggregate information
+    #   track 3 types of aggregate  nformat on
     # 1. total number of samples
-    # 2. aggregated transformed samples (moment1), i.e. sum(f)
-    # 3. aggregated crosses of transformed samples (moment2), i.e. sum(f*f^T)
+    # 2. aggregated transfor d samples (mo nt1),  .e. sum(f)
+    # 3. aggregated crosses of transfor d samples (mo nt2),  .e. sum(f*f^T)
 
     # count total number of samples
-    sample_count = _metric_variable(
-        name='sample_count', shape=[], dtype=tf.int64)
-    update_sample_count = tf.assign_add(sample_count, tf.size(labels, out_type=sample_count.dtype))
+    sample_count = _ tr c_var able(
+        na ='sample_count', shape=[], dtype=tf. nt64)
+    update_sample_count = tf.ass gn_add(sample_count, tf.s ze(labels, out_type=sample_count.dtype))
 
-    # compose the ordered dict into a single vector
-    # so f can be treated as a single column vector rather than a collection of scalars
-    N = len(transformed)
-    transformed_vec = tf.stack(list(transformed.values()), axis=1)
+    # compose t  ordered d ct  nto a s ngle vector
+    # so f can be treated as a s ngle column vector rat r than a collect on of scalars
+    N = len(transfor d)
+    transfor d_vec = tf.stack(l st(transfor d.values()), ax s=1)
 
-    # compute and update transformed samples (1st order statistics)
-    # i.e. accumulate f into F as F += sum(f)
-    aggregates_1 = _metric_variable(
-        name='aggregates_1', shape=[N], dtype=tf.float64)
-    update_aggregates_1 = tf.assign_add(aggregates_1, tf.reduce_sum(transformed_vec, axis=0))
+    # compute and update transfor d samples (1st order stat st cs)
+    #  .e. accumulate f  nto F as F += sum(f)
+    aggregates_1 = _ tr c_var able(
+        na ='aggregates_1', shape=[N], dtype=tf.float64)
+    update_aggregates_1 = tf.ass gn_add(aggregates_1, tf.reduce_sum(transfor d_vec, ax s=0))
 
-    # compute and update crossed transformed samples (2nd order statistics)
-    # i.e. accumulate f*f^T into F2 as F2 += sum(f*transpose(f))
-    aggregates_2 = _metric_variable(
-        name='aggregates_2', shape=[N, N], dtype=tf.float64)
-    moment_2_temp = (
-      tf.reshape(transformed_vec, shape=[-1, N, 1])
-      * tf.reshape(transformed_vec, shape=[-1, 1, N])
+    # compute and update crossed transfor d samples (2nd order stat st cs)
+    #  .e. accumulate f*f^T  nto F2 as F2 += sum(f*transpose(f))
+    aggregates_2 = _ tr c_var able(
+        na ='aggregates_2', shape=[N, N], dtype=tf.float64)
+    mo nt_2_temp = (
+      tf.reshape(transfor d_vec, shape=[-1, N, 1])
+      * tf.reshape(transfor d_vec, shape=[-1, 1, N])
     )
-    update_aggregates_2 = tf.assign_add(aggregates_2, tf.reduce_sum(moment_2_temp, axis=0))
+    update_aggregates_2 = tf.ass gn_add(aggregates_2, tf.reduce_sum(mo nt_2_temp, ax s=0))
 
     def compute_output(agg_1, agg_2, samp_cnt):
-      # decompose the aggregates back into a dict to pass to the user-supplied metric fn
-      aggregates_dict = OrderedDict()
-      for i, key in enumerate(transformed.keys()):
-        aggregates_dict[key] = agg_1[i]
+      # decompose t  aggregates back  nto a d ct to pass to t  user-suppl ed  tr c fn
+      aggregates_d ct = OrderedD ct()
+      for  , key  n enu rate(transfor d.keys()):
+        aggregates_d ct[key] = agg_1[ ]
 
-      metric_value = metric(aggregates_dict)
+       tr c_value =  tr c(aggregates_d ct)
 
-      # derivative of metric with respect to the 1st order aggregates
-      # i.e. d M(agg1) / d agg1
-      metric_prime = tf.gradients(metric_value, agg_1, stop_gradients=agg_1)
+      # der vat ve of  tr c w h respect to t  1st order aggregates
+      #  .e. d M(agg1) / d agg1
+       tr c_pr   = tf.grad ents( tr c_value, agg_1, stop_grad ents=agg_1)
 
-      # estimated covariance of agg_1
+      # est mated covar ance of agg_1
       # cov(F) = sum(f*f^T) - (sum(f) * sum(f)^T) / N
       #     = agg_2 - (agg_1 * agg_1^T) / N
-      N_covariance_estimate = agg_2 - (
+      N_covar ance_est mate = agg_2 - (
         tf.reshape(agg_1, shape=[-1, 1])
         @ tf.reshape(agg_1, shape=[1, -1])
         / tf.cast(samp_cnt, dtype=tf.float64)
       )
 
-      # push N_covariance_estimate through a linearization of metric around agg_1
-      # metric var = transpose(d M(agg1) / d agg1) * cov(F) * (d M(agg1) / d agg1)
-      metric_variance = (
-        tf.reshape(metric_prime, shape=[1, -1])
-        @ N_covariance_estimate
-        @ tf.reshape(metric_prime, shape=[-1, 1])
+      # push N_covar ance_est mate through a l near zat on of  tr c around agg_1
+      #  tr c var = transpose(d M(agg1) / d agg1) * cov(F) * (d M(agg1) / d agg1)
+       tr c_var ance = (
+        tf.reshape( tr c_pr  , shape=[1, -1])
+        @ N_covar ance_est mate
+        @ tf.reshape( tr c_pr  , shape=[-1, 1])
       )
-      # result should be a single element, but the matmul is 2D
-      metric_variance = metric_variance[0][0]
-      metric_stderr = tf.sqrt(metric_variance)
-      return metric_stderr
+      # result should be a s ngle ele nt, but t  matmul  s 2D
+       tr c_var ance =  tr c_var ance[0][0]
+       tr c_stderr = tf.sqrt( tr c_var ance)
+      return  tr c_stderr
 
-    metric_stderr = compute_output(aggregates_1, aggregates_2, sample_count)
-    update_metric_stderr = compute_output(update_aggregates_1, update_aggregates_2, update_sample_count)
+     tr c_stderr = compute_output(aggregates_1, aggregates_2, sample_count)
+    update_ tr c_stderr = compute_output(update_aggregates_1, update_aggregates_2, update_sample_count)
 
-    if metrics_collections:
-      tf.add_to_collections(metrics_collections, metric_stderr)
+     f  tr cs_collect ons:
+      tf.add_to_collect ons( tr cs_collect ons,  tr c_stderr)
 
-    if updates_collections:
-      tf.add_to_collections(updates_collections, update_metric_stderr)
+     f updates_collect ons:
+      tf.add_to_collect ons(updates_collect ons, update_ tr c_stderr)
 
-    return metric_stderr, update_metric_stderr
+    return  tr c_stderr, update_ tr c_stderr
 
 
-def lolly_nrce(labels, predictions,
-               weights=None,
-               metrics_collections=None,
-               updates_collections=None,
-               name=None):
+def lolly_nrce(labels, pred ct ons,
+                 ghts=None,
+                tr cs_collect ons=None,
+               updates_collect ons=None,
+               na =None):
   """
-  Compute the Lolly NRCE.
+  Compute t  Lolly NRCE.
 
-  Note: As this NRCE calculation uses Taylor expansion, it becomes inaccurate when the ctr is large,
-  especially when the adjusted ctr goes above 1.0.
+  Note: As t  NRCE calculat on uses Taylor expans on,   beco s  naccurate w n t  ctr  s large,
+  espec ally w n t  adjusted ctr goes above 1.0.
 
-  Calculation:
+  Calculat on:
 
   ::
 
     NRCE: lolly NRCE
-    BCE: baseline cross entropy
-    NCE: normalized cross entropy
+    BCE: basel ne cross entropy
+    NCE: normal zed cross entropy
     CE: cross entropy
-    y_i: label of example i
-    p_i: prediction of example i
+    y_ : label of example  
+    p_ : pred ct on of example  
     y: ctr
-    p: average prediction
-    a: normalizer
+    p: average pred ct on
+    a: normal zer
 
-    Assumes any p_i and a * p_i is within [0, 1)
+    Assu s any p_  and a * p_   s w h n [0, 1)
     NRCE = (1 - NCE / BCE) * 100
-    BCE = - sum_i(y_i * log(y) + (1 - y_i) * log(1 - y))
+    BCE = - sum_ (y_  * log(y) + (1 - y_ ) * log(1 - y))
         = - (y * log(y) + (1 - y) * log(1 - y))
     a = y / p
-    CE = - sum_i(y_i * log(p_i) + (1 - y_i) * log(1 - p_i))
-    NCE = - sum_i(y_i * log(a * p_i) + (1 - y_i) * log(1 - a * p_i))
-        = - sum_i(y_i * log(p_i) + (1 - y_i) * log(1 - p_i))
-          - sum_i(y_i * log(a))
-          + sum_i((1 - y_i) * log(1 - p_i))
-          - sum_i((1 - y_i) * log(1 - a * p_i))
-        ~= CE - sum_i(y_i) * log(a)
-          + sum_i((1 - y_i) * (- sum_{j=1~5}(p_i^j / j)))
-          - sum_i((1 - y_i) * (- sum_{j=1~5}(a^j * p_i^j / j)))
-          # Takes 5 items from the Taylor expansion, can be increased if needed
-          # Error for each example is O(p_i^6)
-        = CE - sum_i(y_i) * log(a)
-          - sum_{j=1~5}(sum_i((1 - y_i) * p_i^j) / j)
-          + sum_{j=1~5}(sum_i((1 - y_i) * p_i^j) * a^j / j)
-        = CE - sum_i(y_i) * log(a)
-          + sum_{j=1~5}(sum_i((1 - y_i) * p_i^j) * (a^j - 1) / j)
+    CE = - sum_ (y_  * log(p_ ) + (1 - y_ ) * log(1 - p_ ))
+    NCE = - sum_ (y_  * log(a * p_ ) + (1 - y_ ) * log(1 - a * p_ ))
+        = - sum_ (y_  * log(p_ ) + (1 - y_ ) * log(1 - p_ ))
+          - sum_ (y_  * log(a))
+          + sum_ ((1 - y_ ) * log(1 - p_ ))
+          - sum_ ((1 - y_ ) * log(1 - a * p_ ))
+        ~= CE - sum_ (y_ ) * log(a)
+          + sum_ ((1 - y_ ) * (- sum_{j=1~5}(p_ ^j / j)))
+          - sum_ ((1 - y_ ) * (- sum_{j=1~5}(a^j * p_ ^j / j)))
+          # Takes 5  ems from t  Taylor expans on, can be  ncreased  f needed
+          # Error for each example  s O(p_ ^6)
+        = CE - sum_ (y_ ) * log(a)
+          - sum_{j=1~5}(sum_ ((1 - y_ ) * p_ ^j) / j)
+          + sum_{j=1~5}(sum_ ((1 - y_ ) * p_ ^j) * a^j / j)
+        = CE - sum_ (y_ ) * log(a)
+          + sum_{j=1~5}(sum_ ((1 - y_ ) * p_ ^j) * (a^j - 1) / j)
 
-  Thus we keep track of CE, sum_i(y_i), sum_i((1 - y_i) * p_i^j) for j=1~5.
-  We also keep track of p and y by sum_i(y_i), sum_i(p_i), sum_i(1) so that
-  we can get a at the end, which leads to this NRCE.
+  Thus   keep track of CE, sum_ (y_ ), sum_ ((1 - y_ ) * p_ ^j) for j=1~5.
+    also keep track of p and y by sum_ (y_ ), sum_ (p_ ), sum_ (1) so that
+    can get a at t  end, wh ch leads to t  NRCE.
 
-  NRCE uses ctr and average pctr to normalize the pctrs.
-  It removes the impact of prediction error from RCE.
-  Usually NRCE is higher as the prediction error impact on RCE is negative.
-  Removing prediction error in our model can make RCE closer to NRCE and thus improve RCE.
+  NRCE uses ctr and average pctr to normal ze t  pctrs.
+    removes t   mpact of pred ct on error from RCE.
+  Usually NRCE  s h g r as t  pred ct on error  mpact on RCE  s negat ve.
+  Remov ng pred ct on error  n   model can make RCE closer to NRCE and thus  mprove RCE.
 
-  In Lolly NRCE we use ctr and average pctr of the whole dataset.
-  We thus remove the dataset level error in NRCE calculation.
-  In this case, when we want to improve RCE to the level of NRCE,
-  it is achievable as dataset level prediction error is easy to remove by calibration.
-  Lolly NRCE is thus a good estimate about the potential gain by adding calibration.
+   n Lolly NRCE   use ctr and average pctr of t  whole dataset.
+    thus remove t  dataset level error  n NRCE calculat on.
+   n t  case, w n   want to  mprove RCE to t  level of NRCE,
+     s ach evable as dataset level pred ct on error  s easy to remove by cal brat on.
+  Lolly NRCE  s thus a good est mate about t  potent al ga n by add ng cal brat on.
 
-  In DBv2 NRCE, we use per-batch ctr and average pctr. We remove the batch level error.
-  This error is difficult to remove by modeling improvement,
-  at least not by simple calibration.
-  It thus cannot indicate the same opportunity as the Lolly NRCE does.
+   n DBv2 NRCE,   use per-batch ctr and average pctr.   remove t  batch level error.
+  T  error  s d ff cult to remove by model ng  mprove nt,
+  at least not by s mple cal brat on.
+    thus cannot  nd cate t  sa  opportun y as t  Lolly NRCE does.
 
   Args:
     labels:
-      the ground true value.
-    predictions:
-      the predicted values, whose shape must match labels.
-    weights:
-      optional weights, whose shape must match labels . Weight is 1 if not set.
-    metrics_collections:
-      optional list of collections to add this metric into.
-    updates_collections:
-      optional list of collections to add the associated update_op into.
-    name:
-      an optional variable_scope name.
+      t  ground true value.
+    pred ct ons:
+      t  pred cted values, whose shape must match labels.
+      ghts:
+      opt onal   ghts, whose shape must match labels .   ght  s 1  f not set.
+     tr cs_collect ons:
+      opt onal l st of collect ons to add t   tr c  nto.
+    updates_collect ons:
+      opt onal l st of collect ons to add t  assoc ated update_op  nto.
+    na :
+      an opt onal var able_scope na .
 
   Return:
     rce_value:
-      A ``Tensor`` representing the RCE.
+      A ``Tensor`` represent ng t  RCE.
     update_op:
-      A update operation used to accumulate data into this metric.
+      A update operat on used to accumulate data  nto t   tr c.
 
-  Note: Must have at least 1 positive and 1 negative sample accumulated,
-        or NRCE will come out as NaN.
+  Note: Must have at least 1 pos  ve and 1 negat ve sample accumulated,
+        or NRCE w ll co  out as NaN.
   """
-  with tf.variable_scope(name, "lolly_nrce", (labels, predictions, weights)):
-    labels = tf.to_float(labels, name="label_to_float")
-    predictions = tf.to_float(predictions, name="predictions_to_float")
+  w h tf.var able_scope(na , "lolly_nrce", (labels, pred ct ons,   ghts)):
+    labels = tf.to_float(labels, na ="label_to_float")
+    pred ct ons = tf.to_float(pred ct ons, na ="pred ct ons_to_float")
 
-    if weights is None:
-      weights = tf.ones(shape=tf.shape(labels), dtype=tf.float32, name="default_weight")
+     f   ghts  s None:
+        ghts = tf.ones(shape=tf.shape(labels), dtype=tf.float32, na ="default_  ght")
     else:
-      weights = tf.to_float(weights, name="weight_to_float")
+        ghts = tf.to_float(  ghts, na ="  ght_to_float")
 
-    positive_weights = tf.multiply(labels, weights, name="positive_weights")
+    pos  ve_  ghts = tf.mult ply(labels,   ghts, na ="pos  ve_  ghts")
 
-    # clamp predictions to keep log(p) stable
-    clip_predictions = tf.clip_by_value(
-      predictions,
-      CLAMP_EPSILON,
-      1.0 - CLAMP_EPSILON,
-      name="clip_predictions")
-    weighted_predictions = tf.multiply(
-      predictions, weights,
-      name="weighted_predictions")
+    # clamp pred ct ons to keep log(p) stable
+    cl p_pred ct ons = tf.cl p_by_value(
+      pred ct ons,
+      CLAMP_EPS LON,
+      1.0 - CLAMP_EPS LON,
+      na ="cl p_pred ct ons")
+      ghted_pred ct ons = tf.mult ply(
+      pred ct ons,   ghts,
+      na ="  ghted_pred ct ons")
 
-    logloss = _binary_cross_entropy(pred=clip_predictions, target=labels, name="logloss")
-    weighted_logloss = tf.multiply(logloss, weights, name="weighted_logloss")
+    logloss = _b nary_cross_entropy(pred=cl p_pred ct ons, target=labels, na ="logloss")
+      ghted_logloss = tf.mult ply(logloss,   ghts, na ="  ghted_logloss")
 
-    negatives = tf.subtract(
+    negat ves = tf.subtract(
       tf.ones(shape=tf.shape(labels), dtype=tf.float32),
       labels,
-      name="negatives")
-    negative_predictions = tf.multiply(
-      predictions,
-      negatives,
-      name="negative_predictions")
-    weighted_negative_predictions = tf.multiply(
-      negative_predictions, weights,
-      name="weighted_negative_predictions")
-    negative_squared_predictions = tf.multiply(
-      negative_predictions,
-      negative_predictions,
-      name="negative_squared_predictions")
-    weighted_negative_squared_predictions = tf.multiply(
-      negative_squared_predictions, weights,
-      name="weighted_negative_squared_predictions")
-    negative_cubed_predictions = tf.multiply(
-      negative_squared_predictions,
-      negative_predictions,
-      name="negative_cubed_predictions")
-    weighted_negative_cubed_predictions = tf.multiply(
-      negative_cubed_predictions, weights,
-      name="weighted_negative_cubed_predictions")
-    negative_quartic_predictions = tf.multiply(
-      negative_cubed_predictions,
-      negative_predictions,
-      name="negative_quartic_predictions")
-    weighted_negative_quartic_predictions = tf.multiply(
-      negative_quartic_predictions, weights,
-      name="weighted_negative_quartic_predictions")
-    negative_quintic_predictions = tf.multiply(
-      negative_quartic_predictions,
-      negative_predictions,
-      name="negative_quintic_predictions")
-    weighted_negative_quintic_predictions = tf.multiply(
-      negative_quintic_predictions, weights,
-      name="weighted_negative_quintic_predictions")
+      na ="negat ves")
+    negat ve_pred ct ons = tf.mult ply(
+      pred ct ons,
+      negat ves,
+      na ="negat ve_pred ct ons")
+      ghted_negat ve_pred ct ons = tf.mult ply(
+      negat ve_pred ct ons,   ghts,
+      na ="  ghted_negat ve_pred ct ons")
+    negat ve_squared_pred ct ons = tf.mult ply(
+      negat ve_pred ct ons,
+      negat ve_pred ct ons,
+      na ="negat ve_squared_pred ct ons")
+      ghted_negat ve_squared_pred ct ons = tf.mult ply(
+      negat ve_squared_pred ct ons,   ghts,
+      na ="  ghted_negat ve_squared_pred ct ons")
+    negat ve_cubed_pred ct ons = tf.mult ply(
+      negat ve_squared_pred ct ons,
+      negat ve_pred ct ons,
+      na ="negat ve_cubed_pred ct ons")
+      ghted_negat ve_cubed_pred ct ons = tf.mult ply(
+      negat ve_cubed_pred ct ons,   ghts,
+      na ="  ghted_negat ve_cubed_pred ct ons")
+    negat ve_quart c_pred ct ons = tf.mult ply(
+      negat ve_cubed_pred ct ons,
+      negat ve_pred ct ons,
+      na ="negat ve_quart c_pred ct ons")
+      ghted_negat ve_quart c_pred ct ons = tf.mult ply(
+      negat ve_quart c_pred ct ons,   ghts,
+      na ="  ghted_negat ve_quart c_pred ct ons")
+    negat ve_qu nt c_pred ct ons = tf.mult ply(
+      negat ve_quart c_pred ct ons,
+      negat ve_pred ct ons,
+      na ="negat ve_qu nt c_pred ct ons")
+      ghted_negat ve_qu nt c_pred ct ons = tf.mult ply(
+      negat ve_qu nt c_pred ct ons,   ghts,
+      na ="  ghted_negat ve_qu nt c_pred ct ons")
 
     # Tracked stats
-    total_positive = _metric_variable(name="total_positive", shape=[], dtype=tf.float32)
-    total_weight = _metric_variable(name="total_weight", shape=[], dtype=tf.float32)
+    total_pos  ve = _ tr c_var able(na ="total_pos  ve", shape=[], dtype=tf.float32)
+    total_  ght = _ tr c_var able(na ="total_  ght", shape=[], dtype=tf.float32)
 
-    total_prediction = _metric_variable(name="total_prediction", shape=[], dtype=tf.float32)
+    total_pred ct on = _ tr c_var able(na ="total_pred ct on", shape=[], dtype=tf.float32)
 
-    total_negative_prediction = _metric_variable(
-      name="total_negative_prediction",
+    total_negat ve_pred ct on = _ tr c_var able(
+      na ="total_negat ve_pred ct on",
       shape=[], dtype=tf.float32)
-    total_negative_squared_prediction = _metric_variable(
-      name="total_negative_squared_prediction",
+    total_negat ve_squared_pred ct on = _ tr c_var able(
+      na ="total_negat ve_squared_pred ct on",
       shape=[], dtype=tf.float32)
-    total_negative_cubed_prediction = _metric_variable(
-      name="total_negative_cubed_prediction",
+    total_negat ve_cubed_pred ct on = _ tr c_var able(
+      na ="total_negat ve_cubed_pred ct on",
       shape=[], dtype=tf.float32)
-    total_negative_quartic_prediction = _metric_variable(
-      name="total_negative_quartic_prediction",
+    total_negat ve_quart c_pred ct on = _ tr c_var able(
+      na ="total_negat ve_quart c_pred ct on",
       shape=[], dtype=tf.float32)
-    total_negative_quintic_prediction = _metric_variable(
-      name="total_negative_quintic_prediction",
+    total_negat ve_qu nt c_pred ct on = _ tr c_var able(
+      na ="total_negat ve_qu nt c_pred ct on",
       shape=[], dtype=tf.float32)
 
-    total_loss = _metric_variable(name="total_loss", shape=[], dtype=tf.float32)
+    total_loss = _ tr c_var able(na ="total_loss", shape=[], dtype=tf.float32)
 
     # Update tracked stats
-    update_total_positive = tf.assign_add(
-      total_positive, tf.reduce_sum(positive_weights), name="total_positive_update")
-    update_total_weight = tf.assign_add(
-      total_weight, tf.reduce_sum(weights), name="total_weight_update")
-    update_total_prediction = tf.assign_add(
-      total_prediction, tf.reduce_sum(weighted_predictions), name="total_prediction_update")
-    update_total_negative_prediction = tf.assign_add(
-      total_negative_prediction,
-      tf.reduce_sum(weighted_negative_predictions), name="total_negative_prediction_update")
-    update_total_negative_squared_prediction = tf.assign_add(
-      total_negative_squared_prediction,
-      tf.reduce_sum(weighted_negative_squared_predictions),
-      name="total_negative_squared_prediction_update")
-    update_total_negative_cubed_prediction = tf.assign_add(
-      total_negative_cubed_prediction,
-      tf.reduce_sum(weighted_negative_cubed_predictions),
-      name="total_negative_cubed_prediction_update")
-    update_total_negative_quartic_prediction = tf.assign_add(
-      total_negative_quartic_prediction,
-      tf.reduce_sum(weighted_negative_quartic_predictions),
-      name="total_negative_quartic_prediction_update")
-    update_total_negative_quintic_prediction = tf.assign_add(
-      total_negative_quintic_prediction,
-      tf.reduce_sum(weighted_negative_quintic_predictions),
-      name="total_negative_quintic_prediction_update")
-    update_total_loss = tf.assign_add(
-      total_loss, tf.reduce_sum(weighted_logloss), name="total_loss_update")
+    update_total_pos  ve = tf.ass gn_add(
+      total_pos  ve, tf.reduce_sum(pos  ve_  ghts), na ="total_pos  ve_update")
+    update_total_  ght = tf.ass gn_add(
+      total_  ght, tf.reduce_sum(  ghts), na ="total_  ght_update")
+    update_total_pred ct on = tf.ass gn_add(
+      total_pred ct on, tf.reduce_sum(  ghted_pred ct ons), na ="total_pred ct on_update")
+    update_total_negat ve_pred ct on = tf.ass gn_add(
+      total_negat ve_pred ct on,
+      tf.reduce_sum(  ghted_negat ve_pred ct ons), na ="total_negat ve_pred ct on_update")
+    update_total_negat ve_squared_pred ct on = tf.ass gn_add(
+      total_negat ve_squared_pred ct on,
+      tf.reduce_sum(  ghted_negat ve_squared_pred ct ons),
+      na ="total_negat ve_squared_pred ct on_update")
+    update_total_negat ve_cubed_pred ct on = tf.ass gn_add(
+      total_negat ve_cubed_pred ct on,
+      tf.reduce_sum(  ghted_negat ve_cubed_pred ct ons),
+      na ="total_negat ve_cubed_pred ct on_update")
+    update_total_negat ve_quart c_pred ct on = tf.ass gn_add(
+      total_negat ve_quart c_pred ct on,
+      tf.reduce_sum(  ghted_negat ve_quart c_pred ct ons),
+      na ="total_negat ve_quart c_pred ct on_update")
+    update_total_negat ve_qu nt c_pred ct on = tf.ass gn_add(
+      total_negat ve_qu nt c_pred ct on,
+      tf.reduce_sum(  ghted_negat ve_qu nt c_pred ct ons),
+      na ="total_negat ve_qu nt c_pred ct on_update")
+    update_total_loss = tf.ass gn_add(
+      total_loss, tf.reduce_sum(  ghted_logloss), na ="total_loss_update")
 
-    # metric value retrieval subgraph
-    # ctr of this batch
-    positive_rate = tf.truediv(total_positive, total_weight, name="positive_rate")
-    # Note: we don't have to keep running averages for computing baseline CE. Because the prediction
-    # is constant for every sample, we can simplify it to the formula below.
-    baseline_loss = _binary_cross_entropy(
-      pred=positive_rate,
-      target=positive_rate,
-      name="baseline_loss")
+    #  tr c value retr eval subgraph
+    # ctr of t  batch
+    pos  ve_rate = tf.trued v(total_pos  ve, total_  ght, na ="pos  ve_rate")
+    # Note:   don't have to keep runn ng averages for comput ng basel ne CE. Because t  pred ct on
+    #  s constant for every sample,   can s mpl fy   to t  formula below.
+    basel ne_loss = _b nary_cross_entropy(
+      pred=pos  ve_rate,
+      target=pos  ve_rate,
+      na ="basel ne_loss")
 
-    # normalizing ratio for nrce
-    # calculated using total ctr and pctr so the last batch has the dataset ctr and pctr
-    normalizer = tf.truediv(total_positive, total_prediction, name="normalizer")
-    # Taylor expansion to calculate nl = - sum(y * log(p * a) + (1 - y) * log (1 - p * a))
-    # log(1 - p * a) = -sum_{i=1~+inf}(a^i * x^i / i)
-    # log(1 - p) = -sum_{i=1~+inf}(a^i * x^i / i)
-    normalized_loss = (
+    # normal z ng rat o for nrce
+    # calculated us ng total ctr and pctr so t  last batch has t  dataset ctr and pctr
+    normal zer = tf.trued v(total_pos  ve, total_pred ct on, na ="normal zer")
+    # Taylor expans on to calculate nl = - sum(y * log(p * a) + (1 - y) * log (1 - p * a))
+    # log(1 - p * a) = -sum_{ =1~+ nf}(a^  * x^  /  )
+    # log(1 - p) = -sum_{ =1~+ nf}(a^  * x^  /  )
+    normal zed_loss = (
       total_loss -
-      total_positive * tf.log(normalizer) +
-      total_negative_prediction * (normalizer - 1) +
-      total_negative_squared_prediction * (normalizer * normalizer - 1) / 2 +
-      total_negative_cubed_prediction *
-      (normalizer * normalizer * normalizer - 1) / 3 +
-      total_negative_quartic_prediction *
-      (normalizer * normalizer * normalizer * normalizer - 1) / 4 +
-      total_negative_quintic_prediction *
-      (normalizer * normalizer * normalizer * normalizer * normalizer - 1) / 5)
+      total_pos  ve * tf.log(normal zer) +
+      total_negat ve_pred ct on * (normal zer - 1) +
+      total_negat ve_squared_pred ct on * (normal zer * normal zer - 1) / 2 +
+      total_negat ve_cubed_pred ct on *
+      (normal zer * normal zer * normal zer - 1) / 3 +
+      total_negat ve_quart c_pred ct on *
+      (normal zer * normal zer * normal zer * normal zer - 1) / 4 +
+      total_negat ve_qu nt c_pred ct on *
+      (normal zer * normal zer * normal zer * normal zer * normal zer - 1) / 5)
 
-    # average normalized loss
-    avg_loss = tf.truediv(normalized_loss, total_weight, name="avg_loss")
+    # average normal zed loss
+    avg_loss = tf.trued v(normal zed_loss, total_  ght, na ="avg_loss")
 
-    nrce_t = tf.multiply(
-      1.0 - tf.truediv(avg_loss, baseline_loss),
+    nrce_t = tf.mult ply(
+      1.0 - tf.trued v(avg_loss, basel ne_loss),
       100,
-      name="lolly_nrce")
+      na ="lolly_nrce")
 
-    # metric update subgraph
-    update_positive_rate = tf.truediv(
-      update_total_positive,
-      update_total_weight,
-      name="update_positive_rate")
-    # Note: we don't have to keep running averages for computing baseline CE. Because the prediction
-    # is constant for every sample, we can simplify it to the formula below.
-    update_baseline_loss = _binary_cross_entropy(
-      pred=update_positive_rate,
-      target=update_positive_rate,
-      name="update_baseline_loss")
+    #  tr c update subgraph
+    update_pos  ve_rate = tf.trued v(
+      update_total_pos  ve,
+      update_total_  ght,
+      na ="update_pos  ve_rate")
+    # Note:   don't have to keep runn ng averages for comput ng basel ne CE. Because t  pred ct on
+    #  s constant for every sample,   can s mpl fy   to t  formula below.
+    update_basel ne_loss = _b nary_cross_entropy(
+      pred=update_pos  ve_rate,
+      target=update_pos  ve_rate,
+      na ="update_basel ne_loss")
 
-    update_normalizer = tf.truediv(
-      update_total_positive,
-      update_total_prediction,
-      name="update_normalizer")
-    update_normalized_loss = (
+    update_normal zer = tf.trued v(
+      update_total_pos  ve,
+      update_total_pred ct on,
+      na ="update_normal zer")
+    update_normal zed_loss = (
       update_total_loss -
-      update_total_positive * tf.log(update_normalizer) +
-      update_total_negative_prediction *
-      (update_normalizer - 1) +
-      update_total_negative_squared_prediction *
-      (update_normalizer * update_normalizer - 1) / 2 +
-      update_total_negative_cubed_prediction *
-      (update_normalizer * update_normalizer * update_normalizer - 1) / 3 +
-      update_total_negative_quartic_prediction *
-      (update_normalizer * update_normalizer * update_normalizer *
-       update_normalizer - 1) / 4 +
-      update_total_negative_quintic_prediction *
-      (update_normalizer * update_normalizer * update_normalizer *
-       update_normalizer * update_normalizer - 1) / 5)
+      update_total_pos  ve * tf.log(update_normal zer) +
+      update_total_negat ve_pred ct on *
+      (update_normal zer - 1) +
+      update_total_negat ve_squared_pred ct on *
+      (update_normal zer * update_normal zer - 1) / 2 +
+      update_total_negat ve_cubed_pred ct on *
+      (update_normal zer * update_normal zer * update_normal zer - 1) / 3 +
+      update_total_negat ve_quart c_pred ct on *
+      (update_normal zer * update_normal zer * update_normal zer *
+       update_normal zer - 1) / 4 +
+      update_total_negat ve_qu nt c_pred ct on *
+      (update_normal zer * update_normal zer * update_normal zer *
+       update_normal zer * update_normal zer - 1) / 5)
 
-    update_avg_loss = tf.truediv(
-      update_normalized_loss,
-      update_total_weight,
-      name="update_avg_loss")
+    update_avg_loss = tf.trued v(
+      update_normal zed_loss,
+      update_total_  ght,
+      na ="update_avg_loss")
 
-    update_op = tf.multiply(
-      1.0 - tf.truediv(update_avg_loss, update_baseline_loss),
+    update_op = tf.mult ply(
+      1.0 - tf.trued v(update_avg_loss, update_basel ne_loss),
       100,
-      name="update_op")
+      na ="update_op")
 
-    if metrics_collections:
-      tf.add_to_collections(metrics_collections, nrce_t)
+     f  tr cs_collect ons:
+      tf.add_to_collect ons( tr cs_collect ons, nrce_t)
 
-    if updates_collections:
-      tf.add_to_collections(updates_collections, update_op)
+     f updates_collect ons:
+      tf.add_to_collect ons(updates_collect ons, update_op)
 
     return nrce_t, update_op
 
 
-def _binary_cross_entropy(pred, target, name):
+def _b nary_cross_entropy(pred, target, na ):
   return - tf.add(
     target * tf.log(pred),
     (1.0 - target) * tf.log(1.0 - pred),
-    name=name)
+    na =na )
 
 
-# Copied from metrics_impl.py with minor modifications.
-# https://github.com/tensorflow/tensorflow/blob/v1.5.0/tensorflow/python/ops/metrics_impl.py#L39
-def _metric_variable(shape, dtype, validate_shape=True, name=None):
-  """Create variable in `GraphKeys.(LOCAL|METRIC_VARIABLES`) collections."""
+# Cop ed from  tr cs_ mpl.py w h m nor mod f cat ons.
+# https://g hub.com/tensorflow/tensorflow/blob/v1.5.0/tensorflow/python/ops/ tr cs_ mpl.py#L39
+def _ tr c_var able(shape, dtype, val date_shape=True, na =None):
+  """Create var able  n `GraphKeys.(LOCAL|METR C_VAR ABLES`) collect ons."""
 
-  return tf.Variable(
+  return tf.Var able(
     lambda: tf.zeros(shape, dtype),
-    trainable=False,
-    collections=[tf.GraphKeys.LOCAL_VARIABLES, tf.GraphKeys.METRIC_VARIABLES],
-    validate_shape=validate_shape,
-    name=name)
+    tra nable=False,
+    collect ons=[tf.GraphKeys.LOCAL_VAR ABLES, tf.GraphKeys.METR C_VAR ABLES],
+    val date_shape=val date_shape,
+    na =na )
 
-PERCENTILES = np.linspace(0, 1, 101, dtype=np.float32)
+PERCENT LES = np.l nspace(0, 1, 101, dtype=np.float32)
 
-# metric_name: (metric, requires thresholded output)
-SUPPORTED_BINARY_CLASS_METRICS = {
-  # TWML metrics
-  'total_weight': (total_weight_metric, False),
-  'num_samples': (num_samples_metric, False),
+#  tr c_na : ( tr c, requ res thresholded output)
+SUPPORTED_B NARY_CLASS_METR CS = {
+  # TWML  tr cs
+  'total_  ght': (total_  ght_ tr c, False),
+  'num_samples': (num_samples_ tr c, False),
   'rce': (rce, False),
-  'rce_std_err': (partial(metric_std_err, transform=rce_transform, metric=rce_metric, name='rce_std_err'), False),
-  'nrce': (partial(rce, normalize=True), False),
+  'rce_std_err': (part al( tr c_std_err, transform=rce_transform,  tr c=rce_ tr c, na ='rce_std_err'), False),
+  'nrce': (part al(rce, normal ze=True), False),
   'lolly_nrce': (lolly_nrce, False),
-  'arce': (partial(rce, normalize=True, arce=True), False),
-  'arce_original': (partial(rce, normalize=True, arce=True, up_weight=False), False),
-  # CTR measures positive sample ratio. This terminology is inherited from Ads.
+  'arce': (part al(rce, normal ze=True, arce=True), False),
+  'arce_or g nal': (part al(rce, normal ze=True, arce=True, up_  ght=False), False),
+  # CTR  asures pos  ve sample rat o. T  term nology  s  n r ed from Ads.
   'ctr': (ctr, False),
-  # predicted CTR measures predicted positive ratio.
-  'predicted_ctr': (predicted_ctr, False),
-  'pred_std_dev': (prediction_std_dev, False),
-  # thresholded metrics
-  'accuracy': (tf.metrics.accuracy, True),
-  'precision': (tf.metrics.precision, True),
-  'recall': (tf.metrics.recall, True),
+  # pred cted CTR  asures pred cted pos  ve rat o.
+  'pred cted_ctr': (pred cted_ctr, False),
+  'pred_std_dev': (pred ct on_std_dev, False),
+  # thresholded  tr cs
+  'accuracy': (tf. tr cs.accuracy, True),
+  'prec s on': (tf. tr cs.prec s on, True),
+  'recall': (tf. tr cs.recall, True),
 
-  'false_positives': (tf.metrics.false_positives, True),
-  'false_negatives': (tf.metrics.false_negatives, True),
-  'true_positives': (tf.metrics.true_positives, True),
-  'true_negatives': (tf.metrics.true_negatives, True),
+  'false_pos  ves': (tf. tr cs.false_pos  ves, True),
+  'false_negat ves': (tf. tr cs.false_negat ves, True),
+  'true_pos  ves': (tf. tr cs.true_pos  ves, True),
+  'true_negat ves': (tf. tr cs.true_negat ves, True),
 
-  'precision_at_percentiles': (partial(tf.metrics.precision_at_thresholds, thresholds=PERCENTILES), False),
-  'recall_at_percentiles': (partial(tf.metrics.recall_at_thresholds, thresholds=PERCENTILES), False),
-  'false_positives_at_percentiles': (partial(tf.metrics.false_positives_at_thresholds, thresholds=PERCENTILES), False),
-  'false_negatives_at_percentiles': (partial(tf.metrics.false_negatives_at_thresholds, thresholds=PERCENTILES), False),
-  'true_positives_at_percentiles': (partial(tf.metrics.true_positives_at_thresholds, thresholds=PERCENTILES), False),
-  'true_negatives_at_percentiles': (partial(tf.metrics.true_negatives_at_thresholds, thresholds=PERCENTILES), False),
+  'prec s on_at_percent les': (part al(tf. tr cs.prec s on_at_thresholds, thresholds=PERCENT LES), False),
+  'recall_at_percent les': (part al(tf. tr cs.recall_at_thresholds, thresholds=PERCENT LES), False),
+  'false_pos  ves_at_percent les': (part al(tf. tr cs.false_pos  ves_at_thresholds, thresholds=PERCENT LES), False),
+  'false_negat ves_at_percent les': (part al(tf. tr cs.false_negat ves_at_thresholds, thresholds=PERCENT LES), False),
+  'true_pos  ves_at_percent les': (part al(tf. tr cs.true_pos  ves_at_thresholds, thresholds=PERCENT LES), False),
+  'true_negat ves_at_percent les': (part al(tf. tr cs.true_negat ves_at_thresholds, thresholds=PERCENT LES), False),
 
-  # tensorflow metrics
-  'roc_auc': (partial(tf.metrics.auc, curve='ROC',
-    summation_method='careful_interpolation'), False),
-  'pr_auc': (partial(tf.metrics.auc, curve='PR',
-    summation_method='careful_interpolation'), False),
+  # tensorflow  tr cs
+  'roc_auc': (part al(tf. tr cs.auc, curve='ROC',
+    summat on_ thod='careful_ nterpolat on'), False),
+  'pr_auc': (part al(tf. tr cs.auc, curve='PR',
+    summat on_ thod='careful_ nterpolat on'), False),
 
   # tensorboard curves
-  'pr_curve': (tb.summary.v1.pr_curve_streaming_op, False),
+  'pr_curve': (tb.summary.v1.pr_curve_stream ng_op, False),
 
-  # deprecated metrics
-  'deprecated_nrce': (partial(rce, normalize=True, deprecated_rce=True), False),
-  'deprecated_arce': (partial(rce, normalize=True, arce=True, deprecated_rce=True), False),
-  'deprecated_arce_original': (partial(rce, normalize=True, arce=True,
-                                     up_weight=False, deprecated_rce=True), False)
+  # deprecated  tr cs
+  'deprecated_nrce': (part al(rce, normal ze=True, deprecated_rce=True), False),
+  'deprecated_arce': (part al(rce, normal ze=True, arce=True, deprecated_rce=True), False),
+  'deprecated_arce_or g nal': (part al(rce, normal ze=True, arce=True,
+                                     up_  ght=False, deprecated_rce=True), False)
 }
 
-# default metrics provided by get_binary_class_metric_fn
-DEFAULT_BINARY_CLASS_METRICS = ['total_weight', 'num_samples', 'rce', 'rce_std_err',
-                                'nrce', 'arce', 'ctr', 'predicted_ctr', 'pred_std_dev',
-                                'accuracy', 'precision', 'recall', 'roc_auc', 'pr_auc']
+# default  tr cs prov ded by get_b nary_class_ tr c_fn
+DEFAULT_B NARY_CLASS_METR CS = ['total_  ght', 'num_samples', 'rce', 'rce_std_err',
+                                'nrce', 'arce', 'ctr', 'pred cted_ctr', 'pred_std_dev',
+                                'accuracy', 'prec s on', 'recall', 'roc_auc', 'pr_auc']
 
 
-def get_binary_class_metric_fn(metrics=None):
+def get_b nary_class_ tr c_fn( tr cs=None):
   """
-  Returns a function having signature:
+  Returns a funct on hav ng s gnature:
 
   .. code-block:: python
 
-    def get_eval_metric_ops(graph_output, labels, weights):
+    def get_eval_ tr c_ops(graph_output, labels,   ghts):
       ...
-      return eval_metric_ops
+      return eval_ tr c_ops
 
-  where the returned eval_metric_ops is a dict of common evaluation metric
-  Ops for binary classification. See `tf.estimator.EstimatorSpec
-  <https://www.tensorflow.org/api_docs/python/tf/estimator/EstimatorSpec>`_
-  for a description of eval_metric_ops. The graph_output is a the result
-  dict returned by build_graph. Labels and weights are tf.Tensors.
+  w re t  returned eval_ tr c_ops  s a d ct of common evaluat on  tr c
+  Ops for b nary class f cat on. See `tf.est mator.Est matorSpec
+  <https://www.tensorflow.org/ap _docs/python/tf/est mator/Est matorSpec>`_
+  for a descr pt on of eval_ tr c_ops. T  graph_output  s a t  result
+  d ct returned by bu ld_graph. Labels and   ghts are tf.Tensors.
 
-  The following graph_output keys are recognized:
+  T  follow ng graph_output keys are recogn zed:
     output:
-      the raw predictions between 0 and 1. Required.
+      t  raw pred ct ons bet en 0 and 1. Requ red.
     threshold:
-      A value between 0 and 1 used to threshold the output into a hard_output.
-      Defaults to 0.5 when threshold and hard_output are missing.
-      Either threshold or hard_output can be provided, but not both.
+      A value bet en 0 and 1 used to threshold t  output  nto a hard_output.
+      Defaults to 0.5 w n threshold and hard_output are m ss ng.
+      E  r threshold or hard_output can be prov ded, but not both.
     hard_output:
-      A thresholded output. Either threshold or hard_output can be provided, but not both.
+      A thresholded output. E  r threshold or hard_output can be prov ded, but not both.
 
   Args:
-    metrics (list of String):
-      a list of metrics of interest. E.g. ['ctr', 'accuracy', 'rce']
-      Element in the list can be a string from following supported metrics, or can be a tuple
-      with three items: metric name, metric function, bool for thresholded output.
+     tr cs (l st of Str ng):
+      a l st of  tr cs of  nterest. E.g. ['ctr', 'accuracy', 'rce']
+      Ele nt  n t  l st can be a str ng from follow ng supported  tr cs, or can be a tuple
+      w h three  ems:  tr c na ,  tr c funct on, bool for thresholded output.
 
-      These metrics are evaluated and reported to tensorboard *during the eval phases only*.
-      Supported metrics:
+      T se  tr cs are evaluated and reported to tensorboard *dur ng t  eval phases only*.
+      Supported  tr cs:
 
-      - ctr (same as positive sample ratio.)
-      - rce (cross entropy loss compared to the baseline model of always predicting ctr)
-      - nrce (normalized rce, do not use this one if you do not understand what it is)
-      - `arce <http://go/arce>`_ (a more recent proposed improvment over NRCE)
-      - arce_original
-      - lolly_nrce (NRCE as it is computed in Lolly, with Taylor expansion)
+      - ctr (sa  as pos  ve sample rat o.)
+      - rce (cross entropy loss compared to t  basel ne model of always pred ct ng ctr)
+      - nrce (normal zed rce, do not use t  one  f   do not understand what    s)
+      - `arce <http://go/arce>`_ (a more recent proposed  mprov nt over NRCE)
+      - arce_or g nal
+      - lolly_nrce (NRCE as    s computed  n Lolly, w h Taylor expans on)
       - pr_auc
       - roc_auc
-      - accuracy (percentage of predictions that are correct)
-      - precision (true positives) / (true positives + false positives)
-      - recall (true positives) / (true positives + false negatives)
-      - pr_curve (precision-recall curve)
-      - deprecated_arce (ARCE as it was calculated before a stability fix)
-      - deprecated_nrce (NRCE as it was calculated before a stability fix)
+      - accuracy (percentage of pred ct ons that are correct)
+      - prec s on (true pos  ves) / (true pos  ves + false pos  ves)
+      - recall (true pos  ves) / (true pos  ves + false negat ves)
+      - pr_curve (prec s on-recall curve)
+      - deprecated_arce (ARCE as   was calculated before a stab l y f x)
+      - deprecated_nrce (NRCE as   was calculated before a stab l y f x)
 
-      Example of metrics list with mixture of string and tuple:
-      metrics = [
+      Example of  tr cs l st w h m xture of str ng and tuple:
+       tr cs = [
         'rce','nrce',
-        'roc_auc',  # default roc_auc metric
+        'roc_auc',  # default roc_auc  tr c
         (
-          'roc_auc_500',  # give this metric a name
-          partial(tf.metrics.auc, curve='ROC', summation_method='careful_interpolation', num_thresholds=500),  # the metric fn
-          False,  # whether the metric requires thresholded output
+          'roc_auc_500',  # g ve t   tr c a na 
+          part al(tf. tr cs.auc, curve='ROC', summat on_ thod='careful_ nterpolat on', num_thresholds=500),  # t   tr c fn
+          False,  # w t r t   tr c requ res thresholded output
         )]
 
-      NOTE: When predicting rare events roc_auc can be underestimated. Increasing num_threshold
-      can reduce the underestimation. See go/roc-auc-pitfall for more details.
+      NOTE: W n pred ct ng rare events roc_auc can be underest mated.  ncreas ng num_threshold
+      can reduce t  underest mat on. See go/roc-auc-p fall for more deta ls.
 
-      NOTE: accuracy / precision / recall apply to binary classification problems only.
-      I.e. a prediction is only considered correct if it matches the label. E.g. if the label
-      is 1.0, and the prediction is 0.99, it does not get credit.  If you want to use
-      precision / recall / accuracy metrics with soft predictions, you'll need to threshold
-      your predictions into hard 0/1 labels.
+      NOTE: accuracy / prec s on / recall apply to b nary class f cat on problems only.
+       .e. a pred ct on  s only cons dered correct  f   matc s t  label. E.g.  f t  label
+       s 1.0, and t  pred ct on  s 0.99,   does not get cred .   f   want to use
+      prec s on / recall / accuracy  tr cs w h soft pred ct ons,  'll need to threshold
+      y  pred ct ons  nto hard 0/1 labels.
 
-      When metrics is None (the default), it defaults to:
-      [rce, nrce, arce, ctr, predicted_ctr, accuracy, precision, recall, prauc, roc_auc],
+      W n  tr cs  s None (t  default),   defaults to:
+      [rce, nrce, arce, ctr, pred cted_ctr, accuracy, prec s on, recall, prauc, roc_auc],
   """
-  # pylint: disable=dict-keys-not-iterating
-  if metrics is None:
-    # remove expensive metrics by default for faster eval
-    metrics = list(DEFAULT_BINARY_CLASS_METRICS)
+  # pyl nt: d sable=d ct-keys-not- erat ng
+   f  tr cs  s None:
+    # remove expens ve  tr cs by default for faster eval
+     tr cs = l st(DEFAULT_B NARY_CLASS_METR CS)
 
-  def get_eval_metric_ops(graph_output, labels, weights):
+  def get_eval_ tr c_ops(graph_output, labels,   ghts):
     """
     graph_output:
-      dict that is returned by build_graph given input features.
+      d ct that  s returned by bu ld_graph g ven  nput features.
     labels:
-      target labels associated to batch.
-    weights:
-      weights of the samples..
+      target labels assoc ated to batch.
+      ghts:
+        ghts of t  samples..
     """
 
-    eval_metric_ops = OrderedDict()
+    eval_ tr c_ops = OrderedD ct()
 
     preds = graph_output['output']
 
-    threshold = graph_output['threshold'] if 'threshold' in graph_output else 0.5
+    threshold = graph_output['threshold']  f 'threshold'  n graph_output else 0.5
 
     hard_preds = graph_output.get('hard_output')
-    if hard_preds is None:
+     f hard_preds  s None:
       hard_preds = tf.greater_equal(preds, threshold)
 
-    # add metrics to eval_metric_ops dict
-    for metric in metrics:
-      if isinstance(metric, tuple) and len(metric) == 3:
-        metric_name, metric_factory, requires_threshold = metric
-        metric_name = metric_name.lower()
-      elif isinstance(metric, str):
-        metric_name = metric.lower()  # metric name are case insensitive.
-        metric_factory, requires_threshold = SUPPORTED_BINARY_CLASS_METRICS.get(metric_name)
+    # add  tr cs to eval_ tr c_ops d ct
+    for  tr c  n  tr cs:
+       f  s nstance( tr c, tuple) and len( tr c) == 3:
+         tr c_na ,  tr c_factory, requ res_threshold =  tr c
+         tr c_na  =  tr c_na .lo r()
+      el f  s nstance( tr c, str):
+         tr c_na  =  tr c.lo r()  #  tr c na  are case  nsens  ve.
+         tr c_factory, requ res_threshold = SUPPORTED_B NARY_CLASS_METR CS.get( tr c_na )
       else:
-        raise ValueError("Metric should be either string or tuple of length 3.")
+        ra se ValueError(" tr c should be e  r str ng or tuple of length 3.")
 
-      if metric_name in eval_metric_ops:
-        # avoid adding duplicate metrics.
-        continue
+       f  tr c_na   n eval_ tr c_ops:
+        # avo d add ng dupl cate  tr cs.
+        cont nue
 
-      if metric_factory:
-        value_op, update_op = metric_factory(
+       f  tr c_factory:
+        value_op, update_op =  tr c_factory(
           labels=labels,
-          predictions=(hard_preds if requires_threshold else preds),
-          weights=weights, name=metric_name)
-        eval_metric_ops[metric_name] = (value_op, update_op)
+          pred ct ons=(hard_preds  f requ res_threshold else preds),
+            ghts=  ghts, na = tr c_na )
+        eval_ tr c_ops[ tr c_na ] = (value_op, update_op)
       else:
-        raise ValueError('Cannot find the metric named ' + metric_name)
+        ra se ValueError('Cannot f nd t   tr c na d ' +  tr c_na )
 
-    return eval_metric_ops
+    return eval_ tr c_ops
 
-  return get_eval_metric_ops
+  return get_eval_ tr c_ops
 
 
-def get_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1):
+def get_mult _b nary_class_ tr c_fn( tr cs, classes=None, class_d m=1):
   """
-  Returns a function having signature:
+  Returns a funct on hav ng s gnature:
 
   .. code-block:: python
 
-    def get_eval_metric_ops(graph_output, labels, weights):
+    def get_eval_ tr c_ops(graph_output, labels,   ghts):
       ...
-      return eval_metric_ops
+      return eval_ tr c_ops
 
-  where the returned eval_metric_ops is a dict of common evaluation metric
-  Ops for concatenated binary classifications. See `tf.estimator.EstimatorSpec
-  <https://www.tensorflow.org/api_docs/python/tf/estimator/EstimatorSpec>`_
-  for a description of eval_metric_ops. The graph_output is a the result
-  dict returned by build_graph. Labels and weights are tf.Tensors.
+  w re t  returned eval_ tr c_ops  s a d ct of common evaluat on  tr c
+  Ops for concatenated b nary class f cat ons. See `tf.est mator.Est matorSpec
+  <https://www.tensorflow.org/ap _docs/python/tf/est mator/Est matorSpec>`_
+  for a descr pt on of eval_ tr c_ops. T  graph_output  s a t  result
+  d ct returned by bu ld_graph. Labels and   ghts are tf.Tensors.
 
-  In multiple binary classification problems, the
-  ``predictions`` (that is, ``graph_output['output']``)
-  are expected to have shape ``batch_size x n_classes``,
-  where ``n_classes`` is the number of binary classification.
-  Binary classification at output[i] is expected to discriminate between ``classes[i]`` (1)
-  and NOT ``classes[i]`` (0). The labels should be of the same shape as ``graph_output``
-  with binary values (0 or 1). The weights can be of size ``batch_size`` or
-  ``batch_size x n_classes``. The ``class_dim`` contain separate probabilities,
-  and need to have separate metrics.
+   n mult ple b nary class f cat on problems, t 
+  ``pred ct ons`` (that  s, ``graph_output['output']``)
+  are expected to have shape ``batch_s ze x n_classes``,
+  w re ``n_classes``  s t  number of b nary class f cat on.
+  B nary class f cat on at output[ ]  s expected to d scr m nate bet en ``classes[ ]`` (1)
+  and NOT ``classes[ ]`` (0). T  labels should be of t  sa  shape as ``graph_output``
+  w h b nary values (0 or 1). T    ghts can be of s ze ``batch_s ze`` or
+  ``batch_s ze x n_classes``. T  ``class_d m`` conta n separate probab l  es,
+  and need to have separate  tr cs.
 
-  The following graph_output keys are recognized:
+  T  follow ng graph_output keys are recogn zed:
     output:
-      the raw predictions between 0 and 1. Required.
+      t  raw pred ct ons bet en 0 and 1. Requ red.
     threshold:
-      A value between 0 and 1 used to threshold the output into a hard_output.
-      Defaults to 0.5 when threshold and hard_output are missing.
-      Either threshold or hard_output can be provided, but not both.
+      A value bet en 0 and 1 used to threshold t  output  nto a hard_output.
+      Defaults to 0.5 w n threshold and hard_output are m ss ng.
+      E  r threshold or hard_output can be prov ded, but not both.
     hard_output:
-      A thresholded output. Either threshold or hard_output can be provided, but not both.
+      A thresholded output. E  r threshold or hard_output can be prov ded, but not both.
 
   Args:
-    metrics (list of Metrics):
-      a list of metrics of interest. E.g. ['ctr', 'accuracy', 'rce']
-      Element in the list can be a string from following supported metrics, or can be a tuple
-      with three items: metric name, metric function, bool for thresholded output.
+     tr cs (l st of  tr cs):
+      a l st of  tr cs of  nterest. E.g. ['ctr', 'accuracy', 'rce']
+      Ele nt  n t  l st can be a str ng from follow ng supported  tr cs, or can be a tuple
+      w h three  ems:  tr c na ,  tr c funct on, bool for thresholded output.
 
-      These metrics are evaluated and reported to tensorboard *during the eval phases only*.
-      Supported metrics:
+      T se  tr cs are evaluated and reported to tensorboard *dur ng t  eval phases only*.
+      Supported  tr cs:
 
-      - ctr (same as positive sample ratio.)
-      - rce (cross entropy loss compared to the baseline model of always predicting ctr)
-      - nrce (normalized rce, do not use this one if you do not understand what it is)
+      - ctr (sa  as pos  ve sample rat o.)
+      - rce (cross entropy loss compared to t  basel ne model of always pred ct ng ctr)
+      - nrce (normal zed rce, do not use t  one  f   do not understand what    s)
       - pr_auc
       - roc_auc
-      - accuracy (percentage of predictions that are correct)
-      - precision (true positives) / (true positives + false positives)
-      - recall (true positives) / (true positives + false negatives)
-      - pr_curve (precision-recall curve)
+      - accuracy (percentage of pred ct ons that are correct)
+      - prec s on (true pos  ves) / (true pos  ves + false pos  ves)
+      - recall (true pos  ves) / (true pos  ves + false negat ves)
+      - pr_curve (prec s on-recall curve)
 
-      Example of metrics list with mixture of string and tuple:
-      metrics = [
+      Example of  tr cs l st w h m xture of str ng and tuple:
+       tr cs = [
         'rce','nrce',
-        'roc_auc',  # default roc_auc metric
+        'roc_auc',  # default roc_auc  tr c
         (
-          'roc_auc_500',  # give this metric a name
-          partial(tf.metrics.auc, curve='ROC', summation_method='careful_interpolation', num_thresholds=500),  # the metric fn
-          False,  # whether the metric requires thresholded output
+          'roc_auc_500',  # g ve t   tr c a na 
+          part al(tf. tr cs.auc, curve='ROC', summat on_ thod='careful_ nterpolat on', num_thresholds=500),  # t   tr c fn
+          False,  # w t r t   tr c requ res thresholded output
         )]
 
-      NOTE: When prediction on rare events, roc_auc can be underestimated. Increase num_threshold
-      can reduce the underestimation. See go/roc-auc-pitfall for more details.
+      NOTE: W n pred ct on on rare events, roc_auc can be underest mated.  ncrease num_threshold
+      can reduce t  underest mat on. See go/roc-auc-p fall for more deta ls.
 
-      NOTE: accuracy / precision / recall apply to binary classification problems only.
-      I.e. a prediction is only considered correct if it matches the label. E.g. if the label
-      is 1.0, and the prediction is 0.99, it does not get credit.  If you want to use
-      precision / recall / accuracy metrics with soft predictions, you'll need to threshold
-      your predictions into hard 0/1 labels.
+      NOTE: accuracy / prec s on / recall apply to b nary class f cat on problems only.
+       .e. a pred ct on  s only cons dered correct  f   matc s t  label. E.g.  f t  label
+       s 1.0, and t  pred ct on  s 0.99,   does not get cred .   f   want to use
+      prec s on / recall / accuracy  tr cs w h soft pred ct ons,  'll need to threshold
+      y  pred ct ons  nto hard 0/1 labels.
 
-      When metrics is None (the default), it defaults to:
-      [rce, nrce, arce, ctr, predicted_ctr, accuracy, precision, recall, prauc, roc_auc],
+      W n  tr cs  s None (t  default),   defaults to:
+      [rce, nrce, arce, ctr, pred cted_ctr, accuracy, prec s on, recall, prauc, roc_auc],
 
-    classes (list of strings):
-      In case of multiple binary class models, the names for each class or label.
-      These are used to display metrics on tensorboard.
-      If these are not specified, the index in the class or label dimension is used, and you'll
-      get metrics on tensorboard named like: accuracy_0, accuracy_1, etc.
+    classes (l st of str ngs):
+       n case of mult ple b nary class models, t  na s for each class or label.
+      T se are used to d splay  tr cs on tensorboard.
+       f t se are not spec f ed, t   ndex  n t  class or label d  ns on  s used, and  'll
+      get  tr cs on tensorboard na d l ke: accuracy_0, accuracy_1, etc.
 
-    class_dim (number):
-      Dimension of the classes in predictions. Defaults to 1, that is, batch_size x n_classes.
+    class_d m (number):
+      D  ns on of t  classes  n pred ct ons. Defaults to 1, that  s, batch_s ze x n_classes.
   """
-  # pylint: disable=invalid-name,dict-keys-not-iterating
-  if metrics is None:
-    # remove expensive metrics by default for faster eval
-    metrics = list(DEFAULT_BINARY_CLASS_METRICS)
+  # pyl nt: d sable= nval d-na ,d ct-keys-not- erat ng
+   f  tr cs  s None:
+    # remove expens ve  tr cs by default for faster eval
+     tr cs = l st(DEFAULT_B NARY_CLASS_METR CS)
 
-  def get_eval_metric_ops(graph_output, labels, weights):
+  def get_eval_ tr c_ops(graph_output, labels,   ghts):
     """
     graph_output:
-      dict that is returned by build_graph given input features.
+      d ct that  s returned by bu ld_graph g ven  nput features.
     labels:
-      target labels associated to batch.
-    weights:
-      weights of the samples..
+      target labels assoc ated to batch.
+      ghts:
+        ghts of t  samples..
     """
 
-    eval_metric_ops = OrderedDict()
+    eval_ tr c_ops = OrderedD ct()
 
     preds = graph_output['output']
 
-    threshold = graph_output['threshold'] if 'threshold' in graph_output else 0.5
+    threshold = graph_output['threshold']  f 'threshold'  n graph_output else 0.5
 
     hard_preds = graph_output.get('hard_output')
-    if hard_preds is None:
+     f hard_preds  s None:
       hard_preds = tf.greater_equal(preds, threshold)
 
     shape = labels.get_shape()
-    # basic sanity check: multi_metric dimension must exist
-    assert len(shape) > class_dim, "Dimension specified by class_dim does not exist."
+    # bas c san y c ck: mult _ tr c d  ns on must ex st
+    assert len(shape) > class_d m, "D  ns on spec f ed by class_d m does not ex st."
 
-    num_labels = shape[class_dim]
-    # If we are doing multi-class / multi-label metric, the number of classes / labels must
-    # be know at graph construction time.  This dimension cannot have size None.
-    assert num_labels is not None, "The multi-metric dimension cannot be None."
-    assert classes is None or len(classes) == num_labels, (
-      "Number of classes must match the number of labels")
+    num_labels = shape[class_d m]
+    #  f   are do ng mult -class / mult -label  tr c, t  number of classes / labels must
+    # be know at graph construct on t  .  T  d  ns on cannot have s ze None.
+    assert num_labels  s not None, "T  mult - tr c d  ns on cannot be None."
+    assert classes  s None or len(classes) == num_labels, (
+      "Number of classes must match t  number of labels")
 
-    weights_shape = weights.get_shape() if weights is not None else None
-    if weights_shape is None:
-      num_weights = None
-    elif len(weights_shape) > 1:
-      num_weights = weights_shape[class_dim]
+      ghts_shape =   ghts.get_shape()  f   ghts  s not None else None
+     f   ghts_shape  s None:
+      num_  ghts = None
+    el f len(  ghts_shape) > 1:
+      num_  ghts =   ghts_shape[class_d m]
     else:
-      num_weights = 1
+      num_  ghts = 1
 
-    for i in range(num_labels):
+    for    n range(num_labels):
 
-      # add metrics to eval_metric_ops dict
-      for metric in metrics:
-        if isinstance(metric, tuple) and len(metric) == 3:
-          metric_name, metric_factory, requires_threshold = metric
-          metric_name = metric_name.lower()
-        elif isinstance(metric, str):
-          metric_name = metric.lower()  # metric name are case insensitive.
-          metric_factory, requires_threshold = SUPPORTED_BINARY_CLASS_METRICS.get(metric_name)
+      # add  tr cs to eval_ tr c_ops d ct
+      for  tr c  n  tr cs:
+         f  s nstance( tr c, tuple) and len( tr c) == 3:
+           tr c_na ,  tr c_factory, requ res_threshold =  tr c
+           tr c_na  =  tr c_na .lo r()
+        el f  s nstance( tr c, str):
+           tr c_na  =  tr c.lo r()  #  tr c na  are case  nsens  ve.
+           tr c_factory, requ res_threshold = SUPPORTED_B NARY_CLASS_METR CS.get( tr c_na )
         else:
-          raise ValueError("Metric should be either string or tuple of length 3.")
+          ra se ValueError(" tr c should be e  r str ng or tuple of length 3.")
 
-        class_metric_name = metric_name + "_" + (classes[i] if classes is not None else str(i))
+        class_ tr c_na  =  tr c_na  + "_" + (classes[ ]  f classes  s not None else str( ))
 
-        if class_metric_name in eval_metric_ops:
-          # avoid adding duplicate metrics.
-          continue
+         f class_ tr c_na   n eval_ tr c_ops:
+          # avo d add ng dupl cate  tr cs.
+          cont nue
 
-        class_labels = tf.gather(labels, indices=[i], axis=class_dim)
-        class_preds = tf.gather(preds, indices=[i], axis=class_dim)
-        class_hard_preds = tf.gather(hard_preds, indices=[i], axis=class_dim)
+        class_labels = tf.gat r(labels,  nd ces=[ ], ax s=class_d m)
+        class_preds = tf.gat r(preds,  nd ces=[ ], ax s=class_d m)
+        class_hard_preds = tf.gat r(hard_preds,  nd ces=[ ], ax s=class_d m)
 
-        if num_weights is None:
-          class_weights = None
-        elif num_weights == num_labels:
-          class_weights = tf.gather(weights, indices=[i], axis=class_dim)
-        elif num_weights == 1:
-          class_weights = weights
+         f num_  ghts  s None:
+          class_  ghts = None
+        el f num_  ghts == num_labels:
+          class_  ghts = tf.gat r(  ghts,  nd ces=[ ], ax s=class_d m)
+        el f num_  ghts == 1:
+          class_  ghts =   ghts
         else:
-          raise ValueError("num_weights (%d) and num_labels (%d) do not match"
-                           % (num_weights, num_labels))
+          ra se ValueError("num_  ghts (%d) and num_labels (%d) do not match"
+                           % (num_  ghts, num_labels))
 
-        if metric_factory:
-          value_op, update_op = metric_factory(
+         f  tr c_factory:
+          value_op, update_op =  tr c_factory(
             labels=class_labels,
-            predictions=(class_hard_preds if requires_threshold else class_preds),
-            weights=class_weights, name=class_metric_name)
-          eval_metric_ops[class_metric_name] = (value_op, update_op)
+            pred ct ons=(class_hard_preds  f requ res_threshold else class_preds),
+              ghts=class_  ghts, na =class_ tr c_na )
+          eval_ tr c_ops[class_ tr c_na ] = (value_op, update_op)
         else:
-          raise ValueError('Cannot find the metric named ' + metric_name)
+          ra se ValueError('Cannot f nd t   tr c na d ' +  tr c_na )
 
-    return eval_metric_ops
+    return eval_ tr c_ops
 
-  return get_eval_metric_ops
+  return get_eval_ tr c_ops
 
 
-def _get_uncalibrated_metric_fn(calibrated_metric_fn, keep_weight=True):
+def _get_uncal brated_ tr c_fn(cal brated_ tr c_fn, keep_  ght=True):
   """
-  Returns a function having signature:
+  Returns a funct on hav ng s gnature:
 
   .. code-block:: python
 
-    def get_eval_metric_ops(graph_output, labels, weights):
+    def get_eval_ tr c_ops(graph_output, labels,   ghts):
       ...
-      return eval_metric_ops
+      return eval_ tr c_ops
 
-  where the returned eval_metric_ops is a dict of common evaluation metric
-  Ops with uncalibrated output.
+  w re t  returned eval_ tr c_ops  s a d ct of common evaluat on  tr c
+  Ops w h uncal brated output.
 
-  The following graph_output keys are recognized:
-    uncalibrated_output:
-      the uncalibrated raw predictions between 0 and 1. Required.
+  T  follow ng graph_output keys are recogn zed:
+    uncal brated_output:
+      t  uncal brated raw pred ct ons bet en 0 and 1. Requ red.
     output:
-      the calibrated predictions between 0 and 1.
+      t  cal brated pred ct ons bet en 0 and 1.
     threshold:
-      A value between 0 and 1 used to threshold the output into a hard_output.
-      Defaults to 0.5 when threshold and hard_output are missing.
-      Either threshold or hard_output can be provided, but not both.
+      A value bet en 0 and 1 used to threshold t  output  nto a hard_output.
+      Defaults to 0.5 w n threshold and hard_output are m ss ng.
+      E  r threshold or hard_output can be prov ded, but not both.
     hard_output:
-      A thresholded output. Either threshold or hard_output can be provided, but not both.
+      A thresholded output. E  r threshold or hard_output can be prov ded, but not both.
 
   Args:
-    calibrated_metric_fn: metrics function with calibration and weight.
-    keep_weight: Bool indicating whether we keep weight.
+    cal brated_ tr c_fn:  tr cs funct on w h cal brat on and   ght.
+    keep_  ght: Bool  nd cat ng w t r   keep   ght.
   """
-  metric_scope = 'uncalibrated' if keep_weight else 'unweighted'
+   tr c_scope = 'uncal brated'  f keep_  ght else 'un  ghted'
 
-  def get_eval_metric_ops(graph_output, labels, weights):
+  def get_eval_ tr c_ops(graph_output, labels,   ghts):
     """
     graph_output:
-      dict that is returned by build_graph given input features.
+      d ct that  s returned by bu ld_graph g ven  nput features.
     labels:
-      target labels associated to batch.
-    weights:
-      weights of the samples..
+      target labels assoc ated to batch.
+      ghts:
+        ghts of t  samples..
     """
-    with tf.variable_scope(metric_scope):
-      if 'uncalibrated_output' not in graph_output:
-        raise Exception("Missing uncalibrated_output in graph_output!")
-      un_calibrated_weights = weights if keep_weight else tf.ones_like(weights)
-      uncalibrated_output = {
-        'output': graph_output['uncalibrated_output'],
+    w h tf.var able_scope( tr c_scope):
+       f 'uncal brated_output' not  n graph_output:
+        ra se Except on("M ss ng uncal brated_output  n graph_output!")
+      un_cal brated_  ghts =   ghts  f keep_  ght else tf.ones_l ke(  ghts)
+      uncal brated_output = {
+        'output': graph_output['uncal brated_output'],
         'threshold': graph_output.get('threshold', 0.5),
         'hard_output': graph_output.get('hard_output'),
-        **{k: v for k, v in graph_output.items() if k not in ['output', 'threshold', 'hard_output']}
+        **{k: v for k, v  n graph_output. ems()  f k not  n ['output', 'threshold', 'hard_output']}
       }
 
-      eval_metrics_ops = calibrated_metric_fn(uncalibrated_output, labels, un_calibrated_weights)
+      eval_ tr cs_ops = cal brated_ tr c_fn(uncal brated_output, labels, un_cal brated_  ghts)
 
-      renamed_metrics_ops = {f'{metric_scope}_{k}': v for k, v in eval_metrics_ops.items()}
-      return renamed_metrics_ops
+      rena d_ tr cs_ops = {f'{ tr c_scope}_{k}': v for k, v  n eval_ tr cs_ops. ems()}
+      return rena d_ tr cs_ops
 
-  return get_eval_metric_ops
+  return get_eval_ tr c_ops
 
 
-def get_multi_binary_class_uncalibrated_metric_fn(
-  metrics, classes=None, class_dim=1, keep_weight=True):
+def get_mult _b nary_class_uncal brated_ tr c_fn(
+   tr cs, classes=None, class_d m=1, keep_  ght=True):
   """
-  Returns a function having signature:
+  Returns a funct on hav ng s gnature:
 
   .. code-block:: python
 
-    def get_eval_metric_ops(graph_output, labels, weights):
+    def get_eval_ tr c_ops(graph_output, labels,   ghts):
       ...
-      return eval_metric_ops
+      return eval_ tr c_ops
 
-  where the returned eval_metric_ops is a dict of common evaluation metric
-  Ops for concatenated binary classifications without calibration.
+  w re t  returned eval_ tr c_ops  s a d ct of common evaluat on  tr c
+  Ops for concatenated b nary class f cat ons w hout cal brat on.
 
-  Note: 'uncalibrated_output' is required key in graph_output.
+  Note: 'uncal brated_output'  s requ red key  n graph_output.
 
-  The main use case for this function is:
+  T  ma n use case for t  funct on  s:
 
   1) To calculated roc-auc for rare event.
-  Calibrated prediction score for rare events will be concentrated near zero. As a result,
-  the roc-auc can be seriously underestimated with current implementation in tf.metric.auc.
-  Since roc-auc is invariant against calibration, we can directly use uncalibrated score for roc-auc.
-  For more details, please refer to: go/roc-auc-invariance.
+  Cal brated pred ct on score for rare events w ll be concentrated near zero. As a result,
+  t  roc-auc can be ser ously underest mated w h current  mple ntat on  n tf. tr c.auc.
+  S nce roc-auc  s  nvar ant aga nst cal brat on,   can d rectly use uncal brated score for roc-auc.
+  For more deta ls, please refer to: go/roc-auc- nvar ance.
 
-  2) To set keep_weight=False and get unweighted and uncalibrated metrics.
-  This is useful to eval how the model is fitted to its actual training data, since
-  often time the model is trained without weight.
-
-  Args:
-    metrics (list of String):
-      a list of metrics of interest. E.g. ['ctr', 'accuracy', 'rce']
-      Element in the list can be a string from supported metrics, or can be a tuple
-      with three items: metric name, metric function, bool for thresholded output.
-      These metrics are evaluated and reported to tensorboard *during the eval phases only*.
-
-      When metrics is None (the default), it defaults to:
-      [rce, nrce, arce, ctr, predicted_ctr, accuracy, precision, recall, prauc, roc_auc],
-
-    classes (list of strings):
-      In case of multiple binary class models, the names for each class or label.
-      These are used to display metrics on tensorboard.
-      If these are not specified, the index in the class or label dimension is used, and you'll
-      get metrics on tensorboard named like: accuracy_0, accuracy_1, etc.
-
-    class_dim (number):
-      Dimension of the classes in predictions. Defaults to 1, that is, batch_size x n_classes.
-
-    keep_weight (bool):
-      Whether to keep weights for the metric.
-  """
-
-  calibrated_metric_fn = get_multi_binary_class_metric_fn(
-    metrics, classes=classes, class_dim=class_dim)
-  return _get_uncalibrated_metric_fn(calibrated_metric_fn, keep_weight=keep_weight)
-
-
-def combine_metric_fns(*fn_list):
-  """
-  Combine multiple metric functions.
-  For example, we can combine metrics function generated by
-  get_multi_binary_class_metric_fn and get_multi_binary_class_uncalibrated_metric_fn.
+  2) To set keep_  ght=False and get un  ghted and uncal brated  tr cs.
+  T   s useful to eval how t  model  s f ted to  s actual tra n ng data, s nce
+  often t   t  model  s tra ned w hout   ght.
 
   Args:
-    *fn_list: Multiple metric functions to be combined
+     tr cs (l st of Str ng):
+      a l st of  tr cs of  nterest. E.g. ['ctr', 'accuracy', 'rce']
+      Ele nt  n t  l st can be a str ng from supported  tr cs, or can be a tuple
+      w h three  ems:  tr c na ,  tr c funct on, bool for thresholded output.
+      T se  tr cs are evaluated and reported to tensorboard *dur ng t  eval phases only*.
+
+      W n  tr cs  s None (t  default),   defaults to:
+      [rce, nrce, arce, ctr, pred cted_ctr, accuracy, prec s on, recall, prauc, roc_auc],
+
+    classes (l st of str ngs):
+       n case of mult ple b nary class models, t  na s for each class or label.
+      T se are used to d splay  tr cs on tensorboard.
+       f t se are not spec f ed, t   ndex  n t  class or label d  ns on  s used, and  'll
+      get  tr cs on tensorboard na d l ke: accuracy_0, accuracy_1, etc.
+
+    class_d m (number):
+      D  ns on of t  classes  n pred ct ons. Defaults to 1, that  s, batch_s ze x n_classes.
+
+    keep_  ght (bool):
+      W t r to keep   ghts for t   tr c.
+  """
+
+  cal brated_ tr c_fn = get_mult _b nary_class_ tr c_fn(
+     tr cs, classes=classes, class_d m=class_d m)
+  return _get_uncal brated_ tr c_fn(cal brated_ tr c_fn, keep_  ght=keep_  ght)
+
+
+def comb ne_ tr c_fns(*fn_l st):
+  """
+  Comb ne mult ple  tr c funct ons.
+  For example,   can comb ne  tr cs funct on generated by
+  get_mult _b nary_class_ tr c_fn and get_mult _b nary_class_uncal brated_ tr c_fn.
+
+  Args:
+    *fn_l st: Mult ple  tr c funct ons to be comb ned
 
   Returns:
-    Combined metric function.
+    Comb ned  tr c funct on.
   """
-  def combined_metric_ops(*args, **kwargs):
-    eval_metric_ops = OrderedDict()
-    for fn in fn_list:
-      eval_metric_ops.update(fn(*args, **kwargs))
-    return eval_metric_ops
-  return combined_metric_ops
+  def comb ned_ tr c_ops(*args, **kwargs):
+    eval_ tr c_ops = OrderedD ct()
+    for fn  n fn_l st:
+      eval_ tr c_ops.update(fn(*args, **kwargs))
+    return eval_ tr c_ops
+  return comb ned_ tr c_ops

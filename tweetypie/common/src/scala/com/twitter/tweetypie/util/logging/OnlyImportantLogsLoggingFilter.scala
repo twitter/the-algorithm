@@ -1,30 +1,30 @@
-package com.twitter.tweetypie.util.logging
+package com.tw ter.t etyp e.ut l.logg ng
 
-import ch.qos.logback.classic.Level
-import ch.qos.logback.classic.spi.ILoggingEvent
-import ch.qos.logback.core.filter.Filter
-import ch.qos.logback.core.spi.FilterReply
+ mport ch.qos.logback.class c.Level
+ mport ch.qos.logback.class c.sp . Logg ngEvent
+ mport ch.qos.logback.core.f lter.F lter
+ mport ch.qos.logback.core.sp .F lterReply
 
 /**
- * This class is currently being used by logback to log statements from tweetypie at one level and
- * log statements from other packages at another.
+ * T  class  s currently be ng used by logback to log state nts from t etyp e at one level and
+ * log state nts from ot r packages at anot r.
  *
- * Filters do not change the log levels of individual loggers. Filters filter out specific messages
- * for specific appenders. This allows us to have a log file with lots of information you will
- * mostly not need and a log file with only important information. This type of filtering cannot be
- * accomplished by changing the log levels of loggers, because the logger levels are global. We want
- * to change the semantics for specific destinations (appenders).
+ * F lters do not change t  log levels of  nd v dual loggers. F lters f lter out spec f c  ssages
+ * for spec f c appenders. T  allows us to have a log f le w h lots of  nformat on   w ll
+ * mostly not need and a log f le w h only  mportant  nformat on. T  type of f lter ng cannot be
+ * accompl s d by chang ng t  log levels of loggers, because t  logger levels are global.   want
+ * to change t  semant cs for spec f c dest nat ons (appenders).
  */
-class OnlyImportantLogsLoggingFilter extends Filter[ILoggingEvent] {
-  private[this] def notImportant(loggerName: String): Boolean =
-    !loggerName.startsWith("com.twitter.tweetypie")
+class Only mportantLogsLogg ngF lter extends F lter[ Logg ngEvent] {
+  pr vate[t ] def not mportant(loggerNa : Str ng): Boolean =
+    !loggerNa .startsW h("com.tw ter.t etyp e")
 
-  override def decide(event: ILoggingEvent): FilterReply =
-    if (!isStarted || event.getLevel.isGreaterOrEqual(Level.WARN)) {
-      FilterReply.NEUTRAL
-    } else if (notImportant(event.getLoggerName())) {
-      FilterReply.DENY
+  overr de def dec de(event:  Logg ngEvent): F lterReply =
+     f (! sStarted || event.getLevel. sGreaterOrEqual(Level.WARN)) {
+      F lterReply.NEUTRAL
+    } else  f (not mportant(event.getLoggerNa ())) {
+      F lterReply.DENY
     } else {
-      FilterReply.NEUTRAL
+      F lterReply.NEUTRAL
     }
 }

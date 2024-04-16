@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.models.failures
+package com.tw ter.follow_recom ndat ons.models.fa lures
 
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.CandidateSourceTimeout
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.Cand dateS ceT  out
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
 
-object TimeoutPipelineFailure {
-  def apply(candidateSourceName: String): PipelineFailure = {
-    PipelineFailure(
-      CandidateSourceTimeout,
-      s"Candidate Source $candidateSourceName timed out before returning candidates")
+object T  outP pel neFa lure {
+  def apply(cand dateS ceNa : Str ng): P pel neFa lure = {
+    P pel neFa lure(
+      Cand dateS ceT  out,
+      s"Cand date S ce $cand dateS ceNa  t  d out before return ng cand dates")
   }
 }

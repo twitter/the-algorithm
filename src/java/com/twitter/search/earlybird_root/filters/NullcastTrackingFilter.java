@@ -1,81 +1,81 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import java.util.HashSet;
-import java.util.Set;
+ mport java.ut l.HashSet;
+ mport java.ut l.Set;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableSet;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.collect. mmutableSet;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.earlybird.EarlybirdResponseUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
-import com.twitter.search.queryparser.visitors.DetectPositiveOperatorVisitor;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.ut l.earlyb rd.Earlyb rdResponseUt l;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.queryparser.query.search.SearchOperatorConstants;
+ mport com.tw ter.search.queryparser.v s ors.DetectPos  veOperatorV s or;
 
 /**
- * Filter that is tracking the unexpected nullcast results from Earlybirds.
+ * F lter that  s track ng t  unexpected nullcast results from Earlyb rds.
  */
-public class NullcastTrackingFilter extends SensitiveResultsTrackingFilter {
-  public NullcastTrackingFilter() {
-    super("unexpected nullcast tweets", true);
+publ c class NullcastTrack ngF lter extends Sens  veResultsTrack ngF lter {
+  publ c NullcastTrack ngF lter() {
+    super("unexpected nullcast t ets", true);
   }
 
-  private static final Logger LOG = LoggerFactory.getLogger(NullcastTrackingFilter.class);
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(NullcastTrack ngF lter.class);
 
-  @VisibleForTesting
-  static final SearchCounter BAD_NULLCAST_QUERY_COUNT =
+  @V s bleForTest ng
+  stat c f nal SearchCounter BAD_NULLCAST_QUERY_COUNT =
       SearchCounter.export("unexpected_nullcast_query_count");
 
-  @VisibleForTesting
-  static final SearchCounter BAD_NULLCAST_RESULT_COUNT =
+  @V s bleForTest ng
+  stat c f nal SearchCounter BAD_NULLCAST_RESULT_COUNT =
       SearchCounter.export("unexpected_nullcast_result_count");
 
-  @Override
+  @Overr de
   protected Logger getLogger() {
     return LOG;
   }
 
-  @Override
-  protected SearchCounter getSensitiveQueryCounter() {
+  @Overr de
+  protected SearchCounter getSens  veQueryCounter() {
     return BAD_NULLCAST_QUERY_COUNT;
   }
 
-  @Override
-  protected SearchCounter getSensitiveResultsCounter() {
+  @Overr de
+  protected SearchCounter getSens  veResultsCounter() {
     return BAD_NULLCAST_RESULT_COUNT;
   }
 
-  @Override
-  protected Set<Long> getSensitiveResults(EarlybirdRequestContext requestContext,
-                                          EarlybirdResponse earlybirdResponse) throws Exception {
-    if (!requestContext.getParsedQuery().accept(
-        new DetectPositiveOperatorVisitor(SearchOperatorConstants.NULLCAST))) {
-      return EarlybirdResponseUtil.findUnexpectedNullcastStatusIds(
-          earlybirdResponse.getSearchResults(), requestContext.getRequest());
+  @Overr de
+  protected Set<Long> getSens  veResults(Earlyb rdRequestContext requestContext,
+                                          Earlyb rdResponse earlyb rdResponse) throws Except on {
+     f (!requestContext.getParsedQuery().accept(
+        new DetectPos  veOperatorV s or(SearchOperatorConstants.NULLCAST))) {
+      return Earlyb rdResponseUt l.f ndUnexpectedNullcastStatus ds(
+          earlyb rdResponse.getSearchResults(), requestContext.getRequest());
     } else {
       return new HashSet<>();
     }
   }
 
   /**
-   * Some Earlybird requests are not searches, instead, they are scoring requests.
-   * These requests supply a list of IDs to be scored.
-   * It is OK to return nullcast tweet result if the ID is supplied in the request.
-   * This extracts the scoring request tweet IDs.
+   * So  Earlyb rd requests are not searc s,  nstead, t y are scor ng requests.
+   * T se requests supply a l st of  Ds to be scored.
+   *    s OK to return nullcast t et result  f t   D  s suppl ed  n t  request.
+   * T  extracts t  scor ng request t et  Ds.
    */
-  @Override
-  protected Set<Long> getExceptedResults(EarlybirdRequestContext requestContext) {
-    EarlybirdRequest request = requestContext.getRequest();
-    if (request == null
-        || !request.isSetSearchQuery()
-        || request.getSearchQuery().getSearchStatusIdsSize() == 0) {
-      return ImmutableSet.of();
+  @Overr de
+  protected Set<Long> getExceptedResults(Earlyb rdRequestContext requestContext) {
+    Earlyb rdRequest request = requestContext.getRequest();
+     f (request == null
+        || !request. sSetSearchQuery()
+        || request.getSearchQuery().getSearchStatus dsS ze() == 0) {
+      return  mmutableSet.of();
     }
-    return request.getSearchQuery().getSearchStatusIds();
+    return request.getSearchQuery().getSearchStatus ds();
   }
 }

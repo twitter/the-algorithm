@@ -1,210 +1,210 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.tw ter.fr gate.pushserv ce.model. b s
 
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.common.store.deviceinfo.DeviceInfo
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.{PushFeatureSwitchParams => FSParams}
-import com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue.ContinuousFunction
-import com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue.ContinuousFunctionParam
-import com.twitter.frigate.pushservice.util.OverrideNotificationUtil
-import com.twitter.frigate.pushservice.util.PushCapUtil
-import com.twitter.frigate.pushservice.util.PushDeviceUtil
-import com.twitter.frigate.thriftscala.CommonRecommendationType.MagicFanoutSportsEvent
-import com.twitter.ibis2.lib.util.JsonMarshal
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.common.rec_types.RecTypes
+ mport com.tw ter.fr gate.common.store.dev ce nfo.Dev ce nfo
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.params.{PushFeatureSw chParams => FSParams}
+ mport com.tw ter.fr gate.pushserv ce.pred cate.ntab_caret_fat gue.Cont nuousFunct on
+ mport com.tw ter.fr gate.pushserv ce.pred cate.ntab_caret_fat gue.Cont nuousFunct onParam
+ mport com.tw ter.fr gate.pushserv ce.ut l.Overr deNot f cat onUt l
+ mport com.tw ter.fr gate.pushserv ce.ut l.PushCapUt l
+ mport com.tw ter.fr gate.pushserv ce.ut l.PushDev ceUt l
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType.Mag cFanoutSportsEvent
+ mport com.tw ter. b s2.l b.ut l.JsonMarshal
+ mport com.tw ter.ut l.Future
 
-trait OverrideForIbis2Request {
-  self: PushCandidate =>
+tra  Overr deFor b s2Request {
+  self: PushCand date =>
 
-  private lazy val overrideStats = self.statsReceiver.scope("override_for_ibis2")
+  pr vate lazy val overr deStats = self.statsRece ver.scope("overr de_for_ b s2")
 
-  private lazy val addedOverrideAndroidCounter =
-    overrideStats.scope("android").counter("added_override_for_ibis2_request")
-  private lazy val addedSmartPushConfigAndroidCounter =
-    overrideStats.scope("android").counter("added_smart_push_config_for_ibis2_request")
-  private lazy val addedOverrideIosCounter =
-    overrideStats.scope("ios").counter("added_override_for_ibis2_request")
-  private lazy val noOverrideCounter = overrideStats.counter("no_override_for_ibis2_request")
-  private lazy val noOverrideDueToDeviceInfoCounter =
-    overrideStats.counter("no_override_due_to_device_info")
-  private lazy val addedMlScoreToPayloadAndroid =
-    overrideStats.scope("android").counter("added_ml_score")
-  private lazy val noMlScoreAddedToPayload =
-    overrideStats.counter("no_ml_score")
-  private lazy val addedNSlotsToPayload =
-    overrideStats.counter("added_n_slots")
-  private lazy val noNSlotsAddedToPayload =
-    overrideStats.counter("no_n_slots")
-  private lazy val addedCustomThreadIdToPayload =
-    overrideStats.counter("added_custom_thread_id")
-  private lazy val noCustomThreadIdAddedToPayload =
-    overrideStats.counter("no_custom_thread_id")
-  private lazy val enableTargetIdOverrideForMagicFanoutSportsEventCounter =
-    overrideStats.counter("enable_target_id_override_for_mf_sports_event")
+  pr vate lazy val addedOverr deAndro dCounter =
+    overr deStats.scope("andro d").counter("added_overr de_for_ b s2_request")
+  pr vate lazy val addedSmartPushConf gAndro dCounter =
+    overr deStats.scope("andro d").counter("added_smart_push_conf g_for_ b s2_request")
+  pr vate lazy val addedOverr de osCounter =
+    overr deStats.scope(" os").counter("added_overr de_for_ b s2_request")
+  pr vate lazy val noOverr deCounter = overr deStats.counter("no_overr de_for_ b s2_request")
+  pr vate lazy val noOverr deDueToDev ce nfoCounter =
+    overr deStats.counter("no_overr de_due_to_dev ce_ nfo")
+  pr vate lazy val addedMlScoreToPayloadAndro d =
+    overr deStats.scope("andro d").counter("added_ml_score")
+  pr vate lazy val noMlScoreAddedToPayload =
+    overr deStats.counter("no_ml_score")
+  pr vate lazy val addedNSlotsToPayload =
+    overr deStats.counter("added_n_slots")
+  pr vate lazy val noNSlotsAddedToPayload =
+    overr deStats.counter("no_n_slots")
+  pr vate lazy val addedCustomThread dToPayload =
+    overr deStats.counter("added_custom_thread_ d")
+  pr vate lazy val noCustomThread dAddedToPayload =
+    overr deStats.counter("no_custom_thread_ d")
+  pr vate lazy val enableTarget dOverr deForMag cFanoutSportsEventCounter =
+    overr deStats.counter("enable_target_ d_overr de_for_mf_sports_event")
 
-  lazy val candidateModelScoreFut: Future[Option[Double]] = {
-    if (RecTypes.notEligibleForModelScoreTracking(commonRecType)) Future.None
-    else mrWeightedOpenOrNtabClickRankingProbability
+  lazy val cand dateModelScoreFut: Future[Opt on[Double]] = {
+     f (RecTypes.notEl g bleForModelScoreTrack ng(commonRecType)) Future.None
+    else mr  ghtedOpenOrNtabCl ckRank ngProbab l y
   }
 
-  lazy val overrideModelValueFut: Future[Map[String, String]] = {
-    if (self.target.isLoggedOutUser) {
-      Future.value(Map.empty[String, String])
+  lazy val overr deModelValueFut: Future[Map[Str ng, Str ng]] = {
+     f (self.target. sLoggedOutUser) {
+      Future.value(Map.empty[Str ng, Str ng])
     } else {
       Future
-        .join(
-          target.deviceInfo,
+        .jo n(
+          target.dev ce nfo,
           target.accountCountryCode,
-          OverrideNotificationUtil.getCollapseAndImpressionIdForOverride(self),
-          candidateModelScoreFut,
-          target.dynamicPushcap,
+          Overr deNot f cat onUt l.getCollapseAnd mpress on dForOverr de(self),
+          cand dateModelScoreFut,
+          target.dynam cPushcap,
           target.optoutAdjustedPushcap,
-          PushCapUtil.getDefaultPushCap(target)
+          PushCapUt l.getDefaultPushCap(target)
         ).map {
           case (
-                deviceInfoOpt,
+                dev ce nfoOpt,
                 countryCodeOpt,
-                Some((collapseId, impressionIds)),
+                So ((collapse d,  mpress on ds)),
                 mlScore,
-                dynamicPushcapOpt,
+                dynam cPushcapOpt,
                 optoutAdjustedPushcapOpt,
                 defaultPushCap) =>
-            val pushCap: Int = (dynamicPushcapOpt, optoutAdjustedPushcapOpt) match {
-              case (_, Some(optoutAdjustedPushcap)) => optoutAdjustedPushcap
-              case (Some(pushcapInfo), _) => pushcapInfo.pushcap
+            val pushCap:  nt = (dynam cPushcapOpt, optoutAdjustedPushcapOpt) match {
+              case (_, So (optoutAdjustedPushcap)) => optoutAdjustedPushcap
+              case (So (pushcap nfo), _) => pushcap nfo.pushcap
               case _ => defaultPushCap
             }
-            getClientSpecificOverrideModelValues(
+            getCl entSpec f cOverr deModelValues(
               target,
-              deviceInfoOpt,
+              dev ce nfoOpt,
               countryCodeOpt,
-              collapseId,
-              impressionIds,
+              collapse d,
+               mpress on ds,
               mlScore,
               pushCap)
           case _ =>
-            noOverrideCounter.incr()
-            Map.empty[String, String]
+            noOverr deCounter. ncr()
+            Map.empty[Str ng, Str ng]
         }
     }
   }
 
   /**
-   * Determines the appropriate Override Notification model values based on the client
-   * @param target          Target that will be receiving the push recommendation
-   * @param deviceInfoOpt   Target's Device Info
-   * @param collapseId      Collapse ID determined by OverrideNotificationUtil
-   * @param impressionIds   Impression IDs of previously sent Override Notifications
-   * @param mlScore         Open/NTab click ranking score of the current push candidate
-   * @param pushCap         Push cap for the target
-   * @return                Map consisting of the model values that need to be added to the Ibis2 Request
+   * Determ nes t  appropr ate Overr de Not f cat on model values based on t  cl ent
+   * @param target          Target that w ll be rece v ng t  push recom ndat on
+   * @param dev ce nfoOpt   Target's Dev ce  nfo
+   * @param collapse d      Collapse  D determ ned by Overr deNot f cat onUt l
+   * @param  mpress on ds    mpress on  Ds of prev ously sent Overr de Not f cat ons
+   * @param mlScore         Open/NTab cl ck rank ng score of t  current push cand date
+   * @param pushCap         Push cap for t  target
+   * @return                Map cons st ng of t  model values that need to be added to t   b s2 Request
    */
-  def getClientSpecificOverrideModelValues(
+  def getCl entSpec f cOverr deModelValues(
     target: Target,
-    deviceInfoOpt: Option[DeviceInfo],
-    countryCodeOpt: Option[String],
-    collapseId: String,
-    impressionIds: Seq[String],
-    mlScoreOpt: Option[Double],
-    pushCap: Int
-  ): Map[String, String] = {
+    dev ce nfoOpt: Opt on[Dev ce nfo],
+    countryCodeOpt: Opt on[Str ng],
+    collapse d: Str ng,
+     mpress on ds: Seq[Str ng],
+    mlScoreOpt: Opt on[Double],
+    pushCap:  nt
+  ): Map[Str ng, Str ng] = {
 
-    val primaryDeviceIos = PushDeviceUtil.isPrimaryDeviceIOS(deviceInfoOpt)
-    val primaryDeviceAndroid = PushDeviceUtil.isPrimaryDeviceAndroid(deviceInfoOpt)
+    val pr maryDev ce os = PushDev ceUt l. sPr maryDev ce OS(dev ce nfoOpt)
+    val pr maryDev ceAndro d = PushDev ceUt l. sPr maryDev ceAndro d(dev ce nfoOpt)
 
-    if (primaryDeviceIos ||
-      (primaryDeviceAndroid &&
-      target.params(FSParams.EnableOverrideNotificationsSmartPushConfigForAndroid))) {
+     f (pr maryDev ce os ||
+      (pr maryDev ceAndro d &&
+      target.params(FSParams.EnableOverr deNot f cat onsSmartPushConf gForAndro d))) {
 
-      if (primaryDeviceIos) addedOverrideIosCounter.incr()
-      else addedSmartPushConfigAndroidCounter.incr()
+       f (pr maryDev ce os) addedOverr de osCounter. ncr()
+      else addedSmartPushConf gAndro dCounter. ncr()
 
-      val impressionIdsSeq = {
-        if (target.params(FSParams.EnableTargetIdsInSmartPushPayload)) {
-          if (target.params(FSParams.EnableOverrideNotificationsMultipleTargetIds))
-            impressionIds
-          else Seq(impressionIds.head)
+      val  mpress on dsSeq = {
+         f (target.params(FSParams.EnableTarget ds nSmartPushPayload)) {
+           f (target.params(FSParams.EnableOverr deNot f cat onsMult pleTarget ds))
+             mpress on ds
+          else Seq( mpress on ds. ad)
         }
-        // Explicitly enable targetId-based override for MagicFanoutSportsEvent candidates (live sport update notifications)
-        else if (self.commonRecType == MagicFanoutSportsEvent && target.params(
-            FSParams.EnableTargetIdInSmartPushPayloadForMagicFanoutSportsEvent)) {
-          enableTargetIdOverrideForMagicFanoutSportsEventCounter.incr()
-          Seq(impressionIds.head)
-        } else Seq.empty[String]
+        // Expl c ly enable target d-based overr de for Mag cFanoutSportsEvent cand dates (l ve sport update not f cat ons)
+        else  f (self.commonRecType == Mag cFanoutSportsEvent && target.params(
+            FSParams.EnableTarget d nSmartPushPayloadForMag cFanoutSportsEvent)) {
+          enableTarget dOverr deForMag cFanoutSportsEventCounter. ncr()
+          Seq( mpress on ds. ad)
+        } else Seq.empty[Str ng]
       }
 
       val mlScoreMap = mlScoreOpt match {
-        case Some(mlScore)
-            if target.params(FSParams.EnableOverrideNotificationsScoreBasedOverride) =>
-          addedMlScoreToPayloadAndroid.incr()
+        case So (mlScore)
+             f target.params(FSParams.EnableOverr deNot f cat onsScoreBasedOverr de) =>
+          addedMlScoreToPayloadAndro d. ncr()
           Map("score" -> mlScore)
         case _ =>
-          noMlScoreAddedToPayload.incr()
+          noMlScoreAddedToPayload. ncr()
           Map.empty
       }
 
       val nSlotsMap = {
-        if (target.params(FSParams.EnableOverrideNotificationsNSlots)) {
-          if (target.params(FSParams.EnableOverrideMaxSlotFn)) {
-            val nslotFnParam = ContinuousFunctionParam(
+         f (target.params(FSParams.EnableOverr deNot f cat onsNSlots)) {
+           f (target.params(FSParams.EnableOverr deMaxSlotFn)) {
+            val nslotFnParam = Cont nuousFunct onParam(
               target
-                .params(PushFeatureSwitchParams.OverrideMaxSlotFnPushCapKnobs),
+                .params(PushFeatureSw chParams.Overr deMaxSlotFnPushCapKnobs),
               target
-                .params(PushFeatureSwitchParams.OverrideMaxSlotFnNSlotKnobs),
+                .params(PushFeatureSw chParams.Overr deMaxSlotFnNSlotKnobs),
               target
-                .params(PushFeatureSwitchParams.OverrideMaxSlotFnPowerKnobs),
+                .params(PushFeatureSw chParams.Overr deMaxSlotFnPo rKnobs),
               target
-                .params(PushFeatureSwitchParams.OverrideMaxSlotFnWeight),
-              target.params(FSParams.OverrideNotificationsMaxNumOfSlots)
+                .params(PushFeatureSw chParams.Overr deMaxSlotFn  ght),
+              target.params(FSParams.Overr deNot f cat onsMaxNumOfSlots)
             )
-            val numOfSlots = ContinuousFunction.safeEvaluateFn(
+            val numOfSlots = Cont nuousFunct on.safeEvaluateFn(
               pushCap,
               nslotFnParam,
-              overrideStats.scope("max_nslot_fn"))
-            overrideStats.counter("max_notification_slots_num_" + numOfSlots.toString).incr()
-            addedNSlotsToPayload.incr()
-            Map("max_notification_slots" -> numOfSlots)
+              overr deStats.scope("max_nslot_fn"))
+            overr deStats.counter("max_not f cat on_slots_num_" + numOfSlots.toStr ng). ncr()
+            addedNSlotsToPayload. ncr()
+            Map("max_not f cat on_slots" -> numOfSlots)
           } else {
-            addedNSlotsToPayload.incr()
-            val numOfSlots = target.params(FSParams.OverrideNotificationsMaxNumOfSlots)
-            Map("max_notification_slots" -> numOfSlots)
+            addedNSlotsToPayload. ncr()
+            val numOfSlots = target.params(FSParams.Overr deNot f cat onsMaxNumOfSlots)
+            Map("max_not f cat on_slots" -> numOfSlots)
           }
         } else {
-          noNSlotsAddedToPayload.incr()
+          noNSlotsAddedToPayload. ncr()
           Map.empty
         }
       }
 
-      val baseActionDetailsMap = Map("target_ids" -> impressionIdsSeq)
+      val baseAct onDeta lsMap = Map("target_ ds" ->  mpress on dsSeq)
 
-      val actionDetailsMap =
-        Map("action_details" -> (baseActionDetailsMap ++ nSlotsMap))
+      val act onDeta lsMap =
+        Map("act on_deta ls" -> (baseAct onDeta lsMap ++ nSlotsMap))
 
-      val baseSmartPushConfigMap = Map("notification_action" -> "REPLACE")
+      val baseSmartPushConf gMap = Map("not f cat on_act on" -> "REPLACE")
 
-      val customThreadId = {
-        if (target.params(FSParams.EnableCustomThreadIdForOverride)) {
-          addedCustomThreadIdToPayload.incr()
-          Map("custom_thread_id" -> impressionId)
+      val customThread d = {
+         f (target.params(FSParams.EnableCustomThread dForOverr de)) {
+          addedCustomThread dToPayload. ncr()
+          Map("custom_thread_ d" ->  mpress on d)
         } else {
-          noCustomThreadIdAddedToPayload.incr()
+          noCustomThread dAddedToPayload. ncr()
           Map.empty
         }
       }
 
-      val smartPushConfigMap =
+      val smartPushConf gMap =
         JsonMarshal.toJson(
-          baseSmartPushConfigMap ++ actionDetailsMap ++ mlScoreMap ++ customThreadId)
+          baseSmartPushConf gMap ++ act onDeta lsMap ++ mlScoreMap ++ customThread d)
 
-      Map("smart_notification_configuration" -> smartPushConfigMap)
-    } else if (primaryDeviceAndroid) {
-      addedOverrideAndroidCounter.incr()
-      Map("notification_id" -> collapseId, "overriding_impression_id" -> impressionIds.head)
+      Map("smart_not f cat on_conf gurat on" -> smartPushConf gMap)
+    } else  f (pr maryDev ceAndro d) {
+      addedOverr deAndro dCounter. ncr()
+      Map("not f cat on_ d" -> collapse d, "overr d ng_ mpress on_ d" ->  mpress on ds. ad)
     } else {
-      noOverrideDueToDeviceInfoCounter.incr()
-      Map.empty[String, String]
+      noOverr deDueToDev ce nfoCounter. ncr()
+      Map.empty[Str ng, Str ng]
     }
   }
 }

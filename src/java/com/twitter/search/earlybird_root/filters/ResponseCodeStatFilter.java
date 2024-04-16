@@ -1,49 +1,49 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import java.util.Map;
+ mport java.ut l.Map;
 
-import com.google.common.collect.Maps;
+ mport com.google.common.collect.Maps;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.util.Future;
-import com.twitter.util.FutureEventListener;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.ut l.Future;
+ mport com.tw ter.ut l.FutureEventL stener;
 
-public class ResponseCodeStatFilter
-    extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
+publ c class ResponseCodeStatF lter
+    extends S mpleF lter<Earlyb rdRequest, Earlyb rdResponse> {
 
-  private final Map<EarlybirdResponseCode, SearchCounter> responseCodeCounters;
+  pr vate f nal Map<Earlyb rdResponseCode, SearchCounter> responseCodeCounters;
 
   /**
-   * Create ResponseCodeStatFilter
+   * Create ResponseCodeStatF lter
    */
-  public ResponseCodeStatFilter() {
-    responseCodeCounters = Maps.newEnumMap(EarlybirdResponseCode.class);
-    for (EarlybirdResponseCode code : EarlybirdResponseCode.values()) {
-      SearchCounter stat = SearchCounter.export("response_code_" + code.name().toLowerCase());
+  publ c ResponseCodeStatF lter() {
+    responseCodeCounters = Maps.newEnumMap(Earlyb rdResponseCode.class);
+    for (Earlyb rdResponseCode code : Earlyb rdResponseCode.values()) {
+      SearchCounter stat = SearchCounter.export("response_code_" + code.na ().toLo rCase());
       responseCodeCounters.put(code, stat);
     }
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      final EarlybirdRequest request,
-      final Service<EarlybirdRequest, EarlybirdResponse> service) {
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(
+      f nal Earlyb rdRequest request,
+      f nal Serv ce<Earlyb rdRequest, Earlyb rdResponse> serv ce) {
 
-    return service.apply(request).addEventListener(
-        new FutureEventListener<EarlybirdResponse>() {
+    return serv ce.apply(request).addEventL stener(
+        new FutureEventL stener<Earlyb rdResponse>() {
 
-          @Override
-          public void onSuccess(final EarlybirdResponse response) {
-            responseCodeCounters.get(response.getResponseCode()).increment();
+          @Overr de
+          publ c vo d onSuccess(f nal Earlyb rdResponse response) {
+            responseCodeCounters.get(response.getResponseCode()). ncre nt();
           }
 
-          @Override
-          public void onFailure(final Throwable cause) { }
+          @Overr de
+          publ c vo d onFa lure(f nal Throwable cause) { }
         });
 
   }

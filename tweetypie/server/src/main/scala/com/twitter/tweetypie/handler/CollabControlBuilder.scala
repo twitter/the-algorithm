@@ -1,75 +1,75 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.tweetypie.core.TweetCreateFailure
-import com.twitter.tweetypie.thriftscala.CollabControl
-import com.twitter.tweetypie.thriftscala.CollabControlOptions
-import com.twitter.tweetypie.thriftscala.CollabInvitation
-import com.twitter.tweetypie.thriftscala.CollabInvitationOptions
-import com.twitter.tweetypie.thriftscala.CollabInvitationStatus
-import com.twitter.tweetypie.thriftscala.CollabTweet
-import com.twitter.tweetypie.thriftscala.CollabTweetOptions
-import com.twitter.tweetypie.thriftscala.Communities
-import com.twitter.tweetypie.thriftscala.ExclusiveTweetControl
-import com.twitter.tweetypie.thriftscala.InvitedCollaborator
-import com.twitter.tweetypie.thriftscala.TrustedFriendsControl
-import com.twitter.tweetypie.thriftscala.TweetCreateConversationControl
-import com.twitter.tweetypie.thriftscala.TweetCreateState.CollabTweetInvalidParams
-import com.twitter.tweetypie.util.CommunityUtil
+ mport com.tw ter.t etyp e.core.T etCreateFa lure
+ mport com.tw ter.t etyp e.thr ftscala.CollabControl
+ mport com.tw ter.t etyp e.thr ftscala.CollabControlOpt ons
+ mport com.tw ter.t etyp e.thr ftscala.Collab nv at on
+ mport com.tw ter.t etyp e.thr ftscala.Collab nv at onOpt ons
+ mport com.tw ter.t etyp e.thr ftscala.Collab nv at onStatus
+ mport com.tw ter.t etyp e.thr ftscala.CollabT et
+ mport com.tw ter.t etyp e.thr ftscala.CollabT etOpt ons
+ mport com.tw ter.t etyp e.thr ftscala.Commun  es
+ mport com.tw ter.t etyp e.thr ftscala.Exclus veT etControl
+ mport com.tw ter.t etyp e.thr ftscala. nv edCollaborator
+ mport com.tw ter.t etyp e.thr ftscala.TrustedFr endsControl
+ mport com.tw ter.t etyp e.thr ftscala.T etCreateConversat onControl
+ mport com.tw ter.t etyp e.thr ftscala.T etCreateState.CollabT et nval dParams
+ mport com.tw ter.t etyp e.ut l.Commun yUt l
 
-object CollabControlBuilder {
-  type Type = Request => Future[Option[CollabControl]]
+object CollabControlBu lder {
+  type Type = Request => Future[Opt on[CollabControl]]
 
   case class Request(
-    collabControlOptions: Option[CollabControlOptions],
-    replyResult: Option[ReplyBuilder.Result],
-    communities: Option[Communities],
-    trustedFriendsControl: Option[TrustedFriendsControl],
-    conversationControl: Option[TweetCreateConversationControl],
-    exclusiveTweetControl: Option[ExclusiveTweetControl],
-    userId: UserId)
+    collabControlOpt ons: Opt on[CollabControlOpt ons],
+    replyResult: Opt on[ReplyBu lder.Result],
+    commun  es: Opt on[Commun  es],
+    trustedFr endsControl: Opt on[TrustedFr endsControl],
+    conversat onControl: Opt on[T etCreateConversat onControl],
+    exclus veT etControl: Opt on[Exclus veT etControl],
+    user d: User d)
 
   def apply(): Type = { request =>
-    val collabControl = convertToCollabControl(request.collabControlOptions, request.userId)
+    val collabControl = convertToCollabControl(request.collabControlOpt ons, request.user d)
 
-    validateCollabControlParams(
+    val dateCollabControlParams(
       collabControl,
       request.replyResult,
-      request.communities,
-      request.trustedFriendsControl,
-      request.conversationControl,
-      request.exclusiveTweetControl,
-      request.userId
+      request.commun  es,
+      request.trustedFr endsControl,
+      request.conversat onControl,
+      request.exclus veT etControl,
+      request.user d
     ) map { _ => collabControl }
   }
 
   def convertToCollabControl(
-    collabTweetOptions: Option[CollabControlOptions],
-    authorId: UserId
-  ): Option[CollabControl] = {
-    collabTweetOptions flatMap {
-      case CollabControlOptions.CollabInvitation(
-            collabInvitationOptions: CollabInvitationOptions) =>
-        Some(
-          CollabControl.CollabInvitation(
-            CollabInvitation(
-              invitedCollaborators = collabInvitationOptions.collaboratorUserIds.map(userId => {
-                InvitedCollaborator(
-                  collaboratorUserId = userId,
-                  collabInvitationStatus =
-                    if (userId == authorId)
-                      CollabInvitationStatus.Accepted
-                    else CollabInvitationStatus.Pending
+    collabT etOpt ons: Opt on[CollabControlOpt ons],
+    author d: User d
+  ): Opt on[CollabControl] = {
+    collabT etOpt ons flatMap {
+      case CollabControlOpt ons.Collab nv at on(
+            collab nv at onOpt ons: Collab nv at onOpt ons) =>
+        So (
+          CollabControl.Collab nv at on(
+            Collab nv at on(
+               nv edCollaborators = collab nv at onOpt ons.collaboratorUser ds.map(user d => {
+                 nv edCollaborator(
+                  collaboratorUser d = user d,
+                  collab nv at onStatus =
+                     f (user d == author d)
+                      Collab nv at onStatus.Accepted
+                    else Collab nv at onStatus.Pend ng
                 )
               })
             )
           )
         )
-      case CollabControlOptions.CollabTweet(collabTweetOptions: CollabTweetOptions) =>
-        Some(
-          CollabControl.CollabTweet(
-            CollabTweet(
-              collaboratorUserIds = collabTweetOptions.collaboratorUserIds
+      case CollabControlOpt ons.CollabT et(collabT etOpt ons: CollabT etOpt ons) =>
+        So (
+          CollabControl.CollabT et(
+            CollabT et(
+              collaboratorUser ds = collabT etOpt ons.collaboratorUser ds
             )
           )
         )
@@ -77,33 +77,33 @@ object CollabControlBuilder {
     }
   }
 
-  def validateCollabControlParams(
-    collabControl: Option[CollabControl],
-    replyResult: Option[ReplyBuilder.Result],
-    communities: Option[Communities],
-    trustedFriendsControl: Option[TrustedFriendsControl],
-    conversationControl: Option[TweetCreateConversationControl],
-    exclusiveTweetControl: Option[ExclusiveTweetControl],
-    userId: UserId
-  ): Future[Unit] = {
-    val isInReplyToTweet = replyResult.exists(_.reply.inReplyToStatusId.isDefined)
+  def val dateCollabControlParams(
+    collabControl: Opt on[CollabControl],
+    replyResult: Opt on[ReplyBu lder.Result],
+    commun  es: Opt on[Commun  es],
+    trustedFr endsControl: Opt on[TrustedFr endsControl],
+    conversat onControl: Opt on[T etCreateConversat onControl],
+    exclus veT etControl: Opt on[Exclus veT etControl],
+    user d: User d
+  ): Future[Un ] = {
+    val  s nReplyToT et = replyResult.ex sts(_.reply. nReplyToStatus d. sDef ned)
 
     collabControl match {
-      case Some(_: CollabControl)
-          if (isInReplyToTweet ||
-            CommunityUtil.hasCommunity(communities) ||
-            exclusiveTweetControl.isDefined ||
-            trustedFriendsControl.isDefined ||
-            conversationControl.isDefined) =>
-        Future.exception(TweetCreateFailure.State(CollabTweetInvalidParams))
-      case Some(CollabControl.CollabInvitation(collab_invitation))
-          if collab_invitation.invitedCollaborators.head.collaboratorUserId != userId =>
-        Future.exception(TweetCreateFailure.State(CollabTweetInvalidParams))
-      case Some(CollabControl.CollabTweet(collab_tweet))
-          if collab_tweet.collaboratorUserIds.head != userId =>
-        Future.exception(TweetCreateFailure.State(CollabTweetInvalidParams))
+      case So (_: CollabControl)
+           f ( s nReplyToT et ||
+            Commun yUt l.hasCommun y(commun  es) ||
+            exclus veT etControl. sDef ned ||
+            trustedFr endsControl. sDef ned ||
+            conversat onControl. sDef ned) =>
+        Future.except on(T etCreateFa lure.State(CollabT et nval dParams))
+      case So (CollabControl.Collab nv at on(collab_ nv at on))
+           f collab_ nv at on. nv edCollaborators. ad.collaboratorUser d != user d =>
+        Future.except on(T etCreateFa lure.State(CollabT et nval dParams))
+      case So (CollabControl.CollabT et(collab_t et))
+           f collab_t et.collaboratorUser ds. ad != user d =>
+        Future.except on(T etCreateFa lure.State(CollabT et nval dParams))
       case _ =>
-        Future.Unit
+        Future.Un 
     }
   }
 }

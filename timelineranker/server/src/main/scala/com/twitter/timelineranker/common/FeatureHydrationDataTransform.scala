@@ -1,33 +1,33 @@
-package com.twitter.timelineranker.common
+package com.tw ter.t  l neranker.common
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.core.HydratedCandidatesAndFeaturesEnvelope
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.util.Future
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t  l neranker.core.Cand dateEnvelope
+ mport com.tw ter.t  l neranker.core.HydratedCand datesAndFeaturesEnvelope
+ mport com.tw ter.t  l neranker.model.RecapQuery
+ mport com.tw ter.ut l.Future
 
 /**
- * Fetches all data required for feature hydration and generates the HydratedCandidatesAndFeaturesEnvelope
- * @param tweetHydrationAndFilteringPipeline Pipeline which fetches the candidate tweets, hydrates and filters them
- * @param languagesService Fetch user languages, required for feature hydration
- * @param userProfileInfoService Fetch user profile info, required for feature hydration
+ * Fetc s all data requ red for feature hydrat on and generates t  HydratedCand datesAndFeaturesEnvelope
+ * @param t etHydrat onAndF lter ngP pel ne P pel ne wh ch fetc s t  cand date t ets, hydrates and f lters t m
+ * @param languagesServ ce Fetch user languages, requ red for feature hydrat on
+ * @param userProf le nfoServ ce Fetch user prof le  nfo, requ red for feature hydrat on
  */
-class FeatureHydrationDataTransform(
-  tweetHydrationAndFilteringPipeline: FutureArrow[RecapQuery, CandidateEnvelope],
-  languagesService: UserLanguagesTransform,
-  userProfileInfoService: UserProfileInfoTransform)
-    extends FutureArrow[RecapQuery, HydratedCandidatesAndFeaturesEnvelope] {
-  override def apply(request: RecapQuery): Future[HydratedCandidatesAndFeaturesEnvelope] = {
+class FeatureHydrat onDataTransform(
+  t etHydrat onAndF lter ngP pel ne: FutureArrow[RecapQuery, Cand dateEnvelope],
+  languagesServ ce: UserLanguagesTransform,
+  userProf le nfoServ ce: UserProf le nfoTransform)
+    extends FutureArrow[RecapQuery, HydratedCand datesAndFeaturesEnvelope] {
+  overr de def apply(request: RecapQuery): Future[HydratedCand datesAndFeaturesEnvelope] = {
     Future
-      .join(
-        languagesService(request),
-        userProfileInfoService(request),
-        tweetHydrationAndFilteringPipeline(request)).map {
-        case (languages, userProfileInfo, transformedCandidateEnvelope) =>
-          HydratedCandidatesAndFeaturesEnvelope(
-            transformedCandidateEnvelope,
+      .jo n(
+        languagesServ ce(request),
+        userProf le nfoServ ce(request),
+        t etHydrat onAndF lter ngP pel ne(request)).map {
+        case (languages, userProf le nfo, transfor dCand dateEnvelope) =>
+          HydratedCand datesAndFeaturesEnvelope(
+            transfor dCand dateEnvelope,
             languages,
-            userProfileInfo)
+            userProf le nfo)
       }
   }
 }

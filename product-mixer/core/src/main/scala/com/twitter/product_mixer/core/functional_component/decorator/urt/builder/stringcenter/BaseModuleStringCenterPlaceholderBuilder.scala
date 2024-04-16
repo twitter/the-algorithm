@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.stringcenter
+package com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.str ngcenter
 
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-trait BaseModuleStringCenterPlaceholderBuilder[
-  -Query <: PipelineQuery,
-  -Candidate <: UniversalNoun[Any]] {
+tra  BaseModuleStr ngCenterPlaceholderBu lder[
+  -Query <: P pel neQuery,
+  -Cand date <: Un versalNoun[Any]] {
 
-  def apply(query: Query, candidates: Seq[CandidateWithFeatures[Candidate]]): Map[String, Any]
+  def apply(query: Query, cand dates: Seq[Cand dateW hFeatures[Cand date]]): Map[Str ng, Any]
 }

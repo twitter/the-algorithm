@@ -1,53 +1,53 @@
-package com.twitter.simclusters_v2.candidate_source
+package com.tw ter.s mclusters_v2.cand date_s ce
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.simclusters_v2.candidate_source.SimClustersANNCandidateSource.LookbackMediaTweetConfig
-import com.twitter.simclusters_v2.candidate_source.SimClustersANNCandidateSource.SimClustersTweetCandidate
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Cand dateS ce
+ mport com.tw ter.s mclusters_v2.cand date_s ce.S mClustersANNCand dateS ce.Lookback d aT etConf g
+ mport com.tw ter.s mclusters_v2.cand date_s ce.S mClustersANNCand dateS ce.S mClustersT etCand date
+ mport com.tw ter.ut l.Future
 
 /**
- * An abstraction layer that implements a lambda structure for ANNCandidate source.
- * Allows us to call an online store as well as an offline store from a single query.
+ * An abstract on layer that  mple nts a lambda structure for ANNCand date s ce.
+ * Allows us to call an onl ne store as  ll as an offl ne store from a s ngle query.
  */
-case class SimClustersANNWrapperCandidateSource(
-  onlineANNSource: CandidateSource[SimClustersANNCandidateSource.Query, SimClustersTweetCandidate],
-  lookbackANNSource: CandidateSource[
-    SimClustersANNCandidateSource.Query,
-    SimClustersTweetCandidate
+case class S mClustersANNWrapperCand dateS ce(
+  onl neANNS ce: Cand dateS ce[S mClustersANNCand dateS ce.Query, S mClustersT etCand date],
+  lookbackANNS ce: Cand dateS ce[
+    S mClustersANNCand dateS ce.Query,
+    S mClustersT etCand date
   ],
 )(
-  statsReceiver: StatsReceiver)
-    extends CandidateSource[SimClustersANNCandidateSource.Query, SimClustersTweetCandidate] {
+  statsRece ver: StatsRece ver)
+    extends Cand dateS ce[S mClustersANNCand dateS ce.Query, S mClustersT etCand date] {
 
-  override def get(
-    query: SimClustersANNCandidateSource.Query
-  ): Future[Option[Seq[SimClustersTweetCandidate]]] = {
+  overr de def get(
+    query: S mClustersANNCand dateS ce.Query
+  ): Future[Opt on[Seq[S mClustersT etCand date]]] = {
 
-    val enableLookbackSource =
-      query.overrideConfig.exists(_.enableLookbackSource.getOrElse(false))
+    val enableLookbackS ce =
+      query.overr deConf g.ex sts(_.enableLookbackS ce.getOrElse(false))
 
-    val embeddingType = query.sourceEmbeddingId.embeddingType
-    val lookbackCandidatesFut =
-      if (enableLookbackSource &&
-        LookbackMediaTweetConfig.contains(embeddingType)) {
-        statsReceiver
-          .counter("lookback_source", embeddingType.toString, "enable").incr()
-        statsReceiver.counter("lookback_source", "enable").incr()
-        lookbackANNSource.get(query)
+    val embedd ngType = query.s ceEmbedd ng d.embedd ngType
+    val lookbackCand datesFut =
+       f (enableLookbackS ce &&
+        Lookback d aT etConf g.conta ns(embedd ngType)) {
+        statsRece ver
+          .counter("lookback_s ce", embedd ngType.toStr ng, "enable"). ncr()
+        statsRece ver.counter("lookback_s ce", "enable"). ncr()
+        lookbackANNS ce.get(query)
       } else {
-        statsReceiver
-          .counter("lookback_source", embeddingType.toString, "disable").incr()
+        statsRece ver
+          .counter("lookback_s ce", embedd ngType.toStr ng, "d sable"). ncr()
         Future.None
       }
 
-    Future.join(onlineANNSource.get(query), lookbackCandidatesFut).map {
-      case (onlineCandidates, lookbackCandidates) =>
-        Some(
-          onlineCandidates.getOrElse(Nil) ++ lookbackCandidates.getOrElse(Nil)
+    Future.jo n(onl neANNS ce.get(query), lookbackCand datesFut).map {
+      case (onl neCand dates, lookbackCand dates) =>
+        So (
+          onl neCand dates.getOrElse(N l) ++ lookbackCand dates.getOrElse(N l)
         )
     }
   }
 
-  override def name: String = this.getClass.getCanonicalName
+  overr de def na : Str ng = t .getClass.getCanon calNa 
 }

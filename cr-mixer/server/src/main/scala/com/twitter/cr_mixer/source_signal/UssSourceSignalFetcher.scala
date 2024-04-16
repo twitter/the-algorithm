@@ -1,160 +1,160 @@
-package com.twitter.cr_mixer.source_signal
+package com.tw ter.cr_m xer.s ce_s gnal
 
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.ReadableStore
-import com.twitter.usersignalservice.thriftscala.{Signal => UssSignal}
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.frigate.common.util.StatsUtil.Size
-import com.twitter.frigate.common.util.StatsUtil.Success
-import com.twitter.frigate.common.util.StatsUtil.Empty
-import com.twitter.util.Future
-import com.twitter.util.Time
-import javax.inject.Singleton
-import javax.inject.Inject
-import javax.inject.Named
+ mport com.tw ter.cr_m xer.conf g.T  outConf g
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.cr_m xer.model.S ce nfo
+ mport com.tw ter.cr_m xer.thr ftscala.S ceType
+ mport com.tw ter.cr_m xer.s ce_s gnal.S ceFetc r.Fetc rQuery
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.users gnalserv ce.thr ftscala.{S gnal => UssS gnal}
+ mport com.tw ter.users gnalserv ce.thr ftscala.S gnalType
+ mport com.tw ter.fr gate.common.ut l.StatsUt l.S ze
+ mport com.tw ter.fr gate.common.ut l.StatsUt l.Success
+ mport com.tw ter.fr gate.common.ut l.StatsUt l.Empty
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
+ mport javax. nject.S ngleton
+ mport javax. nject. nject
+ mport javax. nject.Na d
 
-@Singleton
-case class UssSourceSignalFetcher @Inject() (
-  @Named(ModuleNames.UssStore) ussStore: ReadableStore[UssStore.Query, Seq[
-    (SignalType, Seq[UssSignal])
+@S ngleton
+case class UssS ceS gnalFetc r @ nject() (
+  @Na d(ModuleNa s.UssStore) ussStore: ReadableStore[UssStore.Query, Seq[
+    (S gnalType, Seq[UssS gnal])
   ]],
-  override val timeoutConfig: TimeoutConfig,
-  globalStats: StatsReceiver)
-    extends SourceSignalFetcher {
+  overr de val t  outConf g: T  outConf g,
+  globalStats: StatsRece ver)
+    extends S ceS gnalFetc r {
 
-  override protected val stats: StatsReceiver = globalStats.scope(identifier)
-  override type SignalConvertType = UssSignal
+  overr de protected val stats: StatsRece ver = globalStats.scope( dent f er)
+  overr de type S gnalConvertType = UssS gnal
 
-  // always enable USS call. We have fine-grained FS to decider which signal to fetch
-  override def isEnabled(query: FetcherQuery): Boolean = true
+  // always enable USS call.   have f ne-gra ned FS to dec der wh ch s gnal to fetch
+  overr de def  sEnabled(query: Fetc rQuery): Boolean = true
 
-  override def fetchAndProcess(
-    query: FetcherQuery,
-  ): Future[Option[Seq[SourceInfo]]] = {
-    // Fetch raw signals
-    val rawSignals = ussStore.get(UssStore.Query(query.userId, query.params, query.product)).map {
+  overr de def fetchAndProcess(
+    query: Fetc rQuery,
+  ): Future[Opt on[Seq[S ce nfo]]] = {
+    // Fetch raw s gnals
+    val rawS gnals = ussStore.get(UssStore.Query(query.user d, query.params, query.product)).map {
       _.map {
         _.map {
-          case (signalType, signals) =>
-            trackUssSignalStatsPerSignalType(query, signalType, signals)
-            (signalType, signals)
+          case (s gnalType, s gnals) =>
+            trackUssS gnalStatsPerS gnalType(query, s gnalType, s gnals)
+            (s gnalType, s gnals)
         }
       }
     }
 
     /**
-     * Process signals:
-     * Transform a Seq of USS Signals with signalType specified to a Seq of SourceInfo
-     * We do case match to make sure the SignalType can correctly map to a SourceType defined in CrMixer
-     * and it should be simplified.
+     * Process s gnals:
+     * Transform a Seq of USS S gnals w h s gnalType spec f ed to a Seq of S ce nfo
+     *   do case match to make sure t  S gnalType can correctly map to a S ceType def ned  n CrM xer
+     * and   should be s mpl f ed.
      */
-    rawSignals.map {
-      _.map { nestedSignal =>
-        val sourceInfoList = nestedSignal.flatMap {
-          case (signalType, ussSignals) =>
-            signalType match {
-              case SignalType.TweetFavorite =>
-                convertSourceInfo(sourceType = SourceType.TweetFavorite, signals = ussSignals)
-              case SignalType.Retweet =>
-                convertSourceInfo(sourceType = SourceType.Retweet, signals = ussSignals)
-              case SignalType.Reply =>
-                convertSourceInfo(sourceType = SourceType.Reply, signals = ussSignals)
-              case SignalType.OriginalTweet =>
-                convertSourceInfo(sourceType = SourceType.OriginalTweet, signals = ussSignals)
-              case SignalType.AccountFollow =>
-                convertSourceInfo(sourceType = SourceType.UserFollow, signals = ussSignals)
-              case SignalType.RepeatedProfileVisit180dMinVisit6V1 |
-                  SignalType.RepeatedProfileVisit90dMinVisit6V1 |
-                  SignalType.RepeatedProfileVisit14dMinVisit2V1 =>
-                convertSourceInfo(
-                  sourceType = SourceType.UserRepeatedProfileVisit,
-                  signals = ussSignals)
-              case SignalType.NotificationOpenAndClickV1 =>
-                convertSourceInfo(sourceType = SourceType.NotificationClick, signals = ussSignals)
-              case SignalType.TweetShareV1 =>
-                convertSourceInfo(sourceType = SourceType.TweetShare, signals = ussSignals)
-              case SignalType.RealGraphOon =>
-                convertSourceInfo(sourceType = SourceType.RealGraphOon, signals = ussSignals)
-              case SignalType.GoodTweetClick | SignalType.GoodTweetClick5s |
-                  SignalType.GoodTweetClick10s | SignalType.GoodTweetClick30s =>
-                convertSourceInfo(sourceType = SourceType.GoodTweetClick, signals = ussSignals)
-              case SignalType.VideoView90dPlayback50V1 =>
-                convertSourceInfo(
-                  sourceType = SourceType.VideoTweetPlayback50,
-                  signals = ussSignals)
-              case SignalType.VideoView90dQualityV1 =>
-                convertSourceInfo(
-                  sourceType = SourceType.VideoTweetQualityView,
-                  signals = ussSignals)
-              case SignalType.GoodProfileClick | SignalType.GoodProfileClick20s |
-                  SignalType.GoodProfileClick30s =>
-                convertSourceInfo(sourceType = SourceType.GoodProfileClick, signals = ussSignals)
-              // negative signals
-              case SignalType.AccountBlock =>
-                convertSourceInfo(sourceType = SourceType.AccountBlock, signals = ussSignals)
-              case SignalType.AccountMute =>
-                convertSourceInfo(sourceType = SourceType.AccountMute, signals = ussSignals)
-              case SignalType.TweetReport =>
-                convertSourceInfo(sourceType = SourceType.TweetReport, signals = ussSignals)
-              case SignalType.TweetDontLike =>
-                convertSourceInfo(sourceType = SourceType.TweetDontLike, signals = ussSignals)
-              // Aggregated Signals
-              case SignalType.TweetBasedUnifiedEngagementWeightedSignal |
-                  SignalType.TweetBasedUnifiedUniformSignal =>
-                convertSourceInfo(sourceType = SourceType.TweetAggregation, signals = ussSignals)
-              case SignalType.ProducerBasedUnifiedEngagementWeightedSignal |
-                  SignalType.ProducerBasedUnifiedUniformSignal =>
-                convertSourceInfo(sourceType = SourceType.ProducerAggregation, signals = ussSignals)
+    rawS gnals.map {
+      _.map { nestedS gnal =>
+        val s ce nfoL st = nestedS gnal.flatMap {
+          case (s gnalType, ussS gnals) =>
+            s gnalType match {
+              case S gnalType.T etFavor e =>
+                convertS ce nfo(s ceType = S ceType.T etFavor e, s gnals = ussS gnals)
+              case S gnalType.Ret et =>
+                convertS ce nfo(s ceType = S ceType.Ret et, s gnals = ussS gnals)
+              case S gnalType.Reply =>
+                convertS ce nfo(s ceType = S ceType.Reply, s gnals = ussS gnals)
+              case S gnalType.Or g nalT et =>
+                convertS ce nfo(s ceType = S ceType.Or g nalT et, s gnals = ussS gnals)
+              case S gnalType.AccountFollow =>
+                convertS ce nfo(s ceType = S ceType.UserFollow, s gnals = ussS gnals)
+              case S gnalType.RepeatedProf leV s 180dM nV s 6V1 |
+                  S gnalType.RepeatedProf leV s 90dM nV s 6V1 |
+                  S gnalType.RepeatedProf leV s 14dM nV s 2V1 =>
+                convertS ce nfo(
+                  s ceType = S ceType.UserRepeatedProf leV s ,
+                  s gnals = ussS gnals)
+              case S gnalType.Not f cat onOpenAndCl ckV1 =>
+                convertS ce nfo(s ceType = S ceType.Not f cat onCl ck, s gnals = ussS gnals)
+              case S gnalType.T etShareV1 =>
+                convertS ce nfo(s ceType = S ceType.T etShare, s gnals = ussS gnals)
+              case S gnalType.RealGraphOon =>
+                convertS ce nfo(s ceType = S ceType.RealGraphOon, s gnals = ussS gnals)
+              case S gnalType.GoodT etCl ck | S gnalType.GoodT etCl ck5s |
+                  S gnalType.GoodT etCl ck10s | S gnalType.GoodT etCl ck30s =>
+                convertS ce nfo(s ceType = S ceType.GoodT etCl ck, s gnals = ussS gnals)
+              case S gnalType.V deoV ew90dPlayback50V1 =>
+                convertS ce nfo(
+                  s ceType = S ceType.V deoT etPlayback50,
+                  s gnals = ussS gnals)
+              case S gnalType.V deoV ew90dQual yV1 =>
+                convertS ce nfo(
+                  s ceType = S ceType.V deoT etQual yV ew,
+                  s gnals = ussS gnals)
+              case S gnalType.GoodProf leCl ck | S gnalType.GoodProf leCl ck20s |
+                  S gnalType.GoodProf leCl ck30s =>
+                convertS ce nfo(s ceType = S ceType.GoodProf leCl ck, s gnals = ussS gnals)
+              // negat ve s gnals
+              case S gnalType.AccountBlock =>
+                convertS ce nfo(s ceType = S ceType.AccountBlock, s gnals = ussS gnals)
+              case S gnalType.AccountMute =>
+                convertS ce nfo(s ceType = S ceType.AccountMute, s gnals = ussS gnals)
+              case S gnalType.T etReport =>
+                convertS ce nfo(s ceType = S ceType.T etReport, s gnals = ussS gnals)
+              case S gnalType.T etDontL ke =>
+                convertS ce nfo(s ceType = S ceType.T etDontL ke, s gnals = ussS gnals)
+              // Aggregated S gnals
+              case S gnalType.T etBasedUn f edEngage nt  ghtedS gnal |
+                  S gnalType.T etBasedUn f edUn formS gnal =>
+                convertS ce nfo(s ceType = S ceType.T etAggregat on, s gnals = ussS gnals)
+              case S gnalType.ProducerBasedUn f edEngage nt  ghtedS gnal |
+                  S gnalType.ProducerBasedUn f edUn formS gnal =>
+                convertS ce nfo(s ceType = S ceType.ProducerAggregat on, s gnals = ussS gnals)
 
               // Default
               case _ =>
-                Seq.empty[SourceInfo]
+                Seq.empty[S ce nfo]
             }
         }
-        sourceInfoList
+        s ce nfoL st
       }
     }
   }
 
-  override def convertSourceInfo(
-    sourceType: SourceType,
-    signals: Seq[SignalConvertType]
-  ): Seq[SourceInfo] = {
-    signals.map { signal =>
-      SourceInfo(
-        sourceType = sourceType,
-        internalId = signal.targetInternalId.getOrElse(
-          throw new IllegalArgumentException(
-            s"${sourceType.toString} Signal does not have internalId")),
-        sourceEventTime =
-          if (signal.timestamp == 0L) None else Some(Time.fromMilliseconds(signal.timestamp))
+  overr de def convertS ce nfo(
+    s ceType: S ceType,
+    s gnals: Seq[S gnalConvertType]
+  ): Seq[S ce nfo] = {
+    s gnals.map { s gnal =>
+      S ce nfo(
+        s ceType = s ceType,
+         nternal d = s gnal.target nternal d.getOrElse(
+          throw new  llegalArgu ntExcept on(
+            s"${s ceType.toStr ng} S gnal does not have  nternal d")),
+        s ceEventT   =
+           f (s gnal.t  stamp == 0L) None else So (T  .fromM ll seconds(s gnal.t  stamp))
       )
     }
   }
 
-  private def trackUssSignalStatsPerSignalType(
-    query: FetcherQuery,
-    signalType: SignalType,
-    ussSignals: Seq[UssSignal]
-  ): Unit = {
-    val productScopedStats = stats.scope(query.product.originalName)
-    val productUserStateScopedStats = productScopedStats.scope(query.userState.toString)
-    val productStats = productScopedStats.scope(signalType.toString)
-    val productUserStateStats = productUserStateScopedStats.scope(signalType.toString)
+  pr vate def trackUssS gnalStatsPerS gnalType(
+    query: Fetc rQuery,
+    s gnalType: S gnalType,
+    ussS gnals: Seq[UssS gnal]
+  ): Un  = {
+    val productScopedStats = stats.scope(query.product.or g nalNa )
+    val productUserStateScopedStats = productScopedStats.scope(query.userState.toStr ng)
+    val productStats = productScopedStats.scope(s gnalType.toStr ng)
+    val productUserStateStats = productUserStateScopedStats.scope(s gnalType.toStr ng)
 
-    productStats.counter(Success).incr()
-    productUserStateStats.counter(Success).incr()
-    val size = ussSignals.size
-    productStats.stat(Size).add(size)
-    productUserStateStats.stat(Size).add(size)
-    if (size == 0) {
-      productStats.counter(Empty).incr()
-      productUserStateStats.counter(Empty).incr()
+    productStats.counter(Success). ncr()
+    productUserStateStats.counter(Success). ncr()
+    val s ze = ussS gnals.s ze
+    productStats.stat(S ze).add(s ze)
+    productUserStateStats.stat(S ze).add(s ze)
+     f (s ze == 0) {
+      productStats.counter(Empty). ncr()
+      productUserStateStats.counter(Empty). ncr()
     }
   }
 }

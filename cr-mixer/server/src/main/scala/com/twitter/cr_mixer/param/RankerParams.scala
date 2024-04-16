@@ -1,59 +1,59 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .Param
 
 object RankerParams {
 
-  object MaxCandidatesToRank
-      extends FSBoundedParam[Int](
-        name = "twistly_core_max_candidates_to_rank",
+  object MaxCand datesToRank
+      extends FSBoundedParam[ nt](
+        na  = "tw stly_core_max_cand dates_to_rank",
         default = 2000,
-        min = 0,
+        m n = 0,
         max = 9999
       )
 
-  object EnableBlueVerifiedTopK
+  object EnableBlueVer f edTopK
       extends FSParam[Boolean](
-        name = "twistly_core_blue_verified_top_k",
+        na  = "tw stly_core_blue_ver f ed_top_k",
         default = true
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    MaxCandidatesToRank,
-    EnableBlueVerifiedTopK
+  val AllParams: Seq[Param[_] w h FSNa ] = Seq(
+    MaxCand datesToRank,
+    EnableBlueVer f edTopK
   )
 
-  lazy val config: BaseConfig = {
+  lazy val conf g: BaseConf g = {
 
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(EnableBlueVerifiedTopK)
+    val booleanOverr des = FeatureSw chOverr deUt l.getBooleanFSOverr des(EnableBlueVer f edTopK)
 
-    val boundedDurationFSOverrides =
-      FeatureSwitchOverrideUtil.getBoundedDurationFSOverrides()
+    val boundedDurat onFSOverr des =
+      FeatureSw chOverr deUt l.getBoundedDurat onFSOverr des()
 
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-      MaxCandidatesToRank
+    val  ntOverr des = FeatureSw chOverr deUt l.getBounded ntFSOverr des(
+      MaxCand datesToRank
     )
 
-    val enumOverrides = FeatureSwitchOverrideUtil.getEnumFSOverrides(
-      NullStatsReceiver,
+    val enumOverr des = FeatureSw chOverr deUt l.getEnumFSOverr des(
+      NullStatsRece ver,
       Logger(getClass),
     )
-    val stringFSOverrides = FeatureSwitchOverrideUtil.getStringFSOverrides()
+    val str ngFSOverr des = FeatureSw chOverr deUt l.getStr ngFSOverr des()
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(boundedDurationFSOverrides: _*)
-      .set(intOverrides: _*)
-      .set(enumOverrides: _*)
-      .set(stringFSOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set(booleanOverr des: _*)
+      .set(boundedDurat onFSOverr des: _*)
+      .set( ntOverr des: _*)
+      .set(enumOverr des: _*)
+      .set(str ngFSOverr des: _*)
+      .bu ld()
   }
 }

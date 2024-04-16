@@ -1,164 +1,164 @@
-package com.twitter.follow_recommendations.logging
+package com.tw ter.follow_recom ndat ons.logg ng
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.models.HasIsSoftUser
-import com.twitter.follow_recommendations.configapi.params.GlobalParams
-import com.twitter.follow_recommendations.logging.thriftscala.RecommendationLog
-import com.twitter.follow_recommendations.models.DebugParams
-import com.twitter.follow_recommendations.models.RecommendationFlowData
-import com.twitter.follow_recommendations.models.RecommendationRequest
-import com.twitter.follow_recommendations.models.RecommendationResponse
-import com.twitter.follow_recommendations.models.ScoringUserRequest
-import com.twitter.follow_recommendations.models.ScoringUserResponse
-import com.twitter.inject.annotations.Flag
-import com.twitter.logging.LoggerFactory
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.scribelib.marshallers.ClientDataProvider
-import com.twitter.scribelib.marshallers.ExternalRefererDataProvider
-import com.twitter.scribelib.marshallers.ScribeSerialization
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.constants.Gu ceNa dConstants
+ mport com.tw ter.follow_recom ndat ons.common.models.Has sSoftUser
+ mport com.tw ter.follow_recom ndat ons.conf gap .params.GlobalParams
+ mport com.tw ter.follow_recom ndat ons.logg ng.thr ftscala.Recom ndat onLog
+ mport com.tw ter.follow_recom ndat ons.models.DebugParams
+ mport com.tw ter.follow_recom ndat ons.models.Recom ndat onFlowData
+ mport com.tw ter.follow_recom ndat ons.models.Recom ndat onRequest
+ mport com.tw ter.follow_recom ndat ons.models.Recom ndat onResponse
+ mport com.tw ter.follow_recom ndat ons.models.Scor ngUserRequest
+ mport com.tw ter.follow_recom ndat ons.models.Scor ngUserResponse
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.logg ng.LoggerFactory
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Cl entContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.scr bel b.marshallers.Cl entDataProv der
+ mport com.tw ter.scr bel b.marshallers.ExternalRefererDataProv der
+ mport com.tw ter.scr bel b.marshallers.Scr beSer al zat on
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport com.tw ter.ut l.T  
+ mport javax. nject. nject
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
 /**
- * This is the standard logging class we use to log data into:
- * 1) logs.follow_recommendations_logs
+ * T   s t  standard logg ng class   use to log data  nto:
+ * 1) logs.follow_recom ndat ons_logs
  *
- * This logger logs data for 2 endpoints: getRecommendations, scoreUserCandidates
- * All data scribed via this logger have to be converted into the same thrift type: RecommendationLog
+ * T  logger logs data for 2 endpo nts: getRecom ndat ons, scoreUserCand dates
+ * All data scr bed v a t  logger have to be converted  nto t  sa  thr ft type: Recom ndat onLog
  *
- * 2) logs.frs_recommendation_flow_logs
+ * 2) logs.frs_recom ndat on_flow_logs
  *
- * This logger logs recommendation flow data for getRecommendations requests
- * All data scribed via this logger have to be converted into the same thrift type: FrsRecommendationFlowLog
+ * T  logger logs recom ndat on flow data for getRecom ndat ons requests
+ * All data scr bed v a t  logger have to be converted  nto t  sa  thr ft type: FrsRecom ndat onFlowLog
  */
-@Singleton
-class FrsLogger @Inject() (
-  @Named(GuiceNamedConstants.REQUEST_LOGGER) loggerFactory: LoggerFactory,
-  @Named(GuiceNamedConstants.FLOW_LOGGER) flowLoggerFactory: LoggerFactory,
-  stats: StatsReceiver,
-  @Flag("log_results") serviceShouldLogResults: Boolean)
-    extends ScribeSerialization {
-  private val logger = loggerFactory.apply()
-  private val flowLogger = flowLoggerFactory.apply()
-  private val logRecommendationCounter = stats.counter("scribe_recommendation")
-  private val logScoringCounter = stats.counter("scribe_scoring")
-  private val logRecommendationFlowCounter = stats.counter("scribe_recommendation_flow")
+@S ngleton
+class FrsLogger @ nject() (
+  @Na d(Gu ceNa dConstants.REQUEST_LOGGER) loggerFactory: LoggerFactory,
+  @Na d(Gu ceNa dConstants.FLOW_LOGGER) flowLoggerFactory: LoggerFactory,
+  stats: StatsRece ver,
+  @Flag("log_results") serv ceShouldLogResults: Boolean)
+    extends Scr beSer al zat on {
+  pr vate val logger = loggerFactory.apply()
+  pr vate val flowLogger = flowLoggerFactory.apply()
+  pr vate val logRecom ndat onCounter = stats.counter("scr be_recom ndat on")
+  pr vate val logScor ngCounter = stats.counter("scr be_scor ng")
+  pr vate val logRecom ndat onFlowCounter = stats.counter("scr be_recom ndat on_flow")
 
-  def logRecommendationResult(
-    request: RecommendationRequest,
-    response: RecommendationResponse
-  ): Unit = {
-    if (!request.isSoftUser) {
+  def logRecom ndat onResult(
+    request: Recom ndat onRequest,
+    response: Recom ndat onResponse
+  ): Un  = {
+     f (!request. sSoftUser) {
       val log =
-        RecommendationLog(request.toOfflineThrift, response.toOfflineThrift, Time.now.inMillis)
-      logRecommendationCounter.incr()
-      logger.info(
-        serializeThrift(
+        Recom ndat onLog(request.toOffl neThr ft, response.toOffl neThr ft, T  .now. nM ll s)
+      logRecom ndat onCounter. ncr()
+      logger. nfo(
+        ser al zeThr ft(
           log,
           FrsLogger.LogCategory,
-          FrsLogger.mkProvider(request.clientContext)
+          FrsLogger.mkProv der(request.cl entContext)
         ))
     }
   }
 
-  def logScoringResult(request: ScoringUserRequest, response: ScoringUserResponse): Unit = {
-    if (!request.isSoftUser) {
+  def logScor ngResult(request: Scor ngUserRequest, response: Scor ngUserResponse): Un  = {
+     f (!request. sSoftUser) {
       val log =
-        RecommendationLog(
-          request.toRecommendationRequest.toOfflineThrift,
-          response.toRecommendationResponse.toOfflineThrift,
-          Time.now.inMillis)
-      logScoringCounter.incr()
-      logger.info(
-        serializeThrift(
+        Recom ndat onLog(
+          request.toRecom ndat onRequest.toOffl neThr ft,
+          response.toRecom ndat onResponse.toOffl neThr ft,
+          T  .now. nM ll s)
+      logScor ngCounter. ncr()
+      logger. nfo(
+        ser al zeThr ft(
           log,
           FrsLogger.LogCategory,
-          FrsLogger.mkProvider(request.toRecommendationRequest.clientContext)
+          FrsLogger.mkProv der(request.toRecom ndat onRequest.cl entContext)
         ))
     }
   }
 
-  def logRecommendationFlowData[Target <: HasClientContext with HasIsSoftUser with HasParams](
+  def logRecom ndat onFlowData[Target <: HasCl entContext w h Has sSoftUser w h HasParams](
     request: Target,
-    flowData: RecommendationFlowData[Target]
-  ): Unit = {
-    if (!request.isSoftUser && request.params(GlobalParams.EnableRecommendationFlowLogs)) {
-      val log = flowData.toRecommendationFlowLogOfflineThrift
-      logRecommendationFlowCounter.incr()
-      flowLogger.info(
-        serializeThrift(
+    flowData: Recom ndat onFlowData[Target]
+  ): Un  = {
+     f (!request. sSoftUser && request.params(GlobalParams.EnableRecom ndat onFlowLogs)) {
+      val log = flowData.toRecom ndat onFlowLogOffl neThr ft
+      logRecom ndat onFlowCounter. ncr()
+      flowLogger. nfo(
+        ser al zeThr ft(
           log,
           FrsLogger.FlowLogCategory,
-          FrsLogger.mkProvider(request.clientContext)
+          FrsLogger.mkProv der(request.cl entContext)
         ))
     }
   }
 
-  // We prefer the settings given in the user request, and if none provided we default to the
-  // aurora service configuration.
-  def shouldLog(debugParamsOpt: Option[DebugParams]): Boolean =
+  //   prefer t  sett ngs g ven  n t  user request, and  f none prov ded   default to t 
+  // aurora serv ce conf gurat on.
+  def shouldLog(debugParamsOpt: Opt on[DebugParams]): Boolean =
     debugParamsOpt match {
-      case Some(debugParams) =>
-        debugParams.debugOptions match {
-          case Some(debugOptions) =>
-            !debugOptions.doNotLog
+      case So (debugParams) =>
+        debugParams.debugOpt ons match {
+          case So (debugOpt ons) =>
+            !debugOpt ons.doNotLog
           case None =>
-            serviceShouldLogResults
+            serv ceShouldLogResults
         }
       case None =>
-        serviceShouldLogResults
+        serv ceShouldLogResults
     }
 
 }
 
 object FrsLogger {
-  val LogCategory = "follow_recommendations_logs"
-  val FlowLogCategory = "frs_recommendation_flow_logs"
+  val LogCategory = "follow_recom ndat ons_logs"
+  val FlowLogCategory = "frs_recom ndat on_flow_logs"
 
-  def mkProvider(clientContext: ClientContext) = new ClientDataProvider {
+  def mkProv der(cl entContext: Cl entContext) = new Cl entDataProv der {
 
-    /** The id of the current user. When the user is logged out, this method should return None. */
-    override val userId: Option[Long] = clientContext.userId
+    /** T   d of t  current user. W n t  user  s logged out, t   thod should return None. */
+    overr de val user d: Opt on[Long] = cl entContext.user d
 
-    /** The id of the guest, which is present in logged-in or loged-out states */
-    override val guestId: Option[Long] = clientContext.guestId
+    /** T   d of t  guest, wh ch  s present  n logged- n or loged-out states */
+    overr de val guest d: Opt on[Long] = cl entContext.guest d
 
-    /** The personalization id (pid) of the user, used to personalize Twitter services */
-    override val personalizationId: Option[String] = None
+    /** T  personal zat on  d (p d) of t  user, used to personal ze Tw ter serv ces */
+    overr de val personal zat on d: Opt on[Str ng] = None
 
-    /** The id of the individual device the user is currently using. This id will be unique for different users' devices. */
-    override val deviceId: Option[String] = clientContext.deviceId
+    /** T   d of t   nd v dual dev ce t  user  s currently us ng. T   d w ll be un que for d fferent users' dev ces. */
+    overr de val dev ce d: Opt on[Str ng] = cl entContext.dev ce d
 
-    /** The OAuth application id of the application the user is currently using */
-    override val clientApplicationId: Option[Long] = clientContext.appId
+    /** T  OAuth appl cat on  d of t  appl cat on t  user  s currently us ng */
+    overr de val cl entAppl cat on d: Opt on[Long] = cl entContext.app d
 
-    /** The OAuth parent application id of the application the user is currently using */
-    override val parentApplicationId: Option[Long] = None
+    /** T  OAuth parent appl cat on  d of t  appl cat on t  user  s currently us ng */
+    overr de val parentAppl cat on d: Opt on[Long] = None
 
-    /** The two-letter, upper-case country code used to designate the country from which the scribe event occurred */
-    override val countryCode: Option[String] = clientContext.countryCode
+    /** T  two-letter, upper-case country code used to des gnate t  country from wh ch t  scr be event occurred */
+    overr de val countryCode: Opt on[Str ng] = cl entContext.countryCode
 
-    /** The two-letter, lower-case language code used to designate the probably language spoken by the scribe event initiator */
-    override val languageCode: Option[String] = clientContext.languageCode
+    /** T  two-letter, lo r-case language code used to des gnate t  probably language spoken by t  scr be event  n  ator */
+    overr de val languageCode: Opt on[Str ng] = cl entContext.languageCode
 
-    /** The user-agent header used to identify the client browser or device that the user is currently active on */
-    override val userAgent: Option[String] = clientContext.userAgent
+    /** T  user-agent  ader used to  dent fy t  cl ent browser or dev ce that t  user  s currently act ve on */
+    overr de val userAgent: Opt on[Str ng] = cl entContext.userAgent
 
-    /** Whether the user is accessing Twitter via a secured connection */
-    override val isSsl: Option[Boolean] = Some(true)
+    /** W t r t  user  s access ng Tw ter v a a secured connect on */
+    overr de val  sSsl: Opt on[Boolean] = So (true)
 
-    /** The referring URL to the current page for web-based clients, if applicable */
-    override val referer: Option[String] = None
+    /** T  referr ng URL to t  current page for  b-based cl ents,  f appl cable */
+    overr de val referer: Opt on[Str ng] = None
 
     /**
-     * The external site, partner, or email that lead to the current Twitter application. Returned value consists of a
-     * tuple including the encrypted referral data and the type of referral
+     * T  external s e, partner, or ema l that lead to t  current Tw ter appl cat on. Returned value cons sts of a
+     * tuple  nclud ng t  encrypted referral data and t  type of referral
      */
-    override val externalReferer: Option[ExternalRefererDataProvider] = None
+    overr de val externalReferer: Opt on[ExternalRefererDataProv der] = None
   }
 }

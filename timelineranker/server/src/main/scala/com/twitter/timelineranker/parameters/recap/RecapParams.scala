@@ -1,231 +1,231 @@
-package com.twitter.timelineranker.parameters.recap
+package com.tw ter.t  l neranker.para ters.recap
 
-import com.twitter.timelines.configapi.decider._
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
-import com.twitter.timelines.util.bounds.BoundsWithDefault
+ mport com.tw ter.t  l nes.conf gap .dec der._
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.t  l nes.ut l.bounds.BoundsW hDefault
 
 object RecapParams {
-  val MaxFollowedUsers: BoundsWithDefault[Int] = BoundsWithDefault[Int](1, 3000, 1000)
-  val MaxCountMultiplier: BoundsWithDefault[Double] = BoundsWithDefault[Double](0.1, 2.0, 2.0)
-  val MaxRealGraphAndFollowedUsers: BoundsWithDefault[Int] = BoundsWithDefault[Int](0, 2000, 1000)
-  val ProbabilityRandomTweet: BoundsWithDefault[Double] = BoundsWithDefault[Double](0.0, 1.0, 0.0)
+  val MaxFollo dUsers: BoundsW hDefault[ nt] = BoundsW hDefault[ nt](1, 3000, 1000)
+  val MaxCountMult pl er: BoundsW hDefault[Double] = BoundsW hDefault[Double](0.1, 2.0, 2.0)
+  val MaxRealGraphAndFollo dUsers: BoundsW hDefault[ nt] = BoundsW hDefault[ nt](0, 2000, 1000)
+  val Probab l yRandomT et: BoundsW hDefault[Double] = BoundsW hDefault[Double](0.0, 1.0, 0.0)
 
   /**
-   * Controls limit on the number of followed users fetched from SGS.
+   * Controls l m  on t  number of follo d users fetc d from SGS.
    *
-   * The specific default value below is for blender-timelines parity.
+   * T  spec f c default value below  s for blender-t  l nes par y.
    */
-  object MaxFollowedUsersParam
-      extends FSBoundedParam[Int](
-        name = "recap_max_followed_users",
-        default = MaxFollowedUsers.default,
-        min = MaxFollowedUsers.bounds.minInclusive,
-        max = MaxFollowedUsers.bounds.maxInclusive
+  object MaxFollo dUsersParam
+      extends FSBoundedParam[ nt](
+        na  = "recap_max_follo d_users",
+        default = MaxFollo dUsers.default,
+        m n = MaxFollo dUsers.bounds.m n nclus ve,
+        max = MaxFollo dUsers.bounds.max nclus ve
       )
 
   /**
-   * Controls limit on the number of hits for Earlybird.
-   * We added it solely for backward compatibility, to align with recycled.
-   * RecapSource is deprecated, but, this param is used by RecapAuthor source
+   * Controls l m  on t  number of h s for Earlyb rd.
+   *   added   solely for backward compat b l y, to al gn w h recycled.
+   * RecapS ce  s deprecated, but, t  param  s used by RecapAuthor s ce
    */
-  object RelevanceOptionsMaxHitsToProcessParam
-      extends FSBoundedParam[Int](
-        name = "recap_relevance_options_max_hits_to_process",
+  object RelevanceOpt onsMaxH sToProcessParam
+      extends FSBoundedParam[ nt](
+        na  = "recap_relevance_opt ons_max_h s_to_process",
         default = 500,
-        min = 100,
+        m n = 100,
         max = 20000
       )
 
   /**
-   * Enables fetching author seedset from real graph users. Only used if user follows >= 1000.
-   * If true, expands author seedset with real graph users and recent followed users.
-   * Otherwise, user seedset only includes followed users.
+   * Enables fetch ng author seedset from real graph users. Only used  f user follows >= 1000.
+   *  f true, expands author seedset w h real graph users and recent follo d users.
+   * Ot rw se, user seedset only  ncludes follo d users.
    */
   object EnableRealGraphUsersParam extends Param(false)
 
   /**
-   * Only used if EnableRealGraphUsersParam is true and OnlyRealGraphUsersParam is false.
-   * Maximum number of real graph users and recent followed users when mixing recent/real-graph users.
+   * Only used  f EnableRealGraphUsersParam  s true and OnlyRealGraphUsersParam  s false.
+   * Max mum number of real graph users and recent follo d users w n m x ng recent/real-graph users.
    */
-  object MaxRealGraphAndFollowedUsersParam
-      extends Param(MaxRealGraphAndFollowedUsers.default)
-      with DeciderValueConverter[Int] {
-    override def convert: IntConverter[Int] =
-      OutputBoundIntConverter(MaxRealGraphAndFollowedUsers.bounds)
+  object MaxRealGraphAndFollo dUsersParam
+      extends Param(MaxRealGraphAndFollo dUsers.default)
+      w h Dec derValueConverter[ nt] {
+    overr de def convert:  ntConverter[ nt] =
+      OutputBound ntConverter(MaxRealGraphAndFollo dUsers.bounds)
   }
 
   /**
-   * FS-controlled param to override the MaxRealGraphAndFollowedUsersParam decider value for experiments
+   * FS-controlled param to overr de t  MaxRealGraphAndFollo dUsersParam dec der value for exper  nts
    */
-  object MaxRealGraphAndFollowedUsersFSOverrideParam
-      extends FSBoundedParam[Option[Int]](
-        name = "max_real_graph_and_followers_users_fs_override_param",
+  object MaxRealGraphAndFollo dUsersFSOverr deParam
+      extends FSBoundedParam[Opt on[ nt]](
+        na  = "max_real_graph_and_follo rs_users_fs_overr de_param",
         default = None,
-        min = Some(100),
-        max = Some(10000)
+        m n = So (100),
+        max = So (10000)
       )
 
   /**
-   * Experimental params for leveling the playing field between user folowees received from
+   * Exper  ntal params for level ng t  play ng f eld bet en user folo es rece ved from
    * real-graph and follow-graph stores.
-   * Author relevance scores returned by real-graph are currently being used for light-ranking
-   * in-network tweet candidates.
-   * Follow-graph store returns the most recent followees without any relevance scores
-   * We are trying to impute the missing scores by using aggregated statistics (min, avg, p50, etc.)
+   * Author relevance scores returned by real-graph are currently be ng used for l ght-rank ng
+   *  n-network t et cand dates.
+   * Follow-graph store returns t  most recent follo es w hout any relevance scores
+   *   are try ng to  mpute t  m ss ng scores by us ng aggregated stat st cs (m n, avg, p50, etc.)
    * of real-graph scores.
    */
-  object ImputeRealGraphAuthorWeightsParam
-      extends FSParam(name = "impute_real_graph_author_weights", default = false)
+  object  mputeRealGraphAuthor  ghtsParam
+      extends FSParam(na  = " mpute_real_graph_author_  ghts", default = false)
 
-  object ImputeRealGraphAuthorWeightsPercentileParam
-      extends FSBoundedParam[Int](
-        name = "impute_real_graph_author_weights_percentile",
+  object  mputeRealGraphAuthor  ghtsPercent leParam
+      extends FSBoundedParam[ nt](
+        na  = " mpute_real_graph_author_  ghts_percent le",
         default = 50,
-        min = 0,
+        m n = 0,
         max = 99)
 
   /**
-   * Enable running the new pipeline for recap author source
+   * Enable runn ng t  new p pel ne for recap author s ce
    */
-  object EnableNewRecapAuthorPipeline extends Param(false)
+  object EnableNewRecapAuthorP pel ne extends Param(false)
 
   /**
-   * Fallback value for maximum number of search results, if not specified by query.maxCount
+   * Fallback value for max mum number of search results,  f not spec f ed by query.maxCount
    */
-  object DefaultMaxTweetCount extends Param(200)
+  object DefaultMaxT etCount extends Param(200)
 
   /**
-   * We multiply maxCount (caller supplied value) by this multiplier and fetch those many
-   * candidates from search so that we are left with sufficient number of candidates after
-   * hydration and filtering.
+   *   mult ply maxCount (caller suppl ed value) by t  mult pl er and fetch those many
+   * cand dates from search so that   are left w h suff c ent number of cand dates after
+   * hydrat on and f lter ng.
    */
-  object MaxCountMultiplierParam
-      extends Param(MaxCountMultiplier.default)
-      with DeciderValueConverter[Double] {
-    override def convert: IntConverter[Double] =
-      OutputBoundIntConverter[Double](divideDeciderBy100 _, MaxCountMultiplier.bounds)
+  object MaxCountMult pl erParam
+      extends Param(MaxCountMult pl er.default)
+      w h Dec derValueConverter[Double] {
+    overr de def convert:  ntConverter[Double] =
+      OutputBound ntConverter[Double](d v deDec derBy100 _, MaxCountMult pl er.bounds)
   }
 
   /**
-   * Enables return all results from search index.
+   * Enables return all results from search  ndex.
    */
   object EnableReturnAllResultsParam
-      extends FSParam(name = "recap_enable_return_all_results", default = false)
+      extends FSParam(na  = "recap_enable_return_all_results", default = false)
 
   /**
-   * Includes one or multiple random tweets in the response.
+   *  ncludes one or mult ple random t ets  n t  response.
    */
-  object IncludeRandomTweetParam
-      extends FSParam(name = "recap_include_random_tweet", default = false)
+  object  ncludeRandomT etParam
+      extends FSParam(na  = "recap_ nclude_random_t et", default = false)
 
   /**
-   * One single random tweet (true) or tag tweet as random with given probability (false).
+   * One s ngle random t et (true) or tag t et as random w h g ven probab l y (false).
    */
-  object IncludeSingleRandomTweetParam
-      extends FSParam(name = "recap_include_random_tweet_single", default = true)
+  object  ncludeS ngleRandomT etParam
+      extends FSParam(na  = "recap_ nclude_random_t et_s ngle", default = true)
 
   /**
-   * Probability to tag a tweet as random (will not be ranked).
+   * Probab l y to tag a t et as random (w ll not be ranked).
    */
-  object ProbabilityRandomTweetParam
+  object Probab l yRandomT etParam
       extends FSBoundedParam(
-        name = "recap_include_random_tweet_probability",
-        default = ProbabilityRandomTweet.default,
-        min = ProbabilityRandomTweet.bounds.minInclusive,
-        max = ProbabilityRandomTweet.bounds.maxInclusive)
+        na  = "recap_ nclude_random_t et_probab l y",
+        default = Probab l yRandomT et.default,
+        m n = Probab l yRandomT et.bounds.m n nclus ve,
+        max = Probab l yRandomT et.bounds.max nclus ve)
 
   /**
-   * Enable extra sorting by score for search results.
+   * Enable extra sort ng by score for search results.
    */
-  object EnableExtraSortingInSearchResultParam extends Param(true)
+  object EnableExtraSort ng nSearchResultParam extends Param(true)
 
   /**
-   * Enables semantic core, penguin, and tweetypie content features in recap source.
+   * Enables semant c core, pengu n, and t etyp e content features  n recap s ce.
    */
-  object EnableContentFeaturesHydrationParam extends Param(true)
+  object EnableContentFeaturesHydrat onParam extends Param(true)
 
   /**
-   * additionally enables tokens when hydrating content features.
+   * add  onally enables tokens w n hydrat ng content features.
    */
-  object EnableTokensInContentFeaturesHydrationParam
+  object EnableTokens nContentFeaturesHydrat onParam
       extends FSParam(
-        name = "recap_enable_tokens_in_content_features_hydration",
+        na  = "recap_enable_tokens_ n_content_features_hydrat on",
         default = false
       )
 
   /**
-   * additionally enables tweet text when hydrating content features.
-   * This only works if EnableContentFeaturesHydrationParam is set to true
+   * add  onally enables t et text w n hydrat ng content features.
+   * T  only works  f EnableContentFeaturesHydrat onParam  s set to true
    */
-  object EnableTweetTextInContentFeaturesHydrationParam
+  object EnableT etText nContentFeaturesHydrat onParam
       extends FSParam(
-        name = "recap_enable_tweet_text_in_content_features_hydration",
+        na  = "recap_enable_t et_text_ n_content_features_hydrat on",
         default = false
       )
 
   /**
-   * Enables hydrating in-network inReplyToTweet features
+   * Enables hydrat ng  n-network  nReplyToT et features
    */
-  object EnableInNetworkInReplyToTweetFeaturesHydrationParam
+  object Enable nNetwork nReplyToT etFeaturesHydrat onParam
       extends FSParam(
-        name = "recap_enable_in_network_in_reply_to_tweet_features_hydration",
+        na  = "recap_enable_ n_network_ n_reply_to_t et_features_hydrat on",
         default = false
       )
 
   /**
-   * Enables hydrating root tweet of in-network replies and extended replies
+   * Enables hydrat ng root t et of  n-network repl es and extended repl es
    */
-  object EnableReplyRootTweetHydrationParam
+  object EnableReplyRootT etHydrat onParam
       extends FSParam(
-        name = "recap_enable_reply_root_tweet_hydration",
+        na  = "recap_enable_reply_root_t et_hydrat on",
         default = false
       )
 
   /**
-   * Enable setting tweetTypes in search queries with TweetKindOption in RecapQuery
+   * Enable sett ng t etTypes  n search quer es w h T etK ndOpt on  n RecapQuery
    */
-  object EnableSettingTweetTypesWithTweetKindOption
+  object EnableSett ngT etTypesW hT etK ndOpt on
       extends FSParam(
-        name = "recap_enable_setting_tweet_types_with_tweet_kind_option",
+        na  = "recap_enable_sett ng_t et_types_w h_t et_k nd_opt on",
         default = false
       )
 
   /**
-   * Enable relevance search, otherwise recency search from earlybird.
+   * Enable relevance search, ot rw se recency search from earlyb rd.
    */
   object EnableRelevanceSearchParam
       extends FSParam(
-        name = "recap_enable_relevance_search",
+        na  = "recap_enable_relevance_search",
         default = true
       )
 
-  object EnableExpandedExtendedRepliesFilterParam
+  object EnableExpandedExtendedRepl esF lterParam
       extends FSParam(
-        name = "recap_enable_expanded_extended_replies_filter",
+        na  = "recap_enable_expanded_extended_repl es_f lter",
         default = false
       )
 
   /**
-   * additionally enables conversationControl when hydrating content features.
-   * This only works if EnableContentFeaturesHydrationParam is set to true
+   * add  onally enables conversat onControl w n hydrat ng content features.
+   * T  only works  f EnableContentFeaturesHydrat onParam  s set to true
    */
-  object EnableConversationControlInContentFeaturesHydrationParam
+  object EnableConversat onControl nContentFeaturesHydrat onParam
       extends FSParam(
-        name = "conversation_control_in_content_features_hydration_recap_enable",
+        na  = "conversat on_control_ n_content_features_hydrat on_recap_enable",
         default = false
       )
 
-  object EnableTweetMediaHydrationParam
+  object EnableT et d aHydrat onParam
       extends FSParam(
-        name = "tweet_media_hydration_recap_enable",
+        na  = "t et_ d a_hydrat on_recap_enable",
         default = false
       )
 
-  object EnableExcludeSourceTweetIdsQueryParam
+  object EnableExcludeS ceT et dsQueryParam
       extends FSParam[Boolean](
-        name = "recap_exclude_source_tweet_ids_query_enable",
+        na  = "recap_exclude_s ce_t et_ ds_query_enable",
         default = false
       )
 }

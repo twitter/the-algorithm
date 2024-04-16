@@ -1,211 +1,211 @@
-package com.twitter.simclusters_v2.scalding.offline_job.adhoc
+package com.tw ter.s mclusters_v2.scald ng.offl ne_job.adhoc
 
-import com.twitter.bijection.{Bufferable, Injection}
-import com.twitter.scalding._
-import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.{ClusterId, TweetId, UserId}
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2InterestedIn20M145KUpdatedScalaDataset
-import com.twitter.simclusters_v2.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
-import com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJobUtil
-import com.twitter.simclusters_v2.summingbird.common.{Configs, SimClustersInterestedInUtil}
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import java.util.TimeZone
+ mport com.tw ter.b ject on.{Bufferable,  nject on}
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng.commons.s ce.Vers onedKeyValS ce
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.{Expl c Locat on, ProcAtla}
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.common.{Cluster d, T et d, User d}
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.S mclustersV2 nterested n20M145KUpdatedScalaDataset
+ mport com.tw ter.s mclusters_v2.scald ng.common.matr x.{SparseMatr x, SparseRowMatr x}
+ mport com.tw ter.s mclusters_v2.scald ng.offl ne_job.S mClustersOffl neJobUt l
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.{Conf gs, S mClusters nterested nUt l}
+ mport com.tw ter.s mclusters_v2.thr ftscala.ClustersUser s nterested n
+ mport com.tw ter.wtf.scald ng.jobs.common.AdhocExecut onApp
+ mport java.ut l.T  Zone
 
 /**
- * Adhoc job for computing Tweet SimClusters embeddings.
- * The output of this job includes two data sets: tweet -> top clusters (or Tweet Embedding), and cluster -> top tweets.
- * These data sets are supposed to be the snapshot of the two index at the end of the dataRange you run.
+ * Adhoc job for comput ng T et S mClusters embedd ngs.
+ * T  output of t  job  ncludes two data sets: t et -> top clusters (or T et Embedd ng), and cluster -> top t ets.
+ * T se data sets are supposed to be t  snapshot of t  two  ndex at t  end of t  dataRange   run.
  *
- * Note that you can also use the output from SimClustersOfflineJobScheduledApp for analysis purpose.
- * The outputs from that job might be more close to the data we use in production.
- * The benefit of having this job is to keep the flexibility of experiment different ideas.
+ * Note that   can also use t  output from S mClustersOffl neJobSc duledApp for analys s purpose.
+ * T  outputs from that job m ght be more close to t  data   use  n product on.
+ * T  benef  of hav ng t  job  s to keep t  flex b l y of exper  nt d fferent  deas.
  *
- * It is recommended to put at least 2 days in the --date (dataRange in the code) in order to make sure
- * we have enough engagement data for tweets have more engagements in the last 1+ days.
- *
- *
- * There are several parameters to tune in the job. They are explained in the inline comments.
+ *    s recom nded to put at least 2 days  n t  --date (dataRange  n t  code)  n order to make sure
+ *   have enough engage nt data for t ets have more engage nts  n t  last 1+ days.
  *
  *
- * To run the job:
-    scalding remote run \
-    --target src/scala/com/twitter/simclusters_v2/scalding/offline_job/adhoc:tweet_embedding-adhoc \
+ * T re are several para ters to tune  n t  job. T y are expla ned  n t   nl ne com nts.
+ *
+ *
+ * To run t  job:
+    scald ng remote run \
+    --target src/scala/com/tw ter/s mclusters_v2/scald ng/offl ne_job/adhoc:t et_embedd ng-adhoc \
     --user recos-platform \
     --reducers 1000 \
-    --main-class com.twitter.simclusters_v2.scalding.offline_job.adhoc.SimClustersTweetEmbeddingAdhocApp -- \
+    --ma n-class com.tw ter.s mclusters_v2.scald ng.offl ne_job.adhoc.S mClustersT etEmbedd ngAdhocApp -- \
     --date 2021-01-27 2021-01-28 \
     --score_type logFav \
-    --output_dir /user/recos-platform/adhoc/tweet_embedding_01_27_28_unnormalized_t9
+    --output_d r /user/recos-platform/adhoc/t et_embedd ng_01_27_28_unnormal zed_t9
  */
-object SimClustersTweetEmbeddingAdhocApp extends AdhocExecutionApp {
+object S mClustersT etEmbedd ngAdhocApp extends AdhocExecut onApp {
 
-  import SimClustersOfflineJobUtil._
+   mport S mClustersOffl neJobUt l._
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
 
-    val outputDir = args("output_dir")
+    val outputD r = args("output_d r")
 
-    // what interestedIn score to use. logFav is what we use in production
-    val scoringMethod = args.getOrElse("score_type", "logFav")
+    // what  nterested n score to use. logFav  s what   use  n product on
+    val scor ng thod = args.getOrElse("score_type", "logFav")
 
-    // whether to use normalized score in the cluster -> top tweets.
-    // Currently, we do not do this in production. DONOT turn it on unless you know what you are doing.
-    // NOTE that for scalding args, "--run_normalized" will just set the arg to be true, and
-    // even you use "--run_normalized false", it will still be true.
-    val usingNormalizedScoringFunction = args.boolean("run_normalized")
+    // w t r to use normal zed score  n t  cluster -> top t ets.
+    // Currently,   do not do t   n product on. DONOT turn   on unless   know what   are do ng.
+    // NOTE that for scald ng args, "--run_normal zed" w ll just set t  arg to be true, and
+    // even   use "--run_normal zed false",   w ll st ll be true.
+    val us ngNormal zedScor ngFunct on = args.boolean("run_normal zed")
 
-    // filter out tweets that has less than X favs in the dateRange.
-    val tweetFavThreshold = args.long("tweet_fav_threshold", 0L)
+    // f lter out t ets that has less than X favs  n t  dateRange.
+    val t etFavThreshold = args.long("t et_fav_threshold", 0L)
 
-    // tweet -> top clusters will be saved in this subfolder
-    val tweetTopKClustersOutputPath: String = outputDir + "/tweet_top_k_clusters"
+    // t et -> top clusters w ll be saved  n t  subfolder
+    val t etTopKClustersOutputPath: Str ng = outputD r + "/t et_top_k_clusters"
 
-    // cluster -> top tweets will be saved in this subfolder
-    val clusterTopKTweetsOutputPath: String = outputDir + "/cluster_top_k_tweets"
+    // cluster -> top t ets w ll be saved  n t  subfolder
+    val clusterTopKT etsOutputPath: Str ng = outputD r + "/cluster_top_k_t ets"
 
-    val interestedInData: TypedPipe[(Long, ClustersUserIsInterestedIn)] =
+    val  nterested nData: TypedP pe[(Long, ClustersUser s nterested n)] =
       DAL
         .readMostRecentSnapshot(
-          SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
-          dateRange.embiggen(Days(14))
+          S mclustersV2 nterested n20M145KUpdatedScalaDataset,
+          dateRange.emb ggen(Days(14))
         )
-        .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-        .toTypedPipe
+        .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+        .toTypedP pe
         .map {
           case KeyVal(key, value) => (key, value)
         }
 
-    // read user-tweet fav data. set the weight to be a decayed value. they will be decayed to the dateRang.end
-    val userTweetFavData: SparseMatrix[UserId, TweetId, Double] =
-      SparseMatrix(readTimelineFavoriteData(dateRange)).tripleApply {
-        case (userId, tweetId, timestamp) =>
+    // read user-t et fav data. set t    ght to be a decayed value. t y w ll be decayed to t  dateRang.end
+    val userT etFavData: SparseMatr x[User d, T et d, Double] =
+      SparseMatr x(readT  l neFavor eData(dateRange)).tr pleApply {
+        case (user d, t et d, t  stamp) =>
           (
-            userId,
-            tweetId,
-            thriftDecayedValueMonoid
+            user d,
+            t et d,
+            thr ftDecayedValueMono d
               .plus(
-                thriftDecayedValueMonoid.build(1.0, timestamp),
-                thriftDecayedValueMonoid.build(0.0, dateRange.end.timestamp)
+                thr ftDecayedValueMono d.bu ld(1.0, t  stamp),
+                thr ftDecayedValueMono d.bu ld(0.0, dateRange.end.t  stamp)
               )
               .value)
       }
 
-    // filter out tweets without x favs
-    val tweetSubset =
-      userTweetFavData.colNnz.filter(
-        _._2 > tweetFavThreshold.toDouble
-      ) // keep tweets with at least x favs
+    // f lter out t ets w hout x favs
+    val t etSubset =
+      userT etFavData.colNnz.f lter(
+        _._2 > t etFavThreshold.toDouble
+      ) // keep t ets w h at least x favs
 
-    val userTweetFavDataSubset = userTweetFavData.filterCols(tweetSubset.keys)
+    val userT etFavDataSubset = userT etFavData.f lterCols(t etSubset.keys)
 
-    // construct user-simclusters matrix
-    val userSimClustersInterestedInData: SparseRowMatrix[UserId, ClusterId, Double] =
-      SparseRowMatrix(
-        interestedInData.map {
-          case (userId, clusters) =>
-            val topClustersWithScores =
-              SimClustersInterestedInUtil
-                .topClustersWithScores(clusters)
+    // construct user-s mclusters matr x
+    val userS mClusters nterested nData: SparseRowMatr x[User d, Cluster d, Double] =
+      SparseRowMatr x(
+         nterested nData.map {
+          case (user d, clusters) =>
+            val topClustersW hScores =
+              S mClusters nterested nUt l
+                .topClustersW hScores(clusters)
                 .collect {
-                  case (clusterId, scores)
-                      if scores.favScore > Configs
-                        .favScoreThresholdForUserInterest(
-                          clusters.knownForModelVersion
-                        ) => // this is the same threshold used in the summingbird job
-                    scoringMethod match {
+                  case (cluster d, scores)
+                       f scores.favScore > Conf gs
+                        .favScoreThresholdForUser nterest(
+                          clusters.knownForModelVers on
+                        ) => // t   s t  sa  threshold used  n t  summ ngb rd job
+                    scor ng thod match {
                       case "fav" =>
-                        clusterId -> scores.clusterNormalizedFavScore
+                        cluster d -> scores.clusterNormal zedFavScore
                       case "follow" =>
-                        clusterId -> scores.clusterNormalizedFollowScore
+                        cluster d -> scores.clusterNormal zedFollowScore
                       case "logFav" =>
-                        clusterId -> scores.clusterNormalizedLogFavScore
+                        cluster d -> scores.clusterNormal zedLogFavScore
                       case _ =>
-                        throw new IllegalArgumentException(
+                        throw new  llegalArgu ntExcept on(
                           "score_type can only be fav, follow or logFav")
                     }
                 }
-                .filter(_._2 > 0.0)
+                .f lter(_._2 > 0.0)
                 .toMap
-            userId -> topClustersWithScores
+            user d -> topClustersW hScores
         },
-        isSkinnyMatrix = true
+         sSk nnyMatr x = true
       )
 
-    // multiply tweet -> user matrix with user -> cluster matrix to get tweet -> cluster matrix
-    val tweetClusterScoreMatrix = if (usingNormalizedScoringFunction) {
-      userTweetFavDataSubset.transpose.rowL2Normalize
-        .multiplySkinnySparseRowMatrix(userSimClustersInterestedInData)
+    // mult ply t et -> user matr x w h user -> cluster matr x to get t et -> cluster matr x
+    val t etClusterScoreMatr x =  f (us ngNormal zedScor ngFunct on) {
+      userT etFavDataSubset.transpose.rowL2Normal ze
+        .mult plySk nnySparseRowMatr x(userS mClusters nterested nData)
     } else {
-      userTweetFavDataSubset.transpose.multiplySkinnySparseRowMatrix(
-        userSimClustersInterestedInData)
+      userT etFavDataSubset.transpose.mult plySk nnySparseRowMatr x(
+        userS mClusters nterested nData)
     }
 
-    // get the tweet -> top clusters by taking top K in each row
-    val tweetTopClusters = tweetClusterScoreMatrix
-      .sortWithTakePerRow(Configs.topKClustersPerTweet)(Ordering.by(-_._2))
+    // get t  t et -> top clusters by tak ng top K  n each row
+    val t etTopClusters = t etClusterScoreMatr x
+      .sortW hTakePerRow(Conf gs.topKClustersPerT et)(Order ng.by(-_._2))
       .fork
 
-    // get the cluster -> top tweets by taking top K in each colum
-    val clusterTopTweets = tweetClusterScoreMatrix
-      .sortWithTakePerCol(Configs.topKTweetsPerCluster)(Ordering.by(-_._2))
+    // get t  cluster -> top t ets by tak ng top K  n each colum
+    val clusterTopT ets = t etClusterScoreMatr x
+      .sortW hTakePerCol(Conf gs.topKT etsPerCluster)(Order ng.by(-_._2))
       .fork
 
-    // injections for saving a list
-    implicit val inj1: Injection[List[(Int, Double)], Array[Byte]] =
-      Bufferable.injectionOf[List[(Int, Double)]]
-    implicit val inj2: Injection[List[(Long, Double)], Array[Byte]] =
-      Bufferable.injectionOf[List[(Long, Double)]]
+    //  nject ons for sav ng a l st
+     mpl c  val  nj1:  nject on[L st[( nt, Double)], Array[Byte]] =
+      Bufferable. nject onOf[L st[( nt, Double)]]
+     mpl c  val  nj2:  nject on[L st[(Long, Double)], Array[Byte]] =
+      Bufferable. nject onOf[L st[(Long, Double)]]
 
-    // save the data sets and also output to some tsv files for eyeballing the results
-    Execution
-      .zip(
-        tweetTopClusters
-          .mapValues(_.toList)
-          .writeExecution(
-            VersionedKeyValSource[TweetId, List[(ClusterId, Double)]](tweetTopKClustersOutputPath)
+    // save t  data sets and also output to so  tsv f les for eyeball ng t  results
+    Execut on
+      .z p(
+        t etTopClusters
+          .mapValues(_.toL st)
+          .wr eExecut on(
+            Vers onedKeyValS ce[T et d, L st[(Cluster d, Double)]](t etTopKClustersOutputPath)
           ),
-        tweetTopClusters
+        t etTopClusters
           .map {
-            case (tweetId, topKClusters) =>
-              tweetId -> topKClusters
+            case (t et d, topKClusters) =>
+              t et d -> topKClusters
                 .map {
-                  case (clusterId, score) =>
-                    s"$clusterId:" + "%.3g".format(score)
+                  case (cluster d, score) =>
+                    s"$cluster d:" + "%.3g".format(score)
                 }
-                .mkString(",")
+                .mkStr ng(",")
           }
-          .writeExecution(
-            TypedTsv(tweetTopKClustersOutputPath + "_tsv")
+          .wr eExecut on(
+            TypedTsv(t etTopKClustersOutputPath + "_tsv")
           ),
-        tweetSubset.writeExecution(TypedTsv(tweetTopKClustersOutputPath + "_tweet_favs")),
-        clusterTopTweets
-          .mapValues(_.toList)
-          .writeExecution(
-            VersionedKeyValSource[ClusterId, List[(TweetId, Double)]](clusterTopKTweetsOutputPath)
+        t etSubset.wr eExecut on(TypedTsv(t etTopKClustersOutputPath + "_t et_favs")),
+        clusterTopT ets
+          .mapValues(_.toL st)
+          .wr eExecut on(
+            Vers onedKeyValS ce[Cluster d, L st[(T et d, Double)]](clusterTopKT etsOutputPath)
           ),
-        clusterTopTweets
+        clusterTopT ets
           .map {
-            case (clusterId, topKTweets) =>
-              clusterId -> topKTweets
+            case (cluster d, topKT ets) =>
+              cluster d -> topKT ets
                 .map {
-                  case (tweetId, score) => s"$tweetId:" + "%.3g".format(score)
+                  case (t et d, score) => s"$t et d:" + "%.3g".format(score)
                 }
-                .mkString(",")
+                .mkStr ng(",")
           }
-          .writeExecution(
-            TypedTsv(clusterTopKTweetsOutputPath + "_tsv")
+          .wr eExecut on(
+            TypedTsv(clusterTopKT etsOutputPath + "_tsv")
           )
       )
-      .unit
+      .un 
   }
 }

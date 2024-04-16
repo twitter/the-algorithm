@@ -1,30 +1,30 @@
-package com.twitter.home_mixer.functional_component.decorator.builder
+package com.tw ter.ho _m xer.funct onal_component.decorator.bu lder
 
-import com.twitter.home_mixer.model.HomeFeatures.AncestorsFeature
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleMetadataBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleConversationMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleMetadata
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.ho _m xer.model.Ho Features.AncestorsFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.BaseT etCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.t  l ne_module.BaseModule tadataBu lder
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.ModuleConversat on tadata
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Module tadata
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-case class HomeConversationModuleMetadataBuilder[
-  -Query <: PipelineQuery,
-  -Candidate <: BaseTweetCandidate
-]() extends BaseModuleMetadataBuilder[Query, Candidate] {
+case class Ho Conversat onModule tadataBu lder[
+  -Query <: P pel neQuery,
+  -Cand date <: BaseT etCand date
+]() extends BaseModule tadataBu lder[Query, Cand date] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): ModuleMetadata = ModuleMetadata(
-    adsMetadata = None,
-    conversationMetadata = Some(
-      ModuleConversationMetadata(
-        allTweetIds = Some((candidates.last.candidate.id +:
-          candidates.last.features.getOrElse(AncestorsFeature, Seq.empty).map(_.tweetId)).reverse),
-        socialContext = None,
-        enableDeduplication = Some(true)
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): Module tadata = Module tadata(
+    ads tadata = None,
+    conversat on tadata = So (
+      ModuleConversat on tadata(
+        allT et ds = So ((cand dates.last.cand date. d +:
+          cand dates.last.features.getOrElse(AncestorsFeature, Seq.empty).map(_.t et d)).reverse),
+        soc alContext = None,
+        enableDedupl cat on = So (true)
       )),
-    gridCarouselMetadata = None
+    gr dCarousel tadata = None
   )
 }

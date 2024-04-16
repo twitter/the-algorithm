@@ -1,99 +1,99 @@
-package com.twitter.follow_recommendations.common.base
+package com.tw ter.follow_recom ndat ons.common.base
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.models.F lterReason
+ mport com.tw ter.st ch.Arrow
+ mport com.tw ter.st ch.St ch
 
-trait Predicate[-Q] {
+tra  Pred cate[-Q] {
 
-  def apply(item: Q): Stitch[PredicateResult]
-  def arrow: Arrow[Q, PredicateResult] = Arrow.apply(apply)
+  def apply( em: Q): St ch[Pred cateResult]
+  def arrow: Arrow[Q, Pred cateResult] = Arrow.apply(apply)
 
-  def map[K](mapper: K => Q): Predicate[K] = Predicate(arrow.contramap(mapper))
+  def map[K](mapper: K => Q): Pred cate[K] = Pred cate(arrow.contramap(mapper))
 
   /**
-   * check the predicate results for a batch of items for convenience.
+   * c ck t  pred cate results for a batch of  ems for conven ence.
    *
-   * mark it as final to avoid potential abuse usage
+   * mark   as f nal to avo d potent al abuse usage
    */
-  final def batch(items: Seq[Q]): Stitch[Seq[PredicateResult]] = {
-    this.arrow.traverse(items)
+  f nal def batch( ems: Seq[Q]): St ch[Seq[Pred cateResult]] = {
+    t .arrow.traverse( ems)
   }
 
   /**
-   * Syntax sugar for functions which take in 2 inputs as a tuple.
+   * Syntax sugar for funct ons wh ch take  n 2  nputs as a tuple.
    */
-  def apply[Q1, Q2](item1: Q1, item2: Q2)(implicit ev: ((Q1, Q2)) => Q): Stitch[PredicateResult] = {
-    apply((item1, item2))
+  def apply[Q1, Q2]( em1: Q1,  em2: Q2)( mpl c  ev: ((Q1, Q2)) => Q): St ch[Pred cateResult] = {
+    apply(( em1,  em2))
   }
 
   /**
-   * Runs the predicates in sequence. The returned predicate will return true iff both the predicates return true.
-   * ie. it is an AND operation
+   * Runs t  pred cates  n sequence. T  returned pred cate w ll return true  ff both t  pred cates return true.
+   *  e.    s an AND operat on
    *
-   * We short-circuit the evaluation, ie we don't evaluate the 2nd predicate if the 1st is false
+   *   short-c rcu  t  evaluat on,  e   don't evaluate t  2nd pred cate  f t  1st  s false
    *
-   * @param p predicate to run in sequence
+   * @param p pred cate to run  n sequence
    *
-   * @return a new predicate object that represents the logical AND of both predicates
+   * @return a new pred cate object that represents t  log cal AND of both pred cates
    */
-  def andThen[Q1 <: Q](p: Predicate[Q1]): Predicate[Q1] = {
-    Predicate({ query: Q1 =>
+  def andT n[Q1 <: Q](p: Pred cate[Q1]): Pred cate[Q1] = {
+    Pred cate({ query: Q1 =>
       apply(query).flatMap {
-        case PredicateResult.Valid => p(query)
-        case PredicateResult.Invalid(reasons) => Stitch.value(PredicateResult.Invalid(reasons))
+        case Pred cateResult.Val d => p(query)
+        case Pred cateResult. nval d(reasons) => St ch.value(Pred cateResult. nval d(reasons))
       }
     })
   }
 
   /**
-   * Creates a predicate which runs the current & given predicate in sequence.
-   * The returned predicate will return true if either current or given predicate returns true.
-   * That is, given predicate will be only run if current predicate returns false.
+   * Creates a pred cate wh ch runs t  current & g ven pred cate  n sequence.
+   * T  returned pred cate w ll return true  f e  r current or g ven pred cate returns true.
+   * That  s, g ven pred cate w ll be only run  f current pred cate returns false.
    *
-   * @param p predicate to run in sequence
+   * @param p pred cate to run  n sequence
    *
-   * @return new predicate object that represents the logical OR of both predicates.
-   *         if both are invalid, the reason would be the set of all invalid reasons.
+   * @return new pred cate object that represents t  log cal OR of both pred cates.
+   *          f both are  nval d, t  reason would be t  set of all  nval d reasons.
    */
-  def or[Q1 <: Q](p: Predicate[Q1]): Predicate[Q1] = {
-    Predicate({ query: Q1 =>
+  def or[Q1 <: Q](p: Pred cate[Q1]): Pred cate[Q1] = {
+    Pred cate({ query: Q1 =>
       apply(query).flatMap {
-        case PredicateResult.Valid => Stitch.value(PredicateResult.Valid)
-        case PredicateResult.Invalid(reasons) =>
+        case Pred cateResult.Val d => St ch.value(Pred cateResult.Val d)
+        case Pred cateResult. nval d(reasons) =>
           p(query).flatMap {
-            case PredicateResult.Valid => Stitch.value(PredicateResult.Valid)
-            case PredicateResult.Invalid(newReasons) =>
-              Stitch.value(PredicateResult.Invalid(reasons ++ newReasons))
+            case Pred cateResult.Val d => St ch.value(Pred cateResult.Val d)
+            case Pred cateResult. nval d(newReasons) =>
+              St ch.value(Pred cateResult. nval d(reasons ++ newReasons))
           }
       }
     })
   }
 
   /*
-   * Runs the predicate only if the provided predicate is valid, otherwise returns valid.
+   * Runs t  pred cate only  f t  prov ded pred cate  s val d, ot rw se returns val d.
    * */
-  def gate[Q1 <: Q](gatingPredicate: Predicate[Q1]): Predicate[Q1] = {
-    Predicate { query: Q1 =>
-      gatingPredicate(query).flatMap { result =>
-        if (result == PredicateResult.Valid) {
+  def gate[Q1 <: Q](gat ngPred cate: Pred cate[Q1]): Pred cate[Q1] = {
+    Pred cate { query: Q1 =>
+      gat ngPred cate(query).flatMap { result =>
+         f (result == Pred cateResult.Val d) {
           apply(query)
         } else {
-          Stitch.value(PredicateResult.Valid)
+          St ch.value(Pred cateResult.Val d)
         }
       }
     }
   }
 
-  def observe(statsReceiver: StatsReceiver): Predicate[Q] = Predicate(
-    StatsUtil.profilePredicateResult(this.arrow, statsReceiver))
+  def observe(statsRece ver: StatsRece ver): Pred cate[Q] = Pred cate(
+    StatsUt l.prof lePred cateResult(t .arrow, statsRece ver))
 
-  def convertToFailOpenWithResultType(resultType: PredicateResult): Predicate[Q] = {
-    Predicate { query: Q =>
+  def convertToFa lOpenW hResultType(resultType: Pred cateResult): Pred cate[Q] = {
+    Pred cate { query: Q =>
       apply(query).handle {
-        case _: Exception =>
+        case _: Except on =>
           resultType
       }
 
@@ -102,151 +102,151 @@ trait Predicate[-Q] {
 
 }
 
-class TruePredicate[Q] extends Predicate[Q] {
-  override def apply(item: Q): Stitch[PredicateResult] = Predicate.AlwaysTrueStitch
+class TruePred cate[Q] extends Pred cate[Q] {
+  overr de def apply( em: Q): St ch[Pred cateResult] = Pred cate.AlwaysTrueSt ch
 }
 
-class FalsePredicate[Q](reason: FilterReason) extends Predicate[Q] {
-  val InvalidResult = Stitch.value(PredicateResult.Invalid(Set(reason)))
-  override def apply(item: Q): Stitch[PredicateResult] = InvalidResult
+class FalsePred cate[Q](reason: F lterReason) extends Pred cate[Q] {
+  val  nval dResult = St ch.value(Pred cateResult. nval d(Set(reason)))
+  overr de def apply( em: Q): St ch[Pred cateResult] =  nval dResult
 }
 
-object Predicate {
+object Pred cate {
 
-  val AlwaysTrueStitch = Stitch.value(PredicateResult.Valid)
+  val AlwaysTrueSt ch = St ch.value(Pred cateResult.Val d)
 
-  val NumBatchesStat = "num_batches_stats"
-  val NumBatchesCount = "num_batches"
+  val NumBatc sStat = "num_batc s_stats"
+  val NumBatc sCount = "num_batc s"
 
-  def apply[Q](func: Q => Stitch[PredicateResult]): Predicate[Q] = new Predicate[Q] {
-    override def apply(item: Q): Stitch[PredicateResult] = func(item)
+  def apply[Q](func: Q => St ch[Pred cateResult]): Pred cate[Q] = new Pred cate[Q] {
+    overr de def apply( em: Q): St ch[Pred cateResult] = func( em)
 
-    override val arrow: Arrow[Q, PredicateResult] = Arrow(func)
+    overr de val arrow: Arrow[Q, Pred cateResult] = Arrow(func)
   }
 
-  def apply[Q](outerArrow: Arrow[Q, PredicateResult]): Predicate[Q] = new Predicate[Q] {
-    override def apply(item: Q): Stitch[PredicateResult] = arrow(item)
+  def apply[Q](outerArrow: Arrow[Q, Pred cateResult]): Pred cate[Q] = new Pred cate[Q] {
+    overr de def apply( em: Q): St ch[Pred cateResult] = arrow( em)
 
-    override val arrow: Arrow[Q, PredicateResult] = outerArrow
+    overr de val arrow: Arrow[Q, Pred cateResult] = outerArrow
   }
 
   /**
-   * Given some items, this function
-   * 1. chunks them up in groups
-   * 2. lazily applies a predicate on each group
-   * 3. filters based on the predicate
-   * 4. takes first numToTake items.
+   * G ven so   ems, t  funct on
+   * 1. chunks t m up  n groups
+   * 2. laz ly appl es a pred cate on each group
+   * 3. f lters based on t  pred cate
+   * 4. takes f rst numToTake  ems.
    *
-   * If numToTake is satisfied, then any later predicates are not called.
+   *  f numToTake  s sat sf ed, t n any later pred cates are not called.
    *
-   * @param items     items of type Q
-   * @param predicate predicate that determines whether an item is acceptable
-   * @param batchSize batch size to call the predicate with
-   * @param numToTake max number of items to return
-   * @param stats stats receiver
-   * @tparam Q type of item
+   * @param  ems      ems of type Q
+   * @param pred cate pred cate that determ nes w t r an  em  s acceptable
+   * @param batchS ze batch s ze to call t  pred cate w h
+   * @param numToTake max number of  ems to return
+   * @param stats stats rece ver
+   * @tparam Q type of  em
    *
-   * @return a future of K items
+   * @return a future of K  ems
    */
-  def batchFilterTake[Q](
-    items: Seq[Q],
-    predicate: Predicate[Q],
-    batchSize: Int,
-    numToTake: Int,
-    stats: StatsReceiver
-  ): Stitch[Seq[Q]] = {
+  def batchF lterTake[Q](
+     ems: Seq[Q],
+    pred cate: Pred cate[Q],
+    batchS ze:  nt,
+    numToTake:  nt,
+    stats: StatsRece ver
+  ): St ch[Seq[Q]] = {
 
     def take(
-      input: Iterator[Stitch[Seq[Q]]],
+       nput:  erator[St ch[Seq[Q]]],
       prev: Seq[Q],
-      takeSize: Int,
-      numOfBatch: Int
-    ): Stitch[(Seq[Q], Int)] = {
-      if (input.hasNext) {
-        val currFut = input.next()
+      takeS ze:  nt,
+      numOfBatch:  nt
+    ): St ch[(Seq[Q],  nt)] = {
+       f ( nput.hasNext) {
+        val currFut =  nput.next()
         currFut.flatMap { curr =>
-          val taken = curr.take(takeSize)
-          val combined = prev ++ taken
-          if (taken.size < takeSize)
-            take(input, combined, takeSize - taken.size, numOfBatch + 1)
-          else Stitch.value((combined, numOfBatch + 1))
+          val taken = curr.take(takeS ze)
+          val comb ned = prev ++ taken
+           f (taken.s ze < takeS ze)
+            take( nput, comb ned, takeS ze - taken.s ze, numOfBatch + 1)
+          else St ch.value((comb ned, numOfBatch + 1))
         }
       } else {
-        Stitch.value((prev, numOfBatch))
+        St ch.value((prev, numOfBatch))
       }
     }
 
-    val batchedItems = items.view.grouped(batchSize)
-    val batchedFutures = batchedItems.map { batch =>
-      Stitch.traverse(batch)(predicate.apply).map { conds =>
-        (batch.zip(conds)).withFilter(_._2.value).map(_._1)
+    val batc d ems =  ems.v ew.grouped(batchS ze)
+    val batc dFutures = batc d ems.map { batch =>
+      St ch.traverse(batch)(pred cate.apply).map { conds =>
+        (batch.z p(conds)).w hF lter(_._2.value).map(_._1)
       }
     }
-    take(batchedFutures, Nil, numToTake, 0).map {
-      case (filtered: Seq[Q], numOfBatch: Int) =>
-        stats.stat(NumBatchesStat).add(numOfBatch)
-        stats.counter(NumBatchesCount).incr(numOfBatch)
-        filtered
+    take(batc dFutures, N l, numToTake, 0).map {
+      case (f ltered: Seq[Q], numOfBatch:  nt) =>
+        stats.stat(NumBatc sStat).add(numOfBatch)
+        stats.counter(NumBatc sCount). ncr(numOfBatch)
+        f ltered
     }
   }
 
   /**
-   * filter a list of items based on the predicate
+   * f lter a l st of  ems based on t  pred cate
    *
-   * @param items a list of items
-   * @param predicate predicate of the item
-   * @tparam Q item type
-   * @return the list of items that satisfy the predicate
+   * @param  ems a l st of  ems
+   * @param pred cate pred cate of t   em
+   * @tparam Q  em type
+   * @return t  l st of  ems that sat sfy t  pred cate
    */
-  def filter[Q](items: Seq[Q], predicate: Predicate[Q]): Stitch[Seq[Q]] = {
-    predicate.batch(items).map { results =>
-      items.zip(results).collect {
-        case (item, PredicateResult.Valid) => item
-      }
-    }
-  }
-
-  /**
-   * filter a list of items based on the predicate given the target
-   *
-   * @param target target item
-   * @param items a list of items
-   * @param predicate predicate of the (target, item) pair
-   * @tparam Q item type
-   * @return the list of items that satisfy the predicate given the target
-   */
-  def filter[T, Q](target: T, items: Seq[Q], predicate: Predicate[(T, Q)]): Stitch[Seq[Q]] = {
-    predicate.batch(items.map(i => (target, i))).map { results =>
-      items.zip(results).collect {
-        case (item, PredicateResult.Valid) => item
+  def f lter[Q]( ems: Seq[Q], pred cate: Pred cate[Q]): St ch[Seq[Q]] = {
+    pred cate.batch( ems).map { results =>
+       ems.z p(results).collect {
+        case ( em, Pred cateResult.Val d) =>  em
       }
     }
   }
 
   /**
-   * Returns a predicate, where an element is true iff it that element is true for all input predicates.
-   * ie. it is an AND operation
+   * f lter a l st of  ems based on t  pred cate g ven t  target
    *
-   * This is done concurrently.
-   *
-   * @param predicates list of predicates
-   * @tparam Q Type parameter
-   *
-   * @return new predicate object that is the logical "and" of the input predicates
+   * @param target target  em
+   * @param  ems a l st of  ems
+   * @param pred cate pred cate of t  (target,  em) pa r
+   * @tparam Q  em type
+   * @return t  l st of  ems that sat sfy t  pred cate g ven t  target
    */
-  def andConcurrently[Q](predicates: Seq[Predicate[Q]]): Predicate[Q] = {
-    Predicate { query: Q =>
-      Stitch.traverse(predicates)(p => p(query)).map { predicateResults =>
-        val allInvalid = predicateResults
+  def f lter[T, Q](target: T,  ems: Seq[Q], pred cate: Pred cate[(T, Q)]): St ch[Seq[Q]] = {
+    pred cate.batch( ems.map(  => (target,  ))).map { results =>
+       ems.z p(results).collect {
+        case ( em, Pred cateResult.Val d) =>  em
+      }
+    }
+  }
+
+  /**
+   * Returns a pred cate, w re an ele nt  s true  ff   that ele nt  s true for all  nput pred cates.
+   *  e.    s an AND operat on
+   *
+   * T   s done concurrently.
+   *
+   * @param pred cates l st of pred cates
+   * @tparam Q Type para ter
+   *
+   * @return new pred cate object that  s t  log cal "and" of t   nput pred cates
+   */
+  def andConcurrently[Q](pred cates: Seq[Pred cate[Q]]): Pred cate[Q] = {
+    Pred cate { query: Q =>
+      St ch.traverse(pred cates)(p => p(query)).map { pred cateResults =>
+        val all nval d = pred cateResults
           .collect {
-            case PredicateResult.Invalid(reason) =>
+            case Pred cateResult. nval d(reason) =>
               reason
           }
-        if (allInvalid.isEmpty) {
-          PredicateResult.Valid
+         f (all nval d. sEmpty) {
+          Pred cateResult.Val d
         } else {
-          val allInvalidReasons = allInvalid.reduce(_ ++ _)
-          PredicateResult.Invalid(allInvalidReasons)
+          val all nval dReasons = all nval d.reduce(_ ++ _)
+          Pred cateResult. nval d(all nval dReasons)
         }
       }
     }
@@ -254,28 +254,28 @@ object Predicate {
 }
 
 /**
- * applies the underlying predicate when the param is on.
+ * appl es t  underly ng pred cate w n t  param  s on.
  */
-abstract class GatedPredicateBase[Q](
-  underlyingPredicate: Predicate[Q],
-  stats: StatsReceiver = NullStatsReceiver)
-    extends Predicate[Q] {
-  def gate(item: Q): Boolean
+abstract class GatedPred cateBase[Q](
+  underly ngPred cate: Pred cate[Q],
+  stats: StatsRece ver = NullStatsRece ver)
+    extends Pred cate[Q] {
+  def gate( em: Q): Boolean
 
-  val underlyingPredicateTotal = stats.counter("underlying_total")
-  val underlyingPredicateValid = stats.counter("underlying_valid")
-  val underlyingPredicateInvalid = stats.counter("underlying_invalid")
+  val underly ngPred cateTotal = stats.counter("underly ng_total")
+  val underly ngPred cateVal d = stats.counter("underly ng_val d")
+  val underly ngPred cate nval d = stats.counter("underly ng_ nval d")
   val notGatedCounter = stats.counter("not_gated")
 
-  val ValidStitch: Stitch[PredicateResult.Valid.type] = Stitch.value(PredicateResult.Valid)
+  val Val dSt ch: St ch[Pred cateResult.Val d.type] = St ch.value(Pred cateResult.Val d)
 
-  override def apply(item: Q): Stitch[PredicateResult] = {
-    if (gate(item)) {
-      underlyingPredicateTotal.incr()
-      underlyingPredicate(item)
+  overr de def apply( em: Q): St ch[Pred cateResult] = {
+     f (gate( em)) {
+      underly ngPred cateTotal. ncr()
+      underly ngPred cate( em)
     } else {
-      notGatedCounter.incr()
-      ValidStitch
+      notGatedCounter. ncr()
+      Val dSt ch
     }
   }
 

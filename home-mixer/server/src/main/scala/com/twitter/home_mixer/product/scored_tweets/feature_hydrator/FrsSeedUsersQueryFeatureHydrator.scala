@@ -1,64 +1,64 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator
 
-import com.twitter.follow_recommendations.{thriftscala => frs}
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.product_mixer.component_library.candidate_source.recommendations.UserFollowRecommendationsCandidateSource
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyView
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.{thr ftscala => frs}
+ mport com.tw ter.ho _m xer.product.scored_t ets.model.ScoredT etsQuery
+ mport com.tw ter.product_m xer.component_l brary.cand date_s ce.recom ndat ons.UserFollowRecom ndat onsCand dateS ce
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.strato.StratoKeyV ew
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.st ch.St ch
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-object FrsSeedUserIdsFeature extends Feature[TweetCandidate, Option[Seq[Long]]]
-object FrsUserToFollowedByUserIdsFeature extends Feature[TweetCandidate, Map[Long, Seq[Long]]]
+object FrsSeedUser dsFeature extends Feature[T etCand date, Opt on[Seq[Long]]]
+object FrsUserToFollo dByUser dsFeature extends Feature[T etCand date, Map[Long, Seq[Long]]]
 
-@Singleton
-case class FrsSeedUsersQueryFeatureHydrator @Inject() (
-  userFollowRecommendationsCandidateSource: UserFollowRecommendationsCandidateSource)
-    extends QueryFeatureHydrator[ScoredTweetsQuery] {
+@S ngleton
+case class FrsSeedUsersQueryFeatureHydrator @ nject() (
+  userFollowRecom ndat onsCand dateS ce: UserFollowRecom ndat onsCand dateS ce)
+    extends QueryFeatureHydrator[ScoredT etsQuery] {
 
-  private val maxUsersToFetch = 100
+  pr vate val maxUsersToFetch = 100
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("FrsSeedUsers")
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er("FrsSeedUsers")
 
-  override def features: Set[Feature[_, _]] = Set(
-    FrsSeedUserIdsFeature,
-    FrsUserToFollowedByUserIdsFeature
+  overr de def features: Set[Feature[_, _]] = Set(
+    FrsSeedUser dsFeature,
+    FrsUserToFollo dByUser dsFeature
   )
 
-  override def hydrate(query: ScoredTweetsQuery): Stitch[FeatureMap] = {
-    val frsRequest = frs.RecommendationRequest(
-      clientContext = frs.ClientContext(query.getOptionalUserId),
-      displayLocation = frs.DisplayLocation.HomeTimelineTweetRecs,
-      maxResults = Some(maxUsersToFetch)
+  overr de def hydrate(query: ScoredT etsQuery): St ch[FeatureMap] = {
+    val frsRequest = frs.Recom ndat onRequest(
+      cl entContext = frs.Cl entContext(query.getOpt onalUser d),
+      d splayLocat on = frs.D splayLocat on.Ho T  l neT etRecs,
+      maxResults = So (maxUsersToFetch)
     )
 
-    userFollowRecommendationsCandidateSource(StratoKeyView(frsRequest, Unit))
-      .map { userRecommendations: Seq[frs.UserRecommendation] =>
-        val seedUserIds = userRecommendations.map(_.userId)
-        val seedUserIdsSet = seedUserIds.toSet
+    userFollowRecom ndat onsCand dateS ce(StratoKeyV ew(frsRequest, Un ))
+      .map { userRecom ndat ons: Seq[frs.UserRecom ndat on] =>
+        val seedUser ds = userRecom ndat ons.map(_.user d)
+        val seedUser dsSet = seedUser ds.toSet
 
-        val userToFollowedByUserIds: Map[Long, Seq[Long]] = userRecommendations.flatMap {
-          userRecommendation =>
-            if (seedUserIdsSet.contains(userRecommendation.userId)) {
+        val userToFollo dByUser ds: Map[Long, Seq[Long]] = userRecom ndat ons.flatMap {
+          userRecom ndat on =>
+             f (seedUser dsSet.conta ns(userRecom ndat on.user d)) {
               val followProof =
-                userRecommendation.reason.flatMap(_.accountProof).flatMap(_.followProof)
-              val followedByUserIds = followProof.map(_.userIds).getOrElse(Seq.empty)
-              Some(userRecommendation.userId -> followedByUserIds)
+                userRecom ndat on.reason.flatMap(_.accountProof).flatMap(_.followProof)
+              val follo dByUser ds = followProof.map(_.user ds).getOrElse(Seq.empty)
+              So (userRecom ndat on.user d -> follo dByUser ds)
             } else {
               None
             }
         }.toMap
 
-        FeatureMapBuilder()
-          .add(FrsSeedUserIdsFeature, Some(seedUserIds))
-          .add(FrsUserToFollowedByUserIdsFeature, userToFollowedByUserIds)
-          .build()
+        FeatureMapBu lder()
+          .add(FrsSeedUser dsFeature, So (seedUser ds))
+          .add(FrsUserToFollo dByUser dsFeature, userToFollo dByUser ds)
+          .bu ld()
       }
   }
 }

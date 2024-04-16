@@ -1,183 +1,183 @@
-package com.twitter.ann.hnsw
+package com.tw ter.ann.hnsw
 
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.ann.common.EmbeddingType._
-import com.twitter.ann.common.Metric.toThrift
-import com.twitter.ann.common._
-import com.twitter.ann.common.thriftscala.DistanceMetric
-import com.twitter.ann.hnsw.HnswIndex.RandomProvider
-import com.twitter.util.Future
-import java.util.Random
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ThreadLocalRandom
-import java.util.concurrent.locks.Lock
-import java.util.concurrent.locks.ReentrantLock
-import scala.collection.JavaConverters._
+ mport com.google.common.annotat ons.V s bleForTest ng
+ mport com.tw ter.ann.common.Embedd ngType._
+ mport com.tw ter.ann.common. tr c.toThr ft
+ mport com.tw ter.ann.common._
+ mport com.tw ter.ann.common.thr ftscala.D stance tr c
+ mport com.tw ter.ann.hnsw.Hnsw ndex.RandomProv der
+ mport com.tw ter.ut l.Future
+ mport java.ut l.Random
+ mport java.ut l.concurrent.ConcurrentHashMap
+ mport java.ut l.concurrent.ThreadLocalRandom
+ mport java.ut l.concurrent.locks.Lock
+ mport java.ut l.concurrent.locks.ReentrantLock
+ mport scala.collect on.JavaConverters._
 
-private[hnsw] object Hnsw {
-  private[hnsw] def apply[T, D <: Distance[D]](
-    dimension: Int,
-    metric: Metric[D],
-    efConstruction: Int,
-    maxM: Int,
-    expectedElements: Int,
-    futurePool: ReadWriteFuturePool,
-    idEmbeddingMap: IdEmbeddingMap[T]
+pr vate[hnsw] object Hnsw {
+  pr vate[hnsw] def apply[T, D <: D stance[D]](
+    d  ns on:  nt,
+     tr c:  tr c[D],
+    efConstruct on:  nt,
+    maxM:  nt,
+    expectedEle nts:  nt,
+    futurePool: ReadWr eFuturePool,
+     dEmbedd ngMap:  dEmbedd ngMap[T]
   ): Hnsw[T, D] = {
-    val randomProvider = new RandomProvider {
-      override def get(): Random = ThreadLocalRandom.current()
+    val randomProv der = new RandomProv der {
+      overr de def get(): Random = ThreadLocalRandom.current()
     }
-    val distFn =
-      DistanceFunctionGenerator(metric, (key: T) => idEmbeddingMap.get(key))
-    val internalIndex = new HnswIndex[T, EmbeddingVector](
-      distFn.index,
-      distFn.query,
-      efConstruction,
+    val d stFn =
+      D stanceFunct onGenerator( tr c, (key: T) =>  dEmbedd ngMap.get(key))
+    val  nternal ndex = new Hnsw ndex[T, Embedd ngVector](
+      d stFn. ndex,
+      d stFn.query,
+      efConstruct on,
       maxM,
-      expectedElements,
-      randomProvider
+      expectedEle nts,
+      randomProv der
     )
     new Hnsw[T, D](
-      dimension,
-      metric,
-      internalIndex,
+      d  ns on,
+       tr c,
+       nternal ndex,
       futurePool,
-      idEmbeddingMap,
-      distFn.shouldNormalize,
-      LockedAccess.apply(expectedElements)
+       dEmbedd ngMap,
+      d stFn.shouldNormal ze,
+      LockedAccess.apply(expectedEle nts)
     )
   }
 }
 
-private[hnsw] object LockedAccess {
-  protected[hnsw] def apply[T](expectedElements: Int): LockedAccess[T] =
-    DefaultLockedAccess(new ConcurrentHashMap[T, Lock](expectedElements))
+pr vate[hnsw] object LockedAccess {
+  protected[hnsw] def apply[T](expectedEle nts:  nt): LockedAccess[T] =
+    DefaultLockedAccess(new ConcurrentHashMap[T, Lock](expectedEle nts))
   protected[hnsw] def apply[T](): LockedAccess[T] =
     DefaultLockedAccess(new ConcurrentHashMap[T, Lock]())
 }
 
-private[hnsw] case class DefaultLockedAccess[T](locks: ConcurrentHashMap[T, Lock])
+pr vate[hnsw] case class DefaultLockedAccess[T](locks: ConcurrentHashMap[T, Lock])
     extends LockedAccess[T] {
-  override def lockProvider(item: T) = locks.computeIfAbsent(item, (_: T) => new ReentrantLock())
+  overr de def lockProv der( em: T) = locks.compute fAbsent( em, (_: T) => new ReentrantLock())
 }
 
-private[hnsw] trait LockedAccess[T] {
-  protected def lockProvider(item: T): Lock
-  def lock[K](item: T)(fn: => K): K = {
-    val lock = lockProvider(item)
+pr vate[hnsw] tra  LockedAccess[T] {
+  protected def lockProv der( em: T): Lock
+  def lock[K]( em: T)(fn: => K): K = {
+    val lock = lockProv der( em)
     lock.lock()
     try {
       fn
-    } finally {
+    } f nally {
       lock.unlock()
     }
   }
 }
 
-@VisibleForTesting
-private[hnsw] class Hnsw[T, D <: Distance[D]](
-  dimension: Int,
-  metric: Metric[D],
-  hnswIndex: HnswIndex[T, EmbeddingVector],
-  readWriteFuturePool: ReadWriteFuturePool,
-  idEmbeddingMap: IdEmbeddingMap[T],
-  shouldNormalize: Boolean,
+@V s bleForTest ng
+pr vate[hnsw] class Hnsw[T, D <: D stance[D]](
+  d  ns on:  nt,
+   tr c:  tr c[D],
+  hnsw ndex: Hnsw ndex[T, Embedd ngVector],
+  readWr eFuturePool: ReadWr eFuturePool,
+   dEmbedd ngMap:  dEmbedd ngMap[T],
+  shouldNormal ze: Boolean,
   lockedAccess: LockedAccess[T] = LockedAccess.apply[T]())
     extends Appendable[T, HnswParams, D]
-    with Queryable[T, HnswParams, D]
-    with Updatable[T] {
-  override def append(entity: EntityEmbedding[T]): Future[Unit] = {
-    readWriteFuturePool.write {
-      val indexDimension = entity.embedding.length
+    w h Queryable[T, HnswParams, D]
+    w h Updatable[T] {
+  overr de def append(ent y: Ent yEmbedd ng[T]): Future[Un ] = {
+    readWr eFuturePool.wr e {
+      val  ndexD  ns on = ent y.embedd ng.length
       assert(
-        toThrift(metric) == DistanceMetric.EditDistance || indexDimension == dimension,
-        s"Dimension mismatch for index(${indexDimension}) and embedding($dimension)"
+        toThr ft( tr c) == D stance tr c.Ed D stance ||  ndexD  ns on == d  ns on,
+        s"D  ns on m smatch for  ndex(${ ndexD  ns on}) and embedd ng($d  ns on)"
       )
 
-      lockedAccess.lock(entity.id) {
-        // To make this thread-safe, we are using ConcurrentHashMap#putIfAbsent underneath,
-        // so if there is a pre-existing item, put() will return something that is not null
-        val embedding = idEmbeddingMap.putIfAbsent(entity.id, updatedEmbedding(entity.embedding))
+      lockedAccess.lock(ent y. d) {
+        // To make t  thread-safe,   are us ng ConcurrentHashMap#put fAbsent underneath,
+        // so  f t re  s a pre-ex st ng  em, put() w ll return so th ng that  s not null
+        val embedd ng =  dEmbedd ngMap.put fAbsent(ent y. d, updatedEmbedd ng(ent y.embedd ng))
 
-        if (embedding == null) { // New element - insert into the index
-          hnswIndex.insert(entity.id)
-        } else { // Existing element - update the embedding and graph structure
-          throw new IllegalDuplicateInsertException(
-            "Append method does not permit duplicates (try using update method): " + entity.id)
+         f (embedd ng == null) { // New ele nt -  nsert  nto t   ndex
+          hnsw ndex. nsert(ent y. d)
+        } else { // Ex st ng ele nt - update t  embedd ng and graph structure
+          throw new  llegalDupl cate nsertExcept on(
+            "Append  thod does not perm  dupl cates (try us ng update  thod): " + ent y. d)
         }
       }
-    } onFailure { e =>
-      Future.exception(e)
+    } onFa lure { e =>
+      Future.except on(e)
     }
   }
 
-  override def toQueryable: Queryable[T, HnswParams, D] = this
+  overr de def toQueryable: Queryable[T, HnswParams, D] = t 
 
-  override def query(
-    embedding: EmbeddingVector,
-    numOfNeighbours: Int,
-    runtimeParams: HnswParams
-  ): Future[List[T]] = {
-    queryWithDistance(embedding, numOfNeighbours, runtimeParams)
-      .map(_.map(_.neighbor))
+  overr de def query(
+    embedd ng: Embedd ngVector,
+    numOfNe ghb s:  nt,
+    runt  Params: HnswParams
+  ): Future[L st[T]] = {
+    queryW hD stance(embedd ng, numOfNe ghb s, runt  Params)
+      .map(_.map(_.ne ghbor))
   }
 
-  override def queryWithDistance(
-    embedding: EmbeddingVector,
-    numOfNeighbours: Int,
-    runtimeParams: HnswParams
-  ): Future[List[NeighborWithDistance[T, D]]] = {
-    val indexDimension = embedding.length
+  overr de def queryW hD stance(
+    embedd ng: Embedd ngVector,
+    numOfNe ghb s:  nt,
+    runt  Params: HnswParams
+  ): Future[L st[Ne ghborW hD stance[T, D]]] = {
+    val  ndexD  ns on = embedd ng.length
     assert(
-      toThrift(metric) == DistanceMetric.EditDistance || indexDimension == dimension,
-      s"Dimension mismatch for index(${indexDimension}) and embedding($dimension)"
+      toThr ft( tr c) == D stance tr c.Ed D stance ||  ndexD  ns on == d  ns on,
+      s"D  ns on m smatch for  ndex(${ ndexD  ns on}) and embedd ng($d  ns on)"
     )
-    readWriteFuturePool.read {
-      hnswIndex
-        .searchKnn(updatedEmbedding(embedding), numOfNeighbours, runtimeParams.ef)
+    readWr eFuturePool.read {
+      hnsw ndex
+        .searchKnn(updatedEmbedd ng(embedd ng), numOfNe ghb s, runt  Params.ef)
         .asScala
         .map { nn =>
-          NeighborWithDistance(
-            nn.getItem,
-            metric.fromAbsoluteDistance(nn.getDistance)
+          Ne ghborW hD stance(
+            nn.get em,
+             tr c.fromAbsoluteD stance(nn.getD stance)
           )
         }
-        .toList
+        .toL st
     }
   }
 
-  private[this] def updatedEmbedding(embedding: EmbeddingVector): EmbeddingVector = {
-    if (shouldNormalize) {
-      MetricUtil.norm(embedding)
+  pr vate[t ] def updatedEmbedd ng(embedd ng: Embedd ngVector): Embedd ngVector = {
+     f (shouldNormal ze) {
+       tr cUt l.norm(embedd ng)
     } else {
-      embedding
+      embedd ng
     }
   }
 
-  def getIndex: HnswIndex[T, EmbeddingVector] = hnswIndex
-  def getDimen: Int = dimension
-  def getMetric: Metric[D] = metric
-  def getIdEmbeddingMap: IdEmbeddingMap[T] = idEmbeddingMap
-  override def update(
-    entity: EntityEmbedding[T]
-  ): Future[Unit] = {
-    readWriteFuturePool.write {
-      val indexDimension = entity.embedding.length
+  def get ndex: Hnsw ndex[T, Embedd ngVector] = hnsw ndex
+  def getD  n:  nt = d  ns on
+  def get tr c:  tr c[D] =  tr c
+  def get dEmbedd ngMap:  dEmbedd ngMap[T] =  dEmbedd ngMap
+  overr de def update(
+    ent y: Ent yEmbedd ng[T]
+  ): Future[Un ] = {
+    readWr eFuturePool.wr e {
+      val  ndexD  ns on = ent y.embedd ng.length
       assert(
-        toThrift(metric) == DistanceMetric.EditDistance || indexDimension == dimension,
-        s"Dimension mismatch for index(${indexDimension}) and embedding($dimension)"
+        toThr ft( tr c) == D stance tr c.Ed D stance ||  ndexD  ns on == d  ns on,
+        s"D  ns on m smatch for  ndex(${ ndexD  ns on}) and embedd ng($d  ns on)"
       )
 
-      lockedAccess.lock(entity.id) {
-        val embedding = idEmbeddingMap.put(entity.id, updatedEmbedding(entity.embedding))
-        if (embedding == null) { // New element - insert into the index
-          hnswIndex.insert(entity.id)
-        } else { // Existing element - update the embedding and graph structure
-          hnswIndex.reInsert(entity.id);
+      lockedAccess.lock(ent y. d) {
+        val embedd ng =  dEmbedd ngMap.put(ent y. d, updatedEmbedd ng(ent y.embedd ng))
+         f (embedd ng == null) { // New ele nt -  nsert  nto t   ndex
+          hnsw ndex. nsert(ent y. d)
+        } else { // Ex st ng ele nt - update t  embedd ng and graph structure
+          hnsw ndex.re nsert(ent y. d);
         }
       }
-    } onFailure { e =>
-      Future.exception(e)
+    } onFa lure { e =>
+      Future.except on(e)
     }
   }
 }

@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker
+package com.tw ter.follow_recom ndat ons.common.rankers.  ghted_cand date_s ce_ranker
 
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
-object WeightedCandidateSourceRankerParams {
-  case object ScribeRankingInfoInWeightedRanker
-      extends FSParam[Boolean]("weighted_ranker_scribe_ranking_info", false)
+object   ghtedCand dateS ceRankerParams {
+  case object Scr beRank ng nfo n  ghtedRanker
+      extends FSParam[Boolean]("  ghted_ranker_scr be_rank ng_ nfo", false)
 }

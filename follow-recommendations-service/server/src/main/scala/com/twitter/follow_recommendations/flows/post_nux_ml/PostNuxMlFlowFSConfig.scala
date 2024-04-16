@@ -1,80 +1,80 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+package com.tw ter.follow_recom ndat ons.flows.post_nux_ml
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker.NoShuffle
-import com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker.RandomShuffler
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.rankers.  ghted_cand date_s ce_ranker.NoShuffle
+ mport com.tw ter.follow_recom ndat ons.common.rankers.  ghted_cand date_s ce_ranker.RandomShuffler
+ mport com.tw ter.follow_recom ndat ons.conf gap .common.FeatureSw chConf g
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .HasDurat onConvers on
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.ut l.Durat on
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class PostNuxMlFlowFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] = Seq(
-    PostNuxMlParams.OnlineSTPEnabled,
-    PostNuxMlParams.SamplingTransformEnabled,
-    PostNuxMlParams.Follow2VecLinearRegressionEnabled,
+@S ngleton
+class PostNuxMlFlowFSConf g @ nject() () extends FeatureSw chConf g {
+  overr de val booleanFSParams: Seq[Param[Boolean] w h FSNa ] = Seq(
+    PostNuxMlParams.Onl neSTPEnabled,
+    PostNuxMlParams.Sampl ngTransformEnabled,
+    PostNuxMlParams.Follow2VecL nearRegress onEnabled,
     PostNuxMlParams.UseMlRanker,
-    PostNuxMlParams.EnableCandidateParamHydration,
-    PostNuxMlParams.EnableInterleaveRanker,
+    PostNuxMlParams.EnableCand dateParamHydrat on,
+    PostNuxMlParams.Enable nterleaveRanker,
     PostNuxMlParams.EnableAdhocRanker,
-    PostNuxMlParams.ExcludeNearZeroCandidates,
-    PostNuxMlParams.IncludeRepeatedProfileVisitsCandidateSource,
-    PostNuxMlParams.EnableInterestsOptOutPredicate,
-    PostNuxMlParams.EnableSGSPredicate,
-    PostNuxMlParams.EnableInvalidRelationshipPredicate,
+    PostNuxMlParams.ExcludeNearZeroCand dates,
+    PostNuxMlParams. ncludeRepeatedProf leV s sCand dateS ce,
+    PostNuxMlParams.Enable nterestsOptOutPred cate,
+    PostNuxMlParams.EnableSGSPred cate,
+    PostNuxMlParams.Enable nval dRelat onsh pPred cate,
     PostNuxMlParams.EnableRemoveAccountProofTransform,
-    PostNuxMlParams.EnablePPMILocaleFollowSourceInPostNux,
+    PostNuxMlParams.EnablePPM LocaleFollowS ce nPostNux,
     PostNuxMlParams.EnableRealGraphOonV2,
-    PostNuxMlParams.GetFollowersFromSgs,
-    PostNuxMlRequestBuilderParams.EnableInvalidRelationshipPredicate
+    PostNuxMlParams.GetFollo rsFromSgs,
+    PostNuxMlRequestBu lderParams.Enable nval dRelat onsh pPred cate
   )
 
-  override val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
-    PostNuxMlCandidateSourceWeightParams.CandidateWeightCrowdSearch,
-    PostNuxMlCandidateSourceWeightParams.CandidateWeightTopOrganicFollow,
-    PostNuxMlCandidateSourceWeightParams.CandidateWeightPPMILocaleFollow,
-    PostNuxMlCandidateSourceWeightParams.CandidateWeightForwardEmailBook,
-    PostNuxMlCandidateSourceWeightParams.CandidateWeightForwardPhoneBook,
-    PostNuxMlCandidateSourceWeightParams.CandidateWeightOfflineStrongTiePrediction,
-    PostNuxMlCandidateSourceWeightParams.CandidateWeightOnlineStp,
-    PostNuxMlCandidateSourceWeightParams.CandidateWeightPopCountry,
-    PostNuxMlCandidateSourceWeightParams.CandidateWeightPopGeohash,
-    PostNuxMlCandidateSourceWeightParams.CandidateWeightPopGeohashQualityFollow,
-    PostNuxMlCandidateSourceWeightParams.CandidateWeightPopGeoBackfill,
-    PostNuxMlCandidateSourceWeightParams.CandidateWeightRecentFollowingSimilarUsers,
-    PostNuxMlCandidateSourceWeightParams.CandidateWeightRecentEngagementDirectFollowSalsaExpansion,
-    PostNuxMlCandidateSourceWeightParams.CandidateWeightRecentEngagementNonDirectFollow,
-    PostNuxMlCandidateSourceWeightParams.CandidateWeightRecentEngagementSimilarUsers,
-    PostNuxMlCandidateSourceWeightParams.CandidateWeightRepeatedProfileVisits,
-    PostNuxMlCandidateSourceWeightParams.CandidateWeightFollow2vecNearestNeighbors,
-    PostNuxMlCandidateSourceWeightParams.CandidateWeightReverseEmailBook,
-    PostNuxMlCandidateSourceWeightParams.CandidateWeightReversePhoneBook,
-    PostNuxMlCandidateSourceWeightParams.CandidateWeightTriangularLoops,
-    PostNuxMlCandidateSourceWeightParams.CandidateWeightTwoHopRandomWalk,
-    PostNuxMlCandidateSourceWeightParams.CandidateWeightUserUserGraph,
-    PostNuxMlCandidateSourceWeightParams.CandidateWeightRealGraphOonV2,
+  overr de val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
+    PostNuxMlCand dateS ce  ghtParams.Cand date  ghtCrowdSearch,
+    PostNuxMlCand dateS ce  ghtParams.Cand date  ghtTopOrgan cFollow,
+    PostNuxMlCand dateS ce  ghtParams.Cand date  ghtPPM LocaleFollow,
+    PostNuxMlCand dateS ce  ghtParams.Cand date  ghtForwardEma lBook,
+    PostNuxMlCand dateS ce  ghtParams.Cand date  ghtForwardPhoneBook,
+    PostNuxMlCand dateS ce  ghtParams.Cand date  ghtOffl neStrongT ePred ct on,
+    PostNuxMlCand dateS ce  ghtParams.Cand date  ghtOnl neStp,
+    PostNuxMlCand dateS ce  ghtParams.Cand date  ghtPopCountry,
+    PostNuxMlCand dateS ce  ghtParams.Cand date  ghtPopGeohash,
+    PostNuxMlCand dateS ce  ghtParams.Cand date  ghtPopGeohashQual yFollow,
+    PostNuxMlCand dateS ce  ghtParams.Cand date  ghtPopGeoBackf ll,
+    PostNuxMlCand dateS ce  ghtParams.Cand date  ghtRecentFollow ngS m larUsers,
+    PostNuxMlCand dateS ce  ghtParams.Cand date  ghtRecentEngage ntD rectFollowSalsaExpans on,
+    PostNuxMlCand dateS ce  ghtParams.Cand date  ghtRecentEngage ntNonD rectFollow,
+    PostNuxMlCand dateS ce  ghtParams.Cand date  ghtRecentEngage ntS m larUsers,
+    PostNuxMlCand dateS ce  ghtParams.Cand date  ghtRepeatedProf leV s s,
+    PostNuxMlCand dateS ce  ghtParams.Cand date  ghtFollow2vecNearestNe ghbors,
+    PostNuxMlCand dateS ce  ghtParams.Cand date  ghtReverseEma lBook,
+    PostNuxMlCand dateS ce  ghtParams.Cand date  ghtReversePhoneBook,
+    PostNuxMlCand dateS ce  ghtParams.Cand date  ghtTr angularLoops,
+    PostNuxMlCand dateS ce  ghtParams.Cand date  ghtTwoHopRandomWalk,
+    PostNuxMlCand dateS ce  ghtParams.Cand date  ghtUserUserGraph,
+    PostNuxMlCand dateS ce  ghtParams.Cand date  ghtRealGraphOonV2,
     PostNuxMlParams.TurnoffMLScorerQFThreshold
   )
 
-  override val durationFSParams: Seq[FSBoundedParam[Duration] with HasDurationConversion] = Seq(
+  overr de val durat onFSParams: Seq[FSBoundedParam[Durat on] w h HasDurat onConvers on] = Seq(
     PostNuxMlParams.MlRankerBudget,
-    PostNuxMlRequestBuilderParams.TopicIdFetchBudget,
-    PostNuxMlRequestBuilderParams.DismissedIdScanBudget,
-    PostNuxMlRequestBuilderParams.WTFImpressionsScanBudget
+    PostNuxMlRequestBu lderParams.Top c dFetchBudget,
+    PostNuxMlRequestBu lderParams.D sm ssed dScanBudget,
+    PostNuxMlRequestBu lderParams.WTF mpress onsScanBudget
   )
 
-  override val gatedOverridesMap = Map(
-    PostNuxMlFlowFeatureSwitchKeys.EnableRandomDataCollection -> Seq(
-      PostNuxMlParams.CandidateShuffler := new RandomShuffler[CandidateUser],
-      PostNuxMlParams.LogRandomRankerId := true
+  overr de val gatedOverr desMap = Map(
+    PostNuxMlFlowFeatureSw chKeys.EnableRandomDataCollect on -> Seq(
+      PostNuxMlParams.Cand dateShuffler := new RandomShuffler[Cand dateUser],
+      PostNuxMlParams.LogRandomRanker d := true
     ),
-    PostNuxMlFlowFeatureSwitchKeys.EnableNoShuffler -> Seq(
-      PostNuxMlParams.CandidateShuffler := new NoShuffle[CandidateUser]
+    PostNuxMlFlowFeatureSw chKeys.EnableNoShuffler -> Seq(
+      PostNuxMlParams.Cand dateShuffler := new NoShuffle[Cand dateUser]
     ),
   )
 }

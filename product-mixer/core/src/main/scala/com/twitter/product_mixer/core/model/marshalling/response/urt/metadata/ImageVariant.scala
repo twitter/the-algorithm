@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.ColorPalette
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.color.ColorPalette
 
-case class ImageVariant(
-  url: String,
-  width: Int,
-  height: Int,
-  palette: Option[List[ColorPalette]])
+case class  mageVar ant(
+  url: Str ng,
+  w dth:  nt,
+    ght:  nt,
+  palette: Opt on[L st[ColorPalette]])

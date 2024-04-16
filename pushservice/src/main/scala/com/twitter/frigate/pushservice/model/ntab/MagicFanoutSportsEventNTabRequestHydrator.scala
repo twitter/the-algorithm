@@ -1,92 +1,92 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.tw ter.fr gate.pushserv ce.model.ntab
 
-import com.twitter.frigate.common.base.MagicFanoutSportsEventCandidate
-import com.twitter.frigate.common.base.MagicFanoutSportsScoreInformation
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.MagicFanoutEventHydratedCandidate
-import com.twitter.frigate.pushservice.params.{PushFeatureSwitchParams => FS}
-import com.twitter.notificationservice.thriftscala.CreateGenericNotificationRequest
-import com.twitter.notificationservice.thriftscala.DisplayText
-import com.twitter.notificationservice.thriftscala.DisplayTextEntity
-import com.twitter.notificationservice.thriftscala.GenericType
-import com.twitter.notificationservice.thriftscala.TextValue
-import com.twitter.notificationservice.thriftscala.TapThroughAction
-import com.twitter.util.Future
-import com.twitter.util.Time
+ mport com.tw ter.fr gate.common.base.Mag cFanoutSportsEventCand date
+ mport com.tw ter.fr gate.common.base.Mag cFanoutSportsScore nformat on
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.Mag cFanoutEventHydratedCand date
+ mport com.tw ter.fr gate.pushserv ce.params.{PushFeatureSw chParams => FS}
+ mport com.tw ter.not f cat onserv ce.thr ftscala.CreateGener cNot f cat onRequest
+ mport com.tw ter.not f cat onserv ce.thr ftscala.D splayText
+ mport com.tw ter.not f cat onserv ce.thr ftscala.D splayTextEnt y
+ mport com.tw ter.not f cat onserv ce.thr ftscala.Gener cType
+ mport com.tw ter.not f cat onserv ce.thr ftscala.TextValue
+ mport com.tw ter.not f cat onserv ce.thr ftscala.TapThroughAct on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
 
-trait MagicFanoutSportsEventNTabRequestHydrator extends EventNTabRequestHydrator {
-  self: PushCandidate
-    with MagicFanoutEventHydratedCandidate
-    with MagicFanoutSportsEventCandidate
-    with MagicFanoutSportsScoreInformation =>
+tra  Mag cFanoutSportsEventNTabRequestHydrator extends EventNTabRequestHydrator {
+  self: PushCand date
+    w h Mag cFanoutEventHydratedCand date
+    w h Mag cFanoutSportsEventCand date
+    w h Mag cFanoutSportsScore nformat on =>
 
-  lazy val stats = self.statsReceiver.scope("MagicFanoutSportsEventNtabHydrator")
-  lazy val inNetworkOnlyCounter = stats.counter("in_network_only")
-  lazy val facePilesEnabledCounter = stats.counter("face_piles_enabled")
-  lazy val facePilesDisabledCounter = stats.counter("face_piles_disabled")
-  lazy val filterPeopleWhoDontFollowMeCounter = stats.counter("pepole_who_dont_follow_me_counter")
+  lazy val stats = self.statsRece ver.scope("Mag cFanoutSportsEventNtabHydrator")
+  lazy val  nNetworkOnlyCounter = stats.counter(" n_network_only")
+  lazy val faceP lesEnabledCounter = stats.counter("face_p les_enabled")
+  lazy val faceP lesD sabledCounter = stats.counter("face_p les_d sabled")
+  lazy val f lterPeopleWhoDontFollow Counter = stats.counter("pepole_who_dont_follow_ _counter")
 
-  override lazy val tapThroughFut: Future[String] = {
-    Future.value(s"i/events/$eventId")
+  overr de lazy val tapThroughFut: Future[Str ng] = {
+    Future.value(s" /events/$event d")
   }
-  override lazy val displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] =
-    eventTitleFut.map { eventTitle =>
-      Seq(DisplayTextEntity(name = "title", value = TextValue.Text(eventTitle)))
+  overr de lazy val d splayTextEnt  esFut: Future[Seq[D splayTextEnt y]] =
+    eventT leFut.map { eventT le =>
+      Seq(D splayTextEnt y(na  = "t le", value = TextValue.Text(eventT le)))
     }
 
-  override lazy val facepileUsersFut: Future[Seq[Long]] =
-    if (target.params(FS.EnableNTabFacePileForSportsEventNotifications)) {
+  overr de lazy val facep leUsersFut: Future[Seq[Long]] =
+     f (target.params(FS.EnableNTabFaceP leForSportsEventNot f cat ons)) {
       Future
-        .join(
-          target.notificationsFromOnlyPeopleIFollow,
-          target.filterNotificationsFromPeopleThatDontFollowMe,
-          awayTeamInfo,
-          homeTeamInfo).map {
-          case (inNetworkOnly, filterPeopleWhoDontFollowMe, away, home)
-              if !(inNetworkOnly || filterPeopleWhoDontFollowMe) =>
-            val awayTeamId = away.flatMap(_.twitterUserId)
-            val homeTeamId = home.flatMap(_.twitterUserId)
-            facePilesEnabledCounter.incr
-            Seq(awayTeamId, homeTeamId).flatten
-          case (inNetworkOnly, filterPeopleWhoDontFollowMe, _, _) =>
-            facePilesDisabledCounter.incr
-            if (inNetworkOnly) inNetworkOnlyCounter.incr
-            if (filterPeopleWhoDontFollowMe) filterPeopleWhoDontFollowMeCounter.incr
+        .jo n(
+          target.not f cat onsFromOnlyPeople Follow,
+          target.f lterNot f cat onsFromPeopleThatDontFollow ,
+          awayTeam nfo,
+          ho Team nfo).map {
+          case ( nNetworkOnly, f lterPeopleWhoDontFollow , away, ho )
+               f !( nNetworkOnly || f lterPeopleWhoDontFollow ) =>
+            val awayTeam d = away.flatMap(_.tw terUser d)
+            val ho Team d = ho .flatMap(_.tw terUser d)
+            faceP lesEnabledCounter. ncr
+            Seq(awayTeam d, ho Team d).flatten
+          case ( nNetworkOnly, f lterPeopleWhoDontFollow , _, _) =>
+            faceP lesD sabledCounter. ncr
+             f ( nNetworkOnly)  nNetworkOnlyCounter. ncr
+             f (f lterPeopleWhoDontFollow ) f lterPeopleWhoDontFollow Counter. ncr
             Seq.empty[Long]
         }
-    } else Future.Nil
+    } else Future.N l
 
-  private lazy val sportsNtabRequest: Future[Option[CreateGenericNotificationRequest]] = {
+  pr vate lazy val sportsNtabRequest: Future[Opt on[CreateGener cNot f cat onRequest]] = {
     Future
-      .join(senderIdFut, displayTextEntitiesFut, facepileUsersFut, tapThroughFut)
+      .jo n(sender dFut, d splayTextEnt  esFut, facep leUsersFut, tapThroughFut)
       .map {
-        case (senderId, displayTextEntities, facepileUsers, tapThrough) =>
-          Some(
-            CreateGenericNotificationRequest(
-              userId = target.targetId,
-              senderId = senderId,
-              genericType = GenericType.RefreshableNotification,
-              displayText = DisplayText(values = displayTextEntities),
-              facepileUsers = facepileUsers,
-              timestampMillis = Time.now.inMillis,
-              tapThroughAction = Some(TapThroughAction(Some(tapThrough))),
-              impressionId = Some(impressionId),
-              socialProofText = socialProofDisplayText,
+        case (sender d, d splayTextEnt  es, facep leUsers, tapThrough) =>
+          So (
+            CreateGener cNot f cat onRequest(
+              user d = target.target d,
+              sender d = sender d,
+              gener cType = Gener cType.RefreshableNot f cat on,
+              d splayText = D splayText(values = d splayTextEnt  es),
+              facep leUsers = facep leUsers,
+              t  stampM ll s = T  .now. nM ll s,
+              tapThroughAct on = So (TapThroughAct on(So (tapThrough))),
+               mpress on d = So ( mpress on d),
+              soc alProofText = soc alProofD splayText,
               context = storyContext,
-              inlineCard = inlineCard,
+               nl neCard =  nl neCard,
               refreshableType = refreshableType
             ))
       }
   }
 
-  override lazy val ntabRequest: Future[Option[CreateGenericNotificationRequest]] = {
-    if (target.params(FS.EnableNTabEntriesForSportsEventNotifications)) {
-      self.target.history.flatMap { pushHistory =>
-        val prevEventHistoryExists = pushHistory.sortedHistory.exists {
-          case (_, notification) =>
-            notification.magicFanoutEventNotification.exists(_.eventId == self.eventId)
+  overr de lazy val ntabRequest: Future[Opt on[CreateGener cNot f cat onRequest]] = {
+     f (target.params(FS.EnableNTabEntr esForSportsEventNot f cat ons)) {
+      self.target. tory.flatMap { push tory =>
+        val prevEvent toryEx sts = push tory.sorted tory.ex sts {
+          case (_, not f cat on) =>
+            not f cat on.mag cFanoutEventNot f cat on.ex sts(_.event d == self.event d)
         }
-        if (prevEventHistoryExists) {
+         f (prevEvent toryEx sts) {
           Future.None
         } else sportsNtabRequest
       }

@@ -1,44 +1,44 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.non_ml_features
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.adapters.non_ml_features
 
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.timelines.prediction.common.adapters.TimelinesMutatingAdapterBase
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import java.lang.{Long => JLong}
+ mport com.tw ter.ml.ap .constant.SharedFeatures
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ml.ap .R chDataRecord
+ mport com.tw ter.t  l nes.pred ct on.common.adapters.T  l nesMutat ngAdapterBase
+ mport com.tw ter.t  l nes.pred ct on.features.common.T  l nesSharedFeatures
+ mport java.lang.{Long => JLong}
 
-case class NonMLCandidateFeatures(
-  tweetId: Long,
-  sourceTweetId: Option[Long],
-  originalAuthorId: Option[Long],
+case class NonMLCand dateFeatures(
+  t et d: Long,
+  s ceT et d: Opt on[Long],
+  or g nalAuthor d: Opt on[Long],
 )
 
 /**
- * define non ml features adapter to create a data record which includes many non ml features
- * e.g. predictionRequestId, userId, tweetId to be used as joined key in batch pipeline.
+ * def ne non ml features adapter to create a data record wh ch  ncludes many non ml features
+ * e.g. pred ct onRequest d, user d, t et d to be used as jo ned key  n batch p pel ne.
  */
-object NonMLCandidateFeaturesAdapter extends TimelinesMutatingAdapterBase[NonMLCandidateFeatures] {
+object NonMLCand dateFeaturesAdapter extends T  l nesMutat ngAdapterBase[NonMLCand dateFeatures] {
 
-  private val featureContext = new FeatureContext(
-    SharedFeatures.TWEET_ID,
-    // For Secondary Engagement data generation
-    TimelinesSharedFeatures.SOURCE_TWEET_ID,
-    TimelinesSharedFeatures.ORIGINAL_AUTHOR_ID,
+  pr vate val featureContext = new FeatureContext(
+    SharedFeatures.TWEET_ D,
+    // For Secondary Engage nt data generat on
+    T  l nesSharedFeatures.SOURCE_TWEET_ D,
+    T  l nesSharedFeatures.OR G NAL_AUTHOR_ D,
   )
 
-  override def getFeatureContext: FeatureContext = featureContext
+  overr de def getFeatureContext: FeatureContext = featureContext
 
-  override val commonFeatures: Set[Feature[_]] = Set.empty
+  overr de val commonFeatures: Set[Feature[_]] = Set.empty
 
-  override def setFeatures(
-    nonMLCandidateFeatures: NonMLCandidateFeatures,
-    richDataRecord: RichDataRecord
-  ): Unit = {
-    richDataRecord.setFeatureValue[JLong](SharedFeatures.TWEET_ID, nonMLCandidateFeatures.tweetId)
-    nonMLCandidateFeatures.sourceTweetId.foreach(
-      richDataRecord.setFeatureValue[JLong](TimelinesSharedFeatures.SOURCE_TWEET_ID, _))
-    nonMLCandidateFeatures.originalAuthorId.foreach(
-      richDataRecord.setFeatureValue[JLong](TimelinesSharedFeatures.ORIGINAL_AUTHOR_ID, _))
+  overr de def setFeatures(
+    nonMLCand dateFeatures: NonMLCand dateFeatures,
+    r chDataRecord: R chDataRecord
+  ): Un  = {
+    r chDataRecord.setFeatureValue[JLong](SharedFeatures.TWEET_ D, nonMLCand dateFeatures.t et d)
+    nonMLCand dateFeatures.s ceT et d.foreach(
+      r chDataRecord.setFeatureValue[JLong](T  l nesSharedFeatures.SOURCE_TWEET_ D, _))
+    nonMLCand dateFeatures.or g nalAuthor d.foreach(
+      r chDataRecord.setFeatureValue[JLong](T  l nesSharedFeatures.OR G NAL_AUTHOR_ D, _))
   }
 }

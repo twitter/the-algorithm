@@ -1,155 +1,155 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.stp
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ForwardEmailBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ForwardPhoneBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ReverseEmailBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ReversePhoneBookSource
-import com.twitter.follow_recommendations.common.clients.real_time_real_graph.RealTimeRealGraphClient
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.follow_recommendations.common.models.PotentialFirstDegreeEdge
-import com.twitter.follow_recommendations.common.stores.LowTweepCredFollowStore
-import com.twitter.hermit.model.Algorithm
-import com.twitter.hermit.model.Algorithm.Algorithm
-import com.twitter.inject.Logging
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Duration
-import com.twitter.util.Timer
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.FirstDegreeEdge
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.FirstDegreeEdgeInfo
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.FirstDegreeEdgeInfoMonoid
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.addressbook.ForwardEma lBookS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.addressbook.ForwardPhoneBookS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.addressbook.ReverseEma lBookS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.addressbook.ReversePhoneBookS ce
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.real_t  _real_graph.RealT  RealGraphCl ent
+ mport com.tw ter.follow_recom ndat ons.common.models.HasRecentFollo dUser ds
+ mport com.tw ter.follow_recom ndat ons.common.models.Potent alF rstDegreeEdge
+ mport com.tw ter.follow_recom ndat ons.common.stores.LowT epCredFollowStore
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter. rm .model.Algor hm.Algor hm
+ mport com.tw ter. nject.Logg ng
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.T  r
+ mport com.tw ter.wtf.scald ng.jobs.strong_t e_pred ct on.F rstDegreeEdge
+ mport com.tw ter.wtf.scald ng.jobs.strong_t e_pred ct on.F rstDegreeEdge nfo
+ mport com.tw ter.wtf.scald ng.jobs.strong_t e_pred ct on.F rstDegreeEdge nfoMono d
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-// Grabs FirstDegreeNodes from Candidate Sources
-@Singleton
-class STPFirstDegreeFetcher @Inject() (
-  realTimeGraphClient: RealTimeRealGraphClient,
-  reversePhoneBookSource: ReversePhoneBookSource,
-  reverseEmailBookSource: ReverseEmailBookSource,
-  forwardEmailBookSource: ForwardEmailBookSource,
-  forwardPhoneBookSource: ForwardPhoneBookSource,
-  mutualFollowStrongTiePredictionSource: MutualFollowStrongTiePredictionSource,
-  lowTweepCredFollowStore: LowTweepCredFollowStore,
-  timer: Timer,
-  statsReceiver: StatsReceiver)
-    extends Logging {
+// Grabs F rstDegreeNodes from Cand date S ces
+@S ngleton
+class STPF rstDegreeFetc r @ nject() (
+  realT  GraphCl ent: RealT  RealGraphCl ent,
+  reversePhoneBookS ce: ReversePhoneBookS ce,
+  reverseEma lBookS ce: ReverseEma lBookS ce,
+  forwardEma lBookS ce: ForwardEma lBookS ce,
+  forwardPhoneBookS ce: ForwardPhoneBookS ce,
+  mutualFollowStrongT ePred ct onS ce: MutualFollowStrongT ePred ct onS ce,
+  lowT epCredFollowStore: LowT epCredFollowStore,
+  t  r: T  r,
+  statsRece ver: StatsRece ver)
+    extends Logg ng {
 
-  private val stats = statsReceiver.scope("STPFirstDegreeFetcher")
-  private val stitchRequests = stats.scope("stitchRequests")
-  private val allStitchRequests = stitchRequests.counter("all")
-  private val timeoutStitchRequests = stitchRequests.counter("timeout")
-  private val successStitchRequests = stitchRequests.counter("success")
+  pr vate val stats = statsRece ver.scope("STPF rstDegreeFetc r")
+  pr vate val st chRequests = stats.scope("st chRequests")
+  pr vate val allSt chRequests = st chRequests.counter("all")
+  pr vate val t  outSt chRequests = st chRequests.counter("t  out")
+  pr vate val successSt chRequests = st chRequests.counter("success")
 
-  private implicit val firstDegreeEdgeInfoMonoid: FirstDegreeEdgeInfoMonoid =
-    new FirstDegreeEdgeInfoMonoid
+  pr vate  mpl c  val f rstDegreeEdge nfoMono d: F rstDegreeEdge nfoMono d =
+    new F rstDegreeEdge nfoMono d
 
   /**
-   * Used to map from algorithm to the correct fetcher and firstDegreeEdgeInfo.
-   * Afterward, uses fetcher to get candidates and construct the correct FirstDegreeEdgeInfo.
+   * Used to map from algor hm to t  correct fetc r and f rstDegreeEdge nfo.
+   * Afterward, uses fetc r to get cand dates and construct t  correct F rstDegreeEdge nfo.
    * */
-  private def getPotentialFirstEdgesFromFetcher(
-    userId: Long,
-    target: HasClientContext with HasParams with HasRecentFollowedUserIds,
-    algorithm: Algorithm,
-    weight: Double
-  ): Stitch[Seq[PotentialFirstDegreeEdge]] = {
-    val (candidates, edgeInfo) = algorithm match {
-      case Algorithm.MutualFollowSTP =>
+  pr vate def getPotent alF rstEdgesFromFetc r(
+    user d: Long,
+    target: HasCl entContext w h HasParams w h HasRecentFollo dUser ds,
+    algor hm: Algor hm,
+      ght: Double
+  ): St ch[Seq[Potent alF rstDegreeEdge]] = {
+    val (cand dates, edge nfo) = algor hm match {
+      case Algor hm.MutualFollowSTP =>
         (
-          mutualFollowStrongTiePredictionSource(target),
-          Some(FirstDegreeEdgeInfo(mutualFollow = true)))
-      case Algorithm.ReverseEmailBookIbis =>
-        (reverseEmailBookSource(target), Some(FirstDegreeEdgeInfo(reverseEmail = true)))
-      case Algorithm.ReversePhoneBook =>
-        (reversePhoneBookSource(target), Some(FirstDegreeEdgeInfo(reversePhone = true)))
-      case Algorithm.ForwardEmailBook =>
-        (forwardEmailBookSource(target), Some(FirstDegreeEdgeInfo(forwardEmail = true)))
-      case Algorithm.ForwardPhoneBook =>
-        (forwardPhoneBookSource(target), Some(FirstDegreeEdgeInfo(forwardPhone = true)))
-      case Algorithm.LowTweepcredFollow =>
+          mutualFollowStrongT ePred ct onS ce(target),
+          So (F rstDegreeEdge nfo(mutualFollow = true)))
+      case Algor hm.ReverseEma lBook b s =>
+        (reverseEma lBookS ce(target), So (F rstDegreeEdge nfo(reverseEma l = true)))
+      case Algor hm.ReversePhoneBook =>
+        (reversePhoneBookS ce(target), So (F rstDegreeEdge nfo(reversePhone = true)))
+      case Algor hm.ForwardEma lBook =>
+        (forwardEma lBookS ce(target), So (F rstDegreeEdge nfo(forwardEma l = true)))
+      case Algor hm.ForwardPhoneBook =>
+        (forwardPhoneBookS ce(target), So (F rstDegreeEdge nfo(forwardPhone = true)))
+      case Algor hm.LowT epcredFollow =>
         (
-          lowTweepCredFollowStore.getLowTweepCredUsers(target),
-          Some(FirstDegreeEdgeInfo(lowTweepcredFollow = true)))
+          lowT epCredFollowStore.getLowT epCredUsers(target),
+          So (F rstDegreeEdge nfo(lowT epcredFollow = true)))
       case _ =>
-        (Stitch.Nil, None)
+        (St ch.N l, None)
     }
-    candidates.map(_.flatMap { candidate =>
-      edgeInfo.map(PotentialFirstDegreeEdge(userId, candidate.id, algorithm, weight, _))
+    cand dates.map(_.flatMap { cand date =>
+      edge nfo.map(Potent alF rstDegreeEdge(user d, cand date. d, algor hm,   ght, _))
     })
   }
 
   /**
-   * Using the DefaultMap (AlgorithmToScore) we iterate through algorithm/weights to get
-   * candidates with a set weight. Then, given repeating candidates (by candidate id).
-   * Given those candidates we group by the candidateId and sum all below weights and combine
-   * the edgeInfos of into one. Then we choose the candidates with most weight. Finally,
-   * we attach the realGraphWeight score to those candidates.
+   * Us ng t  DefaultMap (Algor hmToScore)    erate through algor hm/  ghts to get
+   * cand dates w h a set   ght. T n, g ven repeat ng cand dates (by cand date  d).
+   * G ven those cand dates   group by t  cand date d and sum all below   ghts and comb ne
+   * t  edge nfos of  nto one. T n   choose t  cand dates w h most   ght. F nally,
+   *   attach t  realGraph  ght score to those cand dates.
    * */
-  def getFirstDegreeEdges(
-    target: HasClientContext with HasParams with HasRecentFollowedUserIds
-  ): Stitch[Seq[FirstDegreeEdge]] = {
-    target.getOptionalUserId
-      .map { userId =>
-        allStitchRequests.incr()
-        val firstEdgesQueryStitch = Stitch
-          .collect(STPFirstDegreeFetcher.DefaultGraphBuilderAlgorithmToScore.map {
-            case (algorithm, candidateWeight) =>
-              getPotentialFirstEdgesFromFetcher(userId, target, algorithm, candidateWeight)
+  def getF rstDegreeEdges(
+    target: HasCl entContext w h HasParams w h HasRecentFollo dUser ds
+  ): St ch[Seq[F rstDegreeEdge]] = {
+    target.getOpt onalUser d
+      .map { user d =>
+        allSt chRequests. ncr()
+        val f rstEdgesQuerySt ch = St ch
+          .collect(STPF rstDegreeFetc r.DefaultGraphBu lderAlgor hmToScore.map {
+            case (algor hm, cand date  ght) =>
+              getPotent alF rstEdgesFromFetc r(user d, target, algor hm, cand date  ght)
           }.toSeq)
           .map(_.flatten)
 
-        val destinationIdsToEdges = firstEdgesQueryStitch
-          .map(_.groupBy(_.connectingId).map {
-            case (destinationId: Long, edges: Seq[PotentialFirstDegreeEdge]) =>
-              val combinedDestScore = edges.map(_.score).sum
-              val combinedEdgeInfo: FirstDegreeEdgeInfo =
-                edges.map(_.edgeInfo).fold(firstDegreeEdgeInfoMonoid.zero) {
-                  (aggregatedInfo, currentInfo) =>
-                    firstDegreeEdgeInfoMonoid.plus(aggregatedInfo, currentInfo)
+        val dest nat on dsToEdges = f rstEdgesQuerySt ch
+          .map(_.groupBy(_.connect ng d).map {
+            case (dest nat on d: Long, edges: Seq[Potent alF rstDegreeEdge]) =>
+              val comb nedDestScore = edges.map(_.score).sum
+              val comb nedEdge nfo: F rstDegreeEdge nfo =
+                edges.map(_.edge nfo).fold(f rstDegreeEdge nfoMono d.zero) {
+                  (aggregated nfo, current nfo) =>
+                    f rstDegreeEdge nfoMono d.plus(aggregated nfo, current nfo)
                 }
-              (destinationId, combinedEdgeInfo, combinedDestScore)
+              (dest nat on d, comb nedEdge nfo, comb nedDestScore)
           }).map(_.toSeq)
 
-        val topDestinationEdges = destinationIdsToEdges.map(_.sortBy {
-          case (_, _, combinedDestScore) => -combinedDestScore
-        }.take(STPFirstDegreeFetcher.MaxNumFirstDegreeEdges))
+        val topDest nat onEdges = dest nat on dsToEdges.map(_.sortBy {
+          case (_, _, comb nedDestScore) => -comb nedDestScore
+        }.take(STPF rstDegreeFetc r.MaxNumF rstDegreeEdges))
 
-        Stitch
-          .join(realTimeGraphClient.getRealGraphWeights(userId), topDestinationEdges).map {
-            case (realGraphWeights, topDestinationEdges) =>
-              successStitchRequests.incr()
-              topDestinationEdges.map {
-                case (destinationId, combinedEdgeInfo, _) =>
-                  val updatedEdgeInfo = combinedEdgeInfo.copy(
-                    realGraphWeight = realGraphWeights.getOrElse(destinationId, 0.0),
-                    lowTweepcredFollow =
-                      !combinedEdgeInfo.mutualFollow && combinedEdgeInfo.lowTweepcredFollow
+        St ch
+          .jo n(realT  GraphCl ent.getRealGraph  ghts(user d), topDest nat onEdges).map {
+            case (realGraph  ghts, topDest nat onEdges) =>
+              successSt chRequests. ncr()
+              topDest nat onEdges.map {
+                case (dest nat on d, comb nedEdge nfo, _) =>
+                  val updatedEdge nfo = comb nedEdge nfo.copy(
+                    realGraph  ght = realGraph  ghts.getOrElse(dest nat on d, 0.0),
+                    lowT epcredFollow =
+                      !comb nedEdge nfo.mutualFollow && comb nedEdge nfo.lowT epcredFollow
                   )
-                  FirstDegreeEdge(userId, destinationId, updatedEdgeInfo)
+                  F rstDegreeEdge(user d, dest nat on d, updatedEdge nfo)
               }
-          }.within(STPFirstDegreeFetcher.LongTimeoutFetcher)(timer).rescue {
+          }.w h n(STPF rstDegreeFetc r.LongT  outFetc r)(t  r).rescue {
             case ex =>
-              timeoutStitchRequests.incr()
-              logger.error("Exception while loading direct edges in OnlineSTP: ", ex)
-              Stitch.Nil
+              t  outSt chRequests. ncr()
+              logger.error("Except on wh le load ng d rect edges  n Onl neSTP: ", ex)
+              St ch.N l
           }
-      }.getOrElse(Stitch.Nil)
+      }.getOrElse(St ch.N l)
   }
 }
 
-object STPFirstDegreeFetcher {
-  val MaxNumFirstDegreeEdges = 200
-  val DefaultGraphBuilderAlgorithmToScore = Map(
-    Algorithm.MutualFollowSTP -> 10.0,
-    Algorithm.LowTweepcredFollow -> 6.0,
-    Algorithm.ForwardEmailBook -> 7.0,
-    Algorithm.ForwardPhoneBook -> 9.0,
-    Algorithm.ReverseEmailBookIbis -> 5.0,
-    Algorithm.ReversePhoneBook -> 8.0
+object STPF rstDegreeFetc r {
+  val MaxNumF rstDegreeEdges = 200
+  val DefaultGraphBu lderAlgor hmToScore = Map(
+    Algor hm.MutualFollowSTP -> 10.0,
+    Algor hm.LowT epcredFollow -> 6.0,
+    Algor hm.ForwardEma lBook -> 7.0,
+    Algor hm.ForwardPhoneBook -> 9.0,
+    Algor hm.ReverseEma lBook b s -> 5.0,
+    Algor hm.ReversePhoneBook -> 8.0
   )
-  val LongTimeoutFetcher: Duration = 300.millis
+  val LongT  outFetc r: Durat on = 300.m ll s
 }

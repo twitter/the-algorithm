@@ -1,107 +1,107 @@
-package com.twitter.product_mixer.core.pipeline.product
+package com.tw ter.product_m xer.core.p pel ne.product
 
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.PipelineConfig
-import com.twitter.product_mixer.core.pipeline.PipelineConfigCompanion
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.product_mixer.core.quality_factor.QualityFactorConfig
-import com.twitter.timelines.configapi.Params
+ mport com.tw ter.product_m xer.core.funct onal_component.common.access_pol cy.AccessPol cy
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.Gate
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.ProductP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.P pel neStep dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Product
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Request
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neConf g
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neConf gCompan on
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.product.ProductParamConf g
+ mport com.tw ter.product_m xer.core.qual y_factor.Qual yFactorConf g
+ mport com.tw ter.t  l nes.conf gap .Params
 
-trait ProductPipelineConfig[TRequest <: Request, Query <: PipelineQuery, Response]
-    extends PipelineConfig {
+tra  ProductP pel neConf g[TRequest <: Request, Query <: P pel neQuery, Response]
+    extends P pel neConf g {
 
-  override val identifier: ProductPipelineIdentifier
+  overr de val  dent f er: ProductP pel ne dent f er
 
   val product: Product
-  val paramConfig: ProductParamConfig
+  val paramConf g: ProductParamConf g
 
   /**
-   * Product Pipeline Gates will be executed before any other step (including retrieval from mixer
-   * pipelines). They're executed sequentially, and any "Stop" result will prevent pipeline execution.
+   * Product P pel ne Gates w ll be executed before any ot r step ( nclud ng retr eval from m xer
+   * p pel nes). T y're executed sequent ally, and any "Stop" result w ll prevent p pel ne execut on.
    */
   def gates: Seq[Gate[Query]] = Seq.empty
 
-  def pipelineQueryTransformer(request: TRequest, params: Params): Query
+  def p pel neQueryTransfor r(request: TRequest, params: Params): Query
 
   /**
-   * A list of all pipelines that power this product directly (there is no need to include pipelines
-   * called by those pipelines).
+   * A l st of all p pel nes that po r t  product d rectly (t re  s no need to  nclude p pel nes
+   * called by those p pel nes).
    *
-   * Only pipeline from this list should referenced from the pipelineSelector
+   * Only p pel ne from t  l st should referenced from t  p pel neSelector
    */
-  def pipelines: Seq[PipelineConfig]
+  def p pel nes: Seq[P pel neConf g]
 
   /**
-   * A pipeline selector selects a pipeline (from the list in `def pipelines`) to handle the
+   * A p pel ne selector selects a p pel ne (from t  l st  n `def p pel nes`) to handle t 
    * current request.
    */
-  def pipelineSelector(query: Query): ComponentIdentifier
+  def p pel neSelector(query: Query): Component dent f er
 
   /**
-   ** [[qualityFactorConfigs]] associates [[QualityFactorConfig]]s to specific pipelines
-   * using [[ComponentIdentifier]].
+   ** [[qual yFactorConf gs]] assoc ates [[Qual yFactorConf g]]s to spec f c p pel nes
+   * us ng [[Component dent f er]].
    */
-  def qualityFactorConfigs: Map[ComponentIdentifier, QualityFactorConfig] =
+  def qual yFactorConf gs: Map[Component dent f er, Qual yFactorConf g] =
     Map.empty
 
   /**
-   * By default (for safety), product mixer pipelines do not allow logged out requests.
-   * A "DenyLoggedOutUsersGate" will be generated and added to the pipeline.
+   * By default (for safety), product m xer p pel nes do not allow logged out requests.
+   * A "DenyLoggedOutUsersGate" w ll be generated and added to t  p pel ne.
    *
-   * You can disable this behavior by overriding `denyLoggedOutUsers` with False.
+   *   can d sable t  behav or by overr d ng `denyLoggedOutUsers` w h False.
    */
   val denyLoggedOutUsers: Boolean = true
 
   /**
-   * A pipeline can define a partial function to rescue failures here. They will be treated as failures
-   * from a monitoring standpoint, and cancellation exceptions will always be propagated (they cannot be caught here).
+   * A p pel ne can def ne a part al funct on to rescue fa lures  re. T y w ll be treated as fa lures
+   * from a mon or ng standpo nt, and cancellat on except ons w ll always be propagated (t y cannot be caught  re).
    */
-  def failureClassifier: PartialFunction[Throwable, PipelineFailure] = PartialFunction.empty
+  def fa lureClass f er: Part alFunct on[Throwable, P pel neFa lure] = Part alFunct on.empty
 
   /**
-   * Alerts can be used to indicate the pipeline's service level objectives. Alerts and
-   * dashboards will be automatically created based on this information.
+   * Alerts can be used to  nd cate t  p pel ne's serv ce level object ves. Alerts and
+   * dashboards w ll be automat cally created based on t   nformat on.
    */
   val alerts: Seq[Alert] = Seq.empty
 
   /**
-   * Access Policies can be used to gate who can query a product from Product Mixer's query tool
+   * Access Pol c es can be used to gate who can query a product from Product M xer's query tool
    * (go/turntable).
    *
-   * This will typically be gated by an LDAP group associated with your team. For example:
+   * T  w ll typ cally be gated by an LDAP group assoc ated w h y  team. For example:
    *
    * {{{
-   *   override val debugAccessPolicies: Set[AccessPolicy] = Set(AllowedLdapGroups("NAME"))
+   *   overr de val debugAccessPol c es: Set[AccessPol cy] = Set(Allo dLdapGroups("NAME"))
    * }}}
    *
-   * You can disable all queries by using the [[com.twitter.product_mixer.core.functional_component.common.access_policy.BlockEverything]] policy.
+   *   can d sable all quer es by us ng t  [[com.tw ter.product_m xer.core.funct onal_component.common.access_pol cy.BlockEveryth ng]] pol cy.
    */
-  val debugAccessPolicies: Set[AccessPolicy]
+  val debugAccessPol c es: Set[AccessPol cy]
 }
 
-object ProductPipelineConfig extends PipelineConfigCompanion {
-  val pipelineQueryTransformerStep: PipelineStepIdentifier = PipelineStepIdentifier(
-    "PipelineQueryTransformer")
-  val qualityFactorStep: PipelineStepIdentifier = PipelineStepIdentifier("QualityFactor")
-  val gatesStep: PipelineStepIdentifier = PipelineStepIdentifier("Gates")
-  val pipelineSelectorStep: PipelineStepIdentifier = PipelineStepIdentifier("PipelineSelector")
-  val pipelineExecutionStep: PipelineStepIdentifier = PipelineStepIdentifier("PipelineExecution")
+object ProductP pel neConf g extends P pel neConf gCompan on {
+  val p pel neQueryTransfor rStep: P pel neStep dent f er = P pel neStep dent f er(
+    "P pel neQueryTransfor r")
+  val qual yFactorStep: P pel neStep dent f er = P pel neStep dent f er("Qual yFactor")
+  val gatesStep: P pel neStep dent f er = P pel neStep dent f er("Gates")
+  val p pel neSelectorStep: P pel neStep dent f er = P pel neStep dent f er("P pel neSelector")
+  val p pel neExecut onStep: P pel neStep dent f er = P pel neStep dent f er("P pel neExecut on")
 
-  /** All the Steps which are executed by a [[ProductPipeline]] in the order in which they are run */
-  override val stepsInOrder: Seq[PipelineStepIdentifier] = Seq(
-    pipelineQueryTransformerStep,
-    qualityFactorStep,
+  /** All t  Steps wh ch are executed by a [[ProductP pel ne]]  n t  order  n wh ch t y are run */
+  overr de val steps nOrder: Seq[P pel neStep dent f er] = Seq(
+    p pel neQueryTransfor rStep,
+    qual yFactorStep,
     gatesStep,
-    pipelineSelectorStep,
-    pipelineExecutionStep
+    p pel neSelectorStep,
+    p pel neExecut onStep
   )
 }

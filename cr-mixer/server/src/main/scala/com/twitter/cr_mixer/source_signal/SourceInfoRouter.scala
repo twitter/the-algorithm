@@ -1,67 +1,67 @@
-package com.twitter.cr_mixer.source_signal
+package com.tw ter.cr_m xer.s ce_s gnal
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.cr_mixer.model.GraphSourceInfo
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.cr_mixer.thriftscala.{Product => TProduct}
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.timelines.configapi
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.core_workflows.user_model.thr ftscala.UserState
+ mport com.tw ter.cr_m xer.model.GraphS ce nfo
+ mport com.tw ter.cr_m xer.model.S ce nfo
+ mport com.tw ter.cr_m xer.s ce_s gnal.S ceFetc r.Fetc rQuery
+ mport com.tw ter.cr_m xer.thr ftscala.S ceType
+ mport com.tw ter.cr_m xer.thr ftscala.{Product => TProduct}
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.t  l nes.conf gap 
+ mport com.tw ter.ut l.Future
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-case class SourceInfoRouter @Inject() (
-  ussSourceSignalFetcher: UssSourceSignalFetcher,
-  frsSourceSignalFetcher: FrsSourceSignalFetcher,
-  frsSourceGraphFetcher: FrsSourceGraphFetcher,
-  realGraphOonSourceGraphFetcher: RealGraphOonSourceGraphFetcher,
-  realGraphInSourceGraphFetcher: RealGraphInSourceGraphFetcher,
+@S ngleton
+case class S ce nfoRouter @ nject() (
+  ussS ceS gnalFetc r: UssS ceS gnalFetc r,
+  frsS ceS gnalFetc r: FrsS ceS gnalFetc r,
+  frsS ceGraphFetc r: FrsS ceGraphFetc r,
+  realGraphOonS ceGraphFetc r: RealGraphOonS ceGraphFetc r,
+  realGraph nS ceGraphFetc r: RealGraph nS ceGraphFetc r,
 ) {
 
   def get(
-    userId: UserId,
+    user d: User d,
     product: TProduct,
     userState: UserState,
-    params: configapi.Params
-  ): Future[(Set[SourceInfo], Map[String, Option[GraphSourceInfo]])] = {
+    params: conf gap .Params
+  ): Future[(Set[S ce nfo], Map[Str ng, Opt on[GraphS ce nfo]])] = {
 
-    val fetcherQuery = FetcherQuery(userId, product, userState, params)
-    Future.join(
-      getSourceSignals(fetcherQuery),
-      getSourceGraphs(fetcherQuery)
+    val fetc rQuery = Fetc rQuery(user d, product, userState, params)
+    Future.jo n(
+      getS ceS gnals(fetc rQuery),
+      getS ceGraphs(fetc rQuery)
     )
   }
 
-  private def getSourceSignals(
-    fetcherQuery: FetcherQuery
-  ): Future[Set[SourceInfo]] = {
+  pr vate def getS ceS gnals(
+    fetc rQuery: Fetc rQuery
+  ): Future[Set[S ce nfo]] = {
     Future
-      .join(
-        ussSourceSignalFetcher.get(fetcherQuery),
-        frsSourceSignalFetcher.get(fetcherQuery)).map {
-        case (ussSignalsOpt, frsSignalsOpt) =>
-          (ussSignalsOpt.getOrElse(Seq.empty) ++ frsSignalsOpt.getOrElse(Seq.empty)).toSet
+      .jo n(
+        ussS ceS gnalFetc r.get(fetc rQuery),
+        frsS ceS gnalFetc r.get(fetc rQuery)).map {
+        case (ussS gnalsOpt, frsS gnalsOpt) =>
+          (ussS gnalsOpt.getOrElse(Seq.empty) ++ frsS gnalsOpt.getOrElse(Seq.empty)).toSet
       }
   }
 
-  private def getSourceGraphs(
-    fetcherQuery: FetcherQuery
-  ): Future[Map[String, Option[GraphSourceInfo]]] = {
+  pr vate def getS ceGraphs(
+    fetc rQuery: Fetc rQuery
+  ): Future[Map[Str ng, Opt on[GraphS ce nfo]]] = {
 
     Future
-      .join(
-        frsSourceGraphFetcher.get(fetcherQuery),
-        realGraphOonSourceGraphFetcher.get(fetcherQuery),
-        realGraphInSourceGraphFetcher.get(fetcherQuery)
+      .jo n(
+        frsS ceGraphFetc r.get(fetc rQuery),
+        realGraphOonS ceGraphFetc r.get(fetc rQuery),
+        realGraph nS ceGraphFetc r.get(fetc rQuery)
       ).map {
-        case (frsGraphOpt, realGraphOonGraphOpt, realGraphInGraphOpt) =>
+        case (frsGraphOpt, realGraphOonGraphOpt, realGraph nGraphOpt) =>
           Map(
-            SourceType.FollowRecommendation.name -> frsGraphOpt,
-            SourceType.RealGraphOon.name -> realGraphOonGraphOpt,
-            SourceType.RealGraphIn.name -> realGraphInGraphOpt,
+            S ceType.FollowRecom ndat on.na  -> frsGraphOpt,
+            S ceType.RealGraphOon.na  -> realGraphOonGraphOpt,
+            S ceType.RealGraph n.na  -> realGraph nGraphOpt,
           )
       }
   }

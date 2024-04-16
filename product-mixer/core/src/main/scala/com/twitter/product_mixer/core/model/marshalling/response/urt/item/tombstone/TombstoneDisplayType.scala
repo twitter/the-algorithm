@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.tombstone
 
-sealed trait TombstoneDisplayType
+sealed tra  TombstoneD splayType
 
-case object TweetUnavailable extends TombstoneDisplayType
-case object DisconnectedRepliesAncestor extends TombstoneDisplayType
-case object DisconnectedRepliesDescendant extends TombstoneDisplayType
-case object Inline extends TombstoneDisplayType
-case object NonCompliant extends TombstoneDisplayType
+case object T etUnava lable extends TombstoneD splayType
+case object D sconnectedRepl esAncestor extends TombstoneD splayType
+case object D sconnectedRepl esDescendant extends TombstoneD splayType
+case object  nl ne extends TombstoneD splayType
+case object NonCompl ant extends TombstoneD splayType

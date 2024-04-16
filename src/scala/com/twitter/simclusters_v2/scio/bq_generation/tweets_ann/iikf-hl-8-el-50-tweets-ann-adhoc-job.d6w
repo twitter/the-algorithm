@@ -1,38 +1,38 @@
-class Profile(Struct):
-  project = Required(String)
-  date = Required(String)
-  environment = Default(String, 'dev')
-  job_name = Default(String, 'iikf-hl-8-el-50-tweets-ann-batch-job')
-  machine = Default(String, 'n2-highmem-4')
+class Prof le(Struct):
+  project = Requ red(Str ng)
+  date = Requ red(Str ng)
+  env ron nt = Default(Str ng, 'dev')
+  job_na  = Default(Str ng, '  kf-hl-8-el-50-t ets-ann-batch-job')
+  mach ne = Default(Str ng, 'n2-h gh m-4')
 
 job = Job(
-   name='{{profile.job_name}}',
-   project='{{profile.project}}',
-   staging_bucket='{{profile.project}}',
-   service_account='{{profile.user_name}}-shdw@twttr-dp-svc-accounts.iam.gserviceaccount.com',
-   region='us-central1',
-   worker_config=WorkerConfig(
+   na ='{{prof le.job_na }}',
+   project='{{prof le.project}}',
+   stag ng_bucket='{{prof le.project}}',
+   serv ce_account='{{prof le.user_na }}-shdw@twttr-dp-svc-accounts. am.gserv ceaccount.com',
+   reg on='us-central1',
+   worker_conf g=WorkerConf g(
        num_workers=2,
-       worker_machine_type='{{profile.machine}}',
-       worker_disk_type=WorkerDiskType('HDD'),
+       worker_mach ne_type='{{prof le.mach ne}}',
+       worker_d sk_type=WorkerD skType('HDD'),
    ),
    extra_args={
-     "date": '{{profile.date}}'
+     "date": '{{prof le.date}}'
    },
-   service_identifier='twtr:svc:{{profile.user_name}}:{{profile.job_name}}:{{profile.environment}}:{{profile.cluster}}',
-   deployment_config=BatchDeploymentConfig(
-     role='{{profile.user_name}}',
-     environment='prod',
-     build_target='src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann:iikf-hl-8-el-50-tweets-ann-batch-job',
-     gcp_deployment_credentials='/var/lib/tss/keys/{{profile.user_name}}/cloud/gcp/dp/shadow.json',
-     statebird_config=StatebirdConfig(
-       batch_width='PT4H',
-       first_time='{{profile.date}}',
+   serv ce_ dent f er='twtr:svc:{{prof le.user_na }}:{{prof le.job_na }}:{{prof le.env ron nt}}:{{prof le.cluster}}',
+   deploy nt_conf g=BatchDeploy ntConf g(
+     role='{{prof le.user_na }}',
+     env ron nt='prod',
+     bu ld_target='src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/t ets_ann:  kf-hl-8-el-50-t ets-ann-batch-job',
+     gcp_deploy nt_credent als='/var/l b/tss/keys/{{prof le.user_na }}/cloud/gcp/dp/shadow.json',
+     stateb rd_conf g=Stateb rdConf g(
+       batch_w dth='PT4H',
+       f rst_t  ='{{prof le.date}}',
      ),
-     workflow_config=WorkflowConfig(
+     workflow_conf g=WorkflowConf g(
       play=True,
      ),
-     timeout='PT24H'
+     t  out='PT24H'
    )
 )
 

@@ -1,39 +1,39 @@
-package com.twitter.timelineranker.uteg_liked_by_tweets
+package com.tw ter.t  l neranker.uteg_l ked_by_t ets
 
-import com.twitter.recos.recos_common.thriftscala.SocialProofType
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.TweetRecommendation
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelines.model.TweetId
-import com.twitter.util.Future
+ mport com.tw ter.recos.recos_common.thr ftscala.Soc alProofType
+ mport com.tw ter.recos.user_t et_ent y_graph.thr ftscala.T etRecom ndat on
+ mport com.tw ter.search.earlyb rd.thr ftscala.Thr ftSearchResult
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t  l neranker.core.Cand dateEnvelope
+ mport com.tw ter.t  l neranker.model.RecapQuery.DependencyProv der
+ mport com.tw ter.t  l nes.model.T et d
+ mport com.tw ter.ut l.Future
 
-class MinNumNonAuthorFavoritedByUserIdsFilterTransform(
-  minNumFavoritedByUserIdsProvider: DependencyProvider[Int])
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+class M nNumNonAuthorFavor edByUser dsF lterTransform(
+  m nNumFavor edByUser dsProv der: DependencyProv der[ nt])
+    extends FutureArrow[Cand dateEnvelope, Cand dateEnvelope] {
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val filteredSearchResults = envelope.searchResults.filter { searchResult =>
+  overr de def apply(envelope: Cand dateEnvelope): Future[Cand dateEnvelope] = {
+    val f lteredSearchResults = envelope.searchResults.f lter { searchResult =>
       numNonAuthorFavs(
         searchResult = searchResult,
         utegResultsMap = envelope.utegResults
-      ).exists(_ >= minNumFavoritedByUserIdsProvider(envelope.query))
+      ).ex sts(_ >= m nNumFavor edByUser dsProv der(envelope.query))
     }
-    Future.value(envelope.copy(searchResults = filteredSearchResults))
+    Future.value(envelope.copy(searchResults = f lteredSearchResults))
   }
 
-  // return number of non-author users that faved the tweet in a searchResult
-  // return None if author is None or if the tweet is not found in utegResultsMap
+  // return number of non-author users that faved t  t et  n a searchResult
+  // return None  f author  s None or  f t  t et  s not found  n utegResultsMap
   protected def numNonAuthorFavs(
-    searchResult: ThriftSearchResult,
-    utegResultsMap: Map[TweetId, TweetRecommendation]
-  ): Option[Int] = {
+    searchResult: Thr ftSearchResult,
+    utegResultsMap: Map[T et d, T etRecom ndat on]
+  ): Opt on[ nt] = {
     for {
-      metadata <- searchResult.metadata
-      authorId = metadata.fromUserId
-      tweetRecommendation <- utegResultsMap.get(searchResult.id)
-      favedByUserIds <- tweetRecommendation.socialProofByType.get(SocialProofType.Favorite)
-    } yield favedByUserIds.filterNot(_ == authorId).size
+       tadata <- searchResult. tadata
+      author d =  tadata.fromUser d
+      t etRecom ndat on <- utegResultsMap.get(searchResult. d)
+      favedByUser ds <- t etRecom ndat on.soc alProofByType.get(Soc alProofType.Favor e)
+    } y eld favedByUser ds.f lterNot(_ == author d).s ze
   }
 }

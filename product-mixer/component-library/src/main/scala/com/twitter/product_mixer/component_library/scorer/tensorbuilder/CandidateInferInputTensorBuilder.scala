@@ -1,70 +1,70 @@
-package com.twitter.product_mixer.component_library.scorer.tensorbuilder
+package com.tw ter.product_m xer.component_l brary.scorer.tensorbu lder
 
-import com.twitter.ml.api.thriftscala.FloatTensor
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.ModelFeatureName
-import com.twitter.product_mixer.core.feature.featuremap.featurestorev1.FeatureStoreV1FeatureMap._
-import com.twitter.product_mixer.core.feature.featurestorev1.FeatureStoreV1CandidateFeature
-import com.twitter.product_mixer.core.feature.featurestorev1.FeatureStoreV1QueryFeature
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import inference.GrpcService.ModelInferRequest.InferInputTensor
+ mport com.tw ter.ml.ap .thr ftscala.FloatTensor
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.FeatureW hDefaultOnFa lure
+ mport com.tw ter.product_m xer.core.feature.ModelFeatureNa 
+ mport com.tw ter.product_m xer.core.feature.featuremap.featurestorev1.FeatureStoreV1FeatureMap._
+ mport com.tw ter.product_m xer.core.feature.featurestorev1.FeatureStoreV1Cand dateFeature
+ mport com.tw ter.product_m xer.core.feature.featurestorev1.FeatureStoreV1QueryFeature
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport  nference.GrpcServ ce.Model nferRequest. nfer nputTensor
 
-class CandidateInferInputTensorBuilder[-Candidate <: UniversalNoun[Any], +Value](
-  builder: InferInputTensorBuilder[Value],
-  features: Set[_ <: Feature[Candidate, _] with ModelFeatureName]) {
+class Cand date nfer nputTensorBu lder[-Cand date <: Un versalNoun[Any], +Value](
+  bu lder:  nfer nputTensorBu lder[Value],
+  features: Set[_ <: Feature[Cand date, _] w h ModelFeatureNa ]) {
   def apply(
-    candidates: Seq[CandidateWithFeatures[Candidate]],
-  ): Seq[InferInputTensor] = {
+    cand dates: Seq[Cand dateW hFeatures[Cand date]],
+  ): Seq[ nfer nputTensor] = {
     features.flatMap { feature =>
       val featureValues: Seq[Value] = feature match {
-        case feature: FeatureStoreV1CandidateFeature[_, Candidate, _, Value] =>
-          candidates.map(_.features.getFeatureStoreV1CandidateFeature(feature))
+        case feature: FeatureStoreV1Cand dateFeature[_, Cand date, _, Value] =>
+          cand dates.map(_.features.getFeatureStoreV1Cand dateFeature(feature))
         case feature: FeatureStoreV1QueryFeature[_, _, _] =>
-          throw new UnexpectedFeatureTypeException(feature)
-        case feature: FeatureWithDefaultOnFailure[Candidate, Value] =>
-          candidates.map(_.features.getTry(feature).toOption.getOrElse(feature.defaultValue))
-        case feature: Feature[Candidate, Value] =>
-          candidates.map(_.features.get(feature))
+          throw new UnexpectedFeatureTypeExcept on(feature)
+        case feature: FeatureW hDefaultOnFa lure[Cand date, Value] =>
+          cand dates.map(_.features.getTry(feature).toOpt on.getOrElse(feature.defaultValue))
+        case feature: Feature[Cand date, Value] =>
+          cand dates.map(_.features.get(feature))
       }
-      builder.apply(feature.featureName, featureValues)
+      bu lder.apply(feature.featureNa , featureValues)
     }.toSeq
   }
 }
 
-case class CandidateBooleanInferInputTensorBuilder[-Candidate <: UniversalNoun[Any]](
-  features: Set[_ <: Feature[Candidate, Boolean] with ModelFeatureName])
-    extends CandidateInferInputTensorBuilder[Candidate, Boolean](
-      BooleanInferInputTensorBuilder,
+case class Cand dateBoolean nfer nputTensorBu lder[-Cand date <: Un versalNoun[Any]](
+  features: Set[_ <: Feature[Cand date, Boolean] w h ModelFeatureNa ])
+    extends Cand date nfer nputTensorBu lder[Cand date, Boolean](
+      Boolean nfer nputTensorBu lder,
       features)
 
-case class CandidateBytesInferInputTensorBuilder[-Candidate <: UniversalNoun[Any]](
-  features: Set[_ <: Feature[Candidate, String] with ModelFeatureName])
-    extends CandidateInferInputTensorBuilder[Candidate, String](
-      BytesInferInputTensorBuilder,
+case class Cand dateBytes nfer nputTensorBu lder[-Cand date <: Un versalNoun[Any]](
+  features: Set[_ <: Feature[Cand date, Str ng] w h ModelFeatureNa ])
+    extends Cand date nfer nputTensorBu lder[Cand date, Str ng](
+      Bytes nfer nputTensorBu lder,
       features)
 
-case class CandidateFloat32InferInputTensorBuilder[-Candidate <: UniversalNoun[Any]](
-  features: Set[_ <: Feature[Candidate, _ <: AnyVal] with ModelFeatureName])
-    extends CandidateInferInputTensorBuilder[Candidate, AnyVal](
-      Float32InferInputTensorBuilder,
+case class Cand dateFloat32 nfer nputTensorBu lder[-Cand date <: Un versalNoun[Any]](
+  features: Set[_ <: Feature[Cand date, _ <: AnyVal] w h ModelFeatureNa ])
+    extends Cand date nfer nputTensorBu lder[Cand date, AnyVal](
+      Float32 nfer nputTensorBu lder,
       features)
 
-case class CandidateFloatTensorInferInputTensorBuilder[-Candidate <: UniversalNoun[Any]](
-  features: Set[_ <: Feature[Candidate, FloatTensor] with ModelFeatureName])
-    extends CandidateInferInputTensorBuilder[Candidate, FloatTensor](
-      FloatTensorInferInputTensorBuilder,
+case class Cand dateFloatTensor nfer nputTensorBu lder[-Cand date <: Un versalNoun[Any]](
+  features: Set[_ <: Feature[Cand date, FloatTensor] w h ModelFeatureNa ])
+    extends Cand date nfer nputTensorBu lder[Cand date, FloatTensor](
+      FloatTensor nfer nputTensorBu lder,
       features)
 
-case class CandidateInt64InferInputTensorBuilder[-Candidate <: UniversalNoun[Any]](
-  features: Set[_ <: Feature[Candidate, _ <: AnyVal] with ModelFeatureName])
-    extends CandidateInferInputTensorBuilder[Candidate, AnyVal](
-      Int64InferInputTensorBuilder,
+case class Cand date nt64 nfer nputTensorBu lder[-Cand date <: Un versalNoun[Any]](
+  features: Set[_ <: Feature[Cand date, _ <: AnyVal] w h ModelFeatureNa ])
+    extends Cand date nfer nputTensorBu lder[Cand date, AnyVal](
+       nt64 nfer nputTensorBu lder,
       features)
 
-case class CandidateSparseMapInferInputTensorBuilder[-Candidate <: UniversalNoun[Any]](
-  features: Set[_ <: Feature[Candidate, Option[Map[Int, Double]]] with ModelFeatureName])
-    extends CandidateInferInputTensorBuilder[Candidate, Option[Map[Int, Double]]](
-      SparseMapInferInputTensorBuilder,
+case class Cand dateSparseMap nfer nputTensorBu lder[-Cand date <: Un versalNoun[Any]](
+  features: Set[_ <: Feature[Cand date, Opt on[Map[ nt, Double]]] w h ModelFeatureNa ])
+    extends Cand date nfer nputTensorBu lder[Cand date, Opt on[Map[ nt, Double]]](
+      SparseMap nfer nputTensorBu lder,
       features)

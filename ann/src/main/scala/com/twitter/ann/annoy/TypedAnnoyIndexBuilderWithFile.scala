@@ -1,55 +1,55 @@
-package com.twitter.ann.annoy
+package com.tw ter.ann.annoy
 
-import com.twitter.ann.annoy.AnnoyCommon.IndexIdMappingFileName
-import com.twitter.ann.common._
-import com.twitter.ann.file_store.WritableIndexIdFileStore
-import com.twitter.bijection.Injection
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.util.Future
-import com.twitter.util.FuturePool
-import org.apache.beam.sdk.io.fs.ResourceId
+ mport com.tw ter.ann.annoy.AnnoyCommon. ndex dMapp ngF leNa 
+ mport com.tw ter.ann.common._
+ mport com.tw ter.ann.f le_store.Wr able ndex dF leStore
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.search.common.f le.AbstractF le
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.FuturePool
+ mport org.apac .beam.sdk. o.fs.Res ce d
 
-private[annoy] object TypedAnnoyIndexBuilderWithFile {
-  private[annoy] def apply[T, D <: Distance[D]](
-    dimension: Int,
-    numOfTrees: Int,
-    metric: Metric[D],
-    injection: Injection[T, Array[Byte]],
+pr vate[annoy] object TypedAnnoy ndexBu lderW hF le {
+  pr vate[annoy] def apply[T, D <: D stance[D]](
+    d  ns on:  nt,
+    numOfTrees:  nt,
+     tr c:  tr c[D],
+     nject on:  nject on[T, Array[Byte]],
     futurePool: FuturePool
-  ): Appendable[T, AnnoyRuntimeParams, D] with Serialization = {
-    val index = RawAnnoyIndexBuilder(dimension, numOfTrees, metric, futurePool)
-    val writableFileStore = WritableIndexIdFileStore(injection)
-    new TypedAnnoyIndexBuilderWithFile[T, D](index, writableFileStore)
+  ): Appendable[T, AnnoyRunt  Params, D] w h Ser al zat on = {
+    val  ndex = RawAnnoy ndexBu lder(d  ns on, numOfTrees,  tr c, futurePool)
+    val wr ableF leStore = Wr able ndex dF leStore( nject on)
+    new TypedAnnoy ndexBu lderW hF le[T, D]( ndex, wr ableF leStore)
   }
 }
 
-private[this] class TypedAnnoyIndexBuilderWithFile[T, D <: Distance[D]](
-  indexBuilder: RawAppendable[AnnoyRuntimeParams, D] with Serialization,
-  store: WritableIndexIdFileStore[T])
-    extends Appendable[T, AnnoyRuntimeParams, D]
-    with Serialization {
-  private[this] val transformedIndex = IndexTransformer.transformAppendable(indexBuilder, store)
+pr vate[t ] class TypedAnnoy ndexBu lderW hF le[T, D <: D stance[D]](
+   ndexBu lder: RawAppendable[AnnoyRunt  Params, D] w h Ser al zat on,
+  store: Wr able ndex dF leStore[T])
+    extends Appendable[T, AnnoyRunt  Params, D]
+    w h Ser al zat on {
+  pr vate[t ] val transfor d ndex =  ndexTransfor r.transformAppendable( ndexBu lder, store)
 
-  override def append(entity: EntityEmbedding[T]): Future[Unit] = {
-    transformedIndex.append(entity)
+  overr de def append(ent y: Ent yEmbedd ng[T]): Future[Un ] = {
+    transfor d ndex.append(ent y)
   }
 
-  override def toDirectory(directory: ResourceId): Unit = {
-    indexBuilder.toDirectory(directory)
-    toDirectory(new IndexOutputFile(directory))
+  overr de def toD rectory(d rectory: Res ce d): Un  = {
+     ndexBu lder.toD rectory(d rectory)
+    toD rectory(new  ndexOutputF le(d rectory))
   }
 
-  override def toDirectory(directory: AbstractFile): Unit = {
-    indexBuilder.toDirectory(directory)
-    toDirectory(new IndexOutputFile(directory))
+  overr de def toD rectory(d rectory: AbstractF le): Un  = {
+     ndexBu lder.toD rectory(d rectory)
+    toD rectory(new  ndexOutputF le(d rectory))
   }
 
-  private def toDirectory(directory: IndexOutputFile): Unit = {
-    val indexIdFile = directory.createFile(IndexIdMappingFileName)
-    store.save(indexIdFile)
+  pr vate def toD rectory(d rectory:  ndexOutputF le): Un  = {
+    val  ndex dF le = d rectory.createF le( ndex dMapp ngF leNa )
+    store.save( ndex dF le)
   }
 
-  override def toQueryable: Queryable[T, AnnoyRuntimeParams, D] = {
-    transformedIndex.toQueryable
+  overr de def toQueryable: Queryable[T, AnnoyRunt  Params, D] = {
+    transfor d ndex.toQueryable
   }
 }

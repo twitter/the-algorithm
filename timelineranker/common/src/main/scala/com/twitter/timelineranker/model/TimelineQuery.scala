@@ -1,82 +1,82 @@
-package com.twitter.timelineranker.model
+package com.tw ter.t  l neranker.model
 
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelines.model.UserId
-import com.twitter.timelineservice.model.TimelineId
+ mport com.tw ter.t  l neranker.{thr ftscala => thr ft}
+ mport com.tw ter.t  l nes.model.User d
+ mport com.tw ter.t  l neserv ce.model.T  l ne d
 
-object TimelineQuery {
-  def fromThrift(query: thrift.TimelineQuery): TimelineQuery = {
+object T  l neQuery {
+  def fromThr ft(query: thr ft.T  l neQuery): T  l neQuery = {
     val queryType = query.queryType
-    val id = TimelineId.fromThrift(query.timelineId)
+    val  d = T  l ne d.fromThr ft(query.t  l ne d)
     val maxCount = query.maxCount
-    val range = query.range.map(TimelineRange.fromThrift)
-    val options = query.options.map(TimelineQueryOptions.fromThrift)
+    val range = query.range.map(T  l neRange.fromThr ft)
+    val opt ons = query.opt ons.map(T  l neQueryOpt ons.fromThr ft)
 
     queryType match {
-      case thrift.TimelineQueryType.Ranked =>
-        val rankedOptions = getRankedOptions(options)
-        RankedTimelineQuery(id, maxCount, range, rankedOptions)
+      case thr ft.T  l neQueryType.Ranked =>
+        val rankedOpt ons = getRankedOpt ons(opt ons)
+        RankedT  l neQuery( d, maxCount, range, rankedOpt ons)
 
-      case thrift.TimelineQueryType.ReverseChron =>
-        val reverseChronOptions = getReverseChronOptions(options)
-        ReverseChronTimelineQuery(id, maxCount, range, reverseChronOptions)
+      case thr ft.T  l neQueryType.ReverseChron =>
+        val reverseChronOpt ons = getReverseChronOpt ons(opt ons)
+        ReverseChronT  l neQuery( d, maxCount, range, reverseChronOpt ons)
 
       case _ =>
-        throw new IllegalArgumentException(s"Unsupported query type: $queryType")
+        throw new  llegalArgu ntExcept on(s"Unsupported query type: $queryType")
     }
   }
 
-  def getRankedOptions(
-    options: Option[TimelineQueryOptions]
-  ): Option[RankedTimelineQueryOptions] = {
-    options.map {
-      case o: RankedTimelineQueryOptions => o
+  def getRankedOpt ons(
+    opt ons: Opt on[T  l neQueryOpt ons]
+  ): Opt on[RankedT  l neQueryOpt ons] = {
+    opt ons.map {
+      case o: RankedT  l neQueryOpt ons => o
       case _ =>
-        throw new IllegalArgumentException(
-          "Only RankedTimelineQueryOptions are supported when queryType is TimelineQueryType.Ranked"
+        throw new  llegalArgu ntExcept on(
+          "Only RankedT  l neQueryOpt ons are supported w n queryType  s T  l neQueryType.Ranked"
         )
     }
   }
 
-  def getReverseChronOptions(
-    options: Option[TimelineQueryOptions]
-  ): Option[ReverseChronTimelineQueryOptions] = {
-    options.map {
-      case o: ReverseChronTimelineQueryOptions => o
+  def getReverseChronOpt ons(
+    opt ons: Opt on[T  l neQueryOpt ons]
+  ): Opt on[ReverseChronT  l neQueryOpt ons] = {
+    opt ons.map {
+      case o: ReverseChronT  l neQueryOpt ons => o
       case _ =>
-        throw new IllegalArgumentException(
-          "Only ReverseChronTimelineQueryOptions are supported when queryType is TimelineQueryType.ReverseChron"
+        throw new  llegalArgu ntExcept on(
+          "Only ReverseChronT  l neQueryOpt ons are supported w n queryType  s T  l neQueryType.ReverseChron"
         )
     }
   }
 }
 
-abstract class TimelineQuery(
-  private val queryType: thrift.TimelineQueryType,
-  val id: TimelineId,
-  val maxCount: Option[Int],
-  val range: Option[TimelineRange],
-  val options: Option[TimelineQueryOptions]) {
+abstract class T  l neQuery(
+  pr vate val queryType: thr ft.T  l neQueryType,
+  val  d: T  l ne d,
+  val maxCount: Opt on[ nt],
+  val range: Opt on[T  l neRange],
+  val opt ons: Opt on[T  l neQueryOpt ons]) {
 
-  throwIfInvalid()
+  throw f nval d()
 
-  def userId: UserId = {
-    id.id
+  def user d: User d = {
+     d. d
   }
 
-  def throwIfInvalid(): Unit = {
-    Timeline.throwIfIdInvalid(id)
-    range.foreach(_.throwIfInvalid())
-    options.foreach(_.throwIfInvalid())
+  def throw f nval d(): Un  = {
+    T  l ne.throw f d nval d( d)
+    range.foreach(_.throw f nval d())
+    opt ons.foreach(_.throw f nval d())
   }
 
-  def toThrift: thrift.TimelineQuery = {
-    thrift.TimelineQuery(
+  def toThr ft: thr ft.T  l neQuery = {
+    thr ft.T  l neQuery(
       queryType = queryType,
-      timelineId = id.toThrift,
+      t  l ne d =  d.toThr ft,
       maxCount = maxCount,
-      range = range.map(_.toTimelineRangeThrift),
-      options = options.map(_.toTimelineQueryOptionsThrift)
+      range = range.map(_.toT  l neRangeThr ft),
+      opt ons = opt ons.map(_.toT  l neQueryOpt onsThr ft)
     )
   }
 }

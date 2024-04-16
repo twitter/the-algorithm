@@ -1,108 +1,108 @@
-package com.twitter.timelineranker.common
+package com.tw ter.t  l neranker.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.servo.util.Gate
-import com.twitter.storehaus.Store
-import com.twitter.timelineranker.contentfeatures.ContentFeaturesProvider
-import com.twitter.timelineranker.core.FutureDependencyTransformer
-import com.twitter.timelineranker.core.HydratedCandidatesAndFeaturesEnvelope
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelineranker.util.SearchResultUtil._
-import com.twitter.timelineranker.util.CachingContentFeaturesProvider
-import com.twitter.timelineranker.util.TweetHydrator
-import com.twitter.timelineranker.util.TweetypieContentFeaturesProvider
-import com.twitter.timelines.clients.tweetypie.TweetyPieClient
-import com.twitter.timelines.model.TweetId
-import com.twitter.util.Future
-import com.twitter.timelines.configapi
-import com.twitter.timelines.util.FutureUtils
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.storehaus.Store
+ mport com.tw ter.t  l neranker.contentfeatures.ContentFeaturesProv der
+ mport com.tw ter.t  l neranker.core.FutureDependencyTransfor r
+ mport com.tw ter.t  l neranker.core.HydratedCand datesAndFeaturesEnvelope
+ mport com.tw ter.t  l neranker.model.RecapQuery
+ mport com.tw ter.t  l neranker.recap.model.ContentFeatures
+ mport com.tw ter.t  l neranker.ut l.SearchResultUt l._
+ mport com.tw ter.t  l neranker.ut l.Cach ngContentFeaturesProv der
+ mport com.tw ter.t  l neranker.ut l.T etHydrator
+ mport com.tw ter.t  l neranker.ut l.T etyp eContentFeaturesProv der
+ mport com.tw ter.t  l nes.cl ents.t etyp e.T etyP eCl ent
+ mport com.tw ter.t  l nes.model.T et d
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.t  l nes.conf gap 
+ mport com.tw ter.t  l nes.ut l.FutureUt ls
 
-class ContentFeaturesHydrationTransformBuilder(
-  tweetyPieClient: TweetyPieClient,
-  contentFeaturesCache: Store[TweetId, ContentFeatures],
+class ContentFeaturesHydrat onTransformBu lder(
+  t etyP eCl ent: T etyP eCl ent,
+  contentFeaturesCac : Store[T et d, ContentFeatures],
   enableContentFeaturesGate: Gate[RecapQuery],
-  enableTokensInContentFeaturesGate: Gate[RecapQuery],
-  enableTweetTextInContentFeaturesGate: Gate[RecapQuery],
-  enableConversationControlContentFeaturesGate: Gate[RecapQuery],
-  enableTweetMediaHydrationGate: Gate[RecapQuery],
-  hydrateInReplyToTweets: Boolean,
-  statsReceiver: StatsReceiver) {
-  val scopedStatsReceiver: StatsReceiver = statsReceiver.scope("ContentFeaturesHydrationTransform")
-  val tweetHydrator: TweetHydrator = new TweetHydrator(tweetyPieClient, scopedStatsReceiver)
-  val tweetypieContentFeaturesProvider: ContentFeaturesProvider =
-    new TweetypieContentFeaturesProvider(
-      tweetHydrator,
+  enableTokens nContentFeaturesGate: Gate[RecapQuery],
+  enableT etText nContentFeaturesGate: Gate[RecapQuery],
+  enableConversat onControlContentFeaturesGate: Gate[RecapQuery],
+  enableT et d aHydrat onGate: Gate[RecapQuery],
+  hydrate nReplyToT ets: Boolean,
+  statsRece ver: StatsRece ver) {
+  val scopedStatsRece ver: StatsRece ver = statsRece ver.scope("ContentFeaturesHydrat onTransform")
+  val t etHydrator: T etHydrator = new T etHydrator(t etyP eCl ent, scopedStatsRece ver)
+  val t etyp eContentFeaturesProv der: ContentFeaturesProv der =
+    new T etyp eContentFeaturesProv der(
+      t etHydrator,
       enableContentFeaturesGate,
-      enableTokensInContentFeaturesGate,
-      enableTweetTextInContentFeaturesGate,
-      enableConversationControlContentFeaturesGate,
-      enableTweetMediaHydrationGate,
-      scopedStatsReceiver
+      enableTokens nContentFeaturesGate,
+      enableT etText nContentFeaturesGate,
+      enableConversat onControlContentFeaturesGate,
+      enableT et d aHydrat onGate,
+      scopedStatsRece ver
     )
 
-  val cachingContentFeaturesProvider: ContentFeaturesProvider = new CachingContentFeaturesProvider(
-    underlying = tweetypieContentFeaturesProvider,
-    contentFeaturesCache = contentFeaturesCache,
-    statsReceiver = scopedStatsReceiver
+  val cach ngContentFeaturesProv der: ContentFeaturesProv der = new Cach ngContentFeaturesProv der(
+    underly ng = t etyp eContentFeaturesProv der,
+    contentFeaturesCac  = contentFeaturesCac ,
+    statsRece ver = scopedStatsRece ver
   )
 
-  val contentFeaturesProvider: configapi.FutureDependencyTransformer[RecapQuery, Seq[TweetId], Map[
-    TweetId,
+  val contentFeaturesProv der: conf gap .FutureDependencyTransfor r[RecapQuery, Seq[T et d], Map[
+    T et d,
     ContentFeatures
-  ]] = FutureDependencyTransformer.partition(
+  ]] = FutureDependencyTransfor r.part  on(
     gate = enableContentFeaturesGate,
-    ifTrue = cachingContentFeaturesProvider,
-    ifFalse = tweetypieContentFeaturesProvider
+     fTrue = cach ngContentFeaturesProv der,
+     fFalse = t etyp eContentFeaturesProv der
   )
 
-  lazy val contentFeaturesHydrationTransform: ContentFeaturesHydrationTransform =
-    new ContentFeaturesHydrationTransform(
-      contentFeaturesProvider,
+  lazy val contentFeaturesHydrat onTransform: ContentFeaturesHydrat onTransform =
+    new ContentFeaturesHydrat onTransform(
+      contentFeaturesProv der,
       enableContentFeaturesGate,
-      hydrateInReplyToTweets
+      hydrate nReplyToT ets
     )
-  def build(): ContentFeaturesHydrationTransform = contentFeaturesHydrationTransform
+  def bu ld(): ContentFeaturesHydrat onTransform = contentFeaturesHydrat onTransform
 }
 
-class ContentFeaturesHydrationTransform(
-  contentFeaturesProvider: ContentFeaturesProvider,
+class ContentFeaturesHydrat onTransform(
+  contentFeaturesProv der: ContentFeaturesProv der,
   enableContentFeaturesGate: Gate[RecapQuery],
-  hydrateInReplyToTweets: Boolean)
+  hydrate nReplyToT ets: Boolean)
     extends FutureArrow[
-      HydratedCandidatesAndFeaturesEnvelope,
-      HydratedCandidatesAndFeaturesEnvelope
+      HydratedCand datesAndFeaturesEnvelope,
+      HydratedCand datesAndFeaturesEnvelope
     ] {
-  override def apply(
-    request: HydratedCandidatesAndFeaturesEnvelope
-  ): Future[HydratedCandidatesAndFeaturesEnvelope] = {
-    if (enableContentFeaturesGate(request.candidateEnvelope.query)) {
-      val searchResults = request.candidateEnvelope.searchResults
+  overr de def apply(
+    request: HydratedCand datesAndFeaturesEnvelope
+  ): Future[HydratedCand datesAndFeaturesEnvelope] = {
+     f (enableContentFeaturesGate(request.cand dateEnvelope.query)) {
+      val searchResults = request.cand dateEnvelope.searchResults
 
-      val sourceTweetIdMap = searchResults.map { searchResult =>
-        (searchResult.id, getRetweetSourceTweetId(searchResult).getOrElse(searchResult.id))
+      val s ceT et dMap = searchResults.map { searchResult =>
+        (searchResult. d, getRet etS ceT et d(searchResult).getOrElse(searchResult. d))
       }.toMap
 
-      val inReplyToTweetIds = if (hydrateInReplyToTweets) {
-        searchResults.flatMap(getInReplyToTweetId)
+      val  nReplyToT et ds =  f (hydrate nReplyToT ets) {
+        searchResults.flatMap(get nReplyToT et d)
       } else {
         Seq.empty
       }
 
-      val tweetIdsToHydrate = (sourceTweetIdMap.values ++ inReplyToTweetIds).toSeq.distinct
+      val t et dsToHydrate = (s ceT et dMap.values ++  nReplyToT et ds).toSeq.d st nct
 
-      val contentFeaturesMapFuture = if (tweetIdsToHydrate.nonEmpty) {
-        contentFeaturesProvider(request.candidateEnvelope.query, tweetIdsToHydrate)
+      val contentFeaturesMapFuture =  f (t et dsToHydrate.nonEmpty) {
+        contentFeaturesProv der(request.cand dateEnvelope.query, t et dsToHydrate)
       } else {
-        FutureUtils.EmptyMap[TweetId, ContentFeatures]
+        FutureUt ls.EmptyMap[T et d, ContentFeatures]
       }
 
       Future.value(
         request.copy(
           contentFeaturesFuture = contentFeaturesMapFuture,
-          tweetSourceTweetMap = sourceTweetIdMap,
-          inReplyToTweetIds = inReplyToTweetIds.toSet
+          t etS ceT etMap = s ceT et dMap,
+           nReplyToT et ds =  nReplyToT et ds.toSet
         )
       )
     } else {

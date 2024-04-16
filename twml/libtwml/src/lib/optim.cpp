@@ -1,273 +1,273 @@
-#include "internal/interpolate.h"
-#include "internal/error.h"
-#include <twml/optim.h>
+# nclude " nternal/ nterpolate.h"
+# nclude " nternal/error.h"
+# nclude <twml/opt m.h>
 
-namespace twml {
-  template<typename T>
-  void mdlInfer(Tensor &output_keys, Tensor &output_vals,
-          const Tensor &input_keys, const Tensor &input_vals,
-          const Tensor &bin_ids,
-          const Tensor &bin_vals,
+na space twml {
+  template<typena  T>
+  vo d mdl nfer(Tensor &output_keys, Tensor &output_vals,
+          const Tensor & nput_keys, const Tensor & nput_vals,
+          const Tensor &b n_ ds,
+          const Tensor &b n_vals,
           const Tensor &feature_offsets,
-          bool return_bin_indices) {
-    auto okeysData = output_keys.getData<int64_t>();
+          bool return_b n_ nd ces) {
+    auto okeysData = output_keys.getData< nt64_t>();
     auto ovalsData = output_vals.getData<T>();
-    uint64_t okeysStride   = output_keys.getStride(0);
-    uint64_t ovaluesStride = output_vals.getStride(0);
+    u nt64_t okeysStr de   = output_keys.getStr de(0);
+    u nt64_t ovaluesStr de = output_vals.getStr de(0);
 
-    auto ikeysData = input_keys.getData<int64_t>();
-    auto ivalsData = input_vals.getData<T>();
-    uint64_t ikeysStride   = input_keys.getStride(0);
-    uint64_t ivaluesStride = input_vals.getStride(0);
+    auto  keysData =  nput_keys.getData< nt64_t>();
+    auto  valsData =  nput_vals.getData<T>();
+    u nt64_t  keysStr de   =  nput_keys.getStr de(0);
+    u nt64_t  valuesStr de =  nput_vals.getStr de(0);
 
-    auto xsData = bin_vals.getData<T>();
-    auto ysData = bin_ids.getData<int64_t>();
-    uint64_t xsStride = bin_vals.getStride(0);
-    uint64_t ysStride = bin_ids.getStride(0);
+    auto xsData = b n_vals.getData<T>();
+    auto ysData = b n_ ds.getData< nt64_t>();
+    u nt64_t xsStr de = b n_vals.getStr de(0);
+    u nt64_t ysStr de = b n_ ds.getStr de(0);
 
-    auto offsetData = feature_offsets.getData<int64_t>();
+    auto offsetData = feature_offsets.getData< nt64_t>();
 
-    uint64_t size = input_keys.getDim(0);
-    uint64_t total_bins = bin_ids.getNumElements();
-    uint64_t fsize = feature_offsets.getNumElements();
+    u nt64_t s ze =  nput_keys.getD m(0);
+    u nt64_t total_b ns = b n_ ds.getNumEle nts();
+    u nt64_t fs ze = feature_offsets.getNumEle nts();
 
-    for (uint64_t i = 0; i < size; i++) {
-      int64_t ikey = ikeysData[i * ikeysStride] - TWML_INDEX_BASE;
-      T val = ivalsData[i * ivaluesStride];
-      if (ikey == -1) {
-        ovalsData[i * ovaluesStride] = val;
-        continue;
+    for (u nt64_t   = 0;   < s ze;  ++) {
+       nt64_t  key =  keysData[  *  keysStr de] - TWML_ NDEX_BASE;
+      T val =  valsData[  *  valuesStr de];
+       f ( key == -1) {
+        ovalsData[  * ovaluesStr de] = val;
+        cont nue;
       }
 
-      // Perform interpolation
-      uint64_t offset = offsetData[ikey];
-      uint64_t next_offset = (ikey == (int64_t)(fsize - 1)) ? total_bins : offsetData[ikey + 1];
-      uint64_t mainSize = next_offset - offset;
+      // Perform  nterpolat on
+      u nt64_t offset = offsetData[ key];
+      u nt64_t next_offset = ( key == ( nt64_t)(fs ze - 1)) ? total_b ns : offsetData[ key + 1];
+      u nt64_t ma nS ze = next_offset - offset;
 
       const T *lxsData = xsData + offset;
-      const int64_t *lysData = ysData + offset;
-      int64_t okey = interpolation<T, int64_t>(lxsData, xsStride,
-                                 lysData, ysStride,
-                                 val, mainSize, NEAREST, 0,
-                                 return_bin_indices);
-      okeysData[i * okeysStride] = okey + TWML_INDEX_BASE;
-      ovalsData[i * ovaluesStride] = 1;
+      const  nt64_t *lysData = ysData + offset;
+       nt64_t okey =  nterpolat on<T,  nt64_t>(lxsData, xsStr de,
+                                 lysData, ysStr de,
+                                 val, ma nS ze, NEAREST, 0,
+                                 return_b n_ nd ces);
+      okeysData[  * okeysStr de] = okey + TWML_ NDEX_BASE;
+      ovalsData[  * ovaluesStr de] = 1;
     }
   }
 
-  void mdlInfer(Tensor &output_keys, Tensor &output_vals,
-          const Tensor &input_keys, const Tensor &input_vals,
-          const Tensor &bin_ids,
-          const Tensor &bin_vals,
+  vo d mdl nfer(Tensor &output_keys, Tensor &output_vals,
+          const Tensor & nput_keys, const Tensor & nput_vals,
+          const Tensor &b n_ ds,
+          const Tensor &b n_vals,
           const Tensor &feature_offsets,
-          bool return_bin_indices) {
-    if (input_keys.getType() != TWML_TYPE_INT64) {
-      throw twml::Error(TWML_ERR_TYPE, "input_keys must be a Long Tensor");
+          bool return_b n_ nd ces) {
+     f ( nput_keys.getType() != TWML_TYPE_ NT64) {
+      throw twml::Error(TWML_ERR_TYPE, " nput_keys must be a Long Tensor");
     }
 
-    if (output_keys.getType() != TWML_TYPE_INT64) {
+     f (output_keys.getType() != TWML_TYPE_ NT64) {
       throw twml::Error(TWML_ERR_TYPE, "output_keys must be a Long Tensor");
     }
 
-    if (bin_ids.getType() != TWML_TYPE_INT64) {
-      throw twml::Error(TWML_ERR_TYPE, "bin_ids must be a Long Tensor");
+     f (b n_ ds.getType() != TWML_TYPE_ NT64) {
+      throw twml::Error(TWML_ERR_TYPE, "b n_ ds must be a Long Tensor");
     }
 
-    if (feature_offsets.getType() != TWML_TYPE_INT64) {
-      throw twml::Error(TWML_ERR_TYPE, "bin_ids must be a Long Tensor");
+     f (feature_offsets.getType() != TWML_TYPE_ NT64) {
+      throw twml::Error(TWML_ERR_TYPE, "b n_ ds must be a Long Tensor");
     }
 
-    if (input_vals.getType() != bin_vals.getType()) {
+     f ( nput_vals.getType() != b n_vals.getType()) {
       throw twml::Error(TWML_ERR_TYPE,
-                "Data type of input_vals does not match type of bin_vals");
+                "Data type of  nput_vals does not match type of b n_vals");
     }
 
-    if (bin_vals.getNumDims() != 1) {
-      throw twml::Error(TWML_ERR_SIZE,
-                "bin_vals must be 1 Dimensional");
+     f (b n_vals.getNumD ms() != 1) {
+      throw twml::Error(TWML_ERR_S ZE,
+                "b n_vals must be 1 D  ns onal");
     }
 
-    if (bin_ids.getNumDims() != 1) {
-      throw twml::Error(TWML_ERR_SIZE,
-                "bin_ids must be 1 Dimensional");
+     f (b n_ ds.getNumD ms() != 1) {
+      throw twml::Error(TWML_ERR_S ZE,
+                "b n_ ds must be 1 D  ns onal");
     }
 
-    if (bin_vals.getNumElements() != bin_ids.getNumElements()) {
-      throw twml::Error(TWML_ERR_SIZE,
-                "Dimensions of bin_vals and bin_ids do not match");
+     f (b n_vals.getNumEle nts() != b n_ ds.getNumEle nts()) {
+      throw twml::Error(TWML_ERR_S ZE,
+                "D  ns ons of b n_vals and b n_ ds do not match");
     }
 
-    if (feature_offsets.getStride(0) != 1) {
-      throw twml::Error(TWML_ERR_SIZE,
-                "feature_offsets must be contiguous");
+     f (feature_offsets.getStr de(0) != 1) {
+      throw twml::Error(TWML_ERR_S ZE,
+                "feature_offsets must be cont guous");
     }
 
-    switch (input_vals.getType()) {
+    sw ch ( nput_vals.getType()) {
     case TWML_TYPE_FLOAT:
-      twml::mdlInfer<float>(output_keys, output_vals,
-                  input_keys, input_vals,
-                  bin_ids, bin_vals, feature_offsets,
-                  return_bin_indices);
+      twml::mdl nfer<float>(output_keys, output_vals,
+                   nput_keys,  nput_vals,
+                  b n_ ds, b n_vals, feature_offsets,
+                  return_b n_ nd ces);
       break;
     case TWML_TYPE_DOUBLE:
-      twml::mdlInfer<double>(output_keys, output_vals,
-                   input_keys, input_vals,
-                   bin_ids, bin_vals, feature_offsets,
-                   return_bin_indices);
+      twml::mdl nfer<double>(output_keys, output_vals,
+                    nput_keys,  nput_vals,
+                   b n_ ds, b n_vals, feature_offsets,
+                   return_b n_ nd ces);
       break;
     default:
       throw twml::Error(TWML_ERR_TYPE,
-        "Unsupported datatype for mdlInfer");
+        "Unsupported datatype for mdl nfer");
     }
   }
 
-  const int DEFAULT_INTERPOLATION_LOWEST = 0;
+  const  nt DEFAULT_ NTERPOLAT ON_LOWEST = 0;
   /**
-   * @param output tensor to hold linear or nearest interpolation output.
-   *    This function does not allocate space.
-   *    The output tensor must have space allcoated.
-   * @param input input tensor; size must match output.
-   *    input is assumed to have size [batch_size, number_of_labels].
-   * @param xs the bins.
-   * @param ys the values for the bins.
-   * @param mode: linear or nearest InterpolationMode.
-   *    linear is used for isotonic calibration.
-   *    nearest is used for MDL calibration and MDL inference.
+   * @param output tensor to hold l near or nearest  nterpolat on output.
+   *    T  funct on does not allocate space.
+   *    T  output tensor must have space allcoated.
+   * @param  nput  nput tensor; s ze must match output.
+   *     nput  s assu d to have s ze [batch_s ze, number_of_labels].
+   * @param xs t  b ns.
+   * @param ys t  values for t  b ns.
+   * @param mode: l near or nearest  nterpolat onMode.
+   *    l near  s used for  soton c cal brat on.
+   *    nearest  s used for MDL cal brat on and MDL  nference.
    *
-   * @return Returns nothing. Output is stored into the output tensor.
+   * @return Returns noth ng. Output  s stored  nto t  output tensor.
    *
-   * This is used by IsotonicCalibration inference.
+   * T   s used by  soton cCal brat on  nference.
    */
-  template <typename T>
-  void interpolation(
+  template <typena  T>
+  vo d  nterpolat on(
     Tensor output,
-    const Tensor input,
+    const Tensor  nput,
     const Tensor xs,
     const Tensor ys,
-    const InterpolationMode mode) {
-    // Sanity check: input and output should have two dims.
-    if (input.getNumDims() != 2 || output.getNumDims() != 2) {
+    const  nterpolat onMode mode) {
+    // San y c ck:  nput and output should have two d ms.
+     f ( nput.getNumD ms() != 2 || output.getNumD ms() != 2) {
       throw twml::Error(TWML_ERR_TYPE,
-                "input and output should have 2 dimensions.");
+                " nput and output should have 2 d  ns ons.");
     }
 
-    // Sanity check: input and output size should match.
-    for (int i = 0; i < input.getNumDims(); i++) {
-      if (input.getDim(i) != output.getDim(i))  {
+    // San y c ck:  nput and output s ze should match.
+    for ( nt   = 0;   <  nput.getNumD ms();  ++) {
+       f ( nput.getD m( ) != output.getD m( ))  {
         throw twml::Error(TWML_ERR_TYPE,
-                  "input and output mismatch in size.");
+                  " nput and output m smatch  n s ze.");
       }
     }
 
-    // Sanity check: number of labels in input should match
-    // number of labels in xs / ys.
-    if (input.getDim(1) != xs.getDim(0)
-      || input.getDim(1) != ys.getDim(0)) {
+    // San y c ck: number of labels  n  nput should match
+    // number of labels  n xs / ys.
+     f ( nput.getD m(1) != xs.getD m(0)
+      ||  nput.getD m(1) != ys.getD m(0)) {
       throw twml::Error(TWML_ERR_TYPE,
-                "input, xs, ys should have the same number of labels.");
+                " nput, xs, ys should have t  sa  number of labels.");
     }
 
-    const uint64_t inputStride0 = input.getStride(0);
-    const uint64_t inputStride1 = input.getStride(1);
-    const uint64_t outputStride0 = output.getStride(0);
-    const uint64_t outputStride1 = output.getStride(1);
-    const uint64_t xsStride0 = xs.getStride(0);
-    const uint64_t xsStride1 = xs.getStride(1);
-    const uint64_t ysStride0 = ys.getStride(0);
-    const uint64_t ysStride1 = ys.getStride(1);
-    const uint64_t mainSize = xs.getDim(1);
+    const u nt64_t  nputStr de0 =  nput.getStr de(0);
+    const u nt64_t  nputStr de1 =  nput.getStr de(1);
+    const u nt64_t outputStr de0 = output.getStr de(0);
+    const u nt64_t outputStr de1 = output.getStr de(1);
+    const u nt64_t xsStr de0 = xs.getStr de(0);
+    const u nt64_t xsStr de1 = xs.getStr de(1);
+    const u nt64_t ysStr de0 = ys.getStr de(0);
+    const u nt64_t ysStr de1 = ys.getStr de(1);
+    const u nt64_t ma nS ze = xs.getD m(1);
 
-    // for each value in the input matrix, compute output value by
-    // calling interpolation.
-    auto inputData = input.getData<T>();
+    // for each value  n t   nput matr x, compute output value by
+    // call ng  nterpolat on.
+    auto  nputData =  nput.getData<T>();
     auto outputData = output.getData<T>();
     auto xsData = xs.getData<T>();
     auto ysData = ys.getData<T>();
 
-    for (uint64_t i = 0; i < input.getDim(0); i++) {
-      for (uint64_t j = 0; j < input.getDim(1); j++) {
-        const T val = inputData[i * inputStride0 + j * inputStride1];
-        const T *lxsData = xsData + j * xsStride0;
-        const T *lysData = ysData + j * ysStride0;
-        const T res = interpolation(
-          lxsData, xsStride1,
-          lysData, ysStride1,
+    for (u nt64_t   = 0;   <  nput.getD m(0);  ++) {
+      for (u nt64_t j = 0; j <  nput.getD m(1); j++) {
+        const T val =  nputData[  *  nputStr de0 + j *  nputStr de1];
+        const T *lxsData = xsData + j * xsStr de0;
+        const T *lysData = ysData + j * ysStr de0;
+        const T res =  nterpolat on(
+          lxsData, xsStr de1,
+          lysData, ysStr de1,
           val,
-          mainSize,
+          ma nS ze,
           mode,
-          DEFAULT_INTERPOLATION_LOWEST);
-        outputData[i * outputStride0 + j * outputStride1] = res;
+          DEFAULT_ NTERPOLAT ON_LOWEST);
+        outputData[  * outputStr de0 + j * outputStr de1] = res;
       }
     }
   }
 
-  void linearInterpolation(
+  vo d l near nterpolat on(
     Tensor output,
-    const Tensor input,
+    const Tensor  nput,
     const Tensor xs,
     const Tensor ys) {
-    switch (input.getType()) {
+    sw ch ( nput.getType()) {
     case TWML_TYPE_FLOAT:
-      twml::interpolation<float>(output, input, xs, ys, LINEAR);
+      twml:: nterpolat on<float>(output,  nput, xs, ys, L NEAR);
       break;
     case TWML_TYPE_DOUBLE:
-      twml::interpolation<double>(output, input, xs, ys, LINEAR);
+      twml:: nterpolat on<double>(output,  nput, xs, ys, L NEAR);
       break;
     default:
       throw twml::Error(TWML_ERR_TYPE,
-        "Unsupported datatype for linearInterpolation.");
+        "Unsupported datatype for l near nterpolat on.");
     }
   }
 
-  void nearestInterpolation(
+  vo d nearest nterpolat on(
     Tensor output,
-    const Tensor input,
+    const Tensor  nput,
     const Tensor xs,
     const Tensor ys) {
-    switch (input.getType()) {
+    sw ch ( nput.getType()) {
     case TWML_TYPE_FLOAT:
-      twml::interpolation<float>(output, input, xs, ys, NEAREST);
+      twml:: nterpolat on<float>(output,  nput, xs, ys, NEAREST);
       break;
     case TWML_TYPE_DOUBLE:
-      twml::interpolation<double>(output, input, xs, ys, NEAREST);
+      twml:: nterpolat on<double>(output,  nput, xs, ys, NEAREST);
       break;
     default:
       throw twml::Error(TWML_ERR_TYPE,
-        "Unsupported datatype for nearestInterpolation.");
+        "Unsupported datatype for nearest nterpolat on.");
     }
   }
-}  // namespace twml
+}  // na space twml
 
-twml_err twml_optim_mdl_infer(twml_tensor output_keys,
+twml_err twml_opt m_mdl_ nfer(twml_tensor output_keys,
                 twml_tensor output_vals,
-                const twml_tensor input_keys,
-                const twml_tensor input_vals,
-                const twml_tensor bin_ids,
-                const twml_tensor bin_vals,
+                const twml_tensor  nput_keys,
+                const twml_tensor  nput_vals,
+                const twml_tensor b n_ ds,
+                const twml_tensor b n_vals,
                 const twml_tensor feature_offsets,
-                bool return_bin_indices) {
-  HANDLE_EXCEPTIONS(
-    using namespace twml;
-    mdlInfer(*getTensor(output_keys),
+                bool return_b n_ nd ces) {
+  HANDLE_EXCEPT ONS(
+    us ng na space twml;
+    mdl nfer(*getTensor(output_keys),
          *getTensor(output_vals),
-         *getConstTensor(input_keys),
-         *getConstTensor(input_vals),
-         *getConstTensor(bin_ids),
-         *getConstTensor(bin_vals),
+         *getConstTensor( nput_keys),
+         *getConstTensor( nput_vals),
+         *getConstTensor(b n_ ds),
+         *getConstTensor(b n_vals),
          *getConstTensor(feature_offsets),
-          return_bin_indices););
+          return_b n_ nd ces););
   return TWML_ERR_NONE;
 }
 
-twml_err twml_optim_nearest_interpolation(
+twml_err twml_opt m_nearest_ nterpolat on(
                 twml_tensor output,
-                const twml_tensor input,
+                const twml_tensor  nput,
                 const twml_tensor xs,
                 const twml_tensor ys) {
-  HANDLE_EXCEPTIONS(
-    using namespace twml;
-    nearestInterpolation(*getTensor(output),
-      *getConstTensor(input),
+  HANDLE_EXCEPT ONS(
+    us ng na space twml;
+    nearest nterpolat on(*getTensor(output),
+      *getConstTensor( nput),
       *getConstTensor(xs),
       *getConstTensor(ys)););
   return TWML_ERR_NONE;

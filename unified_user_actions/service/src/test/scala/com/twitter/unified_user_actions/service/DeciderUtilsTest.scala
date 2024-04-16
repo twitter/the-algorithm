@@ -1,74 +1,74 @@
-package com.twitter.unified_user_actions.service
+package com.tw ter.un f ed_user_act ons.serv ce
 
-import com.twitter.decider.MockDecider
-import com.twitter.inject.Test
-import com.twitter.unified_user_actions.service.module.ClientEventDeciderUtils
-import com.twitter.unified_user_actions.service.module.DefaultDeciderUtils
-import com.twitter.unified_user_actions.thriftscala._
-import com.twitter.util.Time
-import com.twitter.util.mock.Mockito
-import org.junit.runner.RunWith
-import org.scalatestplus.junit.JUnitRunner
+ mport com.tw ter.dec der.MockDec der
+ mport com.tw ter. nject.Test
+ mport com.tw ter.un f ed_user_act ons.serv ce.module.Cl entEventDec derUt ls
+ mport com.tw ter.un f ed_user_act ons.serv ce.module.DefaultDec derUt ls
+ mport com.tw ter.un f ed_user_act ons.thr ftscala._
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.ut l.mock.Mock o
+ mport org.jun .runner.RunW h
+ mport org.scalatestplus.jun .JUn Runner
 
-@RunWith(classOf[JUnitRunner])
-class DeciderUtilsTest extends Test with Mockito {
-  trait Fixture {
-    val frozenTime = Time.fromMilliseconds(1658949273000L)
+@RunW h(classOf[JUn Runner])
+class Dec derUt lsTest extends Test w h Mock o {
+  tra  F xture {
+    val frozenT   = T  .fromM ll seconds(1658949273000L)
 
-    val publishActionTypes =
-      Set[ActionType](ActionType.ServerTweetFav, ActionType.ClientTweetRenderImpression)
+    val publ shAct onTypes =
+      Set[Act onType](Act onType.ServerT etFav, Act onType.Cl entT etRender mpress on)
 
-    def decider(
-      features: Set[String] = publishActionTypes.map { action =>
-        s"Publish${action.name}"
+    def dec der(
+      features: Set[Str ng] = publ shAct onTypes.map { act on =>
+        s"Publ sh${act on.na }"
       }
-    ) = new MockDecider(features = features)
+    ) = new MockDec der(features = features)
 
-    def mkUUA(actionType: ActionType) = UnifiedUserAction(
-      userIdentifier = UserIdentifier(userId = Some(91L)),
-      item = Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = 1L,
-          actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(101L))),
+    def mkUUA(act onType: Act onType) = Un f edUserAct on(
+      user dent f er = User dent f er(user d = So (91L)),
+       em =  em.T et nfo(
+        T et nfo(
+          act onT et d = 1L,
+          act onT etAuthor nfo = So (Author nfo(author d = So (101L))),
         )
       ),
-      actionType = actionType,
-      eventMetadata = EventMetadata(
-        sourceTimestampMs = 1001L,
-        receivedTimestampMs = frozenTime.inMilliseconds,
-        sourceLineage = SourceLineage.ServerTlsFavs,
-        traceId = Some(31L)
+      act onType = act onType,
+      event tadata = Event tadata(
+        s ceT  stampMs = 1001L,
+        rece vedT  stampMs = frozenT  . nM ll seconds,
+        s ceL neage = S ceL neage.ServerTlsFavs,
+        trace d = So (31L)
       )
     )
 
-    val uuaServerTweetFav = mkUUA(ActionType.ServerTweetFav)
-    val uuaClientTweetFav = mkUUA(ActionType.ClientTweetFav)
-    val uuaClientTweetRenderImpression = mkUUA(ActionType.ClientTweetRenderImpression)
+    val uuaServerT etFav = mkUUA(Act onType.ServerT etFav)
+    val uuaCl entT etFav = mkUUA(Act onType.Cl entT etFav)
+    val uuaCl entT etRender mpress on = mkUUA(Act onType.Cl entT etRender mpress on)
   }
 
-  test("Decider Utils") {
-    new Fixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        DefaultDeciderUtils.shouldPublish(
-          decider = decider(),
-          uua = uuaServerTweetFav,
-          sinkTopic = "") shouldBe true
-        DefaultDeciderUtils.shouldPublish(
-          decider = decider(),
-          uua = uuaClientTweetFav,
-          sinkTopic = "") shouldBe false
-        ClientEventDeciderUtils.shouldPublish(
-          decider = decider(),
-          uua = uuaClientTweetRenderImpression,
-          sinkTopic = "unified_user_actions_engagements") shouldBe false
-        ClientEventDeciderUtils.shouldPublish(
-          decider = decider(),
-          uua = uuaClientTweetFav,
-          sinkTopic = "unified_user_actions_engagements") shouldBe false
-        ClientEventDeciderUtils.shouldPublish(
-          decider = decider(features = Set[String](s"Publish${ActionType.ClientTweetFav.name}")),
-          uua = uuaClientTweetFav,
-          sinkTopic = "unified_user_actions_engagements") shouldBe true
+  test("Dec der Ut ls") {
+    new F xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        DefaultDec derUt ls.shouldPubl sh(
+          dec der = dec der(),
+          uua = uuaServerT etFav,
+          s nkTop c = "") shouldBe true
+        DefaultDec derUt ls.shouldPubl sh(
+          dec der = dec der(),
+          uua = uuaCl entT etFav,
+          s nkTop c = "") shouldBe false
+        Cl entEventDec derUt ls.shouldPubl sh(
+          dec der = dec der(),
+          uua = uuaCl entT etRender mpress on,
+          s nkTop c = "un f ed_user_act ons_engage nts") shouldBe false
+        Cl entEventDec derUt ls.shouldPubl sh(
+          dec der = dec der(),
+          uua = uuaCl entT etFav,
+          s nkTop c = "un f ed_user_act ons_engage nts") shouldBe false
+        Cl entEventDec derUt ls.shouldPubl sh(
+          dec der = dec der(features = Set[Str ng](s"Publ sh${Act onType.Cl entT etFav.na }")),
+          uua = uuaCl entT etFav,
+          s nkTop c = "un f ed_user_act ons_engage nts") shouldBe true
       }
     }
   }

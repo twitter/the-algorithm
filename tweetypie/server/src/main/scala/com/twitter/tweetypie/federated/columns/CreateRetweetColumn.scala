@@ -1,184 +1,184 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package federated.columns
 
-import com.twitter.accounts.util.SafetyMetadataUtils
-import com.twitter.ads.callback.thriftscala.EngagementRequest
-import com.twitter.bouncer.thriftscala.{Bounce => BouncerBounce}
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.config.AllOf
-import com.twitter.strato.config.BouncerAccess
-import com.twitter.strato.config.ContactInfo
-import com.twitter.strato.config.Policy
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
-import com.twitter.strato.data.Lifecycle.Production
-import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.opcontext.OpContext
-import com.twitter.strato.response.Err
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.tweetypie.federated.columns.ApiErrors._
-import com.twitter.tweetypie.federated.columns.CreateRetweetColumn.toCreateRetweetErr
-import com.twitter.tweetypie.federated.context.GetRequestContext
-import com.twitter.tweetypie.federated.prefetcheddata.PrefetchedDataRequest
-import com.twitter.tweetypie.federated.prefetcheddata.PrefetchedDataResponse
-import com.twitter.tweetypie.federated.promotedcontent.TweetPromotedContentLogger
-import com.twitter.tweetypie.federated.promotedcontent.TweetPromotedContentLogger.RetweetEngagement
-import com.twitter.tweetypie.thriftscala.TweetCreateState._
-import com.twitter.tweetypie.thriftscala.{graphql => gql}
-import com.twitter.tweetypie.{thriftscala => thrift}
-import com.twitter.weaverbird.common.{GetRequestContext => WGetRequestContext}
+ mport com.tw ter.accounts.ut l.Safety tadataUt ls
+ mport com.tw ter.ads.callback.thr ftscala.Engage ntRequest
+ mport com.tw ter.bouncer.thr ftscala.{Bounce => BouncerBounce}
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.catalog.Op tadata
+ mport com.tw ter.strato.conf g.AllOf
+ mport com.tw ter.strato.conf g.BouncerAccess
+ mport com.tw ter.strato.conf g.Contact nfo
+ mport com.tw ter.strato.conf g.Pol cy
+ mport com.tw ter.strato.data.Conv
+ mport com.tw ter.strato.data.Descr pt on.Pla nText
+ mport com.tw ter.strato.data.L fecycle.Product on
+ mport com.tw ter.strato.fed.StratoFed
+ mport com.tw ter.strato.opcontext.OpContext
+ mport com.tw ter.strato.response.Err
+ mport com.tw ter.strato.thr ft.ScroogeConv
+ mport com.tw ter.t etyp e.federated.columns.Ap Errors._
+ mport com.tw ter.t etyp e.federated.columns.CreateRet etColumn.toCreateRet etErr
+ mport com.tw ter.t etyp e.federated.context.GetRequestContext
+ mport com.tw ter.t etyp e.federated.prefetc ddata.Prefetc dDataRequest
+ mport com.tw ter.t etyp e.federated.prefetc ddata.Prefetc dDataResponse
+ mport com.tw ter.t etyp e.federated.promotedcontent.T etPromotedContentLogger
+ mport com.tw ter.t etyp e.federated.promotedcontent.T etPromotedContentLogger.Ret etEngage nt
+ mport com.tw ter.t etyp e.thr ftscala.T etCreateState._
+ mport com.tw ter.t etyp e.thr ftscala.{graphql => gql}
+ mport com.tw ter.t etyp e.{thr ftscala => thr ft}
+ mport com.tw ter. averb rd.common.{GetRequestContext => WGetRequestContext}
 
-class CreateRetweetColumn(
-  retweet: thrift.RetweetRequest => Future[thrift.PostTweetResult],
+class CreateRet etColumn(
+  ret et: thr ft.Ret etRequest => Future[thr ft.PostT etResult],
   getRequestContext: GetRequestContext,
-  prefetchedDataRepository: PrefetchedDataRequest => Stitch[PrefetchedDataResponse],
-  logTweetPromotedContent: TweetPromotedContentLogger.Type,
-  statsReceiver: StatsReceiver,
-) extends StratoFed.Column(CreateRetweetColumn.Path)
-    with StratoFed.Execute.StitchWithContext
-    with StratoFed.HandleDarkRequests {
+  prefetc dDataRepos ory: Prefetc dDataRequest => St ch[Prefetc dDataResponse],
+  logT etPromotedContent: T etPromotedContentLogger.Type,
+  statsRece ver: StatsRece ver,
+) extends StratoFed.Column(CreateRet etColumn.Path)
+    w h StratoFed.Execute.St chW hContext
+    w h StratoFed.HandleDarkRequests {
 
-  override val policy: Policy = AllOf(
-    Seq(AccessPolicy.TweetMutationCommonAccessPolicies, BouncerAccess()))
+  overr de val pol cy: Pol cy = AllOf(
+    Seq(AccessPol cy.T etMutat onCommonAccessPol c es, BouncerAccess()))
 
-  // The underlying call to thriftTweetService.postRetweet is not idempotent
-  override val isIdempotent: Boolean = false
+  // T  underly ng call to thr ftT etServ ce.postRet et  s not  dempotent
+  overr de val  s dempotent: Boolean = false
 
-  override type Arg = gql.CreateRetweetRequest
-  override type Result = gql.CreateRetweetResponseWithSubqueryPrefetchItems
+  overr de type Arg = gql.CreateRet etRequest
+  overr de type Result = gql.CreateRet etResponseW hSubqueryPrefetch ems
 
-  override val argConv: Conv[Arg] = ScroogeConv.fromStruct
-  override val resultConv: Conv[Result] = ScroogeConv.fromStruct
+  overr de val argConv: Conv[Arg] = ScroogeConv.fromStruct
+  overr de val resultConv: Conv[Result] = ScroogeConv.fromStruct
 
-  override val contactInfo: ContactInfo = TweetypieContactInfo
-  override val metadata: OpMetadata = OpMetadata(
-    Some(Production),
-    Some(PlainText("Creates a retweet by the calling Twitter user of the given source tweet.")))
+  overr de val contact nfo: Contact nfo = T etyp eContact nfo
+  overr de val  tadata: Op tadata = Op tadata(
+    So (Product on),
+    So (Pla nText("Creates a ret et by t  call ng Tw ter user of t  g ven s ce t et.")))
 
-  private val getWeaverbirdCtx = new WGetRequestContext()
+  pr vate val get averb rdCtx = new WGetRequestContext()
 
-  override def execute(request: Arg, opContext: OpContext): Stitch[Result] = {
+  overr de def execute(request: Arg, opContext: OpContext): St ch[Result] = {
     val ctx = getRequestContext(opContext)
 
-    // First, do any request parameter validation that can result in an error
-    // prior to calling into thriftTweetService.retweet.
-    val safetyLevel = ctx.safetyLevel.getOrElse(throw SafetyLevelMissingErr)
+    // F rst, do any request para ter val dat on that can result  n an error
+    // pr or to call ng  nto thr ftT etServ ce.ret et.
+    val safetyLevel = ctx.safetyLevel.getOrElse(throw SafetyLevelM ss ngErr)
 
-    // Macaw-tweets returns ApiError.ClientNotPrivileged if the caller provides
-    // an impression_id but lacks the PROMOTED_TWEETS_IN_TIMELINE privilege.
-    val trackingId = request.engagementRequest match {
-      case Some(engagementRequest: EngagementRequest) if ctx.hasPrivilegePromotedTweetsInTimeline =>
-        TrackingId.parse(engagementRequest.impressionId, statsReceiver)
-      case Some(e: EngagementRequest) =>
-        throw ClientNotPrivilegedErr
+    // Macaw-t ets returns Ap Error.Cl entNotPr v leged  f t  caller prov des
+    // an  mpress on_ d but lacks t  PROMOTED_TWEETS_ N_T MEL NE pr v lege.
+    val track ng d = request.engage ntRequest match {
+      case So (engage ntRequest: Engage ntRequest)  f ctx.hasPr v legePromotedT ets nT  l ne =>
+        Track ng d.parse(engage ntRequest. mpress on d, statsRece ver)
+      case So (e: Engage ntRequest) =>
+        throw Cl entNotPr v legedErr
       case None =>
         None
     }
 
-    // DeviceSource is an oauth string computed from the ClientApplicationId.
-    // Macaw-tweets allows non-oauth callers, but GraphQL does not. An undefined
-    // ClientApplicationId is similar to TweetCreateState.DeviceSourceNotFound,
-    // which Macaw-tweets handles via a catch-all that returns
-    // ApiError.GenericAccessDenied
-    val deviceSource = ctx.deviceSource.getOrElse(throw GenericAccessDeniedErr)
+    // Dev ceS ce  s an oauth str ng computed from t  Cl entAppl cat on d.
+    // Macaw-t ets allows non-oauth callers, but GraphQL does not. An undef ned
+    // Cl entAppl cat on d  s s m lar to T etCreateState.Dev ceS ceNotFound,
+    // wh ch Macaw-t ets handles v a a catch-all that returns
+    // Ap Error.Gener cAccessDen ed
+    val dev ceS ce = ctx.dev ceS ce.getOrElse(throw Gener cAccessDen edErr)
 
-    // Macaw-tweets doesn't perform any parameter validation for the components
-    // used as input to makeSafetyMetaData.
-    val safetyMetadata = SafetyMetadataUtils.makeSafetyMetaData(
-      sessionHash = ctx.sessionHash,
-      knownDeviceToken = ctx.knownDeviceToken,
-      contributorId = ctx.contributorId
+    // Macaw-t ets doesn't perform any para ter val dat on for t  components
+    // used as  nput to makeSafety taData.
+    val safety tadata = Safety tadataUt ls.makeSafety taData(
+      sess onHash = ctx.sess onHash,
+      knownDev ceToken = ctx.knownDev ceToken,
+      contr butor d = ctx.contr butor d
     )
 
-    val thriftRetweetRequest = thrift.RetweetRequest(
-      sourceStatusId = request.tweetId,
-      userId = ctx.twitterUserId,
-      contributorUserId = None, // no longer supported, per tweet_service.thrift
-      createdVia = deviceSource,
+    val thr ftRet etRequest = thr ft.Ret etRequest(
+      s ceStatus d = request.t et d,
+      user d = ctx.tw terUser d,
+      contr butorUser d = None, // no longer supported, per t et_serv ce.thr ft
+      createdV a = dev ceS ce,
       nullcast = request.nullcast,
-      trackingId = trackingId,
-      dark = ctx.isDarkRequest,
-      hydrationOptions = Some(HydrationOptions.writePathHydrationOptions(ctx.cardsPlatformKey)),
-      safetyMetaData = Some(safetyMetadata),
+      track ng d = track ng d,
+      dark = ctx. sDarkRequest,
+      hydrat onOpt ons = So (Hydrat onOpt ons.wr ePathHydrat onOpt ons(ctx.cardsPlatformKey)),
+      safety taData = So (safety tadata),
     )
 
-    val stitchRetweet = Stitch.callFuture(retweet(thriftRetweetRequest))
+    val st chRet et = St ch.callFuture(ret et(thr ftRet etRequest))
 
-    request.engagementRequest.foreach { engagement =>
-      logTweetPromotedContent(engagement, RetweetEngagement, ctx.isDarkRequest)
+    request.engage ntRequest.foreach { engage nt =>
+      logT etPromotedContent(engage nt, Ret etEngage nt, ctx. sDarkRequest)
     }
 
-    stitchRetweet.flatMap { result: thrift.PostTweetResult =>
+    st chRet et.flatMap { result: thr ft.PostT etResult =>
       result.state match {
-        case thrift.TweetCreateState.Ok =>
-          val r = PrefetchedDataRequest(
-            tweet = result.tweet.get,
-            sourceTweet = result.sourceTweet,
-            quotedTweet = result.quotedTweet,
+        case thr ft.T etCreateState.Ok =>
+          val r = Prefetc dDataRequest(
+            t et = result.t et.get,
+            s ceT et = result.s ceT et,
+            quotedT et = result.quotedT et,
             safetyLevel = safetyLevel,
-            requestContext = getWeaverbirdCtx()
+            requestContext = get averb rdCtx()
           )
 
-          prefetchedDataRepository(r)
-            .liftToOption()
-            .map((prefetchedData: Option[PrefetchedDataResponse]) => {
-              gql.CreateRetweetResponseWithSubqueryPrefetchItems(
-                data = Some(gql.CreateRetweetResponse(result.tweet.map(_.id))),
-                subqueryPrefetchItems = prefetchedData.map(_.value)
+          prefetc dDataRepos ory(r)
+            .l ftToOpt on()
+            .map((prefetc dData: Opt on[Prefetc dDataResponse]) => {
+              gql.CreateRet etResponseW hSubqueryPrefetch ems(
+                data = So (gql.CreateRet etResponse(result.t et.map(_. d))),
+                subqueryPrefetch ems = prefetc dData.map(_.value)
               )
             })
         case errState =>
-          throw toCreateRetweetErr(errState, result.bounce, result.failureReason)
+          throw toCreateRet etErr(errState, result.bounce, result.fa lureReason)
       }
     }
   }
 }
 
-object CreateRetweetColumn {
-  val Path = "tweetypie/createRetweet.Tweet"
+object CreateRet etColumn {
+  val Path = "t etyp e/createRet et.T et"
 
   /**
    * Ported from:
-   *   StatusesRetweetController#retweetStatus rescue block
-   *   TweetyPieStatusRepository.toRetweetException
+   *   StatusesRet etController#ret etStatus rescue block
+   *   T etyP eStatusRepos ory.toRet etExcept on
    */
-  def toCreateRetweetErr(
-    errState: thrift.TweetCreateState,
-    bounce: Option[BouncerBounce],
-    failureReason: Option[String]
+  def toCreateRet etErr(
+    errState: thr ft.T etCreateState,
+    bounce: Opt on[BouncerBounce],
+    fa lureReason: Opt on[Str ng]
   ): Err = errState match {
-    case CannotRetweetBlockingUser =>
+    case CannotRet etBlock ngUser =>
       BlockedUserErr
-    case AlreadyRetweeted =>
-      AlreadyRetweetedErr
-    case Duplicate =>
-      DuplicateStatusErr
-    case CannotRetweetOwnTweet | CannotRetweetProtectedTweet | CannotRetweetSuspendedUser =>
-      InvalidRetweetForStatusErr
-    case UserNotFound | SourceTweetNotFound | SourceUserNotFound | CannotRetweetDeactivatedUser =>
+    case AlreadyRet eted =>
+      AlreadyRet etedErr
+    case Dupl cate =>
+      Dupl cateStatusErr
+    case CannotRet etOwnT et | CannotRet etProtectedT et | CannotRet etSuspendedUser =>
+       nval dRet etForStatusErr
+    case UserNotFound | S ceT etNotFound | S ceUserNotFound | CannotRet etDeact vatedUser =>
       StatusNotFoundErr
-    case UserDeactivated | UserSuspended =>
-      UserDeniedRetweetErr
-    case RateLimitExceeded =>
-      RateLimitExceededErr
+    case UserDeact vated | UserSuspended =>
+      UserDen edRet etErr
+    case RateL m Exceeded =>
+      RateL m ExceededErr
     case UrlSpam =>
-      TweetUrlSpamErr
+      T etUrlSpamErr
     case Spam | UserReadonly =>
-      TweetSpammerErr
-    case SafetyRateLimitExceeded =>
-      SafetyRateLimitExceededErr
-    case Bounce if bounce.isDefined =>
-      accessDeniedByBouncerErr(bounce.get)
-    case DisabledByIpiPolicy =>
-      failureReason
-        .map(tweetEngagementLimitedErr)
-        .getOrElse(GenericAccessDeniedErr)
-    case TrustedFriendsRetweetNotAllowed =>
-      TrustedFriendsRetweetNotAllowedErr
-    case StaleTweetRetweetNotAllowed =>
-      StaleTweetRetweetNotAllowedErr
+      T etSpam rErr
+    case SafetyRateL m Exceeded =>
+      SafetyRateL m ExceededErr
+    case Bounce  f bounce. sDef ned =>
+      accessDen edByBouncerErr(bounce.get)
+    case D sabledBy p Pol cy =>
+      fa lureReason
+        .map(t etEngage ntL m edErr)
+        .getOrElse(Gener cAccessDen edErr)
+    case TrustedFr endsRet etNotAllo d =>
+      TrustedFr endsRet etNotAllo dErr
+    case StaleT etRet etNotAllo d =>
+      StaleT etRet etNotAllo dErr
     case _ =>
-      GenericAccessDeniedErr
+      Gener cAccessDen edErr
   }
 }

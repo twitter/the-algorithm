@@ -1,74 +1,74 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator
 
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.clients.strato.twistly.SimClustersRecentEngagementSimilarityClient
-import com.twitter.timelines.configapi.decider.BooleanDeciderParam
-import com.twitter.timelines.prediction.adapters.twistly.SimClustersRecentEngagementSimilarityFeaturesAdapter
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParam
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.FeatureW hDefaultOnFa lure
+ mport com.tw ter.product_m xer.core.feature.datarecord.DataRecord nAFeature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BulkCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Cond  onally
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.ut l.OffloadFuturePools
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.cl ents.strato.tw stly.S mClustersRecentEngage ntS m lar yCl ent
+ mport com.tw ter.t  l nes.conf gap .dec der.BooleanDec derParam
+ mport com.tw ter.t  l nes.pred ct on.adapters.tw stly.S mClustersRecentEngage ntS m lar yFeaturesAdapter
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-object SimClustersEngagementSimilarityFeature
-    extends DataRecordInAFeature[PipelineQuery]
-    with FeatureWithDefaultOnFailure[PipelineQuery, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+object S mClustersEngage ntS m lar yFeature
+    extends DataRecord nAFeature[P pel neQuery]
+    w h FeatureW hDefaultOnFa lure[P pel neQuery, DataRecord] {
+  overr de def defaultValue: DataRecord = new DataRecord()
 }
 
-@Singleton
-class SimClustersEngagementSimilarityFeatureHydrator @Inject() (
-  simClustersEngagementSimilarityClient: SimClustersRecentEngagementSimilarityClient)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate]
-    with Conditionally[PipelineQuery] {
+@S ngleton
+class S mClustersEngage ntS m lar yFeatureHydrator @ nject() (
+  s mClustersEngage ntS m lar yCl ent: S mClustersRecentEngage ntS m lar yCl ent)
+    extends BulkCand dateFeatureHydrator[P pel neQuery, T etCand date]
+    w h Cond  onally[P pel neQuery] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("SimClustersEngagementSimilarity")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("S mClustersEngage ntS m lar y")
 
-  override val features: Set[Feature[_, _]] = Set(SimClustersEngagementSimilarityFeature)
+  overr de val features: Set[Feature[_, _]] = Set(S mClustersEngage ntS m lar yFeature)
 
-  private val simClustersRecentEngagementSimilarityFeaturesAdapter =
-    new SimClustersRecentEngagementSimilarityFeaturesAdapter
+  pr vate val s mClustersRecentEngage ntS m lar yFeaturesAdapter =
+    new S mClustersRecentEngage ntS m lar yFeaturesAdapter
 
-  override def onlyIf(query: PipelineQuery): Boolean = {
-    val param: BooleanDeciderParam =
-      ScoredTweetsParam.EnableSimClustersSimilarityFeatureHydrationDeciderParam
+  overr de def only f(query: P pel neQuery): Boolean = {
+    val param: BooleanDec derParam =
+      ScoredT etsParam.EnableS mClustersS m lar yFeatureHydrat onDec derParam
     query.params.apply(param)
   }
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
-    val tweetToCandidates = candidates.map(candidate => candidate.candidate.id -> candidate).toMap
-    val tweetIds = tweetToCandidates.keySet.toSeq
-    val userId = query.getRequiredUserId
-    val userTweetEdges = tweetIds.map(tweetId => (userId, tweetId))
-    simClustersEngagementSimilarityClient
-      .getSimClustersRecentEngagementSimilarityScores(userTweetEdges).map {
-        simClustersRecentEngagementSimilarityScoresMap =>
-          candidates.map { candidate =>
-            val similarityFeatureOpt = simClustersRecentEngagementSimilarityScoresMap
-              .get(userId -> candidate.candidate.id).flatten
-            val dataRecordOpt = similarityFeatureOpt.map { similarityFeature =>
-              simClustersRecentEngagementSimilarityFeaturesAdapter
-                .adaptToDataRecords(similarityFeature)
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
+    val t etToCand dates = cand dates.map(cand date => cand date.cand date. d -> cand date).toMap
+    val t et ds = t etToCand dates.keySet.toSeq
+    val user d = query.getRequ redUser d
+    val userT etEdges = t et ds.map(t et d => (user d, t et d))
+    s mClustersEngage ntS m lar yCl ent
+      .getS mClustersRecentEngage ntS m lar yScores(userT etEdges).map {
+        s mClustersRecentEngage ntS m lar yScoresMap =>
+          cand dates.map { cand date =>
+            val s m lar yFeatureOpt = s mClustersRecentEngage ntS m lar yScoresMap
+              .get(user d -> cand date.cand date. d).flatten
+            val dataRecordOpt = s m lar yFeatureOpt.map { s m lar yFeature =>
+              s mClustersRecentEngage ntS m lar yFeaturesAdapter
+                .adaptToDataRecords(s m lar yFeature)
                 .get(0)
             }
-            FeatureMapBuilder()
-              .add(SimClustersEngagementSimilarityFeature, dataRecordOpt.getOrElse(new DataRecord))
-              .build()
+            FeatureMapBu lder()
+              .add(S mClustersEngage ntS m lar yFeature, dataRecordOpt.getOrElse(new DataRecord))
+              .bu ld()
           }
       }
   }

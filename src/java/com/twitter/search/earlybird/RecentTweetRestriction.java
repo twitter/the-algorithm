@@ -1,59 +1,59 @@
-package com.twitter.search.earlybird;
+package com.tw ter.search.earlyb rd;
 
-import scala.Option;
+ mport scala.Opt on;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import com.twitter.decider.Decider;
+ mport com.tw ter.dec der.Dec der;
 
-public final class RecentTweetRestriction {
-  private static final String RECENT_TWEETS_THRESHOLD = "recent_tweets_threshold";
-  private static final String QUERY_CACHE_UNTIL_TIME = "query_cache_until_time";
+publ c f nal class RecentT etRestr ct on {
+  pr vate stat c f nal Str ng RECENT_TWEETS_THRESHOLD = "recent_t ets_threshold";
+  pr vate stat c f nal Str ng QUERY_CACHE_UNT L_T ME = "query_cac _unt l_t  ";
 
-  @VisibleForTesting
-  public static final int DEFAULT_RECENT_TWEET_SECONDS = 15;
+  @V s bleForTest ng
+  publ c stat c f nal  nt DEFAULT_RECENT_TWEET_SECONDS = 15;
 
-  private RecentTweetRestriction() {
+  pr vate RecentT etRestr ct on() {
   }
 
   /**
-   * Returns the point in time (in seconds past the unix epoch) before which all tweets will be
-   * completely indexed. This is required by some clients, because they rely on Earlybird monotonically
-   * indexing tweets by ID and that tweets are completely indexed when they see them.
+   * Returns t  po nt  n t   ( n seconds past t  un x epoch) before wh ch all t ets w ll be
+   * completely  ndexed. T   s requ red by so  cl ents, because t y rely on Earlyb rd monoton cally
+   *  ndex ng t ets by  D and that t ets are completely  ndexed w n t y see t m.
    *
-   * @param lastTime The time at which the most recent tweet was indexed, in seconds since the unix
+   * @param lastT   T  t   at wh ch t  most recent t et was  ndexed,  n seconds s nce t  un x
    * epoch.
    */
-  public static int recentTweetsUntilTime(Decider decider, int lastTime) {
-    return untilTimeSeconds(decider, lastTime, RECENT_TWEETS_THRESHOLD);
+  publ c stat c  nt recentT etsUnt lT  (Dec der dec der,  nt lastT  ) {
+    return unt lT  Seconds(dec der, lastT  , RECENT_TWEETS_THRESHOLD);
   }
 
   /**
-   * Returns the point in time (in seconds past the unix epoch) before which all tweets will be
-   * completely indexed. This is required by some clients, because they rely on Earlybird monotonically
-   * indexing tweets by ID and that tweets are completely indexed when they see them.
+   * Returns t  po nt  n t   ( n seconds past t  un x epoch) before wh ch all t ets w ll be
+   * completely  ndexed. T   s requ red by so  cl ents, because t y rely on Earlyb rd monoton cally
+   *  ndex ng t ets by  D and that t ets are completely  ndexed w n t y see t m.
    *
-   * @param lastTime The time at which the most recent tweet was indexed, in seconds since the unix
+   * @param lastT   T  t   at wh ch t  most recent t et was  ndexed,  n seconds s nce t  un x
    * epoch.
    */
-  public static int queryCacheUntilTime(Decider decider, int lastTime) {
-    return untilTimeSeconds(decider, lastTime, QUERY_CACHE_UNTIL_TIME);
+  publ c stat c  nt queryCac Unt lT  (Dec der dec der,  nt lastT  ) {
+    return unt lT  Seconds(dec der, lastT  , QUERY_CACHE_UNT L_T ME);
   }
 
-  private static int untilTimeSeconds(Decider decider, int lastTime, String deciderKey) {
-    int recentTweetSeconds = getRecentTweetSeconds(decider, deciderKey);
+  pr vate stat c  nt unt lT  Seconds(Dec der dec der,  nt lastT  , Str ng dec derKey) {
+     nt recentT etSeconds = getRecentT etSeconds(dec der, dec derKey);
 
-    if (recentTweetSeconds == 0) {
+     f (recentT etSeconds == 0) {
       return 0;
     }
 
-    return lastTime - recentTweetSeconds;
+    return lastT   - recentT etSeconds;
   }
 
-  private static int getRecentTweetSeconds(Decider decider, String deciderKey) {
-    Option<Object> deciderValue = decider.getAvailability(deciderKey);
-    if (deciderValue.isDefined()) {
-      return (int) deciderValue.get();
+  pr vate stat c  nt getRecentT etSeconds(Dec der dec der, Str ng dec derKey) {
+    Opt on<Object> dec derValue = dec der.getAva lab l y(dec derKey);
+     f (dec derValue. sDef ned()) {
+      return ( nt) dec derValue.get();
     }
     return DEFAULT_RECENT_TWEET_SECONDS;
   }

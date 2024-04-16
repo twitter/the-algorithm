@@ -1,59 +1,59 @@
-package com.twitter.servo.util
+package com.tw ter.servo.ut l
 
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.finagle.{Addr, Name, Namer}
-import com.twitter.logging.Logger
-import com.twitter.util._
-import scala.collection.JavaConverters._
+ mport com.tw ter.f nagle.ut l.DefaultT  r
+ mport com.tw ter.f nagle.{Addr, Na , Na r}
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.ut l._
+ mport scala.collect on.JavaConverters._
 
 /**
- * A simple utility class to wait for serverset names to be resolved at startup.
+ * A s mple ut l y class to wa  for serverset na s to be resolved at startup.
  *
- * See [[com.twitter.finagle.client.ClientRegistry.expAllRegisteredClientsResolved()]] for an
- * alternative way to wait for ServerSet resolution.
+ * See [[com.tw ter.f nagle.cl ent.Cl entReg stry.expAllReg steredCl entsResolved()]] for an
+ * alternat ve way to wa  for ServerSet resolut on.
  */
-object WaitForServerSets {
-  val log = Logger.get("WaitForServerSets")
+object Wa ForServerSets {
+  val log = Logger.get("Wa ForServerSets")
 
   /**
-   * Convenient wrapper for single name in Java. Provides the default timer from Finagle.
+   * Conven ent wrapper for s ngle na   n Java. Prov des t  default t  r from F nagle.
    */
-  def ready(name: Name, timeout: Duration): Future[Unit] =
-    ready(Seq(name), timeout, DefaultTimer)
+  def ready(na : Na , t  out: Durat on): Future[Un ] =
+    ready(Seq(na ), t  out, DefaultT  r)
 
   /**
-   * Java Compatibility wrapper. Uses java.util.List instead of Seq.
+   * Java Compat b l y wrapper. Uses java.ut l.L st  nstead of Seq.
    */
-  def ready(names: java.util.List[Name], timeout: Duration, timer: Timer): Future[Unit] =
-    ready(names.asScala, timeout, timer)
+  def ready(na s: java.ut l.L st[Na ], t  out: Durat on, t  r: T  r): Future[Un ] =
+    ready(na s.asScala, t  out, t  r)
 
   /**
-   * Returns a Future that is satisfied when no more names resolve to Addr.Pending,
-   * or the specified timeout expires.
+   * Returns a Future that  s sat sf ed w n no more na s resolve to Addr.Pend ng,
+   * or t  spec f ed t  out exp res.
    *
-   * This ignores address resolution failures, so just because the Future is satisfied
-   * doesn't necessarily imply that all names are resolved to something useful.
+   * T   gnores address resolut on fa lures, so just because t  Future  s sat sf ed
+   * doesn't necessar ly  mply that all na s are resolved to so th ng useful.
    */
-  def ready(names: Seq[Name], timeout: Duration, timer: Timer): Future[Unit] = {
-    val vars: Var[Seq[(Name, Addr)]] = Var.collect(names.map {
-      case n @ Name.Path(v) => Namer.resolve(v).map((n, _))
-      case n @ Name.Bound(v) => v.map((n, _))
+  def ready(na s: Seq[Na ], t  out: Durat on, t  r: T  r): Future[Un ] = {
+    val vars: Var[Seq[(Na , Addr)]] = Var.collect(na s.map {
+      case n @ Na .Path(v) => Na r.resolve(v).map((n, _))
+      case n @ Na .Bound(v) => v.map((n, _))
     })
 
-    val pendings = vars.changes.map { names =>
-      names.filter { case (_, addr) => addr == Addr.Pending }
+    val pend ngs = vars.changes.map { na s =>
+      na s.f lter { case (_, addr) => addr == Addr.Pend ng }
     }
 
-    pendings
-      .filter(_.isEmpty)
+    pend ngs
+      .f lter(_. sEmpty)
       .toFuture()
-      .unit
-      .within(
-        timer,
-        timeout,
-        new TimeoutException(
-          "Failed to resolve: " +
-            vars.map(_.map { case (name, _) => name }).sample()
+      .un 
+      .w h n(
+        t  r,
+        t  out,
+        new T  outExcept on(
+          "Fa led to resolve: " +
+            vars.map(_.map { case (na , _) => na  }).sample()
         )
       )
   }

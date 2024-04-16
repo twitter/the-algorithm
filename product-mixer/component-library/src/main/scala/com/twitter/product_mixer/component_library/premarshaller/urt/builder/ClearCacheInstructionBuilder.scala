@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ClearCacheTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.ClearCac T  l ne nstruct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-case class ClearCacheInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends UrtInstructionBuilder[Query, ClearCacheTimelineInstruction] {
+case class ClearCac  nstruct onBu lder[Query <: P pel neQuery](
+  overr de val  nclude nstruct on:  nclude nstruct on[Query] = Always nclude)
+    extends Urt nstruct onBu lder[Query, ClearCac T  l ne nstruct on] {
 
-  override def build(
+  overr de def bu ld(
     query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[ClearCacheTimelineInstruction] =
-    if (includeInstruction(query, entries)) Seq(ClearCacheTimelineInstruction()) else Seq.empty
+    entr es: Seq[T  l neEntry]
+  ): Seq[ClearCac T  l ne nstruct on] =
+     f ( nclude nstruct on(query, entr es)) Seq(ClearCac T  l ne nstruct on()) else Seq.empty
 }

@@ -1,225 +1,225 @@
-package com.twitter.search.common.query;
+package com.tw ter.search.common.query;
 
-import java.io.IOException;
-import java.util.Set;
+ mport java. o. OExcept on;
+ mport java.ut l.Set;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+ mport org.apac .lucene. ndex. ndexReader;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene. ndex.Term;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.search.Explanat on;
+ mport org.apac .lucene.search. ndexSearc r;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .lucene.search.Scorer;
+ mport org.apac .lucene.search.ScoreMode;
+ mport org.apac .lucene.search.  ght;
 
 /**
- * A pairing of a query and a filter. The hits traversal is driven by the query's DocIdSetIterator,
- * and the filter is used only to do post-filtering. In other words, the filter is never used to
- * find the next doc ID: it's only used to filter out the doc IDs returned by the query's
- * DocIdSetIterator. This is useful when we need to have a conjunction between a query that can
- * quickly iterate through doc IDs (eg. a posting list), and an expensive filter (eg. a filter based
- * on the values stored in a CSF).
+ * A pa r ng of a query and a f lter. T  h s traversal  s dr ven by t  query's Doc dSet erator,
+ * and t  f lter  s used only to do post-f lter ng.  n ot r words, t  f lter  s never used to
+ * f nd t  next doc  D:  's only used to f lter out t  doc  Ds returned by t  query's
+ * Doc dSet erator. T   s useful w n   need to have a conjunct on bet en a query that can
+ * qu ckly  erate through doc  Ds (eg. a post ng l st), and an expens ve f lter (eg. a f lter based
+ * on t  values stored  n a CSF).
  *
- * For example, let say we want to build a query that returns all docs that have at least 100 faves.
- *   1. One option is to go with the [min_faves 100] query. This would be very expensive though,
- *      because this query would have to walk through every doc in the segment and for each one of
- *      them it would have to extract the number of faves from the forward index.
- *   2. Another option is to go with a conjunction between this query and the HAS_ENGAGEMENT filter:
- *      (+[min_faves 100] +[cached_filter has_engagements]). The HAS_ENGAGEMENT filter could
- *      traverse the doc ID space faster (if it's backed by a posting list). But this approach would
- *      still be slow, because as soon as the HAS_ENGAGEMENT filter finds a doc ID, the conjunction
- *      scorer would trigger an advance(docID) call on the min_faves part of the query, which has
- *      the same problem as the first option.
- *   3. Finally, a better option for this particular case would be to drive by the HAS_ENGAGEMENT
- *      filter (because it can quickly jump over all docs that do not have any engagement), and use
- *      the min_faves filter as a post-processing step, on a much smaller set of docs.
+ * For example, let say   want to bu ld a query that returns all docs that have at least 100 faves.
+ *   1. One opt on  s to go w h t  [m n_faves 100] query. T  would be very expens ve though,
+ *      because t  query would have to walk through every doc  n t  seg nt and for each one of
+ *      t m   would have to extract t  number of faves from t  forward  ndex.
+ *   2. Anot r opt on  s to go w h a conjunct on bet en t  query and t  HAS_ENGAGEMENT f lter:
+ *      (+[m n_faves 100] +[cac d_f lter has_engage nts]). T  HAS_ENGAGEMENT f lter could
+ *      traverse t  doc  D space faster ( f  's backed by a post ng l st). But t  approach would
+ *      st ll be slow, because as soon as t  HAS_ENGAGEMENT f lter f nds a doc  D, t  conjunct on
+ *      scorer would tr gger an advance(doc D) call on t  m n_faves part of t  query, wh ch has
+ *      t  sa  problem as t  f rst opt on.
+ *   3. F nally, a better opt on for t  part cular case would be to dr ve by t  HAS_ENGAGEMENT
+ *      f lter (because   can qu ckly jump over all docs that do not have any engage nt), and use
+ *      t  m n_faves f lter as a post-process ng step, on a much smaller set of docs.
  */
-public class FilteredQuery extends Query {
+publ c class F lteredQuery extends Query {
   /**
-   * A doc ID predicate that determines if the given doc ID should be accepted.
+   * A doc  D pred cate that determ nes  f t  g ven doc  D should be accepted.
    */
-  @FunctionalInterface
-  public static interface DocIdFilter {
+  @Funct onal nterface
+  publ c stat c  nterface Doc dF lter {
     /**
-     * Determines if the given doc ID should be accepted.
+     * Determ nes  f t  g ven doc  D should be accepted.
      */
-    boolean accept(int docId) throws IOException;
+    boolean accept( nt doc d) throws  OExcept on;
   }
 
   /**
-   * A factory for creating DocIdFilter instances based on a given LeafReaderContext instance.
+   * A factory for creat ng Doc dF lter  nstances based on a g ven LeafReaderContext  nstance.
    */
-  @FunctionalInterface
-  public static interface DocIdFilterFactory {
+  @Funct onal nterface
+  publ c stat c  nterface Doc dF lterFactory {
     /**
-     * Returns a DocIdFilter instance for the given LeafReaderContext instance.
+     * Returns a Doc dF lter  nstance for t  g ven LeafReaderContext  nstance.
      */
-    DocIdFilter getDocIdFilter(LeafReaderContext context) throws IOException;
+    Doc dF lter getDoc dF lter(LeafReaderContext context) throws  OExcept on;
   }
 
-  private static class FilteredQueryDocIdSetIterator extends DocIdSetIterator {
-    private final DocIdSetIterator queryScorerIterator;
-    private final DocIdFilter docIdFilter;
+  pr vate stat c class F lteredQueryDoc dSet erator extends Doc dSet erator {
+    pr vate f nal Doc dSet erator queryScorer erator;
+    pr vate f nal Doc dF lter doc dF lter;
 
-    public FilteredQueryDocIdSetIterator(
-        DocIdSetIterator queryScorerIterator, DocIdFilter docIdFilter) {
-      this.queryScorerIterator = Preconditions.checkNotNull(queryScorerIterator);
-      this.docIdFilter = Preconditions.checkNotNull(docIdFilter);
+    publ c F lteredQueryDoc dSet erator(
+        Doc dSet erator queryScorer erator, Doc dF lter doc dF lter) {
+      t .queryScorer erator = Precond  ons.c ckNotNull(queryScorer erator);
+      t .doc dF lter = Precond  ons.c ckNotNull(doc dF lter);
     }
 
-    @Override
-    public int docID() {
-      return queryScorerIterator.docID();
+    @Overr de
+    publ c  nt doc D() {
+      return queryScorer erator.doc D();
     }
 
-    @Override
-    public int nextDoc() throws IOException {
-      int docId;
+    @Overr de
+    publ c  nt nextDoc() throws  OExcept on {
+       nt doc d;
       do {
-        docId = queryScorerIterator.nextDoc();
-      } while (docId != NO_MORE_DOCS && !docIdFilter.accept(docId));
-      return docId;
+        doc d = queryScorer erator.nextDoc();
+      } wh le (doc d != NO_MORE_DOCS && !doc dF lter.accept(doc d));
+      return doc d;
     }
 
-    @Override
-    public int advance(int target) throws IOException {
-      int docId = queryScorerIterator.advance(target);
-      if (docId == NO_MORE_DOCS || docIdFilter.accept(docId)) {
-        return docId;
+    @Overr de
+    publ c  nt advance( nt target) throws  OExcept on {
+       nt doc d = queryScorer erator.advance(target);
+       f (doc d == NO_MORE_DOCS || doc dF lter.accept(doc d)) {
+        return doc d;
       }
       return nextDoc();
     }
 
-    @Override
-    public long cost() {
-      return queryScorerIterator.cost();
+    @Overr de
+    publ c long cost() {
+      return queryScorer erator.cost();
     }
   }
 
-  private static class FilteredQueryScorer extends Scorer {
-    private final Scorer queryScorer;
-    private final DocIdFilter docIdFilter;
+  pr vate stat c class F lteredQueryScorer extends Scorer {
+    pr vate f nal Scorer queryScorer;
+    pr vate f nal Doc dF lter doc dF lter;
 
-    public FilteredQueryScorer(Weight weight, Scorer queryScorer, DocIdFilter docIdFilter) {
-      super(weight);
-      this.queryScorer = Preconditions.checkNotNull(queryScorer);
-      this.docIdFilter = Preconditions.checkNotNull(docIdFilter);
+    publ c F lteredQueryScorer(  ght   ght, Scorer queryScorer, Doc dF lter doc dF lter) {
+      super(  ght);
+      t .queryScorer = Precond  ons.c ckNotNull(queryScorer);
+      t .doc dF lter = Precond  ons.c ckNotNull(doc dF lter);
     }
 
-    @Override
-    public int docID() {
-      return queryScorer.docID();
+    @Overr de
+    publ c  nt doc D() {
+      return queryScorer.doc D();
     }
 
-    @Override
-    public float score() throws IOException {
+    @Overr de
+    publ c float score() throws  OExcept on {
       return queryScorer.score();
     }
 
-    @Override
-    public DocIdSetIterator iterator() {
-      return new FilteredQueryDocIdSetIterator(queryScorer.iterator(), docIdFilter);
+    @Overr de
+    publ c Doc dSet erator  erator() {
+      return new F lteredQueryDoc dSet erator(queryScorer. erator(), doc dF lter);
     }
 
-    @Override
-    public float getMaxScore(int upTo) throws IOException {
+    @Overr de
+    publ c float getMaxScore( nt upTo) throws  OExcept on {
       return queryScorer.getMaxScore(upTo);
     }
   }
 
-  private static class FilteredQueryWeight extends Weight {
-    private final Weight queryWeight;
-    private final DocIdFilterFactory docIdFilterFactory;
+  pr vate stat c class F lteredQuery  ght extends   ght {
+    pr vate f nal   ght query  ght;
+    pr vate f nal Doc dF lterFactory doc dF lterFactory;
 
-    public FilteredQueryWeight(
-        FilteredQuery query, Weight queryWeight, DocIdFilterFactory docIdFilterFactory) {
+    publ c F lteredQuery  ght(
+        F lteredQuery query,   ght query  ght, Doc dF lterFactory doc dF lterFactory) {
       super(query);
-      this.queryWeight = Preconditions.checkNotNull(queryWeight);
-      this.docIdFilterFactory = Preconditions.checkNotNull(docIdFilterFactory);
+      t .query  ght = Precond  ons.c ckNotNull(query  ght);
+      t .doc dF lterFactory = Precond  ons.c ckNotNull(doc dF lterFactory);
     }
 
-    @Override
-    public void extractTerms(Set<Term> terms) {
-      queryWeight.extractTerms(terms);
+    @Overr de
+    publ c vo d extractTerms(Set<Term> terms) {
+      query  ght.extractTerms(terms);
     }
 
-    @Override
-    public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-      return queryWeight.explain(context, doc);
+    @Overr de
+    publ c Explanat on expla n(LeafReaderContext context,  nt doc) throws  OExcept on {
+      return query  ght.expla n(context, doc);
     }
 
-    @Override
-    public Scorer scorer(LeafReaderContext context) throws IOException {
-      Scorer queryScorer = queryWeight.scorer(context);
-      if (queryScorer == null) {
+    @Overr de
+    publ c Scorer scorer(LeafReaderContext context) throws  OExcept on {
+      Scorer queryScorer = query  ght.scorer(context);
+       f (queryScorer == null) {
         return null;
       }
 
-      return new FilteredQueryScorer(this, queryScorer, docIdFilterFactory.getDocIdFilter(context));
+      return new F lteredQueryScorer(t , queryScorer, doc dF lterFactory.getDoc dF lter(context));
     }
 
-    @Override
-    public boolean isCacheable(LeafReaderContext ctx) {
-      return queryWeight.isCacheable(ctx);
+    @Overr de
+    publ c boolean  sCac able(LeafReaderContext ctx) {
+      return query  ght. sCac able(ctx);
     }
   }
 
-  private final Query query;
-  private final DocIdFilterFactory docIdFilterFactory;
+  pr vate f nal Query query;
+  pr vate f nal Doc dF lterFactory doc dF lterFactory;
 
-  public FilteredQuery(Query query, DocIdFilterFactory docIdFilterFactory) {
-    this.query = Preconditions.checkNotNull(query);
-    this.docIdFilterFactory = Preconditions.checkNotNull(docIdFilterFactory);
+  publ c F lteredQuery(Query query, Doc dF lterFactory doc dF lterFactory) {
+    t .query = Precond  ons.c ckNotNull(query);
+    t .doc dF lterFactory = Precond  ons.c ckNotNull(doc dF lterFactory);
   }
 
-  public Query getQuery() {
+  publ c Query getQuery() {
     return query;
   }
 
-  @Override
-  public Query rewrite(IndexReader reader) throws IOException {
-    Query rewrittenQuery = query.rewrite(reader);
-    if (rewrittenQuery != query) {
-      return new FilteredQuery(rewrittenQuery, docIdFilterFactory);
+  @Overr de
+  publ c Query rewr e( ndexReader reader) throws  OExcept on {
+    Query rewr tenQuery = query.rewr e(reader);
+     f (rewr tenQuery != query) {
+      return new F lteredQuery(rewr tenQuery, doc dF lterFactory);
     }
-    return this;
+    return t ;
   }
 
-  @Override
-  public int hashCode() {
-    return query.hashCode() * 13 + docIdFilterFactory.hashCode();
+  @Overr de
+  publ c  nt hashCode() {
+    return query.hashCode() * 13 + doc dF lterFactory.hashCode();
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof FilteredQuery)) {
+  @Overr de
+  publ c boolean equals(Object obj) {
+     f (!(obj  nstanceof F lteredQuery)) {
       return false;
     }
 
-    FilteredQuery filteredQuery = FilteredQuery.class.cast(obj);
-    return query.equals(filteredQuery.query)
-        && docIdFilterFactory.equals(filteredQuery.docIdFilterFactory);
+    F lteredQuery f lteredQuery = F lteredQuery.class.cast(obj);
+    return query.equals(f lteredQuery.query)
+        && doc dF lterFactory.equals(f lteredQuery.doc dF lterFactory);
   }
 
-  @Override
-  public String toString(String field) {
-    StringBuilder sb = new StringBuilder();
-    sb.append("FilteredQuery(")
+  @Overr de
+  publ c Str ng toStr ng(Str ng f eld) {
+    Str ngBu lder sb = new Str ngBu lder();
+    sb.append("F lteredQuery(")
         .append(query)
         .append(" -> ")
-        .append(docIdFilterFactory)
+        .append(doc dF lterFactory)
         .append(")");
-    return sb.toString();
+    return sb.toStr ng();
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
-    Weight queryWeight = Preconditions.checkNotNull(query.createWeight(searcher, scoreMode, boost));
-    return new FilteredQueryWeight(this, queryWeight, docIdFilterFactory);
+  @Overr de
+  publ c   ght create  ght( ndexSearc r searc r, ScoreMode scoreMode, float boost)
+      throws  OExcept on {
+      ght query  ght = Precond  ons.c ckNotNull(query.create  ght(searc r, scoreMode, boost));
+    return new F lteredQuery  ght(t , query  ght, doc dF lterFactory);
   }
 }

@@ -1,36 +1,36 @@
-package com.twitter.product_mixer.core.functional_component.scorer
+package com.tw ter.product_m xer.core.funct onal_component.scorer
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseBulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.SupportsConditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BaseBulkCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.SupportsCond  onally
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Scorer dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
-/** Scores the provided `candidates` */
-trait Scorer[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]]
-    extends BaseBulkCandidateFeatureHydrator[Query, Candidate, Feature[_, _]]
-    with SupportsConditionally[Query] {
+/** Scores t  prov ded `cand dates` */
+tra  Scorer[-Query <: P pel neQuery, -Cand date <: Un versalNoun[Any]]
+    extends BaseBulkCand dateFeatureHydrator[Query, Cand date, Feature[_, _]]
+    w h SupportsCond  onally[Query] {
 
-  /** @see [[ScorerIdentifier]] */
-  override val identifier: ScorerIdentifier
+  /** @see [[Scorer dent f er]] */
+  overr de val  dent f er: Scorer dent f er
 
   /**
-   * Features returned by the Scorer
+   * Features returned by t  Scorer
    */
   def features: Set[Feature[_, _]]
 
   /**
-   * Scores the provided `candidates`
+   * Scores t  prov ded `cand dates`
    *
-   * @note the returned Seq of [[FeatureMap]] must contain all the input 'candidates'
-   * and be in the same order as the input 'candidates'
+   * @note t  returned Seq of [[FeatureMap]] must conta n all t   nput 'cand dates'
+   * and be  n t  sa  order as t   nput 'cand dates'
    **/
   def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[Seq[FeatureMap]]
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): St ch[Seq[FeatureMap]]
 }

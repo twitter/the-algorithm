@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.operation
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on
 
-case class CursorDisplayTreatment(
-  actionText: Option[String],
-  labelText: Option[String])
+case class CursorD splayTreat nt(
+  act onText: Opt on[Str ng],
+  labelText: Opt on[Str ng])

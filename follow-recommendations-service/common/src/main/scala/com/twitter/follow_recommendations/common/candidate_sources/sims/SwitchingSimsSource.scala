@@ -1,55 +1,55 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.HasS m larToContext
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class SwitchingSimsSource @Inject() (
-  cachedDBV2SimsStore: CachedDBV2SimsStore,
-  cachedDBV2SimsRefreshStore: CachedDBV2SimsRefreshStore,
-  cachedSimsExperimentalStore: CachedSimsExperimentalStore,
-  cachedSimsStore: CachedSimsStore,
-  statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends CandidateSource[HasParams with HasSimilarToContext, CandidateUser] {
+@S ngleton
+class Sw ch ngS msS ce @ nject() (
+  cac dDBV2S msStore: Cac dDBV2S msStore,
+  cac dDBV2S msRefreshStore: Cac dDBV2S msRefreshStore,
+  cac dS msExper  ntalStore: Cac dS msExper  ntalStore,
+  cac dS msStore: Cac dS msStore,
+  statsRece ver: StatsRece ver = NullStatsRece ver)
+    extends Cand dateS ce[HasParams w h HasS m larToContext, Cand dateUser] {
 
-  override val identifier: CandidateSourceIdentifier = SwitchingSimsSource.Identifier
+  overr de val  dent f er: Cand dateS ce dent f er = Sw ch ngS msS ce. dent f er
 
-  private val stats = statsReceiver.scope("SwitchingSimsSource")
-  private val dbV2SimsStoreCounter = stats.counter("DBV2SimsStore")
-  private val dbV2SimsRefreshStoreCounter = stats.counter("DBV2SimsRefreshStore")
-  private val simsExperimentalStoreCounter = stats.counter("SimsExperimentalStore")
-  private val simsStoreCounter = stats.counter("SimsStore")
+  pr vate val stats = statsRece ver.scope("Sw ch ngS msS ce")
+  pr vate val dbV2S msStoreCounter = stats.counter("DBV2S msStore")
+  pr vate val dbV2S msRefreshStoreCounter = stats.counter("DBV2S msRefreshStore")
+  pr vate val s msExper  ntalStoreCounter = stats.counter("S msExper  ntalStore")
+  pr vate val s msStoreCounter = stats.counter("S msStore")
 
-  override def apply(request: HasParams with HasSimilarToContext): Stitch[Seq[CandidateUser]] = {
-    val selectedSimsStore =
-      if (request.params(SimsSourceParams.EnableDBV2SimsStore)) {
-        dbV2SimsStoreCounter.incr()
-        cachedDBV2SimsStore
-      } else if (request.params(SimsSourceParams.EnableDBV2SimsRefreshStore)) {
-        dbV2SimsRefreshStoreCounter.incr()
-        cachedDBV2SimsRefreshStore
-      } else if (request.params(SimsSourceParams.EnableExperimentalSimsStore)) {
-        simsExperimentalStoreCounter.incr()
-        cachedSimsExperimentalStore
+  overr de def apply(request: HasParams w h HasS m larToContext): St ch[Seq[Cand dateUser]] = {
+    val selectedS msStore =
+       f (request.params(S msS ceParams.EnableDBV2S msStore)) {
+        dbV2S msStoreCounter. ncr()
+        cac dDBV2S msStore
+      } else  f (request.params(S msS ceParams.EnableDBV2S msRefreshStore)) {
+        dbV2S msRefreshStoreCounter. ncr()
+        cac dDBV2S msRefreshStore
+      } else  f (request.params(S msS ceParams.EnableExper  ntalS msStore)) {
+        s msExper  ntalStoreCounter. ncr()
+        cac dS msExper  ntalStore
       } else {
-        simsStoreCounter.incr()
-        cachedSimsStore
+        s msStoreCounter. ncr()
+        cac dS msStore
       }
-    stats.counter("total").incr()
-    selectedSimsStore(request)
+    stats.counter("total"). ncr()
+    selectedS msStore(request)
   }
 }
 
-object SwitchingSimsSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(Algorithm.Sims.toString)
+object Sw ch ngS msS ce {
+  val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er(Algor hm.S ms.toStr ng)
 }

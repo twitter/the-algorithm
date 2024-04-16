@@ -1,138 +1,138 @@
-package com.twitter.timelineranker.adapter
+package com.tw ter.t  l neranker.adapter
 
-import com.twitter.timelineranker.model._
-import com.twitter.timelines.model.tweet.HydratedTweet
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelineservice.model.TimelineId
-import com.twitter.timelineservice.model.core
-import com.twitter.timelineservice.{model => tls}
-import com.twitter.timelineservice.{thriftscala => tlsthrift}
-import com.twitter.timelineservice.model.core._
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+ mport com.tw ter.t  l neranker.model._
+ mport com.tw ter.t  l nes.model.t et.HydratedT et
+ mport com.tw ter.t  l nes.model.T et d
+ mport com.tw ter.t  l neserv ce.model.T  l ne d
+ mport com.tw ter.t  l neserv ce.model.core
+ mport com.tw ter.t  l neserv ce.{model => tls}
+ mport com.tw ter.t  l neserv ce.{thr ftscala => tlsthr ft}
+ mport com.tw ter.t  l neserv ce.model.core._
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.Try
 
 /**
- * Enables TLR model objects to be converted to/from TLS model/thrift objects.
+ * Enables TLR model objects to be converted to/from TLS model/thr ft objects.
  */
-object TimelineServiceAdapter {
+object T  l neServ ceAdapter {
   def toTlrQuery(
-    id: Long,
-    tlsRange: tls.TimelineRange,
-    getTweetsFromArchiveIndex: Boolean = true
-  ): ReverseChronTimelineQuery = {
-    val timelineId = TimelineId(id, TimelineKind.home)
+     d: Long,
+    tlsRange: tls.T  l neRange,
+    getT etsFromArch ve ndex: Boolean = true
+  ): ReverseChronT  l neQuery = {
+    val t  l ne d = T  l ne d( d, T  l neK nd.ho )
     val maxCount = tlsRange.maxCount
-    val tweetIdRange = tlsRange.cursor.map { cursor =>
-      TweetIdRange(
-        fromId = cursor.tweetIdBounds.bottom,
-        toId = cursor.tweetIdBounds.top
+    val t et dRange = tlsRange.cursor.map { cursor =>
+      T et dRange(
+        from d = cursor.t et dBounds.bottom,
+        to d = cursor.t et dBounds.top
       )
     }
-    val options = ReverseChronTimelineQueryOptions(
-      getTweetsFromArchiveIndex = getTweetsFromArchiveIndex
+    val opt ons = ReverseChronT  l neQueryOpt ons(
+      getT etsFromArch ve ndex = getT etsFromArch ve ndex
     )
-    ReverseChronTimelineQuery(timelineId, Some(maxCount), tweetIdRange, Some(options))
+    ReverseChronT  l neQuery(t  l ne d, So (maxCount), t et dRange, So (opt ons))
   }
 
-  def toTlsQuery(query: ReverseChronTimelineQuery): tls.TimelineQuery = {
+  def toTlsQuery(query: ReverseChronT  l neQuery): tls.T  l neQuery = {
     val tlsRange = toTlsRange(query.range, query.maxCount)
-    tls.TimelineQuery(
-      id = query.id.id,
-      kind = query.id.kind,
+    tls.T  l neQuery(
+       d = query. d. d,
+      k nd = query. d.k nd,
       range = tlsRange
     )
   }
 
-  def toTlsRange(range: Option[TimelineRange], maxCount: Option[Int]): tls.TimelineRange = {
+  def toTlsRange(range: Opt on[T  l neRange], maxCount: Opt on[ nt]): tls.T  l neRange = {
     val cursor = range.map {
-      case tweetIdRange: TweetIdRange =>
+      case t et dRange: T et dRange =>
         RequestCursor(
-          top = tweetIdRange.toId.map(CursorState.fromTweetId),
-          bottom = tweetIdRange.fromId.map(core.CursorState.fromTweetId)
+          top = t et dRange.to d.map(CursorState.fromT et d),
+          bottom = t et dRange.from d.map(core.CursorState.fromT et d)
         )
       case _ =>
-        throw new IllegalArgumentException(s"Only TweetIdRange is supported. Found: $range")
+        throw new  llegalArgu ntExcept on(s"Only T et dRange  s supported. Found: $range")
     }
     maxCount
-      .map { count => tls.TimelineRange(cursor, count) }
-      .getOrElse(tls.TimelineRange(cursor))
+      .map { count => tls.T  l neRange(cursor, count) }
+      .getOrElse(tls.T  l neRange(cursor))
   }
 
   /**
-   * Converts TLS timeline to a Try of TLR timeline.
+   * Converts TLS t  l ne to a Try of TLR t  l ne.
    *
-   * TLS timeline not only contains timeline entries/attributes but also the retrieval state;
-   * whereas TLR timeline only has entries/attributes. Therefore, the TLS timeline is
-   * mapped to a Try[Timeline] where the Try part captures retrieval state and
-   * Timeline captures entries/attributes.
+   * TLS t  l ne not only conta ns t  l ne entr es/attr butes but also t  retr eval state;
+   * w reas TLR t  l ne only has entr es/attr butes. T refore, t  TLS t  l ne  s
+   * mapped to a Try[T  l ne] w re t  Try part captures retr eval state and
+   * T  l ne captures entr es/attr butes.
    */
-  def toTlrTimelineTry(tlsTimeline: tls.Timeline[tls.TimelineEntry]): Try[Timeline] = {
-    require(
-      tlsTimeline.kind == TimelineKind.home,
-      s"Only home timelines are supported. Found: ${tlsTimeline.kind}"
+  def toTlrT  l neTry(tlsT  l ne: tls.T  l ne[tls.T  l neEntry]): Try[T  l ne] = {
+    requ re(
+      tlsT  l ne.k nd == T  l neK nd.ho ,
+      s"Only ho  t  l nes are supported. Found: ${tlsT  l ne.k nd}"
     )
 
-    tlsTimeline.state match {
-      case Some(TimelineHit) | None =>
-        val tweetEnvelopes = tlsTimeline.entries.map {
-          case tweet: tls.Tweet =>
-            TimelineEntryEnvelope(Tweet(tweet.tweetId))
+    tlsT  l ne.state match {
+      case So (T  l neH ) | None =>
+        val t etEnvelopes = tlsT  l ne.entr es.map {
+          case t et: tls.T et =>
+            T  l neEntryEnvelope(T et(t et.t et d))
           case entry =>
-            throw new Exception(s"Only tweet timelines are supported. Found: $entry")
+            throw new Except on(s"Only t et t  l nes are supported. Found: $entry")
         }
-        Return(Timeline(TimelineId(tlsTimeline.id, tlsTimeline.kind), tweetEnvelopes))
-      case Some(TimelineNotFound) | Some(TimelineUnavailable) =>
-        Throw(new tls.core.TimelineUnavailableException(tlsTimeline.id, Some(tlsTimeline.kind)))
+        Return(T  l ne(T  l ne d(tlsT  l ne. d, tlsT  l ne.k nd), t etEnvelopes))
+      case So (T  l neNotFound) | So (T  l neUnava lable) =>
+        Throw(new tls.core.T  l neUnava lableExcept on(tlsT  l ne. d, So (tlsT  l ne.k nd)))
     }
   }
 
-  def toTlsTimeline(timeline: Timeline): tls.Timeline[tls.Tweet] = {
-    val entries = timeline.entries.map { entry =>
+  def toTlsT  l ne(t  l ne: T  l ne): tls.T  l ne[tls.T et] = {
+    val entr es = t  l ne.entr es.map { entry =>
       entry.entry match {
-        case tweet: Tweet => tls.Tweet(tweet.id)
-        case entry: HydratedTweetEntry => tls.Tweet.fromThrift(entry.tweet)
+        case t et: T et => tls.T et(t et. d)
+        case entry: HydratedT etEntry => tls.T et.fromThr ft(entry.t et)
         case _ =>
-          throw new IllegalArgumentException(
-            s"Only tweet timelines are supported. Found: ${entry.entry}"
+          throw new  llegalArgu ntExcept on(
+            s"Only t et t  l nes are supported. Found: ${entry.entry}"
           )
       }
     }
-    tls.Timeline(
-      id = timeline.id.id,
-      kind = timeline.id.kind,
-      entries = entries
+    tls.T  l ne(
+       d = t  l ne. d. d,
+      k nd = t  l ne. d.k nd,
+      entr es = entr es
     )
   }
 
-  def toTweetIds(timeline: tlsthrift.Timeline): Seq[TweetId] = {
-    timeline.entries.map {
-      case tlsthrift.TimelineEntry.Tweet(tweet) =>
-        tweet.statusId
+  def toT et ds(t  l ne: tlsthr ft.T  l ne): Seq[T et d] = {
+    t  l ne.entr es.map {
+      case tlsthr ft.T  l neEntry.T et(t et) =>
+        t et.status d
       case entry =>
-        throw new IllegalArgumentException(s"Only tweet timelines are supported. Found: ${entry}")
+        throw new  llegalArgu ntExcept on(s"Only t et t  l nes are supported. Found: ${entry}")
     }
   }
 
-  def toTweetIds(timeline: Timeline): Seq[TweetId] = {
-    timeline.entries.map { entry =>
+  def toT et ds(t  l ne: T  l ne): Seq[T et d] = {
+    t  l ne.entr es.map { entry =>
       entry.entry match {
-        case tweet: Tweet => tweet.id
-        case entry: HydratedTweetEntry => entry.tweet.id
+        case t et: T et => t et. d
+        case entry: HydratedT etEntry => entry.t et. d
         case _ =>
-          throw new IllegalArgumentException(
-            s"Only tweet timelines are supported. Found: ${entry.entry}"
+          throw new  llegalArgu ntExcept on(
+            s"Only t et t  l nes are supported. Found: ${entry.entry}"
           )
       }
     }
   }
 
-  def toHydratedTweets(timeline: Timeline): Seq[HydratedTweet] = {
-    timeline.entries.map { entry =>
+  def toHydratedT ets(t  l ne: T  l ne): Seq[HydratedT et] = {
+    t  l ne.entr es.map { entry =>
       entry.entry match {
-        case hydratedTweet: HydratedTweet => hydratedTweet
+        case hydratedT et: HydratedT et => hydratedT et
         case _ =>
-          throw new IllegalArgumentException(s"Expected hydrated tweet. Found: ${entry.entry}")
+          throw new  llegalArgu ntExcept on(s"Expected hydrated t et. Found: ${entry.entry}")
       }
     }
   }

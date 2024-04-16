@@ -1,59 +1,59 @@
-package com.twitter.home_mixer.product.list_tweets
+package com.tw ter.ho _m xer.product.l st_t ets
 
-import com.twitter.home_mixer.candidate_pipeline.TimelineServiceResponseFeatureTransformer
-import com.twitter.home_mixer.marshaller.timelines.TimelineServiceCursorMarshaller
-import com.twitter.home_mixer.product.list_tweets.model.ListTweetsQuery
-import com.twitter.home_mixer.product.list_tweets.param.ListTweetsParam.ServerMaxResultsParam
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.component_library.candidate_source.timeline_service.TimelineServiceTweetCandidateSource
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.timelineservice.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.cand date_p pel ne.T  l neServ ceResponseFeatureTransfor r
+ mport com.tw ter.ho _m xer.marshaller.t  l nes.T  l neServ ceCursorMarshaller
+ mport com.tw ter.ho _m xer.product.l st_t ets.model.L stT etsQuery
+ mport com.tw ter.ho _m xer.product.l st_t ets.param.L stT etsParam.ServerMaxResultsParam
+ mport com.tw ter.ho _m xer.serv ce.Ho M xerAlertConf g
+ mport com.tw ter.product_m xer.component_l brary.cand date_s ce.t  l ne_serv ce.T  l neServ ceT etCand dateS ce
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.BaseCand dateS ce
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neResultsTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neConf g
+ mport com.tw ter.t  l neserv ce.{thr ftscala => t}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ListTweetsTimelineServiceCandidatePipelineConfig @Inject() (
-  timelineServiceTweetCandidateSource: TimelineServiceTweetCandidateSource)
-    extends CandidatePipelineConfig[ListTweetsQuery, t.TimelineQuery, t.Tweet, TweetCandidate] {
+@S ngleton
+class L stT etsT  l neServ ceCand dateP pel neConf g @ nject() (
+  t  l neServ ceT etCand dateS ce: T  l neServ ceT etCand dateS ce)
+    extends Cand dateP pel neConf g[L stT etsQuery, t.T  l neQuery, t.T et, T etCand date] {
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("ListTweetsTimelineServiceTweets")
+  overr de val  dent f er: Cand dateP pel ne dent f er =
+    Cand dateP pel ne dent f er("L stT etsT  l neServ ceT ets")
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    ListTweetsQuery,
-    t.TimelineQuery
+  overr de val queryTransfor r: Cand dateP pel neQueryTransfor r[
+    L stT etsQuery,
+    t.T  l neQuery
   ] = { query =>
-    val timelineQueryOptions = t.TimelineQueryOptions(
-      contextualUserId = query.clientContext.userId,
+    val t  l neQueryOpt ons = t.T  l neQueryOpt ons(
+      contextualUser d = query.cl entContext.user d,
     )
 
-    t.TimelineQuery(
-      timelineType = t.TimelineType.List,
-      timelineId = query.listId,
+    t.T  l neQuery(
+      t  l neType = t.T  l neType.L st,
+      t  l ne d = query.l st d,
       maxCount = query.maxResults(ServerMaxResultsParam).toShort,
-      cursor2 = query.pipelineCursor.flatMap(TimelineServiceCursorMarshaller(_)),
-      options = Some(timelineQueryOptions),
-      timelineId2 = Some(t.TimelineId(t.TimelineType.List, query.listId, None))
+      cursor2 = query.p pel neCursor.flatMap(T  l neServ ceCursorMarshaller(_)),
+      opt ons = So (t  l neQueryOpt ons),
+      t  l ne d2 = So (t.T  l ne d(t.T  l neType.L st, query.l st d, None))
     )
   }
 
-  override def candidateSource: BaseCandidateSource[t.TimelineQuery, t.Tweet] =
-    timelineServiceTweetCandidateSource
+  overr de def cand dateS ce: BaseCand dateS ce[t.T  l neQuery, t.T et] =
+    t  l neServ ceT etCand dateS ce
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[t.Tweet, TweetCandidate] = {
-    sourceResult => TweetCandidate(id = sourceResult.statusId)
+  overr de val resultTransfor r: Cand dateP pel neResultsTransfor r[t.T et, T etCand date] = {
+    s ceResult => T etCand date( d = s ceResult.status d)
   }
 
-  override val featuresFromCandidateSourceTransformers: Seq[CandidateFeatureTransformer[t.Tweet]] =
-    Seq(TimelineServiceResponseFeatureTransformer)
+  overr de val featuresFromCand dateS ceTransfor rs: Seq[Cand dateFeatureTransfor r[t.T et]] =
+    Seq(T  l neServ ceResponseFeatureTransfor r)
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.7)
+  overr de val alerts = Seq(
+    Ho M xerAlertConf g.Bus nessH s.defaultSuccessRateAlert(99.7)
   )
 }

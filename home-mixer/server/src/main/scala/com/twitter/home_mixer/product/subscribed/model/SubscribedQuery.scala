@@ -1,31 +1,31 @@
-package com.twitter.home_mixer.product.subscribed.model
+package com.tw ter.ho _m xer.product.subscr bed.model
 
-import com.twitter.home_mixer.model.request.DeviceContext
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.model.request.HasSeenTweetIds
-import com.twitter.home_mixer.model.request.SubscribedProduct
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.request._
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Params
+ mport com.tw ter.ho _m xer.model.request.Dev ceContext
+ mport com.tw ter.ho _m xer.model.request.HasDev ceContext
+ mport com.tw ter.ho _m xer.model.request.HasSeenT et ds
+ mport com.tw ter.ho _m xer.model.request.Subscr bedProduct
+ mport com.tw ter.product_m xer.component_l brary.model.cursor.UrtOrderedCursor
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.marshall ng.request._
+ mport com.tw ter.product_m xer.core.p pel ne.HasP pel neCursor
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes.conf gap .Params
 
-case class SubscribedQuery(
-  override val params: Params,
-  override val clientContext: ClientContext,
-  override val pipelineCursor: Option[UrtOrderedCursor],
-  override val requestedMaxResults: Option[Int],
-  override val debugOptions: Option[DebugOptions],
-  override val features: Option[FeatureMap],
-  override val deviceContext: Option[DeviceContext],
-  override val seenTweetIds: Option[Seq[Long]])
-    extends PipelineQuery
-    with HasPipelineCursor[UrtOrderedCursor]
-    with HasDeviceContext
-    with HasSeenTweetIds {
-  override val product: Product = SubscribedProduct
+case class Subscr bedQuery(
+  overr de val params: Params,
+  overr de val cl entContext: Cl entContext,
+  overr de val p pel neCursor: Opt on[UrtOrderedCursor],
+  overr de val requestedMaxResults: Opt on[ nt],
+  overr de val debugOpt ons: Opt on[DebugOpt ons],
+  overr de val features: Opt on[FeatureMap],
+  overr de val dev ceContext: Opt on[Dev ceContext],
+  overr de val seenT et ds: Opt on[Seq[Long]])
+    extends P pel neQuery
+    w h HasP pel neCursor[UrtOrderedCursor]
+    w h HasDev ceContext
+    w h HasSeenT et ds {
+  overr de val product: Product = Subscr bedProduct
 
-  override def withFeatureMap(features: FeatureMap): SubscribedQuery =
-    copy(features = Some(features))
+  overr de def w hFeatureMap(features: FeatureMap): Subscr bedQuery =
+    copy(features = So (features))
 }

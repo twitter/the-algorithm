@@ -1,237 +1,237 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.context.thriftscala.FeatureContext
-import com.twitter.tweetypie.backends.LimiterService
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.serverutil.ExceptionCounter
-import com.twitter.tweetypie.store.InsertTweet
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.util.TweetCreationLock.{Key => TweetCreationLockKey}
+ mport com.tw ter.context.thr ftscala.FeatureContext
+ mport com.tw ter.t etyp e.backends.L m erServ ce
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.serverut l.Except onCounter
+ mport com.tw ter.t etyp e.store. nsertT et
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport com.tw ter.t etyp e.ut l.T etCreat onLock.{Key => T etCreat onLockKey}
 
-object PostTweet {
-  type Type[R] = FutureArrow[R, PostTweetResult]
+object PostT et {
+  type Type[R] = FutureArrow[R, PostT etResult]
 
   /**
-   * A type-class to abstract over tweet creation requests.
+   * A type-class to abstract over t et creat on requests.
    */
-  trait RequestView[R] {
-    def isDark(req: R): Boolean
-    def sourceTweetId(req: R): Option[TweetId]
-    def options(req: R): Option[WritePathHydrationOptions]
-    def userId(req: R): UserId
-    def uniquenessId(req: R): Option[Long]
-    def returnSuccessOnDuplicate(req: R): Boolean
-    def returnDuplicateTweet(req: R): Boolean =
-      returnSuccessOnDuplicate(req) || uniquenessId(req).nonEmpty
-    def lockKey(req: R): TweetCreationLockKey
-    def geo(req: R): Option[TweetCreateGeo]
-    def featureContext(req: R): Option[FeatureContext]
-    def additionalContext(req: R): Option[collection.Map[TweetCreateContextKey, String]]
-    def transientContext(req: R): Option[TransientCreateContext]
-    def additionalFields(req: R): Option[Tweet]
-    def duplicateState: TweetCreateState
-    def scope: String
-    def isNullcast(req: R): Boolean
-    def creativesContainerId(req: R): Option[CreativesContainerId]
-    def noteTweetMentionedUserIds(req: R): Option[Seq[Long]]
+  tra  RequestV ew[R] {
+    def  sDark(req: R): Boolean
+    def s ceT et d(req: R): Opt on[T et d]
+    def opt ons(req: R): Opt on[Wr ePathHydrat onOpt ons]
+    def user d(req: R): User d
+    def un queness d(req: R): Opt on[Long]
+    def returnSuccessOnDupl cate(req: R): Boolean
+    def returnDupl cateT et(req: R): Boolean =
+      returnSuccessOnDupl cate(req) || un queness d(req).nonEmpty
+    def lockKey(req: R): T etCreat onLockKey
+    def geo(req: R): Opt on[T etCreateGeo]
+    def featureContext(req: R): Opt on[FeatureContext]
+    def add  onalContext(req: R): Opt on[collect on.Map[T etCreateContextKey, Str ng]]
+    def trans entContext(req: R): Opt on[Trans entCreateContext]
+    def add  onalF elds(req: R): Opt on[T et]
+    def dupl cateState: T etCreateState
+    def scope: Str ng
+    def  sNullcast(req: R): Boolean
+    def creat vesConta ner d(req: R): Opt on[Creat vesConta ner d]
+    def noteT et nt onedUser ds(req: R): Opt on[Seq[Long]]
   }
 
   /**
-   * An implementation of `RequestView` for `PostTweetRequest`.
+   * An  mple ntat on of `RequestV ew` for `PostT etRequest`.
    */
-  implicit object PostTweetRequestView extends RequestView[PostTweetRequest] {
-    def isDark(req: PostTweetRequest): Boolean = req.dark
-    def sourceTweetId(req: PostTweetRequest): None.type = None
-    def options(req: PostTweetRequest): Option[WritePathHydrationOptions] = req.hydrationOptions
-    def userId(req: PostTweetRequest): UserId = req.userId
-    def uniquenessId(req: PostTweetRequest): Option[Long] = req.uniquenessId
-    def returnSuccessOnDuplicate(req: PostTweetRequest) = false
-    def lockKey(req: PostTweetRequest): TweetCreationLockKey = TweetCreationLockKey.byRequest(req)
-    def geo(req: PostTweetRequest): Option[TweetCreateGeo] = req.geo
-    def featureContext(req: PostTweetRequest): Option[FeatureContext] = req.featureContext
-    def additionalContext(
-      req: PostTweetRequest
-    ): Option[collection.Map[TweetCreateContextKey, String]] = req.additionalContext
-    def transientContext(req: PostTweetRequest): Option[TransientCreateContext] =
-      req.transientContext
-    def additionalFields(req: PostTweetRequest): Option[Tweet] = req.additionalFields
-    def duplicateState: TweetCreateState.Duplicate.type = TweetCreateState.Duplicate
-    def scope = "tweet"
-    def isNullcast(req: PostTweetRequest): Boolean = req.nullcast
-    def creativesContainerId(req: PostTweetRequest): Option[CreativesContainerId] =
-      req.underlyingCreativesContainerId
-    def noteTweetMentionedUserIds(req: PostTweetRequest): Option[Seq[Long]] =
-      req.noteTweetOptions match {
-        case Some(noteTweetOptions) => noteTweetOptions.mentionedUserIds
+   mpl c  object PostT etRequestV ew extends RequestV ew[PostT etRequest] {
+    def  sDark(req: PostT etRequest): Boolean = req.dark
+    def s ceT et d(req: PostT etRequest): None.type = None
+    def opt ons(req: PostT etRequest): Opt on[Wr ePathHydrat onOpt ons] = req.hydrat onOpt ons
+    def user d(req: PostT etRequest): User d = req.user d
+    def un queness d(req: PostT etRequest): Opt on[Long] = req.un queness d
+    def returnSuccessOnDupl cate(req: PostT etRequest) = false
+    def lockKey(req: PostT etRequest): T etCreat onLockKey = T etCreat onLockKey.byRequest(req)
+    def geo(req: PostT etRequest): Opt on[T etCreateGeo] = req.geo
+    def featureContext(req: PostT etRequest): Opt on[FeatureContext] = req.featureContext
+    def add  onalContext(
+      req: PostT etRequest
+    ): Opt on[collect on.Map[T etCreateContextKey, Str ng]] = req.add  onalContext
+    def trans entContext(req: PostT etRequest): Opt on[Trans entCreateContext] =
+      req.trans entContext
+    def add  onalF elds(req: PostT etRequest): Opt on[T et] = req.add  onalF elds
+    def dupl cateState: T etCreateState.Dupl cate.type = T etCreateState.Dupl cate
+    def scope = "t et"
+    def  sNullcast(req: PostT etRequest): Boolean = req.nullcast
+    def creat vesConta ner d(req: PostT etRequest): Opt on[Creat vesConta ner d] =
+      req.underly ngCreat vesConta ner d
+    def noteT et nt onedUser ds(req: PostT etRequest): Opt on[Seq[Long]] =
+      req.noteT etOpt ons match {
+        case So (noteT etOpt ons) => noteT etOpt ons. nt onedUser ds
         case _ => None
       }
   }
 
   /**
-   * An implementation of `RequestView` for `RetweetRequest`.
+   * An  mple ntat on of `RequestV ew` for `Ret etRequest`.
    */
-  implicit object RetweetRequestView extends RequestView[RetweetRequest] {
-    def isDark(req: RetweetRequest): Boolean = req.dark
-    def sourceTweetId(req: RetweetRequest): None.type = None
-    def options(req: RetweetRequest): Option[WritePathHydrationOptions] = req.hydrationOptions
-    def userId(req: RetweetRequest): UserId = req.userId
-    def uniquenessId(req: RetweetRequest): Option[Long] = req.uniquenessId
-    def returnSuccessOnDuplicate(req: RetweetRequest): Boolean = req.returnSuccessOnDuplicate
-    def lockKey(req: RetweetRequest): TweetCreationLockKey =
-      req.uniquenessId match {
-        case Some(id) => TweetCreationLockKey.byUniquenessId(req.userId, id)
-        case None => TweetCreationLockKey.bySourceTweetId(req.userId, req.sourceStatusId)
+   mpl c  object Ret etRequestV ew extends RequestV ew[Ret etRequest] {
+    def  sDark(req: Ret etRequest): Boolean = req.dark
+    def s ceT et d(req: Ret etRequest): None.type = None
+    def opt ons(req: Ret etRequest): Opt on[Wr ePathHydrat onOpt ons] = req.hydrat onOpt ons
+    def user d(req: Ret etRequest): User d = req.user d
+    def un queness d(req: Ret etRequest): Opt on[Long] = req.un queness d
+    def returnSuccessOnDupl cate(req: Ret etRequest): Boolean = req.returnSuccessOnDupl cate
+    def lockKey(req: Ret etRequest): T etCreat onLockKey =
+      req.un queness d match {
+        case So ( d) => T etCreat onLockKey.byUn queness d(req.user d,  d)
+        case None => T etCreat onLockKey.byS ceT et d(req.user d, req.s ceStatus d)
       }
-    def geo(req: RetweetRequest): None.type = None
-    def featureContext(req: RetweetRequest): Option[FeatureContext] = req.featureContext
-    def additionalContext(req: RetweetRequest): None.type = None
-    def transientContext(req: RetweetRequest): None.type = None
-    def additionalFields(req: RetweetRequest): Option[Tweet] = req.additionalFields
-    def duplicateState: TweetCreateState.AlreadyRetweeted.type = TweetCreateState.AlreadyRetweeted
-    def scope = "retweet"
-    def isNullcast(req: RetweetRequest): Boolean = req.nullcast
-    def creativesContainerId(req: RetweetRequest): Option[CreativesContainerId] = None
-    def noteTweetMentionedUserIds(req: RetweetRequest): Option[Seq[Long]] = None
+    def geo(req: Ret etRequest): None.type = None
+    def featureContext(req: Ret etRequest): Opt on[FeatureContext] = req.featureContext
+    def add  onalContext(req: Ret etRequest): None.type = None
+    def trans entContext(req: Ret etRequest): None.type = None
+    def add  onalF elds(req: Ret etRequest): Opt on[T et] = req.add  onalF elds
+    def dupl cateState: T etCreateState.AlreadyRet eted.type = T etCreateState.AlreadyRet eted
+    def scope = "ret et"
+    def  sNullcast(req: Ret etRequest): Boolean = req.nullcast
+    def creat vesConta ner d(req: Ret etRequest): Opt on[Creat vesConta ner d] = None
+    def noteT et nt onedUser ds(req: Ret etRequest): Opt on[Seq[Long]] = None
   }
 
   /**
-   * A `Filter` is used to decorate a `FutureArrow` that has a known return type
-   * and an input type for which there is a `RequestView` type-class instance.
+   * A `F lter`  s used to decorate a `FutureArrow` that has a known return type
+   * and an  nput type for wh ch t re  s a `RequestV ew` type-class  nstance.
    */
-  trait Filter[Res] { self =>
+  tra  F lter[Res] { self =>
     type T[Req] = FutureArrow[Req, Res]
 
     /**
-     * Wraps a base arrow with additional behavior.
+     * Wraps a base arrow w h add  onal behav or.
      */
-    def apply[Req: RequestView](base: T[Req]): T[Req]
+    def apply[Req: RequestV ew](base: T[Req]): T[Req]
 
     /**
-     * Composes two filter.  The resulting filter itself composes FutureArrows.
+     * Composes two f lter.  T  result ng f lter  self composes FutureArrows.
      */
-    def andThen(next: Filter[Res]): Filter[Res] =
-      new Filter[Res] {
-        def apply[Req: RequestView](base: T[Req]): T[Req] =
+    def andT n(next: F lter[Res]): F lter[Res] =
+      new F lter[Res] {
+        def apply[Req: RequestV ew](base: T[Req]): T[Req] =
           next(self(base))
       }
   }
 
   /**
-   * This filter attempts to prevent some race-condition related duplicate tweet creations,
-   * via use of a `TweetCreateLock`.  When a duplicate is detected, this filter can synthesize
-   * a successful `PostTweetResult` if applicable, or return the appropriate coded response.
+   * T  f lter attempts to prevent so  race-cond  on related dupl cate t et creat ons,
+   * v a use of a `T etCreateLock`.  W n a dupl cate  s detected, t  f lter can synt s ze
+   * a successful `PostT etResult`  f appl cable, or return t  appropr ate coded response.
    */
-  object DuplicateHandler {
+  object Dupl cateHandler {
     def apply(
-      tweetCreationLock: TweetCreationLock,
-      getTweets: GetTweetsHandler.Type,
-      stats: StatsReceiver
-    ): Filter[PostTweetResult] =
-      new Filter[PostTweetResult] {
-        def apply[R: RequestView](base: T[R]): T[R] = {
-          val view = implicitly[RequestView[R]]
-          val notFoundCount = stats.counter(view.scope, "not_found")
-          val foundCounter = stats.counter(view.scope, "found")
+      t etCreat onLock: T etCreat onLock,
+      getT ets: GetT etsHandler.Type,
+      stats: StatsRece ver
+    ): F lter[PostT etResult] =
+      new F lter[PostT etResult] {
+        def apply[R: RequestV ew](base: T[R]): T[R] = {
+          val v ew =  mpl c ly[RequestV ew[R]]
+          val notFoundCount = stats.counter(v ew.scope, "not_found")
+          val foundCounter = stats.counter(v ew.scope, "found")
 
-          FutureArrow.rec[R, PostTweetResult] { self => req =>
-            val duplicateKey = view.lockKey(req)
+          FutureArrow.rec[R, PostT etResult] { self => req =>
+            val dupl cateKey = v ew.lockKey(req)
 
-            // attempts to find the duplicate tweet.
+            // attempts to f nd t  dupl cate t et.
             //
-            // if `returnDupTweet` is true and we find the tweet, then we return a
-            // successful `PostTweetResult` with that tweet.  if we don't find the
-            // tweet, we throw an `InternalServerError`.
+            //  f `returnDupT et`  s true and   f nd t  t et, t n   return a
+            // successful `PostT etResult` w h that t et.   f   don't f nd t 
+            // t et,   throw an ` nternalServerError`.
             //
-            // if `returnDupTweet` is false and we find the tweet, then we return
-            // the appropriate duplicate state.  if we don't find the tweet, then
-            // we unlock the duplicate key and try again.
-            def duplicate(tweetId: TweetId, returnDupTweet: Boolean) =
-              findDuplicate(tweetId, req).flatMap {
-                case Some(postTweetResult) =>
-                  foundCounter.incr()
-                  if (returnDupTweet) Future.value(postTweetResult)
-                  else Future.value(PostTweetResult(state = view.duplicateState))
+            //  f `returnDupT et`  s false and   f nd t  t et, t n   return
+            // t  appropr ate dupl cate state.   f   don't f nd t  t et, t n
+            //   unlock t  dupl cate key and try aga n.
+            def dupl cate(t et d: T et d, returnDupT et: Boolean) =
+              f ndDupl cate(t et d, req).flatMap {
+                case So (postT etResult) =>
+                  foundCounter. ncr()
+                   f (returnDupT et) Future.value(postT etResult)
+                  else Future.value(PostT etResult(state = v ew.dupl cateState))
 
                 case None =>
-                  notFoundCount.incr()
-                  if (returnDupTweet) {
-                    // If we failed to load the tweet, but we know that it
-                    // should exist, then return an InternalServerError, so that
-                    // the client treats it as a failed tweet creation req.
-                    Future.exception(
-                      InternalServerError("Failed to load duplicate existing tweet: " + tweetId)
+                  notFoundCount. ncr()
+                   f (returnDupT et) {
+                    //  f   fa led to load t  t et, but   know that  
+                    // should ex st, t n return an  nternalServerError, so that
+                    // t  cl ent treats   as a fa led t et creat on req.
+                    Future.except on(
+                       nternalServerError("Fa led to load dupl cate ex st ng t et: " + t et d)
                     )
                   } else {
-                    // Assume the lock is stale if we can't load the tweet. It's
-                    // possible that the lock is not stale, but the tweet is not
-                    // yet available, which requires that it not be present in
-                    // cache and not yet available from the backend. This means
-                    // that the failure mode is to allow tweeting if we can't
-                    // determine the state, but it should be rare that we can't
-                    // determine it.
-                    tweetCreationLock.unlock(duplicateKey).before(self(req))
+                    // Assu  t  lock  s stale  f   can't load t  t et.  's
+                    // poss ble that t  lock  s not stale, but t  t et  s not
+                    // yet ava lable, wh ch requ res that   not be present  n
+                    // cac  and not yet ava lable from t  backend. T   ans
+                    // that t  fa lure mode  s to allow t et ng  f   can't
+                    // determ ne t  state, but   should be rare that   can't
+                    // determ ne  .
+                    t etCreat onLock.unlock(dupl cateKey).before(self(req))
                   }
               }
 
-            tweetCreationLock(duplicateKey, view.isDark(req), view.isNullcast(req)) {
+            t etCreat onLock(dupl cateKey, v ew. sDark(req), v ew. sNullcast(req)) {
               base(req)
             }.rescue {
-              case TweetCreationInProgress =>
-                Future.value(PostTweetResult(state = TweetCreateState.Duplicate))
+              case T etCreat on nProgress =>
+                Future.value(PostT etResult(state = T etCreateState.Dupl cate))
 
-              // if tweetCreationLock detected a duplicate, look up the duplicate
-              // and return the appropriate result
-              case DuplicateTweetCreation(tweetId) =>
-                duplicate(tweetId, view.returnDuplicateTweet(req))
+              //  f t etCreat onLock detected a dupl cate, look up t  dupl cate
+              // and return t  appropr ate result
+              case Dupl cateT etCreat on(t et d) =>
+                dupl cate(t et d, v ew.returnDupl cateT et(req))
 
-              // it's possible that tweetCreationLock didn't find a duplicate for a
-              // retweet attempt, but `RetweetBuilder` did.
-              case TweetCreateFailure.AlreadyRetweeted(tweetId) if view.returnDuplicateTweet(req) =>
-                duplicate(tweetId, true)
+              //  's poss ble that t etCreat onLock d dn't f nd a dupl cate for a
+              // ret et attempt, but `Ret etBu lder` d d.
+              case T etCreateFa lure.AlreadyRet eted(t et d)  f v ew.returnDupl cateT et(req) =>
+                dupl cate(t et d, true)
             }
           }
         }
 
-        private def findDuplicate[R: RequestView](
-          tweetId: TweetId,
+        pr vate def f ndDupl cate[R: RequestV ew](
+          t et d: T et d,
           req: R
-        ): Future[Option[PostTweetResult]] = {
-          val view = implicitly[RequestView[R]]
+        ): Future[Opt on[PostT etResult]] = {
+          val v ew =  mpl c ly[RequestV ew[R]]
           val readRequest =
-            GetTweetsRequest(
-              tweetIds = Seq(tweetId),
-              // Assume that the defaults are OK for all of the hydration
-              // options except the ones that are explicitly set in the
+            GetT etsRequest(
+              t et ds = Seq(t et d),
+              // Assu  that t  defaults are OK for all of t  hydrat on
+              // opt ons except t  ones that are expl c ly set  n t 
               // req.
-              options = Some(
-                GetTweetOptions(
-                  forUserId = Some(view.userId(req)),
-                  includePerspectivals = true,
-                  includeCards = view.options(req).exists(_.includeCards),
-                  cardsPlatformKey = view.options(req).flatMap(_.cardsPlatformKey)
+              opt ons = So (
+                GetT etOpt ons(
+                  forUser d = So (v ew.user d(req)),
+                   ncludePerspect vals = true,
+                   ncludeCards = v ew.opt ons(req).ex sts(_. ncludeCards),
+                  cardsPlatformKey = v ew.opt ons(req).flatMap(_.cardsPlatformKey)
                 )
               )
             )
 
-          getTweets(readRequest).map {
+          getT ets(readRequest).map {
             case Seq(result) =>
-              if (result.tweetState == StatusState.Found) {
-                // If the tweet was successfully found, then convert the
-                // read result into a successful write result.
-                Some(
-                  PostTweetResult(
-                    TweetCreateState.Ok,
-                    result.tweet,
-                    // if the retweet is really old, the retweet perspective might no longer
-                    // be available, but we want to maintain the invariant that the `postRetweet`
-                    // endpoint always returns a source tweet with the correct perspective.
-                    result.sourceTweet.map { srcTweet =>
-                      TweetLenses.perspective
-                        .update(_.map(_.copy(retweeted = true, retweetId = Some(tweetId))))
-                        .apply(srcTweet)
+               f (result.t etState == StatusState.Found) {
+                //  f t  t et was successfully found, t n convert t 
+                // read result  nto a successful wr e result.
+                So (
+                  PostT etResult(
+                    T etCreateState.Ok,
+                    result.t et,
+                    //  f t  ret et  s really old, t  ret et perspect ve m ght no longer
+                    // be ava lable, but   want to ma nta n t   nvar ant that t  `postRet et`
+                    // endpo nt always returns a s ce t et w h t  correct perspect ve.
+                    result.s ceT et.map { srcT et =>
+                      T etLenses.perspect ve
+                        .update(_.map(_.copy(ret eted = true, ret et d = So (t et d))))
+                        .apply(srcT et)
                     },
-                    result.quotedTweet
+                    result.quotedT et
                   )
                 )
               } else {
@@ -243,42 +243,42 @@ object PostTweet {
   }
 
   /**
-   * A `Filter` that applies rate limiting to failing requests.
+   * A `F lter` that appl es rate l m  ng to fa l ng requests.
    */
-  object RateLimitFailures {
+  object RateL m Fa lures {
     def apply(
-      validateLimit: RateLimitChecker.Validate,
-      incrementSuccess: LimiterService.IncrementByOne,
-      incrementFailure: LimiterService.IncrementByOne
-    ): Filter[TweetBuilderResult] =
-      new Filter[TweetBuilderResult] {
-        def apply[R: RequestView](base: T[R]): T[R] = {
-          val view = implicitly[RequestView[R]]
+      val dateL m : RateL m C cker.Val date,
+       ncre ntSuccess: L m erServ ce. ncre ntByOne,
+       ncre ntFa lure: L m erServ ce. ncre ntByOne
+    ): F lter[T etBu lderResult] =
+      new F lter[T etBu lderResult] {
+        def apply[R: RequestV ew](base: T[R]): T[R] = {
+          val v ew =  mpl c ly[RequestV ew[R]]
 
-          FutureArrow[R, TweetBuilderResult] { req =>
-            val userId = view.userId(req)
-            val dark = view.isDark(req)
-            val contributorUserId: Option[UserId] = getContributor(userId).map(_.userId)
+          FutureArrow[R, T etBu lderResult] { req =>
+            val user d = v ew.user d(req)
+            val dark = v ew. sDark(req)
+            val contr butorUser d: Opt on[User d] = getContr butor(user d).map(_.user d)
 
-            validateLimit((userId, dark))
+            val dateL m ((user d, dark))
               .before {
-                base(req).onFailure { _ =>
-                  // We don't increment the failure rate limit if the failure
-                  // was from the failure rate limit so that the user can't
-                  // get in a loop where tweet creation is never attempted. We
-                  // don't increment it if the creation is dark because there
-                  // is no way to perform a dark tweet creation through the
-                  // API, so it's most likey some kind of test traffic like
+                base(req).onFa lure { _ =>
+                  //   don't  ncre nt t  fa lure rate l m   f t  fa lure
+                  // was from t  fa lure rate l m  so that t  user can't
+                  // get  n a loop w re t et creat on  s never attempted.  
+                  // don't  ncre nt    f t  creat on  s dark because t re
+                  //  s no way to perform a dark t et creat on through t 
+                  // AP , so  's most l key so  k nd of test traff c l ke
                   // tap-compare.
-                  if (!dark) incrementFailure(userId, contributorUserId)
+                   f (!dark)  ncre ntFa lure(user d, contr butorUser d)
                 }
               }
               .onSuccess { resp =>
-                // If we return a silent failure, then we want to
-                // increment the rate limit as if the tweet was fully
-                // created, because we want it to appear that way to the
-                // user whose creation silently failed.
-                if (resp.isSilentFail) incrementSuccess(userId, contributorUserId)
+                //  f   return a s lent fa lure, t n   want to
+                //  ncre nt t  rate l m  as  f t  t et was fully
+                // created, because   want   to appear that way to t 
+                // user whose creat on s lently fa led.
+                 f (resp. sS lentFa l)  ncre ntSuccess(user d, contr butorUser d)
               }
           }
         }
@@ -286,110 +286,110 @@ object PostTweet {
   }
 
   /**
-   * A `Filter` for counting non-`TweetCreateFailure` failures.
+   * A `F lter` for count ng non-`T etCreateFa lure` fa lures.
    */
-  object CountFailures {
-    def apply[Res](stats: StatsReceiver, scopeSuffix: String = "_builder"): Filter[Res] =
-      new Filter[Res] {
-        def apply[R: RequestView](base: T[R]): T[R] = {
-          val view = implicitly[RequestView[R]]
-          val exceptionCounter = ExceptionCounter(stats.scope(view.scope + scopeSuffix))
-          base.onFailure {
-            case (_, _: TweetCreateFailure) =>
-            case (_, ex) => exceptionCounter(ex)
+  object CountFa lures {
+    def apply[Res](stats: StatsRece ver, scopeSuff x: Str ng = "_bu lder"): F lter[Res] =
+      new F lter[Res] {
+        def apply[R: RequestV ew](base: T[R]): T[R] = {
+          val v ew =  mpl c ly[RequestV ew[R]]
+          val except onCounter = Except onCounter(stats.scope(v ew.scope + scopeSuff x))
+          base.onFa lure {
+            case (_, _: T etCreateFa lure) =>
+            case (_, ex) => except onCounter(ex)
           }
         }
       }
   }
 
   /**
-   * A `Filter` for logging failures.
+   * A `F lter` for logg ng fa lures.
    */
-  object LogFailures extends Filter[PostTweetResult] {
-    private[this] val failedTweetCreationsLogger = Logger(
-      "com.twitter.tweetypie.FailedTweetCreations"
+  object LogFa lures extends F lter[PostT etResult] {
+    pr vate[t ] val fa ledT etCreat onsLogger = Logger(
+      "com.tw ter.t etyp e.Fa ledT etCreat ons"
     )
 
-    def apply[R: RequestView](base: T[R]): T[R] =
-      FutureArrow[R, PostTweetResult] { req =>
-        base(req).onFailure {
-          case failure => failedTweetCreationsLogger.info(s"request: $req\nfailure: $failure")
+    def apply[R: RequestV ew](base: T[R]): T[R] =
+      FutureArrow[R, PostT etResult] { req =>
+        base(req).onFa lure {
+          case fa lure => fa ledT etCreat onsLogger. nfo(s"request: $req\nfa lure: $fa lure")
         }
       }
   }
 
   /**
-   * A `Filter` for converting a thrown `TweetCreateFailure` into a `PostTweetResult`.
+   * A `F lter` for convert ng a thrown `T etCreateFa lure`  nto a `PostT etResult`.
    */
-  object RescueTweetCreateFailure extends Filter[PostTweetResult] {
-    def apply[R: RequestView](base: T[R]): T[R] =
-      FutureArrow[R, PostTweetResult] { req =>
+  object RescueT etCreateFa lure extends F lter[PostT etResult] {
+    def apply[R: RequestV ew](base: T[R]): T[R] =
+      FutureArrow[R, PostT etResult] { req =>
         base(req).rescue {
-          case failure: TweetCreateFailure => Future.value(failure.toPostTweetResult)
+          case fa lure: T etCreateFa lure => Future.value(fa lure.toPostT etResult)
         }
       }
   }
 
   /**
-   * Builds a base handler for `PostTweetRequest` and `RetweetRequest`.  The handler
-   * calls an underlying tweet builder, creates a `InsertTweet.Event`, hydrates
-   * that, passes it to `tweetStore`, and then converts it to a `PostTweetResult`.
+   * Bu lds a base handler for `PostT etRequest` and `Ret etRequest`.  T  handler
+   * calls an underly ng t et bu lder, creates a ` nsertT et.Event`, hydrates
+   * that, passes   to `t etStore`, and t n converts   to a `PostT etResult`.
    */
   object Handler {
-    def apply[R: RequestView](
-      tweetBuilder: FutureArrow[R, TweetBuilderResult],
-      hydrateInsertEvent: FutureArrow[InsertTweet.Event, InsertTweet.Event],
-      tweetStore: InsertTweet.Store,
+    def apply[R: RequestV ew](
+      t etBu lder: FutureArrow[R, T etBu lderResult],
+      hydrate nsertEvent: FutureArrow[ nsertT et.Event,  nsertT et.Event],
+      t etStore:  nsertT et.Store,
     ): Type[R] = {
       FutureArrow { req =>
         for {
-          bldrRes <- tweetBuilder(req)
-          event <- hydrateInsertEvent(toInsertTweetEvent(req, bldrRes))
-          _ <- Future.when(!event.dark)(tweetStore.insertTweet(event))
-        } yield toPostTweetResult(event)
+          bldrRes <- t etBu lder(req)
+          event <- hydrate nsertEvent(to nsertT etEvent(req, bldrRes))
+          _ <- Future.w n(!event.dark)(t etStore. nsertT et(event))
+        } y eld toPostT etResult(event)
       }
     }
 
     /**
-     * Converts a request/`TweetBuilderResult` pair into an `InsertTweet.Event`.
+     * Converts a request/`T etBu lderResult` pa r  nto an ` nsertT et.Event`.
      */
-    def toInsertTweetEvent[R: RequestView](
+    def to nsertT etEvent[R: RequestV ew](
       req: R,
-      bldrRes: TweetBuilderResult
-    ): InsertTweet.Event = {
-      val view = implicitly[RequestView[R]]
-      InsertTweet.Event(
-        tweet = bldrRes.tweet,
+      bldrRes: T etBu lderResult
+    ):  nsertT et.Event = {
+      val v ew =  mpl c ly[RequestV ew[R]]
+       nsertT et.Event(
+        t et = bldrRes.t et,
         user = bldrRes.user,
-        sourceTweet = bldrRes.sourceTweet,
-        sourceUser = bldrRes.sourceUser,
-        parentUserId = bldrRes.parentUserId,
-        timestamp = bldrRes.createdAt,
-        dark = view.isDark(req) || bldrRes.isSilentFail,
-        hydrateOptions = view.options(req).getOrElse(WritePathHydrationOptions()),
-        featureContext = view.featureContext(req),
-        initialTweetUpdateRequest = bldrRes.initialTweetUpdateRequest,
-        geoSearchRequestId = for {
-          geo <- view.geo(req)
-          searchRequestID <- geo.geoSearchRequestId
-        } yield {
-          GeoSearchRequestId(requestID = searchRequestID.id)
+        s ceT et = bldrRes.s ceT et,
+        s ceUser = bldrRes.s ceUser,
+        parentUser d = bldrRes.parentUser d,
+        t  stamp = bldrRes.createdAt,
+        dark = v ew. sDark(req) || bldrRes. sS lentFa l,
+        hydrateOpt ons = v ew.opt ons(req).getOrElse(Wr ePathHydrat onOpt ons()),
+        featureContext = v ew.featureContext(req),
+         n  alT etUpdateRequest = bldrRes. n  alT etUpdateRequest,
+        geoSearchRequest d = for {
+          geo <- v ew.geo(req)
+          searchRequest D <- geo.geoSearchRequest d
+        } y eld {
+          GeoSearchRequest d(request D = searchRequest D. d)
         },
-        additionalContext = view.additionalContext(req),
-        transientContext = view.transientContext(req),
-        noteTweetMentionedUserIds = view.noteTweetMentionedUserIds(req)
+        add  onalContext = v ew.add  onalContext(req),
+        trans entContext = v ew.trans entContext(req),
+        noteT et nt onedUser ds = v ew.noteT et nt onedUser ds(req)
       )
     }
 
     /**
-     * Converts an `InsertTweet.Event` into a successful `PostTweetResult`.
+     * Converts an ` nsertT et.Event`  nto a successful `PostT etResult`.
      */
-    def toPostTweetResult(event: InsertTweet.Event): PostTweetResult =
-      PostTweetResult(
-        TweetCreateState.Ok,
-        Some(event.tweet),
-        sourceTweet = event.sourceTweet,
-        quotedTweet = event.quotedTweet
+    def toPostT etResult(event:  nsertT et.Event): PostT etResult =
+      PostT etResult(
+        T etCreateState.Ok,
+        So (event.t et),
+        s ceT et = event.s ceT et,
+        quotedT et = event.quotedT et
       )
   }
 }

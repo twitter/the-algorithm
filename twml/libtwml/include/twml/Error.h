@@ -1,20 +1,20 @@
 #pragma once
-#include <twml/defines.h>
+# nclude <twml/def nes.h>
 
-#ifdef __cplusplus
-#include <stddef.h>
-#include <stdexcept>
-#include <stdint.h>
-#include <string>
+# fdef __cplusplus
+# nclude <stddef.h>
+# nclude <stdexcept>
+# nclude <std nt.h>
+# nclude <str ng>
 
-namespace twml {
+na space twml {
 
-class Error : public std::runtime_error {
- private:
+class Error : publ c std::runt  _error {
+ pr vate:
   twml_err m_err;
- public:
-  Error(twml_err  err, const std::string &msg) :
-      std::runtime_error(msg), m_err(err)
+ publ c:
+  Error(twml_err  err, const std::str ng &msg) :
+      std::runt  _error(msg), m_err(err)
   {
   }
 
@@ -24,25 +24,25 @@ class Error : public std::runtime_error {
   }
 };
 
-class ThriftInvalidField: public twml::Error {
- public:
-  ThriftInvalidField(int16_t field_id, const std::string& func) :
-      Error(TWML_ERR_THRIFT,
-            "Found invalid field (" + std::to_string(field_id)
-            + ") while reading thrift [" + func + "]")
+class Thr ft nval dF eld: publ c twml::Error {
+ publ c:
+  Thr ft nval dF eld( nt16_t f eld_ d, const std::str ng& func) :
+      Error(TWML_ERR_THR FT,
+            "Found  nval d f eld (" + std::to_str ng(f eld_ d)
+            + ") wh le read ng thr ft [" + func + "]")
   {
   }
 };
 
-class ThriftInvalidType: public twml::Error {
- public:
-  ThriftInvalidType(uint8_t type_id, const std::string& func, const std::string type) :
-      Error(TWML_ERR_THRIFT,
-            "Found invalid type (" + std::to_string(type_id) +
-            ") while reading thrift [" + func + "::" + type + "]")
+class Thr ft nval dType: publ c twml::Error {
+ publ c:
+  Thr ft nval dType(u nt8_t type_ d, const std::str ng& func, const std::str ng type) :
+      Error(TWML_ERR_THR FT,
+            "Found  nval d type (" + std::to_str ng(type_ d) +
+            ") wh le read ng thr ft [" + func + "::" + type + "]")
   {
   }
 };
 
 }
-#endif
+#end f

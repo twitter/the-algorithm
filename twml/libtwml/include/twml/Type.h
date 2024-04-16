@@ -1,12 +1,12 @@
 #pragma once
-#include <twml/defines.h>
-#include <stddef.h>
-#include <stdint.h>
+# nclude <twml/def nes.h>
+# nclude <stddef.h>
+# nclude <std nt.h>
 
-#ifdef __cplusplus
-namespace twml {
+# fdef __cplusplus
+na space twml {
 
-    template<typename T> struct Type;
+    template<typena  T> struct Type;
 
     template<> struct Type<float>
     {
@@ -15,10 +15,10 @@ namespace twml {
         };
     };
 
-    template<> struct Type<std::string>
+    template<> struct Type<std::str ng>
     {
         enum {
-            type = TWML_TYPE_STRING,
+            type = TWML_TYPE_STR NG,
         };
     };
 
@@ -29,31 +29,31 @@ namespace twml {
         };
     };
 
-    template<> struct Type<int64_t>
+    template<> struct Type< nt64_t>
     {
         enum {
-            type = TWML_TYPE_INT64,
+            type = TWML_TYPE_ NT64,
         };
     };
 
-    template<> struct Type<int32_t>
+    template<> struct Type< nt32_t>
     {
         enum {
-            type = TWML_TYPE_INT32,
+            type = TWML_TYPE_ NT32,
         };
     };
 
-    template<> struct Type<int8_t>
+    template<> struct Type< nt8_t>
     {
         enum {
-            type = TWML_TYPE_INT8,
+            type = TWML_TYPE_ NT8,
         };
     };
 
-    template<> struct Type<uint8_t>
+    template<> struct Type<u nt8_t>
     {
         enum {
-            type = TWML_TYPE_UINT8,
+            type = TWML_TYPE_U NT8,
         };
     };
 
@@ -66,4 +66,4 @@ namespace twml {
     };
 
 }
-#endif
+#end f

@@ -1,409 +1,409 @@
-package com.twitter.search.earlybird.util;
+package com.tw ter.search.earlyb rd.ut l;
 
-import java.util.Optional;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicBoolean;
-import javax.annotation.Nullable;
+ mport java.ut l.Opt onal;
+ mport java.ut l.Random;
+ mport java.ut l.concurrent.atom c.Atom cBoolean;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.base.Stopwatch;
 
-import org.apache.zookeeper.KeeperException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .zookeeper.KeeperExcept on;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.base.ExceptionalFunction;
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.common.zookeeper.ServerSet;
-import com.twitter.common.zookeeper.ZooKeeperClient;
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.util.zktrylock.TryLock;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.earlybird.ServerSetMember;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.exception.AlreadyInServerSetUpdateException;
-import com.twitter.search.earlybird.exception.EarlybirdException;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.NotInServerSetUpdateException;
-import com.twitter.search.earlybird.partition.DynamicPartitionConfig;
-import com.twitter.search.earlybird.partition.PartitionConfig;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
+ mport com.tw ter.common.base.Except onalFunct on;
+ mport com.tw ter.common.quant y.Amount;
+ mport com.tw ter.common.quant y.T  ;
+ mport com.tw ter.common.zookeeper.ServerSet;
+ mport com.tw ter.common.zookeeper.ZooKeeperCl ent;
+ mport com.tw ter.search.common.conf g.Conf g;
+ mport com.tw ter.search.common.database.DatabaseConf g;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchCustomGauge;
+ mport com.tw ter.search.common.ut l.zktrylock.TryLock;
+ mport com.tw ter.search.common.ut l.zktrylock.ZooKeeperTryLockFactory;
+ mport com.tw ter.search.earlyb rd.ServerSet mber;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdProperty;
+ mport com.tw ter.search.earlyb rd.except on.Already nServerSetUpdateExcept on;
+ mport com.tw ter.search.earlyb rd.except on.Earlyb rdExcept on;
+ mport com.tw ter.search.earlyb rd.except on.Cr  calExcept onHandler;
+ mport com.tw ter.search.earlyb rd.except on.Not nServerSetUpdateExcept on;
+ mport com.tw ter.search.earlyb rd.part  on.Dynam cPart  onConf g;
+ mport com.tw ter.search.earlyb rd.part  on.Part  onConf g;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntSyncConf g;
 
 /**
- * Utility class for executing tasks on Earlybirds that need to be coordinated across replicas
- * on the same hash partition.
- * Can be used for things like coordinating optimization on the same timeslice.
- * When enabled, a try-lock will be taken out in zookeeper while the task is performed.
- * The action will attempt to leave the partition's server set. If the attempt fails, the action
- * is aborted.
+ * Ut l y class for execut ng tasks on Earlyb rds that need to be coord nated across repl cas
+ * on t  sa  hash part  on.
+ * Can be used for th ngs l ke coord nat ng opt m zat on on t  sa  t  sl ce.
+ * W n enabled, a try-lock w ll be taken out  n zookeeper wh le t  task  s perfor d.
+ * T  act on w ll attempt to leave t  part  on's server set.  f t  attempt fa ls, t  act on
+ *  s aborted.
  */
-public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInterface {
-  private static final Logger LOG = LoggerFactory.getLogger(CoordinatedEarlybirdAction.class);
+publ c class Coord natedEarlyb rdAct on  mple nts Coord natedEarlyb rdAct on nterface {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Coord natedEarlyb rdAct on.class);
 
-  private static final Boolean COORDINATED_ACTION_FLAG = Boolean.TRUE;
-  private static final Boolean NOT_COORDINATED_ACTION_FLAG = Boolean.FALSE;
+  pr vate stat c f nal Boolean COORD NATED_ACT ON_FLAG = Boolean.TRUE;
+  pr vate stat c f nal Boolean NOT_COORD NATED_ACT ON_FLAG = Boolean.FALSE;
 
-  private final String actionName;
-  private final DynamicPartitionConfig dynamicPartitionConfig;
-  @Nullable private final ServerSetMember serverSetMember;
-  private final ZooKeeperTryLockFactory zooKeeperTryLockFactory;
+  pr vate f nal Str ng act onNa ;
+  pr vate f nal Dynam cPart  onConf g dynam cPart  onConf g;
+  @Nullable pr vate f nal ServerSet mber serverSet mber;
+  pr vate f nal ZooKeeperTryLockFactory zooKeeperTryLockFactory;
 
-  // Whether this action should be coordinated through zookeeper in the first place (could be
-  // config'ed off).
-  // If the action is coordinated, this earlybird will leave its server set when performing the
-  // coordinated action.
-  private final AtomicBoolean shouldSynchronize;
-  // Whether this action should ensure that there are enough replicas in the serverset (defined by
-  // maxAllowedReplicasNotInServerSet) before leaving the serverset.
-  private final boolean checkNumReplicasInServerSet;
-  // If this many (or more) servers have left the partition, we cannot perform a coordinated action
-  private final int maxAllowedReplicasNotInServerSet;
-  // How long to lock out all other replicas in this hash partition for.
-  // Should be some small multiple of how long the action is expected to take, to allow for longer
-  // running cases.
-  private final long zkLockExpirationTimeMinutes;
-  // Prefix for the zookeeper lock used when coordinating daily updates.
-  // Full name should include the hash partition number.
-  private final String zkLockNamePrefix;
-  // If we're unable to re-join this earlybird's server set during coordinated updates,
-  // how many times to retry.
-  private final int joinServerSetRetries;
-  // How long to sleep between retries if unable to job back into server set.
-  private final int joinServerSetRetrySleepMillis;
-  // How long to sleep between leaving the serverset and executing the action
-  private final int sleepAfterLeaveServerSetMillis;
+  // W t r t  act on should be coord nated through zookeeper  n t  f rst place (could be
+  // conf g'ed off).
+  //  f t  act on  s coord nated, t  earlyb rd w ll leave  s server set w n perform ng t 
+  // coord nated act on.
+  pr vate f nal Atom cBoolean shouldSynchron ze;
+  // W t r t  act on should ensure that t re are enough repl cas  n t  serverset (def ned by
+  // maxAllo dRepl casNot nServerSet) before leav ng t  serverset.
+  pr vate f nal boolean c ckNumRepl cas nServerSet;
+  //  f t  many (or more) servers have left t  part  on,   cannot perform a coord nated act on
+  pr vate f nal  nt maxAllo dRepl casNot nServerSet;
+  // How long to lock out all ot r repl cas  n t  hash part  on for.
+  // Should be so  small mult ple of how long t  act on  s expected to take, to allow for longer
+  // runn ng cases.
+  pr vate f nal long zkLockExp rat onT  M nutes;
+  // Pref x for t  zookeeper lock used w n coord nat ng da ly updates.
+  // Full na  should  nclude t  hash part  on number.
+  pr vate f nal Str ng zkLockNa Pref x;
+  //  f  're unable to re-jo n t  earlyb rd's server set dur ng coord nated updates,
+  // how many t  s to retry.
+  pr vate f nal  nt jo nServerSetRetr es;
+  // How long to sleep bet en retr es  f unable to job back  nto server set.
+  pr vate f nal  nt jo nServerSetRetrySleepM ll s;
+  // How long to sleep bet en leav ng t  serverset and execut ng t  act on
+  pr vate f nal  nt sleepAfterLeaveServerSetM ll s;
 
-  // How many times a this action was called within a lock block.
-  private final SearchCounter numCoordinatedFunctionCalls;
-  private final SearchCounter numCoordinatedLeaveServersetCalls;
+  // How many t  s a t  act on was called w h n a lock block.
+  pr vate f nal SearchCounter numCoord natedFunct onCalls;
+  pr vate f nal SearchCounter numCoord natedLeaveServersetCalls;
 
-  private final CriticalExceptionHandler criticalExceptionHandler;
-  private final SegmentSyncConfig segmentSyncConfig;
+  pr vate f nal Cr  calExcept onHandler cr  calExcept onHandler;
+  pr vate f nal Seg ntSyncConf g seg ntSyncConf g;
 
   /**
-   * Create a CoordinatedEarlybirdAction.
+   * Create a Coord natedEarlyb rdAct on.
    *
-   * @param actionName the name to be used for logging and the prefix for config options.
-   * @param dynamicPartitionConfig maintains the current partitioning configuration for this
-   * earlybird. Used mainly to determine the hash partition of this earlybird.
-   * @param serverSetMember the server that this action is running on. To be used to leaving and
-   * rejoining the server's server set.
+   * @param act onNa  t  na  to be used for logg ng and t  pref x for conf g opt ons.
+   * @param dynam cPart  onConf g ma nta ns t  current part  on ng conf gurat on for t 
+   * earlyb rd. Used ma nly to determ ne t  hash part  on of t  earlyb rd.
+   * @param serverSet mber t  server that t  act on  s runn ng on. To be used to leav ng and
+   * rejo n ng t  server's server set.
    */
-  public CoordinatedEarlybirdAction(
+  publ c Coord natedEarlyb rdAct on(
       ZooKeeperTryLockFactory zooKeeperTryLockFactory,
-      String actionName,
-      DynamicPartitionConfig dynamicPartitionConfig,
-      @Nullable ServerSetMember serverSetMember,
-      CriticalExceptionHandler criticalExceptionHandler,
-      SegmentSyncConfig segmentSyncConfig) {
-    this.actionName = actionName;
-    this.dynamicPartitionConfig = dynamicPartitionConfig;
-    this.serverSetMember = serverSetMember;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.segmentSyncConfig = segmentSyncConfig;
-    this.zooKeeperTryLockFactory = zooKeeperTryLockFactory;
-    if (serverSetMember == null) {
-      Preconditions.checkState(Config.environmentIsTest(),
-          "Should only have a null server in tests");
+      Str ng act onNa ,
+      Dynam cPart  onConf g dynam cPart  onConf g,
+      @Nullable ServerSet mber serverSet mber,
+      Cr  calExcept onHandler cr  calExcept onHandler,
+      Seg ntSyncConf g seg ntSyncConf g) {
+    t .act onNa  = act onNa ;
+    t .dynam cPart  onConf g = dynam cPart  onConf g;
+    t .serverSet mber = serverSet mber;
+    t .cr  calExcept onHandler = cr  calExcept onHandler;
+    t .seg ntSyncConf g = seg ntSyncConf g;
+    t .zooKeeperTryLockFactory = zooKeeperTryLockFactory;
+     f (serverSet mber == null) {
+      Precond  ons.c ckState(Conf g.env ron nt sTest(),
+          "Should only have a null server  n tests");
     }
 
-    this.shouldSynchronize = new AtomicBoolean(
-            EarlybirdConfig.getBool(actionName + "_should_synchronize", false));
+    t .shouldSynchron ze = new Atom cBoolean(
+            Earlyb rdConf g.getBool(act onNa  + "_should_synchron ze", false));
 
-    // Export whether or not synchronization is enabled as a stat
+    // Export w t r or not synchron zat on  s enabled as a stat
     SearchCustomGauge.export(
-        actionName + "_should_synchronize", () -> shouldSynchronize.get() ? 1 : 0);
+        act onNa  + "_should_synchron ze", () -> shouldSynchron ze.get() ? 1 : 0);
 
-    this.checkNumReplicasInServerSet = EarlybirdProperty.CHECK_NUM_REPLICAS_IN_SERVER_SET.get();
+    t .c ckNumRepl cas nServerSet = Earlyb rdProperty.CHECK_NUM_REPL CAS_ N_SERVER_SET.get();
 
-    int numReplicas =
-        dynamicPartitionConfig.getCurrentPartitionConfig().getNumReplicasInHashPartition();
-    this.maxAllowedReplicasNotInServerSet =
-        EarlybirdProperty.MAX_ALLOWED_REPLICAS_NOT_IN_SERVER_SET.get(numReplicas);
+     nt numRepl cas =
+        dynam cPart  onConf g.getCurrentPart  onConf g().getNumRepl cas nHashPart  on();
+    t .maxAllo dRepl casNot nServerSet =
+        Earlyb rdProperty.MAX_ALLOWED_REPL CAS_NOT_ N_SERVER_SET.get(numRepl cas);
 
-    this.zkLockExpirationTimeMinutes =
-        EarlybirdConfig.getLong(actionName + "_lock_expiration_time_minutes", 60L);
-    this.zkLockNamePrefix = actionName + "_for_hash_partition_";
-    this.joinServerSetRetries =
-        EarlybirdConfig.getInt(actionName + "_join_server_set_retries", 20);
-    this.joinServerSetRetrySleepMillis =
-        EarlybirdConfig.getInt(actionName + "_join_server_retry_sleep_millis", 2000);
-    this.sleepAfterLeaveServerSetMillis =
-        EarlybirdConfig.getInt("coordinated_action_sleep_after_leave_server_set_millis", 30000);
+    t .zkLockExp rat onT  M nutes =
+        Earlyb rdConf g.getLong(act onNa  + "_lock_exp rat on_t  _m nutes", 60L);
+    t .zkLockNa Pref x = act onNa  + "_for_hash_part  on_";
+    t .jo nServerSetRetr es =
+        Earlyb rdConf g.get nt(act onNa  + "_jo n_server_set_retr es", 20);
+    t .jo nServerSetRetrySleepM ll s =
+        Earlyb rdConf g.get nt(act onNa  + "_jo n_server_retry_sleep_m ll s", 2000);
+    t .sleepAfterLeaveServerSetM ll s =
+        Earlyb rdConf g.get nt("coord nated_act on_sleep_after_leave_server_set_m ll s", 30000);
 
-    this.numCoordinatedFunctionCalls = SearchCounter.export(actionName + "_num_coordinated_calls");
-    this.numCoordinatedLeaveServersetCalls =
-        SearchCounter.export(actionName + "_num_coordinated_leave_serverset_calls");
+    t .numCoord natedFunct onCalls = SearchCounter.export(act onNa  + "_num_coord nated_calls");
+    t .numCoord natedLeaveServersetCalls =
+        SearchCounter.export(act onNa  + "_num_coord nated_leave_serverset_calls");
 
-    if (this.checkNumReplicasInServerSet) {
-      LOG.info(
-          "Coordinate action config ({}): allowedNotIn: {}, current number of replicas: {}, "
-              + "synchronization enabled: {}, checkNumReplicasInServerSet enabled: {}",
-          actionName,
-          maxAllowedReplicasNotInServerSet,
-          dynamicPartitionConfig.getCurrentPartitionConfig().getNumReplicasInHashPartition(),
-          shouldSynchronize,
-          this.checkNumReplicasInServerSet);
+     f (t .c ckNumRepl cas nServerSet) {
+      LOG. nfo(
+          "Coord nate act on conf g ({}): allo dNot n: {}, current number of repl cas: {}, "
+              + "synchron zat on enabled: {}, c ckNumRepl cas nServerSet enabled: {}",
+          act onNa ,
+          maxAllo dRepl casNot nServerSet,
+          dynam cPart  onConf g.getCurrentPart  onConf g().getNumRepl cas nHashPart  on(),
+          shouldSynchron ze,
+          t .c ckNumRepl cas nServerSet);
     } else {
-      LOG.info(
-          "Coordinate action config ({}): synchronization enabled: {}, "
-              + "checkNumReplicasInServerSet enabled: {}",
-          actionName,
-          shouldSynchronize,
-          this.checkNumReplicasInServerSet);
+      LOG. nfo(
+          "Coord nate act on conf g ({}): synchron zat on enabled: {}, "
+              + "c ckNumRepl cas nServerSet enabled: {}",
+          act onNa ,
+          shouldSynchron ze,
+          t .c ckNumRepl cas nServerSet);
     }
   }
 
 
-  @Override
-  public <E extends Exception> boolean execute(
-      String description,
-      ExceptionalFunction<Boolean, Boolean, E> function)
-          throws E, CoordinatedEarlybirdActionLockFailed {
-    if (this.shouldSynchronize.get()) {
-      return executeWithCoordination(description, function);
+  @Overr de
+  publ c <E extends Except on> boolean execute(
+      Str ng descr pt on,
+      Except onalFunct on<Boolean, Boolean, E> funct on)
+          throws E, Coord natedEarlyb rdAct onLockFa led {
+     f (t .shouldSynchron ze.get()) {
+      return executeW hCoord nat on(descr pt on, funct on);
     } else {
-      return function.apply(NOT_COORDINATED_ACTION_FLAG);
+      return funct on.apply(NOT_COORD NATED_ACT ON_FLAG);
     }
   }
 
   enum LeaveServerSetResult {
     SUCCESS,
-    FAILURE,
-    NOT_IN_SERVER_SET,
+    FA LURE,
+    NOT_ N_SERVER_SET,
     NO_SERVER_SET_MEMBER
   }
 
-  private LeaveServerSetResult leaveServerSet() {
-    LOG.info("Leaving serving server set for " + actionName);
+  pr vate LeaveServerSetResult leaveServerSet() {
+    LOG. nfo("Leav ng serv ng server set for " + act onNa );
     try {
-      serverSetMember.leaveServerSet("CoordinatedAction: " + actionName);
+      serverSet mber.leaveServerSet("Coord natedAct on: " + act onNa );
       return LeaveServerSetResult.SUCCESS;
-    } catch (ServerSet.UpdateException ex) {
-      if (ex instanceof NotInServerSetUpdateException) {
-        LOG.info("No need to leave; already out of server set during: "
-            + actionName, ex);
-        return LeaveServerSetResult.NOT_IN_SERVER_SET;
+    } catch (ServerSet.UpdateExcept on ex) {
+       f (ex  nstanceof Not nServerSetUpdateExcept on) {
+        LOG. nfo("No need to leave; already out of server set dur ng: "
+            + act onNa , ex);
+        return LeaveServerSetResult.NOT_ N_SERVER_SET;
       } else {
-        LOG.warn("Unable to leave server set during: " + actionName, ex);
-        return LeaveServerSetResult.FAILURE;
+        LOG.warn("Unable to leave server set dur ng: " + act onNa , ex);
+        return LeaveServerSetResult.FA LURE;
       }
     }
   }
 
-  private LeaveServerSetResult maybeLeaveServerSet() {
-    if (serverSetMember != null) {
-      if (serverSetMember.isInServerSet()) {
+  pr vate LeaveServerSetResult maybeLeaveServerSet() {
+     f (serverSet mber != null) {
+       f (serverSet mber. s nServerSet()) {
 
-        if (!checkNumReplicasInServerSet) {
+         f (!c ckNumRepl cas nServerSet) {
           return leaveServerSet();
         } else {
-          PartitionConfig curPartitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
-          final int minNumServers =
-              curPartitionConfig.getNumReplicasInHashPartition() - maxAllowedReplicasNotInServerSet;
-          Optional<Integer> numServerSetMembers = getNumberOfServerSetMembers();
-          LOG.info("Checking number of replicas before leaving server set for " + actionName
-              + ". Number of members is: " + numServerSetMembers + " minMembers: " + minNumServers);
-          if (numServerSetMembers.isPresent() && numServerSetMembers.get() > minNumServers) {
+          Part  onConf g curPart  onConf g = dynam cPart  onConf g.getCurrentPart  onConf g();
+          f nal  nt m nNumServers =
+              curPart  onConf g.getNumRepl cas nHashPart  on() - maxAllo dRepl casNot nServerSet;
+          Opt onal< nteger> numServerSet mbers = getNumberOfServerSet mbers();
+          LOG. nfo("C ck ng number of repl cas before leav ng server set for " + act onNa 
+              + ". Number of  mbers  s: " + numServerSet mbers + " m n mbers: " + m nNumServers);
+           f (numServerSet mbers. sPresent() && numServerSet mbers.get() > m nNumServers) {
             return leaveServerSet();
           } else {
-            LOG.warn("Not leaving server set during: " + actionName);
-            return LeaveServerSetResult.FAILURE;
+            LOG.warn("Not leav ng server set dur ng: " + act onNa );
+            return LeaveServerSetResult.FA LURE;
           }
         }
       } else {
-        LOG.info("Not in server set, no need to leave it.");
-        return LeaveServerSetResult.NOT_IN_SERVER_SET;
+        LOG. nfo("Not  n server set, no need to leave  .");
+        return LeaveServerSetResult.NOT_ N_SERVER_SET;
       }
     }
 
     return LeaveServerSetResult.NO_SERVER_SET_MEMBER;
   }
 
-  private <E extends Exception> boolean executeWithCoordination(
-      final String description,
-      final ExceptionalFunction<Boolean, Boolean, E> function)
-      throws E, CoordinatedEarlybirdActionLockFailed {
-    PartitionConfig curPartitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
+  pr vate <E extends Except on> boolean executeW hCoord nat on(
+      f nal Str ng descr pt on,
+      f nal Except onalFunct on<Boolean, Boolean, E> funct on)
+      throws E, Coord natedEarlyb rdAct onLockFa led {
+    Part  onConf g curPart  onConf g = dynam cPart  onConf g.getCurrentPart  onConf g();
     TryLock lock = zooKeeperTryLockFactory.createTryLock(
-        DatabaseConfig.getLocalHostname(),
-        segmentSyncConfig.getZooKeeperSyncFullPath(),
-        zkLockNamePrefix
-        + curPartitionConfig.getIndexingHashPartitionID(),
-        Amount.of(zkLockExpirationTimeMinutes, Time.MINUTES)
+        DatabaseConf g.getLocalHostna (),
+        seg ntSyncConf g.getZooKeeperSyncFullPath(),
+        zkLockNa Pref x
+        + curPart  onConf g.get ndex ngHashPart  on D(),
+        Amount.of(zkLockExp rat onT  M nutes, T  .M NUTES)
     );
 
-    final AtomicBoolean success = new AtomicBoolean(false);
+    f nal Atom cBoolean success = new Atom cBoolean(false);
 
-    boolean gotLock = lock.tryWithLock(() -> {
-      Stopwatch actionTiming = Stopwatch.createStarted();
+    boolean gotLock = lock.tryW hLock(() -> {
+      Stopwatch act onT m ng = Stopwatch.createStarted();
 
       LeaveServerSetResult leftServerSet = maybeLeaveServerSet();
-      if (leftServerSet == LeaveServerSetResult.FAILURE) {
-        LOG.info("Failed to leave the server set, will not execute action.");
+       f (leftServerSet == LeaveServerSetResult.FA LURE) {
+        LOG. nfo("Fa led to leave t  server set, w ll not execute act on.");
         return;
       }
 
-      LOG.info("maybeLeaveServerSet returned: {}", leftServerSet);
+      LOG. nfo("maybeLeaveServerSet returned: {}", leftServerSet);
 
-      // Sleep for a short time to give the server some time to finish requests that it is currently
-      // executing and allow roots some time to register that this host has left the server set.
-      // If we didn't do this and the coordinated action included a full GC, then latency and error
-      // rate at the root layer would spike higher at the time of the GC. SEARCH-35456
+      // Sleep for a short t   to g ve t  server so  t   to f n sh requests that    s currently
+      // execut ng and allow roots so  t   to reg ster that t  host has left t  server set.
+      //  f   d dn't do t  and t  coord nated act on  ncluded a full GC, t n latency and error
+      // rate at t  root layer would sp ke h g r at t  t   of t  GC. SEARCH-35456
       try {
-        Thread.sleep(sleepAfterLeaveServerSetMillis);
-      } catch (InterruptedException ex) {
-        Thread.currentThread().interrupt();
+        Thread.sleep(sleepAfterLeaveServerSetM ll s);
+      } catch ( nterruptedExcept on ex) {
+        Thread.currentThread(). nterrupt();
       }
 
-      LOG.info(actionName + " synchronization action for " + description);
+      LOG. nfo(act onNa  + " synchron zat on act on for " + descr pt on);
 
       try {
-        numCoordinatedFunctionCalls.increment();
-        numCoordinatedLeaveServersetCalls.increment();
+        numCoord natedFunct onCalls. ncre nt();
+        numCoord natedLeaveServersetCalls. ncre nt();
 
-        Boolean successValue = function.apply(COORDINATED_ACTION_FLAG);
+        Boolean successValue = funct on.apply(COORD NATED_ACT ON_FLAG);
         success.set(successValue);
-      } finally {
-        if (leftServerSet == LeaveServerSetResult.SUCCESS) {
-          joinServerSet();
+      } f nally {
+         f (leftServerSet == LeaveServerSetResult.SUCCESS) {
+          jo nServerSet();
         }
-        LOG.info("{} synchronization action for {} completed after {}, success: {}",
-            actionName,
-            description,
-            actionTiming,
+        LOG. nfo("{} synchron zat on act on for {} completed after {}, success: {}",
+            act onNa ,
+            descr pt on,
+            act onT m ng,
             success.get());
       }
     });
 
-    if (!gotLock) {
-      String errorMsg = actionName + ": Failed to get zk indexing lock for " + description;
-      LOG.info(errorMsg);
-      throw new CoordinatedEarlybirdActionLockFailed(errorMsg);
+     f (!gotLock) {
+      Str ng errorMsg = act onNa  + ": Fa led to get zk  ndex ng lock for " + descr pt on;
+      LOG. nfo(errorMsg);
+      throw new Coord natedEarlyb rdAct onLockFa led(errorMsg);
     }
     return success.get();
   }
 
-  @Override
-  public void retryActionUntilRan(String description, Runnable action) {
-    Random random = new Random(System.currentTimeMillis());
+  @Overr de
+  publ c vo d retryAct onUnt lRan(Str ng descr pt on, Runnable act on) {
+    Random random = new Random(System.currentT  M ll s());
 
-    boolean actionExecuted = false;
-    int attempts = 0;
-    while (!actionExecuted) {
+    boolean act onExecuted = false;
+     nt attempts = 0;
+    wh le (!act onExecuted) {
       try {
         attempts++;
-        actionExecuted = this.execute(description, isCoordinated -> {
-          action.run();
+        act onExecuted = t .execute(descr pt on,  sCoord nated -> {
+          act on.run();
           return true;
         });
-      } catch (CoordinatedEarlybirdActionLockFailed ex) {
+      } catch (Coord natedEarlyb rdAct onLockFa led ex) {
       }
 
-      if (!actionExecuted) {
-        // Variable sleep amount. The reason for the random sleeps
-        // is so that across multiple earlybirds this doesn't get
-        // executed in some sequence that depends on something else
-        // like maybe deploy times. It might be easier to catch possible
-        // problems if implicit orderings like this are not introduced.
-        long msToSleep = (10 + random.nextInt(5)) * 1000L;
+       f (!act onExecuted) {
+        // Var able sleep amount. T  reason for t  random sleeps
+        //  s so that across mult ple earlyb rds t  doesn't get
+        // executed  n so  sequence that depends on so th ng else
+        // l ke maybe deploy t  s.   m ght be eas er to catch poss ble
+        // problems  f  mpl c  order ngs l ke t  are not  ntroduced.
+        long msToSleep = (10 + random.next nt(5)) * 1000L;
         try {
           Thread.sleep(msToSleep);
-        } catch (InterruptedException ex) {
-          LOG.info("Interrupted while trying to execute");
-          Thread.currentThread().interrupt();
+        } catch ( nterruptedExcept on ex) {
+          LOG. nfo(" nterrupted wh le try ng to execute");
+          Thread.currentThread(). nterrupt();
         }
       } else {
-        LOG.info("Executed {} after {} attempts", actionName, attempts);
+        LOG. nfo("Executed {} after {} attempts", act onNa , attempts);
       }
     }
   }
 
   /**
-   * Gets the current number of servers in this server's server set.
-   * @return absent Optional if we encountered an exception getting the number of hosts.
+   * Gets t  current number of servers  n t  server's server set.
+   * @return absent Opt onal  f   encountered an except on gett ng t  number of hosts.
    */
-  private Optional<Integer> getNumberOfServerSetMembers() {
+  pr vate Opt onal< nteger> getNumberOfServerSet mbers() {
     try {
-      return serverSetMember != null ? Optional.of(serverSetMember.getNumberOfServerSetMembers())
-          : Optional.empty();
-    } catch (InterruptedException ex) {
-      LOG.warn("Action " + actionName + " was interrupted.", ex);
-      Thread.currentThread().interrupt();
-      return Optional.empty();
-    } catch (ZooKeeperClient.ZooKeeperConnectionException | KeeperException ex) {
-      LOG.warn("Exception during " + actionName, ex);
-      return Optional.empty();
+      return serverSet mber != null ? Opt onal.of(serverSet mber.getNumberOfServerSet mbers())
+          : Opt onal.empty();
+    } catch ( nterruptedExcept on ex) {
+      LOG.warn("Act on " + act onNa  + " was  nterrupted.", ex);
+      Thread.currentThread(). nterrupt();
+      return Opt onal.empty();
+    } catch (ZooKeeperCl ent.ZooKeeperConnect onExcept on | KeeperExcept on ex) {
+      LOG.warn("Except on dur ng " + act onNa , ex);
+      return Opt onal.empty();
     }
   }
 
   /**
-   * After a coordinated action, join back this earlybird's server set with retries
-   * and sleeps in between.
+   * After a coord nated act on, jo n back t  earlyb rd's server set w h retr es
+   * and sleeps  n bet en.
    */
-  private void joinServerSet() {
-    Preconditions.checkNotNull(serverSetMember);
+  pr vate vo d jo nServerSet() {
+    Precond  ons.c ckNotNull(serverSet mber);
 
-    boolean joined = false;
-    for (int i = 0; i < joinServerSetRetries; i++) {
+    boolean jo ned = false;
+    for ( nt   = 0;   < jo nServerSetRetr es;  ++) {
       try {
-        serverSetMember.joinServerSet("CoordinatedAction: " + actionName);
-        joined = true;
+        serverSet mber.jo nServerSet("Coord natedAct on: " + act onNa );
+        jo ned = true;
         break;
-      } catch (AlreadyInServerSetUpdateException ex) {
-        // Most likely leaving the server set failed
-        joined = true;
+      } catch (Already nServerSetUpdateExcept on ex) {
+        // Most l kely leav ng t  server set fa led
+        jo ned = true;
         break;
-      } catch (ServerSet.UpdateException ex) {
-        LOG.warn("Unable to join server set after " + actionName + " on attempt "
-                + i, ex);
-        if (i < (joinServerSetRetries - 1)) {
+      } catch (ServerSet.UpdateExcept on ex) {
+        LOG.warn("Unable to jo n server set after " + act onNa  + " on attempt "
+                +  , ex);
+         f (  < (jo nServerSetRetr es - 1)) {
           try {
-            Thread.sleep(joinServerSetRetrySleepMillis);
-          } catch (InterruptedException e) {
-            LOG.warn("Interrupted while waiting to join back server set for: " + actionName);
-            // Preserve interrupt status.
-            Thread.currentThread().interrupt();
+            Thread.sleep(jo nServerSetRetrySleepM ll s);
+          } catch ( nterruptedExcept on e) {
+            LOG.warn(" nterrupted wh le wa  ng to jo n back server set for: " + act onNa );
+            // Preserve  nterrupt status.
+            Thread.currentThread(). nterrupt();
             break;
           }
         }
       }
     }
-    if (!joined) {
-      String message = String.format(
-          "Unable to join server set after %s, setting fatal flag.",
-          actionName);
-      EarlybirdException exception = new EarlybirdException(message);
+     f (!jo ned) {
+      Str ng  ssage = Str ng.format(
+          "Unable to jo n server set after %s, sett ng fatal flag.",
+          act onNa );
+      Earlyb rdExcept on except on = new Earlyb rdExcept on( ssage);
 
-      LOG.error(message, exception);
-      criticalExceptionHandler.handle(this, exception);
+      LOG.error( ssage, except on);
+      cr  calExcept onHandler.handle(t , except on);
     }
   }
 
 
-  @Override
-  public boolean setShouldSynchronize(boolean shouldSynchronizeParam) {
-    boolean oldValue = this.shouldSynchronize.getAndSet(shouldSynchronizeParam);
-    LOG.info("Updated shouldSynchronize for: " + actionName + " from " + oldValue
-            + " to " + shouldSynchronizeParam);
+  @Overr de
+  publ c boolean setShouldSynchron ze(boolean shouldSynchron zeParam) {
+    boolean oldValue = t .shouldSynchron ze.getAndSet(shouldSynchron zeParam);
+    LOG. nfo("Updated shouldSynchron ze for: " + act onNa  + " from " + oldValue
+            + " to " + shouldSynchron zeParam);
     return oldValue;
   }
 
-  @Override
-  @VisibleForTesting
-  public long getNumCoordinatedFunctionCalls() {
-    return this.numCoordinatedFunctionCalls.get();
+  @Overr de
+  @V s bleForTest ng
+  publ c long getNumCoord natedFunct onCalls() {
+    return t .numCoord natedFunct onCalls.get();
   }
 
-  @Override
-  @VisibleForTesting
-  public long getNumCoordinatedLeaveServersetCalls() {
-    return this.numCoordinatedLeaveServersetCalls.get();
+  @Overr de
+  @V s bleForTest ng
+  publ c long getNumCoord natedLeaveServersetCalls() {
+    return t .numCoord natedLeaveServersetCalls.get();
   }
 }

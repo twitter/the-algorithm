@@ -1,61 +1,61 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.tw ter.fr gate.pushserv ce.model.ntab
 
-import com.twitter.frigate.common.base.TrendTweetCandidate
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.common.base.TweetCandidate
-import com.twitter.frigate.pushservice.exception.TweetNTabRequestHydratorException
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.take.NotificationServiceSender
-import com.twitter.frigate.pushservice.util.EmailLandingPageExperimentUtil
-import com.twitter.notificationservice.thriftscala.DisplayText
-import com.twitter.notificationservice.thriftscala.DisplayTextEntity
-import com.twitter.notificationservice.thriftscala.TextValue
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.common.base.TrendT etCand date
+ mport com.tw ter.fr gate.common.base.T etAuthorDeta ls
+ mport com.tw ter.fr gate.common.base.T etCand date
+ mport com.tw ter.fr gate.pushserv ce.except on.T etNTabRequestHydratorExcept on
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.take.Not f cat onServ ceSender
+ mport com.tw ter.fr gate.pushserv ce.ut l.Ema lLand ngPageExper  ntUt l
+ mport com.tw ter.not f cat onserv ce.thr ftscala.D splayText
+ mport com.tw ter.not f cat onserv ce.thr ftscala.D splayTextEnt y
+ mport com.tw ter.not f cat onserv ce.thr ftscala.TextValue
+ mport com.tw ter.ut l.Future
 
-trait TrendTweetNtabHydrator extends TweetNTabRequestHydrator {
-  self: PushCandidate with TrendTweetCandidate with TweetCandidate with TweetAuthorDetails =>
+tra  TrendT etNtabHydrator extends T etNTabRequestHydrator {
+  self: PushCand date w h TrendT etCand date w h T etCand date w h T etAuthorDeta ls =>
 
-  private lazy val trendTweetNtabStats = self.statsReceiver.scope("trend_tweet_ntab")
+  pr vate lazy val trendT etNtabStats = self.statsRece ver.scope("trend_t et_ntab")
 
-  private lazy val ruxLandingOnNtabCounter =
-    trendTweetNtabStats.counter("use_rux_landing_on_ntab")
+  pr vate lazy val ruxLand ngOnNtabCounter =
+    trendT etNtabStats.counter("use_rux_land ng_on_ntab")
 
-  override lazy val displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] =
-    NotificationServiceSender
-      .getDisplayTextEntityFromUser(tweetAuthor, fieldName = "author_name", isBold = true)
+  overr de lazy val d splayTextEnt  esFut: Future[Seq[D splayTextEnt y]] =
+    Not f cat onServ ceSender
+      .getD splayTextEnt yFromUser(t etAuthor, f eldNa  = "author_na ",  sBold = true)
       .map(
-        _.toSeq :+ DisplayTextEntity(
-          name = "trend_name",
-          value = TextValue.Text(trendName),
-          emphasis = true)
+        _.toSeq :+ D splayTextEnt y(
+          na  = "trend_na ",
+          value = TextValue.Text(trendNa ),
+          emphas s = true)
       )
 
-  override lazy val facepileUsersFut: Future[Seq[Long]] = senderIdFut.map(Seq(_))
+  overr de lazy val facep leUsersFut: Future[Seq[Long]] = sender dFut.map(Seq(_))
 
-  override lazy val socialProofDisplayText: Option[DisplayText] = None
+  overr de lazy val soc alProofD splayText: Opt on[D splayText] = None
 
-  override def refreshableType: Option[String] = ntabCopy.refreshableType
+  overr de def refreshableType: Opt on[Str ng] = ntabCopy.refreshableType
 
-  override lazy val tapThroughFut: Future[String] = {
-    Future.join(tweetAuthor, target.deviceInfo).map {
-      case (Some(author), Some(deviceInfo)) =>
-        val enableRuxLandingPage = deviceInfo.isRuxLandingPageEligible && target.params(
-          PushFeatureSwitchParams.EnableNTabRuxLandingPage)
-        val authorProfile = author.profile.getOrElse(
-          throw new TweetNTabRequestHydratorException(
-            s"Unable to obtain author profile for: ${author.id}"))
+  overr de lazy val tapThroughFut: Future[Str ng] = {
+    Future.jo n(t etAuthor, target.dev ce nfo).map {
+      case (So (author), So (dev ce nfo)) =>
+        val enableRuxLand ngPage = dev ce nfo. sRuxLand ngPageEl g ble && target.params(
+          PushFeatureSw chParams.EnableNTabRuxLand ngPage)
+        val authorProf le = author.prof le.getOrElse(
+          throw new T etNTabRequestHydratorExcept on(
+            s"Unable to obta n author prof le for: ${author. d}"))
 
-        if (enableRuxLandingPage) {
-          ruxLandingOnNtabCounter.incr()
-          EmailLandingPageExperimentUtil.createNTabRuxLandingURI(authorProfile.screenName, tweetId)
+         f (enableRuxLand ngPage) {
+          ruxLand ngOnNtabCounter. ncr()
+          Ema lLand ngPageExper  ntUt l.createNTabRuxLand ngUR (authorProf le.screenNa , t et d)
         } else {
-          s"${authorProfile.screenName}/status/${tweetId.toString}"
+          s"${authorProf le.screenNa }/status/${t et d.toStr ng}"
         }
 
       case _ =>
-        throw new TweetNTabRequestHydratorException(
-          s"Unable to obtain author and target details to generate tap through for Tweet: $tweetId")
+        throw new T etNTabRequestHydratorExcept on(
+          s"Unable to obta n author and target deta ls to generate tap through for T et: $t et d")
     }
   }
 }

@@ -1,20 +1,20 @@
-package com.twitter.visibility.interfaces.conversations
+package com.tw ter.v s b l y. nterfaces.conversat ons
 
-import com.twitter.gizmoduck.thriftscala.Label
-import com.twitter.gizmoduck.thriftscala.LabelValue
-import com.twitter.servo.repository.KeyValueResult
-import com.twitter.spam.rtf.thriftscala.SafetyLabel
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType
-import com.twitter.visibility.models.ViewerContext
+ mport com.tw ter.g zmoduck.thr ftscala.Label
+ mport com.tw ter.g zmoduck.thr ftscala.LabelValue
+ mport com.tw ter.servo.repos ory.KeyValueResult
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLabel
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLabelType
+ mport com.tw ter.v s b l y.models.V e rContext
 
-case class TimelineConversationsVisibilityRequest(
-  conversationId: Long,
-  tweetIds: Seq[Long],
-  viewerContext: ViewerContext,
-  minimalSectioningOnly: Boolean = false,
-  prefetchedSafetyLabels: Option[KeyValueResult[Long, Map[SafetyLabelType, SafetyLabel]]] = None,
-  prefetchedTweetAuthorUserLabels: Option[KeyValueResult[Long, Map[LabelValue, Label]]] = None,
-  innerCircleOfFriendsRelationships: Option[KeyValueResult[Long, Boolean]] = None,
-  tweetParentIdMap: Option[Map[Long, Option[Long]]] = None,
-  rootAuthorIsVerified: Boolean = false,
-  tweetAuthors: Option[KeyValueResult[Long, Long]] = None)
+case class T  l neConversat onsV s b l yRequest(
+  conversat on d: Long,
+  t et ds: Seq[Long],
+  v e rContext: V e rContext,
+  m n malSect on ngOnly: Boolean = false,
+  prefetc dSafetyLabels: Opt on[KeyValueResult[Long, Map[SafetyLabelType, SafetyLabel]]] = None,
+  prefetc dT etAuthorUserLabels: Opt on[KeyValueResult[Long, Map[LabelValue, Label]]] = None,
+   nnerC rcleOfFr endsRelat onsh ps: Opt on[KeyValueResult[Long, Boolean]] = None,
+  t etParent dMap: Opt on[Map[Long, Opt on[Long]]] = None,
+  rootAuthor sVer f ed: Boolean = false,
+  t etAuthors: Opt on[KeyValueResult[Long, Long]] = None)

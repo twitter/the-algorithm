@@ -1,91 +1,91 @@
-from .parsers import LollyModelFeaturesParser
+from .parsers  mport LollyModelFeaturesParser
 
 
-class TFModelInitializerBuilder:
+class TFModel n  al zerBu lder:
 
-  def __init__(self, model_features_parser=LollyModelFeaturesParser()):
+  def __ n __(self, model_features_parser=LollyModelFeaturesParser()):
     self._model_features_parser = model_features_parser
 
-  def build(self, lolly_model_reader):
+  def bu ld(self, lolly_model_reader):
     '''
-    :param lolly_model_reader: LollyModelReader instance
-    :return: tf_model_initializer dictionary of the following format:
+    :param lolly_model_reader: LollyModelReader  nstance
+    :return: tf_model_ n  al zer d ct onary of t  follow ng format:
       {
         "features": {
-          "bias": 0.0,
-          "binary": {
-            # (feature name : feature weight) pairs
-            "feature_name_1": 0.0,
+          "b as": 0.0,
+          "b nary": {
+            # (feature na  : feature   ght) pa rs
+            "feature_na _1": 0.0,
             ...
-            "feature_nameN": 0.0
+            "feature_na N": 0.0
           },
-          "discretized": {
-            # (feature name : index aligned lists of bin_boundaries and weights
-            "feature_name_1": {
-              "bin_boundaries": [1, ..., inf],
-              "weights": [0.0, ..., 0.0]
+          "d scret zed": {
+            # (feature na  :  ndex al gned l sts of b n_boundar es and   ghts
+            "feature_na _1": {
+              "b n_boundar es": [1, ...,  nf],
+              "  ghts": [0.0, ..., 0.0]
             }
             ...
-            "feature_name_K": {
-              "bin_boundaries": [1, ..., inf],
-              "weights": [0.0, ..., 0.0]
+            "feature_na _K": {
+              "b n_boundar es": [1, ...,  nf],
+              "  ghts": [0.0, ..., 0.0]
             }
           }
         }
       }
     '''
-    tf_model_initializer = {
+    tf_model_ n  al zer = {
       "features": {}
     }
 
     features = self._model_features_parser.parse(lolly_model_reader)
-    tf_model_initializer["features"]["bias"] = features["bias"]
-    self._set_discretized_features(features["discretized"], tf_model_initializer)
+    tf_model_ n  al zer["features"]["b as"] = features["b as"]
+    self._set_d scret zed_features(features["d scret zed"], tf_model_ n  al zer)
 
-    self._dedup_binary_features(features["binary"], features["discretized"])
-    tf_model_initializer["features"]["binary"] = features["binary"]
+    self._dedup_b nary_features(features["b nary"], features["d scret zed"])
+    tf_model_ n  al zer["features"]["b nary"] = features["b nary"]
 
-    return tf_model_initializer
+    return tf_model_ n  al zer
 
-  def _set_discretized_features(self, discretized_features, tf_model_initializer):
-    if len(discretized_features) == 0:
+  def _set_d scret zed_features(self, d scret zed_features, tf_model_ n  al zer):
+     f len(d scret zed_features) == 0:
       return
 
-    num_bins = max([len(bins) for bins in discretized_features.values()])
+    num_b ns = max([len(b ns) for b ns  n d scret zed_features.values()])
 
-    bin_boundaries_and_weights = {}
-    for feature_name in discretized_features:
-      bin_boundaries_and_weights[feature_name] = self._extract_bin_boundaries_and_weights(
-        discretized_features[feature_name], num_bins)
+    b n_boundar es_and_  ghts = {}
+    for feature_na   n d scret zed_features:
+      b n_boundar es_and_  ghts[feature_na ] = self._extract_b n_boundar es_and_  ghts(
+        d scret zed_features[feature_na ], num_b ns)
 
-    tf_model_initializer["features"]["discretized"] = bin_boundaries_and_weights
+    tf_model_ n  al zer["features"]["d scret zed"] = b n_boundar es_and_  ghts
 
-  def _dedup_binary_features(self, binary_features, discretized_features):
-    [binary_features.pop(feature_name) for feature_name in discretized_features]
+  def _dedup_b nary_features(self, b nary_features, d scret zed_features):
+    [b nary_features.pop(feature_na ) for feature_na   n d scret zed_features]
 
-  def _extract_bin_boundaries_and_weights(self, discretized_feature_buckets, num_bins):
-    bin_boundary_weight_pairs = []
+  def _extract_b n_boundar es_and_  ghts(self, d scret zed_feature_buckets, num_b ns):
+    b n_boundary_  ght_pa rs = []
 
-    for bucket in discretized_feature_buckets:
-      bin_boundary_weight_pairs.append([bucket[0], bucket[2]])
+    for bucket  n d scret zed_feature_buckets:
+      b n_boundary_  ght_pa rs.append([bucket[0], bucket[2]])
 
-    # The default DBv2 HashingDiscretizer bin membership interval is (a, b]
+    # T  default DBv2 Hash ngD scret zer b n  mbersh p  nterval  s (a, b]
     #
-    # The Earlybird Lolly prediction engine discretizer bin membership interval is [a, b)
+    # T  Earlyb rd Lolly pred ct on eng ne d scret zer b n  mbersh p  nterval  s [a, b)
     #
-    # Thus, convert (a, b] to [a, b) by inverting the bin boundaries.
-    for bin_boundary_weight_pair in bin_boundary_weight_pairs:
-      if bin_boundary_weight_pair[0] < float("inf"):
-        bin_boundary_weight_pair[0] *= -1
+    # Thus, convert (a, b] to [a, b) by  nvert ng t  b n boundar es.
+    for b n_boundary_  ght_pa r  n b n_boundary_  ght_pa rs:
+       f b n_boundary_  ght_pa r[0] < float(" nf"):
+        b n_boundary_  ght_pa r[0] *= -1
 
-    while len(bin_boundary_weight_pairs) < num_bins:
-      bin_boundary_weight_pairs.append([float("inf"), float(0)])
+    wh le len(b n_boundary_  ght_pa rs) < num_b ns:
+      b n_boundary_  ght_pa rs.append([float(" nf"), float(0)])
 
-    bin_boundary_weight_pairs.sort(key=lambda bin_boundary_weight_pair: bin_boundary_weight_pair[0])
+    b n_boundary_  ght_pa rs.sort(key=lambda b n_boundary_  ght_pa r: b n_boundary_  ght_pa r[0])
 
-    bin_boundaries, weights = list(zip(*bin_boundary_weight_pairs))
+    b n_boundar es,   ghts = l st(z p(*b n_boundary_  ght_pa rs))
 
     return {
-      "bin_boundaries": bin_boundaries,
-      "weights": weights
+      "b n_boundar es": b n_boundar es,
+      "  ghts":   ghts
     }

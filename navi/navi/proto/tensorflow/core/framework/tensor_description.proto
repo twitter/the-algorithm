@@ -2,23 +2,23 @@ syntax = "proto3";
 
 package tensorflow;
 
-import "tensorflow/core/framework/allocation_description.proto";
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/types.proto";
+ mport "tensorflow/core/fra work/allocat on_descr pt on.proto";
+ mport "tensorflow/core/fra work/tensor_shape.proto";
+ mport "tensorflow/core/fra work/types.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "TensorDescriptionProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/tensor_description_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "TensorDescr pt onProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.fra work";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/fra work/tensor_descr pt on_go_proto";
 
-message TensorDescription {
-  // Data type of tensor elements
+ ssage TensorDescr pt on {
+  // Data type of tensor ele nts
   DataType dtype = 1;
 
-  // Shape of the tensor.
+  // Shape of t  tensor.
   TensorShapeProto shape = 2;
 
-  // Information about the size and allocator used for the data
-  AllocationDescription allocation_description = 4;
+  //  nformat on about t  s ze and allocator used for t  data
+  Allocat onDescr pt on allocat on_descr pt on = 4;
 }

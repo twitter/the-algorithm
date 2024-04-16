@@ -1,73 +1,73 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.DirectedAtUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.MentionUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.prediction.adapters.real_graph.RealGraphEdgeFeaturesCombineAdapter
-import com.twitter.timelines.real_graph.v1.{thriftscala => v1}
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
+ mport com.tw ter.ho _m xer.model.Ho Features.Author dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.D rectedAtUser dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nt onUser dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.S ceUser dFeature
+ mport com.tw ter.ho _m xer.ut l.Cand datesUt l
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.FeatureW hDefaultOnFa lure
+ mport com.tw ter.product_m xer.core.feature.datarecord.DataRecord nAFeature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.Cand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.ut l.OffloadFuturePools
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.pred ct on.adapters.real_graph.RealGraphEdgeFeaturesComb neAdapter
+ mport com.tw ter.t  l nes.real_graph.v1.{thr ftscala => v1}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport scala.collect on.JavaConverters._
 
-object RealGraphViewerRelatedUsersDataRecordFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+object RealGraphV e rRelatedUsersDataRecordFeature
+    extends DataRecord nAFeature[T etCand date]
+    w h FeatureW hDefaultOnFa lure[T etCand date, DataRecord] {
+  overr de def defaultValue: DataRecord = new DataRecord()
 }
 
-@Singleton
-class RealGraphViewerRelatedUsersFeatureHydrator @Inject() ()
-    extends CandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@S ngleton
+class RealGraphV e rRelatedUsersFeatureHydrator @ nject() ()
+    extends Cand dateFeatureHydrator[P pel neQuery, T etCand date] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("RealGraphViewerRelatedUsers")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("RealGraphV e rRelatedUsers")
 
-  override val features: Set[Feature[_, _]] = Set(RealGraphViewerRelatedUsersDataRecordFeature)
+  overr de val features: Set[Feature[_, _]] = Set(RealGraphV e rRelatedUsersDataRecordFeature)
 
-  private val RealGraphEdgeFeaturesCombineAdapter = new RealGraphEdgeFeaturesCombineAdapter
+  pr vate val RealGraphEdgeFeaturesComb neAdapter = new RealGraphEdgeFeaturesComb neAdapter
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = OffloadFuturePools.offload {
+  overr de def apply(
+    query: P pel neQuery,
+    cand date: T etCand date,
+    ex st ngFeatures: FeatureMap
+  ): St ch[FeatureMap] = OffloadFuturePools.offload {
     val realGraphQueryFeatures = query.features
       .flatMap(_.getOrElse(RealGraphFeatures, None))
       .getOrElse(Map.empty[Long, v1.RealGraphEdgeFeatures])
 
-    val allRelatedUserIds = getRelatedUserIds(existingFeatures)
-    val realGraphFeatures = RealGraphViewerAuthorFeatureHydrator.getCombinedRealGraphFeatures(
-      allRelatedUserIds,
+    val allRelatedUser ds = getRelatedUser ds(ex st ngFeatures)
+    val realGraphFeatures = RealGraphV e rAuthorFeatureHydrator.getComb nedRealGraphFeatures(
+      allRelatedUser ds,
       realGraphQueryFeatures
     )
-    val realGraphFeaturesDataRecord = RealGraphEdgeFeaturesCombineAdapter
-      .adaptToDataRecords(Some(realGraphFeatures)).asScala.headOption
+    val realGraphFeaturesDataRecord = RealGraphEdgeFeaturesComb neAdapter
+      .adaptToDataRecords(So (realGraphFeatures)).asScala. adOpt on
       .getOrElse(new DataRecord)
 
-    FeatureMapBuilder()
-      .add(RealGraphViewerRelatedUsersDataRecordFeature, realGraphFeaturesDataRecord)
-      .build()
+    FeatureMapBu lder()
+      .add(RealGraphV e rRelatedUsersDataRecordFeature, realGraphFeaturesDataRecord)
+      .bu ld()
   }
 
-  private def getRelatedUserIds(features: FeatureMap): Seq[Long] = {
-    (CandidatesUtil.getEngagerUserIds(features) ++
-      features.getOrElse(AuthorIdFeature, None) ++
-      features.getOrElse(MentionUserIdFeature, Seq.empty) ++
-      features.getOrElse(SourceUserIdFeature, None) ++
-      features.getOrElse(DirectedAtUserIdFeature, None)).distinct
+  pr vate def getRelatedUser ds(features: FeatureMap): Seq[Long] = {
+    (Cand datesUt l.getEngagerUser ds(features) ++
+      features.getOrElse(Author dFeature, None) ++
+      features.getOrElse( nt onUser dFeature, Seq.empty) ++
+      features.getOrElse(S ceUser dFeature, None) ++
+      features.getOrElse(D rectedAtUser dFeature, None)).d st nct
   }
 }

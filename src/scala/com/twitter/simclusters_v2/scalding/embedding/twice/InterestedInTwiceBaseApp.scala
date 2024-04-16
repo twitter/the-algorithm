@@ -1,494 +1,494 @@
-package com.twitter.simclusters_v2.scalding.embedding.twice
+package com.tw ter.s mclusters_v2.scald ng.embedd ng.tw ce
 
-import com.twitter.bijection.Injection
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.Execution
-import com.twitter.scalding.Stat
-import com.twitter.scalding.TypedTsv
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossDC
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.common.clustering.ClusteringMethod
-import com.twitter.simclusters_v2.common.clustering.ClusteringStatistics._
-import com.twitter.simclusters_v2.common.clustering.ClusterRepresentativeSelectionMethod
-import com.twitter.simclusters_v2.common.clustering.ClusterRepresentativeSelectionStatistics._
-import com.twitter.simclusters_v2.hdfs_sources.ProducerEmbeddingSources
-import com.twitter.simclusters_v2.hdfs_sources.UserUserGraphScalaDataset
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.MultiEmbeddingType
-import com.twitter.simclusters_v2.thriftscala.NeighborWithWeights
-import com.twitter.simclusters_v2.thriftscala.OrderedClustersAndMembers
-import com.twitter.simclusters_v2.thriftscala.ClusterMembers
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingIdWithScore
-import com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbedding
-import com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbedding.Ids
-import com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbeddingByIds
-import com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
-import com.twitter.simclusters_v2.thriftscala.{
-  SimClustersEmbeddingId => SimClustersEmbeddingIdThrift
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.dal.cl ent.dataset.KeyValDALDataset
+ mport com.tw ter.scald ng.DateRange
+ mport com.tw ter.scald ng.Days
+ mport com.tw ter.scald ng.Execut on
+ mport com.tw ter.scald ng.Stat
+ mport com.tw ter.scald ng.TypedTsv
+ mport com.tw ter.scald ng.Un que D
+ mport com.tw ter.scald ng.typed.TypedP pe
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e._
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.AllowCrossDC
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.s mclusters_v2.common.cluster ng.Cluster ng thod
+ mport com.tw ter.s mclusters_v2.common.cluster ng.Cluster ngStat st cs._
+ mport com.tw ter.s mclusters_v2.common.cluster ng.ClusterRepresentat veSelect on thod
+ mport com.tw ter.s mclusters_v2.common.cluster ng.ClusterRepresentat veSelect onStat st cs._
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.ProducerEmbedd ngS ces
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.UserUserGraphScalaDataset
+ mport com.tw ter.s mclusters_v2.scald ng.common.Ut l
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.Embedd ngUt l
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.tw ter.s mclusters_v2.thr ftscala.Mult Embedd ngType
+ mport com.tw ter.s mclusters_v2.thr ftscala.Ne ghborW h  ghts
+ mport com.tw ter.s mclusters_v2.thr ftscala.OrderedClustersAnd mbers
+ mport com.tw ter.s mclusters_v2.thr ftscala.Cluster mbers
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng dW hScore
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersMult Embedd ng
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersMult Embedd ng. ds
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersMult Embedd ngBy ds
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersMult Embedd ng d
+ mport com.tw ter.s mclusters_v2.thr ftscala.UserAndNe ghbors
+ mport com.tw ter.s mclusters_v2.thr ftscala.{
+  S mClustersEmbedd ng d => S mClustersEmbedd ng dThr ft
 }
-import com.twitter.util.Stopwatch
-import java.util.TimeZone
-import scala.util.Random.shuffle
+ mport com.tw ter.ut l.Stopwatch
+ mport java.ut l.T  Zone
+ mport scala.ut l.Random.shuffle
 
 /**
- * Base app for computing User InterestedIn multi-embedding representation.
- * TWICE: Capturing users’ long-term interests using multiple SimClusters embeddings.
- * This job will
- * - Randomly select K follow/fav actions for each user,
- * - cluster the follow/fav actions for each user,
- * - for each cluster, construct a representation (e.g. average or medoid).
+ * Base app for comput ng User  nterested n mult -embedd ng representat on.
+ * TW CE: Captur ng users’ long-term  nterests us ng mult ple S mClusters embedd ngs.
+ * T  job w ll
+ * - Randomly select K follow/fav act ons for each user,
+ * - cluster t  follow/fav act ons for each user,
+ * - for each cluster, construct a representat on (e.g. average or  do d).
  *
- * @tparam T type of producer embedding. e.g. SimClustersEmbedding
+ * @tparam T type of producer embedd ng. e.g. S mClustersEmbedd ng
  */
-trait InterestedInTwiceBaseApp[T] {
+tra   nterested nTw ceBaseApp[T] {
 
-  import InterestedInTwiceBaseApp._
+   mport  nterested nTw ceBaseApp._
 
-  def modelVersion: ModelVersion = ModelVersion.Model20m145k2020
+  def modelVers on: ModelVers on = ModelVers on.Model20m145k2020
 
   /**
-   * function to output similarity (>=0, the larger, more similar), given two producer embeddings.
+   * funct on to output s m lar y (>=0, t  larger, more s m lar), g ven two producer embedd ngs.
    */
-  def producerProducerSimilarityFnForClustering: (T, T) => Double
-  def producerProducerSimilarityFnForClusterRepresentative: (T, T) => Double
+  def producerProducerS m lar yFnForCluster ng: (T, T) => Double
+  def producerProducerS m lar yFnForClusterRepresentat ve: (T, T) => Double
 
-  // Sort clusters by decreasing size, fall back to entity ID to break tie
-  val clusterOrdering: Ordering[Set[Long]] = math.Ordering.by(c => (-c.size, c.min))
+  // Sort clusters by decreas ng s ze, fall back to ent y  D to break t e
+  val clusterOrder ng: Order ng[Set[Long]] = math.Order ng.by(c => (-c.s ze, c.m n))
 
   /**
    * Read user-user graph.
    */
   def getUserUserGraph(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[UserAndNeighbors] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone
+  ): TypedP pe[UserAndNe ghbors] = {
     DAL
       .readMostRecentSnapshot(
         UserUserGraphScalaDataset
       )
-      .withRemoteReadPolicy(AllowCrossDC)
-      .toTypedPipe
+      .w hRemoteReadPol cy(AllowCrossDC)
+      .toTypedP pe
   }
 
   /**
-   * Randomly select up to maxNeighborsByUser neighbors for each user.
-   * Attempts to equally sample both follow and fav edges (e.g. maxNeighborsByUser/2 for each).
-   * However, if one type of edge is insufficient, backfill with other type up to maxNeighborsByUser neighbours.
+   * Randomly select up to maxNe ghborsByUser ne ghbors for each user.
+   * Attempts to equally sample both follow and fav edges (e.g. maxNe ghborsByUser/2 for each).
+   * Ho ver,  f one type of edge  s  nsuff c ent, backf ll w h ot r type up to maxNe ghborsByUser ne ghb s.
    * @param userUserGraph User-User follow/fav graph.
-   * @param maxNeighborsByUser How many neighbors to keep for each user.
+   * @param maxNe ghborsByUser How many ne ghbors to keep for each user.
    */
   def selectMaxProducersPerUser(
-    userUserGraph: TypedPipe[UserAndNeighbors],
-    maxNeighborsByUser: Int = MaxNeighborsByUser
+    userUserGraph: TypedP pe[UserAndNe ghbors],
+    maxNe ghborsByUser:  nt = MaxNe ghborsByUser
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[UserAndNeighbors] = {
+     mpl c  un que D: Un que D
+  ): TypedP pe[UserAndNe ghbors] = {
 
     val numOfFollowEdgesStat = Stat(StatNumOfFollowEdges)
     val numOfFavEdgesStat = Stat(StatNumOfFavEdges)
-    val numOfEdgesCumulativeFrequencyBeforeFilter = Util.CumulativeStat(
-      StatCFNumProducersPerConsumerBeforeFilter,
-      StatCFNumProducersPerConsumerBeforeFilterBuckets)
+    val numOfEdgesCumulat veFrequencyBeforeF lter = Ut l.Cumulat veStat(
+      StatCFNumProducersPerConsu rBeforeF lter,
+      StatCFNumProducersPerConsu rBeforeF lterBuckets)
 
-    userUserGraph.map { userAndNeighbors: UserAndNeighbors =>
-      numOfEdgesCumulativeFrequencyBeforeFilter.incForValue(userAndNeighbors.neighbors.size)
+    userUserGraph.map { userAndNe ghbors: UserAndNe ghbors =>
+      numOfEdgesCumulat veFrequencyBeforeF lter. ncForValue(userAndNe ghbors.ne ghbors.s ze)
 
       val (followEdges, favEdges) =
-        userAndNeighbors.neighbors.partition(_.isFollowed.contains(true))
+        userAndNe ghbors.ne ghbors.part  on(_. sFollo d.conta ns(true))
       val randomFollowEdges = shuffle(followEdges)
       val randomFavEdges = shuffle(favEdges)
 
-      // interleave follow and fav edges, and select top k
-      val interleavedTopKEdges: Seq[NeighborWithWeights] = randomFollowEdges
-        .map(Some(_))
-        .zipAll(
-          randomFavEdges.map(Some(_)),
+      //  nterleave follow and fav edges, and select top k
+      val  nterleavedTopKEdges: Seq[Ne ghborW h  ghts] = randomFollowEdges
+        .map(So (_))
+        .z pAll(
+          randomFavEdges.map(So (_)),
           None,
           None
-        ) // default None value when one edge Seq is shorter than another
+        ) // default None value w n one edge Seq  s shorter than anot r
         .flatMap {
           case (followEdgeOpt, favEdgeOpt) =>
             Seq(followEdgeOpt, favEdgeOpt)
         }.flatten
-        .take(maxNeighborsByUser)
+        .take(maxNe ghborsByUser)
 
       // edge stats
-      interleavedTopKEdges
+       nterleavedTopKEdges
         .foreach { edge =>
-          if (edge.isFollowed.contains(true)) numOfFollowEdgesStat.inc()
-          else numOfFavEdgesStat.inc()
+           f (edge. sFollo d.conta ns(true)) numOfFollowEdgesStat. nc()
+          else numOfFavEdgesStat. nc()
         }
 
-      userAndNeighbors.copy(neighbors = interleavedTopKEdges)
+      userAndNe ghbors.copy(ne ghbors =  nterleavedTopKEdges)
     }
   }
 
   /**
-   * Get multi embedding for each user:
-   * - For each user, join their follow / fav - based neighbors to producer embeddings,
-   * - Group these neighbors into clusters using the specified clusteringMethod,
-   * - For each cluster, select the medoid as the representation.
+   * Get mult  embedd ng for each user:
+   * - For each user, jo n t  r follow / fav - based ne ghbors to producer embedd ngs,
+   * - Group t se ne ghbors  nto clusters us ng t  spec f ed cluster ng thod,
+   * - For each cluster, select t   do d as t  representat on.
    *
    * @param userUserGraph User-User follow/fav graph.
-   * @param producerEmbedding producer embedding dataset. e.g. simclusters embeddings, simhash, etc.
-   * @param clusteringMethod A method to group embeddings together.
+   * @param producerEmbedd ng producer embedd ng dataset. e.g. s mclusters embedd ngs, s mhash, etc.
+   * @param cluster ng thod A  thod to group embedd ngs toget r.
    * @param maxClustersPerUser How many clusters to keep per user.
-   * @param clusterRepresentativeSelectionMethod A method to select a cluster representative.
-   * @param numReducers How many reducers to use for sketch operation.
+   * @param clusterRepresentat veSelect on thod A  thod to select a cluster representat ve.
+   * @param numReducers How many reducers to use for sketch operat on.
    */
-  def getMultiEmbeddingPerUser(
-    userUserGraph: TypedPipe[UserAndNeighbors],
-    producerEmbedding: TypedPipe[(UserId, T)],
-    clusteringMethod: ClusteringMethod,
-    maxClustersPerUser: Int = MaxClustersPerUser,
-    clusterRepresentativeSelectionMethod: ClusterRepresentativeSelectionMethod[T],
-    numReducers: Int
+  def getMult Embedd ngPerUser(
+    userUserGraph: TypedP pe[UserAndNe ghbors],
+    producerEmbedd ng: TypedP pe[(User d, T)],
+    cluster ng thod: Cluster ng thod,
+    maxClustersPerUser:  nt = MaxClustersPerUser,
+    clusterRepresentat veSelect on thod: ClusterRepresentat veSelect on thod[T],
+    numReducers:  nt
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(UserId, Seq[Set[UserId]], SimClustersMultiEmbedding)] = {
+     mpl c  un que D: Un que D
+  ): TypedP pe[(User d, Seq[Set[User d]], S mClustersMult Embedd ng)] = {
 
-    val truncatedUserUserGraph: TypedPipe[UserAndNeighbors] = selectMaxProducersPerUser(
+    val truncatedUserUserGraph: TypedP pe[UserAndNe ghbors] = selectMaxProducersPerUser(
       userUserGraph)
-    val validEdges: TypedPipe[(UserId, NeighborWithWeights)] =
+    val val dEdges: TypedP pe[(User d, Ne ghborW h  ghts)] =
       truncatedUserUserGraph.flatMap {
-        case UserAndNeighbors(srcId, neighborsWithWeights) =>
-          neighborsWithWeights.map { neighborWithWeights =>
+        case UserAndNe ghbors(src d, ne ghborsW h  ghts) =>
+          ne ghborsW h  ghts.map { ne ghborW h  ghts =>
             (
-              neighborWithWeights.neighborId, // producerId
-              neighborWithWeights.copy(neighborId = srcId))
+              ne ghborW h  ghts.ne ghbor d, // producer d
+              ne ghborW h  ghts.copy(ne ghbor d = src d))
           }
       }
 
-    implicit val l2b: UserId => Array[Byte] = Injection.long2BigEndian
+     mpl c  val l2b: User d => Array[Byte] =  nject on.long2B gEnd an
 
-    val totalEdgesNonEmptyProducerEmbeddingsStat = Stat(StatTotalEdgesNonEmptyProducerEmbeddings)
-    val userClusterPairsBeforeTruncation = Stat(StatNumUserClusterPairsBeforeTruncation)
-    val userClusterPairsAfterTruncation = Stat(StatNumUserClusterPairsAfterTruncation)
+    val totalEdgesNonEmptyProducerEmbedd ngsStat = Stat(StatTotalEdgesNonEmptyProducerEmbedd ngs)
+    val userClusterPa rsBeforeTruncat on = Stat(StatNumUserClusterPa rsBeforeTruncat on)
+    val userClusterPa rsAfterTruncat on = Stat(StatNumUserClusterPa rsAfterTruncat on)
     val numUsers = Stat(StatNumUsers)
-    val numOfClustersCumulativeFrequencyBeforeFilter =
-      Util.CumulativeStat(StatCFNumOfClustersBeforeFilter, StatCFNumOfClustersBeforeFilterBuckets)
+    val numOfClustersCumulat veFrequencyBeforeF lter =
+      Ut l.Cumulat veStat(StatCFNumOfClustersBeforeF lter, StatCFNumOfClustersBeforeF lterBuckets)
 
-    // map each clustering statistic to a scalding.Stat
-    val clusteringStatsMap: Map[String, Stat] = Map(
-      StatSimilarityGraphTotalBuildTime -> Stat(StatSimilarityGraphTotalBuildTime),
-      StatClusteringAlgorithmRunTime -> Stat(StatClusteringAlgorithmRunTime),
-      StatMedoidSelectionTime -> Stat(StatMedoidSelectionTime)
+    // map each cluster ng stat st c to a scald ng.Stat
+    val cluster ngStatsMap: Map[Str ng, Stat] = Map(
+      StatS m lar yGraphTotalBu ldT   -> Stat(StatS m lar yGraphTotalBu ldT  ),
+      StatCluster ngAlgor hmRunT   -> Stat(StatCluster ngAlgor hmRunT  ),
+      Stat do dSelect onT   -> Stat(Stat do dSelect onT  )
     )
-    val cosineSimilarityCumulativeFrequencyBeforeFilter = Util.CumulativeStat(
-      StatCFCosineSimilarityBeforeFilter,
-      StatCFCosineSimilarityBeforeFilterBuckets)
+    val cos neS m lar yCumulat veFrequencyBeforeF lter = Ut l.Cumulat veStat(
+      StatCFCos neS m lar yBeforeF lter,
+      StatCFCos neS m lar yBeforeF lterBuckets)
 
-    val clusterRepresentativeSelectionTime = Stat(StatClusterRepresentativeSelectionTime)
+    val clusterRepresentat veSelect onT   = Stat(StatClusterRepresentat veSelect onT  )
 
-    validEdges
+    val dEdges
       .sketch(numReducers)
-      .join(producerEmbedding)
+      .jo n(producerEmbedd ng)
       .map {
-        case (producerId: UserId, (srcWithWeights: NeighborWithWeights, embedding)) =>
-          totalEdgesNonEmptyProducerEmbeddingsStat.inc()
-          (srcWithWeights.neighborId, (srcWithWeights.copy(neighborId = producerId), embedding))
+        case (producer d: User d, (srcW h  ghts: Ne ghborW h  ghts, embedd ng)) =>
+          totalEdgesNonEmptyProducerEmbedd ngsStat. nc()
+          (srcW h  ghts.ne ghbor d, (srcW h  ghts.copy(ne ghbor d = producer d), embedd ng))
       }
       .group
-      .toList
+      .toL st
       .map {
-        case (userId: UserId, embeddings: Seq[(NeighborWithWeights, T)]) =>
-          numUsers.inc()
-          val embeddingsMap: Map[Long, T] = embeddings.map {
-            case (n: NeighborWithWeights, e) => (n.neighborId, e)
+        case (user d: User d, embedd ngs: Seq[(Ne ghborW h  ghts, T)]) =>
+          numUsers. nc()
+          val embedd ngsMap: Map[Long, T] = embedd ngs.map {
+            case (n: Ne ghborW h  ghts, e) => (n.ne ghbor d, e)
           }.toMap
-          val weightsMap: Map[Long, NeighborWithWeights] = embeddings.map {
-            case (n: NeighborWithWeights, _) => (n.neighborId, n)
+          val   ghtsMap: Map[Long, Ne ghborW h  ghts] = embedd ngs.map {
+            case (n: Ne ghborW h  ghts, _) => (n.ne ghbor d, n)
           }.toMap
-          // 1. Cluster embeddings
-          val clusters: Set[Set[UserId]] =
-            clusteringMethod
+          // 1. Cluster embedd ngs
+          val clusters: Set[Set[User d]] =
+            cluster ng thod
               .cluster[T](
-                embeddingsMap,
-                producerProducerSimilarityFnForClustering,
-                // Map.get() returns an Option, so will not throw.
-                // Use .foreach() to filter out potential Nones.
-                (name, incr) => {
-                  clusteringStatsMap.get(name).foreach(ctr => ctr.incBy(incr))
-                  if (name == StatComputedSimilarityBeforeFilter)
-                    cosineSimilarityCumulativeFrequencyBeforeFilter.incForValue(incr)
+                embedd ngsMap,
+                producerProducerS m lar yFnForCluster ng,
+                // Map.get() returns an Opt on, so w ll not throw.
+                // Use .foreach() to f lter out potent al Nones.
+                (na ,  ncr) => {
+                  cluster ngStatsMap.get(na ).foreach(ctr => ctr. ncBy( ncr))
+                   f (na  == StatComputedS m lar yBeforeF lter)
+                    cos neS m lar yCumulat veFrequencyBeforeF lter. ncForValue( ncr)
                 }
               )
 
           // 2. Sort clusters
-          val sortedClusters: Seq[Set[UserId]] = clusters.toSeq.sorted(clusterOrdering)
+          val sortedClusters: Seq[Set[User d]] = clusters.toSeq.sorted(clusterOrder ng)
 
-          // 3. Keep only a max number of clusters (avoid OOM)
-          userClusterPairsBeforeTruncation.incBy(sortedClusters.size)
-          numOfClustersCumulativeFrequencyBeforeFilter.incForValue(sortedClusters.size)
+          // 3. Keep only a max number of clusters (avo d OOM)
+          userClusterPa rsBeforeTruncat on. ncBy(sortedClusters.s ze)
+          numOfClustersCumulat veFrequencyBeforeF lter. ncForValue(sortedClusters.s ze)
           val truncatedClusters = sortedClusters.take(maxClustersPerUser)
-          userClusterPairsAfterTruncation.incBy(truncatedClusters.size)
+          userClusterPa rsAfterTruncat on. ncBy(truncatedClusters.s ze)
 
-          // 4. Get list of cluster representatives
-          val truncatedIdWithScoreList: Seq[SimClustersEmbeddingIdWithScore] =
-            truncatedClusters.map { members: Set[UserId] =>
-              val clusterRepresentationSelectionElapsed = Stopwatch.start()
-              val medoid: UserId = clusterRepresentativeSelectionMethod.selectClusterRepresentative(
-                members.map(id => weightsMap(id)),
-                embeddingsMap)
-              clusterRepresentativeSelectionTime.incBy(
-                clusterRepresentationSelectionElapsed().inMilliseconds)
+          // 4. Get l st of cluster representat ves
+          val truncated dW hScoreL st: Seq[S mClustersEmbedd ng dW hScore] =
+            truncatedClusters.map {  mbers: Set[User d] =>
+              val clusterRepresentat onSelect onElapsed = Stopwatch.start()
+              val  do d: User d = clusterRepresentat veSelect on thod.selectClusterRepresentat ve(
+                 mbers.map( d =>   ghtsMap( d)),
+                embedd ngsMap)
+              clusterRepresentat veSelect onT  . ncBy(
+                clusterRepresentat onSelect onElapsed(). nM ll seconds)
 
-              SimClustersEmbeddingIdWithScore(
-                id = SimClustersEmbeddingIdThrift(
-                  EmbeddingType.TwiceUserInterestedIn,
-                  modelVersion,
-                  InternalId.UserId(medoid)),
-                score = members.size)
+              S mClustersEmbedd ng dW hScore(
+                 d = S mClustersEmbedd ng dThr ft(
+                  Embedd ngType.Tw ceUser nterested n,
+                  modelVers on,
+                   nternal d.User d( do d)),
+                score =  mbers.s ze)
             }
 
           (
-            userId,
+            user d,
             sortedClusters,
-            SimClustersMultiEmbedding.Ids(
-              SimClustersMultiEmbeddingByIds(ids = truncatedIdWithScoreList)))
+            S mClustersMult Embedd ng. ds(
+              S mClustersMult Embedd ngBy ds( ds = truncated dW hScoreL st)))
       }
   }
 
   /**
-   * Write the output to disk as a TypedTsv.
+   * Wr e t  output to d sk as a TypedTsv.
    */
-  def writeOutputToTypedTSV(
-    output: TypedPipe[(UserId, Seq[Set[UserId]], SimClustersMultiEmbedding)],
-    userToClusterRepresentativesIndexOutputPath: String,
-    userToClusterMembersIndexOutputPath: String
-  ): Execution[(Unit, Unit)] = {
+  def wr eOutputToTypedTSV(
+    output: TypedP pe[(User d, Seq[Set[User d]], S mClustersMult Embedd ng)],
+    userToClusterRepresentat ves ndexOutputPath: Str ng,
+    userToCluster mbers ndexOutputPath: Str ng
+  ): Execut on[(Un , Un )] = {
 
-    // write the user -> cluster representatives index
-    val writeClusterRepresentatives = output
+    // wr e t  user -> cluster representat ves  ndex
+    val wr eClusterRepresentat ves = output
       .collect {
-        case (userId: Long, _, Ids(ids)) => (userId, ids.ids)
+        case (user d: Long, _,  ds( ds)) => (user d,  ds. ds)
       }
-      //.shard(partitions = 1)
-      .writeExecution(TypedTsv[(UserId, Seq[SimClustersEmbeddingIdWithScore])](
-        userToClusterRepresentativesIndexOutputPath))
+      //.shard(part  ons = 1)
+      .wr eExecut on(TypedTsv[(User d, Seq[S mClustersEmbedd ng dW hScore])](
+        userToClusterRepresentat ves ndexOutputPath))
 
-    // write the user -> cluster members index
-    val writeClusterMembers = output
+    // wr e t  user -> cluster  mbers  ndex
+    val wr eCluster mbers = output
       .collect {
-        case (userId: Long, clusters: Seq[Set[UserId]], _) => (userId, clusters)
+        case (user d: Long, clusters: Seq[Set[User d]], _) => (user d, clusters)
       }
-      //.shard(partitions = 1)
-      .writeExecution(TypedTsv[(UserId, Seq[Set[UserId]])](userToClusterMembersIndexOutputPath))
+      //.shard(part  ons = 1)
+      .wr eExecut on(TypedTsv[(User d, Seq[Set[User d]])](userToCluster mbers ndexOutputPath))
 
-    Execution.zip(writeClusterRepresentatives, writeClusterMembers)
+    Execut on.z p(wr eClusterRepresentat ves, wr eCluster mbers)
 
   }
 
   /**
-   * Write the output to disk as a KeyValDataset.
+   * Wr e t  output to d sk as a KeyValDataset.
    */
-  def writeOutputToKeyValDataset(
-    output: TypedPipe[(UserId, Seq[Set[UserId]], SimClustersMultiEmbedding)],
-    embeddingType: MultiEmbeddingType,
-    userToClusterRepresentativesIndexDataset: KeyValDALDataset[
-      KeyVal[SimClustersMultiEmbeddingId, SimClustersMultiEmbedding]
+  def wr eOutputToKeyValDataset(
+    output: TypedP pe[(User d, Seq[Set[User d]], S mClustersMult Embedd ng)],
+    embedd ngType: Mult Embedd ngType,
+    userToClusterRepresentat ves ndexDataset: KeyValDALDataset[
+      KeyVal[S mClustersMult Embedd ng d, S mClustersMult Embedd ng]
     ],
-    userToClusterMembersIndexDataset: KeyValDALDataset[KeyVal[UserId, OrderedClustersAndMembers]],
-    userToClusterRepresentativesIndexOutputPath: String,
-    userToClusterMembersIndexOutputPath: String
+    userToCluster mbers ndexDataset: KeyValDALDataset[KeyVal[User d, OrderedClustersAnd mbers]],
+    userToClusterRepresentat ves ndexOutputPath: Str ng,
+    userToCluster mbers ndexOutputPath: Str ng
   )(
-    implicit dateRange: DateRange
-  ): Execution[(Unit, Unit)] = {
-    // write the user -> cluster representatives index
-    val writeClusterRepresentatives = output
+     mpl c  dateRange: DateRange
+  ): Execut on[(Un , Un )] = {
+    // wr e t  user -> cluster representat ves  ndex
+    val wr eClusterRepresentat ves = output
       .map {
-        case (userId: UserId, _, embeddings: SimClustersMultiEmbedding) =>
+        case (user d: User d, _, embedd ngs: S mClustersMult Embedd ng) =>
           KeyVal(
-            key = SimClustersMultiEmbeddingId(
-              embeddingType = embeddingType,
-              modelVersion = modelVersion,
-              internalId = InternalId.UserId(userId)
+            key = S mClustersMult Embedd ng d(
+              embedd ngType = embedd ngType,
+              modelVers on = modelVers on,
+               nternal d =  nternal d.User d(user d)
             ),
-            value = embeddings
+            value = embedd ngs
           )
       }
-      .writeDALVersionedKeyValExecution(
-        userToClusterRepresentativesIndexDataset,
-        D.Suffix(userToClusterRepresentativesIndexOutputPath),
-        ExplicitEndTime(dateRange.end)
+      .wr eDALVers onedKeyValExecut on(
+        userToClusterRepresentat ves ndexDataset,
+        D.Suff x(userToClusterRepresentat ves ndexOutputPath),
+        Expl c EndT  (dateRange.end)
       )
 
-    // write the user -> cluster members index
-    val writeClusterMembers = output
+    // wr e t  user -> cluster  mbers  ndex
+    val wr eCluster mbers = output
       .map {
-        case (userId: UserId, clusters: Seq[Set[UserId]], _) =>
+        case (user d: User d, clusters: Seq[Set[User d]], _) =>
           KeyVal(
-            key = userId,
-            value = OrderedClustersAndMembers(clusters, Some(clusters.map(ClusterMembers(_)))))
+            key = user d,
+            value = OrderedClustersAnd mbers(clusters, So (clusters.map(Cluster mbers(_)))))
       }
-      .writeDALVersionedKeyValExecution(
-        userToClusterMembersIndexDataset,
-        D.Suffix(userToClusterMembersIndexOutputPath),
-        ExplicitEndTime(dateRange.end)
+      .wr eDALVers onedKeyValExecut on(
+        userToCluster mbers ndexDataset,
+        D.Suff x(userToCluster mbers ndexOutputPath),
+        Expl c EndT  (dateRange.end)
       )
 
-    Execution.zip(writeClusterRepresentatives, writeClusterMembers)
+    Execut on.z p(wr eClusterRepresentat ves, wr eCluster mbers)
   }
 
   /**
-   * Main method for scheduled jobs.
+   * Ma n  thod for sc duled jobs.
    */
-  def runScheduledApp(
-    clusteringMethod: ClusteringMethod,
-    clusterRepresentativeSelectionMethod: ClusterRepresentativeSelectionMethod[T],
-    producerEmbedding: TypedPipe[(UserId, T)],
-    userToClusterRepresentativesIndexPathSuffix: String,
-    userToClusterMembersIndexPathSuffix: String,
-    userToClusterRepresentativesIndexDataset: KeyValDALDataset[
-      KeyVal[SimClustersMultiEmbeddingId, SimClustersMultiEmbedding]
+  def runSc duledApp(
+    cluster ng thod: Cluster ng thod,
+    clusterRepresentat veSelect on thod: ClusterRepresentat veSelect on thod[T],
+    producerEmbedd ng: TypedP pe[(User d, T)],
+    userToClusterRepresentat ves ndexPathSuff x: Str ng,
+    userToCluster mbers ndexPathSuff x: Str ng,
+    userToClusterRepresentat ves ndexDataset: KeyValDALDataset[
+      KeyVal[S mClustersMult Embedd ng d, S mClustersMult Embedd ng]
     ],
-    userToClusterMembersIndexDataset: KeyValDALDataset[KeyVal[UserId, OrderedClustersAndMembers]],
-    numReducers: Int
+    userToCluster mbers ndexDataset: KeyValDALDataset[KeyVal[User d, OrderedClustersAnd mbers]],
+    numReducers:  nt
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que d: Un que D
+  ): Execut on[Un ] = {
 
-    val userToClusterRepresentativesIndexOutputPath: String = EmbeddingUtil.getHdfsPath(
-      isAdhoc = false,
-      isManhattanKeyVal = true,
-      modelVersion = modelVersion,
-      pathSuffix = userToClusterRepresentativesIndexPathSuffix
+    val userToClusterRepresentat ves ndexOutputPath: Str ng = Embedd ngUt l.getHdfsPath(
+       sAdhoc = false,
+       sManhattanKeyVal = true,
+      modelVers on = modelVers on,
+      pathSuff x = userToClusterRepresentat ves ndexPathSuff x
     )
 
-    val userToClusterMembersIndexOutputPath: String = EmbeddingUtil.getHdfsPath(
-      isAdhoc = false,
-      isManhattanKeyVal = true,
-      modelVersion = modelVersion,
-      pathSuffix = userToClusterMembersIndexPathSuffix
+    val userToCluster mbers ndexOutputPath: Str ng = Embedd ngUt l.getHdfsPath(
+       sAdhoc = false,
+       sManhattanKeyVal = true,
+      modelVers on = modelVers on,
+      pathSuff x = userToCluster mbers ndexPathSuff x
     )
 
-    val execution = Execution.withId { implicit uniqueId =>
-      val output: TypedPipe[(UserId, Seq[Set[UserId]], SimClustersMultiEmbedding)] =
-        getMultiEmbeddingPerUser(
-          userUserGraph = getUserUserGraph(dateRange.prepend(Days(30)), implicitly),
-          producerEmbedding = producerEmbedding,
-          clusteringMethod = clusteringMethod,
-          clusterRepresentativeSelectionMethod = clusterRepresentativeSelectionMethod,
+    val execut on = Execut on.w h d {  mpl c  un que d =>
+      val output: TypedP pe[(User d, Seq[Set[User d]], S mClustersMult Embedd ng)] =
+        getMult Embedd ngPerUser(
+          userUserGraph = getUserUserGraph(dateRange.prepend(Days(30)),  mpl c ly),
+          producerEmbedd ng = producerEmbedd ng,
+          cluster ng thod = cluster ng thod,
+          clusterRepresentat veSelect on thod = clusterRepresentat veSelect on thod,
           numReducers = numReducers
         )
 
-      writeOutputToKeyValDataset(
+      wr eOutputToKeyValDataset(
         output = output,
-        embeddingType = MultiEmbeddingType.TwiceUserInterestedIn,
-        userToClusterRepresentativesIndexDataset = userToClusterRepresentativesIndexDataset,
-        userToClusterMembersIndexDataset = userToClusterMembersIndexDataset,
-        userToClusterRepresentativesIndexOutputPath = userToClusterRepresentativesIndexOutputPath,
-        userToClusterMembersIndexOutputPath = userToClusterMembersIndexOutputPath
+        embedd ngType = Mult Embedd ngType.Tw ceUser nterested n,
+        userToClusterRepresentat ves ndexDataset = userToClusterRepresentat ves ndexDataset,
+        userToCluster mbers ndexDataset = userToCluster mbers ndexDataset,
+        userToClusterRepresentat ves ndexOutputPath = userToClusterRepresentat ves ndexOutputPath,
+        userToCluster mbers ndexOutputPath = userToCluster mbers ndexOutputPath
       )
 
     }
 
-    execution.unit
+    execut on.un 
   }
 
   /**
-   * Main method for adhoc jobs.
+   * Ma n  thod for adhoc jobs.
    */
   def runAdhocApp(
-    clusteringMethod: ClusteringMethod,
-    clusterRepresentativeSelectionMethod: ClusterRepresentativeSelectionMethod[T],
-    producerEmbedding: TypedPipe[(UserId, T)],
-    userToClusterRepresentativesIndexPathSuffix: String,
-    userToClusterMembersIndexPathSuffix: String,
-    numReducers: Int
+    cluster ng thod: Cluster ng thod,
+    clusterRepresentat veSelect on thod: ClusterRepresentat veSelect on thod[T],
+    producerEmbedd ng: TypedP pe[(User d, T)],
+    userToClusterRepresentat ves ndexPathSuff x: Str ng,
+    userToCluster mbers ndexPathSuff x: Str ng,
+    numReducers:  nt
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que d: Un que D
+  ): Execut on[Un ] = {
 
-    val userToClusterRepresentativesIndexOutputPath: String = EmbeddingUtil.getHdfsPath(
-      isAdhoc = true,
-      isManhattanKeyVal = false,
-      modelVersion = modelVersion,
-      pathSuffix = userToClusterRepresentativesIndexPathSuffix
+    val userToClusterRepresentat ves ndexOutputPath: Str ng = Embedd ngUt l.getHdfsPath(
+       sAdhoc = true,
+       sManhattanKeyVal = false,
+      modelVers on = modelVers on,
+      pathSuff x = userToClusterRepresentat ves ndexPathSuff x
     )
 
-    val userToClusterMembersIndexOutputPath: String = EmbeddingUtil.getHdfsPath(
-      isAdhoc = true,
-      isManhattanKeyVal = false,
-      modelVersion = modelVersion,
-      pathSuffix = userToClusterMembersIndexPathSuffix
+    val userToCluster mbers ndexOutputPath: Str ng = Embedd ngUt l.getHdfsPath(
+       sAdhoc = true,
+       sManhattanKeyVal = false,
+      modelVers on = modelVers on,
+      pathSuff x = userToCluster mbers ndexPathSuff x
     )
 
-    val execution = Execution.withId { implicit uniqueId =>
-      val output: TypedPipe[(UserId, Seq[Set[UserId]], SimClustersMultiEmbedding)] =
-        getMultiEmbeddingPerUser(
-          userUserGraph = getUserUserGraph(dateRange.prepend(Days(30)), implicitly),
-          producerEmbedding = producerEmbedding,
-          clusteringMethod = clusteringMethod,
-          clusterRepresentativeSelectionMethod = clusterRepresentativeSelectionMethod,
+    val execut on = Execut on.w h d {  mpl c  un que d =>
+      val output: TypedP pe[(User d, Seq[Set[User d]], S mClustersMult Embedd ng)] =
+        getMult Embedd ngPerUser(
+          userUserGraph = getUserUserGraph(dateRange.prepend(Days(30)),  mpl c ly),
+          producerEmbedd ng = producerEmbedd ng,
+          cluster ng thod = cluster ng thod,
+          clusterRepresentat veSelect on thod = clusterRepresentat veSelect on thod,
           numReducers = numReducers
         )
 
-      writeOutputToTypedTSV(
+      wr eOutputToTypedTSV(
         output,
-        userToClusterRepresentativesIndexOutputPath,
-        userToClusterMembersIndexOutputPath)
+        userToClusterRepresentat ves ndexOutputPath,
+        userToCluster mbers ndexOutputPath)
     }
 
-    execution.unit
+    execut on.un 
   }
 
 }
 
-object InterestedInTwiceBaseApp {
+object  nterested nTw ceBaseApp {
 
-  // Statistics
+  // Stat st cs
   val StatNumOfFollowEdges = "num_of_follow_edges"
   val StatNumOfFavEdges = "num_of_fav_edges"
-  val StatTotalEdgesNonEmptyProducerEmbeddings = "total_edges_with_non_empty_producer_embeddings"
-  val StatNumUserClusterPairsBeforeTruncation = "num_user_cluster_pairs_before_truncation"
-  val StatNumUserClusterPairsAfterTruncation = "num_user_cluster_pairs_after_truncation"
+  val StatTotalEdgesNonEmptyProducerEmbedd ngs = "total_edges_w h_non_empty_producer_embedd ngs"
+  val StatNumUserClusterPa rsBeforeTruncat on = "num_user_cluster_pa rs_before_truncat on"
+  val StatNumUserClusterPa rsAfterTruncat on = "num_user_cluster_pa rs_after_truncat on"
   val StatNumUsers = "num_users"
-  // Cumulative Frequency
-  val StatCFNumProducersPerConsumerBeforeFilter = "num_producers_per_consumer_cf_before_filter"
-  val StatCFNumProducersPerConsumerBeforeFilterBuckets: Seq[Double] =
+  // Cumulat ve Frequency
+  val StatCFNumProducersPerConsu rBeforeF lter = "num_producers_per_consu r_cf_before_f lter"
+  val StatCFNumProducersPerConsu rBeforeF lterBuckets: Seq[Double] =
     Seq(0, 10, 20, 50, 100, 500, 1000)
-  val StatCFCosineSimilarityBeforeFilter = "cosine_similarity_cf_before_filter"
-  val StatCFCosineSimilarityBeforeFilterBuckets: Seq[Double] =
+  val StatCFCos neS m lar yBeforeF lter = "cos ne_s m lar y_cf_before_f lter"
+  val StatCFCos neS m lar yBeforeF lterBuckets: Seq[Double] =
     Seq(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
-  val StatCFNumOfClustersBeforeFilter = "num_of_clusters_cf_before_filter"
-  val StatCFNumOfClustersBeforeFilterBuckets: Seq[Double] =
+  val StatCFNumOfClustersBeforeF lter = "num_of_clusters_cf_before_f lter"
+  val StatCFNumOfClustersBeforeF lterBuckets: Seq[Double] =
     Seq(1, 3, 5, 10, 15, 20, 50, 100, 200, 300, 500)
 
-  val MaxClustersPerUser: Int = 10
-  val MaxNeighborsByUser: Int = 500
+  val MaxClustersPerUser:  nt = 10
+  val MaxNe ghborsByUser:  nt = 500
 
-  object ProducerEmbeddingSource {
+  object ProducerEmbedd ngS ce {
 
     /**
-     * Read log-fav based Aggregatable Producer embeddings dataset.
+     * Read log-fav based Aggregatable Producer embedd ngs dataset.
      */
-    def getAggregatableProducerEmbeddings(
-      implicit dateRange: DateRange,
-      timeZone: TimeZone
-    ): TypedPipe[(UserId, SimClustersEmbedding)] =
-      ProducerEmbeddingSources
-        .producerEmbeddingSource(
-          EmbeddingType.AggregatableLogFavBasedProducer,
-          ModelVersion.Model20m145k2020)(dateRange.prepend(Days(30)))
-        .mapValues(s => SimClustersEmbedding(s))
+    def getAggregatableProducerEmbedd ngs(
+       mpl c  dateRange: DateRange,
+      t  Zone: T  Zone
+    ): TypedP pe[(User d, S mClustersEmbedd ng)] =
+      ProducerEmbedd ngS ces
+        .producerEmbedd ngS ce(
+          Embedd ngType.AggregatableLogFavBasedProducer,
+          ModelVers on.Model20m145k2020)(dateRange.prepend(Days(30)))
+        .mapValues(s => S mClustersEmbedd ng(s))
 
   }
 

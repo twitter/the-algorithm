@@ -1,39 +1,39 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.real_time_aggregates
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.real_t  _aggregates
 
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.datarecord.DataRecord nAFeature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BulkCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.ut l.OffloadFuturePools
+ mport com.tw ter.st ch.St ch
 
-trait BaseRealTimeAggregateBulkCandidateFeatureHydrator[K]
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate]
-    with BaseRealtimeAggregateHydrator[K] {
+tra  BaseRealT  AggregateBulkCand dateFeatureHydrator[K]
+    extends BulkCand dateFeatureHydrator[P pel neQuery, T etCand date]
+    w h BaseRealt  AggregateHydrator[K] {
 
-  val outputFeature: DataRecordInAFeature[TweetCandidate]
+  val outputFeature: DataRecord nAFeature[T etCand date]
 
-  override def features: Set[Feature[_, _]] = Set(outputFeature)
+  overr de def features: Set[Feature[_, _]] = Set(outputFeature)
 
-  override lazy val statScope: String = identifier.toString
+  overr de lazy val statScope: Str ng =  dent f er.toStr ng
 
-  def keysFromQueryAndCandidates(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Seq[Option[K]]
+  def keysFromQueryAndCand dates(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): Seq[Opt on[K]]
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
-    val possiblyKeys = keysFromQueryAndCandidates(query, candidates)
-    fetchAndConstructDataRecords(possiblyKeys).map { dataRecords =>
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
+    val poss blyKeys = keysFromQueryAndCand dates(query, cand dates)
+    fetchAndConstructDataRecords(poss blyKeys).map { dataRecords =>
       dataRecords.map { dataRecord =>
-        FeatureMapBuilder().add(outputFeature, dataRecord).build()
+        FeatureMapBu lder().add(outputFeature, dataRecord).bu ld()
       }
     }
   }

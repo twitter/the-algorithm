@@ -1,101 +1,101 @@
-package com.twitter.frigate.pushservice.params
+package com.tw ter.fr gate.pushserv ce.params
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.frigate.user_states.thriftscala.UserState
-import java.util.Locale
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.fr gate.user_states.thr ftscala.UserState
+ mport java.ut l.Locale
 
 object PushConstants {
 
-  final val ServiceProdEnvironmentName = "prod"
+  f nal val Serv ceProdEnv ron ntNa  = "prod"
 
-  final val RestrictLightRankingCandidatesThreshold = 1
+  f nal val Restr ctL ghtRank ngCand datesThreshold = 1
 
-  final val DownSampleLightRankingScribeCandidatesRate = 1
+  f nal val DownSampleL ghtRank ngScr beCand datesRate = 1
 
-  final val NewUserLookbackWindow = 1.days
+  f nal val NewUserLookbackW ndow = 1.days
 
-  final val PushCapInactiveUserAndroid = 1
-  final val PushCapInactiveUserIos = 1
-  final val PushCapLightOccasionalOpenerUserAndroid = 1
-  final val PushCapLightOccasionalOpenerUserIos = 1
+  f nal val PushCap nact veUserAndro d = 1
+  f nal val PushCap nact veUser os = 1
+  f nal val PushCapL ghtOccas onalOpenerUserAndro d = 1
+  f nal val PushCapL ghtOccas onalOpenerUser os = 1
 
-  final val UserStateToPushCapIos = Map(
-    UserState.Inactive.name -> PushCapInactiveUserIos,
-    UserState.LightOccasionalOpener.name -> PushCapLightOccasionalOpenerUserIos
+  f nal val UserStateToPushCap os = Map(
+    UserState. nact ve.na  -> PushCap nact veUser os,
+    UserState.L ghtOccas onalOpener.na  -> PushCapL ghtOccas onalOpenerUser os
   )
-  final val UserStateToPushCapAndroid = Map(
-    UserState.Inactive.name -> PushCapInactiveUserAndroid,
-    UserState.LightOccasionalOpener.name -> PushCapLightOccasionalOpenerUserAndroid
-  )
-
-  final val AcceptableTimeSinceLastNegativeResponse = 1.days
-
-  final val DefaultLookBackForHistory = 1.hours
-
-  final val DefaultEventMediaUrl = ""
-
-  final val ConnectTabPushTapThrough = "i/connect_people"
-
-  final val AddressBookUploadTapThrough = "i/flow/mr-address-book-upload"
-  final val InterestPickerTapThrough = "i/flow/mr-interest-picker"
-  final val CompleteOnboardingInterestAddressTapThrough = "i/flow/mr-interest-address"
-
-  final val IndiaCountryCode = "IN"
-  final val JapanCountryCode = Locale.JAPAN.getCountry.toUpperCase
-  final val UKCountryCode = Locale.UK.getCountry.toUpperCase
-
-  final val IndiaTimeZoneCode = "Asia/Kolkata"
-  final val JapanTimeZoneCode = "Asia/Tokyo"
-  final val UKTimeZoneCode = "Europe/London"
-
-  final val countryCodeToTimeZoneMap = Map(
-    IndiaCountryCode -> IndiaTimeZoneCode,
-    JapanCountryCode -> JapanTimeZoneCode,
-    UKCountryCode -> UKTimeZoneCode
+  f nal val UserStateToPushCapAndro d = Map(
+    UserState. nact ve.na  -> PushCap nact veUserAndro d,
+    UserState.L ghtOccas onalOpener.na  -> PushCapL ghtOccas onalOpenerUserAndro d
   )
 
-  final val AbuseStrike_Top2Percent_Id = "AbuseStrike_Top2Percent_Id"
-  final val AbuseStrike_Top1Percent_Id = "AbuseStrike_Top1Percent_Id"
-  final val AbuseStrike_Top05Percent_Id = "AbuseStrike_Top05Percent_Id"
-  final val AbuseStrike_Top025Percent_Id = "AbuseStrike_Top025Percent_Id"
-  final val AllSpamReportsPerFav_Top1Percent_Id = "AllSpamReportsPerFav_Top1Percent_Id"
-  final val ReportsPerFav_Top1Percent_Id = "ReportsPerFav_Top1Percent_Id"
-  final val ReportsPerFav_Top2Percent_Id = "ReportsPerFav_Top2Percent_Id"
-  final val MediaUnderstanding_Nudity_Id = "MediaUnderstanding_Nudity_Id"
-  final val MediaUnderstanding_Beauty_Id = "MediaUnderstanding_Beauty_Id"
-  final val MediaUnderstanding_SinglePerson_Id = "MediaUnderstanding_SinglePerson_Id"
-  final val PornList_Id = "PornList_Id"
-  final val PornographyAndNsfwContent_Id = "PornographyAndNsfwContent_Id"
-  final val SexLife_Id = "SexLife_Id"
-  final val SexLifeOrSexualOrientation_Id = "SexLifeOrSexualOrientation_Id"
-  final val ProfanityFilter_Id = "ProfanityFilter_Id"
-  final val TweetSemanticCoreIdFeature = "tweet.core.tweet.semantic_core_annotations"
-  final val targetUserGenderFeatureName = "Target.User.Gender"
-  final val targetUserAgeFeatureName = "Target.User.AgeBucket"
-  final val targetUserPreferredLanguage = "user.language.user.preferred_contents"
-  final val tweetAgeInHoursFeatureName = "RecTweet.TweetyPieResult.TweetAgeInHrs"
-  final val authorActiveFollowerFeatureName = "RecTweetAuthor.User.ActiveFollowers"
-  final val favFeatureName = "tweet.core.tweet_counts.favorite_count"
-  final val sentFeatureName =
-    "tweet.magic_recs_tweet_real_time_aggregates_v2.pair.v2.magicrecs.realtime.is_sent.any_feature.Duration.Top.count"
-  final val authorSendCountFeatureName =
-    "tweet_author_aggregate.pair.any_label.any_feature.28.days.count"
-  final val authorReportCountFeatureName =
-    "tweet_author_aggregate.pair.label.reportTweetDone.any_feature.28.days.count"
-  final val authorDislikeCountFeatureName =
-    "tweet_author_aggregate.pair.label.ntab.isDisliked.any_feature.28.days.count"
-  final val TweetLikesFeatureName = "tweet.core.tweet_counts.favorite_count"
-  final val TweetRepliesFeatureName = "tweet.core.tweet_counts.reply_count"
+  f nal val AcceptableT  S nceLastNegat veResponse = 1.days
 
-  final val EnableCopyFeaturesForIbis2ModelValues = "has_copy_features"
+  f nal val DefaultLookBackFor tory = 1.h s
 
-  final val EmojiFeatureNameForIbis2ModelValues = "emoji"
+  f nal val DefaultEvent d aUrl = ""
 
-  final val TargetFeatureNameForIbis2ModelValues = "target"
+  f nal val ConnectTabPushTapThrough = " /connect_people"
 
-  final val CopyBodyExpIbisModelValues = "enable_body_exp"
+  f nal val AddressBookUploadTapThrough = " /flow/mr-address-book-upload"
+  f nal val  nterestP ckerTapThrough = " /flow/mr- nterest-p cker"
+  f nal val CompleteOnboard ng nterestAddressTapThrough = " /flow/mr- nterest-address"
 
-  final val TweetMediaEmbeddingBQKeyIds = Seq(
+  f nal val  nd aCountryCode = " N"
+  f nal val JapanCountryCode = Locale.JAPAN.getCountry.toUpperCase
+  f nal val UKCountryCode = Locale.UK.getCountry.toUpperCase
+
+  f nal val  nd aT  ZoneCode = "As a/Kolkata"
+  f nal val JapanT  ZoneCode = "As a/Tokyo"
+  f nal val UKT  ZoneCode = "Europe/London"
+
+  f nal val countryCodeToT  ZoneMap = Map(
+     nd aCountryCode ->  nd aT  ZoneCode,
+    JapanCountryCode -> JapanT  ZoneCode,
+    UKCountryCode -> UKT  ZoneCode
+  )
+
+  f nal val AbuseStr ke_Top2Percent_ d = "AbuseStr ke_Top2Percent_ d"
+  f nal val AbuseStr ke_Top1Percent_ d = "AbuseStr ke_Top1Percent_ d"
+  f nal val AbuseStr ke_Top05Percent_ d = "AbuseStr ke_Top05Percent_ d"
+  f nal val AbuseStr ke_Top025Percent_ d = "AbuseStr ke_Top025Percent_ d"
+  f nal val AllSpamReportsPerFav_Top1Percent_ d = "AllSpamReportsPerFav_Top1Percent_ d"
+  f nal val ReportsPerFav_Top1Percent_ d = "ReportsPerFav_Top1Percent_ d"
+  f nal val ReportsPerFav_Top2Percent_ d = "ReportsPerFav_Top2Percent_ d"
+  f nal val  d aUnderstand ng_Nud y_ d = " d aUnderstand ng_Nud y_ d"
+  f nal val  d aUnderstand ng_Beauty_ d = " d aUnderstand ng_Beauty_ d"
+  f nal val  d aUnderstand ng_S nglePerson_ d = " d aUnderstand ng_S nglePerson_ d"
+  f nal val PornL st_ d = "PornL st_ d"
+  f nal val PornographyAndNsfwContent_ d = "PornographyAndNsfwContent_ d"
+  f nal val SexL fe_ d = "SexL fe_ d"
+  f nal val SexL feOrSexualOr entat on_ d = "SexL feOrSexualOr entat on_ d"
+  f nal val Profan yF lter_ d = "Profan yF lter_ d"
+  f nal val T etSemant cCore dFeature = "t et.core.t et.semant c_core_annotat ons"
+  f nal val targetUserGenderFeatureNa  = "Target.User.Gender"
+  f nal val targetUserAgeFeatureNa  = "Target.User.AgeBucket"
+  f nal val targetUserPreferredLanguage = "user.language.user.preferred_contents"
+  f nal val t etAge nH sFeatureNa  = "RecT et.T etyP eResult.T etAge nHrs"
+  f nal val authorAct veFollo rFeatureNa  = "RecT etAuthor.User.Act veFollo rs"
+  f nal val favFeatureNa  = "t et.core.t et_counts.favor e_count"
+  f nal val sentFeatureNa  =
+    "t et.mag c_recs_t et_real_t  _aggregates_v2.pa r.v2.mag crecs.realt  . s_sent.any_feature.Durat on.Top.count"
+  f nal val authorSendCountFeatureNa  =
+    "t et_author_aggregate.pa r.any_label.any_feature.28.days.count"
+  f nal val authorReportCountFeatureNa  =
+    "t et_author_aggregate.pa r.label.reportT etDone.any_feature.28.days.count"
+  f nal val authorD sl keCountFeatureNa  =
+    "t et_author_aggregate.pa r.label.ntab. sD sl ked.any_feature.28.days.count"
+  f nal val T etL kesFeatureNa  = "t et.core.t et_counts.favor e_count"
+  f nal val T etRepl esFeatureNa  = "t et.core.t et_counts.reply_count"
+
+  f nal val EnableCopyFeaturesFor b s2ModelValues = "has_copy_features"
+
+  f nal val Emoj FeatureNa For b s2ModelValues = "emoj "
+
+  f nal val TargetFeatureNa For b s2ModelValues = "target"
+
+  f nal val CopyBodyExp b sModelValues = "enable_body_exp"
+
+  f nal val T et d aEmbedd ngBQKey ds = Seq(
     230, 110, 231, 111, 232, 233, 112, 113, 234, 235, 114, 236, 115, 237, 116, 117, 238, 118, 239,
     119, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 240, 120, 241, 121, 242, 0, 1, 122, 243, 244, 123,
     2, 124, 245, 3, 4, 246, 125, 5, 126, 247, 127, 248, 6, 128, 249, 7, 8, 129, 9, 20, 21, 22, 23,
@@ -111,16 +111,16 @@ object PushConstants {
     227, 106, 107, 228, 108, 229, 109
   )
 
-  final val SportsEventDomainId = 6L
+  f nal val SportsEventDoma n d = 6L
 
-  final val OoncQualityCombinedScore = "OoncQualityCombinedScore"
+  f nal val OoncQual yComb nedScore = "OoncQual yComb nedScore"
 }
 
-object PushQPSLimitConstants {
+object PushQPSL m Constants {
 
-  final val PerspectiveStoreQPS = 100000
+  f nal val Perspect veStoreQPS = 100000
 
-  final val IbisOrNTabQPSForRFPH = 100000
+  f nal val  b sOrNTabQPSForRFPH = 100000
 
-  final val SocialGraphServiceBatchSize = 100000
+  f nal val Soc alGraphServ ceBatchS ze = 100000
 }

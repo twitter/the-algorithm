@@ -1,608 +1,608 @@
-package com.twitter.search.earlybird;
+package com.tw ter.search.earlyb rd;
 
-import java.io.BufferedWriter;
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.GuardedBy;
+ mport java. o.BufferedWr er;
+ mport java. o.Closeable;
+ mport java. o.F le;
+ mport java. o. OExcept on;
+ mport java.n o.f le.F les;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.L st;
+ mport java.ut l.Set;
+ mport java.ut l.concurrent.ArrayBlock ngQueue;
+ mport java.ut l.concurrent.Execut onExcept on;
+ mport java.ut l.concurrent.ExecutorServ ce;
+ mport java.ut l.concurrent.Executors;
+ mport java.ut l.concurrent.RejectedExecut onExcept on;
+ mport java.ut l.concurrent.T  Un ;
+ mport java.ut l.concurrent.atom c.Atom cReference;
+ mport javax.annotat on.Nullable;
+ mport javax.annotat on.concurrent.GuardedBy;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Charsets;
-import com.google.common.base.Stopwatch;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.AtomicLongMap;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Charsets;
+ mport com.google.common.base.Stopwatch;
+ mport com.google.common.cac .Cac Bu lder;
+ mport com.google.common.cac .Cac Loader;
+ mport com.google.common.cac .Load ngCac ;
+ mport com.google.common.collect. mmutableMap;
+ mport com.google.common.collect.L sts;
+ mport com.google.common.ut l.concurrent.Atom cLongMap;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.thrift.TBase;
-import org.apache.thrift.TException;
-import org.apache.thrift.TSerializer;
-import org.apache.zookeeper.KeeperException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons.codec.b nary.Base64;
+ mport org.apac .lucene.search. ndexSearc r;
+ mport org.apac .thr ft.TBase;
+ mport org.apac .thr ft.TExcept on;
+ mport org.apac .thr ft.TSer al zer;
+ mport org.apac .zookeeper.KeeperExcept on;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.common.util.Clock;
-import com.twitter.common.zookeeper.ServerSet.UpdateException;
-import com.twitter.common.zookeeper.ZooKeeperClient;
-import com.twitter.decider.Decider;
-import com.twitter.finagle.Failure;
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.metrics.Percentile;
-import com.twitter.search.common.metrics.PercentileUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.metrics.Timer;
-import com.twitter.search.common.schema.DynamicSchema;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.FlushVersion;
-import com.twitter.search.common.search.termination.QueryTimeoutFactory;
-import com.twitter.search.common.util.FinagleUtil;
-import com.twitter.search.common.util.GCUtil;
-import com.twitter.search.common.util.ml.tensorflow_engine.TensorflowModelsManager;
-import com.twitter.search.common.util.zookeeper.ZooKeeperProxy;
-import com.twitter.search.core.earlybird.index.inverted.QueryCostTracker;
-import com.twitter.search.earlybird.admin.LastSearchesSummary;
-import com.twitter.search.earlybird.admin.QueriedFieldsAndSchemaStats;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.common.EarlybirdRequestLogger;
-import com.twitter.search.earlybird.common.EarlybirdRequestPostLogger;
-import com.twitter.search.earlybird.common.EarlybirdRequestPreLogger;
-import com.twitter.search.earlybird.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird.common.RequestResponsePair;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.exception.EarlybirdStartupException;
-import com.twitter.search.earlybird.exception.TransientException;
-import com.twitter.search.earlybird.ml.ScoringModelsManager;
-import com.twitter.search.earlybird.partition.AudioSpaceTable;
-import com.twitter.search.earlybird.partition.DynamicPartitionConfig;
-import com.twitter.search.earlybird.partition.EarlybirdStartup;
-import com.twitter.search.earlybird.partition.MultiSegmentTermDictionaryManager;
-import com.twitter.search.earlybird.partition.PartitionConfig;
-import com.twitter.search.earlybird.partition.PartitionManager;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
-import com.twitter.search.earlybird.partition.SegmentManager;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
-import com.twitter.search.earlybird.partition.SegmentVulture;
-import com.twitter.search.earlybird.querycache.QueryCacheManager;
-import com.twitter.search.earlybird.stats.EarlybirdRPCStats;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.EarlybirdServerStats;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird.util.OneTaskScheduledExecutorManager;
-import com.twitter.search.earlybird.util.TermCountMonitor;
-import com.twitter.search.earlybird.util.TweetCountMonitor;
-import com.twitter.snowflake.id.SnowflakeId;
-import com.twitter.util.Duration;
-import com.twitter.util.Function;
-import com.twitter.util.Function0;
-import com.twitter.util.Future;
+ mport com.tw ter.common.collect ons.Pa r;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.common.zookeeper.ServerSet.UpdateExcept on;
+ mport com.tw ter.common.zookeeper.ZooKeeperCl ent;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.f nagle.Fa lure;
+ mport com.tw ter.search.common.database.DatabaseConf g;
+ mport com.tw ter.search.common. tr cs.Percent le;
+ mport com.tw ter.search.common. tr cs.Percent leUt l;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common. tr cs.SearchStatsRece ver;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
+ mport com.tw ter.search.common. tr cs.T  r;
+ mport com.tw ter.search.common.sc ma.Dynam cSc ma;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.earlyb rd.FlushVers on;
+ mport com.tw ter.search.common.search.term nat on.QueryT  outFactory;
+ mport com.tw ter.search.common.ut l.F nagleUt l;
+ mport com.tw ter.search.common.ut l.GCUt l;
+ mport com.tw ter.search.common.ut l.ml.tensorflow_eng ne.TensorflowModelsManager;
+ mport com.tw ter.search.common.ut l.zookeeper.ZooKeeperProxy;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted.QueryCostTracker;
+ mport com.tw ter.search.earlyb rd.adm n.LastSearc sSummary;
+ mport com.tw ter.search.earlyb rd.adm n.Quer edF eldsAndSc maStats;
+ mport com.tw ter.search.earlyb rd.common.Cl ent dUt l;
+ mport com.tw ter.search.earlyb rd.common.Earlyb rdRequestLogger;
+ mport com.tw ter.search.earlyb rd.common.Earlyb rdRequestPostLogger;
+ mport com.tw ter.search.earlyb rd.common.Earlyb rdRequestPreLogger;
+ mport com.tw ter.search.earlyb rd.common.Earlyb rdRequestUt l;
+ mport com.tw ter.search.earlyb rd.common.RequestResponsePa r;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.except on.Earlyb rdStartupExcept on;
+ mport com.tw ter.search.earlyb rd.except on.Trans entExcept on;
+ mport com.tw ter.search.earlyb rd.ml.Scor ngModelsManager;
+ mport com.tw ter.search.earlyb rd.part  on.Aud oSpaceTable;
+ mport com.tw ter.search.earlyb rd.part  on.Dynam cPart  onConf g;
+ mport com.tw ter.search.earlyb rd.part  on.Earlyb rdStartup;
+ mport com.tw ter.search.earlyb rd.part  on.Mult Seg ntTermD ct onaryManager;
+ mport com.tw ter.search.earlyb rd.part  on.Part  onConf g;
+ mport com.tw ter.search.earlyb rd.part  on.Part  onManager;
+ mport com.tw ter.search.earlyb rd.part  on.Search ndex ng tr cSet;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntManager;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntSyncConf g;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntVulture;
+ mport com.tw ter.search.earlyb rd.querycac .QueryCac Manager;
+ mport com.tw ter.search.earlyb rd.stats.Earlyb rdRPCStats;
+ mport com.tw ter.search.earlyb rd.stats.Earlyb rdSearc rStats;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdServerStats;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdServ ce;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdStatusCode;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdStatusResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResults;
+ mport com.tw ter.search.earlyb rd.ut l.OneTaskSc duledExecutorManager;
+ mport com.tw ter.search.earlyb rd.ut l.TermCountMon or;
+ mport com.tw ter.search.earlyb rd.ut l.T etCountMon or;
+ mport com.tw ter.snowflake. d.Snowflake d;
+ mport com.tw ter.ut l.Durat on;
+ mport com.tw ter.ut l.Funct on;
+ mport com.tw ter.ut l.Funct on0;
+ mport com.tw ter.ut l.Future;
 
-public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSetMember {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdServer.class);
+publ c class Earlyb rdServer  mple nts Earlyb rdServ ce.Serv ce face, ServerSet mber {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rdServer.class);
 
-  private static final String EARLYBIRD_STARTUP = "earlybird startup";
-  public static final String SERVICE_NAME = "Earlybird";
+  pr vate stat c f nal Str ng EARLYB RD_STARTUP = "earlyb rd startup";
+  publ c stat c f nal Str ng SERV CE_NAME = "Earlyb rd";
 
-  private static final boolean REGISTER_WITH_ZK_ON_STARTUP =
-      EarlybirdConfig.getBool("register_with_zk_on_startup", true);
-  private static final Duration SERVER_CLOSE_WAIT_TIME = Duration.apply(5L, TimeUnit.SECONDS);
+  pr vate stat c f nal boolean REG STER_W TH_ZK_ON_STARTUP =
+      Earlyb rdConf g.getBool("reg ster_w h_zk_on_startup", true);
+  pr vate stat c f nal Durat on SERVER_CLOSE_WA T_T ME = Durat on.apply(5L, T  Un .SECONDS);
 
-  private static final Failure QUEUE_FULL_FAILURE =
-      Failure.rejected("Rejected due to full executor queue");
+  pr vate stat c f nal Fa lure QUEUE_FULL_FA LURE =
+      Fa lure.rejected("Rejected due to full executor queue");
 
-  private final int port = EarlybirdConfig.getThriftPort();
-  private final int warmUpPort = EarlybirdConfig.getWarmUpThriftPort();
-  private final int numSearcherThreads = EarlybirdConfig.getSearcherThreads();
+  pr vate f nal  nt port = Earlyb rdConf g.getThr ftPort();
+  pr vate f nal  nt warmUpPort = Earlyb rdConf g.getWarmUpThr ftPort();
+  pr vate f nal  nt numSearc rThreads = Earlyb rdConf g.getSearc rThreads();
 
-  private final SearchStatsReceiver earlybirdServerStatsReceiver;
-  private final EarlybirdRPCStats searchStats = new EarlybirdRPCStats("search");
-  private final EarlybirdSearcherStats tweetsSearcherStats;
+  pr vate f nal SearchStatsRece ver earlyb rdServerStatsRece ver;
+  pr vate f nal Earlyb rdRPCStats searchStats = new Earlyb rdRPCStats("search");
+  pr vate f nal Earlyb rdSearc rStats t etsSearc rStats;
 
-  private static final String REQUESTS_RECEIVED_BY_FINAGLE_ID_COUNTER_NAME_PATTERN =
-      "requests_for_finagle_id_%s_all";
-  private static final String REQUESTS_RECEIVED_BY_FINAGLE_ID_AND_CLIENT_ID_COUNTER_NAME_PATTERN =
-      "requests_for_finagle_id_%s_and_client_id_%s";
-  private static final String RESPONSES_PER_CLIENT_ID_STAT_TEMPLATE =
-      "responses_for_client_id_%s_with_response_code_%s";
+  pr vate stat c f nal Str ng REQUESTS_RECE VED_BY_F NAGLE_ D_COUNTER_NAME_PATTERN =
+      "requests_for_f nagle_ d_%s_all";
+  pr vate stat c f nal Str ng REQUESTS_RECE VED_BY_F NAGLE_ D_AND_CL ENT_ D_COUNTER_NAME_PATTERN =
+      "requests_for_f nagle_ d_%s_and_cl ent_ d_%s";
+  pr vate stat c f nal Str ng RESPONSES_PER_CL ENT_ D_STAT_TEMPLATE =
+      "responses_for_cl ent_ d_%s_w h_response_code_%s";
 
-  // Loading cache for per finagle-client-id stats. Storing them in a loading cache key-ed by
-  // finagle client id so we don't export the stat multiple times.
-  private final LoadingCache<String, SearchTimerStats> requestCountersByFinagleClientId =
-      CacheBuilder.newBuilder().build(
-          new CacheLoader<String, SearchTimerStats>() {
-            @Override
-            public SearchTimerStats load(String finagleClientId) {
-              return earlybirdServerStatsReceiver.getTimerStats(
-                  String.format(
-                      REQUESTS_RECEIVED_BY_FINAGLE_ID_COUNTER_NAME_PATTERN,
-                      finagleClientId), TimeUnit.MICROSECONDS, false, true, false);
+  // Load ng cac  for per f nagle-cl ent- d stats. Stor ng t m  n a load ng cac  key-ed by
+  // f nagle cl ent  d so   don't export t  stat mult ple t  s.
+  pr vate f nal Load ngCac <Str ng, SearchT  rStats> requestCountersByF nagleCl ent d =
+      Cac Bu lder.newBu lder().bu ld(
+          new Cac Loader<Str ng, SearchT  rStats>() {
+            @Overr de
+            publ c SearchT  rStats load(Str ng f nagleCl ent d) {
+              return earlyb rdServerStatsRece ver.getT  rStats(
+                  Str ng.format(
+                      REQUESTS_RECE VED_BY_F NAGLE_ D_COUNTER_NAME_PATTERN,
+                      f nagleCl ent d), T  Un .M CROSECONDS, false, true, false);
             }
           });
 
-  // Counters per client and response code.
-  private final LoadingCache<String, SearchCounter> responseByClientIdAndResponseCode =
-      CacheBuilder.newBuilder().build(
-          new CacheLoader<String, SearchCounter>() {
-              @Override
-              public SearchCounter load(String key) {
-                  return earlybirdServerStatsReceiver.getCounter(key);
+  // Counters per cl ent and response code.
+  pr vate f nal Load ngCac <Str ng, SearchCounter> responseByCl ent dAndResponseCode =
+      Cac Bu lder.newBu lder().bu ld(
+          new Cac Loader<Str ng, SearchCounter>() {
+              @Overr de
+              publ c SearchCounter load(Str ng key) {
+                  return earlyb rdServerStatsRece ver.getCounter(key);
               }
           });
 
-  private final LoadingCache<String, SearchCounter> resultsAgeCounter =
-      CacheBuilder.newBuilder().build(
-          new CacheLoader<String, SearchCounter>() {
-            @Override
-            public SearchCounter load(String key) {
-              return earlybirdServerStatsReceiver.getCounter(key);
+  pr vate f nal Load ngCac <Str ng, SearchCounter> resultsAgeCounter =
+      Cac Bu lder.newBu lder().bu ld(
+          new Cac Loader<Str ng, SearchCounter>() {
+            @Overr de
+            publ c SearchCounter load(Str ng key) {
+              return earlyb rdServerStatsRece ver.getCounter(key);
             }
           }
       );
 
-  // Loading cache for per finagle client id and client id stats. These are stored separate
-  // from the other stats because they are key-ed by the pair of finagle client id and client id
-  // in order to make sure the stats are only exported once.
-  // In the key-pair the first element is the finagle client id while the second element is the
-  // client id.
-  private final LoadingCache<Pair<String, String>, SearchRateCounter>
-      requestCountersByFinagleIdAndClientId = CacheBuilder.newBuilder().build(
-          new CacheLoader<Pair<String, String>, SearchRateCounter>() {
-            @Override
-            public SearchRateCounter load(Pair<String, String> clientKey) {
-              return earlybirdServerStatsReceiver.getRateCounter(
-                  String.format(
-                      REQUESTS_RECEIVED_BY_FINAGLE_ID_AND_CLIENT_ID_COUNTER_NAME_PATTERN,
-                      clientKey.getFirst(),
-                      clientKey.getSecond()));
+  // Load ng cac  for per f nagle cl ent  d and cl ent  d stats. T se are stored separate
+  // from t  ot r stats because t y are key-ed by t  pa r of f nagle cl ent  d and cl ent  d
+  //  n order to make sure t  stats are only exported once.
+  //  n t  key-pa r t  f rst ele nt  s t  f nagle cl ent  d wh le t  second ele nt  s t 
+  // cl ent  d.
+  pr vate f nal Load ngCac <Pa r<Str ng, Str ng>, SearchRateCounter>
+      requestCountersByF nagle dAndCl ent d = Cac Bu lder.newBu lder().bu ld(
+          new Cac Loader<Pa r<Str ng, Str ng>, SearchRateCounter>() {
+            @Overr de
+            publ c SearchRateCounter load(Pa r<Str ng, Str ng> cl entKey) {
+              return earlyb rdServerStatsRece ver.getRateCounter(
+                  Str ng.format(
+                      REQUESTS_RECE VED_BY_F NAGLE_ D_AND_CL ENT_ D_COUNTER_NAME_PATTERN,
+                      cl entKey.getF rst(),
+                      cl entKey.getSecond()));
             }
           });
 
-  // Loading cache for per-client-id latency stats. Stored in a loading cache here mainly because
-  // the tests assert the mock stats receiver that each stat is only exported once.
-  private final LoadingCache<String, SearchTimerStats> clientIdSearchStats =
-      CacheBuilder.newBuilder().build(
-          new CacheLoader<String, SearchTimerStats>() {
-            @Override
-            public SearchTimerStats load(String clientId) {
-              String formattedClientId = ClientIdUtil.formatClientId(clientId);
-              return earlybirdServerStatsReceiver.getTimerStats(formattedClientId,
-                  TimeUnit.MICROSECONDS, false, true, true);
+  // Load ng cac  for per-cl ent- d latency stats. Stored  n a load ng cac   re ma nly because
+  // t  tests assert t  mock stats rece ver that each stat  s only exported once.
+  pr vate f nal Load ngCac <Str ng, SearchT  rStats> cl ent dSearchStats =
+      Cac Bu lder.newBu lder().bu ld(
+          new Cac Loader<Str ng, SearchT  rStats>() {
+            @Overr de
+            publ c SearchT  rStats load(Str ng cl ent d) {
+              Str ng formattedCl ent d = Cl ent dUt l.formatCl ent d(cl ent d);
+              return earlyb rdServerStatsRece ver.getT  rStats(formattedCl ent d,
+                  T  Un .M CROSECONDS, false, true, true);
             }
           });
 
-  private final LoadingCache<String, SearchTimerStats> clientIdScoringPerQueryStats =
-      CacheBuilder.newBuilder().build(
-          new CacheLoader<String, SearchTimerStats>() {
-            @Override
-            public SearchTimerStats load(String clientId) {
-              String statName =
-                  String.format("scoring_time_per_query_for_client_id_%s", clientId);
-              return earlybirdServerStatsReceiver.getTimerStats(statName,
-                  TimeUnit.NANOSECONDS, false, true, false);
+  pr vate f nal Load ngCac <Str ng, SearchT  rStats> cl ent dScor ngPerQueryStats =
+      Cac Bu lder.newBu lder().bu ld(
+          new Cac Loader<Str ng, SearchT  rStats>() {
+            @Overr de
+            publ c SearchT  rStats load(Str ng cl ent d) {
+              Str ng statNa  =
+                  Str ng.format("scor ng_t  _per_query_for_cl ent_ d_%s", cl ent d);
+              return earlyb rdServerStatsRece ver.getT  rStats(statNa ,
+                  T  Un .NANOSECONDS, false, true, false);
             }
           });
 
-  private final LoadingCache<String, SearchTimerStats> clientIdScoringPerHitStats =
-      CacheBuilder.newBuilder().build(
-          new CacheLoader<String, SearchTimerStats>() {
-            @Override
-            public SearchTimerStats load(String clientId) {
-              String statName =
-                  String.format("scoring_time_per_hit_for_client_id_%s", clientId);
-              return earlybirdServerStatsReceiver.getTimerStats(statName,
-                  TimeUnit.NANOSECONDS, false, true, false);
+  pr vate f nal Load ngCac <Str ng, SearchT  rStats> cl ent dScor ngPerH Stats =
+      Cac Bu lder.newBu lder().bu ld(
+          new Cac Loader<Str ng, SearchT  rStats>() {
+            @Overr de
+            publ c SearchT  rStats load(Str ng cl ent d) {
+              Str ng statNa  =
+                  Str ng.format("scor ng_t  _per_h _for_cl ent_ d_%s", cl ent d);
+              return earlyb rdServerStatsRece ver.getT  rStats(statNa ,
+                  T  Un .NANOSECONDS, false, true, false);
             }
           });
 
-  private final LoadingCache<String, Percentile<Integer>> clientIdScoringNumHitsProcessedStats =
-      CacheBuilder.newBuilder().build(
-          new CacheLoader<String, Percentile<Integer>>() {
-            @Override
-            public Percentile<Integer> load(String clientId) {
-              String statName =
-                  String.format("scoring_num_hits_processed_for_client_id_%s", clientId);
-              return PercentileUtil.createPercentile(statName);
+  pr vate f nal Load ngCac <Str ng, Percent le< nteger>> cl ent dScor ngNumH sProcessedStats =
+      Cac Bu lder.newBu lder().bu ld(
+          new Cac Loader<Str ng, Percent le< nteger>>() {
+            @Overr de
+            publ c Percent le< nteger> load(Str ng cl ent d) {
+              Str ng statNa  =
+                  Str ng.format("scor ng_num_h s_processed_for_cl ent_ d_%s", cl ent d);
+              return Percent leUt l.createPercent le(statNa );
             }
           });
 
-  private final LoadingCache<String, AtomicReference<RequestResponsePair>> lastRequestPerClientId =
-      CacheBuilder.newBuilder().build(
-          new CacheLoader<String, AtomicReference<RequestResponsePair>>() {
-            @Override
-            public AtomicReference<RequestResponsePair> load(String key) throws Exception {
-              return new AtomicReference<>(null);
+  pr vate f nal Load ngCac <Str ng, Atom cReference<RequestResponsePa r>> lastRequestPerCl ent d =
+      Cac Bu lder.newBu lder().bu ld(
+          new Cac Loader<Str ng, Atom cReference<RequestResponsePa r>>() {
+            @Overr de
+            publ c Atom cReference<RequestResponsePa r> load(Str ng key) throws Except on {
+              return new Atom cReference<>(null);
             }
           });
 
 
-  private final SearchTimerStats overallScoringTimePerQueryStats;
-  private final SearchTimerStats overallScoringTimePerHitStats;
-  private final Percentile<Integer> overallScoringNumHitsProcessedStats;
+  pr vate f nal SearchT  rStats overallScor ngT  PerQueryStats;
+  pr vate f nal SearchT  rStats overallScor ngT  PerH Stats;
+  pr vate f nal Percent le< nteger> overallScor ngNumH sProcessedStats;
 
-  private final EarlybirdIndexConfig earlybirdIndexConfig;
-  private final DynamicPartitionConfig dynamicPartitionConfig;
-  private final SegmentManager segmentManager;
-  private final UpdateableEarlybirdStateManager stateManager;
-  private final AudioSpaceTable audioSpaceTable;
+  pr vate f nal Earlyb rd ndexConf g earlyb rd ndexConf g;
+  pr vate f nal Dynam cPart  onConf g dynam cPart  onConf g;
+  pr vate f nal Seg ntManager seg ntManager;
+  pr vate f nal UpdateableEarlyb rdStateManager stateManager;
+  pr vate f nal Aud oSpaceTable aud oSpaceTable;
 
-  private final SearchLongGauge startupTimeGauge;
+  pr vate f nal SearchLongGauge startupT  Gauge;
 
-  // Time spent in an internal thread pool queue, between the time we get the search request
-  // from finagle until it actually starts being executed.
-  private final SearchTimerStats internalQueueWaitTimeStats;
+  // T   spent  n an  nternal thread pool queue, bet en t  t     get t  search request
+  // from f nagle unt l   actually starts be ng executed.
+  pr vate f nal SearchT  rStats  nternalQueueWa T  Stats;
 
-  // Tracking request that have exceeded their allocated timeout prior to us actually being able
-  // to start executing the search.
-  private final SearchCounter requestTimeoutExceededBeforeSearchCounter;
-  // Current number of running searcher threads.
-  private final SearchLongGauge numSearcherThreadsGauge;
-  private final QueryTimeoutFactory queryTimeoutFactory;
+  // Track ng request that have exceeded t  r allocated t  out pr or to us actually be ng able
+  // to start execut ng t  search.
+  pr vate f nal SearchCounter requestT  outExceededBeforeSearchCounter;
+  // Current number of runn ng searc r threads.
+  pr vate f nal SearchLongGauge numSearc rThreadsGauge;
+  pr vate f nal QueryT  outFactory queryT  outFactory;
 
-  private PartitionManager partitionManager;
-  private QueryCacheManager queryCacheManager;
+  pr vate Part  onManager part  onManager;
+  pr vate QueryCac Manager queryCac Manager;
 
-  private final ScoringModelsManager scoringModelsManager;
+  pr vate f nal Scor ngModelsManager scor ngModelsManager;
 
-  private final TensorflowModelsManager tensorflowModelsManager;
+  pr vate f nal TensorflowModelsManager tensorflowModelsManager;
 
-  private final EarlybirdRequestPreLogger requestPreLogger;
-  private final EarlybirdRequestPostLogger requestLogger;
+  pr vate f nal Earlyb rdRequestPreLogger requestPreLogger;
+  pr vate f nal Earlyb rdRequestPostLogger requestLogger;
 
-  private final TweetCountMonitor tweetCountMonitor;
-  private final TermCountMonitor termCountMonitor;
+  pr vate f nal T etCountMon or t etCountMon or;
+  pr vate f nal TermCountMon or termCountMon or;
 
-  private final EarlybirdServerSetManager serverSetManager;
-  private final EarlybirdWarmUpManager warmUpManager;
-  private final MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager;
+  pr vate f nal Earlyb rdServerSetManager serverSetManager;
+  pr vate f nal Earlyb rdWarmUpManager warmUpManager;
+  pr vate f nal Mult Seg ntTermD ct onaryManager mult Seg ntTermD ct onaryManager;
 
-  private final Object shutdownLock = new Object();
+  pr vate f nal Object shutdownLock = new Object();
   @GuardedBy("shutdownLock")
-  private final EarlybirdFuturePoolManager futurePoolManager;
+  pr vate f nal Earlyb rdFuturePoolManager futurePoolManager;
   @GuardedBy("shutdownLock")
-  private final EarlybirdFinagleServerManager finagleServerManager;
+  pr vate f nal Earlyb rdF nagleServerManager f nagleServerManager;
 
-  // If a search request comes in with a client-side start time, and we see that based on that
-  // the timeout has expired, whether we should drop that query immediately.
-  private final boolean skipTimedOutRequests =
-      EarlybirdConfig.getBool("skip_timedout_requests", false);
+  //  f a search request co s  n w h a cl ent-s de start t  , and   see that based on that
+  // t  t  out has exp red, w t r   should drop that query  m d ately.
+  pr vate f nal boolean sk pT  dOutRequests =
+      Earlyb rdConf g.getBool("sk p_t  dout_requests", false);
 
-  // client of szookeeper.local.twitter.com.
-  // This is used to perform distributed locking and layout reading etc.
-  private final ZooKeeperProxy sZooKeeperClient;
+  // cl ent of szookeeper.local.tw ter.com.
+  // T   s used to perform d str buted lock ng and la t read ng etc.
+  pr vate f nal ZooKeeperProxy sZooKeeperCl ent;
 
-  private final Decider decider;
+  pr vate f nal Dec der dec der;
 
-  private final Clock clock;
+  pr vate f nal Clock clock;
 
-  private final List<Closeable> toClose = new ArrayList<>();
+  pr vate f nal L st<Closeable> toClose = new ArrayL st<>();
 
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
+  pr vate f nal Search ndex ng tr cSet search ndex ng tr cSet;
 
-  private final EarlybirdDarkProxy earlybirdDarkProxy;
+  pr vate f nal Earlyb rdDarkProxy earlyb rdDarkProxy;
 
-  private final ImmutableMap<EarlybirdResponseCode, SearchCounter> responseCodeCounters;
-  private final SegmentSyncConfig segmentSyncConfig;
-  private final EarlybirdStartup earlybirdStartup;
-  private final QualityFactor qualityFactor;
+  pr vate f nal  mmutableMap<Earlyb rdResponseCode, SearchCounter> responseCodeCounters;
+  pr vate f nal Seg ntSyncConf g seg ntSyncConf g;
+  pr vate f nal Earlyb rdStartup earlyb rdStartup;
+  pr vate f nal Qual yFactor qual yFactor;
 
-  private boolean isShutdown = false;
-  private boolean isShuttingDown = false;
+  pr vate boolean  sShutdown = false;
+  pr vate boolean  sShutt ngDown = false;
 
-  private final AtomicLongMap<String> queriedFieldsCounts = AtomicLongMap.create();
+  pr vate f nal Atom cLongMap<Str ng> quer edF eldsCounts = Atom cLongMap.create();
 
-  public EarlybirdServer(QueryCacheManager queryCacheManager,
-                         ZooKeeperProxy sZkClient,
-                         Decider decider,
-                         EarlybirdIndexConfig earlybirdIndexConfig,
-                         DynamicPartitionConfig dynamicPartitionConfig,
-                         PartitionManager partitionManager,
-                         SegmentManager segmentManager,
-                         AudioSpaceTable audioSpaceTable,
-                         TermCountMonitor termCountMonitor,
-                         TweetCountMonitor tweetCountMonitor,
-                         UpdateableEarlybirdStateManager earlybirdStateManager,
-                         EarlybirdFuturePoolManager futurePoolManager,
-                         EarlybirdFinagleServerManager finagleServerManager,
-                         EarlybirdServerSetManager serverSetManager,
-                         EarlybirdWarmUpManager warmUpManager,
-                         SearchStatsReceiver earlybirdServerStatsReceiver,
-                         EarlybirdSearcherStats tweetsSearcherStats,
-                         ScoringModelsManager scoringModelsManager,
+  publ c Earlyb rdServer(QueryCac Manager queryCac Manager,
+                         ZooKeeperProxy sZkCl ent,
+                         Dec der dec der,
+                         Earlyb rd ndexConf g earlyb rd ndexConf g,
+                         Dynam cPart  onConf g dynam cPart  onConf g,
+                         Part  onManager part  onManager,
+                         Seg ntManager seg ntManager,
+                         Aud oSpaceTable aud oSpaceTable,
+                         TermCountMon or termCountMon or,
+                         T etCountMon or t etCountMon or,
+                         UpdateableEarlyb rdStateManager earlyb rdStateManager,
+                         Earlyb rdFuturePoolManager futurePoolManager,
+                         Earlyb rdF nagleServerManager f nagleServerManager,
+                         Earlyb rdServerSetManager serverSetManager,
+                         Earlyb rdWarmUpManager warmUpManager,
+                         SearchStatsRece ver earlyb rdServerStatsRece ver,
+                         Earlyb rdSearc rStats t etsSearc rStats,
+                         Scor ngModelsManager scor ngModelsManager,
                          TensorflowModelsManager tensorflowModelsManager,
                          Clock clock,
-                         MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager,
-                         EarlybirdDarkProxy earlybirdDarkProxy,
-                         SegmentSyncConfig segmentSyncConfig,
-                         QueryTimeoutFactory queryTimeoutFactory,
-                         EarlybirdStartup earlybirdStartup,
-                         QualityFactor qualityFactor,
-                         SearchIndexingMetricSet searchIndexingMetricSet) {
-    LOG.info("Creating EarlybirdServer");
-    this.decider = decider;
-    this.clock = clock;
-    this.sZooKeeperClient = sZkClient;
-    this.earlybirdIndexConfig = earlybirdIndexConfig;
-    this.dynamicPartitionConfig = dynamicPartitionConfig;
-    this.segmentManager = segmentManager;
-    this.queryCacheManager = queryCacheManager;
-    this.termCountMonitor = termCountMonitor;
-    this.tweetCountMonitor = tweetCountMonitor;
-    this.stateManager = earlybirdStateManager;
-    this.partitionManager = partitionManager;
-    this.futurePoolManager = futurePoolManager;
-    this.finagleServerManager = finagleServerManager;
-    this.serverSetManager = serverSetManager;
-    this.warmUpManager = warmUpManager;
-    this.earlybirdServerStatsReceiver = earlybirdServerStatsReceiver;
-    this.tweetsSearcherStats = tweetsSearcherStats;
-    this.scoringModelsManager = scoringModelsManager;
-    this.tensorflowModelsManager = tensorflowModelsManager;
-    this.multiSegmentTermDictionaryManager = multiSegmentTermDictionaryManager;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.earlybirdDarkProxy = earlybirdDarkProxy;
-    this.segmentSyncConfig = segmentSyncConfig;
-    this.queryTimeoutFactory = queryTimeoutFactory;
-    this.earlybirdStartup = earlybirdStartup;
-    this.qualityFactor = qualityFactor;
-    this.audioSpaceTable = audioSpaceTable;
+                         Mult Seg ntTermD ct onaryManager mult Seg ntTermD ct onaryManager,
+                         Earlyb rdDarkProxy earlyb rdDarkProxy,
+                         Seg ntSyncConf g seg ntSyncConf g,
+                         QueryT  outFactory queryT  outFactory,
+                         Earlyb rdStartup earlyb rdStartup,
+                         Qual yFactor qual yFactor,
+                         Search ndex ng tr cSet search ndex ng tr cSet) {
+    LOG. nfo("Creat ng Earlyb rdServer");
+    t .dec der = dec der;
+    t .clock = clock;
+    t .sZooKeeperCl ent = sZkCl ent;
+    t .earlyb rd ndexConf g = earlyb rd ndexConf g;
+    t .dynam cPart  onConf g = dynam cPart  onConf g;
+    t .seg ntManager = seg ntManager;
+    t .queryCac Manager = queryCac Manager;
+    t .termCountMon or = termCountMon or;
+    t .t etCountMon or = t etCountMon or;
+    t .stateManager = earlyb rdStateManager;
+    t .part  onManager = part  onManager;
+    t .futurePoolManager = futurePoolManager;
+    t .f nagleServerManager = f nagleServerManager;
+    t .serverSetManager = serverSetManager;
+    t .warmUpManager = warmUpManager;
+    t .earlyb rdServerStatsRece ver = earlyb rdServerStatsRece ver;
+    t .t etsSearc rStats = t etsSearc rStats;
+    t .scor ngModelsManager = scor ngModelsManager;
+    t .tensorflowModelsManager = tensorflowModelsManager;
+    t .mult Seg ntTermD ct onaryManager = mult Seg ntTermD ct onaryManager;
+    t .search ndex ng tr cSet = search ndex ng tr cSet;
+    t .earlyb rdDarkProxy = earlyb rdDarkProxy;
+    t .seg ntSyncConf g = seg ntSyncConf g;
+    t .queryT  outFactory = queryT  outFactory;
+    t .earlyb rdStartup = earlyb rdStartup;
+    t .qual yFactor = qual yFactor;
+    t .aud oSpaceTable = aud oSpaceTable;
 
-    EarlybirdStatus.setStartTime(System.currentTimeMillis());
+    Earlyb rdStatus.setStartT  (System.currentT  M ll s());
 
-    // Our initial status code is STARTING.
-    EarlybirdStatus.setStatus(EarlybirdStatusCode.STARTING);
-    EarlybirdStatus.THRIFT_SERVICE_STARTED.set(false);
+    //    n  al status code  s START NG.
+    Earlyb rdStatus.setStatus(Earlyb rdStatusCode.START NG);
+    Earlyb rdStatus.THR FT_SERV CE_STARTED.set(false);
 
-    PartitionConfig partitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
-    earlybirdServerStatsReceiver.getLongGauge(
-        "search_cluster_" + partitionConfig.getClusterName()).set(1);
-    earlybirdServerStatsReceiver.getLongGauge(
-        "tier_name_" + partitionConfig.getTierName()).set(1);
+    Part  onConf g part  onConf g = dynam cPart  onConf g.getCurrentPart  onConf g();
+    earlyb rdServerStatsRece ver.getLongGauge(
+        "search_cluster_" + part  onConf g.getClusterNa ()).set(1);
+    earlyb rdServerStatsRece ver.getLongGauge(
+        "t er_na _" + part  onConf g.getT erNa ()).set(1);
 
-    earlybirdServerStatsReceiver.getLongGauge("partition").set(
-        partitionConfig.getIndexingHashPartitionID());
-    earlybirdServerStatsReceiver.getLongGauge("replica").set(
-        partitionConfig.getHostPositionWithinHashPartition());
-    earlybirdServerStatsReceiver.getLongGauge("penguin_version").set(
-        EarlybirdConfig.getPenguinVersionByte());
+    earlyb rdServerStatsRece ver.getLongGauge("part  on").set(
+        part  onConf g.get ndex ngHashPart  on D());
+    earlyb rdServerStatsRece ver.getLongGauge("repl ca").set(
+        part  onConf g.getHostPos  onW h nHashPart  on());
+    earlyb rdServerStatsRece ver.getLongGauge("pengu n_vers on").set(
+        Earlyb rdConf g.getPengu nVers onByte());
 
-    earlybirdServerStatsReceiver.getLongGauge("flush_version").set(
-        FlushVersion.CURRENT_FLUSH_VERSION.ordinal());
-    String buildGen = EarlybirdConfig.getString("offline_segment_build_gen", "unknown");
-    earlybirdServerStatsReceiver.getLongGauge("build_gen_" + buildGen).set(1);
+    earlyb rdServerStatsRece ver.getLongGauge("flush_vers on").set(
+        FlushVers on.CURRENT_FLUSH_VERS ON.ord nal());
+    Str ng bu ldGen = Earlyb rdConf g.getStr ng("offl ne_seg nt_bu ld_gen", "unknown");
+    earlyb rdServerStatsRece ver.getLongGauge("bu ld_gen_" + bu ldGen).set(1);
 
-    this.startupTimeGauge = earlybirdServerStatsReceiver.getLongGauge("startup_time_millis");
-    this.internalQueueWaitTimeStats = earlybirdServerStatsReceiver.getTimerStats(
-        "internal_queue_wait_time", TimeUnit.MILLISECONDS, false, true, false);
-    this.requestTimeoutExceededBeforeSearchCounter = earlybirdServerStatsReceiver.getCounter(
-        "request_timeout_exceeded_before_search");
-    this.numSearcherThreadsGauge =
-        earlybirdServerStatsReceiver.getLongGauge("num_searcher_threads");
-    this.overallScoringTimePerQueryStats = earlybirdServerStatsReceiver.getTimerStats(
-        "overall_scoring_time_per_query", TimeUnit.NANOSECONDS, false, true, false);
+    t .startupT  Gauge = earlyb rdServerStatsRece ver.getLongGauge("startup_t  _m ll s");
+    t . nternalQueueWa T  Stats = earlyb rdServerStatsRece ver.getT  rStats(
+        " nternal_queue_wa _t  ", T  Un .M LL SECONDS, false, true, false);
+    t .requestT  outExceededBeforeSearchCounter = earlyb rdServerStatsRece ver.getCounter(
+        "request_t  out_exceeded_before_search");
+    t .numSearc rThreadsGauge =
+        earlyb rdServerStatsRece ver.getLongGauge("num_searc r_threads");
+    t .overallScor ngT  PerQueryStats = earlyb rdServerStatsRece ver.getT  rStats(
+        "overall_scor ng_t  _per_query", T  Un .NANOSECONDS, false, true, false);
 
-    // For most of our scoring functions the scoring_time_per_hit records the actual time to score a
-    // single hit. However, the tensorflow based scoring function uses batch scoring, so we do not
-    // know the actual time it takes to score a single hit. We are now including batch scoring time
-    // in all scoring time stats (SEARCH-26014), which means that the scoring_time_per_hit stat may
-    // be a bit misleading for tensorflow based queries. For these queries the scoring_time_per_hit
-    // represents the ratio between total_scoring_time and the number_of_hits, instead of the actual
-    // time to score a single hit.
-    this.overallScoringTimePerHitStats = earlybirdServerStatsReceiver.getTimerStats(
-        "overall_scoring_time_per_hit", TimeUnit.NANOSECONDS, false, true, false);
-    this.overallScoringNumHitsProcessedStats = PercentileUtil.createPercentile(
-        "overall_scoring_num_hits_processed");
+    // For most of   scor ng funct ons t  scor ng_t  _per_h  records t  actual t   to score a
+    // s ngle h . Ho ver, t  tensorflow based scor ng funct on uses batch scor ng, so   do not
+    // know t  actual t     takes to score a s ngle h .   are now  nclud ng batch scor ng t  
+    //  n all scor ng t   stats (SEARCH-26014), wh ch  ans that t  scor ng_t  _per_h  stat may
+    // be a b  m slead ng for tensorflow based quer es. For t se quer es t  scor ng_t  _per_h 
+    // represents t  rat o bet en total_scor ng_t   and t  number_of_h s,  nstead of t  actual
+    // t   to score a s ngle h .
+    t .overallScor ngT  PerH Stats = earlyb rdServerStatsRece ver.getT  rStats(
+        "overall_scor ng_t  _per_h ", T  Un .NANOSECONDS, false, true, false);
+    t .overallScor ngNumH sProcessedStats = Percent leUt l.createPercent le(
+        "overall_scor ng_num_h s_processed");
 
-    ImmutableMap.Builder<EarlybirdResponseCode, SearchCounter> responseCodeCountersBuilder =
-        new ImmutableMap.Builder<>();
-    for (EarlybirdResponseCode responseCode : EarlybirdResponseCode.values()) {
-      responseCodeCountersBuilder.put(
+     mmutableMap.Bu lder<Earlyb rdResponseCode, SearchCounter> responseCodeCountersBu lder =
+        new  mmutableMap.Bu lder<>();
+    for (Earlyb rdResponseCode responseCode : Earlyb rdResponseCode.values()) {
+      responseCodeCountersBu lder.put(
           responseCode,
-          earlybirdServerStatsReceiver.getCounter(
-              "responses_with_response_code_" + responseCode.name().toLowerCase()));
+          earlyb rdServerStatsRece ver.getCounter(
+              "responses_w h_response_code_" + responseCode.na ().toLo rCase()));
     }
-    responseCodeCounters = responseCodeCountersBuilder.build();
+    responseCodeCounters = responseCodeCountersBu lder.bu ld();
 
-    disableLuceneQueryCache();
-    initManagers();
+    d sableLuceneQueryCac ();
+     n Managers();
 
-    requestPreLogger = EarlybirdRequestPreLogger.buildForShard(
-      EarlybirdConfig.getInt("latency_warn_threshold", 100), decider);
-    requestLogger = EarlybirdRequestPostLogger.buildForShard(
-        EarlybirdConfig.getInt("latency_warn_threshold", 100), decider);
+    requestPreLogger = Earlyb rdRequestPreLogger.bu ldForShard(
+      Earlyb rdConf g.get nt("latency_warn_threshold", 100), dec der);
+    requestLogger = Earlyb rdRequestPostLogger.bu ldForShard(
+        Earlyb rdConf g.get nt("latency_warn_threshold", 100), dec der);
 
-    this.qualityFactor.startUpdates();
+    t .qual yFactor.startUpdates();
 
-    LOG.info("Created EarlybirdServer");
+    LOG. nfo("Created Earlyb rdServer");
   }
 
-  public boolean isShutdown() {
-    return this.isShutdown;
+  publ c boolean  sShutdown() {
+    return t . sShutdown;
   }
 
-  private void initManagers() {
-    LOG.info("Created EarlybirdIndexConfig: " + earlybirdIndexConfig.getClass().getSimpleName());
+  pr vate vo d  n Managers() {
+    LOG. nfo("Created Earlyb rd ndexConf g: " + earlyb rd ndexConf g.getClass().getS mpleNa ());
 
-    segmentManager.addUpdateListener(queryCacheManager);
+    seg ntManager.addUpdateL stener(queryCac Manager);
   }
 
-  public PartitionManager getPartitionManager() {
-    return partitionManager;
+  publ c Part  onManager getPart  onManager() {
+    return part  onManager;
   }
 
-  public QueryCacheManager getQueryCacheManager() {
-    return queryCacheManager;
+  publ c QueryCac Manager getQueryCac Manager() {
+    return queryCac Manager;
   }
 
-  public SegmentManager getSegmentManager() {
-    return segmentManager;
+  publ c Seg ntManager getSeg ntManager() {
+    return seg ntManager;
   }
 
-  public MultiSegmentTermDictionaryManager getMultiSegmentTermDictionaryManager() {
-    return this.multiSegmentTermDictionaryManager;
+  publ c Mult Seg ntTermD ct onaryManager getMult Seg ntTermD ct onaryManager() {
+    return t .mult Seg ntTermD ct onaryManager;
   }
 
-  @VisibleForTesting
-  public int getPort() {
+  @V s bleForTest ng
+  publ c  nt getPort() {
     return port;
   }
 
-  private void disableLuceneQueryCache() {
-    // SEARCH-30046: Look into possibly re-enabling the query -> weight cache.
-    // We can't use this cache until we upgrade to Lucene 6.0.0, because we have queries with a
-    // boost of 0.0, and they don't play nicely with Lucene's LRUQueryCache.get() method.
+  pr vate vo d d sableLuceneQueryCac () {
+    // SEARCH-30046: Look  nto poss bly re-enabl ng t  query ->   ght cac .
+    //   can't use t  cac  unt l   upgrade to Lucene 6.0.0, because   have quer es w h a
+    // boost of 0.0, and t y don't play n cely w h Lucene's LRUQueryCac .get()  thod.
     //
-    // Lucene 6.0.0 changes how boosts are handled: "real" boosts should be wrapped into BoostQuery
-    // instances, and queries with a boost of 0.0 should be rewritten as "filters"
-    // (BooleanQuery.add(query, BooleanClause.Occur.FILTER)). So when we upgrade to Lucene 6.0.0 we
-    // will be forced to refactor how we handle our current queries with a boost of 0.0, which might
-    // allow us to re-enable this cache.
+    // Lucene 6.0.0 changes how boosts are handled: "real" boosts should be wrapped  nto BoostQuery
+    //  nstances, and quer es w h a boost of 0.0 should be rewr ten as "f lters"
+    // (BooleanQuery.add(query, BooleanClause.Occur.F LTER)). So w n   upgrade to Lucene 6.0.0  
+    // w ll be forced to refactor how   handle   current quer es w h a boost of 0.0, wh ch m ght
+    // allow us to re-enable t  cac .
     //
-    // Note that disabling this cache is not a regression: it should give us the behavior that we
-    // had with Lucene 5.2.1 (and it's unclear if this cache is useful at all).
+    // Note that d sabl ng t  cac   s not a regress on:   should g ve us t  behav or that  
+    // had w h Lucene 5.2.1 (and  's unclear  f t  cac   s useful at all).
     //
-    // WARNING: The default 'DefaultQueryCache' maintains a static reference to the weight forever,
-    // causing a memory leak. Our weights hold references to an entire segment so the memory leak is
-    // significant.
-    IndexSearcher.setDefaultQueryCache(null);
+    // WARN NG: T  default 'DefaultQueryCac ' ma nta ns a stat c reference to t    ght forever,
+    // caus ng a  mory leak.     ghts hold references to an ent re seg nt so t   mory leak  s
+    // s gn f cant.
+     ndexSearc r.setDefaultQueryCac (null);
   }
 
   /**
-   * Starts the earlybird server.
+   * Starts t  earlyb rd server.
    */
-  public void start() throws EarlybirdStartupException {
-    // Make sure this is at the top of the function before other parts of the system start running
-    new EarlybirdBlacklistHandler(Clock.SYSTEM_CLOCK, sZooKeeperClient)
-        .blockThenExitIfBlacklisted();
+  publ c vo d start() throws Earlyb rdStartupExcept on {
+    // Make sure t   s at t  top of t  funct on before ot r parts of t  system start runn ng
+    new Earlyb rdBlackl stHandler(Clock.SYSTEM_CLOCK, sZooKeeperCl ent)
+        .blockT nEx  fBlackl sted();
 
     Stopwatch startupWatch = Stopwatch.createStarted();
-    EarlybirdStatus.beginEvent(EARLYBIRD_STARTUP, searchIndexingMetricSet.startupInProgress);
+    Earlyb rdStatus.beg nEvent(EARLYB RD_STARTUP, search ndex ng tr cSet.startup nProgress);
 
-    LOG.info("java.library.path is: " + System.getProperty("java.library.path"));
+    LOG. nfo("java.l brary.path  s: " + System.getProperty("java.l brary.path"));
 
-    PartitionConfig partitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
+    Part  onConf g part  onConf g = dynam cPart  onConf g.getCurrentPart  onConf g();
 
-    SegmentVulture.removeUnusedSegments(partitionManager, partitionConfig,
-        earlybirdIndexConfig.getSchema().getMajorVersionNumber(), segmentSyncConfig);
+    Seg ntVulture.removeUnusedSeg nts(part  onManager, part  onConf g,
+        earlyb rd ndexConf g.getSc ma().getMajorVers onNumber(), seg ntSyncConf g);
 
-    // Start the schema manager
-    schedule(stateManager);
+    // Start t  sc ma manager
+    sc dule(stateManager);
 
-    Closeable closeable = earlybirdStartup.start();
+    Closeable closeable = earlyb rdStartup.start();
     toClose.add(closeable);
-    if (EarlybirdStatus.getStatusCode() == EarlybirdStatusCode.STOPPING) {
-      LOG.info("Server is shutdown. Exiting...");
+     f (Earlyb rdStatus.getStatusCode() == Earlyb rdStatusCode.STOPP NG) {
+      LOG. nfo("Server  s shutdown. Ex  ng...");
       return;
     }
 
-    startupTimeGauge.set(startupWatch.elapsed(TimeUnit.MILLISECONDS));
+    startupT  Gauge.set(startupWatch.elapsed(T  Un .M LL SECONDS));
 
-    EarlybirdStatus.endEvent(EARLYBIRD_STARTUP, searchIndexingMetricSet.startupInProgress);
+    Earlyb rdStatus.endEvent(EARLYB RD_STARTUP, search ndex ng tr cSet.startup nProgress);
 
-    GCUtil.runGC();  // Attempt to force a full GC before joining the serverset
+    GCUt l.runGC();  // Attempt to force a full GC before jo n ng t  serverset
 
     try {
-      startThriftService(null, true);
-    } catch (InterruptedException e) {
-      LOG.info("Interrupted while starting thrift server, quitting earlybird");
-      throw new EarlybirdStartupException("Interrupted while starting thrift server");
+      startThr ftServ ce(null, true);
+    } catch ( nterruptedExcept on e) {
+      LOG. nfo(" nterrupted wh le start ng thr ft server, qu t ng earlyb rd");
+      throw new Earlyb rdStartupExcept on(" nterrupted wh le start ng thr ft server");
     }
 
-    EarlybirdStatus.THRIFT_SERVICE_STARTED.set(true);
+    Earlyb rdStatus.THR FT_SERV CE_STARTED.set(true);
 
-    // only once we're current, kick off daily tweet count monitors only for archive cluster
-    if (EarlybirdConfig.getInt(TweetCountMonitor.RUN_INTERVAL_MINUTES_CONFIG_NAME, -1) > 0) {
-      schedule(tweetCountMonitor);
+    // only once  're current, k ck off da ly t et count mon ors only for arch ve cluster
+     f (Earlyb rdConf g.get nt(T etCountMon or.RUN_ NTERVAL_M NUTES_CONF G_NAME, -1) > 0) {
+      sc dule(t etCountMon or);
     }
 
-    // only once we're current, kick off per-field term count monitors
-    if (EarlybirdConfig.getInt(TermCountMonitor.RUN_INTERVAL_MINUTES_CONFIG_NAME, -1) > 0) {
-      schedule(termCountMonitor);
+    // only once  're current, k ck off per-f eld term count mon ors
+     f (Earlyb rdConf g.get nt(TermCountMon or.RUN_ NTERVAL_M NUTES_CONF G_NAME, -1) > 0) {
+      sc dule(termCountMon or);
     }
 
-    startupTimeGauge.set(startupWatch.elapsed(TimeUnit.MILLISECONDS));
-    LOG.info("EarlybirdServer start up time: {}", startupWatch);
+    startupT  Gauge.set(startupWatch.elapsed(T  Un .M LL SECONDS));
+    LOG. nfo("Earlyb rdServer start up t  : {}", startupWatch);
   }
 
   /**
-   * Starts the thrift server if the server is not running.
-   * If searcherThreads is null, it uses the value specified by EarlybirdConfig.
+   * Starts t  thr ft server  f t  server  s not runn ng.
+   *  f searc rThreads  s null,   uses t  value spec f ed by Earlyb rdConf g.
    */
-  public void startThriftService(@Nullable Integer searcherThreads, boolean isStartingUp)
-      throws InterruptedException {
-    synchronized (shutdownLock) {
-      if (!finagleServerManager.isWarmUpServerRunning()
-          && !finagleServerManager.isProductionServerRunning()) {
-        int threadCount = searcherThreads != null
-            ? searcherThreads : this.numSearcherThreads;
-        LOG.info("Starting searcher pool with " + threadCount + " threads");
-        futurePoolManager.createUnderlyingFuturePool(threadCount);
-        numSearcherThreadsGauge.set(threadCount);
+  publ c vo d startThr ftServ ce(@Nullable  nteger searc rThreads, boolean  sStart ngUp)
+      throws  nterruptedExcept on {
+    synchron zed (shutdownLock) {
+       f (!f nagleServerManager. sWarmUpServerRunn ng()
+          && !f nagleServerManager. sProduct onServerRunn ng()) {
+         nt threadCount = searc rThreads != null
+            ? searc rThreads : t .numSearc rThreads;
+        LOG. nfo("Start ng searc r pool w h " + threadCount + " threads");
+        futurePoolManager.createUnderly ngFuturePool(threadCount);
+        numSearc rThreadsGauge.set(threadCount);
 
-        // If the server is not shutting down, go through the warm up stage. If the server is
-        // instructed to shut down during warm up, warmUpManager.warmUp() should return within a
-        // second, and should leave the warm up server set. We should still shut down the warm up
-        // Finagle server.
-        if (isStartingUp && (EarlybirdStatus.getStatusCode() != EarlybirdStatusCode.STOPPING)) {
-          LOG.info("Opening warmup thrift port...");
-          finagleServerManager.startWarmUpFinagleServer(this, SERVICE_NAME, warmUpPort);
-          EarlybirdStatus.WARMUP_THRIFT_PORT_OPEN.set(true);
+        //  f t  server  s not shutt ng down, go through t  warm up stage.  f t  server  s
+        //  nstructed to shut down dur ng warm up, warmUpManager.warmUp() should return w h n a
+        // second, and should leave t  warm up server set.   should st ll shut down t  warm up
+        // F nagle server.
+         f ( sStart ngUp && (Earlyb rdStatus.getStatusCode() != Earlyb rdStatusCode.STOPP NG)) {
+          LOG. nfo("Open ng warmup thr ft port...");
+          f nagleServerManager.startWarmUpF nagleServer(t , SERV CE_NAME, warmUpPort);
+          Earlyb rdStatus.WARMUP_THR FT_PORT_OPEN.set(true);
 
           try {
             warmUpManager.warmUp();
-          } catch (UpdateException e) {
-            LOG.warn("Could not join or leave the warm up server set.", e);
-          } finally {
-            finagleServerManager.stopWarmUpFinagleServer(SERVER_CLOSE_WAIT_TIME);
-            EarlybirdStatus.WARMUP_THRIFT_PORT_OPEN.set(false);
+          } catch (UpdateExcept on e) {
+            LOG.warn("Could not jo n or leave t  warm up server set.", e);
+          } f nally {
+            f nagleServerManager.stopWarmUpF nagleServer(SERVER_CLOSE_WA T_T ME);
+            Earlyb rdStatus.WARMUP_THR FT_PORT_OPEN.set(false);
           }
         }
 
-        // If the server is not shutting down, we can start the production Finagle server and join
-        // the production server set.
-        if (EarlybirdStatus.getStatusCode() != EarlybirdStatusCode.STOPPING) {
-          LOG.info("Opening production thrift port...");
-          finagleServerManager.startProductionFinagleServer(
-              earlybirdDarkProxy.getDarkProxy(), this, SERVICE_NAME, port);
-          EarlybirdStatus.THRIFT_PORT_OPEN.set(true);
+        //  f t  server  s not shutt ng down,   can start t  product on F nagle server and jo n
+        // t  product on server set.
+         f (Earlyb rdStatus.getStatusCode() != Earlyb rdStatusCode.STOPP NG) {
+          LOG. nfo("Open ng product on thr ft port...");
+          f nagleServerManager.startProduct onF nagleServer(
+              earlyb rdDarkProxy.getDarkProxy(), t , SERV CE_NAME, port);
+          Earlyb rdStatus.THR FT_PORT_OPEN.set(true);
 
-          if (REGISTER_WITH_ZK_ON_STARTUP) {
-            // After the earlybird starts up, register with ZooKeeper.
+           f (REG STER_W TH_ZK_ON_STARTUP) {
+            // After t  earlyb rd starts up, reg ster w h ZooKeeper.
             try {
-              joinServerSet("internal start-up");
+              jo nServerSet(" nternal start-up");
 
-              // Join separate server set for ServiceProxy on Archive Earlybirds
-              if (!EarlybirdConfig.isAurora()) {
-                joinServerSetForServiceProxy();
+              // Jo n separate server set for Serv ceProxy on Arch ve Earlyb rds
+               f (!Earlyb rdConf g. sAurora()) {
+                jo nServerSetForServ ceProxy();
               }
-            } catch (UpdateException e) {
-              throw new RuntimeException("Unable to join ServerSet during startup.", e);
+            } catch (UpdateExcept on e) {
+              throw new Runt  Except on("Unable to jo n ServerSet dur ng startup.", e);
             }
           }
         }
@@ -611,269 +611,269 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
   }
 
   /**
-   * Stops the thrift server if the server is already running.
+   * Stops t  thr ft server  f t  server  s already runn ng.
    */
-  public void stopThriftService(boolean shouldShutDown) {
-    synchronized (shutdownLock) {
+  publ c vo d stopThr ftServ ce(boolean shouldShutDown) {
+    synchron zed (shutdownLock) {
       try {
-        leaveServerSet(shouldShutDown ? "internal shutdown" : "admin stopThriftService");
-      } catch (UpdateException e) {
-        LOG.warn("Leaving production ServerSet failed.", e);
+        leaveServerSet(shouldShutDown ? " nternal shutdown" : "adm n stopThr ftServ ce");
+      } catch (UpdateExcept on e) {
+        LOG.warn("Leav ng product on ServerSet fa led.", e);
       }
 
-      if (finagleServerManager.isProductionServerRunning()) {
+       f (f nagleServerManager. sProduct onServerRunn ng()) {
         try {
-          finagleServerManager.stopProductionFinagleServer(SERVER_CLOSE_WAIT_TIME);
-          futurePoolManager.stopUnderlyingFuturePool(
-              SERVER_CLOSE_WAIT_TIME.inSeconds(), TimeUnit.SECONDS);
-          numSearcherThreadsGauge.set(0);
-        } catch (InterruptedException e) {
-          LOG.error("Interrupted while stopping thrift service", e);
-          Thread.currentThread().interrupt();
+          f nagleServerManager.stopProduct onF nagleServer(SERVER_CLOSE_WA T_T ME);
+          futurePoolManager.stopUnderly ngFuturePool(
+              SERVER_CLOSE_WA T_T ME. nSeconds(), T  Un .SECONDS);
+          numSearc rThreadsGauge.set(0);
+        } catch ( nterruptedExcept on e) {
+          LOG.error(" nterrupted wh le stopp ng thr ft serv ce", e);
+          Thread.currentThread(). nterrupt();
         }
-        EarlybirdStatus.THRIFT_PORT_OPEN.set(false);
+        Earlyb rdStatus.THR FT_PORT_OPEN.set(false);
       }
     }
   }
 
   /**
-   * Gets a string with information about the last request we've seen from each client.
+   * Gets a str ng w h  nformat on about t  last request  've seen from each cl ent.
    */
-  public Future<String> getLastSearchesByClient(boolean includeResults) {
-    LastSearchesSummary summary = new LastSearchesSummary(
-        lastRequestPerClientId, clientIdSearchStats, includeResults);
+  publ c Future<Str ng> getLastSearc sByCl ent(boolean  ncludeResults) {
+    LastSearc sSummary summary = new LastSearc sSummary(
+        lastRequestPerCl ent d, cl ent dSearchStats,  ncludeResults);
     return Future.value(summary.getSummary());
   }
 
   /**
-   * The following are all the Thrift RPC methods inherited from EarlybirdService.Iface
+   * T  follow ng are all t  Thr ft RPC  thods  n r ed from Earlyb rdServ ce. face
    */
 
-  // Thrift getName RPC.
-  @Override
-  public Future<String> getName() {
-    return Future.value(SERVICE_NAME);
+  // Thr ft getNa  RPC.
+  @Overr de
+  publ c Future<Str ng> getNa () {
+    return Future.value(SERV CE_NAME);
   }
 
-  // Thrift getStatus RPC.
-  @Override
-  public Future<EarlybirdStatusResponse> getStatus() {
-    EarlybirdStatusResponse response = new EarlybirdStatusResponse();
-    response.setCode(EarlybirdStatus.getStatusCode());
-    response.setAliveSince(EarlybirdStatus.getStartTime());
-    response.setMessage(EarlybirdStatus.getStatusMessage());
+  // Thr ft getStatus RPC.
+  @Overr de
+  publ c Future<Earlyb rdStatusResponse> getStatus() {
+    Earlyb rdStatusResponse response = new Earlyb rdStatusResponse();
+    response.setCode(Earlyb rdStatus.getStatusCode());
+    response.setAl veS nce(Earlyb rdStatus.getStartT  ());
+    response.set ssage(Earlyb rdStatus.getStatus ssage());
     return Future.value(response);
   }
 
-  public Future<List<String>> getSegmentMetadata() {
-    return Future.value(segmentManager.getSegmentMetadata());
+  publ c Future<L st<Str ng>> getSeg nt tadata() {
+    return Future.value(seg ntManager.getSeg nt tadata());
   }
 
-  public Future<String> getQueryCachesData() {
-    return Future.value(segmentManager.getQueryCachesData());
+  publ c Future<Str ng> getQueryCac sData() {
+    return Future.value(seg ntManager.getQueryCac sData());
   }
 
   /**
-   * Get a text summary for which fields did we use in a schema.
+   * Get a text summary for wh ch f elds d d   use  n a sc ma.
    */
-  public Future<String> getQueriedFieldsAndSchemaStats() {
-    ImmutableSchemaInterface schema = this.earlybirdIndexConfig.getSchema().getSchemaSnapshot();
+  publ c Future<Str ng> getQuer edF eldsAndSc maStats() {
+     mmutableSc ma nterface sc ma = t .earlyb rd ndexConf g.getSc ma().getSc maSnapshot();
 
-    QueriedFieldsAndSchemaStats summary = new QueriedFieldsAndSchemaStats(schema,
-        queriedFieldsCounts);
+    Quer edF eldsAndSc maStats summary = new Quer edF eldsAndSc maStats(sc ma,
+        quer edF eldsCounts);
     return Future.value(summary.getSummary());
   }
 
   /**
-   * Shuts down the earlybird server.
+   * Shuts down t  earlyb rd server.
    */
-  public void shutdown() {
-    LOG.info("shutdown(): status set to STOPPING");
-    EarlybirdStatus.setStatus(EarlybirdStatusCode.STOPPING);
+  publ c vo d shutdown() {
+    LOG. nfo("shutdown(): status set to STOPP NG");
+    Earlyb rdStatus.setStatus(Earlyb rdStatusCode.STOPP NG);
     try {
-      LOG.info("Stopping Finagle server.");
-      stopThriftService(true);
-      EarlybirdStatus.THRIFT_SERVICE_STARTED.set(false);
+      LOG. nfo("Stopp ng F nagle server.");
+      stopThr ftServ ce(true);
+      Earlyb rdStatus.THR FT_SERV CE_STARTED.set(false);
 
-      if (queryCacheManager != null) {
-        queryCacheManager.shutdown();
+       f (queryCac Manager != null) {
+        queryCac Manager.shutdown();
       } else {
-        LOG.info("No queryCacheManager to shut down");
+        LOG. nfo("No queryCac Manager to shut down");
       }
 
-      earlybirdIndexConfig.getResourceCloser().shutdownExecutor();
+      earlyb rd ndexConf g.getRes ceCloser().shutdownExecutor();
 
-      isShuttingDown = true;
-      LOG.info("Closing {} closeables.", toClose.size());
+       sShutt ngDown = true;
+      LOG. nfo("Clos ng {} closeables.", toClose.s ze());
       for (Closeable closeable : toClose) {
         closeable.close();
       }
-    } catch (InterruptedException | IOException e) {
-      EarlybirdStatus.setStatus(EarlybirdStatusCode.UNHEALTHY, e.getMessage());
-      LOG.error("Interrupted during shutdown, status set to UNHEALTHY");
+    } catch ( nterruptedExcept on |  OExcept on e) {
+      Earlyb rdStatus.setStatus(Earlyb rdStatusCode.UNHEALTHY, e.get ssage());
+      LOG.error(" nterrupted dur ng shutdown, status set to UNHEALTHY");
     }
-    LOG.info("Earlybird server stopped!");
-    isShutdown = true;
+    LOG. nfo("Earlyb rd server stopped!");
+     sShutdown = true;
   }
 
-  @Override
-  public Future<EarlybirdResponse> search(final EarlybirdRequest request) {
-    final long requestReceivedTimeMillis = System.currentTimeMillis();
-    // Record clock diff as early as possible.
-    EarlybirdRequestUtil.recordClientClockDiff(request);
+  @Overr de
+  publ c Future<Earlyb rdResponse> search(f nal Earlyb rdRequest request) {
+    f nal long requestRece vedT  M ll s = System.currentT  M ll s();
+    // Record clock d ff as early as poss ble.
+    Earlyb rdRequestUt l.recordCl entClockD ff(request);
 
-    if (!futurePoolManager.isPoolReady()) {
-      return Future.exception(new TransientException("Earlybird not yet able to handle requests."));
+     f (!futurePoolManager. sPoolReady()) {
+      return Future.except on(new Trans entExcept on("Earlyb rd not yet able to handle requests."));
     }
 
-    return futurePoolManager.apply(new Function0<EarlybirdResponse>() {
-      @Override
-      public EarlybirdResponse apply() {
-        return doSearch(request, requestReceivedTimeMillis);
+    return futurePoolManager.apply(new Funct on0<Earlyb rdResponse>() {
+      @Overr de
+      publ c Earlyb rdResponse apply() {
+        return doSearch(request, requestRece vedT  M ll s);
       }
-    }).rescue(Function.func(
-        // respond with Nack when the queue is full
-        t -> Future.exception((t instanceof RejectedExecutionException) ? QUEUE_FULL_FAILURE : t)));
+    }).rescue(Funct on.func(
+        // respond w h Nack w n t  queue  s full
+        t -> Future.except on((t  nstanceof RejectedExecut onExcept on) ? QUEUE_FULL_FA LURE : t)));
   }
 
-  private EarlybirdResponse doSearch(EarlybirdRequest request, long requestReceivedTimeMillis) {
-    final long queueWaitTime = System.currentTimeMillis() - requestReceivedTimeMillis;
-    internalQueueWaitTimeStats.timerIncrement(queueWaitTime);
+  pr vate Earlyb rdResponse doSearch(Earlyb rdRequest request, long requestRece vedT  M ll s) {
+    f nal long queueWa T   = System.currentT  M ll s() - requestRece vedT  M ll s;
+     nternalQueueWa T  Stats.t  r ncre nt(queueWa T  );
 
-    // request restart time, not to be confused with startTime which is server restart time
-    Timer timer = new Timer(TimeUnit.MICROSECONDS);
+    // request restart t  , not to be confused w h startT   wh ch  s server restart t  
+    T  r t  r = new T  r(T  Un .M CROSECONDS);
 
     requestPreLogger.logRequest(request);
 
-    String clientId = ClientIdUtil.getClientIdFromRequest(request);
-    String finagleClientId = FinagleUtil.getFinagleClientName();
-    requestCountersByFinagleIdAndClientId.getUnchecked(new Pair<>(finagleClientId, clientId))
-        .increment();
+    Str ng cl ent d = Cl ent dUt l.getCl ent dFromRequest(request);
+    Str ng f nagleCl ent d = F nagleUt l.getF nagleCl entNa ();
+    requestCountersByF nagle dAndCl ent d.getUnc cked(new Pa r<>(f nagleCl ent d, cl ent d))
+        . ncre nt();
 
-    EarlybirdRequestUtil.checkAndSetCollectorParams(request);
+    Earlyb rdRequestUt l.c ckAndSetCollectorParams(request);
 
-    // If the thrift logger is busy logging, queue the thrift request for logging.
-    if (EarlybirdThriftRequestLoggingUtil.thriftLoggerBusy) {
-      EarlybirdThriftRequestLoggingUtil.REQUEST_BUFFER.offer(request);
+    //  f t  thr ft logger  s busy logg ng, queue t  thr ft request for logg ng.
+     f (Earlyb rdThr ftRequestLogg ngUt l.thr ftLoggerBusy) {
+      Earlyb rdThr ftRequestLogg ngUt l.REQUEST_BUFFER.offer(request);
     }
 
-    EarlybirdRequestUtil.logAndFixExcessiveValues(request);
+    Earlyb rdRequestUt l.logAndF xExcess veValues(request);
 
-    final EarlybirdSearcher searcher = new EarlybirdSearcher(
+    f nal Earlyb rdSearc r searc r = new Earlyb rdSearc r(
         request,
-        segmentManager,
-        audioSpaceTable,
-        queryCacheManager,
-        earlybirdIndexConfig.getSchema().getSchemaSnapshot(),
-        earlybirdIndexConfig.getCluster(),
-        dynamicPartitionConfig.getCurrentPartitionConfig(),
-        decider,
-        tweetsSearcherStats,
-        scoringModelsManager,
+        seg ntManager,
+        aud oSpaceTable,
+        queryCac Manager,
+        earlyb rd ndexConf g.getSc ma().getSc maSnapshot(),
+        earlyb rd ndexConf g.getCluster(),
+        dynam cPart  onConf g.getCurrentPart  onConf g(),
+        dec der,
+        t etsSearc rStats,
+        scor ngModelsManager,
         tensorflowModelsManager,
         clock,
-        multiSegmentTermDictionaryManager,
-        queryTimeoutFactory,
-        qualityFactor);
+        mult Seg ntTermD ct onaryManager,
+        queryT  outFactory,
+        qual yFactor);
 
     QueryCostTracker queryCostTracker = QueryCostTracker.getTracker();
-    EarlybirdResponse response = null;
+    Earlyb rdResponse response = null;
     try {
-      if (skipTimedOutRequests
-          && searcher.getTerminationTracker().getTimeoutEndTimeWithReservation()
-          <= clock.nowMillis()) {
-        requestTimeoutExceededBeforeSearchCounter.increment();
-        response = new EarlybirdResponse();
-        response.setResponseCode(EarlybirdResponseCode.SERVER_TIMEOUT_ERROR);
+       f (sk pT  dOutRequests
+          && searc r.getTerm nat onTracker().getT  outEndT  W hReservat on()
+          <= clock.nowM ll s()) {
+        requestT  outExceededBeforeSearchCounter. ncre nt();
+        response = new Earlyb rdResponse();
+        response.setResponseCode(Earlyb rdResponseCode.SERVER_T MEOUT_ERROR);
       } else {
         queryCostTracker.reset();
-        response = searcher.search();
+        response = searc r.search();
       }
-    } finally {
-      if (response == null) {
-        // This can only happen if we failed to catch an exception in the searcher.
-        LOG.error("Response was null: " + request.toString());
-        response = new EarlybirdResponse();
-        response.setResponseCode(EarlybirdResponseCode.TRANSIENT_ERROR);
-      }
-
-      if (response.getSearchResults() == null) {
-        List<ThriftSearchResult> emptyResultSet = Lists.newArrayList();
-        response.setSearchResults(new ThriftSearchResults(emptyResultSet));
+    } f nally {
+       f (response == null) {
+        // T  can only happen  f   fa led to catch an except on  n t  searc r.
+        LOG.error("Response was null: " + request.toStr ng());
+        response = new Earlyb rdResponse();
+        response.setResponseCode(Earlyb rdResponseCode.TRANS ENT_ERROR);
       }
 
-      long reqLatency = timer.stop();
-      response.setResponseTime(reqLatency / 1000);
-      response.setResponseTimeMicros(reqLatency);
+       f (response.getSearchResults() == null) {
+        L st<Thr ftSearchResult> emptyResultSet = L sts.newArrayL st();
+        response.setSearchResults(new Thr ftSearchResults(emptyResultSet));
+      }
+
+      long reqLatency = t  r.stop();
+      response.setResponseT  (reqLatency / 1000);
+      response.setResponseT  M cros(reqLatency);
       response.getSearchResults().setQueryCost(queryCostTracker.getTotalCost());
 
-      requestLogger.logRequest(request, response, timer);
+      requestLogger.logRequest(request, response, t  r);
 
-      int numResults = EarlybirdRequestLogger.numResultsForLog(response);
-      boolean success = response.getResponseCode() == EarlybirdResponseCode.SUCCESS;
-      boolean clientError = response.getResponseCode() == EarlybirdResponseCode.CLIENT_ERROR;
-      boolean earlyTerminated = (response.getSearchResults().isSetNumPartitionsEarlyTerminated()
-          && response.getSearchResults().getNumPartitionsEarlyTerminated() > 0)
-          || searcher.getTerminationTracker().isEarlyTerminated();
-      // Update termination stats.
-      searcher.getTerminationTracker().getEarlyTerminationState().incrementCount();
+       nt numResults = Earlyb rdRequestLogger.numResultsForLog(response);
+      boolean success = response.getResponseCode() == Earlyb rdResponseCode.SUCCESS;
+      boolean cl entError = response.getResponseCode() == Earlyb rdResponseCode.CL ENT_ERROR;
+      boolean earlyTerm nated = (response.getSearchResults(). sSetNumPart  onsEarlyTerm nated()
+          && response.getSearchResults().getNumPart  onsEarlyTerm nated() > 0)
+          || searc r.getTerm nat onTracker(). sEarlyTerm nated();
+      // Update term nat on stats.
+      searc r.getTerm nat onTracker().getEarlyTerm nat onState(). ncre ntCount();
 
-      searchStats.requestComplete(reqLatency, numResults, success, earlyTerminated, clientError);
-      if (searcher.getRequestStats() != null) {
-        searcher.getRequestStats().requestComplete(reqLatency, numResults, success,
-            earlyTerminated, clientError);
+      searchStats.requestComplete(reqLatency, numResults, success, earlyTerm nated, cl entError);
+       f (searc r.getRequestStats() != null) {
+        searc r.getRequestStats().requestComplete(reqLatency, numResults, success,
+            earlyTerm nated, cl entError);
       }
 
-      getResponseCodeCounter(response.getResponseCode()).increment();
-      // Adding this counter to make it easier to debug cases where we see a spike in
-      // bad client request errors but don't know where they're coming from. (The
-      // alternative is to ssh to a machine in the cluster and sample
-      // /var/log/earlybird/earlybird.failed_requests).
-      getClientIdResponseCodeCounter(clientId, response.getResponseCode()).increment();
+      getResponseCodeCounter(response.getResponseCode()). ncre nt();
+      // Add ng t  counter to make   eas er to debug cases w re   see a sp ke  n
+      // bad cl ent request errors but don't know w re t y're com ng from. (T 
+      // alternat ve  s to ssh to a mach ne  n t  cluster and sample
+      // /var/log/earlyb rd/earlyb rd.fa led_requests).
+      getCl ent dResponseCodeCounter(cl ent d, response.getResponseCode()). ncre nt();
 
       // Export request latency as a stat.
-      clientIdSearchStats.getUnchecked(clientId).timerIncrement(reqLatency);
-      requestCountersByFinagleClientId.getUnchecked(finagleClientId).timerIncrement(reqLatency);
-      addEarlybirdServerStats(response, queueWaitTime);
-      // Export scoring stats for the request.
-      exportScoringTimeStats(response, clientId);
+      cl ent dSearchStats.getUnc cked(cl ent d).t  r ncre nt(reqLatency);
+      requestCountersByF nagleCl ent d.getUnc cked(f nagleCl ent d).t  r ncre nt(reqLatency);
+      addEarlyb rdServerStats(response, queueWa T  );
+      // Export scor ng stats for t  request.
+      exportScor ngT  Stats(response, cl ent d);
     }
 
-    Set<String> queriedFields = searcher.getQueriedFields();
-    if (queriedFields != null) {
-      for (String queriedField : queriedFields) {
-        queriedFieldsCounts.incrementAndGet(queriedField);
+    Set<Str ng> quer edF elds = searc r.getQuer edF elds();
+     f (quer edF elds != null) {
+      for (Str ng quer edF eld : quer edF elds) {
+        quer edF eldsCounts. ncre ntAndGet(quer edF eld);
       }
     }
 
-    // Increment counters for age of the returned results.
-    if (response.getSearchResults() != null && response.getSearchResults().getResults() != null) {
-      long currentTime = System.currentTimeMillis();
-      for (ThriftSearchResult result : response.getSearchResults().getResults()) {
-        long tweetId = result.getId();
-        if (SnowflakeId.isSnowflakeId(tweetId)) {
-          long ageMillis = Math.max(0L,
-              currentTime - SnowflakeId.unixTimeMillisFromId(tweetId));
-          int ageDays = Duration.fromMilliseconds(ageMillis).inDays();
+    //  ncre nt counters for age of t  returned results.
+     f (response.getSearchResults() != null && response.getSearchResults().getResults() != null) {
+      long currentT   = System.currentT  M ll s();
+      for (Thr ftSearchResult result : response.getSearchResults().getResults()) {
+        long t et d = result.get d();
+         f (Snowflake d. sSnowflake d(t et d)) {
+          long ageM ll s = Math.max(0L,
+              currentT   - Snowflake d.un xT  M ll sFrom d(t et d));
+           nt ageDays = Durat on.fromM ll seconds(ageM ll s). nDays();
 
-          if (EarlybirdConfig.isRealtimeOrProtected()) {
-            String key = "result_age_in_days_" + ageDays;
-            resultsAgeCounter.getUnchecked(key).increment();
+           f (Earlyb rdConf g. sRealt  OrProtected()) {
+            Str ng key = "result_age_ n_days_" + ageDays;
+            resultsAgeCounter.getUnc cked(key). ncre nt();
           } else {
-            int ageYears = ageDays / 365;
-            String key = "result_age_in_years_" + ageYears;
-            resultsAgeCounter.getUnchecked(key).increment();
+             nt ageYears = ageDays / 365;
+            Str ng key = "result_age_ n_years_" + ageYears;
+            resultsAgeCounter.getUnc cked(key). ncre nt();
           }
         }
       }
     }
 
     try {
-      lastRequestPerClientId.get(clientId).set(
-          new RequestResponsePair(request, searcher.getParsedQuery(),
-              searcher.getLuceneQuery(), response));
-    } catch (ExecutionException ex) {
-      // Not a big problem, we'll just notice that the admin page doesn't work, and it
+      lastRequestPerCl ent d.get(cl ent d).set(
+          new RequestResponsePa r(request, searc r.getParsedQuery(),
+              searc r.getLuceneQuery(), response));
+    } catch (Execut onExcept on ex) {
+      // Not a b g problem,  'll just not ce that t  adm n page doesn't work, and  
       // probably won't happen.
     }
 
@@ -881,207 +881,207 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
     return response;
   }
 
-  private void exportScoringTimeStats(EarlybirdResponse response, String clientId) {
-    if (response.isSetSearchResults()
-        && response.getSearchResults().isSetScoringTimeNanos()
-        && response.getSearchResults().isSetNumHitsProcessed()) {
-      int numHitsProcessed = response.getSearchResults().getNumHitsProcessed();
-      long scoringTimeNanos = response.getSearchResults().getScoringTimeNanos();
+  pr vate vo d exportScor ngT  Stats(Earlyb rdResponse response, Str ng cl ent d) {
+     f (response. sSetSearchResults()
+        && response.getSearchResults(). sSetScor ngT  Nanos()
+        && response.getSearchResults(). sSetNumH sProcessed()) {
+       nt numH sProcessed = response.getSearchResults().getNumH sProcessed();
+      long scor ngT  Nanos = response.getSearchResults().getScor ngT  Nanos();
 
-      if (numHitsProcessed > 0) {
-        // Only compute and report scoring time per hit when we have hits. (i.e. we don't just want
-        // to report 0's for cases where there were no hits, and only want to report legit per-hit
-        // times.
-        long scoringTimePerHit = scoringTimeNanos / numHitsProcessed;
+       f (numH sProcessed > 0) {
+        // Only compute and report scor ng t   per h  w n   have h s. ( .e.   don't just want
+        // to report 0's for cases w re t re  re no h s, and only want to report leg  per-h 
+        // t  s.
+        long scor ngT  PerH  = scor ngT  Nanos / numH sProcessed;
 
-        this.clientIdScoringPerHitStats.getUnchecked(clientId).timerIncrement(scoringTimePerHit);
-        this.overallScoringTimePerHitStats.timerIncrement(scoringTimePerHit);
+        t .cl ent dScor ngPerH Stats.getUnc cked(cl ent d).t  r ncre nt(scor ngT  PerH );
+        t .overallScor ngT  PerH Stats.t  r ncre nt(scor ngT  PerH );
       }
 
-      this.clientIdScoringPerQueryStats.getUnchecked(clientId).timerIncrement(scoringTimeNanos);
-      this.overallScoringTimePerQueryStats.timerIncrement(scoringTimeNanos);
+      t .cl ent dScor ngPerQueryStats.getUnc cked(cl ent d).t  r ncre nt(scor ngT  Nanos);
+      t .overallScor ngT  PerQueryStats.t  r ncre nt(scor ngT  Nanos);
 
-      // The num hits processed stats here are scoped only to queries that were actually scored.
-      // This would exclude queries like term stats (that would otherwise have huge num hits
+      // T  num h s processed stats  re are scoped only to quer es that  re actually scored.
+      // T  would exclude quer es l ke term stats (that would ot rw se have huge num h s
       // processed).
-      this.clientIdScoringNumHitsProcessedStats.getUnchecked(clientId).record(numHitsProcessed);
-      this.overallScoringNumHitsProcessedStats.record(numHitsProcessed);
+      t .cl ent dScor ngNumH sProcessedStats.getUnc cked(cl ent d).record(numH sProcessed);
+      t .overallScor ngNumH sProcessedStats.record(numH sProcessed);
     }
   }
 
-  private void addEarlybirdServerStats(EarlybirdResponse response, long queueWaitTime) {
-    PartitionConfig curPartitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
-    EarlybirdServerStats earlybirdServerStats = new EarlybirdServerStats();
-    response.setEarlybirdServerStats(earlybirdServerStats);
-    earlybirdServerStats.setHostname(DatabaseConfig.getLocalHostname());
-    earlybirdServerStats.setPartition(curPartitionConfig.getIndexingHashPartitionID());
-    earlybirdServerStats.setTierName(curPartitionConfig.getTierName());
-    earlybirdServerStats.setCurrentQps(searchStats.getRequestRate());
-    earlybirdServerStats.setQueueTimeMillis(queueWaitTime);
-    earlybirdServerStats.setAverageQueueTimeMillis(
-        (long) (double) internalQueueWaitTimeStats.read());
-    earlybirdServerStats.setAverageLatencyMicros(searchStats.getAverageLatency());
+  pr vate vo d addEarlyb rdServerStats(Earlyb rdResponse response, long queueWa T  ) {
+    Part  onConf g curPart  onConf g = dynam cPart  onConf g.getCurrentPart  onConf g();
+    Earlyb rdServerStats earlyb rdServerStats = new Earlyb rdServerStats();
+    response.setEarlyb rdServerStats(earlyb rdServerStats);
+    earlyb rdServerStats.setHostna (DatabaseConf g.getLocalHostna ());
+    earlyb rdServerStats.setPart  on(curPart  onConf g.get ndex ngHashPart  on D());
+    earlyb rdServerStats.setT erNa (curPart  onConf g.getT erNa ());
+    earlyb rdServerStats.setCurrentQps(searchStats.getRequestRate());
+    earlyb rdServerStats.setQueueT  M ll s(queueWa T  );
+    earlyb rdServerStats.setAverageQueueT  M ll s(
+        (long) (double)  nternalQueueWa T  Stats.read());
+    earlyb rdServerStats.setAverageLatencyM cros(searchStats.getAverageLatency());
   }
 
-  @Override
-  public void joinServerSet(String username) throws UpdateException {
-    serverSetManager.joinServerSet(username);
+  @Overr de
+  publ c vo d jo nServerSet(Str ng userna ) throws UpdateExcept on {
+    serverSetManager.jo nServerSet(userna );
   }
 
 
-  @Override
-  public int getNumberOfServerSetMembers() throws InterruptedException,
-      ZooKeeperClient.ZooKeeperConnectionException, KeeperException {
-    return serverSetManager.getNumberOfServerSetMembers();
+  @Overr de
+  publ c  nt getNumberOfServerSet mbers() throws  nterruptedExcept on,
+      ZooKeeperCl ent.ZooKeeperConnect onExcept on, KeeperExcept on {
+    return serverSetManager.getNumberOfServerSet mbers();
   }
 
-  @Override
-  public void leaveServerSet(String username) throws UpdateException {
-    serverSetManager.leaveServerSet(username);
+  @Overr de
+  publ c vo d leaveServerSet(Str ng userna ) throws UpdateExcept on {
+    serverSetManager.leaveServerSet(userna );
   }
 
-  @Override
-  public void joinServerSetForServiceProxy() {
-    serverSetManager.joinServerSetForServiceProxy();
+  @Overr de
+  publ c vo d jo nServerSetForServ ceProxy() {
+    serverSetManager.jo nServerSetForServ ceProxy();
   }
 
-  @VisibleForTesting
-  protected static class EarlybirdThriftRequestLoggingUtil {
-    private static final int DEFAULT_MAX_ENTRIES_TO_LOG = 50000;
-    private static final int DEFAULT_BUFFER_SIZE = 10000;
-    private static final int DEFAULT_LOGGING_SLEEP_MS = 100;
+  @V s bleForTest ng
+  protected stat c class Earlyb rdThr ftRequestLogg ngUt l {
+    pr vate stat c f nal  nt DEFAULT_MAX_ENTR ES_TO_LOG = 50000;
+    pr vate stat c f nal  nt DEFAULT_BUFFER_S ZE = 10000;
+    pr vate stat c f nal  nt DEFAULT_LOGG NG_SLEEP_MS = 100;
 
-    @VisibleForTesting
-    protected static volatile boolean thriftLoggerBusy = false;
-    private static final ExecutorService LOGGING_EXECUTOR = Executors.newCachedThreadPool();
+    @V s bleForTest ng
+    protected stat c volat le boolean thr ftLoggerBusy = false;
+    pr vate stat c f nal ExecutorServ ce LOGG NG_EXECUTOR = Executors.newCac dThreadPool();
 
-    // Synchronized circular buffer used for buffering requests.
-    // If buffer is full, the oldest requests are replaced. This should not be a problem for
-    // logging purpose.
-    @VisibleForTesting
-    protected static final ArrayBlockingQueue<EarlybirdRequest> REQUEST_BUFFER =
-        new ArrayBlockingQueue<>(DEFAULT_BUFFER_SIZE);
+    // Synchron zed c rcular buffer used for buffer ng requests.
+    //  f buffer  s full, t  oldest requests are replaced. T  should not be a problem for
+    // logg ng purpose.
+    @V s bleForTest ng
+    protected stat c f nal ArrayBlock ngQueue<Earlyb rdRequest> REQUEST_BUFFER =
+        new ArrayBlock ngQueue<>(DEFAULT_BUFFER_S ZE);
 
 
     /**
-     * Create a separate thread to log thrift request to the given file. If a thread is already
-     * logging thrift requests, this does nothing and throws an IOException indicating that the
-     * logging thread is busy.
+     * Create a separate thread to log thr ft request to t  g ven f le.  f a thread  s already
+     * logg ng thr ft requests, t  does noth ng and throws an  OExcept on  nd cat ng that t 
+     * logg ng thread  s busy.
      *
-     * @param logFile File to log to.
-     * @param maxEntriesToLog Number of entries to log.
-     * @param postLoggingHook Code to run after logging finishes. Only used for testing as of now.
+     * @param logF le F le to log to.
+     * @param maxEntr esToLog Number of entr es to log.
+     * @param postLogg ngHook Code to run after logg ng f n s s. Only used for test ng as of now.
      */
-    @VisibleForTesting
-    protected static synchronized void startThriftLogging(final File logFile,
-                                                          final int maxEntriesToLog,
-                                                          final Runnable postLoggingHook)
-        throws IOException {
-      if (thriftLoggerBusy) {
-        throw new IOException("Already busy logging thrift request. No action taken.");
+    @V s bleForTest ng
+    protected stat c synchron zed vo d startThr ftLogg ng(f nal F le logF le,
+                                                          f nal  nt maxEntr esToLog,
+                                                          f nal Runnable postLogg ngHook)
+        throws  OExcept on {
+       f (thr ftLoggerBusy) {
+        throw new  OExcept on("Already busy logg ng thr ft request. No act on taken.");
       }
 
-      if (!logFile.canWrite()) {
-        throw new IOException("Unable to open log file for writing:  " + logFile);
+       f (!logF le.canWr e()) {
+        throw new  OExcept on("Unable to open log f le for wr  ng:  " + logF le);
       }
 
-      final BufferedWriter thriftLogWriter =
-          Files.newBufferedWriter(logFile.toPath(), Charsets.UTF_8);
+      f nal BufferedWr er thr ftLogWr er =
+          F les.newBufferedWr er(logF le.toPath(), Charsets.UTF_8);
 
-      // TSerializer used by the writer thread.
-      final TSerializer serializer = new TSerializer();
+      // TSer al zer used by t  wr er thread.
+      f nal TSer al zer ser al zer = new TSer al zer();
 
       REQUEST_BUFFER.clear();
-      thriftLoggerBusy = true;
-      LOG.info("Started to log thrift requests into file " + logFile.getAbsolutePath());
-      LOGGING_EXECUTOR.submit(() -> {
+      thr ftLoggerBusy = true;
+      LOG. nfo("Started to log thr ft requests  nto f le " + logF le.getAbsolutePath());
+      LOGG NG_EXECUTOR.subm (() -> {
         try {
-          int count = 0;
-          while (count < maxEntriesToLog) {
-            if (REQUEST_BUFFER.isEmpty()) {
-              Thread.sleep(DEFAULT_LOGGING_SLEEP_MS);
-              continue;
+           nt count = 0;
+          wh le (count < maxEntr esToLog) {
+             f (REQUEST_BUFFER. sEmpty()) {
+              Thread.sleep(DEFAULT_LOGG NG_SLEEP_MS);
+              cont nue;
             }
 
             try {
-              EarlybirdRequest ebRequest = REQUEST_BUFFER.poll();
-              String logLine = serializeThriftObject(ebRequest, serializer);
-              thriftLogWriter.write(logLine);
+              Earlyb rdRequest ebRequest = REQUEST_BUFFER.poll();
+              Str ng logL ne = ser al zeThr ftObject(ebRequest, ser al zer);
+              thr ftLogWr er.wr e(logL ne);
               count++;
-            } catch (TException e) {
-              LOG.warn("Unable to serialize EarlybirdRequest for logging.", e);
+            } catch (TExcept on e) {
+              LOG.warn("Unable to ser al ze Earlyb rdRequest for logg ng.", e);
             }
           }
           return count;
-        } finally {
-          thriftLogWriter.close();
-          thriftLoggerBusy = false;
-          LOG.info("Finished logging thrift requests into file " + logFile.getAbsolutePath());
+        } f nally {
+          thr ftLogWr er.close();
+          thr ftLoggerBusy = false;
+          LOG. nfo("F n s d logg ng thr ft requests  nto f le " + logF le.getAbsolutePath());
           REQUEST_BUFFER.clear();
-          if (postLoggingHook != null) {
-            postLoggingHook.run();
+           f (postLogg ngHook != null) {
+            postLogg ngHook.run();
           }
         }
       });
     }
 
     /**
-     * Serialize a thrift object to a base 64 encoded string.
+     * Ser al ze a thr ft object to a base 64 encoded str ng.
      */
-    private static String serializeThriftObject(TBase<?, ?> tObject, TSerializer serializer)
-        throws TException {
-      return new Base64().encodeToString(serializer.serialize(tObject)) + "\n";
+    pr vate stat c Str ng ser al zeThr ftObject(TBase<?, ?> tObject, TSer al zer ser al zer)
+        throws TExcept on {
+      return new Base64().encodeToStr ng(ser al zer.ser al ze(tObject)) + "\n";
     }
   }
 
   /**
-   * Start to log thrift EarlybirdRequests.
+   * Start to log thr ft Earlyb rdRequests.
    *
-   * @param logFile Log file to write to.
-   * @param numRequestsToLog Number of requests to collect.  Default value of 50000 used if
-   * 0 or negative numbers are pass in.
+   * @param logF le Log f le to wr e to.
+   * @param numRequestsToLog Number of requests to collect.  Default value of 50000 used  f
+   * 0 or negat ve numbers are pass  n.
    */
-  public void startThriftLogging(File logFile, int numRequestsToLog) throws IOException {
-    int requestToLog = numRequestsToLog <= 0
-        ? EarlybirdThriftRequestLoggingUtil.DEFAULT_MAX_ENTRIES_TO_LOG : numRequestsToLog;
-    EarlybirdThriftRequestLoggingUtil.startThriftLogging(logFile, requestToLog, null);
+  publ c vo d startThr ftLogg ng(F le logF le,  nt numRequestsToLog) throws  OExcept on {
+     nt requestToLog = numRequestsToLog <= 0
+        ? Earlyb rdThr ftRequestLogg ngUt l.DEFAULT_MAX_ENTR ES_TO_LOG : numRequestsToLog;
+    Earlyb rdThr ftRequestLogg ngUt l.startThr ftLogg ng(logF le, requestToLog, null);
   }
 
-  @VisibleForTesting
-  @Override
-  public boolean isInServerSet() {
-    return serverSetManager.isInServerSet();
+  @V s bleForTest ng
+  @Overr de
+  publ c boolean  s nServerSet() {
+    return serverSetManager. s nServerSet();
   }
 
-  @VisibleForTesting
-  SearchCounter getResponseCodeCounter(EarlybirdResponseCode responseCode) {
+  @V s bleForTest ng
+  SearchCounter getResponseCodeCounter(Earlyb rdResponseCode responseCode) {
     return responseCodeCounters.get(responseCode);
   }
 
-  @VisibleForTesting
-  SearchCounter getClientIdResponseCodeCounter(
-      String clientId, EarlybirdResponseCode responseCode) {
-    String key = String.format(RESPONSES_PER_CLIENT_ID_STAT_TEMPLATE,
-            clientId, responseCode.name().toLowerCase());
-    return responseByClientIdAndResponseCode.getUnchecked(key);
+  @V s bleForTest ng
+  SearchCounter getCl ent dResponseCodeCounter(
+      Str ng cl ent d, Earlyb rdResponseCode responseCode) {
+    Str ng key = Str ng.format(RESPONSES_PER_CL ENT_ D_STAT_TEMPLATE,
+            cl ent d, responseCode.na ().toLo rCase());
+    return responseByCl ent dAndResponseCode.getUnc cked(key);
   }
 
-  public void setNoShutdownWhenNotInLayout(boolean noShutdown) {
-    stateManager.setNoShutdownWhenNotInLayout(noShutdown);
+  publ c vo d setNoShutdownW nNot nLa t(boolean noShutdown) {
+    stateManager.setNoShutdownW nNot nLa t(noShutdown);
   }
 
-  private void schedule(OneTaskScheduledExecutorManager manager) {
-    if (!isShuttingDown) {
-      manager.schedule();
+  pr vate vo d sc dule(OneTaskSc duledExecutorManager manager) {
+     f (! sShutt ngDown) {
+      manager.sc dule();
       toClose.add(manager);
     }
   }
 
-  public DynamicSchema getSchema() {
-    return earlybirdIndexConfig.getSchema();
+  publ c Dynam cSc ma getSc ma() {
+    return earlyb rd ndexConf g.getSc ma();
   }
 
-  public AudioSpaceTable getAudioSpaceTable() {
-    return audioSpaceTable;
+  publ c Aud oSpaceTable getAud oSpaceTable() {
+    return aud oSpaceTable;
   }
 }

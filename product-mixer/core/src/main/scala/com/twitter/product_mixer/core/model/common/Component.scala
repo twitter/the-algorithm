@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.model.common
+package com.tw ter.product_m xer.core.model.common
 
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.HasComponentIdentifier
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.HasComponent dent f er
 
 /**
- * Components are very generically reusable composable pieces
- * Components are uniquely identifiable and centrally registered
+ * Components are very gener cally reusable composable p eces
+ * Components are un quely  dent f able and centrally reg stered
  */
-trait Component extends HasComponentIdentifier {
+tra  Component extends HasComponent dent f er {
 
-  /** @see [[ComponentIdentifier]] */
-  override val identifier: ComponentIdentifier
+  /** @see [[Component dent f er]] */
+  overr de val  dent f er: Component dent f er
 
-  /** the [[Alert]]s that will be used for this component. */
+  /** t  [[Alert]]s that w ll be used for t  component. */
   val alerts: Seq[Alert] = Seq.empty
 }

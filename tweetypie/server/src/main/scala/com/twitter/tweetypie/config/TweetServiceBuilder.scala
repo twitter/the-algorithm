@@ -1,683 +1,683 @@
-package com.twitter.tweetypie
-package config
+package com.tw ter.t etyp e
+package conf g
 
-import com.twitter.coreservices.failed_task.writer.FailedTaskWriter
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.flockdb.client._
-import com.twitter.servo.forked
-import com.twitter.servo.util.FutureArrow
-import com.twitter.servo.util.Scribe
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.handler._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.service.ReplicatingTweetService
-import com.twitter.tweetypie.service._
-import com.twitter.tweetypie.storage.TweetStorageClient
-import com.twitter.tweetypie.storage.TweetStorageClient.GetTweet
-import com.twitter.tweetypie.store._
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.util.Activity
-import com.twitter.util.Timer
+ mport com.tw ter.coreserv ces.fa led_task.wr er.Fa ledTaskWr er
+ mport com.tw ter.featuresw c s.v2.FeatureSw c s
+ mport com.tw ter.flockdb.cl ent._
+ mport com.tw ter.servo.forked
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.servo.ut l.Scr be
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.cl ent_ d.Cl ent d lper
+ mport com.tw ter.t etyp e.handler._
+ mport com.tw ter.t etyp e.repos ory._
+ mport com.tw ter.t etyp e.serv ce.Repl cat ngT etServ ce
+ mport com.tw ter.t etyp e.serv ce._
+ mport com.tw ter.t etyp e.storage.T etStorageCl ent
+ mport com.tw ter.t etyp e.storage.T etStorageCl ent.GetT et
+ mport com.tw ter.t etyp e.store._
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport com.tw ter.ut l.Act v y
+ mport com.tw ter.ut l.T  r
 
 /**
- * Builds a fully configured ThriftTweetService instance.
+ * Bu lds a fully conf gured Thr ftT etServ ce  nstance.
  *
- * The core of the tweet service is a DispatchingTweetService, which is responsible
- * for dispatching requests to underlying handlers and stores.
- * The DispatchingTweetService instance is wrapped in:
- * - ObservedTweetService        (adds stats counting)
- * - ClientHandlingTweetService  (authentication, exception handling, etc)
- * - ReplicatingTweetService     (replicates some reads)
+ * T  core of t  t et serv ce  s a D spatch ngT etServ ce, wh ch  s respons ble
+ * for d spatch ng requests to underly ng handlers and stores.
+ * T  D spatch ngT etServ ce  nstance  s wrapped  n:
+ * - ObservedT etServ ce        (adds stats count ng)
+ * - Cl entHandl ngT etServ ce  (aut nt cat on, except on handl ng, etc)
+ * - Repl cat ngT etServ ce     (repl cates so  reads)
  *
- * TweetServiceBuilder returns an Activity[ThriftTweetService] which updates
- * on config changes. See DynamicConfig.scala for more details.
+ * T etServ ceBu lder returns an Act v y[Thr ftT etServ ce] wh ch updates
+ * on conf g changes. See Dynam cConf g.scala for more deta ls.
  */
-object TweetServiceBuilder {
+object T etServ ceBu lder {
   def apply(
-    settings: TweetServiceSettings,
-    statsReceiver: StatsReceiver,
-    timer: Timer,
-    deciderGates: TweetypieDeciderGates,
-    featureSwitchesWithExperiments: FeatureSwitches,
-    featureSwitchesWithoutExperiments: FeatureSwitches,
-    backendClients: BackendClients,
-    clientIdHelper: ClientIdHelper,
-  ): Activity[ThriftTweetService] = {
-    // a forward reference, will be set to the DispatchingTweetService once created
-    val syncTweetService = new MutableTweetServiceProxy(null)
+    sett ngs: T etServ ceSett ngs,
+    statsRece ver: StatsRece ver,
+    t  r: T  r,
+    dec derGates: T etyp eDec derGates,
+    featureSw c sW hExper  nts: FeatureSw c s,
+    featureSw c sW houtExper  nts: FeatureSw c s,
+    backendCl ents: BackendCl ents,
+    cl ent d lper: Cl ent d lper,
+  ): Act v y[Thr ftT etServ ce] = {
+    // a forward reference, w ll be set to t  D spatch ngT etServ ce once created
+    val syncT etServ ce = new MutableT etServ ceProxy(null)
 
-    val tweetServiceScope = statsReceiver.scope("tweet_service")
+    val t etServ ceScope = statsRece ver.scope("t et_serv ce")
 
-    val dispatchingTweetService =
-      DispatchingTweetServiceBuilder(
-        settings,
-        statsReceiver,
-        tweetServiceScope,
-        syncTweetService,
-        timer,
-        deciderGates,
-        featureSwitchesWithExperiments,
-        featureSwitchesWithoutExperiments,
-        backendClients,
-        clientIdHelper,
+    val d spatch ngT etServ ce =
+      D spatch ngT etServ ceBu lder(
+        sett ngs,
+        statsRece ver,
+        t etServ ceScope,
+        syncT etServ ce,
+        t  r,
+        dec derGates,
+        featureSw c sW hExper  nts,
+        featureSw c sW houtExper  nts,
+        backendCl ents,
+        cl ent d lper,
       )
 
-    val failureLoggingTweetService =
-      // Add the failure writing inside of the authorization filter so
-      // that we don't write out the failures when authorization fails.
-      new FailureLoggingTweetService(
-        failedTaskWriter = FailedTaskWriter("tweetypie_service_failures", identity),
-        underlying = dispatchingTweetService
+    val fa lureLogg ngT etServ ce =
+      // Add t  fa lure wr  ng  ns de of t  author zat on f lter so
+      // that   don't wr e out t  fa lures w n author zat on fa ls.
+      new Fa lureLogg ngT etServ ce(
+        fa ledTaskWr er = Fa ledTaskWr er("t etyp e_serv ce_fa lures",  dent y),
+        underly ng = d spatch ngT etServ ce
       )
 
-    val observedTweetService =
-      new ObservedTweetService(failureLoggingTweetService, tweetServiceScope, clientIdHelper)
+    val observedT etServ ce =
+      new ObservedT etServ ce(fa lureLogg ngT etServ ce, t etServ ceScope, cl ent d lper)
 
-    // Every time config is updated, create a new tweet service. Only
-    // ClientHandlingTweetService and ReplicatingTweetService need to
-    // be recreated, as the underlying TweetServices above don't depend
-    // on the config.
-    DynamicConfig(
-      statsReceiver.scope("dynamic_config"),
-      backendClients.configBus,
-      settings
-    ).map { dynamicConfig =>
-      val clientHandlingTweetService =
-        new ClientHandlingTweetService(
-          observedTweetService,
-          tweetServiceScope,
-          dynamicConfig.loadShedEligible,
-          deciderGates.shedReadTrafficVoluntarily,
-          ClientHandlingTweetServiceAuthorizer(
-            settings = settings,
-            dynamicConfig = dynamicConfig,
-            statsReceiver = statsReceiver
+    // Every t   conf g  s updated, create a new t et serv ce. Only
+    // Cl entHandl ngT etServ ce and Repl cat ngT etServ ce need to
+    // be recreated, as t  underly ng T etServ ces above don't depend
+    // on t  conf g.
+    Dynam cConf g(
+      statsRece ver.scope("dynam c_conf g"),
+      backendCl ents.conf gBus,
+      sett ngs
+    ).map { dynam cConf g =>
+      val cl entHandl ngT etServ ce =
+        new Cl entHandl ngT etServ ce(
+          observedT etServ ce,
+          t etServ ceScope,
+          dynam cConf g.loadS dEl g ble,
+          dec derGates.s dReadTraff cVoluntar ly,
+          Cl entHandl ngT etServ ceAuthor zer(
+            sett ngs = sett ngs,
+            dynam cConf g = dynam cConf g,
+            statsRece ver = statsRece ver
           ),
-          GetTweetsAuthorizer(
-            config = dynamicConfig,
-            maxRequestSize = settings.maxGetTweetsRequestSize,
-            instanceCount = settings.instanceCount,
-            enforceRateLimitedClients = deciderGates.enforceRateLimitedClients,
-            maxRequestWidthEnabled = deciderGates.maxRequestWidthEnabled,
-            statsReceiver = tweetServiceScope.scope("get_tweets"),
+          GetT etsAuthor zer(
+            conf g = dynam cConf g,
+            maxRequestS ze = sett ngs.maxGetT etsRequestS ze,
+             nstanceCount = sett ngs. nstanceCount,
+            enforceRateL m edCl ents = dec derGates.enforceRateL m edCl ents,
+            maxRequestW dthEnabled = dec derGates.maxRequestW dthEnabled,
+            statsRece ver = t etServ ceScope.scope("get_t ets"),
           ),
-          GetTweetFieldsAuthorizer(
-            config = dynamicConfig,
-            maxRequestSize = settings.maxGetTweetsRequestSize,
-            instanceCount = settings.instanceCount,
-            enforceRateLimitedClients = deciderGates.enforceRateLimitedClients,
-            maxRequestWidthEnabled = deciderGates.maxRequestWidthEnabled,
-            statsReceiver = tweetServiceScope.scope("get_tweet_fields"),
+          GetT etF eldsAuthor zer(
+            conf g = dynam cConf g,
+            maxRequestS ze = sett ngs.maxGetT etsRequestS ze,
+             nstanceCount = sett ngs. nstanceCount,
+            enforceRateL m edCl ents = dec derGates.enforceRateL m edCl ents,
+            maxRequestW dthEnabled = dec derGates.maxRequestW dthEnabled,
+            statsRece ver = t etServ ceScope.scope("get_t et_f elds"),
           ),
-          RequestSizeAuthorizer(settings.maxRequestSize, deciderGates.maxRequestWidthEnabled),
-          clientIdHelper,
+          RequestS zeAuthor zer(sett ngs.maxRequestS ze, dec derGates.maxRequestW dthEnabled),
+          cl ent d lper,
         )
 
-      syncTweetService.underlying = clientHandlingTweetService
+      syncT etServ ce.underly ng = cl entHandl ngT etServ ce
 
-      val replicatingService =
-        if (!settings.enableReplication)
-          clientHandlingTweetService
+      val repl cat ngServ ce =
+         f (!sett ngs.enableRepl cat on)
+          cl entHandl ngT etServ ce
         else {
-          new ReplicatingTweetService(
-            underlying = clientHandlingTweetService,
-            replicationTargets = backendClients.lowQoSReplicationClients,
+          new Repl cat ngT etServ ce(
+            underly ng = cl entHandl ngT etServ ce,
+            repl cat onTargets = backendCl ents.lowQoSRepl cat onCl ents,
             executor = new forked.QueueExecutor(
               100,
-              statsReceiver.scope("replicating_tweet_service")
+              statsRece ver.scope("repl cat ng_t et_serv ce")
             ),
           )
         }
 
-      replicatingService
+      repl cat ngServ ce
     }
   }
 }
 
-object DispatchingTweetServiceBuilder {
-  val hasMedia: Tweet => Boolean = MediaIndexHelper(Resources.loadPartnerMediaRegexes())
+object D spatch ngT etServ ceBu lder {
+  val has d a: T et => Boolean =  d a ndex lper(Res ces.loadPartner d aRegexes())
 
   def apply(
-    settings: TweetServiceSettings,
-    statsReceiver: StatsReceiver,
-    tweetServiceScope: StatsReceiver,
-    syncTweetService: ThriftTweetService,
-    timer: Timer,
-    deciderGates: TweetypieDeciderGates,
-    featureSwitchesWithExperiments: FeatureSwitches,
-    featureSwitchesWithoutExperiments: FeatureSwitches,
-    backendClients: BackendClients,
-    clientIdHelper: ClientIdHelper,
-  ): ThriftTweetService = {
-    val (syncInvocationBuilder, asyncInvocationBuilder) = {
+    sett ngs: T etServ ceSett ngs,
+    statsRece ver: StatsRece ver,
+    t etServ ceScope: StatsRece ver,
+    syncT etServ ce: Thr ftT etServ ce,
+    t  r: T  r,
+    dec derGates: T etyp eDec derGates,
+    featureSw c sW hExper  nts: FeatureSw c s,
+    featureSw c sW houtExper  nts: FeatureSw c s,
+    backendCl ents: BackendCl ents,
+    cl ent d lper: Cl ent d lper,
+  ): Thr ftT etServ ce = {
+    val (sync nvocat onBu lder, async nvocat onBu lder) = {
       val b =
-        new ServiceInvocationBuilder(syncTweetService, settings.simulateDeferredrpcCallbacks)
-      (b.withClientId(settings.thriftClientId), b.withClientId(settings.deferredrpcClientId))
+        new Serv ce nvocat onBu lder(syncT etServ ce, sett ngs.s mulateDeferredrpcCallbacks)
+      (b.w hCl ent d(sett ngs.thr ftCl ent d), b.w hCl ent d(sett ngs.deferredrpcCl ent d))
     }
 
-    val tweetKeyFactory = TweetKeyFactory(settings.tweetKeyCacheVersion)
+    val t etKeyFactory = T etKeyFactory(sett ngs.t etKeyCac Vers on)
 
-    val caches =
-      if (!settings.withCache)
-        Caches.NoCache
+    val cac s =
+       f (!sett ngs.w hCac )
+        Cac s.NoCac 
       else
-        Caches(
-          settings = settings,
-          stats = statsReceiver,
-          timer = timer,
-          clients = backendClients,
-          tweetKeyFactory = tweetKeyFactory,
-          deciderGates = deciderGates,
-          clientIdHelper = clientIdHelper,
+        Cac s(
+          sett ngs = sett ngs,
+          stats = statsRece ver,
+          t  r = t  r,
+          cl ents = backendCl ents,
+          t etKeyFactory = t etKeyFactory,
+          dec derGates = dec derGates,
+          cl ent d lper = cl ent d lper,
         )
 
-    val logicalRepos =
-      LogicalRepositories(
-        settings = settings,
-        stats = statsReceiver,
-        timer = timer,
-        deciderGates = deciderGates,
-        external = new ExternalServiceRepositories(
-          clients = backendClients,
-          statsReceiver = statsReceiver,
-          settings = settings,
-          clientIdHelper = clientIdHelper,
+    val log calRepos =
+      Log calRepos or es(
+        sett ngs = sett ngs,
+        stats = statsRece ver,
+        t  r = t  r,
+        dec derGates = dec derGates,
+        external = new ExternalServ ceRepos or es(
+          cl ents = backendCl ents,
+          statsRece ver = statsRece ver,
+          sett ngs = sett ngs,
+          cl ent d lper = cl ent d lper,
         ),
-        caches = caches,
-        stratoClient = backendClients.stratoserverClient,
-        hasMedia = hasMedia,
-        clientIdHelper = clientIdHelper,
-        featureSwitchesWithoutExperiments = featureSwitchesWithoutExperiments,
+        cac s = cac s,
+        stratoCl ent = backendCl ents.stratoserverCl ent,
+        has d a = has d a,
+        cl ent d lper = cl ent d lper,
+        featureSw c sW houtExper  nts = featureSw c sW houtExper  nts,
       )
 
-    val tweetCreationLock =
-      new CacheBasedTweetCreationLock(
-        cache = caches.tweetCreateLockerCache,
-        maxTries = 3,
-        stats = statsReceiver.scope("tweet_save").scope("locker"),
-        logUniquenessId =
-          if (settings.scribeUniquenessIds) CacheBasedTweetCreationLock.ScribeUniquenessId
-          else CacheBasedTweetCreationLock.LogUniquenessId
+    val t etCreat onLock =
+      new Cac BasedT etCreat onLock(
+        cac  = cac s.t etCreateLockerCac ,
+        maxTr es = 3,
+        stats = statsRece ver.scope("t et_save").scope("locker"),
+        logUn queness d =
+           f (sett ngs.scr beUn queness ds) Cac BasedT etCreat onLock.Scr beUn queness d
+          else Cac BasedT etCreat onLock.LogUn queness d
       )
 
-    val tweetStores =
-      TweetStores(
-        settings = settings,
-        statsReceiver = statsReceiver,
-        timer = timer,
-        deciderGates = deciderGates,
-        tweetKeyFactory = tweetKeyFactory,
-        clients = backendClients,
-        caches = caches,
-        asyncBuilder = asyncInvocationBuilder,
-        hasMedia = hasMedia,
-        clientIdHelper = clientIdHelper,
+    val t etStores =
+      T etStores(
+        sett ngs = sett ngs,
+        statsRece ver = statsRece ver,
+        t  r = t  r,
+        dec derGates = dec derGates,
+        t etKeyFactory = t etKeyFactory,
+        cl ents = backendCl ents,
+        cac s = cac s,
+        asyncBu lder = async nvocat onBu lder,
+        has d a = has d a,
+        cl ent d lper = cl ent d lper,
       )
 
-    val tweetDeletePathHandler =
-      new DefaultTweetDeletePathHandler(
-        tweetServiceScope,
-        logicalRepos.tweetResultRepo,
-        logicalRepos.optionalUserRepo,
-        logicalRepos.stratoSafetyLabelsRepo,
-        logicalRepos.lastQuoteOfQuoterRepo,
-        tweetStores,
-        getPerspectives = backendClients.timelineService.getPerspectives,
+    val t etDeletePathHandler =
+      new DefaultT etDeletePathHandler(
+        t etServ ceScope,
+        log calRepos.t etResultRepo,
+        log calRepos.opt onalUserRepo,
+        log calRepos.stratoSafetyLabelsRepo,
+        log calRepos.lastQuoteOfQuoterRepo,
+        t etStores,
+        getPerspect ves = backendCl ents.t  l neServ ce.getPerspect ves,
       )
 
-    val tweetBuilders =
-      TweetBuilders(
-        settings = settings,
-        statsReceiver = statsReceiver,
-        deciderGates = deciderGates,
-        featureSwitchesWithExperiments = featureSwitchesWithExperiments,
-        clients = backendClients,
-        caches = caches,
-        repos = logicalRepos,
-        tweetStore = tweetStores,
-        hasMedia = hasMedia,
-        unretweetEdits = tweetDeletePathHandler.unretweetEdits,
+    val t etBu lders =
+      T etBu lders(
+        sett ngs = sett ngs,
+        statsRece ver = statsRece ver,
+        dec derGates = dec derGates,
+        featureSw c sW hExper  nts = featureSw c sW hExper  nts,
+        cl ents = backendCl ents,
+        cac s = cac s,
+        repos = log calRepos,
+        t etStore = t etStores,
+        has d a = has d a,
+        unret etEd s = t etDeletePathHandler.unret etEd s,
       )
 
-    val hydrateTweetForInsert =
-      WritePathHydration.hydrateTweet(
-        logicalRepos.tweetHydrators.hydrator,
-        statsReceiver.scope("insert_tweet")
+    val hydrateT etFor nsert =
+      Wr ePathHydrat on.hydrateT et(
+        log calRepos.t etHydrators.hydrator,
+        statsRece ver.scope(" nsert_t et")
       )
 
-    val defaultTweetQueryOptions = TweetQuery.Options(include = GetTweetsHandler.BaseInclude)
+    val defaultT etQueryOpt ons = T etQuery.Opt ons( nclude = GetT etsHandler.Base nclude)
 
-    val parentUserIdRepo: ParentUserIdRepository.Type =
-      ParentUserIdRepository(
-        tweetRepo = logicalRepos.tweetRepo
+    val parentUser dRepo: ParentUser dRepos ory.Type =
+      ParentUser dRepos ory(
+        t etRepo = log calRepos.t etRepo
       )
 
-    val undeleteTweetHandler =
-      UndeleteTweetHandlerBuilder(
-        backendClients.tweetStorageClient,
-        logicalRepos,
-        tweetStores,
-        parentUserIdRepo,
-        statsReceiver
+    val undeleteT etHandler =
+      UndeleteT etHandlerBu lder(
+        backendCl ents.t etStorageCl ent,
+        log calRepos,
+        t etStores,
+        parentUser dRepo,
+        statsRece ver
       )
 
-    val eraseUserTweetsHandler =
-      EraseUserTweetsHandlerBuilder(
-        backendClients,
-        asyncInvocationBuilder,
-        deciderGates,
-        settings,
-        timer,
-        tweetDeletePathHandler,
-        tweetServiceScope
+    val eraseUserT etsHandler =
+      EraseUserT etsHandlerBu lder(
+        backendCl ents,
+        async nvocat onBu lder,
+        dec derGates,
+        sett ngs,
+        t  r,
+        t etDeletePathHandler,
+        t etServ ceScope
       )
 
-    val setRetweetVisibilityHandler =
-      SetRetweetVisibilityHandler(
-        tweetGetter =
-          TweetRepository.tweetGetter(logicalRepos.optionalTweetRepo, defaultTweetQueryOptions),
-        tweetStores.setRetweetVisibility
+    val setRet etV s b l yHandler =
+      SetRet etV s b l yHandler(
+        t etGetter =
+          T etRepos ory.t etGetter(log calRepos.opt onalT etRepo, defaultT etQueryOpt ons),
+        t etStores.setRet etV s b l y
       )
 
     val takedownHandler =
-      TakedownHandlerBuilder(
-        logicalRepos = logicalRepos,
-        tweetStores = tweetStores
+      TakedownHandlerBu lder(
+        log calRepos = log calRepos,
+        t etStores = t etStores
       )
 
-    val updatePossiblySensitiveTweetHandler =
-      UpdatePossiblySensitiveTweetHandler(
-        HandlerError.getRequired(
-          TweetRepository.tweetGetter(logicalRepos.optionalTweetRepo, defaultTweetQueryOptions),
-          HandlerError.tweetNotFoundException
+    val updatePoss blySens  veT etHandler =
+      UpdatePoss blySens  veT etHandler(
+        HandlerError.getRequ red(
+          T etRepos ory.t etGetter(log calRepos.opt onalT etRepo, defaultT etQueryOpt ons),
+          HandlerError.t etNotFoundExcept on
         ),
-        HandlerError.getRequired(
+        HandlerError.getRequ red(
           FutureArrow(
-            UserRepository
+            UserRepos ory
               .userGetter(
-                logicalRepos.optionalUserRepo,
-                UserQueryOptions(Set(UserField.Safety), UserVisibility.All)
+                log calRepos.opt onalUserRepo,
+                UserQueryOpt ons(Set(UserF eld.Safety), UserV s b l y.All)
               )
-              .compose(UserKey.byId)
+              .compose(UserKey.by d)
           ),
-          HandlerError.userNotFoundException
+          HandlerError.userNotFoundExcept on
         ),
-        tweetStores.updatePossiblySensitiveTweet
+        t etStores.updatePoss blySens  veT et
       )
 
     val userTakedownHandler =
-      UserTakedownHandlerBuilder(
-        logicalRepos = logicalRepos,
-        tweetStores = tweetStores,
-        stats = tweetServiceScope
+      UserTakedownHandlerBu lder(
+        log calRepos = log calRepos,
+        t etStores = t etStores,
+        stats = t etServ ceScope
       )
 
-    val getDeletedTweetsHandler =
-      GetDeletedTweetsHandler(
-        getDeletedTweets = backendClients.tweetStorageClient.getDeletedTweets,
-        tweetsExist =
-          GetDeletedTweetsHandler.tweetsExist(backendClients.tweetStorageClient.getTweet),
-        stats = tweetServiceScope.scope("get_deleted_tweets_handler")
+    val getDeletedT etsHandler =
+      GetDeletedT etsHandler(
+        getDeletedT ets = backendCl ents.t etStorageCl ent.getDeletedT ets,
+        t etsEx st =
+          GetDeletedT etsHandler.t etsEx st(backendCl ents.t etStorageCl ent.getT et),
+        stats = t etServ ceScope.scope("get_deleted_t ets_handler")
       )
 
-    val hydrateQuotedTweet =
-      WritePathHydration.hydrateQuotedTweet(
-        logicalRepos.optionalTweetRepo,
-        logicalRepos.optionalUserRepo,
-        logicalRepos.quoterHasAlreadyQuotedRepo
+    val hydrateQuotedT et =
+      Wr ePathHydrat on.hydrateQuotedT et(
+        log calRepos.opt onalT etRepo,
+        log calRepos.opt onalUserRepo,
+        log calRepos.quoterHasAlreadyQuotedRepo
       )
 
-    val deleteLocationDataHandler =
-      DeleteLocationDataHandler(
-        backendClients.geoScrubEventStore.getGeoScrubTimestamp,
-        Scribe(DeleteLocationData, "tweetypie_delete_location_data"),
-        backendClients.deleteLocationDataPublisher
+    val deleteLocat onDataHandler =
+      DeleteLocat onDataHandler(
+        backendCl ents.geoScrubEventStore.getGeoScrubT  stamp,
+        Scr be(DeleteLocat onData, "t etyp e_delete_locat on_data"),
+        backendCl ents.deleteLocat onDataPubl s r
       )
 
-    val getStoredTweetsHandler = GetStoredTweetsHandler(logicalRepos.tweetResultRepo)
+    val getStoredT etsHandler = GetStoredT etsHandler(log calRepos.t etResultRepo)
 
-    val getStoredTweetsByUserHandler = GetStoredTweetsByUserHandler(
-      getStoredTweetsHandler = getStoredTweetsHandler,
-      getStoredTweet = backendClients.tweetStorageClient.getStoredTweet,
+    val getStoredT etsByUserHandler = GetStoredT etsByUserHandler(
+      getStoredT etsHandler = getStoredT etsHandler,
+      getStoredT et = backendCl ents.t etStorageCl ent.getStoredT et,
       selectPage = FutureArrow { select =>
-        backendClients.tflockReadClient
-          .selectPage(select, Some(settings.getStoredTweetsByUserPageSize))
+        backendCl ents.tflockReadCl ent
+          .selectPage(select, So (sett ngs.getStoredT etsByUserPageS ze))
       },
-      maxPages = settings.getStoredTweetsByUserMaxPages
+      maxPages = sett ngs.getStoredT etsByUserMaxPages
     )
 
-    val getTweetsHandler =
-      GetTweetsHandler(
-        logicalRepos.tweetResultRepo,
-        logicalRepos.containerAsGetTweetResultRepo,
-        logicalRepos.deletedTweetVisibilityRepo,
-        statsReceiver.scope("read_path"),
-        deciderGates.shouldMaterializeContainers
+    val getT etsHandler =
+      GetT etsHandler(
+        log calRepos.t etResultRepo,
+        log calRepos.conta nerAsGetT etResultRepo,
+        log calRepos.deletedT etV s b l yRepo,
+        statsRece ver.scope("read_path"),
+        dec derGates.shouldMater al zeConta ners
       )
 
-    val getTweetFieldsHandler =
-      GetTweetFieldsHandler(
-        logicalRepos.tweetResultRepo,
-        logicalRepos.deletedTweetVisibilityRepo,
-        logicalRepos.containerAsGetTweetFieldsResultRepo,
-        statsReceiver.scope("read_path"),
-        deciderGates.shouldMaterializeContainers
+    val getT etF eldsHandler =
+      GetT etF eldsHandler(
+        log calRepos.t etResultRepo,
+        log calRepos.deletedT etV s b l yRepo,
+        log calRepos.conta nerAsGetT etF eldsResultRepo,
+        statsRece ver.scope("read_path"),
+        dec derGates.shouldMater al zeConta ners
       )
 
-    val unretweetHandler =
-      UnretweetHandler(
-        tweetDeletePathHandler.deleteTweets,
-        backendClients.timelineService.getPerspectives,
-        tweetDeletePathHandler.unretweetEdits,
-        logicalRepos.tweetRepo,
+    val unret etHandler =
+      Unret etHandler(
+        t etDeletePathHandler.deleteT ets,
+        backendCl ents.t  l neServ ce.getPerspect ves,
+        t etDeletePathHandler.unret etEd s,
+        log calRepos.t etRepo,
       )
 
-    val hydrateInsertEvent =
-      WritePathHydration.hydrateInsertTweetEvent(
-        hydrateTweet = hydrateTweetForInsert,
-        hydrateQuotedTweet = hydrateQuotedTweet
+    val hydrate nsertEvent =
+      Wr ePathHydrat on.hydrate nsertT etEvent(
+        hydrateT et = hydrateT etFor nsert,
+        hydrateQuotedT et = hydrateQuotedT et
       )
 
-    val scrubGeoUpdateUserTimestampBuilder =
-      ScrubGeoEventBuilder.UpdateUserTimestamp(
-        stats = tweetServiceScope.scope("scrub_geo_update_user_timestamp"),
-        userRepo = logicalRepos.optionalUserRepo
+    val scrubGeoUpdateUserT  stampBu lder =
+      ScrubGeoEventBu lder.UpdateUserT  stamp(
+        stats = t etServ ceScope.scope("scrub_geo_update_user_t  stamp"),
+        userRepo = log calRepos.opt onalUserRepo
       )
 
-    val scrubGeoScrubTweetsBuilder =
-      ScrubGeoEventBuilder.ScrubTweets(
-        stats = tweetServiceScope.scope("scrub_geo"),
-        userRepo = logicalRepos.optionalUserRepo
+    val scrubGeoScrubT etsBu lder =
+      ScrubGeoEventBu lder.ScrubT ets(
+        stats = t etServ ceScope.scope("scrub_geo"),
+        userRepo = log calRepos.opt onalUserRepo
       )
 
-    val handlerFilter =
-      PostTweet
-        .DuplicateHandler(
-          tweetCreationLock = tweetCreationLock,
-          getTweets = getTweetsHandler,
-          stats = statsReceiver.scope("duplicate")
+    val handlerF lter =
+      PostT et
+        .Dupl cateHandler(
+          t etCreat onLock = t etCreat onLock,
+          getT ets = getT etsHandler,
+          stats = statsRece ver.scope("dupl cate")
         )
-        .andThen(PostTweet.RescueTweetCreateFailure)
-        .andThen(PostTweet.LogFailures)
+        .andT n(PostT et.RescueT etCreateFa lure)
+        .andT n(PostT et.LogFa lures)
 
-    val postTweetHandler =
-      handlerFilter[PostTweetRequest](
-        PostTweet.Handler(
-          tweetBuilder = tweetBuilders.tweetBuilder,
-          hydrateInsertEvent = hydrateInsertEvent,
-          tweetStore = tweetStores,
-        )
-      )
-
-    val postRetweetHandler =
-      handlerFilter[RetweetRequest](
-        PostTweet.Handler(
-          tweetBuilder = tweetBuilders.retweetBuilder,
-          hydrateInsertEvent = hydrateInsertEvent,
-          tweetStore = tweetStores,
+    val postT etHandler =
+      handlerF lter[PostT etRequest](
+        PostT et.Handler(
+          t etBu lder = t etBu lders.t etBu lder,
+          hydrate nsertEvent = hydrate nsertEvent,
+          t etStore = t etStores,
         )
       )
 
-    val quotedTweetDeleteBuilder: QuotedTweetDeleteEventBuilder.Type =
-      QuotedTweetDeleteEventBuilder(logicalRepos.optionalTweetRepo)
-
-    val quotedTweetTakedownBuilder: QuotedTweetTakedownEventBuilder.Type =
-      QuotedTweetTakedownEventBuilder(logicalRepos.optionalTweetRepo)
-
-    val setAdditionalFieldsBuilder: SetAdditionalFieldsBuilder.Type =
-      SetAdditionalFieldsBuilder(
-        tweetRepo = logicalRepos.tweetRepo
+    val postRet etHandler =
+      handlerF lter[Ret etRequest](
+        PostT et.Handler(
+          t etBu lder = t etBu lders.ret etBu lder,
+          hydrate nsertEvent = hydrate nsertEvent,
+          t etStore = t etStores,
+        )
       )
 
-    val asyncSetAdditionalFieldsBuilder: AsyncSetAdditionalFieldsBuilder.Type =
-      AsyncSetAdditionalFieldsBuilder(
-        userRepo = logicalRepos.userRepo
+    val quotedT etDeleteBu lder: QuotedT etDeleteEventBu lder.Type =
+      QuotedT etDeleteEventBu lder(log calRepos.opt onalT etRepo)
+
+    val quotedT etTakedownBu lder: QuotedT etTakedownEventBu lder.Type =
+      QuotedT etTakedownEventBu lder(log calRepos.opt onalT etRepo)
+
+    val setAdd  onalF eldsBu lder: SetAdd  onalF eldsBu lder.Type =
+      SetAdd  onalF eldsBu lder(
+        t etRepo = log calRepos.t etRepo
       )
 
-    val deleteAdditionalFieldsBuilder: DeleteAdditionalFieldsBuilder.Type =
-      DeleteAdditionalFieldsBuilder(
-        tweetRepo = logicalRepos.tweetRepo
+    val asyncSetAdd  onalF eldsBu lder: AsyncSetAdd  onalF eldsBu lder.Type =
+      AsyncSetAdd  onalF eldsBu lder(
+        userRepo = log calRepos.userRepo
       )
 
-    val asyncDeleteAdditionalFieldsBuilder: AsyncDeleteAdditionalFieldsBuilder.Type =
-      AsyncDeleteAdditionalFieldsBuilder(
-        userRepo = logicalRepos.userRepo
+    val deleteAdd  onalF eldsBu lder: DeleteAdd  onalF eldsBu lder.Type =
+      DeleteAdd  onalF eldsBu lder(
+        t etRepo = log calRepos.t etRepo
       )
 
-    new DispatchingTweetService(
-      asyncDeleteAdditionalFieldsBuilder = asyncDeleteAdditionalFieldsBuilder,
-      asyncSetAdditionalFieldsBuilder = asyncSetAdditionalFieldsBuilder,
-      deleteAdditionalFieldsBuilder = deleteAdditionalFieldsBuilder,
-      deleteLocationDataHandler = deleteLocationDataHandler,
-      deletePathHandler = tweetDeletePathHandler,
-      eraseUserTweetsHandler = eraseUserTweetsHandler,
-      getDeletedTweetsHandler = getDeletedTweetsHandler,
-      getStoredTweetsHandler = getStoredTweetsHandler,
-      getStoredTweetsByUserHandler = getStoredTweetsByUserHandler,
-      getTweetsHandler = getTweetsHandler,
-      getTweetFieldsHandler = getTweetFieldsHandler,
-      getTweetCountsHandler = GetTweetCountsHandler(logicalRepos.tweetCountsRepo),
-      postTweetHandler = postTweetHandler,
-      postRetweetHandler = postRetweetHandler,
-      quotedTweetDeleteBuilder = quotedTweetDeleteBuilder,
-      quotedTweetTakedownBuilder = quotedTweetTakedownBuilder,
-      scrubGeoUpdateUserTimestampBuilder = scrubGeoUpdateUserTimestampBuilder,
-      scrubGeoScrubTweetsBuilder = scrubGeoScrubTweetsBuilder,
-      setAdditionalFieldsBuilder = setAdditionalFieldsBuilder,
-      setRetweetVisibilityHandler = setRetweetVisibilityHandler,
-      statsReceiver = statsReceiver,
+    val asyncDeleteAdd  onalF eldsBu lder: AsyncDeleteAdd  onalF eldsBu lder.Type =
+      AsyncDeleteAdd  onalF eldsBu lder(
+        userRepo = log calRepos.userRepo
+      )
+
+    new D spatch ngT etServ ce(
+      asyncDeleteAdd  onalF eldsBu lder = asyncDeleteAdd  onalF eldsBu lder,
+      asyncSetAdd  onalF eldsBu lder = asyncSetAdd  onalF eldsBu lder,
+      deleteAdd  onalF eldsBu lder = deleteAdd  onalF eldsBu lder,
+      deleteLocat onDataHandler = deleteLocat onDataHandler,
+      deletePathHandler = t etDeletePathHandler,
+      eraseUserT etsHandler = eraseUserT etsHandler,
+      getDeletedT etsHandler = getDeletedT etsHandler,
+      getStoredT etsHandler = getStoredT etsHandler,
+      getStoredT etsByUserHandler = getStoredT etsByUserHandler,
+      getT etsHandler = getT etsHandler,
+      getT etF eldsHandler = getT etF eldsHandler,
+      getT etCountsHandler = GetT etCountsHandler(log calRepos.t etCountsRepo),
+      postT etHandler = postT etHandler,
+      postRet etHandler = postRet etHandler,
+      quotedT etDeleteBu lder = quotedT etDeleteBu lder,
+      quotedT etTakedownBu lder = quotedT etTakedownBu lder,
+      scrubGeoUpdateUserT  stampBu lder = scrubGeoUpdateUserT  stampBu lder,
+      scrubGeoScrubT etsBu lder = scrubGeoScrubT etsBu lder,
+      setAdd  onalF eldsBu lder = setAdd  onalF eldsBu lder,
+      setRet etV s b l yHandler = setRet etV s b l yHandler,
+      statsRece ver = statsRece ver,
       takedownHandler = takedownHandler,
-      tweetStore = tweetStores,
-      undeleteTweetHandler = undeleteTweetHandler,
-      unretweetHandler = unretweetHandler,
-      updatePossiblySensitiveTweetHandler = updatePossiblySensitiveTweetHandler,
+      t etStore = t etStores,
+      undeleteT etHandler = undeleteT etHandler,
+      unret etHandler = unret etHandler,
+      updatePoss blySens  veT etHandler = updatePoss blySens  veT etHandler,
       userTakedownHandler = userTakedownHandler,
-      clientIdHelper = clientIdHelper,
+      cl ent d lper = cl ent d lper,
     )
   }
 }
 
-object TakedownHandlerBuilder {
-  type Type = FutureArrow[TakedownRequest, Unit]
+object TakedownHandlerBu lder {
+  type Type = FutureArrow[TakedownRequest, Un ]
 
-  def apply(logicalRepos: LogicalRepositories, tweetStores: TotalTweetStore) =
+  def apply(log calRepos: Log calRepos or es, t etStores: TotalT etStore) =
     TakedownHandler(
-      getTweet = HandlerError.getRequired(
-        tweetGetter(logicalRepos),
-        HandlerError.tweetNotFoundException
+      getT et = HandlerError.getRequ red(
+        t etGetter(log calRepos),
+        HandlerError.t etNotFoundExcept on
       ),
-      getUser = HandlerError.getRequired(
-        userGetter(logicalRepos),
-        HandlerError.userNotFoundException
+      getUser = HandlerError.getRequ red(
+        userGetter(log calRepos),
+        HandlerError.userNotFoundExcept on
       ),
-      writeTakedown = tweetStores.takedown
+      wr eTakedown = t etStores.takedown
     )
 
-  def tweetGetter(logicalRepos: LogicalRepositories): FutureArrow[TweetId, Option[Tweet]] =
+  def t etGetter(log calRepos: Log calRepos or es): FutureArrow[T et d, Opt on[T et]] =
     FutureArrow(
-      TweetRepository.tweetGetter(
-        logicalRepos.optionalTweetRepo,
-        TweetQuery.Options(
-          include = GetTweetsHandler.BaseInclude.also(
-            tweetFields = Set(
-              Tweet.TweetypieOnlyTakedownCountryCodesField.id,
-              Tweet.TweetypieOnlyTakedownReasonsField.id
+      T etRepos ory.t etGetter(
+        log calRepos.opt onalT etRepo,
+        T etQuery.Opt ons(
+           nclude = GetT etsHandler.Base nclude.also(
+            t etF elds = Set(
+              T et.T etyp eOnlyTakedownCountryCodesF eld. d,
+              T et.T etyp eOnlyTakedownReasonsF eld. d
             )
           )
         )
       )
     )
 
-  def userGetter(logicalRepos: LogicalRepositories): FutureArrow[UserId, Option[User]] =
+  def userGetter(log calRepos: Log calRepos or es): FutureArrow[User d, Opt on[User]] =
     FutureArrow(
-      UserRepository
+      UserRepos ory
         .userGetter(
-          logicalRepos.optionalUserRepo,
-          UserQueryOptions(
-            Set(UserField.Roles, UserField.Safety, UserField.Takedowns),
-            UserVisibility.All
+          log calRepos.opt onalUserRepo,
+          UserQueryOpt ons(
+            Set(UserF eld.Roles, UserF eld.Safety, UserF eld.Takedowns),
+            UserV s b l y.All
           )
         )
-        .compose(UserKey.byId)
+        .compose(UserKey.by d)
     )
 }
 
-object UserTakedownHandlerBuilder {
+object UserTakedownHandlerBu lder {
   def apply(
-    logicalRepos: LogicalRepositories,
-    tweetStores: TotalTweetStore,
-    stats: StatsReceiver
+    log calRepos: Log calRepos or es,
+    t etStores: TotalT etStore,
+    stats: StatsRece ver
   ): UserTakedownHandler.Type =
     UserTakedownHandler(
-      getTweet = TakedownHandlerBuilder.tweetGetter(logicalRepos),
-      tweetTakedown = tweetStores.takedown,
+      getT et = TakedownHandlerBu lder.t etGetter(log calRepos),
+      t etTakedown = t etStores.takedown,
     )
 }
 
-object EraseUserTweetsHandlerBuilder {
+object EraseUserT etsHandlerBu lder {
   def apply(
-    backendClients: BackendClients,
-    asyncInvocationBuilder: ServiceInvocationBuilder,
-    deciderGates: TweetypieDeciderGates,
-    settings: TweetServiceSettings,
-    timer: Timer,
-    tweetDeletePathHandler: DefaultTweetDeletePathHandler,
-    tweetServiceScope: StatsReceiver
-  ): EraseUserTweetsHandler =
-    EraseUserTweetsHandler(
-      selectPage(backendClients, settings),
-      deleteTweet(tweetDeletePathHandler),
-      eraseUserTweets(backendClients, asyncInvocationBuilder),
-      tweetServiceScope.scope("erase_user_tweets"),
-      sleep(deciderGates, settings, timer)
+    backendCl ents: BackendCl ents,
+    async nvocat onBu lder: Serv ce nvocat onBu lder,
+    dec derGates: T etyp eDec derGates,
+    sett ngs: T etServ ceSett ngs,
+    t  r: T  r,
+    t etDeletePathHandler: DefaultT etDeletePathHandler,
+    t etServ ceScope: StatsRece ver
+  ): EraseUserT etsHandler =
+    EraseUserT etsHandler(
+      selectPage(backendCl ents, sett ngs),
+      deleteT et(t etDeletePathHandler),
+      eraseUserT ets(backendCl ents, async nvocat onBu lder),
+      t etServ ceScope.scope("erase_user_t ets"),
+      sleep(dec derGates, sett ngs, t  r)
     )
 
   def selectPage(
-    backendClients: BackendClients,
-    settings: TweetServiceSettings
+    backendCl ents: BackendCl ents,
+    sett ngs: T etServ ceSett ngs
   ): FutureArrow[Select[StatusGraph], PageResult[Long]] =
     FutureArrow(
-      backendClients.tflockWriteClient.selectPage(_, Some(settings.eraseUserTweetsPageSize))
+      backendCl ents.tflockWr eCl ent.selectPage(_, So (sett ngs.eraseUserT etsPageS ze))
     )
 
-  def deleteTweet(
-    tweetDeletePathHandler: DefaultTweetDeletePathHandler
-  ): FutureEffect[(TweetId, UserId)] =
-    FutureEffect[(TweetId, UserId)] {
-      case (tweetId, expectedUserId) =>
-        tweetDeletePathHandler
-          .internalDeleteTweets(
-            request = DeleteTweetsRequest(
-              Seq(tweetId),
-              isUserErasure = true,
-              expectedUserId = Some(expectedUserId)
+  def deleteT et(
+    t etDeletePathHandler: DefaultT etDeletePathHandler
+  ): FutureEffect[(T et d, User d)] =
+    FutureEffect[(T et d, User d)] {
+      case (t et d, expectedUser d) =>
+        t etDeletePathHandler
+          . nternalDeleteT ets(
+            request = DeleteT etsRequest(
+              Seq(t et d),
+               sUserErasure = true,
+              expectedUser d = So (expectedUser d)
             ),
-            byUserId = None,
-            authenticatedUserId = None,
-            validate = tweetDeletePathHandler.validateTweetsForUserErasureDaemon
+            byUser d = None,
+            aut nt catedUser d = None,
+            val date = t etDeletePathHandler.val dateT etsForUserErasureDaemon
           )
-          .unit
+          .un 
     }
 
-  def eraseUserTweets(
-    backendClients: BackendClients,
-    asyncInvocationBuilder: ServiceInvocationBuilder
-  ): FutureArrow[AsyncEraseUserTweetsRequest, Unit] =
-    asyncInvocationBuilder
-      .asyncVia(backendClients.asyncTweetDeletionService)
-      .method(_.asyncEraseUserTweets)
+  def eraseUserT ets(
+    backendCl ents: BackendCl ents,
+    async nvocat onBu lder: Serv ce nvocat onBu lder
+  ): FutureArrow[AsyncEraseUserT etsRequest, Un ] =
+    async nvocat onBu lder
+      .asyncV a(backendCl ents.asyncT etDelet onServ ce)
+      . thod(_.asyncEraseUserT ets)
 
   def sleep(
-    deciderGates: TweetypieDeciderGates,
-    settings: TweetServiceSettings,
-    timer: Timer
-  ): () => Future[Unit] =
+    dec derGates: T etyp eDec derGates,
+    sett ngs: T etServ ceSett ngs,
+    t  r: T  r
+  ): () => Future[Un ] =
     () =>
-      if (deciderGates.delayEraseUserTweets()) {
-        Future.sleep(settings.eraseUserTweetsDelay)(timer)
+       f (dec derGates.delayEraseUserT ets()) {
+        Future.sleep(sett ngs.eraseUserT etsDelay)(t  r)
       } else {
-        Future.Unit
+        Future.Un 
       }
 }
 
-object UndeleteTweetHandlerBuilder {
+object UndeleteT etHandlerBu lder {
   def apply(
-    tweetStorage: TweetStorageClient,
-    logicalRepos: LogicalRepositories,
-    tweetStores: TotalTweetStore,
-    parentUserIdRepo: ParentUserIdRepository.Type,
-    statsReceiver: StatsReceiver
-  ): UndeleteTweetHandler.Type =
-    UndeleteTweetHandler(
-      undelete = tweetStorage.undelete,
-      tweetExists = tweetExists(tweetStorage),
+    t etStorage: T etStorageCl ent,
+    log calRepos: Log calRepos or es,
+    t etStores: TotalT etStore,
+    parentUser dRepo: ParentUser dRepos ory.Type,
+    statsRece ver: StatsRece ver
+  ): UndeleteT etHandler.Type =
+    UndeleteT etHandler(
+      undelete = t etStorage.undelete,
+      t etEx sts = t etEx sts(t etStorage),
       getUser = FutureArrow(
-        UserRepository
+        UserRepos ory
           .userGetter(
-            logicalRepos.optionalUserRepo,
-            UserQueryOptions(
-              // ExtendedProfile is needed to view a user's birthday to
-              // guarantee we are not undeleting tweets from when a user was < 13
-              TweetBuilder.userFields ++ Set(UserField.ExtendedProfile),
-              UserVisibility.All,
-              filteredAsFailure = false
+            log calRepos.opt onalUserRepo,
+            UserQueryOpt ons(
+              // ExtendedProf le  s needed to v ew a user's b rthday to
+              // guarantee   are not undelet ng t ets from w n a user was < 13
+              T etBu lder.userF elds ++ Set(UserF eld.ExtendedProf le),
+              UserV s b l y.All,
+              f lteredAsFa lure = false
             )
           )
-          .compose(UserKey.byId)
+          .compose(UserKey.by d)
       ),
-      getDeletedTweets = tweetStorage.getDeletedTweets,
-      parentUserIdRepo = parentUserIdRepo,
+      getDeletedT ets = t etStorage.getDeletedT ets,
+      parentUser dRepo = parentUser dRepo,
       save = save(
-        logicalRepos,
-        tweetStores,
-        statsReceiver
+        log calRepos,
+        t etStores,
+        statsRece ver
       )
     )
 
-  private def tweetExists(tweetStorage: TweetStorageClient): FutureArrow[TweetId, Boolean] =
-    FutureArrow { id =>
-      Stitch
-        .run(tweetStorage.getTweet(id))
+  pr vate def t etEx sts(t etStorage: T etStorageCl ent): FutureArrow[T et d, Boolean] =
+    FutureArrow {  d =>
+      St ch
+        .run(t etStorage.getT et( d))
         .map {
-          case _: GetTweet.Response.Found => true
+          case _: GetT et.Response.Found => true
           case _ => false
         }
     }
 
-  //  1. hydrates the undeleted tweet
-  //  2. hands a UndeleteTweetEvent to relevant stores.
-  //  3. return the hydrated tweet
+  //  1. hydrates t  undeleted t et
+  //  2. hands a UndeleteT etEvent to relevant stores.
+  //  3. return t  hydrated t et
   def save(
-    logicalRepos: LogicalRepositories,
-    tweetStores: TotalTweetStore,
-    statsReceiver: StatsReceiver
-  ): FutureArrow[UndeleteTweet.Event, Tweet] = {
+    log calRepos: Log calRepos or es,
+    t etStores: TotalT etStore,
+    statsRece ver: StatsRece ver
+  ): FutureArrow[UndeleteT et.Event, T et] = {
 
-    val hydrateTweet =
-      WritePathHydration.hydrateTweet(
-        logicalRepos.tweetHydrators.hydrator,
-        statsReceiver.scope("undelete_tweet")
+    val hydrateT et =
+      Wr ePathHydrat on.hydrateT et(
+        log calRepos.t etHydrators.hydrator,
+        statsRece ver.scope("undelete_t et")
       )
 
-    val hydrateQuotedTweet =
-      WritePathHydration.hydrateQuotedTweet(
-        logicalRepos.optionalTweetRepo,
-        logicalRepos.optionalUserRepo,
-        logicalRepos.quoterHasAlreadyQuotedRepo
+    val hydrateQuotedT et =
+      Wr ePathHydrat on.hydrateQuotedT et(
+        log calRepos.opt onalT etRepo,
+        log calRepos.opt onalUserRepo,
+        log calRepos.quoterHasAlreadyQuotedRepo
       )
 
     val hydrateUndeleteEvent =
-      WritePathHydration.hydrateUndeleteTweetEvent(
-        hydrateTweet = hydrateTweet,
-        hydrateQuotedTweet = hydrateQuotedTweet
+      Wr ePathHydrat on.hydrateUndeleteT etEvent(
+        hydrateT et = hydrateT et,
+        hydrateQuotedT et = hydrateQuotedT et
       )
 
-    FutureArrow[UndeleteTweet.Event, Tweet] { event =>
+    FutureArrow[UndeleteT et.Event, T et] { event =>
       for {
         hydratedEvent <- hydrateUndeleteEvent(event)
-        _ <- tweetStores.undeleteTweet(hydratedEvent)
-      } yield hydratedEvent.tweet
+        _ <- t etStores.undeleteT et(hydratedEvent)
+      } y eld hydratedEvent.t et
     }
   }
 }

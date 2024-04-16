@@ -1,61 +1,61 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.AncestorsFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
-import com.twitter.tweetconvosvc.tweet_ancestor.{thriftscala => ta}
-import com.twitter.tweetconvosvc.{thriftscala => tcs}
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.model.Ho Features.AncestorsFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nReplyToT et dFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.Cand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.ut l.OffloadFuturePools
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etconvosvc.t et_ancestor.{thr ftscala => ta}
+ mport com.tw ter.t etconvosvc.{thr ftscala => tcs}
+ mport com.tw ter.ut l.Future
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class AncestorFeatureHydrator @Inject() (
-  conversationServiceClient: tcs.ConversationService.MethodPerEndpoint)
-    extends CandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@S ngleton
+class AncestorFeatureHydrator @ nject() (
+  conversat onServ ceCl ent: tcs.Conversat onServ ce. thodPerEndpo nt)
+    extends Cand dateFeatureHydrator[P pel neQuery, T etCand date] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("Ancestor")
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er("Ancestor")
 
-  override val features: Set[Feature[_, _]] = Set(AncestorsFeature)
+  overr de val features: Set[Feature[_, _]] = Set(AncestorsFeature)
 
-  private val DefaultFeatureMap = FeatureMapBuilder().add(AncestorsFeature, Seq.empty).build()
+  pr vate val DefaultFeatureMap = FeatureMapBu lder().add(AncestorsFeature, Seq.empty).bu ld()
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = OffloadFuturePools.offloadFuture {
-    if (existingFeatures.getOrElse(InReplyToTweetIdFeature, None).isDefined) {
-      val ancestorsRequest = tcs.GetAncestorsRequest(Seq(candidate.id))
-      conversationServiceClient.getAncestors(ancestorsRequest).map { getAncestorsResponse =>
-        val ancestors = getAncestorsResponse.ancestors.headOption
+  overr de def apply(
+    query: P pel neQuery,
+    cand date: T etCand date,
+    ex st ngFeatures: FeatureMap
+  ): St ch[FeatureMap] = OffloadFuturePools.offloadFuture {
+     f (ex st ngFeatures.getOrElse( nReplyToT et dFeature, None). sDef ned) {
+      val ancestorsRequest = tcs.GetAncestorsRequest(Seq(cand date. d))
+      conversat onServ ceCl ent.getAncestors(ancestorsRequest).map { getAncestorsResponse =>
+        val ancestors = getAncestorsResponse.ancestors. adOpt on
           .collect {
-            case tcs.TweetAncestorsResult.TweetAncestors(ancestorsResult)
-                if ancestorsResult.nonEmpty =>
-              ancestorsResult.head.ancestors ++ getTruncatedRootTweet(ancestorsResult.head)
+            case tcs.T etAncestorsResult.T etAncestors(ancestorsResult)
+                 f ancestorsResult.nonEmpty =>
+              ancestorsResult. ad.ancestors ++ getTruncatedRootT et(ancestorsResult. ad)
           }.getOrElse(Seq.empty)
 
-        FeatureMapBuilder().add(AncestorsFeature, ancestors).build()
+        FeatureMapBu lder().add(AncestorsFeature, ancestors).bu ld()
       }
     } else Future.value(DefaultFeatureMap)
   }
 
-  private def getTruncatedRootTweet(
-    ancestors: ta.TweetAncestors,
-  ): Option[ta.TweetAncestor] = {
-    ancestors.conversationRootAuthorId.collect {
-      case rootAuthorId
-          if ancestors.state == ta.ReplyState.Partial &&
-            ancestors.ancestors.last.tweetId != ancestors.conversationId =>
-        ta.TweetAncestor(ancestors.conversationId, rootAuthorId)
+  pr vate def getTruncatedRootT et(
+    ancestors: ta.T etAncestors,
+  ): Opt on[ta.T etAncestor] = {
+    ancestors.conversat onRootAuthor d.collect {
+      case rootAuthor d
+           f ancestors.state == ta.ReplyState.Part al &&
+            ancestors.ancestors.last.t et d != ancestors.conversat on d =>
+        ta.T etAncestor(ancestors.conversat on d, rootAuthor d)
     }
   }
 }

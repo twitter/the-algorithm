@@ -1,10 +1,10 @@
-package com.twitter.visibility.interfaces.spaces
+package com.tw ter.v s b l y. nterfaces.spaces
 
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.models.V e rContext
 
-case class SpaceVisibilityRequest(
-  spaceId: String,
+case class SpaceV s b l yRequest(
+  space d: Str ng,
   safetyLevel: SafetyLevel,
-  viewerContext: ViewerContext,
-  spaceHostAndAdminUserIds: Option[Seq[Long]])
+  v e rContext: V e rContext,
+  spaceHostAndAdm nUser ds: Opt on[Seq[Long]])

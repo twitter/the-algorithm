@@ -1,31 +1,31 @@
-package com.twitter.tweetypie.core
+package com.tw ter.t etyp e.core
 
-import com.twitter.servo.cache
-import com.twitter.servo.cache.CachedSerializer
-import com.twitter.tweetypie.thriftscala
-import com.twitter.tweetypie.thriftscala.CachedTweet
-import com.twitter.tweetypie.thriftscala.Tweet
-import org.apache.thrift.protocol.TCompactProtocol
+ mport com.tw ter.servo.cac 
+ mport com.tw ter.servo.cac .Cac dSer al zer
+ mport com.tw ter.t etyp e.thr ftscala
+ mport com.tw ter.t etyp e.thr ftscala.Cac dT et
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport org.apac .thr ft.protocol.TCompactProtocol
 
 /**
- * A container object for serializers.
- * Creates a serializer for every object type cached by the tweetypie service
+ * A conta ner object for ser al zers.
+ * Creates a ser al zer for every object type cac d by t  t etyp e serv ce
  */
-object Serializer {
+object Ser al zer {
   lazy val CompactProtocolFactory: TCompactProtocol.Factory = new TCompactProtocol.Factory
 
-  def toCached[T](underlying: cache.Serializer[T]): cache.CachedSerializer[T] =
-    new cache.CachedSerializer(underlying, CompactProtocolFactory)
+  def toCac d[T](underly ng: cac .Ser al zer[T]): cac .Cac dSer al zer[T] =
+    new cac .Cac dSer al zer(underly ng, CompactProtocolFactory)
 
-  object Tweet {
-    lazy val Compact: cache.ThriftSerializer[thriftscala.Tweet] =
-      new cache.ThriftSerializer(thriftscala.Tweet, CompactProtocolFactory)
-    lazy val CachedCompact: CachedSerializer[Tweet] = toCached(Compact)
+  object T et {
+    lazy val Compact: cac .Thr ftSer al zer[thr ftscala.T et] =
+      new cac .Thr ftSer al zer(thr ftscala.T et, CompactProtocolFactory)
+    lazy val Cac dCompact: Cac dSer al zer[T et] = toCac d(Compact)
   }
 
-  object CachedTweet {
-    lazy val Compact: cache.ThriftSerializer[thriftscala.CachedTweet] =
-      new cache.ThriftSerializer(thriftscala.CachedTweet, CompactProtocolFactory)
-    lazy val CachedCompact: CachedSerializer[CachedTweet] = toCached(Compact)
+  object Cac dT et {
+    lazy val Compact: cac .Thr ftSer al zer[thr ftscala.Cac dT et] =
+      new cac .Thr ftSer al zer(thr ftscala.Cac dT et, CompactProtocolFactory)
+    lazy val Cac dCompact: Cac dSer al zer[Cac dT et] = toCac d(Compact)
   }
 }

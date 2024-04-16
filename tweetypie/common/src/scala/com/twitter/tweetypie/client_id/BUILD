@@ -1,15 +1,15 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finagle-internal/mtls/src/main/scala/com/twitter/finagle/mtls/authentication",
-        "finagle-internal/mtls/src/main/scala/com/twitter/finagle/mtls/transport",
-        "finagle/finagle-thrift/src/main/scala",
-        "tweetypie/servo/util/src/main/scala:exception",
-        "strato/src/main/scala/com/twitter/strato/access",
-        "strato/src/main/scala/com/twitter/strato/data",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "f nagle- nternal/mtls/src/ma n/scala/com/tw ter/f nagle/mtls/aut nt cat on",
+        "f nagle- nternal/mtls/src/ma n/scala/com/tw ter/f nagle/mtls/transport",
+        "f nagle/f nagle-thr ft/src/ma n/scala",
+        "t etyp e/servo/ut l/src/ma n/scala:except on",
+        "strato/src/ma n/scala/com/tw ter/strato/access",
+        "strato/src/ma n/scala/com/tw ter/strato/data",
     ],
 )

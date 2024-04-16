@@ -1,75 +1,75 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
-import com.twitter.usersignalservice.thriftscala.SignalType
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSEnumParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.users gnalserv ce.thr ftscala.S gnalType
 
-object GoodTweetClickParams {
+object GoodT etCl ckParams {
 
-  object ClickMinDwellTimeParam extends Enumeration {
-    protected case class SignalTypeValue(signalType: SignalType) extends super.Val
-    import scala.language.implicitConversions
-    implicit def valueToSignalTypeValue(x: Value): SignalTypeValue =
-      x.asInstanceOf[SignalTypeValue]
+  object Cl ckM nD llT  Param extends Enu rat on {
+    protected case class S gnalTypeValue(s gnalType: S gnalType) extends super.Val
+     mport scala.language. mpl c Convers ons
+     mpl c  def valueToS gnalTypeValue(x: Value): S gnalTypeValue =
+      x.as nstanceOf[S gnalTypeValue]
 
-    val TotalDwellTime2s = SignalTypeValue(SignalType.GoodTweetClick)
-    val TotalDwellTime5s = SignalTypeValue(SignalType.GoodTweetClick5s)
-    val TotalDwellTime10s = SignalTypeValue(SignalType.GoodTweetClick10s)
-    val TotalDwellTime30s = SignalTypeValue(SignalType.GoodTweetClick30s)
+    val TotalD llT  2s = S gnalTypeValue(S gnalType.GoodT etCl ck)
+    val TotalD llT  5s = S gnalTypeValue(S gnalType.GoodT etCl ck5s)
+    val TotalD llT  10s = S gnalTypeValue(S gnalType.GoodT etCl ck10s)
+    val TotalD llT  30s = S gnalTypeValue(S gnalType.GoodT etCl ck30s)
 
   }
 
-  object EnableSourceParam
+  object EnableS ceParam
       extends FSParam[Boolean](
-        name = "signal_good_tweet_clicks_enable_source",
+        na  = "s gnal_good_t et_cl cks_enable_s ce",
         default = false
       )
 
-  object ClickMinDwellTimeType
-      extends FSEnumParam[ClickMinDwellTimeParam.type](
-        name = "signal_good_tweet_clicks_min_dwelltime_type_id",
-        default = ClickMinDwellTimeParam.TotalDwellTime2s,
-        enum = ClickMinDwellTimeParam
+  object Cl ckM nD llT  Type
+      extends FSEnumParam[Cl ckM nD llT  Param.type](
+        na  = "s gnal_good_t et_cl cks_m n_d llt  _type_ d",
+        default = Cl ckM nD llT  Param.TotalD llT  2s,
+        enum = Cl ckM nD llT  Param
       )
 
-  object MaxSignalNumParam
-      extends FSBoundedParam[Int](
-        name = "signal_good_tweet_clicks_max_signal_num",
+  object MaxS gnalNumParam
+      extends FSBoundedParam[ nt](
+        na  = "s gnal_good_t et_cl cks_max_s gnal_num",
         default = 15,
-        min = 0,
+        m n = 0,
         max = 15
       )
 
-  val AllParams: Seq[Param[_] with FSName] =
-    Seq(EnableSourceParam, ClickMinDwellTimeType, MaxSignalNumParam)
+  val AllParams: Seq[Param[_] w h FSNa ] =
+    Seq(EnableS ceParam, Cl ckM nD llT  Type, MaxS gnalNumParam)
 
-  lazy val config: BaseConfig = {
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableSourceParam
+  lazy val conf g: BaseConf g = {
+    val booleanOverr des = FeatureSw chOverr deUt l.getBooleanFSOverr des(
+      EnableS ceParam
     )
 
-    val enumOverrides = FeatureSwitchOverrideUtil.getEnumFSOverrides(
-      NullStatsReceiver,
+    val enumOverr des = FeatureSw chOverr deUt l.getEnumFSOverr des(
+      NullStatsRece ver,
       Logger(getClass),
-      ClickMinDwellTimeType
+      Cl ckM nD llT  Type
     )
 
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-      MaxSignalNumParam
+    val  ntOverr des = FeatureSw chOverr deUt l.getBounded ntFSOverr des(
+      MaxS gnalNumParam
     )
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(enumOverrides: _*)
-      .set(intOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set(booleanOverr des: _*)
+      .set(enumOverr des: _*)
+      .set( ntOverr des: _*)
+      .bu ld()
   }
 }

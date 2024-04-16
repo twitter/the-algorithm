@@ -1,113 +1,113 @@
-package com.twitter.search.earlybird.search.queries;
+package com.tw ter.search.earlyb rd.search.quer es;
 
-import java.io.IOException;
-import java.util.Set;
+ mport java. o. OExcept on;
+ mport java.ut l.Set;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+ mport org.apac .lucene. ndex.LeafReader;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene. ndex.Nu r cDocValues;
+ mport org.apac .lucene.search.BooleanClause;
+ mport org.apac .lucene.search.BooleanQuery;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.search. ndexSearc r;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .lucene.search.ScoreMode;
+ mport org.apac .lucene.search.  ght;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
+ mport com.tw ter.search.common.query.DefaultF lter  ght;
+ mport com.tw ter.search.core.earlyb rd. ndex.ut l.RangeF lterD S ;
 
-public final class FeatureValueInAcceptListOrUnsetFilter extends Query {
+publ c f nal class FeatureValue nAcceptL stOrUnsetF lter extends Query {
 
-  private final String featureName;
-  private final Set<Long> idsAcceptList;
+  pr vate f nal Str ng featureNa ;
+  pr vate f nal Set<Long>  dsAcceptL st;
 
   /**
-   * Creates a query that filters for hits that have the given feature unset, or that have the
-   * given feature set to a value in the given list of IDs.
+   * Creates a query that f lters for h s that have t  g ven feature unset, or that have t 
+   * g ven feature set to a value  n t  g ven l st of  Ds.
    *
-   * @param featureName The feature.
-   * @param ids A list of id values this filter will accept for the given feature.
-   * @return A query that filters out all hits that have the given feature set.
+   * @param featureNa  T  feature.
+   * @param  ds A l st of  d values t  f lter w ll accept for t  g ven feature.
+   * @return A query that f lters out all h s that have t  g ven feature set.
    */
-  public static Query getFeatureValueInAcceptListOrUnsetFilter(String featureName, Set<Long> ids) {
-    return new BooleanQuery.Builder()
-        .add(new FeatureValueInAcceptListOrUnsetFilter(featureName, ids),
-            BooleanClause.Occur.FILTER)
-        .build();
+  publ c stat c Query getFeatureValue nAcceptL stOrUnsetF lter(Str ng featureNa , Set<Long>  ds) {
+    return new BooleanQuery.Bu lder()
+        .add(new FeatureValue nAcceptL stOrUnsetF lter(featureNa ,  ds),
+            BooleanClause.Occur.F LTER)
+        .bu ld();
   }
 
-  @Override
-  public String toString(String s) {
-    return String.format("FeatureValueInAcceptListOrUnsetFilter(%s, AcceptList = (%s))",
-        featureName,
-        idsAcceptList);
+  @Overr de
+  publ c Str ng toStr ng(Str ng s) {
+    return Str ng.format("FeatureValue nAcceptL stOrUnsetF lter(%s, AcceptL st = (%s))",
+        featureNa ,
+         dsAcceptL st);
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof FeatureValueInAcceptListOrUnsetFilter)) {
+  @Overr de
+  publ c boolean equals(Object obj) {
+     f (!(obj  nstanceof FeatureValue nAcceptL stOrUnsetF lter)) {
       return false;
     }
 
-    FeatureValueInAcceptListOrUnsetFilter filter =
-        FeatureValueInAcceptListOrUnsetFilter.class.cast(obj);
-    return featureName.equals(filter.featureName) && idsAcceptList.equals(filter.idsAcceptList);
+    FeatureValue nAcceptL stOrUnsetF lter f lter =
+        FeatureValue nAcceptL stOrUnsetF lter.class.cast(obj);
+    return featureNa .equals(f lter.featureNa ) &&  dsAcceptL st.equals(f lter. dsAcceptL st);
   }
 
-  @Override
-  public int hashCode() {
-    return featureName.hashCode() * 7 + idsAcceptList.hashCode();
+  @Overr de
+  publ c  nt hashCode() {
+    return featureNa .hashCode() * 7 +  dsAcceptL st.hashCode();
   }
 
-  private FeatureValueInAcceptListOrUnsetFilter(String featureName, Set<Long> ids) {
-    this.featureName = Preconditions.checkNotNull(featureName);
-    this.idsAcceptList = Preconditions.checkNotNull(ids);
+  pr vate FeatureValue nAcceptL stOrUnsetF lter(Str ng featureNa , Set<Long>  ds) {
+    t .featureNa  = Precond  ons.c ckNotNull(featureNa );
+    t . dsAcceptL st = Precond  ons.c ckNotNull( ds);
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        return new FeatureValueInAcceptListOrUnsetDocIdSetIterator(
-            context.reader(), featureName, idsAcceptList);
+  @Overr de
+  publ c   ght create  ght( ndexSearc r searc r, ScoreMode scoreMode, float boost) {
+    return new DefaultF lter  ght(t ) {
+      @Overr de
+      protected Doc dSet erator getDoc dSet erator(LeafReaderContext context) throws  OExcept on {
+        return new FeatureValue nAcceptL stOrUnsetDoc dSet erator(
+            context.reader(), featureNa ,  dsAcceptL st);
       }
     };
   }
 
-  private static final class FeatureValueInAcceptListOrUnsetDocIdSetIterator
-      extends RangeFilterDISI {
-    private final NumericDocValues featureDocValues;
-    private final Set<Long> idsAcceptList;
+  pr vate stat c f nal class FeatureValue nAcceptL stOrUnsetDoc dSet erator
+      extends RangeF lterD S  {
+    pr vate f nal Nu r cDocValues featureDocValues;
+    pr vate f nal Set<Long>  dsAcceptL st;
 
-    FeatureValueInAcceptListOrUnsetDocIdSetIterator(
-        LeafReader indexReader, String featureName, Set<Long> ids) throws IOException {
-      super(indexReader);
-      this.featureDocValues = indexReader.getNumericDocValues(featureName);
-      this.idsAcceptList = ids;
+    FeatureValue nAcceptL stOrUnsetDoc dSet erator(
+        LeafReader  ndexReader, Str ng featureNa , Set<Long>  ds) throws  OExcept on {
+      super( ndexReader);
+      t .featureDocValues =  ndexReader.getNu r cDocValues(featureNa );
+      t . dsAcceptL st =  ds;
     }
 
-    @Override
-    public boolean shouldReturnDoc() throws IOException {
-      // If featureDocValues is null, that means there were no documents indexed with the given
-      // field in the current segment.
+    @Overr de
+    publ c boolean shouldReturnDoc() throws  OExcept on {
+      //  f featureDocValues  s null, that  ans t re  re no docu nts  ndexed w h t  g ven
+      // f eld  n t  current seg nt.
       //
-      // The advanceExact() method returns false if it cannot find the given docId in the
-      // NumericDocValues instance. So if advanceExact() returns false then we know the feature is
+      // T  advanceExact()  thod returns false  f   cannot f nd t  g ven doc d  n t 
+      // Nu r cDocValues  nstance. So  f advanceExact() returns false t n   know t  feature  s
       // unset.
-      // However, for realtime Earlybirds we have a custom implementation of NumericDocValues,
-      // ColumnStrideFieldDocValues, which will contain an entry for every indexed docId and use a
-      // value of 0 to indicate that a feature is unset.
+      // Ho ver, for realt   Earlyb rds   have a custom  mple ntat on of Nu r cDocValues,
+      // ColumnStr deF eldDocValues, wh ch w ll conta n an entry for every  ndexed doc d and use a
+      // value of 0 to  nd cate that a feature  s unset.
       //
-      // So to check if a feature is unset for a given docId, we first need to check if we can find
-      // the docId, and then we additionally need to check if the feature value is 0.
+      // So to c ck  f a feature  s unset for a g ven doc d,   f rst need to c ck  f   can f nd
+      // t  doc d, and t n   add  onally need to c ck  f t  feature value  s 0.
       return featureDocValues == null
-          || !featureDocValues.advanceExact(docID())
+          || !featureDocValues.advanceExact(doc D())
           || featureDocValues.longValue() == 0
-          || idsAcceptList.contains(featureDocValues.longValue());
+          ||  dsAcceptL st.conta ns(featureDocValues.longValue());
     }
   }
 }

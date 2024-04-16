@@ -1,99 +1,99 @@
-package com.twitter.tweetypie.serverutil.logcachewrites
+package com.tw ter.t etyp e.serverut l.logcac wr es
 
-import com.twitter.servo.cache.Cached
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.tweetypie.TweetId
-import com.twitter.tweetypie.core.Serializer
-import com.twitter.tweetypie.thriftscala.CachedTweet
-import com.twitter.util.Time
-import java.util.Base64
+ mport com.tw ter.servo.cac .Cac d
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.t etyp e.T et d
+ mport com.tw ter.t etyp e.core.Ser al zer
+ mport com.tw ter.t etyp e.thr ftscala.Cac dT et
+ mport com.tw ter.ut l.T  
+ mport java.ut l.Base64
 
 /**
- * A record of a tweet cache write. This is used for debugging. These log
- * messages are scribed to test_tweetypie_tweet_cache_writes.
+ * A record of a t et cac  wr e. T   s used for debugg ng. T se log
+ *  ssages are scr bed to test_t etyp e_t et_cac _wr es.
  */
-case class TweetCacheWrite(
-  tweetId: TweetId,
-  timestamp: Time,
-  action: String,
-  value: Option[Cached[CachedTweet]]) {
+case class T etCac Wr e(
+  t et d: T et d,
+  t  stamp: T  ,
+  act on: Str ng,
+  value: Opt on[Cac d[Cac dT et]]) {
 
   /**
-   * Convert to a tab-separated string suitable for writing to a log message.
+   * Convert to a tab-separated str ng su able for wr  ng to a log  ssage.
    *
-   * Fields are:
-   *  - Tweet id
-   *  - Timestamp:
-   *      If the tweet id is a snowflake id, this is an offset since tweet creation.
-   *      If it is not a snowflake id, then this is a Unix epoch time in
-   *      milliseconds. (The idea is that for most tweets, this encoding will make
-   *      it easier to see the interval between events and whether it occured soon
-   *      after tweet creation.)
-   *  - Cache action ("set", "add", "replace", "cas", "delete")
-   *  - Base64-encoded Cached[CachedTweet] struct
+   * F elds are:
+   *  - T et  d
+   *  - T  stamp:
+   *       f t  t et  d  s a snowflake  d, t   s an offset s nce t et creat on.
+   *       f    s not a snowflake  d, t n t   s a Un x epoch t    n
+   *      m ll seconds. (T   dea  s that for most t ets, t  encod ng w ll make
+   *        eas er to see t   nterval bet en events and w t r   occured soon
+   *      after t et creat on.)
+   *  - Cac  act on ("set", "add", "replace", "cas", "delete")
+   *  - Base64-encoded Cac d[Cac dT et] struct
    */
-  def toLogMessage: String = {
-    val builder = new java.lang.StringBuilder
-    val timestampOffset =
-      if (SnowflakeId.isSnowflakeId(tweetId)) {
-        SnowflakeId(tweetId).unixTimeMillis.asLong
+  def toLog ssage: Str ng = {
+    val bu lder = new java.lang.Str ngBu lder
+    val t  stampOffset =
+       f (Snowflake d. sSnowflake d(t et d)) {
+        Snowflake d(t et d).un xT  M ll s.asLong
       } else {
         0
       }
-    builder
-      .append(tweetId)
+    bu lder
+      .append(t et d)
       .append('\t')
-      .append(timestamp.inMilliseconds - timestampOffset)
+      .append(t  stamp. nM ll seconds - t  stampOffset)
       .append('\t')
-      .append(action)
+      .append(act on)
       .append('\t')
     value.foreach { ct =>
-      // When logging, we end up serializing the value twice, once for the
-      // cache write and once for the logging. This is suboptimal, but the
-      // assumption is that we only do this for a small fraction of cache
-      // writes, so it should be ok. The reason that this is necessary is
-      // because we want to do the filtering on the deserialized value, so
-      // the serialized value is not available at the level that we are
-      // doing the filtering.
-      val thriftBytes = Serializer.CachedTweet.CachedCompact.to(ct).get
-      builder.append(Base64.getEncoder.encodeToString(thriftBytes))
+      // W n logg ng,   end up ser al z ng t  value tw ce, once for t 
+      // cac  wr e and once for t  logg ng. T   s subopt mal, but t 
+      // assumpt on  s that   only do t  for a small fract on of cac 
+      // wr es, so   should be ok. T  reason that t   s necessary  s
+      // because   want to do t  f lter ng on t  deser al zed value, so
+      // t  ser al zed value  s not ava lable at t  level that   are
+      // do ng t  f lter ng.
+      val thr ftBytes = Ser al zer.Cac dT et.Cac dCompact.to(ct).get
+      bu lder.append(Base64.getEncoder.encodeToStr ng(thr ftBytes))
     }
-    builder.toString
+    bu lder.toStr ng
   }
 }
 
-object TweetCacheWrite {
-  case class ParseException(msg: String, cause: Exception) extends RuntimeException(cause) {
-    override def getMessage: String = s"Failed to parse as TweetCacheWrite: $msg"
+object T etCac Wr e {
+  case class ParseExcept on(msg: Str ng, cause: Except on) extends Runt  Except on(cause) {
+    overr de def get ssage: Str ng = s"Fa led to parse as T etCac Wr e: $msg"
   }
 
   /**
-   * Parse a TweetCacheWrite object from the result of TweetCacheWrite.toLogMessage
+   * Parse a T etCac Wr e object from t  result of T etCac Wr e.toLog ssage
    */
-  def fromLogMessage(msg: String): TweetCacheWrite =
+  def fromLog ssage(msg: Str ng): T etCac Wr e =
     try {
-      val (tweetIdStr, timestampStr, action, cachedTweetStr) =
-        msg.split('\t') match {
+      val (t et dStr, t  stampStr, act on, cac dT etStr) =
+        msg.spl ('\t') match {
           case Array(f1, f2, f3) => (f1, f2, f3, None)
-          case Array(f1, f2, f3, f4) => (f1, f2, f3, Some(f4))
+          case Array(f1, f2, f3, f4) => (f1, f2, f3, So (f4))
         }
-      val tweetId = tweetIdStr.toLong
-      val timestamp = {
+      val t et d = t et dStr.toLong
+      val t  stamp = {
         val offset =
-          if (SnowflakeId.isSnowflakeId(tweetId)) {
-            SnowflakeId(tweetId).unixTimeMillis.asLong
+           f (Snowflake d. sSnowflake d(t et d)) {
+            Snowflake d(t et d).un xT  M ll s.asLong
           } else {
             0
           }
-        Time.fromMilliseconds(timestampStr.toLong + offset)
+        T  .fromM ll seconds(t  stampStr.toLong + offset)
       }
-      val value = cachedTweetStr.map { str =>
-        val thriftBytes = Base64.getDecoder.decode(str)
-        Serializer.CachedTweet.CachedCompact.from(thriftBytes).get
+      val value = cac dT etStr.map { str =>
+        val thr ftBytes = Base64.getDecoder.decode(str)
+        Ser al zer.Cac dT et.Cac dCompact.from(thr ftBytes).get
       }
 
-      TweetCacheWrite(tweetIdStr.toLong, timestamp, action, value)
+      T etCac Wr e(t et dStr.toLong, t  stamp, act on, value)
     } catch {
-      case e: Exception => throw ParseException(msg, e)
+      case e: Except on => throw ParseExcept on(msg, e)
     }
 }

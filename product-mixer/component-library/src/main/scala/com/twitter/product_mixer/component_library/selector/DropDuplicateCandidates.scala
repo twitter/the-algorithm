@@ -1,45 +1,45 @@
-package com.twitter.product_mixer.component_library.selector
+package com.tw ter.product_m xer.component_l brary.selector
 
-import com.twitter.product_mixer.component_library.selector.DropSelector.dropDuplicates
-import com.twitter.product_mixer.core.functional_component.common.AllPipelines
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.selector.DropSelector.dropDupl cates
+ mport com.tw ter.product_m xer.core.funct onal_component.common.AllP pel nes
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.SelectorResult
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * Keep only the first instance of a candidate in the `remainingCandidates` as determined by comparing
- * the contained candidate ID and class type. Subsequent matching instances will be dropped. For
- * more details, see DropSelector#dropDuplicates
+ * Keep only t  f rst  nstance of a cand date  n t  `rema n ngCand dates` as determ ned by compar ng
+ * t  conta ned cand date  D and class type. Subsequent match ng  nstances w ll be dropped. For
+ * more deta ls, see DropSelector#dropDupl cates
  *
- * @param duplicationKey how to generate the key used to identify duplicate candidates (by default use id and class name)
- * @param mergeStrategy how to merge two candidates with the same key (by default pick the first one)
+ * @param dupl cat onKey how to generate t  key used to  dent fy dupl cate cand dates (by default use  d and class na )
+ * @param  rgeStrategy how to  rge two cand dates w h t  sa  key (by default p ck t  f rst one)
  *
- * @note [[com.twitter.product_mixer.component_library.model.candidate.CursorCandidate]] are ignored.
- * @note [[com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails]] are ignored.
+ * @note [[com.tw ter.product_m xer.component_l brary.model.cand date.CursorCand date]] are  gnored.
+ * @note [[com.tw ter.product_m xer.core.model.common.presentat on.ModuleCand dateW hDeta ls]] are  gnored.
  *
- * @example if `remainingCandidates`
- * `Seq(sourceA_Id1, sourceA_Id1, sourceA_Id2, sourceB_id1, sourceB_id2, sourceB_id3, sourceC_id4)`
- * then the output candidates will be `Seq(sourceA_Id1, sourceA_Id2, sourceB_id3, sourceC_id4)`
+ * @example  f `rema n ngCand dates`
+ * `Seq(s ceA_ d1, s ceA_ d1, s ceA_ d2, s ceB_ d1, s ceB_ d2, s ceB_ d3, s ceC_ d4)`
+ * t n t  output cand dates w ll be `Seq(s ceA_ d1, s ceA_ d2, s ceB_ d3, s ceC_ d4)`
  */
-case class DropDuplicateCandidates(
-  override val pipelineScope: CandidateScope = AllPipelines,
-  duplicationKey: DeduplicationKey[_] = IdAndClassDuplicationKey,
-  mergeStrategy: CandidateMergeStrategy = PickFirstCandidateMerger)
-    extends Selector[PipelineQuery] {
+case class DropDupl cateCand dates(
+  overr de val p pel neScope: Cand dateScope = AllP pel nes,
+  dupl cat onKey: Dedupl cat onKey[_] =  dAndClassDupl cat onKey,
+   rgeStrategy: Cand date rgeStrategy = P ckF rstCand date rger)
+    extends Selector[P pel neQuery] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+  overr de def apply(
+    query: P pel neQuery,
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
-    val dedupedCandidates = dropDuplicates(
-      pipelineScope = pipelineScope,
-      candidates = remainingCandidates,
-      duplicationKey = duplicationKey,
-      mergeStrategy = mergeStrategy)
+    val dedupedCand dates = dropDupl cates(
+      p pel neScope = p pel neScope,
+      cand dates = rema n ngCand dates,
+      dupl cat onKey = dupl cat onKey,
+       rgeStrategy =  rgeStrategy)
 
-    SelectorResult(remainingCandidates = dedupedCandidates, result = result)
+    SelectorResult(rema n ngCand dates = dedupedCand dates, result = result)
   }
 }

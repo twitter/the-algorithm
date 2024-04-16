@@ -1,245 +1,245 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.tw ter.fr gate.pushserv ce.model. b s
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.history.History
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.frigate.thriftscala.FrigateNotification
-import com.twitter.frigate.thriftscala.OverrideInfo
-import com.twitter.util.Duration
-import com.twitter.util.Time
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common. tory. tory
+ mport com.tw ter.fr gate.common.rec_types.RecTypes
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
+ mport com.tw ter.fr gate.thr ftscala.Fr gateNot f cat on
+ mport com.tw ter.fr gate.thr ftscala.Overr de nfo
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.T  
 
-object PushOverrideInfo {
+object PushOverr de nfo {
 
-  private val name: String = this.getClass.getSimpleName
+  pr vate val na : Str ng = t .getClass.getS mpleNa 
 
   /**
-   * Gets all eligible time + override push notification pairs from a target's History
+   * Gets all el g ble t   + overr de push not f cat on pa rs from a target's  tory
    *
-   * @param history: history of push notifications
-   * @param lookbackDuration: duration to look back up in history for overriding notifications
-   * @return: list of notifications with send timestamps which are eligible for overriding
+   * @param  tory:  tory of push not f cat ons
+   * @param lookbackDurat on: durat on to look back up  n  tory for overr d ng not f cat ons
+   * @return: l st of not f cat ons w h send t  stamps wh ch are el g ble for overr d ng
    */
-  def getOverrideEligibleHistory(
-    history: History,
-    lookbackDuration: Duration,
-  ): Seq[(Time, FrigateNotification)] = {
-    history.sortedHistory
-      .takeWhile { case (notifTimestamp, _) => lookbackDuration.ago < notifTimestamp }
-      .filter {
-        case (_, notification) => notification.overrideInfo.isDefined
+  def getOverr deEl g ble tory(
+     tory:  tory,
+    lookbackDurat on: Durat on,
+  ): Seq[(T  , Fr gateNot f cat on)] = {
+     tory.sorted tory
+      .takeWh le { case (not fT  stamp, _) => lookbackDurat on.ago < not fT  stamp }
+      .f lter {
+        case (_, not f cat on) => not f cat on.overr de nfo. sDef ned
       }
   }
 
   /**
-   * Gets all eligible override push notifications from a target's History
+   * Gets all el g ble overr de push not f cat ons from a target's  tory
    *
-   * @param history           Target's History
-   * @param lookbackDuration  Duration in which we would like to obtain the eligible push notifications
-   * @param stats             StatsReceiver to track stats for this function
-   * @return                  Returns a list of FrigateNotification
+   * @param  tory           Target's  tory
+   * @param lookbackDurat on  Durat on  n wh ch   would l ke to obta n t  el g ble push not f cat ons
+   * @param stats             StatsRece ver to track stats for t  funct on
+   * @return                  Returns a l st of Fr gateNot f cat on
    */
-  def getOverrideEligiblePushNotifications(
-    history: History,
-    lookbackDuration: Duration,
-    stats: StatsReceiver,
-  ): Seq[FrigateNotification] = {
-    val eligibleNotificationsDistribution =
-      stats.scope(name).stat("eligible_notifications_size_distribution")
-    val eligibleNotificationsSeq =
-      getOverrideEligibleHistory(history, lookbackDuration)
+  def getOverr deEl g blePushNot f cat ons(
+     tory:  tory,
+    lookbackDurat on: Durat on,
+    stats: StatsRece ver,
+  ): Seq[Fr gateNot f cat on] = {
+    val el g bleNot f cat onsD str but on =
+      stats.scope(na ).stat("el g ble_not f cat ons_s ze_d str but on")
+    val el g bleNot f cat onsSeq =
+      getOverr deEl g ble tory( tory, lookbackDurat on)
         .collect {
-          case (_, notification) => notification
+          case (_, not f cat on) => not f cat on
         }
 
-    eligibleNotificationsDistribution.add(eligibleNotificationsSeq.size)
-    eligibleNotificationsSeq
+    el g bleNot f cat onsD str but on.add(el g bleNot f cat onsSeq.s ze)
+    el g bleNot f cat onsSeq
   }
 
   /**
-   * Gets the OverrideInfo for the last eligible Override Notification FrigateNotification, if it exists
-   * @param history           Target's History
-   * @param lookbackDuration  Duration in which we would like to obtain the last override notification
-   * @param stats             StatsReceiver to track stats for this function
-   * @return                  Returns OverrideInfo of the last MR push, else None
+   * Gets t  Overr de nfo for t  last el g ble Overr de Not f cat on Fr gateNot f cat on,  f   ex sts
+   * @param  tory           Target's  tory
+   * @param lookbackDurat on  Durat on  n wh ch   would l ke to obta n t  last overr de not f cat on
+   * @param stats             StatsRece ver to track stats for t  funct on
+   * @return                  Returns Overr de nfo of t  last MR push, else None
    */
-  def getOverrideInfoOfLastEligiblePushNotif(
-    history: History,
-    lookbackDuration: Duration,
-    stats: StatsReceiver
-  ): Option[OverrideInfo] = {
-    val overrideInfoEmptyOfLastPush = stats.scope(name).counter("override_info_empty_of_last_push")
-    val overrideInfoExistsForLastPush =
-      stats.scope(name).counter("override_info_exists_for_last_push")
-    val overrideHistory =
-      getOverrideEligiblePushNotifications(history, lookbackDuration, stats)
-    if (overrideHistory.isEmpty) {
-      overrideInfoEmptyOfLastPush.incr()
+  def getOverr de nfoOfLastEl g blePushNot f(
+     tory:  tory,
+    lookbackDurat on: Durat on,
+    stats: StatsRece ver
+  ): Opt on[Overr de nfo] = {
+    val overr de nfoEmptyOfLastPush = stats.scope(na ).counter("overr de_ nfo_empty_of_last_push")
+    val overr de nfoEx stsForLastPush =
+      stats.scope(na ).counter("overr de_ nfo_ex sts_for_last_push")
+    val overr de tory =
+      getOverr deEl g blePushNot f cat ons( tory, lookbackDurat on, stats)
+     f (overr de tory. sEmpty) {
+      overr de nfoEmptyOfLastPush. ncr()
       None
     } else {
-      overrideInfoExistsForLastPush.incr()
-      overrideHistory.head.overrideInfo
+      overr de nfoEx stsForLastPush. ncr()
+      overr de tory. ad.overr de nfo
     }
   }
 
   /**
-   * Gets all the MR Push Notifications in the specified override chain
-   * @param history           Target's History
-   * @param overrideChainId   Override Chain Identifier
-   * @param stats             StatsReceiver to track stats for this function
-   * @return                  Returns a sequence of FrigateNotification that exist in the override chain
+   * Gets all t  MR Push Not f cat ons  n t  spec f ed overr de cha n
+   * @param  tory           Target's  tory
+   * @param overr deCha n d   Overr de Cha n  dent f er
+   * @param stats             StatsRece ver to track stats for t  funct on
+   * @return                  Returns a sequence of Fr gateNot f cat on that ex st  n t  overr de cha n
    */
-  def getMrPushNotificationsInOverrideChain(
-    history: History,
-    overrideChainId: String,
-    stats: StatsReceiver
-  ): Seq[FrigateNotification] = {
-    val notificationInOverrideChain = stats.scope(name).counter("notification_in_override_chain")
-    val notificationNotInOverrideChain =
-      stats.scope(name).counter("notification_not_in_override_chain")
-    history.sortedHistory.flatMap {
-      case (_, notification)
-          if isNotificationInOverrideChain(notification, overrideChainId, stats) =>
-        notificationInOverrideChain.incr()
-        Some(notification)
+  def getMrPushNot f cat ons nOverr deCha n(
+     tory:  tory,
+    overr deCha n d: Str ng,
+    stats: StatsRece ver
+  ): Seq[Fr gateNot f cat on] = {
+    val not f cat on nOverr deCha n = stats.scope(na ).counter("not f cat on_ n_overr de_cha n")
+    val not f cat onNot nOverr deCha n =
+      stats.scope(na ).counter("not f cat on_not_ n_overr de_cha n")
+     tory.sorted tory.flatMap {
+      case (_, not f cat on)
+           f  sNot f cat on nOverr deCha n(not f cat on, overr deCha n d, stats) =>
+        not f cat on nOverr deCha n. ncr()
+        So (not f cat on)
       case _ =>
-        notificationNotInOverrideChain.incr()
+        not f cat onNot nOverr deCha n. ncr()
         None
     }
   }
 
   /**
-   * Gets the timestamp (in milliseconds) for the specified FrigateNotification
-   * @param notification      The FrigateNotification that we would like the timestamp for
-   * @param history           Target's History
-   * @param stats             StatsReceiver to track stats for this function
-   * @return                  Returns the timestamp in milliseconds for the specified notification
-   *                          if it exists History, else None
+   * Gets t  t  stamp ( n m ll seconds) for t  spec f ed Fr gateNot f cat on
+   * @param not f cat on      T  Fr gateNot f cat on that   would l ke t  t  stamp for
+   * @param  tory           Target's  tory
+   * @param stats             StatsRece ver to track stats for t  funct on
+   * @return                  Returns t  t  stamp  n m ll seconds for t  spec f ed not f cat on
+   *                           f   ex sts  tory, else None
    */
-  def getTimestampInMillisForFrigateNotification(
-    notification: FrigateNotification,
-    history: History,
-    stats: StatsReceiver
-  ): Option[Long] = {
-    val foundTimestampOfNotificationInHistory =
-      stats.scope(name).counter("found_timestamp_of_notification_in_history")
-    history.sortedHistory
-      .find(_._2.equals(notification)).map {
-        case (time, _) =>
-          foundTimestampOfNotificationInHistory.incr()
-          time.inMilliseconds
+  def getT  stamp nM ll sForFr gateNot f cat on(
+    not f cat on: Fr gateNot f cat on,
+     tory:  tory,
+    stats: StatsRece ver
+  ): Opt on[Long] = {
+    val foundT  stampOfNot f cat on n tory =
+      stats.scope(na ).counter("found_t  stamp_of_not f cat on_ n_ tory")
+     tory.sorted tory
+      .f nd(_._2.equals(not f cat on)).map {
+        case (t  , _) =>
+          foundT  stampOfNot f cat on n tory. ncr()
+          t  . nM ll seconds
       }
   }
 
   /**
-   * Gets the oldest frigate notification based on the user's NTab last read position
-   * @param overrideCandidatesMap     All the NTab Notifications in the override chain
-   * @return                          Returns the oldest frigate notification in the chain
+   * Gets t  oldest fr gate not f cat on based on t  user's NTab last read pos  on
+   * @param overr deCand datesMap     All t  NTab Not f cat ons  n t  overr de cha n
+   * @return                          Returns t  oldest fr gate not f cat on  n t  cha n
    */
-  def getOldestFrigateNotification(
-    overrideCandidatesMap: Map[Long, FrigateNotification],
-  ): FrigateNotification = {
-    overrideCandidatesMap.minBy(_._1)._2
+  def getOldestFr gateNot f cat on(
+    overr deCand datesMap: Map[Long, Fr gateNot f cat on],
+  ): Fr gateNot f cat on = {
+    overr deCand datesMap.m nBy(_._1)._2
   }
 
   /**
-   * Gets the impression ids of previous eligible push notification.
-   * @param history           Target's History
-   * @param lookbackDuration  Duration in which we would like to obtain previous impression ids
-   * @param stats             StatsReceiver to track stats for this function
-   * @return                  Returns the impression identifier for the last eligible push notif.
-   *                          if it exists in the target's History, else None.
+   * Gets t   mpress on  ds of prev ous el g ble push not f cat on.
+   * @param  tory           Target's  tory
+   * @param lookbackDurat on  Durat on  n wh ch   would l ke to obta n prev ous  mpress on  ds
+   * @param stats             StatsRece ver to track stats for t  funct on
+   * @return                  Returns t   mpress on  dent f er for t  last el g ble push not f.
+   *                           f   ex sts  n t  target's  tory, else None.
    */
-  def getImpressionIdsOfPrevEligiblePushNotif(
-    history: History,
-    lookbackDuration: Duration,
-    stats: StatsReceiver
-  ): Seq[String] = {
-    val foundImpressionIdOfLastEligiblePushNotif =
-      stats.scope(name).counter("found_impression_id_of_last_eligible_push_notif")
-    val overrideHistoryEmptyWhenFetchingImpressionId =
-      stats.scope(name).counter("override_history_empty_when_fetching_impression_id")
-    val overrideHistory = getOverrideEligiblePushNotifications(history, lookbackDuration, stats)
-      .filter(frigateNotification =>
-        // Exclude notifications of nonGenericOverrideTypes from being overridden
-        !RecTypes.nonGenericOverrideTypes.contains(frigateNotification.commonRecommendationType))
+  def get mpress on dsOfPrevEl g blePushNot f(
+     tory:  tory,
+    lookbackDurat on: Durat on,
+    stats: StatsRece ver
+  ): Seq[Str ng] = {
+    val found mpress on dOfLastEl g blePushNot f =
+      stats.scope(na ).counter("found_ mpress on_ d_of_last_el g ble_push_not f")
+    val overr de toryEmptyW nFetch ng mpress on d =
+      stats.scope(na ).counter("overr de_ tory_empty_w n_fetch ng_ mpress on_ d")
+    val overr de tory = getOverr deEl g blePushNot f cat ons( tory, lookbackDurat on, stats)
+      .f lter(fr gateNot f cat on =>
+        // Exclude not f cat ons of nonGener cOverr deTypes from be ng overr dden
+        !RecTypes.nonGener cOverr deTypes.conta ns(fr gateNot f cat on.commonRecom ndat onType))
 
-    if (overrideHistory.isEmpty) {
-      overrideHistoryEmptyWhenFetchingImpressionId.incr()
+     f (overr de tory. sEmpty) {
+      overr de toryEmptyW nFetch ng mpress on d. ncr()
       Seq.empty
     } else {
-      foundImpressionIdOfLastEligiblePushNotif.incr()
-      overrideHistory.flatMap(_.impressionId)
+      found mpress on dOfLastEl g blePushNot f. ncr()
+      overr de tory.flatMap(_. mpress on d)
     }
   }
 
   /**
-   * Gets the impressions ids by eventId, for MagicFanoutEvent candidates.
+   * Gets t   mpress ons  ds by event d, for Mag cFanoutEvent cand dates.
    *
-   * @param history           Target's History
-   * @param lookbackDuration  Duration in which we would like to obtain previous impression ids
-   * @param stats             StatsReceiver to track stats for this function
-   * @param overridableType   Specific MagicFanoutEvent CRT
-   * @param eventId           Event identifier for MagicFanoutEventCandidate.
-   * @return                  Returns the impression identifiers for the last eligible, eventId-matching
-   *                          MagicFanoutEvent push notifications if they exist in the target's history, else None.
+   * @param  tory           Target's  tory
+   * @param lookbackDurat on  Durat on  n wh ch   would l ke to obta n prev ous  mpress on  ds
+   * @param stats             StatsRece ver to track stats for t  funct on
+   * @param overr dableType   Spec f c Mag cFanoutEvent CRT
+   * @param event d           Event  dent f er for Mag cFanoutEventCand date.
+   * @return                  Returns t   mpress on  dent f ers for t  last el g ble, event d-match ng
+   *                          Mag cFanoutEvent push not f cat ons  f t y ex st  n t  target's  tory, else None.
    */
-  def getImpressionIdsForPrevEligibleMagicFanoutEventCandidates(
-    history: History,
-    lookbackDuration: Duration,
-    stats: StatsReceiver,
-    overridableType: CommonRecommendationType,
-    eventId: Long
-  ): Seq[String] = {
-    val foundImpressionIdOfMagicFanoutEventNotif =
-      stats.scope(name).counter("found_impression_id_of_magic_fanout_event_notif")
-    val overrideHistoryEmptyWhenFetchingImpressionId =
+  def get mpress on dsForPrevEl g bleMag cFanoutEventCand dates(
+     tory:  tory,
+    lookbackDurat on: Durat on,
+    stats: StatsRece ver,
+    overr dableType: CommonRecom ndat onType,
+    event d: Long
+  ): Seq[Str ng] = {
+    val found mpress on dOfMag cFanoutEventNot f =
+      stats.scope(na ).counter("found_ mpress on_ d_of_mag c_fanout_event_not f")
+    val overr de toryEmptyW nFetch ng mpress on d =
       stats
-        .scope(name).counter(
-          "override_history_empty_when_fetching_impression_id_for_magic_fanout_event_notif")
+        .scope(na ).counter(
+          "overr de_ tory_empty_w n_fetch ng_ mpress on_ d_for_mag c_fanout_event_not f")
 
-    val overrideHistory =
-      getOverrideEligiblePushNotifications(history, lookbackDuration, stats)
-        .filter(frigateNotification =>
-          // Only override notifications with same CRT and eventId
-          frigateNotification.commonRecommendationType == overridableType &&
-            frigateNotification.magicFanoutEventNotification.exists(_.eventId == eventId))
+    val overr de tory =
+      getOverr deEl g blePushNot f cat ons( tory, lookbackDurat on, stats)
+        .f lter(fr gateNot f cat on =>
+          // Only overr de not f cat ons w h sa  CRT and event d
+          fr gateNot f cat on.commonRecom ndat onType == overr dableType &&
+            fr gateNot f cat on.mag cFanoutEventNot f cat on.ex sts(_.event d == event d))
 
-    if (overrideHistory.isEmpty) {
-      overrideHistoryEmptyWhenFetchingImpressionId.incr()
+     f (overr de tory. sEmpty) {
+      overr de toryEmptyW nFetch ng mpress on d. ncr()
       Seq.empty
     } else {
-      foundImpressionIdOfMagicFanoutEventNotif.incr()
-      overrideHistory.flatMap(_.impressionId)
+      found mpress on dOfMag cFanoutEventNot f. ncr()
+      overr de tory.flatMap(_. mpress on d)
     }
   }
 
   /**
-   * Determines if the provided notification is part of the specified override chain
-   * @param notification      FrigateNotification that we're trying to identify as within the override chain
-   * @param overrideChainId   Override Chain Identifier
-   * @param stats             StatsReceiver to track stats for this function
-   * @return                  Returns true if the provided FrigateNotification is within the override chain, else false
+   * Determ nes  f t  prov ded not f cat on  s part of t  spec f ed overr de cha n
+   * @param not f cat on      Fr gateNot f cat on that  're try ng to  dent fy as w h n t  overr de cha n
+   * @param overr deCha n d   Overr de Cha n  dent f er
+   * @param stats             StatsRece ver to track stats for t  funct on
+   * @return                  Returns true  f t  prov ded Fr gateNot f cat on  s w h n t  overr de cha n, else false
    */
-  private def isNotificationInOverrideChain(
-    notification: FrigateNotification,
-    overrideChainId: String,
-    stats: StatsReceiver
+  pr vate def  sNot f cat on nOverr deCha n(
+    not f cat on: Fr gateNot f cat on,
+    overr deCha n d: Str ng,
+    stats: StatsRece ver
   ): Boolean = {
-    val notifIsInOverrideChain = stats.scope(name).counter("notif_is_in_override_chain")
-    val notifNotInOverrideChain = stats.scope(name).counter("notif_not_in_override_chain")
-    notification.overrideInfo match {
-      case Some(overrideInfo) =>
-        val isNotifInOverrideChain = overrideInfo.collapseInfo.overrideChainId == overrideChainId
-        if (isNotifInOverrideChain) {
-          notifIsInOverrideChain.incr()
+    val not f s nOverr deCha n = stats.scope(na ).counter("not f_ s_ n_overr de_cha n")
+    val not fNot nOverr deCha n = stats.scope(na ).counter("not f_not_ n_overr de_cha n")
+    not f cat on.overr de nfo match {
+      case So (overr de nfo) =>
+        val  sNot f nOverr deCha n = overr de nfo.collapse nfo.overr deCha n d == overr deCha n d
+         f ( sNot f nOverr deCha n) {
+          not f s nOverr deCha n. ncr()
           true
         } else {
-          notifNotInOverrideChain.incr()
+          not fNot nOverr deCha n. ncr()
           false
         }
       case _ =>
-        notifNotInOverrideChain.incr()
+        not fNot nOverr deCha n. ncr()
         false
     }
   }

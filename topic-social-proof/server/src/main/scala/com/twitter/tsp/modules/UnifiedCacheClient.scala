@@ -1,33 +1,33 @@
-package com.twitter.tsp.modules
+package com.tw ter.tsp.modules
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.app.Flag
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.storehaus_internal.memcache.MemcacheStore
-import com.twitter.storehaus_internal.util.ClientName
-import com.twitter.storehaus_internal.util.ZkEndPoint
+ mport com.google. nject.Prov des
+ mport com.google. nject.S ngleton
+ mport com.tw ter.app.Flag
+ mport com.tw ter.f nagle. mcac d.Cl ent
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.storehaus_ nternal. mcac . mcac Store
+ mport com.tw ter.storehaus_ nternal.ut l.Cl entNa 
+ mport com.tw ter.storehaus_ nternal.ut l.ZkEndPo nt
 
-object UnifiedCacheClient extends TwitterModule {
-  val tspUnifiedCacheDest: Flag[String] = flag[String](
-    name = "tsp.unifiedCacheDest",
-    default = "/srv#/prod/local/cache/topic_social_proof_unified",
-    help = "Wily path to topic social proof unified cache"
+object Un f edCac Cl ent extends Tw terModule {
+  val tspUn f edCac Dest: Flag[Str ng] = flag[Str ng](
+    na  = "tsp.un f edCac Dest",
+    default = "/srv#/prod/local/cac /top c_soc al_proof_un f ed",
+     lp = "W ly path to top c soc al proof un f ed cac "
   )
 
-  @Provides
-  @Singleton
-  def provideUnifiedCacheClient(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver,
-  ): Client =
-    MemcacheStore.memcachedClient(
-      name = ClientName("topic-social-proof-unified-memcache"),
-      dest = ZkEndPoint(tspUnifiedCacheDest()),
-      statsReceiver = statsReceiver.scope("cache_client"),
-      serviceIdentifier = serviceIdentifier
+  @Prov des
+  @S ngleton
+  def prov deUn f edCac Cl ent(
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver,
+  ): Cl ent =
+     mcac Store. mcac dCl ent(
+      na  = Cl entNa ("top c-soc al-proof-un f ed- mcac "),
+      dest = ZkEndPo nt(tspUn f edCac Dest()),
+      statsRece ver = statsRece ver.scope("cac _cl ent"),
+      serv ce dent f er = serv ce dent f er
     )
 }

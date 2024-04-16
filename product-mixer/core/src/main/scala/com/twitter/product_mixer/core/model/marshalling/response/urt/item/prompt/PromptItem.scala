@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.prompt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEvent nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FeedbackAct on nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.EntryNa space
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Callback
 
-object PromptItem {
-  val PromptEntryNamespace = EntryNamespace("relevanceprompt")
+object Prompt em {
+  val PromptEntryNa space = EntryNa space("relevanceprompt")
 }
 
-case class PromptItem(
-  override val id: String,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo] = None,
+case class Prompt em(
+  overr de val  d: Str ng,
+  overr de val sort ndex: Opt on[Long],
+  overr de val cl entEvent nfo: Opt on[Cl entEvent nfo],
+  overr de val feedbackAct on nfo: Opt on[FeedbackAct on nfo] = None,
   content: PromptContent,
-  impressionCallbacks: Option[List[Callback]])
-    extends TimelineItem {
+   mpress onCallbacks: Opt on[L st[Callback]])
+    extends T  l ne em {
 
-  override val entryNamespace: EntryNamespace = PromptItem.PromptEntryNamespace
+  overr de val entryNa space: EntryNa space = Prompt em.PromptEntryNa space
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  overr de def w hSort ndex(sort ndex: Long): T  l neEntry = copy(sort ndex = So (sort ndex))
 }

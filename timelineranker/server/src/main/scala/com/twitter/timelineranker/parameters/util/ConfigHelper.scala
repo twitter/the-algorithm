@@ -1,39 +1,39 @@
-package com.twitter.timelineranker.parameters.util
+package com.tw ter.t  l neranker.para ters.ut l
 
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.servo.decider.DeciderKeyName
-import com.twitter.timelines.configapi._
-import com.twitter.timelines.configapi.decider.DeciderIntSpaceOverrideValue
-import com.twitter.timelines.configapi.decider.DeciderSwitchOverrideValue
-import com.twitter.timelines.configapi.decider.DeciderValueConverter
-import com.twitter.timelines.configapi.decider.RecipientBuilder
+ mport com.tw ter.servo.dec der.Dec derGateBu lder
+ mport com.tw ter.servo.dec der.Dec derKeyNa 
+ mport com.tw ter.t  l nes.conf gap ._
+ mport com.tw ter.t  l nes.conf gap .dec der.Dec der ntSpaceOverr deValue
+ mport com.tw ter.t  l nes.conf gap .dec der.Dec derSw chOverr deValue
+ mport com.tw ter.t  l nes.conf gap .dec der.Dec derValueConverter
+ mport com.tw ter.t  l nes.conf gap .dec der.Rec p entBu lder
 
-class ConfigHelper(
-  deciderByParam: Map[Param[_], DeciderKeyName],
-  deciderGateBuilder: DeciderGateBuilder) {
-  def createDeciderBasedBooleanOverrides(
-    parameters: Seq[Param[Boolean]]
-  ): Seq[OptionalOverride[Boolean]] = {
-    parameters.map { parameter =>
-      parameter.optionalOverrideValue(
-        DeciderSwitchOverrideValue(
-          feature = deciderGateBuilder.keyToFeature(deciderByParam(parameter)),
-          recipientBuilder = RecipientBuilder.User,
+class Conf g lper(
+  dec derByParam: Map[Param[_], Dec derKeyNa ],
+  dec derGateBu lder: Dec derGateBu lder) {
+  def createDec derBasedBooleanOverr des(
+    para ters: Seq[Param[Boolean]]
+  ): Seq[Opt onalOverr de[Boolean]] = {
+    para ters.map { para ter =>
+      para ter.opt onalOverr deValue(
+        Dec derSw chOverr deValue(
+          feature = dec derGateBu lder.keyToFeature(dec derByParam(para ter)),
+          rec p entBu lder = Rec p entBu lder.User,
           enabledValue = true,
-          disabledValueOption = Some(false)
+          d sabledValueOpt on = So (false)
         )
       )
     }
   }
 
-  def createDeciderBasedOverrides[T](
-    parameters: Seq[Param[T] with DeciderValueConverter[T]]
-  ): Seq[OptionalOverride[T]] = {
-    parameters.map { parameter =>
-      parameter.optionalOverrideValue(
-        DeciderIntSpaceOverrideValue(
-          feature = deciderGateBuilder.keyToFeature(deciderByParam(parameter)),
-          conversion = parameter.convert
+  def createDec derBasedOverr des[T](
+    para ters: Seq[Param[T] w h Dec derValueConverter[T]]
+  ): Seq[Opt onalOverr de[T]] = {
+    para ters.map { para ter =>
+      para ter.opt onalOverr deValue(
+        Dec der ntSpaceOverr deValue(
+          feature = dec derGateBu lder.keyToFeature(dec derByParam(para ter)),
+          convers on = para ter.convert
         )
       )
     }

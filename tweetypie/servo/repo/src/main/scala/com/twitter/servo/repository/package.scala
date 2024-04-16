@@ -1,50 +1,50 @@
-package com.twitter.servo
+package com.tw ter.servo
 
-import com.twitter.util.Future
+ mport com.tw ter.ut l.Future
 
-package object repository {
-
-  /**
-   * Base repository type.  Maps a Query to a future Result
-   */
-  type Repository[-Q, +R] = Q => Future[R]
+package object repos ory {
 
   /**
-   * RepositoryFilters can be chained onto Repositories to asynchronously apply transformations to
-   * Repository results.
+   * Base repos ory type.  Maps a Query to a future Result
    */
-  type RepositoryFilter[-Q, -R, +S] = (Q, Future[R]) => Future[S]
+  type Repos ory[-Q, +R] = Q => Future[R]
+
+  /**
+   * Repos oryF lters can be cha ned onto Repos or es to asynchronously apply transformat ons to
+   * Repos ory results.
+   */
+  type Repos oryF lter[-Q, -R, +S] = (Q, Future[R]) => Future[S]
 
   type KeyValueResult[K, V] = keyvalue.KeyValueResult[K, V]
   val KeyValueResult = keyvalue.KeyValueResult
 
   /**
-   * A KeyValueRepository is a type of repository that handles bulk gets of data.  The query
-   * defines the values to fetch, and is usually made of up of a Seq[K], possibly with other
-   * contextual information needed to perform the query.  The result is a KeyValueResult,
-   * which contains a break-out of found, notFound, and failed key lookups.  The set of
-   * keys may or may-not be computable locally from the query.  This top-level type does not
-   * require that the keys are computable from the query, but certain instances, such as
-   * CachingKeyValueRepository, do require key-computability.
+   * A KeyValueRepos ory  s a type of repos ory that handles bulk gets of data.  T  query
+   * def nes t  values to fetch, and  s usually made of up of a Seq[K], poss bly w h ot r
+   * contextual  nformat on needed to perform t  query.  T  result  s a KeyValueResult,
+   * wh ch conta ns a break-out of found, notFound, and fa led key lookups.  T  set of
+   * keys may or may-not be computable locally from t  query.  T  top-level type does not
+   * requ re that t  keys are computable from t  query, but certa n  nstances, such as
+   * Cach ngKeyValueRepos ory, do requ re key-computab l y.
    */
-  type KeyValueRepository[Q, K, V] = Repository[Q, KeyValueResult[K, V]]
+  type KeyValueRepos ory[Q, K, V] = Repos ory[Q, KeyValueResult[K, V]]
 
-  type CounterKeyValueRepository[K] = KeyValueRepository[Seq[K], K, Long]
+  type CounterKeyValueRepos ory[K] = KeyValueRepos ory[Seq[K], K, Long]
 
   /**
-   * For KeyValueRepository scenarios where the query is a sequence of keys, a SubqueryBuilder
-   * defines how to convert a sub-set of the keys from the query into a query.
+   * For KeyValueRepos ory scenar os w re t  query  s a sequence of keys, a SubqueryBu lder
+   * def nes how to convert a sub-set of t  keys from t  query  nto a query.
    */
-  type SubqueryBuilder[Q <: Seq[K], K] = (Seq[K], Q) => Q
+  type SubqueryBu lder[Q <: Seq[K], K] = (Seq[K], Q) => Q
 
   /**
-   * A SubqueryBuilder where the query type is nothing more than a sequence of keys.
+   * A SubqueryBu lder w re t  query type  s noth ng more than a sequence of keys.
    */
   @deprecated("use keysAsQuery", "1.1.0")
-  def KeysAsQuery[K]: SubqueryBuilder[Seq[K], K] = keysAsQuery[K]
+  def KeysAsQuery[K]: SubqueryBu lder[Seq[K], K] = keysAsQuery[K]
 
   /**
-   * A SubqueryBuilder where the query type is nothing more than a sequence of keys.
+   * A SubqueryBu lder w re t  query type  s noth ng more than a sequence of keys.
    */
-  def keysAsQuery[K]: SubqueryBuilder[Seq[K], K] = (keys, parentQuery) => keys
+  def keysAsQuery[K]: SubqueryBu lder[Seq[K], K] = (keys, parentQuery) => keys
 }

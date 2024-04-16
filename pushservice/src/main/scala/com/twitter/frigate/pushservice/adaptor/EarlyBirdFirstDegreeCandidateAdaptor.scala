@@ -1,293 +1,293 @@
-package com.twitter.frigate.pushservice.adaptor
+package com.tw ter.fr gate.pushserv ce.adaptor
 
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.candidate._
-import com.twitter.frigate.common.predicate.CommonOutNetworkTweetCandidatesSourcePredicates.filterOutReplyTweet
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.frigate.pushservice.util.PushDeviceUtil
-import com.twitter.hermit.store.tweetypie.UserTweet
-import com.twitter.recos.recos_common.thriftscala.SocialProofType
-import com.twitter.search.common.features.thriftscala.ThriftSearchResultFeatures
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Future
-import com.twitter.util.Time
-import scala.collection.Map
+ mport com.tw ter.f nagle.stats.Stat
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base._
+ mport com.tw ter.fr gate.common.cand date._
+ mport com.tw ter.fr gate.common.pred cate.CommonOutNetworkT etCand datesS cePred cates.f lterOutReplyT et
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.params.PushParams
+ mport com.tw ter.fr gate.pushserv ce.ut l.PushDev ceUt l
+ mport com.tw ter. rm .store.t etyp e.UserT et
+ mport com.tw ter.recos.recos_common.thr ftscala.Soc alProofType
+ mport com.tw ter.search.common.features.thr ftscala.Thr ftSearchResultFeatures
+ mport com.tw ter.st ch.t etyp e.T etyP e.T etyP eResult
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
+ mport scala.collect on.Map
 
-case class EarlyBirdFirstDegreeCandidateAdaptor(
-  earlyBirdFirstDegreeCandidates: CandidateSource[
-    EarlybirdCandidateSource.Query,
-    EarlybirdCandidate
+case class EarlyB rdF rstDegreeCand dateAdaptor(
+  earlyB rdF rstDegreeCand dates: Cand dateS ce[
+    Earlyb rdCand dateS ce.Query,
+    Earlyb rdCand date
   ],
-  tweetyPieStore: ReadableStore[Long, TweetyPieResult],
-  tweetyPieStoreNoVF: ReadableStore[Long, TweetyPieResult],
-  userTweetTweetyPieStore: ReadableStore[UserTweet, TweetyPieResult],
-  maxResultsParam: Param[Int],
-  globalStats: StatsReceiver)
-    extends CandidateSource[Target, RawCandidate]
-    with CandidateSourceEligible[Target, RawCandidate] {
+  t etyP eStore: ReadableStore[Long, T etyP eResult],
+  t etyP eStoreNoVF: ReadableStore[Long, T etyP eResult],
+  userT etT etyP eStore: ReadableStore[UserT et, T etyP eResult],
+  maxResultsParam: Param[ nt],
+  globalStats: StatsRece ver)
+    extends Cand dateS ce[Target, RawCand date]
+    w h Cand dateS ceEl g ble[Target, RawCand date] {
 
-  type EBCandidate = EarlybirdCandidate with TweetDetails
-  private val stats = globalStats.scope("EarlyBirdFirstDegreeAdaptor")
-  private val earlyBirdCandsStat: Stat = stats.stat("early_bird_cands_dist")
-  private val emptyEarlyBirdCands = stats.counter("empty_early_bird_candidates")
-  private val seedSetEmpty = stats.counter("empty_seedset")
-  private val seenTweetsStat = stats.stat("filtered_by_seen_tweets")
-  private val emptyTweetyPieResult = stats.stat("empty_tweetypie_result")
-  private val nonReplyTweetsCounter = stats.counter("non_reply_tweets")
-  private val enableRetweets = stats.counter("enable_retweets")
-  private val f1withoutSocialContexts = stats.counter("f1_without_social_context")
-  private val userTweetTweetyPieStoreCounter = stats.counter("user_tweet_tweetypie_store")
+  type EBCand date = Earlyb rdCand date w h T etDeta ls
+  pr vate val stats = globalStats.scope("EarlyB rdF rstDegreeAdaptor")
+  pr vate val earlyB rdCandsStat: Stat = stats.stat("early_b rd_cands_d st")
+  pr vate val emptyEarlyB rdCands = stats.counter("empty_early_b rd_cand dates")
+  pr vate val seedSetEmpty = stats.counter("empty_seedset")
+  pr vate val seenT etsStat = stats.stat("f ltered_by_seen_t ets")
+  pr vate val emptyT etyP eResult = stats.stat("empty_t etyp e_result")
+  pr vate val nonReplyT etsCounter = stats.counter("non_reply_t ets")
+  pr vate val enableRet ets = stats.counter("enable_ret ets")
+  pr vate val f1w houtSoc alContexts = stats.counter("f1_w hout_soc al_context")
+  pr vate val userT etT etyP eStoreCounter = stats.counter("user_t et_t etyp e_store")
 
-  override val name: String = earlyBirdFirstDegreeCandidates.name
+  overr de val na : Str ng = earlyB rdF rstDegreeCand dates.na 
 
-  private def getAllSocialContextActions(
-    socialProofTypes: Seq[(SocialProofType, Seq[Long])]
-  ): Seq[SocialContextAction] = {
-    socialProofTypes.flatMap {
-      case (SocialProofType.Favorite, scIds) =>
-        scIds.map { scId =>
-          SocialContextAction(
-            scId,
-            Time.now.inMilliseconds,
-            socialContextActionType = Some(SocialContextActionType.Favorite)
+  pr vate def getAllSoc alContextAct ons(
+    soc alProofTypes: Seq[(Soc alProofType, Seq[Long])]
+  ): Seq[Soc alContextAct on] = {
+    soc alProofTypes.flatMap {
+      case (Soc alProofType.Favor e, sc ds) =>
+        sc ds.map { sc d =>
+          Soc alContextAct on(
+            sc d,
+            T  .now. nM ll seconds,
+            soc alContextAct onType = So (Soc alContextAct onType.Favor e)
           )
         }
-      case (SocialProofType.Retweet, scIds) =>
-        scIds.map { scId =>
-          SocialContextAction(
-            scId,
-            Time.now.inMilliseconds,
-            socialContextActionType = Some(SocialContextActionType.Retweet)
+      case (Soc alProofType.Ret et, sc ds) =>
+        sc ds.map { sc d =>
+          Soc alContextAct on(
+            sc d,
+            T  .now. nM ll seconds,
+            soc alContextAct onType = So (Soc alContextAct onType.Ret et)
           )
         }
-      case (SocialProofType.Reply, scIds) =>
-        scIds.map { scId =>
-          SocialContextAction(
-            scId,
-            Time.now.inMilliseconds,
-            socialContextActionType = Some(SocialContextActionType.Reply)
+      case (Soc alProofType.Reply, sc ds) =>
+        sc ds.map { sc d =>
+          Soc alContextAct on(
+            sc d,
+            T  .now. nM ll seconds,
+            soc alContextAct onType = So (Soc alContextAct onType.Reply)
           )
         }
-      case (SocialProofType.Tweet, scIds) =>
-        scIds.map { scId =>
-          SocialContextAction(
-            scId,
-            Time.now.inMilliseconds,
-            socialContextActionType = Some(SocialContextActionType.Tweet)
+      case (Soc alProofType.T et, sc ds) =>
+        sc ds.map { sc d =>
+          Soc alContextAct on(
+            sc d,
+            T  .now. nM ll seconds,
+            soc alContextAct onType = So (Soc alContextAct onType.T et)
           )
         }
-      case _ => Nil
+      case _ => N l
     }
   }
 
-  private def generateRetweetCandidate(
-    inputTarget: Target,
-    candidate: EBCandidate,
-    scIds: Seq[Long],
-    socialProofTypes: Seq[(SocialProofType, Seq[Long])]
-  ): RawCandidate = {
-    val scActions = scIds.map { scId => SocialContextAction(scId, Time.now.inMilliseconds) }
-    new RawCandidate with TweetRetweetCandidate with EarlybirdTweetFeatures {
-      override val socialContextActions = scActions
-      override val socialContextAllTypeActions = getAllSocialContextActions(socialProofTypes)
-      override val tweetId = candidate.tweetId
-      override val target = inputTarget
-      override val tweetyPieResult = candidate.tweetyPieResult
-      override val features = candidate.features
+  pr vate def generateRet etCand date(
+     nputTarget: Target,
+    cand date: EBCand date,
+    sc ds: Seq[Long],
+    soc alProofTypes: Seq[(Soc alProofType, Seq[Long])]
+  ): RawCand date = {
+    val scAct ons = sc ds.map { sc d => Soc alContextAct on(sc d, T  .now. nM ll seconds) }
+    new RawCand date w h T etRet etCand date w h Earlyb rdT etFeatures {
+      overr de val soc alContextAct ons = scAct ons
+      overr de val soc alContextAllTypeAct ons = getAllSoc alContextAct ons(soc alProofTypes)
+      overr de val t et d = cand date.t et d
+      overr de val target =  nputTarget
+      overr de val t etyP eResult = cand date.t etyP eResult
+      overr de val features = cand date.features
     }
   }
 
-  private def generateF1CandidateWithoutSocialContext(
-    inputTarget: Target,
-    candidate: EBCandidate
-  ): RawCandidate = {
-    f1withoutSocialContexts.incr()
-    new RawCandidate with F1FirstDegree with EarlybirdTweetFeatures {
-      override val tweetId = candidate.tweetId
-      override val target = inputTarget
-      override val tweetyPieResult = candidate.tweetyPieResult
-      override val features = candidate.features
+  pr vate def generateF1Cand dateW houtSoc alContext(
+     nputTarget: Target,
+    cand date: EBCand date
+  ): RawCand date = {
+    f1w houtSoc alContexts. ncr()
+    new RawCand date w h F1F rstDegree w h Earlyb rdT etFeatures {
+      overr de val t et d = cand date.t et d
+      overr de val target =  nputTarget
+      overr de val t etyP eResult = cand date.t etyP eResult
+      overr de val features = cand date.features
     }
   }
 
-  private def generateEarlyBirdCandidate(
-    id: Long,
-    result: Option[TweetyPieResult],
-    ebFeatures: Option[ThriftSearchResultFeatures]
-  ): EBCandidate = {
-    new EarlybirdCandidate with TweetDetails {
-      override val tweetyPieResult: Option[TweetyPieResult] = result
-      override val tweetId: Long = id
-      override val features: Option[ThriftSearchResultFeatures] = ebFeatures
+  pr vate def generateEarlyB rdCand date(
+     d: Long,
+    result: Opt on[T etyP eResult],
+    ebFeatures: Opt on[Thr ftSearchResultFeatures]
+  ): EBCand date = {
+    new Earlyb rdCand date w h T etDeta ls {
+      overr de val t etyP eResult: Opt on[T etyP eResult] = result
+      overr de val t et d: Long =  d
+      overr de val features: Opt on[Thr ftSearchResultFeatures] = ebFeatures
     }
   }
 
-  private def filterOutSeenTweets(seenTweetIds: Seq[Long], inputTweetIds: Seq[Long]): Seq[Long] = {
-    inputTweetIds.filterNot(seenTweetIds.contains)
+  pr vate def f lterOutSeenT ets(seenT et ds: Seq[Long],  nputT et ds: Seq[Long]): Seq[Long] = {
+     nputT et ds.f lterNot(seenT et ds.conta ns)
   }
 
-  private def filterInvalidTweets(
-    tweetIds: Seq[Long],
+  pr vate def f lter nval dT ets(
+    t et ds: Seq[Long],
     target: Target
-  ): Future[Seq[(Long, TweetyPieResult)]] = {
+  ): Future[Seq[(Long, T etyP eResult)]] = {
 
     val resMap = {
-      if (target.params(PushFeatureSwitchParams.EnableF1FromProtectedTweetAuthors)) {
-        userTweetTweetyPieStoreCounter.incr()
-        val keys = tweetIds.map { tweetId =>
-          UserTweet(tweetId, Some(target.targetId))
+       f (target.params(PushFeatureSw chParams.EnableF1FromProtectedT etAuthors)) {
+        userT etT etyP eStoreCounter. ncr()
+        val keys = t et ds.map { t et d =>
+          UserT et(t et d, So (target.target d))
         }
 
-        userTweetTweetyPieStore
-          .multiGet(keys.toSet).map {
-            case (userTweet, resultFut) =>
-              userTweet.tweetId -> resultFut
+        userT etT etyP eStore
+          .mult Get(keys.toSet).map {
+            case (userT et, resultFut) =>
+              userT et.t et d -> resultFut
           }.toMap
       } else {
-        (target.params(PushFeatureSwitchParams.EnableVFInTweetypie) match {
-          case true => tweetyPieStore
-          case false => tweetyPieStoreNoVF
-        }).multiGet(tweetIds.toSet)
+        (target.params(PushFeatureSw chParams.EnableVF nT etyp e) match {
+          case true => t etyP eStore
+          case false => t etyP eStoreNoVF
+        }).mult Get(t et ds.toSet)
       }
     }
-    Future.collect(resMap).map { tweetyPieResultMap =>
-      val cands = filterOutReplyTweet(tweetyPieResultMap, nonReplyTweetsCounter).collect {
-        case (id: Long, Some(result)) =>
-          id -> result
+    Future.collect(resMap).map { t etyP eResultMap =>
+      val cands = f lterOutReplyT et(t etyP eResultMap, nonReplyT etsCounter).collect {
+        case ( d: Long, So (result)) =>
+           d -> result
       }
 
-      emptyTweetyPieResult.add(tweetyPieResultMap.size - cands.size)
+      emptyT etyP eResult.add(t etyP eResultMap.s ze - cands.s ze)
       cands.toSeq
     }
   }
 
-  private def getEBRetweetCandidates(
-    inputTarget: Target,
-    retweets: Seq[(Long, TweetyPieResult)]
-  ): Seq[RawCandidate] = {
-    retweets.flatMap {
-      case (_, tweetypieResult) =>
-        tweetypieResult.tweet.coreData.flatMap { coreData =>
-          tweetypieResult.sourceTweet.map { sourceTweet =>
-            val tweetId = sourceTweet.id
-            val scId = coreData.userId
-            val socialProofTypes = Seq((SocialProofType.Retweet, Seq(scId)))
-            val candidate = generateEarlyBirdCandidate(
-              tweetId,
-              Some(TweetyPieResult(sourceTweet, None, None)),
+  pr vate def getEBRet etCand dates(
+     nputTarget: Target,
+    ret ets: Seq[(Long, T etyP eResult)]
+  ): Seq[RawCand date] = {
+    ret ets.flatMap {
+      case (_, t etyp eResult) =>
+        t etyp eResult.t et.coreData.flatMap { coreData =>
+          t etyp eResult.s ceT et.map { s ceT et =>
+            val t et d = s ceT et. d
+            val sc d = coreData.user d
+            val soc alProofTypes = Seq((Soc alProofType.Ret et, Seq(sc d)))
+            val cand date = generateEarlyB rdCand date(
+              t et d,
+              So (T etyP eResult(s ceT et, None, None)),
               None
             )
-            generateRetweetCandidate(
-              inputTarget,
-              candidate,
-              Seq(scId),
-              socialProofTypes
+            generateRet etCand date(
+               nputTarget,
+              cand date,
+              Seq(sc d),
+              soc alProofTypes
             )
           }
         }
     }
   }
 
-  private def getEBFirstDegreeCands(
-    tweets: Seq[(Long, TweetyPieResult)],
-    ebTweetIdMap: Map[Long, Option[ThriftSearchResultFeatures]]
-  ): Seq[EBCandidate] = {
-    tweets.map {
-      case (id, tweetypieResult) =>
-        val features = ebTweetIdMap.getOrElse(id, None)
-        generateEarlyBirdCandidate(id, Some(tweetypieResult), features)
+  pr vate def getEBF rstDegreeCands(
+    t ets: Seq[(Long, T etyP eResult)],
+    ebT et dMap: Map[Long, Opt on[Thr ftSearchResultFeatures]]
+  ): Seq[EBCand date] = {
+    t ets.map {
+      case ( d, t etyp eResult) =>
+        val features = ebT et dMap.getOrElse( d, None)
+        generateEarlyB rdCand date( d, So (t etyp eResult), features)
     }
   }
 
   /**
-   * Returns a combination of raw candidates made of: f1 recs, topic social proof recs, sc recs and retweet candidates
+   * Returns a comb nat on of raw cand dates made of: f1 recs, top c soc al proof recs, sc recs and ret et cand dates
    */
-  def buildRawCandidates(
-    inputTarget: Target,
-    firstDegreeCandidates: Seq[EBCandidate],
-    retweetCandidates: Seq[RawCandidate]
-  ): Seq[RawCandidate] = {
+  def bu ldRawCand dates(
+     nputTarget: Target,
+    f rstDegreeCand dates: Seq[EBCand date],
+    ret etCand dates: Seq[RawCand date]
+  ): Seq[RawCand date] = {
     val hydratedF1Recs =
-      firstDegreeCandidates.map(generateF1CandidateWithoutSocialContext(inputTarget, _))
-    hydratedF1Recs ++ retweetCandidates
+      f rstDegreeCand dates.map(generateF1Cand dateW houtSoc alContext( nputTarget, _))
+    hydratedF1Recs ++ ret etCand dates
   }
 
-  override def get(inputTarget: Target): Future[Option[Seq[RawCandidate]]] = {
-    inputTarget.seedsWithWeight.flatMap { seedsetOpt =>
+  overr de def get( nputTarget: Target): Future[Opt on[Seq[RawCand date]]] = {
+     nputTarget.seedsW h  ght.flatMap { seedsetOpt =>
       val seedsetMap = seedsetOpt.getOrElse(Map.empty)
 
-      if (seedsetMap.isEmpty) {
-        seedSetEmpty.incr()
+       f (seedsetMap. sEmpty) {
+        seedSetEmpty. ncr()
         Future.None
       } else {
-        val maxResultsToReturn = inputTarget.params(maxResultsParam)
-        val maxTweetAge = inputTarget.params(PushFeatureSwitchParams.F1CandidateMaxTweetAgeParam)
-        val earlybirdQuery = EarlybirdCandidateSource.Query(
+        val maxResultsToReturn =  nputTarget.params(maxResultsParam)
+        val maxT etAge =  nputTarget.params(PushFeatureSw chParams.F1Cand dateMaxT etAgeParam)
+        val earlyb rdQuery = Earlyb rdCand dateS ce.Query(
           maxNumResultsToReturn = maxResultsToReturn,
           seedset = seedsetMap,
-          maxConsecutiveResultsByTheSameUser = Some(1),
-          maxTweetAge = maxTweetAge,
-          disableTimelinesMLModel = false,
-          searcherId = Some(inputTarget.targetId),
-          isProtectTweetsEnabled =
-            inputTarget.params(PushFeatureSwitchParams.EnableF1FromProtectedTweetAuthors),
-          followedUserIds = Some(seedsetMap.keySet.toSeq)
+          maxConsecut veResultsByT Sa User = So (1),
+          maxT etAge = maxT etAge,
+          d sableT  l nesMLModel = false,
+          searc r d = So ( nputTarget.target d),
+           sProtectT etsEnabled =
+             nputTarget.params(PushFeatureSw chParams.EnableF1FromProtectedT etAuthors),
+          follo dUser ds = So (seedsetMap.keySet.toSeq)
         )
 
         Future
-          .join(inputTarget.seenTweetIds, earlyBirdFirstDegreeCandidates.get(earlybirdQuery))
+          .jo n( nputTarget.seenT et ds, earlyB rdF rstDegreeCand dates.get(earlyb rdQuery))
           .flatMap {
-            case (seenTweetIds, Some(candidates)) =>
-              earlyBirdCandsStat.add(candidates.size)
+            case (seenT et ds, So (cand dates)) =>
+              earlyB rdCandsStat.add(cand dates.s ze)
 
-              val ebTweetIdMap = candidates.map { cand => cand.tweetId -> cand.features }.toMap
+              val ebT et dMap = cand dates.map { cand => cand.t et d -> cand.features }.toMap
 
-              val ebTweetIds = ebTweetIdMap.keys.toSeq
+              val ebT et ds = ebT et dMap.keys.toSeq
 
-              val tweetIds = filterOutSeenTweets(seenTweetIds, ebTweetIds)
-              seenTweetsStat.add(ebTweetIds.size - tweetIds.size)
+              val t et ds = f lterOutSeenT ets(seenT et ds, ebT et ds)
+              seenT etsStat.add(ebT et ds.s ze - t et ds.s ze)
 
-              filterInvalidTweets(tweetIds, inputTarget)
-                .map { validTweets =>
-                  val (retweets, tweets) = validTweets.partition {
-                    case (_, tweetypieResult) =>
-                      tweetypieResult.sourceTweet.isDefined
+              f lter nval dT ets(t et ds,  nputTarget)
+                .map { val dT ets =>
+                  val (ret ets, t ets) = val dT ets.part  on {
+                    case (_, t etyp eResult) =>
+                      t etyp eResult.s ceT et. sDef ned
                   }
 
-                  val firstDegreeCandidates = getEBFirstDegreeCands(tweets, ebTweetIdMap)
+                  val f rstDegreeCand dates = getEBF rstDegreeCands(t ets, ebT et dMap)
 
-                  val retweetCandidates = {
-                    if (inputTarget.params(PushParams.EarlyBirdSCBasedCandidatesParam) &&
-                      inputTarget.params(PushParams.MRTweetRetweetRecsParam)) {
-                      enableRetweets.incr()
-                      getEBRetweetCandidates(inputTarget, retweets)
-                    } else Nil
+                  val ret etCand dates = {
+                     f ( nputTarget.params(PushParams.EarlyB rdSCBasedCand datesParam) &&
+                       nputTarget.params(PushParams.MRT etRet etRecsParam)) {
+                      enableRet ets. ncr()
+                      getEBRet etCand dates( nputTarget, ret ets)
+                    } else N l
                   }
 
-                  Some(
-                    buildRawCandidates(
-                      inputTarget,
-                      firstDegreeCandidates,
-                      retweetCandidates
+                  So (
+                    bu ldRawCand dates(
+                       nputTarget,
+                      f rstDegreeCand dates,
+                      ret etCand dates
                     ))
                 }
 
             case _ =>
-              emptyEarlyBirdCands.incr()
+              emptyEarlyB rdCands. ncr()
               Future.None
           }
       }
     }
   }
 
-  override def isCandidateSourceAvailable(target: Target): Future[Boolean] = {
-    PushDeviceUtil.isRecommendationsEligible(target)
+  overr de def  sCand dateS ceAva lable(target: Target): Future[Boolean] = {
+    PushDev ceUt l. sRecom ndat onsEl g ble(target)
   }
 }

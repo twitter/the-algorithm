@@ -1,118 +1,118 @@
-package com.twitter.search.earlybird.search.relevance.collectors;
+package com.tw ter.search.earlyb rd.search.relevance.collectors;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+ mport java. o. OExcept on;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.L st;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.features.thrift.ThriftSearchResultFeatures;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.search.EarlyTerminationState;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.search.relevance.LinearScoringData;
-import com.twitter.search.earlybird.search.relevance.RelevanceSearchRequestInfo;
-import com.twitter.search.earlybird.search.relevance.RelevanceSearchResults;
-import com.twitter.search.earlybird.search.relevance.scoring.BatchHit;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunction;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.ThriftSearchRelevanceOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultExtraMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
+ mport com.tw ter.common.collect ons.Pa r;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common.features.thr ft.Thr ftSearchResultFeatures;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.common.search.EarlyTerm nat onState;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserTable;
+ mport com.tw ter.search.earlyb rd.search.relevance.L nearScor ngData;
+ mport com.tw ter.search.earlyb rd.search.relevance.RelevanceSearchRequest nfo;
+ mport com.tw ter.search.earlyb rd.search.relevance.RelevanceSearchResults;
+ mport com.tw ter.search.earlyb rd.search.relevance.scor ng.BatchH ;
+ mport com.tw ter.search.earlyb rd.search.relevance.scor ng.Scor ngFunct on;
+ mport com.tw ter.search.earlyb rd.stats.Earlyb rdSearc rStats;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchRelevanceOpt ons;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultExtra tadata;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult tadata;
 
 /**
- * BatchRelevanceTopCollector is similar to the `RelevanceTopCollector` in what it outputs:
- * Collects the top numResults by score, filtering out duplicates
- * and results with scores equal to Flat.MIN_VALUE.
- * The way that it achieves that is different though: it will score documents through the batch score
- * function instead of scoring documents one by one.
+ * BatchRelevanceTopCollector  s s m lar to t  `RelevanceTopCollector`  n what   outputs:
+ * Collects t  top numResults by score, f lter ng out dupl cates
+ * and results w h scores equal to Flat.M N_VALUE.
+ * T  way that   ach eves that  s d fferent though:   w ll score docu nts through t  batch score
+ * funct on  nstead of scor ng docu nts one by one.
  */
-public class BatchRelevanceTopCollector extends RelevanceTopCollector {
-  protected final List<BatchHit> hits;
+publ c class BatchRelevanceTopCollector extends RelevanceTopCollector {
+  protected f nal L st<BatchH > h s;
 
-  public BatchRelevanceTopCollector(
-      ImmutableSchemaInterface schema,
-      RelevanceSearchRequestInfo searchRequestInfo,
-      ScoringFunction scoringFunction,
-      EarlybirdSearcherStats searcherStats,
-      EarlybirdCluster cluster,
+  publ c BatchRelevanceTopCollector(
+       mmutableSc ma nterface sc ma,
+      RelevanceSearchRequest nfo searchRequest nfo,
+      Scor ngFunct on scor ngFunct on,
+      Earlyb rdSearc rStats searc rStats,
+      Earlyb rdCluster cluster,
       UserTable userTable,
       Clock clock,
-      int requestDebugMode) {
-    super(schema, searchRequestInfo, scoringFunction, searcherStats, cluster, userTable, clock,
+       nt requestDebugMode) {
+    super(sc ma, searchRequest nfo, scor ngFunct on, searc rStats, cluster, userTable, clock,
         requestDebugMode);
-    this.hits = new ArrayList<>((int) getMaxHitsToProcess());
+    t .h s = new ArrayL st<>(( nt) getMaxH sToProcess());
   }
 
-  @Override
-  protected void doCollectWithScore(long tweetID, float score) throws IOException {
-    Pair<LinearScoringData, ThriftSearchResultFeatures> pair =
-        scoringFunction.collectFeatures(score);
-    ThriftSearchResultMetadata metadata = collectMetadata();
-    hits.add(new BatchHit(pair.getFirst(),
-        pair.getSecond(),
-        metadata,
-        tweetID,
-        currTimeSliceID));
+  @Overr de
+  protected vo d doCollectW hScore(long t et D, float score) throws  OExcept on {
+    Pa r<L nearScor ngData, Thr ftSearchResultFeatures> pa r =
+        scor ngFunct on.collectFeatures(score);
+    Thr ftSearchResult tadata  tadata = collect tadata();
+    h s.add(new BatchH (pa r.getF rst(),
+        pa r.getSecond(),
+         tadata,
+        t et D,
+        currT  Sl ce D));
   }
 
-  @Override
-  public EarlyTerminationState innerShouldCollectMore() {
-    if (hits.size() >= getMaxHitsToProcess()) {
-      return setEarlyTerminationState(EarlyTerminationState.TERMINATED_MAX_HITS_EXCEEDED);
+  @Overr de
+  publ c EarlyTerm nat onState  nnerShouldCollectMore() {
+     f (h s.s ze() >= getMaxH sToProcess()) {
+      return setEarlyTerm nat onState(EarlyTerm nat onState.TERM NATED_MAX_H TS_EXCEEDED);
     }
-    return EarlyTerminationState.COLLECTING;
+    return EarlyTerm nat onState.COLLECT NG;
   }
 
-  @Override
-  protected RelevanceSearchResults doGetRelevanceResults() throws IOException {
-    final long scoringStartNanos = getClock().nowNanos();
-    float[] scores = scoringFunction.batchScore(hits);
-    final long scoringEndNanos = getClock().nowNanos();
-    addToOverallScoringTimeNanos(scoringStartNanos, scoringEndNanos);
-    exportBatchScoringTime(scoringEndNanos - scoringStartNanos);
+  @Overr de
+  protected RelevanceSearchResults doGetRelevanceResults() throws  OExcept on {
+    f nal long scor ngStartNanos = getClock().nowNanos();
+    float[] scores = scor ngFunct on.batchScore(h s);
+    f nal long scor ngEndNanos = getClock().nowNanos();
+    addToOverallScor ngT  Nanos(scor ngStartNanos, scor ngEndNanos);
+    exportBatchScor ngT  (scor ngEndNanos - scor ngStartNanos);
 
-    for (int i = 0; i < hits.size(); i++) {
-      BatchHit hit = hits.get(i);
-      ThriftSearchResultMetadata metadata = hit.getMetadata();
+    for ( nt   = 0;   < h s.s ze();  ++) {
+      BatchH  h  = h s.get( );
+      Thr ftSearchResult tadata  tadata = h .get tadata();
 
-      if (!metadata.isSetExtraMetadata()) {
-        metadata.setExtraMetadata(new ThriftSearchResultExtraMetadata());
+       f (! tadata. sSetExtra tadata()) {
+         tadata.setExtra tadata(new Thr ftSearchResultExtra tadata());
       }
-      metadata.getExtraMetadata().setFeatures(hit.getFeatures());
+       tadata.getExtra tadata().setFeatures(h .getFeatures());
 
 
-      // Populate the ThriftSearchResultMetadata post batch scoring with information from the
-      // LinearScoringData, which now includes a score.
-      scoringFunction.populateResultMetadataBasedOnScoringData(
-          searchRequestInfo.getSearchQuery().getResultMetadataOptions(),
-          metadata,
-          hit.getScoringData());
+      // Populate t  Thr ftSearchResult tadata post batch scor ng w h  nformat on from t 
+      // L nearScor ngData, wh ch now  ncludes a score.
+      scor ngFunct on.populateResult tadataBasedOnScor ngData(
+          searchRequest nfo.getSearchQuery().getResult tadataOpt ons(),
+           tadata,
+          h .getScor ngData());
 
-      collectWithScoreInternal(
-          hit.getTweetID(),
-          hit.getTimeSliceID(),
-          scores[i],
-          metadata
+      collectW hScore nternal(
+          h .getT et D(),
+          h .getT  Sl ce D(),
+          scores[ ],
+           tadata
       );
     }
-    return getRelevanceResultsInternal();
+    return getRelevanceResults nternal();
   }
 
-  private void exportBatchScoringTime(long scoringTimeNanos) {
-    ThriftSearchRelevanceOptions relevanceOptions = searchRequestInfo.getRelevanceOptions();
-    if (relevanceOptions.isSetRankingParams()
-        && relevanceOptions.getRankingParams().isSetSelectedTensorflowModel()) {
-      String model = relevanceOptions.getRankingParams().getSelectedTensorflowModel();
-      SearchTimerStats batchScoringPerModelTimer = SearchTimerStats.export(
-          String.format("batch_scoring_time_for_model_%s", model),
-          TimeUnit.NANOSECONDS,
+  pr vate vo d exportBatchScor ngT  (long scor ngT  Nanos) {
+    Thr ftSearchRelevanceOpt ons relevanceOpt ons = searchRequest nfo.getRelevanceOpt ons();
+     f (relevanceOpt ons. sSetRank ngParams()
+        && relevanceOpt ons.getRank ngParams(). sSetSelectedTensorflowModel()) {
+      Str ng model = relevanceOpt ons.getRank ngParams().getSelectedTensorflowModel();
+      SearchT  rStats batchScor ngPerModelT  r = SearchT  rStats.export(
+          Str ng.format("batch_scor ng_t  _for_model_%s", model),
+          T  Un .NANOSECONDS,
           false,
           true);
-      batchScoringPerModelTimer.timerIncrement(scoringTimeNanos);
+      batchScor ngPerModelT  r.t  r ncre nt(scor ngT  Nanos);
     }
   }
 }

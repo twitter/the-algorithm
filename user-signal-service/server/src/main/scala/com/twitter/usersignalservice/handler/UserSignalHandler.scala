@@ -1,61 +1,61 @@
-package com.twitter.usersignalservice.handler
+package com.tw ter.users gnalserv ce.handler
 
-import com.twitter.storehaus.ReadableStore
-import com.twitter.usersignalservice.thriftscala.BatchSignalRequest
-import com.twitter.usersignalservice.thriftscala.BatchSignalResponse
-import com.twitter.util.Future
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.usersignalservice.config.SignalFetcherConfig
-import com.twitter.usersignalservice.base.Query
-import com.twitter.usersignalservice.thriftscala.ClientIdentifier
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.util.Duration
-import com.twitter.util.Timer
-import com.twitter.util.TimeoutException
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.users gnalserv ce.thr ftscala.BatchS gnalRequest
+ mport com.tw ter.users gnalserv ce.thr ftscala.BatchS gnalResponse
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.ut l.StatsUt l
+ mport com.tw ter.users gnalserv ce.conf g.S gnalFetc rConf g
+ mport com.tw ter.users gnalserv ce.base.Query
+ mport com.tw ter.users gnalserv ce.thr ftscala.Cl ent dent f er
+ mport com.tw ter.users gnalserv ce.thr ftscala.S gnalType
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.T  r
+ mport com.tw ter.ut l.T  outExcept on
 
-class UserSignalHandler(
-  signalFetcherConfig: SignalFetcherConfig,
-  timer: Timer,
-  stats: StatsReceiver) {
-  import UserSignalHandler._
+class UserS gnalHandler(
+  s gnalFetc rConf g: S gnalFetc rConf g,
+  t  r: T  r,
+  stats: StatsRece ver) {
+   mport UserS gnalHandler._
 
-  val statsReceiver: StatsReceiver = stats.scope("user-signal-service/service")
+  val statsRece ver: StatsRece ver = stats.scope("user-s gnal-serv ce/serv ce")
 
-  def getBatchSignalsResponse(request: BatchSignalRequest): Future[Option[BatchSignalResponse]] = {
-    StatsUtil.trackOptionStats(statsReceiver) {
-      val allSignals = request.signalRequest.map { signalRequest =>
-        signalFetcherConfig
-          .SignalFetcherMapper(signalRequest.signalType)
+  def getBatchS gnalsResponse(request: BatchS gnalRequest): Future[Opt on[BatchS gnalResponse]] = {
+    StatsUt l.trackOpt onStats(statsRece ver) {
+      val allS gnals = request.s gnalRequest.map { s gnalRequest =>
+        s gnalFetc rConf g
+          .S gnalFetc rMapper(s gnalRequest.s gnalType)
           .get(Query(
-            userId = request.userId,
-            signalType = signalRequest.signalType,
-            maxResults = signalRequest.maxResults.map(_.toInt),
-            clientId = request.clientId.getOrElse(ClientIdentifier.Unknown)
+            user d = request.user d,
+            s gnalType = s gnalRequest.s gnalType,
+            maxResults = s gnalRequest.maxResults.map(_.to nt),
+            cl ent d = request.cl ent d.getOrElse(Cl ent dent f er.Unknown)
           ))
-          .map(signalOpt => (signalRequest.signalType, signalOpt))
+          .map(s gnalOpt => (s gnalRequest.s gnalType, s gnalOpt))
       }
 
-      Future.collect(allSignals).map { signalsSeq =>
-        val signalsMap = signalsSeq.map {
-          case (signalType: SignalType, signalsOpt) =>
-            (signalType, signalsOpt.getOrElse(EmptySeq))
+      Future.collect(allS gnals).map { s gnalsSeq =>
+        val s gnalsMap = s gnalsSeq.map {
+          case (s gnalType: S gnalType, s gnalsOpt) =>
+            (s gnalType, s gnalsOpt.getOrElse(EmptySeq))
         }.toMap
-        Some(BatchSignalResponse(signalsMap))
+        So (BatchS gnalResponse(s gnalsMap))
       }
     }
   }
 
-  def toReadableStore: ReadableStore[BatchSignalRequest, BatchSignalResponse] = {
-    new ReadableStore[BatchSignalRequest, BatchSignalResponse] {
-      override def get(request: BatchSignalRequest): Future[Option[BatchSignalResponse]] = {
-        getBatchSignalsResponse(request).raiseWithin(UserSignalServiceTimeout)(timer).rescue {
-          case _: TimeoutException =>
-            statsReceiver.counter("endpointGetBatchSignals/failure/timeout").incr()
+  def toReadableStore: ReadableStore[BatchS gnalRequest, BatchS gnalResponse] = {
+    new ReadableStore[BatchS gnalRequest, BatchS gnalResponse] {
+      overr de def get(request: BatchS gnalRequest): Future[Opt on[BatchS gnalResponse]] = {
+        getBatchS gnalsResponse(request).ra seW h n(UserS gnalServ ceT  out)(t  r).rescue {
+          case _: T  outExcept on =>
+            statsRece ver.counter("endpo ntGetBatchS gnals/fa lure/t  out"). ncr()
             EmptyResponse
           case e =>
-            statsReceiver.counter("endpointGetBatchSignals/failure/" + e.getClass.getName).incr()
+            statsRece ver.counter("endpo ntGetBatchS gnals/fa lure/" + e.getClass.getNa ). ncr()
             EmptyResponse
         }
       }
@@ -63,9 +63,9 @@ class UserSignalHandler(
   }
 }
 
-object UserSignalHandler {
-  val UserSignalServiceTimeout: Duration = 25.milliseconds
+object UserS gnalHandler {
+  val UserS gnalServ ceT  out: Durat on = 25.m ll seconds
 
-  val EmptySeq: Seq[Nothing] = Seq.empty
-  val EmptyResponse: Future[Option[BatchSignalResponse]] = Future.value(Some(BatchSignalResponse()))
+  val EmptySeq: Seq[Noth ng] = Seq.empty
+  val EmptyResponse: Future[Opt on[BatchS gnalResponse]] = Future.value(So (BatchS gnalResponse()))
 }

@@ -1,257 +1,257 @@
-package com.twitter.frigate.pushservice.refresh_handler
+package com.tw ter.fr gate.pushserv ce.refresh_handler
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.common.base.CandidateResult
-import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.frigate.common.base.FetchRankFlowWithHydratedCandidates
-import com.twitter.frigate.common.base.Invalid
-import com.twitter.frigate.common.base.OK
-import com.twitter.frigate.common.base.Response
-import com.twitter.frigate.common.base.Result
-import com.twitter.frigate.common.base.Stats.track
-import com.twitter.frigate.common.base.Stats.trackSeq
-import com.twitter.frigate.common.logger.MRLogger
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.adaptor.LoggedOutPushCandidateSourceGenerator
-import com.twitter.frigate.pushservice.predicate.LoggedOutPreRankingPredicates
-import com.twitter.frigate.pushservice.predicate.LoggedOutTargetPredicates
-import com.twitter.frigate.pushservice.rank.LoggedOutRanker
-import com.twitter.frigate.pushservice.take.LoggedOutRefreshForPushNotifier
-import com.twitter.frigate.pushservice.scriber.MrRequestScribeHandler
-import com.twitter.frigate.pushservice.target.LoggedOutPushTargetUserBuilder
-import com.twitter.frigate.pushservice.thriftscala.LoggedOutRequest
-import com.twitter.frigate.pushservice.thriftscala.LoggedOutResponse
-import com.twitter.frigate.pushservice.thriftscala.PushContext
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.hermit.predicate.SequentialPredicate
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.Counter
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Cand dateDeta ls
+ mport com.tw ter.fr gate.common.base.Cand dateResult
+ mport com.tw ter.fr gate.common.base.Cand dateS ce
+ mport com.tw ter.fr gate.common.base.FetchRankFlowW hHydratedCand dates
+ mport com.tw ter.fr gate.common.base. nval d
+ mport com.tw ter.fr gate.common.base.OK
+ mport com.tw ter.fr gate.common.base.Response
+ mport com.tw ter.fr gate.common.base.Result
+ mport com.tw ter.fr gate.common.base.Stats.track
+ mport com.tw ter.fr gate.common.base.Stats.trackSeq
+ mport com.tw ter.fr gate.common.logger.MRLogger
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.adaptor.LoggedOutPushCand dateS ceGenerator
+ mport com.tw ter.fr gate.pushserv ce.pred cate.LoggedOutPreRank ngPred cates
+ mport com.tw ter.fr gate.pushserv ce.pred cate.LoggedOutTargetPred cates
+ mport com.tw ter.fr gate.pushserv ce.rank.LoggedOutRanker
+ mport com.tw ter.fr gate.pushserv ce.take.LoggedOutRefreshForPushNot f er
+ mport com.tw ter.fr gate.pushserv ce.scr ber.MrRequestScr beHandler
+ mport com.tw ter.fr gate.pushserv ce.target.LoggedOutPushTargetUserBu lder
+ mport com.tw ter.fr gate.pushserv ce.thr ftscala.LoggedOutRequest
+ mport com.tw ter.fr gate.pushserv ce.thr ftscala.LoggedOutResponse
+ mport com.tw ter.fr gate.pushserv ce.thr ftscala.PushContext
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter. rm .pred cate.Sequent alPred cate
+ mport com.tw ter.ut l.Future
 
 class LoggedOutRefreshForPushHandler(
-  val loPushTargetUserBuilder: LoggedOutPushTargetUserBuilder,
-  val loPushCandidateSourceGenerator: LoggedOutPushCandidateSourceGenerator,
-  candidateHydrator: PushCandidateHydrator,
+  val loPushTargetUserBu lder: LoggedOutPushTargetUserBu lder,
+  val loPushCand dateS ceGenerator: LoggedOutPushCand dateS ceGenerator,
+  cand dateHydrator: PushCand dateHydrator,
   val loRanker: LoggedOutRanker,
-  val loRfphNotifier: LoggedOutRefreshForPushNotifier,
-  loMrRequestScriberNode: String
+  val loRfphNot f er: LoggedOutRefreshForPushNot f er,
+  loMrRequestScr berNode: Str ng
 )(
-  globalStats: StatsReceiver)
-    extends FetchRankFlowWithHydratedCandidates[Target, RawCandidate, PushCandidate] {
+  globalStats: StatsRece ver)
+    extends FetchRankFlowW hHydratedCand dates[Target, RawCand date, PushCand date] {
 
   val log = MRLogger("LORefreshForPushHandler")
-  implicit val statsReceiver: StatsReceiver =
+   mpl c  val statsRece ver: StatsRece ver =
     globalStats.scope("LORefreshForPushHandler")
-  private val loggedOutBuildStats = statsReceiver.scope("logged_out_build_target")
-  private val loggedOutProcessStats = statsReceiver.scope("logged_out_process")
-  private val loggedOutNotifyStats = statsReceiver.scope("logged_out_notify")
-  private val loCandidateHydrationStats: StatsReceiver =
-    statsReceiver.scope("logged_out_candidate_hydration")
-  val mrLORequestCandidateScribeStats =
-    statsReceiver.scope("mr_logged_out_request_scribe_candidates")
+  pr vate val loggedOutBu ldStats = statsRece ver.scope("logged_out_bu ld_target")
+  pr vate val loggedOutProcessStats = statsRece ver.scope("logged_out_process")
+  pr vate val loggedOutNot fyStats = statsRece ver.scope("logged_out_not fy")
+  pr vate val loCand dateHydrat onStats: StatsRece ver =
+    statsRece ver.scope("logged_out_cand date_hydrat on")
+  val mrLORequestCand dateScr beStats =
+    statsRece ver.scope("mr_logged_out_request_scr be_cand dates")
 
-  val mrRequestScribeHandler =
-    new MrRequestScribeHandler(loMrRequestScriberNode, statsReceiver.scope("lo_mr_request_scribe"))
-  val loMrRequestTargetScribeStats = statsReceiver.scope("lo_mr_request_scribe_target")
+  val mrRequestScr beHandler =
+    new MrRequestScr beHandler(loMrRequestScr berNode, statsRece ver.scope("lo_mr_request_scr be"))
+  val loMrRequestTargetScr beStats = statsRece ver.scope("lo_mr_request_scr be_target")
 
-  lazy val loCandSourceEligibleCounter: Counter =
-    loCandidateStats.counter("logged_out_cand_source_eligible")
-  lazy val loCandSourceNotEligibleCounter: Counter =
-    loCandidateStats.counter("logged_out_cand_source_not_eligible")
-  lazy val allCandidatesCounter: Counter = statsReceiver.counter("all_logged_out_candidates")
-  val allCandidatesFilteredPreRank = filterStats.counter("all_logged_out_candidates_filtered")
+  lazy val loCandS ceEl g bleCounter: Counter =
+    loCand dateStats.counter("logged_out_cand_s ce_el g ble")
+  lazy val loCandS ceNotEl g bleCounter: Counter =
+    loCand dateStats.counter("logged_out_cand_s ce_not_el g ble")
+  lazy val allCand datesCounter: Counter = statsRece ver.counter("all_logged_out_cand dates")
+  val allCand datesF lteredPreRank = f lterStats.counter("all_logged_out_cand dates_f ltered")
 
-  override def targetPredicates(target: Target): List[Predicate[Target]] = List(
-    LoggedOutTargetPredicates.targetFatiguePredicate(),
-    LoggedOutTargetPredicates.loggedOutRecsHoldbackPredicate()
+  overr de def targetPred cates(target: Target): L st[Pred cate[Target]] = L st(
+    LoggedOutTargetPred cates.targetFat guePred cate(),
+    LoggedOutTargetPred cates.loggedOutRecsHoldbackPred cate()
   )
 
-  override def isTargetValid(target: Target): Future[Result] = {
+  overr de def  sTargetVal d(target: Target): Future[Result] = {
     val resultFut =
-      if (target.skipFilters) {
+       f (target.sk pF lters) {
         Future.value(OK)
       } else {
-        predicateSeq(target).track(Seq(target)).map { resultArr =>
+        pred cateSeq(target).track(Seq(target)).map { resultArr =>
           trackTargetPredStats(resultArr(0))
         }
       }
     track(targetStats)(resultFut)
   }
 
-  override def rank(
+  overr de def rank(
     target: Target,
-    candidateDetails: Seq[CandidateDetails[PushCandidate]]
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
-    loRanker.rank(candidateDetails)
+    cand dateDeta ls: Seq[Cand dateDeta ls[PushCand date]]
+  ): Future[Seq[Cand dateDeta ls[PushCand date]]] = {
+    loRanker.rank(cand dateDeta ls)
   }
 
-  override def validCandidates(
+  overr de def val dCand dates(
     target: Target,
-    candidates: Seq[PushCandidate]
+    cand dates: Seq[PushCand date]
   ): Future[Seq[Result]] = {
-    Future.value(candidates.map { c => OK })
+    Future.value(cand dates.map { c => OK })
   }
 
-  override def desiredCandidateCount(target: Target): Int = 1
+  overr de def des redCand dateCount(target: Target):  nt = 1
 
-  private val loggedOutPreRankingPredicates =
-    LoggedOutPreRankingPredicates(filterStats.scope("logged_out_predicates"))
+  pr vate val loggedOutPreRank ngPred cates =
+    LoggedOutPreRank ngPred cates(f lterStats.scope("logged_out_pred cates"))
 
-  private val loggedOutPreRankingPredicateChain =
-    new SequentialPredicate[PushCandidate](loggedOutPreRankingPredicates)
+  pr vate val loggedOutPreRank ngPred cateCha n =
+    new Sequent alPred cate[PushCand date](loggedOutPreRank ngPred cates)
 
-  override def filter(
+  overr de def f lter(
     target: Target,
-    candidates: Seq[CandidateDetails[PushCandidate]]
+    cand dates: Seq[Cand dateDeta ls[PushCand date]]
   ): Future[
-    (Seq[CandidateDetails[PushCandidate]], Seq[CandidateResult[PushCandidate, Result]])
+    (Seq[Cand dateDeta ls[PushCand date]], Seq[Cand dateResult[PushCand date, Result]])
   ] = {
-    val predicateChain = loggedOutPreRankingPredicateChain
-    predicateChain
-      .track(candidates.map(_.candidate))
+    val pred cateCha n = loggedOutPreRank ngPred cateCha n
+    pred cateCha n
+      .track(cand dates.map(_.cand date))
       .map { results =>
-        val resultForPreRankingFiltering =
+        val resultForPreRank ngF lter ng =
           results
-            .zip(candidates)
+            .z p(cand dates)
             .foldLeft(
               (
-                Seq.empty[CandidateDetails[PushCandidate]],
-                Seq.empty[CandidateResult[PushCandidate, Result]]
+                Seq.empty[Cand dateDeta ls[PushCand date]],
+                Seq.empty[Cand dateResult[PushCand date, Result]]
               )
             ) {
-              case ((goodCandidates, filteredCandidates), (result, candidateDetails)) =>
+              case ((goodCand dates, f lteredCand dates), (result, cand dateDeta ls)) =>
                 result match {
                   case None =>
-                    (goodCandidates :+ candidateDetails, filteredCandidates)
+                    (goodCand dates :+ cand dateDeta ls, f lteredCand dates)
 
-                  case Some(pred: NamedPredicate[_]) =>
-                    val r = Invalid(Some(pred.name))
+                  case So (pred: Na dPred cate[_]) =>
+                    val r =  nval d(So (pred.na ))
                     (
-                      goodCandidates,
-                      filteredCandidates :+ CandidateResult[PushCandidate, Result](
-                        candidateDetails.candidate,
-                        candidateDetails.source,
+                      goodCand dates,
+                      f lteredCand dates :+ Cand dateResult[PushCand date, Result](
+                        cand dateDeta ls.cand date,
+                        cand dateDeta ls.s ce,
                         r
                       )
                     )
-                  case Some(_) =>
-                    val r = Invalid(Some("Filtered by un-named predicate"))
+                  case So (_) =>
+                    val r =  nval d(So ("F ltered by un-na d pred cate"))
                     (
-                      goodCandidates,
-                      filteredCandidates :+ CandidateResult[PushCandidate, Result](
-                        candidateDetails.candidate,
-                        candidateDetails.source,
+                      goodCand dates,
+                      f lteredCand dates :+ Cand dateResult[PushCand date, Result](
+                        cand dateDeta ls.cand date,
+                        cand dateDeta ls.s ce,
                         r
                       )
                     )
                 }
             }
-        resultForPreRankingFiltering match {
-          case (validCandidates, _) if validCandidates.isEmpty && candidates.nonEmpty =>
-            allCandidatesFilteredPreRank.incr()
+        resultForPreRank ngF lter ng match {
+          case (val dCand dates, _)  f val dCand dates. sEmpty && cand dates.nonEmpty =>
+            allCand datesF lteredPreRank. ncr()
           case _ => ()
 
         }
-        resultForPreRankingFiltering
+        resultForPreRank ngF lter ng
 
       }
 
   }
 
-  override def candidateSources(
+  overr de def cand dateS ces(
     target: Target
-  ): Future[Seq[CandidateSource[Target, RawCandidate]]] = {
+  ): Future[Seq[Cand dateS ce[Target, RawCand date]]] = {
     Future
-      .collect(loPushCandidateSourceGenerator.sources.map { cs =>
-        cs.isCandidateSourceAvailable(target).map { isEligible =>
-          if (isEligible) {
-            loCandSourceEligibleCounter.incr()
-            Some(cs)
+      .collect(loPushCand dateS ceGenerator.s ces.map { cs =>
+        cs. sCand dateS ceAva lable(target).map {  sEl g ble =>
+           f ( sEl g ble) {
+            loCandS ceEl g bleCounter. ncr()
+            So (cs)
           } else {
-            loCandSourceNotEligibleCounter.incr()
+            loCandS ceNotEl g bleCounter. ncr()
             None
           }
         }
       }).map(_.flatten)
   }
 
-  override def process(
+  overr de def process(
     target: Target,
-    externalCandidates: Seq[RawCandidate] = Nil
-  ): Future[Response[PushCandidate, Result]] = {
-    isTargetValid(target).flatMap {
+    externalCand dates: Seq[RawCand date] = N l
+  ): Future[Response[PushCand date, Result]] = {
+     sTargetVal d(target).flatMap {
       case OK =>
         for {
-          candidatesFromSources <- trackSeq(fetchStats)(fetchCandidates(target))
-          externalCandidateDetails = externalCandidates.map(
-            CandidateDetails(_, "logged_out_refresh_for_push_handler_external_candidates"))
-          allCandidates = candidatesFromSources ++ externalCandidateDetails
-          hydratedCandidatesWithCopy <-
-            trackSeq(loCandidateHydrationStats)(hydrateCandidates(allCandidates))
-          (candidates, preRankingFilteredCandidates) <-
-            track(filterStats)(filter(target, hydratedCandidatesWithCopy))
-          rankedCandidates <- trackSeq(rankingStats)(rank(target, candidates))
-          allTakeCandidateResults <- track(takeStats)(
-            take(target, rankedCandidates, desiredCandidateCount(target))
+          cand datesFromS ces <- trackSeq(fetchStats)(fetchCand dates(target))
+          externalCand dateDeta ls = externalCand dates.map(
+            Cand dateDeta ls(_, "logged_out_refresh_for_push_handler_external_cand dates"))
+          allCand dates = cand datesFromS ces ++ externalCand dateDeta ls
+          hydratedCand datesW hCopy <-
+            trackSeq(loCand dateHydrat onStats)(hydrateCand dates(allCand dates))
+          (cand dates, preRank ngF lteredCand dates) <-
+            track(f lterStats)(f lter(target, hydratedCand datesW hCopy))
+          rankedCand dates <- trackSeq(rank ngStats)(rank(target, cand dates))
+          allTakeCand dateResults <- track(takeStats)(
+            take(target, rankedCand dates, des redCand dateCount(target))
           )
-          _ <- track(mrLORequestCandidateScribeStats)(
-            mrRequestScribeHandler.scribeForCandidateFiltering(
+          _ <- track(mrLORequestCand dateScr beStats)(
+            mrRequestScr beHandler.scr beForCand dateF lter ng(
               target,
-              hydratedCandidatesWithCopy,
-              preRankingFilteredCandidates,
-              rankedCandidates,
-              rankedCandidates,
-              rankedCandidates,
-              allTakeCandidateResults
+              hydratedCand datesW hCopy,
+              preRank ngF lteredCand dates,
+              rankedCand dates,
+              rankedCand dates,
+              rankedCand dates,
+              allTakeCand dateResults
             ))
 
-        } yield {
-          val takeCandidateResults = allTakeCandidateResults.filterNot { candResult =>
-            candResult.result == MoreThanDesiredCandidates
+        } y eld {
+          val takeCand dateResults = allTakeCand dateResults.f lterNot { candResult =>
+            candResult.result == MoreThanDes redCand dates
           }
-          val allCandidateResults = takeCandidateResults ++ preRankingFilteredCandidates
-          allCandidatesCounter.incr(allCandidateResults.size)
-          Response(OK, allCandidateResults)
+          val allCand dateResults = takeCand dateResults ++ preRank ngF lteredCand dates
+          allCand datesCounter. ncr(allCand dateResults.s ze)
+          Response(OK, allCand dateResults)
         }
 
       case result: Result =>
-        for (_ <- track(loMrRequestTargetScribeStats)(
-            mrRequestScribeHandler.scribeForTargetFiltering(target, result))) yield {
-          Response(result, Nil)
+        for (_ <- track(loMrRequestTargetScr beStats)(
+            mrRequestScr beHandler.scr beForTargetF lter ng(target, result))) y eld {
+          Response(result, N l)
         }
     }
   }
 
-  def buildTarget(
-    guestId: Long,
-    inputPushContext: Option[PushContext]
+  def bu ldTarget(
+    guest d: Long,
+     nputPushContext: Opt on[PushContext]
   ): Future[Target] =
-    loPushTargetUserBuilder.buildTarget(guestId, inputPushContext)
+    loPushTargetUserBu lder.bu ldTarget(guest d,  nputPushContext)
 
   /**
-   * Hydrate candidate by querying downstream services
+   * Hydrate cand date by query ng downstream serv ces
    *
-   * @param candidates - candidates
+   * @param cand dates - cand dates
    *
-   * @return - hydrated candidates
+   * @return - hydrated cand dates
    */
-  override def hydrateCandidates(
-    candidates: Seq[CandidateDetails[RawCandidate]]
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = candidateHydrator(candidates)
+  overr de def hydrateCand dates(
+    cand dates: Seq[Cand dateDeta ls[RawCand date]]
+  ): Future[Seq[Cand dateDeta ls[PushCand date]]] = cand dateHydrator(cand dates)
 
-  override def batchForCandidatesCheck(target: Target): Int = 1
+  overr de def batchForCand datesC ck(target: Target):  nt = 1
 
   def refreshAndSend(request: LoggedOutRequest): Future[LoggedOutResponse] = {
     for {
-      target <- track(loggedOutBuildStats)(
-        loPushTargetUserBuilder.buildTarget(request.guestId, request.context))
-      response <- track(loggedOutProcessStats)(process(target, externalCandidates = Seq.empty))
+      target <- track(loggedOutBu ldStats)(
+        loPushTargetUserBu lder.bu ldTarget(request.guest d, request.context))
+      response <- track(loggedOutProcessStats)(process(target, externalCand dates = Seq.empty))
       loggedOutRefreshResponse <-
-        track(loggedOutNotifyStats)(loRfphNotifier.checkResponseAndNotify(response))
-    } yield {
+        track(loggedOutNot fyStats)(loRfphNot f er.c ckResponseAndNot fy(response))
+    } y eld {
       loggedOutRefreshResponse
     }
   }

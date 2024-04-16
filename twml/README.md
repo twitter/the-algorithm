@@ -1,13 +1,13 @@
 # TWML
 
 ---
-Note: `twml` is no longer under development. Much of the code here is out of date and unused.
-It is included here for completeness, because `twml` is still used to train the light ranker models
-(see `src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird/README.md`)
+Note: `twml`  s no longer under develop nt. Much of t  code  re  s out of date and unused.
+   s  ncluded  re for completeness, because `twml`  s st ll used to tra n t  l ght ranker models
+(see `src/python/tw ter/deepb rd/projects/t  l nes/scr pts/models/earlyb rd/README.md`)
 ---
 
-TWML is one of Twitter's machine learning frameworks, which uses Tensorflow under the hood. While it is mostly
+TWML  s one of Tw ter's mach ne learn ng fra works, wh ch uses Tensorflow under t  hood. Wh le    s mostly
 deprecated,
-it is still currently used to train the Earlybird light ranking models (
-see `src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird/train.py`).
-The most relevant part of this is the `DataRecordTrainer` class, which is where the core training logic resides.  
+   s st ll currently used to tra n t  Earlyb rd l ght rank ng models (
+see `src/python/tw ter/deepb rd/projects/t  l nes/scr pts/models/earlyb rd/tra n.py`).
+T  most relevant part of t   s t  `DataRecordTra ner` class, wh ch  s w re t  core tra n ng log c res des.  

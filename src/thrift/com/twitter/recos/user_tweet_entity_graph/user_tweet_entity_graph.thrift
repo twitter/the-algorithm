@@ -1,13 +1,13 @@
-namespace java com.twitter.recos.user_tweet_entity_graph.thriftjava
-namespace py gen.twitter.recos.user_tweet_entity_graph
-#@namespace scala com.twitter.recos.user_tweet_entity_graph.thriftscala
-#@namespace strato com.twitter.recos.user_tweet_entity_graph
-namespace rb UserTweetEntityGraph
+na space java com.tw ter.recos.user_t et_ent y_graph.thr ftjava
+na space py gen.tw ter.recos.user_t et_ent y_graph
+#@na space scala com.tw ter.recos.user_t et_ent y_graph.thr ftscala
+#@na space strato com.tw ter.recos.user_t et_ent y_graph
+na space rb UserT etEnt yGraph
 
-include "com/twitter/recos/features/tweet.thrift"
-include "com/twitter/recos/recos_common.thrift"
+ nclude "com/tw ter/recos/features/t et.thr ft"
+ nclude "com/tw ter/recos/recos_common.thr ft"
 
-enum TweetType {
+enum T etType {
   Summary    = 0
   Photo      = 1
   Player     = 2
@@ -15,173 +15,173 @@ enum TweetType {
   Regular    = 4
 }
 
-enum RecommendationType {
-  Tweet      = 0
-  Hashtag    = 1 // Entity type
-  Url        = 2 // Entity type
+enum Recom ndat onType {
+  T et      = 0
+  Hashtag    = 1 // Ent y type
+  Url        = 2 // Ent y type
 }
 
-enum TweetEntityDisplayLocation {
-  MagicRecs                 = 0
-  HomeTimeline              = 1
-  HighlightsEmailUrlRecs    = 2
-  Highlights                = 3
-  Email                     = 4
-  MagicRecsF1               = 5
-  GuideVideo                = 6
-  MagicRecsRareTweet        = 7
-  TopArticles               = 8 // Twitter Blue most shared articles page
-  ContentRecommender        = 9
-  FrigateNTab               = 10
+enum T etEnt yD splayLocat on {
+  Mag cRecs                 = 0
+  Ho T  l ne              = 1
+  H ghl ghtsEma lUrlRecs    = 2
+  H ghl ghts                = 3
+  Ema l                     = 4
+  Mag cRecsF1               = 5
+  Gu deV deo                = 6
+  Mag cRecsRareT et        = 7
+  TopArt cles               = 8 // Tw ter Blue most shared art cles page
+  ContentRecom nder        = 9
+  Fr gateNTab               = 10
 }
 
-struct RecommendTweetEntityRequest {
-  // user id of the requesting user
-  1: required i64                                        requesterId
+struct Recom ndT etEnt yRequest {
+  // user  d of t  request ng user
+  1: requ red  64                                        requester d
 
-  // display location from the client
-  2: required TweetEntityDisplayLocation                 displayLocation
+  // d splay locat on from t  cl ent
+  2: requ red T etEnt yD splayLocat on                 d splayLocat on
 
-  // the recommendation entity types to return
-  3: required list<RecommendationType>                   recommendationTypes
+  // t  recom ndat on ent y types to return
+  3: requ red l st<Recom ndat onType>                   recom ndat onTypes
 
-  // seed ids and weights used in left hand side
-  4: required map<i64,double>                            seedsWithWeights
+  // seed  ds and   ghts used  n left hand s de
+  4: requ red map< 64,double>                            seedsW h  ghts
 
-  // number of suggested results per recommendation entity type
-  5: optional map<RecommendationType, i32>               maxResultsByType
+  // number of suggested results per recom ndat on ent y type
+  5: opt onal map<Recom ndat onType,  32>               maxResultsByType
 
-  // the tweet age threshold in milliseconds
-  6: optional i64                                        maxTweetAgeInMillis
+  // t  t et age threshold  n m ll seconds
+  6: opt onal  64                                        maxT etAge nM ll s
 
-  // list of tweet ids to exclude from response
-  7: optional list<i64>                                  excludedTweetIds
+  // l st of t et  ds to exclude from response
+  7: opt onal l st< 64>                                  excludedT et ds
 
-  // max user social proof size per engagement type
-  8: optional i32                                        maxUserSocialProofSize
+  // max user soc al proof s ze per engage nt type
+  8: opt onal  32                                        maxUserSoc alProofS ze
 
-  // max tweet social proof size per user
-  9: optional i32                                        maxTweetSocialProofSize
+  // max t et soc al proof s ze per user
+  9: opt onal  32                                        maxT etSoc alProofS ze
 
-  // min user social proof size per each recommendation entity type
-  10: optional map<RecommendationType, i32>              minUserSocialProofSizes
+  // m n user soc al proof s ze per each recom ndat on ent y type
+  10: opt onal map<Recom ndat onType,  32>              m nUserSoc alProofS zes
 
   // summary, photo, player, promote, regular
-  11: optional list<TweetType>                           tweetTypes
+  11: opt onal l st<T etType>                           t etTypes
 
-  // the list of social proof types to return
-  12: optional list<recos_common.SocialProofType>        socialProofTypes
+  // t  l st of soc al proof types to return
+  12: opt onal l st<recos_common.Soc alProofType>        soc alProofTypes
 
-  // set of groups of social proof types allowed to be combined for comparison against minUserSocialProofSizes.
-  // e.g. if the input is set<list<Tweet, Favorite>>, then the union of those two social proofs
-  // will be compared against the minUserSocialProofSize of Tweet RecommendationType.
-  13: optional set<list<recos_common.SocialProofType>>   socialProofTypeUnions
+  // set of groups of soc al proof types allo d to be comb ned for compar son aga nst m nUserSoc alProofS zes.
+  // e.g.  f t   nput  s set<l st<T et, Favor e>>, t n t  un on of those two soc al proofs
+  // w ll be compared aga nst t  m nUserSoc alProofS ze of T et Recom ndat onType.
+  13: opt onal set<l st<recos_common.Soc alProofType>>   soc alProofTypeUn ons
 
-  // the recommendations returned in the response are authored by the following users
-  14: optional set<i64>                                  tweetAuthors
+  // t  recom ndat ons returned  n t  response are authored by t  follow ng users
+  14: opt onal set< 64>                                  t etAuthors
 
-  // the tweet engagement age threshold in milliseconds
-  15: optional i64                                       maxEngagementAgeInMillis
+  // t  t et engage nt age threshold  n m ll seconds
+  15: opt onal  64                                       maxEngage ntAge nM ll s
 
-  // the recommendations will not return any tweet authored by the following users
-  16: optional set<i64>                                  excludedTweetAuthors
+  // t  recom ndat ons w ll not return any t et authored by t  follow ng users
+  16: opt onal set< 64>                                  excludedT etAuthors
 }
 
-struct TweetRecommendation {
-  // tweet id
-  1: required i64                                                               tweetId
-  // sum of weights of seed users who engaged with the tweet.
-  // If a user engaged with the same tweet twice, liked it and retweeted it, then his/her weight was counted twice.
-  2: required double                                                            score
-    // user social proofs per engagement type
-  3: required map<recos_common.SocialProofType, list<i64>>                      socialProofByType
-  // user social proofs along with edge metadata per engagement type. The value of the map is a list of SocialProofs.
-  4: optional map<recos_common.SocialProofType, list<recos_common.SocialProof>> socialProofs
+struct T etRecom ndat on {
+  // t et  d
+  1: requ red  64                                                               t et d
+  // sum of   ghts of seed users who engaged w h t  t et.
+  //  f a user engaged w h t  sa  t et tw ce, l ked   and ret eted  , t n  / r   ght was counted tw ce.
+  2: requ red double                                                            score
+    // user soc al proofs per engage nt type
+  3: requ red map<recos_common.Soc alProofType, l st< 64>>                      soc alProofByType
+  // user soc al proofs along w h edge  tadata per engage nt type. T  value of t  map  s a l st of Soc alProofs.
+  4: opt onal map<recos_common.Soc alProofType, l st<recos_common.Soc alProof>> soc alProofs
 }
 
-struct HashtagRecommendation {
-  1: required i32                                       id                   // integer hashtag id, which will be converted to hashtag string by client library.
-  2: required double                                    score
-  // sum of weights of seed users who engaged with the hashtag.
-  // If a user engaged with the same hashtag twice, liked it and retweeted it, then his/her weight was counted twice.
-  3: required map<recos_common.SocialProofType, map<i64, list<i64>>> socialProofByType
-  // user and tweet social proofs per engagement type. The key of inner map is user id, and the value of inner map is
-  // a list of tweet ids that the user engaged with.
+struct HashtagRecom ndat on {
+  1: requ red  32                                        d                   //  nteger hashtag  d, wh ch w ll be converted to hashtag str ng by cl ent l brary.
+  2: requ red double                                    score
+  // sum of   ghts of seed users who engaged w h t  hashtag.
+  //  f a user engaged w h t  sa  hashtag tw ce, l ked   and ret eted  , t n  / r   ght was counted tw ce.
+  3: requ red map<recos_common.Soc alProofType, map< 64, l st< 64>>> soc alProofByType
+  // user and t et soc al proofs per engage nt type. T  key of  nner map  s user  d, and t  value of  nner map  s
+  // a l st of t et  ds that t  user engaged w h.
 }
 
-struct UrlRecommendation {
-  1: required i32                                       id                   // integer url id, which will be converted to url string by client library.
-  2: required double                                    score
-  // sum of weights of seed users who engaged with the url.
-  // If a user engaged with the same url twice, liked it and retweeted it, then his/her weight was counted twice.
-  3: required map<recos_common.SocialProofType, map<i64, list<i64>>> socialProofByType
-  // user and tweet social proofs per engagement type. The key of inner map is user id, and the value of inner map is
-  // a list of tweet ids that the user engaged with.
+struct UrlRecom ndat on {
+  1: requ red  32                                        d                   //  nteger url  d, wh ch w ll be converted to url str ng by cl ent l brary.
+  2: requ red double                                    score
+  // sum of   ghts of seed users who engaged w h t  url.
+  //  f a user engaged w h t  sa  url tw ce, l ked   and ret eted  , t n  / r   ght was counted tw ce.
+  3: requ red map<recos_common.Soc alProofType, map< 64, l st< 64>>> soc alProofByType
+  // user and t et soc al proofs per engage nt type. T  key of  nner map  s user  d, and t  value of  nner map  s
+  // a l st of t et  ds that t  user engaged w h.
 }
 
-union UserTweetEntityRecommendationUnion {
-  1: TweetRecommendation tweetRec
-  2: HashtagRecommendation hashtagRec
-  3: UrlRecommendation urlRec
+un on UserT etEnt yRecom ndat onUn on {
+  1: T etRecom ndat on t etRec
+  2: HashtagRecom ndat on hashtagRec
+  3: UrlRecom ndat on urlRec
 }
 
-struct RecommendTweetEntityResponse {
-  1: required list<UserTweetEntityRecommendationUnion> recommendations
+struct Recom ndT etEnt yResponse {
+  1: requ red l st<UserT etEnt yRecom ndat onUn on> recom ndat ons
 }
 
-struct SocialProofRequest {
-  1: required list<i64>                                  inputTweets             // Only for some tweets we need requst its social proofs.
-  2: required map<i64, double>                           seedsWithWeights        // a set of seed users with weights
-  3: optional i64                                        requesterId             // id of the requesting user
-  4: optional list<recos_common.SocialProofType>         socialProofTypes        // the list of social proof types to return
+struct Soc alProofRequest {
+  1: requ red l st< 64>                                   nputT ets             // Only for so  t ets   need requst  s soc al proofs.
+  2: requ red map< 64, double>                           seedsW h  ghts        // a set of seed users w h   ghts
+  3: opt onal  64                                        requester d             //  d of t  request ng user
+  4: opt onal l st<recos_common.Soc alProofType>         soc alProofTypes        // t  l st of soc al proof types to return
 }
 
-struct SocialProofResponse {
-  1: required list<TweetRecommendation> socialProofResults
+struct Soc alProofResponse {
+  1: requ red l st<T etRecom ndat on> soc alProofResults
 }
 
-struct RecommendationSocialProofRequest {
+struct Recom ndat onSoc alProofRequest {
   /**
-   * Clients can request social proof from multiple recommendation types in a single request.
-   * NOTE: Avoid mixing tweet social proof requests with entity social proof requests as the
-   * underlying library call retrieves these differently.
+   * Cl ents can request soc al proof from mult ple recom ndat on types  n a s ngle request.
+   * NOTE: Avo d m x ng t et soc al proof requests w h ent y soc al proof requests as t 
+   * underly ng l brary call retr eves t se d fferently.
    */
-  1: required map<RecommendationType, set<i64>>           recommendationIdsForSocialProof
-  // These will be the only valid LHS nodes used to fetch social proof.
-  2: required map<i64, double>                            seedsWithWeights
-  3: optional i64                                         requesterId
-  // The list of valid social proof types to return, e.g. we may only want Favorite and Tweet proofs.
-  4: optional list<recos_common.SocialProofType>          socialProofTypes
+  1: requ red map<Recom ndat onType, set< 64>>           recom ndat on dsForSoc alProof
+  // T se w ll be t  only val d LHS nodes used to fetch soc al proof.
+  2: requ red map< 64, double>                            seedsW h  ghts
+  3: opt onal  64                                         requester d
+  // T  l st of val d soc al proof types to return, e.g.   may only want Favor e and T et proofs.
+  4: opt onal l st<recos_common.Soc alProofType>          soc alProofTypes
 }
 
-struct RecommendationSocialProofResponse {
-  1: required list<UserTweetEntityRecommendationUnion> socialProofResults
+struct Recom ndat onSoc alProofResponse {
+  1: requ red l st<UserT etEnt yRecom ndat onUn on> soc alProofResults
 }
 
 /**
- * The main interface-definition for UserTweetEntityGraph.
+ * T  ma n  nterface-def n  on for UserT etEnt yGraph.
  */
-service UserTweetEntityGraph {
-  RecommendTweetEntityResponse recommendTweets (RecommendTweetEntityRequest request)
+serv ce UserT etEnt yGraph {
+  Recom ndT etEnt yResponse recom ndT ets (Recom ndT etEnt yRequest request)
 
   /**
-   * Given a query user, its seed users, and a set of input tweets, return the social proofs of
-   * input tweets if any.
+   * G ven a query user,  s seed users, and a set of  nput t ets, return t  soc al proofs of
+   *  nput t ets  f any.
    *
-   * Currently this supports clients such as Email Recommendations, MagicRecs, and HomeTimeline.
-   * In order to avoid heavy migration work, we are retaining this endpoint.
+   * Currently t  supports cl ents such as Ema l Recom ndat ons, Mag cRecs, and Ho T  l ne.
+   *  n order to avo d  avy m grat on work,   are reta n ng t  endpo nt.
    */
-  SocialProofResponse findTweetSocialProofs(SocialProofRequest request)
+  Soc alProofResponse f ndT etSoc alProofs(Soc alProofRequest request)
 
   /**
-   * Find social proof for the specified RecommendationType given a set of input ids of that type.
-   * Only find social proofs from the specified seed users with the specified social proof types.
+   * F nd soc al proof for t  spec f ed Recom ndat onType g ven a set of  nput  ds of that type.
+   * Only f nd soc al proofs from t  spec f ed seed users w h t  spec f ed soc al proof types.
    *
-   * Currently this supports url social proof generation for Guide.
+   * Currently t  supports url soc al proof generat on for Gu de.
    *
-   * This endpoint is flexible enough to support social proof generation for all recommendation
-   * types, and should be used for all future clients of this service.
+   * T  endpo nt  s flex ble enough to support soc al proof generat on for all recom ndat on
+   * types, and should be used for all future cl ents of t  serv ce.
    */
-  RecommendationSocialProofResponse findRecommendationSocialProofs(RecommendationSocialProofRequest request)
+  Recom ndat onSoc alProofResponse f ndRecom ndat onSoc alProofs(Recom ndat onSoc alProofRequest request)
 }
 

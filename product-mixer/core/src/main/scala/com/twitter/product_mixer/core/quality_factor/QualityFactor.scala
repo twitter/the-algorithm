@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.core.quality_factor
+package com.tw ter.product_m xer.core.qual y_factor
 
 /**
- * [[QualityFactor]] is an abstract number that enables a feedback loop to control operation costs and ultimately
- * maintain the operation success rate. Abstractly, if operations/calls are too expensive (such as high
- * latencies), the quality factor should go down, which helps future calls to ease their demand/load (such as
- * reducing request width); if ops/calls are fast, the quality factor should go up, so we can incur more load.
+ * [[Qual yFactor]]  s an abstract number that enables a feedback loop to control operat on costs and ult mately
+ * ma nta n t  operat on success rate. Abstractly,  f operat ons/calls are too expens ve (such as h gh
+ * latenc es), t  qual y factor should go down, wh ch  lps future calls to ease t  r demand/load (such as
+ * reduc ng request w dth);  f ops/calls are fast, t  qual y factor should go up, so   can  ncur more load.
  *
- * @note to avoid overhead the underlying state may sometimes not be synchronized.
- *       If a part of an application is unhealthy, it will likely be unhealthy for all threads,
- *       it will eventually result in a close-enough quality factor value for all thread's view of the state.
+ * @note to avo d over ad t  underly ng state may so t  s not be synchron zed.
+ *        f a part of an appl cat on  s un althy,   w ll l kely be un althy for all threads,
+ *         w ll eventually result  n a close-enough qual y factor value for all thread's v ew of t  state.
  *
- *       In extremely low volume scenarios such as manual testing in a development environment,
- *       it's possible that different threads will have vastly different views of the underling state,
- *       but in practice, in production systems, they will be close-enough.
+ *        n extre ly low volu  scenar os such as manual test ng  n a develop nt env ron nt,
+ *        's poss ble that d fferent threads w ll have vastly d fferent v ews of t  underl ng state,
+ *       but  n pract ce,  n product on systems, t y w ll be close-enough.
  */
-trait QualityFactor[Input] { self =>
+tra  Qual yFactor[ nput] { self =>
 
-  /** get the current [[QualityFactor]]'s value */
+  /** get t  current [[Qual yFactor]]'s value */
   def currentValue: Double
 
-  def config: QualityFactorConfig
+  def conf g: Qual yFactorConf g
 
-  /** update of the current `factor` value */
-  def update(input: Input): Unit
+  /** update of t  current `factor` value */
+  def update( nput:  nput): Un 
 
-  /** a [[QualityFactorObserver]] for this [[QualityFactor]] */
-  def buildObserver(): QualityFactorObserver
+  /** a [[Qual yFactorObserver]] for t  [[Qual yFactor]] */
+  def bu ldObserver(): Qual yFactorObserver
 
-  override def toString: String = {
-    self.getClass.getSimpleName.stripSuffix("$")
+  overr de def toStr ng: Str ng = {
+    self.getClass.getS mpleNa .str pSuff x("$")
   }
 }

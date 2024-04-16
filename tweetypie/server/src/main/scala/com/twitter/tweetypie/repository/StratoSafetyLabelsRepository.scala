@@ -1,49 +1,49 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.search.blender.services.strato.UserSearchSafetySettings
-import com.twitter.spam.rtf.thriftscala.SafetyLabel
-import com.twitter.spam.rtf.thriftscala.SafetyLabelMap
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.visibility.common.UserSearchSafetySource
+ mport com.tw ter.search.blender.serv ces.strato.UserSearchSafetySett ngs
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLabel
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLabelMap
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLabelType
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.strato.thr ft.ScroogeConv mpl c s._
+ mport com.tw ter.v s b l y.common.UserSearchSafetyS ce
 
-object StratoSafetyLabelsRepository {
-  type Type = (TweetId, SafetyLabelType) => Stitch[Option[SafetyLabel]]
+object StratoSafetyLabelsRepos ory {
+  type Type = (T et d, SafetyLabelType) => St ch[Opt on[SafetyLabel]]
 
-  def apply(client: StratoClient): Type = {
-    val safetyLabelMapRepo = StratoSafetyLabelMapRepository(client)
+  def apply(cl ent: StratoCl ent): Type = {
+    val safetyLabelMapRepo = StratoSafetyLabelMapRepos ory(cl ent)
 
-    (tweetId, safetyLabelType) =>
-      safetyLabelMapRepo(tweetId).map(
+    (t et d, safetyLabelType) =>
+      safetyLabelMapRepo(t et d).map(
         _.flatMap(_.labels).flatMap(_.get(safetyLabelType))
       )
   }
 }
 
-object StratoSafetyLabelMapRepository {
-  type Type = TweetId => Stitch[Option[SafetyLabelMap]]
+object StratoSafetyLabelMapRepos ory {
+  type Type = T et d => St ch[Opt on[SafetyLabelMap]]
 
-  val column = "visibility/baseTweetSafetyLabelMap"
+  val column = "v s b l y/baseT etSafetyLabelMap"
 
-  def apply(client: StratoClient): Type = {
-    val fetcher: Fetcher[TweetId, Unit, SafetyLabelMap] =
-      client.fetcher[TweetId, SafetyLabelMap](column)
+  def apply(cl ent: StratoCl ent): Type = {
+    val fetc r: Fetc r[T et d, Un , SafetyLabelMap] =
+      cl ent.fetc r[T et d, SafetyLabelMap](column)
 
-    tweetId => fetcher.fetch(tweetId).map(_.v)
+    t et d => fetc r.fetch(t et d).map(_.v)
   }
 }
 
-object StratoUserSearchSafetySourceRepository {
-  type Type = UserId => Stitch[UserSearchSafetySettings]
+object StratoUserSearchSafetyS ceRepos ory {
+  type Type = User d => St ch[UserSearchSafetySett ngs]
 
-  def apply(client: StratoClient): Type = {
-    val fetcher: Fetcher[UserId, Unit, UserSearchSafetySettings] =
-      client.fetcher[UserId, UserSearchSafetySettings](UserSearchSafetySource.Column)
+  def apply(cl ent: StratoCl ent): Type = {
+    val fetc r: Fetc r[User d, Un , UserSearchSafetySett ngs] =
+      cl ent.fetc r[User d, UserSearchSafetySett ngs](UserSearchSafetyS ce.Column)
 
-    userId => fetcher.fetch(userId).map(_.v.getOrElse(UserSearchSafetySource.DefaultSetting))
+    user d => fetc r.fetch(user d).map(_.v.getOrElse(UserSearchSafetyS ce.DefaultSett ng))
   }
 }

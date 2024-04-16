@@ -1,94 +1,94 @@
-package com.twitter.home_mixer.product.scored_tweets.candidate_pipeline
+package com.tw ter.ho _m xer.product.scored_t ets.cand date_p pel ne
 
-import com.twitter.home_mixer.functional_component.filter.ReplyFilter
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.TimelineServiceTweetsFeature
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.TweetypieStaticEntitiesFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.gate.MinCachedTweetsGate
-import com.twitter.home_mixer.product.scored_tweets.gate.MinTimeSinceLastRequestGate
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CachedScoredTweets
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CandidatePipeline
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.EnableBackfillCandidatePipelineParam
-import com.twitter.home_mixer.product.scored_tweets.response_transformer.ScoredTweetsBackfillResponseFeatureTransformer
-import com.twitter.product_mixer.component_library.filter.PredicateFeatureFilter
-import com.twitter.product_mixer.component_library.gate.NonEmptySeqFeatureGate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.functional_component.candidate_source.PassthroughCandidateSource
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.decider.DeciderParam
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.funct onal_component.f lter.ReplyF lter
+ mport com.tw ter.ho _m xer.model.Ho Features.Author dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.T  l neServ ceT etsFeature
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.T etyp eStat cEnt  esFeatureHydrator
+ mport com.tw ter.ho _m xer.product.scored_t ets.gate.M nCac dT etsGate
+ mport com.tw ter.ho _m xer.product.scored_t ets.gate.M nT  S nceLastRequestGate
+ mport com.tw ter.ho _m xer.product.scored_t ets.model.ScoredT etsQuery
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParam.Cac dScoredT ets
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParam.Cand dateP pel ne
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParam.EnableBackf llCand dateP pel neParam
+ mport com.tw ter.ho _m xer.product.scored_t ets.response_transfor r.ScoredT etsBackf llResponseFeatureTransfor r
+ mport com.tw ter.product_m xer.component_l brary.f lter.Pred cateFeatureF lter
+ mport com.tw ter.product_m xer.component_l brary.gate.NonEmptySeqFeatureGate
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.PassthroughCand dateS ce
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BaseCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.Gate
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neResultsTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neConf g
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .dec der.Dec derParam
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ScoredTweetsBackfillCandidatePipelineConfig @Inject() (
-  tweetypieStaticEntitiesHydrator: TweetypieStaticEntitiesFeatureHydrator)
-    extends CandidatePipelineConfig[
-      ScoredTweetsQuery,
-      ScoredTweetsQuery,
+@S ngleton
+class ScoredT etsBackf llCand dateP pel neConf g @ nject() (
+  t etyp eStat cEnt  esHydrator: T etyp eStat cEnt  esFeatureHydrator)
+    extends Cand dateP pel neConf g[
+      ScoredT etsQuery,
+      ScoredT etsQuery,
       Long,
-      TweetCandidate
+      T etCand date
     ] {
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("ScoredTweetsBackfill")
+  overr de val  dent f er: Cand dateP pel ne dent f er =
+    Cand dateP pel ne dent f er("ScoredT etsBackf ll")
 
-  private val HasAuthorFilterId = "HasAuthor"
+  pr vate val HasAuthorF lter d = "HasAuthor"
 
-  override val enabledDeciderParam: Option[DeciderParam[Boolean]] =
-    Some(CandidatePipeline.EnableBackfillParam)
+  overr de val enabledDec derParam: Opt on[Dec derParam[Boolean]] =
+    So (Cand dateP pel ne.EnableBackf llParam)
 
-  override val supportedClientParam: Option[FSParam[Boolean]] =
-    Some(EnableBackfillCandidatePipelineParam)
+  overr de val supportedCl entParam: Opt on[FSParam[Boolean]] =
+    So (EnableBackf llCand dateP pel neParam)
 
-  override val gates: Seq[Gate[ScoredTweetsQuery]] =
+  overr de val gates: Seq[Gate[ScoredT etsQuery]] =
     Seq(
-      MinTimeSinceLastRequestGate,
-      NonEmptySeqFeatureGate(TimelineServiceTweetsFeature),
-      MinCachedTweetsGate(identifier, CachedScoredTweets.MinCachedTweetsParam)
+      M nT  S nceLastRequestGate,
+      NonEmptySeqFeatureGate(T  l neServ ceT etsFeature),
+      M nCac dT etsGate( dent f er, Cac dScoredT ets.M nCac dT etsParam)
     )
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    ScoredTweetsQuery,
-    ScoredTweetsQuery
-  ] = identity
+  overr de val queryTransfor r: Cand dateP pel neQueryTransfor r[
+    ScoredT etsQuery,
+    ScoredT etsQuery
+  ] =  dent y
 
-  override def candidateSource: CandidateSource[ScoredTweetsQuery, Long] =
-    PassthroughCandidateSource(
-      identifier = CandidateSourceIdentifier("ScoredTweetsBackfill"),
-      candidateExtractor = { query =>
-        query.features.map(_.getOrElse(TimelineServiceTweetsFeature, Seq.empty)).toSeq.flatten
+  overr de def cand dateS ce: Cand dateS ce[ScoredT etsQuery, Long] =
+    PassthroughCand dateS ce(
+       dent f er = Cand dateS ce dent f er("ScoredT etsBackf ll"),
+      cand dateExtractor = { query =>
+        query.features.map(_.getOrElse(T  l neServ ceT etsFeature, Seq.empty)).toSeq.flatten
       }
     )
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[Long]
-  ] = Seq(ScoredTweetsBackfillResponseFeatureTransformer)
+  overr de val featuresFromCand dateS ceTransfor rs: Seq[
+    Cand dateFeatureTransfor r[Long]
+  ] = Seq(ScoredT etsBackf llResponseFeatureTransfor r)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[Long, TweetCandidate] = {
-    sourceResult => TweetCandidate(id = sourceResult)
+  overr de val resultTransfor r: Cand dateP pel neResultsTransfor r[Long, T etCand date] = {
+    s ceResult => T etCand date( d = s ceResult)
   }
 
-  override val preFilterFeatureHydrationPhase1: Seq[
-    BaseCandidateFeatureHydrator[ScoredTweetsQuery, TweetCandidate, _]
-  ] = Seq(tweetypieStaticEntitiesHydrator)
+  overr de val preF lterFeatureHydrat onPhase1: Seq[
+    BaseCand dateFeatureHydrator[ScoredT etsQuery, T etCand date, _]
+  ] = Seq(t etyp eStat cEnt  esHydrator)
 
-  override val filters: Seq[Filter[ScoredTweetsQuery, TweetCandidate]] = Seq(
-    ReplyFilter,
-    PredicateFeatureFilter.fromPredicate(
-      FilterIdentifier(HasAuthorFilterId),
-      shouldKeepCandidate = _.getOrElse(AuthorIdFeature, None).isDefined
+  overr de val f lters: Seq[F lter[ScoredT etsQuery, T etCand date]] = Seq(
+    ReplyF lter,
+    Pred cateFeatureF lter.fromPred cate(
+      F lter dent f er(HasAuthorF lter d),
+      shouldKeepCand date = _.getOrElse(Author dFeature, None). sDef ned
     )
   )
 }

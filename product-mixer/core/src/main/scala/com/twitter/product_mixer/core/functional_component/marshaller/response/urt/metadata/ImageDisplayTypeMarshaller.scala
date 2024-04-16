@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Icon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FullWidth
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.IconSmall
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata. mageD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata. con
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FullW dth
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata. conSmall
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ImageDisplayTypeMarshaller @Inject() () {
+@S ngleton
+class  mageD splayTypeMarshaller @ nject() () {
 
-  def apply(imageDisplayType: ImageDisplayType): urt.ImageDisplayType =
-    imageDisplayType match {
-      case Icon => urt.ImageDisplayType.Icon
-      case FullWidth => urt.ImageDisplayType.FullWidth
-      case IconSmall => urt.ImageDisplayType.IconSmall
+  def apply( mageD splayType:  mageD splayType): urt. mageD splayType =
+     mageD splayType match {
+      case  con => urt. mageD splayType. con
+      case FullW dth => urt. mageD splayType.FullW dth
+      case  conSmall => urt. mageD splayType. conSmall
     }
 }

@@ -1,32 +1,32 @@
-# pylint: disable=unused-argument, missing-docstring
+# pyl nt: d sable=unused-argu nt, m ss ng-docstr ng
 '''
-Common build graphs that can be reused
+Common bu ld graphs that can be reused
 '''
-import tensorflow.compat.v1 as tf
+ mport tensorflow.compat.v1 as tf
 
 
-def get_saved_modules_graph(input_graph_fn):
+def get_saved_modules_graph( nput_graph_fn):
   """
-  Get common graph for stitching different saved modules for export.
-  This graph is used to save checkpoints; and then export the modules
-  as a unity.
+  Get common graph for st ch ng d fferent saved modules for export.
+  T  graph  s used to save c ckpo nts; and t n export t  modules
+  as a un y.
   Args:
         features:
           model features
         params:
           model params
-        input_graph_fn:
-          main logic for the stitching
+         nput_graph_fn:
+          ma n log c for t  st ch ng
   Returns:
-    build_graph
+    bu ld_graph
   """
-  def build_graph(features, label, mode, params, config=None):
-    output = input_graph_fn(features, params)
-    # If mode is train, we just need to assign a dummy loss
-    # and update the train op. This is done to save the graph to save_dir.
-    if mode == 'train':
+  def bu ld_graph(features, label, mode, params, conf g=None):
+    output =  nput_graph_fn(features, params)
+    #  f mode  s tra n,   just need to ass gn a dum  loss
+    # and update t  tra n op. T   s done to save t  graph to save_d r.
+     f mode == 'tra n':
       loss = tf.constant(1)
-      train_op = tf.assign_add(tf.train.get_global_step(), 1)
-      return {'train_op': train_op, 'loss': loss}
+      tra n_op = tf.ass gn_add(tf.tra n.get_global_step(), 1)
+      return {'tra n_op': tra n_op, 'loss': loss}
     return output
-  return build_graph
+  return bu ld_graph

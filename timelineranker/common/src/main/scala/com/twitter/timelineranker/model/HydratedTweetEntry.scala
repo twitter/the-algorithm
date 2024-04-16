@@ -1,21 +1,21 @@
-package com.twitter.timelineranker.model
+package com.tw ter.t  l neranker.model
 
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelines.model.tweet.HydratedTweet
-import com.twitter.tweetypie.{thriftscala => tweetypie}
+ mport com.tw ter.t  l neranker.{thr ftscala => thr ft}
+ mport com.tw ter.t  l nes.model.t et.HydratedT et
+ mport com.tw ter.t etyp e.{thr ftscala => t etyp e}
 
 /**
- * Enables HydratedTweet entries to be included in a Timeline.
+ * Enables HydratedT et entr es to be  ncluded  n a T  l ne.
  */
-class HydratedTweetEntry(tweet: tweetypie.Tweet) extends HydratedTweet(tweet) with TimelineEntry {
+class HydratedT etEntry(t et: t etyp e.T et) extends HydratedT et(t et) w h T  l neEntry {
 
-  def this(hydratedTweet: HydratedTweet) = this(hydratedTweet.tweet)
+  def t (hydratedT et: HydratedT et) = t (hydratedT et.t et)
 
-  override def toTimelineEntryThrift: thrift.TimelineEntry = {
-    thrift.TimelineEntry.TweetypieTweet(tweet)
+  overr de def toT  l neEntryThr ft: thr ft.T  l neEntry = {
+    thr ft.T  l neEntry.T etyp eT et(t et)
   }
 
-  override def throwIfInvalid(): Unit = {
-    // No validation performed.
+  overr de def throw f nval d(): Un  = {
+    // No val dat on perfor d.
   }
 }

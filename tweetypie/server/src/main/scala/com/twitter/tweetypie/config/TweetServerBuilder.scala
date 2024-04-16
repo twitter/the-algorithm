@@ -1,300 +1,300 @@
-package com.twitter.tweetypie.config
+package com.tw ter.t etyp e.conf g
 
-import com.twitter.decider.Decider
-import com.twitter.decider.DeciderFactory
-import com.twitter.decider.LocalOverrides
-import com.twitter.featureswitches.v2.builder.FeatureSwitchesBuilder
-import com.twitter.finagle.filter.DarkTrafficFilter
-import com.twitter.finagle.stats.DefaultStatsReceiver
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.Protocols
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.finagle.Filter
-import com.twitter.finagle.Service
-import com.twitter.finagle.SimpleFilter
-import com.twitter.quill.capture._
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.servo.util.WaitForServerSets
-import com.twitter.tweetypie.ThriftTweetService
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.client_id.ConditionalServiceIdentifierStrategy
-import com.twitter.tweetypie.client_id.PreferForwardedServiceIdentifierForStrato
-import com.twitter.tweetypie.client_id.UseTransportServiceIdentifier
-import com.twitter.tweetypie.context.TweetypieContext
-import com.twitter.tweetypie.matching.Tokenizer
-import com.twitter.tweetypie.service._
-import com.twitter.tweetypie.thriftscala.TweetServiceInternal$FinagleService
-import com.twitter.util._
-import com.twitter.util.logging.Logger
-import scala.util.control.NonFatal
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.dec der.Dec derFactory
+ mport com.tw ter.dec der.LocalOverr des
+ mport com.tw ter.featuresw c s.v2.bu lder.FeatureSw c sBu lder
+ mport com.tw ter.f nagle.f lter.DarkTraff cF lter
+ mport com.tw ter.f nagle.stats.DefaultStatsRece ver
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.thr ft.Protocols
+ mport com.tw ter.f nagle.ut l.DefaultT  r
+ mport com.tw ter.f nagle.F lter
+ mport com.tw ter.f nagle.Serv ce
+ mport com.tw ter.f nagle.S mpleF lter
+ mport com.tw ter.qu ll.capture._
+ mport com.tw ter.servo.ut l. mo z ngStatsRece ver
+ mport com.tw ter.servo.ut l.Wa ForServerSets
+ mport com.tw ter.t etyp e.Thr ftT etServ ce
+ mport com.tw ter.t etyp e.cl ent_ d.Cl ent d lper
+ mport com.tw ter.t etyp e.cl ent_ d.Cond  onalServ ce dent f erStrategy
+ mport com.tw ter.t etyp e.cl ent_ d.PreferForwardedServ ce dent f erForStrato
+ mport com.tw ter.t etyp e.cl ent_ d.UseTransportServ ce dent f er
+ mport com.tw ter.t etyp e.context.T etyp eContext
+ mport com.tw ter.t etyp e.match ng.Token zer
+ mport com.tw ter.t etyp e.serv ce._
+ mport com.tw ter.t etyp e.thr ftscala.T etServ ce nternal$F nagleServ ce
+ mport com.tw ter.ut l._
+ mport com.tw ter.ut l.logg ng.Logger
+ mport scala.ut l.control.NonFatal
 
-class TweetServerBuilder(settings: TweetServiceSettings) {
+class T etServerBu lder(sett ngs: T etServ ceSett ngs) {
 
   /**
-   * A logger used by some of the built-in initializers.
+   * A logger used by so  of t  bu lt- n  n  al zers.
    */
   val log: Logger = Logger(getClass)
 
   /**
-   * The top-level stats receiver. Defaults to the default StatsReceiver
-   * embedded in Finagle.
+   * T  top-level stats rece ver. Defaults to t  default StatsRece ver
+   * embedded  n F nagle.
    */
-  val statsReceiver: StatsReceiver =
-    new MemoizingStatsReceiver(DefaultStatsReceiver)
+  val statsRece ver: StatsRece ver =
+    new  mo z ngStatsRece ver(DefaultStatsRece ver)
 
-  val hostStatsReceiver: StatsReceiver =
-    if (settings.clientHostStats)
-      statsReceiver
+  val hostStatsRece ver: StatsRece ver =
+     f (sett ngs.cl entHostStats)
+      statsRece ver
     else
-      NullStatsReceiver
+      NullStatsRece ver
 
   /**
-   * A timer for scheduling various things.
+   * A t  r for sc dul ng var ous th ngs.
    */
-  val timer: Timer = DefaultTimer
+  val t  r: T  r = DefaultT  r
 
   /**
-   * Creates a decider instance by looking up the decider configuration information
-   * from the settings object.
+   * Creates a dec der  nstance by look ng up t  dec der conf gurat on  nformat on
+   * from t  sett ngs object.
    */
-  val decider: Decider = {
-    val fileBased = DeciderFactory(settings.deciderBaseFilename, settings.deciderOverlayFilename)()
+  val dec der: Dec der = {
+    val f leBased = Dec derFactory(sett ngs.dec derBaseF lena , sett ngs.dec derOverlayF lena )()
 
-    // Use the tweetypie decider dashboard name for propagating decider overrides.
-    LocalOverrides.decider("tweetypie").orElse(fileBased)
+    // Use t  t etyp e dec der dashboard na  for propagat ng dec der overr des.
+    LocalOverr des.dec der("t etyp e").orElse(f leBased)
   }
 
-  val deciderGates: TweetypieDeciderGates = {
-    val deciderGates = TweetypieDeciderGates(decider, settings.deciderOverrides)
+  val dec derGates: T etyp eDec derGates = {
+    val dec derGates = T etyp eDec derGates(dec der, sett ngs.dec derOverr des)
 
-    // Write out the configuration overrides to the log so that it's
-    // easy to confirm how this instance has been customized.
-    deciderGates.overrides.foreach {
-      case (overrideName, overrideValue) =>
-        log.info("Decider feature " + overrideName + " overridden to " + overrideValue)
-        if (deciderGates.unusedOverrides.contains(overrideName)) {
-          log.error("Unused decider override flag: " + overrideName)
+    // Wr e out t  conf gurat on overr des to t  log so that  's
+    // easy to conf rm how t   nstance has been custom zed.
+    dec derGates.overr des.foreach {
+      case (overr deNa , overr deValue) =>
+        log. nfo("Dec der feature " + overr deNa  + " overr dden to " + overr deValue)
+         f (dec derGates.unusedOverr des.conta ns(overr deNa )) {
+          log.error("Unused dec der overr de flag: " + overr deNa )
         }
     }
 
-    val scopedReceiver = statsReceiver.scope("decider_values")
+    val scopedRece ver = statsRece ver.scope("dec der_values")
 
-    deciderGates.availabilityMap.foreach {
+    dec derGates.ava lab l yMap.foreach {
       case (feature, value) =>
-        scopedReceiver.provideGauge(feature) {
-          // Default value of -1 indicates error state.
+        scopedRece ver.prov deGauge(feature) {
+          // Default value of -1  nd cates error state.
           value.getOrElse(-1).toFloat
         }
     }
 
-    deciderGates
+    dec derGates
   }
 
-  val featureSwitchesWithExperiments = FeatureSwitchesBuilder
-    .createWithExperiments("/features/tweetypie/main")
-    .build()
+  val featureSw c sW hExper  nts = FeatureSw c sBu lder
+    .createW hExper  nts("/features/t etyp e/ma n")
+    .bu ld()
 
-  val featureSwitchesWithoutExperiments = FeatureSwitchesBuilder
-    .createWithNoExperiments("/features/tweetypie/main", Some(statsReceiver))
-    .build()
+  val featureSw c sW houtExper  nts = FeatureSw c sBu lder
+    .createW hNoExper  nts("/features/t etyp e/ma n", So (statsRece ver))
+    .bu ld()
 
-  // ********* initializer **********
+  // *********  n  al zer **********
 
-  private[this] def warmupTextTokenization(logger: Logger): Unit = {
-    logger.info("Warming up text tokenization")
+  pr vate[t ] def warmupTextToken zat on(logger: Logger): Un  = {
+    logger. nfo("Warm ng up text token zat on")
     val watch = Stopwatch.start()
-    Tokenizer.warmUp()
-    logger.info(s"Warmed up text tokenization in ${watch()}")
+    Token zer.warmUp()
+    logger. nfo(s"War d up text token zat on  n ${watch()}")
   }
 
-  private[this] def runWarmup(tweetService: Activity[ThriftTweetService]): Unit = {
-    val tokenizationLogger = Logger("com.twitter.tweetypie.TweetServerBuilder.TokenizationWarmup")
-    warmupTextTokenization(tokenizationLogger)
+  pr vate[t ] def runWarmup(t etServ ce: Act v y[Thr ftT etServ ce]): Un  = {
+    val token zat onLogger = Logger("com.tw ter.t etyp e.T etServerBu lder.Token zat onWarmup")
+    warmupTextToken zat on(token zat onLogger)
 
-    val warmupLogger = Logger("com.twitter.tweetypie.TweetServerBuilder.BackendWarmup")
+    val warmupLogger = Logger("com.tw ter.t etyp e.T etServerBu lder.BackendWarmup")
     // #1 warmup backends
-    Await.ready(settings.backendWarmupSettings(backendClients, warmupLogger, timer))
+    Awa .ready(sett ngs.backendWarmupSett ngs(backendCl ents, warmupLogger, t  r))
 
-    // #2 warmup Tweet Service
-    Await.ready {
-      tweetService.values.toFuture.map(_.get).map { service =>
-        settings.warmupRequestsSettings.foreach(new TweetServiceWarmer(_)(service))
+    // #2 warmup T et Serv ce
+    Awa .ready {
+      t etServ ce.values.toFuture.map(_.get).map { serv ce =>
+        sett ngs.warmupRequestsSett ngs.foreach(new T etServ ceWar r(_)(serv ce))
       }
     }
   }
 
-  private[this] def waitForServerSets(): Unit = {
-    val names = backendClients.referencedNames
-    val startTime = Time.now
-    log.info("will wait for serversets: " + names.mkString("\n", "\t\n", ""))
+  pr vate[t ] def wa ForServerSets(): Un  = {
+    val na s = backendCl ents.referencedNa s
+    val startT   = T  .now
+    log. nfo("w ll wa  for serversets: " + na s.mkStr ng("\n", "\t\n", ""))
 
     try {
-      Await.result(WaitForServerSets.ready(names, settings.waitForServerSetsTimeout, timer))
-      val duration = Time.now.since(startTime)
-      log.info("resolved all serversets in " + duration)
+      Awa .result(Wa ForServerSets.ready(na s, sett ngs.wa ForServerSetsT  out, t  r))
+      val durat on = T  .now.s nce(startT  )
+      log. nfo("resolved all serversets  n " + durat on)
     } catch {
-      case NonFatal(ex) => log.warn("failed to resolve all serversets", ex)
+      case NonFatal(ex) => log.warn("fa led to resolve all serversets", ex)
     }
   }
 
-  private[this] def initialize(tweetService: Activity[ThriftTweetService]): Unit = {
-    waitForServerSets()
-    runWarmup(tweetService)
+  pr vate[t ] def  n  al ze(t etServ ce: Act v y[Thr ftT etServ ce]): Un  = {
+    wa ForServerSets()
+    runWarmup(t etServ ce)
 
-    // try to force a GC before starting to serve requests; this may or may not do anything
+    // try to force a GC before start ng to serve requests; t  may or may not do anyth ng
     System.gc()
   }
 
-  // ********* builders **********
+  // ********* bu lders **********
 
-  val clientIdHelper = new ClientIdHelper(
-    new ConditionalServiceIdentifierStrategy(
-      condition = deciderGates.preferForwardedServiceIdentifierForClientId,
-      ifTrue = PreferForwardedServiceIdentifierForStrato,
-      ifFalse = UseTransportServiceIdentifier,
+  val cl ent d lper = new Cl ent d lper(
+    new Cond  onalServ ce dent f erStrategy(
+      cond  on = dec derGates.preferForwardedServ ce dent f erForCl ent d,
+       fTrue = PreferForwardedServ ce dent f erForStrato,
+       fFalse = UseTransportServ ce dent f er,
     ),
   )
 
-  val backendClients: BackendClients =
-    BackendClients(
-      settings = settings,
-      deciderGates = deciderGates,
-      statsReceiver = statsReceiver,
-      hostStatsReceiver = hostStatsReceiver,
-      timer = timer,
-      clientIdHelper = clientIdHelper,
+  val backendCl ents: BackendCl ents =
+    BackendCl ents(
+      sett ngs = sett ngs,
+      dec derGates = dec derGates,
+      statsRece ver = statsRece ver,
+      hostStatsRece ver = hostStatsRece ver,
+      t  r = t  r,
+      cl ent d lper = cl ent d lper,
     )
 
-  val tweetService: Activity[ThriftTweetService] =
-    TweetServiceBuilder(
-      settings = settings,
-      statsReceiver = statsReceiver,
-      timer = timer,
-      deciderGates = deciderGates,
-      featureSwitchesWithExperiments = featureSwitchesWithExperiments,
-      featureSwitchesWithoutExperiments = featureSwitchesWithoutExperiments,
-      backendClients = backendClients,
-      clientIdHelper = clientIdHelper,
+  val t etServ ce: Act v y[Thr ftT etServ ce] =
+    T etServ ceBu lder(
+      sett ngs = sett ngs,
+      statsRece ver = statsRece ver,
+      t  r = t  r,
+      dec derGates = dec derGates,
+      featureSw c sW hExper  nts = featureSw c sW hExper  nts,
+      featureSw c sW houtExper  nts = featureSw c sW houtExper  nts,
+      backendCl ents = backendCl ents,
+      cl ent d lper = cl ent d lper,
     )
 
-  // Strato columns should use this tweetService
-  def stratoTweetService: Activity[ThriftTweetService] =
-    tweetService.map { service =>
-      // Add quill functionality to the strato tweet service only
-      val quillCapture = QuillCaptureBuilder(settings, deciderGates)
-      new QuillTweetService(quillCapture, service)
+  // Strato columns should use t  t etServ ce
+  def stratoT etServ ce: Act v y[Thr ftT etServ ce] =
+    t etServ ce.map { serv ce =>
+      // Add qu ll funct onal y to t  strato t et serv ce only
+      val qu llCapture = Qu llCaptureBu lder(sett ngs, dec derGates)
+      new Qu llT etServ ce(qu llCapture, serv ce)
     }
 
-  def build: Activity[Service[Array[Byte], Array[Byte]]] = {
+  def bu ld: Act v y[Serv ce[Array[Byte], Array[Byte]]] = {
 
-    val quillCapture = QuillCaptureBuilder(settings, deciderGates)
+    val qu llCapture = Qu llCaptureBu lder(sett ngs, dec derGates)
 
-    val darkTrafficFilter: SimpleFilter[Array[Byte], Array[Byte]] =
-      if (!settings.trafficForkingEnabled) {
-        Filter.identity
+    val darkTraff cF lter: S mpleF lter[Array[Byte], Array[Byte]] =
+       f (!sett ngs.traff cFork ngEnabled) {
+        F lter. dent y
       } else {
-        new DarkTrafficFilter(
-          backendClients.darkTrafficClient,
-          _ => deciderGates.forkDarkTraffic(),
-          statsReceiver
+        new DarkTraff cF lter(
+          backendCl ents.darkTraff cCl ent,
+          _ => dec derGates.forkDarkTraff c(),
+          statsRece ver
         )
       }
 
-    val serviceFilter =
-      quillCapture
-        .getServerFilter(ThriftProto.server)
-        .andThen(TweetypieContext.Local.filter[Array[Byte], Array[Byte]])
-        .andThen(darkTrafficFilter)
+    val serv ceF lter =
+      qu llCapture
+        .getServerF lter(Thr ftProto.server)
+        .andT n(T etyp eContext.Local.f lter[Array[Byte], Array[Byte]])
+        .andT n(darkTraff cF lter)
 
-    initialize(tweetService)
+     n  al ze(t etServ ce)
 
-    // tweetService is an Activity[ThriftTweetService], so this callback
-    // is called every time that Activity updates (on ConfigBus changes).
-    tweetService.map { service =>
-      val finagleService =
-        new TweetServiceInternal$FinagleService(
-          service,
-          protocolFactory = Protocols.binaryFactory(),
-          stats = NullStatsReceiver,
-          maxThriftBufferSize = settings.maxThriftBufferSize
+    // t etServ ce  s an Act v y[Thr ftT etServ ce], so t  callback
+    //  s called every t   that Act v y updates (on Conf gBus changes).
+    t etServ ce.map { serv ce =>
+      val f nagleServ ce =
+        new T etServ ce nternal$F nagleServ ce(
+          serv ce,
+          protocolFactory = Protocols.b naryFactory(),
+          stats = NullStatsRece ver,
+          maxThr ftBufferS ze = sett ngs.maxThr ftBufferS ze
         )
 
-      serviceFilter andThen finagleService
+      serv ceF lter andT n f nagleServ ce
     }
   }
 }
 
-object QuillCaptureBuilder {
-  val tweetServiceWriteMethods: Set[String] =
+object Qu llCaptureBu lder {
+  val t etServ ceWr e thods: Set[Str ng] =
     Set(
       "async_delete",
-      "async_delete_additional_fields",
-      "async_erase_user_tweets",
-      "async_incr_fav_count",
-      "async_insert",
-      "async_set_additional_fields",
-      "async_set_retweet_visibility",
+      "async_delete_add  onal_f elds",
+      "async_erase_user_t ets",
+      "async_ ncr_fav_count",
+      "async_ nsert",
+      "async_set_add  onal_f elds",
+      "async_set_ret et_v s b l y",
       "async_takedown",
-      "async_undelete_tweet",
-      "async_update_possibly_sensitive_tweet",
-      "cascaded_delete_tweet",
-      "delete_additional_fields",
-      "delete_retweets",
-      "delete_tweets",
-      "erase_user_tweets",
+      "async_undelete_t et",
+      "async_update_poss bly_sens  ve_t et",
+      "cascaded_delete_t et",
+      "delete_add  onal_f elds",
+      "delete_ret ets",
+      "delete_t ets",
+      "erase_user_t ets",
       "flush",
-      "incr_fav_count",
-      "insert",
-      "post_retweet",
-      "post_tweet",
+      " ncr_fav_count",
+      " nsert",
+      "post_ret et",
+      "post_t et",
       "remove",
-      "replicated_delete_additional_fields",
-      "replicated_delete_tweet",
-      "replicated_delete_tweet2",
-      "replicated_incr_fav_count",
-      "replicated_insert_tweet2",
-      "replicated_scrub_geo",
-      "replicated_set_additional_fields",
-      "replicated_set_has_safety_labels",
-      "replicated_set_retweet_visibility",
-      "replicated_takedown",
-      "replicated_undelete_tweet2",
-      "replicated_update_possibly_sensitive_tweet",
+      "repl cated_delete_add  onal_f elds",
+      "repl cated_delete_t et",
+      "repl cated_delete_t et2",
+      "repl cated_ ncr_fav_count",
+      "repl cated_ nsert_t et2",
+      "repl cated_scrub_geo",
+      "repl cated_set_add  onal_f elds",
+      "repl cated_set_has_safety_labels",
+      "repl cated_set_ret et_v s b l y",
+      "repl cated_takedown",
+      "repl cated_undelete_t et2",
+      "repl cated_update_poss bly_sens  ve_t et",
       "scrub_geo",
-      "scrub_geo_update_user_timestamp",
-      "set_additional_fields",
+      "scrub_geo_update_user_t  stamp",
+      "set_add  onal_f elds",
       "set_has_safety_labels",
-      "set_retweet_visibility",
-      "set_tweet_user_takedown",
+      "set_ret et_v s b l y",
+      "set_t et_user_takedown",
       "takedown",
-      "undelete_tweet"
+      "undelete_t et"
     )
 
-  val tweetServiceReadMethods: Set[String] =
+  val t etServ ceRead thods: Set[Str ng] =
     Set(
-      "get_tweet_counts",
-      "get_tweet_fields",
-      "get_tweets",
-      "replicated_get_tweet_counts",
-      "replicated_get_tweet_fields",
-      "replicated_get_tweets"
+      "get_t et_counts",
+      "get_t et_f elds",
+      "get_t ets",
+      "repl cated_get_t et_counts",
+      "repl cated_get_t et_f elds",
+      "repl cated_get_t ets"
     )
 
-  def apply(settings: TweetServiceSettings, deciderGates: TweetypieDeciderGates): QuillCapture = {
-    val writesStore = SimpleScribeMessageStore("tweetypie_writes")
-      .enabledBy(deciderGates.logWrites)
+  def apply(sett ngs: T etServ ceSett ngs, dec derGates: T etyp eDec derGates): Qu llCapture = {
+    val wr esStore = S mpleScr be ssageStore("t etyp e_wr es")
+      .enabledBy(dec derGates.logWr es)
 
-    val readsStore = SimpleScribeMessageStore("tweetypie_reads")
-      .enabledBy(deciderGates.logReads)
+    val readsStore = S mpleScr be ssageStore("t etyp e_reads")
+      .enabledBy(dec derGates.logReads)
 
-    val messageStore =
-      MessageStore.selected {
-        case msg if tweetServiceWriteMethods.contains(msg.name) => writesStore
-        case msg if tweetServiceReadMethods.contains(msg.name) => readsStore
-        case _ => writesStore
+    val  ssageStore =
+       ssageStore.selected {
+        case msg  f t etServ ceWr e thods.conta ns(msg.na ) => wr esStore
+        case msg  f t etServ ceRead thods.conta ns(msg.na ) => readsStore
+        case _ => wr esStore
       }
 
-    new QuillCapture(Store.legacyStore(messageStore), Some(settings.thriftClientId.name))
+    new Qu llCapture(Store.legacyStore( ssageStore), So (sett ngs.thr ftCl ent d.na ))
   }
 }

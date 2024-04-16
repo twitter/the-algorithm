@@ -1,13 +1,13 @@
-java_library(
-    sources = ["*.java"],
-    compiler_option_sets = ["fatal_warnings"],
+java_l brary(
+    s ces = ["*.java"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/code/findbugs:jsr305",
-        "decider/src/main/scala",
-        "src/java/com/twitter/search/common/decider",
-        "src/java/com/twitter/search/common/relevance:entities_and_filters",
-        "util/util-core:scala",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/com/google/code/f ndbugs:jsr305",
+        "dec der/src/ma n/scala",
+        "src/java/com/tw ter/search/common/dec der",
+        "src/java/com/tw ter/search/common/relevance:ent  es_and_f lters",
+        "ut l/ut l-core:scala",
     ],
 )

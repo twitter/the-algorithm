@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.message
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage
 
-sealed trait MessageActionType
+sealed tra   ssageAct onType
 
-case object FollowAllMessageActionType extends MessageActionType
+case object FollowAll ssageAct onType extends  ssageAct onType

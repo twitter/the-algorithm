@@ -1,161 +1,161 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator
 
-import com.google.inject.name.Named
-import com.twitter.conversions.DurationOps.RichDuration
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.DirectedAtUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ExclusiveConversationAuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.HasImageFeature
-import com.twitter.home_mixer.model.HomeFeatures.HasVideoFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.MentionScreenNameFeature
-import com.twitter.home_mixer.model.HomeFeatures.MentionUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TweetypieStaticEntitiesCache
-import com.twitter.home_mixer.util.tweetypie.RequestFields
-import com.twitter.home_mixer.util.tweetypie.content.TweetMediaFeaturesExtractor
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.cache.TtlCache
-import com.twitter.spam.rtf.{thriftscala => sp}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.tweetypie.{TweetyPie => TweetypieStitchClient}
-import com.twitter.tweetypie.{thriftscala => tp}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.google. nject.na .Na d
+ mport com.tw ter.convers ons.Durat onOps.R chDurat on
+ mport com.tw ter.ho _m xer.model.Ho Features.Author dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.D rectedAtUser dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Exclus veConversat onAuthor dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Has mageFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.HasV deoFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nReplyToT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nReplyToUser dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. sRet etFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nt onScreenNa Feature
+ mport com.tw ter.ho _m xer.model.Ho Features. nt onUser dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.QuotedT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.QuotedUser dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.S ceT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.S ceUser dFeature
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.T etyp eStat cEnt  esCac 
+ mport com.tw ter.ho _m xer.ut l.t etyp e.RequestF elds
+ mport com.tw ter.ho _m xer.ut l.t etyp e.content.T et d aFeaturesExtractor
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BulkCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.servo.cac .TtlCac 
+ mport com.tw ter.spam.rtf.{thr ftscala => sp}
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.t etyp e.{T etyP e => T etyp eSt chCl ent}
+ mport com.tw ter.t etyp e.{thr ftscala => tp}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TweetypieStaticEntitiesFeatureHydrator @Inject() (
-  tweetypieStitchClient: TweetypieStitchClient,
-  @Named(TweetypieStaticEntitiesCache) cacheClient: TtlCache[Long, tp.Tweet])
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@S ngleton
+class T etyp eStat cEnt  esFeatureHydrator @ nject() (
+  t etyp eSt chCl ent: T etyp eSt chCl ent,
+  @Na d(T etyp eStat cEnt  esCac ) cac Cl ent: TtlCac [Long, tp.T et])
+    extends BulkCand dateFeatureHydrator[P pel neQuery, T etCand date] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("TweetypieStaticEntities")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("T etyp eStat cEnt  es")
 
-  override val features: Set[Feature[_, _]] = Set(
-    AuthorIdFeature,
-    DirectedAtUserIdFeature,
-    ExclusiveConversationAuthorIdFeature,
-    HasImageFeature,
-    HasVideoFeature,
-    InReplyToTweetIdFeature,
-    InReplyToUserIdFeature,
-    IsRetweetFeature,
-    MentionScreenNameFeature,
-    MentionUserIdFeature,
-    QuotedTweetIdFeature,
-    QuotedUserIdFeature,
-    SourceTweetIdFeature,
-    SourceUserIdFeature
+  overr de val features: Set[Feature[_, _]] = Set(
+    Author dFeature,
+    D rectedAtUser dFeature,
+    Exclus veConversat onAuthor dFeature,
+    Has mageFeature,
+    HasV deoFeature,
+     nReplyToT et dFeature,
+     nReplyToUser dFeature,
+     sRet etFeature,
+     nt onScreenNa Feature,
+     nt onUser dFeature,
+    QuotedT et dFeature,
+    QuotedUser dFeature,
+    S ceT et dFeature,
+    S ceUser dFeature
   )
 
-  private val CacheTTL = 24.hours
+  pr vate val Cac TTL = 24.h s
 
-  private val DefaultFeatureMap = FeatureMapBuilder()
-    .add(AuthorIdFeature, None)
-    .add(DirectedAtUserIdFeature, None)
-    .add(ExclusiveConversationAuthorIdFeature, None)
-    .add(HasImageFeature, false)
-    .add(HasVideoFeature, false)
-    .add(InReplyToTweetIdFeature, None)
-    .add(InReplyToUserIdFeature, None)
-    .add(IsRetweetFeature, false)
-    .add(MentionScreenNameFeature, Seq.empty)
-    .add(MentionUserIdFeature, Seq.empty)
-    .add(QuotedTweetIdFeature, None)
-    .add(QuotedUserIdFeature, None)
-    .add(SourceTweetIdFeature, None)
-    .add(SourceUserIdFeature, None)
-    .build()
+  pr vate val DefaultFeatureMap = FeatureMapBu lder()
+    .add(Author dFeature, None)
+    .add(D rectedAtUser dFeature, None)
+    .add(Exclus veConversat onAuthor dFeature, None)
+    .add(Has mageFeature, false)
+    .add(HasV deoFeature, false)
+    .add( nReplyToT et dFeature, None)
+    .add( nReplyToUser dFeature, None)
+    .add( sRet etFeature, false)
+    .add( nt onScreenNa Feature, Seq.empty)
+    .add( nt onUser dFeature, Seq.empty)
+    .add(QuotedT et dFeature, None)
+    .add(QuotedUser dFeature, None)
+    .add(S ceT et dFeature, None)
+    .add(S ceUser dFeature, None)
+    .bu ld()
 
   /**
    * Steps:
-   *  1. query cache with all candidates
-   *  2. create a cached feature map
-   *  3. iterate candidates to hydrate features
-   *  3.a transform cached candidates
-   *  3.b hydrate non-cached candidates from Tweetypie and write to cache
+   *  1. query cac  w h all cand dates
+   *  2. create a cac d feature map
+   *  3.  erate cand dates to hydrate features
+   *  3.a transform cac d cand dates
+   *  3.b hydrate non-cac d cand dates from T etyp e and wr e to cac 
    */
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val tweetIds = candidates.map(_.candidate.id)
-    val cachedTweetsMapFu = cacheClient
-      .get(tweetIds)
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[Seq[FeatureMap]] = {
+    val t et ds = cand dates.map(_.cand date. d)
+    val cac dT etsMapFu = cac Cl ent
+      .get(t et ds)
       .map(_.found)
 
-    Stitch.callFuture(cachedTweetsMapFu).flatMap { cachedTweets =>
-      Stitch.collect {
-        candidates.map { candidate =>
-          if (cachedTweets.contains(candidate.candidate.id))
-            Stitch.value(createFeatureMap(cachedTweets(candidate.candidate.id)))
-          else readFromTweetypie(query, candidate)
+    St ch.callFuture(cac dT etsMapFu).flatMap { cac dT ets =>
+      St ch.collect {
+        cand dates.map { cand date =>
+           f (cac dT ets.conta ns(cand date.cand date. d))
+            St ch.value(createFeatureMap(cac dT ets(cand date.cand date. d)))
+          else readFromT etyp e(query, cand date)
         }
       }
     }
   }
 
-  private def createFeatureMap(tweet: tp.Tweet): FeatureMap = {
-    val coreData = tweet.coreData
-    val quotedTweet = tweet.quotedTweet
-    val mentions = tweet.mentions.getOrElse(Seq.empty)
+  pr vate def createFeatureMap(t et: tp.T et): FeatureMap = {
+    val coreData = t et.coreData
+    val quotedT et = t et.quotedT et
+    val  nt ons = t et. nt ons.getOrElse(Seq.empty)
     val share = coreData.flatMap(_.share)
     val reply = coreData.flatMap(_.reply)
 
-    FeatureMapBuilder()
-      .add(AuthorIdFeature, coreData.map(_.userId))
-      .add(DirectedAtUserIdFeature, coreData.flatMap(_.directedAtUser.map(_.userId)))
+    FeatureMapBu lder()
+      .add(Author dFeature, coreData.map(_.user d))
+      .add(D rectedAtUser dFeature, coreData.flatMap(_.d rectedAtUser.map(_.user d)))
       .add(
-        ExclusiveConversationAuthorIdFeature,
-        tweet.exclusiveTweetControl.map(_.conversationAuthorId))
-      .add(HasImageFeature, TweetMediaFeaturesExtractor.hasImage(tweet))
-      .add(HasVideoFeature, TweetMediaFeaturesExtractor.hasVideo(tweet))
-      .add(InReplyToTweetIdFeature, reply.flatMap(_.inReplyToStatusId))
-      .add(InReplyToUserIdFeature, reply.map(_.inReplyToUserId))
-      .add(IsRetweetFeature, share.isDefined)
-      .add(MentionScreenNameFeature, mentions.map(_.screenName))
-      .add(MentionUserIdFeature, mentions.flatMap(_.userId))
-      .add(QuotedTweetIdFeature, quotedTweet.map(_.tweetId))
-      .add(QuotedUserIdFeature, quotedTweet.map(_.userId))
-      .add(SourceTweetIdFeature, share.map(_.sourceStatusId))
-      .add(SourceUserIdFeature, share.map(_.sourceUserId))
-      .build()
+        Exclus veConversat onAuthor dFeature,
+        t et.exclus veT etControl.map(_.conversat onAuthor d))
+      .add(Has mageFeature, T et d aFeaturesExtractor.has mage(t et))
+      .add(HasV deoFeature, T et d aFeaturesExtractor.hasV deo(t et))
+      .add( nReplyToT et dFeature, reply.flatMap(_. nReplyToStatus d))
+      .add( nReplyToUser dFeature, reply.map(_. nReplyToUser d))
+      .add( sRet etFeature, share. sDef ned)
+      .add( nt onScreenNa Feature,  nt ons.map(_.screenNa ))
+      .add( nt onUser dFeature,  nt ons.flatMap(_.user d))
+      .add(QuotedT et dFeature, quotedT et.map(_.t et d))
+      .add(QuotedUser dFeature, quotedT et.map(_.user d))
+      .add(S ceT et dFeature, share.map(_.s ceStatus d))
+      .add(S ceUser dFeature, share.map(_.s ceUser d))
+      .bu ld()
   }
 
-  private def readFromTweetypie(
-    query: PipelineQuery,
-    candidate: CandidateWithFeatures[TweetCandidate]
-  ): Stitch[FeatureMap] = {
-    tweetypieStitchClient
-      .getTweetFields(
-        tweetId = candidate.candidate.id,
-        options = tp.GetTweetFieldsOptions(
-          tweetIncludes = RequestFields.TweetStaticEntitiesFields,
-          includeRetweetedTweet = false,
-          includeQuotedTweet = false,
-          forUserId = query.getOptionalUserId, // Needed to get protected Tweets for certain users
-          visibilityPolicy = tp.TweetVisibilityPolicy.UserVisible,
-          safetyLevel = Some(sp.SafetyLevel.FilterNone) // VF is handled in the For You product
+  pr vate def readFromT etyp e(
+    query: P pel neQuery,
+    cand date: Cand dateW hFeatures[T etCand date]
+  ): St ch[FeatureMap] = {
+    t etyp eSt chCl ent
+      .getT etF elds(
+        t et d = cand date.cand date. d,
+        opt ons = tp.GetT etF eldsOpt ons(
+          t et ncludes = RequestF elds.T etStat cEnt  esF elds,
+           ncludeRet etedT et = false,
+           ncludeQuotedT et = false,
+          forUser d = query.getOpt onalUser d, // Needed to get protected T ets for certa n users
+          v s b l yPol cy = tp.T etV s b l yPol cy.UserV s ble,
+          safetyLevel = So (sp.SafetyLevel.F lterNone) // VF  s handled  n t  For   product
         )
       ).map {
-        case tp.GetTweetFieldsResult(_, tp.TweetFieldsResultState.Found(found), _, _) =>
-          cacheClient.set(candidate.candidate.id, found.tweet, CacheTTL)
-          createFeatureMap(found.tweet)
+        case tp.GetT etF eldsResult(_, tp.T etF eldsResultState.Found(found), _, _) =>
+          cac Cl ent.set(cand date.cand date. d, found.t et, Cac TTL)
+          createFeatureMap(found.t et)
         case _ =>
-          DefaultFeatureMap + (AuthorIdFeature, candidate.features.getOrElse(AuthorIdFeature, None))
+          DefaultFeatureMap + (Author dFeature, cand date.features.getOrElse(Author dFeature, None))
       }
   }
 }

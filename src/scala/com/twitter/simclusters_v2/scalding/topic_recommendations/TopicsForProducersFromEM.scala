@@ -1,259 +1,259 @@
-package com.twitter.simclusters_v2.scalding.topic_recommendations
-import com.twitter.bijection.Bufferable
-import com.twitter.bijection.Injection
-import com.twitter.recos.entities.thriftscala._
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.Country
-import com.twitter.simclusters_v2.common.Language
-import com.twitter.simclusters_v2.common.SemanticCoreEntityId
-import com.twitter.simclusters_v2.common.TopicId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources.DataSources
-import com.twitter.simclusters_v2.hdfs_sources.TopLocaleTopicsForProducerFromEmScalaDataset
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.ProducerId
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import com.twitter.wtf.scalding.jobs.common.EMRunner
-import java.util.TimeZone
+package com.tw ter.s mclusters_v2.scald ng.top c_recom ndat ons
+ mport com.tw ter.b ject on.Bufferable
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.recos.ent  es.thr ftscala._
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e._
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.common.Country
+ mport com.tw ter.s mclusters_v2.common.Language
+ mport com.tw ter.s mclusters_v2.common.Semant cCoreEnt y d
+ mport com.tw ter.s mclusters_v2.common.Top c d
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.DataS ces
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.TopLocaleTop csForProducerFromEmScalaDataset
+ mport com.tw ter.s mclusters_v2.scald ng.common.matr x.SparseMatr x
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.Embedd ngUt l.Producer d
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.ExternalDataS ces
+ mport com.tw ter.s mclusters_v2.thr ftscala.UserAndNe ghbors
+ mport com.tw ter.wtf.scald ng.jobs.common.AdhocExecut onApp
+ mport com.tw ter.wtf.scald ng.jobs.common.Sc duledExecut onApp
+ mport com.tw ter.wtf.scald ng.jobs.common.EMRunner
+ mport java.ut l.T  Zone
 
 /**
- * In this file, we compute the top topics for a producer to be shown on the Topics To Follow Module on Profile Pages
+ *  n t  f le,   compute t  top top cs for a producer to be shown on t  Top cs To Follow Module on Prof le Pages
  *
- * The top topics for a producer are computed using the Expectation-Maximization (EM) approach
+ * T  top top cs for a producer are computed us ng t  Expectat on-Max m zat on (EM) approach
  *
- * It works as follows:
+ *   works as follows:
  *
- *  1. Obtain the background model distribution of number of followers for a topic
+ *  1. Obta n t  background model d str but on of number of follo rs for a top c
  *
- *  2. Obtain the domain model distribution of the number of producer's followers who follow a topic
+ *  2. Obta n t  doma n model d str but on of t  number of producer's follo rs who follow a top c
  *
- *  4. Iteratively, use the Expectation-Maximization approach to get the best estimate of the domain model's topic distribution for a producer
+ *  4.  erat vely, use t  Expectat on-Max m zat on approach to get t  best est mate of t  doma n model's top c d str but on for a producer
  *
- *  5. for each producer, we only keep its top K topics with highest weights in the domain model's topic distribution after the EM step
+ *  5. for each producer,   only keep  s top K top cs w h h g st   ghts  n t  doma n model's top c d str but on after t  EM step
  *
- *  6. Please note that we also store the locale info for each producer along with the topics
+ *  6. Please note that   also store t  locale  nfo for each producer along w h t  top cs
  */
 /**
-scalding remote run --user cassowary --reducers 2000 \
- --target src/scala/com/twitter/simclusters_v2/scalding/topic_recommendations:top_topics_for_producers_from_em-adhoc \
- --main-class com.twitter.simclusters_v2.scalding.topic_recommendations.TopicsForProducersFromEMAdhocApp \
- --submitter  hadoopnest1.atla.twitter.com  \
- --  --date 2020-07-05 --minActiveFollowers 10000 --minTopicFollowsThreshold 100 --maxTopicsPerProducerPerLocale 50 \
- --output_dir_topics_per_producer /user/cassowary/adhoc/your_ldap/ttf_profile_pages_producers_to_topics
+scald ng remote run --user cassowary --reducers 2000 \
+ --target src/scala/com/tw ter/s mclusters_v2/scald ng/top c_recom ndat ons:top_top cs_for_producers_from_em-adhoc \
+ --ma n-class com.tw ter.s mclusters_v2.scald ng.top c_recom ndat ons.Top csForProducersFromEMAdhocApp \
+ --subm ter  hadoopnest1.atla.tw ter.com  \
+ --  --date 2020-07-05 --m nAct veFollo rs 10000 --m nTop cFollowsThreshold 100 --maxTop csPerProducerPerLocale 50 \
+ --output_d r_top cs_per_producer /user/cassowary/adhoc/y _ldap/ttf_prof le_pages_producers_to_top cs
  */
-object TopicsForProducersFromEMAdhocApp extends AdhocExecutionApp {
+object Top csForProducersFromEMAdhocApp extends AdhocExecut onApp {
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    import TopicsForProducersFromEM._
-    val outputDirTopicsPerProducer = args("output_dir_topics_per_producer")
-    val minActiveFollowersForProducer = args.int("minActiveFollowers", 100)
-    val minTopicFollowsThreshold = args.int("minNumTopicFollows", 100)
-    val maxTopicsPerProducerPerLocale = args.int("maxTopicsPerProducer", 100)
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
+     mport Top csForProducersFromEM._
+    val outputD rTop csPerProducer = args("output_d r_top cs_per_producer")
+    val m nAct veFollo rsForProducer = args. nt("m nAct veFollo rs", 100)
+    val m nTop cFollowsThreshold = args. nt("m nNumTop cFollows", 100)
+    val maxTop csPerProducerPerLocale = args. nt("maxTop csPerProducer", 100)
     val lambda = args.double("lambda", 0.95)
 
-    val numEMSteps = args.int("numEM", 100)
+    val numEMSteps = args. nt("numEM", 100)
 
-    val topicsFollowedByProducersFollowers: TypedPipe[
-      (ProducerId, (TopicId, Option[Language], Option[Country]), Double)
-    ] = getTopLocaleTopicsForProducersFromEM(
-      DataSources
-        .userUserNormalizedGraphSource(dateRange.prepend(Days(7))),
-      ExternalDataSources.topicFollowGraphSource,
-      ExternalDataSources.userSource,
-      ExternalDataSources.inferredUserConsumedLanguageSource,
-      minActiveFollowersForProducer,
-      minTopicFollowsThreshold,
+    val top csFollo dByProducersFollo rs: TypedP pe[
+      (Producer d, (Top c d, Opt on[Language], Opt on[Country]), Double)
+    ] = getTopLocaleTop csForProducersFromEM(
+      DataS ces
+        .userUserNormal zedGraphS ce(dateRange.prepend(Days(7))),
+      ExternalDataS ces.top cFollowGraphS ce,
+      ExternalDataS ces.userS ce,
+      ExternalDataS ces. nferredUserConsu dLanguageS ce,
+      m nAct veFollo rsForProducer,
+      m nTop cFollowsThreshold,
       lambda,
       numEMSteps
     )
 
-    val topTopicsPerLocaleProducerTsvExec = sortAndGetTopLocaleTopicsPerProducer(
-      topicsFollowedByProducersFollowers,
-      maxTopicsPerProducerPerLocale
-    ).writeExecution(
-      TypedTsv(outputDirTopicsPerProducer)
+    val topTop csPerLocaleProducerTsvExec = sortAndGetTopLocaleTop csPerProducer(
+      top csFollo dByProducersFollo rs,
+      maxTop csPerProducerPerLocale
+    ).wr eExecut on(
+      TypedTsv(outputD rTop csPerProducer)
     )
 
-    topTopicsPerLocaleProducerTsvExec
+    topTop csPerLocaleProducerTsvExec
   }
 }
 
 /**
-capesospy-v2 update --build_locally \
- --start_cron top_topics_for_producers_from_em \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capesospy-v2 update --bu ld_locally \
+ --start_cron top_top cs_for_producers_from_em \
+ src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc3.yaml
  */
-object TopicsForProducersFromEMBatchApp extends ScheduledExecutionApp {
-  override val firstTime: RichDate = RichDate("2020-07-26")
+object Top csForProducersFromEMBatchApp extends Sc duledExecut onApp {
+  overr de val f rstT  : R chDate = R chDate("2020-07-26")
 
-  override val batchIncrement: Duration = Days(7)
+  overr de val batch ncre nt: Durat on = Days(7)
 
-  private val topTopicsPerProducerFromEMPath: String =
-    "/user/cassowary/manhattan_sequence_files/top_topics_for_producers_from_em"
+  pr vate val topTop csPerProducerFromEMPath: Str ng =
+    "/user/cassowary/manhattan_sequence_f les/top_top cs_for_producers_from_em"
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    import TopicsForProducersFromEM._
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
+     mport Top csForProducersFromEM._
 
-    // threshold of the minimum number of active followers needed for a user to be considered as a producer
-    val minActiveFollowersForProducer = args.int("minActiveFollowers", 100)
+    // threshold of t  m n mum number of act ve follo rs needed for a user to be cons dered as a producer
+    val m nAct veFollo rsForProducer = args. nt("m nAct veFollo rs", 100)
 
-    // threshold of the topic locale follows score needed for a topic to be considered as valid
-    val minTopicFollowsThreshold = args.int("minNumTopicFollows", 100)
+    // threshold of t  top c locale follows score needed for a top c to be cons dered as val d
+    val m nTop cFollowsThreshold = args. nt("m nNumTop cFollows", 100)
 
-    val maxTopicsPerProducer = args.int("maxTopicsPerProducer", 100)
+    val maxTop csPerProducer = args. nt("maxTop csPerProducer", 100)
 
-    // lambda parameter for the EM algorithm
+    // lambda para ter for t  EM algor hm
     val lambda = args.double("lambda", 0.95)
 
-    // number of EM iterations
-    val numEMSteps = args.int("numEM", 100)
+    // number of EM  erat ons
+    val numEMSteps = args. nt("numEM", 100)
 
-    // (producer, locale) -> List<(topics, scores)> from Expectation Maximization approach
-    val topicsFollowedByProducersFollowers = getTopLocaleTopicsForProducersFromEM(
-      DataSources
-        .userUserNormalizedGraphSource(dateRange.prepend(Days(7))),
-      ExternalDataSources.topicFollowGraphSource,
-      ExternalDataSources.userSource,
-      ExternalDataSources.inferredUserConsumedLanguageSource,
-      minActiveFollowersForProducer,
-      minTopicFollowsThreshold,
+    // (producer, locale) -> L st<(top cs, scores)> from Expectat on Max m zat on approach
+    val top csFollo dByProducersFollo rs = getTopLocaleTop csForProducersFromEM(
+      DataS ces
+        .userUserNormal zedGraphS ce(dateRange.prepend(Days(7))),
+      ExternalDataS ces.top cFollowGraphS ce,
+      ExternalDataS ces.userS ce,
+      ExternalDataS ces. nferredUserConsu dLanguageS ce,
+      m nAct veFollo rsForProducer,
+      m nTop cFollowsThreshold,
       lambda,
       numEMSteps
     )
 
-    val topLocaleTopicsForProducersFromEMKeyValExec =
-      sortAndGetTopLocaleTopicsPerProducer(
-        topicsFollowedByProducersFollowers,
-        maxTopicsPerProducer
+    val topLocaleTop csForProducersFromEMKeyValExec =
+      sortAndGetTopLocaleTop csPerProducer(
+        top csFollo dByProducersFollo rs,
+        maxTop csPerProducer
       ).map {
-          case ((producerId, languageOpt, countryOpt), topicsWithScores) =>
+          case ((producer d, languageOpt, countryOpt), top csW hScores) =>
             KeyVal(
-              UserIdWithLocale(
-                userId = producerId,
+              User dW hLocale(
+                user d = producer d,
                 locale = Locale(language = languageOpt, country = countryOpt)),
-              SemanticCoreEntityScoreList(topicsWithScores.map {
-                case (topicid, topicScore) =>
-                  SemanticEntityScore(SemanticCoreEntity(entityId = topicid), score = topicScore)
+              Semant cCoreEnt yScoreL st(top csW hScores.map {
+                case (top c d, top cScore) =>
+                  Semant cEnt yScore(Semant cCoreEnt y(ent y d = top c d), score = top cScore)
               })
             )
-        }.writeDALVersionedKeyValExecution(
-          TopLocaleTopicsForProducerFromEmScalaDataset,
-          D.Suffix(topTopicsPerProducerFromEMPath),
-          version = ExplicitEndTime(dateRange.end)
+        }.wr eDALVers onedKeyValExecut on(
+          TopLocaleTop csForProducerFromEmScalaDataset,
+          D.Suff x(topTop csPerProducerFromEMPath),
+          vers on = Expl c EndT  (dateRange.end)
         )
-    topLocaleTopicsForProducersFromEMKeyValExec
+    topLocaleTop csForProducersFromEMKeyValExec
   }
 }
 
-object TopicsForProducersFromEM {
+object Top csForProducersFromEM {
 
-  private val MinProducerTopicScoreThreshold = 0.0
+  pr vate val M nProducerTop cScoreThreshold = 0.0
 
-  implicit val sparseMatrixInj: Injection[
-    (SemanticCoreEntityId, Option[Language], Option[Country]),
+   mpl c  val sparseMatr x nj:  nject on[
+    (Semant cCoreEnt y d, Opt on[Language], Opt on[Country]),
     Array[Byte]
   ] =
-    Bufferable.injectionOf[(SemanticCoreEntityId, Option[Language], Option[Country])]
+    Bufferable. nject onOf[(Semant cCoreEnt y d, Opt on[Language], Opt on[Country])]
 
-  // This function takes the producer to topics map and generates the sorted and
-  // truncated top locale topics ranked list for each producer
-  def sortAndGetTopLocaleTopicsPerProducer(
-    producerToTopics: TypedPipe[(ProducerId, (TopicId, Option[Language], Option[Country]), Double)],
-    maxTopicsPerProducerPerLocale: Int
+  // T  funct on takes t  producer to top cs map and generates t  sorted and
+  // truncated top locale top cs ranked l st for each producer
+  def sortAndGetTopLocaleTop csPerProducer(
+    producerToTop cs: TypedP pe[(Producer d, (Top c d, Opt on[Language], Opt on[Country]), Double)],
+    maxTop csPerProducerPerLocale:  nt
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[((ProducerId, Option[Language], Option[Country]), List[(TopicId, Double)])] = {
-    val numProducersWithLocales = Stat("num_producers_with_locales")
-    producerToTopics
+     mpl c  un que D: Un que D
+  ): TypedP pe[((Producer d, Opt on[Language], Opt on[Country]), L st[(Top c d, Double)])] = {
+    val numProducersW hLocales = Stat("num_producers_w h_locales")
+    producerToTop cs
       .map {
-        case (producerId, (topicId, languageOpt, countryOpt), score) =>
-          ((producerId, languageOpt, countryOpt), Seq((topicId, score)))
-      }.sumByKey.mapValues { topicsList: Seq[(TopicId, Double)] =>
-        numProducersWithLocales.inc()
-        topicsList
-          .filter(_._2 >= MinProducerTopicScoreThreshold).sortBy(-_._2).take(
-            maxTopicsPerProducerPerLocale).toList
-      }.toTypedPipe
+        case (producer d, (top c d, languageOpt, countryOpt), score) =>
+          ((producer d, languageOpt, countryOpt), Seq((top c d, score)))
+      }.sumByKey.mapValues { top csL st: Seq[(Top c d, Double)] =>
+        numProducersW hLocales. nc()
+        top csL st
+          .f lter(_._2 >= M nProducerTop cScoreThreshold).sortBy(-_._2).take(
+            maxTop csPerProducerPerLocale).toL st
+      }.toTypedP pe
   }
 
-  def getTopLocaleTopicsForProducersFromEM(
-    userUserGraph: TypedPipe[UserAndNeighbors],
-    followedTopicsToUsers: TypedPipe[(TopicId, UserId)],
-    userSource: TypedPipe[(UserId, (Country, Language))],
-    userLanguages: TypedPipe[(UserId, Seq[(Language, Double)])],
-    minActiveFollowersForProducer: Int,
-    minTopicFollowsThreshold: Int,
+  def getTopLocaleTop csForProducersFromEM(
+    userUserGraph: TypedP pe[UserAndNe ghbors],
+    follo dTop csToUsers: TypedP pe[(Top c d, User d)],
+    userS ce: TypedP pe[(User d, (Country, Language))],
+    userLanguages: TypedP pe[(User d, Seq[(Language, Double)])],
+    m nAct veFollo rsForProducer:  nt,
+    m nTop cFollowsThreshold:  nt,
     lambda: Double,
-    numEMSteps: Int
+    numEMSteps:  nt
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[(ProducerId, (TopicId, Option[Language], Option[Country]), Double)] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): TypedP pe[(Producer d, (Top c d, Opt on[Language], Opt on[Country]), Double)] = {
 
-    // Obtain Producer To Users Matrix
-    val producersToUsersMatrix: SparseMatrix[ProducerId, UserId, Double] =
-      TopicsForProducersUtils.getProducersToFollowedByUsersSparseMatrix(
+    // Obta n Producer To Users Matr x
+    val producersToUsersMatr x: SparseMatr x[Producer d, User d, Double] =
+      Top csForProducersUt ls.getProducersToFollo dByUsersSparseMatr x(
         userUserGraph,
-        minActiveFollowersForProducer)
+        m nAct veFollo rsForProducer)
 
-    // Obtain Users to TopicsWithLocales Matrix
-    val topicToUsersMatrix: SparseMatrix[
-      (TopicId, Option[Language], Option[Country]),
-      UserId,
+    // Obta n Users to Top csW hLocales Matr x
+    val top cToUsersMatr x: SparseMatr x[
+      (Top c d, Opt on[Language], Opt on[Country]),
+      User d,
       Double
-    ] = TopicsForProducersUtils.getFollowedTopicsToUserSparseMatrix(
-      followedTopicsToUsers,
-      userSource,
+    ] = Top csForProducersUt ls.getFollo dTop csToUserSparseMatr x(
+      follo dTop csToUsers,
+      userS ce,
       userLanguages,
-      minTopicFollowsThreshold)
+      m nTop cFollowsThreshold)
 
-    // Domain input probability distribution is the Map(topics->followers) per producer locale
-    val domainInputModel = producersToUsersMatrix
-      .multiplySparseMatrix(topicToUsersMatrix.transpose).toTypedPipe.map {
-        case (producerId, (topicId, languageOpt, countryOpt), dotProduct) =>
-          ((producerId, languageOpt, countryOpt), Map(topicId -> dotProduct))
-      }.sumByKey.toTypedPipe.map {
-        case ((producerId, languageOpt, countryOpt), topicsDomainInputMap) =>
-          ((languageOpt, countryOpt), (producerId, topicsDomainInputMap))
+    // Doma n  nput probab l y d str but on  s t  Map(top cs->follo rs) per producer locale
+    val doma n nputModel = producersToUsersMatr x
+      .mult plySparseMatr x(top cToUsersMatr x.transpose).toTypedP pe.map {
+        case (producer d, (top c d, languageOpt, countryOpt), dotProduct) =>
+          ((producer d, languageOpt, countryOpt), Map(top c d -> dotProduct))
+      }.sumByKey.toTypedP pe.map {
+        case ((producer d, languageOpt, countryOpt), top csDoma n nputMap) =>
+          ((languageOpt, countryOpt), (producer d, top csDoma n nputMap))
       }
 
-    // BackgroundModel is the Map(topics -> Expected value of the number of users who follow the topic)
-    val backgroundModel = topicToUsersMatrix.rowL1Norms.map {
-      case ((topicId, languageOpt, countryOpt), numFollowersOfTopic) =>
-        ((languageOpt, countryOpt), Map(topicId -> numFollowersOfTopic))
+    // BackgroundModel  s t  Map(top cs -> Expected value of t  number of users who follow t  top c)
+    val backgroundModel = top cToUsersMatr x.rowL1Norms.map {
+      case ((top c d, languageOpt, countryOpt), numFollo rsOfTop c) =>
+        ((languageOpt, countryOpt), Map(top c d -> numFollo rsOfTop c))
     }.sumByKey
 
-    val resultsFromEMForEachLocale = domainInputModel.hashJoin(backgroundModel).flatMap {
+    val resultsFromEMForEachLocale = doma n nputModel.hashJo n(backgroundModel).flatMap {
       case (
             (languageOpt, countryOpt),
-            ((producerId, domainInputTopicFollowersMap), backgroundModelTopicFollowersMap)) =>
-        val emScoredTopicsForEachProducerPerLocale = EMRunner.estimateDomainModel(
-          domainInputTopicFollowersMap,
-          backgroundModelTopicFollowersMap,
+            ((producer d, doma n nputTop cFollo rsMap), backgroundModelTop cFollo rsMap)) =>
+        val emScoredTop csForEachProducerPerLocale = EMRunner.est mateDoma nModel(
+          doma n nputTop cFollo rsMap,
+          backgroundModelTop cFollo rsMap,
           lambda,
           numEMSteps)
 
-        emScoredTopicsForEachProducerPerLocale.map {
-          case (topicId, topicScore) =>
-            (producerId, (topicId, languageOpt, countryOpt), topicScore)
+        emScoredTop csForEachProducerPerLocale.map {
+          case (top c d, top cScore) =>
+            (producer d, (top c d, languageOpt, countryOpt), top cScore)
         }
     }
     resultsFromEMForEachLocale

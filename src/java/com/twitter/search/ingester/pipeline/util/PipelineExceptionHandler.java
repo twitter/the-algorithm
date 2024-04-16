@@ -1,15 +1,15 @@
-package com.twitter.search.ingester.pipeline.util;
+package com.tw ter.search. ngester.p pel ne.ut l;
 
-import com.twitter.util.Duration;
+ mport com.tw ter.ut l.Durat on;
 
-public interface PipelineExceptionHandler {
+publ c  nterface P pel neExcept onHandler {
   /**
-   * Logs the given message and waits the given duration.
+   * Logs t  g ven  ssage and wa s t  g ven durat on.
    */
-  void logAndWait(String msg, Duration waitTime) throws InterruptedException;
+  vo d logAndWa (Str ng msg, Durat on wa T  ) throws  nterruptedExcept on;
 
   /**
-   * Logs the given message and shutdowns the application.
+   * Logs t  g ven  ssage and shutdowns t  appl cat on.
    */
-  void logAndShutdown(String msg);
+  vo d logAndShutdown(Str ng msg);
 }

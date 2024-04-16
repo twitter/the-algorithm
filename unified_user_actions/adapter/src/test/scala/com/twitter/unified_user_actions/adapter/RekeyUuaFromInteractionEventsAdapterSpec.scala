@@ -1,35 +1,35 @@
-package com.twitter.unified_user_actions.adapter
+package com.tw ter.un f ed_user_act ons.adapter
 
-import com.twitter.inject.Test
-import com.twitter.unified_user_actions.adapter.TestFixtures.InteractionEventsFixtures
-import com.twitter.unified_user_actions.adapter.uua_aggregates.RekeyUuaFromInteractionEventsAdapter
-import com.twitter.util.Time
-import org.scalatest.prop.TableDrivenPropertyChecks
+ mport com.tw ter. nject.Test
+ mport com.tw ter.un f ed_user_act ons.adapter.TestF xtures. nteract onEventsF xtures
+ mport com.tw ter.un f ed_user_act ons.adapter.uua_aggregates.RekeyUuaFrom nteract onEventsAdapter
+ mport com.tw ter.ut l.T  
+ mport org.scalatest.prop.TableDr venPropertyC cks
 
-class RekeyUuaFromInteractionEventsAdapterSpec extends Test with TableDrivenPropertyChecks {
-  test("ClientTweetRenderImpressions") {
-    new InteractionEventsFixtures {
-      Time.withTimeAt(frozenTime) { _ =>
+class RekeyUuaFrom nteract onEventsAdapterSpec extends Test w h TableDr venPropertyC cks {
+  test("Cl entT etRender mpress ons") {
+    new  nteract onEventsF xtures {
+      T  .w hT  At(frozenT  ) { _ =>
         assert(
-          RekeyUuaFromInteractionEventsAdapter.adaptEvent(baseInteractionEvent) === Seq(
-            expectedBaseKeyedUuaTweet))
+          RekeyUuaFrom nteract onEventsAdapter.adaptEvent(base nteract onEvent) === Seq(
+            expectedBaseKeyedUuaT et))
       }
     }
   }
 
-  test("Filter out logged out users") {
-    new InteractionEventsFixtures {
-      Time.withTimeAt(frozenTime) { _ =>
-        assert(RekeyUuaFromInteractionEventsAdapter.adaptEvent(loggedOutInteractionEvent) === Nil)
+  test("F lter out logged out users") {
+    new  nteract onEventsF xtures {
+      T  .w hT  At(frozenT  ) { _ =>
+        assert(RekeyUuaFrom nteract onEventsAdapter.adaptEvent(loggedOut nteract onEvent) === N l)
       }
     }
   }
 
-  test("Filter out detail impressions") {
-    new InteractionEventsFixtures {
-      Time.withTimeAt(frozenTime) { _ =>
+  test("F lter out deta l  mpress ons") {
+    new  nteract onEventsF xtures {
+      T  .w hT  At(frozenT  ) { _ =>
         assert(
-          RekeyUuaFromInteractionEventsAdapter.adaptEvent(detailImpressionInteractionEvent) === Nil)
+          RekeyUuaFrom nteract onEventsAdapter.adaptEvent(deta l mpress on nteract onEvent) === N l)
       }
     }
   }

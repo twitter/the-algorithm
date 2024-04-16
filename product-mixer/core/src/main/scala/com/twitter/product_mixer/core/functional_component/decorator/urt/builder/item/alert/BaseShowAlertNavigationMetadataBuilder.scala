@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert
+package com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. em.alert
 
-import com.twitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertNavigationMetadata
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.ShowAlertCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.alert.ShowAlertNav gat on tadata
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-trait BaseShowAlertNavigationMetadataBuilder[-Query <: PipelineQuery] {
+tra  BaseShowAlertNav gat on tadataBu lder[-Query <: P pel neQuery] {
 
   def apply(
     query: Query,
-    candidate: ShowAlertCandidate,
+    cand date: ShowAlertCand date,
     features: FeatureMap
-  ): Option[ShowAlertNavigationMetadata]
+  ): Opt on[ShowAlertNav gat on tadata]
 }

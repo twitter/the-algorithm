@@ -1,34 +1,34 @@
-package com.twitter.servo.repository
+package com.tw ter.servo.repos ory
 
-import scala.collection.SeqProxy
+ mport scala.collect on.SeqProxy
 
 /**
- * RichQuery is a mixin trait for KeyValueRepository query objects that are more complex
- * than Seq[K]. It extends SeqProxy to satisfy servo's requirements but provides Product-based
- * implementations of equals and toString. (The query object is expected to be a case class
- * and therefore implement Product.)
+ * R chQuery  s a m x n tra  for KeyValueRepos ory query objects that are more complex
+ * than Seq[K].   extends SeqProxy to sat sfy servo's requ re nts but prov des Product-based
+ *  mple ntat ons of equals and toStr ng. (T  query object  s expected to be a case class
+ * and t refore  mple nt Product.)
  */
-trait RichQuery[K] extends SeqProxy[K] with Product {
-  // Compare to other RichQuery instances via Product; otherwise allow any sequence to
-  // match our proxied Seq (thereby matching the semantics of a case class that simply
+tra  R chQuery[K] extends SeqProxy[K] w h Product {
+  // Compare to ot r R chQuery  nstances v a Product; ot rw se allow any sequence to
+  // match   prox ed Seq (t reby match ng t  semant cs of a case class that s mply
   // extends SeqProxy).
-  override def equals(any: Any) = {
+  overr de def equals(any: Any) = {
     any match {
       case null => false
 
-      case other: RichQuery[_] =>
+      case ot r: R chQuery[_] =>
         (
-          this.productArity == other.productArity &&
-            this.productIterator.zip(other.productIterator).foldLeft(true) {
+          t .productAr y == ot r.productAr y &&
+            t .product erator.z p(ot r.product erator).foldLeft(true) {
               case (ok, (e1, e2)) =>
                 ok && e1 == e2
             }
         )
 
-      case other => other.equals(this)
+      case ot r => ot r.equals(t )
     }
   }
 
-  // Produce reasonable string for testing
-  override def toString = "%s(%s)".format(this.productPrefix, this.productIterator.mkString(","))
+  // Produce reasonable str ng for test ng
+  overr de def toStr ng = "%s(%s)".format(t .productPref x, t .product erator.mkStr ng(","))
 }

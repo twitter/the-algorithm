@@ -1,100 +1,100 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+package com.tw ter.search.earlyb rd.arch ve.seg ntbu lder;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.util.zktrylock.TryLock;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.earlybird.archive.ArchiveSegment;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
+ mport com.tw ter.common.quant y.Amount;
+ mport com.tw ter.common.quant y.T  ;
+ mport com.tw ter.search.common.database.DatabaseConf g;
+ mport com.tw ter.search.common.ut l.zktrylock.TryLock;
+ mport com.tw ter.search.common.ut l.zktrylock.ZooKeeperTryLockFactory;
+ mport com.tw ter.search.earlyb rd.arch ve.Arch veSeg nt;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd. ndex.Earlyb rdSeg ntFactory;
+ mport com.tw ter.search.earlyb rd.part  on.Seg nt nfo;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntSyncConf g;
 
-public abstract class SegmentBuilderSegment {
-  protected final SegmentInfo segmentInfo;
-  protected final SegmentConfig segmentConfig;
-  protected final EarlybirdSegmentFactory earlybirdSegmentFactory;
-  protected final int alreadyRetriedCount;
-  protected final SegmentSyncConfig sync;
+publ c abstract class Seg ntBu lderSeg nt {
+  protected f nal Seg nt nfo seg nt nfo;
+  protected f nal Seg ntConf g seg ntConf g;
+  protected f nal Earlyb rdSeg ntFactory earlyb rdSeg ntFactory;
+  protected f nal  nt alreadyRetr edCount;
+  protected f nal Seg ntSyncConf g sync;
 
-  public SegmentBuilderSegment(SegmentInfo segmentInfo,
-                               SegmentConfig segmentConfig,
-                               EarlybirdSegmentFactory earlybirdSegmentFactory,
-                               int alreadyRetriedCount,
-                               SegmentSyncConfig segmentSyncConfig) {
-    this.segmentConfig = segmentConfig;
-    this.earlybirdSegmentFactory = earlybirdSegmentFactory;
-    this.alreadyRetriedCount = alreadyRetriedCount;
-    this.sync = segmentSyncConfig;
-    Preconditions.checkState(segmentInfo.getSegment() instanceof ArchiveSegment);
-    this.segmentInfo = Preconditions.checkNotNull(segmentInfo);
+  publ c Seg ntBu lderSeg nt(Seg nt nfo seg nt nfo,
+                               Seg ntConf g seg ntConf g,
+                               Earlyb rdSeg ntFactory earlyb rdSeg ntFactory,
+                                nt alreadyRetr edCount,
+                               Seg ntSyncConf g seg ntSyncConf g) {
+    t .seg ntConf g = seg ntConf g;
+    t .earlyb rdSeg ntFactory = earlyb rdSeg ntFactory;
+    t .alreadyRetr edCount = alreadyRetr edCount;
+    t .sync = seg ntSyncConf g;
+    Precond  ons.c ckState(seg nt nfo.getSeg nt()  nstanceof Arch veSeg nt);
+    t .seg nt nfo = Precond  ons.c ckNotNull(seg nt nfo);
   }
 
-  public SegmentInfo getSegmentInfo() {
-    return segmentInfo;
+  publ c Seg nt nfo getSeg nt nfo() {
+    return seg nt nfo;
   }
 
-  public String getSegmentName() {
-    return segmentInfo.getSegmentName();
+  publ c Str ng getSeg ntNa () {
+    return seg nt nfo.getSeg ntNa ();
   }
 
-  public int getAlreadyRetriedCount() {
-    return alreadyRetriedCount;
+  publ c  nt getAlreadyRetr edCount() {
+    return alreadyRetr edCount;
   }
 
   /**
-   * Handle the segment, potentially transitioning to a new state.
-   * @return The state after handling.
+   * Handle t  seg nt, potent ally trans  on ng to a new state.
+   * @return T  state after handl ng.
    */
-  public abstract SegmentBuilderSegment handle()
-      throws SegmentInfoConstructionException, SegmentUpdaterException;
+  publ c abstract Seg ntBu lderSeg nt handle()
+      throws Seg nt nfoConstruct onExcept on, Seg ntUpdaterExcept on;
 
-  public boolean isBuilt() {
+  publ c boolean  sBu lt() {
     return false;
   }
 
-  @Override
-  public String toString() {
-    return "SegmentBuilderSegment{"
-        + "segmentInfo=" + segmentInfo
-        + ", state=" + this.getClass().getSimpleName()
-        + ", alreadyRetriedCount=" + alreadyRetriedCount + '}';
+  @Overr de
+  publ c Str ng toStr ng() {
+    return "Seg ntBu lderSeg nt{"
+        + "seg nt nfo=" + seg nt nfo
+        + ", state=" + t .getClass().getS mpleNa ()
+        + ", alreadyRetr edCount=" + alreadyRetr edCount + '}';
   }
 
   /**
-   * Given a SegmentInfo, create a new one with the same time slice and partitionID but clean
-   * internal state.
+   * G ven a Seg nt nfo, create a new one w h t  sa  t   sl ce and part  on D but clean
+   *  nternal state.
    */
-  protected SegmentInfo createNewSegmentInfo(SegmentInfo oldSegmentInfo)
-      throws SegmentInfoConstructionException {
-    Preconditions.checkArgument(oldSegmentInfo.getSegment() instanceof ArchiveSegment);
-    ArchiveSegment archiveSegment = (ArchiveSegment) oldSegmentInfo.getSegment();
+  protected Seg nt nfo createNewSeg nt nfo(Seg nt nfo oldSeg nt nfo)
+      throws Seg nt nfoConstruct onExcept on {
+    Precond  ons.c ckArgu nt(oldSeg nt nfo.getSeg nt()  nstanceof Arch veSeg nt);
+    Arch veSeg nt arch veSeg nt = (Arch veSeg nt) oldSeg nt nfo.getSeg nt();
 
     try {
-      ArchiveSegment segment = new ArchiveSegment(archiveSegment.getArchiveTimeSlice(),
-          archiveSegment.getHashPartitionID(), EarlybirdConfig.getMaxSegmentSize());
+      Arch veSeg nt seg nt = new Arch veSeg nt(arch veSeg nt.getArch veT  Sl ce(),
+          arch veSeg nt.getHashPart  on D(), Earlyb rdConf g.getMaxSeg ntS ze());
 
-      return new SegmentInfo(segment, earlybirdSegmentFactory, sync);
-    } catch (IOException e) {
-      throw new SegmentInfoConstructionException("Error creating new segments", e);
+      return new Seg nt nfo(seg nt, earlyb rdSeg ntFactory, sync);
+    } catch ( OExcept on e) {
+      throw new Seg nt nfoConstruct onExcept on("Error creat ng new seg nts", e);
     }
   }
 
   protected TryLock getZooKeeperTryLock() {
-    ZooKeeperTryLockFactory tryLockFactory = segmentConfig.getTryLockFactory();
-    String zkRootPath = sync.getZooKeeperSyncFullPath();
-    String nodeName = segmentInfo.getZkNodeName();
-    Amount<Long, Time> expirationTime = segmentConfig.getSegmentZKLockExpirationTime();
+    ZooKeeperTryLockFactory tryLockFactory = seg ntConf g.getTryLockFactory();
+    Str ng zkRootPath = sync.getZooKeeperSyncFullPath();
+    Str ng nodeNa  = seg nt nfo.getZkNodeNa ();
+    Amount<Long, T  > exp rat onT   = seg ntConf g.getSeg ntZKLockExp rat onT  ();
 
     return tryLockFactory.createTryLock(
-        DatabaseConfig.getLocalHostname(),
+        DatabaseConf g.getLocalHostna (),
         zkRootPath,
-        nodeName,
-        expirationTime);
+        nodeNa ,
+        exp rat onT  );
   }
 }

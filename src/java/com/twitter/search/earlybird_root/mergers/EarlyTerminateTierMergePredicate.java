@@ -1,9 +1,9 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.tw ter.search.earlyb rd_root. rgers;
 
-public interface EarlyTerminateTierMergePredicate {
+publ c  nterface EarlyTerm nateT er rgePred cate {
   /**
-   * Do we have enough results so far that we can early terminate and not continue onto next tier?
+   * Do   have enough results so far that   can early term nate and not cont nue onto next t er?
    */
-  boolean shouldEarlyTerminateTierMerge(int totalResultsFromSuccessfulShards,
-                                        boolean foundEarlyTermination);
+  boolean shouldEarlyTerm nateT er rge( nt totalResultsFromSuccessfulShards,
+                                        boolean foundEarlyTerm nat on);
 }

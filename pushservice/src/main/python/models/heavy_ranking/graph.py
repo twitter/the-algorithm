@@ -1,127 +1,127 @@
 """
-Graph class defining methods to obtain key quantities such as:
-  * the logits
-  * the probabilities
-  * the final score
-  * the loss function
-  * the training operator
+Graph class def n ng  thods to obta n key quant  es such as:
+  * t  log s
+  * t  probab l  es
+  * t  f nal score
+  * t  loss funct on
+  * t  tra n ng operator
 """
-from __future__ import annotations
+from __future__  mport annotat ons
 
-from abc import ABC, abstractmethod
-from typing import Any, Dict
+from abc  mport ABC, abstract thod
+from typ ng  mport Any, D ct
 
-from twitter.deepbird.hparam import HParams
-import twml
+from tw ter.deepb rd.hparam  mport HParams
+ mport twml
 
-from ..libs.model_utils import generate_disliked_mask
-from .params import GraphParams
+from ..l bs.model_ut ls  mport generate_d sl ked_mask
+from .params  mport GraphParams
 
-import tensorflow as tf
-import tensorflow.compat.v1 as tf1
+ mport tensorflow as tf
+ mport tensorflow.compat.v1 as tf1
 
 
 class Graph(ABC):
-  def __init__(self, params: GraphParams):
+  def __ n __(self, params: GraphParams):
     self.params = params
 
-  @abstractmethod
-  def get_logits(self, features: Dict[str, tf.Tensor], mode: tf.estimator.ModeKeys) -> tf.Tensor:
+  @abstract thod
+  def get_log s(self, features: D ct[str, tf.Tensor], mode: tf.est mator.ModeKeys) -> tf.Tensor:
     pass
 
-  def get_probabilities(self, logits: tf.Tensor) -> tf.Tensor:
-    return tf.math.cumprod(tf.nn.sigmoid(logits), axis=1, name="probabilities")
+  def get_probab l  es(self, log s: tf.Tensor) -> tf.Tensor:
+    return tf.math.cumprod(tf.nn.s gmo d(log s), ax s=1, na ="probab l  es")
 
-  def get_task_weights(self, labels: tf.Tensor) -> tf.Tensor:
+  def get_task_  ghts(self, labels: tf.Tensor) -> tf.Tensor:
     oonc_label = tf.reshape(labels[:, 0], shape=(-1, 1))
-    task_weights = tf.concat([tf.ones_like(oonc_label), oonc_label], axis=1)
+    task_  ghts = tf.concat([tf.ones_l ke(oonc_label), oonc_label], ax s=1)
 
     n_labels = len(self.params.tasks)
-    task_weights = tf.reshape(task_weights[:, 0:n_labels], shape=(-1, n_labels))
+    task_  ghts = tf.reshape(task_  ghts[:, 0:n_labels], shape=(-1, n_labels))
 
-    return task_weights
+    return task_  ghts
 
-  def get_loss(self, labels: tf.Tensor, logits: tf.Tensor, **kwargs: Any) -> tf.Tensor:
-    with tf.name_scope("weights"):
-      disliked_mask = generate_disliked_mask(labels)
+  def get_loss(self, labels: tf.Tensor, log s: tf.Tensor, **kwargs: Any) -> tf.Tensor:
+    w h tf.na _scope("  ghts"):
+      d sl ked_mask = generate_d sl ked_mask(labels)
 
       labels = tf.reshape(labels[:, 0:2], shape=[-1, 2])
 
-      labels = labels * tf.cast(tf.logical_not(disliked_mask), dtype=labels.dtype)
+      labels = labels * tf.cast(tf.log cal_not(d sl ked_mask), dtype=labels.dtype)
 
-      with tf.name_scope("task_weight"):
-        task_weights = self.get_task_weights(labels)
+      w h tf.na _scope("task_  ght"):
+        task_  ghts = self.get_task_  ghts(labels)
 
-      with tf.name_scope("batch_size"):
-        batch_size = tf.cast(tf.shape(labels)[0], dtype=tf.float32, name="batch_size")
+      w h tf.na _scope("batch_s ze"):
+        batch_s ze = tf.cast(tf.shape(labels)[0], dtype=tf.float32, na ="batch_s ze")
 
-      weights = task_weights / batch_size
+        ghts = task_  ghts / batch_s ze
 
-    with tf.name_scope("loss"):
+    w h tf.na _scope("loss"):
       loss = tf.reduce_sum(
-        tf.nn.sigmoid_cross_entropy_with_logits(labels=labels, logits=logits) * weights,
+        tf.nn.s gmo d_cross_entropy_w h_log s(labels=labels, log s=log s) *   ghts,
       )
 
     return loss
 
-  def get_score(self, probabilities: tf.Tensor) -> tf.Tensor:
-    with tf.name_scope("score_weight"):
-      score_weights = tf.constant([task.score_weight for task in self.params.tasks])
-      score_weights = score_weights / tf.reduce_sum(score_weights, axis=0)
+  def get_score(self, probab l  es: tf.Tensor) -> tf.Tensor:
+    w h tf.na _scope("score_  ght"):
+      score_  ghts = tf.constant([task.score_  ght for task  n self.params.tasks])
+      score_  ghts = score_  ghts / tf.reduce_sum(score_  ghts, ax s=0)
 
-    with tf.name_scope("score"):
-      score = tf.reshape(tf.reduce_sum(probabilities * score_weights, axis=1), shape=[-1, 1])
+    w h tf.na _scope("score"):
+      score = tf.reshape(tf.reduce_sum(probab l  es * score_  ghts, ax s=1), shape=[-1, 1])
 
     return score
 
-  def get_train_op(self, loss: tf.Tensor, twml_params) -> Any:
-    with tf.name_scope("optimizer"):
-      learning_rate = twml_params.learning_rate
-      optimizer = tf1.train.GradientDescentOptimizer(learning_rate=learning_rate)
+  def get_tra n_op(self, loss: tf.Tensor, twml_params) -> Any:
+    w h tf.na _scope("opt m zer"):
+      learn ng_rate = twml_params.learn ng_rate
+      opt m zer = tf1.tra n.Grad entDescentOpt m zer(learn ng_rate=learn ng_rate)
 
-    update_ops = set(tf1.get_collection(tf1.GraphKeys.UPDATE_OPS))
-    with tf.control_dependencies(update_ops):
-      train_op = twml.optimizers.optimize_loss(
+    update_ops = set(tf1.get_collect on(tf1.GraphKeys.UPDATE_OPS))
+    w h tf.control_dependenc es(update_ops):
+      tra n_op = twml.opt m zers.opt m ze_loss(
         loss=loss,
-        variables=tf1.trainable_variables(),
-        global_step=tf1.train.get_global_step(),
-        optimizer=optimizer,
-        learning_rate=None,
+        var ables=tf1.tra nable_var ables(),
+        global_step=tf1.tra n.get_global_step(),
+        opt m zer=opt m zer,
+        learn ng_rate=None,
       )
 
-    return train_op
+    return tra n_op
 
   def __call__(
     self,
-    features: Dict[str, tf.Tensor],
+    features: D ct[str, tf.Tensor],
     labels: tf.Tensor,
-    mode: tf.estimator.ModeKeys,
+    mode: tf.est mator.ModeKeys,
     params: HParams,
-    config=None,
-  ) -> Dict[str, tf.Tensor]:
-    training = mode == tf.estimator.ModeKeys.TRAIN
-    logits = self.get_logits(features=features, training=training)
-    probabilities = self.get_probabilities(logits=logits)
+    conf g=None,
+  ) -> D ct[str, tf.Tensor]:
+    tra n ng = mode == tf.est mator.ModeKeys.TRA N
+    log s = self.get_log s(features=features, tra n ng=tra n ng)
+    probab l  es = self.get_probab l  es(log s=log s)
     score = None
     loss = None
-    train_op = None
+    tra n_op = None
 
-    if mode == tf.estimator.ModeKeys.PREDICT:
-      score = self.get_score(probabilities=probabilities)
-      output = {"loss": loss, "train_op": train_op, "prediction": score}
+     f mode == tf.est mator.ModeKeys.PRED CT:
+      score = self.get_score(probab l  es=probab l  es)
+      output = {"loss": loss, "tra n_op": tra n_op, "pred ct on": score}
 
-    elif mode in (tf.estimator.ModeKeys.TRAIN, tf.estimator.ModeKeys.EVAL):
-      loss = self.get_loss(labels=labels, logits=logits)
+    el f mode  n (tf.est mator.ModeKeys.TRA N, tf.est mator.ModeKeys.EVAL):
+      loss = self.get_loss(labels=labels, log s=log s)
 
-      if mode == tf.estimator.ModeKeys.TRAIN:
-        train_op = self.get_train_op(loss=loss, twml_params=params)
+       f mode == tf.est mator.ModeKeys.TRA N:
+        tra n_op = self.get_tra n_op(loss=loss, twml_params=params)
 
-      output = {"loss": loss, "train_op": train_op, "output": probabilities}
+      output = {"loss": loss, "tra n_op": tra n_op, "output": probab l  es}
 
     else:
-      raise ValueError(
+      ra se ValueError(
         f"""
-        Invalid mode. Possible values are: {tf.estimator.ModeKeys.PREDICT}, {tf.estimator.ModeKeys.TRAIN}, and {tf.estimator.ModeKeys.EVAL}
+         nval d mode. Poss ble values are: {tf.est mator.ModeKeys.PRED CT}, {tf.est mator.ModeKeys.TRA N}, and {tf.est mator.ModeKeys.EVAL}
         . Passed: {mode}
       """
       )

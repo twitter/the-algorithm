@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.common.clients.adserver
+package com.tw ter.follow_recom ndat ons.common.cl ents.adserver
 
-import com.twitter.adserver.thriftscala.NewAdServer
-import com.twitter.adserver.{thriftscala => t}
-import com.twitter.stitch.Stitch
-import javax.inject.{Inject, Singleton}
+ mport com.tw ter.adserver.thr ftscala.NewAdServer
+ mport com.tw ter.adserver.{thr ftscala => t}
+ mport com.tw ter.st ch.St ch
+ mport javax. nject.{ nject, S ngleton}
 
-@Singleton
-class AdserverClient @Inject() (adserverService: NewAdServer.MethodPerEndpoint) {
-  def getAdImpressions(adRequest: AdRequest): Stitch[Seq[t.AdImpression]] = {
-    Stitch
+@S ngleton
+class AdserverCl ent @ nject() (adserverServ ce: NewAdServer. thodPerEndpo nt) {
+  def getAd mpress ons(adRequest: AdRequest): St ch[Seq[t.Ad mpress on]] = {
+    St ch
       .callFuture(
-        adserverService.makeAdRequest(adRequest.toThrift)
-      ).map(_.impressions)
+        adserverServ ce.makeAdRequest(adRequest.toThr ft)
+      ).map(_. mpress ons)
   }
 }

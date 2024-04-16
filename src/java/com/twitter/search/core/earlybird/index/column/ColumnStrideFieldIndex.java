@@ -1,64 +1,64 @@
-package com.twitter.search.core.earlybird.index.column;
+package com.tw ter.search.core.earlyb rd. ndex.column;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.NumericDocValues;
+ mport org.apac .lucene. ndex.LeafReader;
+ mport org.apac .lucene. ndex.Nu r cDocValues;
 
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+ mport com.tw ter.search.core.earlyb rd. ndex.Doc DToT et DMapper;
 
 /**
- * Get an underlying data for a field by calling
- * EarlybirdIndexSegmentAtomicReader#getNumericDocValues(String).
+ * Get an underly ng data for a f eld by call ng
+ * Earlyb rd ndexSeg ntAtom cReader#getNu r cDocValues(Str ng).
  */
-public abstract class ColumnStrideFieldIndex {
-  private final String name;
+publ c abstract class ColumnStr deF eld ndex {
+  pr vate f nal Str ng na ;
 
-  public ColumnStrideFieldIndex(String name) {
-    this.name = name;
+  publ c ColumnStr deF eld ndex(Str ng na ) {
+    t .na  = na ;
   }
 
-  public String getName() {
-    return name;
-  }
-
-  /**
-   * Returns the CSF value for the given doc ID.
-   */
-  public abstract long get(int docID);
-
-  /**
-   * Updates the CSF value for the given doc ID to the given value.
-   */
-  public void setValue(int docID, long value) {
-    throw new UnsupportedOperationException();
+  publ c Str ng getNa () {
+    return na ;
   }
 
   /**
-   * Loads the CSF from an AtomicReader.
+   * Returns t  CSF value for t  g ven doc  D.
    */
-  public void load(LeafReader atomicReader, String field) throws IOException {
-    NumericDocValues docValues = atomicReader.getNumericDocValues(field);
-    if (docValues != null) {
-      for (int i = 0; i < atomicReader.maxDoc(); i++) {
-        if (docValues.advanceExact(i)) {
-          setValue(i, docValues.longValue());
+  publ c abstract long get( nt doc D);
+
+  /**
+   * Updates t  CSF value for t  g ven doc  D to t  g ven value.
+   */
+  publ c vo d setValue( nt doc D, long value) {
+    throw new UnsupportedOperat onExcept on();
+  }
+
+  /**
+   * Loads t  CSF from an Atom cReader.
+   */
+  publ c vo d load(LeafReader atom cReader, Str ng f eld) throws  OExcept on {
+    Nu r cDocValues docValues = atom cReader.getNu r cDocValues(f eld);
+     f (docValues != null) {
+      for ( nt   = 0;   < atom cReader.maxDoc();  ++) {
+         f (docValues.advanceExact( )) {
+          setValue( , docValues.longValue());
         }
       }
     }
   }
 
   /**
-   * Optimizes the representation of this column stride field, and remaps its doc IDs, if necessary.
+   * Opt m zes t  representat on of t  column str de f eld, and remaps  s doc  Ds,  f necessary.
    *
-   * @param originalTweetIdMapper The original tweet ID mapper.
-   * @param optimizedTweetIdMapper The optimized tweet ID mapper.
-   * @return An optimized column stride field equivalent to this CSF,
-   *         with possibly remapped doc IDs.
+   * @param or g nalT et dMapper T  or g nal t et  D mapper.
+   * @param opt m zedT et dMapper T  opt m zed t et  D mapper.
+   * @return An opt m zed column str de f eld equ valent to t  CSF,
+   *         w h poss bly remapped doc  Ds.
    */
-  public ColumnStrideFieldIndex optimize(
-      DocIDToTweetIDMapper originalTweetIdMapper,
-      DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
-    return this;
+  publ c ColumnStr deF eld ndex opt m ze(
+      Doc DToT et DMapper or g nalT et dMapper,
+      Doc DToT et DMapper opt m zedT et dMapper) throws  OExcept on {
+    return t ;
   }
 }

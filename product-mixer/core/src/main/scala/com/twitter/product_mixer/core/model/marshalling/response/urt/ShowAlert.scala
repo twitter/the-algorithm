@@ -1,46 +1,46 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ShowAlert.ShowAlertEntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertColorConfiguration
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertDisplayLocation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertIconDisplayInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertNavigationMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.util.Duration
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.ShowAlert.ShowAlertEntryNa space
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.alert.ShowAlertColorConf gurat on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.alert.ShowAlertD splayLocat on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.alert.ShowAlert conD splay nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.alert.ShowAlertNav gat on tadata
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.alert.ShowAlertType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEvent nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FeedbackAct on nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chText
+ mport com.tw ter.ut l.Durat on
 
 /**
- * Domain model for the URT ShowAlert [[https://docbird.twitter.biz/unified_rich_timelines_urt/gen/com/twitter/timelines/render/thriftscala/ShowAlert.html]]
+ * Doma n model for t  URT ShowAlert [[https://docb rd.tw ter.b z/un f ed_r ch_t  l nes_urt/gen/com/tw ter/t  l nes/render/thr ftscala/ShowAlert.html]]
  *
- * @note the text field (id: 2) has been deliberately excluded as it's been deprecated since 2018. Use RichText instead.
+ * @note t  text f eld ( d: 2) has been del berately excluded as  's been deprecated s nce 2018. Use R chText  nstead.
  */
 case class ShowAlert(
-  override val id: String,
-  override val sortIndex: Option[Long],
+  overr de val  d: Str ng,
+  overr de val sort ndex: Opt on[Long],
   alertType: ShowAlertType,
-  triggerDelay: Option[Duration],
-  displayDuration: Option[Duration],
-  clientEventInfo: Option[ClientEventInfo],
-  collapseDelay: Option[Duration],
-  userIds: Option[Seq[Long]],
-  richText: Option[RichText],
-  iconDisplayInfo: Option[ShowAlertIconDisplayInfo],
-  colorConfig: ShowAlertColorConfiguration,
-  displayLocation: ShowAlertDisplayLocation,
-  navigationMetadata: Option[ShowAlertNavigationMetadata],
-) extends TimelineItem {
-  override val entryNamespace: EntryNamespace = ShowAlertEntryNamespace
+  tr ggerDelay: Opt on[Durat on],
+  d splayDurat on: Opt on[Durat on],
+  cl entEvent nfo: Opt on[Cl entEvent nfo],
+  collapseDelay: Opt on[Durat on],
+  user ds: Opt on[Seq[Long]],
+  r chText: Opt on[R chText],
+   conD splay nfo: Opt on[ShowAlert conD splay nfo],
+  colorConf g: ShowAlertColorConf gurat on,
+  d splayLocat on: ShowAlertD splayLocat on,
+  nav gat on tadata: Opt on[ShowAlertNav gat on tadata],
+) extends T  l ne em {
+  overr de val entryNa space: EntryNa space = ShowAlertEntryNa space
 
-  // Note that sort index is not used for ShowAlerts, as they are not TimelineEntry and do not have entryId
-  override def withSortIndex(newSortIndex: Long): TimelineEntry =
-    copy(sortIndex = Some(newSortIndex))
+  // Note that sort  ndex  s not used for ShowAlerts, as t y are not T  l neEntry and do not have entry d
+  overr de def w hSort ndex(newSort ndex: Long): T  l neEntry =
+    copy(sort ndex = So (newSort ndex))
 
   // Not used for ShowAlerts
-  override def feedbackActionInfo: Option[FeedbackActionInfo] = None
+  overr de def feedbackAct on nfo: Opt on[FeedbackAct on nfo] = None
 }
 
 object ShowAlert {
-  val ShowAlertEntryNamespace: EntryNamespace = EntryNamespace("show-alert")
+  val ShowAlertEntryNa space: EntryNa space = EntryNa space("show-alert")
 }

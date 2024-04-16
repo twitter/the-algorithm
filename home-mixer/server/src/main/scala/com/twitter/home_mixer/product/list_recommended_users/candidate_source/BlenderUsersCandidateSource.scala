@@ -1,43 +1,43 @@
-package com.twitter.home_mixer.product.list_recommended_users.candidate_source
+package com.tw ter.ho _m xer.product.l st_recom nded_users.cand date_s ce
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.search.adaptive.adaptive_results.thriftscala.AdaptiveSearchResultData
-import com.twitter.search.adaptive.adaptive_results.thriftscala.Result
-import com.twitter.search.adaptive.adaptive_results.thriftscala.ResultData
-import com.twitter.search.blender.adaptive_search.thriftscala.AdaptiveSearchResponse
-import com.twitter.search.blender.adaptive_search.thriftscala.Container
-import com.twitter.search.blender.thriftscala.BlenderService
-import com.twitter.search.blender.thriftscala.ThriftBlenderRequest
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.search.adapt ve.adapt ve_results.thr ftscala.Adapt veSearchResultData
+ mport com.tw ter.search.adapt ve.adapt ve_results.thr ftscala.Result
+ mport com.tw ter.search.adapt ve.adapt ve_results.thr ftscala.ResultData
+ mport com.tw ter.search.blender.adapt ve_search.thr ftscala.Adapt veSearchResponse
+ mport com.tw ter.search.blender.adapt ve_search.thr ftscala.Conta ner
+ mport com.tw ter.search.blender.thr ftscala.BlenderServ ce
+ mport com.tw ter.search.blender.thr ftscala.Thr ftBlenderRequest
+ mport com.tw ter.st ch.St ch
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class BlenderUsersCandidateSource @Inject() (
-  blenderClient: BlenderService.MethodPerEndpoint)
-    extends CandidateSource[ThriftBlenderRequest, Long] {
+@S ngleton
+class BlenderUsersCand dateS ce @ nject() (
+  blenderCl ent: BlenderServ ce. thodPerEndpo nt)
+    extends Cand dateS ce[Thr ftBlenderRequest, Long] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("BlenderUsers")
+  overr de val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er("BlenderUsers")
 
-  override def apply(request: ThriftBlenderRequest): Stitch[Seq[Long]] = {
-    Stitch.callFuture(
-      blenderClient.serveV2(request).map { response =>
-        val userIdsOpt =
-          response.adaptiveSearchResponse.map(extractUserIdsFromAdaptiveSearchResponse)
-        userIdsOpt.getOrElse(Seq.empty)
+  overr de def apply(request: Thr ftBlenderRequest): St ch[Seq[Long]] = {
+    St ch.callFuture(
+      blenderCl ent.serveV2(request).map { response =>
+        val user dsOpt =
+          response.adapt veSearchResponse.map(extractUser dsFromAdapt veSearchResponse)
+        user dsOpt.getOrElse(Seq.empty)
       }
     )
   }
 
-  private def extractUserIdsFromAdaptiveSearchResponse(
-    response: AdaptiveSearchResponse
+  pr vate def extractUser dsFromAdapt veSearchResponse(
+    response: Adapt veSearchResponse
   ): Seq[Long] = {
     response match {
-      case AdaptiveSearchResponse(Some(Seq(Container(Some(results), _))), _, _) =>
+      case Adapt veSearchResponse(So (Seq(Conta ner(So (results), _))), _, _) =>
         results.map(_.data).collect {
-          case AdaptiveSearchResultData.Result(Result(ResultData.User(user), _)) =>
-            user.id
+          case Adapt veSearchResultData.Result(Result(ResultData.User(user), _)) =>
+            user. d
         }
       case _ => Seq.empty
     }

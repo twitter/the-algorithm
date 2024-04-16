@@ -1,51 +1,51 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.t  l ne_module
 
 /**
- *  This trait is used for Module ID generation. Clients are safe to ignore this code unless they
- *  have a specific use case that requires hard-coded, specific, module ids.  In that scenario,
- *  they can use the [[ManualModuleId]] case class.
+ *  T  tra   s used for Module  D generat on. Cl ents are safe to  gnore t  code unless t y
+ *  have a spec f c use case that requ res hard-coded, spec f c, module  ds.   n that scenar o,
+ *  t y can use t  [[ManualModule d]] case class.
  */
-sealed trait ModuleIdGeneration {
-  val moduleId: Long
+sealed tra  Module dGenerat on {
+  val module d: Long
 }
 
-object ModuleIdGeneration {
-  def apply(moduleId: Long): ModuleIdGeneration = moduleId match {
-    case moduleId if AutomaticUniqueModuleId.isAutomaticUniqueModuleId(moduleId) =>
-      AutomaticUniqueModuleId(moduleId)
-    case moduleId => ManualModuleId(moduleId)
+object Module dGenerat on {
+  def apply(module d: Long): Module dGenerat on = module d match {
+    case module d  f Automat cUn queModule d. sAutomat cUn queModule d(module d) =>
+      Automat cUn queModule d(module d)
+    case module d => ManualModule d(module d)
   }
 }
 
 /**
- * Generate unique Ids for each module, which results in unique URT entryIds
- * for each module even if they share the same entryNamespace.
- * This is the default and recommended use case.
- * Note that the module Id value is just a placeholder
+ * Generate un que  ds for each module, wh ch results  n un que URT entry ds
+ * for each module even  f t y share t  sa  entryNa space.
+ * T   s t  default and recom nded use case.
+ * Note that t  module  d value  s just a placeholder
  */
-case class AutomaticUniqueModuleId private (moduleId: Long = 0L) extends ModuleIdGeneration {
-  def withOffset(offset: Long): AutomaticUniqueModuleId = copy(
-    AutomaticUniqueModuleId.idRange.min + offset)
+case class Automat cUn queModule d pr vate (module d: Long = 0L) extends Module dGenerat on {
+  def w hOffset(offset: Long): Automat cUn queModule d = copy(
+    Automat cUn queModule d. dRange.m n + offset)
 }
 
-object AutomaticUniqueModuleId {
-  // We use a specific numeric range to track whether IDs should be automatically generated.
-  val idRange: Range = Range(-10000, -1000)
+object Automat cUn queModule d {
+  //   use a spec f c nu r c range to track w t r  Ds should be automat cally generated.
+  val  dRange: Range = Range(-10000, -1000)
 
-  def apply(): AutomaticUniqueModuleId = AutomaticUniqueModuleId(idRange.min)
+  def apply(): Automat cUn queModule d = Automat cUn queModule d( dRange.m n)
 
-  def isAutomaticUniqueModuleId(moduleId: Long): Boolean = idRange.contains(moduleId)
+  def  sAutomat cUn queModule d(module d: Long): Boolean =  dRange.conta ns(module d)
 }
 
 /**
- * ManualModuleId should normally not be required, but is helpful if the
- * entryId of the module must be controlled. A scenario where this may be
- * required is if a single candidate source returns multiple modules, and
- * each module has the same presentation (e.g. Header, Footer). By setting
- * different IDs, we signal to the platform that each module should be separate
- * by using a different manual Id.
+ * ManualModule d should normally not be requ red, but  s  lpful  f t 
+ * entry d of t  module must be controlled. A scenar o w re t  may be
+ * requ red  s  f a s ngle cand date s ce returns mult ple modules, and
+ * each module has t  sa  presentat on (e.g.  ader, Footer). By sett ng
+ * d fferent  Ds,   s gnal to t  platform that each module should be separate
+ * by us ng a d fferent manual  d.
  */
-case class ManualModuleId(override val moduleId: Long) extends ModuleIdGeneration {
-  // Negative module IDs are reserved for internal usage
-  if (moduleId < 0) throw new IllegalArgumentException("moduleId must be a positive number")
+case class ManualModule d(overr de val module d: Long) extends Module dGenerat on {
+  // Negat ve module  Ds are reserved for  nternal usage
+   f (module d < 0) throw new  llegalArgu ntExcept on("module d must be a pos  ve number")
 }

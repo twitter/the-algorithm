@@ -1,39 +1,39 @@
-package com.twitter.unified_user_actions.adapter.client_event
+package com.tw ter.un f ed_user_act ons.adapter.cl ent_event
 
-import com.twitter.clientapp.thriftscala.ItemType
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.clientapp.thriftscala.{Item => LogEventItem}
-import com.twitter.unified_user_actions.thriftscala._
+ mport com.tw ter.cl entapp.thr ftscala. emType
+ mport com.tw ter.cl entapp.thr ftscala.LogEvent
+ mport com.tw ter.cl entapp.thr ftscala.{ em => LogEvent em}
+ mport com.tw ter.un f ed_user_act ons.thr ftscala._
 
-abstract class BaseFeedbackSubmitClientEvent(actionType: ActionType)
-    extends BaseClientEvent(actionType = actionType) {
+abstract class BaseFeedbackSubm Cl entEvent(act onType: Act onType)
+    extends BaseCl entEvent(act onType = act onType) {
 
-  override def getUuaItem(
-    ceItem: LogEventItem,
+  overr de def getUua em(
+    ce em: LogEvent em,
     logEvent: LogEvent
-  ): Option[Item] = {
-    logEvent.eventNamespace.flatMap(_.page).flatMap {
+  ): Opt on[ em] = {
+    logEvent.eventNa space.flatMap(_.page).flatMap {
       case "search" =>
-        val searchInfoUtil = new SearchInfoUtils(ceItem)
-        searchInfoUtil.getQueryOptFromItem(logEvent).flatMap { query =>
-          val isRelevant: Boolean = logEvent.eventNamespace
-            .flatMap(_.element)
-            .contains("is_relevant")
-          logEvent.eventNamespace.flatMap(_.component).flatMap {
+        val search nfoUt l = new Search nfoUt ls(ce em)
+        search nfoUt l.getQueryOptFrom em(logEvent).flatMap { query =>
+          val  sRelevant: Boolean = logEvent.eventNa space
+            .flatMap(_.ele nt)
+            .conta ns(" s_relevant")
+          logEvent.eventNa space.flatMap(_.component).flatMap {
             case "relevance_prompt_module" =>
-              for (actionTweetId <- ceItem.id)
-                yield Item.FeedbackPromptInfo(
-                  FeedbackPromptInfo(
-                    feedbackPromptActionInfo = FeedbackPromptActionInfo.TweetRelevantToSearch(
-                      TweetRelevantToSearch(
+              for (act onT et d <- ce em. d)
+                y eld  em.FeedbackPrompt nfo(
+                  FeedbackPrompt nfo(
+                    feedbackPromptAct on nfo = FeedbackPromptAct on nfo.T etRelevantToSearch(
+                      T etRelevantToSearch(
                         searchQuery = query,
-                        tweetId = actionTweetId,
-                        isRelevant = Some(isRelevant)))))
-            case "did_you_find_it_module" =>
-              Some(
-                Item.FeedbackPromptInfo(FeedbackPromptInfo(feedbackPromptActionInfo =
-                  FeedbackPromptActionInfo.DidYouFindItSearch(
-                    DidYouFindItSearch(searchQuery = query, isRelevant = Some(isRelevant))))))
+                        t et d = act onT et d,
+                         sRelevant = So ( sRelevant)))))
+            case "d d_ _f nd_ _module" =>
+              So (
+                 em.FeedbackPrompt nfo(FeedbackPrompt nfo(feedbackPromptAct on nfo =
+                  FeedbackPromptAct on nfo.D d F nd Search(
+                    D d F nd Search(searchQuery = query,  sRelevant = So ( sRelevant))))))
           }
         }
       case _ => None
@@ -41,6 +41,6 @@ abstract class BaseFeedbackSubmitClientEvent(actionType: ActionType)
 
   }
 
-  override def isItemTypeValid(itemTypeOpt: Option[ItemType]): Boolean =
-    ItemTypeFilterPredicates.isItemTypeForSearchResultsPageFeedbackSubmit(itemTypeOpt)
+  overr de def  s emTypeVal d( emTypeOpt: Opt on[ emType]): Boolean =
+     emTypeF lterPred cates. s emTypeForSearchResultsPageFeedbackSubm ( emTypeOpt)
 }

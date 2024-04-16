@@ -1,70 +1,70 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import java.util.ArrayList;
-import java.util.List;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.L st;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestType;
+ mport com.tw ter.ut l.Future;
 
 /**
- * Filter that returns a PARTITION_SKIPPED response instead of sending the request to a partition
- * if the partition PartitionAccessController says its disabled for a request.
+ * F lter that returns a PART T ON_SK PPED response  nstead of send ng t  request to a part  on
+ *  f t  part  on Part  onAccessController says  s d sabled for a request.
  */
-public final class SkipPartitionFilter extends
-    SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+publ c f nal class Sk pPart  onF lter extends
+    S mpleF lter<Earlyb rdRequestContext, Earlyb rdResponse> {
 
-  private static final Logger LOG = LoggerFactory.getLogger(SkipPartitionFilter.class);
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Sk pPart  onF lter.class);
 
-  private final String tierName;
-  private final int partitionNum;
-  private final PartitionAccessController controller;
+  pr vate f nal Str ng t erNa ;
+  pr vate f nal  nt part  onNum;
+  pr vate f nal Part  onAccessController controller;
 
-  private SkipPartitionFilter(String tierName, int partitionNum,
-                             PartitionAccessController controller) {
-    this.tierName = tierName;
-    this.partitionNum = partitionNum;
-    this.controller = controller;
+  pr vate Sk pPart  onF lter(Str ng t erNa ,  nt part  onNum,
+                             Part  onAccessController controller) {
+    t .t erNa  = t erNa ;
+    t .part  onNum = part  onNum;
+    t .controller = controller;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(
+      Earlyb rdRequestContext requestContext,
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> serv ce) {
 
-    EarlybirdRequest request = requestContext.getRequest();
-    if (!controller.canAccessPartition(tierName, partitionNum, request.getClientId(),
-        EarlybirdRequestType.of(request))) {
-      return Future.value(EarlybirdServiceScatterGatherSupport.newEmptyResponse());
+    Earlyb rdRequest request = requestContext.getRequest();
+     f (!controller.canAccessPart  on(t erNa , part  onNum, request.getCl ent d(),
+        Earlyb rdRequestType.of(request))) {
+      return Future.value(Earlyb rdServ ceScatterGat rSupport.newEmptyResponse());
     }
 
-    return service.apply(requestContext);
+    return serv ce.apply(requestContext);
   }
 
   /**
-   * Wrap the services with a SkipPartitionFilter
+   * Wrap t  serv ces w h a Sk pPart  onF lter
    */
-  public static List<Service<EarlybirdRequestContext, EarlybirdResponse>> wrapServices(
-      String tierName,
-      List<Service<EarlybirdRequestContext, EarlybirdResponse>> clients,
-      PartitionAccessController controller) {
+  publ c stat c L st<Serv ce<Earlyb rdRequestContext, Earlyb rdResponse>> wrapServ ces(
+      Str ng t erNa ,
+      L st<Serv ce<Earlyb rdRequestContext, Earlyb rdResponse>> cl ents,
+      Part  onAccessController controller) {
 
-    LOG.info("Creating SkipPartitionFilters for cluster: {}, tier: {}, partitions 0-{}",
-        controller.getClusterName(), tierName, clients.size() - 1);
+    LOG. nfo("Creat ng Sk pPart  onF lters for cluster: {}, t er: {}, part  ons 0-{}",
+        controller.getClusterNa (), t erNa , cl ents.s ze() - 1);
 
-    List<Service<EarlybirdRequestContext, EarlybirdResponse>> wrappedServices = new ArrayList<>();
-    for (int partitionNum = 0; partitionNum < clients.size(); partitionNum++) {
-      SkipPartitionFilter filter = new SkipPartitionFilter(tierName, partitionNum, controller);
-      wrappedServices.add(filter.andThen(clients.get(partitionNum)));
+    L st<Serv ce<Earlyb rdRequestContext, Earlyb rdResponse>> wrappedServ ces = new ArrayL st<>();
+    for ( nt part  onNum = 0; part  onNum < cl ents.s ze(); part  onNum++) {
+      Sk pPart  onF lter f lter = new Sk pPart  onF lter(t erNa , part  onNum, controller);
+      wrappedServ ces.add(f lter.andT n(cl ents.get(part  onNum)));
     }
 
-    return wrappedServices;
+    return wrappedServ ces;
   }
 }

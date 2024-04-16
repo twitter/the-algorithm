@@ -1,90 +1,90 @@
-package com.twitter.ann.service.query_server.common
+package com.tw ter.ann.serv ce.query_server.common
 
-import com.twitter.ann.common._
-import com.twitter.ann.common.EmbeddingType._
-import com.twitter.ann.common.thriftscala.AnnQueryService.Query
-import com.twitter.ann.common.thriftscala.AnnQueryService
-import com.twitter.ann.common.thriftscala.NearestNeighbor
-import com.twitter.ann.common.thriftscala.NearestNeighborResult
-import com.twitter.ann.common.thriftscala.{Distance => ServiceDistance}
-import com.twitter.ann.common.thriftscala.{RuntimeParams => ServiceRuntimeParams}
-import com.twitter.bijection.Injection
-import com.twitter.finagle.Service
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.thrift.Controller
-import com.twitter.mediaservices.commons.{ThriftServer => TServer}
-import java.nio.ByteBuffer
-import javax.inject.Inject
+ mport com.tw ter.ann.common._
+ mport com.tw ter.ann.common.Embedd ngType._
+ mport com.tw ter.ann.common.thr ftscala.AnnQueryServ ce.Query
+ mport com.tw ter.ann.common.thr ftscala.AnnQueryServ ce
+ mport com.tw ter.ann.common.thr ftscala.NearestNe ghbor
+ mport com.tw ter.ann.common.thr ftscala.NearestNe ghborResult
+ mport com.tw ter.ann.common.thr ftscala.{D stance => Serv ceD stance}
+ mport com.tw ter.ann.common.thr ftscala.{Runt  Params => Serv ceRunt  Params}
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.f nagle.Serv ce
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f natra.thr ft.Controller
+ mport com.tw ter. d aserv ces.commons.{Thr ftServer => TServer}
+ mport java.n o.ByteBuffer
+ mport javax. nject. nject
 
-class QueryIndexThriftController[T, P <: RuntimeParams, D <: Distance[D]] @Inject() (
-  statsReceiver: StatsReceiver,
+class Query ndexThr ftController[T, P <: Runt  Params, D <: D stance[D]] @ nject() (
+  statsRece ver: StatsRece ver,
   queryable: Queryable[T, P, D],
-  runtimeParamInjection: Injection[P, ServiceRuntimeParams],
-  distanceInjection: Injection[D, ServiceDistance],
-  idInjection: Injection[T, Array[Byte]])
-    extends Controller(AnnQueryService) {
+  runt  Param nject on:  nject on[P, Serv ceRunt  Params],
+  d stance nject on:  nject on[D, Serv ceD stance],
+   d nject on:  nject on[T, Array[Byte]])
+    extends Controller(AnnQueryServ ce) {
 
-  private[this] val thriftServer = new TServer(statsReceiver, Some(RuntimeExceptionTransform))
+  pr vate[t ] val thr ftServer = new TServer(statsRece ver, So (Runt  Except onTransform))
 
-  val trackingStatName = "ann_query"
+  val track ngStatNa  = "ann_query"
 
-  private[this] val stats = statsReceiver.scope(trackingStatName)
-  private[this] val numOfNeighboursRequested = stats.stat("num_of_neighbours_requested")
-  private[this] val numOfNeighboursResponse = stats.stat("num_of_neighbours_response")
-  private[this] val queryKeyNotFound = stats.stat("query_key_not_found")
+  pr vate[t ] val stats = statsRece ver.scope(track ngStatNa )
+  pr vate[t ] val numOfNe ghb sRequested = stats.stat("num_of_ne ghb s_requested")
+  pr vate[t ] val numOfNe ghb sResponse = stats.stat("num_of_ne ghb s_response")
+  pr vate[t ] val queryKeyNotFound = stats.stat("query_key_not_found")
 
   /**
-   * Implements AnnQueryService.query, returns nearest neighbours for a given query
+   *  mple nts AnnQueryServ ce.query, returns nearest ne ghb s for a g ven query
    */
-  val query: Service[Query.Args, Query.SuccessType] = { args: Query.Args =>
-    thriftServer.track(trackingStatName) {
+  val query: Serv ce[Query.Args, Query.SuccessType] = { args: Query.Args =>
+    thr ftServer.track(track ngStatNa ) {
       val query = args.query
       val key = query.key
-      val embedding = embeddingSerDe.fromThrift(query.embedding)
-      val numOfNeighbours = query.numberOfNeighbors
-      val withDistance = query.withDistance
-      val runtimeParams = runtimeParamInjection.invert(query.runtimeParams).get
-      numOfNeighboursRequested.add(numOfNeighbours)
+      val embedd ng = embedd ngSerDe.fromThr ft(query.embedd ng)
+      val numOfNe ghb s = query.numberOfNe ghbors
+      val w hD stance = query.w hD stance
+      val runt  Params = runt  Param nject on. nvert(query.runt  Params).get
+      numOfNe ghb sRequested.add(numOfNe ghb s)
 
-      val result = if (withDistance) {
-        val nearestNeighbors = if (queryable.isInstanceOf[QueryableGrouped[T, P, D]]) {
+      val result =  f (w hD stance) {
+        val nearestNe ghbors =  f (queryable. s nstanceOf[QueryableGrouped[T, P, D]]) {
           queryable
-            .asInstanceOf[QueryableGrouped[T, P, D]]
-            .queryWithDistance(embedding, numOfNeighbours, runtimeParams, key)
+            .as nstanceOf[QueryableGrouped[T, P, D]]
+            .queryW hD stance(embedd ng, numOfNe ghb s, runt  Params, key)
         } else {
           queryable
-            .queryWithDistance(embedding, numOfNeighbours, runtimeParams)
+            .queryW hD stance(embedd ng, numOfNe ghb s, runt  Params)
         }
 
-        nearestNeighbors.map { list =>
-          list.map { nn =>
-            NearestNeighbor(
-              ByteBuffer.wrap(idInjection.apply(nn.neighbor)),
-              Some(distanceInjection.apply(nn.distance))
+        nearestNe ghbors.map { l st =>
+          l st.map { nn =>
+            NearestNe ghbor(
+              ByteBuffer.wrap( d nject on.apply(nn.ne ghbor)),
+              So (d stance nject on.apply(nn.d stance))
             )
           }
         }
       } else {
 
-        val nearestNeighbors = if (queryable.isInstanceOf[QueryableGrouped[T, P, D]]) {
+        val nearestNe ghbors =  f (queryable. s nstanceOf[QueryableGrouped[T, P, D]]) {
           queryable
-            .asInstanceOf[QueryableGrouped[T, P, D]]
-            .query(embedding, numOfNeighbours, runtimeParams, key)
+            .as nstanceOf[QueryableGrouped[T, P, D]]
+            .query(embedd ng, numOfNe ghb s, runt  Params, key)
         } else {
           queryable
-            .query(embedding, numOfNeighbours, runtimeParams)
+            .query(embedd ng, numOfNe ghb s, runt  Params)
         }
 
-        nearestNeighbors
-          .map { list =>
-            list.map { nn =>
-              NearestNeighbor(ByteBuffer.wrap(idInjection.apply(nn)))
+        nearestNe ghbors
+          .map { l st =>
+            l st.map { nn =>
+              NearestNe ghbor(ByteBuffer.wrap( d nject on.apply(nn)))
             }
           }
       }
 
-      result.map(NearestNeighborResult(_)).onSuccess { r =>
-        numOfNeighboursResponse.add(r.nearestNeighbors.size)
+      result.map(NearestNe ghborResult(_)).onSuccess { r =>
+        numOfNe ghb sResponse.add(r.nearestNe ghbors.s ze)
       }
     }
   }

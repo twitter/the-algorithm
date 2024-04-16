@@ -1,18 +1,18 @@
-scala_library(
-    name = "default",
-    sources = ["DefaultPartitioner.scala"],
-    tags = ["bazel-compatible"],
-    dependencies = [
+scala_l brary(
+    na  = "default",
+    s ces = ["DefaultPart  oner.scala"],
+    tags = ["bazel-compat ble"],
+    dependenc es = [
         ":base",
-        "unified_user_actions/enricher/src/main/thrift/com/twitter/unified_user_actions/enricher/internal:internal-scala",
+        "un f ed_user_act ons/enr c r/src/ma n/thr ft/com/tw ter/un f ed_user_act ons/enr c r/ nternal: nternal-scala",
     ],
 )
 
-scala_library(
-    name = "base",
-    sources = ["Partitioner.scala"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "unified_user_actions/enricher/src/main/thrift/com/twitter/unified_user_actions/enricher/internal:internal-scala",
+scala_l brary(
+    na  = "base",
+    s ces = ["Part  oner.scala"],
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "un f ed_user_act ons/enr c r/src/ma n/thr ft/com/tw ter/un f ed_user_act ons/enr c r/ nternal: nternal-scala",
     ],
 )

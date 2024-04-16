@@ -2,87 +2,87 @@ syntax = "proto3";
 
 package tensorflow;
 
-import "tensorflow/core/framework/allocation_description.proto";
-import "tensorflow/core/framework/tensor_description.proto";
+ mport "tensorflow/core/fra work/allocat on_descr pt on.proto";
+ mport "tensorflow/core/fra work/tensor_descr pt on.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "StepStatsProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/step_stats_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "StepStatsProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.fra work";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/fra work/step_stats_go_proto";
 
-// An allocation/de-allocation operation performed by the allocator.
-message AllocationRecord {
-  // The timestamp of the operation.
-  int64 alloc_micros = 1;
-  // Number of bytes allocated, or de-allocated if negative.
-  int64 alloc_bytes = 2;
+// An allocat on/de-allocat on operat on perfor d by t  allocator.
+ ssage Allocat onRecord {
+  // T  t  stamp of t  operat on.
+   nt64 alloc_m cros = 1;
+  // Number of bytes allocated, or de-allocated  f negat ve.
+   nt64 alloc_bytes = 2;
 }
 
-message AllocatorMemoryUsed {
-  string allocator_name = 1;
-  // These are per-node allocator memory stats.
-  int64 total_bytes = 2;
-  int64 peak_bytes = 3;
-  // The bytes that are not deallocated.
-  int64 live_bytes = 4;
-  // The allocation and deallocation timeline.
-  repeated AllocationRecord allocation_records = 6;
+ ssage Allocator moryUsed {
+  str ng allocator_na  = 1;
+  // T se are per-node allocator  mory stats.
+   nt64 total_bytes = 2;
+   nt64 peak_bytes = 3;
+  // T  bytes that are not deallocated.
+   nt64 l ve_bytes = 4;
+  // T  allocat on and deallocat on t  l ne.
+  repeated Allocat onRecord allocat on_records = 6;
 
-  // These are snapshots of the overall allocator memory stats.
-  // The number of live bytes currently allocated by the allocator.
-  int64 allocator_bytes_in_use = 5;
+  // T se are snapshots of t  overall allocator  mory stats.
+  // T  number of l ve bytes currently allocated by t  allocator.
+   nt64 allocator_bytes_ n_use = 5;
 }
 
-// Output sizes recorded for a single execution of a graph node.
-message NodeOutput {
-  int32 slot = 1;
-  TensorDescription tensor_description = 3;
+// Output s zes recorded for a s ngle execut on of a graph node.
+ ssage NodeOutput {
+   nt32 slot = 1;
+  TensorDescr pt on tensor_descr pt on = 3;
 }
 
-// For memory tracking.
-message MemoryStats {
-  int64 temp_memory_size = 1;
-  int64 persistent_memory_size = 3;
-  repeated int64 persistent_tensor_alloc_ids = 5;
+// For  mory track ng.
+ ssage  moryStats {
+   nt64 temp_ mory_s ze = 1;
+   nt64 pers stent_ mory_s ze = 3;
+  repeated  nt64 pers stent_tensor_alloc_ ds = 5;
 
-  int64 device_temp_memory_size = 2 [deprecated = true];
-  int64 device_persistent_memory_size = 4 [deprecated = true];
-  repeated int64 device_persistent_tensor_alloc_ids = 6 [deprecated = true];
+   nt64 dev ce_temp_ mory_s ze = 2 [deprecated = true];
+   nt64 dev ce_pers stent_ mory_s ze = 4 [deprecated = true];
+  repeated  nt64 dev ce_pers stent_tensor_alloc_ ds = 6 [deprecated = true];
 }
 
-// Time/size stats recorded for a single execution of a graph node.
-message NodeExecStats {
-  // TODO(tucker): Use some more compact form of node identity than
-  // the full string name.  Either all processes should agree on a
-  // global id (cost_id?) for each node, or we should use a hash of
-  // the name.
-  string node_name = 1;
-  int64 all_start_micros = 2;
-  int64 op_start_rel_micros = 3;
-  int64 op_end_rel_micros = 4;
-  int64 all_end_rel_micros = 5;
-  repeated AllocatorMemoryUsed memory = 6;
+// T  /s ze stats recorded for a s ngle execut on of a graph node.
+ ssage NodeExecStats {
+  // TODO(tucker): Use so  more compact form of node  dent y than
+  // t  full str ng na .  E  r all processes should agree on a
+  // global  d (cost_ d?) for each node, or   should use a hash of
+  // t  na .
+  str ng node_na  = 1;
+   nt64 all_start_m cros = 2;
+   nt64 op_start_rel_m cros = 3;
+   nt64 op_end_rel_m cros = 4;
+   nt64 all_end_rel_m cros = 5;
+  repeated Allocator moryUsed  mory = 6;
   repeated NodeOutput output = 7;
-  string timeline_label = 8;
-  int64 scheduled_micros = 9;
-  uint32 thread_id = 10;
-  repeated AllocationDescription referenced_tensor = 11;
-  MemoryStats memory_stats = 12;
-  int64 all_start_nanos = 13;
-  int64 op_start_rel_nanos = 14;
-  int64 op_end_rel_nanos = 15;
-  int64 all_end_rel_nanos = 16;
-  int64 scheduled_nanos = 17;
+  str ng t  l ne_label = 8;
+   nt64 sc duled_m cros = 9;
+  u nt32 thread_ d = 10;
+  repeated Allocat onDescr pt on referenced_tensor = 11;
+   moryStats  mory_stats = 12;
+   nt64 all_start_nanos = 13;
+   nt64 op_start_rel_nanos = 14;
+   nt64 op_end_rel_nanos = 15;
+   nt64 all_end_rel_nanos = 16;
+   nt64 sc duled_nanos = 17;
 }
 
-message DeviceStepStats {
-  string device = 1;
+ ssage Dev ceStepStats {
+  str ng dev ce = 1;
   repeated NodeExecStats node_stats = 2;
-  // Its key is thread id.
-  map<uint32, string> thread_names = 3;
+  //  s key  s thread  d.
+  map<u nt32, str ng> thread_na s = 3;
 }
 
-message StepStats {
-  repeated DeviceStepStats dev_stats = 1;
+ ssage StepStats {
+  repeated Dev ceStepStats dev_stats = 1;
 }

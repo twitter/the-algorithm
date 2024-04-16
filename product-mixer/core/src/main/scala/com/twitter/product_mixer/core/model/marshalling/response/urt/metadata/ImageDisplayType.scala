@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata
 
-sealed trait ImageDisplayType
+sealed tra   mageD splayType
 
-case object Icon extends ImageDisplayType
-case object FullWidth extends ImageDisplayType
-case object IconSmall extends ImageDisplayType
+case object  con extends  mageD splayType
+case object FullW dth extends  mageD splayType
+case object  conSmall extends  mageD splayType

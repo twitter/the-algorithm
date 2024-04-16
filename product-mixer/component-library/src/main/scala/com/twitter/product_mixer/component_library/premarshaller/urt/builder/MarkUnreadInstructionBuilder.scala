@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.MarkEntriesUnreadInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.MarkUnreadableEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.MarkEntr esUnread nstruct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.MarkUnreadableEntry
 
 /**
- * Build a MarkUnreadEntries instruction
+ * Bu ld a MarkUnreadEntr es  nstruct on
  *
- * Note that this implementation currently supports top-level entries, but not module item entries.
+ * Note that t   mple ntat on currently supports top-level entr es, but not module  em entr es.
  */
-case class MarkUnreadInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends UrtInstructionBuilder[Query, MarkEntriesUnreadInstruction] {
+case class MarkUnread nstruct onBu lder[Query <: P pel neQuery](
+  overr de val  nclude nstruct on:  nclude nstruct on[Query] = Always nclude)
+    extends Urt nstruct onBu lder[Query, MarkEntr esUnread nstruct on] {
 
-  override def build(
+  overr de def bu ld(
     query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[MarkEntriesUnreadInstruction] = {
-    if (includeInstruction(query, entries)) {
-      val filteredEntries = entries.collect {
-        case entry: MarkUnreadableEntry if entry.isMarkUnread.contains(true) =>
-          entry.entryIdentifier
+    entr es: Seq[T  l neEntry]
+  ): Seq[MarkEntr esUnread nstruct on] = {
+     f ( nclude nstruct on(query, entr es)) {
+      val f lteredEntr es = entr es.collect {
+        case entry: MarkUnreadableEntry  f entry. sMarkUnread.conta ns(true) =>
+          entry.entry dent f er
       }
-      if (filteredEntries.nonEmpty) Seq(MarkEntriesUnreadInstruction(filteredEntries))
+       f (f lteredEntr es.nonEmpty) Seq(MarkEntr esUnread nstruct on(f lteredEntr es))
       else Seq.empty
     } else {
       Seq.empty

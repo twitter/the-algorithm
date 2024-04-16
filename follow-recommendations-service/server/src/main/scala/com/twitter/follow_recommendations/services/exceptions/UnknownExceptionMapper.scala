@@ -1,18 +1,18 @@
-package com.twitter.follow_recommendations.service.exceptions
+package com.tw ter.follow_recom ndat ons.serv ce.except ons
 
-import com.twitter.finatra.thrift.exceptions.ExceptionMapper
-import com.twitter.inject.Logging
-import com.twitter.util.Future
-import javax.inject.Singleton
+ mport com.tw ter.f natra.thr ft.except ons.Except onMapper
+ mport com.tw ter. nject.Logg ng
+ mport com.tw ter.ut l.Future
+ mport javax. nject.S ngleton
 
-@Singleton
-class UnknownLoggingExceptionMapper extends ExceptionMapper[Exception, Throwable] with Logging {
-  def handleException(throwable: Exception): Future[Throwable] = {
+@S ngleton
+class UnknownLogg ngExcept onMapper extends Except onMapper[Except on, Throwable] w h Logg ng {
+  def handleExcept on(throwable: Except on): Future[Throwable] = {
     error(
-      s"Unmapped Exception: ${throwable.getMessage} - ${throwable.getStackTrace.mkString(", \n\t")}",
+      s"Unmapped Except on: ${throwable.get ssage} - ${throwable.getStackTrace.mkStr ng(", \n\t")}",
       throwable
     )
 
-    Future.exception(throwable)
+    Future.except on(throwable)
   }
 }

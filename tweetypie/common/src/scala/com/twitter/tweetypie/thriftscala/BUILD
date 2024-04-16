@@ -1,13 +1,13 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finagle/finagle-core/src/main",
-        "scrooge/scrooge-core/src/main/scala",
-        "tweetypie/common/src/thrift/com/twitter/tweetypie:service-scala",
-        "util/util-core:scala",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "f nagle/f nagle-core/src/ma n",
+        "scrooge/scrooge-core/src/ma n/scala",
+        "t etyp e/common/src/thr ft/com/tw ter/t etyp e:serv ce-scala",
+        "ut l/ut l-core:scala",
     ],
 )

@@ -1,31 +1,31 @@
-package com.twitter.follow_recommendations.common.predicates
+package com.tw ter.follow_recom ndat ons.common.pred cates
 
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.follow_recom ndat ons.common.base.Pred cate
+ mport com.tw ter.follow_recom ndat ons.common.base.Pred cateResult
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.F lterReason
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .Param
 
 /**
- * This predicate allows us to filter candidates given its source.
- * To avoid bucket dilution, we only want to evaluate the param (which would implicitly trigger
- * bucketing for FSParams) only if the candidate source fn yields true.
- * The param provided should be true when we want to keep the candidate and false otherwise.
+ * T  pred cate allows us to f lter cand dates g ven  s s ce.
+ * To avo d bucket d lut on,   only want to evaluate t  param (wh ch would  mpl c ly tr gger
+ * bucket ng for FSParams) only  f t  cand date s ce fn y elds true.
+ * T  param prov ded should be true w n   want to keep t  cand date and false ot rw se.
  */
-class CandidateSourceParamPredicate(
+class Cand dateS ceParamPred cate(
   val param: Param[Boolean],
-  val reason: FilterReason,
-  candidateSources: Set[CandidateSourceIdentifier])
-    extends Predicate[CandidateUser] {
-  override def apply(candidate: CandidateUser): Stitch[PredicateResult] = {
-    // we want to avoid evaluating the param if the candidate source fn yields false
-    if (candidate.getCandidateSources.keys.exists(candidateSources.contains) && !candidate.params(
+  val reason: F lterReason,
+  cand dateS ces: Set[Cand dateS ce dent f er])
+    extends Pred cate[Cand dateUser] {
+  overr de def apply(cand date: Cand dateUser): St ch[Pred cateResult] = {
+    //   want to avo d evaluat ng t  param  f t  cand date s ce fn y elds false
+     f (cand date.getCand dateS ces.keys.ex sts(cand dateS ces.conta ns) && !cand date.params(
         param)) {
-      Stitch.value(PredicateResult.Invalid(Set(reason)))
+      St ch.value(Pred cateResult. nval d(Set(reason)))
     } else {
-      Stitch.value(PredicateResult.Valid)
+      St ch.value(Pred cateResult.Val d)
     }
   }
 }

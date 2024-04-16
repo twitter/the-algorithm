@@ -1,10 +1,10 @@
-namespace java com.twitter.follow_recommendations.logging.thriftjava
-#@namespace scala com.twitter.follow_recommendations.logging.thriftscala
-#@namespace strato com.twitter.follow_recommendations.logging
+na space java com.tw ter.follow_recom ndat ons.logg ng.thr ftjava
+#@na space scala com.tw ter.follow_recom ndat ons.logg ng.thr ftscala
+#@na space strato com.tw ter.follow_recom ndat ons.logg ng
 
-include "engagementType.thrift"
+ nclude "engage ntType.thr ft"
 
-struct RecentlyEngagedUserId {
-  1: required i64 id(personalDataType='UserId')
-  2: required engagementType.EngagementType engagementType 
-}(persisted='true', hasPersonalData='true')
+struct RecentlyEngagedUser d {
+  1: requ red  64  d(personalDataType='User d')
+  2: requ red engage ntType.Engage ntType engage ntType 
+}(pers sted='true', hasPersonalData='true')

@@ -1,54 +1,54 @@
-package com.twitter.cr_mixer.source_signal
+package com.tw ter.cr_m xer.s ce_s gnal
 
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.GraphSourceInfo
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.param.RealGraphInParams
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.tw ter.cr_m xer.conf g.T  outConf g
+ mport com.tw ter.cr_m xer.model.GraphS ce nfo
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.cr_m xer.param.RealGraph nParams
+ mport com.tw ter.cr_m xer.s ce_s gnal.S ceFetc r.Fetc rQuery
+ mport com.tw ter.cr_m xer.thr ftscala.S ceType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.wtf.cand date.thr ftscala.Cand dateSeq
+ mport javax. nject. nject
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
 /**
- * This store fetch user recommendations from In-Network RealGraph (go/realgraph) for a given userId
+ * T  store fetch user recom ndat ons from  n-Network RealGraph (go/realgraph) for a g ven user d
  */
-@Singleton
-case class RealGraphInSourceGraphFetcher @Inject() (
-  @Named(ModuleNames.RealGraphInStore) realGraphStoreMh: ReadableStore[UserId, CandidateSeq],
-  override val timeoutConfig: TimeoutConfig,
-  globalStats: StatsReceiver)
-    extends SourceGraphFetcher {
+@S ngleton
+case class RealGraph nS ceGraphFetc r @ nject() (
+  @Na d(ModuleNa s.RealGraph nStore) realGraphStoreMh: ReadableStore[User d, Cand dateSeq],
+  overr de val t  outConf g: T  outConf g,
+  globalStats: StatsRece ver)
+    extends S ceGraphFetc r {
 
-  override protected val stats: StatsReceiver = globalStats.scope(identifier)
-  override protected val graphSourceType: SourceType = SourceType.RealGraphIn
+  overr de protected val stats: StatsRece ver = globalStats.scope( dent f er)
+  overr de protected val graphS ceType: S ceType = S ceType.RealGraph n
 
-  override def isEnabled(query: FetcherQuery): Boolean = {
-    query.params(RealGraphInParams.EnableSourceGraphParam)
+  overr de def  sEnabled(query: Fetc rQuery): Boolean = {
+    query.params(RealGraph nParams.EnableS ceGraphParam)
   }
 
-  override def fetchAndProcess(
-    query: FetcherQuery,
-  ): Future[Option[GraphSourceInfo]] = {
-    val rawSignals = trackPerItemStats(query)(
-      realGraphStoreMh.get(query.userId).map {
-        _.map { candidateSeq =>
-          candidateSeq.candidates
-            .map { candidate =>
-              // Bundle the userId with its score
-              (candidate.userId, candidate.score)
+  overr de def fetchAndProcess(
+    query: Fetc rQuery,
+  ): Future[Opt on[GraphS ce nfo]] = {
+    val rawS gnals = trackPer emStats(query)(
+      realGraphStoreMh.get(query.user d).map {
+        _.map { cand dateSeq =>
+          cand dateSeq.cand dates
+            .map { cand date =>
+              // Bundle t  user d w h  s score
+              (cand date.user d, cand date.score)
             }
         }
       }
     )
-    rawSignals.map {
-      _.map { userWithScores =>
-        convertGraphSourceInfo(userWithScores)
+    rawS gnals.map {
+      _.map { userW hScores =>
+        convertGraphS ce nfo(userW hScores)
       }
     }
   }

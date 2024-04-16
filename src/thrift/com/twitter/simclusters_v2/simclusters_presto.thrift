@@ -1,59 +1,59 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.simclusters_presto
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+na space java com.tw ter.s mclusters_v2.thr ftjava
+na space py gen.tw ter.s mclusters_v2.s mclusters_presto
+#@na space scala com.tw ter.s mclusters_v2.thr ftscala
+#@na space strato com.tw ter.s mclusters_v2
 
-include "embedding.thrift"
-include "identifier.thrift"
-include "interests.thrift"
-include "online_store.thrift"
+ nclude "embedd ng.thr ft"
+ nclude " dent f er.thr ft"
+ nclude " nterests.thr ft"
+ nclude "onl ne_store.thr ft"
 
 /**
-  * This struct is the presto-compatible "lite" version of the ClusterDetails thrift
+  * T  struct  s t  presto-compat ble "l e" vers on of t  ClusterDeta ls thr ft
   */
-struct ClusterDetailsLite {
-  1: required online_store.FullClusterId fullClusterId
-  2: required i32 numUsersWithAnyNonZeroScore
-  3: required i32 numUsersWithNonZeroFollowScore
-  4: required i32 numUsersWithNonZeroFavScore
-  5: required list<interests.UserWithScore> knownForUsersAndScores
-}(persisted="true", hasPersonalData = 'true')
+struct ClusterDeta lsL e {
+  1: requ red onl ne_store.FullCluster d fullCluster d
+  2: requ red  32 numUsersW hAnyNonZeroScore
+  3: requ red  32 numUsersW hNonZeroFollowScore
+  4: requ red  32 numUsersW hNonZeroFavScore
+  5: requ red l st< nterests.UserW hScore> knownForUsersAndScores
+}(pers sted="true", hasPersonalData = 'true')
 
-struct EmbeddingsLite {
-  1: required i64 entityId
-  2: required i32 clusterId
-  3: required double score
-}(persisted="true", hasPersonalData = 'true')
+struct Embedd ngsL e {
+  1: requ red  64 ent y d
+  2: requ red  32 cluster d
+  3: requ red double score
+}(pers sted="true", hasPersonalData = 'true')
 
-struct SimClustersEmbeddingWithId {
-  1: required identifier.SimClustersEmbeddingId embeddingId
-  2: required embedding.SimClustersEmbedding embedding
-}(persisted="true", hasPersonalData = 'true')
+struct S mClustersEmbedd ngW h d {
+  1: requ red  dent f er.S mClustersEmbedd ng d embedd ng d
+  2: requ red embedd ng.S mClustersEmbedd ng embedd ng
+}(pers sted="true", hasPersonalData = 'true')
 
-struct InternalIdEmbeddingWithId {
-  1: required identifier.SimClustersEmbeddingId embeddingId
-  2: required embedding.InternalIdEmbedding embedding
-}(persisted="true", hasPersonalData = 'true')
+struct  nternal dEmbedd ngW h d {
+  1: requ red  dent f er.S mClustersEmbedd ng d embedd ng d
+  2: requ red embedd ng. nternal dEmbedd ng embedd ng
+}(pers sted="true", hasPersonalData = 'true')
 
 /**
-* This struct is the presto-compatible version of the fav_tfg_topic_embeddings
+* T  struct  s t  presto-compat ble vers on of t  fav_tfg_top c_embedd ngs
 */
 struct ClustersScore {
-  1: required i64 clusterId(personalDataType = 'SemanticcoreClassification')
-  2: required double score(personalDataType = 'EngagementScore')
-}(persisted="true", hasPersonalData = 'true')
+  1: requ red  64 cluster d(personalDataType = 'Semant ccoreClass f cat on')
+  2: requ red double score(personalDataType = 'Engage ntScore')
+}(pers sted="true", hasPersonalData = 'true')
 
-struct FavTfgTopicEmbeddings {
-  1: required identifier.TopicId topicId
-  2: required list<ClustersScore> clusterScore
-}(persisted="true", hasPersonalData = 'true')
+struct FavTfgTop cEmbedd ngs {
+  1: requ red  dent f er.Top c d top c d
+  2: requ red l st<ClustersScore> clusterScore
+}(pers sted="true", hasPersonalData = 'true')
 
-struct TfgTopicEmbeddings {
-  1: required identifier.TopicId topicId
-  2: required list<ClustersScore> clusterScore
-}(persisted="true", hasPersonalData = 'true')
+struct TfgTop cEmbedd ngs {
+  1: requ red  dent f er.Top c d top c d
+  2: requ red l st<ClustersScore> clusterScore
+}(pers sted="true", hasPersonalData = 'true')
 
-struct UserTopicWeightedEmbedding {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: required list<ClustersScore> clusterScore
-}(persisted="true", hasPersonalData = 'true')
+struct UserTop c  ghtedEmbedd ng {
+  1: requ red  64 user d(personalDataType = 'User d')
+  2: requ red l st<ClustersScore> clusterScore
+}(pers sted="true", hasPersonalData = 'true')

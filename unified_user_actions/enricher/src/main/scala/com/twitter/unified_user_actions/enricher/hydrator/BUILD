@@ -1,36 +1,36 @@
-scala_library(
-    name = "default",
-    sources = [
+scala_l brary(
+    na  = "default",
+    s ces = [
         "AbstractHydrator.scala",
         "DefaultHydrator.scala",
     ],
-    tags = ["bazel-compatible"],
-    dependencies = [
+    tags = ["bazel-compat ble"],
+    dependenc es = [
         ":base",
-        "featureswitches/dynmap/src/main/scala/com/twitter/dynmap:dynmap-core",
-        "unified_user_actions/enricher/src/main/scala/com/twitter/unified_user_actions/enricher",
-        "unified_user_actions/enricher/src/main/scala/com/twitter/unified_user_actions/enricher/graphql",
-        "unified_user_actions/enricher/src/main/scala/com/twitter/unified_user_actions/enricher/hcache",
-        "unified_user_actions/enricher/src/main/thrift/com/twitter/unified_user_actions/enricher/internal:internal-scala",
+        "featuresw c s/dynmap/src/ma n/scala/com/tw ter/dynmap:dynmap-core",
+        "un f ed_user_act ons/enr c r/src/ma n/scala/com/tw ter/un f ed_user_act ons/enr c r",
+        "un f ed_user_act ons/enr c r/src/ma n/scala/com/tw ter/un f ed_user_act ons/enr c r/graphql",
+        "un f ed_user_act ons/enr c r/src/ma n/scala/com/tw ter/un f ed_user_act ons/enr c r/hcac ",
+        "un f ed_user_act ons/enr c r/src/ma n/thr ft/com/tw ter/un f ed_user_act ons/enr c r/ nternal: nternal-scala",
     ],
 )
 
-scala_library(
-    name = "noop",
-    sources = ["NoopHydrator.scala"],
-    tags = ["bazel-compatible"],
-    dependencies = [
+scala_l brary(
+    na  = "noop",
+    s ces = ["NoopHydrator.scala"],
+    tags = ["bazel-compat ble"],
+    dependenc es = [
         ":base",
-        "unified_user_actions/enricher/src/main/scala/com/twitter/unified_user_actions/enricher",
-        "unified_user_actions/enricher/src/main/thrift/com/twitter/unified_user_actions/enricher/internal:internal-scala",
+        "un f ed_user_act ons/enr c r/src/ma n/scala/com/tw ter/un f ed_user_act ons/enr c r",
+        "un f ed_user_act ons/enr c r/src/ma n/thr ft/com/tw ter/un f ed_user_act ons/enr c r/ nternal: nternal-scala",
     ],
 )
 
-scala_library(
-    name = "base",
-    sources = ["Hydrator.scala"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "unified_user_actions/enricher/src/main/thrift/com/twitter/unified_user_actions/enricher/internal:internal-scala",
+scala_l brary(
+    na  = "base",
+    s ces = ["Hydrator.scala"],
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "un f ed_user_act ons/enr c r/src/ma n/thr ft/com/tw ter/un f ed_user_act ons/enr c r/ nternal: nternal-scala",
     ],
 )

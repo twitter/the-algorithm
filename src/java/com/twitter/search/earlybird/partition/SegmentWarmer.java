@@ -1,47 +1,47 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
+ mport com.tw ter.search.earlyb rd.except on.Cr  calExcept onHandler;
 
-public class SegmentWarmer {
-  private static final Logger LOG = LoggerFactory.getLogger(SegmentWarmer.class);
+publ c class Seg ntWar r {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Seg ntWar r.class);
 
-  private final CriticalExceptionHandler criticalExceptionHandler;
+  pr vate f nal Cr  calExcept onHandler cr  calExcept onHandler;
 
-  public SegmentWarmer(CriticalExceptionHandler criticalExceptionHandler) {
-    this.criticalExceptionHandler = criticalExceptionHandler;
+  publ c Seg ntWar r(Cr  calExcept onHandler cr  calExcept onHandler) {
+    t .cr  calExcept onHandler = cr  calExcept onHandler;
   }
 
-  private boolean shouldWarmSegment(SegmentInfo segmentInfo) {
-    return segmentInfo.isEnabled()
-        && segmentInfo.isComplete()
-        && segmentInfo.isOptimized()
-        && !segmentInfo.isIndexing();
+  pr vate boolean shouldWarmSeg nt(Seg nt nfo seg nt nfo) {
+    return seg nt nfo. sEnabled()
+        && seg nt nfo. sComplete()
+        && seg nt nfo. sOpt m zed()
+        && !seg nt nfo. s ndex ng();
   }
 
   /**
-   * Warms a segment if it is ready to be warmed. Only has an affect on Archive Lucene segments.
+   * Warms a seg nt  f    s ready to be war d. Only has an affect on Arch ve Lucene seg nts.
    */
-  public boolean warmSegmentIfNecessary(SegmentInfo segmentInfo) {
-    if (!shouldWarmSegment(segmentInfo)) {
+  publ c boolean warmSeg nt fNecessary(Seg nt nfo seg nt nfo) {
+     f (!shouldWarmSeg nt(seg nt nfo)) {
       return false;
     }
     try {
-      segmentInfo.getIndexSegment().warmSegment();
+      seg nt nfo.get ndexSeg nt().warmSeg nt();
       return true;
-    } catch (IOException e) {
-      // This is a bad situation, as earlybird can't search a segment that hasn't been warmed up
-      // So we delete the bad segment, and restart the earlybird if it's in starting phrase,
-      // otherwise alert.
-      LOG.error("Failed to warmup segment " + segmentInfo.getSegmentName()
-          + ". Will destroy local unreadable segment.", e);
-      segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
+    } catch ( OExcept on e) {
+      // T   s a bad s uat on, as earlyb rd can't search a seg nt that hasn't been war d up
+      // So   delete t  bad seg nt, and restart t  earlyb rd  f  's  n start ng phrase,
+      // ot rw se alert.
+      LOG.error("Fa led to warmup seg nt " + seg nt nfo.getSeg ntNa ()
+          + ". W ll destroy local unreadable seg nt.", e);
+      seg nt nfo.deleteLocal ndexedSeg ntD rectory m d ately();
 
-      criticalExceptionHandler.handle(this, e);
+      cr  calExcept onHandler.handle(t , e);
 
       return false;
     }

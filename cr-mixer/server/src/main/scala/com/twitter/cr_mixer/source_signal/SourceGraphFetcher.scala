@@ -1,69 +1,69 @@
-package com.twitter.cr_mixer.source_signal
+package com.tw ter.cr_m xer.s ce_s gnal
 
-import com.twitter.cr_mixer.model.GraphSourceInfo
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.util.Future
+ mport com.tw ter.cr_m xer.model.GraphS ce nfo
+ mport com.tw ter.cr_m xer.s ce_s gnal.S ceFetc r.Fetc rQuery
+ mport com.tw ter.cr_m xer.thr ftscala.S ceType
+ mport com.tw ter.fr gate.common.ut l.StatsUt l
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.ut l.Future
 
 /***
- * A SourceGraphFetcher is a trait that extends from `SourceFetcher`
- * and is specialized in tackling User Graph (eg., RealGraphOon, FRS) fetch.
+ * A S ceGraphFetc r  s a tra  that extends from `S ceFetc r`
+ * and  s spec al zed  n tackl ng User Graph (eg., RealGraphOon, FRS) fetch.
  *
- * The [[ResultType]] of a SourceGraphFetcher is a `GraphSourceInfo` which contains a userSeedSet.
- * When we pass in userId, the underlying store returns one GraphSourceInfo.
+ * T  [[ResultType]] of a S ceGraphFetc r  s a `GraphS ce nfo` wh ch conta ns a userSeedSet.
+ * W n   pass  n user d, t  underly ng store returns one GraphS ce nfo.
  */
-trait SourceGraphFetcher extends SourceFetcher[GraphSourceInfo] {
-  protected final val DefaultSeedScore = 1.0
-  protected def graphSourceType: SourceType
+tra  S ceGraphFetc r extends S ceFetc r[GraphS ce nfo] {
+  protected f nal val DefaultSeedScore = 1.0
+  protected def graphS ceType: S ceType
 
   /***
-   * RawDataType contains a consumers seed UserId and a score (weight)
+   * RawDataType conta ns a consu rs seed User d and a score (  ght)
    */
-  protected type RawDataType = (UserId, Double)
+  protected type RawDataType = (User d, Double)
 
   def trackStats(
-    query: FetcherQuery
+    query: Fetc rQuery
   )(
-    func: => Future[Option[GraphSourceInfo]]
-  ): Future[Option[GraphSourceInfo]] = {
-    val productScopedStats = stats.scope(query.product.originalName)
-    val productUserStateScopedStats = productScopedStats.scope(query.userState.toString)
-    StatsUtil
-      .trackOptionStats(productScopedStats) {
-        StatsUtil
-          .trackOptionStats(productUserStateScopedStats) {
+    func: => Future[Opt on[GraphS ce nfo]]
+  ): Future[Opt on[GraphS ce nfo]] = {
+    val productScopedStats = stats.scope(query.product.or g nalNa )
+    val productUserStateScopedStats = productScopedStats.scope(query.userState.toStr ng)
+    StatsUt l
+      .trackOpt onStats(productScopedStats) {
+        StatsUt l
+          .trackOpt onStats(productUserStateScopedStats) {
             func
           }
       }
   }
 
-  // Track per item stats on the fetched graph results
-  def trackPerItemStats(
-    query: FetcherQuery
+  // Track per  em stats on t  fetc d graph results
+  def trackPer emStats(
+    query: Fetc rQuery
   )(
-    func: => Future[Option[Seq[RawDataType]]]
-  ): Future[Option[Seq[RawDataType]]] = {
-    val productScopedStats = stats.scope(query.product.originalName)
-    val productUserStateScopedStats = productScopedStats.scope(query.userState.toString)
-    StatsUtil.trackOptionItemsStats(productScopedStats) {
-      StatsUtil.trackOptionItemsStats(productUserStateScopedStats) {
+    func: => Future[Opt on[Seq[RawDataType]]]
+  ): Future[Opt on[Seq[RawDataType]]] = {
+    val productScopedStats = stats.scope(query.product.or g nalNa )
+    val productUserStateScopedStats = productScopedStats.scope(query.userState.toStr ng)
+    StatsUt l.trackOpt on emsStats(productScopedStats) {
+      StatsUt l.trackOpt on emsStats(productUserStateScopedStats) {
         func
       }
     }
   }
 
   /***
-   * Convert Seq[RawDataType] into GraphSourceInfo
+   * Convert Seq[RawDataType]  nto GraphS ce nfo
    */
-  protected final def convertGraphSourceInfo(
-    userWithScores: Seq[RawDataType]
-  ): GraphSourceInfo = {
-    GraphSourceInfo(
-      sourceType = graphSourceType,
-      seedWithScores = userWithScores.map { userWithScore =>
-        userWithScore._1 -> userWithScore._2
+  protected f nal def convertGraphS ce nfo(
+    userW hScores: Seq[RawDataType]
+  ): GraphS ce nfo = {
+    GraphS ce nfo(
+      s ceType = graphS ceType,
+      seedW hScores = userW hScores.map { userW hScore =>
+        userW hScore._1 -> userW hScore._2
       }.toMap
     )
   }

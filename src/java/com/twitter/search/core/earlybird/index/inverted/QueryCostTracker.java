@@ -1,48 +1,48 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import org.apache.lucene.util.CloseableThreadLocal;
+ mport org.apac .lucene.ut l.CloseableThreadLocal;
 
-import com.twitter.search.common.search.QueryCostProvider;
+ mport com.tw ter.search.common.search.QueryCostProv der;
 
-public class QueryCostTracker implements QueryCostProvider {
-  public static enum CostType {
-    // For the realtime segment we track how many posting list blocks
-    // are accessed during the lifetime of one query.
-    LOAD_REALTIME_POSTING_BLOCK(1),
+publ c class QueryCostTracker  mple nts QueryCostProv der {
+  publ c stat c enum CostType {
+    // For t  realt   seg nt   track how many post ng l st blocks
+    // are accessed dur ng t  l fet   of one query.
+    LOAD_REALT ME_POST NG_BLOCK(1),
 
-    // Number of optimized posting list blocks
-    LOAD_OPTIMIZED_POSTING_BLOCK(1);
+    // Number of opt m zed post ng l st blocks
+    LOAD_OPT M ZED_POST NG_BLOCK(1);
 
-    private final double cost;
+    pr vate f nal double cost;
 
-    private CostType(double cost) {
-      this.cost = cost;
+    pr vate CostType(double cost) {
+      t .cost = cost;
     }
   }
 
-  private static final CloseableThreadLocal<QueryCostTracker> TRACKERS
+  pr vate stat c f nal CloseableThreadLocal<QueryCostTracker> TRACKERS
       = new CloseableThreadLocal<QueryCostTracker>() {
-    @Override protected QueryCostTracker initialValue() {
+    @Overr de protected QueryCostTracker  n  alValue() {
       return new QueryCostTracker();
     }
   };
 
-  public static QueryCostTracker getTracker() {
+  publ c stat c QueryCostTracker getTracker() {
     return TRACKERS.get();
   }
 
-  private double totalCost;
+  pr vate double totalCost;
 
-  public void track(CostType costType) {
+  publ c vo d track(CostType costType) {
     totalCost += costType.cost;
   }
 
-  public void reset() {
+  publ c vo d reset() {
     totalCost = 0;
   }
 
-  @Override
-  public double getTotalCost() {
+  @Overr de
+  publ c double getTotalCost() {
     return totalCost;
   }
 }

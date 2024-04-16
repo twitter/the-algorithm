@@ -1,155 +1,155 @@
-package com.twitter.unified_user_actions.adapter.client_event
+package com.tw ter.un f ed_user_act ons.adapter.cl ent_event
 
-import com.twitter.clientapp.thriftscala.EventNamespace
-import com.twitter.clientapp.thriftscala.Item
-import com.twitter.clientapp.thriftscala.ItemType.Topic
-import com.twitter.guide.scribing.thriftscala.TopicModuleMetadata
-import com.twitter.guide.scribing.thriftscala.TransparentGuideDetails
-import com.twitter.suggests.controller_data.home_hitl_topic_annotation_prompt.thriftscala.HomeHitlTopicAnnotationPromptControllerData
-import com.twitter.suggests.controller_data.home_hitl_topic_annotation_prompt.v1.thriftscala.{
-  HomeHitlTopicAnnotationPromptControllerData => HomeHitlTopicAnnotationPromptControllerDataV1
+ mport com.tw ter.cl entapp.thr ftscala.EventNa space
+ mport com.tw ter.cl entapp.thr ftscala. em
+ mport com.tw ter.cl entapp.thr ftscala. emType.Top c
+ mport com.tw ter.gu de.scr b ng.thr ftscala.Top cModule tadata
+ mport com.tw ter.gu de.scr b ng.thr ftscala.TransparentGu deDeta ls
+ mport com.tw ter.suggests.controller_data.ho _h l_top c_annotat on_prompt.thr ftscala.Ho H lTop cAnnotat onPromptControllerData
+ mport com.tw ter.suggests.controller_data.ho _h l_top c_annotat on_prompt.v1.thr ftscala.{
+  Ho H lTop cAnnotat onPromptControllerData => Ho H lTop cAnnotat onPromptControllerDataV1
 }
-import com.twitter.suggests.controller_data.home_topic_annotation_prompt.thriftscala.HomeTopicAnnotationPromptControllerData
-import com.twitter.suggests.controller_data.home_topic_annotation_prompt.v1.thriftscala.{
-  HomeTopicAnnotationPromptControllerData => HomeTopicAnnotationPromptControllerDataV1
+ mport com.tw ter.suggests.controller_data.ho _top c_annotat on_prompt.thr ftscala.Ho Top cAnnotat onPromptControllerData
+ mport com.tw ter.suggests.controller_data.ho _top c_annotat on_prompt.v1.thr ftscala.{
+  Ho Top cAnnotat onPromptControllerData => Ho Top cAnnotat onPromptControllerDataV1
 }
-import com.twitter.suggests.controller_data.home_topic_follow_prompt.thriftscala.HomeTopicFollowPromptControllerData
-import com.twitter.suggests.controller_data.home_topic_follow_prompt.v1.thriftscala.{
-  HomeTopicFollowPromptControllerData => HomeTopicFollowPromptControllerDataV1
+ mport com.tw ter.suggests.controller_data.ho _top c_follow_prompt.thr ftscala.Ho Top cFollowPromptControllerData
+ mport com.tw ter.suggests.controller_data.ho _top c_follow_prompt.v1.thr ftscala.{
+  Ho Top cFollowPromptControllerData => Ho Top cFollowPromptControllerDataV1
 }
-import com.twitter.suggests.controller_data.home_tweets.thriftscala.HomeTweetsControllerData
-import com.twitter.suggests.controller_data.home_tweets.v1.thriftscala.{
-  HomeTweetsControllerData => HomeTweetsControllerDataV1
+ mport com.tw ter.suggests.controller_data.ho _t ets.thr ftscala.Ho T etsControllerData
+ mport com.tw ter.suggests.controller_data.ho _t ets.v1.thr ftscala.{
+  Ho T etsControllerData => Ho T etsControllerDataV1
 }
-import com.twitter.suggests.controller_data.search_response.item_types.thriftscala.ItemTypesControllerData
-import com.twitter.suggests.controller_data.search_response.thriftscala.SearchResponseControllerData
-import com.twitter.suggests.controller_data.search_response.topic_follow_prompt.thriftscala.SearchTopicFollowPromptControllerData
-import com.twitter.suggests.controller_data.search_response.tweet_types.thriftscala.TweetTypesControllerData
-import com.twitter.suggests.controller_data.search_response.v1.thriftscala.{
+ mport com.tw ter.suggests.controller_data.search_response. em_types.thr ftscala. emTypesControllerData
+ mport com.tw ter.suggests.controller_data.search_response.thr ftscala.SearchResponseControllerData
+ mport com.tw ter.suggests.controller_data.search_response.top c_follow_prompt.thr ftscala.SearchTop cFollowPromptControllerData
+ mport com.tw ter.suggests.controller_data.search_response.t et_types.thr ftscala.T etTypesControllerData
+ mport com.tw ter.suggests.controller_data.search_response.v1.thr ftscala.{
   SearchResponseControllerData => SearchResponseControllerDataV1
 }
-import com.twitter.suggests.controller_data.thriftscala.ControllerData
-import com.twitter.suggests.controller_data.timelines_topic.thriftscala.TimelinesTopicControllerData
-import com.twitter.suggests.controller_data.timelines_topic.v1.thriftscala.{
-  TimelinesTopicControllerData => TimelinesTopicControllerDataV1
+ mport com.tw ter.suggests.controller_data.thr ftscala.ControllerData
+ mport com.tw ter.suggests.controller_data.t  l nes_top c.thr ftscala.T  l nesTop cControllerData
+ mport com.tw ter.suggests.controller_data.t  l nes_top c.v1.thr ftscala.{
+  T  l nesTop cControllerData => T  l nesTop cControllerDataV1
 }
-import com.twitter.suggests.controller_data.v2.thriftscala.{ControllerData => ControllerDataV2}
-import com.twitter.util.Try
+ mport com.tw ter.suggests.controller_data.v2.thr ftscala.{ControllerData => ControllerDataV2}
+ mport com.tw ter.ut l.Try
 
-object TopicIdUtils {
-  val DomainId: Long = 131 // Topical Domain
+object Top c dUt ls {
+  val Doma n d: Long = 131 // Top cal Doma n
 
-  def getTopicId(
-    item: Item,
-    namespace: EventNamespace
-  ): Option[Long] =
-    getTopicIdFromHomeSearch(item)
-      .orElse(getTopicFromGuide(item))
-      .orElse(getTopicFromOnboarding(item, namespace))
-      .orElse(getTopicIdFromItem(item))
+  def getTop c d(
+     em:  em,
+    na space: EventNa space
+  ): Opt on[Long] =
+    getTop c dFromHo Search( em)
+      .orElse(getTop cFromGu de( em))
+      .orElse(getTop cFromOnboard ng( em, na space))
+      .orElse(getTop c dFrom em( em))
 
-  def getTopicIdFromItem(item: Item): Option[Long] =
-    if (item.itemType.contains(Topic))
-      item.id
+  def getTop c dFrom em( em:  em): Opt on[Long] =
+     f ( em. emType.conta ns(Top c))
+       em. d
     else None
 
-  def getTopicIdFromHomeSearch(
-    item: Item
-  ): Option[Long] = {
-    val decodedControllerData = item.suggestionDetails.flatMap(_.decodedControllerData)
+  def getTop c dFromHo Search(
+     em:  em
+  ): Opt on[Long] = {
+    val decodedControllerData =  em.suggest onDeta ls.flatMap(_.decodedControllerData)
     decodedControllerData match {
-      case Some(
+      case So (
             ControllerData.V2(
-              ControllerDataV2.HomeTweets(
-                HomeTweetsControllerData.V1(homeTweets: HomeTweetsControllerDataV1)))
+              ControllerDataV2.Ho T ets(
+                Ho T etsControllerData.V1(ho T ets: Ho T etsControllerDataV1)))
           ) =>
-        homeTweets.topicId
-      case Some(
+        ho T ets.top c d
+      case So (
             ControllerData.V2(
-              ControllerDataV2.HomeTopicFollowPrompt(
-                HomeTopicFollowPromptControllerData.V1(
-                  homeTopicFollowPrompt: HomeTopicFollowPromptControllerDataV1)))
+              ControllerDataV2.Ho Top cFollowPrompt(
+                Ho Top cFollowPromptControllerData.V1(
+                  ho Top cFollowPrompt: Ho Top cFollowPromptControllerDataV1)))
           ) =>
-        homeTopicFollowPrompt.topicId
-      case Some(
+        ho Top cFollowPrompt.top c d
+      case So (
             ControllerData.V2(
-              ControllerDataV2.TimelinesTopic(
-                TimelinesTopicControllerData.V1(
-                  timelinesTopic: TimelinesTopicControllerDataV1
+              ControllerDataV2.T  l nesTop c(
+                T  l nesTop cControllerData.V1(
+                  t  l nesTop c: T  l nesTop cControllerDataV1
                 )))
           ) =>
-        Some(timelinesTopic.topicId)
-      case Some(
+        So (t  l nesTop c.top c d)
+      case So (
             ControllerData.V2(
               ControllerDataV2.SearchResponse(
                 SearchResponseControllerData.V1(s: SearchResponseControllerDataV1)))
           ) =>
-        s.itemTypesControllerData match {
-          case Some(
-                ItemTypesControllerData.TopicFollowControllerData(
-                  topicFollowControllerData: SearchTopicFollowPromptControllerData)) =>
-            topicFollowControllerData.topicId
-          case Some(
-                ItemTypesControllerData.TweetTypesControllerData(
-                  tweetTypesControllerData: TweetTypesControllerData)) =>
-            tweetTypesControllerData.topicId
+        s. emTypesControllerData match {
+          case So (
+                 emTypesControllerData.Top cFollowControllerData(
+                  top cFollowControllerData: SearchTop cFollowPromptControllerData)) =>
+            top cFollowControllerData.top c d
+          case So (
+                 emTypesControllerData.T etTypesControllerData(
+                  t etTypesControllerData: T etTypesControllerData)) =>
+            t etTypesControllerData.top c d
           case _ => None
         }
-      case Some(
+      case So (
             ControllerData.V2(
-              ControllerDataV2.HomeTopicAnnotationPrompt(
-                HomeTopicAnnotationPromptControllerData.V1(
-                  homeTopicAnnotationPrompt: HomeTopicAnnotationPromptControllerDataV1
+              ControllerDataV2.Ho Top cAnnotat onPrompt(
+                Ho Top cAnnotat onPromptControllerData.V1(
+                  ho Top cAnnotat onPrompt: Ho Top cAnnotat onPromptControllerDataV1
                 )))
           ) =>
-        Some(homeTopicAnnotationPrompt.topicId)
-      case Some(
+        So (ho Top cAnnotat onPrompt.top c d)
+      case So (
             ControllerData.V2(
-              ControllerDataV2.HomeHitlTopicAnnotationPrompt(
-                HomeHitlTopicAnnotationPromptControllerData.V1(
-                  homeHitlTopicAnnotationPrompt: HomeHitlTopicAnnotationPromptControllerDataV1
+              ControllerDataV2.Ho H lTop cAnnotat onPrompt(
+                Ho H lTop cAnnotat onPromptControllerData.V1(
+                  ho H lTop cAnnotat onPrompt: Ho H lTop cAnnotat onPromptControllerDataV1
                 )))
           ) =>
-        Some(homeHitlTopicAnnotationPrompt.topicId)
+        So (ho H lTop cAnnotat onPrompt.top c d)
 
       case _ => None
     }
   }
 
-  def getTopicFromOnboarding(
-    item: Item,
-    namespace: EventNamespace
-  ): Option[Long] =
-    if (namespace.page.contains("onboarding") &&
-      (namespace.section.exists(_.contains("topic")) ||
-      namespace.component.exists(_.contains("topic")) ||
-      namespace.element.exists(_.contains("topic")))) {
-      item.description.flatMap { description =>
-        // description: "id=123,main=xyz,row=1"
-        val tokens = description.split(",").headOption.map(_.split("="))
+  def getTop cFromOnboard ng(
+     em:  em,
+    na space: EventNa space
+  ): Opt on[Long] =
+     f (na space.page.conta ns("onboard ng") &&
+      (na space.sect on.ex sts(_.conta ns("top c")) ||
+      na space.component.ex sts(_.conta ns("top c")) ||
+      na space.ele nt.ex sts(_.conta ns("top c")))) {
+       em.descr pt on.flatMap { descr pt on =>
+        // descr pt on: " d=123,ma n=xyz,row=1"
+        val tokens = descr pt on.spl (","). adOpt on.map(_.spl ("="))
         tokens match {
-          case Some(Array("id", token, _*)) => Try(token.toLong).toOption
+          case So (Array(" d", token, _*)) => Try(token.toLong).toOpt on
           case _ => None
         }
       }
     } else None
 
-  def getTopicFromGuide(
-    item: Item
-  ): Option[Long] =
-    item.guideItemDetails.flatMap {
-      _.transparentGuideDetails match {
-        case Some(TransparentGuideDetails.TopicMetadata(topicMetadata)) =>
-          topicMetadata match {
-            case TopicModuleMetadata.TttInterest(_) =>
+  def getTop cFromGu de(
+     em:  em
+  ): Opt on[Long] =
+     em.gu de emDeta ls.flatMap {
+      _.transparentGu deDeta ls match {
+        case So (TransparentGu deDeta ls.Top c tadata(top c tadata)) =>
+          top c tadata match {
+            case Top cModule tadata.Ttt nterest(_) =>
               None
-            case TopicModuleMetadata.SemanticCoreInterest(semanticCoreInterest) =>
-              if (semanticCoreInterest.domainId == DomainId.toString)
-                Try(semanticCoreInterest.entityId.toLong).toOption
+            case Top cModule tadata.Semant cCore nterest(semant cCore nterest) =>
+               f (semant cCore nterest.doma n d == Doma n d.toStr ng)
+                Try(semant cCore nterest.ent y d.toLong).toOpt on
               else None
-            case TopicModuleMetadata.SimClusterInterest(_) =>
+            case Top cModule tadata.S mCluster nterest(_) =>
               None
-            case TopicModuleMetadata.UnknownUnionField(_) => None
+            case Top cModule tadata.UnknownUn onF eld(_) => None
           }
         case _ => None
       }

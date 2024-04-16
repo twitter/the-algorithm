@@ -1,62 +1,62 @@
-package com.twitter.search.earlybird.segment;
+package com.tw ter.search.earlyb rd.seg nt;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+ mport java. o. OExcept on;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Collect ons;
+ mport java.ut l.L st;
+ mport java.ut l.Set;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.common.util.io.dl.DLReaderWriterFactory;
-import com.twitter.search.common.util.io.dl.SegmentDLUtil;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common.part  on ng.base.Seg nt;
+ mport com.tw ter.search.common.ut l. o.dl.DLReaderWr erFactory;
+ mport com.tw ter.search.common.ut l. o.dl.Seg ntDLUt l;
+ mport com.tw ter.search.earlyb rd.Earlyb rd ndexConf g;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
 
 /**
- * An implementation of SegmentDataProvider using DistributedLog.
+ * An  mple ntat on of Seg ntDataProv der us ng D str butedLog.
  */
-public class DLSegmentDataProvider implements SegmentDataProvider {
-  private final int hashPartitionID;
-  private final DLReaderWriterFactory dlFactory;
-  private final SegmentDataReaderSet readerSet;
+publ c class DLSeg ntDataProv der  mple nts Seg ntDataProv der {
+  pr vate f nal  nt hashPart  on D;
+  pr vate f nal DLReaderWr erFactory dlFactory;
+  pr vate f nal Seg ntDataReaderSet readerSet;
 
-  public DLSegmentDataProvider(
-      int hashPartitionID,
-      EarlybirdIndexConfig earlybirdIndexConfig,
-      DLReaderWriterFactory dlReaderWriterFactory) throws IOException {
-    this(hashPartitionID, earlybirdIndexConfig, dlReaderWriterFactory,
+  publ c DLSeg ntDataProv der(
+       nt hashPart  on D,
+      Earlyb rd ndexConf g earlyb rd ndexConf g,
+      DLReaderWr erFactory dlReaderWr erFactory) throws  OExcept on {
+    t (hashPart  on D, earlyb rd ndexConf g, dlReaderWr erFactory,
         Clock.SYSTEM_CLOCK);
   }
 
-  public DLSegmentDataProvider(
-    int hashPartitionID,
-    EarlybirdIndexConfig earlybirdIndexConfig,
-    DLReaderWriterFactory dlReaderWriterFactory,
-    Clock clock) throws IOException {
-    this.hashPartitionID = hashPartitionID;
-    this.dlFactory = dlReaderWriterFactory;
-    this.readerSet = new DLSegmentDataReaderSet(
+  publ c DLSeg ntDataProv der(
+     nt hashPart  on D,
+    Earlyb rd ndexConf g earlyb rd ndexConf g,
+    DLReaderWr erFactory dlReaderWr erFactory,
+    Clock clock) throws  OExcept on {
+    t .hashPart  on D = hashPart  on D;
+    t .dlFactory = dlReaderWr erFactory;
+    t .readerSet = new DLSeg ntDataReaderSet(
         dlFactory,
-        earlybirdIndexConfig,
+        earlyb rd ndexConf g,
         clock);
   }
 
-  @Override
-  public SegmentDataReaderSet getSegmentDataReaderSet() {
+  @Overr de
+  publ c Seg ntDataReaderSet getSeg ntDataReaderSet() {
     return readerSet;
   }
 
-  @Override
-  public List<Segment> newSegmentList() throws IOException {
-    Set<String> segmentNames = SegmentDLUtil.getSegmentNames(dlFactory, null, hashPartitionID);
-    List<Segment> segmentList = new ArrayList<>(segmentNames.size());
-    for (String segmentName : segmentNames) {
-      Segment segment = Segment.fromSegmentName(segmentName, EarlybirdConfig.getMaxSegmentSize());
-      segmentList.add(segment);
+  @Overr de
+  publ c L st<Seg nt> newSeg ntL st() throws  OExcept on {
+    Set<Str ng> seg ntNa s = Seg ntDLUt l.getSeg ntNa s(dlFactory, null, hashPart  on D);
+    L st<Seg nt> seg ntL st = new ArrayL st<>(seg ntNa s.s ze());
+    for (Str ng seg ntNa  : seg ntNa s) {
+      Seg nt seg nt = Seg nt.fromSeg ntNa (seg ntNa , Earlyb rdConf g.getMaxSeg ntS ze());
+      seg ntL st.add(seg nt);
     }
-    // Sort the segments by ID.
-    Collections.sort(segmentList);
-    return segmentList;
+    // Sort t  seg nts by  D.
+    Collect ons.sort(seg ntL st);
+    return seg ntL st;
   }
 }

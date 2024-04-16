@@ -1,34 +1,34 @@
-package com.twitter.tweetypie.config
+package com.tw ter.t etyp e.conf g
 
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.servo.util.FutureArrow
-import com.twitter.tweetypie._
-import com.twitter.tweetypie.service.{ClientIdSettingTweetServiceProxy, TweetServiceProxy}
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t etyp e._
+ mport com.tw ter.t etyp e.serv ce.{Cl ent dSett ngT etServ ceProxy, T etServ ceProxy}
 
 /**
- * This class builds deciderable ThriftTweetService and FutureArrows that respect the
- * simulateDeferredrpcCallbacks decider.  When simulateDeferredrpcCallbacks=true, invocations will
- * be performed synchronously by the root ThriftTweetService.
+ * T  class bu lds dec derable Thr ftT etServ ce and FutureArrows that respect t 
+ * s mulateDeferredrpcCallbacks dec der.  W n s mulateDeferredrpcCallbacks=true,  nvocat ons w ll
+ * be perfor d synchronously by t  root Thr ftT etServ ce.
  */
-class ServiceInvocationBuilder(
-  val service: ThriftTweetService,
-  simulateDeferredrpcCallbacks: Boolean) {
+class Serv ce nvocat onBu lder(
+  val serv ce: Thr ftT etServ ce,
+  s mulateDeferredrpcCallbacks: Boolean) {
 
-  def withClientId(clientId: ClientId): ServiceInvocationBuilder =
-    new ServiceInvocationBuilder(
-      new ClientIdSettingTweetServiceProxy(clientId, service),
-      simulateDeferredrpcCallbacks
+  def w hCl ent d(cl ent d: Cl ent d): Serv ce nvocat onBu lder =
+    new Serv ce nvocat onBu lder(
+      new Cl ent dSett ngT etServ ceProxy(cl ent d, serv ce),
+      s mulateDeferredrpcCallbacks
     )
 
-  def asyncVia(asyncService: ThriftTweetService): ServiceInvocationBuilder =
-    new ServiceInvocationBuilder(
-      new TweetServiceProxy {
-        override def underlying: ThriftTweetService =
-          if (simulateDeferredrpcCallbacks) service else asyncService
+  def asyncV a(asyncServ ce: Thr ftT etServ ce): Serv ce nvocat onBu lder =
+    new Serv ce nvocat onBu lder(
+      new T etServ ceProxy {
+        overr de def underly ng: Thr ftT etServ ce =
+           f (s mulateDeferredrpcCallbacks) serv ce else asyncServ ce
       },
-      simulateDeferredrpcCallbacks
+      s mulateDeferredrpcCallbacks
     )
 
-  def method[A, B](op: ThriftTweetService => A => Future[B]): FutureArrow[A, B] =
-    FutureArrow(op(service))
+  def  thod[A, B](op: Thr ftT etServ ce => A => Future[B]): FutureArrow[A, B] =
+    FutureArrow(op(serv ce))
 }

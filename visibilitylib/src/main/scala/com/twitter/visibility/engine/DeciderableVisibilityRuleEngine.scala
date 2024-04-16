@@ -1,26 +1,26 @@
-package com.twitter.visibility.engine
+package com.tw ter.v s b l y.eng ne
 
-import com.twitter.servo.util.Gate
-import com.twitter.spam.rtf.thriftscala.{SafetyLevel => ThriftSafetyLevel}
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.VisibilityResultBuilder
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.Rule
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.spam.rtf.thr ftscala.{SafetyLevel => Thr ftSafetyLevel}
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.v s b l y.bu lder.V s b l yResult
+ mport com.tw ter.v s b l y.bu lder.V s b l yResultBu lder
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.rules.Evaluat onContext
+ mport com.tw ter.v s b l y.rules.Rule
 
-trait DeciderableVisibilityRuleEngine {
+tra  Dec derableV s b l yRuleEng ne {
   def apply(
-    evaluationContext: EvaluationContext,
+    evaluat onContext: Evaluat onContext,
     safetyLevel: SafetyLevel,
-    visibilityResultBuilder: VisibilityResultBuilder,
-    enableShortCircuiting: Gate[Unit] = Gate.True,
-    preprocessedRules: Option[Seq[Rule]] = None
-  ): Stitch[VisibilityResult]
+    v s b l yResultBu lder: V s b l yResultBu lder,
+    enableShortC rcu  ng: Gate[Un ] = Gate.True,
+    preprocessedRules: Opt on[Seq[Rule]] = None
+  ): St ch[V s b l yResult]
 
   def apply(
-    evaluationContext: EvaluationContext,
-    thriftSafetyLevel: ThriftSafetyLevel,
-    visibilityResultBuilder: VisibilityResultBuilder
-  ): Stitch[VisibilityResult]
+    evaluat onContext: Evaluat onContext,
+    thr ftSafetyLevel: Thr ftSafetyLevel,
+    v s b l yResultBu lder: V s b l yResultBu lder
+  ): St ch[V s b l yResult]
 }

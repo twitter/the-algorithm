@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.pipeline.state
+package com.tw ter.product_m xer.core.p pel ne.state
 
-import com.twitter.timelines.configapi.Params
+ mport com.tw ter.t  l nes.conf gap .Params
 
-trait HasParams {
+tra  HasParams {
   def params: Params
 }

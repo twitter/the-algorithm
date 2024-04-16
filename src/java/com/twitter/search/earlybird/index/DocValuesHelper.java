@@ -1,70 +1,70 @@
-package com.twitter.search.earlybird.index;
+package com.tw ter.search.earlyb rd. ndex;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.util.BytesRef;
+ mport org.apac .lucene. ndex.LeafReader;
+ mport org.apac .lucene. ndex.Terms;
+ mport org.apac .lucene. ndex.TermsEnum;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.ut l.BytesRef;
 
-public final class DocValuesHelper {
-  private DocValuesHelper() {
+publ c f nal class DocValues lper {
+  pr vate DocValues lper() {
   }
 
   /**
-   * Reverse lookup. Given a value, returns the first doc ID with this value. This requires a field
-   * that indexes the values.
+   * Reverse lookup. G ven a value, returns t  f rst doc  D w h t  value. T  requ res a f eld
+   * that  ndexes t  values.
    *
-   * @param reader The reader to use to look up field values.
-   * @param value The value to lookup.
-   * @param indexField The field containing an index of the values.
+   * @param reader T  reader to use to look up f eld values.
+   * @param value T  value to lookup.
+   * @param  ndexF eld T  f eld conta n ng an  ndex of t  values.
    */
-  public static int getFirstDocIdWithValue(
-      LeafReader reader, String indexField, BytesRef value) throws IOException {
-    TermsEnum termsEnum = getTermsEnum(reader, indexField);
-    if (termsEnum == null || !termsEnum.seekExact(value)) {
-      return DocIdSetIterator.NO_MORE_DOCS;
+  publ c stat c  nt getF rstDoc dW hValue(
+      LeafReader reader, Str ng  ndexF eld, BytesRef value) throws  OExcept on {
+    TermsEnum termsEnum = getTermsEnum(reader,  ndexF eld);
+     f (termsEnum == null || !termsEnum.seekExact(value)) {
+      return Doc dSet erator.NO_MORE_DOCS;
     }
 
-    DocIdSetIterator docsIterator = termsEnum.postings(null);
-    return docsIterator.nextDoc();
+    Doc dSet erator docs erator = termsEnum.post ngs(null);
+    return docs erator.nextDoc();
   }
 
   /**
-   * Reverse lookup. Same as getFirstDocIdWithValue(), but if no document with the given value
-   * exists, the next bigger value is used for looking up the first doc ID.
+   * Reverse lookup. Sa  as getF rstDoc dW hValue(), but  f no docu nt w h t  g ven value
+   * ex sts, t  next b gger value  s used for look ng up t  f rst doc  D.
    *
-   * If there are multiple documents that match the value, all documents will be scanned, and the
-   * largest doc ID that matches will be returned.
+   *  f t re are mult ple docu nts that match t  value, all docu nts w ll be scanned, and t 
+   * largest doc  D that matc s w ll be returned.
    *
-   * @param reader The reader to use to look up field values.
-   * @param value The value to lookup.
-   * @param indexField The field containing an index of the values.
+   * @param reader T  reader to use to look up f eld values.
+   * @param value T  value to lookup.
+   * @param  ndexF eld T  f eld conta n ng an  ndex of t  values.
    */
-  public static int getLargestDocIdWithCeilOfValue(
-      LeafReader reader, String indexField, BytesRef value) throws IOException {
-    TermsEnum termsEnum = getTermsEnum(reader, indexField);
-    if (termsEnum == null) {
-      return DocIdSetIterator.NO_MORE_DOCS;
+  publ c stat c  nt getLargestDoc dW hCe lOfValue(
+      LeafReader reader, Str ng  ndexF eld, BytesRef value) throws  OExcept on {
+    TermsEnum termsEnum = getTermsEnum(reader,  ndexF eld);
+     f (termsEnum == null) {
+      return Doc dSet erator.NO_MORE_DOCS;
     }
-    if (termsEnum.seekCeil(value) == TermsEnum.SeekStatus.END) {
-      return DocIdSetIterator.NO_MORE_DOCS;
+     f (termsEnum.seekCe l(value) == TermsEnum.SeekStatus.END) {
+      return Doc dSet erator.NO_MORE_DOCS;
     }
 
-    DocIdSetIterator docsIterator = termsEnum.postings(null);
-    int docId = docsIterator.nextDoc();
-    while (docsIterator.nextDoc() != DocIdSetIterator.NO_MORE_DOCS) {
-      docId = docsIterator.docID();
+    Doc dSet erator docs erator = termsEnum.post ngs(null);
+     nt doc d = docs erator.nextDoc();
+    wh le (docs erator.nextDoc() != Doc dSet erator.NO_MORE_DOCS) {
+      doc d = docs erator.doc D();
     }
-    return docId;
+    return doc d;
   }
 
-  private static TermsEnum getTermsEnum(LeafReader reader, String indexField) throws IOException {
-    Terms terms = reader.terms(indexField);
-    if (terms == null) {
+  pr vate stat c TermsEnum getTermsEnum(LeafReader reader, Str ng  ndexF eld) throws  OExcept on {
+    Terms terms = reader.terms( ndexF eld);
+     f (terms == null) {
       return null;
     }
-    return terms.iterator();
+    return terms. erator();
   }
 }

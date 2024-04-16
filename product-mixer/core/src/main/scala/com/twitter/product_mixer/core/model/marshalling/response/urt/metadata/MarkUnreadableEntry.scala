@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata
 
-// Track unread entries for the MarkUnread URT instruction.
-trait MarkUnreadableEntry {
-  def isMarkUnread: Option[Boolean] = None
+// Track unread entr es for t  MarkUnread URT  nstruct on.
+tra  MarkUnreadableEntry {
+  def  sMarkUnread: Opt on[Boolean] = None
 }

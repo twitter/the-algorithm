@@ -1,28 +1,28 @@
-package com.twitter.follow_recommendations.common.clients.impression_store
+package com.tw ter.follow_recom ndat ons.common.cl ents. mpress on_store
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.thriftscala.DisplayLocation
-import com.twitter.inject.TwitterModule
-import com.twitter.strato.catalog.Scan.Slice
-import com.twitter.strato.client.Client
-import com.twitter.strato.thrift.ScroogeConvImplicits._
+ mport com.google. nject.Prov des
+ mport com.google. nject.S ngleton
+ mport com.tw ter.follow_recom ndat ons.thr ftscala.D splayLocat on
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.strato.catalog.Scan.Sl ce
+ mport com.tw ter.strato.cl ent.Cl ent
+ mport com.tw ter.strato.thr ft.ScroogeConv mpl c s._
 
-object ImpressionStoreModule extends TwitterModule {
+object  mpress onStoreModule extends Tw terModule {
 
-  val columnPath: String = "onboarding/userrecs/wtfImpressionCountsStore"
+  val columnPath: Str ng = "onboard ng/userrecs/wtf mpress onCountsStore"
 
-  type PKey = (Long, DisplayLocation)
+  type PKey = (Long, D splayLocat on)
   type LKey = Long
-  type Value = (Long, Int)
+  type Value = (Long,  nt)
 
-  @Provides
-  @Singleton
-  def providesImpressionStore(stratoClient: Client): WtfImpressionStore = {
-    new WtfImpressionStore(
-      stratoClient.scanner[
-        (PKey, Slice[LKey]),
-        Unit,
+  @Prov des
+  @S ngleton
+  def prov des mpress onStore(stratoCl ent: Cl ent): Wtf mpress onStore = {
+    new Wtf mpress onStore(
+      stratoCl ent.scanner[
+        (PKey, Sl ce[LKey]),
+        Un ,
         (PKey, LKey),
         Value
       ](columnPath)

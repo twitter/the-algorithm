@@ -1,104 +1,104 @@
-package com.twitter.search.earlybird.search.relevance;
+package com.tw ter.search.earlyb rd.search.relevance;
 
-import java.util.Comparator;
+ mport java.ut l.Comparator;
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.common_internal.collections.RandomAccessPriorityQueue;
-import com.twitter.search.common.relevance.features.TweetIntegerShingleSignature;
-import com.twitter.search.earlybird.search.Hit;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunction;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
+ mport com.tw ter.common_ nternal.collect ons.RandomAccessPr or yQueue;
+ mport com.tw ter.search.common.relevance.features.T et ntegerSh ngleS gnature;
+ mport com.tw ter.search.earlyb rd.search.H ;
+ mport com.tw ter.search.earlyb rd.search.relevance.scor ng.Scor ngFunct on;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult tadata;
 
-public class RelevanceHit extends Hit
-    implements RandomAccessPriorityQueue.SignatureProvider<TweetIntegerShingleSignature> {
+publ c class RelevanceH  extends H 
+     mple nts RandomAccessPr or yQueue.S gnatureProv der<T et ntegerSh ngleS gnature> {
   @Nullable
-  private TweetIntegerShingleSignature signature;
+  pr vate T et ntegerSh ngleS gnature s gnature;
 
-  public RelevanceHit() {
+  publ c RelevanceH () {
     super(Long.MAX_VALUE, Long.MAX_VALUE);
   }
 
-  public RelevanceHit(long timeSliceID, long statusID,
-                      TweetIntegerShingleSignature signature,
-                      ThriftSearchResultMetadata metadata) {
-    super(timeSliceID, statusID);
-    update(timeSliceID, statusID, signature, metadata);
+  publ c RelevanceH (long t  Sl ce D, long status D,
+                      T et ntegerSh ngleS gnature s gnature,
+                      Thr ftSearchResult tadata  tadata) {
+    super(t  Sl ce D, status D);
+    update(t  Sl ce D, status D, s gnature,  tadata);
   }
 
   /**
-   * Updates the data for this relevance hit.
+   * Updates t  data for t  relevance h .
    *
-   * @param timeSliceID The timeslice ID of the segment that the segment came from.
-   * @param statusID The hit's tweet ID.
-   * @param tweetSignature The tweet signature generated for this hit.
-   * @param metadata The metadata associated with this hit.
+   * @param t  Sl ce D T  t  sl ce  D of t  seg nt that t  seg nt ca  from.
+   * @param status D T  h 's t et  D.
+   * @param t etS gnature T  t et s gnature generated for t  h .
+   * @param  tadata T   tadata assoc ated w h t  h .
    */
-  public void update(long timeSliceID, long statusID, TweetIntegerShingleSignature tweetSignature,
-      ThriftSearchResultMetadata metadata) {
-    this.statusID = statusID;
-    this.timeSliceID = timeSliceID;
-    this.metadata = Preconditions.checkNotNull(metadata);
-    this.signature = Preconditions.checkNotNull(tweetSignature);
+  publ c vo d update(long t  Sl ce D, long status D, T et ntegerSh ngleS gnature t etS gnature,
+      Thr ftSearchResult tadata  tadata) {
+    t .status D = status D;
+    t .t  Sl ce D = t  Sl ce D;
+    t . tadata = Precond  ons.c ckNotNull( tadata);
+    t .s gnature = Precond  ons.c ckNotNull(t etS gnature);
   }
 
   /**
-   * Returns the computed score for this hit.
+   * Returns t  computed score for t  h .
    */
-  public float getScore() {
-    if (metadata != null) {
-      return (float) metadata.getScore();
+  publ c float getScore() {
+     f ( tadata != null) {
+      return (float)  tadata.getScore();
     } else {
-      return ScoringFunction.SKIP_HIT;
+      return Scor ngFunct on.SK P_H T;
     }
   }
 
-  // We want the score as a double (and not cast to a float) for COMPARATOR_BY_SCORE and
-  // PQ_COMPARATOR_BY_SCORE so that the results returned from Earlybirds will be sorted based on the
-  // scores in the ThriftSearchResultMetadata objects (and will not lose precision by being cast to
-  // floats). Thus, the sorted order on Earlybirds and Earlybird Roots will be consistent.
-  private double getScoreDouble() {
-    if (metadata != null) {
-      return metadata.getScore();
+  //   want t  score as a double (and not cast to a float) for COMPARATOR_BY_SCORE and
+  // PQ_COMPARATOR_BY_SCORE so that t  results returned from Earlyb rds w ll be sorted based on t 
+  // scores  n t  Thr ftSearchResult tadata objects (and w ll not lose prec s on by be ng cast to
+  // floats). Thus, t  sorted order on Earlyb rds and Earlyb rd Roots w ll be cons stent.
+  pr vate double getScoreDouble() {
+     f ( tadata != null) {
+      return  tadata.getScore();
     } else {
-      return (double) ScoringFunction.SKIP_HIT;
+      return (double) Scor ngFunct on.SK P_H T;
     }
   }
 
-  @Override @Nullable
-  public TweetIntegerShingleSignature getSignature() {
-    return signature;
+  @Overr de @Nullable
+  publ c T et ntegerSh ngleS gnature getS gnature() {
+    return s gnature;
   }
 
-  @Override
-  public String toString() {
-    return "RelevanceHit[tweetID=" + statusID + ",timeSliceID=" + timeSliceID
-        + ",score=" + (metadata == null ? "null" : metadata.getScore())
-        + ",signature=" + (signature == null ? "null" : signature) + "]";
+  @Overr de
+  publ c Str ng toStr ng() {
+    return "RelevanceH [t et D=" + status D + ",t  Sl ce D=" + t  Sl ce D
+        + ",score=" + ( tadata == null ? "null" :  tadata.getScore())
+        + ",s gnature=" + (s gnature == null ? "null" : s gnature) + "]";
   }
 
-  public static final Comparator<RelevanceHit> COMPARATOR_BY_SCORE =
+  publ c stat c f nal Comparator<RelevanceH > COMPARATOR_BY_SCORE =
       (d1, d2) -> {
-        // if two docs have the same score, then the first one (most recent) wins
-        if (d1.getScore() == d2.getScore()) {
-          return Long.compare(d2.getStatusID(), d1.getStatusID());
+        //  f two docs have t  sa  score, t n t  f rst one (most recent) w ns
+         f (d1.getScore() == d2.getScore()) {
+          return Long.compare(d2.getStatus D(), d1.getStatus D());
         }
         return Double.compare(d2.getScoreDouble(), d1.getScoreDouble());
       };
 
-  public static final Comparator<RelevanceHit> PQ_COMPARATOR_BY_SCORE =
+  publ c stat c f nal Comparator<RelevanceH > PQ_COMPARATOR_BY_SCORE =
       (d1, d2) -> {
-        // Reverse the order
+        // Reverse t  order
         return COMPARATOR_BY_SCORE.compare(d2, d1);
       };
 
-  @Override
-  public void clear() {
-    timeSliceID = Long.MAX_VALUE;
-    statusID = Long.MAX_VALUE;
-    metadata = null;
-    signature = null;
+  @Overr de
+  publ c vo d clear() {
+    t  Sl ce D = Long.MAX_VALUE;
+    status D = Long.MAX_VALUE;
+     tadata = null;
+    s gnature = null;
   }
 }

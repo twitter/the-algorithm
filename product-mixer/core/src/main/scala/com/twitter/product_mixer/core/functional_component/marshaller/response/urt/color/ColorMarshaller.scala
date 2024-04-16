@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.color
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.Color
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.color.Color
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject.S ngleton
 
-@Singleton
+@S ngleton
 class ColorMarshaller {
 
   def apply(color: Color): urt.Color = urt.Color(
     red = color.red,
     green = color.green,
     blue = color.blue,
-    opacity = color.opacity
+    opac y = color.opac y
   )
 }

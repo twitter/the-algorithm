@@ -1,73 +1,73 @@
-package com.twitter.frigate.pushservice.store
+package com.tw ter.fr gate.pushserv ce.store
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.onboarding.task.service.thriftscala.FatigueFlowEnrollment
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.bijections.Bijections.BinaryScalaInjection
-import com.twitter.storage.client.manhattan.bijections.Bijections.LongInjection
-import com.twitter.storage.client.manhattan.bijections.Bijections.StringInjection
-import com.twitter.storage.client.manhattan.kv.impl.Component
-import com.twitter.storage.client.manhattan.kv.impl.KeyDescriptor
-import com.twitter.storage.client.manhattan.kv.impl.ValueDescriptor
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClient
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpointBuilder
-import com.twitter.storage.client.manhattan.kv.NoMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.Omega
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.onboard ng.task.serv ce.thr ftscala.Fat gueFlowEnroll nt
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.storage.cl ent.manhattan.b ject ons.B ject ons.B naryScala nject on
+ mport com.tw ter.storage.cl ent.manhattan.b ject ons.B ject ons.Long nject on
+ mport com.tw ter.storage.cl ent.manhattan.b ject ons.B ject ons.Str ng nject on
+ mport com.tw ter.storage.cl ent.manhattan.kv. mpl.Component
+ mport com.tw ter.storage.cl ent.manhattan.kv. mpl.KeyDescr ptor
+ mport com.tw ter.storage.cl ent.manhattan.kv. mpl.ValueDescr ptor
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl ent
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl entMtlsParams
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVEndpo ntBu lder
+ mport com.tw ter.storage.cl ent.manhattan.kv.NoMtlsParams
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.storehaus_ nternal.manhattan.O ga
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
 
-case class OCFHistoryStoreKey(userId: Long, fatigueDuration: Duration, fatigueGroup: String)
+case class OCF toryStoreKey(user d: Long, fat gueDurat on: Durat on, fat gueGroup: Str ng)
 
-class OCFPromptHistoryStore(
-  manhattanAppId: String,
-  dataset: String,
-  mtlsParams: ManhattanKVClientMtlsParams = NoMtlsParams
+class OCFPrompt toryStore(
+  manhattanApp d: Str ng,
+  dataset: Str ng,
+  mtlsParams: ManhattanKVCl entMtlsParams = NoMtlsParams
 )(
-  implicit stats: StatsReceiver)
-    extends ReadableStore[OCFHistoryStoreKey, FatigueFlowEnrollment] {
+   mpl c  stats: StatsRece ver)
+    extends ReadableStore[OCF toryStoreKey, Fat gueFlowEnroll nt] {
 
-  import ManhattanInjections._
+   mport Manhattan nject ons._
 
-  private val client = ManhattanKVClient(
-    appId = manhattanAppId,
-    dest = Omega.wilyName,
+  pr vate val cl ent = ManhattanKVCl ent(
+    app d = manhattanApp d,
+    dest = O ga.w lyNa ,
     mtlsParams = mtlsParams,
-    label = "ocf_history_store"
+    label = "ocf_ tory_store"
   )
-  private val endpoint = ManhattanKVEndpointBuilder(client, defaultMaxTimeout = 5.seconds)
-    .statsReceiver(stats.scope("ocf_history_store"))
-    .build()
+  pr vate val endpo nt = ManhattanKVEndpo ntBu lder(cl ent, defaultMaxT  out = 5.seconds)
+    .statsRece ver(stats.scope("ocf_ tory_store"))
+    .bu ld()
 
-  private val limitResultsTo = 1
+  pr vate val l m ResultsTo = 1
 
-  private val datasetKey = keyDesc.withDataset(dataset)
+  pr vate val datasetKey = keyDesc.w hDataset(dataset)
 
-  override def get(storeKey: OCFHistoryStoreKey): Future[Option[FatigueFlowEnrollment]] = {
-    val userId = storeKey.userId
-    val fatigueGroup = storeKey.fatigueGroup
-    val fatigueLength = storeKey.fatigueDuration.inMilliseconds
-    val currentTime = Time.now.inMilliseconds
+  overr de def get(storeKey: OCF toryStoreKey): Future[Opt on[Fat gueFlowEnroll nt]] = {
+    val user d = storeKey.user d
+    val fat gueGroup = storeKey.fat gueGroup
+    val fat gueLength = storeKey.fat gueDurat on. nM ll seconds
+    val currentT   = T  .now. nM ll seconds
     val fullKey = datasetKey
-      .withPkey(userId)
-      .from(fatigueGroup)
-      .to(fatigueGroup, fatigueLength - currentTime)
+      .w hPkey(user d)
+      .from(fat gueGroup)
+      .to(fat gueGroup, fat gueLength - currentT  )
 
-    Stitch
-      .run(endpoint.slice(fullKey, valDesc, limit = Some(limitResultsTo)))
+    St ch
+      .run(endpo nt.sl ce(fullKey, valDesc, l m  = So (l m ResultsTo)))
       .map { results =>
-        if (results.nonEmpty) {
-          val (_, mhValue) = results.head
-          Some(mhValue.contents)
+         f (results.nonEmpty) {
+          val (_, mhValue) = results. ad
+          So (mhValue.contents)
         } else None
       }
   }
 }
 
-object ManhattanInjections {
-  val keyDesc = KeyDescriptor(Component(LongInjection), Component(StringInjection, LongInjection))
-  val valDesc = ValueDescriptor(BinaryScalaInjection(FatigueFlowEnrollment))
+object Manhattan nject ons {
+  val keyDesc = KeyDescr ptor(Component(Long nject on), Component(Str ng nject on, Long nject on))
+  val valDesc = ValueDescr ptor(B naryScala nject on(Fat gueFlowEnroll nt))
 }

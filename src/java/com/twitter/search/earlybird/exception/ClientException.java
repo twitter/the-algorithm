@@ -1,11 +1,11 @@
-package com.twitter.search.earlybird.exception;
+package com.tw ter.search.earlyb rd.except on;
 
-public class ClientException extends Exception {
-  public ClientException(Throwable t) {
+publ c class Cl entExcept on extends Except on {
+  publ c Cl entExcept on(Throwable t) {
     super(t);
   }
 
-  public ClientException(String message) {
-    super(message);
+  publ c Cl entExcept on(Str ng  ssage) {
+    super( ssage);
   }
 }

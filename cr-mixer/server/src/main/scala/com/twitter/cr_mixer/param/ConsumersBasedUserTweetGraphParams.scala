@@ -1,44 +1,44 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .Param
 
 /**
- * ConsumersBasedUserTweetGraph Params, there are multiple ways (e.g. FRS, RealGraphOon) to generate consumersSeedSet for ConsumersBasedUserTweetGraph
- * for now we allow flexibility in tuning UTG params for different consumersSeedSet generation algo by giving the param name {consumerSeedSetAlgo}{ParamName}
+ * Consu rsBasedUserT etGraph Params, t re are mult ple ways (e.g. FRS, RealGraphOon) to generate consu rsSeedSet for Consu rsBasedUserT etGraph
+ * for now   allow flex b l y  n tun ng UTG params for d fferent consu rsSeedSet generat on algo by g v ng t  param na  {consu rSeedSetAlgo}{ParamNa }
  */
 
-object ConsumersBasedUserTweetGraphParams {
+object Consu rsBasedUserT etGraphParams {
 
-  object EnableSourceParam
+  object EnableS ceParam
       extends FSParam[Boolean](
-        name = "consumers_based_user_tweet_graph_enable_source",
+        na  = "consu rs_based_user_t et_graph_enable_s ce",
         default = false
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableSourceParam,
+  val AllParams: Seq[Param[_] w h FSNa ] = Seq(
+    EnableS ceParam,
   )
 
-  lazy val config: BaseConfig = {
+  lazy val conf g: BaseConf g = {
 
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides()
+    val  ntOverr des = FeatureSw chOverr deUt l.getBounded ntFSOverr des()
 
-    val doubleOverrides =
-      FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides()
+    val doubleOverr des =
+      FeatureSw chOverr deUt l.getBoundedDoubleFSOverr des()
 
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableSourceParam
+    val booleanOverr des = FeatureSw chOverr deUt l.getBooleanFSOverr des(
+      EnableS ceParam
     )
 
-    BaseConfigBuilder()
-      .set(intOverrides: _*)
-      .set(booleanOverrides: _*)
-      .set(doubleOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set( ntOverr des: _*)
+      .set(booleanOverr des: _*)
+      .set(doubleOverr des: _*)
+      .bu ld()
   }
 }

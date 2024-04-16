@@ -1,57 +1,57 @@
-package com.twitter.visibility.builder.tweets
+package com.tw ter.v s b l y.bu lder.t ets
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.TrustedFriendsListId
-import com.twitter.visibility.common.TrustedFriendsSource
-import com.twitter.visibility.features.TweetIsTrustedFriendTweet
-import com.twitter.visibility.features.ViewerIsTrustedFriendOfTweetAuthor
-import com.twitter.visibility.features.ViewerIsTrustedFriendTweetAuthor
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.common.TrustedFr endsL st d
+ mport com.tw ter.v s b l y.common.TrustedFr endsS ce
+ mport com.tw ter.v s b l y.features.T et sTrustedFr endT et
+ mport com.tw ter.v s b l y.features.V e r sTrustedFr endOfT etAuthor
+ mport com.tw ter.v s b l y.features.V e r sTrustedFr endT etAuthor
 
-class TrustedFriendsFeatures(trustedFriendsSource: TrustedFriendsSource) {
+class TrustedFr endsFeatures(trustedFr endsS ce: TrustedFr endsS ce) {
 
-  private[builder] def viewerIsTrustedFriend(
-    tweet: Tweet,
-    viewerId: Option[Long]
-  ): Stitch[Boolean] =
-    (trustedFriendsListId(tweet), viewerId) match {
-      case (Some(tfListId), Some(userId)) =>
-        trustedFriendsSource.isTrustedFriend(tfListId, userId)
-      case _ => Stitch.False
+  pr vate[bu lder] def v e r sTrustedFr end(
+    t et: T et,
+    v e r d: Opt on[Long]
+  ): St ch[Boolean] =
+    (trustedFr endsL st d(t et), v e r d) match {
+      case (So (tfL st d), So (user d)) =>
+        trustedFr endsS ce. sTrustedFr end(tfL st d, user d)
+      case _ => St ch.False
     }
 
-  private[builder] def viewerIsTrustedFriendListOwner(
-    tweet: Tweet,
-    viewerId: Option[Long]
-  ): Stitch[Boolean] =
-    (trustedFriendsListId(tweet), viewerId) match {
-      case (Some(tfListId), Some(userId)) =>
-        trustedFriendsSource.isTrustedFriendListOwner(tfListId, userId)
-      case _ => Stitch.False
+  pr vate[bu lder] def v e r sTrustedFr endL stOwner(
+    t et: T et,
+    v e r d: Opt on[Long]
+  ): St ch[Boolean] =
+    (trustedFr endsL st d(t et), v e r d) match {
+      case (So (tfL st d), So (user d)) =>
+        trustedFr endsS ce. sTrustedFr endL stOwner(tfL st d, user d)
+      case _ => St ch.False
     }
 
-  private[builder] def trustedFriendsListId(tweet: Tweet): Option[TrustedFriendsListId] =
-    tweet.trustedFriendsControl.map(_.trustedFriendsListId)
+  pr vate[bu lder] def trustedFr endsL st d(t et: T et): Opt on[TrustedFr endsL st d] =
+    t et.trustedFr endsControl.map(_.trustedFr endsL st d)
 
-  def forTweet(
-    tweet: Tweet,
-    viewerId: Option[Long]
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    _.withConstantFeature(
-      TweetIsTrustedFriendTweet,
-      tweet.trustedFriendsControl.isDefined
-    ).withFeature(
-        ViewerIsTrustedFriendTweetAuthor,
-        viewerIsTrustedFriendListOwner(tweet, viewerId)
-      ).withFeature(
-        ViewerIsTrustedFriendOfTweetAuthor,
-        viewerIsTrustedFriend(tweet, viewerId)
+  def forT et(
+    t et: T et,
+    v e r d: Opt on[Long]
+  ): FeatureMapBu lder => FeatureMapBu lder = {
+    _.w hConstantFeature(
+      T et sTrustedFr endT et,
+      t et.trustedFr endsControl. sDef ned
+    ).w hFeature(
+        V e r sTrustedFr endT etAuthor,
+        v e r sTrustedFr endL stOwner(t et, v e r d)
+      ).w hFeature(
+        V e r sTrustedFr endOfT etAuthor,
+        v e r sTrustedFr end(t et, v e r d)
       )
   }
 
-  def forTweetOnly(tweet: Tweet): FeatureMapBuilder => FeatureMapBuilder = {
-    _.withConstantFeature(TweetIsTrustedFriendTweet, tweet.trustedFriendsControl.isDefined)
+  def forT etOnly(t et: T et): FeatureMapBu lder => FeatureMapBu lder = {
+    _.w hConstantFeature(T et sTrustedFr endT et, t et.trustedFr endsControl. sDef ned)
   }
 
 }

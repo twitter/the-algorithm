@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder
+package com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-trait CandidateUrtEntryBuilder[
-  -Query <: PipelineQuery,
-  -BuilderInput <: UniversalNoun[Any],
-  BuilderOutput <: TimelineEntry] {
+tra  Cand dateUrtEntryBu lder[
+  -Query <: P pel neQuery,
+  -Bu lder nput <: Un versalNoun[Any],
+  Bu lderOutput <: T  l neEntry] {
 
-  def apply(query: Query, candidate: BuilderInput, candidateFeatures: FeatureMap): BuilderOutput
+  def apply(query: Query, cand date: Bu lder nput, cand dateFeatures: FeatureMap): Bu lderOutput
 }

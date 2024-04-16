@@ -1,30 +1,30 @@
-package com.twitter.search.earlybird.search.facets;
+package com.tw ter.search.earlyb rd.search.facets;
 
-import java.util.Iterator;
+ mport java.ut l. erator;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.facets.FacetCountState;
-import com.twitter.search.core.earlybird.facets.FacetCountState.FacetFieldResults;
-import com.twitter.search.earlybird.search.EarlybirdLuceneSearcher;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetCountState;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetCountState.FacetF eldResults;
+ mport com.tw ter.search.earlyb rd.search.Earlyb rdLuceneSearc r;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetF eldResults;
 
-public class SimpleCountRankingModule extends FacetRankingModule {
+publ c class S mpleCountRank ngModule extends FacetRank ngModule {
 
-  @Override
-  public void prepareResults(
-      EarlybirdLuceneSearcher.FacetSearchResults hits,
-      FacetCountState<ThriftFacetFieldResults> facetCountState) {
-    Iterator<FacetFieldResults<ThriftFacetFieldResults>> fieldResultsIterator =
-            facetCountState.getFacetFieldResultsIterator();
-    while (fieldResultsIterator.hasNext()) {
-      FacetFieldResults<ThriftFacetFieldResults> state = fieldResultsIterator.next();
-      if (!state.isFinished()) {
-        Schema.FieldInfo facetField =
-                facetCountState.getSchema().getFacetFieldByFacetName(state.facetName);
-        state.results = hits.getFacetResults(
-                facetField.getFieldType().getFacetName(), state.numResultsRequested);
-        if (state.results != null) {
-          state.numResultsFound = state.results.getTopFacetsSize();
+  @Overr de
+  publ c vo d prepareResults(
+      Earlyb rdLuceneSearc r.FacetSearchResults h s,
+      FacetCountState<Thr ftFacetF eldResults> facetCountState) {
+     erator<FacetF eldResults<Thr ftFacetF eldResults>> f eldResults erator =
+            facetCountState.getFacetF eldResults erator();
+    wh le (f eldResults erator.hasNext()) {
+      FacetF eldResults<Thr ftFacetF eldResults> state = f eldResults erator.next();
+       f (!state. sF n s d()) {
+        Sc ma.F eld nfo facetF eld =
+                facetCountState.getSc ma().getFacetF eldByFacetNa (state.facetNa );
+        state.results = h s.getFacetResults(
+                facetF eld.getF eldType().getFacetNa (), state.numResultsRequested);
+         f (state.results != null) {
+          state.numResultsFound = state.results.getTopFacetsS ze();
         }
       }
     }

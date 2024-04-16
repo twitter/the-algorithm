@@ -1,534 +1,534 @@
-package com.twitter.frigate.pushservice.params
+package com.tw ter.fr gate.pushserv ce.params
 
-import com.twitter.rux.common.context.thriftscala.ExperimentKey
-import com.twitter.timelines.configapi.Param
-import com.twitter.timelines.configapi.decider.BooleanDeciderParam
+ mport com.tw ter.rux.common.context.thr ftscala.Exper  ntKey
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.t  l nes.conf gap .dec der.BooleanDec derParam
 
 object PushParams {
 
   /**
-   * Disable ML models in filtering
+   * D sable ML models  n f lter ng
    */
-  object DisableMlInFilteringParam extends BooleanDeciderParam(DeciderKey.disableMLInFiltering)
+  object D sableMl nF lter ngParam extends BooleanDec derParam(Dec derKey.d sableML nF lter ng)
 
   /**
-   * Disable ML models in ranking, use random ranking instead
-   * This param is used for ML holdback and training data collection
+   * D sable ML models  n rank ng, use random rank ng  nstead
+   * T  param  s used for ML holdback and tra n ng data collect on
    */
-  object UseRandomRankingParam extends Param(false)
+  object UseRandomRank ngParam extends Param(false)
 
   /**
-   * Disable feature hydration, ML ranking, and ML filtering
-   * Use default order from candidate source
-   * This param is for service continuity
+   * D sable feature hydrat on, ML rank ng, and ML f lter ng
+   * Use default order from cand date s ce
+   * T  param  s for serv ce cont nu y
    */
-  object DisableAllRelevanceParam extends BooleanDeciderParam(DeciderKey.disableAllRelevance)
+  object D sableAllRelevanceParam extends BooleanDec derParam(Dec derKey.d sableAllRelevance)
 
   /**
-   * Disable ML heavy ranking
-   * Use default order from candidate source
-   * This param is for service continuity
+   * D sable ML  avy rank ng
+   * Use default order from cand date s ce
+   * T  param  s for serv ce cont nu y
    */
-  object DisableHeavyRankingParam extends BooleanDeciderParam(DeciderKey.disableHeavyRanking)
+  object D sable avyRank ngParam extends BooleanDec derParam(Dec derKey.d sable avyRank ng)
 
   /**
-   * Restrict ML light ranking by selecting top3 candidates
-   * Use default order from candidate source
-   * This param is for service continuity
+   * Restr ct ML l ght rank ng by select ng top3 cand dates
+   * Use default order from cand date s ce
+   * T  param  s for serv ce cont nu y
    */
-  object RestrictLightRankingParam extends BooleanDeciderParam(DeciderKey.restrictLightRanking)
+  object Restr ctL ghtRank ngParam extends BooleanDec derParam(Dec derKey.restr ctL ghtRank ng)
 
   /**
-   * Downsample ML light ranking scribed candidates
+   * Downsample ML l ght rank ng scr bed cand dates
    */
-  object DownSampleLightRankingScribeCandidatesParam
-      extends BooleanDeciderParam(DeciderKey.downSampleLightRankingScribeCandidates)
+  object DownSampleL ghtRank ngScr beCand datesParam
+      extends BooleanDec derParam(Dec derKey.downSampleL ghtRank ngScr beCand dates)
 
   /**
-   * Set it to true only for Android only ranking experiments
+   * Set   to true only for Andro d only rank ng exper  nts
    */
-  object AndroidOnlyRankingExperimentParam extends Param(false)
+  object Andro dOnlyRank ngExper  ntParam extends Param(false)
 
   /**
-   * Enable the user_tweet_entity_graph tweet candidate source.
+   * Enable t  user_t et_ent y_graph t et cand date s ce.
    */
-  object UTEGTweetCandidateSourceParam
-      extends BooleanDeciderParam(DeciderKey.entityGraphTweetRecsDeciderKey)
+  object UTEGT etCand dateS ceParam
+      extends BooleanDec derParam(Dec derKey.ent yGraphT etRecsDec derKey)
 
   /**
-   * Enable writes to Notification Service
+   * Enable wr es to Not f cat on Serv ce
    */
-  object EnableWritesToNotificationServiceParam
-      extends BooleanDeciderParam(DeciderKey.enablePushserviceWritesToNotificationServiceDeciderKey)
+  object EnableWr esToNot f cat onServ ceParam
+      extends BooleanDec derParam(Dec derKey.enablePushserv ceWr esToNot f cat onServ ceDec derKey)
 
   /**
-   * Enable writes to Notification Service for all employees
+   * Enable wr es to Not f cat on Serv ce for all employees
    */
-  object EnableWritesToNotificationServiceForAllEmployeesParam
-      extends BooleanDeciderParam(
-        DeciderKey.enablePushserviceWritesToNotificationServiceForAllEmployeesDeciderKey)
+  object EnableWr esToNot f cat onServ ceForAllEmployeesParam
+      extends BooleanDec derParam(
+        Dec derKey.enablePushserv ceWr esToNot f cat onServ ceForAllEmployeesDec derKey)
 
   /**
-   * Enable writes to Notification Service for everyone
+   * Enable wr es to Not f cat on Serv ce for everyone
    */
-  object EnableWritesToNotificationServiceForEveryoneParam
-      extends BooleanDeciderParam(
-        DeciderKey.enablePushserviceWritesToNotificationServiceForEveryoneDeciderKey)
+  object EnableWr esToNot f cat onServ ceForEveryoneParam
+      extends BooleanDec derParam(
+        Dec derKey.enablePushserv ceWr esToNot f cat onServ ceForEveryoneDec derKey)
 
   /**
-   * Enable fatiguing MR for Ntab caret click
+   * Enable fat gu ng MR for Ntab caret cl ck
    */
-  object EnableFatigueNtabCaretClickingParam extends Param(true)
+  object EnableFat gueNtabCaretCl ck ngParam extends Param(true)
 
   /**
-   * Param for disabling in-network Tweet candidates
+   * Param for d sabl ng  n-network T et cand dates
    */
-  object DisableInNetworkTweetCandidatesParam extends Param(false)
+  object D sable nNetworkT etCand datesParam extends Param(false)
 
   /**
-   * Decider controlled param to enable prompt feedback response NO predicate
+   * Dec der controlled param to enable prompt feedback response NO pred cate
    */
-  object EnablePromptFeedbackFatigueResponseNoPredicate
-      extends BooleanDeciderParam(
-        DeciderKey.enablePromptFeedbackFatigueResponseNoPredicateDeciderKey)
+  object EnablePromptFeedbackFat gueResponseNoPred cate
+      extends BooleanDec derParam(
+        Dec derKey.enablePromptFeedbackFat gueResponseNoPred cateDec derKey)
 
   /**
-   * Enable hydration and generation of Social context (TF, TR) based candidates for Earlybird Tweets
+   * Enable hydrat on and generat on of Soc al context (TF, TR) based cand dates for Earlyb rd T ets
    */
-  object EarlyBirdSCBasedCandidatesParam
-      extends BooleanDeciderParam(DeciderKey.enableUTEGSCForEarlybirdTweetsDecider)
+  object EarlyB rdSCBasedCand datesParam
+      extends BooleanDec derParam(Dec derKey.enableUTEGSCForEarlyb rdT etsDec der)
 
   /**
-   * Param to allow reduce to one social proof for tweet param in UTEG
+   * Param to allow reduce to one soc al proof for t et param  n UTEG
    */
-  object AllowOneSocialProofForTweetInUTEGParam extends Param(true)
+  object AllowOneSoc alProofForT et nUTEGParam extends Param(true)
 
   /**
-   * Param to query UTEG for out network tweets only
+   * Param to query UTEG for out network t ets only
    */
-  object OutNetworkTweetsOnlyForUTEGParam extends Param(false)
+  object OutNetworkT etsOnlyForUTEGParam extends Param(false)
 
-  object EnablePushSendEventBus extends BooleanDeciderParam(DeciderKey.enablePushSendEventBus)
+  object EnablePushSendEventBus extends BooleanDec derParam(Dec derKey.enablePushSendEventBus)
 
   /**
-   * Enable RUX Tweet landing page for push open on iOS
+   * Enable RUX T et land ng page for push open on  OS
    */
-  object EnableRuxLandingPageIOSParam extends Param[Boolean](true)
+  object EnableRuxLand ngPage OSParam extends Param[Boolean](true)
 
   /**
-   * Enable RUX Tweet landing page for push open on Android
+   * Enable RUX T et land ng page for push open on Andro d
    */
-  object EnableRuxLandingPageAndroidParam extends Param[Boolean](true)
+  object EnableRuxLand ngPageAndro dParam extends Param[Boolean](true)
 
   /**
-   * Param to decide which ExperimentKey to be encoded into Rux landing page context object.
-   * The context object is sent to rux-api and rux-api applies logic (e.g. show reply module on
-   * rux landing page or not) accordingly based on the experiment key.
+   * Param to dec de wh ch Exper  ntKey to be encoded  nto Rux land ng page context object.
+   * T  context object  s sent to rux-ap  and rux-ap  appl es log c (e.g. show reply module on
+   * rux land ng page or not) accord ngly based on t  exper  nt key.
    */
-  object RuxLandingPageExperimentKeyIOSParam extends Param[Option[ExperimentKey]](None)
-  object RuxLandingPageExperimentKeyAndroidParam extends Param[Option[ExperimentKey]](None)
+  object RuxLand ngPageExper  ntKey OSParam extends Param[Opt on[Exper  ntKey]](None)
+  object RuxLand ngPageExper  ntKeyAndro dParam extends Param[Opt on[Exper  ntKey]](None)
 
   /**
-   * Param to enable MR Tweet Fav Recs
+   * Param to enable MR T et Fav Recs
    */
-  object MRTweetFavRecsParam extends BooleanDeciderParam(DeciderKey.enableTweetFavRecs)
+  object MRT etFavRecsParam extends BooleanDec derParam(Dec derKey.enableT etFavRecs)
 
   /**
-   * Param to enable MR Tweet Retweet Recs
+   * Param to enable MR T et Ret et Recs
    */
-  object MRTweetRetweetRecsParam extends BooleanDeciderParam(DeciderKey.enableTweetRetweetRecs)
+  object MRT etRet etRecsParam extends BooleanDec derParam(Dec derKey.enableT etRet etRecs)
 
   /**
-   * Param to disable writing to NTAB
+   * Param to d sable wr  ng to NTAB
    * */
-  object DisableWritingToNTAB extends Param[Boolean](default = false)
+  object D sableWr  ngToNTAB extends Param[Boolean](default = false)
 
   /**
-   * Param to show RUX landing page as a modal on iOS
+   * Param to show RUX land ng page as a modal on  OS
    */
-  object ShowRuxLandingPageAsModalOnIOS extends Param[Boolean](default = false)
+  object ShowRuxLand ngPageAsModalOn OS extends Param[Boolean](default = false)
 
   /**
-   * Param to enable mr end to end scribing
+   * Param to enable mr end to end scr b ng
    */
-  object EnableMrRequestScribing extends BooleanDeciderParam(DeciderKey.enableMrRequestScribing)
+  object EnableMrRequestScr b ng extends BooleanDec derParam(Dec derKey.enableMrRequestScr b ng)
 
   /**
-   * Param to enable scribing of high quality candidate scores
+   * Param to enable scr b ng of h gh qual y cand date scores
    */
-  object EnableHighQualityCandidateScoresScribing
-      extends BooleanDeciderParam(DeciderKey.enableHighQualityCandidateScoresScribing)
+  object EnableH ghQual yCand dateScoresScr b ng
+      extends BooleanDec derParam(Dec derKey.enableH ghQual yCand dateScoresScr b ng)
 
   /**
-   * Decider controlled param to pNeg multimodal predictions for F1 tweets
+   * Dec der controlled param to pNeg mult modal pred ct ons for F1 t ets
    */
-  object EnablePnegMultimodalPredictionForF1Tweets
-      extends BooleanDeciderParam(DeciderKey.enablePnegMultimodalPredictionForF1Tweets)
+  object EnablePnegMult modalPred ct onForF1T ets
+      extends BooleanDec derParam(Dec derKey.enablePnegMult modalPred ct onForF1T ets)
 
   /**
-   * Decider controlled param to scribe oonFav score for F1 tweets
+   * Dec der controlled param to scr be oonFav score for F1 t ets
    */
-  object EnableScribeOonFavScoreForF1Tweets
-      extends BooleanDeciderParam(DeciderKey.enableScribingOonFavScoreForF1Tweets)
+  object EnableScr beOonFavScoreForF1T ets
+      extends BooleanDec derParam(Dec derKey.enableScr b ngOonFavScoreForF1T ets)
 
   /**
-   * Param to enable htl user aggregates extended hydration
+   * Param to enable htl user aggregates extended hydrat on
    */
-  object EnableHtlOfflineUserAggregatesExtendedHydration
-      extends BooleanDeciderParam(DeciderKey.enableHtlOfflineUserAggregateExtendedFeaturesHydration)
+  object EnableHtlOffl neUserAggregatesExtendedHydrat on
+      extends BooleanDec derParam(Dec derKey.enableHtlOffl neUserAggregateExtendedFeaturesHydrat on)
 
   /**
-   * Param to enable predicate detailed info scribing
+   * Param to enable pred cate deta led  nfo scr b ng
    */
-  object EnablePredicateDetailedInfoScribing
-      extends BooleanDeciderParam(DeciderKey.enablePredicateDetailedInfoScribing)
+  object EnablePred cateDeta led nfoScr b ng
+      extends BooleanDec derParam(Dec derKey.enablePred cateDeta led nfoScr b ng)
 
   /**
-   * Param to enable predicate detailed info scribing
+   * Param to enable pred cate deta led  nfo scr b ng
    */
-  object EnablePushCapInfoScribing
-      extends BooleanDeciderParam(DeciderKey.enablePredicateDetailedInfoScribing)
+  object EnablePushCap nfoScr b ng
+      extends BooleanDec derParam(Dec derKey.enablePred cateDeta led nfoScr b ng)
 
   /**
-   * Param to enable user signal language feature hydration
+   * Param to enable user s gnal language feature hydrat on
    */
-  object EnableUserSignalLanguageFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableUserSignalLanguageFeatureHydration)
+  object EnableUserS gnalLanguageFeatureHydrat on
+      extends BooleanDec derParam(Dec derKey.enableUserS gnalLanguageFeatureHydrat on)
 
   /**
-   * Param to enable user preferred language feature hydration
+   * Param to enable user preferred language feature hydrat on
    */
-  object EnableUserPreferredLanguageFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableUserPreferredLanguageFeatureHydration)
+  object EnableUserPreferredLanguageFeatureHydrat on
+      extends BooleanDec derParam(Dec derKey.enableUserPreferredLanguageFeatureHydrat on)
 
   /**
-   * Param to enable ner erg feature hydration
+   * Param to enable ner erg feature hydrat on
    */
-  object EnableNerErgFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableNerErgFeaturesHydration)
+  object EnableNerErgFeatureHydrat on
+      extends BooleanDec derParam(Dec derKey.enableNerErgFeaturesHydrat on)
 
   /**
-   * Param to enable inline action on push copy for Android
+   * Param to enable  nl ne act on on push copy for Andro d
    */
-  object MRAndroidInlineActionOnPushCopyParam extends Param[Boolean](default = true)
+  object MRAndro d nl neAct onOnPushCopyParam extends Param[Boolean](default = true)
 
   /**
-   * Param to enable hydrating mr user semantic core embedding features
+   * Param to enable hydrat ng mr user semant c core embedd ng features
    * */
-  object EnableMrUserSemanticCoreFeaturesHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrUserSemanticCoreFeaturesHydration)
+  object EnableMrUserSemant cCoreFeaturesHydrat on
+      extends BooleanDec derParam(Dec derKey.enableMrUserSemant cCoreFeaturesHydrat on)
 
   /**
-   * Param to enable hydrating mr user semantic core embedding features filtered by 0.0000001
+   * Param to enable hydrat ng mr user semant c core embedd ng features f ltered by 0.0000001
    * */
-  object EnableMrUserSemanticCoreNoZeroFeaturesHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrUserSemanticCoreNoZeroFeaturesHydration)
+  object EnableMrUserSemant cCoreNoZeroFeaturesHydrat on
+      extends BooleanDec derParam(Dec derKey.enableMrUserSemant cCoreNoZeroFeaturesHydrat on)
 
   /*
-   * Param to enable days since user's recent resurrection features hydration
+   * Param to enable days s nce user's recent resurrect on features hydrat on
    */
-  object EnableDaysSinceRecentResurrectionFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableDaysSinceRecentResurrectionFeatureHydration)
+  object EnableDaysS nceRecentResurrect onFeatureHydrat on
+      extends BooleanDec derParam(Dec derKey.enableDaysS nceRecentResurrect onFeatureHydrat on)
 
   /*
-   * Param to enable days since user past aggregates features hydration
+   * Param to enable days s nce user past aggregates features hydrat on
    */
-  object EnableUserPastAggregatesFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableUserPastAggregatesFeatureHydration)
+  object EnableUserPastAggregatesFeatureHydrat on
+      extends BooleanDec derParam(Dec derKey.enableUserPastAggregatesFeatureHydrat on)
 
   /*
-   * Param to enable mr user simcluster features (v2020) hydration
+   * Param to enable mr user s mcluster features (v2020) hydrat on
    * */
-  object EnableMrUserSimclusterV2020FeaturesHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrUserSimclusterV2020FeaturesHydration)
+  object EnableMrUserS mclusterV2020FeaturesHydrat on
+      extends BooleanDec derParam(Dec derKey.enableMrUserS mclusterV2020FeaturesHydrat on)
 
   /*
-   * Param to enable mr user simcluster features (v2020) hydration
+   * Param to enable mr user s mcluster features (v2020) hydrat on
    * */
-  object EnableMrUserSimclusterV2020NoZeroFeaturesHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrUserSimclusterV2020NoZeroFeaturesHydration)
+  object EnableMrUserS mclusterV2020NoZeroFeaturesHydrat on
+      extends BooleanDec derParam(Dec derKey.enableMrUserS mclusterV2020NoZeroFeaturesHydrat on)
 
   /*
-   * Param to enable HTL topic engagement realtime aggregate features
+   * Param to enable HTL top c engage nt realt   aggregate features
    * */
-  object EnableTopicEngagementRealTimeAggregatesFeatureHydration
-      extends BooleanDeciderParam(
-        DeciderKey.enableTopicEngagementRealTimeAggregatesFeatureHydration)
+  object EnableTop cEngage ntRealT  AggregatesFeatureHydrat on
+      extends BooleanDec derParam(
+        Dec derKey.enableTop cEngage ntRealT  AggregatesFeatureHydrat on)
 
-  object EnableUserTopicAggregatesFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableUserTopicAggregatesFeatureHydration)
+  object EnableUserTop cAggregatesFeatureHydrat on
+      extends BooleanDec derParam(Dec derKey.enableUserTop cAggregatesFeatureHydrat on)
 
   /**
-   * Param to enable user author RTA feature hydration
+   * Param to enable user author RTA feature hydrat on
    */
-  object EnableHtlUserAuthorRTAFeaturesFromFeatureStoreHydration
-      extends BooleanDeciderParam(DeciderKey.enableHtlUserAuthorRealTimeAggregateFeatureHydration)
+  object EnableHtlUserAuthorRTAFeaturesFromFeatureStoreHydrat on
+      extends BooleanDec derParam(Dec derKey.enableHtlUserAuthorRealT  AggregateFeatureHydrat on)
 
   /**
-   * Param to enable duration since last visit features
+   * Param to enable durat on s nce last v s  features
    */
-  object EnableDurationSinceLastVisitFeatures
-      extends BooleanDeciderParam(DeciderKey.enableDurationSinceLastVisitFeatureHydration)
+  object EnableDurat onS nceLastV s Features
+      extends BooleanDec derParam(Dec derKey.enableDurat onS nceLastV s FeatureHydrat on)
 
-  object EnableTweetAnnotationFeaturesHydration
-      extends BooleanDeciderParam(DeciderKey.enableTweetAnnotationFeatureHydration)
+  object EnableT etAnnotat onFeaturesHydrat on
+      extends BooleanDec derParam(Dec derKey.enableT etAnnotat onFeatureHydrat on)
 
   /**
-   * Param to Enable visibility filtering through SpaceVisibilityLibrary from SpacePredicate
+   * Param to Enable v s b l y f lter ng through SpaceV s b l yL brary from SpacePred cate
    */
-  object EnableSpaceVisibilityLibraryFiltering
-      extends BooleanDeciderParam(DeciderKey.enableSpaceVisibilityLibraryFiltering)
+  object EnableSpaceV s b l yL braryF lter ng
+      extends BooleanDec derParam(Dec derKey.enableSpaceV s b l yL braryF lter ng)
 
   /*
-   * Param to enable user topic follow feature set hydration
+   * Param to enable user top c follow feature set hydrat on
    * */
-  object EnableUserTopicFollowFeatureSetHydration
-      extends BooleanDeciderParam(DeciderKey.enableUserTopicFollowFeatureSet)
+  object EnableUserTop cFollowFeatureSetHydrat on
+      extends BooleanDec derParam(Dec derKey.enableUserTop cFollowFeatureSet)
 
   /*
-   * Param to enable onboarding new user feature set hydration
+   * Param to enable onboard ng new user feature set hydrat on
    * */
-  object EnableOnboardingNewUserFeatureSetHydration
-      extends BooleanDeciderParam(DeciderKey.enableOnboardingNewUserFeatureSet)
+  object EnableOnboard ngNewUserFeatureSetHydrat on
+      extends BooleanDec derParam(Dec derKey.enableOnboard ngNewUserFeatureSet)
 
   /*
-   * Param to enable mr user author sparse continuous feature set hydration
+   * Param to enable mr user author sparse cont nuous feature set hydrat on
    * */
-  object EnableMrUserAuthorSparseContFeatureSetHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrUserAuthorSparseContFeatureSet)
+  object EnableMrUserAuthorSparseContFeatureSetHydrat on
+      extends BooleanDec derParam(Dec derKey.enableMrUserAuthorSparseContFeatureSet)
 
   /*
-   * Param to enable mr user topic sparse continuous feature set hydration
+   * Param to enable mr user top c sparse cont nuous feature set hydrat on
    * */
-  object EnableMrUserTopicSparseContFeatureSetHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrUserTopicSparseContFeatureSet)
+  object EnableMrUserTop cSparseContFeatureSetHydrat on
+      extends BooleanDec derParam(Dec derKey.enableMrUserTop cSparseContFeatureSet)
 
   /*
-   * Param to enable penguin language feature set hydration
+   * Param to enable pengu n language feature set hydrat on
    * */
-  object EnableUserPenguinLanguageFeatureSetHydration
-      extends BooleanDeciderParam(DeciderKey.enableUserPenguinLanguageFeatureSet)
+  object EnableUserPengu nLanguageFeatureSetHydrat on
+      extends BooleanDec derParam(Dec derKey.enableUserPengu nLanguageFeatureSet)
 
   /*
-   * Param to enable user engaged tweet tokens feature hydration
+   * Param to enable user engaged t et tokens feature hydrat on
    * */
-  object EnableMrUserEngagedTweetTokensFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrUserEngagedTweetTokensFeaturesHydration)
+  object EnableMrUserEngagedT etTokensFeatureHydrat on
+      extends BooleanDec derParam(Dec derKey.enableMrUserEngagedT etTokensFeaturesHydrat on)
 
   /*
-   * Param to enable candidate tweet tokens feature hydration
+   * Param to enable cand date t et tokens feature hydrat on
    * */
-  object EnableMrCandidateTweetTokensFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrCandidateTweetTokensFeaturesHydration)
+  object EnableMrCand dateT etTokensFeatureHydrat on
+      extends BooleanDec derParam(Dec derKey.enableMrCand dateT etTokensFeaturesHydrat on)
 
   /*
-   * Param to enable mr user hashspace embedding feature set hydration
+   * Param to enable mr user hashspace embedd ng feature set hydrat on
    * */
-  object EnableMrUserHashspaceEmbeddingFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrUserHashspaceEmbeddingFeatureSet)
+  object EnableMrUserHashspaceEmbedd ngFeatureHydrat on
+      extends BooleanDec derParam(Dec derKey.enableMrUserHashspaceEmbedd ngFeatureSet)
 
   /*
-   * Param to enable mr tweet sentiment feature set hydration
+   * Param to enable mr t et sent  nt feature set hydrat on
    * */
-  object EnableMrTweetSentimentFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrTweetSentimentFeatureSet)
+  object EnableMrT etSent  ntFeatureHydrat on
+      extends BooleanDec derParam(Dec derKey.enableMrT etSent  ntFeatureSet)
 
   /*
-   * Param to enable mr tweet_author aggregates feature set hydration
+   * Param to enable mr t et_author aggregates feature set hydrat on
    * */
-  object EnableMrTweetAuthorAggregatesFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrTweetAuthorAggregatesFeatureSet)
+  object EnableMrT etAuthorAggregatesFeatureHydrat on
+      extends BooleanDec derParam(Dec derKey.enableMrT etAuthorAggregatesFeatureSet)
 
   /**
-   * Param to enable twistly aggregated features
+   * Param to enable tw stly aggregated features
    */
-  object EnableTwistlyAggregatesFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableTwistlyAggregatesFeatureHydration)
+  object EnableTw stlyAggregatesFeatureHydrat on
+      extends BooleanDec derParam(Dec derKey.enableTw stlyAggregatesFeatureHydrat on)
 
   /**
-   * Param to enable tweet twhin favoriate features
+   * Param to enable t et twh n favor ate features
    */
-  object EnableTweetTwHINFavFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableTweetTwHINFavFeaturesHydration)
+  object EnableT etTwH NFavFeatureHydrat on
+      extends BooleanDec derParam(Dec derKey.enableT etTwH NFavFeaturesHydrat on)
 
   /*
-   * Param to enable mr user geo feature set hydration
+   * Param to enable mr user geo feature set hydrat on
    * */
-  object EnableUserGeoFeatureSetHydration
-      extends BooleanDeciderParam(DeciderKey.enableUserGeoFeatureSet)
+  object EnableUserGeoFeatureSetHydrat on
+      extends BooleanDec derParam(Dec derKey.enableUserGeoFeatureSet)
 
   /*
-   * Param to enable mr author geo feature set hydration
+   * Param to enable mr author geo feature set hydrat on
    * */
-  object EnableAuthorGeoFeatureSetHydration
-      extends BooleanDeciderParam(DeciderKey.enableAuthorGeoFeatureSet)
+  object EnableAuthorGeoFeatureSetHydrat on
+      extends BooleanDec derParam(Dec derKey.enableAuthorGeoFeatureSet)
 
   /*
-   * Param to ramp up mr user geo feature set hydration
+   * Param to ramp up mr user geo feature set hydrat on
    * */
-  object RampupUserGeoFeatureSetHydration
-      extends BooleanDeciderParam(DeciderKey.rampupUserGeoFeatureSet)
+  object RampupUserGeoFeatureSetHydrat on
+      extends BooleanDec derParam(Dec derKey.rampupUserGeoFeatureSet)
 
   /*
-   * Param to ramp up mr author geo feature set hydration
+   * Param to ramp up mr author geo feature set hydrat on
    * */
-  object RampupAuthorGeoFeatureSetHydration
-      extends BooleanDeciderParam(DeciderKey.rampupAuthorGeoFeatureSet)
+  object RampupAuthorGeoFeatureSetHydrat on
+      extends BooleanDec derParam(Dec derKey.rampupAuthorGeoFeatureSet)
 
   /*
-   *  Decider controlled param to enable Pop Geo Tweets
+   *  Dec der controlled param to enable Pop Geo T ets
    * */
-  object PopGeoCandidatesDecider extends BooleanDeciderParam(DeciderKey.enablePopGeoTweets)
+  object PopGeoCand datesDec der extends BooleanDec derParam(Dec derKey.enablePopGeoT ets)
 
   /**
-   * Decider controlled param to enable Trip Geo Tweets
+   * Dec der controlled param to enable Tr p Geo T ets
    */
-  object TripGeoTweetCandidatesDecider
-      extends BooleanDeciderParam(DeciderKey.enableTripGeoTweetCandidates)
+  object Tr pGeoT etCand datesDec der
+      extends BooleanDec derParam(Dec derKey.enableTr pGeoT etCand dates)
 
   /**
-   * Decider controlled param to enable ContentRecommenderMixerAdaptor
+   * Dec der controlled param to enable ContentRecom nderM xerAdaptor
    */
-  object ContentRecommenderMixerAdaptorDecider
-      extends BooleanDeciderParam(DeciderKey.enableContentRecommenderMixerAdaptor)
+  object ContentRecom nderM xerAdaptorDec der
+      extends BooleanDec derParam(Dec derKey.enableContentRecom nderM xerAdaptor)
 
   /**
-   * Decider controlled param to enable GenericCandidateAdaptor
+   * Dec der controlled param to enable Gener cCand dateAdaptor
    */
-  object GenericCandidateAdaptorDecider
-      extends BooleanDeciderParam(DeciderKey.enableGenericCandidateAdaptor)
+  object Gener cCand dateAdaptorDec der
+      extends BooleanDec derParam(Dec derKey.enableGener cCand dateAdaptor)
 
   /**
-   * Decider controlled param to enable dark traffic to ContentMixer for Trip Geo Tweets
+   * Dec der controlled param to enable dark traff c to ContentM xer for Tr p Geo T ets
    */
-  object TripGeoTweetContentMixerDarkTrafficDecider
-      extends BooleanDeciderParam(DeciderKey.enableTripGeoTweetContentMixerDarkTraffic)
+  object Tr pGeoT etContentM xerDarkTraff cDec der
+      extends BooleanDec derParam(Dec derKey.enableTr pGeoT etContentM xerDarkTraff c)
 
   /*
-   *  Decider controlled param to enable Pop Geo Tweets
+   *  Dec der controlled param to enable Pop Geo T ets
    * */
-  object TrendsCandidateDecider extends BooleanDeciderParam(DeciderKey.enableTrendsTweets)
+  object TrendsCand dateDec der extends BooleanDec derParam(Dec derKey.enableTrendsT ets)
 
   /*
-   *  Decider controlled param to enable INS Traffic
+   *  Dec der controlled param to enable  NS Traff c
    **/
-  object EnableInsTrafficDecider extends BooleanDeciderParam(DeciderKey.enableInsTraffic)
+  object Enable nsTraff cDec der extends BooleanDec derParam(Dec derKey.enable nsTraff c)
 
   /**
-   * Param to enable assigning pushcap with ML predictions (read from MH table).
-   * Disabling will fallback to only use heuristics and default values.
+   * Param to enable ass gn ng pushcap w h ML pred ct ons (read from MH table).
+   * D sabl ng w ll fallback to only use  ur st cs and default values.
    */
-  object EnableModelBasedPushcapAssignments
-      extends BooleanDeciderParam(DeciderKey.enableModelBasedPushcapAssignments)
+  object EnableModelBasedPushcapAss gn nts
+      extends BooleanDec derParam(Dec derKey.enableModelBasedPushcapAss gn nts)
 
   /**
-   * Param to enable twhin user engagement feature hydration
+   * Param to enable twh n user engage nt feature hydrat on
    */
-  object EnableTwHINUserEngagementFeaturesHydration
-      extends BooleanDeciderParam(DeciderKey.enableTwHINUserEngagementFeaturesHydration)
+  object EnableTwH NUserEngage ntFeaturesHydrat on
+      extends BooleanDec derParam(Dec derKey.enableTwH NUserEngage ntFeaturesHydrat on)
 
   /**
-   * Param to enable twhin user follow feature hydration
+   * Param to enable twh n user follow feature hydrat on
    */
-  object EnableTwHINUserFollowFeaturesHydration
-      extends BooleanDeciderParam(DeciderKey.enableTwHINUserFollowFeaturesHydration)
+  object EnableTwH NUserFollowFeaturesHydrat on
+      extends BooleanDec derParam(Dec derKey.enableTwH NUserFollowFeaturesHydrat on)
 
   /**
-   * Param to enable twhin author follow feature hydration
+   * Param to enable twh n author follow feature hydrat on
    */
-  object EnableTwHINAuthorFollowFeaturesHydration
-      extends BooleanDeciderParam(DeciderKey.enableTwHINAuthorFollowFeaturesHydration)
+  object EnableTwH NAuthorFollowFeaturesHydrat on
+      extends BooleanDec derParam(Dec derKey.enableTwH NAuthorFollowFeaturesHydrat on)
 
   /**
-   * Param to enable calls to the IsTweetTranslatable strato column
+   * Param to enable calls to t   sT etTranslatable strato column
    */
-  object EnableIsTweetTranslatableCheck
-      extends BooleanDeciderParam(DeciderKey.enableIsTweetTranslatable)
+  object Enable sT etTranslatableC ck
+      extends BooleanDec derParam(Dec derKey.enable sT etTranslatable)
 
   /**
-   * Decider controlled param to enable mr tweet simcluster feature set hydration
+   * Dec der controlled param to enable mr t et s mcluster feature set hydrat on
    */
-  object EnableMrTweetSimClusterFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrTweetSimClusterFeatureSet)
+  object EnableMrT etS mClusterFeatureHydrat on
+      extends BooleanDec derParam(Dec derKey.enableMrT etS mClusterFeatureSet)
 
   /**
-   * Decider controlled param to enable real graph v2 feature set hydration
+   * Dec der controlled param to enable real graph v2 feature set hydrat on
    */
-  object EnableRealGraphV2FeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableRealGraphV2FeatureHydration)
+  object EnableRealGraphV2FeatureHydrat on
+      extends BooleanDec derParam(Dec derKey.enableRealGraphV2FeatureHydrat on)
 
   /**
-   * Decider controlled param to enable Tweet BeT feature set hydration
+   * Dec der controlled param to enable T et BeT feature set hydrat on
    */
-  object EnableTweetBeTFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableTweetBeTFeatureHydration)
+  object EnableT etBeTFeatureHydrat on
+      extends BooleanDec derParam(Dec derKey.enableT etBeTFeatureHydrat on)
 
   /**
-   * Decider controlled param to enable mr user tweet topic feature set hydration
+   * Dec der controlled param to enable mr user t et top c feature set hydrat on
    */
-  object EnableMrOfflineUserTweetTopicAggregateHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrOfflineUserTweetTopicAggregate)
+  object EnableMrOffl neUserT etTop cAggregateHydrat on
+      extends BooleanDec derParam(Dec derKey.enableMrOffl neUserT etTop cAggregate)
 
   /**
-   * Decider controlled param to enable mr tweet simcluster feature set hydration
+   * Dec der controlled param to enable mr t et s mcluster feature set hydrat on
    */
-  object EnableMrOfflineUserTweetSimClusterAggregateHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrOfflineUserTweetSimClusterAggregate)
+  object EnableMrOffl neUserT etS mClusterAggregateHydrat on
+      extends BooleanDec derParam(Dec derKey.enableMrOffl neUserT etS mClusterAggregate)
 
   /**
-   * Decider controlled param to enable user send time features
+   * Dec der controlled param to enable user send t   features
    */
-  object EnableUserSendTimeFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableUserSendTimeFeatureHydration)
+  object EnableUserSendT  FeatureHydrat on
+      extends BooleanDec derParam(Dec derKey.enableUserSendT  FeatureHydrat on)
 
   /**
-   * Decider controlled param to enable mr user utc send time aggregate features
+   * Dec der controlled param to enable mr user utc send t   aggregate features
    */
-  object EnableMrUserUtcSendTimeAggregateFeaturesHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrUserUtcSendTimeAggregateFeaturesHydration)
+  object EnableMrUserUtcSendT  AggregateFeaturesHydrat on
+      extends BooleanDec derParam(Dec derKey.enableMrUserUtcSendT  AggregateFeaturesHydrat on)
 
   /**
-   * Decider controlled param to enable mr user local send time aggregate features
+   * Dec der controlled param to enable mr user local send t   aggregate features
    */
-  object EnableMrUserLocalSendTimeAggregateFeaturesHydration
-      extends BooleanDeciderParam(DeciderKey.enableMrUserLocalSendTimeAggregateFeaturesHydration)
+  object EnableMrUserLocalSendT  AggregateFeaturesHydrat on
+      extends BooleanDec derParam(Dec derKey.enableMrUserLocalSendT  AggregateFeaturesHydrat on)
 
   /**
-   * Decider controlled param to enable BQML report model predictions for F1 tweets
+   * Dec der controlled param to enable BQML report model pred ct ons for F1 t ets
    */
-  object EnableBqmlReportModelPredictionForF1Tweets
-      extends BooleanDeciderParam(DeciderKey.enableBqmlReportModelPredictionForF1Tweets)
+  object EnableBqmlReportModelPred ct onForF1T ets
+      extends BooleanDec derParam(Dec derKey.enableBqmlReportModelPred ct onForF1T ets)
 
   /**
-   * Decider controlled param to enable user Twhin embedding feature hydration
+   * Dec der controlled param to enable user Twh n embedd ng feature hydrat on
    */
-  object EnableUserTwhinEmbeddingFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableUserTwhinEmbeddingFeatureHydration)
+  object EnableUserTwh nEmbedd ngFeatureHydrat on
+      extends BooleanDec derParam(Dec derKey.enableUserTwh nEmbedd ngFeatureHydrat on)
 
   /**
-   * Decider controlled param to enable author follow Twhin embedding feature hydration
+   * Dec der controlled param to enable author follow Twh n embedd ng feature hydrat on
    */
-  object EnableAuthorFollowTwhinEmbeddingFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableAuthorFollowTwhinEmbeddingFeatureHydration)
+  object EnableAuthorFollowTwh nEmbedd ngFeatureHydrat on
+      extends BooleanDec derParam(Dec derKey.enableAuthorFollowTwh nEmbedd ngFeatureHydrat on)
 
-  object EnableScribingMLFeaturesAsDataRecord
-      extends BooleanDeciderParam(DeciderKey.enableScribingMLFeaturesAsDataRecord)
-
-  /**
-   * Decider controlled param to enable feature hydration for Verified related feature
-   */
-  object EnableAuthorVerifiedFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableAuthorVerifiedFeatureHydration)
+  object EnableScr b ngMLFeaturesAsDataRecord
+      extends BooleanDec derParam(Dec derKey.enableScr b ngMLFeaturesAsDataRecord)
 
   /**
-   * Decider controlled param to enable feature hydration for creator subscription related feature
+   * Dec der controlled param to enable feature hydrat on for Ver f ed related feature
    */
-  object EnableAuthorCreatorSubscriptionFeatureHydration
-      extends BooleanDeciderParam(DeciderKey.enableAuthorCreatorSubscriptionFeatureHydration)
+  object EnableAuthorVer f edFeatureHydrat on
+      extends BooleanDec derParam(Dec derKey.enableAuthorVer f edFeatureHydrat on)
 
   /**
-   * Decider controlled param to direct MH+Memcache hydration for the UserFeaturesDataset
+   * Dec der controlled param to enable feature hydrat on for creator subscr pt on related feature
    */
-  object EnableDirectHydrationForUserFeatures
-      extends BooleanDeciderParam(DeciderKey.enableDirectHydrationForUserFeatures)
+  object EnableAuthorCreatorSubscr pt onFeatureHydrat on
+      extends BooleanDec derParam(Dec derKey.enableAuthorCreatorSubscr pt onFeatureHydrat on)
+
+  /**
+   * Dec der controlled param to d rect MH+ mcac  hydrat on for t  UserFeaturesDataset
+   */
+  object EnableD rectHydrat onForUserFeatures
+      extends BooleanDec derParam(Dec derKey.enableD rectHydrat onForUserFeatures)
 }

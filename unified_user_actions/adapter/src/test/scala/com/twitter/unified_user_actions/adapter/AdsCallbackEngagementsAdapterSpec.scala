@@ -1,279 +1,279 @@
-package com.twitter.unified_user_actions.adapter
+package com.tw ter.un f ed_user_act ons.adapter
 
-import com.twitter.ads.spendserver.thriftscala.SpendServerEvent
-import com.twitter.adserver.thriftscala.EngagementType
-import com.twitter.clientapp.thriftscala.AmplifyDetails
-import com.twitter.inject.Test
-import com.twitter.unified_user_actions.adapter.TestFixtures.AdsCallbackEngagementsFixture
-import com.twitter.unified_user_actions.adapter.ads_callback_engagements.AdsCallbackEngagementsAdapter
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.TweetActionInfo
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
-import com.twitter.util.Time
-import org.scalatest.prop.TableDrivenPropertyChecks
+ mport com.tw ter.ads.spendserver.thr ftscala.SpendServerEvent
+ mport com.tw ter.adserver.thr ftscala.Engage ntType
+ mport com.tw ter.cl entapp.thr ftscala.Ampl fyDeta ls
+ mport com.tw ter. nject.Test
+ mport com.tw ter.un f ed_user_act ons.adapter.TestF xtures.AdsCallbackEngage ntsF xture
+ mport com.tw ter.un f ed_user_act ons.adapter.ads_callback_engage nts.AdsCallbackEngage ntsAdapter
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Act onType
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.T etAct on nfo
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Un f edUserAct on
+ mport com.tw ter.ut l.T  
+ mport org.scalatest.prop.TableDr venPropertyC cks
 
-class AdsCallbackEngagementsAdapterSpec extends Test with TableDrivenPropertyChecks {
+class AdsCallbackEngage ntsAdapterSpec extends Test w h TableDr venPropertyC cks {
 
-  test("Test basic conversion for ads callback engagement type fav") {
+  test("Test bas c convers on for ads callback engage nt type fav") {
 
-    new AdsCallbackEngagementsFixture {
-      Time.withTimeAt(frozenTime) { _ =>
+    new AdsCallbackEngage ntsF xture {
+      T  .w hT  At(frozenT  ) { _ =>
         val events = Table(
-          ("inputEvent", "expectedUuaOutput"),
-          ( // Test with authorId
-            createSpendServerEvent(EngagementType.Fav),
+          (" nputEvent", "expectedUuaOutput"),
+          ( // Test w h author d
+            createSpendServerEvent(Engage ntType.Fav),
             Seq(
               createExpectedUua(
-                ActionType.ServerPromotedTweetFav,
-                createTweetInfoItem(authorInfo = Some(authorInfo)))))
+                Act onType.ServerPromotedT etFav,
+                createT et nfo em(author nfo = So (author nfo)))))
         )
-        forEvery(events) { (event: SpendServerEvent, expected: Seq[UnifiedUserAction]) =>
-          val actual = AdsCallbackEngagementsAdapter.adaptEvent(event)
+        forEvery(events) { (event: SpendServerEvent, expected: Seq[Un f edUserAct on]) =>
+          val actual = AdsCallbackEngage ntsAdapter.adaptEvent(event)
           assert(expected === actual)
         }
       }
     }
   }
 
-  test("Test basic conversion for different engagement types") {
-    new AdsCallbackEngagementsFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val mappings = Table(
-          ("engagementType", "actionType"),
-          (EngagementType.Unfav, ActionType.ServerPromotedTweetUnfav),
-          (EngagementType.Reply, ActionType.ServerPromotedTweetReply),
-          (EngagementType.Retweet, ActionType.ServerPromotedTweetRetweet),
-          (EngagementType.Block, ActionType.ServerPromotedTweetBlockAuthor),
-          (EngagementType.Unblock, ActionType.ServerPromotedTweetUnblockAuthor),
-          (EngagementType.Send, ActionType.ServerPromotedTweetComposeTweet),
-          (EngagementType.Detail, ActionType.ServerPromotedTweetClick),
-          (EngagementType.Report, ActionType.ServerPromotedTweetReport),
-          (EngagementType.Mute, ActionType.ServerPromotedTweetMuteAuthor),
-          (EngagementType.ProfilePic, ActionType.ServerPromotedTweetClickProfile),
-          (EngagementType.ScreenName, ActionType.ServerPromotedTweetClickProfile),
-          (EngagementType.UserName, ActionType.ServerPromotedTweetClickProfile),
-          (EngagementType.Hashtag, ActionType.ServerPromotedTweetClickHashtag),
-          (EngagementType.CarouselSwipeNext, ActionType.ServerPromotedTweetCarouselSwipeNext),
+  test("Test bas c convers on for d fferent engage nt types") {
+    new AdsCallbackEngage ntsF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val mapp ngs = Table(
+          ("engage ntType", "act onType"),
+          (Engage ntType.Unfav, Act onType.ServerPromotedT etUnfav),
+          (Engage ntType.Reply, Act onType.ServerPromotedT etReply),
+          (Engage ntType.Ret et, Act onType.ServerPromotedT etRet et),
+          (Engage ntType.Block, Act onType.ServerPromotedT etBlockAuthor),
+          (Engage ntType.Unblock, Act onType.ServerPromotedT etUnblockAuthor),
+          (Engage ntType.Send, Act onType.ServerPromotedT etComposeT et),
+          (Engage ntType.Deta l, Act onType.ServerPromotedT etCl ck),
+          (Engage ntType.Report, Act onType.ServerPromotedT etReport),
+          (Engage ntType.Mute, Act onType.ServerPromotedT etMuteAuthor),
+          (Engage ntType.Prof leP c, Act onType.ServerPromotedT etCl ckProf le),
+          (Engage ntType.ScreenNa , Act onType.ServerPromotedT etCl ckProf le),
+          (Engage ntType.UserNa , Act onType.ServerPromotedT etCl ckProf le),
+          (Engage ntType.Hashtag, Act onType.ServerPromotedT etCl ckHashtag),
+          (Engage ntType.CarouselSw peNext, Act onType.ServerPromotedT etCarouselSw peNext),
           (
-            EngagementType.CarouselSwipePrevious,
-            ActionType.ServerPromotedTweetCarouselSwipePrevious),
-          (EngagementType.DwellShort, ActionType.ServerPromotedTweetLingerImpressionShort),
-          (EngagementType.DwellMedium, ActionType.ServerPromotedTweetLingerImpressionMedium),
-          (EngagementType.DwellLong, ActionType.ServerPromotedTweetLingerImpressionLong),
-          (EngagementType.DismissSpam, ActionType.ServerPromotedTweetDismissSpam),
-          (EngagementType.DismissWithoutReason, ActionType.ServerPromotedTweetDismissWithoutReason),
-          (EngagementType.DismissUninteresting, ActionType.ServerPromotedTweetDismissUninteresting),
-          (EngagementType.DismissRepetitive, ActionType.ServerPromotedTweetDismissRepetitive),
+            Engage ntType.CarouselSw pePrev ous,
+            Act onType.ServerPromotedT etCarouselSw pePrev ous),
+          (Engage ntType.D llShort, Act onType.ServerPromotedT etL nger mpress onShort),
+          (Engage ntType.D ll d um, Act onType.ServerPromotedT etL nger mpress on d um),
+          (Engage ntType.D llLong, Act onType.ServerPromotedT etL nger mpress onLong),
+          (Engage ntType.D sm ssSpam, Act onType.ServerPromotedT etD sm ssSpam),
+          (Engage ntType.D sm ssW houtReason, Act onType.ServerPromotedT etD sm ssW houtReason),
+          (Engage ntType.D sm ssUn nterest ng, Act onType.ServerPromotedT etD sm ssUn nterest ng),
+          (Engage ntType.D sm ssRepet  ve, Act onType.ServerPromotedT etD sm ssRepet  ve),
         )
 
-        forEvery(mappings) { (engagementType: EngagementType, actionType: ActionType) =>
-          val event = createSpendServerEvent(engagementType)
-          val actual = AdsCallbackEngagementsAdapter.adaptEvent(event)
+        forEvery(mapp ngs) { (engage ntType: Engage ntType, act onType: Act onType) =>
+          val event = createSpendServerEvent(engage ntType)
+          val actual = AdsCallbackEngage ntsAdapter.adaptEvent(event)
           val expected =
-            Seq(createExpectedUua(actionType, createTweetInfoItem(authorInfo = Some(authorInfo))))
+            Seq(createExpectedUua(act onType, createT et nfo em(author nfo = So (author nfo))))
           assert(expected === actual)
         }
       }
     }
   }
 
-  test("Test conversion for ads callback engagement type spotlight view and click") {
-    new AdsCallbackEngagementsFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val input = Table(
-          ("adsEngagement", "uuaAction"),
-          (EngagementType.SpotlightClick, ActionType.ServerPromotedTweetClickSpotlight),
-          (EngagementType.SpotlightView, ActionType.ServerPromotedTweetViewSpotlight),
-          (EngagementType.TrendView, ActionType.ServerPromotedTrendView),
-          (EngagementType.TrendClick, ActionType.ServerPromotedTrendClick),
+  test("Test convers on for ads callback engage nt type spotl ght v ew and cl ck") {
+    new AdsCallbackEngage ntsF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val  nput = Table(
+          ("adsEngage nt", "uuaAct on"),
+          (Engage ntType.Spotl ghtCl ck, Act onType.ServerPromotedT etCl ckSpotl ght),
+          (Engage ntType.Spotl ghtV ew, Act onType.ServerPromotedT etV ewSpotl ght),
+          (Engage ntType.TrendV ew, Act onType.ServerPromotedTrendV ew),
+          (Engage ntType.TrendCl ck, Act onType.ServerPromotedTrendCl ck),
         )
-        forEvery(input) { (engagementType: EngagementType, actionType: ActionType) =>
-          val adsEvent = createSpendServerEvent(engagementType)
-          val expected = Seq(createExpectedUua(actionType, trendInfoItem))
-          val actual = AdsCallbackEngagementsAdapter.adaptEvent(adsEvent)
+        forEvery( nput) { (engage ntType: Engage ntType, act onType: Act onType) =>
+          val adsEvent = createSpendServerEvent(engage ntType)
+          val expected = Seq(createExpectedUua(act onType, trend nfo em))
+          val actual = AdsCallbackEngage ntsAdapter.adaptEvent(adsEvent)
           assert(expected === actual)
         }
       }
     }
   }
 
-  test("Test basic conversion for ads callback engagement open link with or without url") {
-    new AdsCallbackEngagementsFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val input = Table(
-          ("url", "tweetActionInfo"),
-          (Some("go/url"), openLinkWithUrl),
-          (None, openLinkWithoutUrl)
+  test("Test bas c convers on for ads callback engage nt open l nk w h or w hout url") {
+    new AdsCallbackEngage ntsF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val  nput = Table(
+          ("url", "t etAct on nfo"),
+          (So ("go/url"), openL nkW hUrl),
+          (None, openL nkW houtUrl)
         )
 
-        forEvery(input) { (url: Option[String], tweetActionInfo: TweetActionInfo) =>
-          val event = createSpendServerEvent(engagementType = EngagementType.Url, url = url)
-          val actual = AdsCallbackEngagementsAdapter.adaptEvent(event)
+        forEvery( nput) { (url: Opt on[Str ng], t etAct on nfo: T etAct on nfo) =>
+          val event = createSpendServerEvent(engage ntType = Engage ntType.Url, url = url)
+          val actual = AdsCallbackEngage ntsAdapter.adaptEvent(event)
           val expected = Seq(createExpectedUua(
-            ActionType.ServerPromotedTweetOpenLink,
-            createTweetInfoItem(authorInfo = Some(authorInfo), actionInfo = Some(tweetActionInfo))))
+            Act onType.ServerPromotedT etOpenL nk,
+            createT et nfo em(author nfo = So (author nfo), act on nfo = So (t etAct on nfo))))
           assert(expected === actual)
         }
       }
     }
   }
 
-  test("Test basic conversion for different engagement types with profile info") {
-    new AdsCallbackEngagementsFixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val mappings = Table(
-          ("engagementType", "actionType"),
-          (EngagementType.Follow, ActionType.ServerPromotedProfileFollow),
-          (EngagementType.Unfollow, ActionType.ServerPromotedProfileUnfollow)
+  test("Test bas c convers on for d fferent engage nt types w h prof le  nfo") {
+    new AdsCallbackEngage ntsF xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val mapp ngs = Table(
+          ("engage ntType", "act onType"),
+          (Engage ntType.Follow, Act onType.ServerPromotedProf leFollow),
+          (Engage ntType.Unfollow, Act onType.ServerPromotedProf leUnfollow)
         )
-        forEvery(mappings) { (engagementType: EngagementType, actionType: ActionType) =>
-          val event = createSpendServerEvent(engagementType)
-          val actual = AdsCallbackEngagementsAdapter.adaptEvent(event)
-          val expected = Seq(createExpectedUuaWithProfileInfo(actionType))
+        forEvery(mapp ngs) { (engage ntType: Engage ntType, act onType: Act onType) =>
+          val event = createSpendServerEvent(engage ntType)
+          val actual = AdsCallbackEngage ntsAdapter.adaptEvent(event)
+          val expected = Seq(createExpectedUuaW hProf le nfo(act onType))
           assert(expected === actual)
         }
       }
     }
   }
 
-  test("Test basic conversion for ads callback engagement type video_content_*") {
-    new AdsCallbackEngagementsFixture {
-      Time.withTimeAt(frozenTime) { _ =>
+  test("Test bas c convers on for ads callback engage nt type v deo_content_*") {
+    new AdsCallbackEngage ntsF xture {
+      T  .w hT  At(frozenT  ) { _ =>
         val events = Table(
-          ("engagementType", "amplifyDetails", "actionType", "tweetActionInfo"),
-          //For video_content_* events on promoted tweets when there is no preroll ad played
+          ("engage ntType", "ampl fyDeta ls", "act onType", "t etAct on nfo"),
+          //For v deo_content_* events on promoted t ets w n t re  s no preroll ad played
           (
-            EngagementType.VideoContentPlayback25,
-            amplifyDetailsPromotedTweetWithoutAd,
-            ActionType.ServerPromotedTweetVideoPlayback25,
-            tweetActionInfoPromotedTweetWithoutAd),
+            Engage ntType.V deoContentPlayback25,
+            ampl fyDeta lsPromotedT etW houtAd,
+            Act onType.ServerPromotedT etV deoPlayback25,
+            t etAct on nfoPromotedT etW houtAd),
           (
-            EngagementType.VideoContentPlayback50,
-            amplifyDetailsPromotedTweetWithoutAd,
-            ActionType.ServerPromotedTweetVideoPlayback50,
-            tweetActionInfoPromotedTweetWithoutAd),
+            Engage ntType.V deoContentPlayback50,
+            ampl fyDeta lsPromotedT etW houtAd,
+            Act onType.ServerPromotedT etV deoPlayback50,
+            t etAct on nfoPromotedT etW houtAd),
           (
-            EngagementType.VideoContentPlayback75,
-            amplifyDetailsPromotedTweetWithoutAd,
-            ActionType.ServerPromotedTweetVideoPlayback75,
-            tweetActionInfoPromotedTweetWithoutAd),
-          //For video_content_* events on promoted tweets when there is a preroll ad
+            Engage ntType.V deoContentPlayback75,
+            ampl fyDeta lsPromotedT etW houtAd,
+            Act onType.ServerPromotedT etV deoPlayback75,
+            t etAct on nfoPromotedT etW houtAd),
+          //For v deo_content_* events on promoted t ets w n t re  s a preroll ad
           (
-            EngagementType.VideoContentPlayback25,
-            amplifyDetailsPromotedTweetWithAd,
-            ActionType.ServerPromotedTweetVideoPlayback25,
-            tweetActionInfoPromotedTweetWithAd),
+            Engage ntType.V deoContentPlayback25,
+            ampl fyDeta lsPromotedT etW hAd,
+            Act onType.ServerPromotedT etV deoPlayback25,
+            t etAct on nfoPromotedT etW hAd),
           (
-            EngagementType.VideoContentPlayback50,
-            amplifyDetailsPromotedTweetWithAd,
-            ActionType.ServerPromotedTweetVideoPlayback50,
-            tweetActionInfoPromotedTweetWithAd),
+            Engage ntType.V deoContentPlayback50,
+            ampl fyDeta lsPromotedT etW hAd,
+            Act onType.ServerPromotedT etV deoPlayback50,
+            t etAct on nfoPromotedT etW hAd),
           (
-            EngagementType.VideoContentPlayback75,
-            amplifyDetailsPromotedTweetWithAd,
-            ActionType.ServerPromotedTweetVideoPlayback75,
-            tweetActionInfoPromotedTweetWithAd),
+            Engage ntType.V deoContentPlayback75,
+            ampl fyDeta lsPromotedT etW hAd,
+            Act onType.ServerPromotedT etV deoPlayback75,
+            t etAct on nfoPromotedT etW hAd),
         )
         forEvery(events) {
           (
-            engagementType: EngagementType,
-            amplifyDetails: Option[AmplifyDetails],
-            actionType: ActionType,
-            actionInfo: Option[TweetActionInfo]
+            engage ntType: Engage ntType,
+            ampl fyDeta ls: Opt on[Ampl fyDeta ls],
+            act onType: Act onType,
+            act on nfo: Opt on[T etAct on nfo]
           ) =>
             val spendEvent =
-              createVideoSpendServerEvent(engagementType, amplifyDetails, promotedTweetId, None)
-            val expected = Seq(createExpectedVideoUua(actionType, actionInfo, promotedTweetId))
+              createV deoSpendServerEvent(engage ntType, ampl fyDeta ls, promotedT et d, None)
+            val expected = Seq(createExpectedV deoUua(act onType, act on nfo, promotedT et d))
 
-            val actual = AdsCallbackEngagementsAdapter.adaptEvent(spendEvent)
+            val actual = AdsCallbackEngage ntsAdapter.adaptEvent(spendEvent)
             assert(expected === actual)
         }
       }
     }
   }
 
-  test("Test basic conversion for ads callback engagement type video_ad_*") {
+  test("Test bas c convers on for ads callback engage nt type v deo_ad_*") {
 
-    new AdsCallbackEngagementsFixture {
-      Time.withTimeAt(frozenTime) { _ =>
+    new AdsCallbackEngage ntsF xture {
+      T  .w hT  At(frozenT  ) { _ =>
         val events = Table(
           (
-            "engagementType",
-            "amplifyDetails",
-            "actionType",
-            "tweetActionInfo",
-            "promotedTweetId",
-            "organicTweetId"),
-          //For video_ad_* events when the preroll ad is on a promoted tweet.
+            "engage ntType",
+            "ampl fyDeta ls",
+            "act onType",
+            "t etAct on nfo",
+            "promotedT et d",
+            "organ cT et d"),
+          //For v deo_ad_* events w n t  preroll ad  s on a promoted t et.
           (
-            EngagementType.VideoAdPlayback25,
-            amplifyDetailsPrerollAd,
-            ActionType.ServerPromotedTweetVideoAdPlayback25,
-            tweetActionInfoPrerollAd,
-            promotedTweetId,
+            Engage ntType.V deoAdPlayback25,
+            ampl fyDeta lsPrerollAd,
+            Act onType.ServerPromotedT etV deoAdPlayback25,
+            t etAct on nfoPrerollAd,
+            promotedT et d,
             None
           ),
           (
-            EngagementType.VideoAdPlayback50,
-            amplifyDetailsPrerollAd,
-            ActionType.ServerPromotedTweetVideoAdPlayback50,
-            tweetActionInfoPrerollAd,
-            promotedTweetId,
+            Engage ntType.V deoAdPlayback50,
+            ampl fyDeta lsPrerollAd,
+            Act onType.ServerPromotedT etV deoAdPlayback50,
+            t etAct on nfoPrerollAd,
+            promotedT et d,
             None
           ),
           (
-            EngagementType.VideoAdPlayback75,
-            amplifyDetailsPrerollAd,
-            ActionType.ServerPromotedTweetVideoAdPlayback75,
-            tweetActionInfoPrerollAd,
-            promotedTweetId,
+            Engage ntType.V deoAdPlayback75,
+            ampl fyDeta lsPrerollAd,
+            Act onType.ServerPromotedT etV deoAdPlayback75,
+            t etAct on nfoPrerollAd,
+            promotedT et d,
             None
           ),
-          // For video_ad_* events when the preroll ad is on an organic tweet.
+          // For v deo_ad_* events w n t  preroll ad  s on an organ c t et.
           (
-            EngagementType.VideoAdPlayback25,
-            amplifyDetailsPrerollAd,
-            ActionType.ServerTweetVideoAdPlayback25,
-            tweetActionInfoPrerollAd,
+            Engage ntType.V deoAdPlayback25,
+            ampl fyDeta lsPrerollAd,
+            Act onType.ServerT etV deoAdPlayback25,
+            t etAct on nfoPrerollAd,
             None,
-            organicTweetId
+            organ cT et d
           ),
           (
-            EngagementType.VideoAdPlayback50,
-            amplifyDetailsPrerollAd,
-            ActionType.ServerTweetVideoAdPlayback50,
-            tweetActionInfoPrerollAd,
+            Engage ntType.V deoAdPlayback50,
+            ampl fyDeta lsPrerollAd,
+            Act onType.ServerT etV deoAdPlayback50,
+            t etAct on nfoPrerollAd,
             None,
-            organicTweetId
+            organ cT et d
           ),
           (
-            EngagementType.VideoAdPlayback75,
-            amplifyDetailsPrerollAd,
-            ActionType.ServerTweetVideoAdPlayback75,
-            tweetActionInfoPrerollAd,
+            Engage ntType.V deoAdPlayback75,
+            ampl fyDeta lsPrerollAd,
+            Act onType.ServerT etV deoAdPlayback75,
+            t etAct on nfoPrerollAd,
             None,
-            organicTweetId
+            organ cT et d
           ),
         )
         forEvery(events) {
           (
-            engagementType: EngagementType,
-            amplifyDetails: Option[AmplifyDetails],
-            actionType: ActionType,
-            actionInfo: Option[TweetActionInfo],
-            promotedTweetId: Option[Long],
-            organicTweetId: Option[Long],
+            engage ntType: Engage ntType,
+            ampl fyDeta ls: Opt on[Ampl fyDeta ls],
+            act onType: Act onType,
+            act on nfo: Opt on[T etAct on nfo],
+            promotedT et d: Opt on[Long],
+            organ cT et d: Opt on[Long],
           ) =>
             val spendEvent =
-              createVideoSpendServerEvent(
-                engagementType,
-                amplifyDetails,
-                promotedTweetId,
-                organicTweetId)
-            val actionTweetId = if (organicTweetId.isDefined) organicTweetId else promotedTweetId
-            val expected = Seq(createExpectedVideoUua(actionType, actionInfo, actionTweetId))
+              createV deoSpendServerEvent(
+                engage ntType,
+                ampl fyDeta ls,
+                promotedT et d,
+                organ cT et d)
+            val act onT et d =  f (organ cT et d. sDef ned) organ cT et d else promotedT et d
+            val expected = Seq(createExpectedV deoUua(act onType, act on nfo, act onT et d))
 
-            val actual = AdsCallbackEngagementsAdapter.adaptEvent(spendEvent)
+            val actual = AdsCallbackEngage ntsAdapter.adaptEvent(spendEvent)
             assert(expected === actual)
         }
       }

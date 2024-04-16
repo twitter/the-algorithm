@@ -1,121 +1,121 @@
-package com.twitter.follow_recommendations.common.predicates
+package com.tw ter.follow_recom ndat ons.common.pred cates
 
-import com.google.inject.name.Named
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.follow_recommendations.common.predicates.InactivePredicateParams._
-import com.twitter.service.metastore.gen.thriftscala.UserRecommendabilityFeatures
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.conversions.DurationOps._
-import com.twitter.escherbird.util.stitchcache.StitchCache
-import com.twitter.follow_recommendations.common.models.HasUserState
-import com.twitter.follow_recommendations.common.predicates.InactivePredicateParams.DefaultInactivityThreshold
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+ mport com.google. nject.na .Na d
+ mport com.tw ter.core_workflows.user_model.thr ftscala.UserState
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.base.Pred cate
+ mport com.tw ter.follow_recom ndat ons.common.base.Pred cateResult
+ mport com.tw ter.follow_recom ndat ons.common.constants.Gu ceNa dConstants
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.F lterReason
+ mport com.tw ter.follow_recom ndat ons.common.pred cates. nact vePred cateParams._
+ mport com.tw ter.serv ce. tastore.gen.thr ftscala.UserRecom ndab l yFeatures
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.T  
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.esc rb rd.ut l.st chcac .St chCac 
+ mport com.tw ter.follow_recom ndat ons.common.models.HasUserState
+ mport com.tw ter.follow_recom ndat ons.common.pred cates. nact vePred cateParams.Default nact v yThreshold
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
 
-import java.lang.{Long => JLong}
+ mport java.lang.{Long => JLong}
 
-@Singleton
-case class InactivePredicate @Inject() (
-  statsReceiver: StatsReceiver,
-  @Named(GuiceNamedConstants.USER_RECOMMENDABILITY_FETCHER) userRecommendabilityFetcher: Fetcher[
+@S ngleton
+case class  nact vePred cate @ nject() (
+  statsRece ver: StatsRece ver,
+  @Na d(Gu ceNa dConstants.USER_RECOMMENDAB L TY_FETCHER) userRecom ndab l yFetc r: Fetc r[
     Long,
-    Unit,
-    UserRecommendabilityFeatures
-  ]) extends Predicate[(HasParams with HasClientContext with HasUserState, CandidateUser)] {
+    Un ,
+    UserRecom ndab l yFeatures
+  ]) extends Pred cate[(HasParams w h HasCl entContext w h HasUserState, Cand dateUser)] {
 
-  private val stats: StatsReceiver = statsReceiver.scope("InactivePredicate")
-  private val cacheStats = stats.scope("cache")
+  pr vate val stats: StatsRece ver = statsRece ver.scope(" nact vePred cate")
+  pr vate val cac Stats = stats.scope("cac ")
 
-  private def queryUserRecommendable(userId: Long): Stitch[Option[UserRecommendabilityFeatures]] =
-    userRecommendabilityFetcher.fetch(userId).map(_.v)
+  pr vate def queryUserRecom ndable(user d: Long): St ch[Opt on[UserRecom ndab l yFeatures]] =
+    userRecom ndab l yFetc r.fetch(user d).map(_.v)
 
-  private val userRecommendableCache =
-    StitchCache[JLong, Option[UserRecommendabilityFeatures]](
-      maxCacheSize = 100000,
-      ttl = 12.hours,
-      statsReceiver = cacheStats.scope("UserRecommendable"),
-      underlyingCall = (userId: JLong) => queryUserRecommendable(userId)
+  pr vate val userRecom ndableCac  =
+    St chCac [JLong, Opt on[UserRecom ndab l yFeatures]](
+      maxCac S ze = 100000,
+      ttl = 12.h s,
+      statsRece ver = cac Stats.scope("UserRecom ndable"),
+      underly ngCall = (user d: JLong) => queryUserRecom ndable(user d)
     )
 
-  override def apply(
-    targetAndCandidate: (HasParams with HasClientContext with HasUserState, CandidateUser)
-  ): Stitch[PredicateResult] = {
-    val (target, candidate) = targetAndCandidate
+  overr de def apply(
+    targetAndCand date: (HasParams w h HasCl entContext w h HasUserState, Cand dateUser)
+  ): St ch[Pred cateResult] = {
+    val (target, cand date) = targetAndCand date
 
-    userRecommendableCache
-      .readThrough(candidate.id).map {
+    userRecom ndableCac 
+      .readThrough(cand date. d).map {
         case recFeaturesFetchResult =>
           recFeaturesFetchResult match {
             case None =>
-              PredicateResult.Invalid(Set(FilterReason.MissingRecommendabilityData))
-            case Some(recFeatures) =>
-              if (disableInactivityPredicate(target, target.userState, recFeatures.userState)) {
-                PredicateResult.Valid
+              Pred cateResult. nval d(Set(F lterReason.M ss ngRecom ndab l yData))
+            case So (recFeatures) =>
+               f (d sable nact v yPred cate(target, target.userState, recFeatures.userState)) {
+                Pred cateResult.Val d
               } else {
-                val defaultInactivityThreshold = target.params(DefaultInactivityThreshold).days
-                val hasBeenActiveRecently = recFeatures.lastStatusUpdateMs
-                  .map(Time.now - Time.fromMilliseconds(_)).getOrElse(
-                    Duration.Top) < defaultInactivityThreshold
+                val default nact v yThreshold = target.params(Default nact v yThreshold).days
+                val hasBeenAct veRecently = recFeatures.lastStatusUpdateMs
+                  .map(T  .now - T  .fromM ll seconds(_)).getOrElse(
+                    Durat on.Top) < default nact v yThreshold
                 stats
-                  .scope(defaultInactivityThreshold.toString).counter(
-                    if (hasBeenActiveRecently)
-                      "active"
+                  .scope(default nact v yThreshold.toStr ng).counter(
+                     f (hasBeenAct veRecently)
+                      "act ve"
                     else
-                      "inactive"
-                  ).incr()
-                if (hasBeenActiveRecently && (!target
-                    .params(UseEggFilter) || recFeatures.isNotEgg.contains(1))) {
-                  PredicateResult.Valid
+                      " nact ve"
+                  ). ncr()
+                 f (hasBeenAct veRecently && (!target
+                    .params(UseEggF lter) || recFeatures. sNotEgg.conta ns(1))) {
+                  Pred cateResult.Val d
                 } else {
-                  PredicateResult.Invalid(Set(FilterReason.Inactive))
+                  Pred cateResult. nval d(Set(F lterReason. nact ve))
                 }
               }
           }
       }.rescue {
-        case e: Exception =>
-          stats.counter(e.getClass.getSimpleName).incr()
-          Stitch(PredicateResult.Invalid(Set(FilterReason.FailOpen)))
+        case e: Except on =>
+          stats.counter(e.getClass.getS mpleNa ). ncr()
+          St ch(Pred cateResult. nval d(Set(F lterReason.Fa lOpen)))
       }
   }
 
-  private[this] def disableInactivityPredicate(
+  pr vate[t ] def d sable nact v yPred cate(
     target: HasParams,
-    consumerState: Option[UserState],
-    candidateState: Option[UserState]
+    consu rState: Opt on[UserState],
+    cand dateState: Opt on[UserState]
   ): Boolean = {
-    target.params(MightBeDisabled) &&
-    consumerState.exists(InactivePredicate.ValidConsumerStates.contains) &&
+    target.params(M ghtBeD sabled) &&
+    consu rState.ex sts( nact vePred cate.Val dConsu rStates.conta ns) &&
     (
       (
-        candidateState.exists(InactivePredicate.ValidCandidateStates.contains) &&
-        !target.params(OnlyDisableForNewUserStateCandidates)
+        cand dateState.ex sts( nact vePred cate.Val dCand dateStates.conta ns) &&
+        !target.params(OnlyD sableForNewUserStateCand dates)
       ) ||
       (
-        candidateState.contains(UserState.New) &&
-        target.params(OnlyDisableForNewUserStateCandidates)
+        cand dateState.conta ns(UserState.New) &&
+        target.params(OnlyD sableForNewUserStateCand dates)
       )
     )
   }
 }
 
-object InactivePredicate {
-  val ValidConsumerStates: Set[UserState] = Set(
-    UserState.HeavyNonTweeter,
-    UserState.MediumNonTweeter,
-    UserState.HeavyTweeter,
-    UserState.MediumTweeter
+object  nact vePred cate {
+  val Val dConsu rStates: Set[UserState] = Set(
+    UserState. avyNonT eter,
+    UserState. d umNonT eter,
+    UserState. avyT eter,
+    UserState. d umT eter
   )
-  val ValidCandidateStates: Set[UserState] =
-    Set(UserState.New, UserState.VeryLight, UserState.Light, UserState.NearZero)
+  val Val dCand dateStates: Set[UserState] =
+    Set(UserState.New, UserState.VeryL ght, UserState.L ght, UserState.NearZero)
 }

@@ -1,276 +1,276 @@
-import tensorflow as tf
+ mport tensorflow as tf
 
-physical_devices = tf.config.list_physical_devices('GPU') 
-for device in physical_devices:
-    tf.config.experimental.set_memory_growth(device, True)
+phys cal_dev ces = tf.conf g.l st_phys cal_dev ces('GPU') 
+for dev ce  n phys cal_dev ces:
+    tf.conf g.exper  ntal.set_ mory_growth(dev ce, True)
 
-from twitter.hmli.nimbus.modeling.model_config import FeatureType, EncodingType, Feature, Model, LogType
-from twitter.hmli.nimbus.modeling.feature_loader import BigQueryFeatureLoader
-from twitter.cuad.representation.models.text_encoder import TextEncoder
-from twitter.cuad.representation.models.optimization import create_optimizer
-from twitter.hmli.nimbus.modeling.feature_encoder import FeatureEncoder
+from tw ter.hml .n mbus.model ng.model_conf g  mport FeatureType, Encod ngType, Feature, Model, LogType
+from tw ter.hml .n mbus.model ng.feature_loader  mport B gQueryFeatureLoader
+from tw ter.cuad.representat on.models.text_encoder  mport TextEncoder
+from tw ter.cuad.representat on.models.opt m zat on  mport create_opt m zer
+from tw ter.hml .n mbus.model ng.feature_encoder  mport FeatureEncoder
 
-import numpy as np
-import pandas as pd
-import utils
+ mport numpy as np
+ mport pandas as pd
+ mport ut ls
 
-cat_names = [
+cat_na s = [
 ...
 ]
 
-category_features = [Feature(name=cat_name, ftype=FeatureType.CONTINUOUS) for cat_name in cat_names]
+category_features = [Feature(na =cat_na , ftype=FeatureType.CONT NUOUS) for cat_na   n cat_na s]
 features = [
-  Feature(name="tweet_text_with_media_annotations", ftype=FeatureType.STRING, encoding=EncodingType.BERT),
-  Feature(name="precision_nsfw", ftype=FeatureType.CONTINUOUS),
-  Feature(name="has_media", ftype=FeatureType.BINARY),
-  Feature(name="num_media", ftype=FeatureType.DISCRETE)
+  Feature(na ="t et_text_w h_ d a_annotat ons", ftype=FeatureType.STR NG, encod ng=Encod ngType.BERT),
+  Feature(na ="prec s on_nsfw", ftype=FeatureType.CONT NUOUS),
+  Feature(na ="has_ d a", ftype=FeatureType.B NARY),
+  Feature(na ="num_ d a", ftype=FeatureType.D SCRETE)
 ] + category_features
 
 ptos_prototype = Model(
-  name='ptos_prototype',
+  na ='ptos_prototype',
   export_path="...",
   features=features,
 )
-print(ptos_prototype)
+pr nt(ptos_prototype)
 
-cq_loader = BigQueryFeatureLoader(gcp_project=COMPUTE_PROJECT)
+cq_loader = B gQueryFeatureLoader(gcp_project=COMPUTE_PROJECT)
 labels = [
-  "has_non_punitive_action",
-  "has_punitive_action",
-  "has_punitive_action_contains_self_harm",
-  "has_punitive_action_encourage_self_harm",
-  "has_punitive_action_episodic",
-  "has_punitive_action_episodic_hateful_conduct",
-  "has_punitive_action_other_abuse_policy",
-  "has_punitive_action_without_self_harm"
+  "has_non_pun  ve_act on",
+  "has_pun  ve_act on",
+  "has_pun  ve_act on_conta ns_self_harm",
+  "has_pun  ve_act on_enc age_self_harm",
+  "has_pun  ve_act on_ep sod c",
+  "has_pun  ve_act on_ep sod c_hateful_conduct",
+  "has_pun  ve_act on_ot r_abuse_pol cy",
+  "has_pun  ve_act on_w hout_self_harm"
 ]
 
-train_query = f"""
+tra n_query = f"""
 SELECT 
-  {{feature_names}},
-  {",".join(labels)},
+  {{feature_na s}},
+  {",".jo n(labels)},
 ...
 """
 val_query = f"""
 SELECT 
-  {{feature_names}},
-  {",".join(labels)},
+  {{feature_na s}},
+  {",".jo n(labels)},
 ...
 """
 
-print(train_query)
-train = cq_loader.load_features(ptos_prototype, "", "", custom_query=train_query)
+pr nt(tra n_query)
+tra n = cq_loader.load_features(ptos_prototype, "", "", custom_query=tra n_query)
 val = cq_loader.load_features(ptos_prototype, "", "", custom_query=val_query)
-print(train.describe(model=ptos_prototype))
+pr nt(tra n.descr be(model=ptos_prototype))
 
 params = {
   'max_seq_lengths': 128,
-  'batch_size': 196,
+  'batch_s ze': 196,
   'lr': 1e-5,
-  'optimizer_type': 'adamw',
+  'opt m zer_type': 'adamw',
   'warmup_steps': 0,
   'cls_dropout_rate': 0.1,
   'epochs': 30,
   'steps_per_epoch': 5000,
-  'model_type': 'twitter_multilingual_bert_base_cased_mlm', 
-  'mixed_precision': True,
+  'model_type': 'tw ter_mult l ngual_bert_base_cased_mlm', 
+  'm xed_prec s on': True,
 }
 params
 
-def parse_labeled_data(row_dict):
-  label = [row_dict.pop(l) for l in labels]
-  return row_dict, label
+def parse_labeled_data(row_d ct):
+  label = [row_d ct.pop(l) for l  n labels]
+  return row_d ct, label
 
-mirrored_strategy = tf.distribute.MirroredStrategy()
-BATCH_SIZE = params['batch_size'] * mirrored_strategy.num_replicas_in_sync
+m rrored_strategy = tf.d str bute.M rroredStrategy()
+BATCH_S ZE = params['batch_s ze'] * m rrored_strategy.num_repl cas_ n_sync
 
-train_ds = train.to_tf_dataset().map(parse_labeled_data).shuffle(BATCH_SIZE*100).batch(BATCH_SIZE).repeat()
-val_ds = val.to_tf_dataset().map(parse_labeled_data).batch(BATCH_SIZE)
+tra n_ds = tra n.to_tf_dataset().map(parse_labeled_data).shuffle(BATCH_S ZE*100).batch(BATCH_S ZE).repeat()
+val_ds = val.to_tf_dataset().map(parse_labeled_data).batch(BATCH_S ZE)
 
-for record in train_ds:
-  tf.print(record)
+for record  n tra n_ds:
+  tf.pr nt(record)
   break
 
-def get_positive_weights():
-  """Computes positive weights used for class imbalance from training data."""
-  label_weights_df = utils.get_label_weights(
-      "tos-data-media-full",
-      project_id="twttr-abusive-interact-prod",
-      dataset_id="tos_policy"
+def get_pos  ve_  ghts():
+  """Computes pos  ve   ghts used for class  mbalance from tra n ng data."""
+  label_  ghts_df = ut ls.get_label_  ghts(
+      "tos-data- d a-full",
+      project_ d="twttr-abus ve- nteract-prod",
+      dataset_ d="tos_pol cy"
   )
-  pos_weight_tensor = tf.cast(
-      label_weights_df.sort_values(by='label').positive_class_weight,
+  pos_  ght_tensor = tf.cast(
+      label_  ghts_df.sort_values(by='label').pos  ve_class_  ght,
       dtype=tf.float32
   )
-  return pos_weight_tensor
+  return pos_  ght_tensor
 
-pos_weight_tensor = get_positive_weights()
-print(pos_weight_tensor)
+pos_  ght_tensor = get_pos  ve_  ghts()
+pr nt(pos_  ght_tensor)
 
 class TextEncoderPooledOutput(TextEncoder):
   def call(self, x):
     return super().call([x])["pooled_output"]  
 
-  def get_config(self):
-    return super().get_config()
+  def get_conf g(self):
+    return super().get_conf g()
 
-with mirrored_strategy.scope():
+w h m rrored_strategy.scope():
   text_encoder_pooled_output = TextEncoderPooledOutput(
                                 params['max_seq_lengths'], 
                                 model_type=params['model_type'],
-                                trainable=True
+                                tra nable=True
                               )
 
-  fe = FeatureEncoder(train)
-  inputs, preprocessing_head = fe.build_model_head(model=ptos_prototype, text_encoder=text_encoder_pooled_output)
+  fe = FeatureEncoder(tra n)
+   nputs, preprocess ng_ ad = fe.bu ld_model_ ad(model=ptos_prototype, text_encoder=text_encoder_pooled_output)
 
-  cls_dropout = tf.keras.layers.Dropout(params['cls_dropout_rate'], name="cls_dropout")
-  outputs = cls_dropout(preprocessing_head)
-  outputs = tf.keras.layers.Dense(8, name="output", dtype="float32")(outputs)
+  cls_dropout = tf.keras.layers.Dropout(params['cls_dropout_rate'], na ="cls_dropout")
+  outputs = cls_dropout(preprocess ng_ ad)
+  outputs = tf.keras.layers.Dense(8, na ="output", dtype="float32")(outputs)
 
   model = tf.keras.Model(
-      inputs=inputs,
+       nputs= nputs,
       outputs=outputs
   )
-  pr_auc = tf.keras.metrics.AUC(curve="PR", num_thresholds=1000, multi_label=True, from_logits=True)
+  pr_auc = tf.keras. tr cs.AUC(curve="PR", num_thresholds=1000, mult _label=True, from_log s=True)
 
-  custom_loss = lambda y_true, y_pred: utils.multilabel_weighted_loss(y_true, y_pred, weights=pos_weight_tensor)
-  optimizer = create_optimizer(
-    init_lr=params["lr"], 
-    num_train_steps=(params["epochs"] * params["steps_per_epoch"]),
+  custom_loss = lambda y_true, y_pred: ut ls.mult label_  ghted_loss(y_true, y_pred,   ghts=pos_  ght_tensor)
+  opt m zer = create_opt m zer(
+     n _lr=params["lr"], 
+    num_tra n_steps=(params["epochs"] * params["steps_per_epoch"]),
     num_warmup_steps=params["warmup_steps"],
-    optimizer_type=params["optimizer_type"],
+    opt m zer_type=params["opt m zer_type"],
   )
-  if params.get("mixed_precision"):
-      optimizer = tf.train.experimental.enable_mixed_precision_graph_rewrite(optimizer)
+   f params.get("m xed_prec s on"):
+      opt m zer = tf.tra n.exper  ntal.enable_m xed_prec s on_graph_rewr e(opt m zer)
       
-  model.compile(
-    optimizer=optimizer,
+  model.comp le(
+    opt m zer=opt m zer,
     loss=custom_loss,
-    metrics=[pr_auc]
+     tr cs=[pr_auc]
   )
 
-model.weights
+model.  ghts
 model.summary()
-pr_auc.name
+pr_auc.na 
 
-import getpass
-import wandb
-from wandb.keras import WandbCallback
+ mport getpass
+ mport wandb
+from wandb.keras  mport WandbCallback
 try:
   wandb_key = ...
-  wandb.login(...)
-  run = wandb.init(project='ptos_with_media',
-             group='new-split-trains',
-             notes='tweet text with only (num_media, precision_nsfw). on full train set, new split.',
-             entity='absv',
-             config=params,
-             name='tweet-text-w-nsfw-1.1',
+  wandb.log n(...)
+  run = wandb. n (project='ptos_w h_ d a',
+             group='new-spl -tra ns',
+             notes='t et text w h only (num_ d a, prec s on_nsfw). on full tra n set, new spl .',
+             ent y='absv',
+             conf g=params,
+             na ='t et-text-w-nsfw-1.1',
              sync_tensorboard=True)
-except FileNotFoundError:
-  print('Wandb key not found')
-  run = wandb.init(mode='disabled')
-import datetime
-import os
+except F leNotFoundError:
+  pr nt('Wandb key not found')
+  run = wandb. n (mode='d sabled')
+ mport datet  
+ mport os
 
-start_train_time = datetime.datetime.now()
-print(start_train_time.strftime("%m-%d-%Y (%H:%M:%S)"))
-checkpoint_path = os.path.join("...")
-print("Saving model checkpoints here: ", checkpoint_path)
+start_tra n_t   = datet  .datet  .now()
+pr nt(start_tra n_t  .strft  ("%m-%d-%Y (%H:%M:%S)"))
+c ckpo nt_path = os.path.jo n("...")
+pr nt("Sav ng model c ckpo nts  re: ", c ckpo nt_path)
 
-cp_callback = tf.keras.callbacks.ModelCheckpoint(
-  filepath=os.path.join(checkpoint_path, "model.{epoch:04d}.tf"),
+cp_callback = tf.keras.callbacks.ModelC ckpo nt(
+  f lepath=os.path.jo n(c ckpo nt_path, "model.{epoch:04d}.tf"),
   verbose=1,
-  monitor=f'val_{pr_auc.name}',
+  mon or=f'val_{pr_auc.na }',
   mode='max',
   save_freq='epoch',
   save_best_only=True
 )
 
-early_stopping_callback = tf.keras.callbacks.EarlyStopping(patience=7,
-                                                           monitor=f"val_{pr_auc.name}",
+early_stopp ng_callback = tf.keras.callbacks.EarlyStopp ng(pat ence=7,
+                                                           mon or=f"val_{pr_auc.na }",
                                                            mode="max")
 
-model.fit(train_ds, epochs=params["epochs"], validation_data=val_ds, callbacks=[cp_callback, early_stopping_callback],
+model.f (tra n_ds, epochs=params["epochs"], val dat on_data=val_ds, callbacks=[cp_callback, early_stopp ng_callback],
         steps_per_epoch=params["steps_per_epoch"], 
         verbose=2)
 
-import tensorflow_hub as hub
+ mport tensorflow_hub as hub
 
 gs_model_path = ...
 reloaded_keras_layer = hub.KerasLayer(gs_model_path)
-inputs = tf.keras.layers.Input(name="tweet__core__tweet__text", shape=(1,), dtype=tf.string)
-output = reloaded_keras_layer(inputs)
-v7_model = tf.keras.models.Model(inputs=inputs, outputs=output)
-pr_auc = tf.keras.metrics.AUC(curve="PR", name="pr_auc")
-roc_auc = tf.keras.metrics.AUC(curve="ROC", name="roc_auc")
-v7_model.compile(metrics=[pr_auc, roc_auc])
+ nputs = tf.keras.layers. nput(na ="t et__core__t et__text", shape=(1,), dtype=tf.str ng)
+output = reloaded_keras_layer( nputs)
+v7_model = tf.keras.models.Model( nputs= nputs, outputs=output)
+pr_auc = tf.keras. tr cs.AUC(curve="PR", na ="pr_auc")
+roc_auc = tf.keras. tr cs.AUC(curve="ROC", na ="roc_auc")
+v7_model.comp le( tr cs=[pr_auc, roc_auc])
 
-model.load_weights("...")
-candidate_model = model
+model.load_  ghts("...")
+cand date_model = model
 
-with mirrored_strategy.scope():
-  candidate_eval = candidate_model.evaluate(val_ds)
+w h m rrored_strategy.scope():
+  cand date_eval = cand date_model.evaluate(val_ds)
 
 test_query = f"""
 SELECT 
-  {",".join(ptos_prototype.feature_names())},
-  has_media,
-  precision_nsfw,
-  {",".join(labels)},
+  {",".jo n(ptos_prototype.feature_na s())},
+  has_ d a,
+  prec s on_nsfw,
+  {",".jo n(labels)},
 ...
 """
 
 test = cq_loader.load_features(ptos_prototype, "", "", custom_query=test_query)
 test = test.to_tf_dataset().map(parse_labeled_data)
 
-print(test)
+pr nt(test)
 
-test_only_media = test.filter(lambda x, y: tf.equal(x["has_media"], True))
-test_only_nsfw = test.filter(lambda x, y: tf.greater_equal(x["precision_nsfw"], 0.95))
-test_no_media = test.filter(lambda x, y: tf.equal(x["has_media"], False))
-test_media_not_nsfw = test.filter(lambda x, y: tf.logical_and(tf.equal(x["has_media"], True), tf.less(x["precision_nsfw"], 0.95)))
-for d in [test, test_only_media, test_only_nsfw, test_no_media, test_media_not_nsfw]:
-  print(d.reduce(0, lambda x, _: x + 1).numpy())
+test_only_ d a = test.f lter(lambda x, y: tf.equal(x["has_ d a"], True))
+test_only_nsfw = test.f lter(lambda x, y: tf.greater_equal(x["prec s on_nsfw"], 0.95))
+test_no_ d a = test.f lter(lambda x, y: tf.equal(x["has_ d a"], False))
+test_ d a_not_nsfw = test.f lter(lambda x, y: tf.log cal_and(tf.equal(x["has_ d a"], True), tf.less(x["prec s on_nsfw"], 0.95)))
+for d  n [test, test_only_ d a, test_only_nsfw, test_no_ d a, test_ d a_not_nsfw]:
+  pr nt(d.reduce(0, lambda x, _: x + 1).numpy())
 
-from notebook_eval_utils import SparseMultilabelEvaluator, EvalConfig
-from dataclasses import asdict
+from notebook_eval_ut ls  mport SparseMult labelEvaluator, EvalConf g
+from dataclasses  mport asd ct
 
-def display_metrics(probs, targets, labels=labels):
-  eval_config = EvalConfig(prediction_threshold=0.5, precision_k=0.9)
-  for eval_mode, y_mask in [("implicit", np.ones(targets.shape))]:
-    print("Evaluation mode", eval_mode)
-    metrics = SparseMultilabelEvaluator.evaluate(
-        targets, np.array(probs), y_mask, classes=labels, eval_config=eval_config
+def d splay_ tr cs(probs, targets, labels=labels):
+  eval_conf g = EvalConf g(pred ct on_threshold=0.5, prec s on_k=0.9)
+  for eval_mode, y_mask  n [(" mpl c ", np.ones(targets.shape))]:
+    pr nt("Evaluat on mode", eval_mode)
+     tr cs = SparseMult labelEvaluator.evaluate(
+        targets, np.array(probs), y_mask, classes=labels, eval_conf g=eval_conf g
     )
-    metrics_df = pd.DataFrame.from_dict(asdict(metrics)["per_topic_metrics"]).transpose()
-    metrics_df["pos_to_neg"] = metrics_df["num_pos_samples"] / (metrics_df["num_neg_samples"] + 1)
-    display(metrics_df.median())    
-    display(metrics_df)
-    return metrics_df
+     tr cs_df = pd.DataFra .from_d ct(asd ct( tr cs)["per_top c_ tr cs"]).transpose()
+     tr cs_df["pos_to_neg"] =  tr cs_df["num_pos_samples"] / ( tr cs_df["num_neg_samples"] + 1)
+    d splay( tr cs_df. d an())    
+    d splay( tr cs_df)
+    return  tr cs_df
 
 
 def eval_model(model, df):
-  with mirrored_strategy.scope():
-    targets = np.stack(list(df.map(lambda x, y: y).as_numpy_iterator()), axis=0)
-    df = df.padded_batch(BATCH_SIZE)
-    preds = model.predict(df)
-    return display_metrics(preds, targets)
+  w h m rrored_strategy.scope():
+    targets = np.stack(l st(df.map(lambda x, y: y).as_numpy_ erator()), ax s=0)
+    df = df.padded_batch(BATCH_S ZE)
+    preds = model.pred ct(df)
+    return d splay_ tr cs(preds, targets)
 
 subsets = {"test": test,
-          "test_only_media": test_only_media,
+          "test_only_ d a": test_only_ d a,
           "test_only_nsfw": test_only_nsfw,
-          "test_no_media": test_no_media,
-          "test_media_not_nsfw": test_media_not_nsfw}
+          "test_no_ d a": test_no_ d a,
+          "test_ d a_not_nsfw": test_ d a_not_nsfw}
 
-metrics = {}
-for name, df in subsets.items():
-  metrics[name] = eval_model(candidate_model, df)
-[(name, m.pr_auc) for name, m in metrics.items()]
-for name, x in [(name, m.pr_auc.to_string(index=False).strip().split("\n")) for name, m in metrics.items()]:
-  print(name)
-  for y in x:
-    print(y.strip(), end="\t")
-  print(".")
-for d in [test, test_only_media, test_only_nsfw, test_no_media, test_media_not_nsfw]:
-  print(d.reduce(0, lambda x, _: x + 1).numpy())
+ tr cs = {}
+for na , df  n subsets. ems():
+   tr cs[na ] = eval_model(cand date_model, df)
+[(na , m.pr_auc) for na , m  n  tr cs. ems()]
+for na , x  n [(na , m.pr_auc.to_str ng( ndex=False).str p().spl ("\n")) for na , m  n  tr cs. ems()]:
+  pr nt(na )
+  for y  n x:
+    pr nt(y.str p(), end="\t")
+  pr nt(".")
+for d  n [test, test_only_ d a, test_only_nsfw, test_no_ d a, test_ d a_not_nsfw]:
+  pr nt(d.reduce(0, lambda x, _: x + 1).numpy())

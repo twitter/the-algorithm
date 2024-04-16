@@ -1,19 +1,19 @@
-package com.twitter.follow_recommendations.common.transforms.weighted_sampling
+package com.tw ter.follow_recom ndat ons.common.transforms.  ghted_sampl ng
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.follow_recom ndat ons.conf gap .common.FeatureSw chConf g
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class SamplingTransformFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val intFSParams: Seq[FSBoundedParam[Int]] = Seq(SamplingTransformParams.TopKFixed)
+@S ngleton
+class Sampl ngTransformFSConf g @ nject() () extends FeatureSw chConf g {
+  overr de val  ntFSParams: Seq[FSBoundedParam[ nt]] = Seq(Sampl ngTransformParams.TopKF xed)
 
-  override val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
-    SamplingTransformParams.MultiplicativeFactor)
+  overr de val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
+    Sampl ngTransformParams.Mult pl cat veFactor)
 
-  override val booleanFSParams: Seq[FSParam[Boolean]] = Seq(
-    SamplingTransformParams.ScribeRankingInfoInSamplingTransform)
+  overr de val booleanFSParams: Seq[FSParam[Boolean]] = Seq(
+    Sampl ngTransformParams.Scr beRank ng nfo nSampl ngTransform)
 }

@@ -1,117 +1,117 @@
-package com.twitter.tweetypie.caching
+package com.tw ter.t etyp e.cach ng
 
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import scala.util.Random
-import com.twitter.logging.Logger
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.T  
+ mport scala.ut l.Random
+ mport com.tw ter.logg ng.Logger
 
 /**
- * Used to determine whether values successfully retrieved from cache
- * are [[CacheResult.Fresh]] or [[CacheResult.Stale]]. This is useful
- * in the implementation of a [[ValueSerializer]].
+ * Used to determ ne w t r values successfully retr eved from cac 
+ * are [[Cac Result.Fresh]] or [[Cac Result.Stale]]. T   s useful
+ *  n t   mple ntat on of a [[ValueSer al zer]].
  */
-trait SoftTtl[-V] {
+tra  SoftTtl[-V] {
 
   /**
-   * Determines whether a cached value was fresh.
+   * Determ nes w t r a cac d value was fresh.
    *
-   * @param cachedAt  the time at which the value was cached.
+   * @param cac dAt  t  t   at wh ch t  value was cac d.
    */
-  def isFresh(value: V, cachedAt: Time): Boolean
+  def  sFresh(value: V, cac dAt: T  ): Boolean
 
   /**
-   * Wraps the value in Fresh or Stale depending on the value of `isFresh`.
+   * Wraps t  value  n Fresh or Stale depend ng on t  value of ` sFresh`.
    *
-   * (The type variable U exists because it is not allowed to return
-   * values of a contravariant type, so we must define a variable that
-   * is a specific subclass of V. This is worth it because it allows
-   * us to create polymorphic policies without having to specify the
-   * type. Another solution would be to make the type invariant, but
-   * then we would have to specify the type whenever we create an
-   * instance.)
+   * (T  type var able U ex sts because    s not allo d to return
+   * values of a contravar ant type, so   must def ne a var able that
+   *  s a spec f c subclass of V. T   s worth   because   allows
+   * us to create polymorph c pol c es w hout hav ng to spec fy t 
+   * type. Anot r solut on would be to make t  type  nvar ant, but
+   * t n   would have to spec fy t  type w never   create an
+   *  nstance.)
    */
-  def toCacheResult[U <: V](value: U, cachedAt: Time): CacheResult[U] =
-    if (isFresh(value, cachedAt)) CacheResult.Fresh(value) else CacheResult.Stale(value)
+  def toCac Result[U <: V](value: U, cac dAt: T  ): Cac Result[U] =
+     f ( sFresh(value, cac dAt)) Cac Result.Fresh(value) else Cac Result.Stale(value)
 }
 
 object SoftTtl {
 
   /**
-   * Regardless of the inputs, the value will always be considered
+   * Regardless of t   nputs, t  value w ll always be cons dered
    * fresh.
    */
   object NeverRefresh extends SoftTtl[Any] {
-    override def isFresh(_unusedValue: Any, _unusedCachedAt: Time): Boolean = true
+    overr de def  sFresh(_unusedValue: Any, _unusedCac dAt: T  ): Boolean = true
   }
 
   /**
-   * Trigger refresh based on the length of time that a value has been
-   * stored in cache, ignoring the value.
+   * Tr gger refresh based on t  length of t   that a value has been
+   * stored  n cac ,  gnor ng t  value.
    *
-   * @param softTtl Items that were cached longer ago than this value
-   *   will be refreshed when they are accessed.
+   * @param softTtl  ems that  re cac d longer ago than t  value
+   *   w ll be refres d w n t y are accessed.
    *
-   * @param jitter Add nondeterminism to the soft TTL to prevent a
-   *   thundering herd of requests refreshing the value at the same
-   *   time. The time at which the value is considered stale will be
-   *   uniformly spread out over a range of +/- (jitter/2). It is
-   *   valid to set the jitter to zero, which will turn off jittering.
+   * @param j ter Add nondeterm n sm to t  soft TTL to prevent a
+   *   thunder ng  rd of requests refresh ng t  value at t  sa 
+   *   t  . T  t   at wh ch t  value  s cons dered stale w ll be
+   *   un formly spread out over a range of +/- (j ter/2).    s
+   *   val d to set t  j ter to zero, wh ch w ll turn off j ter ng.
    *
-   * @param logger If non-null, use this logger rather than one based
-   *   on the class name. This logger is only used for trace-level
-   *   logging.
+   * @param logger  f non-null, use t  logger rat r than one based
+   *   on t  class na . T  logger  s only used for trace-level
+   *   logg ng.
    */
   case class ByAge[V](
-    softTtl: Duration,
-    jitter: Duration,
-    specificLogger: Logger = null,
+    softTtl: Durat on,
+    j ter: Durat on,
+    spec f cLogger: Logger = null,
     rng: Random = Random)
       extends SoftTtl[Any] {
 
-    private[this] val logger: Logger =
-      if (specificLogger == null) Logger(getClass) else specificLogger
+    pr vate[t ] val logger: Logger =
+       f (spec f cLogger == null) Logger(getClass) else spec f cLogger
 
-    private[this] val maxJitterMs: Long = jitter.inMilliseconds
+    pr vate[t ] val maxJ terMs: Long = j ter. nM ll seconds
 
-    // this requirement is due to using Random.nextInt to choose the
-    // jitter, but it allows jitter of greater than 24 days
-    require(maxJitterMs <= (Int.MaxValue / 2))
+    // t  requ re nt  s due to us ng Random.next nt to choose t 
+    // j ter, but   allows j ter of greater than 24 days
+    requ re(maxJ terMs <= ( nt.MaxValue / 2))
 
-    // Negative jitter probably indicates misuse of the API
-    require(maxJitterMs >= 0)
+    // Negat ve j ter probably  nd cates m suse of t  AP 
+    requ re(maxJ terMs >= 0)
 
-    // we want period +/- jitter, but the random generator
-    // generates non-negative numbers, so we generate [0, 2 *
-    // maxJitter) and subtract maxJitter to obtain [-maxJitter,
-    // maxJitter)
-    private[this] val maxJitterRangeMs: Int = (maxJitterMs * 2).toInt
+    //   want per od +/- j ter, but t  random generator
+    // generates non-negat ve numbers, so   generate [0, 2 *
+    // maxJ ter) and subtract maxJ ter to obta n [-maxJ ter,
+    // maxJ ter)
+    pr vate[t ] val maxJ terRangeMs:  nt = (maxJ terMs * 2).to nt
 
-    // We perform all calculations in milliseconds, so convert the
-    // period to milliseconds out here.
-    private[this] val softTtlMs: Long = softTtl.inMilliseconds
+    //   perform all calculat ons  n m ll seconds, so convert t 
+    // per od to m ll seconds out  re.
+    pr vate[t ] val softTtlMs: Long = softTtl. nM ll seconds
 
-    // If the value is below this age, it will always be fresh,
-    // regardless of jitter.
-    private[this] val alwaysFreshAgeMs: Long = softTtlMs - maxJitterMs
+    //  f t  value  s below t  age,   w ll always be fresh,
+    // regardless of j ter.
+    pr vate[t ] val alwaysFreshAgeMs: Long = softTtlMs - maxJ terMs
 
-    // If the value is above this age, it will always be stale,
-    // regardless of jitter.
-    private[this] val alwaysStaleAgeMs: Long = softTtlMs + maxJitterMs
+    //  f t  value  s above t  age,   w ll always be stale,
+    // regardless of j ter.
+    pr vate[t ] val alwaysStaleAgeMs: Long = softTtlMs + maxJ terMs
 
-    override def isFresh(value: Any, cachedAt: Time): Boolean = {
-      val ageMs: Long = (Time.now - cachedAt).inMilliseconds
+    overr de def  sFresh(value: Any, cac dAt: T  ): Boolean = {
+      val ageMs: Long = (T  .now - cac dAt). nM ll seconds
       val fresh =
-        if (ageMs <= alwaysFreshAgeMs) {
+         f (ageMs <= alwaysFreshAgeMs) {
           true
-        } else if (ageMs > alwaysStaleAgeMs) {
+        } else  f (ageMs > alwaysStaleAgeMs) {
           false
         } else {
-          val jitterMs: Long = rng.nextInt(maxJitterRangeMs) - maxJitterMs
-          ageMs <= softTtlMs + jitterMs
+          val j terMs: Long = rng.next nt(maxJ terRangeMs) - maxJ terMs
+          ageMs <= softTtlMs + j terMs
         }
 
-      logger.ifTrace(
-        s"Checked soft ttl: fresh = $fresh, " +
+      logger. fTrace(
+        s"C cked soft ttl: fresh = $fresh, " +
           s"soft_ttl_ms = $softTtlMs, age_ms = $ageMs, value = $value")
 
       fresh

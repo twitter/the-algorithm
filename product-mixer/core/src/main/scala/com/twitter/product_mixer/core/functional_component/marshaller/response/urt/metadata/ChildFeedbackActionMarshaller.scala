@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.icon.HorizonIconMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ChildFeedbackAction
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. con.Hor zon conMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Ch ldFeedbackAct on
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ChildFeedbackActionMarshaller @Inject() (
+@S ngleton
+class Ch ldFeedbackAct onMarshaller @ nject() (
   feedbackTypeMarshaller: FeedbackTypeMarshaller,
-  confirmationDisplayTypeMarshaller: ConfirmationDisplayTypeMarshaller,
-  clientEventInfoMarshaller: ClientEventInfoMarshaller,
-  horizonIconMarshaller: HorizonIconMarshaller,
-  richFeedbackBehaviorMarshaller: RichFeedbackBehaviorMarshaller) {
+  conf rmat onD splayTypeMarshaller: Conf rmat onD splayTypeMarshaller,
+  cl entEvent nfoMarshaller: Cl entEvent nfoMarshaller,
+  hor zon conMarshaller: Hor zon conMarshaller,
+  r chFeedbackBehav orMarshaller: R chFeedbackBehav orMarshaller) {
 
-  def apply(feedbackAction: ChildFeedbackAction): urt.FeedbackAction = {
-    urt.FeedbackAction(
-      feedbackType = feedbackTypeMarshaller(feedbackAction.feedbackType),
-      prompt = feedbackAction.prompt,
-      confirmation = feedbackAction.confirmation,
-      childKeys = None,
-      feedbackUrl = feedbackAction.feedbackUrl,
-      hasUndoAction = feedbackAction.hasUndoAction,
-      confirmationDisplayType =
-        feedbackAction.confirmationDisplayType.map(confirmationDisplayTypeMarshaller(_)),
-      clientEventInfo = feedbackAction.clientEventInfo.map(clientEventInfoMarshaller(_)),
-      icon = feedbackAction.icon.map(horizonIconMarshaller(_)),
-      richBehavior = feedbackAction.richBehavior.map(richFeedbackBehaviorMarshaller(_)),
-      subprompt = feedbackAction.subprompt
+  def apply(feedbackAct on: Ch ldFeedbackAct on): urt.FeedbackAct on = {
+    urt.FeedbackAct on(
+      feedbackType = feedbackTypeMarshaller(feedbackAct on.feedbackType),
+      prompt = feedbackAct on.prompt,
+      conf rmat on = feedbackAct on.conf rmat on,
+      ch ldKeys = None,
+      feedbackUrl = feedbackAct on.feedbackUrl,
+      hasUndoAct on = feedbackAct on.hasUndoAct on,
+      conf rmat onD splayType =
+        feedbackAct on.conf rmat onD splayType.map(conf rmat onD splayTypeMarshaller(_)),
+      cl entEvent nfo = feedbackAct on.cl entEvent nfo.map(cl entEvent nfoMarshaller(_)),
+       con = feedbackAct on. con.map(hor zon conMarshaller(_)),
+      r chBehav or = feedbackAct on.r chBehav or.map(r chFeedbackBehav orMarshaller(_)),
+      subprompt = feedbackAct on.subprompt
     )
   }
 }

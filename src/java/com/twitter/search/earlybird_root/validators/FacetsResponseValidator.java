@@ -1,37 +1,37 @@
-package com.twitter.search.earlybird_root.validators;
+package com.tw ter.search.earlyb rd_root.val dators;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.ut l.Future;
 
-public class FacetsResponseValidator implements ServiceResponseValidator<EarlybirdResponse> {
+publ c class FacetsResponseVal dator  mple nts Serv ceResponseVal dator<Earlyb rdResponse> {
 
-  private final EarlybirdCluster cluster;
+  pr vate f nal Earlyb rdCluster cluster;
 
   /**
-   * Validator for facets responses
+   * Val dator for facets responses
    */
-  public FacetsResponseValidator(EarlybirdCluster cluster) {
-    this.cluster = cluster;
+  publ c FacetsResponseVal dator(Earlyb rdCluster cluster) {
+    t .cluster = cluster;
   }
 
-  @Override
-  public Future<EarlybirdResponse> validate(EarlybirdResponse response) {
-    if (!response.isSetSearchResults() || !response.getSearchResults().isSetResults()) {
-      return Future.exception(
-          new IllegalStateException(cluster + " didn't set search results."));
+  @Overr de
+  publ c Future<Earlyb rdResponse> val date(Earlyb rdResponse response) {
+     f (!response. sSetSearchResults() || !response.getSearchResults(). sSetResults()) {
+      return Future.except on(
+          new  llegalStateExcept on(cluster + " d dn't set search results."));
     }
 
-    if (!response.isSetFacetResults()) {
-      return Future.exception(
-          new IllegalStateException(
-              cluster + " facets response does not have the facetResults field set."));
+     f (!response. sSetFacetResults()) {
+      return Future.except on(
+          new  llegalStateExcept on(
+              cluster + " facets response does not have t  facetResults f eld set."));
     }
 
-    if (response.getFacetResults().getFacetFields().isEmpty()) {
-      return Future.exception(
-          new IllegalStateException(
-              cluster + " facets response does not have any facet fields set."));
+     f (response.getFacetResults().getFacetF elds(). sEmpty()) {
+      return Future.except on(
+          new  llegalStateExcept on(
+              cluster + " facets response does not have any facet f elds set."));
     }
 
     return Future.value(response);

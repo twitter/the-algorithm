@@ -1,222 +1,222 @@
-package com.twitter.simclusters_v2.hdfs_sources
+package com.tw ter.s mclusters_v2.hdfs_s ces
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossDC
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.wtf.entity_real_graph.thriftscala.EntityType
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.ModelVersions
+ mport com.tw ter.dal.cl ent.dataset.KeyValDALDataset
+ mport com.tw ter.scald ng.DateRange
+ mport com.tw ter.scald ng.typed.TypedP pe
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.AllowCrossDC
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.thr ftscala._
+ mport com.tw ter.wtf.ent y_real_graph.thr ftscala.Ent yType
+ mport com.tw ter.s mclusters_v2.common.Cluster d
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons
 
-object EntityEmbeddingsSources {
+object Ent yEmbedd ngsS ces {
 
-  final val SemanticCoreSimClustersEmbeddingsDec11Dataset =
-    SemanticCoreSimclustersEmbeddingsScalaDataset
+  f nal val Semant cCoreS mClustersEmbedd ngsDec11Dataset =
+    Semant cCoreS mclustersEmbedd ngsScalaDataset
 
-  final val SemanticCoreSimClustersEmbeddingsUpdatedDataset =
-    SemanticCoreSimclustersEmbeddingsUpdatedScalaDataset
+  f nal val Semant cCoreS mClustersEmbedd ngsUpdatedDataset =
+    Semant cCoreS mclustersEmbedd ngsUpdatedScalaDataset
 
-  final val SemanticCoreSimClustersEmbeddings2020Dataset =
-    SemanticCoreSimclustersEmbeddings2020ScalaDataset
+  f nal val Semant cCoreS mClustersEmbedd ngs2020Dataset =
+    Semant cCoreS mclustersEmbedd ngs2020ScalaDataset
 
-  final val SemanticCorePerLanguageSimClustersEmbeddingsDataset =
-    SemanticCorePerLanguageSimclustersEmbeddingsScalaDataset
+  f nal val Semant cCorePerLanguageS mClustersEmbedd ngsDataset =
+    Semant cCorePerLanguageS mclustersEmbedd ngsScalaDataset
 
-  final val LogFavSemanticCorePerLanguageSimClustersEmbeddingsDataset =
-    LogFavSemanticCorePerLanguageSimclustersEmbeddingsScalaDataset
+  f nal val LogFavSemant cCorePerLanguageS mClustersEmbedd ngsDataset =
+    LogFavSemant cCorePerLanguageS mclustersEmbedd ngsScalaDataset
 
-  final val HashtagSimClustersEmbeddingsUpdatedDataset =
-    HashtagSimclustersEmbeddingsUpdatedScalaDataset
+  f nal val HashtagS mClustersEmbedd ngsUpdatedDataset =
+    HashtagS mclustersEmbedd ngsUpdatedScalaDataset
 
-  final val ReverseIndexSemanticCoreSimClustersEmbeddingsDec11Dataset =
-    ReverseIndexSemanticCoreSimclustersEmbeddingsScalaDataset
+  f nal val Reverse ndexSemant cCoreS mClustersEmbedd ngsDec11Dataset =
+    Reverse ndexSemant cCoreS mclustersEmbedd ngsScalaDataset
 
-  final val ReverseIndexSemanticCoreSimClustersEmbeddingsUpdatedDataset =
-    ReverseIndexSemanticCoreSimclustersEmbeddingsUpdatedScalaDataset
+  f nal val Reverse ndexSemant cCoreS mClustersEmbedd ngsUpdatedDataset =
+    Reverse ndexSemant cCoreS mclustersEmbedd ngsUpdatedScalaDataset
 
-  final val ReverseIndexSemanticCoreSimClustersEmbeddings2020Dataset =
-    ReverseIndexSemanticCoreSimclustersEmbeddings2020ScalaDataset
+  f nal val Reverse ndexSemant cCoreS mClustersEmbedd ngs2020Dataset =
+    Reverse ndexSemant cCoreS mclustersEmbedd ngs2020ScalaDataset
 
-  final val ReverseIndexSemanticCorePerLanguageSimClustersEmbeddingsDataset =
-    ReverseIndexSemanticCorePerLanguageSimclustersEmbeddingsScalaDataset
+  f nal val Reverse ndexSemant cCorePerLanguageS mClustersEmbedd ngsDataset =
+    Reverse ndexSemant cCorePerLanguageS mclustersEmbedd ngsScalaDataset
 
-  final val LogFavReverseIndexSemanticCorePerLanguageSimClustersEmbeddingsDataset =
-    LogFavReverseIndexSemanticCorePerLanguageSimclustersEmbeddingsScalaDataset
+  f nal val LogFavReverse ndexSemant cCorePerLanguageS mClustersEmbedd ngsDataset =
+    LogFavReverse ndexSemant cCorePerLanguageS mclustersEmbedd ngsScalaDataset
 
-  final val ReverseIndexHashtagSimClustersEmbeddingsUpdatedDataset =
-    ReverseIndexHashtagSimclustersEmbeddingsUpdatedScalaDataset
+  f nal val Reverse ndexHashtagS mClustersEmbedd ngsUpdatedDataset =
+    Reverse ndexHashtagS mclustersEmbedd ngsUpdatedScalaDataset
 
-  // Fav-based TFG topic embeddings built from user device languages
-  // Keyed by SimClustersEmbeddingId with InternalId.TopicId ((topic, language) pair, with country = None)
-  final val FavTfgTopicEmbeddingsDataset = FavTfgTopicEmbeddingsScalaDataset
+  // Fav-based TFG top c embedd ngs bu lt from user dev ce languages
+  // Keyed by S mClustersEmbedd ng d w h  nternal d.Top c d ((top c, language) pa r, w h country = None)
+  f nal val FavTfgTop cEmbedd ngsDataset = FavTfgTop cEmbedd ngsScalaDataset
 
-  final val FavTfgTopicEmbeddingsParquetDataset = FavTfgTopicEmbeddingsParquetScalaDataset
+  f nal val FavTfgTop cEmbedd ngsParquetDataset = FavTfgTop cEmbedd ngsParquetScalaDataset
 
-  final val FavTfgTopicEmbeddings2020Dataset = FavTfgTopicEmbeddings2020ScalaDataset
+  f nal val FavTfgTop cEmbedd ngs2020Dataset = FavTfgTop cEmbedd ngs2020ScalaDataset
 
-  final val FavTfgTopicEmbeddings2020ParquetDataset = FavTfgTopicEmbeddings2020ParquetScalaDataset
+  f nal val FavTfgTop cEmbedd ngs2020ParquetDataset = FavTfgTop cEmbedd ngs2020ParquetScalaDataset
 
-  // Logfav-based TFG topic embeddings built from user device languages
-  // Keyed by SimClustersEmbeddingId with InternalId.LocaleEntityId ((topic, language) pair)
-  final val LogFavTfgTopicEmbeddingsDataset = LogFavTfgTopicEmbeddingsScalaDataset
+  // Logfav-based TFG top c embedd ngs bu lt from user dev ce languages
+  // Keyed by S mClustersEmbedd ng d w h  nternal d.LocaleEnt y d ((top c, language) pa r)
+  f nal val LogFavTfgTop cEmbedd ngsDataset = LogFavTfgTop cEmbedd ngsScalaDataset
 
-  final val LogFavTfgTopicEmbeddingsParquetDataset = LogFavTfgTopicEmbeddingsParquetScalaDataset
+  f nal val LogFavTfgTop cEmbedd ngsParquetDataset = LogFavTfgTop cEmbedd ngsParquetScalaDataset
 
-  // Fav-based TFG topic embeddings built from inferred user consumed languages
-  // Keyed by SimClustersEmbeddingId with InternalId.TopicId ((topic, country, language) tuple)
-  final val FavInferredLanguageTfgTopicEmbeddingsDataset =
-    FavInferredLanguageTfgTopicEmbeddingsScalaDataset
+  // Fav-based TFG top c embedd ngs bu lt from  nferred user consu d languages
+  // Keyed by S mClustersEmbedd ng d w h  nternal d.Top c d ((top c, country, language) tuple)
+  f nal val Fav nferredLanguageTfgTop cEmbedd ngsDataset =
+    Fav nferredLanguageTfgTop cEmbedd ngsScalaDataset
 
-  private val validSemanticCoreEmbeddingTypes = Seq(
-    EmbeddingType.FavBasedSematicCoreEntity,
-    EmbeddingType.FollowBasedSematicCoreEntity
+  pr vate val val dSemant cCoreEmbedd ngTypes = Seq(
+    Embedd ngType.FavBasedSemat cCoreEnt y,
+    Embedd ngType.FollowBasedSemat cCoreEnt y
   )
 
   /**
-   * Given a fav/follow/etc embedding type and a ModelVersion, retrieve the corresponding dataset to
-   * (SemanticCore entityId -> List(clusterId)) from a certain dateRange.
+   * G ven a fav/follow/etc embedd ng type and a ModelVers on, retr eve t  correspond ng dataset to
+   * (Semant cCore ent y d -> L st(cluster d)) from a certa n dateRange.
    */
-  def getSemanticCoreEntityEmbeddingsSource(
-    embeddingType: EmbeddingType,
-    modelVersion: String,
+  def getSemant cCoreEnt yEmbedd ngsS ce(
+    embedd ngType: Embedd ngType,
+    modelVers on: Str ng,
     dateRange: DateRange
-  ): TypedPipe[(Long, SimClustersEmbedding)] = {
-    val dataSet = modelVersion match {
-      case ModelVersions.Model20M145KDec11 => SemanticCoreSimClustersEmbeddingsDec11Dataset
-      case ModelVersions.Model20M145KUpdated => SemanticCoreSimClustersEmbeddingsUpdatedDataset
-      case _ => throw new IllegalArgumentException(s"ModelVersion $modelVersion is not supported")
+  ): TypedP pe[(Long, S mClustersEmbedd ng)] = {
+    val dataSet = modelVers on match {
+      case ModelVers ons.Model20M145KDec11 => Semant cCoreS mClustersEmbedd ngsDec11Dataset
+      case ModelVers ons.Model20M145KUpdated => Semant cCoreS mClustersEmbedd ngsUpdatedDataset
+      case _ => throw new  llegalArgu ntExcept on(s"ModelVers on $modelVers on  s not supported")
     }
-    assert(validSemanticCoreEmbeddingTypes.contains(embeddingType))
-    entityEmbeddingsSource(dataSet, embeddingType, dateRange)
+    assert(val dSemant cCoreEmbedd ngTypes.conta ns(embedd ngType))
+    ent yEmbedd ngsS ce(dataSet, embedd ngType, dateRange)
   }
 
   /**
-   * Given a fav/follow/etc embedding type and a ModelVersion, retrieve the corresponding dataset to
-   * (clusterId -> List(SemanticCore entityId)) from a certain dateRange.
+   * G ven a fav/follow/etc embedd ng type and a ModelVers on, retr eve t  correspond ng dataset to
+   * (cluster d -> L st(Semant cCore ent y d)) from a certa n dateRange.
    */
-  def getReverseIndexedSemanticCoreEntityEmbeddingsSource(
-    embeddingType: EmbeddingType,
-    modelVersion: String,
+  def getReverse ndexedSemant cCoreEnt yEmbedd ngsS ce(
+    embedd ngType: Embedd ngType,
+    modelVers on: Str ng,
     dateRange: DateRange
-  ): TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])] = {
-    val dataSet = modelVersion match {
-      case ModelVersions.Model20M145KDec11 =>
-        ReverseIndexSemanticCoreSimClustersEmbeddingsDec11Dataset
-      case ModelVersions.Model20M145KUpdated =>
-        ReverseIndexSemanticCoreSimClustersEmbeddingsUpdatedDataset
-      case ModelVersions.Model20M145K2020 =>
-        ReverseIndexSemanticCoreSimClustersEmbeddings2020Dataset
-      case _ => throw new IllegalArgumentException(s"ModelVersion $modelVersion is not supported")
+  ): TypedP pe[(Cluster d, Seq[Semant cCoreEnt yW hScore])] = {
+    val dataSet = modelVers on match {
+      case ModelVers ons.Model20M145KDec11 =>
+        Reverse ndexSemant cCoreS mClustersEmbedd ngsDec11Dataset
+      case ModelVers ons.Model20M145KUpdated =>
+        Reverse ndexSemant cCoreS mClustersEmbedd ngsUpdatedDataset
+      case ModelVers ons.Model20M145K2020 =>
+        Reverse ndexSemant cCoreS mClustersEmbedd ngs2020Dataset
+      case _ => throw new  llegalArgu ntExcept on(s"ModelVers on $modelVers on  s not supported")
     }
 
-    assert(validSemanticCoreEmbeddingTypes.contains(embeddingType))
-    reverseIndexedEntityEmbeddingsSource(dataSet, embeddingType, dateRange)
+    assert(val dSemant cCoreEmbedd ngTypes.conta ns(embedd ngType))
+    reverse ndexedEnt yEmbedd ngsS ce(dataSet, embedd ngType, dateRange)
   }
 
-  // Return the raw DAL dataset reference. Use this if you're writing to DAL.
-  def getEntityEmbeddingsDataset(
-    entityType: EntityType,
-    modelVersion: String,
-    isEmbeddingsPerLocale: Boolean = false
-  ): KeyValDALDataset[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]] = {
-    (entityType, modelVersion) match {
-      case (EntityType.SemanticCore, ModelVersions.Model20M145KDec11) =>
-        SemanticCoreSimClustersEmbeddingsDec11Dataset
-      case (EntityType.SemanticCore, ModelVersions.Model20M145KUpdated) =>
-        if (isEmbeddingsPerLocale) {
-          SemanticCorePerLanguageSimClustersEmbeddingsDataset
+  // Return t  raw DAL dataset reference. Use t   f   wr  ng to DAL.
+  def getEnt yEmbedd ngsDataset(
+    ent yType: Ent yType,
+    modelVers on: Str ng,
+     sEmbedd ngsPerLocale: Boolean = false
+  ): KeyValDALDataset[KeyVal[S mClustersEmbedd ng d, S mClustersEmbedd ng]] = {
+    (ent yType, modelVers on) match {
+      case (Ent yType.Semant cCore, ModelVers ons.Model20M145KDec11) =>
+        Semant cCoreS mClustersEmbedd ngsDec11Dataset
+      case (Ent yType.Semant cCore, ModelVers ons.Model20M145KUpdated) =>
+         f ( sEmbedd ngsPerLocale) {
+          Semant cCorePerLanguageS mClustersEmbedd ngsDataset
         } else {
-          SemanticCoreSimClustersEmbeddingsUpdatedDataset
+          Semant cCoreS mClustersEmbedd ngsUpdatedDataset
         }
-      case (EntityType.SemanticCore, ModelVersions.Model20M145K2020) =>
-        SemanticCoreSimClustersEmbeddings2020Dataset
-      case (EntityType.Hashtag, ModelVersions.Model20M145KUpdated) =>
-        HashtagSimClustersEmbeddingsUpdatedDataset
-      case (entityType, modelVersion) =>
-        throw new IllegalArgumentException(
-          s"(Entity Type, ModelVersion) ($entityType, $modelVersion) not supported.")
+      case (Ent yType.Semant cCore, ModelVers ons.Model20M145K2020) =>
+        Semant cCoreS mClustersEmbedd ngs2020Dataset
+      case (Ent yType.Hashtag, ModelVers ons.Model20M145KUpdated) =>
+        HashtagS mClustersEmbedd ngsUpdatedDataset
+      case (ent yType, modelVers on) =>
+        throw new  llegalArgu ntExcept on(
+          s"(Ent y Type, ModelVers on) ($ent yType, $modelVers on) not supported.")
     }
   }
 
-  // Return the raw DAL dataset reference. Use this if you're writing to DAL.
-  def getReverseIndexedEntityEmbeddingsDataset(
-    entityType: EntityType,
-    modelVersion: String,
-    isEmbeddingsPerLocale: Boolean = false
-  ): KeyValDALDataset[KeyVal[SimClustersEmbeddingId, InternalIdEmbedding]] = {
-    (entityType, modelVersion) match {
-      case (EntityType.SemanticCore, ModelVersions.Model20M145KDec11) =>
-        ReverseIndexSemanticCoreSimClustersEmbeddingsDec11Dataset
-      case (EntityType.SemanticCore, ModelVersions.Model20M145KUpdated) =>
-        if (isEmbeddingsPerLocale) {
-          ReverseIndexSemanticCorePerLanguageSimClustersEmbeddingsDataset
+  // Return t  raw DAL dataset reference. Use t   f   wr  ng to DAL.
+  def getReverse ndexedEnt yEmbedd ngsDataset(
+    ent yType: Ent yType,
+    modelVers on: Str ng,
+     sEmbedd ngsPerLocale: Boolean = false
+  ): KeyValDALDataset[KeyVal[S mClustersEmbedd ng d,  nternal dEmbedd ng]] = {
+    (ent yType, modelVers on) match {
+      case (Ent yType.Semant cCore, ModelVers ons.Model20M145KDec11) =>
+        Reverse ndexSemant cCoreS mClustersEmbedd ngsDec11Dataset
+      case (Ent yType.Semant cCore, ModelVers ons.Model20M145KUpdated) =>
+         f ( sEmbedd ngsPerLocale) {
+          Reverse ndexSemant cCorePerLanguageS mClustersEmbedd ngsDataset
         } else {
-          ReverseIndexSemanticCoreSimClustersEmbeddingsUpdatedDataset
+          Reverse ndexSemant cCoreS mClustersEmbedd ngsUpdatedDataset
         }
-      case (EntityType.SemanticCore, ModelVersions.Model20M145K2020) =>
-        ReverseIndexSemanticCoreSimClustersEmbeddings2020Dataset
-      case (EntityType.Hashtag, ModelVersions.Model20M145KUpdated) =>
-        ReverseIndexHashtagSimClustersEmbeddingsUpdatedDataset
-      case (entityType, modelVersion) =>
-        throw new IllegalArgumentException(
-          s"(Entity Type, ModelVersion) ($entityType, $modelVersion) not supported.")
+      case (Ent yType.Semant cCore, ModelVers ons.Model20M145K2020) =>
+        Reverse ndexSemant cCoreS mClustersEmbedd ngs2020Dataset
+      case (Ent yType.Hashtag, ModelVers ons.Model20M145KUpdated) =>
+        Reverse ndexHashtagS mClustersEmbedd ngsUpdatedDataset
+      case (ent yType, modelVers on) =>
+        throw new  llegalArgu ntExcept on(
+          s"(Ent y Type, ModelVers on) ($ent yType, $modelVers on) not supported.")
     }
   }
 
-  private def entityEmbeddingsSource(
-    dataset: KeyValDALDataset[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]],
-    embeddingType: EmbeddingType,
+  pr vate def ent yEmbedd ngsS ce(
+    dataset: KeyValDALDataset[KeyVal[S mClustersEmbedd ng d, S mClustersEmbedd ng]],
+    embedd ngType: Embedd ngType,
     dateRange: DateRange
-  ): TypedPipe[(Long, SimClustersEmbedding)] = {
-    val pipe = DAL
+  ): TypedP pe[(Long, S mClustersEmbedd ng)] = {
+    val p pe = DAL
       .readMostRecentSnapshot(dataset, dateRange)
-      .withRemoteReadPolicy(AllowCrossDC)
-      .toTypedPipe
-    filterEntityEmbeddingsByType(pipe, embeddingType)
+      .w hRemoteReadPol cy(AllowCrossDC)
+      .toTypedP pe
+    f lterEnt yEmbedd ngsByType(p pe, embedd ngType)
   }
 
-  private def reverseIndexedEntityEmbeddingsSource(
-    dataset: KeyValDALDataset[KeyVal[SimClustersEmbeddingId, InternalIdEmbedding]],
-    embeddingType: EmbeddingType,
+  pr vate def reverse ndexedEnt yEmbedd ngsS ce(
+    dataset: KeyValDALDataset[KeyVal[S mClustersEmbedd ng d,  nternal dEmbedd ng]],
+    embedd ngType: Embedd ngType,
     dateRange: DateRange
-  ): TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])] = {
-    val pipe = DAL
+  ): TypedP pe[(Cluster d, Seq[Semant cCoreEnt yW hScore])] = {
+    val p pe = DAL
       .readMostRecentSnapshot(dataset, dateRange)
-      .withRemoteReadPolicy(AllowCrossDC)
-      .toTypedPipe
-    filterReverseIndexedEntityEmbeddingsByType(pipe, embeddingType)
+      .w hRemoteReadPol cy(AllowCrossDC)
+      .toTypedP pe
+    f lterReverse ndexedEnt yEmbedd ngsByType(p pe, embedd ngType)
   }
 
-  private[hdfs_sources] def filterEntityEmbeddingsByType(
-    pipe: TypedPipe[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]],
-    embeddingType: EmbeddingType
-  ): TypedPipe[(Long, SimClustersEmbedding)] = {
-    pipe.collect {
+  pr vate[hdfs_s ces] def f lterEnt yEmbedd ngsByType(
+    p pe: TypedP pe[KeyVal[S mClustersEmbedd ng d, S mClustersEmbedd ng]],
+    embedd ngType: Embedd ngType
+  ): TypedP pe[(Long, S mClustersEmbedd ng)] = {
+    p pe.collect {
       case KeyVal(
-            SimClustersEmbeddingId(_embeddingType, _, InternalId.EntityId(entityId)),
-            embedding
-          ) if _embeddingType == embeddingType =>
-        (entityId, embedding)
+            S mClustersEmbedd ng d(_embedd ngType, _,  nternal d.Ent y d(ent y d)),
+            embedd ng
+          )  f _embedd ngType == embedd ngType =>
+        (ent y d, embedd ng)
     }
   }
 
-  private[hdfs_sources] def filterReverseIndexedEntityEmbeddingsByType(
-    pipe: TypedPipe[KeyVal[SimClustersEmbeddingId, InternalIdEmbedding]],
-    embeddingType: EmbeddingType
-  ): TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])] = {
-    pipe.collect {
+  pr vate[hdfs_s ces] def f lterReverse ndexedEnt yEmbedd ngsByType(
+    p pe: TypedP pe[KeyVal[S mClustersEmbedd ng d,  nternal dEmbedd ng]],
+    embedd ngType: Embedd ngType
+  ): TypedP pe[(Cluster d, Seq[Semant cCoreEnt yW hScore])] = {
+    p pe.collect {
       case KeyVal(
-            SimClustersEmbeddingId(_embeddingType, _, InternalId.ClusterId(clusterId)),
-            embedding
-          ) if _embeddingType == embeddingType =>
-        val entitiesWithScores = embedding.embedding.collect {
-          case InternalIdWithScore(InternalId.EntityId(entityId), score) =>
-            SemanticCoreEntityWithScore(entityId, score)
+            S mClustersEmbedd ng d(_embedd ngType, _,  nternal d.Cluster d(cluster d)),
+            embedd ng
+          )  f _embedd ngType == embedd ngType =>
+        val ent  esW hScores = embedd ng.embedd ng.collect {
+          case  nternal dW hScore( nternal d.Ent y d(ent y d), score) =>
+            Semant cCoreEnt yW hScore(ent y d, score)
         }
-        (clusterId, entitiesWithScores)
+        (cluster d, ent  esW hScores)
     }
   }
 }

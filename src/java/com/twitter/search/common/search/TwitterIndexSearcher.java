@@ -1,187 +1,187 @@
-package com.twitter.search.common.search;
+package com.tw ter.search.common.search;
 
-import java.io.IOException;
-import java.util.List;
+ mport java. o. OExcept on;
+ mport java.ut l.L st;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.MultiDocValues;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.search.CollectionStatistics;
-import org.apache.lucene.search.Collector;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.LeafCollector;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.TermStatistics;
-import org.apache.lucene.search.Weight;
+ mport org.apac .lucene. ndex. ndexReader;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene. ndex.Mult DocValues;
+ mport org.apac .lucene. ndex.Nu r cDocValues;
+ mport org.apac .lucene. ndex.Term;
+ mport org.apac .lucene. ndex.Terms;
+ mport org.apac .lucene.search.Collect onStat st cs;
+ mport org.apac .lucene.search.Collector;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.search. ndexSearc r;
+ mport org.apac .lucene.search.LeafCollector;
+ mport org.apac .lucene.search.Scorer;
+ mport org.apac .lucene.search.TermStat st cs;
+ mport org.apac .lucene.search.  ght;
 
 /**
- * An IndexSearch that works with TwitterEarlyTerminationCollector.
- * If a stock Lucene collector is passed into search(), this IndexSearch.search() behaves the
- * same as Lucene's stock IndexSearcher.  However, if a TwitterEarlyTerminationCollector is passed
- * in, this IndexSearcher performs early termination without relying on
- * CollectionTerminatedException.
+ * An  ndexSearch that works w h Tw terEarlyTerm nat onCollector.
+ *  f a stock Lucene collector  s passed  nto search(), t   ndexSearch.search() behaves t 
+ * sa  as Lucene's stock  ndexSearc r.  Ho ver,  f a Tw terEarlyTerm nat onCollector  s passed
+ *  n, t   ndexSearc r performs early term nat on w hout rely ng on
+ * Collect onTerm natedExcept on.
  */
-public class TwitterIndexSearcher extends IndexSearcher {
-  public TwitterIndexSearcher(IndexReader r) {
+publ c class Tw ter ndexSearc r extends  ndexSearc r {
+  publ c Tw ter ndexSearc r( ndexReader r) {
     super(r);
   }
 
   /**
-   * search() main loop.
-   * This behaves exactly like IndexSearcher.search() if a stock Lucene collector passed in.
-   * However, if a TwitterCollector is passed in, this class performs Twitter style early
-   * termination without relying on
-   * {@link org.apache.lucene.search.CollectionTerminatedException}.
+   * search() ma n loop.
+   * T  behaves exactly l ke  ndexSearc r.search()  f a stock Lucene collector passed  n.
+   * Ho ver,  f a Tw terCollector  s passed  n, t  class performs Tw ter style early
+   * term nat on w hout rely ng on
+   * {@l nk org.apac .lucene.search.Collect onTerm natedExcept on}.
    */
-  @Override
-  protected void search(List<LeafReaderContext> leaves, Weight weight, Collector coll)
-      throws IOException {
+  @Overr de
+  protected vo d search(L st<LeafReaderContext> leaves,   ght   ght, Collector coll)
+      throws  OExcept on {
 
-    // If an TwitterCollector is passed in, we can do a few extra things in here, such
-    // as early termination.  Otherwise we can just fall back to IndexSearcher.search().
-    if (coll instanceof TwitterCollector) {
-      TwitterCollector collector = (TwitterCollector) coll;
+    //  f an Tw terCollector  s passed  n,   can do a few extra th ngs  n  re, such
+    // as early term nat on.  Ot rw se   can just fall back to  ndexSearc r.search().
+     f (coll  nstanceof Tw terCollector) {
+      Tw terCollector collector = (Tw terCollector) coll;
 
       for (LeafReaderContext ctx : leaves) { // search each subreader
-        if (collector.isTerminated()) {
+         f (collector. sTerm nated()) {
           return;
         }
 
-        // Notify the collector that we're starting this segment, and check for early
-        // termination criteria again.  setNextReader() performs 'expensive' early
-        // termination checks in some implementations such as TwitterEarlyTerminationCollector.
+        // Not fy t  collector that  're start ng t  seg nt, and c ck for early
+        // term nat on cr er a aga n.  setNextReader() performs 'expens ve' early
+        // term nat on c cks  n so   mple ntat ons such as Tw terEarlyTerm nat onCollector.
         LeafCollector leafCollector = collector.getLeafCollector(ctx);
-        if (collector.isTerminated()) {
+         f (collector. sTerm nated()) {
           return;
         }
 
-        // Initialize the scorer - it should not be null.  Note that constructing the scorer
-        // may actually do real work, such as advancing to the first hit.
-        Scorer scorer = weight.scorer(ctx);
+        //  n  al ze t  scorer -   should not be null.  Note that construct ng t  scorer
+        // may actually do real work, such as advanc ng to t  f rst h .
+        Scorer scorer =   ght.scorer(ctx);
 
-        if (scorer == null) {
-          collector.finishSegment(DocIdSetIterator.NO_MORE_DOCS);
-          continue;
+         f (scorer == null) {
+          collector.f n shSeg nt(Doc dSet erator.NO_MORE_DOCS);
+          cont nue;
         }
 
         leafCollector.setScorer(scorer);
 
-        // Start searching.
-        DocIdSetIterator docIdSetIterator = scorer.iterator();
-        int docID = docIdSetIterator.nextDoc();
-        if (docID != DocIdSetIterator.NO_MORE_DOCS) {
-          // Collect results.  Note: check isTerminated() before calling nextDoc().
+        // Start search ng.
+        Doc dSet erator doc dSet erator = scorer. erator();
+         nt doc D = doc dSet erator.nextDoc();
+         f (doc D != Doc dSet erator.NO_MORE_DOCS) {
+          // Collect results.  Note: c ck  sTerm nated() before call ng nextDoc().
           do {
-            leafCollector.collect(docID);
-          } while (!collector.isTerminated()
-                   && (docID = docIdSetIterator.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS);
+            leafCollector.collect(doc D);
+          } wh le (!collector. sTerm nated()
+                   && (doc D = doc dSet erator.nextDoc()) != Doc dSet erator.NO_MORE_DOCS);
         }
 
-        // Always finish the segment, providing the last docID advanced to.
-        collector.finishSegment(docID);
+        // Always f n sh t  seg nt, prov d ng t  last doc D advanced to.
+        collector.f n shSeg nt(doc D);
       }
     } else {
-      // The collector given is not a TwitterCollector, just use stock lucene search().
-      super.search(leaves, weight, coll);
+      // T  collector g ven  s not a Tw terCollector, just use stock lucene search().
+      super.search(leaves,   ght, coll);
     }
   }
 
-  /** Returns {@link NumericDocValues} for this field, or
-   *  null if no {@link NumericDocValues} were indexed for
-   *  this field.  The returned instance should only be
-   *  used by a single thread. */
-  public NumericDocValues getNumericDocValues(String field) throws IOException {
-    return MultiDocValues.getNumericValues(getIndexReader(), field);
+  /** Returns {@l nk Nu r cDocValues} for t  f eld, or
+   *  null  f no {@l nk Nu r cDocValues}  re  ndexed for
+   *  t  f eld.  T  returned  nstance should only be
+   *  used by a s ngle thread. */
+  publ c Nu r cDocValues getNu r cDocValues(Str ng f eld) throws  OExcept on {
+    return Mult DocValues.getNu r cValues(get ndexReader(), f eld);
   }
 
-  @Override
-  public CollectionStatistics collectionStatistics(String field) throws IOException {
-    return collectionStatistics(field, getIndexReader());
+  @Overr de
+  publ c Collect onStat st cs collect onStat st cs(Str ng f eld) throws  OExcept on {
+    return collect onStat st cs(f eld, get ndexReader());
   }
 
-  @Override
-  public TermStatistics termStatistics(Term term, int docFreq, long totalTermFreq) {
+  @Overr de
+  publ c TermStat st cs termStat st cs(Term term,  nt docFreq, long totalTermFreq) {
     return termStats(term, docFreq, totalTermFreq);
   }
 
   /**
-   * Lucene relies on the fact that maxDocID is typically equal to the number of documents in the
-   * index, which is false when we have sparse doc IDs or when we start from 8 million docs and
-   * decrement, so in this class we pass in numDocs instead of the maximum assigned document ID.
-   * Note that the comment on {@link CollectionStatistics#maxDoc()} says that it returns the number
-   * of documents in the segment, not the maximum ID, and that it is only used this way. This is
-   * necessary for all lucene scoring methods, e.g.
-   * {@link org.apache.lucene.search.similarities.TFIDFSimilarity#idfExplain}. This method body is
-   * largely copied from {@link IndexSearcher#collectionStatistics(String)}.
+   * Lucene rel es on t  fact that maxDoc D  s typ cally equal to t  number of docu nts  n t 
+   *  ndex, wh ch  s false w n   have sparse doc  Ds or w n   start from 8 m ll on docs and
+   * decre nt, so  n t  class   pass  n numDocs  nstead of t  max mum ass gned docu nt  D.
+   * Note that t  com nt on {@l nk Collect onStat st cs#maxDoc()} says that   returns t  number
+   * of docu nts  n t  seg nt, not t  max mum  D, and that    s only used t  way. T   s
+   * necessary for all lucene scor ng  thods, e.g.
+   * {@l nk org.apac .lucene.search.s m lar  es.TF DFS m lar y# dfExpla n}. T   thod body  s
+   * largely cop ed from {@l nk  ndexSearc r#collect onStat st cs(Str ng)}.
    */
-  public static CollectionStatistics collectionStatistics(String field, IndexReader indexReader)
-      throws IOException {
-    Preconditions.checkNotNull(field);
+  publ c stat c Collect onStat st cs collect onStat st cs(Str ng f eld,  ndexReader  ndexReader)
+      throws  OExcept on {
+    Precond  ons.c ckNotNull(f eld);
 
-    int docsWithField = 0;
+     nt docsW hF eld = 0;
     long sumTotalTermFreq = 0;
     long sumDocFreq = 0;
-    for (LeafReaderContext leaf : indexReader.leaves()) {
-      Terms terms = leaf.reader().terms(field);
-      if (terms == null) {
-        continue;
+    for (LeafReaderContext leaf :  ndexReader.leaves()) {
+      Terms terms = leaf.reader().terms(f eld);
+       f (terms == null) {
+        cont nue;
       }
 
-      docsWithField += terms.getDocCount();
+      docsW hF eld += terms.getDocCount();
       sumTotalTermFreq += terms.getSumTotalTermFreq();
       sumDocFreq += terms.getSumDocFreq();
     }
 
-    if (docsWithField == 0) {
-      // The CollectionStatistics API in Lucene is designed poorly. On one hand, starting with
-      // Lucene 8.0.0, searchers are expected to always produce valid CollectionStatistics instances
-      // and all int fields in these instances are expected to be strictly greater than 0. On the
-      // other hand, Lucene itself produces null CollectionStatistics instances in a few places.
-      // Also, there's no good placeholder value to indicate that a field is empty, which is a very
-      // reasonable thing to happen (for example, the first few tweets in a new segment might not
-      // have any links, so then the resolved_links_text would be empty). So to get around this
-      // issue, we do here what Lucene does: we return a CollectionStatistics instance with all
-      // fields set to 1.
-      return new CollectionStatistics(field, 1, 1, 1, 1);
+     f (docsW hF eld == 0) {
+      // T  Collect onStat st cs AP   n Lucene  s des gned poorly. On one hand, start ng w h
+      // Lucene 8.0.0, searc rs are expected to always produce val d Collect onStat st cs  nstances
+      // and all  nt f elds  n t se  nstances are expected to be str ctly greater than 0. On t 
+      // ot r hand, Lucene  self produces null Collect onStat st cs  nstances  n a few places.
+      // Also, t re's no good placeholder value to  nd cate that a f eld  s empty, wh ch  s a very
+      // reasonable th ng to happen (for example, t  f rst few t ets  n a new seg nt m ght not
+      // have any l nks, so t n t  resolved_l nks_text would be empty). So to get around t 
+      //  ssue,   do  re what Lucene does:   return a Collect onStat st cs  nstance w h all
+      // f elds set to 1.
+      return new Collect onStat st cs(f eld, 1, 1, 1, 1);
     }
 
-    // The writer could have added more docs to the index since this searcher started processing
-    // this request, or could be in the middle of adding a doc, which could mean that only some of
-    // the docsWithField, sumTotalTermFreq and sumDocFreq stats have been updated. I don't think
-    // this is a big deal, as these stats are only used for computing a hit's score, and minor
-    // inaccuracies should have very little effect on a hit's final score. But CollectionStatistic's
-    // constructor has some strict asserts for the relationship between these stats. So we need to
-    // make sure we cap the values of these stats appropriately.
+    // T  wr er could have added more docs to t   ndex s nce t  searc r started process ng
+    // t  request, or could be  n t  m ddle of add ng a doc, wh ch could  an that only so  of
+    // t  docsW hF eld, sumTotalTermFreq and sumDocFreq stats have been updated.   don't th nk
+    // t   s a b g deal, as t se stats are only used for comput ng a h 's score, and m nor
+    //  naccurac es should have very l tle effect on a h 's f nal score. But Collect onStat st c's
+    // constructor has so  str ct asserts for t  relat onsh p bet en t se stats. So   need to
+    // make sure   cap t  values of t se stats appropr ately.
     //
-    // Adjust numDocs based on docsWithField (instead of doing the opposite), because:
-    //   1. If new documents were added to this segment after the reader was created, it seems
-    //      reasonable to take the more recent information into account.
-    //   2. The termStats() method below will return the most recent docFreq (not the value that
-    //      docFreq was set to when this reader was created). If this value is higher than numDocs,
-    //      then Lucene might end up producing negative scores, which must never happen.
-    int numDocs = Math.max(indexReader.numDocs(), docsWithField);
-    sumDocFreq = Math.max(sumDocFreq, docsWithField);
+    // Adjust numDocs based on docsW hF eld ( nstead of do ng t  oppos e), because:
+    //   1.  f new docu nts  re added to t  seg nt after t  reader was created,   seems
+    //      reasonable to take t  more recent  nformat on  nto account.
+    //   2. T  termStats()  thod below w ll return t  most recent docFreq (not t  value that
+    //      docFreq was set to w n t  reader was created).  f t  value  s h g r than numDocs,
+    //      t n Lucene m ght end up produc ng negat ve scores, wh ch must never happen.
+     nt numDocs = Math.max( ndexReader.numDocs(), docsW hF eld);
+    sumDocFreq = Math.max(sumDocFreq, docsW hF eld);
     sumTotalTermFreq = Math.max(sumTotalTermFreq, sumDocFreq);
-    return new CollectionStatistics(field, numDocs, docsWithField, sumTotalTermFreq, sumDocFreq);
+    return new Collect onStat st cs(f eld, numDocs, docsW hF eld, sumTotalTermFreq, sumDocFreq);
   }
 
   /**
-   * This method body is largely copied from {@link IndexSearcher#termStatistics(Term, int, long)}.
-   * The only difference is that we make sure all parameters we pass to the TermStatistics instance
-   * we create are set to at least 1 (because Lucene 8.0.0 expects them to be).
+   * T   thod body  s largely cop ed from {@l nk  ndexSearc r#termStat st cs(Term,  nt, long)}.
+   * T  only d fference  s that   make sure all para ters   pass to t  TermStat st cs  nstance
+   *   create are set to at least 1 (because Lucene 8.0.0 expects t m to be).
    */
-  public static TermStatistics termStats(Term term, int docFreq, long totalTermFreq) {
-    // Lucene expects the doc frequency and total term frequency to be at least 1. This assumption
-    // doesn't always make sense (the segment can be empty -- see comment above), but to make Lucene
-    // happy, make sure to always set these parameters to at least 1.
-    int adjustedDocFreq = Math.max(docFreq, 1);
-    return new TermStatistics(
+  publ c stat c TermStat st cs termStats(Term term,  nt docFreq, long totalTermFreq) {
+    // Lucene expects t  doc frequency and total term frequency to be at least 1. T  assumpt on
+    // doesn't always make sense (t  seg nt can be empty -- see com nt above), but to make Lucene
+    // happy, make sure to always set t se para ters to at least 1.
+     nt adjustedDocFreq = Math.max(docFreq, 1);
+    return new TermStat st cs(
         term.bytes(),
         adjustedDocFreq,
         Math.max(totalTermFreq, adjustedDocFreq));

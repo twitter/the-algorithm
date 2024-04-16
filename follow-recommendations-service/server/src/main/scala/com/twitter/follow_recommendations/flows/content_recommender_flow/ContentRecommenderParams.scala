@@ -1,85 +1,85 @@
-package com.twitter.follow_recommendations.flows.content_recommender_flow
+package com.tw ter.follow_recom ndat ons.flows.content_recom nder_flow
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .Param
 
-abstract class ContentRecommenderParams[A](default: A) extends Param[A](default) {
-  override val statName: String = "content_recommender/" + this.getClass.getSimpleName
+abstract class ContentRecom nderParams[A](default: A) extends Param[A](default) {
+  overr de val statNa : Str ng = "content_recom nder/" + t .getClass.getS mpleNa 
 }
 
-object ContentRecommenderParams {
+object ContentRecom nderParams {
 
-  case object TargetEligibility
-      extends FSParam[Boolean](ContentRecommenderFlowFeatureSwitchKeys.TargetUserEligible, true)
+  case object TargetEl g b l y
+      extends FSParam[Boolean](ContentRecom nderFlowFeatureSw chKeys.TargetUserEl g ble, true)
 
-  case object ResultSizeParam
-      extends FSBoundedParam[Int](ContentRecommenderFlowFeatureSwitchKeys.ResultSize, 15, 1, 500)
-  case object BatchSizeParam
-      extends FSBoundedParam[Int](ContentRecommenderFlowFeatureSwitchKeys.BatchSize, 15, 1, 500)
-  case object RecentFollowingPredicateBudgetInMillisecond
-      extends FSBoundedParam[Int](
-        ContentRecommenderFlowFeatureSwitchKeys.RecentFollowingPredicateBudgetInMillisecond,
+  case object ResultS zeParam
+      extends FSBoundedParam[ nt](ContentRecom nderFlowFeatureSw chKeys.ResultS ze, 15, 1, 500)
+  case object BatchS zeParam
+      extends FSBoundedParam[ nt](ContentRecom nderFlowFeatureSw chKeys.BatchS ze, 15, 1, 500)
+  case object RecentFollow ngPred cateBudget nM ll second
+      extends FSBoundedParam[ nt](
+        ContentRecom nderFlowFeatureSw chKeys.RecentFollow ngPred cateBudget nM ll second,
         8,
         1,
         50)
-  case object FetchCandidateSourceBudgetInMillisecond
-      extends FSBoundedParam[Int](
-        ContentRecommenderFlowFeatureSwitchKeys.CandidateGenerationBudgetInMillisecond,
+  case object FetchCand dateS ceBudget nM ll second
+      extends FSBoundedParam[ nt](
+        ContentRecom nderFlowFeatureSw chKeys.Cand dateGenerat onBudget nM ll second,
         60,
         1,
         80)
-  case object EnableRecentFollowingPredicate
+  case object EnableRecentFollow ngPred cate
       extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.EnableRecentFollowingPredicate,
+        ContentRecom nderFlowFeatureSw chKeys.EnableRecentFollow ngPred cate,
         true)
-  case object EnableGizmoduckPredicate
+  case object EnableG zmoduckPred cate
       extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.EnableGizmoduckPredicate,
+        ContentRecom nderFlowFeatureSw chKeys.EnableG zmoduckPred cate,
         false)
-  case object EnableInactivePredicate
+  case object Enable nact vePred cate
       extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.EnableInactivePredicate,
+        ContentRecom nderFlowFeatureSw chKeys.Enable nact vePred cate,
         false)
-  case object EnableInvalidTargetCandidateRelationshipPredicate
+  case object Enable nval dTargetCand dateRelat onsh pPred cate
       extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.EnableInvalidTargetCandidateRelationshipPredicate,
+        ContentRecom nderFlowFeatureSw chKeys.Enable nval dTargetCand dateRelat onsh pPred cate,
         false)
-  case object IncludeActivityBasedCandidateSource
+  case object  ncludeAct v yBasedCand dateS ce
       extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.IncludeActivityBasedCandidateSource,
+        ContentRecom nderFlowFeatureSw chKeys. ncludeAct v yBasedCand dateS ce,
         true)
-  case object IncludeSocialBasedCandidateSource
+  case object  ncludeSoc alBasedCand dateS ce
       extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.IncludeSocialBasedCandidateSource,
+        ContentRecom nderFlowFeatureSw chKeys. ncludeSoc alBasedCand dateS ce,
         true)
-  case object IncludeGeoBasedCandidateSource
+  case object  ncludeGeoBasedCand dateS ce
       extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.IncludeGeoBasedCandidateSource,
+        ContentRecom nderFlowFeatureSw chKeys. ncludeGeoBasedCand dateS ce,
         true)
-  case object IncludeHomeTimelineTweetRecsCandidateSource
+  case object  ncludeHo T  l neT etRecsCand dateS ce
       extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.IncludeHomeTimelineTweetRecsCandidateSource,
+        ContentRecom nderFlowFeatureSw chKeys. ncludeHo T  l neT etRecsCand dateS ce,
         false)
-  case object IncludeSocialProofEnforcedCandidateSource
+  case object  ncludeSoc alProofEnforcedCand dateS ce
       extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.IncludeSocialProofEnforcedCandidateSource,
+        ContentRecom nderFlowFeatureSw chKeys. ncludeSoc alProofEnforcedCand dateS ce,
         false)
-  case object IncludeNewFollowingNewFollowingExpansionCandidateSource
+  case object  ncludeNewFollow ngNewFollow ngExpans onCand dateS ce
       extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.IncludeNewFollowingNewFollowingExpansionCandidateSource,
+        ContentRecom nderFlowFeatureSw chKeys. ncludeNewFollow ngNewFollow ngExpans onCand dateS ce,
         false)
 
-  case object IncludeMoreGeoBasedCandidateSource
+  case object  ncludeMoreGeoBasedCand dateS ce
       extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.IncludeMoreGeoBasedCandidateSource,
+        ContentRecom nderFlowFeatureSw chKeys. ncludeMoreGeoBasedCand dateS ce,
         false)
 
-  case object GetFollowersFromSgs
-      extends FSParam[Boolean](ContentRecommenderFlowFeatureSwitchKeys.GetFollowersFromSgs, false)
+  case object GetFollo rsFromSgs
+      extends FSParam[Boolean](ContentRecom nderFlowFeatureSw chKeys.GetFollo rsFromSgs, false)
 
-  case object EnableInvalidRelationshipPredicate
+  case object Enable nval dRelat onsh pPred cate
       extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.EnableInvalidRelationshipPredicate,
+        ContentRecom nderFlowFeatureSw chKeys.Enable nval dRelat onsh pPred cate,
         false)
 }

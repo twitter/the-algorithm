@@ -1,35 +1,35 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.tw ter.ho _m xer.funct onal_component.decorator.urt.bu lder
 
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ChildFeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorReportTweet
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.product.follow ng.model.Ho M xerExternalStr ngs
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. con
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Ch ldFeedbackAct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.R chBehav or
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.R chFeedbackBehav orReportT et
+ mport com.tw ter.product_m xer.core.product.gu ce.scope.ProductScoped
+ mport com.tw ter.str ngcenter.cl ent.Str ngCenter
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-case class ReportTweetChildFeedbackActionBuilder @Inject() (
-  @ProductScoped stringCenter: StringCenter,
-  externalStrings: HomeMixerExternalStrings) {
+@S ngleton
+case class ReportT etCh ldFeedbackAct onBu lder @ nject() (
+  @ProductScoped str ngCenter: Str ngCenter,
+  externalStr ngs: Ho M xerExternalStr ngs) {
 
   def apply(
-    candidate: TweetCandidate
-  ): Option[ChildFeedbackAction] = {
-    Some(
-      ChildFeedbackAction(
-        feedbackType = RichBehavior,
-        prompt = Some(stringCenter.prepare(externalStrings.reportTweetString)),
-        confirmation = None,
+    cand date: T etCand date
+  ): Opt on[Ch ldFeedbackAct on] = {
+    So (
+      Ch ldFeedbackAct on(
+        feedbackType = R chBehav or,
+        prompt = So (str ngCenter.prepare(externalStr ngs.reportT etStr ng)),
+        conf rmat on = None,
         feedbackUrl = None,
-        hasUndoAction = Some(true),
-        confirmationDisplayType = None,
-        clientEventInfo = None,
-        icon = Some(icon.Flag),
-        richBehavior = Some(RichFeedbackBehaviorReportTweet(candidate.id)),
+        hasUndoAct on = So (true),
+        conf rmat onD splayType = None,
+        cl entEvent nfo = None,
+         con = So ( con.Flag),
+        r chBehav or = So (R chFeedbackBehav orReportT et(cand date. d)),
         subprompt = None
       )
     )

@@ -1,106 +1,106 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.promoted
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.promoted
 
-import com.twitter.ads.adserver.{thriftscala => ads}
-import com.twitter.ads.common.base.{thriftscala => ac}
-import com.twitter.adserver.{thriftscala => ad}
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.promoted.BasePromotedMetadataBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.util.AdMetadataContainerSerializer
+ mport com.tw ter.ads.adserver.{thr ftscala => ads}
+ mport com.tw ter.ads.common.base.{thr ftscala => ac}
+ mport com.tw ter.adserver.{thr ftscala => ad}
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.promoted.BasePromoted tadataBu lder
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted._
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes.ut l.Ad tadataConta nerSer al zer
 
-case class FeaturePromotedMetadataBuilder(adImpressionFeature: Feature[_, Option[ad.AdImpression]])
-    extends BasePromotedMetadataBuilder[PipelineQuery, UniversalNoun[Any]] {
+case class FeaturePromoted tadataBu lder(ad mpress onFeature: Feature[_, Opt on[ad.Ad mpress on]])
+    extends BasePromoted tadataBu lder[P pel neQuery, Un versalNoun[Any]] {
 
   def apply(
-    query: PipelineQuery,
-    candidate: UniversalNoun[Any],
-    candidateFeatures: FeatureMap
-  ): Option[PromotedMetadata] = {
-    candidateFeatures.getOrElse(adImpressionFeature, None).map { impression =>
-      PromotedMetadata(
-        advertiserId = impression.advertiserId,
-        disclosureType = impression.disclosureType.map(convertDisclosureType),
-        experimentValues = impression.experimentValues.map(_.toMap),
-        promotedTrendId = impression.promotedTrendId.map(_.toLong),
-        promotedTrendName = impression.promotedTrendName,
-        promotedTrendQueryTerm = impression.promotedTrendQueryTerm,
-        adMetadataContainer =
-          impression.serializedAdMetadataContainer.flatMap(convertAdMetadataContainer),
-        promotedTrendDescription = impression.promotedTrendDescription,
-        impressionString = impression.impressionString,
-        clickTrackingInfo = impression.clickTrackingInfo.map(convertClickTrackingInfo),
+    query: P pel neQuery,
+    cand date: Un versalNoun[Any],
+    cand dateFeatures: FeatureMap
+  ): Opt on[Promoted tadata] = {
+    cand dateFeatures.getOrElse(ad mpress onFeature, None).map {  mpress on =>
+      Promoted tadata(
+        advert ser d =  mpress on.advert ser d,
+        d sclosureType =  mpress on.d sclosureType.map(convertD sclosureType),
+        exper  ntValues =  mpress on.exper  ntValues.map(_.toMap),
+        promotedTrend d =  mpress on.promotedTrend d.map(_.toLong),
+        promotedTrendNa  =  mpress on.promotedTrendNa ,
+        promotedTrendQueryTerm =  mpress on.promotedTrendQueryTerm,
+        ad tadataConta ner =
+           mpress on.ser al zedAd tadataConta ner.flatMap(convertAd tadataConta ner),
+        promotedTrendDescr pt on =  mpress on.promotedTrendDescr pt on,
+         mpress onStr ng =  mpress on. mpress onStr ng,
+        cl ckTrack ng nfo =  mpress on.cl ckTrack ng nfo.map(convertCl ckTrack ng nfo),
       )
     }
   }
 
-  private def convertAdMetadataContainer(
-    serializedAdMetadataContainer: ac.SerializedThrift
-  ): Option[AdMetadataContainer] =
-    AdMetadataContainerSerializer.deserialize(serializedAdMetadataContainer).map { container =>
-      AdMetadataContainer(
-        removePromotedAttributionForPreroll = container.removePromotedAttributionForPreroll,
-        sponsorshipCandidate = container.sponsorshipCandidate,
-        sponsorshipOrganization = container.sponsorshipOrganization,
-        sponsorshipOrganizationWebsite = container.sponsorshipOrganizationWebsite,
-        sponsorshipType = container.sponsorshipType.map(convertSponsorshipType),
-        disclaimerType = container.disclaimerType.map(convertDisclaimerType),
-        skAdNetworkDataList = container.skAdNetworkDataList.map(convertSkAdNetworkDataList),
-        unifiedCardOverride = container.unifiedCardOverride
+  pr vate def convertAd tadataConta ner(
+    ser al zedAd tadataConta ner: ac.Ser al zedThr ft
+  ): Opt on[Ad tadataConta ner] =
+    Ad tadataConta nerSer al zer.deser al ze(ser al zedAd tadataConta ner).map { conta ner =>
+      Ad tadataConta ner(
+        removePromotedAttr but onForPreroll = conta ner.removePromotedAttr but onForPreroll,
+        sponsorsh pCand date = conta ner.sponsorsh pCand date,
+        sponsorsh pOrgan zat on = conta ner.sponsorsh pOrgan zat on,
+        sponsorsh pOrgan zat on bs e = conta ner.sponsorsh pOrgan zat on bs e,
+        sponsorsh pType = conta ner.sponsorsh pType.map(convertSponsorsh pType),
+        d scla  rType = conta ner.d scla  rType.map(convertD scla  rType),
+        skAdNetworkDataL st = conta ner.skAdNetworkDataL st.map(convertSkAdNetworkDataL st),
+        un f edCardOverr de = conta ner.un f edCardOverr de
       )
     }
 
-  private def convertDisclosureType(disclosureType: ad.DisclosureType): DisclosureType =
-    disclosureType match {
-      case ad.DisclosureType.None => NoDisclosure
-      case ad.DisclosureType.Political => Political
-      case ad.DisclosureType.Earned => Earned
-      case ad.DisclosureType.Issue => Issue
-      case _ => throw new UnsupportedOperationException(s"Unsupported: $disclosureType")
+  pr vate def convertD sclosureType(d sclosureType: ad.D sclosureType): D sclosureType =
+    d sclosureType match {
+      case ad.D sclosureType.None => NoD sclosure
+      case ad.D sclosureType.Pol  cal => Pol  cal
+      case ad.D sclosureType.Earned => Earned
+      case ad.D sclosureType. ssue =>  ssue
+      case _ => throw new UnsupportedOperat onExcept on(s"Unsupported: $d sclosureType")
     }
 
-  private def convertSponsorshipType(sponsorshipType: ads.SponsorshipType): SponsorshipType =
-    sponsorshipType match {
-      case ads.SponsorshipType.Direct => DirectSponsorshipType
-      case ads.SponsorshipType.Indirect => IndirectSponsorshipType
-      case ads.SponsorshipType.NoSponsorship => NoSponsorshipSponsorshipType
-      case _ => throw new UnsupportedOperationException(s"Unsupported: $sponsorshipType")
+  pr vate def convertSponsorsh pType(sponsorsh pType: ads.Sponsorsh pType): Sponsorsh pType =
+    sponsorsh pType match {
+      case ads.Sponsorsh pType.D rect => D rectSponsorsh pType
+      case ads.Sponsorsh pType. nd rect =>  nd rectSponsorsh pType
+      case ads.Sponsorsh pType.NoSponsorsh p => NoSponsorsh pSponsorsh pType
+      case _ => throw new UnsupportedOperat onExcept on(s"Unsupported: $sponsorsh pType")
     }
 
-  private def convertDisclaimerType(disclaimerType: ads.DisclaimerType): DisclaimerType =
-    disclaimerType match {
-      case ads.DisclaimerType.Political => DisclaimerPolitical
-      case ads.DisclaimerType.Issue => DisclaimerIssue
-      case _ => throw new UnsupportedOperationException(s"Unsupported: $disclaimerType")
+  pr vate def convertD scla  rType(d scla  rType: ads.D scla  rType): D scla  rType =
+    d scla  rType match {
+      case ads.D scla  rType.Pol  cal => D scla  rPol  cal
+      case ads.D scla  rType. ssue => D scla  r ssue
+      case _ => throw new UnsupportedOperat onExcept on(s"Unsupported: $d scla  rType")
     }
 
-  private def convertSkAdNetworkDataList(
-    skAdNetworkDataList: Seq[ads.SkAdNetworkData]
-  ): Seq[SkAdNetworkData] = skAdNetworkDataList.map { sdAdNetwork =>
+  pr vate def convertSkAdNetworkDataL st(
+    skAdNetworkDataL st: Seq[ads.SkAdNetworkData]
+  ): Seq[SkAdNetworkData] = skAdNetworkDataL st.map { sdAdNetwork =>
     SkAdNetworkData(
-      version = sdAdNetwork.version,
-      srcAppId = sdAdNetwork.srcAppId,
-      dstAppId = sdAdNetwork.dstAppId,
-      adNetworkId = sdAdNetwork.adNetworkId,
-      campaignId = sdAdNetwork.campaignId,
-      impressionTimeInMillis = sdAdNetwork.impressionTimeInMillis,
+      vers on = sdAdNetwork.vers on,
+      srcApp d = sdAdNetwork.srcApp d,
+      dstApp d = sdAdNetwork.dstApp d,
+      adNetwork d = sdAdNetwork.adNetwork d,
+      campa gn d = sdAdNetwork.campa gn d,
+       mpress onT   nM ll s = sdAdNetwork. mpress onT   nM ll s,
       nonce = sdAdNetwork.nonce,
-      signature = sdAdNetwork.signature,
-      fidelityType = sdAdNetwork.fidelityType
+      s gnature = sdAdNetwork.s gnature,
+      f del yType = sdAdNetwork.f del yType
     )
   }
 
-  private def convertClickTrackingInfo(clickTracking: ad.ClickTrackingInfo): ClickTrackingInfo =
-    ClickTrackingInfo(
-      urlParams = clickTracking.urlParams.getOrElse(Map.empty),
-      urlOverride = clickTracking.urlOverride,
-      urlOverrideType = clickTracking.urlOverrideType.map {
-        case ad.UrlOverrideType.Unknown => UnknownUrlOverrideType
-        case ad.UrlOverrideType.Dcm => DcmUrlOverrideType
-        case ad.UrlOverrideType.EnumUnknownUrlOverrideType(value) =>
-          throw new UnsupportedOperationException(s"Unsupported: $value")
+  pr vate def convertCl ckTrack ng nfo(cl ckTrack ng: ad.Cl ckTrack ng nfo): Cl ckTrack ng nfo =
+    Cl ckTrack ng nfo(
+      urlParams = cl ckTrack ng.urlParams.getOrElse(Map.empty),
+      urlOverr de = cl ckTrack ng.urlOverr de,
+      urlOverr deType = cl ckTrack ng.urlOverr deType.map {
+        case ad.UrlOverr deType.Unknown => UnknownUrlOverr deType
+        case ad.UrlOverr deType.Dcm => DcmUrlOverr deType
+        case ad.UrlOverr deType.EnumUnknownUrlOverr deType(value) =>
+          throw new UnsupportedOperat onExcept on(s"Unsupported: $value")
       }
     )
 }

@@ -1,187 +1,187 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+package com.tw ter.search.common.ut l.ml.pred ct on_eng ne;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Map;
-import javax.annotation.Nullable;
+ mport java. o.BufferedReader;
+ mport java. o.F leReader;
+ mport java. o. OExcept on;
+ mport java.ut l.Map;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.ml.api.Feature;
-import com.twitter.search.common.file.AbstractFile;
+ mport com.tw ter.ml.ap .Feature;
+ mport com.tw ter.search.common.f le.AbstractF le;
 
 /**
- * Provides an interface to the weights associated to the features of a linear model trained
- * with Prediction Engine.
+ * Prov des an  nterface to t    ghts assoc ated to t  features of a l near model tra ned
+ * w h Pred ct on Eng ne.
  *
- * This class is used along with ScoreAccumulator to efficiently score instances. It supports only
- * a limited set of features:
+ * T  class  s used along w h ScoreAccumulator to eff c ently score  nstances.   supports only
+ * a l m ed set of features:
  *
- * - Only linear models are supported.
- * - Only binary and continuous features (i.e. it doesn't support discrete/categorical features).
- * - It supports the MDL discretizer (but not the one based on trees).
- * - It doesn't support feature crossings.
+ * - Only l near models are supported.
+ * - Only b nary and cont nuous features ( .e.   doesn't support d screte/categor cal features).
+ * -   supports t  MDL d scret zer (but not t  one based on trees).
+ * -   doesn't support feature cross ngs.
  *
- * Instances of this class should be created using only the load methods (loadFromHdfs and
- * loadFromLocalFile).
+ *  nstances of t  class should be created us ng only t  load  thods (loadFromHdfs and
+ * loadFromLocalF le).
  *
- * IMPORTANT:
+ *  MPORTANT:
  *
- * Use this class, and ScoreAccumulator, ONLY when runtime is a major concern. Otherwise, consider
- * using Prediction Engine as a library. Ideally, we should access directly the structures that
- * Prediction Engine creates when it loads a model, instead of parsing a text file with the
- * feature weights.
+ * Use t  class, and ScoreAccumulator, ONLY w n runt    s a major concern. Ot rw se, cons der
+ * us ng Pred ct on Eng ne as a l brary.  deally,   should access d rectly t  structures that
+ * Pred ct on Eng ne creates w n   loads a model,  nstead of pars ng a text f le w h t 
+ * feature   ghts.
  *
- * The discretized feature bins created by MDL may be too fine to be displayed properly in the
- * parsed text file and there may be bins with the same min value. A binary search finding the
- * bin for a same feature value therefore may end up with different bins/scores in different runs,
- * producing unstable scores. See SEARCHQUAL-15957 for more detail.
+ * T  d scret zed feature b ns created by MDL may be too f ne to be d splayed properly  n t 
+ * parsed text f le and t re may be b ns w h t  sa  m n value. A b nary search f nd ng t 
+ * b n for a sa  feature value t refore may end up w h d fferent b ns/scores  n d fferent runs,
+ * produc ng unstable scores. See SEARCHQUAL-15957 for more deta l.
  *
- * @see com.twitter.ml.tool.prediction.ModelInterpreter
+ * @see com.tw ter.ml.tool.pred ct on.Model nterpreter
  */
-public class LightweightLinearModel {
-  protected final double bias;
-  protected final boolean schemaBased;
-  protected final String name;
+publ c class L ght  ghtL nearModel {
+  protected f nal double b as;
+  protected f nal boolean sc maBased;
+  protected f nal Str ng na ;
 
-  // for legacy metadata based model
-  protected final Map<Feature<Boolean>, Double> binaryFeatures;
-  protected final Map<Feature<Double>, Double> continuousFeatures;
-  protected final Map<Feature<Double>, DiscretizedFeature> discretizedFeatures;
+  // for legacy  tadata based model
+  protected f nal Map<Feature<Boolean>, Double> b naryFeatures;
+  protected f nal Map<Feature<Double>, Double> cont nuousFeatures;
+  protected f nal Map<Feature<Double>, D scret zedFeature> d scret zedFeatures;
 
-  // for schema-based model
-  protected final Map<Integer, Double> binaryFeaturesById;
-  protected final Map<Integer, Double> continuousFeaturesById;
-  protected final Map<Integer, DiscretizedFeature> discretizedFeaturesById;
+  // for sc ma-based model
+  protected f nal Map< nteger, Double> b naryFeaturesBy d;
+  protected f nal Map< nteger, Double> cont nuousFeaturesBy d;
+  protected f nal Map< nteger, D scret zedFeature> d scret zedFeaturesBy d;
 
-  private static final String SCHEMA_BASED_SUFFIX = ".schema_based";
+  pr vate stat c f nal Str ng SCHEMA_BASED_SUFF X = ".sc ma_based";
 
-  LightweightLinearModel(
-      String modelName,
-      double bias,
-      boolean schemaBased,
-      @Nullable Map<Feature<Boolean>, Double> binaryFeatures,
-      @Nullable Map<Feature<Double>, Double> continuousFeatures,
-      @Nullable Map<Feature<Double>, DiscretizedFeature> discretizedFeatures,
-      @Nullable Map<Integer, Double> binaryFeaturesById,
-      @Nullable Map<Integer, Double> continuousFeaturesById,
-      @Nullable Map<Integer, DiscretizedFeature> discretizedFeaturesById) {
+  L ght  ghtL nearModel(
+      Str ng modelNa ,
+      double b as,
+      boolean sc maBased,
+      @Nullable Map<Feature<Boolean>, Double> b naryFeatures,
+      @Nullable Map<Feature<Double>, Double> cont nuousFeatures,
+      @Nullable Map<Feature<Double>, D scret zedFeature> d scret zedFeatures,
+      @Nullable Map< nteger, Double> b naryFeaturesBy d,
+      @Nullable Map< nteger, Double> cont nuousFeaturesBy d,
+      @Nullable Map< nteger, D scret zedFeature> d scret zedFeaturesBy d) {
 
-    this.name = modelName;
-    this.bias = bias;
-    this.schemaBased = schemaBased;
+    t .na  = modelNa ;
+    t .b as = b as;
+    t .sc maBased = sc maBased;
 
     // legacy feature maps
-    this.binaryFeatures =
-        schemaBased ? null : Preconditions.checkNotNull(binaryFeatures);
-    this.continuousFeatures =
-        schemaBased ? null : Preconditions.checkNotNull(continuousFeatures);
-    this.discretizedFeatures =
-        schemaBased ? null : Preconditions.checkNotNull(discretizedFeatures);
+    t .b naryFeatures =
+        sc maBased ? null : Precond  ons.c ckNotNull(b naryFeatures);
+    t .cont nuousFeatures =
+        sc maBased ? null : Precond  ons.c ckNotNull(cont nuousFeatures);
+    t .d scret zedFeatures =
+        sc maBased ? null : Precond  ons.c ckNotNull(d scret zedFeatures);
 
-    // schema based feature maps
-    this.binaryFeaturesById =
-        schemaBased ? Preconditions.checkNotNull(binaryFeaturesById) : null;
-    this.continuousFeaturesById =
-        schemaBased ? Preconditions.checkNotNull(continuousFeaturesById) : null;
-    this.discretizedFeaturesById =
-        schemaBased ? Preconditions.checkNotNull(discretizedFeaturesById) : null;
+    // sc ma based feature maps
+    t .b naryFeaturesBy d =
+        sc maBased ? Precond  ons.c ckNotNull(b naryFeaturesBy d) : null;
+    t .cont nuousFeaturesBy d =
+        sc maBased ? Precond  ons.c ckNotNull(cont nuousFeaturesBy d) : null;
+    t .d scret zedFeaturesBy d =
+        sc maBased ? Precond  ons.c ckNotNull(d scret zedFeaturesBy d) : null;
   }
 
-  public String getName() {
-    return name;
+  publ c Str ng getNa () {
+    return na ;
   }
 
   /**
    * Create model for legacy features
    */
-  protected static LightweightLinearModel createForLegacy(
-      String modelName,
-      double bias,
-      Map<Feature<Boolean>, Double> binaryFeatures,
-      Map<Feature<Double>, Double> continuousFeatures,
-      Map<Feature<Double>, DiscretizedFeature> discretizedFeatures) {
-    return new LightweightLinearModel(modelName, bias, false,
-        binaryFeatures, continuousFeatures, discretizedFeatures,
+  protected stat c L ght  ghtL nearModel createForLegacy(
+      Str ng modelNa ,
+      double b as,
+      Map<Feature<Boolean>, Double> b naryFeatures,
+      Map<Feature<Double>, Double> cont nuousFeatures,
+      Map<Feature<Double>, D scret zedFeature> d scret zedFeatures) {
+    return new L ght  ghtL nearModel(modelNa , b as, false,
+        b naryFeatures, cont nuousFeatures, d scret zedFeatures,
         null, null, null);
   }
 
   /**
-   * Create model for schema-based features
+   * Create model for sc ma-based features
    */
-  protected static LightweightLinearModel createForSchemaBased(
-      String modelName,
-      double bias,
-      Map<Integer, Double> binaryFeaturesById,
-      Map<Integer, Double> continuousFeaturesById,
-      Map<Integer, DiscretizedFeature> discretizedFeaturesById) {
-    return new LightweightLinearModel(modelName, bias, true,
+  protected stat c L ght  ghtL nearModel createForSc maBased(
+      Str ng modelNa ,
+      double b as,
+      Map< nteger, Double> b naryFeaturesBy d,
+      Map< nteger, Double> cont nuousFeaturesBy d,
+      Map< nteger, D scret zedFeature> d scret zedFeaturesBy d) {
+    return new L ght  ghtL nearModel(modelNa , b as, true,
         null, null, null,
-        binaryFeaturesById, continuousFeaturesById, discretizedFeaturesById);
+        b naryFeaturesBy d, cont nuousFeaturesBy d, d scret zedFeaturesBy d);
   }
 
-  public boolean isSchemaBased() {
-    return schemaBased;
+  publ c boolean  sSc maBased() {
+    return sc maBased;
   }
 
   /**
-   * Loads a model from a text file.
+   * Loads a model from a text f le.
    *
-   * See the javadoc of the constructor for more details on how to create the file from a trained
-   * Prediction Engine model.
+   * See t  javadoc of t  constructor for more deta ls on how to create t  f le from a tra ned
+   * Pred ct on Eng ne model.
    *
-   * If schemaBased is true, the featureContext is ignored.
+   *  f sc maBased  s true, t  featureContext  s  gnored.
    */
-  public static LightweightLinearModel load(
-      String modelName,
+  publ c stat c L ght  ghtL nearModel load(
+      Str ng modelNa ,
       BufferedReader reader,
-      boolean schemaBased,
-      CompositeFeatureContext featureContext) throws IOException {
+      boolean sc maBased,
+      Compos eFeatureContext featureContext) throws  OExcept on {
 
-    ModelBuilder builder = schemaBased
-        ? new SchemaBasedModelBuilder(modelName, featureContext.getFeatureSchema())
-        : new LegacyModelBuilder(modelName, featureContext.getLegacyContext());
-    String line;
-    while ((line = reader.readLine()) != null) {
-      builder.parseLine(line);
+    ModelBu lder bu lder = sc maBased
+        ? new Sc maBasedModelBu lder(modelNa , featureContext.getFeatureSc ma())
+        : new LegacyModelBu lder(modelNa , featureContext.getLegacyContext());
+    Str ng l ne;
+    wh le ((l ne = reader.readL ne()) != null) {
+      bu lder.parseL ne(l ne);
     }
-    return builder.build();
+    return bu lder.bu ld();
   }
 
   /**
-   * Loads a model from a local text file.
+   * Loads a model from a local text f le.
    *
-   * See the javadoc of the constructor for more details on how to create the file from a trained
-   * Prediction Engine model.
+   * See t  javadoc of t  constructor for more deta ls on how to create t  f le from a tra ned
+   * Pred ct on Eng ne model.
    */
-  public static LightweightLinearModel loadFromLocalFile(
-      String modelName,
-      CompositeFeatureContext featureContext,
-      String fileName) throws IOException {
-    try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-      boolean schemaBased = modelName.endsWith(SCHEMA_BASED_SUFFIX);
-      return load(modelName, reader, schemaBased, featureContext);
+  publ c stat c L ght  ghtL nearModel loadFromLocalF le(
+      Str ng modelNa ,
+      Compos eFeatureContext featureContext,
+      Str ng f leNa ) throws  OExcept on {
+    try (BufferedReader reader = new BufferedReader(new F leReader(f leNa ))) {
+      boolean sc maBased = modelNa .endsW h(SCHEMA_BASED_SUFF X);
+      return load(modelNa , reader, sc maBased, featureContext);
     }
   }
 
   /**
-   * Loads a model from a file in the local filesystem or in HDFS.
+   * Loads a model from a f le  n t  local f lesystem or  n HDFS.
    *
-   * See the javadoc of the constructor for more details on how to create the file from a trained
-   * Prediction Engine model.
+   * See t  javadoc of t  constructor for more deta ls on how to create t  f le from a tra ned
+   * Pred ct on Eng ne model.
    */
-  public static LightweightLinearModel load(
-      String modelName, CompositeFeatureContext featureContext, AbstractFile modelFile)
-      throws IOException {
-    try (BufferedReader reader = modelFile.getCharSource().openBufferedStream()) {
-      boolean schemaBased = modelName.endsWith(SCHEMA_BASED_SUFFIX);
-      return load(modelName, reader, schemaBased, featureContext);
+  publ c stat c L ght  ghtL nearModel load(
+      Str ng modelNa , Compos eFeatureContext featureContext, AbstractF le modelF le)
+      throws  OExcept on {
+    try (BufferedReader reader = modelF le.getCharS ce().openBufferedStream()) {
+      boolean sc maBased = modelNa .endsW h(SCHEMA_BASED_SUFF X);
+      return load(modelNa , reader, sc maBased, featureContext);
     }
   }
 
-  public String toString() {
-    return String.format("LightweightLinearModel. {bias=%s binary=%s continuous=%s discrete=%s}",
-        this.bias, this.binaryFeatures, this.continuousFeatures, this.discretizedFeatures);
+  publ c Str ng toStr ng() {
+    return Str ng.format("L ght  ghtL nearModel. {b as=%s b nary=%s cont nuous=%s d screte=%s}",
+        t .b as, t .b naryFeatures, t .cont nuousFeatures, t .d scret zedFeatures);
   }
 }

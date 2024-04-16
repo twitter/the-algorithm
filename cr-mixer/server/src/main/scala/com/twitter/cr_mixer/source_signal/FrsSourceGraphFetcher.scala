@@ -1,53 +1,53 @@
-package com.twitter.cr_mixer.source_signal
+package com.tw ter.cr_m xer.s ce_s gnal
 
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.GraphSourceInfo
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.param.FrsParams
-import com.twitter.cr_mixer.source_signal.FrsStore.FrsQueryResult
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.tw ter.cr_m xer.conf g.T  outConf g
+ mport com.tw ter.cr_m xer.model.GraphS ce nfo
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.cr_m xer.param.FrsParams
+ mport com.tw ter.cr_m xer.s ce_s gnal.FrsStore.FrsQueryResult
+ mport com.tw ter.cr_m xer.s ce_s gnal.S ceFetc r.Fetc rQuery
+ mport com.tw ter.cr_m xer.thr ftscala.S ceType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
+ mport javax. nject. nject
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
 /***
- * This store fetches user recommendations from FRS (go/frs) for a given userId
+ * T  store fetc s user recom ndat ons from FRS (go/frs) for a g ven user d
  */
-@Singleton
-case class FrsSourceGraphFetcher @Inject() (
-  @Named(ModuleNames.FrsStore) frsStore: ReadableStore[FrsStore.Query, Seq[FrsQueryResult]],
-  override val timeoutConfig: TimeoutConfig,
-  globalStats: StatsReceiver)
-    extends SourceGraphFetcher {
+@S ngleton
+case class FrsS ceGraphFetc r @ nject() (
+  @Na d(ModuleNa s.FrsStore) frsStore: ReadableStore[FrsStore.Query, Seq[FrsQueryResult]],
+  overr de val t  outConf g: T  outConf g,
+  globalStats: StatsRece ver)
+    extends S ceGraphFetc r {
 
-  override protected val stats: StatsReceiver = globalStats.scope(identifier)
-  override protected val graphSourceType: SourceType = SourceType.FollowRecommendation
+  overr de protected val stats: StatsRece ver = globalStats.scope( dent f er)
+  overr de protected val graphS ceType: S ceType = S ceType.FollowRecom ndat on
 
-  override def isEnabled(query: FetcherQuery): Boolean = {
-    query.params(FrsParams.EnableSourceGraphParam)
+  overr de def  sEnabled(query: Fetc rQuery): Boolean = {
+    query.params(FrsParams.EnableS ceGraphParam)
   }
 
-  override def fetchAndProcess(
-    query: FetcherQuery,
-  ): Future[Option[GraphSourceInfo]] = {
+  overr de def fetchAndProcess(
+    query: Fetc rQuery,
+  ): Future[Opt on[GraphS ce nfo]] = {
 
-    val rawSignals = trackPerItemStats(query)(
+    val rawS gnals = trackPer emStats(query)(
       frsStore
         .get(
           FrsStore
-            .Query(query.userId, query.params(FrsParams.MaxConsumerSeedsNumParam))).map {
+            .Query(query.user d, query.params(FrsParams.MaxConsu rSeedsNumParam))).map {
           _.map {
-            _.map { v => (v.userId, v.score) }
+            _.map { v => (v.user d, v.score) }
           }
         }
     )
-    rawSignals.map {
-      _.map { userWithScores =>
-        convertGraphSourceInfo(userWithScores)
+    rawS gnals.map {
+      _.map { userW hScores =>
+        convertGraphS ce nfo(userW hScores)
       }
     }
   }

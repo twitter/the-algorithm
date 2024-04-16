@@ -1,47 +1,47 @@
 use anyhow::Result;
-use log::info;
-use navi::cli_args::{ARGS, MODEL_SPECS};
-use navi::cores::validator::validatior::cli_validator;
-use navi::tf_model::tf::TFModel;
-use navi::{bootstrap, metrics};
-use sha256::digest;
+use log:: nfo;
+use nav ::cl _args::{ARGS, MODEL_SPECS};
+use nav ::cores::val dator::val dat or::cl _val dator;
+use nav ::tf_model::tf::TFModel;
+use nav ::{bootstrap,  tr cs};
+use sha256::d gest;
 
-fn main() -> Result<()> {
-    env_logger::init();
-    cli_validator::validate_input_args();
-    //only validate in for tf as other models don't have this
-    assert_eq!(MODEL_SPECS.len(), ARGS.serving_sig.len());
-    metrics::register_custom_metrics();
+fn ma n() -> Result<()> {
+    env_logger:: n ();
+    cl _val dator::val date_ nput_args();
+    //only val date  n for tf as ot r models don't have t 
+    assert_eq!(MODEL_SPECS.len(), ARGS.serv ng_s g.len());
+     tr cs::reg ster_custom_ tr cs();
 
-    //load all the custom ops - comma seperaed
-    if let Some(ref customops_lib) = ARGS.customops_lib {
-        for op_lib in customops_lib.split(",") {
-            load_custom_op(op_lib);
+    //load all t  custom ops - comma seperaed
+     f let So (ref customops_l b) = ARGS.customops_l b {
+        for op_l b  n customops_l b.spl (",") {
+            load_custom_op(op_l b);
         }
     }
 
-    // versioning the customop so library
+    // vers on ng t  customop so l brary
     bootstrap::bootstrap(TFModel::new)
 }
 
-fn load_custom_op(lib_path: &str) -> () {
-    let res = tensorflow::Library::load(lib_path);
-    info!("{} load status:{:?}", lib_path, res);
-    let customop_version_num = get_custom_op_version(lib_path);
-    // Last OP version is recorded
-    metrics::CUSTOMOP_VERSION.set(customop_version_num);
+fn load_custom_op(l b_path: &str) -> () {
+    let res = tensorflow::L brary::load(l b_path);
+     nfo!("{} load status:{:?}", l b_path, res);
+    let customop_vers on_num = get_custom_op_vers on(l b_path);
+    // Last OP vers on  s recorded
+     tr cs::CUSTOMOP_VERS ON.set(customop_vers on_num);
 }
 
-//fn get_custom_op_version(customops_lib: &String) -> i64 {
-fn get_custom_op_version(customops_lib: &str) -> i64 {
-    let customop_bytes = std::fs::read(customops_lib).unwrap(); // Vec<u8>
-    let customop_hash = digest(customop_bytes.as_slice());
-    //conver the last 4 hex digits to version number as prometheus metrics doesn't support string, the total space is 16^4 == 65536
-    let customop_version_num =
-        i64::from_str_radix(&customop_hash[customop_hash.len() - 4..], 16).unwrap();
-    info!(
-        "customop hash: {}, version_number: {}",
-        customop_hash, customop_version_num
+//fn get_custom_op_vers on(customops_l b: &Str ng) ->  64 {
+fn get_custom_op_vers on(customops_l b: &str) ->  64 {
+    let customop_bytes = std::fs::read(customops_l b).unwrap(); // Vec<u8>
+    let customop_hash = d gest(customop_bytes.as_sl ce());
+    //conver t  last 4  x d g s to vers on number as pro t us  tr cs doesn't support str ng, t  total space  s 16^4 == 65536
+    let customop_vers on_num =
+         64::from_str_rad x(&customop_hash[customop_hash.len() - 4..], 16).unwrap();
+     nfo!(
+        "customop hash: {}, vers on_number: {}",
+        customop_hash, customop_vers on_num
     );
-    customop_version_num
+    customop_vers on_num
 }

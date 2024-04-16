@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted
 
-case class MediaInfo(
-  uuid: Option[String],
-  publisherId: Option[Long],
-  callToAction: Option[CallToAction],
-  durationMillis: Option[Int],
-  videoVariants: Option[Seq[VideoVariant]],
-  advertiserName: Option[String],
-  renderAdByAdvertiserName: Option[Boolean],
-  advertiserProfileImageUrl: Option[String])
+case class  d a nfo(
+  uu d: Opt on[Str ng],
+  publ s r d: Opt on[Long],
+  callToAct on: Opt on[CallToAct on],
+  durat onM ll s: Opt on[ nt],
+  v deoVar ants: Opt on[Seq[V deoVar ant]],
+  advert serNa : Opt on[Str ng],
+  renderAdByAdvert serNa : Opt on[Boolean],
+  advert serProf le mageUrl: Opt on[Str ng])

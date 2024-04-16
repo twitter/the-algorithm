@@ -1,201 +1,201 @@
-package com.twitter.follow_recommendations.flows.content_recommender_flow
+package com.tw ter.follow_recom ndat ons.flows.content_recom nder_flow
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.EnrichedCandidateSource
-import com.twitter.follow_recommendations.common.base.GatedPredicateBase
-import com.twitter.follow_recommendations.common.base.ParamPredicate
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.Ranker
-import com.twitter.follow_recommendations.common.base.RecommendationFlow
-import com.twitter.follow_recommendations.common.base.RecommendationResultsConfig
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.predicates.ExcludedUserIdPredicate
-import com.twitter.follow_recommendations.common.predicates.InactivePredicate
-import com.twitter.follow_recommendations.common.predicates.gizmoduck.GizmoduckPredicate
-import com.twitter.follow_recommendations.common.predicates.sgs.InvalidRelationshipPredicate
-import com.twitter.follow_recommendations.common.predicates.sgs.InvalidTargetCandidateRelationshipTypesPredicate
-import com.twitter.follow_recommendations.common.predicates.sgs.RecentFollowingPredicate
-import com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker.WeightedCandidateSourceRanker
-import com.twitter.follow_recommendations.common.transforms.dedup.DedupTransform
-import com.twitter.follow_recommendations.common.transforms.tracking_token.TrackingTokenTransform
-import com.twitter.follow_recommendations.utils.CandidateSourceHoldbackUtil
-import com.twitter.follow_recommendations.utils.RecommendationFlowBaseSideEffectsUtil
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.quality_factor.BoundsWithDefault
-import com.twitter.product_mixer.core.quality_factor.LinearLatencyQualityFactor
-import com.twitter.product_mixer.core.quality_factor.LinearLatencyQualityFactorConfig
-import com.twitter.product_mixer.core.quality_factor.LinearLatencyQualityFactorObserver
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.base.Enr c dCand dateS ce
+ mport com.tw ter.follow_recom ndat ons.common.base.GatedPred cateBase
+ mport com.tw ter.follow_recom ndat ons.common.base.ParamPred cate
+ mport com.tw ter.follow_recom ndat ons.common.base.Pred cate
+ mport com.tw ter.follow_recom ndat ons.common.base.Ranker
+ mport com.tw ter.follow_recom ndat ons.common.base.Recom ndat onFlow
+ mport com.tw ter.follow_recom ndat ons.common.base.Recom ndat onResultsConf g
+ mport com.tw ter.follow_recom ndat ons.common.base.Transform
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.pred cates.ExcludedUser dPred cate
+ mport com.tw ter.follow_recom ndat ons.common.pred cates. nact vePred cate
+ mport com.tw ter.follow_recom ndat ons.common.pred cates.g zmoduck.G zmoduckPred cate
+ mport com.tw ter.follow_recom ndat ons.common.pred cates.sgs. nval dRelat onsh pPred cate
+ mport com.tw ter.follow_recom ndat ons.common.pred cates.sgs. nval dTargetCand dateRelat onsh pTypesPred cate
+ mport com.tw ter.follow_recom ndat ons.common.pred cates.sgs.RecentFollow ngPred cate
+ mport com.tw ter.follow_recom ndat ons.common.rankers.  ghted_cand date_s ce_ranker.  ghtedCand dateS ceRanker
+ mport com.tw ter.follow_recom ndat ons.common.transforms.dedup.DedupTransform
+ mport com.tw ter.follow_recom ndat ons.common.transforms.track ng_token.Track ngTokenTransform
+ mport com.tw ter.follow_recom ndat ons.ut ls.Cand dateS ceHoldbackUt l
+ mport com.tw ter.follow_recom ndat ons.ut ls.Recom ndat onFlowBaseS deEffectsUt l
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.qual y_factor.BoundsW hDefault
+ mport com.tw ter.product_m xer.core.qual y_factor.L nearLatencyQual yFactor
+ mport com.tw ter.product_m xer.core.qual y_factor.L nearLatencyQual yFactorConf g
+ mport com.tw ter.product_m xer.core.qual y_factor.L nearLatencyQual yFactorObserver
+ mport com.tw ter.product_m xer.core.qual y_factor.Qual yFactorObserver
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ContentRecommenderFlow @Inject() (
-  contentRecommenderFlowCandidateSourceRegistry: ContentRecommenderFlowCandidateSourceRegistry,
-  recentFollowingPredicate: RecentFollowingPredicate,
-  gizmoduckPredicate: GizmoduckPredicate,
-  inactivePredicate: InactivePredicate,
-  sgsPredicate: InvalidTargetCandidateRelationshipTypesPredicate,
-  invalidRelationshipPredicate: InvalidRelationshipPredicate,
-  trackingTokenTransform: TrackingTokenTransform,
-  baseStatsReceiver: StatsReceiver)
-    extends RecommendationFlow[ContentRecommenderRequest, CandidateUser]
-    with RecommendationFlowBaseSideEffectsUtil[ContentRecommenderRequest, CandidateUser]
-    with CandidateSourceHoldbackUtil {
+@S ngleton
+class ContentRecom nderFlow @ nject() (
+  contentRecom nderFlowCand dateS ceReg stry: ContentRecom nderFlowCand dateS ceReg stry,
+  recentFollow ngPred cate: RecentFollow ngPred cate,
+  g zmoduckPred cate: G zmoduckPred cate,
+   nact vePred cate:  nact vePred cate,
+  sgsPred cate:  nval dTargetCand dateRelat onsh pTypesPred cate,
+   nval dRelat onsh pPred cate:  nval dRelat onsh pPred cate,
+  track ngTokenTransform: Track ngTokenTransform,
+  baseStatsRece ver: StatsRece ver)
+    extends Recom ndat onFlow[ContentRecom nderRequest, Cand dateUser]
+    w h Recom ndat onFlowBaseS deEffectsUt l[ContentRecom nderRequest, Cand dateUser]
+    w h Cand dateS ceHoldbackUt l {
 
-  override val statsReceiver: StatsReceiver = baseStatsReceiver.scope("content_recommender_flow")
+  overr de val statsRece ver: StatsRece ver = baseStatsRece ver.scope("content_recom nder_flow")
 
-  override val qualityFactorObserver: Option[QualityFactorObserver] = {
-    val config = LinearLatencyQualityFactorConfig(
-      qualityFactorBounds =
-        BoundsWithDefault(minInclusive = 0.1, maxInclusive = 1.0, default = 1.0),
-      initialDelay = 60.seconds,
-      targetLatency = 100.milliseconds,
-      targetLatencyPercentile = 95.0,
+  overr de val qual yFactorObserver: Opt on[Qual yFactorObserver] = {
+    val conf g = L nearLatencyQual yFactorConf g(
+      qual yFactorBounds =
+        BoundsW hDefault(m n nclus ve = 0.1, max nclus ve = 1.0, default = 1.0),
+       n  alDelay = 60.seconds,
+      targetLatency = 100.m ll seconds,
+      targetLatencyPercent le = 95.0,
       delta = 0.001
     )
-    val qualityFactor = LinearLatencyQualityFactor(config)
-    val observer = LinearLatencyQualityFactorObserver(qualityFactor)
-    statsReceiver.provideGauge("quality_factor")(qualityFactor.currentValue.toFloat)
-    Some(observer)
+    val qual yFactor = L nearLatencyQual yFactor(conf g)
+    val observer = L nearLatencyQual yFactorObserver(qual yFactor)
+    statsRece ver.prov deGauge("qual y_factor")(qual yFactor.currentValue.toFloat)
+    So (observer)
   }
 
-  protected override def targetEligibility: Predicate[ContentRecommenderRequest] =
-    new ParamPredicate[ContentRecommenderRequest](
-      ContentRecommenderParams.TargetEligibility
+  protected overr de def targetEl g b l y: Pred cate[ContentRecom nderRequest] =
+    new ParamPred cate[ContentRecom nderRequest](
+      ContentRecom nderParams.TargetEl g b l y
     )
 
-  protected override def candidateSources(
-    target: ContentRecommenderRequest
-  ): Seq[CandidateSource[ContentRecommenderRequest, CandidateUser]] = {
-    import EnrichedCandidateSource._
-    val identifiers = ContentRecommenderFlowCandidateSourceWeights.getWeights(target.params).keySet
-    val selected = contentRecommenderFlowCandidateSourceRegistry.select(identifiers)
+  protected overr de def cand dateS ces(
+    target: ContentRecom nderRequest
+  ): Seq[Cand dateS ce[ContentRecom nderRequest, Cand dateUser]] = {
+     mport Enr c dCand dateS ce._
+    val  dent f ers = ContentRecom nderFlowCand dateS ce  ghts.get  ghts(target.params).keySet
+    val selected = contentRecom nderFlowCand dateS ceReg stry.select( dent f ers)
     val budget =
-      target.params(ContentRecommenderParams.FetchCandidateSourceBudgetInMillisecond).millisecond
-    filterCandidateSources(target, selected.map(c => c.failOpenWithin(budget, statsReceiver)).toSeq)
+      target.params(ContentRecom nderParams.FetchCand dateS ceBudget nM ll second).m ll second
+    f lterCand dateS ces(target, selected.map(c => c.fa lOpenW h n(budget, statsRece ver)).toSeq)
   }
 
-  protected override val preRankerCandidateFilter: Predicate[
-    (ContentRecommenderRequest, CandidateUser)
+  protected overr de val preRankerCand dateF lter: Pred cate[
+    (ContentRecom nderRequest, Cand dateUser)
   ] = {
-    val preRankerFilterStats = statsReceiver.scope("pre_ranker")
-    val recentFollowingPredicateStats = preRankerFilterStats.scope("recent_following_predicate")
-    val invalidRelationshipPredicateStats =
-      preRankerFilterStats.scope("invalid_relationship_predicate")
+    val preRankerF lterStats = statsRece ver.scope("pre_ranker")
+    val recentFollow ngPred cateStats = preRankerF lterStats.scope("recent_follow ng_pred cate")
+    val  nval dRelat onsh pPred cateStats =
+      preRankerF lterStats.scope(" nval d_relat onsh p_pred cate")
 
-    object recentFollowingGatedPredicate
-        extends GatedPredicateBase[(ContentRecommenderRequest, CandidateUser)](
-          recentFollowingPredicate,
-          recentFollowingPredicateStats
+    object recentFollow ngGatedPred cate
+        extends GatedPred cateBase[(ContentRecom nderRequest, Cand dateUser)](
+          recentFollow ngPred cate,
+          recentFollow ngPred cateStats
         ) {
-      override def gate(item: (ContentRecommenderRequest, CandidateUser)): Boolean =
-        item._1.params(ContentRecommenderParams.EnableRecentFollowingPredicate)
+      overr de def gate( em: (ContentRecom nderRequest, Cand dateUser)): Boolean =
+         em._1.params(ContentRecom nderParams.EnableRecentFollow ngPred cate)
     }
 
-    object invalidRelationshipGatedPredicate
-        extends GatedPredicateBase[(ContentRecommenderRequest, CandidateUser)](
-          invalidRelationshipPredicate,
-          invalidRelationshipPredicateStats
+    object  nval dRelat onsh pGatedPred cate
+        extends GatedPred cateBase[(ContentRecom nderRequest, Cand dateUser)](
+           nval dRelat onsh pPred cate,
+           nval dRelat onsh pPred cateStats
         ) {
-      override def gate(item: (ContentRecommenderRequest, CandidateUser)): Boolean =
-        item._1.params(ContentRecommenderParams.EnableInvalidRelationshipPredicate)
+      overr de def gate( em: (ContentRecom nderRequest, Cand dateUser)): Boolean =
+         em._1.params(ContentRecom nderParams.Enable nval dRelat onsh pPred cate)
     }
 
-    ExcludedUserIdPredicate
-      .observe(preRankerFilterStats.scope("exclude_user_id_predicate"))
-      .andThen(recentFollowingGatedPredicate.observe(recentFollowingPredicateStats))
-      .andThen(invalidRelationshipGatedPredicate.observe(invalidRelationshipPredicateStats))
+    ExcludedUser dPred cate
+      .observe(preRankerF lterStats.scope("exclude_user_ d_pred cate"))
+      .andT n(recentFollow ngGatedPred cate.observe(recentFollow ngPred cateStats))
+      .andT n( nval dRelat onsh pGatedPred cate.observe( nval dRelat onsh pPred cateStats))
   }
 
   /**
-   * rank the candidates
+   * rank t  cand dates
    */
-  protected override def selectRanker(
-    target: ContentRecommenderRequest
-  ): Ranker[ContentRecommenderRequest, CandidateUser] = {
-    val rankersStatsReceiver = statsReceiver.scope("rankers")
-    WeightedCandidateSourceRanker
-      .build[ContentRecommenderRequest](
-        ContentRecommenderFlowCandidateSourceWeights.getWeights(target.params),
-        randomSeed = target.getRandomizationSeed
-      ).observe(rankersStatsReceiver.scope("weighted_candidate_source_ranker"))
+  protected overr de def selectRanker(
+    target: ContentRecom nderRequest
+  ): Ranker[ContentRecom nderRequest, Cand dateUser] = {
+    val rankersStatsRece ver = statsRece ver.scope("rankers")
+      ghtedCand dateS ceRanker
+      .bu ld[ContentRecom nderRequest](
+        ContentRecom nderFlowCand dateS ce  ghts.get  ghts(target.params),
+        randomSeed = target.getRandom zat onSeed
+      ).observe(rankersStatsRece ver.scope("  ghted_cand date_s ce_ranker"))
   }
 
   /**
-   * transform the candidates after ranking
+   * transform t  cand dates after rank ng
    */
-  protected override def postRankerTransform: Transform[
-    ContentRecommenderRequest,
-    CandidateUser
+  protected overr de def postRankerTransform: Transform[
+    ContentRecom nderRequest,
+    Cand dateUser
   ] = {
-    new DedupTransform[ContentRecommenderRequest, CandidateUser]
-      .observe(statsReceiver.scope("dedupping"))
+    new DedupTransform[ContentRecom nderRequest, Cand dateUser]
+      .observe(statsRece ver.scope("dedupp ng"))
   }
 
-  protected override def validateCandidates: Predicate[
-    (ContentRecommenderRequest, CandidateUser)
+  protected overr de def val dateCand dates: Pred cate[
+    (ContentRecom nderRequest, Cand dateUser)
   ] = {
-    val stats = statsReceiver.scope("validate_candidates")
-    val gizmoduckPredicateStats = stats.scope("gizmoduck_predicate")
-    val inactivePredicateStats = stats.scope("inactive_predicate")
-    val sgsPredicateStats = stats.scope("sgs_predicate")
+    val stats = statsRece ver.scope("val date_cand dates")
+    val g zmoduckPred cateStats = stats.scope("g zmoduck_pred cate")
+    val  nact vePred cateStats = stats.scope(" nact ve_pred cate")
+    val sgsPred cateStats = stats.scope("sgs_pred cate")
 
-    val includeGizmoduckPredicate =
-      new ParamPredicate[ContentRecommenderRequest](
-        ContentRecommenderParams.EnableGizmoduckPredicate)
-        .map[(ContentRecommenderRequest, CandidateUser)] {
-          case (request: ContentRecommenderRequest, _) =>
+    val  ncludeG zmoduckPred cate =
+      new ParamPred cate[ContentRecom nderRequest](
+        ContentRecom nderParams.EnableG zmoduckPred cate)
+        .map[(ContentRecom nderRequest, Cand dateUser)] {
+          case (request: ContentRecom nderRequest, _) =>
             request
         }
 
-    val includeInactivePredicate =
-      new ParamPredicate[ContentRecommenderRequest](
-        ContentRecommenderParams.EnableInactivePredicate)
-        .map[(ContentRecommenderRequest, CandidateUser)] {
-          case (request: ContentRecommenderRequest, _) =>
+    val  nclude nact vePred cate =
+      new ParamPred cate[ContentRecom nderRequest](
+        ContentRecom nderParams.Enable nact vePred cate)
+        .map[(ContentRecom nderRequest, Cand dateUser)] {
+          case (request: ContentRecom nderRequest, _) =>
             request
         }
 
-    val includeInvalidTargetCandidateRelationshipTypesPredicate =
-      new ParamPredicate[ContentRecommenderRequest](
-        ContentRecommenderParams.EnableInvalidTargetCandidateRelationshipPredicate)
-        .map[(ContentRecommenderRequest, CandidateUser)] {
-          case (request: ContentRecommenderRequest, _) =>
+    val  nclude nval dTargetCand dateRelat onsh pTypesPred cate =
+      new ParamPred cate[ContentRecom nderRequest](
+        ContentRecom nderParams.Enable nval dTargetCand dateRelat onsh pPred cate)
+        .map[(ContentRecom nderRequest, Cand dateUser)] {
+          case (request: ContentRecom nderRequest, _) =>
             request
         }
 
-    Predicate
-      .andConcurrently[(ContentRecommenderRequest, CandidateUser)](
+    Pred cate
+      .andConcurrently[(ContentRecom nderRequest, Cand dateUser)](
         Seq(
-          gizmoduckPredicate.observe(gizmoduckPredicateStats).gate(includeGizmoduckPredicate),
-          inactivePredicate.observe(inactivePredicateStats).gate(includeInactivePredicate),
-          sgsPredicate
-            .observe(sgsPredicateStats).gate(
-              includeInvalidTargetCandidateRelationshipTypesPredicate),
+          g zmoduckPred cate.observe(g zmoduckPred cateStats).gate( ncludeG zmoduckPred cate),
+           nact vePred cate.observe( nact vePred cateStats).gate( nclude nact vePred cate),
+          sgsPred cate
+            .observe(sgsPred cateStats).gate(
+               nclude nval dTargetCand dateRelat onsh pTypesPred cate),
         )
       )
   }
 
   /**
-   * transform the candidates into results and return
+   * transform t  cand dates  nto results and return
    */
-  protected override def transformResults: Transform[ContentRecommenderRequest, CandidateUser] = {
-    trackingTokenTransform
+  protected overr de def transformResults: Transform[ContentRecom nderRequest, Cand dateUser] = {
+    track ngTokenTransform
   }
 
   /**
-   *  configuration for recommendation results
+   *  conf gurat on for recom ndat on results
    */
-  protected override def resultsConfig(
-    target: ContentRecommenderRequest
-  ): RecommendationResultsConfig = {
-    RecommendationResultsConfig(
-      target.maxResults.getOrElse(target.params(ContentRecommenderParams.ResultSizeParam)),
-      target.params(ContentRecommenderParams.BatchSizeParam)
+  protected overr de def resultsConf g(
+    target: ContentRecom nderRequest
+  ): Recom ndat onResultsConf g = {
+    Recom ndat onResultsConf g(
+      target.maxResults.getOrElse(target.params(ContentRecom nderParams.ResultS zeParam)),
+      target.params(ContentRecom nderParams.BatchS zeParam)
     )
   }
 

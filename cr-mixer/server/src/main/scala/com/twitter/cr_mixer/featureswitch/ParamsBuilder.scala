@@ -1,84 +1,84 @@
-package com.twitter.cr_mixer.featureswitch
+package com.tw ter.cr_m xer.featuresw ch
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.abdecider.UserRecipient
-import com.twitter.cr_mixer.{thriftscala => t}
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.discovery.common.configapi.FeatureContextBuilder
-import com.twitter.featureswitches.FSRecipient
-import com.twitter.featureswitches.UserAgent
-import com.twitter.featureswitches.{Recipient => FeatureSwitchRecipient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.thriftscala.ClientContext
-import com.twitter.timelines.configapi.Config
-import com.twitter.timelines.configapi.FeatureValue
-import com.twitter.timelines.configapi.ForcedFeatureContext
-import com.twitter.timelines.configapi.OrElseFeatureContext
-import com.twitter.timelines.configapi.Params
-import com.twitter.timelines.configapi.RequestContext
-import com.twitter.timelines.configapi.abdecider.LoggingABDeciderExperimentContext
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.abdec der.Logg ngABDec der
+ mport com.tw ter.abdec der.UserRec p ent
+ mport com.tw ter.cr_m xer.{thr ftscala => t}
+ mport com.tw ter.core_workflows.user_model.thr ftscala.UserState
+ mport com.tw ter.d scovery.common.conf gap .FeatureContextBu lder
+ mport com.tw ter.featuresw c s.FSRec p ent
+ mport com.tw ter.featuresw c s.UserAgent
+ mport com.tw ter.featuresw c s.{Rec p ent => FeatureSw chRec p ent}
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.core.thr ftscala.Cl entContext
+ mport com.tw ter.t  l nes.conf gap .Conf g
+ mport com.tw ter.t  l nes.conf gap .FeatureValue
+ mport com.tw ter.t  l nes.conf gap .ForcedFeatureContext
+ mport com.tw ter.t  l nes.conf gap .OrElseFeatureContext
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.tw ter.t  l nes.conf gap .RequestContext
+ mport com.tw ter.t  l nes.conf gap .abdec der.Logg ngABDec derExper  ntContext
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-/** Singleton object for building [[Params]] to override */
-@Singleton
-class ParamsBuilder @Inject() (
-  globalStats: StatsReceiver,
-  abDecider: LoggingABDecider,
-  featureContextBuilder: FeatureContextBuilder,
-  config: Config) {
+/** S ngleton object for bu ld ng [[Params]] to overr de */
+@S ngleton
+class ParamsBu lder @ nject() (
+  globalStats: StatsRece ver,
+  abDec der: Logg ngABDec der,
+  featureContextBu lder: FeatureContextBu lder,
+  conf g: Conf g) {
 
-  private val stats = globalStats.scope("params")
+  pr vate val stats = globalStats.scope("params")
 
-  def buildFromClientContext(
-    clientContext: ClientContext,
+  def bu ldFromCl entContext(
+    cl entContext: Cl entContext,
     product: t.Product,
     userState: UserState,
-    userRoleOverride: Option[Set[String]] = None,
-    featureOverrides: Map[String, FeatureValue] = Map.empty,
+    userRoleOverr de: Opt on[Set[Str ng]] = None,
+    featureOverr des: Map[Str ng, FeatureValue] = Map.empty,
   ): Params = {
-    clientContext.userId match {
-      case Some(userId) =>
-        val userRecipient = buildFeatureSwitchRecipient(
-          userId,
-          userRoleOverride,
-          clientContext,
+    cl entContext.user d match {
+      case So (user d) =>
+        val userRec p ent = bu ldFeatureSw chRec p ent(
+          user d,
+          userRoleOverr de,
+          cl entContext,
           product,
           userState
         )
 
         val featureContext = OrElseFeatureContext(
-          ForcedFeatureContext(featureOverrides),
-          featureContextBuilder(
-            Some(userId),
-            Some(userRecipient)
+          ForcedFeatureContext(featureOverr des),
+          featureContextBu lder(
+            So (user d),
+            So (userRec p ent)
           ))
 
-        config(
+        conf g(
           requestContext = RequestContext(
-            userId = Some(userId),
-            experimentContext = LoggingABDeciderExperimentContext(
-              abDecider,
-              Some(UserRecipient(userId, Some(userId)))),
+            user d = So (user d),
+            exper  ntContext = Logg ngABDec derExper  ntContext(
+              abDec der,
+              So (UserRec p ent(user d, So (user d)))),
             featureContext = featureContext
           ),
           stats
         )
       case None =>
-        val guestRecipient =
-          buildFeatureSwitchRecipientWithGuestId(clientContext: ClientContext, product, userState)
+        val guestRec p ent =
+          bu ldFeatureSw chRec p entW hGuest d(cl entContext: Cl entContext, product, userState)
 
         val featureContext = OrElseFeatureContext(
-          ForcedFeatureContext(featureOverrides),
-          featureContextBuilder(
-            clientContext.userId,
-            Some(guestRecipient)
+          ForcedFeatureContext(featureOverr des),
+          featureContextBu lder(
+            cl entContext.user d,
+            So (guestRec p ent)
           )
-        ) //ExperimentContext with GuestRecipient is not supported  as there is no active use-cases yet in CrMixer
+        ) //Exper  ntContext w h GuestRec p ent  s not supported  as t re  s no act ve use-cases yet  n CrM xer
 
-        config(
+        conf g(
           requestContext = RequestContext(
-            userId = clientContext.userId,
+            user d = cl entContext.user d,
             featureContext = featureContext
           ),
           stats
@@ -86,66 +86,66 @@ class ParamsBuilder @Inject() (
     }
   }
 
-  private def buildFeatureSwitchRecipientWithGuestId(
-    clientContext: ClientContext,
+  pr vate def bu ldFeatureSw chRec p entW hGuest d(
+    cl entContext: Cl entContext,
     product: t.Product,
     userState: UserState
-  ): FeatureSwitchRecipient = {
+  ): FeatureSw chRec p ent = {
 
-    val recipient = FSRecipient(
-      userId = None,
+    val rec p ent = FSRec p ent(
+      user d = None,
       userRoles = None,
-      deviceId = clientContext.deviceId,
-      guestId = clientContext.guestId,
-      languageCode = clientContext.languageCode,
-      countryCode = clientContext.countryCode,
-      userAgent = clientContext.userAgent.flatMap(UserAgent(_)),
-      isVerified = None,
-      isTwoffice = None,
-      tooClient = None,
-      highWaterMark = None
+      dev ce d = cl entContext.dev ce d,
+      guest d = cl entContext.guest d,
+      languageCode = cl entContext.languageCode,
+      countryCode = cl entContext.countryCode,
+      userAgent = cl entContext.userAgent.flatMap(UserAgent(_)),
+       sVer f ed = None,
+       sTwoff ce = None,
+      tooCl ent = None,
+      h ghWaterMark = None
     )
 
-    recipient.withCustomFields(
-      (ParamsBuilder.ProductCustomField, product.toString),
-      (ParamsBuilder.UserStateCustomField, userState.toString)
+    rec p ent.w hCustomF elds(
+      (ParamsBu lder.ProductCustomF eld, product.toStr ng),
+      (ParamsBu lder.UserStateCustomF eld, userState.toStr ng)
     )
   }
 
-  private def buildFeatureSwitchRecipient(
-    userId: Long,
-    userRolesOverride: Option[Set[String]],
-    clientContext: ClientContext,
+  pr vate def bu ldFeatureSw chRec p ent(
+    user d: Long,
+    userRolesOverr de: Opt on[Set[Str ng]],
+    cl entContext: Cl entContext,
     product: t.Product,
     userState: UserState
-  ): FeatureSwitchRecipient = {
-    val userRoles = userRolesOverride match {
-      case Some(overrides) => Some(overrides)
-      case _ => clientContext.userRoles.map(_.toSet)
+  ): FeatureSw chRec p ent = {
+    val userRoles = userRolesOverr de match {
+      case So (overr des) => So (overr des)
+      case _ => cl entContext.userRoles.map(_.toSet)
     }
 
-    val recipient = FSRecipient(
-      userId = Some(userId),
+    val rec p ent = FSRec p ent(
+      user d = So (user d),
       userRoles = userRoles,
-      deviceId = clientContext.deviceId,
-      guestId = clientContext.guestId,
-      languageCode = clientContext.languageCode,
-      countryCode = clientContext.countryCode,
-      userAgent = clientContext.userAgent.flatMap(UserAgent(_)),
-      isVerified = None,
-      isTwoffice = None,
-      tooClient = None,
-      highWaterMark = None
+      dev ce d = cl entContext.dev ce d,
+      guest d = cl entContext.guest d,
+      languageCode = cl entContext.languageCode,
+      countryCode = cl entContext.countryCode,
+      userAgent = cl entContext.userAgent.flatMap(UserAgent(_)),
+       sVer f ed = None,
+       sTwoff ce = None,
+      tooCl ent = None,
+      h ghWaterMark = None
     )
 
-    recipient.withCustomFields(
-      (ParamsBuilder.ProductCustomField, product.toString),
-      (ParamsBuilder.UserStateCustomField, userState.toString)
+    rec p ent.w hCustomF elds(
+      (ParamsBu lder.ProductCustomF eld, product.toStr ng),
+      (ParamsBu lder.UserStateCustomF eld, userState.toStr ng)
     )
   }
 }
 
-object ParamsBuilder {
-  private val ProductCustomField = "product_id"
-  private val UserStateCustomField = "user_state"
+object ParamsBu lder {
+  pr vate val ProductCustomF eld = "product_ d"
+  pr vate val UserStateCustomF eld = "user_state"
 }

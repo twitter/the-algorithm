@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.products.common
+package com.tw ter.follow_recom ndat ons.products.common
 
-abstract class ProductException(message: String) extends Exception(message)
+abstract class ProductExcept on( ssage: Str ng) extends Except on( ssage)
 
-class MissingFieldException(productRequest: ProductRequest, fieldName: String)
-    extends ProductException(
-      s"Missing ${fieldName} field for ${productRequest.recommendationRequest.displayLocation} request")
+class M ss ngF eldExcept on(productRequest: ProductRequest, f eldNa : Str ng)
+    extends ProductExcept on(
+      s"M ss ng ${f eldNa } f eld for ${productRequest.recom ndat onRequest.d splayLocat on} request")

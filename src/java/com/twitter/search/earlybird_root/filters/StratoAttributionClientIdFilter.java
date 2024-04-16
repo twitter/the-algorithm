@@ -1,30 +1,30 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.earlyb rd.common.Cl ent dUt l;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.ut l.Future;
 
 /**
- * A filter that will set the clientId of the request to the strato HttpEndpoint Attribution.
+ * A f lter that w ll set t  cl ent d of t  request to t  strato HttpEndpo nt Attr but on.
  * <p>
- * If the clientId is already set to something non-null then that value is used.
- * If the clientId is null but Attribution.httpEndpoint() contains a value it will be set as
- * the clientId.
+ *  f t  cl ent d  s already set to so th ng non-null t n that value  s used.
+ *  f t  cl ent d  s null but Attr but on.httpEndpo nt() conta ns a value   w ll be set as
+ * t  cl ent d.
  */
-public class StratoAttributionClientIdFilter extends
-    SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequest request, Service<EarlybirdRequest, EarlybirdResponse> service
+publ c class StratoAttr but onCl ent dF lter extends
+    S mpleF lter<Earlyb rdRequest, Earlyb rdResponse> {
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(
+      Earlyb rdRequest request, Serv ce<Earlyb rdRequest, Earlyb rdResponse> serv ce
   ) {
-    if (request.getClientId() == null) {
-      ClientIdUtil.getClientIdFromHttpEndpointAttribution().ifPresent(request::setClientId);
+     f (request.getCl ent d() == null) {
+      Cl ent dUt l.getCl ent dFromHttpEndpo ntAttr but on(). fPresent(request::setCl ent d);
     }
 
-    return service.apply(request);
+    return serv ce.apply(request);
   }
 }
 

@@ -1,78 +1,78 @@
-package com.twitter.follow_recommendations.common.clients.cache
+package com.tw ter.follow_recom ndat ons.common.cl ents.cac 
 
-import com.twitter.bijection.Bijection
-import com.twitter.io.Buf
-import com.twitter.scrooge.CompactThriftSerializer
-import com.twitter.scrooge.ThriftEnum
-import com.twitter.scrooge.ThriftStruct
-import java.nio.ByteBuffer
+ mport com.tw ter.b ject on.B ject on
+ mport com.tw ter. o.Buf
+ mport com.tw ter.scrooge.CompactThr ftSer al zer
+ mport com.tw ter.scrooge.Thr ftEnum
+ mport com.tw ter.scrooge.Thr ftStruct
+ mport java.n o.ByteBuffer
 
-abstract class ThriftBijection[T <: ThriftStruct] extends Bijection[Buf, T] {
-  val serializer: CompactThriftSerializer[T]
+abstract class Thr ftB ject on[T <: Thr ftStruct] extends B ject on[Buf, T] {
+  val ser al zer: CompactThr ftSer al zer[T]
 
-  override def apply(b: Buf): T = {
+  overr de def apply(b: Buf): T = {
     val byteArray = Buf.ByteArray.Owned.extract(b)
-    serializer.fromBytes(byteArray)
+    ser al zer.fromBytes(byteArray)
   }
 
-  override def invert(a: T): Buf = {
-    val byteArray = serializer.toBytes(a)
+  overr de def  nvert(a: T): Buf = {
+    val byteArray = ser al zer.toBytes(a)
     Buf.ByteArray.Owned(byteArray)
   }
 }
 
-abstract class ThriftOptionBijection[T <: ThriftStruct] extends Bijection[Buf, Option[T]] {
-  val serializer: CompactThriftSerializer[T]
+abstract class Thr ftOpt onB ject on[T <: Thr ftStruct] extends B ject on[Buf, Opt on[T]] {
+  val ser al zer: CompactThr ftSer al zer[T]
 
-  override def apply(b: Buf): Option[T] = {
-    if (b.isEmpty) {
+  overr de def apply(b: Buf): Opt on[T] = {
+     f (b. sEmpty) {
       None
     } else {
       val byteArray = Buf.ByteArray.Owned.extract(b)
-      Some(serializer.fromBytes(byteArray))
+      So (ser al zer.fromBytes(byteArray))
     }
   }
 
-  override def invert(a: Option[T]): Buf = {
+  overr de def  nvert(a: Opt on[T]): Buf = {
     a match {
-      case Some(t) =>
-        val byteArray = serializer.toBytes(t)
+      case So (t) =>
+        val byteArray = ser al zer.toBytes(t)
         Buf.ByteArray.Owned(byteArray)
       case None => Buf.Empty
     }
   }
 }
 
-class ThriftEnumBijection[T <: ThriftEnum](constructor: Int => T) extends Bijection[Buf, T] {
-  override def apply(b: Buf): T = {    
+class Thr ftEnumB ject on[T <: Thr ftEnum](constructor:  nt => T) extends B ject on[Buf, T] {
+  overr de def apply(b: Buf): T = {    
     val byteArray = Buf.ByteArray.Owned.extract(b)
     val byteBuffer = ByteBuffer.wrap(byteArray)
-    constructor(byteBuffer.getInt())
+    constructor(byteBuffer.get nt())
   }
 
-  override def invert(a: T): Buf = {      
+  overr de def  nvert(a: T): Buf = {      
     val byteBuffer: ByteBuffer = ByteBuffer.allocate(4)
-    byteBuffer.putInt(a.getValue)
+    byteBuffer.put nt(a.getValue)
     Buf.ByteArray.Owned(byteBuffer.array())
   }
 }
 
-class ThriftEnumOptionBijection[T <: ThriftEnum](constructor: Int => T) extends Bijection[Buf, Option[T]] {
-  override def apply(b: Buf): Option[T] = {      
-    if (b.isEmpty) {
+class Thr ftEnumOpt onB ject on[T <: Thr ftEnum](constructor:  nt => T) extends B ject on[Buf, Opt on[T]] {
+  overr de def apply(b: Buf): Opt on[T] = {      
+     f (b. sEmpty) {
       None
     } else {
       val byteArray = Buf.ByteArray.Owned.extract(b)
       val byteBuffer = ByteBuffer.wrap(byteArray)
-      Some(constructor(byteBuffer.getInt()))
+      So (constructor(byteBuffer.get nt()))
     }
   }
 
-  override def invert(a: Option[T]): Buf = {
+  overr de def  nvert(a: Opt on[T]): Buf = {
     a match {
-      case Some(obj) => {
+      case So (obj) => {
         val byteBuffer: ByteBuffer = ByteBuffer.allocate(4)
-        byteBuffer.putInt(obj.getValue)
+        byteBuffer.put nt(obj.getValue)
         Buf.ByteArray.Owned(byteBuffer.array())
       }
       case None => Buf.Empty

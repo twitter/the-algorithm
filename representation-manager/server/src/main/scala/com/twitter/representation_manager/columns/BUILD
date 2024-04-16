@@ -1,9 +1,9 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "strato/src/main/scala/com/twitter/strato/fed",
-        "strato/src/main/scala/com/twitter/strato/fed/server",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "strato/src/ma n/scala/com/tw ter/strato/fed",
+        "strato/src/ma n/scala/com/tw ter/strato/fed/server",
     ],
 )

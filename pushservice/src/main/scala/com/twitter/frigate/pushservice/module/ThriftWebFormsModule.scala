@@ -1,9 +1,9 @@
-package com.twitter.frigate.pushservice.module
+package com.tw ter.fr gate.pushserv ce.module
 
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule
-import com.twitter.finatra.thrift.ThriftServer
-import com.twitter.frigate.pushservice.thriftscala.PushService
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsThr ft bFormsModule
+ mport com.tw ter.f natra.thr ft.Thr ftServer
+ mport com.tw ter.fr gate.pushserv ce.thr ftscala.PushServ ce
 
-class ThriftWebFormsModule(server: ThriftServer)
-    extends MtlsThriftWebFormsModule[PushService.MethodPerEndpoint](server) {
+class Thr ft bFormsModule(server: Thr ftServer)
+    extends MtlsThr ft bFormsModule[PushServ ce. thodPerEndpo nt](server) {
 }

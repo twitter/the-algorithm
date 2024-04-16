@@ -1,190 +1,190 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+# nclude "tensorflow/core/fra work/op.h"
+# nclude "tensorflow/core/fra work/shape_ nference.h"
+# nclude "tensorflow/core/fra work/op_kernel.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
-#include "resource_utils.h"
+# nclude <twml.h>
+# nclude "tensorflow_ut ls.h"
+# nclude "res ce_ut ls.h"
 
-#include <algorithm>
-using std::string;
+# nclude <algor hm>
+us ng std::str ng;
 
-template<typename IndexType, typename ValueType, bool calc_batch_size>
-void ComputeFixedLengthTensor(OpKernelContext *context, int64 max_length_) {
+template<typena   ndexType, typena  ValueType, bool calc_batch_s ze>
+vo d ComputeF xedLengthTensor(OpKernelContext *context,  nt64 max_length_) {
   try {
-    const Tensor& segment_ids = context->input(0);
-    const Tensor& values = context->input(1);
-    const Tensor& pad_value = context->input(2);
+    const Tensor& seg nt_ ds = context-> nput(0);
+    const Tensor& values = context-> nput(1);
+    const Tensor& pad_value = context-> nput(2);
 
-    auto indices_flat = segment_ids.flat<IndexType>();
+    auto  nd ces_flat = seg nt_ ds.flat< ndexType>();
     auto values_flat = values.flat<ValueType>();
 
     auto pad_value_scalar = pad_value.scalar<ValueType>()();
 
-    // Get maximum length from batch if user hasn't specified it.
-    int64 max_length = max_length_;
-    if (max_length < 0 && indices_flat.size() > 0) {
-      int64 current_id = indices_flat(0);
-      int64 current_length = 1;
+    // Get max mum length from batch  f user hasn't spec f ed  .
+     nt64 max_length = max_length_;
+     f (max_length < 0 &&  nd ces_flat.s ze() > 0) {
+       nt64 current_ d =  nd ces_flat(0);
+       nt64 current_length = 1;
 
-      for (int64 i = 1; i < indices_flat.size(); i++) {
-        if (current_id == indices_flat(i)) {
+      for ( nt64   = 1;   <  nd ces_flat.s ze();  ++) {
+         f (current_ d ==  nd ces_flat( )) {
           current_length++;
         } else {
-          current_id = indices_flat(i);
+          current_ d =  nd ces_flat( );
           max_length = std::max(max_length, current_length);
           current_length = 1;
         }
       }
-      // This is needed if the last batch is the longest sequence.
+      // T   s needed  f t  last batch  s t  longest sequence.
       max_length = std::max(max_length, current_length);
     }
 
-    int64 batch_size = 0;
-    if (calc_batch_size) {
-      if (indices_flat.size() > 0) {
-        // The last value of segment_ids will have value batch_size  1;
-        batch_size = 1 + indices_flat(indices_flat.size() - 1);
+     nt64 batch_s ze = 0;
+     f (calc_batch_s ze) {
+       f ( nd ces_flat.s ze() > 0) {
+        // T  last value of seg nt_ ds w ll have value batch_s ze  1;
+        batch_s ze = 1 +  nd ces_flat( nd ces_flat.s ze() - 1);
       } else {
-        batch_size = 0;
+        batch_s ze = 0;
       }
     } else {
-      const Tensor& batch_size_tensor = context->input(3);
-      batch_size = batch_size_tensor.flat<int64>()(0);
+      const Tensor& batch_s ze_tensor = context-> nput(3);
+      batch_s ze = batch_s ze_tensor.flat< nt64>()(0);
     }
 
-    TensorShape output_shape = {batch_size, max_length};
-    Tensor* fixed_length = nullptr;
-    OP_REQUIRES_OK(context, context->allocate_output(0, output_shape, &fixed_length));
+    TensorShape output_shape = {batch_s ze, max_length};
+    Tensor* f xed_length = nullptr;
+    OP_REQU RES_OK(context, context->allocate_output(0, output_shape, &f xed_length));
 
-    auto fixed_length_flat = fixed_length->flat<ValueType>();
+    auto f xed_length_flat = f xed_length->flat<ValueType>();
 
-    int64 n = 0;
-    int64 offset = 0;
-    for (int64 i = 0; i < batch_size; i++) {
-      for (int64 j = 0; j < max_length; j++) {
-        if (n < indices_flat.size() && indices_flat(n) == i) {
-          // Copy from variable length tensor.
-          fixed_length_flat(offset + j) = values_flat(n);
+     nt64 n = 0;
+     nt64 offset = 0;
+    for ( nt64   = 0;   < batch_s ze;  ++) {
+      for ( nt64 j = 0; j < max_length; j++) {
+         f (n <  nd ces_flat.s ze() &&  nd ces_flat(n) ==  ) {
+          // Copy from var able length tensor.
+          f xed_length_flat(offset + j) = values_flat(n);
           n++;
         } else {
-          // Pad to fixed length.
-          fixed_length_flat(offset + j) = pad_value_scalar;
+          // Pad to f xed length.
+          f xed_length_flat(offset + j) = pad_value_scalar;
         }
       }
-      // Corner case: truncate to max_length if user specified max_length < current length.
-      while (n < indices_flat.size() && i == indices_flat(n)) n++;
+      // Corner case: truncate to max_length  f user spec f ed max_length < current length.
+      wh le (n <  nd ces_flat.s ze() &&   ==  nd ces_flat(n)) n++;
 
-      // Update output pointer
+      // Update output po nter
       offset += max_length;
     }
-  } catch (const std::exception &err) {
-    context->CtxFailureWithWarning(errors::InvalidArgument(err.what()));
+  } catch (const std::except on &err) {
+    context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(err.what()));
   }
 }
 
-REGISTER_OP("FixedLengthTensor")
-.Attr("IndexType: {int64, int32}")
-.Attr("ValueType: {int64, int32, string}")
-.Attr("max_length: int")
-.Input("segment_ids: IndexType")
-.Input("values: ValueType")
-.Input("pad_value: ValueType")
-.Output("fixed_length: ValueType")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+REG STER_OP("F xedLengthTensor")
+.Attr(" ndexType: { nt64,  nt32}")
+.Attr("ValueType: { nt64,  nt32, str ng}")
+.Attr("max_length:  nt")
+. nput("seg nt_ ds:  ndexType")
+. nput("values: ValueType")
+. nput("pad_value: ValueType")
+.Output("f xed_length: ValueType")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
 
-A tensorflow OP to convert variable length segments into fixed length tensor.
+A tensorflow OP to convert var able length seg nts  nto f xed length tensor.
 
 Attr
-  max_length: The size of the inner most (i.e. last) dimension.
+  max_length: T  s ze of t   nner most ( .e. last) d  ns on.
 
-Input
-  segment_ids: 1D input tensor containing the sorted segment_ids.
-  values: 1D input tensor containing the values.
-  pad_value: The value used for padding the fixed length tensor.
+ nput
+  seg nt_ ds: 1D  nput tensor conta n ng t  sorted seg nt_ ds.
+  values: 1D  nput tensor conta n ng t  values.
+  pad_value: T  value used for padd ng t  f xed length tensor.
 
 Outputs
-  fixed_length: A fixed length tensor of size [batch_size, max_length].
+  f xed_length: A f xed length tensor of s ze [batch_s ze, max_length].
 )doc");
 
-template<typename IndexType, typename ValueType>
-class FixedLengthTensor: public OpKernel {
- public:
-  explicit FixedLengthTensor(OpKernelConstruction *context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("max_length", &max_length_));
+template<typena   ndexType, typena  ValueType>
+class F xedLengthTensor: publ c OpKernel {
+ publ c:
+  expl c  F xedLengthTensor(OpKernelConstruct on *context) : OpKernel(context) {
+    OP_REQU RES_OK(context, context->GetAttr("max_length", &max_length_));
   }
 
- private:
-  int64 max_length_;
+ pr vate:
+   nt64 max_length_;
 
-  void Compute(OpKernelContext *context) override {
-    ComputeFixedLengthTensor<IndexType, ValueType, true>(context, max_length_);
+  vo d Compute(OpKernelContext *context) overr de {
+    ComputeF xedLengthTensor< ndexType, ValueType, true>(context, max_length_);
   }
 };
 
-REGISTER_OP("FixedLengthTensorV2")
-.Attr("IndexType: {int64, int32}")
-.Attr("ValueType: {int64, int32, string}")
-.Attr("max_length: int")
-.Input("segment_ids: IndexType")
-.Input("values: ValueType")
-.Input("pad_value: ValueType")
-.Input("batch_size: int64")
-.Output("fixed_length: ValueType")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+REG STER_OP("F xedLengthTensorV2")
+.Attr(" ndexType: { nt64,  nt32}")
+.Attr("ValueType: { nt64,  nt32, str ng}")
+.Attr("max_length:  nt")
+. nput("seg nt_ ds:  ndexType")
+. nput("values: ValueType")
+. nput("pad_value: ValueType")
+. nput("batch_s ze:  nt64")
+.Output("f xed_length: ValueType")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
 
-A tensorflow OP to convert variable length segments into fixed length tensor.
+A tensorflow OP to convert var able length seg nts  nto f xed length tensor.
 
 Attr
-  max_length: The size of the inner most (i.e. last) dimension.
+  max_length: T  s ze of t   nner most ( .e. last) d  ns on.
 
-Input
-  segment_ids: 1D input tensor containing the sorted segment_ids.
-  values: 1D input tensor containing the values.
-  pad_value: The value used for padding the fixed length tensor.
-  batch_size: The batch size to use.
+ nput
+  seg nt_ ds: 1D  nput tensor conta n ng t  sorted seg nt_ ds.
+  values: 1D  nput tensor conta n ng t  values.
+  pad_value: T  value used for padd ng t  f xed length tensor.
+  batch_s ze: T  batch s ze to use.
 
 Outputs
-  fixed_length: A fixed length tensor of size [batch_size, max_length].
+  f xed_length: A f xed length tensor of s ze [batch_s ze, max_length].
 )doc");
 
-template<typename IndexType, typename ValueType>
-class FixedLengthTensorV2: public OpKernel {
- public:
-  explicit FixedLengthTensorV2(OpKernelConstruction *context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("max_length", &max_length_));
+template<typena   ndexType, typena  ValueType>
+class F xedLengthTensorV2: publ c OpKernel {
+ publ c:
+  expl c  F xedLengthTensorV2(OpKernelConstruct on *context) : OpKernel(context) {
+    OP_REQU RES_OK(context, context->GetAttr("max_length", &max_length_));
   }
 
- private:
-  int64 max_length_;
+ pr vate:
+   nt64 max_length_;
 
-  void Compute(OpKernelContext *context) override {
-    ComputeFixedLengthTensor<IndexType, ValueType, false>(context, max_length_);
+  vo d Compute(OpKernelContext *context) overr de {
+    ComputeF xedLengthTensor< ndexType, ValueType, false>(context, max_length_);
   }
 };
 
-#define REGISTER_SPARSE_TO_FIXED_LENGTH(IndexType, ValueType)   \
-  REGISTER_KERNEL_BUILDER(                                      \
-    Name("FixedLengthTensor")                                   \
-    .Device(DEVICE_CPU)                                         \
-    .TypeConstraint<IndexType>("IndexType")                     \
-    .TypeConstraint<ValueType>("ValueType"),                    \
-    FixedLengthTensor<IndexType, ValueType>);                   \
+#def ne REG STER_SPARSE_TO_F XED_LENGTH( ndexType, ValueType)   \
+  REG STER_KERNEL_BU LDER(                                      \
+    Na ("F xedLengthTensor")                                   \
+    .Dev ce(DEV CE_CPU)                                         \
+    .TypeConstra nt< ndexType>(" ndexType")                     \
+    .TypeConstra nt<ValueType>("ValueType"),                    \
+    F xedLengthTensor< ndexType, ValueType>);                   \
                                                                 \
-  REGISTER_KERNEL_BUILDER(                                      \
-    Name("FixedLengthTensorV2")                                 \
-    .Device(DEVICE_CPU)                                         \
-    .TypeConstraint<IndexType>("IndexType")                     \
-    .TypeConstraint<ValueType>("ValueType"),                    \
-    FixedLengthTensorV2<IndexType, ValueType>);                 \
+  REG STER_KERNEL_BU LDER(                                      \
+    Na ("F xedLengthTensorV2")                                 \
+    .Dev ce(DEV CE_CPU)                                         \
+    .TypeConstra nt< ndexType>(" ndexType")                     \
+    .TypeConstra nt<ValueType>("ValueType"),                    \
+    F xedLengthTensorV2< ndexType, ValueType>);                 \
 
-REGISTER_SPARSE_TO_FIXED_LENGTH(int64, int64)
-REGISTER_SPARSE_TO_FIXED_LENGTH(int64, int32)
-REGISTER_SPARSE_TO_FIXED_LENGTH(int64, string)
-REGISTER_SPARSE_TO_FIXED_LENGTH(int32, int64)
-REGISTER_SPARSE_TO_FIXED_LENGTH(int32, int32)
-REGISTER_SPARSE_TO_FIXED_LENGTH(int32, string)
+REG STER_SPARSE_TO_F XED_LENGTH( nt64,  nt64)
+REG STER_SPARSE_TO_F XED_LENGTH( nt64,  nt32)
+REG STER_SPARSE_TO_F XED_LENGTH( nt64, str ng)
+REG STER_SPARSE_TO_F XED_LENGTH( nt32,  nt64)
+REG STER_SPARSE_TO_F XED_LENGTH( nt32,  nt32)
+REG STER_SPARSE_TO_F XED_LENGTH( nt32, str ng)

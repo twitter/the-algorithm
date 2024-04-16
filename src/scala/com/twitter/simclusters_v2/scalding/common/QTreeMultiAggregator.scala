@@ -1,30 +1,30 @@
-package com.twitter.simclusters_v2.scalding.common
+package com.tw ter.s mclusters_v2.scald ng.common
 
-import com.twitter.algebird._
+ mport com.tw ter.algeb rd._
 
 /**
- * The reason of creating this class is that we need multiple percentiles and current
- * implementations need one QTree per percentile which is unnecessary. This class gets multiple
- * percentiles from the same QTree.
+ * T  reason of creat ng t  class  s that   need mult ple percent les and current
+ *  mple ntat ons need one QTree per percent le wh ch  s unnecessary. T  class gets mult ple
+ * percent les from t  sa  QTree.
  */
-case class QTreeMultiAggregator[T](percentiles: Seq[Double])(implicit val num: Numeric[T])
-    extends Aggregator[T, QTree[Unit], Map[String, Double]]
-    with QTreeAggregatorLike[T] {
+case class QTreeMult Aggregator[T](percent les: Seq[Double])( mpl c  val num: Nu r c[T])
+    extends Aggregator[T, QTree[Un ], Map[Str ng, Double]]
+    w h QTreeAggregatorL ke[T] {
 
-  require(
-    percentiles.forall(p => p >= 0.0 && p <= 1.0),
-    "The given percentile must be of the form 0 <= p <= 1.0"
+  requ re(
+    percent les.forall(p => p >= 0.0 && p <= 1.0),
+    "T  g ven percent le must be of t  form 0 <= p <= 1.0"
   )
 
-  override def percentile: Double = 0.0 // Useless but needed for the base class
+  overr de def percent le: Double = 0.0 // Useless but needed for t  base class
 
-  override def k: Int = QTreeAggregator.DefaultK
+  overr de def k:  nt = QTreeAggregator.DefaultK
 
-  private def getPercentile(qt: QTree[Unit], p: Double): Double = {
-    val (lower, upper) = qt.quantileBounds(p)
-    (lower + upper) / 2
+  pr vate def getPercent le(qt: QTree[Un ], p: Double): Double = {
+    val (lo r, upper) = qt.quant leBounds(p)
+    (lo r + upper) / 2
   }
 
-  def present(qt: QTree[Unit]): Map[String, Double] =
-    percentiles.map { p => p.toString -> getPercentile(qt, p) }.toMap
+  def present(qt: QTree[Un ]): Map[Str ng, Double] =
+    percent les.map { p => p.toStr ng -> getPercent le(qt, p) }.toMap
 }

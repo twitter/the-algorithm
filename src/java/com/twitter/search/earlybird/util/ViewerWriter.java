@@ -1,47 +1,47 @@
-package com.twitter.search.earlybird.util;
+package com.tw ter.search.earlyb rd.ut l;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
 /**
- * Interface class for writer.  Writer should be passed in
- * and have these methods.  Currently keeps the hierarchy for
- * completed and valid json, methods mirror the ones found in
- * JsonWriter
- * http://google-gson.googlecode.com/svn/trunk/gson/docs/javadocs/com/google/gson/stream/JsonWriter.html
+ *  nterface class for wr er.  Wr er should be passed  n
+ * and have t se  thods.  Currently keeps t  h erarchy for
+ * completed and val d json,  thods m rror t  ones found  n
+ * JsonWr er
+ * http://google-gson.googlecode.com/svn/trunk/gson/docs/javadocs/com/google/gson/stream/JsonWr er.html
  */
-public interface ViewerWriter {
+publ c  nterface V e rWr er {
   /**
-   * Writes a mark for the beginning of an array.
+   * Wr es a mark for t  beg nn ng of an array.
    */
-  ViewerWriter beginArray() throws IOException;
+  V e rWr er beg nArray() throws  OExcept on;
 
   /**
-   * Writes a mark for the beginning of an object.
+   * Wr es a mark for t  beg nn ng of an object.
    */
-  ViewerWriter beginObject() throws IOException;
+  V e rWr er beg nObject() throws  OExcept on;
 
   /**
-   * Writes a mark for the end of an array.
+   * Wr es a mark for t  end of an array.
    */
-  ViewerWriter endArray() throws IOException;
+  V e rWr er endArray() throws  OExcept on;
 
   /**
-   * Writes a mark for the end of an object.
+   * Wr es a mark for t  end of an object.
    */
-  ViewerWriter endObject() throws IOException;
+  V e rWr er endObject() throws  OExcept on;
 
   /**
-   * Writes the name (key) of a property.
+   * Wr es t  na  (key) of a property.
    */
-  ViewerWriter name(String field) throws IOException;
+  V e rWr er na (Str ng f eld) throws  OExcept on;
 
   /**
-   * Writes the value of a property.
+   * Wr es t  value of a property.
    */
-  ViewerWriter value(String s) throws IOException;
+  V e rWr er value(Str ng s) throws  OExcept on;
 
   /**
-   * Writes a new line.
+   * Wr es a new l ne.
    */
-  ViewerWriter newline() throws IOException;
+  V e rWr er newl ne() throws  OExcept on;
 }

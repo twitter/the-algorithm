@@ -1,3 +1,3 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata
 
-case class DismissInfo(callbacks: Option[Seq[Callback]])
+case class D sm ss nfo(callbacks: Opt on[Seq[Callback]])

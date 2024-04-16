@@ -1,93 +1,93 @@
-package com.twitter.frigate.pushservice
+package com.tw ter.fr gate.pushserv ce
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finatra.thrift.routing.ThriftWarmup
-import com.twitter.util.logging.Logging
-import com.twitter.inject.utils.Handler
-import com.twitter.frigate.pushservice.{thriftscala => t}
-import com.twitter.frigate.thriftscala.NotificationDisplayLocation
-import com.twitter.util.Stopwatch
-import com.twitter.scrooge.Request
-import com.twitter.scrooge.Response
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+ mport com.google. nject. nject
+ mport com.google. nject.S ngleton
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.f natra.thr ft.rout ng.Thr ftWarmup
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport com.tw ter. nject.ut ls.Handler
+ mport com.tw ter.fr gate.pushserv ce.{thr ftscala => t}
+ mport com.tw ter.fr gate.thr ftscala.Not f cat onD splayLocat on
+ mport com.tw ter.ut l.Stopwatch
+ mport com.tw ter.scrooge.Request
+ mport com.tw ter.scrooge.Response
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.Try
 
 /**
- * Warms up the refresh request path.
- * If service is running as pushservice-send then the warmup does nothing.
+ * Warms up t  refresh request path.
+ *  f serv ce  s runn ng as pushserv ce-send t n t  warmup does noth ng.
  *
- * When making the warmup refresh requests we
- *  - Set skipFilters to true to execute as much of the request path as possible
- *  - Set darkWrite to true to prevent sending a push
+ * W n mak ng t  warmup refresh requests  
+ *  - Set sk pF lters to true to execute as much of t  request path as poss ble
+ *  - Set darkWr e to true to prevent send ng a push
  */
-@Singleton
-class PushMixerThriftServerWarmupHandler @Inject() (
-  warmup: ThriftWarmup,
-  serviceIdentifier: ServiceIdentifier)
+@S ngleton
+class PushM xerThr ftServerWarmupHandler @ nject() (
+  warmup: Thr ftWarmup,
+  serv ce dent f er: Serv ce dent f er)
     extends Handler
-    with Logging {
+    w h Logg ng {
 
-  private val clientId = ClientId("thrift-warmup-client")
+  pr vate val cl ent d = Cl ent d("thr ft-warmup-cl ent")
 
-  def handle(): Unit = {
-    val refreshServices = Set(
-      "frigate-pushservice",
-      "frigate-pushservice-canary",
-      "frigate-pushservice-canary-control",
-      "frigate-pushservice-canary-treatment"
+  def handle(): Un  = {
+    val refreshServ ces = Set(
+      "fr gate-pushserv ce",
+      "fr gate-pushserv ce-canary",
+      "fr gate-pushserv ce-canary-control",
+      "fr gate-pushserv ce-canary-treat nt"
     )
-    val isRefresh = refreshServices.contains(serviceIdentifier.service)
-    if (isRefresh && !serviceIdentifier.isLocal) refreshWarmup()
+    val  sRefresh = refreshServ ces.conta ns(serv ce dent f er.serv ce)
+     f ( sRefresh && !serv ce dent f er. sLocal) refreshWarmup()
   }
 
-  def refreshWarmup(): Unit = {
+  def refreshWarmup(): Un  = {
     val elapsed = Stopwatch.start()
-    val testIds = Seq(
+    val test ds = Seq(
       1,
       2,
       3
     )
     try {
-      clientId.asCurrent {
-        testIds.foreach { id =>
-          val warmupReq = warmupQuery(id)
-          info(s"Sending warm-up request to service with query: $warmupReq")
+      cl ent d.asCurrent {
+        test ds.foreach {  d =>
+          val warmupReq = warmupQuery( d)
+           nfo(s"Send ng warm-up request to serv ce w h query: $warmupReq")
           warmup.sendRequest(
-            method = t.PushService.Refresh,
-            req = Request(t.PushService.Refresh.Args(warmupReq)))(assertWarmupResponse)
+             thod = t.PushServ ce.Refresh,
+            req = Request(t.PushServ ce.Refresh.Args(warmupReq)))(assertWarmupResponse)
         }
       }
     } catch {
       case e: Throwable =>
-        error(e.getMessage, e)
+        error(e.get ssage, e)
     }
-    info(s"Warm up complete. Time taken: ${elapsed().toString}")
+     nfo(s"Warm up complete. T   taken: ${elapsed().toStr ng}")
   }
 
-  private def warmupQuery(userId: Long): t.RefreshRequest = {
+  pr vate def warmupQuery(user d: Long): t.RefreshRequest = {
     t.RefreshRequest(
-      userId = userId,
-      notificationDisplayLocation = NotificationDisplayLocation.PushToMobileDevice,
-      context = Some(
+      user d = user d,
+      not f cat onD splayLocat on = Not f cat onD splayLocat on.PushToMob leDev ce,
+      context = So (
         t.PushContext(
-          skipFilters = Some(true),
-          darkWrite = Some(true)
+          sk pF lters = So (true),
+          darkWr e = So (true)
         ))
     )
   }
 
-  private def assertWarmupResponse(
-    result: Try[Response[t.PushService.Refresh.SuccessType]]
-  ): Unit = {
+  pr vate def assertWarmupResponse(
+    result: Try[Response[t.PushServ ce.Refresh.SuccessType]]
+  ): Un  = {
     result match {
       case Return(_) => // ok
-      case Throw(exception) =>
-        warn("Error performing warm-up request.")
-        error(exception.getMessage, exception)
+      case Throw(except on) =>
+        warn("Error perform ng warm-up request.")
+        error(except on.get ssage, except on)
     }
   }
 }

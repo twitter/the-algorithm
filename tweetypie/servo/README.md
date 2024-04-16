@@ -1,3 +1,3 @@
 # Servo
 
-Servo is a collection of classes and patterns for building services in Scala. It's a grab-bag of code that was deemed useful for service development.
+Servo  s a collect on of classes and patterns for bu ld ng serv ces  n Scala.  's a grab-bag of code that was dee d useful for serv ce develop nt.

@@ -1,22 +1,22 @@
-package com.twitter.search.earlybird_root.quota;
+package com.tw ter.search.earlyb rd_root.quota;
 
-import java.util.Optional;
+ mport java.ut l.Opt onal;
 
-/** A manager that determines how quota restrictions should be applied for each client. */
-public interface ClientIdQuotaManager {
+/** A manager that determ nes how quota restr ct ons should be appl ed for each cl ent. */
+publ c  nterface Cl ent dQuotaManager {
   /**
-   * Returns the quota for the given client, if one is set.
+   * Returns t  quota for t  g ven cl ent,  f one  s set.
    *
-   * @param clientId The ID of the client.
-   * @return The quota for the given client (in requests per second), if one is set.
+   * @param cl ent d T   D of t  cl ent.
+   * @return T  quota for t  g ven cl ent ( n requests per second),  f one  s set.
    */
-  Optional<QuotaInfo> getQuotaForClient(String clientId);
+  Opt onal<Quota nfo> getQuotaForCl ent(Str ng cl ent d);
 
   /**
-   * Returns the common pool quota. A common pool quota must always be set.
+   * Returns t  common pool quota. A common pool quota must always be set.
    *
-   * @return The common pool quota (in requests per second).
+   * @return T  common pool quota ( n requests per second).
    */
-  QuotaInfo getCommonPoolQuota();
+  Quota nfo getCommonPoolQuota();
 
 }

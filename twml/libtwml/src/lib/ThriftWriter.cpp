@@ -1,91 +1,91 @@
-#include "internal/endianutils.h"
-#include "internal/error.h"
-#include "internal/thrift.h"
+# nclude " nternal/end anut ls.h"
+# nclude " nternal/error.h"
+# nclude " nternal/thr ft.h"
 
-#include <twml/ThriftWriter.h>
-#include <twml/Error.h>
-#include <twml/io/IOError.h>
+# nclude <twml/Thr ftWr er.h>
+# nclude <twml/Error.h>
+# nclude <twml/ o/ OError.h>
 
-#include <cstring>
+# nclude <cstr ng>
 
-using namespace twml::io;
+us ng na space twml:: o;
 
-namespace twml {
+na space twml {
 
-template <typename T> inline
-uint64_t ThriftWriter::write(T val) {
-  if (!m_dry_run) {
-    if (m_bytes_written + sizeof(T) > m_buffer_size)
-      throw IOError(IOError::DESTINATION_LARGER_THAN_CAPACITY);
-    memcpy(m_buffer, &val, sizeof(T));
-    m_buffer += sizeof(T);
+template <typena  T>  nl ne
+u nt64_t Thr ftWr er::wr e(T val) {
+   f (!m_dry_run) {
+     f (m_bytes_wr ten + s zeof(T) > m_buffer_s ze)
+      throw  OError( OError::DEST NAT ON_LARGER_THAN_CAPAC TY);
+     mcpy(m_buffer, &val, s zeof(T));
+    m_buffer += s zeof(T);
   }
-  m_bytes_written += sizeof(T);
-  return sizeof(T);
+  m_bytes_wr ten += s zeof(T);
+  return s zeof(T);
 }
 
-TWMLAPI uint64_t ThriftWriter::getBytesWritten() {
-  return m_bytes_written;
+TWMLAP  u nt64_t Thr ftWr er::getBytesWr ten() {
+  return m_bytes_wr ten;
 }
 
-TWMLAPI uint64_t ThriftWriter::writeStructFieldHeader(int8_t field_type, int16_t field_id) {
-  return writeInt8(field_type) + writeInt16(field_id);
+TWMLAP  u nt64_t Thr ftWr er::wr eStructF eld ader( nt8_t f eld_type,  nt16_t f eld_ d) {
+  return wr e nt8(f eld_type) + wr e nt16(f eld_ d);
 }
 
-TWMLAPI uint64_t ThriftWriter::writeStructStop() {
-  return writeInt8(static_cast<int8_t>(TTYPE_STOP));
+TWMLAP  u nt64_t Thr ftWr er::wr eStructStop() {
+  return wr e nt8(stat c_cast< nt8_t>(TTYPE_STOP));
 }
 
-TWMLAPI uint64_t ThriftWriter::writeListHeader(int8_t element_type, int32_t num_elems) {
-  return writeInt8(element_type) + writeInt32(num_elems);
+TWMLAP  u nt64_t Thr ftWr er::wr eL st ader( nt8_t ele nt_type,  nt32_t num_elems) {
+  return wr e nt8(ele nt_type) + wr e nt32(num_elems);
 }
 
-TWMLAPI uint64_t ThriftWriter::writeMapHeader(int8_t key_type, int8_t val_type, int32_t num_elems) {
-  return writeInt8(key_type) + writeInt8(val_type) + writeInt32(num_elems);
+TWMLAP  u nt64_t Thr ftWr er::wr eMap ader( nt8_t key_type,  nt8_t val_type,  nt32_t num_elems) {
+  return wr e nt8(key_type) + wr e nt8(val_type) + wr e nt32(num_elems);
 }
 
-TWMLAPI uint64_t ThriftWriter::writeDouble(double val) {
-  int64_t bin_value;
-  memcpy(&bin_value, &val, sizeof(int64_t));
-  return writeInt64(bin_value);
+TWMLAP  u nt64_t Thr ftWr er::wr eDouble(double val) {
+   nt64_t b n_value;
+   mcpy(&b n_value, &val, s zeof( nt64_t));
+  return wr e nt64(b n_value);
 }
 
-TWMLAPI uint64_t ThriftWriter::writeInt8(int8_t val) {
-  return write(val);
+TWMLAP  u nt64_t Thr ftWr er::wr e nt8( nt8_t val) {
+  return wr e(val);
 }
 
-TWMLAPI uint64_t ThriftWriter::writeInt16(int16_t val) {
-  return write(betoh16(val));
+TWMLAP  u nt64_t Thr ftWr er::wr e nt16( nt16_t val) {
+  return wr e(betoh16(val));
 }
 
-TWMLAPI uint64_t ThriftWriter::writeInt32(int32_t val) {
-  return write(betoh32(val));
+TWMLAP  u nt64_t Thr ftWr er::wr e nt32( nt32_t val) {
+  return wr e(betoh32(val));
 }
 
-TWMLAPI uint64_t ThriftWriter::writeInt64(int64_t val) {
-  return write(betoh64(val));
+TWMLAP  u nt64_t Thr ftWr er::wr e nt64( nt64_t val) {
+  return wr e(betoh64(val));
 }
 
-TWMLAPI uint64_t ThriftWriter::writeBinary(const uint8_t *bytes, int32_t num_bytes) {
-  writeInt32(num_bytes);
+TWMLAP  u nt64_t Thr ftWr er::wr eB nary(const u nt8_t *bytes,  nt32_t num_bytes) {
+  wr e nt32(num_bytes);
 
-  if (!m_dry_run) {
-    if (m_bytes_written + num_bytes > m_buffer_size)
-      throw IOError(IOError::DESTINATION_LARGER_THAN_CAPACITY);
-    memcpy(m_buffer, bytes, num_bytes);
+   f (!m_dry_run) {
+     f (m_bytes_wr ten + num_bytes > m_buffer_s ze)
+      throw  OError( OError::DEST NAT ON_LARGER_THAN_CAPAC TY);
+     mcpy(m_buffer, bytes, num_bytes);
     m_buffer += num_bytes;
   }
-  m_bytes_written += num_bytes;
+  m_bytes_wr ten += num_bytes;
 
   return 4 + num_bytes;
 }
 
-TWMLAPI uint64_t ThriftWriter::writeString(std::string str) {
-  return writeBinary(reinterpret_cast<const uint8_t *>(str.data()), str.length());
+TWMLAP  u nt64_t Thr ftWr er::wr eStr ng(std::str ng str) {
+  return wr eB nary(re nterpret_cast<const u nt8_t *>(str.data()), str.length());
 }
 
-TWMLAPI uint64_t ThriftWriter::writeBool(bool val) {
-  return write(val);
+TWMLAP  u nt64_t Thr ftWr er::wr eBool(bool val) {
+  return wr e(val);
 }
 
-}  // namespace twml
+}  // na space twml

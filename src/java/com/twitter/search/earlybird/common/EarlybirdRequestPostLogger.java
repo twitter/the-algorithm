@@ -1,37 +1,37 @@
-package com.twitter.search.earlybird.common;
+package com.tw ter.search.earlyb rd.common;
 
-import com.twitter.decider.Decider;
-import com.twitter.search.common.metrics.Timer;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.search.common. tr cs.T  r;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
 
-public final class EarlybirdRequestPostLogger {
-  private final EarlybirdRequestLogger logger;
+publ c f nal class Earlyb rdRequestPostLogger {
+  pr vate f nal Earlyb rdRequestLogger logger;
 
-  public static EarlybirdRequestPostLogger buildForRoot(
-      int latencyWarnThreshold, Decider decider) {
+  publ c stat c Earlyb rdRequestPostLogger bu ldForRoot(
+       nt latencyWarnThreshold, Dec der dec der) {
 
-    EarlybirdRequestLogger requestLogger = EarlybirdRequestLogger.buildForRoot(
-        EarlybirdRequestPostLogger.class.getName(), latencyWarnThreshold, decider);
+    Earlyb rdRequestLogger requestLogger = Earlyb rdRequestLogger.bu ldForRoot(
+        Earlyb rdRequestPostLogger.class.getNa (), latencyWarnThreshold, dec der);
 
-    return new EarlybirdRequestPostLogger(requestLogger);
+    return new Earlyb rdRequestPostLogger(requestLogger);
   }
 
-  public static EarlybirdRequestPostLogger buildForShard(
-      int latencyWarnThreshold, Decider decider) {
+  publ c stat c Earlyb rdRequestPostLogger bu ldForShard(
+       nt latencyWarnThreshold, Dec der dec der) {
 
-    EarlybirdRequestLogger requestLogger = EarlybirdRequestLogger.buildForShard(
-        EarlybirdRequestPostLogger.class.getName(), latencyWarnThreshold, decider);
+    Earlyb rdRequestLogger requestLogger = Earlyb rdRequestLogger.bu ldForShard(
+        Earlyb rdRequestPostLogger.class.getNa (), latencyWarnThreshold, dec der);
 
-    return new EarlybirdRequestPostLogger(requestLogger);
+    return new Earlyb rdRequestPostLogger(requestLogger);
   }
 
-  private EarlybirdRequestPostLogger(EarlybirdRequestLogger logger) {
-    this.logger = logger;
+  pr vate Earlyb rdRequestPostLogger(Earlyb rdRequestLogger logger) {
+    t .logger = logger;
   }
 
-  public void logRequest(EarlybirdRequest request, EarlybirdResponse response, Timer timer) {
-    EarlybirdRequestUtil.updateHitsCounters(request);
-    logger.logRequest(request, response, timer);
+  publ c vo d logRequest(Earlyb rdRequest request, Earlyb rdResponse response, T  r t  r) {
+    Earlyb rdRequestUt l.updateH sCounters(request);
+    logger.logRequest(request, response, t  r);
   }
 }

@@ -1,54 +1,54 @@
-package com.twitter.search.common.relevance.classifiers;
+package com.tw ter.search.common.relevance.class f ers;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.funct on.Funct on;
+ mport java.ut l.stream.Collectors;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.features.TweetTextFeatures;
-import com.twitter.search.common.relevance.features.TweetTextQuality;
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers on;
+ mport com.tw ter.search.common.relevance.ent  es.Tw ter ssage;
+ mport com.tw ter.search.common.relevance.features.T etTextFeatures;
+ mport com.tw ter.search.common.relevance.features.T etTextQual y;
 
 /**
- * Calculates entropy of tweet text based on tokens.
+ * Calculates entropy of t et text based on tokens.
  */
-public class TweetTextEvaluator extends TweetEvaluator {
+publ c class T etTextEvaluator extends T etEvaluator {
 
-  @Override
-  public void evaluate(final TwitterMessage tweet) {
-    for (PenguinVersion penguinVersion : tweet.getSupportedPenguinVersions()) {
-      TweetTextFeatures textFeatures = tweet.getTweetTextFeatures(penguinVersion);
-      TweetTextQuality textQuality = tweet.getTweetTextQuality(penguinVersion);
+  @Overr de
+  publ c vo d evaluate(f nal Tw ter ssage t et) {
+    for (Pengu nVers on pengu nVers on : t et.getSupportedPengu nVers ons()) {
+      T etTextFeatures textFeatures = t et.getT etTextFeatures(pengu nVers on);
+      T etTextQual y textQual y = t et.getT etTextQual y(pengu nVers on);
 
-      double readability = 0;
-      int numKeptWords = textFeatures.getStrippedTokensSize();
-      for (String token : textFeatures.getStrippedTokens()) {
-        readability += token.length();
+      double readab l y = 0;
+       nt numKeptWords = textFeatures.getStr ppedTokensS ze();
+      for (Str ng token : textFeatures.getStr ppedTokens()) {
+        readab l y += token.length();
       }
-      if (numKeptWords > 0) {
-        readability = readability * Math.log(numKeptWords) / numKeptWords;
+       f (numKeptWords > 0) {
+        readab l y = readab l y * Math.log(numKeptWords) / numKeptWords;
       }
-      textQuality.setReadability(readability);
-      textQuality.setEntropy(entropy(textFeatures.getStrippedTokens()));
-      textQuality.setShout(textFeatures.getCaps() / Math.max(textFeatures.getLength(), 1.0d));
+      textQual y.setReadab l y(readab l y);
+      textQual y.setEntropy(entropy(textFeatures.getStr ppedTokens()));
+      textQual y.setShout(textFeatures.getCaps() / Math.max(textFeatures.getLength(), 1.0d));
     }
   }
 
-  private static double entropy(List<String> tokens) {
-    Map<String, Long> tokenCounts =
-        tokens.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-    int numItems = tokens.size();
+  pr vate stat c double entropy(L st<Str ng> tokens) {
+    Map<Str ng, Long> tokenCounts =
+        tokens.stream().collect(Collectors.group ngBy(Funct on. dent y(), Collectors.count ng()));
+     nt num ems = tokens.s ze();
 
     double entropy = 0;
     for (long count : tokenCounts.values()) {
-      double prob = (double) count / numItems;
+      double prob = (double) count / num ems;
       entropy -= prob * log2(prob);
     }
     return entropy;
   }
 
-  private static double log2(double n) {
+  pr vate stat c double log2(double n) {
     return Math.log(n) / Math.log(2);
   }
 }

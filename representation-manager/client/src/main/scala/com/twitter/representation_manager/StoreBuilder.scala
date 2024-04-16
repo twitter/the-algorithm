@@ -1,206 +1,206 @@
-package com.twitter.representation_manager
+package com.tw ter.representat on_manager
 
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.hermit.store.common.ObservedCachedReadableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.representation_manager.config.ClientConfig
-import com.twitter.representation_manager.config.DisabledInMemoryCacheParams
-import com.twitter.representation_manager.config.EnabledInMemoryCacheParams
-import com.twitter.representation_manager.thriftscala.SimClustersEmbeddingView
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.LocaleEntityId
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.TopicId
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.strato.thrift.ScroogeConvImplicits._
+ mport com.tw ter.f nagle. mcac d.{Cl ent =>  mcac dCl ent}
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.store.strato.StratoFetchableStore
+ mport com.tw ter. rm .store.common.ObservedCac dReadableStore
+ mport com.tw ter. rm .store.common.ObservedReadableStore
+ mport com.tw ter.representat on_manager.conf g.Cl entConf g
+ mport com.tw ter.representat on_manager.conf g.D sabled n moryCac Params
+ mport com.tw ter.representat on_manager.conf g.Enabled n moryCac Params
+ mport com.tw ter.representat on_manager.thr ftscala.S mClustersEmbedd ngV ew
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.s mclusters_v2.thr ftscala.LocaleEnt y d
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng d
+ mport com.tw ter.s mclusters_v2.thr ftscala.Top c d
+ mport com.tw ter.s mclusters_v2.thr ftscala.{S mClustersEmbedd ng => Thr ftS mClustersEmbedd ng}
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.strato.thr ft.ScroogeConv mpl c s._
 
 /**
- * This is the class that offers features to build readable stores for a given
- * SimClustersEmbeddingView (i.e. embeddingType and modelVersion). It applies ClientConfig
- * for a particular service and build ReadableStores which implement that config.
+ * T   s t  class that offers features to bu ld readable stores for a g ven
+ * S mClustersEmbedd ngV ew ( .e. embedd ngType and modelVers on).   appl es Cl entConf g
+ * for a part cular serv ce and bu ld ReadableStores wh ch  mple nt that conf g.
  */
-class StoreBuilder(
-  clientConfig: ClientConfig,
-  stratoClient: StratoClient,
-  memCachedClient: MemcachedClient,
-  globalStats: StatsReceiver,
+class StoreBu lder(
+  cl entConf g: Cl entConf g,
+  stratoCl ent: StratoCl ent,
+   mCac dCl ent:  mcac dCl ent,
+  globalStats: StatsRece ver,
 ) {
-  private val stats =
-    globalStats.scope("representation_manager_client").scope(this.getClass.getSimpleName)
+  pr vate val stats =
+    globalStats.scope("representat on_manager_cl ent").scope(t .getClass.getS mpleNa )
 
   // Column consts
-  private val ColPathPrefix = "recommendations/representation_manager/"
-  private val SimclustersTweetColPath = ColPathPrefix + "simClustersEmbedding.Tweet"
-  private val SimclustersUserColPath = ColPathPrefix + "simClustersEmbedding.User"
-  private val SimclustersTopicIdColPath = ColPathPrefix + "simClustersEmbedding.TopicId"
-  private val SimclustersLocaleEntityIdColPath =
-    ColPathPrefix + "simClustersEmbedding.LocaleEntityId"
+  pr vate val ColPathPref x = "recom ndat ons/representat on_manager/"
+  pr vate val S mclustersT etColPath = ColPathPref x + "s mClustersEmbedd ng.T et"
+  pr vate val S mclustersUserColPath = ColPathPref x + "s mClustersEmbedd ng.User"
+  pr vate val S mclustersTop c dColPath = ColPathPref x + "s mClustersEmbedd ng.Top c d"
+  pr vate val S mclustersLocaleEnt y dColPath =
+    ColPathPref x + "s mClustersEmbedd ng.LocaleEnt y d"
 
-  def buildSimclustersTweetEmbeddingStore(
-    embeddingColumnView: SimClustersEmbeddingView
-  ): ReadableStore[Long, SimClustersEmbedding] = {
+  def bu ldS mclustersT etEmbedd ngStore(
+    embedd ngColumnV ew: S mClustersEmbedd ngV ew
+  ): ReadableStore[Long, S mClustersEmbedd ng] = {
     val rawStore = StratoFetchableStore
-      .withView[Long, SimClustersEmbeddingView, ThriftSimClustersEmbedding](
-        stratoClient,
-        SimclustersTweetColPath,
-        embeddingColumnView)
-      .mapValues(SimClustersEmbedding(_))
+      .w hV ew[Long, S mClustersEmbedd ngV ew, Thr ftS mClustersEmbedd ng](
+        stratoCl ent,
+        S mclustersT etColPath,
+        embedd ngColumnV ew)
+      .mapValues(S mClustersEmbedd ng(_))
 
-    addCacheLayer(rawStore, embeddingColumnView)
+    addCac Layer(rawStore, embedd ngColumnV ew)
   }
 
-  def buildSimclustersUserEmbeddingStore(
-    embeddingColumnView: SimClustersEmbeddingView
-  ): ReadableStore[Long, SimClustersEmbedding] = {
+  def bu ldS mclustersUserEmbedd ngStore(
+    embedd ngColumnV ew: S mClustersEmbedd ngV ew
+  ): ReadableStore[Long, S mClustersEmbedd ng] = {
     val rawStore = StratoFetchableStore
-      .withView[Long, SimClustersEmbeddingView, ThriftSimClustersEmbedding](
-        stratoClient,
-        SimclustersUserColPath,
-        embeddingColumnView)
-      .mapValues(SimClustersEmbedding(_))
+      .w hV ew[Long, S mClustersEmbedd ngV ew, Thr ftS mClustersEmbedd ng](
+        stratoCl ent,
+        S mclustersUserColPath,
+        embedd ngColumnV ew)
+      .mapValues(S mClustersEmbedd ng(_))
 
-    addCacheLayer(rawStore, embeddingColumnView)
+    addCac Layer(rawStore, embedd ngColumnV ew)
   }
 
-  def buildSimclustersTopicIdEmbeddingStore(
-    embeddingColumnView: SimClustersEmbeddingView
-  ): ReadableStore[TopicId, SimClustersEmbedding] = {
+  def bu ldS mclustersTop c dEmbedd ngStore(
+    embedd ngColumnV ew: S mClustersEmbedd ngV ew
+  ): ReadableStore[Top c d, S mClustersEmbedd ng] = {
     val rawStore = StratoFetchableStore
-      .withView[TopicId, SimClustersEmbeddingView, ThriftSimClustersEmbedding](
-        stratoClient,
-        SimclustersTopicIdColPath,
-        embeddingColumnView)
-      .mapValues(SimClustersEmbedding(_))
+      .w hV ew[Top c d, S mClustersEmbedd ngV ew, Thr ftS mClustersEmbedd ng](
+        stratoCl ent,
+        S mclustersTop c dColPath,
+        embedd ngColumnV ew)
+      .mapValues(S mClustersEmbedd ng(_))
 
-    addCacheLayer(rawStore, embeddingColumnView)
+    addCac Layer(rawStore, embedd ngColumnV ew)
   }
 
-  def buildSimclustersLocaleEntityIdEmbeddingStore(
-    embeddingColumnView: SimClustersEmbeddingView
-  ): ReadableStore[LocaleEntityId, SimClustersEmbedding] = {
+  def bu ldS mclustersLocaleEnt y dEmbedd ngStore(
+    embedd ngColumnV ew: S mClustersEmbedd ngV ew
+  ): ReadableStore[LocaleEnt y d, S mClustersEmbedd ng] = {
     val rawStore = StratoFetchableStore
-      .withView[LocaleEntityId, SimClustersEmbeddingView, ThriftSimClustersEmbedding](
-        stratoClient,
-        SimclustersLocaleEntityIdColPath,
-        embeddingColumnView)
-      .mapValues(SimClustersEmbedding(_))
+      .w hV ew[LocaleEnt y d, S mClustersEmbedd ngV ew, Thr ftS mClustersEmbedd ng](
+        stratoCl ent,
+        S mclustersLocaleEnt y dColPath,
+        embedd ngColumnV ew)
+      .mapValues(S mClustersEmbedd ng(_))
 
-    addCacheLayer(rawStore, embeddingColumnView)
+    addCac Layer(rawStore, embedd ngColumnV ew)
   }
 
-  def buildSimclustersTweetEmbeddingStoreWithEmbeddingIdAsKey(
-    embeddingColumnView: SimClustersEmbeddingView
-  ): ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] = {
+  def bu ldS mclustersT etEmbedd ngStoreW hEmbedd ng dAsKey(
+    embedd ngColumnV ew: S mClustersEmbedd ngV ew
+  ): ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng] = {
     val rawStore = StratoFetchableStore
-      .withView[Long, SimClustersEmbeddingView, ThriftSimClustersEmbedding](
-        stratoClient,
-        SimclustersTweetColPath,
-        embeddingColumnView)
-      .mapValues(SimClustersEmbedding(_))
-    val embeddingIdAsKeyStore = rawStore.composeKeyMapping[SimClustersEmbeddingId] {
-      case SimClustersEmbeddingId(_, _, InternalId.TweetId(tweetId)) =>
-        tweetId
+      .w hV ew[Long, S mClustersEmbedd ngV ew, Thr ftS mClustersEmbedd ng](
+        stratoCl ent,
+        S mclustersT etColPath,
+        embedd ngColumnV ew)
+      .mapValues(S mClustersEmbedd ng(_))
+    val embedd ng dAsKeyStore = rawStore.composeKeyMapp ng[S mClustersEmbedd ng d] {
+      case S mClustersEmbedd ng d(_, _,  nternal d.T et d(t et d)) =>
+        t et d
     }
 
-    addCacheLayer(embeddingIdAsKeyStore, embeddingColumnView)
+    addCac Layer(embedd ng dAsKeyStore, embedd ngColumnV ew)
   }
 
-  def buildSimclustersUserEmbeddingStoreWithEmbeddingIdAsKey(
-    embeddingColumnView: SimClustersEmbeddingView
-  ): ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] = {
+  def bu ldS mclustersUserEmbedd ngStoreW hEmbedd ng dAsKey(
+    embedd ngColumnV ew: S mClustersEmbedd ngV ew
+  ): ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng] = {
     val rawStore = StratoFetchableStore
-      .withView[Long, SimClustersEmbeddingView, ThriftSimClustersEmbedding](
-        stratoClient,
-        SimclustersUserColPath,
-        embeddingColumnView)
-      .mapValues(SimClustersEmbedding(_))
-    val embeddingIdAsKeyStore = rawStore.composeKeyMapping[SimClustersEmbeddingId] {
-      case SimClustersEmbeddingId(_, _, InternalId.UserId(userId)) =>
-        userId
+      .w hV ew[Long, S mClustersEmbedd ngV ew, Thr ftS mClustersEmbedd ng](
+        stratoCl ent,
+        S mclustersUserColPath,
+        embedd ngColumnV ew)
+      .mapValues(S mClustersEmbedd ng(_))
+    val embedd ng dAsKeyStore = rawStore.composeKeyMapp ng[S mClustersEmbedd ng d] {
+      case S mClustersEmbedd ng d(_, _,  nternal d.User d(user d)) =>
+        user d
     }
 
-    addCacheLayer(embeddingIdAsKeyStore, embeddingColumnView)
+    addCac Layer(embedd ng dAsKeyStore, embedd ngColumnV ew)
   }
 
-  def buildSimclustersTopicEmbeddingStoreWithEmbeddingIdAsKey(
-    embeddingColumnView: SimClustersEmbeddingView
-  ): ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] = {
+  def bu ldS mclustersTop cEmbedd ngStoreW hEmbedd ng dAsKey(
+    embedd ngColumnV ew: S mClustersEmbedd ngV ew
+  ): ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng] = {
     val rawStore = StratoFetchableStore
-      .withView[TopicId, SimClustersEmbeddingView, ThriftSimClustersEmbedding](
-        stratoClient,
-        SimclustersTopicIdColPath,
-        embeddingColumnView)
-      .mapValues(SimClustersEmbedding(_))
-    val embeddingIdAsKeyStore = rawStore.composeKeyMapping[SimClustersEmbeddingId] {
-      case SimClustersEmbeddingId(_, _, InternalId.TopicId(topicId)) =>
-        topicId
+      .w hV ew[Top c d, S mClustersEmbedd ngV ew, Thr ftS mClustersEmbedd ng](
+        stratoCl ent,
+        S mclustersTop c dColPath,
+        embedd ngColumnV ew)
+      .mapValues(S mClustersEmbedd ng(_))
+    val embedd ng dAsKeyStore = rawStore.composeKeyMapp ng[S mClustersEmbedd ng d] {
+      case S mClustersEmbedd ng d(_, _,  nternal d.Top c d(top c d)) =>
+        top c d
     }
 
-    addCacheLayer(embeddingIdAsKeyStore, embeddingColumnView)
+    addCac Layer(embedd ng dAsKeyStore, embedd ngColumnV ew)
   }
 
-  def buildSimclustersTopicIdEmbeddingStoreWithEmbeddingIdAsKey(
-    embeddingColumnView: SimClustersEmbeddingView
-  ): ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] = {
+  def bu ldS mclustersTop c dEmbedd ngStoreW hEmbedd ng dAsKey(
+    embedd ngColumnV ew: S mClustersEmbedd ngV ew
+  ): ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng] = {
     val rawStore = StratoFetchableStore
-      .withView[TopicId, SimClustersEmbeddingView, ThriftSimClustersEmbedding](
-        stratoClient,
-        SimclustersTopicIdColPath,
-        embeddingColumnView)
-      .mapValues(SimClustersEmbedding(_))
-    val embeddingIdAsKeyStore = rawStore.composeKeyMapping[SimClustersEmbeddingId] {
-      case SimClustersEmbeddingId(_, _, InternalId.TopicId(topicId)) =>
-        topicId
+      .w hV ew[Top c d, S mClustersEmbedd ngV ew, Thr ftS mClustersEmbedd ng](
+        stratoCl ent,
+        S mclustersTop c dColPath,
+        embedd ngColumnV ew)
+      .mapValues(S mClustersEmbedd ng(_))
+    val embedd ng dAsKeyStore = rawStore.composeKeyMapp ng[S mClustersEmbedd ng d] {
+      case S mClustersEmbedd ng d(_, _,  nternal d.Top c d(top c d)) =>
+        top c d
     }
 
-    addCacheLayer(embeddingIdAsKeyStore, embeddingColumnView)
+    addCac Layer(embedd ng dAsKeyStore, embedd ngColumnV ew)
   }
 
-  def buildSimclustersLocaleEntityIdEmbeddingStoreWithEmbeddingIdAsKey(
-    embeddingColumnView: SimClustersEmbeddingView
-  ): ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] = {
+  def bu ldS mclustersLocaleEnt y dEmbedd ngStoreW hEmbedd ng dAsKey(
+    embedd ngColumnV ew: S mClustersEmbedd ngV ew
+  ): ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng] = {
     val rawStore = StratoFetchableStore
-      .withView[LocaleEntityId, SimClustersEmbeddingView, ThriftSimClustersEmbedding](
-        stratoClient,
-        SimclustersLocaleEntityIdColPath,
-        embeddingColumnView)
-      .mapValues(SimClustersEmbedding(_))
-    val embeddingIdAsKeyStore = rawStore.composeKeyMapping[SimClustersEmbeddingId] {
-      case SimClustersEmbeddingId(_, _, InternalId.LocaleEntityId(localeEntityId)) =>
-        localeEntityId
+      .w hV ew[LocaleEnt y d, S mClustersEmbedd ngV ew, Thr ftS mClustersEmbedd ng](
+        stratoCl ent,
+        S mclustersLocaleEnt y dColPath,
+        embedd ngColumnV ew)
+      .mapValues(S mClustersEmbedd ng(_))
+    val embedd ng dAsKeyStore = rawStore.composeKeyMapp ng[S mClustersEmbedd ng d] {
+      case S mClustersEmbedd ng d(_, _,  nternal d.LocaleEnt y d(localeEnt y d)) =>
+        localeEnt y d
     }
 
-    addCacheLayer(embeddingIdAsKeyStore, embeddingColumnView)
+    addCac Layer(embedd ng dAsKeyStore, embedd ngColumnV ew)
   }
 
-  private def addCacheLayer[K](
-    rawStore: ReadableStore[K, SimClustersEmbedding],
-    embeddingColumnView: SimClustersEmbeddingView,
-  ): ReadableStore[K, SimClustersEmbedding] = {
-    // Add in-memory caching based on ClientConfig
-    val inMemCacheParams = clientConfig.inMemoryCacheConfig
-      .getCacheSetup(embeddingColumnView.embeddingType, embeddingColumnView.modelVersion)
+  pr vate def addCac Layer[K](
+    rawStore: ReadableStore[K, S mClustersEmbedd ng],
+    embedd ngColumnV ew: S mClustersEmbedd ngV ew,
+  ): ReadableStore[K, S mClustersEmbedd ng] = {
+    // Add  n- mory cach ng based on Cl entConf g
+    val  n mCac Params = cl entConf g. n moryCac Conf g
+      .getCac Setup(embedd ngColumnV ew.embedd ngType, embedd ngColumnV ew.modelVers on)
 
     val statsPerStore = stats
-      .scope(embeddingColumnView.embeddingType.name).scope(embeddingColumnView.modelVersion.name)
+      .scope(embedd ngColumnV ew.embedd ngType.na ).scope(embedd ngColumnV ew.modelVers on.na )
 
-    inMemCacheParams match {
-      case DisabledInMemoryCacheParams =>
+     n mCac Params match {
+      case D sabled n moryCac Params =>
         ObservedReadableStore(
           store = rawStore
         )(statsPerStore)
-      case EnabledInMemoryCacheParams(ttl, maxKeys, cacheName) =>
-        ObservedCachedReadableStore.from[K, SimClustersEmbedding](
+      case Enabled n moryCac Params(ttl, maxKeys, cac Na ) =>
+        ObservedCac dReadableStore.from[K, S mClustersEmbedd ng](
           rawStore,
           ttl = ttl,
           maxKeys = maxKeys,
-          cacheName = cacheName,
-          windowSize = 10000L
+          cac Na  = cac Na ,
+          w ndowS ze = 10000L
         )(statsPerStore)
     }
   }

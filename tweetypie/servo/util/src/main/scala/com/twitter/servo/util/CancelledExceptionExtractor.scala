@@ -1,20 +1,20 @@
-package com.twitter.servo.util
+package com.tw ter.servo.ut l
 
-import com.twitter.finagle.mux.stats.MuxCancelledCategorizer
-import com.twitter.finagle.stats.CancelledCategorizer
-import com.twitter.util.FutureCancelledException
-import com.twitter.util.Throwables.RootCause
+ mport com.tw ter.f nagle.mux.stats.MuxCancelledCategor zer
+ mport com.tw ter.f nagle.stats.CancelledCategor zer
+ mport com.tw ter.ut l.FutureCancelledExcept on
+ mport com.tw ter.ut l.Throwables.RootCause
 
 /**
- * Helper that consolidates various ways (nested and top level) cancel exceptions can be detected.
+ *  lper that consol dates var ous ways (nested and top level) cancel except ons can be detected.
  */
-object CancelledExceptionExtractor {
-  def unapply(e: Throwable): Option[Throwable] = {
+object CancelledExcept onExtractor {
+  def unapply(e: Throwable): Opt on[Throwable] = {
     e match {
-      case _: FutureCancelledException => Some(e)
-      case MuxCancelledCategorizer(cause) => Some(cause)
-      case CancelledCategorizer(cause) => Some(cause)
-      case RootCause(CancelledExceptionExtractor(cause)) => Some(cause)
+      case _: FutureCancelledExcept on => So (e)
+      case MuxCancelledCategor zer(cause) => So (cause)
+      case CancelledCategor zer(cause) => So (cause)
+      case RootCause(CancelledExcept onExtractor(cause)) => So (cause)
       case _ => None
     }
   }

@@ -1,10 +1,10 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/inject:guice",
-        "configapi/configapi-core",
-        "configapi/configapi-decider",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/com/google/ nject:gu ce",
+        "conf gap /conf gap -core",
+        "conf gap /conf gap -dec der",
     ],
 )

@@ -1,17 +1,17 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = False,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "appsec/sanitization-lib/src/main/scala",
-        "src/thrift/com/twitter/expandodo:cards-scala",
-        "stitch/stitch-core",
-        "visibility/lib/src/main/resources/config",
-        "visibility/lib/src/main/scala/com/twitter/visibility",
-        "visibility/lib/src/main/scala/com/twitter/visibility/builder/tweets",
-        "visibility/lib/src/main/scala/com/twitter/visibility/builder/users",
-        "visibility/lib/src/main/scala/com/twitter/visibility/features",
+    str ct_deps = False,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "appsec/san  zat on-l b/src/ma n/scala",
+        "src/thr ft/com/tw ter/expandodo:cards-scala",
+        "st ch/st ch-core",
+        "v s b l y/l b/src/ma n/res ces/conf g",
+        "v s b l y/l b/src/ma n/scala/com/tw ter/v s b l y",
+        "v s b l y/l b/src/ma n/scala/com/tw ter/v s b l y/bu lder/t ets",
+        "v s b l y/l b/src/ma n/scala/com/tw ter/v s b l y/bu lder/users",
+        "v s b l y/l b/src/ma n/scala/com/tw ter/v s b l y/features",
     ],
 )

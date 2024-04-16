@@ -1,28 +1,28 @@
-package com.twitter.search.earlybird.util;
+package com.tw ter.search.earlyb rd.ut l;
 
-import java.text.ParseException;
-import java.util.Date;
+ mport java.text.ParseExcept on;
+ mport java.ut l.Date;
 
-import org.apache.commons.lang3.time.FastDateFormat;
+ mport org.apac .commons.lang3.t  .FastDateFormat;
 
-public final class ScrubGenUtil {
-  public static final FastDateFormat SCRUB_GEN_DATE_FORMAT = FastDateFormat.getInstance("yyyyMMdd");
+publ c f nal class ScrubGenUt l {
+  publ c stat c f nal FastDateFormat SCRUB_GEN_DATE_FORMAT = FastDateFormat.get nstance("yyyyMMdd");
 
-  private ScrubGenUtil() { }
+  pr vate ScrubGenUt l() { }
 
   /**
-   * Helper method to parse a scrub gen from String to date
+   *  lper  thod to parse a scrub gen from Str ng to date
    *
    * @param scrubGen
-   * @return scrubGen in Date type
+   * @return scrubGen  n Date type
    */
-  public static Date parseScrubGenToDate(String scrubGen) {
+  publ c stat c Date parseScrubGenToDate(Str ng scrubGen) {
     try {
       return SCRUB_GEN_DATE_FORMAT.parse(scrubGen);
-    } catch (ParseException e) {
-      String msg = "Malformed scrub gen date: " + scrubGen;
-      // If we are running a scrub gen and the date is bad we should quit and not continue.
-      throw new RuntimeException(msg, e);
+    } catch (ParseExcept on e) {
+      Str ng msg = "Malfor d scrub gen date: " + scrubGen;
+      //  f   are runn ng a scrub gen and t  date  s bad   should qu  and not cont nue.
+      throw new Runt  Except on(msg, e);
     }
   }
 }

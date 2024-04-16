@@ -1,89 +1,89 @@
-package com.twitter.follow_recommendations.common.base
+package com.tw ter.follow_recom ndat ons.common.base
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
-import com.twitter.util.Duration
-import com.twitter.util.TimeoutException
-import scala.language.implicitConversions
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.T  outExcept on
+ mport scala.language. mpl c Convers ons
 
-class EnrichedCandidateSource[Target, Candidate](original: CandidateSource[Target, Candidate]) {
+class Enr c dCand dateS ce[Target, Cand date](or g nal: Cand dateS ce[Target, Cand date]) {
 
   /**
-   * Gate the candidate source based on the Predicate of target.
-   * It returns results only if the predicate returns Valid.
+   * Gate t  cand date s ce based on t  Pred cate of target.
+   *   returns results only  f t  pred cate returns Val d.
    *
-   * @param predicate
+   * @param pred cate
    * @return
    */
-  def gate(predicate: Predicate[Target]): CandidateSource[Target, Candidate] = {
-    throw new UnsupportedOperationException()
+  def gate(pred cate: Pred cate[Target]): Cand dateS ce[Target, Cand date] = {
+    throw new UnsupportedOperat onExcept on()
   }
 
-  def observe(statsReceiver: StatsReceiver): CandidateSource[Target, Candidate] = {
-    val originalIdentifier = original.identifier
-    val stats = statsReceiver.scope(originalIdentifier.name)
-    new CandidateSource[Target, Candidate] {
-      val identifier = originalIdentifier
-      override def apply(target: Target): Stitch[Seq[Candidate]] = {
-        StatsUtil.profileStitchSeqResults[Candidate](original(target), stats)
+  def observe(statsRece ver: StatsRece ver): Cand dateS ce[Target, Cand date] = {
+    val or g nal dent f er = or g nal. dent f er
+    val stats = statsRece ver.scope(or g nal dent f er.na )
+    new Cand dateS ce[Target, Cand date] {
+      val  dent f er = or g nal dent f er
+      overr de def apply(target: Target): St ch[Seq[Cand date]] = {
+        StatsUt l.prof leSt chSeqResults[Cand date](or g nal(target), stats)
       }
     }
   }
 
   /**
-   * Map target type into new target type (1 to optional mapping)
+   * Map target type  nto new target type (1 to opt onal mapp ng)
    */
-  def stitchMapKey[Target2](
-    targetMapper: Target2 => Stitch[Option[Target]]
-  ): CandidateSource[Target2, Candidate] = {
-    val targetsMapper: Target2 => Stitch[Seq[Target]] = { target =>
+  def st chMapKey[Target2](
+    targetMapper: Target2 => St ch[Opt on[Target]]
+  ): Cand dateS ce[Target2, Cand date] = {
+    val targetsMapper: Target2 => St ch[Seq[Target]] = { target =>
       targetMapper(target).map(_.toSeq)
     }
-    stitchMapKeys(targetsMapper)
+    st chMapKeys(targetsMapper)
   }
 
   /**
-   * Map target type into new target type (1 to many mapping)
+   * Map target type  nto new target type (1 to many mapp ng)
    */
-  def stitchMapKeys[Target2](
-    targetMapper: Target2 => Stitch[Seq[Target]]
-  ): CandidateSource[Target2, Candidate] = {
-    new CandidateSource[Target2, Candidate] {
-      val identifier = original.identifier
-      override def apply(target: Target2): Stitch[Seq[Candidate]] = {
+  def st chMapKeys[Target2](
+    targetMapper: Target2 => St ch[Seq[Target]]
+  ): Cand dateS ce[Target2, Cand date] = {
+    new Cand dateS ce[Target2, Cand date] {
+      val  dent f er = or g nal. dent f er
+      overr de def apply(target: Target2): St ch[Seq[Cand date]] = {
         for {
           mappedTargets <- targetMapper(target)
-          results <- Stitch.traverse(mappedTargets)(original(_))
-        } yield results.flatten
+          results <- St ch.traverse(mappedTargets)(or g nal(_))
+        } y eld results.flatten
       }
     }
   }
 
   /**
-   * Map target type into new target type (1 to many mapping)
+   * Map target type  nto new target type (1 to many mapp ng)
    */
   def mapKeys[Target2](
     targetMapper: Target2 => Seq[Target]
-  ): CandidateSource[Target2, Candidate] = {
-    val stitchMapper: Target2 => Stitch[Seq[Target]] = { target =>
-      Stitch.value(targetMapper(target))
+  ): Cand dateS ce[Target2, Cand date] = {
+    val st chMapper: Target2 => St ch[Seq[Target]] = { target =>
+      St ch.value(targetMapper(target))
     }
-    stitchMapKeys(stitchMapper)
+    st chMapKeys(st chMapper)
   }
 
   /**
-   * Map candidate types to new type based on candidateMapper
+   * Map cand date types to new type based on cand dateMapper
    */
-  def mapValues[Candidate2](
-    candidateMapper: Candidate => Stitch[Option[Candidate2]]
-  ): CandidateSource[Target, Candidate2] = {
+  def mapValues[Cand date2](
+    cand dateMapper: Cand date => St ch[Opt on[Cand date2]]
+  ): Cand dateS ce[Target, Cand date2] = {
 
-    new CandidateSource[Target, Candidate2] {
-      val identifier = original.identifier
-      override def apply(target: Target): Stitch[Seq[Candidate2]] = {
-        original(target).flatMap { candidates =>
-          val results = Stitch.traverse(candidates)(candidateMapper(_))
+    new Cand dateS ce[Target, Cand date2] {
+      val  dent f er = or g nal. dent f er
+      overr de def apply(target: Target): St ch[Seq[Cand date2]] = {
+        or g nal(target).flatMap { cand dates =>
+          val results = St ch.traverse(cand dates)(cand dateMapper(_))
           results.map(_.flatten)
         }
       }
@@ -91,66 +91,66 @@ class EnrichedCandidateSource[Target, Candidate](original: CandidateSource[Targe
   }
 
   /**
-   * Map candidate types to new type based on candidateMapper
+   * Map cand date types to new type based on cand dateMapper
    */
-  def mapValue[Candidate2](
-    candidateMapper: Candidate => Candidate2
-  ): CandidateSource[Target, Candidate2] = {
-    val stitchMapper: Candidate => Stitch[Option[Candidate2]] = { c =>
-      Stitch.value(Some(candidateMapper(c)))
+  def mapValue[Cand date2](
+    cand dateMapper: Cand date => Cand date2
+  ): Cand dateS ce[Target, Cand date2] = {
+    val st chMapper: Cand date => St ch[Opt on[Cand date2]] = { c =>
+      St ch.value(So (cand dateMapper(c)))
     }
-    mapValues(stitchMapper)
+    mapValues(st chMapper)
   }
 
   /**
-   * This method wraps the candidate source in a designated timeout so that a single candidate
-   * source does not result in a timeout for the entire flow
+   * T   thod wraps t  cand date s ce  n a des gnated t  out so that a s ngle cand date
+   * s ce does not result  n a t  out for t  ent re flow
    */
-  def within(
-    candidateTimeout: Duration,
-    statsReceiver: StatsReceiver
-  ): CandidateSource[Target, Candidate] = {
-    val originalIdentifier = original.identifier
-    val timeoutCounter =
-      statsReceiver.counter(originalIdentifier.name, "timeout")
+  def w h n(
+    cand dateT  out: Durat on,
+    statsRece ver: StatsRece ver
+  ): Cand dateS ce[Target, Cand date] = {
+    val or g nal dent f er = or g nal. dent f er
+    val t  outCounter =
+      statsRece ver.counter(or g nal dent f er.na , "t  out")
 
-    new CandidateSource[Target, Candidate] {
-      val identifier = originalIdentifier
-      override def apply(target: Target): Stitch[Seq[Candidate]] = {
-        original
+    new Cand dateS ce[Target, Cand date] {
+      val  dent f er = or g nal dent f er
+      overr de def apply(target: Target): St ch[Seq[Cand date]] = {
+        or g nal
           .apply(target)
-          .within(candidateTimeout)(com.twitter.finagle.util.DefaultTimer)
+          .w h n(cand dateT  out)(com.tw ter.f nagle.ut l.DefaultT  r)
           .rescue {
-            case _: TimeoutException =>
-              timeoutCounter.incr()
-              Stitch.Nil
+            case _: T  outExcept on =>
+              t  outCounter. ncr()
+              St ch.N l
           }
       }
     }
   }
 
-  def failOpenWithin(
-    candidateTimeout: Duration,
-    statsReceiver: StatsReceiver
-  ): CandidateSource[Target, Candidate] = {
-    val originalIdentifier = original.identifier
-    val timeoutCounter =
-      statsReceiver.counter(originalIdentifier.name, "timeout")
+  def fa lOpenW h n(
+    cand dateT  out: Durat on,
+    statsRece ver: StatsRece ver
+  ): Cand dateS ce[Target, Cand date] = {
+    val or g nal dent f er = or g nal. dent f er
+    val t  outCounter =
+      statsRece ver.counter(or g nal dent f er.na , "t  out")
 
-    new CandidateSource[Target, Candidate] {
-      val identifier = originalIdentifier
-      override def apply(target: Target): Stitch[Seq[Candidate]] = {
-        original
+    new Cand dateS ce[Target, Cand date] {
+      val  dent f er = or g nal dent f er
+      overr de def apply(target: Target): St ch[Seq[Cand date]] = {
+        or g nal
           .apply(target)
-          .within(candidateTimeout)(com.twitter.finagle.util.DefaultTimer)
+          .w h n(cand dateT  out)(com.tw ter.f nagle.ut l.DefaultT  r)
           .handle {
-            case _: TimeoutException =>
-              timeoutCounter.incr()
+            case _: T  outExcept on =>
+              t  outCounter. ncr()
               Seq.empty
-            case e: Exception =>
-              statsReceiver
-                .scope("candidate_source_error").scope(originalIdentifier.name).counter(
-                  e.getClass.getSimpleName).incr
+            case e: Except on =>
+              statsRece ver
+                .scope("cand date_s ce_error").scope(or g nal dent f er.na ).counter(
+                  e.getClass.getS mpleNa ). ncr
               Seq.empty
           }
       }
@@ -158,7 +158,7 @@ class EnrichedCandidateSource[Target, Candidate](original: CandidateSource[Targe
   }
 }
 
-object EnrichedCandidateSource {
-  implicit def toEnriched[K, V](original: CandidateSource[K, V]): EnrichedCandidateSource[K, V] =
-    new EnrichedCandidateSource(original)
+object Enr c dCand dateS ce {
+   mpl c  def toEnr c d[K, V](or g nal: Cand dateS ce[K, V]): Enr c dCand dateS ce[K, V] =
+    new Enr c dCand dateS ce(or g nal)
 }

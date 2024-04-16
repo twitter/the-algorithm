@@ -1,78 +1,78 @@
-package com.twitter.frigate.pushservice.take.predicates.candidate_map
+package com.tw ter.fr gate.pushserv ce.take.pred cates.cand date_map
 
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model._
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.frigate.thriftscala.CommonRecommendationType._
-import com.twitter.hermit.predicate.NamedPredicate
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model._
+ mport com.tw ter.fr gate.pushserv ce.conf g.Conf g
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType._
+ mport com.tw ter. rm .pred cate.Na dPred cate
 
-object SendHandlerCandidatePredicatesMap {
+object SendHandlerCand datePred catesMap {
 
-  def preCandidatePredicates(
-    implicit config: Config
-  ): Map[CommonRecommendationType, List[NamedPredicate[_ <: PushCandidate]]] = {
-    val magicFanoutNewsEventCandidatePredicates =
-      MagicFanoutNewsEventCandidatePredicates(config).preCandidateSpecificPredicates
+  def preCand datePred cates(
+     mpl c  conf g: Conf g
+  ): Map[CommonRecom ndat onType, L st[Na dPred cate[_ <: PushCand date]]] = {
+    val mag cFanoutNewsEventCand datePred cates =
+      Mag cFanoutNewsEventCand datePred cates(conf g).preCand dateSpec f cPred cates
 
-    val scheduledSpaceSubscriberPredicates = ScheduledSpaceSubscriberCandidatePredicates(
-      config).preCandidateSpecificPredicates
+    val sc duledSpaceSubscr berPred cates = Sc duledSpaceSubscr berCand datePred cates(
+      conf g).preCand dateSpec f cPred cates
 
-    val scheduledSpaceSpeakerPredicates = ScheduledSpaceSpeakerCandidatePredicates(
-      config).preCandidateSpecificPredicates
+    val sc duledSpaceSpeakerPred cates = Sc duledSpaceSpeakerCand datePred cates(
+      conf g).preCand dateSpec f cPred cates
 
-    val magicFanoutSportsEventCandidatePredicates =
-      MagicFanoutSportsEventCandidatePredicates(config).preCandidateSpecificPredicates
+    val mag cFanoutSportsEventCand datePred cates =
+      Mag cFanoutSportsEventCand datePred cates(conf g).preCand dateSpec f cPred cates
 
-    val magicFanoutProductLaunchPredicates = MagicFanoutProductLaunchPushCandidatePredicates(
-      config).preCandidateSpecificPredicates
+    val mag cFanoutProductLaunchPred cates = Mag cFanoutProductLaunchPushCand datePred cates(
+      conf g).preCand dateSpec f cPred cates
 
-    val creatorSubscriptionFanoutPredicates = MagicFanouCreatorSubscriptionEventPushPredicates(
-      config).preCandidateSpecificPredicates
+    val creatorSubscr pt onFanoutPred cates = Mag cFanouCreatorSubscr pt onEventPushPred cates(
+      conf g).preCand dateSpec f cPred cates
 
-    val newCreatorFanoutPredicates = MagicFanoutNewCreatorEventPushPredicates(
-      config).preCandidateSpecificPredicates
+    val newCreatorFanoutPred cates = Mag cFanoutNewCreatorEventPushPred cates(
+      conf g).preCand dateSpec f cPred cates
 
     Map(
-      MagicFanoutNewsEvent -> magicFanoutNewsEventCandidatePredicates,
-      ScheduledSpaceSubscriber -> scheduledSpaceSubscriberPredicates,
-      ScheduledSpaceSpeaker -> scheduledSpaceSpeakerPredicates,
-      MagicFanoutSportsEvent -> magicFanoutSportsEventCandidatePredicates,
-      MagicFanoutProductLaunch -> magicFanoutProductLaunchPredicates,
-      NewCreator -> newCreatorFanoutPredicates,
-      CreatorSubscriber -> creatorSubscriptionFanoutPredicates
+      Mag cFanoutNewsEvent -> mag cFanoutNewsEventCand datePred cates,
+      Sc duledSpaceSubscr ber -> sc duledSpaceSubscr berPred cates,
+      Sc duledSpaceSpeaker -> sc duledSpaceSpeakerPred cates,
+      Mag cFanoutSportsEvent -> mag cFanoutSportsEventCand datePred cates,
+      Mag cFanoutProductLaunch -> mag cFanoutProductLaunchPred cates,
+      NewCreator -> newCreatorFanoutPred cates,
+      CreatorSubscr ber -> creatorSubscr pt onFanoutPred cates
     )
   }
 
-  def postCandidatePredicates(
-    implicit config: Config
-  ): Map[CommonRecommendationType, List[NamedPredicate[_ <: PushCandidate]]] = {
-    val magicFanoutNewsEventCandidatePredicates =
-      MagicFanoutNewsEventCandidatePredicates(config).postCandidateSpecificPredicates
+  def postCand datePred cates(
+     mpl c  conf g: Conf g
+  ): Map[CommonRecom ndat onType, L st[Na dPred cate[_ <: PushCand date]]] = {
+    val mag cFanoutNewsEventCand datePred cates =
+      Mag cFanoutNewsEventCand datePred cates(conf g).postCand dateSpec f cPred cates
 
-    val scheduledSpaceSubscriberPredicates = ScheduledSpaceSubscriberCandidatePredicates(
-      config).postCandidateSpecificPredicates
+    val sc duledSpaceSubscr berPred cates = Sc duledSpaceSubscr berCand datePred cates(
+      conf g).postCand dateSpec f cPred cates
 
-    val scheduledSpaceSpeakerPredicates = ScheduledSpaceSpeakerCandidatePredicates(
-      config).postCandidateSpecificPredicates
+    val sc duledSpaceSpeakerPred cates = Sc duledSpaceSpeakerCand datePred cates(
+      conf g).postCand dateSpec f cPred cates
 
-    val magicFanoutSportsEventCandidatePredicates =
-      MagicFanoutSportsEventCandidatePredicates(config).postCandidateSpecificPredicates
-    val magicFanoutProductLaunchPredicates = MagicFanoutProductLaunchPushCandidatePredicates(
-      config).postCandidateSpecificPredicates
-    val creatorSubscriptionFanoutPredicates = MagicFanouCreatorSubscriptionEventPushPredicates(
-      config).postCandidateSpecificPredicates
-    val newCreatorFanoutPredicates = MagicFanoutNewCreatorEventPushPredicates(
-      config).postCandidateSpecificPredicates
+    val mag cFanoutSportsEventCand datePred cates =
+      Mag cFanoutSportsEventCand datePred cates(conf g).postCand dateSpec f cPred cates
+    val mag cFanoutProductLaunchPred cates = Mag cFanoutProductLaunchPushCand datePred cates(
+      conf g).postCand dateSpec f cPred cates
+    val creatorSubscr pt onFanoutPred cates = Mag cFanouCreatorSubscr pt onEventPushPred cates(
+      conf g).postCand dateSpec f cPred cates
+    val newCreatorFanoutPred cates = Mag cFanoutNewCreatorEventPushPred cates(
+      conf g).postCand dateSpec f cPred cates
 
     Map(
-      MagicFanoutNewsEvent -> magicFanoutNewsEventCandidatePredicates,
-      ScheduledSpaceSubscriber -> scheduledSpaceSubscriberPredicates,
-      ScheduledSpaceSpeaker -> scheduledSpaceSpeakerPredicates,
-      MagicFanoutSportsEvent -> magicFanoutSportsEventCandidatePredicates,
-      MagicFanoutProductLaunch -> magicFanoutProductLaunchPredicates,
-      NewCreator -> newCreatorFanoutPredicates,
-      CreatorSubscriber -> creatorSubscriptionFanoutPredicates
+      Mag cFanoutNewsEvent -> mag cFanoutNewsEventCand datePred cates,
+      Sc duledSpaceSubscr ber -> sc duledSpaceSubscr berPred cates,
+      Sc duledSpaceSpeaker -> sc duledSpaceSpeakerPred cates,
+      Mag cFanoutSportsEvent -> mag cFanoutSportsEventCand datePred cates,
+      Mag cFanoutProductLaunch -> mag cFanoutProductLaunchPred cates,
+      NewCreator -> newCreatorFanoutPred cates,
+      CreatorSubscr ber -> creatorSubscr pt onFanoutPred cates
     )
   }
 }

@@ -1,43 +1,43 @@
-# GetIntersection
+# Get ntersect on
 
 ## Request and response syntax
 
-A `GetIntersection` call takes as input a `GfsIntersectionRequest` thrift struct. 
+A `Get ntersect on` call takes as  nput a `Gfs ntersect onRequest` thr ft struct. 
 
-```thrift
-struct GfsIntersectionRequest {
-  1: required i64 userId
-  2: required list<i64> candidateUserIds
-  3: required list<FeatureType> featureTypes
+```thr ft
+struct Gfs ntersect onRequest {
+  1: requ red  64 user d
+  2: requ red l st< 64> cand dateUser ds
+  3: requ red l st<FeatureType> featureTypes
 }
 ```
 
-The response is returned in a `GfsIntersectionResponse` thrift struct.
+T  response  s returned  n a `Gfs ntersect onResponse` thr ft struct.
 
-```thrift
-struct GfsIntersectionResponse {
-  1: required i64 userId
-  2: required list<GfsIntersectionResult> results
+```thr ft
+struct Gfs ntersect onResponse {
+  1: requ red  64 user d
+  2: requ red l st<Gfs ntersect onResult> results
 }
 
-struct GfsIntersectionResult {
-  1: required i64 candidateUserId
-  2: required list<IntersectionValue> intersectionValues
+struct Gfs ntersect onResult {
+  1: requ red  64 cand dateUser d
+  2: requ red l st< ntersect onValue>  ntersect onValues
 }
 
-struct IntersectionValue {
-  1: required FeatureType featureType
-  2: optional i32 count
-  3: optional list<i64> intersectionIds
-  4: optional i32 leftNodeDegree
-  5: optional i32 rightNodeDegree
-}(persisted="true")
+struct  ntersect onValue {
+  1: requ red FeatureType featureType
+  2: opt onal  32 count
+  3: opt onal l st< 64>  ntersect on ds
+  4: opt onal  32 leftNodeDegree
+  5: opt onal  32 r ghtNodeDegree
+}(pers sted="true")
 ```
 
-## Behavior
+## Behav or
 
-The `GfsIntersectionResponse` contains in its `results` field a `GfsIntersectionResult` for every candidate in `candidateIds` which contains an  `IntersectionValue` for every `FeatureType` in the request's `featureTypes` field. 
+T  `Gfs ntersect onResponse` conta ns  n  s `results` f eld a `Gfs ntersect onResult` for every cand date  n `cand date ds` wh ch conta ns an  ` ntersect onValue` for every `FeatureType`  n t  request's `featureTypes` f eld. 
 
-The `IntersectionValue` contains the size of the intersection between the `leftEdgeType` edges from `userId` and the `rightEdgeType` edges from `candidateId` in the `count` field, as well as their respective degrees in the graphs in `leftNodeDegree` and `rightNodeDegree` respectively.
+T  ` ntersect onValue` conta ns t  s ze of t   ntersect on bet en t  `leftEdgeType` edges from `user d` and t  `r ghtEdgeType` edges from `cand date d`  n t  `count` f eld, as  ll as t  r respect ve degrees  n t  graphs  n `leftNodeDegree` and `r ghtNodeDegree` respect vely.
 
-**Note:** the `intersectionIds` field currently only contains `Nil`.
+**Note:** t  ` ntersect on ds` f eld currently only conta ns `N l`.

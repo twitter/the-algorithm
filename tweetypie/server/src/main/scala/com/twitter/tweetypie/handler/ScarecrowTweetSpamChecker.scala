@@ -1,105 +1,105 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.finagle.tracing.Trace
-import com.twitter.relevance.feature_store.thriftscala.FeatureData
-import com.twitter.relevance.feature_store.thriftscala.FeatureValue
-import com.twitter.service.gen.scarecrow.thriftscala.TieredAction
-import com.twitter.service.gen.scarecrow.thriftscala.TieredActionResult
-import com.twitter.service.gen.scarecrow.thriftscala.TweetContext
-import com.twitter.service.gen.scarecrow.thriftscala.TweetNew
-import com.twitter.spam.features.thriftscala.SafetyMetaData
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.TweetCreateFailure
-import com.twitter.tweetypie.handler.Spam.Checker
-import com.twitter.tweetypie.repository.TweetSpamCheckRepository
-import com.twitter.tweetypie.thriftscala.TweetCreateState
-import com.twitter.tweetypie.thriftscala.TweetMediaTags
+ mport com.tw ter.f nagle.trac ng.Trace
+ mport com.tw ter.relevance.feature_store.thr ftscala.FeatureData
+ mport com.tw ter.relevance.feature_store.thr ftscala.FeatureValue
+ mport com.tw ter.serv ce.gen.scarecrow.thr ftscala.T eredAct on
+ mport com.tw ter.serv ce.gen.scarecrow.thr ftscala.T eredAct onResult
+ mport com.tw ter.serv ce.gen.scarecrow.thr ftscala.T etContext
+ mport com.tw ter.serv ce.gen.scarecrow.thr ftscala.T etNew
+ mport com.tw ter.spam.features.thr ftscala.Safety taData
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.core.T etCreateFa lure
+ mport com.tw ter.t etyp e.handler.Spam.C cker
+ mport com.tw ter.t etyp e.repos ory.T etSpamC ckRepos ory
+ mport com.tw ter.t etyp e.thr ftscala.T etCreateState
+ mport com.tw ter.t etyp e.thr ftscala.T et d aTags
 
-case class TweetSpamRequest(
-  tweetId: TweetId,
-  userId: UserId,
-  text: String,
-  mediaTags: Option[TweetMediaTags],
-  safetyMetaData: Option[SafetyMetaData],
-  inReplyToTweetId: Option[TweetId],
-  quotedTweetId: Option[TweetId],
-  quotedTweetUserId: Option[UserId])
+case class T etSpamRequest(
+  t et d: T et d,
+  user d: User d,
+  text: Str ng,
+   d aTags: Opt on[T et d aTags],
+  safety taData: Opt on[Safety taData],
+   nReplyToT et d: Opt on[T et d],
+  quotedT et d: Opt on[T et d],
+  quotedT etUser d: Opt on[User d])
 
 /**
- * Use the Scarecrow service as the spam checker for tweets.
+ * Use t  Scarecrow serv ce as t  spam c cker for t ets.
  */
-object ScarecrowTweetSpamChecker {
+object ScarecrowT etSpamC cker {
   val log: Logger = Logger(getClass)
 
-  private def requestToScarecrowTweet(req: TweetSpamRequest): TweetNew = {
-    // compile additional input features for the spam check
-    val mediaTaggedUserIds = {
-      val mediaTags = req.mediaTags.getOrElse(TweetMediaTags())
-      mediaTags.tagMap.values.flatten.flatMap(_.userId).toSet
+  pr vate def requestToScarecrowT et(req: T etSpamRequest): T etNew = {
+    // comp le add  onal  nput features for t  spam c ck
+    val  d aTaggedUser ds = {
+      val  d aTags = req. d aTags.getOrElse(T et d aTags())
+       d aTags.tagMap.values.flatten.flatMap(_.user d).toSet
     }
 
-    val additionalInputFeatures = {
-      val mediaTaggedUserFeatures = if (mediaTaggedUserIds.nonEmpty) {
+    val add  onal nputFeatures = {
+      val  d aTaggedUserFeatures =  f ( d aTaggedUser ds.nonEmpty) {
         Seq(
-          "mediaTaggedUsers" -> FeatureData(Some(FeatureValue.LongSetValue(mediaTaggedUserIds))),
-          "victimIds" -> FeatureData(Some(FeatureValue.LongSetValue(mediaTaggedUserIds)))
+          " d aTaggedUsers" -> FeatureData(So (FeatureValue.LongSetValue( d aTaggedUser ds))),
+          "v ct m ds" -> FeatureData(So (FeatureValue.LongSetValue( d aTaggedUser ds)))
         )
       } else {
         Seq.empty
       }
 
-      val quotedTweetIdFeature = req.quotedTweetId.map { quotedTweetId =>
-        "quotedTweetId" -> FeatureData(Some(FeatureValue.LongValue(quotedTweetId)))
+      val quotedT et dFeature = req.quotedT et d.map { quotedT et d =>
+        "quotedT et d" -> FeatureData(So (FeatureValue.LongValue(quotedT et d)))
       }
 
-      val quotedTweetUserIdFeature = req.quotedTweetUserId.map { quotedTweetUserId =>
-        "quotedTweetUserId" -> FeatureData(Some(FeatureValue.LongValue(quotedTweetUserId)))
+      val quotedT etUser dFeature = req.quotedT etUser d.map { quotedT etUser d =>
+        "quotedT etUser d" -> FeatureData(So (FeatureValue.LongValue(quotedT etUser d)))
       }
 
       val featureMap =
-        (mediaTaggedUserFeatures ++ quotedTweetIdFeature ++ quotedTweetUserIdFeature).toMap
+        ( d aTaggedUserFeatures ++ quotedT et dFeature ++ quotedT etUser dFeature).toMap
 
-      if (featureMap.nonEmpty) Some(featureMap) else None
+       f (featureMap.nonEmpty) So (featureMap) else None
     }
 
-    TweetNew(
-      id = req.tweetId,
-      userId = req.userId,
+    T etNew(
+       d = req.t et d,
+      user d = req.user d,
       text = req.text,
-      additionalInputFeatures = additionalInputFeatures,
-      safetyMetaData = req.safetyMetaData,
-      inReplyToStatusId = req.inReplyToTweetId
+      add  onal nputFeatures = add  onal nputFeatures,
+      safety taData = req.safety taData,
+       nReplyToStatus d = req. nReplyToT et d
     )
   }
 
-  private def tieredActionHandler(stats: StatsReceiver): Checker[TieredAction] =
+  pr vate def t eredAct onHandler(stats: StatsRece ver): C cker[T eredAct on] =
     Spam.handleScarecrowResult(stats) {
-      case (TieredActionResult.NotSpam, _, _) => Spam.AllowFuture
-      case (TieredActionResult.SilentFail, _, _) => Spam.SilentFailFuture
-      case (TieredActionResult.DenyByIpiPolicy, _, _) => Spam.DisabledByIpiPolicyFuture
-      case (TieredActionResult.UrlSpam, _, denyMessage) =>
-        Future.exception(TweetCreateFailure.State(TweetCreateState.UrlSpam, denyMessage))
-      case (TieredActionResult.Deny, _, denyMessage) =>
-        Future.exception(TweetCreateFailure.State(TweetCreateState.Spam, denyMessage))
-      case (TieredActionResult.Captcha, _, denyMessage) =>
-        Future.exception(TweetCreateFailure.State(TweetCreateState.SpamCaptcha, denyMessage))
-      case (TieredActionResult.RateLimit, _, denyMessage) =>
-        Future.exception(
-          TweetCreateFailure.State(TweetCreateState.SafetyRateLimitExceeded, denyMessage))
-      case (TieredActionResult.Bounce, Some(b), _) =>
-        Future.exception(TweetCreateFailure.Bounced(b))
+      case (T eredAct onResult.NotSpam, _, _) => Spam.AllowFuture
+      case (T eredAct onResult.S lentFa l, _, _) => Spam.S lentFa lFuture
+      case (T eredAct onResult.DenyBy p Pol cy, _, _) => Spam.D sabledBy p Pol cyFuture
+      case (T eredAct onResult.UrlSpam, _, deny ssage) =>
+        Future.except on(T etCreateFa lure.State(T etCreateState.UrlSpam, deny ssage))
+      case (T eredAct onResult.Deny, _, deny ssage) =>
+        Future.except on(T etCreateFa lure.State(T etCreateState.Spam, deny ssage))
+      case (T eredAct onResult.Captcha, _, deny ssage) =>
+        Future.except on(T etCreateFa lure.State(T etCreateState.SpamCaptcha, deny ssage))
+      case (T eredAct onResult.RateL m , _, deny ssage) =>
+        Future.except on(
+          T etCreateFa lure.State(T etCreateState.SafetyRateL m Exceeded, deny ssage))
+      case (T eredAct onResult.Bounce, So (b), _) =>
+        Future.except on(T etCreateFa lure.Bounced(b))
     }
 
-  def fromSpamCheckRepository(
-    stats: StatsReceiver,
-    repo: TweetSpamCheckRepository.Type
-  ): Spam.Checker[TweetSpamRequest] = {
-    val handler = tieredActionHandler(stats)
+  def fromSpamC ckRepos ory(
+    stats: StatsRece ver,
+    repo: T etSpamC ckRepos ory.Type
+  ): Spam.C cker[T etSpamRequest] = {
+    val handler = t eredAct onHandler(stats)
     req => {
-      Trace.record("com.twitter.tweetypie.ScarecrowTweetSpamChecker.userId=" + req.userId)
-      Stitch.run(repo(requestToScarecrowTweet(req), TweetContext.Creation)).flatMap { resp =>
-        handler(resp.tieredAction)
+      Trace.record("com.tw ter.t etyp e.ScarecrowT etSpamC cker.user d=" + req.user d)
+      St ch.run(repo(requestToScarecrowT et(req), T etContext.Creat on)).flatMap { resp =>
+        handler(resp.t eredAct on)
       }
     }
   }

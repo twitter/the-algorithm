@@ -1,15 +1,15 @@
-package com.twitter.search.common.relevance.features;
+package com.tw ter.search.common.relevance.features;
 
-public final class TweetSignatureUtil {
-  private TweetSignatureUtil() {
+publ c f nal class T etS gnatureUt l {
+  pr vate T etS gnatureUt l() {
   }
 
-  /** Converts the signature in args[0] to a TweetIntegerShingleSignature. */
-  public static void main(String[] args) throws Exception {
-    if (args.length < 1) {
-      throw new RuntimeException("Please provide signature value.");
+  /** Converts t  s gnature  n args[0] to a T et ntegerSh ngleS gnature. */
+  publ c stat c vo d ma n(Str ng[] args) throws Except on {
+     f (args.length < 1) {
+      throw new Runt  Except on("Please prov de s gnature value.");
     }
-    int signature = Integer.parseInt(args[0]);
-    System.out.println(TweetIntegerShingleSignature.deserialize(signature).toString());
+     nt s gnature =  nteger.parse nt(args[0]);
+    System.out.pr ntln(T et ntegerSh ngleS gnature.deser al ze(s gnature).toStr ng());
   }
 }

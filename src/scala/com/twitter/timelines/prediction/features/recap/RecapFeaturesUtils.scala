@@ -1,29 +1,29 @@
-package com.twitter.timelines.prediction.features.recap
+package com.tw ter.t  l nes.pred ct on.features.recap
 
-object RecapFeaturesUtils {
-  // This needs to be updated if an engagement model is added or removed from prediction service.
-  val scoreFeatureIdsMap: Map[String, Long] = Map(
-    RecapFeatures.IS_FAVORITED.getFeatureName -> RecapFeatures.PREDICTED_IS_FAVORITED.getFeatureId,
-    RecapFeatures.IS_REPLIED.getFeatureName -> RecapFeatures.PREDICTED_IS_REPLIED.getFeatureId,
-    RecapFeatures.IS_RETWEETED.getFeatureName -> RecapFeatures.PREDICTED_IS_RETWEETED.getFeatureId,
-    RecapFeatures.IS_GOOD_CLICKED_CONVO_DESC_V1.getFeatureName -> RecapFeatures.PREDICTED_IS_GOOD_CLICKED_V1.getFeatureId,
-    RecapFeatures.IS_GOOD_CLICKED_CONVO_DESC_V2.getFeatureName -> RecapFeatures.PREDICTED_IS_GOOD_CLICKED_V2.getFeatureId,
-//    RecapFeatures.IS_NEGATIVE_FEEDBACK_V2.getFeatureName -> RecapFeatures.PREDICTED_IS_NEGATIVE_FEEDBACK_V2.getFeatureId,
-    RecapFeatures.IS_PROFILE_CLICKED_AND_PROFILE_ENGAGED.getFeatureName -> RecapFeatures.PREDICTED_IS_PROFILE_CLICKED_AND_PROFILE_ENGAGED.getFeatureId,
-    RecapFeatures.IS_REPLIED_REPLY_ENGAGED_BY_AUTHOR.getFeatureName -> RecapFeatures.PREDICTED_IS_REPLIED_REPLY_ENGAGED_BY_AUTHOR.getFeatureId
+object RecapFeaturesUt ls {
+  // T  needs to be updated  f an engage nt model  s added or removed from pred ct on serv ce.
+  val scoreFeature dsMap: Map[Str ng, Long] = Map(
+    RecapFeatures. S_FAVOR TED.getFeatureNa  -> RecapFeatures.PRED CTED_ S_FAVOR TED.getFeature d,
+    RecapFeatures. S_REPL ED.getFeatureNa  -> RecapFeatures.PRED CTED_ S_REPL ED.getFeature d,
+    RecapFeatures. S_RETWEETED.getFeatureNa  -> RecapFeatures.PRED CTED_ S_RETWEETED.getFeature d,
+    RecapFeatures. S_GOOD_CL CKED_CONVO_DESC_V1.getFeatureNa  -> RecapFeatures.PRED CTED_ S_GOOD_CL CKED_V1.getFeature d,
+    RecapFeatures. S_GOOD_CL CKED_CONVO_DESC_V2.getFeatureNa  -> RecapFeatures.PRED CTED_ S_GOOD_CL CKED_V2.getFeature d,
+//    RecapFeatures. S_NEGAT VE_FEEDBACK_V2.getFeatureNa  -> RecapFeatures.PRED CTED_ S_NEGAT VE_FEEDBACK_V2.getFeature d,
+    RecapFeatures. S_PROF LE_CL CKED_AND_PROF LE_ENGAGED.getFeatureNa  -> RecapFeatures.PRED CTED_ S_PROF LE_CL CKED_AND_PROF LE_ENGAGED.getFeature d,
+    RecapFeatures. S_REPL ED_REPLY_ENGAGED_BY_AUTHOR.getFeatureNa  -> RecapFeatures.PRED CTED_ S_REPL ED_REPLY_ENGAGED_BY_AUTHOR.getFeature d
   )
 
-  // This needs to be updated if an engagement model is added or removed from prediction service.
-  val labelFeatureIdToScoreFeatureIdsMap: Map[Long, Long] = Map(
-    RecapFeatures.IS_FAVORITED.getFeatureId -> RecapFeatures.PREDICTED_IS_FAVORITED.getFeatureId,
-    RecapFeatures.IS_REPLIED.getFeatureId -> RecapFeatures.PREDICTED_IS_REPLIED.getFeatureId,
-    RecapFeatures.IS_RETWEETED.getFeatureId -> RecapFeatures.PREDICTED_IS_RETWEETED.getFeatureId,
-    RecapFeatures.IS_GOOD_CLICKED_CONVO_DESC_V1.getFeatureId -> RecapFeatures.PREDICTED_IS_GOOD_CLICKED_V1.getFeatureId,
-    RecapFeatures.IS_GOOD_CLICKED_CONVO_DESC_V2.getFeatureId -> RecapFeatures.PREDICTED_IS_GOOD_CLICKED_V2.getFeatureId,
-    //    RecapFeatures.IS_NEGATIVE_FEEDBACK_V2.getFeatureName -> RecapFeatures.PREDICTED_IS_NEGATIVE_FEEDBACK_V2.getFeatureId,
-    RecapFeatures.IS_PROFILE_CLICKED_AND_PROFILE_ENGAGED.getFeatureId -> RecapFeatures.PREDICTED_IS_PROFILE_CLICKED_AND_PROFILE_ENGAGED.getFeatureId,
-    RecapFeatures.IS_REPLIED_REPLY_ENGAGED_BY_AUTHOR.getFeatureId -> RecapFeatures.PREDICTED_IS_REPLIED_REPLY_ENGAGED_BY_AUTHOR.getFeatureId
+  // T  needs to be updated  f an engage nt model  s added or removed from pred ct on serv ce.
+  val labelFeature dToScoreFeature dsMap: Map[Long, Long] = Map(
+    RecapFeatures. S_FAVOR TED.getFeature d -> RecapFeatures.PRED CTED_ S_FAVOR TED.getFeature d,
+    RecapFeatures. S_REPL ED.getFeature d -> RecapFeatures.PRED CTED_ S_REPL ED.getFeature d,
+    RecapFeatures. S_RETWEETED.getFeature d -> RecapFeatures.PRED CTED_ S_RETWEETED.getFeature d,
+    RecapFeatures. S_GOOD_CL CKED_CONVO_DESC_V1.getFeature d -> RecapFeatures.PRED CTED_ S_GOOD_CL CKED_V1.getFeature d,
+    RecapFeatures. S_GOOD_CL CKED_CONVO_DESC_V2.getFeature d -> RecapFeatures.PRED CTED_ S_GOOD_CL CKED_V2.getFeature d,
+    //    RecapFeatures. S_NEGAT VE_FEEDBACK_V2.getFeatureNa  -> RecapFeatures.PRED CTED_ S_NEGAT VE_FEEDBACK_V2.getFeature d,
+    RecapFeatures. S_PROF LE_CL CKED_AND_PROF LE_ENGAGED.getFeature d -> RecapFeatures.PRED CTED_ S_PROF LE_CL CKED_AND_PROF LE_ENGAGED.getFeature d,
+    RecapFeatures. S_REPL ED_REPLY_ENGAGED_BY_AUTHOR.getFeature d -> RecapFeatures.PRED CTED_ S_REPL ED_REPLY_ENGAGED_BY_AUTHOR.getFeature d
   )
 
-  val labelFeatureNames: Seq[String] = scoreFeatureIdsMap.keys.toSeq
+  val labelFeatureNa s: Seq[Str ng] = scoreFeature dsMap.keys.toSeq
 }

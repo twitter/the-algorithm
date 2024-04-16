@@ -1,12 +1,12 @@
-package com.twitter.cr_mixer.model
+package com.tw ter.cr_m xer.model
 
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.recos.recos_common.thriftscala.SocialProofType
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.recos.recos_common.thr ftscala.Soc alProofType
 
 /***
- * Bind a tweetId with a raw score and social proofs by type
+ * B nd a t et d w h a raw score and soc al proofs by type
  */
-case class TweetWithScoreAndSocialProof(
-  tweetId: TweetId,
+case class T etW hScoreAndSoc alProof(
+  t et d: T et d,
   score: Double,
-  socialProofByType: Map[SocialProofType, Seq[Long]])
+  soc alProofByType: Map[Soc alProofType, Seq[Long]])

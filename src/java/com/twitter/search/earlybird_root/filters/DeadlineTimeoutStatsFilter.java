@@ -1,115 +1,115 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import java.util.concurrent.TimeUnit;
-import javax.inject.Inject;
+ mport java.ut l.concurrent.T  Un ;
+ mport javax. nject. nject;
 
-import scala.Option;
+ mport scala.Opt on;
 
-import com.google.common.base.Preconditions;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.cac .Cac Bu lder;
+ mport com.google.common.cac .Cac Loader;
+ mport com.google.common.cac .Load ngCac ;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.finagle.context.Contexts$;
-import com.twitter.finagle.context.Deadline;
-import com.twitter.finagle.context.Deadline$;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.f nagle.context.Contexts$;
+ mport com.tw ter.f nagle.context.Deadl ne;
+ mport com.tw ter.f nagle.context.Deadl ne$;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
+ mport com.tw ter.search.earlyb rd.common.Cl ent dUt l;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.ut l.Future;
 
 /**
- * A filter for comparing the request deadline (set in the finagle request context) with the request
- * timeout, as set in the EarlybirdRequest.
+ * A f lter for compar ng t  request deadl ne (set  n t  f nagle request context) w h t  request
+ * t  out, as set  n t  Earlyb rdRequest.
  *
- * Tracks stats per client, for (1) requests where the request deadline is set to expire before the
- * EarlybirdRequest timeout, and also (2) requests where the deadline allows enough time for the
- * EarlybirdRequest timeout to kick in.
+ * Tracks stats per cl ent, for (1) requests w re t  request deadl ne  s set to exp re before t 
+ * Earlyb rdRequest t  out, and also (2) requests w re t  deadl ne allows enough t   for t 
+ * Earlyb rdRequest t  out to k ck  n.
  */
-public class DeadlineTimeoutStatsFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+publ c class Deadl neT  outStatsF lter
+    extends S mpleF lter<Earlyb rdRequestContext, Earlyb rdResponse> {
 
-  // All stats maps below are per client id, keyed by the client id.
-  private final LoadingCache<String, SearchCounter> requestTimeoutNotSetStats;
-  private final LoadingCache<String, SearchCounter> finagleDeadlineNotSetStats;
-  private final LoadingCache<String, SearchCounter> finagleDeadlineAndRequestTimeoutNotSetStats;
-  private final LoadingCache<String, SearchTimerStats> requestTimeoutStats;
-  private final LoadingCache<String, SearchTimerStats> finagleDeadlineStats;
-  private final LoadingCache<String, SearchTimerStats> deadlineLargerStats;
-  private final LoadingCache<String, SearchTimerStats> deadlineSmallerStats;
+  // All stats maps below are per cl ent  d, keyed by t  cl ent  d.
+  pr vate f nal Load ngCac <Str ng, SearchCounter> requestT  outNotSetStats;
+  pr vate f nal Load ngCac <Str ng, SearchCounter> f nagleDeadl neNotSetStats;
+  pr vate f nal Load ngCac <Str ng, SearchCounter> f nagleDeadl neAndRequestT  outNotSetStats;
+  pr vate f nal Load ngCac <Str ng, SearchT  rStats> requestT  outStats;
+  pr vate f nal Load ngCac <Str ng, SearchT  rStats> f nagleDeadl neStats;
+  pr vate f nal Load ngCac <Str ng, SearchT  rStats> deadl neLargerStats;
+  pr vate f nal Load ngCac <Str ng, SearchT  rStats> deadl neSmallerStats;
 
-  @Inject
-  public DeadlineTimeoutStatsFilter(Clock clock) {
-    this.requestTimeoutNotSetStats = CacheBuilder.newBuilder().build(
-        new CacheLoader<String, SearchCounter>() {
-          public SearchCounter load(String clientId) {
+  @ nject
+  publ c Deadl neT  outStatsF lter(Clock clock) {
+    t .requestT  outNotSetStats = Cac Bu lder.newBu lder().bu ld(
+        new Cac Loader<Str ng, SearchCounter>() {
+          publ c SearchCounter load(Str ng cl ent d) {
             return SearchCounter.export(
-                "deadline_for_client_id_" + clientId + "_request_timeout_not_set");
+                "deadl ne_for_cl ent_ d_" + cl ent d + "_request_t  out_not_set");
           }
         });
-    this.finagleDeadlineNotSetStats = CacheBuilder.newBuilder().build(
-        new CacheLoader<String, SearchCounter>() {
-          public SearchCounter load(String clientId) {
+    t .f nagleDeadl neNotSetStats = Cac Bu lder.newBu lder().bu ld(
+        new Cac Loader<Str ng, SearchCounter>() {
+          publ c SearchCounter load(Str ng cl ent d) {
             return SearchCounter.export(
-                "deadline_for_client_id_" + clientId + "_finagle_deadline_not_set");
+                "deadl ne_for_cl ent_ d_" + cl ent d + "_f nagle_deadl ne_not_set");
           }
         });
-    this.finagleDeadlineAndRequestTimeoutNotSetStats = CacheBuilder.newBuilder().build(
-        new CacheLoader<String, SearchCounter>() {
-          public SearchCounter load(String clientId) {
+    t .f nagleDeadl neAndRequestT  outNotSetStats = Cac Bu lder.newBu lder().bu ld(
+        new Cac Loader<Str ng, SearchCounter>() {
+          publ c SearchCounter load(Str ng cl ent d) {
             return SearchCounter.export(
-                "deadline_for_client_id_" + clientId
-                    + "_finagle_deadline_and_request_timeout_not_set");
+                "deadl ne_for_cl ent_ d_" + cl ent d
+                    + "_f nagle_deadl ne_and_request_t  out_not_set");
           }
         });
-    this.requestTimeoutStats = CacheBuilder.newBuilder().build(
-        new CacheLoader<String, SearchTimerStats>() {
-          public SearchTimerStats load(String clientId) {
-            return SearchTimerStats.export(
-                "deadline_for_client_id_" + clientId + "_request_timeout",
-                TimeUnit.MILLISECONDS,
+    t .requestT  outStats = Cac Bu lder.newBu lder().bu ld(
+        new Cac Loader<Str ng, SearchT  rStats>() {
+          publ c SearchT  rStats load(Str ng cl ent d) {
+            return SearchT  rStats.export(
+                "deadl ne_for_cl ent_ d_" + cl ent d + "_request_t  out",
+                T  Un .M LL SECONDS,
                 false,
                 true,
                 clock);
           }
         });
-    this.finagleDeadlineStats = CacheBuilder.newBuilder().build(
-        new CacheLoader<String, SearchTimerStats>() {
-          public SearchTimerStats load(String clientId) {
-            return SearchTimerStats.export(
-                "deadline_for_client_id_" + clientId + "_finagle_deadline",
-                TimeUnit.MILLISECONDS,
+    t .f nagleDeadl neStats = Cac Bu lder.newBu lder().bu ld(
+        new Cac Loader<Str ng, SearchT  rStats>() {
+          publ c SearchT  rStats load(Str ng cl ent d) {
+            return SearchT  rStats.export(
+                "deadl ne_for_cl ent_ d_" + cl ent d + "_f nagle_deadl ne",
+                T  Un .M LL SECONDS,
                 false,
                 true,
                 clock);
           }
         });
-    this.deadlineLargerStats = CacheBuilder.newBuilder().build(
-        new CacheLoader<String, SearchTimerStats>() {
-          public SearchTimerStats load(String clientId) {
-            return SearchTimerStats.export(
-                "deadline_for_client_id_" + clientId
-                    + "_finagle_deadline_larger_than_request_timeout",
-                TimeUnit.MILLISECONDS,
+    t .deadl neLargerStats = Cac Bu lder.newBu lder().bu ld(
+        new Cac Loader<Str ng, SearchT  rStats>() {
+          publ c SearchT  rStats load(Str ng cl ent d) {
+            return SearchT  rStats.export(
+                "deadl ne_for_cl ent_ d_" + cl ent d
+                    + "_f nagle_deadl ne_larger_than_request_t  out",
+                T  Un .M LL SECONDS,
                 false,
                 true,
                 clock
             );
           }
         });
-    this.deadlineSmallerStats = CacheBuilder.newBuilder().build(
-        new CacheLoader<String, SearchTimerStats>() {
-          public SearchTimerStats load(String clientId) {
-            return SearchTimerStats.export(
-                "deadline_for_client_id_" + clientId
-                    + "_finagle_deadline_smaller_than_request_timeout",
-                TimeUnit.MILLISECONDS,
+    t .deadl neSmallerStats = Cac Bu lder.newBu lder().bu ld(
+        new Cac Loader<Str ng, SearchT  rStats>() {
+          publ c SearchT  rStats load(Str ng cl ent d) {
+            return SearchT  rStats.export(
+                "deadl ne_for_cl ent_ d_" + cl ent d
+                    + "_f nagle_deadl ne_smaller_than_request_t  out",
+                T  Un .M LL SECONDS,
                 false,
                 true,
                 clock
@@ -118,69 +118,69 @@ public class DeadlineTimeoutStatsFilter
         });
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(
+      Earlyb rdRequestContext requestContext,
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> serv ce) {
 
-    EarlybirdRequest request = requestContext.getRequest();
-    String clientId = ClientIdUtil.getClientIdFromRequest(request);
-    long requestTimeoutMillis = getRequestTimeout(request);
-    Option<Deadline> deadline = Contexts$.MODULE$.broadcast().get(Deadline$.MODULE$);
+    Earlyb rdRequest request = requestContext.getRequest();
+    Str ng cl ent d = Cl ent dUt l.getCl ent dFromRequest(request);
+    long requestT  outM ll s = getRequestT  out(request);
+    Opt on<Deadl ne> deadl ne = Contexts$.MODULE$.broadcast().get(Deadl ne$.MODULE$);
 
-    // Tracking per-client timeouts specified in the EarlybirdRequest.
-    if (requestTimeoutMillis > 0) {
-      requestTimeoutStats.getUnchecked(clientId).timerIncrement(requestTimeoutMillis);
+    // Track ng per-cl ent t  outs spec f ed  n t  Earlyb rdRequest.
+     f (requestT  outM ll s > 0) {
+      requestT  outStats.getUnc cked(cl ent d).t  r ncre nt(requestT  outM ll s);
     } else {
-      requestTimeoutNotSetStats.getUnchecked(clientId).increment();
+      requestT  outNotSetStats.getUnc cked(cl ent d). ncre nt();
     }
 
-    // How much time does this request have, from its deadline start, to the effective deadline.
-    if (deadline.isDefined()) {
-      long deadlineEndTimeMillis = deadline.get().deadline().inMillis();
-      long deadlineStartTimeMillis = deadline.get().timestamp().inMillis();
-      long finagleDeadlineTimeMillis = deadlineEndTimeMillis - deadlineStartTimeMillis;
-      finagleDeadlineStats.getUnchecked(clientId).timerIncrement(finagleDeadlineTimeMillis);
+    // How much t   does t  request have, from  s deadl ne start, to t  effect ve deadl ne.
+     f (deadl ne. sDef ned()) {
+      long deadl neEndT  M ll s = deadl ne.get().deadl ne(). nM ll s();
+      long deadl neStartT  M ll s = deadl ne.get().t  stamp(). nM ll s();
+      long f nagleDeadl neT  M ll s = deadl neEndT  M ll s - deadl neStartT  M ll s;
+      f nagleDeadl neStats.getUnc cked(cl ent d).t  r ncre nt(f nagleDeadl neT  M ll s);
     } else {
-      finagleDeadlineNotSetStats.getUnchecked(clientId).increment();
+      f nagleDeadl neNotSetStats.getUnc cked(cl ent d). ncre nt();
     }
 
-    // Explicitly track when both are not set.
-    if (requestTimeoutMillis <= 0 && deadline.isEmpty()) {
-      finagleDeadlineAndRequestTimeoutNotSetStats.getUnchecked(clientId).increment();
+    // Expl c ly track w n both are not set.
+     f (requestT  outM ll s <= 0 && deadl ne. sEmpty()) {
+      f nagleDeadl neAndRequestT  outNotSetStats.getUnc cked(cl ent d). ncre nt();
     }
 
-    // If both timeout and the deadline are set, track how much over / under we are, when
-    // comparing the deadline, and the EarlybirdRequest timeout.
-    if (requestTimeoutMillis > 0 && deadline.isDefined()) {
-      long deadlineEndTimeMillis = deadline.get().deadline().inMillis();
-      Preconditions.checkState(request.isSetClientRequestTimeMs(),
-          "Expect ClientRequestTimeFilter to always set the clientRequestTimeMs field. Request: %s",
+    //  f both t  out and t  deadl ne are set, track how much over / under   are, w n
+    // compar ng t  deadl ne, and t  Earlyb rdRequest t  out.
+     f (requestT  outM ll s > 0 && deadl ne. sDef ned()) {
+      long deadl neEndT  M ll s = deadl ne.get().deadl ne(). nM ll s();
+      Precond  ons.c ckState(request. sSetCl entRequestT  Ms(),
+          "Expect Cl entRequestT  F lter to always set t  cl entRequestT  Ms f eld. Request: %s",
           request);
-      long requestStartTimeMillis = request.getClientRequestTimeMs();
-      long requestEndTimeMillis = requestStartTimeMillis + requestTimeoutMillis;
+      long requestStartT  M ll s = request.getCl entRequestT  Ms();
+      long requestEndT  M ll s = requestStartT  M ll s + requestT  outM ll s;
 
-      long deadlineDiffMillis = deadlineEndTimeMillis - requestEndTimeMillis;
-      if (deadlineDiffMillis >= 0) {
-        deadlineLargerStats.getUnchecked(clientId).timerIncrement(deadlineDiffMillis);
+      long deadl neD ffM ll s = deadl neEndT  M ll s - requestEndT  M ll s;
+       f (deadl neD ffM ll s >= 0) {
+        deadl neLargerStats.getUnc cked(cl ent d).t  r ncre nt(deadl neD ffM ll s);
       } else {
-        // Track "deadline is smaller" as positive values.
-        deadlineSmallerStats.getUnchecked(clientId).timerIncrement(-deadlineDiffMillis);
+        // Track "deadl ne  s smaller" as pos  ve values.
+        deadl neSmallerStats.getUnc cked(cl ent d).t  r ncre nt(-deadl neD ffM ll s);
       }
     }
 
-    return service.apply(requestContext);
+    return serv ce.apply(requestContext);
   }
 
-  private long getRequestTimeout(EarlybirdRequest request) {
-    if (request.isSetSearchQuery()
-        && request.getSearchQuery().isSetCollectorParams()
-        && request.getSearchQuery().getCollectorParams().isSetTerminationParams()
-        && request.getSearchQuery().getCollectorParams().getTerminationParams().isSetTimeoutMs()) {
+  pr vate long getRequestT  out(Earlyb rdRequest request) {
+     f (request. sSetSearchQuery()
+        && request.getSearchQuery(). sSetCollectorParams()
+        && request.getSearchQuery().getCollectorParams(). sSetTerm nat onParams()
+        && request.getSearchQuery().getCollectorParams().getTerm nat onParams(). sSetT  outMs()) {
 
-      return request.getSearchQuery().getCollectorParams().getTerminationParams().getTimeoutMs();
-    } else if (request.isSetTimeoutMs()) {
-      return request.getTimeoutMs();
+      return request.getSearchQuery().getCollectorParams().getTerm nat onParams().getT  outMs();
+    } else  f (request. sSetT  outMs()) {
+      return request.getT  outMs();
     } else {
       return -1;
     }

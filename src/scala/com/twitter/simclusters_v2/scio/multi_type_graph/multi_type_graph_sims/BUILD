@@ -1,92 +1,92 @@
-scala_library(
-    name = "multi-type-graph-scio-sims-lib",
-    sources = ["*.scala"],
+scala_l brary(
+    na  = "mult -type-graph-sc o-s ms-l b",
+    s ces = ["*.scala"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":right_node_cosine_similarity_scio_adhoc-scala",
-        ":right_node_sim_hash_scio_adhoc-scala",
-        "3rdparty/jvm/com/twitter/bijection:scrooge",
-        "beam-internal/src/main/scala/com/twitter/beam/io/dal",
-        "beam-internal/src/main/scala/com/twitter/beam/io/manhattan",
-        "beam-internal/src/main/scala/com/twitter/beam/job",
-        "beam-internal/src/main/scala/com/twitter/beam/transform",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/runner/dataflow",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/common",
-        "src/scala/com/twitter/wtf/dataflow/cosine_similarity/common",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        ":r ght_node_cos ne_s m lar y_sc o_adhoc-scala",
+        ":r ght_node_s m_hash_sc o_adhoc-scala",
+        "3rdparty/jvm/com/tw ter/b ject on:scrooge",
+        "beam- nternal/src/ma n/scala/com/tw ter/beam/ o/dal",
+        "beam- nternal/src/ma n/scala/com/tw ter/beam/ o/manhattan",
+        "beam- nternal/src/ma n/scala/com/tw ter/beam/job",
+        "beam- nternal/src/ma n/scala/com/tw ter/beam/transform",
+        "beam- nternal/src/ma n/scala/com/tw ter/sc o_ nternal/runner/dataflow",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces",
+        "src/scala/com/tw ter/s mclusters_v2/sc o/mult _type_graph/common",
+        "src/scala/com/tw ter/wtf/dataflow/cos ne_s m lar y/common",
     ],
 )
 
-jvm_binary(
-    name = "multi-type-graph-sim-hash-scio-adhoc-app",
-    main = "com.twitter.simclusters_v2.scio.multi_type_graph.multi_type_graph_sims.RightNodeSimHashScioAdhocApp",
+jvm_b nary(
+    na  = "mult -type-graph-s m-hash-sc o-adhoc-app",
+    ma n = "com.tw ter.s mclusters_v2.sc o.mult _type_graph.mult _type_graph_s ms.R ghtNodeS mHashSc oAdhocApp",
     platform = "java8",
-    dependencies = [
-        ":multi-type-graph-scio-sims-lib",
-        "beam-internal/src/main/scala/com/twitter/beam/runner/dataflow",
+    dependenc es = [
+        ":mult -type-graph-sc o-s ms-l b",
+        "beam- nternal/src/ma n/scala/com/tw ter/beam/runner/dataflow",
     ],
 )
 
-jvm_binary(
-    name = "multi-type-graph-sim-hash-scio-batch-app",
-    main = "com.twitter.simclusters_v2.scio.multi_type_graph.multi_type_graph_sims.RightNodeSimHashScioBatchApp",
+jvm_b nary(
+    na  = "mult -type-graph-s m-hash-sc o-batch-app",
+    ma n = "com.tw ter.s mclusters_v2.sc o.mult _type_graph.mult _type_graph_s ms.R ghtNodeS mHashSc oBatchApp",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":multi-type-graph-scio-sims-lib",
-        "beam-internal/src/main/scala/com/twitter/beam/runner/dataflow",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        ":mult -type-graph-sc o-s ms-l b",
+        "beam- nternal/src/ma n/scala/com/tw ter/beam/runner/dataflow",
     ],
 )
 
-jvm_binary(
-    name = "multi-type-graph-cosine-similarity-scio-adhoc-app",
-    main = "com.twitter.simclusters_v2.scio.multi_type_graph.multi_type_graph_sims.RightNodeCosineSimilarityScioAdhocApp",
+jvm_b nary(
+    na  = "mult -type-graph-cos ne-s m lar y-sc o-adhoc-app",
+    ma n = "com.tw ter.s mclusters_v2.sc o.mult _type_graph.mult _type_graph_s ms.R ghtNodeCos neS m lar ySc oAdhocApp",
     platform = "java8",
-    dependencies = [
-        ":multi-type-graph-scio-sims-lib",
-        "beam-internal/src/main/scala/com/twitter/beam/runner/dataflow",
+    dependenc es = [
+        ":mult -type-graph-sc o-s ms-l b",
+        "beam- nternal/src/ma n/scala/com/tw ter/beam/runner/dataflow",
     ],
 )
 
-jvm_binary(
-    name = "multi-type-graph-cosine-similarity-scio-batch-app",
-    main = "com.twitter.simclusters_v2.scio.multi_type_graph.multi_type_graph_sims.RightNodeCosineSimilarityScioBatchApp",
+jvm_b nary(
+    na  = "mult -type-graph-cos ne-s m lar y-sc o-batch-app",
+    ma n = "com.tw ter.s mclusters_v2.sc o.mult _type_graph.mult _type_graph_s ms.R ghtNodeCos neS m lar ySc oBatchApp",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":multi-type-graph-scio-sims-lib",
-        "beam-internal/src/main/scala/com/twitter/beam/runner/dataflow",
-    ],
-)
-
-create_datasets(
-    base_name = "right_node_sim_hash_scio_adhoc",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.RightNodeSimHashSketch",
-    platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.RightNodeSimHashSketch",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
-    ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        ":mult -type-graph-sc o-s ms-l b",
+        "beam- nternal/src/ma n/scala/com/tw ter/beam/runner/dataflow",
     ],
 )
 
 create_datasets(
-    base_name = "right_node_cosine_similarity_scio_adhoc",
-    key_type = "com.twitter.simclusters_v2.thriftscala.RightNode",
+    base_na  = "r ght_node_s m_hash_sc o_adhoc",
+    java_sc ma = "com.tw ter.s mclusters_v2.thr ftjava.R ghtNodeS mHashSketch",
     platform = "java8",
     role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.MultiTypeGraphInjections.similarRightNodesInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimilarRightNodes",
-    scala_dependencies = [
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    scala_sc ma = "com.tw ter.s mclusters_v2.thr ftscala.R ghtNodeS mHashSketch",
+    seg nt_type = "snapshot",
+    tags = ["bazel-compat ble"],
+    java_dependenc es = [
+        "src/thr ft/com/tw ter/s mclusters_v2:s mclusters_v2-thr ft-java",
+    ],
+    scala_dependenc es = [
+        "src/thr ft/com/tw ter/s mclusters_v2:s mclusters_v2-thr ft-scala",
+    ],
+)
+
+create_datasets(
+    base_na  = "r ght_node_cos ne_s m lar y_sc o_adhoc",
+    key_type = "com.tw ter.s mclusters_v2.thr ftscala.R ghtNode",
+    platform = "java8",
+    role = "cassowary",
+    scala_sc ma = "com.tw ter.s mclusters_v2.hdfs_s ces. nject ons.Mult TypeGraph nject ons.s m larR ghtNodes nject on",
+    seg nt_type = "snapshot",
+    tags = ["bazel-compat ble"],
+    val_type = "com.tw ter.s mclusters_v2.thr ftscala.S m larR ghtNodes",
+    scala_dependenc es = [
+        "src/scala/com/tw ter/scald ng_ nternal/mult format/format",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces/ nject ons",
     ],
 )

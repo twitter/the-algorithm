@@ -1,99 +1,99 @@
-package com.twitter.follow_recommendations.common.candidate_sources.geo
-import com.google.inject.Singleton
-import com.twitter.escherbird.util.stitchcache.StitchCache
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.PopularInGeoProof
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.hermit.model.Algorithm
-import com.twitter.hermit.pop_geo.thriftscala.PopUsersInPlace
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.UniquePopQualityFollowUsersInPlaceClientColumn
-import com.twitter.util.Duration
-import javax.inject.Inject
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.geo
+ mport com.google. nject.S ngleton
+ mport com.tw ter.esc rb rd.ut l.st chcac .St chCac 
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.models.AccountProof
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.Popular nGeoProof
+ mport com.tw ter.follow_recom ndat ons.common.models.Reason
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter. rm .pop_geo.thr ftscala.PopUsers nPlace
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.generated.cl ent.onboard ng.userrecs.Un quePopQual yFollowUsers nPlaceCl entColumn
+ mport com.tw ter.ut l.Durat on
+ mport javax. nject. nject
 
-@Singleton
-class PopGeohashQualityFollowSource @Inject() (
-  popGeoSource: PopGeoQualityFollowSource,
-  statsReceiver: StatsReceiver)
-    extends BasePopGeohashSource(
-      popGeoSource = popGeoSource,
-      statsReceiver = statsReceiver.scope("PopGeohashQualityFollowSource"),
+@S ngleton
+class PopGeohashQual yFollowS ce @ nject() (
+  popGeoS ce: PopGeoQual yFollowS ce,
+  statsRece ver: StatsRece ver)
+    extends BasePopGeohashS ce(
+      popGeoS ce = popGeoS ce,
+      statsRece ver = statsRece ver.scope("PopGeohashQual yFollowS ce"),
     ) {
-  override val identifier: CandidateSourceIdentifier = PopGeohashQualityFollowSource.Identifier
-  override def maxResults(target: Target): Int = {
-    target.params(PopGeoQualityFollowSourceParams.PopGeoSourceMaxResultsPerPrecision)
+  overr de val  dent f er: Cand dateS ce dent f er = PopGeohashQual yFollowS ce. dent f er
+  overr de def maxResults(target: Target):  nt = {
+    target.params(PopGeoQual yFollowS ceParams.PopGeoS ceMaxResultsPerPrec s on)
   }
-  override def minGeohashLength(target: Target): Int = {
-    target.params(PopGeoQualityFollowSourceParams.PopGeoSourceGeoHashMinPrecision)
+  overr de def m nGeohashLength(target: Target):  nt = {
+    target.params(PopGeoQual yFollowS ceParams.PopGeoS ceGeoHashM nPrec s on)
   }
-  override def maxGeohashLength(target: Target): Int = {
-    target.params(PopGeoQualityFollowSourceParams.PopGeoSourceGeoHashMaxPrecision)
+  overr de def maxGeohashLength(target: Target):  nt = {
+    target.params(PopGeoQual yFollowS ceParams.PopGeoS ceGeoHashMaxPrec s on)
   }
-  override def returnResultFromAllPrecision(target: Target): Boolean = {
-    target.params(PopGeoQualityFollowSourceParams.PopGeoSourceReturnFromAllPrecisions)
+  overr de def returnResultFromAllPrec s on(target: Target): Boolean = {
+    target.params(PopGeoQual yFollowS ceParams.PopGeoS ceReturnFromAllPrec s ons)
   }
-  override def candidateSourceEnabled(target: Target): Boolean = {
-    target.params(PopGeoQualityFollowSourceParams.CandidateSourceEnabled)
+  overr de def cand dateS ceEnabled(target: Target): Boolean = {
+    target.params(PopGeoQual yFollowS ceParams.Cand dateS ceEnabled)
   }
 }
 
-object PopGeohashQualityFollowSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.PopGeohashQualityFollow.toString)
+object PopGeohashQual yFollowS ce {
+  val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er(
+    Algor hm.PopGeohashQual yFollow.toStr ng)
 }
 
-object PopGeoQualityFollowSource {
-  val MaxCacheSize = 20000
-  val CacheTTL: Duration = Duration.fromHours(24)
+object PopGeoQual yFollowS ce {
+  val MaxCac S ze = 20000
+  val Cac TTL: Durat on = Durat on.fromH s(24)
   val MaxResults = 200
 }
 
-@Singleton
-class PopGeoQualityFollowSource @Inject() (
-  popGeoQualityFollowClientColumn: UniquePopQualityFollowUsersInPlaceClientColumn,
-  statsReceiver: StatsReceiver,
-) extends CandidateSource[String, CandidateUser] {
+@S ngleton
+class PopGeoQual yFollowS ce @ nject() (
+  popGeoQual yFollowCl entColumn: Un quePopQual yFollowUsers nPlaceCl entColumn,
+  statsRece ver: StatsRece ver,
+) extends Cand dateS ce[Str ng, Cand dateUser] {
 
-  /** @see [[CandidateSourceIdentifier]] */
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    "PopGeoQualityFollowSource")
+  /** @see [[Cand dateS ce dent f er]] */
+  overr de val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er(
+    "PopGeoQual yFollowS ce")
 
-  private val cache = StitchCache[String, Option[PopUsersInPlace]](
-    maxCacheSize = PopGeoQualityFollowSource.MaxCacheSize,
-    ttl = PopGeoQualityFollowSource.CacheTTL,
-    statsReceiver = statsReceiver.scope(identifier.name, "cache"),
-    underlyingCall = (k: String) => {
-      popGeoQualityFollowClientColumn.fetcher
+  pr vate val cac  = St chCac [Str ng, Opt on[PopUsers nPlace]](
+    maxCac S ze = PopGeoQual yFollowS ce.MaxCac S ze,
+    ttl = PopGeoQual yFollowS ce.Cac TTL,
+    statsRece ver = statsRece ver.scope( dent f er.na , "cac "),
+    underly ngCall = (k: Str ng) => {
+      popGeoQual yFollowCl entColumn.fetc r
         .fetch(k)
         .map { result => result.v }
     }
   )
 
-  override def apply(target: String): Stitch[Seq[CandidateUser]] = {
-    val result: Stitch[Option[PopUsersInPlace]] = cache.readThrough(target)
+  overr de def apply(target: Str ng): St ch[Seq[Cand dateUser]] = {
+    val result: St ch[Opt on[PopUsers nPlace]] = cac .readThrough(target)
     result.map { pu =>
-      pu.map { candidates =>
-          candidates.popUsers.sortBy(-_.score).take(PopGeoQualityFollowSource.MaxResults).map {
-            candidate =>
-              CandidateUser(
-                id = candidate.userId,
-                score = Some(candidate.score),
-                reason = Some(
+      pu.map { cand dates =>
+          cand dates.popUsers.sortBy(-_.score).take(PopGeoQual yFollowS ce.MaxResults).map {
+            cand date =>
+              Cand dateUser(
+                 d = cand date.user d,
+                score = So (cand date.score),
+                reason = So (
                   Reason(
-                    Some(
+                    So (
                       AccountProof(
-                        popularInGeoProof = Some(PopularInGeoProof(location = candidates.place))
+                        popular nGeoProof = So (Popular nGeoProof(locat on = cand dates.place))
                       )
                     )
                   )
                 )
               )
           }
-        }.getOrElse(Nil)
+        }.getOrElse(N l)
     }
   }
 }

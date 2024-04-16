@@ -1,15 +1,15 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/java/com/twitter/ml/api:api-base",
-        "src/java/com/twitter/ml/api/constant",
-        "src/scala/com/twitter/ml/api/util",
-        "src/scala/com/twitter/timelines/prediction/common/adapters:base",
-        "src/scala/com/twitter/timelines/prediction/features/common",
-        "src/thrift/com/twitter/ml/api:data-java",
-        "src/thrift/com/twitter/timelines/author_features:thrift-java",
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "src/java/com/tw ter/ml/ap :ap -base",
+        "src/java/com/tw ter/ml/ap /constant",
+        "src/scala/com/tw ter/ml/ap /ut l",
+        "src/scala/com/tw ter/t  l nes/pred ct on/common/adapters:base",
+        "src/scala/com/tw ter/t  l nes/pred ct on/features/common",
+        "src/thr ft/com/tw ter/ml/ap :data-java",
+        "src/thr ft/com/tw ter/t  l nes/author_features:thr ft-java",
     ],
 )

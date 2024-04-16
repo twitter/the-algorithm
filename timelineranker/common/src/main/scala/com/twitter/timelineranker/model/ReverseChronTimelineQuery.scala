@@ -1,23 +1,23 @@
-package com.twitter.timelineranker.model
+package com.tw ter.t  l neranker.model
 
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelineservice.model.TimelineId
+ mport com.tw ter.t  l neranker.{thr ftscala => thr ft}
+ mport com.tw ter.t  l neserv ce.model.T  l ne d
 
-object ReverseChronTimelineQuery {
-  def fromTimelineQuery(query: TimelineQuery): ReverseChronTimelineQuery = {
+object ReverseChronT  l neQuery {
+  def fromT  l neQuery(query: T  l neQuery): ReverseChronT  l neQuery = {
     query match {
-      case q: ReverseChronTimelineQuery => q
-      case _ => throw new IllegalArgumentException(s"Unsupported query type: $query")
+      case q: ReverseChronT  l neQuery => q
+      case _ => throw new  llegalArgu ntExcept on(s"Unsupported query type: $query")
     }
   }
 }
 
-case class ReverseChronTimelineQuery(
-  override val id: TimelineId,
-  override val maxCount: Option[Int] = None,
-  override val range: Option[TimelineRange] = None,
-  override val options: Option[ReverseChronTimelineQueryOptions] = None)
-    extends TimelineQuery(thrift.TimelineQueryType.ReverseChron, id, maxCount, range, options) {
+case class ReverseChronT  l neQuery(
+  overr de val  d: T  l ne d,
+  overr de val maxCount: Opt on[ nt] = None,
+  overr de val range: Opt on[T  l neRange] = None,
+  overr de val opt ons: Opt on[ReverseChronT  l neQueryOpt ons] = None)
+    extends T  l neQuery(thr ft.T  l neQueryType.ReverseChron,  d, maxCount, range, opt ons) {
 
-  throwIfInvalid()
+  throw f nval d()
 }

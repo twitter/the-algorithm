@@ -1,77 +1,77 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import java.util.concurrent.TimeUnit;
-import javax.inject.Inject;
+ mport java.ut l.concurrent.T  Un ;
+ mport javax. nject. nject;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.root.RequestSuccessStats;
-import com.twitter.search.common.util.FinagleUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.util.Future;
-import com.twitter.util.FutureEventListener;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.common.root.RequestSuccessStats;
+ mport com.tw ter.search.common.ut l.F nagleUt l;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.ut l.Future;
+ mport com.tw ter.ut l.FutureEventL stener;
 
-import static com.twitter.search.common.util.earlybird.EarlybirdResponseUtil.responseConsideredFailed;
+ mport stat c com.tw ter.search.common.ut l.earlyb rd.Earlyb rdResponseUt l.responseCons deredFa led;
 
 
 /**
- * Records cancellations, timeouts, and failures for requests that do not go through
- * ScatterGatherService (which also updates these stats, but for different requests).
+ * Records cancellat ons, t  outs, and fa lures for requests that do not go through
+ * ScatterGat rServ ce (wh ch also updates t se stats, but for d fferent requests).
  */
-public class RequestSuccessStatsFilter
-    extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
+publ c class RequestSuccessStatsF lter
+    extends S mpleF lter<Earlyb rdRequest, Earlyb rdResponse> {
 
-  private final RequestSuccessStats stats;
+  pr vate f nal RequestSuccessStats stats;
 
-  @Inject
-  RequestSuccessStatsFilter(RequestSuccessStats stats) {
-    this.stats = stats;
+  @ nject
+  RequestSuccessStatsF lter(RequestSuccessStats stats) {
+    t .stats = stats;
   }
 
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequest request,
-      Service<EarlybirdRequest, EarlybirdResponse> service) {
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(
+      Earlyb rdRequest request,
+      Serv ce<Earlyb rdRequest, Earlyb rdResponse> serv ce) {
 
-    final long startTime = System.nanoTime();
+    f nal long startT   = System.nanoT  ();
 
-    return service.apply(request).addEventListener(
-        new FutureEventListener<EarlybirdResponse>() {
-          @Override
-          public void onSuccess(EarlybirdResponse response) {
+    return serv ce.apply(request).addEventL stener(
+        new FutureEventL stener<Earlyb rdResponse>() {
+          @Overr de
+          publ c vo d onSuccess(Earlyb rdResponse response) {
             boolean success = true;
 
-            if (response.getResponseCode() == EarlybirdResponseCode.CLIENT_CANCEL_ERROR) {
+             f (response.getResponseCode() == Earlyb rdResponseCode.CL ENT_CANCEL_ERROR) {
               success = false;
-              stats.getCancelledRequestCount().increment();
-            } else if (response.getResponseCode() == EarlybirdResponseCode.SERVER_TIMEOUT_ERROR) {
+              stats.getCancelledRequestCount(). ncre nt();
+            } else  f (response.getResponseCode() == Earlyb rdResponseCode.SERVER_T MEOUT_ERROR) {
               success = false;
-              stats.getTimedoutRequestCount().increment();
-            } else if (responseConsideredFailed(response.getResponseCode())) {
+              stats.getT  doutRequestCount(). ncre nt();
+            } else  f (responseCons deredFa led(response.getResponseCode())) {
               success = false;
-              stats.getErroredRequestCount().increment();
+              stats.getErroredRequestCount(). ncre nt();
             }
 
-            long latencyNanos = System.nanoTime() - startTime;
+            long latencyNanos = System.nanoT  () - startT  ;
             stats.getRequestLatencyStats().requestComplete(
-                TimeUnit.NANOSECONDS.toMillis(latencyNanos), 0, success);
+                T  Un .NANOSECONDS.toM ll s(latencyNanos), 0, success);
           }
 
-          @Override
-          public void onFailure(Throwable cause) {
-            long latencyNanos = System.nanoTime() - startTime;
+          @Overr de
+          publ c vo d onFa lure(Throwable cause) {
+            long latencyNanos = System.nanoT  () - startT  ;
             stats.getRequestLatencyStats().requestComplete(
-                TimeUnit.NANOSECONDS.toMillis(latencyNanos), 0, false);
+                T  Un .NANOSECONDS.toM ll s(latencyNanos), 0, false);
 
-            if (FinagleUtil.isCancelException(cause)) {
-              stats.getCancelledRequestCount().increment();
-            } else if (FinagleUtil.isTimeoutException(cause)) {
-              stats.getTimedoutRequestCount().increment();
+             f (F nagleUt l. sCancelExcept on(cause)) {
+              stats.getCancelledRequestCount(). ncre nt();
+            } else  f (F nagleUt l. sT  outExcept on(cause)) {
+              stats.getT  doutRequestCount(). ncre nt();
             } else {
-              stats.getErroredRequestCount().increment();
+              stats.getErroredRequestCount(). ncre nt();
             }
           }
         });

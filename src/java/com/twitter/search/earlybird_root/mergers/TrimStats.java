@@ -1,71 +1,71 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.tw ter.search.earlyb rd_root. rgers;
 
 /**
- * Tracks what situations are encountered when trimming results
+ * Tracks what s uat ons are encountered w n tr mm ng results
  */
-class TrimStats {
-  protected static final TrimStats EMPTY_STATS = new TrimStats();
+class Tr mStats {
+  protected stat c f nal Tr mStats EMPTY_STATS = new Tr mStats();
 
-  private int maxIdFilterCount = 0;
-  private int minIdFilterCount = 0;
-  private int removedDupsCount = 0;
-  private int resultsTruncatedFromTailCount = 0;
+  pr vate  nt max dF lterCount = 0;
+  pr vate  nt m n dF lterCount = 0;
+  pr vate  nt removedDupsCount = 0;
+  pr vate  nt resultsTruncatedFromTa lCount = 0;
 
-  int getMinIdFilterCount() {
-    return minIdFilterCount;
+   nt getM n dF lterCount() {
+    return m n dF lterCount;
   }
 
-  int getRemovedDupsCount() {
+   nt getRemovedDupsCount() {
     return removedDupsCount;
   }
 
-  int getResultsTruncatedFromTailCount() {
-    return resultsTruncatedFromTailCount;
+   nt getResultsTruncatedFromTa lCount() {
+    return resultsTruncatedFromTa lCount;
   }
 
-  void decreaseMaxIdFilterCount() {
-    maxIdFilterCount--;
+  vo d decreaseMax dF lterCount() {
+    max dF lterCount--;
   }
 
-  void decreaseMinIdFilterCount() {
-    minIdFilterCount--;
+  vo d decreaseM n dF lterCount() {
+    m n dF lterCount--;
   }
 
-  public void clearMaxIdFilterCount() {
-    this.maxIdFilterCount = 0;
+  publ c vo d clearMax dF lterCount() {
+    t .max dF lterCount = 0;
   }
 
-  public void clearMinIdFilterCount() {
-    this.minIdFilterCount = 0;
+  publ c vo d clearM n dF lterCount() {
+    t .m n dF lterCount = 0;
   }
 
-  void increaseMaxIdFilterCount() {
-    maxIdFilterCount++;
+  vo d  ncreaseMax dF lterCount() {
+    max dF lterCount++;
   }
 
-  void increaseMinIdFilterCount() {
-    minIdFilterCount++;
+  vo d  ncreaseM n dF lterCount() {
+    m n dF lterCount++;
   }
 
-  void increaseRemovedDupsCount() {
+  vo d  ncreaseRemovedDupsCount() {
     removedDupsCount++;
   }
 
-  void setResultsTruncatedFromTailCount(int resultsTruncatedFromTailCount) {
-    this.resultsTruncatedFromTailCount = resultsTruncatedFromTailCount;
+  vo d setResultsTruncatedFromTa lCount( nt resultsTruncatedFromTa lCount) {
+    t .resultsTruncatedFromTa lCount = resultsTruncatedFromTa lCount;
   }
 
-  @Override
-  public String toString() {
-    StringBuilder builder = new StringBuilder();
+  @Overr de
+  publ c Str ng toStr ng() {
+    Str ngBu lder bu lder = new Str ngBu lder();
 
-    builder.append("TrimStats{");
-    builder.append("maxIdFilterCount=").append(maxIdFilterCount);
-    builder.append(", minIdFilterCount=").append(minIdFilterCount);
-    builder.append(", removedDupsCount=").append(removedDupsCount);
-    builder.append(", resultsTruncatedFromTailCount=").append(resultsTruncatedFromTailCount);
-    builder.append("}");
+    bu lder.append("Tr mStats{");
+    bu lder.append("max dF lterCount=").append(max dF lterCount);
+    bu lder.append(", m n dF lterCount=").append(m n dF lterCount);
+    bu lder.append(", removedDupsCount=").append(removedDupsCount);
+    bu lder.append(", resultsTruncatedFromTa lCount=").append(resultsTruncatedFromTa lCount);
+    bu lder.append("}");
 
-    return builder.toString();
+    return bu lder.toStr ng();
   }
 }

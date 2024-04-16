@@ -1,363 +1,363 @@
-package com.twitter.search.ingester.pipeline.wire;
+package com.tw ter.search. ngester.p pel ne.w re;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import javax.annotation.Nullable;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.L st;
+ mport java.ut l.concurrent.ExecutorServ ce;
+ mport java.ut l.concurrent.Executors;
+ mport javax.annotat on.Nullable;
+ mport javax.nam ng.Context;
+ mport javax.nam ng. n  alContext;
+ mport javax.nam ng.Nam ngExcept on;
 
-import scala.Option;
-import scala.collection.JavaConversions$;
+ mport scala.Opt on;
+ mport scala.collect on.JavaConvers ons$;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect. mmutableL st;
 
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.Partitioner;
-import org.apache.kafka.common.serialization.Deserializer;
-import org.apache.kafka.common.serialization.Serializer;
-import org.apache.thrift.TBase;
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .kafka.cl ents.consu r.KafkaConsu r;
+ mport org.apac .kafka.cl ents.producer.Part  oner;
+ mport org.apac .kafka.common.ser al zat on.Deser al zer;
+ mport org.apac .kafka.common.ser al zat on.Ser al zer;
+ mport org.apac .thr ft.TBase;
+ mport org.apac .thr ft.protocol.TB naryProtocol;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.decider.Decider;
-import com.twitter.decider.DeciderFactory;
-import com.twitter.decider.DeciderFactory$;
-import com.twitter.decider.decisionmaker.DecisionMaker;
-import com.twitter.decider.decisionmaker.MutableDecisionMaker;
-import com.twitter.eventbus.client.EventBusSubscriber;
-import com.twitter.eventbus.client.EventBusSubscriberBuilder;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.ThriftMux;
-import com.twitter.finagle.builder.ClientBuilder;
-import com.twitter.finagle.builder.ClientConfig;
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
-import com.twitter.finagle.mtls.client.MtlsThriftMuxClient;
-import com.twitter.finagle.mux.transport.OpportunisticTls;
-import com.twitter.finagle.service.RetryPolicy;
-import com.twitter.finagle.stats.DefaultStatsReceiver;
-import com.twitter.finagle.thrift.ClientId;
-import com.twitter.finagle.thrift.ThriftClientRequest;
-import com.twitter.finatra.kafka.producers.BlockingFinagleKafkaProducer;
-import com.twitter.gizmoduck.thriftjava.UserService;
-import com.twitter.metastore.client_v2.MetastoreClient;
-import com.twitter.pink_floyd.thrift.Storer;
-import com.twitter.search.common.partitioning.base.PartitionMappingManager;
-import com.twitter.search.common.relevance.classifiers.TweetOffensiveEvaluator;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.util.io.kafka.FinagleKafkaClientUtils;
-import com.twitter.search.ingester.pipeline.strato_fetchers.AudioSpaceCoreFetcher;
-import com.twitter.search.ingester.pipeline.strato_fetchers.AudioSpaceParticipantsFetcher;
-import com.twitter.search.ingester.pipeline.strato_fetchers.NamedEntityFetcher;
-import com.twitter.search.ingester.pipeline.util.PenguinVersionsUtil;
-import com.twitter.search.ingester.pipeline.util.PipelineExceptionHandler;
-import com.twitter.storage.client.manhattan.kv.JavaManhattanKVEndpoint;
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClient;
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams;
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpointBuilder;
-import com.twitter.strato.client.Client;
-import com.twitter.strato.client.Strato;
-import com.twitter.tweetypie.thriftjava.TweetService;
-import com.twitter.util.Duration;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers on;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.dec der.Dec derFactory;
+ mport com.tw ter.dec der.Dec derFactory$;
+ mport com.tw ter.dec der.dec s onmaker.Dec s onMaker;
+ mport com.tw ter.dec der.dec s onmaker.MutableDec s onMaker;
+ mport com.tw ter.eventbus.cl ent.EventBusSubscr ber;
+ mport com.tw ter.eventbus.cl ent.EventBusSubscr berBu lder;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.Thr ftMux;
+ mport com.tw ter.f nagle.bu lder.Cl entBu lder;
+ mport com.tw ter.f nagle.bu lder.Cl entConf g;
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er;
+ mport com.tw ter.f nagle.mtls.cl ent.MtlsThr ftMuxCl ent;
+ mport com.tw ter.f nagle.mux.transport.Opportun st cTls;
+ mport com.tw ter.f nagle.serv ce.RetryPol cy;
+ mport com.tw ter.f nagle.stats.DefaultStatsRece ver;
+ mport com.tw ter.f nagle.thr ft.Cl ent d;
+ mport com.tw ter.f nagle.thr ft.Thr ftCl entRequest;
+ mport com.tw ter.f natra.kafka.producers.Block ngF nagleKafkaProducer;
+ mport com.tw ter.g zmoduck.thr ftjava.UserServ ce;
+ mport com.tw ter. tastore.cl ent_v2. tastoreCl ent;
+ mport com.tw ter.p nk_floyd.thr ft.Storer;
+ mport com.tw ter.search.common.part  on ng.base.Part  onMapp ngManager;
+ mport com.tw ter.search.common.relevance.class f ers.T etOffens veEvaluator;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.common.ut l. o.kafka.F nagleKafkaCl entUt ls;
+ mport com.tw ter.search. ngester.p pel ne.strato_fetc rs.Aud oSpaceCoreFetc r;
+ mport com.tw ter.search. ngester.p pel ne.strato_fetc rs.Aud oSpacePart c pantsFetc r;
+ mport com.tw ter.search. ngester.p pel ne.strato_fetc rs.Na dEnt yFetc r;
+ mport com.tw ter.search. ngester.p pel ne.ut l.Pengu nVers onsUt l;
+ mport com.tw ter.search. ngester.p pel ne.ut l.P pel neExcept onHandler;
+ mport com.tw ter.storage.cl ent.manhattan.kv.JavaManhattanKVEndpo nt;
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl ent;
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl entMtlsParams;
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVEndpo ntBu lder;
+ mport com.tw ter.strato.cl ent.Cl ent;
+ mport com.tw ter.strato.cl ent.Strato;
+ mport com.tw ter.t etyp e.thr ftjava.T etServ ce;
+ mport com.tw ter.ut l.Durat on;
+ mport com.tw ter.ut l.Funct on;
+ mport com.tw ter.ut l.Future;
 
 /**
- * The injection module that provides all production bindings.
+ * T   nject on module that prov des all product on b nd ngs.
  */
-public class ProductionWireModule extends WireModule {
-  private static final Logger LOG = LoggerFactory.getLogger(ProductionWireModule.class);
+publ c class Product onW reModule extends W reModule {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Product onW reModule.class);
 
-  private static final String DECIDER_BASE = "config/ingester-indexer-decider.yml";
-  private static final String GEOCODE_APP_ID = "search_ingester_readonly";
-  private static final String CLUSTER_DEST_NAME = "";
+  pr vate stat c f nal Str ng DEC DER_BASE = "conf g/ ngester- ndexer-dec der.yml";
+  pr vate stat c f nal Str ng GEOCODE_APP_ D = "search_ ngester_readonly";
+  pr vate stat c f nal Str ng CLUSTER_DEST_NAME = "";
 
-  private static final String JNDI_GIZMODUCK_DEST = JNDI_PIPELINE_ROOT + "gizmoduckDest";
+  pr vate stat c f nal Str ng JND _G ZMODUCK_DEST = JND _P PEL NE_ROOT + "g zmoduckDest";
 
-  private static final String PENGUIN_VERSIONS_JNDI_NAME = JNDI_PIPELINE_ROOT + "penguinVersions";
-  private static final String SEGMENT_BUFFER_SIZE_JNDI_NAME =
-      JNDI_PIPELINE_ROOT + "segmentBufferSize";
-  private static final String SEGMENT_SEAL_DELAY_TIME_MS_JNDI_NAME =
-      JNDI_PIPELINE_ROOT + "segmentSealDelayTimeMs";
-  private static final String JNDI_DL_URI = JNDI_PIPELINE_ROOT + "distributedlog/dlUri";
-  private static final String JNDI_DL_CONFIG_FILE =
-      JNDI_PIPELINE_ROOT + "distributedlog/configFile";
-  private static final String CLUSTER_JNDI_NAME = JNDI_PIPELINE_ROOT + "cluster";
+  pr vate stat c f nal Str ng PENGU N_VERS ONS_JND _NAME = JND _P PEL NE_ROOT + "pengu nVers ons";
+  pr vate stat c f nal Str ng SEGMENT_BUFFER_S ZE_JND _NAME =
+      JND _P PEL NE_ROOT + "seg ntBufferS ze";
+  pr vate stat c f nal Str ng SEGMENT_SEAL_DELAY_T ME_MS_JND _NAME =
+      JND _P PEL NE_ROOT + "seg ntSealDelayT  Ms";
+  pr vate stat c f nal Str ng JND _DL_UR  = JND _P PEL NE_ROOT + "d str butedlog/dlUr ";
+  pr vate stat c f nal Str ng JND _DL_CONF G_F LE =
+      JND _P PEL NE_ROOT + "d str butedlog/conf gF le";
+  pr vate stat c f nal Str ng CLUSTER_JND _NAME = JND _P PEL NE_ROOT + "cluster";
 
-  private static final String TIME_SLICE_MANAGER_ROOT_PATH = "";
-  private static final String MAX_TIMESLICES_JNDI_NAME =
-      TIME_SLICE_MANAGER_ROOT_PATH + "hashPartition/maxTimeSlices";
-  private static final String MAX_SEGMENT_SIZE_JNDI_NAME =
-      TIME_SLICE_MANAGER_ROOT_PATH + "hashPartition/maxSegmentSize";
-  private static final String NUM_PARTITIONS_JNDI_NAME =
-      TIME_SLICE_MANAGER_ROOT_PATH + "hashPartition/numPartitions";
+  pr vate stat c f nal Str ng T ME_SL CE_MANAGER_ROOT_PATH = "";
+  pr vate stat c f nal Str ng MAX_T MESL CES_JND _NAME =
+      T ME_SL CE_MANAGER_ROOT_PATH + "hashPart  on/maxT  Sl ces";
+  pr vate stat c f nal Str ng MAX_SEGMENT_S ZE_JND _NAME =
+      T ME_SL CE_MANAGER_ROOT_PATH + "hashPart  on/maxSeg ntS ze";
+  pr vate stat c f nal Str ng NUM_PART T ONS_JND _NAME =
+      T ME_SL CE_MANAGER_ROOT_PATH + "hashPart  on/numPart  ons";
 
-  private static final String PINK_CLIENT_ID = "search_ingester";
+  pr vate stat c f nal Str ng P NK_CL ENT_ D = "search_ ngester";
 
-  private final Decider decider;
-  private final MutableDecisionMaker mutableDecisionMaker;
-  private final int partition;
-  private PipelineExceptionHandler pipelineExceptionHandler;
-  private final StratoMetaStoreWireModule stratoMetaStoreWireModule;
+  pr vate f nal Dec der dec der;
+  pr vate f nal MutableDec s onMaker mutableDec s onMaker;
+  pr vate f nal  nt part  on;
+  pr vate P pel neExcept onHandler p pel neExcept onHandler;
+  pr vate f nal Strato taStoreW reModule strato taStoreW reModule;
 
-  private final Client stratoClient;
+  pr vate f nal Cl ent stratoCl ent;
 
-  private ServiceIdentifier serviceIdentifier = ServiceIdentifier.empty();
+  pr vate Serv ce dent f er serv ce dent f er = Serv ce dent f er.empty();
 
-  private List<PenguinVersion> penguinVersions;
+  pr vate L st<Pengu nVers on> pengu nVers ons;
 
-  public ProductionWireModule(String deciderOverlay, int partition, Option<String>
-      serviceIdentifierFlag) {
-    mutableDecisionMaker = new MutableDecisionMaker();
-    decider = DeciderFactory.get()
-        .withBaseConfig(DECIDER_BASE)
-        .withOverlayConfig(deciderOverlay)
-        .withRefreshBase(false)
-        .withDecisionMakers(
-            ImmutableList.<DecisionMaker>builder()
-                .add(mutableDecisionMaker)
-                .addAll(JavaConversions$.MODULE$.asJavaCollection(
-                    DeciderFactory$.MODULE$.DefaultDecisionMakers()))
-                .build())
+  publ c Product onW reModule(Str ng dec derOverlay,  nt part  on, Opt on<Str ng>
+      serv ce dent f erFlag) {
+    mutableDec s onMaker = new MutableDec s onMaker();
+    dec der = Dec derFactory.get()
+        .w hBaseConf g(DEC DER_BASE)
+        .w hOverlayConf g(dec derOverlay)
+        .w hRefreshBase(false)
+        .w hDec s onMakers(
+             mmutableL st.<Dec s onMaker>bu lder()
+                .add(mutableDec s onMaker)
+                .addAll(JavaConvers ons$.MODULE$.asJavaCollect on(
+                    Dec derFactory$.MODULE$.DefaultDec s onMakers()))
+                .bu ld())
         .apply();
-    this.partition = partition;
-    this.stratoMetaStoreWireModule = new StratoMetaStoreWireModule(this);
-    if (serviceIdentifierFlag.isDefined()) {
-      this.serviceIdentifier =
-          ServiceIdentifier.flagOfServiceIdentifier().parse(serviceIdentifierFlag.get());
+    t .part  on = part  on;
+    t .strato taStoreW reModule = new Strato taStoreW reModule(t );
+     f (serv ce dent f erFlag. sDef ned()) {
+      t .serv ce dent f er =
+          Serv ce dent f er.flagOfServ ce dent f er().parse(serv ce dent f erFlag.get());
     }
 
-    this.stratoClient = Strato.client()
-        .withMutualTls(serviceIdentifier)
-        .withRequestTimeout(Duration.fromMilliseconds(500))
-        .build();
+    t .stratoCl ent = Strato.cl ent()
+        .w hMutualTls(serv ce dent f er)
+        .w hRequestT  out(Durat on.fromM ll seconds(500))
+        .bu ld();
   }
 
-  public ProductionWireModule(String deciderOverlay,
-                              int partition,
-                              PipelineExceptionHandler pipelineExceptionHandler,
-                              Option<String> serviceIdentifierFlag) {
-    this(deciderOverlay, partition, serviceIdentifierFlag);
-    this.pipelineExceptionHandler = pipelineExceptionHandler;
+  publ c Product onW reModule(Str ng dec derOverlay,
+                               nt part  on,
+                              P pel neExcept onHandler p pel neExcept onHandler,
+                              Opt on<Str ng> serv ce dent f erFlag) {
+    t (dec derOverlay, part  on, serv ce dent f erFlag);
+    t .p pel neExcept onHandler = p pel neExcept onHandler;
   }
 
-  public void setPipelineExceptionHandler(PipelineExceptionHandler pipelineExceptionHandler) {
-    this.pipelineExceptionHandler = pipelineExceptionHandler;
+  publ c vo d setP pel neExcept onHandler(P pel neExcept onHandler p pel neExcept onHandler) {
+    t .p pel neExcept onHandler = p pel neExcept onHandler;
   }
 
-  @Override
-  public ServiceIdentifier getServiceIdentifier() {
-    return serviceIdentifier;
+  @Overr de
+  publ c Serv ce dent f er getServ ce dent f er() {
+    return serv ce dent f er;
   }
 
-  @Override
-  public PartitionMappingManager getPartitionMappingManager() {
-    return PartitionMappingManager.getInstance();
+  @Overr de
+  publ c Part  onMapp ngManager getPart  onMapp ngManager() {
+    return Part  onMapp ngManager.get nstance();
   }
 
-  @Override
-  public JavaManhattanKVEndpoint getJavaManhattanKVEndpoint() {
-    Preconditions.checkNotNull(serviceIdentifier,
-        "Can't create Manhattan client with S2S authentication because Service Identifier is null");
-    LOG.info(String.format("Service identifier for Manhattan client: %s",
-        ServiceIdentifier.asString(serviceIdentifier)));
-    ManhattanKVClientMtlsParams mtlsParams = ManhattanKVClientMtlsParams.apply(serviceIdentifier,
-        ManhattanKVClientMtlsParams.apply$default$2(),
-        OpportunisticTls.Required()
+  @Overr de
+  publ c JavaManhattanKVEndpo nt getJavaManhattanKVEndpo nt() {
+    Precond  ons.c ckNotNull(serv ce dent f er,
+        "Can't create Manhattan cl ent w h S2S aut nt cat on because Serv ce  dent f er  s null");
+    LOG. nfo(Str ng.format("Serv ce  dent f er for Manhattan cl ent: %s",
+        Serv ce dent f er.asStr ng(serv ce dent f er)));
+    ManhattanKVCl entMtlsParams mtlsParams = ManhattanKVCl entMtlsParams.apply(serv ce dent f er,
+        ManhattanKVCl entMtlsParams.apply$default$2(),
+        Opportun st cTls.Requ red()
     );
-    return ManhattanKVEndpointBuilder
-        .apply(ManhattanKVClient.apply(GEOCODE_APP_ID, CLUSTER_DEST_NAME, mtlsParams))
-        .buildJava();
+    return ManhattanKVEndpo ntBu lder
+        .apply(ManhattanKVCl ent.apply(GEOCODE_APP_ D, CLUSTER_DEST_NAME, mtlsParams))
+        .bu ldJava();
   }
 
-  @Override
-  public Decider getDecider() {
-    return decider;
+  @Overr de
+  publ c Dec der getDec der() {
+    return dec der;
   }
 
-  // Since MutableDecisionMaker is needed only for production TwitterServer, this method is defined
-  // only in ProductionWireModule.
-  public MutableDecisionMaker getMutableDecisionMaker() {
-    return mutableDecisionMaker;
+  // S nce MutableDec s onMaker  s needed only for product on Tw terServer, t   thod  s def ned
+  // only  n Product onW reModule.
+  publ c MutableDec s onMaker getMutableDec s onMaker() {
+    return mutableDec s onMaker;
   }
 
-  @Override
-  public int getPartition() {
-    return partition;
+  @Overr de
+  publ c  nt getPart  on() {
+    return part  on;
   }
 
-  @Override
-  public PipelineExceptionHandler getPipelineExceptionHandler() {
-    return pipelineExceptionHandler;
+  @Overr de
+  publ c P pel neExcept onHandler getP pel neExcept onHandler() {
+    return p pel neExcept onHandler;
   }
 
-  @Override
-  public Storer.ServiceIface getStorer(Duration requestTimeout, int retries) {
-    TBinaryProtocol.Factory factory = new TBinaryProtocol.Factory();
+  @Overr de
+  publ c Storer.Serv ce face getStorer(Durat on requestT  out,  nt retr es) {
+    TB naryProtocol.Factory factory = new TB naryProtocol.Factory();
 
-    MtlsThriftMuxClient mtlsThriftMuxClient = new MtlsThriftMuxClient(
-        ThriftMux.client().withClientId(new ClientId(PINK_CLIENT_ID)));
-    ThriftMux.Client tmuxClient = mtlsThriftMuxClient
-        .withMutualTls(serviceIdentifier)
-        .withOpportunisticTls(OpportunisticTls.Required());
+    MtlsThr ftMuxCl ent mtlsThr ftMuxCl ent = new MtlsThr ftMuxCl ent(
+        Thr ftMux.cl ent().w hCl ent d(new Cl ent d(P NK_CL ENT_ D)));
+    Thr ftMux.Cl ent tmuxCl ent = mtlsThr ftMuxCl ent
+        .w hMutualTls(serv ce dent f er)
+        .w hOpportun st cTls(Opportun st cTls.Requ red());
 
-    ClientBuilder<
-        ThriftClientRequest,
+    Cl entBu lder<
+        Thr ftCl entRequest,
         byte[],
-        ClientConfig.Yes,
-        ClientConfig.Yes,
-        ClientConfig.Yes> builder = ClientBuilder.get()
+        Cl entConf g.Yes,
+        Cl entConf g.Yes,
+        Cl entConf g.Yes> bu lder = Cl entBu lder.get()
           .dest("")
-          .requestTimeout(requestTimeout)
-          .retries(retries)
-          .timeout(requestTimeout.mul(retries))
-          .stack(tmuxClient)
-          .name("pinkclient")
-          .reportTo(DefaultStatsReceiver.get());
-    return new Storer.ServiceToClient(ClientBuilder.safeBuild(builder), factory);
+          .requestT  out(requestT  out)
+          .retr es(retr es)
+          .t  out(requestT  out.mul(retr es))
+          .stack(tmuxCl ent)
+          .na ("p nkcl ent")
+          .reportTo(DefaultStatsRece ver.get());
+    return new Storer.Serv ceToCl ent(Cl entBu lder.safeBu ld(bu lder), factory);
   }
 
-  @Override
-  public MetastoreClient getMetastoreClient() throws NamingException {
-    return stratoMetaStoreWireModule.getMetastoreClient(this.serviceIdentifier);
+  @Overr de
+  publ c  tastoreCl ent get tastoreCl ent() throws Nam ngExcept on {
+    return strato taStoreW reModule.get tastoreCl ent(t .serv ce dent f er);
   }
 
-  @Override
-  public ExecutorService getThreadPool(int numThreads) {
-    return Executors.newFixedThreadPool(numThreads);
+  @Overr de
+  publ c ExecutorServ ce getThreadPool( nt numThreads) {
+    return Executors.newF xedThreadPool(numThreads);
   }
 
-  @Override
-  public TweetService.ServiceToClient getTweetyPieClient(String tweetypieClientId)
-      throws NamingException {
-    return TweetyPieWireModule.getTweetyPieClient(tweetypieClientId, serviceIdentifier);
+  @Overr de
+  publ c T etServ ce.Serv ceToCl ent getT etyP eCl ent(Str ng t etyp eCl ent d)
+      throws Nam ngExcept on {
+    return T etyP eW reModule.getT etyP eCl ent(t etyp eCl ent d, serv ce dent f er);
   }
 
-  @Override
-  public UserService.ServiceToClient getGizmoduckClient(String clientId)
-      throws NamingException {
-    Context context = new InitialContext();
-    String dest = (String) context.lookup(JNDI_GIZMODUCK_DEST);
+  @Overr de
+  publ c UserServ ce.Serv ceToCl ent getG zmoduckCl ent(Str ng cl ent d)
+      throws Nam ngExcept on {
+    Context context = new  n  alContext();
+    Str ng dest = (Str ng) context.lookup(JND _G ZMODUCK_DEST);
 
-    MtlsThriftMuxClient mtlsThriftMuxClient = new MtlsThriftMuxClient(
-        ThriftMux.client().withClientId(new ClientId(clientId)));
+    MtlsThr ftMuxCl ent mtlsThr ftMuxCl ent = new MtlsThr ftMuxCl ent(
+        Thr ftMux.cl ent().w hCl ent d(new Cl ent d(cl ent d)));
 
-    Service<ThriftClientRequest, byte[]> clientBuilder =
-        ClientBuilder.safeBuild(
-            ClientBuilder
+    Serv ce<Thr ftCl entRequest, byte[]> cl entBu lder =
+        Cl entBu lder.safeBu ld(
+            Cl entBu lder
                 .get()
-                .requestTimeout(Duration.fromMilliseconds(800))
-                .retryPolicy(RetryPolicy.tries(3))
-                .name("search_ingester_gizmoduck_client")
-                .reportTo(DefaultStatsReceiver.get())
+                .requestT  out(Durat on.fromM ll seconds(800))
+                .retryPol cy(RetryPol cy.tr es(3))
+                .na ("search_ ngester_g zmoduck_cl ent")
+                .reportTo(DefaultStatsRece ver.get())
                 .daemon(true)
                 .dest(dest)
-                .stack(mtlsThriftMuxClient.withMutualTls(serviceIdentifier)
-                        .withOpportunisticTls(OpportunisticTls.Required())));
-    return new UserService.ServiceToClient(clientBuilder, new TBinaryProtocol.Factory());
+                .stack(mtlsThr ftMuxCl ent.w hMutualTls(serv ce dent f er)
+                        .w hOpportun st cTls(Opportun st cTls.Requ red())));
+    return new UserServ ce.Serv ceToCl ent(cl entBu lder, new TB naryProtocol.Factory());
   }
 
-  @Override
-  public <T extends TBase<?, ?>> EventBusSubscriber<T> createEventBusSubscriber(
-      Function<T, Future<?>> process,
-      Class<T> thriftStructClass,
-      String eventBusSubscriberId,
-      int maxConcurrentEvents) {
-    Preconditions.checkNotNull(serviceIdentifier,
-        "Can't create EventBusSubscriber with S2S auth because Service Identifier is null");
-    LOG.info(String.format("Service identifier for EventBusSubscriber Manhattan client: %s",
-        ServiceIdentifier.asString(serviceIdentifier)));
-    // We set the processTimeoutMs parameter here to be Duration.Top because we do not want to read
-    // more events from EventBus if we are experiencing back pressure and cannot write them to the
+  @Overr de
+  publ c <T extends TBase<?, ?>> EventBusSubscr ber<T> createEventBusSubscr ber(
+      Funct on<T, Future<?>> process,
+      Class<T> thr ftStructClass,
+      Str ng eventBusSubscr ber d,
+       nt maxConcurrentEvents) {
+    Precond  ons.c ckNotNull(serv ce dent f er,
+        "Can't create EventBusSubscr ber w h S2S auth because Serv ce  dent f er  s null");
+    LOG. nfo(Str ng.format("Serv ce  dent f er for EventBusSubscr ber Manhattan cl ent: %s",
+        Serv ce dent f er.asStr ng(serv ce dent f er)));
+    //   set t  processT  outMs para ter  re to be Durat on.Top because   do not want to read
+    // more events from EventBus  f   are exper enc ng back pressure and cannot wr e t m to t 
     // downstream queue.
-    return EventBusSubscriberBuilder.apply()
-        .subscriberId(eventBusSubscriberId)
-        .skipToLatest(false)
+    return EventBusSubscr berBu lder.apply()
+        .subscr ber d(eventBusSubscr ber d)
+        .sk pToLatest(false)
         .fromAllZones(true)
-        .statsReceiver(DefaultStatsReceiver.get().scope("eventbus"))
-        .thriftStruct(thriftStructClass)
-        .serviceIdentifier(serviceIdentifier)
+        .statsRece ver(DefaultStatsRece ver.get().scope("eventbus"))
+        .thr ftStruct(thr ftStructClass)
+        .serv ce dent f er(serv ce dent f er)
         .maxConcurrentEvents(maxConcurrentEvents)
-        .processTimeout(Duration.Top())
-        .build(process);
+        .processT  out(Durat on.Top())
+        .bu ld(process);
   }
 
-  @Override
-  public Clock getClock() {
+  @Overr de
+  publ c Clock getClock() {
     return Clock.SYSTEM_CLOCK;
   }
 
-  @Override
-  public TweetOffensiveEvaluator getTweetOffensiveEvaluator() {
-    return new TweetOffensiveEvaluator();
+  @Overr de
+  publ c T etOffens veEvaluator getT etOffens veEvaluator() {
+    return new T etOffens veEvaluator();
   }
 
-  @Override
-  public EarlybirdCluster getEarlybirdCluster() throws NamingException {
-    Context jndiContext = new InitialContext();
-    String clusterName = (String) jndiContext.lookup(CLUSTER_JNDI_NAME);
-    return EarlybirdCluster.valueOf(clusterName.toUpperCase());
+  @Overr de
+  publ c Earlyb rdCluster getEarlyb rdCluster() throws Nam ngExcept on {
+    Context jnd Context = new  n  alContext();
+    Str ng clusterNa  = (Str ng) jnd Context.lookup(CLUSTER_JND _NAME);
+    return Earlyb rdCluster.valueOf(clusterNa .toUpperCase());
   }
 
-  @Override
-  public List<PenguinVersion> getPenguinVersions() throws NamingException {
-    Context context = new InitialContext();
-    String penguinVersionsStr = (String) context.lookup(PENGUIN_VERSIONS_JNDI_NAME);
-    penguinVersions = new ArrayList<>();
+  @Overr de
+  publ c L st<Pengu nVers on> getPengu nVers ons() throws Nam ngExcept on {
+    Context context = new  n  alContext();
+    Str ng pengu nVers onsStr = (Str ng) context.lookup(PENGU N_VERS ONS_JND _NAME);
+    pengu nVers ons = new ArrayL st<>();
 
-    for (String penguinVersion : penguinVersionsStr.split(",")) {
-      PenguinVersion pv = PenguinVersion.versionFromByteValue(Byte.parseByte(penguinVersion));
-      if (PenguinVersionsUtil.isPenguinVersionAvailable(pv, decider)) {
-        penguinVersions.add(pv);
+    for (Str ng pengu nVers on : pengu nVers onsStr.spl (",")) {
+      Pengu nVers on pv = Pengu nVers on.vers onFromByteValue(Byte.parseByte(pengu nVers on));
+       f (Pengu nVers onsUt l. sPengu nVers onAva lable(pv, dec der)) {
+        pengu nVers ons.add(pv);
       }
     }
 
-    Preconditions.checkArgument(penguinVersions.size() > 0,
-        "At least one penguin version must be specified.");
+    Precond  ons.c ckArgu nt(pengu nVers ons.s ze() > 0,
+        "At least one pengu n vers on must be spec f ed.");
 
-    return penguinVersions;
+    return pengu nVers ons;
   }
 
-  // We update penguin versions via deciders in order to disable one in case of an emergency.
-  @Override
-  public List<PenguinVersion> getCurrentlyEnabledPenguinVersions() {
-    return PenguinVersionsUtil.filterPenguinVersionsWithDeciders(penguinVersions, decider);
+  //   update pengu n vers ons v a dec ders  n order to d sable one  n case of an e rgency.
+  @Overr de
+  publ c L st<Pengu nVers on> getCurrentlyEnabledPengu nVers ons() {
+    return Pengu nVers onsUt l.f lterPengu nVers onsW hDec ders(pengu nVers ons, dec der);
   }
 
-  @Override
-  public NamedEntityFetcher getNamedEntityFetcher() {
-    return new NamedEntityFetcher(stratoClient);
+  @Overr de
+  publ c Na dEnt yFetc r getNa dEnt yFetc r() {
+    return new Na dEnt yFetc r(stratoCl ent);
   }
 
-  @Override
-  public AudioSpaceParticipantsFetcher getAudioSpaceParticipantsFetcher() {
-    return new AudioSpaceParticipantsFetcher(stratoClient);
+  @Overr de
+  publ c Aud oSpacePart c pantsFetc r getAud oSpacePart c pantsFetc r() {
+    return new Aud oSpacePart c pantsFetc r(stratoCl ent);
   }
 
-  @Override
-  public AudioSpaceCoreFetcher getAudioSpaceCoreFetcher() {
-    return new AudioSpaceCoreFetcher(stratoClient);
+  @Overr de
+  publ c Aud oSpaceCoreFetc r getAud oSpaceCoreFetc r() {
+    return new Aud oSpaceCoreFetc r(stratoCl ent);
   }
 
-  @Override
-  public <T> KafkaConsumer<Long, T> newKafkaConsumer(
-      String kafkaClusterPath, Deserializer<T> deserializer, String clientId, String groupId,
-      int maxPollRecords) {
-    return FinagleKafkaClientUtils.newKafkaConsumer(
-        kafkaClusterPath, deserializer, clientId, groupId, maxPollRecords);
+  @Overr de
+  publ c <T> KafkaConsu r<Long, T> newKafkaConsu r(
+      Str ng kafkaClusterPath, Deser al zer<T> deser al zer, Str ng cl ent d, Str ng group d,
+       nt maxPollRecords) {
+    return F nagleKafkaCl entUt ls.newKafkaConsu r(
+        kafkaClusterPath, deser al zer, cl ent d, group d, maxPollRecords);
   }
 
-  @Override
-  public <T> BlockingFinagleKafkaProducer<Long, T> newFinagleKafkaProducer(
-      String kafkaClusterPath, Serializer<T> serializer, String clientId,
-      @Nullable Class<? extends Partitioner> partitionerClass) {
-    return FinagleKafkaClientUtils.newFinagleKafkaProducer(
-        kafkaClusterPath, true, serializer, clientId, partitionerClass);
+  @Overr de
+  publ c <T> Block ngF nagleKafkaProducer<Long, T> newF nagleKafkaProducer(
+      Str ng kafkaClusterPath, Ser al zer<T> ser al zer, Str ng cl ent d,
+      @Nullable Class<? extends Part  oner> part  onerClass) {
+    return F nagleKafkaCl entUt ls.newF nagleKafkaProducer(
+        kafkaClusterPath, true, ser al zer, cl ent d, part  onerClass);
   }
 }

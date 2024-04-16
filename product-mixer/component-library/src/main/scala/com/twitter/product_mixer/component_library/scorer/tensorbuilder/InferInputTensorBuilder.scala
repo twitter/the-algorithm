@@ -1,151 +1,151 @@
-package com.twitter.product_mixer.component_library.scorer.tensorbuilder
+package com.tw ter.product_m xer.component_l brary.scorer.tensorbu lder
 
-import com.google.protobuf.ByteString
-import com.twitter.product_mixer.core.feature.Feature
-import inference.GrpcService.InferTensorContents
-import inference.GrpcService.ModelInferRequest.InferInputTensor
+ mport com.google.protobuf.ByteStr ng
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport  nference.GrpcServ ce. nferTensorContents
+ mport  nference.GrpcServ ce.Model nferRequest. nfer nputTensor
 
-// This class contains most of common versions at Twitter, but in the future we can add more:
-// https://github.com/kserve/kserve/blob/master/docs/predict-api/v2/required_api.md#tensor-data-1
+// T  class conta ns most of common vers ons at Tw ter, but  n t  future   can add more:
+// https://g hub.com/kserve/kserve/blob/master/docs/pred ct-ap /v2/requ red_ap .md#tensor-data-1
 
-trait InferInputTensorBuilder[Value] {
+tra   nfer nputTensorBu lder[Value] {
 
   def apply(
-    featureName: String,
+    featureNa : Str ng,
     featureValues: Seq[Value]
-  ): Seq[InferInputTensor]
+  ): Seq[ nfer nputTensor]
 
 }
 
-object InferInputTensorBuilder {
+object  nfer nputTensorBu lder {
 
-  def checkTensorShapeMatchesValueLength(
-    featureName: String,
+  def c ckTensorShapeMatc sValueLength(
+    featureNa : Str ng,
     featureValues: Seq[Any],
-    tensorShape: Seq[Int]
-  ): Unit = {
-    val featureValuesSize = featureValues.size
-    val tensorShapeSize = tensorShape.product
-    if (featureValuesSize != tensorShapeSize) {
-      throw new FeatureValuesAndShapeMismatchException(
-        featureName,
-        featureValuesSize,
-        tensorShapeSize)
+    tensorShape: Seq[ nt]
+  ): Un  = {
+    val featureValuesS ze = featureValues.s ze
+    val tensorShapeS ze = tensorShape.product
+     f (featureValuesS ze != tensorShapeS ze) {
+      throw new FeatureValuesAndShapeM smatchExcept on(
+        featureNa ,
+        featureValuesS ze,
+        tensorShapeS ze)
     }
   }
 
-  def buildBoolInferInputTensor(
-    featureName: String,
+  def bu ldBool nfer nputTensor(
+    featureNa : Str ng,
     featureValues: Seq[Boolean],
-    tensorShape: Seq[Int]
-  ): Seq[InferInputTensor] = {
+    tensorShape: Seq[ nt]
+  ): Seq[ nfer nputTensor] = {
 
-    checkTensorShapeMatchesValueLength(featureName, featureValues, tensorShape)
+    c ckTensorShapeMatc sValueLength(featureNa , featureValues, tensorShape)
 
-    val inputTensorBuilder = InferInputTensor.newBuilder().setName(featureName)
+    val  nputTensorBu lder =  nfer nputTensor.newBu lder().setNa (featureNa )
     tensorShape.foreach { shape =>
-      inputTensorBuilder.addShape(shape)
+       nputTensorBu lder.addShape(shape)
     }
-    val inputTensor = inputTensorBuilder
+    val  nputTensor =  nputTensorBu lder
       .setDatatype("BOOL")
       .setContents {
-        val contents = InferTensorContents.newBuilder()
+        val contents =  nferTensorContents.newBu lder()
         featureValues.foreach { featureValue =>
           contents.addBoolContents(featureValue)
         }
         contents
       }
-      .build()
-    Seq(inputTensor)
+      .bu ld()
+    Seq( nputTensor)
   }
 
-  def buildBytesInferInputTensor(
-    featureName: String,
-    featureValues: Seq[String],
-    tensorShape: Seq[Int]
-  ): Seq[InferInputTensor] = {
+  def bu ldBytes nfer nputTensor(
+    featureNa : Str ng,
+    featureValues: Seq[Str ng],
+    tensorShape: Seq[ nt]
+  ): Seq[ nfer nputTensor] = {
 
-    checkTensorShapeMatchesValueLength(featureName, featureValues, tensorShape)
+    c ckTensorShapeMatc sValueLength(featureNa , featureValues, tensorShape)
 
-    val inputTensorBuilder = InferInputTensor.newBuilder().setName(featureName)
+    val  nputTensorBu lder =  nfer nputTensor.newBu lder().setNa (featureNa )
     tensorShape.foreach { shape =>
-      inputTensorBuilder.addShape(shape)
+       nputTensorBu lder.addShape(shape)
     }
-    val inputTensor = inputTensorBuilder
+    val  nputTensor =  nputTensorBu lder
       .setDatatype("BYTES")
       .setContents {
-        val contents = InferTensorContents.newBuilder()
+        val contents =  nferTensorContents.newBu lder()
         featureValues.foreach { featureValue =>
-          val featureValueBytes = ByteString.copyFromUtf8(featureValue)
+          val featureValueBytes = ByteStr ng.copyFromUtf8(featureValue)
           contents.addByteContents(featureValueBytes)
         }
         contents
       }
-      .build()
-    Seq(inputTensor)
+      .bu ld()
+    Seq( nputTensor)
   }
 
-  def buildFloat32InferInputTensor(
-    featureName: String,
+  def bu ldFloat32 nfer nputTensor(
+    featureNa : Str ng,
     featureValues: Seq[Float],
-    tensorShape: Seq[Int]
-  ): Seq[InferInputTensor] = {
+    tensorShape: Seq[ nt]
+  ): Seq[ nfer nputTensor] = {
 
-    checkTensorShapeMatchesValueLength(featureName, featureValues, tensorShape)
+    c ckTensorShapeMatc sValueLength(featureNa , featureValues, tensorShape)
 
-    val inputTensorBuilder = InferInputTensor.newBuilder().setName(featureName)
+    val  nputTensorBu lder =  nfer nputTensor.newBu lder().setNa (featureNa )
     tensorShape.foreach { shape =>
-      inputTensorBuilder.addShape(shape)
+       nputTensorBu lder.addShape(shape)
     }
-    val inputTensor = inputTensorBuilder
+    val  nputTensor =  nputTensorBu lder
       .setDatatype("FP32")
       .setContents {
-        val contents = InferTensorContents.newBuilder()
+        val contents =  nferTensorContents.newBu lder()
         featureValues.foreach { featureValue =>
           contents.addFp32Contents(featureValue.floatValue)
         }
         contents
       }
-      .build()
-    Seq(inputTensor)
+      .bu ld()
+    Seq( nputTensor)
   }
 
-  def buildInt64InferInputTensor(
-    featureName: String,
+  def bu ld nt64 nfer nputTensor(
+    featureNa : Str ng,
     featureValues: Seq[Long],
-    tensorShape: Seq[Int]
-  ): Seq[InferInputTensor] = {
+    tensorShape: Seq[ nt]
+  ): Seq[ nfer nputTensor] = {
 
-    checkTensorShapeMatchesValueLength(featureName, featureValues, tensorShape)
+    c ckTensorShapeMatc sValueLength(featureNa , featureValues, tensorShape)
 
-    val inputTensorBuilder = InferInputTensor.newBuilder().setName(featureName)
+    val  nputTensorBu lder =  nfer nputTensor.newBu lder().setNa (featureNa )
     tensorShape.foreach { shape =>
-      inputTensorBuilder.addShape(shape)
+       nputTensorBu lder.addShape(shape)
     }
-    val inputTensor = inputTensorBuilder
-      .setDatatype("INT64")
+    val  nputTensor =  nputTensorBu lder
+      .setDatatype(" NT64")
       .setContents {
-        val contents = InferTensorContents.newBuilder()
+        val contents =  nferTensorContents.newBu lder()
         featureValues.foreach { featureValue =>
-          contents.addInt64Contents(featureValue)
+          contents.add nt64Contents(featureValue)
         }
         contents
       }
-      .build()
-    Seq(inputTensor)
+      .bu ld()
+    Seq( nputTensor)
   }
 }
 
-class UnexpectedFeatureTypeException(feature: Feature[_, _])
-    extends UnsupportedOperationException(s"Unsupported Feature type passed in $feature")
+class UnexpectedFeatureTypeExcept on(feature: Feature[_, _])
+    extends UnsupportedOperat onExcept on(s"Unsupported Feature type passed  n $feature")
 
-class FeatureValuesAndShapeMismatchException(
-  featureName: String,
-  featureValuesSize: Int,
-  tensorShapeSize: Int)
-    extends UnsupportedOperationException(
-      s"Feature $featureName has mismatching FeatureValues (size: $featureValuesSize) and TensorShape (size: $tensorShapeSize)!")
+class FeatureValuesAndShapeM smatchExcept on(
+  featureNa : Str ng,
+  featureValuesS ze:  nt,
+  tensorShapeS ze:  nt)
+    extends UnsupportedOperat onExcept on(
+      s"Feature $featureNa  has m smatch ng FeatureValues (s ze: $featureValuesS ze) and TensorShape (s ze: $tensorShapeS ze)!")
 
-class UnexpectedDataTypeException[T](value: T, builder: InferInputTensorBuilder[_])
-    extends UnsupportedOperationException(
-      s"Unsupported data type ${value} passed in at ${builder.getClass.toString}")
+class UnexpectedDataTypeExcept on[T](value: T, bu lder:  nfer nputTensorBu lder[_])
+    extends UnsupportedOperat onExcept on(
+      s"Unsupported data type ${value} passed  n at ${bu lder.getClass.toStr ng}")

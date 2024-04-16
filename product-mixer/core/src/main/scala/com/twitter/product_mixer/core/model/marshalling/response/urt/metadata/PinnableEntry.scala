@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata
 
-trait PinnableEntry {
-  def isPinned: Option[Boolean] = None
+tra  P nnableEntry {
+  def  sP nned: Opt on[Boolean] = None
 }

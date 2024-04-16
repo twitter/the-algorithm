@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.query.cr_ml_ranker
+package com.tw ter.product_m xer.component_l brary.feature_hydrator.query.cr_ml_ranker
 
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.cr_ml_ranker.{thriftscala => t}
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.cr_ml_ranker.{thr ftscala => t}
 
 /**
- * Builder for constructing a ranking config from a query
+ * Bu lder for construct ng a rank ng conf g from a query
  */
-trait RankingConfigBuilder {
-  def apply(query: PipelineQuery): t.RankingConfig
+tra  Rank ngConf gBu lder {
+  def apply(query: P pel neQuery): t.Rank ngConf g
 }

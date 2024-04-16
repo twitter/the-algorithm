@@ -1,51 +1,51 @@
-package com.twitter.product_mixer.component_library.scorer.cr_ml_ranker
+package com.tw ter.product_m xer.component_l brary.scorer.cr_ml_ranker
 
-import com.twitter.product_mixer.component_library.feature_hydrator.query.cr_ml_ranker.CrMlRankerCommonFeatures
-import com.twitter.product_mixer.component_library.feature_hydrator.query.cr_ml_ranker.CrMlRankerRankingConfig
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.component_l brary.feature_hydrator.query.cr_ml_ranker.CrMlRankerCommonFeatures
+ mport com.tw ter.product_m xer.component_l brary.feature_hydrator.query.cr_ml_ranker.CrMlRankerRank ngConf g
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.scorer.Scorer
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Scorer dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-object CrMlRankerScore extends Feature[TweetCandidate, Double]
+object CrMlRankerScore extends Feature[T etCand date, Double]
 
 /**
- * Scorer that scores tweets using the Content Recommender ML Light Ranker: http://go/cr-ml-ranker
+ * Scorer that scores t ets us ng t  Content Recom nder ML L ght Ranker: http://go/cr-ml-ranker
  */
-@Singleton
-class CrMlRankerScorer @Inject() (crMlRanker: CrMlRankerScoreStitchClient)
-    extends Scorer[PipelineQuery, TweetCandidate] {
+@S ngleton
+class CrMlRankerScorer @ nject() (crMlRanker: CrMlRankerScoreSt chCl ent)
+    extends Scorer[P pel neQuery, T etCand date] {
 
-  override val identifier: ScorerIdentifier = ScorerIdentifier("CrMlRanker")
+  overr de val  dent f er: Scorer dent f er = Scorer dent f er("CrMlRanker")
 
-  override val features: Set[Feature[_, _]] = Set(CrMlRankerScore)
+  overr de val features: Set[Feature[_, _]] = Set(CrMlRankerScore)
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[Seq[FeatureMap]] = {
     val queryFeatureMap = query.features.getOrElse(FeatureMap.empty)
-    val rankingConfig = queryFeatureMap.get(CrMlRankerRankingConfig)
+    val rank ngConf g = queryFeatureMap.get(CrMlRankerRank ngConf g)
     val commonFeatures = queryFeatureMap.get(CrMlRankerCommonFeatures)
-    val userId = query.getRequiredUserId
+    val user d = query.getRequ redUser d
 
-    val scoresStitch = Stitch.collect(candidates.map { candidateWithFeatures =>
+    val scoresSt ch = St ch.collect(cand dates.map { cand dateW hFeatures =>
       crMlRanker
-        .getScore(userId, candidateWithFeatures.candidate, rankingConfig, commonFeatures).map(
+        .getScore(user d, cand dateW hFeatures.cand date, rank ngConf g, commonFeatures).map(
           _.score)
     })
-    scoresStitch.map { scores =>
+    scoresSt ch.map { scores =>
       scores.map { score =>
-        FeatureMapBuilder()
+        FeatureMapBu lder()
           .add(CrMlRankerScore, score)
-          .build()
+          .bu ld()
       }
     }
   }

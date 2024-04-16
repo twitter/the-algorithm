@@ -1,213 +1,213 @@
-package com.twitter.search.earlybird.stats;
+package com.tw ter.search.earlyb rd.stats;
 
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.EnumMap;
+ mport java.ut l.Map;
+ mport java.ut l.concurrent.ConcurrentHashMap;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchMetricTimerOptions;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.ranking.thriftjava.ThriftRankingParams;
-import com.twitter.search.common.ranking.thriftjava.ThriftScoringFunctionType;
-import com.twitter.search.earlybird.EarlybirdSearcher;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.ThriftSearchRelevanceOptions;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.Search tr cT  rOpt ons;
+ mport com.tw ter.search.common. tr cs.SearchStatsRece ver;
+ mport com.tw ter.search.common. tr cs.SearchT  r;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
+ mport com.tw ter.search.common.rank ng.thr ftjava.Thr ftRank ngParams;
+ mport com.tw ter.search.common.rank ng.thr ftjava.Thr ftScor ngFunct onType;
+ mport com.tw ter.search.earlyb rd.Earlyb rdSearc r;
+ mport com.tw ter.search.earlyb rd.common.Cl ent dUt l;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchRelevanceOpt ons;
 
 /**
- * Manages counter and timer stats for EarlybirdSearcher.
+ * Manages counter and t  r stats for Earlyb rdSearc r.
  */
-public class EarlybirdSearcherStats {
-  private static final TimeUnit TIME_UNIT = TimeUnit.MICROSECONDS;
+publ c class Earlyb rdSearc rStats {
+  pr vate stat c f nal T  Un  T ME_UN T = T  Un .M CROSECONDS;
 
-  private final SearchStatsReceiver earlybirdServerStatsReceiver;
+  pr vate f nal SearchStatsRece ver earlyb rdServerStatsRece ver;
 
-  public final SearchCounter thriftQueryWithSerializedQuery;
-  public final SearchCounter thriftQueryWithLuceneQuery;
-  public final SearchCounter thriftQueryWithoutTextQuery;
-  public final SearchCounter addedFilterBadUserRep;
-  public final SearchCounter addedFilterFromUserIds;
-  public final SearchCounter addedFilterTweetIds;
-  public final SearchCounter unsetFiltersForSocialFilterTypeQuery;
-  public final SearchCounter querySpecificSignalMapTotalSize;
-  public final SearchCounter querySpecificSignalQueriesUsed;
-  public final SearchCounter querySpecificSignalQueriesErased;
-  public final SearchCounter authorSpecificSignalMapTotalSize;
-  public final SearchCounter authorSpecificSignalQueriesUsed;
-  public final SearchCounter authorSpecificSignalQueriesErased;
-  public final SearchCounter nullcastTweetsForceExcluded;
-  public final SearchCounter nullcastUnexpectedResults;
-  public final SearchCounter nullcastUnexpectedQueries;
-  public final SearchCounter relevanceAntiGamingFilterUsed;
-  public final SearchCounter relevanceAntiGamingFilterNotRequested;
-  public final SearchCounter relevanceAntiGamingFilterSpecifiedTweetsAndFromUserIds;
-  public final SearchCounter relevanceAntiGamingFilterSpecifiedTweets;
-  public final SearchCounter relevanceAntiGamingFilterSpecifiedFromUserIds;
-  public final SearchCounter numCollectorAdjustedMinSearchedStatusID;
+  publ c f nal SearchCounter thr ftQueryW hSer al zedQuery;
+  publ c f nal SearchCounter thr ftQueryW hLuceneQuery;
+  publ c f nal SearchCounter thr ftQueryW houtTextQuery;
+  publ c f nal SearchCounter addedF lterBadUserRep;
+  publ c f nal SearchCounter addedF lterFromUser ds;
+  publ c f nal SearchCounter addedF lterT et ds;
+  publ c f nal SearchCounter unsetF ltersForSoc alF lterTypeQuery;
+  publ c f nal SearchCounter querySpec f cS gnalMapTotalS ze;
+  publ c f nal SearchCounter querySpec f cS gnalQuer esUsed;
+  publ c f nal SearchCounter querySpec f cS gnalQuer esErased;
+  publ c f nal SearchCounter authorSpec f cS gnalMapTotalS ze;
+  publ c f nal SearchCounter authorSpec f cS gnalQuer esUsed;
+  publ c f nal SearchCounter authorSpec f cS gnalQuer esErased;
+  publ c f nal SearchCounter nullcastT etsForceExcluded;
+  publ c f nal SearchCounter nullcastUnexpectedResults;
+  publ c f nal SearchCounter nullcastUnexpectedQuer es;
+  publ c f nal SearchCounter relevanceAnt Gam ngF lterUsed;
+  publ c f nal SearchCounter relevanceAnt Gam ngF lterNotRequested;
+  publ c f nal SearchCounter relevanceAnt Gam ngF lterSpec f edT etsAndFromUser ds;
+  publ c f nal SearchCounter relevanceAnt Gam ngF lterSpec f edT ets;
+  publ c f nal SearchCounter relevanceAnt Gam ngF lterSpec f edFromUser ds;
+  publ c f nal SearchCounter numCollectorAdjustedM nSearc dStatus D;
 
-  public final Map<EarlybirdSearcher.QueryMode, SearchCounter> numRequestsWithBlankQuery;
-  private final Map<ThriftScoringFunctionType, SearchTimerStats> latencyByScoringFunctionType;
-  private final Map<ThriftScoringFunctionType,
-      Map<String, SearchTimerStats>> latencyByScoringFunctionTypeAndClient;
-  private final Map<String, SearchTimerStats> latencyByTensorflowModel;
+  publ c f nal Map<Earlyb rdSearc r.QueryMode, SearchCounter> numRequestsW hBlankQuery;
+  pr vate f nal Map<Thr ftScor ngFunct onType, SearchT  rStats> latencyByScor ngFunct onType;
+  pr vate f nal Map<Thr ftScor ngFunct onType,
+      Map<Str ng, SearchT  rStats>> latencyByScor ngFunct onTypeAndCl ent;
+  pr vate f nal Map<Str ng, SearchT  rStats> latencyByTensorflowModel;
 
-  public EarlybirdSearcherStats(SearchStatsReceiver earlybirdServerStatsReceiver) {
-    this.earlybirdServerStatsReceiver = earlybirdServerStatsReceiver;
+  publ c Earlyb rdSearc rStats(SearchStatsRece ver earlyb rdServerStatsRece ver) {
+    t .earlyb rdServerStatsRece ver = earlyb rdServerStatsRece ver;
 
-    this.thriftQueryWithLuceneQuery =
-        earlybirdServerStatsReceiver.getCounter("thrift_query_with_lucene_query");
-    this.thriftQueryWithSerializedQuery =
-        earlybirdServerStatsReceiver.getCounter("thrift_query_with_serialized_query");
-    this.thriftQueryWithoutTextQuery =
-        earlybirdServerStatsReceiver.getCounter("thrift_query_without_text_query");
+    t .thr ftQueryW hLuceneQuery =
+        earlyb rdServerStatsRece ver.getCounter("thr ft_query_w h_lucene_query");
+    t .thr ftQueryW hSer al zedQuery =
+        earlyb rdServerStatsRece ver.getCounter("thr ft_query_w h_ser al zed_query");
+    t .thr ftQueryW houtTextQuery =
+        earlyb rdServerStatsRece ver.getCounter("thr ft_query_w hout_text_query");
 
-    this.addedFilterBadUserRep =
-        earlybirdServerStatsReceiver.getCounter("added_filter_bad_user_rep");
-    this.addedFilterFromUserIds =
-        earlybirdServerStatsReceiver.getCounter("added_filter_from_user_ids");
-    this.addedFilterTweetIds =
-        earlybirdServerStatsReceiver.getCounter("added_filter_tweet_ids");
+    t .addedF lterBadUserRep =
+        earlyb rdServerStatsRece ver.getCounter("added_f lter_bad_user_rep");
+    t .addedF lterFromUser ds =
+        earlyb rdServerStatsRece ver.getCounter("added_f lter_from_user_ ds");
+    t .addedF lterT et ds =
+        earlyb rdServerStatsRece ver.getCounter("added_f lter_t et_ ds");
 
-    this.unsetFiltersForSocialFilterTypeQuery =
-        earlybirdServerStatsReceiver.getCounter("unset_filters_for_social_filter_type_query");
-    this.querySpecificSignalMapTotalSize =
-        earlybirdServerStatsReceiver.getCounter("query_specific_signal_map_total_size");
-    this.querySpecificSignalQueriesUsed =
-        earlybirdServerStatsReceiver.getCounter("query_specific_signal_queries_used");
-    this.querySpecificSignalQueriesErased =
-        earlybirdServerStatsReceiver.getCounter("query_specific_signal_queries_erased");
-    this.authorSpecificSignalMapTotalSize =
-        earlybirdServerStatsReceiver.getCounter("author_specific_signal_map_total_size");
-    this.authorSpecificSignalQueriesUsed =
-        earlybirdServerStatsReceiver.getCounter("author_specific_signal_queries_used");
-    this.authorSpecificSignalQueriesErased =
-        earlybirdServerStatsReceiver.getCounter("author_specific_signal_queries_erased");
-    this.nullcastTweetsForceExcluded =
-        earlybirdServerStatsReceiver.getCounter("force_excluded_nullcast_result_count");
-    this.nullcastUnexpectedResults =
-        earlybirdServerStatsReceiver.getCounter("unexpected_nullcast_result_count");
-    this.nullcastUnexpectedQueries =
-        earlybirdServerStatsReceiver.getCounter("queries_with_unexpected_nullcast_results");
-    this.numCollectorAdjustedMinSearchedStatusID =
-        earlybirdServerStatsReceiver.getCounter("collector_adjusted_min_searched_status_id");
+    t .unsetF ltersForSoc alF lterTypeQuery =
+        earlyb rdServerStatsRece ver.getCounter("unset_f lters_for_soc al_f lter_type_query");
+    t .querySpec f cS gnalMapTotalS ze =
+        earlyb rdServerStatsRece ver.getCounter("query_spec f c_s gnal_map_total_s ze");
+    t .querySpec f cS gnalQuer esUsed =
+        earlyb rdServerStatsRece ver.getCounter("query_spec f c_s gnal_quer es_used");
+    t .querySpec f cS gnalQuer esErased =
+        earlyb rdServerStatsRece ver.getCounter("query_spec f c_s gnal_quer es_erased");
+    t .authorSpec f cS gnalMapTotalS ze =
+        earlyb rdServerStatsRece ver.getCounter("author_spec f c_s gnal_map_total_s ze");
+    t .authorSpec f cS gnalQuer esUsed =
+        earlyb rdServerStatsRece ver.getCounter("author_spec f c_s gnal_quer es_used");
+    t .authorSpec f cS gnalQuer esErased =
+        earlyb rdServerStatsRece ver.getCounter("author_spec f c_s gnal_quer es_erased");
+    t .nullcastT etsForceExcluded =
+        earlyb rdServerStatsRece ver.getCounter("force_excluded_nullcast_result_count");
+    t .nullcastUnexpectedResults =
+        earlyb rdServerStatsRece ver.getCounter("unexpected_nullcast_result_count");
+    t .nullcastUnexpectedQuer es =
+        earlyb rdServerStatsRece ver.getCounter("quer es_w h_unexpected_nullcast_results");
+    t .numCollectorAdjustedM nSearc dStatus D =
+        earlyb rdServerStatsRece ver.getCounter("collector_adjusted_m n_searc d_status_ d");
 
-    this.relevanceAntiGamingFilterUsed = earlybirdServerStatsReceiver
-        .getCounter("relevance_anti_gaming_filter_used");
-    this.relevanceAntiGamingFilterNotRequested = earlybirdServerStatsReceiver
-        .getCounter("relevance_anti_gaming_filter_not_requested");
-    this.relevanceAntiGamingFilterSpecifiedTweetsAndFromUserIds = earlybirdServerStatsReceiver
-        .getCounter("relevance_anti_gaming_filter_specified_tweets_and_from_user_ids");
-    this.relevanceAntiGamingFilterSpecifiedTweets = earlybirdServerStatsReceiver
-        .getCounter("relevance_anti_gaming_filter_specified_tweets");
-    this.relevanceAntiGamingFilterSpecifiedFromUserIds = earlybirdServerStatsReceiver
-        .getCounter("relevance_anti_gaming_filter_specified_from_user_ids");
+    t .relevanceAnt Gam ngF lterUsed = earlyb rdServerStatsRece ver
+        .getCounter("relevance_ant _gam ng_f lter_used");
+    t .relevanceAnt Gam ngF lterNotRequested = earlyb rdServerStatsRece ver
+        .getCounter("relevance_ant _gam ng_f lter_not_requested");
+    t .relevanceAnt Gam ngF lterSpec f edT etsAndFromUser ds = earlyb rdServerStatsRece ver
+        .getCounter("relevance_ant _gam ng_f lter_spec f ed_t ets_and_from_user_ ds");
+    t .relevanceAnt Gam ngF lterSpec f edT ets = earlyb rdServerStatsRece ver
+        .getCounter("relevance_ant _gam ng_f lter_spec f ed_t ets");
+    t .relevanceAnt Gam ngF lterSpec f edFromUser ds = earlyb rdServerStatsRece ver
+        .getCounter("relevance_ant _gam ng_f lter_spec f ed_from_user_ ds");
 
-    this.latencyByScoringFunctionType = new EnumMap<>(ThriftScoringFunctionType.class);
-    this.latencyByScoringFunctionTypeAndClient = new EnumMap<>(ThriftScoringFunctionType.class);
-    this.latencyByTensorflowModel = new ConcurrentHashMap<>();
+    t .latencyByScor ngFunct onType = new EnumMap<>(Thr ftScor ngFunct onType.class);
+    t .latencyByScor ngFunct onTypeAndCl ent = new EnumMap<>(Thr ftScor ngFunct onType.class);
+    t .latencyByTensorflowModel = new ConcurrentHashMap<>();
 
-    for (ThriftScoringFunctionType type : ThriftScoringFunctionType.values()) {
-      this.latencyByScoringFunctionType.put(type, getTimerStatsByName(getStatsNameByType(type)));
-      this.latencyByScoringFunctionTypeAndClient.put(type, new ConcurrentHashMap<>());
+    for (Thr ftScor ngFunct onType type : Thr ftScor ngFunct onType.values()) {
+      t .latencyByScor ngFunct onType.put(type, getT  rStatsByNa (getStatsNa ByType(type)));
+      t .latencyByScor ngFunct onTypeAndCl ent.put(type, new ConcurrentHashMap<>());
     }
 
-    this.numRequestsWithBlankQuery = new EnumMap<>(EarlybirdSearcher.QueryMode.class);
+    t .numRequestsW hBlankQuery = new EnumMap<>(Earlyb rdSearc r.QueryMode.class);
 
-    for (EarlybirdSearcher.QueryMode queryMode : EarlybirdSearcher.QueryMode.values()) {
-      String counterName =
-          String.format("num_requests_with_blank_query_%s", queryMode.name().toLowerCase());
+    for (Earlyb rdSearc r.QueryMode queryMode : Earlyb rdSearc r.QueryMode.values()) {
+      Str ng counterNa  =
+          Str ng.format("num_requests_w h_blank_query_%s", queryMode.na ().toLo rCase());
 
-      this.numRequestsWithBlankQuery.put(
-          queryMode, earlybirdServerStatsReceiver.getCounter(counterName));
-    }
-  }
-
-  /**
-   * Records the latency for a request for the applicable stats.
-   * @param timer A stopped timer that timed the request.
-   * @param request The request that was timed.
-   */
-  public void recordRelevanceStats(SearchTimer timer, EarlybirdRequest request) {
-    Preconditions.checkNotNull(timer);
-    Preconditions.checkNotNull(request);
-    Preconditions.checkArgument(!timer.isRunning());
-
-    ThriftSearchRelevanceOptions relevanceOptions = request.getSearchQuery().getRelevanceOptions();
-
-    // Only record ranking searches with a set type.
-    if (!relevanceOptions.isSetRankingParams()
-        || !relevanceOptions.getRankingParams().isSetType()) {
-      return;
-    }
-
-    ThriftRankingParams rankingParams = relevanceOptions.getRankingParams();
-    ThriftScoringFunctionType scoringFunctionType = rankingParams.getType();
-
-    latencyByScoringFunctionType.get(scoringFunctionType).stoppedTimerIncrement(timer);
-
-    if (request.getClientId() != null) {
-      getTimerStatsByClient(scoringFunctionType, request.getClientId())
-          .stoppedTimerIncrement(timer);
-    }
-
-    if (scoringFunctionType != ThriftScoringFunctionType.TENSORFLOW_BASED) {
-      return;
-    }
-
-    String modelName = rankingParams.getSelectedTensorflowModel();
-
-    if (modelName != null) {
-      getTimerStatsByTensorflowModel(modelName).stoppedTimerIncrement(timer);
+      t .numRequestsW hBlankQuery.put(
+          queryMode, earlyb rdServerStatsRece ver.getCounter(counterNa ));
     }
   }
 
   /**
-   * Creates a search timer with options specified by TweetsEarlybirdSearcherStats.
-   * @return A new SearchTimer.
+   * Records t  latency for a request for t  appl cable stats.
+   * @param t  r A stopped t  r that t  d t  request.
+   * @param request T  request that was t  d.
    */
-  public SearchTimer createTimer() {
-    return new SearchTimer(new SearchMetricTimerOptions.Builder()
-        .withTimeUnit(TIME_UNIT)
-        .build());
+  publ c vo d recordRelevanceStats(SearchT  r t  r, Earlyb rdRequest request) {
+    Precond  ons.c ckNotNull(t  r);
+    Precond  ons.c ckNotNull(request);
+    Precond  ons.c ckArgu nt(!t  r. sRunn ng());
+
+    Thr ftSearchRelevanceOpt ons relevanceOpt ons = request.getSearchQuery().getRelevanceOpt ons();
+
+    // Only record rank ng searc s w h a set type.
+     f (!relevanceOpt ons. sSetRank ngParams()
+        || !relevanceOpt ons.getRank ngParams(). sSetType()) {
+      return;
+    }
+
+    Thr ftRank ngParams rank ngParams = relevanceOpt ons.getRank ngParams();
+    Thr ftScor ngFunct onType scor ngFunct onType = rank ngParams.getType();
+
+    latencyByScor ngFunct onType.get(scor ngFunct onType).stoppedT  r ncre nt(t  r);
+
+     f (request.getCl ent d() != null) {
+      getT  rStatsByCl ent(scor ngFunct onType, request.getCl ent d())
+          .stoppedT  r ncre nt(t  r);
+    }
+
+     f (scor ngFunct onType != Thr ftScor ngFunct onType.TENSORFLOW_BASED) {
+      return;
+    }
+
+    Str ng modelNa  = rank ngParams.getSelectedTensorflowModel();
+
+     f (modelNa  != null) {
+      getT  rStatsByTensorflowModel(modelNa ).stoppedT  r ncre nt(t  r);
+    }
   }
 
-  private SearchTimerStats getTimerStatsByClient(
-      ThriftScoringFunctionType type,
-      String clientId) {
-    Map<String, SearchTimerStats> latencyByClient = latencyByScoringFunctionTypeAndClient.get(type);
-
-    return latencyByClient.computeIfAbsent(clientId,
-        cid -> getTimerStatsByName(getStatsNameByClientAndType(type, cid)));
+  /**
+   * Creates a search t  r w h opt ons spec f ed by T etsEarlyb rdSearc rStats.
+   * @return A new SearchT  r.
+   */
+  publ c SearchT  r createT  r() {
+    return new SearchT  r(new Search tr cT  rOpt ons.Bu lder()
+        .w hT  Un (T ME_UN T)
+        .bu ld());
   }
 
-  private SearchTimerStats getTimerStatsByTensorflowModel(String modelName) {
-    return latencyByTensorflowModel.computeIfAbsent(modelName,
-        mn -> getTimerStatsByName(getStatsNameByTensorflowModel(mn)));
+  pr vate SearchT  rStats getT  rStatsByCl ent(
+      Thr ftScor ngFunct onType type,
+      Str ng cl ent d) {
+    Map<Str ng, SearchT  rStats> latencyByCl ent = latencyByScor ngFunct onTypeAndCl ent.get(type);
+
+    return latencyByCl ent.compute fAbsent(cl ent d,
+        c d -> getT  rStatsByNa (getStatsNa ByCl entAndType(type, c d)));
   }
 
-  private SearchTimerStats getTimerStatsByName(String name) {
-    return earlybirdServerStatsReceiver.getTimerStats(
-        name, TIME_UNIT, false, true, false);
+  pr vate SearchT  rStats getT  rStatsByTensorflowModel(Str ng modelNa ) {
+    return latencyByTensorflowModel.compute fAbsent(modelNa ,
+        mn -> getT  rStatsByNa (getStatsNa ByTensorflowModel(mn)));
   }
 
-  public static String getStatsNameByType(ThriftScoringFunctionType type) {
-    return String.format(
-        "search_relevance_scoring_function_%s_requests", type.name().toLowerCase());
+  pr vate SearchT  rStats getT  rStatsByNa (Str ng na ) {
+    return earlyb rdServerStatsRece ver.getT  rStats(
+        na , T ME_UN T, false, true, false);
   }
 
-  public static String getStatsNameByClientAndType(
-      ThriftScoringFunctionType type,
-      String clientId) {
-    return String.format("%s_%s", ClientIdUtil.formatClientId(clientId), getStatsNameByType(type));
+  publ c stat c Str ng getStatsNa ByType(Thr ftScor ngFunct onType type) {
+    return Str ng.format(
+        "search_relevance_scor ng_funct on_%s_requests", type.na ().toLo rCase());
   }
 
-  public static String getStatsNameByTensorflowModel(String modelName) {
-    return String.format(
-        "model_%s_%s", modelName, getStatsNameByType(ThriftScoringFunctionType.TENSORFLOW_BASED));
+  publ c stat c Str ng getStatsNa ByCl entAndType(
+      Thr ftScor ngFunct onType type,
+      Str ng cl ent d) {
+    return Str ng.format("%s_%s", Cl ent dUt l.formatCl ent d(cl ent d), getStatsNa ByType(type));
+  }
+
+  publ c stat c Str ng getStatsNa ByTensorflowModel(Str ng modelNa ) {
+    return Str ng.format(
+        "model_%s_%s", modelNa , getStatsNa ByType(Thr ftScor ngFunct onType.TENSORFLOW_BASED));
   }
 }

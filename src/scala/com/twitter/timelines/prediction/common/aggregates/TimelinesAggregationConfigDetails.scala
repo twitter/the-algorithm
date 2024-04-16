@@ -1,155 +1,155 @@
-package com.twitter.timelines.prediction.common.aggregates
+package com.tw ter.t  l nes.pred ct on.common.aggregates
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.ml.api.constant.SharedFeatures.AUTHOR_ID
-import com.twitter.ml.api.constant.SharedFeatures.USER_ID
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework._
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics._
-import com.twitter.timelines.data_processing.ml_util.transforms.DownsampleTransform
-import com.twitter.timelines.data_processing.ml_util.transforms.RichRemoveAuthorIdZero
-import com.twitter.timelines.data_processing.ml_util.transforms.RichRemoveUserIdZero
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import com.twitter.timelines.prediction.features.engagement_features.EngagementDataRecordFeatures
-import com.twitter.timelines.prediction.features.engagement_features.EngagementDataRecordFeatures.RichUnifyPublicEngagersTransform
-import com.twitter.timelines.prediction.features.list_features.ListFeatures
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
-import com.twitter.timelines.prediction.features.request_context.RequestContextFeatures
-import com.twitter.timelines.prediction.features.semantic_core_features.SemanticCoreFeatures
-import com.twitter.timelines.prediction.transform.filter.FilterInNetworkTransform
-import com.twitter.timelines.prediction.transform.filter.FilterImageTweetTransform
-import com.twitter.timelines.prediction.transform.filter.FilterVideoTweetTransform
-import com.twitter.timelines.prediction.transform.filter.FilterOutImageVideoTweetTransform
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.ml.ap .constant.SharedFeatures.AUTHOR_ D
+ mport com.tw ter.ml.ap .constant.SharedFeatures.USER_ D
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work._
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. tr cs._
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.transforms.DownsampleTransform
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.transforms.R chRemoveAuthor dZero
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.transforms.R chRemoveUser dZero
+ mport com.tw ter.t  l nes.pred ct on.features.common.T  l nesSharedFeatures
+ mport com.tw ter.t  l nes.pred ct on.features.engage nt_features.Engage ntDataRecordFeatures
+ mport com.tw ter.t  l nes.pred ct on.features.engage nt_features.Engage ntDataRecordFeatures.R chUn fyPubl cEngagersTransform
+ mport com.tw ter.t  l nes.pred ct on.features.l st_features.L stFeatures
+ mport com.tw ter.t  l nes.pred ct on.features.recap.RecapFeatures
+ mport com.tw ter.t  l nes.pred ct on.features.request_context.RequestContextFeatures
+ mport com.tw ter.t  l nes.pred ct on.features.semant c_core_features.Semant cCoreFeatures
+ mport com.tw ter.t  l nes.pred ct on.transform.f lter.F lter nNetworkTransform
+ mport com.tw ter.t  l nes.pred ct on.transform.f lter.F lter mageT etTransform
+ mport com.tw ter.t  l nes.pred ct on.transform.f lter.F lterV deoT etTransform
+ mport com.tw ter.t  l nes.pred ct on.transform.f lter.F lterOut mageV deoT etTransform
+ mport com.tw ter.ut l.Durat on
 
-trait TimelinesAggregationConfigDetails extends Serializable {
+tra  T  l nesAggregat onConf gDeta ls extends Ser al zable {
 
-  import TimelinesAggregationSources._
+   mport T  l nesAggregat onS ces._
 
-  def outputHdfsPath: String
+  def outputHdfsPath: Str ng
 
   /**
-   * Converts the given logical store to a physical store. The reason we do not specify the
-   * physical store directly with the [[AggregateGroup]] is because of a cyclic dependency when
-   * create physical stores that are DalDataset with PersonalDataType annotations derived from
-   * the [[AggregateGroup]].
+   * Converts t  g ven log cal store to a phys cal store. T  reason   do not spec fy t 
+   * phys cal store d rectly w h t  [[AggregateGroup]]  s because of a cycl c dependency w n
+   * create phys cal stores that are DalDataset w h PersonalDataType annotat ons der ved from
+   * t  [[AggregateGroup]].
    *
    */
-  def mkPhysicalStore(store: AggregateStore): AggregateStore
+  def mkPhys calStore(store: AggregateStore): AggregateStore
 
-  def defaultMaxKvSourceFailures: Int = 100
+  def defaultMaxKvS ceFa lures:  nt = 100
 
-  val timelinesOfflineAggregateSink = new OfflineStoreCommonConfig {
-    override def apply(startDate: String) = OfflineAggregateStoreCommonConfig(
-      outputHdfsPathPrefix = outputHdfsPath,
-      dummyAppId = "timelines_aggregates_v2_ro",
-      dummyDatasetPrefix = "timelines_aggregates_v2_ro",
+  val t  l nesOffl neAggregateS nk = new Offl neStoreCommonConf g {
+    overr de def apply(startDate: Str ng) = Offl neAggregateStoreCommonConf g(
+      outputHdfsPathPref x = outputHdfsPath,
+      dum App d = "t  l nes_aggregates_v2_ro",
+      dum DatasetPref x = "t  l nes_aggregates_v2_ro",
       startDate = startDate
     )
   }
 
   val UserAggregateStore = "user_aggregates"
   val UserAuthorAggregateStore = "user_author_aggregates"
-  val UserOriginalAuthorAggregateStore = "user_original_author_aggregates"
-  val OriginalAuthorAggregateStore = "original_author_aggregates"
+  val UserOr g nalAuthorAggregateStore = "user_or g nal_author_aggregates"
+  val Or g nalAuthorAggregateStore = "or g nal_author_aggregates"
   val UserEngagerAggregateStore = "user_engager_aggregates"
-  val UserMentionAggregateStore = "user_mention_aggregates"
-  val TwitterWideUserAggregateStore = "twitter_wide_user_aggregates"
-  val TwitterWideUserAuthorAggregateStore = "twitter_wide_user_author_aggregates"
-  val UserRequestHourAggregateStore = "user_request_hour_aggregates"
+  val User nt onAggregateStore = "user_ nt on_aggregates"
+  val Tw terW deUserAggregateStore = "tw ter_w de_user_aggregates"
+  val Tw terW deUserAuthorAggregateStore = "tw ter_w de_user_author_aggregates"
+  val UserRequestH AggregateStore = "user_request_h _aggregates"
   val UserRequestDowAggregateStore = "user_request_dow_aggregates"
-  val UserListAggregateStore = "user_list_aggregates"
-  val AuthorTopicAggregateStore = "author_topic_aggregates"
-  val UserTopicAggregateStore = "user_topic_aggregates"
-  val UserInferredTopicAggregateStore = "user_inferred_topic_aggregates"
-  val UserMediaUnderstandingAnnotationAggregateStore =
-    "user_media_understanding_annotation_aggregates"
+  val UserL stAggregateStore = "user_l st_aggregates"
+  val AuthorTop cAggregateStore = "author_top c_aggregates"
+  val UserTop cAggregateStore = "user_top c_aggregates"
+  val User nferredTop cAggregateStore = "user_ nferred_top c_aggregates"
+  val User d aUnderstand ngAnnotat onAggregateStore =
+    "user_ d a_understand ng_annotat on_aggregates"
   val AuthorCountryCodeAggregateStore = "author_country_code_aggregates"
-  val OriginalAuthorCountryCodeAggregateStore = "original_author_country_code_aggregates"
+  val Or g nalAuthorCountryCodeAggregateStore = "or g nal_author_country_code_aggregates"
 
   /**
-   * Step 3: Configure all aggregates to compute.
-   * Note that different subsets of aggregates in this list
-   * can be launched by different summingbird job instances.
-   * Any given job can be responsible for a set of AggregateGroup
-   * configs whose outputStores share the same exact startDate.
-   * AggregateGroups that do not share the same inputSource,
-   * outputStore or startDate MUST be launched using different
-   * summingbird jobs and passed in a different --start-time argument
-   * See science/scalding/mesos/timelines/prod.yaml for an example
-   * of how to configure your own job.
+   * Step 3: Conf gure all aggregates to compute.
+   * Note that d fferent subsets of aggregates  n t  l st
+   * can be launc d by d fferent summ ngb rd job  nstances.
+   * Any g ven job can be respons ble for a set of AggregateGroup
+   * conf gs whose outputStores share t  sa  exact startDate.
+   * AggregateGroups that do not share t  sa   nputS ce,
+   * outputStore or startDate MUST be launc d us ng d fferent
+   * summ ngb rd jobs and passed  n a d fferent --start-t   argu nt
+   * See sc ence/scald ng/ sos/t  l nes/prod.yaml for an example
+   * of how to conf gure y  own job.
    */
-  val negativeDownsampleTransform =
+  val negat veDownsampleTransform =
     DownsampleTransform(
-      negativeSamplingRate = 0.03,
-      keepLabels = RecapUserFeatureAggregation.LabelsV2)
-  val negativeRecTweetDownsampleTransform = DownsampleTransform(
-    negativeSamplingRate = 0.03,
-    keepLabels = RectweetUserFeatureAggregation.RectweetLabelsForAggregation
+      negat veSampl ngRate = 0.03,
+      keepLabels = RecapUserFeatureAggregat on.LabelsV2)
+  val negat veRecT etDownsampleTransform = DownsampleTransform(
+    negat veSampl ngRate = 0.03,
+    keepLabels = Rect etUserFeatureAggregat on.Rect etLabelsForAggregat on
   )
 
   val userAggregatesV2: AggregateGroup =
     AggregateGroup(
-      inputSource = timelinesDailyRecapMinimalSource,
-      aggregatePrefix = "user_aggregate_v2",
-      preTransforms = Seq(RichRemoveUserIdZero), /* Eliminates reducer skew */
-      keys = Set(USER_ID),
-      features = RecapUserFeatureAggregation.UserFeaturesV2,
-      labels = RecapUserFeatureAggregation.LabelsV2,
-      metrics = Set(CountMetric, SumMetric),
-      halfLives = Set(50.days),
-      outputStore = mkPhysicalStore(
-        OfflineAggregateDataRecordStore(
-          name = UserAggregateStore,
+       nputS ce = t  l nesDa lyRecapM n malS ce,
+      aggregatePref x = "user_aggregate_v2",
+      preTransforms = Seq(R chRemoveUser dZero), /* El m nates reducer skew */
+      keys = Set(USER_ D),
+      features = RecapUserFeatureAggregat on.UserFeaturesV2,
+      labels = RecapUserFeatureAggregat on.LabelsV2,
+       tr cs = Set(Count tr c, Sum tr c),
+      halfL ves = Set(50.days),
+      outputStore = mkPhys calStore(
+        Offl neAggregateDataRecordStore(
+          na  = UserAggregateStore,
           startDate = "2016-07-15 00:00",
-          commonConfig = timelinesOfflineAggregateSink,
-          maxKvSourceFailures = defaultMaxKvSourceFailures
+          commonConf g = t  l nesOffl neAggregateS nk,
+          maxKvS ceFa lures = defaultMaxKvS ceFa lures
         ))
     )
 
   val userAuthorAggregatesV2: Set[AggregateGroup] = {
 
     /**
-     * NOTE: We need to remove records from out-of-network authors from the recap input
-     * records (which now include out-of-network records as well after merging recap and
-     * rectweet models) that are used to compute user-author aggregates. This is necessary
-     * to limit the growth rate of user-author aggregates.
+     * NOTE:   need to remove records from out-of-network authors from t  recap  nput
+     * records (wh ch now  nclude out-of-network records as  ll after  rg ng recap and
+     * rect et models) that are used to compute user-author aggregates. T   s necessary
+     * to l m  t  growth rate of user-author aggregates.
      */
     val allFeatureAggregates = Set(
       AggregateGroup(
-        inputSource = timelinesDailyRecapMinimalSource,
-        aggregatePrefix = "user_author_aggregate_v2",
-        preTransforms = Seq(FilterInNetworkTransform, RichRemoveUserIdZero),
-        keys = Set(USER_ID, AUTHOR_ID),
-        features = RecapUserFeatureAggregation.UserAuthorFeaturesV2,
-        labels = RecapUserFeatureAggregation.LabelsV2,
-        metrics = Set(SumMetric),
-        halfLives = Set(50.days),
-        outputStore = mkPhysicalStore(
-          OfflineAggregateDataRecordStore(
-            name = UserAuthorAggregateStore,
+         nputS ce = t  l nesDa lyRecapM n malS ce,
+        aggregatePref x = "user_author_aggregate_v2",
+        preTransforms = Seq(F lter nNetworkTransform, R chRemoveUser dZero),
+        keys = Set(USER_ D, AUTHOR_ D),
+        features = RecapUserFeatureAggregat on.UserAuthorFeaturesV2,
+        labels = RecapUserFeatureAggregat on.LabelsV2,
+         tr cs = Set(Sum tr c),
+        halfL ves = Set(50.days),
+        outputStore = mkPhys calStore(
+          Offl neAggregateDataRecordStore(
+            na  = UserAuthorAggregateStore,
             startDate = "2016-07-15 00:00",
-            commonConfig = timelinesOfflineAggregateSink,
-            maxKvSourceFailures = defaultMaxKvSourceFailures
+            commonConf g = t  l nesOffl neAggregateS nk,
+            maxKvS ceFa lures = defaultMaxKvS ceFa lures
           ))
       )
     )
 
     val countAggregates: Set[AggregateGroup] = Set(
       AggregateGroup(
-        inputSource = timelinesDailyRecapMinimalSource,
-        aggregatePrefix = "user_author_aggregate_v2",
-        preTransforms = Seq(FilterInNetworkTransform, RichRemoveUserIdZero),
-        keys = Set(USER_ID, AUTHOR_ID),
-        features = RecapUserFeatureAggregation.UserAuthorFeaturesV2Count,
-        labels = RecapUserFeatureAggregation.LabelsV2,
-        metrics = Set(CountMetric),
-        halfLives = Set(50.days),
-        outputStore = mkPhysicalStore(
-          OfflineAggregateDataRecordStore(
-            name = UserAuthorAggregateStore,
+         nputS ce = t  l nesDa lyRecapM n malS ce,
+        aggregatePref x = "user_author_aggregate_v2",
+        preTransforms = Seq(F lter nNetworkTransform, R chRemoveUser dZero),
+        keys = Set(USER_ D, AUTHOR_ D),
+        features = RecapUserFeatureAggregat on.UserAuthorFeaturesV2Count,
+        labels = RecapUserFeatureAggregat on.LabelsV2,
+         tr cs = Set(Count tr c),
+        halfL ves = Set(50.days),
+        outputStore = mkPhys calStore(
+          Offl neAggregateDataRecordStore(
+            na  = UserAuthorAggregateStore,
             startDate = "2016-07-15 00:00",
-            commonConfig = timelinesOfflineAggregateSink,
-            maxKvSourceFailures = defaultMaxKvSourceFailures
+            commonConf g = t  l nesOffl neAggregateS nk,
+            maxKvS ceFa lures = defaultMaxKvS ceFa lures
           ))
       )
     )
@@ -157,422 +157,422 @@ trait TimelinesAggregationConfigDetails extends Serializable {
     allFeatureAggregates ++ countAggregates
   }
 
-  val userAggregatesV5Continuous: AggregateGroup =
+  val userAggregatesV5Cont nuous: AggregateGroup =
     AggregateGroup(
-      inputSource = timelinesDailyRecapMinimalSource,
-      aggregatePrefix = "user_aggregate_v5.continuous",
-      preTransforms = Seq(RichRemoveUserIdZero),
-      keys = Set(USER_ID),
-      features = RecapUserFeatureAggregation.UserFeaturesV5Continuous,
-      labels = RecapUserFeatureAggregation.LabelsV2,
-      metrics = Set(CountMetric, SumMetric, SumSqMetric),
-      halfLives = Set(50.days),
-      outputStore = mkPhysicalStore(
-        OfflineAggregateDataRecordStore(
-          name = UserAggregateStore,
+       nputS ce = t  l nesDa lyRecapM n malS ce,
+      aggregatePref x = "user_aggregate_v5.cont nuous",
+      preTransforms = Seq(R chRemoveUser dZero),
+      keys = Set(USER_ D),
+      features = RecapUserFeatureAggregat on.UserFeaturesV5Cont nuous,
+      labels = RecapUserFeatureAggregat on.LabelsV2,
+       tr cs = Set(Count tr c, Sum tr c, SumSq tr c),
+      halfL ves = Set(50.days),
+      outputStore = mkPhys calStore(
+        Offl neAggregateDataRecordStore(
+          na  = UserAggregateStore,
           startDate = "2016-07-15 00:00",
-          commonConfig = timelinesOfflineAggregateSink,
-          maxKvSourceFailures = defaultMaxKvSourceFailures
+          commonConf g = t  l nesOffl neAggregateS nk,
+          maxKvS ceFa lures = defaultMaxKvS ceFa lures
         ))
     )
 
   val userAuthorAggregatesV5: AggregateGroup =
     AggregateGroup(
-      inputSource = timelinesDailyRecapMinimalSource,
-      aggregatePrefix = "user_author_aggregate_v5",
-      preTransforms = Seq(FilterInNetworkTransform, RichRemoveUserIdZero),
-      keys = Set(USER_ID, AUTHOR_ID),
-      features = RecapUserFeatureAggregation.UserAuthorFeaturesV5,
-      labels = RecapUserFeatureAggregation.LabelsV2,
-      metrics = Set(CountMetric),
-      halfLives = Set(50.days),
-      outputStore = mkPhysicalStore(
-        OfflineAggregateDataRecordStore(
-          name = UserAuthorAggregateStore,
+       nputS ce = t  l nesDa lyRecapM n malS ce,
+      aggregatePref x = "user_author_aggregate_v5",
+      preTransforms = Seq(F lter nNetworkTransform, R chRemoveUser dZero),
+      keys = Set(USER_ D, AUTHOR_ D),
+      features = RecapUserFeatureAggregat on.UserAuthorFeaturesV5,
+      labels = RecapUserFeatureAggregat on.LabelsV2,
+       tr cs = Set(Count tr c),
+      halfL ves = Set(50.days),
+      outputStore = mkPhys calStore(
+        Offl neAggregateDataRecordStore(
+          na  = UserAuthorAggregateStore,
           startDate = "2016-07-15 00:00",
-          commonConfig = timelinesOfflineAggregateSink,
-          maxKvSourceFailures = defaultMaxKvSourceFailures
+          commonConf g = t  l nesOffl neAggregateS nk,
+          maxKvS ceFa lures = defaultMaxKvS ceFa lures
         ))
     )
 
-  val tweetSourceUserAuthorAggregatesV1: AggregateGroup =
+  val t etS ceUserAuthorAggregatesV1: AggregateGroup =
     AggregateGroup(
-      inputSource = timelinesDailyRecapMinimalSource,
-      aggregatePrefix = "user_author_aggregate_tweetsource_v1",
-      preTransforms = Seq(FilterInNetworkTransform, RichRemoveUserIdZero),
-      keys = Set(USER_ID, AUTHOR_ID),
-      features = RecapUserFeatureAggregation.UserAuthorTweetSourceFeaturesV1,
-      labels = RecapUserFeatureAggregation.LabelsV2,
-      metrics = Set(CountMetric, SumMetric),
-      halfLives = Set(50.days),
-      outputStore = mkPhysicalStore(
-        OfflineAggregateDataRecordStore(
-          name = UserAuthorAggregateStore,
+       nputS ce = t  l nesDa lyRecapM n malS ce,
+      aggregatePref x = "user_author_aggregate_t ets ce_v1",
+      preTransforms = Seq(F lter nNetworkTransform, R chRemoveUser dZero),
+      keys = Set(USER_ D, AUTHOR_ D),
+      features = RecapUserFeatureAggregat on.UserAuthorT etS ceFeaturesV1,
+      labels = RecapUserFeatureAggregat on.LabelsV2,
+       tr cs = Set(Count tr c, Sum tr c),
+      halfL ves = Set(50.days),
+      outputStore = mkPhys calStore(
+        Offl neAggregateDataRecordStore(
+          na  = UserAuthorAggregateStore,
           startDate = "2016-07-15 00:00",
-          commonConfig = timelinesOfflineAggregateSink,
-          maxKvSourceFailures = defaultMaxKvSourceFailures
+          commonConf g = t  l nesOffl neAggregateS nk,
+          maxKvS ceFa lures = defaultMaxKvS ceFa lures
         ))
     )
 
   val userEngagerAggregates = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_engager_aggregate",
-    keys = Set(USER_ID, EngagementDataRecordFeatures.PublicEngagementUserIds),
+     nputS ce = t  l nesDa lyRecapM n malS ce,
+    aggregatePref x = "user_engager_aggregate",
+    keys = Set(USER_ D, Engage ntDataRecordFeatures.Publ cEngage ntUser ds),
     features = Set.empty,
-    labels = RecapUserFeatureAggregation.LabelsV2,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = UserEngagerAggregateStore,
+    labels = RecapUserFeatureAggregat on.LabelsV2,
+     tr cs = Set(Count tr c),
+    halfL ves = Set(50.days),
+    outputStore = mkPhys calStore(
+      Offl neAggregateDataRecordStore(
+        na  = UserEngagerAggregateStore,
         startDate = "2016-09-02 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        commonConf g = t  l nesOffl neAggregateS nk,
+        maxKvS ceFa lures = defaultMaxKvS ceFa lures
       )),
     preTransforms = Seq(
-      RichRemoveUserIdZero,
-      RichUnifyPublicEngagersTransform
+      R chRemoveUser dZero,
+      R chUn fyPubl cEngagersTransform
     )
   )
 
-  val userMentionAggregates = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    preTransforms = Seq(RichRemoveUserIdZero), /* Eliminates reducer skew */
-    aggregatePrefix = "user_mention_aggregate",
-    keys = Set(USER_ID, RecapFeatures.MENTIONED_SCREEN_NAMES),
+  val user nt onAggregates = AggregateGroup(
+     nputS ce = t  l nesDa lyRecapM n malS ce,
+    preTransforms = Seq(R chRemoveUser dZero), /* El m nates reducer skew */
+    aggregatePref x = "user_ nt on_aggregate",
+    keys = Set(USER_ D, RecapFeatures.MENT ONED_SCREEN_NAMES),
     features = Set.empty,
-    labels = RecapUserFeatureAggregation.LabelsV2,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = UserMentionAggregateStore,
+    labels = RecapUserFeatureAggregat on.LabelsV2,
+     tr cs = Set(Count tr c),
+    halfL ves = Set(50.days),
+    outputStore = mkPhys calStore(
+      Offl neAggregateDataRecordStore(
+        na  = User nt onAggregateStore,
         startDate = "2017-03-01 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        commonConf g = t  l nesOffl neAggregateS nk,
+        maxKvS ceFa lures = defaultMaxKvS ceFa lures
       )),
-    includeAnyLabel = false
+     ncludeAnyLabel = false
   )
 
-  val twitterWideUserAggregates = AggregateGroup(
-    inputSource = timelinesDailyTwitterWideSource,
-    preTransforms = Seq(RichRemoveUserIdZero), /* Eliminates reducer skew */
-    aggregatePrefix = "twitter_wide_user_aggregate",
-    keys = Set(USER_ID),
-    features = RecapUserFeatureAggregation.TwitterWideFeatures,
-    labels = RecapUserFeatureAggregation.TwitterWideLabels,
-    metrics = Set(CountMetric, SumMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = TwitterWideUserAggregateStore,
+  val tw terW deUserAggregates = AggregateGroup(
+     nputS ce = t  l nesDa lyTw terW deS ce,
+    preTransforms = Seq(R chRemoveUser dZero), /* El m nates reducer skew */
+    aggregatePref x = "tw ter_w de_user_aggregate",
+    keys = Set(USER_ D),
+    features = RecapUserFeatureAggregat on.Tw terW deFeatures,
+    labels = RecapUserFeatureAggregat on.Tw terW deLabels,
+     tr cs = Set(Count tr c, Sum tr c),
+    halfL ves = Set(50.days),
+    outputStore = mkPhys calStore(
+      Offl neAggregateDataRecordStore(
+        na  = Tw terW deUserAggregateStore,
         startDate = "2016-12-28 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        commonConf g = t  l nesOffl neAggregateS nk,
+        maxKvS ceFa lures = defaultMaxKvS ceFa lures
       ))
   )
 
-  val twitterWideUserAuthorAggregates = AggregateGroup(
-    inputSource = timelinesDailyTwitterWideSource,
-    preTransforms = Seq(RichRemoveUserIdZero), /* Eliminates reducer skew */
-    aggregatePrefix = "twitter_wide_user_author_aggregate",
-    keys = Set(USER_ID, AUTHOR_ID),
-    features = RecapUserFeatureAggregation.TwitterWideFeatures,
-    labels = RecapUserFeatureAggregation.TwitterWideLabels,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = TwitterWideUserAuthorAggregateStore,
+  val tw terW deUserAuthorAggregates = AggregateGroup(
+     nputS ce = t  l nesDa lyTw terW deS ce,
+    preTransforms = Seq(R chRemoveUser dZero), /* El m nates reducer skew */
+    aggregatePref x = "tw ter_w de_user_author_aggregate",
+    keys = Set(USER_ D, AUTHOR_ D),
+    features = RecapUserFeatureAggregat on.Tw terW deFeatures,
+    labels = RecapUserFeatureAggregat on.Tw terW deLabels,
+     tr cs = Set(Count tr c),
+    halfL ves = Set(50.days),
+    outputStore = mkPhys calStore(
+      Offl neAggregateDataRecordStore(
+        na  = Tw terW deUserAuthorAggregateStore,
         startDate = "2016-12-28 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        commonConf g = t  l nesOffl neAggregateS nk,
+        maxKvS ceFa lures = defaultMaxKvS ceFa lures
       )),
-    includeAnyLabel = false
+     ncludeAnyLabel = false
   )
 
   /**
-   * User-HourOfDay and User-DayOfWeek aggregations, both for recap and rectweet
+   * User-H OfDay and User-DayOf ek aggregat ons, both for recap and rect et
    */
-  val userRequestHourAggregates = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_request_context_aggregate.hour",
-    preTransforms = Seq(RichRemoveUserIdZero, negativeDownsampleTransform),
-    keys = Set(USER_ID, RequestContextFeatures.TIMESTAMP_GMT_HOUR),
+  val userRequestH Aggregates = AggregateGroup(
+     nputS ce = t  l nesDa lyRecapM n malS ce,
+    aggregatePref x = "user_request_context_aggregate.h ",
+    preTransforms = Seq(R chRemoveUser dZero, negat veDownsampleTransform),
+    keys = Set(USER_ D, RequestContextFeatures.T MESTAMP_GMT_HOUR),
     features = Set.empty,
-    labels = RecapUserFeatureAggregation.LabelsV2,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = UserRequestHourAggregateStore,
+    labels = RecapUserFeatureAggregat on.LabelsV2,
+     tr cs = Set(Count tr c),
+    halfL ves = Set(50.days),
+    outputStore = mkPhys calStore(
+      Offl neAggregateDataRecordStore(
+        na  = UserRequestH AggregateStore,
         startDate = "2017-08-01 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        commonConf g = t  l nesOffl neAggregateS nk,
+        maxKvS ceFa lures = defaultMaxKvS ceFa lures
       ))
   )
 
   val userRequestDowAggregates = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_request_context_aggregate.dow",
-    preTransforms = Seq(RichRemoveUserIdZero, negativeDownsampleTransform),
-    keys = Set(USER_ID, RequestContextFeatures.TIMESTAMP_GMT_DOW),
+     nputS ce = t  l nesDa lyRecapM n malS ce,
+    aggregatePref x = "user_request_context_aggregate.dow",
+    preTransforms = Seq(R chRemoveUser dZero, negat veDownsampleTransform),
+    keys = Set(USER_ D, RequestContextFeatures.T MESTAMP_GMT_DOW),
     features = Set.empty,
-    labels = RecapUserFeatureAggregation.LabelsV2,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = UserRequestDowAggregateStore,
+    labels = RecapUserFeatureAggregat on.LabelsV2,
+     tr cs = Set(Count tr c),
+    halfL ves = Set(50.days),
+    outputStore = mkPhys calStore(
+      Offl neAggregateDataRecordStore(
+        na  = UserRequestDowAggregateStore,
         startDate = "2017-08-01 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        commonConf g = t  l nesOffl neAggregateS nk,
+        maxKvS ceFa lures = defaultMaxKvS ceFa lures
       ))
   )
 
-  val authorTopicAggregates = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "author_topic_aggregate",
-    preTransforms = Seq(RichRemoveUserIdZero),
-    keys = Set(AUTHOR_ID, TimelinesSharedFeatures.TOPIC_ID),
+  val authorTop cAggregates = AggregateGroup(
+     nputS ce = t  l nesDa lyRecapM n malS ce,
+    aggregatePref x = "author_top c_aggregate",
+    preTransforms = Seq(R chRemoveUser dZero),
+    keys = Set(AUTHOR_ D, T  l nesSharedFeatures.TOP C_ D),
     features = Set.empty,
-    labels = RecapUserFeatureAggregation.LabelsV2,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = AuthorTopicAggregateStore,
+    labels = RecapUserFeatureAggregat on.LabelsV2,
+     tr cs = Set(Count tr c),
+    halfL ves = Set(50.days),
+    outputStore = mkPhys calStore(
+      Offl neAggregateDataRecordStore(
+        na  = AuthorTop cAggregateStore,
         startDate = "2020-05-19 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        commonConf g = t  l nesOffl neAggregateS nk,
+        maxKvS ceFa lures = defaultMaxKvS ceFa lures
       ))
   )
 
-  val userTopicAggregates = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_topic_aggregate",
-    preTransforms = Seq(RichRemoveUserIdZero),
-    keys = Set(USER_ID, TimelinesSharedFeatures.TOPIC_ID),
+  val userTop cAggregates = AggregateGroup(
+     nputS ce = t  l nesDa lyRecapM n malS ce,
+    aggregatePref x = "user_top c_aggregate",
+    preTransforms = Seq(R chRemoveUser dZero),
+    keys = Set(USER_ D, T  l nesSharedFeatures.TOP C_ D),
     features = Set.empty,
-    labels = RecapUserFeatureAggregation.LabelsV2,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = UserTopicAggregateStore,
+    labels = RecapUserFeatureAggregat on.LabelsV2,
+     tr cs = Set(Count tr c),
+    halfL ves = Set(50.days),
+    outputStore = mkPhys calStore(
+      Offl neAggregateDataRecordStore(
+        na  = UserTop cAggregateStore,
         startDate = "2020-05-23 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        commonConf g = t  l nesOffl neAggregateS nk,
+        maxKvS ceFa lures = defaultMaxKvS ceFa lures
       ))
   )
 
-  val userTopicAggregatesV2 = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_topic_aggregate_v2",
-    preTransforms = Seq(RichRemoveUserIdZero),
-    keys = Set(USER_ID, TimelinesSharedFeatures.TOPIC_ID),
-    features = RecapUserFeatureAggregation.UserTopicFeaturesV2Count,
-    labels = RecapUserFeatureAggregation.LabelsV2,
-    includeAnyFeature = false,
-    includeAnyLabel = false,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = UserTopicAggregateStore,
+  val userTop cAggregatesV2 = AggregateGroup(
+     nputS ce = t  l nesDa lyRecapM n malS ce,
+    aggregatePref x = "user_top c_aggregate_v2",
+    preTransforms = Seq(R chRemoveUser dZero),
+    keys = Set(USER_ D, T  l nesSharedFeatures.TOP C_ D),
+    features = RecapUserFeatureAggregat on.UserTop cFeaturesV2Count,
+    labels = RecapUserFeatureAggregat on.LabelsV2,
+     ncludeAnyFeature = false,
+     ncludeAnyLabel = false,
+     tr cs = Set(Count tr c),
+    halfL ves = Set(50.days),
+    outputStore = mkPhys calStore(
+      Offl neAggregateDataRecordStore(
+        na  = UserTop cAggregateStore,
         startDate = "2020-05-23 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        commonConf g = t  l nesOffl neAggregateS nk,
+        maxKvS ceFa lures = defaultMaxKvS ceFa lures
       ))
   )
 
-  val userInferredTopicAggregates = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_inferred_topic_aggregate",
-    preTransforms = Seq(RichRemoveUserIdZero),
-    keys = Set(USER_ID, TimelinesSharedFeatures.INFERRED_TOPIC_IDS),
+  val user nferredTop cAggregates = AggregateGroup(
+     nputS ce = t  l nesDa lyRecapM n malS ce,
+    aggregatePref x = "user_ nferred_top c_aggregate",
+    preTransforms = Seq(R chRemoveUser dZero),
+    keys = Set(USER_ D, T  l nesSharedFeatures. NFERRED_TOP C_ DS),
     features = Set.empty,
-    labels = RecapUserFeatureAggregation.LabelsV2,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = UserInferredTopicAggregateStore,
+    labels = RecapUserFeatureAggregat on.LabelsV2,
+     tr cs = Set(Count tr c),
+    halfL ves = Set(50.days),
+    outputStore = mkPhys calStore(
+      Offl neAggregateDataRecordStore(
+        na  = User nferredTop cAggregateStore,
         startDate = "2020-09-09 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        commonConf g = t  l nesOffl neAggregateS nk,
+        maxKvS ceFa lures = defaultMaxKvS ceFa lures
       ))
   )
 
-  val userInferredTopicAggregatesV2 = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_inferred_topic_aggregate_v2",
-    preTransforms = Seq(RichRemoveUserIdZero),
-    keys = Set(USER_ID, TimelinesSharedFeatures.INFERRED_TOPIC_IDS),
-    features = RecapUserFeatureAggregation.UserTopicFeaturesV2Count,
-    labels = RecapUserFeatureAggregation.LabelsV2,
-    includeAnyFeature = false,
-    includeAnyLabel = false,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = UserInferredTopicAggregateStore,
+  val user nferredTop cAggregatesV2 = AggregateGroup(
+     nputS ce = t  l nesDa lyRecapM n malS ce,
+    aggregatePref x = "user_ nferred_top c_aggregate_v2",
+    preTransforms = Seq(R chRemoveUser dZero),
+    keys = Set(USER_ D, T  l nesSharedFeatures. NFERRED_TOP C_ DS),
+    features = RecapUserFeatureAggregat on.UserTop cFeaturesV2Count,
+    labels = RecapUserFeatureAggregat on.LabelsV2,
+     ncludeAnyFeature = false,
+     ncludeAnyLabel = false,
+     tr cs = Set(Count tr c),
+    halfL ves = Set(50.days),
+    outputStore = mkPhys calStore(
+      Offl neAggregateDataRecordStore(
+        na  = User nferredTop cAggregateStore,
         startDate = "2020-09-09 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        commonConf g = t  l nesOffl neAggregateS nk,
+        maxKvS ceFa lures = defaultMaxKvS ceFa lures
       ))
   )
 
-  val userReciprocalEngagementAggregates = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_aggregate_v6",
-    preTransforms = Seq(RichRemoveUserIdZero),
-    keys = Set(USER_ID),
+  val userRec procalEngage ntAggregates = AggregateGroup(
+     nputS ce = t  l nesDa lyRecapM n malS ce,
+    aggregatePref x = "user_aggregate_v6",
+    preTransforms = Seq(R chRemoveUser dZero),
+    keys = Set(USER_ D),
     features = Set.empty,
-    labels = RecapUserFeatureAggregation.ReciprocalLabels,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = UserAggregateStore,
+    labels = RecapUserFeatureAggregat on.Rec procalLabels,
+     tr cs = Set(Count tr c),
+    halfL ves = Set(50.days),
+    outputStore = mkPhys calStore(
+      Offl neAggregateDataRecordStore(
+        na  = UserAggregateStore,
         startDate = "2016-07-15 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        commonConf g = t  l nesOffl neAggregateS nk,
+        maxKvS ceFa lures = defaultMaxKvS ceFa lures
       )),
-    includeAnyLabel = false
+     ncludeAnyLabel = false
   )
 
-  val userOriginalAuthorReciprocalEngagementAggregates = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_original_author_aggregate_v1",
-    preTransforms = Seq(RichRemoveUserIdZero, RichRemoveAuthorIdZero),
-    keys = Set(USER_ID, TimelinesSharedFeatures.ORIGINAL_AUTHOR_ID),
+  val userOr g nalAuthorRec procalEngage ntAggregates = AggregateGroup(
+     nputS ce = t  l nesDa lyRecapM n malS ce,
+    aggregatePref x = "user_or g nal_author_aggregate_v1",
+    preTransforms = Seq(R chRemoveUser dZero, R chRemoveAuthor dZero),
+    keys = Set(USER_ D, T  l nesSharedFeatures.OR G NAL_AUTHOR_ D),
     features = Set.empty,
-    labels = RecapUserFeatureAggregation.ReciprocalLabels,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = UserOriginalAuthorAggregateStore,
+    labels = RecapUserFeatureAggregat on.Rec procalLabels,
+     tr cs = Set(Count tr c),
+    halfL ves = Set(50.days),
+    outputStore = mkPhys calStore(
+      Offl neAggregateDataRecordStore(
+        na  = UserOr g nalAuthorAggregateStore,
         startDate = "2018-12-26 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        commonConf g = t  l nesOffl neAggregateS nk,
+        maxKvS ceFa lures = defaultMaxKvS ceFa lures
       )),
-    includeAnyLabel = false
+     ncludeAnyLabel = false
   )
 
-  val originalAuthorReciprocalEngagementAggregates = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "original_author_aggregate_v1",
-    preTransforms = Seq(RichRemoveUserIdZero, RichRemoveAuthorIdZero),
-    keys = Set(TimelinesSharedFeatures.ORIGINAL_AUTHOR_ID),
+  val or g nalAuthorRec procalEngage ntAggregates = AggregateGroup(
+     nputS ce = t  l nesDa lyRecapM n malS ce,
+    aggregatePref x = "or g nal_author_aggregate_v1",
+    preTransforms = Seq(R chRemoveUser dZero, R chRemoveAuthor dZero),
+    keys = Set(T  l nesSharedFeatures.OR G NAL_AUTHOR_ D),
     features = Set.empty,
-    labels = RecapUserFeatureAggregation.ReciprocalLabels,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = OriginalAuthorAggregateStore,
+    labels = RecapUserFeatureAggregat on.Rec procalLabels,
+     tr cs = Set(Count tr c),
+    halfL ves = Set(50.days),
+    outputStore = mkPhys calStore(
+      Offl neAggregateDataRecordStore(
+        na  = Or g nalAuthorAggregateStore,
         startDate = "2023-02-25 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        commonConf g = t  l nesOffl neAggregateS nk,
+        maxKvS ceFa lures = defaultMaxKvS ceFa lures
       )),
-    includeAnyLabel = false
+     ncludeAnyLabel = false
   )
 
-  val originalAuthorNegativeEngagementAggregates = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "original_author_aggregate_v2",
-    preTransforms = Seq(RichRemoveUserIdZero, RichRemoveAuthorIdZero),
-    keys = Set(TimelinesSharedFeatures.ORIGINAL_AUTHOR_ID),
+  val or g nalAuthorNegat veEngage ntAggregates = AggregateGroup(
+     nputS ce = t  l nesDa lyRecapM n malS ce,
+    aggregatePref x = "or g nal_author_aggregate_v2",
+    preTransforms = Seq(R chRemoveUser dZero, R chRemoveAuthor dZero),
+    keys = Set(T  l nesSharedFeatures.OR G NAL_AUTHOR_ D),
     features = Set.empty,
-    labels = RecapUserFeatureAggregation.NegativeEngagementLabels,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = OriginalAuthorAggregateStore,
+    labels = RecapUserFeatureAggregat on.Negat veEngage ntLabels,
+     tr cs = Set(Count tr c),
+    halfL ves = Set(50.days),
+    outputStore = mkPhys calStore(
+      Offl neAggregateDataRecordStore(
+        na  = Or g nalAuthorAggregateStore,
         startDate = "2023-02-25 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        commonConf g = t  l nesOffl neAggregateS nk,
+        maxKvS ceFa lures = defaultMaxKvS ceFa lures
       )),
-    includeAnyLabel = false
+     ncludeAnyLabel = false
   )
 
-  val userListAggregates: AggregateGroup =
+  val userL stAggregates: AggregateGroup =
     AggregateGroup(
-      inputSource = timelinesDailyRecapMinimalSource,
-      aggregatePrefix = "user_list_aggregate",
-      keys = Set(USER_ID, ListFeatures.LIST_ID),
+       nputS ce = t  l nesDa lyRecapM n malS ce,
+      aggregatePref x = "user_l st_aggregate",
+      keys = Set(USER_ D, L stFeatures.L ST_ D),
       features = Set.empty,
-      labels = RecapUserFeatureAggregation.LabelsV2,
-      metrics = Set(CountMetric),
-      halfLives = Set(50.days),
-      outputStore = mkPhysicalStore(
-        OfflineAggregateDataRecordStore(
-          name = UserListAggregateStore,
+      labels = RecapUserFeatureAggregat on.LabelsV2,
+       tr cs = Set(Count tr c),
+      halfL ves = Set(50.days),
+      outputStore = mkPhys calStore(
+        Offl neAggregateDataRecordStore(
+          na  = UserL stAggregateStore,
           startDate = "2020-05-28 00:00",
-          commonConfig = timelinesOfflineAggregateSink,
-          maxKvSourceFailures = defaultMaxKvSourceFailures
+          commonConf g = t  l nesOffl neAggregateS nk,
+          maxKvS ceFa lures = defaultMaxKvS ceFa lures
         )),
-      preTransforms = Seq(RichRemoveUserIdZero)
+      preTransforms = Seq(R chRemoveUser dZero)
     )
 
-  val userMediaUnderstandingAnnotationAggregates: AggregateGroup = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_media_annotation_aggregate",
-    preTransforms = Seq(RichRemoveUserIdZero),
+  val user d aUnderstand ngAnnotat onAggregates: AggregateGroup = AggregateGroup(
+     nputS ce = t  l nesDa lyRecapM n malS ce,
+    aggregatePref x = "user_ d a_annotat on_aggregate",
+    preTransforms = Seq(R chRemoveUser dZero),
     keys =
-      Set(USER_ID, SemanticCoreFeatures.mediaUnderstandingHighRecallNonSensitiveEntityIdsFeature),
+      Set(USER_ D, Semant cCoreFeatures. d aUnderstand ngH ghRecallNonSens  veEnt y dsFeature),
     features = Set.empty,
-    labels = RecapUserFeatureAggregation.LabelsV2,
-    metrics = Set(CountMetric),
-    halfLives = Set(50.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = UserMediaUnderstandingAnnotationAggregateStore,
+    labels = RecapUserFeatureAggregat on.LabelsV2,
+     tr cs = Set(Count tr c),
+    halfL ves = Set(50.days),
+    outputStore = mkPhys calStore(
+      Offl neAggregateDataRecordStore(
+        na  = User d aUnderstand ngAnnotat onAggregateStore,
         startDate = "2021-03-20 00:00",
-        commonConfig = timelinesOfflineAggregateSink
+        commonConf g = t  l nesOffl neAggregateS nk
       ))
   )
 
-  val userAuthorGoodClickAggregates = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_author_good_click_aggregate",
-    preTransforms = Seq(FilterInNetworkTransform, RichRemoveUserIdZero),
-    keys = Set(USER_ID, AUTHOR_ID),
-    features = RecapUserFeatureAggregation.UserAuthorFeaturesV2,
-    labels = RecapUserFeatureAggregation.GoodClickLabels,
-    metrics = Set(SumMetric),
-    halfLives = Set(14.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = UserAuthorAggregateStore,
+  val userAuthorGoodCl ckAggregates = AggregateGroup(
+     nputS ce = t  l nesDa lyRecapM n malS ce,
+    aggregatePref x = "user_author_good_cl ck_aggregate",
+    preTransforms = Seq(F lter nNetworkTransform, R chRemoveUser dZero),
+    keys = Set(USER_ D, AUTHOR_ D),
+    features = RecapUserFeatureAggregat on.UserAuthorFeaturesV2,
+    labels = RecapUserFeatureAggregat on.GoodCl ckLabels,
+     tr cs = Set(Sum tr c),
+    halfL ves = Set(14.days),
+    outputStore = mkPhys calStore(
+      Offl neAggregateDataRecordStore(
+        na  = UserAuthorAggregateStore,
         startDate = "2016-07-15 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        commonConf g = t  l nesOffl neAggregateS nk,
+        maxKvS ceFa lures = defaultMaxKvS ceFa lures
       ))
   )
 
-  val userEngagerGoodClickAggregates = AggregateGroup(
-    inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_engager_good_click_aggregate",
-    keys = Set(USER_ID, EngagementDataRecordFeatures.PublicEngagementUserIds),
+  val userEngagerGoodCl ckAggregates = AggregateGroup(
+     nputS ce = t  l nesDa lyRecapM n malS ce,
+    aggregatePref x = "user_engager_good_cl ck_aggregate",
+    keys = Set(USER_ D, Engage ntDataRecordFeatures.Publ cEngage ntUser ds),
     features = Set.empty,
-    labels = RecapUserFeatureAggregation.GoodClickLabels,
-    metrics = Set(CountMetric),
-    halfLives = Set(14.days),
-    outputStore = mkPhysicalStore(
-      OfflineAggregateDataRecordStore(
-        name = UserEngagerAggregateStore,
+    labels = RecapUserFeatureAggregat on.GoodCl ckLabels,
+     tr cs = Set(Count tr c),
+    halfL ves = Set(14.days),
+    outputStore = mkPhys calStore(
+      Offl neAggregateDataRecordStore(
+        na  = UserEngagerAggregateStore,
         startDate = "2016-09-02 00:00",
-        commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        commonConf g = t  l nesOffl neAggregateS nk,
+        maxKvS ceFa lures = defaultMaxKvS ceFa lures
       )),
     preTransforms = Seq(
-      RichRemoveUserIdZero,
-      RichUnifyPublicEngagersTransform
+      R chRemoveUser dZero,
+      R chUn fyPubl cEngagersTransform
     )
   )
 

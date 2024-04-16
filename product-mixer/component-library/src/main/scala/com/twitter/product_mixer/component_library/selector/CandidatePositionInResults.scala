@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.component_library.selector
-import com.twitter.product_mixer.component_library.model.candidate.RelevancePromptCandidate
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+package com.tw ter.product_m xer.component_l brary.selector
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.RelevancePromptCand date
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on. emCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * Compute a position for inserting a specific candidate into the result sequence originally provided to the Selector.
- * If a `None` is returned, the Selector using this would not insert that candidate into the result.
+ * Compute a pos  on for  nsert ng a spec f c cand date  nto t  result sequence or g nally prov ded to t  Selector.
+ *  f a `None`  s returned, t  Selector us ng t  would not  nsert that cand date  nto t  result.
  */
-trait CandidatePositionInResults[-Query <: PipelineQuery] {
+tra  Cand datePos  on nResults[-Query <: P pel neQuery] {
   def apply(
     query: Query,
-    candidate: CandidateWithDetails,
-    result: Seq[CandidateWithDetails]
-  ): Option[Int]
+    cand date: Cand dateW hDeta ls,
+    result: Seq[Cand dateW hDeta ls]
+  ): Opt on[ nt]
 }
 
-object PromptCandidatePositionInResults extends CandidatePositionInResults[PipelineQuery] {
-  override def apply(
-    query: PipelineQuery,
-    candidate: CandidateWithDetails,
-    result: Seq[CandidateWithDetails]
-  ): Option[Int] = candidate match {
-    case ItemCandidateWithDetails(candidate, _, _) =>
-      candidate match {
-        case relevancePromptCandidate: RelevancePromptCandidate => relevancePromptCandidate.position
+object PromptCand datePos  on nResults extends Cand datePos  on nResults[P pel neQuery] {
+  overr de def apply(
+    query: P pel neQuery,
+    cand date: Cand dateW hDeta ls,
+    result: Seq[Cand dateW hDeta ls]
+  ): Opt on[ nt] = cand date match {
+    case  emCand dateW hDeta ls(cand date, _, _) =>
+      cand date match {
+        case relevancePromptCand date: RelevancePromptCand date => relevancePromptCand date.pos  on
         case _ => None
       }
-    // not supporting ModuleCandidateWithDetails right now as RelevancePromptCandidate shouldn't be in a module
+    // not support ng ModuleCand dateW hDeta ls r ght now as RelevancePromptCand date shouldn't be  n a module
     case _ => None
   }
 }

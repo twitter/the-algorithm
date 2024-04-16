@@ -1,9 +1,9 @@
-create_thrift_libraries(
-    base_name = "storage_internal",
-    sources = ["*.thrift"],
+create_thr ft_l brar es(
+    base_na  = "storage_ nternal",
+    s ces = ["*.thr ft"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
     generate_languages = [
         "java",
         "scala",

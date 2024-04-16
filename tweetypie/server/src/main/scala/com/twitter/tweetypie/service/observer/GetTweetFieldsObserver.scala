@@ -1,32 +1,32 @@
-package com.twitter.tweetypie
-package service
+package com.tw ter.t etyp e
+package serv ce
 package observer
 
-import com.twitter.servo.exception.thriftscala.ClientError
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.servo.except on.thr ftscala.Cl entError
+ mport com.tw ter.t etyp e.thr ftscala._
 
-private[service] object GetTweetFieldsObserver {
-  type Type = ObserveExchange[GetTweetFieldsRequest, Seq[GetTweetFieldsResult]]
+pr vate[serv ce] object GetT etF eldsObserver {
+  type Type = ObserveExchange[GetT etF eldsRequest, Seq[GetT etF eldsResult]]
 
-  def observeExchange(statsReceiver: StatsReceiver): Effect[Type] = {
-    val resultStateStats = ResultStateStats(statsReceiver)
+  def observeExchange(statsRece ver: StatsRece ver): Effect[Type] = {
+    val resultStateStats = ResultStateStats(statsRece ver)
 
-    val stats = statsReceiver.scope("results")
-    val tweetResultFailed = stats.counter("tweet_result_failed")
-    val quoteResultFailed = stats.counter("quote_result_failed")
-    val overCapacity = stats.counter("over_capacity")
+    val stats = statsRece ver.scope("results")
+    val t etResultFa led = stats.counter("t et_result_fa led")
+    val quoteResultFa led = stats.counter("quote_result_fa led")
+    val overCapac y = stats.counter("over_capac y")
 
-    def observeFailedResult(r: GetTweetFieldsResult): Unit = {
-      r.tweetResult match {
-        case TweetFieldsResultState.Failed(failed) =>
-          tweetResultFailed.incr()
+    def observeFa ledResult(r: GetT etF eldsResult): Un  = {
+      r.t etResult match {
+        case T etF eldsResultState.Fa led(fa led) =>
+          t etResultFa led. ncr()
 
-          if (failed.overCapacity) overCapacity.incr()
+           f (fa led.overCapac y) overCapac y. ncr()
         case _ =>
       }
 
-      if (r.quotedTweetResult.exists(_.isInstanceOf[TweetFieldsResultState.Failed]))
-        quoteResultFailed.incr()
+       f (r.quotedT etResult.ex sts(_. s nstanceOf[T etF eldsResultState.Fa led]))
+        quoteResultFa led. ncr()
     }
 
     Effect {
@@ -34,87 +34,87 @@ private[service] object GetTweetFieldsObserver {
         response match {
           case Return(xs) =>
             xs foreach {
-              case x if isFailedResult(x) =>
-                observeFailedResult(x)
-                resultStateStats.failed()
+              case x  f  sFa ledResult(x) =>
+                observeFa ledResult(x)
+                resultStateStats.fa led()
               case _ =>
                 resultStateStats.success()
             }
-          case Throw(ClientError(_)) =>
-            resultStateStats.success(request.tweetIds.size)
+          case Throw(Cl entError(_)) =>
+            resultStateStats.success(request.t et ds.s ze)
           case Throw(_) =>
-            resultStateStats.failed(request.tweetIds.size)
+            resultStateStats.fa led(request.t et ds.s ze)
         }
     }
   }
 
-  def observeRequest(stats: StatsReceiver, byClient: Boolean): Effect[GetTweetFieldsRequest] = {
-    val requestSizeStat = stats.stat("request_size")
-    val optionsScope = stats.scope("options")
-    val tweetFieldsScope = optionsScope.scope("tweet_field")
-    val countsFieldsScope = optionsScope.scope("counts_field")
-    val mediaFieldsScope = optionsScope.scope("media_field")
-    val includeRetweetedTweetCounter = optionsScope.counter("include_retweeted_tweet")
-    val includeQuotedTweetCounter = optionsScope.counter("include_quoted_tweet")
-    val forUserIdCounter = optionsScope.counter("for_user_id")
-    val cardsPlatformKeyCounter = optionsScope.counter("cards_platform_key")
-    val cardsPlatformKeyScope = optionsScope.scope("cards_platform_key")
-    val extensionsArgsCounter = optionsScope.counter("extensions_args")
-    val doNotCacheCounter = optionsScope.counter("do_not_cache")
-    val simpleQuotedTweetCounter = optionsScope.counter("simple_quoted_tweet")
-    val visibilityPolicyScope = optionsScope.scope("visibility_policy")
-    val userVisibleCounter = visibilityPolicyScope.counter("user_visible")
-    val noFilteringCounter = visibilityPolicyScope.counter("no_filtering")
-    val noSafetyLevelCounter = optionsScope.counter("no_safety_level")
-    val safetyLevelCounter = optionsScope.counter("safety_level")
-    val safetyLevelScope = optionsScope.scope("safety_level")
+  def observeRequest(stats: StatsRece ver, byCl ent: Boolean): Effect[GetT etF eldsRequest] = {
+    val requestS zeStat = stats.stat("request_s ze")
+    val opt onsScope = stats.scope("opt ons")
+    val t etF eldsScope = opt onsScope.scope("t et_f eld")
+    val countsF eldsScope = opt onsScope.scope("counts_f eld")
+    val  d aF eldsScope = opt onsScope.scope(" d a_f eld")
+    val  ncludeRet etedT etCounter = opt onsScope.counter(" nclude_ret eted_t et")
+    val  ncludeQuotedT etCounter = opt onsScope.counter(" nclude_quoted_t et")
+    val forUser dCounter = opt onsScope.counter("for_user_ d")
+    val cardsPlatformKeyCounter = opt onsScope.counter("cards_platform_key")
+    val cardsPlatformKeyScope = opt onsScope.scope("cards_platform_key")
+    val extens onsArgsCounter = opt onsScope.counter("extens ons_args")
+    val doNotCac Counter = opt onsScope.counter("do_not_cac ")
+    val s mpleQuotedT etCounter = opt onsScope.counter("s mple_quoted_t et")
+    val v s b l yPol cyScope = opt onsScope.scope("v s b l y_pol cy")
+    val userV s bleCounter = v s b l yPol cyScope.counter("user_v s ble")
+    val noF lter ngCounter = v s b l yPol cyScope.counter("no_f lter ng")
+    val noSafetyLevelCounter = opt onsScope.counter("no_safety_level")
+    val safetyLevelCounter = opt onsScope.counter("safety_level")
+    val safetyLevelScope = opt onsScope.scope("safety_level")
 
     Effect {
-      case GetTweetFieldsRequest(tweetIds, options) =>
-        requestSizeStat.add(tweetIds.size)
-        options.tweetIncludes.foreach {
-          case TweetInclude.TweetFieldId(id) => tweetFieldsScope.counter(id.toString).incr()
-          case TweetInclude.CountsFieldId(id) => countsFieldsScope.counter(id.toString).incr()
-          case TweetInclude.MediaEntityFieldId(id) => mediaFieldsScope.counter(id.toString).incr()
+      case GetT etF eldsRequest(t et ds, opt ons) =>
+        requestS zeStat.add(t et ds.s ze)
+        opt ons.t et ncludes.foreach {
+          case T et nclude.T etF eld d( d) => t etF eldsScope.counter( d.toStr ng). ncr()
+          case T et nclude.CountsF eld d( d) => countsF eldsScope.counter( d.toStr ng). ncr()
+          case T et nclude. d aEnt yF eld d( d) =>  d aF eldsScope.counter( d.toStr ng). ncr()
           case _ =>
         }
-        if (options.includeRetweetedTweet) includeRetweetedTweetCounter.incr()
-        if (options.includeQuotedTweet) includeQuotedTweetCounter.incr()
-        if (options.forUserId.nonEmpty) forUserIdCounter.incr()
-        if (options.cardsPlatformKey.nonEmpty) cardsPlatformKeyCounter.incr()
-        if (!byClient) {
-          options.cardsPlatformKey.foreach { cardsPlatformKey =>
-            cardsPlatformKeyScope.counter(cardsPlatformKey).incr()
+         f (opt ons. ncludeRet etedT et)  ncludeRet etedT etCounter. ncr()
+         f (opt ons. ncludeQuotedT et)  ncludeQuotedT etCounter. ncr()
+         f (opt ons.forUser d.nonEmpty) forUser dCounter. ncr()
+         f (opt ons.cardsPlatformKey.nonEmpty) cardsPlatformKeyCounter. ncr()
+         f (!byCl ent) {
+          opt ons.cardsPlatformKey.foreach { cardsPlatformKey =>
+            cardsPlatformKeyScope.counter(cardsPlatformKey). ncr()
           }
         }
-        if (options.extensionsArgs.nonEmpty) extensionsArgsCounter.incr()
-        if (options.safetyLevel.nonEmpty) {
-          safetyLevelCounter.incr()
+         f (opt ons.extens onsArgs.nonEmpty) extens onsArgsCounter. ncr()
+         f (opt ons.safetyLevel.nonEmpty) {
+          safetyLevelCounter. ncr()
         } else {
-          noSafetyLevelCounter.incr()
+          noSafetyLevelCounter. ncr()
         }
-        options.visibilityPolicy match {
-          case TweetVisibilityPolicy.UserVisible => userVisibleCounter.incr()
-          case TweetVisibilityPolicy.NoFiltering => noFilteringCounter.incr()
+        opt ons.v s b l yPol cy match {
+          case T etV s b l yPol cy.UserV s ble => userV s bleCounter. ncr()
+          case T etV s b l yPol cy.NoF lter ng => noF lter ngCounter. ncr()
           case _ =>
         }
-        options.safetyLevel.foreach { level => safetyLevelScope.counter(level.toString).incr() }
-        if (options.doNotCache) doNotCacheCounter.incr()
-        if (options.simpleQuotedTweet) simpleQuotedTweetCounter.incr()
+        opt ons.safetyLevel.foreach { level => safetyLevelScope.counter(level.toStr ng). ncr() }
+         f (opt ons.doNotCac ) doNotCac Counter. ncr()
+         f (opt ons.s mpleQuotedT et) s mpleQuotedT etCounter. ncr()
     }
   }
 
-  def observeResults(stats: StatsReceiver): Effect[Seq[GetTweetFieldsResult]] = {
+  def observeResults(stats: StatsRece ver): Effect[Seq[GetT etF eldsResult]] = {
     val resultsCounter = stats.counter("results")
     val resultsScope = stats.scope("results")
-    val observeState = GetTweetFieldsObserver.observeResultState(resultsScope)
+    val observeState = GetT etF eldsObserver.observeResultState(resultsScope)
 
     Effect { results =>
-      resultsCounter.incr(results.size)
+      resultsCounter. ncr(results.s ze)
       results.foreach { r =>
-        observeState(r.tweetResult)
-        r.quotedTweetResult.foreach { qtResult =>
-          resultsCounter.incr()
+        observeState(r.t etResult)
+        r.quotedT etResult.foreach { qtResult =>
+          resultsCounter. ncr()
           observeState(qtResult)
         }
       }
@@ -122,38 +122,38 @@ private[service] object GetTweetFieldsObserver {
   }
 
   /**
-   * Given a GetTweetFieldsResult result, do we observe the result as a failure or not.
+   * G ven a GetT etF eldsResult result, do   observe t  result as a fa lure or not.
    */
-  private def isFailedResult(result: GetTweetFieldsResult): Boolean = {
-    result.tweetResult.isInstanceOf[TweetFieldsResultState.Failed] ||
-    result.quotedTweetResult.exists(_.isInstanceOf[TweetFieldsResultState.Failed])
+  pr vate def  sFa ledResult(result: GetT etF eldsResult): Boolean = {
+    result.t etResult. s nstanceOf[T etF eldsResultState.Fa led] ||
+    result.quotedT etResult.ex sts(_. s nstanceOf[T etF eldsResultState.Fa led])
   }
 
-  private def observeResultState(stats: StatsReceiver): Effect[TweetFieldsResultState] = {
+  pr vate def observeResultState(stats: StatsRece ver): Effect[T etF eldsResultState] = {
     val foundCounter = stats.counter("found")
     val notFoundCounter = stats.counter("not_found")
-    val failedCounter = stats.counter("failed")
-    val filteredCounter = stats.counter("filtered")
-    val filteredReasonScope = stats.scope("filtered_reason")
-    val otherCounter = stats.counter("other")
-    val observeTweet = Observer
-      .countTweetAttributes(stats.scope("found"), byClient = false)
+    val fa ledCounter = stats.counter("fa led")
+    val f lteredCounter = stats.counter("f ltered")
+    val f lteredReasonScope = stats.scope("f ltered_reason")
+    val ot rCounter = stats.counter("ot r")
+    val observeT et = Observer
+      .countT etAttr butes(stats.scope("found"), byCl ent = false)
 
     Effect {
-      case TweetFieldsResultState.Found(found) =>
-        foundCounter.incr()
-        observeTweet(found.tweet)
-        found.retweetedTweet.foreach(observeTweet)
+      case T etF eldsResultState.Found(found) =>
+        foundCounter. ncr()
+        observeT et(found.t et)
+        found.ret etedT et.foreach(observeT et)
 
-      case TweetFieldsResultState.NotFound(_) => notFoundCounter.incr()
-      case TweetFieldsResultState.Failed(_) => failedCounter.incr()
-      case TweetFieldsResultState.Filtered(f) =>
-        filteredCounter.incr()
-        // Since reasons have parameters, eg. AuthorBlockViewer(true) and we don't
-        // need the "(true)" part, we do .getClass.getSimpleName to get rid of that
-        filteredReasonScope.counter(f.reason.getClass.getSimpleName).incr()
+      case T etF eldsResultState.NotFound(_) => notFoundCounter. ncr()
+      case T etF eldsResultState.Fa led(_) => fa ledCounter. ncr()
+      case T etF eldsResultState.F ltered(f) =>
+        f lteredCounter. ncr()
+        // S nce reasons have para ters, eg. AuthorBlockV e r(true) and   don't
+        // need t  "(true)" part,   do .getClass.getS mpleNa  to get r d of that
+        f lteredReasonScope.counter(f.reason.getClass.getS mpleNa ). ncr()
 
-      case _ => otherCounter.incr()
+      case _ => ot rCounter. ncr()
     }
   }
 

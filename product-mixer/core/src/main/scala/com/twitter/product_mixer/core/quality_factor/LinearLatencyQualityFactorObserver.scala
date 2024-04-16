@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.quality_factor
+package com.tw ter.product_m xer.core.qual y_factor
 
-import com.twitter.util.Duration
-import com.twitter.util.Try
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Try
 
-case class LinearLatencyQualityFactorObserver(
-  override val qualityFactor: LinearLatencyQualityFactor)
-    extends QualityFactorObserver {
+case class L nearLatencyQual yFactorObserver(
+  overr de val qual yFactor: L nearLatencyQual yFactor)
+    extends Qual yFactorObserver {
 
-  override def apply(result: Try[_], latency: Duration): Unit = {
+  overr de def apply(result: Try[_], latency: Durat on): Un  = {
     result
-      .onSuccess(_ => qualityFactor.update(latency))
-      .onFailure {
-        case t if qualityFactor.config.ignorableFailures.isDefinedAt(t) => ()
-        case _ => qualityFactor.update(Duration.Top)
+      .onSuccess(_ => qual yFactor.update(latency))
+      .onFa lure {
+        case t  f qual yFactor.conf g. gnorableFa lures. sDef nedAt(t) => ()
+        case _ => qual yFactor.update(Durat on.Top)
       }
   }
 }

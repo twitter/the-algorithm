@@ -1,24 +1,24 @@
-package com.twitter.home_mixer.service
+package com.tw ter.ho _m xer.serv ce
 
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineRequest
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistry
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Params
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.reflect.runtime.universe._
+ mport com.tw ter.ho _m xer.{thr ftscala => t}
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Request
+ mport com.tw ter.product_m xer.core.p pel ne.product.ProductP pel neRequest
+ mport com.tw ter.product_m xer.core.product.reg stry.ProductP pel neReg stry
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport scala.reflect.runt  .un verse._
 
-@Singleton
-class ScoredTweetsService @Inject() (productPipelineRegistry: ProductPipelineRegistry) {
+@S ngleton
+class ScoredT etsServ ce @ nject() (productP pel neReg stry: ProductP pel neReg stry) {
 
-  def getScoredTweetsResponse[RequestType <: Request](
+  def getScoredT etsResponse[RequestType <: Request](
     request: RequestType,
     params: Params
   )(
-    implicit requestTypeTag: TypeTag[RequestType]
-  ): Stitch[t.ScoredTweetsResponse] = productPipelineRegistry
-    .getProductPipeline[RequestType, t.ScoredTweetsResponse](request.product)
-    .process(ProductPipelineRequest(request, params))
+     mpl c  requestTypeTag: TypeTag[RequestType]
+  ): St ch[t.ScoredT etsResponse] = productP pel neReg stry
+    .getProductP pel ne[RequestType, t.ScoredT etsResponse](request.product)
+    .process(ProductP pel neRequest(request, params))
 }

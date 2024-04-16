@@ -1,102 +1,102 @@
-package com.twitter.follow_recommendations.common.candidate_sources.socialgraph
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.soc algraph
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.base.TwoHopExpansionCandidateSource
-import com.twitter.follow_recommendations.common.clients.socialgraph.RecentEdgesQuery
-import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.hermit.model.Algorithm
-import com.twitter.inject.Logging
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.base.TwoHopExpans onCand dateS ce
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.soc algraph.RecentEdgesQuery
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.soc algraph.Soc alGraphCl ent
+ mport com.tw ter.follow_recom ndat ons.common.models.AccountProof
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.FollowProof
+ mport com.tw ter.follow_recom ndat ons.common.models.HasRecentFollo dUser ds
+ mport com.tw ter.follow_recom ndat ons.common.models.Reason
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter. nject.Logg ng
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.soc algraph.thr ftscala.Relat onsh pType
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * This candidate source is a two hop expansion over the follow graph. The candidates returned from this source is the users that get followed by the target user's recent followings. It will call SocialGraph `n` + 1 times where `n` is the number of recent followings of the target user to be considered.
+ * T  cand date s ce  s a two hop expans on over t  follow graph. T  cand dates returned from t  s ce  s t  users that get follo d by t  target user's recent follow ngs.   w ll call Soc alGraph `n` + 1 t  s w re `n`  s t  number of recent follow ngs of t  target user to be cons dered.
  */
-@Singleton
-class RecentFollowingRecentFollowingExpansionSource @Inject() (
-  socialGraphClient: SocialGraphClient,
-  statsReceiver: StatsReceiver)
-    extends TwoHopExpansionCandidateSource[
-      HasParams with HasRecentFollowedUserIds,
+@S ngleton
+class RecentFollow ngRecentFollow ngExpans onS ce @ nject() (
+  soc alGraphCl ent: Soc alGraphCl ent,
+  statsRece ver: StatsRece ver)
+    extends TwoHopExpans onCand dateS ce[
+      HasParams w h HasRecentFollo dUser ds,
       Long,
       Long,
-      CandidateUser
+      Cand dateUser
     ]
-    with Logging {
+    w h Logg ng {
 
-  override val identifier: CandidateSourceIdentifier =
-    RecentFollowingRecentFollowingExpansionSource.Identifier
+  overr de val  dent f er: Cand dateS ce dent f er =
+    RecentFollow ngRecentFollow ngExpans onS ce. dent f er
 
-  val stats = statsReceiver.scope(identifier.name)
+  val stats = statsRece ver.scope( dent f er.na )
 
-  override def firstDegreeNodes(
-    target: HasParams with HasRecentFollowedUserIds
-  ): Stitch[Seq[Long]] = Stitch.value(
-    target.recentFollowedUserIds
-      .getOrElse(Nil).take(
-        RecentFollowingRecentFollowingExpansionSource.NumFirstDegreeNodesToRetrieve)
+  overr de def f rstDegreeNodes(
+    target: HasParams w h HasRecentFollo dUser ds
+  ): St ch[Seq[Long]] = St ch.value(
+    target.recentFollo dUser ds
+      .getOrElse(N l).take(
+        RecentFollow ngRecentFollow ngExpans onS ce.NumF rstDegreeNodesToRetr eve)
   )
 
-  override def secondaryDegreeNodes(
-    target: HasParams with HasRecentFollowedUserIds,
+  overr de def secondaryDegreeNodes(
+    target: HasParams w h HasRecentFollo dUser ds,
     node: Long
-  ): Stitch[Seq[Long]] = socialGraphClient
-    .getRecentEdgesCached(
+  ): St ch[Seq[Long]] = soc alGraphCl ent
+    .getRecentEdgesCac d(
       RecentEdgesQuery(
         node,
-        Seq(RelationshipType.Following),
-        Some(RecentFollowingRecentFollowingExpansionSource.NumSecondDegreeNodesToRetrieve)),
-      useCachedStratoColumn =
-        target.params(RecentFollowingRecentFollowingExpansionSourceParams.CallSgsCachedColumn)
+        Seq(Relat onsh pType.Follow ng),
+        So (RecentFollow ngRecentFollow ngExpans onS ce.NumSecondDegreeNodesToRetr eve)),
+      useCac dStratoColumn =
+        target.params(RecentFollow ngRecentFollow ngExpans onS ceParams.CallSgsCac dColumn)
     ).map(
-      _.take(RecentFollowingRecentFollowingExpansionSource.NumSecondDegreeNodesToRetrieve)).rescue {
-      case exception: Exception =>
+      _.take(RecentFollow ngRecentFollow ngExpans onS ce.NumSecondDegreeNodesToRetr eve)).rescue {
+      case except on: Except on =>
         logger.warn(
-          s"${this.getClass} fails to retrieve second degree nodes for first degree node $node",
-          exception)
-        stats.counter("second_degree_expansion_error").incr()
-        Stitch.Nil
+          s"${t .getClass} fa ls to retr eve second degree nodes for f rst degree node $node",
+          except on)
+        stats.counter("second_degree_expans on_error"). ncr()
+        St ch.N l
     }
 
-  override def aggregateAndScore(
-    target: HasParams with HasRecentFollowedUserIds,
-    firstDegreeToSecondDegreeNodesMap: Map[Long, Seq[Long]]
-  ): Stitch[Seq[CandidateUser]] = {
-    val zipped = firstDegreeToSecondDegreeNodesMap.toSeq.flatMap {
-      case (firstDegreeId, secondDegreeIds) =>
-        secondDegreeIds.map(secondDegreeId => firstDegreeId -> secondDegreeId)
+  overr de def aggregateAndScore(
+    target: HasParams w h HasRecentFollo dUser ds,
+    f rstDegreeToSecondDegreeNodesMap: Map[Long, Seq[Long]]
+  ): St ch[Seq[Cand dateUser]] = {
+    val z pped = f rstDegreeToSecondDegreeNodesMap.toSeq.flatMap {
+      case (f rstDegree d, secondDegree ds) =>
+        secondDegree ds.map(secondDegree d => f rstDegree d -> secondDegree d)
     }
-    val candidateAndConnections = zipped
-      .groupBy { case (_, secondDegreeId) => secondDegreeId }
-      .mapValues { v => v.map { case (firstDegreeId, _) => firstDegreeId } }
+    val cand dateAndConnect ons = z pped
+      .groupBy { case (_, secondDegree d) => secondDegree d }
+      .mapValues { v => v.map { case (f rstDegree d, _) => f rstDegree d } }
       .toSeq
-      .sortBy { case (_, connections) => -connections.size }
+      .sortBy { case (_, connect ons) => -connect ons.s ze }
       .map {
-        case (candidateId, connections) =>
-          CandidateUser(
-            id = candidateId,
-            score = Some(CandidateUser.DefaultCandidateScore),
-            reason = Some(
+        case (cand date d, connect ons) =>
+          Cand dateUser(
+             d = cand date d,
+            score = So (Cand dateUser.DefaultCand dateScore),
+            reason = So (
               Reason(
-                Some(AccountProof(followProof = Some(FollowProof(connections, connections.size))))))
-          ).withCandidateSource(identifier)
+                So (AccountProof(followProof = So (FollowProof(connect ons, connect ons.s ze))))))
+          ).w hCand dateS ce( dent f er)
       }
-    Stitch.value(candidateAndConnections)
+    St ch.value(cand dateAndConnect ons)
   }
 }
 
-object RecentFollowingRecentFollowingExpansionSource {
-  val Identifier = CandidateSourceIdentifier(Algorithm.NewFollowingNewFollowingExpansion.toString)
+object RecentFollow ngRecentFollow ngExpans onS ce {
+  val  dent f er = Cand dateS ce dent f er(Algor hm.NewFollow ngNewFollow ngExpans on.toStr ng)
 
-  val NumFirstDegreeNodesToRetrieve = 5
-  val NumSecondDegreeNodesToRetrieve = 20
+  val NumF rstDegreeNodesToRetr eve = 5
+  val NumSecondDegreeNodesToRetr eve = 20
 }

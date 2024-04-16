@@ -1,94 +1,94 @@
-package com.twitter.search.earlybird.search.facets;
+package com.tw ter.search.earlyb rd.search.facets;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+ mport java.ut l.L nkedL st;
+ mport java.ut l.L st;
+ mport java.ut l.Set;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect. mmutableSet;
 
-import org.apache.lucene.search.Query;
+ mport org.apac .lucene.search.Query;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.common.util.text.NormalizerHelper;
-import com.twitter.search.common.util.url.URLUtils;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.search.SearchRequestInfo;
-import com.twitter.search.earlybird.thrift.ThriftHistogramSettings;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftTermRequest;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsRequest;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.common.search.Term nat onTracker;
+ mport com.tw ter.search.common.ut l.text.Normal zer lper;
+ mport com.tw ter.search.common.ut l.url.URLUt ls;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.search.SearchRequest nfo;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ft togramSett ngs;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchQuery;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftTermRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftTermStat st csRequest;
 
-public class TermStatisticsRequestInfo extends SearchRequestInfo {
-  private static final Set<String> FACET_URL_FIELDS_TO_NORMALIZE = new ImmutableSet.Builder()
-      .add(EarlybirdFieldConstant.IMAGES_FACET)
-      .add(EarlybirdFieldConstant.VIDEOS_FACET)
-      .add(EarlybirdFieldConstant.NEWS_FACET)
-      .build();
+publ c class TermStat st csRequest nfo extends SearchRequest nfo {
+  pr vate stat c f nal Set<Str ng> FACET_URL_F ELDS_TO_NORMAL ZE = new  mmutableSet.Bu lder()
+      .add(Earlyb rdF eldConstant. MAGES_FACET)
+      .add(Earlyb rdF eldConstant.V DEOS_FACET)
+      .add(Earlyb rdF eldConstant.NEWS_FACET)
+      .bu ld();
 
-  protected final List<ThriftTermRequest> termRequests;
-  protected final ThriftHistogramSettings histogramSettings;
+  protected f nal L st<Thr ftTermRequest> termRequests;
+  protected f nal Thr ft togramSett ngs  togramSett ngs;
 
   /**
-   * Creates a new TermStatisticsRequestInfo instance using the provided query.
+   * Creates a new TermStat st csRequest nfo  nstance us ng t  prov ded query.
    */
-  public TermStatisticsRequestInfo(ThriftSearchQuery searchQuery,
+  publ c TermStat st csRequest nfo(Thr ftSearchQuery searchQuery,
                                    Query luceneQuery,
-                                   ThriftTermStatisticsRequest termStatsRequest,
-                                   TerminationTracker terminationTracker) {
-    super(searchQuery, luceneQuery, terminationTracker);
-    this.termRequests = termStatsRequest.isSetTermRequests()
-                        ? termStatsRequest.getTermRequests() : new LinkedList<>();
-    this.histogramSettings = termStatsRequest.getHistogramSettings();
-    if (termStatsRequest.isIncludeGlobalCounts()) {
-      // Add an empty request to indicate we need a global count across all fields.
-      termRequests.add(new ThriftTermRequest().setFieldName("").setTerm(""));
+                                   Thr ftTermStat st csRequest termStatsRequest,
+                                   Term nat onTracker term nat onTracker) {
+    super(searchQuery, luceneQuery, term nat onTracker);
+    t .termRequests = termStatsRequest. sSetTermRequests()
+                        ? termStatsRequest.getTermRequests() : new L nkedL st<>();
+    t . togramSett ngs = termStatsRequest.get togramSett ngs();
+     f (termStatsRequest. s ncludeGlobalCounts()) {
+      // Add an empty request to  nd cate   need a global count across all f elds.
+      termRequests.add(new Thr ftTermRequest().setF eldNa ("").setTerm(""));
     }
 
-    // We only normalize TEXT terms and urls. All other terms, e.g. topics (named entities) are
-    // not normalized. Here the assumption is that the caller passes the exact terms back that
-    // the facet API returned
-    for (ThriftTermRequest termReq : termRequests) {
-      if (termReq.getTerm().isEmpty()) {
-        continue;  // the special catch-all term.
+    //   only normal ze TEXT terms and urls. All ot r terms, e.g. top cs (na d ent  es) are
+    // not normal zed.  re t  assumpt on  s that t  caller passes t  exact terms back that
+    // t  facet AP  returned
+    for (Thr ftTermRequest termReq : termRequests) {
+       f (termReq.getTerm(). sEmpty()) {
+        cont nue;  // t  spec al catch-all term.
       }
 
-      if (!termReq.isSetFieldName()
-          || termReq.getFieldName().equals(EarlybirdFieldConstant.TEXT_FIELD.getFieldName())) {
-        // normalize the TEXT term as it's normalized during ingestion
-        termReq.setTerm(NormalizerHelper.normalizeWithUnknownLocale(
-                            termReq.getTerm(), EarlybirdConfig.getPenguinVersion()));
-      } else if (FACET_URL_FIELDS_TO_NORMALIZE.contains(termReq.getFieldName())) {
-        // remove the trailing slash from the URL path. This operation is idempotent,
-        // so either a spiderduck URL or a facet URL can be used here. The latter would just
-        // be normalized twice, which is fine.
-        termReq.setTerm(URLUtils.normalizePath(termReq.getTerm()));
+       f (!termReq. sSetF eldNa ()
+          || termReq.getF eldNa ().equals(Earlyb rdF eldConstant.TEXT_F ELD.getF eldNa ())) {
+        // normal ze t  TEXT term as  's normal zed dur ng  ngest on
+        termReq.setTerm(Normal zer lper.normal zeW hUnknownLocale(
+                            termReq.getTerm(), Earlyb rdConf g.getPengu nVers on()));
+      } else  f (FACET_URL_F ELDS_TO_NORMAL ZE.conta ns(termReq.getF eldNa ())) {
+        // remove t  tra l ng slash from t  URL path. T  operat on  s  dempotent,
+        // so e  r a sp derduck URL or a facet URL can be used  re. T  latter would just
+        // be normal zed tw ce, wh ch  s f ne.
+        termReq.setTerm(URLUt ls.normal zePath(termReq.getTerm()));
       }
     }
   }
 
-  @Override
-  protected int calculateMaxHitsToProcess(ThriftSearchQuery searchQuery) {
-    Preconditions.checkNotNull(searchQuery.getCollectorParams());
-    if (!searchQuery.getCollectorParams().isSetTerminationParams()
-        || !searchQuery.getCollectorParams().getTerminationParams().isSetMaxHitsToProcess()) {
-      // Override the default value to all hits.
-      return Integer.MAX_VALUE;
+  @Overr de
+  protected  nt calculateMaxH sToProcess(Thr ftSearchQuery searchQuery) {
+    Precond  ons.c ckNotNull(searchQuery.getCollectorParams());
+     f (!searchQuery.getCollectorParams(). sSetTerm nat onParams()
+        || !searchQuery.getCollectorParams().getTerm nat onParams(). sSetMaxH sToProcess()) {
+      // Overr de t  default value to all h s.
+      return  nteger.MAX_VALUE;
     } else {
-      return super.calculateMaxHitsToProcess(searchQuery);
+      return super.calculateMaxH sToProcess(searchQuery);
     }
   }
 
-  public final List<ThriftTermRequest> getTermRequests() {
-    return this.termRequests;
+  publ c f nal L st<Thr ftTermRequest> getTermRequests() {
+    return t .termRequests;
   }
 
-  public final ThriftHistogramSettings getHistogramSettings() {
-    return this.histogramSettings;
+  publ c f nal Thr ft togramSett ngs get togramSett ngs() {
+    return t . togramSett ngs;
   }
 
-  public final boolean isReturnHistogram() {
-    return this.histogramSettings != null;
+  publ c f nal boolean  sReturn togram() {
+    return t . togramSett ngs != null;
   }
 }

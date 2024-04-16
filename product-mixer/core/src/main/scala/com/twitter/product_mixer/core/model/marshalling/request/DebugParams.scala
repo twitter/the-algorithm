@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.request
+package com.tw ter.product_m xer.core.model.marshall ng.request
 
-import com.twitter.timelines.configapi.{FeatureValue => ConfigApiFeatureValue}
+ mport com.tw ter.t  l nes.conf gap .{FeatureValue => Conf gAp FeatureValue}
 
 case class DebugParams(
-  featureOverrides: Option[Map[String, ConfigApiFeatureValue]],
-  override val debugOptions: Option[DebugOptions])
-    extends HasDebugOptions
+  featureOverr des: Opt on[Map[Str ng, Conf gAp FeatureValue]],
+  overr de val debugOpt ons: Opt on[DebugOpt ons])
+    extends HasDebugOpt ons

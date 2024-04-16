@@ -1,85 +1,85 @@
-package com.twitter.simclusters_v2.hdfs_sources
+package com.tw ter.s mclusters_v2.hdfs_s ces
 
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.Proc3Atla
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.TopSimClustersWithScore
+ mport com.tw ter.scald ng.DateRange
+ mport com.tw ter.scald ng.TypedP pe
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.AllowCrossClusterSa DC
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.Expl c Locat on
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.Proc3Atla
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng d
+ mport com.tw ter.s mclusters_v2.thr ftscala.TopS mClustersW hScore
 
-object ProducerEmbeddingSources {
+object ProducerEmbedd ngS ces {
 
   /**
-   * Helper function to retrieve producer SimClusters embeddings with the legacy `TopSimClustersWithScore`
+   *  lper funct on to retr eve producer S mClusters embedd ngs w h t  legacy `TopS mClustersW hScore`
    * value type.
    */
-  def producerEmbeddingSourceLegacy(
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion
+  def producerEmbedd ngS ceLegacy(
+    embedd ngType: Embedd ngType,
+    modelVers on: ModelVers on
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(Long, TopSimClustersWithScore)] = {
-    val producerEmbeddingDataset = (embeddingType, modelVersion) match {
-      case (EmbeddingType.ProducerFollowBasedSemanticCoreEntity, ModelVersion.Model20m145kDec11) =>
-        ProducerTopKSimclusterEmbeddingsByFollowScoreScalaDataset
-      case (EmbeddingType.ProducerFavBasedSemanticCoreEntity, ModelVersion.Model20m145kDec11) =>
-        ProducerTopKSimclusterEmbeddingsByFavScoreScalaDataset
+     mpl c  dateRange: DateRange
+  ): TypedP pe[(Long, TopS mClustersW hScore)] = {
+    val producerEmbedd ngDataset = (embedd ngType, modelVers on) match {
+      case (Embedd ngType.ProducerFollowBasedSemant cCoreEnt y, ModelVers on.Model20m145kDec11) =>
+        ProducerTopKS mclusterEmbedd ngsByFollowScoreScalaDataset
+      case (Embedd ngType.ProducerFavBasedSemant cCoreEnt y, ModelVers on.Model20m145kDec11) =>
+        ProducerTopKS mclusterEmbedd ngsByFavScoreScalaDataset
       case (
-            EmbeddingType.ProducerFollowBasedSemanticCoreEntity,
-            ModelVersion.Model20m145kUpdated) =>
-        ProducerTopKSimclusterEmbeddingsByFollowScoreUpdatedScalaDataset
-      case (EmbeddingType.ProducerFavBasedSemanticCoreEntity, ModelVersion.Model20m145kUpdated) =>
-        ProducerTopKSimclusterEmbeddingsByFavScoreUpdatedScalaDataset
+            Embedd ngType.ProducerFollowBasedSemant cCoreEnt y,
+            ModelVers on.Model20m145kUpdated) =>
+        ProducerTopKS mclusterEmbedd ngsByFollowScoreUpdatedScalaDataset
+      case (Embedd ngType.ProducerFavBasedSemant cCoreEnt y, ModelVers on.Model20m145kUpdated) =>
+        ProducerTopKS mclusterEmbedd ngsByFavScoreUpdatedScalaDataset
       case (_, _) =>
-        throw new ClassNotFoundException(
-          "Unsupported embedding type: " + embeddingType + " and model version: " + modelVersion)
+        throw new ClassNotFoundExcept on(
+          "Unsupported embedd ng type: " + embedd ngType + " and model vers on: " + modelVers on)
     }
 
     DAL
-      .readMostRecentSnapshot(producerEmbeddingDataset).withRemoteReadPolicy(
-        AllowCrossClusterSameDC)
-      .toTypedPipe.map {
-        case KeyVal(producerId, topSimClustersWithScore) =>
-          (producerId, topSimClustersWithScore)
+      .readMostRecentSnapshot(producerEmbedd ngDataset).w hRemoteReadPol cy(
+        AllowCrossClusterSa DC)
+      .toTypedP pe.map {
+        case KeyVal(producer d, topS mClustersW hScore) =>
+          (producer d, topS mClustersW hScore)
       }
   }
 
-  def producerEmbeddingSource(
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion
+  def producerEmbedd ngS ce(
+    embedd ngType: Embedd ngType,
+    modelVers on: ModelVers on
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(Long, SimClustersEmbedding)] = {
-    val producerEmbeddingDataset = (embeddingType, modelVersion) match {
-      case (EmbeddingType.AggregatableLogFavBasedProducer, ModelVersion.Model20m145k2020) =>
-        AggregatableProducerSimclustersEmbeddingsByLogFavScore2020ScalaDataset
-      case (EmbeddingType.AggregatableFollowBasedProducer, ModelVersion.Model20m145k2020) =>
-        AggregatableProducerSimclustersEmbeddingsByFollowScore2020ScalaDataset
-      case (EmbeddingType.RelaxedAggregatableLogFavBasedProducer, ModelVersion.Model20m145k2020) =>
-        AggregatableProducerSimclustersEmbeddingsByLogFavScoreRelaxedFavEngagementThreshold2020ScalaDataset
+     mpl c  dateRange: DateRange
+  ): TypedP pe[(Long, S mClustersEmbedd ng)] = {
+    val producerEmbedd ngDataset = (embedd ngType, modelVers on) match {
+      case (Embedd ngType.AggregatableLogFavBasedProducer, ModelVers on.Model20m145k2020) =>
+        AggregatableProducerS mclustersEmbedd ngsByLogFavScore2020ScalaDataset
+      case (Embedd ngType.AggregatableFollowBasedProducer, ModelVers on.Model20m145k2020) =>
+        AggregatableProducerS mclustersEmbedd ngsByFollowScore2020ScalaDataset
+      case (Embedd ngType.RelaxedAggregatableLogFavBasedProducer, ModelVers on.Model20m145k2020) =>
+        AggregatableProducerS mclustersEmbedd ngsByLogFavScoreRelaxedFavEngage ntThreshold2020ScalaDataset
       case (_, _) =>
-        throw new ClassNotFoundException(
-          "Unsupported embedding type: " + embeddingType + " and model version: " + modelVersion)
+        throw new ClassNotFoundExcept on(
+          "Unsupported embedd ng type: " + embedd ngType + " and model vers on: " + modelVers on)
     }
 
     DAL
       .readMostRecentSnapshot(
-        producerEmbeddingDataset
+        producerEmbedd ngDataset
       )
-      .withRemoteReadPolicy(ExplicitLocation(Proc3Atla))
-      .toTypedPipe
+      .w hRemoteReadPol cy(Expl c Locat on(Proc3Atla))
+      .toTypedP pe
       .map {
         case KeyVal(
-              SimClustersEmbeddingId(_, _, InternalId.UserId(producerId: Long)),
-              embedding: SimClustersEmbedding) =>
-          (producerId, embedding)
+              S mClustersEmbedd ng d(_, _,  nternal d.User d(producer d: Long)),
+              embedd ng: S mClustersEmbedd ng) =>
+          (producer d, embedd ng)
       }
   }
 

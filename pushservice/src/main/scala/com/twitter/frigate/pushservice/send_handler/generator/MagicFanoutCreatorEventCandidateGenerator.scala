@@ -1,70 +1,70 @@
-package com.twitter.frigate.pushservice.send_handler.generator
+package com.tw ter.fr gate.pushserv ce.send_handler.generator
 
-import com.twitter.frigate.common.base.MagicFanoutCreatorEventCandidate
-import com.twitter.frigate.magic_events.thriftscala.CreatorFanoutType
-import com.twitter.frigate.magic_events.thriftscala.MagicEventsReason
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.model.PushTypes
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.frigate.thriftscala.FrigateNotification
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.common.base.Mag cFanoutCreatorEventCand date
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.CreatorFanoutType
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.Mag cEventsReason
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
+ mport com.tw ter.fr gate.thr ftscala.Fr gateNot f cat on
+ mport com.tw ter.ut l.Future
 
-object MagicFanoutCreatorEventCandidateGenerator extends CandidateGenerator {
-  override def getCandidate(
+object Mag cFanoutCreatorEventCand dateGenerator extends Cand dateGenerator {
+  overr de def getCand date(
     targetUser: PushTypes.Target,
-    notification: FrigateNotification
-  ): Future[PushTypes.RawCandidate] = {
+    not f cat on: Fr gateNot f cat on
+  ): Future[PushTypes.RawCand date] = {
 
-    require(
-      notification.commonRecommendationType == CommonRecommendationType.CreatorSubscriber || notification.commonRecommendationType == CommonRecommendationType.NewCreator,
-      "MagicFanoutCreatorEvent: unexpected CRT " + notification.commonRecommendationType
+    requ re(
+      not f cat on.commonRecom ndat onType == CommonRecom ndat onType.CreatorSubscr ber || not f cat on.commonRecom ndat onType == CommonRecom ndat onType.NewCreator,
+      "Mag cFanoutCreatorEvent: unexpected CRT " + not f cat on.commonRecom ndat onType
     )
-    require(
-      notification.creatorSubscriptionNotification.isDefined,
-      "MagicFanoutCreatorEvent: creatorSubscriptionNotification is not defined")
-    require(
-      notification.creatorSubscriptionNotification.exists(_.magicFanoutPushId.isDefined),
-      "MagicFanoutCreatorEvent: magicFanoutPushId is not defined")
-    require(
-      notification.creatorSubscriptionNotification.exists(_.fanoutReasons.isDefined),
-      "MagicFanoutCreatorEvent: fanoutReasons is not defined")
-    require(
-      notification.creatorSubscriptionNotification.exists(_.creatorId.isDefined),
-      "MagicFanoutCreatorEvent: creatorId is not defined")
-    if (notification.commonRecommendationType == CommonRecommendationType.CreatorSubscriber) {
-      require(
-        notification.creatorSubscriptionNotification
-          .exists(_.subscriberId.isDefined),
-        "MagicFanoutCreatorEvent: subscriber id is not defined"
+    requ re(
+      not f cat on.creatorSubscr pt onNot f cat on. sDef ned,
+      "Mag cFanoutCreatorEvent: creatorSubscr pt onNot f cat on  s not def ned")
+    requ re(
+      not f cat on.creatorSubscr pt onNot f cat on.ex sts(_.mag cFanoutPush d. sDef ned),
+      "Mag cFanoutCreatorEvent: mag cFanoutPush d  s not def ned")
+    requ re(
+      not f cat on.creatorSubscr pt onNot f cat on.ex sts(_.fanoutReasons. sDef ned),
+      "Mag cFanoutCreatorEvent: fanoutReasons  s not def ned")
+    requ re(
+      not f cat on.creatorSubscr pt onNot f cat on.ex sts(_.creator d. sDef ned),
+      "Mag cFanoutCreatorEvent: creator d  s not def ned")
+     f (not f cat on.commonRecom ndat onType == CommonRecom ndat onType.CreatorSubscr ber) {
+      requ re(
+        not f cat on.creatorSubscr pt onNot f cat on
+          .ex sts(_.subscr ber d. sDef ned),
+        "Mag cFanoutCreatorEvent: subscr ber  d  s not def ned"
       )
     }
 
-    val creatorSubscriptionNotification = notification.creatorSubscriptionNotification.get
+    val creatorSubscr pt onNot f cat on = not f cat on.creatorSubscr pt onNot f cat on.get
 
-    val candidate = new RawCandidate with MagicFanoutCreatorEventCandidate {
+    val cand date = new RawCand date w h Mag cFanoutCreatorEventCand date {
 
-      override val target: Target = targetUser
+      overr de val target: Target = targetUser
 
-      override val pushId: Long =
-        creatorSubscriptionNotification.magicFanoutPushId.get
+      overr de val push d: Long =
+        creatorSubscr pt onNot f cat on.mag cFanoutPush d.get
 
-      override val candidateMagicEventsReasons: Seq[MagicEventsReason] =
-        creatorSubscriptionNotification.fanoutReasons.get
+      overr de val cand dateMag cEventsReasons: Seq[Mag cEventsReason] =
+        creatorSubscr pt onNot f cat on.fanoutReasons.get
 
-      override val creatorFanoutType: CreatorFanoutType =
-        creatorSubscriptionNotification.creatorFanoutType
+      overr de val creatorFanoutType: CreatorFanoutType =
+        creatorSubscr pt onNot f cat on.creatorFanoutType
 
-      override val commonRecType: CommonRecommendationType =
-        notification.commonRecommendationType
+      overr de val commonRecType: CommonRecom ndat onType =
+        not f cat on.commonRecom ndat onType
 
-      override val frigateNotification: FrigateNotification = notification
+      overr de val fr gateNot f cat on: Fr gateNot f cat on = not f cat on
 
-      override val subscriberId: Option[Long] = creatorSubscriptionNotification.subscriberId
+      overr de val subscr ber d: Opt on[Long] = creatorSubscr pt onNot f cat on.subscr ber d
 
-      override val creatorId: Long = creatorSubscriptionNotification.creatorId.get
+      overr de val creator d: Long = creatorSubscr pt onNot f cat on.creator d.get
     }
 
-    Future.value(candidate)
+    Future.value(cand date)
   }
 }

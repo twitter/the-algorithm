@@ -1,181 +1,181 @@
-package com.twitter.search.earlybird;
+package com.tw ter.search.earlyb rd;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.sun.management.OperatingSystemMXBean;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.sun.manage nt.Operat ngSystemMXBean;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.decider.Decider;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.common. tr cs.SearchStatsRece ver;
 
 /**
- * Manages the quality factor for an Earlybird based on CPU usage.
+ * Manages t  qual y factor for an Earlyb rd based on CPU usage.
  */
-public class EarlybirdCPUQualityFactor implements QualityFactor {
-  public static final String ENABLE_QUALITY_FACTOR_DECIDER = "enable_quality_factor";
-  public static final String OVERRIDE_QUALITY_FACTOR_DECIDER = "override_quality_factor";
+publ c class Earlyb rdCPUQual yFactor  mple nts Qual yFactor {
+  publ c stat c f nal Str ng ENABLE_QUAL TY_FACTOR_DEC DER = "enable_qual y_factor";
+  publ c stat c f nal Str ng OVERR DE_QUAL TY_FACTOR_DEC DER = "overr de_qual y_factor";
 
-  @VisibleForTesting
-  protected static final double CPU_USAGE_THRESHOLD = 0.8;
-  @VisibleForTesting
-  protected static final double MAX_QF_INCREMENT = 0.5;
-  @VisibleForTesting
-  protected static final double MAX_QF_DECREMENT = 0.1;
-  @VisibleForTesting
-  protected static final double MAX_CPU_USAGE = 1.0;
+  @V s bleForTest ng
+  protected stat c f nal double CPU_USAGE_THRESHOLD = 0.8;
+  @V s bleForTest ng
+  protected stat c f nal double MAX_QF_ NCREMENT = 0.5;
+  @V s bleForTest ng
+  protected stat c f nal double MAX_QF_DECREMENT = 0.1;
+  @V s bleForTest ng
+  protected stat c f nal double MAX_CPU_USAGE = 1.0;
 
-  private static final Logger QUALITY_FACTOR_LOG =
-      LoggerFactory.getLogger(EarlybirdCPUQualityFactor.class);
-  private static final Logger EARLYBIRD_LOG = LoggerFactory.getLogger(Earlybird.class);
-
-  /**
-   * Tracks the real, underlying CPU QF value, regardless of the decider enabling
-   * it.
-   */
-  @VisibleForTesting
-  protected static final String UNDERLYING_CPU_QF_GUAGE = "underlying_cpu_quality_factor";
+  pr vate stat c f nal Logger QUAL TY_FACTOR_LOG =
+      LoggerFactory.getLogger(Earlyb rdCPUQual yFactor.class);
+  pr vate stat c f nal Logger EARLYB RD_LOG = LoggerFactory.getLogger(Earlyb rd.class);
 
   /**
-   * Reports the QF actually used to degrade Earlybirds.
+   * Tracks t  real, underly ng CPU QF value, regardless of t  dec der enabl ng
+   *  .
    */
-  @VisibleForTesting
-  protected static final String CPU_QF_GUAGE = "cpu_quality_factor";
+  @V s bleForTest ng
+  protected stat c f nal Str ng UNDERLY NG_CPU_QF_GUAGE = "underly ng_cpu_qual y_factor";
 
-  private static final int SAMPLING_WINDOW_MILLIS = 60 * 1000;   // one minute
+  /**
+   * Reports t  QF actually used to degrade Earlyb rds.
+   */
+  @V s bleForTest ng
+  protected stat c f nal Str ng CPU_QF_GUAGE = "cpu_qual y_factor";
+
+  pr vate stat c f nal  nt SAMPL NG_W NDOW_M LL S = 60 * 1000;   // one m nute
 
 
-  private double qualityFactor = 1;
-  private double previousQualityFactor = 1;
+  pr vate double qual yFactor = 1;
+  pr vate double prev ousQual yFactor = 1;
 
-  private final SearchDecider decider;
-  private final OperatingSystemMXBean operatingSystemMXBean;
+  pr vate f nal SearchDec der dec der;
+  pr vate f nal Operat ngSystemMXBean operat ngSystemMXBean;
 
-  public EarlybirdCPUQualityFactor(
-      Decider decider,
-      OperatingSystemMXBean operatingSystemMXBean,
-      SearchStatsReceiver searchStatsReceiver) {
-    this.decider = new SearchDecider(decider);
-    this.operatingSystemMXBean = operatingSystemMXBean;
+  publ c Earlyb rdCPUQual yFactor(
+      Dec der dec der,
+      Operat ngSystemMXBean operat ngSystemMXBean,
+      SearchStatsRece ver searchStatsRece ver) {
+    t .dec der = new SearchDec der(dec der);
+    t .operat ngSystemMXBean = operat ngSystemMXBean;
 
-    searchStatsReceiver.getCustomGauge(UNDERLYING_CPU_QF_GUAGE, () -> qualityFactor);
-    searchStatsReceiver.getCustomGauge(CPU_QF_GUAGE, this::get);
+    searchStatsRece ver.getCustomGauge(UNDERLY NG_CPU_QF_GUAGE, () -> qual yFactor);
+    searchStatsRece ver.getCustomGauge(CPU_QF_GUAGE, t ::get);
   }
 
   /**
-   * Updates the current quality factor based on CPU usage.
+   * Updates t  current qual y factor based on CPU usage.
    */
-  @VisibleForTesting
-  protected void update() {
-    previousQualityFactor = qualityFactor;
+  @V s bleForTest ng
+  protected vo d update() {
+    prev ousQual yFactor = qual yFactor;
 
-    double cpuUsage = operatingSystemMXBean.getSystemCpuLoad();
+    double cpuUsage = operat ngSystemMXBean.getSystemCpuLoad();
 
-    if (cpuUsage < CPU_USAGE_THRESHOLD) {
-      double increment =
-          ((CPU_USAGE_THRESHOLD - cpuUsage) / CPU_USAGE_THRESHOLD) * MAX_QF_INCREMENT;
-      qualityFactor = Math.min(1, qualityFactor + increment);
+     f (cpuUsage < CPU_USAGE_THRESHOLD) {
+      double  ncre nt =
+          ((CPU_USAGE_THRESHOLD - cpuUsage) / CPU_USAGE_THRESHOLD) * MAX_QF_ NCREMENT;
+      qual yFactor = Math.m n(1, qual yFactor +  ncre nt);
     } else {
-      double decrement =
+      double decre nt =
           ((cpuUsage - CPU_USAGE_THRESHOLD) / (MAX_CPU_USAGE - CPU_USAGE_THRESHOLD))
               * MAX_QF_DECREMENT;
-      qualityFactor = Math.max(0, qualityFactor - decrement);
+      qual yFactor = Math.max(0, qual yFactor - decre nt);
     }
 
-    if (!qualityFactorChanged()) {
+     f (!qual yFactorChanged()) {
       return;
     }
 
-    QUALITY_FACTOR_LOG.info(
-        String.format("CPU: %.2f Quality Factor: %.2f", cpuUsage, qualityFactor));
+    QUAL TY_FACTOR_LOG. nfo(
+        Str ng.format("CPU: %.2f Qual y Factor: %.2f", cpuUsage, qual yFactor));
 
-    if (!enabled()) {
+     f (!enabled()) {
       return;
     }
 
-    if (degradationBegan()) {
-      EARLYBIRD_LOG.info("Service degradation began.");
+     f (degradat onBegan()) {
+      EARLYB RD_LOG. nfo("Serv ce degradat on began.");
     }
 
-    if (degradationEnded()) {
-      EARLYBIRD_LOG.info("Service degradation ended.");
+     f (degradat onEnded()) {
+      EARLYB RD_LOG. nfo("Serv ce degradat on ended.");
     }
   }
 
-  @Override
-  public double get() {
-    if (!enabled()) {
+  @Overr de
+  publ c double get() {
+     f (!enabled()) {
       return 1;
     }
 
-    if (isOverridden()) {
-      return override();
+     f ( sOverr dden()) {
+      return overr de();
     }
 
-    return qualityFactor;
+    return qual yFactor;
   }
 
-  @Override
-  public void startUpdates() {
+  @Overr de
+  publ c vo d startUpdates() {
     new Thread(() -> {
-      while (true) {
+      wh le (true) {
         update();
         try {
-          Thread.sleep(SAMPLING_WINDOW_MILLIS);
-        } catch (InterruptedException e) {
-          QUALITY_FACTOR_LOG.warn(
-              "Quality factoring thread interrupted during sleep between updates", e);
+          Thread.sleep(SAMPL NG_W NDOW_M LL S);
+        } catch ( nterruptedExcept on e) {
+          QUAL TY_FACTOR_LOG.warn(
+              "Qual y factor ng thread  nterrupted dur ng sleep bet en updates", e);
         }
       }
     }).start();
   }
 
   /**
-   * Returns true if quality factoring is enabled by the decider.
+   * Returns true  f qual y factor ng  s enabled by t  dec der.
    * @return
    */
-  private boolean enabled() {
-    return decider != null && decider.isAvailable(ENABLE_QUALITY_FACTOR_DECIDER);
+  pr vate boolean enabled() {
+    return dec der != null && dec der. sAva lable(ENABLE_QUAL TY_FACTOR_DEC DER);
   }
 
   /**
-   * Returns true if a decider has overridden the quality factor.
+   * Returns true  f a dec der has overr dden t  qual y factor.
    * @return
    */
-  private boolean isOverridden() {
-    return decider != null && decider.getAvailability(OVERRIDE_QUALITY_FACTOR_DECIDER) < 10000.0;
+  pr vate boolean  sOverr dden() {
+    return dec der != null && dec der.getAva lab l y(OVERR DE_QUAL TY_FACTOR_DEC DER) < 10000.0;
   }
 
   /**
-   * Returns the override decider value.
+   * Returns t  overr de dec der value.
    * @return
    */
-  private double override() {
-    return decider == null ? 1 : decider.getAvailability(OVERRIDE_QUALITY_FACTOR_DECIDER) / 10000.0;
+  pr vate double overr de() {
+    return dec der == null ? 1 : dec der.getAva lab l y(OVERR DE_QUAL TY_FACTOR_DEC DER) / 10000.0;
   }
 
   /**
-   * Returns true if the quality factor has changed since the last update.
+   * Returns true  f t  qual y factor has changed s nce t  last update.
    * @return
    */
-  private boolean qualityFactorChanged() {
-    return Math.abs(qualityFactor - previousQualityFactor) > 0.01;
+  pr vate boolean qual yFactorChanged() {
+    return Math.abs(qual yFactor - prev ousQual yFactor) > 0.01;
   }
 
   /**
-   * Returns true if we've entered a degraded state.
+   * Returns true  f  've entered a degraded state.
    * @return
    */
-  private boolean degradationBegan() {
-    return Math.abs(previousQualityFactor - 1.0) < 0.01 && qualityFactor < previousQualityFactor;
+  pr vate boolean degradat onBegan() {
+    return Math.abs(prev ousQual yFactor - 1.0) < 0.01 && qual yFactor < prev ousQual yFactor;
   }
 
   /**
-   * Returns true if we've left the degraded state.
+   * Returns true  f  've left t  degraded state.
    * @return
    */
-  private boolean degradationEnded() {
-    return Math.abs(qualityFactor - 1.0) < 0.01 && previousQualityFactor < qualityFactor;
+  pr vate boolean degradat onEnded() {
+    return Math.abs(qual yFactor - 1.0) < 0.01 && prev ousQual yFactor < qual yFactor;
   }
 }

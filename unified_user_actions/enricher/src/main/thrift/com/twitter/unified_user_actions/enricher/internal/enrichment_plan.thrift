@@ -1,52 +1,52 @@
-namespace java com.twitter.unified_user_actions.enricher.internal.thriftjava
-#@namespace scala com.twitter.unified_user_actions.enricher.internal.thriftscala
-#@namespace strato com.twitter.unified_user_actions.enricher.internal
+na space java com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftjava
+#@na space scala com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala
+#@na space strato com.tw ter.un f ed_user_act ons.enr c r. nternal
 
 /**
-* An enrichment plan. It has multiple stages for different purposes during the enrichment process.
+* An enr ch nt plan.   has mult ple stages for d fferent purposes dur ng t  enr ch nt process.
 **/
-struct EnrichmentPlan {
-  1: required list<EnrichmentStage> stages
-}(persisted='true', hasPersonalData='false')
+struct Enr ch ntPlan {
+  1: requ red l st<Enr ch ntStage> stages
+}(pers sted='true', hasPersonalData='false')
 
 /**
-* A stage in the enrichment process with respect to the current key. Currently it can be of 2 options:
-* - re-partitioning on an id of type X
-* - hydrating metadata on an id of type X
+* A stage  n t  enr ch nt process w h respect to t  current key. Currently   can be of 2 opt ons:
+* - re-part  on ng on an  d of type X
+* - hydrat ng  tadata on an  d of type X
 *
-* A stage also moves through different statues from initialized, processing until completion.
-* Each stage contains one or more instructions.
+* A stage also moves through d fferent statues from  n  al zed, process ng unt l complet on.
+* Each stage conta ns one or more  nstruct ons.
 **/
-struct EnrichmentStage {
-  1: required EnrichmentStageStatus status
-  2: required EnrichmentStageType stageType
-  3: required list<EnrichmentInstruction> instructions
+struct Enr ch ntStage {
+  1: requ red Enr ch ntStageStatus status
+  2: requ red Enr ch ntStageType stageType
+  3: requ red l st<Enr ch nt nstruct on>  nstruct ons
 
-  // The output topic for this stage. This information is not available when the stage was
-  // first setup, and it's only available after the driver has finished working on
-  // this stage.
-  4: optional string outputTopic
-}(persisted='true', hasPersonalData='false')
+  // T  output top c for t  stage. T   nformat on  s not ava lable w n t  stage was
+  // f rst setup, and  's only ava lable after t  dr ver has f n s d work ng on
+  // t  stage.
+  4: opt onal str ng outputTop c
+}(pers sted='true', hasPersonalData='false')
 
 /**
-* The current processing status of a stage. It should either be done (completion) or not done (initialized).
-* Transient statuses such as "processing" is dangerous since we can't exactly be sure that has been done.
+* T  current process ng status of a stage.   should e  r be done (complet on) or not done ( n  al zed).
+* Trans ent statuses such as "process ng"  s dangerous s nce   can't exactly be sure that has been done.
 **/
-enum EnrichmentStageStatus {
-  Initialized = 0
-  Completion = 20
+enum Enr ch ntStageStatus {
+   n  al zed = 0
+  Complet on = 20
 }
 
 /**
-* The type of processing in this stage. For example, repartioning the data or hydrating the data.
+* T  type of process ng  n t  stage. For example, repart on ng t  data or hydrat ng t  data.
 **/
-enum EnrichmentStageType {
-  Repartition = 0
-  Hydration = 10
+enum Enr ch ntStageType {
+  Repart  on = 0
+  Hydrat on = 10
 }
 
-enum EnrichmentInstruction {
-  // all enrichment based on a tweet id in UUA goes here
-  TweetEnrichment = 0
-  NotificationTweetEnrichment = 10
+enum Enr ch nt nstruct on {
+  // all enr ch nt based on a t et  d  n UUA goes  re
+  T etEnr ch nt = 0
+  Not f cat onT etEnr ch nt = 10
 }

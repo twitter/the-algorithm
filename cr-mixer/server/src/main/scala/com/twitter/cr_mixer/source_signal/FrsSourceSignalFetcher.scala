@@ -1,64 +1,64 @@
-package com.twitter.cr_mixer.source_signal
+package com.tw ter.cr_m xer.s ce_s gnal
 
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.param.FrsParams
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.cr_mixer.source_signal.FrsStore.FrsQueryResult
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import javax.inject.Singleton
-import javax.inject.Inject
-import javax.inject.Named
+ mport com.tw ter.cr_m xer.conf g.T  outConf g
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.cr_m xer.model.S ce nfo
+ mport com.tw ter.cr_m xer.param.FrsParams
+ mport com.tw ter.cr_m xer.param.GlobalParams
+ mport com.tw ter.cr_m xer.s ce_s gnal.FrsStore.FrsQueryResult
+ mport com.tw ter.cr_m xer.s ce_s gnal.S ceFetc r.Fetc rQuery
+ mport com.tw ter.cr_m xer.thr ftscala.S ceType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
+ mport javax. nject.S ngleton
+ mport javax. nject. nject
+ mport javax. nject.Na d
 
-@Singleton
-case class FrsSourceSignalFetcher @Inject() (
-  @Named(ModuleNames.FrsStore) frsStore: ReadableStore[FrsStore.Query, Seq[FrsQueryResult]],
-  override val timeoutConfig: TimeoutConfig,
-  globalStats: StatsReceiver)
-    extends SourceSignalFetcher {
+@S ngleton
+case class FrsS ceS gnalFetc r @ nject() (
+  @Na d(ModuleNa s.FrsStore) frsStore: ReadableStore[FrsStore.Query, Seq[FrsQueryResult]],
+  overr de val t  outConf g: T  outConf g,
+  globalStats: StatsRece ver)
+    extends S ceS gnalFetc r {
 
-  override protected val stats: StatsReceiver = globalStats.scope(identifier)
-  override type SignalConvertType = UserId
+  overr de protected val stats: StatsRece ver = globalStats.scope( dent f er)
+  overr de type S gnalConvertType = User d
 
-  override def isEnabled(query: FetcherQuery): Boolean = {
-    query.params(FrsParams.EnableSourceParam)
+  overr de def  sEnabled(query: Fetc rQuery): Boolean = {
+    query.params(FrsParams.EnableS ceParam)
   }
 
-  override def fetchAndProcess(query: FetcherQuery): Future[Option[Seq[SourceInfo]]] = {
-    // Fetch raw signals
-    val rawSignals = frsStore
-      .get(FrsStore.Query(query.userId, query.params(GlobalParams.UnifiedMaxSourceKeyNum)))
+  overr de def fetchAndProcess(query: Fetc rQuery): Future[Opt on[Seq[S ce nfo]]] = {
+    // Fetch raw s gnals
+    val rawS gnals = frsStore
+      .get(FrsStore.Query(query.user d, query.params(GlobalParams.Un f edMaxS ceKeyNum)))
       .map {
         _.map {
           _.map {
-            _.userId
+            _.user d
           }
         }
       }
-    // Process signals
-    rawSignals.map {
+    // Process s gnals
+    rawS gnals.map {
       _.map { frsUsers =>
-        convertSourceInfo(SourceType.FollowRecommendation, frsUsers)
+        convertS ce nfo(S ceType.FollowRecom ndat on, frsUsers)
       }
     }
   }
 
-  override def convertSourceInfo(
-    sourceType: SourceType,
-    signals: Seq[SignalConvertType]
-  ): Seq[SourceInfo] = {
-    signals.map { signal =>
-      SourceInfo(
-        sourceType = sourceType,
-        internalId = InternalId.UserId(signal),
-        sourceEventTime = None
+  overr de def convertS ce nfo(
+    s ceType: S ceType,
+    s gnals: Seq[S gnalConvertType]
+  ): Seq[S ce nfo] = {
+    s gnals.map { s gnal =>
+      S ce nfo(
+        s ceType = s ceType,
+         nternal d =  nternal d.User d(s gnal),
+        s ceEventT   = None
       )
     }
   }

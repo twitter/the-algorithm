@@ -1,189 +1,189 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import java.io.IOException;
-import java.util.Arrays;
+ mport java. o. OExcept on;
+ mport java.ut l.Arrays;
 
-import org.apache.lucene.util.ArrayUtil;
+ mport org.apac .lucene.ut l.ArrayUt l;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
+ mport com.tw ter.search.common.ut l. o.flushable.DataDeser al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.DataSer al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.common.ut l. o.flushable.Flushable;
 
 /**
- * TermsArray provides information on each term in the posting list.
+ * TermsArray prov des  nformat on on each term  n t  post ng l st.
  *
- * It does not provide any concurrency guarantees. The writer must ensure that all updates are
- * visible to readers with an external memory barrier.
+ *   does not prov de any concurrency guarantees. T  wr er must ensure that all updates are
+ * v s ble to readers w h an external  mory barr er.
  */
-public class TermsArray implements Flushable {
-  private static final int BYTES_PER_POSTING = 5 * Integer.BYTES;
-  public static final int INVALID = -1;
+publ c class TermsArray  mple nts Flushable {
+  pr vate stat c f nal  nt BYTES_PER_POST NG = 5 *  nteger.BYTES;
+  publ c stat c f nal  nt  NVAL D = -1;
 
-  private final int size;
+  pr vate f nal  nt s ze;
 
-  public final int[] termPointers;
-  private final int[] postingsPointers;
+  publ c f nal  nt[] termPo nters;
+  pr vate f nal  nt[] post ngsPo nters;
 
-  // Derived data. Not atomic and not reliable.
-  public final int[] largestPostings;
-  public final int[] documentFrequency;
-  public final int[] offensiveCounters;
+  // Der ved data. Not atom c and not rel able.
+  publ c f nal  nt[] largestPost ngs;
+  publ c f nal  nt[] docu ntFrequency;
+  publ c f nal  nt[] offens veCounters;
 
-  TermsArray(int size, boolean useOffensiveCounters) {
-    this.size = size;
+  TermsArray( nt s ze, boolean useOffens veCounters) {
+    t .s ze = s ze;
 
-    termPointers = new int[size];
-    postingsPointers = new int[size];
+    termPo nters = new  nt[s ze];
+    post ngsPo nters = new  nt[s ze];
 
-    largestPostings = new int[size];
-    documentFrequency = new int[size];
+    largestPost ngs = new  nt[s ze];
+    docu ntFrequency = new  nt[s ze];
 
-    if (useOffensiveCounters) {
-      offensiveCounters = new int[size];
+     f (useOffens veCounters) {
+      offens veCounters = new  nt[s ze];
     } else {
-      offensiveCounters = null;
+      offens veCounters = null;
     }
 
-    Arrays.fill(postingsPointers, INVALID);
-    Arrays.fill(largestPostings, INVALID);
+    Arrays.f ll(post ngsPo nters,  NVAL D);
+    Arrays.f ll(largestPost ngs,  NVAL D);
   }
 
-  private TermsArray(TermsArray oldArray, int newSize) {
-    this(newSize, oldArray.offensiveCounters != null);
+  pr vate TermsArray(TermsArray oldArray,  nt newS ze) {
+    t (newS ze, oldArray.offens veCounters != null);
     copyFrom(oldArray);
   }
 
-  private TermsArray(
-      int size,
-      int[] termPointers,
-      int[] postingsPointers,
-      int[] largestPostings,
-      int[] documentFrequency,
-      int[] offensiveCounters) {
-    this.size = size;
+  pr vate TermsArray(
+       nt s ze,
+       nt[] termPo nters,
+       nt[] post ngsPo nters,
+       nt[] largestPost ngs,
+       nt[] docu ntFrequency,
+       nt[] offens veCounters) {
+    t .s ze = s ze;
 
-    this.termPointers = termPointers;
-    this.postingsPointers = postingsPointers;
+    t .termPo nters = termPo nters;
+    t .post ngsPo nters = post ngsPo nters;
 
-    this.largestPostings = largestPostings;
-    this.documentFrequency = documentFrequency;
-    this.offensiveCounters = offensiveCounters;
+    t .largestPost ngs = largestPost ngs;
+    t .docu ntFrequency = docu ntFrequency;
+    t .offens veCounters = offens veCounters;
   }
 
   TermsArray grow() {
-    int newSize = ArrayUtil.oversize(size + 1, BYTES_PER_POSTING);
-    return new TermsArray(this, newSize);
+     nt newS ze = ArrayUt l.overs ze(s ze + 1, BYTES_PER_POST NG);
+    return new TermsArray(t , newS ze);
   }
 
 
-  private void copyFrom(TermsArray from) {
-    copy(from.termPointers, termPointers);
-    copy(from.postingsPointers, postingsPointers);
+  pr vate vo d copyFrom(TermsArray from) {
+    copy(from.termPo nters, termPo nters);
+    copy(from.post ngsPo nters, post ngsPo nters);
 
-    copy(from.largestPostings, largestPostings);
-    copy(from.documentFrequency, documentFrequency);
+    copy(from.largestPost ngs, largestPost ngs);
+    copy(from.docu ntFrequency, docu ntFrequency);
 
-    if (from.offensiveCounters != null) {
-      copy(from.offensiveCounters, offensiveCounters);
+     f (from.offens veCounters != null) {
+      copy(from.offens veCounters, offens veCounters);
     }
   }
 
-  private void copy(int[] from, int[] to) {
+  pr vate vo d copy( nt[] from,  nt[] to) {
     System.arraycopy(from, 0, to, 0, from.length);
   }
 
   /**
-   * Returns the size of this array.
+   * Returns t  s ze of t  array.
    */
-  public int getSize() {
-    return size;
+  publ c  nt getS ze() {
+    return s ze;
   }
 
   /**
-   * Write side operation for updating the pointer to the last posting for a given term.
+   * Wr e s de operat on for updat ng t  po nter to t  last post ng for a g ven term.
    */
-  public void updatePostingsPointer(int termID, int newPointer) {
-    postingsPointers[termID] = newPointer;
+  publ c vo d updatePost ngsPo nter( nt term D,  nt newPo nter) {
+    post ngsPo nters[term D] = newPo nter;
   }
 
   /**
-   * The returned pointer is guaranteed to be memory safe to follow to its target. The data
-   * structure it points to will be consistent and safe to traverse. The posting list may contain
-   * doc IDs that the current reader should not see, and the reader should skip over these doc IDs
-   * to ensure that the readers provide an immutable view of the doc IDs in a posting list.
+   * T  returned po nter  s guaranteed to be  mory safe to follow to  s target. T  data
+   * structure   po nts to w ll be cons stent and safe to traverse. T  post ng l st may conta n
+   * doc  Ds that t  current reader should not see, and t  reader should sk p over t se doc  Ds
+   * to ensure that t  readers prov de an  mmutable v ew of t  doc  Ds  n a post ng l st.
    */
-  public int getPostingsPointer(int termID) {
-    return postingsPointers[termID];
+  publ c  nt getPost ngsPo nter( nt term D) {
+    return post ngsPo nters[term D];
   }
 
-  public int[] getDocumentFrequency() {
-    return documentFrequency;
+  publ c  nt[] getDocu ntFrequency() {
+    return docu ntFrequency;
   }
 
   /**
-   * Gets the array containing the first posting for each indexed term.
+   * Gets t  array conta n ng t  f rst post ng for each  ndexed term.
    */
-  public int[] getLargestPostings() {
-    return largestPostings;
+  publ c  nt[] getLargestPost ngs() {
+    return largestPost ngs;
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @SuppressWarn ngs("unc cked")
+  @Overr de
+  publ c FlushHandler getFlushHandler() {
+    return new FlushHandler(t );
   }
 
-  public static class FlushHandler extends Flushable.Handler<TermsArray> {
-    private static final String SIZE_PROP_NAME = "size";
-    private static final String HAS_OFFENSIVE_COUNTERS_PROP_NAME = "hasOffensiveCounters";
+  publ c stat c class FlushHandler extends Flushable.Handler<TermsArray> {
+    pr vate stat c f nal Str ng S ZE_PROP_NAME = "s ze";
+    pr vate stat c f nal Str ng HAS_OFFENS VE_COUNTERS_PROP_NAME = "hasOffens veCounters";
 
-    public FlushHandler(TermsArray objectToFlush) {
+    publ c FlushHandler(TermsArray objectToFlush) {
       super(objectToFlush);
     }
 
-    public FlushHandler() {
+    publ c FlushHandler() {
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
+    @Overr de
+    protected vo d doFlush(Flush nfo flush nfo, DataSer al zer out) throws  OExcept on {
       TermsArray objectToFlush = getObjectToFlush();
-      flushInfo.addIntProperty(SIZE_PROP_NAME, objectToFlush.size);
-      boolean hasOffensiveCounters = objectToFlush.offensiveCounters != null;
-      flushInfo.addBooleanProperty(HAS_OFFENSIVE_COUNTERS_PROP_NAME, hasOffensiveCounters);
+      flush nfo.add ntProperty(S ZE_PROP_NAME, objectToFlush.s ze);
+      boolean hasOffens veCounters = objectToFlush.offens veCounters != null;
+      flush nfo.addBooleanProperty(HAS_OFFENS VE_COUNTERS_PROP_NAME, hasOffens veCounters);
 
-      out.writeIntArray(objectToFlush.termPointers);
-      out.writeIntArray(objectToFlush.postingsPointers);
+      out.wr e ntArray(objectToFlush.termPo nters);
+      out.wr e ntArray(objectToFlush.post ngsPo nters);
 
-      out.writeIntArray(objectToFlush.largestPostings);
-      out.writeIntArray(objectToFlush.documentFrequency);
+      out.wr e ntArray(objectToFlush.largestPost ngs);
+      out.wr e ntArray(objectToFlush.docu ntFrequency);
 
-      if (hasOffensiveCounters) {
-        out.writeIntArray(objectToFlush.offensiveCounters);
+       f (hasOffens veCounters) {
+        out.wr e ntArray(objectToFlush.offens veCounters);
       }
     }
 
-    @Override
+    @Overr de
     protected TermsArray doLoad(
-        FlushInfo flushInfo, DataDeserializer in) throws IOException {
-      int size = flushInfo.getIntProperty(SIZE_PROP_NAME);
-      boolean hasOffensiveCounters = flushInfo.getBooleanProperty(HAS_OFFENSIVE_COUNTERS_PROP_NAME);
+        Flush nfo flush nfo, DataDeser al zer  n) throws  OExcept on {
+       nt s ze = flush nfo.get ntProperty(S ZE_PROP_NAME);
+      boolean hasOffens veCounters = flush nfo.getBooleanProperty(HAS_OFFENS VE_COUNTERS_PROP_NAME);
 
-      int[] termPointers = in.readIntArray();
-      int[] postingsPointers = in.readIntArray();
+       nt[] termPo nters =  n.read ntArray();
+       nt[] post ngsPo nters =  n.read ntArray();
 
-      int[] largestPostings = in.readIntArray();
-      int[] documentFrequency = in.readIntArray();
+       nt[] largestPost ngs =  n.read ntArray();
+       nt[] docu ntFrequency =  n.read ntArray();
 
-      int[] offensiveCounters = hasOffensiveCounters ? in.readIntArray() : null;
+       nt[] offens veCounters = hasOffens veCounters ?  n.read ntArray() : null;
 
       return new TermsArray(
-          size,
-          termPointers,
-          postingsPointers,
-          largestPostings,
-          documentFrequency,
-          offensiveCounters);
+          s ze,
+          termPo nters,
+          post ngsPo nters,
+          largestPost ngs,
+          docu ntFrequency,
+          offens veCounters);
     }
   }
 }

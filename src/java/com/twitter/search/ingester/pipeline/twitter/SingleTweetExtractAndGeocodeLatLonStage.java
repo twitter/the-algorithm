@@ -1,99 +1,99 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.tw ter.search. ngester.p pel ne.tw ter;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons.p pel ne.StageExcept on;
+ mport org.apac .commons.p pel ne.val dat on.Consu dTypes;
+ mport org.apac .commons.p pel ne.val dat on.ProducesConsu d;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftGeoLocationSource;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.relevance.entities.GeoObject;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.text.LocationUtils;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftGeoLocat onS ce;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common.relevance.ent  es.GeoObject;
+ mport com.tw ter.search.common.relevance.ent  es.Tw ter ssage;
+ mport com.tw ter.search.common.relevance.text.Locat onUt ls;
+ mport com.tw ter.search. ngester.model. ngesterTw ter ssage;
+ mport com.tw ter.search. ngester.p pel ne.ut l.P pel neStageRunt  Except on;
 
 /**
- * Read-only stage to extract lat/lon pairs from the tweet text and populate
- * the geoLocation field.
+ * Read-only stage to extract lat/lon pa rs from t  t et text and populate
+ * t  geoLocat on f eld.
  * <p>
- * If the tweet is geotagged by mobile devices, the geo coordinates extracted from the JSON
- * is used.
+ *  f t  t et  s geotagged by mob le dev ces, t  geo coord nates extracted from t  JSON
+ *  s used.
  */
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducesConsumed
-public class SingleTweetExtractAndGeocodeLatLonStage extends TwitterBaseStage
-    <TwitterMessage, IngesterTwitterMessage> {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(SingleTweetExtractAndGeocodeLatLonStage.class);
+@Consu dTypes( ngesterTw ter ssage.class)
+@ProducesConsu d
+publ c class S ngleT etExtractAndGeocodeLatLonStage extends Tw terBaseStage
+    <Tw ter ssage,  ngesterTw ter ssage> {
+  pr vate stat c f nal Logger LOG =
+      LoggerFactory.getLogger(S ngleT etExtractAndGeocodeLatLonStage.class);
 
-  private SearchRateCounter extractedLatLons;
-  private SearchRateCounter badLatLons;
+  pr vate SearchRateCounter extractedLatLons;
+  pr vate SearchRateCounter badLatLons;
 
-  @Override
-  public void initStats() {
-    super.initStats();
-    innerSetupStats();
+  @Overr de
+  publ c vo d  n Stats() {
+    super. n Stats();
+     nnerSetupStats();
   }
 
-  @Override
-  protected void innerSetupStats() {
-    extractedLatLons = SearchRateCounter.export(getStageNamePrefix() + "_extracted_lat_lons");
-    badLatLons = SearchRateCounter.export(getStageNamePrefix() + "_invalid_lat_lons");
+  @Overr de
+  protected vo d  nnerSetupStats() {
+    extractedLatLons = SearchRateCounter.export(getStageNa Pref x() + "_extracted_lat_lons");
+    badLatLons = SearchRateCounter.export(getStageNa Pref x() + "_ nval d_lat_lons");
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not IngesterTwitterMessage object: " + obj);
+  @Overr de
+  publ c vo d  nnerProcess(Object obj) throws StageExcept on {
+     f (!(obj  nstanceof  ngesterTw ter ssage)) {
+      throw new StageExcept on(t , "Object  s not  ngesterTw ter ssage object: " + obj);
     }
 
-    IngesterTwitterMessage message = IngesterTwitterMessage.class.cast(obj);
-    tryToSetGeoLocation(message);
-    emitAndCount(message);
+     ngesterTw ter ssage  ssage =  ngesterTw ter ssage.class.cast(obj);
+    tryToSetGeoLocat on( ssage);
+    em AndCount( ssage);
   }
 
-  @Override
-  protected IngesterTwitterMessage innerRunStageV2(TwitterMessage message) {
-    // Previous stage takes in a TwitterMessage and returns a TwitterMessage. I think it was
-    // done to simplify testing. From this stage onwards, we only count the message that are of type
-    // IngesterTwitterMessage.
-    if (!(message instanceof IngesterTwitterMessage)) {
-      throw new PipelineStageRuntimeException("Message needs to be of type IngesterTwitterMessage");
+  @Overr de
+  protected  ngesterTw ter ssage  nnerRunStageV2(Tw ter ssage  ssage) {
+    // Prev ous stage takes  n a Tw ter ssage and returns a Tw ter ssage.   th nk   was
+    // done to s mpl fy test ng. From t  stage onwards,   only count t   ssage that are of type
+    //  ngesterTw ter ssage.
+     f (!( ssage  nstanceof  ngesterTw ter ssage)) {
+      throw new P pel neStageRunt  Except on(" ssage needs to be of type  ngesterTw ter ssage");
     }
 
-    IngesterTwitterMessage ingesterTwitterMessage = IngesterTwitterMessage.class.cast(message);
-    tryToSetGeoLocation(ingesterTwitterMessage);
-    return ingesterTwitterMessage;
+     ngesterTw ter ssage  ngesterTw ter ssage =  ngesterTw ter ssage.class.cast( ssage);
+    tryToSetGeoLocat on( ngesterTw ter ssage);
+    return  ngesterTw ter ssage;
   }
 
-  private void tryToSetGeoLocation(IngesterTwitterMessage message) {
-    if (message.getGeoTaggedLocation() != null) {
-      message.setGeoLocation(message.getGeoTaggedLocation());
-    } else if (message.hasGeoLocation()) {
-      LOG.warn("Message {} already contains geoLocation", message.getId());
+  pr vate vo d tryToSetGeoLocat on( ngesterTw ter ssage  ssage) {
+     f ( ssage.getGeoTaggedLocat on() != null) {
+       ssage.setGeoLocat on( ssage.getGeoTaggedLocat on());
+    } else  f ( ssage.hasGeoLocat on()) {
+      LOG.warn(" ssage {} already conta ns geoLocat on",  ssage.get d());
     } else {
       try {
-        GeoObject extracted = extractLatLon(message);
-        if (extracted != null) {
-          message.setGeoLocation(extracted);
-          extractedLatLons.increment();
+        GeoObject extracted = extractLatLon( ssage);
+         f (extracted != null) {
+           ssage.setGeoLocat on(extracted);
+          extractedLatLons. ncre nt();
         }
-      } catch (NumberFormatException e) {
-        LOG.debug("Message contains bad latitude and longitude: " + message.getOrigLocation(), e);
-        badLatLons.increment();
-      } catch (Exception e) {
-        LOG.error("Failed to extract geo location from " + message.getOrigLocation() + " for tweet "
-            + message.getId(), e);
+      } catch (NumberFormatExcept on e) {
+        LOG.debug(" ssage conta ns bad lat ude and long ude: " +  ssage.getOr gLocat on(), e);
+        badLatLons. ncre nt();
+      } catch (Except on e) {
+        LOG.error("Fa led to extract geo locat on from " +  ssage.getOr gLocat on() + " for t et "
+            +  ssage.get d(), e);
       }
     }
   }
 
-  private GeoObject extractLatLon(IngesterTwitterMessage message) throws NumberFormatException {
-    double[] latlon = LocationUtils.extractLatLon(message);
+  pr vate GeoObject extractLatLon( ngesterTw ter ssage  ssage) throws NumberFormatExcept on {
+    double[] latlon = Locat onUt ls.extractLatLon( ssage);
     return latlon == null
         ? null
-        : new GeoObject(latlon[0], latlon[1], ThriftGeoLocationSource.TWEET_TEXT);
+        : new GeoObject(latlon[0], latlon[1], Thr ftGeoLocat onS ce.TWEET_TEXT);
   }
 }

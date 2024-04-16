@@ -1,43 +1,43 @@
-package com.twitter.home_mixer.functional_component.decorator.builder
+package com.tw ter.ho _m xer.funct onal_component.decorator.bu lder
 
-import com.twitter.home_mixer.model.HomeFeatures.EntityTokenFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventDetailsBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.injection.scribe.InjectionScribeUtil
+ mport com.tw ter.ho _m xer.model.Ho Features.Ent yTokenFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.SuggestTypeFeature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseCl entEventDeta lsBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseCl entEvent nfoBu lder
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEvent nfo
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes. nject on.scr be. nject onScr beUt l
 
 /**
- * Sets the [[ClientEventInfo]] with the `component` field set to the Suggest Type assigned to each candidate
+ * Sets t  [[Cl entEvent nfo]] w h t  `component` f eld set to t  Suggest Type ass gned to each cand date
  */
-case class HomeClientEventInfoBuilder[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-  detailsBuilder: Option[BaseClientEventDetailsBuilder[Query, Candidate]] = None)
-    extends BaseClientEventInfoBuilder[Query, Candidate] {
+case class Ho Cl entEvent nfoBu lder[Query <: P pel neQuery, Cand date <: Un versalNoun[Any]](
+  deta lsBu lder: Opt on[BaseCl entEventDeta lsBu lder[Query, Cand date]] = None)
+    extends BaseCl entEvent nfoBu lder[Query, Cand date] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap,
-    element: Option[String]
-  ): Option[ClientEventInfo] = {
-    val suggestType = candidateFeatures
+    cand date: Cand date,
+    cand dateFeatures: FeatureMap,
+    ele nt: Opt on[Str ng]
+  ): Opt on[Cl entEvent nfo] = {
+    val suggestType = cand dateFeatures
       .getOrElse(SuggestTypeFeature, None)
-      .getOrElse(throw new UnsupportedOperationException(s"No SuggestType was set"))
+      .getOrElse(throw new UnsupportedOperat onExcept on(s"No SuggestType was set"))
 
-    Some(
-      ClientEventInfo(
-        component = InjectionScribeUtil.scribeComponent(suggestType),
-        element = element,
-        details = detailsBuilder.flatMap(_.apply(query, candidate, candidateFeatures)),
-        action = None,
+    So (
+      Cl entEvent nfo(
+        component =  nject onScr beUt l.scr beComponent(suggestType),
+        ele nt = ele nt,
+        deta ls = deta lsBu lder.flatMap(_.apply(query, cand date, cand dateFeatures)),
+        act on = None,
         /**
-         * A backend entity encoded by the Client Entities Encoding Library.
-         * Placeholder string for now
+         * A backend ent y encoded by t  Cl ent Ent  es Encod ng L brary.
+         * Placeholder str ng for now
          */
-        entityToken = candidateFeatures.getOrElse(EntityTokenFeature, None)
+        ent yToken = cand dateFeatures.getOrElse(Ent yTokenFeature, None)
       )
     )
   }

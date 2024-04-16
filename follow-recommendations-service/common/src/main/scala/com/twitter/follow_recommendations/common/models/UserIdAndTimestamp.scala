@@ -1,3 +1,3 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-case class UserIdWithTimestamp(userId: Long, timeInMs: Long)
+case class User dW hT  stamp(user d: Long, t   nMs: Long)

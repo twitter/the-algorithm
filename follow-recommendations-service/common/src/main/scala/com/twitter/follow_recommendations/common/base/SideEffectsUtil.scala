@@ -1,24 +1,24 @@
-package com.twitter.follow_recommendations.common.base
+package com.tw ter.follow_recom ndat ons.common.base
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.st ch.St ch
 
 /**
- * SideEffectsUtil applies side effects to the intermediate candidate results from a recommendation flow pipeline.
+ * S deEffectsUt l appl es s de effects to t   nter d ate cand date results from a recom ndat on flow p pel ne.
  *
- * @tparam Target target to recommend the candidates
- * @tparam Candidate candidate type to rank
+ * @tparam Target target to recom nd t  cand dates
+ * @tparam Cand date cand date type to rank
  */
-trait SideEffectsUtil[Target, Candidate] {
-  def applySideEffects(
+tra  S deEffectsUt l[Target, Cand date] {
+  def applyS deEffects(
     target: Target,
-    candidateSources: Seq[CandidateSource[Target, Candidate]],
-    candidatesFromCandidateSources: Seq[Candidate],
-    mergedCandidates: Seq[Candidate],
-    filteredCandidates: Seq[Candidate],
-    rankedCandidates: Seq[Candidate],
-    transformedCandidates: Seq[Candidate],
-    truncatedCandidates: Seq[Candidate],
-    results: Seq[Candidate]
-  ): Stitch[Unit] = Stitch.Unit
+    cand dateS ces: Seq[Cand dateS ce[Target, Cand date]],
+    cand datesFromCand dateS ces: Seq[Cand date],
+     rgedCand dates: Seq[Cand date],
+    f lteredCand dates: Seq[Cand date],
+    rankedCand dates: Seq[Cand date],
+    transfor dCand dates: Seq[Cand date],
+    truncatedCand dates: Seq[Cand date],
+    results: Seq[Cand date]
+  ): St ch[Un ] = St ch.Un 
 }

@@ -1,53 +1,53 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.tw ter.s mclusters_v2.hdfs_s ces. nject ons
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.{
-  Long2BigEndian,
-  ScalaCompactThrift,
-  StringUtf8
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.{
+  Long2B gEnd an,
+  ScalaCompactThr ft,
+  Str ngUtf8
 }
-import com.twitter.recos.entities.thriftscala.{
-  SemanticCoreEntityScoreList,
-  SemanticCoreEntityWithLocale,
-  UserIdWithLocale,
-  UserScoreList
+ mport com.tw ter.recos.ent  es.thr ftscala.{
+  Semant cCoreEnt yScoreL st,
+  Semant cCoreEnt yW hLocale,
+  User dW hLocale,
+  UserScoreL st
 }
 
-object SemanticCoreEntitiesInjections {
+object Semant cCoreEnt  es nject ons {
 
-  final val StringToSemanticCoreEntityScoreListInjection: KeyValInjection[
-    String,
-    SemanticCoreEntityScoreList
+  f nal val Str ngToSemant cCoreEnt yScoreL st nject on: KeyVal nject on[
+    Str ng,
+    Semant cCoreEnt yScoreL st
   ] =
-    KeyValInjection(
-      StringUtf8,
-      ScalaCompactThrift(SemanticCoreEntityScoreList)
+    KeyVal nject on(
+      Str ngUtf8,
+      ScalaCompactThr ft(Semant cCoreEnt yScoreL st)
     )
 
-  final val LongToSemanticCoreEntityScoreListInjection: KeyValInjection[
+  f nal val LongToSemant cCoreEnt yScoreL st nject on: KeyVal nject on[
     Long,
-    SemanticCoreEntityScoreList
+    Semant cCoreEnt yScoreL st
   ] =
-    KeyValInjection(
-      Long2BigEndian,
-      ScalaCompactThrift(SemanticCoreEntityScoreList)
+    KeyVal nject on(
+      Long2B gEnd an,
+      ScalaCompactThr ft(Semant cCoreEnt yScoreL st)
     )
 
-  final val UserWithLocaleToSemanticCoreEntityScoreListInjection: KeyValInjection[
-    UserIdWithLocale,
-    SemanticCoreEntityScoreList
+  f nal val UserW hLocaleToSemant cCoreEnt yScoreL st nject on: KeyVal nject on[
+    User dW hLocale,
+    Semant cCoreEnt yScoreL st
   ] =
-    KeyValInjection(
-      ScalaCompactThrift(UserIdWithLocale),
-      ScalaCompactThrift(SemanticCoreEntityScoreList)
+    KeyVal nject on(
+      ScalaCompactThr ft(User dW hLocale),
+      ScalaCompactThr ft(Semant cCoreEnt yScoreL st)
     )
 
-  final val SemanticCoreEntityWithLocaleToUsersScoreListInjection: KeyValInjection[
-    SemanticCoreEntityWithLocale,
-    UserScoreList
+  f nal val Semant cCoreEnt yW hLocaleToUsersScoreL st nject on: KeyVal nject on[
+    Semant cCoreEnt yW hLocale,
+    UserScoreL st
   ] =
-    KeyValInjection(
-      ScalaCompactThrift(SemanticCoreEntityWithLocale),
-      ScalaCompactThrift(UserScoreList)
+    KeyVal nject on(
+      ScalaCompactThr ft(Semant cCoreEnt yW hLocale),
+      ScalaCompactThr ft(UserScoreL st)
     )
 }

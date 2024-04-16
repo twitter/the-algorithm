@@ -1,3 +1,3 @@
-package com.twitter.servo.decider
+package com.tw ter.servo.dec der
 
-trait DeciderKeyEnum extends Enumeration
+tra  Dec derKeyEnum extends Enu rat on

@@ -1,7 +1,7 @@
-package com.twitter.frigate.pushservice.take.predicates
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.hermit.predicate.NamedPredicate
+package com.tw ter.fr gate.pushserv ce.take.pred cates
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter. rm .pred cate.Na dPred cate
 
-trait BasicRFPHPredicates[C <: PushCandidate] {
-  val predicates: List[NamedPredicate[C]]
+tra  Bas cRFPHPred cates[C <: PushCand date] {
+  val pred cates: L st[Na dPred cate[C]]
 }

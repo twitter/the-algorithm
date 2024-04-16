@@ -1,173 +1,173 @@
-package com.twitter.ann.hnsw
+package com.tw ter.ann.hnsw
 
-import com.twitter.ann.common._
-import com.twitter.bijection.Injection
-import com.twitter.search.common.file.AbstractFile
+ mport com.tw ter.ann.common._
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.search.common.f le.AbstractF le
 
-// Class to provide HNSW based approximate nearest neighbour index
-object TypedHnswIndex {
+// Class to prov de HNSW based approx mate nearest ne ghb   ndex
+object TypedHnsw ndex {
 
   /**
-   * Creates in-memory HNSW based index which supports querying/addition/updates of the entity embeddings.
-   * See https://docbird.twitter.biz/ann/hnsw.html to check information about arguments.
+   * Creates  n- mory HNSW based  ndex wh ch supports query ng/add  on/updates of t  ent y embedd ngs.
+   * See https://docb rd.tw ter.b z/ann/hnsw.html to c ck  nformat on about argu nts.
    *
-   * @param dimension Dimension of the embedding to be indexed
-   * @param metric Distance metric (InnerProduct/Cosine/L2)
-   * @param efConstruction The parameter has the same meaning as ef, but controls the
-   *                       index_time/index_accuracy ratio. Bigger ef_construction leads to longer
-   *                       construction, but better index quality. At some point, increasing
-   *                       ef_construction does not improve the quality of the index. One way to
-   *                       check if the selection of ef_construction was ok is to measure a recall
-   *                       for M nearest neighbor search when ef = ef_constuction: if the recall is
-   *                       lower than 0.9, than there is room for improvement.
-   * @param maxM The number of bi-directional links created for every new element during construction.
-   *             Reasonable range for M is 2-100. Higher M work better on datasets with high
-   *             intrinsic dimensionality and/or high recall, while low M work better for datasets
-   *             with low intrinsic dimensionality and/or low recalls. The parameter also determines
-   *             the algorithm's memory consumption, bigger the param more the memory requirement.
-   *             For high dimensional datasets (word embeddings, good face descriptors), higher M
-   *             are required (e.g. M=48, 64) for optimal performance at high recall.
-   *             The range M=12-48 is ok for the most of the use cases.
-   * @param expectedElements Approximate number of elements to be indexed
-   * @param readWriteFuturePool Future pool for performing read (query) and write operation (addition/updates).
-   * @tparam T Type of item to index
-   * @tparam D Type of distance
+   * @param d  ns on D  ns on of t  embedd ng to be  ndexed
+   * @param  tr c D stance  tr c ( nnerProduct/Cos ne/L2)
+   * @param efConstruct on T  para ter has t  sa   an ng as ef, but controls t 
+   *                        ndex_t  / ndex_accuracy rat o. B gger ef_construct on leads to longer
+   *                       construct on, but better  ndex qual y. At so  po nt,  ncreas ng
+   *                       ef_construct on does not  mprove t  qual y of t   ndex. One way to
+   *                       c ck  f t  select on of ef_construct on was ok  s to  asure a recall
+   *                       for M nearest ne ghbor search w n ef = ef_constuct on:  f t  recall  s
+   *                       lo r than 0.9, than t re  s room for  mprove nt.
+   * @param maxM T  number of b -d rect onal l nks created for every new ele nt dur ng construct on.
+   *             Reasonable range for M  s 2-100. H g r M work better on datasets w h h gh
+   *              ntr ns c d  ns onal y and/or h gh recall, wh le low M work better for datasets
+   *             w h low  ntr ns c d  ns onal y and/or low recalls. T  para ter also determ nes
+   *             t  algor hm's  mory consumpt on, b gger t  param more t   mory requ re nt.
+   *             For h gh d  ns onal datasets (word embedd ngs, good face descr ptors), h g r M
+   *             are requ red (e.g. M=48, 64) for opt mal performance at h gh recall.
+   *             T  range M=12-48  s ok for t  most of t  use cases.
+   * @param expectedEle nts Approx mate number of ele nts to be  ndexed
+   * @param readWr eFuturePool Future pool for perform ng read (query) and wr e operat on (add  on/updates).
+   * @tparam T Type of  em to  ndex
+   * @tparam D Type of d stance
    */
-  def index[T, D <: Distance[D]](
-    dimension: Int,
-    metric: Metric[D],
-    efConstruction: Int,
-    maxM: Int,
-    expectedElements: Int,
-    readWriteFuturePool: ReadWriteFuturePool
-  ): Appendable[T, HnswParams, D] with Queryable[T, HnswParams, D] with Updatable[T] = {
+  def  ndex[T, D <: D stance[D]](
+    d  ns on:  nt,
+     tr c:  tr c[D],
+    efConstruct on:  nt,
+    maxM:  nt,
+    expectedEle nts:  nt,
+    readWr eFuturePool: ReadWr eFuturePool
+  ): Appendable[T, HnswParams, D] w h Queryable[T, HnswParams, D] w h Updatable[T] = {
     Hnsw[T, D](
-      dimension,
-      metric,
-      efConstruction,
+      d  ns on,
+       tr c,
+      efConstruct on,
       maxM,
-      expectedElements,
-      readWriteFuturePool,
-      JMapBasedIdEmbeddingMap.applyInMemory[T](expectedElements)
+      expectedEle nts,
+      readWr eFuturePool,
+      JMapBased dEmbedd ngMap.apply n mory[T](expectedEle nts)
     )
   }
 
   /**
-   * Creates in-memory HNSW based index which supports querying/addition/updates of the entity embeddings.
-   * It can be serialized to a directory (HDFS/Local file system)
-   * See https://docbird.twitter.biz/ann/hnsw.html to check information about arguments.
+   * Creates  n- mory HNSW based  ndex wh ch supports query ng/add  on/updates of t  ent y embedd ngs.
+   *   can be ser al zed to a d rectory (HDFS/Local f le system)
+   * See https://docb rd.tw ter.b z/ann/hnsw.html to c ck  nformat on about argu nts.
    *
-   * @param dimension Dimension of the embedding to be indexed
-   * @param metric Distance metric (InnerProduct/Cosine/L2)
-   * @param efConstruction The parameter has the same meaning as ef, but controls the
-   *                       index_time/index_accuracy ratio. Bigger ef_construction leads to longer
-   *                       construction, but better index quality. At some point, increasing
-   *                       ef_construction does not improve the quality of the index. One way to
-   *                       check if the selection of ef_construction was ok is to measure a recall
-   *                       for M nearest neighbor search when ef = ef_constuction: if the recall is
-   *                       lower than 0.9, than there is room for improvement.
-   * @param maxM The number of bi-directional links created for every new element during construction.
-   *             Reasonable range for M is 2-100. Higher M work better on datasets with high
-   *             intrinsic dimensionality and/or high recall, while low M work better for datasets
-   *             with low intrinsic dimensionality and/or low recalls. The parameter also determines
-   *             the algorithm's memory consumption, bigger the param more the memory requirement.
-   *             For high dimensional datasets (word embeddings, good face descriptors), higher M
-   *             are required (e.g. M=48, 64) for optimal performance at high recall.
-   *             The range M=12-48 is ok for the most of the use cases.
-   * @param expectedElements Approximate number of elements to be indexed
-   * @param injection Injection for typed Id T to Array[Byte]
-   * @param readWriteFuturePool Future pool for performing read (query) and write operation (addition/updates).
-   * @tparam T Type of item to index
-   * @tparam D Type of distance
+   * @param d  ns on D  ns on of t  embedd ng to be  ndexed
+   * @param  tr c D stance  tr c ( nnerProduct/Cos ne/L2)
+   * @param efConstruct on T  para ter has t  sa   an ng as ef, but controls t 
+   *                        ndex_t  / ndex_accuracy rat o. B gger ef_construct on leads to longer
+   *                       construct on, but better  ndex qual y. At so  po nt,  ncreas ng
+   *                       ef_construct on does not  mprove t  qual y of t   ndex. One way to
+   *                       c ck  f t  select on of ef_construct on was ok  s to  asure a recall
+   *                       for M nearest ne ghbor search w n ef = ef_constuct on:  f t  recall  s
+   *                       lo r than 0.9, than t re  s room for  mprove nt.
+   * @param maxM T  number of b -d rect onal l nks created for every new ele nt dur ng construct on.
+   *             Reasonable range for M  s 2-100. H g r M work better on datasets w h h gh
+   *              ntr ns c d  ns onal y and/or h gh recall, wh le low M work better for datasets
+   *             w h low  ntr ns c d  ns onal y and/or low recalls. T  para ter also determ nes
+   *             t  algor hm's  mory consumpt on, b gger t  param more t   mory requ re nt.
+   *             For h gh d  ns onal datasets (word embedd ngs, good face descr ptors), h g r M
+   *             are requ red (e.g. M=48, 64) for opt mal performance at h gh recall.
+   *             T  range M=12-48  s ok for t  most of t  use cases.
+   * @param expectedEle nts Approx mate number of ele nts to be  ndexed
+   * @param  nject on  nject on for typed  d T to Array[Byte]
+   * @param readWr eFuturePool Future pool for perform ng read (query) and wr e operat on (add  on/updates).
+   * @tparam T Type of  em to  ndex
+   * @tparam D Type of d stance
    */
-  def serializableIndex[T, D <: Distance[D]](
-    dimension: Int,
-    metric: Metric[D],
-    efConstruction: Int,
-    maxM: Int,
-    expectedElements: Int,
-    injection: Injection[T, Array[Byte]],
-    readWriteFuturePool: ReadWriteFuturePool
+  def ser al zable ndex[T, D <: D stance[D]](
+    d  ns on:  nt,
+     tr c:  tr c[D],
+    efConstruct on:  nt,
+    maxM:  nt,
+    expectedEle nts:  nt,
+     nject on:  nject on[T, Array[Byte]],
+    readWr eFuturePool: ReadWr eFuturePool
   ): Appendable[T, HnswParams, D]
-    with Queryable[T, HnswParams, D]
-    with Updatable[T]
-    with Serialization = {
-    val index = Hnsw[T, D](
-      dimension,
-      metric,
-      efConstruction,
+    w h Queryable[T, HnswParams, D]
+    w h Updatable[T]
+    w h Ser al zat on = {
+    val  ndex = Hnsw[T, D](
+      d  ns on,
+       tr c,
+      efConstruct on,
       maxM,
-      expectedElements,
-      readWriteFuturePool,
-      JMapBasedIdEmbeddingMap
-        .applyInMemoryWithSerialization[T](expectedElements, injection)
+      expectedEle nts,
+      readWr eFuturePool,
+      JMapBased dEmbedd ngMap
+        .apply n moryW hSer al zat on[T](expectedEle nts,  nject on)
     )
 
-    SerializableHnsw[T, D](
-      index,
-      injection
-    )
-  }
-
-  /**
-   * Loads HNSW index from a directory to in-memory
-   * @param dimension dimension of the embedding to be indexed
-   * @param metric Distance metric
-   * @param readWriteFuturePool Future pool for performing read (query) and write operation (addition/updates).
-   * @param injection : Injection for typed Id T to Array[Byte]
-   * @param directory : Directory(HDFS/Local file system) where hnsw index is stored
-   * @tparam T : Type of item to index
-   * @tparam D : Type of distance
-   */
-  def loadIndex[T, D <: Distance[D]](
-    dimension: Int,
-    metric: Metric[D],
-    injection: Injection[T, Array[Byte]],
-    readWriteFuturePool: ReadWriteFuturePool,
-    directory: AbstractFile
-  ): Appendable[T, HnswParams, D]
-    with Queryable[T, HnswParams, D]
-    with Updatable[T]
-    with Serialization = {
-    SerializableHnsw.loadMapBasedQueryableIndex[T, D](
-      dimension,
-      metric,
-      injection,
-      readWriteFuturePool,
-      directory
+    Ser al zableHnsw[T, D](
+       ndex,
+       nject on
     )
   }
 
   /**
-   * Loads a HNSW index from a directory and memory map it.
-   * It will take less memory but rely more on disk as it leverages memory mapped file backed by disk.
-   * Latency will go up considerably (Could be by factor of > 10x) if used on instance with low
-   * memory since lot of page faults may occur. Best use case to use would with scalding jobs
-   * where mapper/reducers instance are limited by 8gb memory.
-   * @param dimension dimension of the embedding to be indexed
-   * @param metric Distance metric
-   * @param readWriteFuturePool Future pool for performing read (query) and write operation (addition/updates).
-   * @param injection Injection for typed Id T to Array[Byte]
-   * @param directory Directory(HDFS/Local file system) where hnsw index is stored
-   * @tparam T Type of item to index
-   * @tparam D Type of distance
+   * Loads HNSW  ndex from a d rectory to  n- mory
+   * @param d  ns on d  ns on of t  embedd ng to be  ndexed
+   * @param  tr c D stance  tr c
+   * @param readWr eFuturePool Future pool for perform ng read (query) and wr e operat on (add  on/updates).
+   * @param  nject on :  nject on for typed  d T to Array[Byte]
+   * @param d rectory : D rectory(HDFS/Local f le system) w re hnsw  ndex  s stored
+   * @tparam T : Type of  em to  ndex
+   * @tparam D : Type of d stance
    */
-  def loadMMappedIndex[T, D <: Distance[D]](
-    dimension: Int,
-    metric: Metric[D],
-    injection: Injection[T, Array[Byte]],
-    readWriteFuturePool: ReadWriteFuturePool,
-    directory: AbstractFile
+  def load ndex[T, D <: D stance[D]](
+    d  ns on:  nt,
+     tr c:  tr c[D],
+     nject on:  nject on[T, Array[Byte]],
+    readWr eFuturePool: ReadWr eFuturePool,
+    d rectory: AbstractF le
   ): Appendable[T, HnswParams, D]
-    with Queryable[T, HnswParams, D]
-    with Updatable[T]
-    with Serialization = {
-    SerializableHnsw.loadMMappedBasedQueryableIndex[T, D](
-      dimension,
-      metric,
-      injection,
-      readWriteFuturePool,
-      directory
+    w h Queryable[T, HnswParams, D]
+    w h Updatable[T]
+    w h Ser al zat on = {
+    Ser al zableHnsw.loadMapBasedQueryable ndex[T, D](
+      d  ns on,
+       tr c,
+       nject on,
+      readWr eFuturePool,
+      d rectory
+    )
+  }
+
+  /**
+   * Loads a HNSW  ndex from a d rectory and  mory map  .
+   *   w ll take less  mory but rely more on d sk as   leverages  mory mapped f le backed by d sk.
+   * Latency w ll go up cons derably (Could be by factor of > 10x)  f used on  nstance w h low
+   *  mory s nce lot of page faults may occur. Best use case to use would w h scald ng jobs
+   * w re mapper/reducers  nstance are l m ed by 8gb  mory.
+   * @param d  ns on d  ns on of t  embedd ng to be  ndexed
+   * @param  tr c D stance  tr c
+   * @param readWr eFuturePool Future pool for perform ng read (query) and wr e operat on (add  on/updates).
+   * @param  nject on  nject on for typed  d T to Array[Byte]
+   * @param d rectory D rectory(HDFS/Local f le system) w re hnsw  ndex  s stored
+   * @tparam T Type of  em to  ndex
+   * @tparam D Type of d stance
+   */
+  def loadMMapped ndex[T, D <: D stance[D]](
+    d  ns on:  nt,
+     tr c:  tr c[D],
+     nject on:  nject on[T, Array[Byte]],
+    readWr eFuturePool: ReadWr eFuturePool,
+    d rectory: AbstractF le
+  ): Appendable[T, HnswParams, D]
+    w h Queryable[T, HnswParams, D]
+    w h Updatable[T]
+    w h Ser al zat on = {
+    Ser al zableHnsw.loadMMappedBasedQueryable ndex[T, D](
+      d  ns on,
+       tr c,
+       nject on,
+      readWr eFuturePool,
+      d rectory
     )
   }
 }

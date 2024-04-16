@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert
+package com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. em.alert
 
-import com.twitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertIconDisplayInfo
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.ShowAlertCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.alert.ShowAlert conD splay nfo
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-trait BaseShowAlertIconDisplayInfoBuilder[-Query <: PipelineQuery] {
+tra  BaseShowAlert conD splay nfoBu lder[-Query <: P pel neQuery] {
 
   def apply(
     query: Query,
-    candidate: ShowAlertCandidate,
+    cand date: ShowAlertCand date,
     features: FeatureMap
-  ): Option[ShowAlertIconDisplayInfo]
+  ): Opt on[ShowAlert conD splay nfo]
 }

@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.core.functional_component.common.alert.predicate
+package com.tw ter.product_m xer.core.funct onal_component.common.alert.pred cate
 
 /**
- * Specifies the metric granularity
+ * Spec f es t   tr c granular y
  *
- * @see [[https://docbird.twitter.biz/mon/reference.html#predicate DURATION]]
+ * @see [[https://docb rd.tw ter.b z/mon/reference.html#pred cate DURAT ON]]
  */
-sealed trait MetricGranularity { val unit: String }
+sealed tra   tr cGranular y { val un : Str ng }
 
 /**
- * Use minutely metrics and have alert durations in terms of minutes
+ * Use m nutely  tr cs and have alert durat ons  n terms of m nutes
  *
- * i.e. for a [[Predicate]] if [[Predicate.datapointsPastThreshold]] = 5 and [[Predicate.duration]] = 10
- * then the alert will trigger if there are at least 5 '''minutely''' metric points that are past the threshold
- * in any 10 '''minute''' period
+ *  .e. for a [[Pred cate]]  f [[Pred cate.datapo ntsPastThreshold]] = 5 and [[Pred cate.durat on]] = 10
+ * t n t  alert w ll tr gger  f t re are at least 5 '''m nutely'''  tr c po nts that are past t  threshold
+ *  n any 10 '''m nute''' per od
  */
-case object Minutes extends MetricGranularity { override val unit: String = "m" }
+case object M nutes extends  tr cGranular y { overr de val un : Str ng = "m" }
 
 /**
- * Use hourly metrics and have alert durations in terms of hours
+ * Use h ly  tr cs and have alert durat ons  n terms of h s
  *
- * i.e. for a [[Predicate]] if [[Predicate.datapointsPastThreshold]] = 5 and [[Predicate.duration]] = 10
- * then the alert will trigger if there are at least 5 '''hourly''' metric points that are past the threshold
- * in any 10 '''hour''' period
+ *  .e. for a [[Pred cate]]  f [[Pred cate.datapo ntsPastThreshold]] = 5 and [[Pred cate.durat on]] = 10
+ * t n t  alert w ll tr gger  f t re are at least 5 '''h ly'''  tr c po nts that are past t  threshold
+ *  n any 10 '''h ''' per od
  */
-case object Hours extends MetricGranularity { override val unit: String = "h" }
+case object H s extends  tr cGranular y { overr de val un : Str ng = "h" }
 
 /**
- * Use daily metrics and have alert durations in terms of days
+ * Use da ly  tr cs and have alert durat ons  n terms of days
  *
- * i.e. for a [[Predicate]] if [[Predicate.datapointsPastThreshold]] = 5 and [[Predicate.duration]] = 10
- * then the alert will trigger if there are at least 5 '''daily''' metric points that are past the threshold
- * in any 10 '''day''' period
+ *  .e. for a [[Pred cate]]  f [[Pred cate.datapo ntsPastThreshold]] = 5 and [[Pred cate.durat on]] = 10
+ * t n t  alert w ll tr gger  f t re are at least 5 '''da ly'''  tr c po nts that are past t  threshold
+ *  n any 10 '''day''' per od
  */
-case object Days extends MetricGranularity { override val unit: String = "d" }
+case object Days extends  tr cGranular y { overr de val un : Str ng = "d" }

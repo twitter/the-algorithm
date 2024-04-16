@@ -1,637 +1,637 @@
-package com.twitter.simclusters_v2.candidate_source
+package com.tw ter.s mclusters_v2.cand date_s ce
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.frigate.common.base.Stats
-import com.twitter.simclusters_v2.candidate_source.HeavyRanker.UniformScoreStoreRanker
-import com.twitter.simclusters_v2.candidate_source.SimClustersANNCandidateSource.SimClustersANNConfig
-import com.twitter.simclusters_v2.candidate_source.SimClustersANNCandidateSource.SimClustersTweetCandidate
-import com.twitter.simclusters_v2.common.ModelVersions._
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.summingbird.stores.ClusterKey
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ScoreInternalId
-import com.twitter.simclusters_v2.thriftscala.ScoringAlgorithm
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingPairScoreId
-import com.twitter.simclusters_v2.thriftscala.{Score => ThriftScore}
-import com.twitter.simclusters_v2.thriftscala.{ScoreId => ThriftScoreId}
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
-import scala.collection.mutable
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Cand dateS ce
+ mport com.tw ter.fr gate.common.base.Stats
+ mport com.tw ter.s mclusters_v2.cand date_s ce. avyRanker.Un formScoreStoreRanker
+ mport com.tw ter.s mclusters_v2.cand date_s ce.S mClustersANNCand dateS ce.S mClustersANNConf g
+ mport com.tw ter.s mclusters_v2.cand date_s ce.S mClustersANNCand dateS ce.S mClustersT etCand date
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons._
+ mport com.tw ter.s mclusters_v2.common.Cluster d
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.summ ngb rd.stores.ClusterKey
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.s mclusters_v2.thr ftscala.Score nternal d
+ mport com.tw ter.s mclusters_v2.thr ftscala.Scor ngAlgor hm
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng d
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ngPa rScore d
+ mport com.tw ter.s mclusters_v2.thr ftscala.{Score => Thr ftScore}
+ mport com.tw ter.s mclusters_v2.thr ftscala.{Score d => Thr ftScore d}
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
+ mport scala.collect on.mutable
 
 /**
- * This store looks for tweets whose similarity is close to a Source SimClustersEmbeddingId.
+ * T  store looks for t ets whose s m lar y  s close to a S ce S mClustersEmbedd ng d.
  *
- * Approximate cosine similarity is the core algorithm to drive this store.
+ * Approx mate cos ne s m lar y  s t  core algor hm to dr ve t  store.
  *
- * Step 1 - 4 are in "fetchCandidates" method.
- * 1. Retrieve the SimClusters Embedding by the SimClustersEmbeddingId
- * 2. Fetch top N clusters' top tweets from the clusterTweetCandidatesStore (TopTweetsPerCluster index).
- * 3. Calculate all the tweet candidates' dot-product or approximate cosine similarity to source tweets.
- * 4. Take top M tweet candidates by the step 3's score
- * Step 5-6 are in "reranking" method.
- * 5. Calculate the similarity score between source and candidates.
- * 6. Return top N candidates by the step 5's score.
+ * Step 1 - 4 are  n "fetchCand dates"  thod.
+ * 1. Retr eve t  S mClusters Embedd ng by t  S mClustersEmbedd ng d
+ * 2. Fetch top N clusters' top t ets from t  clusterT etCand datesStore (TopT etsPerCluster  ndex).
+ * 3. Calculate all t  t et cand dates' dot-product or approx mate cos ne s m lar y to s ce t ets.
+ * 4. Take top M t et cand dates by t  step 3's score
+ * Step 5-6 are  n "rerank ng"  thod.
+ * 5. Calculate t  s m lar y score bet en s ce and cand dates.
+ * 6. Return top N cand dates by t  step 5's score.
  *
- * Warning: Only turn off the step 5 for User InterestedIn candidate generation. It's the only use
- * case in Recos that we use dot-product to rank the tweet candidates.
+ * Warn ng: Only turn off t  step 5 for User  nterested n cand date generat on.  's t  only use
+ * case  n Recos that   use dot-product to rank t  t et cand dates.
  */
-case class SimClustersANNCandidateSource(
-  clusterTweetCandidatesStore: ReadableStore[ClusterKey, Seq[(TweetId, Double)]],
-  simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding],
-  heavyRanker: HeavyRanker.HeavyRanker,
-  configs: Map[EmbeddingType, SimClustersANNConfig],
-  statsReceiver: StatsReceiver)
-    extends CandidateSource[SimClustersANNCandidateSource.Query, SimClustersTweetCandidate] {
+case class S mClustersANNCand dateS ce(
+  clusterT etCand datesStore: ReadableStore[ClusterKey, Seq[(T et d, Double)]],
+  s mClustersEmbedd ngStore: ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng],
+   avyRanker:  avyRanker. avyRanker,
+  conf gs: Map[Embedd ngType, S mClustersANNConf g],
+  statsRece ver: StatsRece ver)
+    extends Cand dateS ce[S mClustersANNCand dateS ce.Query, S mClustersT etCand date] {
 
-  import SimClustersANNCandidateSource._
+   mport S mClustersANNCand dateS ce._
 
-  override val name: String = this.getClass.getName
-  private val stats = statsReceiver.scope(this.getClass.getName)
+  overr de val na : Str ng = t .getClass.getNa 
+  pr vate val stats = statsRece ver.scope(t .getClass.getNa )
 
-  private val fetchSourceEmbeddingStat = stats.scope("fetchSourceEmbedding")
-  protected val fetchCandidateEmbeddingsStat = stats.scope("fetchCandidateEmbeddings")
-  private val fetchCandidatesStat = stats.scope("fetchCandidates")
-  private val rerankingStat = stats.scope("reranking")
+  pr vate val fetchS ceEmbedd ngStat = stats.scope("fetchS ceEmbedd ng")
+  protected val fetchCand dateEmbedd ngsStat = stats.scope("fetchCand dateEmbedd ngs")
+  pr vate val fetchCand datesStat = stats.scope("fetchCand dates")
+  pr vate val rerank ngStat = stats.scope("rerank ng")
 
-  override def get(
-    query: SimClustersANNCandidateSource.Query
-  ): Future[Option[Seq[SimClustersTweetCandidate]]] = {
-    val sourceEmbeddingId = query.sourceEmbeddingId
-    loadConfig(query) match {
-      case Some(config) =>
+  overr de def get(
+    query: S mClustersANNCand dateS ce.Query
+  ): Future[Opt on[Seq[S mClustersT etCand date]]] = {
+    val s ceEmbedd ng d = query.s ceEmbedd ng d
+    loadConf g(query) match {
+      case So (conf g) =>
         for {
-          maybeSimClustersEmbedding <- Stats.track(fetchSourceEmbeddingStat) {
-            simClustersEmbeddingStore.get(query.sourceEmbeddingId)
+          maybeS mClustersEmbedd ng <- Stats.track(fetchS ceEmbedd ngStat) {
+            s mClustersEmbedd ngStore.get(query.s ceEmbedd ng d)
           }
-          maybeFilteredCandidates <- maybeSimClustersEmbedding match {
-            case Some(sourceEmbedding) =>
+          maybeF lteredCand dates <- maybeS mClustersEmbedd ng match {
+            case So (s ceEmbedd ng) =>
               for {
-                rawCandidates <- Stats.trackSeq(fetchCandidatesStat) {
-                  fetchCandidates(sourceEmbeddingId, config, sourceEmbedding)
+                rawCand dates <- Stats.trackSeq(fetchCand datesStat) {
+                  fetchCand dates(s ceEmbedd ng d, conf g, s ceEmbedd ng)
                 }
-                rankedCandidates <- Stats.trackSeq(rerankingStat) {
-                  reranking(sourceEmbeddingId, config, rawCandidates)
+                rankedCand dates <- Stats.trackSeq(rerank ngStat) {
+                  rerank ng(s ceEmbedd ng d, conf g, rawCand dates)
                 }
-              } yield {
-                fetchCandidatesStat
+              } y eld {
+                fetchCand datesStat
                   .stat(
-                    sourceEmbeddingId.embeddingType.name,
-                    sourceEmbeddingId.modelVersion.name).add(rankedCandidates.size)
-                Some(rankedCandidates)
+                    s ceEmbedd ng d.embedd ngType.na ,
+                    s ceEmbedd ng d.modelVers on.na ).add(rankedCand dates.s ze)
+                So (rankedCand dates)
               }
             case None =>
-              fetchCandidatesStat
+              fetchCand datesStat
                 .stat(
-                  sourceEmbeddingId.embeddingType.name,
-                  sourceEmbeddingId.modelVersion.name).add(0)
+                  s ceEmbedd ng d.embedd ngType.na ,
+                  s ceEmbedd ng d.modelVers on.na ).add(0)
               Future.None
           }
-        } yield {
-          maybeFilteredCandidates
+        } y eld {
+          maybeF lteredCand dates
         }
       case _ =>
-        // Skip over queries whose config is not defined
+        // Sk p over quer es whose conf g  s not def ned
         Future.None
     }
   }
 
-  private def fetchCandidates(
-    sourceEmbeddingId: SimClustersEmbeddingId,
-    config: SimClustersANNConfig,
-    sourceEmbedding: SimClustersEmbedding
-  ): Future[Seq[SimClustersTweetCandidate]] = {
-    val now = Time.now
-    val earliestTweetId = SnowflakeId.firstIdFor(now - config.maxTweetCandidateAge)
-    val latestTweetId = SnowflakeId.firstIdFor(now - config.minTweetCandidateAge)
-    val clusterIds =
-      sourceEmbedding
-        .truncate(config.maxScanClusters).clusterIds
-        .map { clusterId: ClusterId =>
-          ClusterKey(clusterId, sourceEmbeddingId.modelVersion, config.candidateEmbeddingType)
+  pr vate def fetchCand dates(
+    s ceEmbedd ng d: S mClustersEmbedd ng d,
+    conf g: S mClustersANNConf g,
+    s ceEmbedd ng: S mClustersEmbedd ng
+  ): Future[Seq[S mClustersT etCand date]] = {
+    val now = T  .now
+    val earl estT et d = Snowflake d.f rst dFor(now - conf g.maxT etCand dateAge)
+    val latestT et d = Snowflake d.f rst dFor(now - conf g.m nT etCand dateAge)
+    val cluster ds =
+      s ceEmbedd ng
+        .truncate(conf g.maxScanClusters).cluster ds
+        .map { cluster d: Cluster d =>
+          ClusterKey(cluster d, s ceEmbedd ng d.modelVers on, conf g.cand dateEmbedd ngType)
         }.toSet
 
     Future
       .collect {
-        clusterTweetCandidatesStore.multiGet(clusterIds)
-      }.map { clusterTweetsMap =>
-        // Use Mutable map to optimize performance. The method is thread-safe.
-        // Set initial map size to around p75 of map size distribution to avoid too many copying
-        // from extending the size of the mutable hashmap
-        val candidateScoresMap =
-          new SimClustersANNCandidateSource.HashMap[TweetId, Double](InitialCandidateMapSize)
-        val candidateNormalizationMap =
-          new SimClustersANNCandidateSource.HashMap[TweetId, Double](InitialCandidateMapSize)
+        clusterT etCand datesStore.mult Get(cluster ds)
+      }.map { clusterT etsMap =>
+        // Use Mutable map to opt m ze performance. T   thod  s thread-safe.
+        // Set  n  al map s ze to around p75 of map s ze d str but on to avo d too many copy ng
+        // from extend ng t  s ze of t  mutable hashmap
+        val cand dateScoresMap =
+          new S mClustersANNCand dateS ce.HashMap[T et d, Double]( n  alCand dateMapS ze)
+        val cand dateNormal zat onMap =
+          new S mClustersANNCand dateS ce.HashMap[T et d, Double]( n  alCand dateMapS ze)
 
-        clusterTweetsMap.foreach {
-          case (ClusterKey(clusterId, _, _, _), Some(tweetScores))
-              if sourceEmbedding.contains(clusterId) =>
-            val sourceClusterScore = sourceEmbedding.getOrElse(clusterId)
+        clusterT etsMap.foreach {
+          case (ClusterKey(cluster d, _, _, _), So (t etScores))
+               f s ceEmbedd ng.conta ns(cluster d) =>
+            val s ceClusterScore = s ceEmbedd ng.getOrElse(cluster d)
 
-            for (i <- 0 until Math.min(tweetScores.size, config.maxTopTweetsPerCluster)) {
-              val (tweetId, score) = tweetScores(i)
+            for (  <- 0 unt l Math.m n(t etScores.s ze, conf g.maxTopT etsPerCluster)) {
+              val (t et d, score) = t etScores( )
 
-              if (!parseTweetId(sourceEmbeddingId).contains(tweetId) &&
-                tweetId >= earliestTweetId && tweetId <= latestTweetId) {
-                candidateScoresMap.put(
-                  tweetId,
-                  candidateScoresMap.getOrElse(tweetId, 0.0) + score * sourceClusterScore)
-                if (config.enablePartialNormalization) {
-                  candidateNormalizationMap
-                    .put(tweetId, candidateNormalizationMap.getOrElse(tweetId, 0.0) + score * score)
+               f (!parseT et d(s ceEmbedd ng d).conta ns(t et d) &&
+                t et d >= earl estT et d && t et d <= latestT et d) {
+                cand dateScoresMap.put(
+                  t et d,
+                  cand dateScoresMap.getOrElse(t et d, 0.0) + score * s ceClusterScore)
+                 f (conf g.enablePart alNormal zat on) {
+                  cand dateNormal zat onMap
+                    .put(t et d, cand dateNormal zat onMap.getOrElse(t et d, 0.0) + score * score)
                 }
               }
             }
           case _ => ()
         }
 
-        stats.stat("candidateScoresMap").add(candidateScoresMap.size)
-        stats.stat("candidateNormalizationMap").add(candidateNormalizationMap.size)
+        stats.stat("cand dateScoresMap").add(cand dateScoresMap.s ze)
+        stats.stat("cand dateNormal zat onMap").add(cand dateNormal zat onMap.s ze)
 
-        // Re-Rank the candidate by configuration
-        val processedCandidateScores = candidateScoresMap.map {
-          case (candidateId, score) =>
-            // Enable Partial Normalization
+        // Re-Rank t  cand date by conf gurat on
+        val processedCand dateScores = cand dateScoresMap.map {
+          case (cand date d, score) =>
+            // Enable Part al Normal zat on
             val processedScore =
-              if (config.enablePartialNormalization) {
-                // We applied the "log" version of partial normalization when we rank candidates
-                // by log cosine similarity
-                if (config.rankingAlgorithm == ScoringAlgorithm.PairEmbeddingLogCosineSimilarity) {
-                  score / sourceEmbedding.l2norm / math.log(
-                    1 + candidateNormalizationMap(candidateId))
+               f (conf g.enablePart alNormal zat on) {
+                //   appl ed t  "log" vers on of part al normal zat on w n   rank cand dates
+                // by log cos ne s m lar y
+                 f (conf g.rank ngAlgor hm == Scor ngAlgor hm.Pa rEmbedd ngLogCos neS m lar y) {
+                  score / s ceEmbedd ng.l2norm / math.log(
+                    1 + cand dateNormal zat onMap(cand date d))
                 } else {
-                  score / sourceEmbedding.l2norm / math.sqrt(candidateNormalizationMap(candidateId))
+                  score / s ceEmbedd ng.l2norm / math.sqrt(cand dateNormal zat onMap(cand date d))
                 }
               } else score
-            SimClustersTweetCandidate(candidateId, processedScore, sourceEmbeddingId)
+            S mClustersT etCand date(cand date d, processedScore, s ceEmbedd ng d)
         }.toSeq
 
-        processedCandidateScores
+        processedCand dateScores
           .sortBy(-_.score)
       }
   }
 
-  private def reranking(
-    sourceEmbeddingId: SimClustersEmbeddingId,
-    config: SimClustersANNConfig,
-    candidates: Seq[SimClustersTweetCandidate]
-  ): Future[Seq[SimClustersTweetCandidate]] = {
-    val rankedCandidates = if (config.enableHeavyRanking) {
-      heavyRanker
+  pr vate def rerank ng(
+    s ceEmbedd ng d: S mClustersEmbedd ng d,
+    conf g: S mClustersANNConf g,
+    cand dates: Seq[S mClustersT etCand date]
+  ): Future[Seq[S mClustersT etCand date]] = {
+    val rankedCand dates =  f (conf g.enable avyRank ng) {
+       avyRanker
         .rank(
-          scoringAlgorithm = config.rankingAlgorithm,
-          sourceEmbeddingId = sourceEmbeddingId,
-          candidateEmbeddingType = config.candidateEmbeddingType,
-          minScore = config.minScore,
-          candidates = candidates.take(config.maxReRankingCandidates)
+          scor ngAlgor hm = conf g.rank ngAlgor hm,
+          s ceEmbedd ng d = s ceEmbedd ng d,
+          cand dateEmbedd ngType = conf g.cand dateEmbedd ngType,
+          m nScore = conf g.m nScore,
+          cand dates = cand dates.take(conf g.maxReRank ngCand dates)
         ).map(_.sortBy(-_.score))
     } else {
-      Future.value(candidates)
+      Future.value(cand dates)
     }
-    rankedCandidates.map(_.take(config.maxNumResults))
+    rankedCand dates.map(_.take(conf g.maxNumResults))
   }
 
-  private[candidate_source] def loadConfig(query: Query): Option[SimClustersANNConfig] = {
-    configs.get(query.sourceEmbeddingId.embeddingType).map { baseConfig =>
-      // apply overrides if any
-      query.overrideConfig match {
-        case Some(overrides) =>
-          baseConfig.copy(
-            maxNumResults = overrides.maxNumResults.getOrElse(baseConfig.maxNumResults),
-            maxTweetCandidateAge =
-              overrides.maxTweetCandidateAge.getOrElse(baseConfig.maxTweetCandidateAge),
-            minScore = overrides.minScore.getOrElse(baseConfig.minScore),
-            candidateEmbeddingType =
-              overrides.candidateEmbeddingType.getOrElse(baseConfig.candidateEmbeddingType),
-            enablePartialNormalization =
-              overrides.enablePartialNormalization.getOrElse(baseConfig.enablePartialNormalization),
-            enableHeavyRanking =
-              overrides.enableHeavyRanking.getOrElse(baseConfig.enableHeavyRanking),
-            rankingAlgorithm = overrides.rankingAlgorithm.getOrElse(baseConfig.rankingAlgorithm),
-            maxReRankingCandidates =
-              overrides.maxReRankingCandidates.getOrElse(baseConfig.maxReRankingCandidates),
-            maxTopTweetsPerCluster =
-              overrides.maxTopTweetsPerCluster.getOrElse(baseConfig.maxTopTweetsPerCluster),
-            maxScanClusters = overrides.maxScanClusters.getOrElse(baseConfig.maxScanClusters),
-            minTweetCandidateAge =
-              overrides.minTweetCandidateAge.getOrElse(baseConfig.minTweetCandidateAge)
+  pr vate[cand date_s ce] def loadConf g(query: Query): Opt on[S mClustersANNConf g] = {
+    conf gs.get(query.s ceEmbedd ng d.embedd ngType).map { baseConf g =>
+      // apply overr des  f any
+      query.overr deConf g match {
+        case So (overr des) =>
+          baseConf g.copy(
+            maxNumResults = overr des.maxNumResults.getOrElse(baseConf g.maxNumResults),
+            maxT etCand dateAge =
+              overr des.maxT etCand dateAge.getOrElse(baseConf g.maxT etCand dateAge),
+            m nScore = overr des.m nScore.getOrElse(baseConf g.m nScore),
+            cand dateEmbedd ngType =
+              overr des.cand dateEmbedd ngType.getOrElse(baseConf g.cand dateEmbedd ngType),
+            enablePart alNormal zat on =
+              overr des.enablePart alNormal zat on.getOrElse(baseConf g.enablePart alNormal zat on),
+            enable avyRank ng =
+              overr des.enable avyRank ng.getOrElse(baseConf g.enable avyRank ng),
+            rank ngAlgor hm = overr des.rank ngAlgor hm.getOrElse(baseConf g.rank ngAlgor hm),
+            maxReRank ngCand dates =
+              overr des.maxReRank ngCand dates.getOrElse(baseConf g.maxReRank ngCand dates),
+            maxTopT etsPerCluster =
+              overr des.maxTopT etsPerCluster.getOrElse(baseConf g.maxTopT etsPerCluster),
+            maxScanClusters = overr des.maxScanClusters.getOrElse(baseConf g.maxScanClusters),
+            m nT etCand dateAge =
+              overr des.m nT etCand dateAge.getOrElse(baseConf g.m nT etCand dateAge)
           )
-        case _ => baseConfig
+        case _ => baseConf g
       }
     }
   }
 }
 
-object SimClustersANNCandidateSource {
+object S mClustersANNCand dateS ce {
 
-  final val ProductionMaxNumResults = 200
-  final val InitialCandidateMapSize = 16384
+  f nal val Product onMaxNumResults = 200
+  f nal val  n  alCand dateMapS ze = 16384
 
   def apply(
-    clusterTweetCandidatesStore: ReadableStore[ClusterKey, Seq[(TweetId, Double)]],
-    simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding],
-    uniformScoringStore: ReadableStore[ThriftScoreId, ThriftScore],
-    configs: Map[EmbeddingType, SimClustersANNConfig],
-    statsReceiver: StatsReceiver
-  ) = new SimClustersANNCandidateSource(
-    clusterTweetCandidatesStore = clusterTweetCandidatesStore,
-    simClustersEmbeddingStore = simClustersEmbeddingStore,
-    heavyRanker = new UniformScoreStoreRanker(uniformScoringStore, statsReceiver),
-    configs = configs,
-    statsReceiver = statsReceiver
+    clusterT etCand datesStore: ReadableStore[ClusterKey, Seq[(T et d, Double)]],
+    s mClustersEmbedd ngStore: ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng],
+    un formScor ngStore: ReadableStore[Thr ftScore d, Thr ftScore],
+    conf gs: Map[Embedd ngType, S mClustersANNConf g],
+    statsRece ver: StatsRece ver
+  ) = new S mClustersANNCand dateS ce(
+    clusterT etCand datesStore = clusterT etCand datesStore,
+    s mClustersEmbedd ngStore = s mClustersEmbedd ngStore,
+     avyRanker = new Un formScoreStoreRanker(un formScor ngStore, statsRece ver),
+    conf gs = conf gs,
+    statsRece ver = statsRece ver
   )
 
-  private def parseTweetId(embeddingId: SimClustersEmbeddingId): Option[TweetId] = {
-    embeddingId.internalId match {
-      case InternalId.TweetId(tweetId) =>
-        Some(tweetId)
+  pr vate def parseT et d(embedd ng d: S mClustersEmbedd ng d): Opt on[T et d] = {
+    embedd ng d. nternal d match {
+      case  nternal d.T et d(t et d) =>
+        So (t et d)
       case _ =>
         None
     }
   }
 
   case class Query(
-    sourceEmbeddingId: SimClustersEmbeddingId,
-    // Only override the config in DDG and Debuggers.
-    // Use Post-filter for the holdbacks for better cache hit rate.
-    overrideConfig: Option[SimClustersANNConfigOverride] = None)
+    s ceEmbedd ng d: S mClustersEmbedd ng d,
+    // Only overr de t  conf g  n DDG and Debuggers.
+    // Use Post-f lter for t  holdbacks for better cac  h  rate.
+    overr deConf g: Opt on[S mClustersANNConf gOverr de] = None)
 
-  case class SimClustersTweetCandidate(
-    tweetId: TweetId,
+  case class S mClustersT etCand date(
+    t et d: T et d,
     score: Double,
-    sourceEmbeddingId: SimClustersEmbeddingId)
+    s ceEmbedd ng d: S mClustersEmbedd ng d)
 
-  class HashMap[A, B](initSize: Int) extends mutable.HashMap[A, B] {
-    override def initialSize: Int = initSize // 16 - by default
+  class HashMap[A, B]( n S ze:  nt) extends mutable.HashMap[A, B] {
+    overr de def  n  alS ze:  nt =  n S ze // 16 - by default
   }
 
   /**
-   * The Configuration of Each SimClusters ANN Candidate Source.
-   * Expect One SimClusters Embedding Type mapping to a SimClusters ANN Configuration in Production.
+   * T  Conf gurat on of Each S mClusters ANN Cand date S ce.
+   * Expect One S mClusters Embedd ng Type mapp ng to a S mClusters ANN Conf gurat on  n Product on.
    */
-  case class SimClustersANNConfig(
-    // The max number of candidates for a ANN Query
-    // Please don't override this value in Production.
-    maxNumResults: Int = ProductionMaxNumResults,
-    // The max tweet candidate duration from now.
-    maxTweetCandidateAge: Duration,
-    // The min score of the candidates
-    minScore: Double,
-    // The Candidate Embedding Type of Tweet.
-    candidateEmbeddingType: EmbeddingType,
-    // Enables normalization of approximate SimClusters vectors to remove popularity bias
-    enablePartialNormalization: Boolean,
-    // Whether to enable Embedding Similarity ranking
-    enableHeavyRanking: Boolean,
-    // The ranking algorithm for Source Candidate Similarity
-    rankingAlgorithm: ScoringAlgorithm,
-    // The max number of candidates in ReRanking Step
-    maxReRankingCandidates: Int,
-    // The max number of Top Tweets from every cluster tweet index
-    maxTopTweetsPerCluster: Int,
-    // The max number of Clusters in the source Embeddings.
-    maxScanClusters: Int,
-    // The min tweet candidate duration from now.
-    minTweetCandidateAge: Duration)
+  case class S mClustersANNConf g(
+    // T  max number of cand dates for a ANN Query
+    // Please don't overr de t  value  n Product on.
+    maxNumResults:  nt = Product onMaxNumResults,
+    // T  max t et cand date durat on from now.
+    maxT etCand dateAge: Durat on,
+    // T  m n score of t  cand dates
+    m nScore: Double,
+    // T  Cand date Embedd ng Type of T et.
+    cand dateEmbedd ngType: Embedd ngType,
+    // Enables normal zat on of approx mate S mClusters vectors to remove popular y b as
+    enablePart alNormal zat on: Boolean,
+    // W t r to enable Embedd ng S m lar y rank ng
+    enable avyRank ng: Boolean,
+    // T  rank ng algor hm for S ce Cand date S m lar y
+    rank ngAlgor hm: Scor ngAlgor hm,
+    // T  max number of cand dates  n ReRank ng Step
+    maxReRank ngCand dates:  nt,
+    // T  max number of Top T ets from every cluster t et  ndex
+    maxTopT etsPerCluster:  nt,
+    // T  max number of Clusters  n t  s ce Embedd ngs.
+    maxScanClusters:  nt,
+    // T  m n t et cand date durat on from now.
+    m nT etCand dateAge: Durat on)
 
   /**
-   * Contains same fields as [[SimClustersANNConfig]], to specify which fields are to be overriden
-   * for experimental purposes.
+   * Conta ns sa  f elds as [[S mClustersANNConf g]], to spec fy wh ch f elds are to be overr den
+   * for exper  ntal purposes.
    *
-   * All fields in this class must be optional.
+   * All f elds  n t  class must be opt onal.
    */
-  case class SimClustersANNConfigOverride(
-    maxNumResults: Option[Int] = None,
-    maxTweetCandidateAge: Option[Duration] = None,
-    minScore: Option[Double] = None,
-    candidateEmbeddingType: Option[EmbeddingType] = None,
-    enablePartialNormalization: Option[Boolean] = None,
-    enableHeavyRanking: Option[Boolean] = None,
-    rankingAlgorithm: Option[ScoringAlgorithm] = None,
-    maxReRankingCandidates: Option[Int] = None,
-    maxTopTweetsPerCluster: Option[Int] = None,
-    maxScanClusters: Option[Int] = None,
-    minTweetCandidateAge: Option[Duration] = None,
-    enableLookbackSource: Option[Boolean] = None)
+  case class S mClustersANNConf gOverr de(
+    maxNumResults: Opt on[ nt] = None,
+    maxT etCand dateAge: Opt on[Durat on] = None,
+    m nScore: Opt on[Double] = None,
+    cand dateEmbedd ngType: Opt on[Embedd ngType] = None,
+    enablePart alNormal zat on: Opt on[Boolean] = None,
+    enable avyRank ng: Opt on[Boolean] = None,
+    rank ngAlgor hm: Opt on[Scor ngAlgor hm] = None,
+    maxReRank ngCand dates: Opt on[ nt] = None,
+    maxTopT etsPerCluster: Opt on[ nt] = None,
+    maxScanClusters: Opt on[ nt] = None,
+    m nT etCand dateAge: Opt on[Durat on] = None,
+    enableLookbackS ce: Opt on[Boolean] = None)
 
-  final val DefaultMaxTopTweetsPerCluster = 200
-  final val DefaultEnableHeavyRanking = false
-  object SimClustersANNConfig {
-    val DefaultSimClustersANNConfig: SimClustersANNConfig =
-      SimClustersANNConfig(
-        maxTweetCandidateAge = 1.days,
-        minScore = 0.7,
-        candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-        enablePartialNormalization = true,
-        enableHeavyRanking = false,
-        rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-        maxReRankingCandidates = 250,
-        maxTopTweetsPerCluster = 200,
+  f nal val DefaultMaxTopT etsPerCluster = 200
+  f nal val DefaultEnable avyRank ng = false
+  object S mClustersANNConf g {
+    val DefaultS mClustersANNConf g: S mClustersANNConf g =
+      S mClustersANNConf g(
+        maxT etCand dateAge = 1.days,
+        m nScore = 0.7,
+        cand dateEmbedd ngType = Embedd ngType.LogFavBasedT et,
+        enablePart alNormal zat on = true,
+        enable avyRank ng = false,
+        rank ngAlgor hm = Scor ngAlgor hm.Pa rEmbedd ngCos neS m lar y,
+        maxReRank ngCand dates = 250,
+        maxTopT etsPerCluster = 200,
         maxScanClusters = 50,
-        minTweetCandidateAge = 0.seconds
+        m nT etCand dateAge = 0.seconds
       )
   }
 
-  val LookbackMediaMinDays: Int = 0
-  val LookbackMediaMaxDays: Int = 2
-  val LookbackMediaMaxTweetsPerDay: Int = 2000
-  val maxTopTweetsPerCluster: Int =
-    (LookbackMediaMaxDays - LookbackMediaMinDays + 1) * LookbackMediaMaxTweetsPerDay
+  val Lookback d aM nDays:  nt = 0
+  val Lookback d aMaxDays:  nt = 2
+  val Lookback d aMaxT etsPerDay:  nt = 2000
+  val maxTopT etsPerCluster:  nt =
+    (Lookback d aMaxDays - Lookback d aM nDays + 1) * Lookback d aMaxT etsPerDay
 
-  val LookbackMediaTweetConfig: Map[EmbeddingType, SimClustersANNConfig] = {
-    val candidateEmbeddingType = EmbeddingType.LogFavLongestL2EmbeddingTweet
-    val minTweetAge = LookbackMediaMinDays.days
-    val maxTweetAge =
-      LookbackMediaMaxDays.days - 1.hour // To compensate for the cache TTL that might push the tweet age beyond max age
-    val rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity
+  val Lookback d aT etConf g: Map[Embedd ngType, S mClustersANNConf g] = {
+    val cand dateEmbedd ngType = Embedd ngType.LogFavLongestL2Embedd ngT et
+    val m nT etAge = Lookback d aM nDays.days
+    val maxT etAge =
+      Lookback d aMaxDays.days - 1.h  // To compensate for t  cac  TTL that m ght push t  t et age beyond max age
+    val rank ngAlgor hm = Scor ngAlgor hm.Pa rEmbedd ngCos neS m lar y
 
     val maxScanClusters = 50
-    val minScore = 0.5
+    val m nScore = 0.5
     Map(
-      EmbeddingType.FavBasedProducer -> SimClustersANNConfig(
-        minTweetCandidateAge = minTweetAge,
-        maxTweetCandidateAge = maxTweetAge,
-        minScore =
-          minScore, // for twistly candidates. To specify a higher threshold, use a post-filter
-        candidateEmbeddingType = candidateEmbeddingType,
-        enablePartialNormalization = true,
-        enableHeavyRanking = DefaultEnableHeavyRanking,
-        rankingAlgorithm = rankingAlgorithm,
-        maxReRankingCandidates = 250,
-        maxTopTweetsPerCluster = maxTopTweetsPerCluster,
+      Embedd ngType.FavBasedProducer -> S mClustersANNConf g(
+        m nT etCand dateAge = m nT etAge,
+        maxT etCand dateAge = maxT etAge,
+        m nScore =
+          m nScore, // for tw stly cand dates. To spec fy a h g r threshold, use a post-f lter
+        cand dateEmbedd ngType = cand dateEmbedd ngType,
+        enablePart alNormal zat on = true,
+        enable avyRank ng = DefaultEnable avyRank ng,
+        rank ngAlgor hm = rank ngAlgor hm,
+        maxReRank ngCand dates = 250,
+        maxTopT etsPerCluster = maxTopT etsPerCluster,
         maxScanClusters = maxScanClusters,
       ),
-      EmbeddingType.LogFavLongestL2EmbeddingTweet -> SimClustersANNConfig(
-        minTweetCandidateAge = minTweetAge,
-        maxTweetCandidateAge = maxTweetAge,
-        minScore =
-          minScore, // for twistly candidates. To specify a higher threshold, use a post-filter
-        candidateEmbeddingType = candidateEmbeddingType,
-        enablePartialNormalization = true,
-        enableHeavyRanking = DefaultEnableHeavyRanking,
-        rankingAlgorithm = rankingAlgorithm,
-        maxReRankingCandidates = 250,
-        maxTopTweetsPerCluster = maxTopTweetsPerCluster,
+      Embedd ngType.LogFavLongestL2Embedd ngT et -> S mClustersANNConf g(
+        m nT etCand dateAge = m nT etAge,
+        maxT etCand dateAge = maxT etAge,
+        m nScore =
+          m nScore, // for tw stly cand dates. To spec fy a h g r threshold, use a post-f lter
+        cand dateEmbedd ngType = cand dateEmbedd ngType,
+        enablePart alNormal zat on = true,
+        enable avyRank ng = DefaultEnable avyRank ng,
+        rank ngAlgor hm = rank ngAlgor hm,
+        maxReRank ngCand dates = 250,
+        maxTopT etsPerCluster = maxTopT etsPerCluster,
         maxScanClusters = maxScanClusters,
       ),
-      EmbeddingType.FavTfgTopic -> SimClustersANNConfig(
-        minTweetCandidateAge = minTweetAge,
-        maxTweetCandidateAge = maxTweetAge,
-        minScore = minScore,
-        candidateEmbeddingType = candidateEmbeddingType,
-        enablePartialNormalization = true,
-        enableHeavyRanking = DefaultEnableHeavyRanking,
-        rankingAlgorithm = rankingAlgorithm,
-        maxReRankingCandidates = 400,
-        maxTopTweetsPerCluster = 200,
+      Embedd ngType.FavTfgTop c -> S mClustersANNConf g(
+        m nT etCand dateAge = m nT etAge,
+        maxT etCand dateAge = maxT etAge,
+        m nScore = m nScore,
+        cand dateEmbedd ngType = cand dateEmbedd ngType,
+        enablePart alNormal zat on = true,
+        enable avyRank ng = DefaultEnable avyRank ng,
+        rank ngAlgor hm = rank ngAlgor hm,
+        maxReRank ngCand dates = 400,
+        maxTopT etsPerCluster = 200,
         maxScanClusters = maxScanClusters,
       ),
-      EmbeddingType.LogFavBasedKgoApeTopic -> SimClustersANNConfig(
-        minTweetCandidateAge = minTweetAge,
-        maxTweetCandidateAge = maxTweetAge,
-        minScore = minScore,
-        candidateEmbeddingType = candidateEmbeddingType,
-        enablePartialNormalization = true,
-        enableHeavyRanking = DefaultEnableHeavyRanking,
-        rankingAlgorithm = rankingAlgorithm,
-        maxReRankingCandidates = 400,
-        maxTopTweetsPerCluster = 200,
+      Embedd ngType.LogFavBasedKgoApeTop c -> S mClustersANNConf g(
+        m nT etCand dateAge = m nT etAge,
+        maxT etCand dateAge = maxT etAge,
+        m nScore = m nScore,
+        cand dateEmbedd ngType = cand dateEmbedd ngType,
+        enablePart alNormal zat on = true,
+        enable avyRank ng = DefaultEnable avyRank ng,
+        rank ngAlgor hm = rank ngAlgor hm,
+        maxReRank ngCand dates = 400,
+        maxTopT etsPerCluster = 200,
         maxScanClusters = maxScanClusters,
       ),
     )
   }
 
-  val DefaultConfigMappings: Map[EmbeddingType, SimClustersANNConfig] = Map(
-    EmbeddingType.FavBasedProducer -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0, // for twistly candidates. To specify a higher threshold, use a post-filter
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 250,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
+  val DefaultConf gMapp ngs: Map[Embedd ngType, S mClustersANNConf g] = Map(
+    Embedd ngType.FavBasedProducer -> S mClustersANNConf g(
+      maxT etCand dateAge = 1.days,
+      m nScore = 0.0, // for tw stly cand dates. To spec fy a h g r threshold, use a post-f lter
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedT et,
+      enablePart alNormal zat on = true,
+      enable avyRank ng = DefaultEnable avyRank ng,
+      rank ngAlgor hm = Scor ngAlgor hm.Pa rEmbedd ngCos neS m lar y,
+      maxReRank ngCand dates = 250,
+      maxTopT etsPerCluster = DefaultMaxTopT etsPerCluster,
       maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      m nT etCand dateAge = 0.seconds
     ),
-    EmbeddingType.LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0, // for twistly candidates. To specify a higher threshold, use a post-filter
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 250,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
+    Embedd ngType.LogFavBasedUser nterestedMaxpool ngAddressBookFrom  APE -> S mClustersANNConf g(
+      maxT etCand dateAge = 1.days,
+      m nScore = 0.0, // for tw stly cand dates. To spec fy a h g r threshold, use a post-f lter
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedT et,
+      enablePart alNormal zat on = true,
+      enable avyRank ng = DefaultEnable avyRank ng,
+      rank ngAlgor hm = Scor ngAlgor hm.Pa rEmbedd ngCos neS m lar y,
+      maxReRank ngCand dates = 250,
+      maxTopT etsPerCluster = DefaultMaxTopT etsPerCluster,
       maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      m nT etCand dateAge = 0.seconds
     ),
-    EmbeddingType.LogFavBasedUserInterestedAverageAddressBookFromIIAPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0, // for twistly candidates. To specify a higher threshold, use a post-filter
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 250,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
+    Embedd ngType.LogFavBasedUser nterestedAverageAddressBookFrom  APE -> S mClustersANNConf g(
+      maxT etCand dateAge = 1.days,
+      m nScore = 0.0, // for tw stly cand dates. To spec fy a h g r threshold, use a post-f lter
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedT et,
+      enablePart alNormal zat on = true,
+      enable avyRank ng = DefaultEnable avyRank ng,
+      rank ngAlgor hm = Scor ngAlgor hm.Pa rEmbedd ngCos neS m lar y,
+      maxReRank ngCand dates = 250,
+      maxTopT etsPerCluster = DefaultMaxTopT etsPerCluster,
       maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      m nT etCand dateAge = 0.seconds
     ),
-    EmbeddingType.LogFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0, // for twistly candidates. To specify a higher threshold, use a post-filter
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 250,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
+    Embedd ngType.LogFavBasedUser nterestedBooktypeMaxpool ngAddressBookFrom  APE -> S mClustersANNConf g(
+      maxT etCand dateAge = 1.days,
+      m nScore = 0.0, // for tw stly cand dates. To spec fy a h g r threshold, use a post-f lter
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedT et,
+      enablePart alNormal zat on = true,
+      enable avyRank ng = DefaultEnable avyRank ng,
+      rank ngAlgor hm = Scor ngAlgor hm.Pa rEmbedd ngCos neS m lar y,
+      maxReRank ngCand dates = 250,
+      maxTopT etsPerCluster = DefaultMaxTopT etsPerCluster,
       maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      m nT etCand dateAge = 0.seconds
     ),
-    EmbeddingType.LogFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0, // for twistly candidates. To specify a higher threshold, use a post-filter
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 250,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
+    Embedd ngType.LogFavBasedUser nterestedLargestD mMaxpool ngAddressBookFrom  APE -> S mClustersANNConf g(
+      maxT etCand dateAge = 1.days,
+      m nScore = 0.0, // for tw stly cand dates. To spec fy a h g r threshold, use a post-f lter
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedT et,
+      enablePart alNormal zat on = true,
+      enable avyRank ng = DefaultEnable avyRank ng,
+      rank ngAlgor hm = Scor ngAlgor hm.Pa rEmbedd ngCos neS m lar y,
+      maxReRank ngCand dates = 250,
+      maxTopT etsPerCluster = DefaultMaxTopT etsPerCluster,
       maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      m nT etCand dateAge = 0.seconds
     ),
-    EmbeddingType.LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0, // for twistly candidates. To specify a higher threshold, use a post-filter
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 250,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
+    Embedd ngType.LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE -> S mClustersANNConf g(
+      maxT etCand dateAge = 1.days,
+      m nScore = 0.0, // for tw stly cand dates. To spec fy a h g r threshold, use a post-f lter
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedT et,
+      enablePart alNormal zat on = true,
+      enable avyRank ng = DefaultEnable avyRank ng,
+      rank ngAlgor hm = Scor ngAlgor hm.Pa rEmbedd ngCos neS m lar y,
+      maxReRank ngCand dates = 250,
+      maxTopT etsPerCluster = DefaultMaxTopT etsPerCluster,
       maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      m nT etCand dateAge = 0.seconds
     ),
-    EmbeddingType.LogFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0, // for twistly candidates. To specify a higher threshold, use a post-filter
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 250,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
+    Embedd ngType.LogFavBasedUser nterestedConnectedMaxpool ngAddressBookFrom  APE -> S mClustersANNConf g(
+      maxT etCand dateAge = 1.days,
+      m nScore = 0.0, // for tw stly cand dates. To spec fy a h g r threshold, use a post-f lter
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedT et,
+      enablePart alNormal zat on = true,
+      enable avyRank ng = DefaultEnable avyRank ng,
+      rank ngAlgor hm = Scor ngAlgor hm.Pa rEmbedd ngCos neS m lar y,
+      maxReRank ngCand dates = 250,
+      maxTopT etsPerCluster = DefaultMaxTopT etsPerCluster,
       maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      m nT etCand dateAge = 0.seconds
     ),
-    EmbeddingType.RelaxedAggregatableLogFavBasedProducer -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.25, // for twistly candidates. To specify a higher threshold, use a post-filter
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 250,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
+    Embedd ngType.RelaxedAggregatableLogFavBasedProducer -> S mClustersANNConf g(
+      maxT etCand dateAge = 1.days,
+      m nScore = 0.25, // for tw stly cand dates. To spec fy a h g r threshold, use a post-f lter
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedT et,
+      enablePart alNormal zat on = true,
+      enable avyRank ng = DefaultEnable avyRank ng,
+      rank ngAlgor hm = Scor ngAlgor hm.Pa rEmbedd ngCos neS m lar y,
+      maxReRank ngCand dates = 250,
+      maxTopT etsPerCluster = DefaultMaxTopT etsPerCluster,
       maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      m nT etCand dateAge = 0.seconds
     ),
-    EmbeddingType.LogFavLongestL2EmbeddingTweet -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.3, // for twistly candidates. To specify a higher threshold, use a post-filter
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 400,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
+    Embedd ngType.LogFavLongestL2Embedd ngT et -> S mClustersANNConf g(
+      maxT etCand dateAge = 1.days,
+      m nScore = 0.3, // for tw stly cand dates. To spec fy a h g r threshold, use a post-f lter
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedT et,
+      enablePart alNormal zat on = true,
+      enable avyRank ng = DefaultEnable avyRank ng,
+      rank ngAlgor hm = Scor ngAlgor hm.Pa rEmbedd ngCos neS m lar y,
+      maxReRank ngCand dates = 400,
+      maxTopT etsPerCluster = DefaultMaxTopT etsPerCluster,
       maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      m nT etCand dateAge = 0.seconds
     ),
-    EmbeddingType.FilteredUserInterestedInFromPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.7, // unused, heavy ranking disabled
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = false,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm =
-        ScoringAlgorithm.PairEmbeddingCosineSimilarity, // Unused, heavy ranking disabled
-      maxReRankingCandidates = 150, // unused, heavy ranking disabled
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
+    Embedd ngType.F lteredUser nterested nFromPE -> S mClustersANNConf g(
+      maxT etCand dateAge = 1.days,
+      m nScore = 0.7, // unused,  avy rank ng d sabled
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedT et,
+      enablePart alNormal zat on = false,
+      enable avyRank ng = DefaultEnable avyRank ng,
+      rank ngAlgor hm =
+        Scor ngAlgor hm.Pa rEmbedd ngCos neS m lar y, // Unused,  avy rank ng d sabled
+      maxReRank ngCand dates = 150, // unused,  avy rank ng d sabled
+      maxTopT etsPerCluster = DefaultMaxTopT etsPerCluster,
       maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      m nT etCand dateAge = 0.seconds
     ),
-    EmbeddingType.FilteredUserInterestedIn -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.7, // unused, heavy ranking disabled
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = false,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm =
-        ScoringAlgorithm.PairEmbeddingCosineSimilarity, // Unused, heavy ranking disabled
-      maxReRankingCandidates = 150, // unused, heavy ranking disabled
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
+    Embedd ngType.F lteredUser nterested n -> S mClustersANNConf g(
+      maxT etCand dateAge = 1.days,
+      m nScore = 0.7, // unused,  avy rank ng d sabled
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedT et,
+      enablePart alNormal zat on = false,
+      enable avyRank ng = DefaultEnable avyRank ng,
+      rank ngAlgor hm =
+        Scor ngAlgor hm.Pa rEmbedd ngCos neS m lar y, // Unused,  avy rank ng d sabled
+      maxReRank ngCand dates = 150, // unused,  avy rank ng d sabled
+      maxTopT etsPerCluster = DefaultMaxTopT etsPerCluster,
       maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      m nT etCand dateAge = 0.seconds
     ),
-    EmbeddingType.UnfilteredUserInterestedIn -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0,
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingLogCosineSimilarity,
-      maxReRankingCandidates = 400,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
+    Embedd ngType.Unf lteredUser nterested n -> S mClustersANNConf g(
+      maxT etCand dateAge = 1.days,
+      m nScore = 0.0,
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedT et,
+      enablePart alNormal zat on = true,
+      enable avyRank ng = DefaultEnable avyRank ng,
+      rank ngAlgor hm = Scor ngAlgor hm.Pa rEmbedd ngLogCos neS m lar y,
+      maxReRank ngCand dates = 400,
+      maxTopT etsPerCluster = DefaultMaxTopT etsPerCluster,
       maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      m nT etCand dateAge = 0.seconds
     ),
-    EmbeddingType.FollowBasedUserInterestedInFromAPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0,
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 200,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
+    Embedd ngType.FollowBasedUser nterested nFromAPE -> S mClustersANNConf g(
+      maxT etCand dateAge = 1.days,
+      m nScore = 0.0,
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedT et,
+      enablePart alNormal zat on = true,
+      enable avyRank ng = DefaultEnable avyRank ng,
+      rank ngAlgor hm = Scor ngAlgor hm.Pa rEmbedd ngCos neS m lar y,
+      maxReRank ngCand dates = 200,
+      maxTopT etsPerCluster = DefaultMaxTopT etsPerCluster,
       maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      m nT etCand dateAge = 0.seconds
     ),
-    EmbeddingType.LogFavBasedUserInterestedInFromAPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0,
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 200,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
+    Embedd ngType.LogFavBasedUser nterested nFromAPE -> S mClustersANNConf g(
+      maxT etCand dateAge = 1.days,
+      m nScore = 0.0,
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedT et,
+      enablePart alNormal zat on = true,
+      enable avyRank ng = DefaultEnable avyRank ng,
+      rank ngAlgor hm = Scor ngAlgor hm.Pa rEmbedd ngCos neS m lar y,
+      maxReRank ngCand dates = 200,
+      maxTopT etsPerCluster = DefaultMaxTopT etsPerCluster,
       maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      m nT etCand dateAge = 0.seconds
     ),
-    EmbeddingType.FavTfgTopic -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.5,
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 400,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
+    Embedd ngType.FavTfgTop c -> S mClustersANNConf g(
+      maxT etCand dateAge = 1.days,
+      m nScore = 0.5,
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedT et,
+      enablePart alNormal zat on = true,
+      enable avyRank ng = DefaultEnable avyRank ng,
+      rank ngAlgor hm = Scor ngAlgor hm.Pa rEmbedd ngCos neS m lar y,
+      maxReRank ngCand dates = 400,
+      maxTopT etsPerCluster = DefaultMaxTopT etsPerCluster,
       maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      m nT etCand dateAge = 0.seconds
     ),
-    EmbeddingType.LogFavBasedKgoApeTopic -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.5,
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 400,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
+    Embedd ngType.LogFavBasedKgoApeTop c -> S mClustersANNConf g(
+      maxT etCand dateAge = 1.days,
+      m nScore = 0.5,
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedT et,
+      enablePart alNormal zat on = true,
+      enable avyRank ng = DefaultEnable avyRank ng,
+      rank ngAlgor hm = Scor ngAlgor hm.Pa rEmbedd ngCos neS m lar y,
+      maxReRank ngCand dates = 400,
+      maxTopT etsPerCluster = DefaultMaxTopT etsPerCluster,
       maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      m nT etCand dateAge = 0.seconds
     ),
-    EmbeddingType.UserNextInterestedIn -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0,
-      candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-      enablePartialNormalization = true,
-      enableHeavyRanking = DefaultEnableHeavyRanking,
-      rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 200,
-      maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
+    Embedd ngType.UserNext nterested n -> S mClustersANNConf g(
+      maxT etCand dateAge = 1.days,
+      m nScore = 0.0,
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedT et,
+      enablePart alNormal zat on = true,
+      enable avyRank ng = DefaultEnable avyRank ng,
+      rank ngAlgor hm = Scor ngAlgor hm.Pa rEmbedd ngCos neS m lar y,
+      maxReRank ngCand dates = 200,
+      maxTopT etsPerCluster = DefaultMaxTopT etsPerCluster,
       maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      m nT etCand dateAge = 0.seconds
     )
   )
 
   /**
-   * Only cache the candidates if it's not Consumer-source. For example, TweetSource, ProducerSource,
-   * TopicSource. We don't cache consumer-sources (e.g. UserInterestedIn) since a cached consumer
-   * object is going rarely hit, since it can't be shared by multiple users.
+   * Only cac  t  cand dates  f  's not Consu r-s ce. For example, T etS ce, ProducerS ce,
+   * Top cS ce.   don't cac  consu r-s ces (e.g. User nterested n) s nce a cac d consu r
+   * object  s go ng rarely h , s nce   can't be shared by mult ple users.
    */
-  val CacheableShortTTLEmbeddingTypes: Set[EmbeddingType] =
+  val Cac ableShortTTLEmbedd ngTypes: Set[Embedd ngType] =
     Set(
-      EmbeddingType.FavBasedProducer,
-      EmbeddingType.LogFavLongestL2EmbeddingTweet,
+      Embedd ngType.FavBasedProducer,
+      Embedd ngType.LogFavLongestL2Embedd ngT et,
     )
 
-  val CacheableLongTTLEmbeddingTypes: Set[EmbeddingType] =
+  val Cac ableLongTTLEmbedd ngTypes: Set[Embedd ngType] =
     Set(
-      EmbeddingType.FavTfgTopic,
-      EmbeddingType.LogFavBasedKgoApeTopic
+      Embedd ngType.FavTfgTop c,
+      Embedd ngType.LogFavBasedKgoApeTop c
     )
 }

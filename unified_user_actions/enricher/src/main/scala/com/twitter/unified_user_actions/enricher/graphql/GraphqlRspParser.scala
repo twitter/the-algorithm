@@ -1,66 +1,66 @@
-package com.twitter.unified_user_actions.enricher.graphql
+package com.tw ter.un f ed_user_act ons.enr c r.graphql
 
-import com.google.common.util.concurrent.RateLimiter
-import com.twitter.dynmap.DynMap
-import com.twitter.dynmap.json.DynMapJson
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.util.logging.Logging
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+ mport com.google.common.ut l.concurrent.RateL m er
+ mport com.tw ter.dynmap.DynMap
+ mport com.tw ter.dynmap.json.DynMapJson
+ mport com.tw ter.f nagle.stats.Counter
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.Try
 
 /**
- * @param dm The DynMap parsed from the returned Json string
+ * @param dm T  DynMap parsed from t  returned Json str ng
  */
-case class GraphqlRspErrors(dm: DynMap) extends Exception {
-  override def toString: String = dm.toString()
+case class GraphqlRspErrors(dm: DynMap) extends Except on {
+  overr de def toStr ng: Str ng = dm.toStr ng()
 }
 
-object GraphqlRspParser extends Logging {
-  private val rateLimiter = RateLimiter.create(1.0) // at most 1 log message per second
-  private def rateLimitedLogError(e: Throwable): Unit =
-    if (rateLimiter.tryAcquire()) {
-      error(e.getMessage, e)
+object GraphqlRspParser extends Logg ng {
+  pr vate val rateL m er = RateL m er.create(1.0) // at most 1 log  ssage per second
+  pr vate def rateL m edLogError(e: Throwable): Un  =
+     f (rateL m er.tryAcqu re()) {
+      error(e.get ssage, e)
     }
 
   /**
-   * GraphQL's response is a Json string.
-   * This function first parses the raw response as a Json string, then it checks if the returned
-   * object has the "data" field which means the response is expected. The response could also
-   * return a valid Json string but with errors inside it as a list of "errors".
+   * GraphQL's response  s a Json str ng.
+   * T  funct on f rst parses t  raw response as a Json str ng, t n   c cks  f t  returned
+   * object has t  "data" f eld wh ch  ans t  response  s expected. T  response could also
+   * return a val d Json str ng but w h errors  ns de   as a l st of "errors".
    */
   def toDynMap(
-    rsp: String,
-    invalidRspCounter: Counter = NullStatsReceiver.NullCounter,
-    failedReqCounter: Counter = NullStatsReceiver.NullCounter
+    rsp: Str ng,
+     nval dRspCounter: Counter = NullStatsRece ver.NullCounter,
+    fa ledReqCounter: Counter = NullStatsRece ver.NullCounter
   ): Try[DynMap] = {
-    val rawRsp: Try[DynMap] = DynMapJson.fromJsonString(rsp)
+    val rawRsp: Try[DynMap] = DynMapJson.fromJsonStr ng(rsp)
     rawRsp match {
       case Return(r) =>
-        if (r.getMapOpt("data").isDefined) Return(r)
+         f (r.getMapOpt("data"). sDef ned) Return(r)
         else {
-          invalidRspCounter.incr()
-          rateLimitedLogError(GraphqlRspErrors(r))
+           nval dRspCounter. ncr()
+          rateL m edLogError(GraphqlRspErrors(r))
           Throw(GraphqlRspErrors(r))
         }
       case Throw(e) =>
-        rateLimitedLogError(e)
-        failedReqCounter.incr()
+        rateL m edLogError(e)
+        fa ledReqCounter. ncr()
         Throw(e)
     }
   }
 
   /**
-   * Similar to `toDynMap` above, but returns an Option
+   * S m lar to `toDynMap` above, but returns an Opt on
    */
   def toDynMapOpt(
-    rsp: String,
-    invalidRspCounter: Counter = NullStatsReceiver.NullCounter,
-    failedReqCounter: Counter = NullStatsReceiver.NullCounter
-  ): Option[DynMap] =
+    rsp: Str ng,
+     nval dRspCounter: Counter = NullStatsRece ver.NullCounter,
+    fa ledReqCounter: Counter = NullStatsRece ver.NullCounter
+  ): Opt on[DynMap] =
     toDynMap(
       rsp = rsp,
-      invalidRspCounter = invalidRspCounter,
-      failedReqCounter = failedReqCounter).toOption
+       nval dRspCounter =  nval dRspCounter,
+      fa ledReqCounter = fa ledReqCounter).toOpt on
 }

@@ -1,40 +1,40 @@
-package com.twitter.unified_user_actions.adapter.client_event
+package com.tw ter.un f ed_user_act ons.adapter.cl ent_event
 
-import com.twitter.clientapp.thriftscala.ItemType
+ mport com.tw ter.cl entapp.thr ftscala. emType
 
-object ItemTypeFilterPredicates {
-  private val TweetItemTypes = Set[ItemType](ItemType.Tweet, ItemType.QuotedTweet)
-  private val TopicItemTypes = Set[ItemType](ItemType.Tweet, ItemType.QuotedTweet, ItemType.Topic)
-  private val ProfileItemTypes = Set[ItemType](ItemType.User)
-  private val TypeaheadResultItemTypes = Set[ItemType](ItemType.Search, ItemType.User)
-  private val SearchResultsPageFeedbackSubmitItemTypes =
-    Set[ItemType](ItemType.Tweet, ItemType.RelevancePrompt)
-
-  /**
-   *  DDG lambda metrics count Tweets based on the `itemType`
-   *  Reference code - https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/scala/com/twitter/experiments/lambda/shared/Timelines.scala?L156
-   *  Since enums `PROMOTED_TWEET` and `POPULAR_TWEET` are deprecated in the following thrift
-   *  https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/thrift/com/twitter/clientapp/gen/client_app.thrift?L131
-   *  UUA filters two types of Tweets only: `TWEET` and `QUOTED_TWEET`
-   */
-  def isItemTypeTweet(itemTypeOpt: Option[ItemType]): Boolean =
-    itemTypeOpt.exists(itemType => TweetItemTypes.contains(itemType))
-
-  def isItemTypeTopic(itemTypeOpt: Option[ItemType]): Boolean =
-    itemTypeOpt.exists(itemType => TopicItemTypes.contains(itemType))
-
-  def isItemTypeProfile(itemTypeOpt: Option[ItemType]): Boolean =
-    itemTypeOpt.exists(itemType => ProfileItemTypes.contains(itemType))
-
-  def isItemTypeTypeaheadResult(itemTypeOpt: Option[ItemType]): Boolean =
-    itemTypeOpt.exists(itemType => TypeaheadResultItemTypes.contains(itemType))
-
-  def isItemTypeForSearchResultsPageFeedbackSubmit(itemTypeOpt: Option[ItemType]): Boolean =
-    itemTypeOpt.exists(itemType => SearchResultsPageFeedbackSubmitItemTypes.contains(itemType))
+object  emTypeF lterPred cates {
+  pr vate val T et emTypes = Set[ emType]( emType.T et,  emType.QuotedT et)
+  pr vate val Top c emTypes = Set[ emType]( emType.T et,  emType.QuotedT et,  emType.Top c)
+  pr vate val Prof le emTypes = Set[ emType]( emType.User)
+  pr vate val Typea adResult emTypes = Set[ emType]( emType.Search,  emType.User)
+  pr vate val SearchResultsPageFeedbackSubm  emTypes =
+    Set[ emType]( emType.T et,  emType.RelevancePrompt)
 
   /**
-   * Always return true. Use this when there is no need to filter based on `item_type` and all
-   * values of `item_type` are acceptable.
+   *  DDG lambda  tr cs count T ets based on t  ` emType`
+   *  Reference code - https://s cegraph.tw ter.b z/g .tw ter.b z/s ce/-/blob/src/scala/com/tw ter/exper  nts/lambda/shared/T  l nes.scala?L156
+   *  S nce enums `PROMOTED_TWEET` and `POPULAR_TWEET` are deprecated  n t  follow ng thr ft
+   *  https://s cegraph.tw ter.b z/g .tw ter.b z/s ce/-/blob/src/thr ft/com/tw ter/cl entapp/gen/cl ent_app.thr ft?L131
+   *  UUA f lters two types of T ets only: `TWEET` and `QUOTED_TWEET`
    */
-  def ignoreItemType(itemTypeOpt: Option[ItemType]): Boolean = true
+  def  s emTypeT et( emTypeOpt: Opt on[ emType]): Boolean =
+     emTypeOpt.ex sts( emType => T et emTypes.conta ns( emType))
+
+  def  s emTypeTop c( emTypeOpt: Opt on[ emType]): Boolean =
+     emTypeOpt.ex sts( emType => Top c emTypes.conta ns( emType))
+
+  def  s emTypeProf le( emTypeOpt: Opt on[ emType]): Boolean =
+     emTypeOpt.ex sts( emType => Prof le emTypes.conta ns( emType))
+
+  def  s emTypeTypea adResult( emTypeOpt: Opt on[ emType]): Boolean =
+     emTypeOpt.ex sts( emType => Typea adResult emTypes.conta ns( emType))
+
+  def  s emTypeForSearchResultsPageFeedbackSubm ( emTypeOpt: Opt on[ emType]): Boolean =
+     emTypeOpt.ex sts( emType => SearchResultsPageFeedbackSubm  emTypes.conta ns( emType))
+
+  /**
+   * Always return true. Use t  w n t re  s no need to f lter based on ` em_type` and all
+   * values of ` em_type` are acceptable.
+   */
+  def  gnore emType( emTypeOpt: Opt on[ emType]): Boolean = true
 }

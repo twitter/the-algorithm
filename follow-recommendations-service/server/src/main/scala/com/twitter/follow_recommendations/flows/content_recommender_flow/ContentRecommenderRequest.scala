@@ -1,45 +1,45 @@
-package com.twitter.follow_recommendations.flows.content_recommender_flow
+package com.tw ter.follow_recom ndat ons.flows.content_recom nder_flow
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.follow_recommendations.common.models.DebugOptions
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.common.models.GeohashAndCountryCode
-import com.twitter.follow_recommendations.common.models.HasDebugOptions
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasExcludedUserIds
-import com.twitter.follow_recommendations.common.models.HasGeohashAndCountryCode
-import com.twitter.follow_recommendations.common.models.HasInvalidRelationshipUserIds
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedByUserIds
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.follow_recommendations.common.models.HasUserState
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
+ mport com.tw ter.core_workflows.user_model.thr ftscala.UserState
+ mport com.tw ter.follow_recom ndat ons.common.models.DebugOpt ons
+ mport com.tw ter.follow_recom ndat ons.common.models.D splayLocat on
+ mport com.tw ter.follow_recom ndat ons.common.models.GeohashAndCountryCode
+ mport com.tw ter.follow_recom ndat ons.common.models.HasDebugOpt ons
+ mport com.tw ter.follow_recom ndat ons.common.models.HasD splayLocat on
+ mport com.tw ter.follow_recom ndat ons.common.models.HasExcludedUser ds
+ mport com.tw ter.follow_recom ndat ons.common.models.HasGeohashAndCountryCode
+ mport com.tw ter.follow_recom ndat ons.common.models.Has nval dRelat onsh pUser ds
+ mport com.tw ter.follow_recom ndat ons.common.models.HasRecentFollo dByUser ds
+ mport com.tw ter.follow_recom ndat ons.common.models.HasRecentFollo dUser ds
+ mport com.tw ter.follow_recom ndat ons.common.models.HasUserState
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Cl entContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport com.tw ter.t  l nes.conf gap .Params
 
-case class ContentRecommenderRequest(
-  override val params: Params,
-  override val clientContext: ClientContext,
-  inputExcludeUserIds: Seq[Long],
-  override val recentFollowedUserIds: Option[Seq[Long]],
-  override val recentFollowedByUserIds: Option[Seq[Long]],
-  override val invalidRelationshipUserIds: Option[Set[Long]],
-  override val displayLocation: DisplayLocation,
-  maxResults: Option[Int] = None,
-  override val debugOptions: Option[DebugOptions] = None,
-  override val geohashAndCountryCode: Option[GeohashAndCountryCode] = None,
-  override val userState: Option[UserState] = None)
+case class ContentRecom nderRequest(
+  overr de val params: Params,
+  overr de val cl entContext: Cl entContext,
+   nputExcludeUser ds: Seq[Long],
+  overr de val recentFollo dUser ds: Opt on[Seq[Long]],
+  overr de val recentFollo dByUser ds: Opt on[Seq[Long]],
+  overr de val  nval dRelat onsh pUser ds: Opt on[Set[Long]],
+  overr de val d splayLocat on: D splayLocat on,
+  maxResults: Opt on[ nt] = None,
+  overr de val debugOpt ons: Opt on[DebugOpt ons] = None,
+  overr de val geohashAndCountryCode: Opt on[GeohashAndCountryCode] = None,
+  overr de val userState: Opt on[UserState] = None)
     extends HasParams
-    with HasClientContext
-    with HasDisplayLocation
-    with HasDebugOptions
-    with HasRecentFollowedUserIds
-    with HasRecentFollowedByUserIds
-    with HasInvalidRelationshipUserIds
-    with HasExcludedUserIds
-    with HasUserState
-    with HasGeohashAndCountryCode {
-  override val excludedUserIds: Seq[Long] = {
-    inputExcludeUserIds ++ clientContext.userId.toSeq
+    w h HasCl entContext
+    w h HasD splayLocat on
+    w h HasDebugOpt ons
+    w h HasRecentFollo dUser ds
+    w h HasRecentFollo dByUser ds
+    w h Has nval dRelat onsh pUser ds
+    w h HasExcludedUser ds
+    w h HasUserState
+    w h HasGeohashAndCountryCode {
+  overr de val excludedUser ds: Seq[Long] = {
+     nputExcludeUser ds ++ cl entContext.user d.toSeq
   }
 }

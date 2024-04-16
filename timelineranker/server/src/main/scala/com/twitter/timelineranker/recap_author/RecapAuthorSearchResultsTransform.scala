@@ -1,69 +1,69 @@
-package com.twitter.timelineranker.recap_author
+package com.tw ter.t  l neranker.recap_author
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.model.TweetIdRange
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.clients.relevance_search.SearchClient.TweetTypes
-import com.twitter.timelines.model.UserId
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t  l neranker.core.Cand dateEnvelope
+ mport com.tw ter.t  l neranker.model.RecapQuery.DependencyProv der
+ mport com.tw ter.t  l neranker.model.T et dRange
+ mport com.tw ter.t  l nes.cl ents.relevance_search.SearchCl ent
+ mport com.tw ter.t  l nes.cl ents.relevance_search.SearchCl ent.T etTypes
+ mport com.tw ter.t  l nes.model.User d
+ mport com.tw ter.ut l.Future
 
 /**
- * Fetch recap results based on an author id set passed into the query.
- * Calls into the same search method as Recap, but uses the authorIds instead of the SGS-provided followedIds.
+ * Fetch recap results based on an author  d set passed  nto t  query.
+ * Calls  nto t  sa  search  thod as Recap, but uses t  author ds  nstead of t  SGS-prov ded follo d ds.
  */
 class RecapAuthorSearchResultsTransform(
-  searchClient: SearchClient,
-  maxCountProvider: DependencyProvider[Int],
-  relevanceOptionsMaxHitsToProcessProvider: DependencyProvider[Int],
-  enableSettingTweetTypesWithTweetKindOptionProvider: DependencyProvider[Boolean],
-  statsReceiver: StatsReceiver,
-  logSearchDebugInfo: Boolean = false)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  private[this] val maxCountStat = statsReceiver.stat("maxCount")
-  private[this] val numInputAuthorsStat = statsReceiver.stat("numInputAuthors")
-  private[this] val excludedTweetIdsStat = statsReceiver.stat("excludedTweetIds")
+  searchCl ent: SearchCl ent,
+  maxCountProv der: DependencyProv der[ nt],
+  relevanceOpt onsMaxH sToProcessProv der: DependencyProv der[ nt],
+  enableSett ngT etTypesW hT etK ndOpt onProv der: DependencyProv der[Boolean],
+  statsRece ver: StatsRece ver,
+  logSearchDebug nfo: Boolean = false)
+    extends FutureArrow[Cand dateEnvelope, Cand dateEnvelope] {
+  pr vate[t ] val maxCountStat = statsRece ver.stat("maxCount")
+  pr vate[t ] val num nputAuthorsStat = statsRece ver.stat("num nputAuthors")
+  pr vate[t ] val excludedT et dsStat = statsRece ver.stat("excludedT et ds")
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val maxCount = maxCountProvider(envelope.query)
+  overr de def apply(envelope: Cand dateEnvelope): Future[Cand dateEnvelope] = {
+    val maxCount = maxCountProv der(envelope.query)
     maxCountStat.add(maxCount)
 
-    val authorIds = envelope.query.authorIds.getOrElse(Seq.empty[UserId])
-    numInputAuthorsStat.add(authorIds.size)
+    val author ds = envelope.query.author ds.getOrElse(Seq.empty[User d])
+    num nputAuthorsStat.add(author ds.s ze)
 
-    val excludedTweetIdsOpt = envelope.query.excludedTweetIds
-    excludedTweetIdsOpt.map { excludedTweetIds => excludedTweetIdsStat.add(excludedTweetIds.size) }
+    val excludedT et dsOpt = envelope.query.excludedT et ds
+    excludedT et dsOpt.map { excludedT et ds => excludedT et dsStat.add(excludedT et ds.s ze) }
 
-    val tweetIdRange = envelope.query.range
-      .map(TweetIdRange.fromTimelineRange)
-      .getOrElse(TweetIdRange.default)
+    val t et dRange = envelope.query.range
+      .map(T et dRange.fromT  l neRange)
+      .getOrElse(T et dRange.default)
 
-    val beforeTweetIdExclusive = tweetIdRange.toId
-    val afterTweetIdExclusive = tweetIdRange.fromId
+    val beforeT et dExclus ve = t et dRange.to d
+    val afterT et dExclus ve = t et dRange.from d
 
-    val relevanceOptionsMaxHitsToProcess = relevanceOptionsMaxHitsToProcessProvider(envelope.query)
+    val relevanceOpt onsMaxH sToProcess = relevanceOpt onsMaxH sToProcessProv der(envelope.query)
 
-    searchClient
-      .getUsersTweetsForRecap(
-        userId = envelope.query.userId,
-        followedUserIds = authorIds.toSet, // user authorIds as the set of followed users
-        retweetsMutedUserIds = Set.empty,
+    searchCl ent
+      .getUsersT etsForRecap(
+        user d = envelope.query.user d,
+        follo dUser ds = author ds.toSet, // user author ds as t  set of follo d users
+        ret etsMutedUser ds = Set.empty,
         maxCount = maxCount,
-        tweetTypes = TweetTypes.fromTweetKindOption(envelope.query.options),
+        t etTypes = T etTypes.fromT etK ndOpt on(envelope.query.opt ons),
         searchOperator = envelope.query.searchOperator,
-        beforeTweetIdExclusive = beforeTweetIdExclusive,
-        afterTweetIdExclusive = afterTweetIdExclusive,
-        enableSettingTweetTypesWithTweetKindOption =
-          enableSettingTweetTypesWithTweetKindOptionProvider(envelope.query),
-        excludedTweetIds = excludedTweetIdsOpt,
-        earlybirdOptions = envelope.query.earlybirdOptions,
-        getOnlyProtectedTweets = false,
-        logSearchDebugInfo = logSearchDebugInfo,
+        beforeT et dExclus ve = beforeT et dExclus ve,
+        afterT et dExclus ve = afterT et dExclus ve,
+        enableSett ngT etTypesW hT etK ndOpt on =
+          enableSett ngT etTypesW hT etK ndOpt onProv der(envelope.query),
+        excludedT et ds = excludedT et dsOpt,
+        earlyb rdOpt ons = envelope.query.earlyb rdOpt ons,
+        getOnlyProtectedT ets = false,
+        logSearchDebug nfo = logSearchDebug nfo,
         returnAllResults = true,
-        enableExcludeSourceTweetIdsQuery = false,
-        relevanceOptionsMaxHitsToProcess = relevanceOptionsMaxHitsToProcess
+        enableExcludeS ceT et dsQuery = false,
+        relevanceOpt onsMaxH sToProcess = relevanceOpt onsMaxH sToProcess
       ).map { results => envelope.copy(searchResults = results) }
   }
 }

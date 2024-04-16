@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.predicates.user_activity
+package com.tw ter.follow_recom ndat ons.common.pred cates.user_act v y
 
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.util.Duration
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.ut l.Durat on
 
-object UserActivityPredicateParams {
-  case object HeavyTweeterEnabled
-      extends FSParam[Boolean]("user_activity_predicate_heavy_tweeter_enabled", false)
-  val CacheTTL: Duration = Duration.fromHours(6)
+object UserAct v yPred cateParams {
+  case object  avyT eterEnabled
+      extends FSParam[Boolean]("user_act v y_pred cate_ avy_t eter_enabled", false)
+  val Cac TTL: Durat on = Durat on.fromH s(6)
 }

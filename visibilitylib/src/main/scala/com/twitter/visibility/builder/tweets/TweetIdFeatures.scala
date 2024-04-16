@@ -1,76 +1,76 @@
-package com.twitter.visibility.builder.tweets
+package com.tw ter.v s b l y.bu lder.t ets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.Gate
-import com.twitter.spam.rtf.thriftscala.SafetyLabel
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType
-import com.twitter.spam.rtf.thriftscala.SafetyLabelValue
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.stitch.StitchHelpers
-import com.twitter.visibility.features.TweetId
-import com.twitter.visibility.features.TweetSafetyLabels
-import com.twitter.visibility.features.TweetTimestamp
-import com.twitter.visibility.models.TweetSafetyLabel
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLabel
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLabelType
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLabelValue
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.common.st ch.St ch lpers
+ mport com.tw ter.v s b l y.features.T et d
+ mport com.tw ter.v s b l y.features.T etSafetyLabels
+ mport com.tw ter.v s b l y.features.T etT  stamp
+ mport com.tw ter.v s b l y.models.T etSafetyLabel
 
-class TweetIdFeatures(
-  statsReceiver: StatsReceiver,
-  enableStitchProfiling: Gate[Unit]) {
-  private[this] val scopedStatsReceiver: StatsReceiver = statsReceiver.scope("tweet_id_features")
+class T et dFeatures(
+  statsRece ver: StatsRece ver,
+  enableSt chProf l ng: Gate[Un ]) {
+  pr vate[t ] val scopedStatsRece ver: StatsRece ver = statsRece ver.scope("t et_ d_features")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
-  private[this] val tweetSafetyLabels =
-    scopedStatsReceiver.scope(TweetSafetyLabels.name).counter("requests")
-  private[this] val tweetTimestamp =
-    scopedStatsReceiver.scope(TweetTimestamp.name).counter("requests")
+  pr vate[t ] val requests = scopedStatsRece ver.counter("requests")
+  pr vate[t ] val t etSafetyLabels =
+    scopedStatsRece ver.scope(T etSafetyLabels.na ).counter("requests")
+  pr vate[t ] val t etT  stamp =
+    scopedStatsRece ver.scope(T etT  stamp.na ).counter("requests")
 
-  private[this] val labelFetchScope: StatsReceiver =
-    scopedStatsReceiver.scope("labelFetch")
+  pr vate[t ] val labelFetchScope: StatsRece ver =
+    scopedStatsRece ver.scope("labelFetch")
 
-  private[this] def getTweetLabels(
-    tweetId: Long,
-    labelFetcher: Long => Stitch[Map[SafetyLabelType, SafetyLabel]]
-  ): Stitch[Seq[TweetSafetyLabel]] = {
-    val stitch =
-      labelFetcher(tweetId).map { labelMap =>
+  pr vate[t ] def getT etLabels(
+    t et d: Long,
+    labelFetc r: Long => St ch[Map[SafetyLabelType, SafetyLabel]]
+  ): St ch[Seq[T etSafetyLabel]] = {
+    val st ch =
+      labelFetc r(t et d).map { labelMap =>
         labelMap
           .map { case (labelType, label) => SafetyLabelValue(labelType, label) }.toSeq
-          .map(TweetSafetyLabel.fromThrift)
+          .map(T etSafetyLabel.fromThr ft)
       }
 
-    if (enableStitchProfiling()) {
-      StitchHelpers.profileStitch(
-        stitch,
+     f (enableSt chProf l ng()) {
+      St ch lpers.prof leSt ch(
+        st ch,
         Seq(labelFetchScope)
       )
     } else {
-      stitch
+      st ch
     }
   }
 
-  def forTweetId(
-    tweetId: Long,
-    labelFetcher: Long => Stitch[Map[SafetyLabelType, SafetyLabel]]
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
-    tweetSafetyLabels.incr()
-    tweetTimestamp.incr()
+  def forT et d(
+    t et d: Long,
+    labelFetc r: Long => St ch[Map[SafetyLabelType, SafetyLabel]]
+  ): FeatureMapBu lder => FeatureMapBu lder = {
+    requests. ncr()
+    t etSafetyLabels. ncr()
+    t etT  stamp. ncr()
 
-    _.withFeature(TweetSafetyLabels, getTweetLabels(tweetId, labelFetcher))
-      .withConstantFeature(TweetTimestamp, TweetFeatures.tweetTimestamp(tweetId))
-      .withConstantFeature(TweetId, tweetId)
+    _.w hFeature(T etSafetyLabels, getT etLabels(t et d, labelFetc r))
+      .w hConstantFeature(T etT  stamp, T etFeatures.t etT  stamp(t et d))
+      .w hConstantFeature(T et d, t et d)
   }
 
-  def forTweetId(
-    tweetId: Long,
-    constantTweetSafetyLabels: Seq[TweetSafetyLabel]
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
-    tweetSafetyLabels.incr()
-    tweetTimestamp.incr()
+  def forT et d(
+    t et d: Long,
+    constantT etSafetyLabels: Seq[T etSafetyLabel]
+  ): FeatureMapBu lder => FeatureMapBu lder = {
+    requests. ncr()
+    t etSafetyLabels. ncr()
+    t etT  stamp. ncr()
 
-    _.withConstantFeature(TweetSafetyLabels, constantTweetSafetyLabels)
-      .withConstantFeature(TweetTimestamp, TweetFeatures.tweetTimestamp(tweetId))
-      .withConstantFeature(TweetId, tweetId)
+    _.w hConstantFeature(T etSafetyLabels, constantT etSafetyLabels)
+      .w hConstantFeature(T etT  stamp, T etFeatures.t etT  stamp(t et d))
+      .w hConstantFeature(T et d, t et d)
   }
 }

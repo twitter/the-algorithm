@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.core.functional_component.candidate_source.strato
+package com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.strato
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.cl ent.Fetc r
 
 /**
- * A [[CandidateSource]] for getting Candidates from Strato where the
- * Strato column's View is [[StratoView]] and the Value is a Seq of [[StratoResult]]
+ * A [[Cand dateS ce]] for gett ng Cand dates from Strato w re t 
+ * Strato column's V ew  s [[StratoV ew]] and t  Value  s a Seq of [[StratoResult]]
  *
- * @tparam StratoKey the column's Key type
- * @tparam StratoView the column's View type
- * @tparam StratoResult the column's Value's Seq type
+ * @tparam StratoKey t  column's Key type
+ * @tparam StratoV ew t  column's V ew type
+ * @tparam StratoResult t  column's Value's Seq type
  */
-trait StratoKeyViewFetcherSeqSource[StratoKey, StratoView, StratoResult]
-    extends CandidateSource[StratoKeyView[StratoKey, StratoView], StratoResult] {
+tra  StratoKeyV ewFetc rSeqS ce[StratoKey, StratoV ew, StratoResult]
+    extends Cand dateS ce[StratoKeyV ew[StratoKey, StratoV ew], StratoResult] {
 
-  val fetcher: Fetcher[StratoKey, StratoView, Seq[StratoResult]]
+  val fetc r: Fetc r[StratoKey, StratoV ew, Seq[StratoResult]]
 
-  override def apply(
-    request: StratoKeyView[StratoKey, StratoView]
-  ): Stitch[Seq[StratoResult]] = {
-    fetcher
-      .fetch(request.key, request.view)
+  overr de def apply(
+    request: StratoKeyV ew[StratoKey, StratoV ew]
+  ): St ch[Seq[StratoResult]] = {
+    fetc r
+      .fetch(request.key, request.v ew)
       .map { result =>
         result.v
           .getOrElse(Seq.empty)
-      }.rescue(StratoErrCategorizer.CategorizeStratoException)
+      }.rescue(StratoErrCategor zer.Categor zeStratoExcept on)
   }
 }

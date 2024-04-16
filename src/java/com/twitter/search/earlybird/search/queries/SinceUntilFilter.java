@@ -1,137 +1,137 @@
-package com.twitter.search.earlybird.search.queries;
+package com.tw ter.search.earlyb rd.search.quer es;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+ mport org.apac .lucene. ndex.LeafReader;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene.search.BooleanClause;
+ mport org.apac .lucene.search.BooleanQuery;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.search. ndexSearc r;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .lucene.search.ScoreMode;
+ mport org.apac .lucene.search.  ght;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.core.earlybird.index.util.AllDocsIterator;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
+ mport com.tw ter.search.common.query.DefaultF lter  ght;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
+ mport com.tw ter.search.core.earlyb rd. ndex.T  Mapper;
+ mport com.tw ter.search.core.earlyb rd. ndex.ut l.AllDocs erator;
+ mport com.tw ter.search.core.earlyb rd. ndex.ut l.RangeF lterD S ;
 
-// Filters tweets according to since time and until time (in seconds).
-// Note that since time is inclusive, and until time is exclusive.
-public final class SinceUntilFilter extends Query {
-  public static final int NO_FILTER = -1;
+// F lters t ets accord ng to s nce t   and unt l t   ( n seconds).
+// Note that s nce t    s  nclus ve, and unt l t    s exclus ve.
+publ c f nal class S nceUnt lF lter extends Query {
+  publ c stat c f nal  nt NO_F LTER = -1;
 
-  // These are both in seconds since the epoch.
-  private final int minTimeInclusive;
-  private final int maxTimeExclusive;
+  // T se are both  n seconds s nce t  epoch.
+  pr vate f nal  nt m nT   nclus ve;
+  pr vate f nal  nt maxT  Exclus ve;
 
-  public static Query getSinceQuery(int sinceTimeSeconds) {
-    return new BooleanQuery.Builder()
-        .add(new SinceUntilFilter(sinceTimeSeconds, NO_FILTER), BooleanClause.Occur.FILTER)
-        .build();
+  publ c stat c Query getS nceQuery( nt s nceT  Seconds) {
+    return new BooleanQuery.Bu lder()
+        .add(new S nceUnt lF lter(s nceT  Seconds, NO_F LTER), BooleanClause.Occur.F LTER)
+        .bu ld();
   }
 
-  public static Query getUntilQuery(int untilTimeSeconds) {
-    return new BooleanQuery.Builder()
-        .add(new SinceUntilFilter(NO_FILTER, untilTimeSeconds), BooleanClause.Occur.FILTER)
-        .build();
+  publ c stat c Query getUnt lQuery( nt unt lT  Seconds) {
+    return new BooleanQuery.Bu lder()
+        .add(new S nceUnt lF lter(NO_F LTER, unt lT  Seconds), BooleanClause.Occur.F LTER)
+        .bu ld();
   }
 
-  public static Query getSinceUntilQuery(int sinceTimeSeconds, int untilTimeSeconds) {
-    return new BooleanQuery.Builder()
-        .add(new SinceUntilFilter(sinceTimeSeconds, untilTimeSeconds), BooleanClause.Occur.FILTER)
-        .build();
+  publ c stat c Query getS nceUnt lQuery( nt s nceT  Seconds,  nt unt lT  Seconds) {
+    return new BooleanQuery.Bu lder()
+        .add(new S nceUnt lF lter(s nceT  Seconds, unt lT  Seconds), BooleanClause.Occur.F LTER)
+        .bu ld();
   }
 
-  private SinceUntilFilter(int sinceTime, int untilTime) {
-    this.minTimeInclusive = sinceTime != NO_FILTER ? sinceTime : 0;
-    this.maxTimeExclusive = untilTime != NO_FILTER ? untilTime : Integer.MAX_VALUE;
+  pr vate S nceUnt lF lter( nt s nceT  ,  nt unt lT  ) {
+    t .m nT   nclus ve = s nceT   != NO_F LTER ? s nceT   : 0;
+    t .maxT  Exclus ve = unt lT   != NO_F LTER ? unt lT   :  nteger.MAX_VALUE;
   }
 
-  @Override
-  public int hashCode() {
-    return (int) (minTimeInclusive * 17 + maxTimeExclusive);
+  @Overr de
+  publ c  nt hashCode() {
+    return ( nt) (m nT   nclus ve * 17 + maxT  Exclus ve);
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof SinceUntilFilter)) {
+  @Overr de
+  publ c boolean equals(Object obj) {
+     f (!(obj  nstanceof S nceUnt lF lter)) {
       return false;
     }
 
-    SinceUntilFilter filter = SinceUntilFilter.class.cast(obj);
-    return (minTimeInclusive == filter.minTimeInclusive)
-        && (maxTimeExclusive == filter.maxTimeExclusive);
+    S nceUnt lF lter f lter = S nceUnt lF lter.class.cast(obj);
+    return (m nT   nclus ve == f lter.m nT   nclus ve)
+        && (maxT  Exclus ve == f lter.maxT  Exclus ve);
   }
 
-  @Override
-  public String toString(String field) {
-    if (minTimeInclusive > 0 && maxTimeExclusive != Integer.MAX_VALUE) {
-      return "SinceFilter:" + this.minTimeInclusive + ",UntilFilter:" + maxTimeExclusive;
-    } else if (minTimeInclusive > 0) {
-      return "SinceFilter:" + this.minTimeInclusive;
+  @Overr de
+  publ c Str ng toStr ng(Str ng f eld) {
+     f (m nT   nclus ve > 0 && maxT  Exclus ve !=  nteger.MAX_VALUE) {
+      return "S nceF lter:" + t .m nT   nclus ve + ",Unt lF lter:" + maxT  Exclus ve;
+    } else  f (m nT   nclus ve > 0) {
+      return "S nceF lter:" + t .m nT   nclus ve;
     } else {
-      return "UntilFilter:" + this.maxTimeExclusive;
+      return "Unt lF lter:" + t .maxT  Exclus ve;
     }
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        LeafReader indexReader = context.reader();
-        if (!(indexReader instanceof EarlybirdIndexSegmentAtomicReader)) {
-          return new AllDocsIterator(indexReader);
+  @Overr de
+  publ c   ght create  ght( ndexSearc r searc r, ScoreMode scoreMode, float boost)
+      throws  OExcept on {
+    return new DefaultF lter  ght(t ) {
+      @Overr de
+      protected Doc dSet erator getDoc dSet erator(LeafReaderContext context) throws  OExcept on {
+        LeafReader  ndexReader = context.reader();
+         f (!( ndexReader  nstanceof Earlyb rd ndexSeg ntAtom cReader)) {
+          return new AllDocs erator( ndexReader);
         }
 
-        EarlybirdIndexSegmentAtomicReader reader = (EarlybirdIndexSegmentAtomicReader) indexReader;
-        TimeMapper timeMapper = reader.getSegmentData().getTimeMapper();
-        int smallestDocID = timeMapper.findFirstDocId(maxTimeExclusive, reader.getSmallestDocID());
-        int largestDoc = timeMapper.findFirstDocId(minTimeInclusive, reader.getSmallestDocID());
-        int smallestDoc = smallestDocID > 0 ? smallestDocID - 1 : 0;
-        return new SinceUntilDocIdSetIterator(
+        Earlyb rd ndexSeg ntAtom cReader reader = (Earlyb rd ndexSeg ntAtom cReader)  ndexReader;
+        T  Mapper t  Mapper = reader.getSeg ntData().getT  Mapper();
+         nt smallestDoc D = t  Mapper.f ndF rstDoc d(maxT  Exclus ve, reader.getSmallestDoc D());
+         nt largestDoc = t  Mapper.f ndF rstDoc d(m nT   nclus ve, reader.getSmallestDoc D());
+         nt smallestDoc = smallestDoc D > 0 ? smallestDoc D - 1 : 0;
+        return new S nceUnt lDoc dSet erator(
             reader,
-            timeMapper,
+            t  Mapper,
             smallestDoc,
             largestDoc,
-            minTimeInclusive,
-            maxTimeExclusive);
+            m nT   nclus ve,
+            maxT  Exclus ve);
       }
     };
   }
 
-  // Returns true if this TimeMapper is at least partially covered by these time filters.
-  public static boolean sinceUntilTimesInRange(
-      TimeMapper timeMapper, int sinceTime, int untilTime) {
-    return (sinceTime == NO_FILTER || sinceTime <= timeMapper.getLastTime())
-        && (untilTime == NO_FILTER || untilTime >= timeMapper.getFirstTime());
+  // Returns true  f t  T  Mapper  s at least part ally covered by t se t   f lters.
+  publ c stat c boolean s nceUnt lT  s nRange(
+      T  Mapper t  Mapper,  nt s nceT  ,  nt unt lT  ) {
+    return (s nceT   == NO_F LTER || s nceT   <= t  Mapper.getLastT  ())
+        && (unt lT   == NO_F LTER || unt lT   >= t  Mapper.getF rstT  ());
   }
 
-  private static final class SinceUntilDocIdSetIterator extends RangeFilterDISI {
-    private final TimeMapper timeMapper;
-    private final int minTimeInclusive;
-    private final int maxTimeExclusive;
+  pr vate stat c f nal class S nceUnt lDoc dSet erator extends RangeF lterD S  {
+    pr vate f nal T  Mapper t  Mapper;
+    pr vate f nal  nt m nT   nclus ve;
+    pr vate f nal  nt maxT  Exclus ve;
 
-    public SinceUntilDocIdSetIterator(EarlybirdIndexSegmentAtomicReader reader,
-                                      TimeMapper timeMapper,
-                                      int smallestDocID,
-                                      int largestDocID,
-                                      int minTimeInclusive,
-                                      int maxExclusive) throws IOException {
-      super(reader, smallestDocID, largestDocID);
-      this.timeMapper = timeMapper;
-      this.minTimeInclusive = minTimeInclusive;
-      this.maxTimeExclusive = maxExclusive;
+    publ c S nceUnt lDoc dSet erator(Earlyb rd ndexSeg ntAtom cReader reader,
+                                      T  Mapper t  Mapper,
+                                       nt smallestDoc D,
+                                       nt largestDoc D,
+                                       nt m nT   nclus ve,
+                                       nt maxExclus ve) throws  OExcept on {
+      super(reader, smallestDoc D, largestDoc D);
+      t .t  Mapper = t  Mapper;
+      t .m nT   nclus ve = m nT   nclus ve;
+      t .maxT  Exclus ve = maxExclus ve;
     }
 
-    @Override
+    @Overr de
     protected boolean shouldReturnDoc() {
-      final int docTime = timeMapper.getTime(docID());
-      return docTime >= minTimeInclusive && docTime < maxTimeExclusive;
+      f nal  nt docT   = t  Mapper.getT  (doc D());
+      return docT   >= m nT   nclus ve && docT   < maxT  Exclus ve;
     }
   }
 }

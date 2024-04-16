@@ -2,77 +2,77 @@ syntax = "proto3";
 
 package tensorflow;
 
-import "google/protobuf/any.proto";
-import "tensorflow/core/framework/graph.proto";
-import "tensorflow/core/framework/op_def.proto";
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/types.proto";
-import "tensorflow/core/protobuf/saved_object_graph.proto";
-import "tensorflow/core/protobuf/saver.proto";
-import "tensorflow/core/protobuf/struct.proto";
+ mport "google/protobuf/any.proto";
+ mport "tensorflow/core/fra work/graph.proto";
+ mport "tensorflow/core/fra work/op_def.proto";
+ mport "tensorflow/core/fra work/tensor_shape.proto";
+ mport "tensorflow/core/fra work/types.proto";
+ mport "tensorflow/core/protobuf/saved_object_graph.proto";
+ mport "tensorflow/core/protobuf/saver.proto";
+ mport "tensorflow/core/protobuf/struct.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "MetaGraphProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = " taGraphProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.fra work";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
-// NOTE: This protocol buffer is evolving, and will go through revisions in the
-// coming months.
+// NOTE: T  protocol buffer  s evolv ng, and w ll go through rev s ons  n t 
+// com ng months.
 //
-// Protocol buffer containing the following which are necessary to restart
-// training, run inference. It can be used to serialize/de-serialize memory
-// objects necessary for running computation in a graph when crossing the
-// process boundary. It can be used for long term storage of graphs,
-// cross-language execution of graphs, etc.
-//   MetaInfoDef
+// Protocol buffer conta n ng t  follow ng wh ch are necessary to restart
+// tra n ng, run  nference.   can be used to ser al ze/de-ser al ze  mory
+// objects necessary for runn ng computat on  n a graph w n cross ng t 
+// process boundary.   can be used for long term storage of graphs,
+// cross-language execut on of graphs, etc.
+//    ta nfoDef
 //   GraphDef
 //   SaverDef
-//   CollectionDef
-//   TensorInfo
-//   SignatureDef
-message MetaGraphDef {
-  // Meta information regarding the graph to be exported.  To be used by users
-  // of this protocol buffer to encode information regarding their meta graph.
-  message MetaInfoDef {
-    // User specified Version string. Can be the name of the model and revision,
-    // steps this model has been trained to, etc.
-    string meta_graph_version = 1;
+//   Collect onDef
+//   Tensor nfo
+//   S gnatureDef
+ ssage  taGraphDef {
+  //  ta  nformat on regard ng t  graph to be exported.  To be used by users
+  // of t  protocol buffer to encode  nformat on regard ng t  r  ta graph.
+   ssage  ta nfoDef {
+    // User spec f ed Vers on str ng. Can be t  na  of t  model and rev s on,
+    // steps t  model has been tra ned to, etc.
+    str ng  ta_graph_vers on = 1;
 
-    // A copy of the OpDefs used by the producer of this graph_def.
-    // Descriptions and Ops not used in graph_def are stripped out.
-    OpList stripped_op_list = 2;
+    // A copy of t  OpDefs used by t  producer of t  graph_def.
+    // Descr pt ons and Ops not used  n graph_def are str pped out.
+    OpL st str pped_op_l st = 2;
 
-    // A serialized protobuf. Can be the time this meta graph is created, or
-    // modified, or name of the model.
-    google.protobuf.Any any_info = 3;
+    // A ser al zed protobuf. Can be t  t   t   ta graph  s created, or
+    // mod f ed, or na  of t  model.
+    google.protobuf.Any any_ nfo = 3;
 
-    // User supplied tag(s) on the meta_graph and included graph_def.
+    // User suppl ed tag(s) on t   ta_graph and  ncluded graph_def.
     //
-    // MetaGraphDefs should be tagged with their capabilities or use-cases.
-    // Examples: "train", "serve", "gpu", "tpu", etc.
-    // These tags enable loaders to access the MetaGraph(s) appropriate for a
-    // specific use-case or runtime environment.
-    repeated string tags = 4;
+    //  taGraphDefs should be tagged w h t  r capab l  es or use-cases.
+    // Examples: "tra n", "serve", "gpu", "tpu", etc.
+    // T se tags enable loaders to access t   taGraph(s) appropr ate for a
+    // spec f c use-case or runt   env ron nt.
+    repeated str ng tags = 4;
 
-    // The __version__ string of the tensorflow build used to write this graph.
-    // This will be populated by the framework, which will overwrite any user
-    // supplied value.
-    string tensorflow_version = 5;
+    // T  __vers on__ str ng of t  tensorflow bu ld used to wr e t  graph.
+    // T  w ll be populated by t  fra work, wh ch w ll overwr e any user
+    // suppl ed value.
+    str ng tensorflow_vers on = 5;
 
-    // The __git_version__ string of the tensorflow build used to write this
-    // graph. This will be populated by the framework, which will overwrite any
-    // user supplied value.
-    string tensorflow_git_version = 6;
+    // T  __g _vers on__ str ng of t  tensorflow bu ld used to wr e t 
+    // graph. T  w ll be populated by t  fra work, wh ch w ll overwr e any
+    // user suppl ed value.
+    str ng tensorflow_g _vers on = 6;
 
-    // A flag to denote whether default-valued attrs have been stripped from
-    // the nodes in this graph_def.
-    bool stripped_default_attrs = 7;
+    // A flag to denote w t r default-valued attrs have been str pped from
+    // t  nodes  n t  graph_def.
+    bool str pped_default_attrs = 7;
 
-    // FunctionDef name to aliases mapping.
-    map<string, string> function_aliases = 8;
+    // Funct onDef na  to al ases mapp ng.
+    map<str ng, str ng> funct on_al ases = 8;
   }
-  MetaInfoDef meta_info_def = 1;
+   ta nfoDef  ta_ nfo_def = 1;
 
   // GraphDef.
   GraphDef graph_def = 2;
@@ -80,48 +80,48 @@ message MetaGraphDef {
   // SaverDef.
   SaverDef saver_def = 3;
 
-  // collection_def: Map from collection name to collections.
-  // See CollectionDef section for details.
-  map<string, CollectionDef> collection_def = 4;
+  // collect on_def: Map from collect on na  to collect ons.
+  // See Collect onDef sect on for deta ls.
+  map<str ng, Collect onDef> collect on_def = 4;
 
-  // signature_def: Map from user supplied key for a signature to a single
-  // SignatureDef.
-  map<string, SignatureDef> signature_def = 5;
+  // s gnature_def: Map from user suppl ed key for a s gnature to a s ngle
+  // S gnatureDef.
+  map<str ng, S gnatureDef> s gnature_def = 5;
 
-  // Asset file def to be used with the defined graph.
-  repeated AssetFileDef asset_file_def = 6;
+  // Asset f le def to be used w h t  def ned graph.
+  repeated AssetF leDef asset_f le_def = 6;
 
-  // Extra information about the structure of functions and stateful objects.
+  // Extra  nformat on about t  structure of funct ons and stateful objects.
   SavedObjectGraph object_graph_def = 7;
 }
 
-// CollectionDef should cover most collections.
-// To add a user-defined collection, do one of the following:
-// 1. For simple data types, such as string, int, float:
-//      tf.add_to_collection("your_collection_name", your_simple_value)
-//    strings will be stored as bytes_list.
+// Collect onDef should cover most collect ons.
+// To add a user-def ned collect on, do one of t  follow ng:
+// 1. For s mple data types, such as str ng,  nt, float:
+//      tf.add_to_collect on("y _collect on_na ", y _s mple_value)
+//    str ngs w ll be stored as bytes_l st.
 //
-// 2. For Protobuf types, there are three ways to add them:
-//    1) tf.add_to_collection("your_collection_name",
-//         your_proto.SerializeToString())
+// 2. For Protobuf types, t re are three ways to add t m:
+//    1) tf.add_to_collect on("y _collect on_na ",
+//         y _proto.Ser al zeToStr ng())
 //
-//       collection_def {
-//         key: "user_defined_bytes_collection"
+//       collect on_def {
+//         key: "user_def ned_bytes_collect on"
 //         value {
-//           bytes_list {
-//             value: "queue_name: \"test_queue\"\n"
+//           bytes_l st {
+//             value: "queue_na : \"test_queue\"\n"
 //           }
 //         }
 //       }
 //
 //  or
 //
-//    2) tf.add_to_collection("your_collection_name", str(your_proto))
+//    2) tf.add_to_collect on("y _collect on_na ", str(y _proto))
 //
-//       collection_def {
-//         key: "user_defined_string_collection"
+//       collect on_def {
+//         key: "user_def ned_str ng_collect on"
 //         value {
-//          bytes_list {
+//          bytes_l st {
 //             value: "\n\ntest_queue"
 //           }
 //         }
@@ -130,213 +130,213 @@ message MetaGraphDef {
 //  or
 //
 //    3) any_buf = any_pb2.Any()
-//       tf.add_to_collection("your_collection_name",
-//         any_buf.Pack(your_proto))
+//       tf.add_to_collect on("y _collect on_na ",
+//         any_buf.Pack(y _proto))
 //
-//       collection_def {
-//         key: "user_defined_any_collection"
+//       collect on_def {
+//         key: "user_def ned_any_collect on"
 //         value {
-//           any_list {
+//           any_l st {
 //             value {
-//               type_url: "type.googleapis.com/tensorflow.QueueRunnerDef"
+//               type_url: "type.googleap s.com/tensorflow.QueueRunnerDef"
 //               value: "\n\ntest_queue"
 //             }
 //           }
 //         }
 //       }
 //
-// 3. For Python objects, implement to_proto() and from_proto(), and register
-//    them in the following manner:
-//    ops.register_proto_function("your_collection_name",
+// 3. For Python objects,  mple nt to_proto() and from_proto(), and reg ster
+//    t m  n t  follow ng manner:
+//    ops.reg ster_proto_funct on("y _collect on_na ",
 //                                proto_type,
-//                                to_proto=YourPythonObject.to_proto,
-//                                from_proto=YourPythonObject.from_proto)
-//    These functions will be invoked to serialize and de-serialize the
-//    collection. For example,
-//    ops.register_proto_function(ops.GraphKeys.GLOBAL_VARIABLES,
-//                                proto_type=variable_pb2.VariableDef,
-//                                to_proto=Variable.to_proto,
-//                                from_proto=Variable.from_proto)
-message CollectionDef {
-  // NodeList is used for collecting nodes in graph. For example
-  // collection_def {
-  //   key: "summaries"
+//                                to_proto=Y PythonObject.to_proto,
+//                                from_proto=Y PythonObject.from_proto)
+//    T se funct ons w ll be  nvoked to ser al ze and de-ser al ze t 
+//    collect on. For example,
+//    ops.reg ster_proto_funct on(ops.GraphKeys.GLOBAL_VAR ABLES,
+//                                proto_type=var able_pb2.Var ableDef,
+//                                to_proto=Var able.to_proto,
+//                                from_proto=Var able.from_proto)
+ ssage Collect onDef {
+  // NodeL st  s used for collect ng nodes  n graph. For example
+  // collect on_def {
+  //   key: "summar es"
   //   value {
-  //     node_list {
-  //       value: "input_producer/ScalarSummary:0"
+  //     node_l st {
+  //       value: " nput_producer/ScalarSummary:0"
   //       value: "shuffle_batch/ScalarSummary:0"
-  //       value: "ImageSummary:0"
+  //       value: " mageSummary:0"
   //     }
   //   }
-  message NodeList {
-    repeated string value = 1;
+   ssage NodeL st {
+    repeated str ng value = 1;
   }
 
-  // BytesList is used for collecting strings and serialized protobufs. For
+  // BytesL st  s used for collect ng str ngs and ser al zed protobufs. For
   // example:
-  // collection_def {
-  //   key: "trainable_variables"
+  // collect on_def {
+  //   key: "tra nable_var ables"
   //   value {
-  //     bytes_list {
-  //       value: "\n\017conv1/weights:0\022\024conv1/weights/Assign
-  //              \032\024conv1/weights/read:0"
-  //       value: "\n\016conv1/biases:0\022\023conv1/biases/Assign\032
-  //              \023conv1/biases/read:0"
+  //     bytes_l st {
+  //       value: "\n\017conv1/  ghts:0\022\024conv1/  ghts/Ass gn
+  //              \032\024conv1/  ghts/read:0"
+  //       value: "\n\016conv1/b ases:0\022\023conv1/b ases/Ass gn\032
+  //              \023conv1/b ases/read:0"
   //     }
   //   }
   // }
-  message BytesList {
+   ssage BytesL st {
     repeated bytes value = 1;
   }
 
-  // Int64List is used for collecting int, int64 and long values.
-  message Int64List {
-    repeated int64 value = 1 [packed = true];
+  //  nt64L st  s used for collect ng  nt,  nt64 and long values.
+   ssage  nt64L st {
+    repeated  nt64 value = 1 [packed = true];
   }
 
-  // FloatList is used for collecting float values.
-  message FloatList {
+  // FloatL st  s used for collect ng float values.
+   ssage FloatL st {
     repeated float value = 1 [packed = true];
   }
 
-  // AnyList is used for collecting Any protos.
-  message AnyList {
+  // AnyL st  s used for collect ng Any protos.
+   ssage AnyL st {
     repeated google.protobuf.Any value = 1;
   }
 
-  oneof kind {
-    NodeList node_list = 1;
-    BytesList bytes_list = 2;
-    Int64List int64_list = 3;
-    FloatList float_list = 4;
-    AnyList any_list = 5;
+  oneof k nd {
+    NodeL st node_l st = 1;
+    BytesL st bytes_l st = 2;
+     nt64L st  nt64_l st = 3;
+    FloatL st float_l st = 4;
+    AnyL st any_l st = 5;
   }
 }
 
-// Information about a Tensor necessary for feeding or retrieval.
-message TensorInfo {
-  // For sparse tensors, The COO encoding stores a triple of values, indices,
+//  nformat on about a Tensor necessary for feed ng or retr eval.
+ ssage Tensor nfo {
+  // For sparse tensors, T  COO encod ng stores a tr ple of values,  nd ces,
   // and shape.
-  message CooSparse {
-    // The shape of the values Tensor is [?].  Its dtype must be the dtype of
-    // the SparseTensor as a whole, given in the enclosing TensorInfo.
-    string values_tensor_name = 1;
+   ssage CooSparse {
+    // T  shape of t  values Tensor  s [?].   s dtype must be t  dtype of
+    // t  SparseTensor as a whole, g ven  n t  enclos ng Tensor nfo.
+    str ng values_tensor_na  = 1;
 
-    // The indices Tensor must have dtype int64 and shape [?, ?].
-    string indices_tensor_name = 2;
+    // T   nd ces Tensor must have dtype  nt64 and shape [?, ?].
+    str ng  nd ces_tensor_na  = 2;
 
-    // The dynamic logical shape represented by the SparseTensor is recorded in
-    // the Tensor referenced here.  It must have dtype int64 and shape [?].
-    string dense_shape_tensor_name = 3;
+    // T  dynam c log cal shape represented by t  SparseTensor  s recorded  n
+    // t  Tensor referenced  re.    must have dtype  nt64 and shape [?].
+    str ng dense_shape_tensor_na  = 3;
   }
 
-  // Generic encoding for composite tensors.
-  message CompositeTensor {
-    // The serialized TypeSpec for the composite tensor.
+  // Gener c encod ng for compos e tensors.
+   ssage Compos eTensor {
+    // T  ser al zed TypeSpec for t  compos e tensor.
     TypeSpecProto type_spec = 1;
 
-    // A TensorInfo for each flattened component tensor.
-    repeated TensorInfo components = 2;
+    // A Tensor nfo for each flattened component tensor.
+    repeated Tensor nfo components = 2;
   }
 
-  oneof encoding {
-    // For dense `Tensor`s, the name of the tensor in the graph.
-    string name = 1;
-    // There are many possible encodings of sparse matrices
-    // (https://en.wikipedia.org/wiki/Sparse_matrix).  Currently, TensorFlow
-    // uses only the COO encoding.  This is supported and documented in the
+  oneof encod ng {
+    // For dense `Tensor`s, t  na  of t  tensor  n t  graph.
+    str ng na  = 1;
+    // T re are many poss ble encod ngs of sparse matr ces
+    // (https://en.w k ped a.org/w k /Sparse_matr x).  Currently, TensorFlow
+    // uses only t  COO encod ng.  T   s supported and docu nted  n t 
     // SparseTensor Python class.
     CooSparse coo_sparse = 4;
-    // Generic encoding for CompositeTensors.
-    CompositeTensor composite_tensor = 5;
+    // Gener c encod ng for Compos eTensors.
+    Compos eTensor compos e_tensor = 5;
   }
   DataType dtype = 2;
-  // The static shape should be recorded here, to the extent that it can
-  // be known in advance.  In the case of a SparseTensor, this field describes
-  // the logical shape of the represented tensor (aka dense_shape).
+  // T  stat c shape should be recorded  re, to t  extent that   can
+  // be known  n advance.   n t  case of a SparseTensor, t  f eld descr bes
+  // t  log cal shape of t  represented tensor (aka dense_shape).
   TensorShapeProto tensor_shape = 3;
 }
 
-// SignatureDef defines the signature of a computation supported by a TensorFlow
+// S gnatureDef def nes t  s gnature of a computat on supported by a TensorFlow
 // graph.
 //
-// For example, a model with two loss computations, sharing a single input,
-// might have the following signature_def map, in a MetaGraphDef message.
+// For example, a model w h two loss computat ons, shar ng a s ngle  nput,
+// m ght have t  follow ng s gnature_def map,  n a  taGraphDef  ssage.
 //
-// Note that across the two SignatureDefs "loss_A" and "loss_B", the input key,
-// output key, and method_name are identical, and will be used by system(s) that
-// implement or rely upon this particular loss method. The output tensor names
-// differ, demonstrating how different outputs can exist for the same method.
+// Note that across t  two S gnatureDefs "loss_A" and "loss_B", t   nput key,
+// output key, and  thod_na  are  dent cal, and w ll be used by system(s) that
+//  mple nt or rely upon t  part cular loss  thod. T  output tensor na s
+// d ffer, demonstrat ng how d fferent outputs can ex st for t  sa   thod.
 //
-// signature_def {
+// s gnature_def {
 //   key: "loss_A"
 //   value {
-//     inputs {
-//       key: "input"
+//      nputs {
+//       key: " nput"
 //       value {
-//         name: "input:0"
-//         dtype: DT_STRING
+//         na : " nput:0"
+//         dtype: DT_STR NG
 //         tensor_shape: ...
 //       }
 //     }
 //     outputs {
 //       key: "loss_output"
 //       value {
-//         name: "loss_output_A:0"
+//         na : "loss_output_A:0"
 //         dtype: DT_FLOAT
 //         tensor_shape: ...
 //       }
 //     }
-//     method_name: "some/package/compute_loss"
+//      thod_na : "so /package/compute_loss"
 //   }
 //   ...
 // }
-// signature_def {
+// s gnature_def {
 //   key: "loss_B"
 //   value {
-//     inputs {
-//       key: "input"
+//      nputs {
+//       key: " nput"
 //       value {
-//         name: "input:0"
-//         dtype: DT_STRING
+//         na : " nput:0"
+//         dtype: DT_STR NG
 //         tensor_shape: ...
 //       }
 //     }
 //     outputs {
 //       key: "loss_output"
 //       value {
-//         name: "loss_output_B:0"
+//         na : "loss_output_B:0"
 //         dtype: DT_FLOAT
 //         tensor_shape: ...
 //       }
 //     }
-//     method_name: "some/package/compute_loss"
+//      thod_na : "so /package/compute_loss"
 //   }
 //   ...
 // }
-message SignatureDef {
-  // Named input parameters.
-  map<string, TensorInfo> inputs = 1;
-  // Named output parameters.
-  map<string, TensorInfo> outputs = 2;
-  // Extensible method_name information enabling third-party users to mark a
-  // SignatureDef as supporting a particular method. This enables producers and
-  // consumers of SignatureDefs, e.g. a model definition library and a serving
-  // library to have a clear hand-off regarding the semantics of a computation.
+ ssage S gnatureDef {
+  // Na d  nput para ters.
+  map<str ng, Tensor nfo>  nputs = 1;
+  // Na d output para ters.
+  map<str ng, Tensor nfo> outputs = 2;
+  // Extens ble  thod_na   nformat on enabl ng th rd-party users to mark a
+  // S gnatureDef as support ng a part cular  thod. T  enables producers and
+  // consu rs of S gnatureDefs, e.g. a model def n  on l brary and a serv ng
+  // l brary to have a clear hand-off regard ng t  semant cs of a computat on.
   //
-  // Note that multiple SignatureDefs in a single MetaGraphDef may have the same
-  // method_name. This is commonly used to support multi-headed computation,
-  // where a single graph computation may return multiple results.
-  string method_name = 3;
+  // Note that mult ple S gnatureDefs  n a s ngle  taGraphDef may have t  sa 
+  //  thod_na . T   s commonly used to support mult - aded computat on,
+  // w re a s ngle graph computat on may return mult ple results.
+  str ng  thod_na  = 3;
 }
 
-// An asset file def for a single file or a set of sharded files with the same
-// name.
-message AssetFileDef {
-  // The tensor to bind the asset filename to.
-  TensorInfo tensor_info = 1;
-  // The filename within an assets directory. Note: does not include the path
-  // prefix, i.e. directories. For an asset at /tmp/path/vocab.txt, the filename
+// An asset f le def for a s ngle f le or a set of sharded f les w h t  sa 
+// na .
+ ssage AssetF leDef {
+  // T  tensor to b nd t  asset f lena  to.
+  Tensor nfo tensor_ nfo = 1;
+  // T  f lena  w h n an assets d rectory. Note: does not  nclude t  path
+  // pref x,  .e. d rector es. For an asset at /tmp/path/vocab.txt, t  f lena 
   // would be "vocab.txt".
-  string filename = 2;
+  str ng f lena  = 2;
 }

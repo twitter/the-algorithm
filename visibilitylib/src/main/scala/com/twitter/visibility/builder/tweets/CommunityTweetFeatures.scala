@@ -1,69 +1,69 @@
-package com.twitter.visibility.builder.tweets
+package com.tw ter.v s b l y.bu lder.t ets
 
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.features.CommunityTweetAuthorIsRemoved
-import com.twitter.visibility.features.CommunityTweetCommunityNotFound
-import com.twitter.visibility.features.CommunityTweetCommunityDeleted
-import com.twitter.visibility.features.CommunityTweetCommunitySuspended
-import com.twitter.visibility.features.CommunityTweetCommunityVisible
-import com.twitter.visibility.features.CommunityTweetIsHidden
-import com.twitter.visibility.features.TweetIsCommunityTweet
-import com.twitter.visibility.features.ViewerIsCommunityAdmin
-import com.twitter.visibility.features.ViewerIsCommunityMember
-import com.twitter.visibility.features.ViewerIsCommunityModerator
-import com.twitter.visibility.features.ViewerIsInternalCommunitiesAdmin
-import com.twitter.visibility.models.CommunityTweet
-import com.twitter.visibility.models.ViewerContext
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.features.Commun yT etAuthor sRemoved
+ mport com.tw ter.v s b l y.features.Commun yT etCommun yNotFound
+ mport com.tw ter.v s b l y.features.Commun yT etCommun yDeleted
+ mport com.tw ter.v s b l y.features.Commun yT etCommun ySuspended
+ mport com.tw ter.v s b l y.features.Commun yT etCommun yV s ble
+ mport com.tw ter.v s b l y.features.Commun yT et sH dden
+ mport com.tw ter.v s b l y.features.T et sCommun yT et
+ mport com.tw ter.v s b l y.features.V e r sCommun yAdm n
+ mport com.tw ter.v s b l y.features.V e r sCommun y mber
+ mport com.tw ter.v s b l y.features.V e r sCommun yModerator
+ mport com.tw ter.v s b l y.features.V e r s nternalCommun  esAdm n
+ mport com.tw ter.v s b l y.models.Commun yT et
+ mport com.tw ter.v s b l y.models.V e rContext
 
-trait CommunityTweetFeatures {
+tra  Commun yT etFeatures {
 
-  def forTweet(
-    tweet: Tweet,
-    viewerContext: ViewerContext
-  ): FeatureMapBuilder => FeatureMapBuilder
+  def forT et(
+    t et: T et,
+    v e rContext: V e rContext
+  ): FeatureMapBu lder => FeatureMapBu lder
 
-  def forTweetOnly(tweet: Tweet): FeatureMapBuilder => FeatureMapBuilder = {
-    _.withConstantFeature(
-      TweetIsCommunityTweet,
-      CommunityTweet(tweet).isDefined
+  def forT etOnly(t et: T et): FeatureMapBu lder => FeatureMapBu lder = {
+    _.w hConstantFeature(
+      T et sCommun yT et,
+      Commun yT et(t et). sDef ned
     )
   }
 
-  protected def forNonCommunityTweet(): FeatureMapBuilder => FeatureMapBuilder = { builder =>
-    builder
-      .withConstantFeature(
-        TweetIsCommunityTweet,
+  protected def forNonCommun yT et(): FeatureMapBu lder => FeatureMapBu lder = { bu lder =>
+    bu lder
+      .w hConstantFeature(
+        T et sCommun yT et,
         false
-      ).withConstantFeature(
-        CommunityTweetCommunityNotFound,
+      ).w hConstantFeature(
+        Commun yT etCommun yNotFound,
         false
-      ).withConstantFeature(
-        CommunityTweetCommunitySuspended,
+      ).w hConstantFeature(
+        Commun yT etCommun ySuspended,
         false
-      ).withConstantFeature(
-        CommunityTweetCommunityDeleted,
+      ).w hConstantFeature(
+        Commun yT etCommun yDeleted,
         false
-      ).withConstantFeature(
-        CommunityTweetCommunityVisible,
+      ).w hConstantFeature(
+        Commun yT etCommun yV s ble,
         false
-      ).withConstantFeature(
-        ViewerIsInternalCommunitiesAdmin,
+      ).w hConstantFeature(
+        V e r s nternalCommun  esAdm n,
         false
-      ).withConstantFeature(
-        ViewerIsCommunityAdmin,
+      ).w hConstantFeature(
+        V e r sCommun yAdm n,
         false
-      ).withConstantFeature(
-        ViewerIsCommunityModerator,
+      ).w hConstantFeature(
+        V e r sCommun yModerator,
         false
-      ).withConstantFeature(
-        ViewerIsCommunityMember,
+      ).w hConstantFeature(
+        V e r sCommun y mber,
         false
-      ).withConstantFeature(
-        CommunityTweetIsHidden,
+      ).w hConstantFeature(
+        Commun yT et sH dden,
         false
-      ).withConstantFeature(
-        CommunityTweetAuthorIsRemoved,
+      ).w hConstantFeature(
+        Commun yT etAuthor sRemoved,
         false
       )
   }

@@ -1,7 +1,7 @@
-package com.twitter.tweetypie.federated.columns
+package com.tw ter.t etyp e.federated.columns
 
-import com.twitter.tweetypie.TweetId
+ mport com.tw ter.t etyp e.T et d
 
-// Case class to be used for grouping Stitch requests
-// for Federated Fields
-case class FederatedFieldReq(tweetId: TweetId, fieldId: Short)
+// Case class to be used for group ng St ch requests
+// for Federated F elds
+case class FederatedF eldReq(t et d: T et d, f eld d: Short)

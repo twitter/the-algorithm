@@ -1,57 +1,57 @@
-package com.twitter.visibility.interfaces.push_service
+package com.tw ter.v s b l y. nterfaces.push_serv ce
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.rules.Rule
-import com.twitter.visibility.rules.RuleResult
-import com.twitter.visibility.rules.State
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.v s b l y.bu lder.V s b l yResult
+ mport com.tw ter.v s b l y.rules.Rule
+ mport com.tw ter.v s b l y.rules.RuleResult
+ mport com.tw ter.v s b l y.rules.State
 
-object PushServiceVisibilityLibraryUtil {
+object PushServ ceV s b l yL braryUt l {
   def ruleEnabled(ruleResult: RuleResult): Boolean = {
     ruleResult.state match {
-      case State.Disabled => false
-      case State.ShortCircuited => false
+      case State.D sabled => false
+      case State.ShortC rcu ed => false
       case _ => true
     }
   }
-  def getMissingFeatures(ruleResult: RuleResult): Set[String] = {
+  def getM ss ngFeatures(ruleResult: RuleResult): Set[Str ng] = {
     ruleResult.state match {
-      case State.MissingFeature(features) => features.map(f => f.name)
+      case State.M ss ngFeature(features) => features.map(f => f.na )
       case _ => Set.empty
     }
   }
-  def getMissingFeatureCounts(results: Seq[VisibilityResult]): Map[String, Int] = {
+  def getM ss ngFeatureCounts(results: Seq[V s b l yResult]): Map[Str ng,  nt] = {
     results
-      .flatMap(_.ruleResultMap.values.toList)
-      .flatMap(getMissingFeatures(_).toList).groupBy(identity).mapValues(_.length)
+      .flatMap(_.ruleResultMap.values.toL st)
+      .flatMap(getM ss ngFeatures(_).toL st).groupBy( dent y).mapValues(_.length)
   }
 
   def logAllStats(
-    response: PushServiceVisibilityResponse
+    response: PushServ ceV s b l yResponse
   )(
-    implicit statsReceiver: StatsReceiver
+     mpl c  statsRece ver: StatsRece ver
   ) = {
-    val rulesStatsReceiver = statsReceiver.scope("rules")
-    logStats(response.tweetVisibilityResult, rulesStatsReceiver.scope("tweet"))
-    logStats(response.authorVisibilityResult, rulesStatsReceiver.scope("author"))
+    val rulesStatsRece ver = statsRece ver.scope("rules")
+    logStats(response.t etV s b l yResult, rulesStatsRece ver.scope("t et"))
+    logStats(response.authorV s b l yResult, rulesStatsRece ver.scope("author"))
   }
 
-  def logStats(result: VisibilityResult, statsReceiver: StatsReceiver) = {
-    result.ruleResultMap.toList
-      .filter { case (_, ruleResult) => ruleEnabled(ruleResult) }
+  def logStats(result: V s b l yResult, statsRece ver: StatsRece ver) = {
+    result.ruleResultMap.toL st
+      .f lter { case (_, ruleResult) => ruleEnabled(ruleResult) }
       .flatMap { case (rule, ruleResult) => getCounters(rule, ruleResult) }
-      .foreach(statsReceiver.counter(_).incr())
+      .foreach(statsRece ver.counter(_). ncr())
   }
 
-  def getCounters(rule: Rule, ruleResult: RuleResult): List[String] = {
-    val missingFeatures = getMissingFeatures(ruleResult)
-    List(s"${rule.name}/${ruleResult.action.name}") ++
-      missingFeatures.map(feat => s"${rule.name}/${feat}") ++
-      missingFeatures
+  def getCounters(rule: Rule, ruleResult: RuleResult): L st[Str ng] = {
+    val m ss ngFeatures = getM ss ngFeatures(ruleResult)
+    L st(s"${rule.na }/${ruleResult.act on.na }") ++
+      m ss ngFeatures.map(feat => s"${rule.na }/${feat}") ++
+      m ss ngFeatures
   }
 
-  def getAuthorId(tweet: Tweet): Option[Long] = tweet.coreData.map(_.userId)
-  def isRetweet(tweet: Tweet): Boolean = tweet.coreData.flatMap(_.share).isDefined
-  def isQuotedTweet(tweet: Tweet): Boolean = tweet.quotedTweet.isDefined
+  def getAuthor d(t et: T et): Opt on[Long] = t et.coreData.map(_.user d)
+  def  sRet et(t et: T et): Boolean = t et.coreData.flatMap(_.share). sDef ned
+  def  sQuotedT et(t et: T et): Boolean = t et.quotedT et. sDef ned
 }

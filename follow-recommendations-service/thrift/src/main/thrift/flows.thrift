@@ -1,20 +1,20 @@
 /*
- * This file defines additional thrift objects that should be specified in FRS request for context of recommendation, specifically the previous recommendations / new interactions in an interactive flow (series of follow steps). These typically are sent from OCF
+ * T  f le def nes add  onal thr ft objects that should be spec f ed  n FRS request for context of recom ndat on, spec f cally t  prev ous recom ndat ons / new  nteract ons  n an  nteract ve flow (ser es of follow steps). T se typ cally are sent from OCF
  */
 
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendations
+na space java com.tw ter.follow_recom ndat ons.thr ftjava
+#@na space scala com.tw ter.follow_recom ndat ons.thr ftscala
+#@na space strato com.tw ter.follow_recom ndat ons
 
-struct FlowRecommendation {
-  1: required i64 userId(personalDataType='UserId')
+struct FlowRecom ndat on {
+  1: requ red  64 user d(personalDataType='User d')
 }(hasPersonalData='true')
 
-struct RecommendationStep {
-  1: required list<FlowRecommendation> recommendations
-  2: required set<i64> followedUserIds(personalDataType='UserId')
+struct Recom ndat onStep {
+  1: requ red l st<FlowRecom ndat on> recom ndat ons
+  2: requ red set< 64> follo dUser ds(personalDataType='User d')
 }(hasPersonalData='true')
 
 struct FlowContext {
-  1: required list<RecommendationStep> steps
+  1: requ red l st<Recom ndat onStep> steps
 }(hasPersonalData='true')

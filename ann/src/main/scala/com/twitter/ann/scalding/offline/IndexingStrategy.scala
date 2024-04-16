@@ -1,59 +1,59 @@
-package com.twitter.ann.scalding.offline
+package com.tw ter.ann.scald ng.offl ne
 
-import com.twitter.ann.brute_force.{BruteForceIndex, BruteForceRuntimeParams}
-import com.twitter.ann.common.{Distance, EntityEmbedding, Metric, ReadWriteFuturePool}
-import com.twitter.ann.hnsw.{HnswParams, TypedHnswIndex}
-import com.twitter.ann.util.IndexBuilderUtils
-import com.twitter.scalding.Args
-import com.twitter.util.logging.Logger
-import com.twitter.util.{Await, FuturePool}
+ mport com.tw ter.ann.brute_force.{BruteForce ndex, BruteForceRunt  Params}
+ mport com.tw ter.ann.common.{D stance, Ent yEmbedd ng,  tr c, ReadWr eFuturePool}
+ mport com.tw ter.ann.hnsw.{HnswParams, TypedHnsw ndex}
+ mport com.tw ter.ann.ut l. ndexBu lderUt ls
+ mport com.tw ter.scald ng.Args
+ mport com.tw ter.ut l.logg ng.Logger
+ mport com.tw ter.ut l.{Awa , FuturePool}
 
 /**
- * IndexingStrategy is used for determining how we will build the index when doing a KNN in
- * scalding. Right now there are 2 strategies a BruteForce and HNSW strategy.
- * @tparam D distance that the index uses.
+ *  ndex ngStrategy  s used for determ n ng how   w ll bu ld t   ndex w n do ng a KNN  n
+ * scald ng. R ght now t re are 2 strateg es a BruteForce and HNSW strategy.
+ * @tparam D d stance that t   ndex uses.
  */
-sealed trait IndexingStrategy[D <: Distance[D]] {
-  private[offline] def buildIndex[T](
-    indexItems: TraversableOnce[EntityEmbedding[T]]
-  ): ParameterlessQueryable[T, _, D]
+sealed tra   ndex ngStrategy[D <: D stance[D]] {
+  pr vate[offl ne] def bu ld ndex[T](
+     ndex ems: TraversableOnce[Ent yEmbedd ng[T]]
+  ): Para terlessQueryable[T, _, D]
 }
 
-object IndexingStrategy {
+object  ndex ngStrategy {
 
   /**
-   * Parse an indexing strategy from scalding args.
-   * ${argumentName}.type Is hsnw or brute_force
-   * ${argumentName}.type is the metric to use. See Metric.fromString for options.
+   * Parse an  ndex ng strategy from scald ng args.
+   * ${argu ntNa }.type  s hsnw or brute_force
+   * ${argu ntNa }.type  s t   tr c to use. See  tr c.fromStr ng for opt ons.
    *
-   * hsnw has these additional parameters:
-   * ${argumentName}.dimension the number of dimension for the embeddings.
-   * ${argumentName}.ef_construction, ${argumentName}.ef_construction and ${argumentName}.ef_query.
-   * See TypedHnswIndex for more details on these parameters.
-   * @param args scalding arguments to parse.
-   * @param argumentName A specifier to use in case you want to parse more than one indexing
-   *                     strategy. indexing_strategy by default.
-   * @return parse indexing strategy
+   * hsnw has t se add  onal para ters:
+   * ${argu ntNa }.d  ns on t  number of d  ns on for t  embedd ngs.
+   * ${argu ntNa }.ef_construct on, ${argu ntNa }.ef_construct on and ${argu ntNa }.ef_query.
+   * See TypedHnsw ndex for more deta ls on t se para ters.
+   * @param args scald ng argu nts to parse.
+   * @param argu ntNa  A spec f er to use  n case   want to parse more than one  ndex ng
+   *                     strategy.  ndex ng_strategy by default.
+   * @return parse  ndex ng strategy
    */
   def parse(
     args: Args,
-    argumentName: String = "indexing_strategy"
-  ): IndexingStrategy[_] = {
-    def metricArg[D <: Distance[D]] =
-      Metric.fromString(args(s"$argumentName.metric")).asInstanceOf[Metric[D]]
+    argu ntNa : Str ng = " ndex ng_strategy"
+  ):  ndex ngStrategy[_] = {
+    def  tr cArg[D <: D stance[D]] =
+       tr c.fromStr ng(args(s"$argu ntNa . tr c")).as nstanceOf[ tr c[D]]
 
-    args(s"$argumentName.type") match {
+    args(s"$argu ntNa .type") match {
       case "brute_force" =>
-        BruteForceIndexingStrategy(metricArg)
+        BruteForce ndex ngStrategy( tr cArg)
       case "hnsw" =>
-        val dimensionArg = args.int(s"$argumentName.dimension")
-        val efConstructionArg = args.int(s"$argumentName.ef_construction")
-        val maxMArg = args.int(s"$argumentName.max_m")
-        val efQuery = args.int(s"$argumentName.ef_query")
-        HnswIndexingStrategy(
-          dimension = dimensionArg,
-          metric = metricArg,
-          efConstruction = efConstructionArg,
+        val d  ns onArg = args. nt(s"$argu ntNa .d  ns on")
+        val efConstruct onArg = args. nt(s"$argu ntNa .ef_construct on")
+        val maxMArg = args. nt(s"$argu ntNa .max_m")
+        val efQuery = args. nt(s"$argu ntNa .ef_query")
+        Hnsw ndex ngStrategy(
+          d  ns on = d  ns onArg,
+           tr c =  tr cArg,
+          efConstruct on = efConstruct onArg,
           maxM = maxMArg,
           hnswParams = HnswParams(efQuery)
         )
@@ -61,54 +61,54 @@ object IndexingStrategy {
   }
 }
 
-case class BruteForceIndexingStrategy[D <: Distance[D]](metric: Metric[D])
-    extends IndexingStrategy[D] {
-  private[offline] def buildIndex[T](
-    indexItems: TraversableOnce[EntityEmbedding[T]]
-  ): ParameterlessQueryable[T, _, D] = {
-    val appendable = BruteForceIndex[T, D](metric, FuturePool.immediatePool)
-    indexItems.foreach { item =>
-      Await.result(appendable.append(item))
+case class BruteForce ndex ngStrategy[D <: D stance[D]]( tr c:  tr c[D])
+    extends  ndex ngStrategy[D] {
+  pr vate[offl ne] def bu ld ndex[T](
+     ndex ems: TraversableOnce[Ent yEmbedd ng[T]]
+  ): Para terlessQueryable[T, _, D] = {
+    val appendable = BruteForce ndex[T, D]( tr c, FuturePool. m d atePool)
+     ndex ems.foreach {  em =>
+      Awa .result(appendable.append( em))
     }
     val queryable = appendable.toQueryable
-    ParameterlessQueryable[T, BruteForceRuntimeParams.type, D](
+    Para terlessQueryable[T, BruteForceRunt  Params.type, D](
       queryable,
-      BruteForceRuntimeParams
+      BruteForceRunt  Params
     )
   }
 }
 
-case class HnswIndexingStrategy[D <: Distance[D]](
-  dimension: Int,
-  metric: Metric[D],
-  efConstruction: Int,
-  maxM: Int,
+case class Hnsw ndex ngStrategy[D <: D stance[D]](
+  d  ns on:  nt,
+   tr c:  tr c[D],
+  efConstruct on:  nt,
+  maxM:  nt,
   hnswParams: HnswParams,
-  concurrencyLevel: Int = 1)
-    extends IndexingStrategy[D] {
-  private[offline] def buildIndex[T](
-    indexItems: TraversableOnce[EntityEmbedding[T]]
-  ): ParameterlessQueryable[T, _, D] = {
+  concurrencyLevel:  nt = 1)
+    extends  ndex ngStrategy[D] {
+  pr vate[offl ne] def bu ld ndex[T](
+     ndex ems: TraversableOnce[Ent yEmbedd ng[T]]
+  ): Para terlessQueryable[T, _, D] = {
 
     val log: Logger = Logger(getClass)
-    val appendable = TypedHnswIndex.index[T, D](
-      dimension = dimension,
-      metric = metric,
-      efConstruction = efConstruction,
+    val appendable = TypedHnsw ndex. ndex[T, D](
+      d  ns on = d  ns on,
+       tr c =  tr c,
+      efConstruct on = efConstruct on,
       maxM = maxM,
-      // This is not really that important.
-      expectedElements = 1000,
-      readWriteFuturePool = ReadWriteFuturePool(FuturePool.immediatePool)
+      // T   s not really that  mportant.
+      expectedEle nts = 1000,
+      readWr eFuturePool = ReadWr eFuturePool(FuturePool. m d atePool)
     )
     val future =
-      IndexBuilderUtils
-        .addToIndex(appendable, indexItems.toStream, concurrencyLevel)
+       ndexBu lderUt ls
+        .addTo ndex(appendable,  ndex ems.toStream, concurrencyLevel)
         .map { numberUpdates =>
-          log.info(s"Performed $numberUpdates updates")
+          log. nfo(s"Perfor d $numberUpdates updates")
         }
-    Await.result(future)
+    Awa .result(future)
     val queryable = appendable.toQueryable
-    ParameterlessQueryable(
+    Para terlessQueryable(
       queryable,
       hnswParams
     )

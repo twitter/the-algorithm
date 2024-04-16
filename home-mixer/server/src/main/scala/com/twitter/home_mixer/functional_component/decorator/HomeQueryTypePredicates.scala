@@ -1,18 +1,18 @@
-package com.twitter.home_mixer.functional_component.decorator
+package com.tw ter.ho _m xer.funct onal_component.decorator
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.ho _m xer.model.Ho Features._
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
 
-object HomeQueryTypePredicates {
-  private[this] val QueryPredicates: Seq[(String, FeatureMap => Boolean)] = Seq(
+object Ho QueryTypePred cates {
+  pr vate[t ] val QueryPred cates: Seq[(Str ng, FeatureMap => Boolean)] = Seq(
     ("request", _ => true),
-    ("get_initial", _.getOrElse(GetInitialFeature, false)),
-    ("get_newer", _.getOrElse(GetNewerFeature, false)),
+    ("get_ n  al", _.getOrElse(Get n  alFeature, false)),
+    ("get_ne r", _.getOrElse(GetNe rFeature, false)),
     ("get_older", _.getOrElse(GetOlderFeature, false)),
     ("pull_to_refresh", _.getOrElse(PullToRefreshFeature, false)),
-    ("request_context_launch", _.getOrElse(IsLaunchRequestFeature, false)),
-    ("request_context_foreground", _.getOrElse(IsForegroundRequestFeature, false))
+    ("request_context_launch", _.getOrElse( sLaunchRequestFeature, false)),
+    ("request_context_foreground", _.getOrElse( sForegroundRequestFeature, false))
   )
 
-  val PredicateMap = QueryPredicates.toMap
+  val Pred cateMap = QueryPred cates.toMap
 }

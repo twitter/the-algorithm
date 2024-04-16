@@ -1,65 +1,65 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
-import com.twitter.tweetypie.tflock.TweetIndexer
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.t etyp e.tflock.T et ndexer
+ mport com.tw ter.t etyp e.thr ftscala._
 
-trait TweetIndexingStore
-    extends TweetStoreBase[TweetIndexingStore]
-    with AsyncInsertTweet.Store
-    with AsyncDeleteTweet.Store
-    with AsyncUndeleteTweet.Store
-    with AsyncSetRetweetVisibility.Store {
-  def wrap(w: TweetStore.Wrap): TweetIndexingStore =
-    new TweetStoreWrapper(w, this)
-      with TweetIndexingStore
-      with AsyncInsertTweet.StoreWrapper
-      with AsyncDeleteTweet.StoreWrapper
-      with AsyncUndeleteTweet.StoreWrapper
-      with AsyncSetRetweetVisibility.StoreWrapper
+tra  T et ndex ngStore
+    extends T etStoreBase[T et ndex ngStore]
+    w h Async nsertT et.Store
+    w h AsyncDeleteT et.Store
+    w h AsyncUndeleteT et.Store
+    w h AsyncSetRet etV s b l y.Store {
+  def wrap(w: T etStore.Wrap): T et ndex ngStore =
+    new T etStoreWrapper(w, t )
+      w h T et ndex ngStore
+      w h Async nsertT et.StoreWrapper
+      w h AsyncDeleteT et.StoreWrapper
+      w h AsyncUndeleteT et.StoreWrapper
+      w h AsyncSetRet etV s b l y.StoreWrapper
 }
 
 /**
- * A TweetStore that sends indexing updates to a TweetIndexer.
+ * A T etStore that sends  ndex ng updates to a T et ndexer.
  */
-object TweetIndexingStore {
-  val Action: AsyncWriteAction.TweetIndex.type = AsyncWriteAction.TweetIndex
+object T et ndex ngStore {
+  val Act on: AsyncWr eAct on.T et ndex.type = AsyncWr eAct on.T et ndex
 
-  def apply(indexer: TweetIndexer): TweetIndexingStore =
-    new TweetIndexingStore {
-      override val asyncInsertTweet: FutureEffect[AsyncInsertTweet.Event] =
-        FutureEffect[AsyncInsertTweet.Event](event => indexer.createIndex(event.tweet))
+  def apply( ndexer: T et ndexer): T et ndex ngStore =
+    new T et ndex ngStore {
+      overr de val async nsertT et: FutureEffect[Async nsertT et.Event] =
+        FutureEffect[Async nsertT et.Event](event =>  ndexer.create ndex(event.t et))
 
-      override val retryAsyncInsertTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncInsertTweet.Event]
+      overr de val retryAsync nsertT et: FutureEffect[
+        T etStoreRetryEvent[Async nsertT et.Event]
       ] =
-        TweetStore.retry(Action, asyncInsertTweet)
+        T etStore.retry(Act on, async nsertT et)
 
-      override val asyncDeleteTweet: FutureEffect[AsyncDeleteTweet.Event] =
-        FutureEffect[AsyncDeleteTweet.Event](event =>
-          indexer.deleteIndex(event.tweet, event.isBounceDelete))
+      overr de val asyncDeleteT et: FutureEffect[AsyncDeleteT et.Event] =
+        FutureEffect[AsyncDeleteT et.Event](event =>
+           ndexer.delete ndex(event.t et, event. sBounceDelete))
 
-      override val retryAsyncDeleteTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncDeleteTweet.Event]
+      overr de val retryAsyncDeleteT et: FutureEffect[
+        T etStoreRetryEvent[AsyncDeleteT et.Event]
       ] =
-        TweetStore.retry(Action, asyncDeleteTweet)
+        T etStore.retry(Act on, asyncDeleteT et)
 
-      override val asyncUndeleteTweet: FutureEffect[AsyncUndeleteTweet.Event] =
-        FutureEffect[AsyncUndeleteTweet.Event](event => indexer.undeleteIndex(event.tweet))
+      overr de val asyncUndeleteT et: FutureEffect[AsyncUndeleteT et.Event] =
+        FutureEffect[AsyncUndeleteT et.Event](event =>  ndexer.undelete ndex(event.t et))
 
-      override val retryAsyncUndeleteTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncUndeleteTweet.Event]
+      overr de val retryAsyncUndeleteT et: FutureEffect[
+        T etStoreRetryEvent[AsyncUndeleteT et.Event]
       ] =
-        TweetStore.retry(Action, asyncUndeleteTweet)
+        T etStore.retry(Act on, asyncUndeleteT et)
 
-      override val asyncSetRetweetVisibility: FutureEffect[AsyncSetRetweetVisibility.Event] =
-        FutureEffect[AsyncSetRetweetVisibility.Event] { event =>
-          indexer.setRetweetVisibility(event.retweetId, event.visible)
+      overr de val asyncSetRet etV s b l y: FutureEffect[AsyncSetRet etV s b l y.Event] =
+        FutureEffect[AsyncSetRet etV s b l y.Event] { event =>
+           ndexer.setRet etV s b l y(event.ret et d, event.v s ble)
         }
 
-      override val retryAsyncSetRetweetVisibility: FutureEffect[
-        TweetStoreRetryEvent[AsyncSetRetweetVisibility.Event]
+      overr de val retryAsyncSetRet etV s b l y: FutureEffect[
+        T etStoreRetryEvent[AsyncSetRet etV s b l y.Event]
       ] =
-        TweetStore.retry(Action, asyncSetRetweetVisibility)
+        T etStore.retry(Act on, asyncSetRet etV s b l y)
     }
 }

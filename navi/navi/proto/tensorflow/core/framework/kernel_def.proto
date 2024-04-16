@@ -2,47 +2,47 @@ syntax = "proto3";
 
 package tensorflow;
 
-import "tensorflow/core/framework/attr_value.proto";
+ mport "tensorflow/core/fra work/attr_value.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "KernelDefProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/kernel_def_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "KernelDefProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.fra work";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/fra work/kernel_def_go_proto";
 
-message KernelDef {
-  // Must match the name of an Op.
-  string op = 1;
+ ssage KernelDef {
+  // Must match t  na  of an Op.
+  str ng op = 1;
 
-  // Type of device this kernel runs on.
-  string device_type = 2;
+  // Type of dev ce t  kernel runs on.
+  str ng dev ce_type = 2;
 
-  message AttrConstraint {
-    // Name of an attr from the Op.
-    string name = 1;
+   ssage AttrConstra nt {
+    // Na  of an attr from t  Op.
+    str ng na  = 1;
 
-    // A list of values that this kernel supports for this attr.
-    // Like OpDef.AttrDef.allowed_values, except for kernels instead of Ops.
-    AttrValue allowed_values = 2;
+    // A l st of values that t  kernel supports for t  attr.
+    // L ke OpDef.AttrDef.allo d_values, except for kernels  nstead of Ops.
+    AttrValue allo d_values = 2;
   }
-  repeated AttrConstraint constraint = 3;
+  repeated AttrConstra nt constra nt = 3;
 
-  // Names of the Op's input_/output_args that reside in host memory
-  // instead of device memory.
-  repeated string host_memory_arg = 4;
+  // Na s of t  Op's  nput_/output_args that res de  n host  mory
+  //  nstead of dev ce  mory.
+  repeated str ng host_ mory_arg = 4;
 
-  // This allows experimental kernels to be registered for an op that
-  // won't be used unless the user specifies a "_kernel" attr with
-  // value matching this.
-  string label = 5;
+  // T  allows exper  ntal kernels to be reg stered for an op that
+  // won't be used unless t  user spec f es a "_kernel" attr w h
+  // value match ng t .
+  str ng label = 5;
 
-  // Prioritization of kernel amongst different devices. By default we assume
-  // priority is 0. The higher the priority the better. By default (i.e. if
-  // this is not set), we prefer GPU kernels over CPU.
-  int32 priority = 6;
+  // Pr or  zat on of kernel amongst d fferent dev ces. By default   assu 
+  // pr or y  s 0. T  h g r t  pr or y t  better. By default ( .e.  f
+  // t   s not set),   prefer GPU kernels over CPU.
+   nt32 pr or y = 6;
 }
 
-// A collection of KernelDefs
-message KernelList {
+// A collect on of KernelDefs
+ ssage KernelL st {
   repeated KernelDef kernel = 1;
 }

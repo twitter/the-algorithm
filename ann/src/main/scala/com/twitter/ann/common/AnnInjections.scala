@@ -1,28 +1,28 @@
-package com.twitter.ann.common
+package com.tw ter.ann.common
 
-import com.twitter.bijection.{Bijection, Injection}
+ mport com.tw ter.b ject on.{B ject on,  nject on}
 
-// Class providing commonly used injections that can be used directly with ANN apis.
-// Injection  prefixed with `J` can be used in java directly with ANN apis.
-object AnnInjections {
-  val LongInjection: Injection[Long, Array[Byte]] = Injection.long2BigEndian
+// Class prov d ng commonly used  nject ons that can be used d rectly w h ANN ap s.
+//  nject on  pref xed w h `J` can be used  n java d rectly w h ANN ap s.
+object Ann nject ons {
+  val Long nject on:  nject on[Long, Array[Byte]] =  nject on.long2B gEnd an
 
-  def StringInjection: Injection[String, Array[Byte]] = Injection.utf8
+  def Str ng nject on:  nject on[Str ng, Array[Byte]] =  nject on.utf8
 
-  def IntInjection: Injection[Int, Array[Byte]] = Injection.int2BigEndian
+  def  nt nject on:  nject on[ nt, Array[Byte]] =  nject on. nt2B gEnd an
 
-  val JLongInjection: Injection[java.lang.Long, Array[Byte]] =
-    Bijection.long2Boxed
-      .asInstanceOf[Bijection[Long, java.lang.Long]]
-      .inverse
-      .andThen(LongInjection)
+  val JLong nject on:  nject on[java.lang.Long, Array[Byte]] =
+    B ject on.long2Boxed
+      .as nstanceOf[B ject on[Long, java.lang.Long]]
+      . nverse
+      .andT n(Long nject on)
 
-  val JStringInjection: Injection[java.lang.String, Array[Byte]] =
-    StringInjection
+  val JStr ng nject on:  nject on[java.lang.Str ng, Array[Byte]] =
+    Str ng nject on
 
-  val JIntInjection: Injection[java.lang.Integer, Array[Byte]] =
-    Bijection.int2Boxed
-      .asInstanceOf[Bijection[Int, java.lang.Integer]]
-      .inverse
-      .andThen(IntInjection)
+  val J nt nject on:  nject on[java.lang. nteger, Array[Byte]] =
+    B ject on. nt2Boxed
+      .as nstanceOf[B ject on[ nt, java.lang. nteger]]
+      . nverse
+      .andT n( nt nject on)
 }

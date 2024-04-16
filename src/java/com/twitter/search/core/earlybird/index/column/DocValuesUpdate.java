@@ -1,8 +1,8 @@
-package com.twitter.search.core.earlybird.index.column;
+package com.tw ter.search.core.earlyb rd. ndex.column;
 
-public interface DocValuesUpdate {
+publ c  nterface DocValuesUpdate {
   /**
-   * Performs an doc values update on the given document.
+   * Performs an doc values update on t  g ven docu nt.
    */
-  void update(ColumnStrideFieldIndex docValues, int docID);
+  vo d update(ColumnStr deF eld ndex docValues,  nt doc D);
 }

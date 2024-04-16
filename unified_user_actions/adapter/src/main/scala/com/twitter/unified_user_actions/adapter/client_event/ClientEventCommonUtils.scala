@@ -1,169 +1,169 @@
-package com.twitter.unified_user_actions.adapter.client_event
+package com.tw ter.un f ed_user_act ons.adapter.cl ent_event
 
-import com.twitter.clientapp.thriftscala.EventNamespace
-import com.twitter.clientapp.thriftscala.Item
-import com.twitter.clientapp.thriftscala.ItemType.User
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.clientapp.thriftscala.{Item => LogEventItem}
-import com.twitter.unified_user_actions.adapter.common.AdapterUtils
-import com.twitter.unified_user_actions.thriftscala.AuthorInfo
-import com.twitter.unified_user_actions.thriftscala.ClientEventNamespace
-import com.twitter.unified_user_actions.thriftscala.EventMetadata
-import com.twitter.unified_user_actions.thriftscala.ProductSurface
-import com.twitter.unified_user_actions.thriftscala.SourceLineage
-import com.twitter.unified_user_actions.thriftscala.TweetAuthorFollowClickSource
-import com.twitter.unified_user_actions.thriftscala.TweetAuthorUnfollowClickSource
-import com.twitter.unified_user_actions.thriftscala.TweetInfo
+ mport com.tw ter.cl entapp.thr ftscala.EventNa space
+ mport com.tw ter.cl entapp.thr ftscala. em
+ mport com.tw ter.cl entapp.thr ftscala. emType.User
+ mport com.tw ter.cl entapp.thr ftscala.LogEvent
+ mport com.tw ter.cl entapp.thr ftscala.{ em => LogEvent em}
+ mport com.tw ter.un f ed_user_act ons.adapter.common.AdapterUt ls
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Author nfo
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Cl entEventNa space
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Event tadata
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.ProductSurface
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.S ceL neage
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.T etAuthorFollowCl ckS ce
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.T etAuthorUnfollowCl ckS ce
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.T et nfo
 
 /**
- * Comprises helper methods that:
- * 1. need not be overridden by subclasses of `BaseClientEvent`
- * 2. need not be invoked by instances of subclasses of `BaseClientEvent`
- * 3. need to be accessible to subclasses of `BaseClientEvent` and other utils
+ * Compr ses  lper  thods that:
+ * 1. need not be overr dden by subclasses of `BaseCl entEvent`
+ * 2. need not be  nvoked by  nstances of subclasses of `BaseCl entEvent`
+ * 3. need to be access ble to subclasses of `BaseCl entEvent` and ot r ut ls
  */
-object ClientEventCommonUtils {
+object Cl entEventCommonUt ls {
 
-  def getBasicTweetInfo(
-    actionTweetId: Long,
-    ceItem: LogEventItem,
-    ceNamespaceOpt: Option[EventNamespace]
-  ): TweetInfo = TweetInfo(
-    actionTweetId = actionTweetId,
-    actionTweetTopicSocialProofId = getTopicId(ceItem, ceNamespaceOpt),
-    retweetingTweetId = ceItem.tweetDetails.flatMap(_.retweetingTweetId),
-    quotedTweetId = ceItem.tweetDetails.flatMap(_.quotedTweetId),
-    inReplyToTweetId = ceItem.tweetDetails.flatMap(_.inReplyToTweetId),
-    quotingTweetId = ceItem.tweetDetails.flatMap(_.quotingTweetId),
-    // only set AuthorInfo when authorId is present
-    actionTweetAuthorInfo = getAuthorInfo(ceItem),
-    retweetingAuthorId = ceItem.tweetDetails.flatMap(_.retweetAuthorId),
-    quotedAuthorId = ceItem.tweetDetails.flatMap(_.quotedAuthorId),
-    inReplyToAuthorId = ceItem.tweetDetails.flatMap(_.inReplyToAuthorId),
-    tweetPosition = ceItem.position,
-    promotedId = ceItem.promotedId
+  def getBas cT et nfo(
+    act onT et d: Long,
+    ce em: LogEvent em,
+    ceNa spaceOpt: Opt on[EventNa space]
+  ): T et nfo = T et nfo(
+    act onT et d = act onT et d,
+    act onT etTop cSoc alProof d = getTop c d(ce em, ceNa spaceOpt),
+    ret et ngT et d = ce em.t etDeta ls.flatMap(_.ret et ngT et d),
+    quotedT et d = ce em.t etDeta ls.flatMap(_.quotedT et d),
+     nReplyToT et d = ce em.t etDeta ls.flatMap(_. nReplyToT et d),
+    quot ngT et d = ce em.t etDeta ls.flatMap(_.quot ngT et d),
+    // only set Author nfo w n author d  s present
+    act onT etAuthor nfo = getAuthor nfo(ce em),
+    ret et ngAuthor d = ce em.t etDeta ls.flatMap(_.ret etAuthor d),
+    quotedAuthor d = ce em.t etDeta ls.flatMap(_.quotedAuthor d),
+     nReplyToAuthor d = ce em.t etDeta ls.flatMap(_. nReplyToAuthor d),
+    t etPos  on = ce em.pos  on,
+    promoted d = ce em.promoted d
   )
 
-  def getTopicId(
-    ceItem: LogEventItem,
-    ceNamespaceOpt: Option[EventNamespace] = None,
-  ): Option[Long] =
-    ceNamespaceOpt.flatMap {
-      TopicIdUtils.getTopicId(item = ceItem, _)
+  def getTop c d(
+    ce em: LogEvent em,
+    ceNa spaceOpt: Opt on[EventNa space] = None,
+  ): Opt on[Long] =
+    ceNa spaceOpt.flatMap {
+      Top c dUt ls.getTop c d( em = ce em, _)
     }
 
-  def getAuthorInfo(
-    ceItem: LogEventItem,
-  ): Option[AuthorInfo] =
-    ceItem.tweetDetails.flatMap(_.authorId).map { authorId =>
-      AuthorInfo(
-        authorId = Some(authorId),
-        isFollowedByActingUser = ceItem.isViewerFollowsTweetAuthor,
-        isFollowingActingUser = ceItem.isTweetAuthorFollowsViewer,
+  def getAuthor nfo(
+    ce em: LogEvent em,
+  ): Opt on[Author nfo] =
+    ce em.t etDeta ls.flatMap(_.author d).map { author d =>
+      Author nfo(
+        author d = So (author d),
+         sFollo dByAct ngUser = ce em. sV e rFollowsT etAuthor,
+         sFollow ngAct ngUser = ce em. sT etAuthorFollowsV e r,
       )
     }
 
-  def getEventMetadata(
-    eventTimestamp: Long,
+  def getEvent tadata(
+    eventT  stamp: Long,
     logEvent: LogEvent,
-    ceItem: LogEventItem,
-    productSurface: Option[ProductSurface] = None
-  ): EventMetadata = EventMetadata(
-    sourceTimestampMs = eventTimestamp,
-    receivedTimestampMs = AdapterUtils.currentTimestampMs,
-    sourceLineage = SourceLineage.ClientEvents,
-    // Client UI language or from Gizmoduck which is what user set in Twitter App.
-    // Please see more at https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/finatra-internal/international/src/main/scala/com/twitter/finatra/international/LanguageIdentifier.scala
-    // The format should be ISO 639-1.
-    language = logEvent.logBase.flatMap(_.language).map(AdapterUtils.normalizeLanguageCode),
-    // Country code could be IP address (geoduck) or User registration country (gizmoduck) and the former takes precedence.
-    // We don’t know exactly which one is applied, unfortunately,
-    // see https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/finatra-internal/international/src/main/scala/com/twitter/finatra/international/CountryIdentifier.scala
-    // The format should be ISO_3166-1_alpha-2.
-    countryCode = logEvent.logBase.flatMap(_.country).map(AdapterUtils.normalizeCountryCode),
-    clientAppId = logEvent.logBase.flatMap(_.clientAppId),
-    clientVersion = logEvent.clientVersion,
-    clientEventNamespace = logEvent.eventNamespace.map(en => toClientEventNamespace(en)),
-    traceId = getTraceId(productSurface, ceItem),
-    requestJoinId = getRequestJoinId(productSurface, ceItem),
-    clientEventTriggeredOn = logEvent.eventDetails.flatMap(_.triggeredOn)
+    ce em: LogEvent em,
+    productSurface: Opt on[ProductSurface] = None
+  ): Event tadata = Event tadata(
+    s ceT  stampMs = eventT  stamp,
+    rece vedT  stampMs = AdapterUt ls.currentT  stampMs,
+    s ceL neage = S ceL neage.Cl entEvents,
+    // Cl ent U  language or from G zmoduck wh ch  s what user set  n Tw ter App.
+    // Please see more at https://s cegraph.tw ter.b z/g .tw ter.b z/s ce/-/blob/f natra- nternal/ nternat onal/src/ma n/scala/com/tw ter/f natra/ nternat onal/Language dent f er.scala
+    // T  format should be  SO 639-1.
+    language = logEvent.logBase.flatMap(_.language).map(AdapterUt ls.normal zeLanguageCode),
+    // Country code could be  P address (geoduck) or User reg strat on country (g zmoduck) and t  for r takes precedence.
+    //   don’t know exactly wh ch one  s appl ed, unfortunately,
+    // see https://s cegraph.tw ter.b z/g .tw ter.b z/s ce/-/blob/f natra- nternal/ nternat onal/src/ma n/scala/com/tw ter/f natra/ nternat onal/Country dent f er.scala
+    // T  format should be  SO_3166-1_alpha-2.
+    countryCode = logEvent.logBase.flatMap(_.country).map(AdapterUt ls.normal zeCountryCode),
+    cl entApp d = logEvent.logBase.flatMap(_.cl entApp d),
+    cl entVers on = logEvent.cl entVers on,
+    cl entEventNa space = logEvent.eventNa space.map(en => toCl entEventNa space(en)),
+    trace d = getTrace d(productSurface, ce em),
+    requestJo n d = getRequestJo n d(productSurface, ce em),
+    cl entEventTr ggeredOn = logEvent.eventDeta ls.flatMap(_.tr ggeredOn)
   )
 
-  def toClientEventNamespace(eventNamespace: EventNamespace): ClientEventNamespace =
-    ClientEventNamespace(
-      page = eventNamespace.page,
-      section = eventNamespace.section,
-      component = eventNamespace.component,
-      element = eventNamespace.element,
-      action = eventNamespace.action
+  def toCl entEventNa space(eventNa space: EventNa space): Cl entEventNa space =
+    Cl entEventNa space(
+      page = eventNa space.page,
+      sect on = eventNa space.sect on,
+      component = eventNa space.component,
+      ele nt = eventNa space.ele nt,
+      act on = eventNa space.act on
     )
 
   /**
-   * Get the profileId from Item.id, which itemType = 'USER'.
+   * Get t  prof le d from  em. d, wh ch  emType = 'USER'.
    *
-   * The profileId can be also be found in the event_details.profile_id.
-   * However, the item.id is more reliable than event_details.profile_id,
-   * in particular, 45% of the client events with USER items have
-   * Null for event_details.profile_id while 0.13% item.id is Null.
-   * As such, we only use item.id to populate the profile_id.
+   * T  prof le d can be also be found  n t  event_deta ls.prof le_ d.
+   * Ho ver, t   em. d  s more rel able than event_deta ls.prof le_ d,
+   *  n part cular, 45% of t  cl ent events w h USER  ems have
+   * Null for event_deta ls.prof le_ d wh le 0.13%  em. d  s Null.
+   * As such,   only use  em. d to populate t  prof le_ d.
    */
-  def getProfileIdFromUserItem(item: Item): Option[Long] =
-    if (item.itemType.contains(User))
-      item.id
+  def getProf le dFromUser em( em:  em): Opt on[Long] =
+     f ( em. emType.conta ns(User))
+       em. d
     else None
 
   /**
-   * TraceId is going to be deprecated and replaced by requestJoinId.
+   * Trace d  s go ng to be deprecated and replaced by requestJo n d.
    *
-   * Get the traceId from LogEventItem based on productSurface.
+   * Get t  trace d from LogEvent em based on productSurface.
    *
-   * The traceId is hydrated in controller data from backend. Different product surfaces
-   * populate different controller data. Thus, the product surface is checked first to decide
-   * which controller data should be read to ge the requestJoinId.
+   * T  trace d  s hydrated  n controller data from backend. D fferent product surfaces
+   * populate d fferent controller data. Thus, t  product surface  s c cked f rst to dec de
+   * wh ch controller data should be read to ge t  requestJo n d.
    */
-  def getTraceId(productSurface: Option[ProductSurface], ceItem: LogEventItem): Option[Long] =
+  def getTrace d(productSurface: Opt on[ProductSurface], ce em: LogEvent em): Opt on[Long] =
     productSurface match {
-      case Some(ProductSurface.HomeTimeline) => HomeInfoUtils.getTraceId(ceItem)
-      case Some(ProductSurface.SearchResultsPage) => { new SearchInfoUtils(ceItem) }.getTraceId
+      case So (ProductSurface.Ho T  l ne) => Ho  nfoUt ls.getTrace d(ce em)
+      case So (ProductSurface.SearchResultsPage) => { new Search nfoUt ls(ce em) }.getTrace d
       case _ => None
     }
 
   /**
-   * Get the requestJoinId from LogEventItem based on productSurface.
+   * Get t  requestJo n d from LogEvent em based on productSurface.
    *
-   * The requestJoinId is hydrated in controller data from backend. Different product surfaces
-   * populate different controller data. Thus, the product surface is checked first to decide
-   * which controller data should be read to get the requestJoinId.
+   * T  requestJo n d  s hydrated  n controller data from backend. D fferent product surfaces
+   * populate d fferent controller data. Thus, t  product surface  s c cked f rst to dec de
+   * wh ch controller data should be read to get t  requestJo n d.
    *
-   * Support Home / Home_latest / SearchResults for now, to add other surfaces based on requirement.
+   * Support Ho  / Ho _latest / SearchResults for now, to add ot r surfaces based on requ re nt.
    */
-  def getRequestJoinId(productSurface: Option[ProductSurface], ceItem: LogEventItem): Option[Long] =
+  def getRequestJo n d(productSurface: Opt on[ProductSurface], ce em: LogEvent em): Opt on[Long] =
     productSurface match {
-      case Some(ProductSurface.HomeTimeline) => HomeInfoUtils.getRequestJoinId(ceItem)
-      case Some(ProductSurface.SearchResultsPage) => {
-          new SearchInfoUtils(ceItem)
-        }.getRequestJoinId
+      case So (ProductSurface.Ho T  l ne) => Ho  nfoUt ls.getRequestJo n d(ce em)
+      case So (ProductSurface.SearchResultsPage) => {
+          new Search nfoUt ls(ce em)
+        }.getRequestJo n d
       case _ => None
     }
 
-  def getTweetAuthorFollowSource(
-    eventNamespace: Option[EventNamespace]
-  ): TweetAuthorFollowClickSource = {
-    eventNamespace
-      .map(ns => (ns.element, ns.action)).map {
-        case (Some("follow"), Some("click")) => TweetAuthorFollowClickSource.CaretMenu
-        case (_, Some("follow")) => TweetAuthorFollowClickSource.ProfileImage
-        case _ => TweetAuthorFollowClickSource.Unknown
-      }.getOrElse(TweetAuthorFollowClickSource.Unknown)
+  def getT etAuthorFollowS ce(
+    eventNa space: Opt on[EventNa space]
+  ): T etAuthorFollowCl ckS ce = {
+    eventNa space
+      .map(ns => (ns.ele nt, ns.act on)).map {
+        case (So ("follow"), So ("cl ck")) => T etAuthorFollowCl ckS ce.Caret nu
+        case (_, So ("follow")) => T etAuthorFollowCl ckS ce.Prof le mage
+        case _ => T etAuthorFollowCl ckS ce.Unknown
+      }.getOrElse(T etAuthorFollowCl ckS ce.Unknown)
   }
 
-  def getTweetAuthorUnfollowSource(
-    eventNamespace: Option[EventNamespace]
-  ): TweetAuthorUnfollowClickSource = {
-    eventNamespace
-      .map(ns => (ns.element, ns.action)).map {
-        case (Some("unfollow"), Some("click")) => TweetAuthorUnfollowClickSource.CaretMenu
-        case (_, Some("unfollow")) => TweetAuthorUnfollowClickSource.ProfileImage
-        case _ => TweetAuthorUnfollowClickSource.Unknown
-      }.getOrElse(TweetAuthorUnfollowClickSource.Unknown)
+  def getT etAuthorUnfollowS ce(
+    eventNa space: Opt on[EventNa space]
+  ): T etAuthorUnfollowCl ckS ce = {
+    eventNa space
+      .map(ns => (ns.ele nt, ns.act on)).map {
+        case (So ("unfollow"), So ("cl ck")) => T etAuthorUnfollowCl ckS ce.Caret nu
+        case (_, So ("unfollow")) => T etAuthorUnfollowCl ckS ce.Prof le mage
+        case _ => T etAuthorUnfollowCl ckS ce.Unknown
+      }.getOrElse(T etAuthorUnfollowCl ckS ce.Unknown)
   }
 }

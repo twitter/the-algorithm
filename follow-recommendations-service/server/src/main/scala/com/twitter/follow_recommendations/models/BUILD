@@ -1,13 +1,13 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "configapi/configapi-core/src/main/scala/com/twitter/timelines/configapi",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/feature_hydration/common",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/assembler/models",
-        "follow-recommendations-service/thrift/src/main/thrift:thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/request",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "conf gap /conf gap -core/src/ma n/scala/com/tw ter/t  l nes/conf gap ",
+        "follow-recom ndat ons-serv ce/common/src/ma n/scala/com/tw ter/follow_recom ndat ons/common/feature_hydrat on/common",
+        "follow-recom ndat ons-serv ce/common/src/ma n/scala/com/tw ter/follow_recom ndat ons/common/models",
+        "follow-recom ndat ons-serv ce/server/src/ma n/scala/com/tw ter/follow_recom ndat ons/assembler/models",
+        "follow-recom ndat ons-serv ce/thr ft/src/ma n/thr ft:thr ft-scala",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/marshall ng/request",
     ],
 )

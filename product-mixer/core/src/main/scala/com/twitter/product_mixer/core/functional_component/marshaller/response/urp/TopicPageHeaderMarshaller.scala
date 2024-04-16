@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urp
 
-import com.twitter.pages.render.{thriftscala => urp}
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventInfoMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urp.TopicPageHeader
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.pages.render.{thr ftscala => urp}
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.Cl entEvent nfoMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urp.Top cPage ader
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TopicPageHeaderMarshaller @Inject() (
-  topicPageHeaderFacepileMarshaller: TopicPageHeaderFacepileMarshaller,
-  clientEventInfoMarshaller: ClientEventInfoMarshaller,
-  topicPageHeaderDisplayTypeMarshaller: TopicPageHeaderDisplayTypeMarshaller) {
+@S ngleton
+class Top cPage aderMarshaller @ nject() (
+  top cPage aderFacep leMarshaller: Top cPage aderFacep leMarshaller,
+  cl entEvent nfoMarshaller: Cl entEvent nfoMarshaller,
+  top cPage aderD splayTypeMarshaller: Top cPage aderD splayTypeMarshaller) {
 
-  def apply(topicPageHeader: TopicPageHeader): urp.TopicPageHeader =
-    urp.TopicPageHeader(
-      topicId = topicPageHeader.topicId,
-      facepile = topicPageHeader.facepile.map(topicPageHeaderFacepileMarshaller(_)),
-      clientEventInfo = topicPageHeader.clientEventInfo.map(clientEventInfoMarshaller(_)),
-      landingContext = topicPageHeader.landingContext,
-      displayType = topicPageHeader.displayType
-        .map(topicPageHeaderDisplayTypeMarshaller(_)).getOrElse(
-          urp.TopicPageHeaderDisplayType.Basic)
+  def apply(top cPage ader: Top cPage ader): urp.Top cPage ader =
+    urp.Top cPage ader(
+      top c d = top cPage ader.top c d,
+      facep le = top cPage ader.facep le.map(top cPage aderFacep leMarshaller(_)),
+      cl entEvent nfo = top cPage ader.cl entEvent nfo.map(cl entEvent nfoMarshaller(_)),
+      land ngContext = top cPage ader.land ngContext,
+      d splayType = top cPage ader.d splayType
+        .map(top cPage aderD splayTypeMarshaller(_)).getOrElse(
+          urp.Top cPage aderD splayType.Bas c)
     )
 }

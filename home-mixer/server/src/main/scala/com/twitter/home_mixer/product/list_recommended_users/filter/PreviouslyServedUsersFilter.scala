@@ -1,35 +1,35 @@
-package com.twitter.home_mixer.product.list_recommended_users.filter
+package com.tw ter.ho _m xer.product.l st_recom nded_users.f lter
 
-import com.twitter.home_mixer.product.list_recommended_users.feature_hydrator.RecentListMembersFeature
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersQuery
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.stitch.Stitch
+ mport com.tw ter.ho _m xer.product.l st_recom nded_users.feature_hydrator.RecentL st mbersFeature
+ mport com.tw ter.ho _m xer.product.l st_recom nded_users.model.L stRecom ndedUsersQuery
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.UserCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lterResult
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.st ch.St ch
 
-object PreviouslyServedUsersFilter extends Filter[ListRecommendedUsersQuery, UserCandidate] {
+object Prev ouslyServedUsersF lter extends F lter[L stRecom ndedUsersQuery, UserCand date] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("PreviouslyServedUsers")
+  overr de val  dent f er: F lter dent f er = F lter dent f er("Prev ouslyServedUsers")
 
-  override def apply(
-    query: ListRecommendedUsersQuery,
-    candidates: Seq[CandidateWithFeatures[UserCandidate]]
-  ): Stitch[FilterResult[UserCandidate]] = {
+  overr de def apply(
+    query: L stRecom ndedUsersQuery,
+    cand dates: Seq[Cand dateW hFeatures[UserCand date]]
+  ): St ch[F lterResult[UserCand date]] = {
 
-    val recentListMembers = query.features.map(_.getOrElse(RecentListMembersFeature, Seq.empty))
+    val recentL st mbers = query.features.map(_.getOrElse(RecentL st mbersFeature, Seq.empty))
 
-    val servedUserIds = query.pipelineCursor.map(_.excludedIds)
+    val servedUser ds = query.p pel neCursor.map(_.excluded ds)
 
-    val excludedUserIds = (recentListMembers.getOrElse(Seq.empty) ++
-      query.selectedUserIds.getOrElse(Seq.empty) ++
-      query.excludedUserIds.getOrElse(Seq.empty) ++
-      servedUserIds.getOrElse(Seq.empty)).toSet
+    val excludedUser ds = (recentL st mbers.getOrElse(Seq.empty) ++
+      query.selectedUser ds.getOrElse(Seq.empty) ++
+      query.excludedUser ds.getOrElse(Seq.empty) ++
+      servedUser ds.getOrElse(Seq.empty)).toSet
 
     val (removed, kept) =
-      candidates.map(_.candidate).partition(candidate => excludedUserIds.contains(candidate.id))
+      cand dates.map(_.cand date).part  on(cand date => excludedUser ds.conta ns(cand date. d))
 
-    Stitch.value(FilterResult(kept = kept, removed = removed))
+    St ch.value(F lterResult(kept = kept, removed = removed))
   }
 }

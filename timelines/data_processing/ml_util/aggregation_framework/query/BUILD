@@ -1,12 +1,12 @@
-scala_library(
-    sources = ["*.scala"],
+scala_l brary(
+    s ces = ["*.scala"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finagle/finagle-stats",
-        "src/java/com/twitter/ml/api:api-base",
-        "src/thrift/com/twitter/ml/api:data-scala",
-        "src/thrift/com/twitter/ml/api:interpretable-model-java",
-        "timelines/data_processing/ml_util/aggregation_framework/metrics",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "f nagle/f nagle-stats",
+        "src/java/com/tw ter/ml/ap :ap -base",
+        "src/thr ft/com/tw ter/ml/ap :data-scala",
+        "src/thr ft/com/tw ter/ml/ap : nterpretable-model-java",
+        "t  l nes/data_process ng/ml_ut l/aggregat on_fra work/ tr cs",
     ],
 )

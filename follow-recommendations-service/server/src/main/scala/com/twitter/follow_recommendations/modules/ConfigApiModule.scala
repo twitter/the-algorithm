@@ -1,20 +1,20 @@
-package com.twitter.follow_recommendations.modules
+package com.tw ter.follow_recom ndat ons.modules
 
-import com.google.inject.Provides
-import com.twitter.decider.Decider
-import com.twitter.follow_recommendations.configapi.ConfigBuilder
-import com.twitter.inject.TwitterModule
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.timelines.configapi.Config
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.follow_recom ndat ons.conf gap .Conf gBu lder
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.servo.dec der.Dec derGateBu lder
+ mport com.tw ter.t  l nes.conf gap .Conf g
+ mport javax. nject.S ngleton
 
-object ConfigApiModule extends TwitterModule {
-  @Provides
-  @Singleton
-  def providesDeciderGateBuilder(decider: Decider): DeciderGateBuilder =
-    new DeciderGateBuilder(decider)
+object Conf gAp Module extends Tw terModule {
+  @Prov des
+  @S ngleton
+  def prov desDec derGateBu lder(dec der: Dec der): Dec derGateBu lder =
+    new Dec derGateBu lder(dec der)
 
-  @Provides
-  @Singleton
-  def providesConfig(configBuilder: ConfigBuilder): Config = configBuilder.build()
+  @Prov des
+  @S ngleton
+  def prov desConf g(conf gBu lder: Conf gBu lder): Conf g = conf gBu lder.bu ld()
 }

@@ -1,45 +1,45 @@
-package com.twitter.tweetypie.matching
+package com.tw ter.t etyp e.match ng
 
-import com.twitter.common.text.pipeline.TwitterLanguageIdentifier
-import com.twitter.common_internal.text.version.PenguinVersion
-import java.util.Locale
+ mport com.tw ter.common.text.p pel ne.Tw terLanguage dent f er
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers on
+ mport java.ut l.Locale
 
-object TweetTokenizer extends Tokenizer {
-  type LocalePicking = Option[Locale] => Tokenizer
+object T etToken zer extends Token zer {
+  type LocaleP ck ng = Opt on[Locale] => Token zer
 
   /**
-   * Get a Tokenizer-producing function that uses the supplied locale
-   * to select an appropriate Tokenizer.
+   * Get a Token zer-produc ng funct on that uses t  suppl ed locale
+   * to select an appropr ate Token zer.
    */
-  def localePicking: LocalePicking = {
-    case None => TweetTokenizer
-    case Some(locale) => Tokenizer.forLocale(locale)
+  def localeP ck ng: LocaleP ck ng = {
+    case None => T etToken zer
+    case So (locale) => Token zer.forLocale(locale)
   }
 
-  private[this] val tweetLangIdentifier =
-    (new TwitterLanguageIdentifier.Builder).buildForTweet()
+  pr vate[t ] val t etLang dent f er =
+    (new Tw terLanguage dent f er.Bu lder).bu ldForT et()
 
   /**
-   * Get a Tokenizer that performs Tweet language detection, and uses
-   * that result to tokenize the text. If you already know the locale of
-   * the tweet text, use `Tokenizer.get`, because it's much
-   * cheaper.
+   * Get a Token zer that performs T et language detect on, and uses
+   * that result to token ze t  text.  f   already know t  locale of
+   * t  t et text, use `Token zer.get`, because  's much
+   * c aper.
    */
-  def get(version: PenguinVersion): Tokenizer =
-    new Tokenizer {
-      override def tokenize(text: String): TokenSequence = {
-        val locale = tweetLangIdentifier.identify(text).getLocale
-        Tokenizer.get(locale, version).tokenize(text)
+  def get(vers on: Pengu nVers on): Token zer =
+    new Token zer {
+      overr de def token ze(text: Str ng): TokenSequence = {
+        val locale = t etLang dent f er. dent fy(text).getLocale
+        Token zer.get(locale, vers on).token ze(text)
       }
     }
 
-  private[this] val Default = get(Tokenizer.DefaultPenguinVersion)
+  pr vate[t ] val Default = get(Token zer.DefaultPengu nVers on)
 
   /**
-   * Tokenize the given text using Tweet language detection and
-   * `Tokenizer.DefaultPenguinVersion`. Prefer `Tokenizer.forLocale` if
-   * you already know the language of the text.
+   * Token ze t  g ven text us ng T et language detect on and
+   * `Token zer.DefaultPengu nVers on`. Prefer `Token zer.forLocale`  f
+   *   already know t  language of t  text.
    */
-  override def tokenize(tweetText: String): TokenSequence =
-    Default.tokenize(tweetText)
+  overr de def token ze(t etText: Str ng): TokenSequence =
+    Default.token ze(t etText)
 }

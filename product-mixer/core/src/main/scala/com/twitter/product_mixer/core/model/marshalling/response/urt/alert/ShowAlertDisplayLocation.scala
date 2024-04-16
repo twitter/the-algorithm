@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.alert
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.alert
 
-sealed trait ShowAlertDisplayLocation
-case object Top extends ShowAlertDisplayLocation
-case object Bottom extends ShowAlertDisplayLocation
+sealed tra  ShowAlertD splayLocat on
+case object Top extends ShowAlertD splayLocat on
+case object Bottom extends ShowAlertD splayLocat on

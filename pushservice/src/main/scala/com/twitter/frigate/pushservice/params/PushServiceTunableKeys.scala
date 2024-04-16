@@ -1,9 +1,9 @@
-package com.twitter.frigate.pushservice.params
+package com.tw ter.fr gate.pushserv ce.params
 
-import com.twitter.util.tunable.TunableMap
+ mport com.tw ter.ut l.tunable.TunableMap
 
-object PushServiceTunableKeys {
-  final val IbisQpsLimitTunableKey = TunableMap.Key[Int]("ibis2.qps.limit")
-  final val NtabQpsLimitTunableKey = TunableMap.Key[Int]("ntab.qps.limit")
-  final val TweetPerspectiveStoreQpsLimit = TunableMap.Key[Int]("tweetperspective.qps.limit")
+object PushServ ceTunableKeys {
+  f nal val  b sQpsL m TunableKey = TunableMap.Key[ nt](" b s2.qps.l m ")
+  f nal val NtabQpsL m TunableKey = TunableMap.Key[ nt]("ntab.qps.l m ")
+  f nal val T etPerspect veStoreQpsL m  = TunableMap.Key[ nt]("t etperspect ve.qps.l m ")
 }

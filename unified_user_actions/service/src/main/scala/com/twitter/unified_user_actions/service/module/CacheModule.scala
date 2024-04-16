@@ -1,48 +1,48 @@
-package com.twitter.unified_user_actions.service.module
+package com.tw ter.un f ed_user_act ons.serv ce.module
 
-import com.google.common.cache.CacheBuilder
-import com.google.inject.Provides
-import com.twitter.dynmap.DynMap
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.unified_user_actions.enricher.hcache.LocalCache
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentKey
-import com.twitter.util.Future
-import java.util.concurrent.TimeUnit
-import javax.inject.Singleton
+ mport com.google.common.cac .Cac Bu lder
+ mport com.google. nject.Prov des
+ mport com.tw ter.dynmap.DynMap
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.un f ed_user_act ons.enr c r.hcac .LocalCac 
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntKey
+ mport com.tw ter.ut l.Future
+ mport java.ut l.concurrent.T  Un 
+ mport javax. nject.S ngleton
 
-object CacheModule extends TwitterModule {
-  private final val localCacheTtlFlagName = "local.cache.ttl.seconds"
-  private final val localCacheMaxSizeFlagName = "local.cache.max.size"
+object Cac Module extends Tw terModule {
+  pr vate f nal val localCac TtlFlagNa  = "local.cac .ttl.seconds"
+  pr vate f nal val localCac MaxS zeFlagNa  = "local.cac .max.s ze"
 
   flag[Long](
-    name = localCacheTtlFlagName,
+    na  = localCac TtlFlagNa ,
     default = 1800L,
-    help = "Local Cache's TTL in seconds"
+     lp = "Local Cac 's TTL  n seconds"
   )
 
   flag[Long](
-    name = localCacheMaxSizeFlagName,
+    na  = localCac MaxS zeFlagNa ,
     default = 1000L,
-    help = "Local Cache's max size"
+     lp = "Local Cac 's max s ze"
   )
 
-  @Provides
-  @Singleton
-  def providesLocalCache(
-    @Flag(localCacheTtlFlagName) localCacheTtlFlag: Long,
-    @Flag(localCacheMaxSizeFlagName) localCacheMaxSizeFlag: Long,
-    statsReceiver: StatsReceiver
-  ): LocalCache[EnrichmentKey, DynMap] = {
-    val underlying = CacheBuilder
-      .newBuilder()
-      .expireAfterWrite(localCacheTtlFlag, TimeUnit.SECONDS)
-      .maximumSize(localCacheMaxSizeFlag)
-      .build[EnrichmentKey, Future[DynMap]]()
+  @Prov des
+  @S ngleton
+  def prov desLocalCac (
+    @Flag(localCac TtlFlagNa ) localCac TtlFlag: Long,
+    @Flag(localCac MaxS zeFlagNa ) localCac MaxS zeFlag: Long,
+    statsRece ver: StatsRece ver
+  ): LocalCac [Enr ch ntKey, DynMap] = {
+    val underly ng = Cac Bu lder
+      .newBu lder()
+      .exp reAfterWr e(localCac TtlFlag, T  Un .SECONDS)
+      .max mumS ze(localCac MaxS zeFlag)
+      .bu ld[Enr ch ntKey, Future[DynMap]]()
 
-    new LocalCache[EnrichmentKey, DynMap](
-      underlying = underlying,
-      statsReceiver = statsReceiver.scope("enricherLocalCache"))
+    new LocalCac [Enr ch ntKey, DynMap](
+      underly ng = underly ng,
+      statsRece ver = statsRece ver.scope("enr c rLocalCac "))
   }
 }

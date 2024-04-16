@@ -1,21 +1,21 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/configapi/registry",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/request",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/mixer",
-        "stitch/stitch-core",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/conf gap /reg stry",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/marshall ng/request",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/p pel ne",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/p pel ne/m xer",
+        "st ch/st ch-core",
     ],
     exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/configapi/registry",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/request",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/mixer",
-        "stitch/stitch-core",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/conf gap /reg stry",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/marshall ng/request",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/p pel ne",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/p pel ne/m xer",
+        "st ch/st ch-core",
     ],
 )

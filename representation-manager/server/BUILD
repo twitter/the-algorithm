@@ -1,21 +1,21 @@
-jvm_binary(
-    name = "bin",
-    basename = "representation-manager",
-    main = "com.twitter.representation_manager.RepresentationManagerFedServerMain",
+jvm_b nary(
+    na  = "b n",
+    basena  = "representat on-manager",
+    ma n = "com.tw ter.representat on_manager.Representat onManagerFedServerMa n",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finatra/inject/inject-logback/src/main/scala",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "representation-manager/server/src/main/resources",
-        "representation-manager/server/src/main/scala/com/twitter/representation_manager",
-        "twitter-server/logback-classic/src/main/scala",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "f natra/ nject/ nject-logback/src/ma n/scala",
+        "loglens/loglens-logback/src/ma n/scala/com/tw ter/loglens/logback",
+        "representat on-manager/server/src/ma n/res ces",
+        "representat on-manager/server/src/ma n/scala/com/tw ter/representat on_manager",
+        "tw ter-server/logback-class c/src/ma n/scala",
     ],
 )
 
-#  Aurora Workflows build phase convention requires a jvm_app named with ${project-name}-app
+#  Aurora Workflows bu ld phase convent on requ res a jvm_app na d w h ${project-na }-app
 jvm_app(
-    name = "representation-manager-app",
-    archive = "zip",
-    binary = ":bin",
+    na  = "representat on-manager-app",
+    arch ve = "z p",
+    b nary = ":b n",
 )

@@ -1,111 +1,111 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .Param
 
-object RelatedTweetProducerBasedParams {
+object RelatedT etProducerBasedParams {
 
   // UTG params
   object EnableUTGParam
       extends FSParam[Boolean](
-        name = "related_tweet_producer_based_enable_utg",
+        na  = "related_t et_producer_based_enable_utg",
         default = false
       )
 
-  // SimClusters params
-  object EnableSimClustersANNParam
+  // S mClusters params
+  object EnableS mClustersANNParam
       extends FSParam[Boolean](
-        name = "related_tweet_producer_based_enable_simclusters",
+        na  = "related_t et_producer_based_enable_s mclusters",
         default = true
       )
 
-  // Filter params
-  object SimClustersMinScoreParam
+  // F lter params
+  object S mClustersM nScoreParam
       extends FSBoundedParam[Double](
-        name = "related_tweet_producer_based_filter_simclusters_min_score",
+        na  = "related_t et_producer_based_f lter_s mclusters_m n_score",
         default = 0.0,
-        min = 0.0,
+        m n = 0.0,
         max = 1.0
       )
 
-  // Experimental SimClusters ANN params
-  object EnableExperimentalSimClustersANNParam
+  // Exper  ntal S mClusters ANN params
+  object EnableExper  ntalS mClustersANNParam
       extends FSParam[Boolean](
-        name = "related_tweet_producer_based_enable_experimental_simclusters_ann",
+        na  = "related_t et_producer_based_enable_exper  ntal_s mclusters_ann",
         default = false
       )
 
-  // SimClusters ANN cluster 1 params
-  object EnableSimClustersANN1Param
+  // S mClusters ANN cluster 1 params
+  object EnableS mClustersANN1Param
       extends FSParam[Boolean](
-        name = "related_tweet_producer_based_enable_simclusters_ann_1",
+        na  = "related_t et_producer_based_enable_s mclusters_ann_1",
         default = false
       )
 
-  // SimClusters ANN cluster 2 params
-  object EnableSimClustersANN2Param
+  // S mClusters ANN cluster 2 params
+  object EnableS mClustersANN2Param
       extends FSParam[Boolean](
-        name = "related_tweet_producer_based_enable_simclusters_ann_2",
+        na  = "related_t et_producer_based_enable_s mclusters_ann_2",
         default = false
       )
 
-  // SimClusters ANN cluster 3 params
-  object EnableSimClustersANN3Param
+  // S mClusters ANN cluster 3 params
+  object EnableS mClustersANN3Param
       extends FSParam[Boolean](
-        name = "related_tweet_producer_based_enable_simclusters_ann_3",
+        na  = "related_t et_producer_based_enable_s mclusters_ann_3",
         default = false
       )
 
-  // SimClusters ANN cluster 3 params
-  object EnableSimClustersANN5Param
+  // S mClusters ANN cluster 3 params
+  object EnableS mClustersANN5Param
       extends FSParam[Boolean](
-        name = "related_tweet_producer_based_enable_simclusters_ann_5",
+        na  = "related_t et_producer_based_enable_s mclusters_ann_5",
         default = false
       )
 
-  // SimClusters ANN cluster 4 params
-  object EnableSimClustersANN4Param
+  // S mClusters ANN cluster 4 params
+  object EnableS mClustersANN4Param
       extends FSParam[Boolean](
-        name = "related_tweet_producer_based_enable_simclusters_ann_4",
+        na  = "related_t et_producer_based_enable_s mclusters_ann_4",
         default = false
       )
-  val AllParams: Seq[Param[_] with FSName] = Seq(
+  val AllParams: Seq[Param[_] w h FSNa ] = Seq(
     EnableUTGParam,
-    EnableSimClustersANNParam,
-    EnableSimClustersANN1Param,
-    EnableSimClustersANN2Param,
-    EnableSimClustersANN3Param,
-    EnableSimClustersANN5Param,
-    EnableSimClustersANN4Param,
-    EnableExperimentalSimClustersANNParam,
-    SimClustersMinScoreParam
+    EnableS mClustersANNParam,
+    EnableS mClustersANN1Param,
+    EnableS mClustersANN2Param,
+    EnableS mClustersANN3Param,
+    EnableS mClustersANN5Param,
+    EnableS mClustersANN4Param,
+    EnableExper  ntalS mClustersANNParam,
+    S mClustersM nScoreParam
   )
 
-  lazy val config: BaseConfig = {
+  lazy val conf g: BaseConf g = {
 
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
+    val booleanOverr des = FeatureSw chOverr deUt l.getBooleanFSOverr des(
       EnableUTGParam,
-      EnableSimClustersANNParam,
-      EnableSimClustersANN1Param,
-      EnableSimClustersANN2Param,
-      EnableSimClustersANN3Param,
-      EnableSimClustersANN5Param,
-      EnableSimClustersANN4Param,
-      EnableExperimentalSimClustersANNParam
+      EnableS mClustersANNParam,
+      EnableS mClustersANN1Param,
+      EnableS mClustersANN2Param,
+      EnableS mClustersANN3Param,
+      EnableS mClustersANN5Param,
+      EnableS mClustersANN4Param,
+      EnableExper  ntalS mClustersANNParam
     )
 
-    val doubleOverrides = FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(
-      SimClustersMinScoreParam
+    val doubleOverr des = FeatureSw chOverr deUt l.getBoundedDoubleFSOverr des(
+      S mClustersM nScoreParam
     )
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(doubleOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set(booleanOverr des: _*)
+      .set(doubleOverr des: _*)
+      .bu ld()
   }
 }

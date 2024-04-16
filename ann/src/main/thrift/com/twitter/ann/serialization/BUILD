@@ -1,10 +1,10 @@
-create_thrift_libraries(
-    base_name = "serialization",
-    sources = ["*.thrift"],
+create_thr ft_l brar es(
+    base_na  = "ser al zat on",
+    s ces = ["*.thr ft"],
     platform = "java8",
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
     dependency_roots = [
-        "src/thrift/com/twitter/ml/api:embedding",
+        "src/thr ft/com/tw ter/ml/ap :embedd ng",
     ],
     generate_languages = [
         "java",

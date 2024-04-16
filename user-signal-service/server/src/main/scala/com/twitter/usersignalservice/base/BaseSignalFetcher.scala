@@ -1,90 +1,90 @@
-package com.twitter.usersignalservice
+package com.tw ter.users gnalserv ce
 package base
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.ReadableStore
-import com.twitter.usersignalservice.thriftscala.Signal
-import com.twitter.util.Future
-import com.twitter.twistly.common.UserId
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.frigate.common.base.Stats
-import com.twitter.conversions.DurationOps._
-import com.twitter.usersignalservice.thriftscala.ClientIdentifier
-import com.twitter.util.Duration
-import com.twitter.util.Timer
-import java.io.Serializable
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.users gnalserv ce.thr ftscala.S gnal
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.tw stly.common.User d
+ mport com.tw ter.users gnalserv ce.thr ftscala.S gnalType
+ mport com.tw ter.fr gate.common.base.Stats
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.users gnalserv ce.thr ftscala.Cl ent dent f er
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.T  r
+ mport java. o.Ser al zable
 
 case class Query(
-  userId: UserId,
-  signalType: SignalType,
-  maxResults: Option[Int],
-  clientId: ClientIdentifier = ClientIdentifier.Unknown)
+  user d: User d,
+  s gnalType: S gnalType,
+  maxResults: Opt on[ nt],
+  cl ent d: Cl ent dent f er = Cl ent dent f er.Unknown)
 
 /**
- * A trait that defines a standard interface for the signal fetcher
+ * A tra  that def nes a standard  nterface for t  s gnal fetc r
  *
- * Extends this only when all other traits extending BaseSignalFetcher do not apply to
- * your use case.
+ * Extends t  only w n all ot r tra s extend ng BaseS gnalFetc r do not apply to
+ * y  use case.
  */
-trait BaseSignalFetcher extends ReadableStore[Query, Seq[Signal]] {
-  import BaseSignalFetcher._
+tra  BaseS gnalFetc r extends ReadableStore[Query, Seq[S gnal]] {
+   mport BaseS gnalFetc r._
 
   /**
-   * This RawSignalType is the output type of `getRawSignals` and the input type of `process`.
-   * Override it as your own raw signal type to maintain meta data which can be used in the
+   * T  RawS gnalType  s t  output type of `getRawS gnals` and t   nput type of `process`.
+   * Overr de   as y  own raw s gnal type to ma nta n  ta data wh ch can be used  n t 
    * step of `process`.
-   * Note that the RawSignalType is an intermediate data type intended to be small to avoid
-   * big data chunks being passed over functions or being memcached.
+   * Note that t  RawS gnalType  s an  nter d ate data type  ntended to be small to avo d
+   * b g data chunks be ng passed over funct ons or be ng  mcac d.
    */
-  type RawSignalType <: Serializable
+  type RawS gnalType <: Ser al zable
 
-  def name: String
-  def statsReceiver: StatsReceiver
-  def timer: Timer
+  def na : Str ng
+  def statsRece ver: StatsRece ver
+  def t  r: T  r
 
   /**
-   * This function is called by the top level class to fetch signals. It executes the pipeline to
-   * fetch raw signals, process and transform the signals. Exceptions and timeout control are
-   * handled here.
+   * T  funct on  s called by t  top level class to fetch s gnals.   executes t  p pel ne to
+   * fetch raw s gnals, process and transform t  s gnals. Except ons and t  out control are
+   * handled  re.
    * @param query
-   * @return Future[Option[Seq[Signal]]]
+   * @return Future[Opt on[Seq[S gnal]]]
    */
-  override def get(query: Query): Future[Option[Seq[Signal]]] = {
-    val clientStatsReceiver = statsReceiver.scope(query.clientId.name).scope(query.signalType.name)
+  overr de def get(query: Query): Future[Opt on[Seq[S gnal]]] = {
+    val cl entStatsRece ver = statsRece ver.scope(query.cl ent d.na ).scope(query.s gnalType.na )
     Stats
-      .trackItems(clientStatsReceiver) {
-        val rawSignals = getRawSignals(query.userId)
-        val signals = process(query, rawSignals)
-        signals
-      }.raiseWithin(Timeout)(timer).handle {
+      .track ems(cl entStatsRece ver) {
+        val rawS gnals = getRawS gnals(query.user d)
+        val s gnals = process(query, rawS gnals)
+        s gnals
+      }.ra seW h n(T  out)(t  r).handle {
         case e =>
-          clientStatsReceiver.scope("FetcherExceptions").counter(e.getClass.getCanonicalName).incr()
+          cl entStatsRece ver.scope("Fetc rExcept ons").counter(e.getClass.getCanon calNa ). ncr()
           EmptyResponse
       }
   }
 
   /**
-   * Override this function to define how to fetch the raw signals from any store
-   * Note that the RawSignalType is an intermediate data type intended to be small to avoid
-   * big data chunks being passed over functions or being memcached.
-   * @param userId
-   * @return Future[Option[Seq[RawSignalType]]]
+   * Overr de t  funct on to def ne how to fetch t  raw s gnals from any store
+   * Note that t  RawS gnalType  s an  nter d ate data type  ntended to be small to avo d
+   * b g data chunks be ng passed over funct ons or be ng  mcac d.
+   * @param user d
+   * @return Future[Opt on[Seq[RawS gnalType]]]
    */
-  def getRawSignals(userId: UserId): Future[Option[Seq[RawSignalType]]]
+  def getRawS gnals(user d: User d): Future[Opt on[Seq[RawS gnalType]]]
 
   /**
-   * Override this function to define how to process the raw signals and transform them to signals.
+   * Overr de t  funct on to def ne how to process t  raw s gnals and transform t m to s gnals.
    * @param query
-   * @param rawSignals
-   * @return Future[Option[Seq[Signal]]]
+   * @param rawS gnals
+   * @return Future[Opt on[Seq[S gnal]]]
    */
   def process(
     query: Query,
-    rawSignals: Future[Option[Seq[RawSignalType]]]
-  ): Future[Option[Seq[Signal]]]
+    rawS gnals: Future[Opt on[Seq[RawS gnalType]]]
+  ): Future[Opt on[Seq[S gnal]]]
 }
 
-object BaseSignalFetcher {
-  val Timeout: Duration = 20.milliseconds
-  val EmptyResponse: Option[Seq[Signal]] = Some(Seq.empty[Signal])
+object BaseS gnalFetc r {
+  val T  out: Durat on = 20.m ll seconds
+  val EmptyResponse: Opt on[Seq[S gnal]] = So (Seq.empty[S gnal])
 }

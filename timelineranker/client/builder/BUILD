@@ -1,6 +1,6 @@
 target(
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "timelineranker/client/builder/src/main/scala",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "t  l neranker/cl ent/bu lder/src/ma n/scala",
     ],
 )

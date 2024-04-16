@@ -1,17 +1,17 @@
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendations
+na space java com.tw ter.follow_recom ndat ons.thr ftjava
+#@na space scala com.tw ter.follow_recom ndat ons.thr ftscala
+#@na space strato com.tw ter.follow_recom ndat ons
 
-include "com/twitter/suggests/controller_data/controller_data.thrift"
-include "display_location.thrift"
+ nclude "com/tw ter/suggests/controller_data/controller_data.thr ft"
+ nclude "d splay_locat on.thr ft"
 
-// struct used for tracking/attribution purposes in our offline pipelines
-struct TrackingToken {
-  // trace-id of the request
-  1: required i64 sessionId (personalDataType='SessionId')
-  2: optional display_location.DisplayLocation displayLocation
-  // 64-bit encoded binary attributes of our recommendation
-  3: optional controller_data.ControllerData controllerData
-  // WTF Algorithm Id (backward compatibility)
-  4: optional i32 algoId
+// struct used for track ng/attr but on purposes  n   offl ne p pel nes
+struct Track ngToken {
+  // trace- d of t  request
+  1: requ red  64 sess on d (personalDataType='Sess on d')
+  2: opt onal d splay_locat on.D splayLocat on d splayLocat on
+  // 64-b  encoded b nary attr butes of   recom ndat on
+  3: opt onal controller_data.ControllerData controllerData
+  // WTF Algor hm  d (backward compat b l y)
+  4: opt onal  32 algo d
 }(hasPersonalData='true')

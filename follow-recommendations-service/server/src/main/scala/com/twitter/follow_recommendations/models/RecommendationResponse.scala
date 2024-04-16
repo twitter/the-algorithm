@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.models
+package com.tw ter.follow_recom ndat ons.models
 
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.common.models.Recommendation
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
+ mport com.tw ter.follow_recom ndat ons.{thr ftscala => t}
+ mport com.tw ter.follow_recom ndat ons.logg ng.{thr ftscala => offl ne}
+ mport com.tw ter.follow_recom ndat ons.common.models.Recom ndat on
+ mport com.tw ter.product_m xer.core.model.marshall ng.HasMarshall ng
 
-case class RecommendationResponse(recommendations: Seq[Recommendation]) extends HasMarshalling {
-  lazy val toThrift: t.RecommendationResponse =
-    t.RecommendationResponse(recommendations.map(_.toThrift))
+case class Recom ndat onResponse(recom ndat ons: Seq[Recom ndat on]) extends HasMarshall ng {
+  lazy val toThr ft: t.Recom ndat onResponse =
+    t.Recom ndat onResponse(recom ndat ons.map(_.toThr ft))
 
-  lazy val toOfflineThrift: offline.OfflineRecommendationResponse =
-    offline.OfflineRecommendationResponse(recommendations.map(_.toOfflineThrift))
+  lazy val toOffl neThr ft: offl ne.Offl neRecom ndat onResponse =
+    offl ne.Offl neRecom ndat onResponse(recom ndat ons.map(_.toOffl neThr ft))
 }

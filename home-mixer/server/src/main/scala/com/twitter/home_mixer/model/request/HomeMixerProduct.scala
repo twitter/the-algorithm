@@ -1,40 +1,40 @@
-package com.twitter.home_mixer.model.request
+package com.tw ter.ho _m xer.model.request
 
-import com.twitter.product_mixer.core.model.common.identifier.ProductIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.Product
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Product dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Product
 
 /**
- * Identifier names on products can be used to create Feature Switch rules by product,
- * which useful if bucketing occurs in a component shared by multiple products.
- * @see [[Product.identifier]]
+ *  dent f er na s on products can be used to create Feature Sw ch rules by product,
+ * wh ch useful  f bucket ng occurs  n a component shared by mult ple products.
+ * @see [[Product. dent f er]]
  */
 
-case object FollowingProduct extends Product {
-  override val identifier: ProductIdentifier = ProductIdentifier("Following")
-  override val stringCenterProject: Option[String] = Some("timelinemixer")
+case object Follow ngProduct extends Product {
+  overr de val  dent f er: Product dent f er = Product dent f er("Follow ng")
+  overr de val str ngCenterProject: Opt on[Str ng] = So ("t  l nem xer")
 }
 
-case object ForYouProduct extends Product {
-  override val identifier: ProductIdentifier = ProductIdentifier("ForYou")
-  override val stringCenterProject: Option[String] = Some("timelinemixer")
+case object For Product extends Product {
+  overr de val  dent f er: Product dent f er = Product dent f er("For ")
+  overr de val str ngCenterProject: Opt on[Str ng] = So ("t  l nem xer")
 }
 
-case object ScoredTweetsProduct extends Product {
-  override val identifier: ProductIdentifier = ProductIdentifier("ScoredTweets")
-  override val stringCenterProject: Option[String] = Some("timelinemixer")
+case object ScoredT etsProduct extends Product {
+  overr de val  dent f er: Product dent f er = Product dent f er("ScoredT ets")
+  overr de val str ngCenterProject: Opt on[Str ng] = So ("t  l nem xer")
 }
 
-case object ListTweetsProduct extends Product {
-  override val identifier: ProductIdentifier = ProductIdentifier("ListTweets")
-  override val stringCenterProject: Option[String] = Some("timelinemixer")
+case object L stT etsProduct extends Product {
+  overr de val  dent f er: Product dent f er = Product dent f er("L stT ets")
+  overr de val str ngCenterProject: Opt on[Str ng] = So ("t  l nem xer")
 }
 
-case object ListRecommendedUsersProduct extends Product {
-  override val identifier: ProductIdentifier = ProductIdentifier("ListRecommendedUsers")
-  override val stringCenterProject: Option[String] = Some("timelinemixer")
+case object L stRecom ndedUsersProduct extends Product {
+  overr de val  dent f er: Product dent f er = Product dent f er("L stRecom ndedUsers")
+  overr de val str ngCenterProject: Opt on[Str ng] = So ("t  l nem xer")
 }
 
-case object SubscribedProduct extends Product {
-  override val identifier: ProductIdentifier = ProductIdentifier("Subscribed")
-  override val stringCenterProject: Option[String] = Some("timelinemixer")
+case object Subscr bedProduct extends Product {
+  overr de val  dent f er: Product dent f er = Product dent f er("Subscr bed")
+  overr de val str ngCenterProject: Opt on[Str ng] = So ("t  l nem xer")
 }

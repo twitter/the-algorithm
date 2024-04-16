@@ -1,293 +1,293 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+# nclude "tensorflow/core/fra work/op.h"
+# nclude "tensorflow/core/fra work/shape_ nference.h"
+# nclude "tensorflow/core/fra work/op_kernel.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
+# nclude <twml.h>
+# nclude "tensorflow_ut ls.h"
 
-using namespace tensorflow;
+us ng na space tensorflow;
 
 
-void ComputeDiscretizers(OpKernelContext* context, const bool return_bin_indices = false) {
-  const Tensor& keys = context->input(0);
-  const Tensor& vals = context->input(1);
-  const Tensor& bin_ids = context->input(2);
-  const Tensor& bin_vals = context->input(3);
-  const Tensor& feature_offsets = context->input(4);
+vo d ComputeD scret zers(OpKernelContext* context, const bool return_b n_ nd ces = false) {
+  const Tensor& keys = context-> nput(0);
+  const Tensor& vals = context-> nput(1);
+  const Tensor& b n_ ds = context-> nput(2);
+  const Tensor& b n_vals = context-> nput(3);
+  const Tensor& feature_offsets = context-> nput(4);
 
   Tensor* new_keys = nullptr;
-  OP_REQUIRES_OK(context, context->allocate_output(0, keys.shape(),
+  OP_REQU RES_OK(context, context->allocate_output(0, keys.shape(),
                                                    &new_keys));
   Tensor* new_vals = nullptr;
-  OP_REQUIRES_OK(context, context->allocate_output(1, keys.shape(),
+  OP_REQU RES_OK(context, context->allocate_output(1, keys.shape(),
                                                    &new_vals));
 
   try {
     twml::Tensor out_keys_ = TFTensor_to_twml_tensor(*new_keys);
     twml::Tensor out_vals_ = TFTensor_to_twml_tensor(*new_vals);
 
-    const twml::Tensor in_keys_ = TFTensor_to_twml_tensor(keys);
-    const twml::Tensor in_vals_ = TFTensor_to_twml_tensor(vals);
-    const twml::Tensor bin_ids_ = TFTensor_to_twml_tensor(bin_ids);
-    const twml::Tensor bin_vals_ = TFTensor_to_twml_tensor(bin_vals);
+    const twml::Tensor  n_keys_ = TFTensor_to_twml_tensor(keys);
+    const twml::Tensor  n_vals_ = TFTensor_to_twml_tensor(vals);
+    const twml::Tensor b n_ ds_ = TFTensor_to_twml_tensor(b n_ ds);
+    const twml::Tensor b n_vals_ = TFTensor_to_twml_tensor(b n_vals);
     const twml::Tensor feature_offsets_ = TFTensor_to_twml_tensor(feature_offsets);
-    twml::mdlInfer(out_keys_, out_vals_,
-                   in_keys_, in_vals_,
-                   bin_ids_, bin_vals_,
+    twml::mdl nfer(out_keys_, out_vals_,
+                    n_keys_,  n_vals_,
+                   b n_ ds_, b n_vals_,
                    feature_offsets_,
-                   return_bin_indices);
-  }  catch (const std::exception &e) {
-    context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+                   return_b n_ nd ces);
+  }  catch (const std::except on &e) {
+    context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
   }
 }
 
-REGISTER_OP("MDL")
+REG STER_OP("MDL")
 .Attr("T: {float, double}")
-.Input("keys: int64")
-.Input("vals: T")
-.Input("bin_ids: int64")
-.Input("bin_vals: T")
-.Input("feature_offsets: int64")
-.Output("new_keys: int64")
+. nput("keys:  nt64")
+. nput("vals: T")
+. nput("b n_ ds:  nt64")
+. nput("b n_vals: T")
+. nput("feature_offsets:  nt64")
+.Output("new_keys:  nt64")
 .Output("new_vals: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    // TODO: check sizes
-    c->set_output(0, c->input(0));
-    c->set_output(1, c->input(0));
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
+    // TODO: c ck s zes
+    c->set_output(0, c-> nput(0));
+    c->set_output(1, c-> nput(0));
     return Status::OK();
 }).Doc(R"doc(
 
-This operation discretizes a tensor containing continuous features.
+T  operat on d scret zes a tensor conta n ng cont nuous features.
 
-Input
-  keys: A tensor containing feature ids.
-  vals: A tensor containing values at corresponding feature ids.
-  bin_ids: A tensor containing the discretized feature id for a given bin.
-  bin_vals: A tensor containing the bin boundaries for value at a given feature id.
-  feature_offsets: Specifies the starting location of bins for a given feature id.
+ nput
+  keys: A tensor conta n ng feature  ds.
+  vals: A tensor conta n ng values at correspond ng feature  ds.
+  b n_ ds: A tensor conta n ng t  d scret zed feature  d for a g ven b n.
+  b n_vals: A tensor conta n ng t  b n boundar es for value at a g ven feature  d.
+  feature_offsets: Spec f es t  start ng locat on of b ns for a g ven feature  d.
 
-Expected Sizes:
+Expected S zes:
   keys, vals: [N].
-  bin_ids, bin_vals: [sum_{n=1}^{n=num_classes} num_bins(n)]
+  b n_ ds, b n_vals: [sum_{n=1}^{n=num_classes} num_b ns(n)]
 
-  where
-  - N is the number of sparse features in the current batch.
-  - [0, num_classes) represents the range each feature id can take.
-  - num_bins(n) is the number of bins for a given feature id.
-  - If num_bins is fixed, then xs, ys are of size [num_classes * num_bins].
+  w re
+  - N  s t  number of sparse features  n t  current batch.
+  - [0, num_classes) represents t  range each feature  d can take.
+  - num_b ns(n)  s t  number of b ns for a g ven feature  d.
+  -  f num_b ns  s f xed, t n xs, ys are of s ze [num_classes * num_b ns].
 
 Expected Types:
-  keys, bin_ids: int64.
+  keys, b n_ ds:  nt64.
   vals: float or double.
-  bin_vals: same as vals.
+  b n_vals: sa  as vals.
 
-Before using MDL, you should use a hashmap to get the intersection of
-input `keys` with the features that MDL knows about:
+Before us ng MDL,   should use a hashmap to get t   ntersect on of
+ nput `keys` w h t  features that MDL knows about:
 ::
-  keys, vals # keys can be in range [0, 1 << 63)
-  mdl_keys = hashmap.find(keys) # mdl_keys are now in range [0, num_classes_from_calibration)
-  mdl_keys = where (mdl_keys != -1) # Ignore keys not found
+  keys, vals # keys can be  n range [0, 1 << 63)
+  mdl_keys = hashmap.f nd(keys) # mdl_keys are now  n range [0, num_classes_from_cal brat on)
+  mdl_keys = w re (mdl_keys != -1) #  gnore keys not found
 
 
-Inside MDL, the following is happening:
+ ns de MDL, t  follow ng  s happen ng:
 ::
-  start = offsets[key[i]]
-  end = offsets[key[i] + 1]
-  idx = binary_search for val[i] in [bin_vals[start], bin_vals[end]]
+  start = offsets[key[ ]]
+  end = offsets[key[ ] + 1]
+   dx = b nary_search for val[ ]  n [b n_vals[start], b n_vals[end]]
 
-  result_keys[i] = bin_ids[idx]
-  val[i] = 1 # binary feature value
+  result_keys[ ] = b n_ ds[ dx]
+  val[ ] = 1 # b nary feature value
 
 Outputs
-  new_keys: The discretized feature ids with same shape and size as keys.
-  new_vals: The discretized values with the same shape and size as vals.
+  new_keys: T  d scret zed feature  ds w h sa  shape and s ze as keys.
+  new_vals: T  d scret zed values w h t  sa  shape and s ze as vals.
 
 )doc");
 
 
-template<typename T>
-class MDL : public OpKernel {
- public:
-  explicit MDL(OpKernelConstruction* context) : OpKernel(context) {
+template<typena  T>
+class MDL : publ c OpKernel {
+ publ c:
+  expl c  MDL(OpKernelConstruct on* context) : OpKernel(context) {
   }
 
-  void Compute(OpKernelContext* context) override {
-    ComputeDiscretizers(context);
+  vo d Compute(OpKernelContext* context) overr de {
+    ComputeD scret zers(context);
   }
 };
 
-REGISTER_OP("PercentileDiscretizer")
+REG STER_OP("Percent leD scret zer")
 .Attr("T: {float, double}")
-.Input("keys: int64")
-.Input("vals: T")
-.Input("bin_ids: int64")
-.Input("bin_vals: T")
-.Input("feature_offsets: int64")
-.Output("new_keys: int64")
+. nput("keys:  nt64")
+. nput("vals: T")
+. nput("b n_ ds:  nt64")
+. nput("b n_vals: T")
+. nput("feature_offsets:  nt64")
+.Output("new_keys:  nt64")
 .Output("new_vals: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    // TODO: check sizes
-    c->set_output(0, c->input(0));
-    c->set_output(1, c->input(0));
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
+    // TODO: c ck s zes
+    c->set_output(0, c-> nput(0));
+    c->set_output(1, c-> nput(0));
     return Status::OK();
 }).Doc(R"doc(
 
-This operation discretizes a tensor containing continuous features.
+T  operat on d scret zes a tensor conta n ng cont nuous features.
 
-Input
-  keys: A tensor containing feature ids.
-  vals: A tensor containing values at corresponding feature ids.
-  bin_ids: A tensor containing the discretized feature id for a given bin.
-  bin_vals: A tensor containing the bin boundaries for value at a given feature id.
-  feature_offsets: Specifies the starting location of bins for a given feature id.
+ nput
+  keys: A tensor conta n ng feature  ds.
+  vals: A tensor conta n ng values at correspond ng feature  ds.
+  b n_ ds: A tensor conta n ng t  d scret zed feature  d for a g ven b n.
+  b n_vals: A tensor conta n ng t  b n boundar es for value at a g ven feature  d.
+  feature_offsets: Spec f es t  start ng locat on of b ns for a g ven feature  d.
 
-Expected Sizes:
+Expected S zes:
   keys, vals: [N].
-  bin_ids, bin_vals: [sum_{n=1}^{n=num_classes} num_bins(n)]
+  b n_ ds, b n_vals: [sum_{n=1}^{n=num_classes} num_b ns(n)]
 
-  where
-  - N is the number of sparse features in the current batch.
-  - [0, num_classes) represents the range each feature id can take.
-  - num_bins(n) is the number of bins for a given feature id.
-  - If num_bins is fixed, then xs, ys are of size [num_classes * num_bins].
+  w re
+  - N  s t  number of sparse features  n t  current batch.
+  - [0, num_classes) represents t  range each feature  d can take.
+  - num_b ns(n)  s t  number of b ns for a g ven feature  d.
+  -  f num_b ns  s f xed, t n xs, ys are of s ze [num_classes * num_b ns].
 
 Expected Types:
-  keys, bin_ids: int64.
+  keys, b n_ ds:  nt64.
   vals: float or double.
-  bin_vals: same as vals.
+  b n_vals: sa  as vals.
 
-Before using PercentileDiscretizer, you should use a hashmap to get the intersection of
-input `keys` with the features that PercentileDiscretizer knows about:
+Before us ng Percent leD scret zer,   should use a hashmap to get t   ntersect on of
+ nput `keys` w h t  features that Percent leD scret zer knows about:
 ::
-  keys, vals # keys can be in range [0, 1 << 63)
-  percentile_discretizer_keys = hashmap.find(keys) # percentile_discretizer_keys are now in range [0, num_classes_from_calibration)
-  percentile_discretizer_keys = where (percentile_discretizer_keys != -1) # Ignore keys not found
+  keys, vals # keys can be  n range [0, 1 << 63)
+  percent le_d scret zer_keys = hashmap.f nd(keys) # percent le_d scret zer_keys are now  n range [0, num_classes_from_cal brat on)
+  percent le_d scret zer_keys = w re (percent le_d scret zer_keys != -1) #  gnore keys not found
 
 
-Inside PercentileDiscretizer, the following is happening:
+ ns de Percent leD scret zer, t  follow ng  s happen ng:
 ::
-  start = offsets[key[i]]
-  end = offsets[key[i] + 1]
-  idx = binary_search for val[i] in [bin_vals[start], bin_vals[end]]
+  start = offsets[key[ ]]
+  end = offsets[key[ ] + 1]
+   dx = b nary_search for val[ ]  n [b n_vals[start], b n_vals[end]]
 
-  result_keys[i] = bin_ids[idx]
-  val[i] = 1 # binary feature value
+  result_keys[ ] = b n_ ds[ dx]
+  val[ ] = 1 # b nary feature value
 
 Outputs
-  new_keys: The discretized feature ids with same shape and size as keys.
-  new_vals: The discretized values with the same shape and size as vals.
+  new_keys: T  d scret zed feature  ds w h sa  shape and s ze as keys.
+  new_vals: T  d scret zed values w h t  sa  shape and s ze as vals.
 
 )doc");
 
-template<typename T>
-class PercentileDiscretizer : public OpKernel {
- public:
-  explicit PercentileDiscretizer(OpKernelConstruction* context) : OpKernel(context) {
+template<typena  T>
+class Percent leD scret zer : publ c OpKernel {
+ publ c:
+  expl c  Percent leD scret zer(OpKernelConstruct on* context) : OpKernel(context) {
   }
 
-  void Compute(OpKernelContext* context) override {
-    ComputeDiscretizers(context);
+  vo d Compute(OpKernelContext* context) overr de {
+    ComputeD scret zers(context);
   }
 };
 
 
-REGISTER_OP("PercentileDiscretizerBinIndices")
+REG STER_OP("Percent leD scret zerB n nd ces")
 .Attr("T: {float, double}")
-.Input("keys: int64")
-.Input("vals: T")
-.Input("bin_ids: int64")
-.Input("bin_vals: T")
-.Input("feature_offsets: int64")
-.Output("new_keys: int64")
+. nput("keys:  nt64")
+. nput("vals: T")
+. nput("b n_ ds:  nt64")
+. nput("b n_vals: T")
+. nput("feature_offsets:  nt64")
+.Output("new_keys:  nt64")
 .Output("new_vals: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    // TODO: check sizes
-    c->set_output(0, c->input(0));
-    c->set_output(1, c->input(0));
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
+    // TODO: c ck s zes
+    c->set_output(0, c-> nput(0));
+    c->set_output(1, c-> nput(0));
     return Status::OK();
 }).Doc(R"doc(
 
-This operation discretizes a tensor containing continuous features.
-If the feature id and bin id of the discretized value is the same on multiple runs, they
-will always be assigned to the same output key and value, regardless of the bin_id assigned during
-calibration.
+T  operat on d scret zes a tensor conta n ng cont nuous features.
+ f t  feature  d and b n  d of t  d scret zed value  s t  sa  on mult ple runs, t y
+w ll always be ass gned to t  sa  output key and value, regardless of t  b n_ d ass gned dur ng
+cal brat on.
 
-Input
-  keys: A tensor containing feature ids.
-  vals: A tensor containing values at corresponding feature ids.
-  bin_ids: A tensor containing the discretized feature id for a given bin.
-  bin_vals: A tensor containing the bin boundaries for value at a given feature id.
-  feature_offsets: Specifies the starting location of bins for a given feature id.
+ nput
+  keys: A tensor conta n ng feature  ds.
+  vals: A tensor conta n ng values at correspond ng feature  ds.
+  b n_ ds: A tensor conta n ng t  d scret zed feature  d for a g ven b n.
+  b n_vals: A tensor conta n ng t  b n boundar es for value at a g ven feature  d.
+  feature_offsets: Spec f es t  start ng locat on of b ns for a g ven feature  d.
 
-Expected Sizes:
+Expected S zes:
   keys, vals: [N].
-  bin_ids, bin_vals: [sum_{n=1}^{n=num_classes} num_bins(n)]
+  b n_ ds, b n_vals: [sum_{n=1}^{n=num_classes} num_b ns(n)]
 
-  where
-  - N is the number of sparse features in the current batch.
-  - [0, num_classes) represents the range each feature id can take.
-  - num_bins(n) is the number of bins for a given feature id.
-  - If num_bins is fixed, then xs, ys are of size [num_classes * num_bins].
+  w re
+  - N  s t  number of sparse features  n t  current batch.
+  - [0, num_classes) represents t  range each feature  d can take.
+  - num_b ns(n)  s t  number of b ns for a g ven feature  d.
+  -  f num_b ns  s f xed, t n xs, ys are of s ze [num_classes * num_b ns].
 
 Expected Types:
-  keys, bin_ids: int64.
+  keys, b n_ ds:  nt64.
   vals: float or double.
-  bin_vals: same as vals.
+  b n_vals: sa  as vals.
 
-Before using PercentileDiscretizerBinIndices, you should use a hashmap to get the intersection of
-input `keys` with the features that PercentileDiscretizerBinIndices knows about:
+Before us ng Percent leD scret zerB n nd ces,   should use a hashmap to get t   ntersect on of
+ nput `keys` w h t  features that Percent leD scret zerB n nd ces knows about:
 ::
-  keys, vals # keys can be in range [0, 1 << 63)
-  percentile_discretizer_keys = hashmap.find(keys) # percentile_discretizer_keys are now in range [0, num_classes_from_calibration)
-  percentile_discretizer_keys = where (percentile_discretizer_keys != -1) # Ignore keys not found
+  keys, vals # keys can be  n range [0, 1 << 63)
+  percent le_d scret zer_keys = hashmap.f nd(keys) # percent le_d scret zer_keys are now  n range [0, num_classes_from_cal brat on)
+  percent le_d scret zer_keys = w re (percent le_d scret zer_keys != -1) #  gnore keys not found
 
 
-Inside PercentileDiscretizerBinIndices, the following is happening:
+ ns de Percent leD scret zerB n nd ces, t  follow ng  s happen ng:
 ::
-  start = offsets[key[i]]
-  end = offsets[key[i] + 1]
-  idx = binary_search for val[i] in [bin_vals[start], bin_vals[end]]
+  start = offsets[key[ ]]
+  end = offsets[key[ ] + 1]
+   dx = b nary_search for val[ ]  n [b n_vals[start], b n_vals[end]]
 
-  result_keys[i] = bin_ids[idx]
-  val[i] = 1 # binary feature value
+  result_keys[ ] = b n_ ds[ dx]
+  val[ ] = 1 # b nary feature value
 
 Outputs
-  new_keys: The discretized feature ids with same shape and size as keys.
-  new_vals: The discretized values with the same shape and size as vals.
+  new_keys: T  d scret zed feature  ds w h sa  shape and s ze as keys.
+  new_vals: T  d scret zed values w h t  sa  shape and s ze as vals.
 
 )doc");
 
-template<typename T>
-class PercentileDiscretizerBinIndices : public OpKernel {
- public:
-  explicit PercentileDiscretizerBinIndices(OpKernelConstruction* context) : OpKernel(context) {
+template<typena  T>
+class Percent leD scret zerB n nd ces : publ c OpKernel {
+ publ c:
+  expl c  Percent leD scret zerB n nd ces(OpKernelConstruct on* context) : OpKernel(context) {
   }
 
-  void Compute(OpKernelContext* context) override {
-    ComputeDiscretizers(context, true);
+  vo d Compute(OpKernelContext* context) overr de {
+    ComputeD scret zers(context, true);
   }
 };
 
 
-#define REGISTER(Type)              \
+#def ne REG STER(Type)              \
                                     \
-  REGISTER_KERNEL_BUILDER(          \
-    Name("PercentileDiscretizerBinIndices")   \
-    .Device(DEVICE_CPU)             \
-    .TypeConstraint<Type>("T"),     \
-    PercentileDiscretizerBinIndices<Type>);   \
+  REG STER_KERNEL_BU LDER(          \
+    Na ("Percent leD scret zerB n nd ces")   \
+    .Dev ce(DEV CE_CPU)             \
+    .TypeConstra nt<Type>("T"),     \
+    Percent leD scret zerB n nd ces<Type>);   \
                                     \
-  REGISTER_KERNEL_BUILDER(          \
-    Name("PercentileDiscretizer")   \
-    .Device(DEVICE_CPU)             \
-    .TypeConstraint<Type>("T"),     \
-    PercentileDiscretizer<Type>);   \
+  REG STER_KERNEL_BU LDER(          \
+    Na ("Percent leD scret zer")   \
+    .Dev ce(DEV CE_CPU)             \
+    .TypeConstra nt<Type>("T"),     \
+    Percent leD scret zer<Type>);   \
                                     \
-  REGISTER_KERNEL_BUILDER(          \
-    Name("MDL")                     \
-    .Device(DEVICE_CPU)             \
-    .TypeConstraint<Type>("T"),     \
+  REG STER_KERNEL_BU LDER(          \
+    Na ("MDL")                     \
+    .Dev ce(DEV CE_CPU)             \
+    .TypeConstra nt<Type>("T"),     \
     MDL<Type>);                     \
 
-REGISTER(float);
-REGISTER(double);
+REG STER(float);
+REG STER(double);

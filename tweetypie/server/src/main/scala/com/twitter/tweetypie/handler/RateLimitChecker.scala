@@ -1,46 +1,46 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.tweetypie.backends.LimiterService
-import com.twitter.tweetypie.core.TweetCreateFailure
-import com.twitter.tweetypie.thriftscala.TweetCreateState.RateLimitExceeded
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t etyp e.backends.L m erServ ce
+ mport com.tw ter.t etyp e.core.T etCreateFa lure
+ mport com.tw ter.t etyp e.thr ftscala.T etCreateState.RateL m Exceeded
 
-object RateLimitChecker {
+object RateL m C cker {
   type Dark = Boolean
-  type GetRemaining = FutureArrow[(UserId, Dark), Int]
-  type Validate = FutureArrow[(UserId, Dark), Unit]
+  type GetRema n ng = FutureArrow[(User d, Dark),  nt]
+  type Val date = FutureArrow[(User d, Dark), Un ]
 
-  def getMaxMediaTags(minRemaining: LimiterService.MinRemaining, maxMediaTags: Int): GetRemaining =
+  def getMax d aTags(m nRema n ng: L m erServ ce.M nRema n ng, max d aTags:  nt): GetRema n ng =
     FutureArrow {
-      case (userId, dark) =>
-        if (dark) Future.value(maxMediaTags)
+      case (user d, dark) =>
+         f (dark) Future.value(max d aTags)
         else {
-          val contributorUserId = getContributor(userId).map(_.userId)
-          minRemaining(userId, contributorUserId)
-            .map(_.min(maxMediaTags))
-            .handle { case _ => maxMediaTags }
+          val contr butorUser d = getContr butor(user d).map(_.user d)
+          m nRema n ng(user d, contr butorUser d)
+            .map(_.m n(max d aTags))
+            .handle { case _ => max d aTags }
         }
     }
 
-  def validate(
-    hasRemaining: LimiterService.HasRemaining,
-    featureStats: StatsReceiver,
-    rateLimitEnabled: () => Boolean
-  ): Validate = {
+  def val date(
+    hasRema n ng: L m erServ ce.HasRema n ng,
+    featureStats: StatsRece ver,
+    rateL m Enabled: () => Boolean
+  ): Val date = {
     val exceededCounter = featureStats.counter("exceeded")
-    val checkedCounter = featureStats.counter("checked")
+    val c ckedCounter = featureStats.counter("c cked")
     FutureArrow {
-      case (userId, dark) =>
-        if (dark || !rateLimitEnabled()) {
-          Future.Unit
+      case (user d, dark) =>
+         f (dark || !rateL m Enabled()) {
+          Future.Un 
         } else {
-          checkedCounter.incr()
-          val contributorUserId = getContributor(userId).map(_.userId)
-          hasRemaining(userId, contributorUserId).map {
+          c ckedCounter. ncr()
+          val contr butorUser d = getContr butor(user d).map(_.user d)
+          hasRema n ng(user d, contr butorUser d).map {
             case false =>
-              exceededCounter.incr()
-              throw TweetCreateFailure.State(RateLimitExceeded)
+              exceededCounter. ncr()
+              throw T etCreateFa lure.State(RateL m Exceeded)
             case _ => ()
           }
         }

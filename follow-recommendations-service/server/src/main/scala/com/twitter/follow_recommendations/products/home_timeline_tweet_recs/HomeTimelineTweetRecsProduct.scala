@@ -1,50 +1,50 @@
-package com.twitter.follow_recommendations.products.home_timeline_tweet_recs
+package com.tw ter.follow_recom ndat ons.products.ho _t  l ne_t et_recs
 
-import com.twitter.follow_recommendations.common.base.BaseRecommendationFlow
-import com.twitter.follow_recommendations.common.base.IdentityTransform
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.common.models.Recommendation
-import com.twitter.follow_recommendations.flows.content_recommender_flow.ContentRecommenderFlow
-import com.twitter.follow_recommendations.flows.content_recommender_flow.ContentRecommenderRequestBuilder
-import com.twitter.follow_recommendations.products.common.Product
-import com.twitter.follow_recommendations.products.common.ProductRequest
-import com.twitter.follow_recommendations.products.home_timeline_tweet_recs.configapi.HomeTimelineTweetRecsParams._
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.common.base.BaseRecom ndat onFlow
+ mport com.tw ter.follow_recom ndat ons.common.base. dent yTransform
+ mport com.tw ter.follow_recom ndat ons.common.base.Transform
+ mport com.tw ter.follow_recom ndat ons.common.models.D splayLocat on
+ mport com.tw ter.follow_recom ndat ons.common.models.Recom ndat on
+ mport com.tw ter.follow_recom ndat ons.flows.content_recom nder_flow.ContentRecom nderFlow
+ mport com.tw ter.follow_recom ndat ons.flows.content_recom nder_flow.ContentRecom nderRequestBu lder
+ mport com.tw ter.follow_recom ndat ons.products.common.Product
+ mport com.tw ter.follow_recom ndat ons.products.common.ProductRequest
+ mport com.tw ter.follow_recom ndat ons.products.ho _t  l ne_t et_recs.conf gap .Ho T  l neT etRecsParams._
+ mport com.tw ter.st ch.St ch
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /*
- * This "DisplayLocation" is used to generate user recommendations using the ContentRecommenderFlow. These recommendations are later used downstream
- * to generate recommended tweets on Home Timeline.
+ * T  "D splayLocat on"  s used to generate user recom ndat ons us ng t  ContentRecom nderFlow. T se recom ndat ons are later used downstream
+ * to generate recom nded t ets on Ho  T  l ne.
  */
-@Singleton
-class HomeTimelineTweetRecsProduct @Inject() (
-  contentRecommenderFlow: ContentRecommenderFlow,
-  contentRecommenderRequestBuilder: ContentRecommenderRequestBuilder)
+@S ngleton
+class Ho T  l neT etRecsProduct @ nject() (
+  contentRecom nderFlow: ContentRecom nderFlow,
+  contentRecom nderRequestBu lder: ContentRecom nderRequestBu lder)
     extends Product {
-  override val name: String = "Home Timeline Tweet Recs"
+  overr de val na : Str ng = "Ho  T  l ne T et Recs"
 
-  override val identifier: String = "home-timeline-tweet-recs"
+  overr de val  dent f er: Str ng = "ho -t  l ne-t et-recs"
 
-  override val displayLocation: DisplayLocation = DisplayLocation.HomeTimelineTweetRecs
+  overr de val d splayLocat on: D splayLocat on = D splayLocat on.Ho T  l neT etRecs
 
-  override def selectWorkflows(
+  overr de def selectWorkflows(
     request: ProductRequest
-  ): Stitch[Seq[BaseRecommendationFlow[ProductRequest, _ <: Recommendation]]] = {
-    contentRecommenderRequestBuilder.build(request).map { contentRecommenderRequest =>
-      Seq(contentRecommenderFlow.mapKey({ request: ProductRequest => contentRecommenderRequest }))
+  ): St ch[Seq[BaseRecom ndat onFlow[ProductRequest, _ <: Recom ndat on]]] = {
+    contentRecom nderRequestBu lder.bu ld(request).map { contentRecom nderRequest =>
+      Seq(contentRecom nderFlow.mapKey({ request: ProductRequest => contentRecom nderRequest }))
     }
   }
 
-  override val blender: Transform[ProductRequest, Recommendation] =
-    new IdentityTransform[ProductRequest, Recommendation]
+  overr de val blender: Transform[ProductRequest, Recom ndat on] =
+    new  dent yTransform[ProductRequest, Recom ndat on]
 
-  override def resultsTransformer(
+  overr de def resultsTransfor r(
     request: ProductRequest
-  ): Stitch[Transform[ProductRequest, Recommendation]] =
-    Stitch.value(new IdentityTransform[ProductRequest, Recommendation])
+  ): St ch[Transform[ProductRequest, Recom ndat on]] =
+    St ch.value(new  dent yTransform[ProductRequest, Recom ndat on])
 
-  override def enabled(request: ProductRequest): Stitch[Boolean] =
-    Stitch.value(request.params(EnableProduct))
+  overr de def enabled(request: ProductRequest): St ch[Boolean] =
+    St ch.value(request.params(EnableProduct))
 }

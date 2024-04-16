@@ -1,67 +1,67 @@
-package com.twitter.search.common.relevance.classifiers;
+package com.tw ter.search.common.relevance.class f ers;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.L sts;
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
-import java.util.List;
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er;
+ mport java.ut l.L st;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.relevance.config.TweetProcessingConfig;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers on;
+ mport com.tw ter.search.common.relevance.conf g.T etProcess ngConf g;
+ mport com.tw ter.search.common.relevance.ent  es.Tw ter ssage;
 
 /**
- * Classifier that focuses on tweet text features and their corresponding
- * quality.
+ * Class f er that focuses on t et text features and t  r correspond ng
+ * qual y.
  */
-public class TweetTextClassifier extends TweetClassifier {
-  private TweetQualityFeatureExtractor featureExtractor = new TweetQualityFeatureExtractor();
-  private TweetTrendsExtractor trendsExtractor = null;
+publ c class T etTextClass f er extends T etClass f er {
+  pr vate T etQual yFeatureExtractor featureExtractor = new T etQual yFeatureExtractor();
+  pr vate T etTrendsExtractor trendsExtractor = null;
 
   /**
-   * Constructor. Requires a list of TweetQualityEvaluator objects.
-   * @param evaluators list of TweetQualityEvaluator objects responsible for quality evaluation.
-   * @param serviceIdentifier The identifier of the calling service.
-   * @param supportedPenguinVersions A list of supported penguin versions.
+   * Constructor. Requ res a l st of T etQual yEvaluator objects.
+   * @param evaluators l st of T etQual yEvaluator objects respons ble for qual y evaluat on.
+   * @param serv ce dent f er T   dent f er of t  call ng serv ce.
+   * @param supportedPengu nVers ons A l st of supported pengu n vers ons.
    */
-  public TweetTextClassifier(
-      final Iterable<TweetEvaluator> evaluators,
-      ServiceIdentifier serviceIdentifier,
-      List<PenguinVersion> supportedPenguinVersions) {
-    Preconditions.checkNotNull(evaluators);
-    setQualityEvaluators(evaluators);
-    TweetProcessingConfig.init();
+  publ c T etTextClass f er(
+      f nal  erable<T etEvaluator> evaluators,
+      Serv ce dent f er serv ce dent f er,
+      L st<Pengu nVers on> supportedPengu nVers ons) {
+    Precond  ons.c ckNotNull(evaluators);
+    setQual yEvaluators(evaluators);
+    T etProcess ngConf g. n ();
 
-    if (TweetProcessingConfig.getBool("extract_trends", false)) {
-      trendsExtractor = new TweetTrendsExtractor(serviceIdentifier, supportedPenguinVersions);
+     f (T etProcess ngConf g.getBool("extract_trends", false)) {
+      trendsExtractor = new T etTrendsExtractor(serv ce dent f er, supportedPengu nVers ons);
     }
   }
 
   /**
-   * Extract text features for the specified TwitterMessage.
+   * Extract text features for t  spec f ed Tw ter ssage.
    *
-   * @param tweet TwitterMessage to extract features from.
+   * @param t et Tw ter ssage to extract features from.
    */
-  @Override
-  protected void extractFeatures(TwitterMessage tweet) {
-    extractFeatures(Lists.newArrayList(tweet));
+  @Overr de
+  protected vo d extractFeatures(Tw ter ssage t et) {
+    extractFeatures(L sts.newArrayL st(t et));
   }
 
   /**
-   * Extract text features for the specified list of TwitterMessages.
+   * Extract text features for t  spec f ed l st of Tw ter ssages.
    *
-   * @param tweets list of TwitterMessages to extract interesting features for
+   * @param t ets l st of Tw ter ssages to extract  nterest ng features for
    */
-  @Override
-  protected void extractFeatures(Iterable<TwitterMessage> tweets) {
-    Preconditions.checkNotNull(tweets);
-    for (TwitterMessage tweet : tweets) {
-      featureExtractor.extractTweetTextFeatures(tweet);
+  @Overr de
+  protected vo d extractFeatures( erable<Tw ter ssage> t ets) {
+    Precond  ons.c ckNotNull(t ets);
+    for (Tw ter ssage t et : t ets) {
+      featureExtractor.extractT etTextFeatures(t et);
     }
 
-    // Optionally try to annotate trends for all the tweets.
-    if (TweetProcessingConfig.getBool("extract_trends", false) && trendsExtractor != null) {
-      trendsExtractor.extractTrends(tweets);
+    // Opt onally try to annotate trends for all t  t ets.
+     f (T etProcess ngConf g.getBool("extract_trends", false) && trendsExtractor != null) {
+      trendsExtractor.extractTrends(t ets);
     }
   }
 }

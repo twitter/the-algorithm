@@ -1,36 +1,36 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+ mport javax. nject. nject;
+ mport javax. nject.S ngleton;
 
-import com.twitter.finagle.Service;
-import com.twitter.search.common.root.SearchRootServer;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird_root.filters.QueryTokenizerFilter;
-import com.twitter.search.queryparser.query.QueryParserException;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.search.common.root.SearchRootServer;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdServ ce;
+ mport com.tw ter.search.earlyb rd_root.f lters.QueryToken zerF lter;
+ mport com.tw ter.search.queryparser.query.QueryParserExcept on;
 
-@Singleton
-public class SuperRootServer extends SearchRootServer<EarlybirdService.ServiceIface> {
-  private final QueryTokenizerFilter queryTokenizerFilter;
+@S ngleton
+publ c class SuperRootServer extends SearchRootServer<Earlyb rdServ ce.Serv ce face> {
+  pr vate f nal QueryToken zerF lter queryToken zerF lter;
 
-  @Inject
-  public SuperRootServer(
-      SuperRootService svc,
-      Service<byte[], byte[]> byteSvc,
-      QueryTokenizerFilter queryTokenizerFilter) {
+  @ nject
+  publ c SuperRootServer(
+      SuperRootServ ce svc,
+      Serv ce<byte[], byte[]> byteSvc,
+      QueryToken zerF lter queryToken zerF lter) {
     super(svc, byteSvc);
 
-    this.queryTokenizerFilter = queryTokenizerFilter;
+    t .queryToken zerF lter = queryToken zerF lter;
   }
 
-  @Override
-  public void warmup() {
+  @Overr de
+  publ c vo d warmup() {
     super.warmup();
 
     try {
-      queryTokenizerFilter.performExpensiveInitialization();
-    } catch (QueryParserException e) {
-      throw new RuntimeException(e);
+      queryToken zerF lter.performExpens ve n  al zat on();
+    } catch (QueryParserExcept on e) {
+      throw new Runt  Except on(e);
     }
   }
 }

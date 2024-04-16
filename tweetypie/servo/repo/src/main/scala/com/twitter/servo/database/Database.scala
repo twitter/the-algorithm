@@ -1,114 +1,114 @@
-package com.twitter.servo.database
+package com.tw ter.servo.database
 
-import com.twitter.servo.repository._
-import com.twitter.util.Future
-import scala.collection.mutable.{HashMap, HashSet, ListBuffer}
-import scala.collection.generic.Growable
+ mport com.tw ter.servo.repos ory._
+ mport com.tw ter.ut l.Future
+ mport scala.collect on.mutable.{HashMap, HashSet, L stBuffer}
+ mport scala.collect on.gener c.Growable
 
 object Database {
 
   /**
-   * Construct a KeyValueRepository wrapping access to a database.
+   * Construct a KeyValueRepos ory wrapp ng access to a database.
    *
-   * Data retrieved as a row from the query is passed to a Builder producing a
-   * (Key, Row) tuple.  Once all rows have been processed this way it is passed as a
-   * sequence to a post-query function that can perform actions (aggregation usually)
-   * and produce a final sequence of (Key, Value).
+   * Data retr eved as a row from t  query  s passed to a Bu lder produc ng a
+   * (Key, Row) tuple.  Once all rows have been processed t  way    s passed as a
+   * sequence to a post-query funct on that can perform act ons (aggregat on usually)
+   * and produce a f nal sequence of (Key, Value).
    *
    * @tparam Q
-   *   how we'll be querying the this repository
+   *   how  'll be query ng t  t  repos ory
    *
    * @tparam K
-   *   the key used for looking data up
+   *   t  key used for look ng data up
    *
    * @tparam R
-   *   each entry from the the database will be represented as an instance of R
+   *   each entry from t  t  database w ll be represented as an  nstance of R
    *
    * @tparam V
-   *   the repository will return a V produced by processing one or more Rs
+   *   t  repos ory w ll return a V produced by process ng one or more Rs
    *
    * @param database
-   *   A database used to back the KeyValueRepository being built.
+   *   A database used to back t  KeyValueRepos ory be ng bu lt.
    *
    * @param dbQuery
-   *   A database query for fetching records to be parsed into objects of type
-   *   Row. The query string can contain instances of the character '?' as
-   *   placeholders for parameter passed into the `Database.select` calls.
+   *   A database query for fetch ng records to be parsed  nto objects of type
+   *   Row. T  query str ng can conta n  nstances of t  character '?' as
+   *   placeholders for para ter passed  nto t  `Database.select` calls.
    *
-   * @param builder
-   *   A Builder that builds (K, Row) pairs from ResultSets from the database
+   * @param bu lder
+   *   A Bu lder that bu lds (K, Row) pa rs from ResultSets from t  database
    *
    * @param postProcess
-   *   A function which can manipulate the Seq[(K, Row)] that is returned from the
-   *   database. Useful for aggregating multi-mapped K, V pairs where V holds a
-   *   container with multiple values for the same key in the database.  This function
-   *   should not manipulate the list of keys; doing so will result in Return.None
-   *   elements in the ensuing KeyValueResult.
+   *   A funct on wh ch can man pulate t  Seq[(K, Row)] that  s returned from t 
+   *   database. Useful for aggregat ng mult -mapped K, V pa rs w re V holds a
+   *   conta ner w h mult ple values for t  sa  key  n t  database.  T  funct on
+   *   should not man pulate t  l st of keys; do ng so w ll result  n Return.None
+   *   ele nts  n t  ensu ng KeyValueResult.
    *
-   *   AggregateByKey has a basic implementation that groups R objects by a
-   *   specified identifier and may be useful as a common impl.
+   *   AggregateByKey has a bas c  mple ntat on that groups R objects by a
+   *   spec f ed  dent f er and may be useful as a common  mpl.
    *
    * @param selectParams
-   *   A function that is applied to the distinct keys in a repository query.
-   *   The result is passed to `Database.select` to be used for filling in
-   *   bind variables in dbQuery. By default, the repository query is passed
-   *   directly to the select. The use cases for this function are situations
-   *   where the SELECT statement takes multiple parameters.
+   *   A funct on that  s appl ed to t  d st nct keys  n a repos ory query.
+   *   T  result  s passed to `Database.select` to be used for f ll ng  n
+   *   b nd var ables  n dbQuery. By default, t  repos ory query  s passed
+   *   d rectly to t  select. T  use cases for t  funct on are s uat ons
+   *   w re t  SELECT state nt takes mult ple para ters.
    *
    *   Example:
-   *     // A repository that takes Seq[Long]s of userids and returns
-   *     // Item objects of a parameterized item type.
-   *     Database.keyValueRepository[Seq[Long], Long, Item, Item](
+   *     // A repos ory that takes Seq[Long]s of user ds and returns
+   *     //  em objects of a para ter zed  em type.
+   *     Database.keyValueRepos ory[Seq[Long], Long,  em,  em](
    *       database,
-   *       "SELECT * FROM items WHERE user_id IN (?) AND item_type = ?;",
-   *       ItemBuilder,
-   *       selectParams = Seq(_: Seq[Long], itemType)
+   *       "SELECT * FROM  ems WHERE user_ d  N (?) AND  em_type = ?;",
+   *        emBu lder,
+   *       selectParams = Seq(_: Seq[Long],  emType)
    *     )
    */
-  def keyValueRepository[Q <: Seq[K], K, R, V](
+  def keyValueRepos ory[Q <: Seq[K], K, R, V](
     database: Database,
-    dbQuery: String,
-    builder: Builder[(K, R)],
+    dbQuery: Str ng,
+    bu lder: Bu lder[(K, R)],
     postProcess: Seq[(K, R)] => Seq[(K, V)] =
-      (identity[Seq[(K, V)]] _): (Seq[(K, V)] => Seq[(K, V)]),
-    selectParams: Seq[K] => Seq[Any] = (Seq(_: Seq[K])): (Seq[K] => collection.Seq[Seq[K]])
-  ): KeyValueRepository[Q, K, V] =
+      ( dent y[Seq[(K, V)]] _): (Seq[(K, V)] => Seq[(K, V)]),
+    selectParams: Seq[K] => Seq[Any] = (Seq(_: Seq[K])): (Seq[K] => collect on.Seq[Seq[K]])
+  ): KeyValueRepos ory[Q, K, V] =
     query => {
-      if (query.isEmpty) {
+       f (query. sEmpty) {
         KeyValueResult.emptyFuture
       } else {
-        val uniqueKeys = query.distinct
-        KeyValueResult.fromPairs(uniqueKeys) {
-          database.select(dbQuery, builder, selectParams(uniqueKeys): _*) map postProcess
+        val un queKeys = query.d st nct
+        KeyValueResult.fromPa rs(un queKeys) {
+          database.select(dbQuery, bu lder, selectParams(un queKeys): _*) map postProcess
         }
       }
     }
 }
 
 /**
- * A thin trait for async interaction with a database.
+ * A th n tra  for async  nteract on w h a database.
  */
-trait Database {
-  def select[A](query: String, builder: Builder[A], params: Any*): Future[Seq[A]]
-  def selectOne[A](query: String, builder: Builder[A], params: Any*): Future[Option[A]]
-  def execute(query: String, params: Any*): Future[Int]
-  def insert(query: String, params: Any*): Future[Long]
-  def release(): Unit
+tra  Database {
+  def select[A](query: Str ng, bu lder: Bu lder[A], params: Any*): Future[Seq[A]]
+  def selectOne[A](query: Str ng, bu lder: Bu lder[A], params: Any*): Future[Opt on[A]]
+  def execute(query: Str ng, params: Any*): Future[ nt]
+  def  nsert(query: Str ng, params: Any*): Future[Long]
+  def release(): Un 
 }
 
 object NullDatabase extends Database {
-  override def select[Unit](query: String, builder: Builder[Unit], params: Any*) =
-    Future.value(Seq.empty[Unit])
+  overr de def select[Un ](query: Str ng, bu lder: Bu lder[Un ], params: Any*) =
+    Future.value(Seq.empty[Un ])
 
-  override def selectOne[Unit](query: String, builder: Builder[Unit], params: Any*) =
+  overr de def selectOne[Un ](query: Str ng, bu lder: Bu lder[Un ], params: Any*) =
     Future.value(None)
 
-  override def release() = ()
+  overr de def release() = ()
 
-  override def execute(query: String, params: Any*) =
+  overr de def execute(query: Str ng, params: Any*) =
     Future.value(0)
 
-  override def insert(query: String, params: Any*) =
+  overr de def  nsert(query: Str ng, params: Any*) =
     Future.value(0)
 }
 
@@ -116,86 +116,86 @@ object AggregateByKey {
   def apply[K, R, A](
     extractKey: R => K,
     reduce: Seq[R] => A,
-    pruneDuplicates: Boolean = false
-  ) = new AggregateByKey(extractKey, reduce, pruneDuplicates)
+    pruneDupl cates: Boolean = false
+  ) = new AggregateByKey(extractKey, reduce, pruneDupl cates)
 
   /**
-   * In the event that the item type (V) does not carry an aggregation key then we can have
-   * the Builder return a tuple with some id attached.  If that is done then each Row from the
-   * builder will look something like (SomeGroupId, SomeRowObject).  Because we tend to minimize
-   * data duplication this seems to be a pretty common pattern and can be seen in
-   * SavedSearchesRepository, FacebookConnectionsRepository, and UserToRoleRepository.
+   *  n t  event that t   em type (V) does not carry an aggregat on key t n   can have
+   * t  Bu lder return a tuple w h so   d attac d.   f that  s done t n each Row from t 
+   * bu lder w ll look so th ng l ke (So Group d, So RowObject).  Because   tend to m n m ze
+   * data dupl cat on t  seems to be a pretty common pattern and can be seen  n
+   * SavedSearc sRepos ory, FacebookConnect onsRepos ory, and UserToRoleRepos ory.
    *
    * @tparam K
-   *   The type for the key
+   *   T  type for t  key
    * @tparam V
-   *   The type of a single element of the list
+   *   T  type of a s ngle ele nt of t  l st
    * @tparam A
-   *   The object we'll aggregate list items into
+   *   T  object  'll aggregate l st  ems  nto
    * @param reduce
-   *   A function that combines a seq of V into A
-   * @param pruneDuplicates
-   *   If set this ensures that, at most, one instance of any given V will be passed into reduce.
+   *   A funct on that comb nes a seq of V  nto A
+   * @param pruneDupl cates
+   *    f set t  ensures that, at most, one  nstance of any g ven V w ll be passed  nto reduce.
    */
-  def withKeyValuePairs[K, V, A](
+  def w hKeyValuePa rs[K, V, A](
     reduce: Seq[V] => A,
-    pruneDuplicates: Boolean
+    pruneDupl cates: Boolean
   ): AggregateByKey[K, (K, V), A] =
     new AggregateByKey(
       { case (k, _) => k },
       values => reduce(values map { case (_, v) => v }),
-      pruneDuplicates
+      pruneDupl cates
     )
 }
 
 /**
- * Basic aggregator that extracts keys from a Row, groups into a Seq by those keys, and
- * performs some reduction step to mash those into an aggregated object.  Order is not
- * necessarily kept between the retrieving rows from the database and passing them into
+ * Bas c aggregator that extracts keys from a Row, groups  nto a Seq by those keys, and
+ * performs so  reduct on step to mash those  nto an aggregated object.  Order  s not
+ * necessar ly kept bet en t  retr ev ng rows from t  database and pass ng t m  nto
  * reduce.
  *
  * @tparam K
- *   the type used by the item on which we aggregate rows
+ *   t  type used by t   em on wh ch   aggregate rows
  *
  * @tparam R
- *   object that a single row of the query will be represented as
+ *   object that a s ngle row of t  query w ll be represented as
  *
  * @tparam A
- *   what we collect groups of R into
+ *   what   collect groups of R  nto
  *
  * @param extractKey
- *   function to extract a key from a row object
+ *   funct on to extract a key from a row object
  *
  * @param reduce
- *   function that can take a sequence of rows and combine them into an aggregate
+ *   funct on that can take a sequence of rows and comb ne t m  nto an aggregate
  *
- * @param pruneDuplicates
- *   if set this will ensure that at most one copy of each R will be passed into reduce (as
- *   determined by R's equal method) but will pass the input through a set which will
- *   likely lose ordering.
+ * @param pruneDupl cates
+ *    f set t  w ll ensure that at most one copy of each R w ll be passed  nto reduce (as
+ *   determ ned by R's equal  thod) but w ll pass t   nput through a set wh ch w ll
+ *   l kely lose order ng.
  */
 class AggregateByKey[K, R, A](
   extractKey: R => K,
   reduce: Seq[R] => A,
-  pruneDuplicates: Boolean = false)
+  pruneDupl cates: Boolean = false)
     extends (Seq[R] => Seq[(K, A)]) {
-  override def apply(input: Seq[R]): Seq[(K, A)] = {
-    val collectionMap = new HashMap[K, Growable[R] with Iterable[R]]
+  overr de def apply( nput: Seq[R]): Seq[(K, A)] = {
+    val collect onMap = new HashMap[K, Growable[R] w h  erable[R]]
 
-    def emptyCollection: Growable[R] with Iterable[R] =
-      if (pruneDuplicates) {
+    def emptyCollect on: Growable[R] w h  erable[R] =
+       f (pruneDupl cates) {
         new HashSet[R]
       } else {
-        new ListBuffer[R]
+        new L stBuffer[R]
       }
 
-    input foreach { element =>
-      (collectionMap.getOrElseUpdate(extractKey(element), emptyCollection)) += element
+     nput foreach { ele nt =>
+      (collect onMap.getOrElseUpdate(extractKey(ele nt), emptyCollect on)) += ele nt
     }
 
-    collectionMap map {
-      case (key, items) =>
-        key -> reduce(items toSeq)
+    collect onMap map {
+      case (key,  ems) =>
+        key -> reduce( ems toSeq)
     } toSeq
   }
 }

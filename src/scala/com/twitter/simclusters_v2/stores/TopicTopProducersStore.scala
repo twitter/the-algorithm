@@ -1,86 +1,86 @@
-package com.twitter.simclusters_v2.stores
+package com.tw ter.s mclusters_v2.stores
 
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.recos.entities.thriftscala.{SemanticCoreEntityWithLocale, UserScoreList}
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.{Athena, ManhattanRO, ManhattanROConfig}
-import com.twitter.storehaus_internal.util.{ApplicationID, DatasetName, HDFSPath}
+ mport com.tw ter.b ject on.scrooge.CompactScalaCodec
+ mport com.tw ter.recos.ent  es.thr ftscala.{Semant cCoreEnt yW hLocale, UserScoreL st}
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl entMtlsParams
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.storehaus_ nternal.manhattan.{At na, ManhattanRO, ManhattanROConf g}
+ mport com.tw ter.storehaus_ nternal.ut l.{Appl cat on D, DatasetNa , HDFSPath}
 
-object TopicTopProducersStore {
-  val appIdDevel = "recos_platform_dev"
-  val v2DatasetNameDevel = "topic_producers_em"
-  val v3DatasetNameDevel = "topic_producers_agg"
-  val v4DatasetNameDevel = "topic_producers_em_erg"
+object Top cTopProducersStore {
+  val app dDevel = "recos_platform_dev"
+  val v2DatasetNa Devel = "top c_producers_em"
+  val v3DatasetNa Devel = "top c_producers_agg"
+  val v4DatasetNa Devel = "top c_producers_em_erg"
 
-  val appIdProd = "simclusters_v2"
-  val v1DatasetNameProd = "top_producers_for_topic_from_topic_follow_graph"
-  val v2DatasetNameProd = "top_producers_for_topic_em"
+  val app dProd = "s mclusters_v2"
+  val v1DatasetNa Prod = "top_producers_for_top c_from_top c_follow_graph"
+  val v2DatasetNa Prod = "top_producers_for_top c_em"
 
-  implicit val keyInj = CompactScalaCodec(SemanticCoreEntityWithLocale)
-  implicit val valInj = CompactScalaCodec(UserScoreList)
+   mpl c  val key nj = CompactScalaCodec(Semant cCoreEnt yW hLocale)
+   mpl c  val val nj = CompactScalaCodec(UserScoreL st)
 
-  def getTopicTopProducerStoreV1Prod(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[SemanticCoreEntityWithLocale, UserScoreList] =
-    ManhattanRO.getReadableStoreWithMtls[SemanticCoreEntityWithLocale, UserScoreList](
-      ManhattanROConfig(
+  def getTop cTopProducerStoreV1Prod(
+    mhMtlsParams: ManhattanKVCl entMtlsParams
+  ): ReadableStore[Semant cCoreEnt yW hLocale, UserScoreL st] =
+    ManhattanRO.getReadableStoreW hMtls[Semant cCoreEnt yW hLocale, UserScoreL st](
+      ManhattanROConf g(
         HDFSPath(""),
-        ApplicationID(appIdProd),
-        DatasetName(v1DatasetNameProd),
-        Athena
+        Appl cat on D(app dProd),
+        DatasetNa (v1DatasetNa Prod),
+        At na
       ),
       mhMtlsParams
     )
 
-  def getTopicTopProducerStoreV2Devel(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[SemanticCoreEntityWithLocale, UserScoreList] =
-    ManhattanRO.getReadableStoreWithMtls[SemanticCoreEntityWithLocale, UserScoreList](
-      ManhattanROConfig(
+  def getTop cTopProducerStoreV2Devel(
+    mhMtlsParams: ManhattanKVCl entMtlsParams
+  ): ReadableStore[Semant cCoreEnt yW hLocale, UserScoreL st] =
+    ManhattanRO.getReadableStoreW hMtls[Semant cCoreEnt yW hLocale, UserScoreL st](
+      ManhattanROConf g(
         HDFSPath(""),
-        ApplicationID(appIdDevel),
-        DatasetName(v2DatasetNameDevel),
-        Athena
+        Appl cat on D(app dDevel),
+        DatasetNa (v2DatasetNa Devel),
+        At na
       ),
       mhMtlsParams
     )
 
-  def getTopicTopProducerStoreV2Prod(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[SemanticCoreEntityWithLocale, UserScoreList] =
-    ManhattanRO.getReadableStoreWithMtls[SemanticCoreEntityWithLocale, UserScoreList](
-      ManhattanROConfig(
+  def getTop cTopProducerStoreV2Prod(
+    mhMtlsParams: ManhattanKVCl entMtlsParams
+  ): ReadableStore[Semant cCoreEnt yW hLocale, UserScoreL st] =
+    ManhattanRO.getReadableStoreW hMtls[Semant cCoreEnt yW hLocale, UserScoreL st](
+      ManhattanROConf g(
         HDFSPath(""),
-        ApplicationID(appIdProd),
-        DatasetName(v2DatasetNameProd),
-        Athena
+        Appl cat on D(app dProd),
+        DatasetNa (v2DatasetNa Prod),
+        At na
       ),
       mhMtlsParams
     )
 
-  def getTopicTopProducerStoreV3Devel(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[SemanticCoreEntityWithLocale, UserScoreList] =
-    ManhattanRO.getReadableStoreWithMtls[SemanticCoreEntityWithLocale, UserScoreList](
-      ManhattanROConfig(
+  def getTop cTopProducerStoreV3Devel(
+    mhMtlsParams: ManhattanKVCl entMtlsParams
+  ): ReadableStore[Semant cCoreEnt yW hLocale, UserScoreL st] =
+    ManhattanRO.getReadableStoreW hMtls[Semant cCoreEnt yW hLocale, UserScoreL st](
+      ManhattanROConf g(
         HDFSPath(""),
-        ApplicationID(appIdDevel),
-        DatasetName(v3DatasetNameDevel),
-        Athena
+        Appl cat on D(app dDevel),
+        DatasetNa (v3DatasetNa Devel),
+        At na
       ),
       mhMtlsParams
     )
 
-  def getTopicTopProducerStoreV4Devel(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[SemanticCoreEntityWithLocale, UserScoreList] =
-    ManhattanRO.getReadableStoreWithMtls[SemanticCoreEntityWithLocale, UserScoreList](
-      ManhattanROConfig(
+  def getTop cTopProducerStoreV4Devel(
+    mhMtlsParams: ManhattanKVCl entMtlsParams
+  ): ReadableStore[Semant cCoreEnt yW hLocale, UserScoreL st] =
+    ManhattanRO.getReadableStoreW hMtls[Semant cCoreEnt yW hLocale, UserScoreL st](
+      ManhattanROConf g(
         HDFSPath(""),
-        ApplicationID(appIdDevel),
-        DatasetName(v4DatasetNameDevel),
-        Athena
+        Appl cat on D(app dDevel),
+        DatasetNa (v4DatasetNa Devel),
+        At na
       ),
       mhMtlsParams
     )

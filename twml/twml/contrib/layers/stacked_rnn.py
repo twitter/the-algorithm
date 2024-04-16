@@ -1,189 +1,189 @@
 
-from twitter.deepbird.compat.v1.rnn import stack_bidirectional_dynamic_rnn
+from tw ter.deepb rd.compat.v1.rnn  mport stack_b d rect onal_dynam c_rnn
 
-import tensorflow.compat.v1 as tf
-import tensorflow
-import twml
+ mport tensorflow.compat.v1 as tf
+ mport tensorflow
+ mport twml
 
 
 def _get_rnn_cell_creator(cell_type):
-  if cell_type == "LSTM":
+   f cell_type == "LSTM":
     Cell = tf.nn.rnn_cell.LSTMCell
-  elif cell_type == "GRU":
+  el f cell_type == "GRU":
     Cell = tf.nn.rnn_cell.GRUCell
   else:
-    raise ValueError("cell_type: %s is not supported."
-                     "It should be one of 'LSTM' or 'GRU'." % cell_type)
+    ra se ValueError("cell_type: %s  s not supported."
+                     "  should be one of 'LSTM' or 'GRU'." % cell_type)
   return Cell
 
 
 def _apply_dropout_wrapper(rnn_cells, dropout):
-  """ Apply dropout wrapper around each cell if necessary """
-  if rnn_cells is None:
+  """ Apply dropout wrapper around each cell  f necessary """
+   f rnn_cells  s None:
     return None
 
   cells = []
-  for i, dropout_rate in enumerate(dropout):
-    cell = rnn_cells[i]
-    if dropout_rate > 0:
-      cell = tf.nn.rnn_cell.DropoutWrapper(cell, input_keep_prob=(1.0 - dropout_rate))
+  for  , dropout_rate  n enu rate(dropout):
+    cell = rnn_cells[ ]
+     f dropout_rate > 0:
+      cell = tf.nn.rnn_cell.DropoutWrapper(cell,  nput_keep_prob=(1.0 - dropout_rate))
     cells.append(cell)
   return cells
 
 
-def _create_bidirectional_rnn_cell(num_units, dropout, cell_type):
-  scope_name = "lstm" if cell_type else "gru"
-  with tf.variable_scope(scope_name):
+def _create_b d rect onal_rnn_cell(num_un s, dropout, cell_type):
+  scope_na  = "lstm"  f cell_type else "gru"
+  w h tf.var able_scope(scope_na ):
     Cell = _get_rnn_cell_creator(cell_type)
-    cells_forward = [Cell(output_size) for output_size in num_units]
-    cells_backward = [Cell(output_size) for output_size in num_units]
+    cells_forward = [Cell(output_s ze) for output_s ze  n num_un s]
+    cells_backward = [Cell(output_s ze) for output_s ze  n num_un s]
     cells_forward = _apply_dropout_wrapper(cells_forward, dropout)
     cells_backward = _apply_dropout_wrapper(cells_backward, dropout)
 
-  def stacked_rnn_cell(inputs, sequence_lengths):
-    with tf.variable_scope(scope_name):
-      outputs, final_states, _ = stack_bidirectional_dynamic_rnn(
-        cells_fw=cells_forward, cells_bw=cells_backward, inputs=inputs,
-        sequence_length=sequence_lengths, dtype=inputs.dtype)
-      return final_states[-1][-1]
+  def stacked_rnn_cell( nputs, sequence_lengths):
+    w h tf.var able_scope(scope_na ):
+      outputs, f nal_states, _ = stack_b d rect onal_dynam c_rnn(
+        cells_fw=cells_forward, cells_bw=cells_backward,  nputs= nputs,
+        sequence_length=sequence_lengths, dtype= nputs.dtype)
+      return f nal_states[-1][-1]
 
   return stacked_rnn_cell
 
 
-def _create_unidirectional_rnn_cell(num_units, dropout, cell_type):
-  scope_name = "lstm" if cell_type else "gru"
-  with tf.variable_scope(scope_name):
+def _create_un d rect onal_rnn_cell(num_un s, dropout, cell_type):
+  scope_na  = "lstm"  f cell_type else "gru"
+  w h tf.var able_scope(scope_na ):
     Cell = _get_rnn_cell_creator(cell_type)
-    cells = [Cell(output_size) for output_size in num_units]
+    cells = [Cell(output_s ze) for output_s ze  n num_un s]
     cells = _apply_dropout_wrapper(cells, dropout)
-    multi_cell = tf.nn.rnn_cell.MultiRNNCell(cells)
+    mult _cell = tf.nn.rnn_cell.Mult RNNCell(cells)
 
-  def stacked_rnn_cell(inputs, sequence_lengths):
-    with tf.variable_scope(scope_name):
-      outputs, final_states = tf.nn.static_rnn(
-        multi_cell,
-        tf.unstack(inputs, axis=1),
-        dtype=inputs.dtype,
+  def stacked_rnn_cell( nputs, sequence_lengths):
+    w h tf.var able_scope(scope_na ):
+      outputs, f nal_states = tf.nn.stat c_rnn(
+        mult _cell,
+        tf.unstack( nputs, ax s=1),
+        dtype= nputs.dtype,
         sequence_length=sequence_lengths)
-      return final_states[-1].h
+      return f nal_states[-1].h
 
   return stacked_rnn_cell
 
 
-def _create_regular_rnn_cell(num_units, dropout, cell_type, is_bidirectional):
-  if is_bidirectional:
-    return _create_bidirectional_rnn_cell(num_units, dropout, cell_type)
+def _create_regular_rnn_cell(num_un s, dropout, cell_type,  s_b d rect onal):
+   f  s_b d rect onal:
+    return _create_b d rect onal_rnn_cell(num_un s, dropout, cell_type)
   else:
-    return _create_unidirectional_rnn_cell(num_units, dropout, cell_type)
+    return _create_un d rect onal_rnn_cell(num_un s, dropout, cell_type)
 
 
 class StackedRNN(twml.layers.Layer):
   """
-  Layer for stacking RNN modules.
-  This layer provides a unified interface for RNN modules that perform well on CPUs and GPUs.
+  Layer for stack ng RNN modules.
+  T  layer prov des a un f ed  nterface for RNN modules that perform  ll on CPUs and GPUs.
 
-  Arguments:
-    num_units:
-      A list specifying the number of units per layer.
+  Argu nts:
+    num_un s:
+      A l st spec fy ng t  number of un s per layer.
     dropout:
-      Dropout applied to the input of each cell.
-      If list, has to dropout used for each layer.
-      If number, the same amount of dropout is used everywhere.
+      Dropout appl ed to t   nput of each cell.
+       f l st, has to dropout used for each layer.
+       f number, t  sa  amount of dropout  s used everyw re.
       Defaults to 0.
-    is_training:
-      Flag to specify if the layer is used in training mode or not.
+     s_tra n ng:
+      Flag to spec fy  f t  layer  s used  n tra n ng mode or not.
     cell_type:
-      Sepcifies the type of RNN. Can be "LSTM". "GRU" is not yet implemented.
-    is_bidirectional:
-      Specifies if the stacked RNN layer is bidirectional.
-      This is for forward compatibility, this is not yet implemented.
+      Sepc f es t  type of RNN. Can be "LSTM". "GRU"  s not yet  mple nted.
+     s_b d rect onal:
+      Spec f es  f t  stacked RNN layer  s b d rect onal.
+      T   s for forward compat b l y, t   s not yet  mple nted.
       Defaults to False.
   """
 
-  def __init__(self,
-               num_units,
+  def __ n __(self,
+               num_un s,
                dropout=0,
-               is_training=True,
+                s_tra n ng=True,
                cell_type="LSTM",
-               is_bidirectional=False,
-               name="stacked_rnn"):
+                s_b d rect onal=False,
+               na ="stacked_rnn"):
 
-    super(StackedRNN, self).__init__(name=name)
+    super(StackedRNN, self).__ n __(na =na )
 
-    if (is_bidirectional):
-      raise NotImplementedError("Bidirectional RNN is not yet implemented")
+     f ( s_b d rect onal):
+      ra se Not mple ntedError("B d rect onal RNN  s not yet  mple nted")
 
-    if (cell_type != "LSTM"):
-      raise NotImplementedError("Only LSTMs are supported")
+     f (cell_type != "LSTM"):
+      ra se Not mple ntedError("Only LSTMs are supported")
 
-    if not isinstance(num_units, (list, tuple)):
-      num_units = [num_units]
+     f not  s nstance(num_un s, (l st, tuple)):
+      num_un s = [num_un s]
     else:
-      num_units = num_units
+      num_un s = num_un s
 
-    self.num_layers = len(num_units)
-    if not isinstance(dropout, (tuple, list)):
+    self.num_layers = len(num_un s)
+     f not  s nstance(dropout, (tuple, l st)):
       dropout = [dropout] * self.num_layers
     else:
       dropout = dropout
 
-    self.is_training = is_training
+    self. s_tra n ng =  s_tra n ng
 
-    is_gpu_available = twml.contrib.utils.is_gpu_available()
-    same_unit_size = all(size == num_units[0] for size in num_units)
-    same_dropout_rate = any(val == dropout[0] for val in dropout)
+     s_gpu_ava lable = twml.contr b.ut ls. s_gpu_ava lable()
+    sa _un _s ze = all(s ze == num_un s[0] for s ze  n num_un s)
+    sa _dropout_rate = any(val == dropout[0] for val  n dropout)
 
     self.stacked_rnn_cell = None
-    self.num_units = num_units
+    self.num_un s = num_un s
     self.dropout = dropout
     self.cell_type = cell_type
-    self.is_bidirectional = is_bidirectional
+    self. s_b d rect onal =  s_b d rect onal
 
-  def build(self, input_shape):
-    self.stacked_rnn_cell = _create_regular_rnn_cell(self.num_units,
+  def bu ld(self,  nput_shape):
+    self.stacked_rnn_cell = _create_regular_rnn_cell(self.num_un s,
                                                      self.dropout,
                                                      self.cell_type,
-                                                     self.is_bidirectional)
+                                                     self. s_b d rect onal)
 
-  def call(self, inputs, sequence_lengths):
+  def call(self,  nputs, sequence_lengths):
     """
-    Arguments:
-      inputs:
-        A tensor of size [batch_size, max_sequence_length, embedding_size].
+    Argu nts:
+       nputs:
+        A tensor of s ze [batch_s ze, max_sequence_length, embedd ng_s ze].
       sequence_lengths:
-        The length of each input sequence in the batch. Should be of size [batch_size].
+        T  length of each  nput sequence  n t  batch. Should be of s ze [batch_s ze].
     Returns:
-      final_output
-        The output of at the end of sequence_length.
+      f nal_output
+        T  output of at t  end of sequence_length.
     """
-    return self.stacked_rnn_cell(inputs, sequence_lengths)
+    return self.stacked_rnn_cell( nputs, sequence_lengths)
 
 
-def stacked_rnn(inputs, sequence_lengths, num_units,
-                dropout=0, is_training=True,
-                cell_type="LSTM", is_bidirectional=False, name="stacked_rnn"):
-  """Functional interface for StackedRNN
-  Arguments:
-    inputs:
-      A tensor of size [batch_size, max_sequence_length, embedding_size].
+def stacked_rnn( nputs, sequence_lengths, num_un s,
+                dropout=0,  s_tra n ng=True,
+                cell_type="LSTM",  s_b d rect onal=False, na ="stacked_rnn"):
+  """Funct onal  nterface for StackedRNN
+  Argu nts:
+     nputs:
+      A tensor of s ze [batch_s ze, max_sequence_length, embedd ng_s ze].
     sequence_lengths:
-      The length of each input sequence in the batch. Should be of size [batch_size].
-    num_units:
-      A list specifying the number of units per layer.
+      T  length of each  nput sequence  n t  batch. Should be of s ze [batch_s ze].
+    num_un s:
+      A l st spec fy ng t  number of un s per layer.
     dropout:
-      Dropout applied to the input of each cell.
-      If list, has to dropout used for each layer.
-      If number, the same amount of dropout is used everywhere.
+      Dropout appl ed to t   nput of each cell.
+       f l st, has to dropout used for each layer.
+       f number, t  sa  amount of dropout  s used everyw re.
       Defaults to 0.
-    is_training:
-      Flag to specify if the layer is used in training mode or not.
+     s_tra n ng:
+      Flag to spec fy  f t  layer  s used  n tra n ng mode or not.
     cell_type:
-      Sepcifies the type of RNN. Can be "LSTM" or "GRU".
-    is_bidirectional:
-      Specifies if the stacked RNN layer is bidirectional.
+      Sepc f es t  type of RNN. Can be "LSTM" or "GRU".
+     s_b d rect onal:
+      Spec f es  f t  stacked RNN layer  s b d rect onal.
       Defaults to False.
   Returns
     outputs, state.
   """
-  rnn = StackedRNN(num_units, dropout, is_training, cell_type, is_bidirectional, name)
-  return rnn(inputs, sequence_lengths)
+  rnn = StackedRNN(num_un s, dropout,  s_tra n ng, cell_type,  s_b d rect onal, na )
+  return rnn( nputs, sequence_lengths)

@@ -1,43 +1,43 @@
-package com.twitter.simclusters_v2.scio
-package multi_type_graph.multi_type_graph_sims
+package com.tw ter.s mclusters_v2.sc o
+package mult _type_graph.mult _type_graph_s ms
 
-import com.twitter.dal.client.dataset.SnapshotDALDataset
-import com.twitter.simclusters_v2.hdfs_sources.RightNodeSimHashScioScalaDataset
-import com.twitter.simclusters_v2.thriftscala.RightNodeSimHashSketch
+ mport com.tw ter.dal.cl ent.dataset.SnapshotDALDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.R ghtNodeS mHashSc oScalaDataset
+ mport com.tw ter.s mclusters_v2.thr ftscala.R ghtNodeS mHashSketch
 
 /**
-Build:
-./bazel bundle src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/multi_type_graph_sims:multi-type-graph-sim-hash-scio-adhoc-app
+Bu ld:
+./bazel bundle src/scala/com/tw ter/s mclusters_v2/sc o/mult _type_graph/mult _type_graph_s ms:mult -type-graph-s m-hash-sc o-adhoc-app
 
-To kick off an adhoc run:
-bin/d6w create \
-  ${GCP_PROJECT_NAME}/us-central1/multi-type-graph-sim-hash-scio-adhoc-app \
-  src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/multi_type_graph_sims/sim-hash-scio-adhoc.d6w \
-  --jar dist/multi-type-graph-sim-hash-scio-adhoc-app.jar \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=${USER} \
-  --bind=profile.date="2021-12-01" \
-  --bind=profile.machine="n2d-highmem-16" --ignore-existing
+To k ck off an adhoc run:
+b n/d6w create \
+  ${GCP_PROJECT_NAME}/us-central1/mult -type-graph-s m-hash-sc o-adhoc-app \
+  src/scala/com/tw ter/s mclusters_v2/sc o/mult _type_graph/mult _type_graph_s ms/s m-hash-sc o-adhoc.d6w \
+  --jar d st/mult -type-graph-s m-hash-sc o-adhoc-app.jar \
+  --b nd=prof le.project=${GCP_PROJECT_NAME} \
+  --b nd=prof le.user_na =${USER} \
+  --b nd=prof le.date="2021-12-01" \
+  --b nd=prof le.mach ne="n2d-h gh m-16" -- gnore-ex st ng
  */
-object RightNodeSimHashScioAdhocApp extends RightNodeSimHashScioBaseApp {
-  override val isAdhoc: Boolean = true
-  override val rightNodeSimHashSnapshotDataset: SnapshotDALDataset[RightNodeSimHashSketch] =
-    RightNodeSimHashScioAdhocScalaDataset
+object R ghtNodeS mHashSc oAdhocApp extends R ghtNodeS mHashSc oBaseApp {
+  overr de val  sAdhoc: Boolean = true
+  overr de val r ghtNodeS mHashSnapshotDataset: SnapshotDALDataset[R ghtNodeS mHashSketch] =
+    R ghtNodeS mHashSc oAdhocScalaDataset
 }
 
 /**
-To deploy the job:
+To deploy t  job:
 
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/multi-type-graph-sim-hash-scio-batch-app \
-  src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/multi_type_graph_sims/sim-hash-scio-batch.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=recos-platform \
-  --bind=profile.date="2021-12-01" \
-  --bind=profile.machine="n2d-highmem-16"
+b n/d6w sc dule \
+  ${GCP_PROJECT_NAME}/us-central1/mult -type-graph-s m-hash-sc o-batch-app \
+  src/scala/com/tw ter/s mclusters_v2/sc o/mult _type_graph/mult _type_graph_s ms/s m-hash-sc o-batch.d6w \
+  --b nd=prof le.project=${GCP_PROJECT_NAME} \
+  --b nd=prof le.user_na =recos-platform \
+  --b nd=prof le.date="2021-12-01" \
+  --b nd=prof le.mach ne="n2d-h gh m-16"
  */
-object RightNodeSimHashScioBatchApp extends RightNodeSimHashScioBaseApp {
-  override val isAdhoc: Boolean = false
-  override val rightNodeSimHashSnapshotDataset: SnapshotDALDataset[RightNodeSimHashSketch] =
-    RightNodeSimHashScioScalaDataset
+object R ghtNodeS mHashSc oBatchApp extends R ghtNodeS mHashSc oBaseApp {
+  overr de val  sAdhoc: Boolean = false
+  overr de val r ghtNodeS mHashSnapshotDataset: SnapshotDALDataset[R ghtNodeS mHashSketch] =
+    R ghtNodeS mHashSc oScalaDataset
 }

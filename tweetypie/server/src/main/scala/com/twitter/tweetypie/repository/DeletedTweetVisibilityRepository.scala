@@ -1,83 +1,83 @@
-package com.twitter.tweetypie.repository
+package com.tw ter.t etyp e.repos ory
 
-import com.twitter.spam.rtf.thriftscala.FilteredReason
-import com.twitter.spam.rtf.thriftscala.{SafetyLevel => ThriftSafetyLevel}
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.TweetId
-import com.twitter.tweetypie.core.FilteredState.HasFilteredReason
-import com.twitter.tweetypie.core.FilteredState.Unavailable.BounceDeleted
-import com.twitter.tweetypie.core.FilteredState.Unavailable.SourceTweetNotFound
-import com.twitter.tweetypie.core.FilteredState.Unavailable.TweetDeleted
-import com.twitter.tweetypie.repository.VisibilityResultToFilteredState.toFilteredStateUnavailable
-import com.twitter.visibility.interfaces.tweets.DeletedTweetVisibilityLibrary
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.TweetDeleteReason
-import com.twitter.visibility.models.TweetDeleteReason.TweetDeleteReason
-import com.twitter.visibility.models.ViewerContext
+ mport com.tw ter.spam.rtf.thr ftscala.F lteredReason
+ mport com.tw ter.spam.rtf.thr ftscala.{SafetyLevel => Thr ftSafetyLevel}
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.T et d
+ mport com.tw ter.t etyp e.core.F lteredState.HasF lteredReason
+ mport com.tw ter.t etyp e.core.F lteredState.Unava lable.BounceDeleted
+ mport com.tw ter.t etyp e.core.F lteredState.Unava lable.S ceT etNotFound
+ mport com.tw ter.t etyp e.core.F lteredState.Unava lable.T etDeleted
+ mport com.tw ter.t etyp e.repos ory.V s b l yResultToF lteredState.toF lteredStateUnava lable
+ mport com.tw ter.v s b l y. nterfaces.t ets.DeletedT etV s b l yL brary
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.models.T etDeleteReason
+ mport com.tw ter.v s b l y.models.T etDeleteReason.T etDeleteReason
+ mport com.tw ter.v s b l y.models.V e rContext
 
 /**
- *  Generate FilteredReason for tweet entities in following delete states:
- *  com.twitter.tweetypie.core.FilteredState.Unavailable
- *    - SourceTweetNotFound(true)
- *    - TweetDeleted
+ *  Generate F lteredReason for t et ent  es  n follow ng delete states:
+ *  com.tw ter.t etyp e.core.F lteredState.Unava lable
+ *    - S ceT etNotFound(true)
+ *    - T etDeleted
  *    - BounceDeleted
  *
- *  Callers of this repository should be ready to handle empty response (Stitch.None)
- *  from the underlying VF library when:
- *  1.the tweet should not NOT be filtered for the given safety level
- *  2.the tweet is not a relevant content to be handled by the library
+ *  Callers of t  repos ory should be ready to handle empty response (St ch.None)
+ *  from t  underly ng VF l brary w n:
+ *  1.t  t et should not NOT be f ltered for t  g ven safety level
+ *  2.t  t et  s not a relevant content to be handled by t  l brary
  */
-object DeletedTweetVisibilityRepository {
-  type Type = VisibilityRequest => Stitch[Option[FilteredReason]]
+object DeletedT etV s b l yRepos ory {
+  type Type = V s b l yRequest => St ch[Opt on[F lteredReason]]
 
-  case class VisibilityRequest(
-    filteredState: Throwable,
-    tweetId: TweetId,
-    safetyLevel: Option[ThriftSafetyLevel],
-    viewerId: Option[Long],
-    isInnerQuotedTweet: Boolean)
+  case class V s b l yRequest(
+    f lteredState: Throwable,
+    t et d: T et d,
+    safetyLevel: Opt on[Thr ftSafetyLevel],
+    v e r d: Opt on[Long],
+     s nnerQuotedT et: Boolean)
 
   def apply(
-    visibilityLibrary: DeletedTweetVisibilityLibrary.Type
+    v s b l yL brary: DeletedT etV s b l yL brary.Type
   ): Type = { request =>
-    toVisibilityTweetDeleteState(request.filteredState, request.isInnerQuotedTweet)
+    toV s b l yT etDeleteState(request.f lteredState, request. s nnerQuotedT et)
       .map { deleteReason =>
-        val safetyLevel = SafetyLevel.fromThrift(
-          request.safetyLevel.getOrElse(ThriftSafetyLevel.FilterDefault)
+        val safetyLevel = SafetyLevel.fromThr ft(
+          request.safetyLevel.getOrElse(Thr ftSafetyLevel.F lterDefault)
         )
-        val isRetweet = request.filteredState == SourceTweetNotFound(true)
-        visibilityLibrary(
-          DeletedTweetVisibilityLibrary.Request(
-            request.tweetId,
+        val  sRet et = request.f lteredState == S ceT etNotFound(true)
+        v s b l yL brary(
+          DeletedT etV s b l yL brary.Request(
+            request.t et d,
             safetyLevel,
-            ViewerContext.fromContextWithViewerIdFallback(request.viewerId),
+            V e rContext.fromContextW hV e r dFallback(request.v e r d),
             deleteReason,
-            isRetweet,
-            request.isInnerQuotedTweet
+             sRet et,
+            request. s nnerQuotedT et
           )
-        ).map(toFilteredStateUnavailable)
+        ).map(toF lteredStateUnava lable)
           .map {
-            //Accept FilteredReason
-            case Some(fs) if fs.isInstanceOf[HasFilteredReason] =>
-              Some(fs.asInstanceOf[HasFilteredReason].filteredReason)
+            //Accept F lteredReason
+            case So (fs)  f fs. s nstanceOf[HasF lteredReason] =>
+              So (fs.as nstanceOf[HasF lteredReason].f lteredReason)
             case _ => None
           }
       }
-      .getOrElse(Stitch.None)
+      .getOrElse(St ch.None)
   }
 
   /**
-   * @return map an error from tweet hydration to a VF model TweetDeleteReason,
-   *         None when the error is not related to delete state tweets.
+   * @return map an error from t et hydrat on to a VF model T etDeleteReason,
+   *         None w n t  error  s not related to delete state t ets.
    */
-  private def toVisibilityTweetDeleteState(
-    tweetDeleteState: Throwable,
-    isInnerQuotedTweet: Boolean
-  ): Option[TweetDeleteReason] = {
-    tweetDeleteState match {
-      case TweetDeleted => Some(TweetDeleteReason.Deleted)
-      case BounceDeleted => Some(TweetDeleteReason.BounceDeleted)
-      case SourceTweetNotFound(true) if !isInnerQuotedTweet => Some(TweetDeleteReason.Deleted)
+  pr vate def toV s b l yT etDeleteState(
+    t etDeleteState: Throwable,
+     s nnerQuotedT et: Boolean
+  ): Opt on[T etDeleteReason] = {
+    t etDeleteState match {
+      case T etDeleted => So (T etDeleteReason.Deleted)
+      case BounceDeleted => So (T etDeleteReason.BounceDeleted)
+      case S ceT etNotFound(true)  f ! s nnerQuotedT et => So (T etDeleteReason.Deleted)
       case _ => None
     }
   }

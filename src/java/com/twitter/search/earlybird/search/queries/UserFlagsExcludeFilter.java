@@ -1,128 +1,128 @@
-package com.twitter.search.earlybird.search.queries;
+package com.tw ter.search.earlyb rd.search.quer es;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+ mport org.apac .lucene. ndex.LeafReader;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene. ndex.Nu r cDocValues;
+ mport org.apac .lucene.search.BooleanClause;
+ mport org.apac .lucene.search.BooleanQuery;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.search. ndexSearc r;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .lucene.search.ScoreMode;
+ mport org.apac .lucene.search.  ght;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.index.util.AllDocsIterator;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
+ mport com.tw ter.search.common.query.DefaultF lter  ght;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.core.earlyb rd. ndex.ut l.AllDocs erator;
+ mport com.tw ter.search.core.earlyb rd. ndex.ut l.RangeF lterD S ;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserTable;
 
-public final class UserFlagsExcludeFilter extends Query {
+publ c f nal class UserFlagsExcludeF lter extends Query {
   /**
-   * Returns a query that filters hits based on their author flags.
+   * Returns a query that f lters h s based on t  r author flags.
    *
-   * @param excludeAntisocial Determines if the filter should exclude hits from antisocial users.
-   * @param excludeOffensive Determines if the filter should exclude hits from offensive users.
-   * @param excludeProtected Determines if the filter should exclude hits from protected users
-   * @return A query that filters hits based on their author flags.
+   * @param excludeAnt soc al Determ nes  f t  f lter should exclude h s from ant soc al users.
+   * @param excludeOffens ve Determ nes  f t  f lter should exclude h s from offens ve users.
+   * @param excludeProtected Determ nes  f t  f lter should exclude h s from protected users
+   * @return A query that f lters h s based on t  r author flags.
    */
-  public static Query getUserFlagsExcludeFilter(UserTable userTable,
-                                                boolean excludeAntisocial,
-                                                boolean excludeOffensive,
+  publ c stat c Query getUserFlagsExcludeF lter(UserTable userTable,
+                                                boolean excludeAnt soc al,
+                                                boolean excludeOffens ve,
                                                 boolean excludeProtected) {
-    return new BooleanQuery.Builder()
-        .add(new UserFlagsExcludeFilter(
-                userTable, excludeAntisocial, excludeOffensive, excludeProtected),
-            BooleanClause.Occur.FILTER)
-        .build();
+    return new BooleanQuery.Bu lder()
+        .add(new UserFlagsExcludeF lter(
+                userTable, excludeAnt soc al, excludeOffens ve, excludeProtected),
+            BooleanClause.Occur.F LTER)
+        .bu ld();
   }
 
-  private final UserTable userTable;
-  private final boolean excludeAntisocial;
-  private final boolean excludeOffensive;
-  private final boolean excludeProtected;
+  pr vate f nal UserTable userTable;
+  pr vate f nal boolean excludeAnt soc al;
+  pr vate f nal boolean excludeOffens ve;
+  pr vate f nal boolean excludeProtected;
 
-  private UserFlagsExcludeFilter(
+  pr vate UserFlagsExcludeF lter(
       UserTable userTable,
-      boolean excludeAntisocial,
-      boolean excludeOffensive,
+      boolean excludeAnt soc al,
+      boolean excludeOffens ve,
       boolean excludeProtected) {
-    this.userTable = userTable;
-    this.excludeAntisocial = excludeAntisocial;
-    this.excludeOffensive = excludeOffensive;
-    this.excludeProtected = excludeProtected;
+    t .userTable = userTable;
+    t .excludeAnt soc al = excludeAnt soc al;
+    t .excludeOffens ve = excludeOffens ve;
+    t .excludeProtected = excludeProtected;
   }
 
-  @Override
-  public int hashCode() {
-    return (excludeAntisocial ? 13 : 0) + (excludeOffensive ? 1 : 0) + (excludeProtected ? 2 : 0);
+  @Overr de
+  publ c  nt hashCode() {
+    return (excludeAnt soc al ? 13 : 0) + (excludeOffens ve ? 1 : 0) + (excludeProtected ? 2 : 0);
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof UserFlagsExcludeFilter)) {
+  @Overr de
+  publ c boolean equals(Object obj) {
+     f (!(obj  nstanceof UserFlagsExcludeF lter)) {
       return false;
     }
 
-    UserFlagsExcludeFilter filter = UserFlagsExcludeFilter.class.cast(obj);
-    return (excludeAntisocial == filter.excludeAntisocial)
-        && (excludeOffensive == filter.excludeOffensive)
-        && (excludeProtected == filter.excludeProtected);
+    UserFlagsExcludeF lter f lter = UserFlagsExcludeF lter.class.cast(obj);
+    return (excludeAnt soc al == f lter.excludeAnt soc al)
+        && (excludeOffens ve == f lter.excludeOffens ve)
+        && (excludeProtected == f lter.excludeProtected);
   }
 
-  @Override
-  public String toString(String field) {
-    return "UserFlagsExcludeFilter";
+  @Overr de
+  publ c Str ng toStr ng(Str ng f eld) {
+    return "UserFlagsExcludeF lter";
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
+  @Overr de
+  publ c   ght create  ght( ndexSearc r searc r, ScoreMode scoreMode, float boost) {
+    return new DefaultF lter  ght(t ) {
+      @Overr de
+      protected Doc dSet erator getDoc dSet erator(LeafReaderContext context) throws  OExcept on {
         LeafReader reader = context.reader();
-        if (userTable == null) {
-          return new AllDocsIterator(reader);
+         f (userTable == null) {
+          return new AllDocs erator(reader);
         }
 
-        final int bits =
-            (excludeAntisocial ? UserTable.ANTISOCIAL_BIT : 0)
-                | (excludeOffensive ? UserTable.OFFENSIVE_BIT | UserTable.NSFW_BIT : 0)
-                | (excludeProtected ? UserTable.IS_PROTECTED_BIT : 0);
-        if (bits != 0) {
-          return new UserFlagsExcludeDocIdSetIterator(reader, userTable) {
-            @Override
-            protected boolean checkUserFlags(UserTable table, long userID) {
-              return !table.isSet(userID, bits);
+        f nal  nt b s =
+            (excludeAnt soc al ? UserTable.ANT SOC AL_B T : 0)
+                | (excludeOffens ve ? UserTable.OFFENS VE_B T | UserTable.NSFW_B T : 0)
+                | (excludeProtected ? UserTable. S_PROTECTED_B T : 0);
+         f (b s != 0) {
+          return new UserFlagsExcludeDoc dSet erator(reader, userTable) {
+            @Overr de
+            protected boolean c ckUserFlags(UserTable table, long user D) {
+              return !table. sSet(user D, b s);
             }
           };
         }
 
-        return new AllDocsIterator(reader);
+        return new AllDocs erator(reader);
       }
     };
   }
 
-  private abstract static class UserFlagsExcludeDocIdSetIterator extends RangeFilterDISI {
-    private final UserTable userTable;
-    private final NumericDocValues fromUserID;
+  pr vate abstract stat c class UserFlagsExcludeDoc dSet erator extends RangeF lterD S  {
+    pr vate f nal UserTable userTable;
+    pr vate f nal Nu r cDocValues fromUser D;
 
-    public UserFlagsExcludeDocIdSetIterator(
-        LeafReader indexReader, UserTable table) throws IOException {
-      super(indexReader);
+    publ c UserFlagsExcludeDoc dSet erator(
+        LeafReader  ndexReader, UserTable table) throws  OExcept on {
+      super( ndexReader);
       userTable = table;
-      fromUserID =
-          indexReader.getNumericDocValues(EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName());
+      fromUser D =
+           ndexReader.getNu r cDocValues(Earlyb rdF eldConstant.FROM_USER_ D_CSF.getF eldNa ());
     }
 
-    @Override
-    protected boolean shouldReturnDoc() throws IOException {
-      return fromUserID.advanceExact(docID())
-          && checkUserFlags(userTable, fromUserID.longValue());
+    @Overr de
+    protected boolean shouldReturnDoc() throws  OExcept on {
+      return fromUser D.advanceExact(doc D())
+          && c ckUserFlags(userTable, fromUser D.longValue());
     }
 
-    protected abstract boolean checkUserFlags(UserTable table, long userID);
+    protected abstract boolean c ckUserFlags(UserTable table, long user D);
   }
 }

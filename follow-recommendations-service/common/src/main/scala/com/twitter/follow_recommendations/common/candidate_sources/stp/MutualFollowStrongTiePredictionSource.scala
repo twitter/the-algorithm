@@ -1,61 +1,61 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.stp
 
-import com.twitter.follow_recommendations.common.clients.socialgraph.RecentEdgesQuery
-import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.StrongTiePredictionFeaturesOnUserClientColumn
-import javax.inject.Singleton
-import javax.inject.Inject
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.soc algraph.RecentEdgesQuery
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.soc algraph.Soc alGraphCl ent
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.HasRecentFollo dUser ds
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.soc algraph.thr ftscala.Relat onsh pType
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.generated.cl ent.onboard ng.userrecs.StrongT ePred ct onFeaturesOnUserCl entColumn
+ mport javax. nject.S ngleton
+ mport javax. nject. nject
 
 /**
- * Returns mutual follows. It first gets mutual follows from recent 100 follows and followers, and then unions this
- * with mutual follows from STP features dataset.
+ * Returns mutual follows.   f rst gets mutual follows from recent 100 follows and follo rs, and t n un ons t 
+ * w h mutual follows from STP features dataset.
  */
-@Singleton
-class MutualFollowStrongTiePredictionSource @Inject() (
-  sgsClient: SocialGraphClient,
-  strongTiePredictionFeaturesOnUserClientColumn: StrongTiePredictionFeaturesOnUserClientColumn)
-    extends CandidateSource[HasClientContext with HasRecentFollowedUserIds, CandidateUser] {
-  val identifier: CandidateSourceIdentifier =
-    MutualFollowStrongTiePredictionSource.Identifier
+@S ngleton
+class MutualFollowStrongT ePred ct onS ce @ nject() (
+  sgsCl ent: Soc alGraphCl ent,
+  strongT ePred ct onFeaturesOnUserCl entColumn: StrongT ePred ct onFeaturesOnUserCl entColumn)
+    extends Cand dateS ce[HasCl entContext w h HasRecentFollo dUser ds, Cand dateUser] {
+  val  dent f er: Cand dateS ce dent f er =
+    MutualFollowStrongT ePred ct onS ce. dent f er
 
-  override def apply(
-    target: HasClientContext with HasRecentFollowedUserIds
-  ): Stitch[Seq[CandidateUser]] = {
-    target.getOptionalUserId match {
-      case Some(userId) =>
-        val newFollowings = target.recentFollowedUserIds
-          .getOrElse(Nil)
-          .take(MutualFollowStrongTiePredictionSource.NumOfRecentFollowings)
-        val newFollowersStitch =
-          sgsClient
-            .getRecentEdges(RecentEdgesQuery(userId, Seq(RelationshipType.FollowedBy))).map(
-              _.take(MutualFollowStrongTiePredictionSource.NumOfRecentFollowers))
-        val mutualFollowsStitch =
-          strongTiePredictionFeaturesOnUserClientColumn.fetcher
-            .fetch(userId).map(_.v.flatMap(_.topMutualFollows.map(_.map(_.userId))).getOrElse(Nil))
+  overr de def apply(
+    target: HasCl entContext w h HasRecentFollo dUser ds
+  ): St ch[Seq[Cand dateUser]] = {
+    target.getOpt onalUser d match {
+      case So (user d) =>
+        val newFollow ngs = target.recentFollo dUser ds
+          .getOrElse(N l)
+          .take(MutualFollowStrongT ePred ct onS ce.NumOfRecentFollow ngs)
+        val newFollo rsSt ch =
+          sgsCl ent
+            .getRecentEdges(RecentEdgesQuery(user d, Seq(Relat onsh pType.Follo dBy))).map(
+              _.take(MutualFollowStrongT ePred ct onS ce.NumOfRecentFollo rs))
+        val mutualFollowsSt ch =
+          strongT ePred ct onFeaturesOnUserCl entColumn.fetc r
+            .fetch(user d).map(_.v.flatMap(_.topMutualFollows.map(_.map(_.user d))).getOrElse(N l))
 
-        Stitch.join(newFollowersStitch, mutualFollowsStitch).map {
-          case (newFollowers, mutualFollows) => {
-            (newFollowings.intersect(newFollowers) ++ mutualFollows).distinct
-              .map(id => CandidateUser(id, Some(CandidateUser.DefaultCandidateScore)))
+        St ch.jo n(newFollo rsSt ch, mutualFollowsSt ch).map {
+          case (newFollo rs, mutualFollows) => {
+            (newFollow ngs. ntersect(newFollo rs) ++ mutualFollows).d st nct
+              .map( d => Cand dateUser( d, So (Cand dateUser.DefaultCand dateScore)))
           }
         }
-      case _ => Stitch.Nil
+      case _ => St ch.N l
     }
   }
 }
 
-object MutualFollowStrongTiePredictionSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.MutualFollowSTP.toString)
-  val NumOfRecentFollowings = 100
-  val NumOfRecentFollowers = 100
+object MutualFollowStrongT ePred ct onS ce {
+  val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er(
+    Algor hm.MutualFollowSTP.toStr ng)
+  val NumOfRecentFollow ngs = 100
+  val NumOfRecentFollo rs = 100
 }

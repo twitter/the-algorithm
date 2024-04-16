@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neScr beConf g
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TimelineScribeConfigMarshaller @Inject() () {
+@S ngleton
+class T  l neScr beConf gMarshaller @ nject() () {
 
-  def apply(timelineScribeConfig: TimelineScribeConfig): urt.TimelineScribeConfig =
-    urt.TimelineScribeConfig(
-      page = timelineScribeConfig.page,
-      section = timelineScribeConfig.section,
-      entityToken = timelineScribeConfig.entityToken
+  def apply(t  l neScr beConf g: T  l neScr beConf g): urt.T  l neScr beConf g =
+    urt.T  l neScr beConf g(
+      page = t  l neScr beConf g.page,
+      sect on = t  l neScr beConf g.sect on,
+      ent yToken = t  l neScr beConf g.ent yToken
     )
 }

@@ -1,81 +1,81 @@
-scala_library(
-    sources = ["*.scala"],
+scala_l brary(
+    s ces = ["*.scala"],
     platform = "java8",
     tags = [
-        "bazel-compatible",
+        "bazel-compat ble",
         "bazel-only",
     ],
-    dependencies = [
-        "src/scala/com/twitter/octain/p13n/batch:p13n_preferences-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:data_sources",
-        "src/scala/com/twitter/simclusters_v2/scalding",
-        "src/scala/com/twitter/simclusters_v2/scalding/common",
-        "src/scala/com/twitter/simclusters_v2/scalding/inferred_entities",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:cassowary_job",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:execution_app",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:sources",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:stats_util",
+    dependenc es = [
+        "src/scala/com/tw ter/octa n/p13n/batch:p13n_preferences-scala",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces:data_s ces",
+        "src/scala/com/tw ter/s mclusters_v2/scald ng",
+        "src/scala/com/tw ter/s mclusters_v2/scald ng/common",
+        "src/scala/com/tw ter/s mclusters_v2/scald ng/ nferred_ent  es",
+        "src/scala/com/tw ter/wtf/scald ng/jobs/common:cassowary_job",
+        "src/scala/com/tw ter/wtf/scald ng/jobs/common:execut on_app",
+        "src/scala/com/tw ter/wtf/scald ng/jobs/common:s ces",
+        "src/scala/com/tw ter/wtf/scald ng/jobs/common:stats_ut l",
     ],
 )
 
-hadoop_binary(
-    name = "known_for_optout-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.optout.KnownForOptOutAdhocJob",
+hadoop_b nary(
+    na  = "known_for_optout-adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.optout.KnownForOptOutAdhocJob",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
+    dependenc es = [
         ":optout",
     ],
 )
 
-hadoop_binary(
-    name = "known_for_optout_daily",
-    main = "com.twitter.simclusters_v2.scalding.optout.KnownForOptOutDailyBatchJob",
+hadoop_b nary(
+    na  = "known_for_optout_da ly",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.optout.KnownForOptOutDa lyBatchJob",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
+    dependenc es = [
         ":optout",
     ],
 )
 
-hadoop_binary(
-    name = "interested_in_optout-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.optout.InterestedInOptOutAdhocJob",
+hadoop_b nary(
+    na  = " nterested_ n_optout-adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.optout. nterested nOptOutAdhocJob",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
-        "known-to-fail-jira:SD-14439",
+        "known-to-fa l-j ra:SD-14439",
     ],
-    dependencies = [
+    dependenc es = [
         ":optout",
     ],
 )
 
-hadoop_binary(
-    name = "interested_in_optout_daily",
-    main = "com.twitter.simclusters_v2.scalding.optout.InterestedInOptOutDailyBatchJob",
+hadoop_b nary(
+    na  = " nterested_ n_optout_da ly",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.optout. nterested nOptOutDa lyBatchJob",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
+    dependenc es = [
         ":optout",
     ],
 )

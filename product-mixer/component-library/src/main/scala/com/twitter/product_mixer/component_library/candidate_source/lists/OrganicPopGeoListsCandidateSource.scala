@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.component_library.candidate_source.lists
+package com.tw ter.product_m xer.component_l brary.cand date_s ce.l sts
 
-import com.twitter.product_mixer.component_library.model.candidate.TwitterListCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyFetcherSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.recommendations.interests_discovery.recommendations_mh.OrganicPopgeoListsClientColumn
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.Tw terL stCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.strato.StratoKeyFetc rS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.strato.generated.cl ent.recom ndat ons. nterests_d scovery.recom ndat ons_mh.Organ cPopgeoL stsCl entColumn
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class OrganicPopGeoListsCandidateSource @Inject() (
-  organicPopgeoListsClientColumn: OrganicPopgeoListsClientColumn)
-    extends StratoKeyFetcherSource[
-      OrganicPopgeoListsClientColumn.Key,
-      OrganicPopgeoListsClientColumn.Value,
-      TwitterListCandidate
+@S ngleton
+class Organ cPopGeoL stsCand dateS ce @ nject() (
+  organ cPopgeoL stsCl entColumn: Organ cPopgeoL stsCl entColumn)
+    extends StratoKeyFetc rS ce[
+      Organ cPopgeoL stsCl entColumn.Key,
+      Organ cPopgeoL stsCl entColumn.Value,
+      Tw terL stCand date
     ] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    "OrganicPopGeoLists")
+  overr de val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er(
+    "Organ cPopGeoL sts")
 
-  override val fetcher: Fetcher[
-    OrganicPopgeoListsClientColumn.Key,
-    Unit,
-    OrganicPopgeoListsClientColumn.Value
+  overr de val fetc r: Fetc r[
+    Organ cPopgeoL stsCl entColumn.Key,
+    Un ,
+    Organ cPopgeoL stsCl entColumn.Value
   ] =
-    organicPopgeoListsClientColumn.fetcher
+    organ cPopgeoL stsCl entColumn.fetc r
 
-  override def stratoResultTransformer(
-    stratoResult: OrganicPopgeoListsClientColumn.Value
-  ): Seq[TwitterListCandidate] = {
-    stratoResult.recommendedListsByAlgo.flatMap { topLists =>
-      topLists.lists.map { list =>
-        TwitterListCandidate(list.listId)
+  overr de def stratoResultTransfor r(
+    stratoResult: Organ cPopgeoL stsCl entColumn.Value
+  ): Seq[Tw terL stCand date] = {
+    stratoResult.recom ndedL stsByAlgo.flatMap { topL sts =>
+      topL sts.l sts.map { l st =>
+        Tw terL stCand date(l st.l st d)
       }
     }
   }

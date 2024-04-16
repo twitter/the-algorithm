@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.core.pipeline.product
+package com.tw ter.product_m xer.core.p pel ne.product
 
-import com.twitter.product_mixer.core.functional_component.common.access_policy.WithDebugAccessPolicies
-import com.twitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.Pipeline
-import com.twitter.stitch.Arrow
+ mport com.tw ter.product_m xer.core.funct onal_component.common.access_pol cy.W hDebugAccessPol c es
+ mport com.tw ter.product_m xer.core.model.common. dent f er.ProductP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Request
+ mport com.tw ter.product_m xer.core.p pel ne.P pel ne
+ mport com.tw ter.st ch.Arrow
 
 /**
- * A Product Pipeline
+ * A Product P pel ne
  *
- * This is an abstract class, as we only construct these via the [[ProductPipelineBuilder]].
+ * T   s an abstract class, as   only construct t se v a t  [[ProductP pel neBu lder]].
  *
- * A [[ProductPipeline]] is capable of processing a [[Request]] and returning a response.
+ * A [[ProductP pel ne]]  s capable of process ng a [[Request]] and return ng a response.
  *
- * @tparam RequestType the domain model for the query or request
- * @tparam ResponseType the final marshalled result type
+ * @tparam RequestType t  doma n model for t  query or request
+ * @tparam ResponseType t  f nal marshalled result type
  */
-abstract class ProductPipeline[RequestType <: Request, ResponseType] private[product]
-    extends Pipeline[ProductPipelineRequest[RequestType], ResponseType]
-    with WithDebugAccessPolicies {
-  override private[core] val config: ProductPipelineConfig[RequestType, _, ResponseType]
-  override val arrow: Arrow[
-    ProductPipelineRequest[RequestType],
-    ProductPipelineResult[ResponseType]
+abstract class ProductP pel ne[RequestType <: Request, ResponseType] pr vate[product]
+    extends P pel ne[ProductP pel neRequest[RequestType], ResponseType]
+    w h W hDebugAccessPol c es {
+  overr de pr vate[core] val conf g: ProductP pel neConf g[RequestType, _, ResponseType]
+  overr de val arrow: Arrow[
+    ProductP pel neRequest[RequestType],
+    ProductP pel neResult[ResponseType]
   ]
-  override val identifier: ProductPipelineIdentifier
+  overr de val  dent f er: ProductP pel ne dent f er
 }

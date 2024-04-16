@@ -1,48 +1,48 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+package com.tw ter.search.common.ut l.ml.pred ct on_eng ne;
 
 /**
- * The base class for a lightweight scorer based on a model and some feature data.
+ * T  base class for a l ght  ght scorer based on a model and so  feature data.
  *
- * @param <D> The type of feature data to be scored with
+ * @param <D> T  type of feature data to be scored w h
  */
-public abstract class BaseScoreAccumulator<D> {
-  protected final LightweightLinearModel model;
+publ c abstract class BaseScoreAccumulator<D> {
+  protected f nal L ght  ghtL nearModel model;
   protected double score;
 
-  public BaseScoreAccumulator(LightweightLinearModel model) {
-    this.model = model;
-    this.score = model.bias;
+  publ c BaseScoreAccumulator(L ght  ghtL nearModel model) {
+    t .model = model;
+    t .score = model.b as;
   }
 
   /**
-   * Compute score with a model and feature data
+   * Compute score w h a model and feature data
    */
-  public final double scoreWith(D featureData, boolean useLogitScore) {
-    updateScoreWithFeatures(featureData);
-    return useLogitScore ? getLogitScore() : getSigmoidScore();
+  publ c f nal double scoreW h(D featureData, boolean useLog Score) {
+    updateScoreW hFeatures(featureData);
+    return useLog Score ? getLog Score() : getS gmo dScore();
   }
 
-  public final void reset() {
-    this.score = model.bias;
+  publ c f nal vo d reset() {
+    t .score = model.b as;
   }
 
   /**
-   * Update the accumulator score with features, after this function the score should already
+   * Update t  accumulator score w h features, after t  funct on t  score should already
    * be computed.
    */
-  protected abstract void updateScoreWithFeatures(D data);
+  protected abstract vo d updateScoreW hFeatures(D data);
 
   /**
-   * Get the already accumulated score
+   * Get t  already accumulated score
    */
-  protected final double getLogitScore() {
+  protected f nal double getLog Score() {
     return score;
   }
 
   /**
-   * Returns the score as a value mapped between 0 and 1.
+   * Returns t  score as a value mapped bet en 0 and 1.
    */
-  protected final double getSigmoidScore() {
+  protected f nal double getS gmo dScore() {
     return 1 / (1 + Math.exp(-score));
   }
 }

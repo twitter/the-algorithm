@@ -1,31 +1,31 @@
 syntax = "proto3";
 
-package tensorflow.serving;
-option cc_enable_arenas = true;
+package tensorflow.serv ng;
+opt on cc_enable_arenas = true;
 
-import "tensorflow_serving/apis/classification.proto";
-import "tensorflow_serving/apis/get_model_metadata.proto";
-import "tensorflow_serving/apis/inference.proto";
-import "tensorflow_serving/apis/predict.proto";
-import "tensorflow_serving/apis/regression.proto";
+ mport "tensorflow_serv ng/ap s/class f cat on.proto";
+ mport "tensorflow_serv ng/ap s/get_model_ tadata.proto";
+ mport "tensorflow_serv ng/ap s/ nference.proto";
+ mport "tensorflow_serv ng/ap s/pred ct.proto";
+ mport "tensorflow_serv ng/ap s/regress on.proto";
 
-// open source marker; do not remove
-// PredictionService provides access to machine-learned models loaded by
+// open s ce marker; do not remove
+// Pred ct onServ ce prov des access to mach ne-learned models loaded by
 // model_servers.
-service PredictionService {
-  // Classify.
-  rpc Classify(ClassificationRequest) returns (ClassificationResponse);
+serv ce Pred ct onServ ce {
+  // Class fy.
+  rpc Class fy(Class f cat onRequest) returns (Class f cat onResponse);
 
   // Regress.
-  rpc Regress(RegressionRequest) returns (RegressionResponse);
+  rpc Regress(Regress onRequest) returns (Regress onResponse);
 
-  // Predict -- provides access to loaded TensorFlow model.
-  rpc Predict(PredictRequest) returns (PredictResponse);
+  // Pred ct -- prov des access to loaded TensorFlow model.
+  rpc Pred ct(Pred ctRequest) returns (Pred ctResponse);
 
-  // MultiInference API for multi-headed models.
-  rpc MultiInference(MultiInferenceRequest) returns (MultiInferenceResponse);
+  // Mult  nference AP  for mult - aded models.
+  rpc Mult  nference(Mult  nferenceRequest) returns (Mult  nferenceResponse);
 
-  // GetModelMetadata - provides access to metadata for loaded models.
-  rpc GetModelMetadata(GetModelMetadataRequest)
-      returns (GetModelMetadataResponse);
+  // GetModel tadata - prov des access to  tadata for loaded models.
+  rpc GetModel tadata(GetModel tadataRequest)
+      returns (GetModel tadataResponse);
 }

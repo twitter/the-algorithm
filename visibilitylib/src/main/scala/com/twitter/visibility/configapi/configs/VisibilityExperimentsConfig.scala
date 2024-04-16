@@ -1,33 +1,33 @@
-package com.twitter.visibility.configapi.configs
+package com.tw ter.v s b l y.conf gap .conf gs
 
-import com.twitter.timelines.configapi.Config
-import com.twitter.visibility.configapi.params.RuleParams._
-import com.twitter.visibility.configapi.params.VisibilityExperiments._
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.SafetyLevel._
+ mport com.tw ter.t  l nes.conf gap .Conf g
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams._
+ mport com.tw ter.v s b l y.conf gap .params.V s b l yExper  nts._
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.models.SafetyLevel._
 
-private[visibility] object VisibilityExperimentsConfig {
-  import ExperimentsHelper._
+pr vate[v s b l y] object V s b l yExper  ntsConf g {
+   mport Exper  nts lper._
 
-  val TestExperimentConfig: Config = mkABExperimentConfig(TestExperiment, TestHoldbackParam)
+  val TestExper  ntConf g: Conf g = mkABExper  ntConf g(TestExper  nt, TestHoldbackParam)
 
-  val NotGraduatedUserLabelRuleHoldbackExperimentConfig: Config =
-    mkABExperimentConfig(
-      NotGraduatedUserLabelRuleExperiment,
-      NotGraduatedUserLabelRuleHoldbackExperimentParam
+  val NotGraduatedUserLabelRuleHoldbackExper  ntConf g: Conf g =
+    mkABExper  ntConf g(
+      NotGraduatedUserLabelRuleExper  nt,
+      NotGraduatedUserLabelRuleHoldbackExper  ntParam
     )
 
-  def config(safetyLevel: SafetyLevel): Seq[Config] = {
+  def conf g(safetyLevel: SafetyLevel): Seq[Conf g] = {
 
-    val experimentConfigs = safetyLevel match {
+    val exper  ntConf gs = safetyLevel match {
 
       case Test =>
-        Seq(TestExperimentConfig)
+        Seq(TestExper  ntConf g)
 
-      case _ => Seq(NotGraduatedUserLabelRuleHoldbackExperimentConfig)
+      case _ => Seq(NotGraduatedUserLabelRuleHoldbackExper  ntConf g)
     }
 
-    experimentConfigs
+    exper  ntConf gs
   }
 
 }

@@ -1,176 +1,176 @@
-package com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue
+package com.tw ter.fr gate.pushserv ce.pred cate.ntab_caret_fat gue
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.notificationservice.thriftscala.GenericType
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.notificationservice.genericfeedbackstore.FeedbackPromptValue
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.frigate.common.base.Candidate
-import com.twitter.frigate.common.base.RecommendationType
-import com.twitter.frigate.common.base.TargetInfo
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.frigate.thriftscala.SeeLessOftenType
-import com.twitter.frigate.common.history.History
-import com.twitter.frigate.common.predicate.FrigateHistoryFatiguePredicate.TimeSeries
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.common.predicate.ntab_caret_fatigue.NtabCaretClickFatiguePredicateHelper
-import com.twitter.frigate.pushservice.predicate.CaretFeedbackHistoryFilter
-import com.twitter.notificationservice.thriftscala.CaretFeedbackDetails
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.frigate.common.predicate.FatiguePredicate
-import com.twitter.frigate.pushservice.util.PushCapUtil
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.util.PushDeviceUtil
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.not f cat onserv ce.thr ftscala.Gener cType
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter.not f cat onserv ce.gener cfeedbackstore.FeedbackPromptValue
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter.fr gate.common.base.Cand date
+ mport com.tw ter.fr gate.common.base.Recom ndat onType
+ mport com.tw ter.fr gate.common.base.Target nfo
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
+ mport com.tw ter.fr gate.thr ftscala.SeeLessOftenType
+ mport com.tw ter.fr gate.common. tory. tory
+ mport com.tw ter.fr gate.common.pred cate.Fr gate toryFat guePred cate.T  Ser es
+ mport com.tw ter.fr gate.common.rec_types.RecTypes
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.common.pred cate.ntab_caret_fat gue.NtabCaretCl ckFat guePred cate lper
+ mport com.tw ter.fr gate.pushserv ce.pred cate.CaretFeedback toryF lter
+ mport com.tw ter.not f cat onserv ce.thr ftscala.CaretFeedbackDeta ls
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.fr gate.common.pred cate.Fat guePred cate
+ mport com.tw ter.fr gate.pushserv ce.ut l.PushCapUt l
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.ut l.PushDev ceUt l
 
-object CRTBasedNtabCaretClickFatiguePredicates {
+object CRTBasedNtabCaretCl ckFat guePred cates {
 
-  private val MagicRecsCategory = "MagicRecs"
+  pr vate val Mag cRecsCategory = "Mag cRecs"
 
-  private val HighQualityRefreshableTypes: Set[Option[String]] = Set(
-    Some("MagicRecHighQualityTweet"),
+  pr vate val H ghQual yRefreshableTypes: Set[Opt on[Str ng]] = Set(
+    So ("Mag cRecH ghQual yT et"),
   )
 
-  private def getUserStateWeight(target: Target): Future[Double] = {
-    PushDeviceUtil.isNtabOnlyEligible.map {
+  pr vate def getUserState  ght(target: Target): Future[Double] = {
+    PushDev ceUt l. sNtabOnlyEl g ble.map {
       case true =>
-        target.params(PushFeatureSwitchParams.SeeLessOftenNtabOnlyNotifUserPushCapWeight)
+        target.params(PushFeatureSw chParams.SeeLessOftenNtabOnlyNot fUserPushCap  ght)
       case _ => 1.0
     }
   }
 
   def crtToSeeLessOftenType(
-    crt: CommonRecommendationType,
-    candidate: Candidate
-      with RecommendationType
-      with TargetInfo[
+    crt: CommonRecom ndat onType,
+    cand date: Cand date
+      w h Recom ndat onType
+      w h Target nfo[
         Target
       ],
   ): SeeLessOftenType = {
-    val crtToSeeLessOftenTypeMap: Map[CommonRecommendationType, SeeLessOftenType] = {
-      RecTypes.f1FirstDegreeTypes.map((_, SeeLessOftenType.F1Type)).toMap
+    val crtToSeeLessOftenTypeMap: Map[CommonRecom ndat onType, SeeLessOftenType] = {
+      RecTypes.f1F rstDegreeTypes.map((_, SeeLessOftenType.F1Type)).toMap
     }
 
-    crtToSeeLessOftenTypeMap.getOrElse(crt, SeeLessOftenType.OtherTypes)
+    crtToSeeLessOftenTypeMap.getOrElse(crt, SeeLessOftenType.Ot rTypes)
   }
 
-  def genericTypeToSeeLessOftenType(
-    genericType: GenericType,
-    candidate: Candidate
-      with RecommendationType
-      with TargetInfo[
+  def gener cTypeToSeeLessOftenType(
+    gener cType: Gener cType,
+    cand date: Cand date
+      w h Recom ndat onType
+      w h Target nfo[
         Target
       ]
   ): SeeLessOftenType = {
-    val genericTypeToSeeLessOftenTypeMap: Map[GenericType, SeeLessOftenType] = {
-      Map(GenericType.MagicRecFirstDegreeTweetRecent -> SeeLessOftenType.F1Type)
+    val gener cTypeToSeeLessOftenTypeMap: Map[Gener cType, SeeLessOftenType] = {
+      Map(Gener cType.Mag cRecF rstDegreeT etRecent -> SeeLessOftenType.F1Type)
     }
 
-    genericTypeToSeeLessOftenTypeMap.getOrElse(genericType, SeeLessOftenType.OtherTypes)
+    gener cTypeToSeeLessOftenTypeMap.getOrElse(gener cType, SeeLessOftenType.Ot rTypes)
   }
 
-  def getWeightForCaretFeedback(
-    dislikedType: SeeLessOftenType,
-    candidate: Candidate
-      with RecommendationType
-      with TargetInfo[
+  def get  ghtForCaretFeedback(
+    d sl kedType: SeeLessOftenType,
+    cand date: Cand date
+      w h Recom ndat onType
+      w h Target nfo[
         Target
       ]
   ): Double = {
-    def getWeightFromDislikedAndCurrentType(
-      dislikedType: SeeLessOftenType,
+    def get  ghtFromD sl kedAndCurrentType(
+      d sl kedType: SeeLessOftenType,
       currentType: SeeLessOftenType
     ): Double = {
-      val weightMap: Map[(SeeLessOftenType, SeeLessOftenType), Double] = {
+      val   ghtMap: Map[(SeeLessOftenType, SeeLessOftenType), Double] = {
 
         Map(
-          (SeeLessOftenType.F1Type, SeeLessOftenType.F1Type) -> candidate.target.params(
-            PushFeatureSwitchParams.SeeLessOftenF1TriggerF1PushCapWeight),
-          (SeeLessOftenType.OtherTypes, SeeLessOftenType.OtherTypes) -> candidate.target.params(
-            PushFeatureSwitchParams.SeeLessOftenNonF1TriggerNonF1PushCapWeight),
-          (SeeLessOftenType.F1Type, SeeLessOftenType.OtherTypes) -> candidate.target.params(
-            PushFeatureSwitchParams.SeeLessOftenF1TriggerNonF1PushCapWeight),
-          (SeeLessOftenType.OtherTypes, SeeLessOftenType.F1Type) -> candidate.target.params(
-            PushFeatureSwitchParams.SeeLessOftenNonF1TriggerF1PushCapWeight)
+          (SeeLessOftenType.F1Type, SeeLessOftenType.F1Type) -> cand date.target.params(
+            PushFeatureSw chParams.SeeLessOftenF1Tr ggerF1PushCap  ght),
+          (SeeLessOftenType.Ot rTypes, SeeLessOftenType.Ot rTypes) -> cand date.target.params(
+            PushFeatureSw chParams.SeeLessOftenNonF1Tr ggerNonF1PushCap  ght),
+          (SeeLessOftenType.F1Type, SeeLessOftenType.Ot rTypes) -> cand date.target.params(
+            PushFeatureSw chParams.SeeLessOftenF1Tr ggerNonF1PushCap  ght),
+          (SeeLessOftenType.Ot rTypes, SeeLessOftenType.F1Type) -> cand date.target.params(
+            PushFeatureSw chParams.SeeLessOftenNonF1Tr ggerF1PushCap  ght)
         )
       }
 
-      weightMap
+        ghtMap
         .getOrElse(
-          (dislikedType, currentType),
-          candidate.target.params(PushFeatureSwitchParams.SeeLessOftenDefaultPushCapWeight))
+          (d sl kedType, currentType),
+          cand date.target.params(PushFeatureSw chParams.SeeLessOftenDefaultPushCap  ght))
     }
 
-    getWeightFromDislikedAndCurrentType(
-      dislikedType,
-      crtToSeeLessOftenType(candidate.commonRecType, candidate))
+    get  ghtFromD sl kedAndCurrentType(
+      d sl kedType,
+      crtToSeeLessOftenType(cand date.commonRecType, cand date))
   }
 
-  private def isOutsideCrtBasedNtabCaretClickFatiguePeriodContFn(
-    candidate: Candidate
-      with RecommendationType
-      with TargetInfo[
+  pr vate def  sOuts deCrtBasedNtabCaretCl ckFat guePer odContFn(
+    cand date: Cand date
+      w h Recom ndat onType
+      w h Target nfo[
         Target
       ],
-    history: History,
-    feedbackDetails: Seq[CaretFeedbackDetails],
-    filterHistory: TimeSeries => TimeSeries =
-      FatiguePredicate.recTypesOnlyFilter(RecTypes.sharedNTabCaretFatigueTypes),
-    filterCaretFeedbackHistory: Target => Seq[
-      CaretFeedbackDetails
-    ] => Seq[CaretFeedbackDetails] =
-      CaretFeedbackHistoryFilter.caretFeedbackHistoryFilter(Seq(MagicRecsCategory)),
+     tory:  tory,
+    feedbackDeta ls: Seq[CaretFeedbackDeta ls],
+    f lter tory: T  Ser es => T  Ser es =
+      Fat guePred cate.recTypesOnlyF lter(RecTypes.sharedNTabCaretFat gueTypes),
+    f lterCaretFeedback tory: Target => Seq[
+      CaretFeedbackDeta ls
+    ] => Seq[CaretFeedbackDeta ls] =
+      CaretFeedback toryF lter.caretFeedback toryF lter(Seq(Mag cRecsCategory)),
     knobs: Seq[Double],
     pushCapKnobs: Seq[Double],
-    powerKnobs: Seq[Double],
-    f1Weight: Double,
-    nonF1Weight: Double,
-    defaultPushCap: Int,
-    stats: StatsReceiver,
-    tripHqTweetWeight: Double = 0.0,
+    po rKnobs: Seq[Double],
+    f1  ght: Double,
+    nonF1  ght: Double,
+    defaultPushCap:  nt,
+    stats: StatsRece ver,
+    tr pHqT et  ght: Double = 0.0,
   ): Boolean = {
-    val filteredFeedbackDetails = filterCaretFeedbackHistory(candidate.target)(feedbackDetails)
-    val weight = {
-      if (RecTypes.HighQualityTweetTypes.contains(
-          candidate.commonRecType) && (tripHqTweetWeight != 0)) {
-        tripHqTweetWeight
-      } else if (RecTypes.isF1Type(candidate.commonRecType)) {
-        f1Weight
+    val f lteredFeedbackDeta ls = f lterCaretFeedback tory(cand date.target)(feedbackDeta ls)
+    val   ght = {
+       f (RecTypes.H ghQual yT etTypes.conta ns(
+          cand date.commonRecType) && (tr pHqT et  ght != 0)) {
+        tr pHqT et  ght
+      } else  f (RecTypes. sF1Type(cand date.commonRecType)) {
+        f1  ght
       } else {
-        nonF1Weight
+        nonF1  ght
       }
     }
-    val filteredHistory = History(filterHistory(history.history.toSeq).toMap)
-    isOutsideFatiguePeriod(
-      filteredHistory,
-      filteredFeedbackDetails,
+    val f ltered tory =  tory(f lter tory( tory. tory.toSeq).toMap)
+     sOuts deFat guePer od(
+      f ltered tory,
+      f lteredFeedbackDeta ls,
       Seq(),
-      ContinuousFunctionParam(
+      Cont nuousFunct onParam(
         knobs,
         pushCapKnobs,
-        powerKnobs,
-        weight,
+        po rKnobs,
+          ght,
         defaultPushCap
       ),
       stats.scope(
-        if (RecTypes.isF1Type(candidate.commonRecType)) "mr_ntab_dislike_f1_candidate_fn"
-        else if (RecTypes.HighQualityTweetTypes.contains(candidate.commonRecType))
-          "mr_ntab_dislike_high_quality_candidate_fn"
-        else "mr_ntab_dislike_nonf1_candidate_fn")
+         f (RecTypes. sF1Type(cand date.commonRecType)) "mr_ntab_d sl ke_f1_cand date_fn"
+        else  f (RecTypes.H ghQual yT etTypes.conta ns(cand date.commonRecType))
+          "mr_ntab_d sl ke_h gh_qual y_cand date_fn"
+        else "mr_ntab_d sl ke_nonf1_cand date_fn")
     )
   }
 
-  private def isOutsideFatiguePeriod(
-    history: History,
-    feedbackDetails: Seq[CaretFeedbackDetails],
+  pr vate def  sOuts deFat guePer od(
+     tory:  tory,
+    feedbackDeta ls: Seq[CaretFeedbackDeta ls],
     feedbacks: Seq[FeedbackModel],
-    param: ContinuousFunctionParam,
-    stats: StatsReceiver
+    param: Cont nuousFunct onParam,
+    stats: StatsRece ver
   ): Boolean = {
-    val fatiguePeriod: Duration =
-      NtabCaretClickFatigueUtils.durationToFilterForFeedback(
-        feedbackDetails,
+    val fat guePer od: Durat on =
+      NtabCaretCl ckFat gueUt ls.durat onToF lterForFeedback(
+        feedbackDeta ls,
         feedbacks,
         param,
         param.defaultValue,
@@ -178,122 +178,122 @@ object CRTBasedNtabCaretClickFatiguePredicates {
       )
 
     val hasRecentSent =
-      NtabCaretClickFatiguePredicateHelper.hasRecentSend(history, fatiguePeriod)
+      NtabCaretCl ckFat guePred cate lper.hasRecentSend( tory, fat guePer od)
     !hasRecentSent
 
   }
 
-  def genericCRTBasedNtabCaretClickFnFatiguePredicate[
-    Cand <: Candidate with RecommendationType with TargetInfo[
+  def gener cCRTBasedNtabCaretCl ckFnFat guePred cate[
+    Cand <: Cand date w h Recom ndat onType w h Target nfo[
       Target
     ]
   ](
-    filterHistory: TimeSeries => TimeSeries =
-      FatiguePredicate.recTypesOnlyFilter(RecTypes.sharedNTabCaretFatigueTypes),
-    filterCaretFeedbackHistory: Target => Seq[
-      CaretFeedbackDetails
-    ] => Seq[CaretFeedbackDetails] = CaretFeedbackHistoryFilter
-      .caretFeedbackHistoryFilter(Seq(MagicRecsCategory)),
-    filterInlineFeedbackHistory: Seq[FeedbackModel] => Seq[FeedbackModel] =
-      NtabCaretClickFatigueUtils.feedbackModelFilterByCRT(RecTypes.sharedNTabCaretFatigueTypes)
+    f lter tory: T  Ser es => T  Ser es =
+      Fat guePred cate.recTypesOnlyF lter(RecTypes.sharedNTabCaretFat gueTypes),
+    f lterCaretFeedback tory: Target => Seq[
+      CaretFeedbackDeta ls
+    ] => Seq[CaretFeedbackDeta ls] = CaretFeedback toryF lter
+      .caretFeedback toryF lter(Seq(Mag cRecsCategory)),
+    f lter nl neFeedback tory: Seq[FeedbackModel] => Seq[FeedbackModel] =
+      NtabCaretCl ckFat gueUt ls.feedbackModelF lterByCRT(RecTypes.sharedNTabCaretFat gueTypes)
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[Cand] = {
-    val predicateName = "generic_crt_based_ntab_dislike_fatigue_fn"
-    Predicate
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[Cand] = {
+    val pred cateNa  = "gener c_crt_based_ntab_d sl ke_fat gue_fn"
+    Pred cate
       .fromAsync[Cand] { cand: Cand =>
         {
-          if (!cand.target.params(PushFeatureSwitchParams.EnableGenericCRTBasedFatiguePredicate)) {
+           f (!cand.target.params(PushFeatureSw chParams.EnableGener cCRTBasedFat guePred cate)) {
             Future.True
           } else {
-            val scopedStats = stats.scope(predicateName)
-            val totalRequests = scopedStats.counter("mr_ntab_dislike_total")
+            val scopedStats = stats.scope(pred cateNa )
+            val totalRequests = scopedStats.counter("mr_ntab_d sl ke_total")
             val total90Day =
-              scopedStats.counter("mr_ntab_dislike_90day_dislike")
-            val totalDisabled =
-              scopedStats.counter("mr_ntab_dislike_not_90day_dislike")
-            val totalSuccess = scopedStats.counter("mr_ntab_dislike_success")
-            val totalFiltered = scopedStats.counter("mr_ntab_dislike_filtered")
-            val totalWithHistory =
-              scopedStats.counter("mr_ntab_dislike_with_history")
-            val totalWithoutHistory =
-              scopedStats.counter("mr_ntab_dislike_without_history")
-            totalRequests.incr()
+              scopedStats.counter("mr_ntab_d sl ke_90day_d sl ke")
+            val totalD sabled =
+              scopedStats.counter("mr_ntab_d sl ke_not_90day_d sl ke")
+            val totalSuccess = scopedStats.counter("mr_ntab_d sl ke_success")
+            val totalF ltered = scopedStats.counter("mr_ntab_d sl ke_f ltered")
+            val totalW h tory =
+              scopedStats.counter("mr_ntab_d sl ke_w h_ tory")
+            val totalW hout tory =
+              scopedStats.counter("mr_ntab_d sl ke_w hout_ tory")
+            totalRequests. ncr()
 
             Future
-              .join(
-                cand.target.history,
+              .jo n(
+                cand.target. tory,
                 cand.target.caretFeedbacks,
-                cand.target.dynamicPushcap,
+                cand.target.dynam cPushcap,
                 cand.target.optoutAdjustedPushcap,
-                PushCapUtil.getDefaultPushCap(cand.target),
-                getUserStateWeight(cand.target)
+                PushCapUt l.getDefaultPushCap(cand.target),
+                getUserState  ght(cand.target)
               ).map {
                 case (
-                      history,
-                      Some(feedbackDetails),
-                      dynamicPushcapOpt,
+                       tory,
+                      So (feedbackDeta ls),
+                      dynam cPushcapOpt,
                       optoutAdjustedPushcapOpt,
                       defaultPushCap,
-                      userStateWeight) => {
-                  totalWithHistory.incr()
+                      userState  ght) => {
+                  totalW h tory. ncr()
 
-                  val feedbackDetailsDeduped =
-                    NtabCaretClickFatiguePredicateHelper.dedupFeedbackDetails(
-                      filterCaretFeedbackHistory(cand.target)(feedbackDetails),
+                  val feedbackDeta lsDeduped =
+                    NtabCaretCl ckFat guePred cate lper.dedupFeedbackDeta ls(
+                      f lterCaretFeedback tory(cand.target)(feedbackDeta ls),
                       stats
                     )
 
-                  val pushCap: Int = (dynamicPushcapOpt, optoutAdjustedPushcapOpt) match {
-                    case (_, Some(optoutAdjustedPushcap)) => optoutAdjustedPushcap
-                    case (Some(pushcapInfo), _) => pushcapInfo.pushcap
+                  val pushCap:  nt = (dynam cPushcapOpt, optoutAdjustedPushcapOpt) match {
+                    case (_, So (optoutAdjustedPushcap)) => optoutAdjustedPushcap
+                    case (So (pushcap nfo), _) => pushcap nfo.pushcap
                     case _ => defaultPushCap
                   }
-                  val filteredHistory = History(filterHistory(history.history.toSeq).toMap)
+                  val f ltered tory =  tory(f lter tory( tory. tory.toSeq).toMap)
 
-                  val hasUserDislikeInLast90Days =
-                    NtabCaretClickFatigueUtils.hasUserDislikeInLast90Days(feedbackDetailsDeduped)
-                  val isF1TriggerFatigueEnabled = cand.target
-                    .params(PushFeatureSwitchParams.EnableContFnF1TriggerSeeLessOftenFatigue)
-                  val isNonF1TriggerFatigueEnabled = cand.target.params(
-                    PushFeatureSwitchParams.EnableContFnNonF1TriggerSeeLessOftenFatigue)
+                  val hasUserD sl ke nLast90Days =
+                    NtabCaretCl ckFat gueUt ls.hasUserD sl ke nLast90Days(feedbackDeta lsDeduped)
+                  val  sF1Tr ggerFat gueEnabled = cand.target
+                    .params(PushFeatureSw chParams.EnableContFnF1Tr ggerSeeLessOftenFat gue)
+                  val  sNonF1Tr ggerFat gueEnabled = cand.target.params(
+                    PushFeatureSw chParams.EnableContFnNonF1Tr ggerSeeLessOftenFat gue)
 
-                  val isOutisdeSeeLessOftenFatigue =
-                    if (hasUserDislikeInLast90Days && (isF1TriggerFatigueEnabled || isNonF1TriggerFatigueEnabled)) {
-                      total90Day.incr()
+                  val  sOut sdeSeeLessOftenFat gue =
+                     f (hasUserD sl ke nLast90Days && ( sF1Tr ggerFat gueEnabled ||  sNonF1Tr ggerFat gueEnabled)) {
+                      total90Day. ncr()
 
-                      val feedbackDetailsGroupedBySeeLessOftenType: Map[Option[
+                      val feedbackDeta lsGroupedBySeeLessOftenType: Map[Opt on[
                         SeeLessOftenType
                       ], Seq[
-                        CaretFeedbackDetails
-                      ]] = feedbackDetails.groupBy(feedbackDetail =>
-                        feedbackDetail.genericNotificationMetadata.map(x =>
-                          genericTypeToSeeLessOftenType(x.genericType, cand)))
+                        CaretFeedbackDeta ls
+                      ]] = feedbackDeta ls.groupBy(feedbackDeta l =>
+                        feedbackDeta l.gener cNot f cat on tadata.map(x =>
+                          gener cTypeToSeeLessOftenType(x.gener cType, cand)))
 
-                      val isOutsideFatiguePeriodSeq =
-                        for (elem <- feedbackDetailsGroupedBySeeLessOftenType if elem._1.isDefined)
-                          yield {
-                            val dislikedSeeLessOftenType: SeeLessOftenType = elem._1.get
-                            val seqCaretFeedbackDetails: Seq[CaretFeedbackDetails] = elem._2
+                      val  sOuts deFat guePer odSeq =
+                        for (elem <- feedbackDeta lsGroupedBySeeLessOftenType  f elem._1. sDef ned)
+                          y eld {
+                            val d sl kedSeeLessOftenType: SeeLessOftenType = elem._1.get
+                            val seqCaretFeedbackDeta ls: Seq[CaretFeedbackDeta ls] = elem._2
 
-                            val weight = getWeightForCaretFeedback(
-                              dislikedSeeLessOftenType,
-                              cand) * userStateWeight
+                            val   ght = get  ghtForCaretFeedback(
+                              d sl kedSeeLessOftenType,
+                              cand) * userState  ght
 
-                            if (isOutsideFatiguePeriod(
-                                history = filteredHistory,
-                                feedbackDetails = seqCaretFeedbackDetails,
+                             f ( sOuts deFat guePer od(
+                                 tory = f ltered tory,
+                                feedbackDeta ls = seqCaretFeedbackDeta ls,
                                 feedbacks = Seq(),
-                                param = ContinuousFunctionParam(
+                                param = Cont nuousFunct onParam(
                                   knobs = cand.target
-                                    .params(PushFeatureSwitchParams.SeeLessOftenListOfDayKnobs),
+                                    .params(PushFeatureSw chParams.SeeLessOftenL stOfDayKnobs),
                                   knobValues = cand.target
                                     .params(
-                                      PushFeatureSwitchParams.SeeLessOftenListOfPushCapWeightKnobs).map(
+                                      PushFeatureSw chParams.SeeLessOftenL stOfPushCap  ghtKnobs).map(
                                       _ * pushCap),
-                                  powers = cand.target
-                                    .params(PushFeatureSwitchParams.SeeLessOftenListOfPowerKnobs),
-                                  weight = weight,
+                                  po rs = cand.target
+                                    .params(PushFeatureSw chParams.SeeLessOftenL stOfPo rKnobs),
+                                    ght =   ght,
                                   defaultValue = pushCap
                                 ),
                                 scopedStats
@@ -304,669 +304,669 @@ object CRTBasedNtabCaretClickFatiguePredicates {
                             }
                           }
 
-                      isOutsideFatiguePeriodSeq.forall(identity)
+                       sOuts deFat guePer odSeq.forall( dent y)
                     } else {
-                      totalDisabled.incr()
+                      totalD sabled. ncr()
                       true
                     }
 
-                  if (isOutisdeSeeLessOftenFatigue) {
-                    totalSuccess.incr()
-                  } else totalFiltered.incr()
+                   f ( sOut sdeSeeLessOftenFat gue) {
+                    totalSuccess. ncr()
+                  } else totalF ltered. ncr()
 
-                  isOutisdeSeeLessOftenFatigue
+                   sOut sdeSeeLessOftenFat gue
                 }
 
                 case _ =>
-                  totalSuccess.incr()
-                  totalWithoutHistory.incr()
+                  totalSuccess. ncr()
+                  totalW hout tory. ncr()
                   true
               }
           }
         }
-      }.withStats(stats.scope(predicateName))
-      .withName(predicateName)
+      }.w hStats(stats.scope(pred cateNa ))
+      .w hNa (pred cateNa )
   }
 
-  def f1TriggeredCRTBasedNtabCaretClickFnFatiguePredicate[
-    Cand <: Candidate with RecommendationType with TargetInfo[
+  def f1Tr ggeredCRTBasedNtabCaretCl ckFnFat guePred cate[
+    Cand <: Cand date w h Recom ndat onType w h Target nfo[
       Target
     ]
   ](
-    filterHistory: TimeSeries => TimeSeries =
-      FatiguePredicate.recTypesOnlyFilter(RecTypes.sharedNTabCaretFatigueTypes),
-    filterCaretFeedbackHistory: Target => Seq[
-      CaretFeedbackDetails
-    ] => Seq[CaretFeedbackDetails] = CaretFeedbackHistoryFilter
-      .caretFeedbackHistoryFilter(Seq(MagicRecsCategory)),
-    filterInlineFeedbackHistory: Seq[FeedbackModel] => Seq[FeedbackModel] =
-      NtabCaretClickFatigueUtils.feedbackModelFilterByCRT(RecTypes.sharedNTabCaretFatigueTypes)
+    f lter tory: T  Ser es => T  Ser es =
+      Fat guePred cate.recTypesOnlyF lter(RecTypes.sharedNTabCaretFat gueTypes),
+    f lterCaretFeedback tory: Target => Seq[
+      CaretFeedbackDeta ls
+    ] => Seq[CaretFeedbackDeta ls] = CaretFeedback toryF lter
+      .caretFeedback toryF lter(Seq(Mag cRecsCategory)),
+    f lter nl neFeedback tory: Seq[FeedbackModel] => Seq[FeedbackModel] =
+      NtabCaretCl ckFat gueUt ls.feedbackModelF lterByCRT(RecTypes.sharedNTabCaretFat gueTypes)
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[Cand] = {
-    val predicateName = "f1_triggered_crt_based_ntab_dislike_fatigue_fn"
-    Predicate
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[Cand] = {
+    val pred cateNa  = "f1_tr ggered_crt_based_ntab_d sl ke_fat gue_fn"
+    Pred cate
       .fromAsync[Cand] { cand: Cand =>
         {
-          val scopedStats = stats.scope(predicateName)
-          val totalRequests = scopedStats.counter("mr_ntab_dislike_total")
+          val scopedStats = stats.scope(pred cateNa )
+          val totalRequests = scopedStats.counter("mr_ntab_d sl ke_total")
           val total90Day =
-            scopedStats.counter("mr_ntab_dislike_90day_dislike")
-          val totalDisabled =
-            scopedStats.counter("mr_ntab_dislike_not_90day_dislike")
-          val totalSuccess = scopedStats.counter("mr_ntab_dislike_success")
-          val totalFiltered = scopedStats.counter("mr_ntab_dislike_filtered")
-          val totalWithHistory =
-            scopedStats.counter("mr_ntab_dislike_with_history")
-          val totalWithoutHistory =
-            scopedStats.counter("mr_ntab_dislike_without_history")
-          totalRequests.incr()
+            scopedStats.counter("mr_ntab_d sl ke_90day_d sl ke")
+          val totalD sabled =
+            scopedStats.counter("mr_ntab_d sl ke_not_90day_d sl ke")
+          val totalSuccess = scopedStats.counter("mr_ntab_d sl ke_success")
+          val totalF ltered = scopedStats.counter("mr_ntab_d sl ke_f ltered")
+          val totalW h tory =
+            scopedStats.counter("mr_ntab_d sl ke_w h_ tory")
+          val totalW hout tory =
+            scopedStats.counter("mr_ntab_d sl ke_w hout_ tory")
+          totalRequests. ncr()
 
           Future
-            .join(
-              cand.target.history,
+            .jo n(
+              cand.target. tory,
               cand.target.caretFeedbacks,
-              cand.target.dynamicPushcap,
+              cand.target.dynam cPushcap,
               cand.target.optoutAdjustedPushcap,
-              cand.target.notificationFeedbacks,
-              PushCapUtil.getDefaultPushCap(cand.target),
-              getUserStateWeight(cand.target)
+              cand.target.not f cat onFeedbacks,
+              PushCapUt l.getDefaultPushCap(cand.target),
+              getUserState  ght(cand.target)
             ).map {
               case (
-                    history,
-                    Some(feedbackDetails),
-                    dynamicPushcapOpt,
+                     tory,
+                    So (feedbackDeta ls),
+                    dynam cPushcapOpt,
                     optoutAdjustedPushcapOpt,
-                    Some(feedbacks),
+                    So (feedbacks),
                     defaultPushCap,
-                    userStateWeight) =>
-                totalWithHistory.incr()
+                    userState  ght) =>
+                totalW h tory. ncr()
 
-                val feedbackDetailsDeduped =
-                  NtabCaretClickFatiguePredicateHelper.dedupFeedbackDetails(
-                    filterCaretFeedbackHistory(cand.target)(feedbackDetails),
+                val feedbackDeta lsDeduped =
+                  NtabCaretCl ckFat guePred cate lper.dedupFeedbackDeta ls(
+                    f lterCaretFeedback tory(cand.target)(feedbackDeta ls),
                     stats
                   )
 
-                val pushCap: Int = (dynamicPushcapOpt, optoutAdjustedPushcapOpt) match {
-                  case (_, Some(optoutAdjustedPushcap)) => optoutAdjustedPushcap
-                  case (Some(pushcapInfo), _) => pushcapInfo.pushcap
+                val pushCap:  nt = (dynam cPushcapOpt, optoutAdjustedPushcapOpt) match {
+                  case (_, So (optoutAdjustedPushcap)) => optoutAdjustedPushcap
+                  case (So (pushcap nfo), _) => pushcap nfo.pushcap
                   case _ => defaultPushCap
                 }
-                val filteredHistory = History(filterHistory(history.history.toSeq).toMap)
+                val f ltered tory =  tory(f lter tory( tory. tory.toSeq).toMap)
 
-                val isOutsideInlineDislikeFatigue =
-                  if (cand.target
-                      .params(PushFeatureSwitchParams.EnableContFnF1TriggerInlineFeedbackFatigue)) {
-                    val weight =
-                      if (RecTypes.isF1Type(cand.commonRecType)) {
+                val  sOuts de nl neD sl keFat gue =
+                   f (cand.target
+                      .params(PushFeatureSw chParams.EnableContFnF1Tr gger nl neFeedbackFat gue)) {
+                    val   ght =
+                       f (RecTypes. sF1Type(cand.commonRecType)) {
                         cand.target
-                          .params(PushFeatureSwitchParams.InlineFeedbackF1TriggerF1PushCapWeight)
+                          .params(PushFeatureSw chParams. nl neFeedbackF1Tr ggerF1PushCap  ght)
                       } else {
                         cand.target
-                          .params(PushFeatureSwitchParams.InlineFeedbackF1TriggerNonF1PushCapWeight)
+                          .params(PushFeatureSw chParams. nl neFeedbackF1Tr ggerNonF1PushCap  ght)
                       }
 
-                    val inlineFeedbackFatigueParam = ContinuousFunctionParam(
+                    val  nl neFeedbackFat gueParam = Cont nuousFunct onParam(
                       cand.target
-                        .params(PushFeatureSwitchParams.InlineFeedbackListOfDayKnobs),
+                        .params(PushFeatureSw chParams. nl neFeedbackL stOfDayKnobs),
                       cand.target
-                        .params(PushFeatureSwitchParams.InlineFeedbackListOfPushCapWeightKnobs)
+                        .params(PushFeatureSw chParams. nl neFeedbackL stOfPushCap  ghtKnobs)
                         .map(_ * pushCap),
                       cand.target
-                        .params(PushFeatureSwitchParams.InlineFeedbackListOfPowerKnobs),
-                      weight,
+                        .params(PushFeatureSw chParams. nl neFeedbackL stOfPo rKnobs),
+                        ght,
                       pushCap
                     )
 
-                    isInlineDislikeOutsideFatiguePeriod(
+                     s nl neD sl keOuts deFat guePer od(
                       cand,
                       feedbacks
                         .collect {
                           case feedbackPromptValue: FeedbackPromptValue =>
-                            InlineFeedbackModel(feedbackPromptValue, None)
+                             nl neFeedbackModel(feedbackPromptValue, None)
                         },
-                      filteredHistory,
+                      f ltered tory,
                       Seq(
-                        filterInlineFeedbackHistory,
-                        NtabCaretClickFatigueUtils.feedbackModelFilterByCRT(
-                          RecTypes.f1FirstDegreeTypes)),
-                      inlineFeedbackFatigueParam,
+                        f lter nl neFeedback tory,
+                        NtabCaretCl ckFat gueUt ls.feedbackModelF lterByCRT(
+                          RecTypes.f1F rstDegreeTypes)),
+                       nl neFeedbackFat gueParam,
                       scopedStats
                     )
                   } else true
 
-                lazy val isOutsidePromptDislikeFatigue =
-                  if (cand.target
-                      .params(PushFeatureSwitchParams.EnableContFnF1TriggerPromptFeedbackFatigue)) {
-                    val weight =
-                      if (RecTypes.isF1Type(cand.commonRecType)) {
+                lazy val  sOuts dePromptD sl keFat gue =
+                   f (cand.target
+                      .params(PushFeatureSw chParams.EnableContFnF1Tr ggerPromptFeedbackFat gue)) {
+                    val   ght =
+                       f (RecTypes. sF1Type(cand.commonRecType)) {
                         cand.target
-                          .params(PushFeatureSwitchParams.PromptFeedbackF1TriggerF1PushCapWeight)
+                          .params(PushFeatureSw chParams.PromptFeedbackF1Tr ggerF1PushCap  ght)
                       } else {
                         cand.target
-                          .params(PushFeatureSwitchParams.PromptFeedbackF1TriggerNonF1PushCapWeight)
+                          .params(PushFeatureSw chParams.PromptFeedbackF1Tr ggerNonF1PushCap  ght)
                       }
 
-                    val promptFeedbackFatigueParam = ContinuousFunctionParam(
+                    val promptFeedbackFat gueParam = Cont nuousFunct onParam(
                       cand.target
-                        .params(PushFeatureSwitchParams.PromptFeedbackListOfDayKnobs),
+                        .params(PushFeatureSw chParams.PromptFeedbackL stOfDayKnobs),
                       cand.target
-                        .params(PushFeatureSwitchParams.PromptFeedbackListOfPushCapWeightKnobs)
+                        .params(PushFeatureSw chParams.PromptFeedbackL stOfPushCap  ghtKnobs)
                         .map(_ * pushCap),
                       cand.target
-                        .params(PushFeatureSwitchParams.PromptFeedbackListOfPowerKnobs),
-                      weight,
+                        .params(PushFeatureSw chParams.PromptFeedbackL stOfPo rKnobs),
+                        ght,
                       pushCap
                     )
 
-                    isPromptDislikeOutsideFatiguePeriod(
+                     sPromptD sl keOuts deFat guePer od(
                       feedbacks
                         .collect {
                           case feedbackPromptValue: FeedbackPromptValue =>
                             PromptFeedbackModel(feedbackPromptValue, None)
                         },
-                      filteredHistory,
+                      f ltered tory,
                       Seq(
-                        filterInlineFeedbackHistory,
-                        NtabCaretClickFatigueUtils.feedbackModelFilterByCRT(
-                          RecTypes.f1FirstDegreeTypes)),
-                      promptFeedbackFatigueParam,
+                        f lter nl neFeedback tory,
+                        NtabCaretCl ckFat gueUt ls.feedbackModelF lterByCRT(
+                          RecTypes.f1F rstDegreeTypes)),
+                      promptFeedbackFat gueParam,
                       scopedStats
                     )
                   } else true
 
-                isOutsideInlineDislikeFatigue && isOutsidePromptDislikeFatigue
+                 sOuts de nl neD sl keFat gue &&  sOuts dePromptD sl keFat gue
 
               case _ =>
-                totalSuccess.incr()
-                totalWithoutHistory.incr()
+                totalSuccess. ncr()
+                totalW hout tory. ncr()
                 true
             }
         }
-      }.withStats(stats.scope(predicateName))
-      .withName(predicateName)
+      }.w hStats(stats.scope(pred cateNa ))
+      .w hNa (pred cateNa )
   }
 
-  def nonF1TriggeredCRTBasedNtabCaretClickFnFatiguePredicate[
-    Cand <: Candidate with RecommendationType with TargetInfo[
+  def nonF1Tr ggeredCRTBasedNtabCaretCl ckFnFat guePred cate[
+    Cand <: Cand date w h Recom ndat onType w h Target nfo[
       Target
     ]
   ](
-    filterHistory: TimeSeries => TimeSeries =
-      FatiguePredicate.recTypesOnlyFilter(RecTypes.sharedNTabCaretFatigueTypes),
-    filterCaretFeedbackHistory: Target => Seq[
-      CaretFeedbackDetails
-    ] => Seq[CaretFeedbackDetails] = CaretFeedbackHistoryFilter
-      .caretFeedbackHistoryFilter(Seq(MagicRecsCategory)),
-    filterInlineFeedbackHistory: Seq[FeedbackModel] => Seq[FeedbackModel] =
-      NtabCaretClickFatigueUtils.feedbackModelFilterByCRT(RecTypes.sharedNTabCaretFatigueTypes)
+    f lter tory: T  Ser es => T  Ser es =
+      Fat guePred cate.recTypesOnlyF lter(RecTypes.sharedNTabCaretFat gueTypes),
+    f lterCaretFeedback tory: Target => Seq[
+      CaretFeedbackDeta ls
+    ] => Seq[CaretFeedbackDeta ls] = CaretFeedback toryF lter
+      .caretFeedback toryF lter(Seq(Mag cRecsCategory)),
+    f lter nl neFeedback tory: Seq[FeedbackModel] => Seq[FeedbackModel] =
+      NtabCaretCl ckFat gueUt ls.feedbackModelF lterByCRT(RecTypes.sharedNTabCaretFat gueTypes)
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[Cand] = {
-    val predicateName = "non_f1_triggered_crt_based_ntab_dislike_fatigue_fn"
-    Predicate
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[Cand] = {
+    val pred cateNa  = "non_f1_tr ggered_crt_based_ntab_d sl ke_fat gue_fn"
+    Pred cate
       .fromAsync[Cand] { cand: Cand =>
         {
-          val scopedStats = stats.scope(predicateName)
-          val totalRequests = scopedStats.counter("mr_ntab_dislike_total")
+          val scopedStats = stats.scope(pred cateNa )
+          val totalRequests = scopedStats.counter("mr_ntab_d sl ke_total")
           val total90Day =
-            scopedStats.counter("mr_ntab_dislike_90day_dislike")
-          val totalDisabled =
-            scopedStats.counter("mr_ntab_dislike_not_90day_dislike")
-          val totalSuccess = scopedStats.counter("mr_ntab_dislike_success")
-          val totalFiltered = scopedStats.counter("mr_ntab_dislike_filtered")
-          val totalWithHistory =
-            scopedStats.counter("mr_ntab_dislike_with_history")
-          val totalWithoutHistory =
-            scopedStats.counter("mr_ntab_dislike_without_history")
+            scopedStats.counter("mr_ntab_d sl ke_90day_d sl ke")
+          val totalD sabled =
+            scopedStats.counter("mr_ntab_d sl ke_not_90day_d sl ke")
+          val totalSuccess = scopedStats.counter("mr_ntab_d sl ke_success")
+          val totalF ltered = scopedStats.counter("mr_ntab_d sl ke_f ltered")
+          val totalW h tory =
+            scopedStats.counter("mr_ntab_d sl ke_w h_ tory")
+          val totalW hout tory =
+            scopedStats.counter("mr_ntab_d sl ke_w hout_ tory")
           val totalFeedbackSuccess = scopedStats.counter("mr_total_feedback_success")
-          totalRequests.incr()
+          totalRequests. ncr()
 
           Future
-            .join(
-              cand.target.history,
+            .jo n(
+              cand.target. tory,
               cand.target.caretFeedbacks,
-              cand.target.dynamicPushcap,
+              cand.target.dynam cPushcap,
               cand.target.optoutAdjustedPushcap,
-              cand.target.notificationFeedbacks,
-              PushCapUtil.getDefaultPushCap(cand.target),
-              getUserStateWeight(cand.target),
+              cand.target.not f cat onFeedbacks,
+              PushCapUt l.getDefaultPushCap(cand.target),
+              getUserState  ght(cand.target),
             ).map {
               case (
-                    history,
-                    Some(feedbackDetails),
-                    dynamicPushcapOpt,
+                     tory,
+                    So (feedbackDeta ls),
+                    dynam cPushcapOpt,
                     optoutAdjustedPushcapOpt,
-                    Some(feedbacks),
+                    So (feedbacks),
                     defaultPushCap,
-                    userStateWeight) =>
-                totalWithHistory.incr()
+                    userState  ght) =>
+                totalW h tory. ncr()
 
-                val filteredfeedbackDetails =
-                  if (cand.target.params(
-                      PushFeatureSwitchParams.AdjustTripHqTweetTriggeredNtabCaretClickFatigue)) {
-                    val refreshableTypeFilter = CaretFeedbackHistoryFilter
-                      .caretFeedbackHistoryFilterByRefreshableTypeDenyList(
-                        HighQualityRefreshableTypes)
-                    refreshableTypeFilter(cand.target)(feedbackDetails)
+                val f lteredfeedbackDeta ls =
+                   f (cand.target.params(
+                      PushFeatureSw chParams.AdjustTr pHqT etTr ggeredNtabCaretCl ckFat gue)) {
+                    val refreshableTypeF lter = CaretFeedback toryF lter
+                      .caretFeedback toryF lterByRefreshableTypeDenyL st(
+                        H ghQual yRefreshableTypes)
+                    refreshableTypeF lter(cand.target)(feedbackDeta ls)
                   } else {
-                    feedbackDetails
+                    feedbackDeta ls
                   }
 
-                val feedbackDetailsDeduped =
-                  NtabCaretClickFatiguePredicateHelper.dedupFeedbackDetails(
-                    filterCaretFeedbackHistory(cand.target)(filteredfeedbackDetails),
+                val feedbackDeta lsDeduped =
+                  NtabCaretCl ckFat guePred cate lper.dedupFeedbackDeta ls(
+                    f lterCaretFeedback tory(cand.target)(f lteredfeedbackDeta ls),
                     stats
                   )
 
-                val pushCap: Int = (dynamicPushcapOpt, optoutAdjustedPushcapOpt) match {
-                  case (_, Some(optoutAdjustedPushcap)) => optoutAdjustedPushcap
-                  case (Some(pushcapInfo), _) => pushcapInfo.pushcap
+                val pushCap:  nt = (dynam cPushcapOpt, optoutAdjustedPushcapOpt) match {
+                  case (_, So (optoutAdjustedPushcap)) => optoutAdjustedPushcap
+                  case (So (pushcap nfo), _) => pushcap nfo.pushcap
                   case _ => defaultPushCap
                 }
-                val filteredHistory = History(filterHistory(history.history.toSeq).toMap)
+                val f ltered tory =  tory(f lter tory( tory. tory.toSeq).toMap)
 
-                val isOutsideInlineDislikeFatigue =
-                  if (cand.target
+                val  sOuts de nl neD sl keFat gue =
+                   f (cand.target
                       .params(
-                        PushFeatureSwitchParams.EnableContFnNonF1TriggerInlineFeedbackFatigue)) {
-                    val weight =
-                      if (RecTypes.isF1Type(cand.commonRecType))
+                        PushFeatureSw chParams.EnableContFnNonF1Tr gger nl neFeedbackFat gue)) {
+                    val   ght =
+                       f (RecTypes. sF1Type(cand.commonRecType))
                         cand.target
-                          .params(PushFeatureSwitchParams.InlineFeedbackNonF1TriggerF1PushCapWeight)
+                          .params(PushFeatureSw chParams. nl neFeedbackNonF1Tr ggerF1PushCap  ght)
                       else
                         cand.target
                           .params(
-                            PushFeatureSwitchParams.InlineFeedbackNonF1TriggerNonF1PushCapWeight)
+                            PushFeatureSw chParams. nl neFeedbackNonF1Tr ggerNonF1PushCap  ght)
 
-                    val inlineFeedbackFatigueParam = ContinuousFunctionParam(
+                    val  nl neFeedbackFat gueParam = Cont nuousFunct onParam(
                       cand.target
-                        .params(PushFeatureSwitchParams.InlineFeedbackListOfDayKnobs),
+                        .params(PushFeatureSw chParams. nl neFeedbackL stOfDayKnobs),
                       cand.target
-                        .params(PushFeatureSwitchParams.InlineFeedbackListOfPushCapWeightKnobs)
+                        .params(PushFeatureSw chParams. nl neFeedbackL stOfPushCap  ghtKnobs)
                         .map(_ * pushCap),
                       cand.target
-                        .params(PushFeatureSwitchParams.InlineFeedbackListOfPowerKnobs),
-                      weight,
+                        .params(PushFeatureSw chParams. nl neFeedbackL stOfPo rKnobs),
+                        ght,
                       pushCap
                     )
 
-                    val excludedCRTs: Set[CommonRecommendationType] =
-                      if (cand.target.params(
-                          PushFeatureSwitchParams.AdjustTripHqTweetTriggeredNtabCaretClickFatigue)) {
-                        RecTypes.f1FirstDegreeTypes ++ RecTypes.HighQualityTweetTypes
+                    val excludedCRTs: Set[CommonRecom ndat onType] =
+                       f (cand.target.params(
+                          PushFeatureSw chParams.AdjustTr pHqT etTr ggeredNtabCaretCl ckFat gue)) {
+                        RecTypes.f1F rstDegreeTypes ++ RecTypes.H ghQual yT etTypes
                       } else {
-                        RecTypes.f1FirstDegreeTypes
+                        RecTypes.f1F rstDegreeTypes
                       }
 
-                    isInlineDislikeOutsideFatiguePeriod(
+                     s nl neD sl keOuts deFat guePer od(
                       cand,
                       feedbacks
                         .collect {
                           case feedbackPromptValue: FeedbackPromptValue =>
-                            InlineFeedbackModel(feedbackPromptValue, None)
+                             nl neFeedbackModel(feedbackPromptValue, None)
                         },
-                      filteredHistory,
+                      f ltered tory,
                       Seq(
-                        filterInlineFeedbackHistory,
-                        NtabCaretClickFatigueUtils.feedbackModelExcludeCRT(excludedCRTs)),
-                      inlineFeedbackFatigueParam,
+                        f lter nl neFeedback tory,
+                        NtabCaretCl ckFat gueUt ls.feedbackModelExcludeCRT(excludedCRTs)),
+                       nl neFeedbackFat gueParam,
                       scopedStats
                     )
                   } else true
 
-                lazy val isOutsidePromptDislikeFatigue =
-                  if (cand.target
+                lazy val  sOuts dePromptD sl keFat gue =
+                   f (cand.target
                       .params(
-                        PushFeatureSwitchParams.EnableContFnNonF1TriggerPromptFeedbackFatigue)) {
-                    val weight =
-                      if (RecTypes.isF1Type(cand.commonRecType))
+                        PushFeatureSw chParams.EnableContFnNonF1Tr ggerPromptFeedbackFat gue)) {
+                    val   ght =
+                       f (RecTypes. sF1Type(cand.commonRecType))
                         cand.target
-                          .params(PushFeatureSwitchParams.PromptFeedbackNonF1TriggerF1PushCapWeight)
+                          .params(PushFeatureSw chParams.PromptFeedbackNonF1Tr ggerF1PushCap  ght)
                       else
                         cand.target
                           .params(
-                            PushFeatureSwitchParams.PromptFeedbackNonF1TriggerNonF1PushCapWeight)
+                            PushFeatureSw chParams.PromptFeedbackNonF1Tr ggerNonF1PushCap  ght)
 
-                    val promptFeedbackFatigueParam = ContinuousFunctionParam(
+                    val promptFeedbackFat gueParam = Cont nuousFunct onParam(
                       cand.target
-                        .params(PushFeatureSwitchParams.PromptFeedbackListOfDayKnobs),
+                        .params(PushFeatureSw chParams.PromptFeedbackL stOfDayKnobs),
                       cand.target
-                        .params(PushFeatureSwitchParams.PromptFeedbackListOfPushCapWeightKnobs)
+                        .params(PushFeatureSw chParams.PromptFeedbackL stOfPushCap  ghtKnobs)
                         .map(_ * pushCap),
                       cand.target
-                        .params(PushFeatureSwitchParams.PromptFeedbackListOfPowerKnobs),
-                      weight,
+                        .params(PushFeatureSw chParams.PromptFeedbackL stOfPo rKnobs),
+                        ght,
                       pushCap
                     )
 
-                    isPromptDislikeOutsideFatiguePeriod(
+                     sPromptD sl keOuts deFat guePer od(
                       feedbacks
                         .collect {
                           case feedbackPromptValue: FeedbackPromptValue =>
                             PromptFeedbackModel(feedbackPromptValue, None)
                         },
-                      filteredHistory,
+                      f ltered tory,
                       Seq(
-                        filterInlineFeedbackHistory,
-                        NtabCaretClickFatigueUtils.feedbackModelExcludeCRT(
-                          RecTypes.f1FirstDegreeTypes)),
-                      promptFeedbackFatigueParam,
+                        f lter nl neFeedback tory,
+                        NtabCaretCl ckFat gueUt ls.feedbackModelExcludeCRT(
+                          RecTypes.f1F rstDegreeTypes)),
+                      promptFeedbackFat gueParam,
                       scopedStats
                     )
                   } else true
 
-                isOutsideInlineDislikeFatigue && isOutsidePromptDislikeFatigue
+                 sOuts de nl neD sl keFat gue &&  sOuts dePromptD sl keFat gue
               case _ =>
-                totalFeedbackSuccess.incr()
-                totalWithoutHistory.incr()
+                totalFeedbackSuccess. ncr()
+                totalW hout tory. ncr()
                 true
             }
         }
-      }.withStats(stats.scope(predicateName))
-      .withName(predicateName)
+      }.w hStats(stats.scope(pred cateNa ))
+      .w hNa (pred cateNa )
   }
 
-  def tripHqTweetTriggeredCRTBasedNtabCaretClickFnFatiguePredicate[
-    Cand <: Candidate with RecommendationType with TargetInfo[
+  def tr pHqT etTr ggeredCRTBasedNtabCaretCl ckFnFat guePred cate[
+    Cand <: Cand date w h Recom ndat onType w h Target nfo[
       Target
     ]
   ](
-    filterHistory: TimeSeries => TimeSeries =
-      FatiguePredicate.recTypesOnlyFilter(RecTypes.sharedNTabCaretFatigueTypes),
-    filterCaretFeedbackHistory: Target => Seq[
-      CaretFeedbackDetails
-    ] => Seq[CaretFeedbackDetails] = CaretFeedbackHistoryFilter
-      .caretFeedbackHistoryFilter(Seq(MagicRecsCategory)),
-    filterInlineFeedbackHistory: Seq[FeedbackModel] => Seq[FeedbackModel] =
-      NtabCaretClickFatigueUtils.feedbackModelFilterByCRT(RecTypes.sharedNTabCaretFatigueTypes)
+    f lter tory: T  Ser es => T  Ser es =
+      Fat guePred cate.recTypesOnlyF lter(RecTypes.sharedNTabCaretFat gueTypes),
+    f lterCaretFeedback tory: Target => Seq[
+      CaretFeedbackDeta ls
+    ] => Seq[CaretFeedbackDeta ls] = CaretFeedback toryF lter
+      .caretFeedback toryF lter(Seq(Mag cRecsCategory)),
+    f lter nl neFeedback tory: Seq[FeedbackModel] => Seq[FeedbackModel] =
+      NtabCaretCl ckFat gueUt ls.feedbackModelF lterByCRT(RecTypes.sharedNTabCaretFat gueTypes)
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[Cand] = {
-    val predicateName = "trip_hq_tweet_triggered_crt_based_ntab_dislike_fatigue_fn"
-    Predicate
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[Cand] = {
+    val pred cateNa  = "tr p_hq_t et_tr ggered_crt_based_ntab_d sl ke_fat gue_fn"
+    Pred cate
       .fromAsync[Cand] { cand: Cand =>
         {
-          val scopedStats = stats.scope(predicateName)
-          val totalRequests = scopedStats.counter("mr_ntab_dislike_total")
+          val scopedStats = stats.scope(pred cateNa )
+          val totalRequests = scopedStats.counter("mr_ntab_d sl ke_total")
           val total90Day =
-            scopedStats.counter("mr_ntab_dislike_90day_dislike")
-          val totalDisabled =
-            scopedStats.counter("mr_ntab_dislike_not_90day_dislike")
-          val totalSuccess = scopedStats.counter("mr_ntab_dislike_success")
-          val totalFiltered = scopedStats.counter("mr_ntab_dislike_filtered")
-          val totalWithHistory =
-            scopedStats.counter("mr_ntab_dislike_with_history")
-          val totalWithoutHistory =
-            scopedStats.counter("mr_ntab_dislike_without_history")
+            scopedStats.counter("mr_ntab_d sl ke_90day_d sl ke")
+          val totalD sabled =
+            scopedStats.counter("mr_ntab_d sl ke_not_90day_d sl ke")
+          val totalSuccess = scopedStats.counter("mr_ntab_d sl ke_success")
+          val totalF ltered = scopedStats.counter("mr_ntab_d sl ke_f ltered")
+          val totalW h tory =
+            scopedStats.counter("mr_ntab_d sl ke_w h_ tory")
+          val totalW hout tory =
+            scopedStats.counter("mr_ntab_d sl ke_w hout_ tory")
           val totalFeedbackSuccess = scopedStats.counter("mr_total_feedback_success")
-          totalRequests.incr()
+          totalRequests. ncr()
 
           Future
-            .join(
-              cand.target.history,
+            .jo n(
+              cand.target. tory,
               cand.target.caretFeedbacks,
-              cand.target.dynamicPushcap,
+              cand.target.dynam cPushcap,
               cand.target.optoutAdjustedPushcap,
-              cand.target.notificationFeedbacks,
-              PushCapUtil.getDefaultPushCap(cand.target),
-              getUserStateWeight(cand.target),
+              cand.target.not f cat onFeedbacks,
+              PushCapUt l.getDefaultPushCap(cand.target),
+              getUserState  ght(cand.target),
             ).map {
               case (
-                    history,
-                    Some(feedbackDetails),
-                    dynamicPushcapOpt,
+                     tory,
+                    So (feedbackDeta ls),
+                    dynam cPushcapOpt,
                     optoutAdjustedPushcapOpt,
-                    Some(feedbacks),
+                    So (feedbacks),
                     defaultPushCap,
-                    userStateWeight) =>
-                totalWithHistory.incr()
-                if (cand.target.params(
-                    PushFeatureSwitchParams.AdjustTripHqTweetTriggeredNtabCaretClickFatigue)) {
+                    userState  ght) =>
+                totalW h tory. ncr()
+                 f (cand.target.params(
+                    PushFeatureSw chParams.AdjustTr pHqT etTr ggeredNtabCaretCl ckFat gue)) {
 
-                  val refreshableTypeFilter = CaretFeedbackHistoryFilter
-                    .caretFeedbackHistoryFilterByRefreshableType(HighQualityRefreshableTypes)
-                  val filteredfeedbackDetails = refreshableTypeFilter(cand.target)(feedbackDetails)
+                  val refreshableTypeF lter = CaretFeedback toryF lter
+                    .caretFeedback toryF lterByRefreshableType(H ghQual yRefreshableTypes)
+                  val f lteredfeedbackDeta ls = refreshableTypeF lter(cand.target)(feedbackDeta ls)
 
-                  val feedbackDetailsDeduped =
-                    NtabCaretClickFatiguePredicateHelper.dedupFeedbackDetails(
-                      filterCaretFeedbackHistory(cand.target)(filteredfeedbackDetails),
+                  val feedbackDeta lsDeduped =
+                    NtabCaretCl ckFat guePred cate lper.dedupFeedbackDeta ls(
+                      f lterCaretFeedback tory(cand.target)(f lteredfeedbackDeta ls),
                       stats
                     )
 
-                  val pushCap: Int = (dynamicPushcapOpt, optoutAdjustedPushcapOpt) match {
-                    case (_, Some(optoutAdjustedPushcap)) => optoutAdjustedPushcap
-                    case (Some(pushcapInfo), _) => pushcapInfo.pushcap
+                  val pushCap:  nt = (dynam cPushcapOpt, optoutAdjustedPushcapOpt) match {
+                    case (_, So (optoutAdjustedPushcap)) => optoutAdjustedPushcap
+                    case (So (pushcap nfo), _) => pushcap nfo.pushcap
                     case _ => defaultPushCap
                   }
-                  val filteredHistory = History(filterHistory(history.history.toSeq).toMap)
+                  val f ltered tory =  tory(f lter tory( tory. tory.toSeq).toMap)
 
-                  val isOutsideInlineDislikeFatigue =
-                    if (cand.target
+                  val  sOuts de nl neD sl keFat gue =
+                     f (cand.target
                         .params(
-                          PushFeatureSwitchParams.EnableContFnNonF1TriggerInlineFeedbackFatigue)) {
-                      val weight = {
-                        if (RecTypes.HighQualityTweetTypes.contains(cand.commonRecType)) {
+                          PushFeatureSw chParams.EnableContFnNonF1Tr gger nl neFeedbackFat gue)) {
+                      val   ght = {
+                         f (RecTypes.H ghQual yT etTypes.conta ns(cand.commonRecType)) {
                           cand.target
                             .params(
-                              PushFeatureSwitchParams.InlineFeedbackNonF1TriggerNonF1PushCapWeight)
+                              PushFeatureSw chParams. nl neFeedbackNonF1Tr ggerNonF1PushCap  ght)
                         } else {
                           cand.target
                             .params(
-                              PushFeatureSwitchParams.InlineFeedbackNonF1TriggerF1PushCapWeight)
+                              PushFeatureSw chParams. nl neFeedbackNonF1Tr ggerF1PushCap  ght)
                         }
                       }
 
-                      val inlineFeedbackFatigueParam = ContinuousFunctionParam(
+                      val  nl neFeedbackFat gueParam = Cont nuousFunct onParam(
                         cand.target
-                          .params(PushFeatureSwitchParams.InlineFeedbackListOfDayKnobs),
+                          .params(PushFeatureSw chParams. nl neFeedbackL stOfDayKnobs),
                         cand.target
-                          .params(PushFeatureSwitchParams.InlineFeedbackListOfPushCapWeightKnobs)
+                          .params(PushFeatureSw chParams. nl neFeedbackL stOfPushCap  ghtKnobs)
                           .map(_ * pushCap),
                         cand.target
-                          .params(PushFeatureSwitchParams.InlineFeedbackListOfPowerKnobs),
-                        weight,
+                          .params(PushFeatureSw chParams. nl neFeedbackL stOfPo rKnobs),
+                          ght,
                         pushCap
                       )
 
-                      val includedCRTs: Set[CommonRecommendationType] =
-                        RecTypes.HighQualityTweetTypes
+                      val  ncludedCRTs: Set[CommonRecom ndat onType] =
+                        RecTypes.H ghQual yT etTypes
 
-                      isInlineDislikeOutsideFatiguePeriod(
+                       s nl neD sl keOuts deFat guePer od(
                         cand,
                         feedbacks
                           .collect {
                             case feedbackPromptValue: FeedbackPromptValue =>
-                              InlineFeedbackModel(feedbackPromptValue, None)
+                               nl neFeedbackModel(feedbackPromptValue, None)
                           },
-                        filteredHistory,
+                        f ltered tory,
                         Seq(
-                          filterInlineFeedbackHistory,
-                          NtabCaretClickFatigueUtils.feedbackModelFilterByCRT(includedCRTs)),
-                        inlineFeedbackFatigueParam,
+                          f lter nl neFeedback tory,
+                          NtabCaretCl ckFat gueUt ls.feedbackModelF lterByCRT( ncludedCRTs)),
+                         nl neFeedbackFat gueParam,
                         scopedStats
                       )
                     } else true
 
-                  lazy val isOutsidePromptDislikeFatigue =
-                    if (cand.target
+                  lazy val  sOuts dePromptD sl keFat gue =
+                     f (cand.target
                         .params(
-                          PushFeatureSwitchParams.EnableContFnNonF1TriggerPromptFeedbackFatigue)) {
-                      val weight =
-                        if (RecTypes.isF1Type(cand.commonRecType))
+                          PushFeatureSw chParams.EnableContFnNonF1Tr ggerPromptFeedbackFat gue)) {
+                      val   ght =
+                         f (RecTypes. sF1Type(cand.commonRecType))
                           cand.target
                             .params(
-                              PushFeatureSwitchParams.PromptFeedbackNonF1TriggerF1PushCapWeight)
+                              PushFeatureSw chParams.PromptFeedbackNonF1Tr ggerF1PushCap  ght)
                         else
                           cand.target
                             .params(
-                              PushFeatureSwitchParams.PromptFeedbackNonF1TriggerNonF1PushCapWeight)
+                              PushFeatureSw chParams.PromptFeedbackNonF1Tr ggerNonF1PushCap  ght)
 
-                      val promptFeedbackFatigueParam = ContinuousFunctionParam(
+                      val promptFeedbackFat gueParam = Cont nuousFunct onParam(
                         cand.target
-                          .params(PushFeatureSwitchParams.PromptFeedbackListOfDayKnobs),
+                          .params(PushFeatureSw chParams.PromptFeedbackL stOfDayKnobs),
                         cand.target
-                          .params(PushFeatureSwitchParams.PromptFeedbackListOfPushCapWeightKnobs)
+                          .params(PushFeatureSw chParams.PromptFeedbackL stOfPushCap  ghtKnobs)
                           .map(_ * pushCap),
                         cand.target
-                          .params(PushFeatureSwitchParams.PromptFeedbackListOfPowerKnobs),
-                        weight,
+                          .params(PushFeatureSw chParams.PromptFeedbackL stOfPo rKnobs),
+                          ght,
                         pushCap
                       )
 
-                      isPromptDislikeOutsideFatiguePeriod(
+                       sPromptD sl keOuts deFat guePer od(
                         feedbacks
                           .collect {
                             case feedbackPromptValue: FeedbackPromptValue =>
                               PromptFeedbackModel(feedbackPromptValue, None)
                           },
-                        filteredHistory,
+                        f ltered tory,
                         Seq(
-                          filterInlineFeedbackHistory,
-                          NtabCaretClickFatigueUtils.feedbackModelExcludeCRT(
-                            RecTypes.f1FirstDegreeTypes)),
-                        promptFeedbackFatigueParam,
+                          f lter nl neFeedback tory,
+                          NtabCaretCl ckFat gueUt ls.feedbackModelExcludeCRT(
+                            RecTypes.f1F rstDegreeTypes)),
+                        promptFeedbackFat gueParam,
                         scopedStats
                       )
                     } else true
 
-                  isOutsideInlineDislikeFatigue && isOutsidePromptDislikeFatigue
+                   sOuts de nl neD sl keFat gue &&  sOuts dePromptD sl keFat gue
                 } else {
                   true
                 }
               case _ =>
-                totalFeedbackSuccess.incr()
-                totalWithoutHistory.incr()
+                totalFeedbackSuccess. ncr()
+                totalW hout tory. ncr()
                 true
             }
         }
-      }.withStats(stats.scope(predicateName))
-      .withName(predicateName)
+      }.w hStats(stats.scope(pred cateNa ))
+      .w hNa (pred cateNa )
   }
 
-  private def getDedupedInlineFeedbackByType(
-    inlineFeedbacks: Seq[FeedbackModel],
+  pr vate def getDeduped nl neFeedbackByType(
+     nl neFeedbacks: Seq[FeedbackModel],
     feedbackType: FeedbackTypeEnum.Value,
     revertedFeedbackType: FeedbackTypeEnum.Value
   ): Seq[FeedbackModel] = {
-    inlineFeedbacks
-      .filter(feedback =>
+     nl neFeedbacks
+      .f lter(feedback =>
         feedback.feedbackTypeEnum == feedbackType ||
           feedback.feedbackTypeEnum == revertedFeedbackType)
-      .groupBy(feedback => feedback.notificationImpressionId.getOrElse(""))
+      .groupBy(feedback => feedback.not f cat on mpress on d.getOrElse(""))
       .toSeq
       .collect {
-        case (impressionId, feedbacks: Seq[FeedbackModel]) if (feedbacks.nonEmpty) =>
-          val latestFeedback = feedbacks.maxBy(feedback => feedback.timestampMs)
-          if (latestFeedback.feedbackTypeEnum == feedbackType)
-            Some(latestFeedback)
+        case ( mpress on d, feedbacks: Seq[FeedbackModel])  f (feedbacks.nonEmpty) =>
+          val latestFeedback = feedbacks.maxBy(feedback => feedback.t  stampMs)
+           f (latestFeedback.feedbackTypeEnum == feedbackType)
+            So (latestFeedback)
           else None
         case _ => None
       }
       .flatten
   }
 
-  private def getDedupedInlineFeedback(
-    inlineFeedbacks: Seq[FeedbackModel],
+  pr vate def getDeduped nl neFeedback(
+     nl neFeedbacks: Seq[FeedbackModel],
     target: Target
   ): Seq[FeedbackModel] = {
-    val inlineDislikeFeedback =
-      if (target.params(PushFeatureSwitchParams.UseInlineDislikeForFatigue)) {
-        getDedupedInlineFeedbackByType(
-          inlineFeedbacks,
-          FeedbackTypeEnum.InlineDislike,
-          FeedbackTypeEnum.InlineRevertedDislike)
+    val  nl neD sl keFeedback =
+       f (target.params(PushFeatureSw chParams.Use nl neD sl keForFat gue)) {
+        getDeduped nl neFeedbackByType(
+           nl neFeedbacks,
+          FeedbackTypeEnum. nl neD sl ke,
+          FeedbackTypeEnum. nl neRevertedD sl ke)
       } else Seq()
-    val inlineDismissFeedback =
-      if (target.params(PushFeatureSwitchParams.UseInlineDismissForFatigue)) {
-        getDedupedInlineFeedbackByType(
-          inlineFeedbacks,
-          FeedbackTypeEnum.InlineDismiss,
-          FeedbackTypeEnum.InlineRevertedDismiss)
+    val  nl neD sm ssFeedback =
+       f (target.params(PushFeatureSw chParams.Use nl neD sm ssForFat gue)) {
+        getDeduped nl neFeedbackByType(
+           nl neFeedbacks,
+          FeedbackTypeEnum. nl neD sm ss,
+          FeedbackTypeEnum. nl neRevertedD sm ss)
       } else Seq()
-    val inlineSeeLessFeedback =
-      if (target.params(PushFeatureSwitchParams.UseInlineSeeLessForFatigue)) {
-        getDedupedInlineFeedbackByType(
-          inlineFeedbacks,
-          FeedbackTypeEnum.InlineSeeLess,
-          FeedbackTypeEnum.InlineRevertedSeeLess)
+    val  nl neSeeLessFeedback =
+       f (target.params(PushFeatureSw chParams.Use nl neSeeLessForFat gue)) {
+        getDeduped nl neFeedbackByType(
+           nl neFeedbacks,
+          FeedbackTypeEnum. nl neSeeLess,
+          FeedbackTypeEnum. nl neRevertedSeeLess)
       } else Seq()
-    val inlineNotRelevantFeedback =
-      if (target.params(PushFeatureSwitchParams.UseInlineNotRelevantForFatigue)) {
-        getDedupedInlineFeedbackByType(
-          inlineFeedbacks,
-          FeedbackTypeEnum.InlineNotRelevant,
-          FeedbackTypeEnum.InlineRevertedNotRelevant)
+    val  nl neNotRelevantFeedback =
+       f (target.params(PushFeatureSw chParams.Use nl neNotRelevantForFat gue)) {
+        getDeduped nl neFeedbackByType(
+           nl neFeedbacks,
+          FeedbackTypeEnum. nl neNotRelevant,
+          FeedbackTypeEnum. nl neRevertedNotRelevant)
       } else Seq()
 
-    inlineDislikeFeedback ++ inlineDismissFeedback ++ inlineSeeLessFeedback ++ inlineNotRelevantFeedback
+     nl neD sl keFeedback ++  nl neD sm ssFeedback ++  nl neSeeLessFeedback ++  nl neNotRelevantFeedback
   }
 
-  private def isInlineDislikeOutsideFatiguePeriod(
-    candidate: Candidate
-      with RecommendationType
-      with TargetInfo[
+  pr vate def  s nl neD sl keOuts deFat guePer od(
+    cand date: Cand date
+      w h Recom ndat onType
+      w h Target nfo[
         Target
       ],
-    inlineFeedbacks: Seq[FeedbackModel],
-    filteredHistory: History,
-    feedbackFilters: Seq[Seq[FeedbackModel] => Seq[FeedbackModel]],
-    inlineFeedbackFatigueParam: ContinuousFunctionParam,
-    stats: StatsReceiver
+     nl neFeedbacks: Seq[FeedbackModel],
+    f ltered tory:  tory,
+    feedbackF lters: Seq[Seq[FeedbackModel] => Seq[FeedbackModel]],
+     nl neFeedbackFat gueParam: Cont nuousFunct onParam,
+    stats: StatsRece ver
   ): Boolean = {
-    val scopedStats = stats.scope("inline_dislike_fatigue")
+    val scopedStats = stats.scope(" nl ne_d sl ke_fat gue")
 
-    val inlineNegativeFeedback =
-      getDedupedInlineFeedback(inlineFeedbacks, candidate.target)
+    val  nl neNegat veFeedback =
+      getDeduped nl neFeedback( nl neFeedbacks, cand date.target)
 
-    val hydratedInlineNegativeFeedback = FeedbackModelHydrator.HydrateNotification(
-      inlineNegativeFeedback,
-      filteredHistory.history.toSeq.map(_._2))
+    val hydrated nl neNegat veFeedback = FeedbackModelHydrator.HydrateNot f cat on(
+       nl neNegat veFeedback,
+      f ltered tory. tory.toSeq.map(_._2))
 
-    if (isOutsideFatiguePeriod(
-        filteredHistory,
+     f ( sOuts deFat guePer od(
+        f ltered tory,
         Seq(),
-        feedbackFilters.foldLeft(hydratedInlineNegativeFeedback)((feedbacks, feedbackFilter) =>
-          feedbackFilter(feedbacks)),
-        inlineFeedbackFatigueParam,
+        feedbackF lters.foldLeft(hydrated nl neNegat veFeedback)((feedbacks, feedbackF lter) =>
+          feedbackF lter(feedbacks)),
+         nl neFeedbackFat gueParam,
         scopedStats
       )) {
-      scopedStats.counter("feedback_inline_dislike_success").incr()
+      scopedStats.counter("feedback_ nl ne_d sl ke_success"). ncr()
       true
     } else {
-      scopedStats.counter("feedback_inline_dislike_filtered").incr()
+      scopedStats.counter("feedback_ nl ne_d sl ke_f ltered"). ncr()
       false
     }
   }
 
-  private def isPromptDislikeOutsideFatiguePeriod(
+  pr vate def  sPromptD sl keOuts deFat guePer od(
     feedbacks: Seq[FeedbackModel],
-    filteredHistory: History,
-    feedbackFilters: Seq[Seq[FeedbackModel] => Seq[FeedbackModel]],
-    inlineFeedbackFatigueParam: ContinuousFunctionParam,
-    stats: StatsReceiver
+    f ltered tory:  tory,
+    feedbackF lters: Seq[Seq[FeedbackModel] => Seq[FeedbackModel]],
+     nl neFeedbackFat gueParam: Cont nuousFunct onParam,
+    stats: StatsRece ver
   ): Boolean = {
-    val scopedStats = stats.scope("prompt_dislike_fatigue")
+    val scopedStats = stats.scope("prompt_d sl ke_fat gue")
 
-    val promptDislikeFeedback = feedbacks
-      .filter(feedback => feedback.feedbackTypeEnum == FeedbackTypeEnum.PromptIrrelevant)
-    val hydratedPromptDislikeFeedback = FeedbackModelHydrator.HydrateNotification(
-      promptDislikeFeedback,
-      filteredHistory.history.toSeq.map(_._2))
+    val promptD sl keFeedback = feedbacks
+      .f lter(feedback => feedback.feedbackTypeEnum == FeedbackTypeEnum.Prompt rrelevant)
+    val hydratedPromptD sl keFeedback = FeedbackModelHydrator.HydrateNot f cat on(
+      promptD sl keFeedback,
+      f ltered tory. tory.toSeq.map(_._2))
 
-    if (isOutsideFatiguePeriod(
-        filteredHistory,
+     f ( sOuts deFat guePer od(
+        f ltered tory,
         Seq(),
-        feedbackFilters.foldLeft(hydratedPromptDislikeFeedback)((feedbacks, feedbackFilter) =>
-          feedbackFilter(feedbacks)),
-        inlineFeedbackFatigueParam,
+        feedbackF lters.foldLeft(hydratedPromptD sl keFeedback)((feedbacks, feedbackF lter) =>
+          feedbackF lter(feedbacks)),
+         nl neFeedbackFat gueParam,
         scopedStats
       )) {
-      scopedStats.counter("feedback_prompt_dislike_success").incr()
+      scopedStats.counter("feedback_prompt_d sl ke_success"). ncr()
       true
     } else {
-      scopedStats.counter("feedback_prompt_dislike_filtered").incr()
+      scopedStats.counter("feedback_prompt_d sl ke_f ltered"). ncr()
       false
     }
   }

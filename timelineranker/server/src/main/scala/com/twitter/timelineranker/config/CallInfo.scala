@@ -1,35 +1,35 @@
-package com.twitter.timelineranker.config
+package com.tw ter.t  l neranker.conf g
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.util.Duration
-import java.util.concurrent.TimeUnit
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.ut l.Durat on
+ mport java.ut l.concurrent.T  Un 
 
 /**
- * Information about a single method call.
+ *  nformat on about a s ngle  thod call.
  *
- * The purpose of this class is to allow one to express a call graph and latency associated with each (sub)call.
- * Once a call graph is defined, calling getOverAllLatency() off the top level call returns total time taken by that call.
- * That value can then be compared with the timeout budget allocated to that call to see if the
- * value fits within the overall timeout budget of that call.
+ * T  purpose of t  class  s to allow one to express a call graph and latency assoc ated w h each (sub)call.
+ * Once a call graph  s def ned, call ng getOverAllLatency() off t  top level call returns total t   taken by that call.
+ * That value can t n be compared w h t  t  out budget allocated to that call to see  f t 
+ * value f s w h n t  overall t  out budget of that call.
  *
- * This is useful in case of a complex call graph where it is hard to mentally estimate the effect on
- * overall latency when updating timeout value of one or more sub-calls.
+ * T   s useful  n case of a complex call graph w re    s hard to  ntally est mate t  effect on
+ * overall latency w n updat ng t  out value of one or more sub-calls.
  *
- * @param methodName name of the called method.
- * @param latency P999 Latency incurred in calling a service if the method calls an external service. Otherwise 0.
- * @param dependsOn Other calls that this call depends on.
+ * @param  thodNa  na  of t  called  thod.
+ * @param latency P999 Latency  ncurred  n call ng a serv ce  f t   thod calls an external serv ce. Ot rw se 0.
+ * @param dependsOn Ot r calls that t  call depends on.
  */
 case class Call(
-  methodName: String,
-  latency: Duration = 0.milliseconds,
-  dependsOn: Seq[Call] = Nil) {
+   thodNa : Str ng,
+  latency: Durat on = 0.m ll seconds,
+  dependsOn: Seq[Call] = N l) {
 
   /**
-   * Latency incurred in this call as well as recursively all calls this call depends on.
+   * Latency  ncurred  n t  call as  ll as recurs vely all calls t  call depends on.
    */
-  def getOverAllLatency: Duration = {
-    val dependencyLatency = if (dependsOn.isEmpty) {
-      0.milliseconds
+  def getOverAllLatency: Durat on = {
+    val dependencyLatency =  f (dependsOn. sEmpty) {
+      0.m ll seconds
     } else {
       dependsOn.map(_.getOverAllLatency).max
     }
@@ -37,83 +37,83 @@ case class Call(
   }
 
   /**
-   * Call paths starting at this call and recursively traversing all dependencies.
-   * Typically used for debugging or logging.
+   * Call paths start ng at t  call and recurs vely travers ng all dependenc es.
+   * Typ cally used for debugg ng or logg ng.
    */
-  def getLatencyPaths: String = {
-    val sb = new StringBuilder
+  def getLatencyPaths: Str ng = {
+    val sb = new Str ngBu lder
     getLatencyPaths(sb, 1)
-    sb.toString
+    sb.toStr ng
   }
 
-  def getLatencyPaths(sb: StringBuilder, level: Int): Unit = {
-    sb.append(s"${getPrefix(level)} ${getLatencyString(getOverAllLatency)} $methodName\n")
-    if ((latency > 0.milliseconds) && !dependsOn.isEmpty) {
-      sb.append(s"${getPrefix(level + 1)} ${getLatencyString(latency)} self\n")
+  def getLatencyPaths(sb: Str ngBu lder, level:  nt): Un  = {
+    sb.append(s"${getPref x(level)} ${getLatencyStr ng(getOverAllLatency)} $ thodNa \n")
+     f ((latency > 0.m ll seconds) && !dependsOn. sEmpty) {
+      sb.append(s"${getPref x(level + 1)} ${getLatencyStr ng(latency)} self\n")
     }
     dependsOn.foreach(_.getLatencyPaths(sb, level + 1))
   }
 
-  private def getLatencyString(latencyValue: Duration): String = {
-    val latencyMs = latencyValue.inUnit(TimeUnit.MILLISECONDS)
+  pr vate def getLatencyStr ng(latencyValue: Durat on): Str ng = {
+    val latencyMs = latencyValue. nUn (T  Un .M LL SECONDS)
     f"[$latencyMs%3d]"
   }
 
-  private def getPrefix(level: Int): String = {
+  pr vate def getPref x(level:  nt): Str ng = {
     " " * (level * 4) + "--"
   }
 }
 
 /**
- * Information about the getRecapTweetCandidates call.
+ *  nformat on about t  getRecapT etCand dates call.
  *
  * Acronyms used:
- *     : call internal to TLR
- * EB  : Earlybird (search super root)
- * GZ  : Gizmoduck
+ *     : call  nternal to TLR
+ * EB  : Earlyb rd (search super root)
+ * GZ  : G zmoduck
  * MH  : Manhattan
- * SGS : Social graph service
+ * SGS : Soc al graph serv ce
  *
- * The latency values are based on p9999 values observed over 1 week.
+ * T  latency values are based on p9999 values observed over 1  ek.
  */
-object GetRecycledTweetCandidatesCall {
-  val getUserProfileInfo: Call = Call("GZ.getUserProfileInfo", 200.milliseconds)
-  val getUserLanguages: Call = Call("MH.getUserLanguages", 300.milliseconds) // p99: 15ms
+object GetRecycledT etCand datesCall {
+  val getUserProf le nfo: Call = Call("GZ.getUserProf le nfo", 200.m ll seconds)
+  val getUserLanguages: Call = Call("MH.getUserLanguages", 300.m ll seconds) // p99: 15ms
 
-  val getFollowing: Call = Call("SGS.getFollowing", 250.milliseconds) // p99: 75ms
-  val getMutuallyFollowing: Call =
-    Call("SGS.getMutuallyFollowing", 400.milliseconds, Seq(getFollowing)) // p99: 100
-  val getVisibilityProfiles: Call =
-    Call("SGS.getVisibilityProfiles", 400.milliseconds, Seq(getFollowing)) // p99: 100
-  val getVisibilityData: Call = Call(
-    "getVisibilityData",
-    dependsOn = Seq(getFollowing, getMutuallyFollowing, getVisibilityProfiles)
+  val getFollow ng: Call = Call("SGS.getFollow ng", 250.m ll seconds) // p99: 75ms
+  val getMutuallyFollow ng: Call =
+    Call("SGS.getMutuallyFollow ng", 400.m ll seconds, Seq(getFollow ng)) // p99: 100
+  val getV s b l yProf les: Call =
+    Call("SGS.getV s b l yProf les", 400.m ll seconds, Seq(getFollow ng)) // p99: 100
+  val getV s b l yData: Call = Call(
+    "getV s b l yData",
+    dependsOn = Seq(getFollow ng, getMutuallyFollow ng, getV s b l yProf les)
   )
-  val getTweetsForRecapRegular: Call =
-    Call("EB.getTweetsForRecap(regular)", 500.milliseconds, Seq(getVisibilityData)) // p99: 250
-  val getTweetsForRecapProtected: Call =
-    Call("EB.getTweetsForRecap(protected)", 250.milliseconds, Seq(getVisibilityData)) // p99: 150
+  val getT etsForRecapRegular: Call =
+    Call("EB.getT etsForRecap(regular)", 500.m ll seconds, Seq(getV s b l yData)) // p99: 250
+  val getT etsForRecapProtected: Call =
+    Call("EB.getT etsForRecap(protected)", 250.m ll seconds, Seq(getV s b l yData)) // p99: 150
   val getSearchResults: Call =
-    Call("getSearchResults", dependsOn = Seq(getTweetsForRecapRegular, getTweetsForRecapProtected))
-  val getTweetsScoredForRecap: Call =
-    Call("EB.getTweetsScoredForRecap", 400.milliseconds, Seq(getSearchResults)) // p99: 100
+    Call("getSearchResults", dependsOn = Seq(getT etsForRecapRegular, getT etsForRecapProtected))
+  val getT etsScoredForRecap: Call =
+    Call("EB.getT etsScoredForRecap", 400.m ll seconds, Seq(getSearchResults)) // p99: 100
 
   val hydrateSearchResults: Call = Call("hydrateSearchResults")
-  val getSourceTweetSearchResults: Call =
-    Call("getSourceTweetSearchResults", dependsOn = Seq(getSearchResults))
-  val hydrateTweets: Call =
-    Call("hydrateTweets", dependsOn = Seq(getSearchResults, hydrateSearchResults))
-  val hydrateSourceTweets: Call =
-    Call("hydrateSourceTweets", dependsOn = Seq(getSourceTweetSearchResults, hydrateSearchResults))
+  val getS ceT etSearchResults: Call =
+    Call("getS ceT etSearchResults", dependsOn = Seq(getSearchResults))
+  val hydrateT ets: Call =
+    Call("hydrateT ets", dependsOn = Seq(getSearchResults, hydrateSearchResults))
+  val hydrateS ceT ets: Call =
+    Call("hydrateS ceT ets", dependsOn = Seq(getS ceT etSearchResults, hydrateSearchResults))
   val topLevel: Call = Call(
-    "getRecapTweetCandidates",
+    "getRecapT etCand dates",
     dependsOn = Seq(
-      getUserProfileInfo,
+      getUserProf le nfo,
       getUserLanguages,
-      getVisibilityData,
+      getV s b l yData,
       getSearchResults,
       hydrateSearchResults,
-      hydrateSourceTweets
+      hydrateS ceT ets
     )
   )
 }

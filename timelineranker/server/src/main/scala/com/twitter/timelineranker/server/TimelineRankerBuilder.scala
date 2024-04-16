@@ -1,127 +1,127 @@
-package com.twitter.timelineranker.server
+package com.tw ter.t  l neranker.server
 
-import com.twitter.concurrent.AsyncSemaphore
-import com.twitter.finagle.Filter
-import com.twitter.finagle.ServiceFactory
-import com.twitter.finagle.thrift.filter.ThriftForwardingWarmUpFilter
-import com.twitter.finagle.thrift.ClientIdRequiredFilter
-import com.twitter.timelineranker.config.RuntimeConfiguration
-import com.twitter.timelineranker.config.TimelineRankerConstants
-import com.twitter.timelineranker.decider.DeciderKey
-import com.twitter.timelineranker.entity_tweets.EntityTweetsRepositoryBuilder
-import com.twitter.timelineranker.observe.DebugObserverBuilder
-import com.twitter.timelineranker.parameters.ConfigBuilder
-import com.twitter.timelineranker.parameters.util.RecapQueryParamInitializer
-import com.twitter.timelineranker.recap_author.RecapAuthorRepositoryBuilder
-import com.twitter.timelineranker.recap_hydration.RecapHydrationRepositoryBuilder
-import com.twitter.timelineranker.in_network_tweets.InNetworkTweetRepositoryBuilder
-import com.twitter.timelineranker.repository._
-import com.twitter.timelineranker.thriftscala.TimelineRanker$FinagleService
-import com.twitter.timelineranker.uteg_liked_by_tweets.UtegLikedByTweetsRepositoryBuilder
-import com.twitter.timelines.filter.DarkTrafficFilterBuilder
-import com.twitter.timelines.observe.ServiceObserver
-import com.twitter.timelines.util.DeciderableRequestSemaphoreFilter
-import org.apache.thrift.protocol.TBinaryProtocol
-import org.apache.thrift.protocol.TCompactProtocol
-import org.apache.thrift.protocol.TProtocolFactory
+ mport com.tw ter.concurrent.AsyncSemaphore
+ mport com.tw ter.f nagle.F lter
+ mport com.tw ter.f nagle.Serv ceFactory
+ mport com.tw ter.f nagle.thr ft.f lter.Thr ftForward ngWarmUpF lter
+ mport com.tw ter.f nagle.thr ft.Cl ent dRequ redF lter
+ mport com.tw ter.t  l neranker.conf g.Runt  Conf gurat on
+ mport com.tw ter.t  l neranker.conf g.T  l neRankerConstants
+ mport com.tw ter.t  l neranker.dec der.Dec derKey
+ mport com.tw ter.t  l neranker.ent y_t ets.Ent yT etsRepos oryBu lder
+ mport com.tw ter.t  l neranker.observe.DebugObserverBu lder
+ mport com.tw ter.t  l neranker.para ters.Conf gBu lder
+ mport com.tw ter.t  l neranker.para ters.ut l.RecapQueryParam n  al zer
+ mport com.tw ter.t  l neranker.recap_author.RecapAuthorRepos oryBu lder
+ mport com.tw ter.t  l neranker.recap_hydrat on.RecapHydrat onRepos oryBu lder
+ mport com.tw ter.t  l neranker. n_network_t ets. nNetworkT etRepos oryBu lder
+ mport com.tw ter.t  l neranker.repos ory._
+ mport com.tw ter.t  l neranker.thr ftscala.T  l neRanker$F nagleServ ce
+ mport com.tw ter.t  l neranker.uteg_l ked_by_t ets.UtegL kedByT etsRepos oryBu lder
+ mport com.tw ter.t  l nes.f lter.DarkTraff cF lterBu lder
+ mport com.tw ter.t  l nes.observe.Serv ceObserver
+ mport com.tw ter.t  l nes.ut l.Dec derableRequestSemaphoreF lter
+ mport org.apac .thr ft.protocol.TB naryProtocol
+ mport org.apac .thr ft.protocol.TCompactProtocol
+ mport org.apac .thr ft.protocol.TProtocolFactory
 
-class TimelineRankerBuilder(config: RuntimeConfiguration) {
+class T  l neRankerBu lder(conf g: Runt  Conf gurat on) {
 
-  private[this] val underlyingClients = config.underlyingClients
+  pr vate[t ] val underly ngCl ents = conf g.underly ngCl ents
 
-  private[this] val configBuilder =
-    new ConfigBuilder(config.deciderGateBuilder, config.statsReceiver)
-  private[this] val debugObserverBuilder = new DebugObserverBuilder(config.whitelist)
-  private[this] val serviceObserver = new ServiceObserver(config.statsReceiver)
-  private[this] val routingRepository = RoutingTimelineRepositoryBuilder(config, configBuilder)
-  private[this] val inNetworkTweetRepository =
-    new InNetworkTweetRepositoryBuilder(config, configBuilder).apply()
-  private[this] val recapHydrationRepository =
-    new RecapHydrationRepositoryBuilder(config, configBuilder).apply()
-  private[this] val recapAuthorRepository = new RecapAuthorRepositoryBuilder(config).apply()
-  private[this] val entityTweetsRepository =
-    new EntityTweetsRepositoryBuilder(config, configBuilder).apply()
-  private[this] val utegLikedByTweetsRepository =
-    new UtegLikedByTweetsRepositoryBuilder(config, configBuilder).apply()
+  pr vate[t ] val conf gBu lder =
+    new Conf gBu lder(conf g.dec derGateBu lder, conf g.statsRece ver)
+  pr vate[t ] val debugObserverBu lder = new DebugObserverBu lder(conf g.wh el st)
+  pr vate[t ] val serv ceObserver = new Serv ceObserver(conf g.statsRece ver)
+  pr vate[t ] val rout ngRepos ory = Rout ngT  l neRepos oryBu lder(conf g, conf gBu lder)
+  pr vate[t ] val  nNetworkT etRepos ory =
+    new  nNetworkT etRepos oryBu lder(conf g, conf gBu lder).apply()
+  pr vate[t ] val recapHydrat onRepos ory =
+    new RecapHydrat onRepos oryBu lder(conf g, conf gBu lder).apply()
+  pr vate[t ] val recapAuthorRepos ory = new RecapAuthorRepos oryBu lder(conf g).apply()
+  pr vate[t ] val ent yT etsRepos ory =
+    new Ent yT etsRepos oryBu lder(conf g, conf gBu lder).apply()
+  pr vate[t ] val utegL kedByT etsRepos ory =
+    new UtegL kedByT etsRepos oryBu lder(conf g, conf gBu lder).apply()
 
-  private[this] val queryParamInitializer = new RecapQueryParamInitializer(
-    config = configBuilder.rootConfig,
-    runtimeConfig = config
+  pr vate[t ] val queryParam n  al zer = new RecapQueryParam n  al zer(
+    conf g = conf gBu lder.rootConf g,
+    runt  Conf g = conf g
   )
 
-  val timelineRanker: TimelineRanker = new TimelineRanker(
-    routingRepository = routingRepository,
-    inNetworkTweetRepository = inNetworkTweetRepository,
-    recapHydrationRepository = recapHydrationRepository,
-    recapAuthorRepository = recapAuthorRepository,
-    entityTweetsRepository = entityTweetsRepository,
-    utegLikedByTweetsRepository = utegLikedByTweetsRepository,
-    serviceObserver = serviceObserver,
-    abdecider = Some(config.abdecider),
-    clientRequestAuthorizer = config.clientRequestAuthorizer,
-    debugObserver = debugObserverBuilder.observer,
-    queryParamInitializer = queryParamInitializer,
-    statsReceiver = config.statsReceiver
+  val t  l neRanker: T  l neRanker = new T  l neRanker(
+    rout ngRepos ory = rout ngRepos ory,
+     nNetworkT etRepos ory =  nNetworkT etRepos ory,
+    recapHydrat onRepos ory = recapHydrat onRepos ory,
+    recapAuthorRepos ory = recapAuthorRepos ory,
+    ent yT etsRepos ory = ent yT etsRepos ory,
+    utegL kedByT etsRepos ory = utegL kedByT etsRepos ory,
+    serv ceObserver = serv ceObserver,
+    abdec der = So (conf g.abdec der),
+    cl entRequestAuthor zer = conf g.cl entRequestAuthor zer,
+    debugObserver = debugObserverBu lder.observer,
+    queryParam n  al zer = queryParam n  al zer,
+    statsRece ver = conf g.statsRece ver
   )
 
-  private[this] def mkServiceFactory(
+  pr vate[t ] def mkServ ceFactory(
     protocolFactory: TProtocolFactory
-  ): ServiceFactory[Array[Byte], Array[Byte]] = {
-    val clientIdFilter = new ClientIdRequiredFilter[Array[Byte], Array[Byte]](
-      config.statsReceiver.scope("service").scope("filter")
+  ): Serv ceFactory[Array[Byte], Array[Byte]] = {
+    val cl ent dF lter = new Cl ent dRequ redF lter[Array[Byte], Array[Byte]](
+      conf g.statsRece ver.scope("serv ce").scope("f lter")
     )
 
-    // Limits the total number of concurrent requests handled by the TimelineRanker
-    val maxConcurrencyFilter = {
+    // L m s t  total number of concurrent requests handled by t  T  l neRanker
+    val maxConcurrencyF lter = {
       val asyncSemaphore = new AsyncSemaphore(
-        initialPermits = config.maxConcurrency,
-        maxWaiters = 0
+         n  alPerm s = conf g.maxConcurrency,
+        maxWa ers = 0
       )
-      val enableLimiting = config.deciderGateBuilder.linearGate(
-        DeciderKey.EnableMaxConcurrencyLimiting
+      val enableL m  ng = conf g.dec derGateBu lder.l nearGate(
+        Dec derKey.EnableMaxConcurrencyL m  ng
       )
 
-      new DeciderableRequestSemaphoreFilter(
-        enableFilter = enableLimiting,
+      new Dec derableRequestSemaphoreF lter(
+        enableF lter = enableL m  ng,
         semaphore = asyncSemaphore,
-        statsReceiver = config.statsReceiver
+        statsRece ver = conf g.statsRece ver
       )
     }
 
-    // Forwards a percentage of traffic via the DarkTrafficFilter to the TimelineRanker proxy, which in turn can be
-    // used to forward dark traffic to staged instances
-    val darkTrafficFilter = DarkTrafficFilterBuilder(
-      config.deciderGateBuilder,
-      DeciderKey.EnableRoutingToRankerDevProxy,
-      TimelineRankerConstants.ClientPrefix,
-      underlyingClients.darkTrafficProxy,
-      config.statsReceiver
+    // Forwards a percentage of traff c v a t  DarkTraff cF lter to t  T  l neRanker proxy, wh ch  n turn can be
+    // used to forward dark traff c to staged  nstances
+    val darkTraff cF lter = DarkTraff cF lterBu lder(
+      conf g.dec derGateBu lder,
+      Dec derKey.EnableRout ngToRankerDevProxy,
+      T  l neRankerConstants.Cl entPref x,
+      underly ngCl ents.darkTraff cProxy,
+      conf g.statsRece ver
     )
 
-    val warmupForwardingFilter = if (config.isProd) {
-      new ThriftForwardingWarmUpFilter(
-        Warmup.WarmupForwardingTime,
-        underlyingClients.timelineRankerForwardingClient.service,
-        config.statsReceiver.scope("warmupForwardingFilter"),
-        isBypassClient = { _.name.startsWith("timelineranker.") }
+    val warmupForward ngF lter =  f (conf g. sProd) {
+      new Thr ftForward ngWarmUpF lter(
+        Warmup.WarmupForward ngT  ,
+        underly ngCl ents.t  l neRankerForward ngCl ent.serv ce,
+        conf g.statsRece ver.scope("warmupForward ngF lter"),
+         sBypassCl ent = { _.na .startsW h("t  l neranker.") }
       )
-    } else Filter.identity[Array[Byte], Array[Byte]]
+    } else F lter. dent y[Array[Byte], Array[Byte]]
 
-    val serviceFilterChain = clientIdFilter
-      .andThen(maxConcurrencyFilter)
-      .andThen(warmupForwardingFilter)
-      .andThen(darkTrafficFilter)
-      .andThen(serviceObserver.thriftExceptionFilter)
+    val serv ceF lterCha n = cl ent dF lter
+      .andT n(maxConcurrencyF lter)
+      .andT n(warmupForward ngF lter)
+      .andT n(darkTraff cF lter)
+      .andT n(serv ceObserver.thr ftExcept onF lter)
 
-    val finagleService =
-      new TimelineRanker$FinagleService(timelineRanker, protocolFactory)
+    val f nagleServ ce =
+      new T  l neRanker$F nagleServ ce(t  l neRanker, protocolFactory)
 
-    ServiceFactory.const(serviceFilterChain andThen finagleService)
+    Serv ceFactory.const(serv ceF lterCha n andT n f nagleServ ce)
   }
 
-  val serviceFactory: ServiceFactory[Array[Byte], Array[Byte]] =
-    mkServiceFactory(new TBinaryProtocol.Factory())
+  val serv ceFactory: Serv ceFactory[Array[Byte], Array[Byte]] =
+    mkServ ceFactory(new TB naryProtocol.Factory())
 
-  val compactProtocolServiceFactory: ServiceFactory[Array[Byte], Array[Byte]] =
-    mkServiceFactory(new TCompactProtocol.Factory())
+  val compactProtocolServ ceFactory: Serv ceFactory[Array[Byte], Array[Byte]] =
+    mkServ ceFactory(new TCompactProtocol.Factory())
 }

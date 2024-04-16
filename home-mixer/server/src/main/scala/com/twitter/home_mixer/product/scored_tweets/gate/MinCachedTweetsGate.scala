@@ -1,34 +1,34 @@
-package com.twitter.home_mixer.product.scored_tweets.gate
+package com.tw ter.ho _m xer.product.scored_t ets.gate
 
-import com.twitter.home_mixer.product.scored_tweets.gate.MinCachedTweetsGate.identifierSuffix
-import com.twitter.home_mixer.util.CachedScoredTweetsHelper
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.ho _m xer.product.scored_t ets.gate.M nCac dT etsGate. dent f erSuff x
+ mport com.tw ter.ho _m xer.ut l.Cac dScoredT ets lper
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.Gate
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Gate dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .Param
 
-case class MinCachedTweetsGate(
-  candidatePipelineIdentifier: CandidatePipelineIdentifier,
-  minCachedTweetsParam: Param[Int])
-    extends Gate[PipelineQuery] {
+case class M nCac dT etsGate(
+  cand dateP pel ne dent f er: Cand dateP pel ne dent f er,
+  m nCac dT etsParam: Param[ nt])
+    extends Gate[P pel neQuery] {
 
-  override val identifier: GateIdentifier =
-    GateIdentifier(candidatePipelineIdentifier + identifierSuffix)
+  overr de val  dent f er: Gate dent f er =
+    Gate dent f er(cand dateP pel ne dent f er +  dent f erSuff x)
 
-  override def shouldContinue(query: PipelineQuery): Stitch[Boolean] = {
-    val minCachedTweets = query.params(minCachedTweetsParam)
-    val cachedScoredTweets =
-      query.features.map(CachedScoredTweetsHelper.unseenCachedScoredTweets).getOrElse(Seq.empty)
-    val numCachedTweets = cachedScoredTweets.count { tweet =>
-      tweet.candidatePipelineIdentifier.exists(
-        CandidatePipelineIdentifier(_).equals(candidatePipelineIdentifier))
+  overr de def shouldCont nue(query: P pel neQuery): St ch[Boolean] = {
+    val m nCac dT ets = query.params(m nCac dT etsParam)
+    val cac dScoredT ets =
+      query.features.map(Cac dScoredT ets lper.unseenCac dScoredT ets).getOrElse(Seq.empty)
+    val numCac dT ets = cac dScoredT ets.count { t et =>
+      t et.cand dateP pel ne dent f er.ex sts(
+        Cand dateP pel ne dent f er(_).equals(cand dateP pel ne dent f er))
     }
-    Stitch.value(numCachedTweets < minCachedTweets)
+    St ch.value(numCac dT ets < m nCac dT ets)
   }
 }
 
-object MinCachedTweetsGate {
-  val identifierSuffix = "MinCachedTweets"
+object M nCac dT etsGate {
+  val  dent f erSuff x = "M nCac dT ets"
 }

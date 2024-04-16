@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata
 
-trait HasClientEventInfo {
-  def clientEventInfo: Option[ClientEventInfo]
+tra  HasCl entEvent nfo {
+  def cl entEvent nfo: Opt on[Cl entEvent nfo]
 }
 
 /**
- * Information used to build Client Events
- * @see [[http://go/client-events]]
+ *  nformat on used to bu ld Cl ent Events
+ * @see [[http://go/cl ent-events]]
  */
-case class ClientEventInfo(
-  component: Option[String],
-  element: Option[String],
-  details: Option[ClientEventDetails],
-  action: Option[String],
-  entityToken: Option[String])
+case class Cl entEvent nfo(
+  component: Opt on[Str ng],
+  ele nt: Opt on[Str ng],
+  deta ls: Opt on[Cl entEventDeta ls],
+  act on: Opt on[Str ng],
+  ent yToken: Opt on[Str ng])
 
 /**
- * Additional client events fields
+ * Add  onal cl ent events f elds
  *
- * @note if a field from [[http://go/client_app.thrift]] is needed but is not here
- *       contact the `#product-mixer` team to have it added.
+ * @note  f a f eld from [[http://go/cl ent_app.thr ft]]  s needed but  s not  re
+ *       contact t  `#product-m xer` team to have   added.
  */
-case class ClientEventDetails(
-  conversationDetails: Option[ConversationDetails],
-  timelinesDetails: Option[TimelinesDetails],
-  articleDetails: Option[ArticleDetails],
-  liveEventDetails: Option[LiveEventDetails],
-  commerceDetails: Option[CommerceDetails])
+case class Cl entEventDeta ls(
+  conversat onDeta ls: Opt on[Conversat onDeta ls],
+  t  l nesDeta ls: Opt on[T  l nesDeta ls],
+  art cleDeta ls: Opt on[Art cleDeta ls],
+  l veEventDeta ls: Opt on[L veEventDeta ls],
+  com rceDeta ls: Opt on[Com rceDeta ls])

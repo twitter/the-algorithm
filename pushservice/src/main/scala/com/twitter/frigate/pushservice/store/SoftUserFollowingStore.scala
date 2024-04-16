@@ -1,60 +1,60 @@
-package com.twitter.frigate.pushservice.store
+package com.tw ter.fr gate.pushserv ce.store
 
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.gizmoduck.thriftscala.UserType
-import com.twitter.stitch.Stitch
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.Client
-import com.twitter.strato.client.UserId
-import com.twitter.strato.config.FlockCursors.BySource.Begin
-import com.twitter.strato.config.FlockCursors.Continue
-import com.twitter.strato.config.FlockCursors.End
-import com.twitter.strato.config.FlockPage
-import com.twitter.strato.generated.client.socialgraph.service.soft_users.softUserFollows.EdgeBySourceClientColumn
-import com.twitter.util.Future
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter.g zmoduck.thr ftscala.UserType
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.strato.cl ent.Cl ent
+ mport com.tw ter.strato.cl ent.User d
+ mport com.tw ter.strato.conf g.FlockCursors.ByS ce.Beg n
+ mport com.tw ter.strato.conf g.FlockCursors.Cont nue
+ mport com.tw ter.strato.conf g.FlockCursors.End
+ mport com.tw ter.strato.conf g.FlockPage
+ mport com.tw ter.strato.generated.cl ent.soc algraph.serv ce.soft_users.softUserFollows.EdgeByS ceCl entColumn
+ mport com.tw ter.ut l.Future
 
-object SoftUserFollowingStore {
-  type ViewerFollowingCursor = EdgeBySourceClientColumn.Cursor
+object SoftUserFollow ngStore {
+  type V e rFollow ngCursor = EdgeByS ceCl entColumn.Cursor
   val MaxPagesToFetch = 2
-  val PageLimit = 50
+  val PageL m  = 50
 }
 
-class SoftUserFollowingStore(stratoClient: Client) extends ReadableStore[User, Seq[Long]] {
-  import SoftUserFollowingStore._
-  private val softUserFollowingEdgesPaginator = new EdgeBySourceClientColumn(stratoClient).paginator
+class SoftUserFollow ngStore(stratoCl ent: Cl ent) extends ReadableStore[User, Seq[Long]] {
+   mport SoftUserFollow ngStore._
+  pr vate val softUserFollow ngEdgesPag nator = new EdgeByS ceCl entColumn(stratoCl ent).pag nator
 
-  private def accumulateIds(cursor: ViewerFollowingCursor, pagesToFetch: Int): Stitch[Seq[Long]] =
-    softUserFollowingEdgesPaginator.paginate(cursor).flatMap {
+  pr vate def accumulate ds(cursor: V e rFollow ngCursor, pagesToFetch:  nt): St ch[Seq[Long]] =
+    softUserFollow ngEdgesPag nator.pag nate(cursor).flatMap {
       case FlockPage(data, next, _) =>
         next match {
-          case cont: Continue if pagesToFetch > 1 =>
-            Stitch
-              .join(
-                Stitch.value(data.map(_.to).map(_.value)),
-                accumulateIds(cont, pagesToFetch - 1))
+          case cont: Cont nue  f pagesToFetch > 1 =>
+            St ch
+              .jo n(
+                St ch.value(data.map(_.to).map(_.value)),
+                accumulate ds(cont, pagesToFetch - 1))
               .map {
                 case (a, b) => a ++ b
               }
 
-          case _: End | _: Continue =>
-            // end pagination if last page has been fetched or [[MaxPagesToFetch]] have been fetched
-            Stitch.value(data.map(_.to).map(_.value))
+          case _: End | _: Cont nue =>
+            // end pag nat on  f last page has been fetc d or [[MaxPagesToFetch]] have been fetc d
+            St ch.value(data.map(_.to).map(_.value))
         }
     }
 
-  private def softFollowingFromStrato(
-    sourceId: Long,
-    pageLimit: Int,
-    pagesToFetch: Int
-  ): Stitch[Seq[Long]] = {
-    val begin = Begin[UserId, UserId](UserId(sourceId), pageLimit)
-    accumulateIds(begin, pagesToFetch)
+  pr vate def softFollow ngFromStrato(
+    s ce d: Long,
+    pageL m :  nt,
+    pagesToFetch:  nt
+  ): St ch[Seq[Long]] = {
+    val beg n = Beg n[User d, User d](User d(s ce d), pageL m )
+    accumulate ds(beg n, pagesToFetch)
   }
 
-  override def get(user: User): Future[Option[Seq[Long]]] = {
+  overr de def get(user: User): Future[Opt on[Seq[Long]]] = {
     user.userType match {
       case UserType.Soft =>
-        Stitch.run(softFollowingFromStrato(user.id, PageLimit, MaxPagesToFetch)).map(Option(_))
+        St ch.run(softFollow ngFromStrato(user. d, PageL m , MaxPagesToFetch)).map(Opt on(_))
       case _ => Future.None
     }
   }

@@ -1,9 +1,9 @@
-namespace java com.twitter.tweetypie.unmentions.thriftjava
-#@ namespace scala com.twitter.tweetypie.unmentions.thriftscala
-#@ namespace strato com.twitter.tweetypie.unmentions
-namespace py gen.twitter.tweetypie.unmentions
+na space java com.tw ter.t etyp e.un nt ons.thr ftjava
+#@ na space scala com.tw ter.t etyp e.un nt ons.thr ftscala
+#@ na space strato com.tw ter.t etyp e.un nt ons
+na space py gen.tw ter.t etyp e.un nt ons
 
-struct UnmentionData {
-    1: optional i64 conversationId (personalDataType = 'TweetConversationId')
-    2: optional list<i64> mentionedUsers (personalDataType = 'UserId')
-} (strato.space = "Unmentions", persisted='true', hasPersonalData = 'true')
+struct Un nt onData {
+    1: opt onal  64 conversat on d (personalDataType = 'T etConversat on d')
+    2: opt onal l st< 64>  nt onedUsers (personalDataType = 'User d')
+} (strato.space = "Un nt ons", pers sted='true', hasPersonalData = 'true')

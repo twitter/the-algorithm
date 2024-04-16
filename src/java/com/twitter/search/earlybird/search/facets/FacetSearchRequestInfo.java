@@ -1,28 +1,28 @@
-package com.twitter.search.earlybird.search.facets;
+package com.tw ter.search.earlyb rd.search.facets;
 
-import org.apache.lucene.search.Query;
+ mport org.apac .lucene.search.Query;
 
-import com.twitter.search.common.ranking.thriftjava.ThriftFacetRankingOptions;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.core.earlybird.facets.FacetCountState;
-import com.twitter.search.earlybird.search.SearchRequestInfo;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
+ mport com.tw ter.search.common.rank ng.thr ftjava.Thr ftFacetRank ngOpt ons;
+ mport com.tw ter.search.common.search.Term nat onTracker;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetCountState;
+ mport com.tw ter.search.earlyb rd.search.SearchRequest nfo;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchQuery;
 
-public class FacetSearchRequestInfo extends SearchRequestInfo {
-  protected final FacetCountState facetCountState;
-  protected final ThriftFacetRankingOptions rankingOptions;
+publ c class FacetSearchRequest nfo extends SearchRequest nfo {
+  protected f nal FacetCountState facetCountState;
+  protected f nal Thr ftFacetRank ngOpt ons rank ngOpt ons;
 
-  public FacetSearchRequestInfo(ThriftSearchQuery searchQuery,
-                                ThriftFacetRankingOptions rankingOptions,
+  publ c FacetSearchRequest nfo(Thr ftSearchQuery searchQuery,
+                                Thr ftFacetRank ngOpt ons rank ngOpt ons,
                                 Query query,
                                 FacetCountState facetCountState,
-                                TerminationTracker terminationTracker) {
-    super(searchQuery, query, terminationTracker);
-    this.facetCountState = facetCountState;
-    this.rankingOptions = rankingOptions;
+                                Term nat onTracker term nat onTracker) {
+    super(searchQuery, query, term nat onTracker);
+    t .facetCountState = facetCountState;
+    t .rank ngOpt ons = rank ngOpt ons;
   }
 
-  public final FacetCountState getFacetCountState() {
-    return this.facetCountState;
+  publ c f nal FacetCountState getFacetCountState() {
+    return t .facetCountState;
   }
 }

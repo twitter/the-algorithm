@@ -1,126 +1,126 @@
-package com.twitter.recosinjector.util
+package com.tw ter.recos njector.ut l
 
-import com.twitter.frigate.common.base.TweetUtil
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.recos.util.Action.Action
-import com.twitter.tweetypie.thriftscala.Tweet
+ mport com.tw ter.fr gate.common.base.T etUt l
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter.recos.ut l.Act on.Act on
+ mport com.tw ter.t etyp e.thr ftscala.T et
 
 /**
- * This is used to store information about a newly created tweet
- * @param validEntityUserIds For users mentioned or mediatagged in the tweet, these follow the
- *                           engage user and only they are are considered valid
- * @param sourceTweetDetails For Reply, Quote, or RT, source tweet is the tweet being actioned on
+ * T   s used to store  nformat on about a newly created t et
+ * @param val dEnt yUser ds For users  nt oned or  d atagged  n t  t et, t se follow t 
+ *                           engage user and only t y are are cons dered val d
+ * @param s ceT etDeta ls For Reply, Quote, or RT, s ce t et  s t  t et be ng act oned on
  */
-case class TweetCreateEventDetails(
-  userTweetEngagement: UserTweetEngagement,
-  validEntityUserIds: Seq[Long],
-  sourceTweetDetails: Option[TweetDetails]) {
-  // A mention is only valid if the mentioned user follows the source user
-  val validMentionUserIds: Option[Seq[Long]] = {
-    userTweetEngagement.tweetDetails.flatMap(_.mentionUserIds.map(_.intersect(validEntityUserIds)))
+case class T etCreateEventDeta ls(
+  userT etEngage nt: UserT etEngage nt,
+  val dEnt yUser ds: Seq[Long],
+  s ceT etDeta ls: Opt on[T etDeta ls]) {
+  // A  nt on  s only val d  f t   nt oned user follows t  s ce user
+  val val d nt onUser ds: Opt on[Seq[Long]] = {
+    userT etEngage nt.t etDeta ls.flatMap(_. nt onUser ds.map(_. ntersect(val dEnt yUser ds)))
   }
 
-  // A mediatag is only valid if the mediatagged user follows the source user
-  val validMediatagUserIds: Option[Seq[Long]] = {
-    userTweetEngagement.tweetDetails.flatMap(_.mediatagUserIds.map(_.intersect(validEntityUserIds)))
+  // A  d atag  s only val d  f t   d atagged user follows t  s ce user
+  val val d d atagUser ds: Opt on[Seq[Long]] = {
+    userT etEngage nt.t etDeta ls.flatMap(_. d atagUser ds.map(_. ntersect(val dEnt yUser ds)))
   }
 }
 
 /**
- * Stores information about a favorite/unfav engagement.
- * NOTE: This could either be Likes, or UNLIKEs (i.e. when user cancels the Like)
- * @param userTweetEngagement the engagement details
+ * Stores  nformat on about a favor e/unfav engage nt.
+ * NOTE: T  could e  r be L kes, or UNL KEs ( .e. w n user cancels t  L ke)
+ * @param userT etEngage nt t  engage nt deta ls
  */
-case class TweetFavoriteEventDetails(
-  userTweetEngagement: UserTweetEngagement)
+case class T etFavor eEventDeta ls(
+  userT etEngage nt: UserT etEngage nt)
 
 /**
- * Stores information about a unified user action engagement.
- * @param userTweetEngagement the engagement details
+ * Stores  nformat on about a un f ed user act on engage nt.
+ * @param userT etEngage nt t  engage nt deta ls
  */
-case class UuaEngagementEventDetails(
-  userTweetEngagement: UserTweetEngagement)
+case class UuaEngage ntEventDeta ls(
+  userT etEngage nt: UserT etEngage nt)
 
 /**
- * Details about a user-tweet engagement, like when a user tweeted/liked a tweet
- * @param engageUserId User that engaged with the tweet
- * @param action The action the user took on the tweet
- * @param tweetId The type of engagement the user took on the tweet
+ * Deta ls about a user-t et engage nt, l ke w n a user t eted/l ked a t et
+ * @param engageUser d User that engaged w h t  t et
+ * @param act on T  act on t  user took on t  t et
+ * @param t et d T  type of engage nt t  user took on t  t et
  */
-case class UserTweetEngagement(
-  engageUserId: Long,
-  engageUser: Option[User],
-  action: Action,
-  engagementTimeMillis: Option[Long],
-  tweetId: Long,
-  tweetDetails: Option[TweetDetails])
+case class UserT etEngage nt(
+  engageUser d: Long,
+  engageUser: Opt on[User],
+  act on: Act on,
+  engage ntT  M ll s: Opt on[Long],
+  t et d: Long,
+  t etDeta ls: Opt on[T etDeta ls])
 
 /**
- * Helper class that decomposes a tweet object and provides related details about this tweet
+ *  lper class that decomposes a t et object and prov des related deta ls about t  t et
  */
-case class TweetDetails(tweet: Tweet) {
-  val authorId: Option[Long] = tweet.coreData.map(_.userId)
+case class T etDeta ls(t et: T et) {
+  val author d: Opt on[Long] = t et.coreData.map(_.user d)
 
-  val urls: Option[Seq[String]] = tweet.urls.map(_.map(_.url))
+  val urls: Opt on[Seq[Str ng]] = t et.urls.map(_.map(_.url))
 
-  val mediaUrls: Option[Seq[String]] = tweet.media.map(_.map(_.expandedUrl))
+  val  d aUrls: Opt on[Seq[Str ng]] = t et. d a.map(_.map(_.expandedUrl))
 
-  val hashtags: Option[Seq[String]] = tweet.hashtags.map(_.map(_.text))
+  val hashtags: Opt on[Seq[Str ng]] = t et.hashtags.map(_.map(_.text))
 
-  // mentionUserIds include reply user ids at the beginning of a tweet
-  val mentionUserIds: Option[Seq[Long]] = tweet.mentions.map(_.flatMap(_.userId))
+  //  nt onUser ds  nclude reply user  ds at t  beg nn ng of a t et
+  val  nt onUser ds: Opt on[Seq[Long]] = t et. nt ons.map(_.flatMap(_.user d))
 
-  val mediatagUserIds: Option[Seq[Long]] = tweet.mediaTags.map {
+  val  d atagUser ds: Opt on[Seq[Long]] = t et. d aTags.map {
     _.tagMap.flatMap {
-      case (_, mediaTag) => mediaTag.flatMap(_.userId)
+      case (_,  d aTag) =>  d aTag.flatMap(_.user d)
     }.toSeq
   }
 
-  val replySourceId: Option[Long] = tweet.coreData.flatMap(_.reply.flatMap(_.inReplyToStatusId))
-  val replyUserId: Option[Long] = tweet.coreData.flatMap(_.reply.map(_.inReplyToUserId))
+  val replyS ce d: Opt on[Long] = t et.coreData.flatMap(_.reply.flatMap(_. nReplyToStatus d))
+  val replyUser d: Opt on[Long] = t et.coreData.flatMap(_.reply.map(_. nReplyToUser d))
 
-  val retweetSourceId: Option[Long] = tweet.coreData.flatMap(_.share.map(_.sourceStatusId))
-  val retweetUserId: Option[Long] = tweet.coreData.flatMap(_.share.map(_.sourceUserId))
+  val ret etS ce d: Opt on[Long] = t et.coreData.flatMap(_.share.map(_.s ceStatus d))
+  val ret etUser d: Opt on[Long] = t et.coreData.flatMap(_.share.map(_.s ceUser d))
 
-  val quoteSourceId: Option[Long] = tweet.quotedTweet.map(_.tweetId)
-  val quoteUserId: Option[Long] = tweet.quotedTweet.map(_.userId)
-  val quoteTweetUrl: Option[String] = tweet.quotedTweet.flatMap(_.permalink.map(_.shortUrl))
+  val quoteS ce d: Opt on[Long] = t et.quotedT et.map(_.t et d)
+  val quoteUser d: Opt on[Long] = t et.quotedT et.map(_.user d)
+  val quoteT etUrl: Opt on[Str ng] = t et.quotedT et.flatMap(_.permal nk.map(_.shortUrl))
 
-  //If the tweet is retweet/reply/quote, this is the tweet that the new tweet responds to
-  val (sourceTweetId, sourceTweetUserId) = {
-    (replySourceId, retweetSourceId, quoteSourceId) match {
-      case (Some(replyId), _, _) =>
-        (Some(replyId), replyUserId)
-      case (_, Some(retweetId), _) =>
-        (Some(retweetId), retweetUserId)
-      case (_, _, Some(quoteId)) =>
-        (Some(quoteId), quoteUserId)
+  // f t  t et  s ret et/reply/quote, t   s t  t et that t  new t et responds to
+  val (s ceT et d, s ceT etUser d) = {
+    (replyS ce d, ret etS ce d, quoteS ce d) match {
+      case (So (reply d), _, _) =>
+        (So (reply d), replyUser d)
+      case (_, So (ret et d), _) =>
+        (So (ret et d), ret etUser d)
+      case (_, _, So (quote d)) =>
+        (So (quote d), quoteUser d)
       case _ =>
         (None, None)
     }
   }
 
-  // Boolean information
-  val hasPhoto: Boolean = TweetUtil.containsPhotoTweet(tweet)
+  // Boolean  nformat on
+  val hasPhoto: Boolean = T etUt l.conta nsPhotoT et(t et)
 
-  val hasVideo: Boolean = TweetUtil.containsVideoTweet(tweet)
+  val hasV deo: Boolean = T etUt l.conta nsV deoT et(t et)
 
-  // TweetyPie does not populate url fields in a quote tweet create event, even though we
-  // consider quote tweets as url tweets. This boolean helps make up for it.
-  // Details: https://groups.google.com/a/twitter.com/d/msg/eng/BhK1XAcSSWE/F8Gc4_5uDwAJ
-  val hasQuoteTweetUrl: Boolean = tweet.quotedTweet.exists(_.permalink.isDefined)
+  // T etyP e does not populate url f elds  n a quote t et create event, even though  
+  // cons der quote t ets as url t ets. T  boolean  lps make up for  .
+  // Deta ls: https://groups.google.com/a/tw ter.com/d/msg/eng/BhK1XAcSSWE/F8Gc4_5uDwAJ
+  val hasQuoteT etUrl: Boolean = t et.quotedT et.ex sts(_.permal nk. sDef ned)
 
-  val hasUrl: Boolean = this.urls.exists(_.nonEmpty) || hasQuoteTweetUrl
+  val hasUrl: Boolean = t .urls.ex sts(_.nonEmpty) || hasQuoteT etUrl
 
-  val hasHashtag: Boolean = this.hashtags.exists(_.nonEmpty)
+  val hasHashtag: Boolean = t .hashtags.ex sts(_.nonEmpty)
 
-  val isCard: Boolean = hasUrl | hasPhoto | hasVideo
+  val  sCard: Boolean = hasUrl | hasPhoto | hasV deo
 
-  implicit def bool2Long(b: Boolean): Long = if (b) 1L else 0L
+   mpl c  def bool2Long(b: Boolean): Long =  f (b) 1L else 0L
 
-  // Return a hashed long that contains card type information of the tweet
-  val cardInfo: Long = isCard | (hasUrl << 1) | (hasPhoto << 2) | (hasVideo << 3)
+  // Return a has d long that conta ns card type  nformat on of t  t et
+  val card nfo: Long =  sCard | (hasUrl << 1) | (hasPhoto << 2) | (hasV deo << 3)
 
-  // nullcast tweet is one that is purposefully not broadcast to followers, ex. an ad tweet.
-  val isNullCastTweet: Boolean = tweet.coreData.exists(_.nullcast)
+  // nullcast t et  s one that  s purposefully not broadcast to follo rs, ex. an ad t et.
+  val  sNullCastT et: Boolean = t et.coreData.ex sts(_.nullcast)
 }

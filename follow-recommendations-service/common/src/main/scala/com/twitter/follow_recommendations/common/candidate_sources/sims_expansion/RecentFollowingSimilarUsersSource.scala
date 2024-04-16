@@ -1,99 +1,99 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms_expans on
 
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.common.candidate_sources.sims.SwitchingSimsSource
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import javax.inject.Inject
+ mport com.google. nject.S ngleton
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms.Sw ch ngS msS ce
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.HasRecentFollo dUser ds
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.soc algraph.Soc alGraphCl ent
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport javax. nject. nject
 
-object RecentFollowingSimilarUsersSource {
+object RecentFollow ngS m larUsersS ce {
 
-  val Identifier = CandidateSourceIdentifier(Algorithm.NewFollowingSimilarUser.toString)
+  val  dent f er = Cand dateS ce dent f er(Algor hm.NewFollow ngS m larUser.toStr ng)
 }
 
-@Singleton
-class RecentFollowingSimilarUsersSource @Inject() (
-  socialGraph: SocialGraphClient,
-  switchingSimsSource: SwitchingSimsSource,
-  statsReceiver: StatsReceiver)
-    extends SimsExpansionBasedCandidateSource[
-      HasParams with HasRecentFollowedUserIds with HasClientContext
-    ](switchingSimsSource) {
+@S ngleton
+class RecentFollow ngS m larUsersS ce @ nject() (
+  soc alGraph: Soc alGraphCl ent,
+  sw ch ngS msS ce: Sw ch ngS msS ce,
+  statsRece ver: StatsRece ver)
+    extends S msExpans onBasedCand dateS ce[
+      HasParams w h HasRecentFollo dUser ds w h HasCl entContext
+    ](sw ch ngS msS ce) {
 
-  val identifier = RecentFollowingSimilarUsersSource.Identifier
-  private val stats = statsReceiver.scope(identifier.name)
-  private val maxResultsStats = stats.scope("max_results")
-  private val calibratedScoreCounter = stats.counter("calibrated_scores_counter")
+  val  dent f er = RecentFollow ngS m larUsersS ce. dent f er
+  pr vate val stats = statsRece ver.scope( dent f er.na )
+  pr vate val maxResultsStats = stats.scope("max_results")
+  pr vate val cal bratedScoreCounter = stats.counter("cal brated_scores_counter")
 
-  override def firstDegreeNodes(
-    request: HasParams with HasRecentFollowedUserIds with HasClientContext
-  ): Stitch[Seq[CandidateUser]] = {
-    if (request.params(RecentFollowingSimilarUsersParams.TimestampIntegrated)) {
-      val recentFollowedUserIdsWithTimeStitch =
-        socialGraph.getRecentFollowedUserIdsWithTime(request.clientContext.userId.get)
+  overr de def f rstDegreeNodes(
+    request: HasParams w h HasRecentFollo dUser ds w h HasCl entContext
+  ): St ch[Seq[Cand dateUser]] = {
+     f (request.params(RecentFollow ngS m larUsersParams.T  stamp ntegrated)) {
+      val recentFollo dUser dsW hT  St ch =
+        soc alGraph.getRecentFollo dUser dsW hT  (request.cl entContext.user d.get)
 
-      recentFollowedUserIdsWithTimeStitch.map { results =>
-        val first_degree_nodes = results
-          .sortBy(-_.timeInMs).take(
-            request.params(RecentFollowingSimilarUsersParams.MaxFirstDegreeNodes))
-        val max_timestamp = first_degree_nodes.head.timeInMs
-        first_degree_nodes.map {
-          case userIdWithTime =>
-            CandidateUser(
-              userIdWithTime.userId,
-              score = Some(userIdWithTime.timeInMs.toDouble / max_timestamp))
+      recentFollo dUser dsW hT  St ch.map { results =>
+        val f rst_degree_nodes = results
+          .sortBy(-_.t   nMs).take(
+            request.params(RecentFollow ngS m larUsersParams.MaxF rstDegreeNodes))
+        val max_t  stamp = f rst_degree_nodes. ad.t   nMs
+        f rst_degree_nodes.map {
+          case user dW hT   =>
+            Cand dateUser(
+              user dW hT  .user d,
+              score = So (user dW hT  .t   nMs.toDouble / max_t  stamp))
         }
       }
     } else {
-      Stitch.value(
-        request.recentFollowedUserIds
-          .getOrElse(Nil).take(
-            request.params(RecentFollowingSimilarUsersParams.MaxFirstDegreeNodes)).map(
-            CandidateUser(_, score = Some(1.0)))
+      St ch.value(
+        request.recentFollo dUser ds
+          .getOrElse(N l).take(
+            request.params(RecentFollow ngS m larUsersParams.MaxF rstDegreeNodes)).map(
+            Cand dateUser(_, score = So (1.0)))
       )
     }
   }
 
-  override def maxSecondaryDegreeNodes(
-    req: HasParams with HasRecentFollowedUserIds with HasClientContext
-  ): Int = {
-    req.params(RecentFollowingSimilarUsersParams.MaxSecondaryDegreeExpansionPerNode)
+  overr de def maxSecondaryDegreeNodes(
+    req: HasParams w h HasRecentFollo dUser ds w h HasCl entContext
+  ):  nt = {
+    req.params(RecentFollow ngS m larUsersParams.MaxSecondaryDegreeExpans onPerNode)
   }
 
-  override def maxResults(
-    req: HasParams with HasRecentFollowedUserIds with HasClientContext
-  ): Int = {
-    val firstDegreeNodes = req.params(RecentFollowingSimilarUsersParams.MaxFirstDegreeNodes)
-    val maxResultsNum = req.params(RecentFollowingSimilarUsersParams.MaxResults)
+  overr de def maxResults(
+    req: HasParams w h HasRecentFollo dUser ds w h HasCl entContext
+  ):  nt = {
+    val f rstDegreeNodes = req.params(RecentFollow ngS m larUsersParams.MaxF rstDegreeNodes)
+    val maxResultsNum = req.params(RecentFollow ngS m larUsersParams.MaxResults)
     maxResultsStats
       .stat(
-        s"RecentFollowingSimilarUsersSource_firstDegreeNodes_${firstDegreeNodes}_maxResults_${maxResultsNum}")
+        s"RecentFollow ngS m larUsersS ce_f rstDegreeNodes_${f rstDegreeNodes}_maxResults_${maxResultsNum}")
       .add(1)
     maxResultsNum
   }
 
-  override def scoreCandidate(sourceScore: Double, similarToScore: Double): Double = {
-    sourceScore * similarToScore
+  overr de def scoreCand date(s ceScore: Double, s m larToScore: Double): Double = {
+    s ceScore * s m larToScore
   }
 
-  override def calibrateDivisor(
-    req: HasParams with HasRecentFollowedUserIds with HasClientContext
+  overr de def cal brateD v sor(
+    req: HasParams w h HasRecentFollo dUser ds w h HasCl entContext
   ): Double = {
-    req.params(DBV2SimsExpansionParams.RecentFollowingSimilarUsersDBV2CalibrateDivisor)
+    req.params(DBV2S msExpans onParams.RecentFollow ngS m larUsersDBV2Cal brateD v sor)
   }
 
-  override def calibrateScore(
-    candidateScore: Double,
-    req: HasParams with HasRecentFollowedUserIds with HasClientContext
+  overr de def cal brateScore(
+    cand dateScore: Double,
+    req: HasParams w h HasRecentFollo dUser ds w h HasCl entContext
   ): Double = {
-    calibratedScoreCounter.incr()
-    candidateScore / calibrateDivisor(req)
+    cal bratedScoreCounter. ncr()
+    cand dateScore / cal brateD v sor(req)
   }
 }

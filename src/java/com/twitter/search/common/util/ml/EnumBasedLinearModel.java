@@ -1,141 +1,141 @@
-package com.twitter.search.common.util.ml;
+package com.tw ter.search.common.ut l.ml;
 
-import java.io.IOException;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Set;
+ mport java. o. OExcept on;
+ mport java.ut l.EnumMap;
+ mport java.ut l.EnumSet;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.base.Pred cates;
+ mport com.google.common.collect. mmutableMap;
+ mport com.google.common.collect.Maps;
 
-import com.twitter.search.common.file.AbstractFile;
-import com.twitter.search.common.util.io.TextFileLoadingUtils;
+ mport com.tw ter.search.common.f le.AbstractF le;
+ mport com.tw ter.search.common.ut l. o.TextF leLoad ngUt ls;
 
 /**
- * Represents a linear model for scoring and classification.
+ * Represents a l near model for scor ng and class f cat on.
  *
- * The list of features is defined by an Enum class. The model weights and instances are
- * represented as maps that must contain an entry for all the values of the enum.
+ * T  l st of features  s def ned by an Enum class. T  model   ghts and  nstances are
+ * represented as maps that must conta n an entry for all t  values of t  enum.
  *
  */
-public class EnumBasedLinearModel<K extends Enum<K>> implements MapBasedLinearModel<K> {
+publ c class EnumBasedL nearModel<K extends Enum<K>>  mple nts MapBasedL nearModel<K> {
 
-  private final EnumSet<K> features;
-  private final EnumMap<K, Float> weights;
+  pr vate f nal EnumSet<K> features;
+  pr vate f nal EnumMap<K, Float>   ghts;
 
   /**
-   * Creates a model from a map of weights.
+   * Creates a model from a map of   ghts.
    *
-   * @param enumType Enum used for the keys
-   * @param weights Feature weights.
+   * @param enumType Enum used for t  keys
+   * @param   ghts Feature   ghts.
    */
-  public EnumBasedLinearModel(Class<K> enumType, Map<K, Float> weights) {
+  publ c EnumBasedL nearModel(Class<K> enumType, Map<K, Float>   ghts) {
     features = EnumSet.allOf(enumType);
-    EnumMap<K, Float> enumWeights =
-        new EnumMap<>(Maps.filterValues(weights, Predicates.notNull()));
-    Preconditions.checkArgument(features.equals(enumWeights.keySet()),
-        "The model does not include weights for all the available features");
+    EnumMap<K, Float> enum  ghts =
+        new EnumMap<>(Maps.f lterValues(  ghts, Pred cates.notNull()));
+    Precond  ons.c ckArgu nt(features.equals(enum  ghts.keySet()),
+        "T  model does not  nclude   ghts for all t  ava lable features");
 
-    this.weights = enumWeights;
+    t .  ghts = enum  ghts;
   }
 
-  public ImmutableMap<K, Float> getWeights() {
-    return Maps.immutableEnumMap(weights);
+  publ c  mmutableMap<K, Float> get  ghts() {
+    return Maps. mmutableEnumMap(  ghts);
   }
 
-  @Override
-  public float score(Map<K, Float> instance) {
+  @Overr de
+  publ c float score(Map<K, Float>  nstance) {
     float total = 0;
-    for (Map.Entry<K, Float> weightEntry : weights.entrySet()) {
-      Float feature = instance.get(weightEntry.getKey());
-      if (feature != null) {
-        total += weightEntry.getValue() * feature;
+    for (Map.Entry<K, Float>   ghtEntry :   ghts.entrySet()) {
+      Float feature =  nstance.get(  ghtEntry.getKey());
+       f (feature != null) {
+        total +=   ghtEntry.getValue() * feature;
       }
     }
     return total;
   }
 
   /**
-   * Determines whether an instance is positive.
+   * Determ nes w t r an  nstance  s pos  ve.
    */
-  @Override
-  public boolean classify(float threshold, Map<K, Float> instance) {
-    return score(instance) > threshold;
+  @Overr de
+  publ c boolean class fy(float threshold, Map<K, Float>  nstance) {
+    return score( nstance) > threshold;
   }
 
-  @Override
-  public boolean classify(Map<K, Float> instance) {
-    return classify(0, instance);
+  @Overr de
+  publ c boolean class fy(Map<K, Float>  nstance) {
+    return class fy(0,  nstance);
   }
 
-  @Override
-  public String toString() {
-    return String.format("EnumBasedLinearModel[%s]", weights);
+  @Overr de
+  publ c Str ng toStr ng() {
+    return Str ng.format("EnumBasedL nearModel[%s]",   ghts);
   }
 
   /**
-   * Creates a model where all the features have the same weight.
-   * This method is useful for generating the feature vectors for training a new model.
+   * Creates a model w re all t  features have t  sa    ght.
+   * T   thod  s useful for generat ng t  feature vectors for tra n ng a new model.
    */
-  public static <T extends Enum<T>> EnumBasedLinearModel<T> createWithEqualWeight(Class<T> enumType,
-                                                                                  Float weight) {
+  publ c stat c <T extends Enum<T>> EnumBasedL nearModel<T> createW hEqual  ght(Class<T> enumType,
+                                                                                  Float   ght) {
     EnumSet<T> features = EnumSet.allOf(enumType);
-    EnumMap<T, Float> weights = Maps.newEnumMap(enumType);
+    EnumMap<T, Float>   ghts = Maps.newEnumMap(enumType);
     for (T feature : features) {
-      weights.put(feature, weight);
+        ghts.put(feature,   ght);
     }
-    return new EnumBasedLinearModel<>(enumType, weights);
+    return new EnumBasedL nearModel<>(enumType,   ghts);
   }
 
   /**
-   * Loads the model from a TSV file with the following format:
+   * Loads t  model from a TSV f le w h t  follow ng format:
    *
-   *    feature_name  \t  weight
+   *    feature_na   \t    ght
    */
-  public static <T extends Enum<T>> EnumBasedLinearModel<T> createFromFile(
-      Class<T> enumType, AbstractFile path) throws IOException {
-    return new EnumBasedLinearModel<>(enumType, loadWeights(enumType, path, true));
+  publ c stat c <T extends Enum<T>> EnumBasedL nearModel<T> createFromF le(
+      Class<T> enumType, AbstractF le path) throws  OExcept on {
+    return new EnumBasedL nearModel<>(enumType, load  ghts(enumType, path, true));
   }
 
   /**
-   * Loads the model from a TSV file, using a default weight of 0 for missing features.
+   * Loads t  model from a TSV f le, us ng a default   ght of 0 for m ss ng features.
    *
-   * File format:
+   * F le format:
    *
-   *     feature_name  \t  weight
+   *     feature_na   \t    ght
    */
-  public static <T extends Enum<T>> EnumBasedLinearModel<T> createFromFileSafe(
-      Class<T> enumType, AbstractFile path) throws IOException {
-    return new EnumBasedLinearModel<>(enumType, loadWeights(enumType, path, false));
+  publ c stat c <T extends Enum<T>> EnumBasedL nearModel<T> createFromF leSafe(
+      Class<T> enumType, AbstractF le path) throws  OExcept on {
+    return new EnumBasedL nearModel<>(enumType, load  ghts(enumType, path, false));
   }
 
   /**
-   * Creates a map of (feature_name, weight) from a TSV file.
+   * Creates a map of (feature_na ,   ght) from a TSV f le.
    *
-   * If strictMode is true, it will throw an exception if the file doesn't contain all the
-   * features declared in the enum. Otherwise, it will use zero as default value.
+   *  f str ctMode  s true,   w ll throw an except on  f t  f le doesn't conta n all t 
+   * features declared  n t  enum. Ot rw se,   w ll use zero as default value.
    *
    */
-  private static <T extends Enum<T>> EnumMap<T, Float> loadWeights(
-      Class<T> enumType, AbstractFile fileHandle, boolean strictMode) throws IOException {
-    Map<String, Float> weightsFromFile =
-      TextFileLoadingUtils.loadMapFromFile(fileHandle, input -> Float.parseFloat(input));
-    EnumMap<T, Float> weights = Maps.newEnumMap(enumType);
+  pr vate stat c <T extends Enum<T>> EnumMap<T, Float> load  ghts(
+      Class<T> enumType, AbstractF le f leHandle, boolean str ctMode) throws  OExcept on {
+    Map<Str ng, Float>   ghtsFromF le =
+      TextF leLoad ngUt ls.loadMapFromF le(f leHandle,  nput -> Float.parseFloat( nput));
+    EnumMap<T, Float>   ghts = Maps.newEnumMap(enumType);
     Set<T> expectedFeatures = EnumSet.allOf(enumType);
-    if (!strictMode) {
+     f (!str ctMode) {
       for (T feature : expectedFeatures) {
-        weights.put(feature, 0f);
+          ghts.put(feature, 0f);
       }
     }
-    for (String featureName : weightsFromFile.keySet()) {
-      Float weight = weightsFromFile.get(featureName);
-      weights.put(Enum.valueOf(enumType, featureName.toUpperCase()), weight);
+    for (Str ng featureNa  :   ghtsFromF le.keySet()) {
+      Float   ght =   ghtsFromF le.get(featureNa );
+        ghts.put(Enum.valueOf(enumType, featureNa .toUpperCase()),   ght);
     }
-    Preconditions.checkArgument(expectedFeatures.equals(weights.keySet()),
-        "Model does not contain weights for all the features");
-    return weights;
+    Precond  ons.c ckArgu nt(expectedFeatures.equals(  ghts.keySet()),
+        "Model does not conta n   ghts for all t  features");
+    return   ghts;
   }
 }

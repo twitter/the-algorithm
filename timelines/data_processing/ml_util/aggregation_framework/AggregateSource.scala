@@ -1,9 +1,9 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work
 
-import com.twitter.ml.api.Feature
-import java.lang.{Long => JLong}
+ mport com.tw ter.ml.ap .Feature
+ mport java.lang.{Long => JLong}
 
-trait AggregateSource extends Serializable {
-  def name: String
-  def timestampFeature: Feature[JLong]
+tra  AggregateS ce extends Ser al zable {
+  def na : Str ng
+  def t  stampFeature: Feature[JLong]
 }

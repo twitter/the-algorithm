@@ -1,163 +1,163 @@
-package com.twitter.search.earlybird.common.userupdates;
+package com.tw ter.search.earlyb rd.common.userupdates;
 
-import java.util.Iterator;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Predicate;
+ mport java.ut l. erator;
+ mport java.ut l.concurrent.atom c.Atom cReference;
+ mport java.ut l.funct on.Pred cate;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.util.hash.GeneralLongHashFunction;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common.ut l.hash.GeneralLongHashFunct on;
 
 /**
- * Table containing metadata about users, like NSFW or Antisocial status.
- * Used for result filtering.
+ * Table conta n ng  tadata about users, l ke NSFW or Ant soc al status.
+ * Used for result f lter ng.
  */
-public class UserTable {
-  private static final Logger LOG = LoggerFactory.getLogger(UserTable.class);
+publ c class UserTable {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(UserTable.class);
 
-  @VisibleForTesting // Not final for testing.
-  protected static long userUpdateTableMaxCapacity = 1L << 30;
+  @V s bleForTest ng // Not f nal for test ng.
+  protected stat c long userUpdateTableMaxCapac y = 1L << 30;
 
-  private static final int DEFAULT_INITIAL_CAPACITY = 1024;
-  private static final int BYTE_WIDTH = 8;
+  pr vate stat c f nal  nt DEFAULT_ N T AL_CAPAC TY = 1024;
+  pr vate stat c f nal  nt BYTE_W DTH = 8;
 
-  private static final String USER_TABLE_CAPACITY = "user_table_capacity";
-  private static final String USER_TABLE_SIZE = "user_table_size";
-  private static final String
-      USER_NUM_USERS_WITH_NO_BITS_SET = "user_table_users_with_no_bits_set";
-  private static final String USER_TABLE_ANTISOCIAL_USERS = "user_table_antisocial_users";
-  private static final String USER_TABLE_OFFENSIVE_USERS = "user_table_offensive_users";
-  private static final String USER_TABLE_NSFW_USERS = "user_table_nsfw_users";
-  private static final String USER_TABLE_IS_PROTECTED_USERS = "user_table_is_protected_users";
+  pr vate stat c f nal Str ng USER_TABLE_CAPAC TY = "user_table_capac y";
+  pr vate stat c f nal Str ng USER_TABLE_S ZE = "user_table_s ze";
+  pr vate stat c f nal Str ng
+      USER_NUM_USERS_W TH_NO_B TS_SET = "user_table_users_w h_no_b s_set";
+  pr vate stat c f nal Str ng USER_TABLE_ANT SOC AL_USERS = "user_table_ant soc al_users";
+  pr vate stat c f nal Str ng USER_TABLE_OFFENS VE_USERS = "user_table_offens ve_users";
+  pr vate stat c f nal Str ng USER_TABLE_NSFW_USERS = "user_table_nsfw_users";
+  pr vate stat c f nal Str ng USER_TABLE_ S_PROTECTED_USERS = "user_table_ s_protected_users";
 
   /**
-   * number of users filtered
+   * number of users f ltered
    */
-  private static final SearchRateCounter USER_TABLE_USERS_FILTERED_COUNTER =
-      new SearchRateCounter("user_table_users_filtered");
+  pr vate stat c f nal SearchRateCounter USER_TABLE_USERS_F LTERED_COUNTER =
+      new SearchRateCounter("user_table_users_f ltered");
 
-  private SearchLongGauge userTableCapacity;
-  private SearchLongGauge userTableSize;
-  private SearchLongGauge userTableNumUsersWithNoBitsSet;
-  private SearchLongGauge userTableAntisocialUsers;
-  private SearchLongGauge userTableOffensiveUsers;
-  private SearchLongGauge userTableNsfwUsers;
-  private SearchLongGauge userTableIsProtectedUsers;
+  pr vate SearchLongGauge userTableCapac y;
+  pr vate SearchLongGauge userTableS ze;
+  pr vate SearchLongGauge userTableNumUsersW hNoB sSet;
+  pr vate SearchLongGauge userTableAnt soc alUsers;
+  pr vate SearchLongGauge userTableOffens veUsers;
+  pr vate SearchLongGauge userTableNsfwUsers;
+  pr vate SearchLongGauge userTable sProtectedUsers;
 
-  private final Predicate<Long> userIdFilter;
-  private long lastRecordTimestamp;
+  pr vate f nal Pred cate<Long> user dF lter;
+  pr vate long lastRecordT  stamp;
 
-  private static final class HashTable {
-    private int numUsersInTable;
-    private int numUsersWithNoBitsSet;
-    // size 8 array contains the number of users who have the bit set at the index (0-7) position
-    // e.g. setBitCounts[0] stores the number of users who have the 0 bit set in their bytes
-    private long[] setBitCounts;
+  pr vate stat c f nal class HashTable {
+    pr vate  nt numUsers nTable;
+    pr vate  nt numUsersW hNoB sSet;
+    // s ze 8 array conta ns t  number of users who have t  b  set at t   ndex (0-7) pos  on
+    // e.g. setB Counts[0] stores t  number of users who have t  0 b  set  n t  r bytes
+    pr vate long[] setB Counts;
 
-    private final long[] hash;
-    private final byte[] bits;
+    pr vate f nal long[] hash;
+    pr vate f nal byte[] b s;
 
-    private final int hashMask;
+    pr vate f nal  nt hashMask;
 
-    HashTable(int size) {
-      this.hash = new long[size];
-      this.bits = new byte[size];
-      this.hashMask = size - 1;
-      this.numUsersInTable = 0;
-      this.setBitCounts = new long[BYTE_WIDTH];
+    HashTable( nt s ze) {
+      t .hash = new long[s ze];
+      t .b s = new byte[s ze];
+      t .hashMask = s ze - 1;
+      t .numUsers nTable = 0;
+      t .setB Counts = new long[BYTE_W DTH];
     }
 
-    protected int hashSize() {
+    protected  nt hashS ze() {
       return hash.length;
     }
 
-    // If we want to decrease the number of users in the table, we can delete as many users
-    // as this table returns, by calling filterTableAndCountValidItems.
-    public void setCountOfNumUsersWithNoBitsSet() {
-      int count = 0;
-      for (int i = 0; i < hash.length; i++) {
-        if ((hash[i] > 0) && (bits[i] == 0)) {
+    //  f   want to decrease t  number of users  n t  table,   can delete as many users
+    // as t  table returns, by call ng f lterTableAndCountVal d ems.
+    publ c vo d setCountOfNumUsersW hNoB sSet() {
+       nt count = 0;
+      for ( nt   = 0;   < hash.length;  ++) {
+         f ((hash[ ] > 0) && (b s[ ] == 0)) {
           count++;
         }
       }
 
-      numUsersWithNoBitsSet = count;
+      numUsersW hNoB sSet = count;
     }
 
-    public void setSetBitCounts() {
-      long[] counts = new long[BYTE_WIDTH];
-      for (int i = 0; i < hash.length; i++) {
-        if (hash[i] > 0) {
-          int tempBits = bits[i] & 0xff;
-          int curBitPos = 0;
-          while (tempBits != 0) {
-            if ((tempBits & 1) != 0) {
-              counts[curBitPos]++;
+    publ c vo d setSetB Counts() {
+      long[] counts = new long[BYTE_W DTH];
+      for ( nt   = 0;   < hash.length;  ++) {
+         f (hash[ ] > 0) {
+           nt tempB s = b s[ ] & 0xff;
+           nt curB Pos = 0;
+          wh le (tempB s != 0) {
+             f ((tempB s & 1) != 0) {
+              counts[curB Pos]++;
             }
-            tempBits = tempBits >>> 1;
-            curBitPos++;
+            tempB s = tempB s >>> 1;
+            curB Pos++;
           }
         }
       }
-      setBitCounts = counts;
+      setB Counts = counts;
     }
   }
 
-  public static final int ANTISOCIAL_BIT = 1;
-  public static final int OFFENSIVE_BIT = 1 << 1;
-  public static final int NSFW_BIT = 1 << 2;
-  public static final int IS_PROTECTED_BIT = 1 << 3;
+  publ c stat c f nal  nt ANT SOC AL_B T = 1;
+  publ c stat c f nal  nt OFFENS VE_B T = 1 << 1;
+  publ c stat c f nal  nt NSFW_B T = 1 << 2;
+  publ c stat c f nal  nt  S_PROTECTED_B T = 1 << 3;
 
-  public long getLastRecordTimestamp() {
-    return this.lastRecordTimestamp;
+  publ c long getLastRecordT  stamp() {
+    return t .lastRecordT  stamp;
   }
 
-  public void setLastRecordTimestamp(long lastRecordTimestamp) {
-    this.lastRecordTimestamp = lastRecordTimestamp;
+  publ c vo d setLastRecordT  stamp(long lastRecordT  stamp) {
+    t .lastRecordT  stamp = lastRecordT  stamp;
   }
 
-  public void setOffensive(long userID, boolean offensive) {
-    set(userID, OFFENSIVE_BIT, offensive);
+  publ c vo d setOffens ve(long user D, boolean offens ve) {
+    set(user D, OFFENS VE_B T, offens ve);
   }
 
-  public void setAntisocial(long userID, boolean antisocial) {
-    set(userID, ANTISOCIAL_BIT, antisocial);
+  publ c vo d setAnt soc al(long user D, boolean ant soc al) {
+    set(user D, ANT SOC AL_B T, ant soc al);
   }
 
-  public void setNSFW(long userID, boolean nsfw) {
-    set(userID, NSFW_BIT, nsfw);
+  publ c vo d setNSFW(long user D, boolean nsfw) {
+    set(user D, NSFW_B T, nsfw);
   }
 
-  public void setIsProtected(long userID, boolean isProtected) {
-    set(userID, IS_PROTECTED_BIT, isProtected);
+  publ c vo d set sProtected(long user D, boolean  sProtected) {
+    set(user D,  S_PROTECTED_B T,  sProtected);
   }
 
   /**
-   * Adds the given user update to this table.
+   * Adds t  g ven user update to t  table.
    */
-  public boolean indexUserUpdate(UserUpdatesChecker checker, UserUpdate userUpdate) {
-    if (checker.skipUserUpdate(userUpdate)) {
+  publ c boolean  ndexUserUpdate(UserUpdatesC cker c cker, UserUpdate userUpdate) {
+     f (c cker.sk pUserUpdate(userUpdate)) {
       return false;
     }
 
-    switch (userUpdate.updateType) {
-      case ANTISOCIAL:
-        setAntisocial(userUpdate.twitterUserID, userUpdate.updateValue != 0);
+    sw ch (userUpdate.updateType) {
+      case ANT SOC AL:
+        setAnt soc al(userUpdate.tw terUser D, userUpdate.updateValue != 0);
         break;
       case NSFW:
-        setNSFW(userUpdate.twitterUserID, userUpdate.updateValue != 0);
+        setNSFW(userUpdate.tw terUser D, userUpdate.updateValue != 0);
         break;
-      case OFFENSIVE:
-        setOffensive(userUpdate.twitterUserID, userUpdate.updateValue != 0);
+      case OFFENS VE:
+        setOffens ve(userUpdate.tw terUser D, userUpdate.updateValue != 0);
         break;
       case PROTECTED:
-        setIsProtected(userUpdate.twitterUserID, userUpdate.updateValue != 0);
+        set sProtected(userUpdate.tw terUser D, userUpdate.updateValue != 0);
         break;
       default:
         return false;
@@ -166,407 +166,407 @@ public class UserTable {
     return true;
   }
 
-  private final AtomicReference<HashTable> hashTable = new AtomicReference<>();
+  pr vate f nal Atom cReference<HashTable> hashTable = new Atom cReference<>();
 
-  private int hashCode(long userID) {
-    return (int) GeneralLongHashFunction.hash(userID);
+  pr vate  nt hashCode(long user D) {
+    return ( nt) GeneralLongHashFunct on.hash(user D);
   }
 
   /**
-   * Returns an iterator for user IDs that have at least one of the bits set.
+   * Returns an  erator for user  Ds that have at least one of t  b s set.
    */
-  public Iterator<Long> getFlaggedUserIdIterator() {
+  publ c  erator<Long> getFlaggedUser d erator() {
     HashTable table = hashTable.get();
 
-    final long[] currUserIdTable = table.hash;
-    final byte[] currBitsTable = table.bits;
-    return new Iterator<Long>() {
-      private int index = findNext(0);
+    f nal long[] currUser dTable = table.hash;
+    f nal byte[] currB sTable = table.b s;
+    return new  erator<Long>() {
+      pr vate  nt  ndex = f ndNext(0);
 
-      private int findNext(int index) {
-        int startingIndex = index;
-        while (startingIndex < currUserIdTable.length) {
-          if (currUserIdTable[startingIndex] != 0 && currBitsTable[startingIndex] != 0) {
+      pr vate  nt f ndNext( nt  ndex) {
+         nt start ng ndex =  ndex;
+        wh le (start ng ndex < currUser dTable.length) {
+           f (currUser dTable[start ng ndex] != 0 && currB sTable[start ng ndex] != 0) {
             break;
           }
-          ++startingIndex;
+          ++start ng ndex;
         }
-        return startingIndex;
+        return start ng ndex;
       }
 
-      @Override
-      public boolean hasNext() {
-        return index < currUserIdTable.length;
+      @Overr de
+      publ c boolean hasNext() {
+        return  ndex < currUser dTable.length;
       }
 
-      @Override
-      public Long next() {
-        Long r = currUserIdTable[index];
-        index = findNext(index + 1);
+      @Overr de
+      publ c Long next() {
+        Long r = currUser dTable[ ndex];
+         ndex = f ndNext( ndex + 1);
         return r;
       }
 
-      @Override
-      public void remove() {
-        throw new UnsupportedOperationException();
+      @Overr de
+      publ c vo d remove() {
+        throw new UnsupportedOperat onExcept on();
       }
     };
   }
 
   /**
-   * Constructs an UserUpdatesTable with an given HashTable instance.
-   * Use <code>useIdFilter</code> as a Predicate that returns true for the elements
-   * needed to be kept in the table.
-   * Use shouldRehash to force a rehasing on the given HashTable.
+   * Constructs an UserUpdatesTable w h an g ven HashTable  nstance.
+   * Use <code>use dF lter</code> as a Pred cate that returns true for t  ele nts
+   * needed to be kept  n t  table.
+   * Use shouldRehash to force a rehas ng on t  g ven HashTable.
    */
-  private UserTable(HashTable hashTable, Predicate<Long> userIdFilter,
+  pr vate UserTable(HashTable hashTable, Pred cate<Long> user dF lter,
                     boolean shouldRehash) {
 
-    Preconditions.checkNotNull(userIdFilter);
+    Precond  ons.c ckNotNull(user dF lter);
 
-    this.hashTable.set(hashTable);
-    this.userIdFilter = userIdFilter;
+    t .hashTable.set(hashTable);
+    t .user dF lter = user dF lter;
 
     exportUserUpdatesTableStats();
 
-    LOG.info("User table num users: {}. Users with no bits set: {}. "
-            + "Antisocial users: {}. Offensive users: {}. Nsfw users: {}. IsProtected users: {}.",
-        this.getNumUsersInTable(),
-        this.getNumUsersWithNoBitsSet(),
-        this.getSetBitCount(ANTISOCIAL_BIT),
-        this.getSetBitCount(OFFENSIVE_BIT),
-        this.getSetBitCount(NSFW_BIT),
-        this.getSetBitCount(IS_PROTECTED_BIT));
+    LOG. nfo("User table num users: {}. Users w h no b s set: {}. "
+            + "Ant soc al users: {}. Offens ve users: {}. Nsfw users: {}.  sProtected users: {}.",
+        t .getNumUsers nTable(),
+        t .getNumUsersW hNoB sSet(),
+        t .getSetB Count(ANT SOC AL_B T),
+        t .getSetB Count(OFFENS VE_B T),
+        t .getSetB Count(NSFW_B T),
+        t .getSetB Count( S_PROTECTED_B T));
 
-    if (shouldRehash) {
-      int filteredTableSize = filterTableAndCountValidItems();
-      // Having exactly 100% usage can impact lookup. Maintain the table at under 50% usage.
-      int newTableCapacity = computeDesiredHashTableCapacity(filteredTableSize * 2);
+     f (shouldRehash) {
+       nt f lteredTableS ze = f lterTableAndCountVal d ems();
+      // Hav ng exactly 100% usage can  mpact lookup. Ma nta n t  table at under 50% usage.
+       nt newTableCapac y = computeDes redHashTableCapac y(f lteredTableS ze * 2);
 
-      rehash(newTableCapacity);
+      rehash(newTableCapac y);
 
-      LOG.info("User table num users after rehash: {}. Users with no bits set: {}. "
-              + "Antisocial users: {}. Offensive users: {}. Nsfw users: {}. IsProtected users: {}.",
-          this.getNumUsersInTable(),
-          this.getNumUsersWithNoBitsSet(),
-          this.getSetBitCount(ANTISOCIAL_BIT),
-          this.getSetBitCount(OFFENSIVE_BIT),
-          this.getSetBitCount(NSFW_BIT),
-          this.getSetBitCount(IS_PROTECTED_BIT));
+      LOG. nfo("User table num users after rehash: {}. Users w h no b s set: {}. "
+              + "Ant soc al users: {}. Offens ve users: {}. Nsfw users: {}.  sProtected users: {}.",
+          t .getNumUsers nTable(),
+          t .getNumUsersW hNoB sSet(),
+          t .getSetB Count(ANT SOC AL_B T),
+          t .getSetB Count(OFFENS VE_B T),
+          t .getSetB Count(NSFW_B T),
+          t .getSetB Count( S_PROTECTED_B T));
     }
   }
 
-  private UserTable(int initialSize, Predicate<Long> userIdFilter) {
-    this(new HashTable(computeDesiredHashTableCapacity(initialSize)), userIdFilter, false);
+  pr vate UserTable( nt  n  alS ze, Pred cate<Long> user dF lter) {
+    t (new HashTable(computeDes redHashTableCapac y( n  alS ze)), user dF lter, false);
   }
 
-  @VisibleForTesting
-  public UserTable(int initialSize) {
-    this(initialSize, userId -> true);
+  @V s bleForTest ng
+  publ c UserTable( nt  n  alS ze) {
+    t ( n  alS ze, user d -> true);
   }
 
-  public static UserTable
-    newTableWithDefaultCapacityAndPredicate(Predicate<Long> userIdFilter) {
+  publ c stat c UserTable
+    newTableW hDefaultCapac yAndPred cate(Pred cate<Long> user dF lter) {
 
-    return new UserTable(DEFAULT_INITIAL_CAPACITY, userIdFilter);
+    return new UserTable(DEFAULT_ N T AL_CAPAC TY, user dF lter);
   }
 
-  public static UserTable newTableNonFilteredWithDefaultCapacity() {
-    return newTableWithDefaultCapacityAndPredicate(userId -> true);
+  publ c stat c UserTable newTableNonF lteredW hDefaultCapac y() {
+    return newTableW hDefaultCapac yAndPred cate(user d -> true);
   }
 
-  private void exportUserUpdatesTableStats() {
-    userTableSize = SearchLongGauge.export(USER_TABLE_SIZE);
-    userTableCapacity = SearchLongGauge.export(USER_TABLE_CAPACITY);
-    userTableNumUsersWithNoBitsSet = SearchLongGauge.export(
-        USER_NUM_USERS_WITH_NO_BITS_SET
+  pr vate vo d exportUserUpdatesTableStats() {
+    userTableS ze = SearchLongGauge.export(USER_TABLE_S ZE);
+    userTableCapac y = SearchLongGauge.export(USER_TABLE_CAPAC TY);
+    userTableNumUsersW hNoB sSet = SearchLongGauge.export(
+        USER_NUM_USERS_W TH_NO_B TS_SET
     );
-    userTableAntisocialUsers = SearchLongGauge.export(USER_TABLE_ANTISOCIAL_USERS);
-    userTableOffensiveUsers = SearchLongGauge.export(USER_TABLE_OFFENSIVE_USERS);
+    userTableAnt soc alUsers = SearchLongGauge.export(USER_TABLE_ANT SOC AL_USERS);
+    userTableOffens veUsers = SearchLongGauge.export(USER_TABLE_OFFENS VE_USERS);
     userTableNsfwUsers = SearchLongGauge.export(USER_TABLE_NSFW_USERS);
-    userTableIsProtectedUsers = SearchLongGauge.export(USER_TABLE_IS_PROTECTED_USERS);
+    userTable sProtectedUsers = SearchLongGauge.export(USER_TABLE_ S_PROTECTED_USERS);
 
-    LOG.info(
-        "Exporting stats for user table. Starting with numUsersInTable={}, usersWithZeroBits={}, "
-            + "antisocialUsers={}, offensiveUsers={}, nsfwUsers={}, isProtectedUsers={}.",
-        getNumUsersInTable(),
-        getNumUsersWithNoBitsSet(),
-        getSetBitCount(ANTISOCIAL_BIT),
-        getSetBitCount(OFFENSIVE_BIT),
-        getSetBitCount(NSFW_BIT),
-        getSetBitCount(IS_PROTECTED_BIT));
+    LOG. nfo(
+        "Export ng stats for user table. Start ng w h numUsers nTable={}, usersW hZeroB s={}, "
+            + "ant soc alUsers={}, offens veUsers={}, nsfwUsers={},  sProtectedUsers={}.",
+        getNumUsers nTable(),
+        getNumUsersW hNoB sSet(),
+        getSetB Count(ANT SOC AL_B T),
+        getSetB Count(OFFENS VE_B T),
+        getSetB Count(NSFW_B T),
+        getSetB Count( S_PROTECTED_B T));
     updateStats();
   }
 
-  private void updateStats() {
-    HashTable table = this.hashTable.get();
-    userTableSize.set(table.numUsersInTable);
-    userTableNumUsersWithNoBitsSet.set(table.numUsersWithNoBitsSet);
-    userTableCapacity.set(table.hashSize());
-    userTableAntisocialUsers.set(getSetBitCount(ANTISOCIAL_BIT));
-    userTableOffensiveUsers.set(getSetBitCount(OFFENSIVE_BIT));
-    userTableNsfwUsers.set(getSetBitCount(NSFW_BIT));
-    userTableIsProtectedUsers.set(getSetBitCount(IS_PROTECTED_BIT));
+  pr vate vo d updateStats() {
+    HashTable table = t .hashTable.get();
+    userTableS ze.set(table.numUsers nTable);
+    userTableNumUsersW hNoB sSet.set(table.numUsersW hNoB sSet);
+    userTableCapac y.set(table.hashS ze());
+    userTableAnt soc alUsers.set(getSetB Count(ANT SOC AL_B T));
+    userTableOffens veUsers.set(getSetB Count(OFFENS VE_B T));
+    userTableNsfwUsers.set(getSetB Count(NSFW_B T));
+    userTable sProtectedUsers.set(getSetB Count( S_PROTECTED_B T));
   }
 
   /**
-   * Computes the size of the hashtable as the first power of two greater than or equal to initialSize
+   * Computes t  s ze of t  hashtable as t  f rst po r of two greater than or equal to  n  alS ze
    */
-  private static int computeDesiredHashTableCapacity(int initialSize) {
-    long powerOfTwoSize = 2;
-    while (initialSize > powerOfTwoSize) {
-      powerOfTwoSize *= 2;
+  pr vate stat c  nt computeDes redHashTableCapac y( nt  n  alS ze) {
+    long po rOfTwoS ze = 2;
+    wh le ( n  alS ze > po rOfTwoS ze) {
+      po rOfTwoS ze *= 2;
     }
-    if (powerOfTwoSize > Integer.MAX_VALUE) {
-      LOG.error("Error: powerOfTwoSize overflowed Integer.MAX_VALUE! Initial size: " + initialSize);
-      powerOfTwoSize = 1 << 30;  // max power of 2
+     f (po rOfTwoS ze >  nteger.MAX_VALUE) {
+      LOG.error("Error: po rOfTwoS ze overflo d  nteger.MAX_VALUE!  n  al s ze: " +  n  alS ze);
+      po rOfTwoS ze = 1 << 30;  // max po r of 2
     }
 
-    return (int) powerOfTwoSize;
+    return ( nt) po rOfTwoS ze;
   }
 
-  public int getNumUsersInTable() {
-    return hashTable.get().numUsersInTable;
+  publ c  nt getNumUsers nTable() {
+    return hashTable.get().numUsers nTable;
   }
 
   /**
-   * Get the number of users who have the bit set at the `userStateBit` position
+   * Get t  number of users who have t  b  set at t  `userStateB ` pos  on
    */
-  public long getSetBitCount(int userStateBit) {
-    int bit = userStateBit;
-    int bitPosition = 0;
-    while (bit != 0 && (bit & 1) == 0) {
-      bit = bit >>> 1;
-      bitPosition++;
+  publ c long getSetB Count( nt userStateB ) {
+     nt b  = userStateB ;
+     nt b Pos  on = 0;
+    wh le (b  != 0 && (b  & 1) == 0) {
+      b  = b  >>> 1;
+      b Pos  on++;
     }
-    return hashTable.get().setBitCounts[bitPosition];
+    return hashTable.get().setB Counts[b Pos  on];
   }
 
-  public Predicate<Long> getUserIdFilter() {
-    return userIdFilter::test;
+  publ c Pred cate<Long> getUser dF lter() {
+    return user dF lter::test;
   }
 
   /**
-   * Updates a user flag in this table.
+   * Updates a user flag  n t  table.
    */
-  public final void set(long userID, int bit, boolean value) {
-    // if userID is filtered return immediately
-    if (!shouldKeepUser(userID)) {
-      USER_TABLE_USERS_FILTERED_COUNTER.increment();
+  publ c f nal vo d set(long user D,  nt b , boolean value) {
+    //  f user D  s f ltered return  m d ately
+     f (!shouldKeepUser(user D)) {
+      USER_TABLE_USERS_F LTERED_COUNTER. ncre nt();
       return;
     }
 
-    HashTable table = this.hashTable.get();
+    HashTable table = t .hashTable.get();
 
-    int hashPos = findHashPosition(table, userID);
-    long item = table.hash[hashPos];
-    byte bits = 0;
-    int bitsDiff = 0;
+     nt hashPos = f ndHashPos  on(table, user D);
+    long  em = table.hash[hashPos];
+    byte b s = 0;
+     nt b sD ff = 0;
 
-    if (item != 0) {
-      byte bitsOriginally = bits = table.bits[hashPos];
-      if (value) {
-        bits |= bit;
+     f ( em != 0) {
+      byte b sOr g nally = b s = table.b s[hashPos];
+       f (value) {
+        b s |= b ;
       } else {
-        // AND'ing with the inverse map clears the desired bit, but
-        // doesn't change any of the other bits
-        bits &= ~bit;
+        // AND' ng w h t   nverse map clears t  des red b , but
+        // doesn't change any of t  ot r b s
+        b s &= ~b ;
       }
 
-      // Find the changed bits after the above operation, it is possible that no bit is changed if
-      // the input 'bit' is already set/unset in the table.
-      // Since bitwise operators cannot be directly applied on Byte, Byte is promoted into int to
-      // apply the operators. When that happens, if the most significant bit of the Byte is set,
-      // the promoted int has all significant bits set to 1. 0xff bitmask is applied here to make
-      // sure only the last 8 bits are considered.
-      bitsDiff = (bitsOriginally & 0xff) ^ (bits & 0xff);
+      // F nd t  changed b s after t  above operat on,    s poss ble that no b   s changed  f
+      // t   nput 'b '  s already set/unset  n t  table.
+      // S nce b w se operators cannot be d rectly appl ed on Byte, Byte  s promoted  nto  nt to
+      // apply t  operators. W n that happens,  f t  most s gn f cant b  of t  Byte  s set,
+      // t  promoted  nt has all s gn f cant b s set to 1. 0xff b mask  s appl ed  re to make
+      // sure only t  last 8 b s are cons dered.
+      b sD ff = (b sOr g nally & 0xff) ^ (b s & 0xff);
 
-      if (bitsOriginally > 0 && bits == 0) {
-        table.numUsersWithNoBitsSet++;
-      } else if (bitsOriginally == 0 && bits > 0) {
-        table.numUsersWithNoBitsSet--;
+       f (b sOr g nally > 0 && b s == 0) {
+        table.numUsersW hNoB sSet++;
+      } else  f (b sOr g nally == 0 && b s > 0) {
+        table.numUsersW hNoB sSet--;
       }
     } else {
-      if (!value) {
-        // no need to add this user, since all bits would be false anyway
+       f (!value) {
+        // no need to add t  user, s nce all b s would be false anyway
         return;
       }
 
-      // New user string.
-      if (table.numUsersInTable + 1 >= (table.hashSize() >> 1)
-          && table.hashSize() != userUpdateTableMaxCapacity) {
-        if (2L * (long) table.hashSize() < userUpdateTableMaxCapacity) {
-          rehash(2 * table.hashSize());
-          table = this.hashTable.get();
+      // New user str ng.
+       f (table.numUsers nTable + 1 >= (table.hashS ze() >> 1)
+          && table.hashS ze() != userUpdateTableMaxCapac y) {
+         f (2L * (long) table.hashS ze() < userUpdateTableMaxCapac y) {
+          rehash(2 * table.hashS ze());
+          table = t .hashTable.get();
         } else {
-          if (table.hashSize() < (int) userUpdateTableMaxCapacity) {
-            rehash((int) userUpdateTableMaxCapacity);
-            table = this.hashTable.get();
-            LOG.warn("User update table size reached Integer.MAX_VALUE, performance will degrade.");
+           f (table.hashS ze() < ( nt) userUpdateTableMaxCapac y) {
+            rehash(( nt) userUpdateTableMaxCapac y);
+            table = t .hashTable.get();
+            LOG.warn("User update table s ze reac d  nteger.MAX_VALUE, performance w ll degrade.");
           }
         }
 
-        // Must repeat this operation with the resized hashTable.
-        hashPos = findHashPosition(table, userID);
+        // Must repeat t  operat on w h t  res zed hashTable.
+        hashPos = f ndHashPos  on(table, user D);
       }
 
-      item = userID;
-      bits |= bit;
-      bitsDiff = bit & 0xff;
+       em = user D;
+      b s |= b ;
+      b sD ff = b  & 0xff;
 
-      table.numUsersInTable++;
+      table.numUsers nTable++;
     }
 
-    table.hash[hashPos] = item;
-    table.bits[hashPos] = bits;
+    table.hash[hashPos] =  em;
+    table.b s[hashPos] = b s;
 
-    // update setBitCounts for the changed bits after applying the input 'bit'
-    int curBitsDiffPos = 0;
-    while (bitsDiff != 0) {
-      if ((bitsDiff & 1) != 0) {
-        if (value) {
-          table.setBitCounts[curBitsDiffPos]++;
+    // update setB Counts for t  changed b s after apply ng t   nput 'b '
+     nt curB sD ffPos = 0;
+    wh le (b sD ff != 0) {
+       f ((b sD ff & 1) != 0) {
+         f (value) {
+          table.setB Counts[curB sD ffPos]++;
         } else {
-          table.setBitCounts[curBitsDiffPos]--;
+          table.setB Counts[curB sD ffPos]--;
         }
       }
-      bitsDiff = bitsDiff >>> 1;
-      curBitsDiffPos++;
+      b sD ff = b sD ff >>> 1;
+      curB sD ffPos++;
     }
 
     updateStats();
   }
 
-  public final boolean isSet(long userID, int bits) {
+  publ c f nal boolean  sSet(long user D,  nt b s) {
     HashTable table = hashTable.get();
-    int hashPos = findHashPosition(table, userID);
-    return table.hash[hashPos] != 0 && (table.bits[hashPos] & bits) != 0;
+     nt hashPos = f ndHashPos  on(table, user D);
+    return table.hash[hashPos] != 0 && (table.b s[hashPos] & b s) != 0;
   }
 
   /**
-   * Returns true when userIdFilter condition is being met.
-   * If filter is not present returns true
+   * Returns true w n user dF lter cond  on  s be ng  t.
+   *  f f lter  s not present returns true
    */
-  private boolean shouldKeepUser(long userID) {
-    return userIdFilter.test(userID);
+  pr vate boolean shouldKeepUser(long user D) {
+    return user dF lter.test(user D);
   }
 
-  private int findHashPosition(final HashTable table, final long userID) {
-    int code = hashCode(userID);
-    int hashPos = code & table.hashMask;
+  pr vate  nt f ndHashPos  on(f nal HashTable table, f nal long user D) {
+     nt code = hashCode(user D);
+     nt hashPos = code & table.hashMask;
 
-    // Locate user in hash
-    long item = table.hash[hashPos];
+    // Locate user  n hash
+    long  em = table.hash[hashPos];
 
-    if (item != 0 && item != userID) {
-      // Conflict: keep searching different locations in
-      // the hash table.
-      final int inc = ((code >> 8) + code) | 1;
+     f ( em != 0 &&  em != user D) {
+      // Confl ct: keep search ng d fferent locat ons  n
+      // t  hash table.
+      f nal  nt  nc = ((code >> 8) + code) | 1;
       do {
-        code += inc;
+        code +=  nc;
         hashPos = code & table.hashMask;
-        item = table.hash[hashPos];
-      } while (item != 0 && item != userID);
+         em = table.hash[hashPos];
+      } wh le ( em != 0 &&  em != user D);
     }
 
     return hashPos;
   }
 
   /**
-   * Applies the filtering predicate and returns the size of the filtered table.
+   * Appl es t  f lter ng pred cate and returns t  s ze of t  f ltered table.
    */
-  private synchronized int filterTableAndCountValidItems() {
-    final HashTable oldTable = this.hashTable.get();
-    int newSize = 0;
+  pr vate synchron zed  nt f lterTableAndCountVal d ems() {
+    f nal HashTable oldTable = t .hashTable.get();
+     nt newS ze = 0;
 
-    int clearNoItemSet = 0;
-    int clearNoBitsSet = 0;
-    int clearDontKeepUser = 0;
+     nt clearNo emSet = 0;
+     nt clearNoB sSet = 0;
+     nt clearDontKeepUser = 0;
 
-    for (int i = 0; i < oldTable.hashSize(); i++) {
-      final long item = oldTable.hash[i]; // this is the userID
-      final byte bits = oldTable.bits[i];
+    for ( nt   = 0;   < oldTable.hashS ze();  ++) {
+      f nal long  em = oldTable.hash[ ]; // t   s t  user D
+      f nal byte b s = oldTable.b s[ ];
 
       boolean clearSlot = false;
-      if (item == 0) {
+       f ( em == 0) {
         clearSlot = true;
-        clearNoItemSet++;
-      } else if (bits == 0) {
+        clearNo emSet++;
+      } else  f (b s == 0) {
         clearSlot = true;
-        clearNoBitsSet++;
-      } else if (!shouldKeepUser(item)) {
+        clearNoB sSet++;
+      } else  f (!shouldKeepUser( em)) {
         clearSlot = true;
         clearDontKeepUser++;
       }
 
-      if (clearSlot) {
-        oldTable.hash[i] = 0;
-        oldTable.bits[i] = 0;
+       f (clearSlot) {
+        oldTable.hash[ ] = 0;
+        oldTable.b s[ ] = 0;
       } else {
-        newSize += 1;
+        newS ze += 1;
       }
     }
 
-    oldTable.setCountOfNumUsersWithNoBitsSet();
-    oldTable.setSetBitCounts();
+    oldTable.setCountOfNumUsersW hNoB sSet();
+    oldTable.setSetB Counts();
 
-    LOG.info("Done filtering table: clearNoItemSet={}, clearNoBitsSet={}, clearDontKeepUser={}",
-        clearNoItemSet, clearNoBitsSet, clearDontKeepUser);
+    LOG. nfo("Done f lter ng table: clearNo emSet={}, clearNoB sSet={}, clearDontKeepUser={}",
+        clearNo emSet, clearNoB sSet, clearDontKeepUser);
 
-    return newSize;
+    return newS ze;
   }
 
   /**
-   * Called when hash is too small (> 50% occupied)
+   * Called w n hash  s too small (> 50% occup ed)
    */
-  private void rehash(final int newSize) {
-    final HashTable oldTable = this.hashTable.get();
-    final HashTable newTable = new HashTable(newSize);
+  pr vate vo d rehash(f nal  nt newS ze) {
+    f nal HashTable oldTable = t .hashTable.get();
+    f nal HashTable newTable = new HashTable(newS ze);
 
-    final int newMask = newTable.hashMask;
-    final long[] newHash = newTable.hash;
-    final byte[] newBits = newTable.bits;
+    f nal  nt newMask = newTable.hashMask;
+    f nal long[] newHash = newTable.hash;
+    f nal byte[] newB s = newTable.b s;
 
-    for (int i = 0; i < oldTable.hashSize(); i++) {
-      final long item = oldTable.hash[i];
-      final byte bits = oldTable.bits[i];
-      if (item != 0 && bits != 0) {
-        int code = hashCode(item);
+    for ( nt   = 0;   < oldTable.hashS ze();  ++) {
+      f nal long  em = oldTable.hash[ ];
+      f nal byte b s = oldTable.b s[ ];
+       f ( em != 0 && b s != 0) {
+         nt code = hashCode( em);
 
-        int hashPos = code & newMask;
+         nt hashPos = code & newMask;
         assert hashPos >= 0;
-        if (newHash[hashPos] != 0) {
-          final int inc = ((code >> 8) + code) | 1;
+         f (newHash[hashPos] != 0) {
+          f nal  nt  nc = ((code >> 8) + code) | 1;
           do {
-            code += inc;
+            code +=  nc;
             hashPos = code & newMask;
-          } while (newHash[hashPos] != 0);
+          } wh le (newHash[hashPos] != 0);
         }
-        newHash[hashPos] = item;
-        newBits[hashPos] = bits;
-        newTable.numUsersInTable++;
+        newHash[hashPos] =  em;
+        newB s[hashPos] = b s;
+        newTable.numUsers nTable++;
       }
     }
 
-    newTable.setCountOfNumUsersWithNoBitsSet();
-    newTable.setSetBitCounts();
-    this.hashTable.set(newTable);
+    newTable.setCountOfNumUsersW hNoB sSet();
+    newTable.setSetB Counts();
+    t .hashTable.set(newTable);
 
     updateStats();
   }
 
-  public void setTable(UserTable newTable) {
+  publ c vo d setTable(UserTable newTable) {
     hashTable.set(newTable.hashTable.get());
     updateStats();
   }
 
-  @VisibleForTesting
-  protected int getHashTableCapacity() {
-    return hashTable.get().hashSize();
+  @V s bleForTest ng
+  protected  nt getHashTableCapac y() {
+    return hashTable.get().hashS ze();
   }
 
-  @VisibleForTesting
-  protected int getNumUsersWithNoBitsSet() {
-    return hashTable.get().numUsersWithNoBitsSet;
+  @V s bleForTest ng
+  protected  nt getNumUsersW hNoB sSet() {
+    return hashTable.get().numUsersW hNoB sSet;
   }
 }

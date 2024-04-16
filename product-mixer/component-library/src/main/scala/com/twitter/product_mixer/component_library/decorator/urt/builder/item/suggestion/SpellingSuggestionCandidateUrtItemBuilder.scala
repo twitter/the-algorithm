@@ -1,41 +1,41 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.suggestion
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.suggest on
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.suggestion.SpellingSuggestionCandidateUrtItemBuilder.SpellingItemClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.suggestion.SpellingSuggestionCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.suggestion.SpellingItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.suggest on.Spell ngSuggest onCand dateUrt emBu lder.Spell ng emCl entEvent nfoEle nt
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.suggest on.Spell ngSuggest onCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.Cand dateUrtEntryBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseCl entEvent nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseFeedbackAct on nfoBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.suggest on.Spell ng em
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object SpellingSuggestionCandidateUrtItemBuilder {
-  val SpellingItemClientEventInfoElement: String = "spelling"
+object Spell ngSuggest onCand dateUrt emBu lder {
+  val Spell ng emCl entEvent nfoEle nt: Str ng = "spell ng"
 }
 
-case class SpellingSuggestionCandidateUrtItemBuilder[Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, SpellingSuggestionCandidate],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, SpellingSuggestionCandidate]
+case class Spell ngSuggest onCand dateUrt emBu lder[Query <: P pel neQuery](
+  cl entEvent nfoBu lder: BaseCl entEvent nfoBu lder[Query, Spell ngSuggest onCand date],
+  feedbackAct on nfoBu lder: Opt on[
+    BaseFeedbackAct on nfoBu lder[Query, Spell ngSuggest onCand date]
   ] = None,
-) extends CandidateUrtEntryBuilder[Query, SpellingSuggestionCandidate, SpellingItem] {
+) extends Cand dateUrtEntryBu lder[Query, Spell ngSuggest onCand date, Spell ng em] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidate: SpellingSuggestionCandidate,
-    candidateFeatures: FeatureMap
-  ): SpellingItem = SpellingItem(
-    id = candidate.id,
-    sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-    clientEventInfo = clientEventInfoBuilder(
+    cand date: Spell ngSuggest onCand date,
+    cand dateFeatures: FeatureMap
+  ): Spell ng em = Spell ng em(
+     d = cand date. d,
+    sort ndex = None, // Sort  ndexes are automat cally set  n t  doma n marshaller phase
+    cl entEvent nfo = cl entEvent nfoBu lder(
       query,
-      candidate,
-      candidateFeatures,
-      Some(SpellingItemClientEventInfoElement)),
-    feedbackActionInfo =
-      feedbackActionInfoBuilder.flatMap(_.apply(query, candidate, candidateFeatures)),
-    textResult = candidate.textResult,
-    spellingActionType = candidate.spellingActionType,
-    originalQuery = candidate.originalQuery
+      cand date,
+      cand dateFeatures,
+      So (Spell ng emCl entEvent nfoEle nt)),
+    feedbackAct on nfo =
+      feedbackAct on nfoBu lder.flatMap(_.apply(query, cand date, cand dateFeatures)),
+    textResult = cand date.textResult,
+    spell ngAct onType = cand date.spell ngAct onType,
+    or g nalQuery = cand date.or g nalQuery
   )
 }

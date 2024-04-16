@@ -1,31 +1,31 @@
-scala_library(
-    name = "loadtest",
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "ann/src/main/resources",
-        "ann/src/main/scala/com/twitter/ann/annoy",
-        "ann/src/main/scala/com/twitter/ann/common",
-        "ann/src/main/scala/com/twitter/ann/faiss",
-        "ann/src/main/scala/com/twitter/ann/hnsw",
-        "ann/src/main/scala/com/twitter/ann/util",
-        "ann/src/main/thrift/com/twitter/ann/common:ann-common-scala",
-        "finatra/inject/inject-server/src/main/scala",
-        "src/scala/com/twitter/cortex/ml/embeddings/common:Helpers",
-        "twitter-server-internal/src/main/scala",
-        "util/util-logging/src/main/scala",
+scala_l brary(
+    na  = "loadtest",
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "ann/src/ma n/res ces",
+        "ann/src/ma n/scala/com/tw ter/ann/annoy",
+        "ann/src/ma n/scala/com/tw ter/ann/common",
+        "ann/src/ma n/scala/com/tw ter/ann/fa ss",
+        "ann/src/ma n/scala/com/tw ter/ann/hnsw",
+        "ann/src/ma n/scala/com/tw ter/ann/ut l",
+        "ann/src/ma n/thr ft/com/tw ter/ann/common:ann-common-scala",
+        "f natra/ nject/ nject-server/src/ma n/scala",
+        "src/scala/com/tw ter/cortex/ml/embedd ngs/common: lpers",
+        "tw ter-server- nternal/src/ma n/scala",
+        "ut l/ut l-logg ng/src/ma n/scala",
     ],
 )
 
-jvm_binary(
-    name = "bin",
-    basename = "ann-loadtest",
-    main = "com.twitter.ann.service.loadtest.AnnLoadTestMain",
-    runtime_platform = "java11",
-    dependencies = [
+jvm_b nary(
+    na  = "b n",
+    basena  = "ann-loadtest",
+    ma n = "com.tw ter.ann.serv ce.loadtest.AnnLoadTestMa n",
+    runt  _platform = "java11",
+    dependenc es = [
         ":loadtest",
         "3rdparty/jvm/org/slf4j:slf4j-jdk14",
-        "twitter-server/slf4j-jdk14/src/main/scala",
+        "tw ter-server/slf4j-jdk14/src/ma n/scala",
     ],
 )

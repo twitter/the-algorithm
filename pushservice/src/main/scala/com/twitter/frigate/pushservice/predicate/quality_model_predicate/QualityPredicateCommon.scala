@@ -1,15 +1,15 @@
-package com.twitter.frigate.pushservice.predicate.quality_model_predicate
+package com.tw ter.fr gate.pushserv ce.pred cate.qual y_model_pred cate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.pushservice.model.PushTypes
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.target.TargetScoringDetails
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.target.TargetScor ngDeta ls
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter.ut l.Future
 
-object PDauCohort extends Enumeration {
+object PDauCohort extends Enu rat on {
   type PDauCohort = Value
 
   val cohort1 = Value
@@ -20,7 +20,7 @@ object PDauCohort extends Enumeration {
   val cohort6 = Value
 }
 
-object PDauCohortUtil {
+object PDauCohortUt l {
 
   case class DauThreshold(
     threshold1: Double,
@@ -39,21 +39,21 @@ object PDauCohortUtil {
     threshold5 = 0.959
   )
 
-  val finerThresholdMap =
+  val f nerThresholdMap =
     Map(
-      PDauCohort.cohort2 -> List(0.05, 0.0539, 0.0563, 0.0600, 0.0681, 0.0733, 0.0800, 0.0849,
+      PDauCohort.cohort2 -> L st(0.05, 0.0539, 0.0563, 0.0600, 0.0681, 0.0733, 0.0800, 0.0849,
         0.0912, 0.0975, 0.1032, 0.1092, 0.1134, 0.1191, 0.1252, 0.1324, 0.14),
-      PDauCohort.cohort3 -> List(0.14, 0.1489, 0.1544, 0.1625, 0.1704, 0.1797, 0.1905, 0.2001,
+      PDauCohort.cohort3 -> L st(0.14, 0.1489, 0.1544, 0.1625, 0.1704, 0.1797, 0.1905, 0.2001,
         0.2120, 0.2248, 0.2363, 0.2500, 0.2650, 0.2801, 0.2958, 0.3119, 0.33),
-      PDauCohort.cohort4 -> List(0.33, 0.3484, 0.3686, 0.3893, 0.4126, 0.4350, 0.4603, 0.4856,
+      PDauCohort.cohort4 -> L st(0.33, 0.3484, 0.3686, 0.3893, 0.4126, 0.4350, 0.4603, 0.4856,
         0.5092, 0.5348, 0.5602, 0.5850, 0.6087, 0.6319, 0.6548, 0.6779, 0.7),
-      PDauCohort.cohort5 -> List(0.7, 0.7295, 0.7581, 0.7831, 0.8049, 0.8251, 0.8444, 0.8612,
+      PDauCohort.cohort5 -> L st(0.7, 0.7295, 0.7581, 0.7831, 0.8049, 0.8251, 0.8444, 0.8612,
         0.8786, 0.8936, 0.9043, 0.9175, 0.9290, 0.9383, 0.9498, 0.9587, 0.959)
     )
 
-  def getBucket(targetUser: PushTypes.Target, doImpression: Boolean) = {
-    implicit val stats = targetUser.stats.scope("PDauCohortUtil")
-    if (doImpression) targetUser.getBucket _ else targetUser.getBucketWithoutImpression _
+  def getBucket(targetUser: PushTypes.Target, do mpress on: Boolean) = {
+     mpl c  val stats = targetUser.stats.scope("PDauCohortUt l")
+     f (do mpress on) targetUser.getBucket _ else targetUser.getBucketW hout mpress on _
   }
 
   def threshold1(targetUser: PushTypes.Target): Double = dauProbThresholds.threshold1
@@ -66,42 +66,42 @@ object PDauCohortUtil {
 
   def threshold5(targetUser: PushTypes.Target): Double = dauProbThresholds.threshold5
 
-  def thresholdForCohort(targetUser: PushTypes.Target, dauCohort: Int): Double = {
-    if (dauCohort == 0) 0.0
-    else if (dauCohort == 1) threshold1(targetUser)
-    else if (dauCohort == 2) threshold2(targetUser)
-    else if (dauCohort == 3) threshold3(targetUser)
-    else if (dauCohort == 4) threshold4(targetUser)
-    else if (dauCohort == 5) threshold5(targetUser)
+  def thresholdForCohort(targetUser: PushTypes.Target, dauCohort:  nt): Double = {
+     f (dauCohort == 0) 0.0
+    else  f (dauCohort == 1) threshold1(targetUser)
+    else  f (dauCohort == 2) threshold2(targetUser)
+    else  f (dauCohort == 3) threshold3(targetUser)
+    else  f (dauCohort == 4) threshold4(targetUser)
+    else  f (dauCohort == 5) threshold5(targetUser)
     else 1.0
   }
 
-  def getPDauCohort(dauProbability: Double, thresholds: DauThreshold): PDauCohort.Value = {
-    dauProbability match {
-      case dauProb if dauProb >= 0.0 && dauProb < thresholds.threshold1 => PDauCohort.cohort1
-      case dauProb if dauProb >= thresholds.threshold1 && dauProb < thresholds.threshold2 =>
+  def getPDauCohort(dauProbab l y: Double, thresholds: DauThreshold): PDauCohort.Value = {
+    dauProbab l y match {
+      case dauProb  f dauProb >= 0.0 && dauProb < thresholds.threshold1 => PDauCohort.cohort1
+      case dauProb  f dauProb >= thresholds.threshold1 && dauProb < thresholds.threshold2 =>
         PDauCohort.cohort2
-      case dauProb if dauProb >= thresholds.threshold2 && dauProb < thresholds.threshold3 =>
+      case dauProb  f dauProb >= thresholds.threshold2 && dauProb < thresholds.threshold3 =>
         PDauCohort.cohort3
-      case dauProb if dauProb >= thresholds.threshold3 && dauProb < thresholds.threshold4 =>
+      case dauProb  f dauProb >= thresholds.threshold3 && dauProb < thresholds.threshold4 =>
         PDauCohort.cohort4
-      case dauProb if dauProb >= thresholds.threshold4 && dauProb < thresholds.threshold5 =>
+      case dauProb  f dauProb >= thresholds.threshold4 && dauProb < thresholds.threshold5 =>
         PDauCohort.cohort5
-      case dauProb if dauProb >= thresholds.threshold5 && dauProb <= 1.0 => PDauCohort.cohort6
+      case dauProb  f dauProb >= thresholds.threshold5 && dauProb <= 1.0 => PDauCohort.cohort6
     }
   }
 
-  def getDauProb(target: TargetScoringDetails): Future[Double] = {
-    target.dauProbability.map { dauProb =>
-      dauProb.map(_.probability).getOrElse(defaultDAUProb)
+  def getDauProb(target: TargetScor ngDeta ls): Future[Double] = {
+    target.dauProbab l y.map { dauProb =>
+      dauProb.map(_.probab l y).getOrElse(defaultDAUProb)
     }
   }
 
-  def getPDauCohort(target: TargetScoringDetails): Future[PDauCohort.Value] = {
+  def getPDauCohort(target: TargetScor ngDeta ls): Future[PDauCohort.Value] = {
     getDauProb(target).map { getPDauCohort(_, dauProbThresholds) }
   }
 
-  def getPDauCohortWithPDau(target: TargetScoringDetails): Future[(PDauCohort.Value, Double)] = {
+  def getPDauCohortW hPDau(target: TargetScor ngDeta ls): Future[(PDauCohort.Value, Double)] = {
     getDauProb(target).map { prob =>
       (getPDauCohort(prob, dauProbThresholds), prob)
     }
@@ -109,57 +109,57 @@ object PDauCohortUtil {
 
   def updateStats(
     target: PushTypes.Target,
-    modelName: String,
-    predicateResult: Boolean
+    modelNa : Str ng,
+    pred cateResult: Boolean
   )(
-    implicit statsReceiver: StatsReceiver
-  ): Unit = {
+     mpl c  statsRece ver: StatsRece ver
+  ): Un  = {
     val dauCohortOp = getPDauCohort(target)
     dauCohortOp.map { dauCohort =>
-      val cohortStats = statsReceiver.scope(modelName).scope(dauCohort.toString)
-      cohortStats.counter(s"filter_$predicateResult").incr()
+      val cohortStats = statsRece ver.scope(modelNa ).scope(dauCohort.toStr ng)
+      cohortStats.counter(s"f lter_$pred cateResult"). ncr()
     }
-    if (target.isNewSignup) {
-      val newUserModelStats = statsReceiver.scope(modelName)
-      newUserModelStats.counter(s"new_user_filter_$predicateResult").incr()
+     f (target. sNewS gnup) {
+      val newUserModelStats = statsRece ver.scope(modelNa )
+      newUserModelStats.counter(s"new_user_f lter_$pred cateResult"). ncr()
     }
   }
 }
 
-trait QualityPredicateBase {
-  def name: String
+tra  Qual yPred cateBase {
+  def na : Str ng
   def thresholdExtractor: Target => Future[Double]
-  def scoreExtractor: PushCandidate => Future[Option[Double]]
-  def isPredicateEnabled: PushCandidate => Future[Boolean] = _ => Future.True
+  def scoreExtractor: PushCand date => Future[Opt on[Double]]
+  def  sPred cateEnabled: PushCand date => Future[Boolean] = _ => Future.True
   def comparator: (Double, Double) => Boolean =
     (score: Double, threshold: Double) => score >= threshold
   def updateCustomStats(
-    candidate: PushCandidate,
+    cand date: PushCand date,
     score: Double,
     threshold: Double,
     result: Boolean
   )(
-    implicit statsReceiver: StatsReceiver
-  ): Unit = {}
+     mpl c  statsRece ver: StatsRece ver
+  ): Un  = {}
 
-  def apply()(implicit statsReceiver: StatsReceiver): NamedPredicate[PushCandidate] = {
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        isPredicateEnabled(candidate).flatMap {
+  def apply()( mpl c  statsRece ver: StatsRece ver): Na dPred cate[PushCand date] = {
+    Pred cate
+      .fromAsync { cand date: PushCand date =>
+         sPred cateEnabled(cand date).flatMap {
           case true =>
-            scoreExtractor(candidate).flatMap { scoreOpt =>
-              thresholdExtractor(candidate.target).map { threshold =>
+            scoreExtractor(cand date).flatMap { scoreOpt =>
+              thresholdExtractor(cand date.target).map { threshold =>
                 val score = scoreOpt.getOrElse(0.0)
                 val result = comparator(score, threshold)
-                PDauCohortUtil.updateStats(candidate.target, name, result)
-                updateCustomStats(candidate, score, threshold, result)
+                PDauCohortUt l.updateStats(cand date.target, na , result)
+                updateCustomStats(cand date, score, threshold, result)
                 result
               }
             }
           case _ => Future.True
         }
       }
-      .withStats(statsReceiver.scope(s"predicate_$name"))
-      .withName(name)
+      .w hStats(statsRece ver.scope(s"pred cate_$na "))
+      .w hNa (na )
   }
 }

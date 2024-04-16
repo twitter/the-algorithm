@@ -1,215 +1,215 @@
-package com.twitter.visibility.rules
+package com.tw ter.v s b l y.rules
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.timelines.configapi.HasParams.DependencyProvider
-import com.twitter.timelines.configapi.Params
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams
-import com.twitter.visibility.configapi.params.RuleParams.EnableLikelyIvsUserLabelDropRule
-import com.twitter.visibility.features._
-import com.twitter.visibility.models.UserLabelValue
-import com.twitter.visibility.models.UserLabelValue.LikelyIvs
-import com.twitter.visibility.rules.Condition._
-import com.twitter.visibility.rules.Reason.Unspecified
-import com.twitter.visibility.rules.RuleActionSourceBuilder.UserSafetyLabelSourceBuilder
-import com.twitter.visibility.rules.State._
-import com.twitter.visibility.util.NamingUtils
+ mport com.tw ter.abdec der.Logg ngABDec der
+ mport com.tw ter.t  l nes.conf gap .HasParams.DependencyProv der
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.tw ter.v s b l y.conf gap .params.RuleParam
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams.EnableL kely vsUserLabelDropRule
+ mport com.tw ter.v s b l y.features._
+ mport com.tw ter.v s b l y.models.UserLabelValue
+ mport com.tw ter.v s b l y.models.UserLabelValue.L kely vs
+ mport com.tw ter.v s b l y.rules.Cond  on._
+ mport com.tw ter.v s b l y.rules.Reason.Unspec f ed
+ mport com.tw ter.v s b l y.rules.RuleAct onS ceBu lder.UserSafetyLabelS ceBu lder
+ mport com.tw ter.v s b l y.rules.State._
+ mport com.tw ter.v s b l y.ut l.Nam ngUt ls
 
-trait WithGate {
+tra  W hGate {
   def enabled: Seq[RuleParam[Boolean]] = Seq(RuleParams.True)
 
-  def isEnabled(params: Params): Boolean =
+  def  sEnabled(params: Params): Boolean =
     enabled.forall(enabledParam => params(enabledParam))
 
   def holdbacks: Seq[RuleParam[Boolean]] = Seq(RuleParams.False)
 
-  final def shouldHoldback: DependencyProvider[Boolean] =
-    holdbacks.foldLeft(DependencyProvider.from(RuleParams.False)) { (dp, holdbackParam) =>
-      dp.or(DependencyProvider.from(holdbackParam))
+  f nal def shouldHoldback: DependencyProv der[Boolean] =
+    holdbacks.foldLeft(DependencyProv der.from(RuleParams.False)) { (dp, holdbackParam) =>
+      dp.or(DependencyProv der.from(holdbackParam))
     }
 
-  protected def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(RuleParams.False)
-  def shouldFailClosed(params: Params): Boolean =
-    enableFailClosed.forall(fcParam => params(fcParam))
+  protected def enableFa lClosed: Seq[RuleParam[Boolean]] = Seq(RuleParams.False)
+  def shouldFa lClosed(params: Params): Boolean =
+    enableFa lClosed.forall(fcParam => params(fcParam))
 }
 
-abstract class ActionBuilder[T <: Action] {
-  def actionType: Class[_]
+abstract class Act onBu lder[T <: Act on] {
+  def act onType: Class[_]
 
-  val actionSeverity: Int
-  def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult
+  val act onSever y:  nt
+  def bu ld(evaluat onContext: Evaluat onContext, featureMap: Map[Feature[_], _]): RuleResult
 }
 
-object ActionBuilder {
-  def apply[T <: Action](action: T): ActionBuilder[T] = action match {
-    case _: InterstitialLimitedEngagements => new PublicInterestActionBuilder()
-    case _ => new ConstantActionBuilder(action)
+object Act onBu lder {
+  def apply[T <: Act on](act on: T): Act onBu lder[T] = act on match {
+    case _:  nterst  alL m edEngage nts => new Publ c nterestAct onBu lder()
+    case _ => new ConstantAct onBu lder(act on)
   }
 }
 
-class ConstantActionBuilder[T <: Action](action: T) extends ActionBuilder[T] {
-  private val result = RuleResult(action, Evaluated)
+class ConstantAct onBu lder[T <: Act on](act on: T) extends Act onBu lder[T] {
+  pr vate val result = RuleResult(act on, Evaluated)
 
-  def actionType: Class[_] = action.getClass
+  def act onType: Class[_] = act on.getClass
 
-  override val actionSeverity = action.severity
-  def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult =
+  overr de val act onSever y = act on.sever y
+  def bu ld(evaluat onContext: Evaluat onContext, featureMap: Map[Feature[_], _]): RuleResult =
     result
 }
 
-object ConstantActionBuilder {
-  def unapply[T <: Action](builder: ConstantActionBuilder[T]): Option[Action] = Some(
-    builder.result.action)
+object ConstantAct onBu lder {
+  def unapply[T <: Act on](bu lder: ConstantAct onBu lder[T]): Opt on[Act on] = So (
+    bu lder.result.act on)
 }
 
-abstract class Rule(val actionBuilder: ActionBuilder[_ <: Action], val condition: Condition)
-    extends WithGate {
+abstract class Rule(val act onBu lder: Act onBu lder[_ <: Act on], val cond  on: Cond  on)
+    extends W hGate {
 
-  import Rule._
-  def isExperimental: Boolean = false
+   mport Rule._
+  def  sExper  ntal: Boolean = false
 
-  def actionSourceBuilder: Option[RuleActionSourceBuilder] = None
+  def act onS ceBu lder: Opt on[RuleAct onS ceBu lder] = None
 
-  lazy val name: String = NamingUtils.getFriendlyName(this)
+  lazy val na : Str ng = Nam ngUt ls.getFr endlyNa (t )
 
-  val featureDependencies: Set[Feature[_]] = condition.features
+  val featureDependenc es: Set[Feature[_]] = cond  on.features
 
-  val optionalFeatureDependencies: Set[Feature[_]] = condition.optionalFeatures
+  val opt onalFeatureDependenc es: Set[Feature[_]] = cond  on.opt onalFeatures
 
-  def preFilter(
-    evaluationContext: EvaluationContext,
+  def preF lter(
+    evaluat onContext: Evaluat onContext,
     featureMap: Map[Feature[_], Any],
-    abDecider: LoggingABDecider
-  ): PreFilterResult =
-    condition.preFilter(evaluationContext, featureMap)
+    abDec der: Logg ngABDec der
+  ): PreF lterResult =
+    cond  on.preF lter(evaluat onContext, featureMap)
 
-  def actWhen(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): Boolean =
-    condition(evaluationContext, featureMap).asBoolean
+  def actW n(evaluat onContext: Evaluat onContext, featureMap: Map[Feature[_], _]): Boolean =
+    cond  on(evaluat onContext, featureMap).asBoolean
 
-  val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = None
+  val fallbackAct onBu lder: Opt on[Act onBu lder[_ <: Act on]] = None
 
-  final def evaluate(
-    evaluationContext: EvaluationContext,
+  f nal def evaluate(
+    evaluat onContext: Evaluat onContext,
     featureMap: Map[Feature[_], _]
   ): RuleResult = {
-    val missingFeatures = featureDependencies.filterNot(featureMap.contains)
+    val m ss ngFeatures = featureDependenc es.f lterNot(featureMap.conta ns)
 
-    if (missingFeatures.nonEmpty) {
-      fallbackActionBuilder match {
-        case Some(fallbackAction) =>
-          fallbackAction.build(evaluationContext, featureMap)
+     f (m ss ngFeatures.nonEmpty) {
+      fallbackAct onBu lder match {
+        case So (fallbackAct on) =>
+          fallbackAct on.bu ld(evaluat onContext, featureMap)
         case None =>
-          RuleResult(NotEvaluated, MissingFeature(missingFeatures))
+          RuleResult(NotEvaluated, M ss ngFeature(m ss ngFeatures))
       }
     } else {
       try {
-        val act = actWhen(evaluationContext, featureMap)
-        if (!act) {
+        val act = actW n(evaluat onContext, featureMap)
+         f (!act) {
           EvaluatedRuleResult
-        } else if (shouldHoldback(evaluationContext)) {
+        } else  f (shouldHoldback(evaluat onContext)) {
 
-          HeldbackRuleResult
+           ldbackRuleResult
         } else {
-          actionBuilder.build(evaluationContext, featureMap)
+          act onBu lder.bu ld(evaluat onContext, featureMap)
         }
       } catch {
         case t: Throwable =>
-          RuleResult(NotEvaluated, RuleFailed(t))
+          RuleResult(NotEvaluated, RuleFa led(t))
       }
     }
   }
 }
 
-trait ExperimentalRule extends Rule {
-  override def isExperimental: Boolean = true
+tra  Exper  ntalRule extends Rule {
+  overr de def  sExper  ntal: Boolean = true
 }
 
 object Rule {
 
-  val HeldbackRuleResult: RuleResult = RuleResult(Allow, Heldback)
+  val  ldbackRuleResult: RuleResult = RuleResult(Allow,  ldback)
   val EvaluatedRuleResult: RuleResult = RuleResult(Allow, Evaluated)
-  val DisabledRuleResult: RuleResult = RuleResult(NotEvaluated, Disabled)
+  val D sabledRuleResult: RuleResult = RuleResult(NotEvaluated, D sabled)
 
-  def unapply(rule: Rule): Option[(ActionBuilder[_ <: Action], Condition)] =
-    Some((rule.actionBuilder, rule.condition))
+  def unapply(rule: Rule): Opt on[(Act onBu lder[_ <: Act on], Cond  on)] =
+    So ((rule.act onBu lder, rule.cond  on))
 }
 
-abstract class RuleWithConstantAction(val action: Action, override val condition: Condition)
-    extends Rule(ActionBuilder(action), condition)
+abstract class RuleW hConstantAct on(val act on: Act on, overr de val cond  on: Cond  on)
+    extends Rule(Act onBu lder(act on), cond  on)
 
-abstract class UserHasLabelRule(action: Action, userLabelValue: UserLabelValue)
-    extends RuleWithConstantAction(action, AuthorHasLabel(userLabelValue)) {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    UserSafetyLabelSourceBuilder(userLabelValue))
+abstract class UserHasLabelRule(act on: Act on, userLabelValue: UserLabelValue)
+    extends RuleW hConstantAct on(act on, AuthorHasLabel(userLabelValue)) {
+  overr de def act onS ceBu lder: Opt on[RuleAct onS ceBu lder] = So (
+    UserSafetyLabelS ceBu lder(userLabelValue))
 }
 
-abstract class ConditionWithUserLabelRule(
-  action: Action,
-  condition: Condition,
+abstract class Cond  onW hUserLabelRule(
+  act on: Act on,
+  cond  on: Cond  on,
   userLabelValue: UserLabelValue)
     extends Rule(
-      ActionBuilder(action),
-      And(NonAuthorViewer, AuthorHasLabel(userLabelValue), condition)) {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    UserSafetyLabelSourceBuilder(userLabelValue))
+      Act onBu lder(act on),
+      And(NonAuthorV e r, AuthorHasLabel(userLabelValue), cond  on)) {
+  overr de def act onS ceBu lder: Opt on[RuleAct onS ceBu lder] = So (
+    UserSafetyLabelS ceBu lder(userLabelValue))
 }
 
-abstract class WhenAuthorUserLabelPresentRule(action: Action, userLabelValue: UserLabelValue)
-    extends ConditionWithUserLabelRule(action, Condition.True, userLabelValue)
+abstract class W nAuthorUserLabelPresentRule(act on: Act on, userLabelValue: UserLabelValue)
+    extends Cond  onW hUserLabelRule(act on, Cond  on.True, userLabelValue)
 
-abstract class ConditionWithNotInnerCircleOfFriendsRule(
-  action: Action,
-  condition: Condition)
-    extends RuleWithConstantAction(
-      action,
-      And(Not(DoesHaveInnerCircleOfFriendsRelationship), condition))
+abstract class Cond  onW hNot nnerC rcleOfFr endsRule(
+  act on: Act on,
+  cond  on: Cond  on)
+    extends RuleW hConstantAct on(
+      act on,
+      And(Not(DoesHave nnerC rcleOfFr endsRelat onsh p), cond  on))
 
-abstract class AuthorLabelWithNotInnerCircleOfFriendsRule(
-  action: Action,
+abstract class AuthorLabelW hNot nnerC rcleOfFr endsRule(
+  act on: Act on,
   userLabelValue: UserLabelValue)
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      action,
+    extends Cond  onW hNot nnerC rcleOfFr endsRule(
+      act on,
       AuthorHasLabel(userLabelValue)
     ) {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    UserSafetyLabelSourceBuilder(userLabelValue))
+  overr de def act onS ceBu lder: Opt on[RuleAct onS ceBu lder] = So (
+    UserSafetyLabelS ceBu lder(userLabelValue))
 }
 
-abstract class OnlyWhenNotAuthorViewerRule(action: Action, condition: Condition)
-    extends RuleWithConstantAction(action, And(NonAuthorViewer, condition))
+abstract class OnlyW nNotAuthorV e rRule(act on: Act on, cond  on: Cond  on)
+    extends RuleW hConstantAct on(act on, And(NonAuthorV e r, cond  on))
 
-abstract class AuthorLabelAndNonFollowerViewerRule(action: Action, userLabelValue: UserLabelValue)
-    extends ConditionWithUserLabelRule(action, LoggedOutOrViewerNotFollowingAuthor, userLabelValue)
+abstract class AuthorLabelAndNonFollo rV e rRule(act on: Act on, userLabelValue: UserLabelValue)
+    extends Cond  onW hUserLabelRule(act on, LoggedOutOrV e rNotFollow ngAuthor, userLabelValue)
 
-abstract class AlwaysActRule(action: Action) extends Rule(ActionBuilder(action), Condition.True)
+abstract class AlwaysActRule(act on: Act on) extends Rule(Act onBu lder(act on), Cond  on.True)
 
-abstract class ViewerOptInBlockingOnSearchRule(action: Action, condition: Condition)
-    extends OnlyWhenNotAuthorViewerRule(
-      action,
-      And(condition, ViewerOptInBlockingOnSearch)
+abstract class V e rOpt nBlock ngOnSearchRule(act on: Act on, cond  on: Cond  on)
+    extends OnlyW nNotAuthorV e rRule(
+      act on,
+      And(cond  on, V e rOpt nBlock ngOnSearch)
     )
 
-abstract class ViewerOptInFilteringOnSearchRule(action: Action, condition: Condition)
-    extends OnlyWhenNotAuthorViewerRule(
-      action,
-      And(condition, ViewerOptInFilteringOnSearch)
+abstract class V e rOpt nF lter ngOnSearchRule(act on: Act on, cond  on: Cond  on)
+    extends OnlyW nNotAuthorV e rRule(
+      act on,
+      And(cond  on, V e rOpt nF lter ngOnSearch)
     )
 
-abstract class ViewerOptInFilteringOnSearchUserLabelRule(
-  action: Action,
+abstract class V e rOpt nF lter ngOnSearchUserLabelRule(
+  act on: Act on,
   userLabelValue: UserLabelValue,
-  prerequisiteCondition: Condition = True)
-    extends ConditionWithUserLabelRule(
-      action,
-      And(prerequisiteCondition, LoggedOutOrViewerOptInFiltering),
+  prerequ s eCond  on: Cond  on = True)
+    extends Cond  onW hUserLabelRule(
+      act on,
+      And(prerequ s eCond  on, LoggedOutOrV e rOpt nF lter ng),
       userLabelValue
     )
 
-abstract class LikelyIvsLabelNonFollowerDropRule
-    extends AuthorLabelAndNonFollowerViewerRule(
-      Drop(Unspecified),
-      LikelyIvs
+abstract class L kely vsLabelNonFollo rDropRule
+    extends AuthorLabelAndNonFollo rV e rRule(
+      Drop(Unspec f ed),
+      L kely vs
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableLikelyIvsUserLabelDropRule)
+  overr de def enabled: Seq[RuleParam[Boolean]] =
+    Seq(EnableL kely vsUserLabelDropRule)
 }

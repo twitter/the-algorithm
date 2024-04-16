@@ -1,199 +1,199 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml vers on="1.0" encod ng="UTF-8"?>
 
-<!-- Ingesters process tweet create events from TweetyPie and write them to a queue for Earlybird
-to index. -->
-<pipeline>
+<!--  ngesters process t et create events from T etyP e and wr e t m to a queue for Earlyb rd
+to  ndex. -->
+<p pel ne>
   <property
-      propName="validator"
-      className="org.apache.commons.pipeline.validation.SimplePipelineValidator"/>
-  <listener
-      className="org.apache.commons.pipeline.listener.ObjectProcessedEventCounter"/>
-  <driverFactory
-      className="org.apache.commons.pipeline.driver.DedicatedThreadStageDriverFactory"
-      id="kafka">
+      propNa ="val dator"
+      classNa ="org.apac .commons.p pel ne.val dat on.S mpleP pel neVal dator"/>
+  <l stener
+      classNa ="org.apac .commons.p pel ne.l stener.ObjectProcessedEventCounter"/>
+  <dr verFactory
+      classNa ="org.apac .commons.p pel ne.dr ver.Ded catedThreadStageDr verFactory"
+       d="kafka">
 
     <property
-        propName="queueFactory"
-        className="org.apache.commons.pipeline.util.BlockingQueueFactory$ArrayBlockingQueueFactory"
-        capacity="1000"
-        fair="false"/>
-  </driverFactory>
+        propNa ="queueFactory"
+        classNa ="org.apac .commons.p pel ne.ut l.Block ngQueueFactory$ArrayBlock ngQueueFactory"
+        capac y="1000"
+        fa r="false"/>
+  </dr verFactory>
 
-  <!-- Read tweets from the thrift kafka queue. The reader loops forever. -->
+  <!-- Read t ets from t  thr ft kafka queue. T  reader loops forever. -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.kafka.KafkaRawRecordConsumerStage"
+      classNa ="com.tw ter.search. ngester.p pel ne.tw ter.kafka.KafkaRawRecordConsu rStage"
       kafkaClusterPath=""
-      kafkaClientId=""
-      kafkaTopicName=""
-      kafkaConsumerGroupId=""
+      kafkaCl ent d=""
+      kafkaTop cNa =""
+      kafkaConsu rGroup d=""
       maxPollRecords="1"
-      pollTimeoutMs="1000"
-      partitioned="false"
-      deciderKey=""
-      driverFactoryId="kafka"/>
+      pollT  outMs="1000"
+      part  oned="false"
+      dec derKey=""
+      dr verFactory d="kafka"/>
 
-  <!-- Deserialize the bytes into TweetData -->
+  <!-- Deser al ze t  bytes  nto T etData -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.TweetEventDeserializerStage"
-      driverFactoryId="kafka"/>
+      classNa ="com.tw ter.search. ngester.p pel ne.tw ter.T etEventDeser al zerStage"
+      dr verFactory d="kafka"/>
 
-  <!-- Filter to only have the safetytype = PUBLIC or PROTECTED -->
+  <!-- F lter to only have t  safetytype = PUBL C or PROTECTED -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.FilterEventsBySafetyTypeStage"
-      tweetCreateLatencyLogThresholdMillis="5000"
-      safetyType="PUBLIC_OR_PROTECTED"
-      driverFactoryId="kafka"/>
+      classNa ="com.tw ter.search. ngester.p pel ne.tw ter.F lterEventsBySafetyTypeStage"
+      t etCreateLatencyLogThresholdM ll s="5000"
+      safetyType="PUBL C_OR_PROTECTED"
+      dr verFactory d="kafka"/>
 
-  <!-- Parse to TwitterMessage -->
+  <!-- Parse to Tw ter ssage -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.ThriftTweetParserStage"
-      tweetDeleteEventBranchNames="kafka_update_events_delete"
-      driverFactoryId="kafka"/>
+      classNa ="com.tw ter.search. ngester.p pel ne.tw ter.Thr ftT etParserStage"
+      t etDeleteEventBranchNa s="kafka_update_events_delete"
+      dr verFactory d="kafka"/>
 
   <branch>
-    <pipeline key="kafka_update_events_delete">
+    <p pel ne key="kafka_update_events_delete">
       <property
-          propName="validator"
-          className="org.apache.commons.pipeline.validation.SimplePipelineValidator"/>
-      <listener
-          className="org.apache.commons.pipeline.listener.ObjectProcessedEventCounter"/>
-      <driverFactory
-          className="org.apache.commons.pipeline.driver.DedicatedThreadStageDriverFactory"
-          id="kafka_update_events_delete">
+          propNa ="val dator"
+          classNa ="org.apac .commons.p pel ne.val dat on.S mpleP pel neVal dator"/>
+      <l stener
+          classNa ="org.apac .commons.p pel ne.l stener.ObjectProcessedEventCounter"/>
+      <dr verFactory
+          classNa ="org.apac .commons.p pel ne.dr ver.Ded catedThreadStageDr verFactory"
+           d="kafka_update_events_delete">
 
-        <!-- we are willing to queue more deletes than other stages,
-             to make sure we don't slow down the incoming tweets -->
+        <!--   are w ll ng to queue more deletes than ot r stages,
+             to make sure   don't slow down t   ncom ng t ets -->
         <property
-            propName="queueFactory"
-            className="org.apache.commons.pipeline.util.BlockingQueueFactory$ArrayBlockingQueueFactory"
-            capacity="1000"
-            fair="false"/>
-      </driverFactory>
+            propNa ="queueFactory"
+            classNa ="org.apac .commons.p pel ne.ut l.Block ngQueueFactory$ArrayBlock ngQueueFactory"
+            capac y="1000"
+            fa r="false"/>
+      </dr verFactory>
 
       <stage
-          className="com.twitter.search.ingester.pipeline.twitter.kafka.DeleteUpdateEventsKafkaProducerStage"
+          classNa ="com.tw ter.search. ngester.p pel ne.tw ter.kafka.DeleteUpdateEventsKafkaProducerStage"
           kafkaClusterPath=""
-          kafkaClientId=""
-          kafkaTopicName=""
-          driverFactoryId="kafka_update_events_delete"/>
-    </pipeline>
+          kafkaCl ent d=""
+          kafkaTop cNa =""
+          dr verFactory d="kafka_update_events_delete"/>
+    </p pel ne>
   </branch>
 
-  <!-- filters out messages that are not formatted correctly -->
+  <!-- f lters out  ssages that are not formatted correctly -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.FilterTwitterMessageStage"
-      driverFactoryId="kafka"/>
+      classNa ="com.tw ter.search. ngester.p pel ne.tw ter.F lterTw ter ssageStage"
+      dr verFactory d="kafka"/>
 
-  <!-- retrieves space ids from space urls if the tweet has space urls -->
+  <!-- retr eves space  ds from space urls  f t  t et has space urls -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.RetrieveSpaceIdsStage"
-      driverFactoryId="kafka"/>
+      classNa ="com.tw ter.search. ngester.p pel ne.tw ter.Retr eveSpace dsStage"
+      dr verFactory d="kafka"/>
 
 
-  <!-- looks up user reputation scores for each message -->
+  <!-- looks up user reputat on scores for each  ssage -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.LookupUserPropertiesBatchedStage"
-      driverFactoryId="kafka"/>
+      classNa ="com.tw ter.search. ngester.p pel ne.tw ter.LookupUserPropert esBatc dStage"
+      dr verFactory d="kafka"/>
 
-  <!-- extract text features of the message -->
+  <!-- extract text features of t   ssage -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.TextFeatureExtractionWorkersStage"
-      driverFactoryId="kafka"/>
+      classNa ="com.tw ter.search. ngester.p pel ne.tw ter.TextFeatureExtract onWorkersStage"
+      dr verFactory d="kafka"/>
 
-  <!-- compute text quality score of the message -->
+  <!-- compute text qual y score of t   ssage -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.TextQualityEvaluationWorkerStage"
-      driverFactoryId="kafka"/>
+      classNa ="com.tw ter.search. ngester.p pel ne.tw ter.TextQual yEvaluat onWorkerStage"
+      dr verFactory d="kafka"/>
 
-  <!-- Extract lat/lon pairs from the text, and geocode them -->
+  <!-- Extract lat/lon pa rs from t  text, and geocode t m -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.SingleTweetExtractAndGeocodeLatLonStage"
-      driverFactoryId="kafka"/>
+      classNa ="com.tw ter.search. ngester.p pel ne.tw ter.S ngleT etExtractAndGeocodeLatLonStage"
+      dr verFactory d="kafka"/>
 
-  <!-- adds coded locations -->
+  <!-- adds coded locat ons -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.PopulateCodedLocationsBatchedStage"
-      driverFactoryId="kafka"/>
+      classNa ="com.tw ter.search. ngester.p pel ne.tw ter.PopulateCodedLocat onsBatc dStage"
+      dr verFactory d="kafka"/>
 
-  <!-- Parse the TwitterMessages into ThriftStatuses -->
+  <!-- Parse t  Tw ter ssages  nto Thr ftStatuses -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.ConvertMessageToThriftStage"
-      thriftVersionedEventsBranchName="kafka_base_tweets"
-      driverFactoryId="kafka"/>
+      classNa ="com.tw ter.search. ngester.p pel ne.tw ter.Convert ssageToThr ftStage"
+      thr ftVers onedEventsBranchNa ="kafka_base_t ets"
+      dr verFactory d="kafka"/>
 
-  <!-- Branch for tweets -->
+  <!-- Branch for t ets -->
   <branch>
-    <pipeline key="kafka_base_tweets">
+    <p pel ne key="kafka_base_t ets">
       <property
-          propName="validator"
-          className="org.apache.commons.pipeline.validation.SimplePipelineValidator"/>
-      <listener
-          className="org.apache.commons.pipeline.listener.ObjectProcessedEventCounter"/>
-      <driverFactory
-          className="org.apache.commons.pipeline.driver.DedicatedThreadStageDriverFactory"
-          id="kafka_base_tweets">
+          propNa ="val dator"
+          classNa ="org.apac .commons.p pel ne.val dat on.S mpleP pel neVal dator"/>
+      <l stener
+          classNa ="org.apac .commons.p pel ne.l stener.ObjectProcessedEventCounter"/>
+      <dr verFactory
+          classNa ="org.apac .commons.p pel ne.dr ver.Ded catedThreadStageDr verFactory"
+           d="kafka_base_t ets">
 
         <property
-            propName="queueFactory"
-            className="org.apache.commons.pipeline.util.BlockingQueueFactory$ArrayBlockingQueueFactory"
-            capacity="1000"
-            fair="false"/>
-      </driverFactory>
+            propNa ="queueFactory"
+            classNa ="org.apac .commons.p pel ne.ut l.Block ngQueueFactory$ArrayBlock ngQueueFactory"
+            capac y="1000"
+            fa r="false"/>
+      </dr verFactory>
 
       <stage
-          className="com.twitter.search.ingester.pipeline.twitter.kafka.TweetThriftVersionedEventsKafkaProducerStage"
+          classNa ="com.tw ter.search. ngester.p pel ne.tw ter.kafka.T etThr ftVers onedEventsKafkaProducerStage"
           kafkaClusterPath=""
-          kafkaClientId=""
-          kafkaTopicName=""
-          driverFactoryId="kafka_base_tweets"/>
-    </pipeline>
+          kafkaCl ent d=""
+          kafkaTop cNa =""
+          dr verFactory d="kafka_base_t ets"/>
+    </p pel ne>
   </branch>
 
-  <!-- Resolve compressed URL via Pink -->
+  <!-- Resolve compressed URL v a P nk -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.ResolveCompressedUrlsBatchedStage"
-      pinkClientId="INGESTER"
-      batchedStageBatchSize="10"
-      tweetMaxAgeToResolve="10000"
-      driverFactoryId="kafka"/>
+      classNa ="com.tw ter.search. ngester.p pel ne.tw ter.ResolveCompressedUrlsBatc dStage"
+      p nkCl ent d=" NGESTER"
+      batc dStageBatchS ze="10"
+      t etMaxAgeToResolve="10000"
+      dr verFactory d="kafka"/>
 
-  <!-- Retrieve card information -->
+  <!-- Retr eve card  nformat on -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.RetrieveCardBatchedStage"
-      tweetypieClientId=""
-      internalBatchSize="50"
-      driverFactoryId="kafka"/>
+      classNa ="com.tw ter.search. ngester.p pel ne.tw ter.Retr eveCardBatc dStage"
+      t etyp eCl ent d=""
+       nternalBatchS ze="50"
+      dr verFactory d="kafka"/>
 
-  <!-- Retrieve named entities -->
+  <!-- Retr eve na d ent  es -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.RetrieveNamedEntitiesSingleTweetStage"
-      driverFactoryId="kafka"/>
+      classNa ="com.tw ter.search. ngester.p pel ne.tw ter.Retr eveNa dEnt  esS ngleT etStage"
+      dr verFactory d="kafka"/>
 
-  <!-- retrieves space admins and title for a tweet if the tweet has space urls -->
+  <!-- retr eves space adm ns and t le for a t et  f t  t et has space urls -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.RetrieveSpaceAdminsAndTitleStage"
-      driverFactoryId="kafka"/>
+      classNa ="com.tw ter.search. ngester.p pel ne.tw ter.Retr eveSpaceAdm nsAndT leStage"
+      dr verFactory d="kafka"/>
 
-  <!-- extract text features of the message -->
+  <!-- extract text features of t   ssage -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.TextUrlsFeatureExtractionStage"
-      driverFactoryId="kafka"/>
+      classNa ="com.tw ter.search. ngester.p pel ne.tw ter.TextUrlsFeatureExtract onStage"
+      dr verFactory d="kafka"/>
 
-  <!-- Compute the tweet signature -->
+  <!-- Compute t  t et s gnature -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.ComputeTweetSignatureStage"
-      driverFactoryId="kafka"/>
+      classNa ="com.tw ter.search. ngester.p pel ne.tw ter.ComputeT etS gnatureStage"
+      dr verFactory d="kafka"/>
 
-  <!-- Parse the TwitterMessages into ThriftStatuses -->
+  <!-- Parse t  Tw ter ssages  nto Thr ftStatuses -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.ConvertDelayedMessageToThriftStage"
-      driverFactoryId="kafka"/>
+      classNa ="com.tw ter.search. ngester.p pel ne.tw ter.ConvertDelayed ssageToThr ftStage"
+      dr verFactory d="kafka"/>
 
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.kafka.TweetThriftVersionedEventsKafkaProducerStage"
+      classNa ="com.tw ter.search. ngester.p pel ne.tw ter.kafka.T etThr ftVers onedEventsKafkaProducerStage"
       kafkaClusterPath=""
-      stageName="UpdateEvents"
-      kafkaClientId=""
-      kafkaTopicName=""
-      driverFactoryId="kafka"/>
-</pipeline>
+      stageNa ="UpdateEvents"
+      kafkaCl ent d=""
+      kafkaTop cNa =""
+      dr verFactory d="kafka"/>
+</p pel ne>

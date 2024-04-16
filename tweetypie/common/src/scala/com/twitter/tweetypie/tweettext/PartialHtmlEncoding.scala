@@ -1,17 +1,17 @@
-package com.twitter.tweetypie.tweettext
+package com.tw ter.t etyp e.t ettext
 
 /**
- * Code used to convert raw user-provided text into an allowable form.
+ * Code used to convert raw user-prov ded text  nto an allowable form.
  */
-object PartialHtmlEncoding {
+object Part alHtmlEncod ng {
 
   /**
-   * Replaces all `<`, `>`, and '&' chars with "&lt;", "&gt;", and "&amp;", respectively.
+   * Replaces all `<`, `>`, and '&' chars w h "&lt;", "&gt;", and "&amp;", respect vely.
    *
-   * Tweet text is HTML-encoded at tweet creation time, and is stored and processed in encoded form.
+   * T et text  s HTML-encoded at t et creat on t  , and  s stored and processed  n encoded form.
    */
-  def encode(text: String): String = {
-    val buf = new StringBuilder
+  def encode(text: Str ng): Str ng = {
+    val buf = new Str ngBu lder
 
     text.foreach {
       case '<' => buf.append("&lt;")
@@ -20,33 +20,33 @@ object PartialHtmlEncoding {
       case c => buf.append(c)
     }
 
-    buf.toString
+    buf.toStr ng
   }
 
-  private val AmpLtRegex = "&lt;".r
-  private val AmpGtRegex = "&gt;".r
-  private val AmpAmpRegex = "&amp;".r
+  pr vate val AmpLtRegex = "&lt;".r
+  pr vate val AmpGtRegex = "&gt;".r
+  pr vate val AmpAmpRegex = "&amp;".r
 
-  private val partialHtmlDecoder: (String => String) =
-    ((s: String) => AmpLtRegex.replaceAllIn(s, "<"))
-      .andThen(s => AmpGtRegex.replaceAllIn(s, ">"))
-      .andThen(s => AmpAmpRegex.replaceAllIn(s, "&"))
+  pr vate val part alHtmlDecoder: (Str ng => Str ng) =
+    ((s: Str ng) => AmpLtRegex.replaceAll n(s, "<"))
+      .andT n(s => AmpGtRegex.replaceAll n(s, ">"))
+      .andT n(s => AmpAmpRegex.replaceAll n(s, "&"))
 
   /**
-   * The opposite of encode, it replaces all "&lt;", "&gt;", and "&amp;" with
-   * `<`, `>`, and '&', respectively.
+   * T  oppos e of encode,   replaces all "&lt;", "&gt;", and "&amp;" w h
+   * `<`, `>`, and '&', respect vely.
    */
-  def decode(text: String): String =
-    decodeWithModification(text) match {
-      case Some(mod) => mod.updated
+  def decode(text: Str ng): Str ng =
+    decodeW hMod f cat on(text) match {
+      case So (mod) => mod.updated
       case None => text
     }
 
   /**
-   * Decodes encoded entities, and returns a `TextModification` if the text was modified.
+   * Decodes encoded ent  es, and returns a `TextMod f cat on`  f t  text was mod f ed.
    */
-  def decodeWithModification(text: String): Option[TextModification] =
-    TextModification.replaceAll(
+  def decodeW hMod f cat on(text: Str ng): Opt on[TextMod f cat on] =
+    TextMod f cat on.replaceAll(
       text,
       AmpLtRegex -> "<",
       AmpGtRegex -> ">",

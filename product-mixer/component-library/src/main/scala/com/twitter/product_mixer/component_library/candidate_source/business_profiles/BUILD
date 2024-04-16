@@ -1,13 +1,13 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/cursor",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source/strato",
-        "strato/config/columns/consumer-identity/business-profiles:business-profiles-strato-client",
-        "strato/config/src/thrift/com/twitter/strato/graphql:graphql-scala",
-        "strato/src/main/scala/com/twitter/strato/client",
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "product-m xer/component-l brary/src/ma n/scala/com/tw ter/product_m xer/component_l brary/model/cursor",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/cand date_s ce/strato",
+        "strato/conf g/columns/consu r- dent y/bus ness-prof les:bus ness-prof les-strato-cl ent",
+        "strato/conf g/src/thr ft/com/tw ter/strato/graphql:graphql-scala",
+        "strato/src/ma n/scala/com/tw ter/strato/cl ent",
     ],
 )

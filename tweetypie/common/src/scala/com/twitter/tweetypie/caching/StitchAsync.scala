@@ -1,65 +1,65 @@
-package com.twitter.tweetypie.caching
+package com.tw ter.t etyp e.cach ng
 
-import scala.collection.mutable
-import com.twitter.util.Future
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.Runner
-import com.twitter.stitch.FutureRunner
-import com.twitter.stitch.Group
+ mport scala.collect on.mutable
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.Runner
+ mport com.tw ter.st ch.FutureRunner
+ mport com.tw ter.st ch.Group
 
 /**
- * Workaround for a infelicity in the implementation of [[Stitch.async]].
+ * Workaround for a  nfel c y  n t   mple ntat on of [[St ch.async]].
  *
- * This has the same semantics to [[Stitch.async]], with the exception
- * that interrupts to the main computation will not interrupt the
+ * T  has t  sa  semant cs to [[St ch.async]], w h t  except on
+ * that  nterrupts to t  ma n computat on w ll not  nterrupt t 
  * async call.
  *
- * The problem that this implementation solves is that we do not want
- * async calls grouped together with synchronous calls. See the
- * mailing list thread [1] for discussion. This may eventually be
- * fixed in Stitch.
+ * T  problem that t   mple ntat on solves  s that   do not want
+ * async calls grouped toget r w h synchronous calls. See t 
+ * ma l ng l st thread [1] for d scuss on. T  may eventually be
+ * f xed  n St ch.
  */
-private[caching] object StitchAsync {
-  // Contains a deferred Stitch that we want to run asynchronously
-  private[this] class AsyncCall(deferred: => Stitch[_]) {
-    def call(): Stitch[_] = deferred
+pr vate[cach ng] object St chAsync {
+  // Conta ns a deferred St ch that   want to run asynchronously
+  pr vate[t ] class AsyncCall(deferred: => St ch[_]) {
+    def call(): St ch[_] = deferred
   }
 
-  private object AsyncGroup extends Group[AsyncCall, Unit] {
-    override def runner(): Runner[AsyncCall, Unit] =
-      new FutureRunner[AsyncCall, Unit] {
-        // All of the deferred calls of any type. When they are
-        // executed in `run`, the normal Stitch batching and deduping
-        // will occur.
-        private[this] val calls = new mutable.ArrayBuffer[AsyncCall]
+  pr vate object AsyncGroup extends Group[AsyncCall, Un ] {
+    overr de def runner(): Runner[AsyncCall, Un ] =
+      new FutureRunner[AsyncCall, Un ] {
+        // All of t  deferred calls of any type. W n t y are
+        // executed  n `run`, t  normal St ch batch ng and dedup ng
+        // w ll occur.
+        pr vate[t ] val calls = new mutable.ArrayBuffer[AsyncCall]
 
-        def add(call: AsyncCall): Stitch[Unit] = {
-          // Just remember the deferred call.
+        def add(call: AsyncCall): St ch[Un ] = {
+          // Just re mber t  deferred call.
           calls.append(call)
 
-          // Since we don't wait for the completion of the effect,
+          // S nce   don't wa  for t  complet on of t  effect,
           // just return a constant value.
-          Stitch.Unit
+          St ch.Un 
         }
 
         def run(): Future[_] = {
-          // The future returned from this innter invocation of
-          // Stitch.run is not linked to the returned future, so these
-          // effects are not linked to the outer Run in which this
-          // method was invoked.
-          Stitch.run {
-            Stitch.traverse(calls) { asyncCall: AsyncCall =>
+          // T  future returned from t   nnter  nvocat on of
+          // St ch.run  s not l nked to t  returned future, so t se
+          // effects are not l nked to t  outer Run  n wh ch t 
+          //  thod was  nvoked.
+          St ch.run {
+            St ch.traverse(calls) { asyncCall: AsyncCall =>
               asyncCall
                 .call()
-                .liftToTry // So that an exception will not interrupt the other calls
+                .l ftToTry // So that an except on w ll not  nterrupt t  ot r calls
             }
           }
-          Future.Unit
+          Future.Un 
         }
       }
   }
 
-  def apply(call: => Stitch[_]): Stitch[Unit] =
-    // Group together all of the async calls
-    Stitch.call(new AsyncCall(call), AsyncGroup)
+  def apply(call: => St ch[_]): St ch[Un ] =
+    // Group toget r all of t  async calls
+    St ch.call(new AsyncCall(call), AsyncGroup)
 }

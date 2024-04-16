@@ -1,43 +1,43 @@
-package com.twitter.home_mixer.functional_component.side_effect
+package com.tw ter.ho _m xer.funct onal_component.s de_effect
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.model.HomeFeatures.IsTweetPreviewFeature
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module.WhoToFollowCandidateDecorator
-import com.twitter.product_mixer.component_library.pipeline.candidate.who_to_subscribe_module.WhoToSubscribeCandidateDecorator
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ReplaceEntryTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ShowCoverInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinemixer.clients.persistence.EntryWithItemIds
-import com.twitter.timelinemixer.clients.persistence.ItemIds
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseBatchesClient
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseV3
-import com.twitter.timelines.persistence.thriftscala.TweetScoreV1
-import com.twitter.timelines.persistence.{thriftscala => persistence}
-import com.twitter.timelineservice.model.TimelineQuery
-import com.twitter.timelineservice.model.TimelineQueryOptions
-import com.twitter.timelineservice.model.TweetScore
-import com.twitter.timelineservice.model.core.TimelineKind
-import com.twitter.timelineservice.model.rich.EntityIdType
-import com.twitter.util.Time
-import com.twitter.{timelineservice => tls}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.model.Ho Features._
+ mport com.tw ter.ho _m xer.model.request.Follow ngProduct
+ mport com.tw ter.ho _m xer.model.request.For Product
+ mport com.tw ter.ho _m xer.model.Ho Features. sT etPrev ewFeature
+ mport com.tw ter.ho _m xer.serv ce.Ho M xerAlertConf g
+ mport com.tw ter.product_m xer.component_l brary.p pel ne.cand date.who_to_follow_module.WhoToFollowCand dateDecorator
+ mport com.tw ter.product_m xer.component_l brary.p pel ne.cand date.who_to_subscr be_module.WhoToSubscr beCand dateDecorator
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.s de_effect.P pel neResultS deEffect
+ mport com.tw ter.product_m xer.core.model.common. dent f er.S deEffect dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on. emCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on.ModuleCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.AddEntr esT  l ne nstruct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.ReplaceEntryT  l ne nstruct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.ShowCover nstruct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neModule
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t et.T et em
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nem xer.cl ents.pers stence.EntryW h em ds
+ mport com.tw ter.t  l nem xer.cl ents.pers stence. em ds
+ mport com.tw ter.t  l nem xer.cl ents.pers stence.T  l neResponseBatc sCl ent
+ mport com.tw ter.t  l nem xer.cl ents.pers stence.T  l neResponseV3
+ mport com.tw ter.t  l nes.pers stence.thr ftscala.T etScoreV1
+ mport com.tw ter.t  l nes.pers stence.{thr ftscala => pers stence}
+ mport com.tw ter.t  l neserv ce.model.T  l neQuery
+ mport com.tw ter.t  l neserv ce.model.T  l neQueryOpt ons
+ mport com.tw ter.t  l neserv ce.model.T etScore
+ mport com.tw ter.t  l neserv ce.model.core.T  l neK nd
+ mport com.tw ter.t  l neserv ce.model.r ch.Ent y dType
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.{t  l neserv ce => tls}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-object UpdateTimelinesPersistenceStoreSideEffect {
-  val EmptyItemIds = ItemIds(
+object UpdateT  l nesPers stenceStoreS deEffect {
+  val Empty em ds =  em ds(
     None,
     None,
     None,
@@ -56,128 +56,128 @@ object UpdateTimelinesPersistenceStoreSideEffect {
 }
 
 /**
- * Side effect that updates the Timelines Persistence Store (Manhattan) with the entries being returned.
+ * S de effect that updates t  T  l nes Pers stence Store (Manhattan) w h t  entr es be ng returned.
  */
-@Singleton
-class UpdateTimelinesPersistenceStoreSideEffect @Inject() (
-  timelineResponseBatchesClient: TimelineResponseBatchesClient[TimelineResponseV3])
-    extends PipelineResultSideEffect[PipelineQuery, Timeline] {
+@S ngleton
+class UpdateT  l nesPers stenceStoreS deEffect @ nject() (
+  t  l neResponseBatc sCl ent: T  l neResponseBatc sCl ent[T  l neResponseV3])
+    extends P pel neResultS deEffect[P pel neQuery, T  l ne] {
 
-  override val identifier: SideEffectIdentifier =
-    SideEffectIdentifier("UpdateTimelinesPersistenceStore")
+  overr de val  dent f er: S deEffect dent f er =
+    S deEffect dent f er("UpdateT  l nesPers stenceStore")
 
-  final override def apply(
-    inputs: PipelineResultSideEffect.Inputs[PipelineQuery, Timeline]
-  ): Stitch[Unit] = {
-    if (inputs.response.instructions.nonEmpty) {
-      val timelineKind = inputs.query.product match {
-        case FollowingProduct => TimelineKind.homeLatest
-        case ForYouProduct => TimelineKind.home
-        case other => throw new UnsupportedOperationException(s"Unknown product: $other")
+  f nal overr de def apply(
+     nputs: P pel neResultS deEffect. nputs[P pel neQuery, T  l ne]
+  ): St ch[Un ] = {
+     f ( nputs.response. nstruct ons.nonEmpty) {
+      val t  l neK nd =  nputs.query.product match {
+        case Follow ngProduct => T  l neK nd.ho Latest
+        case For Product => T  l neK nd.ho 
+        case ot r => throw new UnsupportedOperat onExcept on(s"Unknown product: $ot r")
       }
-      val timelineQuery = TimelineQuery(
-        id = inputs.query.getRequiredUserId,
-        kind = timelineKind,
-        options = TimelineQueryOptions(
-          contextualUserId = inputs.query.getOptionalUserId,
-          deviceContext = tls.DeviceContext.empty.copy(
-            userAgent = inputs.query.clientContext.userAgent,
-            clientAppId = inputs.query.clientContext.appId)
+      val t  l neQuery = T  l neQuery(
+         d =  nputs.query.getRequ redUser d,
+        k nd = t  l neK nd,
+        opt ons = T  l neQueryOpt ons(
+          contextualUser d =  nputs.query.getOpt onalUser d,
+          dev ceContext = tls.Dev ceContext.empty.copy(
+            userAgent =  nputs.query.cl entContext.userAgent,
+            cl entApp d =  nputs.query.cl entContext.app d)
         )
       )
 
-      val tweetIdToItemCandidateMap: Map[Long, ItemCandidateWithDetails] =
-        inputs.selectedCandidates.flatMap {
-          case item: ItemCandidateWithDetails if item.candidate.id.isInstanceOf[Long] =>
-            Seq((item.candidateIdLong, item))
-          case module: ModuleCandidateWithDetails
-              if module.candidates.headOption.exists(_.candidate.id.isInstanceOf[Long]) =>
-            module.candidates.map(item => (item.candidateIdLong, item))
+      val t et dTo emCand dateMap: Map[Long,  emCand dateW hDeta ls] =
+         nputs.selectedCand dates.flatMap {
+          case  em:  emCand dateW hDeta ls  f  em.cand date. d. s nstanceOf[Long] =>
+            Seq(( em.cand date dLong,  em))
+          case module: ModuleCand dateW hDeta ls
+               f module.cand dates. adOpt on.ex sts(_.cand date. d. s nstanceOf[Long]) =>
+            module.cand dates.map( em => ( em.cand date dLong,  em))
           case _ => Seq.empty
         }.toMap
 
-      val entries = inputs.response.instructions.collect {
-        case AddEntriesTimelineInstruction(entries) =>
-          entries.collect {
-            // includes tweets, tweet previews, and promoted tweets
-            case entry: TweetItem if entry.sortIndex.isDefined => {
+      val entr es =  nputs.response. nstruct ons.collect {
+        case AddEntr esT  l ne nstruct on(entr es) =>
+          entr es.collect {
+            //  ncludes t ets, t et prev ews, and promoted t ets
+            case entry: T et em  f entry.sort ndex. sDef ned => {
               Seq(
-                buildTweetEntryWithItemIds(
-                  tweetIdToItemCandidateMap(entry.id),
-                  entry.sortIndex.get
+                bu ldT etEntryW h em ds(
+                  t et dTo emCand dateMap(entry. d),
+                  entry.sort ndex.get
                 ))
             }
-            // tweet conversation modules are flattened to individual tweets in the persistence store
-            case module: TimelineModule
-                if module.sortIndex.isDefined && module.items.headOption.exists(
-                  _.item.isInstanceOf[TweetItem]) =>
-              module.items.map { item =>
-                buildTweetEntryWithItemIds(
-                  tweetIdToItemCandidateMap(item.item.id.asInstanceOf[Long]),
-                  module.sortIndex.get)
+            // t et conversat on modules are flattened to  nd v dual t ets  n t  pers stence store
+            case module: T  l neModule
+                 f module.sort ndex. sDef ned && module. ems. adOpt on.ex sts(
+                  _. em. s nstanceOf[T et em]) =>
+              module. ems.map {  em =>
+                bu ldT etEntryW h em ds(
+                  t et dTo emCand dateMap( em. em. d.as nstanceOf[Long]),
+                  module.sort ndex.get)
               }
-            case module: TimelineModule
-                if module.sortIndex.isDefined && module.entryNamespace.toString == WhoToFollowCandidateDecorator.EntryNamespaceString =>
-              val userIds = module.items
-                .map(item =>
-                  UpdateTimelinesPersistenceStoreSideEffect.EmptyItemIds.copy(userId =
-                    Some(item.item.id.asInstanceOf[Long])))
+            case module: T  l neModule
+                 f module.sort ndex. sDef ned && module.entryNa space.toStr ng == WhoToFollowCand dateDecorator.EntryNa spaceStr ng =>
+              val user ds = module. ems
+                .map( em =>
+                  UpdateT  l nesPers stenceStoreS deEffect.Empty em ds.copy(user d =
+                    So ( em. em. d.as nstanceOf[Long])))
               Seq(
-                EntryWithItemIds(
-                  entityIdType = EntityIdType.WhoToFollow,
-                  sortIndex = module.sortIndex.get,
-                  size = module.items.size.toShort,
-                  itemIds = Some(userIds)
+                EntryW h em ds(
+                  ent y dType = Ent y dType.WhoToFollow,
+                  sort ndex = module.sort ndex.get,
+                  s ze = module. ems.s ze.toShort,
+                   em ds = So (user ds)
                 ))
-            case module: TimelineModule
-                if module.sortIndex.isDefined && module.entryNamespace.toString == WhoToSubscribeCandidateDecorator.EntryNamespaceString =>
-              val userIds = module.items
-                .map(item =>
-                  UpdateTimelinesPersistenceStoreSideEffect.EmptyItemIds.copy(userId =
-                    Some(item.item.id.asInstanceOf[Long])))
+            case module: T  l neModule
+                 f module.sort ndex. sDef ned && module.entryNa space.toStr ng == WhoToSubscr beCand dateDecorator.EntryNa spaceStr ng =>
+              val user ds = module. ems
+                .map( em =>
+                  UpdateT  l nesPers stenceStoreS deEffect.Empty em ds.copy(user d =
+                    So ( em. em. d.as nstanceOf[Long])))
               Seq(
-                EntryWithItemIds(
-                  entityIdType = EntityIdType.WhoToSubscribe,
-                  sortIndex = module.sortIndex.get,
-                  size = module.items.size.toShort,
-                  itemIds = Some(userIds)
+                EntryW h em ds(
+                  ent y dType = Ent y dType.WhoToSubscr be,
+                  sort ndex = module.sort ndex.get,
+                  s ze = module. ems.s ze.toShort,
+                   em ds = So (user ds)
                 ))
           }.flatten
-        case ShowCoverInstruction(cover) =>
+        case ShowCover nstruct on(cover) =>
           Seq(
-            EntryWithItemIds(
-              entityIdType = EntityIdType.Prompt,
-              sortIndex = cover.sortIndex.get,
-              size = 1,
-              itemIds = None
+            EntryW h em ds(
+              ent y dType = Ent y dType.Prompt,
+              sort ndex = cover.sort ndex.get,
+              s ze = 1,
+               em ds = None
             )
           )
-        case ReplaceEntryTimelineInstruction(entry) =>
-          val namespaceLength = TweetItem.TweetEntryNamespace.toString.length
+        case ReplaceEntryT  l ne nstruct on(entry) =>
+          val na spaceLength = T et em.T etEntryNa space.toStr ng.length
           Seq(
-            EntryWithItemIds(
-              entityIdType = EntityIdType.Tweet,
-              sortIndex = entry.sortIndex.get,
-              size = 1,
-              itemIds = Some(
+            EntryW h em ds(
+              ent y dType = Ent y dType.T et,
+              sort ndex = entry.sort ndex.get,
+              s ze = 1,
+               em ds = So (
                 Seq(
-                  ItemIds(
-                    tweetId =
-                      entry.entryIdToReplace.map(e => e.substring(namespaceLength + 1).toLong),
-                    sourceTweetId = None,
-                    quoteTweetId = None,
-                    sourceAuthorId = None,
-                    quoteAuthorId = None,
-                    inReplyToTweetId = None,
-                    inReplyToAuthorId = None,
-                    semanticCoreId = None,
-                    articleId = None,
+                   em ds(
+                    t et d =
+                      entry.entry dToReplace.map(e => e.substr ng(na spaceLength + 1).toLong),
+                    s ceT et d = None,
+                    quoteT et d = None,
+                    s ceAuthor d = None,
+                    quoteAuthor d = None,
+                     nReplyToT et d = None,
+                     nReplyToAuthor d = None,
+                    semant cCore d = None,
+                    art cle d = None,
                     hasRelevancePrompt = None,
                     promptData = None,
-                    tweetScore = None,
-                    entryIdToReplace = entry.entryIdToReplace,
-                    tweetReactiveData = None,
-                    userId = None
+                    t etScore = None,
+                    entry dToReplace = entry.entry dToReplace,
+                    t etReact veData = None,
+                    user d = None
                   )
                 ))
             )
@@ -185,79 +185,79 @@ class UpdateTimelinesPersistenceStoreSideEffect @Inject() (
 
       }.flatten
 
-      val response = TimelineResponseV3(
-        clientPlatform = timelineQuery.clientPlatform,
-        servedTime = Time.now,
-        requestType = requestTypeFromQuery(inputs.query),
-        entries = entries)
+      val response = T  l neResponseV3(
+        cl entPlatform = t  l neQuery.cl entPlatform,
+        servedT   = T  .now,
+        requestType = requestTypeFromQuery( nputs.query),
+        entr es = entr es)
 
-      Stitch.callFuture(timelineResponseBatchesClient.insertResponse(timelineQuery, response))
-    } else Stitch.Unit
+      St ch.callFuture(t  l neResponseBatc sCl ent. nsertResponse(t  l neQuery, response))
+    } else St ch.Un 
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.8)
+  overr de val alerts = Seq(
+    Ho M xerAlertConf g.Bus nessH s.defaultSuccessRateAlert(99.8)
   )
 
-  private def buildTweetEntryWithItemIds(
-    candidate: ItemCandidateWithDetails,
-    sortIndex: Long
-  ): EntryWithItemIds = {
-    val features = candidate.features
-    val sourceAuthorId =
-      if (features.getOrElse(IsRetweetFeature, false)) features.getOrElse(SourceUserIdFeature, None)
-      else features.getOrElse(AuthorIdFeature, None)
-    val quoteAuthorId =
-      if (features.getOrElse(QuotedTweetIdFeature, None).nonEmpty)
-        features.getOrElse(SourceUserIdFeature, None)
+  pr vate def bu ldT etEntryW h em ds(
+    cand date:  emCand dateW hDeta ls,
+    sort ndex: Long
+  ): EntryW h em ds = {
+    val features = cand date.features
+    val s ceAuthor d =
+       f (features.getOrElse( sRet etFeature, false)) features.getOrElse(S ceUser dFeature, None)
+      else features.getOrElse(Author dFeature, None)
+    val quoteAuthor d =
+       f (features.getOrElse(QuotedT et dFeature, None).nonEmpty)
+        features.getOrElse(S ceUser dFeature, None)
       else None
-    val tweetScore = features.getOrElse(ScoreFeature, None).map { score =>
-      TweetScore.fromThrift(persistence.TweetScore.TweetScoreV1(TweetScoreV1(score)))
+    val t etScore = features.getOrElse(ScoreFeature, None).map { score =>
+      T etScore.fromThr ft(pers stence.T etScore.T etScoreV1(T etScoreV1(score)))
     }
 
-    val itemIds = ItemIds(
-      tweetId = Some(candidate.candidateIdLong),
-      sourceTweetId = features.getOrElse(SourceTweetIdFeature, None),
-      quoteTweetId = features.getOrElse(QuotedTweetIdFeature, None),
-      sourceAuthorId = sourceAuthorId,
-      quoteAuthorId = quoteAuthorId,
-      inReplyToTweetId = features.getOrElse(InReplyToTweetIdFeature, None),
-      inReplyToAuthorId = features.getOrElse(DirectedAtUserIdFeature, None),
-      semanticCoreId = features.getOrElse(SemanticCoreIdFeature, None),
-      articleId = None,
+    val  em ds =  em ds(
+      t et d = So (cand date.cand date dLong),
+      s ceT et d = features.getOrElse(S ceT et dFeature, None),
+      quoteT et d = features.getOrElse(QuotedT et dFeature, None),
+      s ceAuthor d = s ceAuthor d,
+      quoteAuthor d = quoteAuthor d,
+       nReplyToT et d = features.getOrElse( nReplyToT et dFeature, None),
+       nReplyToAuthor d = features.getOrElse(D rectedAtUser dFeature, None),
+      semant cCore d = features.getOrElse(Semant cCore dFeature, None),
+      art cle d = None,
       hasRelevancePrompt = None,
       promptData = None,
-      tweetScore = tweetScore,
-      entryIdToReplace = None,
-      tweetReactiveData = None,
-      userId = None
+      t etScore = t etScore,
+      entry dToReplace = None,
+      t etReact veData = None,
+      user d = None
     )
 
-    val isPreview = features.getOrElse(IsTweetPreviewFeature, default = false)
-    val entityType = if (isPreview) EntityIdType.TweetPreview else EntityIdType.Tweet
+    val  sPrev ew = features.getOrElse( sT etPrev ewFeature, default = false)
+    val ent yType =  f ( sPrev ew) Ent y dType.T etPrev ew else Ent y dType.T et
 
-    EntryWithItemIds(
-      entityIdType = entityType,
-      sortIndex = sortIndex,
-      size = 1.toShort,
-      itemIds = Some(Seq(itemIds))
+    EntryW h em ds(
+      ent y dType = ent yType,
+      sort ndex = sort ndex,
+      s ze = 1.toShort,
+       em ds = So (Seq( em ds))
     )
   }
 
-  private def requestTypeFromQuery(query: PipelineQuery): persistence.RequestType = {
+  pr vate def requestTypeFromQuery(query: P pel neQuery): pers stence.RequestType = {
     val features = query.features.getOrElse(FeatureMap.empty)
 
     val featureToRequestType = Seq(
-      (PollingFeature, persistence.RequestType.Polling),
-      (GetInitialFeature, persistence.RequestType.Initial),
-      (GetNewerFeature, persistence.RequestType.Newer),
-      (GetMiddleFeature, persistence.RequestType.Middle),
-      (GetOlderFeature, persistence.RequestType.Older)
+      (Poll ngFeature, pers stence.RequestType.Poll ng),
+      (Get n  alFeature, pers stence.RequestType. n  al),
+      (GetNe rFeature, pers stence.RequestType.Ne r),
+      (GetM ddleFeature, pers stence.RequestType.M ddle),
+      (GetOlderFeature, pers stence.RequestType.Older)
     )
 
     featureToRequestType
-      .collectFirst {
-        case (feature, requestType) if features.getOrElse(feature, false) => requestType
-      }.getOrElse(persistence.RequestType.Other)
+      .collectF rst {
+        case (feature, requestType)  f features.getOrElse(feature, false) => requestType
+      }.getOrElse(pers stence.RequestType.Ot r)
   }
 }

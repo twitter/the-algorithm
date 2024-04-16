@@ -1,30 +1,30 @@
 syntax = "proto3";
 
-package tensorflow.serving;
-option cc_enable_arenas = true;
+package tensorflow.serv ng;
+opt on cc_enable_arenas = true;
 
-import "google/protobuf/any.proto";
-import "tensorflow/core/protobuf/meta_graph.proto";
-import "tensorflow_serving/apis/model.proto";
+ mport "google/protobuf/any.proto";
+ mport "tensorflow/core/protobuf/ ta_graph.proto";
+ mport "tensorflow_serv ng/ap s/model.proto";
 
-// Message returned for "signature_def" field.
-message SignatureDefMap {
-  map<string, SignatureDef> signature_def = 1;
+//  ssage returned for "s gnature_def" f eld.
+ ssage S gnatureDefMap {
+  map<str ng, S gnatureDef> s gnature_def = 1;
 };
 
-message GetModelMetadataRequest {
-  // Model Specification indicating which model we are querying for metadata.
-  // If version is not specified, will use the latest (numerical) version.
+ ssage GetModel tadataRequest {
+  // Model Spec f cat on  nd cat ng wh ch model   are query ng for  tadata.
+  //  f vers on  s not spec f ed, w ll use t  latest (nu r cal) vers on.
   ModelSpec model_spec = 1;
-  // Metadata fields to get. Currently supported: "signature_def".
-  repeated string metadata_field = 2;
+  //  tadata f elds to get. Currently supported: "s gnature_def".
+  repeated str ng  tadata_f eld = 2;
 }
 
-message GetModelMetadataResponse {
-  // Model Specification indicating which model this metadata belongs to.
+ ssage GetModel tadataResponse {
+  // Model Spec f cat on  nd cat ng wh ch model t   tadata belongs to.
   ModelSpec model_spec = 1;
-  // Map of metadata field name to metadata field. The options for metadata
-  // field name are listed in GetModelMetadataRequest. Currently supported:
-  // "signature_def".
-  map<string, google.protobuf.Any> metadata = 2;
+  // Map of  tadata f eld na  to  tadata f eld. T  opt ons for  tadata
+  // f eld na  are l sted  n GetModel tadataRequest. Currently supported:
+  // "s gnature_def".
+  map<str ng, google.protobuf.Any>  tadata = 2;
 }

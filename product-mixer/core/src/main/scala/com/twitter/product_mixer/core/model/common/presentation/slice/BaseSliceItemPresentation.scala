@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.common.presentation.slice
+package com.tw ter.product_m xer.core.model.common.presentat on.sl ce
 
-import com.twitter.product_mixer.core.model.common.presentation.ItemPresentation
-import com.twitter.product_mixer.core.model.marshalling.response.slice.SliceItem
+ mport com.tw ter.product_m xer.core.model.common.presentat on. emPresentat on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.sl ce.Sl ce em
 
-trait BaseSliceItemPresentation extends ItemPresentation {
-  def sliceItem: SliceItem
+tra  BaseSl ce emPresentat on extends  emPresentat on {
+  def sl ce em: Sl ce em
 }

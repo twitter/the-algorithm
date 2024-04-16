@@ -1,15 +1,15 @@
-junit_tests(
-    sources = ["**/*.scala"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "3rdparty/jvm/junit",
+jun _tests(
+    s ces = ["**/*.scala"],
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/ch/qos/logback:logback-class c",
+        "3rdparty/jvm/jun ",
         "3rdparty/jvm/org/scalatest",
-        "3rdparty/jvm/org/scalatestplus:junit",
-        "finatra/inject/inject-core/src/test/scala:test-deps",
-        "kafka/finagle-kafka/finatra-kafka/src/test/scala:test-deps",
-        "unified_user_actions/kafka/src/main/scala/com/twitter/unified_user_actions/kafka",
-        "unified_user_actions/kafka/src/test/resources",
-        "unified_user_actions/thrift/src/test/thrift/com/twitter/unified_user_actions:unified_user_actions_spec-scala",
+        "3rdparty/jvm/org/scalatestplus:jun ",
+        "f natra/ nject/ nject-core/src/test/scala:test-deps",
+        "kafka/f nagle-kafka/f natra-kafka/src/test/scala:test-deps",
+        "un f ed_user_act ons/kafka/src/ma n/scala/com/tw ter/un f ed_user_act ons/kafka",
+        "un f ed_user_act ons/kafka/src/test/res ces",
+        "un f ed_user_act ons/thr ft/src/test/thr ft/com/tw ter/un f ed_user_act ons:un f ed_user_act ons_spec-scala",
     ],
 )

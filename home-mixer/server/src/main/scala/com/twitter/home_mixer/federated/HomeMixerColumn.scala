@@ -1,88 +1,88 @@
-package com.twitter.home_mixer.federated
+package com.tw ter.ho _m xer.federated
 
-import com.twitter.gizmoduck.{thriftscala => gd}
-import com.twitter.home_mixer.marshaller.request.HomeMixerRequestUnmarshaller
-import com.twitter.home_mixer.model.request.HomeMixerRequest
-import com.twitter.home_mixer.{thriftscala => hm}
-import com.twitter.product_mixer.core.functional_component.configapi.ParamsBuilder
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineRequest
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineResult
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistry
-import com.twitter.product_mixer.core.{thriftscala => pm}
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
-import com.twitter.strato.callcontext.CallContext
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.config._
-import com.twitter.strato.data._
-import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.generated.client.auth_context.AuditIpClientColumn
-import com.twitter.strato.generated.client.gizmoduck.CompositeOnUserClientColumn
-import com.twitter.strato.graphql.timelines.{thriftscala => gql}
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.timelines.render.{thriftscala => tr}
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.g zmoduck.{thr ftscala => gd}
+ mport com.tw ter.ho _m xer.marshaller.request.Ho M xerRequestUnmarshaller
+ mport com.tw ter.ho _m xer.model.request.Ho M xerRequest
+ mport com.tw ter.ho _m xer.{thr ftscala => hm}
+ mport com.tw ter.product_m xer.core.funct onal_component.conf gap .ParamsBu lder
+ mport com.tw ter.product_m xer.core.p pel ne.product.ProductP pel neRequest
+ mport com.tw ter.product_m xer.core.p pel ne.product.ProductP pel neResult
+ mport com.tw ter.product_m xer.core.product.reg stry.ProductP pel neReg stry
+ mport com.tw ter.product_m xer.core.{thr ftscala => pm}
+ mport com.tw ter.st ch.Arrow
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.callcontext.CallContext
+ mport com.tw ter.strato.catalog.Op tadata
+ mport com.tw ter.strato.conf g._
+ mport com.tw ter.strato.data._
+ mport com.tw ter.strato.fed.StratoFed
+ mport com.tw ter.strato.generated.cl ent.auth_context.Aud  pCl entColumn
+ mport com.tw ter.strato.generated.cl ent.g zmoduck.Compos eOnUserCl entColumn
+ mport com.tw ter.strato.graphql.t  l nes.{thr ftscala => gql}
+ mport com.tw ter.strato.thr ft.ScroogeConv
+ mport com.tw ter.t  l nes.render.{thr ftscala => tr}
+ mport com.tw ter.ut l.Try
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class HomeMixerColumn @Inject() (
-  homeMixerRequestUnmarshaller: HomeMixerRequestUnmarshaller,
-  compositeOnUserClientColumn: CompositeOnUserClientColumn,
-  auditIpClientColumn: AuditIpClientColumn,
-  paramsBuilder: ParamsBuilder,
-  productPipelineRegistry: ProductPipelineRegistry)
-    extends StratoFed.Column(HomeMixerColumn.Path)
-    with StratoFed.Fetch.Arrow {
+@S ngleton
+class Ho M xerColumn @ nject() (
+  ho M xerRequestUnmarshaller: Ho M xerRequestUnmarshaller,
+  compos eOnUserCl entColumn: Compos eOnUserCl entColumn,
+  aud  pCl entColumn: Aud  pCl entColumn,
+  paramsBu lder: ParamsBu lder,
+  productP pel neReg stry: ProductP pel neReg stry)
+    extends StratoFed.Column(Ho M xerColumn.Path)
+    w h StratoFed.Fetch.Arrow {
 
-  override val contactInfo: ContactInfo = ContactInfo(
-    contactEmail = "",
+  overr de val contact nfo: Contact nfo = Contact nfo(
+    contactEma l = "",
     ldapGroup = "",
-    slackRoomId = ""
+    slackRoom d = ""
   )
 
-  override val metadata: OpMetadata =
-    OpMetadata(
-      lifecycle = Some(Lifecycle.Production),
-      description =
-        Some(Description.PlainText("Federated Strato column for Timelines served via Home Mixer"))
+  overr de val  tadata: Op tadata =
+    Op tadata(
+      l fecycle = So (L fecycle.Product on),
+      descr pt on =
+        So (Descr pt on.Pla nText("Federated Strato column for T  l nes served v a Ho  M xer"))
     )
 
-  private val bouncerAccess: Seq[Policy] = Seq(BouncerAccess())
-  private val finatraTestServiceIdentifiers: Seq[Policy] = Seq(
-    ServiceIdentifierPattern(
+  pr vate val bouncerAccess: Seq[Pol cy] = Seq(BouncerAccess())
+  pr vate val f natraTestServ ce dent f ers: Seq[Pol cy] = Seq(
+    Serv ce dent f erPattern(
       role = "",
-      service = "",
+      serv ce = "",
       env = "",
       zone = Seq(""))
   )
 
-  override val policy: Policy = AnyOf(bouncerAccess ++ finatraTestServiceIdentifiers)
+  overr de val pol cy: Pol cy = AnyOf(bouncerAccess ++ f natraTestServ ce dent f ers)
 
-  override type Key = gql.TimelineKey
-  override type View = gql.HomeTimelineView
-  override type Value = tr.Timeline
+  overr de type Key = gql.T  l neKey
+  overr de type V ew = gql.Ho T  l neV ew
+  overr de type Value = tr.T  l ne
 
-  override val keyConv: Conv[Key] = ScroogeConv.fromStruct[gql.TimelineKey]
-  override val viewConv: Conv[View] = ScroogeConv.fromStruct[gql.HomeTimelineView]
-  override val valueConv: Conv[Value] = ScroogeConv.fromStruct[tr.Timeline]
+  overr de val keyConv: Conv[Key] = ScroogeConv.fromStruct[gql.T  l neKey]
+  overr de val v ewConv: Conv[V ew] = ScroogeConv.fromStruct[gql.Ho T  l neV ew]
+  overr de val valueConv: Conv[Value] = ScroogeConv.fromStruct[tr.T  l ne]
 
-  private def createHomeMixerRequestArrow(
-    compositeOnUserClientColumn: CompositeOnUserClientColumn,
-    auditIpClientColumn: AuditIpClientColumn
-  ): Arrow[(Key, View), hm.HomeMixerRequest] = {
+  pr vate def createHo M xerRequestArrow(
+    compos eOnUserCl entColumn: Compos eOnUserCl entColumn,
+    aud  pCl entColumn: Aud  pCl entColumn
+  ): Arrow[(Key, V ew), hm.Ho M xerRequest] = {
 
-    val populateUserRolesAndIp: Arrow[(Key, View), (Option[Set[String]], Option[String])] = {
-      val gizmoduckView: (gd.LookupContext, Set[gd.QueryFields]) =
-        (gd.LookupContext(), Set(gd.QueryFields.Roles))
+    val populateUserRolesAnd p: Arrow[(Key, V ew), (Opt on[Set[Str ng]], Opt on[Str ng])] = {
+      val g zmoduckV ew: (gd.LookupContext, Set[gd.QueryF elds]) =
+        (gd.LookupContext(), Set(gd.QueryF elds.Roles))
 
       val populateUserRoles = Arrow
-        .flatMap[(Key, View), Option[Set[String]]] { _ =>
-          Stitch.collect {
-            CallContext.twitterUserId.map { userId =>
-              compositeOnUserClientColumn.fetcher
-                .callStack(HomeMixerColumn.FetchCallstack)
-                .fetch(userId, gizmoduckView).map(_.v)
+        .flatMap[(Key, V ew), Opt on[Set[Str ng]]] { _ =>
+          St ch.collect {
+            CallContext.tw terUser d.map { user d =>
+              compos eOnUserCl entColumn.fetc r
+                .callStack(Ho M xerColumn.FetchCallstack)
+                .fetch(user d, g zmoduckV ew).map(_.v)
                 .map {
                   _.flatMap(_.roles.map(_.roles.toSet)).getOrElse(Set.empty)
                 }
@@ -90,128 +90,128 @@ class HomeMixerColumn @Inject() (
           }
         }
 
-      val populateIpAddress = Arrow
-        .flatMap[(Key, View), Option[String]](_ =>
-          auditIpClientColumn.fetcher
-            .callStack(HomeMixerColumn.FetchCallstack)
+      val populate pAddress = Arrow
+        .flatMap[(Key, V ew), Opt on[Str ng]](_ =>
+          aud  pCl entColumn.fetc r
+            .callStack(Ho M xerColumn.FetchCallstack)
             .fetch((), ()).map(_.v))
 
-      Arrow.join(
+      Arrow.jo n(
         populateUserRoles,
-        populateIpAddress
+        populate pAddress
       )
     }
 
-    Arrow.zipWithArg(populateUserRolesAndIp).map {
-      case ((key, view), (roles, ipAddress)) =>
-        val deviceContextOpt = Some(
-          hm.DeviceContext(
-            isPolling = CallContext.isPolling,
-            requestContext = view.requestContext,
-            latestControlAvailable = view.latestControlAvailable,
-            autoplayEnabled = view.autoplayEnabled
+    Arrow.z pW hArg(populateUserRolesAnd p).map {
+      case ((key, v ew), (roles,  pAddress)) =>
+        val dev ceContextOpt = So (
+          hm.Dev ceContext(
+             sPoll ng = CallContext. sPoll ng,
+            requestContext = v ew.requestContext,
+            latestControlAva lable = v ew.latestControlAva lable,
+            autoplayEnabled = v ew.autoplayEnabled
           ))
-        val seenTweetIds = view.seenTweetIds.filter(_.nonEmpty)
+        val seenT et ds = v ew.seenT et ds.f lter(_.nonEmpty)
 
         val (product, productContext) = key match {
-          case gql.TimelineKey.HomeTimeline(_) | gql.TimelineKey.HomeTimelineV2(_) =>
+          case gql.T  l neKey.Ho T  l ne(_) | gql.T  l neKey.Ho T  l neV2(_) =>
             (
-              hm.Product.ForYou,
-              hm.ProductContext.ForYou(
-                hm.ForYou(
-                  deviceContextOpt,
-                  seenTweetIds,
-                  view.dspClientContext,
-                  view.pushToHomeTweetId
+              hm.Product.For ,
+              hm.ProductContext.For (
+                hm.For (
+                  dev ceContextOpt,
+                  seenT et ds,
+                  v ew.dspCl entContext,
+                  v ew.pushToHo T et d
                 )
               ))
-          case gql.TimelineKey.HomeLatestTimeline(_) | gql.TimelineKey.HomeLatestTimelineV2(_) =>
+          case gql.T  l neKey.Ho LatestT  l ne(_) | gql.T  l neKey.Ho LatestT  l neV2(_) =>
             (
-              hm.Product.Following,
-              hm.ProductContext.Following(
-                hm.Following(deviceContextOpt, seenTweetIds, view.dspClientContext)))
-          case gql.TimelineKey.CreatorSubscriptionsTimeline(_) =>
+              hm.Product.Follow ng,
+              hm.ProductContext.Follow ng(
+                hm.Follow ng(dev ceContextOpt, seenT et ds, v ew.dspCl entContext)))
+          case gql.T  l neKey.CreatorSubscr pt onsT  l ne(_) =>
             (
-              hm.Product.Subscribed,
-              hm.ProductContext.Subscribed(hm.Subscribed(deviceContextOpt, seenTweetIds)))
-          case _ => throw new UnsupportedOperationException(s"Unknown product: $key")
+              hm.Product.Subscr bed,
+              hm.ProductContext.Subscr bed(hm.Subscr bed(dev ceContextOpt, seenT et ds)))
+          case _ => throw new UnsupportedOperat onExcept on(s"Unknown product: $key")
         }
 
-        val clientContext = pm.ClientContext(
-          userId = CallContext.twitterUserId,
-          guestId = CallContext.guestId,
-          guestIdAds = CallContext.guestIdAds,
-          guestIdMarketing = CallContext.guestIdMarketing,
-          appId = CallContext.clientApplicationId,
-          ipAddress = ipAddress,
+        val cl entContext = pm.Cl entContext(
+          user d = CallContext.tw terUser d,
+          guest d = CallContext.guest d,
+          guest dAds = CallContext.guest dAds,
+          guest dMarket ng = CallContext.guest dMarket ng,
+          app d = CallContext.cl entAppl cat on d,
+           pAddress =  pAddress,
           userAgent = CallContext.userAgent,
           countryCode = CallContext.requestCountryCode,
           languageCode = CallContext.requestLanguageCode,
-          isTwoffice = CallContext.isInternalOrTwoffice,
+           sTwoff ce = CallContext. s nternalOrTwoff ce,
           userRoles = roles,
-          deviceId = CallContext.deviceId,
-          mobileDeviceId = CallContext.mobileDeviceId,
-          mobileDeviceAdId = CallContext.adId,
-          limitAdTracking = CallContext.limitAdTracking
+          dev ce d = CallContext.dev ce d,
+          mob leDev ce d = CallContext.mob leDev ce d,
+          mob leDev ceAd d = CallContext.ad d,
+          l m AdTrack ng = CallContext.l m AdTrack ng
         )
 
-        hm.HomeMixerRequest(
-          clientContext = clientContext,
+        hm.Ho M xerRequest(
+          cl entContext = cl entContext,
           product = product,
-          productContext = Some(productContext),
-          maxResults = Try(view.count.get.toInt).toOption.orElse(HomeMixerColumn.MaxCount),
-          cursor = view.cursor.filter(_.nonEmpty)
+          productContext = So (productContext),
+          maxResults = Try(v ew.count.get.to nt).toOpt on.orElse(Ho M xerColumn.MaxCount),
+          cursor = v ew.cursor.f lter(_.nonEmpty)
         )
     }
   }
 
-  override val fetch: Arrow[(Key, View), Result[Value]] = {
-    val transformThriftIntoPipelineRequest: Arrow[
-      (Key, View),
-      ProductPipelineRequest[HomeMixerRequest]
+  overr de val fetch: Arrow[(Key, V ew), Result[Value]] = {
+    val transformThr ft ntoP pel neRequest: Arrow[
+      (Key, V ew),
+      ProductP pel neRequest[Ho M xerRequest]
     ] = {
       Arrow
-        .identity[(Key, View)]
-        .andThen {
-          createHomeMixerRequestArrow(compositeOnUserClientColumn, auditIpClientColumn)
+        . dent y[(Key, V ew)]
+        .andT n {
+          createHo M xerRequestArrow(compos eOnUserCl entColumn, aud  pCl entColumn)
         }
         .map {
-          case thriftRequest =>
-            val request = homeMixerRequestUnmarshaller(thriftRequest)
-            val params = paramsBuilder.build(
-              clientContext = request.clientContext,
+          case thr ftRequest =>
+            val request = ho M xerRequestUnmarshaller(thr ftRequest)
+            val params = paramsBu lder.bu ld(
+              cl entContext = request.cl entContext,
               product = request.product,
-              featureOverrides =
-                request.debugParams.flatMap(_.featureOverrides).getOrElse(Map.empty),
+              featureOverr des =
+                request.debugParams.flatMap(_.featureOverr des).getOrElse(Map.empty),
             )
-            ProductPipelineRequest(request, params)
+            ProductP pel neRequest(request, params)
         }
     }
 
-    val underlyingProduct: Arrow[
-      ProductPipelineRequest[HomeMixerRequest],
-      ProductPipelineResult[tr.TimelineResponse]
+    val underly ngProduct: Arrow[
+      ProductP pel neRequest[Ho M xerRequest],
+      ProductP pel neResult[tr.T  l neResponse]
     ] = Arrow
-      .identity[ProductPipelineRequest[HomeMixerRequest]]
-      .map { pipelineRequest =>
-        val pipelineArrow = productPipelineRegistry
-          .getProductPipeline[HomeMixerRequest, tr.TimelineResponse](
-            pipelineRequest.request.product)
+      . dent y[ProductP pel neRequest[Ho M xerRequest]]
+      .map { p pel neRequest =>
+        val p pel neArrow = productP pel neReg stry
+          .getProductP pel ne[Ho M xerRequest, tr.T  l neResponse](
+            p pel neRequest.request.product)
           .arrow
-        (pipelineArrow, pipelineRequest)
+        (p pel neArrow, p pel neRequest)
       }.applyArrow
 
-    transformThriftIntoPipelineRequest.andThen(underlyingProduct).map {
+    transformThr ft ntoP pel neRequest.andT n(underly ngProduct).map {
       _.result match {
-        case Some(result) => found(result.timeline)
-        case _ => missing
+        case So (result) => found(result.t  l ne)
+        case _ => m ss ng
       }
     }
   }
 }
 
-object HomeMixerColumn {
-  val Path = "home-mixer/homeMixer.Timeline"
-  private val FetchCallstack = s"$Path:fetch"
-  private val MaxCount: Option[Int] = Some(100)
+object Ho M xerColumn {
+  val Path = "ho -m xer/ho M xer.T  l ne"
+  pr vate val FetchCallstack = s"$Path:fetch"
+  pr vate val MaxCount: Opt on[ nt] = So (100)
 }

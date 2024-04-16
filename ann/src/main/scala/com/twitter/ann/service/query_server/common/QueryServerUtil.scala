@@ -1,34 +1,34 @@
-package com.twitter.ann.service.query_server.common
+package com.tw ter.ann.serv ce.query_server.common
 
-import com.twitter.logging.Logger
-import com.twitter.search.common.file.AbstractFile
-import scala.collection.JavaConverters._
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.search.common.f le.AbstractF le
+ mport scala.collect on.JavaConverters._
 
-object QueryServerUtil {
+object QueryServerUt l {
 
-  private val log = Logger.get("QueryServerUtil")
+  pr vate val log = Logger.get("QueryServerUt l")
 
   /**
-   * Validate if the abstract file (directory) size is within the defined limits.
-   * @param dir Hdfs/Local directory
-   * @param minIndexSizeBytes minimum size of file in bytes (Exclusive)
-   * @param maxIndexSizeBytes minimum size of file in bytes (Exclusive)
-   * @return true if file size within minIndexSizeBytes and maxIndexSizeBytes else false
+   * Val date  f t  abstract f le (d rectory) s ze  s w h n t  def ned l m s.
+   * @param d r Hdfs/Local d rectory
+   * @param m n ndexS zeBytes m n mum s ze of f le  n bytes (Exclus ve)
+   * @param max ndexS zeBytes m n mum s ze of f le  n bytes (Exclus ve)
+   * @return true  f f le s ze w h n m n ndexS zeBytes and max ndexS zeBytes else false
    */
-  def isValidIndexDirSize(
-    dir: AbstractFile,
-    minIndexSizeBytes: Long,
-    maxIndexSizeBytes: Long
+  def  sVal d ndexD rS ze(
+    d r: AbstractF le,
+    m n ndexS zeBytes: Long,
+    max ndexS zeBytes: Long
   ): Boolean = {
-    val recursive = true
-    val dirSize = dir.listFiles(recursive).asScala.map(_.getSizeInBytes).sum
+    val recurs ve = true
+    val d rS ze = d r.l stF les(recurs ve).asScala.map(_.getS ze nBytes).sum
 
-    log.debug(s"Ann index directory ${dir.getPath} size in bytes $dirSize")
+    log.debug(s"Ann  ndex d rectory ${d r.getPath} s ze  n bytes $d rS ze")
 
-    val isValid = (dirSize > minIndexSizeBytes) && (dirSize < maxIndexSizeBytes)
-    if (!isValid) {
-      log.info(s"Ann index directory is invalid ${dir.getPath} size in bytes $dirSize")
+    val  sVal d = (d rS ze > m n ndexS zeBytes) && (d rS ze < max ndexS zeBytes)
+     f (! sVal d) {
+      log. nfo(s"Ann  ndex d rectory  s  nval d ${d r.getPath} s ze  n bytes $d rS ze")
     }
-    isValid
+     sVal d
   }
 }

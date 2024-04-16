@@ -1,77 +1,77 @@
-package com.twitter.search.earlybird.common;
+package com.tw ter.search.earlyb rd.common;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.thrift.TException;
-import org.apache.thrift.TSerializer;
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.slf4j.Logger;
+ mport org.apac .commons.codec.b nary.Base64;
+ mport org.apac .thr ft.TExcept on;
+ mport org.apac .thr ft.TSer al zer;
+ mport org.apac .thr ft.protocol.TB naryProtocol;
+ mport org.slf4j.Logger;
 
-import com.twitter.search.common.util.FinagleUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
+ mport com.tw ter.search.common.ut l.F nagleUt l;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
 
 /**
- * This class logs all requests that misses either the finagle Id or the client Id.
+ * T  class logs all requests that m sses e  r t  f nagle  d or t  cl ent  d.
  */
-public final class UnknownClientRequestForLogging {
-  private static final Logger GENERAL_LOG = org.slf4j.LoggerFactory.getLogger(
-      UnknownClientRequestForLogging.class);
-  private static final Logger LOG = org.slf4j.LoggerFactory.getLogger(
-      UnknownClientRequestForLogging.class.getName() + ".unknownClientRequests");
+publ c f nal class UnknownCl entRequestForLogg ng {
+  pr vate stat c f nal Logger GENERAL_LOG = org.slf4j.LoggerFactory.getLogger(
+      UnknownCl entRequestForLogg ng.class);
+  pr vate stat c f nal Logger LOG = org.slf4j.LoggerFactory.getLogger(
+      UnknownCl entRequestForLogg ng.class.getNa () + ".unknownCl entRequests");
 
-  private final String logLine;
-  private final EarlybirdRequest request;
-  private final String clientId;
-  private final String finagleId;
+  pr vate f nal Str ng logL ne;
+  pr vate f nal Earlyb rdRequest request;
+  pr vate f nal Str ng cl ent d;
+  pr vate f nal Str ng f nagle d;
 
-  private final Base64 base64 = new Base64();
-  private final TSerializer serializer = new TSerializer(new TBinaryProtocol.Factory());
+  pr vate f nal Base64 base64 = new Base64();
+  pr vate f nal TSer al zer ser al zer = new TSer al zer(new TB naryProtocol.Factory());
 
-  private UnknownClientRequestForLogging(
-      String logLine,
-      EarlybirdRequest request,
-      String clientId,
-      String finagleId) {
+  pr vate UnknownCl entRequestForLogg ng(
+      Str ng logL ne,
+      Earlyb rdRequest request,
+      Str ng cl ent d,
+      Str ng f nagle d) {
 
-    this.logLine = logLine;
-    this.request = request;
-    this.clientId = clientId;
-    this.finagleId = finagleId;
+    t .logL ne = logL ne;
+    t .request = request;
+    t .cl ent d = cl ent d;
+    t .f nagle d = f nagle d;
   }
 
   /**
-   * Returns an UnknownClientRequestForLogging instance if a client ID is not set on the given
-   * earlybird request. If the request has a client ID set, {@code null} is returned.
+   * Returns an UnknownCl entRequestForLogg ng  nstance  f a cl ent  D  s not set on t  g ven
+   * earlyb rd request.  f t  request has a cl ent  D set, {@code null}  s returned.
    *
-   * @param logLine Additional information to propagate to the log file, when logging this request.
-   * @param request The earlybird request.
+   * @param logL ne Add  onal  nformat on to propagate to t  log f le, w n logg ng t  request.
+   * @param request T  earlyb rd request.
    */
-  public static UnknownClientRequestForLogging unknownClientRequest(
-      String logLine, EarlybirdRequest request) {
-    String clientId = ClientIdUtil.getClientIdFromRequest(request);
-    String finagleId = FinagleUtil.getFinagleClientName();
+  publ c stat c UnknownCl entRequestForLogg ng unknownCl entRequest(
+      Str ng logL ne, Earlyb rdRequest request) {
+    Str ng cl ent d = Cl ent dUt l.getCl ent dFromRequest(request);
+    Str ng f nagle d = F nagleUt l.getF nagleCl entNa ();
 
-    if (clientId.equals(ClientIdUtil.UNSET_CLIENT_ID)) {
-      return new UnknownClientRequestForLogging(logLine, request, clientId, finagleId);
+     f (cl ent d.equals(Cl ent dUt l.UNSET_CL ENT_ D)) {
+      return new UnknownCl entRequestForLogg ng(logL ne, request, cl ent d, f nagle d);
     } else {
       return null;
     }
   }
 
-  private String asBase64() {
+  pr vate Str ng asBase64() {
     try {
-      // Need to make a deepCopy() here, because the request may still be in use (e.g. if we are
-      // doing this in the pre-logger), and we should not be modifying crucial fields on the
-      // EarlybirdRequest in place.
-      EarlybirdRequest clearedRequest = request.deepCopy();
-      clearedRequest.unsetClientRequestTimeMs();
-      return base64.encodeToString(serializer.serialize(clearedRequest));
-    } catch (TException e) {
-      GENERAL_LOG.error("Failed to serialize request for logging.", e);
-      return "failed_to_serialize";
+      // Need to make a deepCopy()  re, because t  request may st ll be  n use (e.g.  f   are
+      // do ng t   n t  pre-logger), and   should not be mod fy ng cruc al f elds on t 
+      // Earlyb rdRequest  n place.
+      Earlyb rdRequest clearedRequest = request.deepCopy();
+      clearedRequest.unsetCl entRequestT  Ms();
+      return base64.encodeToStr ng(ser al zer.ser al ze(clearedRequest));
+    } catch (TExcept on e) {
+      GENERAL_LOG.error("Fa led to ser al ze request for logg ng.", e);
+      return "fa led_to_ser al ze";
     }
   }
 
-  public void log() {
-    LOG.info("{},{},{},{}", clientId, finagleId, logLine, asBase64());
+  publ c vo d log() {
+    LOG. nfo("{},{},{},{}", cl ent d, f nagle d, logL ne, asBase64());
   }
 }

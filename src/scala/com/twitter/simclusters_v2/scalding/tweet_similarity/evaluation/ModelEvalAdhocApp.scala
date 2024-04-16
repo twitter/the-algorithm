@@ -1,91 +1,91 @@
-package com.twitter.simclusters_v2.scalding.tweet_similarity.evaluation
+package com.tw ter.s mclusters_v2.scald ng.t et_s m lar y.evaluat on
 
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.DailySuffixFeatureSource
-import com.twitter.ml.api.DataSetPipe
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.scalding._
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.simclusters_v2.tweet_similarity.TweetSimilarityFeatures
-import com.twitter.twml.runtime.scalding.TensorflowBatchPredictor
-import java.util.TimeZone
+ mport com.tw ter.ml.ap .Feature.Cont nuous
+ mport com.tw ter.ml.ap .Da lySuff xFeatureS ce
+ mport com.tw ter.ml.ap .DataSetP pe
+ mport com.tw ter.ml.ap .R chDataRecord
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng.typed.TypedP pe
+ mport com.tw ter.scald ng_ nternal.job.Tw terExecut onApp
+ mport com.tw ter.s mclusters_v2.t et_s m lar y.T etS m lar yFeatures
+ mport com.tw ter.twml.runt  .scald ng.TensorflowBatchPred ctor
+ mport java.ut l.T  Zone
 
 /**
- * Scalding execution app for scoring a Dataset against an exported Tensorflow model.
+ * Scald ng execut on app for scor ng a Dataset aga nst an exported Tensorflow model.
 
-** Arguments:
- * dataset_path - Path for the dataset on hdfs
- * date - Date for the dataset paths, required if Daily dataset.
- * model_source - Path of the exported model on HDFS. Must start with hdfs:// scheme.
- * output_path - Path of the output result file
+** Argu nts:
+ * dataset_path - Path for t  dataset on hdfs
+ * date - Date for t  dataset paths, requ red  f Da ly dataset.
+ * model_s ce - Path of t  exported model on HDFS. Must start w h hdfs:// sc  .
+ * output_path - Path of t  output result f le
 
-scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/tweet_similarity:model_eval-adhoc \
+scald ng remote run --target src/scala/com/tw ter/s mclusters_v2/scald ng/t et_s m lar y:model_eval-adhoc \
 --user cassowary \
---submitter hadoopnest2.atla.twitter.com \
---main-class com.twitter.simclusters_v2.scalding.tweet_similarity.ModelEvalAdhocApp -- \
+--subm ter hadoopnest2.atla.tw ter.com \
+--ma n-class com.tw ter.s mclusters_v2.scald ng.t et_s m lar y.ModelEvalAdhocApp -- \
 --date 2020-02-19 \
---dataset_path /user/cassowary/adhoc/training_data/2020-02-19_class_balanced/test \
---model_path hdfs:///user/cassowary/tweet_similarity/2020-02-07-15-20-15/exported_models/1581253926 \
---output_path /user/cassowary/adhoc/training_data/2020-02-19_class_balanced/test/prediction_v1
+--dataset_path /user/cassowary/adhoc/tra n ng_data/2020-02-19_class_balanced/test \
+--model_path hdfs:///user/cassowary/t et_s m lar y/2020-02-07-15-20-15/exported_models/1581253926 \
+--output_path /user/cassowary/adhoc/tra n ng_data/2020-02-19_class_balanced/test/pred ct on_v1
  **/
-object ModelEvalAdhocApp extends TwitterExecutionApp {
-  implicit val timeZone: TimeZone = DateOps.UTC
-  implicit val dateParser: DateParser = DateParser.default
+object ModelEvalAdhocApp extends Tw terExecut onApp {
+   mpl c  val t  Zone: T  Zone = DateOps.UTC
+   mpl c  val dateParser: DateParser = DateParser.default
 
   /**
-   * Get predictor for the given model path
-   * @param modelName name of the model
-   * @param modelSource path of the exported model on HDFS. Must start with hdfs:// scheme.
+   * Get pred ctor for t  g ven model path
+   * @param modelNa  na  of t  model
+   * @param modelS ce path of t  exported model on HDFS. Must start w h hdfs:// sc  .
    * @return
    */
-  def getPredictor(modelName: String, modelSource: String): TensorflowBatchPredictor = {
-    val defaultInputNode = "request:0"
+  def getPred ctor(modelNa : Str ng, modelS ce: Str ng): TensorflowBatchPred ctor = {
+    val default nputNode = "request:0"
     val defaultOutputNode = "response:0"
-    TensorflowBatchPredictor(modelName, modelSource, defaultInputNode, defaultOutputNode)
+    TensorflowBatchPred ctor(modelNa , modelS ce, default nputNode, defaultOutputNode)
   }
 
   /**
-   * Given input pipe and predictor, return the predictions in TypedPipe
-   * @param dataset dataset for prediction
-   * @param batchPredictor predictor
+   * G ven  nput p pe and pred ctor, return t  pred ct ons  n TypedP pe
+   * @param dataset dataset for pred ct on
+   * @param batchPred ctor pred ctor
    * @return
    */
-  def getPrediction(
-    dataset: DataSetPipe,
-    batchPredictor: TensorflowBatchPredictor
-  ): TypedPipe[(Long, Long, Boolean, Double, Double)] = {
+  def getPred ct on(
+    dataset: DataSetP pe,
+    batchPred ctor: TensorflowBatchPred ctor
+  ): TypedP pe[(Long, Long, Boolean, Double, Double)] = {
     val featureContext = dataset.featureContext
-    val predictionFeature = new Continuous("output")
+    val pred ct onFeature = new Cont nuous("output")
 
-    batchPredictor
-      .predict(dataset.records)
+    batchPred ctor
+      .pred ct(dataset.records)
       .map {
-        case (originalDataRecord, predictedDataRecord) =>
-          val prediction = new RichDataRecord(predictedDataRecord, featureContext)
-            .getFeatureValue(predictionFeature).toDouble
-          val richDataRecord = new RichDataRecord(originalDataRecord, featureContext)
+        case (or g nalDataRecord, pred ctedDataRecord) =>
+          val pred ct on = new R chDataRecord(pred ctedDataRecord, featureContext)
+            .getFeatureValue(pred ct onFeature).toDouble
+          val r chDataRecord = new R chDataRecord(or g nalDataRecord, featureContext)
           (
-            richDataRecord.getFeatureValue(TweetSimilarityFeatures.QueryTweetId).toLong,
-            richDataRecord.getFeatureValue(TweetSimilarityFeatures.CandidateTweetId).toLong,
-            richDataRecord.getFeatureValue(TweetSimilarityFeatures.Label).booleanValue,
-            richDataRecord.getFeatureValue(TweetSimilarityFeatures.CosineSimilarity).toDouble,
-            prediction
+            r chDataRecord.getFeatureValue(T etS m lar yFeatures.QueryT et d).toLong,
+            r chDataRecord.getFeatureValue(T etS m lar yFeatures.Cand dateT et d).toLong,
+            r chDataRecord.getFeatureValue(T etS m lar yFeatures.Label).booleanValue,
+            r chDataRecord.getFeatureValue(T etS m lar yFeatures.Cos neS m lar y).toDouble,
+            pred ct on
           )
       }
   }
 
-  override def job: Execution[Unit] =
-    Execution.withId { implicit uniqueId =>
-      Execution.withArgs { args: Args =>
-        implicit val dateRange: DateRange = DateRange.parse(args.list("date"))
-        val outputPath: String = args("output_path")
-        val dataset: DataSetPipe = DailySuffixFeatureSource(args("dataset_path")).read
-        val modelSource: String = args("model_path")
-        val modelName: String = "tweet_similarity"
+  overr de def job: Execut on[Un ] =
+    Execut on.w h d {  mpl c  un que d =>
+      Execut on.w hArgs { args: Args =>
+         mpl c  val dateRange: DateRange = DateRange.parse(args.l st("date"))
+        val outputPath: Str ng = args("output_path")
+        val dataset: DataSetP pe = Da lySuff xFeatureS ce(args("dataset_path")).read
+        val modelS ce: Str ng = args("model_path")
+        val modelNa : Str ng = "t et_s m lar y"
 
-        getPrediction(dataset, getPredictor(modelName, modelSource))
-          .writeExecution(TypedTsv[(Long, Long, Boolean, Double, Double)](outputPath))
+        getPred ct on(dataset, getPred ctor(modelNa , modelS ce))
+          .wr eExecut on(TypedTsv[(Long, Long, Boolean, Double, Double)](outputPath))
       }
     }
 }

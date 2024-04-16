@@ -1,38 +1,38 @@
-resources(
-    name = "sql",
-    sources = ["bq.sql"],
+res ces(
+    na  = "sql",
+    s ces = ["bq.sql"],
 )
 
-python3_library(
-    name = "faiss_indexing",
-    sources = ["**/*.py"],
-    tags = ["bazel-compatible"],
-    dependencies = [
+python3_l brary(
+    na  = "fa ss_ ndex ng",
+    s ces = ["**/*.py"],
+    tags = ["bazel-compat ble"],
+    dependenc es = [
         ":sql",
-        "3rdparty/python/apache-beam:default",
-        "3rdparty/python/faiss-gpu:default",
+        "3rdparty/python/apac -beam:default",
+        "3rdparty/python/fa ss-gpu:default",
         "3rdparty/python/gcsfs:default",
-        "3rdparty/python/google-cloud-bigquery:default",
+        "3rdparty/python/google-cloud-b gquery:default",
         "3rdparty/python/google-cloud-storage",
         "3rdparty/python/numpy:default",
         "3rdparty/python/pandas:default",
         "3rdparty/python/pandas-gbq:default",
         "3rdparty/python/pyarrow:default",
-        "src/python/twitter/ml/common/apache_beam",
+        "src/python/tw ter/ml/common/apac _beam",
     ],
 )
 
-python37_binary(
-    name = "faiss_indexing_bin",
-    sources = ["faiss_index_bq_dataset.py"],
+python37_b nary(
+    na  = "fa ss_ ndex ng_b n",
+    s ces = ["fa ss_ ndex_bq_dataset.py"],
     platforms = [
         "current",
-        "linux_x86_64",
+        "l nux_x86_64",
     ],
-    tags = ["no-mypy"],
-    zip_safe = False,
-    dependencies = [
-        ":faiss_indexing",
-        "3rdparty/python/_closures/ann/src/main/python/dataflow:faiss_indexing_bin",
+    tags = ["no- py"],
+    z p_safe = False,
+    dependenc es = [
+        ":fa ss_ ndex ng",
+        "3rdparty/python/_closures/ann/src/ma n/python/dataflow:fa ss_ ndex ng_b n",
     ],
 )

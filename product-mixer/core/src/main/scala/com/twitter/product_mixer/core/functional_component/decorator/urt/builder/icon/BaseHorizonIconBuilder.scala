@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.icon
+package com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. con
 
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.HorizonIcon
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. con.Hor zon con
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-trait BaseHorizonIconBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]] {
+tra  BaseHor zon conBu lder[-Query <: P pel neQuery, -Cand date <: Un versalNoun[Any]] {
 
   def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Option[HorizonIcon]
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): Opt on[Hor zon con]
 }

@@ -1,53 +1,53 @@
-package com.twitter.timelineranker.server
+package com.tw ter.t  l neranker.server
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.logging.Logger
-import com.twitter.timelineranker.model._
-import com.twitter.timelines.warmup.TwitterServerWarmup
-import com.twitter.timelineservice.model.TimelineId
-import com.twitter.timelineservice.model.core.TimelineKind
-import com.twitter.timelineranker.config.TimelineRankerConstants
-import com.twitter.timelineranker.thriftscala.{TimelineRanker => ThriftTimelineRanker}
-import com.twitter.util.Future
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.t  l neranker.model._
+ mport com.tw ter.t  l nes.warmup.Tw terServerWarmup
+ mport com.tw ter.t  l neserv ce.model.T  l ne d
+ mport com.tw ter.t  l neserv ce.model.core.T  l neK nd
+ mport com.tw ter.t  l neranker.conf g.T  l neRankerConstants
+ mport com.tw ter.t  l neranker.thr ftscala.{T  l neRanker => Thr ftT  l neRanker}
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Durat on
 
 object Warmup {
-  val WarmupForwardingTime: Duration = 25.seconds
+  val WarmupForward ngT  : Durat on = 25.seconds
 }
 
 class Warmup(
-  localInstance: TimelineRanker,
-  forwardingClient: ThriftTimelineRanker.MethodPerEndpoint,
-  override val logger: Logger)
-    extends TwitterServerWarmup {
-  override val WarmupClientId: ClientId = ClientId(TimelineRankerConstants.WarmupClientName)
-  override val NumWarmupRequests = 20
-  override val MinSuccessfulRequests = 10
+  local nstance: T  l neRanker,
+  forward ngCl ent: Thr ftT  l neRanker. thodPerEndpo nt,
+  overr de val logger: Logger)
+    extends Tw terServerWarmup {
+  overr de val WarmupCl ent d: Cl ent d = Cl ent d(T  l neRankerConstants.WarmupCl entNa )
+  overr de val NumWarmupRequests = 20
+  overr de val M nSuccessfulRequests = 10
 
-  private[this] val warmupUserId = Math.abs(scala.util.Random.nextLong())
-  private[server] val reverseChronQuery = ReverseChronTimelineQuery(
-    id = new TimelineId(warmupUserId, TimelineKind.home),
-    maxCount = Some(20),
-    range = Some(TweetIdRange.default)
-  ).toThrift
-  private[server] val recapQuery = RecapQuery(
-    userId = warmupUserId,
-    maxCount = Some(20),
-    range = Some(TweetIdRange.default)
-  ).toThriftRecapQuery
+  pr vate[t ] val warmupUser d = Math.abs(scala.ut l.Random.nextLong())
+  pr vate[server] val reverseChronQuery = ReverseChronT  l neQuery(
+     d = new T  l ne d(warmupUser d, T  l neK nd.ho ),
+    maxCount = So (20),
+    range = So (T et dRange.default)
+  ).toThr ft
+  pr vate[server] val recapQuery = RecapQuery(
+    user d = warmupUser d,
+    maxCount = So (20),
+    range = So (T et dRange.default)
+  ).toThr ftRecapQuery
 
-  override def sendSingleWarmupRequest(): Future[Unit] = {
+  overr de def sendS ngleWarmupRequest(): Future[Un ] = {
     val localWarmups = Seq(
-      localInstance.getTimelines(Seq(reverseChronQuery)),
-      localInstance.getRecycledTweetCandidates(Seq(recapQuery))
+      local nstance.getT  l nes(Seq(reverseChronQuery)),
+      local nstance.getRecycledT etCand dates(Seq(recapQuery))
     )
 
-    // send forwarding requests but ignore failures
-    forwardingClient.getTimelines(Seq(reverseChronQuery)).unit.handle {
-      case e => logger.warning(e, "fowarding request failed")
+    // send forward ng requests but  gnore fa lures
+    forward ngCl ent.getT  l nes(Seq(reverseChronQuery)).un .handle {
+      case e => logger.warn ng(e, "foward ng request fa led")
     }
 
-    Future.join(localWarmups).unit
+    Future.jo n(localWarmups).un 
   }
 }

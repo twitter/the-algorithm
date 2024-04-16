@@ -1,98 +1,98 @@
-package com.twitter.ann.hnsw;
+package com.tw ter.ann.hnsw;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+ mport java. o. OExcept on;
+ mport java. o. nputStream;
+ mport java. o.OutputStream;
+ mport java.n o.ByteBuffer;
+ mport java.ut l.HashMap;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
+ mport java.ut l.stream.Collectors;
 
-import com.google.common.collect.ImmutableList;
+ mport com.google.common.collect. mmutableL st;
 
-import org.apache.thrift.TDeserializer;
-import org.apache.thrift.TException;
-import org.apache.thrift.TSerializer;
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.apache.thrift.protocol.TProtocol;
-import org.apache.thrift.transport.TIOStreamTransport;
-import org.apache.thrift.transport.TTransportException;
+ mport org.apac .thr ft.TDeser al zer;
+ mport org.apac .thr ft.TExcept on;
+ mport org.apac .thr ft.TSer al zer;
+ mport org.apac .thr ft.protocol.TB naryProtocol;
+ mport org.apac .thr ft.protocol.TProtocol;
+ mport org.apac .thr ft.transport.T OStreamTransport;
+ mport org.apac .thr ft.transport.TTransportExcept on;
 
-import com.twitter.ann.common.thriftjava.HnswGraphEntry;
-import com.twitter.ann.common.thriftjava.HnswInternalIndexMetadata;
-import com.twitter.bijection.Injection;
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec;
-import com.twitter.search.common.file.AbstractFile;
+ mport com.tw ter.ann.common.thr ftjava.HnswGraphEntry;
+ mport com.tw ter.ann.common.thr ftjava.Hnsw nternal ndex tadata;
+ mport com.tw ter.b ject on. nject on;
+ mport com.tw ter. d aserv ces.commons.codec.ArrayByteBufferCodec;
+ mport com.tw ter.search.common.f le.AbstractF le;
 
-public final class HnswIndexIOUtil {
-  private HnswIndexIOUtil() {
+publ c f nal class Hnsw ndex OUt l {
+  pr vate Hnsw ndex OUt l() {
   }
 
   /**
-   * Save thrift object in file
+   * Save thr ft object  n f le
    */
-  public static <T> void saveMetadata(
-      HnswMeta<T> graphMeta,
-      int efConstruction,
-      int maxM,
-      int numElements,
-      Injection<T, byte[]> injection,
+  publ c stat c <T> vo d save tadata(
+      Hnsw ta<T> graph ta,
+       nt efConstruct on,
+       nt maxM,
+       nt numEle nts,
+       nject on<T, byte[]>  nject on,
       OutputStream outputStream
-  ) throws IOException, TException {
-    final int maxLevel = graphMeta.getMaxLevel();
-    final HnswInternalIndexMetadata metadata = new HnswInternalIndexMetadata(
+  ) throws  OExcept on, TExcept on {
+    f nal  nt maxLevel = graph ta.getMaxLevel();
+    f nal Hnsw nternal ndex tadata  tadata = new Hnsw nternal ndex tadata(
         maxLevel,
-        efConstruction,
+        efConstruct on,
         maxM,
-        numElements
+        numEle nts
     );
 
-    if (graphMeta.getEntryPoint().isPresent()) {
-      metadata.setEntryPoint(injection.apply(graphMeta.getEntryPoint().get()));
+     f (graph ta.getEntryPo nt(). sPresent()) {
+       tadata.setEntryPo nt( nject on.apply(graph ta.getEntryPo nt().get()));
     }
-    final TSerializer serializer = new TSerializer(new TBinaryProtocol.Factory());
-    outputStream.write(serializer.serialize(metadata));
+    f nal TSer al zer ser al zer = new TSer al zer(new TB naryProtocol.Factory());
+    outputStream.wr e(ser al zer.ser al ze( tadata));
     outputStream.close();
   }
 
   /**
-   * Load Hnsw index metadata
+   * Load Hnsw  ndex  tadata
    */
-  public static HnswInternalIndexMetadata loadMetadata(AbstractFile file)
-      throws IOException, TException {
-    final HnswInternalIndexMetadata obj = new HnswInternalIndexMetadata();
-    final TDeserializer deserializer = new TDeserializer(new TBinaryProtocol.Factory());
-    deserializer.deserialize(obj, file.getByteSource().read());
+  publ c stat c Hnsw nternal ndex tadata load tadata(AbstractF le f le)
+      throws  OExcept on, TExcept on {
+    f nal Hnsw nternal ndex tadata obj = new Hnsw nternal ndex tadata();
+    f nal TDeser al zer deser al zer = new TDeser al zer(new TB naryProtocol.Factory());
+    deser al zer.deser al ze(obj, f le.getByteS ce().read());
     return obj;
   }
 
   /**
-   * Load Hnsw graph entries from file
+   * Load Hnsw graph entr es from f le
    */
-  public static <T> Map<HnswNode<T>, ImmutableList<T>> loadHnswGraph(
-      AbstractFile file,
-      Injection<T, byte[]> injection,
-      int numElements
-  ) throws IOException, TException {
-    final InputStream stream = file.getByteSource().openBufferedStream();
-    final TProtocol protocol = new TBinaryProtocol(new TIOStreamTransport(stream));
-    final Map<HnswNode<T>, ImmutableList<T>> graph =
-        new HashMap<>(numElements);
-    while (true) {
+  publ c stat c <T> Map<HnswNode<T>,  mmutableL st<T>> loadHnswGraph(
+      AbstractF le f le,
+       nject on<T, byte[]>  nject on,
+       nt numEle nts
+  ) throws  OExcept on, TExcept on {
+    f nal  nputStream stream = f le.getByteS ce().openBufferedStream();
+    f nal TProtocol protocol = new TB naryProtocol(new T OStreamTransport(stream));
+    f nal Map<HnswNode<T>,  mmutableL st<T>> graph =
+        new HashMap<>(numEle nts);
+    wh le (true) {
       try {
-        final HnswGraphEntry entry = new HnswGraphEntry();
+        f nal HnswGraphEntry entry = new HnswGraphEntry();
         entry.read(protocol);
-        final HnswNode<T> node = HnswNode.from(entry.level,
-            injection.invert(ArrayByteBufferCodec.decode(entry.key)).get());
-        final List<T> list = entry.getNeighbours().stream()
-            .map(bb -> injection.invert(ArrayByteBufferCodec.decode(bb)).get())
-            .collect(Collectors.toList());
-        graph.put(node, ImmutableList.copyOf(list.iterator()));
-      } catch (TException e) {
-        if (e instanceof TTransportException
-            && TTransportException.class.cast(e).getType() == TTransportException.END_OF_FILE) {
+        f nal HnswNode<T> node = HnswNode.from(entry.level,
+             nject on. nvert(ArrayByteBufferCodec.decode(entry.key)).get());
+        f nal L st<T> l st = entry.getNe ghb s().stream()
+            .map(bb ->  nject on. nvert(ArrayByteBufferCodec.decode(bb)).get())
+            .collect(Collectors.toL st());
+        graph.put(node,  mmutableL st.copyOf(l st. erator()));
+      } catch (TExcept on e) {
+         f (e  nstanceof TTransportExcept on
+            && TTransportExcept on.class.cast(e).getType() == TTransportExcept on.END_OF_F LE) {
           stream.close();
           break;
         }
@@ -105,29 +105,29 @@ public final class HnswIndexIOUtil {
   }
 
   /**
-   * Save hnsw graph in file
+   * Save hnsw graph  n f le
    *
-   * @return number of keys in the graph
+   * @return number of keys  n t  graph
    */
-  public static <T> int saveHnswGraphEntries(
-      Map<HnswNode<T>, ImmutableList<T>> graph,
+  publ c stat c <T>  nt saveHnswGraphEntr es(
+      Map<HnswNode<T>,  mmutableL st<T>> graph,
       OutputStream outputStream,
-      Injection<T, byte[]> injection
-  ) throws IOException, TException {
-    final TProtocol protocol = new TBinaryProtocol(new TIOStreamTransport(outputStream));
-    final Set<HnswNode<T>> nodes = graph.keySet();
+       nject on<T, byte[]>  nject on
+  ) throws  OExcept on, TExcept on {
+    f nal TProtocol protocol = new TB naryProtocol(new T OStreamTransport(outputStream));
+    f nal Set<HnswNode<T>> nodes = graph.keySet();
     for (HnswNode<T> node : nodes) {
-      final HnswGraphEntry entry = new HnswGraphEntry();
+      f nal HnswGraphEntry entry = new HnswGraphEntry();
       entry.setLevel(node.level);
-      entry.setKey(injection.apply(node.item));
-      final List<ByteBuffer> nn = graph.getOrDefault(node, ImmutableList.of()).stream()
-          .map(t -> ByteBuffer.wrap(injection.apply(t)))
-          .collect(Collectors.toList());
-      entry.setNeighbours(nn);
-      entry.write(protocol);
+      entry.setKey( nject on.apply(node. em));
+      f nal L st<ByteBuffer> nn = graph.getOrDefault(node,  mmutableL st.of()).stream()
+          .map(t -> ByteBuffer.wrap( nject on.apply(t)))
+          .collect(Collectors.toL st());
+      entry.setNe ghb s(nn);
+      entry.wr e(protocol);
     }
 
     outputStream.close();
-    return nodes.size();
+    return nodes.s ze();
   }
 }

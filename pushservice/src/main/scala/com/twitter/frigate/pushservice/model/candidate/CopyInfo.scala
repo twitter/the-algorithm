@@ -1,33 +1,33 @@
-package com.twitter.frigate.pushservice.model.candidate
+package com.tw ter.fr gate.pushserv ce.model.cand date
 
-import com.twitter.frigate.common.util.MRPushCopy
-import com.twitter.frigate.common.util.MrPushCopyObjects
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.util.CandidateUtil
+ mport com.tw ter.fr gate.common.ut l.MRPushCopy
+ mport com.tw ter.fr gate.common.ut l.MrPushCopyObjects
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.ut l.Cand dateUt l
 
-case class CopyIds(
-  pushCopyId: Option[Int] = None,
-  ntabCopyId: Option[Int] = None,
-  aggregationId: Option[String] = None)
+case class Copy ds(
+  pushCopy d: Opt on[ nt] = None,
+  ntabCopy d: Opt on[ nt] = None,
+  aggregat on d: Opt on[Str ng] = None)
 
-trait CopyInfo {
-  self: PushCandidate =>
+tra  Copy nfo {
+  self: PushCand date =>
 
-  import com.twitter.frigate.data_pipeline.common.FrigateNotificationUtil._
+   mport com.tw ter.fr gate.data_p pel ne.common.Fr gateNot f cat onUt l._
 
-  def getPushCopy: Option[MRPushCopy] =
-    pushCopyId match {
-      case Some(pushCopyId) => MrPushCopyObjects.getCopyFromId(pushCopyId)
+  def getPushCopy: Opt on[MRPushCopy] =
+    pushCopy d match {
+      case So (pushCopy d) => MrPushCopyObjects.getCopyFrom d(pushCopy d)
       case _ =>
         crt2PushCopy(
           commonRecType,
-          CandidateUtil.getSocialContextActionsFromCandidate(self).size
+          Cand dateUt l.getSoc alContextAct onsFromCand date(self).s ze
         )
     }
 
-  def pushCopyId: Option[Int]
+  def pushCopy d: Opt on[ nt]
 
-  def ntabCopyId: Option[Int]
+  def ntabCopy d: Opt on[ nt]
 
-  def copyAggregationId: Option[String]
+  def copyAggregat on d: Opt on[Str ng]
 }

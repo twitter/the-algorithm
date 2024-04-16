@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.features
+package com.tw ter.follow_recom ndat ons.common.features
 
-import com.twitter.follow_recommendations.common.models.GeohashAndCountryCode
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.follow_recom ndat ons.common.models.GeohashAndCountryCode
+ mport com.tw ter.product_m xer.core.feature.FeatureW hDefaultOnFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-case object LocationFeature
-    extends FeatureWithDefaultOnFailure[PipelineQuery, Option[GeohashAndCountryCode]] {
-  override val defaultValue: Option[GeohashAndCountryCode] = None
+case object Locat onFeature
+    extends FeatureW hDefaultOnFa lure[P pel neQuery, Opt on[GeohashAndCountryCode]] {
+  overr de val defaultValue: Opt on[GeohashAndCountryCode] = None
 }

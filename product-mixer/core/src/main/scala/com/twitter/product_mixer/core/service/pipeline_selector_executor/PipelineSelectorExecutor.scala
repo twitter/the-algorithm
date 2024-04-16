@@ -1,48 +1,48 @@
-package com.twitter.product_mixer.core.service.pipeline_selector_executor
+package com.tw ter.product_m xer.core.serv ce.p pel ne_selector_executor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.logging.Logging
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PlatformIdentifier
-import com.twitter.product_mixer.core.pipeline.Pipeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.InvalidPipelineSelected
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.stitch.Arrow
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Platform dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel ne
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure. nval dP pel neSelected
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.st ch.Arrow
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class PipelineSelectorExecutor @Inject() (override val statsReceiver: StatsReceiver)
+@S ngleton
+class P pel neSelectorExecutor @ nject() (overr de val statsRece ver: StatsRece ver)
     extends Executor
-    with Logging {
+    w h Logg ng {
 
-  val identifier: ComponentIdentifier = PlatformIdentifier("PipelineSelector")
+  val  dent f er: Component dent f er = Platform dent f er("P pel neSelector")
 
-  def arrow[Query <: PipelineQuery, Response](
-    pipelineByIdentifier: Map[ComponentIdentifier, Pipeline[Query, Response]],
-    pipelineSelector: Query => ComponentIdentifier,
+  def arrow[Query <: P pel neQuery, Response](
+    p pel neBy dent f er: Map[Component dent f er, P pel ne[Query, Response]],
+    p pel neSelector: Query => Component dent f er,
     context: Executor.Context
-  ): Arrow[Query, PipelineSelectorExecutorResult] = {
+  ): Arrow[Query, P pel neSelectorExecutorResult] = {
 
-    val validateSelectedPipelineExists = Arrow
-      .map(pipelineSelector)
-      .map { chosenIdentifier =>
-        if (pipelineByIdentifier.contains(chosenIdentifier)) {
-          PipelineSelectorExecutorResult(chosenIdentifier)
+    val val dateSelectedP pel neEx sts = Arrow
+      .map(p pel neSelector)
+      .map { chosen dent f er =>
+         f (p pel neBy dent f er.conta ns(chosen dent f er)) {
+          P pel neSelectorExecutorResult(chosen dent f er)
         } else {
-          // throwing instead of returning a `Throw(_)` and then `.lowerFromTry` because this is an exceptional case and we want to emphasize that by explicitly throwing
-          throw PipelineFailure(
-            InvalidPipelineSelected,
-            s"${context.componentStack.peek} attempted to select $chosenIdentifier",
-            // the `componentStack` includes the missing pipeline so it can show up in metrics easier
-            componentStack = Some(context.componentStack.push(chosenIdentifier))
+          // throw ng  nstead of return ng a `Throw(_)` and t n `.lo rFromTry` because t   s an except onal case and   want to emphas ze that by expl c ly throw ng
+          throw P pel neFa lure(
+             nval dP pel neSelected,
+            s"${context.componentStack.peek} attempted to select $chosen dent f er",
+            // t  `componentStack`  ncludes t  m ss ng p pel ne so   can show up  n  tr cs eas er
+            componentStack = So (context.componentStack.push(chosen dent f er))
           )
         }
       }
 
-    wrapWithErrorHandling(context, identifier)(validateSelectedPipelineExists)
+    wrapW hErrorHandl ng(context,  dent f er)(val dateSelectedP pel neEx sts)
   }
 }

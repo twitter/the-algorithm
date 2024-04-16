@@ -1,7 +1,7 @@
-package com.twitter.timelines.prediction.features.ppmi
+package com.tw ter.t  l nes.pred ct on.features.ppm 
 
-import com.twitter.ml.api.Feature.Continuous
+ mport com.tw ter.ml.ap .Feature.Cont nuous
 
-object PpmiDataRecordFeatures {
-  val PPMI_SCORE = new Continuous("ppmi.source_author.score")
+object Ppm DataRecordFeatures {
+  val PPM _SCORE = new Cont nuous("ppm .s ce_author.score")
 }

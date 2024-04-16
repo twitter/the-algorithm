@@ -1,70 +1,70 @@
-scala_library(
-    sources = ["*.scala"],
+scala_l brary(
+    s ces = ["*.scala"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":topic_recommendations_test_datarecords-java",
-        ":topic_recommendations_train_datarecords-java",
-        "escherbird/src/scala/com/twitter/escherbird/scalding/jobs/exportentities:entities-scala",
-        "interests-ds/src/main/scala/com/twitter/interests_ds/jobs/interests_service",
-        "interests-ds/src/main/scala/com/twitter/interests_ds/jobs/interests_service:user_topic_relation_snapshot-scala",
-        "src/java/com/twitter/ml/api/constant",
-        "src/scala/com/twitter/scalding_internal/dalv2",
-        "src/scala/com/twitter/scalding_internal/dalv2/dataset",
-        "src/scala/com/twitter/scalding_internal/job",
-        "src/scala/com/twitter/scalding_internal/job/analytics_batch",
-        "src/scala/com/twitter/scalding_internal/source",
-        "src/scala/com/twitter/scalding_internal/source/lzo_scrooge",
-        "src/scala/com/twitter/simclusters_v2/candidate_source",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/scalding/common",
-        "timelines/data_processing/jobs/metrics/per_topic_metrics:per_topic_aggregate_engagement-scala",
-        "twml/runtime/src/main/scala/com/twitter/twml/runtime/scalding",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        ":top c_recom ndat ons_test_datarecords-java",
+        ":top c_recom ndat ons_tra n_datarecords-java",
+        "esc rb rd/src/scala/com/tw ter/esc rb rd/scald ng/jobs/exportent  es:ent  es-scala",
+        " nterests-ds/src/ma n/scala/com/tw ter/ nterests_ds/jobs/ nterests_serv ce",
+        " nterests-ds/src/ma n/scala/com/tw ter/ nterests_ds/jobs/ nterests_serv ce:user_top c_relat on_snapshot-scala",
+        "src/java/com/tw ter/ml/ap /constant",
+        "src/scala/com/tw ter/scald ng_ nternal/dalv2",
+        "src/scala/com/tw ter/scald ng_ nternal/dalv2/dataset",
+        "src/scala/com/tw ter/scald ng_ nternal/job",
+        "src/scala/com/tw ter/scald ng_ nternal/job/analyt cs_batch",
+        "src/scala/com/tw ter/scald ng_ nternal/s ce",
+        "src/scala/com/tw ter/scald ng_ nternal/s ce/lzo_scrooge",
+        "src/scala/com/tw ter/s mclusters_v2/cand date_s ce",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces",
+        "src/scala/com/tw ter/s mclusters_v2/scald ng/common",
+        "t  l nes/data_process ng/jobs/ tr cs/per_top c_ tr cs:per_top c_aggregate_engage nt-scala",
+        "twml/runt  /src/ma n/scala/com/tw ter/twml/runt  /scald ng",
     ],
 )
 
-hadoop_binary(
-    name = "training_data_for_topic_recommendations-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.topic_recommendations.model_based_topic_recommendations.UserTopicFeatureHydrationAdhocApp",
+hadoop_b nary(
+    na  = "tra n ng_data_for_top c_recom ndat ons-adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.top c_recom ndat ons.model_based_top c_recom ndat ons.UserTop cFeatureHydrat onAdhocApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":model_based_topic_recommendations",
+    dependenc es = [
+        ":model_based_top c_recom ndat ons",
     ],
 )
 
-hadoop_binary(
-    name = "training_data_for_topic_recommendations",
-    main = "com.twitter.simclusters_v2.scalding.topic_recommendations.model_based_topic_recommendations.UserTopicFeatureHydrationScheduledApp",
+hadoop_b nary(
+    na  = "tra n ng_data_for_top c_recom ndat ons",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.top c_recom ndat ons.model_based_top c_recom ndat ons.UserTop cFeatureHydrat onSc duledApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":model_based_topic_recommendations",
+    dependenc es = [
+        ":model_based_top c_recom ndat ons",
     ],
 )
 
 create_datarecord_datasets(
-    base_name = "topic_recommendations_train_datarecords",
+    base_na  = "top c_recom ndat ons_tra n_datarecords",
     platform = "java8",
     role = "cassowary",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
+    seg nt_type = "snapshot",
+    tags = ["bazel-compat ble"],
 )
 
 create_datarecord_datasets(
-    base_name = "topic_recommendations_test_datarecords",
+    base_na  = "top c_recom ndat ons_test_datarecords",
     platform = "java8",
     role = "cassowary",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
+    seg nt_type = "snapshot",
+    tags = ["bazel-compat ble"],
 )

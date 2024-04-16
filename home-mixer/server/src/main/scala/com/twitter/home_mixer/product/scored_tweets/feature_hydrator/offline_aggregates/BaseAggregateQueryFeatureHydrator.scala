@@ -1,57 +1,57 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.offl ne_aggregates
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.repository.Repository
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.aggregate_interactions.thriftjava.UserAggregateInteractions
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateType.AggregateType
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.StoreConfig
-import com.twitter.timelines.suggests.common.dense_data_record.thriftscala.DenseFeatureMetadata
-import com.twitter.user_session_store.thriftjava.UserSession
-import com.twitter.util.Future
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.servo.repos ory.Repos ory
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.aggregate_ nteract ons.thr ftjava.UserAggregate nteract ons
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.AggregateType.AggregateType
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.StoreConf g
+ mport com.tw ter.t  l nes.suggests.common.dense_data_record.thr ftscala.DenseFeature tadata
+ mport com.tw ter.user_sess on_store.thr ftjava.UserSess on
+ mport com.tw ter.ut l.Future
 
 abstract class BaseAggregateQueryFeatureHydrator(
-  featureRepository: Repository[Long, Option[UserSession]],
-  metadataRepository: Repository[Int, Option[DenseFeatureMetadata]],
-  feature: Feature[PipelineQuery, Option[AggregateFeaturesToDecodeWithMetadata]])
-    extends QueryFeatureHydrator[PipelineQuery] {
+  featureRepos ory: Repos ory[Long, Opt on[UserSess on]],
+   tadataRepos ory: Repos ory[ nt, Opt on[DenseFeature tadata]],
+  feature: Feature[P pel neQuery, Opt on[AggregateFeaturesToDecodeW h tadata]])
+    extends QueryFeatureHydrator[P pel neQuery] {
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    val viewerId = query.getRequiredUserId
+  overr de def hydrate(query: P pel neQuery): St ch[FeatureMap] = {
+    val v e r d = query.getRequ redUser d
 
-    Stitch.callFuture(
-      featureRepository(viewerId)
-        .flatMap { userSession: Option[UserSession] =>
-          val featuresWithMetadata: Option[Future[AggregateFeaturesToDecodeWithMetadata]] =
-            userSession
-              .flatMap(decodeUserSession(_))
+    St ch.callFuture(
+      featureRepos ory(v e r d)
+        .flatMap { userSess on: Opt on[UserSess on] =>
+          val featuresW h tadata: Opt on[Future[AggregateFeaturesToDecodeW h tadata]] =
+            userSess on
+              .flatMap(decodeUserSess on(_))
 
-          featuresWithMetadata
-            .map { fu: Future[AggregateFeaturesToDecodeWithMetadata] => fu.map(Some(_)) }
+          featuresW h tadata
+            .map { fu: Future[AggregateFeaturesToDecodeW h tadata] => fu.map(So (_)) }
             .getOrElse(Future.None)
             .map { value =>
-              FeatureMapBuilder()
+              FeatureMapBu lder()
                 .add(feature, value)
-                .build()
+                .bu ld()
             }
         }
     )
   }
 
-  private def decodeUserSession(
-    session: UserSession
-  ): Option[Future[AggregateFeaturesToDecodeWithMetadata]] = {
-    Option(session.user_aggregate_interactions).flatMap { aggregates =>
-      aggregates.getSetField match {
-        case UserAggregateInteractions._Fields.V17 =>
-          Some(
-            getAggregateFeaturesWithMetadata(
-              aggregates.getV17.user_aggregates.versionId,
-              UserAggregateInteractions.v17(aggregates.getV17))
+  pr vate def decodeUserSess on(
+    sess on: UserSess on
+  ): Opt on[Future[AggregateFeaturesToDecodeW h tadata]] = {
+    Opt on(sess on.user_aggregate_ nteract ons).flatMap { aggregates =>
+      aggregates.getSetF eld match {
+        case UserAggregate nteract ons._F elds.V17 =>
+          So (
+            getAggregateFeaturesW h tadata(
+              aggregates.getV17.user_aggregates.vers on d,
+              UserAggregate nteract ons.v17(aggregates.getV17))
           )
         case _ =>
           None
@@ -59,18 +59,18 @@ abstract class BaseAggregateQueryFeatureHydrator(
     }
   }
 
-  private def getAggregateFeaturesWithMetadata(
-    versionId: Int,
-    userAggregateInteractions: UserAggregateInteractions,
-  ): Future[AggregateFeaturesToDecodeWithMetadata] = {
-    metadataRepository(versionId)
-      .map(AggregateFeaturesToDecodeWithMetadata(_, userAggregateInteractions))
+  pr vate def getAggregateFeaturesW h tadata(
+    vers on d:  nt,
+    userAggregate nteract ons: UserAggregate nteract ons,
+  ): Future[AggregateFeaturesToDecodeW h tadata] = {
+     tadataRepos ory(vers on d)
+      .map(AggregateFeaturesToDecodeW h tadata(_, userAggregate nteract ons))
   }
 }
 
-trait BaseAggregateRootFeature
-    extends Feature[PipelineQuery, Option[AggregateFeaturesToDecodeWithMetadata]] {
-  def aggregateStores: Set[StoreConfig[_]]
+tra  BaseAggregateRootFeature
+    extends Feature[P pel neQuery, Opt on[AggregateFeaturesToDecodeW h tadata]] {
+  def aggregateStores: Set[StoreConf g[_]]
 
   lazy val aggregateTypes: Set[AggregateType] = aggregateStores.map(_.aggregateType)
 }

@@ -1,5 +1,5 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [],
+scala_l brary(
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    tags = ["bazel-compat ble"],
+    dependenc es = [],
 )

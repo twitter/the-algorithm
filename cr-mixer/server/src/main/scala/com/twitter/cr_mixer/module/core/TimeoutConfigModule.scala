@@ -1,104 +1,104 @@
-package com.twitter.cr_mixer.module.core
+package com.tw ter.cr_m xer.module.core
 
-import com.twitter.inject.TwitterModule
-import com.google.inject.Provides
-import javax.inject.Singleton
-import com.twitter.util.Duration
-import com.twitter.app.Flag
-import com.twitter.cr_mixer.config.TimeoutConfig
+ mport com.tw ter. nject.Tw terModule
+ mport com.google. nject.Prov des
+ mport javax. nject.S ngleton
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.app.Flag
+ mport com.tw ter.cr_m xer.conf g.T  outConf g
 
 /**
- * All timeout settings in CrMixer.
- * Timeout numbers are defined in source/cr-mixer/server/config/deploy.aurora
+ * All t  out sett ngs  n CrM xer.
+ * T  out numbers are def ned  n s ce/cr-m xer/server/conf g/deploy.aurora
  */
-object TimeoutConfigModule extends TwitterModule {
+object T  outConf gModule extends Tw terModule {
 
   /**
-   * Flag names for client timeout
-   * These are used in modules extending ThriftMethodBuilderClientModule
-   * which cannot accept injection of TimeoutConfig
+   * Flag na s for cl ent t  out
+   * T se are used  n modules extend ng Thr ft thodBu lderCl entModule
+   * wh ch cannot accept  nject on of T  outConf g
    */
-  val EarlybirdClientTimeoutFlagName = "earlybird.client.timeout"
-  val FrsClientTimeoutFlagName = "frsSignalFetch.client.timeout"
-  val QigRankerClientTimeoutFlagName = "qigRanker.client.timeout"
-  val TweetypieClientTimeoutFlagName = "tweetypie.client.timeout"
-  val UserTweetGraphClientTimeoutFlagName = "userTweetGraph.client.timeout"
-  val UserTweetGraphPlusClientTimeoutFlagName = "userTweetGraphPlus.client.timeout"
-  val UserAdGraphClientTimeoutFlagName = "userAdGraph.client.timeout"
-  val UserVideoGraphClientTimeoutFlagName = "userVideoGraph.client.timeout"
-  val UtegClientTimeoutFlagName = "uteg.client.timeout"
-  val NaviRequestTimeoutFlagName = "navi.client.request.timeout"
+  val Earlyb rdCl entT  outFlagNa  = "earlyb rd.cl ent.t  out"
+  val FrsCl entT  outFlagNa  = "frsS gnalFetch.cl ent.t  out"
+  val Q gRankerCl entT  outFlagNa  = "q gRanker.cl ent.t  out"
+  val T etyp eCl entT  outFlagNa  = "t etyp e.cl ent.t  out"
+  val UserT etGraphCl entT  outFlagNa  = "userT etGraph.cl ent.t  out"
+  val UserT etGraphPlusCl entT  outFlagNa  = "userT etGraphPlus.cl ent.t  out"
+  val UserAdGraphCl entT  outFlagNa  = "userAdGraph.cl ent.t  out"
+  val UserV deoGraphCl entT  outFlagNa  = "userV deoGraph.cl ent.t  out"
+  val UtegCl entT  outFlagNa  = "uteg.cl ent.t  out"
+  val Nav RequestT  outFlagNa  = "nav .cl ent.request.t  out"
 
   /**
-   * Flags for timeouts
-   * These are defined and initialized only in this file
+   * Flags for t  outs
+   * T se are def ned and  n  al zed only  n t  f le
    */
-  // timeout for the service
-  private val serviceTimeout: Flag[Duration] =
-    flag("service.timeout", "service total timeout")
+  // t  out for t  serv ce
+  pr vate val serv ceT  out: Flag[Durat on] =
+    flag("serv ce.t  out", "serv ce total t  out")
 
-  // timeout for signal fetch
-  private val signalFetchTimeout: Flag[Duration] =
-    flag[Duration]("signalFetch.timeout", "signal fetch timeout")
+  // t  out for s gnal fetch
+  pr vate val s gnalFetchT  out: Flag[Durat on] =
+    flag[Durat on]("s gnalFetch.t  out", "s gnal fetch t  out")
 
-  // timeout for similarity engine
-  private val similarityEngineTimeout: Flag[Duration] =
-    flag[Duration]("similarityEngine.timeout", "similarity engine timeout")
-  private val annServiceClientTimeout: Flag[Duration] =
-    flag[Duration]("annService.client.timeout", "annQueryService client timeout")
+  // t  out for s m lar y eng ne
+  pr vate val s m lar yEng neT  out: Flag[Durat on] =
+    flag[Durat on]("s m lar yEng ne.t  out", "s m lar y eng ne t  out")
+  pr vate val annServ ceCl entT  out: Flag[Durat on] =
+    flag[Durat on]("annServ ce.cl ent.t  out", "annQueryServ ce cl ent t  out")
 
-  // timeout for user affinities fetcher
-  private val userStateUnderlyingStoreTimeout: Flag[Duration] =
-    flag[Duration]("userStateUnderlyingStore.timeout", "user state underlying store timeout")
+  // t  out for user aff n  es fetc r
+  pr vate val userStateUnderly ngStoreT  out: Flag[Durat on] =
+    flag[Durat on]("userStateUnderly ngStore.t  out", "user state underly ng store t  out")
 
-  private val userStateStoreTimeout: Flag[Duration] =
-    flag[Duration]("userStateStore.timeout", "user state store timeout")
+  pr vate val userStateStoreT  out: Flag[Durat on] =
+    flag[Durat on]("userStateStore.t  out", "user state store t  out")
 
-  private val utegSimilarityEngineTimeout: Flag[Duration] =
-    flag[Duration]("uteg.similarityEngine.timeout", "uteg similarity engine timeout")
+  pr vate val utegS m lar yEng neT  out: Flag[Durat on] =
+    flag[Durat on]("uteg.s m lar yEng ne.t  out", "uteg s m lar y eng ne t  out")
 
-  private val earlybirdServerTimeout: Flag[Duration] =
-    flag[Duration]("earlybird.server.timeout", "earlybird server timeout")
+  pr vate val earlyb rdServerT  out: Flag[Durat on] =
+    flag[Durat on]("earlyb rd.server.t  out", "earlyb rd server t  out")
 
-  private val earlybirdSimilarityEngineTimeout: Flag[Duration] =
-    flag[Duration]("earlybird.similarityEngine.timeout", "Earlybird similarity engine timeout")
+  pr vate val earlyb rdS m lar yEng neT  out: Flag[Durat on] =
+    flag[Durat on]("earlyb rd.s m lar yEng ne.t  out", "Earlyb rd s m lar y eng ne t  out")
 
-  private val frsBasedTweetEndpointTimeout: Flag[Duration] =
-    flag[Duration](
-      "frsBasedTweet.endpoint.timeout",
-      "frsBasedTweet endpoint timeout"
+  pr vate val frsBasedT etEndpo ntT  out: Flag[Durat on] =
+    flag[Durat on](
+      "frsBasedT et.endpo nt.t  out",
+      "frsBasedT et endpo nt t  out"
     )
 
-  private val topicTweetEndpointTimeout: Flag[Duration] =
-    flag[Duration](
-      "topicTweet.endpoint.timeout",
-      "topicTweet endpoint timeout"
+  pr vate val top cT etEndpo ntT  out: Flag[Durat on] =
+    flag[Durat on](
+      "top cT et.endpo nt.t  out",
+      "top cT et endpo nt t  out"
     )
 
-  // timeout for Navi client
-  private val naviRequestTimeout: Flag[Duration] =
-    flag[Duration](
-      NaviRequestTimeoutFlagName,
-      Duration.fromMilliseconds(2000),
-      "Request timeout for a single RPC Call",
+  // t  out for Nav  cl ent
+  pr vate val nav RequestT  out: Flag[Durat on] =
+    flag[Durat on](
+      Nav RequestT  outFlagNa ,
+      Durat on.fromM ll seconds(2000),
+      "Request t  out for a s ngle RPC Call",
     )
 
-  @Provides
-  @Singleton
-  def provideTimeoutBudget(): TimeoutConfig =
-    TimeoutConfig(
-      serviceTimeout = serviceTimeout(),
-      signalFetchTimeout = signalFetchTimeout(),
-      similarityEngineTimeout = similarityEngineTimeout(),
-      annServiceClientTimeout = annServiceClientTimeout(),
-      utegSimilarityEngineTimeout = utegSimilarityEngineTimeout(),
-      userStateUnderlyingStoreTimeout = userStateUnderlyingStoreTimeout(),
-      userStateStoreTimeout = userStateStoreTimeout(),
-      earlybirdServerTimeout = earlybirdServerTimeout(),
-      earlybirdSimilarityEngineTimeout = earlybirdSimilarityEngineTimeout(),
-      frsBasedTweetEndpointTimeout = frsBasedTweetEndpointTimeout(),
-      topicTweetEndpointTimeout = topicTweetEndpointTimeout(),
-      naviRequestTimeout = naviRequestTimeout()
+  @Prov des
+  @S ngleton
+  def prov deT  outBudget(): T  outConf g =
+    T  outConf g(
+      serv ceT  out = serv ceT  out(),
+      s gnalFetchT  out = s gnalFetchT  out(),
+      s m lar yEng neT  out = s m lar yEng neT  out(),
+      annServ ceCl entT  out = annServ ceCl entT  out(),
+      utegS m lar yEng neT  out = utegS m lar yEng neT  out(),
+      userStateUnderly ngStoreT  out = userStateUnderly ngStoreT  out(),
+      userStateStoreT  out = userStateStoreT  out(),
+      earlyb rdServerT  out = earlyb rdServerT  out(),
+      earlyb rdS m lar yEng neT  out = earlyb rdS m lar yEng neT  out(),
+      frsBasedT etEndpo ntT  out = frsBasedT etEndpo ntT  out(),
+      top cT etEndpo ntT  out = top cT etEndpo ntT  out(),
+      nav RequestT  out = nav RequestT  out()
     )
 
 }

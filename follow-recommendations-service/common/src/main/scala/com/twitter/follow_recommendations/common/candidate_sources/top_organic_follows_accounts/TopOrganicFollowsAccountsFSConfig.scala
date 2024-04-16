@@ -1,18 +1,18 @@
-package com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.top_organ c_follows_accounts
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.Param
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.conf gap .common.FeatureSw chConf g
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TopOrganicFollowsAccountsFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] = Seq(
-    TopOrganicFollowsAccountsParams.CandidateSourceEnabled,
+@S ngleton
+class TopOrgan cFollowsAccountsFSConf g @ nject() () extends FeatureSw chConf g {
+  overr de val booleanFSParams: Seq[Param[Boolean] w h FSNa ] = Seq(
+    TopOrgan cFollowsAccountsParams.Cand dateS ceEnabled,
   )
-  override val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
-    TopOrganicFollowsAccountsParams.CandidateSourceWeight,
+  overr de val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
+    TopOrgan cFollowsAccountsParams.Cand dateS ce  ght,
   )
 }

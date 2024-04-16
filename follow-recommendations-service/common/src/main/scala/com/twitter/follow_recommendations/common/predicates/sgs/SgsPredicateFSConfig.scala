@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.common.predicates.sgs
+package com.tw ter.follow_recom ndat ons.common.pred cates.sgs
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.util.Duration
+ mport com.tw ter.follow_recom ndat ons.conf gap .common.FeatureSw chConf g
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .HasDurat onConvers on
+ mport com.tw ter.ut l.Durat on
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class SgsPredicateFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val durationFSParams: Seq[FSBoundedParam[Duration] with HasDurationConversion] = Seq(
-    SgsPredicateParams.SgsRelationshipsPredicateTimeout
+@S ngleton
+class SgsPred cateFSConf g @ nject() () extends FeatureSw chConf g {
+  overr de val durat onFSParams: Seq[FSBoundedParam[Durat on] w h HasDurat onConvers on] = Seq(
+    SgsPred cateParams.SgsRelat onsh psPred cateT  out
   )
 }

@@ -1,87 +1,87 @@
-package com.twitter.timelineranker.common
+package com.tw ter.t  l neranker.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.model.TweetIdRange
-import com.twitter.timelineranker.parameters.recap.RecapParams
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.clients.relevance_search.SearchClient.TweetTypes
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t  l neranker.core.Cand dateEnvelope
+ mport com.tw ter.t  l neranker.model.RecapQuery.DependencyProv der
+ mport com.tw ter.t  l neranker.model.T et dRange
+ mport com.tw ter.t  l neranker.para ters.recap.RecapParams
+ mport com.tw ter.t  l nes.cl ents.relevance_search.SearchCl ent
+ mport com.tw ter.t  l nes.cl ents.relevance_search.SearchCl ent.T etTypes
+ mport com.tw ter.ut l.Future
 
 /**
- * Fetch recap/recycled search results using the search client
- * and populate them into the CandidateEnvelope
+ * Fetch recap/recycled search results us ng t  search cl ent
+ * and populate t m  nto t  Cand dateEnvelope
  */
 class RecapSearchResultsTransform(
-  searchClient: SearchClient,
-  maxCountProvider: DependencyProvider[Int],
-  returnAllResultsProvider: DependencyProvider[Boolean],
-  relevanceOptionsMaxHitsToProcessProvider: DependencyProvider[Int],
-  enableExcludeSourceTweetIdsProvider: DependencyProvider[Boolean],
-  enableSettingTweetTypesWithTweetKindOptionProvider: DependencyProvider[Boolean],
-  perRequestSearchClientIdProvider: DependencyProvider[Option[String]],
-  relevanceSearchProvider: DependencyProvider[Boolean] =
-    DependencyProvider.from(RecapParams.EnableRelevanceSearchParam),
-  statsReceiver: StatsReceiver,
-  logSearchDebugInfo: Boolean = true)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  private[this] val maxCountStat = statsReceiver.stat("maxCount")
-  private[this] val numResultsFromSearchStat = statsReceiver.stat("numResultsFromSearch")
-  private[this] val excludedTweetIdsStat = statsReceiver.stat("excludedTweetIds")
+  searchCl ent: SearchCl ent,
+  maxCountProv der: DependencyProv der[ nt],
+  returnAllResultsProv der: DependencyProv der[Boolean],
+  relevanceOpt onsMaxH sToProcessProv der: DependencyProv der[ nt],
+  enableExcludeS ceT et dsProv der: DependencyProv der[Boolean],
+  enableSett ngT etTypesW hT etK ndOpt onProv der: DependencyProv der[Boolean],
+  perRequestSearchCl ent dProv der: DependencyProv der[Opt on[Str ng]],
+  relevanceSearchProv der: DependencyProv der[Boolean] =
+    DependencyProv der.from(RecapParams.EnableRelevanceSearchParam),
+  statsRece ver: StatsRece ver,
+  logSearchDebug nfo: Boolean = true)
+    extends FutureArrow[Cand dateEnvelope, Cand dateEnvelope] {
+  pr vate[t ] val maxCountStat = statsRece ver.stat("maxCount")
+  pr vate[t ] val numResultsFromSearchStat = statsRece ver.stat("numResultsFromSearch")
+  pr vate[t ] val excludedT et dsStat = statsRece ver.stat("excludedT et ds")
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val maxCount = maxCountProvider(envelope.query)
+  overr de def apply(envelope: Cand dateEnvelope): Future[Cand dateEnvelope] = {
+    val maxCount = maxCountProv der(envelope.query)
     maxCountStat.add(maxCount)
 
-    val excludedTweetIdsOpt = envelope.query.excludedTweetIds
-    excludedTweetIdsOpt.foreach { excludedTweetIds =>
-      excludedTweetIdsStat.add(excludedTweetIds.size)
+    val excludedT et dsOpt = envelope.query.excludedT et ds
+    excludedT et dsOpt.foreach { excludedT et ds =>
+      excludedT et dsStat.add(excludedT et ds.s ze)
     }
 
-    val tweetIdRange = envelope.query.range
-      .map(TweetIdRange.fromTimelineRange)
-      .getOrElse(TweetIdRange.default)
+    val t et dRange = envelope.query.range
+      .map(T et dRange.fromT  l neRange)
+      .getOrElse(T et dRange.default)
 
-    val beforeTweetIdExclusive = tweetIdRange.toId
-    val afterTweetIdExclusive = tweetIdRange.fromId
+    val beforeT et dExclus ve = t et dRange.to d
+    val afterT et dExclus ve = t et dRange.from d
 
-    val returnAllResults = returnAllResultsProvider(envelope.query)
-    val relevanceOptionsMaxHitsToProcess = relevanceOptionsMaxHitsToProcessProvider(envelope.query)
+    val returnAllResults = returnAllResultsProv der(envelope.query)
+    val relevanceOpt onsMaxH sToProcess = relevanceOpt onsMaxH sToProcessProv der(envelope.query)
 
     Future
-      .join(
-        envelope.followGraphData.followedUserIdsFuture,
-        envelope.followGraphData.retweetsMutedUserIdsFuture
+      .jo n(
+        envelope.followGraphData.follo dUser dsFuture,
+        envelope.followGraphData.ret etsMutedUser dsFuture
       ).flatMap {
-        case (followedIds, retweetsMutedIds) =>
-          val followedIdsIncludingSelf = followedIds.toSet + envelope.query.userId
+        case (follo d ds, ret etsMuted ds) =>
+          val follo d ds nclud ngSelf = follo d ds.toSet + envelope.query.user d
 
-          searchClient
-            .getUsersTweetsForRecap(
-              userId = envelope.query.userId,
-              followedUserIds = followedIdsIncludingSelf,
-              retweetsMutedUserIds = retweetsMutedIds,
+          searchCl ent
+            .getUsersT etsForRecap(
+              user d = envelope.query.user d,
+              follo dUser ds = follo d ds nclud ngSelf,
+              ret etsMutedUser ds = ret etsMuted ds,
               maxCount = maxCount,
-              tweetTypes = TweetTypes.fromTweetKindOption(envelope.query.options),
+              t etTypes = T etTypes.fromT etK ndOpt on(envelope.query.opt ons),
               searchOperator = envelope.query.searchOperator,
-              beforeTweetIdExclusive = beforeTweetIdExclusive,
-              afterTweetIdExclusive = afterTweetIdExclusive,
-              enableSettingTweetTypesWithTweetKindOption =
-                enableSettingTweetTypesWithTweetKindOptionProvider(envelope.query),
-              excludedTweetIds = excludedTweetIdsOpt,
-              earlybirdOptions = envelope.query.earlybirdOptions,
-              getOnlyProtectedTweets = false,
-              logSearchDebugInfo = logSearchDebugInfo,
+              beforeT et dExclus ve = beforeT et dExclus ve,
+              afterT et dExclus ve = afterT et dExclus ve,
+              enableSett ngT etTypesW hT etK ndOpt on =
+                enableSett ngT etTypesW hT etK ndOpt onProv der(envelope.query),
+              excludedT et ds = excludedT et dsOpt,
+              earlyb rdOpt ons = envelope.query.earlyb rdOpt ons,
+              getOnlyProtectedT ets = false,
+              logSearchDebug nfo = logSearchDebug nfo,
               returnAllResults = returnAllResults,
-              enableExcludeSourceTweetIdsQuery =
-                enableExcludeSourceTweetIdsProvider(envelope.query),
-              relevanceSearch = relevanceSearchProvider(envelope.query),
-              searchClientId = perRequestSearchClientIdProvider(envelope.query),
-              relevanceOptionsMaxHitsToProcess = relevanceOptionsMaxHitsToProcess
+              enableExcludeS ceT et dsQuery =
+                enableExcludeS ceT et dsProv der(envelope.query),
+              relevanceSearch = relevanceSearchProv der(envelope.query),
+              searchCl ent d = perRequestSearchCl ent dProv der(envelope.query),
+              relevanceOpt onsMaxH sToProcess = relevanceOpt onsMaxH sToProcess
             ).map { results =>
-              numResultsFromSearchStat.add(results.size)
+              numResultsFromSearchStat.add(results.s ze)
               envelope.copy(searchResults = results)
             }
       }

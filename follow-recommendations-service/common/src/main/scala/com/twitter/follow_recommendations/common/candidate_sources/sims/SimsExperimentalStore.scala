@@ -1,36 +1,36 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms
 
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.generated.client.recommendations.similarity.SimilarUsersBySimsExperimentalOnUserClientColumn
-import com.twitter.util.Duration
+ mport com.google. nject.S ngleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.strato.generated.cl ent.recom ndat ons.s m lar y.S m larUsersByS msExper  ntalOnUserCl entColumn
+ mport com.tw ter.ut l.Durat on
 
-import javax.inject.Inject
+ mport javax. nject. nject
 
-@Singleton
-class SimsExperimentalStore @Inject() (
-  simsExperimentalOnUserClientColumn: SimilarUsersBySimsExperimentalOnUserClientColumn)
-    extends StratoBasedSimsCandidateSourceWithUnitView(
-      fetcher = simsExperimentalOnUserClientColumn.fetcher,
-      identifier = SimsExperimentalStore.Identifier
+@S ngleton
+class S msExper  ntalStore @ nject() (
+  s msExper  ntalOnUserCl entColumn: S m larUsersByS msExper  ntalOnUserCl entColumn)
+    extends StratoBasedS msCand dateS ceW hUn V ew(
+      fetc r = s msExper  ntalOnUserCl entColumn.fetc r,
+       dent f er = S msExper  ntalStore. dent f er
     )
 
-@Singleton
-class CachedSimsExperimentalStore @Inject() (
-  simsExperimentalOnUserClientColumn: SimilarUsersBySimsExperimentalOnUserClientColumn,
-  statsReceiver: StatsReceiver)
-    extends CacheBasedSimsStore(
-      id = SimsExperimentalStore.Identifier,
-      fetcher = simsExperimentalOnUserClientColumn.fetcher,
-      maxCacheSize = SimsExperimentalStore.MaxCacheSize,
-      cacheTtl = SimsExperimentalStore.CacheTTL,
-      statsReceiver = statsReceiver.scope("CachedSimsExperimentalStore", "cache")
+@S ngleton
+class Cac dS msExper  ntalStore @ nject() (
+  s msExper  ntalOnUserCl entColumn: S m larUsersByS msExper  ntalOnUserCl entColumn,
+  statsRece ver: StatsRece ver)
+    extends Cac BasedS msStore(
+       d = S msExper  ntalStore. dent f er,
+      fetc r = s msExper  ntalOnUserCl entColumn.fetc r,
+      maxCac S ze = S msExper  ntalStore.MaxCac S ze,
+      cac Ttl = S msExper  ntalStore.Cac TTL,
+      statsRece ver = statsRece ver.scope("Cac dS msExper  ntalStore", "cac ")
     )
 
-object SimsExperimentalStore {
-  val Identifier = CandidateSourceIdentifier(Algorithm.Sims.toString)
-  val MaxCacheSize = 1000
-  val CacheTTL: Duration = Duration.fromHours(12)
+object S msExper  ntalStore {
+  val  dent f er = Cand dateS ce dent f er(Algor hm.S ms.toStr ng)
+  val MaxCac S ze = 1000
+  val Cac TTL: Durat on = Durat on.fromH s(12)
 }

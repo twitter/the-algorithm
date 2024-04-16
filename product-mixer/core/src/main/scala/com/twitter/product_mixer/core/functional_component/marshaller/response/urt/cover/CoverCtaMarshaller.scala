@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.cover
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.button.ButtonStyleMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.icon.HorizonIconMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.CallbackMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventInfoMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverCta
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.button.ButtonStyleMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. con.Hor zon conMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.CallbackMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.Cl entEvent nfoMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover.CoverCta
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class CoverCtaMarshaller @Inject() (
-  coverCtaBehaviorMarshaller: CoverCtaBehaviorMarshaller,
+@S ngleton
+class CoverCtaMarshaller @ nject() (
+  coverCtaBehav orMarshaller: CoverCtaBehav orMarshaller,
   callbackMarshaller: CallbackMarshaller,
-  clientEventInfoMarshaller: ClientEventInfoMarshaller,
-  horizonIconMarshaller: HorizonIconMarshaller,
+  cl entEvent nfoMarshaller: Cl entEvent nfoMarshaller,
+  hor zon conMarshaller: Hor zon conMarshaller,
   buttonStyleMarshaller: ButtonStyleMarshaller) {
 
   def apply(coverCta: CoverCta): urt.CoverCta = urt.CoverCta(
     text = coverCta.text,
-    ctaBehavior = coverCtaBehaviorMarshaller(coverCta.ctaBehavior),
+    ctaBehav or = coverCtaBehav orMarshaller(coverCta.ctaBehav or),
     callbacks = coverCta.callbacks.map(_.map(callbackMarshaller(_))),
-    clientEventInfo = coverCta.clientEventInfo.map(clientEventInfoMarshaller(_)),
-    icon = coverCta.icon.map(horizonIconMarshaller(_)),
+    cl entEvent nfo = coverCta.cl entEvent nfo.map(cl entEvent nfoMarshaller(_)),
+     con = coverCta. con.map(hor zon conMarshaller(_)),
     buttonStyle = coverCta.buttonStyle.map(buttonStyleMarshaller(_))
   )
 }

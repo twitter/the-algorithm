@@ -1,167 +1,167 @@
-import os
-import itertools
-import subprocess
-import math
+ mport os
+ mport  ertools
+ mport subprocess
+ mport math
 
-SERVICE_NAME = 'uua-ads-callback-engagements'
+SERV CE_NAME = 'uua-ads-callback-engage nts'
 
 CPU_NUM = 3
-HEAP_SIZE = 3 * GB
-RAM_SIZE = HEAP_SIZE + 1 * GB
-# We make disk size larger than HEAP so that if we ever need to do a heap dump, it will fit on disk.
-DISK_SIZE = HEAP_SIZE + 2 * GB
+HEAP_S ZE = 3 * GB
+RAM_S ZE = HEAP_S ZE + 1 * GB
+#   make d sk s ze larger than HEAP so that  f   ever need to do a  ap dump,   w ll f  on d sk.
+D SK_S ZE = HEAP_S ZE + 2 * GB
 
-class Profile(Struct):
-  package = Default(String, SERVICE_NAME)
-  cmdline_flags = Default(String, '')
-  log_level = Default(String, 'INFO')
-  instances = Default(Integer, 50)
-  kafka_bootstrap_servers = Default(String, '/s/kafka/ads-callback-1:kafka-tls')
-  kafka_bootstrap_servers_remote_dest = Default(String, '/s/kafka/bluebird-1:kafka-tls')
-  source_topic = Default(String, 'ads_spend_prod')
-  sink_topics = Default(String, 'unified_user_actions,unified_user_actions_engagements')
-  decider_overlay = Default(String, '')
+class Prof le(Struct):
+  package = Default(Str ng, SERV CE_NAME)
+  cmdl ne_flags = Default(Str ng, '')
+  log_level = Default(Str ng, ' NFO')
+   nstances = Default( nteger, 50)
+  kafka_bootstrap_servers = Default(Str ng, '/s/kafka/ads-callback-1:kafka-tls')
+  kafka_bootstrap_servers_remote_dest = Default(Str ng, '/s/kafka/blueb rd-1:kafka-tls')
+  s ce_top c = Default(Str ng, 'ads_spend_prod')
+  s nk_top cs = Default(Str ng, 'un f ed_user_act ons,un f ed_user_act ons_engage nts')
+  dec der_overlay = Default(Str ng, '')
 
-resources = Resources(
+res ces = Res ces(
   cpu = CPU_NUM,
-  ram = RAM_SIZE,
-  disk = DISK_SIZE
+  ram = RAM_S ZE,
+  d sk = D SK_S ZE
 )
 
-install = Packer.install(
-  name = '{{profile.package}}',
-  version = Workflows.package_version()
+ nstall = Packer. nstall(
+  na  = '{{prof le.package}}',
+  vers on = Workflows.package_vers on()
 )
 
-async_profiler_install = Packer.install(
-  name = 'async-profiler',
+async_prof ler_ nstall = Packer. nstall(
+  na  = 'async-prof ler',
   role = 'csl-perf',
-  version = 'latest'
+  vers on = 'latest'
 )
 
-setup_jaas_config = Process(
-    name           = 'setup_jaas_config',
-    cmdline        = '''
-    mkdir -p jaas_config
-    echo "KafkaClient {
-      com.sun.security.auth.module.Krb5LoginModule required
-      principal=\\"discode@TWITTER.BIZ\\"
+setup_jaas_conf g = Process(
+    na            = 'setup_jaas_conf g',
+    cmdl ne        = '''
+    mkd r -p jaas_conf g
+    echo "KafkaCl ent {
+      com.sun.secur y.auth.module.Krb5Log nModule requ red
+      pr nc pal=\\"d scode@TW TTER.B Z\\"
       useKeyTab=true
       storeKey=true
-      keyTab=\\"/var/lib/tss/keys/fluffy/keytabs/client/discode.keytab\\"
+      keyTab=\\"/var/l b/tss/keys/fluffy/keytabs/cl ent/d scode.keytab\\"
       doNotPrompt=true;
-  };" >> jaas_config/jaas.conf
+  };" >> jaas_conf g/jaas.conf
   '''
 )
 
-main = JVMProcess(
-  name = SERVICE_NAME,
+ma n = JVMProcess(
+  na  = SERV CE_NAME,
   jvm = Java11(
-   heap                     = HEAP_SIZE,
+    ap                     = HEAP_S ZE,
    extra_jvm_flags =
-      '-Djava.net.preferIPv4Stack=true'
+      '-Djava.net.prefer Pv4Stack=true'
 
       ' -XX:+UseNUMA'
-      ' -XX:+AggressiveOpts'
-      ' -XX:+PerfDisableSharedMem' # http://www.evanjones.ca/jvm-mmap-pause.html
+      ' -XX:+Aggress veOpts'
+      ' -XX:+PerfD sableShared m' # http://www.evanjones.ca/jvm-mmap-pause.html
 
-      ' -Dlog_level={{profile.log_level}}'
+      ' -Dlog_level={{prof le.log_level}}'
       ' -Dlog.access.output=access.log'
-      ' -Dlog.service.output={{name}}.log'
-      ' -Djava.security.auth.login.config=jaas_config/jaas.conf'
+      ' -Dlog.serv ce.output={{na }}.log'
+      ' -Djava.secur y.auth.log n.conf g=jaas_conf g/jaas.conf'
   ),
-  arguments =
-    '-jar {{name}}-bin.jar'
-    ' -admin.port=:{{thermos.ports[health]}}'
-    ' -kafka.bootstrap.servers={{profile.kafka_bootstrap_servers}}'
-    ' -kafka.bootstrap.servers.remote.dest={{profile.kafka_bootstrap_servers_remote_dest}}'
-    ' -kafka.group.id={{name}}-{{environment}}'
-    ' -kafka.producer.client.id={{name}}-{{environment}}'
-    ' -kafka.max.pending.requests=10000'
-    ' -kafka.consumer.fetch.max=1.megabytes'
-    ' -kafka.producer.batch.size=16.kilobytes'
-    ' -kafka.producer.buffer.mem=128.megabytes'
-    ' -kafka.producer.linger=50.milliseconds'
-    ' -kafka.producer.request.timeout=30.seconds'
-    ' -kafka.producer.compression.type=lz4'
+  argu nts =
+    '-jar {{na }}-b n.jar'
+    ' -adm n.port=:{{t rmos.ports[ alth]}}'
+    ' -kafka.bootstrap.servers={{prof le.kafka_bootstrap_servers}}'
+    ' -kafka.bootstrap.servers.remote.dest={{prof le.kafka_bootstrap_servers_remote_dest}}'
+    ' -kafka.group. d={{na }}-{{env ron nt}}'
+    ' -kafka.producer.cl ent. d={{na }}-{{env ron nt}}'
+    ' -kafka.max.pend ng.requests=10000'
+    ' -kafka.consu r.fetch.max=1. gabytes'
+    ' -kafka.producer.batch.s ze=16.k lobytes'
+    ' -kafka.producer.buffer. m=128. gabytes'
+    ' -kafka.producer.l nger=50.m ll seconds'
+    ' -kafka.producer.request.t  out=30.seconds'
+    ' -kafka.producer.compress on.type=lz4'
     ' -kafka.worker.threads=5'
-    ' -kafka.source.topic={{profile.source_topic}}'
-    ' -kafka.sink.topics={{profile.sink_topics}}'
-    ' -decider.base=decider.yml'
-    ' -decider.overlay={{profile.decider_overlay}}'
+    ' -kafka.s ce.top c={{prof le.s ce_top c}}'
+    ' -kafka.s nk.top cs={{prof le.s nk_top cs}}'
+    ' -dec der.base=dec der.yml'
+    ' -dec der.overlay={{prof le.dec der_overlay}}'
     ' -cluster={{cluster}}'
-    ' {{profile.cmdline_flags}}',
-  resources = resources
+    ' {{prof le.cmdl ne_flags}}',
+  res ces = res ces
 )
 
 stats = Stats(
-  library = 'metrics',
-  port = 'admin'
+  l brary = ' tr cs',
+  port = 'adm n'
 )
 
-job_template = Service(
-  name = SERVICE_NAME,
-  role = 'discode',
-  instances = '{{profile.instances}}',
-  contact = 'disco-data-eng@twitter.com',
-  constraints = {'rack': 'limit:1', 'host': 'limit:1'},
+job_template = Serv ce(
+  na  = SERV CE_NAME,
+  role = 'd scode',
+   nstances = '{{prof le. nstances}}',
+  contact = 'd sco-data-eng@tw ter.com',
+  constra nts = {'rack': 'l m :1', 'host': 'l m :1'},
   announce = Announcer(
-    primary_port = 'health',
-    portmap = {'aurora': 'health', 'admin': 'health'}
+    pr mary_port = ' alth',
+    portmap = {'aurora': ' alth', 'adm n': ' alth'}
   ),
   task = Task(
-    resources = resources,
-    name = SERVICE_NAME,
-    processes = [async_profiler_install, install, setup_jaas_config, main, stats],
-    constraints = order(async_profiler_install, install, setup_jaas_config, main)
+    res ces = res ces,
+    na  = SERV CE_NAME,
+    processes = [async_prof ler_ nstall,  nstall, setup_jaas_conf g, ma n, stats],
+    constra nts = order(async_prof ler_ nstall,  nstall, setup_jaas_conf g, ma n)
   ),
-  health_check_config         = HealthCheckConfig(
-    initial_interval_secs     = 100,
-    interval_secs             = 60,
-    timeout_secs              = 60,
-    max_consecutive_failures  = 4
+   alth_c ck_conf g         =  althC ckConf g(
+     n  al_ nterval_secs     = 100,
+     nterval_secs             = 60,
+    t  out_secs              = 60,
+    max_consecut ve_fa lures  = 4
   ),
-  update_config               = UpdateConfig(
-    batch_size                = 50,
+  update_conf g               = UpdateConf g(
+    batch_s ze                = 50,
     watch_secs                = 90,
-    max_per_shard_failures    = 3,
-    max_total_failures        = 0,
-    rollback_on_failure       = False
+    max_per_shard_fa lures    = 3,
+    max_total_fa lures        = 0,
+    rollback_on_fa lure       = False
   )
 )
 
-PRODUCTION = Profile(
-  # go/uua-decider
-  decider_overlay = '/usr/local/config/overlays/discode-default/UnifiedUserActions/prod/{{cluster}}/decider_overlay.yml'
+PRODUCT ON = Prof le(
+  # go/uua-dec der
+  dec der_overlay = '/usr/local/conf g/overlays/d scode-default/Un f edUserAct ons/prod/{{cluster}}/dec der_overlay.yml'
 )
 
-STAGING = Profile(
-  package = SERVICE_NAME+'-staging',
-  cmdline_flags = '',
+STAG NG = Prof le(
+  package = SERV CE_NAME+'-stag ng',
+  cmdl ne_flags = '',
   kafka_bootstrap_servers_remote_dest = '/s/kafka/custdevel:kafka-tls',
-  decider_overlay = '/usr/local/config/overlays/discode-default/UnifiedUserActions/staging/{{cluster}}/decider_overlay.yml' # go/uua-decider
+  dec der_overlay = '/usr/local/conf g/overlays/d scode-default/Un f edUserAct ons/stag ng/{{cluster}}/dec der_overlay.yml' # go/uua-dec der
 )
 
-DEVEL = STAGING(
+DEVEL = STAG NG(
   log_level = 'DEBUG',
 )
 
 
 prod_job = job_template(
-  tier = 'preferred',
-  environment = 'prod',
-).bind(profile = PRODUCTION)
+  t er = 'preferred',
+  env ron nt = 'prod',
+).b nd(prof le = PRODUCT ON)
 
-staging_job = job_template(
-  environment = 'staging'
-).bind(profile = STAGING)
+stag ng_job = job_template(
+  env ron nt = 'stag ng'
+).b nd(prof le = STAG NG)
 
 devel_job = job_template(
-  environment = 'devel'
-).bind(profile = DEVEL)
+  env ron nt = 'devel'
+).b nd(prof le = DEVEL)
 
 jobs = []
-for cluster in ['atla', 'pdxa']:
+for cluster  n ['atla', 'pdxa']:
   jobs.append(prod_job(cluster = cluster))
-  jobs.append(staging_job(cluster = cluster))
+  jobs.append(stag ng_job(cluster = cluster))
   jobs.append(devel_job(cluster = cluster))

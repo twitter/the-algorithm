@@ -1,347 +1,347 @@
-package com.twitter.servo.util
+package com.tw ter.servo.ut l
 
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.tracing.Trace
-import com.twitter.finagle.FailedFastException
-import com.twitter.finagle.Filter
-import com.twitter.finagle.Service
-import com.twitter.util._
-import scala.util.control.NonFatal
+ mport com.tw ter.f nagle.serv ce.RetryPol cy
+ mport com.tw ter.f nagle.stats.Stat
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.trac ng.Trace
+ mport com.tw ter.f nagle.Fa ledFastExcept on
+ mport com.tw ter.f nagle.F lter
+ mport com.tw ter.f nagle.Serv ce
+ mport com.tw ter.ut l._
+ mport scala.ut l.control.NonFatal
 
 /**
- * A collection of FutureArrow factory functions.
+ * A collect on of FutureArrow factory funct ons.
  */
 object FutureArrow {
 
   /**
-   * Produce a FutureArrow from a function `A => Future[B]`.
+   * Produce a FutureArrow from a funct on `A => Future[B]`.
    */
   def apply[A, B](f: A => Future[B]): FutureArrow[A, B] =
     new FutureArrow[A, B] {
-      override def apply(a: A): Future[B] =
+      overr de def apply(a: A): Future[B] =
         try f(a)
         catch {
-          case NonFatal(e) => Future.exception(e)
+          case NonFatal(e) => Future.except on(e)
         }
     }
 
   /**
-   * Produce a FutureArrow that supports recursive calls.  Recursing from a `Future`
-   * continuation is stack-safe, but direct recursion will use the stack, like a
-   * normal method invocation.
+   * Produce a FutureArrow that supports recurs ve calls.  Recurs ng from a `Future`
+   * cont nuat on  s stack-safe, but d rect recurs on w ll use t  stack, l ke a
+   * normal  thod  nvocat on.
    */
   def rec[A, B](f: FutureArrow[A, B] => A => Future[B]): FutureArrow[A, B] =
     new FutureArrow[A, B] { self =>
-      private val g: A => Future[B] = f(this)
-      override def apply(a: A): Future[B] =
+      pr vate val g: A => Future[B] = f(t )
+      overr de def apply(a: A): Future[B] =
         try g(a)
         catch {
-          case NonFatal(e) => Future.exception(e)
+          case NonFatal(e) => Future.except on(e)
         }
     }
 
   /**
-   * Produce a FutureArrow from an FunctionArrow.
+   * Produce a FutureArrow from an Funct onArrow.
    */
-  def fromFunctionArrow[A, B](f: FunctionArrow[A, B]): FutureArrow[A, B] =
+  def fromFunct onArrow[A, B](f: Funct onArrow[A, B]): FutureArrow[A, B] =
     FutureArrow[A, B](a => Future(f(a)))
 
   /**
-   * Produce a FutureArrow from a function.
+   * Produce a FutureArrow from a funct on.
    */
-  def fromFunction[A, B](f: A => B): FutureArrow[A, B] = fromFunctionArrow(FunctionArrow(f))
+  def fromFunct on[A, B](f: A => B): FutureArrow[A, B] = fromFunct onArrow(Funct onArrow(f))
 
   /**
-   * Produce a FutureArrow from a function `A => Try[B]`.
+   * Produce a FutureArrow from a funct on `A => Try[B]`.
    *
-   * The Try is evaluated within a Future. Thus, Throw results are translated
-   * to `Future.exception`s.
+   * T  Try  s evaluated w h n a Future. Thus, Throw results are translated
+   * to `Future.except on`s.
    */
   def fromTry[A, B](f: A => Try[B]): FutureArrow[A, B] =
     FutureArrow[A, B](a => Future.const(f(a)))
 
   /**
-   * A FutureArrow that simply returns a Future of its argument.
+   * A FutureArrow that s mply returns a Future of  s argu nt.
    */
-  def identity[A]: FutureArrow[A, A] =
+  def  dent y[A]: FutureArrow[A, A] =
     FutureArrow[A, A](a => Future.value(a))
 
   /**
-   * A FutureArrow with a constant result, regardless of input.
+   * A FutureArrow w h a constant result, regardless of  nput.
    */
   def const[A, B](value: Future[B]): FutureArrow[A, B] =
     FutureArrow[A, B](_ => value)
 
   /**
-   * Appends two FutureArrows together.
+   * Appends two FutureArrows toget r.
    *
-   * This forms a category with 'identity'.
+   * T  forms a category w h ' dent y'.
    */
-  def append[A, B, C](a: FutureArrow[A, B], b: FutureArrow[B, C]) = a.andThen(b)
+  def append[A, B, C](a: FutureArrow[A, B], b: FutureArrow[B, C]) = a.andT n(b)
 
   /**
-   * Produce a FutureArrow that applies an FutureEffect, returning the argument
-   * value as-is on success. If the effect returns an Future exception, then the
-   * result of the filter will also be that exception.
+   * Produce a FutureArrow that appl es an FutureEffect, return ng t  argu nt
+   * value as- s on success.  f t  effect returns an Future except on, t n t 
+   * result of t  f lter w ll also be that except on.
    */
   def effect[A](effect: FutureEffect[A]): FutureArrow[A, A] =
     apply(a => effect(a).map(_ => a))
 
   /**
-   * Produces a FutureArrow that proxies to one of two others, depending on a
-   * predicate.
+   * Produces a FutureArrow that prox es to one of two ot rs, depend ng on a
+   * pred cate.
    */
-  def choose[A, B](predicate: A => Boolean, ifTrue: FutureArrow[A, B], ifFalse: FutureArrow[A, B]) =
-    FutureArrow[A, B](a => if (predicate(a)) ifTrue(a) else ifFalse(a))
+  def choose[A, B](pred cate: A => Boolean,  fTrue: FutureArrow[A, B],  fFalse: FutureArrow[A, B]) =
+    FutureArrow[A, B](a =>  f (pred cate(a))  fTrue(a) else  fFalse(a))
 
   /**
-   * Produces a FutureArrow whose application is guarded by a predicate. `f` is
-   * applied if the predicate returns true, otherwise the argument is simply
+   * Produces a FutureArrow whose appl cat on  s guarded by a pred cate. `f`  s
+   * appl ed  f t  pred cate returns true, ot rw se t  argu nt  s s mply
    * returned.
    */
-  def onlyIf[A](predicate: A => Boolean, f: FutureArrow[A, A]) =
-    choose(predicate, f, identity[A])
+  def only f[A](pred cate: A => Boolean, f: FutureArrow[A, A]) =
+    choose(pred cate, f,  dent y[A])
 
   /**
-   * Produces a FutureArrow that forwards to multiple FutureArrows and collects
-   * the results into a `Seq[B]`. Results are gathered via Future.collect, so
-   * failure semantics are inherited from that method.
+   * Produces a FutureArrow that forwards to mult ple FutureArrows and collects
+   * t  results  nto a `Seq[B]`. Results are gat red v a Future.collect, so
+   * fa lure semant cs are  n r ed from that  thod.
    */
   def collect[A, B](arrows: Seq[FutureArrow[A, B]]): FutureArrow[A, Seq[B]] =
     apply(a => Future.collect(arrows.map(arrow => arrow(a))))
 
-  private val RetryOnNonFailedFast: PartialFunction[Try[Any], Boolean] = {
-    case Throw(_: FailedFastException) => false
-    case Throw(_: Exception) => true
+  pr vate val RetryOnNonFa ledFast: Part alFunct on[Try[Any], Boolean] = {
+    case Throw(_: Fa ledFastExcept on) => false
+    case Throw(_: Except on) => true
   }
 }
 
 /**
- * A function encapsulating an asynchronous computation.
+ * A funct on encapsulat ng an asynchronous computat on.
  *
- * Background on the Arrow abstraction:
- * http://en.wikipedia.org/wiki/Arrow_(computer_science)
+ * Background on t  Arrow abstract on:
+ * http://en.w k ped a.org/w k /Arrow_(computer_sc ence)
  */
-trait FutureArrow[-A, +B] extends (A => Future[B]) { self =>
+tra  FutureArrow[-A, +B] extends (A => Future[B]) { self =>
 
   /**
-   * Composes two FutureArrows. Produces a new FutureArrow that performs both in
-   * series, depending on the success of the first.
+   * Composes two FutureArrows. Produces a new FutureArrow that performs both  n
+   * ser es, depend ng on t  success of t  f rst.
    */
-  def andThen[C](next: FutureArrow[B, C]): FutureArrow[A, C] =
+  def andT n[C](next: FutureArrow[B, C]): FutureArrow[A, C] =
     FutureArrow[A, C](a => self(a).flatMap(next.apply))
 
   /**
-   * Combines this FutureArrow with another, producing one that translates a
-   * tuple of its constituents' arguments into a tuple of their results.
+   * Comb nes t  FutureArrow w h anot r, produc ng one that translates a
+   * tuple of  s const uents' argu nts  nto a tuple of t  r results.
    */
-  def zipjoin[C, D](other: FutureArrow[C, D]): FutureArrow[(A, C), (B, D)] =
+  def z pjo n[C, D](ot r: FutureArrow[C, D]): FutureArrow[(A, C), (B, D)] =
     FutureArrow[(A, C), (B, D)] {
-      case (a, c) => self(a) join other(c)
+      case (a, c) => self(a) jo n ot r(c)
     }
 
   /**
-   * Converts a FutureArrow on a scalar input and output value into a FutureArrow on a
-   * Sequence of input values producing a pairwise sequence of output values.  The elements
-   * of the input sequence are processed in parallel, so execution order is not guaranteed.
-   * Results are gathered via Future.collect, so failure semantics are inherited from that method.
+   * Converts a FutureArrow on a scalar  nput and output value  nto a FutureArrow on a
+   * Sequence of  nput values produc ng a pa rw se sequence of output values.  T  ele nts
+   * of t   nput sequence are processed  n parallel, so execut on order  s not guaranteed.
+   * Results are gat red v a Future.collect, so fa lure semant cs are  n r ed from that  thod.
    */
-  def liftSeq: FutureArrow[Seq[A], Seq[B]] =
+  def l ftSeq: FutureArrow[Seq[A], Seq[B]] =
     FutureArrow[Seq[A], Seq[B]] { seqA =>
-      Future.collect(seqA.map(this))
+      Future.collect(seqA.map(t ))
     }
 
   /**
-   * Converts this FutureArrow to a FutureEffect, where the result value is ignored.
+   * Converts t  FutureArrow to a FutureEffect, w re t  result value  s  gnored.
    */
   def asFutureEffect[A2 <: A]: FutureEffect[A2] =
-    FutureEffect(this.unit)
+    FutureEffect(t .un )
 
   /**
-   * Combines this FutureArrow with another, producing one that applies both
-   * in parallel, producing a tuple of their results.
+   * Comb nes t  FutureArrow w h anot r, produc ng one that appl es both
+   *  n parallel, produc ng a tuple of t  r results.
    */
-  def inParallel[A2 <: A, C](other: FutureArrow[A2, C]): FutureArrow[A2, (B, C)] = {
-    val paired = self.zipjoin(other)
-    FutureArrow[A2, (B, C)](a => paired((a, a)))
+  def  nParallel[A2 <: A, C](ot r: FutureArrow[A2, C]): FutureArrow[A2, (B, C)] = {
+    val pa red = self.z pjo n(ot r)
+    FutureArrow[A2, (B, C)](a => pa red((a, a)))
   }
 
   /**
-   * Wrap a FutureArrow with an ExceptionCounter, thus providing
-   * observability into the arrow's success and failure.
+   * Wrap a FutureArrow w h an Except onCounter, thus prov d ng
+   * observab l y  nto t  arrow's success and fa lure.
    */
-  def countExceptions(
-    exceptionCounter: ExceptionCounter
+  def countExcept ons(
+    except onCounter: Except onCounter
   ): FutureArrow[A, B] =
-    FutureArrow[A, B](request => exceptionCounter(self(request)))
+    FutureArrow[A, B](request => except onCounter(self(request)))
 
   /**
-   * Returns a chained FutureArrow in which the given function will be called for any
-   * input that succeeds.
+   * Returns a cha ned FutureArrow  n wh ch t  g ven funct on w ll be called for any
+   *  nput that succeeds.
    */
-  def onSuccess[A2 <: A](f: (A2, B) => Unit): FutureArrow[A2, B] =
+  def onSuccess[A2 <: A](f: (A2, B) => Un ): FutureArrow[A2, B] =
     FutureArrow[A2, B](a => self(a).onSuccess(b => f(a, b)))
 
   /**
-   * Returns a chained FutureArrow in which the given function will be called for any
-   * input that fails.
+   * Returns a cha ned FutureArrow  n wh ch t  g ven funct on w ll be called for any
+   *  nput that fa ls.
    */
-  def onFailure[A2 <: A](f: (A2, Throwable) => Unit): FutureArrow[A2, B] =
-    FutureArrow[A2, B](a => self(a).onFailure(t => f(a, t)))
+  def onFa lure[A2 <: A](f: (A2, Throwable) => Un ): FutureArrow[A2, B] =
+    FutureArrow[A2, B](a => self(a).onFa lure(t => f(a, t)))
 
   /**
-   * Translate exception returned by a FutureArrow according to a
-   * PartialFunction.
+   * Translate except on returned by a FutureArrow accord ng to a
+   * Part alFunct on.
    */
-  def translateExceptions(
-    translateException: PartialFunction[Throwable, Throwable]
+  def translateExcept ons(
+    translateExcept on: Part alFunct on[Throwable, Throwable]
   ): FutureArrow[A, B] =
     FutureArrow[A, B] { request =>
       self(request).rescue {
-        case t if translateException.isDefinedAt(t) => Future.exception(translateException(t))
-        case t => Future.exception(t)
+        case t  f translateExcept on. sDef nedAt(t) => Future.except on(translateExcept on(t))
+        case t => Future.except on(t)
       }
     }
 
   /**
-   * Apply a FutureArrow, lifting any non-Future exceptions thrown into
-   * `Future.exception`s.
+   * Apply a FutureArrow, l ft ng any non-Future except ons thrown  nto
+   * `Future.except on`s.
    */
-  def liftExceptions: FutureArrow[A, B] =
+  def l ftExcept ons: FutureArrow[A, B] =
     FutureArrow[A, B] { request =>
-      // Flattening the Future[Future[Response]] is equivalent, but more concise
-      // than wrapping the arrow(request) call in a try/catch block that transforms
-      // the exception to a Future.exception, or at least was more concise before
-      // I added a four-line comment.
+      // Flatten ng t  Future[Future[Response]]  s equ valent, but more conc se
+      // than wrapp ng t  arrow(request) call  n a try/catch block that transforms
+      // t  except on to a Future.except on, or at least was more conc se before
+      //   added a f -l ne com nt.
       Future(self(request)).flatten
     }
 
   /**
-   * Wrap a FutureArrow in exception-tracking and -translation. Given a
-   * filter and a handler, exceptional results will be observed and translated
-   * according to the function passed in this function's second argument list.
+   * Wrap a FutureArrow  n except on-track ng and -translat on. G ven a
+   * f lter and a handler, except onal results w ll be observed and translated
+   * accord ng to t  funct on passed  n t  funct on's second argu nt l st.
    */
   def cleanly(
-    exceptionCounter: ExceptionCounter
+    except onCounter: Except onCounter
   )(
-    translateException: PartialFunction[Throwable, Throwable] = { case t => t }
+    translateExcept on: Part alFunct on[Throwable, Throwable] = { case t => t }
   ): FutureArrow[A, B] = {
-    liftExceptions
-      .translateExceptions(translateException)
-      .countExceptions(exceptionCounter)
+    l ftExcept ons
+      .translateExcept ons(translateExcept on)
+      .countExcept ons(except onCounter)
   }
 
   /**
-   * Produces a FutureArrow that tracks its own application latency.
+   * Produces a FutureArrow that tracks  s own appl cat on latency.
    */
-  @deprecated("use trackLatency(StatsReceiver, (A2 => String)", "2.11.1")
+  @deprecated("use trackLatency(StatsRece ver, (A2 => Str ng)", "2.11.1")
   def trackLatency[A2 <: A](
-    extractName: (A2 => String),
-    statsReceiver: StatsReceiver
+    extractNa : (A2 => Str ng),
+    statsRece ver: StatsRece ver
   ): FutureArrow[A2, B] =
-    trackLatency(statsReceiver, extractName)
+    trackLatency(statsRece ver, extractNa )
 
   /**
-   * Produces a FutureArrow that tracks its own application latency.
+   * Produces a FutureArrow that tracks  s own appl cat on latency.
    */
   def trackLatency[A2 <: A](
-    statsReceiver: StatsReceiver,
-    extractName: (A2 => String)
+    statsRece ver: StatsRece ver,
+    extractNa : (A2 => Str ng)
   ): FutureArrow[A2, B] =
     FutureArrow[A2, B] { request =>
-      Stat.timeFuture(statsReceiver.stat(extractName(request), "latency_ms")) {
+      Stat.t  Future(statsRece ver.stat(extractNa (request), "latency_ms")) {
         self(request)
       }
     }
 
   /**
-   * Produces a FutureArrow that tracks the outcome (i.e. success vs failure) of
+   * Produces a FutureArrow that tracks t  outco  ( .e. success vs fa lure) of
    * requests.
    */
-  @deprecated("use trackOutcome(StatsReceiver, (A2 => String)", "2.11.1")
-  def trackOutcome[A2 <: A](
-    extractName: (A2 => String),
-    statsReceiver: StatsReceiver
+  @deprecated("use trackOutco (StatsRece ver, (A2 => Str ng)", "2.11.1")
+  def trackOutco [A2 <: A](
+    extractNa : (A2 => Str ng),
+    statsRece ver: StatsRece ver
   ): FutureArrow[A2, B] =
-    trackOutcome(statsReceiver, extractName)
+    trackOutco (statsRece ver, extractNa )
 
-  def trackOutcome[A2 <: A](
-    statsReceiver: StatsReceiver,
-    extractName: (A2 => String)
+  def trackOutco [A2 <: A](
+    statsRece ver: StatsRece ver,
+    extractNa : (A2 => Str ng)
   ): FutureArrow[A2, B] =
-    trackOutcome(statsReceiver, extractName, _ => None)
+    trackOutco (statsRece ver, extractNa , _ => None)
 
   /**
-   * Produces a FutureArrow that tracks the outcome (i.e. success vs failure) of
+   * Produces a FutureArrow that tracks t  outco  ( .e. success vs fa lure) of
    * requests.
    */
-  def trackOutcome[A2 <: A](
-    statsReceiver: StatsReceiver,
-    extractName: (A2 => String),
-    exceptionCategorizer: Throwable => Option[String]
+  def trackOutco [A2 <: A](
+    statsRece ver: StatsRece ver,
+    extractNa : (A2 => Str ng),
+    except onCategor zer: Throwable => Opt on[Str ng]
   ): FutureArrow[A2, B] =
     FutureArrow[A2, B] { request =>
-      val scope = statsReceiver.scope(extractName(request))
+      val scope = statsRece ver.scope(extractNa (request))
 
       self(request).respond { r =>
-        statsReceiver.counter("requests").incr()
-        scope.counter("requests").incr()
+        statsRece ver.counter("requests"). ncr()
+        scope.counter("requests"). ncr()
 
         r match {
           case Return(_) =>
-            statsReceiver.counter("success").incr()
-            scope.counter("success").incr()
+            statsRece ver.counter("success"). ncr()
+            scope.counter("success"). ncr()
 
           case Throw(t) =>
-            val category = exceptionCategorizer(t).getOrElse("failures")
-            statsReceiver.counter(category).incr()
-            scope.counter(category).incr()
-            scope.scope(category).counter(ThrowableHelper.sanitizeClassnameChain(t): _*).incr()
+            val category = except onCategor zer(t).getOrElse("fa lures")
+            statsRece ver.counter(category). ncr()
+            scope.counter(category). ncr()
+            scope.scope(category).counter(Throwable lper.san  zeClassna Cha n(t): _*). ncr()
         }
       }
     }
 
   /**
-   * Observe latency and success rate for any FutureArrow[A, B] where A is Observable
+   * Observe latency and success rate for any FutureArrow[A, B] w re A  s Observable
    */
-  def observed[A2 <: A with Observable](
-    statsReceiver: StatsReceiver
+  def observed[A2 <: A w h Observable](
+    statsRece ver: StatsRece ver
   ): FutureArrow[A2, B] =
-    observed(statsReceiver, exceptionCategorizer = _ => None)
+    observed(statsRece ver, except onCategor zer = _ => None)
 
   /**
-   * Observe latency and success rate for any FutureArrow[A, B] where A is Observable
+   * Observe latency and success rate for any FutureArrow[A, B] w re A  s Observable
    */
-  def observed[A2 <: A with Observable](
-    statsReceiver: StatsReceiver,
-    exceptionCategorizer: Throwable => Option[String]
+  def observed[A2 <: A w h Observable](
+    statsRece ver: StatsRece ver,
+    except onCategor zer: Throwable => Opt on[Str ng]
   ): FutureArrow[A2, B] =
     self.observed(
-      statsReceiver.scope("client_request"),
-      (a: A2) => a.requestName,
-      exceptionCategorizer
+      statsRece ver.scope("cl ent_request"),
+      (a: A2) => a.requestNa ,
+      except onCategor zer
     )
 
   /**
    * Observe latency and success rate for any FutureArrow
    */
   def observed[A2 <: A](
-    statsReceiver: StatsReceiver,
-    statsScope: A2 => String,
-    exceptionCategorizer: Throwable => Option[String] = _ => None
+    statsRece ver: StatsRece ver,
+    statsScope: A2 => Str ng,
+    except onCategor zer: Throwable => Opt on[Str ng] = _ => None
   ): FutureArrow[A2, B] =
     self
-      .trackLatency(statsReceiver, statsScope)
-      .trackOutcome(statsReceiver, statsScope, exceptionCategorizer)
+      .trackLatency(statsRece ver, statsScope)
+      .trackOutco (statsRece ver, statsScope, except onCategor zer)
 
   /**
-   * Trace the future arrow using local spans as documented here:
-   * https://docbird.twitter.biz/finagle/Tracing.html
+   * Trace t  future arrow us ng local spans as docu nted  re:
+   * https://docb rd.tw ter.b z/f nagle/Trac ng.html
    */
   def traced[A2 <: A](
-    traceScope: A2 => String
+    traceScope: A2 => Str ng
   ): FutureArrow[A2, B] = {
     FutureArrow[A2, B] { a =>
       Trace.traceLocalFuture(traceScope(a))(self(a))
@@ -349,153 +349,153 @@ trait FutureArrow[-A, +B] extends (A => Future[B]) { self =>
   }
 
   /**
-   * Produces a new FutureArrow where the given function is applied to the input, and the result
-   * passed to this FutureArrow.
+   * Produces a new FutureArrow w re t  g ven funct on  s appl ed to t   nput, and t  result
+   * passed to t  FutureArrow.
    */
   def contramap[C](f: C => A): FutureArrow[C, B] =
-    FutureArrow[C, B](f.andThen(self))
+    FutureArrow[C, B](f.andT n(self))
 
   /**
-   * Produces a new FutureArrow where the given function is applied to the result of this
+   * Produces a new FutureArrow w re t  g ven funct on  s appl ed to t  result of t 
    * FutureArrow.
    */
   def map[C](f: B => C): FutureArrow[A, C] =
     mapResult(_.map(f))
 
   /**
-   * Produces a new FutureArrow where the given function is applied to the resulting Future of
-   * this FutureArrow.
+   * Produces a new FutureArrow w re t  g ven funct on  s appl ed to t  result ng Future of
+   * t  FutureArrow.
    */
   def mapResult[C](f: Future[B] => Future[C]): FutureArrow[A, C] =
     FutureArrow[A, C](a => f(self(a)))
 
   /**
-   * Produces a new FutureArrow which translates exceptions into futures
+   * Produces a new FutureArrow wh ch translates except ons  nto futures
    */
   def rescue[B2 >: B](
-    rescueException: PartialFunction[Throwable, Future[B2]]
+    rescueExcept on: Part alFunct on[Throwable, Future[B2]]
   ): FutureArrow[A, B2] = {
     FutureArrow[A, B2] { a =>
-      self(a).rescue(rescueException)
+      self(a).rescue(rescueExcept on)
     }
   }
 
   /**
-   * Produces a new FutureArrow where the result value is ignored, and Unit is returned.
+   * Produces a new FutureArrow w re t  result value  s  gnored, and Un   s returned.
    */
-  def unit: FutureArrow[A, Unit] =
-    mapResult(_.unit)
+  def un : FutureArrow[A, Un ] =
+    mapResult(_.un )
 
   /**
-   * Returns a copy of this FutureArrow where the returned Future has its `.masked`
-   * method called.
+   * Returns a copy of t  FutureArrow w re t  returned Future has  s `.masked`
+   *  thod called.
    */
   def masked: FutureArrow[A, B] =
     mapResult(_.masked)
 
   /**
-   * Wraps this FutureArrow by passing the underlying operation to the given retry handler
-   * for possible retries.
+   * Wraps t  FutureArrow by pass ng t  underly ng operat on to t  g ven retry handler
+   * for poss ble retr es.
    */
   def retry(handler: RetryHandler[B]): FutureArrow[A, B] =
     FutureArrow[A, B](a => handler(self(a)))
 
   def retry[A2 <: A](
-    policy: RetryPolicy[Try[B]],
-    timer: Timer,
-    statsReceiver: StatsReceiver,
-    extractName: (A2 => String)
+    pol cy: RetryPol cy[Try[B]],
+    t  r: T  r,
+    statsRece ver: StatsRece ver,
+    extractNa : (A2 => Str ng)
   ): FutureArrow[A2, B] =
     FutureArrow[A2, B] { a =>
-      val scoped = statsReceiver.scope(extractName(a))
-      RetryHandler(policy, timer, scoped)(self(a))
+      val scoped = statsRece ver.scope(extractNa (a))
+      RetryHandler(pol cy, t  r, scoped)(self(a))
     }
 
   /**
-   * Produces a new FutureArrow where the returned Future[B] must complete within the specified
-   * timeout, otherwise the Future fails with a com.twitter.util.TimeoutException.
+   * Produces a new FutureArrow w re t  returned Future[B] must complete w h n t  spec f ed
+   * t  out, ot rw se t  Future fa ls w h a com.tw ter.ut l.T  outExcept on.
    *
-   * The [[timeout]] is passed by name to take advantage of deadlines passed in the request context.
+   * T  [[t  out]]  s passed by na  to take advantage of deadl nes passed  n t  request context.
    *
-   * ''Note'': On timeout, the underlying future is NOT interrupted.
+   * ''Note'': On t  out, t  underly ng future  s NOT  nterrupted.
    */
-  def withTimeout(timer: Timer, timeout: => Duration): FutureArrow[A, B] =
-    mapResult(_.within(timer, timeout))
+  def w hT  out(t  r: T  r, t  out: => Durat on): FutureArrow[A, B] =
+    mapResult(_.w h n(t  r, t  out))
 
   /**
-   * Produces a new FutureArrow where the returned Future must complete within the specified
-   * timeout, otherwise the Future fails with the specified Throwable.
+   * Produces a new FutureArrow w re t  returned Future must complete w h n t  spec f ed
+   * t  out, ot rw se t  Future fa ls w h t  spec f ed Throwable.
    *
-   * The [[timeout]] is passed by name to take advantage of deadlines passed in the request context.
+   * T  [[t  out]]  s passed by na  to take advantage of deadl nes passed  n t  request context.
    *
-   * ''Note'': On timeout, the underlying future is NOT interrupted.
+   * ''Note'': On t  out, t  underly ng future  s NOT  nterrupted.
    */
-  def withTimeout(timer: Timer, timeout: => Duration, exc: => Throwable): FutureArrow[A, B] =
-    mapResult(_.within(timer, timeout, exc))
+  def w hT  out(t  r: T  r, t  out: => Durat on, exc: => Throwable): FutureArrow[A, B] =
+    mapResult(_.w h n(t  r, t  out, exc))
 
   /**
-   * Produces a new FutureArrow where the returned Future[B] must complete within the specified
-   * timeout, otherwise the Future fails with a com.twitter.util.TimeoutException.
+   * Produces a new FutureArrow w re t  returned Future[B] must complete w h n t  spec f ed
+   * t  out, ot rw se t  Future fa ls w h a com.tw ter.ut l.T  outExcept on.
    *
-   * The [[timeout]] is passed by name to take advantage of deadlines passed in the request context.
+   * T  [[t  out]]  s passed by na  to take advantage of deadl nes passed  n t  request context.
    *
-   * ''Note'': On timeout, the underlying future is interrupted.
+   * ''Note'': On t  out, t  underly ng future  s  nterrupted.
    */
-  def raiseWithin(timer: Timer, timeout: => Duration): FutureArrow[A, B] =
-    mapResult(_.raiseWithin(timeout)(timer))
+  def ra seW h n(t  r: T  r, t  out: => Durat on): FutureArrow[A, B] =
+    mapResult(_.ra seW h n(t  out)(t  r))
 
   /**
-   * Produces a new FutureArrow where the returned Future must complete within the specified
-   * timeout, otherwise the Future fails with the specified Throwable.
+   * Produces a new FutureArrow w re t  returned Future must complete w h n t  spec f ed
+   * t  out, ot rw se t  Future fa ls w h t  spec f ed Throwable.
    *
-   * [[timeout]] is passed by name to take advantage of deadlines passed in the request context.
+   * [[t  out]]  s passed by na  to take advantage of deadl nes passed  n t  request context.
    *
-   * ''Note'': On timeout, the underlying future is interrupted.
+   * ''Note'': On t  out, t  underly ng future  s  nterrupted.
    */
-  def raiseWithin(timer: Timer, timeout: => Duration, exc: => Throwable): FutureArrow[A, B] =
-    mapResult(_.raiseWithin(timer, timeout, exc))
+  def ra seW h n(t  r: T  r, t  out: => Durat on, exc: => Throwable): FutureArrow[A, B] =
+    mapResult(_.ra seW h n(t  r, t  out, exc))
 
   /**
-   * Produces a finagle.Service instance that invokes this arrow.
+   * Produces a f nagle.Serv ce  nstance that  nvokes t  arrow.
    */
-  def asService: Service[A, B] = Service.mk(this)
+  def asServ ce: Serv ce[A, B] = Serv ce.mk(t )
 
   /**
-   * Produces a new FutureArrow with the given finagle.Filter applied to this instance.
+   * Produces a new FutureArrow w h t  g ven f nagle.F lter appl ed to t   nstance.
    */
-  def withFilter[A2, B2](filter: Filter[A2, B2, A, B]): FutureArrow[A2, B2] =
-    FutureArrow[A2, B2](filter.andThen(asService))
+  def w hF lter[A2, B2](f lter: F lter[A2, B2, A, B]): FutureArrow[A2, B2] =
+    FutureArrow[A2, B2](f lter.andT n(asServ ce))
 
   /**
-   * Produces a new FutureArrow with the given timeout which retries on Exceptions or timeouts and
-   * records stats about the logical request.  This is only appropriate for idempotent operations.
+   * Produces a new FutureArrow w h t  g ven t  out wh ch retr es on Except ons or t  outs and
+   * records stats about t  log cal request.  T   s only appropr ate for  dempotent operat ons.
    */
-  def observedWithTimeoutAndRetry[A2 <: A](
-    statsReceiver: StatsReceiver,
-    extractName: (A2 => String),
-    timer: Timer,
-    timeout: Duration,
-    numTries: Int,
-    shouldRetry: PartialFunction[Try[B], Boolean] = FutureArrow.RetryOnNonFailedFast
+  def observedW hT  outAndRetry[A2 <: A](
+    statsRece ver: StatsRece ver,
+    extractNa : (A2 => Str ng),
+    t  r: T  r,
+    t  out: Durat on,
+    numTr es:  nt,
+    shouldRetry: Part alFunct on[Try[B], Boolean] = FutureArrow.RetryOnNonFa ledFast
   ): FutureArrow[A2, B] = {
-    val retryPolicy = RetryPolicy.tries(numTries, shouldRetry)
-    withTimeout(timer, timeout)
-      .retry(retryPolicy, timer, statsReceiver, extractName)
-      .trackLatency(statsReceiver, extractName)
-      .trackOutcome(statsReceiver, extractName)
+    val retryPol cy = RetryPol cy.tr es(numTr es, shouldRetry)
+    w hT  out(t  r, t  out)
+      .retry(retryPol cy, t  r, statsRece ver, extractNa )
+      .trackLatency(statsRece ver, extractNa )
+      .trackOutco (statsRece ver, extractNa )
   }
 
   /**
-   * Produces a new FutureArrow with the given timeout and records stats about the logical request.
-   * This does not retry and is appropriate for non-idempotent operations.
+   * Produces a new FutureArrow w h t  g ven t  out and records stats about t  log cal request.
+   * T  does not retry and  s appropr ate for non- dempotent operat ons.
    */
-  def observedWithTimeout[A2 <: A](
-    statsReceiver: StatsReceiver,
-    extractName: (A2 => String),
-    timer: Timer,
-    timeout: Duration
+  def observedW hT  out[A2 <: A](
+    statsRece ver: StatsRece ver,
+    extractNa : (A2 => Str ng),
+    t  r: T  r,
+    t  out: Durat on
   ): FutureArrow[A2, B] =
-    withTimeout(timer, timeout)
-      .trackLatency(statsReceiver, extractName)
-      .trackOutcome(statsReceiver, extractName)
+    w hT  out(t  r, t  out)
+      .trackLatency(statsRece ver, extractNa )
+      .trackOutco (statsRece ver, extractNa )
 }

@@ -1,53 +1,53 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+na space java com.tw ter.s mclusters_v2.thr ftjava
+na space py gen.tw ter.s mclusters_v2
+#@na space scala com.tw ter.s mclusters_v2.thr ftscala
+#@na space strato com.tw ter.s mclusters_v2
 
-include "embedding.thrift"
-include "simclusters_presto.thrift"
+ nclude "embedd ng.thr ft"
+ nclude "s mclusters_presto.thr ft"
 
 /**
- * Struct that associates a user with simcluster scores for different
- * interaction types. This is meant to be used as a feature to predict abuse.
+ * Struct that assoc ates a user w h s mcluster scores for d fferent
+ *  nteract on types. T   s  ant to be used as a feature to pred ct abuse.
  *
- * This thrift struct is meant for exploration purposes. It does not have any
- * assumptions about what type of interactions we use or what types of scores
- * we are keeping track of.
+ * T  thr ft struct  s  ant for explorat on purposes.   does not have any
+ * assumpt ons about what type of  nteract ons   use or what types of scores
+ *   are keep ng track of.
  **/ 
-struct AdhocSingleSideClusterScores {
-  1: required i64 userId(personalDataType = 'UserId')
-  // We can make the interaction types have arbitrary names. In the production
-  // version of this dataset. We should have a different field per interaction
-  // type so that API of what is included is more clear.
-  2: required map<string, embedding.SimClustersEmbedding> interactionScores
-}(persisted="true", hasPersonalData = 'true')
+struct AdhocS ngleS deClusterScores {
+  1: requ red  64 user d(personalDataType = 'User d')
+  //   can make t   nteract on types have arb rary na s.  n t  product on
+  // vers on of t  dataset.   should have a d fferent f eld per  nteract on
+  // type so that AP  of what  s  ncluded  s more clear.
+  2: requ red map<str ng, embedd ng.S mClustersEmbedd ng>  nteract onScores
+}(pers sted="true", hasPersonalData = 'true')
 
 /**
-* This is a prod version of the single side features. It is meant to be used as a value in a key
-* value store. The pair of healthy and unhealthy scores will be different depending on the use case.
-* We will use different stores for different user cases. For instance, the first instance that
-* we implement will use search abuse reports and impressions. We can build stores for new values
-* in the future.
+* T   s a prod vers on of t  s ngle s de features.    s  ant to be used as a value  n a key
+* value store. T  pa r of  althy and un althy scores w ll be d fferent depend ng on t  use case.
+*   w ll use d fferent stores for d fferent user cases. For  nstance, t  f rst  nstance that
+*    mple nt w ll use search abuse reports and  mpress ons.   can bu ld stores for new values
+*  n t  future.
 *
-* The consumer creates the interactions which the author receives.  For instance, the consumer
-* creates an abuse report for an author. The consumer scores are related to the interaction creation
-* behavior of the consumer. The author scores are related to the whether the author receives these
-* interactions.
+* T  consu r creates t   nteract ons wh ch t  author rece ves.  For  nstance, t  consu r
+* creates an abuse report for an author. T  consu r scores are related to t   nteract on creat on
+* behav or of t  consu r. T  author scores are related to t  w t r t  author rece ves t se
+*  nteract ons.
 *
 **/
-struct SingleSideUserScores {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: required double consumerUnhealthyScore(personalDataType = 'EngagementScore')
-  3: required double consumerHealthyScore(personalDataType = 'EngagementScore')
-  4: required double authorUnhealthyScore(personalDataType = 'EngagementScore')
-  5: required double authorHealthyScore(personalDataType = 'EngagementScore')
-}(persisted="true", hasPersonalData = 'true')
+struct S ngleS deUserScores {
+  1: requ red  64 user d(personalDataType = 'User d')
+  2: requ red double consu rUn althyScore(personalDataType = 'Engage ntScore')
+  3: requ red double consu r althyScore(personalDataType = 'Engage ntScore')
+  4: requ red double authorUn althyScore(personalDataType = 'Engage ntScore')
+  5: requ red double author althyScore(personalDataType = 'Engage ntScore')
+}(pers sted="true", hasPersonalData = 'true')
 
 /**
-* Struct that associates a cluster-cluster interaction scores for different
-* interaction types.
+* Struct that assoc ates a cluster-cluster  nteract on scores for d fferent
+*  nteract on types.
 **/
-struct AdhocCrossSimClusterInteractionScores {
-  1: required i64 clusterId
-  2: required list<simclusters_presto.ClustersScore> clusterScores
-}(persisted="true")
+struct AdhocCrossS mCluster nteract onScores {
+  1: requ red  64 cluster d
+  2: requ red l st<s mclusters_presto.ClustersScore> clusterScores
+}(pers sted="true")

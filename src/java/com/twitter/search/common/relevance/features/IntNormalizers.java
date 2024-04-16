@@ -1,39 +1,39 @@
-package com.twitter.search.common.relevance.features;
+package com.tw ter.search.common.relevance.features;
 
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.twitter.search.common.encoding.features.ByteNormalizer;
-import com.twitter.search.common.encoding.features.IntNormalizer;
-import com.twitter.search.common.encoding.features.PredictionScoreNormalizer;
+ mport com.tw ter.search.common.encod ng.features.ByteNormal zer;
+ mport com.tw ter.search.common.encod ng.features. ntNormal zer;
+ mport com.tw ter.search.common.encod ng.features.Pred ct onScoreNormal zer;
 
 /**
- * Int value normalizers used to push feature values into earlybird db. For the
- * 8-bit feature types, this class wraps the
- * com.twitter.search.common.relevance.features.MutableFeatureNormalizers
+ *  nt value normal zers used to push feature values  nto earlyb rd db. For t 
+ * 8-b  feature types, t  class wraps t 
+ * com.tw ter.search.common.relevance.features.MutableFeatureNormal zers
  */
-public final class IntNormalizers {
-  private IntNormalizers() {
+publ c f nal class  ntNormal zers {
+  pr vate  ntNormal zers() {
   }
 
-  public static final IntNormalizer LEGACY_NORMALIZER =
-      val -> ByteNormalizer.unsignedByteToInt(
-          MutableFeatureNormalizers.BYTE_NORMALIZER.normalize(val));
+  publ c stat c f nal  ntNormal zer LEGACY_NORMAL ZER =
+      val -> ByteNormal zer.uns gnedByteTo nt(
+          MutableFeatureNormal zers.BYTE_NORMAL ZER.normal ze(val));
 
-  public static final IntNormalizer SMART_INTEGER_NORMALIZER =
-      val -> ByteNormalizer.unsignedByteToInt(
-          MutableFeatureNormalizers.SMART_INTEGER_NORMALIZER.normalize(val));
+  publ c stat c f nal  ntNormal zer SMART_ NTEGER_NORMAL ZER =
+      val -> ByteNormal zer.uns gnedByteTo nt(
+          MutableFeatureNormal zers.SMART_ NTEGER_NORMAL ZER.normal ze(val));
 
-  // The PARUS_SCORE feature is deprecated and is never set in our indexes. However, we still need
-  // this normalizer for now, because some models do not work properly with "missing" features, so
-  // for now we still need to set the PARUS_SCORE feature to 0.
-  public static final IntNormalizer PARUS_SCORE_NORMALIZER = val -> 0;
+  // T  PARUS_SCORE feature  s deprecated and  s never set  n    ndexes. Ho ver,   st ll need
+  // t  normal zer for now, because so  models do not work properly w h "m ss ng" features, so
+  // for now   st ll need to set t  PARUS_SCORE feature to 0.
+  publ c stat c f nal  ntNormal zer PARUS_SCORE_NORMAL ZER = val -> 0;
 
-  public static final IntNormalizer BOOLEAN_NORMALIZER =
+  publ c stat c f nal  ntNormal zer BOOLEAN_NORMAL ZER =
       val -> val == 0 ? 0 : 1;
 
-  public static final IntNormalizer TIMESTAMP_SEC_TO_HR_NORMALIZER =
-      val -> (int) TimeUnit.SECONDS.toHours((long) val);
+  publ c stat c f nal  ntNormal zer T MESTAMP_SEC_TO_HR_NORMAL ZER =
+      val -> ( nt) T  Un .SECONDS.toH s((long) val);
 
-  public static final PredictionScoreNormalizer PREDICTION_SCORE_NORMALIZER =
-      new PredictionScoreNormalizer(3);
+  publ c stat c f nal Pred ct onScoreNormal zer PRED CT ON_SCORE_NORMAL ZER =
+      new Pred ct onScoreNormal zer(3);
 }

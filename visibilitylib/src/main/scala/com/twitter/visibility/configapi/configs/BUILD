@@ -1,17 +1,17 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "configapi/configapi-core",
-        "configapi/configapi-decider",
-        "decider",
-        "finagle/finagle-stats",
-        "servo/decider",
-        "servo/decider/src/main/scala",
-        "visibility/lib/src/main/scala/com/twitter/visibility/configapi/params",
-        "visibility/lib/src/main/scala/com/twitter/visibility/models",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "conf gap /conf gap -core",
+        "conf gap /conf gap -dec der",
+        "dec der",
+        "f nagle/f nagle-stats",
+        "servo/dec der",
+        "servo/dec der/src/ma n/scala",
+        "v s b l y/l b/src/ma n/scala/com/tw ter/v s b l y/conf gap /params",
+        "v s b l y/l b/src/ma n/scala/com/tw ter/v s b l y/models",
     ],
 )

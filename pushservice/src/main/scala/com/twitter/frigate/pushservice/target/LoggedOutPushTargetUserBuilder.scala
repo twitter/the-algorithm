@@ -1,180 +1,180 @@
-package com.twitter.frigate.pushservice.target
+package com.tw ter.fr gate.pushserv ce.target
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.conversions.DurationOps._
-import com.twitter.decider.Decider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.FeatureMap
-import com.twitter.frigate.common.history.History
-import com.twitter.frigate.common.history.HistoryStoreKeyContext
-import com.twitter.frigate.common.history.MagicFanoutReasonHistory
-import com.twitter.frigate.common.history.PushServiceHistoryStore
-import com.twitter.frigate.common.history.RecItems
-import com.twitter.frigate.common.store.deviceinfo.DeviceInfo
-import com.twitter.frigate.common.util.ABDeciderWithOverride
-import com.twitter.frigate.common.util.LanguageLocaleUtil
-import com.twitter.frigate.data_pipeline.features_common.MrRequestContextForFeatureStore
-import com.twitter.frigate.data_pipeline.thriftscala.UserHistoryValue
-import com.twitter.frigate.dau_model.thriftscala.DauProbability
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.thriftscala.PushContext
-import com.twitter.frigate.thriftscala.UserForPushTargeting
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.hermit.stp.thriftscala.STPResult
-import com.twitter.interests.thriftscala.InterestId
-import com.twitter.notificationservice.genericfeedbackstore.FeedbackPromptValue
-import com.twitter.notificationservice.thriftscala.CaretFeedbackDetails
-import com.twitter.nrel.hydration.push.HydrationContext
-import com.twitter.permissions_storage.thriftscala.AppPermission
-import com.twitter.service.metastore.gen.thriftscala.Location
-import com.twitter.service.metastore.gen.thriftscala.UserLanguages
-import com.twitter.stitch.Stitch
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.columns.frigate.logged_out_web_notifications.thriftscala.LOWebNotificationMetadata
-import com.twitter.timelines.configapi
-import com.twitter.timelines.configapi.Params
-import com.twitter.timelines.real_graph.v1.thriftscala.RealGraphFeatures
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.wtf.scalding.common.thriftscala.UserFeatures
+ mport com.tw ter.abdec der.Logg ngABDec der
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.FeatureMap
+ mport com.tw ter.fr gate.common. tory. tory
+ mport com.tw ter.fr gate.common. tory. toryStoreKeyContext
+ mport com.tw ter.fr gate.common. tory.Mag cFanoutReason tory
+ mport com.tw ter.fr gate.common. tory.PushServ ce toryStore
+ mport com.tw ter.fr gate.common. tory.Rec ems
+ mport com.tw ter.fr gate.common.store.dev ce nfo.Dev ce nfo
+ mport com.tw ter.fr gate.common.ut l.ABDec derW hOverr de
+ mport com.tw ter.fr gate.common.ut l.LanguageLocaleUt l
+ mport com.tw ter.fr gate.data_p pel ne.features_common.MrRequestContextForFeatureStore
+ mport com.tw ter.fr gate.data_p pel ne.thr ftscala.User toryValue
+ mport com.tw ter.fr gate.dau_model.thr ftscala.DauProbab l y
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.thr ftscala.PushContext
+ mport com.tw ter.fr gate.thr ftscala.UserForPushTarget ng
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter. rm .stp.thr ftscala.STPResult
+ mport com.tw ter. nterests.thr ftscala. nterest d
+ mport com.tw ter.not f cat onserv ce.gener cfeedbackstore.FeedbackPromptValue
+ mport com.tw ter.not f cat onserv ce.thr ftscala.CaretFeedbackDeta ls
+ mport com.tw ter.nrel.hydrat on.push.Hydrat onContext
+ mport com.tw ter.perm ss ons_storage.thr ftscala.AppPerm ss on
+ mport com.tw ter.serv ce. tastore.gen.thr ftscala.Locat on
+ mport com.tw ter.serv ce. tastore.gen.thr ftscala.UserLanguages
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.strato.columns.fr gate.logged_out_ b_not f cat ons.thr ftscala.LO bNot f cat on tadata
+ mport com.tw ter.t  l nes.conf gap 
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.tw ter.t  l nes.real_graph.v1.thr ftscala.RealGraphFeatures
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.wtf.scald ng.common.thr ftscala.UserFeatures
 
-case class LoggedOutPushTargetUserBuilder(
-  historyStore: PushServiceHistoryStore,
-  inputDecider: Decider,
-  inputAbDecider: LoggingABDecider,
-  loggedOutPushInfoStore: ReadableStore[Long, LOWebNotificationMetadata]
+case class LoggedOutPushTargetUserBu lder(
+   toryStore: PushServ ce toryStore,
+   nputDec der: Dec der,
+   nputAbDec der: Logg ngABDec der,
+  loggedOutPush nfoStore: ReadableStore[Long, LO bNot f cat on tadata]
 )(
-  globalStatsReceiver: StatsReceiver) {
-  private val stats = globalStatsReceiver.scope("LORefreshForPushHandler")
-  private val noHistoryCounter = stats.counter("no_logged_out_history")
-  private val historyFoundCounter = stats.counter("logged_out_history_counter")
-  private val noLoggedOutUserCounter = stats.counter("no_logged_out_user")
-  private val countryCodeCounter = stats.counter("country_counter")
-  private val noCountryCodeCounter = stats.counter("no_country_counter")
-  private val noLanguageCodeCounter = stats.counter("no_language_counter")
+  globalStatsRece ver: StatsRece ver) {
+  pr vate val stats = globalStatsRece ver.scope("LORefreshForPushHandler")
+  pr vate val no toryCounter = stats.counter("no_logged_out_ tory")
+  pr vate val  toryFoundCounter = stats.counter("logged_out_ tory_counter")
+  pr vate val noLoggedOutUserCounter = stats.counter("no_logged_out_user")
+  pr vate val countryCodeCounter = stats.counter("country_counter")
+  pr vate val noCountryCodeCounter = stats.counter("no_country_counter")
+  pr vate val noLanguageCodeCounter = stats.counter("no_language_counter")
 
-  def buildTarget(
-    guestId: Long,
-    inputPushContext: Option[PushContext]
+  def bu ldTarget(
+    guest d: Long,
+     nputPushContext: Opt on[PushContext]
   ): Future[Target] = {
 
-    val historyStoreKeyContext = HistoryStoreKeyContext(
-      guestId,
-      inputPushContext.flatMap(_.useMemcacheForHistory).getOrElse(false)
+    val  toryStoreKeyContext =  toryStoreKeyContext(
+      guest d,
+       nputPushContext.flatMap(_.use mcac For tory).getOrElse(false)
     )
-    if (historyStore.get(historyStoreKeyContext, Some(30.days)) == Future.None) {
-      noHistoryCounter.incr()
+     f ( toryStore.get( toryStoreKeyContext, So (30.days)) == Future.None) {
+      no toryCounter. ncr()
     } else {
-      historyFoundCounter.incr()
+       toryFoundCounter. ncr()
 
     }
-    if (loggedOutPushInfoStore.get(guestId) == Future.None) {
-      noLoggedOutUserCounter.incr()
+     f (loggedOutPush nfoStore.get(guest d) == Future.None) {
+      noLoggedOutUserCounter. ncr()
     }
     Future
-      .join(
-        historyStore.get(historyStoreKeyContext, Some(30.days)),
-        loggedOutPushInfoStore.get(guestId)
+      .jo n(
+         toryStore.get( toryStoreKeyContext, So (30.days)),
+        loggedOutPush nfoStore.get(guest d)
       ).map {
-        case (loNotifHistory, loggedOutUserPushInfo) =>
+        case (loNot f tory, loggedOutUserPush nfo) =>
           new Target {
-            override lazy val stats: StatsReceiver = globalStatsReceiver
-            override val targetId: Long = guestId
-            override val targetGuestId = Some(guestId)
-            override lazy val decider: Decider = inputDecider
-            override lazy val loggedOutMetadata = Future.value(loggedOutUserPushInfo)
-            val rawLanguageFut = loggedOutMetadata.map { metadata => metadata.map(_.language) }
-            override val targetLanguage: Future[Option[String]] = rawLanguageFut.map { rawLang =>
-              if (rawLang.isDefined) {
-                val lang = LanguageLocaleUtil.getStandardLanguageCode(rawLang.get)
-                if (lang.isEmpty) {
-                  noLanguageCodeCounter.incr()
+            overr de lazy val stats: StatsRece ver = globalStatsRece ver
+            overr de val target d: Long = guest d
+            overr de val targetGuest d = So (guest d)
+            overr de lazy val dec der: Dec der =  nputDec der
+            overr de lazy val loggedOut tadata = Future.value(loggedOutUserPush nfo)
+            val rawLanguageFut = loggedOut tadata.map {  tadata =>  tadata.map(_.language) }
+            overr de val targetLanguage: Future[Opt on[Str ng]] = rawLanguageFut.map { rawLang =>
+               f (rawLang. sDef ned) {
+                val lang = LanguageLocaleUt l.getStandardLanguageCode(rawLang.get)
+                 f (lang. sEmpty) {
+                  noLanguageCodeCounter. ncr()
                   None
                 } else {
-                  Option(lang)
+                  Opt on(lang)
                 }
               } else None
             }
-            val country = loggedOutMetadata.map(_.map(_.countryCode))
-            if (country.isDefined) {
-              countryCodeCounter.incr()
+            val country = loggedOut tadata.map(_.map(_.countryCode))
+             f (country. sDef ned) {
+              countryCodeCounter. ncr()
             } else {
-              noCountryCodeCounter.incr()
+              noCountryCodeCounter. ncr()
             }
-            if (loNotifHistory == null) {
-              noHistoryCounter.incr()
+             f (loNot f tory == null) {
+              no toryCounter. ncr()
             } else {
-              historyFoundCounter.incr()
+               toryFoundCounter. ncr()
             }
-            override lazy val location: Future[Option[Location]] = country.map {
-              case Some(code) =>
-                Some(
-                  Location(
-                    city = "",
-                    region = "",
+            overr de lazy val locat on: Future[Opt on[Locat on]] = country.map {
+              case So (code) =>
+                So (
+                  Locat on(
+                    c y = "",
+                    reg on = "",
                     countryCode = code,
-                    confidence = 0.0,
+                    conf dence = 0.0,
                     lat = None,
                     lon = None,
-                    metro = None,
-                    placeIds = None,
-                    weightedLocations = None,
+                     tro = None,
+                    place ds = None,
+                      ghtedLocat ons = None,
                     createdAtMsec = None,
-                    ip = None,
-                    isSignupIp = None,
+                     p = None,
+                     sS gnup p = None,
                     placeMap = None
                   ))
               case _ => None
             }
 
-            override lazy val pushContext: Option[PushContext] = inputPushContext
-            override lazy val history: Future[History] = Future.value(loNotifHistory)
-            override lazy val magicFanoutReasonHistory30Days: Future[MagicFanoutReasonHistory] =
+            overr de lazy val pushContext: Opt on[PushContext] =  nputPushContext
+            overr de lazy val  tory: Future[ tory] = Future.value(loNot f tory)
+            overr de lazy val mag cFanoutReason tory30Days: Future[Mag cFanoutReason tory] =
               Future.value(null)
-            override lazy val globalStats: StatsReceiver = globalStatsReceiver
-            override lazy val pushTargeting: Future[Option[UserForPushTargeting]] = Future.None
-            override lazy val appPermissions: Future[Option[AppPermission]] = Future.None
-            override lazy val lastHTLVisitTimestamp: Future[Option[Long]] = Future.None
-            override lazy val pushRecItems: Future[RecItems] = Future.value(null)
+            overr de lazy val globalStats: StatsRece ver = globalStatsRece ver
+            overr de lazy val pushTarget ng: Future[Opt on[UserForPushTarget ng]] = Future.None
+            overr de lazy val appPerm ss ons: Future[Opt on[AppPerm ss on]] = Future.None
+            overr de lazy val lastHTLV s T  stamp: Future[Opt on[Long]] = Future.None
+            overr de lazy val pushRec ems: Future[Rec ems] = Future.value(null)
 
-            override lazy val isNewSignup: Boolean = false
-            override lazy val metastoreLanguages: Future[Option[UserLanguages]] = Future.None
-            override lazy val optOutUserInterests: Future[Option[Seq[InterestId]]] = Future.None
-            override lazy val mrRequestContextForFeatureStore: MrRequestContextForFeatureStore =
+            overr de lazy val  sNewS gnup: Boolean = false
+            overr de lazy val  tastoreLanguages: Future[Opt on[UserLanguages]] = Future.None
+            overr de lazy val optOutUser nterests: Future[Opt on[Seq[ nterest d]]] = Future.None
+            overr de lazy val mrRequestContextForFeatureStore: MrRequestContextForFeatureStore =
               null
-            override lazy val targetUser: Future[Option[User]] = Future.None
-            override lazy val notificationFeedbacks: Future[Option[Seq[FeedbackPromptValue]]] =
+            overr de lazy val targetUser: Future[Opt on[User]] = Future.None
+            overr de lazy val not f cat onFeedbacks: Future[Opt on[Seq[FeedbackPromptValue]]] =
               Future.None
-            override lazy val promptFeedbacks: Stitch[Seq[FeedbackPromptValue]] = null
-            override lazy val seedsWithWeight: Future[Option[Map[Long, Double]]] = Future.None
-            override lazy val tweetImpressionResults: Future[Seq[Long]] = Future.Nil
-            override lazy val params: configapi.Params = Params.Empty
-            override lazy val deviceInfo: Future[Option[DeviceInfo]] = Future.None
-            override lazy val userFeatures: Future[Option[UserFeatures]] = Future.None
-            override lazy val isOpenAppExperimentUser: Future[Boolean] = Future.False
-            override lazy val featureMap: Future[FeatureMap] = Future.value(null)
-            override lazy val dauProbability: Future[Option[DauProbability]] = Future.None
-            override lazy val labeledPushRecsHydrated: Future[Option[UserHistoryValue]] =
+            overr de lazy val promptFeedbacks: St ch[Seq[FeedbackPromptValue]] = null
+            overr de lazy val seedsW h  ght: Future[Opt on[Map[Long, Double]]] = Future.None
+            overr de lazy val t et mpress onResults: Future[Seq[Long]] = Future.N l
+            overr de lazy val params: conf gap .Params = Params.Empty
+            overr de lazy val dev ce nfo: Future[Opt on[Dev ce nfo]] = Future.None
+            overr de lazy val userFeatures: Future[Opt on[UserFeatures]] = Future.None
+            overr de lazy val  sOpenAppExper  ntUser: Future[Boolean] = Future.False
+            overr de lazy val featureMap: Future[FeatureMap] = Future.value(null)
+            overr de lazy val dauProbab l y: Future[Opt on[DauProbab l y]] = Future.None
+            overr de lazy val labeledPushRecsHydrated: Future[Opt on[User toryValue]] =
               Future.None
-            override lazy val onlineLabeledPushRecs: Future[Option[UserHistoryValue]] = Future.None
-            override lazy val realGraphFeatures: Future[Option[RealGraphFeatures]] = Future.None
-            override lazy val stpResult: Future[Option[STPResult]] = Future.None
-            override lazy val globalOptoutProbabilities: Seq[Future[Option[Double]]] = Seq.empty
-            override lazy val bucketOptoutProbability: Future[Option[Double]] = Future.None
-            override lazy val utcOffset: Future[Option[Duration]] = Future.None
-            override lazy val abDecider: ABDeciderWithOverride =
-              ABDeciderWithOverride(inputAbDecider, ddgOverrideOption)(globalStatsReceiver)
-            override lazy val resurrectionDate: Future[Option[String]] = Future.None
-            override lazy val isResurrectedUser: Boolean = false
-            override lazy val timeSinceResurrection: Option[Duration] = None
-            override lazy val inlineActionHistory: Future[Seq[(Long, String)]] = Future.Nil
-            override lazy val caretFeedbacks: Future[Option[Seq[CaretFeedbackDetails]]] =
+            overr de lazy val onl neLabeledPushRecs: Future[Opt on[User toryValue]] = Future.None
+            overr de lazy val realGraphFeatures: Future[Opt on[RealGraphFeatures]] = Future.None
+            overr de lazy val stpResult: Future[Opt on[STPResult]] = Future.None
+            overr de lazy val globalOptoutProbab l  es: Seq[Future[Opt on[Double]]] = Seq.empty
+            overr de lazy val bucketOptoutProbab l y: Future[Opt on[Double]] = Future.None
+            overr de lazy val utcOffset: Future[Opt on[Durat on]] = Future.None
+            overr de lazy val abDec der: ABDec derW hOverr de =
+              ABDec derW hOverr de( nputAbDec der, ddgOverr deOpt on)(globalStatsRece ver)
+            overr de lazy val resurrect onDate: Future[Opt on[Str ng]] = Future.None
+            overr de lazy val  sResurrectedUser: Boolean = false
+            overr de lazy val t  S nceResurrect on: Opt on[Durat on] = None
+            overr de lazy val  nl neAct on tory: Future[Seq[(Long, Str ng)]] = Future.N l
+            overr de lazy val caretFeedbacks: Future[Opt on[Seq[CaretFeedbackDeta ls]]] =
               Future.None
 
-            override def targetHydrationContext: Future[HydrationContext] = Future.value(null)
-            override def isBlueVerified: Future[Option[Boolean]] = Future.None
-            override def isVerified: Future[Option[Boolean]] = Future.None
-            override def isSuperFollowCreator: Future[Option[Boolean]] = Future.None
+            overr de def targetHydrat onContext: Future[Hydrat onContext] = Future.value(null)
+            overr de def  sBlueVer f ed: Future[Opt on[Boolean]] = Future.None
+            overr de def  sVer f ed: Future[Opt on[Boolean]] = Future.None
+            overr de def  sSuperFollowCreator: Future[Opt on[Boolean]] = Future.None
           }
       }
   }

@@ -1,109 +1,109 @@
-package com.twitter.frigate.pushservice.predicate
+package com.tw ter.fr gate.pushserv ce.pred cate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.util.CandidateUtil
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.language.normalization.UserDisplayLanguage
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base._
+ mport com.tw ter.fr gate.common.rec_types.RecTypes
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.ut l.Cand dateUt l
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter.language.normal zat on.UserD splayLanguage
+ mport com.tw ter.ut l.Future
 
-object TweetLanguagePredicate {
+object T etLanguagePred cate {
 
-  def oonTweeetLanguageMatch(
+  def oonT eetLanguageMatch(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[
-    PushCandidate with RecommendationType with TweetDetails
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[
+    PushCand date w h Recom ndat onType w h T etDeta ls
   ] = {
-    val name = "oon_tweet_language_predicate"
-    val scopedStatsReceiver = stats.scope(name)
-    val oonCandidatesCounter =
-      scopedStatsReceiver.counter("oon_candidates")
-    val enableFilterCounter =
-      scopedStatsReceiver.counter("enabled_filter")
-    val skipMediaTweetsCounter =
-      scopedStatsReceiver.counter("skip_media_tweets")
+    val na  = "oon_t et_language_pred cate"
+    val scopedStatsRece ver = stats.scope(na )
+    val oonCand datesCounter =
+      scopedStatsRece ver.counter("oon_cand dates")
+    val enableF lterCounter =
+      scopedStatsRece ver.counter("enabled_f lter")
+    val sk p d aT etsCounter =
+      scopedStatsRece ver.counter("sk p_ d a_t ets")
 
-    Predicate
-      .fromAsync { candidate: PushCandidate with RecommendationType with TweetDetails =>
-        val target = candidate.target
-        val crt = candidate.commonRecType
-        val isOonCandidate = RecTypes.isOutOfNetworkTweetRecType(crt) ||
-          RecTypes.outOfNetworkTopicTweetTypes.contains(crt)
+    Pred cate
+      .fromAsync { cand date: PushCand date w h Recom ndat onType w h T etDeta ls =>
+        val target = cand date.target
+        val crt = cand date.commonRecType
+        val  sOonCand date = RecTypes. sOutOfNetworkT etRecType(crt) ||
+          RecTypes.outOfNetworkTop cT etTypes.conta ns(crt)
 
-        if (CandidateUtil.shouldApplyHealthQualityFilters(candidate) && isOonCandidate) {
-          oonCandidatesCounter.incr()
+         f (Cand dateUt l.shouldApply althQual yF lters(cand date) &&  sOonCand date) {
+          oonCand datesCounter. ncr()
 
           target.featureMap.map { featureMap =>
-            val userPreferredLanguages = featureMap.sparseBinaryFeatures
-              .getOrElse("user.language.user.preferred_contents", Set.empty[String])
-            val userEngagementLanguages = featureMap.sparseContinuousFeatures.getOrElse(
-              "user.language.user.engagements",
-              Map.empty[String, Double])
-            val userFollowLanguages = featureMap.sparseContinuousFeatures.getOrElse(
-              "user.language.user.following_accounts",
-              Map.empty[String, Double])
-            val userProducedTweetLanguages = featureMap.sparseContinuousFeatures
-              .getOrElse("user.language.user.produced_tweets", Map.empty)
-            val userDeviceLanguages = featureMap.sparseContinuousFeatures.getOrElse(
-              "user.language.user.recent_devices",
-              Map.empty[String, Double])
-            val tweetLanguageOpt = candidate.categoricalFeatures
-              .get(target.params(PushFeatureSwitchParams.TweetLanguageFeatureNameParam))
+            val userPreferredLanguages = featureMap.sparseB naryFeatures
+              .getOrElse("user.language.user.preferred_contents", Set.empty[Str ng])
+            val userEngage ntLanguages = featureMap.sparseCont nuousFeatures.getOrElse(
+              "user.language.user.engage nts",
+              Map.empty[Str ng, Double])
+            val userFollowLanguages = featureMap.sparseCont nuousFeatures.getOrElse(
+              "user.language.user.follow ng_accounts",
+              Map.empty[Str ng, Double])
+            val userProducedT etLanguages = featureMap.sparseCont nuousFeatures
+              .getOrElse("user.language.user.produced_t ets", Map.empty)
+            val userDev ceLanguages = featureMap.sparseCont nuousFeatures.getOrElse(
+              "user.language.user.recent_dev ces",
+              Map.empty[Str ng, Double])
+            val t etLanguageOpt = cand date.categor calFeatures
+              .get(target.params(PushFeatureSw chParams.T etLanguageFeatureNa Param))
 
-            if (userPreferredLanguages.isEmpty)
-              scopedStatsReceiver.counter("userPreferredLanguages_empty").incr()
-            if (userEngagementLanguages.isEmpty)
-              scopedStatsReceiver.counter("userEngagementLanguages_empty").incr()
-            if (userFollowLanguages.isEmpty)
-              scopedStatsReceiver.counter("userFollowLanguages_empty").incr()
-            if (userProducedTweetLanguages.isEmpty)
-              scopedStatsReceiver
-                .counter("userProducedTweetLanguages_empty")
-                .incr()
-            if (userDeviceLanguages.isEmpty)
-              scopedStatsReceiver.counter("userDeviceLanguages_empty").incr()
-            if (tweetLanguageOpt.isEmpty) scopedStatsReceiver.counter("tweetLanguage_empty").incr()
+             f (userPreferredLanguages. sEmpty)
+              scopedStatsRece ver.counter("userPreferredLanguages_empty"). ncr()
+             f (userEngage ntLanguages. sEmpty)
+              scopedStatsRece ver.counter("userEngage ntLanguages_empty"). ncr()
+             f (userFollowLanguages. sEmpty)
+              scopedStatsRece ver.counter("userFollowLanguages_empty"). ncr()
+             f (userProducedT etLanguages. sEmpty)
+              scopedStatsRece ver
+                .counter("userProducedT etLanguages_empty")
+                . ncr()
+             f (userDev ceLanguages. sEmpty)
+              scopedStatsRece ver.counter("userDev ceLanguages_empty"). ncr()
+             f (t etLanguageOpt. sEmpty) scopedStatsRece ver.counter("t etLanguage_empty"). ncr()
 
-            val tweetLanguage = tweetLanguageOpt.getOrElse("und")
-            val undefinedTweetLanguages = Set("")
+            val t etLanguage = t etLanguageOpt.getOrElse("und")
+            val undef nedT etLanguages = Set("")
 
-            if (!undefinedTweetLanguages.contains(tweetLanguage)) {
-              lazy val userInferredLanguageThreshold =
-                target.params(PushFeatureSwitchParams.UserInferredLanguageThresholdParam)
-              lazy val userDeviceLanguageThreshold =
-                target.params(PushFeatureSwitchParams.UserDeviceLanguageThresholdParam)
-              lazy val enableTweetLanguageFilter =
-                target.params(PushFeatureSwitchParams.EnableTweetLanguageFilter)
-              lazy val skipLanguageFilterForMediaTweets =
-                target.params(PushFeatureSwitchParams.SkipLanguageFilterForMediaTweets)
+             f (!undef nedT etLanguages.conta ns(t etLanguage)) {
+              lazy val user nferredLanguageThreshold =
+                target.params(PushFeatureSw chParams.User nferredLanguageThresholdParam)
+              lazy val userDev ceLanguageThreshold =
+                target.params(PushFeatureSw chParams.UserDev ceLanguageThresholdParam)
+              lazy val enableT etLanguageF lter =
+                target.params(PushFeatureSw chParams.EnableT etLanguageF lter)
+              lazy val sk pLanguageF lterFor d aT ets =
+                target.params(PushFeatureSw chParams.Sk pLanguageF lterFor d aT ets)
 
               lazy val allLanguages = userPreferredLanguages ++
-                userEngagementLanguages.filter(_._2 > userInferredLanguageThreshold).keySet ++
-                userFollowLanguages.filter(_._2 > userInferredLanguageThreshold).keySet ++
-                userProducedTweetLanguages.filter(_._2 > userInferredLanguageThreshold).keySet ++
-                userDeviceLanguages.filter(_._2 > userDeviceLanguageThreshold).keySet
+                userEngage ntLanguages.f lter(_._2 > user nferredLanguageThreshold).keySet ++
+                userFollowLanguages.f lter(_._2 > user nferredLanguageThreshold).keySet ++
+                userProducedT etLanguages.f lter(_._2 > user nferredLanguageThreshold).keySet ++
+                userDev ceLanguages.f lter(_._2 > userDev ceLanguageThreshold).keySet
 
-              if (enableTweetLanguageFilter && allLanguages.nonEmpty) {
-                enableFilterCounter.incr()
-                val hasMedia = candidate.hasPhoto || candidate.hasVideo
+               f (enableT etLanguageF lter && allLanguages.nonEmpty) {
+                enableF lterCounter. ncr()
+                val has d a = cand date.hasPhoto || cand date.hasV deo
 
-                if (hasMedia && skipLanguageFilterForMediaTweets) {
-                  skipMediaTweetsCounter.incr()
+                 f (has d a && sk pLanguageF lterFor d aT ets) {
+                  sk p d aT etsCounter. ncr()
                   true
                 } else {
-                  allLanguages.map(UserDisplayLanguage.toTweetLanguage).contains(tweetLanguage)
+                  allLanguages.map(UserD splayLanguage.toT etLanguage).conta ns(t etLanguage)
                 }
               } else true
             } else true
           }
         } else Future.True
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .w hStats(stats.scope(na ))
+      .w hNa (na )
   }
 }

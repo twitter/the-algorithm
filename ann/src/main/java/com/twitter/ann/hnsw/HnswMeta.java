@@ -1,45 +1,45 @@
-package com.twitter.ann.hnsw;
+package com.tw ter.ann.hnsw;
 
-import java.util.Objects;
-import java.util.Optional;
+ mport java.ut l.Objects;
+ mport java.ut l.Opt onal;
 
-class HnswMeta<T> {
-  private final int maxLevel;
-  private final Optional<T> entryPoint;
+class Hnsw ta<T> {
+  pr vate f nal  nt maxLevel;
+  pr vate f nal Opt onal<T> entryPo nt;
 
-  HnswMeta(int maxLevel, Optional<T> entryPoint) {
-    this.maxLevel = maxLevel;
-    this.entryPoint = entryPoint;
+  Hnsw ta( nt maxLevel, Opt onal<T> entryPo nt) {
+    t .maxLevel = maxLevel;
+    t .entryPo nt = entryPo nt;
   }
 
-  public int getMaxLevel() {
+  publ c  nt getMaxLevel() {
     return maxLevel;
   }
 
-  public Optional<T> getEntryPoint() {
-    return entryPoint;
+  publ c Opt onal<T> getEntryPo nt() {
+    return entryPo nt;
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  @Overr de
+  publ c boolean equals(Object o) {
+     f (t  == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+     f (o == null || getClass() != o.getClass()) {
       return false;
     }
-    HnswMeta<?> hnswMeta = (HnswMeta<?>) o;
-    return maxLevel == hnswMeta.maxLevel
-        && Objects.equals(entryPoint, hnswMeta.entryPoint);
+    Hnsw ta<?> hnsw ta = (Hnsw ta<?>) o;
+    return maxLevel == hnsw ta.maxLevel
+        && Objects.equals(entryPo nt, hnsw ta.entryPo nt);
   }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(maxLevel, entryPoint);
+  @Overr de
+  publ c  nt hashCode() {
+    return Objects.hash(maxLevel, entryPo nt);
   }
 
-  @Override
-  public String toString() {
-    return "HnswMeta{maxLevel=" + maxLevel + ", entryPoint=" + entryPoint + '}';
+  @Overr de
+  publ c Str ng toStr ng() {
+    return "Hnsw ta{maxLevel=" + maxLevel + ", entryPo nt=" + entryPo nt + '}';
   }
 }

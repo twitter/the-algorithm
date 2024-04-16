@@ -1,51 +1,51 @@
-package com.twitter.recos.user_user_graph
+package com.tw ter.recos.user_user_graph
 
-import com.twitter.logging.Logger
-import com.twitter.recos.user_user_graph.thriftscala._
-import com.twitter.util.Future
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.recos.user_user_graph.thr ftscala._
+ mport com.tw ter.ut l.Future
 
-trait LoggingUserUserGraph extends thriftscala.UserUserGraph.MethodPerEndpoint {
-  private[this] val accessLog = Logger("access")
+tra  Logg ngUserUserGraph extends thr ftscala.UserUserGraph. thodPerEndpo nt {
+  pr vate[t ] val accessLog = Logger("access")
 
-  abstract override def recommendUsers(
-    request: RecommendUserRequest
-  ): Future[RecommendUserResponse] = {
-    val time = System.currentTimeMillis
-    super.recommendUsers(request) onSuccess { resp =>
-      val timeTaken = System.currentTimeMillis - time
+  abstract overr de def recom ndUsers(
+    request: Recom ndUserRequest
+  ): Future[Recom ndUserResponse] = {
+    val t   = System.currentT  M ll s
+    super.recom ndUsers(request) onSuccess { resp =>
+      val t  Taken = System.currentT  M ll s - t  
       val logText =
-        s"In ${timeTaken}ms, recommendUsers(${requestToString(request)}), response ${responseToString(resp)}"
-      accessLog.info(logText)
-    } onFailure { exc =>
-      val timeTaken = System.currentTimeMillis - time
-      val logText = s"In ${timeTaken}ms, recommendUsers(${requestToString(request)} returned error"
+        s" n ${t  Taken}ms, recom ndUsers(${requestToStr ng(request)}), response ${responseToStr ng(resp)}"
+      accessLog. nfo(logText)
+    } onFa lure { exc =>
+      val t  Taken = System.currentT  M ll s - t  
+      val logText = s" n ${t  Taken}ms, recom ndUsers(${requestToStr ng(request)} returned error"
       accessLog.error(exc, logText)
     }
   }
 
-  private def requestToString(request: RecommendUserRequest): String = {
+  pr vate def requestToStr ng(request: Recom ndUserRequest): Str ng = {
     Seq(
-      request.requesterId,
-      request.displayLocation,
-      request.seedsWithWeights.size,
-      request.seedsWithWeights.take(5),
-      request.excludedUserIds.map(_.size).getOrElse(0),
-      request.excludedUserIds.map(_.take(5)),
+      request.requester d,
+      request.d splayLocat on,
+      request.seedsW h  ghts.s ze,
+      request.seedsW h  ghts.take(5),
+      request.excludedUser ds.map(_.s ze).getOrElse(0),
+      request.excludedUser ds.map(_.take(5)),
       request.maxNumResults,
-      request.maxNumSocialProofs,
-      request.minUserPerSocialProof,
-      request.socialProofTypes,
-      request.maxEdgeEngagementAgeInMillis
-    ).mkString(",")
+      request.maxNumSoc alProofs,
+      request.m nUserPerSoc alProof,
+      request.soc alProofTypes,
+      request.maxEdgeEngage ntAge nM ll s
+    ).mkStr ng(",")
   }
 
-  private def responseToString(response: RecommendUserResponse): String = {
-    response.recommendedUsers.toList.map { recUser =>
-      val socialProof = recUser.socialProofs.map {
+  pr vate def responseToStr ng(response: Recom ndUserResponse): Str ng = {
+    response.recom ndedUsers.toL st.map { recUser =>
+      val soc alProof = recUser.soc alProofs.map {
         case (proofType, proofs) =>
           (proofType, proofs)
       }
-      (recUser.userId, recUser.score, socialProof)
-    }.toString
+      (recUser.user d, recUser.score, soc alProof)
+    }.toStr ng
   }
 }

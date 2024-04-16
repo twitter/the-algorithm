@@ -1,57 +1,57 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
+ mport org.apac .lucene. ndex.Terms;
+ mport org.apac .lucene. ndex.TermsEnum;
 
-public class OptimizedIndexTerms extends Terms {
-  private final OptimizedMemoryIndex index;
+publ c class Opt m zed ndexTerms extends Terms {
+  pr vate f nal Opt m zed mory ndex  ndex;
 
-  public OptimizedIndexTerms(OptimizedMemoryIndex index) {
-    this.index = index;
+  publ c Opt m zed ndexTerms(Opt m zed mory ndex  ndex) {
+    t . ndex =  ndex;
   }
 
-  @Override
-  public long size() {
-    return index.getNumTerms();
+  @Overr de
+  publ c long s ze() {
+    return  ndex.getNumTerms();
   }
 
-  @Override
-  public TermsEnum iterator() {
-    return index.createTermsEnum(index.getMaxPublishedPointer());
+  @Overr de
+  publ c TermsEnum  erator() {
+    return  ndex.createTermsEnum( ndex.getMaxPubl s dPo nter());
   }
 
-  @Override
-  public long getSumTotalTermFreq() {
-    return index.getSumTotalTermFreq();
+  @Overr de
+  publ c long getSumTotalTermFreq() {
+    return  ndex.getSumTotalTermFreq();
   }
 
-  @Override
-  public long getSumDocFreq() {
-    return index.getSumTermDocFreq();
+  @Overr de
+  publ c long getSumDocFreq() {
+    return  ndex.getSumTermDocFreq();
   }
 
-  @Override
-  public int getDocCount() {
-    return index.getNumDocs();
+  @Overr de
+  publ c  nt getDocCount() {
+    return  ndex.getNumDocs();
   }
 
-  @Override
-  public boolean hasFreqs() {
+  @Overr de
+  publ c boolean hasFreqs() {
     return false;
   }
 
-  @Override
-  public boolean hasOffsets() {
+  @Overr de
+  publ c boolean hasOffsets() {
     return false;
   }
 
-  @Override
-  public boolean hasPositions() {
+  @Overr de
+  publ c boolean hasPos  ons() {
     return true;
   }
 
-  @Override
-  public boolean hasPayloads() {
+  @Overr de
+  publ c boolean hasPayloads() {
     return false;
   }
 }

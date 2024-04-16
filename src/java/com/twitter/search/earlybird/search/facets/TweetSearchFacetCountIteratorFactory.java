@@ -1,41 +1,41 @@
-package com.twitter.search.earlybird.search.facets;
+package com.tw ter.search.earlyb rd.search.facets;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.facets.CSFFacetCountIterator;
-import com.twitter.search.core.earlybird.facets.FacetCountIterator;
-import com.twitter.search.core.earlybird.facets.FacetCountIteratorFactory;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.core.earlyb rd.facets.CSFFacetCount erator;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetCount erator;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetCount eratorFactory;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
 
 /**
- * Factory of {@link FacetCountIterator} instances for tweet search.
- * It provides a special iterator for the retweets facet.
+ * Factory of {@l nk FacetCount erator}  nstances for t et search.
+ *   prov des a spec al  erator for t  ret ets facet.
  */
-public final class TweetSearchFacetCountIteratorFactory extends FacetCountIteratorFactory {
-  public static final TweetSearchFacetCountIteratorFactory FACTORY =
-      new TweetSearchFacetCountIteratorFactory();
+publ c f nal class T etSearchFacetCount eratorFactory extends FacetCount eratorFactory {
+  publ c stat c f nal T etSearchFacetCount eratorFactory FACTORY =
+      new T etSearchFacetCount eratorFactory();
 
-  private TweetSearchFacetCountIteratorFactory() {
+  pr vate T etSearchFacetCount eratorFactory() {
   }
 
-  @Override
-  public FacetCountIterator getFacetCountIterator(
-      EarlybirdIndexSegmentAtomicReader reader,
-      Schema.FieldInfo fieldInfo) throws IOException {
-    Preconditions.checkNotNull(reader);
-    Preconditions.checkNotNull(fieldInfo);
-    Preconditions.checkArgument(fieldInfo.getFieldType().isUseCSFForFacetCounting());
+  @Overr de
+  publ c FacetCount erator getFacetCount erator(
+      Earlyb rd ndexSeg ntAtom cReader reader,
+      Sc ma.F eld nfo f eld nfo) throws  OExcept on {
+    Precond  ons.c ckNotNull(reader);
+    Precond  ons.c ckNotNull(f eld nfo);
+    Precond  ons.c ckArgu nt(f eld nfo.getF eldType(). sUseCSFForFacetCount ng());
 
-    String facetName = fieldInfo.getFieldType().getFacetName();
+    Str ng facetNa  = f eld nfo.getF eldType().getFacetNa ();
 
-    if (EarlybirdFieldConstant.RETWEETS_FACET.equals(facetName)) {
-      return new RetweetFacetCountIterator(reader, fieldInfo);
+     f (Earlyb rdF eldConstant.RETWEETS_FACET.equals(facetNa )) {
+      return new Ret etFacetCount erator(reader, f eld nfo);
     } else {
-      return new CSFFacetCountIterator(reader, fieldInfo);
+      return new CSFFacetCount erator(reader, f eld nfo);
     }
   }
 }

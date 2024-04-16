@@ -1,46 +1,46 @@
-package com.twitter.product_mixer.component_library.filter
+package com.tw ter.product_m xer.component_l brary.f lter
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.BaseT etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lterResult
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
 /**
- * A [[filter]] that filters candidates based on a country code feature
+ * A [[f lter]] that f lters cand dates based on a country code feature
  *
- * @param countryCodeFeature the feature to filter candidates on
+ * @param countryCodeFeature t  feature to f lter cand dates on
  */
-case class TweetAuthorCountryFilter[Candidate <: BaseTweetCandidate](
-  countryCodeFeature: Feature[Candidate, Option[String]])
-    extends Filter[PipelineQuery, Candidate] {
+case class T etAuthorCountryF lter[Cand date <: BaseT etCand date](
+  countryCodeFeature: Feature[Cand date, Opt on[Str ng]])
+    extends F lter[P pel neQuery, Cand date] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("TweetAuthorCountry")
+  overr de val  dent f er: F lter dent f er = F lter dent f er("T etAuthorCountry")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): St ch[F lterResult[Cand date]] = {
 
     val userCountry = query.getCountryCode
 
-    val (keptCandidates, removedCandidates) = candidates.partition { filteredCandidate =>
-      val authorCountry = filteredCandidate.features.get(countryCodeFeature)
+    val (keptCand dates, removedCand dates) = cand dates.part  on { f lteredCand date =>
+      val authorCountry = f lteredCand date.features.get(countryCodeFeature)
 
       (authorCountry, userCountry) match {
-        case (Some(authorCountryCode), Some(userCountryCode)) =>
-          authorCountryCode.equalsIgnoreCase(userCountryCode)
+        case (So (authorCountryCode), So (userCountryCode)) =>
+          authorCountryCode.equals gnoreCase(userCountryCode)
         case _ => true
       }
     }
 
-    Stitch.value(
-      FilterResult(
-        kept = keptCandidates.map(_.candidate),
-        removed = removedCandidates.map(_.candidate)
+    St ch.value(
+      F lterResult(
+        kept = keptCand dates.map(_.cand date),
+        removed = removedCand dates.map(_.cand date)
       )
     )
   }

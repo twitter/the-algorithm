@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.model.common.presentation.urt
+package com.tw ter.product_m xer.core.model.common.presentat on.urt
 
-import com.twitter.product_mixer.core.model.common.presentation.ItemPresentation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineOperation
+ mport com.tw ter.product_m xer.core.model.common.presentat on. emPresentat on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neOperat on
 
-trait BaseUrtOperationPresentation extends ItemPresentation {
+tra  BaseUrtOperat onPresentat on extends  emPresentat on {
 
-  def timelineOperation: TimelineOperation
+  def t  l neOperat on: T  l neOperat on
 }

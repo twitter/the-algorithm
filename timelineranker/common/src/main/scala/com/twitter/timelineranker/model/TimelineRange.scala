@@ -1,18 +1,18 @@
-package com.twitter.timelineranker.model
+package com.tw ter.t  l neranker.model
 
-import com.twitter.timelineranker.{thriftscala => thrift}
+ mport com.tw ter.t  l neranker.{thr ftscala => thr ft}
 
-object TimelineRange {
-  def fromThrift(range: thrift.TimelineRange): TimelineRange = {
+object T  l neRange {
+  def fromThr ft(range: thr ft.T  l neRange): T  l neRange = {
     range match {
-      case thrift.TimelineRange.TimeRange(r) => TimeRange.fromThrift(r)
-      case thrift.TimelineRange.TweetIdRange(r) => TweetIdRange.fromThrift(r)
-      case _ => throw new IllegalArgumentException(s"Unsupported type: $range")
+      case thr ft.T  l neRange.T  Range(r) => T  Range.fromThr ft(r)
+      case thr ft.T  l neRange.T et dRange(r) => T et dRange.fromThr ft(r)
+      case _ => throw new  llegalArgu ntExcept on(s"Unsupported type: $range")
     }
   }
 }
 
-trait TimelineRange {
-  def toTimelineRangeThrift: thrift.TimelineRange
-  def throwIfInvalid(): Unit
+tra  T  l neRange {
+  def toT  l neRangeThr ft: thr ft.T  l neRange
+  def throw f nval d(): Un 
 }

@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.alert
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.alert
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.RosettaColor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.color.RosettaColor
 
-case class ShowAlertIconDisplayInfo(icon: ShowAlertIcon, tint: RosettaColor)
+case class ShowAlert conD splay nfo( con: ShowAlert con, t nt: RosettaColor)

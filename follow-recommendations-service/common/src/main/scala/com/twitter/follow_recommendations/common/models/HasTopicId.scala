@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-trait HasTopicId {
-  def topicId: Long
+tra  HasTop c d {
+  def top c d: Long
 }

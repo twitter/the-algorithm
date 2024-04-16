@@ -2,261 +2,261 @@ syntax = "proto3";
 
 package tensorflow.eager;
 
-import "tensorflow/core/framework/attr_value.proto";
-import "tensorflow/core/framework/device_attributes.proto";
-import "tensorflow/core/framework/function.proto";
-import "tensorflow/core/framework/tensor.proto";
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/versions.proto";
-import "tensorflow/core/protobuf/remote_tensor_handle.proto";
-import "tensorflow/core/protobuf/tensorflow_server.proto";
+ mport "tensorflow/core/fra work/attr_value.proto";
+ mport "tensorflow/core/fra work/dev ce_attr butes.proto";
+ mport "tensorflow/core/fra work/funct on.proto";
+ mport "tensorflow/core/fra work/tensor.proto";
+ mport "tensorflow/core/fra work/tensor_shape.proto";
+ mport "tensorflow/core/fra work/vers ons.proto";
+ mport "tensorflow/core/protobuf/remote_tensor_handle.proto";
+ mport "tensorflow/core/protobuf/tensorflow_server.proto";
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
-// A proto representation of an eager operation.
-message Operation {
-  // A unique identifier for the operation. Set by the client so that the client
-  // can uniquely identify the outputs of the scheduled operation.
+// A proto representat on of an eager operat on.
+ ssage Operat on {
+  // A un que  dent f er for t  operat on. Set by t  cl ent so that t  cl ent
+  // can un quely  dent fy t  outputs of t  sc duled operat on.
   //
-  // In the initial implementation, sending duplicate IDs has undefined
-  // behaviour, but additional constraints may be placed upon this in the
+  //  n t   n  al  mple ntat on, send ng dupl cate  Ds has undef ned
+  // behav  , but add  onal constra nts may be placed upon t   n t 
   // future.
-  int64 id = 1;
-  string name = 2;
+   nt64  d = 1;
+  str ng na  = 2;
 
-  message Input {
-    oneof item {
+   ssage  nput {
+    oneof  em {
       RemoteTensorHandle remote_handle = 1;
       TensorProto tensor = 2;
     }
   }
 
-  repeated Input op_inputs = 10;
+  repeated  nput op_ nputs = 10;
 
-  // Control Operation IDs that will be respected when ops are re-ordered by
-  // async execution. If async execution (+ op re-ordering) is not enabled, this
+  // Control Operat on  Ds that w ll be respected w n ops are re-ordered by
+  // async execut on.  f async execut on (+ op re-order ng)  s not enabled, t 
   // should have no effect.
-  repeated int64 control_op_ids = 4;
-  map<string, AttrValue> attrs = 5;
-  string device = 6;
+  repeated  nt64 control_op_ ds = 4;
+  map<str ng, AttrValue> attrs = 5;
+  str ng dev ce = 6;
 
-  // Indicates whether the op is a component of a multi-device function.
-  bool is_component_function = 7;
-  // Set when is_component_function is true. It's initially generated
-  // when we create an FunctionLibraryRuntime::Options (negative value) and used
-  // to create Rendezvous for function execution. All components of a
-  // multi-device function should use the same step id to make sure that they
-  // can communicate through Send/Recv ops.
-  int64 func_step_id = 8;
-  // Indicates whether the op is a function.
-  bool is_function = 9;
+  //  nd cates w t r t  op  s a component of a mult -dev ce funct on.
+  bool  s_component_funct on = 7;
+  // Set w n  s_component_funct on  s true.  's  n  ally generated
+  // w n   create an Funct onL braryRunt  ::Opt ons (negat ve value) and used
+  // to create Rendezvous for funct on execut on. All components of a
+  // mult -dev ce funct on should use t  sa  step  d to make sure that t y
+  // can commun cate through Send/Recv ops.
+   nt64 func_step_ d = 8;
+  //  nd cates w t r t  op  s a funct on.
+  bool  s_funct on = 9;
 
   reserved 3;
 }
 
-message QueueItem {
-  // The remote executor should be able to handle either executing ops directly,
-  // or releasing any unused tensor handles, since the tensor lifetime is
-  // maintained by the client.
-  oneof item {
+ ssage Queue em {
+  // T  remote executor should be able to handle e  r execut ng ops d rectly,
+  // or releas ng any unused tensor handles, s nce t  tensor l fet    s
+  // ma nta ned by t  cl ent.
+  oneof  em {
     RemoteTensorHandle handle_to_decref = 1;
-    Operation operation = 2;
+    Operat on operat on = 2;
     SendTensorOp send_tensor = 3;
-    // Takes a FunctionDef and makes it enqueable on the remote worker.
-    RegisterFunctionOp register_function = 4;
-    CleanupFunctionOp cleanup_function = 5;
-    // A remote executor is created to execute ops/functions asynchronously
-    // enqueued in streaming call. Request with this item type waits for pending
-    // nodes to finish on the remote executor and report status.
+    // Takes a Funct onDef and makes   enqueable on t  remote worker.
+    Reg sterFunct onOp reg ster_funct on = 4;
+    CleanupFunct onOp cleanup_funct on = 5;
+    // A remote executor  s created to execute ops/funct ons asynchronously
+    // enqueued  n stream ng call. Request w h t   em type wa s for pend ng
+    // nodes to f n sh on t  remote executor and report status.
     SyncRemoteExecutorForStream sync_remote_executor_for_stream = 6;
     SendPackedHandleOp send_packed_handle = 7;
   }
 }
 
-message QueueResponse {
-  // `shape` and `tensor` cannot be set in the same response.
-  // Shapes of output tensors for creating remote TensorHandles.
+ ssage QueueResponse {
+  // `shape` and `tensor` cannot be set  n t  sa  response.
+  // Shapes of output tensors for creat ng remote TensorHandles.
   repeated TensorShapeProto shape = 1;
-  // Optional. If set, represents the output devices of a function.
-  repeated string device = 3;
+  // Opt onal.  f set, represents t  output dev ces of a funct on.
+  repeated str ng dev ce = 3;
 
-  // Output tensors of a remote function. Set when Operation.id is invalid.
+  // Output tensors of a remote funct on. Set w n Operat on. d  s  nval d.
   repeated TensorProto tensor = 2;
 }
 
-message CreateContextRequest {
-  // Identifies the full cluster, and this particular worker's position within.
+ ssage CreateContextRequest {
+  //  dent f es t  full cluster, and t  part cular worker's pos  on w h n.
   ServerDef server_def = 1;
 
-  // Whether the ops on the worker should be executed synchronously or
+  // W t r t  ops on t  worker should be executed synchronously or
   // asynchronously. By default, ops are executed synchronously.
   bool async = 2;
 
-  // Number of seconds to keep the context alive. If more than keep_alive_secs
-  // has passed since a particular context has been communicated with, it will
+  // Number of seconds to keep t  context al ve.  f more than keep_al ve_secs
+  // has passed s nce a part cular context has been commun cated w h,   w ll
   // be garbage collected.
-  int64 keep_alive_secs = 3;
+   nt64 keep_al ve_secs = 3;
 
-  // This is the version for all the ops that will be enqueued by the client.
-  VersionDef version_def = 4;
+  // T   s t  vers on for all t  ops that w ll be enqueued by t  cl ent.
+  Vers onDef vers on_def = 4;
 
-  // Device attributes in the cluster
-  repeated DeviceAttributes cluster_device_attributes = 6;
+  // Dev ce attr butes  n t  cluster
+  repeated Dev ceAttr butes cluster_dev ce_attr butes = 6;
 
-  // The ID of the created context. This is usually a randomly generated number,
-  // that will be used to identify the context in future requests to the
-  // service. Contexts are not persisted through server restarts.
-  // This ID will be used for all future communications as well. It is essential
-  // that both ends use this ID for selecting a rendezvous to get everything to
+  // T   D of t  created context. T   s usually a randomly generated number,
+  // that w ll be used to  dent fy t  context  n future requests to t 
+  // serv ce. Contexts are not pers sted through server restarts.
+  // T   D w ll be used for all future commun cat ons as  ll.    s essent al
+  // that both ends use t   D for select ng a rendezvous to get everyth ng to
   // match.
-  fixed64 context_id = 7;
+  f xed64 context_ d = 7;
 
-  // The view ID of the context.
-  fixed64 context_view_id = 8;
+  // T  v ew  D of t  context.
+  f xed64 context_v ew_ d = 8;
 
-  // For a multi device function, if false, eagerly copy all remote inputs to
-  // the default function device; if true, lazily copy remote inputs to their
-  // target devices after function instantiation to avoid redundant copies.
-  bool lazy_copy_remote_function_inputs = 9;
+  // For a mult  dev ce funct on,  f false, eagerly copy all remote  nputs to
+  // t  default funct on dev ce;  f true, laz ly copy remote  nputs to t  r
+  // target dev ces after funct on  nstant at on to avo d redundant cop es.
+  bool lazy_copy_remote_funct on_ nputs = 9;
 
   reserved 5;
 }
 
-message CreateContextResponse {
-  // List of devices that are locally accessible to the worker.
-  repeated DeviceAttributes device_attributes = 2;
+ ssage CreateContextResponse {
+  // L st of dev ces that are locally access ble to t  worker.
+  repeated Dev ceAttr butes dev ce_attr butes = 2;
 
   reserved 1;
 }
 
-message UpdateContextRequest {
-  // Identifies the full cluster, and this particular worker's position within.
+ ssage UpdateContextRequest {
+  //  dent f es t  full cluster, and t  part cular worker's pos  on w h n.
   ServerDef server_def = 1;
 
-  // Device attributes in the cluster.
-  // If this field is empty, it indicates that this is a simple update request
-  // that only increments the cluster view ID and does not require changes to
-  // the workers it connects to.
-  repeated DeviceAttributes cluster_device_attributes = 2;
+  // Dev ce attr butes  n t  cluster.
+  //  f t  f eld  s empty,    nd cates that t   s a s mple update request
+  // that only  ncre nts t  cluster v ew  D and does not requ re changes to
+  // t  workers   connects to.
+  repeated Dev ceAttr butes cluster_dev ce_attr butes = 2;
 
-  // The ID of the context to be updated. A context with the specified ID must
-  // already exist on the recepient server of this request.
-  fixed64 context_id = 3;
+  // T   D of t  context to be updated. A context w h t  spec f ed  D must
+  // already ex st on t  recep ent server of t  request.
+  f xed64 context_ d = 3;
 
-  // The view ID of the context, which should be contiguously incremented when
-  // updating the same context.
-  fixed64 context_view_id = 4;
+  // T  v ew  D of t  context, wh ch should be cont guously  ncre nted w n
+  // updat ng t  sa  context.
+  f xed64 context_v ew_ d = 4;
 }
 
-message UpdateContextResponse {
-  // List of devices that are locally accessible to the worker.
-  repeated DeviceAttributes device_attributes = 1;
+ ssage UpdateContextResponse {
+  // L st of dev ces that are locally access ble to t  worker.
+  repeated Dev ceAttr butes dev ce_attr butes = 1;
 }
 
-message EnqueueRequest {
-  fixed64 context_id = 1;
+ ssage EnqueueRequest {
+  f xed64 context_ d = 1;
 
-  repeated QueueItem queue = 3;
+  repeated Queue em queue = 3;
 }
 
-message EnqueueResponse {
-  // A single operation response for every item in the request.
+ ssage EnqueueResponse {
+  // A s ngle operat on response for every  em  n t  request.
   repeated QueueResponse queue_response = 1;
 }
 
-message WaitQueueDoneRequest {
-  fixed64 context_id = 1;
+ ssage Wa QueueDoneRequest {
+  f xed64 context_ d = 1;
 
-  // Ids to wait on. If empty, wait on everything currently pending.
-  repeated int64 op_id = 2;
+  //  ds to wa  on.  f empty, wa  on everyth ng currently pend ng.
+  repeated  nt64 op_ d = 2;
 }
 
-message WaitQueueDoneResponse {
-  // TODO(nareshmodi): Consider adding NodeExecStats here to be able to
-  // propagate some stats.
+ ssage Wa QueueDoneResponse {
+  // TODO(nareshmod ): Cons der add ng NodeExecStats  re to be able to
+  // propagate so  stats.
 }
 
-message RunComponentFunctionRequest {
-  fixed64 context_id = 1;
+ ssage RunComponentFunct onRequest {
+  f xed64 context_ d = 1;
 
-  Operation operation = 2;
+  Operat on operat on = 2;
 
-  // The output indices of its parent function.
-  repeated int32 output_num = 3;
+  // T  output  nd ces of  s parent funct on.
+  repeated  nt32 output_num = 3;
 }
 
-message RunComponentFunctionResponse {
+ ssage RunComponentFunct onResponse {
   repeated TensorShapeProto shape = 1;
 
   repeated TensorProto tensor = 2;
 }
 
-message KeepAliveRequest {
-  fixed64 context_id = 1;
+ ssage KeepAl veRequest {
+  f xed64 context_ d = 1;
 }
 
-message KeepAliveResponse {
-  // If the requested context_id is on the remote host, set the context view ID.
-  fixed64 context_view_id = 1;
+ ssage KeepAl veResponse {
+  //  f t  requested context_ d  s on t  remote host, set t  context v ew  D.
+  f xed64 context_v ew_ d = 1;
 }
 
-message CloseContextRequest {
-  fixed64 context_id = 1;
-  fixed64 context_view_id = 2;
+ ssage CloseContextRequest {
+  f xed64 context_ d = 1;
+  f xed64 context_v ew_ d = 2;
 }
 
-message CloseContextResponse {}
+ ssage CloseContextResponse {}
 
-message RegisterFunctionOp {
-  FunctionDef function_def = 1;
+ ssage Reg sterFunct onOp {
+  Funct onDef funct on_def = 1;
 
-  // If true, it means that function_def is produced by graph partition during
-  // multi-device function instantiation.
-  bool is_component_function = 2;
+  //  f true,    ans that funct on_def  s produced by graph part  on dur ng
+  // mult -dev ce funct on  nstant at on.
+  bool  s_component_funct on = 2;
 
-  // All necessary FunctionDefs and GradientDefs to expand `function_def`.
-  // When is_component_function is true, `function_def` could be a nested
-  // function, since some nodes in its parent's function body could be
-  // replaced with a new function by the graph optimization passes. No need to
-  // add FunctionDefs here to the function cache in EagerContext since they
-  // won't be executed as KernelAndDevices.
-  FunctionDefLibrary library = 3;
+  // All necessary Funct onDefs and Grad entDefs to expand `funct on_def`.
+  // W n  s_component_funct on  s true, `funct on_def` could be a nested
+  // funct on, s nce so  nodes  n  s parent's funct on body could be
+  // replaced w h a new funct on by t  graph opt m zat on passes. No need to
+  // add Funct onDefs  re to t  funct on cac   n EagerContext s nce t y
+  // won't be executed as KernelAndDev ces.
+  Funct onDefL brary l brary = 3;
 }
 
-// Cleanup the step state of a multi-device function (e.g. tensors buffered by
-// a `Send` op but not picked up by its corresponding `Recv` op).
-message CleanupFunctionOp {
-  int64 step_id = 1;
+// Cleanup t  step state of a mult -dev ce funct on (e.g. tensors buffered by
+// a `Send` op but not p cked up by  s correspond ng `Recv` op).
+ ssage CleanupFunct onOp {
+   nt64 step_ d = 1;
 }
 
-message SyncRemoteExecutorForStream {}
+ ssage SyncRemoteExecutorForStream {}
 
-message SendTensorOp {
-  // All remote tensors are identified by <Op ID, Output num>. To mimic this
-  // situation when directly sending tensors, we include an "artificial" op ID
-  // (which would have corresponded to the _Recv op when not using SendTensor).
-  int64 op_id = 1;
-  // The index within the repeated field is the output number that will help
-  // uniquely identify (along with the above op_id) the particular tensor.
+ ssage SendTensorOp {
+  // All remote tensors are  dent f ed by <Op  D, Output num>. To m m c t 
+  // s uat on w n d rectly send ng tensors,    nclude an "art f c al" op  D
+  // (wh ch would have corresponded to t  _Recv op w n not us ng SendTensor).
+   nt64 op_ d = 1;
+  // T   ndex w h n t  repeated f eld  s t  output number that w ll  lp
+  // un quely  dent fy (along w h t  above op_ d) t  part cular tensor.
   repeated TensorProto tensors = 2;
 
-  // The device on which the tensors should be resident.
-  string device_name = 3;
+  // T  dev ce on wh ch t  tensors should be res dent.
+  str ng dev ce_na  = 3;
 }
 
 // Send a packed TensorHandle to a remote worker.
-message SendPackedHandleOp {
-  // Op id of the remote packed TensorHandle.
-  int64 op_id = 1;
+ ssage SendPackedHandleOp {
+  // Op  d of t  remote packed TensorHandle.
+   nt64 op_ d = 1;
 
-  message LocalTensorHandle {
+   ssage LocalTensorHandle {
     TensorProto tensor = 1;
-    // Device where the tensor is produced.
-    string device = 2;
+    // Dev ce w re t  tensor  s produced.
+    str ng dev ce = 2;
   }
 
-  message Handle {
-    oneof item {
+   ssage Handle {
+    oneof  em {
       LocalTensorHandle local_handle = 1;
       RemoteTensorHandle remote_handle = 2;
     }
@@ -264,81 +264,81 @@ message SendPackedHandleOp {
 
   repeated Handle handles = 2;
 
-  string device_name = 3;
+  str ng dev ce_na  = 3;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Eager Service defines a TensorFlow service that executes operations eagerly
-// on a set of local devices, on behalf of a remote Eager executor.
+// Eager Serv ce def nes a TensorFlow serv ce that executes operat ons eagerly
+// on a set of local dev ces, on behalf of a remote Eager executor.
 //
-// The service impl will keep track of the various clients and devices it has
-// access to and allows the client to enqueue ops on any devices that it is able
-// to access and schedule data transfers from/to any of the peers.
+// T  serv ce  mpl w ll keep track of t  var ous cl ents and dev ces   has
+// access to and allows t  cl ent to enqueue ops on any dev ces that    s able
+// to access and sc dule data transfers from/to any of t  peers.
 //
-// A client can generate multiple contexts to be able to independently execute
-// operations, but cannot share data between the two contexts.
+// A cl ent can generate mult ple contexts to be able to  ndependently execute
+// operat ons, but cannot share data bet en t  two contexts.
 //
-// NOTE: Even though contexts generated by clients should be independent, the
-// lower level tensorflow execution engine is not, so they might share some data
-// (e.g. a Device's ResourceMgr).
+// NOTE: Even though contexts generated by cl ents should be  ndependent, t 
+// lo r level tensorflow execut on eng ne  s not, so t y m ght share so  data
+// (e.g. a Dev ce's Res ceMgr).
 //
 ////////////////////////////////////////////////////////////////////////////////
-service EagerService {
-  // This initializes the worker, informing it about the other workers in the
-  // cluster and exchanging authentication tokens which will be used in all
-  // other RPCs to detect whether the worker has restarted.
+serv ce EagerServ ce {
+  // T   n  al zes t  worker,  nform ng   about t  ot r workers  n t 
+  // cluster and exchang ng aut nt cat on tokens wh ch w ll be used  n all
+  // ot r RPCs to detect w t r t  worker has restarted.
   rpc CreateContext(CreateContextRequest) returns (CreateContextResponse);
 
-  // This updates the eager context on an existing worker when updating the set
-  // of servers in a distributed eager cluster.
+  // T  updates t  eager context on an ex st ng worker w n updat ng t  set
+  // of servers  n a d str buted eager cluster.
   rpc UpdateContext(UpdateContextRequest) returns (UpdateContextResponse);
 
-  // This takes a list of Execute and DeleteTensorHandle operations and enqueues
-  // (in async mode) or executes (in sync mode) them on the remote server.
-  // All outputs of ops which were not explicitly deleted with
-  // DeleteTensorHandle entries will be assumed to be alive and are usable by
+  // T  takes a l st of Execute and DeleteTensorHandle operat ons and enqueues
+  // ( n async mode) or executes ( n sync mode) t m on t  remote server.
+  // All outputs of ops wh ch  re not expl c ly deleted w h
+  // DeleteTensorHandle entr es w ll be assu d to be al ve and are usable by
   // future calls to Enqueue.
   rpc Enqueue(EnqueueRequest) returns (EnqueueResponse);
 
-  // A streaming version of Enqueue.
-  // Current server implementation sends one response per received request.
-  // The benefit for using a streaming version is that subsequent requests
-  // can be sent without waiting for a response to the previous request. This
-  // synchronization is required in the regular Enqueue call because gRPC does
+  // A stream ng vers on of Enqueue.
+  // Current server  mple ntat on sends one response per rece ved request.
+  // T  benef  for us ng a stream ng vers on  s that subsequent requests
+  // can be sent w hout wa  ng for a response to t  prev ous request. T 
+  // synchron zat on  s requ red  n t  regular Enqueue call because gRPC does
   // not guarantee to preserve request order.
-  rpc StreamingEnqueue(stream EnqueueRequest) returns (stream EnqueueResponse);
+  rpc Stream ngEnqueue(stream EnqueueRequest) returns (stream EnqueueResponse);
 
-  // Takes a set of op IDs and waits until those ops are done. Returns any error
-  // in the stream so far.
-  rpc WaitQueueDone(WaitQueueDoneRequest) returns (WaitQueueDoneResponse);
+  // Takes a set of op  Ds and wa s unt l those ops are done. Returns any error
+  //  n t  stream so far.
+  rpc Wa QueueDone(Wa QueueDoneRequest) returns (Wa QueueDoneResponse);
 
-  // This takes an Eager operation and executes it in async mode on the remote
-  // server. Different from EnqueueRequest, ops/functions sent through this
-  // type of requests are allowed to execute in parallel and no ordering is
+  // T  takes an Eager operat on and executes    n async mode on t  remote
+  // server. D fferent from EnqueueRequest, ops/funct ons sent through t 
+  // type of requests are allo d to execute  n parallel and no order ng  s
   // preserved by RPC stream or executor.
-  // This request type should only be used for executing component functions.
-  // Ordering of component functions should be enforced by their corresponding
-  // main functions. The runtime ensures the following invarients for component
-  // functions (CFs) and their main functions (MFs):
-  // (1) MF1 -> MF2 ==> CF1 -> CF2 ("->" indicates order of execution);
-  // (2) MF1 || MF2 ==> CF1 || CF2 ("||" indicates possible parallel execution);
-  // (3) For CF1 and CF2 that come from the same MF, CF1 || CF2
-  // For executing ops/main functions, use Enqueue or StreamingEnqueue instead
-  // for correct ordering.
-  rpc RunComponentFunction(RunComponentFunctionRequest)
-      returns (RunComponentFunctionResponse);
+  // T  request type should only be used for execut ng component funct ons.
+  // Order ng of component funct ons should be enforced by t  r correspond ng
+  // ma n funct ons. T  runt   ensures t  follow ng  nvar ents for component
+  // funct ons (CFs) and t  r ma n funct ons (MFs):
+  // (1) MF1 -> MF2 ==> CF1 -> CF2 ("->"  nd cates order of execut on);
+  // (2) MF1 || MF2 ==> CF1 || CF2 ("||"  nd cates poss ble parallel execut on);
+  // (3) For CF1 and CF2 that co  from t  sa  MF, CF1 || CF2
+  // For execut ng ops/ma n funct ons, use Enqueue or Stream ngEnqueue  nstead
+  // for correct order ng.
+  rpc RunComponentFunct on(RunComponentFunct onRequest)
+      returns (RunComponentFunct onResponse);
 
-  // Contexts are always created with a deadline and no RPCs within a deadline
-  // will trigger a context garbage collection. KeepAlive calls can be used to
-  // delay this. It can also be used to validate the existence of a context ID
-  // on remote eager worker. If the context is on remote worker, return the same
-  // ID and the current context view ID. This is useful for checking if the
-  // remote worker (potentially with the same task name and hostname / port) is
-  // replaced with a new process.
-  rpc KeepAlive(KeepAliveRequest) returns (KeepAliveResponse);
+  // Contexts are always created w h a deadl ne and no RPCs w h n a deadl ne
+  // w ll tr gger a context garbage collect on. KeepAl ve calls can be used to
+  // delay t .   can also be used to val date t  ex stence of a context  D
+  // on remote eager worker.  f t  context  s on remote worker, return t  sa 
+  //  D and t  current context v ew  D. T   s useful for c ck ng  f t 
+  // remote worker (potent ally w h t  sa  task na  and hostna  / port)  s
+  // replaced w h a new process.
+  rpc KeepAl ve(KeepAl veRequest) returns (KeepAl veResponse);
 
-  // Closes the context. No calls to other methods using the existing context ID
-  // are valid after this.
+  // Closes t  context. No calls to ot r  thods us ng t  ex st ng context  D
+  // are val d after t .
   rpc CloseContext(CloseContextRequest) returns (CloseContextResponse);
 }

@@ -1,11 +1,11 @@
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    //::compile_protos("proto/tensorflow_serving/apis/prediction_service.proto")?;
-    tonic_build::configure().compile(
+fn ma n() -> Result<(), Box<dyn std::error::Error>> {
+    //::comp le_protos("proto/tensorflow_serv ng/ap s/pred ct on_serv ce.proto")?;
+    ton c_bu ld::conf gure().comp le(
         &[
-            "proto/tensorflow_serving/apis/prediction_service.proto",
-            "proto/tensorflow/core/protobuf/config.proto",
-            "proto/tensorflow_serving/apis/prediction_log.proto",
-            "proto/kfserving/grpc_predict_v2.proto",
+            "proto/tensorflow_serv ng/ap s/pred ct on_serv ce.proto",
+            "proto/tensorflow/core/protobuf/conf g.proto",
+            "proto/tensorflow_serv ng/ap s/pred ct on_log.proto",
+            "proto/kfserv ng/grpc_pred ct_v2.proto",
         ],
         &["proto"],
     )?;

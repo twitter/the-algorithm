@@ -1,122 +1,122 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.timelines.configapi.CompositeConfig
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.t  l nes.conf gap .Compos eConf g
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .Param
 
-object CrMixerParamConfig {
+object CrM xerParamConf g {
 
-  lazy val config: CompositeConfig = new CompositeConfig(
-    configs = Seq(
-      AdsParams.config,
-      BlenderParams.config,
-      BypassInterleaveAndRankParams.config,
-      RankerParams.config,
-      ConsumerBasedWalsParams.config,
-      ConsumerEmbeddingBasedCandidateGenerationParams.config,
-      ConsumerEmbeddingBasedTripParams.config,
-      ConsumerEmbeddingBasedTwHINParams.config,
-      ConsumerEmbeddingBasedTwoTowerParams.config,
-      ConsumersBasedUserAdGraphParams.config,
-      ConsumersBasedUserTweetGraphParams.config,
-      ConsumersBasedUserVideoGraphParams.config,
-      CustomizedRetrievalBasedCandidateGenerationParams.config,
-      CustomizedRetrievalBasedOfflineInterestedInParams.config,
-      CustomizedRetrievalBasedFTROfflineInterestedInParams.config,
-      CustomizedRetrievalBasedTwhinParams.config,
-      EarlybirdFrsBasedCandidateGenerationParams.config,
-      FrsParams.config,
-      GlobalParams.config,
-      InterestedInParams.config,
-      ProducerBasedCandidateGenerationParams.config,
-      ProducerBasedUserAdGraphParams.config,
-      ProducerBasedUserTweetGraphParams.config,
-      RecentFollowsParams.config,
-      RecentNegativeSignalParams.config,
-      RecentNotificationsParams.config,
-      RecentOriginalTweetsParams.config,
-      RecentReplyTweetsParams.config,
-      RecentRetweetsParams.config,
-      RecentTweetFavoritesParams.config,
-      RelatedTweetGlobalParams.config,
-      RelatedVideoTweetGlobalParams.config,
-      RelatedTweetProducerBasedParams.config,
-      RelatedTweetTweetBasedParams.config,
-      RelatedVideoTweetTweetBasedParams.config,
-      RealGraphInParams.config,
-      RealGraphOonParams.config,
-      RepeatedProfileVisitsParams.config,
-      SimClustersANNParams.config,
-      TopicTweetParams.config,
-      TweetBasedCandidateGenerationParams.config,
-      TweetBasedUserAdGraphParams.config,
-      TweetBasedUserTweetGraphParams.config,
-      TweetBasedUserVideoGraphParams.config,
-      TweetSharesParams.config,
-      TweetBasedTwHINParams.config,
-      RealGraphOonParams.config,
-      GoodTweetClickParams.config,
-      GoodProfileClickParams.config,
-      UtegTweetGlobalParams.config,
-      VideoTweetFilterParams.config,
-      VideoViewTweetsParams.config,
-      UnifiedUSSSignalParams.config,
+  lazy val conf g: Compos eConf g = new Compos eConf g(
+    conf gs = Seq(
+      AdsParams.conf g,
+      BlenderParams.conf g,
+      Bypass nterleaveAndRankParams.conf g,
+      RankerParams.conf g,
+      Consu rBasedWalsParams.conf g,
+      Consu rEmbedd ngBasedCand dateGenerat onParams.conf g,
+      Consu rEmbedd ngBasedTr pParams.conf g,
+      Consu rEmbedd ngBasedTwH NParams.conf g,
+      Consu rEmbedd ngBasedTwoTo rParams.conf g,
+      Consu rsBasedUserAdGraphParams.conf g,
+      Consu rsBasedUserT etGraphParams.conf g,
+      Consu rsBasedUserV deoGraphParams.conf g,
+      Custom zedRetr evalBasedCand dateGenerat onParams.conf g,
+      Custom zedRetr evalBasedOffl ne nterested nParams.conf g,
+      Custom zedRetr evalBasedFTROffl ne nterested nParams.conf g,
+      Custom zedRetr evalBasedTwh nParams.conf g,
+      Earlyb rdFrsBasedCand dateGenerat onParams.conf g,
+      FrsParams.conf g,
+      GlobalParams.conf g,
+       nterested nParams.conf g,
+      ProducerBasedCand dateGenerat onParams.conf g,
+      ProducerBasedUserAdGraphParams.conf g,
+      ProducerBasedUserT etGraphParams.conf g,
+      RecentFollowsParams.conf g,
+      RecentNegat veS gnalParams.conf g,
+      RecentNot f cat onsParams.conf g,
+      RecentOr g nalT etsParams.conf g,
+      RecentReplyT etsParams.conf g,
+      RecentRet etsParams.conf g,
+      RecentT etFavor esParams.conf g,
+      RelatedT etGlobalParams.conf g,
+      RelatedV deoT etGlobalParams.conf g,
+      RelatedT etProducerBasedParams.conf g,
+      RelatedT etT etBasedParams.conf g,
+      RelatedV deoT etT etBasedParams.conf g,
+      RealGraph nParams.conf g,
+      RealGraphOonParams.conf g,
+      RepeatedProf leV s sParams.conf g,
+      S mClustersANNParams.conf g,
+      Top cT etParams.conf g,
+      T etBasedCand dateGenerat onParams.conf g,
+      T etBasedUserAdGraphParams.conf g,
+      T etBasedUserT etGraphParams.conf g,
+      T etBasedUserV deoGraphParams.conf g,
+      T etSharesParams.conf g,
+      T etBasedTwH NParams.conf g,
+      RealGraphOonParams.conf g,
+      GoodT etCl ckParams.conf g,
+      GoodProf leCl ckParams.conf g,
+      UtegT etGlobalParams.conf g,
+      V deoT etF lterParams.conf g,
+      V deoV ewT etsParams.conf g,
+      Un f edUSSS gnalParams.conf g,
     ),
-    simpleName = "CrMixerConfig"
+    s mpleNa  = "CrM xerConf g"
   )
 
-  val allParams: Seq[Param[_] with FSName] = {
+  val allParams: Seq[Param[_] w h FSNa ] = {
     AdsParams.AllParams ++
       BlenderParams.AllParams ++
-      BypassInterleaveAndRankParams.AllParams ++
+      Bypass nterleaveAndRankParams.AllParams ++
       RankerParams.AllParams ++
-      ConsumerBasedWalsParams.AllParams ++
-      ConsumerEmbeddingBasedCandidateGenerationParams.AllParams ++
-      ConsumerEmbeddingBasedTripParams.AllParams ++
-      ConsumerEmbeddingBasedTwHINParams.AllParams ++
-      ConsumerEmbeddingBasedTwoTowerParams.AllParams ++
-      ConsumersBasedUserAdGraphParams.AllParams ++
-      ConsumersBasedUserTweetGraphParams.AllParams ++
-      ConsumersBasedUserVideoGraphParams.AllParams ++
-      CustomizedRetrievalBasedCandidateGenerationParams.AllParams ++
-      CustomizedRetrievalBasedOfflineInterestedInParams.AllParams ++
-      CustomizedRetrievalBasedFTROfflineInterestedInParams.AllParams ++
-      CustomizedRetrievalBasedTwhinParams.AllParams ++
-      EarlybirdFrsBasedCandidateGenerationParams.AllParams ++
+      Consu rBasedWalsParams.AllParams ++
+      Consu rEmbedd ngBasedCand dateGenerat onParams.AllParams ++
+      Consu rEmbedd ngBasedTr pParams.AllParams ++
+      Consu rEmbedd ngBasedTwH NParams.AllParams ++
+      Consu rEmbedd ngBasedTwoTo rParams.AllParams ++
+      Consu rsBasedUserAdGraphParams.AllParams ++
+      Consu rsBasedUserT etGraphParams.AllParams ++
+      Consu rsBasedUserV deoGraphParams.AllParams ++
+      Custom zedRetr evalBasedCand dateGenerat onParams.AllParams ++
+      Custom zedRetr evalBasedOffl ne nterested nParams.AllParams ++
+      Custom zedRetr evalBasedFTROffl ne nterested nParams.AllParams ++
+      Custom zedRetr evalBasedTwh nParams.AllParams ++
+      Earlyb rdFrsBasedCand dateGenerat onParams.AllParams ++
       FrsParams.AllParams ++
       GlobalParams.AllParams ++
-      InterestedInParams.AllParams ++
-      ProducerBasedCandidateGenerationParams.AllParams ++
+       nterested nParams.AllParams ++
+      ProducerBasedCand dateGenerat onParams.AllParams ++
       ProducerBasedUserAdGraphParams.AllParams ++
-      ProducerBasedUserTweetGraphParams.AllParams ++
+      ProducerBasedUserT etGraphParams.AllParams ++
       RecentFollowsParams.AllParams ++
-      RecentNegativeSignalParams.AllParams ++
-      RecentNotificationsParams.AllParams ++
-      RecentOriginalTweetsParams.AllParams ++
-      RecentReplyTweetsParams.AllParams ++
-      RecentRetweetsParams.AllParams ++
-      RecentTweetFavoritesParams.AllParams ++
-      RelatedTweetGlobalParams.AllParams ++
-      RelatedVideoTweetGlobalParams.AllParams ++
-      RelatedTweetProducerBasedParams.AllParams ++
-      RelatedTweetTweetBasedParams.AllParams ++
-      RelatedVideoTweetTweetBasedParams.AllParams ++
-      RepeatedProfileVisitsParams.AllParams ++
-      SimClustersANNParams.AllParams ++
-      TopicTweetParams.AllParams ++
-      TweetBasedCandidateGenerationParams.AllParams ++
-      TweetBasedUserAdGraphParams.AllParams ++
-      TweetBasedUserTweetGraphParams.AllParams ++
-      TweetBasedUserVideoGraphParams.AllParams ++
-      TweetSharesParams.AllParams ++
-      TweetBasedTwHINParams.AllParams ++
+      RecentNegat veS gnalParams.AllParams ++
+      RecentNot f cat onsParams.AllParams ++
+      RecentOr g nalT etsParams.AllParams ++
+      RecentReplyT etsParams.AllParams ++
+      RecentRet etsParams.AllParams ++
+      RecentT etFavor esParams.AllParams ++
+      RelatedT etGlobalParams.AllParams ++
+      RelatedV deoT etGlobalParams.AllParams ++
+      RelatedT etProducerBasedParams.AllParams ++
+      RelatedT etT etBasedParams.AllParams ++
+      RelatedV deoT etT etBasedParams.AllParams ++
+      RepeatedProf leV s sParams.AllParams ++
+      S mClustersANNParams.AllParams ++
+      Top cT etParams.AllParams ++
+      T etBasedCand dateGenerat onParams.AllParams ++
+      T etBasedUserAdGraphParams.AllParams ++
+      T etBasedUserT etGraphParams.AllParams ++
+      T etBasedUserV deoGraphParams.AllParams ++
+      T etSharesParams.AllParams ++
+      T etBasedTwH NParams.AllParams ++
       RealGraphOonParams.AllParams ++
-      RealGraphInParams.AllParams ++
-      GoodTweetClickParams.AllParams ++
-      GoodProfileClickParams.AllParams ++
-      UtegTweetGlobalParams.AllParams ++
-      VideoTweetFilterParams.AllParams ++
-      VideoViewTweetsParams.AllParams ++
-      UnifiedUSSSignalParams.AllParams
+      RealGraph nParams.AllParams ++
+      GoodT etCl ckParams.AllParams ++
+      GoodProf leCl ckParams.AllParams ++
+      UtegT etGlobalParams.AllParams ++
+      V deoT etF lterParams.AllParams ++
+      V deoV ewT etsParams.AllParams ++
+      Un f edUSSS gnalParams.AllParams
   }
 }

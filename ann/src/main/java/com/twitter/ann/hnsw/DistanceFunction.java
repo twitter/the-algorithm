@@ -1,8 +1,8 @@
-package com.twitter.ann.hnsw;
+package com.tw ter.ann.hnsw;
 
-public interface DistanceFunction<T, Q> {
+publ c  nterface D stanceFunct on<T, Q> {
   /**
-   * Distance between two items.
+   * D stance bet en two  ems.
    */
-  float distance(T t, Q q);
+  float d stance(T t, Q q);
 }

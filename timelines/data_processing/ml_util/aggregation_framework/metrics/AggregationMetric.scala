@@ -1,183 +1,183 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. tr cs
 
-import com.twitter.ml.api._
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.util.Duration
-import java.lang.{Long => JLong}
+ mport com.tw ter.ml.ap ._
+ mport com.tw ter.ml.ap .constant.SharedFeatures
+ mport com.tw ter.ml.ap .ut l.SR chDataRecord
+ mport com.tw ter.ut l.Durat on
+ mport java.lang.{Long => JLong}
 
 /**
- * Represents an aggregation operator (e.g. count or mean).
- * Override all functions in this trait to implement your own metric.
- * The operator is parameterized on an input type T, which is the type
- * of feature it aggregates, and a TimedValue[A] which is
- * the result type of aggregation for this metric.
+ * Represents an aggregat on operator (e.g. count or  an).
+ * Overr de all funct ons  n t  tra  to  mple nt y  own  tr c.
+ * T  operator  s para ter zed on an  nput type T, wh ch  s t  type
+ * of feature   aggregates, and a T  dValue[A] wh ch  s
+ * t  result type of aggregat on for t   tr c.
  */
-trait AggregationMetric[T, A] extends FeatureCache[T] {
+tra  Aggregat on tr c[T, A] extends FeatureCac [T] {
   /*
-   * Combines two timed aggregate values ''left'' and ''right''
-   * with the specified half life ''halfLife'' to produce a result
-   * TimedValue
+   * Comb nes two t  d aggregate values ''left'' and ''r ght''
+   * w h t  spec f ed half l fe ''halfL fe'' to produce a result
+   * T  dValue
    *
-   * @param left Left timed value
-   * @param right Right timed value
-   * @param halfLife Half life to use for adding timed values
-   * @return Result timed value
+   * @param left Left t  d value
+   * @param r ght R ght t  d value
+   * @param halfL fe Half l fe to use for add ng t  d values
+   * @return Result t  d value
    */
-  def plus(left: TimedValue[A], right: TimedValue[A], halfLife: Duration): TimedValue[A]
+  def plus(left: T  dValue[A], r ght: T  dValue[A], halfL fe: Durat on): T  dValue[A]
 
   /*
-   * Gets increment value given a datarecord and a feature.
+   * Gets  ncre nt value g ven a datarecord and a feature.
    *
-   * @param dataRecord to get increment value from.
-   * @param feature Feature to get increment value for. If None,
-     then the semantics is to just aggregate the label.
-   * @param timestampFeature Feature to use as millisecond timestamp
-     for decayed value aggregation.
-   * @return The incremental contribution to the aggregate of ''feature'' from ''dataRecord''.
+   * @param dataRecord to get  ncre nt value from.
+   * @param feature Feature to get  ncre nt value for.  f None,
+     t n t  semant cs  s to just aggregate t  label.
+   * @param t  stampFeature Feature to use as m ll second t  stamp
+     for decayed value aggregat on.
+   * @return T   ncre ntal contr but on to t  aggregate of ''feature'' from ''dataRecord''.
    *
-   * For example, if the aggregation metric is count, the incremental
-   * contribution is always a TimedValue (1.0, time). If the aggregation metric
-   * is mean, and the feature is a continuous feature (double), the incremental
-   * contribution looks like a tuple (value, 1.0, time)
+   * For example,  f t  aggregat on  tr c  s count, t   ncre ntal
+   * contr but on  s always a T  dValue (1.0, t  ).  f t  aggregat on  tr c
+   *  s  an, and t  feature  s a cont nuous feature (double), t   ncre ntal
+   * contr but on looks l ke a tuple (value, 1.0, t  )
    */
-  def getIncrementValue(
+  def get ncre ntValue(
     dataRecord: DataRecord,
-    feature: Option[Feature[T]],
-    timestampFeature: Feature[JLong]
-  ): TimedValue[A]
+    feature: Opt on[Feature[T]],
+    t  stampFeature: Feature[JLong]
+  ): T  dValue[A]
 
   /*
-   * The "zero" value for aggregation.
-   * For example, the zero is 0 for the count operator.
+   * T  "zero" value for aggregat on.
+   * For example, t  zero  s 0 for t  count operator.
    */
-  def zero(timeOpt: Option[Long] = None): TimedValue[A]
+  def zero(t  Opt: Opt on[Long] = None): T  dValue[A]
 
   /*
-   * Gets the value of aggregate feature(s) stored in a datarecord, if any.
-   * Different aggregate operators might store this info in the datarecord
-   * differently. E.g. count just stores a count, while mean needs to
-   * store both a sum and a count, and compile them into a TimedValue. We call
-   * these features stored in the record "output" features.
+   * Gets t  value of aggregate feature(s) stored  n a datarecord,  f any.
+   * D fferent aggregate operators m ght store t   nfo  n t  datarecord
+   * d fferently. E.g. count just stores a count, wh le  an needs to
+   * store both a sum and a count, and comp le t m  nto a T  dValue.   call
+   * t se features stored  n t  record "output" features.
    *
    * @param record Record to get value from
-   * @param query AggregateFeature (see above) specifying details of aggregate
-   * @param aggregateOutputs An optional precomputed set of aggregation "output"
-   * feature hashes for this (query, metric) pair. This can be derived from ''query'',
-   * but we precompute and pass this in for significantly (approximately 4x = 400%)
-   * faster performance. If not passed in, the operator should reconstruct these features
+   * @param query AggregateFeature (see above) spec fy ng deta ls of aggregate
+   * @param aggregateOutputs An opt onal precomputed set of aggregat on "output"
+   * feature has s for t  (query,  tr c) pa r. T  can be der ved from ''query'',
+   * but   precompute and pass t   n for s gn f cantly (approx mately 4x = 400%)
+   * faster performance.  f not passed  n, t  operator should reconstruct t se features
    * from scratch.
    *
-   * @return The aggregate value if found in ''record'', else the appropriate "zero"
-     for this type of aggregation.
+   * @return T  aggregate value  f found  n ''record'', else t  appropr ate "zero"
+     for t  type of aggregat on.
    */
   def getAggregateValue(
     record: DataRecord,
     query: AggregateFeature[T],
-    aggregateOutputs: Option[List[JLong]] = None
-  ): TimedValue[A]
+    aggregateOutputs: Opt on[L st[JLong]] = None
+  ): T  dValue[A]
 
   /*
-   * Sets the value of aggregate feature(s) in a datarecord. Different operators
-   * will have different representations (see example above).
+   * Sets t  value of aggregate feature(s)  n a datarecord. D fferent operators
+   * w ll have d fferent representat ons (see example above).
    *
-   * @param record Record to set value in
-   * @param query AggregateFeature (see above) specifying details of aggregate
-   * @param aggregateOutputs An optional precomputed set of aggregation "output"
-   * features for this (query, metric) pair. This can be derived from ''query'',
-   * but we precompute and pass this in for significantly (approximately 4x = 400%)
-   * faster performance. If not passed in, the operator should reconstruct these features
+   * @param record Record to set value  n
+   * @param query AggregateFeature (see above) spec fy ng deta ls of aggregate
+   * @param aggregateOutputs An opt onal precomputed set of aggregat on "output"
+   * features for t  (query,  tr c) pa r. T  can be der ved from ''query'',
+   * but   precompute and pass t   n for s gn f cantly (approx mately 4x = 400%)
+   * faster performance.  f not passed  n, t  operator should reconstruct t se features
    * from scratch.
    *
-   * @param value Value to set for aggregate feature in the record being passed in via ''query''
+   * @param value Value to set for aggregate feature  n t  record be ng passed  n v a ''query''
    */
   def setAggregateValue(
     record: DataRecord,
     query: AggregateFeature[T],
-    aggregateOutputs: Option[List[JLong]] = None,
-    value: TimedValue[A]
-  ): Unit
+    aggregateOutputs: Opt on[L st[JLong]] = None,
+    value: T  dValue[A]
+  ): Un 
 
   /**
-   * Get features used to store aggregate output representation
-   * in partially aggregated data records.
+   * Get features used to store aggregate output representat on
+   *  n part ally aggregated data records.
    *
-   * @query AggregateFeature (see above) specifying details of aggregate
-   * @return A list of "output" features used by this metric to store
-   * output representation. For example, for the "count" operator, we
-   * have only one element in this list, which is the result "count" feature.
-   * For the "mean" operator, we have three elements in this list: the "count"
-   * feature, the "sum" feature and the "mean" feature.
+   * @query AggregateFeature (see above) spec fy ng deta ls of aggregate
+   * @return A l st of "output" features used by t   tr c to store
+   * output representat on. For example, for t  "count" operator,  
+   * have only one ele nt  n t  l st, wh ch  s t  result "count" feature.
+   * For t  " an" operator,   have three ele nts  n t  l st: t  "count"
+   * feature, t  "sum" feature and t  " an" feature.
    */
-  def getOutputFeatures(query: AggregateFeature[T]): List[Feature[_]]
+  def getOutputFeatures(query: AggregateFeature[T]): L st[Feature[_]]
 
   /**
-   * Get feature hashes used to store aggregate output representation
-   * in partially aggregated data records.
+   * Get feature has s used to store aggregate output representat on
+   *  n part ally aggregated data records.
    *
-   * @query AggregateFeature (see above) specifying details of aggregate
-   * @return A list of "output" feature hashes used by this metric to store
-   * output representation. For example, for the "count" operator, we
-   * have only one element in this list, which is the result "count" feature.
-   * For the "mean" operator, we have three elements in this list: the "count"
-   * feature, the "sum" feature and the "mean" feature.
+   * @query AggregateFeature (see above) spec fy ng deta ls of aggregate
+   * @return A l st of "output" feature has s used by t   tr c to store
+   * output representat on. For example, for t  "count" operator,  
+   * have only one ele nt  n t  l st, wh ch  s t  result "count" feature.
+   * For t  " an" operator,   have three ele nts  n t  l st: t  "count"
+   * feature, t  "sum" feature and t  " an" feature.
    */
-  def getOutputFeatureIds(query: AggregateFeature[T]): List[JLong] =
+  def getOutputFeature ds(query: AggregateFeature[T]): L st[JLong] =
     getOutputFeatures(query)
-      .map(_.getDenseFeatureId().asInstanceOf[JLong])
+      .map(_.getDenseFeature d().as nstanceOf[JLong])
 
   /*
-   * Sums the given feature in two datarecords into a result record
-   * WARNING: this method has side-effects; it modifies combined
+   * Sums t  g ven feature  n two datarecords  nto a result record
+   * WARN NG: t   thod has s de-effects;   mod f es comb ned
    *
-   * @param combined Result datarecord to mutate and store addition result in
+   * @param comb ned Result datarecord to mutate and store add  on result  n
    * @param left Left datarecord to add
-   * @param right Right datarecord to add
-   * @param query Details of aggregate to add
-   * @param aggregateOutputs An optional precomputed set of aggregation "output"
-   * feature hashes for this (query, metric) pair. This can be derived from ''query'',
-   * but we precompute and pass this in for significantly (approximately 4x = 400%)
-   * faster performance. If not passed in, the operator should reconstruct these features
+   * @param r ght R ght datarecord to add
+   * @param query Deta ls of aggregate to add
+   * @param aggregateOutputs An opt onal precomputed set of aggregat on "output"
+   * feature has s for t  (query,  tr c) pa r. T  can be der ved from ''query'',
+   * but   precompute and pass t   n for s gn f cantly (approx mately 4x = 400%)
+   * faster performance.  f not passed  n, t  operator should reconstruct t se features
    * from scratch.
    */
   def mutatePlus(
-    combined: DataRecord,
+    comb ned: DataRecord,
     left: DataRecord,
-    right: DataRecord,
+    r ght: DataRecord,
     query: AggregateFeature[T],
-    aggregateOutputs: Option[List[JLong]] = None
-  ): Unit = {
+    aggregateOutputs: Opt on[L st[JLong]] = None
+  ): Un  = {
     val leftValue = getAggregateValue(left, query, aggregateOutputs)
-    val rightValue = getAggregateValue(right, query, aggregateOutputs)
-    val combinedValue = plus(leftValue, rightValue, query.halfLife)
-    setAggregateValue(combined, query, aggregateOutputs, combinedValue)
+    val r ghtValue = getAggregateValue(r ght, query, aggregateOutputs)
+    val comb nedValue = plus(leftValue, r ghtValue, query.halfL fe)
+    setAggregateValue(comb ned, query, aggregateOutputs, comb nedValue)
   }
 
   /**
-   * Helper function to get increment value from an input DataRecord
-   * and copy it to an output DataRecord, given an AggregateFeature query spec.
+   *  lper funct on to get  ncre nt value from an  nput DataRecord
+   * and copy   to an output DataRecord, g ven an AggregateFeature query spec.
    *
-   * @param output Datarecord to output increment to (will be mutated by this method)
-   * @param input Datarecord to get increment from
-   * @param query Details of aggregation
-   * @param aggregateOutputs An optional precomputed set of aggregation "output"
-   * feature hashes for this (query, metric) pair. This can be derived from ''query'',
-   * but we precompute and pass this in for significantly (approximately 4x = 400%)
-   * faster performance. If not passed in, the operator should reconstruct these features
+   * @param output Datarecord to output  ncre nt to (w ll be mutated by t   thod)
+   * @param  nput Datarecord to get  ncre nt from
+   * @param query Deta ls of aggregat on
+   * @param aggregateOutputs An opt onal precomputed set of aggregat on "output"
+   * feature has s for t  (query,  tr c) pa r. T  can be der ved from ''query'',
+   * but   precompute and pass t   n for s gn f cantly (approx mately 4x = 400%)
+   * faster performance.  f not passed  n, t  operator should reconstruct t se features
    * from scratch.
-   * @return True if an increment was set in the output record, else false
+   * @return True  f an  ncre nt was set  n t  output record, else false
    */
-  def setIncrement(
+  def set ncre nt(
     output: DataRecord,
-    input: DataRecord,
+     nput: DataRecord,
     query: AggregateFeature[T],
-    timestampFeature: Feature[JLong] = SharedFeatures.TIMESTAMP,
-    aggregateOutputs: Option[List[JLong]] = None
+    t  stampFeature: Feature[JLong] = SharedFeatures.T MESTAMP,
+    aggregateOutputs: Opt on[L st[JLong]] = None
   ): Boolean = {
-    if (query.label == None ||
-      (query.label.isDefined && SRichDataRecord(input).hasFeature(query.label.get))) {
-      val incrementValue: TimedValue[A] = getIncrementValue(input, query.feature, timestampFeature)
-      setAggregateValue(output, query, aggregateOutputs, incrementValue)
+     f (query.label == None ||
+      (query.label. sDef ned && SR chDataRecord( nput).hasFeature(query.label.get))) {
+      val  ncre ntValue: T  dValue[A] = get ncre ntValue( nput, query.feature, t  stampFeature)
+      setAggregateValue(output, query, aggregateOutputs,  ncre ntValue)
       true
     } else false
   }

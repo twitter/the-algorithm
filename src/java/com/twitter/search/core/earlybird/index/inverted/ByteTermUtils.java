@@ -1,32 +1,32 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import org.apache.lucene.util.ByteBlockPool;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.StringHelper;
+ mport org.apac .lucene.ut l.ByteBlockPool;
+ mport org.apac .lucene.ut l.BytesRef;
+ mport org.apac .lucene.ut l.Str ng lper;
 
 /**
- * Utility class for BytePools which have each term's length encoded before the contents in the
+ * Ut l y class for BytePools wh ch have each term's length encoded before t  contents  n t 
  * ByteBlockPool
- * Another solution is to have a class that encapsulates both textStarts and the byteBlockPool and
- * knows how the byteBlockPool is used to store the strings
+ * Anot r solut on  s to have a class that encapsulates both textStarts and t  byteBlockPool and
+ * knows how t  byteBlockPool  s used to store t  str ngs
  **/
-public abstract class ByteTermUtils {
+publ c abstract class ByteTermUt ls {
   /**
-   * Fill in a BytesRef from term's length & bytes encoded in byte block
+   * F ll  n a BytesRef from term's length & bytes encoded  n byte block
    */
-  public static int setBytesRef(final BaseByteBlockPool byteBlockPool,
+  publ c stat c  nt setBytesRef(f nal BaseByteBlockPool byteBlockPool,
                                 BytesRef term,
-                                final int textStart) {
-    final byte[] block = term.bytes =
-            byteBlockPool.pool.buffers[textStart >>> ByteBlockPool.BYTE_BLOCK_SHIFT];
-    final int start = textStart & ByteBlockPool.BYTE_BLOCK_MASK;
-    int pos = start;
+                                f nal  nt textStart) {
+    f nal byte[] block = term.bytes =
+            byteBlockPool.pool.buffers[textStart >>> ByteBlockPool.BYTE_BLOCK_SH FT];
+    f nal  nt start = textStart & ByteBlockPool.BYTE_BLOCK_MASK;
+     nt pos = start;
 
     byte b = block[pos++];
     term.length = b & 0x7F;
-    for (int shift = 7; (b & 0x80) != 0; shift += 7) {
+    for ( nt sh ft = 7; (b & 0x80) != 0; sh ft += 7) {
       b = block[pos++];
-      term.length |= (b & 0x7F) << shift;
+      term.length |= (b & 0x7F) << sh ft;
     }
     term.offset = pos;
 
@@ -35,28 +35,28 @@ public abstract class ByteTermUtils {
   }
 
    /**
-    * Test whether the text for current RawPostingList p equals
-    * current tokenText in utf8.
+    * Test w t r t  text for current RawPost ngL st p equals
+    * current tokenText  n utf8.
     */
-   public static boolean postingEquals(final BaseByteBlockPool termPool,
-       final int textStart, final BytesRef other) {
-     final byte[] block = termPool.pool.getBlocks()[textStart >>> ByteBlockPool.BYTE_BLOCK_SHIFT];
+   publ c stat c boolean post ngEquals(f nal BaseByteBlockPool termPool,
+       f nal  nt textStart, f nal BytesRef ot r) {
+     f nal byte[] block = termPool.pool.getBlocks()[textStart >>> ByteBlockPool.BYTE_BLOCK_SH FT];
      assert block != null;
 
-     int pos = textStart & ByteBlockPool.BYTE_BLOCK_MASK;
+      nt pos = textStart & ByteBlockPool.BYTE_BLOCK_MASK;
 
      byte b = block[pos++];
-     int len = b & 0x7F;
-     for (int shift = 7; (b & 0x80) != 0; shift += 7) {
+      nt len = b & 0x7F;
+     for ( nt sh ft = 7; (b & 0x80) != 0; sh ft += 7) {
        b = block[pos++];
-       len |= (b & 0x7F) << shift;
+       len |= (b & 0x7F) << sh ft;
      }
 
-     if (len == other.length) {
-       final byte[] utf8Bytes = other.bytes;
-       for (int tokenPos = other.offset;
-               tokenPos < other.length + other.offset; pos++, tokenPos++) {
-         if (utf8Bytes[tokenPos] != block[pos]) {
+      f (len == ot r.length) {
+       f nal byte[] utf8Bytes = ot r.bytes;
+       for ( nt tokenPos = ot r.offset;
+               tokenPos < ot r.length + ot r.offset; pos++, tokenPos++) {
+          f (utf8Bytes[tokenPos] != block[pos]) {
            return false;
          }
        }
@@ -67,56 +67,56 @@ public abstract class ByteTermUtils {
    }
 
    /**
-    * Returns the hashCode of the term stored at the given position in the block pool.
+    * Returns t  hashCode of t  term stored at t  g ven pos  on  n t  block pool.
     */
-   public static int hashCode(
-       final BaseByteBlockPool termPool, final int textStart) {
-    final byte[] block = termPool.pool.getBlocks()[textStart >>> ByteBlockPool.BYTE_BLOCK_SHIFT];
-    final int start = textStart & ByteBlockPool.BYTE_BLOCK_MASK;
+   publ c stat c  nt hashCode(
+       f nal BaseByteBlockPool termPool, f nal  nt textStart) {
+    f nal byte[] block = termPool.pool.getBlocks()[textStart >>> ByteBlockPool.BYTE_BLOCK_SH FT];
+    f nal  nt start = textStart & ByteBlockPool.BYTE_BLOCK_MASK;
 
-    int pos = start;
+     nt pos = start;
 
     byte b = block[pos++];
-    int len = b & 0x7F;
-    for (int shift = 7; (b & 0x80) != 0; shift += 7) {
+     nt len = b & 0x7F;
+    for ( nt sh ft = 7; (b & 0x80) != 0; sh ft += 7) {
       b = block[pos++];
-      len |= (b & 0x7F) << shift;
+      len |= (b & 0x7F) << sh ft;
     }
 
-    // Hash code returned here must be consistent with the one used in TermHashTable.lookupItem, so
-    // use the fixed hash seed. See TermHashTable.lookupItem for explanation of fixed hash seed.
-    return StringHelper.murmurhash3_x86_32(block, pos, len, InvertedRealtimeIndex.FIXED_HASH_SEED);
+    // Hash code returned  re must be cons stent w h t  one used  n TermHashTable.lookup em, so
+    // use t  f xed hash seed. See TermHashTable.lookup em for explanat on of f xed hash seed.
+    return Str ng lper.murmurhash3_x86_32(block, pos, len,  nvertedRealt   ndex.F XED_HASH_SEED);
   }
 
   /**
-   * Copies the utf8 encoded byte ref to the termPool.
+   * Cop es t  utf8 encoded byte ref to t  termPool.
    * @param termPool
    * @param utf8
-   * @return The text's start position in the termPool
+   * @return T  text's start pos  on  n t  termPool
    */
-  public static int copyToTermPool(BaseByteBlockPool termPool, BytesRef bytes) {
-    // Maybe grow the termPool before we write.  Assume we need 5 bytes in
-    // the worst case to store the VInt.
-    if (bytes.length + 5 + termPool.byteUpto > ByteBlockPool.BYTE_BLOCK_SIZE) {
-      // Not enough room in current block
+  publ c stat c  nt copyToTermPool(BaseByteBlockPool termPool, BytesRef bytes) {
+    // Maybe grow t  termPool before   wr e.  Assu    need 5 bytes  n
+    // t  worst case to store t  V nt.
+     f (bytes.length + 5 + termPool.byteUpto > ByteBlockPool.BYTE_BLOCK_S ZE) {
+      // Not enough room  n current block
       termPool.nextBuffer();
     }
 
-    final int textStart = termPool.byteUpto + termPool.byteOffset;
+    f nal  nt textStart = termPool.byteUpto + termPool.byteOffset;
 
-    writeVInt(termPool, bytes.length);
+    wr eV nt(termPool, bytes.length);
     System.arraycopy(bytes.bytes, bytes.offset, termPool.buffer, termPool.byteUpto, bytes.length);
     termPool.byteUpto += bytes.length;
 
     return textStart;
   }
 
-  private static void writeVInt(final BaseByteBlockPool termPool, final int v) {
-    int value = v;
-    final byte[] block = termPool.buffer;
-    int blockUpto = termPool.byteUpto;
+  pr vate stat c vo d wr eV nt(f nal BaseByteBlockPool termPool, f nal  nt v) {
+     nt value = v;
+    f nal byte[] block = termPool.buffer;
+     nt blockUpto = termPool.byteUpto;
 
-    while ((value & ~0x7F) != 0) {
+    wh le ((value & ~0x7F) != 0) {
       block[blockUpto++] = (byte) ((value & 0x7f) | 0x80);
       value >>>= 7;
     }

@@ -1,115 +1,115 @@
-package com.twitter.servo.util
+package com.tw ter.servo.ut l
 
-import com.twitter.util.{Duration, Time}
+ mport com.tw ter.ut l.{Durat on, T  }
 
 /**
- * Calculate a running average of data points
+ * Calculate a runn ng average of data po nts
  */
-trait Average {
-  def value: Option[Double]
-  def record(dataPoint: Double, count: Double = 1.0): Unit
+tra  Average {
+  def value: Opt on[Double]
+  def record(dataPo nt: Double, count: Double = 1.0): Un 
 }
 
 /**
- * Calculates a running average using two windows of data points, a
- * current one and a previous one.  When the current window is full,
- * it is rolled into the previous and the current window starts
- * filling up again.
+ * Calculates a runn ng average us ng two w ndows of data po nts, a
+ * current one and a prev ous one.  W n t  current w ndow  s full,
+ *    s rolled  nto t  prev ous and t  current w ndow starts
+ * f ll ng up aga n.
  */
-class WindowedAverage(val windowSize: Long, initialValue: Option[Double] = None) extends Average {
-  private[this] val average = new ResettableAverage(None)
-  private[this] var lastAverage: Option[Double] = initialValue
+class W ndo dAverage(val w ndowS ze: Long,  n  alValue: Opt on[Double] = None) extends Average {
+  pr vate[t ] val average = new ResettableAverage(None)
+  pr vate[t ] var lastAverage: Opt on[Double] =  n  alValue
 
-  def value: Option[Double] =
-    synchronized {
+  def value: Opt on[Double] =
+    synchron zed {
       lastAverage match {
-        case Some(lastAvg) =>
-          // currentCount can temporarily exceed windowSize
-          val currentWeight = (average.count / windowSize) min 1.0
-          Some((1.0 - currentWeight) * lastAvg + currentWeight * average.value.getOrElse(0.0))
+        case So (lastAvg) =>
+          // currentCount can temporar ly exceed w ndowS ze
+          val current  ght = (average.count / w ndowS ze) m n 1.0
+          So ((1.0 - current  ght) * lastAvg + current  ght * average.value.getOrElse(0.0))
         case None => average.value
       }
     }
 
-  def record(dataPoint: Double, count: Double = 1.0): Unit =
-    synchronized {
-      if (average.count >= windowSize) {
+  def record(dataPo nt: Double, count: Double = 1.0): Un  =
+    synchron zed {
+       f (average.count >= w ndowS ze) {
         lastAverage = value
         average.reset()
       }
-      average.record(dataPoint, count)
+      average.record(dataPo nt, count)
     }
 }
 
 /**
- * Calculates a recent average using the past windowDuration of data points.  Old average is mixed
- * with the new average during windowDuration.  If new data points are not recorded the average
- * will revert towards defaultAverage.
+ * Calculates a recent average us ng t  past w ndowDurat on of data po nts.  Old average  s m xed
+ * w h t  new average dur ng w ndowDurat on.   f new data po nts are not recorded t  average
+ * w ll revert towards defaultAverage.
  */
 class RecentAverage(
-  val windowDuration: Duration,
+  val w ndowDurat on: Durat on,
   val defaultAverage: Double,
-  currentTime: Time = Time.now // passing in start time to simplify scalacheck tests
+  currentT  : T   = T  .now // pass ng  n start t   to s mpl fy scalac ck tests
 ) extends Average {
-  private[this] val default = Some(defaultAverage)
-  private[this] val currentAverage = new ResettableAverage(Some(defaultAverage))
-  private[this] var prevAverage: Option[Double] = None
-  private[this] var windowStart: Time = currentTime
+  pr vate[t ] val default = So (defaultAverage)
+  pr vate[t ] val currentAverage = new ResettableAverage(So (defaultAverage))
+  pr vate[t ] var prevAverage: Opt on[Double] = None
+  pr vate[t ] var w ndowStart: T   = currentT  
 
-  private[this] def mix(fractOfV2: Double, v1: Double, v2: Double): Double = {
-    val f = 0.0.max(1.0.min(fractOfV2))
+  pr vate[t ] def m x(fractOfV2: Double, v1: Double, v2: Double): Double = {
+    val f = 0.0.max(1.0.m n(fractOfV2))
     (1.0 - f) * v1 + f * v2
   }
 
-  private[this] def timeFract: Double =
-    0.0.max(windowStart.untilNow.inNanoseconds.toDouble / windowDuration.inNanoseconds)
+  pr vate[t ] def t  Fract: Double =
+    0.0.max(w ndowStart.unt lNow. nNanoseconds.toDouble / w ndowDurat on. nNanoseconds)
 
-  def value: Some[Double] =
-    synchronized {
-      timeFract match {
-        case f if f < 1.0 =>
-          Some(mix(f, prevAverage.getOrElse(defaultAverage), currentAverage.getValue))
-        case f if f < 2.0 => Some(mix(f - 1.0, currentAverage.getValue, defaultAverage))
+  def value: So [Double] =
+    synchron zed {
+      t  Fract match {
+        case f  f f < 1.0 =>
+          So (m x(f, prevAverage.getOrElse(defaultAverage), currentAverage.getValue))
+        case f  f f < 2.0 => So (m x(f - 1.0, currentAverage.getValue, defaultAverage))
         case f => default
       }
     }
 
   def getValue: Double = value.get
 
-  def record(dataPoint: Double, count: Double = 1.0): Unit =
-    synchronized {
-      // if we're past windowDuration, roll average
-      val now = Time.now
-      if (now - windowStart > windowDuration) {
+  def record(dataPo nt: Double, count: Double = 1.0): Un  =
+    synchron zed {
+      //  f  're past w ndowDurat on, roll average
+      val now = T  .now
+       f (now - w ndowStart > w ndowDurat on) {
         prevAverage = value
-        windowStart = now
+        w ndowStart = now
         currentAverage.reset()
       }
-      currentAverage.record(dataPoint, count)
+      currentAverage.record(dataPo nt, count)
     }
 
-  override def toString =
-    s"RecentAverage(window=$windowDuration, default=$defaultAverage, " +
-      s"prevValue=$prevAverage, value=$value, timeFract=$timeFract)"
+  overr de def toStr ng =
+    s"RecentAverage(w ndow=$w ndowDurat on, default=$defaultAverage, " +
+      s"prevValue=$prevAverage, value=$value, t  Fract=$t  Fract)"
 }
 
-private class ResettableAverage[DoubleOpt <: Option[Double]](defaultAverage: DoubleOpt)
+pr vate class ResettableAverage[DoubleOpt <: Opt on[Double]](defaultAverage: DoubleOpt)
     extends Average {
-  private[this] var currentCount: Double = 0
-  private[this] var currentValue: Double = 0
-  def reset(): Unit = {
+  pr vate[t ] var currentCount: Double = 0
+  pr vate[t ] var currentValue: Double = 0
+  def reset(): Un  = {
     currentCount = 0
     currentValue = 0
   }
-  def record(dataPoint: Double, count: Double): Unit = {
+  def record(dataPo nt: Double, count: Double): Un  = {
     currentCount += count
-    currentValue += dataPoint
+    currentValue += dataPo nt
   }
-  def value: Option[Double] =
-    if (currentCount == 0) defaultAverage
-    else Some(currentValue / currentCount)
+  def value: Opt on[Double] =
+     f (currentCount == 0) defaultAverage
+    else So (currentValue / currentCount)
 
-  def getValue(implicit ev: DoubleOpt <:< Some[Double]): Double =
+  def getValue( mpl c  ev: DoubleOpt <:< So [Double]): Double =
     value.get
 
   def count: Double = currentCount

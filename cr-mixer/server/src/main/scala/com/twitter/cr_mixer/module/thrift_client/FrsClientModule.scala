@@ -1,41 +1,41 @@
-package com.twitter.cr_mixer.module.thrift_client
+package com.tw ter.cr_m xer.module.thr ft_cl ent
 
-import com.twitter.app.Flag
-import com.twitter.finagle.ThriftMux
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.module.core.TimeoutConfigModule.FrsClientTimeoutFlagName
-import com.twitter.finagle.service.RetryBudget
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.util.Duration
+ mport com.tw ter.app.Flag
+ mport com.tw ter.f nagle.Thr ftMux
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.cr_m xer.module.core.T  outConf gModule.FrsCl entT  outFlagNa 
+ mport com.tw ter.f nagle.serv ce.RetryBudget
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport com.tw ter.follow_recom ndat ons.thr ftscala.FollowRecom ndat onsThr ftServ ce
+ mport com.tw ter. nject. njector
+ mport com.tw ter. nject.thr ft.modules.Thr ft thodBu lderCl entModule
+ mport com.tw ter.ut l.Durat on
 
-object FrsClientModule
-    extends ThriftMethodBuilderClientModule[
-      FollowRecommendationsThriftService.ServicePerEndpoint,
-      FollowRecommendationsThriftService.MethodPerEndpoint
+object FrsCl entModule
+    extends Thr ft thodBu lderCl entModule[
+      FollowRecom ndat onsThr ftServ ce.Serv cePerEndpo nt,
+      FollowRecom ndat onsThr ftServ ce. thodPerEndpo nt
     ]
-    with MtlsClient {
+    w h MtlsCl ent {
 
-  override def label: String = "follow-recommendations-service"
-  override def dest: String = "/s/follow-recommendations/follow-recos-service"
+  overr de def label: Str ng = "follow-recom ndat ons-serv ce"
+  overr de def dest: Str ng = "/s/follow-recom ndat ons/follow-recos-serv ce"
 
-  private val frsSignalFetchTimeout: Flag[Duration] =
-    flag[Duration](FrsClientTimeoutFlagName, "FRS signal fetch client timeout")
-  override def requestTimeout: Duration = frsSignalFetchTimeout()
+  pr vate val frsS gnalFetchT  out: Flag[Durat on] =
+    flag[Durat on](FrsCl entT  outFlagNa , "FRS s gnal fetch cl ent t  out")
+  overr de def requestT  out: Durat on = frsS gnalFetchT  out()
 
-  override def retryBudget: RetryBudget = RetryBudget.Empty
+  overr de def retryBudget: RetryBudget = RetryBudget.Empty
 
-  override def configureThriftMuxClient(
-    injector: Injector,
-    client: ThriftMux.Client
-  ): ThriftMux.Client = {
+  overr de def conf gureThr ftMuxCl ent(
+     njector:  njector,
+    cl ent: Thr ftMux.Cl ent
+  ): Thr ftMux.Cl ent = {
     super
-      .configureThriftMuxClient(injector, client)
-      .withStatsReceiver(injector.instance[StatsReceiver].scope("clnt"))
-      .withSessionQualifier
-      .successRateFailureAccrual(successRate = 0.9, window = 30.seconds)
+      .conf gureThr ftMuxCl ent( njector, cl ent)
+      .w hStatsRece ver( njector. nstance[StatsRece ver].scope("clnt"))
+      .w hSess onQual f er
+      .successRateFa lureAccrual(successRate = 0.9, w ndow = 30.seconds)
   }
 }

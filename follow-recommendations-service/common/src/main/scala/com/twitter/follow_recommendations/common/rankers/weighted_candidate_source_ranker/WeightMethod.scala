@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker
+package com.tw ter.follow_recom ndat ons.common.rankers.  ghted_cand date_s ce_ranker
 
-object WeightMethod extends Enumeration {
-  type WeightMethod = Value
-  val WeightedRandomSampling, WeightedRoundRobin = Value
+object   ght thod extends Enu rat on {
+  type   ght thod = Value
+  val   ghtedRandomSampl ng,   ghtedRoundRob n = Value
 }

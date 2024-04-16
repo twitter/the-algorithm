@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.DismissInfo
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.D sm ss nfo
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class DismissInfoMarshaller @Inject() (callbackMarshaller: CallbackMarshaller) {
+@S ngleton
+class D sm ss nfoMarshaller @ nject() (callbackMarshaller: CallbackMarshaller) {
 
-  def apply(dismissInfo: DismissInfo): urt.DismissInfo =
-    urt.DismissInfo(dismissInfo.callbacks.map(_.map(callbackMarshaller(_))))
+  def apply(d sm ss nfo: D sm ss nfo): urt.D sm ss nfo =
+    urt.D sm ss nfo(d sm ss nfo.callbacks.map(_.map(callbackMarshaller(_))))
 }

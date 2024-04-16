@@ -1,60 +1,60 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.eventbus.client.EventBusPublisher
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.backends.GeoScrubEventStore.GetGeoScrubTimestamp
-import com.twitter.tweetypie.thriftscala.DeleteLocationData
-import com.twitter.tweetypie.thriftscala.DeleteLocationDataRequest
+ mport com.tw ter.eventbus.cl ent.EventBusPubl s r
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.backends.GeoScrubEventStore.GetGeoScrubT  stamp
+ mport com.tw ter.t etyp e.thr ftscala.DeleteLocat onData
+ mport com.tw ter.t etyp e.thr ftscala.DeleteLocat onDataRequest
 
 /**
- * Initiates the process of removing the geo information from a user's
- * tweets.
+ *  n  ates t  process of remov ng t  geo  nformat on from a user's
+ * t ets.
  */
-object DeleteLocationDataHandler {
-  type Type = DeleteLocationDataRequest => Future[Unit]
+object DeleteLocat onDataHandler {
+  type Type = DeleteLocat onDataRequest => Future[Un ]
 
   def apply(
-    getLastScrubTime: GetGeoScrubTimestamp,
-    scribe: DeleteLocationData => Future[Unit],
-    eventbus: EventBusPublisher[DeleteLocationData]
+    getLastScrubT  : GetGeoScrubT  stamp,
+    scr be: DeleteLocat onData => Future[Un ],
+    eventbus: EventBusPubl s r[DeleteLocat onData]
   ): Type =
     request => {
-      // Attempt to bound the time range of the tweets that need to be
-      // scrubbed by finding the most recent scrub time on record. This
-      // is an optimization that prevents scrubbing already-scrubbed
-      // tweets, so it is OK if the value that we find is occasionally
-      // stale or if the lookup fails. Primarily, this is intended to
-      // protect against intentional abuse by enqueueing multiple
-      // delete_location_data events that have to traverse a very long
-      // timeline.
-      Stitch
-        .run(getLastScrubTime(request.userId))
-        // If there is no timestamp or the lookup failed, continue with
+      // Attempt to bound t  t   range of t  t ets that need to be
+      // scrubbed by f nd ng t  most recent scrub t   on record. T 
+      //  s an opt m zat on that prevents scrubb ng already-scrubbed
+      // t ets, so    s OK  f t  value that   f nd  s occas onally
+      // stale or  f t  lookup fa ls. Pr mar ly, t   s  ntended to
+      // protect aga nst  ntent onal abuse by enqueue ng mult ple
+      // delete_locat on_data events that have to traverse a very long
+      // t  l ne.
+      St ch
+        .run(getLastScrubT  (request.user d))
+        //  f t re  s no t  stamp or t  lookup fa led, cont nue w h
         // an unchanged request.
         .handle { case _ => None }
-        .flatMap { lastScrubTime =>
-          // Due to clock skew, it's possible for the last scrub
-          // timestamp to be larger than the timestamp from the request,
-          // but we ignore that so that we keep a faithful record of
-          // user requests. The execution of such events will end up a
+        .flatMap { lastScrubT   =>
+          // Due to clock skew,  's poss ble for t  last scrub
+          // t  stamp to be larger than t  t  stamp from t  request,
+          // but    gnore that so that   keep a fa hful record of
+          // user requests. T  execut on of such events w ll end up a
           // no-op.
           val event =
-            DeleteLocationData(
-              userId = request.userId,
-              timestampMs = Time.now.inMilliseconds,
-              lastTimestampMs = lastScrubTime.map(_.inMilliseconds)
+            DeleteLocat onData(
+              user d = request.user d,
+              t  stampMs = T  .now. nM ll seconds,
+              lastT  stampMs = lastScrubT  .map(_. nM ll seconds)
             )
 
-          Future.join(
+          Future.jo n(
             Seq(
-              // Scribe the event so that we can reprocess events if
-              // there is a bug or operational issue that causes some
+              // Scr be t  event so that   can reprocess events  f
+              // t re  s a bug or operat onal  ssue that causes so 
               // events to be lost.
-              scribe(event),
-              // The actual deletion process is handled by the TweetyPie
+              scr be(event),
+              // T  actual delet on process  s handled by t  T etyP e
               // geoscrub daemon.
-              eventbus.publish(event)
+              eventbus.publ sh(event)
             )
           )
         }

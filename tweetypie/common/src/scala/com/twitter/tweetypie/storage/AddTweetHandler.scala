@@ -1,80 +1,80 @@
-package com.twitter.tweetypie.storage
+package com.tw ter.t etyp e.storage
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.kv.ManhattanValue
-import com.twitter.tweetypie.storage.TweetUtils.collectWithRateLimitCheck
-import com.twitter.tweetypie.storage_internal.thriftscala.StoredTweet
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.util.Time
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanValue
+ mport com.tw ter.t etyp e.storage.T etUt ls.collectW hRateL m C ck
+ mport com.tw ter.t etyp e.storage_ nternal.thr ftscala.StoredT et
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.ut l.T  
 
-object AddTweetHandler {
-  private[storage] type InternalAddTweet = (
-    Tweet,
-    ManhattanOperations.Insert,
-    Scribe,
-    StatsReceiver,
-    Time
-  ) => Stitch[Unit]
+object AddT etHandler {
+  pr vate[storage] type  nternalAddT et = (
+    T et,
+    ManhattanOperat ons. nsert,
+    Scr be,
+    StatsRece ver,
+    T  
+  ) => St ch[Un ]
 
   def apply(
-    insert: ManhattanOperations.Insert,
-    scribe: Scribe,
-    stats: StatsReceiver
-  ): TweetStorageClient.AddTweet =
-    tweet => doAddTweet(tweet, insert, scribe, stats, Time.now)
+     nsert: ManhattanOperat ons. nsert,
+    scr be: Scr be,
+    stats: StatsRece ver
+  ): T etStorageCl ent.AddT et =
+    t et => doAddT et(t et,  nsert, scr be, stats, T  .now)
 
   def makeRecords(
-    storedTweet: StoredTweet,
-    timestamp: Time
-  ): Seq[TweetManhattanRecord] = {
-    val core = CoreFieldsCodec.fromTweet(storedTweet)
-    val packedCoreFieldsBlob = CoreFieldsCodec.toTFieldBlob(core)
+    storedT et: StoredT et,
+    t  stamp: T  
+  ): Seq[T etManhattanRecord] = {
+    val core = CoreF eldsCodec.fromT et(storedT et)
+    val packedCoreF eldsBlob = CoreF eldsCodec.toTF eldBlob(core)
     val coreRecord =
-      TweetManhattanRecord(
-        TweetKey.coreFieldsKey(storedTweet.id),
-        ManhattanValue(TFieldBlobCodec.toByteBuffer(packedCoreFieldsBlob), Some(timestamp))
+      T etManhattanRecord(
+        T etKey.coreF eldsKey(storedT et. d),
+        ManhattanValue(TF eldBlobCodec.toByteBuffer(packedCoreF eldsBlob), So (t  stamp))
       )
 
-    val otherFieldIds =
-      TweetFields.nonCoreInternalFields ++ TweetFields.getAdditionalFieldIds(storedTweet)
+    val ot rF eld ds =
+      T etF elds.nonCore nternalF elds ++ T etF elds.getAdd  onalF eld ds(storedT et)
 
-    val otherFields =
-      storedTweet
-        .getFieldBlobs(otherFieldIds)
+    val ot rF elds =
+      storedT et
+        .getF eldBlobs(ot rF eld ds)
         .map {
-          case (fieldId, tFieldBlob) =>
-            TweetManhattanRecord(
-              TweetKey.fieldKey(storedTweet.id, fieldId),
-              ManhattanValue(TFieldBlobCodec.toByteBuffer(tFieldBlob), Some(timestamp))
+          case (f eld d, tF eldBlob) =>
+            T etManhattanRecord(
+              T etKey.f eldKey(storedT et. d, f eld d),
+              ManhattanValue(TF eldBlobCodec.toByteBuffer(tF eldBlob), So (t  stamp))
             )
         }
         .toSeq
-    otherFields :+ coreRecord
+    ot rF elds :+ coreRecord
   }
 
-  private[storage] val doAddTweet: InternalAddTweet = (
-    tweet: Tweet,
-    insert: ManhattanOperations.Insert,
-    scribe: Scribe,
-    stats: StatsReceiver,
-    timestamp: Time
+  pr vate[storage] val doAddT et:  nternalAddT et = (
+    t et: T et,
+     nsert: ManhattanOperat ons. nsert,
+    scr be: Scr be,
+    stats: StatsRece ver,
+    t  stamp: T  
   ) => {
-    assert(tweet.coreData.isDefined, s"Tweet ${tweet.id} is missing coreData: $tweet")
+    assert(t et.coreData. sDef ned, s"T et ${t et. d}  s m ss ng coreData: $t et")
 
-    val storedTweet = StorageConversions.toStoredTweet(tweet)
-    val records = makeRecords(storedTweet, timestamp)
-    val inserts = records.map(insert)
-    val insertsWithRateLimitCheck =
-      Stitch.collect(inserts.map(_.liftToTry)).map(collectWithRateLimitCheck).lowerFromTry
+    val storedT et = StorageConvers ons.toStoredT et(t et)
+    val records = makeRecords(storedT et, t  stamp)
+    val  nserts = records.map( nsert)
+    val  nsertsW hRateL m C ck =
+      St ch.collect( nserts.map(_.l ftToTry)).map(collectW hRateL m C ck).lo rFromTry
 
-    Stats.updatePerFieldQpsCounters(
-      "addTweet",
-      TweetFields.getAdditionalFieldIds(storedTweet),
+    Stats.updatePerF eldQpsCounters(
+      "addT et",
+      T etF elds.getAdd  onalF eld ds(storedT et),
       1,
       stats
     )
 
-    insertsWithRateLimitCheck.unit.onSuccess { _ => scribe.logAdded(storedTweet) }
+     nsertsW hRateL m C ck.un .onSuccess { _ => scr be.logAdded(storedT et) }
   }
 }

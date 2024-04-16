@@ -1,207 +1,207 @@
-package com.twitter.visibility.rules
+package com.tw ter.v s b l y.rules
 
-import com.twitter.timelines.configapi.Params
-import com.twitter.visibility.common.ModelScoreThresholds
-import com.twitter.visibility.configapi.configs.DeciderKey
-import com.twitter.visibility.configapi.params.FSRuleParams.HighSpammyTweetContentScoreConvoDownrankAbusiveQualityThresholdParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableDownrankSpamReplySectioningRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableNotGraduatedDownrankConvosAbusiveQualityRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.NotGraduatedUserLabelRuleHoldbackExperimentParam
-import com.twitter.visibility.configapi.params.TimelineConversationsDownrankingSpecificParams._
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.models.TweetSafetyLabelType
-import com.twitter.visibility.models.UserLabelValue
-import com.twitter.visibility.rules.Condition._
-import com.twitter.visibility.rules.RuleActionSourceBuilder.TweetSafetyLabelSourceBuilder
-import com.twitter.visibility.rules.RuleActionSourceBuilder.UserSafetyLabelSourceBuilder
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.tw ter.v s b l y.common.ModelScoreThresholds
+ mport com.tw ter.v s b l y.conf gap .conf gs.Dec derKey
+ mport com.tw ter.v s b l y.conf gap .params.FSRuleParams.H ghSpam T etContentScoreConvoDownrankAbus veQual yThresholdParam
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams.EnableDownrankSpamReplySect on ngRuleParam
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams.EnableNotGraduatedDownrankConvosAbus veQual yRuleParam
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams.NotGraduatedUserLabelRuleHoldbackExper  ntParam
+ mport com.tw ter.v s b l y.conf gap .params.T  l neConversat onsDownrank ngSpec f cParams._
+ mport com.tw ter.v s b l y.conf gap .params.RuleParam
+ mport com.tw ter.v s b l y.models.T etSafetyLabelType
+ mport com.tw ter.v s b l y.models.UserLabelValue
+ mport com.tw ter.v s b l y.rules.Cond  on._
+ mport com.tw ter.v s b l y.rules.RuleAct onS ceBu lder.T etSafetyLabelS ceBu lder
+ mport com.tw ter.v s b l y.rules.RuleAct onS ceBu lder.UserSafetyLabelS ceBu lder
 
-object DownrankingRules {
+object Downrank ngRules {
 
-  val ToxicityScoreAboveDownrankAbusiveQualitySectionThresholdCondition: TweetHasLabelWithLanguageScoreAboveThreshold =
-    TweetHasLabelWithLanguageScoreAboveThreshold(
-      safetyLabel = TweetSafetyLabelType.HighToxicityScore,
-      languagesToScoreThresholds = ModelScoreThresholds.ToxicityAbusiveQualityLanguagesToThresholds
+  val Tox c yScoreAboveDownrankAbus veQual ySect onThresholdCond  on: T etHasLabelW hLanguageScoreAboveThreshold =
+    T etHasLabelW hLanguageScoreAboveThreshold(
+      safetyLabel = T etSafetyLabelType.H ghTox c yScore,
+      languagesToScoreThresholds = ModelScoreThresholds.Tox c yAbus veQual yLanguagesToThresholds
     )
 
-  val ToxicityScoreAboveDownrankLowQualitySectionThresholdCondition: TweetHasLabelWithLanguageScoreAboveThreshold =
-    TweetHasLabelWithLanguageScoreAboveThreshold(
-      safetyLabel = TweetSafetyLabelType.HighToxicityScore,
-      languagesToScoreThresholds = ModelScoreThresholds.ToxicityLowQualityLanguagesToThresholds
+  val Tox c yScoreAboveDownrankLowQual ySect onThresholdCond  on: T etHasLabelW hLanguageScoreAboveThreshold =
+    T etHasLabelW hLanguageScoreAboveThreshold(
+      safetyLabel = T etSafetyLabelType.H ghTox c yScore,
+      languagesToScoreThresholds = ModelScoreThresholds.Tox c yLowQual yLanguagesToThresholds
     )
 
-  val ToxicityScoreAboveDownrankHighQualitySectionThresholdCondition: TweetHasLabelWithLanguageScoreAboveThreshold =
-    TweetHasLabelWithLanguageScoreAboveThreshold(
-      safetyLabel = TweetSafetyLabelType.HighToxicityScore,
-      languagesToScoreThresholds = ModelScoreThresholds.ToxicityHighQualityLanguagesToThresholds
+  val Tox c yScoreAboveDownrankH ghQual ySect onThresholdCond  on: T etHasLabelW hLanguageScoreAboveThreshold =
+    T etHasLabelW hLanguageScoreAboveThreshold(
+      safetyLabel = T etSafetyLabelType.H ghTox c yScore,
+      languagesToScoreThresholds = ModelScoreThresholds.Tox c yH ghQual yLanguagesToThresholds
     )
 
-  val HighSpammyTweetContentScoreConvoDownrankAbusiveQualityCondition: Condition =
-    TweetHasLabelWithScoreAboveThresholdWithParam(
-      TweetSafetyLabelType.HighSpammyTweetContentScore,
-      HighSpammyTweetContentScoreConvoDownrankAbusiveQualityThresholdParam)
+  val H ghSpam T etContentScoreConvoDownrankAbus veQual yCond  on: Cond  on =
+    T etHasLabelW hScoreAboveThresholdW hParam(
+      T etSafetyLabelType.H ghSpam T etContentScore,
+      H ghSpam T etContentScoreConvoDownrankAbus veQual yThresholdParam)
 
-  val HighCryptospamScoreConvoDownrankAbusiveQualityCondition: Condition =
-    TweetHasLabel(TweetSafetyLabelType.HighCryptospamScore)
+  val H ghCryptospamScoreConvoDownrankAbus veQual yCond  on: Cond  on =
+    T etHasLabel(T etSafetyLabelType.H ghCryptospamScore)
 }
 
-object HighToxicityScoreDownrankHighQualitySectionRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
+object H ghTox c yScoreDownrankH ghQual ySect onRule
+    extends Cond  onW hNot nnerC rcleOfFr endsRule(
       Downrank,
-      DownrankingRules.ToxicityScoreAboveDownrankHighQualitySectionThresholdCondition
+      Downrank ngRules.Tox c yScoreAboveDownrankH ghQual ySect onThresholdCond  on
     )
-    with DoesLogVerdictDecidered {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighToxicityScore))
+    w h DoesLogVerd ctDec dered {
+  overr de def act onS ceBu lder: Opt on[RuleAct onS ceBu lder] = So (
+    T etSafetyLabelS ceBu lder(T etSafetyLabelType.H ghTox c yScore))
 
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+  overr de def verd ctLogDec derKey = Dec derKey.EnableDownlevelRuleVerd ctLogg ng
 }
 
-object HighToxicityScoreDownrankLowQualitySectionRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      ConversationSectionLowQuality,
-      DownrankingRules.ToxicityScoreAboveDownrankLowQualitySectionThresholdCondition
+object H ghTox c yScoreDownrankLowQual ySect onRule
+    extends Cond  onW hNot nnerC rcleOfFr endsRule(
+      Conversat onSect onLowQual y,
+      Downrank ngRules.Tox c yScoreAboveDownrankLowQual ySect onThresholdCond  on
     )
-    with DoesLogVerdict {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighToxicityScore))
+    w h DoesLogVerd ct {
+  overr de def act onS ceBu lder: Opt on[RuleAct onS ceBu lder] = So (
+    T etSafetyLabelS ceBu lder(T etSafetyLabelType.H ghTox c yScore))
 }
 
-object HighToxicityScoreDownrankAbusiveQualitySectionRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      ConversationSectionAbusiveQuality,
-      DownrankingRules.ToxicityScoreAboveDownrankAbusiveQualitySectionThresholdCondition
+object H ghTox c yScoreDownrankAbus veQual ySect onRule
+    extends Cond  onW hNot nnerC rcleOfFr endsRule(
+      Conversat onSect onAbus veQual y,
+      Downrank ngRules.Tox c yScoreAboveDownrankAbus veQual ySect onThresholdCond  on
     )
-    with DoesLogVerdict {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighToxicityScore))
+    w h DoesLogVerd ct {
+  overr de def act onS ceBu lder: Opt on[RuleAct onS ceBu lder] = So (
+    T etSafetyLabelS ceBu lder(T etSafetyLabelType.H ghTox c yScore))
 }
 
-object UntrustedUrlConversationsTweetLabelRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      ConversationSectionAbusiveQuality,
-      TweetHasLabel(TweetSafetyLabelType.UntrustedUrl)
+object UntrustedUrlConversat onsT etLabelRule
+    extends Cond  onW hNot nnerC rcleOfFr endsRule(
+      Conversat onSect onAbus veQual y,
+      T etHasLabel(T etSafetyLabelType.UntrustedUrl)
     )
-    with DoesLogVerdictDecidered {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.UntrustedUrl))
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+    w h DoesLogVerd ctDec dered {
+  overr de def act onS ceBu lder: Opt on[RuleAct onS ceBu lder] = So (
+    T etSafetyLabelS ceBu lder(T etSafetyLabelType.UntrustedUrl))
+  overr de def verd ctLogDec derKey = Dec derKey.EnableDownlevelRuleVerd ctLogg ng
 }
 
-object DownrankSpamReplyConversationsTweetLabelRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      ConversationSectionAbusiveQuality,
-      TweetHasLabel(TweetSafetyLabelType.DownrankSpamReply)
+object DownrankSpamReplyConversat onsT etLabelRule
+    extends Cond  onW hNot nnerC rcleOfFr endsRule(
+      Conversat onSect onAbus veQual y,
+      T etHasLabel(T etSafetyLabelType.DownrankSpamReply)
     )
-    with DoesLogVerdictDecidered {
+    w h DoesLogVerd ctDec dered {
 
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableDownrankSpamReplySectioningRuleParam)
+  overr de def enabled: Seq[RuleParam[Boolean]] =
+    Seq(EnableDownrankSpamReplySect on ngRuleParam)
 
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.DownrankSpamReply))
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+  overr de def act onS ceBu lder: Opt on[RuleAct onS ceBu lder] = So (
+    T etSafetyLabelS ceBu lder(T etSafetyLabelType.DownrankSpamReply))
+  overr de def verd ctLogDec derKey = Dec derKey.EnableDownlevelRuleVerd ctLogg ng
 }
 
-object DownrankSpamReplyConversationsAuthorLabelRule
-    extends AuthorLabelWithNotInnerCircleOfFriendsRule(
-      ConversationSectionAbusiveQuality,
+object DownrankSpamReplyConversat onsAuthorLabelRule
+    extends AuthorLabelW hNot nnerC rcleOfFr endsRule(
+      Conversat onSect onAbus veQual y,
       UserLabelValue.DownrankSpamReply
     )
-    with DoesLogVerdictDecidered {
+    w h DoesLogVerd ctDec dered {
 
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableDownrankSpamReplySectioningRuleParam)
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+  overr de def enabled: Seq[RuleParam[Boolean]] =
+    Seq(EnableDownrankSpamReplySect on ngRuleParam)
+  overr de def verd ctLogDec derKey = Dec derKey.EnableDownlevelRuleVerd ctLogg ng
 
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    UserSafetyLabelSourceBuilder(UserLabelValue.DownrankSpamReply))
+  overr de def act onS ceBu lder: Opt on[RuleAct onS ceBu lder] = So (
+    UserSafetyLabelS ceBu lder(UserLabelValue.DownrankSpamReply))
 }
 
-object NotGraduatedConversationsAuthorLabelRule
-    extends AuthorLabelWithNotInnerCircleOfFriendsRule(
-      ConversationSectionLowQuality,
+object NotGraduatedConversat onsAuthorLabelRule
+    extends AuthorLabelW hNot nnerC rcleOfFr endsRule(
+      Conversat onSect onLowQual y,
       UserLabelValue.NotGraduated
     )
-    with DoesLogVerdictDecidered {
+    w h DoesLogVerd ctDec dered {
 
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableNotGraduatedDownrankConvosAbusiveQualityRuleParam)
+  overr de def enabled: Seq[RuleParam[Boolean]] =
+    Seq(EnableNotGraduatedDownrankConvosAbus veQual yRuleParam)
 
-  override def holdbacks: Seq[RuleParam[Boolean]] = Seq(
-    NotGraduatedUserLabelRuleHoldbackExperimentParam)
+  overr de def holdbacks: Seq[RuleParam[Boolean]] = Seq(
+    NotGraduatedUserLabelRuleHoldbackExper  ntParam)
 
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    UserSafetyLabelSourceBuilder(UserLabelValue.NotGraduated))
+  overr de def verd ctLogDec derKey = Dec derKey.EnableDownlevelRuleVerd ctLogg ng
+  overr de def act onS ceBu lder: Opt on[RuleAct onS ceBu lder] = So (
+    UserSafetyLabelS ceBu lder(UserLabelValue.NotGraduated))
 }
 
-object HighProactiveTosScoreTweetLabelDownrankingRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      ConversationSectionAbusiveQuality,
-      TweetHasLabel(TweetSafetyLabelType.HighProactiveTosScore)
+object H ghProact veTosScoreT etLabelDownrank ngRule
+    extends Cond  onW hNot nnerC rcleOfFr endsRule(
+      Conversat onSect onAbus veQual y,
+      T etHasLabel(T etSafetyLabelType.H ghProact veTosScore)
     )
-    with DoesLogVerdictDecidered {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighProactiveTosScore))
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+    w h DoesLogVerd ctDec dered {
+  overr de def act onS ceBu lder: Opt on[RuleAct onS ceBu lder] = So (
+    T etSafetyLabelS ceBu lder(T etSafetyLabelType.H ghProact veTosScore))
+  overr de def verd ctLogDec derKey = Dec derKey.EnableDownlevelRuleVerd ctLogg ng
 }
 
-object HighPSpammyTweetScoreDownrankLowQualitySectionRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      action = ConversationSectionLowQuality,
-      condition = TweetHasLabelWithScoreAboveThreshold(
-        TweetSafetyLabelType.HighPSpammyTweetScore,
-        ModelScoreThresholds.HighPSpammyTweetScoreThreshold)
+object H ghPSpam T etScoreDownrankLowQual ySect onRule
+    extends Cond  onW hNot nnerC rcleOfFr endsRule(
+      act on = Conversat onSect onLowQual y,
+      cond  on = T etHasLabelW hScoreAboveThreshold(
+        T etSafetyLabelType.H ghPSpam T etScore,
+        ModelScoreThresholds.H ghPSpam T etScoreThreshold)
     )
-    with DoesLogVerdictDecidered {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    EnablePSpammyTweetDownrankConvosLowQualityParam)
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighPSpammyTweetScore))
-  override def verdictLogDeciderKey: DeciderKey.Value =
-    DeciderKey.EnableSpammyTweetRuleVerdictLogging
+    w h DoesLogVerd ctDec dered {
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(
+    EnablePSpam T etDownrankConvosLowQual yParam)
+  overr de def act onS ceBu lder: Opt on[RuleAct onS ceBu lder] = So (
+    T etSafetyLabelS ceBu lder(T etSafetyLabelType.H ghPSpam T etScore))
+  overr de def verd ctLogDec derKey: Dec derKey.Value =
+    Dec derKey.EnableSpam T etRuleVerd ctLogg ng
 }
 
-object HighSpammyTweetContentScoreConvoDownrankAbusiveQualityRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      action = ConversationSectionAbusiveQuality,
-      condition = And(
-        Not(IsTweetInTweetLevelStcmHoldback),
-        DownrankingRules.HighSpammyTweetContentScoreConvoDownrankAbusiveQualityCondition)
+object H ghSpam T etContentScoreConvoDownrankAbus veQual yRule
+    extends Cond  onW hNot nnerC rcleOfFr endsRule(
+      act on = Conversat onSect onAbus veQual y,
+      cond  on = And(
+        Not( sT et nT etLevelStcmHoldback),
+        Downrank ngRules.H ghSpam T etContentScoreConvoDownrankAbus veQual yCond  on)
     )
-    with DoesLogVerdictDecidered {
-  override def isEnabled(params: Params): Boolean = {
-    params(EnableHighSpammyTweetContentScoreConvoDownrankAbusiveQualityRuleParam)
+    w h DoesLogVerd ctDec dered {
+  overr de def  sEnabled(params: Params): Boolean = {
+    params(EnableH ghSpam T etContentScoreConvoDownrankAbus veQual yRuleParam)
   }
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighSpammyTweetContentScore))
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+  overr de def act onS ceBu lder: Opt on[RuleAct onS ceBu lder] = So (
+    T etSafetyLabelS ceBu lder(T etSafetyLabelType.H ghSpam T etContentScore))
+  overr de def verd ctLogDec derKey = Dec derKey.EnableDownlevelRuleVerd ctLogg ng
 }
 
-object HighCryptospamScoreConvoDownrankAbusiveQualityRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      action = ConversationSectionAbusiveQuality,
-      condition = DownrankingRules.HighCryptospamScoreConvoDownrankAbusiveQualityCondition
+object H ghCryptospamScoreConvoDownrankAbus veQual yRule
+    extends Cond  onW hNot nnerC rcleOfFr endsRule(
+      act on = Conversat onSect onAbus veQual y,
+      cond  on = Downrank ngRules.H ghCryptospamScoreConvoDownrankAbus veQual yCond  on
     )
-    with DoesLogVerdictDecidered {
-  override def isEnabled(params: Params): Boolean = {
-    params(EnableHighCryptospamScoreConvoDownrankAbusiveQualityRuleParam)
+    w h DoesLogVerd ctDec dered {
+  overr de def  sEnabled(params: Params): Boolean = {
+    params(EnableH ghCryptospamScoreConvoDownrankAbus veQual yRuleParam)
   }
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighCryptospamScore))
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+  overr de def act onS ceBu lder: Opt on[RuleAct onS ceBu lder] = So (
+    T etSafetyLabelS ceBu lder(T etSafetyLabelType.H ghCryptospamScore))
+  overr de def verd ctLogDec derKey = Dec derKey.EnableDownlevelRuleVerd ctLogg ng
 }
 
-object RitoActionedTweetDownrankLowQualitySectionRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      action = ConversationSectionLowQuality,
-      condition = TweetHasLabel(TweetSafetyLabelType.RitoActionedTweet)
+object R oAct onedT etDownrankLowQual ySect onRule
+    extends Cond  onW hNot nnerC rcleOfFr endsRule(
+      act on = Conversat onSect onLowQual y,
+      cond  on = T etHasLabel(T etSafetyLabelType.R oAct onedT et)
     )
-    with DoesLogVerdictDecidered {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    EnableRitoActionedTweetDownrankConvosLowQualityParam)
+    w h DoesLogVerd ctDec dered {
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(
+    EnableR oAct onedT etDownrankConvosLowQual yParam)
 
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.RitoActionedTweet))
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+  overr de def act onS ceBu lder: Opt on[RuleAct onS ceBu lder] = So (
+    T etSafetyLabelS ceBu lder(T etSafetyLabelType.R oAct onedT et))
+  overr de def verd ctLogDec derKey = Dec derKey.EnableDownlevelRuleVerd ctLogg ng
 }

@@ -1,15 +1,15 @@
-package com.twitter.recos.user_tweet_graph.util
+package com.tw ter.recos.user_t et_graph.ut l
 
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Duration
-import com.twitter.util.Time
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.T  
 
-object FilterUtil {
-  def tweetAgeFilter(tweetId: TweetId, maxAge: Duration): Boolean = {
-    SnowflakeId
-      .timeFromIdOpt(tweetId)
-      .map { tweetTime => tweetTime > Time.now - maxAge }.getOrElse(false)
-    // If there's no snowflake timestamp, we have no idea when this tweet happened.
+object F lterUt l {
+  def t etAgeF lter(t et d: T et d, maxAge: Durat on): Boolean = {
+    Snowflake d
+      .t  From dOpt(t et d)
+      .map { t etT   => t etT   > T  .now - maxAge }.getOrElse(false)
+    //  f t re's no snowflake t  stamp,   have no  dea w n t  t et happened.
   }
 }

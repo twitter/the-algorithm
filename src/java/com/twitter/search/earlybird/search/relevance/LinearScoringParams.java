@@ -1,304 +1,304 @@
-package com.twitter.search.earlybird.search.relevance;
+package com.tw ter.search.earlyb rd.search.relevance;
 
-import java.util.Arrays;
-import java.util.Map;
+ mport java.ut l.Arrays;
+ mport java.ut l.Map;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import com.twitter.search.common.constants.SearchCardType;
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.ranking.thriftjava.ThriftAgeDecayRankingParams;
-import com.twitter.search.common.ranking.thriftjava.ThriftCardRankingParams;
-import com.twitter.search.common.ranking.thriftjava.ThriftRankingParams;
-import com.twitter.search.common.util.lang.ThriftLanguageUtil;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSocialFilterType;
+ mport com.tw ter.search.common.constants.SearchCardType;
+ mport com.tw ter.search.common.constants.thr ftjava.Thr ftLanguage;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.rank ng.thr ftjava.Thr ftAgeDecayRank ngParams;
+ mport com.tw ter.search.common.rank ng.thr ftjava.Thr ftCardRank ngParams;
+ mport com.tw ter.search.common.rank ng.thr ftjava.Thr ftRank ngParams;
+ mport com.tw ter.search.common.ut l.lang.Thr ftLanguageUt l;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchQuery;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSoc alF lterType;
 
 /*
- * The class for all query specific parameters, including the parameters from the relevanceOptions and
- * values that are extracted from the request itself.
+ * T  class for all query spec f c para ters,  nclud ng t  para ters from t  relevanceOpt ons and
+ * values that are extracted from t  request  self.
  */
-public class LinearScoringParams {
+publ c class L nearScor ngParams {
 
-  public static final double DEFAULT_FEATURE_WEIGHT = 0;
-  public static final double DEFAULT_FEATURE_MIN_VAL = 0;
-  public static final double DEFAULT_NO_BOOST = 1.0;
-  @VisibleForTesting
-  static final SearchCounter NULL_USER_LANGS_KEY =
-      SearchCounter.export("linear_scoring_params_null_user_langs_key");
+  publ c stat c f nal double DEFAULT_FEATURE_WE GHT = 0;
+  publ c stat c f nal double DEFAULT_FEATURE_M N_VAL = 0;
+  publ c stat c f nal double DEFAULT_NO_BOOST = 1.0;
+  @V s bleForTest ng
+  stat c f nal SearchCounter NULL_USER_LANGS_KEY =
+      SearchCounter.export("l near_scor ng_params_null_user_langs_key");
 
-  public final double luceneWeight;
-  public final double textScoreWeight;
-  public final double textScoreMinVal;
-  public final double retweetWeight;
-  public final double retweetMinVal;
-  public final double favWeight;
-  public final double favMinVal;
-  public final double replyWeight;
-  public final double multipleReplyWeight;
-  public final double multipleReplyMinVal;
-  public final double isReplyWeight;
-  public final double parusWeight;
-  public final double embedsImpressionWeight;
-  public final double embedsUrlWeight;
-  public final double videoViewWeight;
-  public final double quotedCountWeight;
+  publ c f nal double lucene  ght;
+  publ c f nal double textScore  ght;
+  publ c f nal double textScoreM nVal;
+  publ c f nal double ret et  ght;
+  publ c f nal double ret etM nVal;
+  publ c f nal double fav  ght;
+  publ c f nal double favM nVal;
+  publ c f nal double reply  ght;
+  publ c f nal double mult pleReply  ght;
+  publ c f nal double mult pleReplyM nVal;
+  publ c f nal double  sReply  ght;
+  publ c f nal double parus  ght;
+  publ c f nal double embeds mpress on  ght;
+  publ c f nal double embedsUrl  ght;
+  publ c f nal double v deoV ew  ght;
+  publ c f nal double quotedCount  ght;
 
-  public final double[] rankingOfflineExpWeights =
-      new double[LinearScoringData.MAX_OFFLINE_EXPERIMENTAL_FIELDS];
+  publ c f nal double[] rank ngOffl neExp  ghts =
+      new double[L nearScor ngData.MAX_OFFL NE_EXPER MENTAL_F ELDS];
 
-  public final boolean applyBoosts;
+  publ c f nal boolean applyBoosts;
 
-  // Storing ranking params for cards, avoid using maps for faster lookup
-  public final double[] hasCardBoosts = new double[SearchCardType.values().length];
-  public final double[] cardDomainMatchBoosts = new double[SearchCardType.values().length];
-  public final double[] cardAuthorMatchBoosts = new double[SearchCardType.values().length];
-  public final double[] cardTitleMatchBoosts = new double[SearchCardType.values().length];
-  public final double[] cardDescriptionMatchBoosts = new double[SearchCardType.values().length];
+  // Stor ng rank ng params for cards, avo d us ng maps for faster lookup
+  publ c f nal double[] hasCardBoosts = new double[SearchCardType.values().length];
+  publ c f nal double[] cardDoma nMatchBoosts = new double[SearchCardType.values().length];
+  publ c f nal double[] cardAuthorMatchBoosts = new double[SearchCardType.values().length];
+  publ c f nal double[] cardT leMatchBoosts = new double[SearchCardType.values().length];
+  publ c f nal double[] cardDescr pt onMatchBoosts = new double[SearchCardType.values().length];
 
-  public final double urlWeight;
-  public final double reputationWeight;
-  public final double reputationMinVal;
-  public final double followRetweetWeight;
-  public final double trustedRetweetWeight;
+  publ c f nal double url  ght;
+  publ c f nal double reputat on  ght;
+  publ c f nal double reputat onM nVal;
+  publ c f nal double followRet et  ght;
+  publ c f nal double trustedRet et  ght;
 
-  // Adjustments for specific tweets (tweetId -> score)
-  public final Map<Long, Double> querySpecificScoreAdjustments;
+  // Adjust nts for spec f c t ets (t et d -> score)
+  publ c f nal Map<Long, Double> querySpec f cScoreAdjust nts;
 
-  // Adjustments for tweets posted by specific authors (userId -> score)
-  public final Map<Long, Double> authorSpecificScoreAdjustments;
+  // Adjust nts for t ets posted by spec f c authors (user d -> score)
+  publ c f nal Map<Long, Double> authorSpec f cScoreAdjust nts;
 
-  public final double offensiveDamping;
-  public final double spamUserDamping;
-  public final double nsfwUserDamping;
-  public final double botUserDamping;
-  public final double trustedCircleBoost;
-  public final double directFollowBoost;
-  public final double minScore;
+  publ c f nal double offens veDamp ng;
+  publ c f nal double spamUserDamp ng;
+  publ c f nal double nsfwUserDamp ng;
+  publ c f nal double botUserDamp ng;
+  publ c f nal double trustedC rcleBoost;
+  publ c f nal double d rectFollowBoost;
+  publ c f nal double m nScore;
 
-  public final boolean applyFiltersAlways;
+  publ c f nal boolean applyF ltersAlways;
 
-  public final boolean useLuceneScoreAsBoost;
-  public final double maxLuceneScoreBoost;
+  publ c f nal boolean useLuceneScoreAsBoost;
+  publ c f nal double maxLuceneScoreBoost;
 
-  public final double langEnglishTweetDemote;
-  public final double langEnglishUIDemote;
-  public final double langDefaultDemote;
-  public final boolean useUserLanguageInfo;
-  public final double unknownLanguageBoost;
+  publ c f nal double langEngl shT etDemote;
+  publ c f nal double langEngl shU Demote;
+  publ c f nal double langDefaultDemote;
+  publ c f nal boolean useUserLanguage nfo;
+  publ c f nal double unknownLanguageBoost;
 
-  public final double outOfNetworkReplyPenalty;
+  publ c f nal double outOfNetworkReplyPenalty;
 
-  public final boolean useAgeDecay;
-  public final double ageDecayHalflife;
-  public final double ageDecayBase;
-  public final double ageDecaySlope;
+  publ c f nal boolean useAgeDecay;
+  publ c f nal double ageDecayHalfl fe;
+  publ c f nal double ageDecayBase;
+  publ c f nal double ageDecaySlope;
 
-  // hit attribute demotions
-  public final boolean enableHitDemotion;
-  public final double noTextHitDemotion;
-  public final double urlOnlyHitDemotion;
-  public final double nameOnlyHitDemotion;
-  public final double separateTextAndNameHitDemotion;
-  public final double separateTextAndUrlHitDemotion;
+  // h  attr bute demot ons
+  publ c f nal boolean enableH Demot on;
+  publ c f nal double noTextH Demot on;
+  publ c f nal double urlOnlyH Demot on;
+  publ c f nal double na OnlyH Demot on;
+  publ c f nal double separateTextAndNa H Demot on;
+  publ c f nal double separateTextAndUrlH Demot on;
 
   // trends related params
-  public final double tweetHasTrendBoost;
-  public final double multipleHashtagsOrTrendsDamping;
+  publ c f nal double t etHasTrendBoost;
+  publ c f nal double mult pleHashtagsOrTrendsDamp ng;
 
-  public final double tweetFromVerifiedAccountBoost;
+  publ c f nal double t etFromVer f edAccountBoost;
 
-  public final double tweetFromBlueVerifiedAccountBoost;
+  publ c f nal double t etFromBlueVer f edAccountBoost;
 
-  public final ThriftSocialFilterType socialFilterType;
-  public final int uiLangId;
-  // Confidences of the understandability of different languages for this user.
-  public final double[] userLangs = new double[ThriftLanguage.values().length];
+  publ c f nal Thr ftSoc alF lterType soc alF lterType;
+  publ c f nal  nt u Lang d;
+  // Conf dences of t  understandab l y of d fferent languages for t  user.
+  publ c f nal double[] userLangs = new double[Thr ftLanguage.values().length];
 
-  public final long searcherId;
-  public final double selfTweetBoost;
+  publ c f nal long searc r d;
+  publ c f nal double selfT etBoost;
 
-  public final double tweetHasMediaUrlBoost;
-  public final double tweetHasNewsUrlBoost;
+  publ c f nal double t etHas d aUrlBoost;
+  publ c f nal double t etHasNewsUrlBoost;
 
-  // whether we need meta-data for replies what the reply is to.
-  public final boolean getInReplyToStatusId;
+  // w t r   need  ta-data for repl es what t  reply  s to.
+  publ c f nal boolean get nReplyToStatus d;
 
-  // Initialize from a ranking parameter
-  public LinearScoringParams(ThriftSearchQuery searchQuery, ThriftRankingParams params) {
-    // weights
-    luceneWeight = params.isSetLuceneScoreParams()
-        ? params.getLuceneScoreParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    textScoreWeight = params.isSetTextScoreParams()
-        ? params.getTextScoreParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    retweetWeight = params.isSetRetweetCountParams()
-        ? params.getRetweetCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    favWeight = params.isSetFavCountParams()
-        ? params.getFavCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    replyWeight = params.isSetReplyCountParams()
-        ? params.getReplyCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    multipleReplyWeight = params.isSetMultipleReplyCountParams()
-        ? params.getMultipleReplyCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    parusWeight = params.isSetParusScoreParams()
-        ? params.getParusScoreParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    for (int i = 0; i < LinearScoringData.MAX_OFFLINE_EXPERIMENTAL_FIELDS; i++) {
-      Byte featureTypeByte = (byte) i;
-      // default weight is 0, thus contribution for unset feature value will be 0.
-      rankingOfflineExpWeights[i] = params.getOfflineExperimentalFeatureRankingParamsSize() > 0
-          && params.getOfflineExperimentalFeatureRankingParams().containsKey(featureTypeByte)
-              ? params.getOfflineExperimentalFeatureRankingParams().get(featureTypeByte).getWeight()
-              : DEFAULT_FEATURE_WEIGHT;
+  //  n  al ze from a rank ng para ter
+  publ c L nearScor ngParams(Thr ftSearchQuery searchQuery, Thr ftRank ngParams params) {
+    //   ghts
+    lucene  ght = params. sSetLuceneScoreParams()
+        ? params.getLuceneScoreParams().get  ght() : DEFAULT_FEATURE_WE GHT;
+    textScore  ght = params. sSetTextScoreParams()
+        ? params.getTextScoreParams().get  ght() : DEFAULT_FEATURE_WE GHT;
+    ret et  ght = params. sSetRet etCountParams()
+        ? params.getRet etCountParams().get  ght() : DEFAULT_FEATURE_WE GHT;
+    fav  ght = params. sSetFavCountParams()
+        ? params.getFavCountParams().get  ght() : DEFAULT_FEATURE_WE GHT;
+    reply  ght = params. sSetReplyCountParams()
+        ? params.getReplyCountParams().get  ght() : DEFAULT_FEATURE_WE GHT;
+    mult pleReply  ght = params. sSetMult pleReplyCountParams()
+        ? params.getMult pleReplyCountParams().get  ght() : DEFAULT_FEATURE_WE GHT;
+    parus  ght = params. sSetParusScoreParams()
+        ? params.getParusScoreParams().get  ght() : DEFAULT_FEATURE_WE GHT;
+    for ( nt   = 0;   < L nearScor ngData.MAX_OFFL NE_EXPER MENTAL_F ELDS;  ++) {
+      Byte featureTypeByte = (byte)  ;
+      // default   ght  s 0, thus contr but on for unset feature value w ll be 0.
+      rank ngOffl neExp  ghts[ ] = params.getOffl neExper  ntalFeatureRank ngParamsS ze() > 0
+          && params.getOffl neExper  ntalFeatureRank ngParams().conta nsKey(featureTypeByte)
+              ? params.getOffl neExper  ntalFeatureRank ngParams().get(featureTypeByte).get  ght()
+              : DEFAULT_FEATURE_WE GHT;
     }
-    embedsImpressionWeight = params.isSetEmbedsImpressionCountParams()
-        ? params.getEmbedsImpressionCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    embedsUrlWeight = params.isSetEmbedsUrlCountParams()
-        ? params.getEmbedsUrlCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    videoViewWeight = params.isSetVideoViewCountParams()
-        ? params.getVideoViewCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    quotedCountWeight = params.isSetQuotedCountParams()
-        ? params.getQuotedCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
+    embeds mpress on  ght = params. sSetEmbeds mpress onCountParams()
+        ? params.getEmbeds mpress onCountParams().get  ght() : DEFAULT_FEATURE_WE GHT;
+    embedsUrl  ght = params. sSetEmbedsUrlCountParams()
+        ? params.getEmbedsUrlCountParams().get  ght() : DEFAULT_FEATURE_WE GHT;
+    v deoV ew  ght = params. sSetV deoV ewCountParams()
+        ? params.getV deoV ewCountParams().get  ght() : DEFAULT_FEATURE_WE GHT;
+    quotedCount  ght = params. sSetQuotedCountParams()
+        ? params.getQuotedCountParams().get  ght() : DEFAULT_FEATURE_WE GHT;
 
-    applyBoosts = params.isApplyBoosts();
+    applyBoosts = params. sApplyBoosts();
 
-    // configure card values
-    Arrays.fill(hasCardBoosts, DEFAULT_NO_BOOST);
-    Arrays.fill(cardAuthorMatchBoosts, DEFAULT_NO_BOOST);
-    Arrays.fill(cardDomainMatchBoosts, DEFAULT_NO_BOOST);
-    Arrays.fill(cardTitleMatchBoosts, DEFAULT_NO_BOOST);
-    Arrays.fill(cardDescriptionMatchBoosts, DEFAULT_NO_BOOST);
-    if (params.isSetCardRankingParams()) {
+    // conf gure card values
+    Arrays.f ll(hasCardBoosts, DEFAULT_NO_BOOST);
+    Arrays.f ll(cardAuthorMatchBoosts, DEFAULT_NO_BOOST);
+    Arrays.f ll(cardDoma nMatchBoosts, DEFAULT_NO_BOOST);
+    Arrays.f ll(cardT leMatchBoosts, DEFAULT_NO_BOOST);
+    Arrays.f ll(cardDescr pt onMatchBoosts, DEFAULT_NO_BOOST);
+     f (params. sSetCardRank ngParams()) {
       for (SearchCardType cardType : SearchCardType.values()) {
-        byte cardTypeIndex = cardType.getByteValue();
-        ThriftCardRankingParams rankingParams = params.getCardRankingParams().get(cardTypeIndex);
-        if (rankingParams != null) {
-          hasCardBoosts[cardTypeIndex] = rankingParams.getHasCardBoost();
-          cardAuthorMatchBoosts[cardTypeIndex] = rankingParams.getAuthorMatchBoost();
-          cardDomainMatchBoosts[cardTypeIndex] = rankingParams.getDomainMatchBoost();
-          cardTitleMatchBoosts[cardTypeIndex] = rankingParams.getTitleMatchBoost();
-          cardDescriptionMatchBoosts[cardTypeIndex] = rankingParams.getDescriptionMatchBoost();
+        byte cardType ndex = cardType.getByteValue();
+        Thr ftCardRank ngParams rank ngParams = params.getCardRank ngParams().get(cardType ndex);
+         f (rank ngParams != null) {
+          hasCardBoosts[cardType ndex] = rank ngParams.getHasCardBoost();
+          cardAuthorMatchBoosts[cardType ndex] = rank ngParams.getAuthorMatchBoost();
+          cardDoma nMatchBoosts[cardType ndex] = rank ngParams.getDoma nMatchBoost();
+          cardT leMatchBoosts[cardType ndex] = rank ngParams.getT leMatchBoost();
+          cardDescr pt onMatchBoosts[cardType ndex] = rank ngParams.getDescr pt onMatchBoost();
         }
       }
     }
 
-    urlWeight = params.isSetUrlParams()
-        ? params.getUrlParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    reputationWeight = params.isSetReputationParams()
-        ? params.getReputationParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    isReplyWeight = params.isSetIsReplyParams()
-        ? params.getIsReplyParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    followRetweetWeight = params.isSetDirectFollowRetweetCountParams()
-        ? params.getDirectFollowRetweetCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    trustedRetweetWeight = params.isSetTrustedCircleRetweetCountParams()
-        ? params.getTrustedCircleRetweetCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
+    url  ght = params. sSetUrlParams()
+        ? params.getUrlParams().get  ght() : DEFAULT_FEATURE_WE GHT;
+    reputat on  ght = params. sSetReputat onParams()
+        ? params.getReputat onParams().get  ght() : DEFAULT_FEATURE_WE GHT;
+     sReply  ght = params. sSet sReplyParams()
+        ? params.get sReplyParams().get  ght() : DEFAULT_FEATURE_WE GHT;
+    followRet et  ght = params. sSetD rectFollowRet etCountParams()
+        ? params.getD rectFollowRet etCountParams().get  ght() : DEFAULT_FEATURE_WE GHT;
+    trustedRet et  ght = params. sSetTrustedC rcleRet etCountParams()
+        ? params.getTrustedC rcleRet etCountParams().get  ght() : DEFAULT_FEATURE_WE GHT;
 
-    querySpecificScoreAdjustments = params.getQuerySpecificScoreAdjustments();
-    authorSpecificScoreAdjustments = params.getAuthorSpecificScoreAdjustments();
+    querySpec f cScoreAdjust nts = params.getQuerySpec f cScoreAdjust nts();
+    authorSpec f cScoreAdjust nts = params.getAuthorSpec f cScoreAdjust nts();
 
-    // min/max filters
-    textScoreMinVal = params.isSetTextScoreParams()
-        ? params.getTextScoreParams().getMin() : DEFAULT_FEATURE_MIN_VAL;
-    reputationMinVal = params.isSetReputationParams()
-        ? params.getReputationParams().getMin() : DEFAULT_FEATURE_MIN_VAL;
-    multipleReplyMinVal = params.isSetMultipleReplyCountParams()
-        ? params.getMultipleReplyCountParams().getMin() : DEFAULT_FEATURE_MIN_VAL;
-    retweetMinVal = params.isSetRetweetCountParams() && params.getRetweetCountParams().isSetMin()
-        ? params.getRetweetCountParams().getMin() : DEFAULT_FEATURE_MIN_VAL;
-    favMinVal = params.isSetFavCountParams() && params.getFavCountParams().isSetMin()
-        ? params.getFavCountParams().getMin() : DEFAULT_FEATURE_MIN_VAL;
+    // m n/max f lters
+    textScoreM nVal = params. sSetTextScoreParams()
+        ? params.getTextScoreParams().getM n() : DEFAULT_FEATURE_M N_VAL;
+    reputat onM nVal = params. sSetReputat onParams()
+        ? params.getReputat onParams().getM n() : DEFAULT_FEATURE_M N_VAL;
+    mult pleReplyM nVal = params. sSetMult pleReplyCountParams()
+        ? params.getMult pleReplyCountParams().getM n() : DEFAULT_FEATURE_M N_VAL;
+    ret etM nVal = params. sSetRet etCountParams() && params.getRet etCountParams(). sSetM n()
+        ? params.getRet etCountParams().getM n() : DEFAULT_FEATURE_M N_VAL;
+    favM nVal = params. sSetFavCountParams() && params.getFavCountParams(). sSetM n()
+        ? params.getFavCountParams().getM n() : DEFAULT_FEATURE_M N_VAL;
 
     // boosts
-    spamUserDamping = params.isSetSpamUserBoost() ? params.getSpamUserBoost() : 1.0;
-    nsfwUserDamping = params.isSetNsfwUserBoost() ? params.getNsfwUserBoost() : 1.0;
-    botUserDamping = params.isSetBotUserBoost() ? params.getBotUserBoost() : 1.0;
-    offensiveDamping = params.getOffensiveBoost();
-    trustedCircleBoost = params.getInTrustedCircleBoost();
-    directFollowBoost = params.getInDirectFollowBoost();
+    spamUserDamp ng = params. sSetSpamUserBoost() ? params.getSpamUserBoost() : 1.0;
+    nsfwUserDamp ng = params. sSetNsfwUserBoost() ? params.getNsfwUserBoost() : 1.0;
+    botUserDamp ng = params. sSetBotUserBoost() ? params.getBotUserBoost() : 1.0;
+    offens veDamp ng = params.getOffens veBoost();
+    trustedC rcleBoost = params.get nTrustedC rcleBoost();
+    d rectFollowBoost = params.get nD rectFollowBoost();
 
     // language boosts
-    langEnglishTweetDemote = params.getLangEnglishTweetBoost();
-    langEnglishUIDemote = params.getLangEnglishUIBoost();
+    langEngl shT etDemote = params.getLangEngl shT etBoost();
+    langEngl shU Demote = params.getLangEngl shU Boost();
     langDefaultDemote = params.getLangDefaultBoost();
-    useUserLanguageInfo = params.isUseUserLanguageInfo();
+    useUserLanguage nfo = params. sUseUserLanguage nfo();
     unknownLanguageBoost = params.getUnknownLanguageBoost();
 
-    // hit demotions
-    enableHitDemotion = params.isEnableHitDemotion();
-    noTextHitDemotion = params.getNoTextHitDemotion();
-    urlOnlyHitDemotion = params.getUrlOnlyHitDemotion();
-    nameOnlyHitDemotion = params.getNameOnlyHitDemotion();
-    separateTextAndNameHitDemotion = params.getSeparateTextAndNameHitDemotion();
-    separateTextAndUrlHitDemotion = params.getSeparateTextAndUrlHitDemotion();
+    // h  demot ons
+    enableH Demot on = params. sEnableH Demot on();
+    noTextH Demot on = params.getNoTextH Demot on();
+    urlOnlyH Demot on = params.getUrlOnlyH Demot on();
+    na OnlyH Demot on = params.getNa OnlyH Demot on();
+    separateTextAndNa H Demot on = params.getSeparateTextAndNa H Demot on();
+    separateTextAndUrlH Demot on = params.getSeparateTextAndUrlH Demot on();
 
     outOfNetworkReplyPenalty = params.getOutOfNetworkReplyPenalty();
 
-    if (params.isSetAgeDecayParams()) {
-      // new age decay settings
-      ThriftAgeDecayRankingParams ageDecayParams = params.getAgeDecayParams();
+     f (params. sSetAgeDecayParams()) {
+      // new age decay sett ngs
+      Thr ftAgeDecayRank ngParams ageDecayParams = params.getAgeDecayParams();
       ageDecaySlope = ageDecayParams.getSlope();
-      ageDecayHalflife = ageDecayParams.getHalflife();
+      ageDecayHalfl fe = ageDecayParams.getHalfl fe();
       ageDecayBase = ageDecayParams.getBase();
       useAgeDecay = true;
-    } else if (params.isSetDeprecatedAgeDecayBase()
-        && params.isSetDeprecatedAgeDecayHalflife()
-        && params.isSetDeprecatedAgeDecaySlope()) {
+    } else  f (params. sSetDeprecatedAgeDecayBase()
+        && params. sSetDeprecatedAgeDecayHalfl fe()
+        && params. sSetDeprecatedAgeDecaySlope()) {
       ageDecaySlope = params.getDeprecatedAgeDecaySlope();
-      ageDecayHalflife = params.getDeprecatedAgeDecayHalflife();
+      ageDecayHalfl fe = params.getDeprecatedAgeDecayHalfl fe();
       ageDecayBase = params.getDeprecatedAgeDecayBase();
       useAgeDecay = true;
     } else {
       ageDecaySlope = 0.0;
-      ageDecayHalflife = 0.0;
+      ageDecayHalfl fe = 0.0;
       ageDecayBase = 0.0;
       useAgeDecay = false;
     }
 
     // trends
-    tweetHasTrendBoost = params.getTweetHasTrendBoost();
-    multipleHashtagsOrTrendsDamping = params.getMultipleHashtagsOrTrendsBoost();
+    t etHasTrendBoost = params.getT etHasTrendBoost();
+    mult pleHashtagsOrTrendsDamp ng = params.getMult pleHashtagsOrTrendsBoost();
 
-    // verified accounts
-    tweetFromVerifiedAccountBoost = params.getTweetFromVerifiedAccountBoost();
-    tweetFromBlueVerifiedAccountBoost = params.getTweetFromBlueVerifiedAccountBoost();
+    // ver f ed accounts
+    t etFromVer f edAccountBoost = params.getT etFromVer f edAccountBoost();
+    t etFromBlueVer f edAccountBoost = params.getT etFromBlueVer f edAccountBoost();
 
-    // score filter
-    minScore = params.getMinScore();
+    // score f lter
+    m nScore = params.getM nScore();
 
-    applyFiltersAlways = params.isApplyFiltersAlways();
+    applyF ltersAlways = params. sApplyF ltersAlways();
 
-    useLuceneScoreAsBoost = params.isUseLuceneScoreAsBoost();
+    useLuceneScoreAsBoost = params. sUseLuceneScoreAsBoost();
     maxLuceneScoreBoost = params.getMaxLuceneScoreBoost();
 
-    searcherId = searchQuery.isSetSearcherId() ? searchQuery.getSearcherId() : -1;
-    selfTweetBoost = params.getSelfTweetBoost();
+    searc r d = searchQuery. sSetSearc r d() ? searchQuery.getSearc r d() : -1;
+    selfT etBoost = params.getSelfT etBoost();
 
-    socialFilterType = searchQuery.getSocialFilterType();
+    soc alF lterType = searchQuery.getSoc alF lterType();
 
-    // the UI language and the confidences of the languages user can understand.
-    if (!searchQuery.isSetUiLang() || searchQuery.getUiLang().isEmpty()) {
-      uiLangId = ThriftLanguage.UNKNOWN.getValue();
+    // t  U  language and t  conf dences of t  languages user can understand.
+     f (!searchQuery. sSetU Lang() || searchQuery.getU Lang(). sEmpty()) {
+      u Lang d = Thr ftLanguage.UNKNOWN.getValue();
     } else {
-      uiLangId = ThriftLanguageUtil.getThriftLanguageOf(searchQuery.getUiLang()).getValue();
+      u Lang d = Thr ftLanguageUt l.getThr ftLanguageOf(searchQuery.getU Lang()).getValue();
     }
-    if (searchQuery.getUserLangsSize() > 0) {
-      for (Map.Entry<ThriftLanguage, Double> lang : searchQuery.getUserLangs().entrySet()) {
-        ThriftLanguage thriftLanguage = lang.getKey();
+     f (searchQuery.getUserLangsS ze() > 0) {
+      for (Map.Entry<Thr ftLanguage, Double> lang : searchQuery.getUserLangs().entrySet()) {
+        Thr ftLanguage thr ftLanguage = lang.getKey();
         // SEARCH-13441
-        if (thriftLanguage != null) {
-          userLangs[thriftLanguage.getValue()] = lang.getValue();
+         f (thr ftLanguage != null) {
+          userLangs[thr ftLanguage.getValue()] = lang.getValue();
         } else {
-          NULL_USER_LANGS_KEY.increment();
+          NULL_USER_LANGS_KEY. ncre nt();
         }
       }
     }
 
-    // For now, we will use the same boost for both image, and video.
-    tweetHasMediaUrlBoost = params.getTweetHasImageUrlBoost();
-    tweetHasNewsUrlBoost = params.getTweetHasNewsUrlBoost();
+    // For now,   w ll use t  sa  boost for both  mage, and v deo.
+    t etHas d aUrlBoost = params.getT etHas mageUrlBoost();
+    t etHasNewsUrlBoost = params.getT etHasNewsUrlBoost();
 
-    getInReplyToStatusId =
-        searchQuery.isSetResultMetadataOptions()
-            && searchQuery.getResultMetadataOptions().isSetGetInReplyToStatusId()
-            && searchQuery.getResultMetadataOptions().isGetInReplyToStatusId();
+    get nReplyToStatus d =
+        searchQuery. sSetResult tadataOpt ons()
+            && searchQuery.getResult tadataOpt ons(). sSetGet nReplyToStatus d()
+            && searchQuery.getResult tadataOpt ons(). sGet nReplyToStatus d();
   }
 }

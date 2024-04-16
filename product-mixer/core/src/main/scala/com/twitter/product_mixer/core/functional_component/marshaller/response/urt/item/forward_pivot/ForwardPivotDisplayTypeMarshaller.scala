@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.forward_pivot
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.forward_p vot
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.CommunityNotes
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.ForwardPivotDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.LiveEvent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.SoftIntervention
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.forward_p vot.Commun yNotes
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.forward_p vot.ForwardP votD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.forward_p vot.L veEvent
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.forward_p vot.Soft ntervent on
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ForwardPivotDisplayTypeMarshaller @Inject() () {
+@S ngleton
+class ForwardP votD splayTypeMarshaller @ nject() () {
 
-  def apply(forwardPivotDisplayType: ForwardPivotDisplayType): urt.ForwardPivotDisplayType =
-    forwardPivotDisplayType match {
-      case LiveEvent => urt.ForwardPivotDisplayType.LiveEvent
-      case SoftIntervention => urt.ForwardPivotDisplayType.SoftIntervention
-      case CommunityNotes => urt.ForwardPivotDisplayType.CommunityNotes
+  def apply(forwardP votD splayType: ForwardP votD splayType): urt.ForwardP votD splayType =
+    forwardP votD splayType match {
+      case L veEvent => urt.ForwardP votD splayType.L veEvent
+      case Soft ntervent on => urt.ForwardP votD splayType.Soft ntervent on
+      case Commun yNotes => urt.ForwardP votD splayType.Commun yNotes
     }
 }

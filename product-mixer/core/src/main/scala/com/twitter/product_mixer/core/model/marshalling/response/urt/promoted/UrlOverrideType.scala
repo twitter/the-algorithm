@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted
 
-sealed trait UrlOverrideType
+sealed tra  UrlOverr deType
 
-object UnknownUrlOverrideType extends UrlOverrideType
-object DcmUrlOverrideType extends UrlOverrideType
+object UnknownUrlOverr deType extends UrlOverr deType
+object DcmUrlOverr deType extends UrlOverr deType

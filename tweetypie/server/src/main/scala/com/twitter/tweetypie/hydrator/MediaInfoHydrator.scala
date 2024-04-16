@@ -1,73 +1,73 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.media.MediaKeyUtil
-import com.twitter.tweetypie.media.MediaMetadataRequest
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
-import java.nio.ByteBuffer
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e. d a. d aKeyUt l
+ mport com.tw ter.t etyp e. d a. d a tadataRequest
+ mport com.tw ter.t etyp e.repos ory._
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport java.n o.ByteBuffer
 
-object MediaInfoHydrator {
-  type Ctx = MediaEntityHydrator.Uncacheable.Ctx
-  type Type = MediaEntityHydrator.Uncacheable.Type
+object  d a nfoHydrator {
+  type Ctx =  d aEnt yHydrator.Uncac able.Ctx
+  type Type =  d aEnt yHydrator.Uncac able.Type
 
-  private[this] val log = Logger(getClass)
+  pr vate[t ] val log = Logger(getClass)
 
-  def apply(repo: MediaMetadataRepository.Type, stats: StatsReceiver): Type = {
-    val attributableUserCounter = stats.counter("attributable_user")
+  def apply(repo:  d a tadataRepos ory.Type, stats: StatsRece ver): Type = {
+    val attr butableUserCounter = stats.counter("attr butable_user")
 
-    ValueHydrator[MediaEntity, Ctx] { (curr, ctx) =>
+    ValueHydrator[ d aEnt y, Ctx] { (curr, ctx) =>
       val request =
-        toMediaMetadataRequest(
-          mediaEntity = curr,
-          tweetId = ctx.tweetId,
-          extensionsArgs = ctx.opts.extensionsArgs
+        to d a tadataRequest(
+           d aEnt y = curr,
+          t et d = ctx.t et d,
+          extens onsArgs = ctx.opts.extens onsArgs
         )
 
       request match {
-        case None => Stitch.value(ValueState.unmodified(curr))
+        case None => St ch.value(ValueState.unmod f ed(curr))
 
-        case Some(req) =>
-          repo(req).liftToTry.map {
-            case Return(metadata) =>
-              if (metadata.attributableUserId.nonEmpty) attributableUserCounter.incr()
+        case So (req) =>
+          repo(req).l ftToTry.map {
+            case Return( tadata) =>
+               f ( tadata.attr butableUser d.nonEmpty) attr butableUserCounter. ncr()
 
               ValueState.delta(
                 curr,
-                metadata.updateEntity(
-                  mediaEntity = curr,
-                  tweetUserId = ctx.userId,
-                  includeAdditionalMetadata = ctx.includeAdditionalMetadata
+                 tadata.updateEnt y(
+                   d aEnt y = curr,
+                  t etUser d = ctx.user d,
+                   ncludeAdd  onal tadata = ctx. ncludeAdd  onal tadata
                 )
               )
 
-            case Throw(ex) if !PartialEntityCleaner.isPartialMedia(curr) =>
-              log.info("Ignored media info repo failure, media entity already hydrated", ex)
-              ValueState.unmodified(curr)
+            case Throw(ex)  f !Part alEnt yCleaner. sPart al d a(curr) =>
+              log. nfo(" gnored  d a  nfo repo fa lure,  d a ent y already hydrated", ex)
+              ValueState.unmod f ed(curr)
 
             case Throw(ex) =>
-              log.error("Media info hydration failed", ex)
-              ValueState.partial(curr, MediaEntityHydrator.hydratedField)
+              log.error(" d a  nfo hydrat on fa led", ex)
+              ValueState.part al(curr,  d aEnt yHydrator.hydratedF eld)
           }
       }
     }
   }
 
-  def toMediaMetadataRequest(
-    mediaEntity: MediaEntity,
-    tweetId: TweetId,
-    extensionsArgs: Option[ByteBuffer]
-  ): Option[MediaMetadataRequest] =
-    mediaEntity.isProtected.map { isProtected =>
-      val mediaKey = MediaKeyUtil.get(mediaEntity)
+  def to d a tadataRequest(
+     d aEnt y:  d aEnt y,
+    t et d: T et d,
+    extens onsArgs: Opt on[ByteBuffer]
+  ): Opt on[ d a tadataRequest] =
+     d aEnt y. sProtected.map {  sProtected =>
+      val  d aKey =  d aKeyUt l.get( d aEnt y)
 
-      MediaMetadataRequest(
-        tweetId = tweetId,
-        mediaKey = mediaKey,
-        isProtected = isProtected,
-        extensionsArgs = extensionsArgs
+       d a tadataRequest(
+        t et d = t et d,
+         d aKey =  d aKey,
+         sProtected =  sProtected,
+        extens onsArgs = extens onsArgs
       )
     }
 }

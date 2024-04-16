@@ -1,82 +1,82 @@
-package com.twitter.follow_recommendations.utils
+package com.tw ter.follow_recom ndat ons.ut ls
 
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook._
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopCountrySource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopCountryBackFillSource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopGeoSource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopGeohashSource
-import com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow.PPMILocaleFollowSource
-import com.twitter.follow_recommendations.common.candidate_sources.recent_engagement.RecentEngagementNonDirectFollowSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims.SwitchingSimsSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentEngagementSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentFollowingSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentStrongEngagementDirectFollowSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.socialgraph.RecentFollowingRecentFollowingExpansionSource
-import com.twitter.follow_recommendations.common.candidate_sources.stp.MutualFollowStrongTiePredictionSource
-import com.twitter.follow_recommendations.common.candidate_sources.stp.OfflineStrongTiePredictionSource
-import com.twitter.follow_recommendations.common.candidate_sources.stp.BaseOnlineSTPSource
-import com.twitter.follow_recommendations.common.candidate_sources.stp.SocialProofEnforcedOfflineStrongTiePredictionSource
-import com.twitter.follow_recommendations.common.candidate_sources.triangular_loops.TriangularLoopsSource
-import com.twitter.follow_recommendations.common.candidate_sources.two_hop_random_walk.TwoHopRandomWalkSource
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.configapi.params.GlobalParams
-import com.twitter.follow_recommendations.models.CandidateSourceType
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.timelines.configapi.HasParams
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.addressbook._
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.geo.PopCountryS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.geo.PopCountryBackF llS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.geo.PopGeoS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.geo.PopGeohashS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.ppm _locale_follow.PPM LocaleFollowS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.recent_engage nt.RecentEngage ntNonD rectFollowS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms.Sw ch ngS msS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms_expans on.RecentEngage ntS m larUsersS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms_expans on.RecentFollow ngS m larUsersS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms_expans on.RecentStrongEngage ntD rectFollowS m larUsersS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.soc algraph.RecentFollow ngRecentFollow ngExpans onS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.stp.MutualFollowStrongT ePred ct onS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.stp.Offl neStrongT ePred ct onS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.stp.BaseOnl neSTPS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.stp.Soc alProofEnforcedOffl neStrongT ePred ct onS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.tr angular_loops.Tr angularLoopsS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.two_hop_random_walk.TwoHopRandomWalkS ce
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.conf gap .params.GlobalParams
+ mport com.tw ter.follow_recom ndat ons.models.Cand dateS ceType
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.t  l nes.conf gap .HasParams
 
-trait CandidateSourceHoldbackUtil {
-  import CandidateSourceHoldbackUtil._
-  def filterCandidateSources[T <: HasParams](
+tra  Cand dateS ceHoldbackUt l {
+   mport Cand dateS ceHoldbackUt l._
+  def f lterCand dateS ces[T <: HasParams](
     request: T,
-    sources: Seq[CandidateSource[T, CandidateUser]]
-  ): Seq[CandidateSource[T, CandidateUser]] = {
-    val typeToFilter = request.params(GlobalParams.CandidateSourcesToFilter)
-    val sourcesToFilter = CandidateSourceTypeToMap.get(typeToFilter).getOrElse(Set.empty)
-    sources.filterNot { source => sourcesToFilter.contains(source.identifier) }
+    s ces: Seq[Cand dateS ce[T, Cand dateUser]]
+  ): Seq[Cand dateS ce[T, Cand dateUser]] = {
+    val typeToF lter = request.params(GlobalParams.Cand dateS cesToF lter)
+    val s cesToF lter = Cand dateS ceTypeToMap.get(typeToF lter).getOrElse(Set.empty)
+    s ces.f lterNot { s ce => s cesToF lter.conta ns(s ce. dent f er) }
   }
 }
 
-object CandidateSourceHoldbackUtil {
-  final val ContextualActivityCandidateSourceIds: Set[CandidateSourceIdentifier] =
+object Cand dateS ceHoldbackUt l {
+  f nal val ContextualAct v yCand dateS ce ds: Set[Cand dateS ce dent f er] =
     Set(
-      RecentFollowingSimilarUsersSource.Identifier,
-      RecentEngagementNonDirectFollowSource.Identifier,
-      RecentEngagementSimilarUsersSource.Identifier,
-      RecentStrongEngagementDirectFollowSimilarUsersSource.Identifier,
-      SwitchingSimsSource.Identifier,
+      RecentFollow ngS m larUsersS ce. dent f er,
+      RecentEngage ntNonD rectFollowS ce. dent f er,
+      RecentEngage ntS m larUsersS ce. dent f er,
+      RecentStrongEngage ntD rectFollowS m larUsersS ce. dent f er,
+      Sw ch ngS msS ce. dent f er,
     )
 
-  final val SocialCandidateSourceIds: Set[CandidateSourceIdentifier] =
+  f nal val Soc alCand dateS ce ds: Set[Cand dateS ce dent f er] =
     Set(
-      ForwardEmailBookSource.Identifier,
-      ForwardPhoneBookSource.Identifier,
-      ReverseEmailBookSource.Identifier,
-      ReversePhoneBookSource.Identifier,
-      RecentFollowingRecentFollowingExpansionSource.Identifier,
-      BaseOnlineSTPSource.Identifier,
-      MutualFollowStrongTiePredictionSource.Identifier,
-      OfflineStrongTiePredictionSource.Identifier,
-      SocialProofEnforcedOfflineStrongTiePredictionSource.Identifier,
-      TriangularLoopsSource.Identifier,
-      TwoHopRandomWalkSource.Identifier
+      ForwardEma lBookS ce. dent f er,
+      ForwardPhoneBookS ce. dent f er,
+      ReverseEma lBookS ce. dent f er,
+      ReversePhoneBookS ce. dent f er,
+      RecentFollow ngRecentFollow ngExpans onS ce. dent f er,
+      BaseOnl neSTPS ce. dent f er,
+      MutualFollowStrongT ePred ct onS ce. dent f er,
+      Offl neStrongT ePred ct onS ce. dent f er,
+      Soc alProofEnforcedOffl neStrongT ePred ct onS ce. dent f er,
+      Tr angularLoopsS ce. dent f er,
+      TwoHopRandomWalkS ce. dent f er
     )
 
-  final val GeoCandidateSourceIds: Set[CandidateSourceIdentifier] =
+  f nal val GeoCand dateS ce ds: Set[Cand dateS ce dent f er] =
     Set(
-      PPMILocaleFollowSource.Identifier,
-      PopCountrySource.Identifier,
-      PopGeohashSource.Identifier,
-      PopCountryBackFillSource.Identifier,
-      PopGeoSource.Identifier,
+      PPM LocaleFollowS ce. dent f er,
+      PopCountryS ce. dent f er,
+      PopGeohashS ce. dent f er,
+      PopCountryBackF llS ce. dent f er,
+      PopGeoS ce. dent f er,
     )
 
-  final val CandidateSourceTypeToMap: Map[CandidateSourceType.Value, Set[
-    CandidateSourceIdentifier
+  f nal val Cand dateS ceTypeToMap: Map[Cand dateS ceType.Value, Set[
+    Cand dateS ce dent f er
   ]] =
     Map(
-      CandidateSourceType.Social -> SocialCandidateSourceIds,
-      CandidateSourceType.ActivityContextual -> ContextualActivityCandidateSourceIds,
-      CandidateSourceType.GeoAndInterests -> GeoCandidateSourceIds
+      Cand dateS ceType.Soc al -> Soc alCand dateS ce ds,
+      Cand dateS ceType.Act v yContextual -> ContextualAct v yCand dateS ce ds,
+      Cand dateS ceType.GeoAnd nterests -> GeoCand dateS ce ds
     )
 }

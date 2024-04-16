@@ -1,36 +1,36 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.offl ne_aggregates
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.timelines.suggests.common.dense_data_record.thriftjava.DenseCompactDataRecord
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ml.ap .R chDataRecord
+ mport com.tw ter.t  l nes.suggests.common.dense_data_record.thr ftjava.DenseCompactDataRecord
 
-private[offline_aggregates] object Utils {
+pr vate[offl ne_aggregates] object Ut ls {
 
   /**
-   * Selects only those values in map that correspond to the keys in ids and apply the provided
-   * transform to the selected values. This is a convenience method for use by Timelines Aggregation
-   * Framework based features.
+   * Selects only those values  n map that correspond to t  keys  n  ds and apply t  prov ded
+   * transform to t  selected values. T   s a conven ence  thod for use by T  l nes Aggregat on
+   * Fra work based features.
    *
-   * @param idsToSelect The set of ids to extract values for.
-   * @param transform A transform to apply to the selected values.
+   * @param  dsToSelect T  set of  ds to extract values for.
+   * @param transform A transform to apply to t  selected values.
    * @param map Map[Long, DenseCompactDataRecord]
    */
   def selectAndTransform(
-    idsToSelect: Seq[Long],
+     dsToSelect: Seq[Long],
     transform: DenseCompactDataRecord => DataRecord,
-    map: java.util.Map[java.lang.Long, DenseCompactDataRecord],
+    map: java.ut l.Map[java.lang.Long, DenseCompactDataRecord],
   ): Map[Long, DataRecord] = {
-    val filtered: Seq[(Long, DataRecord)] =
+    val f ltered: Seq[(Long, DataRecord)] =
       for {
-        id <- idsToSelect if map.containsKey(id)
-      } yield {
-        id -> transform(map.get(id))
+         d <-  dsToSelect  f map.conta nsKey( d)
+      } y eld {
+         d -> transform(map.get( d))
       }
-    filtered.toMap
+    f ltered.toMap
   }
 
-  def filterDataRecord(dr: DataRecord, featureContext: FeatureContext): Unit = {
-    new RichDataRecord(dr, featureContext).dropUnknownFeatures()
+  def f lterDataRecord(dr: DataRecord, featureContext: FeatureContext): Un  = {
+    new R chDataRecord(dr, featureContext).dropUnknownFeatures()
   }
 }

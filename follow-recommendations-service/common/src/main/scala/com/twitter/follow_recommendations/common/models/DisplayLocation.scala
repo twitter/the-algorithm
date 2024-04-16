@@ -1,420 +1,420 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-import com.twitter.adserver.thriftscala.{DisplayLocation => AdDisplayLocation}
-import com.twitter.follow_recommendations.logging.thriftscala.{
-  OfflineDisplayLocation => TOfflineDisplayLocation
+ mport com.tw ter.adserver.thr ftscala.{D splayLocat on => AdD splayLocat on}
+ mport com.tw ter.follow_recom ndat ons.logg ng.thr ftscala.{
+  Offl neD splayLocat on => TOffl neD splayLocat on
 }
-import com.twitter.follow_recommendations.thriftscala.{DisplayLocation => TDisplayLocation}
+ mport com.tw ter.follow_recom ndat ons.thr ftscala.{D splayLocat on => TD splayLocat on}
 
-sealed trait DisplayLocation {
-  def toThrift: TDisplayLocation
+sealed tra  D splayLocat on {
+  def toThr ft: TD splayLocat on
 
-  def toOfflineThrift: TOfflineDisplayLocation
+  def toOffl neThr ft: TOffl neD splayLocat on
 
-  def toFsName: String
+  def toFsNa : Str ng
 
-  // corresponding display location in adserver if available
-  // make sure to be consistent with the definition here
-  def toAdDisplayLocation: Option[AdDisplayLocation] = None
+  // correspond ng d splay locat on  n adserver  f ava lable
+  // make sure to be cons stent w h t  def n  on  re
+  def toAdD splayLocat on: Opt on[AdD splayLocat on] = None
 }
 
 /**
- * Make sure you add the new DL to the following files and redeploy our attribution jobs
- *  - follow-recommendations-service/thrift/src/main/thrift/display_location.thrift
- *  - follow-recommendations-service/thrift/src/main/thrift/logging/display_location.thrift
- *  - follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models/DisplayLocation.scala
+ * Make sure   add t  new DL to t  follow ng f les and redeploy   attr but on jobs
+ *  - follow-recom ndat ons-serv ce/thr ft/src/ma n/thr ft/d splay_locat on.thr ft
+ *  - follow-recom ndat ons-serv ce/thr ft/src/ma n/thr ft/logg ng/d splay_locat on.thr ft
+ *  - follow-recom ndat ons-serv ce/common/src/ma n/scala/com/tw ter/follow_recom ndat ons/common/models/D splayLocat on.scala
  */
 
-object DisplayLocation {
+object D splayLocat on {
 
-  case object ProfileSidebar extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.ProfileSidebar
-    override val toOfflineThrift: TOfflineDisplayLocation = TOfflineDisplayLocation.ProfileSidebar
-    override val toFsName: String = "ProfileSidebar"
+  case object Prof leS debar extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.Prof leS debar
+    overr de val toOffl neThr ft: TOffl neD splayLocat on = TOffl neD splayLocat on.Prof leS debar
+    overr de val toFsNa : Str ng = "Prof leS debar"
 
-    override val toAdDisplayLocation: Option[AdDisplayLocation] = Some(
-      AdDisplayLocation.ProfileAccountsSidebar
+    overr de val toAdD splayLocat on: Opt on[AdD splayLocat on] = So (
+      AdD splayLocat on.Prof leAccountsS debar
     )
   }
 
-  case object HomeTimeline extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.HomeTimeline
-    override val toOfflineThrift: TOfflineDisplayLocation = TOfflineDisplayLocation.HomeTimeline
-    override val toFsName: String = "HomeTimeline"
-    override val toAdDisplayLocation: Option[AdDisplayLocation] = Some(
-      // it is based on the logic that HTL DL should correspond to Sidebar:
-      AdDisplayLocation.WtfSidebar
+  case object Ho T  l ne extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.Ho T  l ne
+    overr de val toOffl neThr ft: TOffl neD splayLocat on = TOffl neD splayLocat on.Ho T  l ne
+    overr de val toFsNa : Str ng = "Ho T  l ne"
+    overr de val toAdD splayLocat on: Opt on[AdD splayLocat on] = So (
+      //    s based on t  log c that HTL DL should correspond to S debar:
+      AdD splayLocat on.WtfS debar
     )
   }
 
-  case object ReactiveFollow extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.ReactiveFollow
-    override val toOfflineThrift: TOfflineDisplayLocation = TOfflineDisplayLocation.ReactiveFollow
-    override val toFsName: String = "ReactiveFollow"
+  case object React veFollow extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.React veFollow
+    overr de val toOffl neThr ft: TOffl neD splayLocat on = TOffl neD splayLocat on.React veFollow
+    overr de val toFsNa : Str ng = "React veFollow"
   }
 
-  case object ExploreTab extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.ExploreTab
-    override val toOfflineThrift: TOfflineDisplayLocation = TOfflineDisplayLocation.ExploreTab
-    override val toFsName: String = "ExploreTab"
+  case object ExploreTab extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.ExploreTab
+    overr de val toOffl neThr ft: TOffl neD splayLocat on = TOffl neD splayLocat on.ExploreTab
+    overr de val toFsNa : Str ng = "ExploreTab"
   }
 
-  case object MagicRecs extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.MagicRecs
-    override val toOfflineThrift: TOfflineDisplayLocation = TOfflineDisplayLocation.MagicRecs
-    override val toFsName: String = "MagicRecs"
+  case object Mag cRecs extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.Mag cRecs
+    overr de val toOffl neThr ft: TOffl neD splayLocat on = TOffl neD splayLocat on.Mag cRecs
+    overr de val toFsNa : Str ng = "Mag cRecs"
   }
 
-  case object AbUploadInjection extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.AbUploadInjection
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.AbUploadInjection
-    override val toFsName: String = "AbUploadInjection"
+  case object AbUpload nject on extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.AbUpload nject on
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.AbUpload nject on
+    overr de val toFsNa : Str ng = "AbUpload nject on"
   }
 
-  case object RuxLandingPage extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.RuxLandingPage
-    override val toOfflineThrift: TOfflineDisplayLocation = TOfflineDisplayLocation.RuxLandingPage
-    override val toFsName: String = "RuxLandingPage"
+  case object RuxLand ngPage extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.RuxLand ngPage
+    overr de val toOffl neThr ft: TOffl neD splayLocat on = TOffl neD splayLocat on.RuxLand ngPage
+    overr de val toFsNa : Str ng = "RuxLand ngPage"
   }
 
-  case object ProfileBonusFollow extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.ProfileBonusFollow
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.ProfileBonusFollow
-    override val toFsName: String = "ProfileBonusFollow"
+  case object Prof leBonusFollow extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.Prof leBonusFollow
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.Prof leBonusFollow
+    overr de val toFsNa : Str ng = "Prof leBonusFollow"
   }
 
-  case object ElectionExploreWtf extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.ElectionExploreWtf
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.ElectionExploreWtf
-    override val toFsName: String = "ElectionExploreWtf"
+  case object Elect onExploreWtf extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.Elect onExploreWtf
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.Elect onExploreWtf
+    overr de val toFsNa : Str ng = "Elect onExploreWtf"
   }
 
-  case object ClusterFollow extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.ClusterFollow
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.ClusterFollow
-    override val toFsName: String = "ClusterFollow"
-    override val toAdDisplayLocation: Option[AdDisplayLocation] = Some(
-      AdDisplayLocation.ClusterFollow
+  case object ClusterFollow extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.ClusterFollow
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.ClusterFollow
+    overr de val toFsNa : Str ng = "ClusterFollow"
+    overr de val toAdD splayLocat on: Opt on[AdD splayLocat on] = So (
+      AdD splayLocat on.ClusterFollow
     )
   }
 
-  case object HtlBonusFollow extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.HtlBonusFollow
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.HtlBonusFollow
-    override val toFsName: String = "HtlBonusFollow"
+  case object HtlBonusFollow extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.HtlBonusFollow
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.HtlBonusFollow
+    overr de val toFsNa : Str ng = "HtlBonusFollow"
   }
 
-  case object TopicLandingPageHeader extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.TopicLandingPageHeader
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.TopicLandingPageHeader
-    override val toFsName: String = "TopicLandingPageHeader"
+  case object Top cLand ngPage ader extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.Top cLand ngPage ader
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.Top cLand ngPage ader
+    overr de val toFsNa : Str ng = "Top cLand ngPage ader"
   }
 
-  case object NewUserSarusBackfill extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.NewUserSarusBackfill
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.NewUserSarusBackfill
-    override val toFsName: String = "NewUserSarusBackfill"
+  case object NewUserSarusBackf ll extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.NewUserSarusBackf ll
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.NewUserSarusBackf ll
+    overr de val toFsNa : Str ng = "NewUserSarusBackf ll"
   }
 
-  case object NuxPymk extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.NuxPymk
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.NuxPymk
-    override val toFsName: String = "NuxPymk"
+  case object NuxPymk extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.NuxPymk
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.NuxPymk
+    overr de val toFsNa : Str ng = "NuxPymk"
   }
 
-  case object NuxInterests extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.NuxInterests
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.NuxInterests
-    override val toFsName: String = "NuxInterests"
+  case object Nux nterests extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.Nux nterests
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.Nux nterests
+    overr de val toFsNa : Str ng = "Nux nterests"
   }
 
-  case object NuxTopicBonusFollow extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.NuxTopicBonusFollow
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.NuxTopicBonusFollow
-    override val toFsName: String = "NuxTopicBonusFollow"
+  case object NuxTop cBonusFollow extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.NuxTop cBonusFollow
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.NuxTop cBonusFollow
+    overr de val toFsNa : Str ng = "NuxTop cBonusFollow"
   }
 
-  case object Sidebar extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.Sidebar
-    override val toOfflineThrift: TOfflineDisplayLocation = TOfflineDisplayLocation.Sidebar
-    override val toFsName: String = "Sidebar"
+  case object S debar extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.S debar
+    overr de val toOffl neThr ft: TOffl neD splayLocat on = TOffl neD splayLocat on.S debar
+    overr de val toFsNa : Str ng = "S debar"
 
-    override val toAdDisplayLocation: Option[AdDisplayLocation] = Some(
-      AdDisplayLocation.WtfSidebar
+    overr de val toAdD splayLocat on: Opt on[AdD splayLocat on] = So (
+      AdD splayLocat on.WtfS debar
     )
   }
 
-  case object CampaignForm extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.CampaignForm
-    override val toOfflineThrift: TOfflineDisplayLocation = TOfflineDisplayLocation.CampaignForm
-    override val toFsName: String = "CampaignForm"
+  case object Campa gnForm extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.Campa gnForm
+    overr de val toOffl neThr ft: TOffl neD splayLocat on = TOffl neD splayLocat on.Campa gnForm
+    overr de val toFsNa : Str ng = "Campa gnForm"
   }
 
-  case object ProfileTopFollowers extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.ProfileTopFollowers
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.ProfileTopFollowers
-    override val toFsName: String = "ProfileTopFollowers"
+  case object Prof leTopFollo rs extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.Prof leTopFollo rs
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.Prof leTopFollo rs
+    overr de val toFsNa : Str ng = "Prof leTopFollo rs"
   }
 
-  case object ProfileTopFollowing extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.ProfileTopFollowing
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.ProfileTopFollowing
-    override val toFsName: String = "ProfileTopFollowing"
+  case object Prof leTopFollow ng extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.Prof leTopFollow ng
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.Prof leTopFollow ng
+    overr de val toFsNa : Str ng = "Prof leTopFollow ng"
   }
 
-  case object RuxPymk extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.RuxPymk
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.RuxPymk
-    override val toFsName: String = "RuxPymk"
+  case object RuxPymk extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.RuxPymk
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.RuxPymk
+    overr de val toFsNa : Str ng = "RuxPymk"
   }
 
-  case object IndiaCovid19CuratedAccountsWtf extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.IndiaCovid19CuratedAccountsWtf
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.IndiaCovid19CuratedAccountsWtf
-    override val toFsName: String = "IndiaCovid19CuratedAccountsWtf"
+  case object  nd aCov d19CuratedAccountsWtf extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on. nd aCov d19CuratedAccountsWtf
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on. nd aCov d19CuratedAccountsWtf
+    overr de val toFsNa : Str ng = " nd aCov d19CuratedAccountsWtf"
   }
 
-  case object PeoplePlusPlus extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.PeoplePlusPlus
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.PeoplePlusPlus
-    override val toFsName: String = "PeoplePlusPlus"
+  case object PeoplePlusPlus extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.PeoplePlusPlus
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.PeoplePlusPlus
+    overr de val toFsNa : Str ng = "PeoplePlusPlus"
   }
 
-  case object TweetNotificationRecs extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.TweetNotificationRecs
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.TweetNotificationRecs
-    override val toFsName: String = "TweetNotificationRecs"
+  case object T etNot f cat onRecs extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.T etNot f cat onRecs
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.T etNot f cat onRecs
+    overr de val toFsNa : Str ng = "T etNot f cat onRecs"
   }
 
-  case object ProfileDeviceFollow extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.ProfileDeviceFollow
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.ProfileDeviceFollow
-    override val toFsName: String = "ProfileDeviceFollow"
+  case object Prof leDev ceFollow extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.Prof leDev ceFollow
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.Prof leDev ceFollow
+    overr de val toFsNa : Str ng = "Prof leDev ceFollow"
   }
 
-  case object RecosBackfill extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.RecosBackfill
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.RecosBackfill
-    override val toFsName: String = "RecosBackfill"
+  case object RecosBackf ll extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.RecosBackf ll
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.RecosBackf ll
+    overr de val toFsNa : Str ng = "RecosBackf ll"
   }
 
-  case object HtlSpaceHosts extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.HtlSpaceHosts
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.HtlSpaceHosts
-    override val toFsName: String = "HtlSpaceHosts"
+  case object HtlSpaceHosts extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.HtlSpaceHosts
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.HtlSpaceHosts
+    overr de val toFsNa : Str ng = "HtlSpaceHosts"
   }
 
-  case object PostNuxFollowTask extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.PostNuxFollowTask
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.PostNuxFollowTask
-    override val toFsName: String = "PostNuxFollowTask"
+  case object PostNuxFollowTask extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.PostNuxFollowTask
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.PostNuxFollowTask
+    overr de val toFsNa : Str ng = "PostNuxFollowTask"
   }
 
-  case object TopicLandingPage extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.TopicLandingPage
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.TopicLandingPage
-    override val toFsName: String = "TopicLandingPage"
+  case object Top cLand ngPage extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.Top cLand ngPage
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.Top cLand ngPage
+    overr de val toFsNa : Str ng = "Top cLand ngPage"
   }
 
-  case object UserTypeaheadPrefetch extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.UserTypeaheadPrefetch
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.UserTypeaheadPrefetch
-    override val toFsName: String = "UserTypeaheadPrefetch"
+  case object UserTypea adPrefetch extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.UserTypea adPrefetch
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.UserTypea adPrefetch
+    overr de val toFsNa : Str ng = "UserTypea adPrefetch"
   }
 
-  case object HomeTimelineRelatableAccounts extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.HomeTimelineRelatableAccounts
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.HomeTimelineRelatableAccounts
-    override val toFsName: String = "HomeTimelineRelatableAccounts"
+  case object Ho T  l neRelatableAccounts extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.Ho T  l neRelatableAccounts
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.Ho T  l neRelatableAccounts
+    overr de val toFsNa : Str ng = "Ho T  l neRelatableAccounts"
   }
 
-  case object NuxGeoCategory extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.NuxGeoCategory
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.NuxGeoCategory
-    override val toFsName: String = "NuxGeoCategory"
+  case object NuxGeoCategory extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.NuxGeoCategory
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.NuxGeoCategory
+    overr de val toFsNa : Str ng = "NuxGeoCategory"
   }
 
-  case object NuxInterestsCategory extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.NuxInterestsCategory
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.NuxInterestsCategory
-    override val toFsName: String = "NuxInterestsCategory"
+  case object Nux nterestsCategory extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.Nux nterestsCategory
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.Nux nterestsCategory
+    overr de val toFsNa : Str ng = "Nux nterestsCategory"
   }
 
-  case object TopArticles extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.TopArticles
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.TopArticles
-    override val toFsName: String = "TopArticles"
+  case object TopArt cles extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.TopArt cles
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.TopArt cles
+    overr de val toFsNa : Str ng = "TopArt cles"
   }
 
-  case object NuxPymkCategory extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.NuxPymkCategory
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.NuxPymkCategory
-    override val toFsName: String = "NuxPymkCategory"
+  case object NuxPymkCategory extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.NuxPymkCategory
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.NuxPymkCategory
+    overr de val toFsNa : Str ng = "NuxPymkCategory"
   }
 
-  case object HomeTimelineTweetRecs extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.HomeTimelineTweetRecs
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.HomeTimelineTweetRecs
-    override val toFsName: String = "HomeTimelineTweetRecs"
+  case object Ho T  l neT etRecs extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.Ho T  l neT etRecs
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.Ho T  l neT etRecs
+    overr de val toFsNa : Str ng = "Ho T  l neT etRecs"
   }
 
-  case object HtlBulkFriendFollows extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.HtlBulkFriendFollows
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.HtlBulkFriendFollows
-    override val toFsName: String = "HtlBulkFriendFollows"
+  case object HtlBulkFr endFollows extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.HtlBulkFr endFollows
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.HtlBulkFr endFollows
+    overr de val toFsNa : Str ng = "HtlBulkFr endFollows"
   }
 
-  case object NuxAutoFollow extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.NuxAutoFollow
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.NuxAutoFollow
-    override val toFsName: String = "NuxAutoFollow"
+  case object NuxAutoFollow extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.NuxAutoFollow
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.NuxAutoFollow
+    overr de val toFsNa : Str ng = "NuxAutoFollow"
   }
 
-  case object SearchBonusFollow extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.SearchBonusFollow
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.SearchBonusFollow
-    override val toFsName: String = "SearchBonusFollow"
+  case object SearchBonusFollow extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.SearchBonusFollow
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.SearchBonusFollow
+    overr de val toFsNa : Str ng = "SearchBonusFollow"
   }
 
-  case object ContentRecommender extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.ContentRecommender
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.ContentRecommender
-    override val toFsName: String = "ContentRecommender"
+  case object ContentRecom nder extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.ContentRecom nder
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.ContentRecom nder
+    overr de val toFsNa : Str ng = "ContentRecom nder"
   }
 
-  case object HomeTimelineReverseChron extends DisplayLocation {
-    override val toThrift: TDisplayLocation = TDisplayLocation.HomeTimelineReverseChron
-    override val toOfflineThrift: TOfflineDisplayLocation =
-      TOfflineDisplayLocation.HomeTimelineReverseChron
-    override val toFsName: String = "HomeTimelineReverseChron"
+  case object Ho T  l neReverseChron extends D splayLocat on {
+    overr de val toThr ft: TD splayLocat on = TD splayLocat on.Ho T  l neReverseChron
+    overr de val toOffl neThr ft: TOffl neD splayLocat on =
+      TOffl neD splayLocat on.Ho T  l neReverseChron
+    overr de val toFsNa : Str ng = "Ho T  l neReverseChron"
   }
 
-  def fromThrift(displayLocation: TDisplayLocation): DisplayLocation = displayLocation match {
-    case TDisplayLocation.ProfileSidebar => ProfileSidebar
-    case TDisplayLocation.HomeTimeline => HomeTimeline
-    case TDisplayLocation.MagicRecs => MagicRecs
-    case TDisplayLocation.AbUploadInjection => AbUploadInjection
-    case TDisplayLocation.RuxLandingPage => RuxLandingPage
-    case TDisplayLocation.ProfileBonusFollow => ProfileBonusFollow
-    case TDisplayLocation.ElectionExploreWtf => ElectionExploreWtf
-    case TDisplayLocation.ClusterFollow => ClusterFollow
-    case TDisplayLocation.HtlBonusFollow => HtlBonusFollow
-    case TDisplayLocation.ReactiveFollow => ReactiveFollow
-    case TDisplayLocation.TopicLandingPageHeader => TopicLandingPageHeader
-    case TDisplayLocation.NewUserSarusBackfill => NewUserSarusBackfill
-    case TDisplayLocation.NuxPymk => NuxPymk
-    case TDisplayLocation.NuxInterests => NuxInterests
-    case TDisplayLocation.NuxTopicBonusFollow => NuxTopicBonusFollow
-    case TDisplayLocation.ExploreTab => ExploreTab
-    case TDisplayLocation.Sidebar => Sidebar
-    case TDisplayLocation.CampaignForm => CampaignForm
-    case TDisplayLocation.ProfileTopFollowers => ProfileTopFollowers
-    case TDisplayLocation.ProfileTopFollowing => ProfileTopFollowing
-    case TDisplayLocation.RuxPymk => RuxPymk
-    case TDisplayLocation.IndiaCovid19CuratedAccountsWtf => IndiaCovid19CuratedAccountsWtf
-    case TDisplayLocation.PeoplePlusPlus => PeoplePlusPlus
-    case TDisplayLocation.TweetNotificationRecs => TweetNotificationRecs
-    case TDisplayLocation.ProfileDeviceFollow => ProfileDeviceFollow
-    case TDisplayLocation.RecosBackfill => RecosBackfill
-    case TDisplayLocation.HtlSpaceHosts => HtlSpaceHosts
-    case TDisplayLocation.PostNuxFollowTask => PostNuxFollowTask
-    case TDisplayLocation.TopicLandingPage => TopicLandingPage
-    case TDisplayLocation.UserTypeaheadPrefetch => UserTypeaheadPrefetch
-    case TDisplayLocation.HomeTimelineRelatableAccounts => HomeTimelineRelatableAccounts
-    case TDisplayLocation.NuxGeoCategory => NuxGeoCategory
-    case TDisplayLocation.NuxInterestsCategory => NuxInterestsCategory
-    case TDisplayLocation.TopArticles => TopArticles
-    case TDisplayLocation.NuxPymkCategory => NuxPymkCategory
-    case TDisplayLocation.HomeTimelineTweetRecs => HomeTimelineTweetRecs
-    case TDisplayLocation.HtlBulkFriendFollows => HtlBulkFriendFollows
-    case TDisplayLocation.NuxAutoFollow => NuxAutoFollow
-    case TDisplayLocation.SearchBonusFollow => SearchBonusFollow
-    case TDisplayLocation.ContentRecommender => ContentRecommender
-    case TDisplayLocation.HomeTimelineReverseChron => HomeTimelineReverseChron
-    case TDisplayLocation.EnumUnknownDisplayLocation(i) =>
-      throw new UnknownDisplayLocationException(
-        s"Unknown display location thrift enum with value: ${i}")
+  def fromThr ft(d splayLocat on: TD splayLocat on): D splayLocat on = d splayLocat on match {
+    case TD splayLocat on.Prof leS debar => Prof leS debar
+    case TD splayLocat on.Ho T  l ne => Ho T  l ne
+    case TD splayLocat on.Mag cRecs => Mag cRecs
+    case TD splayLocat on.AbUpload nject on => AbUpload nject on
+    case TD splayLocat on.RuxLand ngPage => RuxLand ngPage
+    case TD splayLocat on.Prof leBonusFollow => Prof leBonusFollow
+    case TD splayLocat on.Elect onExploreWtf => Elect onExploreWtf
+    case TD splayLocat on.ClusterFollow => ClusterFollow
+    case TD splayLocat on.HtlBonusFollow => HtlBonusFollow
+    case TD splayLocat on.React veFollow => React veFollow
+    case TD splayLocat on.Top cLand ngPage ader => Top cLand ngPage ader
+    case TD splayLocat on.NewUserSarusBackf ll => NewUserSarusBackf ll
+    case TD splayLocat on.NuxPymk => NuxPymk
+    case TD splayLocat on.Nux nterests => Nux nterests
+    case TD splayLocat on.NuxTop cBonusFollow => NuxTop cBonusFollow
+    case TD splayLocat on.ExploreTab => ExploreTab
+    case TD splayLocat on.S debar => S debar
+    case TD splayLocat on.Campa gnForm => Campa gnForm
+    case TD splayLocat on.Prof leTopFollo rs => Prof leTopFollo rs
+    case TD splayLocat on.Prof leTopFollow ng => Prof leTopFollow ng
+    case TD splayLocat on.RuxPymk => RuxPymk
+    case TD splayLocat on. nd aCov d19CuratedAccountsWtf =>  nd aCov d19CuratedAccountsWtf
+    case TD splayLocat on.PeoplePlusPlus => PeoplePlusPlus
+    case TD splayLocat on.T etNot f cat onRecs => T etNot f cat onRecs
+    case TD splayLocat on.Prof leDev ceFollow => Prof leDev ceFollow
+    case TD splayLocat on.RecosBackf ll => RecosBackf ll
+    case TD splayLocat on.HtlSpaceHosts => HtlSpaceHosts
+    case TD splayLocat on.PostNuxFollowTask => PostNuxFollowTask
+    case TD splayLocat on.Top cLand ngPage => Top cLand ngPage
+    case TD splayLocat on.UserTypea adPrefetch => UserTypea adPrefetch
+    case TD splayLocat on.Ho T  l neRelatableAccounts => Ho T  l neRelatableAccounts
+    case TD splayLocat on.NuxGeoCategory => NuxGeoCategory
+    case TD splayLocat on.Nux nterestsCategory => Nux nterestsCategory
+    case TD splayLocat on.TopArt cles => TopArt cles
+    case TD splayLocat on.NuxPymkCategory => NuxPymkCategory
+    case TD splayLocat on.Ho T  l neT etRecs => Ho T  l neT etRecs
+    case TD splayLocat on.HtlBulkFr endFollows => HtlBulkFr endFollows
+    case TD splayLocat on.NuxAutoFollow => NuxAutoFollow
+    case TD splayLocat on.SearchBonusFollow => SearchBonusFollow
+    case TD splayLocat on.ContentRecom nder => ContentRecom nder
+    case TD splayLocat on.Ho T  l neReverseChron => Ho T  l neReverseChron
+    case TD splayLocat on.EnumUnknownD splayLocat on( ) =>
+      throw new UnknownD splayLocat onExcept on(
+        s"Unknown d splay locat on thr ft enum w h value: ${ }")
   }
 
-  def fromOfflineThrift(displayLocation: TOfflineDisplayLocation): DisplayLocation =
-    displayLocation match {
-      case TOfflineDisplayLocation.ProfileSidebar => ProfileSidebar
-      case TOfflineDisplayLocation.HomeTimeline => HomeTimeline
-      case TOfflineDisplayLocation.MagicRecs => MagicRecs
-      case TOfflineDisplayLocation.AbUploadInjection => AbUploadInjection
-      case TOfflineDisplayLocation.RuxLandingPage => RuxLandingPage
-      case TOfflineDisplayLocation.ProfileBonusFollow => ProfileBonusFollow
-      case TOfflineDisplayLocation.ElectionExploreWtf => ElectionExploreWtf
-      case TOfflineDisplayLocation.ClusterFollow => ClusterFollow
-      case TOfflineDisplayLocation.HtlBonusFollow => HtlBonusFollow
-      case TOfflineDisplayLocation.TopicLandingPageHeader => TopicLandingPageHeader
-      case TOfflineDisplayLocation.NewUserSarusBackfill => NewUserSarusBackfill
-      case TOfflineDisplayLocation.NuxPymk => NuxPymk
-      case TOfflineDisplayLocation.NuxInterests => NuxInterests
-      case TOfflineDisplayLocation.NuxTopicBonusFollow => NuxTopicBonusFollow
-      case TOfflineDisplayLocation.ExploreTab => ExploreTab
-      case TOfflineDisplayLocation.ReactiveFollow => ReactiveFollow
-      case TOfflineDisplayLocation.Sidebar => Sidebar
-      case TOfflineDisplayLocation.CampaignForm => CampaignForm
-      case TOfflineDisplayLocation.ProfileTopFollowers => ProfileTopFollowers
-      case TOfflineDisplayLocation.ProfileTopFollowing => ProfileTopFollowing
-      case TOfflineDisplayLocation.RuxPymk => RuxPymk
-      case TOfflineDisplayLocation.IndiaCovid19CuratedAccountsWtf => IndiaCovid19CuratedAccountsWtf
-      case TOfflineDisplayLocation.PeoplePlusPlus => PeoplePlusPlus
-      case TOfflineDisplayLocation.TweetNotificationRecs => TweetNotificationRecs
-      case TOfflineDisplayLocation.ProfileDeviceFollow => ProfileDeviceFollow
-      case TOfflineDisplayLocation.RecosBackfill => RecosBackfill
-      case TOfflineDisplayLocation.HtlSpaceHosts => HtlSpaceHosts
-      case TOfflineDisplayLocation.PostNuxFollowTask => PostNuxFollowTask
-      case TOfflineDisplayLocation.TopicLandingPage => TopicLandingPage
-      case TOfflineDisplayLocation.UserTypeaheadPrefetch => UserTypeaheadPrefetch
-      case TOfflineDisplayLocation.HomeTimelineRelatableAccounts => HomeTimelineRelatableAccounts
-      case TOfflineDisplayLocation.NuxGeoCategory => NuxGeoCategory
-      case TOfflineDisplayLocation.NuxInterestsCategory => NuxInterestsCategory
-      case TOfflineDisplayLocation.TopArticles => TopArticles
-      case TOfflineDisplayLocation.NuxPymkCategory => NuxPymkCategory
-      case TOfflineDisplayLocation.HomeTimelineTweetRecs => HomeTimelineTweetRecs
-      case TOfflineDisplayLocation.HtlBulkFriendFollows => HtlBulkFriendFollows
-      case TOfflineDisplayLocation.NuxAutoFollow => NuxAutoFollow
-      case TOfflineDisplayLocation.SearchBonusFollow => SearchBonusFollow
-      case TOfflineDisplayLocation.ContentRecommender => ContentRecommender
-      case TOfflineDisplayLocation.HomeTimelineReverseChron => HomeTimelineReverseChron
-      case TOfflineDisplayLocation.EnumUnknownOfflineDisplayLocation(i) =>
-        throw new UnknownDisplayLocationException(
-          s"Unknown offline display location thrift enum with value: ${i}")
+  def fromOffl neThr ft(d splayLocat on: TOffl neD splayLocat on): D splayLocat on =
+    d splayLocat on match {
+      case TOffl neD splayLocat on.Prof leS debar => Prof leS debar
+      case TOffl neD splayLocat on.Ho T  l ne => Ho T  l ne
+      case TOffl neD splayLocat on.Mag cRecs => Mag cRecs
+      case TOffl neD splayLocat on.AbUpload nject on => AbUpload nject on
+      case TOffl neD splayLocat on.RuxLand ngPage => RuxLand ngPage
+      case TOffl neD splayLocat on.Prof leBonusFollow => Prof leBonusFollow
+      case TOffl neD splayLocat on.Elect onExploreWtf => Elect onExploreWtf
+      case TOffl neD splayLocat on.ClusterFollow => ClusterFollow
+      case TOffl neD splayLocat on.HtlBonusFollow => HtlBonusFollow
+      case TOffl neD splayLocat on.Top cLand ngPage ader => Top cLand ngPage ader
+      case TOffl neD splayLocat on.NewUserSarusBackf ll => NewUserSarusBackf ll
+      case TOffl neD splayLocat on.NuxPymk => NuxPymk
+      case TOffl neD splayLocat on.Nux nterests => Nux nterests
+      case TOffl neD splayLocat on.NuxTop cBonusFollow => NuxTop cBonusFollow
+      case TOffl neD splayLocat on.ExploreTab => ExploreTab
+      case TOffl neD splayLocat on.React veFollow => React veFollow
+      case TOffl neD splayLocat on.S debar => S debar
+      case TOffl neD splayLocat on.Campa gnForm => Campa gnForm
+      case TOffl neD splayLocat on.Prof leTopFollo rs => Prof leTopFollo rs
+      case TOffl neD splayLocat on.Prof leTopFollow ng => Prof leTopFollow ng
+      case TOffl neD splayLocat on.RuxPymk => RuxPymk
+      case TOffl neD splayLocat on. nd aCov d19CuratedAccountsWtf =>  nd aCov d19CuratedAccountsWtf
+      case TOffl neD splayLocat on.PeoplePlusPlus => PeoplePlusPlus
+      case TOffl neD splayLocat on.T etNot f cat onRecs => T etNot f cat onRecs
+      case TOffl neD splayLocat on.Prof leDev ceFollow => Prof leDev ceFollow
+      case TOffl neD splayLocat on.RecosBackf ll => RecosBackf ll
+      case TOffl neD splayLocat on.HtlSpaceHosts => HtlSpaceHosts
+      case TOffl neD splayLocat on.PostNuxFollowTask => PostNuxFollowTask
+      case TOffl neD splayLocat on.Top cLand ngPage => Top cLand ngPage
+      case TOffl neD splayLocat on.UserTypea adPrefetch => UserTypea adPrefetch
+      case TOffl neD splayLocat on.Ho T  l neRelatableAccounts => Ho T  l neRelatableAccounts
+      case TOffl neD splayLocat on.NuxGeoCategory => NuxGeoCategory
+      case TOffl neD splayLocat on.Nux nterestsCategory => Nux nterestsCategory
+      case TOffl neD splayLocat on.TopArt cles => TopArt cles
+      case TOffl neD splayLocat on.NuxPymkCategory => NuxPymkCategory
+      case TOffl neD splayLocat on.Ho T  l neT etRecs => Ho T  l neT etRecs
+      case TOffl neD splayLocat on.HtlBulkFr endFollows => HtlBulkFr endFollows
+      case TOffl neD splayLocat on.NuxAutoFollow => NuxAutoFollow
+      case TOffl neD splayLocat on.SearchBonusFollow => SearchBonusFollow
+      case TOffl neD splayLocat on.ContentRecom nder => ContentRecom nder
+      case TOffl neD splayLocat on.Ho T  l neReverseChron => Ho T  l neReverseChron
+      case TOffl neD splayLocat on.EnumUnknownOffl neD splayLocat on( ) =>
+        throw new UnknownD splayLocat onExcept on(
+          s"Unknown offl ne d splay locat on thr ft enum w h value: ${ }")
     }
 }
 
-class UnknownDisplayLocationException(message: String) extends Exception(message)
+class UnknownD splayLocat onExcept on( ssage: Str ng) extends Except on( ssage)

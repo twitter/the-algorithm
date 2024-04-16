@@ -1,4 +1,4 @@
-package com.twitter.product_mixer.core.functional_component.filter
+package com.tw ter.product_m xer.core.funct onal_component.f lter
 
-/** `Candidate`s were `kept` and `removed` by a [[Filter]] */
-case class FilterResult[+Candidate](kept: Seq[Candidate], removed: Seq[Candidate])
+/** `Cand date`s  re `kept` and `removed` by a [[F lter]] */
+case class F lterResult[+Cand date](kept: Seq[Cand date], removed: Seq[Cand date])

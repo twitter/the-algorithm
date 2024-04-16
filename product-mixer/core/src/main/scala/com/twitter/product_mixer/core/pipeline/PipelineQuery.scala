@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.core.pipeline
+package com.tw ter.product_m xer.core.p pel ne
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasDebugOptions
-import com.twitter.product_mixer.core.model.marshalling.request.HasProduct
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Time
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasDebugOpt ons
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasProduct
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.ut l.T  
 
-trait PipelineQuery extends HasParams with HasClientContext with HasProduct with HasDebugOptions {
+tra  P pel neQuery extends HasParams w h HasCl entContext w h HasProduct w h HasDebugOpt ons {
   self =>
 
-  /** Set a query time val that is constant for the duration of the query lifecycle */
-  val queryTime: Time = self.debugOptions.flatMap(_.requestTimeOverride).getOrElse(Time.now)
+  /** Set a query t   val that  s constant for t  durat on of t  query l fecycle */
+  val queryT  : T   = self.debugOpt ons.flatMap(_.requestT  Overr de).getOrElse(T  .now)
 
-  /** The requested max results is specified, or not specified, by the thrift client */
-  def requestedMaxResults: Option[Int]
+  /** T  requested max results  s spec f ed, or not spec f ed, by t  thr ft cl ent */
+  def requestedMaxResults: Opt on[ nt]
 
-  /** Retrieves the max results with a default Param, if not specified by the thrift client */
-  def maxResults(defaultRequestedMaxResultParam: Param[Int]): Int =
+  /** Retr eves t  max results w h a default Param,  f not spec f ed by t  thr ft cl ent */
+  def maxResults(defaultRequestedMaxResultParam: Param[ nt]):  nt =
     requestedMaxResults.getOrElse(params(defaultRequestedMaxResultParam))
 
-  /** Optional [[FeatureMap]], this may be updated later using [[withFeatureMap]] */
-  def features: Option[FeatureMap]
+  /** Opt onal [[FeatureMap]], t  may be updated later us ng [[w hFeatureMap]] */
+  def features: Opt on[FeatureMap]
 
   /**
-   * Since Query-Level features can be hydrated later, we need this method to update the PipelineQuery
-   * usually this will be implemented via `copy(features = Some(features))`
+   * S nce Query-Level features can be hydrated later,   need t   thod to update t  P pel neQuery
+   * usually t  w ll be  mple nted v a `copy(features = So (features))`
    */
-  def withFeatureMap(features: FeatureMap): PipelineQuery
+  def w hFeatureMap(features: FeatureMap): P pel neQuery
 }

@@ -1,92 +1,92 @@
-package com.twitter.product_mixer.core.service.candidate_feature_transformer_executor
+package com.tw ter.product_m xer.core.serv ce.cand date_feature_transfor r_executor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.Executor._
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Transfor r dent f er
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.product_m xer.core.serv ce.Executor._
+ mport com.tw ter.st ch.Arrow
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class CandidateFeatureTransformerExecutor @Inject() (override val statsReceiver: StatsReceiver)
+@S ngleton
+class Cand dateFeatureTransfor rExecutor @ nject() (overr de val statsRece ver: StatsRece ver)
     extends Executor {
   def arrow[Result](
-    transformers: Seq[CandidateFeatureTransformer[Result]],
+    transfor rs: Seq[Cand dateFeatureTransfor r[Result]],
     context: Executor.Context
-  ): Arrow[Seq[Result], CandidateFeatureTransformerExecutorResult] = {
-    if (transformers.isEmpty) {
-      // must always return a Seq of FeatureMaps, even if there are no Transformers
-      Arrow.map[Seq[Result], CandidateFeatureTransformerExecutorResult] { candidates =>
-        CandidateFeatureTransformerExecutorResult(candidates.map(_ => FeatureMap.empty), Seq.empty)
+  ): Arrow[Seq[Result], Cand dateFeatureTransfor rExecutorResult] = {
+     f (transfor rs. sEmpty) {
+      // must always return a Seq of FeatureMaps, even  f t re are no Transfor rs
+      Arrow.map[Seq[Result], Cand dateFeatureTransfor rExecutorResult] { cand dates =>
+        Cand dateFeatureTransfor rExecutorResult(cand dates.map(_ => FeatureMap.empty), Seq.empty)
       }
     } else {
-      val transformerArrows: Seq[Arrow[Seq[Result], Seq[(TransformerIdentifier, FeatureMap)]]] =
-        transformers.map { transformer =>
-          val transformerContext = context.pushToComponentStack(transformer.identifier)
+      val transfor rArrows: Seq[Arrow[Seq[Result], Seq[(Transfor r dent f er, FeatureMap)]]] =
+        transfor rs.map { transfor r =>
+          val transfor rContext = context.pushToComponentStack(transfor r. dent f er)
 
-          val liftNonValidationFailuresToFailedFeatures =
+          val l ftNonVal dat onFa luresToFa ledFeatures =
             Arrow.handle[FeatureMap, FeatureMap] {
-              case NotAMisconfiguredFeatureMapFailure(e) =>
-                featureMapWithFailuresForFeatures(transformer.features, e, transformerContext)
+              case NotAM sconf guredFeatureMapFa lure(e) =>
+                featureMapW hFa luresForFeatures(transfor r.features, e, transfor rContext)
             }
 
-          val underlyingArrow = Arrow
-            .map(transformer.transform)
-            .map(validateFeatureMap(transformer.features, _, transformerContext))
+          val underly ngArrow = Arrow
+            .map(transfor r.transform)
+            .map(val dateFeatureMap(transfor r.features, _, transfor rContext))
 
-          val observedArrowWithoutTracing =
-            wrapPerCandidateComponentWithExecutorBookkeepingWithoutTracing(
+          val observedArrowW houtTrac ng =
+            wrapPerCand dateComponentW hExecutorBookkeep ngW houtTrac ng(
               context,
-              transformer.identifier)(underlyingArrow)
+              transfor r. dent f er)(underly ngArrow)
 
           val seqArrow =
             Arrow.sequence(
-              observedArrowWithoutTracing
-                .andThen(liftNonValidationFailuresToFailedFeatures)
-                .map(transformer.identifier -> _)
+              observedArrowW houtTrac ng
+                .andT n(l ftNonVal dat onFa luresToFa ledFeatures)
+                .map(transfor r. dent f er -> _)
             )
 
-          wrapComponentsWithTracingOnly(context, transformer.identifier)(seqArrow)
+          wrapComponentsW hTrac ngOnly(context, transfor r. dent f er)(seqArrow)
         }
 
-      Arrow.collect(transformerArrows).map { results =>
+      Arrow.collect(transfor rArrows).map { results =>
         /**
-         * Inner Seqs are a given Transformer applied to all the candidates
+         *  nner Seqs are a g ven Transfor r appl ed to all t  cand dates
          *
-         * We want to merge the FeatureMaps for each candidate
-         * from all the Transformers. We do this by merging all the FeatureMaps at
-         * each index `i` of each Seq in `results` by `transpose`-ing the `results`
-         * so the inner Seq becomes all the FeatureMaps for Candidate
-         * at index `i` in the input Seq.
+         *   want to  rge t  FeatureMaps for each cand date
+         * from all t  Transfor rs.   do t  by  rg ng all t  FeatureMaps at
+         * each  ndex ` ` of each Seq  n `results` by `transpose`- ng t  `results`
+         * so t   nner Seq beco s all t  FeatureMaps for Cand date
+         * at  ndex ` `  n t   nput Seq.
          *
          * {{{
          *  Seq(
-         *    Seq(transformer1FeatureMapCandidate1, ..., transformer1FeatureMapCandidateN),
+         *    Seq(transfor r1FeatureMapCand date1, ..., transfor r1FeatureMapCand dateN),
          *    ...,
-         *    Seq(transformerMFeatureMapCandidate1, ..., transformerMFeatureMapCandidateN)
+         *    Seq(transfor rMFeatureMapCand date1, ..., transfor rMFeatureMapCand dateN)
          *  ).transpose == Seq(
-         *    Seq(transformer1FeatureMapCandidate1, ..., transformerMFeatureMapCandidate1),
+         *    Seq(transfor r1FeatureMapCand date1, ..., transfor rMFeatureMapCand date1),
          *    ...,
-         *    Seq(transformer1FeatureMapCandidateN, ..., transformerMFeatureMapCandidateN)
+         *    Seq(transfor r1FeatureMapCand dateN, ..., transfor rMFeatureMapCand dateN)
          *  )
          * }}}
          *
-         * we could avoid the transpose if we ran each candidate through all the transformers
-         * one-after-the-other, but then we couldn't have a single tracing span for all applications
-         * of a Transformer, so instead we apply each transformer to all candidates together, then
-         * move onto the next transformer.
+         *   could avo d t  transpose  f   ran each cand date through all t  transfor rs
+         * one-after-t -ot r, but t n   couldn't have a s ngle trac ng span for all appl cat ons
+         * of a Transfor r, so  nstead   apply each transfor r to all cand dates toget r, t n
+         * move onto t  next transfor r.
          *
-         * It's worth noting that the outer Seq is bounded by the number of Transformers that are
-         * applied which will typically be small.
+         *  's worth not ng that t  outer Seq  s bounded by t  number of Transfor rs that are
+         * appl ed wh ch w ll typ cally be small.
          */
         val transposed = results.transpose
-        val combinedMaps = transposed.map(featureMapsForSingleCandidate =>
-          FeatureMap.merge(featureMapsForSingleCandidate.map { case (_, maps) => maps }))
+        val comb nedMaps = transposed.map(featureMapsForS ngleCand date =>
+          FeatureMap. rge(featureMapsForS ngleCand date.map { case (_, maps) => maps }))
 
-        CandidateFeatureTransformerExecutorResult(combinedMaps, transposed.map(_.toMap))
+        Cand dateFeatureTransfor rExecutorResult(comb nedMaps, transposed.map(_.toMap))
       }
     }
   }

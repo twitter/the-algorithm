@@ -1,342 +1,342 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+package com.tw ter.follow_recom ndat ons.common.feature_hydrat on.s ces
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.featurestore.catalog.entities.core.{Author => AuthorEntity}
-import com.twitter.ml.featurestore.catalog.entities.core.{AuthorTopic => AuthorTopicEntity}
-import com.twitter.ml.featurestore.catalog.entities.core.{CandidateUser => CandidateUserEntity}
-import com.twitter.ml.featurestore.catalog.entities.core.{Topic => TopicEntity}
-import com.twitter.ml.featurestore.catalog.entities.core.{User => UserEntity}
-import com.twitter.ml.featurestore.catalog.entities.core.{UserCandidate => UserCandidateEntity}
-import com.twitter.ml.featurestore.catalog.entities.onboarding.UserWtfAlgorithmEntity
-import com.twitter.ml.featurestore.catalog.entities.onboarding.{
-  WtfAlgorithm => WtfAlgorithmIdEntity
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ml.featurestore.catalog.ent  es.core.{Author => AuthorEnt y}
+ mport com.tw ter.ml.featurestore.catalog.ent  es.core.{AuthorTop c => AuthorTop cEnt y}
+ mport com.tw ter.ml.featurestore.catalog.ent  es.core.{Cand dateUser => Cand dateUserEnt y}
+ mport com.tw ter.ml.featurestore.catalog.ent  es.core.{Top c => Top cEnt y}
+ mport com.tw ter.ml.featurestore.catalog.ent  es.core.{User => UserEnt y}
+ mport com.tw ter.ml.featurestore.catalog.ent  es.core.{UserCand date => UserCand dateEnt y}
+ mport com.tw ter.ml.featurestore.catalog.ent  es.onboard ng.UserWtfAlgor hmEnt y
+ mport com.tw ter.ml.featurestore.catalog.ent  es.onboard ng.{
+  WtfAlgor hm => WtfAlgor hm dEnt y
 }
-import com.twitter.ml.featurestore.catalog.entities.onboarding.{
-  WtfAlgorithmType => WtfAlgorithmTypeEntity
+ mport com.tw ter.ml.featurestore.catalog.ent  es.onboard ng.{
+  WtfAlgor hmType => WtfAlgor hmTypeEnt y
 }
-import com.twitter.ml.featurestore.catalog.features.core.UserClients.FullPrimaryClientVersion
-import com.twitter.ml.featurestore.catalog.features.core.UserClients.NumClients
-import com.twitter.ml.featurestore.catalog.features.core.UserClients.PrimaryClient
-import com.twitter.ml.featurestore.catalog.features.core.UserClients.PrimaryClientVersion
-import com.twitter.ml.featurestore.catalog.features.core.UserClients.PrimaryDeviceManufacturer
-import com.twitter.ml.featurestore.catalog.features.core.UserClients.PrimaryMobileSdkVersion
-import com.twitter.ml.featurestore.catalog.features.core.UserClients.SecondaryClient
-import com.twitter.ml.featurestore.catalog.features.core.UserCounts.Favorites
-import com.twitter.ml.featurestore.catalog.features.core.UserCounts.Followers
-import com.twitter.ml.featurestore.catalog.features.core.UserCounts.Following
-import com.twitter.ml.featurestore.catalog.features.core.UserCounts.Tweets
-import com.twitter.ml.featurestore.catalog.features.customer_journey.PostNuxAlgorithmIdAggregateFeatureGroup
-import com.twitter.ml.featurestore.catalog.features.customer_journey.PostNuxAlgorithmTypeAggregateFeatureGroup
-import com.twitter.ml.featurestore.catalog.features.customer_journey.{Utils => FeatureGroupUtils}
-import com.twitter.ml.featurestore.catalog.features.interests_discovery.UserTopicRelationships.FollowedTopics
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumFavorites
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumFavoritesReceived
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumFollowBacks
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumFollows
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumFollowsReceived
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumLoginDays
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumLoginTweetImpressions
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumMuteBacks
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumMuted
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumOriginalTweets
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumQualityFollowReceived
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumQuoteRetweets
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumQuoteRetweetsReceived
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumReplies
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumRepliesReceived
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumRetweets
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumRetweetsReceived
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumSpamBlocked
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumSpamBlockedBacks
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumTweetImpressions
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumTweets
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumUnfollowBacks
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumUnfollows
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumUserActiveMinutes
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumWasMutualFollowed
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumWasMutualUnfollowed
-import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumWasUnfollowed
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.Country
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.FollowersOverFollowingRatio
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.Language
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.MutualFollowsOverFollowersRatio
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.MutualFollowsOverFollowingRatio
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.NumFollowers
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.NumFollowings
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.NumMutualFollows
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.TweepCred
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.UserState
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOfflineEdge.HaveSameCountry
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOfflineEdge.HaveSameLanguage
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOfflineEdge.HaveSameUserState
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOfflineEdge.NumFollowersGap
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOfflineEdge.NumFollowingsGap
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOfflineEdge.NumMutualFollowsGap
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOfflineEdge.TweepCredGap
-import com.twitter.ml.featurestore.catalog.features.onboarding.Ratio.FollowersFollowings
-import com.twitter.ml.featurestore.catalog.features.onboarding.Ratio.MutualFollowsFollowing
-import com.twitter.ml.featurestore.catalog.features.onboarding.SimclusterUserInterestedInCandidateKnownFor.HasIntersection
-import com.twitter.ml.featurestore.catalog.features.onboarding.SimclusterUserInterestedInCandidateKnownFor.IntersectionCandidateKnownForScore
-import com.twitter.ml.featurestore.catalog.features.onboarding.SimclusterUserInterestedInCandidateKnownFor.IntersectionClusterIds
-import com.twitter.ml.featurestore.catalog.features.onboarding.SimclusterUserInterestedInCandidateKnownFor.IntersectionUserFavCandidateKnownForScore
-import com.twitter.ml.featurestore.catalog.features.onboarding.SimclusterUserInterestedInCandidateKnownFor.IntersectionUserFavScore
-import com.twitter.ml.featurestore.catalog.features.onboarding.SimclusterUserInterestedInCandidateKnownFor.IntersectionUserFollowCandidateKnownForScore
-import com.twitter.ml.featurestore.catalog.features.onboarding.SimclusterUserInterestedInCandidateKnownFor.IntersectionUserFollowScore
-import com.twitter.ml.featurestore.catalog.features.onboarding.UserWtfAlgorithmAggregate
-import com.twitter.ml.featurestore.catalog.features.onboarding.WhoToFollowImpression.HomeTimelineWtfCandidateCounts
-import com.twitter.ml.featurestore.catalog.features.onboarding.WhoToFollowImpression.HomeTimelineWtfCandidateImpressionCounts
-import com.twitter.ml.featurestore.catalog.features.onboarding.WhoToFollowImpression.HomeTimelineWtfCandidateImpressionLatestTimestamp
-import com.twitter.ml.featurestore.catalog.features.onboarding.WhoToFollowImpression.HomeTimelineWtfLatestTimestamp
-import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.FollowRate
-import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.Follows
-import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.FollowsTweetFavRate
-import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.FollowsTweetReplies
-import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.FollowsTweetReplyRate
-import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.FollowsTweetRetweetRate
-import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.FollowsTweetRetweets
-import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.FollowsWithTweetFavs
-import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.FollowsWithTweetImpressions
-import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.HasAnyEngagements
-import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.HasForwardEngagements
-import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.HasReverseEngagements
-import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.Impressions
-import com.twitter.ml.featurestore.catalog.features.rux.UserResurrection.DaysSinceRecentResurrection
-import com.twitter.ml.featurestore.catalog.features.timelines.AuthorTopicAggregates
-import com.twitter.ml.featurestore.catalog.features.timelines.EngagementsReceivedByAuthorRealTimeAggregates
-import com.twitter.ml.featurestore.catalog.features.timelines.NegativeEngagementsReceivedByAuthorRealTimeAggregates
-import com.twitter.ml.featurestore.catalog.features.timelines.OriginalAuthorAggregates
-import com.twitter.ml.featurestore.catalog.features.timelines.TopicEngagementRealTimeAggregates
-import com.twitter.ml.featurestore.catalog.features.timelines.TopicEngagementUserStateRealTimeAggregates
-import com.twitter.ml.featurestore.catalog.features.timelines.TopicNegativeEngagementUserStateRealTimeAggregates
-import com.twitter.ml.featurestore.catalog.features.timelines.UserEngagementAuthorUserStateRealTimeAggregates
-import com.twitter.ml.featurestore.catalog.features.timelines.UserNegativeEngagementAuthorUserStateRealTimeAggregates
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.ml.featurestore.lib.feature.BoundFeature
-import com.twitter.ml.featurestore.lib.feature.Feature
+ mport com.tw ter.ml.featurestore.catalog.features.core.UserCl ents.FullPr maryCl entVers on
+ mport com.tw ter.ml.featurestore.catalog.features.core.UserCl ents.NumCl ents
+ mport com.tw ter.ml.featurestore.catalog.features.core.UserCl ents.Pr maryCl ent
+ mport com.tw ter.ml.featurestore.catalog.features.core.UserCl ents.Pr maryCl entVers on
+ mport com.tw ter.ml.featurestore.catalog.features.core.UserCl ents.Pr maryDev ceManufacturer
+ mport com.tw ter.ml.featurestore.catalog.features.core.UserCl ents.Pr maryMob leSdkVers on
+ mport com.tw ter.ml.featurestore.catalog.features.core.UserCl ents.SecondaryCl ent
+ mport com.tw ter.ml.featurestore.catalog.features.core.UserCounts.Favor es
+ mport com.tw ter.ml.featurestore.catalog.features.core.UserCounts.Follo rs
+ mport com.tw ter.ml.featurestore.catalog.features.core.UserCounts.Follow ng
+ mport com.tw ter.ml.featurestore.catalog.features.core.UserCounts.T ets
+ mport com.tw ter.ml.featurestore.catalog.features.custo r_j ney.PostNuxAlgor hm dAggregateFeatureGroup
+ mport com.tw ter.ml.featurestore.catalog.features.custo r_j ney.PostNuxAlgor hmTypeAggregateFeatureGroup
+ mport com.tw ter.ml.featurestore.catalog.features.custo r_j ney.{Ut ls => FeatureGroupUt ls}
+ mport com.tw ter.ml.featurestore.catalog.features. nterests_d scovery.UserTop cRelat onsh ps.Follo dTop cs
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumFavor es
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumFavor esRece ved
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumFollowBacks
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumFollows
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumFollowsRece ved
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumLog nDays
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumLog nT et mpress ons
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumMuteBacks
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumMuted
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumOr g nalT ets
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumQual yFollowRece ved
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumQuoteRet ets
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumQuoteRet etsRece ved
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumRepl es
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumRepl esRece ved
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumRet ets
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumRet etsRece ved
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumSpamBlocked
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumSpamBlockedBacks
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumT et mpress ons
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumT ets
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumUnfollowBacks
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumUnfollows
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumUserAct veM nutes
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumWasMutualFollo d
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumWasMutualUnfollo d
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng. tr cCenterUserCounts.NumWasUnfollo d
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.PostNuxOffl ne.Country
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.PostNuxOffl ne.Follo rsOverFollow ngRat o
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.PostNuxOffl ne.Language
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.PostNuxOffl ne.MutualFollowsOverFollo rsRat o
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.PostNuxOffl ne.MutualFollowsOverFollow ngRat o
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.PostNuxOffl ne.NumFollo rs
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.PostNuxOffl ne.NumFollow ngs
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.PostNuxOffl ne.NumMutualFollows
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.PostNuxOffl ne.T epCred
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.PostNuxOffl ne.UserState
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.PostNuxOffl neEdge.HaveSa Country
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.PostNuxOffl neEdge.HaveSa Language
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.PostNuxOffl neEdge.HaveSa UserState
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.PostNuxOffl neEdge.NumFollo rsGap
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.PostNuxOffl neEdge.NumFollow ngsGap
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.PostNuxOffl neEdge.NumMutualFollowsGap
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.PostNuxOffl neEdge.T epCredGap
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.Rat o.Follo rsFollow ngs
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.Rat o.MutualFollowsFollow ng
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.S mclusterUser nterested nCand dateKnownFor.Has ntersect on
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.S mclusterUser nterested nCand dateKnownFor. ntersect onCand dateKnownForScore
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.S mclusterUser nterested nCand dateKnownFor. ntersect onCluster ds
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.S mclusterUser nterested nCand dateKnownFor. ntersect onUserFavCand dateKnownForScore
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.S mclusterUser nterested nCand dateKnownFor. ntersect onUserFavScore
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.S mclusterUser nterested nCand dateKnownFor. ntersect onUserFollowCand dateKnownForScore
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.S mclusterUser nterested nCand dateKnownFor. ntersect onUserFollowScore
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.UserWtfAlgor hmAggregate
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.WhoToFollow mpress on.Ho T  l neWtfCand dateCounts
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.WhoToFollow mpress on.Ho T  l neWtfCand date mpress onCounts
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.WhoToFollow mpress on.Ho T  l neWtfCand date mpress onLatestT  stamp
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.WhoToFollow mpress on.Ho T  l neWtfLatestT  stamp
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.WtfUserAlgor hmAggregate.FollowRate
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.WtfUserAlgor hmAggregate.Follows
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.WtfUserAlgor hmAggregate.FollowsT etFavRate
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.WtfUserAlgor hmAggregate.FollowsT etRepl es
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.WtfUserAlgor hmAggregate.FollowsT etReplyRate
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.WtfUserAlgor hmAggregate.FollowsT etRet etRate
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.WtfUserAlgor hmAggregate.FollowsT etRet ets
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.WtfUserAlgor hmAggregate.FollowsW hT etFavs
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.WtfUserAlgor hmAggregate.FollowsW hT et mpress ons
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.WtfUserAlgor hmAggregate.HasAnyEngage nts
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.WtfUserAlgor hmAggregate.HasForwardEngage nts
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.WtfUserAlgor hmAggregate.HasReverseEngage nts
+ mport com.tw ter.ml.featurestore.catalog.features.onboard ng.WtfUserAlgor hmAggregate. mpress ons
+ mport com.tw ter.ml.featurestore.catalog.features.rux.UserResurrect on.DaysS nceRecentResurrect on
+ mport com.tw ter.ml.featurestore.catalog.features.t  l nes.AuthorTop cAggregates
+ mport com.tw ter.ml.featurestore.catalog.features.t  l nes.Engage ntsRece vedByAuthorRealT  Aggregates
+ mport com.tw ter.ml.featurestore.catalog.features.t  l nes.Negat veEngage ntsRece vedByAuthorRealT  Aggregates
+ mport com.tw ter.ml.featurestore.catalog.features.t  l nes.Or g nalAuthorAggregates
+ mport com.tw ter.ml.featurestore.catalog.features.t  l nes.Top cEngage ntRealT  Aggregates
+ mport com.tw ter.ml.featurestore.catalog.features.t  l nes.Top cEngage ntUserStateRealT  Aggregates
+ mport com.tw ter.ml.featurestore.catalog.features.t  l nes.Top cNegat veEngage ntUserStateRealT  Aggregates
+ mport com.tw ter.ml.featurestore.catalog.features.t  l nes.UserEngage ntAuthorUserStateRealT  Aggregates
+ mport com.tw ter.ml.featurestore.catalog.features.t  l nes.UserNegat veEngage ntAuthorUserStateRealT  Aggregates
+ mport com.tw ter.ml.featurestore.l b.Ent y d
+ mport com.tw ter.ml.featurestore.l b.User d
+ mport com.tw ter.ml.featurestore.l b.feature.BoundFeature
+ mport com.tw ter.ml.featurestore.l b.feature.Feature
 
 object FeatureStoreFeatures {
-  import FeatureStoreRawFeatures._
+   mport FeatureStoreRawFeatures._
   ///////////////////////////// Target user features ////////////////////////
-  val targetUserFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    (userKeyedFeatures ++ userAlgorithmAggregateFeatures).map(_.bind(UserEntity))
+  val targetUserFeatures: Set[BoundFeature[_ <: Ent y d, _]] =
+    (userKeyedFeatures ++ userAlgor hmAggregateFeatures).map(_.b nd(UserEnt y))
 
-  val targetUserResurrectionFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    userResurrectionFeatures.map(_.bind(UserEntity))
-  val targetUserWtfImpressionFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    wtfImpressionUserFeatures.map(_.bind(UserEntity))
-  val targetUserUserAuthorUserStateRealTimeAggregatesFeature: Set[BoundFeature[_ <: EntityId, _]] =
-    userAuthorUserStateRealTimeAggregatesFeature.map(_.bind(UserEntity))
+  val targetUserResurrect onFeatures: Set[BoundFeature[_ <: Ent y d, _]] =
+    userResurrect onFeatures.map(_.b nd(UserEnt y))
+  val targetUserWtf mpress onFeatures: Set[BoundFeature[_ <: Ent y d, _]] =
+    wtf mpress onUserFeatures.map(_.b nd(UserEnt y))
+  val targetUserUserAuthorUserStateRealT  AggregatesFeature: Set[BoundFeature[_ <: Ent y d, _]] =
+    userAuthorUserStateRealT  AggregatesFeature.map(_.b nd(UserEnt y))
 
-  val targetUserStatusFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    userStatusFeatures.map(_.bind(UserEntity).logarithm1p)
-  val targetUserMetricCountFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    mcFeatures.map(_.bind(UserEntity).logarithm1p)
+  val targetUserStatusFeatures: Set[BoundFeature[_ <: Ent y d, _]] =
+    userStatusFeatures.map(_.b nd(UserEnt y).logar hm1p)
+  val targetUser tr cCountFeatures: Set[BoundFeature[_ <: Ent y d, _]] =
+    mcFeatures.map(_.b nd(UserEnt y).logar hm1p)
 
-  val targetUserClientFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    clientFeatures.map(_.bind(UserEntity))
+  val targetUserCl entFeatures: Set[BoundFeature[_ <: Ent y d, _]] =
+    cl entFeatures.map(_.b nd(UserEnt y))
 
-  ///////////////////////////// Candidate user features ////////////////////////
-  val candidateUserFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    userKeyedFeatures.map(_.bind(CandidateUserEntity))
-  val candidateUserAuthorRealTimeAggregateFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    authorAggregateFeatures.map(_.bind(CandidateUserEntity))
-  val candidateUserResurrectionFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    userResurrectionFeatures.map(_.bind(CandidateUserEntity))
+  ///////////////////////////// Cand date user features ////////////////////////
+  val cand dateUserFeatures: Set[BoundFeature[_ <: Ent y d, _]] =
+    userKeyedFeatures.map(_.b nd(Cand dateUserEnt y))
+  val cand dateUserAuthorRealT  AggregateFeatures: Set[BoundFeature[_ <: Ent y d, _]] =
+    authorAggregateFeatures.map(_.b nd(Cand dateUserEnt y))
+  val cand dateUserResurrect onFeatures: Set[BoundFeature[_ <: Ent y d, _]] =
+    userResurrect onFeatures.map(_.b nd(Cand dateUserEnt y))
 
-  val candidateUserStatusFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    userStatusFeatures.map(_.bind(CandidateUserEntity).logarithm1p)
-  val candidateUserTimelinesAuthorAggregateFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    Set(timelinesAuthorAggregateFeatures.bind(CandidateUserEntity))
-  val candidateUserMetricCountFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    mcFeatures.map(_.bind(CandidateUserEntity).logarithm1p)
+  val cand dateUserStatusFeatures: Set[BoundFeature[_ <: Ent y d, _]] =
+    userStatusFeatures.map(_.b nd(Cand dateUserEnt y).logar hm1p)
+  val cand dateUserT  l nesAuthorAggregateFeatures: Set[BoundFeature[_ <: Ent y d, _]] =
+    Set(t  l nesAuthorAggregateFeatures.b nd(Cand dateUserEnt y))
+  val cand dateUser tr cCountFeatures: Set[BoundFeature[_ <: Ent y d, _]] =
+    mcFeatures.map(_.b nd(Cand dateUserEnt y).logar hm1p)
 
-  val candidateUserClientFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    clientFeatures.map(_.bind(CandidateUserEntity))
+  val cand dateUserCl entFeatures: Set[BoundFeature[_ <: Ent y d, _]] =
+    cl entFeatures.map(_.b nd(Cand dateUserEnt y))
 
-  val similarToUserFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    (userKeyedFeatures ++ authorAggregateFeatures).map(_.bind(AuthorEntity))
+  val s m larToUserFeatures: Set[BoundFeature[_ <: Ent y d, _]] =
+    (userKeyedFeatures ++ authorAggregateFeatures).map(_.b nd(AuthorEnt y))
 
-  val similarToUserStatusFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    userStatusFeatures.map(_.bind(AuthorEntity).logarithm1p)
-  val similarToUserTimelinesAuthorAggregateFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    Set(timelinesAuthorAggregateFeatures.bind(AuthorEntity))
-  val similarToUserMetricCountFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    mcFeatures.map(_.bind(AuthorEntity).logarithm1p)
+  val s m larToUserStatusFeatures: Set[BoundFeature[_ <: Ent y d, _]] =
+    userStatusFeatures.map(_.b nd(AuthorEnt y).logar hm1p)
+  val s m larToUserT  l nesAuthorAggregateFeatures: Set[BoundFeature[_ <: Ent y d, _]] =
+    Set(t  l nesAuthorAggregateFeatures.b nd(AuthorEnt y))
+  val s m larToUser tr cCountFeatures: Set[BoundFeature[_ <: Ent y d, _]] =
+    mcFeatures.map(_.b nd(AuthorEnt y).logar hm1p)
 
-  val userCandidateEdgeFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    (simclusterUVIntersectionFeatures ++ userCandidatePostNuxEdgeFeatures).map(
-      _.bind(UserCandidateEntity))
-  val userCandidateWtfImpressionCandidateFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    wtfImpressionCandidateFeatures.map(_.bind(UserCandidateEntity))
-
-  /**
-   * Aggregate features based on candidate source algorithms.
-   */
-  val postNuxAlgorithmIdAggregateFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    Set(PostNuxAlgorithmIdAggregateFeatureGroup.FeaturesAsDataRecord)
-      .map(_.bind(WtfAlgorithmIdEntity))
+  val userCand dateEdgeFeatures: Set[BoundFeature[_ <: Ent y d, _]] =
+    (s mclusterUV ntersect onFeatures ++ userCand datePostNuxEdgeFeatures).map(
+      _.b nd(UserCand dateEnt y))
+  val userCand dateWtf mpress onCand dateFeatures: Set[BoundFeature[_ <: Ent y d, _]] =
+    wtf mpress onCand dateFeatures.map(_.b nd(UserCand dateEnt y))
 
   /**
-   * Aggregate features based on candidate source algorithm types. There are 4 at the moment:
-   * Geo, Social, Activity and Interest.
+   * Aggregate features based on cand date s ce algor hms.
    */
-  val postNuxAlgorithmTypeAggregateFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    Set(PostNuxAlgorithmTypeAggregateFeatureGroup.FeaturesAsDataRecord)
-      .map(_.bind(WtfAlgorithmTypeEntity))
+  val postNuxAlgor hm dAggregateFeatures: Set[BoundFeature[_ <: Ent y d, _]] =
+    Set(PostNuxAlgor hm dAggregateFeatureGroup.FeaturesAsDataRecord)
+      .map(_.b nd(WtfAlgor hm dEnt y))
 
-  // user wtf-Algorithm features
-  val userWtfAlgorithmEdgeFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    FeatureGroupUtils.getTimelinesAggregationFrameworkCombinedFeatures(
-      UserWtfAlgorithmAggregate,
-      UserWtfAlgorithmEntity,
-      FeatureGroupUtils.getMaxSumAvgAggregate(UserWtfAlgorithmAggregate)
+  /**
+   * Aggregate features based on cand date s ce algor hm types. T re are 4 at t  mo nt:
+   * Geo, Soc al, Act v y and  nterest.
+   */
+  val postNuxAlgor hmTypeAggregateFeatures: Set[BoundFeature[_ <: Ent y d, _]] =
+    Set(PostNuxAlgor hmTypeAggregateFeatureGroup.FeaturesAsDataRecord)
+      .map(_.b nd(WtfAlgor hmTypeEnt y))
+
+  // user wtf-Algor hm features
+  val userWtfAlgor hmEdgeFeatures: Set[BoundFeature[_ <: Ent y d, _]] =
+    FeatureGroupUt ls.getT  l nesAggregat onFra workComb nedFeatures(
+      UserWtfAlgor hmAggregate,
+      UserWtfAlgor hmEnt y,
+      FeatureGroupUt ls.getMaxSumAvgAggregate(UserWtfAlgor hmAggregate)
     )
 
   /**
-   * We have to add the max/sum/avg-aggregated features to the set of all features so that we can
-   * register them using FRS's [[FrsFeatureJsonExporter]].
+   *   have to add t  max/sum/avg-aggregated features to t  set of all features so that   can
+   * reg ster t m us ng FRS's [[FrsFeatureJsonExporter]].
    *
-   * Any additional such aggregated features that are included in [[FeatureStoreSource]] client
-   * should be registered here as well.
+   * Any add  onal such aggregated features that are  ncluded  n [[FeatureStoreS ce]] cl ent
+   * should be reg stered  re as  ll.
    */
   val maxSumAvgAggregatedFeatureContext: FeatureContext = new FeatureContext()
     .addFeatures(
-      UserWtfAlgorithmAggregate.getSecondaryAggregatedFeatureContext
+      UserWtfAlgor hmAggregate.getSecondaryAggregatedFeatureContext
     )
 
-  // topic features
-  val topicAggregateFeatures: Set[BoundFeature[_ <: EntityId, _]] = Set(
-    TopicEngagementRealTimeAggregates.FeaturesAsDataRecord,
-    TopicNegativeEngagementUserStateRealTimeAggregates.FeaturesAsDataRecord,
-    TopicEngagementUserStateRealTimeAggregates.FeaturesAsDataRecord
-  ).map(_.bind(TopicEntity))
-  val userTopicFeatures: Set[BoundFeature[_ <: EntityId, _]] = Set(FollowedTopics.bind(UserEntity))
-  val authorTopicFeatures: Set[BoundFeature[_ <: EntityId, _]] = Set(
-    AuthorTopicAggregates.FeaturesAsDataRecord.bind(AuthorTopicEntity))
-  val topicFeatures = topicAggregateFeatures ++ userTopicFeatures ++ authorTopicFeatures
+  // top c features
+  val top cAggregateFeatures: Set[BoundFeature[_ <: Ent y d, _]] = Set(
+    Top cEngage ntRealT  Aggregates.FeaturesAsDataRecord,
+    Top cNegat veEngage ntUserStateRealT  Aggregates.FeaturesAsDataRecord,
+    Top cEngage ntUserStateRealT  Aggregates.FeaturesAsDataRecord
+  ).map(_.b nd(Top cEnt y))
+  val userTop cFeatures: Set[BoundFeature[_ <: Ent y d, _]] = Set(Follo dTop cs.b nd(UserEnt y))
+  val authorTop cFeatures: Set[BoundFeature[_ <: Ent y d, _]] = Set(
+    AuthorTop cAggregates.FeaturesAsDataRecord.b nd(AuthorTop cEnt y))
+  val top cFeatures = top cAggregateFeatures ++ userTop cFeatures ++ authorTop cFeatures
 
 }
 
 object FeatureStoreRawFeatures {
   val mcFeatures = Set(
-    NumTweets,
-    NumRetweets,
-    NumOriginalTweets,
-    NumRetweetsReceived,
-    NumFavoritesReceived,
-    NumRepliesReceived,
-    NumQuoteRetweetsReceived,
-    NumFollowsReceived,
+    NumT ets,
+    NumRet ets,
+    NumOr g nalT ets,
+    NumRet etsRece ved,
+    NumFavor esRece ved,
+    NumRepl esRece ved,
+    NumQuoteRet etsRece ved,
+    NumFollowsRece ved,
     NumFollowBacks,
     NumFollows,
     NumUnfollows,
     NumUnfollowBacks,
-    NumQualityFollowReceived,
-    NumQuoteRetweets,
-    NumFavorites,
-    NumReplies,
-    NumLoginTweetImpressions,
-    NumTweetImpressions,
-    NumLoginDays,
-    NumUserActiveMinutes,
+    NumQual yFollowRece ved,
+    NumQuoteRet ets,
+    NumFavor es,
+    NumRepl es,
+    NumLog nT et mpress ons,
+    NumT et mpress ons,
+    NumLog nDays,
+    NumUserAct veM nutes,
     NumMuted,
     NumSpamBlocked,
     NumMuteBacks,
     NumSpamBlockedBacks,
-    NumWasMutualFollowed,
-    NumWasMutualUnfollowed,
-    NumWasUnfollowed
+    NumWasMutualFollo d,
+    NumWasMutualUnfollo d,
+    NumWasUnfollo d
   )
-  // based off usersource, and each feature represents the cumulative 'sent' counts
+  // based off users ce, and each feature represents t  cumulat ve 'sent' counts
   val userStatusFeatures = Set(
-    Favorites,
-    Followers,
-    Following,
-    Tweets
+    Favor es,
+    Follo rs,
+    Follow ng,
+    T ets
   )
-  // ratio features created from combining other features
-  val userRatioFeatures = Set(MutualFollowsFollowing, FollowersFollowings)
-  // features related to user login history
-  val userResurrectionFeatures: Set[Feature[UserId, Int]] = Set(
-    DaysSinceRecentResurrection
+  // rat o features created from comb n ng ot r features
+  val userRat oFeatures = Set(MutualFollowsFollow ng, Follo rsFollow ngs)
+  // features related to user log n  tory
+  val userResurrect onFeatures: Set[Feature[User d,  nt]] = Set(
+    DaysS nceRecentResurrect on
   )
 
-  // real-time  aggregate features borrowed from timelines
+  // real-t    aggregate features borro d from t  l nes
   val authorAggregateFeatures = Set(
-    EngagementsReceivedByAuthorRealTimeAggregates.FeaturesAsDataRecord,
-    NegativeEngagementsReceivedByAuthorRealTimeAggregates.FeaturesAsDataRecord,
+    Engage ntsRece vedByAuthorRealT  Aggregates.FeaturesAsDataRecord,
+    Negat veEngage ntsRece vedByAuthorRealT  Aggregates.FeaturesAsDataRecord,
   )
 
-  val timelinesAuthorAggregateFeatures = OriginalAuthorAggregates.FeaturesAsDataRecord
+  val t  l nesAuthorAggregateFeatures = Or g nalAuthorAggregates.FeaturesAsDataRecord
 
-  val userAuthorUserStateRealTimeAggregatesFeature: Set[Feature[UserId, DataRecord]] = Set(
-    UserEngagementAuthorUserStateRealTimeAggregates.FeaturesAsDataRecord,
-    UserNegativeEngagementAuthorUserStateRealTimeAggregates.FeaturesAsDataRecord
+  val userAuthorUserStateRealT  AggregatesFeature: Set[Feature[User d, DataRecord]] = Set(
+    UserEngage ntAuthorUserStateRealT  Aggregates.FeaturesAsDataRecord,
+    UserNegat veEngage ntAuthorUserStateRealT  Aggregates.FeaturesAsDataRecord
   )
-  // post nux per-user offline features
-  val userOfflineFeatures = Set(
-    NumFollowings,
-    NumFollowers,
+  // post nux per-user offl ne features
+  val userOffl neFeatures = Set(
+    NumFollow ngs,
+    NumFollo rs,
     NumMutualFollows,
-    TweepCred,
+    T epCred,
     UserState,
     Language,
     Country,
-    MutualFollowsOverFollowingRatio,
-    MutualFollowsOverFollowersRatio,
-    FollowersOverFollowingRatio,
+    MutualFollowsOverFollow ngRat o,
+    MutualFollowsOverFollo rsRat o,
+    Follo rsOverFollow ngRat o,
   )
-  // matched post nux offline features between user and candidate
-  val userCandidatePostNuxEdgeFeatures = Set(
-    HaveSameUserState,
-    HaveSameLanguage,
-    HaveSameCountry,
-    NumFollowingsGap,
-    NumFollowersGap,
+  // matc d post nux offl ne features bet en user and cand date
+  val userCand datePostNuxEdgeFeatures = Set(
+    HaveSa UserState,
+    HaveSa Language,
+    HaveSa Country,
+    NumFollow ngsGap,
+    NumFollo rsGap,
     NumMutualFollowsGap,
-    TweepCredGap,
+    T epCredGap,
   )
-  // user algorithm aggregate features
-  val userAlgorithmAggregateFeatures = Set(
-    Impressions,
+  // user algor hm aggregate features
+  val userAlgor hmAggregateFeatures = Set(
+     mpress ons,
     Follows,
     FollowRate,
-    FollowsWithTweetImpressions,
-    FollowsWithTweetFavs,
-    FollowsTweetFavRate,
-    FollowsTweetReplies,
-    FollowsTweetReplyRate,
-    FollowsTweetRetweets,
-    FollowsTweetRetweetRate,
-    HasForwardEngagements,
-    HasReverseEngagements,
-    HasAnyEngagements,
+    FollowsW hT et mpress ons,
+    FollowsW hT etFavs,
+    FollowsT etFavRate,
+    FollowsT etRepl es,
+    FollowsT etReplyRate,
+    FollowsT etRet ets,
+    FollowsT etRet etRate,
+    HasForwardEngage nts,
+    HasReverseEngage nts,
+    HasAnyEngage nts,
   )
-  val userKeyedFeatures = userRatioFeatures ++ userOfflineFeatures
-  val wtfImpressionUserFeatures =
-    Set(HomeTimelineWtfCandidateCounts, HomeTimelineWtfLatestTimestamp)
-  val wtfImpressionCandidateFeatures =
-    Set(HomeTimelineWtfCandidateImpressionCounts, HomeTimelineWtfCandidateImpressionLatestTimestamp)
-  val simclusterUVIntersectionFeatures = Set(
-    IntersectionClusterIds,
-    HasIntersection,
-    IntersectionUserFollowScore,
-    IntersectionUserFavScore,
-    IntersectionCandidateKnownForScore,
-    IntersectionUserFollowCandidateKnownForScore,
-    IntersectionUserFavCandidateKnownForScore
+  val userKeyedFeatures = userRat oFeatures ++ userOffl neFeatures
+  val wtf mpress onUserFeatures =
+    Set(Ho T  l neWtfCand dateCounts, Ho T  l neWtfLatestT  stamp)
+  val wtf mpress onCand dateFeatures =
+    Set(Ho T  l neWtfCand date mpress onCounts, Ho T  l neWtfCand date mpress onLatestT  stamp)
+  val s mclusterUV ntersect onFeatures = Set(
+     ntersect onCluster ds,
+    Has ntersect on,
+     ntersect onUserFollowScore,
+     ntersect onUserFavScore,
+     ntersect onCand dateKnownForScore,
+     ntersect onUserFollowCand dateKnownForScore,
+     ntersect onUserFavCand dateKnownForScore
   )
 
-  // Client features
-  val clientFeatures = Set(
-    NumClients,
-    PrimaryClient,
-    PrimaryClientVersion,
-    FullPrimaryClientVersion,
-    PrimaryDeviceManufacturer,
-    PrimaryMobileSdkVersion,
-    SecondaryClient
+  // Cl ent features
+  val cl entFeatures = Set(
+    NumCl ents,
+    Pr maryCl ent,
+    Pr maryCl entVers on,
+    FullPr maryCl entVers on,
+    Pr maryDev ceManufacturer,
+    Pr maryMob leSdkVers on,
+    SecondaryCl ent
   )
 }

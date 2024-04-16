@@ -1,45 +1,45 @@
-package com.twitter.product_mixer.core.pipeline.scoring
+package com.tw ter.product_m xer.core.p pel ne.scor ng
 
-import com.twitter.product_mixer.core.functional_component.scorer.ScoredCandidateResult
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineResult
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutorResult
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutorResult
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutorResult
+ mport com.tw ter.product_m xer.core.funct onal_component.scorer.ScoredCand dateResult
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neResult
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.serv ce.cand date_feature_hydrator_executor.Cand dateFeatureHydratorExecutorResult
+ mport com.tw ter.product_m xer.core.serv ce.gate_executor.GateExecutorResult
+ mport com.tw ter.product_m xer.core.serv ce.selector_executor.SelectorExecutorResult
 
 /**
- * The Results of every step during the ScoringPipeline process. The end result contains
- * only the candidates that were actually scored (e.g, not dropped by a filter) with an updated,
- * combined feature map of all features that were passed in with the candidate plus all features
- * returned as part of scoring.
+ * T  Results of every step dur ng t  Scor ngP pel ne process. T  end result conta ns
+ * only t  cand dates that  re actually scored (e.g, not dropped by a f lter) w h an updated,
+ * comb ned feature map of all features that  re passed  n w h t  cand date plus all features
+ * returned as part of scor ng.
  */
-case class ScoringPipelineResult[Candidate <: UniversalNoun[Any]](
-  gateResults: Option[GateExecutorResult],
-  selectorResults: Option[SelectorExecutorResult],
-  preScoringHydrationPhase1Result: Option[CandidateFeatureHydratorExecutorResult[Candidate]],
-  preScoringHydrationPhase2Result: Option[CandidateFeatureHydratorExecutorResult[Candidate]],
-  scorerResults: Option[CandidateFeatureHydratorExecutorResult[
-    Candidate
+case class Scor ngP pel neResult[Cand date <: Un versalNoun[Any]](
+  gateResults: Opt on[GateExecutorResult],
+  selectorResults: Opt on[SelectorExecutorResult],
+  preScor ngHydrat onPhase1Result: Opt on[Cand dateFeatureHydratorExecutorResult[Cand date]],
+  preScor ngHydrat onPhase2Result: Opt on[Cand dateFeatureHydratorExecutorResult[Cand date]],
+  scorerResults: Opt on[Cand dateFeatureHydratorExecutorResult[
+    Cand date
   ]],
-  failure: Option[PipelineFailure],
-  result: Option[Seq[ScoredCandidateResult[Candidate]]])
-    extends PipelineResult[Seq[ScoredCandidateResult[Candidate]]] {
-  override val resultSize: Int = result.map(_.size).getOrElse(0)
+  fa lure: Opt on[P pel neFa lure],
+  result: Opt on[Seq[ScoredCand dateResult[Cand date]]])
+    extends P pel neResult[Seq[ScoredCand dateResult[Cand date]]] {
+  overr de val resultS ze:  nt = result.map(_.s ze).getOrElse(0)
 
-  override def withFailure(
-    failure: PipelineFailure
-  ): ScoringPipelineResult[Candidate] =
-    copy(failure = Some(failure))
-  override def withResult(
-    result: Seq[ScoredCandidateResult[Candidate]]
-  ): ScoringPipelineResult[Candidate] =
-    copy(result = Some(result))
+  overr de def w hFa lure(
+    fa lure: P pel neFa lure
+  ): Scor ngP pel neResult[Cand date] =
+    copy(fa lure = So (fa lure))
+  overr de def w hResult(
+    result: Seq[ScoredCand dateResult[Cand date]]
+  ): Scor ngP pel neResult[Cand date] =
+    copy(result = So (result))
 }
 
-object ScoringPipelineResult {
-  def empty[Candidate <: UniversalNoun[Any]]: ScoringPipelineResult[Candidate] =
-    ScoringPipelineResult(
+object Scor ngP pel neResult {
+  def empty[Cand date <: Un versalNoun[Any]]: Scor ngP pel neResult[Cand date] =
+    Scor ngP pel neResult(
       None,
       None,
       None,

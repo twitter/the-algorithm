@@ -2,26 +2,26 @@ syntax = "proto3";
 
 package tensorflow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "VerifierConfigProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "Ver f erConf gProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.fra work";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
-// The config for graph verifiers.
-message VerifierConfig {
+// T  conf g for graph ver f ers.
+ ssage Ver f erConf g {
   enum Toggle {
     DEFAULT = 0;
     ON = 1;
     OFF = 2;
   }
 
-  // Deadline for completion of all verification i.e. all the Toggle ON
-  // verifiers must complete execution within this time.
-  int64 verification_timeout_in_ms = 1;
+  // Deadl ne for complet on of all ver f cat on  .e. all t  Toggle ON
+  // ver f ers must complete execut on w h n t  t  .
+   nt64 ver f cat on_t  out_ n_ms = 1;
 
-  // Perform structural validation on a tensorflow graph. Default is OFF.
-  Toggle structure_verifier = 2;
+  // Perform structural val dat on on a tensorflow graph. Default  s OFF.
+  Toggle structure_ver f er = 2;
 
   // Next tag: 3
 }

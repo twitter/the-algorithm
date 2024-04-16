@@ -1,23 +1,23 @@
-package com.twitter.simclusters_v2.score
+package com.tw ter.s mclusters_v2.score
 
-import com.twitter.simclusters_v2.thriftscala.{ScoreId => ThriftScoreId, Score => ThriftScore}
-import com.twitter.storehaus.ReadableStore
+ mport com.tw ter.s mclusters_v2.thr ftscala.{Score d => Thr ftScore d, Score => Thr ftScore}
+ mport com.tw ter.storehaus.ReadableStore
 
 /**
- * A wrapper class, used to aggregate the scores calculated by other score stores. It relies on the
- * results of other ScoreStores registered in the ScoreFacadeStore.
+ * A wrapper class, used to aggregate t  scores calculated by ot r score stores.   rel es on t 
+ * results of ot r ScoreStores reg stered  n t  ScoreFacadeStore.
  */
-trait AggregatedScoreStore extends ReadableStore[ThriftScoreId, ThriftScore] {
+tra  AggregatedScoreStore extends ReadableStore[Thr ftScore d, Thr ftScore] {
 
-  // The underlyingScoreStore relies on [[ScoreFacadeStore]] to finish the dependency injection.
-  protected var scoreFacadeStore: ReadableStore[ThriftScoreId, ThriftScore] = ReadableStore.empty
+  // T  underly ngScoreStore rel es on [[ScoreFacadeStore]] to f n sh t  dependency  nject on.
+  protected var scoreFacadeStore: ReadableStore[Thr ftScore d, Thr ftScore] = ReadableStore.empty
 
   /**
-   * When registering this store in a ScoreFacadeStore, the facade store calls this function to
-   * provide references to other score stores.
+   * W n reg ster ng t  store  n a ScoreFacadeStore, t  facade store calls t  funct on to
+   * prov de references to ot r score stores.
    */
-  private[score] def set(facadeStore: ReadableStore[ThriftScoreId, ThriftScore]): Unit = {
-    this.synchronized {
+  pr vate[score] def set(facadeStore: ReadableStore[Thr ftScore d, Thr ftScore]): Un  = {
+    t .synchron zed {
       scoreFacadeStore = facadeStore
     }
   }

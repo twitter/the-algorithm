@@ -1,87 +1,87 @@
-package com.twitter.home_mixer.product.following.model
+package com.tw ter.ho _m xer.product.follow ng.model
 
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.ExternalStringRegistry
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.product.gu ce.scope.ProductScoped
+ mport com.tw ter.str ngcenter.cl ent.ExternalStr ngReg stry
+ mport javax. nject. nject
+ mport javax. nject.Prov der
+ mport javax. nject.S ngleton
 
-@Singleton
-class HomeMixerExternalStrings @Inject() (
-  @ProductScoped externalStringRegistryProvider: Provider[ExternalStringRegistry]) {
-  val seeNewTweetsString =
-    externalStringRegistryProvider.get().createProdString("SeeNewTweets")
-  val tweetedString =
-    externalStringRegistryProvider.get().createProdString("Tweeted")
-  val muteUserString =
-    externalStringRegistryProvider.get().createProdString("Feedback.muteUser")
-  val blockUserString = externalStringRegistryProvider.get().createProdString("Feedback.blockUser")
-  val unfollowUserString =
-    externalStringRegistryProvider.get().createProdString("Feedback.unfollowUser")
-  val unfollowUserConfirmationString =
-    externalStringRegistryProvider.get().createProdString("Feedback.unfollowUserConfirmation")
-  val reportTweetString =
-    externalStringRegistryProvider.get().createProdString("Feedback.reportTweet")
-  val dontLikeString = externalStringRegistryProvider.get().createProdString("Feedback.dontLike")
-  val dontLikeConfirmationString =
-    externalStringRegistryProvider.get().createProdString("Feedback.dontLikeConfirmation")
-  val showFewerTweetsString =
-    externalStringRegistryProvider.get().createProdString("Feedback.showFewerTweets")
-  val showFewerTweetsConfirmationString =
-    externalStringRegistryProvider.get().createProdString("Feedback.showFewerTweetsConfirmation")
-  val showFewerRetweetsString =
-    externalStringRegistryProvider.get().createProdString("Feedback.showFewerRetweets")
-  val showFewerRetweetsConfirmationString =
-    externalStringRegistryProvider.get().createProdString("Feedback.showFewerRetweetsConfirmation")
-  val notRelevantString =
-    externalStringRegistryProvider.get().createProdString("Feedback.notRelevant")
-  val notRelevantConfirmationString =
-    externalStringRegistryProvider.get().createProdString("Feedback.notRelevantConfirmation")
+@S ngleton
+class Ho M xerExternalStr ngs @ nject() (
+  @ProductScoped externalStr ngReg stryProv der: Prov der[ExternalStr ngReg stry]) {
+  val seeNewT etsStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("SeeNewT ets")
+  val t etedStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("T eted")
+  val muteUserStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("Feedback.muteUser")
+  val blockUserStr ng = externalStr ngReg stryProv der.get().createProdStr ng("Feedback.blockUser")
+  val unfollowUserStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("Feedback.unfollowUser")
+  val unfollowUserConf rmat onStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("Feedback.unfollowUserConf rmat on")
+  val reportT etStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("Feedback.reportT et")
+  val dontL keStr ng = externalStr ngReg stryProv der.get().createProdStr ng("Feedback.dontL ke")
+  val dontL keConf rmat onStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("Feedback.dontL keConf rmat on")
+  val showFe rT etsStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("Feedback.showFe rT ets")
+  val showFe rT etsConf rmat onStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("Feedback.showFe rT etsConf rmat on")
+  val showFe rRet etsStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("Feedback.showFe rRet ets")
+  val showFe rRet etsConf rmat onStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("Feedback.showFe rRet etsConf rmat on")
+  val notRelevantStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("Feedback.notRelevant")
+  val notRelevantConf rmat onStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("Feedback.notRelevantConf rmat on")
 
-  val socialContextOneUserLikedString =
-    externalStringRegistryProvider.get().createProdString("SocialContext.oneUserLiked")
-  val socialContextTwoUsersLikedString =
-    externalStringRegistryProvider.get().createProdString("SocialContext.twoUsersLiked")
-  val socialContextMoreUsersLikedString =
-    externalStringRegistryProvider.get().createProdString("SocialContext.moreUsersLiked")
-  val socialContextLikedByTimelineTitle =
-    externalStringRegistryProvider.get().createProdString("SocialContext.likedByTimelineTitle")
+  val soc alContextOneUserL kedStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("Soc alContext.oneUserL ked")
+  val soc alContextTwoUsersL kedStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("Soc alContext.twoUsersL ked")
+  val soc alContextMoreUsersL kedStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("Soc alContext.moreUsersL ked")
+  val soc alContextL kedByT  l neT le =
+    externalStr ngReg stryProv der.get().createProdStr ng("Soc alContext.l kedByT  l neT le")
 
-  val socialContextOneUserFollowsString =
-    externalStringRegistryProvider.get().createProdString("SocialContext.oneUserFollows")
-  val socialContextTwoUsersFollowString =
-    externalStringRegistryProvider.get().createProdString("SocialContext.twoUsersFollow")
-  val socialContextMoreUsersFollowString =
-    externalStringRegistryProvider.get().createProdString("SocialContext.moreUsersFollow")
-  val socialContextFollowedByTimelineTitle =
-    externalStringRegistryProvider.get().createProdString("SocialContext.followedByTimelineTitle")
+  val soc alContextOneUserFollowsStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("Soc alContext.oneUserFollows")
+  val soc alContextTwoUsersFollowStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("Soc alContext.twoUsersFollow")
+  val soc alContextMoreUsersFollowStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("Soc alContext.moreUsersFollow")
+  val soc alContextFollo dByT  l neT le =
+    externalStr ngReg stryProv der.get().createProdStr ng("Soc alContext.follo dByT  l neT le")
 
-  val socialContextYouMightLikeString =
-    externalStringRegistryProvider.get().createProdString("SocialContext.youMightLike")
+  val soc alContext M ghtL keStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("Soc alContext. M ghtL ke")
 
-  val socialContextExtendedReply =
-    externalStringRegistryProvider.get().createProdString("SocialContext.extendedReply")
-  val socialContextReceivedReply =
-    externalStringRegistryProvider.get().createProdString("SocialContext.receivedReply")
+  val soc alContextExtendedReply =
+    externalStr ngReg stryProv der.get().createProdStr ng("Soc alContext.extendedReply")
+  val soc alContextRece vedReply =
+    externalStr ngReg stryProv der.get().createProdStr ng("Soc alContext.rece vedReply")
 
-  val socialContextPopularVideoString =
-    externalStringRegistryProvider.get().createProdString("SocialContext.popularVideo")
+  val soc alContextPopularV deoStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("Soc alContext.popularV deo")
 
-  val socialContextPopularInYourAreaString =
-    externalStringRegistryProvider.get().createProdString("PopgeoTweet.socialProof")
+  val soc alContextPopular nY AreaStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("PopgeoT et.soc alProof")
 
-  val listToFollowModuleHeaderString =
-    externalStringRegistryProvider.get().createProdString("ListToFollowModule.header")
-  val listToFollowModuleFooterString =
-    externalStringRegistryProvider.get().createProdString("ListToFollowModule.footer")
-  val pinnedListsModuleHeaderString =
-    externalStringRegistryProvider.get().createProdString("PinnedListModule.header")
-  val pinnedListsModuleEmptyStateMessageString =
-    externalStringRegistryProvider.get().createProdString("PinnedListModule.emptyStateMessage")
+  val l stToFollowModule aderStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("L stToFollowModule. ader")
+  val l stToFollowModuleFooterStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("L stToFollowModule.footer")
+  val p nnedL stsModule aderStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("P nnedL stModule. ader")
+  val p nnedL stsModuleEmptyState ssageStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("P nnedL stModule.emptyState ssage")
 
-  val ownedSubscribedListsModuleHeaderString =
-    externalStringRegistryProvider.get().createProdString("OwnedSubscribedListModule.header")
-  val ownedSubscribedListsModuleEmptyStateMessageString =
-    externalStringRegistryProvider
-      .get().createProdString("OwnedSubscribedListModule.emptyStateMessage")
+  val ownedSubscr bedL stsModule aderStr ng =
+    externalStr ngReg stryProv der.get().createProdStr ng("OwnedSubscr bedL stModule. ader")
+  val ownedSubscr bedL stsModuleEmptyState ssageStr ng =
+    externalStr ngReg stryProv der
+      .get().createProdStr ng("OwnedSubscr bedL stModule.emptyState ssage")
 }

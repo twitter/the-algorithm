@@ -1,1587 +1,1587 @@
-package com.twitter.visibility.rules
+package com.tw ter.v s b l y.rules
 
-import com.twitter.contenthealth.sensitivemediasettings.thriftscala.SensitiveMediaSettingsLevel
-import com.twitter.contenthealth.toxicreplyfilter.thriftscala.FilterState
-import com.twitter.conversions.DurationOps._
-import com.twitter.gizmoduck.thriftscala.Label
-import com.twitter.gizmoduck.thriftscala.MuteSurface
-import com.twitter.health.platform_manipulation.stcm_tweet_holdback.StcmTweetHoldback
-import com.twitter.search.common.constants.thriftscala.ThriftQuerySource
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.takedown.util.TakedownReasons
-import com.twitter.takedown.util.{TakedownReasons => TakedownReasonsUtil}
-import com.twitter.timelines.configapi.EnumParam
-import com.twitter.timelines.configapi.Param
-import com.twitter.timelines.configapi.Params
-import com.twitter.tseng.withholding.thriftscala.TakedownReason
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams
-import com.twitter.visibility.features.AuthorIsSuspended
-import com.twitter.visibility.features.CardIsPoll
-import com.twitter.visibility.features.CardUriHost
-import com.twitter.visibility.features.SearchQuerySource
-import com.twitter.visibility.features._
-import com.twitter.visibility.features.{AuthorBlocksOuterAuthor => AuthorBlocksOuterAuthorFeature}
-import com.twitter.visibility.features.{AuthorBlocksViewer => AuthorBlocksViewerFeature}
-import com.twitter.visibility.features.{
-  CommunityTweetAuthorIsRemoved => CommunityTweetAuthorIsRemovedFeature
+ mport com.tw ter.content alth.sens  ve d asett ngs.thr ftscala.Sens  ve d aSett ngsLevel
+ mport com.tw ter.content alth.tox creplyf lter.thr ftscala.F lterState
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.g zmoduck.thr ftscala.Label
+ mport com.tw ter.g zmoduck.thr ftscala.MuteSurface
+ mport com.tw ter. alth.platform_man pulat on.stcm_t et_holdback.StcmT etHoldback
+ mport com.tw ter.search.common.constants.thr ftscala.Thr ftQueryS ce
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.takedown.ut l.TakedownReasons
+ mport com.tw ter.takedown.ut l.{TakedownReasons => TakedownReasonsUt l}
+ mport com.tw ter.t  l nes.conf gap .EnumParam
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.tw ter.tseng.w hhold ng.thr ftscala.TakedownReason
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.v s b l y.conf gap .params.RuleParam
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams
+ mport com.tw ter.v s b l y.features.Author sSuspended
+ mport com.tw ter.v s b l y.features.Card sPoll
+ mport com.tw ter.v s b l y.features.CardUr Host
+ mport com.tw ter.v s b l y.features.SearchQueryS ce
+ mport com.tw ter.v s b l y.features._
+ mport com.tw ter.v s b l y.features.{AuthorBlocksOuterAuthor => AuthorBlocksOuterAuthorFeature}
+ mport com.tw ter.v s b l y.features.{AuthorBlocksV e r => AuthorBlocksV e rFeature}
+ mport com.tw ter.v s b l y.features.{
+  Commun yT etAuthor sRemoved => Commun yT etAuthor sRemovedFeature
 }
-import com.twitter.visibility.features.{
-  CommunityTweetCommunityNotFound => CommunityTweetCommunityNotFoundFeature
+ mport com.tw ter.v s b l y.features.{
+  Commun yT etCommun yNotFound => Commun yT etCommun yNotFoundFeature
 }
-import com.twitter.visibility.features.{
-  CommunityTweetCommunityDeleted => CommunityTweetCommunityDeletedFeature
+ mport com.tw ter.v s b l y.features.{
+  Commun yT etCommun yDeleted => Commun yT etCommun yDeletedFeature
 }
-import com.twitter.visibility.features.{
-  CommunityTweetCommunitySuspended => CommunityTweetCommunitySuspendedFeature
+ mport com.tw ter.v s b l y.features.{
+  Commun yT etCommun ySuspended => Commun yT etCommun ySuspendedFeature
 }
-import com.twitter.visibility.features.{
-  CommunityTweetCommunityVisible => CommunityTweetCommunityVisibleFeature
+ mport com.tw ter.v s b l y.features.{
+  Commun yT etCommun yV s ble => Commun yT etCommun yV s bleFeature
 }
-import com.twitter.visibility.features.{CommunityTweetIsHidden => CommunityTweetIsHiddenFeature}
-import com.twitter.visibility.features.{
-  NotificationIsOnCommunityTweet => NotificationIsOnCommunityTweetFeature
+ mport com.tw ter.v s b l y.features.{Commun yT et sH dden => Commun yT et sH ddenFeature}
+ mport com.tw ter.v s b l y.features.{
+  Not f cat on sOnCommun yT et => Not f cat on sOnCommun yT etFeature
 }
-import com.twitter.visibility.features.{OuterAuthorFollowsAuthor => OuterAuthorFollowsAuthorFeature}
-import com.twitter.visibility.features.{OuterAuthorIsInnerAuthor => OuterAuthorIsInnerAuthorFeature}
-import com.twitter.visibility.features.{TweetHasCard => TweetHasCardFeature}
-import com.twitter.visibility.features.{TweetHasMedia => TweetHasMediaFeature}
-import com.twitter.visibility.features.{TweetIsCommunityTweet => TweetIsCommunityTweetFeature}
-import com.twitter.visibility.features.{TweetIsEditTweet => TweetIsEditTweetFeature}
-import com.twitter.visibility.features.{TweetIsStaleTweet => TweetIsStaleTweetFeature}
-import com.twitter.visibility.features.{ViewerBlocksAuthor => ViewerBlocksAuthorFeature}
-import com.twitter.visibility.features.{ViewerIsCommunityAdmin => ViewerIsCommunityAdminFeature}
-import com.twitter.visibility.features.{ViewerIsCommunityMember => ViewerIsCommunityMemberFeature}
-import com.twitter.visibility.features.{
-  ViewerIsCommunityModerator => ViewerIsCommunityModeratorFeature
+ mport com.tw ter.v s b l y.features.{OuterAuthorFollowsAuthor => OuterAuthorFollowsAuthorFeature}
+ mport com.tw ter.v s b l y.features.{OuterAuthor s nnerAuthor => OuterAuthor s nnerAuthorFeature}
+ mport com.tw ter.v s b l y.features.{T etHasCard => T etHasCardFeature}
+ mport com.tw ter.v s b l y.features.{T etHas d a => T etHas d aFeature}
+ mport com.tw ter.v s b l y.features.{T et sCommun yT et => T et sCommun yT etFeature}
+ mport com.tw ter.v s b l y.features.{T et sEd T et => T et sEd T etFeature}
+ mport com.tw ter.v s b l y.features.{T et sStaleT et => T et sStaleT etFeature}
+ mport com.tw ter.v s b l y.features.{V e rBlocksAuthor => V e rBlocksAuthorFeature}
+ mport com.tw ter.v s b l y.features.{V e r sCommun yAdm n => V e r sCommun yAdm nFeature}
+ mport com.tw ter.v s b l y.features.{V e r sCommun y mber => V e r sCommun y mberFeature}
+ mport com.tw ter.v s b l y.features.{
+  V e r sCommun yModerator => V e r sCommun yModeratorFeature
 }
-import com.twitter.visibility.features.{
-  ViewerIsInternalCommunitiesAdmin => ViewerIsInternalCommunitiesAdminFeature
+ mport com.tw ter.v s b l y.features.{
+  V e r s nternalCommun  esAdm n => V e r s nternalCommun  esAdm nFeature
 }
-import com.twitter.visibility.features.{ViewerMutesAuthor => ViewerMutesAuthorFeature}
-import com.twitter.visibility.features.{
-  ViewerMutesRetweetsFromAuthor => ViewerMutesRetweetsFromAuthorFeature
+ mport com.tw ter.v s b l y.features.{V e rMutesAuthor => V e rMutesAuthorFeature}
+ mport com.tw ter.v s b l y.features.{
+  V e rMutesRet etsFromAuthor => V e rMutesRet etsFromAuthorFeature
 }
-import com.twitter.visibility.models.ViolationLevel
-import com.twitter.visibility.models._
-import com.twitter.visibility.rules.Result.FoundCardUriRootDomain
-import com.twitter.visibility.rules.Result.FoundMediaLabel
-import com.twitter.visibility.rules.Result.FoundSpaceLabel
-import com.twitter.visibility.rules.Result.FoundSpaceLabelWithScoreAboveThreshold
-import com.twitter.visibility.rules.Result.FoundTweetLabel
-import com.twitter.visibility.rules.Result.FoundTweetLabelForPerspectivalUser
-import com.twitter.visibility.rules.Result.FoundTweetLabelWithLanguageIn
-import com.twitter.visibility.rules.Result.FoundTweetLabelWithLanguageScoreAboveThreshold
-import com.twitter.visibility.rules.Result.FoundTweetLabelWithScoreAboveThreshold
-import com.twitter.visibility.rules.Result.FoundTweetViolationOfLevel
-import com.twitter.visibility.rules.Result.FoundTweetViolationOfSomeLevel
-import com.twitter.visibility.rules.Result.FoundUserLabel
-import com.twitter.visibility.rules.Result.FoundUserRole
-import com.twitter.visibility.rules.Result.HasQuerySource
-import com.twitter.visibility.rules.Result.HasTweetTimestampAfterCutoff
-import com.twitter.visibility.rules.Result.HasTweetTimestampAfterOffset
-import com.twitter.visibility.rules.Result.HasTweetTimestampBeforeCutoff
-import com.twitter.visibility.rules.Result.ParamWasTrue
-import com.twitter.visibility.rules.Result.Result
-import com.twitter.visibility.rules.Result.Satisfied
-import com.twitter.visibility.rules.Result.Unsatisfied
-import com.twitter.visibility.util.NamingUtils
-import com.twitter.visibility.{features => feats}
+ mport com.tw ter.v s b l y.models.V olat onLevel
+ mport com.tw ter.v s b l y.models._
+ mport com.tw ter.v s b l y.rules.Result.FoundCardUr RootDoma n
+ mport com.tw ter.v s b l y.rules.Result.Found d aLabel
+ mport com.tw ter.v s b l y.rules.Result.FoundSpaceLabel
+ mport com.tw ter.v s b l y.rules.Result.FoundSpaceLabelW hScoreAboveThreshold
+ mport com.tw ter.v s b l y.rules.Result.FoundT etLabel
+ mport com.tw ter.v s b l y.rules.Result.FoundT etLabelForPerspect valUser
+ mport com.tw ter.v s b l y.rules.Result.FoundT etLabelW hLanguage n
+ mport com.tw ter.v s b l y.rules.Result.FoundT etLabelW hLanguageScoreAboveThreshold
+ mport com.tw ter.v s b l y.rules.Result.FoundT etLabelW hScoreAboveThreshold
+ mport com.tw ter.v s b l y.rules.Result.FoundT etV olat onOfLevel
+ mport com.tw ter.v s b l y.rules.Result.FoundT etV olat onOfSo Level
+ mport com.tw ter.v s b l y.rules.Result.FoundUserLabel
+ mport com.tw ter.v s b l y.rules.Result.FoundUserRole
+ mport com.tw ter.v s b l y.rules.Result.HasQueryS ce
+ mport com.tw ter.v s b l y.rules.Result.HasT etT  stampAfterCutoff
+ mport com.tw ter.v s b l y.rules.Result.HasT etT  stampAfterOffset
+ mport com.tw ter.v s b l y.rules.Result.HasT etT  stampBeforeCutoff
+ mport com.tw ter.v s b l y.rules.Result.ParamWasTrue
+ mport com.tw ter.v s b l y.rules.Result.Result
+ mport com.tw ter.v s b l y.rules.Result.Sat sf ed
+ mport com.tw ter.v s b l y.rules.Result.Unsat sf ed
+ mport com.tw ter.v s b l y.ut l.Nam ngUt ls
+ mport com.tw ter.v s b l y.{features => feats}
 
-sealed trait PreFilterResult
-case object Filtered extends PreFilterResult
-case object NeedsFullEvaluation extends PreFilterResult
-case object NotFiltered extends PreFilterResult
+sealed tra  PreF lterResult
+case object F ltered extends PreF lterResult
+case object NeedsFullEvaluat on extends PreF lterResult
+case object NotF ltered extends PreF lterResult
 
-sealed trait Condition {
-  lazy val name: String = NamingUtils.getFriendlyName(this)
+sealed tra  Cond  on {
+  lazy val na : Str ng = Nam ngUt ls.getFr endlyNa (t )
   def features: Set[Feature[_]]
-  def optionalFeatures: Set[Feature[_]]
+  def opt onalFeatures: Set[Feature[_]]
 
-  def preFilter(
-    evaluationContext: EvaluationContext,
+  def preF lter(
+    evaluat onContext: Evaluat onContext,
     featureMap: Map[Feature[_], _]
-  ): PreFilterResult = {
-    if (features.forall(featureMap.contains)) {
-      if (apply(evaluationContext, featureMap).asBoolean) {
-        NotFiltered
+  ): PreF lterResult = {
+     f (features.forall(featureMap.conta ns)) {
+       f (apply(evaluat onContext, featureMap).asBoolean) {
+        NotF ltered
       } else {
-        Filtered
+        F ltered
       }
     } else {
-      NeedsFullEvaluation
+      NeedsFullEvaluat on
     }
   }
 
-  def apply(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): Result
+  def apply(evaluat onContext: Evaluat onContext, featureMap: Map[Feature[_], _]): Result
 }
 
-trait PreFilterOnOptionalFeatures extends Condition {
-  override def preFilter(
-    evaluationContext: EvaluationContext,
+tra  PreF lterOnOpt onalFeatures extends Cond  on {
+  overr de def preF lter(
+    evaluat onContext: Evaluat onContext,
     featureMap: Map[Feature[_], _]
-  ): PreFilterResult =
-    if ((features ++ optionalFeatures).forall(featureMap.contains)) {
-      if (apply(evaluationContext, featureMap).asBoolean) {
-        NotFiltered
+  ): PreF lterResult =
+     f ((features ++ opt onalFeatures).forall(featureMap.conta ns)) {
+       f (apply(evaluat onContext, featureMap).asBoolean) {
+        NotF ltered
       } else {
-        Filtered
+        F ltered
       }
     } else {
-      NeedsFullEvaluation
+      NeedsFullEvaluat on
     }
 }
 
-trait HasSafetyLabelType {
+tra  HasSafetyLabelType {
   val labelTypes: Set[SafetyLabelType]
-  def hasLabelType(labelType: SafetyLabelType): Boolean = labelTypes.contains(labelType)
+  def hasLabelType(labelType: SafetyLabelType): Boolean = labelTypes.conta ns(labelType)
 }
 
-sealed trait HasNestedConditions extends HasSafetyLabelType {
-  val conditions: Seq[Condition]
-  override lazy val labelTypes: Set[SafetyLabelType] = conditions
+sealed tra  HasNestedCond  ons extends HasSafetyLabelType {
+  val cond  ons: Seq[Cond  on]
+  overr de lazy val labelTypes: Set[SafetyLabelType] = cond  ons
     .collect {
       case lt: HasSafetyLabelType => lt.labelTypes
     }.flatten.toSet
 }
 
 object Result {
-  sealed trait ConditionReason
-  case object FoundInnerQuotedTweet extends ConditionReason
-  case object FoundTweetViolationOfSomeLevel extends ConditionReason
-  case class FoundTweetViolationOfLevel(level: ViolationLevel) extends ConditionReason
-  case class FoundTweetLabel(label: TweetSafetyLabelType) extends ConditionReason
-  case class FoundSpaceLabel(label: SpaceSafetyLabelType) extends ConditionReason
-  case class FoundMediaLabel(label: MediaSafetyLabelType) extends ConditionReason
-  case class FoundTweetLabelForPerspectivalUser(label: TweetSafetyLabelType) extends ConditionReason
-  case class FoundTweetLabelWithLanguageScoreAboveThreshold(
-    label: TweetSafetyLabelType,
-    languagesToScoreThresholds: Map[String, Double])
-      extends ConditionReason
-  case class FoundTweetLabelWithScoreAboveThreshold(label: TweetSafetyLabelType, threshold: Double)
-      extends ConditionReason
-  case class FoundTweetLabelWithLanguageIn(
-    safetyLabelType: TweetSafetyLabelType,
-    languages: Set[String])
-      extends ConditionReason
-  case class FoundTweetSafetyLabelWithPredicate(safetyLabelType: TweetSafetyLabelType, name: String)
-      extends ConditionReason
-  case class FoundUserLabel(label: UserLabelValue) extends ConditionReason
-  case class FoundMutedKeyword(keyword: String) extends ConditionReason
-  case object HasTweetTimestampAfterCutoff extends ConditionReason
-  case object HasTweetTimestampAfterOffset extends ConditionReason
-  case object HasTweetTimestampBeforeCutoff extends ConditionReason
-  case class IsTweetReplyToParentTweetBeforeDuration(duration: Duration) extends ConditionReason
-  case class IsTweetReplyToRootTweetBeforeDuration(duration: Duration) extends ConditionReason
-  case class HasQuerySource(querySource: ThriftQuerySource) extends ConditionReason
-  case class FoundUserRole(role: String) extends ConditionReason
-  case class ViewerInHrcj(jurisdiction: String) extends ConditionReason
-  case class ViewerOrRequestInCountry(country: String) extends ConditionReason
-  case class ViewerAgeInYears(ageInYears: Int) extends ConditionReason
-  case object NoViewerAge extends ConditionReason
-  case class ParamWasTrue(param: Param[Boolean]) extends ConditionReason
-  case class FoundCardUriRootDomain(domain: String) extends ConditionReason
-  case object Unknown extends ConditionReason
+  sealed tra  Cond  onReason
+  case object Found nnerQuotedT et extends Cond  onReason
+  case object FoundT etV olat onOfSo Level extends Cond  onReason
+  case class FoundT etV olat onOfLevel(level: V olat onLevel) extends Cond  onReason
+  case class FoundT etLabel(label: T etSafetyLabelType) extends Cond  onReason
+  case class FoundSpaceLabel(label: SpaceSafetyLabelType) extends Cond  onReason
+  case class Found d aLabel(label:  d aSafetyLabelType) extends Cond  onReason
+  case class FoundT etLabelForPerspect valUser(label: T etSafetyLabelType) extends Cond  onReason
+  case class FoundT etLabelW hLanguageScoreAboveThreshold(
+    label: T etSafetyLabelType,
+    languagesToScoreThresholds: Map[Str ng, Double])
+      extends Cond  onReason
+  case class FoundT etLabelW hScoreAboveThreshold(label: T etSafetyLabelType, threshold: Double)
+      extends Cond  onReason
+  case class FoundT etLabelW hLanguage n(
+    safetyLabelType: T etSafetyLabelType,
+    languages: Set[Str ng])
+      extends Cond  onReason
+  case class FoundT etSafetyLabelW hPred cate(safetyLabelType: T etSafetyLabelType, na : Str ng)
+      extends Cond  onReason
+  case class FoundUserLabel(label: UserLabelValue) extends Cond  onReason
+  case class FoundMutedKeyword(keyword: Str ng) extends Cond  onReason
+  case object HasT etT  stampAfterCutoff extends Cond  onReason
+  case object HasT etT  stampAfterOffset extends Cond  onReason
+  case object HasT etT  stampBeforeCutoff extends Cond  onReason
+  case class  sT etReplyToParentT etBeforeDurat on(durat on: Durat on) extends Cond  onReason
+  case class  sT etReplyToRootT etBeforeDurat on(durat on: Durat on) extends Cond  onReason
+  case class HasQueryS ce(queryS ce: Thr ftQueryS ce) extends Cond  onReason
+  case class FoundUserRole(role: Str ng) extends Cond  onReason
+  case class V e r nHrcj(jur sd ct on: Str ng) extends Cond  onReason
+  case class V e rOrRequest nCountry(country: Str ng) extends Cond  onReason
+  case class V e rAge nYears(age nYears:  nt) extends Cond  onReason
+  case object NoV e rAge extends Cond  onReason
+  case class ParamWasTrue(param: Param[Boolean]) extends Cond  onReason
+  case class FoundCardUr RootDoma n(doma n: Str ng) extends Cond  onReason
+  case object Unknown extends Cond  onReason
 
-  sealed trait Result {
+  sealed tra  Result {
     def asBoolean: Boolean
   }
 
-  val SatisfiedResult: Result = Satisfied()
+  val Sat sf edResult: Result = Sat sf ed()
 
-  case class Satisfied(reason: ConditionReason = Unknown) extends Result {
-    override val asBoolean: Boolean = true
+  case class Sat sf ed(reason: Cond  onReason = Unknown) extends Result {
+    overr de val asBoolean: Boolean = true
   }
 
-  case class Unsatisfied(condition: Condition) extends Result {
-    override val asBoolean: Boolean = false
+  case class Unsat sf ed(cond  on: Cond  on) extends Result {
+    overr de val asBoolean: Boolean = false
   }
 
-  def fromMutedKeyword(mutedKeyword: MutedKeyword, unsatisfied: Unsatisfied): Result = {
+  def fromMutedKeyword(mutedKeyword: MutedKeyword, unsat sf ed: Unsat sf ed): Result = {
     mutedKeyword match {
-      case MutedKeyword(Some(keyword)) => Satisfied(FoundMutedKeyword(keyword))
-      case _ => unsatisfied
+      case MutedKeyword(So (keyword)) => Sat sf ed(FoundMutedKeyword(keyword))
+      case _ => unsat sf ed
     }
   }
 
-  case class FoundSpaceLabelWithScoreAboveThreshold(label: SpaceSafetyLabelType, threshold: Double)
-      extends ConditionReason
+  case class FoundSpaceLabelW hScoreAboveThreshold(label: SpaceSafetyLabelType, threshold: Double)
+      extends Cond  onReason
 }
 
-object Condition {
+object Cond  on {
 
-  abstract class BooleanFeatureCondition(feature: Feature[Boolean]) extends Condition {
-    override val features: Set[Feature[_]] = Set(feature)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
+  abstract class BooleanFeatureCond  on(feature: Feature[Boolean]) extends Cond  on {
+    overr de val features: Set[Feature[_]] = Set(feature)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
 
-    private val UnsatisfiedResult = Unsatisfied(this)
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result =
-      if (featureMap(feature).asInstanceOf[Boolean]) {
-        Result.SatisfiedResult
+       f (featureMap(feature).as nstanceOf[Boolean]) {
+        Result.Sat sf edResult
       } else {
-        UnsatisfiedResult
+        Unsat sf edResult
       }
   }
 
-  case class ParamIsTrue(param: Param[Boolean]) extends Condition with HasParams {
-    override lazy val name: String = s"ParamIsTrue(${NamingUtils.getFriendlyName(param)})"
-    override val features: Set[Feature[_]] = Set.empty
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
+  case class Param sTrue(param: Param[Boolean]) extends Cond  on w h HasParams {
+    overr de lazy val na : Str ng = s"Param sTrue(${Nam ngUt ls.getFr endlyNa (param)})"
+    overr de val features: Set[Feature[_]] = Set.empty
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
 
-    private val UnsatisfiedResult = Unsatisfied(this)
-    private val SatisfiedResult = Satisfied(ParamWasTrue(param))
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
+    pr vate val Sat sf edResult = Sat sf ed(ParamWasTrue(param))
 
-    override val params: Set[Param[_]] = Set(param)
+    overr de val params: Set[Param[_]] = Set(param)
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result =
-      if (evaluationContext.params(param)) {
-        SatisfiedResult
+       f (evaluat onContext.params(param)) {
+        Sat sf edResult
       } else {
-        UnsatisfiedResult
+        Unsat sf edResult
       }
   }
 
-  case object Never extends Condition {
-    override lazy val name: String = s"""Never"""
-    override val features: Set[Feature[_]] = Set.empty
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
-    private val UnsatisfiedResult = Unsatisfied(this)
+  case object Never extends Cond  on {
+    overr de lazy val na : Str ng = s"""Never"""
+    overr de val features: Set[Feature[_]] = Set.empty
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
 
-    override def preFilter(
-      evaluationContext: EvaluationContext,
+    overr de def preF lter(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
-    ): PreFilterResult = {
-      NeedsFullEvaluation
+    ): PreF lterResult = {
+      NeedsFullEvaluat on
     }
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result =
-      UnsatisfiedResult
+      Unsat sf edResult
   }
 
-  class BooleanCondition(value: Boolean) extends Condition {
-    override lazy val name: String = s"""${if (value) "True" else "False"}"""
-    override val features: Set[Feature[_]] = Set.empty
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
-    private val UnsatisfiedResult = Unsatisfied(this)
+  class BooleanCond  on(value: Boolean) extends Cond  on {
+    overr de lazy val na : Str ng = s"""${ f (value) "True" else "False"}"""
+    overr de val features: Set[Feature[_]] = Set.empty
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result =
       value match {
-        case true => Result.SatisfiedResult
-        case false => UnsatisfiedResult
+        case true => Result.Sat sf edResult
+        case false => Unsat sf edResult
       }
   }
 
-  case object True extends BooleanCondition(true)
-  case object False extends BooleanCondition(false)
+  case object True extends BooleanCond  on(true)
+  case object False extends BooleanCond  on(false)
 
-  abstract class ContentTakendownInViewerCountry(takedownFeature: Feature[Seq[TakedownReason]])
-      extends Condition {
-    override val features: Set[Feature[_]] = Set(takedownFeature)
-    override val optionalFeatures: Set[Feature[_]] = Set(RequestCountryCode)
+  abstract class ContentTakendown nV e rCountry(takedownFeature: Feature[Seq[TakedownReason]])
+      extends Cond  on {
+    overr de val features: Set[Feature[_]] = Set(takedownFeature)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set(RequestCountryCode)
 
-    private val UnsatisfiedResult = Unsatisfied(this)
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val requestCountryCode = featureMap.get(RequestCountryCode).asInstanceOf[Option[String]]
-      val takedownReasons = featureMap(takedownFeature).asInstanceOf[Seq[TakedownReason]]
-      if (TakedownReasonsUtil.isTakenDownIn(requestCountryCode, takedownReasons)) {
-        Result.SatisfiedResult
+      val requestCountryCode = featureMap.get(RequestCountryCode).as nstanceOf[Opt on[Str ng]]
+      val takedownReasons = featureMap(takedownFeature).as nstanceOf[Seq[TakedownReason]]
+       f (TakedownReasonsUt l. sTakenDown n(requestCountryCode, takedownReasons)) {
+        Result.Sat sf edResult
       } else {
-        UnsatisfiedResult
+        Unsat sf edResult
       }
     }
   }
 
-  case object TweetTakendownInViewerCountry
-      extends ContentTakendownInViewerCountry(TweetTakedownReasons)
+  case object T etTakendown nV e rCountry
+      extends ContentTakendown nV e rCountry(T etTakedownReasons)
 
-  case object AuthorTakendownInViewerCountry
-      extends ContentTakendownInViewerCountry(AuthorTakedownReasons)
+  case object AuthorTakendown nV e rCountry
+      extends ContentTakendown nV e rCountry(AuthorTakedownReasons)
 
-  case object SuspendedAuthor extends BooleanFeatureCondition(AuthorIsSuspended)
+  case object SuspendedAuthor extends BooleanFeatureCond  on(Author sSuspended)
 
-  case object SuspendedViewer extends BooleanFeatureCondition(ViewerIsSuspended)
+  case object SuspendedV e r extends BooleanFeatureCond  on(V e r sSuspended)
 
-  case object DeactivatedViewer extends BooleanFeatureCondition(ViewerIsDeactivated)
+  case object Deact vatedV e r extends BooleanFeatureCond  on(V e r sDeact vated)
 
-  case object UnavailableAuthor extends BooleanFeatureCondition(AuthorIsUnavailable)
+  case object Unava lableAuthor extends BooleanFeatureCond  on(Author sUnava lable)
 
-  case object IsVerifiedCrawlerViewer extends BooleanFeatureCondition(RequestIsVerifiedCrawler)
+  case object  sVer f edCrawlerV e r extends BooleanFeatureCond  on(Request sVer f edCrawler)
 
-  case object LoggedOutViewer extends Condition {
-    override val features: Set[Feature[_]] = Set.empty
-    override val optionalFeatures: Set[Feature[_]] = Set(ViewerId)
+  case object LoggedOutV e r extends Cond  on {
+    overr de val features: Set[Feature[_]] = Set.empty
+    overr de val opt onalFeatures: Set[Feature[_]] = Set(V e r d)
 
-    private val UnsatisfiedResult = Unsatisfied(this)
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result =
-      if (featureMap.contains(ViewerId)) UnsatisfiedResult else Result.SatisfiedResult
+       f (featureMap.conta ns(V e r d)) Unsat sf edResult else Result.Sat sf edResult
   }
 
-  case object IsSelfQuote extends Condition {
-    override val features: Set[Feature[_]] = Set(AuthorId, OuterAuthorId)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
+  case object  sSelfQuote extends Cond  on {
+    overr de val features: Set[Feature[_]] = Set(Author d, OuterAuthor d)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
 
-    private val UnsatisfiedResult = Unsatisfied(this)
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val authorIds = featureMap(AuthorId).asInstanceOf[Set[Long]]
-      val outerAuthorId = featureMap(OuterAuthorId).asInstanceOf[Long]
-      if (authorIds.contains(outerAuthorId)) {
-        Result.SatisfiedResult
+      val author ds = featureMap(Author d).as nstanceOf[Set[Long]]
+      val outerAuthor d = featureMap(OuterAuthor d).as nstanceOf[Long]
+       f (author ds.conta ns(outerAuthor d)) {
+        Result.Sat sf edResult
       } else {
-        UnsatisfiedResult
+        Unsat sf edResult
       }
     }
   }
 
-  case object ViewerIsAuthor extends Condition {
-    override val features: Set[Feature[_]] = Set(AuthorId)
-    override val optionalFeatures: Set[Feature[_]] = Set(ViewerId)
+  case object V e r sAuthor extends Cond  on {
+    overr de val features: Set[Feature[_]] = Set(Author d)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set(V e r d)
 
-    private val UnsatisfiedResult = Unsatisfied(this)
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result =
-      if (featureMap.contains(ViewerId)) {
-        val authorIds = featureMap(AuthorId).asInstanceOf[Set[Long]]
-        val viewerId = featureMap(ViewerId).asInstanceOf[Long]
-        if (authorIds.contains(viewerId)) {
-          Result.SatisfiedResult
+       f (featureMap.conta ns(V e r d)) {
+        val author ds = featureMap(Author d).as nstanceOf[Set[Long]]
+        val v e r d = featureMap(V e r d).as nstanceOf[Long]
+         f (author ds.conta ns(v e r d)) {
+          Result.Sat sf edResult
         } else {
-          UnsatisfiedResult
+          Unsat sf edResult
         }
       } else {
-        UnsatisfiedResult
+        Unsat sf edResult
       }
   }
 
-  case object NonAuthorViewer extends Condition {
-    override val features: Set[Feature[_]] = Set(AuthorId)
-    override val optionalFeatures: Set[Feature[_]] = Set(ViewerId)
+  case object NonAuthorV e r extends Cond  on {
+    overr de val features: Set[Feature[_]] = Set(Author d)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set(V e r d)
 
-    private val UnsatisfiedResult = Unsatisfied(this)
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result =
-      if (featureMap.contains(ViewerId)) {
-        val authorIds = featureMap(AuthorId).asInstanceOf[Set[Long]]
-        val viewerId = featureMap(ViewerId).asInstanceOf[Long]
-        if (authorIds.contains(viewerId)) {
-          UnsatisfiedResult
+       f (featureMap.conta ns(V e r d)) {
+        val author ds = featureMap(Author d).as nstanceOf[Set[Long]]
+        val v e r d = featureMap(V e r d).as nstanceOf[Long]
+         f (author ds.conta ns(v e r d)) {
+          Unsat sf edResult
         } else {
-          Result.SatisfiedResult
+          Result.Sat sf edResult
         }
       } else {
-        Result.SatisfiedResult
+        Result.Sat sf edResult
       }
   }
 
-  case object ViewerFollowsAuthorOfFosnrViolatingTweet
-      extends BooleanFeatureCondition(ViewerFollowsAuthorOfViolatingTweet)
+  case object V e rFollowsAuthorOfFosnrV olat ngT et
+      extends BooleanFeatureCond  on(V e rFollowsAuthorOfV olat ngT et)
 
-  case object ViewerDoesNotFollowAuthorOfFosnrViolatingTweet
-      extends BooleanFeatureCondition(ViewerDoesNotFollowAuthorOfViolatingTweet)
+  case object V e rDoesNotFollowAuthorOfFosnrV olat ngT et
+      extends BooleanFeatureCond  on(V e rDoesNotFollowAuthorOfV olat ngT et)
 
-  case object ViewerDoesFollowAuthor extends BooleanFeatureCondition(ViewerFollowsAuthor)
+  case object V e rDoesFollowAuthor extends BooleanFeatureCond  on(V e rFollowsAuthor)
 
-  case object AuthorDoesFollowViewer extends BooleanFeatureCondition(AuthorFollowsViewer)
+  case object AuthorDoesFollowV e r extends BooleanFeatureCond  on(AuthorFollowsV e r)
 
-  case object AuthorBlocksViewer extends BooleanFeatureCondition(AuthorBlocksViewerFeature)
+  case object AuthorBlocksV e r extends BooleanFeatureCond  on(AuthorBlocksV e rFeature)
 
-  case object ViewerBlocksAuthor extends BooleanFeatureCondition(ViewerBlocksAuthorFeature)
+  case object V e rBlocksAuthor extends BooleanFeatureCond  on(V e rBlocksAuthorFeature)
 
-  case object ViewerIsUnmentioned extends BooleanFeatureCondition(NotificationIsOnUnmentionedViewer)
+  case object V e r sUn nt oned extends BooleanFeatureCond  on(Not f cat on sOnUn nt onedV e r)
 
   case object AuthorBlocksOuterAuthor
-      extends BooleanFeatureCondition(AuthorBlocksOuterAuthorFeature)
+      extends BooleanFeatureCond  on(AuthorBlocksOuterAuthorFeature)
 
   case object OuterAuthorFollowsAuthor
-      extends BooleanFeatureCondition(OuterAuthorFollowsAuthorFeature)
+      extends BooleanFeatureCond  on(OuterAuthorFollowsAuthorFeature)
 
-  case object OuterAuthorIsInnerAuthor
-      extends BooleanFeatureCondition(OuterAuthorIsInnerAuthorFeature)
+  case object OuterAuthor s nnerAuthor
+      extends BooleanFeatureCond  on(OuterAuthor s nnerAuthorFeature)
 
-  case object ViewerMutesAuthor extends BooleanFeatureCondition(ViewerMutesAuthorFeature)
+  case object V e rMutesAuthor extends BooleanFeatureCond  on(V e rMutesAuthorFeature)
 
-  case object ViewerReportsAuthor extends BooleanFeatureCondition(ViewerReportsAuthorAsSpam)
-  case object ViewerReportsTweet extends BooleanFeatureCondition(ViewerReportedTweet)
+  case object V e rReportsAuthor extends BooleanFeatureCond  on(V e rReportsAuthorAsSpam)
+  case object V e rReportsT et extends BooleanFeatureCond  on(V e rReportedT et)
 
-  case object IsQuotedInnerTweet extends BooleanFeatureCondition(TweetIsInnerQuotedTweet)
+  case object  sQuoted nnerT et extends BooleanFeatureCond  on(T et s nnerQuotedT et)
 
-  case object IsSourceTweet extends BooleanFeatureCondition(TweetIsSourceTweet)
+  case object  sS ceT et extends BooleanFeatureCond  on(T et sS ceT et)
 
-  case object ViewerMutesRetweetsFromAuthor
-      extends BooleanFeatureCondition(ViewerMutesRetweetsFromAuthorFeature)
+  case object V e rMutesRet etsFromAuthor
+      extends BooleanFeatureCond  on(V e rMutesRet etsFromAuthorFeature)
 
-  case object ConversationRootAuthorDoesFollowViewer
-      extends BooleanFeatureCondition(ConversationRootAuthorFollowsViewer)
+  case object Conversat onRootAuthorDoesFollowV e r
+      extends BooleanFeatureCond  on(Conversat onRootAuthorFollowsV e r)
 
-  case object ViewerDoesFollowConversationRootAuthor
-      extends BooleanFeatureCondition(ViewerFollowsConversationRootAuthor)
+  case object V e rDoesFollowConversat onRootAuthor
+      extends BooleanFeatureCond  on(V e rFollowsConversat onRootAuthor)
 
-  case object TweetIsCommunityTweet extends BooleanFeatureCondition(TweetIsCommunityTweetFeature)
+  case object T et sCommun yT et extends BooleanFeatureCond  on(T et sCommun yT etFeature)
 
-  case object NotificationIsOnCommunityTweet
-      extends BooleanFeatureCondition(NotificationIsOnCommunityTweetFeature)
+  case object Not f cat on sOnCommun yT et
+      extends BooleanFeatureCond  on(Not f cat on sOnCommun yT etFeature)
 
-  sealed trait CommunityTweetCommunityUnavailable extends Condition
+  sealed tra  Commun yT etCommun yUnava lable extends Cond  on
 
-  case object CommunityTweetCommunityNotFound
-      extends BooleanFeatureCondition(CommunityTweetCommunityNotFoundFeature)
-      with CommunityTweetCommunityUnavailable
+  case object Commun yT etCommun yNotFound
+      extends BooleanFeatureCond  on(Commun yT etCommun yNotFoundFeature)
+      w h Commun yT etCommun yUnava lable
 
-  case object CommunityTweetCommunityDeleted
-      extends BooleanFeatureCondition(CommunityTweetCommunityDeletedFeature)
-      with CommunityTweetCommunityUnavailable
+  case object Commun yT etCommun yDeleted
+      extends BooleanFeatureCond  on(Commun yT etCommun yDeletedFeature)
+      w h Commun yT etCommun yUnava lable
 
-  case object CommunityTweetCommunitySuspended
-      extends BooleanFeatureCondition(CommunityTweetCommunitySuspendedFeature)
-      with CommunityTweetCommunityUnavailable
+  case object Commun yT etCommun ySuspended
+      extends BooleanFeatureCond  on(Commun yT etCommun ySuspendedFeature)
+      w h Commun yT etCommun yUnava lable
 
-  case object CommunityTweetCommunityVisible
-      extends BooleanFeatureCondition(CommunityTweetCommunityVisibleFeature)
+  case object Commun yT etCommun yV s ble
+      extends BooleanFeatureCond  on(Commun yT etCommun yV s bleFeature)
 
-  case object ViewerIsInternalCommunitiesAdmin
-      extends BooleanFeatureCondition(ViewerIsInternalCommunitiesAdminFeature)
+  case object V e r s nternalCommun  esAdm n
+      extends BooleanFeatureCond  on(V e r s nternalCommun  esAdm nFeature)
 
-  case object ViewerIsCommunityAdmin extends BooleanFeatureCondition(ViewerIsCommunityAdminFeature)
+  case object V e r sCommun yAdm n extends BooleanFeatureCond  on(V e r sCommun yAdm nFeature)
 
-  case object ViewerIsCommunityModerator
-      extends BooleanFeatureCondition(ViewerIsCommunityModeratorFeature)
+  case object V e r sCommun yModerator
+      extends BooleanFeatureCond  on(V e r sCommun yModeratorFeature)
 
-  case object ViewerIsCommunityMember
-      extends BooleanFeatureCondition(ViewerIsCommunityMemberFeature)
+  case object V e r sCommun y mber
+      extends BooleanFeatureCond  on(V e r sCommun y mberFeature)
 
-  sealed trait CommunityTweetIsModerated extends Condition
+  sealed tra  Commun yT et sModerated extends Cond  on
 
-  case object CommunityTweetIsHidden
-      extends BooleanFeatureCondition(CommunityTweetIsHiddenFeature)
-      with CommunityTweetIsModerated
+  case object Commun yT et sH dden
+      extends BooleanFeatureCond  on(Commun yT et sH ddenFeature)
+      w h Commun yT et sModerated
 
-  case object CommunityTweetAuthorIsRemoved
-      extends BooleanFeatureCondition(CommunityTweetAuthorIsRemovedFeature)
-      with CommunityTweetIsModerated
+  case object Commun yT etAuthor sRemoved
+      extends BooleanFeatureCond  on(Commun yT etAuthor sRemovedFeature)
+      w h Commun yT et sModerated
 
-  case object DoesHaveInnerCircleOfFriendsRelationship
-      extends BooleanFeatureCondition(HasInnerCircleOfFriendsRelationship)
+  case object DoesHave nnerC rcleOfFr endsRelat onsh p
+      extends BooleanFeatureCond  on(Has nnerC rcleOfFr endsRelat onsh p)
 
-  case object TweetIsCommunityConversation
-      extends BooleanFeatureCondition(TweetHasCommunityConversationControl)
+  case object T et sCommun yConversat on
+      extends BooleanFeatureCond  on(T etHasCommun yConversat onControl)
 
-  case object TweetIsByInvitationConversation
-      extends BooleanFeatureCondition(TweetHasByInvitationConversationControl)
+  case object T et sBy nv at onConversat on
+      extends BooleanFeatureCond  on(T etHasBy nv at onConversat onControl)
 
-  case object TweetIsFollowersConversation
-      extends BooleanFeatureCondition(TweetHasFollowersConversationControl)
+  case object T et sFollo rsConversat on
+      extends BooleanFeatureCond  on(T etHasFollo rsConversat onControl)
 
-  case object ViewerIsTweetConversationRootAuthor
-      extends BooleanFeatureCondition(TweetConversationViewerIsRootAuthor)
+  case object V e r sT etConversat onRootAuthor
+      extends BooleanFeatureCond  on(T etConversat onV e r sRootAuthor)
 
-  private case object ViewerIsInvitedToTweetConversationByMention
-      extends BooleanFeatureCondition(TweetConversationViewerIsInvited)
+  pr vate case object V e r s nv edToT etConversat onBy nt on
+      extends BooleanFeatureCond  on(T etConversat onV e r s nv ed)
 
-  private case object ViewerIsInvitedToTweetConversationByReplyMention
-      extends BooleanFeatureCondition(TweetConversationViewerIsInvitedViaReplyMention)
+  pr vate case object V e r s nv edToT etConversat onByReply nt on
+      extends BooleanFeatureCond  on(T etConversat onV e r s nv edV aReply nt on)
 
-  object ViewerIsInvitedToTweetConversation
+  object V e r s nv edToT etConversat on
       extends Or(
-        ViewerIsInvitedToTweetConversationByMention,
-        ViewerIsInvitedToTweetConversationByReplyMention)
+        V e r s nv edToT etConversat onBy nt on,
+        V e r s nv edToT etConversat onByReply nt on)
 
-  object TweetIsExclusiveContent extends BooleanFeatureCondition(TweetIsExclusiveTweet)
-  object ViewerIsExclusiveTweetAuthor
-      extends BooleanFeatureCondition(ViewerIsExclusiveTweetRootAuthor)
-  object ViewerSuperFollowsExclusiveTweetAuthor
-      extends BooleanFeatureCondition(ViewerSuperFollowsExclusiveTweetRootAuthor)
+  object T et sExclus veContent extends BooleanFeatureCond  on(T et sExclus veT et)
+  object V e r sExclus veT etAuthor
+      extends BooleanFeatureCond  on(V e r sExclus veT etRootAuthor)
+  object V e rSuperFollowsExclus veT etAuthor
+      extends BooleanFeatureCond  on(V e rSuperFollowsExclus veT etRootAuthor)
 
-  object TweetIsTrustedFriendsContent extends BooleanFeatureCondition(TweetIsTrustedFriendTweet)
-  object ViewerIsTrustedFriendsTweetAuthor
-      extends BooleanFeatureCondition(ViewerIsTrustedFriendTweetAuthor)
-  object ViewerIsTrustedFriend extends BooleanFeatureCondition(ViewerIsTrustedFriendOfTweetAuthor)
+  object T et sTrustedFr endsContent extends BooleanFeatureCond  on(T et sTrustedFr endT et)
+  object V e r sTrustedFr endsT etAuthor
+      extends BooleanFeatureCond  on(V e r sTrustedFr endT etAuthor)
+  object V e r sTrustedFr end extends BooleanFeatureCond  on(V e r sTrustedFr endOfT etAuthor)
 
-  object TweetIsCollabInvitationContent
-      extends BooleanFeatureCondition(TweetIsCollabInvitationTweet)
+  object T et sCollab nv at onContent
+      extends BooleanFeatureCond  on(T et sCollab nv at onT et)
 
-  case class TweetHasLabelForPerspectivalUser(safetyLabel: TweetSafetyLabelType)
-      extends Condition
-      with HasSafetyLabelType {
-    override lazy val name: String = s"TweetHasLabelForPerspectivalUser(${safetyLabel.name})"
-    override val features: Set[Feature[_]] = Set(TweetSafetyLabels)
-    override val optionalFeatures: Set[Feature[_]] = Set(ViewerId)
-    override val labelTypes: Set[SafetyLabelType] = Set(safetyLabel)
+  case class T etHasLabelForPerspect valUser(safetyLabel: T etSafetyLabelType)
+      extends Cond  on
+      w h HasSafetyLabelType {
+    overr de lazy val na : Str ng = s"T etHasLabelForPerspect valUser(${safetyLabel.na })"
+    overr de val features: Set[Feature[_]] = Set(T etSafetyLabels)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set(V e r d)
+    overr de val labelTypes: Set[SafetyLabelType] = Set(safetyLabel)
 
-    private val UnsatisfiedResult: Unsatisfied = Unsatisfied(this)
-    private val SatisfiedResult: Satisfied = Satisfied(
-      FoundTweetLabelForPerspectivalUser(safetyLabel)
+    pr vate val Unsat sf edResult: Unsat sf ed = Unsat sf ed(t )
+    pr vate val Sat sf edResult: Sat sf ed = Sat sf ed(
+      FoundT etLabelForPerspect valUser(safetyLabel)
     )
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      if (!featureMap.contains(ViewerId)) {
-        UnsatisfiedResult
+       f (!featureMap.conta ns(V e r d)) {
+        Unsat sf edResult
       } else {
-        val viewerId = featureMap(ViewerId).asInstanceOf[Long]
-        val labels = featureMap(TweetSafetyLabels).asInstanceOf[Seq[TweetSafetyLabel]]
+        val v e r d = featureMap(V e r d).as nstanceOf[Long]
+        val labels = featureMap(T etSafetyLabels).as nstanceOf[Seq[T etSafetyLabel]]
         labels
-          .collectFirst {
+          .collectF rst {
             case label
-                if label.labelType == safetyLabel && label.applicableUsers.contains(viewerId)
-                  && ExperimentBase.shouldFilterForSource(evaluationContext.params, label.source) =>
-              SatisfiedResult
-          }.getOrElse(UnsatisfiedResult)
+                 f label.labelType == safetyLabel && label.appl cableUsers.conta ns(v e r d)
+                  && Exper  ntBase.shouldF lterForS ce(evaluat onContext.params, label.s ce) =>
+              Sat sf edResult
+          }.getOrElse(Unsat sf edResult)
       }
     }
   }
 
-  case class TweetHasLabel(
-    safetyLabel: TweetSafetyLabelType,
-    labelSourceExperimentPredicate: Option[(Params, Option[LabelSource]) => Boolean] = None)
-      extends Condition
-      with HasSafetyLabelType {
-    override lazy val name: String = s"TweetHasLabel(${safetyLabel.name})"
-    override val features: Set[Feature[_]] = Set(TweetSafetyLabels)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
-    override val labelTypes: Set[SafetyLabelType] = Set(safetyLabel)
+  case class T etHasLabel(
+    safetyLabel: T etSafetyLabelType,
+    labelS ceExper  ntPred cate: Opt on[(Params, Opt on[LabelS ce]) => Boolean] = None)
+      extends Cond  on
+      w h HasSafetyLabelType {
+    overr de lazy val na : Str ng = s"T etHasLabel(${safetyLabel.na })"
+    overr de val features: Set[Feature[_]] = Set(T etSafetyLabels)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
+    overr de val labelTypes: Set[SafetyLabelType] = Set(safetyLabel)
 
-    private val UnsatisfiedResult: Unsatisfied = Unsatisfied(this)
-    private val SatisfiedResult: Satisfied = Satisfied(FoundTweetLabel(safetyLabel))
+    pr vate val Unsat sf edResult: Unsat sf ed = Unsat sf ed(t )
+    pr vate val Sat sf edResult: Sat sf ed = Sat sf ed(FoundT etLabel(safetyLabel))
 
-    private val labelSourcePredicate: (Params, Option[LabelSource]) => Boolean =
-      labelSourceExperimentPredicate match {
-        case Some(predicate) => predicate
-        case _ => ExperimentBase.shouldFilterForSource
+    pr vate val labelS cePred cate: (Params, Opt on[LabelS ce]) => Boolean =
+      labelS ceExper  ntPred cate match {
+        case So (pred cate) => pred cate
+        case _ => Exper  ntBase.shouldF lterForS ce
       }
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val labels = featureMap(TweetSafetyLabels).asInstanceOf[Seq[TweetSafetyLabel]]
+      val labels = featureMap(T etSafetyLabels).as nstanceOf[Seq[T etSafetyLabel]]
       labels
-        .collectFirst {
+        .collectF rst {
           case label
-              if label.labelType == safetyLabel
-                && labelSourcePredicate(evaluationContext.params, label.source) =>
-            SatisfiedResult
-        }.getOrElse(UnsatisfiedResult)
+               f label.labelType == safetyLabel
+                && labelS cePred cate(evaluat onContext.params, label.s ce) =>
+            Sat sf edResult
+        }.getOrElse(Unsat sf edResult)
     }
   }
 
   case class SpaceHasLabel(
     safetyLabelType: SpaceSafetyLabelType)
-      extends Condition
-      with HasSafetyLabelType {
-    override lazy val name: String = s"SpaceHasLabel(${safetyLabelType.name})"
-    override val features: Set[Feature[_]] = Set(SpaceSafetyLabels)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
-    override val labelTypes: Set[SafetyLabelType] = Set(safetyLabelType)
+      extends Cond  on
+      w h HasSafetyLabelType {
+    overr de lazy val na : Str ng = s"SpaceHasLabel(${safetyLabelType.na })"
+    overr de val features: Set[Feature[_]] = Set(SpaceSafetyLabels)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
+    overr de val labelTypes: Set[SafetyLabelType] = Set(safetyLabelType)
 
-    private val UnsatisfiedResult: Unsatisfied = Unsatisfied(this)
-    private val SatisfiedResult: Satisfied = Satisfied(FoundSpaceLabel(safetyLabelType))
+    pr vate val Unsat sf edResult: Unsat sf ed = Unsat sf ed(t )
+    pr vate val Sat sf edResult: Sat sf ed = Sat sf ed(FoundSpaceLabel(safetyLabelType))
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val labels = featureMap(SpaceSafetyLabels).asInstanceOf[Seq[SpaceSafetyLabel]]
+      val labels = featureMap(SpaceSafetyLabels).as nstanceOf[Seq[SpaceSafetyLabel]]
       labels
-        .collectFirst {
-          case label if label.safetyLabelType == safetyLabelType =>
-            SatisfiedResult
-        }.getOrElse(UnsatisfiedResult)
+        .collectF rst {
+          case label  f label.safetyLabelType == safetyLabelType =>
+            Sat sf edResult
+        }.getOrElse(Unsat sf edResult)
     }
   }
 
-  case class MediaHasLabel(
-    safetyLabelType: MediaSafetyLabelType)
-      extends Condition
-      with HasSafetyLabelType {
-    override lazy val name: String = s"MediaHasLabel(${safetyLabelType.name})"
-    override val features: Set[Feature[_]] = Set(MediaSafetyLabels)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
-    override val labelTypes: Set[SafetyLabelType] = Set(safetyLabelType)
+  case class  d aHasLabel(
+    safetyLabelType:  d aSafetyLabelType)
+      extends Cond  on
+      w h HasSafetyLabelType {
+    overr de lazy val na : Str ng = s" d aHasLabel(${safetyLabelType.na })"
+    overr de val features: Set[Feature[_]] = Set( d aSafetyLabels)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
+    overr de val labelTypes: Set[SafetyLabelType] = Set(safetyLabelType)
 
-    private val UnsatisfiedResult: Unsatisfied = Unsatisfied(this)
-    private val SatisfiedResult: Satisfied = Satisfied(FoundMediaLabel(safetyLabelType))
+    pr vate val Unsat sf edResult: Unsat sf ed = Unsat sf ed(t )
+    pr vate val Sat sf edResult: Sat sf ed = Sat sf ed(Found d aLabel(safetyLabelType))
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val labels = featureMap(MediaSafetyLabels).asInstanceOf[Seq[MediaSafetyLabel]]
+      val labels = featureMap( d aSafetyLabels).as nstanceOf[Seq[ d aSafetyLabel]]
       labels
-        .collectFirst {
-          case label if label.safetyLabelType == safetyLabelType =>
-            SatisfiedResult
-        }.getOrElse(UnsatisfiedResult)
+        .collectF rst {
+          case label  f label.safetyLabelType == safetyLabelType =>
+            Sat sf edResult
+        }.getOrElse(Unsat sf edResult)
     }
   }
 
-  case class TweetHasLabelWithLanguageScoreAboveThreshold(
-    safetyLabel: TweetSafetyLabelType,
-    languagesToScoreThresholds: Map[String, Double])
-      extends Condition
-      with HasSafetyLabelType {
+  case class T etHasLabelW hLanguageScoreAboveThreshold(
+    safetyLabel: T etSafetyLabelType,
+    languagesToScoreThresholds: Map[Str ng, Double])
+      extends Cond  on
+      w h HasSafetyLabelType {
 
-    override lazy val name: String =
-      s"TweetHasLabelWithLanguageScoreAboveThreshold(${safetyLabel.name}, ${languagesToScoreThresholds.toString})"
-    override val features: Set[Feature[_]] = Set(TweetSafetyLabels)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
-    override val labelTypes: Set[SafetyLabelType] = Set(safetyLabel)
+    overr de lazy val na : Str ng =
+      s"T etHasLabelW hLanguageScoreAboveThreshold(${safetyLabel.na }, ${languagesToScoreThresholds.toStr ng})"
+    overr de val features: Set[Feature[_]] = Set(T etSafetyLabels)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
+    overr de val labelTypes: Set[SafetyLabelType] = Set(safetyLabel)
 
-    private val UnsatisfiedResult: Unsatisfied = Unsatisfied(this)
-    private val SatisfiedResult: Satisfied =
-      Satisfied(
-        FoundTweetLabelWithLanguageScoreAboveThreshold(safetyLabel, languagesToScoreThresholds))
+    pr vate val Unsat sf edResult: Unsat sf ed = Unsat sf ed(t )
+    pr vate val Sat sf edResult: Sat sf ed =
+      Sat sf ed(
+        FoundT etLabelW hLanguageScoreAboveThreshold(safetyLabel, languagesToScoreThresholds))
 
-    private[this] def isAboveThreshold(label: TweetSafetyLabel) = {
-      val isAboveThresholdOpt = for {
-        modelMetadata <- label.modelMetadata
-        calibratedLanguage <- modelMetadata.calibratedLanguage
-        threshold <- languagesToScoreThresholds.get(calibratedLanguage)
+    pr vate[t ] def  sAboveThreshold(label: T etSafetyLabel) = {
+      val  sAboveThresholdOpt = for {
+        model tadata <- label.model tadata
+        cal bratedLanguage <- model tadata.cal bratedLanguage
+        threshold <- languagesToScoreThresholds.get(cal bratedLanguage)
         score <- label.score
-      } yield score >= threshold
+      } y eld score >= threshold
 
-      isAboveThresholdOpt.getOrElse(false)
+       sAboveThresholdOpt.getOrElse(false)
     }
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val labels = featureMap(TweetSafetyLabels).asInstanceOf[Seq[TweetSafetyLabel]]
+      val labels = featureMap(T etSafetyLabels).as nstanceOf[Seq[T etSafetyLabel]]
       labels
-        .collectFirst {
+        .collectF rst {
           case label
-              if label.labelType == safetyLabel
-                && isAboveThreshold(label) =>
-            SatisfiedResult
-        }.getOrElse(UnsatisfiedResult)
+               f label.labelType == safetyLabel
+                &&  sAboveThreshold(label) =>
+            Sat sf edResult
+        }.getOrElse(Unsat sf edResult)
     }
   }
 
-  case class TweetHasLabelWithScoreAboveThreshold(
-    safetyLabel: TweetSafetyLabelType,
+  case class T etHasLabelW hScoreAboveThreshold(
+    safetyLabel: T etSafetyLabelType,
     threshold: Double)
-      extends Condition
-      with HasSafetyLabelType {
+      extends Cond  on
+      w h HasSafetyLabelType {
 
-    override lazy val name: String =
-      s"TweetHasLabelWithScoreAboveThreshold(${safetyLabel.name}, $threshold)"
-    override val features: Set[Feature[_]] = Set(TweetSafetyLabels)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
-    override val labelTypes: Set[SafetyLabelType] = Set(safetyLabel)
+    overr de lazy val na : Str ng =
+      s"T etHasLabelW hScoreAboveThreshold(${safetyLabel.na }, $threshold)"
+    overr de val features: Set[Feature[_]] = Set(T etSafetyLabels)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
+    overr de val labelTypes: Set[SafetyLabelType] = Set(safetyLabel)
 
-    private val UnsatisfiedResult = Unsatisfied(this)
-    private val SatisfiedResult =
-      Satisfied(FoundTweetLabelWithScoreAboveThreshold(safetyLabel, threshold))
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
+    pr vate val Sat sf edResult =
+      Sat sf ed(FoundT etLabelW hScoreAboveThreshold(safetyLabel, threshold))
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val labels = featureMap(TweetSafetyLabels).asInstanceOf[Seq[TweetSafetyLabel]]
+      val labels = featureMap(T etSafetyLabels).as nstanceOf[Seq[T etSafetyLabel]]
       labels
-        .collectFirst {
+        .collectF rst {
           case label
-              if label.labelType == safetyLabel
-                && label.score.exists(_ >= threshold) =>
-            SatisfiedResult
-        }.getOrElse(UnsatisfiedResult)
+               f label.labelType == safetyLabel
+                && label.score.ex sts(_ >= threshold) =>
+            Sat sf edResult
+        }.getOrElse(Unsat sf edResult)
     }
   }
 
-  case class TweetHasLabelWithScoreAboveThresholdWithParam(
-    safetyLabel: TweetSafetyLabelType,
+  case class T etHasLabelW hScoreAboveThresholdW hParam(
+    safetyLabel: T etSafetyLabelType,
     thresholdParam: Param[Double])
-      extends Condition
-      with HasSafetyLabelType
-      with HasParams {
-    override lazy val name: String =
-      s"TweetHasLabelWithScoreAboveThreshold(${safetyLabel.name}, ${NamingUtils.getFriendlyName(thresholdParam)})"
-    override val features: Set[Feature[_]] = Set(TweetSafetyLabels)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
-    override val labelTypes: Set[SafetyLabelType] = Set(safetyLabel)
-    private val UnsatisfiedResult = Unsatisfied(this)
-    override val params: Set[Param[_]] = Set(thresholdParam)
+      extends Cond  on
+      w h HasSafetyLabelType
+      w h HasParams {
+    overr de lazy val na : Str ng =
+      s"T etHasLabelW hScoreAboveThreshold(${safetyLabel.na }, ${Nam ngUt ls.getFr endlyNa (thresholdParam)})"
+    overr de val features: Set[Feature[_]] = Set(T etSafetyLabels)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
+    overr de val labelTypes: Set[SafetyLabelType] = Set(safetyLabel)
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
+    overr de val params: Set[Param[_]] = Set(thresholdParam)
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val labels = featureMap(TweetSafetyLabels).asInstanceOf[Seq[TweetSafetyLabel]]
-      val threshold = evaluationContext.params(thresholdParam)
-      val SatisfiedResult =
-        Satisfied(FoundTweetLabelWithScoreAboveThreshold(safetyLabel, threshold))
+      val labels = featureMap(T etSafetyLabels).as nstanceOf[Seq[T etSafetyLabel]]
+      val threshold = evaluat onContext.params(thresholdParam)
+      val Sat sf edResult =
+        Sat sf ed(FoundT etLabelW hScoreAboveThreshold(safetyLabel, threshold))
       labels
-        .collectFirst {
+        .collectF rst {
           case label
-              if label.labelType == safetyLabel
-                && label.score.exists(_ >= threshold) =>
-            SatisfiedResult
-        }.getOrElse(UnsatisfiedResult)
+               f label.labelType == safetyLabel
+                && label.score.ex sts(_ >= threshold) =>
+            Sat sf edResult
+        }.getOrElse(Unsat sf edResult)
     }
   }
 
-  case class TweetHasLabelWithLanguageIn(
-    safetyLabelType: TweetSafetyLabelType,
-    languages: Set[String])
-      extends Condition
-      with HasSafetyLabelType {
+  case class T etHasLabelW hLanguage n(
+    safetyLabelType: T etSafetyLabelType,
+    languages: Set[Str ng])
+      extends Cond  on
+      w h HasSafetyLabelType {
 
-    override lazy val name: String =
-      s"TweetHasLabelWithLanguageIn($safetyLabelType, $languages)"
-    override val features: Set[Feature[_]] = Set(TweetSafetyLabels)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
-    override val labelTypes: Set[SafetyLabelType] = Set(safetyLabelType)
+    overr de lazy val na : Str ng =
+      s"T etHasLabelW hLanguage n($safetyLabelType, $languages)"
+    overr de val features: Set[Feature[_]] = Set(T etSafetyLabels)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
+    overr de val labelTypes: Set[SafetyLabelType] = Set(safetyLabelType)
 
-    private val UnsatisfiedResult: Unsatisfied = Unsatisfied(this)
-    private val SatisfiedResult: Satisfied =
-      Satisfied(FoundTweetLabelWithLanguageIn(safetyLabelType, languages))
+    pr vate val Unsat sf edResult: Unsat sf ed = Unsat sf ed(t )
+    pr vate val Sat sf edResult: Sat sf ed =
+      Sat sf ed(FoundT etLabelW hLanguage n(safetyLabelType, languages))
 
-    private[this] def hasLanguageMatch(label: TweetSafetyLabel): Boolean = {
-      val isMatchingLanguageOpt = for {
-        metadata <- label.modelMetadata
-        language <- metadata.calibratedLanguage
-      } yield languages.contains(language)
-      isMatchingLanguageOpt.getOrElse(false)
+    pr vate[t ] def hasLanguageMatch(label: T etSafetyLabel): Boolean = {
+      val  sMatch ngLanguageOpt = for {
+         tadata <- label.model tadata
+        language <-  tadata.cal bratedLanguage
+      } y eld languages.conta ns(language)
+       sMatch ngLanguageOpt.getOrElse(false)
     }
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      featureMap(TweetSafetyLabels)
-        .asInstanceOf[Seq[TweetSafetyLabel]]
-        .collectFirst {
-          case label if label.labelType == safetyLabelType && hasLanguageMatch(label) =>
-            SatisfiedResult
-        }.getOrElse(UnsatisfiedResult)
+      featureMap(T etSafetyLabels)
+        .as nstanceOf[Seq[T etSafetyLabel]]
+        .collectF rst {
+          case label  f label.labelType == safetyLabelType && hasLanguageMatch(label) =>
+            Sat sf edResult
+        }.getOrElse(Unsat sf edResult)
     }
   }
 
-  case class TweetHasLabelWithLanguagesWithParam(
-    safetyLabelType: TweetSafetyLabelType,
-    languageParam: Param[Seq[String]])
-      extends Condition
-      with HasSafetyLabelType
-      with HasParams {
-    override lazy val name: String =
-      s"TweetHasLabelWithLanguageIn($safetyLabelType, ${NamingUtils.getFriendlyName(languageParam)})"
-    override val features: Set[Feature[_]] = Set(TweetSafetyLabels)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
-    override val labelTypes: Set[SafetyLabelType] = Set(safetyLabelType)
-    override val params: Set[Param[_]] = Set(languageParam)
+  case class T etHasLabelW hLanguagesW hParam(
+    safetyLabelType: T etSafetyLabelType,
+    languageParam: Param[Seq[Str ng]])
+      extends Cond  on
+      w h HasSafetyLabelType
+      w h HasParams {
+    overr de lazy val na : Str ng =
+      s"T etHasLabelW hLanguage n($safetyLabelType, ${Nam ngUt ls.getFr endlyNa (languageParam)})"
+    overr de val features: Set[Feature[_]] = Set(T etSafetyLabels)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
+    overr de val labelTypes: Set[SafetyLabelType] = Set(safetyLabelType)
+    overr de val params: Set[Param[_]] = Set(languageParam)
 
-    private val UnsatisfiedResult: Unsatisfied = Unsatisfied(this)
+    pr vate val Unsat sf edResult: Unsat sf ed = Unsat sf ed(t )
 
-    private[this] def hasLanguageMatch(label: TweetSafetyLabel, languages: Set[String]): Boolean = {
-      val isMatchingLanguageOpt = for {
-        metadata <- label.modelMetadata
-        language <- metadata.calibratedLanguage
-      } yield languages.contains(language)
-      isMatchingLanguageOpt.getOrElse(false)
+    pr vate[t ] def hasLanguageMatch(label: T etSafetyLabel, languages: Set[Str ng]): Boolean = {
+      val  sMatch ngLanguageOpt = for {
+         tadata <- label.model tadata
+        language <-  tadata.cal bratedLanguage
+      } y eld languages.conta ns(language)
+       sMatch ngLanguageOpt.getOrElse(false)
     }
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val languages = evaluationContext.params(languageParam).toSet
-      val SatisfiedResult: Satisfied =
-        Satisfied(FoundTweetLabelWithLanguageIn(safetyLabelType, languages))
-      featureMap(TweetSafetyLabels)
-        .asInstanceOf[Seq[TweetSafetyLabel]]
-        .collectFirst {
-          case label if label.labelType == safetyLabelType && hasLanguageMatch(label, languages) =>
-            SatisfiedResult
-        }.getOrElse(UnsatisfiedResult)
+      val languages = evaluat onContext.params(languageParam).toSet
+      val Sat sf edResult: Sat sf ed =
+        Sat sf ed(FoundT etLabelW hLanguage n(safetyLabelType, languages))
+      featureMap(T etSafetyLabels)
+        .as nstanceOf[Seq[T etSafetyLabel]]
+        .collectF rst {
+          case label  f label.labelType == safetyLabelType && hasLanguageMatch(label, languages) =>
+            Sat sf edResult
+        }.getOrElse(Unsat sf edResult)
     }
   }
 
-  type TweetSafetyLabelPredicateFn = (TweetSafetyLabel) => Boolean
-  abstract class NamedTweetSafetyLabelPredicate(
-    private[rules] val fn: TweetSafetyLabelPredicateFn,
-    private[rules] val name: String)
+  type T etSafetyLabelPred cateFn = (T etSafetyLabel) => Boolean
+  abstract class Na dT etSafetyLabelPred cate(
+    pr vate[rules] val fn: T etSafetyLabelPred cateFn,
+    pr vate[rules] val na : Str ng)
 
-  abstract class TweetHasSafetyLabelWithPredicate(
-    private[rules] val safetyLabelType: TweetSafetyLabelType,
-    private[rules] val predicate: NamedTweetSafetyLabelPredicate)
-      extends Condition
-      with HasSafetyLabelType {
+  abstract class T etHasSafetyLabelW hPred cate(
+    pr vate[rules] val safetyLabelType: T etSafetyLabelType,
+    pr vate[rules] val pred cate: Na dT etSafetyLabelPred cate)
+      extends Cond  on
+      w h HasSafetyLabelType {
 
-    override lazy val name: String =
-      s"TweetHasSafetyLabelWithPredicate(${predicate.name}($safetyLabelType))"
-    override val features: Set[Feature[_]] = Set(TweetSafetyLabels)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
-    override val labelTypes: Set[SafetyLabelType] = Set(safetyLabelType)
+    overr de lazy val na : Str ng =
+      s"T etHasSafetyLabelW hPred cate(${pred cate.na }($safetyLabelType))"
+    overr de val features: Set[Feature[_]] = Set(T etSafetyLabels)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
+    overr de val labelTypes: Set[SafetyLabelType] = Set(safetyLabelType)
 
-    private val UnsatisfiedResult: Unsatisfied = Unsatisfied(this)
-    private val SatisfiedResult: Satisfied =
-      Satisfied(Result.FoundTweetSafetyLabelWithPredicate(safetyLabelType, predicate.name))
+    pr vate val Unsat sf edResult: Unsat sf ed = Unsat sf ed(t )
+    pr vate val Sat sf edResult: Sat sf ed =
+      Sat sf ed(Result.FoundT etSafetyLabelW hPred cate(safetyLabelType, pred cate.na ))
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      featureMap(TweetSafetyLabels)
-        .asInstanceOf[Seq[TweetSafetyLabel]]
-        .collectFirst {
-          case label if label.labelType == safetyLabelType && predicate.fn(label) =>
-            SatisfiedResult
-        }.getOrElse(UnsatisfiedResult)
+      featureMap(T etSafetyLabels)
+        .as nstanceOf[Seq[T etSafetyLabel]]
+        .collectF rst {
+          case label  f label.labelType == safetyLabelType && pred cate.fn(label) =>
+            Sat sf edResult
+        }.getOrElse(Unsat sf edResult)
     }
   }
 
-  object TweetHasSafetyLabelWithPredicate {
+  object T etHasSafetyLabelW hPred cate {
     def unapply(
-      condition: TweetHasSafetyLabelWithPredicate
-    ): Option[(TweetSafetyLabelType, NamedTweetSafetyLabelPredicate)] =
-      Some((condition.safetyLabelType, condition.predicate))
+      cond  on: T etHasSafetyLabelW hPred cate
+    ): Opt on[(T etSafetyLabelType, Na dT etSafetyLabelPred cate)] =
+      So ((cond  on.safetyLabelType, cond  on.pred cate))
   }
 
-  case class WithScoreEqInt(score: Int)
-      extends NamedTweetSafetyLabelPredicate(
-        fn = tweetSafetyLabel => tweetSafetyLabel.score.exists(s => s.intValue() == score),
-        name = "WithScoreEqInt"
+  case class W hScoreEq nt(score:  nt)
+      extends Na dT etSafetyLabelPred cate(
+        fn = t etSafetyLabel => t etSafetyLabel.score.ex sts(s => s. ntValue() == score),
+        na  = "W hScoreEq nt"
       )
-  case class TweetHasSafetyLabelWithScoreEqInt(
-    override val safetyLabelType: TweetSafetyLabelType,
-    score: Int)
-      extends TweetHasSafetyLabelWithPredicate(
+  case class T etHasSafetyLabelW hScoreEq nt(
+    overr de val safetyLabelType: T etSafetyLabelType,
+    score:  nt)
+      extends T etHasSafetyLabelW hPred cate(
         safetyLabelType,
-        predicate = WithScoreEqInt(score)
+        pred cate = W hScoreEq nt(score)
       )
 
-  case class TweetReplyToParentTweetBeforeDuration(duration: Duration) extends Condition {
-    override val features: Set[Feature[_]] = Set(TweetParentId, TweetTimestamp)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
+  case class T etReplyToParentT etBeforeDurat on(durat on: Durat on) extends Cond  on {
+    overr de val features: Set[Feature[_]] = Set(T etParent d, T etT  stamp)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
 
-    private val UnsatisfiedResult: Unsatisfied = Unsatisfied(this)
-    private val SatisfiedResult: Satisfied = Satisfied(
-      Result.IsTweetReplyToParentTweetBeforeDuration(duration))
+    pr vate val Unsat sf edResult: Unsat sf ed = Unsat sf ed(t )
+    pr vate val Sat sf edResult: Sat sf ed = Sat sf ed(
+      Result. sT etReplyToParentT etBeforeDurat on(durat on))
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
       featureMap
-        .get(TweetParentId).collect {
-          case tweetParentId: Long =>
+        .get(T etParent d).collect {
+          case t etParent d: Long =>
             featureMap
-              .get(TweetTimestamp).collect {
-                case tweetTimestamp: Time
-                    if tweetTimestamp.diff(SnowflakeId.timeFromId(tweetParentId)) < duration =>
-                  SatisfiedResult
-              }.getOrElse(UnsatisfiedResult)
-        }.getOrElse(UnsatisfiedResult)
+              .get(T etT  stamp).collect {
+                case t etT  stamp: T  
+                     f t etT  stamp.d ff(Snowflake d.t  From d(t etParent d)) < durat on =>
+                  Sat sf edResult
+              }.getOrElse(Unsat sf edResult)
+        }.getOrElse(Unsat sf edResult)
     }
   }
 
-  case class TweetReplyToRootTweetBeforeDuration(duration: Duration) extends Condition {
-    override val features: Set[Feature[_]] = Set(TweetConversationId, TweetTimestamp)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
+  case class T etReplyToRootT etBeforeDurat on(durat on: Durat on) extends Cond  on {
+    overr de val features: Set[Feature[_]] = Set(T etConversat on d, T etT  stamp)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
 
-    private val UnsatisfiedResult: Unsatisfied = Unsatisfied(this)
-    private val SatisfiedResult: Satisfied = Satisfied(
-      Result.IsTweetReplyToRootTweetBeforeDuration(duration))
+    pr vate val Unsat sf edResult: Unsat sf ed = Unsat sf ed(t )
+    pr vate val Sat sf edResult: Sat sf ed = Sat sf ed(
+      Result. sT etReplyToRootT etBeforeDurat on(durat on))
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
       featureMap
-        .get(TweetConversationId).collect {
-          case tweetConversationId: Long =>
+        .get(T etConversat on d).collect {
+          case t etConversat on d: Long =>
             featureMap
-              .get(TweetTimestamp).collect {
-                case tweetTimestamp: Time
-                    if tweetTimestamp.diff(
-                      SnowflakeId.timeFromId(tweetConversationId)) < duration =>
-                  SatisfiedResult
-              }.getOrElse(UnsatisfiedResult)
-        }.getOrElse(UnsatisfiedResult)
+              .get(T etT  stamp).collect {
+                case t etT  stamp: T  
+                     f t etT  stamp.d ff(
+                      Snowflake d.t  From d(t etConversat on d)) < durat on =>
+                  Sat sf edResult
+              }.getOrElse(Unsat sf edResult)
+        }.getOrElse(Unsat sf edResult)
     }
   }
 
-  case class TweetComposedBefore(cutoffTimestamp: Time) extends Condition {
-    assert(cutoffTimestamp.inMilliseconds > SnowflakeId.FirstSnowflakeIdUnixTime)
+  case class T etComposedBefore(cutoffT  stamp: T  ) extends Cond  on {
+    assert(cutoffT  stamp. nM ll seconds > Snowflake d.F rstSnowflake dUn xT  )
 
-    override val features: Set[Feature[_]] = Set(TweetTimestamp)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
+    overr de val features: Set[Feature[_]] = Set(T etT  stamp)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
 
-    private val UnsatisfiedResult: Unsatisfied = Unsatisfied(this)
-    private val SatisfiedResult: Satisfied = Satisfied(HasTweetTimestampBeforeCutoff)
+    pr vate val Unsat sf edResult: Unsat sf ed = Unsat sf ed(t )
+    pr vate val Sat sf edResult: Sat sf ed = Sat sf ed(HasT etT  stampBeforeCutoff)
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      featureMap(TweetTimestamp) match {
-        case timestamp: Time if timestamp > cutoffTimestamp => UnsatisfiedResult
-        case _ => SatisfiedResult
+      featureMap(T etT  stamp) match {
+        case t  stamp: T    f t  stamp > cutoffT  stamp => Unsat sf edResult
+        case _ => Sat sf edResult
       }
     }
   }
 
-  case class TweetComposedAfter(cutoffTimestamp: Time) extends Condition {
-    assert(cutoffTimestamp.inMilliseconds > SnowflakeId.FirstSnowflakeIdUnixTime)
+  case class T etComposedAfter(cutoffT  stamp: T  ) extends Cond  on {
+    assert(cutoffT  stamp. nM ll seconds > Snowflake d.F rstSnowflake dUn xT  )
 
-    override val features: Set[Feature[_]] = Set(TweetTimestamp)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
+    overr de val features: Set[Feature[_]] = Set(T etT  stamp)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
 
-    private val UnsatisfiedResult: Unsatisfied = Unsatisfied(this)
-    private val SatisfiedResult: Satisfied = Satisfied(HasTweetTimestampAfterCutoff)
+    pr vate val Unsat sf edResult: Unsat sf ed = Unsat sf ed(t )
+    pr vate val Sat sf edResult: Sat sf ed = Sat sf ed(HasT etT  stampAfterCutoff)
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      featureMap(TweetTimestamp) match {
-        case timestamp: Time if timestamp > cutoffTimestamp => SatisfiedResult
-        case _ => UnsatisfiedResult
+      featureMap(T etT  stamp) match {
+        case t  stamp: T    f t  stamp > cutoffT  stamp => Sat sf edResult
+        case _ => Unsat sf edResult
       }
     }
   }
 
-  case class TweetComposedAfterOffset(offset: Duration) extends Condition {
-    override val features: Set[Feature[_]] = Set(TweetTimestamp)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
+  case class T etComposedAfterOffset(offset: Durat on) extends Cond  on {
+    overr de val features: Set[Feature[_]] = Set(T etT  stamp)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
 
-    private val UnsatisfiedResult: Unsatisfied = Unsatisfied(this)
-    private val SatisfiedResult: Satisfied = Satisfied(HasTweetTimestampAfterOffset)
+    pr vate val Unsat sf edResult: Unsat sf ed = Unsat sf ed(t )
+    pr vate val Sat sf edResult: Sat sf ed = Sat sf ed(HasT etT  stampAfterOffset)
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      featureMap(TweetTimestamp) match {
-        case timestamp: Time if timestamp > Time.now.minus(offset) => SatisfiedResult
-        case _ => UnsatisfiedResult
+      featureMap(T etT  stamp) match {
+        case t  stamp: T    f t  stamp > T  .now.m nus(offset) => Sat sf edResult
+        case _ => Unsat sf edResult
       }
     }
   }
 
-  case class TweetComposedAfterWithParam(cutoffTimeParam: Param[Time])
-      extends Condition
-      with HasParams {
-    override val features: Set[Feature[_]] = Set(TweetTimestamp)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
-    override val params: Set[Param[_]] = Set(cutoffTimeParam)
-    private val UnsatisfiedResult: Unsatisfied = Unsatisfied(this)
-    private val SatisfiedResult: Satisfied = Satisfied(HasTweetTimestampAfterCutoff)
+  case class T etComposedAfterW hParam(cutoffT  Param: Param[T  ])
+      extends Cond  on
+      w h HasParams {
+    overr de val features: Set[Feature[_]] = Set(T etT  stamp)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
+    overr de val params: Set[Param[_]] = Set(cutoffT  Param)
+    pr vate val Unsat sf edResult: Unsat sf ed = Unsat sf ed(t )
+    pr vate val Sat sf edResult: Sat sf ed = Sat sf ed(HasT etT  stampAfterCutoff)
 
-    override def preFilter(
-      evaluationContext: EvaluationContext,
+    overr de def preF lter(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
-    ): PreFilterResult = {
-      val cutoffTimestamp = evaluationContext.params(cutoffTimeParam)
-      if (cutoffTimestamp.inMilliseconds < SnowflakeId.FirstSnowflakeIdUnixTime) {
-        Filtered
+    ): PreF lterResult = {
+      val cutoffT  stamp = evaluat onContext.params(cutoffT  Param)
+       f (cutoffT  stamp. nM ll seconds < Snowflake d.F rstSnowflake dUn xT  ) {
+        F ltered
       } else {
-        super.preFilter(evaluationContext, featureMap)
+        super.preF lter(evaluat onContext, featureMap)
       }
     }
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val cutoffTimestamp = evaluationContext.params(cutoffTimeParam)
-      featureMap(TweetTimestamp) match {
-        case _: Time if cutoffTimestamp.inMilliseconds < SnowflakeId.FirstSnowflakeIdUnixTime =>
-          UnsatisfiedResult
-        case timestamp: Time if timestamp > cutoffTimestamp => SatisfiedResult
-        case _ => UnsatisfiedResult
+      val cutoffT  stamp = evaluat onContext.params(cutoffT  Param)
+      featureMap(T etT  stamp) match {
+        case _: T    f cutoffT  stamp. nM ll seconds < Snowflake d.F rstSnowflake dUn xT   =>
+          Unsat sf edResult
+        case t  stamp: T    f t  stamp > cutoffT  stamp => Sat sf edResult
+        case _ => Unsat sf edResult
       }
     }
   }
 
-  case class AuthorHasLabel(labelValue: UserLabelValue, shortCircuitable: Boolean = true)
-      extends Condition
-      with HasSafetyLabelType {
-    override lazy val name: String = s"AuthorHasLabel(${labelValue.name})"
-    override val features: Set[Feature[_]] = Set(AuthorUserLabels)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
-    override val labelTypes: Set[SafetyLabelType] = Set(labelValue)
+  case class AuthorHasLabel(labelValue: UserLabelValue, shortC rcu able: Boolean = true)
+      extends Cond  on
+      w h HasSafetyLabelType {
+    overr de lazy val na : Str ng = s"AuthorHasLabel(${labelValue.na })"
+    overr de val features: Set[Feature[_]] = Set(AuthorUserLabels)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
+    overr de val labelTypes: Set[SafetyLabelType] = Set(labelValue)
 
-    private val UnsatisfiedResult: Unsatisfied = Unsatisfied(this)
-    private val SatisfiedResult: Satisfied = Satisfied(FoundUserLabel(labelValue))
+    pr vate val Unsat sf edResult: Unsat sf ed = Unsat sf ed(t )
+    pr vate val Sat sf edResult: Sat sf ed = Sat sf ed(FoundUserLabel(labelValue))
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val labels = featureMap(AuthorUserLabels).asInstanceOf[Seq[Label]].map(UserLabel.fromThrift)
+      val labels = featureMap(AuthorUserLabels).as nstanceOf[Seq[Label]].map(UserLabel.fromThr ft)
       labels
-        .collectFirst {
+        .collectF rst {
           case label
-              if label.labelValue == labelValue
-                && ExperimentBase.shouldFilterForSource(evaluationContext.params, label.source) =>
-            SatisfiedResult
-        }.getOrElse(UnsatisfiedResult)
+               f label.labelValue == labelValue
+                && Exper  ntBase.shouldF lterForS ce(evaluat onContext.params, label.s ce) =>
+            Sat sf edResult
+        }.getOrElse(Unsat sf edResult)
     }
   }
 
-  abstract class ViewerHasRole(role: String) extends Condition {
-    override lazy val name: String = s"ViewerHasRole(${role})"
-    override val features: Set[Feature[_]] = Set(ViewerRoles)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
+  abstract class V e rHasRole(role: Str ng) extends Cond  on {
+    overr de lazy val na : Str ng = s"V e rHasRole(${role})"
+    overr de val features: Set[Feature[_]] = Set(V e rRoles)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
 
-    private val UnsatisfiedResult: Unsatisfied = Unsatisfied(this)
-    private val SatisfiedResult: Satisfied = Satisfied(FoundUserRole(role))
+    pr vate val Unsat sf edResult: Unsat sf ed = Unsat sf ed(t )
+    pr vate val Sat sf edResult: Sat sf ed = Sat sf ed(FoundUserRole(role))
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val roles = featureMap(ViewerRoles).asInstanceOf[Seq[String]]
-      if (roles.contains(role)) {
-        SatisfiedResult
+      val roles = featureMap(V e rRoles).as nstanceOf[Seq[Str ng]]
+       f (roles.conta ns(role)) {
+        Sat sf edResult
       } else {
-        UnsatisfiedResult
+        Unsat sf edResult
       }
     }
   }
 
-  case object ViewerIsEmployee extends ViewerHasRole(ViewerRoles.EmployeeRole)
+  case object V e r sEmployee extends V e rHasRole(V e rRoles.EmployeeRole)
 
-  case class ViewerHasLabel(labelValue: UserLabelValue) extends Condition with HasSafetyLabelType {
-    override lazy val name: String = s"ViewerHasLabel(${labelValue.name})"
-    override val features: Set[Feature[_]] = Set(ViewerUserLabels)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
-    override val labelTypes: Set[SafetyLabelType] = Set(labelValue)
+  case class V e rHasLabel(labelValue: UserLabelValue) extends Cond  on w h HasSafetyLabelType {
+    overr de lazy val na : Str ng = s"V e rHasLabel(${labelValue.na })"
+    overr de val features: Set[Feature[_]] = Set(V e rUserLabels)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
+    overr de val labelTypes: Set[SafetyLabelType] = Set(labelValue)
 
-    private val UnsatisfiedResult: Unsatisfied = Unsatisfied(this)
-    private val SatisfiedResult: Satisfied = Satisfied(FoundUserLabel(labelValue))
+    pr vate val Unsat sf edResult: Unsat sf ed = Unsat sf ed(t )
+    pr vate val Sat sf edResult: Sat sf ed = Sat sf ed(FoundUserLabel(labelValue))
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val labels = featureMap(ViewerUserLabels).asInstanceOf[Seq[Label]].map(UserLabel.fromThrift)
+      val labels = featureMap(V e rUserLabels).as nstanceOf[Seq[Label]].map(UserLabel.fromThr ft)
       labels
-        .collectFirst {
+        .collectF rst {
           case label
-              if label.labelValue == labelValue
-                && ExperimentBase.shouldFilterForSource(evaluationContext.params, label.source) =>
-            SatisfiedResult
-        }.getOrElse(UnsatisfiedResult)
+               f label.labelValue == labelValue
+                && Exper  ntBase.shouldF lterForS ce(evaluat onContext.params, label.s ce) =>
+            Sat sf edResult
+        }.getOrElse(Unsat sf edResult)
     }
   }
 
-  case object DeactivatedAuthor extends BooleanFeatureCondition(AuthorIsDeactivated)
-  case object ErasedAuthor extends BooleanFeatureCondition(AuthorIsErased)
-  case object OffboardedAuthor extends BooleanFeatureCondition(AuthorIsOffboarded)
-  case object ProtectedAuthor extends BooleanFeatureCondition(AuthorIsProtected)
-  case object VerifiedAuthor extends BooleanFeatureCondition(AuthorIsVerified)
-  case object NsfwUserAuthor extends BooleanFeatureCondition(AuthorIsNsfwUser)
-  case object NsfwAdminAuthor extends BooleanFeatureCondition(AuthorIsNsfwAdmin)
-  case object TweetHasNsfwUserAuthor extends BooleanFeatureCondition(TweetHasNsfwUser)
-  case object TweetHasNsfwAdminAuthor extends BooleanFeatureCondition(TweetHasNsfwAdmin)
-  case object TweetHasMedia extends BooleanFeatureCondition(TweetHasMediaFeature)
-  case object TweetHasDmcaMedia extends BooleanFeatureCondition(HasDmcaMediaFeature)
-  case object TweetHasCard extends BooleanFeatureCondition(TweetHasCardFeature)
-  case object IsPollCard extends BooleanFeatureCondition(CardIsPoll)
+  case object Deact vatedAuthor extends BooleanFeatureCond  on(Author sDeact vated)
+  case object ErasedAuthor extends BooleanFeatureCond  on(Author sErased)
+  case object OffboardedAuthor extends BooleanFeatureCond  on(Author sOffboarded)
+  case object ProtectedAuthor extends BooleanFeatureCond  on(Author sProtected)
+  case object Ver f edAuthor extends BooleanFeatureCond  on(Author sVer f ed)
+  case object NsfwUserAuthor extends BooleanFeatureCond  on(Author sNsfwUser)
+  case object NsfwAdm nAuthor extends BooleanFeatureCond  on(Author sNsfwAdm n)
+  case object T etHasNsfwUserAuthor extends BooleanFeatureCond  on(T etHasNsfwUser)
+  case object T etHasNsfwAdm nAuthor extends BooleanFeatureCond  on(T etHasNsfwAdm n)
+  case object T etHas d a extends BooleanFeatureCond  on(T etHas d aFeature)
+  case object T etHasDmca d a extends BooleanFeatureCond  on(HasDmca d aFeature)
+  case object T etHasCard extends BooleanFeatureCond  on(T etHasCardFeature)
+  case object  sPollCard extends BooleanFeatureCond  on(Card sPoll)
 
-  case object ProtectedViewer extends BooleanFeatureCondition(ViewerIsProtected)
-  case object SoftViewer extends BooleanFeatureCondition(ViewerIsSoftUser)
+  case object ProtectedV e r extends BooleanFeatureCond  on(V e r sProtected)
+  case object SoftV e r extends BooleanFeatureCond  on(V e r sSoftUser)
 
-  case object ViewerHasUqfEnabled
-      extends BooleanFeatureCondition(ViewerHasUniversalQualityFilterEnabled)
+  case object V e rHasUqfEnabled
+      extends BooleanFeatureCond  on(V e rHasUn versalQual yF lterEnabled)
 
-  abstract class ViewerHasMatchingKeywordFor(muteSurface: MuteSurface) extends Condition {
-    override def features: Set[Feature[_]] = Set(feature)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
+  abstract class V e rHasMatch ngKeywordFor(muteSurface: MuteSurface) extends Cond  on {
+    overr de def features: Set[Feature[_]] = Set(feature)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
 
-    private val UnsatisfiedResult = Unsatisfied(this)
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
 
-    private val feature: Feature[MutedKeyword] = muteSurface match {
-      case MuteSurface.HomeTimeline => ViewerMutesKeywordInTweetForHomeTimeline
-      case MuteSurface.Notifications => ViewerMutesKeywordInTweetForNotifications
-      case MuteSurface.TweetReplies => ViewerMutesKeywordInTweetForTweetReplies
+    pr vate val feature: Feature[MutedKeyword] = muteSurface match {
+      case MuteSurface.Ho T  l ne => V e rMutesKeyword nT etForHo T  l ne
+      case MuteSurface.Not f cat ons => V e rMutesKeyword nT etForNot f cat ons
+      case MuteSurface.T etRepl es => V e rMutesKeyword nT etForT etRepl es
 
-      case _ => throw new NoSuchElementException(muteSurface.toString)
+      case _ => throw new NoSuchEle ntExcept on(muteSurface.toStr ng)
     }
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val mutedKeyword = featureMap(feature)
-        .asInstanceOf[MutedKeyword]
-      Result.fromMutedKeyword(mutedKeyword, UnsatisfiedResult)
+        .as nstanceOf[MutedKeyword]
+      Result.fromMutedKeyword(mutedKeyword, Unsat sf edResult)
     }
   }
 
-  case object ViewerHasMatchingKeywordForHomeTimeline
-      extends ViewerHasMatchingKeywordFor(MuteSurface.HomeTimeline)
+  case object V e rHasMatch ngKeywordForHo T  l ne
+      extends V e rHasMatch ngKeywordFor(MuteSurface.Ho T  l ne)
 
-  case object ViewerHasMatchingKeywordForNotifications
-      extends ViewerHasMatchingKeywordFor(MuteSurface.Notifications)
+  case object V e rHasMatch ngKeywordForNot f cat ons
+      extends V e rHasMatch ngKeywordFor(MuteSurface.Not f cat ons)
 
-  case object ViewerHasMatchingKeywordForTweetReplies
-      extends ViewerHasMatchingKeywordFor(MuteSurface.TweetReplies)
+  case object V e rHasMatch ngKeywordForT etRepl es
+      extends V e rHasMatch ngKeywordFor(MuteSurface.T etRepl es)
 
-  case object ViewerHasMatchingKeywordForAllSurfaces extends Condition {
-    override def features: Set[Feature[_]] = Set(ViewerMutesKeywordInTweetForAllSurfaces)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
-    private val UnsatisfiedResult = Unsatisfied(this)
+  case object V e rHasMatch ngKeywordForAllSurfaces extends Cond  on {
+    overr de def features: Set[Feature[_]] = Set(V e rMutesKeyword nT etForAllSurfaces)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val mutedKeyword = featureMap(ViewerMutesKeywordInTweetForAllSurfaces)
-        .asInstanceOf[MutedKeyword]
-      Result.fromMutedKeyword(mutedKeyword, UnsatisfiedResult)
+      val mutedKeyword = featureMap(V e rMutesKeyword nT etForAllSurfaces)
+        .as nstanceOf[MutedKeyword]
+      Result.fromMutedKeyword(mutedKeyword, Unsat sf edResult)
     }
   }
 
-  abstract class ViewerHasMatchingKeywordInSpaceTitleFor(muteSurface: MuteSurface)
-      extends Condition {
-    override def features: Set[Feature[_]] = Set(feature)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
+  abstract class V e rHasMatch ngKeyword nSpaceT leFor(muteSurface: MuteSurface)
+      extends Cond  on {
+    overr de def features: Set[Feature[_]] = Set(feature)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
 
-    private val UnsatisfiedResult = Unsatisfied(this)
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
 
-    private val feature: Feature[MutedKeyword] = muteSurface match {
-      case MuteSurface.Notifications => ViewerMutesKeywordInSpaceTitleForNotifications
-      case _ => throw new NoSuchElementException(muteSurface.toString)
+    pr vate val feature: Feature[MutedKeyword] = muteSurface match {
+      case MuteSurface.Not f cat ons => V e rMutesKeyword nSpaceT leForNot f cat ons
+      case _ => throw new NoSuchEle ntExcept on(muteSurface.toStr ng)
     }
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val mutedKeyword = featureMap(feature)
-        .asInstanceOf[MutedKeyword]
-      Result.fromMutedKeyword(mutedKeyword, UnsatisfiedResult)
+        .as nstanceOf[MutedKeyword]
+      Result.fromMutedKeyword(mutedKeyword, Unsat sf edResult)
     }
   }
 
-  case object ViewerHasMatchingKeywordInSpaceTitleForNotifications
-      extends ViewerHasMatchingKeywordInSpaceTitleFor(MuteSurface.Notifications)
+  case object V e rHasMatch ngKeyword nSpaceT leForNot f cat ons
+      extends V e rHasMatch ngKeyword nSpaceT leFor(MuteSurface.Not f cat ons)
 
-  case object ViewerFiltersNoConfirmedEmail
-      extends BooleanFeatureCondition(
-        com.twitter.visibility.features.ViewerFiltersNoConfirmedEmail
+  case object V e rF ltersNoConf r dEma l
+      extends BooleanFeatureCond  on(
+        com.tw ter.v s b l y.features.V e rF ltersNoConf r dEma l
       )
 
-  case object ViewerFiltersNoConfirmedPhone
-      extends BooleanFeatureCondition(
-        com.twitter.visibility.features.ViewerFiltersNoConfirmedPhone
+  case object V e rF ltersNoConf r dPhone
+      extends BooleanFeatureCond  on(
+        com.tw ter.v s b l y.features.V e rF ltersNoConf r dPhone
       )
 
-  case object ViewerFiltersDefaultProfileImage
-      extends BooleanFeatureCondition(
-        com.twitter.visibility.features.ViewerFiltersDefaultProfileImage
+  case object V e rF ltersDefaultProf le mage
+      extends BooleanFeatureCond  on(
+        com.tw ter.v s b l y.features.V e rF ltersDefaultProf le mage
       )
 
-  case object ViewerFiltersNewUsers
-      extends BooleanFeatureCondition(
-        com.twitter.visibility.features.ViewerFiltersNewUsers
+  case object V e rF ltersNewUsers
+      extends BooleanFeatureCond  on(
+        com.tw ter.v s b l y.features.V e rF ltersNewUsers
       )
 
-  case object ViewerFiltersNotFollowedBy
-      extends BooleanFeatureCondition(
-        com.twitter.visibility.features.ViewerFiltersNotFollowedBy
+  case object V e rF ltersNotFollo dBy
+      extends BooleanFeatureCond  on(
+        com.tw ter.v s b l y.features.V e rF ltersNotFollo dBy
       )
 
-  case object AuthorHasConfirmedEmail
-      extends BooleanFeatureCondition(
-        com.twitter.visibility.features.AuthorHasConfirmedEmail
+  case object AuthorHasConf r dEma l
+      extends BooleanFeatureCond  on(
+        com.tw ter.v s b l y.features.AuthorHasConf r dEma l
       )
 
-  case object AuthorHasVerifiedPhone
-      extends BooleanFeatureCondition(
-        com.twitter.visibility.features.AuthorHasVerifiedPhone
+  case object AuthorHasVer f edPhone
+      extends BooleanFeatureCond  on(
+        com.tw ter.v s b l y.features.AuthorHasVer f edPhone
       )
 
-  case object AuthorHasDefaultProfileImage
-      extends BooleanFeatureCondition(
-        com.twitter.visibility.features.AuthorHasDefaultProfileImage
+  case object AuthorHasDefaultProf le mage
+      extends BooleanFeatureCond  on(
+        com.tw ter.v s b l y.features.AuthorHasDefaultProf le mage
       )
 
-  case object AuthorIsNewAccount extends Condition {
-    override val features: Set[Feature[_]] = Set(AuthorAccountAge)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
+  case object Author sNewAccount extends Cond  on {
+    overr de val features: Set[Feature[_]] = Set(AuthorAccountAge)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
 
-    private val UnsatisfiedResult = Unsatisfied(this)
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val age = featureMap(AuthorAccountAge).asInstanceOf[Duration]
+      val age = featureMap(AuthorAccountAge).as nstanceOf[Durat on]
 
-      if (age < 72.hours) {
-        Result.SatisfiedResult
+       f (age < 72.h s) {
+        Result.Sat sf edResult
       } else {
-        UnsatisfiedResult
+        Unsat sf edResult
       }
     }
   }
 
-  abstract class ViewerInJurisdiction extends Condition {
-    override def features: Set[Feature[_]] = Set.empty
-    override val optionalFeatures: Set[Feature[_]] = Set(RequestCountryCode, ViewerCountryCode)
+  abstract class V e r nJur sd ct on extends Cond  on {
+    overr de def features: Set[Feature[_]] = Set.empty
+    overr de val opt onalFeatures: Set[Feature[_]] = Set(RequestCountryCode, V e rCountryCode)
 
-    protected val unsatisfiedResult = Unsatisfied(this)
+    protected val unsat sf edResult = Unsat sf ed(t )
 
     protected case class CountryFeatures(
-      requestCountryCode: Option[String],
-      viewerCountryCode: Option[String])
+      requestCountryCode: Opt on[Str ng],
+      v e rCountryCode: Opt on[Str ng])
 
     def getCountryFeatures(featureMap: Map[Feature[_], _]): CountryFeatures = {
       val requestCountryCodeOpt = featureMap
         .get(RequestCountryCode)
-        .map(_.asInstanceOf[String])
-      val viewerCountryCodeOpt = featureMap
-        .get(ViewerCountryCode)
-        .map(_.asInstanceOf[String])
+        .map(_.as nstanceOf[Str ng])
+      val v e rCountryCodeOpt = featureMap
+        .get(V e rCountryCode)
+        .map(_.as nstanceOf[Str ng])
 
-      CountryFeatures(requestCountryCodeOpt, viewerCountryCodeOpt)
+      CountryFeatures(requestCountryCodeOpt, v e rCountryCodeOpt)
     }
   }
 
-  case class ViewerInHrcj(jurisdictions: Set[String]) extends ViewerInJurisdiction {
+  case class V e r nHrcj(jur sd ct ons: Set[Str ng]) extends V e r nJur sd ct on {
 
-    override def preFilter(
-      evaluationContext: EvaluationContext,
+    overr de def preF lter(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
-    ): PreFilterResult =
+    ): PreF lterResult =
       featureMap
         .get(RequestCountryCode)
-        .map(_.asInstanceOf[String])
-        .collectFirst {
-          case rcc if jurisdictions.contains(rcc) => NeedsFullEvaluation
+        .map(_.as nstanceOf[Str ng])
+        .collectF rst {
+          case rcc  f jur sd ct ons.conta ns(rcc) => NeedsFullEvaluat on
         }
-        .getOrElse(Filtered)
+        .getOrElse(F ltered)
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val countryFeatures = getCountryFeatures(featureMap)
 
       countryFeatures match {
-        case CountryFeatures(Some(rcc), Some(vcc))
-            if jurisdictions.contains(rcc) && vcc.equals(rcc) =>
-          Satisfied(Result.ViewerInHrcj(rcc))
-        case _ => unsatisfiedResult
+        case CountryFeatures(So (rcc), So (vcc))
+             f jur sd ct ons.conta ns(rcc) && vcc.equals(rcc) =>
+          Sat sf ed(Result.V e r nHrcj(rcc))
+        case _ => unsat sf edResult
       }
     }
   }
 
-  case class ViewerOrRequestInJurisdiction(enabledCountriesParam: Param[Seq[String]])
-      extends ViewerInJurisdiction
-      with HasParams
-      with PreFilterOnOptionalFeatures {
+  case class V e rOrRequest nJur sd ct on(enabledCountr esParam: Param[Seq[Str ng]])
+      extends V e r nJur sd ct on
+      w h HasParams
+      w h PreF lterOnOpt onalFeatures {
 
-    override val params: Set[Param[_]] = Set(enabledCountriesParam)
+    overr de val params: Set[Param[_]] = Set(enabledCountr esParam)
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val countries: Seq[String] =
-        evaluationContext.params(enabledCountriesParam).map(c => c.toLowerCase)
+      val countr es: Seq[Str ng] =
+        evaluat onContext.params(enabledCountr esParam).map(c => c.toLo rCase)
       val countryFeatures = getCountryFeatures(featureMap)
 
       val countryCodeOpt =
-        countryFeatures.viewerCountryCode.orElse(countryFeatures.requestCountryCode)
+        countryFeatures.v e rCountryCode.orElse(countryFeatures.requestCountryCode)
 
       countryCodeOpt match {
-        case Some(countryCode) if countries.contains(countryCode) =>
-          Satisfied(Result.ViewerOrRequestInCountry(countryCode))
-        case _ => unsatisfiedResult
+        case So (countryCode)  f countr es.conta ns(countryCode) =>
+          Sat sf ed(Result.V e rOrRequest nCountry(countryCode))
+        case _ => unsat sf edResult
       }
     }
   }
 
-  case class ViewerAgeInYearsGte(ageToCompare: Int, ignoreEmptyAge: Boolean = false)
-      extends Condition
-      with PreFilterOnOptionalFeatures {
-    override def features: Set[Feature[_]] = Set.empty
-    override def optionalFeatures: Set[Feature[_]] = Set(ViewerAge)
+  case class V e rAge nYearsGte(ageToCompare:  nt,  gnoreEmptyAge: Boolean = false)
+      extends Cond  on
+      w h PreF lterOnOpt onalFeatures {
+    overr de def features: Set[Feature[_]] = Set.empty
+    overr de def opt onalFeatures: Set[Feature[_]] = Set(V e rAge)
 
-    private val unsatisfiedResult = Unsatisfied(this)
+    pr vate val unsat sf edResult = Unsat sf ed(t )
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result =
       featureMap
-        .get(ViewerAge)
-        .map(_.asInstanceOf[UserAge])
-        .collectFirst {
-          case UserAge(Some(age)) if age >= ageToCompare =>
-            Satisfied(Result.ViewerAgeInYears(age))
-          case UserAge(None) if ignoreEmptyAge =>
-            Satisfied(Result.NoViewerAge)
+        .get(V e rAge)
+        .map(_.as nstanceOf[UserAge])
+        .collectF rst {
+          case UserAge(So (age))  f age >= ageToCompare =>
+            Sat sf ed(Result.V e rAge nYears(age))
+          case UserAge(None)  f  gnoreEmptyAge =>
+            Sat sf ed(Result.NoV e rAge)
         }
-        .getOrElse(unsatisfiedResult)
+        .getOrElse(unsat sf edResult)
   }
 
-  case class UnderageViewer(ageToCompare: Int) extends Condition with PreFilterOnOptionalFeatures {
-    override def features: Set[Feature[_]] = Set.empty
-    override def optionalFeatures: Set[Feature[_]] = Set(ViewerAge)
+  case class UnderageV e r(ageToCompare:  nt) extends Cond  on w h PreF lterOnOpt onalFeatures {
+    overr de def features: Set[Feature[_]] = Set.empty
+    overr de def opt onalFeatures: Set[Feature[_]] = Set(V e rAge)
 
-    private val unsatisfiedResult = Unsatisfied(this)
+    pr vate val unsat sf edResult = Unsat sf ed(t )
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result =
       featureMap
-        .get(ViewerAge)
-        .map(_.asInstanceOf[UserAge])
-        .collectFirst {
-          case UserAge(Some(age)) if age < ageToCompare => Satisfied(Result.ViewerAgeInYears(age))
+        .get(V e rAge)
+        .map(_.as nstanceOf[UserAge])
+        .collectF rst {
+          case UserAge(So (age))  f age < ageToCompare => Sat sf ed(Result.V e rAge nYears(age))
         }
-        .getOrElse(unsatisfiedResult)
+        .getOrElse(unsat sf edResult)
   }
 
-  case object ViewerMissingAge extends Condition with PreFilterOnOptionalFeatures {
-    override def features: Set[Feature[_]] = Set.empty
-    override def optionalFeatures: Set[Feature[_]] = Set(ViewerAge)
+  case object V e rM ss ngAge extends Cond  on w h PreF lterOnOpt onalFeatures {
+    overr de def features: Set[Feature[_]] = Set.empty
+    overr de def opt onalFeatures: Set[Feature[_]] = Set(V e rAge)
 
-    private val unsatisfiedResult = Unsatisfied(this)
+    pr vate val unsat sf edResult = Unsat sf ed(t )
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result =
       featureMap
-        .get(ViewerAge)
-        .map(_.asInstanceOf[UserAge])
-        .collectFirst {
-          case UserAge(None) => Satisfied(Result.NoViewerAge)
+        .get(V e rAge)
+        .map(_.as nstanceOf[UserAge])
+        .collectF rst {
+          case UserAge(None) => Sat sf ed(Result.NoV e rAge)
         }
-        .getOrElse(unsatisfiedResult)
+        .getOrElse(unsat sf edResult)
   }
 
-  case object ViewerOptInBlockingOnSearch extends BooleanFeatureCondition(ViewerOptInBlocking)
-  case object ViewerOptInFilteringOnSearch extends BooleanFeatureCondition(ViewerOptInFiltering)
-  case object SelfReply extends BooleanFeatureCondition(TweetIsSelfReply)
-  case object Nullcast extends BooleanFeatureCondition(TweetIsNullcast)
-  case object Moderated extends BooleanFeatureCondition(TweetIsModerated)
-  case object Retweet extends BooleanFeatureCondition(TweetIsRetweet)
+  case object V e rOpt nBlock ngOnSearch extends BooleanFeatureCond  on(V e rOpt nBlock ng)
+  case object V e rOpt nF lter ngOnSearch extends BooleanFeatureCond  on(V e rOpt nF lter ng)
+  case object SelfReply extends BooleanFeatureCond  on(T et sSelfReply)
+  case object Nullcast extends BooleanFeatureCond  on(T et sNullcast)
+  case object Moderated extends BooleanFeatureCond  on(T et sModerated)
+  case object Ret et extends BooleanFeatureCond  on(T et sRet et)
 
-  case object IsFirstPageSearchResult extends Condition {
-    override val features: Set[Feature[_]] = Set(SearchResultsPageNumber)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
-    private val UnsatisfiedResult = Unsatisfied(this)
+  case object  sF rstPageSearchResult extends Cond  on {
+    overr de val features: Set[Feature[_]] = Set(SearchResultsPageNumber)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val searchResultsPageNumber = featureMap(SearchResultsPageNumber).asInstanceOf[Int]
-      if (searchResultsPageNumber == 1) {
-        Result.SatisfiedResult
+      val searchResultsPageNumber = featureMap(SearchResultsPageNumber).as nstanceOf[ nt]
+       f (searchResultsPageNumber == 1) {
+        Result.Sat sf edResult
       } else {
-        UnsatisfiedResult
+        Unsat sf edResult
       }
     }
   }
 
-  case object HasSearchCandidateCountGreaterThan45 extends Condition {
-    override val features: Set[Feature[_]] = Set(SearchCandidateCount)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
-    private val UnsatisfiedResult = Unsatisfied(this)
+  case object HasSearchCand dateCountGreaterThan45 extends Cond  on {
+    overr de val features: Set[Feature[_]] = Set(SearchCand dateCount)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val searchCandidateCount = featureMap(SearchCandidateCount).asInstanceOf[Int]
-      if (searchCandidateCount > 45) {
-        Result.SatisfiedResult
+      val searchCand dateCount = featureMap(SearchCand dateCount).as nstanceOf[ nt]
+       f (searchCand dateCount > 45) {
+        Result.Sat sf edResult
       } else {
-        UnsatisfiedResult
+        Unsat sf edResult
       }
     }
   }
 
-  abstract class HasSearchQuerySource(querySourceToMatch: ThriftQuerySource) extends Condition {
-    override lazy val name: String = s"HasSearchQuerySource(${querySourceToMatch})"
-    override val features: Set[Feature[_]] = Set(SearchQuerySource)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
-    private val UnsatisfiedResult = Unsatisfied(this)
-    private val SatisfiedResult: Satisfied = Satisfied(HasQuerySource(querySourceToMatch))
+  abstract class HasSearchQueryS ce(queryS ceToMatch: Thr ftQueryS ce) extends Cond  on {
+    overr de lazy val na : Str ng = s"HasSearchQueryS ce(${queryS ceToMatch})"
+    overr de val features: Set[Feature[_]] = Set(SearchQueryS ce)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
+    pr vate val Sat sf edResult: Sat sf ed = Sat sf ed(HasQueryS ce(queryS ceToMatch))
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val querySource = featureMap(SearchQuerySource).asInstanceOf[ThriftQuerySource]
-      if (querySourceToMatch.equals(querySource)) {
-        SatisfiedResult
+      val queryS ce = featureMap(SearchQueryS ce).as nstanceOf[Thr ftQueryS ce]
+       f (queryS ceToMatch.equals(queryS ce)) {
+        Sat sf edResult
       } else {
-        UnsatisfiedResult
+        Unsat sf edResult
       }
     }
   }
 
-  case object IsTrendClickSourceSearchResult extends Condition {
-    override val features: Set[Feature[_]] = Set(SearchQuerySource)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
-    private val UnsatisfiedResult = Unsatisfied(this)
+  case object  sTrendCl ckS ceSearchResult extends Cond  on {
+    overr de val features: Set[Feature[_]] = Set(SearchQueryS ce)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
 
-    private def checkQuerySource[T](
+    pr vate def c ckQueryS ce[T](
       featureMap: Map[Feature[_], _],
-      nonTrendSourceResult: T,
-      trendSourceResult: T
+      nonTrendS ceResult: T,
+      trendS ceResult: T
     ): T = {
-      val searchResultsPageNumber = featureMap(SearchQuerySource).asInstanceOf[ThriftQuerySource]
-      if (searchResultsPageNumber == ThriftQuerySource.TrendClick) {
-        trendSourceResult
+      val searchResultsPageNumber = featureMap(SearchQueryS ce).as nstanceOf[Thr ftQueryS ce]
+       f (searchResultsPageNumber == Thr ftQueryS ce.TrendCl ck) {
+        trendS ceResult
       } else {
-        nonTrendSourceResult
+        nonTrendS ceResult
       }
     }
 
-    override def preFilter(
-      evaluationContext: EvaluationContext,
+    overr de def preF lter(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
-    ): PreFilterResult =
-      checkQuerySource(featureMap, Filtered, NotFiltered)
+    ): PreF lterResult =
+      c ckQueryS ce(featureMap, F ltered, NotF ltered)
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result =
-      checkQuerySource(featureMap, UnsatisfiedResult, Result.SatisfiedResult)
+      c ckQueryS ce(featureMap, Unsat sf edResult, Result.Sat sf edResult)
   }
-  case object IsSearchHashtagClick extends HasSearchQuerySource(ThriftQuerySource.HashtagClick)
-  case object IsSearchTrendClick extends HasSearchQuerySource(ThriftQuerySource.TrendClick)
+  case object  sSearchHashtagCl ck extends HasSearchQueryS ce(Thr ftQueryS ce.HashtagCl ck)
+  case object  sSearchTrendCl ck extends HasSearchQueryS ce(Thr ftQueryS ce.TrendCl ck)
 
   case object SearchQueryHasUser
-      extends BooleanFeatureCondition(com.twitter.visibility.features.SearchQueryHasUser)
+      extends BooleanFeatureCond  on(com.tw ter.v s b l y.features.SearchQueryHasUser)
 
-  case class Equals[T](feature: Feature[T], value: T) extends Condition {
+  case class Equals[T](feature: Feature[T], value: T) extends Cond  on {
 
-    override def features: Set[Feature[_]] = Set(feature)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
+    overr de def features: Set[Feature[_]] = Set(feature)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
 
-    private val SatisfiedResult: Result = Satisfied()
-    private val UnsatisfiedResult: Result = Unsatisfied(this)
+    pr vate val Sat sf edResult: Result = Sat sf ed()
+    pr vate val Unsat sf edResult: Result = Unsat sf ed(t )
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val featureValue = featureMap(feature).asInstanceOf[T]
-      if (featureValue.equals(value)) SatisfiedResult else UnsatisfiedResult
+      val featureValue = featureMap(feature).as nstanceOf[T]
+       f (featureValue.equals(value)) Sat sf edResult else Unsat sf edResult
     }
   }
 
-  case class FeatureEquals[T](left: Feature[T], right: Feature[T]) extends Condition {
+  case class FeatureEquals[T](left: Feature[T], r ght: Feature[T]) extends Cond  on {
 
-    override def features: Set[Feature[_]] = Set.empty
-    override val optionalFeatures: Set[Feature[_]] = Set(left, right)
+    overr de def features: Set[Feature[_]] = Set.empty
+    overr de val opt onalFeatures: Set[Feature[_]] = Set(left, r ght)
 
-    private val SatisfiedResult: Result = Satisfied()
-    private val UnsatisfiedResult: Result = Unsatisfied(this)
+    pr vate val Sat sf edResult: Result = Sat sf ed()
+    pr vate val Unsat sf edResult: Result = Unsat sf ed(t )
 
-    override def preFilter(
-      evaluationContext: EvaluationContext,
+    overr de def preF lter(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
-    ): PreFilterResult = {
-      if (featureMap.contains(left) && featureMap.contains(right)) {
-        if (apply(evaluationContext, featureMap).asBoolean) {
-          NotFiltered
+    ): PreF lterResult = {
+       f (featureMap.conta ns(left) && featureMap.conta ns(r ght)) {
+         f (apply(evaluat onContext, featureMap).asBoolean) {
+          NotF ltered
         } else {
-          Filtered
+          F ltered
         }
       } else {
-        NeedsFullEvaluation
+        NeedsFullEvaluat on
       }
     }
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      if (featureMap.contains(left) && featureMap.contains(right)) {
-        val leftValue = featureMap(left).asInstanceOf[T]
-        val rightValue = featureMap(right).asInstanceOf[T]
-        if (leftValue.equals(rightValue)) SatisfiedResult else UnsatisfiedResult
+       f (featureMap.conta ns(left) && featureMap.conta ns(r ght)) {
+        val leftValue = featureMap(left).as nstanceOf[T]
+        val r ghtValue = featureMap(r ght).as nstanceOf[T]
+         f (leftValue.equals(r ghtValue)) Sat sf edResult else Unsat sf edResult
       } else {
-        UnsatisfiedResult
+        Unsat sf edResult
       }
     }
   }
 
-  case class And(override val conditions: Condition*)
-      extends Condition
-      with HasNestedConditions
-      with HasParams {
-    override lazy val name: String = s"(${conditions.map(_.name).mkString(" And ")})"
-    override val features: Set[Feature[_]] = conditions.flatMap(_.features).toSet
-    override val optionalFeatures: Set[Feature[_]] = conditions.flatMap(_.optionalFeatures).toSet
-    override val params: Set[Param[_]] =
-      conditions.collect { case p: HasParams => p.params }.flatten.toSet
+  case class And(overr de val cond  ons: Cond  on*)
+      extends Cond  on
+      w h HasNestedCond  ons
+      w h HasParams {
+    overr de lazy val na : Str ng = s"(${cond  ons.map(_.na ).mkStr ng(" And ")})"
+    overr de val features: Set[Feature[_]] = cond  ons.flatMap(_.features).toSet
+    overr de val opt onalFeatures: Set[Feature[_]] = cond  ons.flatMap(_.opt onalFeatures).toSet
+    overr de val params: Set[Param[_]] =
+      cond  ons.collect { case p: HasParams => p.params }.flatten.toSet
 
-    override def preFilter(
-      evaluationContext: EvaluationContext,
+    overr de def preF lter(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
-    ): PreFilterResult = {
-      conditions.foldLeft(NotFiltered: PreFilterResult) {
-        case (NotFiltered, condition) => condition.preFilter(evaluationContext, featureMap)
-        case (Filtered, _) => Filtered
-        case (NeedsFullEvaluation, condition) => {
-          condition.preFilter(evaluationContext, featureMap) match {
-            case Filtered => Filtered
-            case _ => NeedsFullEvaluation
+    ): PreF lterResult = {
+      cond  ons.foldLeft(NotF ltered: PreF lterResult) {
+        case (NotF ltered, cond  on) => cond  on.preF lter(evaluat onContext, featureMap)
+        case (F ltered, _) => F ltered
+        case (NeedsFullEvaluat on, cond  on) => {
+          cond  on.preF lter(evaluat onContext, featureMap) match {
+            case F ltered => F ltered
+            case _ => NeedsFullEvaluat on
           }
         }
       }
     }
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      conditions.foldLeft(Result.SatisfiedResult) {
-        case (result @ Unsatisfied(_), _) => result
-        case (Result.SatisfiedResult, condition) => condition.apply(evaluationContext, featureMap)
-        case (result @ Satisfied(_), condition) => {
-          condition.apply(evaluationContext, featureMap) match {
-            case r @ Unsatisfied(_) => r
+      cond  ons.foldLeft(Result.Sat sf edResult) {
+        case (result @ Unsat sf ed(_), _) => result
+        case (Result.Sat sf edResult, cond  on) => cond  on.apply(evaluat onContext, featureMap)
+        case (result @ Sat sf ed(_), cond  on) => {
+          cond  on.apply(evaluat onContext, featureMap) match {
+            case r @ Unsat sf ed(_) => r
             case _ => result
           }
         }
@@ -1589,812 +1589,812 @@ object Condition {
     }
   }
 
-  case class Or(override val conditions: Condition*)
-      extends Condition
-      with HasNestedConditions
-      with HasParams {
-    override lazy val name: String = s"(${conditions.map(_.name).mkString(" Or ")})"
-    override val features: Set[Feature[_]] = conditions.flatMap(_.features).toSet
-    override val optionalFeatures: Set[Feature[_]] = conditions.flatMap(_.optionalFeatures).toSet
-    override val params: Set[Param[_]] =
-      conditions.collect { case p: HasParams => p.params }.flatten.toSet
+  case class Or(overr de val cond  ons: Cond  on*)
+      extends Cond  on
+      w h HasNestedCond  ons
+      w h HasParams {
+    overr de lazy val na : Str ng = s"(${cond  ons.map(_.na ).mkStr ng(" Or ")})"
+    overr de val features: Set[Feature[_]] = cond  ons.flatMap(_.features).toSet
+    overr de val opt onalFeatures: Set[Feature[_]] = cond  ons.flatMap(_.opt onalFeatures).toSet
+    overr de val params: Set[Param[_]] =
+      cond  ons.collect { case p: HasParams => p.params }.flatten.toSet
 
-    private val UnsatisfiedResult = Unsatisfied(this)
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
 
-    override def preFilter(
-      evaluationContext: EvaluationContext,
+    overr de def preF lter(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
-    ): PreFilterResult = {
-      conditions.foldLeft(Filtered: PreFilterResult) {
-        case (Filtered, c) => c.preFilter(evaluationContext, featureMap)
-        case (NotFiltered, _) => NotFiltered
-        case (NeedsFullEvaluation, c) => {
-          c.preFilter(evaluationContext, featureMap) match {
-            case NotFiltered => NotFiltered
-            case _ => NeedsFullEvaluation
+    ): PreF lterResult = {
+      cond  ons.foldLeft(F ltered: PreF lterResult) {
+        case (F ltered, c) => c.preF lter(evaluat onContext, featureMap)
+        case (NotF ltered, _) => NotF ltered
+        case (NeedsFullEvaluat on, c) => {
+          c.preF lter(evaluat onContext, featureMap) match {
+            case NotF ltered => NotF ltered
+            case _ => NeedsFullEvaluat on
           }
         }
       }
     }
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val foundSatisfiedCondition =
-        conditions.find(_.apply(evaluationContext, featureMap).asBoolean)
-      if (foundSatisfiedCondition.isDefined) {
-        Result.SatisfiedResult
+      val foundSat sf edCond  on =
+        cond  ons.f nd(_.apply(evaluat onContext, featureMap).asBoolean)
+       f (foundSat sf edCond  on. sDef ned) {
+        Result.Sat sf edResult
       } else {
-        UnsatisfiedResult
+        Unsat sf edResult
       }
     }
   }
 
-  case class Not(condition: Condition) extends Condition with HasNestedConditions with HasParams {
-    override lazy val name: String = s"Not(${condition.name})"
-    override val features: Set[Feature[_]] = condition.features
-    override val optionalFeatures: Set[Feature[_]] = condition.optionalFeatures
-    override val conditions: Seq[Condition] = Seq(condition)
-    override val params: Set[Param[_]] =
-      conditions.collect { case p: HasParams => p.params }.flatten.toSet
+  case class Not(cond  on: Cond  on) extends Cond  on w h HasNestedCond  ons w h HasParams {
+    overr de lazy val na : Str ng = s"Not(${cond  on.na })"
+    overr de val features: Set[Feature[_]] = cond  on.features
+    overr de val opt onalFeatures: Set[Feature[_]] = cond  on.opt onalFeatures
+    overr de val cond  ons: Seq[Cond  on] = Seq(cond  on)
+    overr de val params: Set[Param[_]] =
+      cond  ons.collect { case p: HasParams => p.params }.flatten.toSet
 
-    private val UnsatisfiedResult = Unsatisfied(this)
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
 
-    override def preFilter(
-      evaluationContext: EvaluationContext,
+    overr de def preF lter(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
-    ): PreFilterResult =
-      condition.preFilter(evaluationContext, featureMap) match {
-        case Filtered => NotFiltered
-        case NotFiltered => Filtered
-        case _ => NeedsFullEvaluation
+    ): PreF lterResult =
+      cond  on.preF lter(evaluat onContext, featureMap) match {
+        case F ltered => NotF ltered
+        case NotF ltered => F ltered
+        case _ => NeedsFullEvaluat on
       }
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result =
-      if (condition(evaluationContext, featureMap).asBoolean) {
-        UnsatisfiedResult
+       f (cond  on(evaluat onContext, featureMap).asBoolean) {
+        Unsat sf edResult
       } else {
-        Result.SatisfiedResult
+        Result.Sat sf edResult
       }
   }
 
-  val LoggedOutOrViewerNotFollowingAuthor: And =
-    And(NonAuthorViewer, Or(LoggedOutViewer, Not(ViewerDoesFollowAuthor)))
+  val LoggedOutOrV e rNotFollow ngAuthor: And =
+    And(NonAuthorV e r, Or(LoggedOutV e r, Not(V e rDoesFollowAuthor)))
 
-  val LoggedOutOrViewerOptInFiltering: Or =
-    Or(LoggedOutViewer, ViewerOptInFilteringOnSearch)
+  val LoggedOutOrV e rOpt nF lter ng: Or =
+    Or(LoggedOutV e r, V e rOpt nF lter ngOnSearch)
 
-  val LoggedInViewer: Not = Not(LoggedOutViewer)
+  val Logged nV e r: Not = Not(LoggedOutV e r)
 
-  val OuterAuthorNotFollowingAuthor: And =
-    And(Not(OuterAuthorIsInnerAuthor), Not(OuterAuthorFollowsAuthor))
+  val OuterAuthorNotFollow ngAuthor: And =
+    And(Not(OuterAuthor s nnerAuthor), Not(OuterAuthorFollowsAuthor))
 
-  val IsFocalTweet: FeatureEquals[Long] = FeatureEquals(TweetId, FocalTweetId)
+  val  sFocalT et: FeatureEquals[Long] = FeatureEquals(T et d, FocalT et d)
 
-  val NonHydratingConditions: Set[Class[_]] = Set(
-    LoggedOutViewer,
-    NonAuthorViewer,
+  val NonHydrat ngCond  ons: Set[Class[_]] = Set(
+    LoggedOutV e r,
+    NonAuthorV e r,
     True,
-    TweetComposedAfter(Time.now),
-    TweetComposedBefore(Time.now)
+    T etComposedAfter(T  .now),
+    T etComposedBefore(T  .now)
   ).map(_.getClass)
 
-  trait HasParams {
+  tra  HasParams {
     val params: Set[Param[_]]
   }
 
-  def hasLabelCondition(condition: Condition, tweetSafetyLabelType: TweetSafetyLabelType): Boolean =
-    condition match {
+  def hasLabelCond  on(cond  on: Cond  on, t etSafetyLabelType: T etSafetyLabelType): Boolean =
+    cond  on match {
       case lt: HasSafetyLabelType =>
-        lt.hasLabelType(tweetSafetyLabelType)
+        lt.hasLabelType(t etSafetyLabelType)
       case _ => false
     }
 
-  def hasLabelCondition(condition: Condition, userLabelValue: UserLabelValue): Boolean =
-    condition match {
+  def hasLabelCond  on(cond  on: Cond  on, userLabelValue: UserLabelValue): Boolean =
+    cond  on match {
       case lt: HasSafetyLabelType =>
         lt.hasLabelType(userLabelValue)
       case _ => false
     }
 
-  def hasLabelCondition(condition: Condition, spaceSafetyLabelType: SpaceSafetyLabelType): Boolean =
-    condition match {
+  def hasLabelCond  on(cond  on: Cond  on, spaceSafetyLabelType: SpaceSafetyLabelType): Boolean =
+    cond  on match {
       case lt: HasSafetyLabelType =>
         lt.hasLabelType(spaceSafetyLabelType)
       case _ => false
     }
 
-  def hasLabelCondition(condition: Condition, mediaSafetyLabelType: MediaSafetyLabelType): Boolean =
-    condition match {
+  def hasLabelCond  on(cond  on: Cond  on,  d aSafetyLabelType:  d aSafetyLabelType): Boolean =
+    cond  on match {
       case lt: HasSafetyLabelType =>
-        lt.hasLabelType(mediaSafetyLabelType)
+        lt.hasLabelType( d aSafetyLabelType)
       case _ => false
     }
 
   case class Choose[T](
-    conditionMap: Map[T, Condition],
-    defaultCondition: Condition,
-    choiceParam: Param[T])
-      extends Condition
-      with HasNestedConditions
-      with HasParams {
-    override lazy val name: String =
-      s"(Either ${conditionMap.values.map(_.name).mkString(", ")} or ${defaultCondition.name})"
-    override val features: Set[Feature[_]] =
-      conditionMap.values.flatMap(_.features).toSet ++ defaultCondition.features
-    override val optionalFeatures: Set[Feature[_]] =
-      conditionMap.values.flatMap(_.optionalFeatures).toSet ++ defaultCondition.optionalFeatures
-    override val conditions: Seq[Condition] = conditionMap.values.toSeq :+ defaultCondition
-    override val params: Set[Param[_]] =
-      conditions.collect { case p: HasParams => p.params }.flatten.toSet
+    cond  onMap: Map[T, Cond  on],
+    defaultCond  on: Cond  on,
+    cho ceParam: Param[T])
+      extends Cond  on
+      w h HasNestedCond  ons
+      w h HasParams {
+    overr de lazy val na : Str ng =
+      s"(E  r ${cond  onMap.values.map(_.na ).mkStr ng(", ")} or ${defaultCond  on.na })"
+    overr de val features: Set[Feature[_]] =
+      cond  onMap.values.flatMap(_.features).toSet ++ defaultCond  on.features
+    overr de val opt onalFeatures: Set[Feature[_]] =
+      cond  onMap.values.flatMap(_.opt onalFeatures).toSet ++ defaultCond  on.opt onalFeatures
+    overr de val cond  ons: Seq[Cond  on] = cond  onMap.values.toSeq :+ defaultCond  on
+    overr de val params: Set[Param[_]] =
+      cond  ons.collect { case p: HasParams => p.params }.flatten.toSet
 
-    private[this] def getCondition(evaluationContext: EvaluationContext): Condition =
-      conditionMap.getOrElse(evaluationContext.params(choiceParam), defaultCondition)
+    pr vate[t ] def getCond  on(evaluat onContext: Evaluat onContext): Cond  on =
+      cond  onMap.getOrElse(evaluat onContext.params(cho ceParam), defaultCond  on)
 
-    override def preFilter(
-      evaluationContext: EvaluationContext,
+    overr de def preF lter(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
-    ): PreFilterResult =
-      getCondition(evaluationContext).preFilter(evaluationContext, featureMap)
+    ): PreF lterResult =
+      getCond  on(evaluat onContext).preF lter(evaluat onContext, featureMap)
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result =
-      getCondition(evaluationContext)(evaluationContext, featureMap)
+      getCond  on(evaluat onContext)(evaluat onContext, featureMap)
   }
 
-  case class IfElse(
-    branchingCondition: Condition,
-    ifTrueCondition: Condition,
-    ifFalseCondition: Condition)
-      extends Condition
-      with HasNestedConditions
-      with HasParams {
-    override lazy val name: String =
-      s"(If ${branchingCondition.name} Then ${ifTrueCondition.name} Else ${ifFalseCondition.name})"
-    override val features: Set[Feature[_]] =
-      branchingCondition.features ++ ifTrueCondition.features ++ ifFalseCondition.features
-    override val optionalFeatures: Set[Feature[_]] =
-      branchingCondition.optionalFeatures ++ ifTrueCondition.optionalFeatures ++ ifFalseCondition.optionalFeatures
-    override val conditions: Seq[Condition] =
-      Seq(branchingCondition, ifTrueCondition, ifFalseCondition)
-    override val params: Set[Param[_]] =
-      conditions.collect { case p: HasParams => p.params }.flatten.toSet
+  case class  fElse(
+    branch ngCond  on: Cond  on,
+     fTrueCond  on: Cond  on,
+     fFalseCond  on: Cond  on)
+      extends Cond  on
+      w h HasNestedCond  ons
+      w h HasParams {
+    overr de lazy val na : Str ng =
+      s"( f ${branch ngCond  on.na } T n ${ fTrueCond  on.na } Else ${ fFalseCond  on.na })"
+    overr de val features: Set[Feature[_]] =
+      branch ngCond  on.features ++  fTrueCond  on.features ++  fFalseCond  on.features
+    overr de val opt onalFeatures: Set[Feature[_]] =
+      branch ngCond  on.opt onalFeatures ++  fTrueCond  on.opt onalFeatures ++  fFalseCond  on.opt onalFeatures
+    overr de val cond  ons: Seq[Cond  on] =
+      Seq(branch ngCond  on,  fTrueCond  on,  fFalseCond  on)
+    overr de val params: Set[Param[_]] =
+      cond  ons.collect { case p: HasParams => p.params }.flatten.toSet
 
-    override def preFilter(
-      evaluationContext: EvaluationContext,
+    overr de def preF lter(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
-    ): PreFilterResult =
-      branchingCondition.preFilter(evaluationContext, featureMap) match {
-        case Filtered =>
-          ifFalseCondition.preFilter(evaluationContext, featureMap)
-        case NotFiltered =>
-          ifTrueCondition.preFilter(evaluationContext, featureMap)
+    ): PreF lterResult =
+      branch ngCond  on.preF lter(evaluat onContext, featureMap) match {
+        case F ltered =>
+           fFalseCond  on.preF lter(evaluat onContext, featureMap)
+        case NotF ltered =>
+           fTrueCond  on.preF lter(evaluat onContext, featureMap)
         case _ =>
-          NeedsFullEvaluation
+          NeedsFullEvaluat on
       }
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result =
-      if (branchingCondition(evaluationContext, featureMap).asBoolean) {
-        ifTrueCondition(evaluationContext, featureMap)
+       f (branch ngCond  on(evaluat onContext, featureMap).asBoolean) {
+         fTrueCond  on(evaluat onContext, featureMap)
       } else {
-        ifFalseCondition(evaluationContext, featureMap)
+         fFalseCond  on(evaluat onContext, featureMap)
       }
   }
 
   case class GatedAlternate[T](
-    defaultCondition: Condition,
-    alternateConditions: Map[T, Condition],
-    bucketIdentifierToUseOnDisagreementParam: Param[Option[T]])
-      extends Condition
-      with HasNestedConditions
-      with HasParams {
+    defaultCond  on: Cond  on,
+    alternateCond  ons: Map[T, Cond  on],
+    bucket dent f erToUseOnD sagree ntParam: Param[Opt on[T]])
+      extends Cond  on
+      w h HasNestedCond  ons
+      w h HasParams {
 
-    override lazy val name: String =
-      s"(${defaultCondition.name} or sometimes ${alternateConditions.values.map(_.name).mkString(" or ")})"
+    overr de lazy val na : Str ng =
+      s"(${defaultCond  on.na } or so t  s ${alternateCond  ons.values.map(_.na ).mkStr ng(" or ")})"
 
-    override val features: Set[Feature[_]] =
-      defaultCondition.features ++ alternateConditions.values.flatMap(_.features)
+    overr de val features: Set[Feature[_]] =
+      defaultCond  on.features ++ alternateCond  ons.values.flatMap(_.features)
 
-    override val optionalFeatures: Set[Feature[_]] =
-      defaultCondition.optionalFeatures ++ alternateConditions.values.flatMap(_.optionalFeatures)
+    overr de val opt onalFeatures: Set[Feature[_]] =
+      defaultCond  on.opt onalFeatures ++ alternateCond  ons.values.flatMap(_.opt onalFeatures)
 
-    override val conditions: Seq[Condition] = Seq(defaultCondition) ++ alternateConditions.values
+    overr de val cond  ons: Seq[Cond  on] = Seq(defaultCond  on) ++ alternateCond  ons.values
 
-    override val params: Set[Param[_]] =
-      conditions.collect { case p: HasParams => p.params }.flatten.toSet
+    overr de val params: Set[Param[_]] =
+      cond  ons.collect { case p: HasParams => p.params }.flatten.toSet
 
-    override def preFilter(
-      evaluationContext: EvaluationContext,
+    overr de def preF lter(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
-    ): PreFilterResult =
-      if (defaultCondition.preFilter(evaluationContext, featureMap) == Filtered &&
-        alternateConditions.values.forall(_.preFilter(evaluationContext, featureMap) == Filtered)) {
-        Filtered
-      } else if (defaultCondition.preFilter(evaluationContext, featureMap) == NotFiltered &&
-        alternateConditions.values.forall(
-          _.preFilter(evaluationContext, featureMap) == NotFiltered)) {
-        NotFiltered
+    ): PreF lterResult =
+       f (defaultCond  on.preF lter(evaluat onContext, featureMap) == F ltered &&
+        alternateCond  ons.values.forall(_.preF lter(evaluat onContext, featureMap) == F ltered)) {
+        F ltered
+      } else  f (defaultCond  on.preF lter(evaluat onContext, featureMap) == NotF ltered &&
+        alternateCond  ons.values.forall(
+          _.preF lter(evaluat onContext, featureMap) == NotF ltered)) {
+        NotF ltered
       } else {
-        NeedsFullEvaluation
+        NeedsFullEvaluat on
       }
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val defaultConditionResult: Result = defaultCondition(evaluationContext, featureMap)
-      val alternateConditionResult: Map[T, Result] =
-        alternateConditions.mapValues(_(evaluationContext, featureMap))
+      val defaultCond  onResult: Result = defaultCond  on(evaluat onContext, featureMap)
+      val alternateCond  onResult: Map[T, Result] =
+        alternateCond  ons.mapValues(_(evaluat onContext, featureMap))
 
-      if (alternateConditionResult.values.exists(_.asBoolean != defaultConditionResult.asBoolean)) {
-        evaluationContext.params(bucketIdentifierToUseOnDisagreementParam) match {
-          case Some(bucket) if alternateConditionResult.contains(bucket) =>
-            alternateConditionResult(bucket)
+       f (alternateCond  onResult.values.ex sts(_.asBoolean != defaultCond  onResult.asBoolean)) {
+        evaluat onContext.params(bucket dent f erToUseOnD sagree ntParam) match {
+          case So (bucket)  f alternateCond  onResult.conta ns(bucket) =>
+            alternateCond  onResult(bucket)
           case _ =>
-            defaultConditionResult
+            defaultCond  onResult
         }
       } else {
-        defaultConditionResult
+        defaultCond  onResult
       }
     }
   }
 
-  case class EnumGatedAlternate[E <: Enumeration](
-    defaultCondition: Condition,
-    alternateConditions: Map[E#Value, Condition],
-    bucketIdentifierToUseOnDisagreementParam: EnumParam[E])
-      extends Condition
-      with HasNestedConditions
-      with HasParams {
+  case class EnumGatedAlternate[E <: Enu rat on](
+    defaultCond  on: Cond  on,
+    alternateCond  ons: Map[E#Value, Cond  on],
+    bucket dent f erToUseOnD sagree ntParam: EnumParam[E])
+      extends Cond  on
+      w h HasNestedCond  ons
+      w h HasParams {
 
-    override lazy val name: String =
-      s"(${defaultCondition.name} or sometimes ${alternateConditions.values.map(_.name).mkString(" or ")})"
+    overr de lazy val na : Str ng =
+      s"(${defaultCond  on.na } or so t  s ${alternateCond  ons.values.map(_.na ).mkStr ng(" or ")})"
 
-    override val features: Set[Feature[_]] =
-      defaultCondition.features ++ alternateConditions.values.flatMap(_.features)
+    overr de val features: Set[Feature[_]] =
+      defaultCond  on.features ++ alternateCond  ons.values.flatMap(_.features)
 
-    override val optionalFeatures: Set[Feature[_]] =
-      defaultCondition.optionalFeatures ++ alternateConditions.values.flatMap(_.optionalFeatures)
+    overr de val opt onalFeatures: Set[Feature[_]] =
+      defaultCond  on.opt onalFeatures ++ alternateCond  ons.values.flatMap(_.opt onalFeatures)
 
-    override val conditions: Seq[Condition] = Seq(defaultCondition) ++ alternateConditions.values
+    overr de val cond  ons: Seq[Cond  on] = Seq(defaultCond  on) ++ alternateCond  ons.values
 
-    override val params: Set[Param[_]] =
-      conditions
+    overr de val params: Set[Param[_]] =
+      cond  ons
         .collect {
           case p: HasParams => p.params
-        }.flatten.toSet + bucketIdentifierToUseOnDisagreementParam
+        }.flatten.toSet + bucket dent f erToUseOnD sagree ntParam
 
-    override def preFilter(
-      evaluationContext: EvaluationContext,
+    overr de def preF lter(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
-    ): PreFilterResult =
-      if (defaultCondition.preFilter(evaluationContext, featureMap) == Filtered &&
-        alternateConditions.values.forall(_.preFilter(evaluationContext, featureMap) == Filtered)) {
-        Filtered
-      } else if (defaultCondition.preFilter(evaluationContext, featureMap) == NotFiltered &&
-        alternateConditions.values.forall(
-          _.preFilter(evaluationContext, featureMap) == NotFiltered)) {
-        NotFiltered
+    ): PreF lterResult =
+       f (defaultCond  on.preF lter(evaluat onContext, featureMap) == F ltered &&
+        alternateCond  ons.values.forall(_.preF lter(evaluat onContext, featureMap) == F ltered)) {
+        F ltered
+      } else  f (defaultCond  on.preF lter(evaluat onContext, featureMap) == NotF ltered &&
+        alternateCond  ons.values.forall(
+          _.preF lter(evaluat onContext, featureMap) == NotF ltered)) {
+        NotF ltered
       } else {
-        NeedsFullEvaluation
+        NeedsFullEvaluat on
       }
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val defaultConditionResult: Result = defaultCondition(evaluationContext, featureMap)
-      val alternateConditionResult: Map[E#Value, Result] =
-        alternateConditions.mapValues(_(evaluationContext, featureMap))
+      val defaultCond  onResult: Result = defaultCond  on(evaluat onContext, featureMap)
+      val alternateCond  onResult: Map[E#Value, Result] =
+        alternateCond  ons.mapValues(_(evaluat onContext, featureMap))
 
-      if (alternateConditionResult.values.exists(_.asBoolean != defaultConditionResult.asBoolean)) {
-        evaluationContext.params(bucketIdentifierToUseOnDisagreementParam) match {
-          case bucket if alternateConditionResult.contains(bucket) =>
-            alternateConditionResult(bucket)
+       f (alternateCond  onResult.values.ex sts(_.asBoolean != defaultCond  onResult.asBoolean)) {
+        evaluat onContext.params(bucket dent f erToUseOnD sagree ntParam) match {
+          case bucket  f alternateCond  onResult.conta ns(bucket) =>
+            alternateCond  onResult(bucket)
           case _ =>
-            defaultConditionResult
+            defaultCond  onResult
         }
       } else {
-        defaultConditionResult
+        defaultCond  onResult
       }
     }
   }
 
-  case object IsTestTweet extends Condition {
-    override val features: Set[Feature[_]] = Set(TweetId)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
+  case object  sTestT et extends Cond  on {
+    overr de val features: Set[Feature[_]] = Set(T et d)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
 
-    private val UnsatisfiedResult = Unsatisfied(this)
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      if (!featureMap.contains(TweetId)) {
-        UnsatisfiedResult
+       f (!featureMap.conta ns(T et d)) {
+        Unsat sf edResult
       } else {
-        Result.SatisfiedResult
+        Result.Sat sf edResult
       }
     }
   }
 
-  case object IsTweetInTweetLevelStcmHoldback extends Condition {
-    override val features: Set[Feature[_]] = Set(TweetId)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
-    private val UnsatisfiedResult = Unsatisfied(this)
+  case object  sT et nT etLevelStcmHoldback extends Cond  on {
+    overr de val features: Set[Feature[_]] = Set(T et d)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val tweetId: Long = featureMap(TweetId).asInstanceOf[Long]
-      if (StcmTweetHoldback.isTweetInHoldback(tweetId)) {
-        Result.SatisfiedResult
+      val t et d: Long = featureMap(T et d).as nstanceOf[Long]
+       f (StcmT etHoldback. sT et nHoldback(t et d)) {
+        Result.Sat sf edResult
       } else {
-        UnsatisfiedResult
+        Unsat sf edResult
       }
     }
   }
 
-  case object MediaRestrictedInViewerCountry extends Condition {
-    override val features: Set[Feature[_]] =
-      Set(MediaGeoRestrictionsAllowList, MediaGeoRestrictionsDenyList)
-    override val optionalFeatures: Set[Feature[_]] = Set(RequestCountryCode)
+  case object  d aRestr cted nV e rCountry extends Cond  on {
+    overr de val features: Set[Feature[_]] =
+      Set( d aGeoRestr ct onsAllowL st,  d aGeoRestr ct onsDenyL st)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set(RequestCountryCode)
 
-    private val UnsatisfiedResult = Unsatisfied(this)
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val requestCountryCode = TakedownReasons.normalizeCountryCodeOption(
-        featureMap.get(RequestCountryCode).asInstanceOf[Option[String]])
-      val allowlistCountryCodes =
-        featureMap(MediaGeoRestrictionsAllowList).asInstanceOf[Seq[String]]
-      val denylistCountryCodes =
-        featureMap(MediaGeoRestrictionsDenyList).asInstanceOf[Seq[String]]
-      if ((allowlistCountryCodes.nonEmpty && !allowlistCountryCodes.contains(requestCountryCode))
-        || denylistCountryCodes.contains(requestCountryCode)) {
-        Result.SatisfiedResult
+      val requestCountryCode = TakedownReasons.normal zeCountryCodeOpt on(
+        featureMap.get(RequestCountryCode).as nstanceOf[Opt on[Str ng]])
+      val allowl stCountryCodes =
+        featureMap( d aGeoRestr ct onsAllowL st).as nstanceOf[Seq[Str ng]]
+      val denyl stCountryCodes =
+        featureMap( d aGeoRestr ct onsDenyL st).as nstanceOf[Seq[Str ng]]
+       f ((allowl stCountryCodes.nonEmpty && !allowl stCountryCodes.conta ns(requestCountryCode))
+        || denyl stCountryCodes.conta ns(requestCountryCode)) {
+        Result.Sat sf edResult
       } else {
-        UnsatisfiedResult
+        Unsat sf edResult
       }
     }
   }
 
-  case object OneToOneDmConversation
-      extends BooleanFeatureCondition(DmConversationIsOneToOneConversation)
+  case object OneToOneDmConversat on
+      extends BooleanFeatureCond  on(DmConversat on sOneToOneConversat on)
 
-  case object DmConversationTimelineIsEmpty
-      extends BooleanFeatureCondition(DmConversationHasEmptyTimeline)
+  case object DmConversat onT  l ne sEmpty
+      extends BooleanFeatureCond  on(DmConversat onHasEmptyT  l ne)
 
-  case object DmConversationLastReadableEventIdIsValid
-      extends BooleanFeatureCondition(DmConversationHasValidLastReadableEventId)
+  case object DmConversat onLastReadableEvent d sVal d
+      extends BooleanFeatureCond  on(DmConversat onHasVal dLastReadableEvent d)
 
-  case object ViewerIsDmConversationParticipant
-      extends BooleanFeatureCondition(feats.ViewerIsDmConversationParticipant)
+  case object V e r sDmConversat onPart c pant
+      extends BooleanFeatureCond  on(feats.V e r sDmConversat onPart c pant)
 
-  case object DmConversationInfoExists
-      extends BooleanFeatureCondition(feats.DmConversationInfoExists)
+  case object DmConversat on nfoEx sts
+      extends BooleanFeatureCond  on(feats.DmConversat on nfoEx sts)
 
-  case object DmConversationTimelineExists
-      extends BooleanFeatureCondition(feats.DmConversationTimelineExists)
+  case object DmConversat onT  l neEx sts
+      extends BooleanFeatureCond  on(feats.DmConversat onT  l neEx sts)
 
-  case object DmEventIsBeforeLastClearedEvent
-      extends BooleanFeatureCondition(DmEventOccurredBeforeLastClearedEvent)
+  case object DmEvent sBeforeLastClearedEvent
+      extends BooleanFeatureCond  on(DmEventOccurredBeforeLastClearedEvent)
 
-  case object DmEventIsBeforeJoinConversationEvent
-      extends BooleanFeatureCondition(DmEventOccurredBeforeJoinConversationEvent)
+  case object DmEvent sBeforeJo nConversat onEvent
+      extends BooleanFeatureCond  on(DmEventOccurredBeforeJo nConversat onEvent)
 
-  case object DmEventIsDeleted extends BooleanFeatureCondition(feats.DmEventIsDeleted)
+  case object DmEvent sDeleted extends BooleanFeatureCond  on(feats.DmEvent sDeleted)
 
-  case object DmEventIsHidden extends BooleanFeatureCondition(feats.DmEventIsHidden)
+  case object DmEvent sH dden extends BooleanFeatureCond  on(feats.DmEvent sH dden)
 
-  case object ViewerIsDmEventInitiatingUser
-      extends BooleanFeatureCondition(feats.ViewerIsDmEventInitiatingUser)
+  case object V e r sDmEvent n  at ngUser
+      extends BooleanFeatureCond  on(feats.V e r sDmEvent n  at ngUser)
 
-  case object DmEventInOneToOneConversationWithUnavailableUser
-      extends BooleanFeatureCondition(feats.DmEventInOneToOneConversationWithUnavailableUser)
+  case object DmEvent nOneToOneConversat onW hUnava lableUser
+      extends BooleanFeatureCond  on(feats.DmEvent nOneToOneConversat onW hUnava lableUser)
 
-  case object DmEventInOneToOneConversation
-      extends BooleanFeatureCondition(feats.DmEventInOneToOneConversation)
+  case object DmEvent nOneToOneConversat on
+      extends BooleanFeatureCond  on(feats.DmEvent nOneToOneConversat on)
 
-  case object MessageCreateDmEvent extends BooleanFeatureCondition(DmEventIsMessageCreateEvent)
+  case object  ssageCreateDmEvent extends BooleanFeatureCond  on(DmEvent s ssageCreateEvent)
 
-  case object WelcomeMessageCreateDmEvent
-      extends BooleanFeatureCondition(DmEventIsWelcomeMessageCreateEvent)
+  case object  lco  ssageCreateDmEvent
+      extends BooleanFeatureCond  on(DmEvent s lco  ssageCreateEvent)
 
-  case object LastMessageReadUpdateDmEvent
-      extends BooleanFeatureCondition(DmEventIsLastMessageReadUpdateEvent)
+  case object Last ssageReadUpdateDmEvent
+      extends BooleanFeatureCond  on(DmEvent sLast ssageReadUpdateEvent)
 
-  case object JoinConversationDmEvent
-      extends BooleanFeatureCondition(DmEventIsJoinConversationEvent)
+  case object Jo nConversat onDmEvent
+      extends BooleanFeatureCond  on(DmEvent sJo nConversat onEvent)
 
-  case object ConversationCreateDmEvent
-      extends BooleanFeatureCondition(DmEventIsConversationCreateEvent)
+  case object Conversat onCreateDmEvent
+      extends BooleanFeatureCond  on(DmEvent sConversat onCreateEvent)
 
-  case object TrustConversationDmEvent
-      extends BooleanFeatureCondition(DmEventIsTrustConversationEvent)
+  case object TrustConversat onDmEvent
+      extends BooleanFeatureCond  on(DmEvent sTrustConversat onEvent)
 
-  case object CsFeedbackSubmittedDmEvent
-      extends BooleanFeatureCondition(DmEventIsCsFeedbackSubmitted)
+  case object CsFeedbackSubm tedDmEvent
+      extends BooleanFeatureCond  on(DmEvent sCsFeedbackSubm ted)
 
-  case object CsFeedbackDismissedDmEvent
-      extends BooleanFeatureCondition(DmEventIsCsFeedbackDismissed)
+  case object CsFeedbackD sm ssedDmEvent
+      extends BooleanFeatureCond  on(DmEvent sCsFeedbackD sm ssed)
 
-  case object PerspectivalJoinConversationDmEvent
-      extends BooleanFeatureCondition(feats.DmEventIsPerspectivalJoinConversationEvent)
+  case object Perspect valJo nConversat onDmEvent
+      extends BooleanFeatureCond  on(feats.DmEvent sPerspect valJo nConversat onEvent)
 
 
-  case class SpaceHasLabelWithScoreAboveThresholdWithParam(
+  case class SpaceHasLabelW hScoreAboveThresholdW hParam(
     spaceSafetyLabelType: SpaceSafetyLabelType,
     thresholdParam: Param[Double])
-      extends Condition
-      with HasParams {
-    override lazy val name: String =
-      s"SpaceHasLabelWithScoreAboveThreshold(${spaceSafetyLabelType.name}, ${NamingUtils.getFriendlyName(thresholdParam)})"
-    override val features: Set[Feature[_]] = Set(SpaceSafetyLabels)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
-    private val UnsatisfiedResult = Unsatisfied(this)
-    override val params: Set[Param[_]] = Set(thresholdParam)
+      extends Cond  on
+      w h HasParams {
+    overr de lazy val na : Str ng =
+      s"SpaceHasLabelW hScoreAboveThreshold(${spaceSafetyLabelType.na }, ${Nam ngUt ls.getFr endlyNa (thresholdParam)})"
+    overr de val features: Set[Feature[_]] = Set(SpaceSafetyLabels)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
+    overr de val params: Set[Param[_]] = Set(thresholdParam)
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val labels = featureMap(SpaceSafetyLabels).asInstanceOf[Seq[SpaceSafetyLabel]]
-      val threshold = evaluationContext.params(thresholdParam)
-      val SatisfiedResult =
-        Satisfied(FoundSpaceLabelWithScoreAboveThreshold(spaceSafetyLabelType, threshold))
+      val labels = featureMap(SpaceSafetyLabels).as nstanceOf[Seq[SpaceSafetyLabel]]
+      val threshold = evaluat onContext.params(thresholdParam)
+      val Sat sf edResult =
+        Sat sf ed(FoundSpaceLabelW hScoreAboveThreshold(spaceSafetyLabelType, threshold))
       labels
-        .collectFirst {
+        .collectF rst {
           case label
-              if label.safetyLabelType == spaceSafetyLabelType
-                && label.safetyLabel.score.exists(_ >= threshold) =>
-            SatisfiedResult
-        }.getOrElse(UnsatisfiedResult)
+               f label.safetyLabelType == spaceSafetyLabelType
+                && label.safetyLabel.score.ex sts(_ >= threshold) =>
+            Sat sf edResult
+        }.getOrElse(Unsat sf edResult)
     }
   }
 
-  case class CardUriHasRootDomain(rootDomainParam: Param[Seq[String]])
-      extends Condition
-      with HasParams {
-    override lazy val name: String =
-      s"CardUriHasRootDomain(${NamingUtils.getFriendlyName(rootDomainParam)})"
-    override val features: Set[Feature[_]] = Set(CardUriHost)
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
-    private val UnsatisfiedResult = Unsatisfied(this)
-    override val params: Set[Param[_]] = Set(rootDomainParam)
+  case class CardUr HasRootDoma n(rootDoma nParam: Param[Seq[Str ng]])
+      extends Cond  on
+      w h HasParams {
+    overr de lazy val na : Str ng =
+      s"CardUr HasRootDoma n(${Nam ngUt ls.getFr endlyNa (rootDoma nParam)})"
+    overr de val features: Set[Feature[_]] = Set(CardUr Host)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
+    overr de val params: Set[Param[_]] = Set(rootDoma nParam)
 
-    private[this] def isHostDomainOrSubdomain(domain: String, host: String): Boolean =
-      host == domain || host.endsWith("." + domain)
+    pr vate[t ] def  sHostDoma nOrSubdoma n(doma n: Str ng, host: Str ng): Boolean =
+      host == doma n || host.endsW h("." + doma n)
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val cardUriHost = featureMap(CardUriHost).asInstanceOf[String]
-      val rootDomains = evaluationContext.params(rootDomainParam)
+      val cardUr Host = featureMap(CardUr Host).as nstanceOf[Str ng]
+      val rootDoma ns = evaluat onContext.params(rootDoma nParam)
 
-      if (rootDomains.exists(isHostDomainOrSubdomain(_, cardUriHost))) {
-        Satisfied(FoundCardUriRootDomain(cardUriHost))
+       f (rootDoma ns.ex sts( sHostDoma nOrSubdoma n(_, cardUr Host))) {
+        Sat sf ed(FoundCardUr RootDoma n(cardUr Host))
       } else {
-        UnsatisfiedResult
+        Unsat sf edResult
       }
     }
   }
 
-  case class TweetHasViolationOfLevel(level: ViolationLevel)
-      extends Condition
-      with HasSafetyLabelType {
+  case class T etHasV olat onOfLevel(level: V olat onLevel)
+      extends Cond  on
+      w h HasSafetyLabelType {
 
-    override lazy val name: String = s"tweetHasViolationOfLevel(${level})"
+    overr de lazy val na : Str ng = s"t etHasV olat onOfLevel(${level})"
 
-    override val features: Set[Feature[_]] = Set(TweetSafetyLabels)
-    override def optionalFeatures: Set[Feature[_]] = Set.empty
+    overr de val features: Set[Feature[_]] = Set(T etSafetyLabels)
+    overr de def opt onalFeatures: Set[Feature[_]] = Set.empty
 
-    private val UnsatisfiedResult: Unsatisfied = Unsatisfied(this)
+    pr vate val Unsat sf edResult: Unsat sf ed = Unsat sf ed(t )
 
-    private val SatisfiedResult: Satisfied = Satisfied(FoundTweetViolationOfLevel(level))
+    pr vate val Sat sf edResult: Sat sf ed = Sat sf ed(FoundT etV olat onOfLevel(level))
 
-    override val labelTypes: Set[SafetyLabelType] =
-      ViolationLevel.violationLevelToSafetyLabels
+    overr de val labelTypes: Set[SafetyLabelType] =
+      V olat onLevel.v olat onLevelToSafetyLabels
         .getOrElse(level, Set.empty)
-        .map(_.asInstanceOf[SafetyLabelType])
+        .map(_.as nstanceOf[SafetyLabelType])
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val labels = featureMap(TweetSafetyLabels).asInstanceOf[Seq[TweetSafetyLabel]]
-      if (labels.map(ViolationLevel.fromTweetSafetyLabel).contains(level)) {
-        SatisfiedResult
+      val labels = featureMap(T etSafetyLabels).as nstanceOf[Seq[T etSafetyLabel]]
+       f (labels.map(V olat onLevel.fromT etSafetyLabel).conta ns(level)) {
+        Sat sf edResult
       } else {
-        UnsatisfiedResult
+        Unsat sf edResult
       }
     }
   }
 
-  case object TweetHasViolationOfAnyLevel extends Condition with HasSafetyLabelType {
+  case object T etHasV olat onOfAnyLevel extends Cond  on w h HasSafetyLabelType {
 
-    override lazy val name: String = s"tweetHasViolationOfAnyLevel"
+    overr de lazy val na : Str ng = s"t etHasV olat onOfAnyLevel"
 
-    override val features: Set[Feature[_]] = Set(TweetSafetyLabels)
+    overr de val features: Set[Feature[_]] = Set(T etSafetyLabels)
 
-    override def optionalFeatures: Set[Feature[_]] = Set.empty
+    overr de def opt onalFeatures: Set[Feature[_]] = Set.empty
 
-    private val UnsatisfiedResult: Unsatisfied = Unsatisfied(this)
+    pr vate val Unsat sf edResult: Unsat sf ed = Unsat sf ed(t )
 
-    private val SatisfiedResult: Satisfied = Satisfied(FoundTweetViolationOfSomeLevel)
+    pr vate val Sat sf edResult: Sat sf ed = Sat sf ed(FoundT etV olat onOfSo Level)
 
-    override val labelTypes: Set[SafetyLabelType] =
-      ViolationLevel.violationLevelToSafetyLabels.values
+    overr de val labelTypes: Set[SafetyLabelType] =
+      V olat onLevel.v olat onLevelToSafetyLabels.values
         .reduceLeft(_ ++ _)
-        .map(_.asInstanceOf[SafetyLabelType])
+        .map(_.as nstanceOf[SafetyLabelType])
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val labels = featureMap(TweetSafetyLabels).asInstanceOf[Seq[TweetSafetyLabel]]
-      if (labels
-          .map(ViolationLevel.fromTweetSafetyLabelOpt).collect {
-            case Some(level) => level
+      val labels = featureMap(T etSafetyLabels).as nstanceOf[Seq[T etSafetyLabel]]
+       f (labels
+          .map(V olat onLevel.fromT etSafetyLabelOpt).collect {
+            case So (level) => level
           }.nonEmpty) {
-        SatisfiedResult
+        Sat sf edResult
       } else {
-        UnsatisfiedResult
+        Unsat sf edResult
       }
     }
   }
 
-  case object TweetIsEditTweet extends BooleanFeatureCondition(TweetIsEditTweetFeature)
-  case object TweetIsStaleTweet extends BooleanFeatureCondition(TweetIsStaleTweetFeature)
+  case object T et sEd T et extends BooleanFeatureCond  on(T et sEd T etFeature)
+  case object T et sStaleT et extends BooleanFeatureCond  on(T et sStaleT etFeature)
 
 
-  case class ViewerHasAdultMediaSettingLevel(settingLevelToCompare: SensitiveMediaSettingsLevel)
-      extends Condition {
-    override def features: Set[Feature[_]] = Set(ViewerSensitiveMediaSettings)
+  case class V e rHasAdult d aSett ngLevel(sett ngLevelToCompare: Sens  ve d aSett ngsLevel)
+      extends Cond  on {
+    overr de def features: Set[Feature[_]] = Set(V e rSens  ve d aSett ngs)
 
-    override def optionalFeatures: Set[Feature[_]] = Set.empty
+    overr de def opt onalFeatures: Set[Feature[_]] = Set.empty
 
-    private val UnsatisfiedResult = Unsatisfied(this)
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
       featureMap
-        .get(ViewerSensitiveMediaSettings)
-        .map(_.asInstanceOf[UserSensitiveMediaSettings])
-        .collectFirst {
-          case UserSensitiveMediaSettings(Some(setting))
-              if (setting.viewAdultContent == settingLevelToCompare) =>
-            Result.SatisfiedResult
-          case UserSensitiveMediaSettings(None) => UnsatisfiedResult
-        }.getOrElse(UnsatisfiedResult)
+        .get(V e rSens  ve d aSett ngs)
+        .map(_.as nstanceOf[UserSens  ve d aSett ngs])
+        .collectF rst {
+          case UserSens  ve d aSett ngs(So (sett ng))
+               f (sett ng.v ewAdultContent == sett ngLevelToCompare) =>
+            Result.Sat sf edResult
+          case UserSens  ve d aSett ngs(None) => Unsat sf edResult
+        }.getOrElse(Unsat sf edResult)
     }
   }
 
-  case class ViewerHasViolentMediaSettingLevel(settingLevelToCompare: SensitiveMediaSettingsLevel)
-      extends Condition {
-    override def features: Set[Feature[_]] = Set(ViewerSensitiveMediaSettings)
+  case class V e rHasV olent d aSett ngLevel(sett ngLevelToCompare: Sens  ve d aSett ngsLevel)
+      extends Cond  on {
+    overr de def features: Set[Feature[_]] = Set(V e rSens  ve d aSett ngs)
 
-    override def optionalFeatures: Set[Feature[_]] = Set.empty
+    overr de def opt onalFeatures: Set[Feature[_]] = Set.empty
 
-    private val UnsatisfiedResult = Unsatisfied(this)
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
 
-    override def apply(
-      evaluationContext: EvaluationContext,
-      featureMap: Map[Feature[_], _]
-    ): Result = {
-
-      featureMap
-        .get(ViewerSensitiveMediaSettings)
-        .map(_.asInstanceOf[UserSensitiveMediaSettings])
-        .collectFirst {
-          case UserSensitiveMediaSettings(Some(setting))
-              if (setting.viewViolentContent == settingLevelToCompare) =>
-            Result.SatisfiedResult
-          case UserSensitiveMediaSettings(None) => UnsatisfiedResult
-        }.getOrElse(UnsatisfiedResult)
-    }
-  }
-
-  case class ViewerHasOtherSensitiveMediaSettingLevel(
-    settingLevelToCompare: SensitiveMediaSettingsLevel)
-      extends Condition {
-    override def features: Set[Feature[_]] = Set(ViewerSensitiveMediaSettings)
-
-    override def optionalFeatures: Set[Feature[_]] = Set.empty
-
-    private val UnsatisfiedResult = Unsatisfied(this)
-
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
 
       featureMap
-        .get(ViewerSensitiveMediaSettings)
-        .map(_.asInstanceOf[UserSensitiveMediaSettings])
-        .collectFirst {
-          case UserSensitiveMediaSettings(Some(setting))
-              if (setting.viewOtherContent == settingLevelToCompare) =>
-            Result.SatisfiedResult
-          case UserSensitiveMediaSettings(None) => UnsatisfiedResult
-        }.getOrElse(UnsatisfiedResult)
+        .get(V e rSens  ve d aSett ngs)
+        .map(_.as nstanceOf[UserSens  ve d aSett ngs])
+        .collectF rst {
+          case UserSens  ve d aSett ngs(So (sett ng))
+               f (sett ng.v ewV olentContent == sett ngLevelToCompare) =>
+            Result.Sat sf edResult
+          case UserSens  ve d aSett ngs(None) => Unsat sf edResult
+        }.getOrElse(Unsat sf edResult)
     }
   }
 
-  private[rules] val ToxrfTweetFilteredForAuthor =
-    Equals(ToxicReplyFilterState, FilterState.FilteredFromAuthor)
+  case class V e rHasOt rSens  ve d aSett ngLevel(
+    sett ngLevelToCompare: Sens  ve d aSett ngsLevel)
+      extends Cond  on {
+    overr de def features: Set[Feature[_]] = Set(V e rSens  ve d aSett ngs)
 
-  private[rules] case object ToxrfViewerIsConversationAuthor
-      extends BooleanFeatureCondition(ToxicReplyFilterConversationAuthorIsViewer)
+    overr de def opt onalFeatures: Set[Feature[_]] = Set.empty
 
-  val ToxrfFilteredFromAuthorViewer =
-    And(LoggedInViewer, ToxrfTweetFilteredForAuthor, ToxrfViewerIsConversationAuthor)
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
 
-  case object SearchQueryMatchesScreenName extends Condition {
-    override def features: Set[Feature[_]] = Set.empty
-
-    override def optionalFeatures: Set[Feature[_]] = Set(RawQuery, AuthorScreenName)
-
-    private val UnsatisfiedResult = Unsatisfied(this)
-
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      if (featureMap.contains(RawQuery) && featureMap.contains(AuthorScreenName)) {
-        val rawQuery = featureMap(RawQuery).asInstanceOf[String]
-        val authorScreenName = featureMap(AuthorScreenName).asInstanceOf[String]
-        if (rawQuery.equalsIgnoreCase(authorScreenName)) {
-          Result.SatisfiedResult
+
+      featureMap
+        .get(V e rSens  ve d aSett ngs)
+        .map(_.as nstanceOf[UserSens  ve d aSett ngs])
+        .collectF rst {
+          case UserSens  ve d aSett ngs(So (sett ng))
+               f (sett ng.v ewOt rContent == sett ngLevelToCompare) =>
+            Result.Sat sf edResult
+          case UserSens  ve d aSett ngs(None) => Unsat sf edResult
+        }.getOrElse(Unsat sf edResult)
+    }
+  }
+
+  pr vate[rules] val ToxrfT etF lteredForAuthor =
+    Equals(Tox cReplyF lterState, F lterState.F lteredFromAuthor)
+
+  pr vate[rules] case object ToxrfV e r sConversat onAuthor
+      extends BooleanFeatureCond  on(Tox cReplyF lterConversat onAuthor sV e r)
+
+  val ToxrfF lteredFromAuthorV e r =
+    And(Logged nV e r, ToxrfT etF lteredForAuthor, ToxrfV e r sConversat onAuthor)
+
+  case object SearchQueryMatc sScreenNa  extends Cond  on {
+    overr de def features: Set[Feature[_]] = Set.empty
+
+    overr de def opt onalFeatures: Set[Feature[_]] = Set(RawQuery, AuthorScreenNa )
+
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
+
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
+      featureMap: Map[Feature[_], _]
+    ): Result = {
+       f (featureMap.conta ns(RawQuery) && featureMap.conta ns(AuthorScreenNa )) {
+        val rawQuery = featureMap(RawQuery).as nstanceOf[Str ng]
+        val authorScreenNa  = featureMap(AuthorScreenNa ).as nstanceOf[Str ng]
+         f (rawQuery.equals gnoreCase(authorScreenNa )) {
+          Result.Sat sf edResult
         } else {
-          UnsatisfiedResult
+          Unsat sf edResult
         }
       } else {
-        UnsatisfiedResult
+        Unsat sf edResult
       }
     }
   }
 
-  object SearchQueryDoesNotMatchScreenNameConditionBuilder {
-    def apply(condition: Condition, ruleParam: RuleParam[Boolean]): Choose[Boolean] = {
+  object SearchQueryDoesNotMatchScreenNa Cond  onBu lder {
+    def apply(cond  on: Cond  on, ruleParam: RuleParam[Boolean]): Choose[Boolean] = {
       Choose(
-        conditionMap =
-          Map(true -> And(condition, Not(SearchQueryMatchesScreenName)), false -> condition),
-        defaultCondition = condition,
-        choiceParam = ruleParam
+        cond  onMap =
+          Map(true -> And(cond  on, Not(SearchQueryMatc sScreenNa )), false -> cond  on),
+        defaultCond  on = cond  on,
+        cho ceParam = ruleParam
       )
     }
   }
 
-  val SearchQueryDoesNotMatchScreenNameDefaultTrueCondition: Choose[Boolean] =
-    SearchQueryDoesNotMatchScreenNameConditionBuilder(Condition.True, RuleParams.False)
+  val SearchQueryDoesNotMatchScreenNa DefaultTrueCond  on: Choose[Boolean] =
+    SearchQueryDoesNotMatchScreenNa Cond  onBu lder(Cond  on.True, RuleParams.False)
 
-  case object OptionalNonAuthorViewer extends Condition {
-    override val features: Set[Feature[_]] = Set()
-    override val optionalFeatures: Set[Feature[_]] = Set(AuthorId, ViewerId)
+  case object Opt onalNonAuthorV e r extends Cond  on {
+    overr de val features: Set[Feature[_]] = Set()
+    overr de val opt onalFeatures: Set[Feature[_]] = Set(Author d, V e r d)
 
-    private val UnsatisfiedResult = Unsatisfied(this)
+    pr vate val Unsat sf edResult = Unsat sf ed(t )
 
-    override def preFilter(
-      evaluationContext: EvaluationContext,
+    overr de def preF lter(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
-    ): PreFilterResult = {
-      NeedsFullEvaluation
+    ): PreF lterResult = {
+      NeedsFullEvaluat on
     }
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val authorIdsOpt = featureMap.get(AuthorId).asInstanceOf[Option[Set[Long]]]
-      val viewerIdOpt = featureMap.get(ViewerId).asInstanceOf[Option[Long]]
+      val author dsOpt = featureMap.get(Author d).as nstanceOf[Opt on[Set[Long]]]
+      val v e r dOpt = featureMap.get(V e r d).as nstanceOf[Opt on[Long]]
 
       (for {
-        authorIds <- authorIdsOpt
-        viewerId <- viewerIdOpt
-      } yield {
-        if (authorIds.contains(viewerId)) UnsatisfiedResult
-        else Result.SatisfiedResult
+        author ds <- author dsOpt
+        v e r d <- v e r dOpt
+      } y eld {
+         f (author ds.conta ns(v e r d)) Unsat sf edResult
+        else Result.Sat sf edResult
       }) getOrElse {
-        Result.SatisfiedResult
+        Result.Sat sf edResult
       }
     }
   }
 
-  case class ViewerLocatedInApplicableCountriesOfMediaWithholdingLabel(
-    safetyLabelType: MediaSafetyLabelType)
-      extends ViewerInJurisdiction
-      with HasSafetyLabelType {
+  case class V e rLocated nAppl cableCountr esOf d aW hhold ngLabel(
+    safetyLabelType:  d aSafetyLabelType)
+      extends V e r nJur sd ct on
+      w h HasSafetyLabelType {
 
-    override lazy val name: String =
-      s"ViewerLocatedInApplicableCountriesOfMediaLabel(${safetyLabelType.name})"
-    override val features: Set[Feature[_]] = Set(MediaSafetyLabels)
-    override val optionalFeatures: Set[Feature[_]] = Set(ViewerCountryCode, RequestCountryCode)
-    override val labelTypes: Set[SafetyLabelType] = Set(safetyLabelType)
+    overr de lazy val na : Str ng =
+      s"V e rLocated nAppl cableCountr esOf d aLabel(${safetyLabelType.na })"
+    overr de val features: Set[Feature[_]] = Set( d aSafetyLabels)
+    overr de val opt onalFeatures: Set[Feature[_]] = Set(V e rCountryCode, RequestCountryCode)
+    overr de val labelTypes: Set[SafetyLabelType] = Set(safetyLabelType)
 
-    private val UnsatisfiedResult: Unsatisfied = Unsatisfied(this)
+    pr vate val Unsat sf edResult: Unsat sf ed = Unsat sf ed(t )
 
-    private[this] def isInApplicableCountries(
-      countryCodeOpt: Option[String],
+    pr vate[t ] def  s nAppl cableCountr es(
+      countryCodeOpt: Opt on[Str ng],
       label: SafetyLabel
     ): Boolean = {
-      val inApplicableCountry = (for {
-        applicableCountries <- label.applicableCountries
+      val  nAppl cableCountry = (for {
+        appl cableCountr es <- label.appl cableCountr es
         countryCode <- countryCodeOpt
-      } yield {
-        applicableCountries.contains(countryCode)
+      } y eld {
+        appl cableCountr es.conta ns(countryCode)
       }) getOrElse (false)
-      inApplicableCountry
+       nAppl cableCountry
     }
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val labels = featureMap(MediaSafetyLabels).asInstanceOf[Seq[MediaSafetyLabel]]
+      val labels = featureMap( d aSafetyLabels).as nstanceOf[Seq[ d aSafetyLabel]]
 
       val countryFeatures = getCountryFeatures(featureMap)
       val countryCodeOpt = countryFeatures.requestCountryCode
-        .orElse(countryFeatures.viewerCountryCode)
+        .orElse(countryFeatures.v e rCountryCode)
 
       labels
-        .collectFirst {
+        .collectF rst {
           case label
-              if label.safetyLabelType == safetyLabelType
+               f label.safetyLabelType == safetyLabelType
                 &&
-                  isInApplicableCountries(countryCodeOpt, label.safetyLabel) =>
-            Result.SatisfiedResult
-        }.getOrElse(UnsatisfiedResult)
+                   s nAppl cableCountr es(countryCodeOpt, label.safetyLabel) =>
+            Result.Sat sf edResult
+        }.getOrElse(Unsat sf edResult)
     }
   }
 
-  case class MediaHasLabelWithWorldwideWithholding(safetyLabelType: MediaSafetyLabelType)
-      extends Condition
-      with HasSafetyLabelType {
+  case class  d aHasLabelW hWorldw deW hhold ng(safetyLabelType:  d aSafetyLabelType)
+      extends Cond  on
+      w h HasSafetyLabelType {
 
-    override lazy val name: String =
-      s"MediaHasLabelWithWorldwideWithholding(${safetyLabelType.name})"
+    overr de lazy val na : Str ng =
+      s" d aHasLabelW hWorldw deW hhold ng(${safetyLabelType.na })"
 
-    override val features: Set[Feature[_]] = Set(MediaSafetyLabels)
+    overr de val features: Set[Feature[_]] = Set( d aSafetyLabels)
 
-    override val optionalFeatures: Set[Feature[_]] = Set.empty
+    overr de val opt onalFeatures: Set[Feature[_]] = Set.empty
 
-    override val labelTypes: Set[SafetyLabelType] = Set(safetyLabelType)
+    overr de val labelTypes: Set[SafetyLabelType] = Set(safetyLabelType)
 
-    private val UnsatisfiedResult: Unsatisfied = Unsatisfied(this)
+    pr vate val Unsat sf edResult: Unsat sf ed = Unsat sf ed(t )
 
-    private[this] def isWithheldWorldwide(label: SafetyLabel): Boolean = {
-      label.applicableCountries.map(_.contains("xx")).getOrElse(false)
+    pr vate[t ] def  sW h ldWorldw de(label: SafetyLabel): Boolean = {
+      label.appl cableCountr es.map(_.conta ns("xx")).getOrElse(false)
     }
 
-    override def apply(
-      evaluationContext: EvaluationContext,
+    overr de def apply(
+      evaluat onContext: Evaluat onContext,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val labels = featureMap(MediaSafetyLabels).asInstanceOf[Seq[MediaSafetyLabel]]
+      val labels = featureMap( d aSafetyLabels).as nstanceOf[Seq[ d aSafetyLabel]]
 
       labels
-        .collectFirst {
+        .collectF rst {
           case label
-              if label.safetyLabelType == safetyLabelType
-                && isWithheldWorldwide(label.safetyLabel) =>
-            Result.SatisfiedResult
-        }.getOrElse(UnsatisfiedResult)
+               f label.safetyLabelType == safetyLabelType
+                &&  sW h ldWorldw de(label.safetyLabel) =>
+            Result.Sat sf edResult
+        }.getOrElse(Unsat sf edResult)
     }
 
   }

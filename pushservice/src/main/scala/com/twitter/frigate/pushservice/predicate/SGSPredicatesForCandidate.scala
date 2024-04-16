@@ -1,174 +1,174 @@
-package com.twitter.frigate.pushservice.predicate
+package com.tw ter.fr gate.pushserv ce.pred cate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.SocialGraphServiceRelationshipMap
-import com.twitter.frigate.common.base.TweetAuthor
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.gizmoduck.thriftscala.UserType
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.hermit.predicate.socialgraph.Edge
-import com.twitter.hermit.predicate.socialgraph.RelationEdge
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Soc alGraphServ ceRelat onsh pMap
+ mport com.tw ter.fr gate.common.base.T etAuthor
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.params.PushParams
+ mport com.tw ter.g zmoduck.thr ftscala.UserType
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter. rm .pred cate.soc algraph.Edge
+ mport com.tw ter. rm .pred cate.soc algraph.Relat onEdge
+ mport com.tw ter.soc algraph.thr ftscala.Relat onsh pType
+ mport com.tw ter.ut l.Future
 
 /**
- * Refactor SGS predicates so that predicates can use relationshipMap we generate in hydrate step
+ * Refactor SGS pred cates so that pred cates can use relat onsh pMap   generate  n hydrate step
  */
-object SGSPredicatesForCandidate {
+object SGSPred catesForCand date {
 
-  case class RelationshipMapEdge(edge: Edge, relationshipMap: Map[RelationEdge, Boolean])
+  case class Relat onsh pMapEdge(edge: Edge, relat onsh pMap: Map[Relat onEdge, Boolean])
 
-  private def relationshipMapEdgeFromCandidate(
-    candidate: PushCandidate with TweetAuthor with SocialGraphServiceRelationshipMap
-  ): Option[RelationshipMapEdge] = {
-    candidate.authorId map { authorId =>
-      RelationshipMapEdge(Edge(candidate.target.targetId, authorId), candidate.relationshipMap)
+  pr vate def relat onsh pMapEdgeFromCand date(
+    cand date: PushCand date w h T etAuthor w h Soc alGraphServ ceRelat onsh pMap
+  ): Opt on[Relat onsh pMapEdge] = {
+    cand date.author d map { author d =>
+      Relat onsh pMapEdge(Edge(cand date.target.target d, author d), cand date.relat onsh pMap)
     }
   }
 
-  def authorBeingFollowed(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthor with SocialGraphServiceRelationshipMap] = {
-    val name = "author_not_being_followed"
-    val stats = statsReceiver.scope(name)
+  def authorBe ngFollo d(
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etAuthor w h Soc alGraphServ ceRelat onsh pMap] = {
+    val na  = "author_not_be ng_follo d"
+    val stats = statsRece ver.scope(na )
     val softUserCounter = stats.counter("soft_user")
 
-    val sgsAuthorBeingFollowedPredicate = Predicate
-      .from { relationshipMapEdge: RelationshipMapEdge =>
-        anyRelationExist(relationshipMapEdge, Set(RelationshipType.Following))
+    val sgsAuthorBe ngFollo dPred cate = Pred cate
+      .from { relat onsh pMapEdge: Relat onsh pMapEdge =>
+        anyRelat onEx st(relat onsh pMapEdge, Set(Relat onsh pType.Follow ng))
       }
 
-    Predicate
+    Pred cate
       .fromAsync {
-        candidate: PushCandidate with TweetAuthor with SocialGraphServiceRelationshipMap =>
-          val target = candidate.target
+        cand date: PushCand date w h T etAuthor w h Soc alGraphServ ceRelat onsh pMap =>
+          val target = cand date.target
           target.targetUser.flatMap {
-            case Some(gizmoduckUser) if gizmoduckUser.userType == UserType.Soft =>
-              softUserCounter.incr()
-              target.seedsWithWeight.map { followedUsersWithWeightOpt =>
-                candidate.authorId match {
-                  case Some(authorId) =>
-                    val followedUsers = followedUsersWithWeightOpt.getOrElse(Map.empty).keys
-                    followedUsers.toSet.contains(authorId)
+            case So (g zmoduckUser)  f g zmoduckUser.userType == UserType.Soft =>
+              softUserCounter. ncr()
+              target.seedsW h  ght.map { follo dUsersW h  ghtOpt =>
+                cand date.author d match {
+                  case So (author d) =>
+                    val follo dUsers = follo dUsersW h  ghtOpt.getOrElse(Map.empty).keys
+                    follo dUsers.toSet.conta ns(author d)
 
                   case None => false
                 }
               }
 
             case _ =>
-              sgsAuthorBeingFollowedPredicate
-                .optionalOn(relationshipMapEdgeFromCandidate, missingResult = false)
-                .apply(Seq(candidate))
-                .map(_.head)
+              sgsAuthorBe ngFollo dPred cate
+                .opt onalOn(relat onsh pMapEdgeFromCand date, m ss ngResult = false)
+                .apply(Seq(cand date))
+                .map(_. ad)
           }
-      }.withStats(stats)
-      .withName(name)
+      }.w hStats(stats)
+      .w hNa (na )
   }
 
-  def authorNotBeingDeviceFollowed(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthor with SocialGraphServiceRelationshipMap] = {
-    val name = "author_being_device_followed"
-    Predicate
-      .from { relationshipMapEdge: RelationshipMapEdge =>
+  def authorNotBe ngDev ceFollo d(
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etAuthor w h Soc alGraphServ ceRelat onsh pMap] = {
+    val na  = "author_be ng_dev ce_follo d"
+    Pred cate
+      .from { relat onsh pMapEdge: Relat onsh pMapEdge =>
         {
-          anyRelationExist(relationshipMapEdge, Set(RelationshipType.DeviceFollowing))
+          anyRelat onEx st(relat onsh pMapEdge, Set(Relat onsh pType.Dev ceFollow ng))
         }
       }
-      .optionalOn(relationshipMapEdgeFromCandidate, missingResult = false)
-      .flip
-      .withStats(statsReceiver.scope(name))
-      .withName(name)
+      .opt onalOn(relat onsh pMapEdgeFromCand date, m ss ngResult = false)
+      .fl p
+      .w hStats(statsRece ver.scope(na ))
+      .w hNa (na )
   }
 
-  def recommendedTweetAuthorAcceptableToTargetUser(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthor with SocialGraphServiceRelationshipMap] = {
-    val name = "recommended_tweet_author_not_acceptable_to_target_user"
-    Predicate
-      .from { relationshipMapEdge: RelationshipMapEdge =>
+  def recom ndedT etAuthorAcceptableToTargetUser(
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etAuthor w h Soc alGraphServ ceRelat onsh pMap] = {
+    val na  = "recom nded_t et_author_not_acceptable_to_target_user"
+    Pred cate
+      .from { relat onsh pMapEdge: Relat onsh pMapEdge =>
         {
-          anyRelationExist(
-            relationshipMapEdge,
+          anyRelat onEx st(
+            relat onsh pMapEdge,
             Set(
-              RelationshipType.Blocking,
-              RelationshipType.BlockedBy,
-              RelationshipType.HideRecommendations,
-              RelationshipType.Muting
+              Relat onsh pType.Block ng,
+              Relat onsh pType.BlockedBy,
+              Relat onsh pType.H deRecom ndat ons,
+              Relat onsh pType.Mut ng
             ))
         }
       }
-      .flip
-      .optionalOn(relationshipMapEdgeFromCandidate, missingResult = false)
-      .withStats(statsReceiver.scope(name))
-      .withName(name)
+      .fl p
+      .opt onalOn(relat onsh pMapEdgeFromCand date, m ss ngResult = false)
+      .w hStats(statsRece ver.scope(na ))
+      .w hNa (na )
   }
 
-  def authorNotBeingFollowed(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthor with SocialGraphServiceRelationshipMap] = {
-    Predicate
-      .from { relationshipMapEdge: RelationshipMapEdge =>
+  def authorNotBe ngFollo d(
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etAuthor w h Soc alGraphServ ceRelat onsh pMap] = {
+    Pred cate
+      .from { relat onsh pMapEdge: Relat onsh pMapEdge =>
         {
-          anyRelationExist(relationshipMapEdge, Set(RelationshipType.Following))
+          anyRelat onEx st(relat onsh pMapEdge, Set(Relat onsh pType.Follow ng))
         }
       }
-      .optionalOn(relationshipMapEdgeFromCandidate, missingResult = false)
-      .flip
-      .withStats(statsReceiver.scope("predicate_author_not_being_followed_pre_ranking"))
-      .withName("author_not_being_followed")
+      .opt onalOn(relat onsh pMapEdgeFromCand date, m ss ngResult = false)
+      .fl p
+      .w hStats(statsRece ver.scope("pred cate_author_not_be ng_follo d_pre_rank ng"))
+      .w hNa ("author_not_be ng_follo d")
   }
 
-  def disableInNetworkTweetPredicate(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthor with SocialGraphServiceRelationshipMap] = {
-    val name = "enable_in_network_tweet"
-    Predicate
+  def d sable nNetworkT etPred cate(
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etAuthor w h Soc alGraphServ ceRelat onsh pMap] = {
+    val na  = "enable_ n_network_t et"
+    Pred cate
       .fromAsync {
-        candidate: PushCandidate with TweetAuthor with SocialGraphServiceRelationshipMap =>
-          if (candidate.target.params(PushParams.DisableInNetworkTweetCandidatesParam)) {
-            authorNotBeingFollowed
-              .apply(Seq(candidate))
-              .map(_.head)
+        cand date: PushCand date w h T etAuthor w h Soc alGraphServ ceRelat onsh pMap =>
+           f (cand date.target.params(PushParams.D sable nNetworkT etCand datesParam)) {
+            authorNotBe ngFollo d
+              .apply(Seq(cand date))
+              .map(_. ad)
           } else Future.True
-      }.withStats(statsReceiver.scope(name))
-      .withName(name)
+      }.w hStats(statsRece ver.scope(na ))
+      .w hNa (na )
   }
 
-  def disableOutNetworkTweetPredicate(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthor with SocialGraphServiceRelationshipMap] = {
-    val name = "enable_out_network_tweet"
-    Predicate
+  def d sableOutNetworkT etPred cate(
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etAuthor w h Soc alGraphServ ceRelat onsh pMap] = {
+    val na  = "enable_out_network_t et"
+    Pred cate
       .fromAsync {
-        candidate: PushCandidate with TweetAuthor with SocialGraphServiceRelationshipMap =>
-          if (candidate.target.params(PushFeatureSwitchParams.DisableOutNetworkTweetCandidatesFS)) {
-            authorBeingFollowed
-              .apply(Seq(candidate))
-              .map(_.head)
+        cand date: PushCand date w h T etAuthor w h Soc alGraphServ ceRelat onsh pMap =>
+           f (cand date.target.params(PushFeatureSw chParams.D sableOutNetworkT etCand datesFS)) {
+            authorBe ngFollo d
+              .apply(Seq(cand date))
+              .map(_. ad)
           } else Future.True
-      }.withStats(statsReceiver.scope(name))
-      .withName(name)
+      }.w hStats(statsRece ver.scope(na ))
+      .w hNa (na )
   }
 
   /**
-   * Returns true if the provided relationshipEdge exists among
-   * @param candidate candidate
-   * @param relationships relaionships
+   * Returns true  f t  prov ded relat onsh pEdge ex sts among
+   * @param cand date cand date
+   * @param relat onsh ps rela onsh ps
    * @return Boolean result
    */
-  private def anyRelationExist(
-    relationshipMapEdge: RelationshipMapEdge,
-    relationships: Set[RelationshipType]
+  pr vate def anyRelat onEx st(
+    relat onsh pMapEdge: Relat onsh pMapEdge,
+    relat onsh ps: Set[Relat onsh pType]
   ): Boolean = {
-    val resultSeq = relationships.map { relationship =>
-      relationshipMapEdge.relationshipMap.getOrElse(
-        RelationEdge(relationshipMapEdge.edge, relationship),
+    val resultSeq = relat onsh ps.map { relat onsh p =>
+      relat onsh pMapEdge.relat onsh pMap.getOrElse(
+        Relat onEdge(relat onsh pMapEdge.edge, relat onsh p),
         false)
     }.toSeq
-    resultSeq.contains(true)
+    resultSeq.conta ns(true)
   }
 }

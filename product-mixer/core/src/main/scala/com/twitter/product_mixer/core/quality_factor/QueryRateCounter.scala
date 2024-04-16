@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.quality_factor
+package com.tw ter.product_m xer.core.qual y_factor
 
-import com.twitter.util.Duration
-import com.twitter.util.Stopwatch
-import com.twitter.util.TokenBucket
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Stopwatch
+ mport com.tw ter.ut l.TokenBucket
 
 /**
- * Query rate counter based on a leaky bucket. For more, see [[com.twitter.util.TokenBucket]].
+ * Query rate counter based on a leaky bucket. For more, see [[com.tw ter.ut l.TokenBucket]].
  */
-case class QueryRateCounter private[quality_factor] (
-  queryRateWindow: Duration) {
+case class QueryRateCounter pr vate[qual y_factor] (
+  queryRateW ndow: Durat on) {
 
-  private val queryRateWindowInSeconds = queryRateWindow.inSeconds
+  pr vate val queryRateW ndow nSeconds = queryRateW ndow. nSeconds
 
-  private val leakyBucket: TokenBucket =
-    TokenBucket.newLeakyBucket(ttl = queryRateWindow, reserve = 0, nowMs = Stopwatch.timeMillis)
+  pr vate val leakyBucket: TokenBucket =
+    TokenBucket.newLeakyBucket(ttl = queryRateW ndow, reserve = 0, nowMs = Stopwatch.t  M ll s)
 
-  def increment(count: Int): Unit = leakyBucket.put(count)
+  def  ncre nt(count:  nt): Un  = leakyBucket.put(count)
 
-  def getRate(): Double = leakyBucket.count / queryRateWindowInSeconds
+  def getRate(): Double = leakyBucket.count / queryRateW ndow nSeconds
 }

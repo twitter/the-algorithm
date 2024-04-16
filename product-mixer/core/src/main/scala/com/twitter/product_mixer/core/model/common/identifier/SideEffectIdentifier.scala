@@ -1,70 +1,70 @@
-package com.twitter.product_mixer.core.model.common.identifier
+package com.tw ter.product_m xer.core.model.common. dent f er
 
 /**
- * Side Effect identifier
+ * S de Effect  dent f er
  *
- * @note This class should always remain effectively `final`. If for any reason the `sealed`
- *       modifier is removed, the equals() implementation must be updated in order to handle class
- *       inheritor equality (see note on the equals method below)
+ * @note T  class should always rema n effect vely `f nal`.  f for any reason t  `sealed`
+ *       mod f er  s removed, t  equals()  mple ntat on must be updated  n order to handle class
+ *        n r or equal y (see note on t  equals  thod below)
  */
-sealed abstract class SideEffectIdentifier(override val name: String)
-    extends ComponentIdentifier("SideEffect", name) {
+sealed abstract class S deEffect dent f er(overr de val na : Str ng)
+    extends Component dent f er("S deEffect", na ) {
 
   /**
-   * @inheritdoc
+   * @ n r doc
    */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[SideEffectIdentifier]
+  overr de def canEqual(that: Any): Boolean = that. s nstanceOf[S deEffect dent f er]
 
   /**
-   * High performance implementation of equals method that leverages:
-   *  - Referential equality short circuit
-   *  - Cached hashcode equality short circuit
-   *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
-   *    of a hashCode collision
-   *  - Removal of check for `that` being an equals-compatible descendant since this class is final
+   * H gh performance  mple ntat on of equals  thod that leverages:
+   *  - Referent al equal y short c rcu 
+   *  - Cac d hashcode equal y short c rcu 
+   *  - F eld values are only c cked  f t  hashCodes are equal to handle t  unl kely case
+   *    of a hashCode coll s on
+   *  - Removal of c ck for `that` be ng an equals-compat ble descendant s nce t  class  s f nal
    *
-   * @note `candidate.canEqual(this)` is not necessary because this class is final
-   * @see [[http://www.artima.com/pins1ed/object-equality.html Programming in Scala,
-   *      Chapter 28]] for discussion and design.
+   * @note `cand date.canEqual(t )`  s not necessary because t  class  s f nal
+   * @see [[http://www.art ma.com/p ns1ed/object-equal y.html Programm ng  n Scala,
+   *      Chapter 28]] for d scuss on and des gn.
    */
-  override def equals(that: Any): Boolean =
+  overr de def equals(that: Any): Boolean =
     that match {
-      case identifier: SideEffectIdentifier =>
-        // Note identifier.canEqual(this) is not necessary because this class is effectively final
-        ((this eq identifier)
-          || ((hashCode == identifier.hashCode) && ((componentType == identifier.componentType) && (name == identifier.name))))
+      case  dent f er: S deEffect dent f er =>
+        // Note  dent f er.canEqual(t )  s not necessary because t  class  s effect vely f nal
+        ((t  eq  dent f er)
+          || ((hashCode ==  dent f er.hashCode) && ((componentType ==  dent f er.componentType) && (na  ==  dent f er.na ))))
       case _ =>
         false
     }
 
   /**
-   * Leverage domain-specific constraints (see notes below) to safely construct and cache the
-   * hashCode as a val, such that it is instantiated once on object construction. This prevents the
-   * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
-   * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
-   * object mutability and hashCode implementations.
+   * Leverage doma n-spec f c constra nts (see notes below) to safely construct and cac  t 
+   * hashCode as a val, such that    s  nstant ated once on object construct on. T  prevents t 
+   * need to recompute t  hashCode on each hashCode()  nvocat on, wh ch  s t  behav or of t 
+   * Scala comp ler case class-generated hashCode() s nce   cannot make assumpt ons regard ng f eld
+   * object mutab l y and hashCode  mple ntat ons.
    *
-   * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
-   *       are immutable. This includes:
-   *       - Inability to mutate the object reference on for an existing instantiated identifier
-   *       (i.e. each field is a val)
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
-   *       data structure), assuming stable hashCode implementations for these objects
+   * @note Cach ng t  hashCode  s only safe  f all of t  f elds used to construct t  hashCode
+   *       are  mmutable. T   ncludes:
+   *       -  nab l y to mutate t  object reference on for an ex st ng  nstant ated  dent f er
+   *       ( .e. each f eld  s a val)
+   *       -  nab l y to mutate t  f eld object  nstance  self ( .e. each f eld  s an  mmutable
+   *       -  nab l y to mutate t  f eld object  nstance  self ( .e. each f eld  s an  mmutable
+   *       data structure), assum ng stable hashCode  mple ntat ons for t se objects
    *
-   * @note In order for the hashCode to be consistent with object equality, `##` must be used for
-   *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
+   * @note  n order for t  hashCode to be cons stent w h object equal y, `##` must be used for
+   *       boxed nu r c types and null. As such, always prefer `.##` over `.hashCode()`.
    */
-  override val hashCode: Int = 31 * componentType.## + name.##
+  overr de val hashCode:  nt = 31 * componentType.## + na .##
 }
 
-object SideEffectIdentifier {
-  def apply(name: String)(implicit sourceFile: sourcecode.File): SideEffectIdentifier = {
-    if (ComponentIdentifier.isValidName(name))
-      new SideEffectIdentifier(name) {
-        override val file: sourcecode.File = sourceFile
+object S deEffect dent f er {
+  def apply(na : Str ng)( mpl c  s ceF le: s cecode.F le): S deEffect dent f er = {
+     f (Component dent f er. sVal dNa (na ))
+      new S deEffect dent f er(na ) {
+        overr de val f le: s cecode.F le = s ceF le
       }
     else
-      throw new IllegalArgumentException(s"Illegal SideEffectIdentifier: $name")
+      throw new  llegalArgu ntExcept on(s" llegal S deEffect dent f er: $na ")
   }
 }

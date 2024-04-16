@@ -1,48 +1,48 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.tw ter.ho _m xer.funct onal_component.decorator.urt.bu lder
 
-import com.twitter.home_mixer.model.HomeFeatures.ConversationModuleFocalTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ConversationModuleIdFeature
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableSocialContextParam
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.model.Ho Features.Conversat onModuleFocalT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Conversat onModule dFeature
+ mport com.tw ter.ho _m xer.param.Ho GlobalParams.EnableSoc alContextParam
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.soc al_context.BaseSoc alContextBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Soc alContext
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-case class HomeTweetSocialContextBuilder @Inject() (
-  likedBySocialContextBuilder: LikedBySocialContextBuilder,
-  listsSocialContextBuilder: ListsSocialContextBuilder,
-  followedBySocialContextBuilder: FollowedBySocialContextBuilder,
-  topicSocialContextBuilder: TopicSocialContextBuilder,
-  extendedReplySocialContextBuilder: ExtendedReplySocialContextBuilder,
-  receivedReplySocialContextBuilder: ReceivedReplySocialContextBuilder,
-  popularVideoSocialContextBuilder: PopularVideoSocialContextBuilder,
-  popularInYourAreaSocialContextBuilder: PopularInYourAreaSocialContextBuilder)
-    extends BaseSocialContextBuilder[PipelineQuery, TweetCandidate] {
+@S ngleton
+case class Ho T etSoc alContextBu lder @ nject() (
+  l kedBySoc alContextBu lder: L kedBySoc alContextBu lder,
+  l stsSoc alContextBu lder: L stsSoc alContextBu lder,
+  follo dBySoc alContextBu lder: Follo dBySoc alContextBu lder,
+  top cSoc alContextBu lder: Top cSoc alContextBu lder,
+  extendedReplySoc alContextBu lder: ExtendedReplySoc alContextBu lder,
+  rece vedReplySoc alContextBu lder: Rece vedReplySoc alContextBu lder,
+  popularV deoSoc alContextBu lder: PopularV deoSoc alContextBu lder,
+  popular nY AreaSoc alContextBu lder: Popular nY AreaSoc alContextBu lder)
+    extends BaseSoc alContextBu lder[P pel neQuery, T etCand date] {
 
   def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
+    query: P pel neQuery,
+    cand date: T etCand date,
     features: FeatureMap
-  ): Option[SocialContext] = {
-    if (query.params(EnableSocialContextParam)) {
-      features.getOrElse(ConversationModuleFocalTweetIdFeature, None) match {
+  ): Opt on[Soc alContext] = {
+     f (query.params(EnableSoc alContextParam)) {
+      features.getOrElse(Conversat onModuleFocalT et dFeature, None) match {
         case None =>
-          likedBySocialContextBuilder(query, candidate, features)
-            .orElse(followedBySocialContextBuilder(query, candidate, features))
-            .orElse(topicSocialContextBuilder(query, candidate, features))
-            .orElse(popularVideoSocialContextBuilder(query, candidate, features))
-            .orElse(listsSocialContextBuilder(query, candidate, features))
-            .orElse(popularInYourAreaSocialContextBuilder(query, candidate, features))
-        case Some(_) =>
-          val conversationId = features.getOrElse(ConversationModuleIdFeature, None)
-          // Only hydrate the social context into the root tweet in a conversation module
-          if (conversationId.contains(candidate.id)) {
-            extendedReplySocialContextBuilder(query, candidate, features)
-              .orElse(receivedReplySocialContextBuilder(query, candidate, features))
+          l kedBySoc alContextBu lder(query, cand date, features)
+            .orElse(follo dBySoc alContextBu lder(query, cand date, features))
+            .orElse(top cSoc alContextBu lder(query, cand date, features))
+            .orElse(popularV deoSoc alContextBu lder(query, cand date, features))
+            .orElse(l stsSoc alContextBu lder(query, cand date, features))
+            .orElse(popular nY AreaSoc alContextBu lder(query, cand date, features))
+        case So (_) =>
+          val conversat on d = features.getOrElse(Conversat onModule dFeature, None)
+          // Only hydrate t  soc al context  nto t  root t et  n a conversat on module
+           f (conversat on d.conta ns(cand date. d)) {
+            extendedReplySoc alContextBu lder(query, cand date, features)
+              .orElse(rece vedReplySoc alContextBu lder(query, cand date, features))
           } else None
       }
     } else None

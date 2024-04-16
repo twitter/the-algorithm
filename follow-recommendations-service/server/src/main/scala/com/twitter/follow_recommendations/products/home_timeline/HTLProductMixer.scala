@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.products.home_timeline
+package com.tw ter.follow_recom ndat ons.products.ho _t  l ne
 
-import com.twitter.product_mixer.core.model.common.identifier.ProductIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.Product
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Product dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Product
 
-case object HTLProductMixer extends Product {
-  override val identifier: ProductIdentifier = ProductIdentifier("HomeTimeline")
-  override val stringCenterProject: Option[String] = Some("people-discovery")
+case object HTLProductM xer extends Product {
+  overr de val  dent f er: Product dent f er = Product dent f er("Ho T  l ne")
+  overr de val str ngCenterProject: Opt on[Str ng] = So ("people-d scovery")
 }

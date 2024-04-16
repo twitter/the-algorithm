@@ -1,58 +1,58 @@
-package com.twitter.product_mixer.component_library.scorer.deepbird
+package com.tw ter.product_m xer.component_l brary.scorer.deepb rd
 
-import com.twitter.cortex.deepbird.runtime.prediction_engine.TensorflowPredictionEngine
-import com.twitter.cortex.deepbird.thriftjava.ModelSelector
-import com.twitter.ml.prediction_service.BatchPredictionRequest
-import com.twitter.ml.prediction_service.BatchPredictionResponse
-import com.twitter.product_mixer.core.feature.datarecord.BaseDataRecordFeature
-import com.twitter.product_mixer.core.feature.featuremap.datarecord.FeaturesScope
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.util.Future
+ mport com.tw ter.cortex.deepb rd.runt  .pred ct on_eng ne.TensorflowPred ct onEng ne
+ mport com.tw ter.cortex.deepb rd.thr ftjava.ModelSelector
+ mport com.tw ter.ml.pred ct on_serv ce.BatchPred ct onRequest
+ mport com.tw ter.ml.pred ct on_serv ce.BatchPred ct onResponse
+ mport com.tw ter.product_m xer.core.feature.datarecord.BaseDataRecordFeature
+ mport com.tw ter.product_m xer.core.feature.featuremap.datarecord.FeaturesScope
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Scorer dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.ut l.Future
 
 /**
- * Configurable Scorer that calls a TensorflowPredictionEngine.
- * @param identifier Unique identifier for the scorer
- * @param tensorflowPredictionEngine The TensorFlow Prediction Engine
- * @param queryFeatures The Query Features to convert and pass to the deepbird model.
- * @param candidateFeatures The Candidate Features to convert and pass to the deepbird model.
- * @param resultFeatures The Candidate features returned by the model.
- * @tparam Query Type of pipeline query.
- * @tparam Candidate Type of candidates to score.
- * @tparam QueryFeatures type of the query level features consumed by the scorer.
- * @tparam CandidateFeatures type of the candidate level features consumed by the scorer.
- * @tparam ResultFeatures type of the candidate level features returned by the scorer.
+ * Conf gurable Scorer that calls a TensorflowPred ct onEng ne.
+ * @param  dent f er Un que  dent f er for t  scorer
+ * @param tensorflowPred ct onEng ne T  TensorFlow Pred ct on Eng ne
+ * @param queryFeatures T  Query Features to convert and pass to t  deepb rd model.
+ * @param cand dateFeatures T  Cand date Features to convert and pass to t  deepb rd model.
+ * @param resultFeatures T  Cand date features returned by t  model.
+ * @tparam Query Type of p pel ne query.
+ * @tparam Cand date Type of cand dates to score.
+ * @tparam QueryFeatures type of t  query level features consu d by t  scorer.
+ * @tparam Cand dateFeatures type of t  cand date level features consu d by t  scorer.
+ * @tparam ResultFeatures type of t  cand date level features returned by t  scorer.
  */
-class TensorflowPredictionEngineScorer[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
+class TensorflowPred ct onEng neScorer[
+  Query <: P pel neQuery,
+  Cand date <: Un versalNoun[Any],
   QueryFeatures <: BaseDataRecordFeature[Query, _],
-  CandidateFeatures <: BaseDataRecordFeature[Candidate, _],
-  ResultFeatures <: BaseDataRecordFeature[Candidate, _]
+  Cand dateFeatures <: BaseDataRecordFeature[Cand date, _],
+  ResultFeatures <: BaseDataRecordFeature[Cand date, _]
 ](
-  override val identifier: ScorerIdentifier,
-  tensorflowPredictionEngine: TensorflowPredictionEngine,
+  overr de val  dent f er: Scorer dent f er,
+  tensorflowPred ct onEng ne: TensorflowPred ct onEng ne,
   queryFeatures: FeaturesScope[QueryFeatures],
-  candidateFeatures: FeaturesScope[CandidateFeatures],
+  cand dateFeatures: FeaturesScope[Cand dateFeatures],
   resultFeatures: Set[ResultFeatures])
-    extends BaseDeepbirdV2Scorer[
+    extends BaseDeepb rdV2Scorer[
       Query,
-      Candidate,
+      Cand date,
       QueryFeatures,
-      CandidateFeatures,
+      Cand dateFeatures,
       ResultFeatures
     ](
-      identifier,
+       dent f er,
       { _: Query =>
         None
       },
       queryFeatures,
-      candidateFeatures,
+      cand dateFeatures,
       resultFeatures) {
 
-  override def getBatchPredictions(
-    request: BatchPredictionRequest,
+  overr de def getBatchPred ct ons(
+    request: BatchPred ct onRequest,
     modelSelector: ModelSelector
-  ): Future[BatchPredictionResponse] = tensorflowPredictionEngine.getBatchPrediction(request)
+  ): Future[BatchPred ct onResponse] = tensorflowPred ct onEng ne.getBatchPred ct on(request)
 }

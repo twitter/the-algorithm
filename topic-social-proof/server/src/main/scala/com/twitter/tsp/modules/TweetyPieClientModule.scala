@@ -1,63 +1,63 @@
-package com.twitter.tsp
+package com.tw ter.tsp
 package modules
 
-import com.google.inject.Module
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps.richDurationFromInt
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsThriftMuxClientSyntax
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.service.ReqRep
-import com.twitter.finagle.service.ResponseClass
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.tweetypie.thriftscala.TweetService
-import com.twitter.util.Duration
-import com.twitter.util.Throw
-import com.twitter.stitch.tweetypie.{TweetyPie => STweetyPie}
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import javax.inject.Singleton
+ mport com.google. nject.Module
+ mport com.google. nject.Prov des
+ mport com.tw ter.convers ons.Durat onOps.r chDurat onFrom nt
+ mport com.tw ter.f nagle.Thr ftMux
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.mtls.cl ent.MtlsStackCl ent.MtlsThr ftMuxCl entSyntax
+ mport com.tw ter.f nagle.mux.Cl entD scardedRequestExcept on
+ mport com.tw ter.f nagle.serv ce.ReqRep
+ mport com.tw ter.f nagle.serv ce.ResponseClass
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter. nject. njector
+ mport com.tw ter. nject.thr ft.modules.Thr ft thodBu lderCl entModule
+ mport com.tw ter.t etyp e.thr ftscala.T etServ ce
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.st ch.t etyp e.{T etyP e => ST etyP e}
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport javax. nject.S ngleton
 
-object TweetyPieClientModule
-    extends ThriftMethodBuilderClientModule[
-      TweetService.ServicePerEndpoint,
-      TweetService.MethodPerEndpoint
+object T etyP eCl entModule
+    extends Thr ft thodBu lderCl entModule[
+      T etServ ce.Serv cePerEndpo nt,
+      T etServ ce. thodPerEndpo nt
     ]
-    with MtlsClient {
-  override val label = "tweetypie"
-  override val dest = "/s/tweetypie/tweetypie"
-  override val requestTimeout: Duration = 450.milliseconds
+    w h MtlsCl ent {
+  overr de val label = "t etyp e"
+  overr de val dest = "/s/t etyp e/t etyp e"
+  overr de val requestT  out: Durat on = 450.m ll seconds
 
-  override val modules: Seq[Module] = Seq(TSPClientIdModule)
+  overr de val modules: Seq[Module] = Seq(TSPCl ent dModule)
 
-  // We bump the success rate from the default of 0.8 to 0.9 since we're dropping the
-  // consecutive failures part of the default policy.
-  override def configureThriftMuxClient(
-    injector: Injector,
-    client: ThriftMux.Client
-  ): ThriftMux.Client =
+  //   bump t  success rate from t  default of 0.8 to 0.9 s nce  're dropp ng t 
+  // consecut ve fa lures part of t  default pol cy.
+  overr de def conf gureThr ftMuxCl ent(
+     njector:  njector,
+    cl ent: Thr ftMux.Cl ent
+  ): Thr ftMux.Cl ent =
     super
-      .configureThriftMuxClient(injector, client)
-      .withMutualTls(injector.instance[ServiceIdentifier])
-      .withStatsReceiver(injector.instance[StatsReceiver].scope("clnt"))
-      .withClientId(injector.instance[ClientId])
-      .withResponseClassifier {
-        case ReqRep(_, Throw(_: ClientDiscardedRequestException)) => ResponseClass.Ignorable
+      .conf gureThr ftMuxCl ent( njector, cl ent)
+      .w hMutualTls( njector. nstance[Serv ce dent f er])
+      .w hStatsRece ver( njector. nstance[StatsRece ver].scope("clnt"))
+      .w hCl ent d( njector. nstance[Cl ent d])
+      .w hResponseClass f er {
+        case ReqRep(_, Throw(_: Cl entD scardedRequestExcept on)) => ResponseClass. gnorable
       }
-      .withSessionQualifier
-      .successRateFailureAccrual(successRate = 0.9, window = 30.seconds)
-      .withResponseClassifier {
-        case ReqRep(_, Throw(_: ClientDiscardedRequestException)) => ResponseClass.Ignorable
+      .w hSess onQual f er
+      .successRateFa lureAccrual(successRate = 0.9, w ndow = 30.seconds)
+      .w hResponseClass f er {
+        case ReqRep(_, Throw(_: Cl entD scardedRequestExcept on)) => ResponseClass. gnorable
       }
 
-  @Provides
-  @Singleton
-  def providesTweetyPie(
-    tweetyPieService: TweetService.MethodPerEndpoint
-  ): STweetyPie = {
-    STweetyPie(tweetyPieService)
+  @Prov des
+  @S ngleton
+  def prov desT etyP e(
+    t etyP eServ ce: T etServ ce. thodPerEndpo nt
+  ): ST etyP e = {
+    ST etyP e(t etyP eServ ce)
   }
 }

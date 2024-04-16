@@ -1,17 +1,17 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+ mport javax. nject. nject;
+ mport javax. nject.S ngleton;
 
-import com.twitter.finagle.Service;
-import com.twitter.search.common.root.SearchRootServer;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.search.common.root.SearchRootServer;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdServ ce;
 
-@Singleton
-public class RealtimeCgRootServer extends SearchRootServer<EarlybirdService.ServiceIface> {
+@S ngleton
+publ c class Realt  CgRootServer extends SearchRootServer<Earlyb rdServ ce.Serv ce face> {
 
-  @Inject
-  public RealtimeCgRootServer(RealtimeCgRootService svc, Service<byte[], byte[]> byteSvc) {
+  @ nject
+  publ c Realt  CgRootServer(Realt  CgRootServ ce svc, Serv ce<byte[], byte[]> byteSvc) {
     super(svc, byteSvc);
   }
 

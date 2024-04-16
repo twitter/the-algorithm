@@ -1,37 +1,37 @@
-package com.twitter.timelineranker.model
+package com.tw ter.t  l neranker.model
 
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.util.Future
+ mport com.tw ter.t  l neranker.{thr ftscala => thr ft}
+ mport com.tw ter.ut l.Future
 
-object CandidateTweetsResult {
-  val Empty: CandidateTweetsResult = CandidateTweetsResult(Nil, Nil)
-  val EmptyFuture: Future[CandidateTweetsResult] = Future.value(Empty)
-  val EmptyCandidateTweet: Seq[CandidateTweet] = Seq.empty[CandidateTweet]
+object Cand dateT etsResult {
+  val Empty: Cand dateT etsResult = Cand dateT etsResult(N l, N l)
+  val EmptyFuture: Future[Cand dateT etsResult] = Future.value(Empty)
+  val EmptyCand dateT et: Seq[Cand dateT et] = Seq.empty[Cand dateT et]
 
-  def fromThrift(response: thrift.GetCandidateTweetsResponse): CandidateTweetsResult = {
-    val candidates = response.candidates
-      .map(_.map(CandidateTweet.fromThrift))
-      .getOrElse(EmptyCandidateTweet)
-    val sourceTweets = response.sourceTweets
-      .map(_.map(CandidateTweet.fromThrift))
-      .getOrElse(EmptyCandidateTweet)
-    if (sourceTweets.nonEmpty) {
-      require(candidates.nonEmpty, "sourceTweets cannot have a value if candidates list is empty.")
+  def fromThr ft(response: thr ft.GetCand dateT etsResponse): Cand dateT etsResult = {
+    val cand dates = response.cand dates
+      .map(_.map(Cand dateT et.fromThr ft))
+      .getOrElse(EmptyCand dateT et)
+    val s ceT ets = response.s ceT ets
+      .map(_.map(Cand dateT et.fromThr ft))
+      .getOrElse(EmptyCand dateT et)
+     f (s ceT ets.nonEmpty) {
+      requ re(cand dates.nonEmpty, "s ceT ets cannot have a value  f cand dates l st  s empty.")
     }
-    CandidateTweetsResult(candidates, sourceTweets)
+    Cand dateT etsResult(cand dates, s ceT ets)
   }
 }
 
-case class CandidateTweetsResult(
-  candidates: Seq[CandidateTweet],
-  sourceTweets: Seq[CandidateTweet]) {
+case class Cand dateT etsResult(
+  cand dates: Seq[Cand dateT et],
+  s ceT ets: Seq[Cand dateT et]) {
 
-  def toThrift: thrift.GetCandidateTweetsResponse = {
-    val thriftCandidates = candidates.map(_.toThrift)
-    val thriftSourceTweets = sourceTweets.map(_.toThrift)
-    thrift.GetCandidateTweetsResponse(
-      candidates = Some(thriftCandidates),
-      sourceTweets = Some(thriftSourceTweets)
+  def toThr ft: thr ft.GetCand dateT etsResponse = {
+    val thr ftCand dates = cand dates.map(_.toThr ft)
+    val thr ftS ceT ets = s ceT ets.map(_.toThr ft)
+    thr ft.GetCand dateT etsResponse(
+      cand dates = So (thr ftCand dates),
+      s ceT ets = So (thr ftS ceT ets)
     )
   }
 }

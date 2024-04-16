@@ -1,20 +1,20 @@
-package com.twitter.home_mixer.product.for_you.side_effect
+package com.tw ter.ho _m xer.product.for_ .s de_effect
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-case class ServedCandidateFeatureKeysKafkaSideEffectBuilder @Inject() (
-  injectedServiceIdentifier: ServiceIdentifier) {
-  def build(
-    sourceIdentifiers: Set[CandidatePipelineIdentifier]
-  ): ServedCandidateFeatureKeysKafkaSideEffect = {
-    val topic = injectedServiceIdentifier.environment.toLowerCase match {
-      case "prod" => "tq_ct_served_candidate_feature_keys"
-      case _ => "tq_ct_served_candidate_feature_keys_staging"
+@S ngleton
+case class ServedCand dateFeatureKeysKafkaS deEffectBu lder @ nject() (
+   njectedServ ce dent f er: Serv ce dent f er) {
+  def bu ld(
+    s ce dent f ers: Set[Cand dateP pel ne dent f er]
+  ): ServedCand dateFeatureKeysKafkaS deEffect = {
+    val top c =  njectedServ ce dent f er.env ron nt.toLo rCase match {
+      case "prod" => "tq_ct_served_cand date_feature_keys"
+      case _ => "tq_ct_served_cand date_feature_keys_stag ng"
     }
-    new ServedCandidateFeatureKeysKafkaSideEffect(topic, sourceIdentifiers)
+    new ServedCand dateFeatureKeysKafkaS deEffect(top c, s ce dent f ers)
   }
 }

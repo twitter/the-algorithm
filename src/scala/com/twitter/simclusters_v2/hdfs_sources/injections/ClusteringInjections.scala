@@ -1,16 +1,16 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.tw ter.s mclusters_v2.hdfs_s ces. nject ons
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaBinaryThrift
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala._
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.ScalaB naryThr ft
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.Long2B gEnd an
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.s mclusters_v2.thr ftscala._
 
-object ClusteringInjections {
+object Cluster ng nject ons {
 
-  final val OrderedClustersAndMembersInjection: KeyValInjection[
-    UserId,
-    OrderedClustersAndMembers
+  f nal val OrderedClustersAnd mbers nject on: KeyVal nject on[
+    User d,
+    OrderedClustersAnd mbers
   ] =
-    KeyValInjection(Long2BigEndian, ScalaBinaryThrift(OrderedClustersAndMembers))
+    KeyVal nject on(Long2B gEnd an, ScalaB naryThr ft(OrderedClustersAnd mbers))
 }

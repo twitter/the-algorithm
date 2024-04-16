@@ -1,64 +1,64 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.Future
-import com.twitter.tweetypie.core.FilteredState
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.repository.TweetRepository
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.timelineservice.{thriftscala => tls}
-import com.twitter.tweetypie.backends.TimelineService.GetPerspectives
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.Future
+ mport com.tw ter.t etyp e.core.F lteredState
+ mport com.tw ter.t etyp e.repos ory.T etQuery
+ mport com.tw ter.t etyp e.repos ory.T etRepos ory
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport com.tw ter.t  l neserv ce.{thr ftscala => tls}
+ mport com.tw ter.t etyp e.backends.T  l neServ ce.GetPerspect ves
 
-object UnretweetHandler {
+object Unret etHandler {
 
-  type Type = UnretweetRequest => Future[UnretweetResult]
+  type Type = Unret etRequest => Future[Unret etResult]
 
   def apply(
-    deleteTweets: TweetDeletePathHandler.DeleteTweets,
-    getPerspectives: GetPerspectives,
-    unretweetEdits: TweetDeletePathHandler.UnretweetEdits,
-    tweetRepo: TweetRepository.Type,
-  ): Type = { request: UnretweetRequest =>
-    val handleEdits = getSourceTweet(request.sourceTweetId, tweetRepo).liftToTry.flatMap {
-      case Return(sourceTweet) =>
-        // If we're able to fetch the source Tweet, unretweet all its other versions
-        unretweetEdits(sourceTweet.editControl, request.sourceTweetId, request.userId)
+    deleteT ets: T etDeletePathHandler.DeleteT ets,
+    getPerspect ves: GetPerspect ves,
+    unret etEd s: T etDeletePathHandler.Unret etEd s,
+    t etRepo: T etRepos ory.Type,
+  ): Type = { request: Unret etRequest =>
+    val handleEd s = getS ceT et(request.s ceT et d, t etRepo).l ftToTry.flatMap {
+      case Return(s ceT et) =>
+        //  f  're able to fetch t  s ce T et, unret et all  s ot r vers ons
+        unret etEd s(s ceT et.ed Control, request.s ceT et d, request.user d)
       case Throw(_) => Future.Done
     }
 
-    handleEdits.flatMap(_ => unretweetSourceTweet(request, deleteTweets, getPerspectives))
+    handleEd s.flatMap(_ => unret etS ceT et(request, deleteT ets, getPerspect ves))
   }
 
-  def unretweetSourceTweet(
-    request: UnretweetRequest,
-    deleteTweets: TweetDeletePathHandler.DeleteTweets,
-    getPerspectives: GetPerspectives,
-  ): Future[UnretweetResult] =
-    getPerspectives(
-      Seq(tls.PerspectiveQuery(request.userId, Seq(request.sourceTweetId)))
-    ).map { results => results.head.perspectives.headOption.flatMap(_.retweetId) }
+  def unret etS ceT et(
+    request: Unret etRequest,
+    deleteT ets: T etDeletePathHandler.DeleteT ets,
+    getPerspect ves: GetPerspect ves,
+  ): Future[Unret etResult] =
+    getPerspect ves(
+      Seq(tls.Perspect veQuery(request.user d, Seq(request.s ceT et d)))
+    ).map { results => results. ad.perspect ves. adOpt on.flatMap(_.ret et d) }
       .flatMap {
-        case Some(id) =>
-          deleteTweets(
-            DeleteTweetsRequest(tweetIds = Seq(id), byUserId = Some(request.userId)),
+        case So ( d) =>
+          deleteT ets(
+            DeleteT etsRequest(t et ds = Seq( d), byUser d = So (request.user d)),
             false
-          ).map(_.head).map { deleteTweetResult =>
-            UnretweetResult(Some(deleteTweetResult.tweetId), deleteTweetResult.state)
+          ).map(_. ad).map { deleteT etResult =>
+            Unret etResult(So (deleteT etResult.t et d), deleteT etResult.state)
           }
-        case None => Future.value(UnretweetResult(None, TweetDeleteState.Ok))
+        case None => Future.value(Unret etResult(None, T etDeleteState.Ok))
       }
 
-  def getSourceTweet(
-    sourceTweetId: TweetId,
-    tweetRepo: TweetRepository.Type
-  ): Future[Tweet] = {
-    val options: TweetQuery.Options = TweetQuery
-      .Options(include = TweetQuery.Include(tweetFields = Set(Tweet.EditControlField.id)))
+  def getS ceT et(
+    s ceT et d: T et d,
+    t etRepo: T etRepos ory.Type
+  ): Future[T et] = {
+    val opt ons: T etQuery.Opt ons = T etQuery
+      .Opt ons( nclude = T etQuery. nclude(t etF elds = Set(T et.Ed ControlF eld. d)))
 
-    Stitch.run {
-      tweetRepo(sourceTweetId, options).rescue {
-        case _: FilteredState => Stitch.NotFound
+    St ch.run {
+      t etRepo(s ceT et d, opt ons).rescue {
+        case _: F lteredState => St ch.NotFound
       }
     }
   }

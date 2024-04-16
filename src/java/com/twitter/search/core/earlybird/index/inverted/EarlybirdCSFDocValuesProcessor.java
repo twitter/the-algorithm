@@ -1,73 +1,73 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.facet.FacetsConfig;
-import org.apache.lucene.index.DocValuesType;
-import org.apache.lucene.index.IndexableField;
+ mport org.apac .lucene.facet.FacetsConf g;
+ mport org.apac .lucene. ndex.DocValuesType;
+ mport org.apac .lucene. ndex. ndexableF eld;
 
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentWriter;
-import com.twitter.search.core.earlybird.index.column.AbstractColumnStrideMultiIntIndex;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideFieldIndex;
-import com.twitter.search.core.earlybird.index.column.DocValuesManager;
+ mport com.tw ter.search.common.sc ma.base.Earlyb rdF eldType;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rdRealt   ndexSeg ntWr er;
+ mport com.tw ter.search.core.earlyb rd. ndex.column.AbstractColumnStr deMult  nt ndex;
+ mport com.tw ter.search.core.earlyb rd. ndex.column.ColumnStr deF eld ndex;
+ mport com.tw ter.search.core.earlyb rd. ndex.column.DocValuesManager;
 
 /**
- * Handler for docvalues in the indexing chain.
+ * Handler for docvalues  n t   ndex ng cha n.
  */
-public class EarlybirdCSFDocValuesProcessor
-    implements EarlybirdRealtimeIndexSegmentWriter.StoredFieldsConsumer {
+publ c class Earlyb rdCSFDocValuesProcessor
+     mple nts Earlyb rdRealt   ndexSeg ntWr er.StoredF eldsConsu r {
 
-  private final DocValuesManager docValuesManager;
+  pr vate f nal DocValuesManager docValuesManager;
 
-  public EarlybirdCSFDocValuesProcessor(DocValuesManager docValuesManager) {
-    this.docValuesManager = docValuesManager;
+  publ c Earlyb rdCSFDocValuesProcessor(DocValuesManager docValuesManager) {
+    t .docValuesManager = docValuesManager;
   }
 
-  @Override
-  public void addField(int docID, IndexableField field) throws IOException {
-    final DocValuesType dvType = field.fieldType().docValuesType();
-    if (dvType != null) {
+  @Overr de
+  publ c vo d addF eld( nt doc D,  ndexableF eld f eld) throws  OExcept on {
+    f nal DocValuesType dvType = f eld.f eldType().docValuesType();
+     f (dvType != null) {
 
-      // ignore lucene facet fields for realtime index, we are handling it differently
-      if (field.name().startsWith(FacetsConfig.DEFAULT_INDEX_FIELD_NAME)) {
+      //  gnore lucene facet f elds for realt    ndex,   are handl ng   d fferently
+       f (f eld.na ().startsW h(FacetsConf g.DEFAULT_ NDEX_F ELD_NAME)) {
         return;
       }
-      if (!(field.fieldType() instanceof EarlybirdFieldType)) {
-        throw new RuntimeException(
-            "fieldType must be an EarlybirdFieldType instance for field " + field.name());
+       f (!(f eld.f eldType()  nstanceof Earlyb rdF eldType)) {
+        throw new Runt  Except on(
+            "f eldType must be an Earlyb rdF eldType  nstance for f eld " + f eld.na ());
       }
-      EarlybirdFieldType fieldType = (EarlybirdFieldType) field.fieldType();
+      Earlyb rdF eldType f eldType = (Earlyb rdF eldType) f eld.f eldType();
 
-      if (dvType == DocValuesType.NUMERIC) {
-        if (!(field.numericValue() instanceof Long)) {
-          throw new IllegalArgumentException(
-              "illegal type " + field.numericValue().getClass()
+       f (dvType == DocValuesType.NUMER C) {
+         f (!(f eld.nu r cValue()  nstanceof Long)) {
+          throw new  llegalArgu ntExcept on(
+              " llegal type " + f eld.nu r cValue().getClass()
               + ": DocValues types must be Long");
         }
 
-        ColumnStrideFieldIndex csfIndex =
-            docValuesManager.addColumnStrideField(field.name(), fieldType);
-        if (fieldType.getCsfFixedLengthNumValuesPerDoc() > 1) {
-          throw new UnsupportedOperationException("unsupported multi numeric values");
+        ColumnStr deF eld ndex csf ndex =
+            docValuesManager.addColumnStr deF eld(f eld.na (), f eldType);
+         f (f eldType.getCsfF xedLengthNumValuesPerDoc() > 1) {
+          throw new UnsupportedOperat onExcept on("unsupported mult  nu r c values");
         } else {
-          csfIndex.setValue(docID, field.numericValue().longValue());
+          csf ndex.setValue(doc D, f eld.nu r cValue().longValue());
         }
 
-      } else if (dvType == DocValuesType.BINARY) {
-        ColumnStrideFieldIndex csfIndex =
-            docValuesManager.addColumnStrideField(field.name(), fieldType);
-        if (fieldType.getCsfFixedLengthNumValuesPerDoc() > 1) {
-          Preconditions.checkArgument(
-              csfIndex instanceof AbstractColumnStrideMultiIntIndex,
-              "Unsupported multi-value binary CSF class: " + csfIndex);
-          ((AbstractColumnStrideMultiIntIndex) csfIndex).updateDocValues(
-              field.binaryValue(), docID);
+      } else  f (dvType == DocValuesType.B NARY) {
+        ColumnStr deF eld ndex csf ndex =
+            docValuesManager.addColumnStr deF eld(f eld.na (), f eldType);
+         f (f eldType.getCsfF xedLengthNumValuesPerDoc() > 1) {
+          Precond  ons.c ckArgu nt(
+              csf ndex  nstanceof AbstractColumnStr deMult  nt ndex,
+              "Unsupported mult -value b nary CSF class: " + csf ndex);
+          ((AbstractColumnStr deMult  nt ndex) csf ndex).updateDocValues(
+              f eld.b naryValue(), doc D);
         }
       } else {
-        throw new UnsupportedOperationException("unsupported DocValues.Type: " + dvType);
+        throw new UnsupportedOperat onExcept on("unsupported DocValues.Type: " + dvType);
       }
     }
   }

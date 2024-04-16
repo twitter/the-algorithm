@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.t  l ne_module
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleDisplayTypeBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalConversation
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.t  l ne_module.BaseModuleD splayTypeBu lder
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.ModuleD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Vert calConversat on
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-case class FeatureModuleDisplayTypeBuilder(
-  displayTypeFeature: Feature[_, Option[ModuleDisplayType]],
-  defaultDisplayType: ModuleDisplayType = VerticalConversation)
-    extends BaseModuleDisplayTypeBuilder[PipelineQuery, UniversalNoun[Any]] {
+case class FeatureModuleD splayTypeBu lder(
+  d splayTypeFeature: Feature[_, Opt on[ModuleD splayType]],
+  defaultD splayType: ModuleD splayType = Vert calConversat on)
+    extends BaseModuleD splayTypeBu lder[P pel neQuery, Un versalNoun[Any]] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[UniversalNoun[Any]]]
-  ): ModuleDisplayType = candidates.headOption
-    .flatMap(_.features.getOrElse(displayTypeFeature, None))
-    .getOrElse(defaultDisplayType)
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[Un versalNoun[Any]]]
+  ): ModuleD splayType = cand dates. adOpt on
+    .flatMap(_.features.getOrElse(d splayTypeFeature, None))
+    .getOrElse(defaultD splayType)
 }

@@ -1,43 +1,43 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.repos ory._
 
 /**
- * Ensures that the tweet's author and source tweet's author (if retweet) are visible to the
- * viewing user - ctx.opts.forUserId - when enforceVisibilityFiltering is true.
- * If either of these users is not visible then a FilteredState.Suppress will be returned.
+ * Ensures that t  t et's author and s ce t et's author ( f ret et) are v s ble to t 
+ * v ew ng user - ctx.opts.forUser d - w n enforceV s b l yF lter ng  s true.
+ *  f e  r of t se users  s not v s ble t n a F lteredState.Suppress w ll be returned.
  *
- * Note: blocking relationship is NOT checked here, this means if viewing user `forUserId` is blocked
- * by either the tweet's author or source tweet's author, this will not filter out the tweet.
+ * Note: block ng relat onsh p  s NOT c cked  re, t   ans  f v ew ng user `forUser d`  s blocked
+ * by e  r t  t et's author or s ce t et's author, t  w ll not f lter out t  t et.
  */
-object TweetAuthorVisibilityHydrator {
-  type Type = ValueHydrator[Unit, TweetCtx]
+object T etAuthorV s b l yHydrator {
+  type Type = ValueHydrator[Un , T etCtx]
 
-  def apply(repo: UserVisibilityRepository.Type): Type =
-    ValueHydrator[Unit, TweetCtx] { (_, ctx) =>
-      val ids = Seq(ctx.userId) ++ ctx.sourceUserId
-      val keys = ids.map(id => toRepoQuery(id, ctx))
+  def apply(repo: UserV s b l yRepos ory.Type): Type =
+    ValueHydrator[Un , T etCtx] { (_, ctx) =>
+      val  ds = Seq(ctx.user d) ++ ctx.s ceUser d
+      val keys =  ds.map( d => toRepoQuery( d, ctx))
 
-      Stitch
+      St ch
         .traverse(keys)(repo.apply).flatMap { responses =>
-          val fs: Option[FilteredState.Unavailable] = responses.flatten.headOption
+          val fs: Opt on[F lteredState.Unava lable] = responses.flatten. adOpt on
 
           fs match {
-            case Some(fs: FilteredState.Unavailable) => Stitch.exception(fs)
-            case None => ValueState.StitchUnmodifiedUnit
+            case So (fs: F lteredState.Unava lable) => St ch.except on(fs)
+            case None => ValueState.St chUnmod f edUn 
           }
         }
-    }.onlyIf((_, ctx) => ctx.opts.enforceVisibilityFiltering)
+    }.only f((_, ctx) => ctx.opts.enforceV s b l yF lter ng)
 
-  private def toRepoQuery(userId: UserId, ctx: TweetCtx) =
-    UserVisibilityRepository.Query(
-      UserKey(userId),
-      ctx.opts.forUserId,
-      ctx.tweetId,
-      ctx.isRetweet,
-      ctx.opts.isInnerQuotedTweet,
-      Some(ctx.opts.safetyLevel))
+  pr vate def toRepoQuery(user d: User d, ctx: T etCtx) =
+    UserV s b l yRepos ory.Query(
+      UserKey(user d),
+      ctx.opts.forUser d,
+      ctx.t et d,
+      ctx. sRet et,
+      ctx.opts. s nnerQuotedT et,
+      So (ctx.opts.safetyLevel))
 }

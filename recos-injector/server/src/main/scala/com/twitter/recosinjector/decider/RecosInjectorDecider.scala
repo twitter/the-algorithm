@@ -1,33 +1,33 @@
-package com.twitter.recosinjector.decider
+package com.tw ter.recos njector.dec der
 
-import com.twitter.decider.{Decider, DeciderFactory, RandomRecipient, Recipient}
+ mport com.tw ter.dec der.{Dec der, Dec derFactory, RandomRec p ent, Rec p ent}
 
-case class RecosInjectorDecider(isProd: Boolean, dataCenter: String) {
-  lazy val decider: Decider = DeciderFactory(
-    Some("config/decider.yml"),
-    Some(getOverlayPath(isProd, dataCenter))
+case class Recos njectorDec der( sProd: Boolean, dataCenter: Str ng) {
+  lazy val dec der: Dec der = Dec derFactory(
+    So ("conf g/dec der.yml"),
+    So (getOverlayPath( sProd, dataCenter))
   )()
 
-  private def getOverlayPath(isProd: Boolean, dataCenter: String): String = {
-    if (isProd) {
-      s"/usr/local/config/overlays/recos-injector/recos-injector/prod/$dataCenter/decider_overlay.yml"
+  pr vate def getOverlayPath( sProd: Boolean, dataCenter: Str ng): Str ng = {
+     f ( sProd) {
+      s"/usr/local/conf g/overlays/recos- njector/recos- njector/prod/$dataCenter/dec der_overlay.yml"
     } else {
-      s"/usr/local/config/overlays/recos-injector/recos-injector/staging/$dataCenter/decider_overlay.yml"
+      s"/usr/local/conf g/overlays/recos- njector/recos- njector/stag ng/$dataCenter/dec der_overlay.yml"
     }
   }
 
-  def getDecider: Decider = decider
+  def getDec der: Dec der = dec der
 
-  def isAvailable(feature: String, recipient: Option[Recipient]): Boolean = {
-    decider.isAvailable(feature, recipient)
+  def  sAva lable(feature: Str ng, rec p ent: Opt on[Rec p ent]): Boolean = {
+    dec der. sAva lable(feature, rec p ent)
   }
 
-  def isAvailable(feature: String): Boolean = isAvailable(feature, Some(RandomRecipient))
+  def  sAva lable(feature: Str ng): Boolean =  sAva lable(feature, So (RandomRec p ent))
 }
 
-object RecosInjectorDeciderConstants {
-  val TweetEventTransformerUserTweetEntityEdgesDecider =
-    "tweet_event_transformer_user_tweet_entity_edges"
-  val EnableEmitTweetEdgeFromReply = "enable_emit_tweet_edge_from_reply"
-  val EnableUnfavoriteEdge = "enable_unfavorite_edge"
+object Recos njectorDec derConstants {
+  val T etEventTransfor rUserT etEnt yEdgesDec der =
+    "t et_event_transfor r_user_t et_ent y_edges"
+  val EnableEm T etEdgeFromReply = "enable_em _t et_edge_from_reply"
+  val EnableUnfavor eEdge = "enable_unfavor e_edge"
 }

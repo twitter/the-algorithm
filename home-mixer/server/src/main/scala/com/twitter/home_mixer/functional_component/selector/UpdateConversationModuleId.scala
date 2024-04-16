@@ -1,40 +1,40 @@
-package com.twitter.home_mixer.functional_component.selector
+package com.tw ter.ho _m xer.funct onal_component.selector
 
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtModulePresentation
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope.PartitionedCandidates
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.model.presentat on.urt.UrtModulePresentat on
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope.Part  onedCand dates
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.SelectorResult
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on.ModuleCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * This selector updates the id of the conversation modules to be the head of the module's id.
+ * T  selector updates t   d of t  conversat on modules to be t   ad of t  module's  d.
  */
-case class UpdateConversationModuleId(
-  override val pipelineScope: CandidateScope)
-    extends Selector[PipelineQuery] {
+case class UpdateConversat onModule d(
+  overr de val p pel neScope: Cand dateScope)
+    extends Selector[P pel neQuery] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+  overr de def apply(
+    query: P pel neQuery,
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
-    val PartitionedCandidates(selectedCandidates, otherCandidates) =
-      pipelineScope.partition(remainingCandidates)
+    val Part  onedCand dates(selectedCand dates, ot rCand dates) =
+      p pel neScope.part  on(rema n ngCand dates)
 
-    val updatedCandidates = selectedCandidates.map {
-      case module @ ModuleCandidateWithDetails(candidates, presentationOpt, _) =>
-        val updatedPresentation = presentationOpt.map {
-          case urtModule @ UrtModulePresentation(timelineModule) =>
-            urtModule.copy(timelineModule =
-              timelineModule.copy(id = candidates.head.candidateIdLong))
+    val updatedCand dates = selectedCand dates.map {
+      case module @ ModuleCand dateW hDeta ls(cand dates, presentat onOpt, _) =>
+        val updatedPresentat on = presentat onOpt.map {
+          case urtModule @ UrtModulePresentat on(t  l neModule) =>
+            urtModule.copy(t  l neModule =
+              t  l neModule.copy( d = cand dates. ad.cand date dLong))
         }
-        module.copy(presentation = updatedPresentation)
-      case candidate => candidate
+        module.copy(presentat on = updatedPresentat on)
+      case cand date => cand date
     }
 
-    SelectorResult(remainingCandidates = updatedCandidates ++ otherCandidates, result = result)
+    SelectorResult(rema n ngCand dates = updatedCand dates ++ ot rCand dates, result = result)
   }
 }

@@ -1,39 +1,39 @@
-package com.twitter.product_mixer.core.module
+package com.tw ter.product_m xer.core.module
 
-import com.google.inject.Provides
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.ssl.OpportunisticTls
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ServiceLocal
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.StratoLocalRequestTimeout
-import com.twitter.strato.client.Client
-import com.twitter.strato.client.Strato
-import com.twitter.util.Duration
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.ssl.Opportun st cTls
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.product_m xer.core.module.product_m xer_flags.ProductM xerFlagModule.Serv ceLocal
+ mport com.tw ter.product_m xer.core.module.product_m xer_flags.ProductM xerFlagModule.StratoLocalRequestT  out
+ mport com.tw ter.strato.cl ent.Cl ent
+ mport com.tw ter.strato.cl ent.Strato
+ mport com.tw ter.ut l.Durat on
+ mport javax. nject.S ngleton
 
 /**
- * Product Mixer prefers to use a single strato client module over having a variety with different
- * timeouts. Latency Budgets in Product Mixer systems should be defined at the application layer.
+ * Product M xer prefers to use a s ngle strato cl ent module over hav ng a var ety w h d fferent
+ * t  outs. Latency Budgets  n Product M xer systems should be def ned at t  appl cat on layer.
  */
-object StratoClientModule extends TwitterModule {
+object StratoCl entModule extends Tw terModule {
 
-  @Provides
-  @Singleton
-  def providesStratoClient(
-    serviceIdentifier: ServiceIdentifier,
-    @Flag(ServiceLocal) isServiceLocal: Boolean,
-    @Flag(StratoLocalRequestTimeout) timeout: Option[Duration]
-  ): Client = {
-    val stratoClient = Strato.client.withMutualTls(serviceIdentifier, OpportunisticTls.Required)
+  @Prov des
+  @S ngleton
+  def prov desStratoCl ent(
+    serv ce dent f er: Serv ce dent f er,
+    @Flag(Serv ceLocal)  sServ ceLocal: Boolean,
+    @Flag(StratoLocalRequestT  out) t  out: Opt on[Durat on]
+  ): Cl ent = {
+    val stratoCl ent = Strato.cl ent.w hMutualTls(serv ce dent f er, Opportun st cTls.Requ red)
 
-    // For local development it can be useful to have a larger timeout than the Strato default of
-    // 280ms. We strongly discourage setting client-level timeouts outside of this use-case. We
-    // recommend setting an overall timeout for your pipeline's end-to-end running time.
-    if (isServiceLocal && timeout.isDefined)
-      stratoClient.withRequestTimeout(timeout.get).build()
+    // For local develop nt   can be useful to have a larger t  out than t  Strato default of
+    // 280ms.   strongly d sc age sett ng cl ent-level t  outs outs de of t  use-case.  
+    // recom nd sett ng an overall t  out for y  p pel ne's end-to-end runn ng t  .
+     f ( sServ ceLocal && t  out. sDef ned)
+      stratoCl ent.w hRequestT  out(t  out.get).bu ld()
     else {
-      stratoClient.build()
+      stratoCl ent.bu ld()
     }
   }
 }

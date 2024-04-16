@@ -1,382 +1,382 @@
-package com.twitter.simclusters_v2.scalding.mbcg
+package com.tw ter.s mclusters_v2.scald ng.mbcg
 
-import com.twitter.ann.common.EntityEmbedding
-import com.twitter.ann.common.Cosine
-import com.twitter.ann.common.CosineDistance
-import com.twitter.ann.common.InnerProduct
-import com.twitter.ann.common.InnerProductDistance
-import com.twitter.ann.common.ReadWriteFuturePool
-import com.twitter.ann.hnsw.TypedHnswIndex
-import com.twitter.ann.util.IndexBuilderUtils
-import com.twitter.conversions.DurationOps._
-import com.twitter.cortex.deepbird.runtime.prediction_engine.TensorflowPredictionEngineConfig
-import com.twitter.cortex.ml.embeddings.common.TweetKind
-import com.twitter.cortex.ml.embeddings.common.UserKind
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.iesource.common.util.InteractionEventUtils
-import com.twitter.iesource.processing.events.batch.ServerEngagementsScalaDataset
-import com.twitter.iesource.thriftscala.InteractionDetails
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.ml.api.FeatureUtil
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.embedding.EmbeddingSerDe
-import com.twitter.ml.api.thriftscala
-import com.twitter.ml.api.thriftscala.{GeneralTensor => ThriftGeneralTensor}
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.ml.api.util.ScalaToJavaDataRecordConversions
-import com.twitter.ml.featurestore.lib.TweetId
-import com.twitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
-import com.twitter.scalding.Args
-import com.twitter.scalding.DateParser
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Execution
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossDC
-import com.twitter.scalding_internal.job.FutureHelper
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecution
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecutionArgs
-import com.twitter.scalding_internal.job.analytics_batch.BatchDescription
-import com.twitter.scalding_internal.job.analytics_batch.BatchFirstTime
-import com.twitter.scalding_internal.job.analytics_batch.BatchIncrement
-import com.twitter.scalding_internal.job.analytics_batch.BatchWidth
-import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledExecutionApp
-import com.twitter.search.common.file.FileUtils
-import com.twitter.simclusters_v2.scalding.common.LogFavBasedPersistentTweetEmbeddingMhExportSource
-import com.twitter.simclusters_v2.thriftscala.PersistentSimClustersEmbedding
-import com.twitter.tweetsource.common.thriftscala.MediaType
-import com.twitter.tweetsource.public_tweets.PublicTweetsScalaDataset
-import com.twitter.tweetsource.public_tweets.thriftscala.PublicTweet
-import com.twitter.twml.runtime.scalding.TensorflowBatchPredictor
-import com.twitter.twml.runtime.scalding.TensorflowBatchPredictor.ScaldingThreadingConfig
-import com.twitter.util.FuturePool
-import com.twitter.util.logging.Logger
-import java.util.TimeZone
-import java.util.concurrent.Executors
+ mport com.tw ter.ann.common.Ent yEmbedd ng
+ mport com.tw ter.ann.common.Cos ne
+ mport com.tw ter.ann.common.Cos neD stance
+ mport com.tw ter.ann.common. nnerProduct
+ mport com.tw ter.ann.common. nnerProductD stance
+ mport com.tw ter.ann.common.ReadWr eFuturePool
+ mport com.tw ter.ann.hnsw.TypedHnsw ndex
+ mport com.tw ter.ann.ut l. ndexBu lderUt ls
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.cortex.deepb rd.runt  .pred ct on_eng ne.TensorflowPred ct onEng neConf g
+ mport com.tw ter.cortex.ml.embedd ngs.common.T etK nd
+ mport com.tw ter.cortex.ml.embedd ngs.common.UserK nd
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter. es ce.common.ut l. nteract onEventUt ls
+ mport com.tw ter. es ce.process ng.events.batch.ServerEngage ntsScalaDataset
+ mport com.tw ter. es ce.thr ftscala. nteract onDeta ls
+ mport com.tw ter.ml.ap .embedd ng.Embedd ng
+ mport com.tw ter.ml.ap .FeatureUt l
+ mport com.tw ter.ml.ap .constant.SharedFeatures
+ mport com.tw ter.ml.ap .embedd ng.Embedd ngSerDe
+ mport com.tw ter.ml.ap .thr ftscala
+ mport com.tw ter.ml.ap .thr ftscala.{GeneralTensor => Thr ftGeneralTensor}
+ mport com.tw ter.ml.ap .ut l.FDsl._
+ mport com.tw ter.ml.ap .ut l.ScalaToJavaDataRecordConvers ons
+ mport com.tw ter.ml.featurestore.l b.T et d
+ mport com.tw ter.ml.featurestore.l b.embedd ng.Embedd ngW hEnt y
+ mport com.tw ter.scald ng.Args
+ mport com.tw ter.scald ng.DateParser
+ mport com.tw ter.scald ng.DateRange
+ mport com.tw ter.scald ng.Execut on
+ mport com.tw ter.scald ng.Un que D
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.AllowCrossDC
+ mport com.tw ter.scald ng_ nternal.job.Future lper
+ mport com.tw ter.scald ng_ nternal.job.Tw terExecut onApp
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.Analyt csBatchExecut on
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.Analyt csBatchExecut onArgs
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.BatchDescr pt on
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.BatchF rstT  
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.Batch ncre nt
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.BatchW dth
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.Tw terSc duledExecut onApp
+ mport com.tw ter.search.common.f le.F leUt ls
+ mport com.tw ter.s mclusters_v2.scald ng.common.LogFavBasedPers stentT etEmbedd ngMhExportS ce
+ mport com.tw ter.s mclusters_v2.thr ftscala.Pers stentS mClustersEmbedd ng
+ mport com.tw ter.t ets ce.common.thr ftscala. d aType
+ mport com.tw ter.t ets ce.publ c_t ets.Publ cT etsScalaDataset
+ mport com.tw ter.t ets ce.publ c_t ets.thr ftscala.Publ cT et
+ mport com.tw ter.twml.runt  .scald ng.TensorflowBatchPred ctor
+ mport com.tw ter.twml.runt  .scald ng.TensorflowBatchPred ctor.Scald ngThread ngConf g
+ mport com.tw ter.ut l.FuturePool
+ mport com.tw ter.ut l.logg ng.Logger
+ mport java.ut l.T  Zone
+ mport java.ut l.concurrent.Executors
 
 /*
-This class does the following:
-1) Get tweet simcluster features from LogFavBasedPersistentTweetEmbeddingMhExportSource
-2) Filter them down to English media tweets that aren't replies or quote tweets using TweetSource
-3) Convert the remaining tweets into DataRecords using TweetSimclusterRecordAdapter
-4) Run inference using a TF model exported with a DataRecord compatible serving signature
-5) Create an ANN index from the generated tweet embeddings
+T  class does t  follow ng:
+1) Get t et s mcluster features from LogFavBasedPers stentT etEmbedd ngMhExportS ce
+2) F lter t m down to Engl sh  d a t ets that aren't repl es or quote t ets us ng T etS ce
+3) Convert t  rema n ng t ets  nto DataRecords us ng T etS mclusterRecordAdapter
+4) Run  nference us ng a TF model exported w h a DataRecord compat ble serv ng s gnature
+5) Create an ANN  ndex from t  generated t et embedd ngs
  */
-trait TweetEmbeddingGenerationTrait {
-  implicit val tz: TimeZone = DateOps.UTC
-  implicit val dp: DateParser = DateParser.default
-  implicit val updateHours = 4
+tra  T etEmbedd ngGenerat onTra  {
+   mpl c  val tz: T  Zone = DateOps.UTC
+   mpl c  val dp: DateParser = DateParser.default
+   mpl c  val updateH s = 4
 
-  private val inputNodeName = "request:0"
-  private val outputNodeName = "response:0"
-  private val functionSignatureName = "serve"
-  private val predictionRequestTimeout = 5.seconds
-  private val SupportedLanguages = Set("en")
-  private val tweetSourceLookback = Days(2)
+  pr vate val  nputNodeNa  = "request:0"
+  pr vate val outputNodeNa  = "response:0"
+  pr vate val funct onS gnatureNa  = "serve"
+  pr vate val pred ct onRequestT  out = 5.seconds
+  pr vate val SupportedLanguages = Set("en")
+  pr vate val t etS ceLookback = Days(2)
 
-  private val DEFAULT_F2V_VECTOR: Embedding[Float] = Embedding(Array.fill[Float](200)(0.0f))
+  pr vate val DEFAULT_F2V_VECTOR: Embedd ng[Float] = Embedd ng(Array.f ll[Float](200)(0.0f))
 
-  def getPredictionEngine(modelName: String, modelPath: String): TensorflowBatchPredictor = {
-    val config = TensorflowPredictionEngineConfig(
-      modelName = modelName,
-      modelSource = modelPath,
-      threadingConfig = Some(ScaldingThreadingConfig),
-      defaultInputNode = inputNodeName,
-      defaultOutputNode = outputNodeName,
-      functionSignatureName = functionSignatureName,
-      statsReceiver = NullStatsReceiver
+  def getPred ct onEng ne(modelNa : Str ng, modelPath: Str ng): TensorflowBatchPred ctor = {
+    val conf g = TensorflowPred ct onEng neConf g(
+      modelNa  = modelNa ,
+      modelS ce = modelPath,
+      thread ngConf g = So (Scald ngThread ngConf g),
+      default nputNode =  nputNodeNa ,
+      defaultOutputNode = outputNodeNa ,
+      funct onS gnatureNa  = funct onS gnatureNa ,
+      statsRece ver = NullStatsRece ver
     )
-    TensorflowBatchPredictor(config, predictionRequestTimeout)
+    TensorflowBatchPred ctor(conf g, pred ct onRequestT  out)
   }
 
-  def getEmbeddingWithEntity(tweetEmbeddingTensor: ThriftGeneralTensor, tweetId: Long) = {
-    tweetEmbeddingTensor match {
-      case ThriftGeneralTensor.RawTypedTensor(rawTensor) =>
-        val embedding = EmbeddingSerDe.floatEmbeddingSerDe.fromThrift(
-          thriftscala.Embedding(Some(rawTensor))
+  def getEmbedd ngW hEnt y(t etEmbedd ngTensor: Thr ftGeneralTensor, t et d: Long) = {
+    t etEmbedd ngTensor match {
+      case Thr ftGeneralTensor.RawTypedTensor(rawTensor) =>
+        val embedd ng = Embedd ngSerDe.floatEmbedd ngSerDe.fromThr ft(
+          thr ftscala.Embedd ng(So (rawTensor))
         )
-        EmbeddingWithEntity[TweetId](TweetId(tweetId), embedding)
-      case _ => throw new IllegalArgumentException("tensor is wrong type!")
+        Embedd ngW hEnt y[T et d](T et d(t et d), embedd ng)
+      case _ => throw new  llegalArgu ntExcept on("tensor  s wrong type!")
     }
   }
 
-  def buildAnnIndex(
-    pipe: TypedPipe[EmbeddingWithEntity[TweetId]],
+  def bu ldAnn ndex(
+    p pe: TypedP pe[Embedd ngW hEnt y[T et d]],
     args: Args
-  ): Execution[Unit] = {
-    def embeddingDimension: Int = args.int("embedding_dimension", 128)
-    def efConstruction: Int = args.int("ef_construction", 800)
-    def maxM: Int = args.int("max_M", 40)
+  ): Execut on[Un ] = {
+    def embedd ngD  ns on:  nt = args. nt("embedd ng_d  ns on", 128)
+    def efConstruct on:  nt = args. nt("ef_construct on", 800)
+    def maxM:  nt = args. nt("max_M", 40)
     val log: Logger = Logger(getClass)
-    val annOutputPath: String = args("ann_output_path")
+    val annOutputPath: Str ng = args("ann_output_path")
 
-    val embeddingWithEntity = pipe.map {
-      case EmbeddingWithEntity(tweetId, embedding) =>
-        EntityEmbedding[TweetId](tweetId, embedding)
+    val embedd ngW hEnt y = p pe.map {
+      case Embedd ngW hEnt y(t et d, embedd ng) =>
+        Ent yEmbedd ng[T et d](t et d, embedd ng)
     }
-    val concurrencyLevel = args.int("concurrency_level", 60)
-    val expectedElements = args.int("expected_elements", 30000000)
-    val threadPool = Executors.newFixedThreadPool(concurrencyLevel)
-    val hnswIndex = TypedHnswIndex.serializableIndex[TweetId, InnerProductDistance](
-      embeddingDimension,
-      InnerProduct,
-      efConstruction,
+    val concurrencyLevel = args. nt("concurrency_level", 60)
+    val expectedEle nts = args. nt("expected_ele nts", 30000000)
+    val threadPool = Executors.newF xedThreadPool(concurrencyLevel)
+    val hnsw ndex = TypedHnsw ndex.ser al zable ndex[T et d,  nnerProductD stance](
+      embedd ngD  ns on,
+       nnerProduct,
+      efConstruct on,
       maxM,
-      expectedElements,
-      TweetKind.byteInjection,
-      ReadWriteFuturePool(FuturePool.apply(threadPool))
+      expectedEle nts,
+      T etK nd.byte nject on,
+      ReadWr eFuturePool(FuturePool.apply(threadPool))
     )
 
-    // Create a timestamped directory to use for recovery in case of index corruption
-    val timeStampedAnnOutputPath: String = annOutputPath + "/" + (System.currentTimeMillis() / 1000)
-    val timeStampedAnnOutputDirectory = FileUtils.getFileHandle(timeStampedAnnOutputPath)
+    // Create a t  stamped d rectory to use for recovery  n case of  ndex corrupt on
+    val t  StampedAnnOutputPath: Str ng = annOutputPath + "/" + (System.currentT  M ll s() / 1000)
+    val t  StampedAnnOutputD rectory = F leUt ls.getF leHandle(t  StampedAnnOutputPath)
 
-    embeddingWithEntity.toIterableExecution
-      .flatMap { annEmbeddings =>
+    embedd ngW hEnt y.to erableExecut on
+      .flatMap { annEmbedd ngs =>
         val future =
-          IndexBuilderUtils.addToIndex(hnswIndex, annEmbeddings.toStream, concurrencyLevel)
+           ndexBu lderUt ls.addTo ndex(hnsw ndex, annEmbedd ngs.toStream, concurrencyLevel)
         val result = future.map { numberUpdates =>
-          log.info(s"Performed $numberUpdates updates")
-          hnswIndex.toDirectory(timeStampedAnnOutputDirectory)
-          log.info(s"Finished writing to timestamped index directory - " +
-            s"$timeStampedAnnOutputDirectory")
+          log. nfo(s"Perfor d $numberUpdates updates")
+          hnsw ndex.toD rectory(t  StampedAnnOutputD rectory)
+          log. nfo(s"F n s d wr  ng to t  stamped  ndex d rectory - " +
+            s"$t  StampedAnnOutputD rectory")
         }
-        FutureHelper.executionFrom(result).unit
+        Future lper.execut onFrom(result).un 
       }.onComplete { _ =>
         threadPool.shutdown()
-        Unit
+        Un 
       }
   }
 
-  def getTweetSimclusterFeatures(
+  def getT etS mclusterFeatures(
     args: Args
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(Long, PersistentSimClustersEmbedding)] = {
-    val serviceIdEnv = args.getOrElse("sIdEnv", "prod")
-    val serviceIdRole = args.getOrElse("sIdRole", "cassowary")
-    val serviceIdZone = args.getOrElse("sIdZone", "atla")
-    val serviceIdName = args
-      .getOrElse("sIdName", "tweet-embedding-generation-batch-job")
-    val serviceId = ServiceIdentifier(
-      role = serviceIdRole,
-      service = serviceIdName,
-      environment = serviceIdEnv,
-      zone = serviceIdZone)
+     mpl c  dateRange: DateRange
+  ): TypedP pe[(Long, Pers stentS mClustersEmbedd ng)] = {
+    val serv ce dEnv = args.getOrElse("s dEnv", "prod")
+    val serv ce dRole = args.getOrElse("s dRole", "cassowary")
+    val serv ce dZone = args.getOrElse("s dZone", "atla")
+    val serv ce dNa  = args
+      .getOrElse("s dNa ", "t et-embedd ng-generat on-batch-job")
+    val serv ce d = Serv ce dent f er(
+      role = serv ce dRole,
+      serv ce = serv ce dNa ,
+      env ron nt = serv ce dEnv,
+      zone = serv ce dZone)
 
-    val logFavBasedPersistentTweetEmbeddingSource =
-      new LogFavBasedPersistentTweetEmbeddingMhExportSource(
-        range = dateRange.prepend(Hours(24)),
-        serviceIdentifier = serviceId)
-    val tweetSimclusterEmbeddingTypedPipe = TypedPipe
-      .from(logFavBasedPersistentTweetEmbeddingSource)
+    val logFavBasedPers stentT etEmbedd ngS ce =
+      new LogFavBasedPers stentT etEmbedd ngMhExportS ce(
+        range = dateRange.prepend(H s(24)),
+        serv ce dent f er = serv ce d)
+    val t etS mclusterEmbedd ngTypedP pe = TypedP pe
+      .from(logFavBasedPers stentT etEmbedd ngS ce)
       .collect {
         case (
-              (tweetId, timestamp),
-              simclusterEmbedding: PersistentSimClustersEmbedding
-            ) if timestamp == 1L => // 1L corresponds to the LongestL2Norm simcluster embedding
-          (tweetId.toLong, simclusterEmbedding)
+              (t et d, t  stamp),
+              s mclusterEmbedd ng: Pers stentS mClustersEmbedd ng
+            )  f t  stamp == 1L => // 1L corresponds to t  LongestL2Norm s mcluster embedd ng
+          (t et d.toLong, s mclusterEmbedd ng)
       }
 
-    tweetSimclusterEmbeddingTypedPipe
+    t etS mclusterEmbedd ngTypedP pe
   }
 
-  def getTweetSource()(implicit dateRange: DateRange): TypedPipe[PublicTweet] = {
-    val recentTweets = DAL
-      .read(PublicTweetsScalaDataset, dateRange.prepend(tweetSourceLookback))
-      .toTypedPipe
+  def getT etS ce()( mpl c  dateRange: DateRange): TypedP pe[Publ cT et] = {
+    val recentT ets = DAL
+      .read(Publ cT etsScalaDataset, dateRange.prepend(t etS ceLookback))
+      .toTypedP pe
 
-    recentTweets
+    recentT ets
   }
 
-  def isVideoTweet(tweet: PublicTweet): Boolean = {
-    tweet.media.exists { mediaSeq =>
-      mediaSeq.exists { e =>
-        e.mediaType.contains(MediaType.Video)
+  def  sV deoT et(t et: Publ cT et): Boolean = {
+    t et. d a.ex sts {  d aSeq =>
+       d aSeq.ex sts { e =>
+        e. d aType.conta ns( d aType.V deo)
       }
     }
   }
 
-  def getEngagementFilteredTweets(
-    minFavCount: Long
+  def getEngage ntF lteredT ets(
+    m nFavCount: Long
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(Long, Int)] = {
-    val engagementFilteredTweetsPipe = DAL
-      .read(ServerEngagementsScalaDataset, dateRange.prepend(Days(2))).withRemoteReadPolicy(
-        AllowCrossDC).toTypedPipe
+     mpl c  dateRange: DateRange
+  ): TypedP pe[(Long,  nt)] = {
+    val engage ntF lteredT etsP pe = DAL
+      .read(ServerEngage ntsScalaDataset, dateRange.prepend(Days(2))).w hRemoteReadPol cy(
+        AllowCrossDC).toTypedP pe
       .collect {
-        case event if InteractionEventUtils.isTweetType(event) =>
-          val targetTweetId = event.targetId
-          event.details match {
-            case InteractionDetails.Favorite(_) => (targetTweetId, 1)
-            case _ => (targetTweetId, 0)
+        case event  f  nteract onEventUt ls. sT etType(event) =>
+          val targetT et d = event.target d
+          event.deta ls match {
+            case  nteract onDeta ls.Favor e(_) => (targetT et d, 1)
+            case _ => (targetT et d, 0)
           }
       }
       .sumByKey
       .map {
-        case (tweetId, count) => (tweetId, count)
+        case (t et d, count) => (t et d, count)
       }
-      .filter(_._2 >= minFavCount)
+      .f lter(_._2 >= m nFavCount)
 
-    engagementFilteredTweetsPipe
+    engage ntF lteredT etsP pe
   }
 
-  def run(args: Args)(implicit dateRange: DateRange, idx: UniqueID) = {
-    val minFavCount = args.int("minFavCount", 32)
-    val indexAllTweets = args.boolean("indexAllTweets")
+  def run(args: Args)( mpl c  dateRange: DateRange,  dx: Un que D) = {
+    val m nFavCount = args. nt("m nFavCount", 32)
+    val  ndexAllT ets = args.boolean(" ndexAllT ets")
 
-    val tweetSimclusterDataset = getTweetSimclusterFeatures(args)
-    val tweetSourceDataset = getTweetSource()
-    val engagementFilteredTweetsPipe = getEngagementFilteredTweets(minFavCount)
-    val inputEmbeddingFormat = UserKind.parser
-      .getEmbeddingFormat(args, "f2v_input", Some(dateRange.prepend(Days(14))))
-    val f2vProducerEmbeddings = inputEmbeddingFormat.getEmbeddings
+    val t etS mclusterDataset = getT etS mclusterFeatures(args)
+    val t etS ceDataset = getT etS ce()
+    val engage ntF lteredT etsP pe = getEngage ntF lteredT ets(m nFavCount)
+    val  nputEmbedd ngFormat = UserK nd.parser
+      .getEmbedd ngFormat(args, "f2v_ nput", So (dateRange.prepend(Days(14))))
+    val f2vProducerEmbedd ngs =  nputEmbedd ngFormat.getEmbedd ngs
       .map {
-        case EmbeddingWithEntity(userId, embedding) => (userId.userId, embedding)
+        case Embedd ngW hEnt y(user d, embedd ng) => (user d.user d, embedd ng)
       }
 
-    val engagementFilteredTweetInfoPipe = tweetSourceDataset
-      .groupBy(_.tweetId)
-      .join(engagementFilteredTweetsPipe.groupBy(_._1))
+    val engage ntF lteredT et nfoP pe = t etS ceDataset
+      .groupBy(_.t et d)
+      .jo n(engage ntF lteredT etsP pe.groupBy(_._1))
       .map {
-        case (tweetId, (tweetInfo, tweetFavCount)) =>
-          (tweetId, tweetInfo)
+        case (t et d, (t et nfo, t etFavCount)) =>
+          (t et d, t et nfo)
       }
 
-    val filteredSimclustersPipe = tweetSimclusterDataset
+    val f lteredS mclustersP pe = t etS mclusterDataset
       .groupBy(_._1)
-      .join(engagementFilteredTweetInfoPipe.groupBy(_._1))
+      .jo n(engage ntF lteredT et nfoP pe.groupBy(_._1))
       .map {
-        case (tweetId, ((_, simclusterEmbedding), (_, tweetInfo))) =>
-          (tweetId, simclusterEmbedding, tweetInfo)
+        case (t et d, ((_, s mclusterEmbedd ng), (_, t et nfo))) =>
+          (t et d, s mclusterEmbedd ng, t et nfo)
       }
-      .filter {
-        case (_, _, tweetInfo) =>
-          tweetInfo.quotedTweetTweetId.isEmpty &&
-            tweetInfo.inReplyToTweetId.isEmpty &&
-            tweetInfo.language.exists(SupportedLanguages.contains) &&
-            (indexAllTweets || (!tweetInfo.media.exists(_.isEmpty) && isVideoTweet(tweetInfo))) &&
-            !tweetInfo.nsfwAdmin &&
-            !tweetInfo.nsfwUser
+      .f lter {
+        case (_, _, t et nfo) =>
+          t et nfo.quotedT etT et d. sEmpty &&
+            t et nfo. nReplyToT et d. sEmpty &&
+            t et nfo.language.ex sts(SupportedLanguages.conta ns) &&
+            ( ndexAllT ets || (!t et nfo. d a.ex sts(_. sEmpty) &&  sV deoT et(t et nfo))) &&
+            !t et nfo.nsfwAdm n &&
+            !t et nfo.nsfwUser
       }
       .map {
-        case (tweetId, simclusterEmbedding, tweetInfo) =>
-          (tweetInfo.userId, tweetId, simclusterEmbedding)
+        case (t et d, s mclusterEmbedd ng, t et nfo) =>
+          (t et nfo.user d, t et d, s mclusterEmbedd ng)
       }
 
-    val dataRecordsPipe = filteredSimclustersPipe
+    val dataRecordsP pe = f lteredS mclustersP pe
       .groupBy(_._1)
-      .leftJoin(f2vProducerEmbeddings.groupBy(_._1))
+      .leftJo n(f2vProducerEmbedd ngs.groupBy(_._1))
       .values
       .map {
-        case ((authorId1, tweetId, simclusterEmbedding), Some((authorId2, f2vEmbedding))) =>
-          TweetSimclusterRecordAdapter.adaptToDataRecord(
-            (tweetId, simclusterEmbedding, f2vEmbedding))
-        case ((authorId, tweetId, simclusterEmbedding), None) =>
-          TweetSimclusterRecordAdapter.adaptToDataRecord(
-            (tweetId, simclusterEmbedding, DEFAULT_F2V_VECTOR))
+        case ((author d1, t et d, s mclusterEmbedd ng), So ((author d2, f2vEmbedd ng))) =>
+          T etS mclusterRecordAdapter.adaptToDataRecord(
+            (t et d, s mclusterEmbedd ng, f2vEmbedd ng))
+        case ((author d, t et d, s mclusterEmbedd ng), None) =>
+          T etS mclusterRecordAdapter.adaptToDataRecord(
+            (t et d, s mclusterEmbedd ng, DEFAULT_F2V_VECTOR))
       }
 
     val modelPath = args.getOrElse("model_path", "")
-    val batchPredictor = getPredictionEngine(modelName = "tweet_model", modelPath = modelPath)
-    val tweetIdFeature = SharedFeatures.TWEET_ID
-    val tweetEmbeddingName = args.getOrElse("tweet_embedding_name", "output")
+    val batchPred ctor = getPred ct onEng ne(modelNa  = "t et_model", modelPath = modelPath)
+    val t et dFeature = SharedFeatures.TWEET_ D
+    val t etEmbedd ngNa  = args.getOrElse("t et_embedd ng_na ", "output")
 
-    val outputPipe = batchPredictor.predict(dataRecordsPipe).map {
-      case (originalDataRecord, predictedDataRecord) =>
-        val tweetId = originalDataRecord.getFeatureValue(tweetIdFeature)
-        val scalaPredictedDataRecord =
-          ScalaToJavaDataRecordConversions.javaDataRecord2ScalaDataRecord(predictedDataRecord)
-        val tweetEmbeddingTensor =
-          scalaPredictedDataRecord.tensors.get(FeatureUtil.featureIdForName(tweetEmbeddingName))
-        val tweetEmbeddingWithEntity = getEmbeddingWithEntity(tweetEmbeddingTensor, tweetId)
-        tweetEmbeddingWithEntity
+    val outputP pe = batchPred ctor.pred ct(dataRecordsP pe).map {
+      case (or g nalDataRecord, pred ctedDataRecord) =>
+        val t et d = or g nalDataRecord.getFeatureValue(t et dFeature)
+        val scalaPred ctedDataRecord =
+          ScalaToJavaDataRecordConvers ons.javaDataRecord2ScalaDataRecord(pred ctedDataRecord)
+        val t etEmbedd ngTensor =
+          scalaPred ctedDataRecord.tensors.get(FeatureUt l.feature dForNa (t etEmbedd ngNa ))
+        val t etEmbedd ngW hEnt y = getEmbedd ngW hEnt y(t etEmbedd ngTensor, t et d)
+        t etEmbedd ngW hEnt y
     }
 
-    buildAnnIndex(outputPipe, args)
+    bu ldAnn ndex(outputP pe, args)
   }
 }
 
-object TweetEmbeddingGenerationAdhocJob
-    extends TwitterExecutionApp
-    with TweetEmbeddingGenerationTrait {
+object T etEmbedd ngGenerat onAdhocJob
+    extends Tw terExecut onApp
+    w h T etEmbedd ngGenerat onTra  {
 
-  override def job: Execution[Unit] =
-    Execution.withId { implicit uid =>
-      Execution.withArgs { args =>
-        implicit val dateRange: DateRange = DateRange.parse(args.list("dateRange"))
+  overr de def job: Execut on[Un ] =
+    Execut on.w h d {  mpl c  u d =>
+      Execut on.w hArgs { args =>
+         mpl c  val dateRange: DateRange = DateRange.parse(args.l st("dateRange"))
         run(args)
       }
     }
 }
 
-object TweetEmbeddingGenerationBatchJob
-    extends TwitterScheduledExecutionApp
-    with TweetEmbeddingGenerationTrait {
+object T etEmbedd ngGenerat onBatchJob
+    extends Tw terSc duledExecut onApp
+    w h T etEmbedd ngGenerat onTra  {
 
-  override def scheduledJob: Execution[Unit] =
-    Execution.withId { implicit uid =>
-      Execution.withArgs { args =>
-        implicit val tz: TimeZone = DateOps.UTC
-        val batchFirstTime = BatchFirstTime(RichDate("2021-10-28")(tz, DateParser.default))
-        val analyticsArgs = AnalyticsBatchExecutionArgs(
-          batchDesc = BatchDescription(getClass.getName),
-          firstTime = batchFirstTime,
-          batchIncrement = BatchIncrement(Hours(updateHours)),
-          batchWidth = Some(BatchWidth(Hours(updateHours)))
+  overr de def sc duledJob: Execut on[Un ] =
+    Execut on.w h d {  mpl c  u d =>
+      Execut on.w hArgs { args =>
+         mpl c  val tz: T  Zone = DateOps.UTC
+        val batchF rstT   = BatchF rstT  (R chDate("2021-10-28")(tz, DateParser.default))
+        val analyt csArgs = Analyt csBatchExecut onArgs(
+          batchDesc = BatchDescr pt on(getClass.getNa ),
+          f rstT   = batchF rstT  ,
+          batch ncre nt = Batch ncre nt(H s(updateH s)),
+          batchW dth = So (BatchW dth(H s(updateH s)))
         )
 
-        AnalyticsBatchExecution(analyticsArgs) { implicit dateRange =>
+        Analyt csBatchExecut on(analyt csArgs) {  mpl c  dateRange =>
           run(args)
         }
       }
     }
 }
 
-object TweetEmbeddingGenerationBatchJobAlternate
-    extends TwitterScheduledExecutionApp
-    with TweetEmbeddingGenerationTrait {
+object T etEmbedd ngGenerat onBatchJobAlternate
+    extends Tw terSc duledExecut onApp
+    w h T etEmbedd ngGenerat onTra  {
 
-  override def scheduledJob: Execution[Unit] =
-    Execution.withId { implicit uid =>
-      Execution.withArgs { args =>
-        implicit val tz: TimeZone = DateOps.UTC
-        val batchFirstTime = BatchFirstTime(RichDate("2022-03-28")(tz, DateParser.default))
-        val analyticsArgs = AnalyticsBatchExecutionArgs(
-          batchDesc = BatchDescription(getClass.getName),
-          firstTime = batchFirstTime,
-          batchIncrement = BatchIncrement(Hours(updateHours)),
-          batchWidth = Some(BatchWidth(Hours(updateHours)))
+  overr de def sc duledJob: Execut on[Un ] =
+    Execut on.w h d {  mpl c  u d =>
+      Execut on.w hArgs { args =>
+         mpl c  val tz: T  Zone = DateOps.UTC
+        val batchF rstT   = BatchF rstT  (R chDate("2022-03-28")(tz, DateParser.default))
+        val analyt csArgs = Analyt csBatchExecut onArgs(
+          batchDesc = BatchDescr pt on(getClass.getNa ),
+          f rstT   = batchF rstT  ,
+          batch ncre nt = Batch ncre nt(H s(updateH s)),
+          batchW dth = So (BatchW dth(H s(updateH s)))
         )
 
-        AnalyticsBatchExecution(analyticsArgs) { implicit dateRange =>
+        Analyt csBatchExecut on(analyt csArgs) {  mpl c  dateRange =>
           run(args)
         }
       }
     }
 }
 
-object TweetEmbeddingGenerationBatchJobExperimental
-    extends TwitterScheduledExecutionApp
-    with TweetEmbeddingGenerationTrait {
+object T etEmbedd ngGenerat onBatchJobExper  ntal
+    extends Tw terSc duledExecut onApp
+    w h T etEmbedd ngGenerat onTra  {
 
-  override def scheduledJob: Execution[Unit] =
-    Execution.withId { implicit uid =>
-      Execution.withArgs { args =>
-        implicit val tz: TimeZone = DateOps.UTC
-        val batchFirstTime = BatchFirstTime(RichDate("2021-12-12")(tz, DateParser.default))
-        val analyticsArgs = AnalyticsBatchExecutionArgs(
-          batchDesc = BatchDescription(getClass.getName),
-          firstTime = batchFirstTime,
-          batchIncrement = BatchIncrement(Hours(updateHours)),
-          batchWidth = Some(BatchWidth(Hours(updateHours)))
+  overr de def sc duledJob: Execut on[Un ] =
+    Execut on.w h d {  mpl c  u d =>
+      Execut on.w hArgs { args =>
+         mpl c  val tz: T  Zone = DateOps.UTC
+        val batchF rstT   = BatchF rstT  (R chDate("2021-12-12")(tz, DateParser.default))
+        val analyt csArgs = Analyt csBatchExecut onArgs(
+          batchDesc = BatchDescr pt on(getClass.getNa ),
+          f rstT   = batchF rstT  ,
+          batch ncre nt = Batch ncre nt(H s(updateH s)),
+          batchW dth = So (BatchW dth(H s(updateH s)))
         )
 
-        AnalyticsBatchExecution(analyticsArgs) { implicit dateRange =>
+        Analyt csBatchExecut on(analyt csArgs) {  mpl c  dateRange =>
           run(args)
         }
       }

@@ -1,221 +1,221 @@
-package com.twitter.frigate.pushservice.predicate
+package com.tw ter.fr gate.pushserv ce.pred cate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.candidate.TargetABDecider
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.data_pipeline.features_common.MrRequestContextForFeatureStore
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.ml.featurestore.lib.dynamic.DynamicFeatureStoreClient
-import com.twitter.util.Future
-import com.twitter.frigate.pushservice.predicate.PostRankingPredicateHelper._
-import com.twitter.frigate.pushservice.util.CandidateUtil
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base._
+ mport com.tw ter.fr gate.common.cand date.TargetABDec der
+ mport com.tw ter.fr gate.common.rec_types.RecTypes
+ mport com.tw ter.fr gate.data_p pel ne.features_common.MrRequestContextForFeatureStore
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter.ml.featurestore.l b.dynam c.Dynam cFeatureStoreCl ent
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.fr gate.pushserv ce.pred cate.PostRank ngPred cate lper._
+ mport com.tw ter.fr gate.pushserv ce.ut l.Cand dateUt l
 
-object OutOfNetworkCandidatesQualityPredicates {
+object OutOfNetworkCand datesQual yPred cates {
 
-  def getTweetCharLengthThreshold(
-    target: TargetUser with TargetABDecider,
-    language: String,
-    useMediaThresholds: Boolean
+  def getT etCharLengthThreshold(
+    target: TargetUser w h TargetABDec der,
+    language: Str ng,
+    use d aThresholds: Boolean
   ): Double = {
-    lazy val sautOonWithMediaTweetLengthThreshold =
-      target.params(PushFeatureSwitchParams.SautOonWithMediaTweetLengthThresholdParam)
-    lazy val nonSautOonWithMediaTweetLengthThreshold =
-      target.params(PushFeatureSwitchParams.NonSautOonWithMediaTweetLengthThresholdParam)
-    lazy val sautOonWithoutMediaTweetLengthThreshold =
-      target.params(PushFeatureSwitchParams.SautOonWithoutMediaTweetLengthThresholdParam)
-    lazy val nonSautOonWithoutMediaTweetLengthThreshold =
-      target.params(PushFeatureSwitchParams.NonSautOonWithoutMediaTweetLengthThresholdParam)
-    val moreStrictForUndefinedLanguages =
-      target.params(PushFeatureSwitchParams.OonTweetLengthPredicateMoreStrictForUndefinedLanguages)
-    val isSautLanguage = if (moreStrictForUndefinedLanguages) {
-      isTweetLanguageInSautOrUndefined(language)
-    } else isTweetLanguageInSaut(language)
+    lazy val sautOonW h d aT etLengthThreshold =
+      target.params(PushFeatureSw chParams.SautOonW h d aT etLengthThresholdParam)
+    lazy val nonSautOonW h d aT etLengthThreshold =
+      target.params(PushFeatureSw chParams.NonSautOonW h d aT etLengthThresholdParam)
+    lazy val sautOonW hout d aT etLengthThreshold =
+      target.params(PushFeatureSw chParams.SautOonW hout d aT etLengthThresholdParam)
+    lazy val nonSautOonW hout d aT etLengthThreshold =
+      target.params(PushFeatureSw chParams.NonSautOonW hout d aT etLengthThresholdParam)
+    val moreStr ctForUndef nedLanguages =
+      target.params(PushFeatureSw chParams.OonT etLengthPred cateMoreStr ctForUndef nedLanguages)
+    val  sSautLanguage =  f (moreStr ctForUndef nedLanguages) {
+       sT etLanguage nSautOrUndef ned(language)
+    } else  sT etLanguage nSaut(language)
 
-    (useMediaThresholds, isSautLanguage) match {
+    (use d aThresholds,  sSautLanguage) match {
       case (true, true) =>
-        sautOonWithMediaTweetLengthThreshold
+        sautOonW h d aT etLengthThreshold
       case (true, false) =>
-        nonSautOonWithMediaTweetLengthThreshold
+        nonSautOonW h d aT etLengthThreshold
       case (false, true) =>
-        sautOonWithoutMediaTweetLengthThreshold
+        sautOonW hout d aT etLengthThreshold
       case (false, false) =>
-        nonSautOonWithoutMediaTweetLengthThreshold
+        nonSautOonW hout d aT etLengthThreshold
       case _ => -1
     }
   }
 
-  def getTweetWordLengthThreshold(
-    target: TargetUser with TargetABDecider,
-    language: String,
-    useMediaThresholds: Boolean
+  def getT etWordLengthThreshold(
+    target: TargetUser w h TargetABDec der,
+    language: Str ng,
+    use d aThresholds: Boolean
   ): Double = {
-    lazy val argfOonWithMediaTweetWordLengthThresholdParam =
-      target.params(PushFeatureSwitchParams.ArgfOonWithMediaTweetWordLengthThresholdParam)
-    lazy val esfthOonWithMediaTweetWordLengthThresholdParam =
-      target.params(PushFeatureSwitchParams.EsfthOonWithMediaTweetWordLengthThresholdParam)
+    lazy val argfOonW h d aT etWordLengthThresholdParam =
+      target.params(PushFeatureSw chParams.ArgfOonW h d aT etWordLengthThresholdParam)
+    lazy val esfthOonW h d aT etWordLengthThresholdParam =
+      target.params(PushFeatureSw chParams.EsfthOonW h d aT etWordLengthThresholdParam)
 
-    lazy val argfOonCandidatesWithMediaCondition =
-      isTweetLanguageInArgf(language) && useMediaThresholds
-    lazy val esfthOonCandidatesWithMediaCondition =
-      isTweetLanguageInEsfth(language) && useMediaThresholds
-    lazy val afirfOonCandidatesWithoutMediaCondition =
-      isTweetLanguageInAfirf(language) && !useMediaThresholds
+    lazy val argfOonCand datesW h d aCond  on =
+       sT etLanguage nArgf(language) && use d aThresholds
+    lazy val esfthOonCand datesW h d aCond  on =
+       sT etLanguage nEsfth(language) && use d aThresholds
+    lazy val af rfOonCand datesW hout d aCond  on =
+       sT etLanguage nAf rf(language) && !use d aThresholds
 
-    val afirfOonCandidatesWithoutMediaTweetWordLengthThreshold = 5
-    if (argfOonCandidatesWithMediaCondition) {
-      argfOonWithMediaTweetWordLengthThresholdParam
-    } else if (esfthOonCandidatesWithMediaCondition) {
-      esfthOonWithMediaTweetWordLengthThresholdParam
-    } else if (afirfOonCandidatesWithoutMediaCondition) {
-      afirfOonCandidatesWithoutMediaTweetWordLengthThreshold
+    val af rfOonCand datesW hout d aT etWordLengthThreshold = 5
+     f (argfOonCand datesW h d aCond  on) {
+      argfOonW h d aT etWordLengthThresholdParam
+    } else  f (esfthOonCand datesW h d aCond  on) {
+      esfthOonW h d aT etWordLengthThresholdParam
+    } else  f (af rfOonCand datesW hout d aCond  on) {
+      af rfOonCand datesW hout d aT etWordLengthThreshold
     } else -1
   }
 
-  def oonTweetLengthBasedPrerankingPredicate(
+  def oonT etLengthBasedPrerank ngPred cate(
     characterBased: Boolean
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[OutOfNetworkTweetCandidate with TargetInfo[
-    TargetUser with TargetABDecider
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[OutOfNetworkT etCand date w h Target nfo[
+    TargetUser w h TargetABDec der
   ]] = {
-    val name = "oon_tweet_length_based_preranking_predicate"
-    val scopedStats = stats.scope(s"${name}_charBased_$characterBased")
+    val na  = "oon_t et_length_based_prerank ng_pred cate"
+    val scopedStats = stats.scope(s"${na }_charBased_$characterBased")
 
-    Predicate
+    Pred cate
       .fromAsync {
-        cand: OutOfNetworkTweetCandidate with TargetInfo[TargetUser with TargetABDecider] =>
+        cand: OutOfNetworkT etCand date w h Target nfo[TargetUser w h TargetABDec der] =>
           cand match {
-            case candidate: TweetAuthorDetails =>
-              val target = candidate.target
-              val crt = candidate.commonRecType
+            case cand date: T etAuthorDeta ls =>
+              val target = cand date.target
+              val crt = cand date.commonRecType
 
-              val updatedMediaLogic =
-                target.params(PushFeatureSwitchParams.OonTweetLengthPredicateUpdatedMediaLogic)
-              val updatedQuoteTweetLogic =
-                target.params(PushFeatureSwitchParams.OonTweetLengthPredicateUpdatedQuoteTweetLogic)
-              val useMediaThresholds = if (updatedMediaLogic || updatedQuoteTweetLogic) {
-                val hasMedia = updatedMediaLogic && (candidate.hasPhoto || candidate.hasVideo)
-                val hasQuoteTweet = updatedQuoteTweetLogic && candidate.quotedTweet.nonEmpty
-                hasMedia || hasQuoteTweet
-              } else RecTypes.isMediaType(crt)
-              val enableFilter =
-                target.params(PushFeatureSwitchParams.EnablePrerankingTweetLengthPredicate)
+              val updated d aLog c =
+                target.params(PushFeatureSw chParams.OonT etLengthPred cateUpdated d aLog c)
+              val updatedQuoteT etLog c =
+                target.params(PushFeatureSw chParams.OonT etLengthPred cateUpdatedQuoteT etLog c)
+              val use d aThresholds =  f (updated d aLog c || updatedQuoteT etLog c) {
+                val has d a = updated d aLog c && (cand date.hasPhoto || cand date.hasV deo)
+                val hasQuoteT et = updatedQuoteT etLog c && cand date.quotedT et.nonEmpty
+                has d a || hasQuoteT et
+              } else RecTypes. s d aType(crt)
+              val enableF lter =
+                target.params(PushFeatureSw chParams.EnablePrerank ngT etLengthPred cate)
 
-              val language = candidate.tweet.flatMap(_.language.map(_.language)).getOrElse("")
-              val tweetTextOpt = candidate.tweet.flatMap(_.coreData.map(_.text))
+              val language = cand date.t et.flatMap(_.language.map(_.language)).getOrElse("")
+              val t etTextOpt = cand date.t et.flatMap(_.coreData.map(_.text))
 
-              val (length: Double, threshold: Double) = if (characterBased) {
+              val (length: Double, threshold: Double) =  f (characterBased) {
                 (
-                  tweetTextOpt.map(_.size.toDouble).getOrElse(9999.0),
-                  getTweetCharLengthThreshold(target, language, useMediaThresholds))
+                  t etTextOpt.map(_.s ze.toDouble).getOrElse(9999.0),
+                  getT etCharLengthThreshold(target, language, use d aThresholds))
               } else {
                 (
-                  tweetTextOpt.map(getTweetWordLength).getOrElse(999.0),
-                  getTweetWordLengthThreshold(target, language, useMediaThresholds))
+                  t etTextOpt.map(getT etWordLength).getOrElse(999.0),
+                  getT etWordLengthThreshold(target, language, use d aThresholds))
               }
-              scopedStats.counter("threshold_" + threshold.toString).incr()
+              scopedStats.counter("threshold_" + threshold.toStr ng). ncr()
 
-              CandidateUtil.shouldApplyHealthQualityFiltersForPrerankingPredicates(candidate).map {
-                case true if enableFilter =>
+              Cand dateUt l.shouldApply althQual yF ltersForPrerank ngPred cates(cand date).map {
+                case true  f enableF lter =>
                   length > threshold
                 case _ => true
               }
             case _ =>
-              scopedStats.counter("author_is_not_hydrated").incr()
+              scopedStats.counter("author_ s_not_hydrated"). ncr()
               Future.True
           }
-      }.withStats(scopedStats)
-      .withName(name)
+      }.w hStats(scopedStats)
+      .w hNa (na )
   }
 
-  private def isTweetLanguageInAfirf(candidateLanguage: String): Boolean = {
-    val setAFIRF: Set[String] = Set("")
-    setAFIRF.contains(candidateLanguage)
+  pr vate def  sT etLanguage nAf rf(cand dateLanguage: Str ng): Boolean = {
+    val setAF RF: Set[Str ng] = Set("")
+    setAF RF.conta ns(cand dateLanguage)
   }
-  private def isTweetLanguageInEsfth(candidateLanguage: String): Boolean = {
-    val setESFTH: Set[String] = Set("")
-    setESFTH.contains(candidateLanguage)
+  pr vate def  sT etLanguage nEsfth(cand dateLanguage: Str ng): Boolean = {
+    val setESFTH: Set[Str ng] = Set("")
+    setESFTH.conta ns(cand dateLanguage)
   }
-  private def isTweetLanguageInArgf(candidateLanguage: String): Boolean = {
-    val setARGF: Set[String] = Set("")
-    setARGF.contains(candidateLanguage)
+  pr vate def  sT etLanguage nArgf(cand dateLanguage: Str ng): Boolean = {
+    val setARGF: Set[Str ng] = Set("")
+    setARGF.conta ns(cand dateLanguage)
   }
 
-  private def isTweetLanguageInSaut(candidateLanguage: String): Boolean = {
+  pr vate def  sT etLanguage nSaut(cand dateLanguage: Str ng): Boolean = {
     val setSAUT = Set("")
-    setSAUT.contains(candidateLanguage)
+    setSAUT.conta ns(cand dateLanguage)
   }
 
-  private def isTweetLanguageInSautOrUndefined(candidateLanguage: String): Boolean = {
-    val setSautOrUndefined = Set("")
-    setSautOrUndefined.contains(candidateLanguage)
+  pr vate def  sT etLanguage nSautOrUndef ned(cand dateLanguage: Str ng): Boolean = {
+    val setSautOrUndef ned = Set("")
+    setSautOrUndef ned.conta ns(cand dateLanguage)
   }
 
-  def containTargetNegativeKeywords(text: String, denylist: Seq[String]): Boolean = {
-    if (denylist.isEmpty)
+  def conta nTargetNegat veKeywords(text: Str ng, denyl st: Seq[Str ng]): Boolean = {
+     f (denyl st. sEmpty)
       false
     else {
-      denylist
-        .map { negativeKeyword =>
-          text.toLowerCase().contains(negativeKeyword)
+      denyl st
+        .map { negat veKeyword =>
+          text.toLo rCase().conta ns(negat veKeyword)
         }.reduce(_ || _)
     }
   }
 
-  def NegativeKeywordsPredicate(
-    postRankingFeatureStoreClient: DynamicFeatureStoreClient[MrRequestContextForFeatureStore]
+  def Negat veKeywordsPred cate(
+    postRank ngFeatureStoreCl ent: Dynam cFeatureStoreCl ent[MrRequestContextForFeatureStore]
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[
-    PushCandidate with TweetCandidate with RecommendationType
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[
+    PushCand date w h T etCand date w h Recom ndat onType
   ] = {
 
-    val name = "negative_keywords_predicate"
-    val scopedStatsReceiver = stats.scope(name)
-    val allOonCandidatesCounter = scopedStatsReceiver.counter("all_oon_candidates")
-    val filteredOonCandidatesCounter = scopedStatsReceiver.counter("filtered_oon_candidates")
-    val tweetLanguageFeature = "RecTweet.TweetyPieResult.Language"
+    val na  = "negat ve_keywords_pred cate"
+    val scopedStatsRece ver = stats.scope(na )
+    val allOonCand datesCounter = scopedStatsRece ver.counter("all_oon_cand dates")
+    val f lteredOonCand datesCounter = scopedStatsRece ver.counter("f ltered_oon_cand dates")
+    val t etLanguageFeature = "RecT et.T etyP eResult.Language"
 
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetCandidate with RecommendationType =>
-        val target = candidate.target
-        val crt = candidate.commonRecType
-        val isTwistlyCandidate = RecTypes.twistlyTweets.contains(crt)
+    Pred cate
+      .fromAsync { cand date: PushCand date w h T etCand date w h Recom ndat onType =>
+        val target = cand date.target
+        val crt = cand date.commonRecType
+        val  sTw stlyCand date = RecTypes.tw stlyT ets.conta ns(crt)
 
-        lazy val enableNegativeKeywordsPredicateParam =
-          target.params(PushFeatureSwitchParams.EnableNegativeKeywordsPredicateParam)
-        lazy val negativeKeywordsPredicateDenylist =
-          target.params(PushFeatureSwitchParams.NegativeKeywordsPredicateDenylist)
-        lazy val candidateLanguage =
-          candidate.categoricalFeatures.getOrElse(tweetLanguageFeature, "")
+        lazy val enableNegat veKeywordsPred cateParam =
+          target.params(PushFeatureSw chParams.EnableNegat veKeywordsPred cateParam)
+        lazy val negat veKeywordsPred cateDenyl st =
+          target.params(PushFeatureSw chParams.Negat veKeywordsPred cateDenyl st)
+        lazy val cand dateLanguage =
+          cand date.categor calFeatures.getOrElse(t etLanguageFeature, "")
 
-        if (CandidateUtil.shouldApplyHealthQualityFilters(candidate) && candidateLanguage.equals(
-            "en") && isTwistlyCandidate && enableNegativeKeywordsPredicateParam) {
-          allOonCandidatesCounter.incr()
+         f (Cand dateUt l.shouldApply althQual yF lters(cand date) && cand dateLanguage.equals(
+            "en") &&  sTw stlyCand date && enableNegat veKeywordsPred cateParam) {
+          allOonCand datesCounter. ncr()
 
-          val tweetTextFuture: Future[String] =
-            getTweetText(candidate, postRankingFeatureStoreClient)
+          val t etTextFuture: Future[Str ng] =
+            getT etText(cand date, postRank ngFeatureStoreCl ent)
 
-          tweetTextFuture.map { tweetText =>
-            val containsNegativeWords =
-              containTargetNegativeKeywords(tweetText, negativeKeywordsPredicateDenylist)
-            candidate.cachePredicateInfo(
-              name,
-              if (containsNegativeWords) 1.0 else 0.0,
+          t etTextFuture.map { t etText =>
+            val conta nsNegat veWords =
+              conta nTargetNegat veKeywords(t etText, negat veKeywordsPred cateDenyl st)
+            cand date.cac Pred cate nfo(
+              na ,
+               f (conta nsNegat veWords) 1.0 else 0.0,
               0.0,
-              containsNegativeWords)
-            if (containsNegativeWords) {
-              filteredOonCandidatesCounter.incr()
+              conta nsNegat veWords)
+             f (conta nsNegat veWords) {
+              f lteredOonCand datesCounter. ncr()
               false
             } else true
           }
         } else Future.True
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .w hStats(stats.scope(na ))
+      .w hNa (na )
   }
 }

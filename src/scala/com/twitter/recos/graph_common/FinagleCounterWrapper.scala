@@ -1,15 +1,15 @@
-package com.twitter.recos.graph_common
+package com.tw ter.recos.graph_common
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.graphjet.stats.{Counter => GraphCounter}
+ mport com.tw ter.f nagle.stats.Counter
+ mport com.tw ter.graphjet.stats.{Counter => GraphCounter}
 
 /**
- * FinagleCounterWrapper wraps Twitter's Finagle Counter.
+ * F nagleCounterWrapper wraps Tw ter's F nagle Counter.
  *
- * This is because GraphJet is an openly available library which does not
- * depend on Finagle, but tracks stats using a similar interface.
+ * T   s because GraphJet  s an openly ava lable l brary wh ch does not
+ * depend on F nagle, but tracks stats us ng a s m lar  nterface.
  */
-class FinagleCounterWrapper(counter: Counter) extends GraphCounter {
-  def incr() = counter.incr()
-  def incr(delta: Int) = counter.incr(delta)
+class F nagleCounterWrapper(counter: Counter) extends GraphCounter {
+  def  ncr() = counter. ncr()
+  def  ncr(delta:  nt) = counter. ncr(delta)
 }

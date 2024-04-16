@@ -1,14 +1,14 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.tw ter.s mclusters_v2.summ ngb rd.common
 
 /**
- * Provides int to int hash function. Used to batch clusterIds together.
+ * Prov des  nt to  nt hash funct on. Used to batch cluster ds toget r.
  */
-object SimClustersHashUtil {
-  def clusterIdToBucket(clusterId: Int): Int = {
-    clusterId % numBuckets
+object S mClustersHashUt l {
+  def cluster dToBucket(cluster d:  nt):  nt = {
+    cluster d % numBuckets
   }
 
-  val numBuckets: Int = 200
+  val numBuckets:  nt = 200
 
-  val getAllBuckets: Seq[Int] = 0.until(numBuckets)
+  val getAllBuckets: Seq[ nt] = 0.unt l(numBuckets)
 }

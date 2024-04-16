@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.button
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.button
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.HorizonIcon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. con.Hor zon con
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Url
 
-sealed trait CtaButton
+sealed tra  CtaButton
 
-case class TextCtaButton(buttonText: String, url: Url) extends CtaButton
+case class TextCtaButton(buttonText: Str ng, url: Url) extends CtaButton
 
-case class IconCtaButton(buttonIcon: HorizonIcon, accessibilityLabel: String, url: Url)
+case class  conCtaButton(button con: Hor zon con, access b l yLabel: Str ng, url: Url)
     extends CtaButton

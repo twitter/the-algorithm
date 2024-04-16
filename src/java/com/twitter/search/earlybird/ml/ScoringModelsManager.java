@@ -1,155 +1,155 @@
-package com.twitter.search.earlybird.ml;
+package com.tw ter.search.earlyb rd.ml;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Optional;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Opt onal;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.file.AbstractFile;
-import com.twitter.search.common.file.FileUtils;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.schema.DynamicSchema;
-import com.twitter.search.common.util.ml.prediction_engine.CompositeFeatureContext;
-import com.twitter.search.common.util.ml.prediction_engine.LightweightLinearModel;
-import com.twitter.search.common.util.ml.prediction_engine.ModelLoader;
+ mport com.tw ter.search.common.f le.AbstractF le;
+ mport com.tw ter.search.common.f le.F leUt ls;
+ mport com.tw ter.search.common. tr cs.SearchStatsRece ver;
+ mport com.tw ter.search.common.sc ma.Dynam cSc ma;
+ mport com.tw ter.search.common.ut l.ml.pred ct on_eng ne.Compos eFeatureContext;
+ mport com.tw ter.search.common.ut l.ml.pred ct on_eng ne.L ght  ghtL nearModel;
+ mport com.tw ter.search.common.ut l.ml.pred ct on_eng ne.ModelLoader;
 
-import static com.twitter.search.modeling.tweet_ranking.TweetScoringFeatures.CONTEXT;
-import static com.twitter.search.modeling.tweet_ranking.TweetScoringFeatures.FeatureContextVersion.CURRENT_VERSION;
+ mport stat c com.tw ter.search.model ng.t et_rank ng.T etScor ngFeatures.CONTEXT;
+ mport stat c com.tw ter.search.model ng.t et_rank ng.T etScor ngFeatures.FeatureContextVers on.CURRENT_VERS ON;
 
 /**
- * Loads the scoring models for tweets and provides access to them.
+ * Loads t  scor ng models for t ets and prov des access to t m.
  *
- * This class relies on a list of ModelLoader objects to retrieve the objects from them. It will
- * return the first model found according to the order in the list.
+ * T  class rel es on a l st of ModelLoader objects to retr eve t  objects from t m.   w ll
+ * return t  f rst model found accord ng to t  order  n t  l st.
  *
- * For production, we load models from 2 sources: classpath and HDFS. If a model is available
- * from HDFS, we return it, otherwise we use the model from the classpath.
+ * For product on,   load models from 2 s ces: classpath and HDFS.  f a model  s ava lable
+ * from HDFS,   return  , ot rw se   use t  model from t  classpath.
  *
- * The models used for default requests (i.e. not experiments) MUST be present in the
- * classpath, this allows us to avoid errors if they can't be loaded from HDFS.
- * Models for experiments can live only in HDFS, so we don't need to redeploy Earlybird if we
- * want to test them.
+ * T  models used for default requests ( .e. not exper  nts) MUST be present  n t 
+ * classpath, t  allows us to avo d errors  f t y can't be loaded from HDFS.
+ * Models for exper  nts can l ve only  n HDFS, so   don't need to redeploy Earlyb rd  f  
+ * want to test t m.
  */
-public class ScoringModelsManager {
+publ c class Scor ngModelsManager {
 
-  private static final Logger LOG = LoggerFactory.getLogger(ScoringModelsManager.class);
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Scor ngModelsManager.class);
 
   /**
-   * Used when
-   * 1. Testing
-   * 2. The scoring models are disabled in the config
-   * 3. Exceptions thrown during loading the scoring models
+   * Used w n
+   * 1. Test ng
+   * 2. T  scor ng models are d sabled  n t  conf g
+   * 3. Except ons thrown dur ng load ng t  scor ng models
    */
-  public static final ScoringModelsManager NO_OP_MANAGER = new ScoringModelsManager() {
-    @Override
-    public boolean isEnabled() {
+  publ c stat c f nal Scor ngModelsManager NO_OP_MANAGER = new Scor ngModelsManager() {
+    @Overr de
+    publ c boolean  sEnabled() {
       return false;
     }
   };
 
-  private final ModelLoader[] loaders;
-  private final DynamicSchema dynamicSchema;
+  pr vate f nal ModelLoader[] loaders;
+  pr vate f nal Dynam cSc ma dynam cSc ma;
 
-  public ScoringModelsManager(ModelLoader... loaders) {
-    this.loaders = loaders;
-    this.dynamicSchema = null;
+  publ c Scor ngModelsManager(ModelLoader... loaders) {
+    t .loaders = loaders;
+    t .dynam cSc ma = null;
   }
 
-  public ScoringModelsManager(DynamicSchema dynamicSchema, ModelLoader... loaders) {
-    this.loaders = loaders;
-    this.dynamicSchema = dynamicSchema;
+  publ c Scor ngModelsManager(Dynam cSc ma dynam cSc ma, ModelLoader... loaders) {
+    t .loaders = loaders;
+    t .dynam cSc ma = dynam cSc ma;
   }
 
   /**
-   * Indicates that the scoring models were enabled in the config and were loaded successfully
+   *  nd cates that t  scor ng models  re enabled  n t  conf g and  re loaded successfully
    */
-  public boolean isEnabled() {
+  publ c boolean  sEnabled() {
     return true;
   }
 
-  public void reload() {
+  publ c vo d reload() {
     for (ModelLoader loader : loaders) {
       loader.run();
     }
   }
 
   /**
-   * Loads and returns the model with the given name, if one exists.
+   * Loads and returns t  model w h t  g ven na ,  f one ex sts.
    */
-  public Optional<LightweightLinearModel> getModel(String modelName) {
+  publ c Opt onal<L ght  ghtL nearModel> getModel(Str ng modelNa ) {
     for (ModelLoader loader : loaders) {
-      Optional<LightweightLinearModel> model = loader.getModel(modelName);
-      if (model.isPresent()) {
+      Opt onal<L ght  ghtL nearModel> model = loader.getModel(modelNa );
+       f (model. sPresent()) {
         return model;
       }
     }
-    return Optional.absent();
+    return Opt onal.absent();
   }
 
   /**
-   * Creates an instance that loads models first from HDFS and the classpath resources.
+   * Creates an  nstance that loads models f rst from HDFS and t  classpath res ces.
    *
-   * If the models are not found in HDFS, it uses the models from the classpath as fallback.
+   *  f t  models are not found  n HDFS,   uses t  models from t  classpath as fallback.
    */
-  public static ScoringModelsManager create(
-      SearchStatsReceiver serverStats,
-      String hdfsNameNode,
-      String hdfsBasedPath,
-      DynamicSchema dynamicSchema) throws IOException {
-    // Create a composite feature context so we can load both legacy and schema-based models
-    CompositeFeatureContext featureContext = new CompositeFeatureContext(
-        CONTEXT, dynamicSchema::getSearchFeatureSchema);
+  publ c stat c Scor ngModelsManager create(
+      SearchStatsRece ver serverStats,
+      Str ng hdfsNa Node,
+      Str ng hdfsBasedPath,
+      Dynam cSc ma dynam cSc ma) throws  OExcept on {
+    // Create a compos e feature context so   can load both legacy and sc ma-based models
+    Compos eFeatureContext featureContext = new Compos eFeatureContext(
+        CONTEXT, dynam cSc ma::getSearchFeatureSc ma);
     ModelLoader hdfsLoader = createHdfsLoader(
-        serverStats, hdfsNameNode, hdfsBasedPath, featureContext);
+        serverStats, hdfsNa Node, hdfsBasedPath, featureContext);
     ModelLoader classpathLoader = createClasspathLoader(
         serverStats, featureContext);
 
-    // Explicitly load the models from the classpath
+    // Expl c ly load t  models from t  classpath
     classpathLoader.run();
 
-    ScoringModelsManager manager = new ScoringModelsManager(hdfsLoader, classpathLoader);
-    LOG.info("Initialized ScoringModelsManager for loading models from HDFS and the classpath");
+    Scor ngModelsManager manager = new Scor ngModelsManager(hdfsLoader, classpathLoader);
+    LOG. nfo(" n  al zed Scor ngModelsManager for load ng models from HDFS and t  classpath");
     return manager;
   }
 
-  protected static ModelLoader createHdfsLoader(
-      SearchStatsReceiver serverStats,
-      String hdfsNameNode,
-      String hdfsBasedPath,
-      CompositeFeatureContext featureContext) {
-    String hdfsVersionedPath = hdfsBasedPath + "/" + CURRENT_VERSION.getVersionDirectory();
-    LOG.info("Starting to load scoring models from HDFS: {}:{}",
-        hdfsNameNode, hdfsVersionedPath);
-    return ModelLoader.forHdfsDirectory(
-        hdfsNameNode,
-        hdfsVersionedPath,
+  protected stat c ModelLoader createHdfsLoader(
+      SearchStatsRece ver serverStats,
+      Str ng hdfsNa Node,
+      Str ng hdfsBasedPath,
+      Compos eFeatureContext featureContext) {
+    Str ng hdfsVers onedPath = hdfsBasedPath + "/" + CURRENT_VERS ON.getVers onD rectory();
+    LOG. nfo("Start ng to load scor ng models from HDFS: {}:{}",
+        hdfsNa Node, hdfsVers onedPath);
+    return ModelLoader.forHdfsD rectory(
+        hdfsNa Node,
+        hdfsVers onedPath,
         featureContext,
-        "scoring_models_hdfs_",
+        "scor ng_models_hdfs_",
         serverStats);
   }
 
   /**
-   * Creates a loader that loads models from a default location in the classpath.
+   * Creates a loader that loads models from a default locat on  n t  classpath.
    */
-  @VisibleForTesting
-  public static ModelLoader createClasspathLoader(
-      SearchStatsReceiver serverStats, CompositeFeatureContext featureContext)
-      throws IOException {
-    AbstractFile defaultModelsBaseDir = FileUtils.getTmpDirHandle(
-        ScoringModelsManager.class,
-        "/com/twitter/search/earlybird/ml/default_models");
-    AbstractFile defaultModelsDir = defaultModelsBaseDir.getChild(
-        CURRENT_VERSION.getVersionDirectory());
+  @V s bleForTest ng
+  publ c stat c ModelLoader createClasspathLoader(
+      SearchStatsRece ver serverStats, Compos eFeatureContext featureContext)
+      throws  OExcept on {
+    AbstractF le defaultModelsBaseD r = F leUt ls.getTmpD rHandle(
+        Scor ngModelsManager.class,
+        "/com/tw ter/search/earlyb rd/ml/default_models");
+    AbstractF le defaultModelsD r = defaultModelsBaseD r.getCh ld(
+        CURRENT_VERS ON.getVers onD rectory());
 
-    LOG.info("Starting to load scoring models from the classpath: {}",
-        defaultModelsDir.getPath());
-    return ModelLoader.forDirectory(
-        defaultModelsDir,
+    LOG. nfo("Start ng to load scor ng models from t  classpath: {}",
+        defaultModelsD r.getPath());
+    return ModelLoader.forD rectory(
+        defaultModelsD r,
         featureContext,
-        "scoring_models_classpath_",
+        "scor ng_models_classpath_",
         serverStats);
   }
 }

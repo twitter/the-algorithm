@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.products.explore_tab.configapi
+package com.tw ter.follow_recom ndat ons.products.explore_tab.conf gap 
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.follow_recommendations.products.explore_tab.configapi.ExploreTabParams._
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.Param
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.conf gap .common.FeatureSw chConf g
+ mport com.tw ter.follow_recom ndat ons.products.explore_tab.conf gap .ExploreTabParams._
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ExploreTabFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] =
+@S ngleton
+class ExploreTabFSConf g @ nject() () extends FeatureSw chConf g {
+  overr de val booleanFSParams: Seq[Param[Boolean] w h FSNa ] =
     Seq(EnableProductForSoftUser)
 }

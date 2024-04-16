@@ -1,66 +1,66 @@
 {
-  "role": "discode",
-  "name": "uua-user-modification-prod",
-  "config-files": [
-    "uua-user-modification.aurora"
+  "role": "d scode",
+  "na ": "uua-user-mod f cat on-prod",
+  "conf g-f les": [
+    "uua-user-mod f cat on.aurora"
   ],
-  "build": {
+  "bu ld": {
     "play": true,
-    "trigger": {
-      "cron-schedule": "0 17 * * 2"
+    "tr gger": {
+      "cron-sc dule": "0 17 * * 2"
     },
-    "dependencies": [
+    "dependenc es": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "na ": "packer-cl ent-no-pex",
+        "vers on": "latest"
       }
     ],
     "steps": [
       {
         "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-user-modification"
+        "na ": "bundle",
+        "target": "un f ed_user_act ons/serv ce/src/ma n/scala:uua-user-mod f cat on"
       },
       {
         "type": "packer",
-        "name": "uua-user-modification",
-        "artifact": "./dist/uua-user-modification.zip"
+        "na ": "uua-user-mod f cat on",
+        "art fact": "./d st/uua-user-mod f cat on.z p"
       }
     ]
   },
   "targets": [
     {
       "type": "group",
-      "name": "prod",
+      "na ": "prod",
       "targets": [
         {
-          "name": "uua-user-modification-prod-atla",
-          "key": "atla/discode/prod/uua-user-modification"
+          "na ": "uua-user-mod f cat on-prod-atla",
+          "key": "atla/d scode/prod/uua-user-mod f cat on"
         },
         {
-          "name": "uua-user-modification-prod-pdxa",
-          "key": "pdxa/discode/prod/uua-user-modification"
+          "na ": "uua-user-mod f cat on-prod-pdxa",
+          "key": "pdxa/d scode/prod/uua-user-mod f cat on"
         }
       ]
     }
   ],
-  "subscriptions": [
+  "subscr pt ons": [
    {
      "type": "SLACK",
-     "recipients": [
+     "rec p ents": [
        {
-         "to": "discode-oncall"
+         "to": "d scode-oncall"
        }
      ],
      "events": ["WORKFLOW_SUCCESS"]
    },
    {
      "type": "SLACK",
-     "recipients": [{
-       "to": "discode-oncall"
+     "rec p ents": [{
+       "to": "d scode-oncall"
      }],
-     "events": ["*FAILED"]
+     "events": ["*FA LED"]
    }
   ]
 }

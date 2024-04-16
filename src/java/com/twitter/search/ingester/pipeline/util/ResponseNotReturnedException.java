@@ -1,7 +1,7 @@
-package com.twitter.search.ingester.pipeline.util;
+package com.tw ter.search. ngester.p pel ne.ut l;
 
-public class ResponseNotReturnedException extends Exception {
-  ResponseNotReturnedException(Object request) {
-    super("Response not returned in batch for request: " + request);
+publ c class ResponseNotReturnedExcept on extends Except on {
+  ResponseNotReturnedExcept on(Object request) {
+    super("Response not returned  n batch for request: " + request);
   }
 }

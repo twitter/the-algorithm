@@ -1,18 +1,18 @@
-create_thrift_libraries(
-    base_name = "thrift",
-    sources = ["*.thrift"],
+create_thr ft_l brar es(
+    base_na  = "thr ft",
+    s ces = ["*.thr ft"],
     platform = "java8",
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
     dependency_roots = [
-        "src/thrift/com/twitter/ads/adserver:adserver_common",
-        "src/thrift/com/twitter/ml/api:data",
-        "src/thrift/com/twitter/suggests/controller_data",
+        "src/thr ft/com/tw ter/ads/adserver:adserver_common",
+        "src/thr ft/com/tw ter/ml/ap :data",
+        "src/thr ft/com/tw ter/suggests/controller_data",
     ],
     generate_languages = [
         "java",
         "scala",
         "strato",
     ],
-    provides_java_name = "follow-recommendations-logging-java",
-    provides_scala_name = "follow-recommendations-logging-scala",
+    prov des_java_na  = "follow-recom ndat ons-logg ng-java",
+    prov des_scala_na  = "follow-recom ndat ons-logg ng-scala",
 )

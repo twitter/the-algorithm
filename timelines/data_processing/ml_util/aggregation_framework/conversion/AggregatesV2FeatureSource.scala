@@ -1,171 +1,171 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.convers on
 
-import com.twitter.bijection.Injection
-import com.twitter.bijection.thrift.CompactThriftCodec
-import com.twitter.ml.api.AdaptedFeatureSource
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.IRecordOneToManyAdapter
-import com.twitter.ml.api.TypedFeatureSource
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.RichDate
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding.commons.tap.VersionedTap.TapMode
-import com.twitter.summingbird.batch.BatchID
-import com.twitter.summingbird_internal.bijection.BatchPairImplicits
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKey
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKeyInjection
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
-import org.apache.hadoop.mapred.JobConf
-import scala.collection.JavaConverters._
-import AggregatesV2Adapter._
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.b ject on.thr ft.CompactThr ftCodec
+ mport com.tw ter.ml.ap .AdaptedFeatureS ce
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap . RecordOneToManyAdapter
+ mport com.tw ter.ml.ap .TypedFeatureS ce
+ mport com.tw ter.scald ng.DateRange
+ mport com.tw ter.scald ng.R chDate
+ mport com.tw ter.scald ng.TypedP pe
+ mport com.tw ter.scald ng.commons.s ce.Vers onedKeyValS ce
+ mport com.tw ter.scald ng.commons.tap.Vers onedTap.TapMode
+ mport com.tw ter.summ ngb rd.batch.Batch D
+ mport com.tw ter.summ ngb rd_ nternal.b ject on.BatchPa r mpl c s
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.Aggregat onKey
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.Aggregat onKey nject on
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.TypedAggregateGroup
+ mport org.apac .hadoop.mapred.JobConf
+ mport scala.collect on.JavaConverters._
+ mport AggregatesV2Adapter._
 
-object AggregatesV2AdaptedSource {
-  val DefaultTrimThreshold = 0
+object AggregatesV2AdaptedS ce {
+  val DefaultTr mThreshold = 0
 }
 
-trait AggregatesV2AdaptedSource extends AggregatesV2AdaptedSourceBase[DataRecord] {
-  override def storageFormatCodec: Injection[DataRecord, Array[Byte]] =
-    CompactThriftCodec[DataRecord]
-  override def toDataRecord(v: DataRecord): DataRecord = v
+tra  AggregatesV2AdaptedS ce extends AggregatesV2AdaptedS ceBase[DataRecord] {
+  overr de def storageFormatCodec:  nject on[DataRecord, Array[Byte]] =
+    CompactThr ftCodec[DataRecord]
+  overr de def toDataRecord(v: DataRecord): DataRecord = v
 }
 
-trait AggregatesV2AdaptedSourceBase[StorageFormat]
-    extends TypedFeatureSource[AggregatesV2Tuple]
-    with AdaptedFeatureSource[AggregatesV2Tuple]
-    with BatchPairImplicits {
+tra  AggregatesV2AdaptedS ceBase[StorageFormat]
+    extends TypedFeatureS ce[AggregatesV2Tuple]
+    w h AdaptedFeatureS ce[AggregatesV2Tuple]
+    w h BatchPa r mpl c s {
 
-  /* Output root path of aggregates v2 job, excluding store name and version */
-  def rootPath: String
+  /* Output root path of aggregates v2 job, exclud ng store na  and vers on */
+  def rootPath: Str ng
 
-  /* Name of store under root path to read */
-  def storeName: String
+  /* Na  of store under root path to read */
+  def storeNa : Str ng
 
-  // max bijection failures
-  def maxFailures: Int = 0
+  // max b ject on fa lures
+  def maxFa lures:  nt = 0
 
-  /* Aggregate config used to generate above output */
+  /* Aggregate conf g used to generate above output */
   def aggregates: Set[TypedAggregateGroup[_]]
 
-  /* trimThreshold Trim all aggregates below a certain threshold to save memory */
-  def trimThreshold: Double
+  /* tr mThreshold Tr m all aggregates below a certa n threshold to save  mory */
+  def tr mThreshold: Double
 
   def toDataRecord(v: StorageFormat): DataRecord
 
-  def sourceVersionOpt: Option[Long]
+  def s ceVers onOpt: Opt on[Long]
 
-  def enableMostRecentBeforeSourceVersion: Boolean = false
+  def enableMostRecentBeforeS ceVers on: Boolean = false
 
-  implicit private val aggregationKeyInjection: Injection[AggregationKey, Array[Byte]] =
-    AggregationKeyInjection
-  implicit def storageFormatCodec: Injection[StorageFormat, Array[Byte]]
+   mpl c  pr vate val aggregat onKey nject on:  nject on[Aggregat onKey, Array[Byte]] =
+    Aggregat onKey nject on
+   mpl c  def storageFormatCodec:  nject on[StorageFormat, Array[Byte]]
 
-  private def filteredAggregates = aggregates.filter(_.outputStore.name == storeName)
-  def storePath: String = List(rootPath, storeName).mkString("/")
+  pr vate def f lteredAggregates = aggregates.f lter(_.outputStore.na  == storeNa )
+  def storePath: Str ng = L st(rootPath, storeNa ).mkStr ng("/")
 
-  def mostRecentVkvs: VersionedKeyValSource[_, _] = {
-    VersionedKeyValSource[AggregationKey, (BatchID, StorageFormat)](
+  def mostRecentVkvs: Vers onedKeyValS ce[_, _] = {
+    Vers onedKeyValS ce[Aggregat onKey, (Batch D, StorageFormat)](
       path = storePath,
-      sourceVersion = None,
-      maxFailures = maxFailures
+      s ceVers on = None,
+      maxFa lures = maxFa lures
     )
   }
 
-  private def availableVersions: Seq[Long] =
+  pr vate def ava lableVers ons: Seq[Long] =
     mostRecentVkvs
       .getTap(TapMode.SOURCE)
       .getStore(new JobConf(true))
-      .getAllVersions()
+      .getAllVers ons()
       .asScala
       .map(_.toLong)
 
-  private def mostRecentVersion: Long = {
-    require(!availableVersions.isEmpty, s"$storeName has no available versions")
-    availableVersions.max
+  pr vate def mostRecentVers on: Long = {
+    requ re(!ava lableVers ons. sEmpty, s"$storeNa  has no ava lable vers ons")
+    ava lableVers ons.max
   }
 
-  def versionToUse: Long =
-    if (enableMostRecentBeforeSourceVersion) {
-      sourceVersionOpt
-        .map(sourceVersion =>
-          availableVersions.filter(_ <= sourceVersion) match {
+  def vers onToUse: Long =
+     f (enableMostRecentBeforeS ceVers on) {
+      s ceVers onOpt
+        .map(s ceVers on =>
+          ava lableVers ons.f lter(_ <= s ceVers on) match {
             case Seq() =>
-              throw new IllegalArgumentException(
-                "No version older than version: %s, available versions: %s"
-                  .format(sourceVersion, availableVersions)
+              throw new  llegalArgu ntExcept on(
+                "No vers on older than vers on: %s, ava lable vers ons: %s"
+                  .format(s ceVers on, ava lableVers ons)
               )
-            case versionList => versionList.max
+            case vers onL st => vers onL st.max
           })
-        .getOrElse(mostRecentVersion)
+        .getOrElse(mostRecentVers on)
     } else {
-      sourceVersionOpt.getOrElse(mostRecentVersion)
+      s ceVers onOpt.getOrElse(mostRecentVers on)
     }
 
-  override lazy val adapter: IRecordOneToManyAdapter[AggregatesV2Tuple] =
-    new AggregatesV2Adapter(filteredAggregates, versionToUse, trimThreshold)
+  overr de lazy val adapter:  RecordOneToManyAdapter[AggregatesV2Tuple] =
+    new AggregatesV2Adapter(f lteredAggregates, vers onToUse, tr mThreshold)
 
-  override def getData: TypedPipe[AggregatesV2Tuple] = {
-    val vkvsToUse: VersionedKeyValSource[AggregationKey, (BatchID, StorageFormat)] = {
-      VersionedKeyValSource[AggregationKey, (BatchID, StorageFormat)](
+  overr de def getData: TypedP pe[AggregatesV2Tuple] = {
+    val vkvsToUse: Vers onedKeyValS ce[Aggregat onKey, (Batch D, StorageFormat)] = {
+      Vers onedKeyValS ce[Aggregat onKey, (Batch D, StorageFormat)](
         path = storePath,
-        sourceVersion = Some(versionToUse),
-        maxFailures = maxFailures
+        s ceVers on = So (vers onToUse),
+        maxFa lures = maxFa lures
       )
     }
-    TypedPipe.from(vkvsToUse).map {
+    TypedP pe.from(vkvsToUse).map {
       case (key, (batch, value)) => (key, (batch, toDataRecord(value)))
     }
   }
 }
 
 /*
- * Adapted data record feature source from aggregates v2 manhattan output
- * Params documented in parent trait.
+ * Adapted data record feature s ce from aggregates v2 manhattan output
+ * Params docu nted  n parent tra .
  */
-case class AggregatesV2FeatureSource(
-  override val rootPath: String,
-  override val storeName: String,
-  override val aggregates: Set[TypedAggregateGroup[_]],
-  override val trimThreshold: Double = 0,
-  override val maxFailures: Int = 0,
+case class AggregatesV2FeatureS ce(
+  overr de val rootPath: Str ng,
+  overr de val storeNa : Str ng,
+  overr de val aggregates: Set[TypedAggregateGroup[_]],
+  overr de val tr mThreshold: Double = 0,
+  overr de val maxFa lures:  nt = 0,
 )(
-  implicit val dateRange: DateRange)
-    extends AggregatesV2AdaptedSource {
+   mpl c  val dateRange: DateRange)
+    extends AggregatesV2AdaptedS ce {
 
-  // Increment end date by 1 millisec since summingbird output for date D is stored at (D+1)T00
-  override val sourceVersionOpt: Some[Long] = Some(dateRange.end.timestamp + 1)
+  //  ncre nt end date by 1 m ll sec s nce summ ngb rd output for date D  s stored at (D+1)T00
+  overr de val s ceVers onOpt: So [Long] = So (dateRange.end.t  stamp + 1)
 }
 
 /*
- * Reads most recent available AggregatesV2FeatureSource.
- * There is no constraint on recency.
- * Params documented in parent trait.
+ * Reads most recent ava lable AggregatesV2FeatureS ce.
+ * T re  s no constra nt on recency.
+ * Params docu nted  n parent tra .
  */
-case class AggregatesV2MostRecentFeatureSource(
-  override val rootPath: String,
-  override val storeName: String,
-  override val aggregates: Set[TypedAggregateGroup[_]],
-  override val trimThreshold: Double = AggregatesV2AdaptedSource.DefaultTrimThreshold,
-  override val maxFailures: Int = 0)
-    extends AggregatesV2AdaptedSource {
+case class AggregatesV2MostRecentFeatureS ce(
+  overr de val rootPath: Str ng,
+  overr de val storeNa : Str ng,
+  overr de val aggregates: Set[TypedAggregateGroup[_]],
+  overr de val tr mThreshold: Double = AggregatesV2AdaptedS ce.DefaultTr mThreshold,
+  overr de val maxFa lures:  nt = 0)
+    extends AggregatesV2AdaptedS ce {
 
-  override val sourceVersionOpt: None.type = None
+  overr de val s ceVers onOpt: None.type = None
 }
 
 /*
- * Reads most recent available AggregatesV2FeatureSource
- * on or before the specified beforeDate.
- * Params documented in parent trait.
+ * Reads most recent ava lable AggregatesV2FeatureS ce
+ * on or before t  spec f ed beforeDate.
+ * Params docu nted  n parent tra .
  */
-case class AggregatesV2MostRecentFeatureSourceBeforeDate(
-  override val rootPath: String,
-  override val storeName: String,
-  override val aggregates: Set[TypedAggregateGroup[_]],
-  override val trimThreshold: Double = AggregatesV2AdaptedSource.DefaultTrimThreshold,
-  beforeDate: RichDate,
-  override val maxFailures: Int = 0)
-    extends AggregatesV2AdaptedSource {
+case class AggregatesV2MostRecentFeatureS ceBeforeDate(
+  overr de val rootPath: Str ng,
+  overr de val storeNa : Str ng,
+  overr de val aggregates: Set[TypedAggregateGroup[_]],
+  overr de val tr mThreshold: Double = AggregatesV2AdaptedS ce.DefaultTr mThreshold,
+  beforeDate: R chDate,
+  overr de val maxFa lures:  nt = 0)
+    extends AggregatesV2AdaptedS ce {
 
-  override val enableMostRecentBeforeSourceVersion = true
-  override val sourceVersionOpt: Some[Long] = Some(beforeDate.timestamp + 1)
+  overr de val enableMostRecentBeforeS ceVers on = true
+  overr de val s ceVers onOpt: So [Long] = So (beforeDate.t  stamp + 1)
 }

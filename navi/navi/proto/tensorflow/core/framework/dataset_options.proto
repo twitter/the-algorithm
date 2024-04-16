@@ -2,195 +2,195 @@ syntax = "proto3";
 
 package tensorflow.data;
 
-import "tensorflow/core/framework/model.proto";
+ mport "tensorflow/core/fra work/model.proto";
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/dataset_options_go_proto";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/fra work/dataset_opt ons_go_proto";
 
-// Represents the type of auto-sharding we enable.
-enum AutoShardPolicy {
-  // AUTO: Attempts FILE-based sharding, falling back to DATA-based sharding.
+// Represents t  type of auto-shard ng   enable.
+enum AutoShardPol cy {
+  // AUTO: Attempts F LE-based shard ng, fall ng back to DATA-based shard ng.
   AUTO = 0;
-  // FILE: Shards by input files (i.e. each worker will get a set of files to
-  // process). When this option is selected, make sure that there is at least as
-  // many files as workers. If there are fewer input files than workers, a
-  // runtime error will be raised.
-  FILE = 1;
-  // DATA: Shards by elements produced by the dataset. Each worker will process
-  // the whole dataset and discard the portion that is not for itself. Note that
-  // for this mode to correctly partitions the dataset elements, the dataset
-  // needs to produce elements in a deterministic order.
+  // F LE: Shards by  nput f les ( .e. each worker w ll get a set of f les to
+  // process). W n t  opt on  s selected, make sure that t re  s at least as
+  // many f les as workers.  f t re are fe r  nput f les than workers, a
+  // runt   error w ll be ra sed.
+  F LE = 1;
+  // DATA: Shards by ele nts produced by t  dataset. Each worker w ll process
+  // t  whole dataset and d scard t  port on that  s not for  self. Note that
+  // for t  mode to correctly part  ons t  dataset ele nts, t  dataset
+  // needs to produce ele nts  n a determ n st c order.
   DATA = 2;
-  // HINT: Looks for the presence of `shard(SHARD_HINT, ...)` which is treated
-  // as a placeholder to replace with `shard(num_workers, worker_index)`.
-  HINT = 3;
-  // OFF: No sharding will be performed.
+  // H NT: Looks for t  presence of `shard(SHARD_H NT, ...)` wh ch  s treated
+  // as a placeholder to replace w h `shard(num_workers, worker_ ndex)`.
+  H NT = 3;
+  // OFF: No shard ng w ll be perfor d.
   OFF = -1;
 }
 
 // next: 5
-message AutotuneOptions {
-  // Whether to automatically tune performance knobs.
-  oneof optional_enabled {
+ ssage AutotuneOpt ons {
+  // W t r to automat cally tune performance knobs.
+  oneof opt onal_enabled {
     bool enabled = 1;
   }
-  // When autotuning is enabled (through autotune), determines the CPU budget to
-  // use. Values greater than the number of schedulable CPU cores are allowed
-  // but may result in CPU contention.
-  oneof optional_cpu_budget {
-    int32 cpu_budget = 2;
+  // W n autotun ng  s enabled (through autotune), determ nes t  CPU budget to
+  // use. Values greater than t  number of sc dulable CPU cores are allo d
+  // but may result  n CPU content on.
+  oneof opt onal_cpu_budget {
+     nt32 cpu_budget = 2;
   }
-  // When autotuning is enabled (through autotune), determines the RAM budget to
-  // use. Values greater than the available RAM in bytes may result in OOM. If
-  // 0, defaults to half of the available RAM in bytes.
-  oneof optional_ram_budget {
-    int64 ram_budget = 3;
+  // W n autotun ng  s enabled (through autotune), determ nes t  RAM budget to
+  // use. Values greater than t  ava lable RAM  n bytes may result  n OOM.  f
+  // 0, defaults to half of t  ava lable RAM  n bytes.
+  oneof opt onal_ram_budget {
+     nt64 ram_budget = 3;
   }
 
-  // When autotuning is enabled (through autotune), determines the algorithm to
-  // use. If not explicitly set by user, autotuning will follow HILL_CLIMB
-  // algorithm but has more flexibility to tune parameters more aggressively,
-  // in which case the behavior is implementation specific and may change over
-  // time.
-  oneof optional_autotune_algorithm {
-    model.AutotuneAlgorithm autotune_algorithm = 4;
+  // W n autotun ng  s enabled (through autotune), determ nes t  algor hm to
+  // use.  f not expl c ly set by user, autotun ng w ll follow H LL_CL MB
+  // algor hm but has more flex b l y to tune para ters more aggress vely,
+  //  n wh ch case t  behav or  s  mple ntat on spec f c and may change over
+  // t  .
+  oneof opt onal_autotune_algor hm {
+    model.AutotuneAlgor hm autotune_algor hm = 4;
   }
 }
 
 // next: 2
-message CardinalityOptions {
+ ssage Card nal yOpt ons {
   enum ComputeLevel {
-    CARDINALITY_COMPUTE_UNSPECIFIED = 0;
-    // Cardinality will only be computed if it can be determined in a cheap
-    // manner (ie. without reading from file sources). If the cardinality would
-    // be nontrivial to compute, Cardinality() will return UNKNOWN_CARDINALITY.
-    CARDINALITY_COMPUTE_LOW = 1;
-    // Moderate effort will be made to determine cardinality, such as reading
-    // index data from source files. If significant work is needed to compute
-    // cardinality (e.g. reading entire source file contents or executing user
-    // defined functions), Cardinality() will return UNKNOWN_CARDINALITY.
-    CARDINALITY_COMPUTE_MODERATE = 2;
+    CARD NAL TY_COMPUTE_UNSPEC F ED = 0;
+    // Card nal y w ll only be computed  f   can be determ ned  n a c ap
+    // manner ( e. w hout read ng from f le s ces).  f t  card nal y would
+    // be nontr v al to compute, Card nal y() w ll return UNKNOWN_CARD NAL TY.
+    CARD NAL TY_COMPUTE_LOW = 1;
+    // Moderate effort w ll be made to determ ne card nal y, such as read ng
+    //  ndex data from s ce f les.  f s gn f cant work  s needed to compute
+    // card nal y (e.g. read ng ent re s ce f le contents or execut ng user
+    // def ned funct ons), Card nal y() w ll return UNKNOWN_CARD NAL TY.
+    CARD NAL TY_COMPUTE_MODERATE = 2;
   }
   ComputeLevel compute_level = 1;
 }
 
 // next: 3
-message DistributeOptions {
-  AutoShardPolicy auto_shard_policy = 1;
-  // The number of devices attached to this input pipeline.
-  oneof optional_num_devices {
-    int32 num_devices = 2;
+ ssage D str buteOpt ons {
+  AutoShardPol cy auto_shard_pol cy = 1;
+  // T  number of dev ces attac d to t   nput p pel ne.
+  oneof opt onal_num_dev ces {
+     nt32 num_dev ces = 2;
   }
 }
 
 // next: 18
-message OptimizationOptions {
-  // Whether to apply default graph optimizations. If False, only graph
-  // optimizations that have been explicitly enabled will be applied.
-  oneof optional_apply_default_optimizations {
-    bool apply_default_optimizations = 1;
+ ssage Opt m zat onOpt ons {
+  // W t r to apply default graph opt m zat ons.  f False, only graph
+  // opt m zat ons that have been expl c ly enabled w ll be appl ed.
+  oneof opt onal_apply_default_opt m zat ons {
+    bool apply_default_opt m zat ons = 1;
   }
   reserved 2;
   reserved 3;
   reserved 4;
   reserved 5;
-  // Whether to fuse filter transformations.
-  oneof optional_filter_fusion {
-    bool filter_fusion = 6;
+  // W t r to fuse f lter transformat ons.
+  oneof opt onal_f lter_fus on {
+    bool f lter_fus on = 6;
   }
-  // NOTE: field id 7 deleted in June 2021.
+  // NOTE: f eld  d 7 deleted  n June 2021.
   reserved 7;
-  // NOTE: field id 8 deleted in June 2021.
+  // NOTE: f eld  d 8 deleted  n June 2021.
   reserved 8;
-  // Whether to fuse map and batch transformations.
-  oneof optional_map_and_batch_fusion {
-    bool map_and_batch_fusion = 9;
+  // W t r to fuse map and batch transformat ons.
+  oneof opt onal_map_and_batch_fus on {
+    bool map_and_batch_fus on = 9;
   }
-  // Whether to fuse map and filter transformations.
-  oneof optional_map_and_filter_fusion {
-    bool map_and_filter_fusion = 10;
+  // W t r to fuse map and f lter transformat ons.
+  oneof opt onal_map_and_f lter_fus on {
+    bool map_and_f lter_fus on = 10;
   }
-  // Whether to fuse map transformations.
-  oneof optional_map_fusion {
-    bool map_fusion = 11;
+  // W t r to fuse map transformat ons.
+  oneof opt onal_map_fus on {
+    bool map_fus on = 11;
   }
-  // Whether to parallelize stateless map transformations.
-  oneof optional_map_parallelization {
-    bool map_parallelization = 12;
+  // W t r to parallel ze stateless map transformat ons.
+  oneof opt onal_map_parallel zat on {
+    bool map_parallel zat on = 12;
   }
 
-  // NOTE: field id 13 deleted in June 2021.
+  // NOTE: f eld  d 13 deleted  n June 2021.
   reserved 13;
 
-  // Whether to eliminate no-op transformations.
-  oneof optional_noop_elimination {
-    bool noop_elimination = 14;
+  // W t r to el m nate no-op transformat ons.
+  oneof opt onal_noop_el m nat on {
+    bool noop_el m nat on = 14;
   }
-  // Whether to parallelize copying of batch elements. This optimization is
-  // highly experimental and can cause performance degradation (e.g. when the
-  // parallelization overhead exceeds the benefits of performing the data copies
-  // in parallel). You should only enable this optimization if a) your input
-  // pipeline is bottlenecked on batching and b) you have validated that this
-  // optimization improves performance.
-  oneof optional_parallel_batch {
+  // W t r to parallel ze copy ng of batch ele nts. T  opt m zat on  s
+  // h ghly exper  ntal and can cause performance degradat on (e.g. w n t 
+  // parallel zat on over ad exceeds t  benef s of perform ng t  data cop es
+  //  n parallel).   should only enable t  opt m zat on  f a) y   nput
+  // p pel ne  s bottlenecked on batch ng and b)   have val dated that t 
+  // opt m zat on  mproves performance.
+  oneof opt onal_parallel_batch {
     bool parallel_batch = 15;
   }
-  // Field id 16 was removed in 06/2021.
+  // F eld  d 16 was removed  n 06/2021.
   reserved 16;
-  // Whether to fuse shuffle and repeat transformations.
-  oneof optional_shuffle_and_repeat_fusion {
-    bool shuffle_and_repeat_fusion = 17;
+  // W t r to fuse shuffle and repeat transformat ons.
+  oneof opt onal_shuffle_and_repeat_fus on {
+    bool shuffle_and_repeat_fus on = 17;
   }
 }
 
 // next: 3
-message ThreadingOptions {
-  // If set, it overrides the maximum degree of intra-op parallelism.
-  oneof optional_max_intra_op_parallelism {
-    int32 max_intra_op_parallelism = 1;
+ ssage Thread ngOpt ons {
+  //  f set,   overr des t  max mum degree of  ntra-op parallel sm.
+  oneof opt onal_max_ ntra_op_parallel sm {
+     nt32 max_ ntra_op_parallel sm = 1;
   }
-  // If set, the dataset will use a private threadpool of the given size.
-  oneof optional_private_threadpool_size {
-    int32 private_threadpool_size = 2;
+  //  f set, t  dataset w ll use a pr vate threadpool of t  g ven s ze.
+  oneof opt onal_pr vate_threadpool_s ze {
+     nt32 pr vate_threadpool_s ze = 2;
   }
 }
 
-// Represents how to handle external state during serialization.
-enum ExternalStatePolicy {
-  POLICY_WARN = 0;
-  POLICY_IGNORE = 1;
-  POLICY_FAIL = 2;
+// Represents how to handle external state dur ng ser al zat on.
+enum ExternalStatePol cy {
+  POL CY_WARN = 0;
+  POL CY_ GNORE = 1;
+  POL CY_FA L = 2;
 }
 
-// Message stored with Dataset objects to control how datasets are processed and
-// optimized.
+//  ssage stored w h Dataset objects to control how datasets are processed and
+// opt m zed.
 //
 // next: 8
-message Options {
-  // Whether the outputs need to be produced in deterministic order.
-  oneof optional_deterministic {
-    bool deterministic = 1;
+ ssage Opt ons {
+  // W t r t  outputs need to be produced  n determ n st c order.
+  oneof opt onal_determ n st c {
+    bool determ n st c = 1;
   }
-  // The distribution strategy options associated with the dataset.
-  AutotuneOptions autotune_options = 7;
-  // The distribution strategy options associated with the dataset.
-  DistributeOptions distribute_options = 2;
-  // The optimization options associated with the dataset.
-  OptimizationOptions optimization_options = 3;
-  // Whether to introduce 'slack' in the last `prefetch` of the input pipeline,
-  // if it exists. This may reduce CPU contention with accelerator host-side
-  // activity at the start of a step. The slack frequency is determined by the
-  // number of devices attached to this input pipeline.
-  oneof optional_slack {
+  // T  d str but on strategy opt ons assoc ated w h t  dataset.
+  AutotuneOpt ons autotune_opt ons = 7;
+  // T  d str but on strategy opt ons assoc ated w h t  dataset.
+  D str buteOpt ons d str bute_opt ons = 2;
+  // T  opt m zat on opt ons assoc ated w h t  dataset.
+  Opt m zat onOpt ons opt m zat on_opt ons = 3;
+  // W t r to  ntroduce 'slack'  n t  last `prefetch` of t   nput p pel ne,
+  //  f   ex sts. T  may reduce CPU content on w h accelerator host-s de
+  // act v y at t  start of a step. T  slack frequency  s determ ned by t 
+  // number of dev ces attac d to t   nput p pel ne.
+  oneof opt onal_slack {
     bool slack = 4;
   }
-  // The threading options associated with the dataset.
-  ThreadingOptions threading_options = 5;
-  // This option can be used to override the default policy for how to handle
-  // external state when serializing a dataset or checkpointing its iterator.
-  // There are three settings available - IGNORE: External state is ignored
-  // without a warning; WARN: External state is ignored and a warning is logged;
-  // FAIL: External state results in an error.
-  oneof optional_external_state_policy {
-    ExternalStatePolicy external_state_policy = 6;
+  // T  thread ng opt ons assoc ated w h t  dataset.
+  Thread ngOpt ons thread ng_opt ons = 5;
+  // T  opt on can be used to overr de t  default pol cy for how to handle
+  // external state w n ser al z ng a dataset or c ckpo nt ng  s  erator.
+  // T re are three sett ngs ava lable -  GNORE: External state  s  gnored
+  // w hout a warn ng; WARN: External state  s  gnored and a warn ng  s logged;
+  // FA L: External state results  n an error.
+  oneof opt onal_external_state_pol cy {
+    ExternalStatePol cy external_state_pol cy = 6;
   }
 }

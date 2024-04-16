@@ -1,175 +1,175 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+package com.tw ter.follow_recom ndat ons.flows.post_nux_ml
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .Param
 
-abstract class PostNuxMlCandidateSourceWeightParams[A](default: A) extends Param[A](default) {
-  override val statName: String = "post_nux_ml/" + this.getClass.getSimpleName
+abstract class PostNuxMlCand dateS ce  ghtParams[A](default: A) extends Param[A](default) {
+  overr de val statNa : Str ng = "post_nux_ml/" + t .getClass.getS mpleNa 
 }
 
-object PostNuxMlCandidateSourceWeightParams {
+object PostNuxMlCand dateS ce  ghtParams {
 
-  case object CandidateWeightCrowdSearch
+  case object Cand date  ghtCrowdSearch
       extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightCrowdSearch,
-        1.0,
-        0.0,
-        1000.0
-      )
-
-  case object CandidateWeightTopOrganicFollow
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightTopOrganicFollow,
-        1.0,
-        0.0,
-        1000.0
-      )
-  case object CandidateWeightPPMILocaleFollow
-      extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightPPMILocaleFollow,
+        PostNuxMlFlowCand dateS ce  ghtsFeatureSw chKeys.Cand date  ghtCrowdSearch,
         1.0,
         0.0,
         1000.0
       )
 
-  case object CandidateWeightForwardEmailBook
+  case object Cand date  ghtTopOrgan cFollow
       extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightForwardEmailBook,
+        PostNuxMlFlowCand dateS ce  ghtsFeatureSw chKeys.Cand date  ghtTopOrgan cFollow,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightForwardPhoneBook
+  case object Cand date  ghtPPM LocaleFollow
       extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightForwardPhoneBook,
+        PostNuxMlFlowCand dateS ce  ghtsFeatureSw chKeys.Cand date  ghtPPM LocaleFollow,
         1.0,
         0.0,
         1000.0
       )
 
-  case object CandidateWeightOfflineStrongTiePrediction
+  case object Cand date  ghtForwardEma lBook
       extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightOfflineStrongTiePrediction,
+        PostNuxMlFlowCand dateS ce  ghtsFeatureSw chKeys.Cand date  ghtForwardEma lBook,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightOnlineStp
+  case object Cand date  ghtForwardPhoneBook
       extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightOnlineStp,
+        PostNuxMlFlowCand dateS ce  ghtsFeatureSw chKeys.Cand date  ghtForwardPhoneBook,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightPopCountry
+
+  case object Cand date  ghtOffl neStrongT ePred ct on
       extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightPopCountry,
+        PostNuxMlFlowCand dateS ce  ghtsFeatureSw chKeys.Cand date  ghtOffl neStrongT ePred ct on,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightPopGeohash
+  case object Cand date  ghtOnl neStp
       extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightPopGeohash,
+        PostNuxMlFlowCand dateS ce  ghtsFeatureSw chKeys.Cand date  ghtOnl neStp,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightPopGeohashQualityFollow
+  case object Cand date  ghtPopCountry
       extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightPopGeohashQualityFollow,
+        PostNuxMlFlowCand dateS ce  ghtsFeatureSw chKeys.Cand date  ghtPopCountry,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightPopGeoBackfill
+  case object Cand date  ghtPopGeohash
       extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightPopGeoBackfill,
+        PostNuxMlFlowCand dateS ce  ghtsFeatureSw chKeys.Cand date  ghtPopGeohash,
+        1.0,
+        0.0,
+        1000.0
+      )
+  case object Cand date  ghtPopGeohashQual yFollow
+      extends FSBoundedParam[Double](
+        PostNuxMlFlowCand dateS ce  ghtsFeatureSw chKeys.Cand date  ghtPopGeohashQual yFollow,
+        1.0,
+        0.0,
+        1000.0
+      )
+  case object Cand date  ghtPopGeoBackf ll
+      extends FSBoundedParam[Double](
+        PostNuxMlFlowCand dateS ce  ghtsFeatureSw chKeys.Cand date  ghtPopGeoBackf ll,
         1,
         0.0,
         1000.0
       )
-  case object CandidateWeightRecentFollowingSimilarUsers
+  case object Cand date  ghtRecentFollow ngS m larUsers
       extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightRecentFollowingSimilarUsers,
+        PostNuxMlFlowCand dateS ce  ghtsFeatureSw chKeys.Cand date  ghtRecentFollow ngS m larUsers,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightRecentEngagementDirectFollowSalsaExpansion
+  case object Cand date  ghtRecentEngage ntD rectFollowSalsaExpans on
       extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightRecentEngagementDirectFollowSalsaExpansion,
+        PostNuxMlFlowCand dateS ce  ghtsFeatureSw chKeys.Cand date  ghtRecentEngage ntD rectFollowSalsaExpans on,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightRecentEngagementNonDirectFollow
+  case object Cand date  ghtRecentEngage ntNonD rectFollow
       extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightRecentEngagementNonDirectFollow,
+        PostNuxMlFlowCand dateS ce  ghtsFeatureSw chKeys.Cand date  ghtRecentEngage ntNonD rectFollow,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightRecentEngagementSimilarUsers
+  case object Cand date  ghtRecentEngage ntS m larUsers
       extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightRecentEngagementSimilarUsers,
+        PostNuxMlFlowCand dateS ce  ghtsFeatureSw chKeys.Cand date  ghtRecentEngage ntS m larUsers,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightRepeatedProfileVisits
+  case object Cand date  ghtRepeatedProf leV s s
       extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightRepeatedProfileVisits,
+        PostNuxMlFlowCand dateS ce  ghtsFeatureSw chKeys.Cand date  ghtRepeatedProf leV s s,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightFollow2vecNearestNeighbors
+  case object Cand date  ghtFollow2vecNearestNe ghbors
       extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightFollow2vecNearestNeighbors,
+        PostNuxMlFlowCand dateS ce  ghtsFeatureSw chKeys.Cand date  ghtFollow2vecNearestNe ghbors,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightReverseEmailBook
+  case object Cand date  ghtReverseEma lBook
       extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightReverseEmailBook,
+        PostNuxMlFlowCand dateS ce  ghtsFeatureSw chKeys.Cand date  ghtReverseEma lBook,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightReversePhoneBook
+  case object Cand date  ghtReversePhoneBook
       extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightReversePhoneBook,
+        PostNuxMlFlowCand dateS ce  ghtsFeatureSw chKeys.Cand date  ghtReversePhoneBook,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightTriangularLoops
+  case object Cand date  ghtTr angularLoops
       extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightTriangularLoops,
+        PostNuxMlFlowCand dateS ce  ghtsFeatureSw chKeys.Cand date  ghtTr angularLoops,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightTwoHopRandomWalk
+  case object Cand date  ghtTwoHopRandomWalk
       extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightTwoHopRandomWalk,
+        PostNuxMlFlowCand dateS ce  ghtsFeatureSw chKeys.Cand date  ghtTwoHopRandomWalk,
         1.0,
         0.0,
         1000.0
       )
-  case object CandidateWeightUserUserGraph
+  case object Cand date  ghtUserUserGraph
       extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightUserUserGraph,
+        PostNuxMlFlowCand dateS ce  ghtsFeatureSw chKeys.Cand date  ghtUserUserGraph,
         1.0,
         0.0,
         1000.0
       )
 
-  case object CandidateWeightRealGraphOonV2
+  case object Cand date  ghtRealGraphOonV2
       extends FSBoundedParam[Double](
-        PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys.CandidateWeightRealGraphOonV2,
+        PostNuxMlFlowCand dateS ce  ghtsFeatureSw chKeys.Cand date  ghtRealGraphOonV2,
         1.0,
         0.0,
         2000.0

@@ -1,18 +1,18 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.tw ter.ho _m xer.funct onal_component.decorator.urt.bu lder
 
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.ExternalStringRegistry
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.product.gu ce.scope.ProductScoped
+ mport com.tw ter.str ngcenter.cl ent.ExternalStr ngReg stry
+ mport javax. nject. nject
+ mport javax. nject.Prov der
+ mport javax. nject.S ngleton
 
-@Singleton
-class FeedbackStrings @Inject() (
-  @ProductScoped externalStringRegistryProvider: Provider[ExternalStringRegistry]) {
-  private val externalStringRegistry = externalStringRegistryProvider.get()
+@S ngleton
+class FeedbackStr ngs @ nject() (
+  @ProductScoped externalStr ngReg stryProv der: Prov der[ExternalStr ngReg stry]) {
+  pr vate val externalStr ngReg stry = externalStr ngReg stryProv der.get()
 
-  val seeLessOftenFeedbackString =
-    externalStringRegistry.createProdString("Feedback.seeLessOften")
-  val seeLessOftenConfirmationFeedbackString =
-    externalStringRegistry.createProdString("Feedback.seeLessOftenConfirmation")
+  val seeLessOftenFeedbackStr ng =
+    externalStr ngReg stry.createProdStr ng("Feedback.seeLessOften")
+  val seeLessOftenConf rmat onFeedbackStr ng =
+    externalStr ngReg stry.createProdStr ng("Feedback.seeLessOftenConf rmat on")
 }

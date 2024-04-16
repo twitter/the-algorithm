@@ -1,118 +1,118 @@
-# pylint: disable=arguments-differ,no-member,too-many-statements
-''' Contains MDLFeature and MDLCalibrator used for MDL calibration '''
+# pyl nt: d sable=argu nts-d ffer,no- mber,too-many-state nts
+''' Conta ns MDLFeature and MDLCal brator used for MDL cal brat on '''
 
 
-import os
+ mport os
 
-from .percentile_discretizer import PercentileDiscretizerCalibrator, PercentileDiscretizerFeature
+from .percent le_d scret zer  mport Percent leD scret zerCal brator, Percent leD scret zerFeature
 
-from absl import logging
-import numpy as np
-import tensorflow.compat.v1 as tf
-import twml
-import twml.layers
-
-
-DEFAULT_SAMPLE_WEIGHT = 1
+from absl  mport logg ng
+ mport numpy as np
+ mport tensorflow.compat.v1 as tf
+ mport twml
+ mport twml.layers
 
 
-class MDLFeature(PercentileDiscretizerFeature):
-  ''' Accumulates and calibrates a single sparse MDL feature. '''
+DEFAULT_SAMPLE_WE GHT = 1
 
 
-class MDLCalibrator(PercentileDiscretizerCalibrator):
-  ''' Accumulates features and their respective values for MDL calibration.
-  Internally, each feature's values is accumulated via its own ``MDLFeature`` object.
-  The steps for calibration are typically as follows:
+class MDLFeature(Percent leD scret zerFeature):
+  ''' Accumulates and cal brates a s ngle sparse MDL feature. '''
 
-   1. accumulate feature values from batches by calling ``accumulate()``;
-   2. calibrate all feature into MDL bin_vals by calling ``calibrate()``; and
-   3. convert to a twml.layers.MDL layer by calling ``to_layer()``.
+
+class MDLCal brator(Percent leD scret zerCal brator):
+  ''' Accumulates features and t  r respect ve values for MDL cal brat on.
+   nternally, each feature's values  s accumulated v a  s own ``MDLFeature`` object.
+  T  steps for cal brat on are typ cally as follows:
+
+   1. accumulate feature values from batc s by call ng ``accumulate()``;
+   2. cal brate all feature  nto MDL b n_vals by call ng ``cal brate()``; and
+   3. convert to a twml.layers.MDL layer by call ng ``to_layer()``.
 
   '''
 
-  def to_layer(self, name=None):
+  def to_layer(self, na =None):
     """
-    Returns a twml.layers.PercentileDiscretizer Layer
-    that can be used for feature discretization.
+    Returns a twml.layers.Percent leD scret zer Layer
+    that can be used for feature d scret zat on.
 
-    Arguments:
-      name:
-        name-scope of the PercentileDiscretizer layer
+    Argu nts:
+      na :
+        na -scope of t  Percent leD scret zer layer
     """
-    n_feature = len(self._discretizer_feature_dict)
-    max_discretizer_feature = n_feature * (self._n_bin + 1)
+    n_feature = len(self._d scret zer_feature_d ct)
+    max_d scret zer_feature = n_feature * (self._n_b n + 1)
 
-    if not self._calibrated:
-      raise RuntimeError("Expecting prior call to calibrate()")
+     f not self._cal brated:
+      ra se Runt  Error("Expect ng pr or call to cal brate()")
 
-    if self._bin_ids.shape[0] != n_feature:
-      raise RuntimeError("Expecting self._bin_ids.shape[0] \
-        != len(self._discretizer_feature_dict)")
-    if self._bin_vals.shape[0] != n_feature:
-      raise RuntimeError("Expecting self._bin_vals.shape[0] \
-        != len(self._discretizer_feature_dict)")
+     f self._b n_ ds.shape[0] != n_feature:
+      ra se Runt  Error("Expect ng self._b n_ ds.shape[0] \
+        != len(self._d scret zer_feature_d ct)")
+     f self._b n_vals.shape[0] != n_feature:
+      ra se Runt  Error("Expect ng self._b n_vals.shape[0] \
+        != len(self._d scret zer_feature_d ct)")
 
-    # can add at most #features * (n_bin+1) new feature ids
-    if 2**self._out_bits <= max_discretizer_feature:
-      raise ValueError("""Maximum number of features created by discretizer is
-        %d but requested that the output be limited to %d values (%d bits),
-        which is smaller than that. Please ensure the output has enough bits
-        to represent at least the new features"""
-                       % (max_discretizer_feature, 2**self._out_bits, self._out_bits))
+    # can add at most #features * (n_b n+1) new feature  ds
+     f 2**self._out_b s <= max_d scret zer_feature:
+      ra se ValueError("""Max mum number of features created by d scret zer  s
+        %d but requested that t  output be l m ed to %d values (%d b s),
+        wh ch  s smaller than that. Please ensure t  output has enough b s
+        to represent at least t  new features"""
+                       % (max_d scret zer_feature, 2**self._out_b s, self._out_b s))
 
-    # build feature_offsets, hash_map_keys, hash_map_values
-    feature_offsets = np.arange(0, max_discretizer_feature,
-                                self._n_bin + 1, dtype='int64')
-    hash_map_keys = np.array(list(self._hash_map.keys()), dtype=np.int64)
-    hash_map_values = np.array(list(self._hash_map.values()), dtype=np.float32)
+    # bu ld feature_offsets, hash_map_keys, hash_map_values
+    feature_offsets = np.arange(0, max_d scret zer_feature,
+                                self._n_b n + 1, dtype=' nt64')
+    hash_map_keys = np.array(l st(self._hash_map.keys()), dtype=np. nt64)
+    hash_map_values = np.array(l st(self._hash_map.values()), dtype=np.float32)
 
-    discretizer = twml.layers.MDL(
-      n_feature=n_feature, n_bin=self._n_bin,
-      name=name, out_bits=self._out_bits,
+    d scret zer = twml.layers.MDL(
+      n_feature=n_feature, n_b n=self._n_b n,
+      na =na , out_b s=self._out_b s,
       hash_keys=hash_map_keys, hash_values=hash_map_values,
-      bin_ids=self._bin_ids.flatten(), bin_values=self._bin_vals.flatten(),
+      b n_ ds=self._b n_ ds.flatten(), b n_values=self._b n_vals.flatten(),
       feature_offsets=feature_offsets,
       **self._kwargs
     )
 
-    return discretizer
+    return d scret zer
 
-  def save(self, save_dir, name='calibrator', verbose=False):
-    '''Save the calibrator into the given save_directory.
-    Arguments:
-      save_dir:
-        name of the saving directory
-      name:
-        name for the graph scope. Passed to to_layer(name=name) to set
+  def save(self, save_d r, na ='cal brator', verbose=False):
+    '''Save t  cal brator  nto t  g ven save_d rectory.
+    Argu nts:
+      save_d r:
+        na  of t  sav ng d rectory
+      na :
+        na  for t  graph scope. Passed to to_layer(na =na ) to set
         scope of layer.
     '''
-    if not self._calibrated:
-      raise RuntimeError("Expecting prior call to calibrate().Cannot save() prior to calibrate()")
+     f not self._cal brated:
+      ra se Runt  Error("Expect ng pr or call to cal brate().Cannot save() pr or to cal brate()")
 
     layer_args = self.get_layer_args()
 
-    calibrator_filename = os.path.join(save_dir, name + '.json.tf')
-    calibrator_dict = {
+    cal brator_f lena  = os.path.jo n(save_d r, na  + '.json.tf')
+    cal brator_d ct = {
       'layer_args': layer_args,
-      'saved_layer_scope': name + '/',
+      'saved_layer_scope': na  + '/',
     }
-    twml.write_file(calibrator_filename, calibrator_dict, encode='json')
+    twml.wr e_f le(cal brator_f lena , cal brator_d ct, encode='json')
 
-    if verbose:
-      logging.info("The layer graph and other information necessary ")
-      logging.info("for multi-phase training is saved in directory:")
-      logging.info(save_dir)
-      logging.info("This directory can be specified as --init_from_dir argument.")
-      logging.info("")
-      logging.info("Other information is available in: %s.json.tf", name)
-      logging.info("This file can be loaded with twml.read_file(decode='json) to obtain ")
-      logging.info("layer_args, saved_layer_scope and variable_names")
+     f verbose:
+      logg ng. nfo("T  layer graph and ot r  nformat on necessary ")
+      logg ng. nfo("for mult -phase tra n ng  s saved  n d rectory:")
+      logg ng. nfo(save_d r)
+      logg ng. nfo("T  d rectory can be spec f ed as -- n _from_d r argu nt.")
+      logg ng. nfo("")
+      logg ng. nfo("Ot r  nformat on  s ava lable  n: %s.json.tf", na )
+      logg ng. nfo("T  f le can be loaded w h twml.read_f le(decode='json) to obta n ")
+      logg ng. nfo("layer_args, saved_layer_scope and var able_na s")
 
     graph = tf.Graph()
-    # save graph for tensorboard as well
-    writer = tf.summary.FileWriter(logdir=save_dir, graph=graph)
+    # save graph for tensorboard as  ll
+    wr er = tf.summary.F leWr er(logd r=save_d r, graph=graph)
 
-    with tf.Session(graph=graph) as sess:
-      self.write_summary(writer, sess)
-    writer.flush()
+    w h tf.Sess on(graph=graph) as sess:
+      self.wr e_summary(wr er, sess)
+    wr er.flush()

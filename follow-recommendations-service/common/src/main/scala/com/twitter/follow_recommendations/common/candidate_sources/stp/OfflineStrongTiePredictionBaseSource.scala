@@ -1,53 +1,53 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.stp
 
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.hermit.stp.thriftscala.STPResult
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.timelines.configapi.HasParams
+ mport com.tw ter.follow_recom ndat ons.common.models.AccountProof
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.FollowProof
+ mport com.tw ter.follow_recom ndat ons.common.models.Reason
+ mport com.tw ter. rm .stp.thr ftscala.STPResult
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.t  l nes.conf gap .HasParams
 
-/** Base class that all variants of our offline stp dataset can extend. Assumes the same STPResult
- *  value in the key and converts the result into the necessary internal model.
+/** Base class that all var ants of   offl ne stp dataset can extend. Assu s t  sa  STPResult
+ *  value  n t  key and converts t  result  nto t  necessary  nternal model.
  */
-abstract class OfflineStrongTiePredictionBaseSource(
-  fetcher: Fetcher[Long, Unit, STPResult])
-    extends CandidateSource[HasParams with HasClientContext, CandidateUser] {
+abstract class Offl neStrongT ePred ct onBaseS ce(
+  fetc r: Fetc r[Long, Un , STPResult])
+    extends Cand dateS ce[HasParams w h HasCl entContext, Cand dateUser] {
 
   def fetch(
     target: Long,
-  ): Stitch[Seq[CandidateUser]] = {
-    fetcher
+  ): St ch[Seq[Cand dateUser]] = {
+    fetc r
       .fetch(target)
       .map { result =>
         result.v
-          .map { candidates => OfflineStrongTiePredictionBaseSource.map(target, candidates) }
-          .getOrElse(Nil)
-          .map(_.withCandidateSource(identifier))
+          .map { cand dates => Offl neStrongT ePred ct onBaseS ce.map(target, cand dates) }
+          .getOrElse(N l)
+          .map(_.w hCand dateS ce( dent f er))
       }
   }
 
-  override def apply(request: HasParams with HasClientContext): Stitch[Seq[CandidateUser]] = {
-    request.getOptionalUserId.map(fetch).getOrElse(Stitch.Nil)
+  overr de def apply(request: HasParams w h HasCl entContext): St ch[Seq[Cand dateUser]] = {
+    request.getOpt onalUser d.map(fetch).getOrElse(St ch.N l)
   }
 }
 
-object OfflineStrongTiePredictionBaseSource {
-  def map(target: Long, candidates: STPResult): Seq[CandidateUser] = {
+object Offl neStrongT ePred ct onBaseS ce {
+  def map(target: Long, cand dates: STPResult): Seq[Cand dateUser] = {
     for {
-      candidate <- candidates.strongTieUsers.sortBy(-_.score)
-    } yield CandidateUser(
-      id = candidate.userId,
-      score = Some(candidate.score),
-      reason = Some(
+      cand date <- cand dates.strongT eUsers.sortBy(-_.score)
+    } y eld Cand dateUser(
+       d = cand date.user d,
+      score = So (cand date.score),
+      reason = So (
         Reason(
-          Some(
+          So (
             AccountProof(
-              followProof = candidate.socialProof.map(proof => FollowProof(proof, proof.size))
+              followProof = cand date.soc alProof.map(proof => FollowProof(proof, proof.s ze))
             )
           )
         )

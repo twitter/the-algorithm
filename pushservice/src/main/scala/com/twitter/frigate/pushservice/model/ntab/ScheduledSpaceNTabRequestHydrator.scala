@@ -1,105 +1,105 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.tw ter.fr gate.pushserv ce.model.ntab
 
-import com.twitter.frigate.common.base.SpaceCandidate
-import com.twitter.frigate.common.util.MrNtabCopyObjects
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.ScheduledSpaceSpeakerPushCandidate
-import com.twitter.frigate.pushservice.model.ScheduledSpaceSubscriberPushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.take.NotificationServiceSender
-import com.twitter.frigate.thriftscala.SpaceNotificationType
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.notificationservice.thriftscala._
-import com.twitter.util.Future
-import com.twitter.util.Time
+ mport com.tw ter.fr gate.common.base.SpaceCand date
+ mport com.tw ter.fr gate.common.ut l.MrNtabCopyObjects
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.Sc duledSpaceSpeakerPushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.Sc duledSpaceSubscr berPushCand date
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.take.Not f cat onServ ceSender
+ mport com.tw ter.fr gate.thr ftscala.SpaceNot f cat onType
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter.not f cat onserv ce.thr ftscala._
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
 
-trait ScheduledSpaceSpeakerNTabRequestHydrator extends ScheduledSpaceNTabRequestHydrator {
-  self: PushCandidate with ScheduledSpaceSpeakerPushCandidate =>
+tra  Sc duledSpaceSpeakerNTabRequestHydrator extends Sc duledSpaceNTabRequestHydrator {
+  self: PushCand date w h Sc duledSpaceSpeakerPushCand date =>
 
-  override def refreshableType: Option[String] = {
-    frigateNotification.spaceNotification.flatMap { spaceNotification =>
-      spaceNotification.spaceNotificationType.flatMap {
-        case SpaceNotificationType.PreSpaceBroadcast =>
-          MrNtabCopyObjects.ScheduledSpaceSpeakerSoon.refreshableType
-        case SpaceNotificationType.AtSpaceBroadcast =>
-          MrNtabCopyObjects.ScheduledSpaceSpeakerNow.refreshableType
+  overr de def refreshableType: Opt on[Str ng] = {
+    fr gateNot f cat on.spaceNot f cat on.flatMap { spaceNot f cat on =>
+      spaceNot f cat on.spaceNot f cat onType.flatMap {
+        case SpaceNot f cat onType.PreSpaceBroadcast =>
+          MrNtabCopyObjects.Sc duledSpaceSpeakerSoon.refreshableType
+        case SpaceNot f cat onType.AtSpaceBroadcast =>
+          MrNtabCopyObjects.Sc duledSpaceSpeakerNow.refreshableType
         case _ =>
-          throw new IllegalStateException(s"Unexpected SpaceNotificationType")
+          throw new  llegalStateExcept on(s"Unexpected SpaceNot f cat onType")
       }
     }
   }
 
-  override lazy val facepileUsersFut: Future[Seq[Long]] = Future.Nil
+  overr de lazy val facep leUsersFut: Future[Seq[Long]] = Future.N l
 
-  override val socialProofDisplayText: Option[DisplayText] = Some(DisplayText())
+  overr de val soc alProofD splayText: Opt on[D splayText] = So (D splayText())
 }
 
-trait ScheduledSpaceSubscriberNTabRequestHydrator extends ScheduledSpaceNTabRequestHydrator {
-  self: PushCandidate with ScheduledSpaceSubscriberPushCandidate =>
+tra  Sc duledSpaceSubscr berNTabRequestHydrator extends Sc duledSpaceNTabRequestHydrator {
+  self: PushCand date w h Sc duledSpaceSubscr berPushCand date =>
 
-  override lazy val facepileUsersFut: Future[Seq[Long]] = {
-    hostId match {
-      case Some(spaceHostId) => Future.value(Seq(spaceHostId))
+  overr de lazy val facep leUsersFut: Future[Seq[Long]] = {
+    host d match {
+      case So (spaceHost d) => Future.value(Seq(spaceHost d))
       case _ =>
-        Future.exception(
-          new IllegalStateException(
-            "Unable to get host id for ScheduledSpaceSubscriberNTabRequestHydrator"))
+        Future.except on(
+          new  llegalStateExcept on(
+            "Unable to get host  d for Sc duledSpaceSubscr berNTabRequestHydrator"))
     }
   }
 
-  override val socialProofDisplayText: Option[DisplayText] = None
+  overr de val soc alProofD splayText: Opt on[D splayText] = None
 }
 
-trait ScheduledSpaceNTabRequestHydrator extends NTabRequestHydrator {
-  self: PushCandidate with SpaceCandidate =>
+tra  Sc duledSpaceNTabRequestHydrator extends NTabRequestHydrator {
+  self: PushCand date w h SpaceCand date =>
 
-  def hydratedHost: Option[User]
+  def hydratedHost: Opt on[User]
 
-  override lazy val senderIdFut: Future[Long] = {
-    hostId match {
-      case Some(spaceHostId) => Future.value(spaceHostId)
-      case _ => throw new IllegalStateException(s"No Space Host Id")
+  overr de lazy val sender dFut: Future[Long] = {
+    host d match {
+      case So (spaceHost d) => Future.value(spaceHost d)
+      case _ => throw new  llegalStateExcept on(s"No Space Host  d")
     }
   }
 
-  override lazy val tapThroughFut: Future[String] = Future.value(s"i/spaces/$spaceId")
+  overr de lazy val tapThroughFut: Future[Str ng] = Future.value(s" /spaces/$space d")
 
-  override lazy val displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] =
-    NotificationServiceSender
-      .getDisplayTextEntityFromUser(
+  overr de lazy val d splayTextEnt  esFut: Future[Seq[D splayTextEnt y]] =
+    Not f cat onServ ceSender
+      .getD splayTextEnt yFromUser(
         Future.value(hydratedHost),
-        fieldName = "space_host_name",
-        isBold = true
+        f eldNa  = "space_host_na ",
+         sBold = true
       ).map(_.toSeq)
 
-  override val storyContext: Option[StoryContext] = None
+  overr de val storyContext: Opt on[StoryContext] = None
 
-  override val inlineCard: Option[InlineCard] = None
+  overr de val  nl neCard: Opt on[ nl neCard] = None
 
-  override lazy val ntabRequest: Future[Option[CreateGenericNotificationRequest]] = {
-    Future.join(senderIdFut, displayTextEntitiesFut, facepileUsersFut, tapThroughFut).map {
-      case (senderId, displayTextEntities, facepileUsers, tapThrough) =>
-        val expiryTimeMillis = if (target.params(PushFeatureSwitchParams.EnableSpacesTtlForNtab)) {
-          Some(
-            (Time.now + target.params(
-              PushFeatureSwitchParams.SpaceNotificationsTTLDurationForNTab)).inMillis)
+  overr de lazy val ntabRequest: Future[Opt on[CreateGener cNot f cat onRequest]] = {
+    Future.jo n(sender dFut, d splayTextEnt  esFut, facep leUsersFut, tapThroughFut).map {
+      case (sender d, d splayTextEnt  es, facep leUsers, tapThrough) =>
+        val exp ryT  M ll s =  f (target.params(PushFeatureSw chParams.EnableSpacesTtlForNtab)) {
+          So (
+            (T  .now + target.params(
+              PushFeatureSw chParams.SpaceNot f cat onsTTLDurat onForNTab)). nM ll s)
         } else None
 
-        Some(
-          CreateGenericNotificationRequest(
-            userId = target.targetId,
-            senderId = senderId,
-            genericType = GenericType.RefreshableNotification,
-            displayText = DisplayText(values = displayTextEntities),
-            facepileUsers = facepileUsers,
-            timestampMillis = Time.now.inMillis,
-            tapThroughAction = Some(TapThroughAction(Some(tapThrough))),
-            impressionId = Some(impressionId),
-            socialProofText = socialProofDisplayText,
+        So (
+          CreateGener cNot f cat onRequest(
+            user d = target.target d,
+            sender d = sender d,
+            gener cType = Gener cType.RefreshableNot f cat on,
+            d splayText = D splayText(values = d splayTextEnt  es),
+            facep leUsers = facep leUsers,
+            t  stampM ll s = T  .now. nM ll s,
+            tapThroughAct on = So (TapThroughAct on(So (tapThrough))),
+             mpress on d = So ( mpress on d),
+            soc alProofText = soc alProofD splayText,
             context = storyContext,
-            inlineCard = inlineCard,
+             nl neCard =  nl neCard,
             refreshableType = refreshableType,
-            expiryTimeMillis = expiryTimeMillis
+            exp ryT  M ll s = exp ryT  M ll s
           ))
     }
   }

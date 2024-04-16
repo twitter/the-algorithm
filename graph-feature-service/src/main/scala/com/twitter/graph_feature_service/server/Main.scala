@@ -1,56 +1,56 @@
-package com.twitter.graph_feature_service.server
+package com.tw ter.graph_feature_serv ce.server
 
-import com.google.inject.Module
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.mtls.thriftmux.Mtls
-import com.twitter.finatra.thrift.ThriftServer
-import com.twitter.finatra.thrift.filters.{
-  AccessLoggingFilter,
-  LoggingMDCFilter,
-  StatsFilter,
-  ThriftMDCFilter,
-  TraceIdMDCFilter
+ mport com.google. nject.Module
+ mport com.tw ter.f natra.dec der.modules.Dec derModule
+ mport com.tw ter.f natra.mtls.thr ftmux.Mtls
+ mport com.tw ter.f natra.thr ft.Thr ftServer
+ mport com.tw ter.f natra.thr ft.f lters.{
+  AccessLogg ngF lter,
+  Logg ngMDCF lter,
+  StatsF lter,
+  Thr ftMDCF lter,
+  Trace dMDCF lter
 }
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule
-import com.twitter.finatra.thrift.routing.ThriftRouter
-import com.twitter.graph_feature_service.server.controllers.ServerController
-import com.twitter.graph_feature_service.server.handlers.ServerWarmupHandler
-import com.twitter.graph_feature_service.server.modules.{
-  GetIntersectionStoreModule,
-  GraphFeatureServiceWorkerClientsModule,
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsThr ft bFormsModule
+ mport com.tw ter.f natra.thr ft.rout ng.Thr ftRouter
+ mport com.tw ter.graph_feature_serv ce.server.controllers.ServerController
+ mport com.tw ter.graph_feature_serv ce.server.handlers.ServerWarmupHandler
+ mport com.tw ter.graph_feature_serv ce.server.modules.{
+  Get ntersect onStoreModule,
+  GraphFeatureServ ceWorkerCl entsModule,
   ServerFlagsModule
 }
-import com.twitter.graph_feature_service.thriftscala
-import com.twitter.inject.thrift.modules.ThriftClientIdModule
+ mport com.tw ter.graph_feature_serv ce.thr ftscala
+ mport com.tw ter. nject.thr ft.modules.Thr ftCl ent dModule
 
-object Main extends ServerMain
+object Ma n extends ServerMa n
 
-class ServerMain extends ThriftServer with Mtls {
+class ServerMa n extends Thr ftServer w h Mtls {
 
-  override val name = "graph_feature_service-server"
+  overr de val na  = "graph_feature_serv ce-server"
 
-  override val modules: Seq[Module] = {
+  overr de val modules: Seq[Module] = {
     Seq(
       ServerFlagsModule,
-      DeciderModule,
-      ThriftClientIdModule,
-      GraphFeatureServiceWorkerClientsModule,
-      GetIntersectionStoreModule,
-      new MtlsThriftWebFormsModule[thriftscala.Server.MethodPerEndpoint](this)
+      Dec derModule,
+      Thr ftCl ent dModule,
+      GraphFeatureServ ceWorkerCl entsModule,
+      Get ntersect onStoreModule,
+      new MtlsThr ft bFormsModule[thr ftscala.Server. thodPerEndpo nt](t )
     )
   }
 
-  override def configureThrift(router: ThriftRouter): Unit = {
+  overr de def conf gureThr ft(router: Thr ftRouter): Un  = {
     router
-      .filter[LoggingMDCFilter]
-      .filter[TraceIdMDCFilter]
-      .filter[ThriftMDCFilter]
-      .filter[AccessLoggingFilter]
-      .filter[StatsFilter]
+      .f lter[Logg ngMDCF lter]
+      .f lter[Trace dMDCF lter]
+      .f lter[Thr ftMDCF lter]
+      .f lter[AccessLogg ngF lter]
+      .f lter[StatsF lter]
       .add[ServerController]
   }
 
-  override protected def warmup(): Unit = {
+  overr de protected def warmup(): Un  = {
     handle[ServerWarmupHandler]()
   }
 }

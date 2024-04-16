@@ -1,129 +1,129 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package federated.context
 
-import com.twitter.common.ip_address_utils.ClientIpAddressUtils
-import com.twitter.context.thriftscala.Viewer
-import com.twitter.context.TwitterContext
-import com.twitter.finagle.core.util.InetAddressUtil
-import com.twitter.passbird.bitfield.clientprivileges.thriftscala.{Constants => ClientAppPrivileges}
-import com.twitter.finatra.tfe.HttpHeaderNames
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.strato.access.Access.ClientApplicationPrivilege
-import com.twitter.strato.access.Access
-import com.twitter.strato.access.ClientApplicationPrivilegeVariant
-import com.twitter.strato.context.StratoContext
-import com.twitter.strato.opcontext.OpContext
-import com.twitter.strato.response.Err
-import com.twitter.weaverbird.common.GetPlatformKey
+ mport com.tw ter.common. p_address_ut ls.Cl ent pAddressUt ls
+ mport com.tw ter.context.thr ftscala.V e r
+ mport com.tw ter.context.Tw terContext
+ mport com.tw ter.f nagle.core.ut l. netAddressUt l
+ mport com.tw ter.passb rd.b f eld.cl entpr v leges.thr ftscala.{Constants => Cl entAppPr v leges}
+ mport com.tw ter.f natra.tfe.Http aderNa s
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLevel
+ mport com.tw ter.strato.access.Access.Cl entAppl cat onPr v lege
+ mport com.tw ter.strato.access.Access
+ mport com.tw ter.strato.access.Cl entAppl cat onPr v legeVar ant
+ mport com.tw ter.strato.context.StratoContext
+ mport com.tw ter.strato.opcontext.OpContext
+ mport com.tw ter.strato.response.Err
+ mport com.tw ter. averb rd.common.GetPlatformKey
 
 /**
- * [[RequestContext]] exists to avoid wiring the federated column
- * implementations directly to the request data that is derived from the
- * contextual environment. Columns should not directly reference
- * TwitterContext, StratoContext, strato.access.Access, HTTP headers, etc.
- * Each column operation operates on two input parameters: a request (i.e.
- * a column operation's Arg) and a [[RequestContext]].
+ * [[RequestContext]] ex sts to avo d w r ng t  federated column
+ *  mple ntat ons d rectly to t  request data that  s der ved from t 
+ * contextual env ron nt. Columns should not d rectly reference
+ * Tw terContext, StratoContext, strato.access.Access, HTTP  aders, etc.
+ * Each column operat on operates on two  nput para ters: a request ( .e.
+ * a column operat on's Arg) and a [[RequestContext]].
  */
-private[federated] case class RequestContext(
-  clientApplicationId: Option[AppId] = None,
-  deviceSource: Option[String] = None,
-  knownDeviceToken: Option[KnownDeviceToken] = None,
-  remoteHost: Option[String] = None,
-  twitterUserId: UserId,
-  contributorId: Option[UserId] = None,
-  isDarkRequest: Boolean = false,
-  hasPrivilegeNullcastingAccess: Boolean = false,
-  hasPrivilegePromotedTweetsInTimeline: Boolean = false,
-  sessionHash: Option[String] = None,
-  cardsPlatformKey: Option[String] = None,
-  safetyLevel: Option[SafetyLevel] = None,
+pr vate[federated] case class RequestContext(
+  cl entAppl cat on d: Opt on[App d] = None,
+  dev ceS ce: Opt on[Str ng] = None,
+  knownDev ceToken: Opt on[KnownDev ceToken] = None,
+  remoteHost: Opt on[Str ng] = None,
+  tw terUser d: User d,
+  contr butor d: Opt on[User d] = None,
+   sDarkRequest: Boolean = false,
+  hasPr v legeNullcast ngAccess: Boolean = false,
+  hasPr v legePromotedT ets nT  l ne: Boolean = false,
+  sess onHash: Opt on[Str ng] = None,
+  cardsPlatformKey: Opt on[Str ng] = None,
+  safetyLevel: Opt on[SafetyLevel] = None,
 ) {
-  def isContributorRequest = contributorId.exists(_ != twitterUserId)
+  def  sContr butorRequest = contr butor d.ex sts(_ != tw terUser d)
 }
 
 /**
- * Provides a single place to derive request data from the contextual
- * environment. Defined as a sealed class (vs an object) to allow mocking
- * in unit tests.
+ * Prov des a s ngle place to der ve request data from t  contextual
+ * env ron nt. Def ned as a sealed class (vs an object) to allow mock ng
+ *  n un  tests.
  */
-private[federated] sealed class GetRequestContext() {
-  // Bring Tweetypie permitted TwitterContext into scope
-  private[this] val TwitterContext: TwitterContext =
-    com.twitter.context.TwitterContext(com.twitter.tweetypie.TwitterContextPermit)
+pr vate[federated] sealed class GetRequestContext() {
+  // Br ng T etyp e perm ted Tw terContext  nto scope
+  pr vate[t ] val Tw terContext: Tw terContext =
+    com.tw ter.context.Tw terContext(com.tw ter.t etyp e.Tw terContextPerm )
 
   /**
-   * When TwitterUserIdNotDefined is thrown, it's likely that the column
-   * access control configuration lacks `AllowTwitterUserId` or other
-   * Policy that ensures the caller is authenticated.
+   * W n Tw terUser dNotDef ned  s thrown,  's l kely that t  column
+   * access control conf gurat on lacks `AllowTw terUser d` or ot r
+   * Pol cy that ensures t  caller  s aut nt cated.
    */
-  private[federated] val TwitterUserIdNotDefined =
-    Err(Err.Authentication, "User authentication is required for this operation.")
+  pr vate[federated] val Tw terUser dNotDef ned =
+    Err(Err.Aut nt cat on, "User aut nt cat on  s requ red for t  operat on.")
 
-  private[this] val SessionHashHeaderName = "x-tfe-session-hash"
-  private[this] def hasClientApplicationPrivilege(id: Int): Boolean =
-    Access.getPrincipals.contains(
-      ClientApplicationPrivilege(
-        ClientApplicationPrivilegeVariant
-          .byId(id.toShort).get))
+  pr vate[t ] val Sess onHash aderNa  = "x-tfe-sess on-hash"
+  pr vate[t ] def hasCl entAppl cat onPr v lege( d:  nt): Boolean =
+    Access.getPr nc pals.conta ns(
+      Cl entAppl cat onPr v lege(
+        Cl entAppl cat onPr v legeVar ant
+          .by d( d.toShort).get))
 
-  private[this] def getRequestHeader(headerName: String): Option[String] =
+  pr vate[t ] def getRequest ader( aderNa : Str ng): Opt on[Str ng] =
     StratoContext
       .current()
-      .propagatedHeaders
-      .flatMap(_.get(headerName))
+      .propagated aders
+      .flatMap(_.get( aderNa ))
 
   def apply(opContext: OpContext): RequestContext = {
-    val twitterUserId = Access.getTwitterUserId match {
-      // Access.getTwitterUserId should return a value as long as the column
-      // policy includes AllowTwitterUserId, which guarantees the presence of
-      // the value.
-      case Some(twitterUser) => twitterUser.id
-      case None => throw TwitterUserIdNotDefined
+    val tw terUser d = Access.getTw terUser d match {
+      // Access.getTw terUser d should return a value as long as t  column
+      // pol cy  ncludes AllowTw terUser d, wh ch guarantees t  presence of
+      // t  value.
+      case So (tw terUser) => tw terUser. d
+      case None => throw Tw terUser dNotDef ned
     }
 
-    // contributorId should only be defined when the authenticated user differs
-    // from the "Twitter user"
-    val contributorId =
-      Access.getAuthenticatedTwitterUserId.map(_.id).filter(_ != twitterUserId)
+    // contr butor d should only be def ned w n t  aut nt cated user d ffers
+    // from t  "Tw ter user"
+    val contr butor d =
+      Access.getAut nt catedTw terUser d.map(_. d).f lter(_ != tw terUser d)
 
-    val twitterContext = TwitterContext().getOrElse(Viewer())
+    val tw terContext = Tw terContext().getOrElse(V e r())
 
-    val deviceSource = twitterContext.clientApplicationId.map("oauth:" + _)
+    val dev ceS ce = tw terContext.cl entAppl cat on d.map("oauth:" + _)
 
-    // Ported from StatusesUpdateController#getBirdherdOptions and
-    // BirdherdOption.UserIp(request.clientHost)
-    val remoteHost: Option[String] =
-      getRequestHeader(HttpHeaderNames.X_TWITTER_AUDIT_IP_THRIFT.toLowerCase) // use the new header
-        .flatMap(ClientIpAddressUtils.decodeClientIpAddress(_))
-        .flatMap(ClientIpAddressUtils.getString(_))
+    // Ported from StatusesUpdateController#getB rd rdOpt ons and
+    // B rd rdOpt on.User p(request.cl entHost)
+    val remoteHost: Opt on[Str ng] =
+      getRequest ader(Http aderNa s.X_TW TTER_AUD T_ P_THR FT.toLo rCase) // use t  new  ader
+        .flatMap(Cl ent pAddressUt ls.decodeCl ent pAddress(_))
+        .flatMap(Cl ent pAddressUt ls.getStr ng(_))
         .orElse(
-          getRequestHeader(
-            HttpHeaderNames.X_TWITTER_AUDIT_IP.toLowerCase
-          ) // fallback to old way before migration is completed
-            .map(h => InetAddressUtil.getByName(h.trim).getHostAddress)
+          getRequest ader(
+            Http aderNa s.X_TW TTER_AUD T_ P.toLo rCase
+          ) // fallback to old way before m grat on  s completed
+            .map(h =>  netAddressUt l.getByNa (h.tr m).getHostAddress)
         )
 
-    val isDarkRequest = opContext.darkRequest.isDefined
+    val  sDarkRequest = opContext.darkRequest. sDef ned
 
-    val sessionHash = getRequestHeader(SessionHashHeaderName)
+    val sess onHash = getRequest ader(Sess onHash aderNa )
 
-    val cardsPlatformKey = twitterContext.clientApplicationId.map(GetPlatformKey(_))
+    val cardsPlatformKey = tw terContext.cl entAppl cat on d.map(GetPlatformKey(_))
 
     val safetyLevel = opContext.safetyLevel
 
     RequestContext(
-      clientApplicationId = twitterContext.clientApplicationId,
-      deviceSource = deviceSource,
-      knownDeviceToken = twitterContext.knownDeviceToken,
+      cl entAppl cat on d = tw terContext.cl entAppl cat on d,
+      dev ceS ce = dev ceS ce,
+      knownDev ceToken = tw terContext.knownDev ceToken,
       remoteHost = remoteHost,
-      twitterUserId = twitterUserId,
-      contributorId = contributorId,
-      isDarkRequest = isDarkRequest,
-      hasPrivilegeNullcastingAccess =
-        hasClientApplicationPrivilege(ClientAppPrivileges.NULLCASTING_ACCESS),
-      hasPrivilegePromotedTweetsInTimeline =
-        hasClientApplicationPrivilege(ClientAppPrivileges.PROMOTED_TWEETS_IN_TIMELINE),
-      sessionHash = sessionHash,
+      tw terUser d = tw terUser d,
+      contr butor d = contr butor d,
+       sDarkRequest =  sDarkRequest,
+      hasPr v legeNullcast ngAccess =
+        hasCl entAppl cat onPr v lege(Cl entAppPr v leges.NULLCAST NG_ACCESS),
+      hasPr v legePromotedT ets nT  l ne =
+        hasCl entAppl cat onPr v lege(Cl entAppPr v leges.PROMOTED_TWEETS_ N_T MEL NE),
+      sess onHash = sess onHash,
       cardsPlatformKey = cardsPlatformKey,
       safetyLevel = safetyLevel,
     )

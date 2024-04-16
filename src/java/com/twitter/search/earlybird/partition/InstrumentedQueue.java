@@ -1,51 +1,51 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.atomic.AtomicLong;
+ mport java.ut l.concurrent.ConcurrentL nkedDeque;
+ mport java.ut l.concurrent.atom c.Atom cLong;
 
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchRateCounter;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
 
 /**
- * A queue with metrics on size, enqueue rate and dequeue rate.
+ * A queue w h  tr cs on s ze, enqueue rate and dequeue rate.
  */
-public class InstrumentedQueue<T> {
-  private final SearchRateCounter enqueueRate;
-  private final SearchRateCounter dequeueRate;
-  private final AtomicLong queueSize = new AtomicLong();
+publ c class  nstru ntedQueue<T> {
+  pr vate f nal SearchRateCounter enqueueRate;
+  pr vate f nal SearchRateCounter dequeueRate;
+  pr vate f nal Atom cLong queueS ze = new Atom cLong();
 
-  private final ConcurrentLinkedDeque<T> queue;
+  pr vate f nal ConcurrentL nkedDeque<T> queue;
 
-  public InstrumentedQueue(String statsPrefix) {
-    SearchLongGauge.export(statsPrefix + "_size", queueSize);
-    enqueueRate = SearchRateCounter.export(statsPrefix + "_enqueue");
-    dequeueRate = SearchRateCounter.export(statsPrefix + "_dequeue");
+  publ c  nstru ntedQueue(Str ng statsPref x) {
+    SearchLongGauge.export(statsPref x + "_s ze", queueS ze);
+    enqueueRate = SearchRateCounter.export(statsPref x + "_enqueue");
+    dequeueRate = SearchRateCounter.export(statsPref x + "_dequeue");
 
-    queue = new ConcurrentLinkedDeque<>();
+    queue = new ConcurrentL nkedDeque<>();
   }
 
   /**
-   * Adds a new element to the queue.
+   * Adds a new ele nt to t  queue.
    */
-  public void add(T tve) {
+  publ c vo d add(T tve) {
     queue.add(tve);
-    enqueueRate.increment();
-    queueSize.incrementAndGet();
+    enqueueRate. ncre nt();
+    queueS ze. ncre ntAndGet();
   }
 
   /**
-   * Returns the first element in the queue. If the queue is empty, {@code null} is returned.
+   * Returns t  f rst ele nt  n t  queue.  f t  queue  s empty, {@code null}  s returned.
    */
-  public T poll() {
+  publ c T poll() {
     T tve = queue.poll();
-    if (tve != null) {
-      dequeueRate.increment();
-      queueSize.decrementAndGet();
+     f (tve != null) {
+      dequeueRate. ncre nt();
+      queueS ze.decre ntAndGet();
     }
     return tve;
   }
 
-  public long getQueueSize() {
-    return queueSize.get();
+  publ c long getQueueS ze() {
+    return queueS ze.get();
   }
 }

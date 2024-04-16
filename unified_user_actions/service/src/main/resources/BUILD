@@ -1,13 +1,13 @@
-resources(
-    sources = ["*.*"],
-    tags = ["bazel-compatible"],
+res ces(
+    s ces = ["*.*"],
+    tags = ["bazel-compat ble"],
 )
 
-files(
-    name = "files",
-    sources = [
-        "!BUILD",
+f les(
+    na  = "f les",
+    s ces = [
+        "!BU LD",
         "**/*",
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
 )

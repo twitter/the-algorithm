@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.configapi
+package com.tw ter.product_m xer.core.funct onal_component.conf gap 
 
-import com.twitter.timelines.configapi.BaseRequestContext
-import com.twitter.timelines.configapi.FeatureContext
-import com.twitter.timelines.configapi.GuestId
-import com.twitter.timelines.configapi.UserId
-import com.twitter.timelines.configapi.WithFeatureContext
-import com.twitter.timelines.configapi.WithGuestId
-import com.twitter.timelines.configapi.WithUserId
+ mport com.tw ter.t  l nes.conf gap .BaseRequestContext
+ mport com.tw ter.t  l nes.conf gap .FeatureContext
+ mport com.tw ter.t  l nes.conf gap .Guest d
+ mport com.tw ter.t  l nes.conf gap .User d
+ mport com.tw ter.t  l nes.conf gap .W hFeatureContext
+ mport com.tw ter.t  l nes.conf gap .W hGuest d
+ mport com.tw ter.t  l nes.conf gap .W hUser d
 
-/** Represents [[com.twitter.timelines.configapi]]'s context information */
+/** Represents [[com.tw ter.t  l nes.conf gap ]]'s context  nformat on */
 case class RequestContext(
-  userId: Option[UserId],
-  guestId: Option[GuestId],
+  user d: Opt on[User d],
+  guest d: Opt on[Guest d],
   featureContext: FeatureContext)
     extends BaseRequestContext
-    with WithUserId
-    with WithGuestId
-    with WithFeatureContext
+    w h W hUser d
+    w h W hGuest d
+    w h W hFeatureContext

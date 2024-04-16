@@ -1,58 +1,58 @@
-package com.twitter.cr_mixer.module.similarity_engine
+package com.tw ter.cr_m xer.module.s m lar y_eng ne
 
-import com.google.inject.Provides
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.ModelConfig
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.TripTweetWithScore
-import com.twitter.cr_mixer.similarity_engine.ConsumerEmbeddingBasedTripSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.TripEngineQuery
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripTweet
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripDomain
-import javax.inject.Named
+ mport com.google. nject.Prov des
+ mport com.tw ter.cr_m xer.conf g.T  outConf g
+ mport com.tw ter.cr_m xer.model.ModelConf g
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.cr_m xer.model.Tr pT etW hScore
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.Consu rEmbedd ngBasedTr pS m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S m lar yEng ne.Gat ngConf g
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S m lar yEng ne.S m lar yEng neConf g
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.StandardS m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.Tr pEng neQuery
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. rm .store.common.ObservedReadableStore
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.trends.tr p_v1.tr p_t ets.thr ftscala.Tr pT et
+ mport com.tw ter.trends.tr p_v1.tr p_t ets.thr ftscala.Tr pDoma n
+ mport javax. nject.Na d
 
-object ConsumerEmbeddingBasedTripSimilarityEngineModule extends TwitterModule {
-  @Provides
-  @Named(ModuleNames.ConsumerEmbeddingBasedTripSimilarityEngine)
-  def providesConsumerEmbeddingBasedTripSimilarityEngineModule(
-    @Named(ModuleNames.RmsUserLogFavInterestedInEmbeddingStore)
-    userLogFavInterestedInEmbeddingStore: ReadableStore[UserId, SimClustersEmbedding],
-    @Named(ModuleNames.RmsUserFollowInterestedInEmbeddingStore)
-    userFollowInterestedInEmbeddingStore: ReadableStore[UserId, SimClustersEmbedding],
-    @Named(ModuleNames.TripCandidateStore)
-    tripCandidateStore: ReadableStore[TripDomain, Seq[TripTweet]],
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-  ): StandardSimilarityEngine[TripEngineQuery, TripTweetWithScore] = {
-    val underlyingStore = ObservedReadableStore(
-      ConsumerEmbeddingBasedTripSimilarityEngine(
-        embeddingStoreLookUpMap = Map(
-          ModelConfig.ConsumerLogFavBasedInterestedInEmbedding -> userLogFavInterestedInEmbeddingStore,
-          ModelConfig.ConsumerFollowBasedInterestedInEmbedding -> userFollowInterestedInEmbeddingStore,
+object Consu rEmbedd ngBasedTr pS m lar yEng neModule extends Tw terModule {
+  @Prov des
+  @Na d(ModuleNa s.Consu rEmbedd ngBasedTr pS m lar yEng ne)
+  def prov desConsu rEmbedd ngBasedTr pS m lar yEng neModule(
+    @Na d(ModuleNa s.RmsUserLogFav nterested nEmbedd ngStore)
+    userLogFav nterested nEmbedd ngStore: ReadableStore[User d, S mClustersEmbedd ng],
+    @Na d(ModuleNa s.RmsUserFollow nterested nEmbedd ngStore)
+    userFollow nterested nEmbedd ngStore: ReadableStore[User d, S mClustersEmbedd ng],
+    @Na d(ModuleNa s.Tr pCand dateStore)
+    tr pCand dateStore: ReadableStore[Tr pDoma n, Seq[Tr pT et]],
+    t  outConf g: T  outConf g,
+    statsRece ver: StatsRece ver,
+  ): StandardS m lar yEng ne[Tr pEng neQuery, Tr pT etW hScore] = {
+    val underly ngStore = ObservedReadableStore(
+      Consu rEmbedd ngBasedTr pS m lar yEng ne(
+        embedd ngStoreLookUpMap = Map(
+          ModelConf g.Consu rLogFavBased nterested nEmbedd ng -> userLogFav nterested nEmbedd ngStore,
+          ModelConf g.Consu rFollowBased nterested nEmbedd ng -> userFollow nterested nEmbedd ngStore,
         ),
-        tripCandidateSource = tripCandidateStore,
-        statsReceiver
-      ))(statsReceiver.scope("TripSimilarityEngine"))
+        tr pCand dateS ce = tr pCand dateStore,
+        statsRece ver
+      ))(statsRece ver.scope("Tr pS m lar yEng ne"))
 
-    new StandardSimilarityEngine[TripEngineQuery, TripTweetWithScore](
-      implementingStore = underlyingStore,
-      identifier = SimilarityEngineType.ExploreTripOfflineSimClustersTweets,
-      globalStats = statsReceiver,
-      engineConfig = SimilarityEngineConfig(
-        timeout = timeoutConfig.similarityEngineTimeout,
-        gatingConfig = GatingConfig(
-          deciderConfig = None,
-          enableFeatureSwitch = None
+    new StandardS m lar yEng ne[Tr pEng neQuery, Tr pT etW hScore](
+       mple nt ngStore = underly ngStore,
+       dent f er = S m lar yEng neType.ExploreTr pOffl neS mClustersT ets,
+      globalStats = statsRece ver,
+      eng neConf g = S m lar yEng neConf g(
+        t  out = t  outConf g.s m lar yEng neT  out,
+        gat ngConf g = Gat ngConf g(
+          dec derConf g = None,
+          enableFeatureSw ch = None
         )
       )
     )

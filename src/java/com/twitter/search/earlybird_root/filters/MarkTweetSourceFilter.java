@@ -1,43 +1,43 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftTweetSource;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftT etS ce;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestType;
+ mport com.tw ter.ut l.Funct on;
+ mport com.tw ter.ut l.Future;
 
-public class MarkTweetSourceFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
-  private final SearchCounter searchResultsNotSet;
+publ c class MarkT etS ceF lter
+    extends S mpleF lter<Earlyb rdRequestContext, Earlyb rdResponse> {
+  pr vate f nal SearchCounter searchResultsNotSet;
 
-  private final ThriftTweetSource tweetSource;
+  pr vate f nal Thr ftT etS ce t etS ce;
 
-  public MarkTweetSourceFilter(ThriftTweetSource tweetSource) {
-    this.tweetSource = tweetSource;
+  publ c MarkT etS ceF lter(Thr ftT etS ce t etS ce) {
+    t .t etS ce = t etS ce;
     searchResultsNotSet = SearchCounter.export(
-        tweetSource.name().toLowerCase() + "_mark_tweet_source_filter_search_results_not_set");
+        t etS ce.na ().toLo rCase() + "_mark_t et_s ce_f lter_search_results_not_set");
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      final EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    return service.apply(requestContext).map(new Function<EarlybirdResponse, EarlybirdResponse>() {
-        @Override
-        public EarlybirdResponse apply(EarlybirdResponse response) {
-          if (response.getResponseCode() == EarlybirdResponseCode.SUCCESS
-              && requestContext.getEarlybirdRequestType() != EarlybirdRequestType.TERM_STATS) {
-            if (!response.isSetSearchResults()) {
-              searchResultsNotSet.increment();
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(
+      f nal Earlyb rdRequestContext requestContext,
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> serv ce) {
+    return serv ce.apply(requestContext).map(new Funct on<Earlyb rdResponse, Earlyb rdResponse>() {
+        @Overr de
+        publ c Earlyb rdResponse apply(Earlyb rdResponse response) {
+           f (response.getResponseCode() == Earlyb rdResponseCode.SUCCESS
+              && requestContext.getEarlyb rdRequestType() != Earlyb rdRequestType.TERM_STATS) {
+             f (!response. sSetSearchResults()) {
+              searchResultsNotSet. ncre nt();
             } else {
-              for (ThriftSearchResult searchResult : response.getSearchResults().getResults()) {
-                searchResult.setTweetSource(tweetSource);
+              for (Thr ftSearchResult searchResult : response.getSearchResults().getResults()) {
+                searchResult.setT etS ce(t etS ce);
               }
             }
           }

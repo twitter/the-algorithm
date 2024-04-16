@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.graphql.contextual_ref
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.graphql.contextual_ref
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.ContextualTweetRef
-import com.twitter.strato.graphql.contextual_refs.{thriftscala => thrift}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.contextual_ref.ContextualT etRef
+ mport com.tw ter.strato.graphql.contextual_refs.{thr ftscala => thr ft}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ContextualTweetRefMarshaller @Inject() (
-  tweetHydrationContextMarshaller: TweetHydrationContextMarshaller) {
+@S ngleton
+class ContextualT etRefMarshaller @ nject() (
+  t etHydrat onContextMarshaller: T etHydrat onContextMarshaller) {
 
-  def apply(contextualTweetRef: ContextualTweetRef): thrift.ContextualTweetRef =
-    thrift.ContextualTweetRef(
-      id = contextualTweetRef.id,
-      hydrationContext =
-        contextualTweetRef.hydrationContext.map(tweetHydrationContextMarshaller(_)))
+  def apply(contextualT etRef: ContextualT etRef): thr ft.ContextualT etRef =
+    thr ft.ContextualT etRef(
+       d = contextualT etRef. d,
+      hydrat onContext =
+        contextualT etRef.hydrat onContext.map(t etHydrat onContextMarshaller(_)))
 }

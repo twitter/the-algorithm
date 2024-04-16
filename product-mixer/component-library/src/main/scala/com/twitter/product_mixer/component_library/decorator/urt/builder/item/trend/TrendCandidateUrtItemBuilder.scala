@@ -1,63 +1,63 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.trend
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.trend
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.trend.TrendCandidateUrtItemBuilder.TrendsClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendDescription
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendDomainContext
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendGroupedTrends
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendNormalizedTrendName
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendTrendName
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendTweetCount
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendUrl
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.UnifiedTrendCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.promoted.BasePromotedMetadataBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.trend.TrendItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.trend.TrendCand dateUrt emBu lder.TrendsCl entEvent nfoEle nt
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.trends_events.TrendDescr pt on
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.trends_events.TrendDoma nContext
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.trends_events.TrendGroupedTrends
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.trends_events.TrendNormal zedTrendNa 
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.trends_events.TrendTrendNa 
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.trends_events.TrendT etCount
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.trends_events.TrendUrl
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.trends_events.Un f edTrendCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.Cand dateUrtEntryBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseCl entEvent nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseFeedbackAct on nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.promoted.BasePromoted tadataBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.trend.Trend em
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object TrendCandidateUrtItemBuilder {
-  final val TrendsClientEventInfoElement = "trend"
+object TrendCand dateUrt emBu lder {
+  f nal val TrendsCl entEvent nfoEle nt = "trend"
 }
 
-case class TrendCandidateUrtItemBuilder[Query <: PipelineQuery](
-  trendMetaDescriptionBuilder: TrendMetaDescriptionBuilder[Query, UnifiedTrendCandidate],
-  promotedMetadataBuilder: BasePromotedMetadataBuilder[Query, UnifiedTrendCandidate],
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, UnifiedTrendCandidate],
-  feedbackActionInfoBuilder: Option[BaseFeedbackActionInfoBuilder[Query, UnifiedTrendCandidate]] =
+case class TrendCand dateUrt emBu lder[Query <: P pel neQuery](
+  trend taDescr pt onBu lder: Trend taDescr pt onBu lder[Query, Un f edTrendCand date],
+  promoted tadataBu lder: BasePromoted tadataBu lder[Query, Un f edTrendCand date],
+  cl entEvent nfoBu lder: BaseCl entEvent nfoBu lder[Query, Un f edTrendCand date],
+  feedbackAct on nfoBu lder: Opt on[BaseFeedbackAct on nfoBu lder[Query, Un f edTrendCand date]] =
     None)
-    extends CandidateUrtEntryBuilder[Query, UnifiedTrendCandidate, TimelineItem] {
+    extends Cand dateUrtEntryBu lder[Query, Un f edTrendCand date, T  l ne em] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidate: UnifiedTrendCandidate,
-    candidateFeatures: FeatureMap
-  ): TimelineItem = {
-    TrendItem(
-      id = candidate.id,
-      sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-      clientEventInfo = clientEventInfoBuilder(
+    cand date: Un f edTrendCand date,
+    cand dateFeatures: FeatureMap
+  ): T  l ne em = {
+    Trend em(
+       d = cand date. d,
+      sort ndex = None, // Sort  ndexes are automat cally set  n t  doma n marshaller phase
+      cl entEvent nfo = cl entEvent nfoBu lder(
         query = query,
-        candidate = candidate,
-        candidateFeatures = candidateFeatures,
-        element = Some(TrendsClientEventInfoElement)
+        cand date = cand date,
+        cand dateFeatures = cand dateFeatures,
+        ele nt = So (TrendsCl entEvent nfoEle nt)
       ),
-      feedbackActionInfo = None,
-      normalizedTrendName = candidateFeatures.get(TrendNormalizedTrendName),
-      trendName = candidateFeatures.get(TrendTrendName),
-      url = candidateFeatures.get(TrendUrl),
-      description = candidateFeatures.getOrElse(TrendDescription, None),
-      metaDescription = trendMetaDescriptionBuilder(query, candidate, candidateFeatures),
-      tweetCount = candidateFeatures.getOrElse(TrendTweetCount, None),
-      domainContext = candidateFeatures.getOrElse(TrendDomainContext, None),
-      promotedMetadata = promotedMetadataBuilder(
+      feedbackAct on nfo = None,
+      normal zedTrendNa  = cand dateFeatures.get(TrendNormal zedTrendNa ),
+      trendNa  = cand dateFeatures.get(TrendTrendNa ),
+      url = cand dateFeatures.get(TrendUrl),
+      descr pt on = cand dateFeatures.getOrElse(TrendDescr pt on, None),
+       taDescr pt on = trend taDescr pt onBu lder(query, cand date, cand dateFeatures),
+      t etCount = cand dateFeatures.getOrElse(TrendT etCount, None),
+      doma nContext = cand dateFeatures.getOrElse(TrendDoma nContext, None),
+      promoted tadata = promoted tadataBu lder(
         query = query,
-        candidate = candidate,
-        candidateFeatures = candidateFeatures
+        cand date = cand date,
+        cand dateFeatures = cand dateFeatures
       ),
-      groupedTrends = candidateFeatures.getOrElse(TrendGroupedTrends, None)
+      groupedTrends = cand dateFeatures.getOrElse(TrendGroupedTrends, None)
     )
   }
 }

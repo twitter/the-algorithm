@@ -1,90 +1,90 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.tw ter.search.earlyb rd_root. rgers;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.Collect on;
+ mport java.ut l.L st;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.google.common.collect.Collections2;
+ mport com.google.common.collect.Collect ons2;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.util.earlybird.FacetsResultsUtils;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsRequest;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsResults;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
+ mport com.tw ter.search.common.ut l.earlyb rd.FacetsResultsUt ls;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftTermStat st csRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftTermStat st csResults;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.ut l.Future;
 
 /**
- * Merger class to merge termstats EarlybirdResponse objects
+ *  rger class to  rge termstats Earlyb rdResponse objects
  */
-public class TermStatisticsResponseMerger extends EarlybirdResponseMerger {
-  private static final Logger LOG = LoggerFactory.getLogger(TermStatisticsResponseMerger.class);
+publ c class TermStat st csResponse rger extends Earlyb rdResponse rger {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(TermStat st csResponse rger.class);
 
-  private static final SearchTimerStats TIMER =
-      SearchTimerStats.export("merge_term_stats", TimeUnit.NANOSECONDS, false, true);
+  pr vate stat c f nal SearchT  rStats T MER =
+      SearchT  rStats.export(" rge_term_stats", T  Un .NANOSECONDS, false, true);
 
-  private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 0.9;
+  pr vate stat c f nal double SUCCESSFUL_RESPONSE_THRESHOLD = 0.9;
 
-  public TermStatisticsResponseMerger(EarlybirdRequestContext requestContext,
-                                      List<Future<EarlybirdResponse>> responses,
+  publ c TermStat st csResponse rger(Earlyb rdRequestContext requestContext,
+                                      L st<Future<Earlyb rdResponse>> responses,
                                       ResponseAccumulator mode) {
     super(requestContext, responses, mode);
   }
 
-  @Override
-  protected SearchTimerStats getMergedResponseTimer() {
-    return TIMER;
+  @Overr de
+  protected SearchT  rStats get rgedResponseT  r() {
+    return T MER;
   }
 
-  @Override
+  @Overr de
   protected double getDefaultSuccessResponseThreshold() {
     return SUCCESSFUL_RESPONSE_THRESHOLD;
   }
 
-  @Override
-  protected EarlybirdResponse internalMerge(EarlybirdResponse termStatsResponse) {
-    ThriftTermStatisticsRequest termStatisticsRequest =
-        requestContext.getRequest().getTermStatisticsRequest();
+  @Overr de
+  protected Earlyb rdResponse  nternal rge(Earlyb rdResponse termStatsResponse) {
+    Thr ftTermStat st csRequest termStat st csRequest =
+        requestContext.getRequest().getTermStat st csRequest();
 
-    Collection<EarlybirdResponse> termStatsResults =
-        Collections2.filter(accumulatedResponses.getSuccessResponses(),
-            earlybirdResponse -> earlybirdResponse.isSetTermStatisticsResults());
+    Collect on<Earlyb rdResponse> termStatsResults =
+        Collect ons2.f lter(accumulatedResponses.getSuccessResponses(),
+            earlyb rdResponse -> earlyb rdResponse. sSetTermStat st csResults());
 
-    ThriftTermStatisticsResults results =
-        new ThriftTermResultsMerger(
+    Thr ftTermStat st csResults results =
+        new Thr ftTermResults rger(
             termStatsResults,
-            termStatisticsRequest.getHistogramSettings())
-        .merge();
+            termStat st csRequest.get togramSett ngs())
+        . rge();
 
-    if (results.getTermResults().isEmpty()) {
-      final String line = "No results returned from any backend for term statistics request: {}";
+     f (results.getTermResults(). sEmpty()) {
+      f nal Str ng l ne = "No results returned from any backend for term stat st cs request: {}";
 
-      // If the termstats request was not empty and we got empty results. log it as a warning
-      // otherwise log is as a debug.
-      if (termStatisticsRequest.getTermRequestsSize() > 0) {
-        LOG.warn(line, termStatisticsRequest);
+      //  f t  termstats request was not empty and   got empty results. log   as a warn ng
+      // ot rw se log  s as a debug.
+       f (termStat st csRequest.getTermRequestsS ze() > 0) {
+        LOG.warn(l ne, termStat st csRequest);
       } else {
-        LOG.debug(line, termStatisticsRequest);
+        LOG.debug(l ne, termStat st csRequest);
       }
     }
 
-    termStatsResponse.setTermStatisticsResults(results);
-    termStatsResponse.setSearchResults(ThriftTermResultsMerger.mergeSearchStats(termStatsResults));
+    termStatsResponse.setTermStat st csResults(results);
+    termStatsResponse.setSearchResults(Thr ftTermResults rger. rgeSearchStats(termStatsResults));
 
-    FacetsResultsUtils.fixNativePhotoUrl(results.getTermResults().values());
+    FacetsResultsUt ls.f xNat vePhotoUrl(results.getTermResults().values());
 
     LOG.debug("TermStats call completed successfully: {}", termStatsResponse);
 
     return termStatsResponse;
   }
 
-  @Override
-  public boolean shouldEarlyTerminateTierMerge(int totalResultsFromSuccessfulShards,
-                                                  boolean foundEarlyTermination) {
-    // To get accurate term stats, must never early terminate
+  @Overr de
+  publ c boolean shouldEarlyTerm nateT er rge( nt totalResultsFromSuccessfulShards,
+                                                  boolean foundEarlyTerm nat on) {
+    // To get accurate term stats, must never early term nate
     return false;
   }
 }

@@ -1,147 +1,147 @@
-package com.twitter.search.common.util.earlybird;
+package com.tw ter.search.common.ut l.earlyb rd;
 
-import java.util.List;
-import java.util.Map;
-import javax.annotation.Nullable;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+ mport com.google.common.base.Funct on;
+ mport com.google.common.base.Pred cate;
+ mport com.google.common.base.Pred cates;
+ mport com.google.common.collect. erables;
+ mport com.google.common.collect.L sts;
+ mport com.google.common.collect.Maps;
 
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.relevance.ranking.ActionChain;
-import com.twitter.search.common.relevance.ranking.filters.ExactDuplicateFilter;
-import com.twitter.search.common.relevance.text.VisibleTokenRatioNormalizer;
-import com.twitter.search.common.runtime.ActionChainDebugManager;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
-import com.twitter.search.earlybird.thrift.ThriftFacetResults;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftTweetSource;
+ mport com.tw ter.search.common.constants.thr ftjava.Thr ftLanguage;
+ mport com.tw ter.search.common.relevance.rank ng.Act onCha n;
+ mport com.tw ter.search.common.relevance.rank ng.f lters.ExactDupl cateF lter;
+ mport com.tw ter.search.common.relevance.text.V s bleTokenRat oNormal zer;
+ mport com.tw ter.search.common.runt  .Act onCha nDebugManager;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetF eldResults;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetResults;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult tadata;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultType;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResults;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftT etS ce;
 
 /**
- * ThriftSearchResultUtil contains some simple static methods for constructing
- * ThriftSearchResult objects.
+ * Thr ftSearchResultUt l conta ns so  s mple stat c  thods for construct ng
+ * Thr ftSearchResult objects.
  */
-public final class ThriftSearchResultUtil {
-  private ThriftSearchResultUtil() { }
+publ c f nal class Thr ftSearchResultUt l {
+  pr vate Thr ftSearchResultUt l() { }
 
-  private static final VisibleTokenRatioNormalizer NORMALIZER =
-      VisibleTokenRatioNormalizer.createInstance();
+  pr vate stat c f nal V s bleTokenRat oNormal zer NORMAL ZER =
+      V s bleTokenRat oNormal zer.create nstance();
 
-  public static final Function<ThriftSearchResults, Map<ThriftLanguage, Integer>> LANG_MAP_GETTER =
-      searchResults -> searchResults.getLanguageHistogram();
-  public static final Function<ThriftSearchResults, Map<Long, Integer>> HIT_COUNTS_MAP_GETTER =
-      searchResults -> searchResults.getHitCounts();
+  publ c stat c f nal Funct on<Thr ftSearchResults, Map<Thr ftLanguage,  nteger>> LANG_MAP_GETTER =
+      searchResults -> searchResults.getLanguage togram();
+  publ c stat c f nal Funct on<Thr ftSearchResults, Map<Long,  nteger>> H T_COUNTS_MAP_GETTER =
+      searchResults -> searchResults.getH Counts();
 
-  // Some useful Predicates
-  public static final Predicate<ThriftSearchResult> IS_OFFENSIVE_TWEET =
+  // So  useful Pred cates
+  publ c stat c f nal Pred cate<Thr ftSearchResult>  S_OFFENS VE_TWEET =
       result -> {
-        if (result != null && result.isSetMetadata()) {
-          ThriftSearchResultMetadata metadata = result.getMetadata();
-          return metadata.isIsOffensive();
+         f (result != null && result. sSet tadata()) {
+          Thr ftSearchResult tadata  tadata = result.get tadata();
+          return  tadata. s sOffens ve();
         } else {
           return false;
         }
       };
 
-  public static final Predicate<ThriftSearchResult> IS_TOP_TWEET =
+  publ c stat c f nal Pred cate<Thr ftSearchResult>  S_TOP_TWEET =
       result -> result != null
-             && result.isSetMetadata()
-             && result.getMetadata().isSetResultType()
-             && result.getMetadata().getResultType() == ThriftSearchResultType.POPULAR;
+             && result. sSet tadata()
+             && result.get tadata(). sSetResultType()
+             && result.get tadata().getResultType() == Thr ftSearchResultType.POPULAR;
 
-  public static final Predicate<ThriftSearchResult> FROM_FULL_ARCHIVE =
+  publ c stat c f nal Pred cate<Thr ftSearchResult> FROM_FULL_ARCH VE =
       result -> result != null
-             && result.isSetTweetSource()
-             && result.getTweetSource() == ThriftTweetSource.FULL_ARCHIVE_CLUSTER;
+             && result. sSetT etS ce()
+             && result.getT etS ce() == Thr ftT etS ce.FULL_ARCH VE_CLUSTER;
 
-  public static final Predicate<ThriftSearchResult> IS_FULL_ARCHIVE_TOP_TWEET =
-      Predicates.and(FROM_FULL_ARCHIVE, IS_TOP_TWEET);
+  publ c stat c f nal Pred cate<Thr ftSearchResult>  S_FULL_ARCH VE_TOP_TWEET =
+      Pred cates.and(FROM_FULL_ARCH VE,  S_TOP_TWEET);
 
-  public static final Predicate<ThriftSearchResult> IS_NSFW_BY_ANY_MEANS_TWEET =
+  publ c stat c f nal Pred cate<Thr ftSearchResult>  S_NSFW_BY_ANY_MEANS_TWEET =
           result -> {
-            if (result != null && result.isSetMetadata()) {
-              ThriftSearchResultMetadata metadata = result.getMetadata();
-              return metadata.isIsUserNSFW()
-                      || metadata.isIsOffensive()
-                      || metadata.getExtraMetadata().isIsSensitiveContent();
+             f (result != null && result. sSet tadata()) {
+              Thr ftSearchResult tadata  tadata = result.get tadata();
+              return  tadata. s sUserNSFW()
+                      ||  tadata. s sOffens ve()
+                      ||  tadata.getExtra tadata(). s sSens  veContent();
             } else {
               return false;
             }
           };
 
   /**
-   * Returns the number of underlying ThriftSearchResult results.
+   * Returns t  number of underly ng Thr ftSearchResult results.
    */
-  public static int numResults(ThriftSearchResults results) {
-    if (results == null || !results.isSetResults()) {
+  publ c stat c  nt numResults(Thr ftSearchResults results) {
+     f (results == null || !results. sSetResults()) {
       return 0;
     } else {
-      return results.getResultsSize();
+      return results.getResultsS ze();
     }
   }
 
   /**
-   * Returns the list of tweet IDs in ThriftSearchResults.
-   * Returns null if there's no results.
+   * Returns t  l st of t et  Ds  n Thr ftSearchResults.
+   * Returns null  f t re's no results.
    */
   @Nullable
-  public static List<Long> getTweetIds(ThriftSearchResults results) {
-    if (numResults(results) > 0) {
-      return getTweetIds(results.getResults());
+  publ c stat c L st<Long> getT et ds(Thr ftSearchResults results) {
+     f (numResults(results) > 0) {
+      return getT et ds(results.getResults());
     } else {
       return null;
     }
   }
 
   /**
-   * Returns the list of tweet IDs in a list of ThriftSearchResult.
-   * Returns null if there's no results.
+   * Returns t  l st of t et  Ds  n a l st of Thr ftSearchResult.
+   * Returns null  f t re's no results.
    */
-  public static List<Long> getTweetIds(@Nullable List<ThriftSearchResult> results) {
-    if (results != null && results.size() > 0) {
-      return Lists.newArrayList(Iterables.transform(
+  publ c stat c L st<Long> getT et ds(@Nullable L st<Thr ftSearchResult> results) {
+     f (results != null && results.s ze() > 0) {
+      return L sts.newArrayL st( erables.transform(
           results,
-          searchResult -> searchResult.getId()
+          searchResult -> searchResult.get d()
       ));
     }
     return null;
   }
 
   /**
-   * Given ThriftSearchResults, build a map from tweet ID to the tweets metadata.
+   * G ven Thr ftSearchResults, bu ld a map from t et  D to t  t ets  tadata.
    */
-  public static Map<Long, ThriftSearchResultMetadata> getTweetMetadataMap(
-      Schema schema, ThriftSearchResults results) {
-    Map<Long, ThriftSearchResultMetadata> resultMap = Maps.newHashMap();
-    if (results == null || results.getResultsSize() == 0) {
+  publ c stat c Map<Long, Thr ftSearchResult tadata> getT et tadataMap(
+      Sc ma sc ma, Thr ftSearchResults results) {
+    Map<Long, Thr ftSearchResult tadata> resultMap = Maps.newHashMap();
+     f (results == null || results.getResultsS ze() == 0) {
       return resultMap;
     }
-    for (ThriftSearchResult searchResult : results.getResults()) {
-      resultMap.put(searchResult.getId(), searchResult.getMetadata());
+    for (Thr ftSearchResult searchResult : results.getResults()) {
+      resultMap.put(searchResult.get d(), searchResult.get tadata());
     }
     return resultMap;
   }
 
   /**
-   * Return the total number of facet results in ThriftFacetResults, by summing up the number
-   * of facet results in each field.
+   * Return t  total number of facet results  n Thr ftFacetResults, by summ ng up t  number
+   * of facet results  n each f eld.
    */
-  public static int numFacetResults(ThriftFacetResults results) {
-    if (results == null || !results.isSetFacetFields()) {
+  publ c stat c  nt numFacetResults(Thr ftFacetResults results) {
+     f (results == null || !results. sSetFacetF elds()) {
       return 0;
     } else {
-      int numResults = 0;
-      for (ThriftFacetFieldResults field : results.getFacetFields().values()) {
-        if (field.isSetTopFacets()) {
-          numResults += field.topFacets.size();
+       nt numResults = 0;
+      for (Thr ftFacetF eldResults f eld : results.getFacetF elds().values()) {
+         f (f eld. sSetTopFacets()) {
+          numResults += f eld.topFacets.s ze();
         }
       }
       return numResults;
@@ -149,32 +149,32 @@ public final class ThriftSearchResultUtil {
   }
 
   /**
-   * Updates the search statistics on base, by adding the corresponding stats from delta.
+   * Updates t  search stat st cs on base, by add ng t  correspond ng stats from delta.
    */
-  public static void incrementCounts(ThriftSearchResults base,
-                                     ThriftSearchResults delta) {
-    if (delta.isSetNumHitsProcessed()) {
-      base.setNumHitsProcessed(base.getNumHitsProcessed() + delta.getNumHitsProcessed());
+  publ c stat c vo d  ncre ntCounts(Thr ftSearchResults base,
+                                     Thr ftSearchResults delta) {
+     f (delta. sSetNumH sProcessed()) {
+      base.setNumH sProcessed(base.getNumH sProcessed() + delta.getNumH sProcessed());
     }
-    if (delta.isSetNumPartitionsEarlyTerminated() && delta.getNumPartitionsEarlyTerminated() > 0) {
-      // This currently used for merging results on a single earlybird, so we don't sum up all the
-      // counts, just set it to 1 if we see one that was early terminated.
-      base.setNumPartitionsEarlyTerminated(1);
+     f (delta. sSetNumPart  onsEarlyTerm nated() && delta.getNumPart  onsEarlyTerm nated() > 0) {
+      // T  currently used for  rg ng results on a s ngle earlyb rd, so   don't sum up all t 
+      // counts, just set   to 1  f   see one that was early term nated.
+      base.setNumPart  onsEarlyTerm nated(1);
     }
-    if (delta.isSetMaxSearchedStatusID()) {
-      long deltaMax = delta.getMaxSearchedStatusID();
-      if (!base.isSetMaxSearchedStatusID() || deltaMax > base.getMaxSearchedStatusID()) {
-        base.setMaxSearchedStatusID(deltaMax);
+     f (delta. sSetMaxSearc dStatus D()) {
+      long deltaMax = delta.getMaxSearc dStatus D();
+       f (!base. sSetMaxSearc dStatus D() || deltaMax > base.getMaxSearc dStatus D()) {
+        base.setMaxSearc dStatus D(deltaMax);
       }
     }
-    if (delta.isSetMinSearchedStatusID()) {
-      long deltaMin = delta.getMinSearchedStatusID();
-      if (!base.isSetMinSearchedStatusID() || deltaMin < base.getMinSearchedStatusID()) {
-        base.setMinSearchedStatusID(deltaMin);
+     f (delta. sSetM nSearc dStatus D()) {
+      long deltaM n = delta.getM nSearc dStatus D();
+       f (!base. sSetM nSearc dStatus D() || deltaM n < base.getM nSearc dStatus D()) {
+        base.setM nSearc dStatus D(deltaM n);
       }
     }
-    if (delta.isSetScore()) {
-      if (base.isSetScore()) {
+     f (delta. sSetScore()) {
+       f (base. sSetScore()) {
         base.setScore(base.getScore() + delta.getScore());
       } else {
         base.setScore(delta.getScore());
@@ -183,27 +183,27 @@ public final class ThriftSearchResultUtil {
   }
 
   /**
-   * Removes the duplicates from the given list of results.
+   * Removes t  dupl cates from t  g ven l st of results.
    *
-   * @param results The list of ThriftSearchResults.
-   * @return The given list with duplicates removed.
+   * @param results T  l st of Thr ftSearchResults.
+   * @return T  g ven l st w h dupl cates removed.
    */
-  public static List<ThriftSearchResult> removeDuplicates(List<ThriftSearchResult> results) {
-    ActionChain<ThriftSearchResult> filterChain =
-      ActionChainDebugManager
-        .<ThriftSearchResult>createActionChainBuilder("RemoveDuplicatesFilters")
-        .appendActions(new ExactDuplicateFilter())
-        .build();
-    return filterChain.apply(results);
+  publ c stat c L st<Thr ftSearchResult> removeDupl cates(L st<Thr ftSearchResult> results) {
+    Act onCha n<Thr ftSearchResult> f lterCha n =
+      Act onCha nDebugManager
+        .<Thr ftSearchResult>createAct onCha nBu lder("RemoveDupl catesF lters")
+        .appendAct ons(new ExactDupl cateF lter())
+        .bu ld();
+    return f lterCha n.apply(results);
   }
 
   /**
-   * Returns ranking score from Earlybird shard-based ranking models if any, and 0 otherwise.
+   * Returns rank ng score from Earlyb rd shard-based rank ng models  f any, and 0 ot rw se.
    */
-  public static double getTweetScore(@Nullable ThriftSearchResult result) {
-    if (result == null || !result.isSetMetadata() || !result.getMetadata().isSetScore()) {
+  publ c stat c double getT etScore(@Nullable Thr ftSearchResult result) {
+     f (result == null || !result. sSet tadata() || !result.get tadata(). sSetScore()) {
       return 0.0;
     }
-    return result.getMetadata().getScore();
+    return result.get tadata().getScore();
   }
 }

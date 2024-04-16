@@ -1,13 +1,13 @@
-package com.twitter.home_mixer.service
+package com.tw ter.ho _m xer.serv ce
 
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AllowedLdapGroups
+ mport com.tw ter.product_m xer.core.funct onal_component.common.access_pol cy.AccessPol cy
+ mport com.tw ter.product_m xer.core.funct onal_component.common.access_pol cy.Allo dLdapGroups
 
-object HomeMixerAccessPolicy {
+object Ho M xerAccessPol cy {
 
   /**
-   * Access policies can be configured on a product-by-product basis but you may also want products
-   * to have a common policy.
+   * Access pol c es can be conf gured on a product-by-product bas s but   may also want products
+   * to have a common pol cy.
    */
-  val DefaultHomeMixerAccessPolicy: Set[AccessPolicy] = Set(AllowedLdapGroups(Set.empty[String]))
+  val DefaultHo M xerAccessPol cy: Set[AccessPol cy] = Set(Allo dLdapGroups(Set.empty[Str ng]))
 }

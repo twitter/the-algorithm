@@ -1,50 +1,50 @@
-package com.twitter.recos.user_video_graph.store
+package com.tw ter.recos.user_v deo_graph.store
 
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.socialgraph.thriftscala.EdgesRequest
-import com.twitter.socialgraph.thriftscala.EdgesResult
-import com.twitter.socialgraph.thriftscala.PageRequest
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.socialgraph.thriftscala.SrcRelationship
-import com.twitter.socialgraph.thriftscala.SocialGraphService
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.soc algraph.thr ftscala.EdgesRequest
+ mport com.tw ter.soc algraph.thr ftscala.EdgesResult
+ mport com.tw ter.soc algraph.thr ftscala.PageRequest
+ mport com.tw ter.soc algraph.thr ftscala.Relat onsh pType
+ mport com.tw ter.soc algraph.thr ftscala.SrcRelat onsh p
+ mport com.tw ter.soc algraph.thr ftscala.Soc alGraphServ ce
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
 
-class UserRecentFollowersStore(
-  sgsClient: SocialGraphService.MethodPerEndpoint)
-    extends ReadableStore[UserRecentFollowersStore.Query, Seq[UserId]] {
+class UserRecentFollo rsStore(
+  sgsCl ent: Soc alGraphServ ce. thodPerEndpo nt)
+    extends ReadableStore[UserRecentFollo rsStore.Query, Seq[User d]] {
 
-  override def get(key: UserRecentFollowersStore.Query): Future[Option[Seq[UserId]]] = {
+  overr de def get(key: UserRecentFollo rsStore.Query): Future[Opt on[Seq[User d]]] = {
     val edgeRequest = EdgesRequest(
-      relationship = SrcRelationship(key.userId, RelationshipType.FollowedBy),
-      // Could have a better guess at count when k.maxAge != None
-      pageRequest = Some(PageRequest(count = key.maxResults))
+      relat onsh p = SrcRelat onsh p(key.user d, Relat onsh pType.Follo dBy),
+      // Could have a better guess at count w n k.maxAge != None
+      pageRequest = So (PageRequest(count = key.maxResults))
     )
 
-    val lookbackThresholdMillis = key.maxAge
-      .map(maxAge => (Time.now - maxAge).inMilliseconds)
+    val lookbackThresholdM ll s = key.maxAge
+      .map(maxAge => (T  .now - maxAge). nM ll seconds)
       .getOrElse(0L)
 
-    sgsClient
+    sgsCl ent
       .edges(Seq(edgeRequest))
       .map(_.flatMap {
         case EdgesResult(edges, _, _) =>
           edges.collect {
-            case e if e.createdAt >= lookbackThresholdMillis =>
+            case e  f e.createdAt >= lookbackThresholdM ll s =>
               e.target
           }
       })
-      .map(Some(_))
+      .map(So (_))
   }
 }
 
-object UserRecentFollowersStore {
+object UserRecentFollo rsStore {
   case class Query(
-    userId: UserId,
-    // maxResults - if Some(count), we return only the `count` most recent follows
-    maxResults: Option[Int] = None,
-    // maxAge - if Some(duration), return only follows since `Time.now - duration`
-    maxAge: Option[Duration] = None)
+    user d: User d,
+    // maxResults -  f So (count),   return only t  `count` most recent follows
+    maxResults: Opt on[ nt] = None,
+    // maxAge -  f So (durat on), return only follows s nce `T  .now - durat on`
+    maxAge: Opt on[Durat on] = None)
 }

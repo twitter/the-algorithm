@@ -1,25 +1,25 @@
-package com.twitter.ann.common
+package com.tw ter.ann.common
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.util.Future
+ mport com.tw ter.ann.common.Embedd ngType.Embedd ngVector
+ mport com.tw ter.ut l.Future
 
-object QueryableOperations {
-  implicit class Map[T, P <: RuntimeParams, D <: Distance[D]](
+object QueryableOperat ons {
+   mpl c  class Map[T, P <: Runt  Params, D <: D stance[D]](
     val q: Queryable[T, P, D]) {
-    def mapRuntimeParameters(f: P => P): Queryable[T, P, D] = {
+    def mapRunt  Para ters(f: P => P): Queryable[T, P, D] = {
       new Queryable[T, P, D] {
         def query(
-          embedding: EmbeddingVector,
-          numOfNeighbors: Int,
-          runtimeParams: P
-        ): Future[List[T]] = q.query(embedding, numOfNeighbors, f(runtimeParams))
+          embedd ng: Embedd ngVector,
+          numOfNe ghbors:  nt,
+          runt  Params: P
+        ): Future[L st[T]] = q.query(embedd ng, numOfNe ghbors, f(runt  Params))
 
-        def queryWithDistance(
-          embedding: EmbeddingVector,
-          numOfNeighbors: Int,
-          runtimeParams: P
-        ): Future[List[NeighborWithDistance[T, D]]] =
-          q.queryWithDistance(embedding, numOfNeighbors, f(runtimeParams))
+        def queryW hD stance(
+          embedd ng: Embedd ngVector,
+          numOfNe ghbors:  nt,
+          runt  Params: P
+        ): Future[L st[Ne ghborW hD stance[T, D]]] =
+          q.queryW hD stance(embedd ng, numOfNe ghbors, f(runt  Params))
       }
     }
   }

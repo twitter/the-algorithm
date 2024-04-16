@@ -1,58 +1,58 @@
-"""Module containing wrapper class to allow numpy arrays to work with twml functions"""
+"""Module conta n ng wrapper class to allow numpy arrays to work w h twml funct ons"""
 
-import ctypes as ct
+ mport ctypes as ct
 
-from absl import logging
-from libtwml import CLIB
-import numpy as np
+from absl  mport logg ng
+from l btwml  mport CL B
+ mport numpy as np
 
 
 _NP_TO_TWML_TYPE = {
-  'float32': ct.c_int(1),
-  'float64': ct.c_int(2),
-  'int32': ct.c_int(3),
-  'int64': ct.c_int(4),
-  'int8': ct.c_int(5),
-  'uint8': ct.c_int(6),
+  'float32': ct.c_ nt(1),
+  'float64': ct.c_ nt(2),
+  ' nt32': ct.c_ nt(3),
+  ' nt64': ct.c_ nt(4),
+  ' nt8': ct.c_ nt(5),
+  'u nt8': ct.c_ nt(6),
 }
 
 
 class Array(object):
   """
-  Wrapper class to allow numpy arrays to work with twml functions.
+  Wrapper class to allow numpy arrays to work w h twml funct ons.
   """
 
-  def __init__(self, array):
+  def __ n __(self, array):
     """
-    Wraps numpy array and creates a handle that can be passed to C functions from libtwml.
+    Wraps numpy array and creates a handle that can be passed to C funct ons from l btwml.
 
     array: Numpy array
     """
-    if not isinstance(array, np.ndarray):
-      raise TypeError("Input must be a numpy array")
+     f not  s nstance(array, np.ndarray):
+      ra se TypeError(" nput must be a numpy array")
 
     try:
-      ttype = _NP_TO_TWML_TYPE[array.dtype.name]
+      ttype = _NP_TO_TWML_TYPE[array.dtype.na ]
     except KeyError as err:
-      logging.error("Unsupported numpy type")
-      raise err
+      logg ng.error("Unsupported numpy type")
+      ra se err
 
-    handle = ct.c_void_p(0)
-    ndim = ct.c_int(array.ndim)
-    dims = array.ctypes.get_shape()
-    isize = array.dtype.itemsize
+    handle = ct.c_vo d_p(0)
+    nd m = ct.c_ nt(array.nd m)
+    d ms = array.ctypes.get_shape()
+     s ze = array.dtype. ems ze
 
-    strides_t = ct.c_size_t * array.ndim
-    strides = strides_t(*[n // isize for n in array.strides])
+    str des_t = ct.c_s ze_t * array.nd m
+    str des = str des_t(*[n //  s ze for n  n array.str des])
 
-    err = CLIB.twml_tensor_create(ct.pointer(handle),
-                                  array.ctypes.get_as_parameter(),
-                                  ndim, dims, strides, ttype)
+    err = CL B.twml_tensor_create(ct.po nter(handle),
+                                  array.ctypes.get_as_para ter(),
+                                  nd m, d ms, str des, ttype)
 
-    if err != 1000:
-      raise RuntimeError("Error from libtwml")
+     f err != 1000:
+      ra se Runt  Error("Error from l btwml")
 
-    # Store the numpy array to ensure it isn't deleted before self
+    # Store t  numpy array to ensure    sn't deleted before self
     self._array = array
 
     self._handle = handle
@@ -62,28 +62,28 @@ class Array(object):
   @property
   def handle(self):
     """
-    Return the twml handle
+    Return t  twml handle
     """
     return self._handle
 
   @property
   def shape(self):
     """
-    Return the shape
+    Return t  shape
     """
     return self._array.shape
 
   @property
-  def ndim(self):
+  def nd m(self):
     """
-    Return the shape
+    Return t  shape
     """
-    return self._array.ndim
+    return self._array.nd m
 
   @property
   def array(self):
     """
-    Return the numpy array
+    Return t  numpy array
     """
     return self._array
 
@@ -96,6 +96,6 @@ class Array(object):
 
   def __del__(self):
     """
-    Delete the handle
+    Delete t  handle
     """
-    CLIB.twml_tensor_delete(self._handle)
+    CL B.twml_tensor_delete(self._handle)

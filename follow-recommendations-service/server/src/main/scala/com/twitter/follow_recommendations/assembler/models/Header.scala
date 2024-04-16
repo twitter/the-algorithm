@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.assembler.models
+package com.tw ter.follow_recom ndat ons.assembler.models
 
-import com.twitter.follow_recommendations.{thriftscala => t}
+ mport com.tw ter.follow_recom ndat ons.{thr ftscala => t}
 
-case class Header(title: Title) {
-  lazy val toThrift: t.Header = {
-    t.Header(title.toThrift)
+case class  ader(t le: T le) {
+  lazy val toThr ft: t. ader = {
+    t. ader(t le.toThr ft)
   }
 }

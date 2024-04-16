@@ -1,71 +1,71 @@
-package com.twitter.product_mixer.component_library.candidate_source.people_discovery
+package com.tw ter.product_m xer.component_l brary.cand date_s ce.people_d scovery
 
-import com.twitter.peoplediscovery.api.{thriftscala => t}
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.UnexpectedCandidateResult
-import com.twitter.stitch.Stitch
-import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.peopled scovery.ap .{thr ftscala => t}
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.UserCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ceW hExtractedFeatures
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand datesW hS ceFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.UnexpectedCand dateResult
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-object WhoToFollowModuleHeaderFeature extends Feature[UserCandidate, t.Header]
-object WhoToFollowModuleDisplayOptionsFeature
-    extends Feature[UserCandidate, Option[t.DisplayOptions]]
-object WhoToFollowModuleShowMoreFeature extends Feature[UserCandidate, Option[t.ShowMore]]
+object WhoToFollowModule aderFeature extends Feature[UserCand date, t. ader]
+object WhoToFollowModuleD splayOpt onsFeature
+    extends Feature[UserCand date, Opt on[t.D splayOpt ons]]
+object WhoToFollowModuleShowMoreFeature extends Feature[UserCand date, Opt on[t.ShowMore]]
 
-@Singleton
-class PeopleDiscoveryCandidateSource @Inject() (
-  peopleDiscoveryService: t.ThriftPeopleDiscoveryService.MethodPerEndpoint)
-    extends CandidateSourceWithExtractedFeatures[t.GetModuleRequest, t.RecommendedUser]
-    with Logging {
+@S ngleton
+class PeopleD scoveryCand dateS ce @ nject() (
+  peopleD scoveryServ ce: t.Thr ftPeopleD scoveryServ ce. thodPerEndpo nt)
+    extends Cand dateS ceW hExtractedFeatures[t.GetModuleRequest, t.Recom ndedUser]
+    w h Logg ng {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier(name = "PeopleDiscovery")
+  overr de val  dent f er: Cand dateS ce dent f er =
+    Cand dateS ce dent f er(na  = "PeopleD scovery")
 
-  override def apply(
+  overr de def apply(
     request: t.GetModuleRequest
-  ): Stitch[CandidatesWithSourceFeatures[t.RecommendedUser]] = {
-    Stitch
-      .callFuture(peopleDiscoveryService.getModules(request))
+  ): St ch[Cand datesW hS ceFeatures[t.Recom ndedUser]] = {
+    St ch
+      .callFuture(peopleD scoveryServ ce.getModules(request))
       .map { response: t.GetModuleResponse =>
-        // under the assumption getModules returns a maximum of one module
+        // under t  assumpt on getModules returns a max mum of one module
         response.modules
-          .collectFirst { module =>
-            module.layout match {
-              case t.Layout.UserBioList(layout) =>
-                layoutToCandidatesWithSourceFeatures(
-                  layout.userRecommendations,
-                  layout.header,
-                  layout.displayOptions,
-                  layout.showMore)
-              case t.Layout.UserTweetCarousel(layout) =>
-                layoutToCandidatesWithSourceFeatures(
-                  layout.userRecommendations,
-                  layout.header,
-                  layout.displayOptions,
-                  layout.showMore)
+          .collectF rst { module =>
+            module.la t match {
+              case t.La t.UserB oL st(la t) =>
+                la tToCand datesW hS ceFeatures(
+                  la t.userRecom ndat ons,
+                  la t. ader,
+                  la t.d splayOpt ons,
+                  la t.showMore)
+              case t.La t.UserT etCarousel(la t) =>
+                la tToCand datesW hS ceFeatures(
+                  la t.userRecom ndat ons,
+                  la t. ader,
+                  la t.d splayOpt ons,
+                  la t.showMore)
             }
-          }.getOrElse(throw PipelineFailure(UnexpectedCandidateResult, "unexpected missing module"))
+          }.getOrElse(throw P pel neFa lure(UnexpectedCand dateResult, "unexpected m ss ng module"))
       }
   }
 
-  private def layoutToCandidatesWithSourceFeatures(
-    userRecommendations: Seq[t.RecommendedUser],
-    header: t.Header,
-    displayOptions: Option[t.DisplayOptions],
-    showMore: Option[t.ShowMore],
-  ): CandidatesWithSourceFeatures[t.RecommendedUser] = {
-    val features = FeatureMapBuilder()
-      .add(WhoToFollowModuleHeaderFeature, header)
-      .add(WhoToFollowModuleDisplayOptionsFeature, displayOptions)
+  pr vate def la tToCand datesW hS ceFeatures(
+    userRecom ndat ons: Seq[t.Recom ndedUser],
+     ader: t. ader,
+    d splayOpt ons: Opt on[t.D splayOpt ons],
+    showMore: Opt on[t.ShowMore],
+  ): Cand datesW hS ceFeatures[t.Recom ndedUser] = {
+    val features = FeatureMapBu lder()
+      .add(WhoToFollowModule aderFeature,  ader)
+      .add(WhoToFollowModuleD splayOpt onsFeature, d splayOpt ons)
       .add(WhoToFollowModuleShowMoreFeature, showMore)
-      .build()
-    CandidatesWithSourceFeatures(userRecommendations, features)
+      .bu ld()
+    Cand datesW hS ceFeatures(userRecom ndat ons, features)
   }
 }

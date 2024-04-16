@@ -1,34 +1,34 @@
-package com.twitter.product_mixer.component_library.candidate_source.interest_discovery
+package com.tw ter.product_m xer.component_l brary.cand date_s ce. nterest_d scovery
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.inject.Logging
-import com.twitter.interests_discovery.{thriftscala => t}
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
+ mport com.google. nject. nject
+ mport com.google. nject.S ngleton
+ mport com.tw ter. nject.Logg ng
+ mport com.tw ter. nterests_d scovery.{thr ftscala => t}
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.st ch.St ch
 
 /**
- * Generate a list of related topics results from IDS getRelatedTopics (thrift) endpoint.
- * Returns related topics, given a topic, whereas [[RecommendedTopicsCandidateSource]] returns
- * recommended topics, given a user.
+ * Generate a l st of related top cs results from  DS getRelatedTop cs (thr ft) endpo nt.
+ * Returns related top cs, g ven a top c, w reas [[Recom ndedTop csCand dateS ce]] returns
+ * recom nded top cs, g ven a user.
  */
-@Singleton
-class RelatedTopicsCandidateSource @Inject() (
-  interestDiscoveryService: t.InterestsDiscoveryService.MethodPerEndpoint)
-    extends CandidateSource[t.RelatedTopicsRequest, t.RelatedTopic]
-    with Logging {
+@S ngleton
+class RelatedTop csCand dateS ce @ nject() (
+   nterestD scoveryServ ce: t. nterestsD scoveryServ ce. thodPerEndpo nt)
+    extends Cand dateS ce[t.RelatedTop csRequest, t.RelatedTop c]
+    w h Logg ng {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier(name = "RelatedTopics")
+  overr de val  dent f er: Cand dateS ce dent f er =
+    Cand dateS ce dent f er(na  = "RelatedTop cs")
 
-  override def apply(
-    request: t.RelatedTopicsRequest
-  ): Stitch[Seq[t.RelatedTopic]] = {
-    Stitch
-      .callFuture(interestDiscoveryService.getRelatedTopics(request))
-      .map { response: t.RelatedTopicsResponse =>
-        response.topics
+  overr de def apply(
+    request: t.RelatedTop csRequest
+  ): St ch[Seq[t.RelatedTop c]] = {
+    St ch
+      .callFuture( nterestD scoveryServ ce.getRelatedTop cs(request))
+      .map { response: t.RelatedTop csResponse =>
+        response.top cs
       }
   }
 }

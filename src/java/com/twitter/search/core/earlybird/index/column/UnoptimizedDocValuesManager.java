@@ -1,69 +1,69 @@
-package com.twitter.search.core.earlybird.index.column;
+package com.tw ter.search.core.earlyb rd. ndex.column;
 
-import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
+ mport java. o. OExcept on;
+ mport java.ut l.concurrent.ConcurrentHashMap;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.core.earlyb rd. ndex.Doc DToT et DMapper;
 
-public class UnoptimizedDocValuesManager extends DocValuesManager {
-  public UnoptimizedDocValuesManager(Schema schema, int segmentSize) {
-    super(schema, segmentSize);
+publ c class Unopt m zedDocValuesManager extends DocValuesManager {
+  publ c Unopt m zedDocValuesManager(Sc ma sc ma,  nt seg ntS ze) {
+    super(sc ma, seg ntS ze);
   }
 
-  private UnoptimizedDocValuesManager(
-      Schema schema,
-      int segmentSize,
-      ConcurrentHashMap<String, ColumnStrideFieldIndex> columnStrideFields) {
-    super(schema, segmentSize, columnStrideFields);
+  pr vate Unopt m zedDocValuesManager(
+      Sc ma sc ma,
+       nt seg ntS ze,
+      ConcurrentHashMap<Str ng, ColumnStr deF eld ndex> columnStr deF elds) {
+    super(sc ma, seg ntS ze, columnStr deF elds);
   }
 
-  @Override
-  protected ColumnStrideFieldIndex newByteCSF(String field) {
-    return new ColumnStrideByteIndex(field, segmentSize);
+  @Overr de
+  protected ColumnStr deF eld ndex newByteCSF(Str ng f eld) {
+    return new ColumnStr deByte ndex(f eld, seg ntS ze);
   }
 
-  @Override
-  protected ColumnStrideFieldIndex newIntCSF(String field) {
-    return new ColumnStrideIntIndex(field, segmentSize);
+  @Overr de
+  protected ColumnStr deF eld ndex new ntCSF(Str ng f eld) {
+    return new ColumnStr de nt ndex(f eld, seg ntS ze);
   }
 
-  @Override
-  protected ColumnStrideFieldIndex newLongCSF(String field) {
-    return new ColumnStrideLongIndex(field, segmentSize);
+  @Overr de
+  protected ColumnStr deF eld ndex newLongCSF(Str ng f eld) {
+    return new ColumnStr deLong ndex(f eld, seg ntS ze);
   }
 
-  @Override
-  protected ColumnStrideFieldIndex newMultiIntCSF(String field, int numIntsPerField) {
-    return new ColumnStrideMultiIntIndex(field, segmentSize, numIntsPerField);
+  @Overr de
+  protected ColumnStr deF eld ndex newMult  ntCSF(Str ng f eld,  nt num ntsPerF eld) {
+    return new ColumnStr deMult  nt ndex(f eld, seg ntS ze, num ntsPerF eld);
   }
 
-  @Override
-  public DocValuesManager optimize(DocIDToTweetIDMapper originalTweetIdMapper,
-                                   DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
-    return new OptimizedDocValuesManager(this, originalTweetIdMapper, optimizedTweetIdMapper);
+  @Overr de
+  publ c DocValuesManager opt m ze(Doc DToT et DMapper or g nalT et dMapper,
+                                   Doc DToT et DMapper opt m zedT et dMapper) throws  OExcept on {
+    return new Opt m zedDocValuesManager(t , or g nalT et dMapper, opt m zedT et dMapper);
   }
 
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new UnoptimizedFlushHandler(this);
+  @Overr de
+  publ c FlushHandler getFlushHandler() {
+    return new Unopt m zedFlushHandler(t );
   }
 
-  public static class UnoptimizedFlushHandler extends FlushHandler {
-    public UnoptimizedFlushHandler(Schema schema) {
-      super(schema);
+  publ c stat c class Unopt m zedFlushHandler extends FlushHandler {
+    publ c Unopt m zedFlushHandler(Sc ma sc ma) {
+      super(sc ma);
     }
 
-    private UnoptimizedFlushHandler(DocValuesManager docValuesManager) {
+    pr vate Unopt m zedFlushHandler(DocValuesManager docValuesManager) {
       super(docValuesManager);
     }
 
-    @Override
+    @Overr de
     protected DocValuesManager createDocValuesManager(
-        Schema schema,
-        int maxSegmentSize,
-        ConcurrentHashMap<String, ColumnStrideFieldIndex> columnStrideFields) {
-      return new UnoptimizedDocValuesManager(schema, maxSegmentSize, columnStrideFields);
+        Sc ma sc ma,
+         nt maxSeg ntS ze,
+        ConcurrentHashMap<Str ng, ColumnStr deF eld ndex> columnStr deF elds) {
+      return new Unopt m zedDocValuesManager(sc ma, maxSeg ntS ze, columnStr deF elds);
     }
   }
 }

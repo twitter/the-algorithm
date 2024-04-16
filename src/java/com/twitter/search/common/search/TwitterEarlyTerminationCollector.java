@@ -1,328 +1,328 @@
-package com.twitter.search.common.search;
+package com.tw ter.search.common.search;
 
-import java.io.IOException;
-import java.util.List;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+ mport java. o. OExcept on;
+ mport java.ut l.L st;
+ mport javax.annotat on.Nonnull;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.LeafCollector;
-import org.apache.lucene.search.Scorable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .lucene. ndex.LeafReader;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene.search.LeafCollector;
+ mport org.apac .lucene.search.Scorable;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.query.thriftjava.CollectorParams;
-import com.twitter.search.common.query.thriftjava.CollectorTerminationParams;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common.query.thr ftjava.CollectorParams;
+ mport com.tw ter.search.common.query.thr ftjava.CollectorTerm nat onParams;
 
 /**
- * A TwitterCollector containing the most common early termination logic based on
- * timeout, cost, and max hits. This class does not do any actual hit collection---this class
- * is abstract and cannot be instantiated.
+ * A Tw terCollector conta n ng t  most common early term nat on log c based on
+ * t  out, cost, and max h s. T  class does not do any actual h  collect on---t  class
+ *  s abstract and cannot be  nstant ated.
  *
- * If a Collector and all its subclasses need early termination, it should extend this class.
+ *  f a Collector and all  s subclasses need early term nat on,   should extend t  class.
  *
- * However, if one just wants to add EarlyTermination to any single collector, he can just
- * use {@link DelegatingEarlyTerminationCollector}
+ * Ho ver,  f one just wants to add EarlyTerm nat on to any s ngle collector,   can just
+ * use {@l nk Delegat ngEarlyTerm nat onCollector}
  * as a wrapper.
  */
-public abstract class TwitterEarlyTerminationCollector
-    extends TwitterCollector implements LeafCollector {
-  private static final Logger LOG = LoggerFactory.getLogger(TwitterEarlyTerminationCollector.class);
-  private static final SearchCounter NEGATIVE_TIME_PER_SEGMENT =
-      SearchCounter.export("TwitterEarlyTerminationCollector_negative_time_per_segment");
-  private static final SearchRateCounter QUERY_TIMEOUT_ENFORCED =
-      SearchRateCounter.export("TwitterEarlyTerminationCollector_query_timeout_enforced");
+publ c abstract class Tw terEarlyTerm nat onCollector
+    extends Tw terCollector  mple nts LeafCollector {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Tw terEarlyTerm nat onCollector.class);
+  pr vate stat c f nal SearchCounter NEGAT VE_T ME_PER_SEGMENT =
+      SearchCounter.export("Tw terEarlyTerm nat onCollector_negat ve_t  _per_seg nt");
+  pr vate stat c f nal SearchRateCounter QUERY_T MEOUT_ENFORCED =
+      SearchRateCounter.export("Tw terEarlyTerm nat onCollector_query_t  out_enforced");
 
-  protected int curDocId = -1;
+  protected  nt curDoc d = -1;
 
   protected Scorable scorer = null;
-  private LeafReader curReader = null;
-  private final long maxHitsToProcess;
-  private long numHitsProcessed = 0;
-  private int lastEarlyTerminationCheckDocId = -1;
-  private final Clock clock;
+  pr vate LeafReader curReader = null;
+  pr vate f nal long maxH sToProcess;
+  pr vate long numH sProcessed = 0;
+  pr vate  nt lastEarlyTerm nat onC ckDoc d = -1;
+  pr vate f nal Clock clock;
 
   @Nullable
-  private final QueryCostProvider queryCostProvider;
+  pr vate f nal QueryCostProv der queryCostProv der;
 
-  private final TerminationTracker terminationTracker;
+  pr vate f nal Term nat onTracker term nat onTracker;
 
-  // This determines how often the expensive early termination check is performed.
-  // If set to be negative, expensive early termination check only performed at segment boundaries.
-  // If set to a positive number X, this check is performed every X docs processed.
-  private int numDocsBetweenTimeoutChecks;
+  // T  determ nes how often t  expens ve early term nat on c ck  s perfor d.
+  //  f set to be negat ve, expens ve early term nat on c ck only perfor d at seg nt boundar es.
+  //  f set to a pos  ve number X, t  c ck  s perfor d every X docs processed.
+  pr vate  nt numDocsBet enT  outC cks;
 
-  // Number of segments searched so far.
-  // This is used to predicatively early terminate.
-  // Expensive early termination checks may not happen often enough. Sometimes the request
-  // times out in between the termination checks.
-  // After finishing searching a segment, we estimate how much time is needed to search one
-  // segment on average.  If searching the next segment would cause a timeout, we early terminate.
-  private int numSearchedSegments = 0;
+  // Number of seg nts searc d so far.
+  // T   s used to pred cat vely early term nate.
+  // Expens ve early term nat on c cks may not happen often enough. So t  s t  request
+  // t  s out  n bet en t  term nat on c cks.
+  // After f n sh ng search ng a seg nt,   est mate how much t    s needed to search one
+  // seg nt on average.   f search ng t  next seg nt would cause a t  out,   early term nate.
+  pr vate  nt numSearc dSeg nts = 0;
 
   /**
-   * Creates a new TwitterEarlyTerminationCollector instance.
+   * Creates a new Tw terEarlyTerm nat onCollector  nstance.
    *
-   * @param collectorParams the parameters needed to guide early termination.
-   * @param terminationTracker If null is passed in, a new TerminationTrack is created. Otherwise,
-   *        the one passed in is used.
-   * @param numDocsBetweenTimeoutChecks TerminationTracker based check are performed upon a hit
-   *        every numDocsBetweenTimeoutChecks docs. If a non-positive number is passed
-   *        in, TerminationTracker based checks are disabled.
-   *        If collectorParams specifies a value as well, that value is used.
+   * @param collectorParams t  para ters needed to gu de early term nat on.
+   * @param term nat onTracker  f null  s passed  n, a new Term nat onTrack  s created. Ot rw se,
+   *        t  one passed  n  s used.
+   * @param numDocsBet enT  outC cks Term nat onTracker based c ck are perfor d upon a h 
+   *        every numDocsBet enT  outC cks docs.  f a non-pos  ve number  s passed
+   *         n, Term nat onTracker based c cks are d sabled.
+   *         f collectorParams spec f es a value as  ll, that value  s used.
    */
-  public TwitterEarlyTerminationCollector(
+  publ c Tw terEarlyTerm nat onCollector(
       CollectorParams collectorParams,
-      TerminationTracker terminationTracker,
-      @Nullable QueryCostProvider queryCostProvider,
-      int numDocsBetweenTimeoutChecks,
+      Term nat onTracker term nat onTracker,
+      @Nullable QueryCostProv der queryCostProv der,
+       nt numDocsBet enT  outC cks,
       Clock clock) {
-    CollectorTerminationParams terminationParams = collectorParams.getTerminationParams();
+    CollectorTerm nat onParams term nat onParams = collectorParams.getTerm nat onParams();
 
-    if (terminationParams == null) {
-      terminationParams = new CollectorTerminationParams()
-          .setMaxHitsToProcess(Integer.MAX_VALUE)
+     f (term nat onParams == null) {
+      term nat onParams = new CollectorTerm nat onParams()
+          .setMaxH sToProcess( nteger.MAX_VALUE)
           .setMaxQueryCost(Double.MAX_VALUE)
-          .setTimeoutMs(Integer.MAX_VALUE);
+          .setT  outMs( nteger.MAX_VALUE);
     }
 
-    if (!terminationParams.isSetMaxHitsToProcess() || terminationParams.getMaxHitsToProcess() < 0) {
-      maxHitsToProcess = Integer.MAX_VALUE;
+     f (!term nat onParams. sSetMaxH sToProcess() || term nat onParams.getMaxH sToProcess() < 0) {
+      maxH sToProcess =  nteger.MAX_VALUE;
     } else {
-      maxHitsToProcess = terminationParams.getMaxHitsToProcess();
+      maxH sToProcess = term nat onParams.getMaxH sToProcess();
     }
 
-    if (terminationParams.isSetNumDocsBetweenTimeoutChecks()) {
-      this.numDocsBetweenTimeoutChecks = terminationParams.getNumDocsBetweenTimeoutChecks();
+     f (term nat onParams. sSetNumDocsBet enT  outC cks()) {
+      t .numDocsBet enT  outC cks = term nat onParams.getNumDocsBet enT  outC cks();
     } else {
-      this.numDocsBetweenTimeoutChecks = numDocsBetweenTimeoutChecks;
+      t .numDocsBet enT  outC cks = numDocsBet enT  outC cks;
     }
 
-    this.terminationTracker = Preconditions.checkNotNull(terminationTracker);
-    this.queryCostProvider = queryCostProvider;
-    this.clock = clock;
+    t .term nat onTracker = Precond  ons.c ckNotNull(term nat onTracker);
+    t .queryCostProv der = queryCostProv der;
+    t .clock = clock;
   }
 
-  public final LeafCollector getLeafCollector(LeafReaderContext context) throws IOException {
-    this.setNextReader(context);
-    return this;
-  }
-
-  /**
-   * Sub-classes may override this to add more collection logic.
-   */
-  protected abstract void doCollect() throws IOException;
-
-  /**
-   * Sub-classes may override this to add more segment completion logic.
-   * @param lastSearchedDocID is the last docid searched before termination,
-   * or NO_MORE_DOCS if there was no early termination.  This doc may not be a hit!
-   */
-  protected abstract void doFinishSegment(int lastSearchedDocID) throws IOException;
-
-  /**
-   *  sub classes can override this to perform more early termination checks.
-   */
-  public EarlyTerminationState innerShouldCollectMore() throws IOException {
-    return EarlyTerminationState.COLLECTING;
+  publ c f nal LeafCollector getLeafCollector(LeafReaderContext context) throws  OExcept on {
+    t .setNextReader(context);
+    return t ;
   }
 
   /**
-   * After early termination, this method can be used to retrieve early termination reason.
+   * Sub-classes may overr de t  to add more collect on log c.
+   */
+  protected abstract vo d doCollect() throws  OExcept on;
+
+  /**
+   * Sub-classes may overr de t  to add more seg nt complet on log c.
+   * @param lastSearc dDoc D  s t  last doc d searc d before term nat on,
+   * or NO_MORE_DOCS  f t re was no early term nat on.  T  doc may not be a h !
+   */
+  protected abstract vo d doF n shSeg nt( nt lastSearc dDoc D) throws  OExcept on;
+
+  /**
+   *  sub classes can overr de t  to perform more early term nat on c cks.
+   */
+  publ c EarlyTerm nat onState  nnerShouldCollectMore() throws  OExcept on {
+    return EarlyTerm nat onState.COLLECT NG;
+  }
+
+  /**
+   * After early term nat on, t   thod can be used to retr eve early term nat on reason.
    */
   @Nonnull
-  public final EarlyTerminationState getEarlyTerminationState() {
-    return terminationTracker.getEarlyTerminationState();
+  publ c f nal EarlyTerm nat onState getEarlyTerm nat onState() {
+    return term nat onTracker.getEarlyTerm nat onState();
   }
 
-  protected final EarlyTerminationState setEarlyTerminationState(
-      EarlyTerminationState newEarlyTerminationState) {
-    terminationTracker.setEarlyTerminationState(newEarlyTerminationState);
-    return newEarlyTerminationState;
+  protected f nal EarlyTerm nat onState setEarlyTerm nat onState(
+      EarlyTerm nat onState newEarlyTerm nat onState) {
+    term nat onTracker.setEarlyTerm nat onState(newEarlyTerm nat onState);
+    return newEarlyTerm nat onState;
   }
 
-  @Override
-  public final boolean isTerminated() throws IOException {
-    EarlyTerminationState earlyTerminationState = getEarlyTerminationState();
+  @Overr de
+  publ c f nal boolean  sTerm nated() throws  OExcept on {
+    EarlyTerm nat onState earlyTerm nat onState = getEarlyTerm nat onState();
 
-    if (earlyTerminationState.isTerminated()) {
+     f (earlyTerm nat onState. sTerm nated()) {
       return true;
     }
 
-    if (getNumHitsProcessed() >= getMaxHitsToProcess()) {
+     f (getNumH sProcessed() >= getMaxH sToProcess()) {
       collectedEnoughResults();
-      if (shouldTerminate()) {
-        return setEarlyTerminationState(EarlyTerminationState.TERMINATED_MAX_HITS_EXCEEDED)
-            .isTerminated();
+       f (shouldTerm nate()) {
+        return setEarlyTerm nat onState(EarlyTerm nat onState.TERM NATED_MAX_H TS_EXCEEDED)
+            . sTerm nated();
       } else {
         return false;
       }
     }
 
-    return innerShouldCollectMore().isTerminated();
+    return  nnerShouldCollectMore(). sTerm nated();
   }
 
   /**
-   * Note: subclasses overriding this method are expected to call "super.setNextReader"
-   * in their setNextReader().
-   * @deprecated Remove this methods in favor of {@link #getLeafCollector(LeafReaderContext)}
+   * Note: subclasses overr d ng t   thod are expected to call "super.setNextReader"
+   *  n t  r setNextReader().
+   * @deprecated Remove t   thods  n favor of {@l nk #getLeafCollector(LeafReaderContext)}
    */
   @Deprecated
-  public void setNextReader(LeafReaderContext context) throws IOException {
-    if (!terminationTracker.useLastSearchedDocIdOnTimeout()) {
-      expensiveEarlyTerminationCheck();
+  publ c vo d setNextReader(LeafReaderContext context) throws  OExcept on {
+     f (!term nat onTracker.useLastSearc dDoc dOnT  out()) {
+      expens veEarlyTerm nat onC ck();
     }
 
-    // Reset curDocId for next segment
-    curDocId = -1;
-    lastEarlyTerminationCheckDocId = -1;
+    // Reset curDoc d for next seg nt
+    curDoc d = -1;
+    lastEarlyTerm nat onC ckDoc d = -1;
     curReader = context.reader();
   }
 
   /**
-   * Sub-classes overriding this method are expected to call super.setScorer()
+   * Sub-classes overr d ng t   thod are expected to call super.setScorer()
    */
-  @Override
-  public void setScorer(Scorable scorer) throws IOException {
-    this.scorer = scorer;
+  @Overr de
+  publ c vo d setScorer(Scorable scorer) throws  OExcept on {
+    t .scorer = scorer;
   }
 
-  @Override
-  public final void collect(int doc) throws IOException {
-    curDocId = doc;
+  @Overr de
+  publ c f nal vo d collect( nt doc) throws  OExcept on {
+    curDoc d = doc;
     doCollect();
-    numHitsProcessed++;
-    if (numDocsBetweenTimeoutChecks > 0
-        && (curDocId - lastEarlyTerminationCheckDocId) >= numDocsBetweenTimeoutChecks) {
-      lastEarlyTerminationCheckDocId = curDocId;
+    numH sProcessed++;
+     f (numDocsBet enT  outC cks > 0
+        && (curDoc d - lastEarlyTerm nat onC ckDoc d) >= numDocsBet enT  outC cks) {
+      lastEarlyTerm nat onC ckDoc d = curDoc d;
 
-      if (!terminationTracker.useLastSearchedDocIdOnTimeout()) {
-        expensiveEarlyTerminationCheck();
+       f (!term nat onTracker.useLastSearc dDoc dOnT  out()) {
+        expens veEarlyTerm nat onC ck();
       }
     }
   }
 
   /**
-   * Accounting for a segment searched.
-   * @param lastSearchedDocID is the last docid searched before termination,
-   * or NO_MORE_DOCS if there was no early termination.  This doc may not be a hit!
+   * Account ng for a seg nt searc d.
+   * @param lastSearc dDoc D  s t  last doc d searc d before term nat on,
+   * or NO_MORE_DOCS  f t re was no early term nat on.  T  doc may not be a h !
    */
-  protected final void trackCompleteSegment(int lastSearchedDocID) throws IOException {
-    doFinishSegment(lastSearchedDocID);
+  protected f nal vo d trackCompleteSeg nt( nt lastSearc dDoc D) throws  OExcept on {
+    doF n shSeg nt(lastSearc dDoc D);
   }
 
-  @Override
-  public final void finishSegment(int lastSearchedDocID) throws IOException {
-    // finished searching a segment. Computer average time needed to search a segment.
-    Preconditions.checkState(curReader != null, "Did subclass call super.setNextReader()?");
-    numSearchedSegments++;
+  @Overr de
+  publ c f nal vo d f n shSeg nt( nt lastSearc dDoc D) throws  OExcept on {
+    // f n s d search ng a seg nt. Computer average t   needed to search a seg nt.
+    Precond  ons.c ckState(curReader != null, "D d subclass call super.setNextReader()?");
+    numSearc dSeg nts++;
 
-    long totalTime = clock.nowMillis() - terminationTracker.getLocalStartTimeMillis();
+    long totalT   = clock.nowM ll s() - term nat onTracker.getLocalStartT  M ll s();
 
-    if (totalTime >= Integer.MAX_VALUE) {
-      String msg = String.format(
-          "%s: A query runs for %d that is longer than Integer.MAX_VALUE ms. lastSearchedDocID: %d",
-          getClass().getSimpleName(), totalTime, lastSearchedDocID
+     f (totalT   >=  nteger.MAX_VALUE) {
+      Str ng msg = Str ng.format(
+          "%s: A query runs for %d that  s longer than  nteger.MAX_VALUE ms. lastSearc dDoc D: %d",
+          getClass().getS mpleNa (), totalT  , lastSearc dDoc D
       );
       LOG.error(msg);
-      throw new IllegalStateException(msg);
+      throw new  llegalStateExcept on(msg);
     }
 
-    int timePerSegment = ((int) totalTime) / numSearchedSegments;
+     nt t  PerSeg nt = (( nt) totalT  ) / numSearc dSeg nts;
 
-    if (timePerSegment < 0) {
-      NEGATIVE_TIME_PER_SEGMENT.increment();
-      timePerSegment = 0;
+     f (t  PerSeg nt < 0) {
+      NEGAT VE_T ME_PER_SEGMENT. ncre nt();
+      t  PerSeg nt = 0;
     }
 
-    // If we're enforcing timeout via the last searched doc ID, we don't need to add this buffer,
-    // since we'll detect the timeout right away.
-    if (!terminationTracker.useLastSearchedDocIdOnTimeout()) {
-      terminationTracker.setPreTerminationSafeBufferTimeMillis(timePerSegment);
+    //  f  're enforc ng t  out v a t  last searc d doc  D,   don't need to add t  buffer,
+    // s nce  'll detect t  t  out r ght away.
+     f (!term nat onTracker.useLastSearc dDoc dOnT  out()) {
+      term nat onTracker.setPreTerm nat onSafeBufferT  M ll s(t  PerSeg nt);
     }
 
-    // Check whether we timed out and are checking for timeout at the leaves. If so, we should use
-    // the captured lastSearchedDocId from the tracker instead, which is the most up-to-date amongst
-    // the query nodes.
-    if (terminationTracker.useLastSearchedDocIdOnTimeout()
-        && EarlyTerminationState.TERMINATED_TIME_OUT_EXCEEDED.equals(
-            terminationTracker.getEarlyTerminationState())) {
-      QUERY_TIMEOUT_ENFORCED.increment();
-      trackCompleteSegment(terminationTracker.getLastSearchedDocId());
+    // C ck w t r   t  d out and are c ck ng for t  out at t  leaves.  f so,   should use
+    // t  captured lastSearc dDoc d from t  tracker  nstead, wh ch  s t  most up-to-date amongst
+    // t  query nodes.
+     f (term nat onTracker.useLastSearc dDoc dOnT  out()
+        && EarlyTerm nat onState.TERM NATED_T ME_OUT_EXCEEDED.equals(
+            term nat onTracker.getEarlyTerm nat onState())) {
+      QUERY_T MEOUT_ENFORCED. ncre nt();
+      trackCompleteSeg nt(term nat onTracker.getLastSearc dDoc d());
     } else {
-      trackCompleteSegment(lastSearchedDocID);
+      trackCompleteSeg nt(lastSearc dDoc D);
     }
 
-    // We finished a segment, so clear out the DocIdTrackers. The next segment will register its
-    // own trackers, and we don't need to keep the trackers from the current segment.
-    terminationTracker.resetDocIdTrackers();
+    //   f n s d a seg nt, so clear out t  Doc dTrackers. T  next seg nt w ll reg ster  s
+    // own trackers, and   don't need to keep t  trackers from t  current seg nt.
+    term nat onTracker.resetDoc dTrackers();
 
-    curDocId = -1;
+    curDoc d = -1;
     curReader = null;
     scorer = null;
   }
 
   /**
-   * More expensive Early Termination checks, which are not called every hit.
-   * This sets EarlyTerminationState if it decides that early termination should kick in.
+   * More expens ve Early Term nat on c cks, wh ch are not called every h .
+   * T  sets EarlyTerm nat onState  f   dec des that early term nat on should k ck  n.
    * See: SEARCH-29723.
    */
-  private void expensiveEarlyTerminationCheck() {
-    if (queryCostProvider != null) {
-      double totalQueryCost = queryCostProvider.getTotalCost();
-      double maxQueryCost = terminationTracker.getMaxQueryCost();
-      if (totalQueryCost >= maxQueryCost) {
-        setEarlyTerminationState(EarlyTerminationState.TERMINATED_MAX_QUERY_COST_EXCEEDED);
+  pr vate vo d expens veEarlyTerm nat onC ck() {
+     f (queryCostProv der != null) {
+      double totalQueryCost = queryCostProv der.getTotalCost();
+      double maxQueryCost = term nat onTracker.getMaxQueryCost();
+       f (totalQueryCost >= maxQueryCost) {
+        setEarlyTerm nat onState(EarlyTerm nat onState.TERM NATED_MAX_QUERY_COST_EXCEEDED);
       }
     }
 
-    final long nowMillis = clock.nowMillis();
-    if (nowMillis >= terminationTracker.getTimeoutEndTimeWithReservation()) {
-      setEarlyTerminationState(EarlyTerminationState.TERMINATED_TIME_OUT_EXCEEDED);
+    f nal long nowM ll s = clock.nowM ll s();
+     f (nowM ll s >= term nat onTracker.getT  outEndT  W hReservat on()) {
+      setEarlyTerm nat onState(EarlyTerm nat onState.TERM NATED_T ME_OUT_EXCEEDED);
     }
   }
 
-  public long getMaxHitsToProcess() {
-    return maxHitsToProcess;
+  publ c long getMaxH sToProcess() {
+    return maxH sToProcess;
   }
 
-  public final void setNumHitsProcessed(long numHitsProcessed) {
-    this.numHitsProcessed = numHitsProcessed;
+  publ c f nal vo d setNumH sProcessed(long numH sProcessed) {
+    t .numH sProcessed = numH sProcessed;
   }
 
-  protected final long getNumHitsProcessed() {
-    return numHitsProcessed;
+  protected f nal long getNumH sProcessed() {
+    return numH sProcessed;
   }
 
-  protected final int getNumSearchedSegments() {
-    return numSearchedSegments;
+  protected f nal  nt getNumSearc dSeg nts() {
+    return numSearc dSeg nts;
   }
 
-  protected final Clock getClock() {
+  protected f nal Clock getClock() {
     return clock;
   }
 
-  @VisibleForTesting
-  protected final TerminationTracker getTerminationTracker() {
-    return this.terminationTracker;
+  @V s bleForTest ng
+  protected f nal Term nat onTracker getTerm nat onTracker() {
+    return t .term nat onTracker;
   }
 
-  protected void collectedEnoughResults() throws IOException {
+  protected vo d collectedEnoughResults() throws  OExcept on {
   }
 
-  protected boolean shouldTerminate() {
+  protected boolean shouldTerm nate() {
     return true;
   }
 
   /**
-   * Debug info collected during execution.
+   * Debug  nfo collected dur ng execut on.
    */
-  public abstract List<String> getDebugInfo();
+  publ c abstract L st<Str ng> getDebug nfo();
 }

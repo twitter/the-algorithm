@@ -1,292 +1,292 @@
 """
-Module containing extra tensorflow metrics used at Twitter.
-This module conforms to conventions used by tf.metrics.*.
-In particular, each metric constructs two subgraphs: value_op and update_op:
-  - The value op is used to fetch the current metric value.
-  - The update_op is used to accumulate into the metric.
+Module conta n ng extra tensorflow  tr cs used at Tw ter.
+T  module conforms to convent ons used by tf. tr cs.*.
+ n part cular, each  tr c constructs two subgraphs: value_op and update_op:
+  - T  value op  s used to fetch t  current  tr c value.
+  - T  update_op  s used to accumulate  nto t   tr c.
 
-Note: similar to tf.metrics.*, metrics in here do not support multi-label learning.
-We will have to write wrapper classes to create one metric per label.
+Note: s m lar to tf. tr cs.*,  tr cs  n  re do not support mult -label learn ng.
+  w ll have to wr e wrapper classes to create one  tr c per label.
 
-Note: similar to tf.metrics.*, batches added into a metric via its update_op are cumulative!
+Note: s m lar to tf. tr cs.*, batc s added  nto a  tr c v a  s update_op are cumulat ve!
 
 """
 
-from collections import OrderedDict
-from functools import partial
+from collect ons  mport OrderedD ct
+from functools  mport part al
 
-import tensorflow.compat.v1 as tf
-from tensorflow.python.eager import context
-from tensorflow.python.framework import dtypes, ops
-from tensorflow.python.ops import array_ops, state_ops
-import twml
-from twml.contrib.utils import math_fns
+ mport tensorflow.compat.v1 as tf
+from tensorflow.python.eager  mport context
+from tensorflow.python.fra work  mport dtypes, ops
+from tensorflow.python.ops  mport array_ops, state_ops
+ mport twml
+from twml.contr b.ut ls  mport math_fns
 
 
-def ndcg(labels, predictions,
-                  metrics_collections=None,
-                  updates_collections=None,
-                  name=None,
-                  top_k_int=1):
-  # pylint: disable=unused-argument
+def ndcg(labels, pred ct ons,
+                   tr cs_collect ons=None,
+                  updates_collect ons=None,
+                  na =None,
+                  top_k_ nt=1):
+  # pyl nt: d sable=unused-argu nt
   """
-  Compute full normalized discounted cumulative gain (ndcg) based on predictions
-  ndcg = dcg_k/idcg_k, k is a cut off ranking postion
-  There are a few variants of ndcg
-  The dcg (discounted cumulative gain) formula used in
-  twml.contrib.metrics.ndcg is::
+  Compute full normal zed d scounted cumulat ve ga n (ndcg) based on pred ct ons
+  ndcg = dcg_k/ dcg_k, k  s a cut off rank ng post on
+  T re are a few var ants of ndcg
+  T  dcg (d scounted cumulat ve ga n) formula used  n
+  twml.contr b. tr cs.ndcg  s::
 
-    \\sum_{i=1}^k \frac{2^{relevance\\_score} -1}{\\log_{2}(i + 1)}
+    \\sum_{ =1}^k \frac{2^{relevance\\_score} -1}{\\log_{2}(  + 1)}
 
-  k is the length of items to be ranked in a batch/query
-  Notice that whether k will be replaced with a fixed value requires discussions
-  The scores in predictions are transformed to order and relevance scores to calculate ndcg
-  A relevance score means how relevant a DataRecord is to a particular query
+  k  s t  length of  ems to be ranked  n a batch/query
+  Not ce that w t r k w ll be replaced w h a f xed value requ res d scuss ons
+  T  scores  n pred ct ons are transfor d to order and relevance scores to calculate ndcg
+  A relevance score  ans how relevant a DataRecord  s to a part cular query
 
-  Arguments:
-    labels: the ground truth value.
-    predictions: the predicted values, whose shape must match labels. Ignored for CTR computation.
-    metrics_collections: optional list of collections to add this metric into.
-    updates_collections: optional list of collections to add the associated update_op into.
-    name: an optional variable_scope name.
+  Argu nts:
+    labels: t  ground truth value.
+    pred ct ons: t  pred cted values, whose shape must match labels.  gnored for CTR computat on.
+     tr cs_collect ons: opt onal l st of collect ons to add t   tr c  nto.
+    updates_collect ons: opt onal l st of collect ons to add t  assoc ated update_op  nto.
+    na : an opt onal var able_scope na .
 
   Returns:
-    ndcg: A `Tensor` representing the ndcg score.
-    update_op: A update operation used to accumulate data into this metric.
+    ndcg: A `Tensor` represent ng t  ndcg score.
+    update_op: A update operat on used to accumulate data  nto t   tr c.
   """
-  with tf.variable_scope(name, 'ndcg', (labels, predictions)):
-    label_scores = tf.to_float(labels, name='label_to_float')
-    predicted_scores = tf.to_float(predictions, name='predictions_to_float')
+  w h tf.var able_scope(na , 'ndcg', (labels, pred ct ons)):
+    label_scores = tf.to_float(labels, na ='label_to_float')
+    pred cted_scores = tf.to_float(pred ct ons, na ='pred ct ons_to_float')
 
-    if context.executing_eagerly():
-      raise RuntimeError('ndcg is not supported when eager execution '
-                         'is enabled.')
+     f context.execut ng_eagerly():
+      ra se Runt  Error('ndcg  s not supported w n eager execut on '
+                         ' s enabled.')
 
-    total_ndcg = _metric_variable([], dtypes.float32, name='total_ndcg')
-    count_query = _metric_variable([], dtypes.float32, name='query_count')
+    total_ndcg = _ tr c_var able([], dtypes.float32, na ='total_ndcg')
+    count_query = _ tr c_var able([], dtypes.float32, na ='query_count')
 
-    # actual ndcg cutoff position top_k_int
-    max_prediction_size = array_ops.size(predicted_scores)
-    top_k_int = tf.minimum(max_prediction_size, top_k_int)
-    # the ndcg score of the batch
+    # actual ndcg cutoff pos  on top_k_ nt
+    max_pred ct on_s ze = array_ops.s ze(pred cted_scores)
+    top_k_ nt = tf.m n mum(max_pred ct on_s ze, top_k_ nt)
+    # t  ndcg score of t  batch
     ndcg = math_fns.cal_ndcg(label_scores,
-      predicted_scores, top_k_int=top_k_int)
-    # add ndcg of the current batch to total_ndcg
-    update_total_op = state_ops.assign_add(total_ndcg, ndcg)
-    with ops.control_dependencies([ndcg]):
-      # count_query stores the number of queries
-      # count_query increases by 1 for each batch/query
-      update_count_op = state_ops.assign_add(count_query, 1)
+      pred cted_scores, top_k_ nt=top_k_ nt)
+    # add ndcg of t  current batch to total_ndcg
+    update_total_op = state_ops.ass gn_add(total_ndcg, ndcg)
+    w h ops.control_dependenc es([ndcg]):
+      # count_query stores t  number of quer es
+      # count_query  ncreases by 1 for each batch/query
+      update_count_op = state_ops.ass gn_add(count_query, 1)
 
-    mean_ndcg = math_fns.safe_div(total_ndcg, count_query, 'mean_ndcg')
-    update_op = math_fns.safe_div(update_total_op, update_count_op, 'update_mean_ndcg_op')
+     an_ndcg = math_fns.safe_d v(total_ndcg, count_query, ' an_ndcg')
+    update_op = math_fns.safe_d v(update_total_op, update_count_op, 'update_ an_ndcg_op')
 
-    if metrics_collections:
-      ops.add_to_collections(metrics_collections, mean_ndcg)
+     f  tr cs_collect ons:
+      ops.add_to_collect ons( tr cs_collect ons,  an_ndcg)
 
-    if updates_collections:
-      ops.add_to_collections(updates_collections, update_op)
+     f updates_collect ons:
+      ops.add_to_collect ons(updates_collect ons, update_op)
 
-    return mean_ndcg, update_op
+    return  an_ndcg, update_op
 
 
-# Copied from metrics_impl.py with minor modifications.
-# https://github.com/tensorflow/tensorflow/blob/v1.5.0/tensorflow/python/ops/metrics_impl.py#L39
-def _metric_variable(shape, dtype, validate_shape=True, name=None):
-  """Create variable in `GraphKeys.(LOCAL|METRIC_VARIABLES`) collections."""
+# Cop ed from  tr cs_ mpl.py w h m nor mod f cat ons.
+# https://g hub.com/tensorflow/tensorflow/blob/v1.5.0/tensorflow/python/ops/ tr cs_ mpl.py#L39
+def _ tr c_var able(shape, dtype, val date_shape=True, na =None):
+  """Create var able  n `GraphKeys.(LOCAL|METR C_VAR ABLES`) collect ons."""
 
-  return tf.Variable(
+  return tf.Var able(
     lambda: tf.zeros(shape, dtype),
-    trainable=False,
-    collections=[tf.GraphKeys.LOCAL_VARIABLES, tf.GraphKeys.METRIC_VARIABLES],
-    validate_shape=validate_shape,
-    name=name)
+    tra nable=False,
+    collect ons=[tf.GraphKeys.LOCAL_VAR ABLES, tf.GraphKeys.METR C_VAR ABLES],
+    val date_shape=val date_shape,
+    na =na )
 
 
-# binary metric_name: (metric, requires thresholded output)
-SUPPORTED_BINARY_CLASS_METRICS = {
-  # TWML binary metrics
-  'rce': (twml.metrics.rce, False),
-  'nrce': (partial(twml.metrics.rce, normalize=True), False),
-  # CTR measures positive sample ratio. This terminology is inherited from Ads.
-  'ctr': (twml.metrics.ctr, False),
-  # predicted CTR measures predicted positive ratio.
-  'predicted_ctr': (twml.metrics.predicted_ctr, False),
-  # thresholded metrics
-  'accuracy': (tf.metrics.accuracy, True),
-  'precision': (tf.metrics.precision, True),
-  'recall': (tf.metrics.recall, True),
-  # tensorflow metrics
-  'roc_auc': (partial(tf.metrics.auc, curve='ROC'), False),
-  'pr_auc': (partial(tf.metrics.auc, curve='PR'), False),
+# b nary  tr c_na : ( tr c, requ res thresholded output)
+SUPPORTED_B NARY_CLASS_METR CS = {
+  # TWML b nary  tr cs
+  'rce': (twml. tr cs.rce, False),
+  'nrce': (part al(twml. tr cs.rce, normal ze=True), False),
+  # CTR  asures pos  ve sample rat o. T  term nology  s  n r ed from Ads.
+  'ctr': (twml. tr cs.ctr, False),
+  # pred cted CTR  asures pred cted pos  ve rat o.
+  'pred cted_ctr': (twml. tr cs.pred cted_ctr, False),
+  # thresholded  tr cs
+  'accuracy': (tf. tr cs.accuracy, True),
+  'prec s on': (tf. tr cs.prec s on, True),
+  'recall': (tf. tr cs.recall, True),
+  # tensorflow  tr cs
+  'roc_auc': (part al(tf. tr cs.auc, curve='ROC'), False),
+  'pr_auc': (part al(tf. tr cs.auc, curve='PR'), False),
 }
 
-# search metric_name: metric
-SUPPORTED_SEARCH_METRICS = {
-  # TWML search metrics
-  # ndcg needs the raw prediction scores to sort
+# search  tr c_na :  tr c
+SUPPORTED_SEARCH_METR CS = {
+  # TWML search  tr cs
+  # ndcg needs t  raw pred ct on scores to sort
   'ndcg': ndcg,
 }
 
 
-def get_search_metric_fn(binary_metrics=None, search_metrics=None,
-  ndcg_top_ks=[1, 3, 5, 10], use_binary_metrics=False):
+def get_search_ tr c_fn(b nary_ tr cs=None, search_ tr cs=None,
+  ndcg_top_ks=[1, 3, 5, 10], use_b nary_ tr cs=False):
   """
-  Returns a function having signature:
+  Returns a funct on hav ng s gnature:
 
   .. code-block:: python
 
-    def get_eval_metric_ops(graph_output, labels, weights):
+    def get_eval_ tr c_ops(graph_output, labels,   ghts):
       ...
-      return eval_metric_ops
+      return eval_ tr c_ops
 
-  where the returned eval_metric_ops is a dict of common evaluation metric
-  Ops for ranking. See `tf.estimator.EstimatorSpec
-  <https://www.tensorflow.org/api_docs/python/tf/estimator/EstimatorSpec>`_
-  for a description of eval_metric_ops. The graph_output is a the result
-  dict returned by build_graph. Labels and weights are tf.Tensors.
+  w re t  returned eval_ tr c_ops  s a d ct of common evaluat on  tr c
+  Ops for rank ng. See `tf.est mator.Est matorSpec
+  <https://www.tensorflow.org/ap _docs/python/tf/est mator/Est matorSpec>`_
+  for a descr pt on of eval_ tr c_ops. T  graph_output  s a t  result
+  d ct returned by bu ld_graph. Labels and   ghts are tf.Tensors.
 
-  The following graph_output keys are recognized:
+  T  follow ng graph_output keys are recogn zed:
     output:
-      the raw predictions. Required.
+      t  raw pred ct ons. Requ red.
     threshold:
-      Only used in SUPPORTED_BINARY_CLASS_METRICS
-      If the lables are 0s and 1s
-      A value between 0 and 1 used to threshold the output into a hard_output.
-      Defaults to 0.5 when threshold and hard_output are missing.
-      Either threshold or hard_output can be provided, but not both.
+      Only used  n SUPPORTED_B NARY_CLASS_METR CS
+       f t  lables are 0s and 1s
+      A value bet en 0 and 1 used to threshold t  output  nto a hard_output.
+      Defaults to 0.5 w n threshold and hard_output are m ss ng.
+      E  r threshold or hard_output can be prov ded, but not both.
     hard_output:
-      Only used in SUPPORTED_BINARY_CLASS_METRICS
-      A thresholded output. Either threshold or hard_output can be provided, but not both.
+      Only used  n SUPPORTED_B NARY_CLASS_METR CS
+      A thresholded output. E  r threshold or hard_output can be prov ded, but not both.
 
-  Arguments:
-    only used in pointwise learning-to-rank
+  Argu nts:
+    only used  n po ntw se learn ng-to-rank
 
-    binary_metrics (list of String):
-      a list of metrics of interest. E.g. ['ctr', 'accuracy', 'rce']
-      These metrics are evaluated and reported to tensorboard *during the eval phases only*.
-      Supported metrics:
-        - ctr (same as positive sample ratio.)
-        - rce (cross entropy loss compared to the baseline model of always predicting ctr)
-        - nrce (normalized rce, do not use this one if you do not understand what it is)
+    b nary_ tr cs (l st of Str ng):
+      a l st of  tr cs of  nterest. E.g. ['ctr', 'accuracy', 'rce']
+      T se  tr cs are evaluated and reported to tensorboard *dur ng t  eval phases only*.
+      Supported  tr cs:
+        - ctr (sa  as pos  ve sample rat o.)
+        - rce (cross entropy loss compared to t  basel ne model of always pred ct ng ctr)
+        - nrce (normal zed rce, do not use t  one  f   do not understand what    s)
         - pr_auc
         - roc_auc
-        - accuracy (percentage of predictions that are correct)
-        - precision (true positives) / (true positives + false positives)
-        - recall (true positives) / (true positives + false negatives)
+        - accuracy (percentage of pred ct ons that are correct)
+        - prec s on (true pos  ves) / (true pos  ves + false pos  ves)
+        - recall (true pos  ves) / (true pos  ves + false negat ves)
 
-      NOTE: accuracy / precision / recall apply to binary classification problems only.
-      I.e. a prediction is only considered correct if it matches the label. E.g. if the label
-      is 1.0, and the prediction is 0.99, it does not get credit.  If you want to use
-      precision / recall / accuracy metrics with soft predictions, you'll need to threshold
-      your predictions into hard 0/1 labels.
+      NOTE: accuracy / prec s on / recall apply to b nary class f cat on problems only.
+       .e. a pred ct on  s only cons dered correct  f   matc s t  label. E.g.  f t  label
+       s 1.0, and t  pred ct on  s 0.99,   does not get cred .   f   want to use
+      prec s on / recall / accuracy  tr cs w h soft pred ct ons,  'll need to threshold
+      y  pred ct ons  nto hard 0/1 labels.
 
-      When binary_metrics is None (the default), it defaults to all supported metrics
+      W n b nary_ tr cs  s None (t  default),   defaults to all supported  tr cs
 
-    search_metrics (list of String):
-      a list of metrics of interest. E.g. ['ndcg']
-      These metrics are evaluated and reported to tensorboard *during the eval phases only*.
-      Supported metrics:
+    search_ tr cs (l st of Str ng):
+      a l st of  tr cs of  nterest. E.g. ['ndcg']
+      T se  tr cs are evaluated and reported to tensorboard *dur ng t  eval phases only*.
+      Supported  tr cs:
         - ndcg
 
-      NOTE: ndcg works for ranking-relatd problems.
-      A batch contains all DataRecords that belong to the same query
-      If pair_in_batch_mode used in scalding -- a batch contains a pair of DataRecords
-      that belong to the same query and have different labels -- ndcg does not apply in here.
+      NOTE: ndcg works for rank ng-relatd problems.
+      A batch conta ns all DataRecords that belong to t  sa  query
+       f pa r_ n_batch_mode used  n scald ng -- a batch conta ns a pa r of DataRecords
+      that belong to t  sa  query and have d fferent labels -- ndcg does not apply  n  re.
 
-      When search_metrics is None (the default), it defaults to all supported search metrics
+      W n search_ tr cs  s None (t  default),   defaults to all supported search  tr cs
       currently only 'ndcg'
 
-    ndcg_top_ks (list of integers):
-      The cut-off ranking postions for a query
-      When ndcg_top_ks is None or empty (the default), it defaults to [1, 3, 5, 10]
+    ndcg_top_ks (l st of  ntegers):
+      T  cut-off rank ng post ons for a query
+      W n ndcg_top_ks  s None or empty (t  default),   defaults to [1, 3, 5, 10]
 
-    use_binary_metrics:
+    use_b nary_ tr cs:
       False (default)
-      Only set it to true in pointwise learning-to-rank
+      Only set   to true  n po ntw se learn ng-to-rank
   """
-  # pylint: disable=dict-keys-not-iterating
+  # pyl nt: d sable=d ct-keys-not- erat ng
 
-  if ndcg_top_ks is None or not ndcg_top_ks:
+   f ndcg_top_ks  s None or not ndcg_top_ks:
     ndcg_top_ks = [1, 3, 5, 10]
 
-  if search_metrics is None:
-    search_metrics = list(SUPPORTED_SEARCH_METRICS.keys())
+   f search_ tr cs  s None:
+    search_ tr cs = l st(SUPPORTED_SEARCH_METR CS.keys())
 
-  if binary_metrics is None and use_binary_metrics:
-    # Added SUPPORTED_BINARY_CLASS_METRICS in twml.metics as well
-    # they are only used in pointwise learing-to-rank
-    binary_metrics = list(SUPPORTED_BINARY_CLASS_METRICS.keys())
+   f b nary_ tr cs  s None and use_b nary_ tr cs:
+    # Added SUPPORTED_B NARY_CLASS_METR CS  n twml. t cs as  ll
+    # t y are only used  n po ntw se lear ng-to-rank
+    b nary_ tr cs = l st(SUPPORTED_B NARY_CLASS_METR CS.keys())
 
-  def get_eval_metric_ops(graph_output, labels, weights):
+  def get_eval_ tr c_ops(graph_output, labels,   ghts):
     """
     graph_output:
-      dict that is returned by build_graph given input features.
+      d ct that  s returned by bu ld_graph g ven  nput features.
     labels:
-      target labels associated to batch.
-    weights:
-      weights of the samples..
+      target labels assoc ated to batch.
+      ghts:
+        ghts of t  samples..
     """
 
-    eval_metric_ops = OrderedDict()
+    eval_ tr c_ops = OrderedD ct()
 
     preds = graph_output['output']
 
-    threshold = graph_output['threshold'] if 'threshold' in graph_output else 0.5
+    threshold = graph_output['threshold']  f 'threshold'  n graph_output else 0.5
 
     hard_preds = graph_output.get('hard_output')
-    # hard_preds is a tensor
-    # check hard_preds is None and then check if it is empty
-    if hard_preds is None or tf.equal(tf.size(hard_preds), 0):
+    # hard_preds  s a tensor
+    # c ck hard_preds  s None and t n c ck  f    s empty
+     f hard_preds  s None or tf.equal(tf.s ze(hard_preds), 0):
       hard_preds = tf.greater_equal(preds, threshold)
 
-    # add search metrics to eval_metric_ops dict
-    for metric_name in search_metrics:
-      metric_name = metric_name.lower()  # metric name are case insensitive.
+    # add search  tr cs to eval_ tr c_ops d ct
+    for  tr c_na   n search_ tr cs:
+       tr c_na  =  tr c_na .lo r()  #  tr c na  are case  nsens  ve.
 
-      if metric_name in eval_metric_ops:
-        # avoid adding duplicate metrics.
-        continue
+       f  tr c_na   n eval_ tr c_ops:
+        # avo d add ng dupl cate  tr cs.
+        cont nue
 
-      search_metric_factory = SUPPORTED_SEARCH_METRICS.get(metric_name)
-      if search_metric_factory:
-        if metric_name == 'ndcg':
-          for top_k in ndcg_top_ks:
-            # metric name will show as ndcg_1, ndcg_10, ...
-            metric_name_ndcg_top_k = metric_name + '_' + str(top_k)
-            top_k_int = tf.constant(top_k, dtype=tf.int32)
-            # Note: having weights in ndcg does not make much sense
-            # Because ndcg already has position weights/discounts
-            # Thus weights are not applied in ndcg metric
-            value_op, update_op = search_metric_factory(
+      search_ tr c_factory = SUPPORTED_SEARCH_METR CS.get( tr c_na )
+       f search_ tr c_factory:
+         f  tr c_na  == 'ndcg':
+          for top_k  n ndcg_top_ks:
+            #  tr c na  w ll show as ndcg_1, ndcg_10, ...
+             tr c_na _ndcg_top_k =  tr c_na  + '_' + str(top_k)
+            top_k_ nt = tf.constant(top_k, dtype=tf. nt32)
+            # Note: hav ng   ghts  n ndcg does not make much sense
+            # Because ndcg already has pos  on   ghts/d scounts
+            # Thus   ghts are not appl ed  n ndcg  tr c
+            value_op, update_op = search_ tr c_factory(
               labels=labels,
-              predictions=preds,
-              name=metric_name_ndcg_top_k,
-              top_k_int=top_k_int)
-            eval_metric_ops[metric_name_ndcg_top_k] = (value_op, update_op)
+              pred ct ons=preds,
+              na = tr c_na _ndcg_top_k,
+              top_k_ nt=top_k_ nt)
+            eval_ tr c_ops[ tr c_na _ndcg_top_k] = (value_op, update_op)
       else:
-        raise ValueError('Cannot find the search metric named ' + metric_name)
+        ra se ValueError('Cannot f nd t  search  tr c na d ' +  tr c_na )
 
-    if use_binary_metrics:
-      # add binary metrics to eval_metric_ops dict
-      for metric_name in binary_metrics:
+     f use_b nary_ tr cs:
+      # add b nary  tr cs to eval_ tr c_ops d ct
+      for  tr c_na   n b nary_ tr cs:
 
-        if metric_name in eval_metric_ops:
-          # avoid adding duplicate metrics.
-          continue
+         f  tr c_na   n eval_ tr c_ops:
+          # avo d add ng dupl cate  tr cs.
+          cont nue
 
-        metric_name = metric_name.lower()  # metric name are case insensitive.
-        binary_metric_factory, requires_threshold = SUPPORTED_BINARY_CLASS_METRICS.get(metric_name)
-        if binary_metric_factory:
-          value_op, update_op = binary_metric_factory(
+         tr c_na  =  tr c_na .lo r()  #  tr c na  are case  nsens  ve.
+        b nary_ tr c_factory, requ res_threshold = SUPPORTED_B NARY_CLASS_METR CS.get( tr c_na )
+         f b nary_ tr c_factory:
+          value_op, update_op = b nary_ tr c_factory(
             labels=labels,
-            predictions=(hard_preds if requires_threshold else preds),
-            weights=weights,
-            name=metric_name)
-          eval_metric_ops[metric_name] = (value_op, update_op)
+            pred ct ons=(hard_preds  f requ res_threshold else preds),
+              ghts=  ghts,
+            na = tr c_na )
+          eval_ tr c_ops[ tr c_na ] = (value_op, update_op)
         else:
-          raise ValueError('Cannot find the binary metric named ' + metric_name)
+          ra se ValueError('Cannot f nd t  b nary  tr c na d ' +  tr c_na )
 
-    return eval_metric_ops
+    return eval_ tr c_ops
 
-  return get_eval_metric_ops
+  return get_eval_ tr c_ops

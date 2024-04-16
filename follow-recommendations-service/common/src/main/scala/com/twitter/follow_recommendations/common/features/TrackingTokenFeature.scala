@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.features
+package com.tw ter.follow_recom ndat ons.common.features
 
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.feature.FeatureW hDefaultOnFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-case object TrackingTokenFeature extends FeatureWithDefaultOnFailure[PipelineQuery, Option[Int]] {
-  override val defaultValue: Option[Int] = None
+case object Track ngTokenFeature extends FeatureW hDefaultOnFa lure[P pel neQuery, Opt on[ nt]] {
+  overr de val defaultValue: Opt on[ nt] = None
 }

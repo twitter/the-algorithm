@@ -1,76 +1,76 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIsCreatorFeature
-import com.twitter.home_mixer.util.MissingKeyException
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.audiencerewards.audienceRewardsService.GetSuperFollowEligibilityOnUserClientColumn
-import com.twitter.util.Throw
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ho _m xer.model.Ho Features.Author dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Author sCreatorFeature
+ mport com.tw ter.ho _m xer.ut l.M ss ngKeyExcept on
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BulkCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.ut l.OffloadFuturePools
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.generated.cl ent.aud encerewards.aud enceRewardsServ ce.GetSuperFollowEl g b l yOnUserCl entColumn
+ mport com.tw ter.ut l.Throw
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class AuthorIsCreatorFeatureHydrator @Inject() (
-  getSuperFollowEligibilityOnUserClientColumn: GetSuperFollowEligibilityOnUserClientColumn,
-  statsReceiver: StatsReceiver)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@S ngleton
+class Author sCreatorFeatureHydrator @ nject() (
+  getSuperFollowEl g b l yOnUserCl entColumn: GetSuperFollowEl g b l yOnUserCl entColumn,
+  statsRece ver: StatsRece ver)
+    extends BulkCand dateFeatureHydrator[P pel neQuery, T etCand date] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("AuthorIsCreator")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("Author sCreator")
 
-  override val features: Set[Feature[_, _]] =
-    Set(AuthorIsCreatorFeature)
+  overr de val features: Set[Feature[_, _]] =
+    Set(Author sCreatorFeature)
 
-  private val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
-  private val keyFoundCounter = scopedStatsReceiver.counter("key/found")
-  private val keyFailureCounter = scopedStatsReceiver.counter("key/failure")
+  pr vate val scopedStatsRece ver = statsRece ver.scope(getClass.getS mpleNa )
+  pr vate val keyFoundCounter = scopedStatsRece ver.counter("key/found")
+  pr vate val keyFa lureCounter = scopedStatsRece ver.counter("key/fa lure")
 
-  private val MissingKeyFeatureMap = FeatureMapBuilder()
-    .add(AuthorIsCreatorFeature, Throw(MissingKeyException))
-    .build()
+  pr vate val M ss ngKeyFeatureMap = FeatureMapBu lder()
+    .add(Author sCreatorFeature, Throw(M ss ngKeyExcept on))
+    .bu ld()
 
-  private val DefaultFeatureMap = FeatureMapBuilder()
-    .add(AuthorIsCreatorFeature, false)
-    .build()
+  pr vate val DefaultFeatureMap = FeatureMapBu lder()
+    .add(Author sCreatorFeature, false)
+    .bu ld()
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    OffloadFuturePools.offloadStitch {
-      val authorIds = candidates.flatMap(_.features.getOrElse(AuthorIdFeature, None)).distinct
-      Stitch
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[Seq[FeatureMap]] = {
+    OffloadFuturePools.offloadSt ch {
+      val author ds = cand dates.flatMap(_.features.getOrElse(Author dFeature, None)).d st nct
+      St ch
         .collect {
-          authorIds.map { authorId =>
-            getSuperFollowEligibilityOnUserClientColumn.fetcher
-              .fetch(authorId)
-              .map { authorId -> _.v }
+          author ds.map { author d =>
+            getSuperFollowEl g b l yOnUserCl entColumn.fetc r
+              .fetch(author d)
+              .map { author d -> _.v }
           }
-        }.map { authorIdsToIsCreator =>
-          val authorIdsToIsCreatorMap = authorIdsToIsCreator.toMap
-          candidates.map { candidate =>
-            candidate.features.getOrElse(AuthorIdFeature, None) match {
-              case Some(authorId) =>
-                authorIdsToIsCreatorMap.get(authorId) match {
-                  case Some(response) =>
-                    keyFoundCounter.incr()
-                    FeatureMapBuilder()
-                      .add(AuthorIsCreatorFeature, response.getOrElse(false)).build()
+        }.map { author dsTo sCreator =>
+          val author dsTo sCreatorMap = author dsTo sCreator.toMap
+          cand dates.map { cand date =>
+            cand date.features.getOrElse(Author dFeature, None) match {
+              case So (author d) =>
+                author dsTo sCreatorMap.get(author d) match {
+                  case So (response) =>
+                    keyFoundCounter. ncr()
+                    FeatureMapBu lder()
+                      .add(Author sCreatorFeature, response.getOrElse(false)).bu ld()
                   case _ =>
-                    keyFailureCounter.incr()
+                    keyFa lureCounter. ncr()
                     DefaultFeatureMap
                 }
-              case _ => MissingKeyFeatureMap
+              case _ => M ss ngKeyFeatureMap
             }
           }
         }

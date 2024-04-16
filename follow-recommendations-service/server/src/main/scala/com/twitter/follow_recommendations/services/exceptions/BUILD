@@ -1,14 +1,14 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finatra/thrift/src/main/scala/com/twitter/finatra/thrift",
-        "finatra/thrift/src/main/scala/com/twitter/finatra/thrift:controller",
-        "finatra/thrift/src/main/scala/com/twitter/finatra/thrift/exceptions",
-        "finatra/thrift/src/main/scala/com/twitter/finatra/thrift/filters",
-        "finatra/thrift/src/main/scala/com/twitter/finatra/thrift/modules",
-        "finatra/thrift/src/main/scala/com/twitter/finatra/thrift/response",
-        "finatra/thrift/src/main/scala/com/twitter/finatra/thrift/routing",
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "f natra/thr ft/src/ma n/scala/com/tw ter/f natra/thr ft",
+        "f natra/thr ft/src/ma n/scala/com/tw ter/f natra/thr ft:controller",
+        "f natra/thr ft/src/ma n/scala/com/tw ter/f natra/thr ft/except ons",
+        "f natra/thr ft/src/ma n/scala/com/tw ter/f natra/thr ft/f lters",
+        "f natra/thr ft/src/ma n/scala/com/tw ter/f natra/thr ft/modules",
+        "f natra/thr ft/src/ma n/scala/com/tw ter/f natra/thr ft/response",
+        "f natra/thr ft/src/ma n/scala/com/tw ter/f natra/thr ft/rout ng",
     ],
 )

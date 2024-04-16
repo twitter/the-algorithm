@@ -1,60 +1,60 @@
-package com.twitter.frigate.pushservice.params
+package com.tw ter.fr gate.pushserv ce.params
 
 /**
- * This enum defines ML models for push
+ * T  enum def nes ML models for push
  */
-object PushMLModel extends Enumeration {
+object PushMLModel extends Enu rat on {
   type PushMLModel = Value
 
-  val WeightedOpenOrNtabClickProbability = Value
-  val DauProbability = Value
-  val OptoutProbability = Value
-  val FilteringProbability = Value
-  val BigFilteringSupervisedSendingModel = Value
-  val BigFilteringSupervisedWithoutSendingModel = Value
-  val BigFilteringRLSendingModel = Value
-  val BigFilteringRLWithoutSendingModel = Value
-  val HealthNsfwProbability = Value
+  val   ghtedOpenOrNtabCl ckProbab l y = Value
+  val DauProbab l y = Value
+  val OptoutProbab l y = Value
+  val F lter ngProbab l y = Value
+  val B gF lter ngSuperv sedSend ngModel = Value
+  val B gF lter ngSuperv sedW houtSend ngModel = Value
+  val B gF lter ngRLSend ngModel = Value
+  val B gF lter ngRLW houtSend ngModel = Value
+  val  althNsfwProbab l y = Value
 }
 
-object WeightedOpenOrNtabClickModel {
-  type ModelNameType = String
+object   ghtedOpenOrNtabCl ckModel {
+  type ModelNa Type = Str ng
 
   // MR models
-  val Periodically_Refreshed_Prod_Model =
-    "Periodically_Refreshed_Prod_Model" // used in DBv2 service, needed for gradually migrate via feature switch
+  val Per od cally_Refres d_Prod_Model =
+    "Per od cally_Refres d_Prod_Model" // used  n DBv2 serv ce, needed for gradually m grate v a feature sw ch
 }
 
 
 object OptoutModel {
-  type ModelNameType = String
-  val D0_has_realtime_features = "D0_has_realtime_features"
-  val D0_no_realtime_features = "D0_no_realtime_features"
+  type ModelNa Type = Str ng
+  val D0_has_realt  _features = "D0_has_realt  _features"
+  val D0_no_realt  _features = "D0_no_realt  _features"
 }
 
-object HealthNsfwModel {
-  type ModelNameType = String
-  val Q2_2022_Mr_Bqml_Health_Model_NsfwV0 = "Q2_2022_Mr_Bqml_Health_Model_NsfwV0"
+object  althNsfwModel {
+  type ModelNa Type = Str ng
+  val Q2_2022_Mr_Bqml_ alth_Model_NsfwV0 = "Q2_2022_Mr_Bqml_ alth_Model_NsfwV0"
 }
 
-object BigFilteringSupervisedModel {
-  type ModelNameType = String
-  val V0_0_BigFiltering_Supervised_Sending_Model = "Q3_2022_bigfiltering_supervised_send_model_v0"
-  val V0_0_BigFiltering_Supervised_Without_Sending_Model =
-    "Q3_2022_bigfiltering_supervised_not_send_model_v0"
+object B gF lter ngSuperv sedModel {
+  type ModelNa Type = Str ng
+  val V0_0_B gF lter ng_Superv sed_Send ng_Model = "Q3_2022_b gf lter ng_superv sed_send_model_v0"
+  val V0_0_B gF lter ng_Superv sed_W hout_Send ng_Model =
+    "Q3_2022_b gf lter ng_superv sed_not_send_model_v0"
 }
 
-object BigFilteringRLModel {
-  type ModelNameType = String
-  val V0_0_BigFiltering_Rl_Sending_Model = "Q3_2022_bigfiltering_rl_send_model_dqn_dau_15_open"
-  val V0_0_BigFiltering_Rl_Without_Sending_Model =
-    "Q3_2022_bigfiltering_rl_not_send_model_dqn_dau_15_open"
+object B gF lter ngRLModel {
+  type ModelNa Type = Str ng
+  val V0_0_B gF lter ng_Rl_Send ng_Model = "Q3_2022_b gf lter ng_rl_send_model_dqn_dau_15_open"
+  val V0_0_B gF lter ng_Rl_W hout_Send ng_Model =
+    "Q3_2022_b gf lter ng_rl_not_send_model_dqn_dau_15_open"
 }
 
-case class PushModelName(
+case class PushModelNa (
   modelType: PushMLModel.Value,
-  version: WeightedOpenOrNtabClickModel.ModelNameType) {
-  override def toString: String = {
-    modelType.toString + "_" + version
+  vers on:   ghtedOpenOrNtabCl ckModel.ModelNa Type) {
+  overr de def toStr ng: Str ng = {
+    modelType.toStr ng + "_" + vers on
   }
 }

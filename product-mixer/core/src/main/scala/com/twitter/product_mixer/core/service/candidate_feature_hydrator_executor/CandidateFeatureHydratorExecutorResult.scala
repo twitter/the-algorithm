@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor
+package com.tw ter.product_m xer.core.serv ce.cand date_feature_hydrator_executor
 
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.service.ExecutorResult
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
+ mport com.tw ter.product_m xer.core.serv ce.ExecutorResult
 
-case class CandidateFeatureHydratorExecutorResult[+Result <: UniversalNoun[Any]](
-  results: Seq[CandidateWithFeatures[Result]],
-  individualFeatureHydratorResults: Map[
-    _ <: ComponentIdentifier,
-    BaseIndividualFeatureHydratorResult[Result]
+case class Cand dateFeatureHydratorExecutorResult[+Result <: Un versalNoun[Any]](
+  results: Seq[Cand dateW hFeatures[Result]],
+   nd v dualFeatureHydratorResults: Map[
+    _ <: Component dent f er,
+    Base nd v dualFeatureHydratorResult[Result]
   ]) extends ExecutorResult
 
-sealed trait BaseIndividualFeatureHydratorResult[+Result <: UniversalNoun[Any]]
-case class FeatureHydratorDisabled[+Result <: UniversalNoun[Any]]()
-    extends BaseIndividualFeatureHydratorResult[Result]
-case class IndividualFeatureHydratorResult[+Result <: UniversalNoun[Any]](
-  result: Seq[CandidateWithFeatures[Result]])
-    extends BaseIndividualFeatureHydratorResult[Result]
+sealed tra  Base nd v dualFeatureHydratorResult[+Result <: Un versalNoun[Any]]
+case class FeatureHydratorD sabled[+Result <: Un versalNoun[Any]]()
+    extends Base nd v dualFeatureHydratorResult[Result]
+case class  nd v dualFeatureHydratorResult[+Result <: Un versalNoun[Any]](
+  result: Seq[Cand dateW hFeatures[Result]])
+    extends Base nd v dualFeatureHydratorResult[Result]

@@ -1,17 +1,17 @@
-package com.twitter.search.earlybird.index;
+package com.tw ter.search.earlyb rd. ndex;
 
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsData;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsFactory;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdRealtimeIndexExtensionsData;
+ mport com.tw ter.search.core.earlyb rd. ndex.extens ons.Earlyb rd ndexExtens onsData;
+ mport com.tw ter.search.core.earlyb rd. ndex.extens ons.Earlyb rd ndexExtens onsFactory;
+ mport com.tw ter.search.core.earlyb rd. ndex.extens ons.Earlyb rdRealt   ndexExtens onsData;
 
-public class TweetSearchIndexExtensionsFactory extends EarlybirdIndexExtensionsFactory {
-  @Override
-  public EarlybirdRealtimeIndexExtensionsData newRealtimeIndexExtensionsData() {
-    return new TweetSearchRealtimeIndexExtensionsData();
+publ c class T etSearch ndexExtens onsFactory extends Earlyb rd ndexExtens onsFactory {
+  @Overr de
+  publ c Earlyb rdRealt   ndexExtens onsData newRealt   ndexExtens onsData() {
+    return new T etSearchRealt   ndexExtens onsData();
   }
 
-  @Override
-  public EarlybirdIndexExtensionsData newLuceneIndexExtensionsData() {
-    return new TweetSearchLuceneIndexExtensionsData();
+  @Overr de
+  publ c Earlyb rd ndexExtens onsData newLucene ndexExtens onsData() {
+    return new T etSearchLucene ndexExtens onsData();
   }
 }

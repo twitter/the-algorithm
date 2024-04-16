@@ -1,80 +1,80 @@
-package com.twitter.servo.util
+package com.tw ter.servo.ut l
 
-import com.twitter.finagle.stats.{NullStatsReceiver, StatsReceiver}
-import com.twitter.logging._
-import com.twitter.scrooge.{BinaryThriftStructSerializer, ThriftStruct, ThriftStructCodec}
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.{NullStatsRece ver, StatsRece ver}
+ mport com.tw ter.logg ng._
+ mport com.tw ter.scrooge.{B naryThr ftStructSer al zer, Thr ftStruct, Thr ftStructCodec}
+ mport com.tw ter.ut l.Future
 
-object Scribe {
+object Scr be {
 
   /**
-   * Returns a new FutureEffect for scribing text to the specified category.
+   * Returns a new FutureEffect for scr b ng text to t  spec f ed category.
    */
   def apply(
-    category: String,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): FutureEffect[String] =
-    Scribe(loggingHandler(category = category, statsReceiver = statsReceiver))
+    category: Str ng,
+    statsRece ver: StatsRece ver = NullStatsRece ver
+  ): FutureEffect[Str ng] =
+    Scr be(logg ngHandler(category = category, statsRece ver = statsRece ver))
 
   /**
-   * Returns a new FutureEffect for scribing text to the specified logging handler.
+   * Returns a new FutureEffect for scr b ng text to t  spec f ed logg ng handler.
    */
-  def apply(handler: Handler): FutureEffect[String] =
-    FutureEffect[String] { msg =>
-      handler.publish(new LogRecord(handler.getLevel, msg))
-      Future.Unit
+  def apply(handler: Handler): FutureEffect[Str ng] =
+    FutureEffect[Str ng] { msg =>
+      handler.publ sh(new LogRecord(handler.getLevel, msg))
+      Future.Un 
     }
 
   /**
-   * Returns a new FutureEffect for scribing thrift objects to the specified category.
-   * The thrift object will be serialized to binary then converted to Base64.
+   * Returns a new FutureEffect for scr b ng thr ft objects to t  spec f ed category.
+   * T  thr ft object w ll be ser al zed to b nary t n converted to Base64.
    */
-  def apply[T <: ThriftStruct](
-    codec: ThriftStructCodec[T],
-    category: String
+  def apply[T <: Thr ftStruct](
+    codec: Thr ftStructCodec[T],
+    category: Str ng
   ): FutureEffect[T] =
-    Scribe(codec, Scribe(category = category))
+    Scr be(codec, Scr be(category = category))
 
   /**
-   * Returns a new FutureEffect for scribing thrift objects to the specified category.
-   * The thrift object will be serialized to binary then converted to Base64.
+   * Returns a new FutureEffect for scr b ng thr ft objects to t  spec f ed category.
+   * T  thr ft object w ll be ser al zed to b nary t n converted to Base64.
    */
-  def apply[T <: ThriftStruct](
-    codec: ThriftStructCodec[T],
-    category: String,
-    statsReceiver: StatsReceiver
+  def apply[T <: Thr ftStruct](
+    codec: Thr ftStructCodec[T],
+    category: Str ng,
+    statsRece ver: StatsRece ver
   ): FutureEffect[T] =
-    Scribe(codec, Scribe(category = category, statsReceiver = statsReceiver))
+    Scr be(codec, Scr be(category = category, statsRece ver = statsRece ver))
 
   /**
-   * Returns a new FutureEffect for scribing thrift objects to the underlying scribe effect.
-   * The thrift object will be serialized to binary then converted to Base64.
+   * Returns a new FutureEffect for scr b ng thr ft objects to t  underly ng scr be effect.
+   * T  thr ft object w ll be ser al zed to b nary t n converted to Base64.
    */
-  def apply[T <: ThriftStruct](
-    codec: ThriftStructCodec[T],
-    underlying: FutureEffect[String]
+  def apply[T <: Thr ftStruct](
+    codec: Thr ftStructCodec[T],
+    underly ng: FutureEffect[Str ng]
   ): FutureEffect[T] =
-    underlying contramap serialize(codec)
+    underly ng contramap ser al ze(codec)
 
   /**
-   * Builds a logging Handler that scribes log messages, wrapped with a QueueingHandler.
+   * Bu lds a logg ng Handler that scr bes log  ssages, wrapped w h a Queue ngHandler.
    */
-  def loggingHandler(
-    category: String,
+  def logg ngHandler(
+    category: Str ng,
     formatter: Formatter = BareFormatter,
-    maxQueueSize: Int = 5000,
-    statsReceiver: StatsReceiver = NullStatsReceiver
+    maxQueueS ze:  nt = 5000,
+    statsRece ver: StatsRece ver = NullStatsRece ver
   ): Handler =
-    new QueueingHandler(
-      ScribeHandler(category = category, formatter = formatter, statsReceiver = statsReceiver)(),
-      maxQueueSize = maxQueueSize
+    new Queue ngHandler(
+      Scr beHandler(category = category, formatter = formatter, statsRece ver = statsRece ver)(),
+      maxQueueS ze = maxQueueS ze
     )
 
   /**
-   * Returns a function that serializes thrift structs to Base64.
+   * Returns a funct on that ser al zes thr ft structs to Base64.
    */
-  def serialize[T <: ThriftStruct](c: ThriftStructCodec[T]): T => String = {
-    val serializer = BinaryThriftStructSerializer(c)
-    t => serializer.toString(t)
+  def ser al ze[T <: Thr ftStruct](c: Thr ftStructCodec[T]): T => Str ng = {
+    val ser al zer = B naryThr ftStructSer al zer(c)
+    t => ser al zer.toStr ng(t)
   }
 }

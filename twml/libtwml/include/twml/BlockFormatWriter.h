@@ -1,61 +1,61 @@
 #pragma once
-#include <twml/defines.h>
-#include <cstdlib>
-#include <cstdio>
-#include <unistd.h>
-#include <cinttypes>
-#include <cstdint>
+# nclude <twml/def nes.h>
+# nclude <cstdl b>
+# nclude <cstd o>
+# nclude <un std.h>
+# nclude <c nttypes>
+# nclude <cstd nt>
 
-#ifndef PATH_MAX
-#define PATH_MAX (8096)
-#endif
+# fndef PATH_MAX
+#def ne PATH_MAX (8096)
+#end f
 
-#ifdef __cplusplus
+# fdef __cplusplus
 extern "C" {
-#endif
+#end f
 
-  struct block_format_writer__;
-  typedef block_format_writer__ * block_format_writer;
+  struct block_format_wr er__;
+  typedef block_format_wr er__ * block_format_wr er;
 
-#ifdef __cplusplus
+# fdef __cplusplus
 }
-#endif
+#end f
 
 
-#ifdef __cplusplus
-namespace twml {
-    class BlockFormatWriter {
-    private:
-        const char *file_name_;
-        FILE *outputfile_;
-        char temp_file_name_[PATH_MAX];
-        int record_index_;
-        int records_per_block_;
+# fdef __cplusplus
+na space twml {
+    class BlockFormatWr er {
+    pr vate:
+        const char *f le_na _;
+        F LE *outputf le_;
+        char temp_f le_na _[PATH_MAX];
+         nt record_ ndex_;
+         nt records_per_block_;
 
-        int pack_tag_and_wiretype(FILE *file, uint32_t tag, uint32_t wiretype);
-        int pack_varint_i32(FILE *file, int value);
-        int pack_string(FILE *file, const char *in, size_t in_len);
-        int write_int(FILE *file, int value);
+         nt pack_tag_and_w retype(F LE *f le, u nt32_t tag, u nt32_t w retype);
+         nt pack_var nt_ 32(F LE *f le,  nt value);
+         nt pack_str ng(F LE *f le, const char * n, s ze_t  n_len);
+         nt wr e_ nt(F LE *f le,  nt value);
 
-    public:
-        BlockFormatWriter(const char *file_name, int record_per_block);
-        ~BlockFormatWriter();
-        int write(const char *class_name, const char *record, int record_len) ;
-        int flush();
-        block_format_writer getHandle();
+    publ c:
+        BlockFormatWr er(const char *f le_na ,  nt record_per_block);
+        ~BlockFormatWr er();
+         nt wr e(const char *class_na , const char *record,  nt record_len) ;
+         nt flush();
+        block_format_wr er getHandle();
       };
 
-      BlockFormatWriter *getBlockFormatWriter(block_format_writer w);
-} //twml namespace
-#endif
+      BlockFormatWr er *getBlockFormatWr er(block_format_wr er w);
+} //twml na space
+#end f
 
-#ifdef __cplusplus
+# fdef __cplusplus
 extern "C" {
-#endif
-twml_err block_format_writer_create(block_format_writer *w, const char *file_name, int records_per_block);
-twml_err block_format_write(block_format_writer w, const char *class_name, const char *record, int record_len);
-twml_err block_format_flush(block_format_writer w);
-twml_err block_format_writer_delete(const block_format_writer w);
-#ifdef __cplusplus
+#end f
+twml_err block_format_wr er_create(block_format_wr er *w, const char *f le_na ,  nt records_per_block);
+twml_err block_format_wr e(block_format_wr er w, const char *class_na , const char *record,  nt record_len);
+twml_err block_format_flush(block_format_wr er w);
+twml_err block_format_wr er_delete(const block_format_wr er w);
+# fdef __cplusplus
 }
-#endif
+#end f

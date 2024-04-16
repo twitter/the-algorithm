@@ -1,96 +1,96 @@
-package com.twitter.simclusters_v2.scalding.optout
+package com.tw ter.s mclusters_v2.scald ng.optout
 
-import com.twitter.dal.client.dataset.{KeyValDALDataset, SnapshotDALDataset}
-import com.twitter.scalding.{
+ mport com.tw ter.dal.cl ent.dataset.{KeyValDALDataset, SnapshotDALDataset}
+ mport com.tw ter.scald ng.{
   Args,
   DateRange,
   Days,
-  Duration,
-  Execution,
-  RichDate,
-  TypedPipe,
+  Durat on,
+  Execut on,
+  R chDate,
+  TypedP pe,
   TypedTsv,
-  UniqueID
+  Un que D
 }
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.{ClusterId, ModelVersions, SemanticCoreEntityId, UserId}
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.inferred_entities.InferredEntities
-import com.twitter.simclusters_v2.thriftscala.{
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e.D
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e._
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.common.{Cluster d, ModelVers ons, Semant cCoreEnt y d, User d}
+ mport com.tw ter.s mclusters_v2.hdfs_s ces._
+ mport com.tw ter.s mclusters_v2.scald ng. nferred_ent  es. nferredEnt  es
+ mport com.tw ter.s mclusters_v2.thr ftscala.{
   ClusterType,
-  ClustersUserIsInterestedIn,
-  SemanticCoreEntityWithScore,
-  UserToInterestedInClusters
+  ClustersUser s nterested n,
+  Semant cCoreEnt yW hScore,
+  UserTo nterested nClusters
 }
-import com.twitter.wtf.scalding.jobs.common.{AdhocExecutionApp, ScheduledExecutionApp}
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-import com.twitter.simclusters_v2.scalding.common.Util
-import java.util.TimeZone
+ mport com.tw ter.wtf.scald ng.jobs.common.{AdhocExecut onApp, Sc duledExecut onApp}
+ mport com.tw ter.s mclusters_v2.scald ng.common.TypedR chP pe._
+ mport com.tw ter.s mclusters_v2.scald ng.common.Ut l
+ mport java.ut l.T  Zone
 
-object InterestedInOptOut {
+object  nterested nOptOut {
 
-  def filterOptedOutInterestedIn(
-    interestedInPipe: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    optedOutEntities: TypedPipe[(UserId, Set[SemanticCoreEntityId])],
-    clusterToEntities: TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])]
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
+  def f lterOptedOut nterested n(
+     nterested nP pe: TypedP pe[(User d, ClustersUser s nterested n)],
+    optedOutEnt  es: TypedP pe[(User d, Set[Semant cCoreEnt y d])],
+    clusterToEnt  es: TypedP pe[(Cluster d, Seq[Semant cCoreEnt yW hScore])]
+  ): TypedP pe[(User d, ClustersUser s nterested n)] = {
 
-    val validInterestedIn = SimClustersOptOutUtil.filterOptedOutClusters(
-      userToClusters = interestedInPipe.mapValues(_.clusterIdToScores.keySet.toSeq),
-      optedOutEntities = optedOutEntities,
-      legibleClusters = clusterToEntities
+    val val d nterested n = S mClustersOptOutUt l.f lterOptedOutClusters(
+      userToClusters =  nterested nP pe.mapValues(_.cluster dToScores.keySet.toSeq),
+      optedOutEnt  es = optedOutEnt  es,
+      leg bleClusters = clusterToEnt  es
     )
 
-    interestedInPipe
-      .leftJoin(validInterestedIn)
+     nterested nP pe
+      .leftJo n(val d nterested n)
       .mapValues {
-        case (originalInterestedIn, validInterestedInOpt) =>
-          val validInterestedIn = validInterestedInOpt.getOrElse(Seq()).toSet
+        case (or g nal nterested n, val d nterested nOpt) =>
+          val val d nterested n = val d nterested nOpt.getOrElse(Seq()).toSet
 
-          originalInterestedIn.copy(
-            clusterIdToScores = originalInterestedIn.clusterIdToScores.filterKeys(validInterestedIn)
+          or g nal nterested n.copy(
+            cluster dToScores = or g nal nterested n.cluster dToScores.f lterKeys(val d nterested n)
           )
       }
-      .filter(_._2.clusterIdToScores.nonEmpty)
+      .f lter(_._2.cluster dToScores.nonEmpty)
   }
 
   /**
-   * Writes InterestedIn data to HDFS
+   * Wr es  nterested n data to HDFS
    */
-  def writeInterestedInOutputExecution(
-    interestedIn: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    interestedInDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsInterestedIn]],
-    outputPath: String
-  ): Execution[Unit] = {
-    interestedIn
+  def wr e nterested nOutputExecut on(
+     nterested n: TypedP pe[(User d, ClustersUser s nterested n)],
+     nterested nDataset: KeyValDALDataset[KeyVal[Long, ClustersUser s nterested n]],
+    outputPath: Str ng
+  ): Execut on[Un ] = {
+     nterested n
       .map { case (k, v) => KeyVal(k, v) }
-      .writeDALVersionedKeyValExecution(
-        interestedInDataset,
-        D.Suffix(outputPath)
+      .wr eDALVers onedKeyValExecut on(
+         nterested nDataset,
+        D.Suff x(outputPath)
       )
   }
 
   /**
-   * Convert InterestedIn to thrift structs, then write to HDFS
+   * Convert  nterested n to thr ft structs, t n wr e to HDFS
    */
-  def writeInterestedInThriftOutputExecution(
-    interestedIn: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    modelVersion: String,
-    interestedInThriftDatset: SnapshotDALDataset[UserToInterestedInClusters],
-    thriftOutputPath: String,
+  def wr e nterested nThr ftOutputExecut on(
+     nterested n: TypedP pe[(User d, ClustersUser s nterested n)],
+    modelVers on: Str ng,
+     nterested nThr ftDatset: SnapshotDALDataset[UserTo nterested nClusters],
+    thr ftOutputPath: Str ng,
     dateRange: DateRange
-  ): Execution[Unit] = {
-    interestedIn
+  ): Execut on[Un ] = {
+     nterested n
       .map {
-        case (userId, clusters) =>
-          UserToInterestedInClusters(userId, modelVersion, clusters.clusterIdToScores)
+        case (user d, clusters) =>
+          UserTo nterested nClusters(user d, modelVers on, clusters.cluster dToScores)
       }
-      .writeDALSnapshotExecution(
-        interestedInThriftDatset,
-        D.Daily,
-        D.Suffix(thriftOutputPath),
+      .wr eDALSnapshotExecut on(
+         nterested nThr ftDatset,
+        D.Da ly,
+        D.Suff x(thr ftOutputPath),
         D.EBLzo(),
         dateRange.end
       )
@@ -98,102 +98,102 @@ object InterestedInOptOut {
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
-  --start_cron interested_in_optout_daily \
-  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+capesospy-v2 update --bu ld_locally --start_cron \
+  --start_cron  nterested_ n_optout_da ly \
+  src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc.yaml
  */
-object InterestedInOptOutDailyBatchJob extends ScheduledExecutionApp {
+object  nterested nOptOutDa lyBatchJob extends Sc duledExecut onApp {
 
-  override def firstTime: RichDate = RichDate("2019-11-24")
+  overr de def f rstT  : R chDate = R chDate("2019-11-24")
 
-  override def batchIncrement: Duration = Days(1)
+  overr de def batch ncre nt: Durat on = Days(1)
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
 
-    val userOptoutEntities =
-      SimClustersOptOutUtil
-        .getP13nOptOutSources(dateRange.embiggen(Days(4)), ClusterType.InterestedIn)
-        .count("num_users_with_optouts")
-        .forceToDisk
+    val userOptoutEnt  es =
+      S mClustersOptOutUt l
+        .getP13nOptOutS ces(dateRange.emb ggen(Days(4)), ClusterType. nterested n)
+        .count("num_users_w h_optouts")
+        .forceToD sk
 
-    val interestedIn2020Pipe = InterestedInSources
-      .simClustersRawInterestedIn2020Source(dateRange, timeZone)
-      .count("num_users_with_2020_interestedin")
+    val  nterested n2020P pe =  nterested nS ces
+      .s mClustersRaw nterested n2020S ce(dateRange, t  Zone)
+      .count("num_users_w h_2020_ nterested n")
 
-    val interestedInLite2020Pipe = InterestedInSources
-      .simClustersRawInterestedInLite2020Source(dateRange, timeZone)
-      .count("num_users_with_2020_interestedin_lite")
+    val  nterested nL e2020P pe =  nterested nS ces
+      .s mClustersRaw nterested nL e2020S ce(dateRange, t  Zone)
+      .count("num_users_w h_2020_ nterested n_l e")
 
-    val clusterToEntities = InferredEntities
-      .getLegibleEntityEmbeddings(dateRange.prepend(Days(21)), timeZone)
-      .count("num_cluster_to_entities")
+    val clusterToEnt  es =  nferredEnt  es
+      .getLeg bleEnt yEmbedd ngs(dateRange.prepend(Days(21)), t  Zone)
+      .count("num_cluster_to_ent  es")
 
-    val filtered2020InterestedIn = InterestedInOptOut
-      .filterOptedOutInterestedIn(interestedIn2020Pipe, userOptoutEntities, clusterToEntities)
-      .count("num_users_with_compliant_2020_interestedin")
+    val f ltered2020 nterested n =  nterested nOptOut
+      .f lterOptedOut nterested n( nterested n2020P pe, userOptoutEnt  es, clusterToEnt  es)
+      .count("num_users_w h_compl ant_2020_ nterested n")
 
-    val write2020Exec = InterestedInOptOut.writeInterestedInOutputExecution(
-      filtered2020InterestedIn,
-      SimclustersV2InterestedIn20M145K2020ScalaDataset,
-      DataPaths.InterestedIn2020Path
+    val wr e2020Exec =  nterested nOptOut.wr e nterested nOutputExecut on(
+      f ltered2020 nterested n,
+      S mclustersV2 nterested n20M145K2020ScalaDataset,
+      DataPaths. nterested n2020Path
     )
 
-    val write2020ThriftExec = InterestedInOptOut.writeInterestedInThriftOutputExecution(
-      filtered2020InterestedIn,
-      ModelVersions.Model20M145K2020,
-      SimclustersV2UserToInterestedIn20M145K2020ScalaDataset,
-      DataPaths.InterestedIn2020ThriftPath,
+    val wr e2020Thr ftExec =  nterested nOptOut.wr e nterested nThr ftOutputExecut on(
+      f ltered2020 nterested n,
+      ModelVers ons.Model20M145K2020,
+      S mclustersV2UserTo nterested n20M145K2020ScalaDataset,
+      DataPaths. nterested n2020Thr ftPath,
       dateRange
     )
 
-    val sanityCheck2020Exec = SimClustersOptOutUtil.sanityCheckAndSendEmail(
-      oldNumClustersPerUser = interestedIn2020Pipe.map(_._2.clusterIdToScores.size),
-      newNumClustersPerUser = filtered2020InterestedIn.map(_._2.clusterIdToScores.size),
-      modelVersion = ModelVersions.Model20M145K2020,
-      alertEmail = SimClustersOptOutUtil.AlertEmail
+    val san yC ck2020Exec = S mClustersOptOutUt l.san yC ckAndSendEma l(
+      oldNumClustersPerUser =  nterested n2020P pe.map(_._2.cluster dToScores.s ze),
+      newNumClustersPerUser = f ltered2020 nterested n.map(_._2.cluster dToScores.s ze),
+      modelVers on = ModelVers ons.Model20M145K2020,
+      alertEma l = S mClustersOptOutUt l.AlertEma l
     )
 
-    val filtered2020InterestedInLite = InterestedInOptOut
-      .filterOptedOutInterestedIn(interestedInLite2020Pipe, userOptoutEntities, clusterToEntities)
-      .count("num_users_with_compliant_2020_interestedin_lite")
+    val f ltered2020 nterested nL e =  nterested nOptOut
+      .f lterOptedOut nterested n( nterested nL e2020P pe, userOptoutEnt  es, clusterToEnt  es)
+      .count("num_users_w h_compl ant_2020_ nterested n_l e")
 
-    val write2020LiteExec = InterestedInOptOut.writeInterestedInOutputExecution(
-      filtered2020InterestedInLite,
-      SimclustersV2InterestedInLite20M145K2020ScalaDataset,
-      DataPaths.InterestedInLite2020Path
+    val wr e2020L eExec =  nterested nOptOut.wr e nterested nOutputExecut on(
+      f ltered2020 nterested nL e,
+      S mclustersV2 nterested nL e20M145K2020ScalaDataset,
+      DataPaths. nterested nL e2020Path
     )
 
-    val write2020LiteThriftExec = InterestedInOptOut.writeInterestedInThriftOutputExecution(
-      filtered2020InterestedInLite,
-      ModelVersions.Model20M145K2020,
-      SimclustersV2UserToInterestedInLite20M145K2020ScalaDataset,
-      DataPaths.InterestedInLite2020ThriftPath,
+    val wr e2020L eThr ftExec =  nterested nOptOut.wr e nterested nThr ftOutputExecut on(
+      f ltered2020 nterested nL e,
+      ModelVers ons.Model20M145K2020,
+      S mclustersV2UserTo nterested nL e20M145K2020ScalaDataset,
+      DataPaths. nterested nL e2020Thr ftPath,
       dateRange
     )
 
-    val sanityCheck2020LiteExec = SimClustersOptOutUtil.sanityCheckAndSendEmail(
-      oldNumClustersPerUser = interestedInLite2020Pipe.map(_._2.clusterIdToScores.size),
-      newNumClustersPerUser = filtered2020InterestedInLite.map(_._2.clusterIdToScores.size),
-      modelVersion = ModelVersions.Model20M145K2020,
-      alertEmail = SimClustersOptOutUtil.AlertEmail
+    val san yC ck2020L eExec = S mClustersOptOutUt l.san yC ckAndSendEma l(
+      oldNumClustersPerUser =  nterested nL e2020P pe.map(_._2.cluster dToScores.s ze),
+      newNumClustersPerUser = f ltered2020 nterested nL e.map(_._2.cluster dToScores.s ze),
+      modelVers on = ModelVers ons.Model20M145K2020,
+      alertEma l = S mClustersOptOutUt l.AlertEma l
     )
 
-    Util.printCounters(
-      Execution.zip(
-        Execution.zip(
-          write2020Exec,
-          write2020ThriftExec,
-          sanityCheck2020Exec),
-        Execution.zip(
-          write2020LiteExec,
-          write2020LiteThriftExec,
-          sanityCheck2020LiteExec
+    Ut l.pr ntCounters(
+      Execut on.z p(
+        Execut on.z p(
+          wr e2020Exec,
+          wr e2020Thr ftExec,
+          san yC ck2020Exec),
+        Execut on.z p(
+          wr e2020L eExec,
+          wr e2020L eThr ftExec,
+          san yC ck2020L eExec
         )
       )
     )
@@ -201,69 +201,69 @@ object InterestedInOptOutDailyBatchJob extends ScheduledExecutionApp {
 }
 
 /**
- * For debugging only. Does a filtering run and prints the differences before/after the opt out
+ * For debugg ng only. Does a f lter ng run and pr nts t  d fferences before/after t  opt out
 
- scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/optout:interested_in_optout-adhoc \
- --user cassowary --cluster bluebird-qus1 \
- --main-class com.twitter.simclusters_v2.scalding.optout.InterestedInOptOutAdhocJob -- \
- --keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
- --principal service_acoount@TWITTER.BIZ \
+ scald ng remote run --target src/scala/com/tw ter/s mclusters_v2/scald ng/optout: nterested_ n_optout-adhoc \
+ --user cassowary --cluster blueb rd-qus1 \
+ --ma n-class com.tw ter.s mclusters_v2.scald ng.optout. nterested nOptOutAdhocJob -- \
+ --keytab /var/l b/tss/keys/fluffy/keytabs/cl ent/cassowary.keytab \
+ --pr nc pal serv ce_acoount@TW TTER.B Z \
  -- \
- --outputDir /user/cassowary/adhoc/interestedin_optout \
+ --outputD r /user/cassowary/adhoc/ nterested n_optout \
  --date 2020-09-03
  */
-object InterestedInOptOutAdhocJob extends AdhocExecutionApp {
-  override def runOnDateRange(
+object  nterested nOptOutAdhocJob extends AdhocExecut onApp {
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val outputDir = args("outputDir")
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
+    val outputD r = args("outputD r")
 
-    val interestedInPipe = InterestedInSources
-      .simClustersInterestedInUpdatedSource(dateRange, timeZone)
-      .count("num_users_with_interestedin")
+    val  nterested nP pe =  nterested nS ces
+      .s mClusters nterested nUpdatedS ce(dateRange, t  Zone)
+      .count("num_users_w h_ nterested n")
 
-    val userOptoutEntities: TypedPipe[(UserId, Set[SemanticCoreEntityId])] =
-      SimClustersOptOutUtil
-        .getP13nOptOutSources(dateRange.embiggen(Days(4)), ClusterType.InterestedIn)
-        .count("num_users_with_optouts")
+    val userOptoutEnt  es: TypedP pe[(User d, Set[Semant cCoreEnt y d])] =
+      S mClustersOptOutUt l
+        .getP13nOptOutS ces(dateRange.emb ggen(Days(4)), ClusterType. nterested n)
+        .count("num_users_w h_optouts")
 
-    val clusterToEntities = InferredEntities
-      .getLegibleEntityEmbeddings(dateRange, timeZone)
-      .count("num_cluster_to_entities")
+    val clusterToEnt  es =  nferredEnt  es
+      .getLeg bleEnt yEmbedd ngs(dateRange, t  Zone)
+      .count("num_cluster_to_ent  es")
 
-    val filteredInterestedInPipe = InterestedInOptOut
-      .filterOptedOutInterestedIn(
-        interestedInPipe,
-        userOptoutEntities,
-        clusterToEntities
+    val f ltered nterested nP pe =  nterested nOptOut
+      .f lterOptedOut nterested n(
+         nterested nP pe,
+        userOptoutEnt  es,
+        clusterToEnt  es
       )
-      .count("num_users_with_interestedin_after_optout")
+      .count("num_users_w h_ nterested n_after_optout")
 
-    val output = interestedInPipe
-      .join(filteredInterestedInPipe)
-      .filter {
-        case (userId, (originalInterestedIn, filtered)) =>
-          originalInterestedIn.clusterIdToScores != filtered.clusterIdToScores
+    val output =  nterested nP pe
+      .jo n(f ltered nterested nP pe)
+      .f lter {
+        case (user d, (or g nal nterested n, f ltered)) =>
+          or g nal nterested n.cluster dToScores != f ltered.cluster dToScores
       }
-      .join(userOptoutEntities)
+      .jo n(userOptoutEnt  es)
       .map {
-        case (userId, ((originalInterestedIn, filtered), optoutEntities)) =>
+        case (user d, ((or g nal nterested n, f ltered), optoutEnt  es)) =>
           Seq(
-            "userId=" + userId,
-            "originalInterestedInVersion=" + originalInterestedIn.knownForModelVersion,
-            "originalInterestedIn=" + originalInterestedIn.clusterIdToScores.keySet,
-            "filteredInterestedIn=" + filtered.knownForModelVersion,
-            "filteredInterestedIn=" + filtered.clusterIdToScores.keySet,
-            "optoutEntities=" + optoutEntities
-          ).mkString("\t")
+            "user d=" + user d,
+            "or g nal nterested nVers on=" + or g nal nterested n.knownForModelVers on,
+            "or g nal nterested n=" + or g nal nterested n.cluster dToScores.keySet,
+            "f ltered nterested n=" + f ltered.knownForModelVers on,
+            "f ltered nterested n=" + f ltered.cluster dToScores.keySet,
+            "optoutEnt  es=" + optoutEnt  es
+          ).mkStr ng("\t")
       }
 
-    Util.printCounters(
-      output.writeExecution(TypedTsv(outputDir))
+    Ut l.pr ntCounters(
+      output.wr eExecut on(TypedTsv(outputD r))
     )
   }
 }

@@ -1,52 +1,52 @@
-package com.twitter.servo.util
+package com.tw ter.servo.ut l
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.{Duration, Local}
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ut l.{Durat on, Local}
 
 /**
- * A strategy for tracking success rate, usually over a window
+ * A strategy for track ng success rate, usually over a w ndow
  */
-trait SuccessRateTracker { self =>
-  def record(successes: Int, failures: Int): Unit
+tra  SuccessRateTracker { self =>
+  def record(successes:  nt, fa lures:  nt): Un 
   def successRate: Double
 
   /**
-   * A [[Gate]] whose availability is computed from the success rate (SR) reported by the tracker.
+   * A [[Gate]] whose ava lab l y  s computed from t  success rate (SR) reported by t  tracker.
    *
-   * @param availabilityFromSuccessRate function to calculate availability of gate given SR
+   * @param ava lab l yFromSuccessRate funct on to calculate ava lab l y of gate g ven SR
    */
-  def availabilityGate(availabilityFromSuccessRate: Double => Double): Gate[Unit] =
-    Gate.fromAvailability(availabilityFromSuccessRate(successRate))
+  def ava lab l yGate(ava lab l yFromSuccessRate: Double => Double): Gate[Un ] =
+    Gate.fromAva lab l y(ava lab l yFromSuccessRate(successRate))
 
   /**
-   * A [[Gate]] whose availability is computed from the success rate reported by the tracker
-   * with stats attached.
+   * A [[Gate]] whose ava lab l y  s computed from t  success rate reported by t  tracker
+   * w h stats attac d.
    */
-  def observedAvailabilityGate(
-    availabilityFromSuccessRate: Double => Double,
-    stats: StatsReceiver
-  ): Gate[Unit] =
-    new Gate[Unit] {
-      val underlying = availabilityGate(availabilityFromSuccessRate)
-      val availabilityGauge =
-        stats.addGauge("availability") { availabilityFromSuccessRate(successRate).toFloat }
-      override def apply[U](u: U)(implicit asT: <:<[U, Unit]): Boolean = underlying.apply(u)
+  def observedAva lab l yGate(
+    ava lab l yFromSuccessRate: Double => Double,
+    stats: StatsRece ver
+  ): Gate[Un ] =
+    new Gate[Un ] {
+      val underly ng = ava lab l yGate(ava lab l yFromSuccessRate)
+      val ava lab l yGauge =
+        stats.addGauge("ava lab l y") { ava lab l yFromSuccessRate(successRate).toFloat }
+      overr de def apply[U](u: U)( mpl c  asT: <:<[U, Un ]): Boolean = underly ng.apply(u)
     }
 
   /**
-   * Tracks number of successes and failures as counters, and success_rate as a gauge
+   * Tracks number of successes and fa lures as counters, and success_rate as a gauge
    */
-  def observed(stats: StatsReceiver) = {
+  def observed(stats: StatsRece ver) = {
     val successCounter = stats.counter("successes")
-    val failureCounter = stats.counter("failures")
+    val fa lureCounter = stats.counter("fa lures")
     new SuccessRateTracker {
-      private[this] val successRateGauge = stats.addGauge("success_rate")(successRate.toFloat)
-      override def record(successes: Int, failures: Int) = {
-        self.record(successes, failures)
-        successCounter.incr(successes)
-        failureCounter.incr(failures)
+      pr vate[t ] val successRateGauge = stats.addGauge("success_rate")(successRate.toFloat)
+      overr de def record(successes:  nt, fa lures:  nt) = {
+        self.record(successes, fa lures)
+        successCounter. ncr(successes)
+        fa lureCounter. ncr(fa lures)
       }
-      override def successRate = self.successRate
+      overr de def successRate = self.successRate
     }
   }
 }
@@ -54,126 +54,126 @@ trait SuccessRateTracker { self =>
 object SuccessRateTracker {
 
   /**
-   * Track success rate (SR) using [[RecentAverage]]
+   * Track success rate (SR) us ng [[RecentAverage]]
    *
-   * Defaults success rate to 100% which prevents early failures (or periods of 0 data points,
-   * e.g. tracking backend SR during failover) from producing dramatic drops in success rate.
+   * Defaults success rate to 100% wh ch prevents early fa lures (or per ods of 0 data po nts,
+   * e.g. track ng backend SR dur ng fa lover) from produc ng dramat c drops  n success rate.
    *
-   * @param window Window size as duration
+   * @param w ndow W ndow s ze as durat on
    */
-  def recentWindowed(window: Duration) =
-    new AverageSuccessRateTracker(new RecentAverage(window, defaultAverage = 1.0))
+  def recentW ndo d(w ndow: Durat on) =
+    new AverageSuccessRateTracker(new RecentAverage(w ndow, defaultAverage = 1.0))
 
   /**
-   * Track success rate using [[WindowedAverage]]
+   * Track success rate us ng [[W ndo dAverage]]
    *
-   * Initializes the windowedAverage to one window's worth of successes.  This prevents
-   * the problem where early failures produce dramatic drops in the success rate.
+   *  n  al zes t  w ndo dAverage to one w ndow's worth of successes.  T  prevents
+   * t  problem w re early fa lures produce dramat c drops  n t  success rate.
    *
-   * @param windowSize Window size in number of data points
+   * @param w ndowS ze W ndow s ze  n number of data po nts
    */
-  def rollingWindow(windowSize: Int) =
-    new AverageSuccessRateTracker(new WindowedAverage(windowSize, initialValue = Some(1.0)))
+  def roll ngW ndow(w ndowS ze:  nt) =
+    new AverageSuccessRateTracker(new W ndo dAverage(w ndowS ze,  n  alValue = So (1.0)))
 }
 
 /**
- * Tracks success rate using an [[Average]]
+ * Tracks success rate us ng an [[Average]]
  *
- * @param average Strategy for recording an average, usually over a window
+ * @param average Strategy for record ng an average, usually over a w ndow
  */
 class AverageSuccessRateTracker(average: Average) extends SuccessRateTracker {
-  def record(successes: Int, failures: Int): Unit =
-    average.record(successes, successes + failures)
+  def record(successes:  nt, fa lures:  nt): Un  =
+    average.record(successes, successes + fa lures)
 
   def successRate: Double = average.value.getOrElse(1)
 }
 
 /**
- * EwmaSuccessRateTracker computes a failure rate with exponential decay over a time bound.
+ * EwmaSuccessRateTracker computes a fa lure rate w h exponent al decay over a t   bound.
  *
- * @param halfLife determines the rate of decay. Assuming a hypothetical service that is initially
- * 100% successful and then instantly switches to 50% successful, it will take `halfLife` time
- * for this tracker to report a success rate of ~75%.
+ * @param halfL fe determ nes t  rate of decay. Assum ng a hypot t cal serv ce that  s  n  ally
+ * 100% successful and t n  nstantly sw c s to 50% successful,   w ll take `halfL fe` t  
+ * for t  tracker to report a success rate of ~75%.
  */
-class EwmaSuccessRateTracker(halfLife: Duration) extends SuccessRateTracker {
-  // math.exp(-x) = 0.50 when x == ln(2)
-  // math.exp(-x / Tau) == math.exp(-x / halfLife * ln(2)) therefore when x/halfLife == 1, the
-  // decay output is 0.5
-  private[this] val Tau: Double = halfLife.inNanoseconds.toDouble / math.log(2.0)
+class EwmaSuccessRateTracker(halfL fe: Durat on) extends SuccessRateTracker {
+  // math.exp(-x) = 0.50 w n x == ln(2)
+  // math.exp(-x / Tau) == math.exp(-x / halfL fe * ln(2)) t refore w n x/halfL fe == 1, t 
+  // decay output  s 0.5
+  pr vate[t ] val Tau: Double = halfL fe. nNanoseconds.toDouble / math.log(2.0)
 
-  private[this] var stamp: Long = EwmaSuccessRateTracker.nanoTime()
-  private[this] var decayingFailureRate: Double = 0.0
+  pr vate[t ] var stamp: Long = EwmaSuccessRateTracker.nanoT  ()
+  pr vate[t ] var decay ngFa lureRate: Double = 0.0
 
-  def record(successes: Int, failures: Int): Unit = {
-    if (successes < 0 || failures < 0) return
+  def record(successes:  nt, fa lures:  nt): Un  = {
+     f (successes < 0 || fa lures < 0) return
 
-    val total = successes + failures
-    if (total == 0) return
+    val total = successes + fa lures
+     f (total == 0) return
 
-    val observation = (failures.toDouble / total) max 0.0 min 1.0
+    val observat on = (fa lures.toDouble / total) max 0.0 m n 1.0
 
-    synchronized {
-      val time = EwmaSuccessRateTracker.nanoTime()
-      val delta = ((time - stamp) max 0L).toDouble
-      val weight = math.exp(-delta / Tau)
-      decayingFailureRate = (decayingFailureRate * weight) + (observation * (1.0 - weight))
-      stamp = time
+    synchron zed {
+      val t   = EwmaSuccessRateTracker.nanoT  ()
+      val delta = ((t   - stamp) max 0L).toDouble
+      val   ght = math.exp(-delta / Tau)
+      decay ngFa lureRate = (decay ngFa lureRate *   ght) + (observat on * (1.0 -   ght))
+      stamp = t  
     }
   }
 
   /**
-   *  The current success rate computed as the inverse of the failure rate.
+   *  T  current success rate computed as t   nverse of t  fa lure rate.
    */
-  def successRate: Double = 1.0 - failureRate
+  def successRate: Double = 1.0 - fa lureRate
 
-  def failureRate = synchronized { decayingFailureRate }
+  def fa lureRate = synchron zed { decay ngFa lureRate }
 }
 
-private[servo] trait NanoTimeControl {
-  def set(nanoTime: Long): Unit
-  def advance(delta: Long): Unit
-  def advance(delta: Duration): Unit = advance(delta.inNanoseconds)
+pr vate[servo] tra  NanoT  Control {
+  def set(nanoT  : Long): Un 
+  def advance(delta: Long): Un 
+  def advance(delta: Durat on): Un  = advance(delta. nNanoseconds)
 }
 
 object EwmaSuccessRateTracker {
-  private[EwmaSuccessRateTracker] val localNanoTime = new Local[() => Long]
+  pr vate[EwmaSuccessRateTracker] val localNanoT   = new Local[() => Long]
 
-  private[EwmaSuccessRateTracker] def nanoTime(): Long = {
-    localNanoTime() match {
-      case None => System.nanoTime()
-      case Some(f) => f()
+  pr vate[EwmaSuccessRateTracker] def nanoT  (): Long = {
+    localNanoT  () match {
+      case None => System.nanoT  ()
+      case So (f) => f()
     }
   }
 
   /**
-   * Execute body with the time function replaced by `timeFunction`
-   * WARNING: This is only meant for testing purposes.
+   * Execute body w h t  t   funct on replaced by `t  Funct on`
+   * WARN NG: T   s only  ant for test ng purposes.
    */
-  private[this] def withNanoTimeFunction[A](
-    timeFunction: => Long
+  pr vate[t ] def w hNanoT  Funct on[A](
+    t  Funct on: => Long
   )(
-    body: NanoTimeControl => A
+    body: NanoT  Control => A
   ): A = {
-    @volatile var tf = () => timeFunction
+    @volat le var tf = () => t  Funct on
 
-    localNanoTime.let(() => tf()) {
-      val timeControl = new NanoTimeControl {
-        def set(nanoTime: Long): Unit = {
-          tf = () => nanoTime
+    localNanoT  .let(() => tf()) {
+      val t  Control = new NanoT  Control {
+        def set(nanoT  : Long): Un  = {
+          tf = () => nanoT  
         }
-        def advance(delta: Long): Unit = {
-          val newNanoTime = tf() + delta
-          tf = () => newNanoTime
+        def advance(delta: Long): Un  = {
+          val newNanoT   = tf() + delta
+          tf = () => newNanoT  
         }
       }
 
-      body(timeControl)
+      body(t  Control)
     }
   }
 
-  private[this] def withNanoTimeAt[A](nanoTime: Long)(body: NanoTimeControl => A): A =
-    withNanoTimeFunction(nanoTime)(body)
+  pr vate[t ] def w hNanoT  At[A](nanoT  : Long)(body: NanoT  Control => A): A =
+    w hNanoT  Funct on(nanoT  )(body)
 
-  private[servo] def withCurrentNanoTimeFrozen[A](body: NanoTimeControl => A): A =
-    withNanoTimeAt(System.nanoTime())(body)
+  pr vate[servo] def w hCurrentNanoT  Frozen[A](body: NanoT  Control => A): A =
+    w hNanoT  At(System.nanoT  ())(body)
 }

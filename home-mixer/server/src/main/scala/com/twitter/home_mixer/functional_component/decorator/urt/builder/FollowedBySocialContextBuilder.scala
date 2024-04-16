@@ -1,50 +1,50 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.tw ter.ho _m xer.funct onal_component.decorator.urt.bu lder
 
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidFollowedByUserIdsFeature
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.model.Ho Features. nNetworkFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.SGSVal dFollo dByUser dsFeature
+ mport com.tw ter.ho _m xer.product.follow ng.model.Ho M xerExternalStr ngs
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.soc al_context.BaseSoc alContextBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata._
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.product.gu ce.scope.ProductScoped
+ mport com.tw ter.str ngcenter.cl ent.Str ngCenter
+ mport javax. nject. nject
+ mport javax. nject.Prov der
+ mport javax. nject.S ngleton
 
-@Singleton
-case class FollowedBySocialContextBuilder @Inject() (
-  externalStrings: HomeMixerExternalStrings,
-  @ProductScoped stringCenterProvider: Provider[StringCenter])
-    extends BaseSocialContextBuilder[PipelineQuery, TweetCandidate] {
+@S ngleton
+case class Follo dBySoc alContextBu lder @ nject() (
+  externalStr ngs: Ho M xerExternalStr ngs,
+  @ProductScoped str ngCenterProv der: Prov der[Str ngCenter])
+    extends BaseSoc alContextBu lder[P pel neQuery, T etCand date] {
 
-  private val stringCenter = stringCenterProvider.get()
+  pr vate val str ngCenter = str ngCenterProv der.get()
 
-  private val engagerSocialContextBuilder = EngagerSocialContextBuilder(
+  pr vate val engagerSoc alContextBu lder = EngagerSoc alContextBu lder(
     contextType = FollowGeneralContextType,
-    stringCenter = stringCenter,
-    oneUserString = externalStrings.socialContextOneUserFollowsString,
-    twoUsersString = externalStrings.socialContextTwoUsersFollowString,
-    moreUsersString = externalStrings.socialContextMoreUsersFollowString,
-    timelineTitle = externalStrings.socialContextFollowedByTimelineTitle
+    str ngCenter = str ngCenter,
+    oneUserStr ng = externalStr ngs.soc alContextOneUserFollowsStr ng,
+    twoUsersStr ng = externalStr ngs.soc alContextTwoUsersFollowStr ng,
+    moreUsersStr ng = externalStr ngs.soc alContextMoreUsersFollowStr ng,
+    t  l neT le = externalStr ngs.soc alContextFollo dByT  l neT le
   )
 
   def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[SocialContext] = {
-    // Only apply followed-by social context for OON Tweets
-    val inNetwork = candidateFeatures.getOrElse(InNetworkFeature, true)
-    if (!inNetwork) {
-      val validFollowedByUserIds =
-        candidateFeatures.getOrElse(SGSValidFollowedByUserIdsFeature, Nil)
-      engagerSocialContextBuilder(
-        socialContextIds = validFollowedByUserIds,
+    query: P pel neQuery,
+    cand date: T etCand date,
+    cand dateFeatures: FeatureMap
+  ): Opt on[Soc alContext] = {
+    // Only apply follo d-by soc al context for OON T ets
+    val  nNetwork = cand dateFeatures.getOrElse( nNetworkFeature, true)
+     f (! nNetwork) {
+      val val dFollo dByUser ds =
+        cand dateFeatures.getOrElse(SGSVal dFollo dByUser dsFeature, N l)
+      engagerSoc alContextBu lder(
+        soc alContext ds = val dFollo dByUser ds,
         query = query,
-        candidateFeatures = candidateFeatures
+        cand dateFeatures = cand dateFeatures
       )
     } else {
       None

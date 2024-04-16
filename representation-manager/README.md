@@ -1,4 +1,4 @@
-# Representation Manager #
+# Representat on Manager #
 
-**Representation Manager** (RMS) serves as a centralized embedding management system, providing SimClusters or other embeddings as facade of the underlying storage or services. 
+**Representat on Manager** (RMS) serves as a central zed embedd ng manage nt system, prov d ng S mClusters or ot r embedd ngs as facade of t  underly ng storage or serv ces. 
 

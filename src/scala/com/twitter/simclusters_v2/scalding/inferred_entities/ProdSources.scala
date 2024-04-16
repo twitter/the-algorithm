@@ -1,94 +1,94 @@
-package com.twitter.simclusters_v2.scalding.inferred_entities
+package com.tw ter.s mclusters_v2.scald ng. nferred_ent  es
 
-import com.twitter.scalding.{DateRange, Days, TypedPipe}
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.{ModelVersions, SemanticCoreEntityId, UserId}
-import com.twitter.simclusters_v2.hdfs_sources.{
-  SimclustersInferredEntitiesFromKnownForScalaDataset,
-  SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
-  SimclustersV2InterestedInScalaDataset,
-  SimclustersV2KnownFor20M145KDec11ScalaDataset,
-  SimclustersV2KnownFor20M145KUpdatedScalaDataset,
-  UserUserNormalizedGraphScalaDataset
+ mport com.tw ter.scald ng.{DateRange, Days, TypedP pe}
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.{Expl c Locat on, ProcAtla}
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.common.{ModelVers ons, Semant cCoreEnt y d, User d}
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.{
+  S mclusters nferredEnt  esFromKnownForScalaDataset,
+  S mclustersV2 nterested n20M145KUpdatedScalaDataset,
+  S mclustersV2 nterested nScalaDataset,
+  S mclustersV2KnownFor20M145KDec11ScalaDataset,
+  S mclustersV2KnownFor20M145KUpdatedScalaDataset,
+  UserUserNormal zedGraphScalaDataset
 }
-import com.twitter.simclusters_v2.scalding.KnownForSources
-import com.twitter.simclusters_v2.thriftscala.{
-  EntitySource,
-  SimClusterWithScore,
-  SimClustersSource,
-  TopSimClustersWithScore,
-  UserAndNeighbors
+ mport com.tw ter.s mclusters_v2.scald ng.KnownForS ces
+ mport com.tw ter.s mclusters_v2.thr ftscala.{
+  Ent yS ce,
+  S mClusterW hScore,
+  S mClustersS ce,
+  TopS mClustersW hScore,
+  UserAndNe ghbors
 }
-import java.util.TimeZone
+ mport java.ut l.T  Zone
 
 /**
- * Convenience functions to read data from prod.
+ * Conven ence funct ons to read data from prod.
  */
-object ProdSources {
+object ProdS ces {
 
-  // Returns the Dec11 KnownFor from production
-  def getDec11KnownFor(implicit tz: TimeZone): TypedPipe[(UserId, Seq[SimClusterWithScore])] =
-    KnownForSources
+  // Returns t  Dec11 KnownFor from product on
+  def getDec11KnownFor( mpl c  tz: T  Zone): TypedP pe[(User d, Seq[S mClusterW hScore])] =
+    KnownForS ces
       .readDALDataset(
-        SimclustersV2KnownFor20M145KDec11ScalaDataset,
+        S mclustersV2KnownFor20M145KDec11ScalaDataset,
         Days(30),
-        ModelVersions.Model20M145KDec11)
+        ModelVers ons.Model20M145KDec11)
       .map {
-        case (userId, clustersArray) =>
+        case (user d, clustersArray) =>
           val clusters = clustersArray.map {
-            case (clusterId, score) => SimClusterWithScore(clusterId, score)
+            case (cluster d, score) => S mClusterW hScore(cluster d, score)
           }.toSeq
-          (userId, clusters)
+          (user d, clusters)
       }
 
-  // Returns the Updated KnownFor from production
-  def getUpdatedKnownFor(implicit tz: TimeZone): TypedPipe[(UserId, Seq[SimClusterWithScore])] =
-    KnownForSources
+  // Returns t  Updated KnownFor from product on
+  def getUpdatedKnownFor( mpl c  tz: T  Zone): TypedP pe[(User d, Seq[S mClusterW hScore])] =
+    KnownForS ces
       .readDALDataset(
-        SimclustersV2KnownFor20M145KUpdatedScalaDataset,
+        S mclustersV2KnownFor20M145KUpdatedScalaDataset,
         Days(30),
-        ModelVersions.Model20M145KUpdated
+        ModelVers ons.Model20M145KUpdated
       )
       .map {
-        case (userId, clustersArray) =>
+        case (user d, clustersArray) =>
           val clusters = clustersArray.map {
-            case (clusterId, score) => SimClusterWithScore(clusterId, score)
+            case (cluster d, score) => S mClusterW hScore(cluster d, score)
           }.toSeq
-          (userId, clusters)
+          (user d, clusters)
       }
 
-  def getInferredEntitiesFromKnownFor(
-    inferredFromCluster: SimClustersSource,
-    inferredFromEntity: EntitySource,
+  def get nferredEnt  esFromKnownFor(
+     nferredFromCluster: S mClustersS ce,
+     nferredFromEnt y: Ent yS ce,
     dateRange: DateRange
-  ): TypedPipe[(UserId, Seq[(SemanticCoreEntityId, Double)])] = {
+  ): TypedP pe[(User d, Seq[(Semant cCoreEnt y d, Double)])] = {
     DAL
-      .readMostRecentSnapshot(SimclustersInferredEntitiesFromKnownForScalaDataset, dateRange)
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .readMostRecentSnapshot(S mclusters nferredEnt  esFromKnownForScalaDataset, dateRange)
+      .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+      .toTypedP pe
       .map {
-        case KeyVal(userId, entities) =>
-          val validEntities =
-            entities.entities
+        case KeyVal(user d, ent  es) =>
+          val val dEnt  es =
+            ent  es.ent  es
               .collect {
-                case entity
-                    if entity.entitySource.contains(inferredFromEntity) &&
-                      entity.simclusterSource.contains(inferredFromCluster) =>
-                  (entity.entityId, entity.score)
+                case ent y
+                     f ent y.ent yS ce.conta ns( nferredFromEnt y) &&
+                      ent y.s mclusterS ce.conta ns( nferredFromCluster) =>
+                  (ent y.ent y d, ent y.score)
               }
               .groupBy(_._1)
-              .map { case (entityId, scores) => (entityId, scores.map(_._2).max) }
+              .map { case (ent y d, scores) => (ent y d, scores.map(_._2).max) }
               .toSeq
-          (userId, validEntities)
+          (user d, val dEnt  es)
       }
   }
 
-  def getUserUserEngagementGraph(dateRange: DateRange): TypedPipe[UserAndNeighbors] = {
+  def getUserUserEngage ntGraph(dateRange: DateRange): TypedP pe[UserAndNe ghbors] = {
     DAL
-      .readMostRecentSnapshot(UserUserNormalizedGraphScalaDataset, dateRange)
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .readMostRecentSnapshot(UserUserNormal zedGraphScalaDataset, dateRange)
+      .w hRemoteReadPol cy(Expl c Locat on(ProcAtla))
+      .toTypedP pe
   }
 }

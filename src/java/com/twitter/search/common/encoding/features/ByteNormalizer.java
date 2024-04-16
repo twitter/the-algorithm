@@ -1,38 +1,38 @@
-package com.twitter.search.common.encoding.features;
+package com.tw ter.search.common.encod ng.features;
 
 /**
- * Interface for compressing unbounded float values to a signed byte. It includes both
- * normalization of values and encoding of values in a byte.
+ *  nterface for compress ng unbounded float values to a s gned byte.    ncludes both
+ * normal zat on of values and encod ng of values  n a byte.
  */
-public abstract class ByteNormalizer {
-  public static byte intToUnsignedByte(int i) {
-    return (byte) i;
+publ c abstract class ByteNormal zer {
+  publ c stat c byte  ntToUns gnedByte( nt  ) {
+    return (byte)  ;
   }
 
-  public static int unsignedByteToInt(byte b) {
-    return (int) b & 0xFF;
+  publ c stat c  nt uns gnedByteTo nt(byte b) {
+    return ( nt) b & 0xFF;
   }
 
   /**
-   * Returns the byte-compressed value of {@code val}.
+   * Returns t  byte-compressed value of {@code val}.
    */
-  public abstract byte normalize(double val);
+  publ c abstract byte normal ze(double val);
 
   /**
-   * Returns a lower bound to the unnormalized range of {@code norm}.
+   * Returns a lo r bound to t  unnormal zed range of {@code norm}.
    */
-  public abstract double unnormLowerBound(byte norm);
+  publ c abstract double unnormLo rBound(byte norm);
 
   /**
-   * Returns an upper bound to the unnormalized range of {@code norm}.
+   * Returns an upper bound to t  unnormal zed range of {@code norm}.
    */
-  public abstract double unnormUpperBound(byte norm);
+  publ c abstract double unnormUpperBound(byte norm);
 
   /**
-   * Returns true if the normalized value of {@code val} is different than the normalized value of
+   * Returns true  f t  normal zed value of {@code val}  s d fferent than t  normal zed value of
    * {@code val - 1}
    */
-  public boolean changedNorm(double val) {
-    return normalize(val) != normalize(val - 1);
+  publ c boolean changedNorm(double val) {
+    return normal ze(val) != normal ze(val - 1);
   }
 }

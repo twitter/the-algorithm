@@ -1,119 +1,119 @@
-package com.twitter.timelineranker.util
+package com.tw ter.t  l neranker.ut l
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.Store
-import com.twitter.timelineranker.contentfeatures.ContentFeaturesProvider
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.timelines.util.FutureUtils
-import com.twitter.timelines.util.stats.FutureObserver
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.storehaus.Store
+ mport com.tw ter.t  l neranker.contentfeatures.ContentFeaturesProv der
+ mport com.tw ter.t  l neranker.model.RecapQuery
+ mport com.tw ter.t  l neranker.recap.model.ContentFeatures
+ mport com.tw ter.t  l nes.model.T et d
+ mport com.tw ter.t  l nes.ut l.Fa lOpenHandler
+ mport com.tw ter.t  l nes.ut l.FutureUt ls
+ mport com.tw ter.t  l nes.ut l.stats.FutureObserver
+ mport com.tw ter.ut l.Future
 
-object CachingContentFeaturesProvider {
-  private sealed trait CacheResult
-  private object CacheFailure extends CacheResult
-  private object CacheMiss extends CacheResult
-  private case class CacheHit(t: ContentFeatures) extends CacheResult
-  def isHit(result: CacheResult): Boolean = result != CacheMiss && result != CacheFailure
-  def isMiss(result: CacheResult): Boolean = result == CacheMiss
+object Cach ngContentFeaturesProv der {
+  pr vate sealed tra  Cac Result
+  pr vate object Cac Fa lure extends Cac Result
+  pr vate object Cac M ss extends Cac Result
+  pr vate case class Cac H (t: ContentFeatures) extends Cac Result
+  def  sH (result: Cac Result): Boolean = result != Cac M ss && result != Cac Fa lure
+  def  sM ss(result: Cac Result): Boolean = result == Cac M ss
 }
 
-class CachingContentFeaturesProvider(
-  underlying: ContentFeaturesProvider,
-  contentFeaturesCache: Store[TweetId, ContentFeatures],
-  statsReceiver: StatsReceiver)
-    extends ContentFeaturesProvider {
-  import CachingContentFeaturesProvider._
+class Cach ngContentFeaturesProv der(
+  underly ng: ContentFeaturesProv der,
+  contentFeaturesCac : Store[T et d, ContentFeatures],
+  statsRece ver: StatsRece ver)
+    extends ContentFeaturesProv der {
+   mport Cach ngContentFeaturesProv der._
 
-  private val scopedStatsReceiver = statsReceiver.scope("CachingContentFeaturesProvider")
-  private val cacheScope = scopedStatsReceiver.scope("cache")
-  private val cacheReadsCounter = cacheScope.counter("reads")
-  private val cacheReadFailOpenHandler = new FailOpenHandler(cacheScope.scope("reads"))
-  private val cacheHitsCounter = cacheScope.counter("hits")
-  private val cacheMissesCounter = cacheScope.counter("misses")
-  private val cacheFailuresCounter = cacheScope.counter("failures")
-  private val cacheWritesCounter = cacheScope.counter("writes")
-  private val cacheWriteObserver = FutureObserver(cacheScope.scope("writes"))
-  private val underlyingScope = scopedStatsReceiver.scope("underlying")
-  private val underlyingReadsCounter = underlyingScope.counter("reads")
+  pr vate val scopedStatsRece ver = statsRece ver.scope("Cach ngContentFeaturesProv der")
+  pr vate val cac Scope = scopedStatsRece ver.scope("cac ")
+  pr vate val cac ReadsCounter = cac Scope.counter("reads")
+  pr vate val cac ReadFa lOpenHandler = new Fa lOpenHandler(cac Scope.scope("reads"))
+  pr vate val cac H sCounter = cac Scope.counter("h s")
+  pr vate val cac M ssesCounter = cac Scope.counter("m sses")
+  pr vate val cac Fa luresCounter = cac Scope.counter("fa lures")
+  pr vate val cac Wr esCounter = cac Scope.counter("wr es")
+  pr vate val cac Wr eObserver = FutureObserver(cac Scope.scope("wr es"))
+  pr vate val underly ngScope = scopedStatsRece ver.scope("underly ng")
+  pr vate val underly ngReadsCounter = underly ngScope.counter("reads")
 
-  override def apply(
+  overr de def apply(
     query: RecapQuery,
-    tweetIds: Seq[TweetId]
-  ): Future[Map[TweetId, ContentFeatures]] = {
-    if (tweetIds.nonEmpty) {
-      val distinctTweetIds = tweetIds.toSet
-      readFromCache(distinctTweetIds).flatMap { cacheResultsFuture =>
-        val (resultsFromCache, missedTweetIds) = partitionHitsMisses(cacheResultsFuture)
+    t et ds: Seq[T et d]
+  ): Future[Map[T et d, ContentFeatures]] = {
+     f (t et ds.nonEmpty) {
+      val d st nctT et ds = t et ds.toSet
+      readFromCac (d st nctT et ds).flatMap { cac ResultsFuture =>
+        val (resultsFromCac , m ssedT et ds) = part  onH sM sses(cac ResultsFuture)
 
-        if (missedTweetIds.nonEmpty) {
-          underlyingReadsCounter.incr(missedTweetIds.size)
-          val resultsFromUnderlyingFu = underlying(query, missedTweetIds)
-          resultsFromUnderlyingFu.onSuccess(writeToCache)
-          resultsFromUnderlyingFu
-            .map(resultsFromUnderlying => resultsFromCache ++ resultsFromUnderlying)
+         f (m ssedT et ds.nonEmpty) {
+          underly ngReadsCounter. ncr(m ssedT et ds.s ze)
+          val resultsFromUnderly ngFu = underly ng(query, m ssedT et ds)
+          resultsFromUnderly ngFu.onSuccess(wr eToCac )
+          resultsFromUnderly ngFu
+            .map(resultsFromUnderly ng => resultsFromCac  ++ resultsFromUnderly ng)
         } else {
-          Future.value(resultsFromCache)
+          Future.value(resultsFromCac )
         }
       }
     } else {
-      FutureUtils.EmptyMap
+      FutureUt ls.EmptyMap
     }
   }
 
-  private def readFromCache(tweetIds: Set[TweetId]): Future[Seq[(TweetId, CacheResult)]] = {
-    cacheReadsCounter.incr(tweetIds.size)
+  pr vate def readFromCac (t et ds: Set[T et d]): Future[Seq[(T et d, Cac Result)]] = {
+    cac ReadsCounter. ncr(t et ds.s ze)
     Future.collect(
-      contentFeaturesCache
-        .multiGet(tweetIds)
+      contentFeaturesCac 
+        .mult Get(t et ds)
         .toSeq
         .map {
-          case (tweetId, cacheResultOptionFuture) =>
-            cacheReadFailOpenHandler(
-              cacheResultOptionFuture.map {
-                case Some(t: ContentFeatures) => tweetId -> CacheHit(t)
-                case None => tweetId -> CacheMiss
+          case (t et d, cac ResultOpt onFuture) =>
+            cac ReadFa lOpenHandler(
+              cac ResultOpt onFuture.map {
+                case So (t: ContentFeatures) => t et d -> Cac H (t)
+                case None => t et d -> Cac M ss
               }
-            ) { _: Throwable => Future.value(tweetId -> CacheFailure) }
+            ) { _: Throwable => Future.value(t et d -> Cac Fa lure) }
         }
     )
   }
 
-  private def partitionHitsMisses(
-    cacheResults: Seq[(TweetId, CacheResult)]
-  ): (Map[TweetId, ContentFeatures], Seq[TweetId]) = {
-    val (hits, missesAndFailures) = cacheResults.partition {
-      case (_, cacheResult) => isHit(cacheResult)
+  pr vate def part  onH sM sses(
+    cac Results: Seq[(T et d, Cac Result)]
+  ): (Map[T et d, ContentFeatures], Seq[T et d]) = {
+    val (h s, m ssesAndFa lures) = cac Results.part  on {
+      case (_, cac Result) =>  sH (cac Result)
     }
 
-    val (misses, cacheFailures) = missesAndFailures.partition {
-      case (_, cacheResult) => isMiss(cacheResult)
+    val (m sses, cac Fa lures) = m ssesAndFa lures.part  on {
+      case (_, cac Result) =>  sM ss(cac Result)
     }
 
-    val cacheHits = hits.collect { case (tweetId, CacheHit(t)) => (tweetId, t) }.toMap
-    val cacheMisses = misses.collect { case (tweetId, _) => tweetId }
+    val cac H s = h s.collect { case (t et d, Cac H (t)) => (t et d, t) }.toMap
+    val cac M sses = m sses.collect { case (t et d, _) => t et d }
 
-    cacheHitsCounter.incr(cacheHits.size)
-    cacheMissesCounter.incr(cacheMisses.size)
-    cacheFailuresCounter.incr(cacheFailures.size)
+    cac H sCounter. ncr(cac H s.s ze)
+    cac M ssesCounter. ncr(cac M sses.s ze)
+    cac Fa luresCounter. ncr(cac Fa lures.s ze)
 
-    (cacheHits, cacheMisses)
+    (cac H s, cac M sses)
   }
 
-  private def writeToCache(results: Map[TweetId, ContentFeatures]): Unit = {
-    if (results.nonEmpty) {
-      cacheWritesCounter.incr(results.size)
-      val indexedResults = results.map {
-        case (tweetId, contentFeatures) =>
-          (tweetId, Some(contentFeatures))
+  pr vate def wr eToCac (results: Map[T et d, ContentFeatures]): Un  = {
+     f (results.nonEmpty) {
+      cac Wr esCounter. ncr(results.s ze)
+      val  ndexedResults = results.map {
+        case (t et d, contentFeatures) =>
+          (t et d, So (contentFeatures))
       }
-      contentFeaturesCache
-        .multiPut(indexedResults)
+      contentFeaturesCac 
+        .mult Put( ndexedResults)
         .map {
           case (_, statusFu) =>
-            cacheWriteObserver(statusFu)
+            cac Wr eObserver(statusFu)
         }
     }
   }

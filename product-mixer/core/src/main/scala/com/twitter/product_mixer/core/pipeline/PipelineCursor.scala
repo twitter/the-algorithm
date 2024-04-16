@@ -1,37 +1,37 @@
-package com.twitter.product_mixer.core.pipeline
+package com.tw ter.product_m xer.core.p pel ne
 
 /**
- * PipelineCursor represents any product-specific cursor model. Typically the PipelineCursor will be
- * a de-serialized base 64 thrift struct from initial request.
+ * P pel neCursor represents any product-spec f c cursor model. Typ cally t  P pel neCursor w ll be
+ * a de-ser al zed base 64 thr ft struct from  n  al request.
  */
-trait PipelineCursor
+tra  P pel neCursor
 
 /**
- * HasPipelineCursor indicates that a [[PipelineQuery]] has a cursor
+ * HasP pel neCursor  nd cates that a [[P pel neQuery]] has a cursor
  */
-trait HasPipelineCursor[+Cursor <: PipelineCursor] {
-  def pipelineCursor: Option[Cursor]
+tra  HasP pel neCursor[+Cursor <: P pel neCursor] {
+  def p pel neCursor: Opt on[Cursor]
 
   /**
-   * If the cursor is not present, this typically means that we are on the first page
+   *  f t  cursor  s not present, t  typ cally  ans that   are on t  f rst page
    */
-  def isFirstPage: Boolean = pipelineCursor.isEmpty
+  def  sF rstPage: Boolean = p pel neCursor. sEmpty
 }
 
 /**
- * UrtPipelineCursor represents a URT product-specific cursor model. Typically the UrtPipelineCursor
- * will be a de-serialized base 64 thrift struct from initial request.
+ * UrtP pel neCursor represents a URT product-spec f c cursor model. Typ cally t  UrtP pel neCursor
+ * w ll be a de-ser al zed base 64 thr ft struct from  n  al request.
  */
-trait UrtPipelineCursor extends PipelineCursor {
+tra  UrtP pel neCursor extends P pel neCursor {
 
-  /** See [[UrtCursorBuilder]] for background on building initialSortIndex */
-  def initialSortIndex: Long
+  /** See [[UrtCursorBu lder]] for background on bu ld ng  n  alSort ndex */
+  def  n  alSort ndex: Long
 }
 
-object UrtPipelineCursor {
-  def getCursorInitialSortIndex(query: PipelineQuery with HasPipelineCursor[_]): Option[Long] = {
-    query.pipelineCursor match {
-      case Some(cursor: UrtPipelineCursor) => Some(cursor.initialSortIndex)
+object UrtP pel neCursor {
+  def getCursor n  alSort ndex(query: P pel neQuery w h HasP pel neCursor[_]): Opt on[Long] = {
+    query.p pel neCursor match {
+      case So (cursor: UrtP pel neCursor) => So (cursor. n  alSort ndex)
       case _ => None
     }
   }

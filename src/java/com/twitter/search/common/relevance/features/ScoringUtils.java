@@ -1,23 +1,23 @@
-package com.twitter.search.common.relevance.features;
+package com.tw ter.search.common.relevance.features;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
 /**
- * Scoring utilities
+ * Scor ng ut l  es
  */
-public final class ScoringUtils {
-  private ScoringUtils() { }
+publ c f nal class Scor ngUt ls {
+  pr vate Scor ngUt ls() { }
 
   /**
-   * normalize a positive value of arbitrary range to [0.0, 1.0], with a slop
-   * @param value the value to normalize.
-   * @param halfval a reference value that will be normalized to 0.5
-   * @param exp an exponential parameter (must be positive) to control the converging speed,
-   * the smaller the value the faster it reaches the halfval but slower it reaches the maximum.
-   * @return a normalized value
+   * normal ze a pos  ve value of arb rary range to [0.0, 1.0], w h a slop
+   * @param value t  value to normal ze.
+   * @param halfval a reference value that w ll be normal zed to 0.5
+   * @param exp an exponent al para ter (must be pos  ve) to control t  converg ng speed,
+   * t  smaller t  value t  faster   reac s t  halfval but slo r   reac s t  max mum.
+   * @return a normal zed value
    */
-  public static float normalize(float value, double halfval, double exp) {
-    Preconditions.checkArgument(exp > 0.0 && exp <= 1.0);
+  publ c stat c float normal ze(float value, double halfval, double exp) {
+    Precond  ons.c ckArgu nt(exp > 0.0 && exp <= 1.0);
     return (float) (Math.pow(value, exp) / (Math.pow(value, exp) + Math.pow(halfval, exp)));
   }
 

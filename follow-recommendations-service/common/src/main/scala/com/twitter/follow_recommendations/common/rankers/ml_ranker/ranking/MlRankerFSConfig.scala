@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.ranking
+package com.tw ter.follow_recom ndat ons.common.rankers.ml_ranker.rank ng
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSParam
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport com.tw ter.follow_recom ndat ons.conf gap .common.FeatureSw chConf g
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
-@Singleton
-class MlRankerFSConfig @Inject() extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[FSParam[Boolean]] =
-    Seq(MlRankerParams.ScribeRankingInfoInMlRanker)
+@S ngleton
+class MlRankerFSConf g @ nject() extends FeatureSw chConf g {
+  overr de val booleanFSParams: Seq[FSParam[Boolean]] =
+    Seq(MlRankerParams.Scr beRank ng nfo nMlRanker)
 }

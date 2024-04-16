@@ -1,141 +1,141 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+ mport java. o.F le;
+ mport java. o. OExcept on;
+ mport java.ut l.concurrent.T  Un ;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons. o.F leUt ls;
+ mport org.apac .commons. o. OUt ls;
+ mport org.apac .hadoop.fs.F leStatus;
+ mport org.apac .hadoop.fs.F leSystem;
+ mport org.apac .hadoop.fs.Path;
+ mport org.apac .lucene.store.D rectory;
+ mport org.apac .lucene.store.FSD rectory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.Timer;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.util.io.flushable.PersistentFile;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.FlushVersionMismatchException;
-import com.twitter.search.earlybird.stats.SegmentSyncStats;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common. tr cs.T  r;
+ mport com.tw ter.search.common.part  on ng.snowflakeparser.Snowflake dParser;
+ mport com.tw ter.search.common.ut l. o.flushable.Pers stentF le;
+ mport com.tw ter.search.earlyb rd.except on.Cr  calExcept onHandler;
+ mport com.tw ter.search.earlyb rd.except on.FlushVers onM smatchExcept on;
+ mport com.tw ter.search.earlyb rd.stats.Seg ntSyncStats;
 
-public class SegmentLoader {
-  private static final Logger LOG = LoggerFactory.getLogger(SegmentLoader.class);
-  private static final SegmentSyncStats SEGMENT_LOAD_FROM_HDFS_STATS =
-      new SegmentSyncStats("load_from_hdfs");
+publ c class Seg ntLoader {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Seg ntLoader.class);
+  pr vate stat c f nal Seg ntSyncStats SEGMENT_LOAD_FROM_HDFS_STATS =
+      new Seg ntSyncStats("load_from_hdfs");
 
-  private final CriticalExceptionHandler criticalExceptionHandler;
-  private final SegmentSyncConfig segmentSyncConfig;
+  pr vate f nal Cr  calExcept onHandler cr  calExcept onHandler;
+  pr vate f nal Seg ntSyncConf g seg ntSyncConf g;
 
-  private final Clock clock;
+  pr vate f nal Clock clock;
 
-  public SegmentLoader(SegmentSyncConfig sync,
-                       CriticalExceptionHandler criticalExceptionHandler) {
-    this(sync, criticalExceptionHandler, Clock.SYSTEM_CLOCK);
+  publ c Seg ntLoader(Seg ntSyncConf g sync,
+                       Cr  calExcept onHandler cr  calExcept onHandler) {
+    t (sync, cr  calExcept onHandler, Clock.SYSTEM_CLOCK);
   }
 
-  public SegmentLoader(SegmentSyncConfig sync,
-                       CriticalExceptionHandler criticalExceptionHandler,
+  publ c Seg ntLoader(Seg ntSyncConf g sync,
+                       Cr  calExcept onHandler cr  calExcept onHandler,
                        Clock clock) {
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.segmentSyncConfig = sync;
-    this.clock = clock;
+    t .cr  calExcept onHandler = cr  calExcept onHandler;
+    t .seg ntSyncConf g = sync;
+    t .clock = clock;
   }
 
-  public boolean load(SegmentInfo segmentInfo) {
-    return downloadSegment(segmentInfo) && loadSegmentFromDisk(segmentInfo);
+  publ c boolean load(Seg nt nfo seg nt nfo) {
+    return downloadSeg nt(seg nt nfo) && loadSeg ntFromD sk(seg nt nfo);
   }
 
   /**
-   * Determines if the Earlybird should attempt to download the given segment from HDFS. This
-   * returns true if the segment is not already present on local disk, and the segment does exist
+   * Determ nes  f t  Earlyb rd should attempt to download t  g ven seg nt from HDFS. T 
+   * returns true  f t  seg nt  s not already present on local d sk, and t  seg nt does ex st
    * on HDFS.
    */
-  public boolean shouldDownloadSegmentWhileInServerSet(SegmentInfo segmentInfo) {
-    if (isValidSegmentOnDisk(segmentInfo)) {
+  publ c boolean shouldDownloadSeg ntWh le nServerSet(Seg nt nfo seg nt nfo) {
+     f ( sVal dSeg ntOnD sk(seg nt nfo)) {
       return false;
     }
-    try (FileSystem fs = HdfsUtil.getHdfsFileSystem()) {
-      return HdfsUtil.segmentExistsOnHdfs(fs, segmentInfo);
-    } catch (IOException e) {
-      LOG.error("Failed to check HDFS for segment " + segmentInfo, e);
+    try (F leSystem fs = HdfsUt l.getHdfsF leSystem()) {
+      return HdfsUt l.seg ntEx stsOnHdfs(fs, seg nt nfo);
+    } catch ( OExcept on e) {
+      LOG.error("Fa led to c ck HDFS for seg nt " + seg nt nfo, e);
       return false;
     }
   }
 
   /**
-   * Verifies if the data for the given segment is present on the local disk, and if it's not,
-   * downloads it from HDFS.
+   * Ver f es  f t  data for t  g ven seg nt  s present on t  local d sk, and  f  's not,
+   * downloads   from HDFS.
    */
-  public boolean downloadSegment(SegmentInfo segmentInfo) {
-    if (!segmentInfo.isEnabled()) {
-      LOG.debug("Segment is disabled: " + segmentInfo);
+  publ c boolean downloadSeg nt(Seg nt nfo seg nt nfo) {
+     f (!seg nt nfo. sEnabled()) {
+      LOG.debug("Seg nt  s d sabled: " + seg nt nfo);
       return false;
     }
 
-    if (segmentInfo.isIndexing() || segmentInfo.getSyncInfo().isLoaded()) {
-      LOG.debug("Cannot load indexing or loaded segment: " + segmentInfo);
+     f (seg nt nfo. s ndex ng() || seg nt nfo.getSync nfo(). sLoaded()) {
+      LOG.debug("Cannot load  ndex ng or loaded seg nt: " + seg nt nfo);
       return false;
     }
 
-    // Return whether the appropriate version is on disk, and if not, download it from HDFS.
-    return isValidSegmentOnDisk(segmentInfo) || checkSegmentOnHdfsAndCopyLocally(segmentInfo);
+    // Return w t r t  appropr ate vers on  s on d sk, and  f not, download   from HDFS.
+    return  sVal dSeg ntOnD sk(seg nt nfo) || c ckSeg ntOnHdfsAndCopyLocally(seg nt nfo);
   }
 
   /**
-   * Loads the data for the given segment from the local disk.
+   * Loads t  data for t  g ven seg nt from t  local d sk.
    */
-  public boolean loadSegmentFromDisk(SegmentInfo segmentInfo) {
-    if (segmentInfo.isIndexing()) {
-      LOG.error("Tried to load current segment!");
+  publ c boolean loadSeg ntFromD sk(Seg nt nfo seg nt nfo) {
+     f (seg nt nfo. s ndex ng()) {
+      LOG.error("Tr ed to load current seg nt!");
       return false;
     }
 
-    segmentInfo.setIndexing(true);
+    seg nt nfo.set ndex ng(true);
     try {
-      File flushDir = new File(segmentInfo.getSyncInfo().getLocalSyncDir());
-      Directory loadDir = FSDirectory.open(flushDir.toPath());
+      F le flushD r = new F le(seg nt nfo.getSync nfo().getLocalSyncD r());
+      D rectory loadD r = FSD rectory.open(flushD r.toPath());
 
-      segmentInfo.load(loadDir);
+      seg nt nfo.load(loadD r);
 
-      if (!verifySegmentStatusCountLargeEnough(segmentInfo)) {
+       f (!ver fySeg ntStatusCountLargeEnough(seg nt nfo)) {
         SearchRateCounter.export(
-            "segment_loader_failed_too_few_tweets_in_segment_" + segmentInfo.getSegmentName())
-            .increment();
+            "seg nt_loader_fa led_too_few_t ets_ n_seg nt_" + seg nt nfo.getSeg ntNa ())
+            . ncre nt();
         return false;
       }
 
-      segmentInfo.setIndexing(false);
-      segmentInfo.setComplete(true);
-      segmentInfo.getSyncInfo().setLoaded(true);
+      seg nt nfo.set ndex ng(false);
+      seg nt nfo.setComplete(true);
+      seg nt nfo.getSync nfo().setLoaded(true);
       return true;
-    } catch (FlushVersionMismatchException e) {
-      handleException(segmentInfo, e);
-      // If earlybird is in starting state, handler will terminate it
-      criticalExceptionHandler.handle(this, e);
-    } catch (Exception e) {
-      handleException(segmentInfo, e);
+    } catch (FlushVers onM smatchExcept on e) {
+      handleExcept on(seg nt nfo, e);
+      //  f earlyb rd  s  n start ng state, handler w ll term nate  
+      cr  calExcept onHandler.handle(t , e);
+    } catch (Except on e) {
+      handleExcept on(seg nt nfo, e);
     }
 
-    SearchRateCounter.export("segment_loader_failed_" + segmentInfo.getSegmentName()).increment();
+    SearchRateCounter.export("seg nt_loader_fa led_" + seg nt nfo.getSeg ntNa ()). ncre nt();
     return false;
   }
 
-  // Check to see if the segment exists on disk, and its checksum passes.
-  private boolean isValidSegmentOnDisk(SegmentInfo segment) {
-    String loadDirStr = segment.getSyncInfo().getLocalSyncDir();
-    File loadDir = new File(loadDirStr);
+  // C ck to see  f t  seg nt ex sts on d sk, and  s c cksum passes.
+  pr vate boolean  sVal dSeg ntOnD sk(Seg nt nfo seg nt) {
+    Str ng loadD rStr = seg nt.getSync nfo().getLocalSyncD r();
+    F le loadD r = new F le(loadD rStr);
 
-    if (!loadDir.exists()) {
+     f (!loadD r.ex sts()) {
       return false;
     }
 
-    for (String persistentFileName : segmentSyncConfig.getPersistentFileNames(segment)) {
-      if (!verifyInfoChecksum(loadDir, persistentFileName)) {
+    for (Str ng pers stentF leNa  : seg ntSyncConf g.getPers stentF leNa s(seg nt)) {
+       f (!ver fy nfoC cksum(loadD r, pers stentF leNa )) {
         return false;
       }
     }
@@ -143,158 +143,158 @@ public class SegmentLoader {
     return true;
   }
 
-  private static boolean verifyInfoChecksum(File loadDir, String databaseName) {
-    if (checksumFileExists(loadDir, databaseName)) {
+  pr vate stat c boolean ver fy nfoC cksum(F le loadD r, Str ng databaseNa ) {
+     f (c cksumF leEx sts(loadD r, databaseNa )) {
       try {
-        Directory dir = FSDirectory.open(loadDir.toPath());
-        PersistentFile.Reader reader = PersistentFile.getReader(dir, databaseName);
+        D rectory d r = FSD rectory.open(loadD r.toPath());
+        Pers stentF le.Reader reader = Pers stentF le.getReader(d r, databaseNa );
         try {
-          reader.verifyInfoChecksum();
+          reader.ver fy nfoC cksum();
           return true;
-        } finally {
-          IOUtils.closeQuietly(reader);
-          IOUtils.closeQuietly(dir);
+        } f nally {
+           OUt ls.closeQu etly(reader);
+           OUt ls.closeQu etly(d r);
         }
-      } catch (PersistentFile.CorruptFileException e) {
-        LOG.error("Failed checksum verification.", e);
-      } catch (IOException e) {
-        LOG.error("Error while trying to read checksum file", e);
+      } catch (Pers stentF le.CorruptF leExcept on e) {
+        LOG.error("Fa led c cksum ver f cat on.", e);
+      } catch ( OExcept on e) {
+        LOG.error("Error wh le try ng to read c cksum f le", e);
       }
     }
     return false;
   }
 
-  // Check that the loaded segment's status count is higher than the configured threshold
-  private boolean verifySegmentStatusCountLargeEnough(SegmentInfo segmentInfo) {
-    long segmentStatusCount = segmentInfo.getIndexStats().getStatusCount();
-    if (segmentStatusCount > segmentSyncConfig.getMinSegmentStatusCountThreshold()) {
+  // C ck that t  loaded seg nt's status count  s h g r than t  conf gured threshold
+  pr vate boolean ver fySeg ntStatusCountLargeEnough(Seg nt nfo seg nt nfo) {
+    long seg ntStatusCount = seg nt nfo.get ndexStats().getStatusCount();
+     f (seg ntStatusCount > seg ntSyncConf g.getM nSeg ntStatusCountThreshold()) {
       return true;
-    } else if (segmentInfo.getEarlybirdIndexConfig().isIndexStoredOnDisk()
-        && couldBeMostRecentArchiveSegment(segmentInfo)) {
-      // The most recent archive earlybird segment is expected to be incomplete
-      LOG.info("Segment status count (" + segmentStatusCount + ") is below the threshold of "
-          + segmentSyncConfig.getMinSegmentStatusCountThreshold()
-          + ", but this is expected because the most recent segment is expected to be incomplete: "
-          + segmentInfo);
+    } else  f (seg nt nfo.getEarlyb rd ndexConf g(). s ndexStoredOnD sk()
+        && couldBeMostRecentArch veSeg nt(seg nt nfo)) {
+      // T  most recent arch ve earlyb rd seg nt  s expected to be  ncomplete
+      LOG. nfo("Seg nt status count (" + seg ntStatusCount + ")  s below t  threshold of "
+          + seg ntSyncConf g.getM nSeg ntStatusCountThreshold()
+          + ", but t   s expected because t  most recent seg nt  s expected to be  ncomplete: "
+          + seg nt nfo);
       return true;
     } else {
-      // The segment status count is small so the segment is likely incomplete.
-      LOG.error("Segment status count (" + segmentStatusCount + ") is below the threshold of "
-          + segmentSyncConfig.getMinSegmentStatusCountThreshold() + ": " + segmentInfo);
-      segmentInfo.setIndexing(false);
-      segmentInfo.getSyncInfo().setLoaded(false);
+      // T  seg nt status count  s small so t  seg nt  s l kely  ncomplete.
+      LOG.error("Seg nt status count (" + seg ntStatusCount + ")  s below t  threshold of "
+          + seg ntSyncConf g.getM nSeg ntStatusCountThreshold() + ": " + seg nt nfo);
+      seg nt nfo.set ndex ng(false);
+      seg nt nfo.getSync nfo().setLoaded(false);
 
-      // Remove segment from local disk
-      if (!segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately()) {
-        LOG.error("Failed to cleanup unloadable segment directory.");
+      // Remove seg nt from local d sk
+       f (!seg nt nfo.deleteLocal ndexedSeg ntD rectory m d ately()) {
+        LOG.error("Fa led to cleanup unloadable seg nt d rectory.");
       }
 
       return false;
     }
   }
 
-  // Check if this segment could be the most recent archive earlybird segment (would be on the
-  // latest tier). Archive segments tend to span around 12 days, so using a conservative threshold
+  // C ck  f t  seg nt could be t  most recent arch ve earlyb rd seg nt (would be on t 
+  // latest t er). Arch ve seg nts tend to span around 12 days, so us ng a conservat ve threshold
   // of 20 days.
-  private boolean couldBeMostRecentArchiveSegment(SegmentInfo segmentInfo) {
-    long timesliceAgeMs =
-        SnowflakeIdParser.getTweetAgeInMs(clock.nowMillis(), segmentInfo.getTimeSliceID());
-    return (timesliceAgeMs / 1000 / 60 / 60 / 24) <= 20;
+  pr vate boolean couldBeMostRecentArch veSeg nt(Seg nt nfo seg nt nfo) {
+    long t  sl ceAgeMs =
+        Snowflake dParser.getT etAge nMs(clock.nowM ll s(), seg nt nfo.getT  Sl ce D());
+    return (t  sl ceAgeMs / 1000 / 60 / 60 / 24) <= 20;
   }
 
   /**
-   * Check to see if the segment exists on hdfs. Will look for the correct segment version
-   * uploaded by any of the hosts.
-   * If the segment exists on hdfs, the segment will be copied from hdfs to the local file
-   * system, and we will verify the checksum against the copied version.
-   * @return true iff the segment was copied to local disk, and the checksum is verified.
+   * C ck to see  f t  seg nt ex sts on hdfs. W ll look for t  correct seg nt vers on
+   * uploaded by any of t  hosts.
+   *  f t  seg nt ex sts on hdfs, t  seg nt w ll be cop ed from hdfs to t  local f le
+   * system, and   w ll ver fy t  c cksum aga nst t  cop ed vers on.
+   * @return true  ff t  seg nt was cop ed to local d sk, and t  c cksum  s ver f ed.
    */
-  private boolean checkSegmentOnHdfsAndCopyLocally(SegmentInfo segment) {
-    if (!segmentSyncConfig.isSegmentLoadFromHdfsEnabled()) {
-      return isValidSegmentOnDisk(segment);
+  pr vate boolean c ckSeg ntOnHdfsAndCopyLocally(Seg nt nfo seg nt) {
+     f (!seg ntSyncConf g. sSeg ntLoadFromHdfsEnabled()) {
+      return  sVal dSeg ntOnD sk(seg nt);
     }
 
-    LOG.info("About to start downloading segment from hdfs: " + segment);
-    Timer timer = new Timer(TimeUnit.MILLISECONDS);
-    String status = null;
-    String localBaseDir = segment.getSyncInfo().getLocalSyncDir();
-    FileSystem fs = null;
+    LOG. nfo("About to start download ng seg nt from hdfs: " + seg nt);
+    T  r t  r = new T  r(T  Un .M LL SECONDS);
+    Str ng status = null;
+    Str ng localBaseD r = seg nt.getSync nfo().getLocalSyncD r();
+    F leSystem fs = null;
     try {
-      fs = HdfsUtil.getHdfsFileSystem();
+      fs = HdfsUt l.getHdfsF leSystem();
 
-      String hdfsBaseDirPrefix = segment.getSyncInfo().getHdfsSyncDirPrefix();
-      FileStatus[] statuses = fs.globStatus(new Path(hdfsBaseDirPrefix));
-      if (statuses != null && statuses.length > 0) {
+      Str ng hdfsBaseD rPref x = seg nt.getSync nfo().getHdfsSyncD rPref x();
+      F leStatus[] statuses = fs.globStatus(new Path(hdfsBaseD rPref x));
+       f (statuses != null && statuses.length > 0) {
         Path hdfsSyncPath = statuses[0].getPath();
-        copySegmentFilesFromHdfs(segment, segmentSyncConfig, fs, hdfsSyncPath);
+        copySeg ntF lesFromHdfs(seg nt, seg ntSyncConf g, fs, hdfsSyncPath);
         status = "loaded";
       } else {
-        LOG.info("No segments found in hdfs under: " + hdfsBaseDirPrefix);
+        LOG. nfo("No seg nts found  n hdfs under: " + hdfsBaseD rPref x);
         status = "notloaded";
       }
       fs.close();
-    } catch (IOException ex) {
-      LOG.error("Failed copying segment from hdfs: " + segment + " after: "
-                + timer.stop() + " ms", ex);
-      status = "exception";
+    } catch ( OExcept on ex) {
+      LOG.error("Fa led copy ng seg nt from hdfs: " + seg nt + " after: "
+                + t  r.stop() + " ms", ex);
+      status = "except on";
       SEGMENT_LOAD_FROM_HDFS_STATS.recordError();
       try {
-        FileUtils.deleteDirectory(new File(localBaseDir));
-      } catch (IOException e) {
-        LOG.error("Error cleaning up local segment directory: " + segment, e);
+        F leUt ls.deleteD rectory(new F le(localBaseD r));
+      } catch ( OExcept on e) {
+        LOG.error("Error clean ng up local seg nt d rectory: " + seg nt, e);
       }
-    } finally {
-      timer.stop();
-      SEGMENT_LOAD_FROM_HDFS_STATS.actionComplete(timer);
-      LOG.info("Download from hdfs completed in "
-          + timer.getElapsed() + " milliseconds: " + segment + " status: " + status);
-      IOUtils.closeQuietly(fs);
+    } f nally {
+      t  r.stop();
+      SEGMENT_LOAD_FROM_HDFS_STATS.act onComplete(t  r);
+      LOG. nfo("Download from hdfs completed  n "
+          + t  r.getElapsed() + " m ll seconds: " + seg nt + " status: " + status);
+       OUt ls.closeQu etly(fs);
     }
 
-    // now check to see if we have successfully copied the segment
-    return isValidSegmentOnDisk(segment);
+    // now c ck to see  f   have successfully cop ed t  seg nt
+    return  sVal dSeg ntOnD sk(seg nt);
   }
 
-  private static void copySegmentFilesFromHdfs(SegmentInfo segment,
-                                               SegmentSyncConfig syncConfig,
-                                               FileSystem fs,
-                                               Path hdfsSyncPath) throws IOException {
-    String localBaseDir = segment.getSyncInfo().getLocalSyncDir();
-    File localBaseDirFile = new File(localBaseDir);
-    FileUtils.deleteQuietly(localBaseDirFile);
-    if (localBaseDirFile.exists()) {
-      LOG.warn("Cannot delete the existing path: " + localBaseDir);
+  pr vate stat c vo d copySeg ntF lesFromHdfs(Seg nt nfo seg nt,
+                                               Seg ntSyncConf g syncConf g,
+                                               F leSystem fs,
+                                               Path hdfsSyncPath) throws  OExcept on {
+    Str ng localBaseD r = seg nt.getSync nfo().getLocalSyncD r();
+    F le localBaseD rF le = new F le(localBaseD r);
+    F leUt ls.deleteQu etly(localBaseD rF le);
+     f (localBaseD rF le.ex sts()) {
+      LOG.warn("Cannot delete t  ex st ng path: " + localBaseD r);
     }
-    for (String fileName : syncConfig.getAllSyncFileNames(segment)) {
-      Path hdfsFilePath = new Path(hdfsSyncPath, fileName);
-      String localFileName = localBaseDir + "/" + fileName;
-      LOG.debug("About to start loading from hdfs: " + fileName + " from: "
-                + hdfsFilePath + " to: " + localFileName);
+    for (Str ng f leNa  : syncConf g.getAllSyncF leNa s(seg nt)) {
+      Path hdfsF lePath = new Path(hdfsSyncPath, f leNa );
+      Str ng localF leNa  = localBaseD r + "/" + f leNa ;
+      LOG.debug("About to start load ng from hdfs: " + f leNa  + " from: "
+                + hdfsF lePath + " to: " + localF leNa );
 
-      Timer timer = new Timer(TimeUnit.MILLISECONDS);
-      fs.copyToLocalFile(hdfsFilePath, new Path(localFileName));
-      LOG.debug("Loaded segment file from hdfs: " + fileName + " from: "
-                + hdfsFilePath + " to: " + localFileName + " in: " + timer.stop() + " ms.");
+      T  r t  r = new T  r(T  Un .M LL SECONDS);
+      fs.copyToLocalF le(hdfsF lePath, new Path(localF leNa ));
+      LOG.debug("Loaded seg nt f le from hdfs: " + f leNa  + " from: "
+                + hdfsF lePath + " to: " + localF leNa  + "  n: " + t  r.stop() + " ms.");
     }
 
-    LOG.info("Finished downloading segments from " + hdfsSyncPath);
+    LOG. nfo("F n s d download ng seg nts from " + hdfsSyncPath);
   }
 
-  private static boolean checksumFileExists(File loadDir, String databaseName) {
-    String checksumFileName = PersistentFile.genChecksumFileName(databaseName);
-    File checksumFile = new File(loadDir, checksumFileName);
+  pr vate stat c boolean c cksumF leEx sts(F le loadD r, Str ng databaseNa ) {
+    Str ng c cksumF leNa  = Pers stentF le.genC cksumF leNa (databaseNa );
+    F le c cksumF le = new F le(loadD r, c cksumF leNa );
 
-    return checksumFile.exists();
+    return c cksumF le.ex sts();
   }
 
-  private void handleException(SegmentInfo segmentInfo, Exception e) {
-    LOG.error("Exception while loading IndexSegment from "
-        + segmentInfo.getSyncInfo().getLocalSyncDir(), e);
+  pr vate vo d handleExcept on(Seg nt nfo seg nt nfo, Except on e) {
+    LOG.error("Except on wh le load ng  ndexSeg nt from "
+        + seg nt nfo.getSync nfo().getLocalSyncD r(), e);
 
-    segmentInfo.setIndexing(false);
-    segmentInfo.getSyncInfo().setLoaded(false);
-    if (!segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately()) {
-      LOG.error("Failed to cleanup unloadable segment directory.");
+    seg nt nfo.set ndex ng(false);
+    seg nt nfo.getSync nfo().setLoaded(false);
+     f (!seg nt nfo.deleteLocal ndexedSeg ntD rectory m d ately()) {
+      LOG.error("Fa led to cleanup unloadable seg nt d rectory.");
     }
   }
 }

@@ -1,214 +1,214 @@
-package com.twitter.search.common.schema;
+package com.tw ter.search.common.sc ma;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
+ mport java.ut l.Collect on;
+ mport java.ut l.Map;
+ mport java.ut l.concurrent.atom c.Atom cReference;
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableMap;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.base.Pred cate;
+ mport com.google.common.collect. mmutableCollect on;
+ mport com.google.common.collect. mmutableMap;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.facet.FacetsConfig;
-import org.apache.lucene.index.FieldInfos;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .lucene.analys s.Analyzer;
+ mport org.apac .lucene.facet.FacetsConf g;
+ mport org.apac .lucene. ndex.F eld nfos;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchema;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.FieldWeightDefault;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.thriftjava.ThriftAnalyzer;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldConfiguration;
+ mport com.tw ter.search.common.features.thr ft.Thr ftSearchFeatureSc ma;
+ mport com.tw ter.search.common.sc ma.base.FeatureConf gurat on;
+ mport com.tw ter.search.common.sc ma.base.F eld  ghtDefault;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftAnalyzer;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftCSFType;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftF eldConf gurat on;
 
 /**
- * A schema implementation that allow minor version increments at run time.
+ * A sc ma  mple ntat on that allow m nor vers on  ncre nts at run t  .
  */
-public class DynamicSchema implements Schema {
-  private static final Logger LOG = LoggerFactory.getLogger(DynamicSchema.class);
+publ c class Dynam cSc ma  mple nts Sc ma {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Dynam cSc ma.class);
 
-  private final AtomicReference<ImmutableSchema> schema;
+  pr vate f nal Atom cReference< mmutableSc ma> sc ma;
 
-  public DynamicSchema(ImmutableSchema schema) {
-    this.schema = new AtomicReference<>(schema);
+  publ c Dynam cSc ma( mmutableSc ma sc ma) {
+    t .sc ma = new Atom cReference<>(sc ma);
   }
 
-  public ImmutableSchemaInterface getSchemaSnapshot() {
-    return schema.get();
+  publ c  mmutableSc ma nterface getSc maSnapshot() {
+    return sc ma.get();
   }
 
   /**
-   * Update the schema reference inside this DynamicSchema.
+   * Update t  sc ma reference  ns de t  Dynam cSc ma.
    */
-  public synchronized void updateSchema(ImmutableSchema newSchema) throws SchemaUpdateException {
-    ImmutableSchema oldSchema = schema.get();
-    if (newSchema.getMajorVersionNumber() != oldSchema.getMajorVersionNumber()) {
-      throw new SchemaUpdateException("Dynamic major version update is not supported.");
+  publ c synchron zed vo d updateSc ma( mmutableSc ma newSc ma) throws Sc maUpdateExcept on {
+     mmutableSc ma oldSc ma = sc ma.get();
+     f (newSc ma.getMajorVers onNumber() != oldSc ma.getMajorVers onNumber()) {
+      throw new Sc maUpdateExcept on("Dynam c major vers on update  s not supported.");
     } else {
-      if (newSchema.getMinorVersionNumber() <= oldSchema.getMinorVersionNumber()) {
-        throw new SchemaUpdateException("Dynamic backward minor version update is not supported.");
+       f (newSc ma.getM norVers onNumber() <= oldSc ma.getM norVers onNumber()) {
+        throw new Sc maUpdateExcept on("Dynam c backward m nor vers on update  s not supported.");
       } else {
-        LOG.info("DynamicSchema accepted update. Old version is {}.{}; new version is {}.{}",
-            oldSchema.getMajorVersionNumber(),
-            oldSchema.getMinorVersionNumber(),
-            newSchema.getMajorVersionNumber(),
-            newSchema.getMinorVersionNumber());
-        schema.set(newSchema);
+        LOG. nfo("Dynam cSc ma accepted update. Old vers on  s {}.{}; new vers on  s {}.{}",
+            oldSc ma.getMajorVers onNumber(),
+            oldSc ma.getM norVers onNumber(),
+            newSc ma.getMajorVers onNumber(),
+            newSc ma.getM norVers onNumber());
+        sc ma.set(newSc ma);
       }
     }
   }
 
-  public static class SchemaUpdateException extends Exception {
-    public SchemaUpdateException(String message) {
-      super(message);
+  publ c stat c class Sc maUpdateExcept on extends Except on {
+    publ c Sc maUpdateExcept on(Str ng  ssage) {
+      super( ssage);
     }
   }
 
-  // The below are all methods in the Schema interface delegated to the underlying ImmutableSchema.
-  // The below is generated by IntelliJ, and reviewers can stop reviewing this file here.
-  // If you are adding logic into this class, please do so above this line.
-  @Override
-  public FieldInfos getLuceneFieldInfos(
-      Predicate<String> acceptedFields) {
-    return schema.get().getLuceneFieldInfos(acceptedFields);
+  // T  below are all  thods  n t  Sc ma  nterface delegated to t  underly ng  mmutableSc ma.
+  // T  below  s generated by  ntell J, and rev e rs can stop rev ew ng t  f le  re.
+  //  f   are add ng log c  nto t  class, please do so above t  l ne.
+  @Overr de
+  publ c F eld nfos getLuceneF eld nfos(
+      Pred cate<Str ng> acceptedF elds) {
+    return sc ma.get().getLuceneF eld nfos(acceptedF elds);
   }
 
-  @Override
-  public FacetsConfig getFacetsConfig() {
-    return schema.get().getFacetsConfig();
+  @Overr de
+  publ c FacetsConf g getFacetsConf g() {
+    return sc ma.get().getFacetsConf g();
   }
 
-  @Override
-  public Analyzer getDefaultAnalyzer(
-      ThriftAnalyzer override) {
-    return schema.get().getDefaultAnalyzer(override);
+  @Overr de
+  publ c Analyzer getDefaultAnalyzer(
+      Thr ftAnalyzer overr de) {
+    return sc ma.get().getDefaultAnalyzer(overr de);
   }
 
-  @Override
-  public ImmutableCollection<FieldInfo> getFieldInfos() {
-    return schema.get().getFieldInfos();
+  @Overr de
+  publ c  mmutableCollect on<F eld nfo> getF eld nfos() {
+    return sc ma.get().getF eld nfos();
   }
 
-  @Override
-  public boolean hasField(int fieldConfigId) {
-    return schema.get().hasField(fieldConfigId);
+  @Overr de
+  publ c boolean hasF eld( nt f eldConf g d) {
+    return sc ma.get().hasF eld(f eldConf g d);
   }
 
-  @Override
-  public boolean hasField(String fieldName) {
-    return schema.get().hasField(fieldName);
+  @Overr de
+  publ c boolean hasF eld(Str ng f eldNa ) {
+    return sc ma.get().hasF eld(f eldNa );
   }
 
-  @Override
+  @Overr de
   @Nullable
-  public FieldInfo getFieldInfo(int fieldConfigId) {
-    return schema.get().getFieldInfo(fieldConfigId);
+  publ c F eld nfo getF eld nfo( nt f eldConf g d) {
+    return sc ma.get().getF eld nfo(f eldConf g d);
   }
 
-  @Override
+  @Overr de
   @Nullable
-  public FieldInfo getFieldInfo(String fieldName) {
-    return schema.get().getFieldInfo(fieldName);
+  publ c F eld nfo getF eld nfo(Str ng f eldNa ) {
+    return sc ma.get().getF eld nfo(f eldNa );
   }
 
-  @Override
-  public String getFieldName(int fieldConfigId) {
-    return schema.get().getFieldName(fieldConfigId);
+  @Overr de
+  publ c Str ng getF eldNa ( nt f eldConf g d) {
+    return sc ma.get().getF eldNa (f eldConf g d);
   }
 
-  @Override
-  public FieldInfo getFieldInfo(int fieldConfigId,
-                                ThriftFieldConfiguration override) {
-    return schema.get().getFieldInfo(fieldConfigId, override);
+  @Overr de
+  publ c F eld nfo getF eld nfo( nt f eldConf g d,
+                                Thr ftF eldConf gurat on overr de) {
+    return sc ma.get().getF eld nfo(f eldConf g d, overr de);
   }
 
-  @Override
-  public int getNumFacetFields() {
-    return schema.get().getNumFacetFields();
+  @Overr de
+  publ c  nt getNumFacetF elds() {
+    return sc ma.get().getNumFacetF elds();
   }
 
-  @Override
-  public FieldInfo getFacetFieldByFacetName(
-      String facetName) {
-    return schema.get().getFacetFieldByFacetName(facetName);
+  @Overr de
+  publ c F eld nfo getFacetF eldByFacetNa (
+      Str ng facetNa ) {
+    return sc ma.get().getFacetF eldByFacetNa (facetNa );
   }
 
-  @Override
-  public FieldInfo getFacetFieldByFieldName(
-      String fieldName) {
-    return schema.get().getFacetFieldByFieldName(fieldName);
+  @Overr de
+  publ c F eld nfo getFacetF eldByF eldNa (
+      Str ng f eldNa ) {
+    return sc ma.get().getFacetF eldByF eldNa (f eldNa );
   }
 
-  @Override
-  public Collection<FieldInfo> getFacetFields() {
-    return schema.get().getFacetFields();
+  @Overr de
+  publ c Collect on<F eld nfo> getFacetF elds() {
+    return sc ma.get().getFacetF elds();
   }
 
-  @Override
-  public Collection<FieldInfo> getCsfFacetFields() {
-    return schema.get().getCsfFacetFields();
+  @Overr de
+  publ c Collect on<F eld nfo> getCsfFacetF elds() {
+    return sc ma.get().getCsfFacetF elds();
   }
 
-  @Override
-  public String getVersionDescription() {
-    return schema.get().getVersionDescription();
+  @Overr de
+  publ c Str ng getVers onDescr pt on() {
+    return sc ma.get().getVers onDescr pt on();
   }
 
-  @Override
-  public int getMajorVersionNumber() {
-    return schema.get().getMajorVersionNumber();
+  @Overr de
+  publ c  nt getMajorVers onNumber() {
+    return sc ma.get().getMajorVers onNumber();
   }
 
-  @Override
-  public int getMinorVersionNumber() {
-    return schema.get().getMinorVersionNumber();
+  @Overr de
+  publ c  nt getM norVers onNumber() {
+    return sc ma.get().getM norVers onNumber();
   }
 
-  @Override
-  public boolean isVersionOfficial() {
-    return schema.get().isVersionOfficial();
+  @Overr de
+  publ c boolean  sVers onOff c al() {
+    return sc ma.get(). sVers onOff c al();
   }
 
-  @Override
-  public Map<String, FieldWeightDefault> getFieldWeightMap() {
-    return schema.get().getFieldWeightMap();
+  @Overr de
+  publ c Map<Str ng, F eld  ghtDefault> getF eld  ghtMap() {
+    return sc ma.get().getF eld  ghtMap();
   }
 
-  @Override
-  public FeatureConfiguration getFeatureConfigurationByName(
-      String featureName) {
-    return schema.get().getFeatureConfigurationByName(featureName);
+  @Overr de
+  publ c FeatureConf gurat on getFeatureConf gurat onByNa (
+      Str ng featureNa ) {
+    return sc ma.get().getFeatureConf gurat onByNa (featureNa );
   }
 
-  @Override
-  public FeatureConfiguration getFeatureConfigurationById(int featureFieldId) {
-    return Preconditions.checkNotNull(schema.get().getFeatureConfigurationById(featureFieldId));
+  @Overr de
+  publ c FeatureConf gurat on getFeatureConf gurat onBy d( nt featureF eld d) {
+    return Precond  ons.c ckNotNull(sc ma.get().getFeatureConf gurat onBy d(featureF eld d));
   }
 
-  @Override
+  @Overr de
   @Nullable
-  public ThriftCSFType getCSFFieldType(
-      String fieldName) {
-    return schema.get().getCSFFieldType(fieldName);
+  publ c Thr ftCSFType getCSFF eldType(
+      Str ng f eldNa ) {
+    return sc ma.get().getCSFF eldType(f eldNa );
   }
 
-  @Override
-  public ThriftSearchFeatureSchema getSearchFeatureSchema() {
-    return schema.get().getSearchFeatureSchema();
+  @Overr de
+  publ c Thr ftSearchFeatureSc ma getSearchFeatureSc ma() {
+    return sc ma.get().getSearchFeatureSc ma();
   }
 
-  @Override
-  public ImmutableMap<Integer, FeatureConfiguration> getFeatureIdToFeatureConfig() {
-    return schema.get().getFeatureIdToFeatureConfig();
+  @Overr de
+  publ c  mmutableMap< nteger, FeatureConf gurat on> getFeature dToFeatureConf g() {
+    return sc ma.get().getFeature dToFeatureConf g();
   }
 
-  @Override
-  public ImmutableMap<String, FeatureConfiguration> getFeatureNameToFeatureConfig() {
-    return schema.get().getFeatureNameToFeatureConfig();
+  @Overr de
+  publ c  mmutableMap<Str ng, FeatureConf gurat on> getFeatureNa ToFeatureConf g() {
+    return sc ma.get().getFeatureNa ToFeatureConf g();
   }
 }

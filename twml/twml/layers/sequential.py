@@ -1,160 +1,160 @@
 """
-Implementing Sequential Layer container
+ mple nt ng Sequent al Layer conta ner
 """
 
 
-from .layer import Layer
+from .layer  mport Layer
 
-from tensorflow import keras
-from tensorflow.python.layers import base
+from tensorflow  mport keras
+from tensorflow.python.layers  mport base
 
 
-class Sequential(Layer):
+class Sequent al(Layer):
   """
-  A sequential stack of layers.
+  A sequent al stack of layers.
 
-  Arguments:
-      layers: list of layers to add to the model.
+  Argu nts:
+      layers: l st of layers to add to t  model.
 
   Output:
-      the output of the sequential layers
+      t  output of t  sequent al layers
    """
 
-  def __init__(self, layers=None, **kwargs):
+  def __ n __(self, layers=None, **kwargs):
     self._layers = []  # Stack of layers.
-    self._layer_names = []  # Stack of layers names
+    self._layer_na s = []  # Stack of layers na s
     self._layer_outputs = []
-    # Add to the model any layers passed to the constructor.
-    if layers:
-      for layer in layers:
+    # Add to t  model any layers passed to t  constructor.
+     f layers:
+      for layer  n layers:
         self.add(layer)
-    super(Sequential, self).__init__(**kwargs)
+    super(Sequent al, self).__ n __(**kwargs)
 
   def add(self, layer):
-    """Adds a layer instance on top of the layer stack.
+    """Adds a layer  nstance on top of t  layer stack.
 
-    Arguments:
+    Argu nts:
       layer:
-        layer instance.
+        layer  nstance.
 
-    Raises:
+    Ra ses:
       TypeError:
-        if the layer argument is not instance of base.Layer
+         f t  layer argu nt  s not  nstance of base.Layer
     """
-    if not isinstance(layer, base.Layer) and not isinstance(layer, keras.layers.Layer):
-      raise TypeError('The added layer must be an instance of class Layer')
+     f not  s nstance(layer, base.Layer) and not  s nstance(layer, keras.layers.Layer):
+      ra se TypeError('T  added layer must be an  nstance of class Layer')
 
-    if layer.name in self._layer_names:
-      raise ValueError('Layer with name %s already exists in sequential layer' % layer.name)
+     f layer.na   n self._layer_na s:
+      ra se ValueError('Layer w h na  %s already ex sts  n sequent al layer' % layer.na )
 
     self._layers.append(layer)
-    self._layer_names.append(layer.name)
+    self._layer_na s.append(layer.na )
 
   def pop(self):
-    """Removes the last layer in the model.
+    """Removes t  last layer  n t  model.
 
-    Raises:
+    Ra ses:
       TypeError:
-        if there are no layers in the model.
+         f t re are no layers  n t  model.
     """
-    if not self._layers or not self._layer_names:
-      raise TypeError('There are no layers in the model.')
+     f not self._layers or not self._layer_na s:
+      ra se TypeError('T re are no layers  n t  model.')
     self._layers.pop()
-    self._layer_names.pop()
+    self._layer_na s.pop()
 
-  def call(self, inputs, **kwargs):  # pylint: disable=unused-argument
-    """The logic of the layer lives here.
+  def call(self,  nputs, **kwargs):  # pyl nt: d sable=unused-argu nt
+    """T  log c of t  layer l ves  re.
 
-    Arguments:
-      inputs:
-        input tensor(s).
+    Argu nts:
+       nputs:
+         nput tensor(s).
 
     Returns:
-      The output of the sequential layers
+      T  output of t  sequent al layers
     """
     self._layer_outputs = []
-    for layer in self._layers:
-      # don't use layer.call because you want to build individual layers
-      inputs = layer(inputs)  # overwrites the current input after it has been processed
-      self._layer_outputs.append(inputs)
-    return inputs
+    for layer  n self._layers:
+      # don't use layer.call because   want to bu ld  nd v dual layers
+       nputs = layer( nputs)  # overwr es t  current  nput after   has been processed
+      self._layer_outputs.append( nputs)
+    return  nputs
 
   @property
   def layers(self):
-    """ Return the layers in the sequential layer """
+    """ Return t  layers  n t  sequent al layer """
     return self._layers
 
   @property
-  def layer_names(self):
-    """ Return the layer names in the sequential layer """
-    return self._layer_names
+  def layer_na s(self):
+    """ Return t  layer na s  n t  sequent al layer """
+    return self._layer_na s
 
   @property
   def layer_outputs(self):
-    """ Return the layer outputs in the sequential layer """
+    """ Return t  layer outputs  n t  sequent al layer """
     return self._layer_outputs
 
   def get(self, key):
-    """Retrieves the n-th layer.
+    """Retr eves t  n-th layer.
 
-    Arguments:
+    Argu nts:
       key:
-        index of the layer
+         ndex of t  layer
 
     Output:
-      The n-th layer where n is equal to the key.
+      T  n-th layer w re n  s equal to t  key.
     """
     return self._layers[key]
 
   def get_output(self, key):
-    """Retrieves the n-th layer output.
+    """Retr eves t  n-th layer output.
 
-    Arguments:
+    Argu nts:
       key:
-        index of the layer
+         ndex of t  layer
 
     Output:
-      The intermediary output equivalent to the nth layer, where n is equal to the key.
+      T   nter d ary output equ valent to t  nth layer, w re n  s equal to t  key.
     """
     return self._layer_outputs[key]
 
-  def get_layer_by_name(self, name):
-    """Retrieves the layer corresponding to the name.
+  def get_layer_by_na (self, na ):
+    """Retr eves t  layer correspond ng to t  na .
 
-    Arguments:
-      name:
-        name of the layer
-
-    Output:
-      list of layers that have the name desired
-    """
-    return self._layers[self._layer_names.index(name)]
-
-  def get_layer_output_by_name(self, name):
-    """Retrieves the layer output corresponding to the name.
-
-    Arguments:
-      name:
-        name of the layer
+    Argu nts:
+      na :
+        na  of t  layer
 
     Output:
-      list of the output of the layers that have the desired name
+      l st of layers that have t  na  des red
     """
-    return self._layer_outputs[self._layer_names.index(name)]
+    return self._layers[self._layer_na s. ndex(na )]
+
+  def get_layer_output_by_na (self, na ):
+    """Retr eves t  layer output correspond ng to t  na .
+
+    Argu nts:
+      na :
+        na  of t  layer
+
+    Output:
+      l st of t  output of t  layers that have t  des red na 
+    """
+    return self._layer_outputs[self._layer_na s. ndex(na )]
 
   @property
-  def init(self):
-    """ returns a list of initialization ops (one per layer) """
-    return [layer.init for layer in self._layers]
+  def  n (self):
+    """ returns a l st of  n  al zat on ops (one per layer) """
+    return [layer. n  for layer  n self._layers]
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  def compute_output_shape(self,  nput_shape):
+    """Computes t  output shape of t  layer g ven t   nput shape.
 
     Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+       nput_shape: A (poss bly nested tuple of) `TensorShape`.    need not
+        be fully def ned (e.g. t  batch s ze may be unknown).
 
-    Raise NotImplementedError.
+    Ra se Not mple ntedError.
 
     """
-    raise NotImplementedError
+    ra se Not mple ntedError

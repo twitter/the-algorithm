@@ -1,13 +1,13 @@
-junit_tests(
-    sources = ["*.scala"],
-    tags = ["bazel-compatible"],
-    dependencies = [
+jun _tests(
+    s ces = ["*.scala"],
+    tags = ["bazel-compat ble"],
+    dependenc es = [
         "3rdparty/jvm/org/scalatest",
-        "3rdparty/jvm/org/scalatestplus:junit",
-        "finatra/inject/inject-core/src/test/scala/com/twitter/inject",
-        "unified_user_actions/enricher/src/main/scala/com/twitter/unified_user_actions/enricher/partitioner:default",
-        "unified_user_actions/enricher/src/main/thrift/com/twitter/unified_user_actions/enricher/internal:internal-scala",
-        "unified_user_actions/enricher/src/test/scala/com/twitter/unified_user_actions/enricher:fixture",
-        "unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions:unified_user_actions-scala",
+        "3rdparty/jvm/org/scalatestplus:jun ",
+        "f natra/ nject/ nject-core/src/test/scala/com/tw ter/ nject",
+        "un f ed_user_act ons/enr c r/src/ma n/scala/com/tw ter/un f ed_user_act ons/enr c r/part  oner:default",
+        "un f ed_user_act ons/enr c r/src/ma n/thr ft/com/tw ter/un f ed_user_act ons/enr c r/ nternal: nternal-scala",
+        "un f ed_user_act ons/enr c r/src/test/scala/com/tw ter/un f ed_user_act ons/enr c r:f xture",
+        "un f ed_user_act ons/thr ft/src/ma n/thr ft/com/tw ter/un f ed_user_act ons:un f ed_user_act ons-scala",
     ],
 )

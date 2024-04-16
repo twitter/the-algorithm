@@ -1,98 +1,98 @@
-package com.twitter.search.earlybird.search;
+package com.tw ter.search.earlyb rd.search;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.google.common.base.Preconditions;
-import com.google.common.primitives.Longs;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.pr m  ves.Longs;
 
-import org.apache.lucene.index.NumericDocValues;
+ mport org.apac .lucene. ndex.Nu r cDocValues;
 
-import com.twitter.common_internal.bloomfilter.BloomFilter;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.thrift.ThriftSocialFilterType;
+ mport com.tw ter.common_ nternal.bloomf lter.BloomF lter;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSoc alF lterType;
 
 /**
- * Filter class used by the SearchResultsCollector to filter social tweets
- * from the hits.
+ * F lter class used by t  SearchResultsCollector to f lter soc al t ets
+ * from t  h s.
  */
-public class SocialFilter {
-  private interface Acceptor {
-    boolean accept(long fromUserLong, byte[] userIDInBytes);
+publ c class Soc alF lter {
+  pr vate  nterface Acceptor {
+    boolean accept(long fromUserLong, byte[] user D nBytes);
   }
 
-  private NumericDocValues fromUserID;
-  private final Acceptor acceptor;
-  private final long searcherId;
-  private final BloomFilter trustedFilter;
-  private final BloomFilter followFilter;
+  pr vate Nu r cDocValues fromUser D;
+  pr vate f nal Acceptor acceptor;
+  pr vate f nal long searc r d;
+  pr vate f nal BloomF lter trustedF lter;
+  pr vate f nal BloomF lter followF lter;
 
-  private class FollowsAcceptor implements Acceptor {
-    @Override
-    public boolean accept(long fromUserLong, byte[] userIdInBytes) {
-      return followFilter.contains(userIdInBytes);
+  pr vate class FollowsAcceptor  mple nts Acceptor {
+    @Overr de
+    publ c boolean accept(long fromUserLong, byte[] user d nBytes) {
+      return followF lter.conta ns(user d nBytes);
     }
   }
 
-  private class TrustedAcceptor implements Acceptor {
-    @Override
-    public boolean accept(long fromUserLong, byte[] userIdInBytes) {
-      return trustedFilter.contains(userIdInBytes);
+  pr vate class TrustedAcceptor  mple nts Acceptor {
+    @Overr de
+    publ c boolean accept(long fromUserLong, byte[] user d nBytes) {
+      return trustedF lter.conta ns(user d nBytes);
     }
   }
 
-  private class AllAcceptor implements Acceptor {
-    @Override
-    public boolean accept(long fromUserLong, byte[] userIdInBytes) {
-      return trustedFilter.contains(userIdInBytes)
-          || followFilter.contains(userIdInBytes)
-          || fromUserLong == searcherId;
+  pr vate class AllAcceptor  mple nts Acceptor {
+    @Overr de
+    publ c boolean accept(long fromUserLong, byte[] user d nBytes) {
+      return trustedF lter.conta ns(user d nBytes)
+          || followF lter.conta ns(user d nBytes)
+          || fromUserLong == searc r d;
     }
   }
 
-  public SocialFilter(
-      ThriftSocialFilterType socialFilterType,
-      final long searcherId,
-      final byte[] trustedFilter,
-      final byte[] followFilter) throws IOException {
-    Preconditions.checkNotNull(socialFilterType);
-    Preconditions.checkNotNull(trustedFilter);
-    Preconditions.checkNotNull(followFilter);
-    this.searcherId = searcherId;
-    this.trustedFilter = new BloomFilter(trustedFilter);
-    this.followFilter = new BloomFilter(followFilter);
+  publ c Soc alF lter(
+      Thr ftSoc alF lterType soc alF lterType,
+      f nal long searc r d,
+      f nal byte[] trustedF lter,
+      f nal byte[] followF lter) throws  OExcept on {
+    Precond  ons.c ckNotNull(soc alF lterType);
+    Precond  ons.c ckNotNull(trustedF lter);
+    Precond  ons.c ckNotNull(followF lter);
+    t .searc r d = searc r d;
+    t .trustedF lter = new BloomF lter(trustedF lter);
+    t .followF lter = new BloomF lter(followF lter);
 
 
-    switch (socialFilterType) {
+    sw ch (soc alF lterType) {
       case FOLLOWS:
-        this.acceptor = new FollowsAcceptor();
+        t .acceptor = new FollowsAcceptor();
         break;
       case TRUSTED:
-        this.acceptor = new TrustedAcceptor();
+        t .acceptor = new TrustedAcceptor();
         break;
       case ALL:
-        this.acceptor = new AllAcceptor();
+        t .acceptor = new AllAcceptor();
         break;
       default:
-        throw new UnsupportedOperationException("Invalid social filter type passed");
+        throw new UnsupportedOperat onExcept on(" nval d soc al f lter type passed");
     }
   }
 
-  public void startSegment(EarlybirdIndexSegmentAtomicReader indexReader) throws IOException {
-    fromUserID =
-        indexReader.getNumericDocValues(EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName());
+  publ c vo d startSeg nt(Earlyb rd ndexSeg ntAtom cReader  ndexReader) throws  OExcept on {
+    fromUser D =
+         ndexReader.getNu r cDocValues(Earlyb rdF eldConstant.FROM_USER_ D_CSF.getF eldNa ());
   }
 
   /**
-   * Determines if the given doc ID should be accepted.
+   * Determ nes  f t  g ven doc  D should be accepted.
    */
-  public boolean accept(int internalDocID) throws IOException {
-    if (!fromUserID.advanceExact(internalDocID)) {
+  publ c boolean accept( nt  nternalDoc D) throws  OExcept on {
+     f (!fromUser D.advanceExact( nternalDoc D)) {
       return false;
     }
 
-    long fromUserLong = fromUserID.longValue();
-    byte[] userIDInBytes = Longs.toByteArray(fromUserLong);
-    return acceptor.accept(fromUserLong, userIDInBytes);
+    long fromUserLong = fromUser D.longValue();
+    byte[] user D nBytes = Longs.toByteArray(fromUserLong);
+    return acceptor.accept(fromUserLong, user D nBytes);
   }
 }

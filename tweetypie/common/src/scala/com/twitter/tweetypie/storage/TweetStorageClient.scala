@@ -1,189 +1,189 @@
-package com.twitter.tweetypie.storage
+package com.tw ter.t etyp e.storage
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.storage.Response.TweetResponse
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.util.Future
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.storage.Response.T etResponse
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.ut l.Future
 
 /**
- * Interface for reading and writing tweet data in Manhattan
+ *  nterface for read ng and wr  ng t et data  n Manhattan
  */
-trait TweetStorageClient {
-  import TweetStorageClient._
-  def addTweet: AddTweet
-  def deleteAdditionalFields: DeleteAdditionalFields
-  def getTweet: GetTweet
-  def getStoredTweet: GetStoredTweet
-  def getDeletedTweets: GetDeletedTweets
+tra  T etStorageCl ent {
+   mport T etStorageCl ent._
+  def addT et: AddT et
+  def deleteAdd  onalF elds: DeleteAdd  onalF elds
+  def getT et: GetT et
+  def getStoredT et: GetStoredT et
+  def getDeletedT ets: GetDeletedT ets
   def undelete: Undelete
-  def updateTweet: UpdateTweet
+  def updateT et: UpdateT et
   def scrub: Scrub
   def softDelete: SoftDelete
   def bounceDelete: BounceDelete
-  def hardDeleteTweet: HardDeleteTweet
-  def ping: Ping
+  def hardDeleteT et: HardDeleteT et
+  def p ng: P ng
 }
 
-object TweetStorageClient {
-  type GetTweet = TweetId => Stitch[GetTweet.Response]
+object T etStorageCl ent {
+  type GetT et = T et d => St ch[GetT et.Response]
 
-  object GetTweet {
-    sealed trait Response
+  object GetT et {
+    sealed tra  Response
     object Response {
-      case class Found(tweet: Tweet) extends Response
+      case class Found(t et: T et) extends Response
       object NotFound extends Response
       object Deleted extends Response
-      // On BounceDeleted, provide the full Tweet so that implementations
-      // (i.e. ManhattanTweetStorageClient) don't not need to be aware of the specific tweet
-      // fields required by callers for proper processing of bounced deleted tweets.
-      case class BounceDeleted(tweet: Tweet) extends Response
+      // On BounceDeleted, prov de t  full T et so that  mple ntat ons
+      // ( .e. ManhattanT etStorageCl ent) don't not need to be aware of t  spec f c t et
+      // f elds requ red by callers for proper process ng of bounced deleted t ets.
+      case class BounceDeleted(t et: T et) extends Response
     }
   }
 
-  type GetStoredTweet = TweetId => Stitch[GetStoredTweet.Response]
+  type GetStoredT et = T et d => St ch[GetStoredT et.Response]
 
-  object GetStoredTweet {
-    sealed abstract class Error(val message: String) {
-      override def toString: String = message
+  object GetStoredT et {
+    sealed abstract class Error(val  ssage: Str ng) {
+      overr de def toStr ng: Str ng =  ssage
     }
     object Error {
-      case object TweetIsCorrupt extends Error("stored tweet data is corrupt and cannot be decoded")
+      case object T et sCorrupt extends Error("stored t et data  s corrupt and cannot be decoded")
 
-      case object ScrubbedFieldsPresent
-          extends Error("stored tweet fields that should be scrubbed are still present")
+      case object ScrubbedF eldsPresent
+          extends Error("stored t et f elds that should be scrubbed are st ll present")
 
-      case object TweetFieldsMissingOrInvalid
-          extends Error("expected tweet fields are missing or contain invalid values")
+      case object T etF eldsM ss ngOr nval d
+          extends Error("expected t et f elds are m ss ng or conta n  nval d values")
 
-      case object TweetShouldBeHardDeleted
-          extends Error("stored tweet that should be hard deleted is still present")
+      case object T etShouldBeHardDeleted
+          extends Error("stored t et that should be hard deleted  s st ll present")
     }
 
-    sealed trait Response
+    sealed tra  Response
     object Response {
-      sealed trait StoredTweetMetadata {
-        def state: Option[TweetStateRecord]
-        def allStates: Seq[TweetStateRecord]
-        def scrubbedFields: Set[FieldId]
+      sealed tra  StoredT et tadata {
+        def state: Opt on[T etStateRecord]
+        def allStates: Seq[T etStateRecord]
+        def scrubbedF elds: Set[F eld d]
       }
 
-      sealed trait StoredTweetErrors {
+      sealed tra  StoredT etErrors {
         def errs: Seq[Error]
       }
 
       /**
-       * Tweet data was found, possibly state records and/or scrubbed field records.
+       * T et data was found, poss bly state records and/or scrubbed f eld records.
        */
-      sealed trait FoundAny extends Response with StoredTweetMetadata {
-        def tweet: Tweet
+      sealed tra  FoundAny extends Response w h StoredT et tadata {
+        def t et: T et
       }
 
       object FoundAny {
         def unapply(
           response: Response
-        ): Option[
-          (Tweet, Option[TweetStateRecord], Seq[TweetStateRecord], Set[FieldId], Seq[Error])
+        ): Opt on[
+          (T et, Opt on[T etStateRecord], Seq[T etStateRecord], Set[F eld d], Seq[Error])
         ] =
           response match {
-            case f: FoundWithErrors =>
-              Some((f.tweet, f.state, f.allStates, f.scrubbedFields, f.errs))
-            case f: FoundAny => Some((f.tweet, f.state, f.allStates, f.scrubbedFields, Seq.empty))
+            case f: FoundW hErrors =>
+              So ((f.t et, f.state, f.allStates, f.scrubbedF elds, f.errs))
+            case f: FoundAny => So ((f.t et, f.state, f.allStates, f.scrubbedF elds, Seq.empty))
             case _ => None
           }
       }
 
       /**
-       * No records for this tweet id were found in storage
+       * No records for t  t et  d  re found  n storage
        */
-      case class NotFound(id: TweetId) extends Response
+      case class NotFound( d: T et d) extends Response
 
       /**
-       * Data related to the Tweet id was found but could not be loaded successfully. The
-       * errs array contains details of the problems.
+       * Data related to t  T et  d was found but could not be loaded successfully. T 
+       * errs array conta ns deta ls of t  problems.
        */
-      case class Failed(
-        id: TweetId,
-        state: Option[TweetStateRecord],
-        allStates: Seq[TweetStateRecord],
-        scrubbedFields: Set[FieldId],
+      case class Fa led(
+         d: T et d,
+        state: Opt on[T etStateRecord],
+        allStates: Seq[T etStateRecord],
+        scrubbedF elds: Set[F eld d],
         errs: Seq[Error],
       ) extends Response
-          with StoredTweetMetadata
-          with StoredTweetErrors
+          w h StoredT et tadata
+          w h StoredT etErrors
 
       /**
-       * No Tweet data was found, and the most recent state record found is HardDeleted
+       * No T et data was found, and t  most recent state record found  s HardDeleted
        */
       case class HardDeleted(
-        id: TweetId,
-        state: Option[TweetStateRecord.HardDeleted],
-        allStates: Seq[TweetStateRecord],
-        scrubbedFields: Set[FieldId],
+         d: T et d,
+        state: Opt on[T etStateRecord.HardDeleted],
+        allStates: Seq[T etStateRecord],
+        scrubbedF elds: Set[F eld d],
       ) extends Response
-          with StoredTweetMetadata
+          w h StoredT et tadata
 
       /**
-       * Tweet data was found, and the most recent state record found, if any, is not
-       * any form of deletion record.
+       * T et data was found, and t  most recent state record found,  f any,  s not
+       * any form of delet on record.
        */
       case class Found(
-        tweet: Tweet,
-        state: Option[TweetStateRecord],
-        allStates: Seq[TweetStateRecord],
-        scrubbedFields: Set[FieldId],
+        t et: T et,
+        state: Opt on[T etStateRecord],
+        allStates: Seq[T etStateRecord],
+        scrubbedF elds: Set[F eld d],
       ) extends FoundAny
 
       /**
-       * Tweet data was found, and the most recent state record found indicates deletion.
+       * T et data was found, and t  most recent state record found  nd cates delet on.
        */
       case class FoundDeleted(
-        tweet: Tweet,
-        state: Option[TweetStateRecord],
-        allStates: Seq[TweetStateRecord],
-        scrubbedFields: Set[FieldId],
+        t et: T et,
+        state: Opt on[T etStateRecord],
+        allStates: Seq[T etStateRecord],
+        scrubbedF elds: Set[F eld d],
       ) extends FoundAny
 
       /**
-       * Tweet data was found, however errors were detected in the stored data. Required
-       * fields may be missing from the Tweet struct (e.g. CoreData), stored fields that
-       * should be scrubbed remain present, or Tweets that should be hard-deleted remain
-       * in storage. The errs array contains details of the problems.
+       * T et data was found, ho ver errors  re detected  n t  stored data. Requ red
+       * f elds may be m ss ng from t  T et struct (e.g. CoreData), stored f elds that
+       * should be scrubbed rema n present, or T ets that should be hard-deleted rema n
+       *  n storage. T  errs array conta ns deta ls of t  problems.
        */
-      case class FoundWithErrors(
-        tweet: Tweet,
-        state: Option[TweetStateRecord],
-        allStates: Seq[TweetStateRecord],
-        scrubbedFields: Set[FieldId],
+      case class FoundW hErrors(
+        t et: T et,
+        state: Opt on[T etStateRecord],
+        allStates: Seq[T etStateRecord],
+        scrubbedF elds: Set[F eld d],
         errs: Seq[Error],
       ) extends FoundAny
-          with StoredTweetErrors
+          w h StoredT etErrors
     }
   }
 
-  type HardDeleteTweet = TweetId => Stitch[HardDeleteTweet.Response]
-  type SoftDelete = TweetId => Stitch[Unit]
-  type BounceDelete = TweetId => Stitch[Unit]
+  type HardDeleteT et = T et d => St ch[HardDeleteT et.Response]
+  type SoftDelete = T et d => St ch[Un ]
+  type BounceDelete = T et d => St ch[Un ]
 
-  object HardDeleteTweet {
-    sealed trait Response
+  object HardDeleteT et {
+    sealed tra  Response
     object Response {
-      case class Deleted(deletedAtMillis: Option[Long], createdAtMillis: Option[Long])
+      case class Deleted(deletedAtM ll s: Opt on[Long], createdAtM ll s: Opt on[Long])
           extends Response
-      case class NotDeleted(id: TweetId, ineligibleLKey: Option[TweetKey.LKey])
+      case class NotDeleted( d: T et d,  nel g bleLKey: Opt on[T etKey.LKey])
           extends Throwable
-          with Response
+          w h Response
     }
   }
 
-  type Undelete = TweetId => Stitch[Undelete.Response]
+  type Undelete = T et d => St ch[Undelete.Response]
   object Undelete {
     case class Response(
       code: UndeleteResponseCode,
-      tweet: Option[Tweet] = None,
-      createdAtMillis: Option[Long] = None,
-      archivedAtMillis: Option[Long] = None)
+      t et: Opt on[T et] = None,
+      createdAtM ll s: Opt on[Long] = None,
+      arch vedAtM ll s: Opt on[Long] = None)
 
-    sealed trait UndeleteResponseCode
+    sealed tra  UndeleteResponseCode
 
     object UndeleteResponseCode {
       object Success extends UndeleteResponseCode
@@ -192,10 +192,10 @@ object TweetStorageClient {
     }
   }
 
-  type AddTweet = Tweet => Stitch[Unit]
-  type UpdateTweet = (Tweet, Seq[Field]) => Stitch[TweetResponse]
-  type GetDeletedTweets = Seq[TweetId] => Stitch[Seq[DeletedTweetResponse]]
-  type DeleteAdditionalFields = (Seq[TweetId], Seq[Field]) => Stitch[Seq[TweetResponse]]
-  type Scrub = (Seq[TweetId], Seq[Field]) => Stitch[Unit]
-  type Ping = () => Future[Unit]
+  type AddT et = T et => St ch[Un ]
+  type UpdateT et = (T et, Seq[F eld]) => St ch[T etResponse]
+  type GetDeletedT ets = Seq[T et d] => St ch[Seq[DeletedT etResponse]]
+  type DeleteAdd  onalF elds = (Seq[T et d], Seq[F eld]) => St ch[Seq[T etResponse]]
+  type Scrub = (Seq[T et d], Seq[F eld]) => St ch[Un ]
+  type P ng = () => Future[Un ]
 }

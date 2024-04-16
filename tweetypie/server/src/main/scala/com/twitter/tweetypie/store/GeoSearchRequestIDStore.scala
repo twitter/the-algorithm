@@ -1,72 +1,72 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
-import com.twitter.geoduck.backend.relevance.thriftscala.ReportFailure
-import com.twitter.geoduck.backend.relevance.thriftscala.ReportResult
-import com.twitter.geoduck.backend.relevance.thriftscala.ConversionReport
-import com.twitter.geoduck.backend.searchrequestid.thriftscala.SearchRequestID
-import com.twitter.geoduck.backend.tweetid.thriftscala.TweetID
-import com.twitter.geoduck.common.thriftscala.GeoduckException
-import com.twitter.geoduck.service.identifier.thriftscala.PlaceIdentifier
-import com.twitter.servo.util.FutureArrow
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.geoduck.backend.relevance.thr ftscala.ReportFa lure
+ mport com.tw ter.geoduck.backend.relevance.thr ftscala.ReportResult
+ mport com.tw ter.geoduck.backend.relevance.thr ftscala.Convers onReport
+ mport com.tw ter.geoduck.backend.searchrequest d.thr ftscala.SearchRequest D
+ mport com.tw ter.geoduck.backend.t et d.thr ftscala.T et D
+ mport com.tw ter.geoduck.common.thr ftscala.GeoduckExcept on
+ mport com.tw ter.geoduck.serv ce. dent f er.thr ftscala.Place dent f er
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t etyp e.thr ftscala._
 
-trait GeoSearchRequestIDStore
-    extends TweetStoreBase[GeoSearchRequestIDStore]
-    with AsyncInsertTweet.Store {
-  def wrap(w: TweetStore.Wrap): GeoSearchRequestIDStore =
-    new TweetStoreWrapper[GeoSearchRequestIDStore](w, this)
-      with GeoSearchRequestIDStore
-      with AsyncInsertTweet.StoreWrapper
+tra  GeoSearchRequest DStore
+    extends T etStoreBase[GeoSearchRequest DStore]
+    w h Async nsertT et.Store {
+  def wrap(w: T etStore.Wrap): GeoSearchRequest DStore =
+    new T etStoreWrapper[GeoSearchRequest DStore](w, t )
+      w h GeoSearchRequest DStore
+      w h Async nsertT et.StoreWrapper
 }
 
-object GeoSearchRequestIDStore {
-  type ConversionReporter = FutureArrow[ConversionReport, ReportResult]
+object GeoSearchRequest DStore {
+  type Convers onReporter = FutureArrow[Convers onReport, ReportResult]
 
-  val Action: AsyncWriteAction.GeoSearchRequestId.type = AsyncWriteAction.GeoSearchRequestId
-  private val log = Logger(getClass)
+  val Act on: AsyncWr eAct on.GeoSearchRequest d.type = AsyncWr eAct on.GeoSearchRequest d
+  pr vate val log = Logger(getClass)
 
-  object FailureHandler {
-    def translateException(failure: ReportResult.Failure): GeoduckException = {
-      failure.failure match {
-        case ReportFailure.Failure(exception) => exception
-        case _ => GeoduckException("Unknown failure: " + failure.toString)
+  object Fa lureHandler {
+    def translateExcept on(fa lure: ReportResult.Fa lure): GeoduckExcept on = {
+      fa lure.fa lure match {
+        case ReportFa lure.Fa lure(except on) => except on
+        case _ => GeoduckExcept on("Unknown fa lure: " + fa lure.toStr ng)
       }
     }
   }
 
-  def apply(conversionReporter: ConversionReporter): GeoSearchRequestIDStore =
-    new GeoSearchRequestIDStore {
+  def apply(convers onReporter: Convers onReporter): GeoSearchRequest DStore =
+    new GeoSearchRequest DStore {
 
-      val conversionEffect: FutureEffect[ConversionReport] =
+      val convers onEffect: FutureEffect[Convers onReport] =
         FutureEffect
-          .fromPartial[ReportResult] {
-            case unionFailure: ReportResult.Failure =>
-              Future.exception(FailureHandler.translateException(unionFailure))
+          .fromPart al[ReportResult] {
+            case un onFa lure: ReportResult.Fa lure =>
+              Future.except on(Fa lureHandler.translateExcept on(un onFa lure))
           }
-          .contramapFuture(conversionReporter)
+          .contramapFuture(convers onReporter)
 
-      override val asyncInsertTweet: FutureEffect[AsyncInsertTweet.Event] =
-        conversionEffect.contramapOption[AsyncInsertTweet.Event] { event =>
+      overr de val async nsertT et: FutureEffect[Async nsertT et.Event] =
+        convers onEffect.contramapOpt on[Async nsertT et.Event] { event =>
           for {
-            isUserProtected <- event.user.safety.map(_.isProtected)
-            geoSearchRequestID <- event.geoSearchRequestId
-            placeType <- event.tweet.place.map(_.`type`)
-            placeId <- event.tweet.coreData.flatMap(_.placeId)
-            placeIdLong <- Try(java.lang.Long.parseUnsignedLong(placeId, 16)).toOption
-            if placeType == PlaceType.Poi && isUserProtected == false
-          } yield {
-            ConversionReport(
-              requestID = SearchRequestID(requestID = geoSearchRequestID),
-              tweetID = TweetID(event.tweet.id),
-              placeID = PlaceIdentifier(placeIdLong)
+             sUserProtected <- event.user.safety.map(_. sProtected)
+            geoSearchRequest D <- event.geoSearchRequest d
+            placeType <- event.t et.place.map(_.`type`)
+            place d <- event.t et.coreData.flatMap(_.place d)
+            place dLong <- Try(java.lang.Long.parseUns gnedLong(place d, 16)).toOpt on
+             f placeType == PlaceType.Po  &&  sUserProtected == false
+          } y eld {
+            Convers onReport(
+              request D = SearchRequest D(request D = geoSearchRequest D),
+              t et D = T et D(event.t et. d),
+              place D = Place dent f er(place dLong)
             )
           }
         }
 
-      override val retryAsyncInsertTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncInsertTweet.Event]
+      overr de val retryAsync nsertT et: FutureEffect[
+        T etStoreRetryEvent[Async nsertT et.Event]
       ] =
-        TweetStore.retry(Action, asyncInsertTweet)
+        T etStore.retry(Act on, async nsertT et)
     }
 }

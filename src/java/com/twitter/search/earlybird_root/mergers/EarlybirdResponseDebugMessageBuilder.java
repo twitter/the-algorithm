@@ -1,175 +1,175 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.tw ter.search.earlyb rd_root. rgers;
 
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.collect.Iterables;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Funct on;
+ mport com.google.common.base.Jo ner;
+ mport com.google.common.collect. erables;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.logging.DebugMessageBuilder;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
+ mport com.tw ter.search.common.logg ng.Debug ssageBu lder;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchQuery;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult;
 
 /**
- * Collects debug messages to attach to EarlybirdResponse
+ * Collects debug  ssages to attach to Earlyb rdResponse
  */
-class EarlybirdResponseDebugMessageBuilder {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(EarlybirdResponseDebugMessageBuilder.class);
+class Earlyb rdResponseDebug ssageBu lder {
+  pr vate stat c f nal Logger LOG =
+      LoggerFactory.getLogger(Earlyb rdResponseDebug ssageBu lder.class);
 
-  private static final Logger TOO_MANY_FAILED_PARTITIONS_LOG =
-      LoggerFactory.getLogger(String.format("%s_too_many_failed_partitions",
-                                            EarlybirdResponseDebugMessageBuilder.class.getName()));
+  pr vate stat c f nal Logger TOO_MANY_FA LED_PART T ONS_LOG =
+      LoggerFactory.getLogger(Str ng.format("%s_too_many_fa led_part  ons",
+                                            Earlyb rdResponseDebug ssageBu lder.class.getNa ()));
 
-  @VisibleForTesting
-  protected final SearchCounter insufficientValidResponseCounter =
-      SearchCounter.export("insufficient_valid_partition_responses_count");
-  @VisibleForTesting
-  protected final SearchCounter validPartitionResponseCounter =
-      SearchCounter.export("valid_partition_response_count");
+  @V s bleForTest ng
+  protected f nal SearchCounter  nsuff c entVal dResponseCounter =
+      SearchCounter.export(" nsuff c ent_val d_part  on_responses_count");
+  @V s bleForTest ng
+  protected f nal SearchCounter val dPart  onResponseCounter =
+      SearchCounter.export("val d_part  on_response_count");
 
-  // the combined debug string for all earlybird responses
-  private final StringBuilder debugString;
+  // t  comb ned debug str ng for all earlyb rd responses
+  pr vate f nal Str ngBu lder debugStr ng;
   /**
-   * A message builder backed by the same {@link #debugString} above.
+   * A  ssage bu lder backed by t  sa  {@l nk #debugStr ng} above.
    */
-  private final DebugMessageBuilder debugMessageBuilder;
+  pr vate f nal Debug ssageBu lder debug ssageBu lder;
 
-  private static final Joiner JOINER = Joiner.on(", ");
+  pr vate stat c f nal Jo ner JO NER = Jo ner.on(", ");
 
-  EarlybirdResponseDebugMessageBuilder(EarlybirdRequest request) {
-    this(getDebugLevel(request));
+  Earlyb rdResponseDebug ssageBu lder(Earlyb rdRequest request) {
+    t (getDebugLevel(request));
   }
 
-  EarlybirdResponseDebugMessageBuilder(DebugMessageBuilder.Level level) {
-    this.debugString = new StringBuilder();
-    this.debugMessageBuilder = new DebugMessageBuilder(debugString, level);
+  Earlyb rdResponseDebug ssageBu lder(Debug ssageBu lder.Level level) {
+    t .debugStr ng = new Str ngBu lder();
+    t .debug ssageBu lder = new Debug ssageBu lder(debugStr ng, level);
   }
 
-  private static DebugMessageBuilder.Level getDebugLevel(EarlybirdRequest request) {
-    if (request.isSetDebugMode() && request.getDebugMode() > 0) {
-      return DebugMessageBuilder.getDebugLevel(request.getDebugMode());
-    } else if (request.isSetDebugOptions()) {
-      return DebugMessageBuilder.Level.DEBUG_BASIC;
+  pr vate stat c Debug ssageBu lder.Level getDebugLevel(Earlyb rdRequest request) {
+     f (request. sSetDebugMode() && request.getDebugMode() > 0) {
+      return Debug ssageBu lder.getDebugLevel(request.getDebugMode());
+    } else  f (request. sSetDebugOpt ons()) {
+      return Debug ssageBu lder.Level.DEBUG_BAS C;
     } else {
-      return DebugMessageBuilder.Level.DEBUG_NONE;
+      return Debug ssageBu lder.Level.DEBUG_NONE;
     }
   }
 
-  protected boolean isDebugMode() {
-    return debugMessageBuilder.getDebugLevel() > 0;
+  protected boolean  sDebugMode() {
+    return debug ssageBu lder.getDebugLevel() > 0;
   }
 
-  void append(String msg) {
-    debugString.append(msg);
+  vo d append(Str ng msg) {
+    debugStr ng.append(msg);
   }
 
-  void debugAndLogWarning(String msg) {
-    if (isDebugMode()) {
-      debugString.append(msg).append('\n');
+  vo d debugAndLogWarn ng(Str ng msg) {
+     f ( sDebugMode()) {
+      debugStr ng.append(msg).append('\n');
     }
     LOG.warn(msg);
   }
 
-  void debugDetailed(String format, Object... args) {
-    debugAtLevel(DebugMessageBuilder.Level.DEBUG_DETAILED, format, args);
+  vo d debugDeta led(Str ng format, Object... args) {
+    debugAtLevel(Debug ssageBu lder.Level.DEBUG_DETA LED, format, args);
   }
 
-  void debugVerbose(String format, Object... args) {
-    debugAtLevel(DebugMessageBuilder.Level.DEBUG_VERBOSE, format, args);
+  vo d debugVerbose(Str ng format, Object... args) {
+    debugAtLevel(Debug ssageBu lder.Level.DEBUG_VERBOSE, format, args);
   }
 
-  void debugVerbose2(String format, Object... args) {
-    debugAtLevel(DebugMessageBuilder.Level.DEBUG_VERBOSE_2, format, args);
+  vo d debugVerbose2(Str ng format, Object... args) {
+    debugAtLevel(Debug ssageBu lder.Level.DEBUG_VERBOSE_2, format, args);
   }
 
-  void debugAtLevel(DebugMessageBuilder.Level level, String format, Object... args) {
-    boolean levelOK = debugMessageBuilder.isAtLeastLevel(level);
-    if (levelOK || LOG.isDebugEnabled()) {
-      // We check both modes here in order to build the formatted message only once.
-      String message = String.format(format, args);
+  vo d debugAtLevel(Debug ssageBu lder.Level level, Str ng format, Object... args) {
+    boolean levelOK = debug ssageBu lder. sAtLeastLevel(level);
+     f (levelOK || LOG. sDebugEnabled()) {
+      //   c ck both modes  re  n order to bu ld t  formatted  ssage only once.
+      Str ng  ssage = Str ng.format(format, args);
 
-      LOG.debug(message);
+      LOG.debug( ssage);
 
-      if (levelOK) {
-        debugString.append(message).append('\n');
+       f (levelOK) {
+        debugStr ng.append( ssage).append('\n');
       }
     }
   }
 
-  String debugString() {
-    return debugString.toString();
+  Str ng debugStr ng() {
+    return debugStr ng.toStr ng();
   }
 
-  DebugMessageBuilder getDebugMessageBuilder() {
-    return debugMessageBuilder;
+  Debug ssageBu lder getDebug ssageBu lder() {
+    return debug ssageBu lder;
   }
 
-  void logBelowSuccessThreshold(ThriftSearchQuery searchQuery, int numSuccessResponses,
-                                int numPartitions, double successThreshold) {
-    String rawQuery = (searchQuery != null && searchQuery.isSetRawQuery())
+  vo d logBelowSuccessThreshold(Thr ftSearchQuery searchQuery,  nt numSuccessResponses,
+                                 nt numPart  ons, double successThreshold) {
+    Str ng rawQuery = (searchQuery != null && searchQuery. sSetRawQuery())
         ? "[" + searchQuery.getRawQuery() + "]" : "null";
-    String serializedQuery = (searchQuery != null && searchQuery.isSetSerializedQuery())
-        ? "[" + searchQuery.getSerializedQuery() + "]" : "null";
-    // Not enough successful responses from partitions.
-    String errorMessage = String.format(
-        "Only %d valid responses returned out of %d partitions for raw query: %s"
-            + " serialized query: %s. Lower than threshold of %s",
-        numSuccessResponses, numPartitions, rawQuery, serializedQuery, successThreshold);
+    Str ng ser al zedQuery = (searchQuery != null && searchQuery. sSetSer al zedQuery())
+        ? "[" + searchQuery.getSer al zedQuery() + "]" : "null";
+    // Not enough successful responses from part  ons.
+    Str ng error ssage = Str ng.format(
+        "Only %d val d responses returned out of %d part  ons for raw query: %s"
+            + " ser al zed query: %s. Lo r than threshold of %s",
+        numSuccessResponses, numPart  ons, rawQuery, ser al zedQuery, successThreshold);
 
-    TOO_MANY_FAILED_PARTITIONS_LOG.warn(errorMessage);
+    TOO_MANY_FA LED_PART T ONS_LOG.warn(error ssage);
 
-    insufficientValidResponseCounter.increment();
-    validPartitionResponseCounter.add(numSuccessResponses);
-    debugString.append(errorMessage);
+     nsuff c entVal dResponseCounter. ncre nt();
+    val dPart  onResponseCounter.add(numSuccessResponses);
+    debugStr ng.append(error ssage);
   }
 
 
-  @VisibleForTesting
-  void logResponseDebugInfo(EarlybirdRequest earlybirdRequest,
-                            String partitionTierName,
-                            EarlybirdResponse response) {
-    if (response.isSetDebugString() && !response.getDebugString().isEmpty()) {
-      debugString.append(String.format("Received response from [%s] with debug string [%s]",
-          partitionTierName, response.getDebugString())).append("\n");
+  @V s bleForTest ng
+  vo d logResponseDebug nfo(Earlyb rdRequest earlyb rdRequest,
+                            Str ng part  onT erNa ,
+                            Earlyb rdResponse response) {
+     f (response. sSetDebugStr ng() && !response.getDebugStr ng(). sEmpty()) {
+      debugStr ng.append(Str ng.format("Rece ved response from [%s] w h debug str ng [%s]",
+          part  onT erNa , response.getDebugStr ng())).append("\n");
     }
 
-    if (!response.isSetResponseCode()) {
-      debugAndLogWarning(String.format(
-          "Received Earlybird null response code for query [%s] from [%s]",
-          earlybirdRequest, partitionTierName));
-    } else if (response.getResponseCode() != EarlybirdResponseCode.SUCCESS
-        && response.getResponseCode() != EarlybirdResponseCode.PARTITION_SKIPPED
-        && response.getResponseCode() != EarlybirdResponseCode.PARTITION_DISABLED
-        && response.getResponseCode() != EarlybirdResponseCode.TIER_SKIPPED) {
-      debugAndLogWarning(String.format(
-          "Received Earlybird response error [%s] for query [%s] from [%s]",
-          response.getResponseCode(), earlybirdRequest, partitionTierName));
+     f (!response. sSetResponseCode()) {
+      debugAndLogWarn ng(Str ng.format(
+          "Rece ved Earlyb rd null response code for query [%s] from [%s]",
+          earlyb rdRequest, part  onT erNa ));
+    } else  f (response.getResponseCode() != Earlyb rdResponseCode.SUCCESS
+        && response.getResponseCode() != Earlyb rdResponseCode.PART T ON_SK PPED
+        && response.getResponseCode() != Earlyb rdResponseCode.PART T ON_D SABLED
+        && response.getResponseCode() != Earlyb rdResponseCode.T ER_SK PPED) {
+      debugAndLogWarn ng(Str ng.format(
+          "Rece ved Earlyb rd response error [%s] for query [%s] from [%s]",
+          response.getResponseCode(), earlyb rdRequest, part  onT erNa ));
     }
 
-    if (debugMessageBuilder.isVerbose2()) {
-      debugVerbose2("Earlybird [%s] returned response: %s", partitionTierName, response);
-    } else if (debugMessageBuilder.isVerbose()) {
-      if (response.isSetSearchResults() && response.getSearchResults().getResultsSize() > 0) {
-        String ids = JOINER.join(Iterables.transform(
+     f (debug ssageBu lder. sVerbose2()) {
+      debugVerbose2("Earlyb rd [%s] returned response: %s", part  onT erNa , response);
+    } else  f (debug ssageBu lder. sVerbose()) {
+       f (response. sSetSearchResults() && response.getSearchResults().getResultsS ze() > 0) {
+        Str ng  ds = JO NER.jo n( erables.transform(
             response.getSearchResults().getResults(),
-            new Function<ThriftSearchResult, Long>() {
+            new Funct on<Thr ftSearchResult, Long>() {
               @Nullable
-              @Override
-              public Long apply(ThriftSearchResult result) {
-                return result.getId();
+              @Overr de
+              publ c Long apply(Thr ftSearchResult result) {
+                return result.get d();
               }
             }));
-        debugVerbose("Earlybird [%s] returned TweetIDs: %s", partitionTierName, ids);
+        debugVerbose("Earlyb rd [%s] returned T et Ds: %s", part  onT erNa ,  ds);
       }
     }
   }

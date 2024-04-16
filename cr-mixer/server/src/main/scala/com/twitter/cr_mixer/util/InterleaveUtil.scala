@@ -1,160 +1,160 @@
-package com.twitter.cr_mixer.util
+package com.tw ter.cr_m xer.ut l
 
-import com.twitter.cr_mixer.model.Candidate
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.simclusters_v2.common.TweetId
-import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
+ mport com.tw ter.cr_m xer.model.Cand date
+ mport com.tw ter.cr_m xer.model.Cand dateGenerat on nfo
+ mport com.tw ter.cr_m xer.model.RankedCand date
+ mport com.tw ter.cr_m xer.model.S ce nfo
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport scala.collect on.mutable
+ mport scala.collect on.mutable.ArrayBuffer
 
-object InterleaveUtil {
+object  nterleaveUt l {
 
   /**
-   * Interleaves candidates by iteratively taking one candidate from the 1st Seq and adding it to the result.
-   * Once we take a candidate from a Seq, we move this Seq to the end of the queue to process,
-   * and remove the candidate from that Seq.
+   *  nterleaves cand dates by  erat vely tak ng one cand date from t  1st Seq and add ng   to t  result.
+   * Once   take a cand date from a Seq,   move t  Seq to t  end of t  queue to process,
+   * and remove t  cand date from that Seq.
    *
-   * We keep a mutable.Set[TweetId] buffer to ensure there are no duplicates.
+   *   keep a mutable.Set[T et d] buffer to ensure t re are no dupl cates.
    *
-   * @param candidates candidates assumed to be sorted by eventTime (latest event comes first)
-   * @return interleaved candidates
+   * @param cand dates cand dates assu d to be sorted by eventT   (latest event co s f rst)
+   * @return  nterleaved cand dates
    */
-  def interleave[CandidateType <: Candidate](
-    candidates: Seq[Seq[CandidateType]]
-  ): Seq[CandidateType] = {
+  def  nterleave[Cand dateType <: Cand date](
+    cand dates: Seq[Seq[Cand dateType]]
+  ): Seq[Cand dateType] = {
 
-    // copy candidates into a mutable map so this method is thread-safe
-    val candidatesPerSequence = candidates.map { tweetCandidates =>
-      mutable.Queue() ++= tweetCandidates
+    // copy cand dates  nto a mutable map so t   thod  s thread-safe
+    val cand datesPerSequence = cand dates.map { t etCand dates =>
+      mutable.Queue() ++= t etCand dates
     }
 
-    val seen = mutable.Set[TweetId]()
+    val seen = mutable.Set[T et d]()
 
-    val candidateSeqQueue = mutable.Queue() ++= candidatesPerSequence
+    val cand dateSeqQueue = mutable.Queue() ++= cand datesPerSequence
 
-    val result = ArrayBuffer[CandidateType]()
+    val result = ArrayBuffer[Cand dateType]()
 
-    while (candidateSeqQueue.nonEmpty) {
-      val candidatesQueue = candidateSeqQueue.head
+    wh le (cand dateSeqQueue.nonEmpty) {
+      val cand datesQueue = cand dateSeqQueue. ad
 
-      if (candidatesQueue.nonEmpty) {
-        val candidate = candidatesQueue.dequeue()
-        val candidateTweetId = candidate.tweetId
-        val seenCandidate = seen.contains(candidateTweetId)
-        if (!seenCandidate) {
-          result += candidate
-          seen.add(candidate.tweetId)
-          candidateSeqQueue.enqueue(
-            candidateSeqQueue.dequeue()
-          ) // move this Seq to end
+       f (cand datesQueue.nonEmpty) {
+        val cand date = cand datesQueue.dequeue()
+        val cand dateT et d = cand date.t et d
+        val seenCand date = seen.conta ns(cand dateT et d)
+         f (!seenCand date) {
+          result += cand date
+          seen.add(cand date.t et d)
+          cand dateSeqQueue.enqueue(
+            cand dateSeqQueue.dequeue()
+          ) // move t  Seq to end
         }
       } else {
-        candidateSeqQueue.dequeue() //finished processing this Seq
+        cand dateSeqQueue.dequeue() //f n s d process ng t  Seq
       }
     }
-    //convert result to immutable seq
-    result.toList
+    //convert result to  mmutable seq
+    result.toL st
   }
 
   /**
-   * Interleaves candidates by iteratively
-   * 1. Checking weight to see if enough accumulation has occurred to sample from
-   * 2. If yes, taking one candidate from the the Seq and adding it to the result.
-   * 3. Move this Seq to the end of the queue to process (and remove the candidate from that Seq if
-   *    we sampled it from step 2).
+   *  nterleaves cand dates by  erat vely
+   * 1. C ck ng   ght to see  f enough accumulat on has occurred to sample from
+   * 2.  f yes, tak ng one cand date from t  t  Seq and add ng   to t  result.
+   * 3. Move t  Seq to t  end of t  queue to process (and remove t  cand date from that Seq  f
+   *      sampled   from step 2).
    *
-   * We keep count of the iterations to prevent infinite loops.
-   * We keep a mutable.Set[TweetId] buffer to ensure there are no duplicates.
+   *   keep count of t   erat ons to prevent  nf n e loops.
+   *   keep a mutable.Set[T et d] buffer to ensure t re are no dupl cates.
    *
-   * @param candidatesAndWeight candidates assumed to be sorted by eventTime (latest event comes first),
-   *                            along with sampling weights to help prioritize important groups.
-   * @param maxWeightAdjustments Maximum number of iterations to account for weighting before
-   *                             defaulting to uniform interleaving.
-   * @return interleaved candidates
+   * @param cand datesAnd  ght cand dates assu d to be sorted by eventT   (latest event co s f rst),
+   *                            along w h sampl ng   ghts to  lp pr or  ze  mportant groups.
+   * @param max  ghtAdjust nts Max mum number of  erat ons to account for   ght ng before
+   *                             default ng to un form  nterleav ng.
+   * @return  nterleaved cand dates
    */
-  def weightedInterleave[CandidateType <: Candidate](
-    candidatesAndWeight: Seq[(Seq[CandidateType], Double)],
-    maxWeightAdjustments: Int = 0
-  ): Seq[CandidateType] = {
+  def   ghted nterleave[Cand dateType <: Cand date](
+    cand datesAnd  ght: Seq[(Seq[Cand dateType], Double)],
+    max  ghtAdjust nts:  nt = 0
+  ): Seq[Cand dateType] = {
 
-    // Set to avoid numerical issues around 1.0
-    val min_weight = 1 - 1e-30
+    // Set to avo d nu r cal  ssues around 1.0
+    val m n_  ght = 1 - 1e-30
 
-    // copy candidates into a mutable map so this method is thread-safe
-    // adds a counter to use towards sampling
-    val candidatesAndWeightsPerSequence: Seq[
-      (mutable.Queue[CandidateType], InterleaveWeights)
+    // copy cand dates  nto a mutable map so t   thod  s thread-safe
+    // adds a counter to use towards sampl ng
+    val cand datesAnd  ghtsPerSequence: Seq[
+      (mutable.Queue[Cand dateType],  nterleave  ghts)
     ] =
-      candidatesAndWeight.map { candidatesAndWeight =>
-        (mutable.Queue() ++= candidatesAndWeight._1, InterleaveWeights(candidatesAndWeight._2, 0.0))
+      cand datesAnd  ght.map { cand datesAnd  ght =>
+        (mutable.Queue() ++= cand datesAnd  ght._1,  nterleave  ghts(cand datesAnd  ght._2, 0.0))
       }
 
-    val seen: mutable.Set[TweetId] = mutable.Set[TweetId]()
+    val seen: mutable.Set[T et d] = mutable.Set[T et d]()
 
-    val candidateSeqQueue: mutable.Queue[(mutable.Queue[CandidateType], InterleaveWeights)] =
-      mutable.Queue() ++= candidatesAndWeightsPerSequence
+    val cand dateSeqQueue: mutable.Queue[(mutable.Queue[Cand dateType],  nterleave  ghts)] =
+      mutable.Queue() ++= cand datesAnd  ghtsPerSequence
 
-    val result: ArrayBuffer[CandidateType] = ArrayBuffer[CandidateType]()
-    var number_iterations: Int = 0
+    val result: ArrayBuffer[Cand dateType] = ArrayBuffer[Cand dateType]()
+    var number_ erat ons:  nt = 0
 
-    while (candidateSeqQueue.nonEmpty) {
-      val (candidatesQueue, currentWeights) = candidateSeqQueue.head
-      if (candidatesQueue.nonEmpty) {
-        // Confirm weighting scheme
-        currentWeights.summed_weight += currentWeights.weight
-        number_iterations += 1
-        if (currentWeights.summed_weight >= min_weight || number_iterations >= maxWeightAdjustments) {
-          // If we sample, then adjust the counter
-          currentWeights.summed_weight -= 1.0
-          val candidate = candidatesQueue.dequeue()
-          val candidateTweetId = candidate.tweetId
-          val seenCandidate = seen.contains(candidateTweetId)
-          if (!seenCandidate) {
-            result += candidate
-            seen.add(candidate.tweetId)
-            candidateSeqQueue.enqueue(candidateSeqQueue.dequeue()) // move this Seq to end
+    wh le (cand dateSeqQueue.nonEmpty) {
+      val (cand datesQueue, current  ghts) = cand dateSeqQueue. ad
+       f (cand datesQueue.nonEmpty) {
+        // Conf rm   ght ng sc  
+        current  ghts.sum d_  ght += current  ghts.  ght
+        number_ erat ons += 1
+         f (current  ghts.sum d_  ght >= m n_  ght || number_ erat ons >= max  ghtAdjust nts) {
+          //  f   sample, t n adjust t  counter
+          current  ghts.sum d_  ght -= 1.0
+          val cand date = cand datesQueue.dequeue()
+          val cand dateT et d = cand date.t et d
+          val seenCand date = seen.conta ns(cand dateT et d)
+           f (!seenCand date) {
+            result += cand date
+            seen.add(cand date.t et d)
+            cand dateSeqQueue.enqueue(cand dateSeqQueue.dequeue()) // move t  Seq to end
           }
         } else {
-          candidateSeqQueue.enqueue(candidateSeqQueue.dequeue()) // move this Seq to end
+          cand dateSeqQueue.enqueue(cand dateSeqQueue.dequeue()) // move t  Seq to end
         }
       } else {
-        candidateSeqQueue.dequeue() //finished processing this Seq
+        cand dateSeqQueue.dequeue() //f n s d process ng t  Seq
       }
     }
-    //convert result to immutable seq
-    result.toList
+    //convert result to  mmutable seq
+    result.toL st
   }
 
-  def buildCandidatesKeyByCGInfo(
-    candidates: Seq[RankedCandidate],
-  ): Seq[Seq[RankedCandidate]] = {
-    // To accommodate the re-grouping in InterleaveRanker
-    // In InterleaveBlender, we have already abandoned the grouping keys, and use Seq[Seq[]] to do interleave
-    // Since that we build the candidateSeq with groupingKey, we can guarantee there is no empty candidateSeq
-    val candidateSeqKeyByCG =
-      candidates.groupBy(candidate => GroupingKey.toGroupingKey(candidate.reasonChosen))
-    candidateSeqKeyByCG.map {
-      case (groupingKey, candidateSeq) =>
-        candidateSeq.sortBy(-_.predictionScore)
+  def bu ldCand datesKeyByCG nfo(
+    cand dates: Seq[RankedCand date],
+  ): Seq[Seq[RankedCand date]] = {
+    // To accommodate t  re-group ng  n  nterleaveRanker
+    //  n  nterleaveBlender,   have already abandoned t  group ng keys, and use Seq[Seq[]] to do  nterleave
+    // S nce that   bu ld t  cand dateSeq w h group ngKey,   can guarantee t re  s no empty cand dateSeq
+    val cand dateSeqKeyByCG =
+      cand dates.groupBy(cand date => Group ngKey.toGroup ngKey(cand date.reasonChosen))
+    cand dateSeqKeyByCG.map {
+      case (group ngKey, cand dateSeq) =>
+        cand dateSeq.sortBy(-_.pred ct onScore)
     }.toSeq
   }
 }
 
-case class GroupingKey(
-  sourceInfoOpt: Option[SourceInfo],
-  similarityEngineType: SimilarityEngineType,
-  modelId: Option[String]) {}
+case class Group ngKey(
+  s ce nfoOpt: Opt on[S ce nfo],
+  s m lar yEng neType: S m lar yEng neType,
+  model d: Opt on[Str ng]) {}
 
-object GroupingKey {
-  def toGroupingKey(candidateGenerationInfo: CandidateGenerationInfo): GroupingKey = {
-    GroupingKey(
-      candidateGenerationInfo.sourceInfoOpt,
-      candidateGenerationInfo.similarityEngineInfo.similarityEngineType,
-      candidateGenerationInfo.similarityEngineInfo.modelId
+object Group ngKey {
+  def toGroup ngKey(cand dateGenerat on nfo: Cand dateGenerat on nfo): Group ngKey = {
+    Group ngKey(
+      cand dateGenerat on nfo.s ce nfoOpt,
+      cand dateGenerat on nfo.s m lar yEng ne nfo.s m lar yEng neType,
+      cand dateGenerat on nfo.s m lar yEng ne nfo.model d
     )
   }
 }
 
-case class InterleaveWeights(weight: Double, var summed_weight: Double)
+case class  nterleave  ghts(  ght: Double, var sum d_  ght: Double)

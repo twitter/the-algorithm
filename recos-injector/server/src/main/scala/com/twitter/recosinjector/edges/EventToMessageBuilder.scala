@@ -1,31 +1,31 @@
-package com.twitter.recosinjector.edges
+package com.tw ter.recos njector.edges
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.Stats.track
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Stats.track
+ mport com.tw ter.ut l.Future
 
 /**
- * This is the generic interface that converts incoming Events (ex. TweetEvent, FavEvent, etc)
- * into Edge for a specific output graph. It applies the following flow:
+ * T   s t  gener c  nterface that converts  ncom ng Events (ex. T etEvent, FavEvent, etc)
+ *  nto Edge for a spec f c output graph.   appl es t  follow ng flow:
  *
- * event -> update event stats -> build edges -> filter edges
+ * event -> update event stats -> bu ld edges -> f lter edges
  *
- * Top-level statistics are provided for each step, such as latency and number of events
+ * Top-level stat st cs are prov ded for each step, such as latency and number of events
  */
-trait EventToMessageBuilder[Event, E <: Edge] {
-  implicit val statsReceiver: StatsReceiver
+tra  EventTo ssageBu lder[Event, E <: Edge] {
+   mpl c  val statsRece ver: StatsRece ver
 
-  private lazy val processEventStats = statsReceiver.scope("process_event")
-  private lazy val numEventsStats = statsReceiver.counter("num_process_event")
-  private lazy val rejectEventStats = statsReceiver.counter("num_reject_event")
-  private lazy val buildEdgesStats = statsReceiver.scope("build")
-  private lazy val numAllEdgesStats = buildEdgesStats.counter("num_all_edges")
-  private lazy val filterEdgesStats = statsReceiver.scope("filter")
-  private lazy val numValidEdgesStats = statsReceiver.counter("num_valid_edges")
-  private lazy val numRecosHoseMessageStats = statsReceiver.counter("num_RecosHoseMessage")
+  pr vate lazy val processEventStats = statsRece ver.scope("process_event")
+  pr vate lazy val numEventsStats = statsRece ver.counter("num_process_event")
+  pr vate lazy val rejectEventStats = statsRece ver.counter("num_reject_event")
+  pr vate lazy val bu ldEdgesStats = statsRece ver.scope("bu ld")
+  pr vate lazy val numAllEdgesStats = bu ldEdgesStats.counter("num_all_edges")
+  pr vate lazy val f lterEdgesStats = statsRece ver.scope("f lter")
+  pr vate lazy val numVal dEdgesStats = statsRece ver.counter("num_val d_edges")
+  pr vate lazy val numRecosHose ssageStats = statsRece ver.counter("num_RecosHose ssage")
 
   /**
-   * Given an incoming event, process and convert it into a sequence of RecosHoseMessages
+   * G ven an  ncom ng event, process and convert    nto a sequence of RecosHose ssages
    * @param event
    * @return
    */
@@ -33,50 +33,50 @@ trait EventToMessageBuilder[Event, E <: Edge] {
     track(processEventStats) {
       shouldProcessEvent(event).flatMap {
         case true =>
-          numEventsStats.incr()
+          numEventsStats. ncr()
           updateEventStatus(event)
           for {
-            allEdges <- track(buildEdgesStats)(buildEdges(event))
-            filteredEdges <- track(filterEdgesStats)(filterEdges(event, allEdges))
-          } yield {
-            numAllEdgesStats.incr(allEdges.size)
-            numValidEdgesStats.incr(filteredEdges.size)
-            numRecosHoseMessageStats.incr(filteredEdges.size)
-            filteredEdges
+            allEdges <- track(bu ldEdgesStats)(bu ldEdges(event))
+            f lteredEdges <- track(f lterEdgesStats)(f lterEdges(event, allEdges))
+          } y eld {
+            numAllEdgesStats. ncr(allEdges.s ze)
+            numVal dEdgesStats. ncr(f lteredEdges.s ze)
+            numRecosHose ssageStats. ncr(f lteredEdges.s ze)
+            f lteredEdges
           }
         case false =>
-          rejectEventStats.incr()
-          Future.Nil
+          rejectEventStats. ncr()
+          Future.N l
       }
     }
   }
 
   /**
-   * Pre-process filter that determines whether the given event should be used to build edges.
+   * Pre-process f lter that determ nes w t r t  g ven event should be used to bu ld edges.
    * @param event
    * @return
    */
   def shouldProcessEvent(event: Event): Future[Boolean]
 
   /**
-   * Update cache/event logging related to the specific event.
-   * By default, no action will be taken. Override when necessary
+   * Update cac /event logg ng related to t  spec f c event.
+   * By default, no act on w ll be taken. Overr de w n necessary
    * @param event
    */
-  def updateEventStatus(event: Event): Unit = {}
+  def updateEventStatus(event: Event): Un  = {}
 
   /**
-   * Given an event, extract info and build a sequence of edges
+   * G ven an event, extract  nfo and bu ld a sequence of edges
    * @param event
    * @return
    */
-  def buildEdges(event: Event): Future[Seq[E]]
+  def bu ldEdges(event: Event): Future[Seq[E]]
 
   /**
-   * Given a sequence of edges, filter and return the valid edges
+   * G ven a sequence of edges, f lter and return t  val d edges
    * @param event
    * @param edges
    * @return
    */
-  def filterEdges(event: Event, edges: Seq[E]): Future[Seq[E]]
+  def f lterEdges(event: Event, edges: Seq[E]): Future[Seq[E]]
 }

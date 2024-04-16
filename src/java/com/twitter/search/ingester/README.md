@@ -1,10 +1,10 @@
-## Ingesters
-Ingesters are services that consume raw tweets and user updates, process them through a series of transformations and write them to kafka topics for Earlybird to consume and subsequently index. 
+##  ngesters
+ ngesters are serv ces that consu  raw t ets and user updates, process t m through a ser es of transformat ons and wr e t m to kafka top cs for Earlyb rd to consu  and subsequently  ndex. 
 
-There are two types of ingesters:
-1. Tweet ingesters
-2. UserUpdates ingesters
+T re are two types of  ngesters:
+1. T et  ngesters
+2. UserUpdates  ngesters
 
-Tweet ingesters consume raw tweets and extract different fields and features for Earlybird to index. User updates ingester produces user safety information such as whether the user is deactivated, suspended or off-boarded. The user and tweet features produced by ingesters are then used by Earlybird during tweet retieval and ranking.  
+T et  ngesters consu  raw t ets and extract d fferent f elds and features for Earlyb rd to  ndex. User updates  ngester produces user safety  nformat on such as w t r t  user  s deact vated, suspended or off-boarded. T  user and t et features produced by  ngesters are t n used by Earlyb rd dur ng t et ret eval and rank ng.  
 
-Ingesters are made up of a pipeline of stages with each stage performing a different field/feature extraction. The pipeline configuration of the ingesters can be found at science/search/ingester/config
+ ngesters are made up of a p pel ne of stages w h each stage perform ng a d fferent f eld/feature extract on. T  p pel ne conf gurat on of t   ngesters can be found at sc ence/search/ ngester/conf g

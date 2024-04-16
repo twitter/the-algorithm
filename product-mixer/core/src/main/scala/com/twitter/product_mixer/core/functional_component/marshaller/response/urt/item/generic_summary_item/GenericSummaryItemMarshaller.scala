@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.generic_summary_item
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.gener c_summary_ em
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media.MediaMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.PromotedMetadataMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary.GenericSummaryItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. d a. d aMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted.Promoted tadataMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.r chtext.R chTextMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.gener c_summary.Gener cSummary em
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class GenericSummaryItemMarshaller @Inject() (
-  genericSummaryDisplayTypeMarshaller: GenericSummaryDisplayTypeMarshaller,
-  genericSummaryContextMarshaller: GenericSummaryContextMarshaller,
-  genericSummaryActionMarshaller: GenericSummaryActionMarshaller,
-  mediaMarshaller: MediaMarshaller,
-  promotedMetadataMarshaller: PromotedMetadataMarshaller,
-  richTextMarshaller: RichTextMarshaller) {
+@S ngleton
+class Gener cSummary emMarshaller @ nject() (
+  gener cSummaryD splayTypeMarshaller: Gener cSummaryD splayTypeMarshaller,
+  gener cSummaryContextMarshaller: Gener cSummaryContextMarshaller,
+  gener cSummaryAct onMarshaller: Gener cSummaryAct onMarshaller,
+   d aMarshaller:  d aMarshaller,
+  promoted tadataMarshaller: Promoted tadataMarshaller,
+  r chTextMarshaller: R chTextMarshaller) {
 
-  def apply(genericSummaryItem: GenericSummaryItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.GenericSummary(
-      urt.GenericSummary(
-        headline = richTextMarshaller(genericSummaryItem.headline),
-        displayType = genericSummaryDisplayTypeMarshaller(genericSummaryItem.displayType),
-        userAttributionIds = genericSummaryItem.userAttributionIds,
-        media = genericSummaryItem.media.map(mediaMarshaller(_)),
-        context = genericSummaryItem.context.map(genericSummaryContextMarshaller(_)),
-        timestamp = genericSummaryItem.timestamp.map(_.inMilliseconds),
-        onClickAction = genericSummaryItem.onClickAction.map(genericSummaryActionMarshaller(_)),
-        promotedMetadata = genericSummaryItem.promotedMetadata.map(promotedMetadataMarshaller(_))
+  def apply(gener cSummary em: Gener cSummary em): urt.T  l ne emContent =
+    urt.T  l ne emContent.Gener cSummary(
+      urt.Gener cSummary(
+         adl ne = r chTextMarshaller(gener cSummary em. adl ne),
+        d splayType = gener cSummaryD splayTypeMarshaller(gener cSummary em.d splayType),
+        userAttr but on ds = gener cSummary em.userAttr but on ds,
+         d a = gener cSummary em. d a.map( d aMarshaller(_)),
+        context = gener cSummary em.context.map(gener cSummaryContextMarshaller(_)),
+        t  stamp = gener cSummary em.t  stamp.map(_. nM ll seconds),
+        onCl ckAct on = gener cSummary em.onCl ckAct on.map(gener cSummaryAct onMarshaller(_)),
+        promoted tadata = gener cSummary em.promoted tadata.map(promoted tadataMarshaller(_))
       )
     )
 }

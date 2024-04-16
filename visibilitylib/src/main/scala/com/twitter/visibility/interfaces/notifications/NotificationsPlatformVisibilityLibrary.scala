@@ -1,157 +1,157 @@
-package com.twitter.visibility.interfaces.notifications
+package com.tw ter.v s b l y. nterfaces.not f cat ons
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.util.Throwables
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.tweets.CommunityNotificationFeatures
-import com.twitter.visibility.builder.tweets.UnmentionNotificationFeatures
-import com.twitter.visibility.builder.users.AuthorDeviceFeatures
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.builder.users.ViewerAdvancedFilteringFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.common.UserDeviceSource
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.features.AuthorUserLabels
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.rules.State.FeatureFailed
-import com.twitter.visibility.rules.State.MissingFeature
-import com.twitter.visibility.rules.Action
-import com.twitter.visibility.rules.RuleResult
-import com.twitter.visibility.rules.{Allow => AllowAction}
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.ut l.Throwables
+ mport com.tw ter.v s b l y.V s b l yL brary
+ mport com.tw ter.v s b l y.bu lder.V s b l yResult
+ mport com.tw ter.v s b l y.bu lder.t ets.Commun yNot f cat onFeatures
+ mport com.tw ter.v s b l y.bu lder.t ets.Un nt onNot f cat onFeatures
+ mport com.tw ter.v s b l y.bu lder.users.AuthorDev ceFeatures
+ mport com.tw ter.v s b l y.bu lder.users.AuthorFeatures
+ mport com.tw ter.v s b l y.bu lder.users.Relat onsh pFeatures
+ mport com.tw ter.v s b l y.bu lder.users.V e rAdvancedF lter ngFeatures
+ mport com.tw ter.v s b l y.bu lder.users.V e rFeatures
+ mport com.tw ter.v s b l y.common.UserDev ceS ce
+ mport com.tw ter.v s b l y.common.UserRelat onsh pS ce
+ mport com.tw ter.v s b l y.common.UserS ce
+ mport com.tw ter.v s b l y.features.AuthorUserLabels
+ mport com.tw ter.v s b l y.features.Feature
+ mport com.tw ter.v s b l y.features.FeatureMap
+ mport com.tw ter.v s b l y.models.V e rContext
+ mport com.tw ter.v s b l y.rules.State.FeatureFa led
+ mport com.tw ter.v s b l y.rules.State.M ss ngFeature
+ mport com.tw ter.v s b l y.rules.Act on
+ mport com.tw ter.v s b l y.rules.RuleResult
+ mport com.tw ter.v s b l y.rules.{Allow => AllowAct on}
 
-object NotificationsPlatformVisibilityLibrary {
-  type NotificationsPlatformVFType =
-    NotificationVFRequest => Stitch[NotificationsPlatformFilteringResponse]
+object Not f cat onsPlatformV s b l yL brary {
+  type Not f cat onsPlatformVFType =
+    Not f cat onVFRequest => St ch[Not f cat onsPlatformF lter ngResponse]
 
-  private val AllowResponse: Stitch[NotificationsPlatformFilteringResponse] =
-    Stitch.value(AllowVerdict)
+  pr vate val AllowResponse: St ch[Not f cat onsPlatformF lter ngResponse] =
+    St ch.value(AllowVerd ct)
 
   def apply(
-    userSource: UserSource,
-    userRelationshipSource: UserRelationshipSource,
-    userDeviceSource: UserDeviceSource,
-    visibilityLibrary: VisibilityLibrary,
-    enableShimFeatureHydration: Gate[Unit] = Gate.False
-  ): NotificationsPlatformVFType = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
+    userS ce: UserS ce,
+    userRelat onsh pS ce: UserRelat onsh pS ce,
+    userDev ceS ce: UserDev ceS ce,
+    v s b l yL brary: V s b l yL brary,
+    enableSh mFeatureHydrat on: Gate[Un ] = Gate.False
+  ): Not f cat onsPlatformVFType = {
+    val l braryStatsRece ver = v s b l yL brary.statsRece ver
+    val vfEng neCounter = l braryStatsRece ver.counter("vf_eng ne_requests")
 
-    val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
-    val authorDeviceFeatures = new AuthorDeviceFeatures(userDeviceSource, libraryStatsReceiver)
-    val viewerFeatures = new ViewerFeatures(userSource, libraryStatsReceiver)
+    val authorFeatures = new AuthorFeatures(userS ce, l braryStatsRece ver)
+    val authorDev ceFeatures = new AuthorDev ceFeatures(userDev ceS ce, l braryStatsRece ver)
+    val v e rFeatures = new V e rFeatures(userS ce, l braryStatsRece ver)
 
-    val viewerAdvancedFilteringFeatures =
-      new ViewerAdvancedFilteringFeatures(userSource, libraryStatsReceiver)
-    val relationshipFeatures =
-      new RelationshipFeatures(userRelationshipSource, libraryStatsReceiver)
+    val v e rAdvancedF lter ngFeatures =
+      new V e rAdvancedF lter ngFeatures(userS ce, l braryStatsRece ver)
+    val relat onsh pFeatures =
+      new Relat onsh pFeatures(userRelat onsh pS ce, l braryStatsRece ver)
 
-    val isShimFeatureHydrationEnabled = enableShimFeatureHydration()
+    val  sSh mFeatureHydrat onEnabled = enableSh mFeatureHydrat on()
 
-    def runRuleEngine(candidate: NotificationVFRequest): Stitch[VisibilityResult] = {
+    def runRuleEng ne(cand date: Not f cat onVFRequest): St ch[V s b l yResult] = {
       val featureMap =
-        visibilityLibrary.featureMapBuilder(
+        v s b l yL brary.featureMapBu lder(
           Seq(
-            viewerFeatures.forViewerId(Some(candidate.recipientId)),
-            viewerAdvancedFilteringFeatures.forViewerId(Some(candidate.recipientId)),
-            authorFeatures.forAuthorId(candidate.subject.id),
-            authorDeviceFeatures.forAuthorId(candidate.subject.id),
-            relationshipFeatures.forAuthorId(candidate.subject.id, Some(candidate.recipientId)),
-            CommunityNotificationFeatures.ForNonCommunityTweetNotification,
-            UnmentionNotificationFeatures.ForNonUnmentionNotificationFeatures
+            v e rFeatures.forV e r d(So (cand date.rec p ent d)),
+            v e rAdvancedF lter ngFeatures.forV e r d(So (cand date.rec p ent d)),
+            authorFeatures.forAuthor d(cand date.subject. d),
+            authorDev ceFeatures.forAuthor d(cand date.subject. d),
+            relat onsh pFeatures.forAuthor d(cand date.subject. d, So (cand date.rec p ent d)),
+            Commun yNot f cat onFeatures.ForNonCommun yT etNot f cat on,
+            Un nt onNot f cat onFeatures.ForNonUn nt onNot f cat onFeatures
           )
         )
 
-      vfEngineCounter.incr()
+      vfEng neCounter. ncr()
 
-      if (isShimFeatureHydrationEnabled) {
-        FeatureMap.resolve(featureMap, libraryStatsReceiver).flatMap { resolvedFeatureMap =>
-          visibilityLibrary.runRuleEngine(
-            contentId = candidate.subject,
+       f ( sSh mFeatureHydrat onEnabled) {
+        FeatureMap.resolve(featureMap, l braryStatsRece ver).flatMap { resolvedFeatureMap =>
+          v s b l yL brary.runRuleEng ne(
+            content d = cand date.subject,
             featureMap = resolvedFeatureMap,
-            viewerContext =
-              ViewerContext.fromContextWithViewerIdFallback(Some(candidate.recipientId)),
-            safetyLevel = candidate.safetyLevel
+            v e rContext =
+              V e rContext.fromContextW hV e r dFallback(So (cand date.rec p ent d)),
+            safetyLevel = cand date.safetyLevel
           )
         }
       } else {
-        visibilityLibrary.runRuleEngine(
-          contentId = candidate.subject,
+        v s b l yL brary.runRuleEng ne(
+          content d = cand date.subject,
           featureMap = featureMap,
-          viewerContext =
-            ViewerContext.fromContextWithViewerIdFallback(Some(candidate.recipientId)),
-          safetyLevel = candidate.safetyLevel
+          v e rContext =
+            V e rContext.fromContextW hV e r dFallback(So (cand date.rec p ent d)),
+          safetyLevel = cand date.safetyLevel
         )
       }
     }
 
     {
-      case candidate: NotificationVFRequest =>
-        runRuleEngine(candidate).flatMap(failCloseForFailures(_, libraryStatsReceiver))
+      case cand date: Not f cat onVFRequest =>
+        runRuleEng ne(cand date).flatMap(fa lCloseForFa lures(_, l braryStatsRece ver))
       case _ =>
         AllowResponse
     }
   }
 
-  private def failCloseForFailures(
-    visibilityResult: VisibilityResult,
-    stats: StatsReceiver
-  ): Stitch[NotificationsPlatformFilteringResponse] = {
-    lazy val vfEngineSuccess = stats.counter("vf_engine_success")
-    lazy val vfEngineFailures = stats.counter("vf_engine_failures")
-    lazy val vfEngineFailuresMissing = stats.scope("vf_engine_failures").counter("missing")
-    lazy val vfEngineFailuresFailed = stats.scope("vf_engine_failures").counter("failed")
-    lazy val vfEngineFiltered = stats.counter("vf_engine_filtered")
+  pr vate def fa lCloseForFa lures(
+    v s b l yResult: V s b l yResult,
+    stats: StatsRece ver
+  ): St ch[Not f cat onsPlatformF lter ngResponse] = {
+    lazy val vfEng neSuccess = stats.counter("vf_eng ne_success")
+    lazy val vfEng neFa lures = stats.counter("vf_eng ne_fa lures")
+    lazy val vfEng neFa luresM ss ng = stats.scope("vf_eng ne_fa lures").counter("m ss ng")
+    lazy val vfEng neFa luresFa led = stats.scope("vf_eng ne_fa lures").counter("fa led")
+    lazy val vfEng neF ltered = stats.counter("vf_eng ne_f ltered")
 
-    val isFailedOrMissingFeature: RuleResult => Boolean = {
-      case RuleResult(_, FeatureFailed(features)) =>
-        !(features.contains(AuthorUserLabels) && features.size == 1)
-      case RuleResult(_, MissingFeature(_)) => true
+    val  sFa ledOrM ss ngFeature: RuleResult => Boolean = {
+      case RuleResult(_, FeatureFa led(features)) =>
+        !(features.conta ns(AuthorUserLabels) && features.s ze == 1)
+      case RuleResult(_, M ss ngFeature(_)) => true
       case _ => false
     }
 
-    val failedRuleResults =
-      visibilityResult.ruleResultMap.values.filter(isFailedOrMissingFeature(_))
+    val fa ledRuleResults =
+      v s b l yResult.ruleResultMap.values.f lter( sFa ledOrM ss ngFeature(_))
 
-    val (failedFeatures, missingFeatures) = failedRuleResults.partition {
-      case RuleResult(_, FeatureFailed(_)) => true
-      case RuleResult(_, MissingFeature(_)) => false
+    val (fa ledFeatures, m ss ngFeatures) = fa ledRuleResults.part  on {
+      case RuleResult(_, FeatureFa led(_)) => true
+      case RuleResult(_, M ss ngFeature(_)) => false
       case _ => false
     }
 
-    val failedOrMissingFeatures: Map[Feature[_], String] = failedRuleResults
+    val fa ledOrM ss ngFeatures: Map[Feature[_], Str ng] = fa ledRuleResults
       .collect {
-        case RuleResult(_, FeatureFailed(features)) =>
+        case RuleResult(_, FeatureFa led(features)) =>
           features.map {
             case (feature: Feature[_], throwable: Throwable) =>
-              feature -> Throwables.mkString(throwable).mkString(" -> ")
+              feature -> Throwables.mkStr ng(throwable).mkStr ng(" -> ")
           }.toSet
-        case RuleResult(_, MissingFeature(features)) => features.map(_ -> "Feature missing.")
+        case RuleResult(_, M ss ngFeature(features)) => features.map(_ -> "Feature m ss ng.")
       }.flatten.toMap
 
-    visibilityResult.verdict match {
-      case AllowAction if failedOrMissingFeatures.isEmpty =>
-        vfEngineSuccess.incr()
+    v s b l yResult.verd ct match {
+      case AllowAct on  f fa ledOrM ss ngFeatures. sEmpty =>
+        vfEng neSuccess. ncr()
         AllowResponse
-      case AllowAction if failedOrMissingFeatures.nonEmpty =>
-        vfEngineFailures.incr()
-        if (missingFeatures.nonEmpty) {
-          vfEngineFailuresMissing.incr()
+      case AllowAct on  f fa ledOrM ss ngFeatures.nonEmpty =>
+        vfEng neFa lures. ncr()
+         f (m ss ngFeatures.nonEmpty) {
+          vfEng neFa luresM ss ng. ncr()
         }
-        if (failedFeatures.nonEmpty) {
-          vfEngineFailuresFailed.incr()
+         f (fa ledFeatures.nonEmpty) {
+          vfEng neFa luresFa led. ncr()
         }
 
-        Stitch.value(FailedVerdict(failedOrMissingFeatures))
-      case action: Action =>
-        vfEngineFiltered.incr()
-        Stitch.value(FilteredVerdict(action))
+        St ch.value(Fa ledVerd ct(fa ledOrM ss ngFeatures))
+      case act on: Act on =>
+        vfEng neF ltered. ncr()
+        St ch.value(F lteredVerd ct(act on))
     }
   }
 }

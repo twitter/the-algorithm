@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.label
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.label
 
-sealed trait LabelDisplayType
+sealed tra  LabelD splayType
 
-case object InlineHeaderLabelDisplayType extends LabelDisplayType
-case object OtherRepliesSectionHeaderLabelDisplayType extends LabelDisplayType
+case object  nl ne aderLabelD splayType extends LabelD splayType
+case object Ot rRepl esSect on aderLabelD splayType extends LabelD splayType

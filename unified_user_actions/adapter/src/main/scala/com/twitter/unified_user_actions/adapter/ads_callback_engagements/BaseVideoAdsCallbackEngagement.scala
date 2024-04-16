@@ -1,50 +1,50 @@
-package com.twitter.unified_user_actions.adapter.ads_callback_engagements
+package com.tw ter.un f ed_user_act ons.adapter.ads_callback_engage nts
 
-import com.twitter.ads.spendserver.thriftscala.SpendServerEvent
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.AuthorInfo
-import com.twitter.unified_user_actions.thriftscala.TweetVideoWatch
-import com.twitter.unified_user_actions.thriftscala.Item
-import com.twitter.unified_user_actions.thriftscala.TweetActionInfo
-import com.twitter.unified_user_actions.thriftscala.TweetInfo
+ mport com.tw ter.ads.spendserver.thr ftscala.SpendServerEvent
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Act onType
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Author nfo
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.T etV deoWatch
+ mport com.tw ter.un f ed_user_act ons.thr ftscala. em
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.T etAct on nfo
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.T et nfo
 
-abstract class BaseVideoAdsCallbackEngagement(actionType: ActionType)
-    extends BaseAdsCallbackEngagement(actionType = actionType) {
+abstract class BaseV deoAdsCallbackEngage nt(act onType: Act onType)
+    extends BaseAdsCallbackEngage nt(act onType = act onType) {
 
-  override def getItem(input: SpendServerEvent): Option[Item] = {
-    input.engagementEvent.flatMap { e =>
-      e.impressionData.flatMap { i =>
-        getTweetInfo(i.promotedTweetId, i.organicTweetId, i.advertiserId, input)
+  overr de def get em( nput: SpendServerEvent): Opt on[ em] = {
+     nput.engage ntEvent.flatMap { e =>
+      e. mpress onData.flatMap {   =>
+        getT et nfo( .promotedT et d,  .organ cT et d,  .advert ser d,  nput)
       }
     }
   }
 
-  private def getTweetInfo(
-    promotedTweetId: Option[Long],
-    organicTweetId: Option[Long],
-    advertiserId: Long,
-    input: SpendServerEvent
-  ): Option[Item] = {
-    val actionedTweetIdOpt: Option[Long] =
-      if (promotedTweetId.isEmpty) organicTweetId else promotedTweetId
-    actionedTweetIdOpt.map { actionTweetId =>
-      Item.TweetInfo(
-        TweetInfo(
-          actionTweetId = actionTweetId,
-          actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(advertiserId))),
-          tweetActionInfo = Some(
-            TweetActionInfo.TweetVideoWatch(
-              TweetVideoWatch(
-                isMonetizable = Some(true),
-                videoOwnerId = input.engagementEvent
-                  .flatMap(e => e.cardEngagement).flatMap(_.amplifyDetails).flatMap(_.videoOwnerId),
-                videoUuid = input.engagementEvent
-                  .flatMap(_.cardEngagement).flatMap(_.amplifyDetails).flatMap(_.videoUuid),
-                prerollOwnerId = input.engagementEvent
-                  .flatMap(e => e.cardEngagement).flatMap(_.amplifyDetails).flatMap(
-                    _.prerollOwnerId),
-                prerollUuid = input.engagementEvent
-                  .flatMap(_.cardEngagement).flatMap(_.amplifyDetails).flatMap(_.prerollUuid)
+  pr vate def getT et nfo(
+    promotedT et d: Opt on[Long],
+    organ cT et d: Opt on[Long],
+    advert ser d: Long,
+     nput: SpendServerEvent
+  ): Opt on[ em] = {
+    val act onedT et dOpt: Opt on[Long] =
+       f (promotedT et d. sEmpty) organ cT et d else promotedT et d
+    act onedT et dOpt.map { act onT et d =>
+       em.T et nfo(
+        T et nfo(
+          act onT et d = act onT et d,
+          act onT etAuthor nfo = So (Author nfo(author d = So (advert ser d))),
+          t etAct on nfo = So (
+            T etAct on nfo.T etV deoWatch(
+              T etV deoWatch(
+                 sMonet zable = So (true),
+                v deoOwner d =  nput.engage ntEvent
+                  .flatMap(e => e.cardEngage nt).flatMap(_.ampl fyDeta ls).flatMap(_.v deoOwner d),
+                v deoUu d =  nput.engage ntEvent
+                  .flatMap(_.cardEngage nt).flatMap(_.ampl fyDeta ls).flatMap(_.v deoUu d),
+                prerollOwner d =  nput.engage ntEvent
+                  .flatMap(e => e.cardEngage nt).flatMap(_.ampl fyDeta ls).flatMap(
+                    _.prerollOwner d),
+                prerollUu d =  nput.engage ntEvent
+                  .flatMap(_.cardEngage nt).flatMap(_.ampl fyDeta ls).flatMap(_.prerollUu d)
               ))
           )
         ),

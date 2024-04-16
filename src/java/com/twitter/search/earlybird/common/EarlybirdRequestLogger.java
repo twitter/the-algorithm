@@ -1,365 +1,365 @@
-package com.twitter.search.earlybird.common;
+package com.tw ter.search.earlyb rd.common;
 
-import java.util.EnumMap;
-import java.util.Map;
+ mport java.ut l.EnumMap;
+ mport java.ut l.Map;
 
-import scala.Option;
+ mport scala.Opt on;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Maps;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.collect.Maps;
 
-import com.twitter.context.TwitterContext;
-import com.twitter.context.thriftscala.Viewer;
-import com.twitter.decider.Decider;
-import com.twitter.finagle.thrift.ClientId;
-import com.twitter.finagle.thrift.ClientId$;
-import com.twitter.search.TwitterContextPermit;
-import com.twitter.search.common.constants.thriftjava.ThriftQuerySource;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.logging.RPCLogger;
-import com.twitter.search.common.metrics.FailureRatioCounter;
-import com.twitter.search.common.metrics.Timer;
-import com.twitter.search.common.util.earlybird.TermStatisticsUtil;
-import com.twitter.search.common.util.earlybird.ThriftSearchResultUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldRequest;
-import com.twitter.search.earlybird.thrift.ThriftHistogramSettings;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsRequest;
+ mport com.tw ter.context.Tw terContext;
+ mport com.tw ter.context.thr ftscala.V e r;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.f nagle.thr ft.Cl ent d;
+ mport com.tw ter.f nagle.thr ft.Cl ent d$;
+ mport com.tw ter.search.Tw terContextPerm ;
+ mport com.tw ter.search.common.constants.thr ftjava.Thr ftQueryS ce;
+ mport com.tw ter.search.common.dec der.Dec derUt l;
+ mport com.tw ter.search.common.logg ng.RPCLogger;
+ mport com.tw ter.search.common. tr cs.Fa lureRat oCounter;
+ mport com.tw ter.search.common. tr cs.T  r;
+ mport com.tw ter.search.common.ut l.earlyb rd.TermStat st csUt l;
+ mport com.tw ter.search.common.ut l.earlyb rd.Thr ftSearchResultUt l;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetF eldRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ft togramSett ngs;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchQuery;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftTermStat st csRequest;
 
-import static com.twitter.search.common.util.earlybird.EarlybirdResponseUtil
-    .responseConsideredFailed;
+ mport stat c com.tw ter.search.common.ut l.earlyb rd.Earlyb rdResponseUt l
+    .responseCons deredFa led;
 
 
-public class EarlybirdRequestLogger extends RPCLogger {
-  protected enum ExtraFields {
-    QUERY_MAX_HITS_TO_PROCESS,
-    COLLECTOR_PARAMS_MAX_HITS_TO_PROCESS,
-    RELEVANCE_OPTIONS_MAX_HITS_TO_PROCESS,
-    NUM_HITS_PROCESSED,
+publ c class Earlyb rdRequestLogger extends RPCLogger {
+  protected enum ExtraF elds {
+    QUERY_MAX_H TS_TO_PROCESS,
+    COLLECTOR_PARAMS_MAX_H TS_TO_PROCESS,
+    RELEVANCE_OPT ONS_MAX_H TS_TO_PROCESS,
+    NUM_H TS_PROCESSED,
     QUERY_COST,
     CPU_TOTAL,
     QUERY_SOURCE,
-    CLIENT_ID,
-    FINAGLE_CLIENT_ID
+    CL ENT_ D,
+    F NAGLE_CL ENT_ D
   }
 
-  protected enum ShardOnlyExtraFields {
+  protected enum ShardOnlyExtraF elds {
     NUM_SEARCHED_SEGMENTS,
-    SCORING_TIME_NANOS
+    SCOR NG_T ME_NANOS
   }
 
-  protected enum RootOnlyExtraFields {
-    CACHING_ALLOWED,
+  protected enum RootOnlyExtraF elds {
+    CACH NG_ALLOWED,
     DEBUG_MODE,
-    CACHE_HIT,
+    CACHE_H T,
     USER_AGENT,
-    // See JIRA APPSEC-2303 for IP addresses logging
+    // See J RA APPSEC-2303 for  P addresses logg ng
   }
 
-  private static final String LOG_FULL_REQUEST_DETAILS_ON_ERROR_DECIDER_KEY =
-      "log_full_request_details_on_error";
-  private static final String LOG_FULL_REQUEST_DETAILS_RANDOM_FRACTION_DECIDER_KEY =
-      "log_full_request_details_random_fraction";
-  private static final String LOG_FULL_SLOW_REQUEST_DETAILS_RANDOM_FRACTION_DECIDER_KEY =
-      "log_full_slow_request_details_random_fraction";
-  private static final String SLOW_REQUEST_LATENCY_THRESHOLD_MS_DECIDER_KEY =
+  pr vate stat c f nal Str ng LOG_FULL_REQUEST_DETA LS_ON_ERROR_DEC DER_KEY =
+      "log_full_request_deta ls_on_error";
+  pr vate stat c f nal Str ng LOG_FULL_REQUEST_DETA LS_RANDOM_FRACT ON_DEC DER_KEY =
+      "log_full_request_deta ls_random_fract on";
+  pr vate stat c f nal Str ng LOG_FULL_SLOW_REQUEST_DETA LS_RANDOM_FRACT ON_DEC DER_KEY =
+      "log_full_slow_request_deta ls_random_fract on";
+  pr vate stat c f nal Str ng SLOW_REQUEST_LATENCY_THRESHOLD_MS_DEC DER_KEY =
       "slow_request_latency_threshold_ms";
 
-  private final Decider decider;
-  private final boolean enableLogUnknownClientRequests;
+  pr vate f nal Dec der dec der;
+  pr vate f nal boolean enableLogUnknownCl entRequests;
 
-  private static final Map<ThriftQuerySource, FailureRatioCounter>
-      FAILURE_RATIO_COUNTER_BY_QUERY_SOURCE = preBuildFailureRatioCounters();
-  private static final FailureRatioCounter NO_QUERY_SOURCE_FAILURE_RATIO_COUNTER =
-      new FailureRatioCounter("earlybird_logger", "query_source", "not_set");
+  pr vate stat c f nal Map<Thr ftQueryS ce, Fa lureRat oCounter>
+      FA LURE_RAT O_COUNTER_BY_QUERY_SOURCE = preBu ldFa lureRat oCounters();
+  pr vate stat c f nal Fa lureRat oCounter NO_QUERY_SOURCE_FA LURE_RAT O_COUNTER =
+      new Fa lureRat oCounter("earlyb rd_logger", "query_s ce", "not_set");
 
-  static EarlybirdRequestLogger buildForRoot(
-      String loggerName, int latencyWarnThreshold, Decider decider) {
+  stat c Earlyb rdRequestLogger bu ldForRoot(
+      Str ng loggerNa ,  nt latencyWarnThreshold, Dec der dec der) {
 
-    return new EarlybirdRequestLogger(loggerName, latencyWarnThreshold,
-        decider, true, RPCLogger.Fields.values(), ExtraFields.values(),
-        RootOnlyExtraFields.values());
+    return new Earlyb rdRequestLogger(loggerNa , latencyWarnThreshold,
+        dec der, true, RPCLogger.F elds.values(), ExtraF elds.values(),
+        RootOnlyExtraF elds.values());
   }
 
-  static EarlybirdRequestLogger buildForShard(
-      String loggerName, int latencyWarnThreshold, Decider decider) {
+  stat c Earlyb rdRequestLogger bu ldForShard(
+      Str ng loggerNa ,  nt latencyWarnThreshold, Dec der dec der) {
 
-    return new EarlybirdRequestLogger(loggerName, latencyWarnThreshold,
-        decider, false, RPCLogger.Fields.values(), ExtraFields.values(),
-        ShardOnlyExtraFields.values());
+    return new Earlyb rdRequestLogger(loggerNa , latencyWarnThreshold,
+        dec der, false, RPCLogger.F elds.values(), ExtraF elds.values(),
+        ShardOnlyExtraF elds.values());
   }
 
-  @VisibleForTesting
-  EarlybirdRequestLogger(String loggerName, int latencyWarnThreshold, Decider decider) {
-    this(loggerName, latencyWarnThreshold, decider, false, RPCLogger.Fields.values(),
-        ExtraFields.values(), RootOnlyExtraFields.values(), ShardOnlyExtraFields.values());
+  @V s bleForTest ng
+  Earlyb rdRequestLogger(Str ng loggerNa ,  nt latencyWarnThreshold, Dec der dec der) {
+    t (loggerNa , latencyWarnThreshold, dec der, false, RPCLogger.F elds.values(),
+        ExtraF elds.values(), RootOnlyExtraF elds.values(), ShardOnlyExtraF elds.values());
   }
 
-  private EarlybirdRequestLogger(String loggerName, int latencyWarnThreshold, Decider decider,
-                                 boolean enableLogUnknownClientRequests, Enum[]... fieldEnums) {
-    super(loggerName, fieldEnums);
-    this.decider = decider;
-    this.enableLogUnknownClientRequests = enableLogUnknownClientRequests;
+  pr vate Earlyb rdRequestLogger(Str ng loggerNa ,  nt latencyWarnThreshold, Dec der dec der,
+                                 boolean enableLogUnknownCl entRequests, Enum[]... f eldEnums) {
+    super(loggerNa , f eldEnums);
+    t .dec der = dec der;
+    t .enableLogUnknownCl entRequests = enableLogUnknownCl entRequests;
     setLatencyWarnThreshold(latencyWarnThreshold);
   }
 
   /**
-   * Logs the given earlybird request and response.
+   * Logs t  g ven earlyb rd request and response.
    *
-   * @param request The earlybird request.
-   * @param response The earlybird response.
-   * @param timer The time it took to process this request.
+   * @param request T  earlyb rd request.
+   * @param response T  earlyb rd response.
+   * @param t  r T  t     took to process t  request.
    */
-  public void logRequest(EarlybirdRequest request, EarlybirdResponse response, Timer timer) {
+  publ c vo d logRequest(Earlyb rdRequest request, Earlyb rdResponse response, T  r t  r) {
     try {
       LogEntry entry = newLogEntry();
 
-      setRequestLogEntries(entry, request);
-      setResponseLogEntries(entry, response);
-      if (timer != null) {
-        entry.setField(ExtraFields.CPU_TOTAL, Long.toString(timer.getElapsedCpuTotal()));
+      setRequestLogEntr es(entry, request);
+      setResponseLogEntr es(entry, response);
+       f (t  r != null) {
+        entry.setF eld(ExtraF elds.CPU_TOTAL, Long.toStr ng(t  r.getElapsedCpuTotal()));
       }
 
-      boolean wasError = response != null && responseConsideredFailed(response.getResponseCode());
+      boolean wasError = response != null && responseCons deredFa led(response.getResponseCode());
 
-      long responseTime = response != null ? response.getResponseTime() : 0L;
+      long responseT   = response != null ? response.getResponseT  () : 0L;
 
-      String logLine = writeLogLine(entry, responseTime, wasError);
+      Str ng logL ne = wr eLogL ne(entry, responseT  , wasError);
 
-      // This code path is called for pre/post logging
-      // Prevent same request showing up twice by only logging on post logging
-      if (response != null && DeciderUtil.isAvailableForRandomRecipient(
-          decider, LOG_FULL_REQUEST_DETAILS_RANDOM_FRACTION_DECIDER_KEY)) {
-        Base64RequestResponseForLogging.randomRequest(logLine, request, response).log();
+      // T  code path  s called for pre/post logg ng
+      // Prevent sa  request show ng up tw ce by only logg ng on post logg ng
+       f (response != null && Dec derUt l. sAva lableForRandomRec p ent(
+          dec der, LOG_FULL_REQUEST_DETA LS_RANDOM_FRACT ON_DEC DER_KEY)) {
+        Base64RequestResponseForLogg ng.randomRequest(logL ne, request, response).log();
       }
 
-      // Unknown client request logging only applies to pre-logging.
-      if (enableLogUnknownClientRequests && response == null) {
-        UnknownClientRequestForLogging unknownClientRequestLogger =
-            UnknownClientRequestForLogging.unknownClientRequest(logLine, request);
-        if (unknownClientRequestLogger != null) {
-          unknownClientRequestLogger.log();
+      // Unknown cl ent request logg ng only appl es to pre-logg ng.
+       f (enableLogUnknownCl entRequests && response == null) {
+        UnknownCl entRequestForLogg ng unknownCl entRequestLogger =
+            UnknownCl entRequestForLogg ng.unknownCl entRequest(logL ne, request);
+         f (unknownCl entRequestLogger != null) {
+          unknownCl entRequestLogger.log();
         }
       }
 
-      if (wasError
-          && DeciderUtil.isAvailableForRandomRecipient(
-          decider, LOG_FULL_REQUEST_DETAILS_ON_ERROR_DECIDER_KEY)) {
-        new RequestResponseForLogging(request, response).logFailedRequest();
-        Base64RequestResponseForLogging.failedRequest(logLine, request, response).log();
+       f (wasError
+          && Dec derUt l. sAva lableForRandomRec p ent(
+          dec der, LOG_FULL_REQUEST_DETA LS_ON_ERROR_DEC DER_KEY)) {
+        new RequestResponseForLogg ng(request, response).logFa ledRequest();
+        Base64RequestResponseForLogg ng.fa ledRequest(logL ne, request, response).log();
       }
 
       boolean wasSlow = response != null
-          && responseTime >= DeciderUtil.getAvailability(
-              decider, SLOW_REQUEST_LATENCY_THRESHOLD_MS_DECIDER_KEY);
-      if (wasSlow
-          && DeciderUtil.isAvailableForRandomRecipient(
-              decider, LOG_FULL_SLOW_REQUEST_DETAILS_RANDOM_FRACTION_DECIDER_KEY)) {
-        Base64RequestResponseForLogging.slowRequest(logLine, request, response).log();
+          && responseT   >= Dec derUt l.getAva lab l y(
+              dec der, SLOW_REQUEST_LATENCY_THRESHOLD_MS_DEC DER_KEY);
+       f (wasSlow
+          && Dec derUt l. sAva lableForRandomRec p ent(
+              dec der, LOG_FULL_SLOW_REQUEST_DETA LS_RANDOM_FRACT ON_DEC DER_KEY)) {
+        Base64RequestResponseForLogg ng.slowRequest(logL ne, request, response).log();
       }
 
-      FailureRatioCounter failureRatioCounter =
-          FAILURE_RATIO_COUNTER_BY_QUERY_SOURCE.get(request.getQuerySource());
-      if (failureRatioCounter != null) {
-        failureRatioCounter.requestFinished(!wasError);
+      Fa lureRat oCounter fa lureRat oCounter =
+          FA LURE_RAT O_COUNTER_BY_QUERY_SOURCE.get(request.getQueryS ce());
+       f (fa lureRat oCounter != null) {
+        fa lureRat oCounter.requestF n s d(!wasError);
       } else {
-        NO_QUERY_SOURCE_FAILURE_RATIO_COUNTER.requestFinished(!wasError);
+        NO_QUERY_SOURCE_FA LURE_RAT O_COUNTER.requestF n s d(!wasError);
       }
 
-    } catch (Exception e) {
-      LOG.error("Exception building log entry ", e);
+    } catch (Except on e) {
+      LOG.error("Except on bu ld ng log entry ", e);
     }
   }
 
-  private void setRequestLogEntries(LogEntry entry, EarlybirdRequest request) {
-    entry.setField(Fields.CLIENT_HOST, request.getClientHost());
-    entry.setField(Fields.CLIENT_REQUEST_ID, request.getClientRequestID());
-    entry.setField(Fields.REQUEST_TYPE, requestTypeForLog(request));
+  pr vate vo d setRequestLogEntr es(LogEntry entry, Earlyb rdRequest request) {
+    entry.setF eld(F elds.CL ENT_HOST, request.getCl entHost());
+    entry.setF eld(F elds.CL ENT_REQUEST_ D, request.getCl entRequest D());
+    entry.setF eld(F elds.REQUEST_TYPE, requestTypeForLog(request));
 
-    if (request.isSetSearchQuery()) {
-      ThriftSearchQuery searchQuery = request.getSearchQuery();
-      entry.setField(Fields.QUERY, searchQuery.getSerializedQuery());
+     f (request. sSetSearchQuery()) {
+      Thr ftSearchQuery searchQuery = request.getSearchQuery();
+      entry.setF eld(F elds.QUERY, searchQuery.getSer al zedQuery());
 
-      if (searchQuery.isSetMaxHitsToProcess()) {
-        entry.setField(ExtraFields.QUERY_MAX_HITS_TO_PROCESS,
-                       Integer.toString(searchQuery.getMaxHitsToProcess()));
+       f (searchQuery. sSetMaxH sToProcess()) {
+        entry.setF eld(ExtraF elds.QUERY_MAX_H TS_TO_PROCESS,
+                        nteger.toStr ng(searchQuery.getMaxH sToProcess()));
       }
 
-      if (searchQuery.isSetCollectorParams()
-          && searchQuery.getCollectorParams().isSetTerminationParams()
-          && searchQuery.getCollectorParams().getTerminationParams().isSetMaxHitsToProcess()) {
-        entry.setField(ExtraFields.COLLECTOR_PARAMS_MAX_HITS_TO_PROCESS,
-                       Integer.toString(searchQuery.getCollectorParams().getTerminationParams()
-                                        .getMaxHitsToProcess()));
+       f (searchQuery. sSetCollectorParams()
+          && searchQuery.getCollectorParams(). sSetTerm nat onParams()
+          && searchQuery.getCollectorParams().getTerm nat onParams(). sSetMaxH sToProcess()) {
+        entry.setF eld(ExtraF elds.COLLECTOR_PARAMS_MAX_H TS_TO_PROCESS,
+                        nteger.toStr ng(searchQuery.getCollectorParams().getTerm nat onParams()
+                                        .getMaxH sToProcess()));
       }
 
-      if (searchQuery.isSetRelevanceOptions()
-          && searchQuery.getRelevanceOptions().isSetMaxHitsToProcess()) {
-        entry.setField(ExtraFields.RELEVANCE_OPTIONS_MAX_HITS_TO_PROCESS,
-                       Integer.toString(searchQuery.getRelevanceOptions().getMaxHitsToProcess()));
+       f (searchQuery. sSetRelevanceOpt ons()
+          && searchQuery.getRelevanceOpt ons(). sSetMaxH sToProcess()) {
+        entry.setF eld(ExtraF elds.RELEVANCE_OPT ONS_MAX_H TS_TO_PROCESS,
+                        nteger.toStr ng(searchQuery.getRelevanceOpt ons().getMaxH sToProcess()));
       }
     }
 
-    entry.setField(Fields.NUM_REQUESTED, Integer.toString(numRequestedForLog(request)));
+    entry.setF eld(F elds.NUM_REQUESTED,  nteger.toStr ng(numRequestedForLog(request)));
 
-    if (request.isSetQuerySource()) {
-      entry.setField(ExtraFields.QUERY_SOURCE, request.getQuerySource().name());
+     f (request. sSetQueryS ce()) {
+      entry.setF eld(ExtraF elds.QUERY_SOURCE, request.getQueryS ce().na ());
     }
 
-    if (request.isSetClientId()) {
-      entry.setField(ExtraFields.CLIENT_ID, request.getClientId());
+     f (request. sSetCl ent d()) {
+      entry.setF eld(ExtraF elds.CL ENT_ D, request.getCl ent d());
     }
 
-    entry.setField(RootOnlyExtraFields.CACHING_ALLOWED,
-                   Boolean.toString(EarlybirdRequestUtil.isCachingAllowed(request)));
+    entry.setF eld(RootOnlyExtraF elds.CACH NG_ALLOWED,
+                   Boolean.toStr ng(Earlyb rdRequestUt l. sCach ngAllo d(request)));
 
-    entry.setField(RootOnlyExtraFields.DEBUG_MODE, Byte.toString(request.getDebugMode()));
+    entry.setF eld(RootOnlyExtraF elds.DEBUG_MODE, Byte.toStr ng(request.getDebugMode()));
 
-    Option<ClientId> clientIdOption = ClientId$.MODULE$.current();
-    if (clientIdOption.isDefined()) {
-      entry.setField(ExtraFields.FINAGLE_CLIENT_ID, clientIdOption.get().name());
+    Opt on<Cl ent d> cl ent dOpt on = Cl ent d$.MODULE$.current();
+     f (cl ent dOpt on. sDef ned()) {
+      entry.setF eld(ExtraF elds.F NAGLE_CL ENT_ D, cl ent dOpt on.get().na ());
     }
 
-    setLogEntriesFromTwitterContext(entry);
+    setLogEntr esFromTw terContext(entry);
   }
 
-  @VisibleForTesting
-  Option<Viewer> getTwitterContext() {
-    return TwitterContext.acquire(TwitterContextPermit.get()).apply();
+  @V s bleForTest ng
+  Opt on<V e r> getTw terContext() {
+    return Tw terContext.acqu re(Tw terContextPerm .get()).apply();
   }
 
-  private void setLogEntriesFromTwitterContext(LogEntry entry) {
-    Option<Viewer> viewerOption = getTwitterContext();
-    if (viewerOption.nonEmpty()) {
-      Viewer viewer = viewerOption.get();
+  pr vate vo d setLogEntr esFromTw terContext(LogEntry entry) {
+    Opt on<V e r> v e rOpt on = getTw terContext();
+     f (v e rOpt on.nonEmpty()) {
+      V e r v e r = v e rOpt on.get();
 
-      if (viewer.userAgent().nonEmpty()) {
-        String userAgent = viewer.userAgent().get();
+       f (v e r.userAgent().nonEmpty()) {
+        Str ng userAgent = v e r.userAgent().get();
 
-        // we only replace the comma in the user-agent with %2C to make it easily parseable,
-        // specially with command line tools like cut/sed/awk
+        //   only replace t  comma  n t  user-agent w h %2C to make   eas ly parseable,
+        // spec ally w h command l ne tools l ke cut/sed/awk
         userAgent = userAgent.replace(",", "%2C");
 
-        entry.setField(RootOnlyExtraFields.USER_AGENT, userAgent);
+        entry.setF eld(RootOnlyExtraF elds.USER_AGENT, userAgent);
       }
     }
   }
 
-  private void setResponseLogEntries(LogEntry entry, EarlybirdResponse response) {
-    if (response != null) {
-      entry.setField(Fields.NUM_RETURNED, Integer.toString(numResultsForLog(response)));
-      entry.setField(Fields.RESPONSE_CODE, String.valueOf(response.getResponseCode()));
-      entry.setField(Fields.RESPONSE_TIME_MICROS, Long.toString(response.getResponseTimeMicros()));
-      if (response.isSetSearchResults()) {
-        entry.setField(ExtraFields.NUM_HITS_PROCESSED,
-            Integer.toString(response.getSearchResults().getNumHitsProcessed()));
-        entry.setField(ExtraFields.QUERY_COST,
-            Double.toString(response.getSearchResults().getQueryCost()));
-        if (response.getSearchResults().isSetScoringTimeNanos()) {
-          entry.setField(ShardOnlyExtraFields.SCORING_TIME_NANOS,
-              Long.toString(response.getSearchResults().getScoringTimeNanos()));
+  pr vate vo d setResponseLogEntr es(LogEntry entry, Earlyb rdResponse response) {
+     f (response != null) {
+      entry.setF eld(F elds.NUM_RETURNED,  nteger.toStr ng(numResultsForLog(response)));
+      entry.setF eld(F elds.RESPONSE_CODE, Str ng.valueOf(response.getResponseCode()));
+      entry.setF eld(F elds.RESPONSE_T ME_M CROS, Long.toStr ng(response.getResponseT  M cros()));
+       f (response. sSetSearchResults()) {
+        entry.setF eld(ExtraF elds.NUM_H TS_PROCESSED,
+             nteger.toStr ng(response.getSearchResults().getNumH sProcessed()));
+        entry.setF eld(ExtraF elds.QUERY_COST,
+            Double.toStr ng(response.getSearchResults().getQueryCost()));
+         f (response.getSearchResults(). sSetScor ngT  Nanos()) {
+          entry.setF eld(ShardOnlyExtraF elds.SCOR NG_T ME_NANOS,
+              Long.toStr ng(response.getSearchResults().getScor ngT  Nanos()));
         }
       }
-      if (response.isSetCacheHit()) {
-        entry.setField(RootOnlyExtraFields.CACHE_HIT, String.valueOf(response.isCacheHit()));
+       f (response. sSetCac H ()) {
+        entry.setF eld(RootOnlyExtraF elds.CACHE_H T, Str ng.valueOf(response. sCac H ()));
       }
-      if (response.isSetNumSearchedSegments()) {
-        entry.setField(ShardOnlyExtraFields.NUM_SEARCHED_SEGMENTS,
-            Integer.toString(response.getNumSearchedSegments()));
+       f (response. sSetNumSearc dSeg nts()) {
+        entry.setF eld(ShardOnlyExtraF elds.NUM_SEARCHED_SEGMENTS,
+             nteger.toStr ng(response.getNumSearc dSeg nts()));
       }
     }
   }
 
-  private static int numRequestedForLog(EarlybirdRequest request) {
-    int num = 0;
-    if (request.isSetFacetRequest() && request.getFacetRequest().isSetFacetFields()) {
-      for (ThriftFacetFieldRequest field : request.getFacetRequest().getFacetFields()) {
-        num += field.getNumResults();
+  pr vate stat c  nt numRequestedForLog(Earlyb rdRequest request) {
+     nt num = 0;
+     f (request. sSetFacetRequest() && request.getFacetRequest(). sSetFacetF elds()) {
+      for (Thr ftFacetF eldRequest f eld : request.getFacetRequest().getFacetF elds()) {
+        num += f eld.getNumResults();
       }
-    } else if (request.isSetTermStatisticsRequest()) {
-      num = request.getTermStatisticsRequest().getTermRequestsSize();
-    } else if (request.isSetSearchQuery()) {
-      num =  request.getSearchQuery().isSetCollectorParams()
+    } else  f (request. sSetTermStat st csRequest()) {
+      num = request.getTermStat st csRequest().getTermRequestsS ze();
+    } else  f (request. sSetSearchQuery()) {
+      num =  request.getSearchQuery(). sSetCollectorParams()
           ? request.getSearchQuery().getCollectorParams().getNumResultsToReturn() : 0;
-      if (request.getSearchQuery().getSearchStatusIdsSize() > 0) {
-        num = Math.max(num, request.getSearchQuery().getSearchStatusIdsSize());
+       f (request.getSearchQuery().getSearchStatus dsS ze() > 0) {
+        num = Math.max(num, request.getSearchQuery().getSearchStatus dsS ze());
       }
     }
     return num;
   }
 
   /**
-   * Returns the number of results in the given response. If the response is a term stats response,
-   * then the returned value will be the number of term results. If the response is a facet
-   * response, then the returned value will be the number of facet results. Otherwise, the returned
-   * value will be the number of search results.
+   * Returns t  number of results  n t  g ven response.  f t  response  s a term stats response,
+   * t n t  returned value w ll be t  number of term results.  f t  response  s a facet
+   * response, t n t  returned value w ll be t  number of facet results. Ot rw se, t  returned
+   * value w ll be t  number of search results.
    */
-  public static int numResultsForLog(EarlybirdResponse response) {
-    if (response == null) {
+  publ c stat c  nt numResultsForLog(Earlyb rdResponse response) {
+     f (response == null) {
       return 0;
-    } else if (response.isSetFacetResults()) {
-      return ThriftSearchResultUtil.numFacetResults(response.getFacetResults());
-    } else if (response.isSetTermStatisticsResults()) {
-      return response.getTermStatisticsResults().getTermResultsSize();
+    } else  f (response. sSetFacetResults()) {
+      return Thr ftSearchResultUt l.numFacetResults(response.getFacetResults());
+    } else  f (response. sSetTermStat st csResults()) {
+      return response.getTermStat st csResults().getTermResultsS ze();
     } else {
-      return ThriftSearchResultUtil.numResults(response.getSearchResults());
+      return Thr ftSearchResultUt l.numResults(response.getSearchResults());
     }
   }
 
-  private static String requestTypeForLog(EarlybirdRequest request) {
-    StringBuilder requestType = new StringBuilder(64);
-    if (request.isSetFacetRequest()) {
+  pr vate stat c Str ng requestTypeForLog(Earlyb rdRequest request) {
+    Str ngBu lder requestType = new Str ngBu lder(64);
+     f (request. sSetFacetRequest()) {
       requestType.append("FACETS");
-      int numFields = request.getFacetRequest().getFacetFieldsSize();
-      if (numFields > 0) {
-        // For 1 or 2 fields, just put them in the request type.  For more, just log the number.
-        if (numFields <= 2) {
-          for (ThriftFacetFieldRequest field : request.getFacetRequest().getFacetFields()) {
-            requestType.append(":").append(field.getFieldName().toUpperCase());
+       nt numF elds = request.getFacetRequest().getFacetF eldsS ze();
+       f (numF elds > 0) {
+        // For 1 or 2 f elds, just put t m  n t  request type.  For more, just log t  number.
+         f (numF elds <= 2) {
+          for (Thr ftFacetF eldRequest f eld : request.getFacetRequest().getFacetF elds()) {
+            requestType.append(":").append(f eld.getF eldNa ().toUpperCase());
           }
         } else {
-          requestType.append(":MULTI-").append(numFields);
+          requestType.append(":MULT -").append(numF elds);
         }
       }
-    } else if (request.isSetTermStatisticsRequest()) {
-      ThriftTermStatisticsRequest termStatsRequest = request.getTermStatisticsRequest();
+    } else  f (request. sSetTermStat st csRequest()) {
+      Thr ftTermStat st csRequest termStatsRequest = request.getTermStat st csRequest();
       requestType.append("TERMSTATS-")
-          .append(termStatsRequest.getTermRequestsSize());
+          .append(termStatsRequest.getTermRequestsS ze());
 
-      ThriftHistogramSettings histoSettings = termStatsRequest.getHistogramSettings();
-      if (histoSettings != null) {
-        String binSizeVal = String.valueOf(TermStatisticsUtil.determineBinSize(histoSettings));
-        String numBinsVal = String.valueOf(histoSettings.getNumBins());
-        requestType.append(":NUMBINS-").append(numBinsVal).append(":BINSIZE-").append(binSizeVal);
+      Thr ft togramSett ngs  toSett ngs = termStatsRequest.get togramSett ngs();
+       f ( toSett ngs != null) {
+        Str ng b nS zeVal = Str ng.valueOf(TermStat st csUt l.determ neB nS ze( toSett ngs));
+        Str ng numB nsVal = Str ng.valueOf( toSett ngs.getNumB ns());
+        requestType.append(":NUMB NS-").append(numB nsVal).append(":B NS ZE-").append(b nS zeVal);
       }
-    } else if (request.isSetSearchQuery()) {
+    } else  f (request. sSetSearchQuery()) {
       requestType.append("SEARCH:");
-      requestType.append(request.getSearchQuery().getRankingMode().name());
-      // Denote when a from user id is present.
-      if (request.getSearchQuery().isSetFromUserIDFilter64()) {
+      requestType.append(request.getSearchQuery().getRank ngMode().na ());
+      // Denote w n a from user  d  s present.
+       f (request.getSearchQuery(). sSetFromUser DF lter64()) {
         requestType.append(":NETWORK-")
-            .append(request.getSearchQuery().getFromUserIDFilter64Size());
+            .append(request.getSearchQuery().getFromUser DF lter64S ze());
       }
-      // Denote when required status ids are present.
-      if (request.getSearchQuery().getSearchStatusIdsSize() > 0) {
-        requestType.append(":IDS-").append(request.getSearchQuery().getSearchStatusIdsSize());
+      // Denote w n requ red status  ds are present.
+       f (request.getSearchQuery().getSearchStatus dsS ze() > 0) {
+        requestType.append(": DS-").append(request.getSearchQuery().getSearchStatus dsS ze());
       }
     }
-    return requestType.toString();
+    return requestType.toStr ng();
   }
 
-  private static Map<ThriftQuerySource, FailureRatioCounter> preBuildFailureRatioCounters() {
-    Map<ThriftQuerySource, FailureRatioCounter> counterByQuerySource =
-        new EnumMap<>(ThriftQuerySource.class);
+  pr vate stat c Map<Thr ftQueryS ce, Fa lureRat oCounter> preBu ldFa lureRat oCounters() {
+    Map<Thr ftQueryS ce, Fa lureRat oCounter> counterByQueryS ce =
+        new EnumMap<>(Thr ftQueryS ce.class);
 
-    for (ThriftQuerySource thriftQuerySource : ThriftQuerySource.values()) {
-      FailureRatioCounter counter = new FailureRatioCounter("earlybird_logger", "query_source",
-          thriftQuerySource.toString());
-      counterByQuerySource.put(thriftQuerySource, counter);
+    for (Thr ftQueryS ce thr ftQueryS ce : Thr ftQueryS ce.values()) {
+      Fa lureRat oCounter counter = new Fa lureRat oCounter("earlyb rd_logger", "query_s ce",
+          thr ftQueryS ce.toStr ng());
+      counterByQueryS ce.put(thr ftQueryS ce, counter);
     }
 
-    return Maps.immutableEnumMap(counterByQuerySource);
+    return Maps. mmutableEnumMap(counterByQueryS ce);
   }
 }

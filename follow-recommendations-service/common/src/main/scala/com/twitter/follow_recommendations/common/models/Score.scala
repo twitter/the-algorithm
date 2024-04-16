@@ -1,144 +1,144 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.follow_recommendations.common.rankers.common.RankerId.RankerId
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => t}
+ mport com.tw ter.follow_recom ndat ons.common.rankers.common.Ranker d
+ mport com.tw ter.follow_recom ndat ons.common.rankers.common.Ranker d.Ranker d
+ mport com.tw ter.follow_recom ndat ons.logg ng.{thr ftscala => offl ne}
+ mport com.tw ter.follow_recom ndat ons.{thr ftscala => t}
 
 /**
- * Type of Score. This is used to differentiate scores.
+ * Type of Score. T   s used to d fferent ate scores.
  *
- * Define it as a trait so it is possible to add more information for different score types.
+ * Def ne   as a tra  so    s poss ble to add more  nformat on for d fferent score types.
  */
-sealed trait ScoreType {
-  def getName: String
+sealed tra  ScoreType {
+  def getNa : Str ng
 }
 
 /**
- * Existing Score Types
+ * Ex st ng Score Types
  */
 object ScoreType {
 
   /**
-   * the score is calculated based on heuristics and most likely not normalized
+   * t  score  s calculated based on  ur st cs and most l kely not normal zed
    */
-  case object HeuristicBasedScore extends ScoreType {
-    override def getName: String = "HeuristicBasedScore"
+  case object  ur st cBasedScore extends ScoreType {
+    overr de def getNa : Str ng = " ur st cBasedScore"
   }
 
   /**
-   * probability of follow after the candidate is recommended to the user
+   * probab l y of follow after t  cand date  s recom nded to t  user
    */
-  case object PFollowGivenReco extends ScoreType {
-    override def getName: String = "PFollowGivenReco"
+  case object PFollowG venReco extends ScoreType {
+    overr de def getNa : Str ng = "PFollowG venReco"
   }
 
   /**
-   * probability of engage after the user follows the candidate
+   * probab l y of engage after t  user follows t  cand date
    */
-  case object PEngagementGivenFollow extends ScoreType {
-    override def getName: String = "PEngagementGivenFollow"
+  case object PEngage ntG venFollow extends ScoreType {
+    overr de def getNa : Str ng = "PEngage ntG venFollow"
   }
 
   /**
-   * probability of engage per tweet impression
+   * probab l y of engage per t et  mpress on
    */
-  case object PEngagementPerImpression extends ScoreType {
-    override def getName: String = "PEngagementPerImpression"
+  case object PEngage ntPer mpress on extends ScoreType {
+    overr de def getNa : Str ng = "PEngage ntPer mpress on"
   }
 
   /**
-   * probability of engage per tweet impression
+   * probab l y of engage per t et  mpress on
    */
-  case object PEngagementGivenReco extends ScoreType {
-    override def getName: String = "PEngagementGivenReco"
+  case object PEngage ntG venReco extends ScoreType {
+    overr de def getNa : Str ng = "PEngage ntG venReco"
   }
 
-  def fromScoreTypeString(scoreTypeName: String): ScoreType = scoreTypeName match {
-    case "HeuristicBasedScore" => HeuristicBasedScore
-    case "PFollowGivenReco" => PFollowGivenReco
-    case "PEngagementGivenFollow" => PEngagementGivenFollow
-    case "PEngagementPerImpression" => PEngagementPerImpression
-    case "PEngagementGivenReco" => PEngagementGivenReco
+  def fromScoreTypeStr ng(scoreTypeNa : Str ng): ScoreType = scoreTypeNa  match {
+    case " ur st cBasedScore" =>  ur st cBasedScore
+    case "PFollowG venReco" => PFollowG venReco
+    case "PEngage ntG venFollow" => PEngage ntG venFollow
+    case "PEngage ntPer mpress on" => PEngage ntPer mpress on
+    case "PEngage ntG venReco" => PEngage ntG venReco
   }
 }
 
 /**
- * Represent the output from a certain ranker or scorer. All the fields are optional
+ * Represent t  output from a certa n ranker or scorer. All t  f elds are opt onal
  *
- * @param value value of the score
- * @param rankerId ranker id
+ * @param value value of t  score
+ * @param ranker d ranker  d
  * @param scoreType score type
  */
-final case class Score(
+f nal case class Score(
   value: Double,
-  rankerId: Option[RankerId] = None,
-  scoreType: Option[ScoreType] = None) {
+  ranker d: Opt on[Ranker d] = None,
+  scoreType: Opt on[ScoreType] = None) {
 
-  def toThrift: t.Score = t.Score(
+  def toThr ft: t.Score = t.Score(
     value = value,
-    rankerId = rankerId.map(_.toString),
-    scoreType = scoreType.map(_.getName)
+    ranker d = ranker d.map(_.toStr ng),
+    scoreType = scoreType.map(_.getNa )
   )
 
-  def toOfflineThrift: offline.Score =
-    offline.Score(
+  def toOffl neThr ft: offl ne.Score =
+    offl ne.Score(
       value = value,
-      rankerId = rankerId.map(_.toString),
-      scoreType = scoreType.map(_.getName)
+      ranker d = ranker d.map(_.toStr ng),
+      scoreType = scoreType.map(_.getNa )
     )
 }
 
 object Score {
 
-  val RandomScore = Score(0.0d, Some(RankerId.RandomRanker))
+  val RandomScore = Score(0.0d, So (Ranker d.RandomRanker))
 
-  def optimusScore(score: Double, scoreType: ScoreType): Score = {
-    Score(value = score, scoreType = Some(scoreType))
+  def opt musScore(score: Double, scoreType: ScoreType): Score = {
+    Score(value = score, scoreType = So (scoreType))
   }
 
-  def predictionScore(score: Double, rankerId: RankerId): Score = {
-    Score(value = score, rankerId = Some(rankerId))
+  def pred ct onScore(score: Double, ranker d: Ranker d): Score = {
+    Score(value = score, ranker d = So (ranker d))
   }
 
-  def fromThrift(thriftScore: t.Score): Score =
+  def fromThr ft(thr ftScore: t.Score): Score =
     Score(
-      value = thriftScore.value,
-      rankerId = thriftScore.rankerId.flatMap(RankerId.getRankerByName),
-      scoreType = thriftScore.scoreType.map(ScoreType.fromScoreTypeString)
+      value = thr ftScore.value,
+      ranker d = thr ftScore.ranker d.flatMap(Ranker d.getRankerByNa ),
+      scoreType = thr ftScore.scoreType.map(ScoreType.fromScoreTypeStr ng)
     )
 }
 
 /**
- * a list of scores
+ * a l st of scores
  */
-final case class Scores(
+f nal case class Scores(
   scores: Seq[Score],
-  selectedRankerId: Option[RankerId] = None,
-  isInProducerScoringExperiment: Boolean = false) {
+  selectedRanker d: Opt on[Ranker d] = None,
+   s nProducerScor ngExper  nt: Boolean = false) {
 
-  def toThrift: t.Scores =
+  def toThr ft: t.Scores =
     t.Scores(
-      scores = scores.map(_.toThrift),
-      selectedRankerId = selectedRankerId.map(_.toString),
-      isInProducerScoringExperiment = isInProducerScoringExperiment
+      scores = scores.map(_.toThr ft),
+      selectedRanker d = selectedRanker d.map(_.toStr ng),
+       s nProducerScor ngExper  nt =  s nProducerScor ngExper  nt
     )
 
-  def toOfflineThrift: offline.Scores =
-    offline.Scores(
-      scores = scores.map(_.toOfflineThrift),
-      selectedRankerId = selectedRankerId.map(_.toString),
-      isInProducerScoringExperiment = isInProducerScoringExperiment
+  def toOffl neThr ft: offl ne.Scores =
+    offl ne.Scores(
+      scores = scores.map(_.toOffl neThr ft),
+      selectedRanker d = selectedRanker d.map(_.toStr ng),
+       s nProducerScor ngExper  nt =  s nProducerScor ngExper  nt
     )
 }
 
 object Scores {
-  val Empty: Scores = Scores(Nil)
+  val Empty: Scores = Scores(N l)
 
-  def fromThrift(thriftScores: t.Scores): Scores =
+  def fromThr ft(thr ftScores: t.Scores): Scores =
     Scores(
-      scores = thriftScores.scores.map(Score.fromThrift),
-      selectedRankerId = thriftScores.selectedRankerId.flatMap(RankerId.getRankerByName),
-      isInProducerScoringExperiment = thriftScores.isInProducerScoringExperiment
+      scores = thr ftScores.scores.map(Score.fromThr ft),
+      selectedRanker d = thr ftScores.selectedRanker d.flatMap(Ranker d.getRankerByNa ),
+       s nProducerScor ngExper  nt = thr ftScores. s nProducerScor ngExper  nt
     )
 }

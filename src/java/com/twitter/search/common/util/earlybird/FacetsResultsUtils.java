@@ -1,264 +1,264 @@
-package com.twitter.search.common.util.earlybird;
+package com.tw ter.search.common.ut l.earlyb rd;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Collect on;
+ mport java.ut l.Collect ons;
+ mport java.ut l.Comparator;
+ mport java.ut l.HashMap;
+ mport java.ut l. erator;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
 
-import com.google.common.collect.Lists;
+ mport com.google.common.collect.L sts;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.logging.DebugMessageBuilder;
-import com.twitter.search.common.ranking.thriftjava.ThriftFacetFinalSortOrder;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftFacetCount;
-import com.twitter.search.earlybird.thrift.ThriftFacetCountMetadata;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldRequest;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
-import com.twitter.search.earlybird.thrift.ThriftFacetRankingMode;
-import com.twitter.search.earlybird.thrift.ThriftFacetRequest;
-import com.twitter.search.earlybird.thrift.ThriftFacetResults;
-import com.twitter.search.earlybird.thrift.ThriftTermResults;
+ mport com.tw ter.search.common.constants.thr ftjava.Thr ftLanguage;
+ mport com.tw ter.search.common.logg ng.Debug ssageBu lder;
+ mport com.tw ter.search.common.rank ng.thr ftjava.Thr ftFacetF nalSortOrder;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetCount;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetCount tadata;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetF eldRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetF eldResults;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetRank ngMode;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetResults;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftTermResults;
 
 /**
- * A utility class to provide some functions for facets results processing.
+ * A ut l y class to prov de so  funct ons for facets results process ng.
  */
-public final class FacetsResultsUtils {
+publ c f nal class FacetsResultsUt ls {
 
-  private static final Logger LOG = LoggerFactory.getLogger(FacetsResultsUtils.class);
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(FacetsResultsUt ls.class);
 
-  private FacetsResultsUtils() {
+  pr vate FacetsResultsUt ls() {
   }
 
-  public static class FacetFieldInfo {
-    public ThriftFacetFieldRequest fieldRequest;
-    public int totalCounts;
-    public Map<String, ThriftFacetCount> topFacets;
-    public List<Map.Entry<ThriftLanguage, Double>> languageHistogramEntries = Lists.newLinkedList();
+  publ c stat c class FacetF eld nfo {
+    publ c Thr ftFacetF eldRequest f eldRequest;
+    publ c  nt totalCounts;
+    publ c Map<Str ng, Thr ftFacetCount> topFacets;
+    publ c L st<Map.Entry<Thr ftLanguage, Double>> language togramEntr es = L sts.newL nkedL st();
   }
 
-  // Only return top languages in the language histogram which sum up to at least this much
-  // ratio, here we get first 80 percentiles.
-  public static final double MIN_PERCENTAGE_SUM_REQUIRED = 0.8;
-  // if a language ratio is over this number, we already return.
-  public static final double MIN_PERCENTAGE = 0.01;
+  // Only return top languages  n t  language  togram wh ch sum up to at least t  much
+  // rat o,  re   get f rst 80 percent les.
+  publ c stat c f nal double M N_PERCENTAGE_SUM_REQU RED = 0.8;
+  //  f a language rat o  s over t  number,   already return.
+  publ c stat c f nal double M N_PERCENTAGE = 0.01;
 
   /**
-   * Prepare facet fields with empty entries and check if we need termStats for filtering.
-   * Returns true if termStats filtering is needed (thus the termStats servie call).
-   * @param facetRequest The related facet request.
-   * @param facetFieldInfoMap The facet field info map to fill, a map from facet type to the facet
-   * fiels results info.
-   * @return {@code true} if termstats request is needed afterwards.
+   * Prepare facet f elds w h empty entr es and c ck  f   need termStats for f lter ng.
+   * Returns true  f termStats f lter ng  s needed (thus t  termStats serv e call).
+   * @param facetRequest T  related facet request.
+   * @param facetF eld nfoMap T  facet f eld  nfo map to f ll, a map from facet type to t  facet
+   * f els results  nfo.
+   * @return {@code true}  f termstats request  s needed afterwards.
    */
-  public static boolean prepareFieldInfoMap(
-      ThriftFacetRequest facetRequest,
-      final Map<String, FacetsResultsUtils.FacetFieldInfo> facetFieldInfoMap) {
-    boolean termStatsFilteringMode = false;
+  publ c stat c boolean prepareF eld nfoMap(
+      Thr ftFacetRequest facetRequest,
+      f nal Map<Str ng, FacetsResultsUt ls.FacetF eld nfo> facetF eld nfoMap) {
+    boolean termStatsF lter ngMode = false;
 
-    for (ThriftFacetFieldRequest fieldRequest : facetRequest.getFacetFields()) {
-      FacetsResultsUtils.FacetFieldInfo info = new FacetsResultsUtils.FacetFieldInfo();
-      info.fieldRequest = fieldRequest;
-      facetFieldInfoMap.put(fieldRequest.getFieldName(), info);
-      if (fieldRequest.getRankingMode() == ThriftFacetRankingMode.FILTER_WITH_TERM_STATISTICS) {
-        termStatsFilteringMode = true;
+    for (Thr ftFacetF eldRequest f eldRequest : facetRequest.getFacetF elds()) {
+      FacetsResultsUt ls.FacetF eld nfo  nfo = new FacetsResultsUt ls.FacetF eld nfo();
+       nfo.f eldRequest = f eldRequest;
+      facetF eld nfoMap.put(f eldRequest.getF eldNa (),  nfo);
+       f (f eldRequest.getRank ngMode() == Thr ftFacetRank ngMode.F LTER_W TH_TERM_STAT ST CS) {
+        termStatsF lter ngMode = true;
       }
     }
 
-    return termStatsFilteringMode;
+    return termStatsF lter ngMode;
   }
 
   /**
-   * Extract information from one ThriftFacetResults into facetFieldInfoMap and userIDWhitelist.
+   * Extract  nformat on from one Thr ftFacetResults  nto facetF eld nfoMap and user DWh el st.
    * @param facetResults Related facets results.
-   * @param facetFieldInfoMap The facets field info map to fill, a map from facet type to the facet
-   * fiels results info.
-   * @param userIDWhitelist The user whitelist to fill.
+   * @param facetF eld nfoMap T  facets f eld  nfo map to f ll, a map from facet type to t  facet
+   * f els results  nfo.
+   * @param user DWh el st T  user wh el st to f ll.
    */
-  public static void fillFacetFieldInfo(
-      final ThriftFacetResults facetResults,
-      final Map<String, FacetsResultsUtils.FacetFieldInfo> facetFieldInfoMap,
-      final Set<Long> userIDWhitelist) {
+  publ c stat c vo d f llFacetF eld nfo(
+      f nal Thr ftFacetResults facetResults,
+      f nal Map<Str ng, FacetsResultsUt ls.FacetF eld nfo> facetF eld nfoMap,
+      f nal Set<Long> user DWh el st) {
 
-    for (String facetField : facetResults.getFacetFields().keySet()) {
-      FacetsResultsUtils.FacetFieldInfo info = facetFieldInfoMap.get(facetField);
-      if (info.topFacets == null) {
-        info.topFacets = new HashMap<>();
+    for (Str ng facetF eld : facetResults.getFacetF elds().keySet()) {
+      FacetsResultsUt ls.FacetF eld nfo  nfo = facetF eld nfoMap.get(facetF eld);
+       f ( nfo.topFacets == null) {
+         nfo.topFacets = new HashMap<>();
       }
 
-      ThriftFacetFieldResults results = facetResults.getFacetFields().get(facetField);
-      if (results.isSetLanguageHistogram()) {
-        info.languageHistogramEntries.addAll(results.getLanguageHistogram().entrySet());
+      Thr ftFacetF eldResults results = facetResults.getFacetF elds().get(facetF eld);
+       f (results. sSetLanguage togram()) {
+         nfo.language togramEntr es.addAll(results.getLanguage togram().entrySet());
       }
-      for (ThriftFacetCount newCount : results.getTopFacets()) {
-        ThriftFacetCount resultCount = info.topFacets.get(newCount.facetLabel);
-        if (resultCount == null) {
-          info.topFacets.put(newCount.facetLabel, new ThriftFacetCount(newCount));
+      for (Thr ftFacetCount newCount : results.getTopFacets()) {
+        Thr ftFacetCount resultCount =  nfo.topFacets.get(newCount.facetLabel);
+         f (resultCount == null) {
+           nfo.topFacets.put(newCount.facetLabel, new Thr ftFacetCount(newCount));
         } else {
           resultCount.setFacetCount(resultCount.facetCount + newCount.facetCount);
-          resultCount.setSimpleCount(resultCount.simpleCount + newCount.simpleCount);
-          resultCount.setWeightedCount(resultCount.weightedCount + newCount.weightedCount);
+          resultCount.setS mpleCount(resultCount.s mpleCount + newCount.s mpleCount);
+          resultCount.set  ghtedCount(resultCount.  ghtedCount + newCount.  ghtedCount);
           resultCount.setPenaltyCount(resultCount.penaltyCount + newCount.penaltyCount);
-          //  this could pass the old metadata object back or a new merged one.
-          resultCount.setMetadata(
-                  mergeFacetMetadata(resultCount.getMetadata(), newCount.getMetadata(),
-                                     userIDWhitelist));
+          //  t  could pass t  old  tadata object back or a new  rged one.
+          resultCount.set tadata(
+                   rgeFacet tadata(resultCount.get tadata(), newCount.get tadata(),
+                                     user DWh el st));
         }
       }
-      info.totalCounts += results.totalCount;
+       nfo.totalCounts += results.totalCount;
     }
   }
 
   /**
-   * Merge a metadata into an existing one.
-   * @param baseMetadata the metadata to merge into.
-   * @param metadataUpdate the new metadata to merge.
-   * @param userIDWhitelist user id whitelist to filter user id with.
-   * @return The updated metadata.
+   *  rge a  tadata  nto an ex st ng one.
+   * @param base tadata t   tadata to  rge  nto.
+   * @param  tadataUpdate t  new  tadata to  rge.
+   * @param user DWh el st user  d wh el st to f lter user  d w h.
+   * @return T  updated  tadata.
    */
-  public static ThriftFacetCountMetadata mergeFacetMetadata(
-          final ThriftFacetCountMetadata baseMetadata,
-          final ThriftFacetCountMetadata metadataUpdate,
-          final Set<Long> userIDWhitelist) {
-    ThriftFacetCountMetadata mergedMetadata = baseMetadata;
-    if (metadataUpdate != null) {
-      String mergedExplanation = null;
-      if (mergedMetadata != null) {
-        if (mergedMetadata.maxTweepCred < metadataUpdate.maxTweepCred) {
-          mergedMetadata.setMaxTweepCred(metadataUpdate.maxTweepCred);
+  publ c stat c Thr ftFacetCount tadata  rgeFacet tadata(
+          f nal Thr ftFacetCount tadata base tadata,
+          f nal Thr ftFacetCount tadata  tadataUpdate,
+          f nal Set<Long> user DWh el st) {
+    Thr ftFacetCount tadata  rged tadata = base tadata;
+     f ( tadataUpdate != null) {
+      Str ng  rgedExplanat on = null;
+       f ( rged tadata != null) {
+         f ( rged tadata.maxT epCred <  tadataUpdate.maxT epCred) {
+           rged tadata.setMaxT epCred( tadataUpdate.maxT epCred);
         }
 
-        if (mergedMetadata.isSetExplanation()) {
-          mergedExplanation = mergedMetadata.getExplanation();
-          if (metadataUpdate.isSetExplanation()) {
-            mergedExplanation += "\n" + metadataUpdate.getExplanation();
+         f ( rged tadata. sSetExplanat on()) {
+           rgedExplanat on =  rged tadata.getExplanat on();
+           f ( tadataUpdate. sSetExplanat on()) {
+             rgedExplanat on += "\n" +  tadataUpdate.getExplanat on();
           }
-        } else if (metadataUpdate.isSetExplanation()) {
-          mergedExplanation = metadataUpdate.getExplanation();
+        } else  f ( tadataUpdate. sSetExplanat on()) {
+           rgedExplanat on =  tadataUpdate.getExplanat on();
         }
 
-        if (mergedMetadata.getStatusId() == -1) {
-          if (LOG.isDebugEnabled()) {
-            LOG.debug("status id in facet count metadata is -1: " + mergedMetadata);
+         f ( rged tadata.getStatus d() == -1) {
+           f (LOG. sDebugEnabled()) {
+            LOG.debug("status  d  n facet count  tadata  s -1: " +  rged tadata);
           }
-          mergedMetadata = metadataUpdate;
-        } else if (metadataUpdate.getStatusId() != -1
-            && metadataUpdate.getStatusId() < mergedMetadata.getStatusId()) {
-          // keep the oldest tweet, ie. the lowest status ID
-          mergedMetadata = metadataUpdate;
-        } else if (metadataUpdate.getStatusId() == mergedMetadata.getStatusId()) {
-          if (mergedMetadata.getTwitterUserId() == -1) {
-            // in this case we didn't find the user in a previous partition yet
-            // only update the user if the status id matches
-            mergedMetadata.setTwitterUserId(metadataUpdate.getTwitterUserId());
-            mergedMetadata.setDontFilterUser(metadataUpdate.isDontFilterUser());
+           rged tadata =  tadataUpdate;
+        } else  f ( tadataUpdate.getStatus d() != -1
+            &&  tadataUpdate.getStatus d() <  rged tadata.getStatus d()) {
+          // keep t  oldest t et,  e. t  lo st status  D
+           rged tadata =  tadataUpdate;
+        } else  f ( tadataUpdate.getStatus d() ==  rged tadata.getStatus d()) {
+           f ( rged tadata.getTw terUser d() == -1) {
+            //  n t  case   d dn't f nd t  user  n a prev ous part  on yet
+            // only update t  user  f t  status  d matc s
+             rged tadata.setTw terUser d( tadataUpdate.getTw terUser d());
+             rged tadata.setDontF lterUser( tadataUpdate. sDontF lterUser());
           }
-          if (!mergedMetadata.isSetStatusLanguage()) {
-            mergedMetadata.setStatusLanguage(metadataUpdate.getStatusLanguage());
+           f (! rged tadata. sSetStatusLanguage()) {
+             rged tadata.setStatusLanguage( tadataUpdate.getStatusLanguage());
           }
         }
-        if (!mergedMetadata.isSetNativePhotoUrl() && metadataUpdate.isSetNativePhotoUrl()) {
-          mergedMetadata.setNativePhotoUrl(metadataUpdate.getNativePhotoUrl());
+         f (! rged tadata. sSetNat vePhotoUrl() &&  tadataUpdate. sSetNat vePhotoUrl()) {
+           rged tadata.setNat vePhotoUrl( tadataUpdate.getNat vePhotoUrl());
         }
       } else {
-        mergedMetadata = metadataUpdate;
+         rged tadata =  tadataUpdate;
       }
 
-      // this will not set an explanation if neither oldMetadata nor metadataUpdate
-      // had an explanation
-      if (mergedExplanation != null) {
-        mergedMetadata.setExplanation(mergedExplanation);
+      // t  w ll not set an explanat on  f ne  r old tadata nor  tadataUpdate
+      // had an explanat on
+       f ( rgedExplanat on != null) {
+         rged tadata.setExplanat on( rgedExplanat on);
       }
 
-      if (userIDWhitelist != null) {
-        // result must not be null now because of the if above
-        if (mergedMetadata.getTwitterUserId() != -1 && !mergedMetadata.isDontFilterUser()) {
-          mergedMetadata.setDontFilterUser(
-              userIDWhitelist.contains(mergedMetadata.getTwitterUserId()));
+       f (user DWh el st != null) {
+        // result must not be null now because of t   f above
+         f ( rged tadata.getTw terUser d() != -1 && ! rged tadata. sDontF lterUser()) {
+           rged tadata.setDontF lterUser(
+              user DWh el st.conta ns( rged tadata.getTw terUser d()));
         }
       }
     }
 
-    return mergedMetadata;
+    return  rged tadata;
   }
 
   /**
-   * Appends all twimg results to the image results. Optionally resorts the image results if
-   * a comparator is passed in.
-   * Also computes the sums of totalCount, totalScore, totalPenalty.
+   * Appends all tw mg results to t   mage results. Opt onally resorts t   mage results  f
+   * a comparator  s passed  n.
+   * Also computes t  sums of totalCount, totalScore, totalPenalty.
    */
-  public static void mergeTwimgResults(ThriftFacetResults facetResults,
-                                       Comparator<ThriftFacetCount> optionalSortComparator) {
-    if (facetResults == null || !facetResults.isSetFacetFields()) {
+  publ c stat c vo d  rgeTw mgResults(Thr ftFacetResults facetResults,
+                                       Comparator<Thr ftFacetCount> opt onalSortComparator) {
+     f (facetResults == null || !facetResults. sSetFacetF elds()) {
       return;
     }
 
-    ThriftFacetFieldResults imageResults =
-        facetResults.getFacetFields().get(EarlybirdFieldConstant.IMAGES_FACET);
-    ThriftFacetFieldResults twimgResults =
-        facetResults.getFacetFields().remove(EarlybirdFieldConstant.TWIMG_FACET);
-    if (imageResults == null) {
-      if (twimgResults != null) {
-        facetResults.getFacetFields().put(EarlybirdFieldConstant.IMAGES_FACET, twimgResults);
+    Thr ftFacetF eldResults  mageResults =
+        facetResults.getFacetF elds().get(Earlyb rdF eldConstant. MAGES_FACET);
+    Thr ftFacetF eldResults tw mgResults =
+        facetResults.getFacetF elds().remove(Earlyb rdF eldConstant.TW MG_FACET);
+     f ( mageResults == null) {
+       f (tw mgResults != null) {
+        facetResults.getFacetF elds().put(Earlyb rdF eldConstant. MAGES_FACET, tw mgResults);
       }
       return;
     }
 
-    if (twimgResults != null) {
-      imageResults.setTotalCount(imageResults.getTotalCount() + twimgResults.getTotalCount());
-      imageResults.setTotalPenalty(imageResults.getTotalPenalty() + twimgResults.getTotalPenalty());
-      imageResults.setTotalScore(imageResults.getTotalScore() + twimgResults.getTotalScore());
-      for (ThriftFacetCount count : twimgResults.getTopFacets()) {
-        imageResults.addToTopFacets(count);
+     f (tw mgResults != null) {
+       mageResults.setTotalCount( mageResults.getTotalCount() + tw mgResults.getTotalCount());
+       mageResults.setTotalPenalty( mageResults.getTotalPenalty() + tw mgResults.getTotalPenalty());
+       mageResults.setTotalScore( mageResults.getTotalScore() + tw mgResults.getTotalScore());
+      for (Thr ftFacetCount count : tw mgResults.getTopFacets()) {
+         mageResults.addToTopFacets(count);
       }
-      if (optionalSortComparator != null) {
-        Collections.sort(imageResults.topFacets, optionalSortComparator);
+       f (opt onalSortComparator != null) {
+        Collect ons.sort( mageResults.topFacets, opt onalSortComparator);
       }
     }
   }
 
   /**
-   * Dedup twimg facets.
+   * Dedup tw mg facets.
    *
-   * Twimg facet uses the status ID as the facet label, instead of the twimg URL, a.k.a.
-   * native photo URL. It is possible to have the same twimg URL appearing in two different
-   * facet label (RT style retweet? copy & paste the twimg URL?). Therefore, to dedup twimg
-   * facet correctly, we need to look at ThriftFacetCount.metadata.nativePhotoUrl
+   * Tw mg facet uses t  status  D as t  facet label,  nstead of t  tw mg URL, a.k.a.
+   * nat ve photo URL.    s poss ble to have t  sa  tw mg URL appear ng  n two d fferent
+   * facet label (RT style ret et? copy & paste t  tw mg URL?). T refore, to dedup tw mg
+   * facet correctly,   need to look at Thr ftFacetCount. tadata.nat vePhotoUrl
    *
-   * @param dedupSet A set holding the native URLs from the twimg facetFieldResults. By having
-   *                 the caller passing in the set, it allows the caller to dedup the facet
-   *                 across different ThriftFacetFieldResults.
-   * @param facetFieldResults The twimg facet field results to be debupped
-   * @param debugMessageBuilder
+   * @param dedupSet A set hold ng t  nat ve URLs from t  tw mg facetF eldResults. By hav ng
+   *                 t  caller pass ng  n t  set,   allows t  caller to dedup t  facet
+   *                 across d fferent Thr ftFacetF eldResults.
+   * @param facetF eldResults T  tw mg facet f eld results to be debupped
+   * @param debug ssageBu lder
    */
-  public static void dedupTwimgFacet(Set<String> dedupSet,
-                                     ThriftFacetFieldResults facetFieldResults,
-                                     DebugMessageBuilder debugMessageBuilder) {
-    if (facetFieldResults == null || facetFieldResults.getTopFacets() == null) {
+  publ c stat c vo d dedupTw mgFacet(Set<Str ng> dedupSet,
+                                     Thr ftFacetF eldResults facetF eldResults,
+                                     Debug ssageBu lder debug ssageBu lder) {
+     f (facetF eldResults == null || facetF eldResults.getTopFacets() == null) {
       return;
     }
 
-    Iterator<ThriftFacetCount> iterator = facetFieldResults.getTopFacetsIterator();
+     erator<Thr ftFacetCount>  erator = facetF eldResults.getTopFacets erator();
 
-    while (iterator.hasNext()) {
-      ThriftFacetCount count = iterator.next();
-      if (count.isSetMetadata() && count.getMetadata().isSetNativePhotoUrl()) {
-        String nativeUrl = count.getMetadata().getNativePhotoUrl();
+    wh le ( erator.hasNext()) {
+      Thr ftFacetCount count =  erator.next();
+       f (count. sSet tadata() && count.get tadata(). sSetNat vePhotoUrl()) {
+        Str ng nat veUrl = count.get tadata().getNat vePhotoUrl();
 
-        if (dedupSet.contains(nativeUrl)) {
-          iterator.remove();
-          debugMessageBuilder.detailed("dedupTwimgFacet removed %s", nativeUrl);
+         f (dedupSet.conta ns(nat veUrl)) {
+           erator.remove();
+          debug ssageBu lder.deta led("dedupTw mgFacet removed %s", nat veUrl);
         } else {
-          dedupSet.add(nativeUrl);
+          dedupSet.add(nat veUrl);
         }
       }
     }
@@ -266,147 +266,147 @@ public final class FacetsResultsUtils {
 
   }
 
-  private static final class LanguageCount {
-    private final ThriftLanguage lang;
-    private final double count;
-    private LanguageCount(ThriftLanguage lang, double count) {
-      this.lang = lang;
-      this.count = count;
+  pr vate stat c f nal class LanguageCount {
+    pr vate f nal Thr ftLanguage lang;
+    pr vate f nal double count;
+    pr vate LanguageCount(Thr ftLanguage lang, double count) {
+      t .lang = lang;
+      t .count = count;
     }
   }
 
   /**
-   * Calculate the top languages and store them in the results.
+   * Calculate t  top languages and store t m  n t  results.
    */
-  public static void fillTopLanguages(FacetsResultsUtils.FacetFieldInfo info,
-                                      final ThriftFacetFieldResults results) {
+  publ c stat c vo d f llTopLanguages(FacetsResultsUt ls.FacetF eld nfo  nfo,
+                                      f nal Thr ftFacetF eldResults results) {
     double sumForLanguage = 0.0;
-    double[] sums = new double[ThriftLanguage.values().length];
-    for (Map.Entry<ThriftLanguage, Double> entry : info.languageHistogramEntries) {
+    double[] sums = new double[Thr ftLanguage.values().length];
+    for (Map.Entry<Thr ftLanguage, Double> entry :  nfo.language togramEntr es) {
       sumForLanguage += entry.getValue();
-      if (entry.getKey() == null) {
-        // EB might be setting null key for unknown language. SEARCH-1294
-        continue;
+       f (entry.getKey() == null) {
+        // EB m ght be sett ng null key for unknown language. SEARCH-1294
+        cont nue;
       }
       sums[entry.getKey().getValue()] += entry.getValue();
     }
-    if (sumForLanguage == 0.0) {
+     f (sumForLanguage == 0.0) {
       return;
     }
-    List<LanguageCount> langCounts = new ArrayList<>(ThriftLanguage.values().length);
-    for (int i = 0; i < sums.length; i++) {
-      if (sums[i] > 0.0) {
-        // ThriftLanguage.findByValue() might return null, which should fall back to UNKNOWN.
-        ThriftLanguage lang = ThriftLanguage.findByValue(i);
-        lang = lang == null ? ThriftLanguage.UNKNOWN : lang;
-        langCounts.add(new LanguageCount(lang, sums[i]));
+    L st<LanguageCount> langCounts = new ArrayL st<>(Thr ftLanguage.values().length);
+    for ( nt   = 0;   < sums.length;  ++) {
+       f (sums[ ] > 0.0) {
+        // Thr ftLanguage.f ndByValue() m ght return null, wh ch should fall back to UNKNOWN.
+        Thr ftLanguage lang = Thr ftLanguage.f ndByValue( );
+        lang = lang == null ? Thr ftLanguage.UNKNOWN : lang;
+        langCounts.add(new LanguageCount(lang, sums[ ]));
       }
     }
-    Collections.sort(langCounts, (left, right) -> Double.compare(right.count, left.count));
+    Collect ons.sort(langCounts, (left, r ght) -> Double.compare(r ght.count, left.count));
     double percentageSum = 0.0;
-    Map<ThriftLanguage, Double> languageHistogramMap =
-        new HashMap<>(langCounts.size());
-    int numAdded = 0;
+    Map<Thr ftLanguage, Double> language togramMap =
+        new HashMap<>(langCounts.s ze());
+     nt numAdded = 0;
     for (LanguageCount langCount : langCounts) {
-      if (langCount.count == 0.0) {
+       f (langCount.count == 0.0) {
         break;
       }
       double percentage = langCount.count / sumForLanguage;
-      if (percentageSum > MIN_PERCENTAGE_SUM_REQUIRED
-          && percentage < MIN_PERCENTAGE && numAdded >= 3) {
+       f (percentageSum > M N_PERCENTAGE_SUM_REQU RED
+          && percentage < M N_PERCENTAGE && numAdded >= 3) {
         break;
       }
-      languageHistogramMap.put(langCount.lang, percentage);
+      language togramMap.put(langCount.lang, percentage);
       percentageSum += percentage;
       numAdded++;
     }
-    results.setLanguageHistogram(languageHistogramMap);
+    results.setLanguage togram(language togramMap);
   }
 
   /**
-   * Replace "p.twimg.com/" part of the native photo (twimg) URL with "pbs.twimg.com/media/".
-   * We need to do this because of blobstore and it's suppose to be a temporary measure. This
-   * code should be removed once we verified that all native photo URL being sent to Search
-   * are prefixed with "pbs.twimg.com/media/" and no native photo URL in our index contains
-   * "p.twimg.com/"
+   * Replace "p.tw mg.com/" part of t  nat ve photo (tw mg) URL w h "pbs.tw mg.com/ d a/".
+   *   need to do t  because of blobstore and  's suppose to be a temporary  asure. T 
+   * code should be removed once   ver f ed that all nat ve photo URL be ng sent to Search
+   * are pref xed w h "pbs.tw mg.com/ d a/" and no nat ve photo URL  n    ndex conta ns
+   * "p.tw mg.com/"
    *
-   * Please see SEARCH-783 and EVENTS-539 for more details.
+   * Please see SEARCH-783 and EVENTS-539 for more deta ls.
    *
-   * @param response response containing the facet results
+   * @param response response conta n ng t  facet results
    */
-  public static void fixNativePhotoUrl(EarlybirdResponse response) {
-    if (response == null
-        || !response.isSetFacetResults()
-        || !response.getFacetResults().isSetFacetFields()) {
+  publ c stat c vo d f xNat vePhotoUrl(Earlyb rdResponse response) {
+     f (response == null
+        || !response. sSetFacetResults()
+        || !response.getFacetResults(). sSetFacetF elds()) {
       return;
     }
 
-    for (Map.Entry<String, ThriftFacetFieldResults> facetMapEntry
-        : response.getFacetResults().getFacetFields().entrySet()) {
-      final String facetResultField = facetMapEntry.getKey();
+    for (Map.Entry<Str ng, Thr ftFacetF eldResults> facetMapEntry
+        : response.getFacetResults().getFacetF elds().entrySet()) {
+      f nal Str ng facetResultF eld = facetMapEntry.getKey();
 
-      if (EarlybirdFieldConstant.TWIMG_FACET.equals(facetResultField)
-          || EarlybirdFieldConstant.IMAGES_FACET.equals(facetResultField)) {
-        ThriftFacetFieldResults facetFieldResults = facetMapEntry.getValue();
-        for (ThriftFacetCount facetCount : facetFieldResults.getTopFacets()) {
-          replacePhotoUrl(facetCount.getMetadata());
+       f (Earlyb rdF eldConstant.TW MG_FACET.equals(facetResultF eld)
+          || Earlyb rdF eldConstant. MAGES_FACET.equals(facetResultF eld)) {
+        Thr ftFacetF eldResults facetF eldResults = facetMapEntry.getValue();
+        for (Thr ftFacetCount facetCount : facetF eldResults.getTopFacets()) {
+          replacePhotoUrl(facetCount.get tadata());
         }
       }
     }
   }
 
   /**
-   * Replace "p.twimg.com/" part of the native photo (twimg) URL with "pbs.twimg.com/media/".
-   * We need to do this because of blobstore and it's suppose to be a temporary measure. This
-   * code should be removed once we verified that all native photo URL being sent to Search
-   * are prefixed with "pbs.twimg.com/media/" and no native photo URL in our index contains
-   * "p.twimg.com/"
+   * Replace "p.tw mg.com/" part of t  nat ve photo (tw mg) URL w h "pbs.tw mg.com/ d a/".
+   *   need to do t  because of blobstore and  's suppose to be a temporary  asure. T 
+   * code should be removed once   ver f ed that all nat ve photo URL be ng sent to Search
+   * are pref xed w h "pbs.tw mg.com/ d a/" and no nat ve photo URL  n    ndex conta ns
+   * "p.tw mg.com/"
    *
-   * Please see SEARCH-783 and EVENTS-539 for more details.
+   * Please see SEARCH-783 and EVENTS-539 for more deta ls.
    *
-   * @param termResultsCollection collection of ThriftTermResults containing the native photo URL
+   * @param termResultsCollect on collect on of Thr ftTermResults conta n ng t  nat ve photo URL
    */
-  public static void fixNativePhotoUrl(Collection<ThriftTermResults> termResultsCollection) {
-    if (termResultsCollection == null) {
+  publ c stat c vo d f xNat vePhotoUrl(Collect on<Thr ftTermResults> termResultsCollect on) {
+     f (termResultsCollect on == null) {
       return;
     }
 
-    for (ThriftTermResults termResults : termResultsCollection) {
-      if (!termResults.isSetMetadata()) {
-        continue;
+    for (Thr ftTermResults termResults : termResultsCollect on) {
+       f (!termResults. sSet tadata()) {
+        cont nue;
       }
-      replacePhotoUrl(termResults.getMetadata());
+      replacePhotoUrl(termResults.get tadata());
     }
   }
 
   /**
-   * Helper function for fixNativePhotoUrl()
+   *  lper funct on for f xNat vePhotoUrl()
    */
-  private static void replacePhotoUrl(ThriftFacetCountMetadata metadata) {
-    if (metadata != null
-        && metadata.isSetNativePhotoUrl()) {
-      String nativePhotoUrl = metadata.getNativePhotoUrl();
-      nativePhotoUrl = nativePhotoUrl.replace("://p.twimg.com/", "://pbs.twimg.com/media/");
-      metadata.setNativePhotoUrl(nativePhotoUrl);
+  pr vate stat c vo d replacePhotoUrl(Thr ftFacetCount tadata  tadata) {
+     f ( tadata != null
+        &&  tadata. sSetNat vePhotoUrl()) {
+      Str ng nat vePhotoUrl =  tadata.getNat vePhotoUrl();
+      nat vePhotoUrl = nat vePhotoUrl.replace("://p.tw mg.com/", "://pbs.tw mg.com/ d a/");
+       tadata.setNat vePhotoUrl(nat vePhotoUrl);
     }
   }
 
   /**
-   * Deepcopy of an EarlybirdResponse without explanation
+   * Deepcopy of an Earlyb rdResponse w hout explanat on
    */
-  public static EarlybirdResponse deepCopyWithoutExplanation(EarlybirdResponse facetsResponse) {
-    if (facetsResponse == null) {
+  publ c stat c Earlyb rdResponse deepCopyW houtExplanat on(Earlyb rdResponse facetsResponse) {
+     f (facetsResponse == null) {
       return null;
-    } else if (!facetsResponse.isSetFacetResults()
-        || facetsResponse.getFacetResults().getFacetFieldsSize() == 0) {
+    } else  f (!facetsResponse. sSetFacetResults()
+        || facetsResponse.getFacetResults().getFacetF eldsS ze() == 0) {
       return facetsResponse.deepCopy();
     }
-    EarlybirdResponse copy = facetsResponse.deepCopy();
-    for (Map.Entry<String, ThriftFacetFieldResults> entry
-        : copy.getFacetResults().getFacetFields().entrySet()) {
-      if (entry.getValue().getTopFacetsSize() > 0) {
-        for (ThriftFacetCount fc : entry.getValue().getTopFacets()) {
-          fc.getMetadata().unsetExplanation();
+    Earlyb rdResponse copy = facetsResponse.deepCopy();
+    for (Map.Entry<Str ng, Thr ftFacetF eldResults> entry
+        : copy.getFacetResults().getFacetF elds().entrySet()) {
+       f (entry.getValue().getTopFacetsS ze() > 0) {
+        for (Thr ftFacetCount fc : entry.getValue().getTopFacets()) {
+          fc.get tadata().unsetExplanat on();
         }
       }
     }
@@ -414,78 +414,78 @@ public final class FacetsResultsUtils {
   }
 
   /**
-   * Returns a comparator used to compare facet counts by calling
-   * getFacetCountComparator(ThriftFacetFinalSortOrder).  The sort order is determined by
-   * the facetRankingOptions on the facet request.
+   * Returns a comparator used to compare facet counts by call ng
+   * getFacetCountComparator(Thr ftFacetF nalSortOrder).  T  sort order  s determ ned by
+   * t  facetRank ngOpt ons on t  facet request.
    */
-  public static Comparator<ThriftFacetCount> getFacetCountComparator(
-      ThriftFacetRequest facetRequest) {
+  publ c stat c Comparator<Thr ftFacetCount> getFacetCountComparator(
+      Thr ftFacetRequest facetRequest) {
 
-    ThriftFacetFinalSortOrder sortOrder = ThriftFacetFinalSortOrder.SCORE;
+    Thr ftFacetF nalSortOrder sortOrder = Thr ftFacetF nalSortOrder.SCORE;
 
-    if (facetRequest.isSetFacetRankingOptions()
-        && facetRequest.getFacetRankingOptions().isSetFinalSortOrder()) {
-      sortOrder = facetRequest.getFacetRankingOptions().getFinalSortOrder();
+     f (facetRequest. sSetFacetRank ngOpt ons()
+        && facetRequest.getFacetRank ngOpt ons(). sSetF nalSortOrder()) {
+      sortOrder = facetRequest.getFacetRank ngOpt ons().getF nalSortOrder();
     }
 
     return getFacetCountComparator(sortOrder);
   }
 
   /**
-   * Returns a comparator using the specified order.
+   * Returns a comparator us ng t  spec f ed order.
    */
-  public static Comparator<ThriftFacetCount> getFacetCountComparator(
-      ThriftFacetFinalSortOrder sortOrder) {
+  publ c stat c Comparator<Thr ftFacetCount> getFacetCountComparator(
+      Thr ftFacetF nalSortOrder sortOrder) {
 
-    switch (sortOrder) {
-      case SIMPLE_COUNT:   return SIMPLE_COUNT_COMPARATOR;
+    sw ch (sortOrder) {
+      case S MPLE_COUNT:   return S MPLE_COUNT_COMPARATOR;
       case SCORE:          return SCORE_COMPARATOR;
       case CREATED_AT:     return CREATED_AT_COMPARATOR;
-      case WEIGHTED_COUNT: return WEIGHTED_COUNT_COMPARATOR;
+      case WE GHTED_COUNT: return WE GHTED_COUNT_COMPARATOR;
       default:             return SCORE_COMPARATOR;
     }
   }
 
-  private static final Comparator<ThriftFacetCount> SIMPLE_COUNT_COMPARATOR =
+  pr vate stat c f nal Comparator<Thr ftFacetCount> S MPLE_COUNT_COMPARATOR =
       (count1, count2) -> {
-        if (count1.simpleCount > count2.simpleCount) {
+         f (count1.s mpleCount > count2.s mpleCount) {
           return 1;
-        } else if (count1.simpleCount < count2.simpleCount) {
+        } else  f (count1.s mpleCount < count2.s mpleCount) {
           return -1;
         }
 
         return count1.facetLabel.compareTo(count2.facetLabel);
       };
 
-  private static final Comparator<ThriftFacetCount> WEIGHTED_COUNT_COMPARATOR =
+  pr vate stat c f nal Comparator<Thr ftFacetCount> WE GHTED_COUNT_COMPARATOR =
       (count1, count2) -> {
-        if (count1.weightedCount > count2.weightedCount) {
+         f (count1.  ghtedCount > count2.  ghtedCount) {
           return 1;
-        } else if (count1.weightedCount < count2.weightedCount) {
+        } else  f (count1.  ghtedCount < count2.  ghtedCount) {
           return -1;
         }
 
-        return SIMPLE_COUNT_COMPARATOR.compare(count1, count2);
+        return S MPLE_COUNT_COMPARATOR.compare(count1, count2);
       };
 
-  private static final Comparator<ThriftFacetCount> SCORE_COMPARATOR =
+  pr vate stat c f nal Comparator<Thr ftFacetCount> SCORE_COMPARATOR =
       (count1, count2) -> {
-        if (count1.score > count2.score) {
+         f (count1.score > count2.score) {
           return 1;
-        } else if (count1.score < count2.score) {
+        } else  f (count1.score < count2.score) {
           return -1;
         }
-        return SIMPLE_COUNT_COMPARATOR.compare(count1, count2);
+        return S MPLE_COUNT_COMPARATOR.compare(count1, count2);
       };
 
-  private static final Comparator<ThriftFacetCount> CREATED_AT_COMPARATOR =
+  pr vate stat c f nal Comparator<Thr ftFacetCount> CREATED_AT_COMPARATOR =
       (count1, count2) -> {
-        if (count1.isSetMetadata() && count1.getMetadata().isSetCreated_at()
-            && count2.isSetMetadata() && count2.getMetadata().isSetCreated_at()) {
-          // more recent items have higher created_at values
-          if (count1.getMetadata().getCreated_at() > count2.getMetadata().getCreated_at()) {
+         f (count1. sSet tadata() && count1.get tadata(). sSetCreated_at()
+            && count2. sSet tadata() && count2.get tadata(). sSetCreated_at()) {
+          // more recent  ems have h g r created_at values
+           f (count1.get tadata().getCreated_at() > count2.get tadata().getCreated_at()) {
             return 1;
-          } else if (count1.getMetadata().getCreated_at() < count2.getMetadata().getCreated_at()) {
+          } else  f (count1.get tadata().getCreated_at() < count2.get tadata().getCreated_at()) {
             return -1;
           }
         }

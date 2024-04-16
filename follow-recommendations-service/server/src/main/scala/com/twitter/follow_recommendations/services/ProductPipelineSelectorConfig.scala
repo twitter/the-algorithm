@@ -1,18 +1,18 @@
-package com.twitter.follow_recommendations.services
+package com.tw ter.follow_recom ndat ons.serv ces
 
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.common.models.D splayLocat on
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport javax. nject.S ngleton
 
-@Singleton
-class ProductPipelineSelectorConfig {
-  private val paramsMap: Map[DisplayLocation, DarkReadAndExpParams] = Map.empty
+@S ngleton
+class ProductP pel neSelectorConf g {
+  pr vate val paramsMap: Map[D splayLocat on, DarkReadAndExpParams] = Map.empty
 
   def getDarkReadAndExpParams(
-    displayLocation: DisplayLocation
-  ): Option[DarkReadAndExpParams] = {
-    paramsMap.get(displayLocation)
+    d splayLocat on: D splayLocat on
+  ): Opt on[DarkReadAndExpParams] = {
+    paramsMap.get(d splayLocat on)
   }
 }
 

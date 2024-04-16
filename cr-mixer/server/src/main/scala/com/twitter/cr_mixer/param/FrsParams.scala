@@ -1,131 +1,131 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
-import com.twitter.follow_recommendations.thriftscala.DisplayLocation
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.logging.Logger
-import com.twitter.finagle.stats.NullStatsReceiver
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.follow_recom ndat ons.thr ftscala.D splayLocat on
+ mport com.tw ter.t  l nes.conf gap .FSEnumParam
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
 
 object FrsParams {
-  object EnableSourceParam
+  object EnableS ceParam
       extends FSParam[Boolean](
-        name = "signal_frs_enable_source",
+        na  = "s gnal_frs_enable_s ce",
         default = false
       )
 
-  object EnableSourceGraphParam
+  object EnableS ceGraphParam
       extends FSParam[Boolean](
-        name = "graph_frs_enable_source",
+        na  = "graph_frs_enable_s ce",
         default = false
       )
 
-  object MinScoreParam
+  object M nScoreParam
       extends FSBoundedParam[Double](
-        name = "signal_frs_min_score",
+        na  = "s gnal_frs_m n_score",
         default = 0.4,
-        min = 0.0,
+        m n = 0.0,
         max = 1.0
       )
 
-  object MaxConsumerSeedsNumParam
-      extends FSBoundedParam[Int](
-        name = "graph_frs_max_user_seeds_num",
+  object MaxConsu rSeedsNumParam
+      extends FSBoundedParam[ nt](
+        na  = "graph_frs_max_user_seeds_num",
         default = 200,
-        min = 0,
+        m n = 0,
         max = 1000
       )
 
   /**
-   * These params below are only used for FrsTweetCandidateGenerator and shouldn't be used in other endpoints
-   *    * FrsBasedCandidateGenerationMaxSeedsNumParam
-   *    * FrsCandidateGenerationDisplayLocationParam
-   *    * FrsCandidateGenerationDisplayLocation
-   *    * FrsBasedCandidateGenerationMaxCandidatesNumParam
+   * T se params below are only used for FrsT etCand dateGenerator and shouldn't be used  n ot r endpo nts
+   *    * FrsBasedCand dateGenerat onMaxSeedsNumParam
+   *    * FrsCand dateGenerat onD splayLocat onParam
+   *    * FrsCand dateGenerat onD splayLocat on
+   *    * FrsBasedCand dateGenerat onMaxCand datesNumParam
    */
-  object FrsBasedCandidateGenerationEnableVisibilityFilteringParam
+  object FrsBasedCand dateGenerat onEnableV s b l yF lter ngParam
       extends FSParam[Boolean](
-        name = "frs_based_candidate_generation_enable_vf",
+        na  = "frs_based_cand date_generat on_enable_vf",
         default = true
       )
 
-  object FrsBasedCandidateGenerationMaxSeedsNumParam
-      extends FSBoundedParam[Int](
-        name = "frs_based_candidate_generation_max_seeds_num",
+  object FrsBasedCand dateGenerat onMaxSeedsNumParam
+      extends FSBoundedParam[ nt](
+        na  = "frs_based_cand date_generat on_max_seeds_num",
         default = 100,
-        min = 0,
+        m n = 0,
         max = 800
       )
 
-  object FrsBasedCandidateGenerationDisplayLocation extends Enumeration {
-    protected case class FrsDisplayLocationValue(displayLocation: DisplayLocation) extends super.Val
-    import scala.language.implicitConversions
-    implicit def valueToDisplayLocationValue(x: Value): FrsDisplayLocationValue =
-      x.asInstanceOf[FrsDisplayLocationValue]
+  object FrsBasedCand dateGenerat onD splayLocat on extends Enu rat on {
+    protected case class FrsD splayLocat onValue(d splayLocat on: D splayLocat on) extends super.Val
+     mport scala.language. mpl c Convers ons
+     mpl c  def valueToD splayLocat onValue(x: Value): FrsD splayLocat onValue =
+      x.as nstanceOf[FrsD splayLocat onValue]
 
-    val DisplayLocation_ContentRecommender: FrsDisplayLocationValue = FrsDisplayLocationValue(
-      DisplayLocation.ContentRecommender)
-    val DisplayLocation_Home: FrsDisplayLocationValue = FrsDisplayLocationValue(
-      DisplayLocation.HomeTimelineTweetRecs)
-    val DisplayLocation_Notifications: FrsDisplayLocationValue = FrsDisplayLocationValue(
-      DisplayLocation.TweetNotificationRecs)
+    val D splayLocat on_ContentRecom nder: FrsD splayLocat onValue = FrsD splayLocat onValue(
+      D splayLocat on.ContentRecom nder)
+    val D splayLocat on_Ho : FrsD splayLocat onValue = FrsD splayLocat onValue(
+      D splayLocat on.Ho T  l neT etRecs)
+    val D splayLocat on_Not f cat ons: FrsD splayLocat onValue = FrsD splayLocat onValue(
+      D splayLocat on.T etNot f cat onRecs)
   }
 
-  object FrsBasedCandidateGenerationDisplayLocationParam
-      extends FSEnumParam[FrsBasedCandidateGenerationDisplayLocation.type](
-        name = "frs_based_candidate_generation_display_location_id",
-        default = FrsBasedCandidateGenerationDisplayLocation.DisplayLocation_Home,
-        enum = FrsBasedCandidateGenerationDisplayLocation
+  object FrsBasedCand dateGenerat onD splayLocat onParam
+      extends FSEnumParam[FrsBasedCand dateGenerat onD splayLocat on.type](
+        na  = "frs_based_cand date_generat on_d splay_locat on_ d",
+        default = FrsBasedCand dateGenerat onD splayLocat on.D splayLocat on_Ho ,
+        enum = FrsBasedCand dateGenerat onD splayLocat on
       )
 
-  object FrsBasedCandidateGenerationMaxCandidatesNumParam
-      extends FSBoundedParam[Int](
-        name = "frs_based_candidate_generation_max_candidates_num",
+  object FrsBasedCand dateGenerat onMaxCand datesNumParam
+      extends FSBoundedParam[ nt](
+        na  = "frs_based_cand date_generat on_max_cand dates_num",
         default = 100,
-        min = 0,
+        m n = 0,
         max = 2000
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableSourceParam,
-    EnableSourceGraphParam,
-    MinScoreParam,
-    MaxConsumerSeedsNumParam,
-    FrsBasedCandidateGenerationMaxSeedsNumParam,
-    FrsBasedCandidateGenerationDisplayLocationParam,
-    FrsBasedCandidateGenerationMaxCandidatesNumParam,
-    FrsBasedCandidateGenerationEnableVisibilityFilteringParam
+  val AllParams: Seq[Param[_] w h FSNa ] = Seq(
+    EnableS ceParam,
+    EnableS ceGraphParam,
+    M nScoreParam,
+    MaxConsu rSeedsNumParam,
+    FrsBasedCand dateGenerat onMaxSeedsNumParam,
+    FrsBasedCand dateGenerat onD splayLocat onParam,
+    FrsBasedCand dateGenerat onMaxCand datesNumParam,
+    FrsBasedCand dateGenerat onEnableV s b l yF lter ngParam
   )
 
-  lazy val config: BaseConfig = {
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableSourceParam,
-      EnableSourceGraphParam,
-      FrsBasedCandidateGenerationEnableVisibilityFilteringParam
+  lazy val conf g: BaseConf g = {
+    val booleanOverr des = FeatureSw chOverr deUt l.getBooleanFSOverr des(
+      EnableS ceParam,
+      EnableS ceGraphParam,
+      FrsBasedCand dateGenerat onEnableV s b l yF lter ngParam
     )
 
-    val doubleOverrides = FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(MinScoreParam)
+    val doubleOverr des = FeatureSw chOverr deUt l.getBoundedDoubleFSOverr des(M nScoreParam)
 
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-      MaxConsumerSeedsNumParam,
-      FrsBasedCandidateGenerationMaxSeedsNumParam,
-      FrsBasedCandidateGenerationMaxCandidatesNumParam)
+    val  ntOverr des = FeatureSw chOverr deUt l.getBounded ntFSOverr des(
+      MaxConsu rSeedsNumParam,
+      FrsBasedCand dateGenerat onMaxSeedsNumParam,
+      FrsBasedCand dateGenerat onMaxCand datesNumParam)
 
-    val enumOverrides = FeatureSwitchOverrideUtil.getEnumFSOverrides(
-      NullStatsReceiver,
+    val enumOverr des = FeatureSw chOverr deUt l.getEnumFSOverr des(
+      NullStatsRece ver,
       Logger(getClass),
-      FrsBasedCandidateGenerationDisplayLocationParam,
+      FrsBasedCand dateGenerat onD splayLocat onParam,
     )
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(doubleOverrides: _*)
-      .set(intOverrides: _*)
-      .set(enumOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set(booleanOverr des: _*)
+      .set(doubleOverr des: _*)
+      .set( ntOverr des: _*)
+      .set(enumOverr des: _*)
+      .bu ld()
   }
 }

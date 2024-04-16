@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. d a
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.media.BroadcastId
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. d a.Broadcast d
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class BroadcastIdMarshaller @Inject() () {
+@S ngleton
+class Broadcast dMarshaller @ nject() () {
 
-  def apply(broadcastId: BroadcastId): urt.BroadcastId = urt.BroadcastId(
-    id = broadcastId.id
+  def apply(broadcast d: Broadcast d): urt.Broadcast d = urt.Broadcast d(
+     d = broadcast d. d
   )
 }

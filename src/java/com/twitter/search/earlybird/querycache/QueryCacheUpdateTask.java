@@ -1,282 +1,282 @@
-package com.twitter.search.earlybird.querycache;
+package com.tw ter.search.earlyb rd.querycac ;
 
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+ mport java. o. OExcept on;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.cac .Cac Bu lder;
+ mport com.google.common.cac .Cac Loader;
+ mport com.google.common.cac .Load ngCac ;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.common.util.Clock;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.Timer;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.core.earlybird.index.QueryCacheResultForSegment;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.EarlybirdException;
-import com.twitter.search.earlybird.index.EarlybirdSegment;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.search.SearchResultsInfo;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.util.ScheduledExecutorTask;
+ mport com.tw ter.common.quant y.Amount;
+ mport com.tw ter.common.quant y.T  ;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
+ mport com.tw ter.search.common. tr cs.T  r;
+ mport com.tw ter.search.common.search.Term nat onTracker;
+ mport com.tw ter.search.core.earlyb rd. ndex.QueryCac ResultForSeg nt;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserTable;
+ mport com.tw ter.search.earlyb rd.except on.Cr  calExcept onHandler;
+ mport com.tw ter.search.earlyb rd.except on.Earlyb rdExcept on;
+ mport com.tw ter.search.earlyb rd. ndex.Earlyb rdSeg nt;
+ mport com.tw ter.search.earlyb rd. ndex.Earlyb rdS ngleSeg ntSearc r;
+ mport com.tw ter.search.earlyb rd.part  on.Seg nt nfo;
+ mport com.tw ter.search.earlyb rd.search.SearchResults nfo;
+ mport com.tw ter.search.earlyb rd.stats.Earlyb rdSearc rStats;
+ mport com.tw ter.search.earlyb rd.ut l.Sc duledExecutorTask;
 
 /**
- * Each task is responsible for one filter on one segment. We should have a total
- * of num_of_filter * num_of_segments tasks
+ * Each task  s respons ble for one f lter on one seg nt.   should have a total
+ * of num_of_f lter * num_of_seg nts tasks
  */
-@VisibleForTesting
-class QueryCacheUpdateTask extends ScheduledExecutorTask {
-  private static final Logger LOG =  LoggerFactory.getLogger(QueryCacheUpdateTask.class);
+@V s bleForTest ng
+class QueryCac UpdateTask extends Sc duledExecutorTask {
+  pr vate stat c f nal Logger LOG =  LoggerFactory.getLogger(QueryCac UpdateTask.class);
 
   // See OBSERVE-10347
-  private static final boolean EXPORT_STATS =
-      EarlybirdConfig.getBool("export_query_cache_update_task_stats", false);
+  pr vate stat c f nal boolean EXPORT_STATS =
+      Earlyb rdConf g.getBool("export_query_cac _update_task_stats", false);
 
-  private static final LoadingCache<String, TaskStats> TASK_STATS =
-      CacheBuilder.newBuilder().build(new CacheLoader<String, TaskStats>() {
-        @Override
-        public TaskStats load(String statNamePrefix) {
-          return new TaskStats(statNamePrefix, EXPORT_STATS);
+  pr vate stat c f nal Load ngCac <Str ng, TaskStats> TASK_STATS =
+      Cac Bu lder.newBu lder().bu ld(new Cac Loader<Str ng, TaskStats>() {
+        @Overr de
+        publ c TaskStats load(Str ng statNa Pref x) {
+          return new TaskStats(statNa Pref x, EXPORT_STATS);
         }
       });
 
-  private static final SearchCounter FINISHED_TASKS = SearchCounter.export(
-      "querycache_finished_tasks");
+  pr vate stat c f nal SearchCounter F N SHED_TASKS = SearchCounter.export(
+      "querycac _f n s d_tasks");
 
-  private final QueryCacheFilter filter;
+  pr vate f nal QueryCac F lter f lter;
 
-  // Info/data of the segment this task is responsible for
-  private final SegmentInfo segmentInfo;
+  //  nfo/data of t  seg nt t  task  s respons ble for
+  pr vate f nal Seg nt nfo seg nt nfo;
 
-  private final UserTable userTable;
+  pr vate f nal UserTable userTable;
 
-  private volatile boolean ranOnce;
-  private final TaskStats stats;
-  private Amount<Long, Time> lastRunFinishTime;
+  pr vate volat le boolean ranOnce;
+  pr vate f nal TaskStats stats;
+  pr vate Amount<Long, T  > lastRunF n shT  ;
 
   // See SEARCH-4346
-  private final String filterAndSegment;
+  pr vate f nal Str ng f lterAndSeg nt;
 
-  private final Decider decider;
+  pr vate f nal Dec der dec der;
 
-  private static final class TaskStats {
-    private final SearchLongGauge numHitsStat;
-    private final SearchLongGauge updateLatencyStat;
-    private final SearchCounter updateSuccessCountStat;
-    private final SearchCounter updateFailureCountStat;
+  pr vate stat c f nal class TaskStats {
+    pr vate f nal SearchLongGauge numH sStat;
+    pr vate f nal SearchLongGauge updateLatencyStat;
+    pr vate f nal SearchCounter updateSuccessCountStat;
+    pr vate f nal SearchCounter updateFa lureCountStat;
 
-    private TaskStats(String statNamePrefix, boolean exportStats) {
+    pr vate TaskStats(Str ng statNa Pref x, boolean exportStats) {
       // See SEARCH-3698
-      numHitsStat = exportStats ? SearchLongGauge.export(statNamePrefix + "numhit")
-          : new SearchLongGauge(statNamePrefix + "numhit");
+      numH sStat = exportStats ? SearchLongGauge.export(statNa Pref x + "numh ")
+          : new SearchLongGauge(statNa Pref x + "numh ");
       updateLatencyStat = exportStats
-          ? SearchLongGauge.export(statNamePrefix + "update_latency_ms")
-          : new SearchLongGauge(statNamePrefix + "update_latency_ms");
+          ? SearchLongGauge.export(statNa Pref x + "update_latency_ms")
+          : new SearchLongGauge(statNa Pref x + "update_latency_ms");
       updateSuccessCountStat = exportStats
-          ? SearchCounter.export(statNamePrefix + "update_success_count")
-          : SearchCounter.create(statNamePrefix + "update_success_count");
-      updateFailureCountStat = exportStats
-          ? SearchCounter.export(statNamePrefix + "update_failure_count")
-          : SearchCounter.create(statNamePrefix + "update_failure_count");
+          ? SearchCounter.export(statNa Pref x + "update_success_count")
+          : SearchCounter.create(statNa Pref x + "update_success_count");
+      updateFa lureCountStat = exportStats
+          ? SearchCounter.export(statNa Pref x + "update_fa lure_count")
+          : SearchCounter.create(statNa Pref x + "update_fa lure_count");
     }
   }
 
-  private final Amount<Long, Time> updateInterval;
-  private final Amount<Long, Time> initialDelay;
+  pr vate f nal Amount<Long, T  > update nterval;
+  pr vate f nal Amount<Long, T  >  n  alDelay;
 
-  private final EarlybirdSearcherStats searcherStats;
-  private final CriticalExceptionHandler criticalExceptionHandler;
+  pr vate f nal Earlyb rdSearc rStats searc rStats;
+  pr vate f nal Cr  calExcept onHandler cr  calExcept onHandler;
 
   /**
    * Constructor
-   * @param filter Filter to be used to populate the cache
-   * @param segmentInfo Segment this task is responsible for
-   * @param updateInterval Time between successive updates
-   * @param initialDelay Time before the first update
-   * @param updateIterationCounter
-   * @param decider
+   * @param f lter F lter to be used to populate t  cac 
+   * @param seg nt nfo Seg nt t  task  s respons ble for
+   * @param update nterval T   bet en success ve updates
+   * @param  n  alDelay T   before t  f rst update
+   * @param update erat onCounter
+   * @param dec der
    */
-  public QueryCacheUpdateTask(QueryCacheFilter filter,
-                              SegmentInfo segmentInfo,
+  publ c QueryCac UpdateTask(QueryCac F lter f lter,
+                              Seg nt nfo seg nt nfo,
                               UserTable userTable,
-                              Amount<Long, Time> updateInterval,
-                              Amount<Long, Time> initialDelay,
-                              SearchCounter updateIterationCounter,
-                              EarlybirdSearcherStats searcherStats,
-                              Decider decider,
-                              CriticalExceptionHandler criticalExceptionHandler,
+                              Amount<Long, T  > update nterval,
+                              Amount<Long, T  >  n  alDelay,
+                              SearchCounter update erat onCounter,
+                              Earlyb rdSearc rStats searc rStats,
+                              Dec der dec der,
+                              Cr  calExcept onHandler cr  calExcept onHandler,
                               Clock clock) {
-    super(updateIterationCounter, clock);
-    this.filter = filter;
-    this.segmentInfo = segmentInfo;
-    this.userTable = userTable;
-    this.ranOnce = false;
-    this.updateInterval = updateInterval;
-    this.initialDelay = initialDelay;
-    this.stats = setupStats();
-    this.filterAndSegment = String.format(
-        "QueryCacheFilter: %s | Segment: %d",
-        filter.getFilterName(), segmentInfo.getTimeSliceID());
-    this.searcherStats = searcherStats;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.decider = decider;
+    super(update erat onCounter, clock);
+    t .f lter = f lter;
+    t .seg nt nfo = seg nt nfo;
+    t .userTable = userTable;
+    t .ranOnce = false;
+    t .update nterval = update nterval;
+    t . n  alDelay =  n  alDelay;
+    t .stats = setupStats();
+    t .f lterAndSeg nt = Str ng.format(
+        "QueryCac F lter: %s | Seg nt: %d",
+        f lter.getF lterNa (), seg nt nfo.getT  Sl ce D());
+    t .searc rStats = searc rStats;
+    t .cr  calExcept onHandler = cr  calExcept onHandler;
+    t .dec der = dec der;
   }
 
-  @Override
-  protected void runOneIteration() {
+  @Overr de
+  protected vo d runOne erat on() {
     try {
-      if (LOG.isDebugEnabled()) {
+       f (LOG. sDebugEnabled()) {
         LOG.debug(
-            "[{}] Updating with query [{}] for the {} th time.",
-            filterAndSegment,
-            filter.getQueryString(),
-            stats.updateSuccessCountStat.get() + stats.updateFailureCountStat.get() + 1
+            "[{}] Updat ng w h query [{}] for t  {} th t  .",
+            f lterAndSeg nt,
+            f lter.getQueryStr ng(),
+            stats.updateSuccessCountStat.get() + stats.updateFa lureCountStat.get() + 1
         );
-        if (lastRunFinishTime != null) {
+         f (lastRunF n shT   != null) {
           LOG.debug(
-              "[{}] Last run, {} th time, finished {} secs ago. Should run every {} secs",
-              filterAndSegment,
-              stats.updateSuccessCountStat.get() + stats.updateFailureCountStat.get(),
-              TimeUnit.NANOSECONDS.toSeconds(
-                  System.nanoTime() - lastRunFinishTime.as(Time.NANOSECONDS)),
-              updateInterval.as(Time.SECONDS)
+              "[{}] Last run, {} th t  , f n s d {} secs ago. Should run every {} secs",
+              f lterAndSeg nt,
+              stats.updateSuccessCountStat.get() + stats.updateFa lureCountStat.get(),
+              T  Un .NANOSECONDS.toSeconds(
+                  System.nanoT  () - lastRunF n shT  .as(T  .NANOSECONDS)),
+              update nterval.as(T  .SECONDS)
           );
         }
       }
 
-      Timer timer = new Timer(TimeUnit.MILLISECONDS);
-      SearchResultsInfo result = null;
+      T  r t  r = new T  r(T  Un .M LL SECONDS);
+      SearchResults nfo result = null;
       try {
         result = update();
-      } catch (Exception e) {
-        String msg = "Failed to update query cache entry [" + filter.getFilterName()
-            + "] on segment [" + segmentInfo.getTimeSliceID() + "]";
+      } catch (Except on e) {
+        Str ng msg = "Fa led to update query cac  entry [" + f lter.getF lterNa ()
+            + "] on seg nt [" + seg nt nfo.getT  Sl ce D() + "]";
         LOG.warn(msg, e);
       }
 
-      long endTime = timer.stop();
-      updateStats(result, endTime);
+      long endT   = t  r.stop();
+      updateStats(result, endT  );
 
-      if (LOG.isDebugEnabled()) {
-        LOG.debug("[{}] Updated in {} ms, hit {} docs.",
-            filterAndSegment, endTime, stats.numHitsStat.read());
+       f (LOG. sDebugEnabled()) {
+        LOG.debug("[{}] Updated  n {} ms, h  {} docs.",
+            f lterAndSeg nt, endT  , stats.numH sStat.read());
       }
-      // Need to catch throwable here instead of exception so we handle errors like OutOfMemory
+      // Need to catch throwable  re  nstead of except on so   handle errors l ke OutOf mory
       // See RB=528695 and SEARCH-4402
     } catch (Throwable t) {
-      String message = String.format("Got unexpected throwable in %s", getClass().getName());
-      LOG.error(message, t);
+      Str ng  ssage = Str ng.format("Got unexpected throwable  n %s", getClass().getNa ());
+      LOG.error( ssage, t);
 
-      // Wrap the Throwable in a FatalEarlybirdException to categorize it and ensure it's
-      // handled as a fatal exception
-      criticalExceptionHandler.handle(this,
-          new EarlybirdException(message, t));
-    } finally {
-      // Earlybird won't become CURRENT until all tasks are run at least once. We don't want
-      // failed "run" (update) to prevent Earlybird from becoming CURRENT. As long as all tasks
-      // got a chance to run at least once, we are good to go.
+      // Wrap t  Throwable  n a FatalEarlyb rdExcept on to categor ze   and ensure  's
+      // handled as a fatal except on
+      cr  calExcept onHandler.handle(t ,
+          new Earlyb rdExcept on( ssage, t));
+    } f nally {
+      // Earlyb rd won't beco  CURRENT unt l all tasks are run at least once.   don't want
+      // fa led "run" (update) to prevent Earlyb rd from becom ng CURRENT. As long as all tasks
+      // got a chance to run at least once,   are good to go.
       ranOnce = true;
 
-      lastRunFinishTime = Amount.of(System.nanoTime(), Time.NANOSECONDS);
+      lastRunF n shT   = Amount.of(System.nanoT  (), T  .NANOSECONDS);
     }
   }
 
-  public boolean ranOnce() {
+  publ c boolean ranOnce() {
     return ranOnce;
   }
 
-  private TaskStats setupStats() {
-    return TASK_STATS.getUnchecked(statNamePrefix());
+  pr vate TaskStats setupStats() {
+    return TASK_STATS.getUnc cked(statNa Pref x());
   }
 
-  private SearchResultsInfo update() throws IOException {
-    // There's a chance that the EarlybirdSegment of a SegmentInfo to change at any
-    // time. Therefore, it's not safe to operate segments on the SegmentInfo level.
-    // On the archive clusters we create a new EarlybirdSegment and then swap it in when there's
-    // new data instead of appending to an existing EarlybirdSegment.
-    EarlybirdSegment earlybirdSegment = segmentInfo.getIndexSegment();
+  pr vate SearchResults nfo update() throws  OExcept on {
+    // T re's a chance that t  Earlyb rdSeg nt of a Seg nt nfo to change at any
+    // t  . T refore,  's not safe to operate seg nts on t  Seg nt nfo level.
+    // On t  arch ve clusters   create a new Earlyb rdSeg nt and t n swap    n w n t re's
+    // new data  nstead of append ng to an ex st ng Earlyb rdSeg nt.
+    Earlyb rdSeg nt earlyb rdSeg nt = seg nt nfo.get ndexSeg nt();
 
-    EarlybirdSingleSegmentSearcher searcher = earlybirdSegment.getSearcher(userTable);
-    if (searcher == null) {
-      LOG.warn("Unable to get searcher from TwitterIndexManager for segment ["
-          + segmentInfo.getTimeSliceID() + "]. Has it been dropped?");
+    Earlyb rdS ngleSeg ntSearc r searc r = earlyb rdSeg nt.getSearc r(userTable);
+     f (searc r == null) {
+      LOG.warn("Unable to get searc r from Tw ter ndexManager for seg nt ["
+          + seg nt nfo.getT  Sl ce D() + "]. Has   been dropped?");
       return null;
     }
 
-    QueryCacheResultCollector collector = new QueryCacheResultCollector(
-        searcher.getSchemaSnapshot(), filter, searcherStats, decider, clock, 0);
-    searcher.search(filter.getLuceneQuery(), collector);
+    QueryCac ResultCollector collector = new QueryCac ResultCollector(
+        searc r.getSc maSnapshot(), f lter, searc rStats, dec der, clock, 0);
+    searc r.search(f lter.getLuceneQuery(), collector);
 
-    QueryCacheResultForSegment cacheResult = collector.getCachedResult();
-    searcher.getTwitterIndexReader().getSegmentData().updateQueryCacheResult(
-        filter.getFilterName(), cacheResult);
+    QueryCac ResultForSeg nt cac Result = collector.getCac dResult();
+    searc r.getTw ter ndexReader().getSeg ntData().updateQueryCac Result(
+        f lter.getF lterNa (), cac Result);
 
-    FINISHED_TASKS.increment();
+    F N SHED_TASKS. ncre nt();
 
-    if (LOG.isDebugEnabled()) {
-      TerminationTracker tracker = collector.getSearchRequestInfo().getTerminationTracker();
+     f (LOG. sDebugEnabled()) {
+      Term nat onTracker tracker = collector.getSearchRequest nfo().getTerm nat onTracker();
       LOG.debug(
-          "[{}] Updating query finished, start time ms is {}, termination reason is {}",
-          filterAndSegment,
-          tracker.getLocalStartTimeMillis(),
-          tracker.getEarlyTerminationState().getTerminationReason());
+          "[{}] Updat ng query f n s d, start t   ms  s {}, term nat on reason  s {}",
+          f lterAndSeg nt,
+          tracker.getLocalStartT  M ll s(),
+          tracker.getEarlyTerm nat onState().getTerm nat onReason());
     }
 
     return collector.getResults();
   }
 
-  private void updateStats(SearchResultsInfo result, long endTime) {
-    if (result != null) {
-      stats.numHitsStat.set(result.getNumHitsProcessed());
-      stats.updateSuccessCountStat.increment();
+  pr vate vo d updateStats(SearchResults nfo result, long endT  ) {
+     f (result != null) {
+      stats.numH sStat.set(result.getNumH sProcessed());
+      stats.updateSuccessCountStat. ncre nt();
     } else {
-      stats.updateFailureCountStat.increment();
+      stats.updateFa lureCountStat. ncre nt();
     }
-    stats.updateLatencyStat.set(endTime);
+    stats.updateLatencyStat.set(endT  );
   }
 
-  @VisibleForTesting
-  String statNamePrefix() {
-    // If we use this and try to display in monviz "ts(partition, single_instance, querycache*)",
-    // the UI shows "Really expensive query" message. We can keep this around for times when we
-    // want to start things manually and debug.
-    return "querycache_" + filter.getFilterName() + "_" + segmentInfo.getTimeSliceID() + "_";
+  @V s bleForTest ng
+  Str ng statNa Pref x() {
+    //  f   use t  and try to d splay  n monv z "ts(part  on, s ngle_ nstance, querycac *)",
+    // t  U  shows "Really expens ve query"  ssage.   can keep t  around for t  s w n  
+    // want to start th ngs manually and debug.
+    return "querycac _" + f lter.getF lterNa () + "_" + seg nt nfo.getT  Sl ce D() + "_";
   }
 
-  public long getTimeSliceID() {
-    return segmentInfo.getTimeSliceID();
+  publ c long getT  Sl ce D() {
+    return seg nt nfo.getT  Sl ce D();
   }
 
   //////////////////////////
-  // for unit tests only
+  // for un  tests only
   //////////////////////////
-  @VisibleForTesting
-  String getFilterNameForTest() {
-    return filter.getFilterName();
+  @V s bleForTest ng
+  Str ng getF lterNa ForTest() {
+    return f lter.getF lterNa ();
   }
 
-  @VisibleForTesting
-  Amount<Long, Time> getUpdateIntervalForTest() {
-    return updateInterval;
+  @V s bleForTest ng
+  Amount<Long, T  > getUpdate ntervalForTest() {
+    return update nterval;
   }
 
-  @VisibleForTesting
-  Amount<Long, Time> getInitialDelayForTest() {
-    return initialDelay;
+  @V s bleForTest ng
+  Amount<Long, T  > get n  alDelayForTest() {
+    return  n  alDelay;
   }
 
-  @VisibleForTesting
+  @V s bleForTest ng
   TaskStats getTaskStatsForTest() {
     return stats;
   }

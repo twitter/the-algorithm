@@ -1,24 +1,24 @@
-package com.twitter.search.earlybird_root.caching;
+package com.tw ter.search.earlyb rd_root.cach ng;
 
-import javax.inject.Inject;
+ mport javax. nject. nject;
 
-import com.twitter.common.base.Supplier;
-import com.twitter.search.common.decider.SearchDecider;
+ mport com.tw ter.common.base.Suppl er;
+ mport com.tw ter.search.common.dec der.SearchDec der;
 
 /**
- * A cache miss decider backed by a decider key.
+ * A cac  m ss dec der backed by a dec der key.
  */
-public class DefaultForcedCacheMissDecider implements Supplier<Boolean> {
-  private static final String DECIDER_KEY = "default_forced_cache_miss_rate";
-  private final SearchDecider decider;
+publ c class DefaultForcedCac M ssDec der  mple nts Suppl er<Boolean> {
+  pr vate stat c f nal Str ng DEC DER_KEY = "default_forced_cac _m ss_rate";
+  pr vate f nal SearchDec der dec der;
 
-  @Inject
-  public DefaultForcedCacheMissDecider(SearchDecider decider) {
-    this.decider = decider;
+  @ nject
+  publ c DefaultForcedCac M ssDec der(SearchDec der dec der) {
+    t .dec der = dec der;
   }
 
-  @Override
-  public Boolean get() {
-    return decider.isAvailable(DECIDER_KEY);
+  @Overr de
+  publ c Boolean get() {
+    return dec der. sAva lable(DEC DER_KEY);
   }
 }

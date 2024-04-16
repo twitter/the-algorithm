@@ -1,39 +1,39 @@
-package com.twitter.cr_mixer.param.decider
+package com.tw ter.cr_m xer.param.dec der
 
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.decider.Recipient
-import com.twitter.decider.SimpleRecipient
-import com.twitter.simclusters_v2.common.DeciderGateBuilderWithIdHashing
-import javax.inject.Inject
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.dec der.RandomRec p ent
+ mport com.tw ter.dec der.Rec p ent
+ mport com.tw ter.dec der.S mpleRec p ent
+ mport com.tw ter.s mclusters_v2.common.Dec derGateBu lderW h dHash ng
+ mport javax. nject. nject
 
-case class CrMixerDecider @Inject() (decider: Decider) {
+case class CrM xerDec der @ nject() (dec der: Dec der) {
 
-  def isAvailable(feature: String, recipient: Option[Recipient]): Boolean = {
-    decider.isAvailable(feature, recipient)
+  def  sAva lable(feature: Str ng, rec p ent: Opt on[Rec p ent]): Boolean = {
+    dec der. sAva lable(feature, rec p ent)
   }
 
-  lazy val deciderGateBuilder = new DeciderGateBuilderWithIdHashing(decider)
+  lazy val dec derGateBu lder = new Dec derGateBu lderW h dHash ng(dec der)
 
   /**
-   * When useRandomRecipient is set to false, the decider is either completely on or off.
-   * When useRandomRecipient is set to true, the decider is on for the specified % of traffic.
+   * W n useRandomRec p ent  s set to false, t  dec der  s e  r completely on or off.
+   * W n useRandomRec p ent  s set to true, t  dec der  s on for t  spec f ed % of traff c.
    */
-  def isAvailable(feature: String, useRandomRecipient: Boolean = true): Boolean = {
-    if (useRandomRecipient) isAvailable(feature, Some(RandomRecipient))
-    else isAvailable(feature, None)
+  def  sAva lable(feature: Str ng, useRandomRec p ent: Boolean = true): Boolean = {
+     f (useRandomRec p ent)  sAva lable(feature, So (RandomRec p ent))
+    else  sAva lable(feature, None)
   }
 
   /***
-   * Decide whether the decider is available for a specific id using SimpleRecipient(id).
+   * Dec de w t r t  dec der  s ava lable for a spec f c  d us ng S mpleRec p ent( d).
    */
-  def isAvailableForId(
-    id: Long,
-    deciderConstants: String
+  def  sAva lableFor d(
+     d: Long,
+    dec derConstants: Str ng
   ): Boolean = {
-    // Note: SimpleRecipient does expose a `val isUser = true` field which is not correct if the Id is not a user Id.
-    // However this field does not appear to be used anywhere in source.
-    decider.isAvailable(deciderConstants, Some(SimpleRecipient(id)))
+    // Note: S mpleRec p ent does expose a `val  sUser = true` f eld wh ch  s not correct  f t   d  s not a user  d.
+    // Ho ver t  f eld does not appear to be used anyw re  n s ce.
+    dec der. sAva lable(dec derConstants, So (S mpleRec p ent( d)))
   }
 
 }

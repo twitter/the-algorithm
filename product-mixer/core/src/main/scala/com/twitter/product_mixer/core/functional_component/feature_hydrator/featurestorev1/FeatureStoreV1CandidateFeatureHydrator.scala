@@ -1,97 +1,97 @@
-package com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1
+package com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.featurestorev1
 
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.data.PredictionRecordAdapter
-import com.twitter.ml.featurestore.lib.entity.EntityWithId
-import com.twitter.ml.featurestore.lib.online.FeatureStoreRequest
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.feature.featurestorev1.BaseFeatureStoreV1CandidateFeature
-import com.twitter.product_mixer.core.feature.featurestorev1.FeatureStoreV1CandidateEntity
-import com.twitter.product_mixer.core.feature.featurestorev1.featurevalue.FeatureStoreV1Response
-import com.twitter.product_mixer.core.feature.featurestorev1.featurevalue.FeatureStoreV1ResponseFeature
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseBulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.FeatureHydrationFailed
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.stitch.Stitch
-import com.twitter.util.logging.Logging
+ mport com.tw ter.ml.ap .ut l.SR chDataRecord
+ mport com.tw ter.ml.featurestore.l b.Ent y d
+ mport com.tw ter.ml.featurestore.l b.data.Pred ct onRecordAdapter
+ mport com.tw ter.ml.featurestore.l b.ent y.Ent yW h d
+ mport com.tw ter.ml.featurestore.l b.onl ne.FeatureStoreRequest
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.feature.featurestorev1.BaseFeatureStoreV1Cand dateFeature
+ mport com.tw ter.product_m xer.core.feature.featurestorev1.FeatureStoreV1Cand dateEnt y
+ mport com.tw ter.product_m xer.core.feature.featurestorev1.featurevalue.FeatureStoreV1Response
+ mport com.tw ter.product_m xer.core.feature.featurestorev1.featurevalue.FeatureStoreV1ResponseFeature
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BaseBulkCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.FeatureHydrat onFa led
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.ut l.logg ng.Logg ng
 
-trait FeatureStoreV1CandidateFeatureHydrator[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any]]
-    extends BaseBulkCandidateFeatureHydrator[
+tra  FeatureStoreV1Cand dateFeatureHydrator[
+  Query <: P pel neQuery,
+  Cand date <: Un versalNoun[Any]]
+    extends BaseBulkCand dateFeatureHydrator[
       Query,
-      Candidate,
-      BaseFeatureStoreV1CandidateFeature[Query, Candidate, _ <: EntityId, _]
+      Cand date,
+      BaseFeatureStoreV1Cand dateFeature[Query, Cand date, _ <: Ent y d, _]
     ]
-    with Logging {
+    w h Logg ng {
 
-  override def features: Set[BaseFeatureStoreV1CandidateFeature[Query, Candidate, _ <: EntityId, _]]
+  overr de def features: Set[BaseFeatureStoreV1Cand dateFeature[Query, Cand date, _ <: Ent y d, _]]
 
-  def clientBuilder: FeatureStoreV1DynamicClientBuilder
+  def cl entBu lder: FeatureStoreV1Dynam cCl entBu lder
 
-  private lazy val hydrationConfig = FeatureStoreV1CandidateFeatureHydrationConfig(features)
+  pr vate lazy val hydrat onConf g = FeatureStoreV1Cand dateFeatureHydrat onConf g(features)
 
-  private lazy val client = clientBuilder.build(hydrationConfig)
+  pr vate lazy val cl ent = cl entBu lder.bu ld(hydrat onConf g)
 
-  private lazy val datasetToFeatures =
-    FeatureStoreDatasetErrorHandler.datasetToFeaturesMapping(features)
+  pr vate lazy val datasetToFeatures =
+    FeatureStoreDatasetErrorHandler.datasetToFeaturesMapp ng(features)
 
-  private lazy val dataRecordAdapter =
-    PredictionRecordAdapter.oneToOne(hydrationConfig.allBoundFeatures)
+  pr vate lazy val dataRecordAdapter =
+    Pred ct onRecordAdapter.oneToOne(hydrat onConf g.allBoundFeatures)
 
-  private lazy val featureContext = hydrationConfig.allBoundFeatures.toFeatureContext
+  pr vate lazy val featureContext = hydrat onConf g.allBoundFeatures.toFeatureContext
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    // Duplicate entities are expected across features, so de-dupe via the Set before converting to Seq
-    val entities: Seq[FeatureStoreV1CandidateEntity[Query, Candidate, _ <: EntityId]] =
-      features.map(_.entity).toSeq
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): St ch[Seq[FeatureMap]] = {
+    // Dupl cate ent  es are expected across features, so de-dupe v a t  Set before convert ng to Seq
+    val ent  es: Seq[FeatureStoreV1Cand dateEnt y[Query, Cand date, _ <: Ent y d]] =
+      features.map(_.ent y).toSeq
 
-    val featureStoreRequests = candidates.map { candidate =>
-      val candidateEntityIds: Seq[EntityWithId[_ <: EntityId]] =
-        entities.map(_.entityWithId(query, candidate.candidate, candidate.features))
+    val featureStoreRequests = cand dates.map { cand date =>
+      val cand dateEnt y ds: Seq[Ent yW h d[_ <: Ent y d]] =
+        ent  es.map(_.ent yW h d(query, cand date.cand date, cand date.features))
 
-      FeatureStoreRequest(entityIds = candidateEntityIds)
+      FeatureStoreRequest(ent y ds = cand dateEnt y ds)
     }
 
-    val featureMaps = client(featureStoreRequests, query).map { predictionRecords =>
-      if (predictionRecords.size == candidates.size)
-        predictionRecords
-          .zip(candidates).map {
-            case (predictionRecord, candidate) =>
-              val datasetErrors = predictionRecord.getDatasetHydrationErrors
+    val featureMaps = cl ent(featureStoreRequests, query).map { pred ct onRecords =>
+       f (pred ct onRecords.s ze == cand dates.s ze)
+        pred ct onRecords
+          .z p(cand dates).map {
+            case (pred ct onRecord, cand date) =>
+              val datasetErrors = pred ct onRecord.getDatasetHydrat onErrors
               val errorMap =
-                FeatureStoreDatasetErrorHandler.featureToHydrationErrors(
+                FeatureStoreDatasetErrorHandler.featureToHydrat onErrors(
                   datasetToFeatures,
                   datasetErrors)
 
-              if (errorMap.nonEmpty) {
+               f (errorMap.nonEmpty) {
                 logger.debug(() =>
-                  s"$identifier hydration errors for candidate ${candidate.candidate.id}: $errorMap")
+                  s"$ dent f er hydrat on errors for cand date ${cand date.cand date. d}: $errorMap")
               }
               val dataRecord =
-                new SRichDataRecord(
-                  dataRecordAdapter.adaptToDataRecord(predictionRecord),
+                new SR chDataRecord(
+                  dataRecordAdapter.adaptToDataRecord(pred ct onRecord),
                   featureContext)
               val featureStoreResponse =
                 FeatureStoreV1Response(dataRecord, errorMap)
-              FeatureMapBuilder()
-                .add(FeatureStoreV1ResponseFeature, featureStoreResponse).build()
+              FeatureMapBu lder()
+                .add(FeatureStoreV1ResponseFeature, featureStoreResponse).bu ld()
           }
       else
-        // Should not happen as FSv1 is guaranteed to return a prediction record per feature store request
-        throw PipelineFailure(
-          FeatureHydrationFailed,
-          "Unexpected response length from Feature Store V1 while hydrating candidate features")
+        // Should not happen as FSv1  s guaranteed to return a pred ct on record per feature store request
+        throw P pel neFa lure(
+          FeatureHydrat onFa led,
+          "Unexpected response length from Feature Store V1 wh le hydrat ng cand date features")
     }
 
-    Stitch.callFuture(featureMaps)
+    St ch.callFuture(featureMaps)
   }
 }

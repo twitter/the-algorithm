@@ -1,142 +1,142 @@
-package com.twitter.servo.json
+package com.tw ter.servo.json
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.scrooge.ThriftStructCodec
-import com.twitter.scrooge.ThriftStructSerializer
-import difflib.DiffUtils
-import java.io.StringWriter
-import org.apache.thrift.protocol.TField
-import org.apache.thrift.protocol.TProtocol
-import org.apache.thrift.protocol.TProtocolFactory
-import org.apache.thrift.protocol.TSimpleJSONProtocol
-import org.apache.thrift.transport.TTransport
-import scala.collection.JavaConverters._
-import scala.language.experimental.macros
-import scala.reflect.macros.blackbox.Context
+ mport com.fasterxml.jackson.core.JsonParser
+ mport com.fasterxml.jackson.datab nd.JsonNode
+ mport com.fasterxml.jackson.datab nd.ObjectMapper
+ mport com.tw ter.scrooge.Thr ftStruct
+ mport com.tw ter.scrooge.Thr ftStructCodec
+ mport com.tw ter.scrooge.Thr ftStructSer al zer
+ mport d ffl b.D ffUt ls
+ mport java. o.Str ngWr er
+ mport org.apac .thr ft.protocol.TF eld
+ mport org.apac .thr ft.protocol.TProtocol
+ mport org.apac .thr ft.protocol.TProtocolFactory
+ mport org.apac .thr ft.protocol.TS mpleJSONProtocol
+ mport org.apac .thr ft.transport.TTransport
+ mport scala.collect on.JavaConverters._
+ mport scala.language.exper  ntal.macros
+ mport scala.reflect.macros.blackbox.Context
 
-object ThriftJsonInspector {
-  private val mapper = new ObjectMapper()
-  mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true)
-  private val factory = mapper.getFactory()
+object Thr ftJson nspector {
+  pr vate val mapper = new ObjectMapper()
+  mapper.conf gure(JsonParser.Feature.ALLOW_UNQUOTED_F ELD_NAMES, true)
+  pr vate val factory = mapper.getFactory()
 
-  private def mkSerializer[T <: ThriftStruct](_codec: ThriftStructCodec[T]) =
-    new ThriftStructSerializer[T] {
+  pr vate def mkSer al zer[T <: Thr ftStruct](_codec: Thr ftStructCodec[T]) =
+    new Thr ftStructSer al zer[T] {
       def codec = _codec
 
       def protocolFactory =
-        // Identical to TSimpleJSONProtocol.Factory except the TProtocol
-        // returned serializes Thrift pass-through fields with the name
-        // "(TField.id)" instead of empty string.
+        //  dent cal to TS mpleJSONProtocol.Factory except t  TProtocol
+        // returned ser al zes Thr ft pass-through f elds w h t  na 
+        // "(TF eld. d)"  nstead of empty str ng.
         new TProtocolFactory {
           def getProtocol(trans: TTransport): TProtocol =
-            new TSimpleJSONProtocol(trans) {
-              override def writeFieldBegin(field: TField): Unit =
-                writeString(if (field.name.isEmpty) s"(${field.id})" else field.name)
+            new TS mpleJSONProtocol(trans) {
+              overr de def wr eF eldBeg n(f eld: TF eld): Un  =
+                wr eStr ng( f (f eld.na . sEmpty) s"(${f eld. d})" else f eld.na )
             }
         }
     }
 
-  def apply[T <: ThriftStruct](codec: ThriftStructCodec[T]) = new ThriftJsonInspector(codec)
+  def apply[T <: Thr ftStruct](codec: Thr ftStructCodec[T]) = new Thr ftJson nspector(codec)
 }
 
 /**
- * Helper for human inspection of Thrift objects.
+ *  lper for human  nspect on of Thr ft objects.
  */
-class ThriftJsonInspector[T <: ThriftStruct](codec: ThriftStructCodec[T]) {
-  import ThriftJsonInspector._
+class Thr ftJson nspector[T <: Thr ftStruct](codec: Thr ftStructCodec[T]) {
+   mport Thr ftJson nspector._
 
-  private[this] val serializer = mkSerializer(codec)
+  pr vate[t ] val ser al zer = mkSer al zer(codec)
 
   /**
-   * Convert the Thrift object to a JSON representation based on this
-   * object's codec, in the manner of TSimpleJSONProtocol. The resulting
-   * JSON will have human-readable field names that match the field
-   * names that were used in the Thrift definition that the codec was
-   * created from, but the conversion is lossy, and the JSON
-   * representation cannot be converted back.
+   * Convert t  Thr ft object to a JSON representat on based on t 
+   * object's codec,  n t  manner of TS mpleJSONProtocol. T  result ng
+   * JSON w ll have human-readable f eld na s that match t  f eld
+   * na s that  re used  n t  Thr ft def n  on that t  codec was
+   * created from, but t  convers on  s lossy, and t  JSON
+   * representat on cannot be converted back.
    */
-  def toSimpleJson(t: T): JsonNode =
-    mapper.readTree(factory.createParser(serializer.toBytes(t)))
+  def toS mpleJson(t: T): JsonNode =
+    mapper.readTree(factory.createParser(ser al zer.toBytes(t)))
 
   /**
-   * Selects requested fields (matching against the JSON fields) from a
-   * Thrift-generated class.
+   * Selects requested f elds (match ng aga nst t  JSON f elds) from a
+   * Thr ft-generated class.
    *
-   * Paths are specified as slash-separated strings (e.g.,
-   * "key1/key2/key3"). If the path specifies an array or object, it is
-   * included in the output in JSON format, otherwise the simple value is
-   * converted to a string.
+   * Paths are spec f ed as slash-separated str ngs (e.g.,
+   * "key1/key2/key3").  f t  path spec f es an array or object,    s
+   *  ncluded  n t  output  n JSON format, ot rw se t  s mple value  s
+   * converted to a str ng.
    */
-  def select(item: T, paths: Seq[String]): Seq[String] = {
-    val jsonNode = toSimpleJson(item)
+  def select( em: T, paths: Seq[Str ng]): Seq[Str ng] = {
+    val jsonNode = toS mpleJson( em)
     paths.map {
-      _.split("/").foldLeft(jsonNode)(_.findPath(_)) match {
-        case node if node.isMissingNode => "[invalid-path]"
-        case node if node.isContainerNode => node.toString
+      _.spl ("/").foldLeft(jsonNode)(_.f ndPath(_)) match {
+        case node  f node. sM ss ngNode => "[ nval d-path]"
+        case node  f node. sConta nerNode => node.toStr ng
         case node => node.asText
       }
     }
   }
 
   /**
-   * Convert the given Thrift struct to a human-readable pretty-printed
-   * JSON representation. This JSON cannot be converted back into a
-   * struct. This output is intended for debug logging or interactive
-   * inspection of Thrift objects.
+   * Convert t  g ven Thr ft struct to a human-readable pretty-pr nted
+   * JSON representat on. T  JSON cannot be converted back  nto a
+   * struct. T  output  s  ntended for debug logg ng or  nteract ve
+   *  nspect on of Thr ft objects.
    */
-  def prettyPrint(t: T): String = print(t, true)
+  def prettyPr nt(t: T): Str ng = pr nt(t, true)
 
-  def print(t: T, pretty: Boolean = false): String = {
-    val writer = new StringWriter()
-    val generator = factory.createGenerator(writer)
-    if (pretty)
-      generator.useDefaultPrettyPrinter()
-    generator.writeTree(toSimpleJson(t))
-    writer.toString
+  def pr nt(t: T, pretty: Boolean = false): Str ng = {
+    val wr er = new Str ngWr er()
+    val generator = factory.createGenerator(wr er)
+     f (pretty)
+      generator.useDefaultPrettyPr nter()
+    generator.wr eTree(toS mpleJson(t))
+    wr er.toStr ng
   }
 
   /**
-   * Produce a human-readable unified diff of the json pretty-printed
-   * representations of `a` and `b`. If the inputs have the same JSON
-   * representation, the result will be the empty string.
+   * Produce a human-readable un f ed d ff of t  json pretty-pr nted
+   * representat ons of `a` and `b`.  f t   nputs have t  sa  JSON
+   * representat on, t  result w ll be t  empty str ng.
    */
-  def diff(a: T, b: T, contextLines: Int = 1): String = {
-    val linesA = prettyPrint(a).linesIterator.toList.asJava
-    val linesB = prettyPrint(b).linesIterator.toList.asJava
-    val patch = DiffUtils.diff(linesA, linesB)
-    DiffUtils.generateUnifiedDiff("a", "b", linesA, patch, contextLines).asScala.mkString("\n")
+  def d ff(a: T, b: T, contextL nes:  nt = 1): Str ng = {
+    val l nesA = prettyPr nt(a).l nes erator.toL st.asJava
+    val l nesB = prettyPr nt(b).l nes erator.toL st.asJava
+    val patch = D ffUt ls.d ff(l nesA, l nesB)
+    D ffUt ls.generateUn f edD ff("a", "b", l nesA, patch, contextL nes).asScala.mkStr ng("\n")
   }
 }
 
 object syntax {
-  private[this] object CompanionObjectLoader {
-    def load[T](c: Context)(implicit t: c.universe.WeakTypeTag[T]) = {
+  pr vate[t ] object Compan onObjectLoader {
+    def load[T](c: Context)( mpl c  t: c.un verse. akTypeTag[T]) = {
       val tSym = t.tpe.typeSymbol
-      val companion = tSym.asClass.companion
-      if (companion == c.universe.NoSymbol) {
-        c.abort(c.enclosingPosition, s"${tSym} has no companion object")
+      val compan on = tSym.asClass.compan on
+       f (compan on == c.un verse.NoSymbol) {
+        c.abort(c.enclos ngPos  on, s"${tSym} has no compan on object")
       } else {
-        c.universe.Ident(companion)
+        c.un verse. dent(compan on)
       }
     }
   }
 
   /**
-   * Load the companion object of the named type parameter and require
-   * it to be a ThriftStructCodec. Compilation will fail if the
-   * companion object is not a ThriftStructCodec.
+   * Load t  compan on object of t  na d type para ter and requ re
+   *   to be a Thr ftStructCodec. Comp lat on w ll fa l  f t 
+   * compan on object  s not a Thr ftStructCodec.
    */
-  implicit def thriftStructCodec[T <: ThriftStruct]: ThriftStructCodec[T] =
-    macro CompanionObjectLoader.load[T]
+   mpl c  def thr ftStructCodec[T <: Thr ftStruct]: Thr ftStructCodec[T] =
+    macro Compan onObjectLoader.load[T]
 
-  implicit class ThriftJsonSyntax[T <: ThriftStruct](t: T)(implicit codec: ThriftStructCodec[T]) {
-    private[this] def inspector = ThriftJsonInspector(codec)
-    def toSimpleJson: JsonNode = inspector.toSimpleJson(t)
-    def prettyPrint: String = inspector.prettyPrint(t)
-    def diff(other: T, contextLines: Int = 1): String =
-      inspector.diff(t, other, contextLines)
+   mpl c  class Thr ftJsonSyntax[T <: Thr ftStruct](t: T)( mpl c  codec: Thr ftStructCodec[T]) {
+    pr vate[t ] def  nspector = Thr ftJson nspector(codec)
+    def toS mpleJson: JsonNode =  nspector.toS mpleJson(t)
+    def prettyPr nt: Str ng =  nspector.prettyPr nt(t)
+    def d ff(ot r: T, contextL nes:  nt = 1): Str ng =
+       nspector.d ff(t, ot r, contextL nes)
   }
 }

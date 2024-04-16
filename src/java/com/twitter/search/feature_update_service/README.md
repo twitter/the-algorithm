@@ -1,5 +1,5 @@
-## Feature Update Service
-Feature update service is a service that sends tweet feature updates e.g number of retweets, replies and favorites to Earlybird. Earlybird then indexes and uses these features to rank in-network Home Timeline tweets.
+## Feature Update Serv ce
+Feature update serv ce  s a serv ce that sends t et feature updates e.g number of ret ets, repl es and favor es to Earlyb rd. Earlyb rd t n  ndexes and uses t se features to rank  n-network Ho  T  l ne t ets.
 
 
 

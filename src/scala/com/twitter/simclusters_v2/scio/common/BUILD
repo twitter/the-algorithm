@@ -1,21 +1,21 @@
-scala_library(
-    sources = [
+scala_l brary(
+    s ces = [
         "*.scala",
     ],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "beam-internal/src/main/scala/com/twitter/beam/io/dal",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/runner/dataflow",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "beam- nternal/src/ma n/scala/com/tw ter/beam/ o/dal",
+        "beam- nternal/src/ma n/scala/com/tw ter/sc o_ nternal/runner/dataflow",
         "flockdb-tools/datasets/flock:flock-blocks-edges-scala",
         "flockdb-tools/datasets/flock:flock-follows-edges-scala",
         "flockdb-tools/datasets/flock:flock-report-as-abuse-edges-scala",
         "flockdb-tools/datasets/flock:flock-report-as-spam-edges-scala",
-        "iesource/processing/events/src/main/scala/com/twitter/iesource/processing/events/batch:server_engagements-scala",
-        "src/scala/com/twitter/simclusters_v2/scalding",
-        "src/thrift/com/twitter/twadoop/user/gen:gen-scala",
-        "tweetsource/public_tweets/src/main/scala/com/twitter/tweetsource/public_tweets:public_tweets-scala",
-        "usersource/snapshot/src/main/scala/com/twitter/usersource/snapshot/flat:usersource_flat-scala",
-        "usersource/snapshot/src/main/thrift/com/twitter/usersource/snapshot/flat:flat-scala",
+        " es ce/process ng/events/src/ma n/scala/com/tw ter/ es ce/process ng/events/batch:server_engage nts-scala",
+        "src/scala/com/tw ter/s mclusters_v2/scald ng",
+        "src/thr ft/com/tw ter/twadoop/user/gen:gen-scala",
+        "t ets ce/publ c_t ets/src/ma n/scala/com/tw ter/t ets ce/publ c_t ets:publ c_t ets-scala",
+        "users ce/snapshot/src/ma n/scala/com/tw ter/users ce/snapshot/flat:users ce_flat-scala",
+        "users ce/snapshot/src/ma n/thr ft/com/tw ter/users ce/snapshot/flat:flat-scala",
     ],
 )

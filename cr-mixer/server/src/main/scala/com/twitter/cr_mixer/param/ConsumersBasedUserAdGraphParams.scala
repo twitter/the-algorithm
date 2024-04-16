@@ -1,54 +1,54 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .Param
 
-object ConsumersBasedUserAdGraphParams {
+object Consu rsBasedUserAdGraphParams {
 
-  object EnableSourceParam
+  object EnableS ceParam
       extends FSParam[Boolean](
-        name = "consumers_based_user_ad_graph_enable_source",
+        na  = "consu rs_based_user_ad_graph_enable_s ce",
         default = false
       )
 
-  // UTG-Lookalike
-  object MinCoOccurrenceParam
-      extends FSBoundedParam[Int](
-        name = "consumers_based_user_ad_graph_min_co_occurrence",
+  // UTG-Lookal ke
+  object M nCoOccurrenceParam
+      extends FSBoundedParam[ nt](
+        na  = "consu rs_based_user_ad_graph_m n_co_occurrence",
         default = 2,
-        min = 0,
+        m n = 0,
         max = 500
       )
 
-  object MinScoreParam
+  object M nScoreParam
       extends FSBoundedParam[Double](
-        name = "consumers_based_user_ad_graph_min_score",
+        na  = "consu rs_based_user_ad_graph_m n_score",
         default = 0.0,
-        min = 0.0,
+        m n = 0.0,
         max = 10.0
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableSourceParam,
-    MinCoOccurrenceParam,
-    MinScoreParam
+  val AllParams: Seq[Param[_] w h FSNa ] = Seq(
+    EnableS ceParam,
+    M nCoOccurrenceParam,
+    M nScoreParam
   )
 
-  lazy val config: BaseConfig = {
+  lazy val conf g: BaseConf g = {
 
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(MinCoOccurrenceParam)
-    val doubleOverrides = FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(MinScoreParam)
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(EnableSourceParam)
+    val  ntOverr des = FeatureSw chOverr deUt l.getBounded ntFSOverr des(M nCoOccurrenceParam)
+    val doubleOverr des = FeatureSw chOverr deUt l.getBoundedDoubleFSOverr des(M nScoreParam)
+    val booleanOverr des = FeatureSw chOverr deUt l.getBooleanFSOverr des(EnableS ceParam)
 
-    BaseConfigBuilder()
-      .set(intOverrides: _*)
-      .set(booleanOverrides: _*)
-      .set(doubleOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set( ntOverr des: _*)
+      .set(booleanOverr des: _*)
+      .set(doubleOverr des: _*)
+      .bu ld()
   }
 }

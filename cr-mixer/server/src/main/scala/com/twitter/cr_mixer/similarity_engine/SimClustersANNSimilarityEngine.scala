@@ -1,110 +1,110 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.tw ter.cr_m xer.s m lar y_eng ne
 
-import com.twitter.cr_mixer.config.SimClustersANNConfig
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclustersann.thriftscala.SimClustersANNService
-import com.twitter.simclustersann.thriftscala.{Query => SimClustersANNQuery}
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.util.Future
-import javax.inject.Singleton
-import com.twitter.cr_mixer.exception.InvalidSANNConfigException
-import com.twitter.relevance_platform.simclustersann.multicluster.ServiceNameMapper
+ mport com.tw ter.cr_m xer.conf g.S mClustersANNConf g
+ mport com.tw ter.cr_m xer.model.S m lar yEng ne nfo
+ mport com.tw ter.cr_m xer.model.T etW hScore
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.ut l.StatsUt l
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng d
+ mport com.tw ter.s mclustersann.thr ftscala.S mClustersANNServ ce
+ mport com.tw ter.s mclustersann.thr ftscala.{Query => S mClustersANNQuery}
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.conf gap 
+ mport com.tw ter.ut l.Future
+ mport javax. nject.S ngleton
+ mport com.tw ter.cr_m xer.except on. nval dSANNConf gExcept on
+ mport com.tw ter.relevance_platform.s mclustersann.mult cluster.Serv ceNa Mapper
 
-@Singleton
-case class SimClustersANNSimilarityEngine(
-  simClustersANNServiceNameToClientMapper: Map[String, SimClustersANNService.MethodPerEndpoint],
-  statsReceiver: StatsReceiver)
+@S ngleton
+case class S mClustersANNS m lar yEng ne(
+  s mClustersANNServ ceNa ToCl entMapper: Map[Str ng, S mClustersANNServ ce. thodPerEndpo nt],
+  statsRece ver: StatsRece ver)
     extends ReadableStore[
-      SimClustersANNSimilarityEngine.Query,
-      Seq[TweetWithScore]
+      S mClustersANNS m lar yEng ne.Query,
+      Seq[T etW hScore]
     ] {
 
-  private val name: String = this.getClass.getSimpleName
-  private val stats = statsReceiver.scope(name)
-  private val fetchCandidatesStat = stats.scope("fetchCandidates")
+  pr vate val na : Str ng = t .getClass.getS mpleNa 
+  pr vate val stats = statsRece ver.scope(na )
+  pr vate val fetchCand datesStat = stats.scope("fetchCand dates")
 
-  private def getSimClustersANNService(
-    query: SimClustersANNQuery
-  ): Option[SimClustersANNService.MethodPerEndpoint] = {
-    ServiceNameMapper
-      .getServiceName(
-        query.sourceEmbeddingId.modelVersion,
-        query.config.candidateEmbeddingType).flatMap(serviceName =>
-        simClustersANNServiceNameToClientMapper.get(serviceName))
+  pr vate def getS mClustersANNServ ce(
+    query: S mClustersANNQuery
+  ): Opt on[S mClustersANNServ ce. thodPerEndpo nt] = {
+    Serv ceNa Mapper
+      .getServ ceNa (
+        query.s ceEmbedd ng d.modelVers on,
+        query.conf g.cand dateEmbedd ngType).flatMap(serv ceNa  =>
+        s mClustersANNServ ceNa ToCl entMapper.get(serv ceNa ))
   }
 
-  override def get(
-    query: SimClustersANNSimilarityEngine.Query
-  ): Future[Option[Seq[TweetWithScore]]] = {
-    StatsUtil.trackOptionItemsStats(fetchCandidatesStat) {
+  overr de def get(
+    query: S mClustersANNS m lar yEng ne.Query
+  ): Future[Opt on[Seq[T etW hScore]]] = {
+    StatsUt l.trackOpt on emsStats(fetchCand datesStat) {
 
-      getSimClustersANNService(query.simClustersANNQuery) match {
-        case Some(simClustersANNService) =>
-          simClustersANNService.getTweetCandidates(query.simClustersANNQuery).map {
-            simClustersANNTweetCandidates =>
-              val tweetWithScores = simClustersANNTweetCandidates.map { candidate =>
-                TweetWithScore(candidate.tweetId, candidate.score)
+      getS mClustersANNServ ce(query.s mClustersANNQuery) match {
+        case So (s mClustersANNServ ce) =>
+          s mClustersANNServ ce.getT etCand dates(query.s mClustersANNQuery).map {
+            s mClustersANNT etCand dates =>
+              val t etW hScores = s mClustersANNT etCand dates.map { cand date =>
+                T etW hScore(cand date.t et d, cand date.score)
               }
-              Some(tweetWithScores)
+              So (t etW hScores)
           }
         case None =>
-          throw InvalidSANNConfigException(
-            "No SANN Cluster configured to serve this query, check CandidateEmbeddingType and ModelVersion")
+          throw  nval dSANNConf gExcept on(
+            "No SANN Cluster conf gured to serve t  query, c ck Cand dateEmbedd ngType and ModelVers on")
       }
     }
   }
 }
 
-object SimClustersANNSimilarityEngine {
+object S mClustersANNS m lar yEng ne {
   case class Query(
-    simClustersANNQuery: SimClustersANNQuery,
-    simClustersANNConfigId: String)
+    s mClustersANNQuery: S mClustersANNQuery,
+    s mClustersANNConf g d: Str ng)
 
-  def toSimilarityEngineInfo(
-    query: EngineQuery[Query],
+  def toS m lar yEng ne nfo(
+    query: Eng neQuery[Query],
     score: Double
-  ): SimilarityEngineInfo = {
-    SimilarityEngineInfo(
-      similarityEngineType = SimilarityEngineType.SimClustersANN,
-      modelId = Some(
-        s"SimClustersANN_${query.storeQuery.simClustersANNQuery.sourceEmbeddingId.embeddingType.toString}_" +
-          s"${query.storeQuery.simClustersANNQuery.sourceEmbeddingId.modelVersion.toString}_" +
-          s"${query.storeQuery.simClustersANNConfigId}"),
-      score = Some(score)
+  ): S m lar yEng ne nfo = {
+    S m lar yEng ne nfo(
+      s m lar yEng neType = S m lar yEng neType.S mClustersANN,
+      model d = So (
+        s"S mClustersANN_${query.storeQuery.s mClustersANNQuery.s ceEmbedd ng d.embedd ngType.toStr ng}_" +
+          s"${query.storeQuery.s mClustersANNQuery.s ceEmbedd ng d.modelVers on.toStr ng}_" +
+          s"${query.storeQuery.s mClustersANNConf g d}"),
+      score = So (score)
     )
   }
 
   def fromParams(
-    internalId: InternalId,
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion,
-    simClustersANNConfigId: String,
-    params: configapi.Params,
-  ): EngineQuery[Query] = {
+     nternal d:  nternal d,
+    embedd ngType: Embedd ngType,
+    modelVers on: ModelVers on,
+    s mClustersANNConf g d: Str ng,
+    params: conf gap .Params,
+  ): Eng neQuery[Query] = {
 
-    // SimClusters EmbeddingId and ANNConfig
-    val simClustersEmbeddingId =
-      SimClustersEmbeddingId(embeddingType, modelVersion, internalId)
-    val simClustersANNConfig =
-      SimClustersANNConfig
-        .getConfig(embeddingType.toString, modelVersion.toString, simClustersANNConfigId)
+    // S mClusters Embedd ng d and ANNConf g
+    val s mClustersEmbedd ng d =
+      S mClustersEmbedd ng d(embedd ngType, modelVers on,  nternal d)
+    val s mClustersANNConf g =
+      S mClustersANNConf g
+        .getConf g(embedd ngType.toStr ng, modelVers on.toStr ng, s mClustersANNConf g d)
 
-    EngineQuery(
+    Eng neQuery(
       Query(
-        SimClustersANNQuery(
-          sourceEmbeddingId = simClustersEmbeddingId,
-          config = simClustersANNConfig.toSANNConfigThrift
+        S mClustersANNQuery(
+          s ceEmbedd ng d = s mClustersEmbedd ng d,
+          conf g = s mClustersANNConf g.toSANNConf gThr ft
         ),
-        simClustersANNConfigId
+        s mClustersANNConf g d
       ),
       params
     )

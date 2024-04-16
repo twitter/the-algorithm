@@ -1,43 +1,43 @@
-package com.twitter.product_mixer.core.service.debug_query
+package com.tw ter.product_m xer.core.serv ce.debug_query
 
-import com.twitter.finagle.Service
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ProductDisabled
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineResult
-import com.twitter.scrooge.{Request => ScroogeRequest}
-import com.twitter.scrooge.{Response => ScroogeResponse}
-import com.twitter.util.Future
-import com.twitter.product_mixer.core.{thriftscala => t}
-import com.twitter.util.jackson.ScalaObjectMapper
+ mport com.tw ter.f nagle.Serv ce
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.ProductD sabled
+ mport com.tw ter.product_m xer.core.p pel ne.product.ProductP pel neResult
+ mport com.tw ter.scrooge.{Request => ScroogeRequest}
+ mport com.tw ter.scrooge.{Response => ScroogeResponse}
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.product_m xer.core.{thr ftscala => t}
+ mport com.tw ter.ut l.jackson.ScalaObjectMapper
 
 /**
- * All Mixers must implement a debug query interface. This can be a problem for in-place migrations
- * where a service may only partially implement Product Mixer patterns. This service can be used as
- * a noop implementation of [[DebugQueryService]] until the Mixer service is fully migrated.
+ * All M xers must  mple nt a debug query  nterface. T  can be a problem for  n-place m grat ons
+ * w re a serv ce may only part ally  mple nt Product M xer patterns. T  serv ce can be used as
+ * a noop  mple ntat on of [[DebugQueryServ ce]] unt l t  M xer serv ce  s fully m grated.
  */
-object DebugQueryNotSupportedService
-    extends Service[ScroogeRequest[_], ScroogeResponse[t.PipelineExecutionResult]] {
+object DebugQueryNotSupportedServ ce
+    extends Serv ce[ScroogeRequest[_], ScroogeResponse[t.P pel neExecut onResult]] {
 
-  val failureJson: String = {
-    val message = "This service does not support debug queries, this is usually due to an active " +
-      "in-place migration to Product Mixer. Please reach out in #product-mixer if you have any questions."
+  val fa lureJson: Str ng = {
+    val  ssage = "T  serv ce does not support debug quer es, t   s usually due to an act ve " +
+      " n-place m grat on to Product M xer. Please reach out  n #product-m xer  f   have any quest ons."
 
-    ScalaObjectMapper().writeValueAsString(
-      ProductPipelineResult(
-        transformedQuery = None,
-        qualityFactorResult = None,
+    ScalaObjectMapper().wr eValueAsStr ng(
+      ProductP pel neResult(
+        transfor dQuery = None,
+        qual yFactorResult = None,
         gateResult = None,
-        pipelineSelectorResult = None,
-        mixerPipelineResult = None,
-        recommendationPipelineResult = None,
-        traceId = None,
-        failure = Some(PipelineFailure(ProductDisabled, message)),
+        p pel neSelectorResult = None,
+        m xerP pel neResult = None,
+        recom ndat onP pel neResult = None,
+        trace d = None,
+        fa lure = So (P pel neFa lure(ProductD sabled,  ssage)),
         result = None,
       ))
   }
 
-  override def apply(
-    thriftRequest: ScroogeRequest[_]
-  ): Future[ScroogeResponse[t.PipelineExecutionResult]] =
-    Future.value(ScroogeResponse(t.PipelineExecutionResult(failureJson)))
+  overr de def apply(
+    thr ftRequest: ScroogeRequest[_]
+  ): Future[ScroogeResponse[t.P pel neExecut onResult]] =
+    Future.value(ScroogeResponse(t.P pel neExecut onResult(fa lureJson)))
 }

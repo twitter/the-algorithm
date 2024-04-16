@@ -1,244 +1,244 @@
-package com.twitter.search.earlybird.common;
+package com.tw ter.search.earlyb rd.common;
 
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchMovingAverage;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.query.thriftjava.CollectorParams;
-import com.twitter.search.common.query.thriftjava.CollectorTerminationParams;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchRelevanceOptions;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchMov ngAverage;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
+ mport com.tw ter.search.common.query.thr ftjava.CollectorParams;
+ mport com.tw ter.search.common.query.thr ftjava.CollectorTerm nat onParams;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchQuery;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchRelevanceOpt ons;
 
-public final class EarlybirdRequestUtil {
-  // This logger is setup to log to a separate set of log files (request_info) and use an
-  // async logger so as to not block the searcher thread. See search/earlybird/config/log4j.xml
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdRequestUtil.class);
+publ c f nal class Earlyb rdRequestUt l {
+  // T  logger  s setup to log to a separate set of log f les (request_ nfo) and use an
+  // async logger so as to not block t  searc r thread. See search/earlyb rd/conf g/log4j.xml
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rdRequestUt l.class);
 
-  @VisibleForTesting
-  static final SearchMovingAverage REQUESTED_NUM_RESULTS_STAT =
-      SearchMovingAverage.export("requested_num_results");
+  @V s bleForTest ng
+  stat c f nal SearchMov ngAverage REQUESTED_NUM_RESULTS_STAT =
+      SearchMov ngAverage.export("requested_num_results");
 
-  @VisibleForTesting
-  static final SearchMovingAverage REQUESTED_MAX_HITS_TO_PROCESS_STAT =
-      SearchMovingAverage.export("requested_max_hits_to_process");
+  @V s bleForTest ng
+  stat c f nal SearchMov ngAverage REQUESTED_MAX_H TS_TO_PROCESS_STAT =
+      SearchMov ngAverage.export("requested_max_h s_to_process");
 
-  @VisibleForTesting
-  static final SearchMovingAverage REQUESTED_COLLECTOR_PARAMS_MAX_HITS_TO_PROCESS_STAT =
-      SearchMovingAverage.export("requested_collector_params_max_hits_to_process");
+  @V s bleForTest ng
+  stat c f nal SearchMov ngAverage REQUESTED_COLLECTOR_PARAMS_MAX_H TS_TO_PROCESS_STAT =
+      SearchMov ngAverage.export("requested_collector_params_max_h s_to_process");
 
-  @VisibleForTesting
-  static final SearchMovingAverage REQUESTED_RELEVANCE_OPTIONS_MAX_HITS_TO_PROCESS_STAT =
-      SearchMovingAverage.export("requested_relevance_options_max_hits_to_process");
+  @V s bleForTest ng
+  stat c f nal SearchMov ngAverage REQUESTED_RELEVANCE_OPT ONS_MAX_H TS_TO_PROCESS_STAT =
+      SearchMov ngAverage.export("requested_relevance_opt ons_max_h s_to_process");
 
-  @VisibleForTesting
-  static final SearchCounter REQUESTED_MAX_HITS_TO_PROCESS_ARE_DIFFERENT_STAT =
-      SearchCounter.export("requested_max_hits_to_process_are_different");
+  @V s bleForTest ng
+  stat c f nal SearchCounter REQUESTED_MAX_H TS_TO_PROCESS_ARE_D FFERENT_STAT =
+      SearchCounter.export("requested_max_h s_to_process_are_d fferent");
 
-  private static final SearchRateCounter REQUEST_WITH_MORE_THAN_2K_NUM_RESULTS_STAT =
-      SearchRateCounter.export("request_with_more_than_2k_num_result");
-  private static final SearchRateCounter REQUEST_WITH_MORE_THAN_4K_NUM_RESULTS_STAT =
-      SearchRateCounter.export("request_with_more_than_4k_num_result");
+  pr vate stat c f nal SearchRateCounter REQUEST_W TH_MORE_THAN_2K_NUM_RESULTS_STAT =
+      SearchRateCounter.export("request_w h_more_than_2k_num_result");
+  pr vate stat c f nal SearchRateCounter REQUEST_W TH_MORE_THAN_4K_NUM_RESULTS_STAT =
+      SearchRateCounter.export("request_w h_more_than_4k_num_result");
 
-  // Stats for tracking clock skew between earlybird and the client-specified request timestamp.
-  @VisibleForTesting
-  public static final SearchTimerStats CLIENT_CLOCK_DIFF_ABS =
-      SearchTimerStats.export("client_clock_diff_abs", TimeUnit.MILLISECONDS, false, true);
-  @VisibleForTesting
-  public static final SearchTimerStats CLIENT_CLOCK_DIFF_POS =
-      SearchTimerStats.export("client_clock_diff_pos", TimeUnit.MILLISECONDS, false, true);
-  @VisibleForTesting
-  public static final SearchTimerStats CLIENT_CLOCK_DIFF_NEG =
-      SearchTimerStats.export("client_clock_diff_neg", TimeUnit.MILLISECONDS, false, true);
-  @VisibleForTesting
-  public static final SearchRateCounter CLIENT_CLOCK_DIFF_MISSING =
-      SearchRateCounter.export("client_clock_diff_missing");
+  // Stats for track ng clock skew bet en earlyb rd and t  cl ent-spec f ed request t  stamp.
+  @V s bleForTest ng
+  publ c stat c f nal SearchT  rStats CL ENT_CLOCK_D FF_ABS =
+      SearchT  rStats.export("cl ent_clock_d ff_abs", T  Un .M LL SECONDS, false, true);
+  @V s bleForTest ng
+  publ c stat c f nal SearchT  rStats CL ENT_CLOCK_D FF_POS =
+      SearchT  rStats.export("cl ent_clock_d ff_pos", T  Un .M LL SECONDS, false, true);
+  @V s bleForTest ng
+  publ c stat c f nal SearchT  rStats CL ENT_CLOCK_D FF_NEG =
+      SearchT  rStats.export("cl ent_clock_d ff_neg", T  Un .M LL SECONDS, false, true);
+  @V s bleForTest ng
+  publ c stat c f nal SearchRateCounter CL ENT_CLOCK_D FF_M SS NG =
+      SearchRateCounter.export("cl ent_clock_d ff_m ss ng");
 
-  private static final int MAX_NUM_RESULTS = 4000;
-  private static final int OLD_MAX_NUM_RESULTS = 2000;
+  pr vate stat c f nal  nt MAX_NUM_RESULTS = 4000;
+  pr vate stat c f nal  nt OLD_MAX_NUM_RESULTS = 2000;
 
-  private EarlybirdRequestUtil() {
+  pr vate Earlyb rdRequestUt l() {
   }
 
   /**
-   * Logs and fixes some potentially excessive values in the given request.
+   * Logs and f xes so  potent ally excess ve values  n t  g ven request.
    */
-  public static void logAndFixExcessiveValues(EarlybirdRequest request) {
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
-    if (searchQuery != null) {
-      int maxHitsToProcess = 0;
-      int numResultsToReturn = 0;
+  publ c stat c vo d logAndF xExcess veValues(Earlyb rdRequest request) {
+    Thr ftSearchQuery searchQuery = request.getSearchQuery();
+     f (searchQuery != null) {
+       nt maxH sToProcess = 0;
+       nt numResultsToReturn = 0;
 
-      if (searchQuery.isSetCollectorParams()) {
+       f (searchQuery. sSetCollectorParams()) {
         numResultsToReturn = searchQuery.getCollectorParams().getNumResultsToReturn();
 
-        if (searchQuery.getCollectorParams().isSetTerminationParams()) {
-          maxHitsToProcess =
-              searchQuery.getCollectorParams().getTerminationParams().getMaxHitsToProcess();
+         f (searchQuery.getCollectorParams(). sSetTerm nat onParams()) {
+          maxH sToProcess =
+              searchQuery.getCollectorParams().getTerm nat onParams().getMaxH sToProcess();
         }
       }
 
-      if (maxHitsToProcess > 50000) {
-        LOG.warn("Excessive max hits in " + request.toString());
+       f (maxH sToProcess > 50000) {
+        LOG.warn("Excess ve max h s  n " + request.toStr ng());
       }
 
-      // We used to limit number of results to 2000. These two counters help us track if we receive
-      // too many requests with large number of results set.
-      String warningMessageTemplate = "Exceed %d num result in %s";
-      if (numResultsToReturn > MAX_NUM_RESULTS) {
-        LOG.warn(String.format(warningMessageTemplate, MAX_NUM_RESULTS, request.toString()));
-        REQUEST_WITH_MORE_THAN_4K_NUM_RESULTS_STAT.increment();
+      //   used to l m  number of results to 2000. T se two counters  lp us track  f   rece ve
+      // too many requests w h large number of results set.
+      Str ng warn ng ssageTemplate = "Exceed %d num result  n %s";
+       f (numResultsToReturn > MAX_NUM_RESULTS) {
+        LOG.warn(Str ng.format(warn ng ssageTemplate, MAX_NUM_RESULTS, request.toStr ng()));
+        REQUEST_W TH_MORE_THAN_4K_NUM_RESULTS_STAT. ncre nt();
         searchQuery.getCollectorParams().setNumResultsToReturn(MAX_NUM_RESULTS);
-      } else if (numResultsToReturn > OLD_MAX_NUM_RESULTS) {
-        LOG.warn(String.format(warningMessageTemplate, OLD_MAX_NUM_RESULTS, request.toString()));
-        REQUEST_WITH_MORE_THAN_2K_NUM_RESULTS_STAT.increment();
+      } else  f (numResultsToReturn > OLD_MAX_NUM_RESULTS) {
+        LOG.warn(Str ng.format(warn ng ssageTemplate, OLD_MAX_NUM_RESULTS, request.toStr ng()));
+        REQUEST_W TH_MORE_THAN_2K_NUM_RESULTS_STAT. ncre nt();
       }
 
-      ThriftSearchRelevanceOptions options = searchQuery.getRelevanceOptions();
-      if (options != null) {
-        if (options.getMaxHitsToProcess() > 50000) {
-          LOG.warn("Excessive max hits in " + request.toString());
+      Thr ftSearchRelevanceOpt ons opt ons = searchQuery.getRelevanceOpt ons();
+       f (opt ons != null) {
+         f (opt ons.getMaxH sToProcess() > 50000) {
+          LOG.warn("Excess ve max h s  n " + request.toStr ng());
         }
       }
     }
   }
 
   /**
-   * Sets {@code request.searchQuery.collectorParams} if they are not already set.
+   * Sets {@code request.searchQuery.collectorParams}  f t y are not already set.
    */
-  public static void checkAndSetCollectorParams(EarlybirdRequest request) {
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
-    if (searchQuery == null) {
+  publ c stat c vo d c ckAndSetCollectorParams(Earlyb rdRequest request) {
+    Thr ftSearchQuery searchQuery = request.getSearchQuery();
+     f (searchQuery == null) {
       return;
     }
 
-    if (!searchQuery.isSetCollectorParams()) {
+     f (!searchQuery. sSetCollectorParams()) {
       searchQuery.setCollectorParams(new CollectorParams());
     }
-    if (!searchQuery.getCollectorParams().isSetNumResultsToReturn()) {
+     f (!searchQuery.getCollectorParams(). sSetNumResultsToReturn()) {
       searchQuery.getCollectorParams().setNumResultsToReturn(searchQuery.getNumResults());
     }
-    if (!searchQuery.getCollectorParams().isSetTerminationParams()) {
-      CollectorTerminationParams terminationParams = new CollectorTerminationParams();
-      if (request.isSetTimeoutMs()) {
-        terminationParams.setTimeoutMs(request.getTimeoutMs());
+     f (!searchQuery.getCollectorParams(). sSetTerm nat onParams()) {
+      CollectorTerm nat onParams term nat onParams = new CollectorTerm nat onParams();
+       f (request. sSetT  outMs()) {
+        term nat onParams.setT  outMs(request.getT  outMs());
       }
-      if (request.isSetMaxQueryCost()) {
-        terminationParams.setMaxQueryCost(request.getMaxQueryCost());
+       f (request. sSetMaxQueryCost()) {
+        term nat onParams.setMaxQueryCost(request.getMaxQueryCost());
       }
-      searchQuery.getCollectorParams().setTerminationParams(terminationParams);
+      searchQuery.getCollectorParams().setTerm nat onParams(term nat onParams);
     }
-    setMaxHitsToProcess(searchQuery);
+    setMaxH sToProcess(searchQuery);
   }
 
-  // Early birds will only look for maxHitsToProcess in CollectorParameters.TerminationParameters.
-  // Priority to set  CollectorParameters.TerminationParameters.maxHitsToProcess is
-  // 1 Collector parameters
-  // 2 RelevanceParameters
-  // 3 ThrfitQuery.maxHitsToProcess
-  private static void setMaxHitsToProcess(ThriftSearchQuery thriftSearchQuery) {
-    CollectorTerminationParams terminationParams = thriftSearchQuery
-        .getCollectorParams().getTerminationParams();
-    if (!terminationParams.isSetMaxHitsToProcess()) {
-      if (thriftSearchQuery.isSetRelevanceOptions()
-          && thriftSearchQuery.getRelevanceOptions().isSetMaxHitsToProcess()) {
-        terminationParams.setMaxHitsToProcess(
-            thriftSearchQuery.getRelevanceOptions().getMaxHitsToProcess());
+  // Early b rds w ll only look for maxH sToProcess  n CollectorPara ters.Term nat onPara ters.
+  // Pr or y to set  CollectorPara ters.Term nat onPara ters.maxH sToProcess  s
+  // 1 Collector para ters
+  // 2 RelevancePara ters
+  // 3 Thrf Query.maxH sToProcess
+  pr vate stat c vo d setMaxH sToProcess(Thr ftSearchQuery thr ftSearchQuery) {
+    CollectorTerm nat onParams term nat onParams = thr ftSearchQuery
+        .getCollectorParams().getTerm nat onParams();
+     f (!term nat onParams. sSetMaxH sToProcess()) {
+       f (thr ftSearchQuery. sSetRelevanceOpt ons()
+          && thr ftSearchQuery.getRelevanceOpt ons(). sSetMaxH sToProcess()) {
+        term nat onParams.setMaxH sToProcess(
+            thr ftSearchQuery.getRelevanceOpt ons().getMaxH sToProcess());
       } else {
-        terminationParams.setMaxHitsToProcess(thriftSearchQuery.getMaxHitsToProcess());
+        term nat onParams.setMaxH sToProcess(thr ftSearchQuery.getMaxH sToProcess());
       }
     }
   }
 
   /**
-   * Creates a copy of the given request and unsets the binary fields to make the logged line for
-   * this request look nicer.
+   * Creates a copy of t  g ven request and unsets t  b nary f elds to make t  logged l ne for
+   * t  request look n cer.
    */
-  public static EarlybirdRequest copyAndClearUnnecessaryValuesForLogging(EarlybirdRequest request) {
-    EarlybirdRequest copiedRequest = request.deepCopy();
+  publ c stat c Earlyb rdRequest copyAndClearUnnecessaryValuesForLogg ng(Earlyb rdRequest request) {
+    Earlyb rdRequest cop edRequest = request.deepCopy();
 
-    if (copiedRequest.isSetSearchQuery()) {
-      // These fields are very large and the binary data doesn't play well with formz
-      copiedRequest.getSearchQuery().unsetTrustedFilter();
-      copiedRequest.getSearchQuery().unsetDirectFollowFilter();
+     f (cop edRequest. sSetSearchQuery()) {
+      // T se f elds are very large and t  b nary data doesn't play  ll w h formz
+      cop edRequest.getSearchQuery().unsetTrustedF lter();
+      cop edRequest.getSearchQuery().unsetD rectFollowF lter();
     }
 
-    return copiedRequest;
+    return cop edRequest;
   }
 
   /**
-   * Updates some hit-related stats based on the parameters in the given request.
+   * Updates so  h -related stats based on t  para ters  n t  g ven request.
    */
-  public static void updateHitsCounters(EarlybirdRequest request) {
-    if ((request == null) || !request.isSetSearchQuery()) {
+  publ c stat c vo d updateH sCounters(Earlyb rdRequest request) {
+     f ((request == null) || !request. sSetSearchQuery()) {
       return;
     }
 
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
+    Thr ftSearchQuery searchQuery = request.getSearchQuery();
 
-    if (searchQuery.isSetNumResults()) {
+     f (searchQuery. sSetNumResults()) {
       REQUESTED_NUM_RESULTS_STAT.addSample(searchQuery.getNumResults());
     }
 
-    if (searchQuery.isSetMaxHitsToProcess()) {
-      REQUESTED_MAX_HITS_TO_PROCESS_STAT.addSample(searchQuery.getMaxHitsToProcess());
+     f (searchQuery. sSetMaxH sToProcess()) {
+      REQUESTED_MAX_H TS_TO_PROCESS_STAT.addSample(searchQuery.getMaxH sToProcess());
     }
 
-    Integer collectorParamsMaxHitsToProcess = null;
-    if (searchQuery.isSetCollectorParams()
-        && searchQuery.getCollectorParams().isSetTerminationParams()
-        && searchQuery.getCollectorParams().getTerminationParams().isSetMaxHitsToProcess()) {
-      collectorParamsMaxHitsToProcess =
-          searchQuery.getCollectorParams().getTerminationParams().getMaxHitsToProcess();
-      REQUESTED_COLLECTOR_PARAMS_MAX_HITS_TO_PROCESS_STAT
-          .addSample(collectorParamsMaxHitsToProcess);
+     nteger collectorParamsMaxH sToProcess = null;
+     f (searchQuery. sSetCollectorParams()
+        && searchQuery.getCollectorParams(). sSetTerm nat onParams()
+        && searchQuery.getCollectorParams().getTerm nat onParams(). sSetMaxH sToProcess()) {
+      collectorParamsMaxH sToProcess =
+          searchQuery.getCollectorParams().getTerm nat onParams().getMaxH sToProcess();
+      REQUESTED_COLLECTOR_PARAMS_MAX_H TS_TO_PROCESS_STAT
+          .addSample(collectorParamsMaxH sToProcess);
     }
 
-    Integer relevanceOptionsMaxHitsToProcess = null;
-    if (searchQuery.isSetRelevanceOptions()
-        && searchQuery.getRelevanceOptions().isSetMaxHitsToProcess()) {
-      relevanceOptionsMaxHitsToProcess = searchQuery.getRelevanceOptions().getMaxHitsToProcess();
-      REQUESTED_RELEVANCE_OPTIONS_MAX_HITS_TO_PROCESS_STAT
-          .addSample(relevanceOptionsMaxHitsToProcess);
+     nteger relevanceOpt onsMaxH sToProcess = null;
+     f (searchQuery. sSetRelevanceOpt ons()
+        && searchQuery.getRelevanceOpt ons(). sSetMaxH sToProcess()) {
+      relevanceOpt onsMaxH sToProcess = searchQuery.getRelevanceOpt ons().getMaxH sToProcess();
+      REQUESTED_RELEVANCE_OPT ONS_MAX_H TS_TO_PROCESS_STAT
+          .addSample(relevanceOpt onsMaxH sToProcess);
     }
 
-    if ((collectorParamsMaxHitsToProcess != null)
-        && (relevanceOptionsMaxHitsToProcess != null)
-        && (collectorParamsMaxHitsToProcess != relevanceOptionsMaxHitsToProcess)) {
-      REQUESTED_MAX_HITS_TO_PROCESS_ARE_DIFFERENT_STAT.increment();
+     f ((collectorParamsMaxH sToProcess != null)
+        && (relevanceOpt onsMaxH sToProcess != null)
+        && (collectorParamsMaxH sToProcess != relevanceOpt onsMaxH sToProcess)) {
+      REQUESTED_MAX_H TS_TO_PROCESS_ARE_D FFERENT_STAT. ncre nt();
     }
   }
 
-  public static boolean isCachingAllowed(EarlybirdRequest request) {
-    return !request.isSetCachingParams() || request.getCachingParams().isCache();
+  publ c stat c boolean  sCach ngAllo d(Earlyb rdRequest request) {
+    return !request. sSetCach ngParams() || request.getCach ngParams(). sCac ();
   }
 
   /**
-   * Track the clock difference between this server and its client's specified request time.
-   * When there is no clock drift between machines, this will record the inflight time between this
-   * server and the client.
+   * Track t  clock d fference bet en t  server and  s cl ent's spec f ed request t  .
+   * W n t re  s no clock dr ft bet en mach nes, t  w ll record t   nfl ght t   bet en t 
+   * server and t  cl ent.
    *
-   * @param request the incoming earlybird request.
+   * @param request t   ncom ng earlyb rd request.
    */
-  public static void recordClientClockDiff(EarlybirdRequest request) {
-    if (request.isSetClientRequestTimeMs()) {
-      final long timeDiff = System.currentTimeMillis() - request.getClientRequestTimeMs();
-      final long timeDiffAbs = Math.abs(timeDiff);
-      if (timeDiff >= 0) {
-        CLIENT_CLOCK_DIFF_POS.timerIncrement(timeDiffAbs);
+  publ c stat c vo d recordCl entClockD ff(Earlyb rdRequest request) {
+     f (request. sSetCl entRequestT  Ms()) {
+      f nal long t  D ff = System.currentT  M ll s() - request.getCl entRequestT  Ms();
+      f nal long t  D ffAbs = Math.abs(t  D ff);
+       f (t  D ff >= 0) {
+        CL ENT_CLOCK_D FF_POS.t  r ncre nt(t  D ffAbs);
       } else {
-        CLIENT_CLOCK_DIFF_NEG.timerIncrement(timeDiffAbs);
+        CL ENT_CLOCK_D FF_NEG.t  r ncre nt(t  D ffAbs);
       }
-      CLIENT_CLOCK_DIFF_ABS.timerIncrement(timeDiffAbs);
+      CL ENT_CLOCK_D FF_ABS.t  r ncre nt(t  D ffAbs);
     } else {
-      CLIENT_CLOCK_DIFF_MISSING.increment();
+      CL ENT_CLOCK_D FF_M SS NG. ncre nt();
     }
   }
 }

@@ -1,167 +1,167 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import java.util.ArrayList;
-import java.util.List;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.L st;
 
-import javax.annotation.Nullable;
-import javax.inject.Named;
+ mport javax.annotat on.Nullable;
+ mport javax. nject.Na d;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.stats.StatsReceiver;
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.root.PartitionConfig;
-import com.twitter.search.common.root.PartitionLoggingSupport;
-import com.twitter.search.common.root.RequestSuccessStats;
-import com.twitter.search.common.root.RootClientServiceBuilder;
-import com.twitter.search.common.root.ScatterGatherService;
-import com.twitter.search.common.root.SplitterService;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.config.TierConfig;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.filters.RequestContextToEarlybirdRequestFilter;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.stats.StatsRece ver;
+ mport com.tw ter. nject.Tw terModule;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.common.root.Part  onConf g;
+ mport com.tw ter.search.common.root.Part  onLogg ngSupport;
+ mport com.tw ter.search.common.root.RequestSuccessStats;
+ mport com.tw ter.search.common.root.RootCl entServ ceBu lder;
+ mport com.tw ter.search.common.root.ScatterGat rServ ce;
+ mport com.tw ter.search.common.root.Spl terServ ce;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.earlyb rd.conf g.T erConf g;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdServ ce;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.earlyb rd_root.f lters.RequestContextToEarlyb rdRequestF lter;
 
-public abstract class ScatterGatherModule extends TwitterModule {
-  private static final Logger LOG = LoggerFactory.getLogger(ScatterGatherModule.class);
+publ c abstract class ScatterGat rModule extends Tw terModule {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(ScatterGat rModule.class);
 
-  private static final String SEARCH_METHOD_NAME = "search";
-  protected static final String ALT_TRAFFIC_PERCENTAGE_DECIDER_KEY_PREFIX =
-      "alt_client_traffic_percentage_";
-  static final String NAMED_SCATTER_GATHER_SERVICE = "scatter_gather_service";
+  pr vate stat c f nal Str ng SEARCH_METHOD_NAME = "search";
+  protected stat c f nal Str ng ALT_TRAFF C_PERCENTAGE_DEC DER_KEY_PREF X =
+      "alt_cl ent_traff c_percentage_";
+  stat c f nal Str ng NAMED_SCATTER_GATHER_SERV CE = "scatter_gat r_serv ce";
 
   /**
-   * Provides the scatterGatherService for single tier Earlybird clusters (Protected and Realtime).
+   * Prov des t  scatterGat rServ ce for s ngle t er Earlyb rd clusters (Protected and Realt  ).
    */
-  public abstract Service<EarlybirdRequestContext, EarlybirdResponse> provideScatterGatherService(
-      EarlybirdServiceScatterGatherSupport scatterGatherSupport,
+  publ c abstract Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> prov deScatterGat rServ ce(
+      Earlyb rdServ ceScatterGat rSupport scatterGat rSupport,
       RequestSuccessStats requestSuccessStats,
-      PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
-      PartitionAccessController partitionAccessController,
-      PartitionConfig partitionConfig,
-      RootClientServiceBuilder<EarlybirdService.ServiceIface> rootClientServiceBuilder,
-      @Named(EarlybirdCommonModule.NAMED_EXP_CLUSTER_CLIENT)
-          RootClientServiceBuilder<EarlybirdService.ServiceIface>
-          expClusterRootClientServiceBuilder,
-      @Named(EarlybirdCommonModule.NAMED_ALT_CLIENT) @Nullable PartitionConfig altPartitionConfig,
-      @Named(EarlybirdCommonModule.NAMED_ALT_CLIENT) @Nullable
-          RootClientServiceBuilder<EarlybirdService.ServiceIface> altRootClientServiceBuilder,
-      StatsReceiver statsReceiver,
-      EarlybirdCluster cluster,
-      SearchDecider decider);
+      Part  onLogg ngSupport<Earlyb rdRequestContext> part  onLogg ngSupport,
+      RequestContextToEarlyb rdRequestF lter requestContextToEarlyb rdRequestF lter,
+      Part  onAccessController part  onAccessController,
+      Part  onConf g part  onConf g,
+      RootCl entServ ceBu lder<Earlyb rdServ ce.Serv ce face> rootCl entServ ceBu lder,
+      @Na d(Earlyb rdCommonModule.NAMED_EXP_CLUSTER_CL ENT)
+          RootCl entServ ceBu lder<Earlyb rdServ ce.Serv ce face>
+          expClusterRootCl entServ ceBu lder,
+      @Na d(Earlyb rdCommonModule.NAMED_ALT_CL ENT) @Nullable Part  onConf g altPart  onConf g,
+      @Na d(Earlyb rdCommonModule.NAMED_ALT_CL ENT) @Nullable
+          RootCl entServ ceBu lder<Earlyb rdServ ce.Serv ce face> altRootCl entServ ceBu lder,
+      StatsRece ver statsRece ver,
+      Earlyb rdCluster cluster,
+      SearchDec der dec der);
 
-  protected final Service<EarlybirdRequestContext, EarlybirdResponse> buildScatterOrSplitterService(
-      EarlybirdServiceScatterGatherSupport scatterGatherSupport,
+  protected f nal Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> bu ldScatterOrSpl terServ ce(
+      Earlyb rdServ ceScatterGat rSupport scatterGat rSupport,
       RequestSuccessStats requestSuccessStats,
-      PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
-      PartitionAccessController partitionAccessController,
-      PartitionConfig partitionConfig,
-      RootClientServiceBuilder<EarlybirdService.ServiceIface> rootClientServiceBuilder,
-      @Named(EarlybirdCommonModule.NAMED_ALT_CLIENT) @Nullable PartitionConfig altPartitionConfig,
-      @Named(EarlybirdCommonModule.NAMED_ALT_CLIENT) @Nullable
-          RootClientServiceBuilder<EarlybirdService.ServiceIface> altRootClientServiceBuilder,
-      StatsReceiver statsReceiver,
-      EarlybirdCluster cluster,
-      SearchDecider decider
+      Part  onLogg ngSupport<Earlyb rdRequestContext> part  onLogg ngSupport,
+      RequestContextToEarlyb rdRequestF lter requestContextToEarlyb rdRequestF lter,
+      Part  onAccessController part  onAccessController,
+      Part  onConf g part  onConf g,
+      RootCl entServ ceBu lder<Earlyb rdServ ce.Serv ce face> rootCl entServ ceBu lder,
+      @Na d(Earlyb rdCommonModule.NAMED_ALT_CL ENT) @Nullable Part  onConf g altPart  onConf g,
+      @Na d(Earlyb rdCommonModule.NAMED_ALT_CL ENT) @Nullable
+          RootCl entServ ceBu lder<Earlyb rdServ ce.Serv ce face> altRootCl entServ ceBu lder,
+      StatsRece ver statsRece ver,
+      Earlyb rdCluster cluster,
+      SearchDec der dec der
   ) {
-    ScatterGatherService<EarlybirdRequestContext, EarlybirdResponse> scatterGatherService =
-        createScatterGatherService(
+    ScatterGat rServ ce<Earlyb rdRequestContext, Earlyb rdResponse> scatterGat rServ ce =
+        createScatterGat rServ ce(
             "",
-            scatterGatherSupport,
+            scatterGat rSupport,
             requestSuccessStats,
-            partitionLoggingSupport,
-            requestContextToEarlybirdRequestFilter,
-            partitionAccessController,
-            partitionConfig.getNumPartitions(),
-            partitionConfig.getPartitionPath(),
-            rootClientServiceBuilder,
-            statsReceiver,
+            part  onLogg ngSupport,
+            requestContextToEarlyb rdRequestF lter,
+            part  onAccessController,
+            part  onConf g.getNumPart  ons(),
+            part  onConf g.getPart  onPath(),
+            rootCl entServ ceBu lder,
+            statsRece ver,
             cluster,
-            decider,
-            TierConfig.DEFAULT_TIER_NAME);
+            dec der,
+            T erConf g.DEFAULT_T ER_NAME);
 
-    if (altPartitionConfig == null || altRootClientServiceBuilder == null) {
-      LOG.info("altPartitionConfig or altRootClientServiceBuilder is not available, "
-          + "not using SplitterService");
-      return scatterGatherService;
+     f (altPart  onConf g == null || altRootCl entServ ceBu lder == null) {
+      LOG. nfo("altPart  onConf g or altRootCl entServ ceBu lder  s not ava lable, "
+          + "not us ng Spl terServ ce");
+      return scatterGat rServ ce;
     }
 
-    LOG.info("alt client config available, using SplitterService");
+    LOG. nfo("alt cl ent conf g ava lable, us ng Spl terServ ce");
 
-    ScatterGatherService<EarlybirdRequestContext, EarlybirdResponse> altScatterGatherService =
-        createScatterGatherService(
+    ScatterGat rServ ce<Earlyb rdRequestContext, Earlyb rdResponse> altScatterGat rServ ce =
+        createScatterGat rServ ce(
             "_alt",
-            scatterGatherSupport,
+            scatterGat rSupport,
             requestSuccessStats,
-            partitionLoggingSupport,
-            requestContextToEarlybirdRequestFilter,
-            partitionAccessController,
-            altPartitionConfig.getNumPartitions(),
-            altPartitionConfig.getPartitionPath(),
-            altRootClientServiceBuilder,
-            statsReceiver,
+            part  onLogg ngSupport,
+            requestContextToEarlyb rdRequestF lter,
+            part  onAccessController,
+            altPart  onConf g.getNumPart  ons(),
+            altPart  onConf g.getPart  onPath(),
+            altRootCl entServ ceBu lder,
+            statsRece ver,
             cluster,
-            decider,
-            TierConfig.DEFAULT_TIER_NAME);
+            dec der,
+            T erConf g.DEFAULT_T ER_NAME);
 
-    return new SplitterService<>(
-        scatterGatherService,
-        altScatterGatherService,
-        decider,
-        ALT_TRAFFIC_PERCENTAGE_DECIDER_KEY_PREFIX + cluster.getNameForStats());
+    return new Spl terServ ce<>(
+        scatterGat rServ ce,
+        altScatterGat rServ ce,
+        dec der,
+        ALT_TRAFF C_PERCENTAGE_DEC DER_KEY_PREF X + cluster.getNa ForStats());
   }
 
-  protected ScatterGatherService<EarlybirdRequestContext, EarlybirdResponse>
-      createScatterGatherService(
-          String nameSuffix,
-          EarlybirdServiceScatterGatherSupport scatterGatherSupport,
+  protected ScatterGat rServ ce<Earlyb rdRequestContext, Earlyb rdResponse>
+      createScatterGat rServ ce(
+          Str ng na Suff x,
+          Earlyb rdServ ceScatterGat rSupport scatterGat rSupport,
           RequestSuccessStats requestSuccessStats,
-          PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport,
-          RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
-          PartitionAccessController partitionAccessController,
-          int numPartitions,
-          String partitionPath,
-          RootClientServiceBuilder<EarlybirdService.ServiceIface> rootClientServiceBuilder,
-          StatsReceiver statsReceiver,
-          EarlybirdCluster cluster,
-          SearchDecider decider,
-          String clientName) {
-    rootClientServiceBuilder.initializeWithPathSuffix(clientName + nameSuffix,
-        numPartitions,
-        partitionPath);
+          Part  onLogg ngSupport<Earlyb rdRequestContext> part  onLogg ngSupport,
+          RequestContextToEarlyb rdRequestF lter requestContextToEarlyb rdRequestF lter,
+          Part  onAccessController part  onAccessController,
+           nt numPart  ons,
+          Str ng part  onPath,
+          RootCl entServ ceBu lder<Earlyb rdServ ce.Serv ce face> rootCl entServ ceBu lder,
+          StatsRece ver statsRece ver,
+          Earlyb rdCluster cluster,
+          SearchDec der dec der,
+          Str ng cl entNa ) {
+    rootCl entServ ceBu lder. n  al zeW hPathSuff x(cl entNa  + na Suff x,
+        numPart  ons,
+        part  onPath);
 
-    ClientBackupFilter backupFilter =
-        new ClientBackupFilter(
-            "root_" + cluster.getNameForStats(),
-            "earlybird" + nameSuffix,
-            statsReceiver,
-            decider);
+    Cl entBackupF lter backupF lter =
+        new Cl entBackupF lter(
+            "root_" + cluster.getNa ForStats(),
+            "earlyb rd" + na Suff x,
+            statsRece ver,
+            dec der);
 
-    ClientLatencyFilter clientLatencyFilter = new ClientLatencyFilter("all" + nameSuffix);
+    Cl entLatencyF lter cl entLatencyF lter = new Cl entLatencyF lter("all" + na Suff x);
 
-    List<Service<EarlybirdRequestContext, EarlybirdResponse>> services = new ArrayList<>();
-    for (Service<EarlybirdRequest, EarlybirdResponse> service
-        : rootClientServiceBuilder
-        .<EarlybirdRequest, EarlybirdResponse>safeBuildServiceList(SEARCH_METHOD_NAME)) {
-      services.add(requestContextToEarlybirdRequestFilter
-          .andThen(backupFilter)
-          .andThen(clientLatencyFilter)
-          .andThen(service));
+    L st<Serv ce<Earlyb rdRequestContext, Earlyb rdResponse>> serv ces = new ArrayL st<>();
+    for (Serv ce<Earlyb rdRequest, Earlyb rdResponse> serv ce
+        : rootCl entServ ceBu lder
+        .<Earlyb rdRequest, Earlyb rdResponse>safeBu ldServ ceL st(SEARCH_METHOD_NAME)) {
+      serv ces.add(requestContextToEarlyb rdRequestF lter
+          .andT n(backupF lter)
+          .andT n(cl entLatencyF lter)
+          .andT n(serv ce));
     }
-    services = SkipPartitionFilter.wrapServices(TierConfig.DEFAULT_TIER_NAME, services,
-        partitionAccessController);
+    serv ces = Sk pPart  onF lter.wrapServ ces(T erConf g.DEFAULT_T ER_NAME, serv ces,
+        part  onAccessController);
 
-    return new ScatterGatherService<>(
-        scatterGatherSupport,
-        services,
+    return new ScatterGat rServ ce<>(
+        scatterGat rSupport,
+        serv ces,
         requestSuccessStats,
-        partitionLoggingSupport);
+        part  onLogg ngSupport);
   }
 }

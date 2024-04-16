@@ -1,139 +1,139 @@
-package com.twitter.cr_mixer.logging
+package com.tw ter.cr_m xer.logg ng
 
-import com.twitter.cr_mixer.model.AdsCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialAdsCandidate
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.logging.ScribeLoggerUtils._
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.param.decider.DeciderConstants
-import com.twitter.cr_mixer.thriftscala.AdsRecommendationTopLevelApiResult
-import com.twitter.cr_mixer.thriftscala.AdsRecommendationsResult
-import com.twitter.cr_mixer.thriftscala.AdsRequest
-import com.twitter.cr_mixer.thriftscala.AdsResponse
-import com.twitter.cr_mixer.thriftscala.FetchCandidatesResult
-import com.twitter.cr_mixer.thriftscala.GetAdsRecommendationsScribe
-import com.twitter.cr_mixer.thriftscala.PerformanceMetrics
-import com.twitter.cr_mixer.thriftscala.TweetCandidateWithMetadata
-import com.twitter.cr_mixer.util.CandidateGenerationKeyUtil
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.tracing.Trace
-import com.twitter.logging.Logger
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.util.Future
-import com.twitter.util.Stopwatch
+ mport com.tw ter.cr_m xer.model.AdsCand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model. n  alAdsCand date
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.cr_m xer.logg ng.Scr beLoggerUt ls._
+ mport com.tw ter.cr_m xer.param.dec der.CrM xerDec der
+ mport com.tw ter.cr_m xer.param.dec der.Dec derConstants
+ mport com.tw ter.cr_m xer.thr ftscala.AdsRecom ndat onTopLevelAp Result
+ mport com.tw ter.cr_m xer.thr ftscala.AdsRecom ndat onsResult
+ mport com.tw ter.cr_m xer.thr ftscala.AdsRequest
+ mport com.tw ter.cr_m xer.thr ftscala.AdsResponse
+ mport com.tw ter.cr_m xer.thr ftscala.FetchCand datesResult
+ mport com.tw ter.cr_m xer.thr ftscala.GetAdsRecom ndat onsScr be
+ mport com.tw ter.cr_m xer.thr ftscala.Performance tr cs
+ mport com.tw ter.cr_m xer.thr ftscala.T etCand dateW h tadata
+ mport com.tw ter.cr_m xer.ut l.Cand dateGenerat onKeyUt l
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.trac ng.Trace
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Stopwatch
 
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-@Singleton
-case class AdsRecommendationsScribeLogger @Inject() (
-  @Named(ModuleNames.AdsRecommendationsLogger) adsRecommendationsScribeLogger: Logger,
-  decider: CrMixerDecider,
-  statsReceiver: StatsReceiver) {
+@S ngleton
+case class AdsRecom ndat onsScr beLogger @ nject() (
+  @Na d(ModuleNa s.AdsRecom ndat onsLogger) adsRecom ndat onsScr beLogger: Logger,
+  dec der: CrM xerDec der,
+  statsRece ver: StatsRece ver) {
 
-  private val scopedStats = statsReceiver.scope(this.getClass.getCanonicalName)
-  private val upperFunnelsStats = scopedStats.scope("UpperFunnels")
-  private val topLevelApiStats = scopedStats.scope("TopLevelApi")
+  pr vate val scopedStats = statsRece ver.scope(t .getClass.getCanon calNa )
+  pr vate val upperFunnelsStats = scopedStats.scope("UpperFunnels")
+  pr vate val topLevelAp Stats = scopedStats.scope("TopLevelAp ")
 
   /*
-   * Scribe first step results after fetching initial ads candidate
+   * Scr be f rst step results after fetch ng  n  al ads cand date
    * */
-  def scribeInitialAdsCandidates(
-    query: AdsCandidateGeneratorQuery,
-    getResultFn: => Future[Seq[Seq[InitialAdsCandidate]]],
-    enableScribe: Boolean // controlled by feature switch so that we can scribe for certain DDG
-  ): Future[Seq[Seq[InitialAdsCandidate]]] = {
-    val scribeMetadata = ScribeMetadata.from(query)
-    val timer = Stopwatch.start()
-    getResultFn.onSuccess { input =>
-      val latencyMs = timer().inMilliseconds
-      val result = convertFetchCandidatesResult(input, scribeMetadata.userId)
-      val traceId = Trace.id.traceId.toLong
-      val scribeMsg = buildScribeMessage(result, scribeMetadata, latencyMs, traceId)
+  def scr be n  alAdsCand dates(
+    query: AdsCand dateGeneratorQuery,
+    getResultFn: => Future[Seq[Seq[ n  alAdsCand date]]],
+    enableScr be: Boolean // controlled by feature sw ch so that   can scr be for certa n DDG
+  ): Future[Seq[Seq[ n  alAdsCand date]]] = {
+    val scr be tadata = Scr be tadata.from(query)
+    val t  r = Stopwatch.start()
+    getResultFn.onSuccess {  nput =>
+      val latencyMs = t  r(). nM ll seconds
+      val result = convertFetchCand datesResult( nput, scr be tadata.user d)
+      val trace d = Trace. d.trace d.toLong
+      val scr beMsg = bu ldScr be ssage(result, scr be tadata, latencyMs, trace d)
 
-      if (enableScribe && decider.isAvailableForId(
-          scribeMetadata.userId,
-          DeciderConstants.adsRecommendationsPerExperimentScribeRate)) {
-        upperFunnelsStats.counter(scribeMetadata.product.originalName).incr()
-        scribeResult(scribeMsg)
+       f (enableScr be && dec der. sAva lableFor d(
+          scr be tadata.user d,
+          Dec derConstants.adsRecom ndat onsPerExper  ntScr beRate)) {
+        upperFunnelsStats.counter(scr be tadata.product.or g nalNa ). ncr()
+        scr beResult(scr beMsg)
       }
     }
   }
 
   /*
-   * Scribe top level API results
+   * Scr be top level AP  results
    * */
-  def scribeGetAdsRecommendations(
+  def scr beGetAdsRecom ndat ons(
     request: AdsRequest,
-    startTime: Long,
-    scribeMetadata: ScribeMetadata,
+    startT  : Long,
+    scr be tadata: Scr be tadata,
     getResultFn: => Future[AdsResponse],
-    enableScribe: Boolean
+    enableScr be: Boolean
   ): Future[AdsResponse] = {
-    val timer = Stopwatch.start()
+    val t  r = Stopwatch.start()
     getResultFn.onSuccess { response =>
-      val latencyMs = timer().inMilliseconds
-      val result = AdsRecommendationsResult.AdsRecommendationTopLevelApiResult(
-        AdsRecommendationTopLevelApiResult(
-          timestamp = startTime,
+      val latencyMs = t  r(). nM ll seconds
+      val result = AdsRecom ndat onsResult.AdsRecom ndat onTopLevelAp Result(
+        AdsRecom ndat onTopLevelAp Result(
+          t  stamp = startT  ,
           request = request,
           response = response
         ))
-      val traceId = Trace.id.traceId.toLong
-      val scribeMsg = buildScribeMessage(result, scribeMetadata, latencyMs, traceId)
+      val trace d = Trace. d.trace d.toLong
+      val scr beMsg = bu ldScr be ssage(result, scr be tadata, latencyMs, trace d)
 
-      if (enableScribe && decider.isAvailableForId(
-          scribeMetadata.userId,
-          DeciderConstants.adsRecommendationsPerExperimentScribeRate)) {
-        topLevelApiStats.counter(scribeMetadata.product.originalName).incr()
-        scribeResult(scribeMsg)
+       f (enableScr be && dec der. sAva lableFor d(
+          scr be tadata.user d,
+          Dec derConstants.adsRecom ndat onsPerExper  ntScr beRate)) {
+        topLevelAp Stats.counter(scr be tadata.product.or g nalNa ). ncr()
+        scr beResult(scr beMsg)
       }
     }
   }
 
-  private def convertFetchCandidatesResult(
-    candidatesSeq: Seq[Seq[InitialAdsCandidate]],
-    requestUserId: UserId
-  ): AdsRecommendationsResult = {
-    val tweetCandidatesWithMetadata = candidatesSeq.flatMap { candidates =>
-      candidates.map { candidate =>
-        TweetCandidateWithMetadata(
-          tweetId = candidate.tweetId,
-          candidateGenerationKey = Some(
-            CandidateGenerationKeyUtil.toThrift(candidate.candidateGenerationInfo, requestUserId)),
-          score = Some(candidate.getSimilarityScore),
-          numCandidateGenerationKeys = None // not populated yet
+  pr vate def convertFetchCand datesResult(
+    cand datesSeq: Seq[Seq[ n  alAdsCand date]],
+    requestUser d: User d
+  ): AdsRecom ndat onsResult = {
+    val t etCand datesW h tadata = cand datesSeq.flatMap { cand dates =>
+      cand dates.map { cand date =>
+        T etCand dateW h tadata(
+          t et d = cand date.t et d,
+          cand dateGenerat onKey = So (
+            Cand dateGenerat onKeyUt l.toThr ft(cand date.cand dateGenerat on nfo, requestUser d)),
+          score = So (cand date.getS m lar yScore),
+          numCand dateGenerat onKeys = None // not populated yet
         )
       }
     }
-    AdsRecommendationsResult.FetchCandidatesResult(
-      FetchCandidatesResult(Some(tweetCandidatesWithMetadata)))
+    AdsRecom ndat onsResult.FetchCand datesResult(
+      FetchCand datesResult(So (t etCand datesW h tadata)))
   }
 
-  private def buildScribeMessage(
-    result: AdsRecommendationsResult,
-    scribeMetadata: ScribeMetadata,
+  pr vate def bu ldScr be ssage(
+    result: AdsRecom ndat onsResult,
+    scr be tadata: Scr be tadata,
     latencyMs: Long,
-    traceId: Long
-  ): GetAdsRecommendationsScribe = {
-    GetAdsRecommendationsScribe(
-      uuid = scribeMetadata.requestUUID,
-      userId = scribeMetadata.userId,
+    trace d: Long
+  ): GetAdsRecom ndat onsScr be = {
+    GetAdsRecom ndat onsScr be(
+      uu d = scr be tadata.requestUU D,
+      user d = scr be tadata.user d,
       result = result,
-      traceId = Some(traceId),
-      performanceMetrics = Some(PerformanceMetrics(Some(latencyMs))),
-      impressedBuckets = getImpressedBuckets(scopedStats)
+      trace d = So (trace d),
+      performance tr cs = So (Performance tr cs(So (latencyMs))),
+       mpressedBuckets = get mpressedBuckets(scopedStats)
     )
   }
 
-  private def scribeResult(
-    scribeMsg: GetAdsRecommendationsScribe
-  ): Unit = {
-    publish(
-      logger = adsRecommendationsScribeLogger,
-      codec = GetAdsRecommendationsScribe,
-      message = scribeMsg)
+  pr vate def scr beResult(
+    scr beMsg: GetAdsRecom ndat onsScr be
+  ): Un  = {
+    publ sh(
+      logger = adsRecom ndat onsScr beLogger,
+      codec = GetAdsRecom ndat onsScr be,
+       ssage = scr beMsg)
   }
 
 }

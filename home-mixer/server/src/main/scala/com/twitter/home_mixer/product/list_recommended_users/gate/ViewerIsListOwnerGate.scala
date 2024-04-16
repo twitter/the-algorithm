@@ -1,29 +1,29 @@
-package com.twitter.home_mixer.product.list_recommended_users.gate
+package com.tw ter.ho _m xer.product.l st_recom nded_users.gate
 
-import com.twitter.home_mixer.model.request.HasListId
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.socialgraph.{thriftscala => sg}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
+ mport com.tw ter.ho _m xer.model.request.HasL st d
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.Gate
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Gate dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.soc algraph.{thr ftscala => sg}
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.soc algraph.Soc alGraph
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-case class ViewerIsListOwnerGate @Inject() (socialGraph: SocialGraph)
-    extends Gate[PipelineQuery with HasListId] {
+@S ngleton
+case class V e r sL stOwnerGate @ nject() (soc alGraph: Soc alGraph)
+    extends Gate[P pel neQuery w h HasL st d] {
 
-  override val identifier: GateIdentifier = GateIdentifier("ViewerIsListOwner")
+  overr de val  dent f er: Gate dent f er = Gate dent f er("V e r sL stOwner")
 
-  private val relationship = sg.Relationship(relationshipType = sg.RelationshipType.ListOwning)
+  pr vate val relat onsh p = sg.Relat onsh p(relat onsh pType = sg.Relat onsh pType.L stOwn ng)
 
-  override def shouldContinue(query: PipelineQuery with HasListId): Stitch[Boolean] = {
-    val request = sg.ExistsRequest(
-      source = query.getRequiredUserId,
-      target = query.listId,
-      relationships = Seq(relationship))
-    socialGraph.exists(request).map(_.exists)
+  overr de def shouldCont nue(query: P pel neQuery w h HasL st d): St ch[Boolean] = {
+    val request = sg.Ex stsRequest(
+      s ce = query.getRequ redUser d,
+      target = query.l st d,
+      relat onsh ps = Seq(relat onsh p))
+    soc alGraph.ex sts(request).map(_.ex sts)
   }
 }

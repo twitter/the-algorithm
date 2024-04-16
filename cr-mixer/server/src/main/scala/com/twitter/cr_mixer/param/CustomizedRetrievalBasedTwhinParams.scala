@@ -1,60 +1,60 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.cr_mixer.model.ModelConfig
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.cr_m xer.model.ModelConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .Param
 
-object CustomizedRetrievalBasedTwhinParams {
+object Custom zedRetr evalBasedTwh nParams {
 
-  // Model slots available for TwhinCollab and MultiCluster
-  object CustomizedRetrievalBasedTwhinCollabFilterFollowSource
-      extends FSParam[String](
-        name = "customized_retrieval_based_offline_twhin_collab_filter_follow_model_id",
-        default = ModelConfig.TwhinCollabFilterForFollow
+  // Model slots ava lable for Twh nCollab and Mult Cluster
+  object Custom zedRetr evalBasedTwh nCollabF lterFollowS ce
+      extends FSParam[Str ng](
+        na  = "custom zed_retr eval_based_offl ne_twh n_collab_f lter_follow_model_ d",
+        default = ModelConf g.Twh nCollabF lterForFollow
       )
 
-  object CustomizedRetrievalBasedTwhinCollabFilterEngagementSource
-      extends FSParam[String](
-        name = "customized_retrieval_based_offline_twhin_collab_filter_engagement_model_id",
-        default = ModelConfig.TwhinCollabFilterForEngagement
+  object Custom zedRetr evalBasedTwh nCollabF lterEngage ntS ce
+      extends FSParam[Str ng](
+        na  = "custom zed_retr eval_based_offl ne_twh n_collab_f lter_engage nt_model_ d",
+        default = ModelConf g.Twh nCollabF lterForEngage nt
       )
 
-  object CustomizedRetrievalBasedTwhinMultiClusterFollowSource
-      extends FSParam[String](
-        name = "customized_retrieval_based_offline_twhin_multi_cluster_follow_model_id",
-        default = ModelConfig.TwhinMultiClusterForFollow
+  object Custom zedRetr evalBasedTwh nMult ClusterFollowS ce
+      extends FSParam[Str ng](
+        na  = "custom zed_retr eval_based_offl ne_twh n_mult _cluster_follow_model_ d",
+        default = ModelConf g.Twh nMult ClusterForFollow
       )
 
-  object CustomizedRetrievalBasedTwhinMultiClusterEngagementSource
-      extends FSParam[String](
-        name = "customized_retrieval_based_offline_twhin_multi_cluster_engagement_model_id",
-        default = ModelConfig.TwhinMultiClusterForEngagement
+  object Custom zedRetr evalBasedTwh nMult ClusterEngage ntS ce
+      extends FSParam[Str ng](
+        na  = "custom zed_retr eval_based_offl ne_twh n_mult _cluster_engage nt_model_ d",
+        default = ModelConf g.Twh nMult ClusterForEngage nt
       )
 
-  val AllParams: Seq[Param[_] with FSName] =
+  val AllParams: Seq[Param[_] w h FSNa ] =
     Seq(
-      CustomizedRetrievalBasedTwhinCollabFilterFollowSource,
-      CustomizedRetrievalBasedTwhinCollabFilterEngagementSource,
-      CustomizedRetrievalBasedTwhinMultiClusterFollowSource,
-      CustomizedRetrievalBasedTwhinMultiClusterEngagementSource,
+      Custom zedRetr evalBasedTwh nCollabF lterFollowS ce,
+      Custom zedRetr evalBasedTwh nCollabF lterEngage ntS ce,
+      Custom zedRetr evalBasedTwh nMult ClusterFollowS ce,
+      Custom zedRetr evalBasedTwh nMult ClusterEngage ntS ce,
     )
 
-  lazy val config: BaseConfig = {
+  lazy val conf g: BaseConf g = {
 
-    val stringFSOverrides =
-      FeatureSwitchOverrideUtil.getStringFSOverrides(
-        CustomizedRetrievalBasedTwhinCollabFilterFollowSource,
-        CustomizedRetrievalBasedTwhinCollabFilterEngagementSource,
-        CustomizedRetrievalBasedTwhinMultiClusterFollowSource,
-        CustomizedRetrievalBasedTwhinMultiClusterEngagementSource,
+    val str ngFSOverr des =
+      FeatureSw chOverr deUt l.getStr ngFSOverr des(
+        Custom zedRetr evalBasedTwh nCollabF lterFollowS ce,
+        Custom zedRetr evalBasedTwh nCollabF lterEngage ntS ce,
+        Custom zedRetr evalBasedTwh nMult ClusterFollowS ce,
+        Custom zedRetr evalBasedTwh nMult ClusterEngage ntS ce,
       )
 
-    BaseConfigBuilder()
-      .set(stringFSOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set(str ngFSOverr des: _*)
+      .bu ld()
   }
 }

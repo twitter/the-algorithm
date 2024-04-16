@@ -1,78 +1,78 @@
-package com.twitter.follow_recommendations.common.candidate_sources.addressbook
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.addressbook
 
-import com.twitter.cds.contact_consent_state.thriftscala.PurposeOfProcessing
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.clients.addressbook.AddressbookClient
-import com.twitter.follow_recommendations.common.clients.addressbook.models.EdgeType
-import com.twitter.follow_recommendations.common.clients.addressbook.models.RecordIdentifier
-import com.twitter.follow_recommendations.common.clients.email_storage_service.EmailStorageServiceClient
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.utils.RescueWithStatsUtils.rescueOptionalWithStats
-import com.twitter.follow_recommendations.common.utils.RescueWithStatsUtils.rescueWithStats
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.ReverseEmailContactsClientColumn
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.cds.contact_consent_state.thr ftscala.PurposeOfProcess ng
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.addressbook.AddressbookCl ent
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.addressbook.models.EdgeType
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.addressbook.models.Record dent f er
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.ema l_storage_serv ce.Ema lStorageServ ceCl ent
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.ut ls.RescueW hStatsUt ls.rescueOpt onalW hStats
+ mport com.tw ter.follow_recom ndat ons.common.ut ls.RescueW hStatsUt ls.rescueW hStats
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.generated.cl ent.onboard ng.userrecs.ReverseEma lContactsCl entColumn
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ReverseEmailBookSource @Inject() (
-  reverseEmailContactsClientColumn: ReverseEmailContactsClientColumn,
-  essClient: EmailStorageServiceClient,
-  addressBookClient: AddressbookClient,
-  statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends CandidateSource[HasParams with HasClientContext, CandidateUser] {
-  override val identifier: CandidateSourceIdentifier = ReverseEmailBookSource.Identifier
-  private val rescueStats = statsReceiver.scope("ReverseEmailBookSource")
+@S ngleton
+class ReverseEma lBookS ce @ nject() (
+  reverseEma lContactsCl entColumn: ReverseEma lContactsCl entColumn,
+  essCl ent: Ema lStorageServ ceCl ent,
+  addressBookCl ent: AddressbookCl ent,
+  statsRece ver: StatsRece ver = NullStatsRece ver)
+    extends Cand dateS ce[HasParams w h HasCl entContext, Cand dateUser] {
+  overr de val  dent f er: Cand dateS ce dent f er = ReverseEma lBookS ce. dent f er
+  pr vate val rescueStats = statsRece ver.scope("ReverseEma lBookS ce")
 
   /**
-   * Generate a list of candidates for the target
+   * Generate a l st of cand dates for t  target
    */
-  override def apply(target: HasParams with HasClientContext): Stitch[Seq[CandidateUser]] = {
-    val reverseCandidatesFromEmail = target.getOptionalUserId
-      .map { userId =>
-        val verifiedEmailStitchOpt =
-          rescueOptionalWithStats(
-            essClient.getVerifiedEmail(userId, PurposeOfProcessing.ContentRecommendations),
+  overr de def apply(target: HasParams w h HasCl entContext): St ch[Seq[Cand dateUser]] = {
+    val reverseCand datesFromEma l = target.getOpt onalUser d
+      .map { user d =>
+        val ver f edEma lSt chOpt =
+          rescueOpt onalW hStats(
+            essCl ent.getVer f edEma l(user d, PurposeOfProcess ng.ContentRecom ndat ons),
             rescueStats,
-            "getVerifiedEmail")
-        verifiedEmailStitchOpt.flatMap { emailOpt =>
-          rescueWithStats(
-            addressBookClient.getUsers(
-              userId = userId,
-              identifiers = emailOpt
-                .map(email =>
-                  RecordIdentifier(userId = None, email = Some(email), phoneNumber = None)).toSeq,
-              batchSize = ReverseEmailBookSource.NumEmailBookEntries,
-              edgeType = ReverseEmailBookSource.DefaultEdgeType,
-              fetcherOption =
-                if (target.params(AddressBookParams.ReadFromABV2Only)) None
-                else Some(reverseEmailContactsClientColumn.fetcher)
+            "getVer f edEma l")
+        ver f edEma lSt chOpt.flatMap { ema lOpt =>
+          rescueW hStats(
+            addressBookCl ent.getUsers(
+              user d = user d,
+               dent f ers = ema lOpt
+                .map(ema l =>
+                  Record dent f er(user d = None, ema l = So (ema l), phoneNumber = None)).toSeq,
+              batchS ze = ReverseEma lBookS ce.NumEma lBookEntr es,
+              edgeType = ReverseEma lBookS ce.DefaultEdgeType,
+              fetc rOpt on =
+                 f (target.params(AddressBookParams.ReadFromABV2Only)) None
+                else So (reverseEma lContactsCl entColumn.fetc r)
             ),
             rescueStats,
-            "AddressBookClient"
+            "AddressBookCl ent"
           )
         }
-      }.getOrElse(Stitch.Nil)
+      }.getOrElse(St ch.N l)
 
-    reverseCandidatesFromEmail.map(
-      _.take(ReverseEmailBookSource.NumEmailBookEntries)
+    reverseCand datesFromEma l.map(
+      _.take(ReverseEma lBookS ce.NumEma lBookEntr es)
         .map(
-          CandidateUser(_, score = Some(CandidateUser.DefaultCandidateScore))
-            .withCandidateSource(identifier))
+          Cand dateUser(_, score = So (Cand dateUser.DefaultCand dateScore))
+            .w hCand dateS ce( dent f er))
     )
   }
 }
 
-object ReverseEmailBookSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.ReverseEmailBookIbis.toString)
-  val NumEmailBookEntries: Int = 500
-  val IsPhone = false
+object ReverseEma lBookS ce {
+  val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er(
+    Algor hm.ReverseEma lBook b s.toStr ng)
+  val NumEma lBookEntr es:  nt = 500
+  val  sPhone = false
   val DefaultEdgeType: EdgeType = EdgeType.Reverse
 }

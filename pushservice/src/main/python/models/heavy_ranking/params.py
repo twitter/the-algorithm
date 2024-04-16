@@ -1,28 +1,28 @@
-import enum
-import json
-from typing import List, Optional
+ mport enum
+ mport json
+from typ ng  mport L st, Opt onal
 
-from .lib.params import BlockParams, ClemNetParams, ConvParams, DenseParams, TopLayerParams
+from .l b.params  mport BlockParams, ClemNetParams, ConvParams, DenseParams, TopLayerParams
 
-from pydantic import BaseModel, Extra, NonNegativeFloat
-import tensorflow.compat.v1 as tf
+from pydant c  mport BaseModel, Extra, NonNegat veFloat
+ mport tensorflow.compat.v1 as tf
 
 
-# checkstyle: noqa
+# c ckstyle: noqa
 
 
 class ExtendedBaseModel(BaseModel):
-  class Config:
-    extra = Extra.forbid
+  class Conf g:
+    extra = Extra.forb d
 
 
 class SparseFeaturesParams(ExtendedBaseModel):
-  bits: int
-  embedding_size: int
+  b s:  nt
+  embedd ng_s ze:  nt
 
 
 class FeaturesParams(ExtendedBaseModel):
-  sparse_features: Optional[SparseFeaturesParams]
+  sparse_features: Opt onal[SparseFeaturesParams]
 
 
 class ModelTypeEnum(str, enum.Enum):
@@ -30,60 +30,60 @@ class ModelTypeEnum(str, enum.Enum):
 
 
 class ModelParams(ExtendedBaseModel):
-  name: ModelTypeEnum
+  na : ModelTypeEnum
   features: FeaturesParams
-  architecture: ClemNetParams
+  arch ecture: ClemNetParams
 
 
-class TaskNameEnum(str, enum.Enum):
+class TaskNa Enum(str, enum.Enum):
   oonc: str = "OONC"
-  engagement: str = "Engagement"
+  engage nt: str = "Engage nt"
 
 
 class Task(ExtendedBaseModel):
-  name: TaskNameEnum
+  na : TaskNa Enum
   label: str
-  score_weight: NonNegativeFloat
+  score_  ght: NonNegat veFloat
 
 
 DEFAULT_TASKS = [
-  Task(name=TaskNameEnum.oonc, label="label", score_weight=0.9),
-  Task(name=TaskNameEnum.engagement, label="label.engagement", score_weight=0.1),
+  Task(na =TaskNa Enum.oonc, label="label", score_  ght=0.9),
+  Task(na =TaskNa Enum.engage nt, label="label.engage nt", score_  ght=0.1),
 ]
 
 
 class GraphParams(ExtendedBaseModel):
-  tasks: List[Task] = DEFAULT_TASKS
+  tasks: L st[Task] = DEFAULT_TASKS
   model: ModelParams
-  weight: Optional[str]
+    ght: Opt onal[str]
 
 
-DEFAULT_ARCHITECTURE_PARAMS = ClemNetParams(
+DEFAULT_ARCH TECTURE_PARAMS = ClemNetParams(
   blocks=[
     BlockParams(
-      activation="relu",
-      conv=ConvParams(kernel_size=3, filters=5),
-      dense=DenseParams(output_size=output_size),
-      residual=False,
+      act vat on="relu",
+      conv=ConvParams(kernel_s ze=3, f lters=5),
+      dense=DenseParams(output_s ze=output_s ze),
+      res dual=False,
     )
-    for output_size in [1024, 512, 256, 128]
+    for output_s ze  n [1024, 512, 256, 128]
   ],
   top=TopLayerParams(n_labels=1),
 )
 
 DEFAULT_GRAPH_PARAMS = GraphParams(
   model=ModelParams(
-    name=ModelTypeEnum.clemnet,
-    architecture=DEFAULT_ARCHITECTURE_PARAMS,
-    features=FeaturesParams(sparse_features=SparseFeaturesParams(bits=18, embedding_size=50)),
+    na =ModelTypeEnum.clemnet,
+    arch ecture=DEFAULT_ARCH TECTURE_PARAMS,
+    features=FeaturesParams(sparse_features=SparseFeaturesParams(b s=18, embedd ng_s ze=50)),
   ),
 )
 
 
 def load_graph_params(args) -> GraphParams:
   params = DEFAULT_GRAPH_PARAMS
-  if args.param_file:
-    with tf.io.gfile.GFile(args.param_file, mode="r+") as file:
-      params = GraphParams.parse_obj(json.load(file))
+   f args.param_f le:
+    w h tf. o.gf le.GF le(args.param_f le, mode="r+") as f le:
+      params = GraphParams.parse_obj(json.load(f le))
 
   return params

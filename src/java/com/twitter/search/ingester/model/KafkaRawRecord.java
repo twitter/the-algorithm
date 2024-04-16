@@ -1,22 +1,22 @@
-package com.twitter.search.ingester.model;
+package com.tw ter.search. ngester.model;
 
 /**
- * The raw data in a Kafka record.
+ * T  raw data  n a Kafka record.
  */
-public class KafkaRawRecord {
-  private final byte[] data;
-  private final long readAtTimestampMs;
+publ c class KafkaRawRecord {
+  pr vate f nal byte[] data;
+  pr vate f nal long readAtT  stampMs;
 
-  public KafkaRawRecord(byte[] data, long readAtTimestampMs) {
-    this.data = data;
-    this.readAtTimestampMs = readAtTimestampMs;
+  publ c KafkaRawRecord(byte[] data, long readAtT  stampMs) {
+    t .data = data;
+    t .readAtT  stampMs = readAtT  stampMs;
   }
 
-  public byte[] getData() {
+  publ c byte[] getData() {
     return data;
   }
 
-  public long getReadAtTimestampMs() {
-    return readAtTimestampMs;
+  publ c long getReadAtT  stampMs() {
+    return readAtT  stampMs;
   }
 }

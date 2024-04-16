@@ -1,128 +1,128 @@
-package com.twitter.home_mixer
+package com.tw ter.ho _m xer
 
-import com.google.inject.Module
-import com.twitter.finagle.Filter
-import com.twitter.finatra.annotations.DarkTrafficFilterType
-import com.twitter.finatra.http.HttpServer
-import com.twitter.finatra.http.routing.HttpRouter
-import com.twitter.finatra.mtls.http.{Mtls => HttpMtls}
-import com.twitter.finatra.mtls.thriftmux.Mtls
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule
-import com.twitter.finatra.thrift.ThriftServer
-import com.twitter.finatra.thrift.filters._
-import com.twitter.finatra.thrift.routing.ThriftRouter
-import com.twitter.home_mixer.controller.HomeThriftController
-import com.twitter.home_mixer.federated.HomeMixerColumn
-import com.twitter.home_mixer.module._
-import com.twitter.home_mixer.param.GlobalParamConfigModule
-import com.twitter.home_mixer.product.HomeMixerProductModule
-import com.twitter.home_mixer.{thriftscala => st}
-import com.twitter.product_mixer.component_library.module.AccountRecommendationsMixerModule
-import com.twitter.product_mixer.component_library.module.DarkTrafficFilterModule
-import com.twitter.product_mixer.component_library.module.EarlybirdModule
-import com.twitter.product_mixer.component_library.module.ExploreRankerClientModule
-import com.twitter.product_mixer.component_library.module.GizmoduckClientModule
-import com.twitter.product_mixer.component_library.module.OnboardingTaskServiceModule
-import com.twitter.product_mixer.component_library.module.SocialGraphServiceModule
-import com.twitter.product_mixer.component_library.module.TimelineRankerClientModule
-import com.twitter.product_mixer.component_library.module.TimelineScorerClientModule
-import com.twitter.product_mixer.component_library.module.TimelineServiceClientModule
-import com.twitter.product_mixer.component_library.module.TweetImpressionStoreModule
-import com.twitter.product_mixer.component_library.module.TweetMixerClientModule
-import com.twitter.product_mixer.component_library.module.UserSessionStoreModule
-import com.twitter.product_mixer.core.controllers.ProductMixerController
-import com.twitter.product_mixer.core.module.LoggingThrowableExceptionMapper
-import com.twitter.product_mixer.core.module.ProductMixerModule
-import com.twitter.product_mixer.core.module.stringcenter.ProductScopeStringCenterModule
-import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.fed.server.StratoFedServer
+ mport com.google. nject.Module
+ mport com.tw ter.f nagle.F lter
+ mport com.tw ter.f natra.annotat ons.DarkTraff cF lterType
+ mport com.tw ter.f natra.http.HttpServer
+ mport com.tw ter.f natra.http.rout ng.HttpRouter
+ mport com.tw ter.f natra.mtls.http.{Mtls => HttpMtls}
+ mport com.tw ter.f natra.mtls.thr ftmux.Mtls
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsThr ft bFormsModule
+ mport com.tw ter.f natra.thr ft.Thr ftServer
+ mport com.tw ter.f natra.thr ft.f lters._
+ mport com.tw ter.f natra.thr ft.rout ng.Thr ftRouter
+ mport com.tw ter.ho _m xer.controller.Ho Thr ftController
+ mport com.tw ter.ho _m xer.federated.Ho M xerColumn
+ mport com.tw ter.ho _m xer.module._
+ mport com.tw ter.ho _m xer.param.GlobalParamConf gModule
+ mport com.tw ter.ho _m xer.product.Ho M xerProductModule
+ mport com.tw ter.ho _m xer.{thr ftscala => st}
+ mport com.tw ter.product_m xer.component_l brary.module.AccountRecom ndat onsM xerModule
+ mport com.tw ter.product_m xer.component_l brary.module.DarkTraff cF lterModule
+ mport com.tw ter.product_m xer.component_l brary.module.Earlyb rdModule
+ mport com.tw ter.product_m xer.component_l brary.module.ExploreRankerCl entModule
+ mport com.tw ter.product_m xer.component_l brary.module.G zmoduckCl entModule
+ mport com.tw ter.product_m xer.component_l brary.module.Onboard ngTaskServ ceModule
+ mport com.tw ter.product_m xer.component_l brary.module.Soc alGraphServ ceModule
+ mport com.tw ter.product_m xer.component_l brary.module.T  l neRankerCl entModule
+ mport com.tw ter.product_m xer.component_l brary.module.T  l neScorerCl entModule
+ mport com.tw ter.product_m xer.component_l brary.module.T  l neServ ceCl entModule
+ mport com.tw ter.product_m xer.component_l brary.module.T et mpress onStoreModule
+ mport com.tw ter.product_m xer.component_l brary.module.T etM xerCl entModule
+ mport com.tw ter.product_m xer.component_l brary.module.UserSess onStoreModule
+ mport com.tw ter.product_m xer.core.controllers.ProductM xerController
+ mport com.tw ter.product_m xer.core.module.Logg ngThrowableExcept onMapper
+ mport com.tw ter.product_m xer.core.module.ProductM xerModule
+ mport com.tw ter.product_m xer.core.module.str ngcenter.ProductScopeStr ngCenterModule
+ mport com.tw ter.strato.fed.StratoFed
+ mport com.tw ter.strato.fed.server.StratoFedServer
 
-object HomeMixerServerMain extends HomeMixerServer
+object Ho M xerServerMa n extends Ho M xerServer
 
-class HomeMixerServer
+class Ho M xerServer
     extends StratoFedServer
-    with ThriftServer
-    with Mtls
-    with HttpServer
-    with HttpMtls {
-  override val name = "home-mixer-server"
+    w h Thr ftServer
+    w h Mtls
+    w h HttpServer
+    w h HttpMtls {
+  overr de val na  = "ho -m xer-server"
 
-  override val modules: Seq[Module] = Seq(
-    AccountRecommendationsMixerModule,
-    AdvertiserBrandSafetySettingsStoreModule,
-    BlenderClientModule,
-    ClientSentImpressionsPublisherModule,
-    ConversationServiceModule,
-    EarlybirdModule,
-    ExploreRankerClientModule,
-    FeedbackHistoryClientModule,
-    GizmoduckClientModule,
-    GlobalParamConfigModule,
-    HomeAdsCandidateSourceModule,
-    HomeMixerFlagsModule,
-    HomeMixerProductModule,
-    HomeMixerResourcesModule,
-    ImpressionBloomFilterModule,
-    InjectionHistoryClientModule,
-    ManhattanClientsModule,
-    ManhattanFeatureRepositoryModule,
-    ManhattanTweetImpressionStoreModule,
-    MemcachedFeatureRepositoryModule,
-    NaviModelClientModule,
-    OnboardingTaskServiceModule,
-    OptimizedStratoClientModule,
-    PeopleDiscoveryServiceModule,
-    ProductMixerModule,
-    RealGraphInNetworkScoresModule,
-    RealtimeAggregateFeatureRepositoryModule,
-    ScoredTweetsMemcacheModule,
-    ScribeEventPublisherModule,
-    SimClustersRecentEngagementsClientModule,
-    SocialGraphServiceModule,
-    StaleTweetsCacheModule,
-    ThriftFeatureRepositoryModule,
-    TimelineRankerClientModule,
-    TimelineScorerClientModule,
-    TimelineServiceClientModule,
-    TimelinesPersistenceStoreClientModule,
-    TopicSocialProofClientModule,
-    TweetImpressionStoreModule,
-    TweetMixerClientModule,
-    TweetypieClientModule,
-    TweetypieStaticEntitiesCacheClientModule,
-    UserSessionStoreModule,
-    new DarkTrafficFilterModule[st.HomeMixer.ReqRepServicePerEndpoint](),
-    new MtlsThriftWebFormsModule[st.HomeMixer.MethodPerEndpoint](this),
-    new ProductScopeStringCenterModule()
+  overr de val modules: Seq[Module] = Seq(
+    AccountRecom ndat onsM xerModule,
+    Advert serBrandSafetySett ngsStoreModule,
+    BlenderCl entModule,
+    Cl entSent mpress onsPubl s rModule,
+    Conversat onServ ceModule,
+    Earlyb rdModule,
+    ExploreRankerCl entModule,
+    Feedback toryCl entModule,
+    G zmoduckCl entModule,
+    GlobalParamConf gModule,
+    Ho AdsCand dateS ceModule,
+    Ho M xerFlagsModule,
+    Ho M xerProductModule,
+    Ho M xerRes cesModule,
+     mpress onBloomF lterModule,
+     nject on toryCl entModule,
+    ManhattanCl entsModule,
+    ManhattanFeatureRepos oryModule,
+    ManhattanT et mpress onStoreModule,
+     mcac dFeatureRepos oryModule,
+    Nav ModelCl entModule,
+    Onboard ngTaskServ ceModule,
+    Opt m zedStratoCl entModule,
+    PeopleD scoveryServ ceModule,
+    ProductM xerModule,
+    RealGraph nNetworkScoresModule,
+    Realt  AggregateFeatureRepos oryModule,
+    ScoredT ets mcac Module,
+    Scr beEventPubl s rModule,
+    S mClustersRecentEngage ntsCl entModule,
+    Soc alGraphServ ceModule,
+    StaleT etsCac Module,
+    Thr ftFeatureRepos oryModule,
+    T  l neRankerCl entModule,
+    T  l neScorerCl entModule,
+    T  l neServ ceCl entModule,
+    T  l nesPers stenceStoreCl entModule,
+    Top cSoc alProofCl entModule,
+    T et mpress onStoreModule,
+    T etM xerCl entModule,
+    T etyp eCl entModule,
+    T etyp eStat cEnt  esCac Cl entModule,
+    UserSess onStoreModule,
+    new DarkTraff cF lterModule[st.Ho M xer.ReqRepServ cePerEndpo nt](),
+    new MtlsThr ft bFormsModule[st.Ho M xer. thodPerEndpo nt](t ),
+    new ProductScopeStr ngCenterModule()
   )
 
-  override def configureThrift(router: ThriftRouter): Unit = {
+  overr de def conf gureThr ft(router: Thr ftRouter): Un  = {
     router
-      .filter[LoggingMDCFilter]
-      .filter[TraceIdMDCFilter]
-      .filter[ThriftMDCFilter]
-      .filter[StatsFilter]
-      .filter[AccessLoggingFilter]
-      .filter[ExceptionMappingFilter]
-      .filter[Filter.TypeAgnostic, DarkTrafficFilterType]
-      .exceptionMapper[LoggingThrowableExceptionMapper]
-      .exceptionMapper[PipelineFailureExceptionMapper]
-      .add[HomeThriftController]
+      .f lter[Logg ngMDCF lter]
+      .f lter[Trace dMDCF lter]
+      .f lter[Thr ftMDCF lter]
+      .f lter[StatsF lter]
+      .f lter[AccessLogg ngF lter]
+      .f lter[Except onMapp ngF lter]
+      .f lter[F lter.TypeAgnost c, DarkTraff cF lterType]
+      .except onMapper[Logg ngThrowableExcept onMapper]
+      .except onMapper[P pel neFa lureExcept onMapper]
+      .add[Ho Thr ftController]
   }
 
-  override def configureHttp(router: HttpRouter): Unit =
+  overr de def conf gureHttp(router: HttpRouter): Un  =
     router.add(
-      ProductMixerController[st.HomeMixer.MethodPerEndpoint](
-        this.injector,
-        st.HomeMixer.ExecutePipeline))
+      ProductM xerController[st.Ho M xer. thodPerEndpo nt](
+        t . njector,
+        st.Ho M xer.ExecuteP pel ne))
 
-  override val dest: String = "/s/home-mixer/home-mixer:strato"
+  overr de val dest: Str ng = "/s/ho -m xer/ho -m xer:strato"
 
-  override val columns: Seq[Class[_ <: StratoFed.Column]] =
-    Seq(classOf[HomeMixerColumn])
+  overr de val columns: Seq[Class[_ <: StratoFed.Column]] =
+    Seq(classOf[Ho M xerColumn])
 
-  override protected def warmup(): Unit = {
-    handle[HomeMixerThriftServerWarmupHandler]()
-    handle[HomeMixerHttpServerWarmupHandler]()
+  overr de protected def warmup(): Un  = {
+    handle[Ho M xerThr ftServerWarmupHandler]()
+    handle[Ho M xerHttpServerWarmupHandler]()
   }
 }

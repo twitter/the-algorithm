@@ -1,3818 +1,3818 @@
-package com.twitter.visibility.rules
+package com.tw ter.v s b l y.rules
 
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.rules.ConversationControlRules._
-import com.twitter.visibility.rules.FollowerRelations.AuthorMutesViewerRule
-import com.twitter.visibility.rules.FollowerRelations.ProtectedViewerRule
-import com.twitter.visibility.rules.PolicyLevelRuleParams.ruleParams
-import com.twitter.visibility.rules.PublicInterestRules._
-import com.twitter.visibility.rules.SafeSearchTweetRules._
-import com.twitter.visibility.rules.SafeSearchUserRules.SafeSearchNsfwAvatarImageUserLabelRule
-import com.twitter.visibility.rules.SafeSearchUserRules._
-import com.twitter.visibility.rules.SpaceRules._
-import com.twitter.visibility.rules.ToxicityReplyFilterRules.ToxicityReplyFilterDropNotificationRule
-import com.twitter.visibility.rules.ToxicityReplyFilterRules.ToxicityReplyFilterRule
-import com.twitter.visibility.rules.UnsafeSearchTweetRules._
-import com.twitter.visibility.rules.UserUnavailableStateTombstoneRules._
+ mport com.tw ter.v s b l y.conf gap .params.RuleParam
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams
+ mport com.tw ter.v s b l y.models.Content d
+ mport com.tw ter.v s b l y.rules.Conversat onControlRules._
+ mport com.tw ter.v s b l y.rules.Follo rRelat ons.AuthorMutesV e rRule
+ mport com.tw ter.v s b l y.rules.Follo rRelat ons.ProtectedV e rRule
+ mport com.tw ter.v s b l y.rules.Pol cyLevelRuleParams.ruleParams
+ mport com.tw ter.v s b l y.rules.Publ c nterestRules._
+ mport com.tw ter.v s b l y.rules.SafeSearchT etRules._
+ mport com.tw ter.v s b l y.rules.SafeSearchUserRules.SafeSearchNsfwAvatar mageUserLabelRule
+ mport com.tw ter.v s b l y.rules.SafeSearchUserRules._
+ mport com.tw ter.v s b l y.rules.SpaceRules._
+ mport com.tw ter.v s b l y.rules.Tox c yReplyF lterRules.Tox c yReplyF lterDropNot f cat onRule
+ mport com.tw ter.v s b l y.rules.Tox c yReplyF lterRules.Tox c yReplyF lterRule
+ mport com.tw ter.v s b l y.rules.UnsafeSearchT etRules._
+ mport com.tw ter.v s b l y.rules.UserUnava lableStateTombstoneRules._
 
-abstract class VisibilityPolicy(
-  val tweetRules: Seq[Rule] = Nil,
-  val userRules: Seq[Rule] = Nil,
-  val cardRules: Seq[Rule] = Nil,
-  val quotedTweetRules: Seq[Rule] = Nil,
-  val dmRules: Seq[Rule] = Nil,
-  val dmConversationRules: Seq[Rule] = Nil,
-  val dmEventRules: Seq[Rule] = Nil,
-  val spaceRules: Seq[Rule] = Nil,
-  val userUnavailableStateRules: Seq[Rule] = Nil,
-  val twitterArticleRules: Seq[Rule] = Nil,
-  val deletedTweetRules: Seq[Rule] = Nil,
-  val mediaRules: Seq[Rule] = Nil,
-  val communityRules: Seq[Rule] = Nil,
-  val policyRuleParams: Map[Rule, PolicyLevelRuleParams] = Map.empty) {
+abstract class V s b l yPol cy(
+  val t etRules: Seq[Rule] = N l,
+  val userRules: Seq[Rule] = N l,
+  val cardRules: Seq[Rule] = N l,
+  val quotedT etRules: Seq[Rule] = N l,
+  val dmRules: Seq[Rule] = N l,
+  val dmConversat onRules: Seq[Rule] = N l,
+  val dmEventRules: Seq[Rule] = N l,
+  val spaceRules: Seq[Rule] = N l,
+  val userUnava lableStateRules: Seq[Rule] = N l,
+  val tw terArt cleRules: Seq[Rule] = N l,
+  val deletedT etRules: Seq[Rule] = N l,
+  val  d aRules: Seq[Rule] = N l,
+  val commun yRules: Seq[Rule] = N l,
+  val pol cyRuleParams: Map[Rule, Pol cyLevelRuleParams] = Map.empty) {
 
-  def forContentId(contentId: ContentId): Seq[Rule] =
-    contentId match {
-      case ContentId.TweetId(_) => tweetRules
-      case ContentId.UserId(_) => userRules
-      case ContentId.CardId(_) => cardRules
-      case ContentId.QuotedTweetRelationship(_, _) => quotedTweetRules
-      case ContentId.NotificationId(_) => userRules
-      case ContentId.DmId(_) => dmRules
-      case ContentId.BlenderTweetId(_) => userRules ++ tweetRules
-      case ContentId.SpaceId(_) => spaceRules
-      case ContentId.SpacePlusUserId(_) => spaceRules ++ userRules
-      case ContentId.DmConversationId(_) => dmConversationRules
-      case ContentId.DmEventId(_) => dmEventRules
-      case ContentId.UserUnavailableState(_) => userUnavailableStateRules
-      case ContentId.TwitterArticleId(_) => twitterArticleRules
-      case ContentId.DeleteTweetId(_) => deletedTweetRules
-      case ContentId.MediaId(_) => mediaRules
-      case ContentId.CommunityId(_) => communityRules
+  def forContent d(content d: Content d): Seq[Rule] =
+    content d match {
+      case Content d.T et d(_) => t etRules
+      case Content d.User d(_) => userRules
+      case Content d.Card d(_) => cardRules
+      case Content d.QuotedT etRelat onsh p(_, _) => quotedT etRules
+      case Content d.Not f cat on d(_) => userRules
+      case Content d.Dm d(_) => dmRules
+      case Content d.BlenderT et d(_) => userRules ++ t etRules
+      case Content d.Space d(_) => spaceRules
+      case Content d.SpacePlusUser d(_) => spaceRules ++ userRules
+      case Content d.DmConversat on d(_) => dmConversat onRules
+      case Content d.DmEvent d(_) => dmEventRules
+      case Content d.UserUnava lableState(_) => userUnava lableStateRules
+      case Content d.Tw terArt cle d(_) => tw terArt cleRules
+      case Content d.DeleteT et d(_) => deletedT etRules
+      case Content d. d a d(_) =>  d aRules
+      case Content d.Commun y d(_) => commun yRules
     }
 
-  private[visibility] def allRules: Seq[Rule] =
-    (tweetRules ++ userRules ++ cardRules ++ quotedTweetRules ++ dmRules ++ spaceRules ++ dmConversationRules ++ dmEventRules ++ twitterArticleRules ++ deletedTweetRules ++ mediaRules ++ communityRules)
+  pr vate[v s b l y] def allRules: Seq[Rule] =
+    (t etRules ++ userRules ++ cardRules ++ quotedT etRules ++ dmRules ++ spaceRules ++ dmConversat onRules ++ dmEventRules ++ tw terArt cleRules ++ deletedT etRules ++  d aRules ++ commun yRules)
 }
 
-object VisibilityPolicy {
-  val baseTweetRules = Seq(
-    DropCommunityTweetsRule,
-    DropCommunityTweetCommunityNotVisibleRule,
-    DropProtectedCommunityTweetsRule,
-    DropHiddenCommunityTweetsRule,
-    DropAuthorRemovedCommunityTweetsRule,
-    SpamTweetLabelRule,
-    PdnaTweetLabelRule,
-    BounceTweetLabelRule,
-    DropExclusiveTweetContentRule,
-    DropTrustedFriendsTweetContentRule
+object V s b l yPol cy {
+  val baseT etRules = Seq(
+    DropCommun yT etsRule,
+    DropCommun yT etCommun yNotV s bleRule,
+    DropProtectedCommun yT etsRule,
+    DropH ddenCommun yT etsRule,
+    DropAuthorRemovedCommun yT etsRule,
+    SpamT etLabelRule,
+    PdnaT etLabelRule,
+    BounceT etLabelRule,
+    DropExclus veT etContentRule,
+    DropTrustedFr endsT etContentRule
   )
 
-  val baseTweetTombstoneRules = Seq(
-    TombstoneCommunityTweetsRule,
-    TombstoneCommunityTweetCommunityNotVisibleRule,
-    TombstoneProtectedCommunityTweetsRule,
-    TombstoneHiddenCommunityTweetsRule,
-    TombstoneAuthorRemovedCommunityTweetsRule,
-    SpamTweetLabelTombstoneRule,
-    PdnaTweetLabelTombstoneRule,
-    BounceTweetLabelTombstoneRule,
-    TombstoneExclusiveTweetContentRule,
-    TombstoneTrustedFriendsTweetContentRule,
+  val baseT etTombstoneRules = Seq(
+    TombstoneCommun yT etsRule,
+    TombstoneCommun yT etCommun yNotV s bleRule,
+    TombstoneProtectedCommun yT etsRule,
+    TombstoneH ddenCommun yT etsRule,
+    TombstoneAuthorRemovedCommun yT etsRule,
+    SpamT etLabelTombstoneRule,
+    PdnaT etLabelTombstoneRule,
+    BounceT etLabelTombstoneRule,
+    TombstoneExclus veT etContentRule,
+    TombstoneTrustedFr endsT etContentRule,
   )
 
-  val baseMediaRules = Seq(
+  val base d aRules = Seq(
   )
 
-  val baseQuotedTweetTombstoneRules = Seq(
-    BounceQuotedTweetTombstoneRule
+  val baseQuotedT etTombstoneRules = Seq(
+    BounceQuotedT etTombstoneRule
   )
 
-  def union[T](rules: Seq[Rule]*): Seq[Rule] = {
-    if (rules.isEmpty) {
+  def un on[T](rules: Seq[Rule]*): Seq[Rule] = {
+     f (rules. sEmpty) {
       Seq.empty[Rule]
     } else {
-      rules.reduce((a, b) => a ++ b.filterNot(a.contains))
+      rules.reduce((a, b) => a ++ b.f lterNot(a.conta ns))
     }
   }
 }
 
-case class PolicyLevelRuleParams(
+case class Pol cyLevelRuleParams(
   ruleParams: Seq[RuleParam[Boolean]],
   force: Boolean = false) {}
 
-object PolicyLevelRuleParams {
-  def ruleParams(ruleParams: RuleParam[Boolean]*): PolicyLevelRuleParams = {
-    PolicyLevelRuleParams(ruleParams)
+object Pol cyLevelRuleParams {
+  def ruleParams(ruleParams: RuleParam[Boolean]*): Pol cyLevelRuleParams = {
+    Pol cyLevelRuleParams(ruleParams)
   }
 
-  def ruleParams(force: Boolean, ruleParams: RuleParam[Boolean]*): PolicyLevelRuleParams = {
-    PolicyLevelRuleParams(ruleParams, force)
+  def ruleParams(force: Boolean, ruleParams: RuleParam[Boolean]*): Pol cyLevelRuleParams = {
+    Pol cyLevelRuleParams(ruleParams, force)
   }
 }
 
-case object FilterAllPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(DropAllRule),
+case object F lterAllPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(DropAllRule),
       userRules = Seq(DropAllRule),
       cardRules = Seq(DropAllRule),
-      quotedTweetRules = Seq(DropAllRule),
+      quotedT etRules = Seq(DropAllRule),
       dmRules = Seq(DropAllRule),
-      dmConversationRules = Seq(DropAllRule),
+      dmConversat onRules = Seq(DropAllRule),
       dmEventRules = Seq(DropAllRule),
       spaceRules = Seq(DropAllRule),
-      userUnavailableStateRules = Seq(DropAllRule),
-      twitterArticleRules = Seq(DropAllRule),
-      deletedTweetRules = Seq(DropAllRule),
-      mediaRules = Seq(DropAllRule),
-      communityRules = Seq(DropAllRule),
+      userUnava lableStateRules = Seq(DropAllRule),
+      tw terArt cleRules = Seq(DropAllRule),
+      deletedT etRules = Seq(DropAllRule),
+       d aRules = Seq(DropAllRule),
+      commun yRules = Seq(DropAllRule),
     )
 
-case object FilterNonePolicy extends VisibilityPolicy()
+case object F lterNonePol cy extends V s b l yPol cy()
 
-object ConversationsAdAvoidanceRules {
-  val tweetRules = Seq(
-    NsfwHighRecallTweetLabelAvoidRule,
-    NsfwHighPrecisionTweetLabelAvoidRule,
-    NsfwTextTweetLabelAvoidRule,
-    AvoidHighToxicityModelScoreRule,
-    AvoidReportedTweetModelScoreRule,
-    NsfwHighPrecisionUserLabelAvoidTweetRule,
-    TweetNsfwUserAdminAvoidRule,
-    DoNotAmplifyTweetLabelAvoidRule,
-    NsfaHighPrecisionTweetLabelAvoidRule,
+object Conversat onsAdAvo danceRules {
+  val t etRules = Seq(
+    NsfwH ghRecallT etLabelAvo dRule,
+    NsfwH ghPrec s onT etLabelAvo dRule,
+    NsfwTextT etLabelAvo dRule,
+    Avo dH ghTox c yModelScoreRule,
+    Avo dReportedT etModelScoreRule,
+    NsfwH ghPrec s onUserLabelAvo dT etRule,
+    T etNsfwUserAdm nAvo dRule,
+    DoNotAmpl fyT etLabelAvo dRule,
+    NsfaH ghPrec s onT etLabelAvo dRule,
   )
 
-  val policyRuleParams = Map[Rule, PolicyLevelRuleParams](
-    NsfwHighRecallTweetLabelAvoidRule -> ruleParams(
-      RuleParams.EnableNewAdAvoidanceRulesParam
+  val pol cyRuleParams = Map[Rule, Pol cyLevelRuleParams](
+    NsfwH ghRecallT etLabelAvo dRule -> ruleParams(
+      RuleParams.EnableNewAdAvo danceRulesParam
     ),
-    NsfwHighPrecisionTweetLabelAvoidRule -> ruleParams(
-      RuleParams.EnableNewAdAvoidanceRulesParam
+    NsfwH ghPrec s onT etLabelAvo dRule -> ruleParams(
+      RuleParams.EnableNewAdAvo danceRulesParam
     ),
-    NsfwTextTweetLabelAvoidRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
-    AvoidHighToxicityModelScoreRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
-    AvoidReportedTweetModelScoreRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
-    NsfwHighPrecisionUserLabelAvoidTweetRule -> ruleParams(
-      RuleParams.EnableNewAdAvoidanceRulesParam),
-    TweetNsfwUserAdminAvoidRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
-    DoNotAmplifyTweetLabelAvoidRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
-    NsfaHighPrecisionTweetLabelAvoidRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
+    NsfwTextT etLabelAvo dRule -> ruleParams(RuleParams.EnableNewAdAvo danceRulesParam),
+    Avo dH ghTox c yModelScoreRule -> ruleParams(RuleParams.EnableNewAdAvo danceRulesParam),
+    Avo dReportedT etModelScoreRule -> ruleParams(RuleParams.EnableNewAdAvo danceRulesParam),
+    NsfwH ghPrec s onUserLabelAvo dT etRule -> ruleParams(
+      RuleParams.EnableNewAdAvo danceRulesParam),
+    T etNsfwUserAdm nAvo dRule -> ruleParams(RuleParams.EnableNewAdAvo danceRulesParam),
+    DoNotAmpl fyT etLabelAvo dRule -> ruleParams(RuleParams.EnableNewAdAvo danceRulesParam),
+    NsfaH ghPrec s onT etLabelAvo dRule -> ruleParams(RuleParams.EnableNewAdAvo danceRulesParam),
   )
 }
 
-case object FilterDefaultPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
+case object F lterDefaultPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++
         Seq(
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+          NsfwCard mageAllUsersT etLabelRule
         )
     )
 
-case object LimitedEngagementBaseRules
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        StaleTweetLimitedActionsRule,
-        LimitRepliesByInvitationConversationRule,
-        LimitRepliesCommunityConversationRule,
-        LimitRepliesFollowersConversationRule,
-        CommunityTweetCommunityNotFoundLimitedActionsRule,
-        CommunityTweetCommunityDeletedLimitedActionsRule,
-        CommunityTweetCommunitySuspendedLimitedActionsRule,
-        CommunityTweetMemberRemovedLimitedActionsRule,
-        CommunityTweetHiddenLimitedActionsRule,
-        CommunityTweetMemberLimitedActionsRule,
-        CommunityTweetNonMemberLimitedActionsRule,
-        DynamicProductAdLimitedEngagementTweetLabelRule,
-        TrustedFriendsTweetLimitedEngagementsRule
+case object L m edEngage ntBaseRules
+    extends V s b l yPol cy(
+      t etRules = Seq(
+        StaleT etL m edAct onsRule,
+        L m Repl esBy nv at onConversat onRule,
+        L m Repl esCommun yConversat onRule,
+        L m Repl esFollo rsConversat onRule,
+        Commun yT etCommun yNotFoundL m edAct onsRule,
+        Commun yT etCommun yDeletedL m edAct onsRule,
+        Commun yT etCommun ySuspendedL m edAct onsRule,
+        Commun yT et mberRemovedL m edAct onsRule,
+        Commun yT etH ddenL m edAct onsRule,
+        Commun yT et mberL m edAct onsRule,
+        Commun yT etNon mberL m edAct onsRule,
+        Dynam cProductAdL m edEngage ntT etLabelRule,
+        TrustedFr endsT etL m edEngage ntsRule
       )
     )
 
-case object WritePathLimitedActionsEnforcementPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule
+case object Wr ePathL m edAct onsEnforce ntPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
+        AbusePol cyEp sod cT etLabel nterst  alRule,
+        E rgencyDynam c nterst  alRule
       ) ++
-        LimitedEngagementBaseRules.tweetRules
+        L m edEngage ntBaseRules.t etRules
     )
 
-case object TestPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
+case object TestPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
         TestRule
       )
     )
 
-case object CardsServicePolicy
-    extends VisibilityPolicy(
+case object CardsServ cePol cy
+    extends V s b l yPol cy(
       cardRules = Seq(
         DropProtectedAuthorPollCardRule,
-        DropCardUriRootDomainDenylistRule
+        DropCardUr RootDoma nDenyl stRule
       ),
       spaceRules = Seq(
-        SpaceHighToxicityScoreNonFollowerDropRule,
-        SpaceHatefulHighRecallAllUsersDropRule,
-        SpaceViolenceHighRecallAllUsersDropRule,
-        ViewerIsSoftUserDropRule
+        SpaceH ghTox c yScoreNonFollo rDropRule,
+        SpaceHatefulH ghRecallAllUsersDropRule,
+        SpaceV olenceH ghRecallAllUsersDropRule,
+        V e r sSoftUserDropRule
       ),
     )
 
-case object CardPollVotingPolicy
-    extends VisibilityPolicy(
+case object CardPollVot ngPol cy
+    extends V s b l yPol cy(
       cardRules = Seq(
         DropProtectedAuthorPollCardRule,
-        DropCommunityNonMemberPollCardRule
+        DropCommun yNon mberPollCardRule
       )
     )
 
-case object UserTimelineRules {
+case object UserT  l neRules {
   val UserRules = Seq(
-    AuthorBlocksViewerDropRule,
+    AuthorBlocksV e rDropRule,
     ProtectedAuthorDropRule,
     SuspendedAuthorRule
   )
 }
 
-case object TimelineLikedByRules {
+case object T  l neL kedByRules {
   val UserRules = Seq(
-    CompromisedNonFollowerWithUqfRule,
-    EngagementSpammerNonFollowerWithUqfRule,
-    LowQualityNonFollowerWithUqfRule,
-    ReadOnlyNonFollowerWithUqfRule,
-    SpamHighRecallNonFollowerWithUqfRule
+    Comprom sedNonFollo rW hUqfRule,
+    Engage ntSpam rNonFollo rW hUqfRule,
+    LowQual yNonFollo rW hUqfRule,
+    ReadOnlyNonFollo rW hUqfRule,
+    SpamH ghRecallNonFollo rW hUqfRule
   )
 }
 
-case object FollowingAndFollowersUserListPolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules
+case object Follow ngAndFollo rsUserL stPol cy
+    extends V s b l yPol cy(
+      userRules = UserT  l neRules.UserRules
     )
 
-case object FriendsFollowingListPolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules
+case object Fr endsFollow ngL stPol cy
+    extends V s b l yPol cy(
+      userRules = UserT  l neRules.UserRules
     )
 
-case object ListOwnershipsPolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules
+case object L stOwnersh psPol cy
+    extends V s b l yPol cy(
+      userRules = UserT  l neRules.UserRules
     )
 
-case object ListRecommendationsPolicy
-    extends VisibilityPolicy(
-      userRules = RecommendationsPolicy.userRules ++ Seq(
+case object L stRecom ndat onsPol cy
+    extends V s b l yPol cy(
+      userRules = Recom ndat onsPol cy.userRules ++ Seq(
         DropNsfwUserAuthorRule,
-        NsfwHighRecallRule,
-        SearchBlacklistRule,
+        NsfwH ghRecallRule,
+        SearchBlackl stRule,
         SearchNsfwTextRule,
-        ViewerBlocksAuthorRule,
-        ViewerMutesAuthorRule
+        V e rBlocksAuthorRule,
+        V e rMutesAuthorRule
       )
     )
 
-case object ListSearchBaseRules {
+case object L stSearchBaseRules {
 
-  val NonExperimentalSafeSearchMinimalPolicyUserRules: Seq[Rule] =
-    SafeSearchMinimalPolicy.userRules.filterNot(_.isExperimental)
+  val NonExper  ntalSafeSearchM n malPol cyUserRules: Seq[Rule] =
+    SafeSearchM n malPol cy.userRules.f lterNot(_. sExper  ntal)
 
-  val MinimalPolicyUserRules: Seq[Rule] = NonExperimentalSafeSearchMinimalPolicyUserRules
+  val M n malPol cyUserRules: Seq[Rule] = NonExper  ntalSafeSearchM n malPol cyUserRules
 
-  val BlockMutePolicyUserRules = Seq(
-    ViewerBlocksAuthorViewerOptInBlockingOnSearchRule,
-    ViewerMutesAuthorViewerOptInBlockingOnSearchRule
+  val BlockMutePol cyUserRules = Seq(
+    V e rBlocksAuthorV e rOpt nBlock ngOnSearchRule,
+    V e rMutesAuthorV e rOpt nBlock ngOnSearchRule
   )
 
-  val StrictPolicyUserRules = Seq(
-    SafeSearchAbusiveUserLabelRule,
-    SafeSearchAbusiveHighRecallUserLabelRule,
-    SafeSearchCompromisedUserLabelRule,
-    SafeSearchDoNotAmplifyNonFollowersUserLabelRule,
-    SafeSearchDuplicateContentUserLabelRule,
-    SafeSearchLowQualityUserLabelRule,
-    SafeSearchNotGraduatedNonFollowersUserLabelRule,
-    SafeSearchNsfwHighPrecisionUserLabelRule,
-    SafeSearchNsfwAvatarImageUserLabelRule,
-    SafeSearchNsfwBannerImageUserLabelRule,
+  val Str ctPol cyUserRules = Seq(
+    SafeSearchAbus veUserLabelRule,
+    SafeSearchAbus veH ghRecallUserLabelRule,
+    SafeSearchComprom sedUserLabelRule,
+    SafeSearchDoNotAmpl fyNonFollo rsUserLabelRule,
+    SafeSearchDupl cateContentUserLabelRule,
+    SafeSearchLowQual yUserLabelRule,
+    SafeSearchNotGraduatedNonFollo rsUserLabelRule,
+    SafeSearchNsfwH ghPrec s onUserLabelRule,
+    SafeSearchNsfwAvatar mageUserLabelRule,
+    SafeSearchNsfwBanner mageUserLabelRule,
     SafeSearchReadOnlyUserLabelRule,
-    SafeSearchSearchBlacklistUserLabelRule,
+    SafeSearchSearchBlackl stUserLabelRule,
     SafeSearchNsfwTextUserLabelRule,
-    SafeSearchSpamHighRecallUserLabelRule,
+    SafeSearchSpamH ghRecallUserLabelRule,
     SafeSearchDownrankSpamReplyAuthorLabelRule,
     SafeSearchNsfwTextAuthorLabelRule,
-    DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule,
-    DropNsfwUserAuthorViewerOptInFilteringOnSearchRule,
+    DropNsfwAdm nAuthorV e rOpt nF lter ngOnSearchRule,
+    DropNsfwUserAuthorV e rOpt nF lter ngOnSearchRule,
   )
 }
 
-object SensitiveMediaSettingsTimelineHomeBaseRules {
-  val policyRuleParams = Map[Rule, PolicyLevelRuleParams](
-    NsfwHighPrecisionInterstitialAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaHomeTimelineRulesParam),
-    GoreAndViolenceHighPrecisionAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaHomeTimelineRulesParam),
-    NsfwReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaHomeTimelineRulesParam),
-    GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaHomeTimelineRulesParam),
-    NsfwCardImageAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaHomeTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam)
+object Sens  ve d aSett ngsT  l neHo BaseRules {
+  val pol cyRuleParams = Map[Rule, Pol cyLevelRuleParams](
+    NsfwH ghPrec s on nterst  alAllUsersT etLabelRule -> ruleParams(
+      RuleParams.EnableLegacySens  ve d aHo T  l neRulesParam),
+    GoreAndV olenceH ghPrec s onAllUsersT etLabelRule -> ruleParams(
+      RuleParams.EnableLegacySens  ve d aHo T  l neRulesParam),
+    NsfwReported ur st csAllUsersT etLabelRule -> ruleParams(
+      RuleParams.EnableLegacySens  ve d aHo T  l neRulesParam),
+    GoreAndV olenceReported ur st csAllUsersT etLabelRule -> ruleParams(
+      RuleParams.EnableLegacySens  ve d aHo T  l neRulesParam),
+    NsfwCard mageAllUsersT etLabelRule -> ruleParams(
+      RuleParams.EnableLegacySens  ve d aHo T  l neRulesParam),
+    Sens  ve d aT et nterst  alRules.Adult d aNsfwH ghPrec s onT etLabel nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsHo T  l neRulesParam),
+    Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceH ghPrec s on nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsHo T  l neRulesParam),
+    Sens  ve d aT et nterst  alRules.Adult d aNsfwReported ur st csT etLabel nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsHo T  l neRulesParam),
+    Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceReported ur st cs nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsHo T  l neRulesParam),
+    Sens  ve d aT et nterst  alRules.Adult d aNsfwCard mageT etLabel nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsHo T  l neRulesParam),
+    Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwUserT etFlag nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsHo T  l neRulesParam),
+    Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwAdm nT etFlag nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsHo T  l neRulesParam)
   )
 }
 
-object SensitiveMediaSettingsConversationBaseRules {
-  val policyRuleParams = Map[Rule, PolicyLevelRuleParams](
-    NsfwHighPrecisionInterstitialAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaConversationRulesParam),
-    GoreAndViolenceHighPrecisionAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaConversationRulesParam),
-    NsfwReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaConversationRulesParam),
-    GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaConversationRulesParam),
-    NsfwCardImageAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaConversationRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam),
-    SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam),
-    SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam)
+object Sens  ve d aSett ngsConversat onBaseRules {
+  val pol cyRuleParams = Map[Rule, Pol cyLevelRuleParams](
+    NsfwH ghPrec s on nterst  alAllUsersT etLabelRule -> ruleParams(
+      RuleParams.EnableLegacySens  ve d aConversat onRulesParam),
+    GoreAndV olenceH ghPrec s onAllUsersT etLabelRule -> ruleParams(
+      RuleParams.EnableLegacySens  ve d aConversat onRulesParam),
+    NsfwReported ur st csAllUsersT etLabelRule -> ruleParams(
+      RuleParams.EnableLegacySens  ve d aConversat onRulesParam),
+    GoreAndV olenceReported ur st csAllUsersT etLabelRule -> ruleParams(
+      RuleParams.EnableLegacySens  ve d aConversat onRulesParam),
+    NsfwCard mageAllUsersT etLabelRule -> ruleParams(
+      RuleParams.EnableLegacySens  ve d aConversat onRulesParam),
+    Sens  ve d aT et nterst  alRules.Adult d aNsfwH ghPrec s onT etLabel nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsConversat onRulesParam),
+    Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceH ghPrec s on nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsConversat onRulesParam),
+    Sens  ve d aT et nterst  alRules.Adult d aNsfwReported ur st csT etLabel nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsConversat onRulesParam),
+    Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceReported ur st cs nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsConversat onRulesParam),
+    Sens  ve d aT et nterst  alRules.Adult d aNsfwCard mageT etLabel nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsConversat onRulesParam),
+    Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwUserT etFlag nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsConversat onRulesParam),
+    Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwAdm nT etFlag nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsConversat onRulesParam)
   )
 }
 
-object SensitiveMediaSettingsProfileTimelineBaseRules {
-  val policyRuleParams = Map[Rule, PolicyLevelRuleParams](
-    NsfwHighPrecisionInterstitialAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaProfileTimelineRulesParam),
-    GoreAndViolenceHighPrecisionAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaProfileTimelineRulesParam),
-    NsfwReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaProfileTimelineRulesParam),
-    GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaProfileTimelineRulesParam),
-    NsfwCardImageAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaProfileTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam)
+object Sens  ve d aSett ngsProf leT  l neBaseRules {
+  val pol cyRuleParams = Map[Rule, Pol cyLevelRuleParams](
+    NsfwH ghPrec s on nterst  alAllUsersT etLabelRule -> ruleParams(
+      RuleParams.EnableLegacySens  ve d aProf leT  l neRulesParam),
+    GoreAndV olenceH ghPrec s onAllUsersT etLabelRule -> ruleParams(
+      RuleParams.EnableLegacySens  ve d aProf leT  l neRulesParam),
+    NsfwReported ur st csAllUsersT etLabelRule -> ruleParams(
+      RuleParams.EnableLegacySens  ve d aProf leT  l neRulesParam),
+    GoreAndV olenceReported ur st csAllUsersT etLabelRule -> ruleParams(
+      RuleParams.EnableLegacySens  ve d aProf leT  l neRulesParam),
+    NsfwCard mageAllUsersT etLabelRule -> ruleParams(
+      RuleParams.EnableLegacySens  ve d aProf leT  l neRulesParam),
+    Sens  ve d aT et nterst  alRules.Adult d aNsfwH ghPrec s onT etLabel nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsProf leT  l neRulesParam),
+    Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceH ghPrec s on nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsProf leT  l neRulesParam),
+    Sens  ve d aT et nterst  alRules.Adult d aNsfwReported ur st csT etLabel nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsProf leT  l neRulesParam),
+    Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceReported ur st cs nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsProf leT  l neRulesParam),
+    Sens  ve d aT et nterst  alRules.Adult d aNsfwCard mageT etLabel nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsProf leT  l neRulesParam),
+    Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwUserT etFlag nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsProf leT  l neRulesParam),
+    Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwAdm nT etFlag nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsProf leT  l neRulesParam)
   )
 }
 
-object SensitiveMediaSettingsTweetDetailBaseRules {
-  val policyRuleParams = Map[Rule, PolicyLevelRuleParams](
-    NsfwHighPrecisionInterstitialAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaTweetDetailRulesParam),
-    GoreAndViolenceHighPrecisionAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaTweetDetailRulesParam),
-    NsfwReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaTweetDetailRulesParam),
-    GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaTweetDetailRulesParam),
-    NsfwCardImageAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaTweetDetailRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam),
-    SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam),
-    SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam)
+object Sens  ve d aSett ngsT etDeta lBaseRules {
+  val pol cyRuleParams = Map[Rule, Pol cyLevelRuleParams](
+    NsfwH ghPrec s on nterst  alAllUsersT etLabelRule -> ruleParams(
+      RuleParams.EnableLegacySens  ve d aT etDeta lRulesParam),
+    GoreAndV olenceH ghPrec s onAllUsersT etLabelRule -> ruleParams(
+      RuleParams.EnableLegacySens  ve d aT etDeta lRulesParam),
+    NsfwReported ur st csAllUsersT etLabelRule -> ruleParams(
+      RuleParams.EnableLegacySens  ve d aT etDeta lRulesParam),
+    GoreAndV olenceReported ur st csAllUsersT etLabelRule -> ruleParams(
+      RuleParams.EnableLegacySens  ve d aT etDeta lRulesParam),
+    NsfwCard mageAllUsersT etLabelRule -> ruleParams(
+      RuleParams.EnableLegacySens  ve d aT etDeta lRulesParam),
+    Sens  ve d aT et nterst  alRules.Adult d aNsfwH ghPrec s onT etLabel nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsT etDeta lRulesParam),
+    Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceH ghPrec s on nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsT etDeta lRulesParam),
+    Sens  ve d aT et nterst  alRules.Adult d aNsfwReported ur st csT etLabel nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsT etDeta lRulesParam),
+    Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceReported ur st cs nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsT etDeta lRulesParam),
+    Sens  ve d aT et nterst  alRules.Adult d aNsfwCard mageT etLabel nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsT etDeta lRulesParam),
+    Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwUserT etFlag nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsT etDeta lRulesParam),
+    Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwAdm nT etFlag nterst  alRule -> ruleParams(
+      RuleParams.EnableNewSens  ve d aSett ngs nterst  alsT etDeta lRulesParam)
   )
 }
 
-case object ListSearchPolicy
-    extends VisibilityPolicy(
-      userRules = ListSearchBaseRules.MinimalPolicyUserRules ++
-        ListSearchBaseRules.BlockMutePolicyUserRules ++
-        ListSearchBaseRules.StrictPolicyUserRules
+case object L stSearchPol cy
+    extends V s b l yPol cy(
+      userRules = L stSearchBaseRules.M n malPol cyUserRules ++
+        L stSearchBaseRules.BlockMutePol cyUserRules ++
+        L stSearchBaseRules.Str ctPol cyUserRules
     )
 
-case object ListSubscriptionsPolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules
+case object L stSubscr pt onsPol cy
+    extends V s b l yPol cy(
+      userRules = UserT  l neRules.UserRules
     )
 
-case object ListMembershipsPolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules
+case object L st mbersh psPol cy
+    extends V s b l yPol cy(
+      userRules = UserT  l neRules.UserRules
     )
 
-case object AllSubscribedListsPolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules
+case object AllSubscr bedL stsPol cy
+    extends V s b l yPol cy(
+      userRules = UserT  l neRules.UserRules
     )
 
-case object ListHeaderPolicy
-    extends VisibilityPolicy(
+case object L st aderPol cy
+    extends V s b l yPol cy(
       userRules = Seq(
-        AuthorBlocksViewerDropRule,
+        AuthorBlocksV e rDropRule,
         ProtectedAuthorDropRule,
         SuspendedAuthorRule
       )
     )
 
-case object NewUserExperiencePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusiveTweetLabelRule,
-        LowQualityTweetLabelDropRule,
-        NsfaHighRecallTweetLabelRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        GoreAndViolenceTweetLabelRule,
-        UntrustedUrlTweetLabelRule,
-        DownrankSpamReplyTweetLabelRule,
-        SearchBlacklistTweetLabelRule,
-        AutomationTweetLabelRule,
-        DuplicateMentionTweetLabelRule,
-        BystanderAbusiveTweetLabelRule,
-        SafetyCrisisLevel3DropRule,
-        SafetyCrisisLevel4DropRule,
-        DoNotAmplifyDropRule,
-        SmyteSpamTweetLabelDropRule,
+case object NewUserExper encePol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++ Seq(
+        Abus veT etLabelRule,
+        LowQual yT etLabelDropRule,
+        NsfaH ghRecallT etLabelRule,
+        NsfwH ghPrec s onT etLabelRule,
+        GoreAndV olenceH ghPrec s onT etLabelRule,
+        NsfwReported ur st csT etLabelRule,
+        GoreAndV olenceReported ur st csT etLabelRule,
+        NsfwCard mageT etLabelRule,
+        NsfwH ghRecallT etLabelRule,
+        NsfwV deoT etLabelDropRule,
+        NsfwTextT etLabelDropRule,
+        SpamH ghRecallT etLabelDropRule,
+        Dupl cateContentT etLabelDropRule,
+        GoreAndV olenceT etLabelRule,
+        UntrustedUrlT etLabelRule,
+        DownrankSpamReplyT etLabelRule,
+        SearchBlackl stT etLabelRule,
+        Automat onT etLabelRule,
+        Dupl cate nt onT etLabelRule,
+        BystanderAbus veT etLabelRule,
+        SafetyCr s sLevel3DropRule,
+        SafetyCr s sLevel4DropRule,
+        DoNotAmpl fyDropRule,
+        S teSpamT etLabelDropRule,
       ),
       userRules = Seq(
-        AbusiveRule,
-        LowQualityRule,
+        Abus veRule,
+        LowQual yRule,
         ReadOnlyRule,
-        SearchBlacklistRule,
+        SearchBlackl stRule,
         SearchNsfwTextRule,
-        CompromisedRule,
-        SpamHighRecallRule,
-        DuplicateContentRule,
-        NsfwHighPrecisionRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule,
-        AbusiveHighRecallRule,
-        DoNotAmplifyNonFollowerRule,
-        NotGraduatedNonFollowerRule,
-        LikelyIvsLabelNonFollowerDropUserRule,
+        Comprom sedRule,
+        SpamH ghRecallRule,
+        Dupl cateContentRule,
+        NsfwH ghPrec s onRule,
+        NsfwAvatar mageRule,
+        NsfwBanner mageRule,
+        Abus veH ghRecallRule,
+        DoNotAmpl fyNonFollo rRule,
+        NotGraduatedNonFollo rRule,
+        L kely vsLabelNonFollo rDropUserRule,
         DownrankSpamReplyNonAuthorRule,
         NsfwTextNonAuthorDropRule
       )
     )
 
-case object DESHomeTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropStaleTweetsRule,
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
-        DropAllCommunityTweetsRule
+case object DESHo T  l nePol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
+        DropStaleT etsRule,
+        DropAllExclus veT etsRule,
+        DropAllTrustedFr endsT etsRule,
+        DropAllCommun yT etsRule
       ) ++
-        VisibilityPolicy.baseTweetRules,
-      userRules = UserTimelineRules.UserRules
+        V s b l yPol cy.baseT etRules,
+      userRules = UserT  l neRules.UserRules
     )
 
-case object DesQuoteTweetTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropStaleTweetsRule,
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule
-      ) ++ ElevatedQuoteTweetTimelinePolicy.tweetRules.diff(Seq(DropStaleTweetsRule)),
+case object DesQuoteT etT  l nePol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
+        DropStaleT etsRule,
+        DropAllExclus veT etsRule,
+        DropAllTrustedFr endsT etsRule
+      ) ++ ElevatedQuoteT etT  l nePol cy.t etRules.d ff(Seq(DropStaleT etsRule)),
       userRules = Seq(
         ProtectedAuthorDropRule
       ),
-      policyRuleParams = ElevatedQuoteTweetTimelinePolicy.policyRuleParams
+      pol cyRuleParams = ElevatedQuoteT etT  l nePol cy.pol cyRuleParams
     )
 
-case object DESRealtimeSpamEnrichmentPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        LowQualityTweetLabelDropRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        SearchBlacklistTweetLabelRule,
-        SmyteSpamTweetLabelDropRule,
-        DropAllCommunityTweetsRule,
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
-        NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-        GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-        NsfwReportedHeuristicsAllUsersTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-        NsfwCardImageAllUsersTweetLabelRule
+case object DESRealt  SpamEnr ch ntPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++ Seq(
+        LowQual yT etLabelDropRule,
+        SpamH ghRecallT etLabelDropRule,
+        Dupl cateContentT etLabelDropRule,
+        SearchBlackl stT etLabelRule,
+        S teSpamT etLabelDropRule,
+        DropAllCommun yT etsRule,
+        DropAllExclus veT etsRule,
+        DropAllTrustedFr endsT etsRule,
+        NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+        GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+        NsfwReported ur st csAllUsersT etLabelRule,
+        GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+        NsfwCard mageAllUsersT etLabelRule
       )
     )
 
-case object DESRealtimePolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropAllCommunityTweetsRule,
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
-        DropAllCollabInvitationTweetsRule
+case object DESRealt  Pol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
+        DropAllCommun yT etsRule,
+        DropAllExclus veT etsRule,
+        DropAllTrustedFr endsT etsRule,
+        DropAllCollab nv at onT etsRule
       ),
       userRules = Seq(
         DropAllProtectedAuthorRule,
-        DropProtectedViewerIfPresentRule
+        DropProtectedV e r fPresentRule
       )
     )
 
-case object DESRetweetingUsersPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
+case object DESRet et ngUsersPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++ Seq(
+        DropAllExclus veT etsRule,
+        DropAllTrustedFr endsT etsRule,
       ),
       userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ViewerBlocksAuthorRule,
+        AuthorBlocksV e rDropRule,
+        V e rBlocksAuthorRule,
         ProtectedAuthorDropRule,
         SuspendedAuthorRule
       )
     )
 
-case object DESTweetLikingUsersPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
+case object DEST etL k ngUsersPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++ Seq(
+        DropAllExclus veT etsRule,
+        DropAllTrustedFr endsT etsRule,
       ),
-      userRules = TimelineLikedByRules.UserRules
+      userRules = T  l neL kedByRules.UserRules
     )
 
-case object DESUserBookmarksPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
+case object DESUserBookmarksPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
+        DropAllExclus veT etsRule,
+        DropAllTrustedFr endsT etsRule,
       ) ++
-        (VisibilityPolicy.baseTweetRules
-          ++ Seq(DropAllCommunityTweetsRule)
-          ++ TimelineProfileRules.tweetRules),
-      userRules = UserTimelineRules.UserRules
+        (V s b l yPol cy.baseT etRules
+          ++ Seq(DropAllCommun yT etsRule)
+          ++ T  l neProf leRules.t etRules),
+      userRules = UserT  l neRules.UserRules
     )
 
-case object DESUserLikedTweetsPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropStaleTweetsRule,
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
+case object DESUserL kedT etsPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
+        DropStaleT etsRule,
+        DropAllExclus veT etsRule,
+        DropAllTrustedFr endsT etsRule,
       ) ++
         (
-          VisibilityPolicy.baseTweetRules ++
+          V s b l yPol cy.baseT etRules ++
             Seq(
-              DropAllCommunityTweetsRule,
-              AbusePolicyEpisodicTweetLabelInterstitialRule,
-              EmergencyDynamicInterstitialRule,
-              ReportedTweetInterstitialRule,
-              NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-              GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-              NsfwReportedHeuristicsAllUsersTweetLabelRule,
-              GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-              NsfwCardImageAllUsersTweetLabelRule,
-              NsfwHighPrecisionTweetLabelAvoidRule,
-              NsfwHighRecallTweetLabelAvoidRule,
-              GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-              NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-              GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-              NsfwCardImageAvoidAllUsersTweetLabelRule,
-              DoNotAmplifyTweetLabelAvoidRule,
-              NsfaHighPrecisionTweetLabelAvoidRule,
-            ) ++ LimitedEngagementBaseRules.tweetRules
+              DropAllCommun yT etsRule,
+              AbusePol cyEp sod cT etLabel nterst  alRule,
+              E rgencyDynam c nterst  alRule,
+              ReportedT et nterst  alRule,
+              NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+              GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+              NsfwReported ur st csAllUsersT etLabelRule,
+              GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+              NsfwCard mageAllUsersT etLabelRule,
+              NsfwH ghPrec s onT etLabelAvo dRule,
+              NsfwH ghRecallT etLabelAvo dRule,
+              GoreAndV olenceH ghPrec s onAvo dAllUsersT etLabelRule,
+              NsfwReported ur st csAvo dAllUsersT etLabelRule,
+              GoreAndV olenceReported ur st csAvo dAllUsersT etLabelRule,
+              NsfwCard mageAvo dAllUsersT etLabelRule,
+              DoNotAmpl fyT etLabelAvo dRule,
+              NsfaH ghPrec s onT etLabelAvo dRule,
+            ) ++ L m edEngage ntBaseRules.t etRules
         ),
-      userRules = UserTimelineRules.UserRules
+      userRules = UserT  l neRules.UserRules
     )
 
-case object DESUserMentionsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        DropAllCommunityTweetsRule,
-        AuthorBlocksViewerDropRule,
+case object DESUser nt onsPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++ Seq(
+        DropAllCommun yT etsRule,
+        AuthorBlocksV e rDropRule,
         ProtectedAuthorDropRule,
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
-        NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-        GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-        NsfwReportedHeuristicsAllUsersTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-        NsfwCardImageAllUsersTweetLabelRule,
-      ) ++ LimitedEngagementBaseRules.tweetRules,
+        DropAllExclus veT etsRule,
+        DropAllTrustedFr endsT etsRule,
+        AbusePol cyEp sod cT etLabel nterst  alRule,
+        E rgencyDynam c nterst  alRule,
+        NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+        GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+        NsfwReported ur st csAllUsersT etLabelRule,
+        GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+        NsfwCard mageAllUsersT etLabelRule,
+      ) ++ L m edEngage ntBaseRules.t etRules,
       userRules = Seq(
         SuspendedAuthorRule
       )
     )
 
-case object DESUserTweetsPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropStaleTweetsRule,
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
+case object DESUserT etsPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
+        DropStaleT etsRule,
+        DropAllExclus veT etsRule,
+        DropAllTrustedFr endsT etsRule,
       ) ++
-        (VisibilityPolicy.baseTweetRules
-          ++ Seq(DropAllCommunityTweetsRule)
-          ++ TimelineProfileRules.tweetRules),
-      userRules = UserTimelineRules.UserRules
+        (V s b l yPol cy.baseT etRules
+          ++ Seq(DropAllCommun yT etsRule)
+          ++ T  l neProf leRules.t etRules),
+      userRules = UserT  l neRules.UserRules
     )
 
-case object DevPlatformComplianceStreamPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        SpamAllUsersTweetLabelRule,
-        PdnaAllUsersTweetLabelRule,
-        BounceAllUsersTweetLabelRule,
-        AbusePolicyEpisodicTweetLabelComplianceTweetNoticeRule,
+case object DevPlatformCompl anceStreamPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
+        SpamAllUsersT etLabelRule,
+        PdnaAllUsersT etLabelRule,
+        BounceAllUsersT etLabelRule,
+        AbusePol cyEp sod cT etLabelCompl anceT etNot ceRule,
       )
     )
 
-case object DesTweetDetailPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
-      ) ++ BaseTweetDetailPolicy.tweetRules
+case object DesT etDeta lPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
+        DropAllExclus veT etsRule,
+        DropAllTrustedFr endsT etsRule,
+      ) ++ BaseT etDeta lPol cy.t etRules
     )
 
-case object DevPlatformGetListTweetsPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(DropStaleTweetsRule) ++ DesTweetDetailPolicy.tweetRules
+case object DevPlatformGetL stT etsPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(DropStaleT etsRule) ++ DesT etDeta lPol cy.t etRules
     )
 
-case object FollowerConnectionsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules,
+case object Follo rConnect onsPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules,
       userRules = Seq(
-        SpammyFollowerRule
+        Spam Follo rRule
       )
     )
 
-case object SuperFollowerConnectionsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules,
+case object SuperFollo rConnect onsPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules,
       userRules = Seq(
-        SpammyFollowerRule
+        Spam Follo rRule
       )
     )
 
-case object LivePipelineEngagementCountsPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
-      ) ++ LimitedEngagementBaseRules.tweetRules
+case object L veP pel neEngage ntCountsPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
+        AbusePol cyEp sod cT etLabel nterst  alRule,
+        E rgencyDynam c nterst  alRule,
+      ) ++ L m edEngage ntBaseRules.t etRules
     )
 
-case object LiveVideoTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusiveTweetLabelRule,
-        AbusiveHighRecallTweetLabelRule,
-        LowQualityTweetLabelDropRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        LiveLowQualityTweetLabelRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        SearchBlacklistTweetLabelRule,
-        BystanderAbusiveTweetLabelRule,
-        SafetyCrisisLevel3DropRule,
-        SafetyCrisisLevel4DropRule,
-        DoNotAmplifyDropRule,
-        SmyteSpamTweetLabelDropRule,
-        AbusePolicyEpisodicTweetLabelDropRule,
-        EmergencyDropRule,
+case object L veV deoT  l nePol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++ Seq(
+        Abus veT etLabelRule,
+        Abus veH ghRecallT etLabelRule,
+        LowQual yT etLabelDropRule,
+        NsfwH ghPrec s onT etLabelRule,
+        GoreAndV olenceH ghPrec s onT etLabelRule,
+        NsfwReported ur st csT etLabelRule,
+        GoreAndV olenceReported ur st csT etLabelRule,
+        NsfwCard mageT etLabelRule,
+        NsfwH ghRecallT etLabelRule,
+        NsfwV deoT etLabelDropRule,
+        NsfwTextT etLabelDropRule,
+        L veLowQual yT etLabelRule,
+        SpamH ghRecallT etLabelDropRule,
+        Dupl cateContentT etLabelDropRule,
+        SearchBlackl stT etLabelRule,
+        BystanderAbus veT etLabelRule,
+        SafetyCr s sLevel3DropRule,
+        SafetyCr s sLevel4DropRule,
+        DoNotAmpl fyDropRule,
+        S teSpamT etLabelDropRule,
+        AbusePol cyEp sod cT etLabelDropRule,
+        E rgencyDropRule,
       ),
       userRules = Seq(
-        AbusiveRule,
-        LowQualityRule,
+        Abus veRule,
+        LowQual yRule,
         ReadOnlyRule,
-        SearchBlacklistRule,
+        SearchBlackl stRule,
         SearchNsfwTextRule,
-        CompromisedRule,
-        NsfwHighPrecisionRule,
-        NsfwHighRecallRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule,
-        SpamHighRecallRule,
-        DuplicateContentRule,
-        LiveLowQualityRule,
-        EngagementSpammerRule,
-        EngagementSpammerHighRecallRule,
-        AbusiveHighRecallRule,
-        DoNotAmplifyNonFollowerRule,
-        NotGraduatedNonFollowerRule,
-        LikelyIvsLabelNonFollowerDropUserRule,
+        Comprom sedRule,
+        NsfwH ghPrec s onRule,
+        NsfwH ghRecallRule,
+        NsfwAvatar mageRule,
+        NsfwBanner mageRule,
+        SpamH ghRecallRule,
+        Dupl cateContentRule,
+        L veLowQual yRule,
+        Engage ntSpam rRule,
+        Engage ntSpam rH ghRecallRule,
+        Abus veH ghRecallRule,
+        DoNotAmpl fyNonFollo rRule,
+        NotGraduatedNonFollo rRule,
+        L kely vsLabelNonFollo rDropUserRule,
         NsfwTextNonAuthorDropRule
       )
     )
 
-case object MagicRecsPolicyOverrides {
-  val replacements: Map[Rule, Rule] = Map()
-  def union(rules: Seq[Rule]*): Seq[Rule] = rules
-    .map(ar => ar.map(x => replacements.getOrElse(x, x)))
-    .reduce((a, b) => a ++ b.filterNot(a.contains))
+case object Mag cRecsPol cyOverr des {
+  val replace nts: Map[Rule, Rule] = Map()
+  def un on(rules: Seq[Rule]*): Seq[Rule] = rules
+    .map(ar => ar.map(x => replace nts.getOrElse(x, x)))
+    .reduce((a, b) => a ++ b.f lterNot(a.conta ns))
 }
 
-case object MagicRecsPolicy
-    extends VisibilityPolicy(
-      tweetRules = MagicRecsPolicyOverrides.union(
-        RecommendationsPolicy.tweetRules.filterNot(_ == SafetyCrisisLevel3DropRule),
-        NotificationsIbisPolicy.tweetRules,
+case object Mag cRecsPol cy
+    extends V s b l yPol cy(
+      t etRules = Mag cRecsPol cyOverr des.un on(
+        Recom ndat onsPol cy.t etRules.f lterNot(_ == SafetyCr s sLevel3DropRule),
+        Not f cat ons b sPol cy.t etRules,
         Seq(
-          NsfaHighRecallTweetLabelRule,
-          NsfwHighRecallTweetLabelRule,
-          NsfwTextHighPrecisionTweetLabelDropRule),
+          NsfaH ghRecallT etLabelRule,
+          NsfwH ghRecallT etLabelRule,
+          NsfwTextH ghPrec s onT etLabelDropRule),
         Seq(
-          AuthorBlocksViewerDropRule,
-          ViewerBlocksAuthorRule,
-          ViewerMutesAuthorRule
+          AuthorBlocksV e rDropRule,
+          V e rBlocksAuthorRule,
+          V e rMutesAuthorRule
         ),
         Seq(
-          DeactivatedAuthorRule,
+          Deact vatedAuthorRule,
           SuspendedAuthorRule,
-          TweetNsfwUserDropRule,
-          TweetNsfwAdminDropRule
+          T etNsfwUserDropRule,
+          T etNsfwAdm nDropRule
         )
       ),
-      userRules = MagicRecsPolicyOverrides.union(
-        RecommendationsPolicy.userRules,
-        NotificationsRules.userRules
+      userRules = Mag cRecsPol cyOverr des.un on(
+        Recom ndat onsPol cy.userRules,
+        Not f cat onsRules.userRules
       )
     )
 
-case object MagicRecsV2Policy
-    extends VisibilityPolicy(
-      tweetRules = MagicRecsPolicyOverrides.union(
-        MagicRecsPolicy.tweetRules,
-        NotificationsWriterTweetHydratorPolicy.tweetRules
+case object Mag cRecsV2Pol cy
+    extends V s b l yPol cy(
+      t etRules = Mag cRecsPol cyOverr des.un on(
+        Mag cRecsPol cy.t etRules,
+        Not f cat onsWr erT etHydratorPol cy.t etRules
       ),
-      userRules = MagicRecsPolicyOverrides.union(
-        MagicRecsPolicy.userRules,
-        NotificationsWriterV2Policy.userRules
+      userRules = Mag cRecsPol cyOverr des.un on(
+        Mag cRecsPol cy.userRules,
+        Not f cat onsWr erV2Pol cy.userRules
       )
     )
 
-case object MagicRecsAggressivePolicy
-    extends VisibilityPolicy(
-      tweetRules = MagicRecsPolicy.tweetRules,
-      userRules = MagicRecsPolicy.userRules
+case object Mag cRecsAggress vePol cy
+    extends V s b l yPol cy(
+      t etRules = Mag cRecsPol cy.t etRules,
+      userRules = Mag cRecsPol cy.userRules
     )
 
-case object MagicRecsAggressiveV2Policy
-    extends VisibilityPolicy(
-      tweetRules = MagicRecsV2Policy.tweetRules,
-      userRules = MagicRecsV2Policy.userRules
+case object Mag cRecsAggress veV2Pol cy
+    extends V s b l yPol cy(
+      t etRules = Mag cRecsV2Pol cy.t etRules,
+      userRules = Mag cRecsV2Pol cy.userRules
     )
 
-case object MinimalPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules,
+case object M n malPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules,
       userRules = Seq(
-        TsViolationRule
+        TsV olat onRule
       )
     )
 
-case object ModeratedTweetsTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules = TweetDetailPolicy.tweetRules.diff(
+case object ModeratedT etsT  l nePol cy
+    extends V s b l yPol cy(
+      t etRules = T etDeta lPol cy.t etRules.d ff(
         Seq(
-          AuthorBlocksViewerDropRule,
-          MutedKeywordForTweetRepliesInterstitialRule,
-          ReportedTweetInterstitialRule)),
-      policyRuleParams = TweetDetailPolicy.policyRuleParams
+          AuthorBlocksV e rDropRule,
+          MutedKeywordForT etRepl es nterst  alRule,
+          ReportedT et nterst  alRule)),
+      pol cyRuleParams = T etDeta lPol cy.pol cyRuleParams
     )
 
-case object MomentsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
+case object Mo ntsPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++
         Seq(
-          AuthorBlocksViewerUnspecifiedRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
+          AuthorBlocksV e rUnspec f edRule,
+          AbusePol cyEp sod cT etLabel nterst  alRule,
+          E rgencyDynam c nterst  alRule,
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+          NsfwCard mageAllUsersT etLabelRule,
+        ) ++ L m edEngage ntBaseRules.t etRules
     )
 
-case object NearbyTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules = SearchBlenderRules.tweetRelevanceRules,
+case object NearbyT  l nePol cy
+    extends V s b l yPol cy(
+      t etRules = SearchBlenderRules.t etRelevanceRules,
       userRules = SearchBlenderRules.userBaseRules
     )
 
-private object NotificationsRules {
-  val tweetRules: Seq[Rule] =
-    DropStaleTweetsRule +: VisibilityPolicy.baseTweetRules
+pr vate object Not f cat onsRules {
+  val t etRules: Seq[Rule] =
+    DropStaleT etsRule +: V s b l yPol cy.baseT etRules
 
   val userRules: Seq[Rule] = Seq(
-    AbusiveRule,
-    LowQualityRule,
+    Abus veRule,
+    LowQual yRule,
     ReadOnlyRule,
-    CompromisedRule,
-    SpamHighRecallRule,
-    DuplicateContentRule,
-    AbusiveHighRecallRule,
-    EngagementSpammerNonFollowerWithUqfRule,
-    EngagementSpammerHighRecallNonFollowerWithUqfRule,
-    DownrankSpamReplyNonFollowerWithUqfRule
+    Comprom sedRule,
+    SpamH ghRecallRule,
+    Dupl cateContentRule,
+    Abus veH ghRecallRule,
+    Engage ntSpam rNonFollo rW hUqfRule,
+    Engage ntSpam rH ghRecallNonFollo rW hUqfRule,
+    DownrankSpamReplyNonFollo rW hUqfRule
   )
 }
 
-case object NotificationsIbisPolicy
-    extends VisibilityPolicy(
-      tweetRules =
-          VisibilityPolicy.baseTweetRules ++ Seq(
-          AbusiveUqfNonFollowerTweetLabelRule,
-          LowQualityTweetLabelDropRule,
-          ToxicityReplyFilterDropNotificationRule,
-          NsfwHighPrecisionTweetLabelRule,
-          GoreAndViolenceHighPrecisionTweetLabelRule,
-          NsfwReportedHeuristicsTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsTweetLabelRule,
-          NsfwCardImageTweetLabelRule,
-          NsfwVideoTweetLabelDropRule,
-          NsfwTextTweetLabelDropRule,
-          SpamHighRecallTweetLabelDropRule,
-          DuplicateContentTweetLabelDropRule,
-          DuplicateMentionTweetLabelRule,
-          LowQualityMentionTweetLabelRule,
-          UntrustedUrlUqfNonFollowerTweetLabelRule,
-          DownrankSpamReplyUqfNonFollowerTweetLabelRule,
-          SafetyCrisisAnyLevelDropRule,
-          DoNotAmplifyDropRule,
-          SmyteSpamTweetLabelDropRule,
-          AbusePolicyEpisodicTweetLabelDropRule,
-          EmergencyDropRule,
+case object Not f cat ons b sPol cy
+    extends V s b l yPol cy(
+      t etRules =
+          V s b l yPol cy.baseT etRules ++ Seq(
+          Abus veUqfNonFollo rT etLabelRule,
+          LowQual yT etLabelDropRule,
+          Tox c yReplyF lterDropNot f cat onRule,
+          NsfwH ghPrec s onT etLabelRule,
+          GoreAndV olenceH ghPrec s onT etLabelRule,
+          NsfwReported ur st csT etLabelRule,
+          GoreAndV olenceReported ur st csT etLabelRule,
+          NsfwCard mageT etLabelRule,
+          NsfwV deoT etLabelDropRule,
+          NsfwTextT etLabelDropRule,
+          SpamH ghRecallT etLabelDropRule,
+          Dupl cateContentT etLabelDropRule,
+          Dupl cate nt onT etLabelRule,
+          LowQual y nt onT etLabelRule,
+          UntrustedUrlUqfNonFollo rT etLabelRule,
+          DownrankSpamReplyUqfNonFollo rT etLabelRule,
+          SafetyCr s sAnyLevelDropRule,
+          DoNotAmpl fyDropRule,
+          S teSpamT etLabelDropRule,
+          AbusePol cyEp sod cT etLabelDropRule,
+          E rgencyDropRule,
         ),
-      userRules = NotificationsRules.userRules ++ Seq(
-        DoNotAmplifyNonFollowerRule,
-        LikelyIvsLabelNonFollowerDropUserRule,
+      userRules = Not f cat onsRules.userRules ++ Seq(
+        DoNotAmpl fyNonFollo rRule,
+        L kely vsLabelNonFollo rDropUserRule,
         NsfwTextNonAuthorDropRule
       )
     )
 
-case object NotificationsReadPolicy
-    extends VisibilityPolicy(
-      tweetRules = NotificationsRules.tweetRules,
-      userRules = NotificationsRules.userRules
+case object Not f cat onsReadPol cy
+    extends V s b l yPol cy(
+      t etRules = Not f cat onsRules.t etRules,
+      userRules = Not f cat onsRules.userRules
     )
 
-case object NotificationsTimelineDeviceFollowPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules,
+case object Not f cat onsT  l neDev ceFollowPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules,
       userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ViewerBlocksAuthorRule,
-        CompromisedRule
+        AuthorBlocksV e rDropRule,
+        V e rBlocksAuthorRule,
+        Comprom sedRule
       )
     )
 
-case object NotificationsWritePolicy
-    extends VisibilityPolicy(
-      tweetRules = NotificationsRules.tweetRules,
-      userRules = NotificationsRules.userRules
+case object Not f cat onsWr ePol cy
+    extends V s b l yPol cy(
+      t etRules = Not f cat onsRules.t etRules,
+      userRules = Not f cat onsRules.userRules
     )
 
-case object NotificationsWriterV2Policy
-    extends VisibilityPolicy(
+case object Not f cat onsWr erV2Pol cy
+    extends V s b l yPol cy(
       userRules =
         Seq(
-          AuthorBlocksViewerDropRule,
-          DeactivatedAuthorRule,
+          AuthorBlocksV e rDropRule,
+          Deact vatedAuthorRule,
           ErasedAuthorRule,
           ProtectedAuthorDropRule,
           SuspendedAuthorRule,
-          DeactivatedViewerRule,
-          SuspendedViewerRule,
-          ViewerBlocksAuthorRule,
-          ViewerMutesAndDoesNotFollowAuthorRule,
-          ViewerIsUnmentionedRule,
-          NoConfirmedEmailRule,
-          NoConfirmedPhoneRule,
-          NoDefaultProfileImageRule,
+          Deact vatedV e rRule,
+          SuspendedV e rRule,
+          V e rBlocksAuthorRule,
+          V e rMutesAndDoesNotFollowAuthorRule,
+          V e r sUn nt onedRule,
+          NoConf r dEma lRule,
+          NoConf r dPhoneRule,
+          NoDefaultProf le mageRule,
           NoNewUsersRule,
-          NoNotFollowedByRule,
-          OnlyPeopleIFollowRule
+          NoNotFollo dByRule,
+          OnlyPeople FollowRule
         ) ++
-          NotificationsRules.userRules
+          Not f cat onsRules.userRules
     )
 
-case object NotificationsWriterTweetHydratorPolicy
-    extends VisibilityPolicy(
-      tweetRules = NotificationsRules.tweetRules ++
+case object Not f cat onsWr erT etHydratorPol cy
+    extends V s b l yPol cy(
+      t etRules = Not f cat onsRules.t etRules ++
         Seq(
-          LowQualityTweetLabelDropRule,
-          SpamHighRecallTweetLabelDropRule,
-          DuplicateContentTweetLabelDropRule,
-          DuplicateMentionUqfTweetLabelRule,
-          LowQualityMentionTweetLabelRule,
-          SmyteSpamTweetLabelDropRule,
-          ToxicityReplyFilterDropNotificationRule,
-          AbusiveUqfNonFollowerTweetLabelRule,
-          UntrustedUrlUqfNonFollowerTweetLabelRule,
-          DownrankSpamReplyUqfNonFollowerTweetLabelRule,
-          ViewerHasMatchingMutedKeywordForNotificationsRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
+          LowQual yT etLabelDropRule,
+          SpamH ghRecallT etLabelDropRule,
+          Dupl cateContentT etLabelDropRule,
+          Dupl cate nt onUqfT etLabelRule,
+          LowQual y nt onT etLabelRule,
+          S teSpamT etLabelDropRule,
+          Tox c yReplyF lterDropNot f cat onRule,
+          Abus veUqfNonFollo rT etLabelRule,
+          UntrustedUrlUqfNonFollo rT etLabelRule,
+          DownrankSpamReplyUqfNonFollo rT etLabelRule,
+          V e rHasMatch ngMutedKeywordForNot f cat onsRule,
+          NsfwCard mageAllUsersT etLabelRule,
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+        ) ++ L m edEngage ntBaseRules.t etRules
     )
 
-case object NotificationsPlatformPolicy
-    extends VisibilityPolicy(
-      tweetRules = NotificationsWriterTweetHydratorPolicy.tweetRules,
-      userRules = NotificationsWriterV2Policy.userRules
+case object Not f cat onsPlatformPol cy
+    extends V s b l yPol cy(
+      t etRules = Not f cat onsWr erT etHydratorPol cy.t etRules,
+      userRules = Not f cat onsWr erV2Pol cy.userRules
     )
 
-case object NotificationsPlatformPushPolicy
-    extends VisibilityPolicy(
-      tweetRules = NotificationsIbisPolicy.tweetRules,
-      userRules = Seq(ViewerMutesAuthorRule)
-        ++ NotificationsIbisPolicy.userRules
+case object Not f cat onsPlatformPushPol cy
+    extends V s b l yPol cy(
+      t etRules = Not f cat ons b sPol cy.t etRules,
+      userRules = Seq(V e rMutesAuthorRule)
+        ++ Not f cat ons b sPol cy.userRules
     )
 
-case object QuoteTweetTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        DropStaleTweetsRule,
-        AbusiveTweetLabelRule,
-        LowQualityTweetLabelDropRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        GoreAndViolenceTweetLabelRule,
-        UntrustedUrlTweetLabelRule,
-        DownrankSpamReplyTweetLabelRule,
-        SearchBlacklistTweetLabelRule,
-        AutomationTweetLabelRule,
-        DuplicateMentionTweetLabelRule,
-        BystanderAbusiveTweetLabelRule,
-        SmyteSpamTweetLabelDropRule,
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
-      ) ++ LimitedEngagementBaseRules.tweetRules,
+case object QuoteT etT  l nePol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++ Seq(
+        DropStaleT etsRule,
+        Abus veT etLabelRule,
+        LowQual yT etLabelDropRule,
+        NsfwH ghPrec s onT etLabelRule,
+        GoreAndV olenceH ghPrec s onT etLabelRule,
+        NsfwReported ur st csT etLabelRule,
+        GoreAndV olenceReported ur st csT etLabelRule,
+        NsfwCard mageT etLabelRule,
+        NsfwH ghRecallT etLabelRule,
+        NsfwV deoT etLabelDropRule,
+        NsfwTextT etLabelDropRule,
+        SpamH ghRecallT etLabelDropRule,
+        Dupl cateContentT etLabelDropRule,
+        GoreAndV olenceT etLabelRule,
+        UntrustedUrlT etLabelRule,
+        DownrankSpamReplyT etLabelRule,
+        SearchBlackl stT etLabelRule,
+        Automat onT etLabelRule,
+        Dupl cate nt onT etLabelRule,
+        BystanderAbus veT etLabelRule,
+        S teSpamT etLabelDropRule,
+        AbusePol cyEp sod cT etLabel nterst  alRule,
+        E rgencyDynam c nterst  alRule,
+      ) ++ L m edEngage ntBaseRules.t etRules,
       userRules = Seq(
-        AbusiveRule,
-        LowQualityRule,
+        Abus veRule,
+        LowQual yRule,
         ReadOnlyRule,
-        SearchBlacklistRule,
+        SearchBlackl stRule,
         SearchNsfwTextRule,
-        CompromisedRule,
-        SpamHighRecallRule,
-        DuplicateContentRule,
-        NsfwHighPrecisionRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule,
-        AbusiveHighRecallRule,
+        Comprom sedRule,
+        SpamH ghRecallRule,
+        Dupl cateContentRule,
+        NsfwH ghPrec s onRule,
+        NsfwAvatar mageRule,
+        NsfwBanner mageRule,
+        Abus veH ghRecallRule,
         DownrankSpamReplyNonAuthorRule,
         NsfwTextNonAuthorDropRule
       )
     )
 
-case object ElevatedQuoteTweetTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules =
-          TweetDetailPolicy.tweetRules.diff(
+case object ElevatedQuoteT etT  l nePol cy
+    extends V s b l yPol cy(
+      t etRules =
+          T etDeta lPol cy.t etRules.d ff(
             Seq(
-              MutedKeywordForQuotedTweetTweetDetailInterstitialRule,
-              ReportedTweetInterstitialRule)),
-      policyRuleParams = TweetDetailPolicy.policyRuleParams
+              MutedKeywordForQuotedT etT etDeta l nterst  alRule,
+              ReportedT et nterst  alRule)),
+      pol cyRuleParams = T etDeta lPol cy.pol cyRuleParams
     )
 
-case object EmbedsPublicInterestNoticePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
+case object EmbedsPubl c nterestNot cePol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++ Seq(
+        AbusePol cyEp sod cT etLabel nterst  alRule,
+        E rgencyDynam c nterst  alRule,
       )
     )
 
-case object RecommendationsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
+case object Recom ndat onsPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++
         Seq(
-          AbusiveTweetLabelRule,
-          LowQualityTweetLabelDropRule,
-          NsfwHighPrecisionTweetLabelRule,
-          GoreAndViolenceHighPrecisionTweetLabelRule,
-          NsfwReportedHeuristicsTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsTweetLabelRule,
-          NsfwCardImageTweetLabelRule,
-          NsfwVideoTweetLabelDropRule,
-          NsfwTextTweetLabelDropRule,
-          SpamHighRecallTweetLabelDropRule,
-          DuplicateContentTweetLabelDropRule,
-          GoreAndViolenceTweetLabelRule,
-          BystanderAbusiveTweetLabelRule,
-          DoNotAmplifyDropRule,
-          SafetyCrisisLevel3DropRule,
-          SmyteSpamTweetLabelDropRule,
-          AbusePolicyEpisodicTweetLabelDropRule,
-          EmergencyDropRule,
+          Abus veT etLabelRule,
+          LowQual yT etLabelDropRule,
+          NsfwH ghPrec s onT etLabelRule,
+          GoreAndV olenceH ghPrec s onT etLabelRule,
+          NsfwReported ur st csT etLabelRule,
+          GoreAndV olenceReported ur st csT etLabelRule,
+          NsfwCard mageT etLabelRule,
+          NsfwV deoT etLabelDropRule,
+          NsfwTextT etLabelDropRule,
+          SpamH ghRecallT etLabelDropRule,
+          Dupl cateContentT etLabelDropRule,
+          GoreAndV olenceT etLabelRule,
+          BystanderAbus veT etLabelRule,
+          DoNotAmpl fyDropRule,
+          SafetyCr s sLevel3DropRule,
+          S teSpamT etLabelDropRule,
+          AbusePol cyEp sod cT etLabelDropRule,
+          E rgencyDropRule,
         ),
       userRules = Seq(
-        DropNsfwAdminAuthorRule,
-        AbusiveRule,
-        LowQualityRule,
+        DropNsfwAdm nAuthorRule,
+        Abus veRule,
+        LowQual yRule,
         ReadOnlyRule,
-        CompromisedRule,
-        RecommendationsBlacklistRule,
-        SpamHighRecallRule,
-        DuplicateContentRule,
-        NsfwHighPrecisionRule,
+        Comprom sedRule,
+        Recom ndat onsBlackl stRule,
+        SpamH ghRecallRule,
+        Dupl cateContentRule,
+        NsfwH ghPrec s onRule,
         NsfwNearPerfectAuthorRule,
-        NsfwBannerImageRule,
-        NsfwAvatarImageRule,
-        EngagementSpammerRule,
-        EngagementSpammerHighRecallRule,
-        AbusiveHighRecallRule,
-        DoNotAmplifyNonFollowerRule,
-        NotGraduatedNonFollowerRule,
-        LikelyIvsLabelNonFollowerDropUserRule,
+        NsfwBanner mageRule,
+        NsfwAvatar mageRule,
+        Engage ntSpam rRule,
+        Engage ntSpam rH ghRecallRule,
+        Abus veH ghRecallRule,
+        DoNotAmpl fyNonFollo rRule,
+        NotGraduatedNonFollo rRule,
+        L kely vsLabelNonFollo rDropUserRule,
         NsfwTextNonAuthorDropRule
       )
     )
 
-case object RecosVideoPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusiveTweetLabelRule,
-        LowQualityTweetLabelDropRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        BystanderAbusiveTweetLabelRule,
-        SmyteSpamTweetLabelDropRule,
+case object RecosV deoPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++ Seq(
+        Abus veT etLabelRule,
+        LowQual yT etLabelDropRule,
+        NsfwH ghPrec s onT etLabelRule,
+        GoreAndV olenceH ghPrec s onT etLabelRule,
+        NsfwReported ur st csT etLabelRule,
+        GoreAndV olenceReported ur st csT etLabelRule,
+        NsfwCard mageT etLabelRule,
+        NsfwH ghRecallT etLabelRule,
+        NsfwV deoT etLabelDropRule,
+        NsfwTextT etLabelDropRule,
+        SpamH ghRecallT etLabelDropRule,
+        Dupl cateContentT etLabelDropRule,
+        BystanderAbus veT etLabelRule,
+        S teSpamT etLabelDropRule,
       ),
       userRules = Seq(NsfwTextNonAuthorDropRule)
     )
 
-case object RepliesGroupingPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
+case object Repl esGroup ngPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++
         Seq(
-          LowQualityTweetLabelDropRule,
-          SpamHighRecallTweetLabelDropRule,
-          DuplicateContentTweetLabelDropRule,
-          DeciderableSpamHighRecallAuthorLabelDropRule,
-          SmyteSpamTweetLabelDropRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          MutedKeywordForTweetRepliesInterstitialRule,
-          ReportedTweetInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          NsfwHighPrecisionTweetLabelAvoidRule,
-          NsfwHighRecallTweetLabelAvoidRule,
-          GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAdPlacementAllUsersTweetLabelRule,
-          DoNotAmplifyTweetLabelAvoidRule,
-          NsfaHighPrecisionTweetLabelAvoidRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules,
+          LowQual yT etLabelDropRule,
+          SpamH ghRecallT etLabelDropRule,
+          Dupl cateContentT etLabelDropRule,
+          Dec derableSpamH ghRecallAuthorLabelDropRule,
+          S teSpamT etLabelDropRule,
+          AbusePol cyEp sod cT etLabel nterst  alRule,
+          E rgencyDynam c nterst  alRule,
+          MutedKeywordForT etRepl es nterst  alRule,
+          ReportedT et nterst  alRule,
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+          NsfwCard mageAllUsersT etLabelRule,
+          NsfwH ghPrec s onT etLabelAvo dRule,
+          NsfwH ghRecallT etLabelAvo dRule,
+          GoreAndV olenceH ghPrec s onAvo dAllUsersT etLabelRule,
+          NsfwReported ur st csAvo dAdPlace ntAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAvo dAdPlace ntAllUsersT etLabelRule,
+          NsfwCard mageAvo dAdPlace ntAllUsersT etLabelRule,
+          DoNotAmpl fyT etLabelAvo dRule,
+          NsfaH ghPrec s onT etLabelAvo dRule,
+        ) ++ L m edEngage ntBaseRules.t etRules,
       userRules = Seq(
-        LowQualityRule,
+        LowQual yRule,
         ReadOnlyRule,
-        LowQualityHighRecallRule,
-        CompromisedRule,
-        DeciderableSpamHighRecallRule
+        LowQual yH ghRecallRule,
+        Comprom sedRule,
+        Dec derableSpamH ghRecallRule
       )
     )
 
-case object ReturningUserExperiencePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusiveTweetLabelRule,
-        LowQualityTweetLabelDropRule,
-        NsfaHighRecallTweetLabelRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        NsfwTextHighPrecisionTweetLabelDropRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        GoreAndViolenceTweetLabelRule,
-        UntrustedUrlTweetLabelRule,
-        DownrankSpamReplyTweetLabelRule,
-        SearchBlacklistTweetLabelRule,
-        AutomationTweetLabelRule,
-        DuplicateMentionTweetLabelRule,
-        BystanderAbusiveTweetLabelRule,
-        SmyteSpamTweetLabelDropRule,
-        SafetyCrisisLevel3DropRule,
-        SafetyCrisisLevel4DropRule,
-        DoNotAmplifyDropRule,
-        AbusePolicyEpisodicTweetLabelDropRule,
-        EmergencyDropRule,
-      ) ++ LimitedEngagementBaseRules.tweetRules,
+case object Return ngUserExper encePol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++ Seq(
+        Abus veT etLabelRule,
+        LowQual yT etLabelDropRule,
+        NsfaH ghRecallT etLabelRule,
+        NsfwH ghPrec s onT etLabelRule,
+        GoreAndV olenceH ghPrec s onT etLabelRule,
+        NsfwReported ur st csT etLabelRule,
+        GoreAndV olenceReported ur st csT etLabelRule,
+        NsfwCard mageT etLabelRule,
+        NsfwH ghRecallT etLabelRule,
+        NsfwV deoT etLabelDropRule,
+        NsfwTextT etLabelDropRule,
+        NsfwTextH ghPrec s onT etLabelDropRule,
+        SpamH ghRecallT etLabelDropRule,
+        Dupl cateContentT etLabelDropRule,
+        GoreAndV olenceT etLabelRule,
+        UntrustedUrlT etLabelRule,
+        DownrankSpamReplyT etLabelRule,
+        SearchBlackl stT etLabelRule,
+        Automat onT etLabelRule,
+        Dupl cate nt onT etLabelRule,
+        BystanderAbus veT etLabelRule,
+        S teSpamT etLabelDropRule,
+        SafetyCr s sLevel3DropRule,
+        SafetyCr s sLevel4DropRule,
+        DoNotAmpl fyDropRule,
+        AbusePol cyEp sod cT etLabelDropRule,
+        E rgencyDropRule,
+      ) ++ L m edEngage ntBaseRules.t etRules,
       userRules = Seq(
-        AbusiveRule,
-        LowQualityRule,
+        Abus veRule,
+        LowQual yRule,
         ReadOnlyRule,
-        SearchBlacklistRule,
+        SearchBlackl stRule,
         SearchNsfwTextRule,
-        CompromisedRule,
-        SpamHighRecallRule,
-        DuplicateContentRule,
-        NsfwHighPrecisionRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule,
-        AbusiveHighRecallRule,
-        DoNotAmplifyNonFollowerRule,
-        NotGraduatedNonFollowerRule,
-        LikelyIvsLabelNonFollowerDropUserRule,
+        Comprom sedRule,
+        SpamH ghRecallRule,
+        Dupl cateContentRule,
+        NsfwH ghPrec s onRule,
+        NsfwAvatar mageRule,
+        NsfwBanner mageRule,
+        Abus veH ghRecallRule,
+        DoNotAmpl fyNonFollo rRule,
+        NotGraduatedNonFollo rRule,
+        L kely vsLabelNonFollo rDropUserRule,
         DownrankSpamReplyNonAuthorRule,
         NsfwTextNonAuthorDropRule,
         DropNsfwUserAuthorRule,
-        NsfwHighRecallRule
+        NsfwH ghRecallRule
       )
     )
 
-case object ReturningUserExperienceFocalTweetPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
+case object Return ngUserExper enceFocalT etPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++
         Seq(
-          AuthorBlocksViewerDropRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          MutedKeywordForTweetRepliesInterstitialRule,
-          ViewerMutesAuthorInterstitialRule,
-          ReportedTweetInterstitialRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
+          AuthorBlocksV e rDropRule,
+          AbusePol cyEp sod cT etLabel nterst  alRule,
+          E rgencyDynam c nterst  alRule,
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+          NsfwCard mageAllUsersT etLabelRule,
+          MutedKeywordForT etRepl es nterst  alRule,
+          V e rMutesAuthor nterst  alRule,
+          ReportedT et nterst  alRule,
+        ) ++ L m edEngage ntBaseRules.t etRules
     )
 
-case object RevenuePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
+case object RevenuePol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++
         Seq(
-          AbusiveTweetLabelRule,
-          BystanderAbusiveTweetLabelRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule
+          Abus veT etLabelRule,
+          BystanderAbus veT etLabelRule,
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+          NsfwCard mageAllUsersT etLabelRule
         )
     )
 
-case object SafeSearchMinimalPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropOuterCommunityTweetsRule,
-      ) ++ VisibilityPolicy.baseTweetRules ++ Seq(
-        LowQualityTweetLabelDropRule,
-        HighProactiveTosScoreTweetLabelDropSearchRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        SearchBlacklistTweetLabelRule,
-        SearchBlacklistHighRecallTweetLabelDropRule,
-        SafetyCrisisLevel3DropRule,
-        SafetyCrisisLevel4DropRule,
-        DoNotAmplifyDropRule,
-        SmyteSpamTweetLabelDropRule,
+case object SafeSearchM n malPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
+        DropOuterCommun yT etsRule,
+      ) ++ V s b l yPol cy.baseT etRules ++ Seq(
+        LowQual yT etLabelDropRule,
+        H ghProact veTosScoreT etLabelDropSearchRule,
+        SpamH ghRecallT etLabelDropRule,
+        Dupl cateContentT etLabelDropRule,
+        SearchBlackl stT etLabelRule,
+        SearchBlackl stH ghRecallT etLabelDropRule,
+        SafetyCr s sLevel3DropRule,
+        SafetyCr s sLevel4DropRule,
+        DoNotAmpl fyDropRule,
+        S teSpamT etLabelDropRule,
       ) ++
         Seq(
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
-        ++ SearchBlenderRules.tweetAvoidRules,
+          AbusePol cyEp sod cT etLabel nterst  alRule,
+          E rgencyDynam c nterst  alRule,
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+          NsfwCard mageAllUsersT etLabelRule,
+        ) ++ L m edEngage ntBaseRules.t etRules
+        ++ SearchBlenderRules.t etAvo dRules,
       userRules = Seq(
-        LowQualityRule,
+        LowQual yRule,
         ReadOnlyRule,
-        CompromisedRule,
-        SpamHighRecallRule,
-        SearchBlacklistRule,
+        Comprom sedRule,
+        SpamH ghRecallRule,
+        SearchBlackl stRule,
         SearchNsfwTextRule,
-        DuplicateContentRule,
-        DoNotAmplifyNonFollowerRule,
-        SearchLikelyIvsLabelNonFollowerDropUserRule
+        Dupl cateContentRule,
+        DoNotAmpl fyNonFollo rRule,
+        SearchL kely vsLabelNonFollo rDropUserRule
       )
     )
 
-case object SearchHydrationPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
-        ReportedTweetInterstitialSearchRule,
-        NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-        GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-        NsfwReportedHeuristicsAllUsersTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-        NsfwCardImageAllUsersTweetLabelRule,
-      ) ++ LimitedEngagementBaseRules.tweetRules
+case object SearchHydrat onPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
+        AbusePol cyEp sod cT etLabel nterst  alRule,
+        E rgencyDynam c nterst  alRule,
+        ReportedT et nterst  alSearchRule,
+        NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+        GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+        NsfwReported ur st csAllUsersT etLabelRule,
+        GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+        NsfwCard mageAllUsersT etLabelRule,
+      ) ++ L m edEngage ntBaseRules.t etRules
     )
 
 case object SearchBlenderRules {
-  val limitedEngagementBaseRules: Seq[Rule] = LimitedEngagementBaseRules.tweetRules
+  val l m edEngage ntBaseRules: Seq[Rule] = L m edEngage ntBaseRules.t etRules
 
-  val tweetAvoidRules: Seq[Rule] =
+  val t etAvo dRules: Seq[Rule] =
     Seq(
-      NsfwHighPrecisionTweetLabelAvoidRule,
-      NsfwHighRecallTweetLabelAvoidRule,
-      GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-      NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-      GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-      NsfwCardImageAvoidAllUsersTweetLabelRule,
-      SearchAvoidTweetNsfwAdminRule,
-      SearchAvoidTweetNsfwUserRule,
-      DoNotAmplifyTweetLabelAvoidRule,
-      NsfaHighPrecisionTweetLabelAvoidRule,
+      NsfwH ghPrec s onT etLabelAvo dRule,
+      NsfwH ghRecallT etLabelAvo dRule,
+      GoreAndV olenceH ghPrec s onAvo dAllUsersT etLabelRule,
+      NsfwReported ur st csAvo dAllUsersT etLabelRule,
+      GoreAndV olenceReported ur st csAvo dAllUsersT etLabelRule,
+      NsfwCard mageAvo dAllUsersT etLabelRule,
+      SearchAvo dT etNsfwAdm nRule,
+      SearchAvo dT etNsfwUserRule,
+      DoNotAmpl fyT etLabelAvo dRule,
+      NsfaH ghPrec s onT etLabelAvo dRule,
     )
 
-  val basicBlockMuteRules: Seq[Rule] = Seq(
-    AuthorBlocksViewerDropRule,
-    ViewerBlocksAuthorViewerOptInBlockingOnSearchRule,
-    ViewerMutesAuthorViewerOptInBlockingOnSearchRule
+  val bas cBlockMuteRules: Seq[Rule] = Seq(
+    AuthorBlocksV e rDropRule,
+    V e rBlocksAuthorV e rOpt nBlock ngOnSearchRule,
+    V e rMutesAuthorV e rOpt nBlock ngOnSearchRule
   )
 
-  val tweetRelevanceRules: Seq[Rule] =
+  val t etRelevanceRules: Seq[Rule] =
     Seq(
-      DropOuterCommunityTweetsRule,
-      DropStaleTweetsRule,
-    ) ++ VisibilityPolicy.baseTweetRules ++ Seq(
-      SafeSearchAbusiveTweetLabelRule,
-      LowQualityTweetLabelDropRule,
-      HighProactiveTosScoreTweetLabelDropSearchRule,
-      HighPSpammyTweetScoreSearchTweetLabelDropRule,
-      HighSpammyTweetContentScoreSearchTopTweetLabelDropRule,
-      HighSpammyTweetContentScoreTrendsTopTweetLabelDropRule,
-      SafeSearchNsfwHighPrecisionTweetLabelRule,
-      SafeSearchGoreAndViolenceHighPrecisionTweetLabelRule,
-      SafeSearchNsfwReportedHeuristicsTweetLabelRule,
-      SafeSearchGoreAndViolenceReportedHeuristicsTweetLabelRule,
-      SafeSearchNsfwCardImageTweetLabelRule,
-      SafeSearchNsfwHighRecallTweetLabelRule,
-      SafeSearchNsfwVideoTweetLabelRule,
-      SafeSearchNsfwTextTweetLabelRule,
-      SpamHighRecallTweetLabelDropRule,
-      DuplicateContentTweetLabelDropRule,
-      SafeSearchGoreAndViolenceTweetLabelRule,
-      SafeSearchUntrustedUrlTweetLabelRule,
-      SafeSearchDownrankSpamReplyTweetLabelRule,
-      SearchBlacklistTweetLabelRule,
-      SearchBlacklistHighRecallTweetLabelDropRule,
-      SmyteSpamTweetLabelDropSearchRule,
-      CopypastaSpamAllViewersSearchTweetLabelRule,
-    ) ++ basicBlockMuteRules ++
+      DropOuterCommun yT etsRule,
+      DropStaleT etsRule,
+    ) ++ V s b l yPol cy.baseT etRules ++ Seq(
+      SafeSearchAbus veT etLabelRule,
+      LowQual yT etLabelDropRule,
+      H ghProact veTosScoreT etLabelDropSearchRule,
+      H ghPSpam T etScoreSearchT etLabelDropRule,
+      H ghSpam T etContentScoreSearchTopT etLabelDropRule,
+      H ghSpam T etContentScoreTrendsTopT etLabelDropRule,
+      SafeSearchNsfwH ghPrec s onT etLabelRule,
+      SafeSearchGoreAndV olenceH ghPrec s onT etLabelRule,
+      SafeSearchNsfwReported ur st csT etLabelRule,
+      SafeSearchGoreAndV olenceReported ur st csT etLabelRule,
+      SafeSearchNsfwCard mageT etLabelRule,
+      SafeSearchNsfwH ghRecallT etLabelRule,
+      SafeSearchNsfwV deoT etLabelRule,
+      SafeSearchNsfwTextT etLabelRule,
+      SpamH ghRecallT etLabelDropRule,
+      Dupl cateContentT etLabelDropRule,
+      SafeSearchGoreAndV olenceT etLabelRule,
+      SafeSearchUntrustedUrlT etLabelRule,
+      SafeSearchDownrankSpamReplyT etLabelRule,
+      SearchBlackl stT etLabelRule,
+      SearchBlackl stH ghRecallT etLabelDropRule,
+      S teSpamT etLabelDropSearchRule,
+      CopypastaSpamAllV e rsSearchT etLabelRule,
+    ) ++ bas cBlockMuteRules ++
       Seq(
-        SafeSearchAutomationNonFollowerTweetLabelRule,
-        SafeSearchDuplicateMentionNonFollowerTweetLabelRule,
-        SafeSearchBystanderAbusiveTweetLabelRule,
-        SafetyCrisisLevel3DropRule,
-        SafetyCrisisLevel4DropRule,
-        DoNotAmplifyDropRule,
-        SearchIpiSafeSearchWithoutUserInQueryDropRule,
-        SearchEdiSafeSearchWithoutUserInQueryDropRule,
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
-        UnsafeSearchNsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-        UnsafeSearchGoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-        UnsafeSearchNsfwReportedHeuristicsAllUsersTweetLabelRule,
-        UnsafeSearchGoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-        UnsafeSearchNsfwCardImageAllUsersTweetLabelRule,
+        SafeSearchAutomat onNonFollo rT etLabelRule,
+        SafeSearchDupl cate nt onNonFollo rT etLabelRule,
+        SafeSearchBystanderAbus veT etLabelRule,
+        SafetyCr s sLevel3DropRule,
+        SafetyCr s sLevel4DropRule,
+        DoNotAmpl fyDropRule,
+        Search p SafeSearchW houtUser nQueryDropRule,
+        SearchEd SafeSearchW houtUser nQueryDropRule,
+        AbusePol cyEp sod cT etLabel nterst  alRule,
+        E rgencyDynam c nterst  alRule,
+        UnsafeSearchNsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+        UnsafeSearchGoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+        UnsafeSearchNsfwReported ur st csAllUsersT etLabelRule,
+        UnsafeSearchGoreAndV olenceReported ur st csAllUsersT etLabelRule,
+        UnsafeSearchNsfwCard mageAllUsersT etLabelRule,
       ) ++
-      limitedEngagementBaseRules ++
-      tweetAvoidRules
+      l m edEngage ntBaseRules ++
+      t etAvo dRules
 
-    VisibilityPolicy.baseTweetRules ++ Seq(
-    SafeSearchAbusiveTweetLabelRule,
-    LowQualityTweetLabelDropRule,
-    HighProactiveTosScoreTweetLabelDropSearchRule,
-    HighSpammyTweetContentScoreSearchLatestTweetLabelDropRule,
-    HighSpammyTweetContentScoreTrendsLatestTweetLabelDropRule,
-    SafeSearchNsfwHighPrecisionTweetLabelRule,
-    SafeSearchGoreAndViolenceHighPrecisionTweetLabelRule,
-    SafeSearchNsfwReportedHeuristicsTweetLabelRule,
-    SafeSearchGoreAndViolenceReportedHeuristicsTweetLabelRule,
-    SafeSearchNsfwCardImageTweetLabelRule,
-    SafeSearchNsfwHighRecallTweetLabelRule,
-    SafeSearchNsfwVideoTweetLabelRule,
-    SafeSearchNsfwTextTweetLabelRule,
-    SpamHighRecallTweetLabelDropRule,
-    DuplicateContentTweetLabelDropRule,
-    SafeSearchGoreAndViolenceTweetLabelRule,
-    SafeSearchUntrustedUrlTweetLabelRule,
-    SafeSearchDownrankSpamReplyTweetLabelRule,
-    SearchBlacklistTweetLabelRule,
-    SearchBlacklistHighRecallTweetLabelDropRule,
-    SmyteSpamTweetLabelDropSearchRule,
-    CopypastaSpamNonFollowerSearchTweetLabelRule,
+    V s b l yPol cy.baseT etRules ++ Seq(
+    SafeSearchAbus veT etLabelRule,
+    LowQual yT etLabelDropRule,
+    H ghProact veTosScoreT etLabelDropSearchRule,
+    H ghSpam T etContentScoreSearchLatestT etLabelDropRule,
+    H ghSpam T etContentScoreTrendsLatestT etLabelDropRule,
+    SafeSearchNsfwH ghPrec s onT etLabelRule,
+    SafeSearchGoreAndV olenceH ghPrec s onT etLabelRule,
+    SafeSearchNsfwReported ur st csT etLabelRule,
+    SafeSearchGoreAndV olenceReported ur st csT etLabelRule,
+    SafeSearchNsfwCard mageT etLabelRule,
+    SafeSearchNsfwH ghRecallT etLabelRule,
+    SafeSearchNsfwV deoT etLabelRule,
+    SafeSearchNsfwTextT etLabelRule,
+    SpamH ghRecallT etLabelDropRule,
+    Dupl cateContentT etLabelDropRule,
+    SafeSearchGoreAndV olenceT etLabelRule,
+    SafeSearchUntrustedUrlT etLabelRule,
+    SafeSearchDownrankSpamReplyT etLabelRule,
+    SearchBlackl stT etLabelRule,
+    SearchBlackl stH ghRecallT etLabelDropRule,
+    S teSpamT etLabelDropSearchRule,
+    CopypastaSpamNonFollo rSearchT etLabelRule,
   ) ++
-    basicBlockMuteRules ++
+    bas cBlockMuteRules ++
     Seq(
-      SafeSearchAutomationNonFollowerTweetLabelRule,
-      SafeSearchDuplicateMentionNonFollowerTweetLabelRule,
-      SafeSearchBystanderAbusiveTweetLabelRule,
-      SafetyCrisisLevel3DropRule,
-      SafetyCrisisLevel4DropRule,
-      SearchIpiSafeSearchWithoutUserInQueryDropRule,
-      SearchEdiSafeSearchWithoutUserInQueryDropRule,
-      AbusePolicyEpisodicTweetLabelInterstitialRule,
-      EmergencyDynamicInterstitialRule,
-      UnsafeSearchNsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-      UnsafeSearchGoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-      UnsafeSearchNsfwReportedHeuristicsAllUsersTweetLabelRule,
-      UnsafeSearchGoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-      UnsafeSearchNsfwCardImageAllUsersTweetLabelRule,
-    ) ++ limitedEngagementBaseRules ++ tweetAvoidRules
+      SafeSearchAutomat onNonFollo rT etLabelRule,
+      SafeSearchDupl cate nt onNonFollo rT etLabelRule,
+      SafeSearchBystanderAbus veT etLabelRule,
+      SafetyCr s sLevel3DropRule,
+      SafetyCr s sLevel4DropRule,
+      Search p SafeSearchW houtUser nQueryDropRule,
+      SearchEd SafeSearchW houtUser nQueryDropRule,
+      AbusePol cyEp sod cT etLabel nterst  alRule,
+      E rgencyDynam c nterst  alRule,
+      UnsafeSearchNsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+      UnsafeSearchGoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+      UnsafeSearchNsfwReported ur st csAllUsersT etLabelRule,
+      UnsafeSearchGoreAndV olenceReported ur st csAllUsersT etLabelRule,
+      UnsafeSearchNsfwCard mageAllUsersT etLabelRule,
+    ) ++ l m edEngage ntBaseRules ++ t etAvo dRules
 
-  val userBaseRules: Seq[ConditionWithUserLabelRule] = Seq(
-    SafeSearchAbusiveUserLabelRule,
-    LowQualityRule,
+  val userBaseRules: Seq[Cond  onW hUserLabelRule] = Seq(
+    SafeSearchAbus veUserLabelRule,
+    LowQual yRule,
     ReadOnlyRule,
-    SearchBlacklistRule,
-    CompromisedRule,
-    SpamHighRecallRule,
-    DuplicateContentRule,
-    DoNotAmplifyNonFollowerRule,
-    SearchLikelyIvsLabelNonFollowerDropUserRule,
-    SafeSearchNsfwHighPrecisionUserLabelRule,
-    SafeSearchNsfwAvatarImageUserLabelRule,
-    SafeSearchNsfwBannerImageUserLabelRule,
-    SafeSearchAbusiveHighRecallUserLabelRule,
+    SearchBlackl stRule,
+    Comprom sedRule,
+    SpamH ghRecallRule,
+    Dupl cateContentRule,
+    DoNotAmpl fyNonFollo rRule,
+    SearchL kely vsLabelNonFollo rDropUserRule,
+    SafeSearchNsfwH ghPrec s onUserLabelRule,
+    SafeSearchNsfwAvatar mageUserLabelRule,
+    SafeSearchNsfwBanner mageUserLabelRule,
+    SafeSearchAbus veH ghRecallUserLabelRule,
     SafeSearchDownrankSpamReplyAuthorLabelRule,
-    SafeSearchNotGraduatedNonFollowersUserLabelRule,
+    SafeSearchNotGraduatedNonFollo rsUserLabelRule,
     SafeSearchNsfwTextAuthorLabelRule
   )
 
-  val userRules: Seq[ConditionWithUserLabelRule] = userBaseRules
+  val userRules: Seq[Cond  onW hUserLabelRule] = userBaseRules
 
-  val userRelevanceBaseRules = userBaseRules ++ basicBlockMuteRules
+  val userRelevanceBaseRules = userBaseRules ++ bas cBlockMuteRules
 
   val userRelevanceRules = userRelevanceBaseRules
 
-  val userRecencyBaseRules = userBaseRules.filterNot(
-    Seq(DoNotAmplifyNonFollowerRule, SearchLikelyIvsLabelNonFollowerDropUserRule).contains
-  ) ++ basicBlockMuteRules
+  val userRecencyBaseRules = userBaseRules.f lterNot(
+    Seq(DoNotAmpl fyNonFollo rRule, SearchL kely vsLabelNonFollo rDropUserRule).conta ns
+  ) ++ bas cBlockMuteRules
 
-  val searchQueryMatchesTweetAuthorRules: Seq[ConditionWithUserLabelRule] =
+  val searchQueryMatc sT etAuthorRules: Seq[Cond  onW hUserLabelRule] =
     userBaseRules
 
-  val basicBlockMutePolicyRuleParam: Map[Rule, PolicyLevelRuleParams] =
-    SearchBlenderRules.basicBlockMuteRules
-      .map(rule => rule -> ruleParams(RuleParams.EnableSearchBasicBlockMuteRulesParam)).toMap
+  val bas cBlockMutePol cyRuleParam: Map[Rule, Pol cyLevelRuleParams] =
+    SearchBlenderRules.bas cBlockMuteRules
+      .map(rule => rule -> ruleParams(RuleParams.EnableSearchBas cBlockMuteRulesParam)).toMap
 }
 
-case object SearchBlenderUserRulesPolicy
-    extends VisibilityPolicy(
+case object SearchBlenderUserRulesPol cy
+    extends V s b l yPol cy(
       userRules = SearchBlenderRules.userRules
     )
 
-case object SearchLatestUserRulesPolicy
-    extends VisibilityPolicy(
-      userRules = SearchLatestPolicy.userRules
+case object SearchLatestUserRulesPol cy
+    extends V s b l yPol cy(
+      userRules = SearchLatestPol cy.userRules
     )
 
-case object UserSearchSrpPolicy
-    extends VisibilityPolicy(
+case object UserSearchSrpPol cy
+    extends V s b l yPol cy(
       userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ViewerBlocksAuthorViewerOptInBlockingOnSearchRule,
-        ViewerMutesAuthorViewerOptInBlockingOnSearchRule,
-        DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule,
-        SafeSearchAbusiveUserLabelRule,
-        SafeSearchHighRecallUserLabelRule,
+        AuthorBlocksV e rDropRule,
+        V e rBlocksAuthorV e rOpt nBlock ngOnSearchRule,
+        V e rMutesAuthorV e rOpt nBlock ngOnSearchRule,
+        DropNsfwAdm nAuthorV e rOpt nF lter ngOnSearchRule,
+        SafeSearchAbus veUserLabelRule,
+        SafeSearchH ghRecallUserLabelRule,
         SafeSearchNsfwNearPerfectAuthorRule,
-        SafeSearchNsfwHighPrecisionUserLabelRule,
-        SafeSearchNsfwAvatarImageUserLabelRule,
-        SafeSearchNsfwBannerImageUserLabelRule,
-        SafeSearchAbusiveHighRecallUserLabelRule,
+        SafeSearchNsfwH ghPrec s onUserLabelRule,
+        SafeSearchNsfwAvatar mageUserLabelRule,
+        SafeSearchNsfwBanner mageUserLabelRule,
+        SafeSearchAbus veH ghRecallUserLabelRule,
         SafeSearchNsfwTextAuthorLabelRule
       )
     )
 
-case object UserSearchTypeaheadPolicy
-    extends VisibilityPolicy(
+case object UserSearchTypea adPol cy
+    extends V s b l yPol cy(
       userRules = Seq(
-        SafeSearchAbusiveUserLabelRule,
-        SafeSearchHighRecallUserLabelRule,
+        SafeSearchAbus veUserLabelRule,
+        SafeSearchH ghRecallUserLabelRule,
         SafeSearchNsfwNearPerfectAuthorRule,
-        SafeSearchNsfwHighPrecisionUserLabelRule,
-        SafeSearchNsfwAvatarImageUserLabelRule,
-        SafeSearchNsfwBannerImageUserLabelRule,
-        SafeSearchAbusiveHighRecallUserLabelRule,
+        SafeSearchNsfwH ghPrec s onUserLabelRule,
+        SafeSearchNsfwAvatar mageUserLabelRule,
+        SafeSearchNsfwBanner mageUserLabelRule,
+        SafeSearchAbus veH ghRecallUserLabelRule,
         SafeSearchNsfwTextAuthorLabelRule
       ),
-      tweetRules = Seq(DropAllRule)
+      t etRules = Seq(DropAllRule)
     )
 
-case object SearchMixerSrpMinimalPolicy
-    extends VisibilityPolicy(
+case object SearchM xerSrpM n malPol cy
+    extends V s b l yPol cy(
       userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ViewerBlocksAuthorViewerOptInBlockingOnSearchRule,
-        ViewerMutesAuthorViewerOptInBlockingOnSearchRule
+        AuthorBlocksV e rDropRule,
+        V e rBlocksAuthorV e rOpt nBlock ngOnSearchRule,
+        V e rMutesAuthorV e rOpt nBlock ngOnSearchRule
       )
     )
 
-case object SearchMixerSrpStrictPolicy
-    extends VisibilityPolicy(
+case object SearchM xerSrpStr ctPol cy
+    extends V s b l yPol cy(
       userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ViewerBlocksAuthorViewerOptInBlockingOnSearchRule,
-        ViewerMutesAuthorViewerOptInBlockingOnSearchRule,
-        DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule,
+        AuthorBlocksV e rDropRule,
+        V e rBlocksAuthorV e rOpt nBlock ngOnSearchRule,
+        V e rMutesAuthorV e rOpt nBlock ngOnSearchRule,
+        DropNsfwAdm nAuthorV e rOpt nF lter ngOnSearchRule,
         NsfwNearPerfectAuthorRule,
-        NsfwHighPrecisionRule,
-        NsfwHighRecallRule,
-        NsfwSensitiveRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule
-      ) ++ SearchBlenderRules.searchQueryMatchesTweetAuthorRules
-        .diff(Seq(SafeSearchNotGraduatedNonFollowersUserLabelRule))
+        NsfwH ghPrec s onRule,
+        NsfwH ghRecallRule,
+        NsfwSens  veRule,
+        NsfwAvatar mageRule,
+        NsfwBanner mageRule
+      ) ++ SearchBlenderRules.searchQueryMatc sT etAuthorRules
+        .d ff(Seq(SafeSearchNotGraduatedNonFollo rsUserLabelRule))
     )
 
-case object SearchPeopleSrpPolicy
-    extends VisibilityPolicy(
-      userRules = SearchBlenderRules.searchQueryMatchesTweetAuthorRules
+case object SearchPeopleSrpPol cy
+    extends V s b l yPol cy(
+      userRules = SearchBlenderRules.searchQueryMatc sT etAuthorRules
     )
 
-case object SearchPeopleTypeaheadPolicy
-    extends VisibilityPolicy(
-      userRules = SearchBlenderRules.searchQueryMatchesTweetAuthorRules
-        .diff(
+case object SearchPeopleTypea adPol cy
+    extends V s b l yPol cy(
+      userRules = SearchBlenderRules.searchQueryMatc sT etAuthorRules
+        .d ff(
           Seq(
-            SafeSearchNotGraduatedNonFollowersUserLabelRule
+            SafeSearchNotGraduatedNonFollo rsUserLabelRule
           )),
-      tweetRules = Seq(DropAllRule)
+      t etRules = Seq(DropAllRule)
     )
 
-case object SearchPhotoPolicy
-    extends VisibilityPolicy(
-      tweetRules = SearchBlenderRules.tweetRelevanceRules,
+case object SearchPhotoPol cy
+    extends V s b l yPol cy(
+      t etRules = SearchBlenderRules.t etRelevanceRules,
       userRules = SearchBlenderRules.userRelevanceRules,
-      policyRuleParams = SearchBlenderRules.basicBlockMutePolicyRuleParam
+      pol cyRuleParams = SearchBlenderRules.bas cBlockMutePol cyRuleParam
     )
 
-case object SearchTrendTakeoverPromotedTweetPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules
+case object SearchTrendTakeoverPromotedT etPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules
     )
 
-case object SearchVideoPolicy
-    extends VisibilityPolicy(
-      tweetRules = SearchBlenderRules.tweetRelevanceRules,
+case object SearchV deoPol cy
+    extends V s b l yPol cy(
+      t etRules = SearchBlenderRules.t etRelevanceRules,
       userRules = SearchBlenderRules.userRelevanceRules,
-      policyRuleParams = SearchBlenderRules.basicBlockMutePolicyRuleParam
+      pol cyRuleParams = SearchBlenderRules.bas cBlockMutePol cyRuleParam
     )
 
-case object SearchLatestPolicy
-    extends VisibilityPolicy(
-      tweetRules = SearchBlenderRules.tweetRecencyRules,
+case object SearchLatestPol cy
+    extends V s b l yPol cy(
+      t etRules = SearchBlenderRules.t etRecencyRules,
       userRules = SearchBlenderRules.userRecencyBaseRules,
-      policyRuleParams = SearchBlenderRules.basicBlockMutePolicyRuleParam
+      pol cyRuleParams = SearchBlenderRules.bas cBlockMutePol cyRuleParam
     )
 
-case object SearchTopPolicy
-    extends VisibilityPolicy(
-      tweetRules = SearchBlenderRules.tweetRelevanceRules,
-      userRules = Seq(SpammyUserModelHighPrecisionDropTweetRule) ++
-        SearchBlenderRules.basicBlockMuteRules ++
-        SearchBlenderRules.searchQueryMatchesTweetAuthorRules,
-      policyRuleParams = SearchBlenderRules.basicBlockMutePolicyRuleParam
+case object SearchTopPol cy
+    extends V s b l yPol cy(
+      t etRules = SearchBlenderRules.t etRelevanceRules,
+      userRules = Seq(Spam UserModelH ghPrec s onDropT etRule) ++
+        SearchBlenderRules.bas cBlockMuteRules ++
+        SearchBlenderRules.searchQueryMatc sT etAuthorRules,
+      pol cyRuleParams = SearchBlenderRules.bas cBlockMutePol cyRuleParam
     )
 
-case object SearchTopQigPolicy
-    extends VisibilityPolicy(
-      tweetRules = BaseQigPolicy.tweetRules ++
+case object SearchTopQ gPol cy
+    extends V s b l yPol cy(
+      t etRules = BaseQ gPol cy.t etRules ++
         Seq(
-          UnsafeSearchGoreAndViolenceHighPrecisionAllUsersTweetLabelDropRule,
-          UnsafeSearchGoreAndViolenceReportedHeuristicsAllUsersTweetLabelDropRule,
-          UnsafeSearchNsfwCardImageAllUsersTweetLabelDropRule,
-          UnsafeSearchNsfwReportedHeuristicsAllUsersTweetLabelDropRule,
-          UnsafeSearchNsfwHighPrecisionAllUsersTweetLabelDropRule
+          UnsafeSearchGoreAndV olenceH ghPrec s onAllUsersT etLabelDropRule,
+          UnsafeSearchGoreAndV olenceReported ur st csAllUsersT etLabelDropRule,
+          UnsafeSearchNsfwCard mageAllUsersT etLabelDropRule,
+          UnsafeSearchNsfwReported ur st csAllUsersT etLabelDropRule,
+          UnsafeSearchNsfwH ghPrec s onAllUsersT etLabelDropRule
         ) ++
-        SearchTopPolicy.tweetRules.diff(
+        SearchTopPol cy.t etRules.d ff(
           Seq(
-            SearchIpiSafeSearchWithoutUserInQueryDropRule,
-            SearchEdiSafeSearchWithoutUserInQueryDropRule,
-            HighSpammyTweetContentScoreTrendsTopTweetLabelDropRule,
-            UnsafeSearchNsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-            UnsafeSearchGoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-            UnsafeSearchGoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-            UnsafeSearchNsfwCardImageAllUsersTweetLabelRule,
-            UnsafeSearchNsfwReportedHeuristicsAllUsersTweetLabelRule
+            Search p SafeSearchW houtUser nQueryDropRule,
+            SearchEd SafeSearchW houtUser nQueryDropRule,
+            H ghSpam T etContentScoreTrendsTopT etLabelDropRule,
+            UnsafeSearchNsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+            UnsafeSearchGoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+            UnsafeSearchGoreAndV olenceReported ur st csAllUsersT etLabelRule,
+            UnsafeSearchNsfwCard mageAllUsersT etLabelRule,
+            UnsafeSearchNsfwReported ur st csAllUsersT etLabelRule
           ) ++
-            SearchTopPolicy.tweetRules.intersect(BaseQigPolicy.tweetRules)),
-      userRules = BaseQigPolicy.userRules ++ Seq(
-        DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule,
+            SearchTopPol cy.t etRules. ntersect(BaseQ gPol cy.t etRules)),
+      userRules = BaseQ gPol cy.userRules ++ Seq(
+        DropNsfwAdm nAuthorV e rOpt nF lter ngOnSearchRule,
         NsfwNearPerfectAuthorRule,
-      ) ++ SearchTopPolicy.userRules.diff(
-        SearchTopPolicy.userRules.intersect(BaseQigPolicy.userRules)),
-      policyRuleParams = SearchBlenderRules.basicBlockMutePolicyRuleParam
+      ) ++ SearchTopPol cy.userRules.d ff(
+        SearchTopPol cy.userRules. ntersect(BaseQ gPol cy.userRules)),
+      pol cyRuleParams = SearchBlenderRules.bas cBlockMutePol cyRuleParam
     )
 
-case object SafeSearchStrictPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropOuterCommunityTweetsRule,
-      ) ++ VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusiveTweetLabelRule,
-        LowQualityTweetLabelDropRule,
-        HighProactiveTosScoreTweetLabelDropSearchRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        GoreAndViolenceTweetLabelRule,
-        UntrustedUrlTweetLabelRule,
-        DownrankSpamReplyTweetLabelRule,
-        SearchBlacklistTweetLabelRule,
-        SearchBlacklistHighRecallTweetLabelDropRule,
-        AutomationTweetLabelRule,
-        DuplicateMentionTweetLabelRule,
-        BystanderAbusiveTweetLabelRule,
-        SafetyCrisisLevel3DropRule,
-        SafetyCrisisLevel4DropRule,
-        DoNotAmplifyDropRule,
-        SmyteSpamTweetLabelDropRule,
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
-      ) ++ LimitedEngagementBaseRules.tweetRules
-        ++ SearchBlenderRules.tweetAvoidRules,
+case object SafeSearchStr ctPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
+        DropOuterCommun yT etsRule,
+      ) ++ V s b l yPol cy.baseT etRules ++ Seq(
+        Abus veT etLabelRule,
+        LowQual yT etLabelDropRule,
+        H ghProact veTosScoreT etLabelDropSearchRule,
+        NsfwH ghPrec s onT etLabelRule,
+        GoreAndV olenceH ghPrec s onT etLabelRule,
+        NsfwReported ur st csT etLabelRule,
+        GoreAndV olenceReported ur st csT etLabelRule,
+        NsfwCard mageT etLabelRule,
+        NsfwH ghRecallT etLabelRule,
+        NsfwV deoT etLabelDropRule,
+        NsfwTextT etLabelDropRule,
+        SpamH ghRecallT etLabelDropRule,
+        Dupl cateContentT etLabelDropRule,
+        GoreAndV olenceT etLabelRule,
+        UntrustedUrlT etLabelRule,
+        DownrankSpamReplyT etLabelRule,
+        SearchBlackl stT etLabelRule,
+        SearchBlackl stH ghRecallT etLabelDropRule,
+        Automat onT etLabelRule,
+        Dupl cate nt onT etLabelRule,
+        BystanderAbus veT etLabelRule,
+        SafetyCr s sLevel3DropRule,
+        SafetyCr s sLevel4DropRule,
+        DoNotAmpl fyDropRule,
+        S teSpamT etLabelDropRule,
+        AbusePol cyEp sod cT etLabel nterst  alRule,
+        E rgencyDynam c nterst  alRule,
+      ) ++ L m edEngage ntBaseRules.t etRules
+        ++ SearchBlenderRules.t etAvo dRules,
       userRules = Seq(
-        AbusiveRule,
-        LowQualityRule,
+        Abus veRule,
+        LowQual yRule,
         ReadOnlyRule,
-        SearchBlacklistRule,
+        SearchBlackl stRule,
         SearchNsfwTextRule,
-        CompromisedRule,
-        SpamHighRecallRule,
-        DuplicateContentRule,
-        NsfwHighPrecisionRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule,
-        AbusiveHighRecallRule,
-        DoNotAmplifyNonFollowerRule,
-        NotGraduatedNonFollowerRule,
-        SearchLikelyIvsLabelNonFollowerDropUserRule,
+        Comprom sedRule,
+        SpamH ghRecallRule,
+        Dupl cateContentRule,
+        NsfwH ghPrec s onRule,
+        NsfwAvatar mageRule,
+        NsfwBanner mageRule,
+        Abus veH ghRecallRule,
+        DoNotAmpl fyNonFollo rRule,
+        NotGraduatedNonFollo rRule,
+        SearchL kely vsLabelNonFollo rDropUserRule,
         DownrankSpamReplyNonAuthorRule,
         NsfwTextNonAuthorDropRule,
       )
     )
 
-case object StickersTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules,
+case object St ckersT  l nePol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules,
       userRules = Seq(
-        AbusiveRule,
-        LowQualityRule,
+        Abus veRule,
+        LowQual yRule,
         ReadOnlyRule,
-        CompromisedRule,
-        SearchBlacklistRule,
+        Comprom sedRule,
+        SearchBlackl stRule,
         SearchNsfwTextRule,
-        DuplicateContentRule,
-        EngagementSpammerRule,
-        EngagementSpammerHighRecallRule,
-        NsfwSensitiveRule,
-        SpamHighRecallRule,
-        AbusiveHighRecallRule
+        Dupl cateContentRule,
+        Engage ntSpam rRule,
+        Engage ntSpam rH ghRecallRule,
+        NsfwSens  veRule,
+        SpamH ghRecallRule,
+        Abus veH ghRecallRule
       )
     )
 
-case object StratoExtLimitedEngagementsPolicy
-    extends VisibilityPolicy(
-      tweetRules =
-        VisibilityPolicy.baseTweetRules ++ LimitedEngagementBaseRules.tweetRules
+case object StratoExtL m edEngage ntsPol cy
+    extends V s b l yPol cy(
+      t etRules =
+        V s b l yPol cy.baseT etRules ++ L m edEngage ntBaseRules.t etRules
     )
 
-case object InternalPromotedContentPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules
+case object  nternalPromotedContentPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules
     )
 
-case object StreamServicesPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusiveTweetLabelRule,
-        LowQualityTweetLabelDropRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        BystanderAbusiveTweetLabelRule,
-        SmyteSpamTweetLabelDropRule
+case object StreamServ cesPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++ Seq(
+        Abus veT etLabelRule,
+        LowQual yT etLabelDropRule,
+        NsfwH ghPrec s onT etLabelRule,
+        GoreAndV olenceH ghPrec s onT etLabelRule,
+        NsfwReported ur st csT etLabelRule,
+        GoreAndV olenceReported ur st csT etLabelRule,
+        NsfwCard mageT etLabelRule,
+        NsfwV deoT etLabelDropRule,
+        NsfwTextT etLabelDropRule,
+        SpamH ghRecallT etLabelDropRule,
+        Dupl cateContentT etLabelDropRule,
+        BystanderAbus veT etLabelRule,
+        S teSpamT etLabelDropRule
       ),
       userRules = Seq(NsfwTextNonAuthorDropRule)
     )
 
-case object SuperLikePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusePolicyEpisodicTweetLabelDropRule,
-        EmergencyDropRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule
+case object SuperL kePol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++ Seq(
+        AbusePol cyEp sod cT etLabelDropRule,
+        E rgencyDropRule,
+        NsfwH ghPrec s onT etLabelRule,
+        GoreAndV olenceH ghPrec s onT etLabelRule,
+        NsfwReported ur st csT etLabelRule,
+        GoreAndV olenceReported ur st csT etLabelRule,
+        NsfwCard mageT etLabelRule,
+        NsfwV deoT etLabelDropRule,
+        NsfwTextT etLabelDropRule
       ),
       userRules = Seq(NsfwTextNonAuthorDropRule)
     )
 
-case object TimelineFocalTweetPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
-      ) ++ LimitedEngagementBaseRules.tweetRules
+case object T  l neFocalT etPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
+        AbusePol cyEp sod cT etLabel nterst  alRule,
+        E rgencyDynam c nterst  alRule,
+      ) ++ L m edEngage ntBaseRules.t etRules
     )
 
-case object TimelineBookmarkPolicy
-    extends VisibilityPolicy(
-      tweetRules =
+case object T  l neBookmarkPol cy
+    extends V s b l yPol cy(
+      t etRules =
         Seq(
-          DropCommunityTweetsRule,
-          DropCommunityTweetCommunityNotVisibleRule,
-          DropProtectedCommunityTweetsRule,
-          DropHiddenCommunityTweetsRule,
-          DropAuthorRemovedCommunityTweetsRule,
-          SpamTweetLabelRule,
-          PdnaTweetLabelRule,
-          BounceOuterTweetTombstoneRule,
-          BounceQuotedTweetTombstoneRule,
-          DropExclusiveTweetContentRule,
-          DropTrustedFriendsTweetContentRule,
+          DropCommun yT etsRule,
+          DropCommun yT etCommun yNotV s bleRule,
+          DropProtectedCommun yT etsRule,
+          DropH ddenCommun yT etsRule,
+          DropAuthorRemovedCommun yT etsRule,
+          SpamT etLabelRule,
+          PdnaT etLabelRule,
+          BounceOuterT etTombstoneRule,
+          BounceQuotedT etTombstoneRule,
+          DropExclus veT etContentRule,
+          DropTrustedFr endsT etContentRule,
         ) ++
           Seq(
-            AbusePolicyEpisodicTweetLabelInterstitialRule,
-            EmergencyDynamicInterstitialRule,
-            NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-            GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAllUsersTweetLabelRule,
-            GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-            ViewerBlocksAuthorInnerQuotedTweetInterstitialRule,
-            ViewerMutesAuthorInnerQuotedTweetInterstitialRule,
-            NsfwCardImageAllUsersTweetLabelRule,
-          ) ++ LimitedEngagementBaseRules.tweetRules,
-      deletedTweetRules = Seq(
-        TombstoneBounceDeletedTweetRule,
-        TombstoneDeletedQuotedTweetRule
+            AbusePol cyEp sod cT etLabel nterst  alRule,
+            E rgencyDynam c nterst  alRule,
+            NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+            GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+            NsfwReported ur st csAllUsersT etLabelRule,
+            GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+            V e rBlocksAuthor nnerQuotedT et nterst  alRule,
+            V e rMutesAuthor nnerQuotedT et nterst  alRule,
+            NsfwCard mageAllUsersT etLabelRule,
+          ) ++ L m edEngage ntBaseRules.t etRules,
+      deletedT etRules = Seq(
+        TombstoneBounceDeletedT etRule,
+        TombstoneDeletedQuotedT etRule
       ),
-      userUnavailableStateRules = Seq(
-        SuspendedUserUnavailableTweetTombstoneRule,
-        DeactivatedUserUnavailableTweetTombstoneRule,
-        OffBoardedUserUnavailableTweetTombstoneRule,
-        ErasedUserUnavailableTweetTombstoneRule,
-        ProtectedUserUnavailableTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule,
-        UserUnavailableTweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule,
-        ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
+      userUnava lableStateRules = Seq(
+        SuspendedUserUnava lableT etTombstoneRule,
+        Deact vatedUserUnava lableT etTombstoneRule,
+        OffBoardedUserUnava lableT etTombstoneRule,
+        ErasedUserUnava lableT etTombstoneRule,
+        ProtectedUserUnava lableT etTombstoneRule,
+        AuthorBlocksV e rUserUnava lable nnerQuotedT etTombstoneRule,
+        UserUnava lableT etTombstoneRule,
+        V e rBlocksAuthorUserUnava lable nnerQuotedT et nterst  alRule,
+        V e rMutesAuthorUserUnava lable nnerQuotedT et nterst  alRule
       ),
     )
 
-case object TimelineListsPolicy
-    extends VisibilityPolicy(
-      tweetRules =
+case object T  l neL stsPol cy
+    extends V s b l yPol cy(
+      t etRules =
         Seq(
-          DropOuterCommunityTweetsRule,
-          DropStaleTweetsRule,
+          DropOuterCommun yT etsRule,
+          DropStaleT etsRule,
         ) ++
-          VisibilityPolicy.baseTweetRules ++
+          V s b l yPol cy.baseT etRules ++
           Seq(
-            AbusePolicyEpisodicTweetLabelInterstitialRule,
-            EmergencyDynamicInterstitialRule,
-            NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-            GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAllUsersTweetLabelRule,
-            GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-            NsfwCardImageAllUsersTweetLabelRule,
-            NsfwHighPrecisionTweetLabelAvoidRule,
-            NsfwHighRecallTweetLabelAvoidRule,
-            GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-            GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-            NsfwCardImageAvoidAllUsersTweetLabelRule,
-            DoNotAmplifyTweetLabelAvoidRule,
-            NsfaHighPrecisionTweetLabelAvoidRule,
-          ) ++ LimitedEngagementBaseRules.tweetRules
+            AbusePol cyEp sod cT etLabel nterst  alRule,
+            E rgencyDynam c nterst  alRule,
+            NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+            GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+            NsfwReported ur st csAllUsersT etLabelRule,
+            GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+            NsfwCard mageAllUsersT etLabelRule,
+            NsfwH ghPrec s onT etLabelAvo dRule,
+            NsfwH ghRecallT etLabelAvo dRule,
+            GoreAndV olenceH ghPrec s onAvo dAllUsersT etLabelRule,
+            NsfwReported ur st csAvo dAllUsersT etLabelRule,
+            GoreAndV olenceReported ur st csAvo dAllUsersT etLabelRule,
+            NsfwCard mageAvo dAllUsersT etLabelRule,
+            DoNotAmpl fyT etLabelAvo dRule,
+            NsfaH ghPrec s onT etLabelAvo dRule,
+          ) ++ L m edEngage ntBaseRules.t etRules
     )
 
-case object TimelineFavoritesPolicy
-    extends VisibilityPolicy(
-      tweetRules =
+case object T  l neFavor esPol cy
+    extends V s b l yPol cy(
+      t etRules =
         Seq(
-          DropOuterCommunityTweetsRule,
-          DropStaleTweetsRule,
+          DropOuterCommun yT etsRule,
+          DropStaleT etsRule,
         )
-          ++ TimelineProfileRules.baseTweetRules
+          ++ T  l neProf leRules.baseT etRules
           ++ Seq(
-            DynamicProductAdDropTweetLabelRule,
-            NsfwHighPrecisionTombstoneInnerQuotedTweetLabelRule,
-            SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
-            SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
-            SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule,
-            SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule,
-            SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule,
-            SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule,
-            SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule,
-            AbusePolicyEpisodicTweetLabelInterstitialRule,
-            EmergencyDynamicInterstitialRule,
-            ReportedTweetInterstitialRule,
-            ViewerMutesAuthorInterstitialRule,
-            ViewerBlocksAuthorInterstitialRule,
-            NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-            GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAllUsersTweetLabelRule,
-            GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-            NsfwCardImageAllUsersTweetLabelRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-            NsfwHighPrecisionTweetLabelAvoidRule,
-            NsfwHighRecallTweetLabelAvoidRule,
-            GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-            GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-            NsfwCardImageAvoidAllUsersTweetLabelRule,
-            DoNotAmplifyTweetLabelAvoidRule,
-            NsfaHighPrecisionTweetLabelAvoidRule,
-          ) ++ LimitedEngagementBaseRules.tweetRules,
-      deletedTweetRules = Seq(
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule
+            Dynam cProductAdDropT etLabelRule,
+            NsfwH ghPrec s onTombstone nnerQuotedT etLabelRule,
+            Sens  ve d aT etDropSett ngLevelTombstoneRules.Adult d aNsfwH ghPrec s onT etLabelDropSett ngLevelTombstoneRule,
+            Sens  ve d aT etDropSett ngLevelTombstoneRules.V olent d aGoreAndV olenceH ghPrec s onDropSett ngLeveTombstoneRule,
+            Sens  ve d aT etDropSett ngLevelTombstoneRules.Adult d aNsfwReported ur st csT etLabelDropSett ngLevelTombstoneRule,
+            Sens  ve d aT etDropSett ngLevelTombstoneRules.V olent d aGoreAndV olenceReported ur st csDropSett ngLevelTombstoneRule,
+            Sens  ve d aT etDropSett ngLevelTombstoneRules.Adult d aNsfwCard mageT etLabelDropSett ngLevelTombstoneRule,
+            Sens  ve d aT etDropSett ngLevelTombstoneRules.Ot rSens  ve d aNsfwUserT etFlagDropSett ngLevelTombstoneRule,
+            Sens  ve d aT etDropSett ngLevelTombstoneRules.Ot rSens  ve d aNsfwAdm nT etFlagDropSett ngLevelTombstoneRule,
+            AbusePol cyEp sod cT etLabel nterst  alRule,
+            E rgencyDynam c nterst  alRule,
+            ReportedT et nterst  alRule,
+            V e rMutesAuthor nterst  alRule,
+            V e rBlocksAuthor nterst  alRule,
+            NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+            GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+            NsfwReported ur st csAllUsersT etLabelRule,
+            GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+            NsfwCard mageAllUsersT etLabelRule,
+            Sens  ve d aT et nterst  alRules.Adult d aNsfwH ghPrec s onT etLabel nterst  alRule,
+            Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceH ghPrec s on nterst  alRule,
+            Sens  ve d aT et nterst  alRules.Adult d aNsfwReported ur st csT etLabel nterst  alRule,
+            Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceReported ur st cs nterst  alRule,
+            Sens  ve d aT et nterst  alRules.Adult d aNsfwCard mageT etLabel nterst  alRule,
+            Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwUserT etFlag nterst  alRule,
+            Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwAdm nT etFlag nterst  alRule,
+            NsfwH ghPrec s onT etLabelAvo dRule,
+            NsfwH ghRecallT etLabelAvo dRule,
+            GoreAndV olenceH ghPrec s onAvo dAllUsersT etLabelRule,
+            NsfwReported ur st csAvo dAllUsersT etLabelRule,
+            GoreAndV olenceReported ur st csAvo dAllUsersT etLabelRule,
+            NsfwCard mageAvo dAllUsersT etLabelRule,
+            DoNotAmpl fyT etLabelAvo dRule,
+            NsfaH ghPrec s onT etLabelAvo dRule,
+          ) ++ L m edEngage ntBaseRules.t etRules,
+      deletedT etRules = Seq(
+        TombstoneDeletedQuotedT etRule,
+        TombstoneBounceDeletedQuotedT etRule
       ),
-      userUnavailableStateRules = Seq(
-        SuspendedUserUnavailableInnerQuotedTweetTombstoneRule,
-        DeactivatedUserUnavailableInnerQuotedTweetTombstoneRule,
-        OffBoardedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ErasedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ProtectedUserUnavailableInnerQuotedTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule,
-        ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
+      userUnava lableStateRules = Seq(
+        SuspendedUserUnava lable nnerQuotedT etTombstoneRule,
+        Deact vatedUserUnava lable nnerQuotedT etTombstoneRule,
+        OffBoardedUserUnava lable nnerQuotedT etTombstoneRule,
+        ErasedUserUnava lable nnerQuotedT etTombstoneRule,
+        ProtectedUserUnava lable nnerQuotedT etTombstoneRule,
+        AuthorBlocksV e rUserUnava lable nnerQuotedT etTombstoneRule,
+        V e rBlocksAuthorUserUnava lable nnerQuotedT et nterst  alRule,
+        V e rMutesAuthorUserUnava lable nnerQuotedT et nterst  alRule
       ),
-      policyRuleParams = SensitiveMediaSettingsProfileTimelineBaseRules.policyRuleParams
+      pol cyRuleParams = Sens  ve d aSett ngsProf leT  l neBaseRules.pol cyRuleParams
     )
 
-case object ProfileMixerFavoritesPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropStaleTweetsRule,
-        DropExclusiveTweetContentRule,
-        DropOuterCommunityTweetsRule,
+case object Prof leM xerFavor esPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
+        DropStaleT etsRule,
+        DropExclus veT etContentRule,
+        DropOuterCommun yT etsRule,
       ),
-      deletedTweetRules = Seq(
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule
+      deletedT etRules = Seq(
+        TombstoneDeletedQuotedT etRule,
+        TombstoneBounceDeletedQuotedT etRule
       )
     )
 
-case object TimelineMediaPolicy
-    extends VisibilityPolicy(
-        TimelineProfileRules.baseTweetRules
+case object T  l ne d aPol cy
+    extends V s b l yPol cy(
+        T  l neProf leRules.baseT etRules
         ++ Seq(
-          NsfwHighPrecisionTombstoneInnerQuotedTweetLabelRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          ReportedTweetInterstitialRule,
-          ViewerMutesAuthorInnerQuotedTweetInterstitialRule,
-          ViewerBlocksAuthorInnerQuotedTweetInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-          NsfwHighPrecisionTweetLabelAvoidRule,
-          NsfwHighRecallTweetLabelAvoidRule,
-          GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAllUsersTweetLabelRule,
-          DoNotAmplifyTweetLabelAvoidRule,
-          NsfaHighPrecisionTweetLabelAvoidRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules,
-      deletedTweetRules = Seq(
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule
+          NsfwH ghPrec s onTombstone nnerQuotedT etLabelRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.Adult d aNsfwH ghPrec s onT etLabelDropSett ngLevelTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.V olent d aGoreAndV olenceH ghPrec s onDropSett ngLeveTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.Adult d aNsfwReported ur st csT etLabelDropSett ngLevelTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.V olent d aGoreAndV olenceReported ur st csDropSett ngLevelTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.Adult d aNsfwCard mageT etLabelDropSett ngLevelTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.Ot rSens  ve d aNsfwUserT etFlagDropSett ngLevelTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.Ot rSens  ve d aNsfwAdm nT etFlagDropSett ngLevelTombstoneRule,
+          AbusePol cyEp sod cT etLabel nterst  alRule,
+          E rgencyDynam c nterst  alRule,
+          ReportedT et nterst  alRule,
+          V e rMutesAuthor nnerQuotedT et nterst  alRule,
+          V e rBlocksAuthor nnerQuotedT et nterst  alRule,
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+          NsfwCard mageAllUsersT etLabelRule,
+          Sens  ve d aT et nterst  alRules.Adult d aNsfwH ghPrec s onT etLabel nterst  alRule,
+          Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceH ghPrec s on nterst  alRule,
+          Sens  ve d aT et nterst  alRules.Adult d aNsfwReported ur st csT etLabel nterst  alRule,
+          Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceReported ur st cs nterst  alRule,
+          Sens  ve d aT et nterst  alRules.Adult d aNsfwCard mageT etLabel nterst  alRule,
+          Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwUserT etFlag nterst  alRule,
+          Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwAdm nT etFlag nterst  alRule,
+          NsfwH ghPrec s onT etLabelAvo dRule,
+          NsfwH ghRecallT etLabelAvo dRule,
+          GoreAndV olenceH ghPrec s onAvo dAllUsersT etLabelRule,
+          NsfwReported ur st csAvo dAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAvo dAllUsersT etLabelRule,
+          NsfwCard mageAvo dAllUsersT etLabelRule,
+          DoNotAmpl fyT etLabelAvo dRule,
+          NsfaH ghPrec s onT etLabelAvo dRule,
+        ) ++ L m edEngage ntBaseRules.t etRules,
+      deletedT etRules = Seq(
+        TombstoneBounceDeletedOuterT etRule,
+        TombstoneDeletedQuotedT etRule,
+        TombstoneBounceDeletedQuotedT etRule
       ),
-      userUnavailableStateRules = Seq(
-        SuspendedUserUnavailableInnerQuotedTweetTombstoneRule,
-        DeactivatedUserUnavailableInnerQuotedTweetTombstoneRule,
-        OffBoardedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ErasedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ProtectedUserUnavailableInnerQuotedTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule,
-        ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
+      userUnava lableStateRules = Seq(
+        SuspendedUserUnava lable nnerQuotedT etTombstoneRule,
+        Deact vatedUserUnava lable nnerQuotedT etTombstoneRule,
+        OffBoardedUserUnava lable nnerQuotedT etTombstoneRule,
+        ErasedUserUnava lable nnerQuotedT etTombstoneRule,
+        ProtectedUserUnava lable nnerQuotedT etTombstoneRule,
+        AuthorBlocksV e rUserUnava lable nnerQuotedT etTombstoneRule,
+        V e rBlocksAuthorUserUnava lable nnerQuotedT et nterst  alRule,
+        V e rMutesAuthorUserUnava lable nnerQuotedT et nterst  alRule
       ),
-      policyRuleParams = SensitiveMediaSettingsProfileTimelineBaseRules.policyRuleParams
+      pol cyRuleParams = Sens  ve d aSett ngsProf leT  l neBaseRules.pol cyRuleParams
     )
 
-case object ProfileMixerMediaPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropStaleTweetsRule,
-        DropExclusiveTweetContentRule
+case object Prof leM xer d aPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
+        DropStaleT etsRule,
+        DropExclus veT etContentRule
       ),
-      deletedTweetRules = Seq(
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule
+      deletedT etRules = Seq(
+        TombstoneBounceDeletedOuterT etRule,
+        TombstoneDeletedQuotedT etRule,
+        TombstoneBounceDeletedQuotedT etRule
       )
     )
 
-object TimelineProfileRules {
+object T  l neProf leRules {
 
-  val baseTweetRules: Seq[Rule] = Seq(
-    TombstoneCommunityTweetsRule,
-    TombstoneCommunityTweetCommunityNotVisibleRule,
-    TombstoneProtectedCommunityTweetsRule,
-    TombstoneHiddenCommunityTweetsRule,
-    TombstoneAuthorRemovedCommunityTweetsRule,
-    SpamQuotedTweetLabelTombstoneRule,
-    SpamTweetLabelRule,
-    PdnaQuotedTweetLabelTombstoneRule,
-    PdnaTweetLabelRule,
-    BounceTweetLabelTombstoneRule,
-    TombstoneExclusiveQuotedTweetContentRule,
-    DropExclusiveTweetContentRule,
-    DropTrustedFriendsTweetContentRule
+  val baseT etRules: Seq[Rule] = Seq(
+    TombstoneCommun yT etsRule,
+    TombstoneCommun yT etCommun yNotV s bleRule,
+    TombstoneProtectedCommun yT etsRule,
+    TombstoneH ddenCommun yT etsRule,
+    TombstoneAuthorRemovedCommun yT etsRule,
+    SpamQuotedT etLabelTombstoneRule,
+    SpamT etLabelRule,
+    PdnaQuotedT etLabelTombstoneRule,
+    PdnaT etLabelRule,
+    BounceT etLabelTombstoneRule,
+    TombstoneExclus veQuotedT etContentRule,
+    DropExclus veT etContentRule,
+    DropTrustedFr endsT etContentRule
   )
 
-  val tweetRules: Seq[Rule] =
+  val t etRules: Seq[Rule] =
     Seq(
-      DynamicProductAdDropTweetLabelRule,
-      AbusePolicyEpisodicTweetLabelInterstitialRule,
-      EmergencyDynamicInterstitialRule,
-      ReportedTweetInterstitialRule,
-      NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-      GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-      NsfwReportedHeuristicsAllUsersTweetLabelRule,
-      GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-      NsfwCardImageAllUsersTweetLabelRule,
-      NsfwHighPrecisionTweetLabelAvoidRule,
-      NsfwHighRecallTweetLabelAvoidRule,
-      GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-      NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-      GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-      NsfwCardImageAvoidAllUsersTweetLabelRule,
-      NsfwTextTweetLabelAvoidRule,
-      DoNotAmplifyTweetLabelAvoidRule,
-      NsfaHighPrecisionTweetLabelAvoidRule,
-    ) ++ LimitedEngagementBaseRules.tweetRules
+      Dynam cProductAdDropT etLabelRule,
+      AbusePol cyEp sod cT etLabel nterst  alRule,
+      E rgencyDynam c nterst  alRule,
+      ReportedT et nterst  alRule,
+      NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+      GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+      NsfwReported ur st csAllUsersT etLabelRule,
+      GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+      NsfwCard mageAllUsersT etLabelRule,
+      NsfwH ghPrec s onT etLabelAvo dRule,
+      NsfwH ghRecallT etLabelAvo dRule,
+      GoreAndV olenceH ghPrec s onAvo dAllUsersT etLabelRule,
+      NsfwReported ur st csAvo dAllUsersT etLabelRule,
+      GoreAndV olenceReported ur st csAvo dAllUsersT etLabelRule,
+      NsfwCard mageAvo dAllUsersT etLabelRule,
+      NsfwTextT etLabelAvo dRule,
+      DoNotAmpl fyT etLabelAvo dRule,
+      NsfaH ghPrec s onT etLabelAvo dRule,
+    ) ++ L m edEngage ntBaseRules.t etRules
 
-  val tweetTombstoneRules: Seq[Rule] =
+  val t etTombstoneRules: Seq[Rule] =
     Seq(
-      DynamicProductAdDropTweetLabelRule,
-      NsfwHighPrecisionInnerQuotedTweetLabelRule,
-      SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
-      SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
-      SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule,
-      SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule,
-      SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule,
-      SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule,
-      SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule,
-      AbusePolicyEpisodicTweetLabelInterstitialRule,
-      EmergencyDynamicInterstitialRule,
-      ReportedTweetInterstitialRule,
-      ViewerMutesAuthorInnerQuotedTweetInterstitialRule,
-      ViewerBlocksAuthorInnerQuotedTweetInterstitialRule,
-      NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-      GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-      NsfwReportedHeuristicsAllUsersTweetLabelRule,
-      GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-      NsfwCardImageAllUsersTweetLabelRule,
-      SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-      SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-      SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-      SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-      SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-      SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-      SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-      NsfwHighPrecisionTweetLabelAvoidRule,
-      NsfwHighRecallTweetLabelAvoidRule,
-      GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-      NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-      GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-      NsfwCardImageAvoidAllUsersTweetLabelRule,
-      DoNotAmplifyTweetLabelAvoidRule,
-      NsfaHighPrecisionTweetLabelAvoidRule,
-    ) ++ LimitedEngagementBaseRules.tweetRules
+      Dynam cProductAdDropT etLabelRule,
+      NsfwH ghPrec s on nnerQuotedT etLabelRule,
+      Sens  ve d aT etDropSett ngLevelTombstoneRules.Adult d aNsfwH ghPrec s onT etLabelDropSett ngLevelTombstoneRule,
+      Sens  ve d aT etDropSett ngLevelTombstoneRules.V olent d aGoreAndV olenceH ghPrec s onDropSett ngLeveTombstoneRule,
+      Sens  ve d aT etDropSett ngLevelTombstoneRules.Adult d aNsfwReported ur st csT etLabelDropSett ngLevelTombstoneRule,
+      Sens  ve d aT etDropSett ngLevelTombstoneRules.V olent d aGoreAndV olenceReported ur st csDropSett ngLevelTombstoneRule,
+      Sens  ve d aT etDropSett ngLevelTombstoneRules.Adult d aNsfwCard mageT etLabelDropSett ngLevelTombstoneRule,
+      Sens  ve d aT etDropSett ngLevelTombstoneRules.Ot rSens  ve d aNsfwUserT etFlagDropSett ngLevelTombstoneRule,
+      Sens  ve d aT etDropSett ngLevelTombstoneRules.Ot rSens  ve d aNsfwAdm nT etFlagDropSett ngLevelTombstoneRule,
+      AbusePol cyEp sod cT etLabel nterst  alRule,
+      E rgencyDynam c nterst  alRule,
+      ReportedT et nterst  alRule,
+      V e rMutesAuthor nnerQuotedT et nterst  alRule,
+      V e rBlocksAuthor nnerQuotedT et nterst  alRule,
+      NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+      GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+      NsfwReported ur st csAllUsersT etLabelRule,
+      GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+      NsfwCard mageAllUsersT etLabelRule,
+      Sens  ve d aT et nterst  alRules.Adult d aNsfwH ghPrec s onT etLabel nterst  alRule,
+      Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceH ghPrec s on nterst  alRule,
+      Sens  ve d aT et nterst  alRules.Adult d aNsfwReported ur st csT etLabel nterst  alRule,
+      Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceReported ur st cs nterst  alRule,
+      Sens  ve d aT et nterst  alRules.Adult d aNsfwCard mageT etLabel nterst  alRule,
+      Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwUserT etFlag nterst  alRule,
+      Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwAdm nT etFlag nterst  alRule,
+      NsfwH ghPrec s onT etLabelAvo dRule,
+      NsfwH ghRecallT etLabelAvo dRule,
+      GoreAndV olenceH ghPrec s onAvo dAllUsersT etLabelRule,
+      NsfwReported ur st csAvo dAllUsersT etLabelRule,
+      GoreAndV olenceReported ur st csAvo dAllUsersT etLabelRule,
+      NsfwCard mageAvo dAllUsersT etLabelRule,
+      DoNotAmpl fyT etLabelAvo dRule,
+      NsfaH ghPrec s onT etLabelAvo dRule,
+    ) ++ L m edEngage ntBaseRules.t etRules
 }
 
-case object TimelineProfilePolicy
-    extends VisibilityPolicy(
-      tweetRules =
+case object T  l neProf lePol cy
+    extends V s b l yPol cy(
+      t etRules =
         Seq(
-          DropOuterCommunityTweetsRule,
-          DropStaleTweetsRule,
+          DropOuterCommun yT etsRule,
+          DropStaleT etsRule,
         )
-          ++ TimelineProfileRules.baseTweetRules
-          ++ TimelineProfileRules.tweetTombstoneRules,
-      deletedTweetRules = Seq(
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule,
+          ++ T  l neProf leRules.baseT etRules
+          ++ T  l neProf leRules.t etTombstoneRules,
+      deletedT etRules = Seq(
+        TombstoneBounceDeletedOuterT etRule,
+        TombstoneDeletedQuotedT etRule,
+        TombstoneBounceDeletedQuotedT etRule,
       ),
-      userUnavailableStateRules = Seq(
-        SuspendedUserUnavailableInnerQuotedTweetTombstoneRule,
-        DeactivatedUserUnavailableInnerQuotedTweetTombstoneRule,
-        OffBoardedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ErasedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ProtectedUserUnavailableInnerQuotedTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule,
-        ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
+      userUnava lableStateRules = Seq(
+        SuspendedUserUnava lable nnerQuotedT etTombstoneRule,
+        Deact vatedUserUnava lable nnerQuotedT etTombstoneRule,
+        OffBoardedUserUnava lable nnerQuotedT etTombstoneRule,
+        ErasedUserUnava lable nnerQuotedT etTombstoneRule,
+        ProtectedUserUnava lable nnerQuotedT etTombstoneRule,
+        AuthorBlocksV e rUserUnava lable nnerQuotedT etTombstoneRule,
+        V e rBlocksAuthorUserUnava lable nnerQuotedT et nterst  alRule,
+        V e rMutesAuthorUserUnava lable nnerQuotedT et nterst  alRule
       ),
-      policyRuleParams = SensitiveMediaSettingsProfileTimelineBaseRules.policyRuleParams
+      pol cyRuleParams = Sens  ve d aSett ngsProf leT  l neBaseRules.pol cyRuleParams
     )
 
-case object TimelineProfileAllPolicy
-    extends VisibilityPolicy(
-        TimelineProfileRules.baseTweetRules
-        ++ TimelineProfileRules.tweetTombstoneRules,
-      deletedTweetRules = Seq(
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule,
+case object T  l neProf leAllPol cy
+    extends V s b l yPol cy(
+        T  l neProf leRules.baseT etRules
+        ++ T  l neProf leRules.t etTombstoneRules,
+      deletedT etRules = Seq(
+        TombstoneBounceDeletedOuterT etRule,
+        TombstoneDeletedQuotedT etRule,
+        TombstoneBounceDeletedQuotedT etRule,
       ),
-      userUnavailableStateRules = Seq(
-        SuspendedUserUnavailableInnerQuotedTweetTombstoneRule,
-        DeactivatedUserUnavailableInnerQuotedTweetTombstoneRule,
-        OffBoardedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ErasedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ProtectedUserUnavailableInnerQuotedTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule,
-        ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
+      userUnava lableStateRules = Seq(
+        SuspendedUserUnava lable nnerQuotedT etTombstoneRule,
+        Deact vatedUserUnava lable nnerQuotedT etTombstoneRule,
+        OffBoardedUserUnava lable nnerQuotedT etTombstoneRule,
+        ErasedUserUnava lable nnerQuotedT etTombstoneRule,
+        ProtectedUserUnava lable nnerQuotedT etTombstoneRule,
+        AuthorBlocksV e rUserUnava lable nnerQuotedT etTombstoneRule,
+        V e rBlocksAuthorUserUnava lable nnerQuotedT et nterst  alRule,
+        V e rMutesAuthorUserUnava lable nnerQuotedT et nterst  alRule
       ),
-      policyRuleParams = SensitiveMediaSettingsProfileTimelineBaseRules.policyRuleParams
+      pol cyRuleParams = Sens  ve d aSett ngsProf leT  l neBaseRules.pol cyRuleParams
     )
 
-case object TimelineProfileSuperFollowsPolicy
-    extends VisibilityPolicy(
-      tweetRules =
+case object T  l neProf leSuperFollowsPol cy
+    extends V s b l yPol cy(
+      t etRules =
         Seq(
-          DropOuterCommunityTweetsRule
+          DropOuterCommun yT etsRule
         ) ++
-          VisibilityPolicy.baseTweetRules ++
-          TimelineProfileRules.tweetRules
+          V s b l yPol cy.baseT etRules ++
+          T  l neProf leRules.t etRules
     )
 
-case object TimelineReactiveBlendingPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
+case object T  l neReact veBlend ngPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++
         Seq(
-          ViewerHasMatchingMutedKeywordForHomeTimelineRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
+          V e rHasMatch ngMutedKeywordForHo T  l neRule,
+          AbusePol cyEp sod cT etLabel nterst  alRule,
+          E rgencyDynam c nterst  alRule,
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+          NsfwCard mageAllUsersT etLabelRule,
+        ) ++ L m edEngage ntBaseRules.t etRules
     )
 
-case object TimelineHomePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseQuotedTweetTombstoneRules ++
-        VisibilityPolicy.baseTweetRules ++
+case object T  l neHo Pol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseQuotedT etTombstoneRules ++
+        V s b l yPol cy.baseT etRules ++
         Seq(
-          NullcastedTweetRule,
-          DropOuterCommunityTweetsRule,
-          DynamicProductAdDropTweetLabelRule,
-          MutedRetweetsRule,
-          DropAllAuthorRemovedCommunityTweetsRule,
-          DropAllHiddenCommunityTweetsRule,
-          AbusePolicyEpisodicTweetLabelDropRule,
-          EmergencyDropRule,
-          SafetyCrisisLevel4DropRule,
-          ViewerHasMatchingMutedKeywordForHomeTimelineRule,
-          SensitiveMediaTweetDropRules.AdultMediaNsfwHighPrecisionTweetLabelDropRule,
-          SensitiveMediaTweetDropRules.ViolentMediaGoreAndViolenceHighPrecisionDropRule,
-          SensitiveMediaTweetDropRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropRule,
-          SensitiveMediaTweetDropRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropRule,
-          SensitiveMediaTweetDropRules.AdultMediaNsfwCardImageTweetLabelDropRule,
-          SensitiveMediaTweetDropRules.OtherSensitiveMediaNsfwUserTweetFlagDropRule,
-          SensitiveMediaTweetDropRules.OtherSensitiveMediaNsfwAdminTweetFlagDropRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-          NsfwHighPrecisionTweetLabelAvoidRule,
-          NsfwHighRecallTweetLabelAvoidRule,
-          GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAllUsersTweetLabelRule,
-          DoNotAmplifyTweetLabelAvoidRule,
-          NsfaHighPrecisionTweetLabelAvoidRule,
+          NullcastedT etRule,
+          DropOuterCommun yT etsRule,
+          Dynam cProductAdDropT etLabelRule,
+          MutedRet etsRule,
+          DropAllAuthorRemovedCommun yT etsRule,
+          DropAllH ddenCommun yT etsRule,
+          AbusePol cyEp sod cT etLabelDropRule,
+          E rgencyDropRule,
+          SafetyCr s sLevel4DropRule,
+          V e rHasMatch ngMutedKeywordForHo T  l neRule,
+          Sens  ve d aT etDropRules.Adult d aNsfwH ghPrec s onT etLabelDropRule,
+          Sens  ve d aT etDropRules.V olent d aGoreAndV olenceH ghPrec s onDropRule,
+          Sens  ve d aT etDropRules.Adult d aNsfwReported ur st csT etLabelDropRule,
+          Sens  ve d aT etDropRules.V olent d aGoreAndV olenceReported ur st csDropRule,
+          Sens  ve d aT etDropRules.Adult d aNsfwCard mageT etLabelDropRule,
+          Sens  ve d aT etDropRules.Ot rSens  ve d aNsfwUserT etFlagDropRule,
+          Sens  ve d aT etDropRules.Ot rSens  ve d aNsfwAdm nT etFlagDropRule,
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+          NsfwCard mageAllUsersT etLabelRule,
+          Sens  ve d aT et nterst  alRules.Adult d aNsfwH ghPrec s onT etLabel nterst  alRule,
+          Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceH ghPrec s on nterst  alRule,
+          Sens  ve d aT et nterst  alRules.Adult d aNsfwReported ur st csT etLabel nterst  alRule,
+          Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceReported ur st cs nterst  alRule,
+          Sens  ve d aT et nterst  alRules.Adult d aNsfwCard mageT etLabel nterst  alRule,
+          Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwUserT etFlag nterst  alRule,
+          Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwAdm nT etFlag nterst  alRule,
+          NsfwH ghPrec s onT etLabelAvo dRule,
+          NsfwH ghRecallT etLabelAvo dRule,
+          GoreAndV olenceH ghPrec s onAvo dAllUsersT etLabelRule,
+          NsfwReported ur st csAvo dAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAvo dAllUsersT etLabelRule,
+          NsfwCard mageAvo dAllUsersT etLabelRule,
+          DoNotAmpl fyT etLabelAvo dRule,
+          NsfaH ghPrec s onT etLabelAvo dRule,
         )
         ++
-          LimitedEngagementBaseRules.tweetRules,
+          L m edEngage ntBaseRules.t etRules,
       userRules = Seq(
-        ViewerMutesAuthorRule,
-        ViewerBlocksAuthorRule,
-        DeciderableAuthorBlocksViewerDropRule,
+        V e rMutesAuthorRule,
+        V e rBlocksAuthorRule,
+        Dec derableAuthorBlocksV e rDropRule,
         ProtectedAuthorDropRule,
         SuspendedAuthorRule,
-        DeactivatedAuthorRule,
+        Deact vatedAuthorRule,
         ErasedAuthorRule,
         OffboardedAuthorRule,
         DropTakendownUserRule
       ),
-      policyRuleParams = SensitiveMediaSettingsTimelineHomeBaseRules.policyRuleParams
+      pol cyRuleParams = Sens  ve d aSett ngsT  l neHo BaseRules.pol cyRuleParams
     )
 
-case object BaseTimelineHomePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseQuotedTweetTombstoneRules ++
-        VisibilityPolicy.baseTweetRules ++
+case object BaseT  l neHo Pol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseQuotedT etTombstoneRules ++
+        V s b l yPol cy.baseT etRules ++
         Seq(
-          NullcastedTweetRule,
-          DropOuterCommunityTweetsRule,
-          DynamicProductAdDropTweetLabelRule,
-          MutedRetweetsRule,
-          DropAllAuthorRemovedCommunityTweetsRule,
-          DropAllHiddenCommunityTweetsRule,
-          AbusePolicyEpisodicTweetLabelDropRule,
-          EmergencyDropRule,
-          SafetyCrisisLevel4DropRule,
-          ViewerHasMatchingMutedKeywordForHomeTimelineRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          NsfwHighPrecisionTweetLabelAvoidRule,
-          NsfwHighRecallTweetLabelAvoidRule,
-          GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAllUsersTweetLabelRule,
-          DoNotAmplifyTweetLabelAvoidRule,
-          NsfaHighPrecisionTweetLabelAvoidRule,
+          NullcastedT etRule,
+          DropOuterCommun yT etsRule,
+          Dynam cProductAdDropT etLabelRule,
+          MutedRet etsRule,
+          DropAllAuthorRemovedCommun yT etsRule,
+          DropAllH ddenCommun yT etsRule,
+          AbusePol cyEp sod cT etLabelDropRule,
+          E rgencyDropRule,
+          SafetyCr s sLevel4DropRule,
+          V e rHasMatch ngMutedKeywordForHo T  l neRule,
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+          NsfwCard mageAllUsersT etLabelRule,
+          NsfwH ghPrec s onT etLabelAvo dRule,
+          NsfwH ghRecallT etLabelAvo dRule,
+          GoreAndV olenceH ghPrec s onAvo dAllUsersT etLabelRule,
+          NsfwReported ur st csAvo dAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAvo dAllUsersT etLabelRule,
+          NsfwCard mageAvo dAllUsersT etLabelRule,
+          DoNotAmpl fyT etLabelAvo dRule,
+          NsfaH ghPrec s onT etLabelAvo dRule,
         )
         ++
-          LimitedEngagementBaseRules.tweetRules,
+          L m edEngage ntBaseRules.t etRules,
       userRules = Seq(
-        ViewerMutesAuthorRule,
-        ViewerBlocksAuthorRule,
-        DeciderableAuthorBlocksViewerDropRule,
+        V e rMutesAuthorRule,
+        V e rBlocksAuthorRule,
+        Dec derableAuthorBlocksV e rDropRule,
         ProtectedAuthorDropRule,
         SuspendedAuthorRule,
-        DeactivatedAuthorRule,
+        Deact vatedAuthorRule,
         ErasedAuthorRule,
         OffboardedAuthorRule,
         DropTakendownUserRule
       )
     )
 
-case object TimelineHomeHydrationPolicy
-    extends VisibilityPolicy(
-      tweetRules =
-          VisibilityPolicy.baseQuotedTweetTombstoneRules ++
-          VisibilityPolicy.baseTweetRules ++
+case object T  l neHo Hydrat onPol cy
+    extends V s b l yPol cy(
+      t etRules =
+          V s b l yPol cy.baseQuotedT etTombstoneRules ++
+          V s b l yPol cy.baseT etRules ++
           Seq(
-            SensitiveMediaTweetDropRules.AdultMediaNsfwHighPrecisionTweetLabelDropRule,
-            SensitiveMediaTweetDropRules.ViolentMediaGoreAndViolenceHighPrecisionDropRule,
-            SensitiveMediaTweetDropRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropRule,
-            SensitiveMediaTweetDropRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropRule,
-            SensitiveMediaTweetDropRules.AdultMediaNsfwCardImageTweetLabelDropRule,
-            SensitiveMediaTweetDropRules.OtherSensitiveMediaNsfwUserTweetFlagDropRule,
-            SensitiveMediaTweetDropRules.OtherSensitiveMediaNsfwAdminTweetFlagDropRule,
-            AbusePolicyEpisodicTweetLabelInterstitialRule,
-            EmergencyDynamicInterstitialRule,
-            NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-            GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAllUsersTweetLabelRule,
-            GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-            NsfwCardImageAllUsersTweetLabelRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-            NsfaHighPrecisionTweetLabelAvoidRule,
-            NsfwHighPrecisionTweetLabelAvoidRule,
-            NsfwHighRecallTweetLabelAvoidRule,
-          ) ++ LimitedEngagementBaseRules.tweetRules,
-      policyRuleParams = SensitiveMediaSettingsTimelineHomeBaseRules.policyRuleParams
+            Sens  ve d aT etDropRules.Adult d aNsfwH ghPrec s onT etLabelDropRule,
+            Sens  ve d aT etDropRules.V olent d aGoreAndV olenceH ghPrec s onDropRule,
+            Sens  ve d aT etDropRules.Adult d aNsfwReported ur st csT etLabelDropRule,
+            Sens  ve d aT etDropRules.V olent d aGoreAndV olenceReported ur st csDropRule,
+            Sens  ve d aT etDropRules.Adult d aNsfwCard mageT etLabelDropRule,
+            Sens  ve d aT etDropRules.Ot rSens  ve d aNsfwUserT etFlagDropRule,
+            Sens  ve d aT etDropRules.Ot rSens  ve d aNsfwAdm nT etFlagDropRule,
+            AbusePol cyEp sod cT etLabel nterst  alRule,
+            E rgencyDynam c nterst  alRule,
+            NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+            GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+            NsfwReported ur st csAllUsersT etLabelRule,
+            GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+            NsfwCard mageAllUsersT etLabelRule,
+            Sens  ve d aT et nterst  alRules.Adult d aNsfwH ghPrec s onT etLabel nterst  alRule,
+            Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceH ghPrec s on nterst  alRule,
+            Sens  ve d aT et nterst  alRules.Adult d aNsfwReported ur st csT etLabel nterst  alRule,
+            Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceReported ur st cs nterst  alRule,
+            Sens  ve d aT et nterst  alRules.Adult d aNsfwCard mageT etLabel nterst  alRule,
+            Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwUserT etFlag nterst  alRule,
+            Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwAdm nT etFlag nterst  alRule,
+            NsfaH ghPrec s onT etLabelAvo dRule,
+            NsfwH ghPrec s onT etLabelAvo dRule,
+            NsfwH ghRecallT etLabelAvo dRule,
+          ) ++ L m edEngage ntBaseRules.t etRules,
+      pol cyRuleParams = Sens  ve d aSett ngsT  l neHo BaseRules.pol cyRuleParams
     )
 
-case object TimelineHomeLatestPolicy
-    extends VisibilityPolicy(
-      tweetRules =
-          VisibilityPolicy.baseQuotedTweetTombstoneRules ++
-          VisibilityPolicy.baseTweetRules ++
+case object T  l neHo LatestPol cy
+    extends V s b l yPol cy(
+      t etRules =
+          V s b l yPol cy.baseQuotedT etTombstoneRules ++
+          V s b l yPol cy.baseT etRules ++
           Seq(
-            NullcastedTweetRule,
-            DropOuterCommunityTweetsRule,
-            DynamicProductAdDropTweetLabelRule,
-            MutedRetweetsRule,
-            ViewerHasMatchingMutedKeywordForHomeTimelineRule,
-            SensitiveMediaTweetDropRules.AdultMediaNsfwHighPrecisionTweetLabelDropRule,
-            SensitiveMediaTweetDropRules.ViolentMediaGoreAndViolenceHighPrecisionDropRule,
-            SensitiveMediaTweetDropRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropRule,
-            SensitiveMediaTweetDropRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropRule,
-            SensitiveMediaTweetDropRules.AdultMediaNsfwCardImageTweetLabelDropRule,
-            SensitiveMediaTweetDropRules.OtherSensitiveMediaNsfwUserTweetFlagDropRule,
-            SensitiveMediaTweetDropRules.OtherSensitiveMediaNsfwAdminTweetFlagDropRule,
-            AbusePolicyEpisodicTweetLabelInterstitialRule,
-            EmergencyDynamicInterstitialRule,
-            NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-            GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAllUsersTweetLabelRule,
-            GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-            NsfwCardImageAllUsersTweetLabelRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-            NsfwHighPrecisionTweetLabelAvoidRule,
-            NsfwHighRecallTweetLabelAvoidRule,
-            GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
-            GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-            NsfwCardImageAvoidAllUsersTweetLabelRule,
-            DoNotAmplifyTweetLabelAvoidRule,
-            NsfaHighPrecisionTweetLabelAvoidRule,
+            NullcastedT etRule,
+            DropOuterCommun yT etsRule,
+            Dynam cProductAdDropT etLabelRule,
+            MutedRet etsRule,
+            V e rHasMatch ngMutedKeywordForHo T  l neRule,
+            Sens  ve d aT etDropRules.Adult d aNsfwH ghPrec s onT etLabelDropRule,
+            Sens  ve d aT etDropRules.V olent d aGoreAndV olenceH ghPrec s onDropRule,
+            Sens  ve d aT etDropRules.Adult d aNsfwReported ur st csT etLabelDropRule,
+            Sens  ve d aT etDropRules.V olent d aGoreAndV olenceReported ur st csDropRule,
+            Sens  ve d aT etDropRules.Adult d aNsfwCard mageT etLabelDropRule,
+            Sens  ve d aT etDropRules.Ot rSens  ve d aNsfwUserT etFlagDropRule,
+            Sens  ve d aT etDropRules.Ot rSens  ve d aNsfwAdm nT etFlagDropRule,
+            AbusePol cyEp sod cT etLabel nterst  alRule,
+            E rgencyDynam c nterst  alRule,
+            NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+            GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+            NsfwReported ur st csAllUsersT etLabelRule,
+            GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+            NsfwCard mageAllUsersT etLabelRule,
+            Sens  ve d aT et nterst  alRules.Adult d aNsfwH ghPrec s onT etLabel nterst  alRule,
+            Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceH ghPrec s on nterst  alRule,
+            Sens  ve d aT et nterst  alRules.Adult d aNsfwReported ur st csT etLabel nterst  alRule,
+            Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceReported ur st cs nterst  alRule,
+            Sens  ve d aT et nterst  alRules.Adult d aNsfwCard mageT etLabel nterst  alRule,
+            Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwUserT etFlag nterst  alRule,
+            Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwAdm nT etFlag nterst  alRule,
+            NsfwH ghPrec s onT etLabelAvo dRule,
+            NsfwH ghRecallT etLabelAvo dRule,
+            GoreAndV olenceH ghPrec s onAvo dAllUsersT etLabelRule,
+            NsfwReported ur st csAvo dAllUsersT etLabelRule,
+            GoreAndV olenceReported ur st csAvo dAllUsersT etLabelRule,
+            NsfwCard mageAvo dAllUsersT etLabelRule,
+            DoNotAmpl fyT etLabelAvo dRule,
+            NsfaH ghPrec s onT etLabelAvo dRule,
           )
           ++
-            LimitedEngagementBaseRules.tweetRules,
+            L m edEngage ntBaseRules.t etRules,
       userRules = Seq(
-        ViewerMutesAuthorRule,
-        ViewerBlocksAuthorRule,
-        DeciderableAuthorBlocksViewerDropRule,
+        V e rMutesAuthorRule,
+        V e rBlocksAuthorRule,
+        Dec derableAuthorBlocksV e rDropRule,
         ProtectedAuthorDropRule,
         SuspendedAuthorRule,
-        DeactivatedAuthorRule,
+        Deact vatedAuthorRule,
         ErasedAuthorRule,
         OffboardedAuthorRule,
         DropTakendownUserRule
       ),
-      policyRuleParams = SensitiveMediaSettingsTimelineHomeBaseRules.policyRuleParams
+      pol cyRuleParams = Sens  ve d aSett ngsT  l neHo BaseRules.pol cyRuleParams
     )
 
-case object TimelineModeratedTweetsHydrationPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
+case object T  l neModeratedT etsHydrat onPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++
         Seq(
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+          NsfwCard mageAllUsersT etLabelRule,
+        ) ++ L m edEngage ntBaseRules.t etRules
     )
 
-case object SignalsReactionsPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        AuthorBlocksViewerDropRule
-      ) ++ LimitedEngagementBaseRules.tweetRules
+case object S gnalsReact onsPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
+        AuthorBlocksV e rDropRule
+      ) ++ L m edEngage ntBaseRules.t etRules
     )
 
-case object SignalsTweetReactingUsersPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules :+
-        NsfwVideoTweetLabelDropRule :+
-        NsfwTextAllUsersTweetLabelDropRule,
+case object S gnalsT etReact ngUsersPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules :+
+        NsfwV deoT etLabelDropRule :+
+        NsfwTextAllUsersT etLabelDropRule,
       userRules = Seq(
-        CompromisedNonFollowerWithUqfRule,
-        EngagementSpammerNonFollowerWithUqfRule,
-        LowQualityNonFollowerWithUqfRule,
-        ReadOnlyNonFollowerWithUqfRule,
-        SpamHighRecallNonFollowerWithUqfRule,
-        AuthorBlocksViewerDropRule,
+        Comprom sedNonFollo rW hUqfRule,
+        Engage ntSpam rNonFollo rW hUqfRule,
+        LowQual yNonFollo rW hUqfRule,
+        ReadOnlyNonFollo rW hUqfRule,
+        SpamH ghRecallNonFollo rW hUqfRule,
+        AuthorBlocksV e rDropRule,
         ProtectedAuthorDropRule,
         SuspendedAuthorRule,
         NsfwTextNonAuthorDropRule
       )
     )
 
-case object SocialProofPolicy
-    extends VisibilityPolicy(
-      tweetRules = FilterDefaultPolicy.tweetRules,
+case object Soc alProofPol cy
+    extends V s b l yPol cy(
+      t etRules = F lterDefaultPol cy.t etRules,
       userRules = Seq(
         ProtectedAuthorDropRule,
         SuspendedAuthorRule,
-        AuthorBlocksViewerDropRule,
-        ViewerBlocksAuthorRule
+        AuthorBlocksV e rDropRule,
+        V e rBlocksAuthorRule
       )
     )
 
-case object TimelineLikedByPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules :+
-        NsfwVideoTweetLabelDropRule :+
-        NsfwTextAllUsersTweetLabelDropRule,
-      userRules = TimelineLikedByRules.UserRules :+ NsfwTextNonAuthorDropRule
+case object T  l neL kedByPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules :+
+        NsfwV deoT etLabelDropRule :+
+        NsfwTextAllUsersT etLabelDropRule,
+      userRules = T  l neL kedByRules.UserRules :+ NsfwTextNonAuthorDropRule
     )
 
-case object TimelineRetweetedByPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules :+
-        NsfwVideoTweetLabelDropRule :+
-        NsfwTextAllUsersTweetLabelDropRule,
+case object T  l neRet etedByPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules :+
+        NsfwV deoT etLabelDropRule :+
+        NsfwTextAllUsersT etLabelDropRule,
       userRules = Seq(
-        CompromisedNonFollowerWithUqfRule,
-        EngagementSpammerNonFollowerWithUqfRule,
-        LowQualityNonFollowerWithUqfRule,
-        ReadOnlyNonFollowerWithUqfRule,
-        SpamHighRecallNonFollowerWithUqfRule,
+        Comprom sedNonFollo rW hUqfRule,
+        Engage ntSpam rNonFollo rW hUqfRule,
+        LowQual yNonFollo rW hUqfRule,
+        ReadOnlyNonFollo rW hUqfRule,
+        SpamH ghRecallNonFollo rW hUqfRule,
         NsfwTextNonAuthorDropRule
       )
     )
 
-case object TimelineSuperLikedByPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules :+
-        NsfwVideoTweetLabelDropRule :+
-        NsfwTextAllUsersTweetLabelDropRule,
+case object T  l neSuperL kedByPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules :+
+        NsfwV deoT etLabelDropRule :+
+        NsfwTextAllUsersT etLabelDropRule,
       userRules = Seq(
-        CompromisedNonFollowerWithUqfRule,
-        EngagementSpammerNonFollowerWithUqfRule,
-        LowQualityNonFollowerWithUqfRule,
-        ReadOnlyNonFollowerWithUqfRule,
-        SpamHighRecallNonFollowerWithUqfRule,
+        Comprom sedNonFollo rW hUqfRule,
+        Engage ntSpam rNonFollo rW hUqfRule,
+        LowQual yNonFollo rW hUqfRule,
+        ReadOnlyNonFollo rW hUqfRule,
+        SpamH ghRecallNonFollo rW hUqfRule,
         NsfwTextNonAuthorDropRule
       )
     )
 
-case object TimelineContentControlsPolicy
-    extends VisibilityPolicy(
-      tweetRules = TopicsLandingPageTopicRecommendationsPolicy.tweetRules,
-      userRules = TopicsLandingPageTopicRecommendationsPolicy.userRules
+case object T  l neContentControlsPol cy
+    extends V s b l yPol cy(
+      t etRules = Top csLand ngPageTop cRecom ndat onsPol cy.t etRules,
+      userRules = Top csLand ngPageTop cRecom ndat onsPol cy.userRules
     )
 
-case object TimelineConversationsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
+case object T  l neConversat onsPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++
         Seq(
-          AbusiveNonFollowerTweetLabelRule,
-          LowQualityTweetLabelDropRule,
-          SpamHighRecallTweetLabelDropRule,
-          DuplicateContentTweetLabelDropRule,
-          BystanderAbusiveNonFollowerTweetLabelRule,
-          UntrustedUrlAllViewersTweetLabelRule,
-          DownrankSpamReplyAllViewersTweetLabelRule,
-          SmyteSpamTweetLabelDropRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule,
-          MutedKeywordForTweetRepliesInterstitialRule,
-          ReportedTweetInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-          AbusiveHighRecallNonFollowerTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules,
+          Abus veNonFollo rT etLabelRule,
+          LowQual yT etLabelDropRule,
+          SpamH ghRecallT etLabelDropRule,
+          Dupl cateContentT etLabelDropRule,
+          BystanderAbus veNonFollo rT etLabelRule,
+          UntrustedUrlAllV e rsT etLabelRule,
+          DownrankSpamReplyAllV e rsT etLabelRule,
+          S teSpamT etLabelDropRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.Adult d aNsfwH ghPrec s onT etLabelDropSett ngLevelTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.V olent d aGoreAndV olenceH ghPrec s onDropSett ngLeveTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.Adult d aNsfwReported ur st csT etLabelDropSett ngLevelTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.V olent d aGoreAndV olenceReported ur st csDropSett ngLevelTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.Adult d aNsfwCard mageT etLabelDropSett ngLevelTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.Ot rSens  ve d aNsfwUserT etFlagDropSett ngLevelTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.Ot rSens  ve d aNsfwAdm nT etFlagDropSett ngLevelTombstoneRule,
+          MutedKeywordForT etRepl es nterst  alRule,
+          ReportedT et nterst  alRule,
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+          NsfwCard mageAllUsersT etLabelRule,
+          Sens  ve d aT et nterst  alRules.Adult d aNsfwH ghPrec s onT etLabel nterst  alRule,
+          Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceH ghPrec s on nterst  alRule,
+          Sens  ve d aT et nterst  alRules.Adult d aNsfwReported ur st csT etLabel nterst  alRule,
+          Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceReported ur st cs nterst  alRule,
+          Sens  ve d aT et nterst  alRules.Adult d aNsfwCard mageT etLabel nterst  alRule,
+          Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwUserT etFlag nterst  alRule,
+          Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwAdm nT etFlag nterst  alRule,
+          Abus veH ghRecallNonFollo rT etLabelRule,
+        ) ++ L m edEngage ntBaseRules.t etRules,
       userRules = Seq(
-        AbusiveRule,
-        LowQualityRule,
+        Abus veRule,
+        LowQual yRule,
         ReadOnlyRule,
-        LowQualityHighRecallRule,
-        CompromisedRule,
-        SpamHighRecallRule,
-        AbusiveHighRecallRule,
-        DownrankSpamReplyAllViewersRule,
+        LowQual yH ghRecallRule,
+        Comprom sedRule,
+        SpamH ghRecallRule,
+        Abus veH ghRecallRule,
+        DownrankSpamReplyAllV e rsRule,
       ),
-      policyRuleParams = SensitiveMediaSettingsConversationBaseRules.policyRuleParams
+      pol cyRuleParams = Sens  ve d aSett ngsConversat onBaseRules.pol cyRuleParams
     )
 
-case object TimelineFollowingActivityPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
+case object T  l neFollow ngAct v yPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++
         Seq(
-          AbusiveTweetLabelRule,
-          BystanderAbusiveTweetLabelRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
+          Abus veT etLabelRule,
+          BystanderAbus veT etLabelRule,
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+          NsfwCard mageAllUsersT etLabelRule,
+        ) ++ L m edEngage ntBaseRules.t etRules
     )
 
-case object TimelineInjectionPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        SafetyCrisisLevel2DropRule,
-        SafetyCrisisLevel3DropRule,
-        SafetyCrisisLevel4DropRule,
-        DoNotAmplifyDropRule,
-        HighProactiveTosScoreTweetLabelDropRule
+case object T  l ne nject onPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++ Seq(
+        NsfwH ghPrec s onT etLabelRule,
+        GoreAndV olenceH ghPrec s onT etLabelRule,
+        NsfwReported ur st csT etLabelRule,
+        GoreAndV olenceReported ur st csT etLabelRule,
+        NsfwCard mageT etLabelRule,
+        NsfwH ghRecallT etLabelRule,
+        NsfwV deoT etLabelDropRule,
+        NsfwTextT etLabelDropRule,
+        SafetyCr s sLevel2DropRule,
+        SafetyCr s sLevel3DropRule,
+        SafetyCr s sLevel4DropRule,
+        DoNotAmpl fyDropRule,
+        H ghProact veTosScoreT etLabelDropRule
       ),
       userRules = Seq(
-        DoNotAmplifyNonFollowerRule,
-        NotGraduatedNonFollowerRule,
-        LikelyIvsLabelNonFollowerDropUserRule,
+        DoNotAmpl fyNonFollo rRule,
+        NotGraduatedNonFollo rRule,
+        L kely vsLabelNonFollo rDropUserRule,
         NsfwTextNonAuthorDropRule
       )
     )
 
-case object TimelineMentionsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
+case object T  l ne nt onsPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++
         Seq(
-          LowQualityTweetLabelDropRule,
-          SpamHighRecallTweetLabelDropRule,
-          DuplicateContentTweetLabelDropRule,
-          DuplicateMentionUqfTweetLabelRule,
-          LowQualityMentionTweetLabelRule,
-          SmyteSpamTweetLabelDropRule,
-          ToxicityReplyFilterDropNotificationRule,
-          AbusiveUqfNonFollowerTweetLabelRule,
-          UntrustedUrlUqfNonFollowerTweetLabelRule,
-          DownrankSpamReplyUqfNonFollowerTweetLabelRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules,
+          LowQual yT etLabelDropRule,
+          SpamH ghRecallT etLabelDropRule,
+          Dupl cateContentT etLabelDropRule,
+          Dupl cate nt onUqfT etLabelRule,
+          LowQual y nt onT etLabelRule,
+          S teSpamT etLabelDropRule,
+          Tox c yReplyF lterDropNot f cat onRule,
+          Abus veUqfNonFollo rT etLabelRule,
+          UntrustedUrlUqfNonFollo rT etLabelRule,
+          DownrankSpamReplyUqfNonFollo rT etLabelRule,
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+          NsfwCard mageAllUsersT etLabelRule,
+        ) ++ L m edEngage ntBaseRules.t etRules,
       userRules = Seq(
-        AbusiveRule,
-        LowQualityRule,
+        Abus veRule,
+        LowQual yRule,
         ReadOnlyRule,
-        CompromisedRule,
-        SpamHighRecallRule,
-        DuplicateContentRule,
-        AbusiveHighRecallRule,
-        EngagementSpammerNonFollowerWithUqfRule,
-        EngagementSpammerHighRecallNonFollowerWithUqfRule,
-        DownrankSpamReplyNonFollowerWithUqfRule
+        Comprom sedRule,
+        SpamH ghRecallRule,
+        Dupl cateContentRule,
+        Abus veH ghRecallRule,
+        Engage ntSpam rNonFollo rW hUqfRule,
+        Engage ntSpam rH ghRecallNonFollo rW hUqfRule,
+        DownrankSpamReplyNonFollo rW hUqfRule
       )
     )
 
-case object TweetEngagersPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules,
+case object T etEngagersPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules,
       userRules = Seq(
-        CompromisedNonFollowerWithUqfRule,
-        EngagementSpammerNonFollowerWithUqfRule,
-        LowQualityNonFollowerWithUqfRule,
-        ReadOnlyNonFollowerWithUqfRule,
-        SpamHighRecallNonFollowerWithUqfRule
+        Comprom sedNonFollo rW hUqfRule,
+        Engage ntSpam rNonFollo rW hUqfRule,
+        LowQual yNonFollo rW hUqfRule,
+        ReadOnlyNonFollo rW hUqfRule,
+        SpamH ghRecallNonFollo rW hUqfRule
       )
     )
 
-case object TweetWritesApiPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusePolicyEpisodicTweetLabelInterstitialRule,
-        EmergencyDynamicInterstitialRule,
-      ) ++ LimitedEngagementBaseRules.tweetRules
+case object T etWr esAp Pol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++ Seq(
+        AbusePol cyEp sod cT etLabel nterst  alRule,
+        E rgencyDynam c nterst  alRule,
+      ) ++ L m edEngage ntBaseRules.t etRules
     )
 
-case object QuotedTweetRulesPolicy
-    extends VisibilityPolicy(
-      quotedTweetRules = Seq(
-        DeactivatedAuthorRule,
+case object QuotedT etRulesPol cy
+    extends V s b l yPol cy(
+      quotedT etRules = Seq(
+        Deact vatedAuthorRule,
         ErasedAuthorRule,
         OffboardedAuthorRule,
         SuspendedAuthorRule,
         AuthorBlocksOuterAuthorRule,
-        ViewerBlocksAuthorRule,
-        AuthorBlocksViewerDropRule,
-        ViewerMutesAndDoesNotFollowAuthorRule,
-        ProtectedQuoteTweetAuthorRule
+        V e rBlocksAuthorRule,
+        AuthorBlocksV e rDropRule,
+        V e rMutesAndDoesNotFollowAuthorRule,
+        ProtectedQuoteT etAuthorRule
       )
     )
 
-case object TweetDetailPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
+case object T etDeta lPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++
         Seq(
-          AuthorBlocksViewerDropRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-          NsfwHighPrecisionTweetLabelAvoidRule,
-          NsfwHighRecallTweetLabelAvoidRule,
-          GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAdPlacementAllUsersTweetLabelRule,
-          DoNotAmplifyTweetLabelAvoidRule,
-          NsfaHighPrecisionTweetLabelAvoidRule,
-          MutedKeywordForQuotedTweetTweetDetailInterstitialRule,
+          AuthorBlocksV e rDropRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.Adult d aNsfwH ghPrec s onT etLabelDropSett ngLevelTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.V olent d aGoreAndV olenceH ghPrec s onDropSett ngLeveTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.Adult d aNsfwReported ur st csT etLabelDropSett ngLevelTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.V olent d aGoreAndV olenceReported ur st csDropSett ngLevelTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.Adult d aNsfwCard mageT etLabelDropSett ngLevelTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.Ot rSens  ve d aNsfwUserT etFlagDropSett ngLevelTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.Ot rSens  ve d aNsfwAdm nT etFlagDropSett ngLevelTombstoneRule,
+          AbusePol cyEp sod cT etLabel nterst  alRule,
+          E rgencyDynam c nterst  alRule,
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+          NsfwCard mageAllUsersT etLabelRule,
+          Sens  ve d aT et nterst  alRules.Adult d aNsfwH ghPrec s onT etLabel nterst  alRule,
+          Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceH ghPrec s on nterst  alRule,
+          Sens  ve d aT et nterst  alRules.Adult d aNsfwReported ur st csT etLabel nterst  alRule,
+          Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceReported ur st cs nterst  alRule,
+          Sens  ve d aT et nterst  alRules.Adult d aNsfwCard mageT etLabel nterst  alRule,
+          Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwUserT etFlag nterst  alRule,
+          Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwAdm nT etFlag nterst  alRule,
+          NsfwH ghPrec s onT etLabelAvo dRule,
+          NsfwH ghRecallT etLabelAvo dRule,
+          GoreAndV olenceH ghPrec s onAvo dAllUsersT etLabelRule,
+          NsfwReported ur st csAvo dAdPlace ntAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAvo dAdPlace ntAllUsersT etLabelRule,
+          NsfwCard mageAvo dAdPlace ntAllUsersT etLabelRule,
+          DoNotAmpl fyT etLabelAvo dRule,
+          NsfaH ghPrec s onT etLabelAvo dRule,
+          MutedKeywordForQuotedT etT etDeta l nterst  alRule,
         )
-        ++ LimitedEngagementBaseRules.tweetRules,
-      policyRuleParams = SensitiveMediaSettingsTweetDetailBaseRules.policyRuleParams
+        ++ L m edEngage ntBaseRules.t etRules,
+      pol cyRuleParams = Sens  ve d aSett ngsT etDeta lBaseRules.pol cyRuleParams
     )
 
-case object BaseTweetDetailPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
+case object BaseT etDeta lPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++
         Seq(
-          AuthorBlocksViewerDropRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          NsfwHighPrecisionTweetLabelAvoidRule,
-          NsfwHighRecallTweetLabelAvoidRule,
-          GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAdPlacementAllUsersTweetLabelRule,
-          DoNotAmplifyTweetLabelAvoidRule,
-          NsfaHighPrecisionTweetLabelAvoidRule,
-          MutedKeywordForQuotedTweetTweetDetailInterstitialRule,
+          AuthorBlocksV e rDropRule,
+          AbusePol cyEp sod cT etLabel nterst  alRule,
+          E rgencyDynam c nterst  alRule,
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+          NsfwCard mageAllUsersT etLabelRule,
+          NsfwH ghPrec s onT etLabelAvo dRule,
+          NsfwH ghRecallT etLabelAvo dRule,
+          GoreAndV olenceH ghPrec s onAvo dAllUsersT etLabelRule,
+          NsfwReported ur st csAvo dAdPlace ntAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAvo dAdPlace ntAllUsersT etLabelRule,
+          NsfwCard mageAvo dAdPlace ntAllUsersT etLabelRule,
+          DoNotAmpl fyT etLabelAvo dRule,
+          NsfaH ghPrec s onT etLabelAvo dRule,
+          MutedKeywordForQuotedT etT etDeta l nterst  alRule,
         )
-        ++ LimitedEngagementBaseRules.tweetRules
+        ++ L m edEngage ntBaseRules.t etRules
     )
 
-case object TweetDetailWithInjectionsHydrationPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
+case object T etDeta lW h nject onsHydrat onPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++
         Seq(
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          MutedKeywordForQuotedTweetTweetDetailInterstitialRule,
-          ReportedTweetInterstitialRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules,
-      userRules = UserTimelineRules.UserRules
+          AbusePol cyEp sod cT etLabel nterst  alRule,
+          E rgencyDynam c nterst  alRule,
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+          NsfwCard mageAllUsersT etLabelRule,
+          MutedKeywordForQuotedT etT etDeta l nterst  alRule,
+          ReportedT et nterst  alRule,
+        ) ++ L m edEngage ntBaseRules.t etRules,
+      userRules = UserT  l neRules.UserRules
     )
 
-case object TweetDetailNonTooPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropAllExclusiveTweetsRule,
-        DropAllTrustedFriendsTweetsRule,
-      ) ++ BaseTweetDetailPolicy.tweetRules
+case object T etDeta lNonTooPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
+        DropAllExclus veT etsRule,
+        DropAllTrustedFr endsT etsRule,
+      ) ++ BaseT etDeta lPol cy.t etRules
     )
 
-case object RecosWritePathPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AbusiveTweetLabelRule,
-        LowQualityTweetLabelDropRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        SpamHighRecallTweetLabelDropRule,
-        DuplicateContentTweetLabelDropRule,
-        BystanderAbusiveTweetLabelRule,
-        SmyteSpamTweetLabelDropRule
+case object RecosWr ePathPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++ Seq(
+        Abus veT etLabelRule,
+        LowQual yT etLabelDropRule,
+        NsfwH ghPrec s onT etLabelRule,
+        GoreAndV olenceH ghPrec s onT etLabelRule,
+        NsfwReported ur st csT etLabelRule,
+        GoreAndV olenceReported ur st csT etLabelRule,
+        NsfwCard mageT etLabelRule,
+        NsfwV deoT etLabelDropRule,
+        NsfwTextT etLabelDropRule,
+        SpamH ghRecallT etLabelDropRule,
+        Dupl cateContentT etLabelDropRule,
+        BystanderAbus veT etLabelRule,
+        S teSpamT etLabelDropRule
       ),
       userRules = Seq(NsfwTextNonAuthorDropRule)
     )
 
-case object BrandSafetyPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        NsfaHighRecallTweetLabelInterstitialRule
+case object BrandSafetyPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++ Seq(
+        NsfwV deoT etLabelDropRule,
+        NsfwTextT etLabelDropRule,
+        NsfaH ghRecallT etLabel nterst  alRule
       ),
       userRules = Seq(NsfwTextNonAuthorDropRule)
     )
 
-case object VideoAdsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules
+case object V deoAdsPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules
     )
 
-case object AppealsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
+case object AppealsPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++
         Seq(
-          NsfwCardImageAllUsersTweetLabelRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
+          NsfwCard mageAllUsersT etLabelRule,
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
         )
     )
 
-case object TimelineConversationsDownrankingPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        HighToxicityScoreDownrankAbusiveQualitySectionRule,
-        UntrustedUrlConversationsTweetLabelRule,
-        DownrankSpamReplyConversationsTweetLabelRule,
-        DownrankSpamReplyConversationsAuthorLabelRule,
-        HighProactiveTosScoreTweetLabelDownrankingRule,
-        SafetyCrisisLevel3SectionRule,
-        SafetyCrisisLevel4SectionRule,
-        DoNotAmplifySectionRule,
-        DoNotAmplifySectionUserRule,
-        NotGraduatedConversationsAuthorLabelRule,
-        HighSpammyTweetContentScoreConvoDownrankAbusiveQualityRule,
-        HighCryptospamScoreConvoDownrankAbusiveQualityRule,
-        CopypastaSpamAbusiveQualityTweetLabelRule,
-        HighToxicityScoreDownrankLowQualitySectionRule,
-        HighPSpammyTweetScoreDownrankLowQualitySectionRule,
-        RitoActionedTweetDownrankLowQualitySectionRule,
-        HighToxicityScoreDownrankHighQualitySectionRule,
+case object T  l neConversat onsDownrank ngPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
+        H ghTox c yScoreDownrankAbus veQual ySect onRule,
+        UntrustedUrlConversat onsT etLabelRule,
+        DownrankSpamReplyConversat onsT etLabelRule,
+        DownrankSpamReplyConversat onsAuthorLabelRule,
+        H ghProact veTosScoreT etLabelDownrank ngRule,
+        SafetyCr s sLevel3Sect onRule,
+        SafetyCr s sLevel4Sect onRule,
+        DoNotAmpl fySect onRule,
+        DoNotAmpl fySect onUserRule,
+        NotGraduatedConversat onsAuthorLabelRule,
+        H ghSpam T etContentScoreConvoDownrankAbus veQual yRule,
+        H ghCryptospamScoreConvoDownrankAbus veQual yRule,
+        CopypastaSpamAbus veQual yT etLabelRule,
+        H ghTox c yScoreDownrankLowQual ySect onRule,
+        H ghPSpam T etScoreDownrankLowQual ySect onRule,
+        R oAct onedT etDownrankLowQual ySect onRule,
+        H ghTox c yScoreDownrankH ghQual ySect onRule,
       )
     )
 
-case object TimelineConversationsDownrankingMinimalPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        HighProactiveTosScoreTweetLabelDownrankingRule
+case object T  l neConversat onsDownrank ngM n malPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
+        H ghProact veTosScoreT etLabelDownrank ngRule
       )
     )
 
-case object TimelineHomeRecommendationsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.union(
-        RecommendationsPolicy.tweetRules.filter(
-          _ != NsfwHighPrecisionTweetLabelRule
+case object T  l neHo Recom ndat onsPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.un on(
+        Recom ndat onsPol cy.t etRules.f lter(
+          _ != NsfwH ghPrec s onT etLabelRule
         ),
         Seq(
-          SafetyCrisisLevel2DropRule,
-          SafetyCrisisLevel3DropRule,
-          SafetyCrisisLevel4DropRule,
-          HighProactiveTosScoreTweetLabelDropRule,
-          NsfwHighRecallTweetLabelRule,
+          SafetyCr s sLevel2DropRule,
+          SafetyCr s sLevel3DropRule,
+          SafetyCr s sLevel4DropRule,
+          H ghProact veTosScoreT etLabelDropRule,
+          NsfwH ghRecallT etLabelRule,
         ),
-        BaseTimelineHomePolicy.tweetRules,
+        BaseT  l neHo Pol cy.t etRules,
       ),
-      userRules = VisibilityPolicy.union(
-        RecommendationsPolicy.userRules,
-        BaseTimelineHomePolicy.userRules
+      userRules = V s b l yPol cy.un on(
+        Recom ndat onsPol cy.userRules,
+        BaseT  l neHo Pol cy.userRules
       )
     )
 
-case object TimelineHomeTopicFollowRecommendationsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.union(
+case object T  l neHo Top cFollowRecom ndat onsPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.un on(
         Seq(
-          SearchBlacklistTweetLabelRule,
-          GoreAndViolenceTopicHighRecallTweetLabelRule,
-          NsfwHighRecallTweetLabelRule,
+          SearchBlackl stT etLabelRule,
+          GoreAndV olenceTop cH ghRecallT etLabelRule,
+          NsfwH ghRecallT etLabelRule,
         ),
-        RecommendationsPolicy.tweetRules
-          .filterNot(
+        Recom ndat onsPol cy.t etRules
+          .f lterNot(
             Seq(
-              NsfwHighPrecisionTweetLabelRule,
-            ).contains),
-        BaseTimelineHomePolicy.tweetRules
+              NsfwH ghPrec s onT etLabelRule,
+            ).conta ns),
+        BaseT  l neHo Pol cy.t etRules
       ),
-      userRules = VisibilityPolicy.union(
-        RecommendationsPolicy.userRules,
-        BaseTimelineHomePolicy.userRules
+      userRules = V s b l yPol cy.un on(
+        Recom ndat onsPol cy.userRules,
+        BaseT  l neHo Pol cy.userRules
       )
     )
 
-case object TimelineScorerPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
+case object T  l neScorerPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
         AllowAllRule
       )
     )
 
-case object FollowedTopicsTimelinePolicy
-    extends VisibilityPolicy(
+case object Follo dTop csT  l nePol cy
+    extends V s b l yPol cy(
       userRules = Seq(
-        AuthorBlocksViewerDropRule,
+        AuthorBlocksV e rDropRule,
         ProtectedAuthorDropRule,
         SuspendedAuthorRule
       )
     )
 
-case object TopicsLandingPageTopicRecommendationsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.union(
+case object Top csLand ngPageTop cRecom ndat onsPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.un on(
         Seq(
-          SearchBlacklistTweetLabelRule,
-          GoreAndViolenceTopicHighRecallTweetLabelRule,
-          NsfwHighRecallTweetLabelRule
+          SearchBlackl stT etLabelRule,
+          GoreAndV olenceTop cH ghRecallT etLabelRule,
+          NsfwH ghRecallT etLabelRule
         ),
-        RecommendationsPolicy.tweetRules,
-        BaseTimelineHomePolicy.tweetRules,
+        Recom ndat onsPol cy.t etRules,
+        BaseT  l neHo Pol cy.t etRules,
       ),
-      userRules = VisibilityPolicy.union(
-        RecommendationsPolicy.userRules,
-        BaseTimelineHomePolicy.userRules
+      userRules = V s b l yPol cy.un on(
+        Recom ndat onsPol cy.userRules,
+        BaseT  l neHo Pol cy.userRules
       ) ++ Seq(
-        AuthorBlocksViewerDropRule
+        AuthorBlocksV e rDropRule
       )
     )
 
-case object ExploreRecommendationsPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        DropOuterCommunityTweetsRule,
-        SearchBlacklistTweetLabelRule,
-        GoreAndViolenceTopicHighRecallTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        DropTweetsWithGeoRestrictedMediaRule,
-        TweetNsfwUserDropRule,
-        TweetNsfwAdminDropRule,
-        ViewerHasMatchingMutedKeywordForHomeTimelineRule,
-        ViewerHasMatchingMutedKeywordForNotificationsRule,
-      ) ++ VisibilityPolicy.union(
-        RecommendationsPolicy.tweetRules
+case object ExploreRecom ndat onsPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
+        DropOuterCommun yT etsRule,
+        SearchBlackl stT etLabelRule,
+        GoreAndV olenceTop cH ghRecallT etLabelRule,
+        NsfwH ghRecallT etLabelRule,
+        DropT etsW hGeoRestr cted d aRule,
+        T etNsfwUserDropRule,
+        T etNsfwAdm nDropRule,
+        V e rHasMatch ngMutedKeywordForHo T  l neRule,
+        V e rHasMatch ngMutedKeywordForNot f cat onsRule,
+      ) ++ V s b l yPol cy.un on(
+        Recom ndat onsPol cy.t etRules
       ),
-      userRules = VisibilityPolicy.union(
-        RecommendationsPolicy.userRules
+      userRules = V s b l yPol cy.un on(
+        Recom ndat onsPol cy.userRules
       ) ++ Seq(
-        AuthorBlocksViewerDropRule,
-        ViewerMutesAuthorRule,
-        ViewerBlocksAuthorRule
+        AuthorBlocksV e rDropRule,
+        V e rMutesAuthorRule,
+        V e rBlocksAuthorRule
       )
     )
 
-case object TombstoningPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        TombstoneIf.ViewerIsBlockedByAuthor,
-        TombstoneIf.AuthorIsProtected,
-        TombstoneIf.ReplyIsModeratedByRootAuthor,
-        TombstoneIf.AuthorIsSuspended,
-        TombstoneIf.AuthorIsDeactivated,
-        InterstitialIf.ViewerHardMutedAuthor
+case object Tombston ngPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
+        Tombstone f.V e r sBlockedByAuthor,
+        Tombstone f.Author sProtected,
+        Tombstone f.Reply sModeratedByRootAuthor,
+        Tombstone f.Author sSuspended,
+        Tombstone f.Author sDeact vated,
+         nterst  al f.V e rHardMutedAuthor
       )
     )
 
-case object TweetReplyNudgePolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        SpamAllUsersTweetLabelRule,
-        PdnaAllUsersTweetLabelRule,
-        BounceAllUsersTweetLabelRule,
-        TweetNsfwAdminDropRule,
-        TweetNsfwUserDropRule,
-        NsfwHighRecallAllUsersTweetLabelDropRule,
-        NsfwHighPrecisionAllUsersTweetLabelDropRule,
-        GoreAndViolenceHighPrecisionAllUsersTweetLabelDropRule,
-        NsfwReportedHeuristicsAllUsersTweetLabelDropRule,
-        GoreAndViolenceReportedHeuristicsAllUsersTweetLabelDropRule,
-        NsfwCardImageAllUsersTweetLabelDropRule,
-        NsfwVideoAllUsersTweetLabelDropRule,
-        NsfwTextAllUsersTweetLabelDropRule,
+case object T etReplyNudgePol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
+        SpamAllUsersT etLabelRule,
+        PdnaAllUsersT etLabelRule,
+        BounceAllUsersT etLabelRule,
+        T etNsfwAdm nDropRule,
+        T etNsfwUserDropRule,
+        NsfwH ghRecallAllUsersT etLabelDropRule,
+        NsfwH ghPrec s onAllUsersT etLabelDropRule,
+        GoreAndV olenceH ghPrec s onAllUsersT etLabelDropRule,
+        NsfwReported ur st csAllUsersT etLabelDropRule,
+        GoreAndV olenceReported ur st csAllUsersT etLabelDropRule,
+        NsfwCard mageAllUsersT etLabelDropRule,
+        NsfwV deoAllUsersT etLabelDropRule,
+        NsfwTextAllUsersT etLabelDropRule,
       ),
       userRules = Seq(
         DropNsfwUserAuthorRule,
-        DropNsfwAdminAuthorRule,
+        DropNsfwAdm nAuthorRule,
         NsfwTextAllUsersDropRule
       )
     )
 
-case object HumanizationNudgePolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules
+case object Human zat onNudgePol cy
+    extends V s b l yPol cy(
+      userRules = UserT  l neRules.UserRules
     )
 
-case object TrendsRepresentativeTweetPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.union(
-        RecommendationsPolicy.tweetRules,
+case object TrendsRepresentat veT etPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.un on(
+        Recom ndat onsPol cy.t etRules,
         Seq(
-          AbusiveHighRecallTweetLabelRule,
-          BystanderAbusiveTweetLabelRule,
-          DuplicateContentTweetLabelDropRule,
-          LowQualityTweetLabelDropRule,
-          HighProactiveTosScoreTweetLabelDropRule,
-          NsfaHighRecallTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelDropRule,
-          NsfwHighPrecisionTweetLabelRule,
-          NsfwHighRecallAllUsersTweetLabelDropRule,
-          NsfwVideoTweetLabelDropRule,
-          NsfwTextTweetLabelDropRule,
-          PdnaAllUsersTweetLabelRule,
-          SearchBlacklistTweetLabelRule,
-          SpamHighRecallTweetLabelDropRule,
-          UntrustedUrlAllViewersTweetLabelRule,
-          DownrankSpamReplyAllViewersTweetLabelRule,
-          HighPSpammyScoreAllViewerDropRule,
-          DoNotAmplifyAllViewersDropRule,
-          SmyteSpamTweetLabelDropRule,
-          AuthorBlocksViewerDropRule,
-          ViewerBlocksAuthorRule,
-          ViewerMutesAuthorRule,
-          CopypastaSpamAllViewersTweetLabelRule,
+          Abus veH ghRecallT etLabelRule,
+          BystanderAbus veT etLabelRule,
+          Dupl cateContentT etLabelDropRule,
+          LowQual yT etLabelDropRule,
+          H ghProact veTosScoreT etLabelDropRule,
+          NsfaH ghRecallT etLabelRule,
+          NsfwCard mageAllUsersT etLabelDropRule,
+          NsfwH ghPrec s onT etLabelRule,
+          NsfwH ghRecallAllUsersT etLabelDropRule,
+          NsfwV deoT etLabelDropRule,
+          NsfwTextT etLabelDropRule,
+          PdnaAllUsersT etLabelRule,
+          SearchBlackl stT etLabelRule,
+          SpamH ghRecallT etLabelDropRule,
+          UntrustedUrlAllV e rsT etLabelRule,
+          DownrankSpamReplyAllV e rsT etLabelRule,
+          H ghPSpam ScoreAllV e rDropRule,
+          DoNotAmpl fyAllV e rsDropRule,
+          S teSpamT etLabelDropRule,
+          AuthorBlocksV e rDropRule,
+          V e rBlocksAuthorRule,
+          V e rMutesAuthorRule,
+          CopypastaSpamAllV e rsT etLabelRule,
         )
       ),
-      userRules = VisibilityPolicy.union(
-        RecommendationsPolicy.userRules,
+      userRules = V s b l yPol cy.un on(
+        Recom ndat onsPol cy.userRules,
         Seq(
-          AbusiveRule,
-          LowQualityRule,
+          Abus veRule,
+          LowQual yRule,
           ReadOnlyRule,
-          CompromisedRule,
-          RecommendationsBlacklistRule,
-          SpamHighRecallRule,
-          DuplicateContentRule,
-          NsfwHighPrecisionRule,
+          Comprom sedRule,
+          Recom ndat onsBlackl stRule,
+          SpamH ghRecallRule,
+          Dupl cateContentRule,
+          NsfwH ghPrec s onRule,
           NsfwNearPerfectAuthorRule,
-          NsfwBannerImageRule,
-          NsfwAvatarImageRule,
-          EngagementSpammerRule,
-          EngagementSpammerHighRecallRule,
-          AbusiveHighRecallRule,
-          SearchBlacklistRule,
+          NsfwBanner mageRule,
+          NsfwAvatar mageRule,
+          Engage ntSpam rRule,
+          Engage ntSpam rH ghRecallRule,
+          Abus veH ghRecallRule,
+          SearchBlackl stRule,
           SearchNsfwTextRule,
-          NsfwHighRecallRule,
-          TsViolationRule,
-          DownrankSpamReplyAllViewersRule,
+          NsfwH ghRecallRule,
+          TsV olat onRule,
+          DownrankSpamReplyAllV e rsRule,
           NsfwTextNonAuthorDropRule
         )
       )
     )
 
-case object AdsCampaignPolicy
-    extends VisibilityPolicy(
+case object AdsCampa gnPol cy
+    extends V s b l yPol cy(
       userRules = Seq(SuspendedAuthorRule),
-      tweetRules = VisibilityPolicy.baseTweetRules
+      t etRules = V s b l yPol cy.baseT etRules
     )
 
-case object AdsManagerPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        AdsManagerDenyListAllUsersTweetLabelRule,
+case object AdsManagerPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++ Seq(
+        AdsManagerDenyL stAllUsersT etLabelRule,
       )
     )
 
-case object AdsReportingDashboardPolicy
-    extends VisibilityPolicy(
-      tweetRules = AdsManagerPolicy.tweetRules,
-      userRules = AdsCampaignPolicy.userRules
+case object AdsReport ngDashboardPol cy
+    extends V s b l yPol cy(
+      t etRules = AdsManagerPol cy.t etRules,
+      userRules = AdsCampa gnPol cy.userRules
     )
 
-case object BirdwatchNoteAuthorPolicy
-    extends VisibilityPolicy(
+case object B rdwatchNoteAuthorPol cy
+    extends V s b l yPol cy(
       userRules = Seq(
         SuspendedAuthorRule,
-        AuthorBlocksViewerDropRule,
-        ViewerBlocksAuthorRule,
-        ViewerMutesAuthorRule
+        AuthorBlocksV e rDropRule,
+        V e rBlocksAuthorRule,
+        V e rMutesAuthorRule
       )
     )
 
-case object BirdwatchNoteTweetsTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
+case object B rdwatchNoteT etsT  l nePol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++
         Seq(
-          MutedRetweetsRule,
-          AuthorBlocksViewerDropRule,
-          ViewerMutesAuthorRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
+          MutedRet etsRule,
+          AuthorBlocksV e rDropRule,
+          V e rMutesAuthorRule,
+          AbusePol cyEp sod cT etLabel nterst  alRule,
+          E rgencyDynam c nterst  alRule,
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+          NsfwCard mageAllUsersT etLabelRule,
+        ) ++ L m edEngage ntBaseRules.t etRules
     )
 
-case object BirdwatchNeedsYourHelpNotificationsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
+case object B rdwatchNeedsY  lpNot f cat onsPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++
         Seq(
-          AuthorBlocksViewerDropRule,
-          ViewerBlocksAuthorRule,
-          ViewerMutesAuthorRule,
-          ViewerHasMatchingMutedKeywordForHomeTimelineRule,
-          ViewerHasMatchingMutedKeywordForNotificationsRule,
+          AuthorBlocksV e rDropRule,
+          V e rBlocksAuthorRule,
+          V e rMutesAuthorRule,
+          V e rHasMatch ngMutedKeywordForHo T  l neRule,
+          V e rHasMatch ngMutedKeywordForNot f cat onsRule,
         )
     )
 
-case object ForDevelopmentOnlyPolicy
-    extends VisibilityPolicy(
+case object ForDevelop ntOnlyPol cy
+    extends V s b l yPol cy(
       userRules = Seq.empty,
-      tweetRules = VisibilityPolicy.baseTweetRules
+      t etRules = V s b l yPol cy.baseT etRules
     )
 
-case object UserProfileHeaderPolicy
-    extends VisibilityPolicy(
+case object UserProf le aderPol cy
+    extends V s b l yPol cy(
       userRules = Seq.empty,
-      tweetRules = Seq(DropAllRule)
+      t etRules = Seq(DropAllRule)
     )
 
-case object UserScopedTimelinePolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules,
-      tweetRules = Seq(DropAllRule)
+case object UserScopedT  l nePol cy
+    extends V s b l yPol cy(
+      userRules = UserT  l neRules.UserRules,
+      t etRules = Seq(DropAllRule)
     )
 
-case object TweetScopedTimelinePolicy
-    extends VisibilityPolicy(
-      userRules = UserTimelineRules.UserRules,
-      tweetRules = Seq.empty
+case object T etScopedT  l nePol cy
+    extends V s b l yPol cy(
+      userRules = UserT  l neRules.UserRules,
+      t etRules = Seq.empty
     )
 
-case object SoftInterventionPivotPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules
+case object Soft ntervent onP votPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules
     )
 
-case object CuratedTrendsRepresentativeTweetPolicy
-    extends VisibilityPolicy(
+case object CuratedTrendsRepresentat veT etPol cy
+    extends V s b l yPol cy(
       userRules = Seq(
         SuspendedAuthorRule,
-        AuthorBlocksViewerDropRule,
-        ViewerBlocksAuthorRule,
-        ViewerMutesAndDoesNotFollowAuthorRule
+        AuthorBlocksV e rDropRule,
+        V e rBlocksAuthorRule,
+        V e rMutesAndDoesNotFollowAuthorRule
       )
     )
 
-case object CommunitiesPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
+case object Commun  esPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++
         Seq(
-          RetweetDropRule,
-          AbusePolicyEpisodicTweetLabelDropRule,
-          EmergencyDropRule,
-          SafetyCrisisLevel4DropRule,
-          ReportedTweetInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
+          Ret etDropRule,
+          AbusePol cyEp sod cT etLabelDropRule,
+          E rgencyDropRule,
+          SafetyCr s sLevel4DropRule,
+          ReportedT et nterst  alRule,
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+          NsfwCard mageAllUsersT etLabelRule,
+        ) ++ L m edEngage ntBaseRules.t etRules
     )
 
-case object TimelineHomeCommunitiesPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.union(
+case object T  l neHo Commun  esPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.un on(
         Seq(
-          DropAllAuthorRemovedCommunityTweetsRule,
-          DropAllHiddenCommunityTweetsRule,
-          ViewerHasMatchingMutedKeywordForHomeTimelineRule,
+          DropAllAuthorRemovedCommun yT etsRule,
+          DropAllH ddenCommun yT etsRule,
+          V e rHasMatch ngMutedKeywordForHo T  l neRule,
         ),
-        VisibilityPolicy.baseQuotedTweetTombstoneRules,
-        CommunitiesPolicy.tweetRules,
+        V s b l yPol cy.baseQuotedT etTombstoneRules,
+        Commun  esPol cy.t etRules,
       ),
       userRules = Seq(
-        ViewerMutesAuthorRule,
-        ViewerBlocksAuthorRule,
+        V e rMutesAuthorRule,
+        V e rBlocksAuthorRule,
       )
     )
 
-case object TimelineHomePromotedHydrationPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        ViewerHasMatchingMutedKeywordForHomeTimelinePromotedTweetRule,
-        ViewerMutesAuthorHomeTimelinePromotedTweetRule,
-        ViewerBlocksAuthorHomeTimelinePromotedTweetRule
-      ) ++ TimelineHomeHydrationPolicy.tweetRules,
-      policyRuleParams = TimelineHomeHydrationPolicy.policyRuleParams
+case object T  l neHo PromotedHydrat onPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
+        V e rHasMatch ngMutedKeywordForHo T  l nePromotedT etRule,
+        V e rMutesAuthorHo T  l nePromotedT etRule,
+        V e rBlocksAuthorHo T  l nePromotedT etRule
+      ) ++ T  l neHo Hydrat onPol cy.t etRules,
+      pol cyRuleParams = T  l neHo Hydrat onPol cy.pol cyRuleParams
     )
 
-case object SpacesPolicy
-    extends VisibilityPolicy(
-        SpaceDoNotAmplifyAllUsersDropRule,
-        SpaceNsfwHighPrecisionNonFollowerDropRule),
+case object SpacesPol cy
+    extends V s b l yPol cy(
+        SpaceDoNotAmpl fyAllUsersDropRule,
+        SpaceNsfwH ghPrec s onNonFollo rDropRule),
       userRules = Seq(
-        AuthorBlocksViewerDropRule
+        AuthorBlocksV e rDropRule
       )
     )
 
-case object SpacesSellerApplicationStatusPolicy
-    extends VisibilityPolicy(
+case object SpacesSellerAppl cat onStatusPol cy
+    extends V s b l yPol cy(
       userRules = Seq(
-        ViewerIsNotAuthorDropRule
+        V e r sNotAuthorDropRule
       )
     )
 
-case object SpacesParticipantsPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(DropAllRule),
+case object SpacesPart c pantsPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(DropAllRule),
       userRules = Seq(
-        AuthorBlocksViewerDropRule,
+        AuthorBlocksV e rDropRule,
         SuspendedAuthorRule
       )
     )
 
-case object SpacesSharingPolicy
-    extends VisibilityPolicy(
-      tweetRules = TweetDetailPolicy.tweetRules,
+case object SpacesShar ngPol cy
+    extends V s b l yPol cy(
+      t etRules = T etDeta lPol cy.t etRules,
       userRules = Seq(
-        AuthorBlocksViewerDropRule,
+        AuthorBlocksV e rDropRule,
         ProtectedAuthorDropRule,
         SuspendedAuthorRule
       ),
-      policyRuleParams = TweetDetailPolicy.policyRuleParams
+      pol cyRuleParams = T etDeta lPol cy.pol cyRuleParams
     )
 
-case object SpaceFleetlinePolicy
-    extends VisibilityPolicy(
+case object SpaceFleetl nePol cy
+    extends V s b l yPol cy(
       spaceRules = Seq(
-        SpaceDoNotAmplifyNonFollowerDropRule,
-        SpaceCoordHarmfulActivityHighRecallNonFollowerDropRule,
-        SpaceUntrustedUrlNonFollowerDropRule,
-        SpaceMisleadingHighRecallNonFollowerDropRule,
-        SpaceNsfwHighPrecisionAllUsersInterstitialRule
+        SpaceDoNotAmpl fyNonFollo rDropRule,
+        SpaceCoordHarmfulAct v yH ghRecallNonFollo rDropRule,
+        SpaceUntrustedUrlNonFollo rDropRule,
+        SpaceM slead ngH ghRecallNonFollo rDropRule,
+        SpaceNsfwH ghPrec s onAllUsers nterst  alRule
       ),
       userRules = Seq(
-        TsViolationRule,
-        DoNotAmplifyNonFollowerRule,
-        NotGraduatedNonFollowerRule,
-        LikelyIvsLabelNonFollowerDropUserRule,
-        UserAbusiveNonFollowerDropRule
+        TsV olat onRule,
+        DoNotAmpl fyNonFollo rRule,
+        NotGraduatedNonFollo rRule,
+        L kely vsLabelNonFollo rDropUserRule,
+        UserAbus veNonFollo rDropRule
       )
     )
 
-case object SpaceNotificationsPolicy
-    extends VisibilityPolicy(
+case object SpaceNot f cat onsPol cy
+    extends V s b l yPol cy(
       spaceRules = Seq(
-        SpaceHatefulHighRecallAllUsersDropRule,
-        SpaceViolenceHighRecallAllUsersDropRule,
-        SpaceDoNotAmplifyAllUsersDropRule,
-        SpaceCoordHarmfulActivityHighRecallAllUsersDropRule,
-        SpaceUntrustedUrlNonFollowerDropRule,
-        SpaceMisleadingHighRecallNonFollowerDropRule,
-        SpaceNsfwHighPrecisionAllUsersDropRule,
-        SpaceNsfwHighRecallAllUsersDropRule,
-        ViewerHasMatchingMutedKeywordInSpaceTitleForNotificationsRule
+        SpaceHatefulH ghRecallAllUsersDropRule,
+        SpaceV olenceH ghRecallAllUsersDropRule,
+        SpaceDoNotAmpl fyAllUsersDropRule,
+        SpaceCoordHarmfulAct v yH ghRecallAllUsersDropRule,
+        SpaceUntrustedUrlNonFollo rDropRule,
+        SpaceM slead ngH ghRecallNonFollo rDropRule,
+        SpaceNsfwH ghPrec s onAllUsersDropRule,
+        SpaceNsfwH ghRecallAllUsersDropRule,
+        V e rHasMatch ngMutedKeyword nSpaceT leForNot f cat onsRule
       ),
       userRules = Seq(
-        ViewerMutesAuthorRule,
-        ViewerBlocksAuthorRule,
-        AuthorBlocksViewerDropRule,
-        TsViolationRule,
-        DoNotAmplifyUserRule,
-        AbusiveRule,
-        SearchBlacklistRule,
+        V e rMutesAuthorRule,
+        V e rBlocksAuthorRule,
+        AuthorBlocksV e rDropRule,
+        TsV olat onRule,
+        DoNotAmpl fyUserRule,
+        Abus veRule,
+        SearchBlackl stRule,
         SearchNsfwTextRule,
-        RecommendationsBlacklistRule,
+        Recom ndat onsBlackl stRule,
         NotGraduatedRule,
-        SpamHighRecallRule,
-        AbusiveHighRecallRule,
-        UserBlinkWorstAllUsersDropRule,
-        UserNsfwNearPerfectNonFollowerDropRule,
-        SpaceNsfwHighPrecisionNonFollowerDropRule,
-        UserNsfwAvatarImageNonFollowerDropRule,
-        UserNsfwBannerImageNonFollowerDropRule
+        SpamH ghRecallRule,
+        Abus veH ghRecallRule,
+        UserBl nkWorstAllUsersDropRule,
+        UserNsfwNearPerfectNonFollo rDropRule,
+        SpaceNsfwH ghPrec s onNonFollo rDropRule,
+        UserNsfwAvatar mageNonFollo rDropRule,
+        UserNsfwBanner mageNonFollo rDropRule
       )
     )
 
-case object SpaceTweetAvatarHomeTimelinePolicy
-    extends VisibilityPolicy(
+case object SpaceT etAvatarHo T  l nePol cy
+    extends V s b l yPol cy(
       spaceRules = Seq(
-        SpaceDoNotAmplifyNonFollowerDropRule,
-        SpaceCoordHarmfulActivityHighRecallNonFollowerDropRule,
-        SpaceUntrustedUrlNonFollowerDropRule,
-        SpaceMisleadingHighRecallNonFollowerDropRule,
-        SpaceNsfwHighPrecisionAllUsersDropRule,
-        SpaceNsfwHighPrecisionAllUsersInterstitialRule
+        SpaceDoNotAmpl fyNonFollo rDropRule,
+        SpaceCoordHarmfulAct v yH ghRecallNonFollo rDropRule,
+        SpaceUntrustedUrlNonFollo rDropRule,
+        SpaceM slead ngH ghRecallNonFollo rDropRule,
+        SpaceNsfwH ghPrec s onAllUsersDropRule,
+        SpaceNsfwH ghPrec s onAllUsers nterst  alRule
       ),
       userRules = Seq(
-        TsViolationRule,
-        DoNotAmplifyUserRule,
-        NotGraduatedNonFollowerRule,
-        AbusiveRule,
-        SearchBlacklistRule,
+        TsV olat onRule,
+        DoNotAmpl fyUserRule,
+        NotGraduatedNonFollo rRule,
+        Abus veRule,
+        SearchBlackl stRule,
         SearchNsfwTextRule,
-        RecommendationsBlacklistRule,
-        SpamHighRecallRule,
-        AbusiveHighRecallRule,
-        UserBlinkWorstAllUsersDropRule,
-        UserNsfwNearPerfectNonFollowerDropRule,
-        SpaceNsfwHighPrecisionNonFollowerDropRule,
-        UserNsfwAvatarImageNonFollowerDropRule,
-        UserNsfwBannerImageNonFollowerDropRule
+        Recom ndat onsBlackl stRule,
+        SpamH ghRecallRule,
+        Abus veH ghRecallRule,
+        UserBl nkWorstAllUsersDropRule,
+        UserNsfwNearPerfectNonFollo rDropRule,
+        SpaceNsfwH ghPrec s onNonFollo rDropRule,
+        UserNsfwAvatar mageNonFollo rDropRule,
+        UserNsfwBanner mageNonFollo rDropRule
       )
     )
 
-case object SpaceHomeTimelineUprankingPolicy
-    extends VisibilityPolicy(
+case object SpaceHo T  l neUprank ngPol cy
+    extends V s b l yPol cy(
       spaceRules = Seq(
-        SpaceDoNotAmplifyNonFollowerDropRule,
-        SpaceCoordHarmfulActivityHighRecallNonFollowerDropRule,
-        SpaceUntrustedUrlNonFollowerDropRule,
-        SpaceMisleadingHighRecallNonFollowerDropRule,
-        SpaceNsfwHighPrecisionNonFollowerDropRule,
-        SpaceNsfwHighPrecisionSafeSearchNonFollowerDropRule,
-        SpaceNsfwHighRecallSafeSearchNonFollowerDropRule
+        SpaceDoNotAmpl fyNonFollo rDropRule,
+        SpaceCoordHarmfulAct v yH ghRecallNonFollo rDropRule,
+        SpaceUntrustedUrlNonFollo rDropRule,
+        SpaceM slead ngH ghRecallNonFollo rDropRule,
+        SpaceNsfwH ghPrec s onNonFollo rDropRule,
+        SpaceNsfwH ghPrec s onSafeSearchNonFollo rDropRule,
+        SpaceNsfwH ghRecallSafeSearchNonFollo rDropRule
       ),
       userRules = Seq(
-        TsViolationRule,
-        DoNotAmplifyUserRule,
+        TsV olat onRule,
+        DoNotAmpl fyUserRule,
         NotGraduatedRule,
-        AbusiveRule,
-        SearchBlacklistRule,
+        Abus veRule,
+        SearchBlackl stRule,
         SearchNsfwTextRule,
-        RecommendationsBlacklistRule,
-        SpamHighRecallRule,
-        AbusiveHighRecallRule,
-        UserBlinkWorstAllUsersDropRule,
-        UserNsfwNearPerfectNonFollowerDropRule,
-        UserNsfwAvatarImageNonFollowerDropRule,
-        UserNsfwBannerImageNonFollowerDropRule
+        Recom ndat onsBlackl stRule,
+        SpamH ghRecallRule,
+        Abus veH ghRecallRule,
+        UserBl nkWorstAllUsersDropRule,
+        UserNsfwNearPerfectNonFollo rDropRule,
+        UserNsfwAvatar mageNonFollo rDropRule,
+        UserNsfwBanner mageNonFollo rDropRule
       )
     )
 
-case object SpaceJoinScreenPolicy
-    extends VisibilityPolicy(
+case object SpaceJo nScreenPol cy
+    extends V s b l yPol cy(
       spaceRules = Seq(
-        SpaceNsfwHighPrecisionAllUsersInterstitialRule
+        SpaceNsfwH ghPrec s onAllUsers nterst  alRule
       )
     )
 
-case object KitchenSinkDevelopmentPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules.diff(
+case object K c nS nkDevelop ntPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules.d ff(
         Seq(
-          BounceTweetLabelRule,
-          DropExclusiveTweetContentRule,
-          DropTrustedFriendsTweetContentRule
+          BounceT etLabelRule,
+          DropExclus veT etContentRule,
+          DropTrustedFr endsT etContentRule
         )
       ) ++ Seq(
-        BounceTweetLabelTombstoneRule,
-        TombstoneExclusiveTweetContentRule,
-        TombstoneTrustedFriendsTweetContentRule)
+        BounceT etLabelTombstoneRule,
+        TombstoneExclus veT etContentRule,
+        TombstoneTrustedFr endsT etContentRule)
         ++ Seq(
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          ViewerReportsAuthorInterstitialRule,
-          ViewerMutesAuthorInterstitialRule,
-          ViewerBlocksAuthorInterstitialRule,
-          MutedKeywordForTweetRepliesInterstitialRule,
-          ReportedTweetInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          ExperimentalNudgeLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules,
+          AbusePol cyEp sod cT etLabel nterst  alRule,
+          E rgencyDynam c nterst  alRule,
+          V e rReportsAuthor nterst  alRule,
+          V e rMutesAuthor nterst  alRule,
+          V e rBlocksAuthor nterst  alRule,
+          MutedKeywordForT etRepl es nterst  alRule,
+          ReportedT et nterst  alRule,
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+          NsfwCard mageAllUsersT etLabelRule,
+          Exper  ntalNudgeLabelRule,
+        ) ++ L m edEngage ntBaseRules.t etRules,
       userRules = Seq(
-        AuthorBlocksViewerDropRule,
+        AuthorBlocksV e rDropRule,
         ProtectedAuthorTombstoneRule,
         SuspendedAuthorRule
       ),
-      userUnavailableStateRules = Seq(
-        SuspendedUserUnavailableRetweetTombstoneRule,
-        DeactivatedUserUnavailableRetweetTombstoneRule,
-        OffBoardedUserUnavailableRetweetTombstoneRule,
-        ErasedUserUnavailableRetweetTombstoneRule,
-        ProtectedUserUnavailableRetweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableRetweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableRetweetTombstoneRule,
-        ViewerMutesAuthorUserUnavailableRetweetTombstoneRule,
-        SuspendedUserUnavailableInnerQuotedTweetTombstoneRule,
-        DeactivatedUserUnavailableInnerQuotedTweetTombstoneRule,
-        OffBoardedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ErasedUserUnavailableInnerQuotedTweetTombstoneRule,
-        ProtectedUserUnavailableInnerQuotedTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule,
-        SuspendedUserUnavailableTweetTombstoneRule,
-        DeactivatedUserUnavailableTweetTombstoneRule,
-        OffBoardedUserUnavailableTweetTombstoneRule,
-        ErasedUserUnavailableTweetTombstoneRule,
-        ProtectedUserUnavailableTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableTweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule,
-        ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
+      userUnava lableStateRules = Seq(
+        SuspendedUserUnava lableRet etTombstoneRule,
+        Deact vatedUserUnava lableRet etTombstoneRule,
+        OffBoardedUserUnava lableRet etTombstoneRule,
+        ErasedUserUnava lableRet etTombstoneRule,
+        ProtectedUserUnava lableRet etTombstoneRule,
+        AuthorBlocksV e rUserUnava lableRet etTombstoneRule,
+        V e rBlocksAuthorUserUnava lableRet etTombstoneRule,
+        V e rMutesAuthorUserUnava lableRet etTombstoneRule,
+        SuspendedUserUnava lable nnerQuotedT etTombstoneRule,
+        Deact vatedUserUnava lable nnerQuotedT etTombstoneRule,
+        OffBoardedUserUnava lable nnerQuotedT etTombstoneRule,
+        ErasedUserUnava lable nnerQuotedT etTombstoneRule,
+        ProtectedUserUnava lable nnerQuotedT etTombstoneRule,
+        AuthorBlocksV e rUserUnava lable nnerQuotedT etTombstoneRule,
+        SuspendedUserUnava lableT etTombstoneRule,
+        Deact vatedUserUnava lableT etTombstoneRule,
+        OffBoardedUserUnava lableT etTombstoneRule,
+        ErasedUserUnava lableT etTombstoneRule,
+        ProtectedUserUnava lableT etTombstoneRule,
+        AuthorBlocksV e rUserUnava lableT etTombstoneRule,
+        V e rBlocksAuthorUserUnava lable nnerQuotedT et nterst  alRule,
+        V e rMutesAuthorUserUnava lable nnerQuotedT et nterst  alRule
       ),
-      deletedTweetRules = Seq(
-        TombstoneDeletedOuterTweetRule,
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule
+      deletedT etRules = Seq(
+        TombstoneDeletedOuterT etRule,
+        TombstoneBounceDeletedOuterT etRule,
+        TombstoneDeletedQuotedT etRule,
+        TombstoneBounceDeletedQuotedT etRule
       ),
-      mediaRules = VisibilityPolicy.baseMediaRules
+       d aRules = V s b l yPol cy.base d aRules
     )
 
-case object CurationPolicyViolationsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        DoNotAmplifyAllViewersDropRule,
+case object Curat onPol cyV olat onsPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++ Seq(
+        DoNotAmpl fyAllV e rsDropRule,
       ),
       userRules = Seq(
-        DoNotAmplifyUserRule,
-        TsViolationRule
+        DoNotAmpl fyUserRule,
+        TsV olat onRule
       )
     )
 
-case object GraphqlDefaultPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
+case object GraphqlDefaultPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++
         Seq(
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-        ) ++ LimitedEngagementBaseRules.tweetRules
+          AbusePol cyEp sod cT etLabel nterst  alRule,
+          E rgencyDynam c nterst  alRule,
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+          NsfwCard mageAllUsersT etLabelRule,
+        ) ++ L m edEngage ntBaseRules.t etRules
     )
 
-case object GryphonDecksAndColumnsSharingPolicy
-    extends VisibilityPolicy(
+case object GryphonDecksAndColumnsShar ngPol cy
+    extends V s b l yPol cy(
       userRules = Seq(
-        AuthorBlocksViewerDropRule,
+        AuthorBlocksV e rDropRule,
         ProtectedAuthorDropRule,
         SuspendedAuthorRule
       ),
-      tweetRules = Seq(DropAllRule)
+      t etRules = Seq(DropAllRule)
     )
 
-case object UserSettingsPolicy
-    extends VisibilityPolicy(
-      userRules = Seq(ViewerIsNotAuthorDropRule),
-      tweetRules = Seq(DropAllRule)
+case object UserSett ngsPol cy
+    extends V s b l yPol cy(
+      userRules = Seq(V e r sNotAuthorDropRule),
+      t etRules = Seq(DropAllRule)
     )
 
-case object BlockMuteUsersTimelinePolicy
-    extends VisibilityPolicy(
+case object BlockMuteUsersT  l nePol cy
+    extends V s b l yPol cy(
       userRules = Seq(SuspendedAuthorRule),
-      tweetRules = Seq(DropAllRule)
+      t etRules = Seq(DropAllRule)
     )
 
-case object TopicRecommendationsPolicy
-    extends VisibilityPolicy(
-      tweetRules =
+case object Top cRecom ndat onsPol cy
+    extends V s b l yPol cy(
+      t etRules =
         Seq(
-          NsfwHighRecallTweetLabelRule,
-          NsfwTextHighPrecisionTweetLabelDropRule
+          NsfwH ghRecallT etLabelRule,
+          NsfwTextH ghPrec s onT etLabelDropRule
         )
-          ++ RecommendationsPolicy.tweetRules,
-      userRules = RecommendationsPolicy.userRules
+          ++ Recom ndat onsPol cy.t etRules,
+      userRules = Recom ndat onsPol cy.userRules
     )
 
-case object RitoActionedTweetTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules =
-        VisibilityPolicy.baseTweetTombstoneRules
+case object R oAct onedT etT  l nePol cy
+    extends V s b l yPol cy(
+      t etRules =
+        V s b l yPol cy.baseT etTombstoneRules
           ++ Seq(
-            AuthorBlocksViewerTombstoneRule,
+            AuthorBlocksV e rTombstoneRule,
             ProtectedAuthorTombstoneRule
           ),
-      deletedTweetRules = Seq(
-        TombstoneDeletedOuterTweetRule,
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule,
+      deletedT etRules = Seq(
+        TombstoneDeletedOuterT etRule,
+        TombstoneBounceDeletedOuterT etRule,
+        TombstoneDeletedQuotedT etRule,
+        TombstoneBounceDeletedQuotedT etRule,
       ),
     )
 
-case object EmbeddedTweetsPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetTombstoneRules
+case object EmbeddedT etsPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etTombstoneRules
         ++ Seq(
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
+          AbusePol cyEp sod cT etLabel nterst  alRule,
+          E rgencyDynam c nterst  alRule,
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+          NsfwCard mageAllUsersT etLabelRule,
         )
-        ++ LimitedEngagementBaseRules.tweetRules,
-      deletedTweetRules = Seq(
-        TombstoneDeletedOuterTweetRule,
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule,
+        ++ L m edEngage ntBaseRules.t etRules,
+      deletedT etRules = Seq(
+        TombstoneDeletedOuterT etRule,
+        TombstoneBounceDeletedOuterT etRule,
+        TombstoneDeletedQuotedT etRule,
+        TombstoneBounceDeletedQuotedT etRule,
       ),
-      userUnavailableStateRules = Seq(
-        SuspendedUserUnavailableTweetTombstoneRule,
-        DeactivatedUserUnavailableTweetTombstoneRule,
-        OffBoardedUserUnavailableTweetTombstoneRule,
-        ErasedUserUnavailableTweetTombstoneRule,
-        ProtectedUserUnavailableTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule,
+      userUnava lableStateRules = Seq(
+        SuspendedUserUnava lableT etTombstoneRule,
+        Deact vatedUserUnava lableT etTombstoneRule,
+        OffBoardedUserUnava lableT etTombstoneRule,
+        ErasedUserUnava lableT etTombstoneRule,
+        ProtectedUserUnava lableT etTombstoneRule,
+        AuthorBlocksV e rUserUnava lable nnerQuotedT etTombstoneRule,
       )
     )
 
-case object EmbedTweetMarkupPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(DropStaleTweetsRule) ++
-        VisibilityPolicy.baseTweetTombstoneRules
+case object EmbedT etMarkupPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(DropStaleT etsRule) ++
+        V s b l yPol cy.baseT etTombstoneRules
         ++ Seq(
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
+          AbusePol cyEp sod cT etLabel nterst  alRule,
+          E rgencyDynam c nterst  alRule,
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+          NsfwCard mageAllUsersT etLabelRule,
         )
-        ++ LimitedEngagementBaseRules.tweetRules,
-      deletedTweetRules = Seq(
-        TombstoneDeletedOuterTweetRule,
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule,
+        ++ L m edEngage ntBaseRules.t etRules,
+      deletedT etRules = Seq(
+        TombstoneDeletedOuterT etRule,
+        TombstoneBounceDeletedOuterT etRule,
+        TombstoneDeletedQuotedT etRule,
+        TombstoneBounceDeletedQuotedT etRule,
       ),
     )
 
-case object ArticleTweetTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules =
-          VisibilityPolicy.baseTweetRules ++
+case object Art cleT etT  l nePol cy
+    extends V s b l yPol cy(
+      t etRules =
+          V s b l yPol cy.baseT etRules ++
           Seq(
-            ViewerHasMatchingMutedKeywordForHomeTimelineRule,
-            AbusePolicyEpisodicTweetLabelInterstitialRule,
-            EmergencyDynamicInterstitialRule,
-            NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-            GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAllUsersTweetLabelRule,
-            GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-            NsfwCardImageAllUsersTweetLabelRule,
-          ) ++ LimitedEngagementBaseRules.tweetRules,
+            V e rHasMatch ngMutedKeywordForHo T  l neRule,
+            AbusePol cyEp sod cT etLabel nterst  alRule,
+            E rgencyDynam c nterst  alRule,
+            NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+            GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+            NsfwReported ur st csAllUsersT etLabelRule,
+            GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+            NsfwCard mageAllUsersT etLabelRule,
+          ) ++ L m edEngage ntBaseRules.t etRules,
       userRules = Seq(
-        AuthorBlocksViewerDropRule,
-        ViewerBlocksAuthorRule,
-        ViewerMutesAuthorRule,
+        AuthorBlocksV e rDropRule,
+        V e rBlocksAuthorRule,
+        V e rMutesAuthorRule,
         ProtectedAuthorDropRule,
         SuspendedAuthorRule
       )
     )
 
-case object ConversationFocalPrehydrationPolicy
-    extends VisibilityPolicy(
-      deletedTweetRules = Seq(
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule,
+case object Conversat onFocalPrehydrat onPol cy
+    extends V s b l yPol cy(
+      deletedT etRules = Seq(
+        TombstoneBounceDeletedOuterT etRule,
+        TombstoneBounceDeletedQuotedT etRule,
       )
     )
 
-case object ConversationFocalTweetPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetTombstoneRules
+case object Conversat onFocalT etPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etTombstoneRules
         ++ Seq(
-          DynamicProductAdDropTweetLabelRule,
-          AuthorBlocksViewerTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          ReportedTweetInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-          GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAdPlacementAllUsersTweetLabelRule,
-          MutedKeywordForQuotedTweetTweetDetailInterstitialRule,
-          ViewerMutesAuthorInnerQuotedTweetInterstitialRule,
-          ViewerBlocksAuthorInnerQuotedTweetInterstitialRule,
+          Dynam cProductAdDropT etLabelRule,
+          AuthorBlocksV e rTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.Adult d aNsfwH ghPrec s onT etLabelDropSett ngLevelTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.V olent d aGoreAndV olenceH ghPrec s onDropSett ngLeveTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.Adult d aNsfwReported ur st csT etLabelDropSett ngLevelTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.V olent d aGoreAndV olenceReported ur st csDropSett ngLevelTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.Adult d aNsfwCard mageT etLabelDropSett ngLevelTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.Ot rSens  ve d aNsfwUserT etFlagDropSett ngLevelTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.Ot rSens  ve d aNsfwAdm nT etFlagDropSett ngLevelTombstoneRule,
+          AbusePol cyEp sod cT etLabel nterst  alRule,
+          E rgencyDynam c nterst  alRule,
+          ReportedT et nterst  alRule,
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+          NsfwCard mageAllUsersT etLabelRule,
+          Sens  ve d aT et nterst  alRules.Adult d aNsfwH ghPrec s onT etLabel nterst  alRule,
+          Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceH ghPrec s on nterst  alRule,
+          Sens  ve d aT et nterst  alRules.Adult d aNsfwReported ur st csT etLabel nterst  alRule,
+          Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceReported ur st cs nterst  alRule,
+          Sens  ve d aT et nterst  alRules.Adult d aNsfwCard mageT etLabel nterst  alRule,
+          Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwUserT etFlag nterst  alRule,
+          Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwAdm nT etFlag nterst  alRule,
+          GoreAndV olenceH ghPrec s onAvo dAllUsersT etLabelRule,
+          NsfwReported ur st csAvo dAdPlace ntAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAvo dAdPlace ntAllUsersT etLabelRule,
+          NsfwCard mageAvo dAdPlace ntAllUsersT etLabelRule,
+          MutedKeywordForQuotedT etT etDeta l nterst  alRule,
+          V e rMutesAuthor nnerQuotedT et nterst  alRule,
+          V e rBlocksAuthor nnerQuotedT et nterst  alRule,
         )
-        ++ LimitedEngagementBaseRules.tweetRules
-        ++ ConversationsAdAvoidanceRules.tweetRules,
-      deletedTweetRules = Seq(
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule,
+        ++ L m edEngage ntBaseRules.t etRules
+        ++ Conversat onsAdAvo danceRules.t etRules,
+      deletedT etRules = Seq(
+        TombstoneBounceDeletedOuterT etRule,
+        TombstoneDeletedQuotedT etRule,
+        TombstoneBounceDeletedQuotedT etRule,
       ),
-      userUnavailableStateRules = Seq(
-        SuspendedUserUnavailableTweetTombstoneRule,
-        DeactivatedUserUnavailableTweetTombstoneRule,
-        OffBoardedUserUnavailableTweetTombstoneRule,
-        ErasedUserUnavailableTweetTombstoneRule,
-        ProtectedUserUnavailableTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule,
-        UserUnavailableTweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule,
-        ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
+      userUnava lableStateRules = Seq(
+        SuspendedUserUnava lableT etTombstoneRule,
+        Deact vatedUserUnava lableT etTombstoneRule,
+        OffBoardedUserUnava lableT etTombstoneRule,
+        ErasedUserUnava lableT etTombstoneRule,
+        ProtectedUserUnava lableT etTombstoneRule,
+        AuthorBlocksV e rUserUnava lable nnerQuotedT etTombstoneRule,
+        UserUnava lableT etTombstoneRule,
+        V e rBlocksAuthorUserUnava lable nnerQuotedT et nterst  alRule,
+        V e rMutesAuthorUserUnava lable nnerQuotedT et nterst  alRule
       ),
-      policyRuleParams = ConversationsAdAvoidanceRules.policyRuleParams
-        ++ SensitiveMediaSettingsConversationBaseRules.policyRuleParams
+      pol cyRuleParams = Conversat onsAdAvo danceRules.pol cyRuleParams
+        ++ Sens  ve d aSett ngsConversat onBaseRules.pol cyRuleParams
     )
 
-case object ConversationReplyPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetTombstoneRules
+case object Conversat onReplyPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etTombstoneRules
         ++ Seq(
-          LowQualityTweetLabelTombstoneRule,
-          SpamHighRecallTweetLabelTombstoneRule,
-          DuplicateContentTweetLabelTombstoneRule,
-          DeciderableSpamHighRecallAuthorLabelTombstoneRule,
-          SmyteSpamTweetLabelTombstoneRule,
-          AuthorBlocksViewerTombstoneRule,
-          ToxicityReplyFilterRule,
-          DynamicProductAdDropTweetLabelRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule,
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          MutedKeywordForTweetRepliesInterstitialRule,
-          ReportedTweetInterstitialRule,
-          ViewerBlocksAuthorInterstitialRule,
-          ViewerMutesAuthorInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-          GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAdPlacementAllUsersTweetLabelRule,
+          LowQual yT etLabelTombstoneRule,
+          SpamH ghRecallT etLabelTombstoneRule,
+          Dupl cateContentT etLabelTombstoneRule,
+          Dec derableSpamH ghRecallAuthorLabelTombstoneRule,
+          S teSpamT etLabelTombstoneRule,
+          AuthorBlocksV e rTombstoneRule,
+          Tox c yReplyF lterRule,
+          Dynam cProductAdDropT etLabelRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.Adult d aNsfwH ghPrec s onT etLabelDropSett ngLevelTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.V olent d aGoreAndV olenceH ghPrec s onDropSett ngLeveTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.Adult d aNsfwReported ur st csT etLabelDropSett ngLevelTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.V olent d aGoreAndV olenceReported ur st csDropSett ngLevelTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.Adult d aNsfwCard mageT etLabelDropSett ngLevelTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.Ot rSens  ve d aNsfwUserT etFlagDropSett ngLevelTombstoneRule,
+          Sens  ve d aT etDropSett ngLevelTombstoneRules.Ot rSens  ve d aNsfwAdm nT etFlagDropSett ngLevelTombstoneRule,
+          AbusePol cyEp sod cT etLabel nterst  alRule,
+          E rgencyDynam c nterst  alRule,
+          MutedKeywordForT etRepl es nterst  alRule,
+          ReportedT et nterst  alRule,
+          V e rBlocksAuthor nterst  alRule,
+          V e rMutesAuthor nterst  alRule,
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+          NsfwCard mageAllUsersT etLabelRule,
+          Sens  ve d aT et nterst  alRules.Adult d aNsfwH ghPrec s onT etLabel nterst  alRule,
+          Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceH ghPrec s on nterst  alRule,
+          Sens  ve d aT et nterst  alRules.Adult d aNsfwReported ur st csT etLabel nterst  alRule,
+          Sens  ve d aT et nterst  alRules.V olent d aGoreAndV olenceReported ur st cs nterst  alRule,
+          Sens  ve d aT et nterst  alRules.Adult d aNsfwCard mageT etLabel nterst  alRule,
+          Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwUserT etFlag nterst  alRule,
+          Sens  ve d aT et nterst  alRules.Ot rSens  ve d aNsfwAdm nT etFlag nterst  alRule,
+          GoreAndV olenceH ghPrec s onAvo dAllUsersT etLabelRule,
+          NsfwReported ur st csAvo dAdPlace ntAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAvo dAdPlace ntAllUsersT etLabelRule,
+          NsfwCard mageAvo dAdPlace ntAllUsersT etLabelRule,
         )
-        ++ LimitedEngagementBaseRules.tweetRules
-        ++ ConversationsAdAvoidanceRules.tweetRules,
+        ++ L m edEngage ntBaseRules.t etRules
+        ++ Conversat onsAdAvo danceRules.t etRules,
       userRules = Seq(
-        LowQualityRule,
+        LowQual yRule,
         ReadOnlyRule,
-        LowQualityHighRecallRule,
-        CompromisedRule,
-        DeciderableSpamHighRecallRule
+        LowQual yH ghRecallRule,
+        Comprom sedRule,
+        Dec derableSpamH ghRecallRule
       ),
-      deletedTweetRules = Seq(
-        TombstoneDeletedOuterTweetRule,
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule,
+      deletedT etRules = Seq(
+        TombstoneDeletedOuterT etRule,
+        TombstoneBounceDeletedOuterT etRule,
+        TombstoneDeletedQuotedT etRule,
+        TombstoneBounceDeletedQuotedT etRule,
       ),
-      userUnavailableStateRules = Seq(
-        SuspendedUserUnavailableTweetTombstoneRule,
-        DeactivatedUserUnavailableTweetTombstoneRule,
-        OffBoardedUserUnavailableTweetTombstoneRule,
-        ErasedUserUnavailableTweetTombstoneRule,
-        ProtectedUserUnavailableTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule,
-        UserUnavailableTweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule,
-        ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
+      userUnava lableStateRules = Seq(
+        SuspendedUserUnava lableT etTombstoneRule,
+        Deact vatedUserUnava lableT etTombstoneRule,
+        OffBoardedUserUnava lableT etTombstoneRule,
+        ErasedUserUnava lableT etTombstoneRule,
+        ProtectedUserUnava lableT etTombstoneRule,
+        AuthorBlocksV e rUserUnava lable nnerQuotedT etTombstoneRule,
+        UserUnava lableT etTombstoneRule,
+        V e rBlocksAuthorUserUnava lable nnerQuotedT et nterst  alRule,
+        V e rMutesAuthorUserUnava lable nnerQuotedT et nterst  alRule
       ),
-      policyRuleParams = ConversationsAdAvoidanceRules.policyRuleParams
-        ++ SensitiveMediaSettingsConversationBaseRules.policyRuleParams
+      pol cyRuleParams = Conversat onsAdAvo danceRules.pol cyRuleParams
+        ++ Sens  ve d aSett ngsConversat onBaseRules.pol cyRuleParams
     )
 
-case object AdsBusinessSettingsPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(DropAllRule)
+case object AdsBus nessSett ngsPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(DropAllRule)
     )
 
-case object UserMilestoneRecommendationPolicy
-    extends VisibilityPolicy(
-      userRules = RecommendationsPolicy.userRules ++ Seq(
+case object UserM lestoneRecom ndat onPol cy
+    extends V s b l yPol cy(
+      userRules = Recom ndat onsPol cy.userRules ++ Seq(
       )
     )
 
-case object TrustedFriendsUserListPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(DropAllRule),
+case object TrustedFr endsUserL stPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(DropAllRule),
       userRules = Seq(
-        ViewerBlocksAuthorRule
+        V e rBlocksAuthorRule
       )
     )
 
-case object TwitterDelegateUserListPolicy
-    extends VisibilityPolicy(
+case object Tw terDelegateUserL stPol cy
+    extends V s b l yPol cy(
       userRules = Seq(
-        ViewerBlocksAuthorRule,
-        ViewerIsAuthorDropRule,
-        DeactivatedAuthorRule,
-        AuthorBlocksViewerDropRule
+        V e rBlocksAuthorRule,
+        V e r sAuthorDropRule,
+        Deact vatedAuthorRule,
+        AuthorBlocksV e rDropRule
       ),
-      tweetRules = Seq(DropAllRule)
+      t etRules = Seq(DropAllRule)
     )
 
-case object QuickPromoteTweetEligibilityPolicy
-    extends VisibilityPolicy(
-      tweetRules = TweetDetailPolicy.tweetRules,
-      userRules = UserTimelineRules.UserRules,
-      policyRuleParams = TweetDetailPolicy.policyRuleParams
+case object Qu ckPromoteT etEl g b l yPol cy
+    extends V s b l yPol cy(
+      t etRules = T etDeta lPol cy.t etRules,
+      userRules = UserT  l neRules.UserRules,
+      pol cyRuleParams = T etDeta lPol cy.pol cyRuleParams
     )
 
-case object ReportCenterPolicy
-    extends VisibilityPolicy(
-      tweetRules = ConversationFocalTweetPolicy.tweetRules.diff(
-        ConversationsAdAvoidanceRules.tweetRules
+case object ReportCenterPol cy
+    extends V s b l yPol cy(
+      t etRules = Conversat onFocalT etPol cy.t etRules.d ff(
+        Conversat onsAdAvo danceRules.t etRules
       ),
-      deletedTweetRules = Seq(
-        TombstoneBounceDeletedOuterTweetRule,
-        TombstoneDeletedQuotedTweetRule,
-        TombstoneBounceDeletedQuotedTweetRule,
-        TombstoneDeletedOuterTweetRule,
+      deletedT etRules = Seq(
+        TombstoneBounceDeletedOuterT etRule,
+        TombstoneDeletedQuotedT etRule,
+        TombstoneBounceDeletedQuotedT etRule,
+        TombstoneDeletedOuterT etRule,
       ),
-      userUnavailableStateRules = Seq(
-        SuspendedUserUnavailableTweetTombstoneRule,
-        DeactivatedUserUnavailableTweetTombstoneRule,
-        OffBoardedUserUnavailableTweetTombstoneRule,
-        ErasedUserUnavailableTweetTombstoneRule,
-        ProtectedUserUnavailableTweetTombstoneRule,
-        AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule,
-        UserUnavailableTweetTombstoneRule,
-        ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule,
-        ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
+      userUnava lableStateRules = Seq(
+        SuspendedUserUnava lableT etTombstoneRule,
+        Deact vatedUserUnava lableT etTombstoneRule,
+        OffBoardedUserUnava lableT etTombstoneRule,
+        ErasedUserUnava lableT etTombstoneRule,
+        ProtectedUserUnava lableT etTombstoneRule,
+        AuthorBlocksV e rUserUnava lable nnerQuotedT etTombstoneRule,
+        UserUnava lableT etTombstoneRule,
+        V e rBlocksAuthorUserUnava lable nnerQuotedT et nterst  alRule,
+        V e rMutesAuthorUserUnava lable nnerQuotedT et nterst  alRule
       ),
-      policyRuleParams = ConversationFocalTweetPolicy.policyRuleParams
+      pol cyRuleParams = Conversat onFocalT etPol cy.pol cyRuleParams
     )
 
-case object ConversationInjectedTweetPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules ++
+case object Conversat on njectedT etPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etRules ++
         Seq(
-          AbusePolicyEpisodicTweetLabelInterstitialRule,
-          EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
-          GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
+          AbusePol cyEp sod cT etLabel nterst  alRule,
+          E rgencyDynam c nterst  alRule,
+          NsfwH ghPrec s on nterst  alAllUsersT etLabelRule,
+          GoreAndV olenceH ghPrec s onAllUsersT etLabelRule,
+          NsfwReported ur st csAllUsersT etLabelRule,
+          GoreAndV olenceReported ur st csAllUsersT etLabelRule,
+          NsfwCard mageAllUsersT etLabelRule,
         ) ++
-        LimitedEngagementBaseRules.tweetRules ++ Seq(
-        SkipTweetDetailLimitedEngagementTweetLabelRule
+        L m edEngage ntBaseRules.t etRules ++ Seq(
+        Sk pT etDeta lL m edEngage ntT etLabelRule
       )
     )
 
-case object EditHistoryTimelinePolicy
-    extends VisibilityPolicy(
-      tweetRules = ConversationReplyPolicy.tweetRules,
-      policyRuleParams = ConversationReplyPolicy.policyRuleParams,
-      deletedTweetRules = ConversationReplyPolicy.deletedTweetRules,
-      userUnavailableStateRules = ConversationReplyPolicy.userUnavailableStateRules)
+case object Ed  toryT  l nePol cy
+    extends V s b l yPol cy(
+      t etRules = Conversat onReplyPol cy.t etRules,
+      pol cyRuleParams = Conversat onReplyPol cy.pol cyRuleParams,
+      deletedT etRules = Conversat onReplyPol cy.deletedT etRules,
+      userUnava lableStateRules = Conversat onReplyPol cy.userUnava lableStateRules)
 
-case object UserSelfViewOnlyPolicy
-    extends VisibilityPolicy(
-      userRules = Seq(ViewerIsNotAuthorDropRule),
-      tweetRules = Seq(DropAllRule)
+case object UserSelfV ewOnlyPol cy
+    extends V s b l yPol cy(
+      userRules = Seq(V e r sNotAuthorDropRule),
+      t etRules = Seq(DropAllRule)
     )
 
-case object TwitterArticleComposePolicy
-    extends VisibilityPolicy(
-      twitterArticleRules = Seq(
-        ViewerIsNotAuthorDropRule
+case object Tw terArt cleComposePol cy
+    extends V s b l yPol cy(
+      tw terArt cleRules = Seq(
+        V e r sNotAuthorDropRule
       )
     )
 
-case object TwitterArticleProfileTabPolicy
-    extends VisibilityPolicy(
-      twitterArticleRules = Seq(
-        AuthorBlocksViewerDropRule
+case object Tw terArt cleProf leTabPol cy
+    extends V s b l yPol cy(
+      tw terArt cleRules = Seq(
+        AuthorBlocksV e rDropRule
       )
     )
 
-case object TwitterArticleReadPolicy
-    extends VisibilityPolicy(
-      twitterArticleRules = Seq(
-        AuthorBlocksViewerDropRule,
+case object Tw terArt cleReadPol cy
+    extends V s b l yPol cy(
+      tw terArt cleRules = Seq(
+        AuthorBlocksV e rDropRule,
       )
     )
 
-case object ContentControlToolInstallPolicy
-    extends VisibilityPolicy(
-      userRules = UserProfileHeaderPolicy.userRules,
-      tweetRules = UserProfileHeaderPolicy.tweetRules
+case object ContentControlTool nstallPol cy
+    extends V s b l yPol cy(
+      userRules = UserProf le aderPol cy.userRules,
+      t etRules = UserProf le aderPol cy.t etRules
     )
 
-case object TimelineProfileSpacesPolicy
-    extends VisibilityPolicy(
-      userRules = UserProfileHeaderPolicy.userRules,
-      tweetRules = UserProfileHeaderPolicy.tweetRules
+case object T  l neProf leSpacesPol cy
+    extends V s b l yPol cy(
+      userRules = UserProf le aderPol cy.userRules,
+      t etRules = UserProf le aderPol cy.t etRules
     )
 
-case object TimelineFavoritesSelfViewPolicy
-    extends VisibilityPolicy(
-      tweetRules = TimelineFavoritesPolicy.tweetRules.diff(Seq(DropStaleTweetsRule)),
-      policyRuleParams = TimelineFavoritesPolicy.policyRuleParams,
-      deletedTweetRules = TimelineFavoritesPolicy.deletedTweetRules,
-      userUnavailableStateRules = TimelineFavoritesPolicy.userUnavailableStateRules
+case object T  l neFavor esSelfV ewPol cy
+    extends V s b l yPol cy(
+      t etRules = T  l neFavor esPol cy.t etRules.d ff(Seq(DropStaleT etsRule)),
+      pol cyRuleParams = T  l neFavor esPol cy.pol cyRuleParams,
+      deletedT etRules = T  l neFavor esPol cy.deletedT etRules,
+      userUnava lableStateRules = T  l neFavor esPol cy.userUnava lableStateRules
     )
 
-case object BaseQigPolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
-        AbusePolicyEpisodicTweetLabelDropRule,
-        AutomationTweetLabelRule,
-        DoNotAmplifyDropRule,
-        DownrankSpamReplyTweetLabelRule,
-        DuplicateContentTweetLabelDropRule,
-        DuplicateMentionTweetLabelRule,
-        NsfwHighPrecisionTweetLabelRule,
-        GoreAndViolenceHighPrecisionTweetLabelRule,
-        GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        LikelyIvsLabelNonFollowerDropUserRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        NsfwTextTweetLabelDropRule,
-        NsfwVideoTweetLabelDropRule,
-        PdnaTweetLabelRule,
-        SafetyCrisisLevel3DropRule,
-        SafetyCrisisLevel4DropRule,
-        SearchBlacklistHighRecallTweetLabelDropRule,
-        SearchBlacklistTweetLabelRule,
-        SmyteSpamTweetLabelDropRule,
-        SpamHighRecallTweetLabelDropRule,
+case object BaseQ gPol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
+        AbusePol cyEp sod cT etLabelDropRule,
+        Automat onT etLabelRule,
+        DoNotAmpl fyDropRule,
+        DownrankSpamReplyT etLabelRule,
+        Dupl cateContentT etLabelDropRule,
+        Dupl cate nt onT etLabelRule,
+        NsfwH ghPrec s onT etLabelRule,
+        GoreAndV olenceH ghPrec s onT etLabelRule,
+        GoreAndV olenceReported ur st csT etLabelRule,
+        L kely vsLabelNonFollo rDropUserRule,
+        NsfwCard mageT etLabelRule,
+        NsfwH ghRecallT etLabelRule,
+        NsfwReported ur st csT etLabelRule,
+        NsfwTextT etLabelDropRule,
+        NsfwV deoT etLabelDropRule,
+        PdnaT etLabelRule,
+        SafetyCr s sLevel3DropRule,
+        SafetyCr s sLevel4DropRule,
+        SearchBlackl stH ghRecallT etLabelDropRule,
+        SearchBlackl stT etLabelRule,
+        S teSpamT etLabelDropRule,
+        SpamH ghRecallT etLabelDropRule,
       ),
       userRules = Seq(
-        DuplicateContentRule,
-        EngagementSpammerHighRecallRule,
-        EngagementSpammerRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule,
-        NsfwHighPrecisionRule,
-        NsfwHighRecallRule,
-        NsfwSensitiveRule,
+        Dupl cateContentRule,
+        Engage ntSpam rH ghRecallRule,
+        Engage ntSpam rRule,
+        NsfwAvatar mageRule,
+        NsfwBanner mageRule,
+        NsfwH ghPrec s onRule,
+        NsfwH ghRecallRule,
+        NsfwSens  veRule,
         ReadOnlyRule,
-        RecommendationsBlacklistRule,
-        SearchBlacklistRule,
-        SpamHighRecallRule
+        Recom ndat onsBlackl stRule,
+        SearchBlackl stRule,
+        SpamH ghRecallRule
       ))
 
-case object NotificationsQigPolicy
-    extends VisibilityPolicy(
-      tweetRules = BaseQigPolicy.tweetRules ++ Seq(
-        DropAllCommunityTweetsRule,
-        DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule,
-        HighProactiveTosScoreTweetLabelDropSearchRule,
-        LowQualityTweetLabelDropRule,
-        NsfwHighPrecisionRule,
-        NsfwHighRecallRule,
+case object Not f cat onsQ gPol cy
+    extends V s b l yPol cy(
+      t etRules = BaseQ gPol cy.t etRules ++ Seq(
+        DropAllCommun yT etsRule,
+        DropNsfwAdm nAuthorV e rOpt nF lter ngOnSearchRule,
+        H ghProact veTosScoreT etLabelDropSearchRule,
+        LowQual yT etLabelDropRule,
+        NsfwH ghPrec s onRule,
+        NsfwH ghRecallRule,
         NsfwNearPerfectAuthorRule,
-        NsfwSensitiveRule,
+        NsfwSens  veRule,
       ),
-      userRules = BaseQigPolicy.userRules ++ Seq(
-        AbusiveRule,
-        LowQualityRule,
-        CompromisedRule,
-        ViewerBlocksAuthorViewerOptInBlockingOnSearchRule,
-        ViewerMutesAuthorViewerOptInBlockingOnSearchRule,
-        DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule,
+      userRules = BaseQ gPol cy.userRules ++ Seq(
+        Abus veRule,
+        LowQual yRule,
+        Comprom sedRule,
+        V e rBlocksAuthorV e rOpt nBlock ngOnSearchRule,
+        V e rMutesAuthorV e rOpt nBlock ngOnSearchRule,
+        DropNsfwAdm nAuthorV e rOpt nF lter ngOnSearchRule,
         NsfwNearPerfectAuthorRule
       )
     )
 
-case object ShoppingManagerSpyModePolicy
-    extends VisibilityPolicy(
-      tweetRules = Seq(
+case object Shopp ngManagerSpyModePol cy
+    extends V s b l yPol cy(
+      t etRules = Seq(
         DropAllRule
       ),
       userRules = Seq(
         SuspendedAuthorRule,
-        DeactivatedAuthorRule,
+        Deact vatedAuthorRule,
         ErasedAuthorRule,
         OffboardedAuthorRule
       )
     )
 
-case object ZipbirdConsumerArchivesPolicy
-    extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetTombstoneRules,
+case object Z pb rdConsu rArch vesPol cy
+    extends V s b l yPol cy(
+      t etRules = V s b l yPol cy.baseT etTombstoneRules,
       userRules = Seq(
-        AuthorBlocksViewerDropRule,
+        AuthorBlocksV e rDropRule,
         ProtectedAuthorDropRule,
         SuspendedAuthorRule,
       ),
-      userUnavailableStateRules = Seq(
-        AuthorBlocksViewerUserUnavailableTweetTombstoneRule,
-        ProtectedUserUnavailableTweetTombstoneRule,
-        SuspendedUserUnavailableTweetTombstoneRule,
+      userUnava lableStateRules = Seq(
+        AuthorBlocksV e rUserUnava lableT etTombstoneRule,
+        ProtectedUserUnava lableT etTombstoneRule,
+        SuspendedUserUnava lableT etTombstoneRule,
       ),
-      deletedTweetRules = Seq(
-        TombstoneDeletedTweetRule,
-        TombstoneBounceDeletedTweetRule,
+      deletedT etRules = Seq(
+        TombstoneDeletedT etRule,
+        TombstoneBounceDeletedT etRule,
       )
     )
 
-case class MixedVisibilityPolicy(
-  originalPolicy: VisibilityPolicy,
-  additionalTweetRules: Seq[Rule])
-    extends VisibilityPolicy(
-      tweetRules = (additionalTweetRules ++ originalPolicy.tweetRules)
-        .sortWith(_.actionBuilder.actionSeverity > _.actionBuilder.actionSeverity),
-      userRules = originalPolicy.userRules,
-      cardRules = originalPolicy.cardRules,
-      quotedTweetRules = originalPolicy.quotedTweetRules,
-      dmRules = originalPolicy.dmRules,
-      dmConversationRules = originalPolicy.dmConversationRules,
-      dmEventRules = originalPolicy.dmEventRules,
-      spaceRules = originalPolicy.spaceRules,
-      userUnavailableStateRules = originalPolicy.userUnavailableStateRules,
-      twitterArticleRules = originalPolicy.twitterArticleRules,
-      deletedTweetRules = originalPolicy.deletedTweetRules,
-      mediaRules = originalPolicy.mediaRules,
-      communityRules = originalPolicy.communityRules,
-      policyRuleParams = originalPolicy.policyRuleParams
+case class M xedV s b l yPol cy(
+  or g nalPol cy: V s b l yPol cy,
+  add  onalT etRules: Seq[Rule])
+    extends V s b l yPol cy(
+      t etRules = (add  onalT etRules ++ or g nalPol cy.t etRules)
+        .sortW h(_.act onBu lder.act onSever y > _.act onBu lder.act onSever y),
+      userRules = or g nalPol cy.userRules,
+      cardRules = or g nalPol cy.cardRules,
+      quotedT etRules = or g nalPol cy.quotedT etRules,
+      dmRules = or g nalPol cy.dmRules,
+      dmConversat onRules = or g nalPol cy.dmConversat onRules,
+      dmEventRules = or g nalPol cy.dmEventRules,
+      spaceRules = or g nalPol cy.spaceRules,
+      userUnava lableStateRules = or g nalPol cy.userUnava lableStateRules,
+      tw terArt cleRules = or g nalPol cy.tw terArt cleRules,
+      deletedT etRules = or g nalPol cy.deletedT etRules,
+       d aRules = or g nalPol cy. d aRules,
+      commun yRules = or g nalPol cy.commun yRules,
+      pol cyRuleParams = or g nalPol cy.pol cyRuleParams
     )
 
-case object TweetAwardPolicy
-    extends VisibilityPolicy(
+case object T etAwardPol cy
+    extends V s b l yPol cy(
       userRules = Seq.empty,
-      tweetRules =
-        VisibilityPolicy.baseTweetRules ++ Seq(
-          EmergencyDropRule,
-          NsfwHighPrecisionTweetLabelRule,
-          NsfwHighRecallTweetLabelRule,
-          NsfwReportedHeuristicsTweetLabelRule,
-          NsfwCardImageTweetLabelRule,
-          NsfwVideoTweetLabelDropRule,
-          NsfwTextTweetLabelDropRule,
-          GoreAndViolenceHighPrecisionTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsTweetLabelRule,
-          GoreAndViolenceTweetLabelRule,
-          AbusePolicyEpisodicTweetLabelDropRule,
-          AbusiveTweetLabelRule,
-          BystanderAbusiveTweetLabelRule
+      t etRules =
+        V s b l yPol cy.baseT etRules ++ Seq(
+          E rgencyDropRule,
+          NsfwH ghPrec s onT etLabelRule,
+          NsfwH ghRecallT etLabelRule,
+          NsfwReported ur st csT etLabelRule,
+          NsfwCard mageT etLabelRule,
+          NsfwV deoT etLabelDropRule,
+          NsfwTextT etLabelDropRule,
+          GoreAndV olenceH ghPrec s onT etLabelRule,
+          GoreAndV olenceReported ur st csT etLabelRule,
+          GoreAndV olenceT etLabelRule,
+          AbusePol cyEp sod cT etLabelDropRule,
+          Abus veT etLabelRule,
+          BystanderAbus veT etLabelRule
         )
     )

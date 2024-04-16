@@ -1,88 +1,88 @@
-package com.twitter.search.core.earlybird.index.column;
+package com.tw ter.search.core.earlyb rd. ndex.column;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+ mport com.tw ter.search.common.ut l. o.flushable.DataDeser al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.DataSer al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.common.ut l. o.flushable.Flushable;
+ mport com.tw ter.search.core.earlyb rd. ndex.Doc DToT et DMapper;
 
-import it.unimi.dsi.fastutil.ints.Int2LongOpenHashMap;
+ mport  .un m .ds .fastut l. nts. nt2LongOpenHashMap;
 
-public class ColumnStrideLongIndex extends ColumnStrideFieldIndex implements Flushable {
-  private final Int2LongOpenHashMap values;
-  private final int maxSize;
+publ c class ColumnStr deLong ndex extends ColumnStr deF eld ndex  mple nts Flushable {
+  pr vate f nal  nt2LongOpenHashMap values;
+  pr vate f nal  nt maxS ze;
 
-  public ColumnStrideLongIndex(String name, int maxSize) {
-    super(name);
-    values = new Int2LongOpenHashMap(maxSize);  // default unset value is 0
-    this.maxSize = maxSize;
+  publ c ColumnStr deLong ndex(Str ng na ,  nt maxS ze) {
+    super(na );
+    values = new  nt2LongOpenHashMap(maxS ze);  // default unset value  s 0
+    t .maxS ze = maxS ze;
   }
 
-  private ColumnStrideLongIndex(String name, Int2LongOpenHashMap values, int maxSize) {
-    super(name);
-    this.values = values;
-    this.maxSize = maxSize;
+  pr vate ColumnStr deLong ndex(Str ng na ,  nt2LongOpenHashMap values,  nt maxS ze) {
+    super(na );
+    t .values = values;
+    t .maxS ze = maxS ze;
   }
 
-  @Override
-  public void setValue(int docID, long value) {
-    values.put(docID, value);
+  @Overr de
+  publ c vo d setValue( nt doc D, long value) {
+    values.put(doc D, value);
   }
 
-  @Override
-  public long get(int docID) {
-    return values.get(docID);
+  @Overr de
+  publ c long get( nt doc D) {
+    return values.get(doc D);
   }
 
-  @Override
-  public ColumnStrideFieldIndex optimize(
-      DocIDToTweetIDMapper originalTweetIdMapper,
-      DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
-    return new OptimizedColumnStrideLongIndex(this, originalTweetIdMapper, optimizedTweetIdMapper);
+  @Overr de
+  publ c ColumnStr deF eld ndex opt m ze(
+      Doc DToT et DMapper or g nalT et dMapper,
+      Doc DToT et DMapper opt m zedT et dMapper) throws  OExcept on {
+    return new Opt m zedColumnStr deLong ndex(t , or g nalT et dMapper, opt m zedT et dMapper);
   }
 
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @Overr de
+  publ c FlushHandler getFlushHandler() {
+    return new FlushHandler(t );
   }
 
-  public static final class FlushHandler extends Flushable.Handler<ColumnStrideLongIndex> {
-    private static final String NAME_PROP_NAME = "fieldName";
-    private static final String MAX_SIZE_PROP = "maxSize";
+  publ c stat c f nal class FlushHandler extends Flushable.Handler<ColumnStr deLong ndex> {
+    pr vate stat c f nal Str ng NAME_PROP_NAME = "f eldNa ";
+    pr vate stat c f nal Str ng MAX_S ZE_PROP = "maxS ze";
 
-    public FlushHandler() {
+    publ c FlushHandler() {
       super();
     }
 
-    public FlushHandler(ColumnStrideLongIndex objectToFlush) {
+    publ c FlushHandler(ColumnStr deLong ndex objectToFlush) {
       super(objectToFlush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      ColumnStrideLongIndex index = getObjectToFlush();
-      flushInfo.addStringProperty(NAME_PROP_NAME, index.getName());
-      flushInfo.addIntProperty(MAX_SIZE_PROP, index.maxSize);
+    @Overr de
+    protected vo d doFlush(Flush nfo flush nfo, DataSer al zer out) throws  OExcept on {
+      ColumnStr deLong ndex  ndex = getObjectToFlush();
+      flush nfo.addStr ngProperty(NAME_PROP_NAME,  ndex.getNa ());
+      flush nfo.add ntProperty(MAX_S ZE_PROP,  ndex.maxS ze);
 
-      out.writeInt(index.values.size());
-      for (Int2LongOpenHashMap.Entry entry : index.values.int2LongEntrySet()) {
-        out.writeInt(entry.getIntKey());
-        out.writeLong(entry.getLongValue());
+      out.wr e nt( ndex.values.s ze());
+      for ( nt2LongOpenHashMap.Entry entry :  ndex.values. nt2LongEntrySet()) {
+        out.wr e nt(entry.get ntKey());
+        out.wr eLong(entry.getLongValue());
       }
     }
 
-    @Override
-    protected ColumnStrideLongIndex doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
-      int size = in.readInt();
-      int maxSize = flushInfo.getIntProperty(MAX_SIZE_PROP);
-      Int2LongOpenHashMap map = new Int2LongOpenHashMap(maxSize);
-      for (int i = 0; i < size; i++) {
-        map.put(in.readInt(), in.readLong());
+    @Overr de
+    protected ColumnStr deLong ndex doLoad(Flush nfo flush nfo, DataDeser al zer  n)
+        throws  OExcept on {
+       nt s ze =  n.read nt();
+       nt maxS ze = flush nfo.get ntProperty(MAX_S ZE_PROP);
+       nt2LongOpenHashMap map = new  nt2LongOpenHashMap(maxS ze);
+      for ( nt   = 0;   < s ze;  ++) {
+        map.put( n.read nt(),  n.readLong());
       }
-      return new ColumnStrideLongIndex(flushInfo.getStringProperty(NAME_PROP_NAME), map, maxSize);
+      return new ColumnStr deLong ndex(flush nfo.getStr ngProperty(NAME_PROP_NAME), map, maxS ze);
     }
   }
 }

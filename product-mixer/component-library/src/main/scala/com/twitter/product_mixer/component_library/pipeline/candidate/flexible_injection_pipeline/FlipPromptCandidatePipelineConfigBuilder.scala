@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline
+package com.tw ter.product_m xer.component_l brary.p pel ne.cand date.flex ble_ nject on_p pel ne
 
-import com.twitter.product_mixer.component_library.candidate_source.flexible_injection_pipeline.PromptCandidateSource
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.HasFlipInjectionParams
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.decider.DeciderParam
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.component_l brary.cand date_s ce.flex ble_ nject on_p pel ne.PromptCand dateS ce
+ mport com.tw ter.product_m xer.component_l brary.p pel ne.cand date.flex ble_ nject on_p pel ne.transfor r.HasFl p nject onParams
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .dec der.Dec derParam
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class FlipPromptCandidatePipelineConfigBuilder @Inject() (
-  promptCandidateSource: PromptCandidateSource) {
+@S ngleton
+class Fl pPromptCand dateP pel neConf gBu lder @ nject() (
+  promptCand dateS ce: PromptCand dateS ce) {
 
   /**
-   * Build a FlipPromptCandidatePipelineConfig
+   * Bu ld a Fl pPromptCand dateP pel neConf g
    *
-   * @note If injected classes are needed to populate parameters in this method, consider creating a
-   *       ProductFlipPromptCandidatePipelineConfigBuilder with a single `def build()` method.
-   *       That product-specific builder class can then inject everything it needs (including this
-   *       class), and delegate to this class's build() method within its own build() method.
+   * @note  f  njected classes are needed to populate para ters  n t   thod, cons der creat ng a
+   *       ProductFl pPromptCand dateP pel neConf gBu lder w h a s ngle `def bu ld()`  thod.
+   *       That product-spec f c bu lder class can t n  nject everyth ng   needs ( nclud ng t 
+   *       class), and delegate to t  class's bu ld()  thod w h n  s own bu ld()  thod.
    */
-  def build[Query <: PipelineQuery with HasFlipInjectionParams](
-    identifier: CandidatePipelineIdentifier = CandidatePipelineIdentifier("FlipPrompt"),
-    enabledDeciderParam: Option[DeciderParam[Boolean]] = None,
-    supportedClientParam: Option[FSParam[Boolean]] = None,
-  ): FlipPromptCandidatePipelineConfig[Query] = {
-    new FlipPromptCandidatePipelineConfig(
-      identifier = identifier,
-      enabledDeciderParam = enabledDeciderParam,
-      supportedClientParam = supportedClientParam,
-      promptCandidateSource = promptCandidateSource)
+  def bu ld[Query <: P pel neQuery w h HasFl p nject onParams](
+     dent f er: Cand dateP pel ne dent f er = Cand dateP pel ne dent f er("Fl pPrompt"),
+    enabledDec derParam: Opt on[Dec derParam[Boolean]] = None,
+    supportedCl entParam: Opt on[FSParam[Boolean]] = None,
+  ): Fl pPromptCand dateP pel neConf g[Query] = {
+    new Fl pPromptCand dateP pel neConf g(
+       dent f er =  dent f er,
+      enabledDec derParam = enabledDec derParam,
+      supportedCl entParam = supportedCl entParam,
+      promptCand dateS ce = promptCand dateS ce)
   }
 }

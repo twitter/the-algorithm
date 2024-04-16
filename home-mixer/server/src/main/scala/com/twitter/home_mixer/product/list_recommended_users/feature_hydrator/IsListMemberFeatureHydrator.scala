@@ -1,52 +1,52 @@
-package com.twitter.home_mixer.product.list_recommended_users.feature_hydrator
+package com.tw ter.ho _m xer.product.l st_recom nded_users.feature_hydrator
 
-import com.twitter.home_mixer.model.request.HasListId
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersFeatures.IsListMemberFeature
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.socialgraph.{thriftscala => sg}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
+ mport com.tw ter.ho _m xer.model.request.HasL st d
+ mport com.tw ter.ho _m xer.product.l st_recom nded_users.model.L stRecom ndedUsersFeatures. sL st mberFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.UserCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BulkCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.soc algraph.{thr ftscala => sg}
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.soc algraph.Soc alGraph
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class IsListMemberFeatureHydrator @Inject() (socialGraph: SocialGraph)
-    extends BulkCandidateFeatureHydrator[PipelineQuery with HasListId, UserCandidate] {
+@S ngleton
+class  sL st mberFeatureHydrator @ nject() (soc alGraph: Soc alGraph)
+    extends BulkCand dateFeatureHydrator[P pel neQuery w h HasL st d, UserCand date] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("IsListMember")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er(" sL st mber")
 
-  override val features: Set[Feature[_, _]] = Set(IsListMemberFeature)
+  overr de val features: Set[Feature[_, _]] = Set( sL st mberFeature)
 
-  override def apply(
-    query: PipelineQuery with HasListId,
-    candidates: Seq[CandidateWithFeatures[UserCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val userIds = candidates.map(_.candidate.id)
-    val request = sg.IdsRequest(
-      relationships = Seq(
-        sg.SrcRelationship(
-          source = query.listId,
-          relationshipType = sg.RelationshipType.ListHasMember,
-          hasRelationship = true,
-          targets = Some(userIds))),
-      pageRequest = Some(sg.PageRequest(selectAll = Some(true)))
+  overr de def apply(
+    query: P pel neQuery w h HasL st d,
+    cand dates: Seq[Cand dateW hFeatures[UserCand date]]
+  ): St ch[Seq[FeatureMap]] = {
+    val user ds = cand dates.map(_.cand date. d)
+    val request = sg. dsRequest(
+      relat onsh ps = Seq(
+        sg.SrcRelat onsh p(
+          s ce = query.l st d,
+          relat onsh pType = sg.Relat onsh pType.L stHas mber,
+          hasRelat onsh p = true,
+          targets = So (user ds))),
+      pageRequest = So (sg.PageRequest(selectAll = So (true)))
     )
 
-    socialGraph.ids(request).map(_.ids).map { listMembers =>
-      val listMembersSet = listMembers.toSet
-      candidates.map { candidate =>
-        FeatureMapBuilder()
-          .add(IsListMemberFeature, listMembersSet.contains(candidate.candidate.id))
-          .build()
+    soc alGraph. ds(request).map(_. ds).map { l st mbers =>
+      val l st mbersSet = l st mbers.toSet
+      cand dates.map { cand date =>
+        FeatureMapBu lder()
+          .add( sL st mberFeature, l st mbersSet.conta ns(cand date.cand date. d))
+          .bu ld()
       }
     }
   }

@@ -1,20 +1,20 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/candidate_source/account_recommendations_mixer",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/candidate_source/people_discovery",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/decorator/urt",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/marshaller/request",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/candidate",
-        "servo/repo/src/main/scala",
-        "src/thrift/com/twitter/hermit/internal:hermit-internal-scala",
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/javax/ nject:javax. nject",
+        "product-m xer/component-l brary/src/ma n/scala/com/tw ter/product_m xer/component_l brary/cand date_s ce/account_recom ndat ons_m xer",
+        "product-m xer/component-l brary/src/ma n/scala/com/tw ter/product_m xer/component_l brary/cand date_s ce/people_d scovery",
+        "product-m xer/component-l brary/src/ma n/scala/com/tw ter/product_m xer/component_l brary/decorator/urt",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/marshaller/request",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/p pel ne/cand date",
+        "servo/repo/src/ma n/scala",
+        "src/thr ft/com/tw ter/ rm / nternal: rm - nternal-scala",
     ],
     exports = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/candidate",
+        "3rdparty/jvm/javax/ nject:javax. nject",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/p pel ne/cand date",
     ],
 )

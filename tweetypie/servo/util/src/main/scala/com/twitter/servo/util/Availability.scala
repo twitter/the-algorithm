@@ -1,43 +1,43 @@
-package com.twitter.servo.util
+package com.tw ter.servo.ut l
 
 /**
- * Provides functions for computing prescribed feature availability based
- * on some runtime condition(s). (e.g. watermark values)
+ * Prov des funct ons for comput ng prescr bed feature ava lab l y based
+ * on so  runt   cond  on(s). (e.g. watermark values)
  */
-object Availability {
+object Ava lab l y {
 
   /**
-   * Stay at 100% available down to a high watermark success rate. Then
-   * between high and low watermarks, dial down availability to a provided
-   * minimum. Never go below this level because we need some requests to
-   * track the success rate going back up.
+   * Stay at 100% ava lable down to a h gh watermark success rate. T n
+   * bet en h gh and low watermarks, d al down ava lab l y to a prov ded
+   * m n mum. Never go below t  level because   need so  requests to
+   * track t  success rate go ng back up.
    *
-   * NOTE: watermarks and minAvailability must be between 0 and 1.
+   * NOTE: watermarks and m nAva lab l y must be bet en 0 and 1.
    */
-  def linearlyScaled(
-    highWaterMark: Double,
+  def l nearlyScaled(
+    h ghWaterMark: Double,
     lowWaterMark: Double,
-    minAvailability: Double
+    m nAva lab l y: Double
   ): Double => Double = {
-    require(
-      highWaterMark >= lowWaterMark && highWaterMark <= 1,
-      s"highWaterMark ($highWaterMark) must be between lowWaterMark ($lowWaterMark) and 1, inclusive"
+    requ re(
+      h ghWaterMark >= lowWaterMark && h ghWaterMark <= 1,
+      s"h ghWaterMark ($h ghWaterMark) must be bet en lowWaterMark ($lowWaterMark) and 1,  nclus ve"
     )
-    require(
-      lowWaterMark >= minAvailability && lowWaterMark <= 1,
-      s"lowWaterMark ($lowWaterMark) must be between minAvailability ($minAvailability) and 1, inclusive"
+    requ re(
+      lowWaterMark >= m nAva lab l y && lowWaterMark <= 1,
+      s"lowWaterMark ($lowWaterMark) must be bet en m nAva lab l y ($m nAva lab l y) and 1,  nclus ve"
     )
-    require(
-      minAvailability > 0 && minAvailability < 1,
-      s"minAvailability ($minAvailability) must be between 0 and 1, exclusive"
+    requ re(
+      m nAva lab l y > 0 && m nAva lab l y < 1,
+      s"m nAva lab l y ($m nAva lab l y) must be bet en 0 and 1, exclus ve"
     )
 
     {
-      case sr if sr >= highWaterMark => 1.0
-      case sr if sr <= lowWaterMark => minAvailability
+      case sr  f sr >= h ghWaterMark => 1.0
+      case sr  f sr <= lowWaterMark => m nAva lab l y
       case sr =>
-        val linearFraction = (sr - lowWaterMark) / (highWaterMark - lowWaterMark)
-        minAvailability + (1.0 - minAvailability) * linearFraction
+        val l nearFract on = (sr - lowWaterMark) / (h ghWaterMark - lowWaterMark)
+        m nAva lab l y + (1.0 - m nAva lab l y) * l nearFract on
     }
   }
 }

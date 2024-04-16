@@ -1,27 +1,27 @@
-package com.twitter.frigate.pushservice.module
+package com.tw ter.fr gate.pushserv ce.module
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.decider.Decider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.pushservice.target.LoggedOutPushTargetUserBuilder
-import com.twitter.frigate.pushservice.config.DeployConfig
-import com.twitter.inject.TwitterModule
+ mport com.google. nject.Prov des
+ mport com.google. nject.S ngleton
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.pushserv ce.target.LoggedOutPushTargetUserBu lder
+ mport com.tw ter.fr gate.pushserv ce.conf g.DeployConf g
+ mport com.tw ter. nject.Tw terModule
 
-object LoggedOutPushTargetUserBuilderModule extends TwitterModule {
+object LoggedOutPushTargetUserBu lderModule extends Tw terModule {
 
-  @Provides
-  @Singleton
-  def providesLoggedOutPushTargetUserBuilder(
-    decider: Decider,
-    config: DeployConfig,
-    statsReceiver: StatsReceiver
-  ): LoggedOutPushTargetUserBuilder = {
-    LoggedOutPushTargetUserBuilder(
-      historyStore = config.loggedOutHistoryStore,
-      inputDecider = decider,
-      inputAbDecider = config.abDecider,
-      loggedOutPushInfoStore = config.loggedOutPushInfoStore
-    )(statsReceiver)
+  @Prov des
+  @S ngleton
+  def prov desLoggedOutPushTargetUserBu lder(
+    dec der: Dec der,
+    conf g: DeployConf g,
+    statsRece ver: StatsRece ver
+  ): LoggedOutPushTargetUserBu lder = {
+    LoggedOutPushTargetUserBu lder(
+       toryStore = conf g.loggedOut toryStore,
+       nputDec der = dec der,
+       nputAbDec der = conf g.abDec der,
+      loggedOutPush nfoStore = conf g.loggedOutPush nfoStore
+    )(statsRece ver)
   }
 }

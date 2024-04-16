@@ -1,390 +1,390 @@
-use std::collections::BTreeSet;
-use std::fmt::{self, Debug, Display};
+use std::collect ons::BTreeSet;
+use std::fmt::{self, Debug, D splay};
 use std::fs;
 
-use crate::all_config;
-use crate::all_config::AllConfig;
-use anyhow::{bail, Context};
-use bpr_thrift::data::DataRecord;
-use bpr_thrift::prediction_service::BatchPredictionRequest;
-use bpr_thrift::tensor::GeneralTensor;
+use crate::all_conf g;
+use crate::all_conf g::AllConf g;
+use anyhow::{ba l, Context};
+use bpr_thr ft::data::DataRecord;
+use bpr_thr ft::pred ct on_serv ce::BatchPred ct onRequest;
+use bpr_thr ft::tensor::GeneralTensor;
 use log::debug;
 use ndarray::Array2;
 use once_cell::sync::OnceCell;
-use ort::tensor::InputTensor;
-use prometheus::{HistogramOpts, HistogramVec};
+use ort::tensor:: nputTensor;
+use pro t us::{ togramOpts,  togramVec};
 use segdense::mapper::{FeatureMapper, MapReader};
-use segdense::segdense_transform_spec_home_recap_2022::{DensificationTransformSpec, Root};
-use segdense::util;
-use thrift::protocol::{TBinaryInputProtocol, TSerializable};
-use thrift::transport::TBufferChannel;
+use segdense::segdense_transform_spec_ho _recap_2022::{Dens f cat onTransformSpec, Root};
+use segdense::ut l;
+use thr ft::protocol::{TB nary nputProtocol, TSer al zable};
+use thr ft::transport::TBufferChannel;
 
 pub fn log_feature_match(
     dr: &DataRecord,
-    seg_dense_config: &DensificationTransformSpec,
-    dr_type: String,
+    seg_dense_conf g: &Dens f cat onTransformSpec,
+    dr_type: Str ng,
 ) {
-    // Note the following algorithm matches features from config using linear search.
-    // Also the record source is MinDataRecord. This includes only binary and continous features for now.
+    // Note t  follow ng algor hm matc s features from conf g us ng l near search.
+    // Also t  record s ce  s M nDataRecord. T   ncludes only b nary and cont nous features for now.
 
-    for (feature_id, feature_value) in dr.continuous_features.as_ref().unwrap() {
+    for (feature_ d, feature_value)  n dr.cont nuous_features.as_ref().unwrap() {
         debug!(
-            "{} - Continous Datarecord => Feature ID: {}, Feature value: {}",
-            dr_type, feature_id, feature_value
+            "{} - Cont nous Datarecord => Feature  D: {}, Feature value: {}",
+            dr_type, feature_ d, feature_value
         );
-        for input_feature in &seg_dense_config.cont.input_features {
-            if input_feature.feature_id == *feature_id {
-                debug!("Matching input feature: {:?}", input_feature)
+        for  nput_feature  n &seg_dense_conf g.cont. nput_features {
+             f  nput_feature.feature_ d == *feature_ d {
+                debug!("Match ng  nput feature: {:?}",  nput_feature)
             }
         }
     }
 
-    for feature_id in dr.binary_features.as_ref().unwrap() {
+    for feature_ d  n dr.b nary_features.as_ref().unwrap() {
         debug!(
-            "{} - Binary Datarecord => Feature ID: {}",
-            dr_type, feature_id
+            "{} - B nary Datarecord => Feature  D: {}",
+            dr_type, feature_ d
         );
-        for input_feature in &seg_dense_config.binary.input_features {
-            if input_feature.feature_id == *feature_id {
-                debug!("Found input feature: {:?}", input_feature)
+        for  nput_feature  n &seg_dense_conf g.b nary. nput_features {
+             f  nput_feature.feature_ d == *feature_ d {
+                debug!("Found  nput feature: {:?}",  nput_feature)
             }
         }
     }
 }
 
-pub fn log_feature_matches(drs: &Vec<DataRecord>, seg_dense_config: &DensificationTransformSpec) {
-    for dr in drs {
-        log_feature_match(dr, seg_dense_config, String::from("individual"));
+pub fn log_feature_matc s(drs: &Vec<DataRecord>, seg_dense_conf g: &Dens f cat onTransformSpec) {
+    for dr  n drs {
+        log_feature_match(dr, seg_dense_conf g, Str ng::from(" nd v dual"));
     }
 }
 
-pub trait Converter: Send + Sync + Debug + 'static + Display {
-    fn convert(&self, input: Vec<Vec<u8>>) -> (Vec<InputTensor>, Vec<usize>);
+pub tra  Converter: Send + Sync + Debug + 'stat c + D splay {
+    fn convert(&self,  nput: Vec<Vec<u8>>) -> (Vec< nputTensor>, Vec<us ze>);
 }
 
-#[derive(Debug)]
+#[der ve(Debug)]
 #[allow(dead_code)]
-pub struct BatchPredictionRequestToTorchTensorConverter {
-    all_config: AllConfig,
-    seg_dense_config: Root,
-    all_config_path: String,
-    seg_dense_config_path: String,
+pub struct BatchPred ct onRequestToTorchTensorConverter {
+    all_conf g: AllConf g,
+    seg_dense_conf g: Root,
+    all_conf g_path: Str ng,
+    seg_dense_conf g_path: Str ng,
     feature_mapper: FeatureMapper,
-    user_embedding_feature_id: i64,
-    user_eng_embedding_feature_id: i64,
-    author_embedding_feature_id: i64,
-    discrete_features_to_report: BTreeSet<i64>,
-    continuous_features_to_report: BTreeSet<i64>,
-    discrete_feature_metrics: &'static HistogramVec,
-    continuous_feature_metrics: &'static HistogramVec,
+    user_embedd ng_feature_ d:  64,
+    user_eng_embedd ng_feature_ d:  64,
+    author_embedd ng_feature_ d:  64,
+    d screte_features_to_report: BTreeSet< 64>,
+    cont nuous_features_to_report: BTreeSet< 64>,
+    d screte_feature_ tr cs: &'stat c  togramVec,
+    cont nuous_feature_ tr cs: &'stat c  togramVec,
 }
 
-impl Display for BatchPredictionRequestToTorchTensorConverter {
+ mpl D splay for BatchPred ct onRequestToTorchTensorConverter {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
+        wr e!(
             f,
-            "all_config_path: {}, seg_dense_config_path:{}",
-            self.all_config_path, self.seg_dense_config_path
+            "all_conf g_path: {}, seg_dense_conf g_path:{}",
+            self.all_conf g_path, self.seg_dense_conf g_path
         )
     }
 }
 
-impl BatchPredictionRequestToTorchTensorConverter {
+ mpl BatchPred ct onRequestToTorchTensorConverter {
     pub fn new(
-        model_dir: &str,
-        model_version: &str,
-        reporting_feature_ids: Vec<(i64, &str)>,
-        register_metric_fn: Option<impl Fn(&HistogramVec)>,
-    ) -> anyhow::Result<BatchPredictionRequestToTorchTensorConverter> {
-        let all_config_path = format!("{}/{}/all_config.json", model_dir, model_version);
-        let seg_dense_config_path = format!(
-            "{}/{}/segdense_transform_spec_home_recap_2022.json",
-            model_dir, model_version
+        model_d r: &str,
+        model_vers on: &str,
+        report ng_feature_ ds: Vec<( 64, &str)>,
+        reg ster_ tr c_fn: Opt on< mpl Fn(& togramVec)>,
+    ) -> anyhow::Result<BatchPred ct onRequestToTorchTensorConverter> {
+        let all_conf g_path = format!("{}/{}/all_conf g.json", model_d r, model_vers on);
+        let seg_dense_conf g_path = format!(
+            "{}/{}/segdense_transform_spec_ho _recap_2022.json",
+            model_d r, model_vers on
         );
-        let seg_dense_config = util::load_config(&seg_dense_config_path)?;
-        let all_config = all_config::parse(
-            &fs::read_to_string(&all_config_path)
-                .with_context(|| "error loading all_config.json - ")?,
+        let seg_dense_conf g = ut l::load_conf g(&seg_dense_conf g_path)?;
+        let all_conf g = all_conf g::parse(
+            &fs::read_to_str ng(&all_conf g_path)
+                .w h_context(|| "error load ng all_conf g.json - ")?,
         )?;
 
-        let feature_mapper = util::load_from_parsed_config(seg_dense_config.clone())?;
+        let feature_mapper = ut l::load_from_parsed_conf g(seg_dense_conf g.clone())?;
 
-        let user_embedding_feature_id = Self::get_feature_id(
-            &all_config
-                .train_data
-                .seg_dense_schema
-                .renamed_features
-                .user_embedding,
-            &seg_dense_config,
+        let user_embedd ng_feature_ d = Self::get_feature_ d(
+            &all_conf g
+                .tra n_data
+                .seg_dense_sc ma
+                .rena d_features
+                .user_embedd ng,
+            &seg_dense_conf g,
         );
-        let user_eng_embedding_feature_id = Self::get_feature_id(
-            &all_config
-                .train_data
-                .seg_dense_schema
-                .renamed_features
-                .user_eng_embedding,
-            &seg_dense_config,
+        let user_eng_embedd ng_feature_ d = Self::get_feature_ d(
+            &all_conf g
+                .tra n_data
+                .seg_dense_sc ma
+                .rena d_features
+                .user_eng_embedd ng,
+            &seg_dense_conf g,
         );
-        let author_embedding_feature_id = Self::get_feature_id(
-            &all_config
-                .train_data
-                .seg_dense_schema
-                .renamed_features
-                .author_embedding,
-            &seg_dense_config,
+        let author_embedd ng_feature_ d = Self::get_feature_ d(
+            &all_conf g
+                .tra n_data
+                .seg_dense_sc ma
+                .rena d_features
+                .author_embedd ng,
+            &seg_dense_conf g,
         );
-        static METRICS: OnceCell<(HistogramVec, HistogramVec)> = OnceCell::new();
-        let (discrete_feature_metrics, continuous_feature_metrics) = METRICS.get_or_init(|| {
-            let discrete = HistogramVec::new(
-                HistogramOpts::new(":navi:feature_id:discrete", "Discrete Feature ID values")
+        stat c METR CS: OnceCell<( togramVec,  togramVec)> = OnceCell::new();
+        let (d screte_feature_ tr cs, cont nuous_feature_ tr cs) = METR CS.get_or_ n (|| {
+            let d screte =  togramVec::new(
+                 togramOpts::new(":nav :feature_ d:d screte", "D screte Feature  D values")
                     .buckets(Vec::from(&[
                         0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 110.0,
                         120.0, 130.0, 140.0, 150.0, 160.0, 170.0, 180.0, 190.0, 200.0, 250.0,
                         300.0, 500.0, 1000.0, 10000.0, 100000.0,
-                    ] as &'static [f64])),
-                &["feature_id"],
+                    ] as &'stat c [f64])),
+                &["feature_ d"],
             )
-            .expect("metric cannot be created");
-            let continuous = HistogramVec::new(
-                HistogramOpts::new(
-                    ":navi:feature_id:continuous",
-                    "continuous Feature ID values",
+            .expect(" tr c cannot be created");
+            let cont nuous =  togramVec::new(
+                 togramOpts::new(
+                    ":nav :feature_ d:cont nuous",
+                    "cont nuous Feature  D values",
                 )
                 .buckets(Vec::from(&[
                     0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 110.0, 120.0,
                     130.0, 140.0, 150.0, 160.0, 170.0, 180.0, 190.0, 200.0, 250.0, 300.0, 500.0,
                     1000.0, 10000.0, 100000.0,
-                ] as &'static [f64])),
-                &["feature_id"],
+                ] as &'stat c [f64])),
+                &["feature_ d"],
             )
-            .expect("metric cannot be created");
-            register_metric_fn.map(|r| {
-                r(&discrete);
-                r(&continuous);
+            .expect(" tr c cannot be created");
+            reg ster_ tr c_fn.map(|r| {
+                r(&d screte);
+                r(&cont nuous);
             });
-            (discrete, continuous)
+            (d screte, cont nuous)
         });
 
-        let mut discrete_features_to_report = BTreeSet::new();
-        let mut continuous_features_to_report = BTreeSet::new();
+        let mut d screte_features_to_report = BTreeSet::new();
+        let mut cont nuous_features_to_report = BTreeSet::new();
 
-        for (feature_id, feature_type) in reporting_feature_ids.iter() {
+        for (feature_ d, feature_type)  n report ng_feature_ ds. er() {
             match *feature_type {
-                "discrete" => discrete_features_to_report.insert(feature_id.clone()),
-                "continuous" => continuous_features_to_report.insert(feature_id.clone()),
-                _ => bail!(
-                    "Invalid feature type {} for reporting metrics!",
+                "d screte" => d screte_features_to_report. nsert(feature_ d.clone()),
+                "cont nuous" => cont nuous_features_to_report. nsert(feature_ d.clone()),
+                _ => ba l!(
+                    " nval d feature type {} for report ng  tr cs!",
                     feature_type
                 ),
             };
         }
 
-        Ok(BatchPredictionRequestToTorchTensorConverter {
-            all_config,
-            seg_dense_config,
-            all_config_path,
-            seg_dense_config_path,
+        Ok(BatchPred ct onRequestToTorchTensorConverter {
+            all_conf g,
+            seg_dense_conf g,
+            all_conf g_path,
+            seg_dense_conf g_path,
             feature_mapper,
-            user_embedding_feature_id,
-            user_eng_embedding_feature_id,
-            author_embedding_feature_id,
-            discrete_features_to_report,
-            continuous_features_to_report,
-            discrete_feature_metrics,
-            continuous_feature_metrics,
+            user_embedd ng_feature_ d,
+            user_eng_embedd ng_feature_ d,
+            author_embedd ng_feature_ d,
+            d screte_features_to_report,
+            cont nuous_features_to_report,
+            d screte_feature_ tr cs,
+            cont nuous_feature_ tr cs,
         })
     }
 
-    fn get_feature_id(feature_name: &str, seg_dense_config: &Root) -> i64 {
-        // given a feature name, we get the complex feature type id
-        for feature in &seg_dense_config.complex_feature_type_transform_spec {
-            if feature.full_feature_name == feature_name {
-                return feature.feature_id;
+    fn get_feature_ d(feature_na : &str, seg_dense_conf g: &Root) ->  64 {
+        // g ven a feature na ,   get t  complex feature type  d
+        for feature  n &seg_dense_conf g.complex_feature_type_transform_spec {
+             f feature.full_feature_na  == feature_na  {
+                return feature.feature_ d;
             }
         }
         -1
     }
 
-    fn parse_batch_prediction_request(bytes: Vec<u8>) -> BatchPredictionRequest {
-        // parse batch prediction request into a struct from byte array repr.
-        let mut bc = TBufferChannel::with_capacity(bytes.len(), 0);
+    fn parse_batch_pred ct on_request(bytes: Vec<u8>) -> BatchPred ct onRequest {
+        // parse batch pred ct on request  nto a struct from byte array repr.
+        let mut bc = TBufferChannel::w h_capac y(bytes.len(), 0);
         bc.set_readable_bytes(&bytes);
-        let mut protocol = TBinaryInputProtocol::new(bc, true);
-        BatchPredictionRequest::read_from_in_protocol(&mut protocol).unwrap()
+        let mut protocol = TB nary nputProtocol::new(bc, true);
+        BatchPred ct onRequest::read_from_ n_protocol(&mut protocol).unwrap()
     }
 
-    fn get_embedding_tensors(
+    fn get_embedd ng_tensors(
         &self,
-        bprs: &[BatchPredictionRequest],
-        feature_id: i64,
-        batch_size: &[usize],
+        bprs: &[BatchPred ct onRequest],
+        feature_ d:  64,
+        batch_s ze: &[us ze],
     ) -> Array2<f32> {
-        // given an embedding feature id, extract the float tensor array into tensors.
-        let cols: usize = 200;
-        let rows: usize = batch_size[batch_size.len() - 1];
-        let total_size = rows * cols;
+        // g ven an embedd ng feature  d, extract t  float tensor array  nto tensors.
+        let cols: us ze = 200;
+        let rows: us ze = batch_s ze[batch_s ze.len() - 1];
+        let total_s ze = rows * cols;
 
-        let mut working_set = vec![0 as f32; total_size];
+        let mut work ng_set = vec![0 as f32; total_s ze];
         let mut bpr_start = 0;
-        for (bpr, &bpr_end) in bprs.iter().zip(batch_size) {
-            if bpr.common_features.is_some() {
-                if bpr.common_features.as_ref().unwrap().tensors.is_some() {
-                    if bpr
+        for (bpr, &bpr_end)  n bprs. er().z p(batch_s ze) {
+             f bpr.common_features. s_so () {
+                 f bpr.common_features.as_ref().unwrap().tensors. s_so () {
+                     f bpr
                         .common_features
                         .as_ref()
                         .unwrap()
                         .tensors
                         .as_ref()
                         .unwrap()
-                        .contains_key(&feature_id)
+                        .conta ns_key(&feature_ d)
                     {
-                        let source_tensor = bpr
+                        let s ce_tensor = bpr
                             .common_features
                             .as_ref()
                             .unwrap()
                             .tensors
                             .as_ref()
                             .unwrap()
-                            .get(&feature_id)
+                            .get(&feature_ d)
                             .unwrap();
-                        let tensor = match source_tensor {
+                        let tensor = match s ce_tensor {
                             GeneralTensor::FloatTensor(float_tensor) =>
-                            //Tensor::of_slice(
+                            //Tensor::of_sl ce(
                             {
                                 float_tensor
                                     .floats
-                                    .iter()
-                                    .map(|x| x.into_inner() as f32)
+                                    . er()
+                                    .map(|x| x. nto_ nner() as f32)
                                     .collect::<Vec<_>>()
                             }
                             _ => vec![0 as f32; cols],
                         };
 
-                        // since the tensor is found in common feature, add it in all batches
-                        for row in bpr_start..bpr_end {
-                            for col in 0..cols {
-                                working_set[row * cols + col] = tensor[col];
+                        // s nce t  tensor  s found  n common feature, add    n all batc s
+                        for row  n bpr_start..bpr_end {
+                            for col  n 0..cols {
+                                work ng_set[row * cols + col] = tensor[col];
                             }
                         }
                     }
                 }
             }
-            // find the feature in individual feature list and add to corresponding batch.
-            for (index, datarecord) in bpr.individual_features_list.iter().enumerate() {
-                if datarecord.tensors.is_some()
+            // f nd t  feature  n  nd v dual feature l st and add to correspond ng batch.
+            for ( ndex, datarecord)  n bpr. nd v dual_features_l st. er().enu rate() {
+                 f datarecord.tensors. s_so ()
                     && datarecord
                         .tensors
                         .as_ref()
                         .unwrap()
-                        .contains_key(&feature_id)
+                        .conta ns_key(&feature_ d)
                 {
-                    let source_tensor = datarecord
+                    let s ce_tensor = datarecord
                         .tensors
                         .as_ref()
                         .unwrap()
-                        .get(&feature_id)
+                        .get(&feature_ d)
                         .unwrap();
-                    let tensor = match source_tensor {
+                    let tensor = match s ce_tensor {
                         GeneralTensor::FloatTensor(float_tensor) => float_tensor
                             .floats
-                            .iter()
-                            .map(|x| x.into_inner() as f32)
+                            . er()
+                            .map(|x| x. nto_ nner() as f32)
                             .collect::<Vec<_>>(),
                         _ => vec![0 as f32; cols],
                     };
-                    for col in 0..cols {
-                        working_set[(bpr_start + index) * cols + col] = tensor[col];
+                    for col  n 0..cols {
+                        work ng_set[(bpr_start +  ndex) * cols + col] = tensor[col];
                     }
                 }
             }
             bpr_start = bpr_end;
         }
-        Array2::<f32>::from_shape_vec([rows, cols], working_set).unwrap()
+        Array2::<f32>::from_shape_vec([rows, cols], work ng_set).unwrap()
     }
 
-    // Todo : Refactor, create a generic version with different type and field accessors
-    //   Example paramterize and then instiantiate the following
-    //           (FLOAT --> FLOAT, DataRecord.continuous_feature)
-    //           (BOOL --> INT64, DataRecord.binary_feature)
-    //           (INT64 --> INT64, DataRecord.discrete_feature)
-    fn get_continuous(&self, bprs: &[BatchPredictionRequest], batch_ends: &[usize]) -> InputTensor {
-        // These need to be part of model schema
-        let rows: usize = batch_ends[batch_ends.len() - 1];
-        let cols: usize = 5293;
-        let full_size: usize = rows * cols;
+    // Todo : Refactor, create a gener c vers on w h d fferent type and f eld accessors
+    //   Example paramter ze and t n  nst ant ate t  follow ng
+    //           (FLOAT --> FLOAT, DataRecord.cont nuous_feature)
+    //           (BOOL -->  NT64, DataRecord.b nary_feature)
+    //           ( NT64 -->  NT64, DataRecord.d screte_feature)
+    fn get_cont nuous(&self, bprs: &[BatchPred ct onRequest], batch_ends: &[us ze]) ->  nputTensor {
+        // T se need to be part of model sc ma
+        let rows: us ze = batch_ends[batch_ends.len() - 1];
+        let cols: us ze = 5293;
+        let full_s ze: us ze = rows * cols;
         let default_val = f32::NAN;
 
-        let mut tensor = vec![default_val; full_size];
+        let mut tensor = vec![default_val; full_s ze];
 
         let mut bpr_start = 0;
-        for (bpr, &bpr_end) in bprs.iter().zip(batch_ends) {
+        for (bpr, &bpr_end)  n bprs. er().z p(batch_ends) {
             // Common features
-            if bpr.common_features.is_some()
+             f bpr.common_features. s_so ()
                 && bpr
                     .common_features
                     .as_ref()
                     .unwrap()
-                    .continuous_features
-                    .is_some()
+                    .cont nuous_features
+                    . s_so ()
             {
                 let common_features = bpr
                     .common_features
                     .as_ref()
                     .unwrap()
-                    .continuous_features
+                    .cont nuous_features
                     .as_ref()
                     .unwrap();
 
-                for feature in common_features {
+                for feature  n common_features {
                     match self.feature_mapper.get(feature.0) {
-                        Some(f_info) => {
-                            let idx = f_info.index_within_tensor as usize;
-                            if idx < cols {
-                                // Set value in each row
-                                for r in bpr_start..bpr_end {
-                                    let flat_index: usize = r * cols + idx;
-                                    tensor[flat_index] = feature.1.into_inner() as f32;
+                        So (f_ nfo) => {
+                            let  dx = f_ nfo. ndex_w h n_tensor as us ze;
+                             f  dx < cols {
+                                // Set value  n each row
+                                for r  n bpr_start..bpr_end {
+                                    let flat_ ndex: us ze = r * cols +  dx;
+                                    tensor[flat_ ndex] = feature.1. nto_ nner() as f32;
                                 }
                             }
                         }
                         None => (),
                     }
-                    if self.continuous_features_to_report.contains(feature.0) {
-                        self.continuous_feature_metrics
-                            .with_label_values(&[feature.0.to_string().as_str()])
-                            .observe(feature.1.into_inner())
-                    } else if self.discrete_features_to_report.contains(feature.0) {
-                        self.discrete_feature_metrics
-                            .with_label_values(&[feature.0.to_string().as_str()])
-                            .observe(feature.1.into_inner())
+                     f self.cont nuous_features_to_report.conta ns(feature.0) {
+                        self.cont nuous_feature_ tr cs
+                            .w h_label_values(&[feature.0.to_str ng().as_str()])
+                            .observe(feature.1. nto_ nner())
+                    } else  f self.d screte_features_to_report.conta ns(feature.0) {
+                        self.d screte_feature_ tr cs
+                            .w h_label_values(&[feature.0.to_str ng().as_str()])
+                            .observe(feature.1. nto_ nner())
                     }
                 }
             }
 
-            // Process the batch of datarecords
-            for r in bpr_start..bpr_end {
+            // Process t  batch of datarecords
+            for r  n bpr_start..bpr_end {
                 let dr: &DataRecord =
-                    &bpr.individual_features_list[usize::try_from(r - bpr_start).unwrap()];
-                if dr.continuous_features.is_some() {
-                    for feature in dr.continuous_features.as_ref().unwrap() {
+                    &bpr. nd v dual_features_l st[us ze::try_from(r - bpr_start).unwrap()];
+                 f dr.cont nuous_features. s_so () {
+                    for feature  n dr.cont nuous_features.as_ref().unwrap() {
                         match self.feature_mapper.get(&feature.0) {
-                            Some(f_info) => {
-                                let idx = f_info.index_within_tensor as usize;
-                                let flat_index: usize = r * cols + idx;
-                                if flat_index < tensor.len() && idx < cols {
-                                    tensor[flat_index] = feature.1.into_inner() as f32;
+                            So (f_ nfo) => {
+                                let  dx = f_ nfo. ndex_w h n_tensor as us ze;
+                                let flat_ ndex: us ze = r * cols +  dx;
+                                 f flat_ ndex < tensor.len() &&  dx < cols {
+                                    tensor[flat_ ndex] = feature.1. nto_ nner() as f32;
                                 }
                             }
                             None => (),
                         }
-                        if self.continuous_features_to_report.contains(feature.0) {
-                            self.continuous_feature_metrics
-                                .with_label_values(&[feature.0.to_string().as_str()])
-                                .observe(feature.1.into_inner() as f64)
-                        } else if self.discrete_features_to_report.contains(feature.0) {
-                            self.discrete_feature_metrics
-                                .with_label_values(&[feature.0.to_string().as_str()])
-                                .observe(feature.1.into_inner() as f64)
+                         f self.cont nuous_features_to_report.conta ns(feature.0) {
+                            self.cont nuous_feature_ tr cs
+                                .w h_label_values(&[feature.0.to_str ng().as_str()])
+                                .observe(feature.1. nto_ nner() as f64)
+                        } else  f self.d screte_features_to_report.conta ns(feature.0) {
+                            self.d screte_feature_ tr cs
+                                .w h_label_values(&[feature.0.to_str ng().as_str()])
+                                .observe(feature.1. nto_ nner() as f64)
                         }
                     }
                 }
@@ -392,50 +392,50 @@ impl BatchPredictionRequestToTorchTensorConverter {
             bpr_start = bpr_end;
         }
 
-        InputTensor::FloatTensor(
+         nputTensor::FloatTensor(
             Array2::<f32>::from_shape_vec([rows, cols], tensor)
                 .unwrap()
-                .into_dyn(),
+                . nto_dyn(),
         )
     }
 
-    fn get_binary(&self, bprs: &[BatchPredictionRequest], batch_ends: &[usize]) -> InputTensor {
-        // These need to be part of model schema
-        let rows: usize = batch_ends[batch_ends.len() - 1];
-        let cols: usize = 149;
-        let full_size: usize = rows * cols;
-        let default_val: i64 = 0;
+    fn get_b nary(&self, bprs: &[BatchPred ct onRequest], batch_ends: &[us ze]) ->  nputTensor {
+        // T se need to be part of model sc ma
+        let rows: us ze = batch_ends[batch_ends.len() - 1];
+        let cols: us ze = 149;
+        let full_s ze: us ze = rows * cols;
+        let default_val:  64 = 0;
 
-        let mut v = vec![default_val; full_size];
+        let mut v = vec![default_val; full_s ze];
 
         let mut bpr_start = 0;
-        for (bpr, &bpr_end) in bprs.iter().zip(batch_ends) {
+        for (bpr, &bpr_end)  n bprs. er().z p(batch_ends) {
             // Common features
-            if bpr.common_features.is_some()
+             f bpr.common_features. s_so ()
                 && bpr
                     .common_features
                     .as_ref()
                     .unwrap()
-                    .binary_features
-                    .is_some()
+                    .b nary_features
+                    . s_so ()
             {
                 let common_features = bpr
                     .common_features
                     .as_ref()
                     .unwrap()
-                    .binary_features
+                    .b nary_features
                     .as_ref()
                     .unwrap();
 
-                for feature in common_features {
+                for feature  n common_features {
                     match self.feature_mapper.get(feature) {
-                        Some(f_info) => {
-                            let idx = f_info.index_within_tensor as usize;
-                            if idx < cols {
-                                // Set value in each row
-                                for r in bpr_start..bpr_end {
-                                    let flat_index: usize = r * cols + idx;
-                                    v[flat_index] = 1;
+                        So (f_ nfo) => {
+                            let  dx = f_ nfo. ndex_w h n_tensor as us ze;
+                             f  dx < cols {
+                                // Set value  n each row
+                                for r  n bpr_start..bpr_end {
+                                    let flat_ ndex: us ze = r * cols +  dx;
+                                    v[flat_ ndex] = 1;
                                 }
                             }
                         }
@@ -444,16 +444,16 @@ impl BatchPredictionRequestToTorchTensorConverter {
                 }
             }
 
-            // Process the batch of datarecords
-            for r in bpr_start..bpr_end {
-                let dr: &DataRecord = &bpr.individual_features_list[r - bpr_start];
-                if dr.binary_features.is_some() {
-                    for feature in dr.binary_features.as_ref().unwrap() {
+            // Process t  batch of datarecords
+            for r  n bpr_start..bpr_end {
+                let dr: &DataRecord = &bpr. nd v dual_features_l st[r - bpr_start];
+                 f dr.b nary_features. s_so () {
+                    for feature  n dr.b nary_features.as_ref().unwrap() {
                         match self.feature_mapper.get(&feature) {
-                            Some(f_info) => {
-                                let idx = f_info.index_within_tensor as usize;
-                                let flat_index: usize = r * cols + idx;
-                                v[flat_index] = 1;
+                            So (f_ nfo) => {
+                                let  dx = f_ nfo. ndex_w h n_tensor as us ze;
+                                let flat_ ndex: us ze = r * cols +  dx;
+                                v[flat_ ndex] = 1;
                             }
                             None => (),
                         }
@@ -462,82 +462,82 @@ impl BatchPredictionRequestToTorchTensorConverter {
             }
             bpr_start = bpr_end;
         }
-        InputTensor::Int64Tensor(
-            Array2::<i64>::from_shape_vec([rows, cols], v)
+         nputTensor:: nt64Tensor(
+            Array2::< 64>::from_shape_vec([rows, cols], v)
                 .unwrap()
-                .into_dyn(),
+                . nto_dyn(),
         )
     }
 
     #[allow(dead_code)]
-    fn get_discrete(&self, bprs: &[BatchPredictionRequest], batch_ends: &[usize]) -> InputTensor {
-        // These need to be part of model schema
-        let rows: usize = batch_ends[batch_ends.len() - 1];
-        let cols: usize = 320;
-        let full_size: usize = rows * cols;
-        let default_val: i64 = 0;
+    fn get_d screte(&self, bprs: &[BatchPred ct onRequest], batch_ends: &[us ze]) ->  nputTensor {
+        // T se need to be part of model sc ma
+        let rows: us ze = batch_ends[batch_ends.len() - 1];
+        let cols: us ze = 320;
+        let full_s ze: us ze = rows * cols;
+        let default_val:  64 = 0;
 
-        let mut v = vec![default_val; full_size];
+        let mut v = vec![default_val; full_s ze];
 
         let mut bpr_start = 0;
-        for (bpr, &bpr_end) in bprs.iter().zip(batch_ends) {
+        for (bpr, &bpr_end)  n bprs. er().z p(batch_ends) {
             // Common features
-            if bpr.common_features.is_some()
+             f bpr.common_features. s_so ()
                 && bpr
                     .common_features
                     .as_ref()
                     .unwrap()
-                    .discrete_features
-                    .is_some()
+                    .d screte_features
+                    . s_so ()
             {
                 let common_features = bpr
                     .common_features
                     .as_ref()
                     .unwrap()
-                    .discrete_features
+                    .d screte_features
                     .as_ref()
                     .unwrap();
 
-                for feature in common_features {
+                for feature  n common_features {
                     match self.feature_mapper.get(feature.0) {
-                        Some(f_info) => {
-                            let idx = f_info.index_within_tensor as usize;
-                            if idx < cols {
-                                // Set value in each row
-                                for r in bpr_start..bpr_end {
-                                    let flat_index: usize = r * cols + idx;
-                                    v[flat_index] = *feature.1;
+                        So (f_ nfo) => {
+                            let  dx = f_ nfo. ndex_w h n_tensor as us ze;
+                             f  dx < cols {
+                                // Set value  n each row
+                                for r  n bpr_start..bpr_end {
+                                    let flat_ ndex: us ze = r * cols +  dx;
+                                    v[flat_ ndex] = *feature.1;
                                 }
                             }
                         }
                         None => (),
                     }
-                    if self.discrete_features_to_report.contains(feature.0) {
-                        self.discrete_feature_metrics
-                            .with_label_values(&[feature.0.to_string().as_str()])
+                     f self.d screte_features_to_report.conta ns(feature.0) {
+                        self.d screte_feature_ tr cs
+                            .w h_label_values(&[feature.0.to_str ng().as_str()])
                             .observe(*feature.1 as f64)
                     }
                 }
             }
 
-            // Process the batch of datarecords
-            for r in bpr_start..bpr_end {
-                let dr: &DataRecord = &bpr.individual_features_list[usize::try_from(r).unwrap()];
-                if dr.discrete_features.is_some() {
-                    for feature in dr.discrete_features.as_ref().unwrap() {
+            // Process t  batch of datarecords
+            for r  n bpr_start..bpr_end {
+                let dr: &DataRecord = &bpr. nd v dual_features_l st[us ze::try_from(r).unwrap()];
+                 f dr.d screte_features. s_so () {
+                    for feature  n dr.d screte_features.as_ref().unwrap() {
                         match self.feature_mapper.get(&feature.0) {
-                            Some(f_info) => {
-                                let idx = f_info.index_within_tensor as usize;
-                                let flat_index: usize = r * cols + idx;
-                                if flat_index < v.len() && idx < cols {
-                                    v[flat_index] = *feature.1;
+                            So (f_ nfo) => {
+                                let  dx = f_ nfo. ndex_w h n_tensor as us ze;
+                                let flat_ ndex: us ze = r * cols +  dx;
+                                 f flat_ ndex < v.len() &&  dx < cols {
+                                    v[flat_ ndex] = *feature.1;
                                 }
                             }
                             None => (),
                         }
-                        if self.discrete_features_to_report.contains(feature.0) {
-                            self.discrete_feature_metrics
-                                .with_label_values(&[feature.0.to_string().as_str()])
+                         f self.d screte_features_to_report.conta ns(feature.0) {
+                            self.d screte_feature_ tr cs
+                                .w h_label_values(&[feature.0.to_str ng().as_str()])
                                 .observe(*feature.1 as f64)
                         }
                     }
@@ -545,71 +545,71 @@ impl BatchPredictionRequestToTorchTensorConverter {
             }
             bpr_start = bpr_end;
         }
-        InputTensor::Int64Tensor(
-            Array2::<i64>::from_shape_vec([rows, cols], v)
+         nputTensor:: nt64Tensor(
+            Array2::< 64>::from_shape_vec([rows, cols], v)
                 .unwrap()
-                .into_dyn(),
+                . nto_dyn(),
         )
     }
 
-    fn get_user_embedding(
+    fn get_user_embedd ng(
         &self,
-        bprs: &[BatchPredictionRequest],
-        batch_ends: &[usize],
-    ) -> InputTensor {
-        InputTensor::FloatTensor(
-            self.get_embedding_tensors(bprs, self.user_embedding_feature_id, batch_ends)
-                .into_dyn(),
+        bprs: &[BatchPred ct onRequest],
+        batch_ends: &[us ze],
+    ) ->  nputTensor {
+         nputTensor::FloatTensor(
+            self.get_embedd ng_tensors(bprs, self.user_embedd ng_feature_ d, batch_ends)
+                . nto_dyn(),
         )
     }
 
-    fn get_eng_embedding(
+    fn get_eng_embedd ng(
         &self,
-        bpr: &[BatchPredictionRequest],
-        batch_ends: &[usize],
-    ) -> InputTensor {
-        InputTensor::FloatTensor(
-            self.get_embedding_tensors(bpr, self.user_eng_embedding_feature_id, batch_ends)
-                .into_dyn(),
+        bpr: &[BatchPred ct onRequest],
+        batch_ends: &[us ze],
+    ) ->  nputTensor {
+         nputTensor::FloatTensor(
+            self.get_embedd ng_tensors(bpr, self.user_eng_embedd ng_feature_ d, batch_ends)
+                . nto_dyn(),
         )
     }
 
-    fn get_author_embedding(
+    fn get_author_embedd ng(
         &self,
-        bpr: &[BatchPredictionRequest],
-        batch_ends: &[usize],
-    ) -> InputTensor {
-        InputTensor::FloatTensor(
-            self.get_embedding_tensors(bpr, self.author_embedding_feature_id, batch_ends)
-                .into_dyn(),
+        bpr: &[BatchPred ct onRequest],
+        batch_ends: &[us ze],
+    ) ->  nputTensor {
+         nputTensor::FloatTensor(
+            self.get_embedd ng_tensors(bpr, self.author_embedd ng_feature_ d, batch_ends)
+                . nto_dyn(),
         )
     }
 }
 
-impl Converter for BatchPredictionRequestToTorchTensorConverter {
-    fn convert(&self, batched_bytes: Vec<Vec<u8>>) -> (Vec<InputTensor>, Vec<usize>) {
-        let bprs = batched_bytes
-            .into_iter()
+ mpl Converter for BatchPred ct onRequestToTorchTensorConverter {
+    fn convert(&self, batc d_bytes: Vec<Vec<u8>>) -> (Vec< nputTensor>, Vec<us ze>) {
+        let bprs = batc d_bytes
+            . nto_ er()
             .map(|bytes| {
-                BatchPredictionRequestToTorchTensorConverter::parse_batch_prediction_request(bytes)
+                BatchPred ct onRequestToTorchTensorConverter::parse_batch_pred ct on_request(bytes)
             })
             .collect::<Vec<_>>();
         let batch_ends = bprs
-            .iter()
-            .map(|bpr| bpr.individual_features_list.len())
-            .scan(0usize, |acc, e| {
-                //running total
+            . er()
+            .map(|bpr| bpr. nd v dual_features_l st.len())
+            .scan(0us ze, |acc, e| {
+                //runn ng total
                 *acc = *acc + e;
-                Some(*acc)
+                So (*acc)
             })
             .collect::<Vec<_>>();
 
-        let t1 = self.get_continuous(&bprs, &batch_ends);
-        let t2 = self.get_binary(&bprs, &batch_ends);
-        //let _t3 = self.get_discrete(&bprs, &batch_ends);
-        let t4 = self.get_user_embedding(&bprs, &batch_ends);
-        let t5 = self.get_eng_embedding(&bprs, &batch_ends);
-        let t6 = self.get_author_embedding(&bprs, &batch_ends);
+        let t1 = self.get_cont nuous(&bprs, &batch_ends);
+        let t2 = self.get_b nary(&bprs, &batch_ends);
+        //let _t3 = self.get_d screte(&bprs, &batch_ends);
+        let t4 = self.get_user_embedd ng(&bprs, &batch_ends);
+        let t5 = self.get_eng_embedd ng(&bprs, &batch_ends);
+        let t6 = self.get_author_embedd ng(&bprs, &batch_ends);
 
         (vec![t1, t2, t4, t5, t6], batch_ends)
     }

@@ -1,64 +1,64 @@
-namespace java com.twitter.recos.user_video_graph.thriftjava
-namespace py gen.twitter.recos.user_video_graph
-#@namespace scala com.twitter.recos.user_video_graph.thriftscala
-#@namespace strato com.twitter.recos.user_video_graph
-namespace rb UserVideoGraph
+na space java com.tw ter.recos.user_v deo_graph.thr ftjava
+na space py gen.tw ter.recos.user_v deo_graph
+#@na space scala com.tw ter.recos.user_v deo_graph.thr ftscala
+#@na space strato com.tw ter.recos.user_v deo_graph
+na space rb UserV deoGraph
 
-include "com/twitter/recos/features/tweet.thrift"
-include "com/twitter/recos/recos_common.thrift"
+ nclude "com/tw ter/recos/features/t et.thr ft"
+ nclude "com/tw ter/recos/recos_common.thr ft"
 
 
-struct TweetBasedRelatedTweetRequest {
-  1: required i64                                   tweetId               // query tweet id
-  2: optional i32                                   maxResults            // number of suggested results to return
-  3: optional list<i64>                             excludeTweetIds       // list of tweet ids to exclude from response
-  4: optional i32                                   minQueryDegree        // min degree of query tweet
-  5: optional i32                                   maxNumSamplesPerNeighbor // max number of sampled users who engaged with the query tweet
-  6: optional i32                                   minCooccurrence       // min co-occurrence of related tweet candidate 
-  7: optional i32                                   minResultDegree       // min degree of related tweet candidate 
-  8: optional double                                minScore              // min score of related tweet candidate
-  9: optional i32                                   maxTweetAgeInHours    // max tweet age in hours of related tweet candidate 
+struct T etBasedRelatedT etRequest {
+  1: requ red  64                                   t et d               // query t et  d
+  2: opt onal  32                                   maxResults            // number of suggested results to return
+  3: opt onal l st< 64>                             excludeT et ds       // l st of t et  ds to exclude from response
+  4: opt onal  32                                   m nQueryDegree        // m n degree of query t et
+  5: opt onal  32                                   maxNumSamplesPerNe ghbor // max number of sampled users who engaged w h t  query t et
+  6: opt onal  32                                   m nCooccurrence       // m n co-occurrence of related t et cand date 
+  7: opt onal  32                                   m nResultDegree       // m n degree of related t et cand date 
+  8: opt onal double                                m nScore              // m n score of related t et cand date
+  9: opt onal  32                                   maxT etAge nH s    // max t et age  n h s of related t et cand date 
 }
 
-struct ProducerBasedRelatedTweetRequest {
-  1: required i64                                   producerId            // query producer id
-  2: optional i32                                   maxResults            // number of suggested results to return
-  3: optional list<i64>                             excludeTweetIds       // list of tweet ids to exclude from response
-  4: optional i32                                   minQueryDegree        // min degree of query producer, e.g. number of followers
-  5: optional i32                                   maxNumFollowers       // max number of sampled users who follow the query producer 
-  6: optional i32                                   minCooccurrence       // min co-occurrence of related tweet candidate 
-  7: optional i32                                   minResultDegree       // min degree of related tweet candidate 
-  8: optional double                                minScore              // min score of related tweet candidate
-  9: optional i32                                   maxTweetAgeInHours    // max tweet age in hours of related tweet candidate 
+struct ProducerBasedRelatedT etRequest {
+  1: requ red  64                                   producer d            // query producer  d
+  2: opt onal  32                                   maxResults            // number of suggested results to return
+  3: opt onal l st< 64>                             excludeT et ds       // l st of t et  ds to exclude from response
+  4: opt onal  32                                   m nQueryDegree        // m n degree of query producer, e.g. number of follo rs
+  5: opt onal  32                                   maxNumFollo rs       // max number of sampled users who follow t  query producer 
+  6: opt onal  32                                   m nCooccurrence       // m n co-occurrence of related t et cand date 
+  7: opt onal  32                                   m nResultDegree       // m n degree of related t et cand date 
+  8: opt onal double                                m nScore              // m n score of related t et cand date
+  9: opt onal  32                                   maxT etAge nH s    // max t et age  n h s of related t et cand date 
 }
 
-struct ConsumersBasedRelatedTweetRequest {
-  1: required list<i64>                             consumerSeedSet       // query consumer userId set
-  2: optional i32                                   maxResults            // number of suggested results to return
-  3: optional list<i64>                             excludeTweetIds       // list of tweet ids to exclude from response
-  4: optional i32                                   minCooccurrence       // min co-occurrence of related tweet candidate 
-  5: optional i32                                   minResultDegree       // min degree of related tweet candidate  
-  6: optional double                                minScore              // min score of related tweet candidate
-  7: optional i32                                   maxTweetAgeInHours    // max tweet age in hours of related tweet candidate
+struct Consu rsBasedRelatedT etRequest {
+  1: requ red l st< 64>                             consu rSeedSet       // query consu r user d set
+  2: opt onal  32                                   maxResults            // number of suggested results to return
+  3: opt onal l st< 64>                             excludeT et ds       // l st of t et  ds to exclude from response
+  4: opt onal  32                                   m nCooccurrence       // m n co-occurrence of related t et cand date 
+  5: opt onal  32                                   m nResultDegree       // m n degree of related t et cand date  
+  6: opt onal double                                m nScore              // m n score of related t et cand date
+  7: opt onal  32                                   maxT etAge nH s    // max t et age  n h s of related t et cand date
 }
 
-struct RelatedTweet {
-  1: required i64                          tweetId
-  2: required double                       score
-  3: optional tweet.GraphFeaturesForTweet  relatedTweetGraphFeatures
+struct RelatedT et {
+  1: requ red  64                          t et d
+  2: requ red double                       score
+  3: opt onal t et.GraphFeaturesForT et  relatedT etGraphFeatures
 }
 
-struct RelatedTweetResponse {
-  1: required list<RelatedTweet>           tweets
-  2: optional tweet.GraphFeaturesForQuery  queryTweetGraphFeatures
+struct RelatedT etResponse {
+  1: requ red l st<RelatedT et>           t ets
+  2: opt onal t et.GraphFeaturesForQuery  queryT etGraphFeatures
 }
 
 /**
- * The main interface-definition for UserVideoGraph.
+ * T  ma n  nterface-def n  on for UserV deoGraph.
  */
-service UserVideoGraph {
-  RelatedTweetResponse tweetBasedRelatedTweets (TweetBasedRelatedTweetRequest request)
-  RelatedTweetResponse producerBasedRelatedTweets (ProducerBasedRelatedTweetRequest request)
-  RelatedTweetResponse consumersBasedRelatedTweets (ConsumersBasedRelatedTweetRequest request)
+serv ce UserV deoGraph {
+  RelatedT etResponse t etBasedRelatedT ets (T etBasedRelatedT etRequest request)
+  RelatedT etResponse producerBasedRelatedT ets (ProducerBasedRelatedT etRequest request)
+  RelatedT etResponse consu rsBasedRelatedT ets (Consu rsBasedRelatedT etRequest request)
 }
 

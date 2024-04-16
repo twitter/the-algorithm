@@ -1,105 +1,105 @@
-package com.twitter.frigate.pushservice.rank
+package com.tw ter.fr gate.pushserv ce.rank
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.common.base.TweetAuthor
-import com.twitter.frigate.common.base.TweetCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.storehaus.FutureOps
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Cand dateDeta ls
+ mport com.tw ter.fr gate.common.base.T etAuthor
+ mport com.tw ter.fr gate.common.base.T etCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.storehaus.FutureOps
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
-class SubscriptionCreatorRanker(
-  superFollowEligibilityUserStore: ReadableStore[Long, Boolean],
-  statsReceiver: StatsReceiver) {
+class Subscr pt onCreatorRanker(
+  superFollowEl g b l yUserStore: ReadableStore[Long, Boolean],
+  statsRece ver: StatsRece ver) {
 
-  private val scopedStats = statsReceiver.scope("SubscriptionCreatorRanker")
-  private val boostStats = scopedStats.scope("boostSubscriptionCreator")
-  private val softUprankStats = scopedStats.scope("boostByScoreFactor")
-  private val boostTotalCandidates = boostStats.stat("total_input_candidates")
-  private val softRankTotalCandidates = softUprankStats.stat("total_input_candidates")
-  private val softRankNumCandidatesCreators = softUprankStats.counter("candidates_from_creators")
-  private val softRankNumCandidatesNonCreators =
-    softUprankStats.counter("candidates_not_from_creators")
-  private val boostNumCandidatesCreators = boostStats.counter("candidates_from_creators")
-  private val boostNumCandidatesNonCreators =
-    boostStats.counter("candidates_not_from_creators")
+  pr vate val scopedStats = statsRece ver.scope("Subscr pt onCreatorRanker")
+  pr vate val boostStats = scopedStats.scope("boostSubscr pt onCreator")
+  pr vate val softUprankStats = scopedStats.scope("boostByScoreFactor")
+  pr vate val boostTotalCand dates = boostStats.stat("total_ nput_cand dates")
+  pr vate val softRankTotalCand dates = softUprankStats.stat("total_ nput_cand dates")
+  pr vate val softRankNumCand datesCreators = softUprankStats.counter("cand dates_from_creators")
+  pr vate val softRankNumCand datesNonCreators =
+    softUprankStats.counter("cand dates_not_from_creators")
+  pr vate val boostNumCand datesCreators = boostStats.counter("cand dates_from_creators")
+  pr vate val boostNumCand datesNonCreators =
+    boostStats.counter("cand dates_not_from_creators")
 
-  def boostSubscriptionCreator(
-    inputCandidatesFut: Future[Seq[CandidateDetails[PushCandidate]]]
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
+  def boostSubscr pt onCreator(
+     nputCand datesFut: Future[Seq[Cand dateDeta ls[PushCand date]]]
+  ): Future[Seq[Cand dateDeta ls[PushCand date]]] = {
 
-    inputCandidatesFut.flatMap { inputCandidates =>
-      boostTotalCandidates.add(inputCandidates.size)
-      val tweetAuthorIds = inputCandidates.flatMap {
-        case CandidateDetails(candidate: TweetCandidate with TweetAuthor, s) =>
-          candidate.authorId
+     nputCand datesFut.flatMap {  nputCand dates =>
+      boostTotalCand dates.add( nputCand dates.s ze)
+      val t etAuthor ds =  nputCand dates.flatMap {
+        case Cand dateDeta ls(cand date: T etCand date w h T etAuthor, s) =>
+          cand date.author d
         case _ => None
       }.toSet
 
       FutureOps
-        .mapCollect(superFollowEligibilityUserStore.multiGet(tweetAuthorIds))
+        .mapCollect(superFollowEl g b l yUserStore.mult Get(t etAuthor ds))
         .map { creatorAuthorMap =>
-          val (upRankedCandidates, otherCandidates) = inputCandidates.partition {
-            case CandidateDetails(candidate: TweetCandidate with TweetAuthor, s) =>
-              candidate.authorId match {
-                case Some(authorId) =>
-                  creatorAuthorMap(authorId).getOrElse(false)
+          val (upRankedCand dates, ot rCand dates) =  nputCand dates.part  on {
+            case Cand dateDeta ls(cand date: T etCand date w h T etAuthor, s) =>
+              cand date.author d match {
+                case So (author d) =>
+                  creatorAuthorMap(author d).getOrElse(false)
                 case _ => false
               }
             case _ => false
           }
-          boostNumCandidatesCreators.incr(upRankedCandidates.size)
-          boostNumCandidatesNonCreators.incr(otherCandidates.size)
-          upRankedCandidates ++ otherCandidates
+          boostNumCand datesCreators. ncr(upRankedCand dates.s ze)
+          boostNumCand datesNonCreators. ncr(ot rCand dates.s ze)
+          upRankedCand dates ++ ot rCand dates
         }
     }
   }
 
   def boostByScoreFactor(
-    inputCandidatesFut: Future[Seq[CandidateDetails[PushCandidate]]],
+     nputCand datesFut: Future[Seq[Cand dateDeta ls[PushCand date]]],
     factor: Double = 1.0,
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
+  ): Future[Seq[Cand dateDeta ls[PushCand date]]] = {
 
-    inputCandidatesFut.flatMap { inputCandidates =>
-      softRankTotalCandidates.add(inputCandidates.size)
-      val tweetAuthorIds = inputCandidates.flatMap {
-        case CandidateDetails(candidate: TweetCandidate with TweetAuthor, s) =>
-          candidate.authorId
+     nputCand datesFut.flatMap {  nputCand dates =>
+      softRankTotalCand dates.add( nputCand dates.s ze)
+      val t etAuthor ds =  nputCand dates.flatMap {
+        case Cand dateDeta ls(cand date: T etCand date w h T etAuthor, s) =>
+          cand date.author d
         case _ => None
       }.toSet
 
       FutureOps
-        .mapCollect(superFollowEligibilityUserStore.multiGet(tweetAuthorIds))
+        .mapCollect(superFollowEl g b l yUserStore.mult Get(t etAuthor ds))
         .flatMap { creatorAuthorMap =>
-          val (upRankedCandidates, otherCandidates) = inputCandidates.partition {
-            case CandidateDetails(candidate: TweetCandidate with TweetAuthor, s) =>
-              candidate.authorId match {
-                case Some(authorId) =>
-                  creatorAuthorMap(authorId).getOrElse(false)
+          val (upRankedCand dates, ot rCand dates) =  nputCand dates.part  on {
+            case Cand dateDeta ls(cand date: T etCand date w h T etAuthor, s) =>
+              cand date.author d match {
+                case So (author d) =>
+                  creatorAuthorMap(author d).getOrElse(false)
                 case _ => false
               }
             case _ => false
           }
-          softRankNumCandidatesCreators.incr(upRankedCandidates.size)
-          softRankNumCandidatesNonCreators.incr(otherCandidates.size)
+          softRankNumCand datesCreators. ncr(upRankedCand dates.s ze)
+          softRankNumCand datesNonCreators. ncr(ot rCand dates.s ze)
 
-          ModelBasedRanker.rankBySpecifiedScore(
-            inputCandidates,
-            candidate => {
-              val isFromCreator = candidate match {
-                case candidate: TweetCandidate with TweetAuthor =>
-                  candidate.authorId match {
-                    case Some(authorId) =>
-                      creatorAuthorMap(authorId).getOrElse(false)
+          ModelBasedRanker.rankBySpec f edScore(
+             nputCand dates,
+            cand date => {
+              val  sFromCreator = cand date match {
+                case cand date: T etCand date w h T etAuthor =>
+                  cand date.author d match {
+                    case So (author d) =>
+                      creatorAuthorMap(author d).getOrElse(false)
                     case _ => false
                   }
                 case _ => false
               }
-              candidate.mrWeightedOpenOrNtabClickRankingProbability.map {
-                case Some(score) =>
-                  if (isFromCreator) Some(score * factor)
-                  else Some(score)
+              cand date.mr  ghtedOpenOrNtabCl ckRank ngProbab l y.map {
+                case So (score) =>
+                   f ( sFromCreator) So (score * factor)
+                  else So (score)
                 case _ => None
               }
             }

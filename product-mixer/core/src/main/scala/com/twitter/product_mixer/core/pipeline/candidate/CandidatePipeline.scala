@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.core.pipeline.candidate
+package com.tw ter.product_m xer.core.p pel ne.cand date
 
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.Pipeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Arrow
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel ne
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.Arrow
 
 /**
- * A Candidate Pipeline
+ * A Cand date P pel ne
  *
- * This is an abstract class, as we only construct these via the [[CandidatePipelineBuilder]].
+ * T   s an abstract class, as   only construct t se v a t  [[Cand dateP pel neBu lder]].
  *
- * A [[CandidatePipeline]] is capable of processing requests (queries) and returning candidates
- * in the form of a [[CandidatePipelineResult]]
+ * A [[Cand dateP pel ne]]  s capable of process ng requests (quer es) and return ng cand dates
+ *  n t  form of a [[Cand dateP pel neResult]]
  *
- * @tparam Query the domain model for the query or request
+ * @tparam Query t  doma n model for t  query or request
  */
-abstract class CandidatePipeline[-Query <: PipelineQuery] private[candidate]
-    extends Pipeline[CandidatePipeline.Inputs[Query], Seq[CandidateWithDetails]] {
-  override private[core] val config: BaseCandidatePipelineConfig[Query, _, _, _]
-  override val arrow: Arrow[CandidatePipeline.Inputs[Query], CandidatePipelineResult]
-  override val identifier: CandidatePipelineIdentifier
+abstract class Cand dateP pel ne[-Query <: P pel neQuery] pr vate[cand date]
+    extends P pel ne[Cand dateP pel ne. nputs[Query], Seq[Cand dateW hDeta ls]] {
+  overr de pr vate[core] val conf g: BaseCand dateP pel neConf g[Query, _, _, _]
+  overr de val arrow: Arrow[Cand dateP pel ne. nputs[Query], Cand dateP pel neResult]
+  overr de val  dent f er: Cand dateP pel ne dent f er
 }
 
-object CandidatePipeline {
-  case class Inputs[+Query <: PipelineQuery](
+object Cand dateP pel ne {
+  case class  nputs[+Query <: P pel neQuery](
     query: Query,
-    existingCandidates: Seq[CandidateWithDetails])
+    ex st ngCand dates: Seq[Cand dateW hDeta ls])
 }

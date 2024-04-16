@@ -1,299 +1,299 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import java.io.IOException;
-import java.util.Comparator;
+ mport java. o. OExcept on;
+ mport java.ut l.Comparator;
 
-import org.apache.lucene.index.BaseTermsEnum;
-import org.apache.lucene.index.ImpactsEnum;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.SlowImpactsEnum;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.InPlaceMergeSorter;
-import org.apache.lucene.util.IntsRefBuilder;
-import org.apache.lucene.util.fst.BytesRefFSTEnum;
-import org.apache.lucene.util.fst.FST;
-import org.apache.lucene.util.fst.PositiveIntOutputs;
-import org.apache.lucene.util.fst.Util;
-import org.apache.lucene.util.packed.PackedInts;
+ mport org.apac .lucene. ndex.BaseTermsEnum;
+ mport org.apac .lucene. ndex. mpactsEnum;
+ mport org.apac .lucene. ndex.Post ngsEnum;
+ mport org.apac .lucene. ndex.Slow mpactsEnum;
+ mport org.apac .lucene. ndex.TermsEnum;
+ mport org.apac .lucene.ut l.BytesRef;
+ mport org.apac .lucene.ut l. nPlace rgeSorter;
+ mport org.apac .lucene.ut l. ntsRefBu lder;
+ mport org.apac .lucene.ut l.fst.BytesRefFSTEnum;
+ mport org.apac .lucene.ut l.fst.FST;
+ mport org.apac .lucene.ut l.fst.Pos  ve ntOutputs;
+ mport org.apac .lucene.ut l.fst.Ut l;
+ mport org.apac .lucene.ut l.packed.Packed nts;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+ mport com.tw ter.search.common.ut l. o.flushable.DataDeser al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.DataSer al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.common.ut l. o.flushable.Flushable;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
 
-public class FSTTermDictionary implements TermDictionary, Flushable {
-  private final FST<Long> fst;
+publ c class FSTTermD ct onary  mple nts TermD ct onary, Flushable {
+  pr vate f nal FST<Long> fst;
 
-  private final PackedInts.Reader termPointers;
-  private final ByteBlockPool termPool;
-  private final TermPointerEncoding termPointerEncoding;
-  private int numTerms;
+  pr vate f nal Packed nts.Reader termPo nters;
+  pr vate f nal ByteBlockPool termPool;
+  pr vate f nal TermPo nterEncod ng termPo nterEncod ng;
+  pr vate  nt numTerms;
 
-  FSTTermDictionary(int numTerms, FST<Long> fst,
-                    ByteBlockPool termPool, PackedInts.Reader termPointers,
-                    TermPointerEncoding termPointerEncoding) {
-    this.numTerms = numTerms;
-    this.fst = fst;
-    this.termPool = termPool;
-    this.termPointers = termPointers;
-    this.termPointerEncoding = termPointerEncoding;
+  FSTTermD ct onary( nt numTerms, FST<Long> fst,
+                    ByteBlockPool termPool, Packed nts.Reader termPo nters,
+                    TermPo nterEncod ng termPo nterEncod ng) {
+    t .numTerms = numTerms;
+    t .fst = fst;
+    t .termPool = termPool;
+    t .termPo nters = termPo nters;
+    t .termPo nterEncod ng = termPo nterEncod ng;
   }
 
-  @Override
-  public int getNumTerms() {
+  @Overr de
+  publ c  nt getNumTerms() {
     return numTerms;
   }
 
-  @Override
-  public int lookupTerm(BytesRef term) throws IOException {
-    if (fst == null) {
-      return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+  @Overr de
+  publ c  nt lookupTerm(BytesRef term) throws  OExcept on {
+     f (fst == null) {
+      return Earlyb rd ndexSeg ntAtom cReader.TERM_NOT_FOUND;
     }
-    final BytesRefFSTEnum<Long> fstEnum = new BytesRefFSTEnum<>(fst);
+    f nal BytesRefFSTEnum<Long> fstEnum = new BytesRefFSTEnum<>(fst);
 
-    final BytesRefFSTEnum.InputOutput<Long> result = fstEnum.seekExact(term);
-    if (result != null && result.input.equals(term)) {
-      // -1 because 0 is not supported by the fst
-      return result.output.intValue() - 1;
+    f nal BytesRefFSTEnum. nputOutput<Long> result = fstEnum.seekExact(term);
+     f (result != null && result. nput.equals(term)) {
+      // -1 because 0  s not supported by t  fst
+      return result.output. ntValue() - 1;
     } else {
-      return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+      return Earlyb rd ndexSeg ntAtom cReader.TERM_NOT_FOUND;
     }
   }
 
-  static FSTTermDictionary buildFST(
-      final ByteBlockPool termPool,
-      int[] termPointers,
-      int numTerms,
-      final Comparator<BytesRef> comp,
+  stat c FSTTermD ct onary bu ldFST(
+      f nal ByteBlockPool termPool,
+       nt[] termPo nters,
+       nt numTerms,
+      f nal Comparator<BytesRef> comp,
       boolean supportTermTextLookup,
-      final TermPointerEncoding termPointerEncoding) throws IOException {
-    final IntsRefBuilder scratchIntsRef = new IntsRefBuilder();
+      f nal TermPo nterEncod ng termPo nterEncod ng) throws  OExcept on {
+    f nal  ntsRefBu lder scratch ntsRef = new  ntsRefBu lder();
 
-    final int[] compact = new int[numTerms];
-    for (int i = 0; i < numTerms; i++) {
-      compact[i] = i;
+    f nal  nt[] compact = new  nt[numTerms];
+    for ( nt   = 0;   < numTerms;  ++) {
+      compact[ ] =  ;
     }
 
-    // first sort the terms
-    new InPlaceMergeSorter() {
-      private BytesRef scratch1 = new BytesRef();
-      private BytesRef scratch2 = new BytesRef();
+    // f rst sort t  terms
+    new  nPlace rgeSorter() {
+      pr vate BytesRef scratch1 = new BytesRef();
+      pr vate BytesRef scratch2 = new BytesRef();
 
-      @Override
-      protected void swap(int i, int j) {
-        final int o = compact[i];
-        compact[i] = compact[j];
+      @Overr de
+      protected vo d swap( nt  ,  nt j) {
+        f nal  nt o = compact[ ];
+        compact[ ] = compact[j];
         compact[j] = o;
       }
 
-      @Override
-      protected int compare(int i, int j) {
-        final int ord1 = compact[i];
-        final int ord2 = compact[j];
-        ByteTermUtils.setBytesRef(termPool, scratch1,
-                                  termPointerEncoding.getTextStart(termPointers[ord1]));
-        ByteTermUtils.setBytesRef(termPool, scratch2,
-                                  termPointerEncoding.getTextStart(termPointers[ord2]));
+      @Overr de
+      protected  nt compare( nt  ,  nt j) {
+        f nal  nt ord1 = compact[ ];
+        f nal  nt ord2 = compact[j];
+        ByteTermUt ls.setBytesRef(termPool, scratch1,
+                                  termPo nterEncod ng.getTextStart(termPo nters[ord1]));
+        ByteTermUt ls.setBytesRef(termPool, scratch2,
+                                  termPo nterEncod ng.getTextStart(termPo nters[ord2]));
         return comp.compare(scratch1, scratch2);
       }
 
     }.sort(0, compact.length);
 
-    final PositiveIntOutputs outputs = PositiveIntOutputs.getSingleton();
+    f nal Pos  ve ntOutputs outputs = Pos  ve ntOutputs.getS ngleton();
 
-    final org.apache.lucene.util.fst.Builder<Long> builder =
-        new org.apache.lucene.util.fst.Builder<>(FST.INPUT_TYPE.BYTE1, outputs);
+    f nal org.apac .lucene.ut l.fst.Bu lder<Long> bu lder =
+        new org.apac .lucene.ut l.fst.Bu lder<>(FST. NPUT_TYPE.BYTE1, outputs);
 
-    final BytesRef term = new BytesRef();
-    for (int termID : compact) {
-      ByteTermUtils.setBytesRef(termPool, term,
-              termPointerEncoding.getTextStart(termPointers[termID]));
-      // +1 because 0 is not supported by the fst
-      builder.add(Util.toIntsRef(term, scratchIntsRef), (long) termID + 1);
+    f nal BytesRef term = new BytesRef();
+    for ( nt term D : compact) {
+      ByteTermUt ls.setBytesRef(termPool, term,
+              termPo nterEncod ng.getTextStart(termPo nters[term D]));
+      // +1 because 0  s not supported by t  fst
+      bu lder.add(Ut l.to ntsRef(term, scratch ntsRef), (long) term D + 1);
     }
 
-    if (supportTermTextLookup) {
-      PackedInts.Reader packedTermPointers = OptimizedMemoryIndex.getPackedInts(termPointers);
-      return new FSTTermDictionary(
+     f (supportTermTextLookup) {
+      Packed nts.Reader packedTermPo nters = Opt m zed mory ndex.getPacked nts(termPo nters);
+      return new FSTTermD ct onary(
           numTerms,
-          builder.finish(),
+          bu lder.f n sh(),
           termPool,
-          packedTermPointers,
-          termPointerEncoding);
+          packedTermPo nters,
+          termPo nterEncod ng);
     } else {
-      return new FSTTermDictionary(
+      return new FSTTermD ct onary(
           numTerms,
-          builder.finish(),
+          bu lder.f n sh(),
           null, // termPool
-          null, // termPointers
-          termPointerEncoding);
+          null, // termPo nters
+          termPo nterEncod ng);
     }
   }
 
-  @Override
-  public boolean getTerm(int termID, BytesRef text, BytesRef termPayload) {
-    if (termPool == null) {
-      throw new UnsupportedOperationException(
-              "This dictionary does not support term lookup by termID");
+  @Overr de
+  publ c boolean getTerm( nt term D, BytesRef text, BytesRef termPayload) {
+     f (termPool == null) {
+      throw new UnsupportedOperat onExcept on(
+              "T  d ct onary does not support term lookup by term D");
     } else {
-      int termPointer = (int) termPointers.get(termID);
-      boolean hasTermPayload = termPointerEncoding.hasPayload(termPointer);
-      int textStart = termPointerEncoding.getTextStart(termPointer);
-      // setBytesRef sets the passed in BytesRef "text" to the term in the termPool.
-      // As a side effect it returns the offset of the next entry in the pool after the term,
-      // which may optionally be used if this term has a payload.
-      int termPayloadStart = ByteTermUtils.setBytesRef(termPool, text, textStart);
-      if (termPayload != null && hasTermPayload) {
-        ByteTermUtils.setBytesRef(termPool, termPayload, termPayloadStart);
+       nt termPo nter = ( nt) termPo nters.get(term D);
+      boolean hasTermPayload = termPo nterEncod ng.hasPayload(termPo nter);
+       nt textStart = termPo nterEncod ng.getTextStart(termPo nter);
+      // setBytesRef sets t  passed  n BytesRef "text" to t  term  n t  termPool.
+      // As a s de effect   returns t  offset of t  next entry  n t  pool after t  term,
+      // wh ch may opt onally be used  f t  term has a payload.
+       nt termPayloadStart = ByteTermUt ls.setBytesRef(termPool, text, textStart);
+       f (termPayload != null && hasTermPayload) {
+        ByteTermUt ls.setBytesRef(termPool, termPayload, termPayloadStart);
       }
 
       return hasTermPayload;
     }
   }
 
-  @Override
-  public TermsEnum createTermsEnum(OptimizedMemoryIndex index) {
+  @Overr de
+  publ c TermsEnum createTermsEnum(Opt m zed mory ndex  ndex) {
     return new BaseTermsEnum() {
-      private final BytesRefFSTEnum<Long> fstEnum = fst != null ? new BytesRefFSTEnum<>(fst) : null;
-      private BytesRefFSTEnum.InputOutput<Long> current;
+      pr vate f nal BytesRefFSTEnum<Long> fstEnum = fst != null ? new BytesRefFSTEnum<>(fst) : null;
+      pr vate BytesRefFSTEnum. nputOutput<Long> current;
 
-      @Override
-      public SeekStatus seekCeil(BytesRef term)
-          throws IOException {
-        if (fstEnum == null) {
+      @Overr de
+      publ c SeekStatus seekCe l(BytesRef term)
+          throws  OExcept on {
+         f (fstEnum == null) {
           return SeekStatus.END;
         }
 
-        current = fstEnum.seekCeil(term);
-        if (current != null && current.input.equals(term)) {
+        current = fstEnum.seekCe l(term);
+         f (current != null && current. nput.equals(term)) {
           return SeekStatus.FOUND;
         } else {
           return SeekStatus.END;
         }
       }
 
-      @Override
-      public boolean seekExact(BytesRef text) throws IOException {
+      @Overr de
+      publ c boolean seekExact(BytesRef text) throws  OExcept on {
         current = fstEnum.seekExact(text);
         return current != null;
       }
 
-      // In our case the ord is the termId.
-      @Override
-      public void seekExact(long ord) {
-        current = new BytesRefFSTEnum.InputOutput<>();
-        current.input = null;
-        // +1 because 0 is not supported by the fst
+      //  n   case t  ord  s t  term d.
+      @Overr de
+      publ c vo d seekExact(long ord) {
+        current = new BytesRefFSTEnum. nputOutput<>();
+        current. nput = null;
+        // +1 because 0  s not supported by t  fst
         current.output = ord + 1;
 
-        if (termPool != null) {
+         f (termPool != null) {
           BytesRef bytesRef = new BytesRef();
-          int termId = (int) ord;
-          assert termId == ord;
-          FSTTermDictionary.this.getTerm(termId, bytesRef, null);
-          current.input = bytesRef;
+           nt term d = ( nt) ord;
+          assert term d == ord;
+          FSTTermD ct onary.t .getTerm(term d, bytesRef, null);
+          current. nput = bytesRef;
         }
       }
 
-      @Override
-      public BytesRef next() throws IOException {
+      @Overr de
+      publ c BytesRef next() throws  OExcept on {
         current = fstEnum.next();
-        if (current == null) {
+         f (current == null) {
           return null;
         }
-        return current.input;
+        return current. nput;
       }
 
-      @Override
-      public BytesRef term() {
-        return current.input;
+      @Overr de
+      publ c BytesRef term() {
+        return current. nput;
       }
 
-      // In our case the ord is the termId.
-      @Override
-      public long ord() {
-        // -1 because 0 is not supported by the fst
+      //  n   case t  ord  s t  term d.
+      @Overr de
+      publ c long ord() {
+        // -1 because 0  s not supported by t  fst
         return current.output - 1;
       }
 
-      @Override
-      public int docFreq() {
-        return index.getDF((int) ord());
+      @Overr de
+      publ c  nt docFreq() {
+        return  ndex.getDF(( nt) ord());
       }
 
-      @Override
-      public long totalTermFreq() {
+      @Overr de
+      publ c long totalTermFreq() {
         return docFreq();
       }
 
-      @Override
-      public PostingsEnum postings(PostingsEnum reuse, int flags) throws IOException {
-        int termID = (int) ord();
-        int postingsPointer = index.getPostingListPointer(termID);
-        int numPostings = index.getNumPostings(termID);
-        return index.getPostingLists().postings(postingsPointer, numPostings, flags);
+      @Overr de
+      publ c Post ngsEnum post ngs(Post ngsEnum reuse,  nt flags) throws  OExcept on {
+         nt term D = ( nt) ord();
+         nt post ngsPo nter =  ndex.getPost ngL stPo nter(term D);
+         nt numPost ngs =  ndex.getNumPost ngs(term D);
+        return  ndex.getPost ngL sts().post ngs(post ngsPo nter, numPost ngs, flags);
       }
 
-      @Override
-      public ImpactsEnum impacts(int flags) throws IOException {
-        return new SlowImpactsEnum(postings(null, flags));
+      @Overr de
+      publ c  mpactsEnum  mpacts( nt flags) throws  OExcept on {
+        return new Slow mpactsEnum(post ngs(null, flags));
       }
     };
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @SuppressWarn ngs("unc cked")
+  @Overr de
+  publ c FlushHandler getFlushHandler() {
+    return new FlushHandler(t );
   }
 
-  public static class FlushHandler extends Flushable.Handler<FSTTermDictionary> {
-    private static final String NUM_TERMS_PROP_NAME = "numTerms";
-    private static final String SUPPORT_TERM_TEXT_LOOKUP_PROP_NAME = "supportTermTextLookup";
-    private final TermPointerEncoding termPointerEncoding;
+  publ c stat c class FlushHandler extends Flushable.Handler<FSTTermD ct onary> {
+    pr vate stat c f nal Str ng NUM_TERMS_PROP_NAME = "numTerms";
+    pr vate stat c f nal Str ng SUPPORT_TERM_TEXT_LOOKUP_PROP_NAME = "supportTermTextLookup";
+    pr vate f nal TermPo nterEncod ng termPo nterEncod ng;
 
-    public FlushHandler(TermPointerEncoding termPointerEncoding) {
+    publ c FlushHandler(TermPo nterEncod ng termPo nterEncod ng) {
       super();
-      this.termPointerEncoding = termPointerEncoding;
+      t .termPo nterEncod ng = termPo nterEncod ng;
     }
 
-    public FlushHandler(FSTTermDictionary objectToFlush) {
+    publ c FlushHandler(FSTTermD ct onary objectToFlush) {
       super(objectToFlush);
-      this.termPointerEncoding = objectToFlush.termPointerEncoding;
+      t .termPo nterEncod ng = objectToFlush.termPo nterEncod ng;
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out)
-        throws IOException {
-      FSTTermDictionary objectToFlush = getObjectToFlush();
-      flushInfo.addIntProperty(NUM_TERMS_PROP_NAME, objectToFlush.getNumTerms());
-      flushInfo.addBooleanProperty(SUPPORT_TERM_TEXT_LOOKUP_PROP_NAME,
+    @Overr de
+    protected vo d doFlush(Flush nfo flush nfo, DataSer al zer out)
+        throws  OExcept on {
+      FSTTermD ct onary objectToFlush = getObjectToFlush();
+      flush nfo.add ntProperty(NUM_TERMS_PROP_NAME, objectToFlush.getNumTerms());
+      flush nfo.addBooleanProperty(SUPPORT_TERM_TEXT_LOOKUP_PROP_NAME,
               objectToFlush.termPool != null);
-      if (objectToFlush.termPool != null) {
-        out.writePackedInts(objectToFlush.termPointers);
-        objectToFlush.termPool.getFlushHandler().flush(flushInfo.newSubProperties("termPool"), out);
+       f (objectToFlush.termPool != null) {
+        out.wr ePacked nts(objectToFlush.termPo nters);
+        objectToFlush.termPool.getFlushHandler().flush(flush nfo.newSubPropert es("termPool"), out);
       }
-      objectToFlush.fst.save(out.getIndexOutput());
+      objectToFlush.fst.save(out.get ndexOutput());
     }
 
-    @Override
-    protected FSTTermDictionary doLoad(FlushInfo flushInfo,
-        DataDeserializer in) throws IOException {
-      int numTerms = flushInfo.getIntProperty(NUM_TERMS_PROP_NAME);
+    @Overr de
+    protected FSTTermD ct onary doLoad(Flush nfo flush nfo,
+        DataDeser al zer  n) throws  OExcept on {
+       nt numTerms = flush nfo.get ntProperty(NUM_TERMS_PROP_NAME);
       boolean supportTermTextLookup =
-              flushInfo.getBooleanProperty(SUPPORT_TERM_TEXT_LOOKUP_PROP_NAME);
-      PackedInts.Reader termPointers = null;
+              flush nfo.getBooleanProperty(SUPPORT_TERM_TEXT_LOOKUP_PROP_NAME);
+      Packed nts.Reader termPo nters = null;
       ByteBlockPool termPool = null;
-      if (supportTermTextLookup) {
-        termPointers = in.readPackedInts();
+       f (supportTermTextLookup) {
+        termPo nters =  n.readPacked nts();
         termPool = (new ByteBlockPool.FlushHandler())
-                .load(flushInfo.getSubProperties("termPool"), in);
+                .load(flush nfo.getSubPropert es("termPool"),  n);
       }
-      final PositiveIntOutputs outputs = PositiveIntOutputs.getSingleton();
-      return new FSTTermDictionary(numTerms, new FST<>(in.getIndexInput(), outputs),
-              termPool, termPointers, termPointerEncoding);
+      f nal Pos  ve ntOutputs outputs = Pos  ve ntOutputs.getS ngleton();
+      return new FSTTermD ct onary(numTerms, new FST<>( n.get ndex nput(), outputs),
+              termPool, termPo nters, termPo nterEncod ng);
     }
   }
 }

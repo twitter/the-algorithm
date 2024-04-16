@@ -1,49 +1,49 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+ mport javax. nject. nject;
+ mport javax. nject.S ngleton;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.decider.SearchDecider;
+ mport com.tw ter.search.common.dec der.SearchDec der;
 
 /**
- * Controls fractions of requests that are sent out to each tier.
+ * Controls fract ons of requests that are sent out to each t er.
  */
-@Singleton
-public class EarlybirdTierThrottleDeciders {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(EarlybirdTierThrottleDeciders.class);
-  private static final String TIER_THROTTLE_DECIDER_KEY_FORMAT =
-      "percentage_to_hit_cluster_%s_tier_%s";
-  private final SearchDecider decider;
+@S ngleton
+publ c class Earlyb rdT erThrottleDec ders {
+  pr vate stat c f nal Logger LOG =
+      LoggerFactory.getLogger(Earlyb rdT erThrottleDec ders.class);
+  pr vate stat c f nal Str ng T ER_THROTTLE_DEC DER_KEY_FORMAT =
+      "percentage_to_h _cluster_%s_t er_%s";
+  pr vate f nal SearchDec der dec der;
 
   /**
-   * Construct a decider using the singleton decider object injected by Guice for the
-   * specified tier.
-   * See {@link com.twitter.search.common.root.SearchRootModule#provideDecider()}
+   * Construct a dec der us ng t  s ngleton dec der object  njected by Gu ce for t 
+   * spec f ed t er.
+   * See {@l nk com.tw ter.search.common.root.SearchRootModule#prov deDec der()}
    */
-  @Inject
-  public EarlybirdTierThrottleDeciders(SearchDecider decider) {
-    this.decider = decider;
+  @ nject
+  publ c Earlyb rdT erThrottleDec ders(SearchDec der dec der) {
+    t .dec der = dec der;
   }
 
   /**
-   * Return the throttle decider key for the specified tier.
+   * Return t  throttle dec der key for t  spec f ed t er.
    */
-  public String getTierThrottleDeciderKey(String clusterName, String tierName) {
-    String deciderKey = String.format(TIER_THROTTLE_DECIDER_KEY_FORMAT, clusterName, tierName);
-    if (!decider.getDecider().feature(deciderKey).exists()) {
-      LOG.warn("Decider key {} not found. Will always return unavailable.", deciderKey);
+  publ c Str ng getT erThrottleDec derKey(Str ng clusterNa , Str ng t erNa ) {
+    Str ng dec derKey = Str ng.format(T ER_THROTTLE_DEC DER_KEY_FORMAT, clusterNa , t erNa );
+     f (!dec der.getDec der().feature(dec derKey).ex sts()) {
+      LOG.warn("Dec der key {} not found. W ll always return unava lable.", dec derKey);
     }
-    return deciderKey;
+    return dec derKey;
   }
 
   /**
-   * Check whether a request should be sent to the specified tier.
+   * C ck w t r a request should be sent to t  spec f ed t er.
    */
-  public Boolean shouldSendRequestToTier(final String tierDarkReadDeciderKey) {
-    return decider.isAvailable(tierDarkReadDeciderKey);
+  publ c Boolean shouldSendRequestToT er(f nal Str ng t erDarkReadDec derKey) {
+    return dec der. sAva lable(t erDarkReadDec derKey);
   }
 }

@@ -1,25 +1,25 @@
-package com.twitter.timelineranker.uteg_liked_by_tweets
+package com.tw ter.t  l neranker.uteg_l ked_by_t ets
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.HydratedCandidatesAndFeaturesEnvelope
-import com.twitter.util.Future
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t  l neranker.core.HydratedCand datesAndFeaturesEnvelope
+ mport com.tw ter.ut l.Future
 
-object SocialProofAndUTEGScoreHydrationTransform
+object Soc alProofAndUTEGScoreHydrat onTransform
     extends FutureArrow[
-      HydratedCandidatesAndFeaturesEnvelope,
-      HydratedCandidatesAndFeaturesEnvelope
+      HydratedCand datesAndFeaturesEnvelope,
+      HydratedCand datesAndFeaturesEnvelope
     ] {
-  override def apply(
-    request: HydratedCandidatesAndFeaturesEnvelope
-  ): Future[HydratedCandidatesAndFeaturesEnvelope] = {
+  overr de def apply(
+    request: HydratedCand datesAndFeaturesEnvelope
+  ): Future[HydratedCand datesAndFeaturesEnvelope] = {
 
     val updatedFeatures = request.features.map {
-      case (tweetId, features) =>
-        tweetId ->
+      case (t et d, features) =>
+        t et d ->
           features.copy(
-            utegSocialProofByType =
-              request.candidateEnvelope.utegResults.get(tweetId).map(_.socialProofByType),
-            utegScore = request.candidateEnvelope.utegResults.get(tweetId).map(_.score)
+            utegSoc alProofByType =
+              request.cand dateEnvelope.utegResults.get(t et d).map(_.soc alProofByType),
+            utegScore = request.cand dateEnvelope.utegResults.get(t et d).map(_.score)
           )
     }
 

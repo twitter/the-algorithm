@@ -1,13 +1,13 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.tw ter.s mclusters_v2.hdfs_s ces. nject ons
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.StringUtf8
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaCompactThrift
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.Str ngUtf8
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.Long2B gEnd an
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.ScalaCompactThr ft
+ mport com.tw ter.s mclusters_v2.thr ftscala.ClustersUser s nterested n
 
-object InterestedInInjection {
-  val injection = KeyValInjection(Long2BigEndian, ScalaCompactThrift(ClustersUserIsInterestedIn))
-  val languageInjection =
-    KeyValInjection(StringUtf8, ScalaCompactThrift(ClustersUserIsInterestedIn))
+object  nterested n nject on {
+  val  nject on = KeyVal nject on(Long2B gEnd an, ScalaCompactThr ft(ClustersUser s nterested n))
+  val language nject on =
+    KeyVal nject on(Str ngUtf8, ScalaCompactThr ft(ClustersUser s nterested n))
 }

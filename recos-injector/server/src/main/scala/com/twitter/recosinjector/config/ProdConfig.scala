@@ -1,29 +1,29 @@
-package com.twitter.recosinjector.config
+package com.tw ter.recos njector.conf g
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.logging.Logger
-import com.twitter.recosinjector.decider.RecosInjectorDecider
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.recos njector.dec der.Recos njectorDec der
 
-case class ProdConfig(
-  override val serviceIdentifier: ServiceIdentifier
-)(implicit val statsReceiver: StatsReceiver) extends {
-  // Due to trait initialization logic in Scala, any abstract members declared in Config or
-  // DeployConfig should be declared in this block. Otherwise the abstract member might initialize
-  // to null if invoked before before object creation finishing.
+case class ProdConf g(
+  overr de val serv ce dent f er: Serv ce dent f er
+)( mpl c  val statsRece ver: StatsRece ver) extends {
+  // Due to tra   n  al zat on log c  n Scala, any abstract  mbers declared  n Conf g or
+  // DeployConf g should be declared  n t  block. Ot rw se t  abstract  mber m ght  n  al ze
+  // to null  f  nvoked before before object creat on f n sh ng.
 
-  val recosInjectorThriftClientId = ClientId("recos-injector.prod")
+  val recos njectorThr ftCl ent d = Cl ent d("recos- njector.prod")
 
-  val outputKafkaTopicPrefix = "recos_injector"
+  val outputKafkaTop cPref x = "recos_ njector"
 
-  val log = Logger("ProdConfig")
+  val log = Logger("ProdConf g")
 
-  val recosInjectorCoreSvcsCacheDest = "/srv#/prod/local/cache/recos_metadata"
+  val recos njectorCoreSvcsCac Dest = "/srv#/prod/local/cac /recos_ tadata"
 
-  val recosInjectorDecider = RecosInjectorDecider(
-    isProd = true,
-    dataCenter = serviceIdentifier.zone
+  val recos njectorDec der = Recos njectorDec der(
+     sProd = true,
+    dataCenter = serv ce dent f er.zone
   )
 
-} with DeployConfig
+} w h DeployConf g

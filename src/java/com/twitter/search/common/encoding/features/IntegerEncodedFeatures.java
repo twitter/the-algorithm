@@ -1,119 +1,119 @@
-package com.twitter.search.common.encoding.features;
+package com.tw ter.search.common.encod ng.features;
 
-import java.util.List;
+ mport java.ut l.L st;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.L sts;
 
-import com.twitter.search.common.indexing.thriftjava.PackedFeatures;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.PackedFeatures;
+ mport com.tw ter.search.common.sc ma.base.FeatureConf gurat on;
 
 /**
- * Class used to read/write integers encoded according to
- * {@link com.twitter.search.common.schema.base.FeatureConfiguration}
+ * Class used to read/wr e  ntegers encoded accord ng to
+ * {@l nk com.tw ter.search.common.sc ma.base.FeatureConf gurat on}
  *
- * Implementations must override {@link #getInt(int pos)} and {@link #setInt(int pos, int value)}.
+ *  mple ntat ons must overr de {@l nk #get nt( nt pos)} and {@l nk #set nt( nt pos,  nt value)}.
  */
-public abstract class IntegerEncodedFeatures {
+publ c abstract class  ntegerEncodedFeatures {
   /**
-   * Returns the value at the given position.
+   * Returns t  value at t  g ven pos  on.
    */
-  public abstract int getInt(int pos);
+  publ c abstract  nt get nt( nt pos);
 
   /**
-   * Sets the given value at the given position.
+   * Sets t  g ven value at t  g ven pos  on.
    */
-  public abstract void setInt(int pos, int value);
+  publ c abstract vo d set nt( nt pos,  nt value);
 
   /**
-   * Get the maximum number of integers to hold features.
-   * @return the number of integers to represent all features.
+   * Get t  max mum number of  ntegers to hold features.
+   * @return t  number of  ntegers to represent all features.
    */
-  public abstract int getNumInts();
+  publ c abstract  nt getNum nts();
 
   /**
-   * Test to see if the given feature is true or non-zero. Useful for one bit features.
-   * @param feature feature to examine
-   * @return true if feature is non-zero
+   * Test to see  f t  g ven feature  s true or non-zero. Useful for one b  features.
+   * @param feature feature to exam ne
+   * @return true  f feature  s non-zero
    */
-  public boolean isFlagSet(FeatureConfiguration feature) {
-    return (getInt(feature.getValueIndex()) & feature.getBitMask()) != 0;
+  publ c boolean  sFlagSet(FeatureConf gurat on feature) {
+    return (get nt(feature.getValue ndex()) & feature.getB Mask()) != 0;
   }
 
-  public IntegerEncodedFeatures setFlag(FeatureConfiguration feature) {
-    setInt(feature.getValueIndex(), getInt(feature.getValueIndex()) | feature.getBitMask());
-    return this;
+  publ c  ntegerEncodedFeatures setFlag(FeatureConf gurat on feature) {
+    set nt(feature.getValue ndex(), get nt(feature.getValue ndex()) | feature.getB Mask());
+    return t ;
   }
 
-  public IntegerEncodedFeatures clearFlag(FeatureConfiguration feature) {
-    setInt(feature.getValueIndex(), getInt(feature.getValueIndex()) & feature.getInverseBitMask());
-    return this;
+  publ c  ntegerEncodedFeatures clearFlag(FeatureConf gurat on feature) {
+    set nt(feature.getValue ndex(), get nt(feature.getValue ndex()) & feature.get nverseB Mask());
+    return t ;
   }
 
   /**
    * Sets a boolean flag.
    */
-  public IntegerEncodedFeatures setFlagValue(FeatureConfiguration feature, boolean value) {
-    if (value) {
+  publ c  ntegerEncodedFeatures setFlagValue(FeatureConf gurat on feature, boolean value) {
+     f (value) {
       setFlag(feature);
     } else {
       clearFlag(feature);
     }
-    return this;
+    return t ;
   }
 
   /**
    * Get feature value
    * @param feature feature to get
-   * @return the value of the feature
+   * @return t  value of t  feature
    */
-  public int getFeatureValue(FeatureConfiguration feature) {
-    return (getInt(feature.getValueIndex()) & feature.getBitMask())
-            >>> feature.getBitStartPosition();
+  publ c  nt getFeatureValue(FeatureConf gurat on feature) {
+    return (get nt(feature.getValue ndex()) & feature.getB Mask())
+            >>> feature.getB StartPos  on();
   }
 
   /**
    * Set feature value
-   * @param feature feature to modify
+   * @param feature feature to mod fy
    * @param value value to set.
    */
-  public IntegerEncodedFeatures setFeatureValue(FeatureConfiguration feature, int value) {
-    Preconditions.checkState(
+  publ c  ntegerEncodedFeatures setFeatureValue(FeatureConf gurat on feature,  nt value) {
+    Precond  ons.c ckState(
         value <= feature.getMaxValue(),
-        "Feature value, %s, is greater than the max value allowed for this feature. "
+        "Feature value, %s,  s greater than t  max value allo d for t  feature. "
             + "Feature: %s, Max value: %s",
-        value, feature.getName(), feature.getMaxValue());
+        value, feature.getNa (), feature.getMaxValue());
 
-    // Clear the value of the given feature in its int.
-    int temp = getInt(feature.getValueIndex()) & feature.getInverseBitMask();
+    // Clear t  value of t  g ven feature  n  s  nt.
+     nt temp = get nt(feature.getValue ndex()) & feature.get nverseB Mask();
 
-    // Set the new feature value. Applying the bit mask here ensures that other features in the
-    // same int are not modified by mistake.
-    temp |= (value << feature.getBitStartPosition()) & feature.getBitMask();
+    // Set t  new feature value. Apply ng t  b  mask  re ensures that ot r features  n t 
+    // sa   nt are not mod f ed by m stake.
+    temp |= (value << feature.getB StartPos  on()) & feature.getB Mask();
 
-    setInt(feature.getValueIndex(), temp);
-    return this;
+    set nt(feature.getValue ndex(), temp);
+    return t ;
   }
 
   /**
-   * Sets feature value if greater than current value
-   * @param feature feature to modify
+   * Sets feature value  f greater than current value
+   * @param feature feature to mod fy
    * @param value new value
    */
-  public IntegerEncodedFeatures setFeatureValueIfGreater(FeatureConfiguration feature, int value) {
-    if (value > getFeatureValue(feature)) {
+  publ c  ntegerEncodedFeatures setFeatureValue fGreater(FeatureConf gurat on feature,  nt value) {
+     f (value > getFeatureValue(feature)) {
       setFeatureValue(feature, value);
     }
-    return this;
+    return t ;
   }
 
   /**
-   * Increment a feature if its not at its maximum value.
-   * @return whether the feature is incremented.
+   *  ncre nt a feature  f  s not at  s max mum value.
+   * @return w t r t  feature  s  ncre nted.
    */
-  public boolean incrementIfNotMaximum(FeatureConfiguration feature) {
-    int newValue = getFeatureValue(feature) + 1;
-    if (newValue <= feature.getMaxValue()) {
+  publ c boolean  ncre nt fNotMax mum(FeatureConf gurat on feature) {
+     nt newValue = getFeatureValue(feature) + 1;
+     f (newValue <= feature.getMaxValue()) {
       setFeatureValue(feature, newValue);
       return true;
     } else {
@@ -122,37 +122,37 @@ public abstract class IntegerEncodedFeatures {
   }
 
   /**
-   * Copy these encoded features to a new PackedFeatures thrift struct.
+   * Copy t se encoded features to a new PackedFeatures thr ft struct.
    */
-  public PackedFeatures copyToPackedFeatures() {
+  publ c PackedFeatures copyToPackedFeatures() {
     return copyToPackedFeatures(new PackedFeatures());
   }
 
   /**
-    * Copy these encoded features to a PackedFeatures thrift struct.
+    * Copy t se encoded features to a PackedFeatures thr ft struct.
     */
-  public PackedFeatures copyToPackedFeatures(PackedFeatures packedFeatures) {
-    Preconditions.checkNotNull(packedFeatures);
-    final List<Integer> integers = Lists.newArrayListWithCapacity(getNumInts());
-    for (int i = 0; i < getNumInts(); i++) {
-      integers.add(getInt(i));
+  publ c PackedFeatures copyToPackedFeatures(PackedFeatures packedFeatures) {
+    Precond  ons.c ckNotNull(packedFeatures);
+    f nal L st< nteger>  ntegers = L sts.newArrayL stW hCapac y(getNum nts());
+    for ( nt   = 0;   < getNum nts();  ++) {
+       ntegers.add(get nt( ));
     }
-    packedFeatures.setDeprecated_featureConfigurationVersion(0);
-    packedFeatures.setFeatures(integers);
+    packedFeatures.setDeprecated_featureConf gurat onVers on(0);
+    packedFeatures.setFeatures( ntegers);
     return packedFeatures;
   }
 
   /**
    * Copy features from a packed features struct.
    */
-  public void readFromPackedFeatures(PackedFeatures packedFeatures) {
-    Preconditions.checkNotNull(packedFeatures);
-    List<Integer> ints = packedFeatures.getFeatures();
-    for (int i = 0; i < getNumInts(); i++) {
-      if (i < ints.size()) {
-        setInt(i, ints.get(i));
+  publ c vo d readFromPackedFeatures(PackedFeatures packedFeatures) {
+    Precond  ons.c ckNotNull(packedFeatures);
+    L st< nteger>  nts = packedFeatures.getFeatures();
+    for ( nt   = 0;   < getNum nts();  ++) {
+       f (  <  nts.s ze()) {
+        set nt( ,  nts.get( ));
       } else {
-        setInt(i, 0);
+        set nt( , 0);
       }
     }
   }

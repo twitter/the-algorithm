@@ -1,54 +1,54 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+package com.tw ter.product_m xer.component_l brary.p pel ne.cand date.ads
 
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.model.query.ads.AdsQuery
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * Derive an estimate of the number of organic items from the query. If you need a more precise number,
- * consider switching to [[AdsDependentCandidatePipelineConfig]]
+ * Der ve an est mate of t  number of organ c  ems from t  query.  f   need a more prec se number,
+ * cons der sw ch ng to [[AdsDependentCand dateP pel neConf g]]
  */
-trait EstimateNumOrganicItems[Query <: PipelineQuery with AdsQuery] {
+tra  Est mateNumOrgan c ems[Query <: P pel neQuery w h AdsQuery] {
 
   def apply(query: Query): Short
 }
 
 /**
- * Compute the number of organic items from the query and set of previous candidates.
+ * Compute t  number of organ c  ems from t  query and set of prev ous cand dates.
  *
- * @note the key difference between [[CountNumOrganicItems]] and [[EstimateNumOrganicItems]] is
- *       that for [[EstimateNumOrganicItems]] we don't have any candidates returned yet, so we can
- *       only guess as to the number of organic items in the result set. In contrast,
- *       [[CountNumOrganicItems]] is used on dependant candidate pipelines where we can scan over
- *       the candidate pipelines result set to count the number of organic items.
+ * @note t  key d fference bet en [[CountNumOrgan c ems]] and [[Est mateNumOrgan c ems]]  s
+ *       that for [[Est mateNumOrgan c ems]]   don't have any cand dates returned yet, so   can
+ *       only guess as to t  number of organ c  ems  n t  result set.  n contrast,
+ *       [[CountNumOrgan c ems]]  s used on dependant cand date p pel nes w re   can scan over
+ *       t  cand date p pel nes result set to count t  number of organ c  ems.
  */
-trait CountNumOrganicItems[-Query <: PipelineQuery with AdsQuery] {
+tra  CountNumOrgan c ems[-Query <: P pel neQuery w h AdsQuery] {
 
-  def apply(query: Query, previousCandidates: Seq[CandidateWithDetails]): Short
+  def apply(query: Query, prev ousCand dates: Seq[Cand dateW hDeta ls]): Short
 }
 
 /**
- * Treat all previously retrieved candidates as organic
+ * Treat all prev ously retr eved cand dates as organ c
  */
-case object CountAllCandidates extends CountNumOrganicItems[PipelineQuery with AdsQuery] {
+case object CountAllCand dates extends CountNumOrgan c ems[P pel neQuery w h AdsQuery] {
 
   def apply(
-    query: PipelineQuery with AdsQuery,
-    previousCandidates: Seq[CandidateWithDetails]
+    query: P pel neQuery w h AdsQuery,
+    prev ousCand dates: Seq[Cand dateW hDeta ls]
   ): Short =
-    previousCandidates.length.toShort
+    prev ousCand dates.length.toShort
 }
 
 /**
- * Only count candidates from a specific subset of pipelines as organic
+ * Only count cand dates from a spec f c subset of p pel nes as organ c
  */
-case class CountCandidatesFromPipelines(pipelines: CandidateScope)
-    extends CountNumOrganicItems[PipelineQuery with AdsQuery] {
+case class CountCand datesFromP pel nes(p pel nes: Cand dateScope)
+    extends CountNumOrgan c ems[P pel neQuery w h AdsQuery] {
 
   def apply(
-    query: PipelineQuery with AdsQuery,
-    previousCandidates: Seq[CandidateWithDetails]
+    query: P pel neQuery w h AdsQuery,
+    prev ousCand dates: Seq[Cand dateW hDeta ls]
   ): Short =
-    previousCandidates.count(pipelines.contains).toShort
+    prev ousCand dates.count(p pel nes.conta ns).toShort
 }

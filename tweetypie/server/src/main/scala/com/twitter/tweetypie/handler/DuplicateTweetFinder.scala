@@ -1,254 +1,254 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.stitch.Stitch
-import com.twitter.timelineservice.{thriftscala => tls}
-import com.twitter.tweetypie.backends.TimelineService
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.repository.TweetRepository
-import com.twitter.tweetypie.thriftscala.CardReference
-import com.twitter.tweetypie.thriftscala.ConversationControl
-import com.twitter.tweetypie.thriftscala.ConversationControlByInvitation
-import com.twitter.tweetypie.thriftscala.ConversationControlCommunity
-import com.twitter.tweetypie.thriftscala.ConversationControlFollowers
-import com.twitter.tweetypie.thriftscala.EditControl
-import com.twitter.tweetypie.thriftscala.EditOptions
-import com.twitter.tweetypie.thriftscala.NoteTweetOptions
-import com.twitter.tweetypie.thriftscala.PostTweetRequest
-import com.twitter.tweetypie.thriftscala.TweetCreateConversationControl
-import com.twitter.tweetypie.util.ConversationControls
-import com.twitter.tweetypie.util.EditControlUtil
-import com.twitter.util.Time
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l neserv ce.{thr ftscala => tls}
+ mport com.tw ter.t etyp e.backends.T  l neServ ce
+ mport com.tw ter.t etyp e.repos ory.T etQuery
+ mport com.tw ter.t etyp e.repos ory.T etRepos ory
+ mport com.tw ter.t etyp e.thr ftscala.CardReference
+ mport com.tw ter.t etyp e.thr ftscala.Conversat onControl
+ mport com.tw ter.t etyp e.thr ftscala.Conversat onControlBy nv at on
+ mport com.tw ter.t etyp e.thr ftscala.Conversat onControlCommun y
+ mport com.tw ter.t etyp e.thr ftscala.Conversat onControlFollo rs
+ mport com.tw ter.t etyp e.thr ftscala.Ed Control
+ mport com.tw ter.t etyp e.thr ftscala.Ed Opt ons
+ mport com.tw ter.t etyp e.thr ftscala.NoteT etOpt ons
+ mport com.tw ter.t etyp e.thr ftscala.PostT etRequest
+ mport com.tw ter.t etyp e.thr ftscala.T etCreateConversat onControl
+ mport com.tw ter.t etyp e.ut l.Conversat onControls
+ mport com.tw ter.t etyp e.ut l.Ed ControlUt l
+ mport com.tw ter.ut l.T  
 
 /**
- * Used at tweet creation time to determine whether the tweet creation
- * request should be considered a duplicate of an existing tweet.
+ * Used at t et creat on t   to determ ne w t r t  t et creat on
+ * request should be cons dered a dupl cate of an ex st ng t et.
  */
-object DuplicateTweetFinder {
+object Dupl cateT etF nder {
 
   /**
-   * Return the ids of any tweets that are found to be duplicates of
-   * this request.
+   * Return t   ds of any t ets that are found to be dupl cates of
+   * t  request.
    */
-  type Type = RequestInfo => Future[Option[TweetId]]
+  type Type = Request nfo => Future[Opt on[T et d]]
 
-  final case class Settings(
-    // The number of tweets that are loaded from the user's timeline
-    // for the heuristic duplicate check
-    numTweetsToCheck: Int,
-    // The oldest that a tweet can be to still be considered a
-    // duplicate by the heuristic duplicate check
-    maxDuplicateAge: Duration)
+  f nal case class Sett ngs(
+    // T  number of t ets that are loaded from t  user's t  l ne
+    // for t   ur st c dupl cate c ck
+    numT etsToC ck:  nt,
+    // T  oldest that a t et can be to st ll be cons dered a
+    // dupl cate by t   ur st c dupl cate c ck
+    maxDupl cateAge: Durat on)
 
-  // Takes a ConversationControl from a Tweet and converts to the equivalent
-  // TweetCreateConversationControl. Note: this is a lossy conversion because the
-  // ConversationControl contains additional data from the Tweet.
-  def toTweetCreateConversationControl(
-    conversationControl: ConversationControl
-  ): TweetCreateConversationControl =
-    conversationControl match {
-      case ConversationControl.ByInvitation(
-            ConversationControlByInvitation(_, _, inviteViaMention)) =>
-        ConversationControls.Create.byInvitation(inviteViaMention)
-      case ConversationControl.Community(ConversationControlCommunity(_, _, inviteViaMention)) =>
-        ConversationControls.Create.community(inviteViaMention)
-      case ConversationControl.Followers(ConversationControlFollowers(_, _, inviteViaMention)) =>
-        ConversationControls.Create.followers(inviteViaMention)
-      case _ => throw new IllegalArgumentException
+  // Takes a Conversat onControl from a T et and converts to t  equ valent
+  // T etCreateConversat onControl. Note: t   s a lossy convers on because t 
+  // Conversat onControl conta ns add  onal data from t  T et.
+  def toT etCreateConversat onControl(
+    conversat onControl: Conversat onControl
+  ): T etCreateConversat onControl =
+    conversat onControl match {
+      case Conversat onControl.By nv at on(
+            Conversat onControlBy nv at on(_, _,  nv eV a nt on)) =>
+        Conversat onControls.Create.by nv at on( nv eV a nt on)
+      case Conversat onControl.Commun y(Conversat onControlCommun y(_, _,  nv eV a nt on)) =>
+        Conversat onControls.Create.commun y( nv eV a nt on)
+      case Conversat onControl.Follo rs(Conversat onControlFollo rs(_, _,  nv eV a nt on)) =>
+        Conversat onControls.Create.follo rs( nv eV a nt on)
+      case _ => throw new  llegalArgu ntExcept on
     }
 
   /**
-   * The parts of the request that we need in order to perform
-   * duplicate detection.
+   * T  parts of t  request that   need  n order to perform
+   * dupl cate detect on.
    */
-  final case class RequestInfo(
-    userId: UserId,
-    isNarrowcast: Boolean,
-    isNullcast: Boolean,
-    text: String,
-    replyToTweetId: Option[TweetId],
-    mediaUploadIds: Seq[MediaId],
-    cardReference: Option[CardReference],
-    conversationControl: Option[TweetCreateConversationControl],
-    underlyingCreativesContainer: Option[CreativesContainerId],
-    editOptions: Option[EditOptions] = None,
-    noteTweetOptions: Option[NoteTweetOptions] = None) {
+  f nal case class Request nfo(
+    user d: User d,
+     sNarrowcast: Boolean,
+     sNullcast: Boolean,
+    text: Str ng,
+    replyToT et d: Opt on[T et d],
+     d aUpload ds: Seq[ d a d],
+    cardReference: Opt on[CardReference],
+    conversat onControl: Opt on[T etCreateConversat onControl],
+    underly ngCreat vesConta ner: Opt on[Creat vesConta ner d],
+    ed Opt ons: Opt on[Ed Opt ons] = None,
+    noteT etOpt ons: Opt on[NoteT etOpt ons] = None) {
 
-    def isDuplicateOf(tweet: Tweet, oldestAcceptableTimestamp: Time): Boolean = {
-      val createdAt = getTimestamp(tweet)
-      val isDuplicateText = text == getText(tweet)
-      val isDuplicateReplyToTweetId = replyToTweetId == getReply(tweet).flatMap(_.inReplyToStatusId)
-      val isDuplicateMedia = getMedia(tweet).map(_.mediaId) == mediaUploadIds
-      val isDuplicateCardReference = getCardReference(tweet) == cardReference
-      val isDuplicateConversationControl =
-        tweet.conversationControl.map(toTweetCreateConversationControl) == conversationControl
-      val isDuplicateConversationContainerId = {
-        tweet.underlyingCreativesContainerId == underlyingCreativesContainer
+    def  sDupl cateOf(t et: T et, oldestAcceptableT  stamp: T  ): Boolean = {
+      val createdAt = getT  stamp(t et)
+      val  sDupl cateText = text == getText(t et)
+      val  sDupl cateReplyToT et d = replyToT et d == getReply(t et).flatMap(_. nReplyToStatus d)
+      val  sDupl cate d a = get d a(t et).map(_. d a d) ==  d aUpload ds
+      val  sDupl cateCardReference = getCardReference(t et) == cardReference
+      val  sDupl cateConversat onControl =
+        t et.conversat onControl.map(toT etCreateConversat onControl) == conversat onControl
+      val  sDupl cateConversat onConta ner d = {
+        t et.underly ngCreat vesConta ner d == underly ngCreat vesConta ner
       }
 
-      val isDuplicateIfEditRequest = if (editOptions.isDefined) {
-        // We do not count an incoming edit request as creating a duplicate tweet if:
-        // 1) The tweet that is considered a duplicate is a previous version of this tweet OR
-        // 2) The tweet that is considered a duplicate is otherwise stale.
-        val tweetEditChain = tweet.editControl match {
-          case Some(EditControl.Initial(initial)) =>
-            initial.editTweetIds
-          case Some(EditControl.Edit(edit)) =>
-            edit.editControlInitial.map(_.editTweetIds).getOrElse(Nil)
-          case _ => Nil
+      val  sDupl cate fEd Request =  f (ed Opt ons. sDef ned) {
+        //   do not count an  ncom ng ed  request as creat ng a dupl cate t et  f:
+        // 1) T  t et that  s cons dered a dupl cate  s a prev ous vers on of t  t et OR
+        // 2) T  t et that  s cons dered a dupl cate  s ot rw se stale.
+        val t etEd Cha n = t et.ed Control match {
+          case So (Ed Control. n  al( n  al)) =>
+             n  al.ed T et ds
+          case So (Ed Control.Ed (ed )) =>
+            ed .ed Control n  al.map(_.ed T et ds).getOrElse(N l)
+          case _ => N l
         }
-        val tweetIsAPreviousVersion =
-          editOptions.map(_.previousTweetId).exists(tweetEditChain.contains)
+        val t et sAPrev ousVers on =
+          ed Opt ons.map(_.prev ousT et d).ex sts(t etEd Cha n.conta ns)
 
-        val tweetIsStale = EditControlUtil.isLatestEdit(tweet.editControl, tweet.id) match {
+        val t et sStale = Ed ControlUt l. sLatestEd (t et.ed Control, t et. d) match {
           case Return(false) => true
           case _ => false
         }
 
-        !(tweetIsStale || tweetIsAPreviousVersion)
+        !(t et sStale || t et sAPrev ousVers on)
       } else {
-        // If not an edit request, this condition is true as duplication checking is not blocked
+        //  f not an ed  request, t  cond  on  s true as dupl cat on c ck ng  s not blocked
         true
       }
 
-      // Note that this does not prevent you from tweeting the same
-      // image twice with different text, or the same text twice with
-      // different images, because if you upload the same media twice,
-      // we will store two copies of it, each with a different media
-      // URL and thus different t.co URL, and since the text that
-      // we're checking here has that t.co URL added to it already, it
-      // is necessarily different.
+      // Note that t  does not prevent   from t et ng t  sa 
+      //  mage tw ce w h d fferent text, or t  sa  text tw ce w h
+      // d fferent  mages, because  f   upload t  sa   d a tw ce,
+      //   w ll store two cop es of  , each w h a d fferent  d a
+      // URL and thus d fferent t.co URL, and s nce t  text that
+      //  're c ck ng  re has that t.co URL added to   already,  
+      //  s necessar ly d fferent.
       //
-      // We shouldn't have to check the user id or whether it's a
-      // retweet, because we loaded the tweets from the user's
-      // (non-retweet) timelines, but it doesn't hurt and protects
-      // against possible future changes.
-      (oldestAcceptableTimestamp <= createdAt) &&
-      getShare(tweet).isEmpty &&
-      (getUserId(tweet) == userId) &&
-      isDuplicateText &&
-      isDuplicateReplyToTweetId &&
-      isDuplicateMedia &&
-      isDuplicateCardReference &&
-      isDuplicateConversationControl &&
-      isDuplicateConversationContainerId &&
-      isDuplicateIfEditRequest &&
-      noteTweetOptions.isEmpty // Skip duplicate checks for NoteTweets
+      //   shouldn't have to c ck t  user  d or w t r  's a
+      // ret et, because   loaded t  t ets from t  user's
+      // (non-ret et) t  l nes, but   doesn't hurt and protects
+      // aga nst poss ble future changes.
+      (oldestAcceptableT  stamp <= createdAt) &&
+      getShare(t et). sEmpty &&
+      (getUser d(t et) == user d) &&
+       sDupl cateText &&
+       sDupl cateReplyToT et d &&
+       sDupl cate d a &&
+       sDupl cateCardReference &&
+       sDupl cateConversat onControl &&
+       sDupl cateConversat onConta ner d &&
+       sDupl cate fEd Request &&
+      noteT etOpt ons. sEmpty // Sk p dupl cate c cks for NoteT ets
     }
   }
 
-  object RequestInfo {
+  object Request nfo {
 
     /**
-     * Extract the information relevant to the DuplicateTweetFinder
-     * from the PostTweetRequest.
+     * Extract t   nformat on relevant to t  Dupl cateT etF nder
+     * from t  PostT etRequest.
      */
-    def fromPostTweetRequest(req: PostTweetRequest, processedText: String): RequestInfo =
-      RequestInfo(
-        userId = req.userId,
-        isNarrowcast = req.narrowcast.nonEmpty,
-        isNullcast = req.nullcast,
+    def fromPostT etRequest(req: PostT etRequest, processedText: Str ng): Request nfo =
+      Request nfo(
+        user d = req.user d,
+         sNarrowcast = req.narrowcast.nonEmpty,
+         sNullcast = req.nullcast,
         text = processedText,
-        replyToTweetId = req.inReplyToTweetId,
-        mediaUploadIds = req.mediaUploadIds.getOrElse[Seq[MediaId]](Seq.empty),
-        cardReference = req.additionalFields.flatMap(_.cardReference),
-        conversationControl = req.conversationControl,
-        underlyingCreativesContainer = req.underlyingCreativesContainerId,
-        editOptions = req.editOptions,
-        noteTweetOptions = req.noteTweetOptions
+        replyToT et d = req. nReplyToT et d,
+         d aUpload ds = req. d aUpload ds.getOrElse[Seq[ d a d]](Seq.empty),
+        cardReference = req.add  onalF elds.flatMap(_.cardReference),
+        conversat onControl = req.conversat onControl,
+        underly ngCreat vesConta ner = req.underly ngCreat vesConta ner d,
+        ed Opt ons = req.ed Opt ons,
+        noteT etOpt ons = req.noteT etOpt ons
       )
   }
 
   /**
-   * Encapsulates the external interactions that we need to do for
-   * duplicate checking.
+   * Encapsulates t  external  nteract ons that   need to do for
+   * dupl cate c ck ng.
    */
-  trait TweetSource {
-    def loadTweets(tweetIds: Seq[TweetId]): Future[Seq[Tweet]]
-    def loadUserTimelineIds(userId: UserId, maxCount: Int): Future[Seq[TweetId]]
-    def loadNarrowcastTimelineIds(userId: UserId, maxCount: Int): Future[Seq[TweetId]]
+  tra  T etS ce {
+    def loadT ets(t et ds: Seq[T et d]): Future[Seq[T et]]
+    def loadUserT  l ne ds(user d: User d, maxCount:  nt): Future[Seq[T et d]]
+    def loadNarrowcastT  l ne ds(user d: User d, maxCount:  nt): Future[Seq[T et d]]
   }
 
-  object TweetSource {
+  object T etS ce {
 
     /**
-     * Use the provided services to access tweets.
+     * Use t  prov ded serv ces to access t ets.
      */
-    def fromServices(
-      tweetRepo: TweetRepository.Optional,
-      getStatusTimeline: TimelineService.GetStatusTimeline
-    ): TweetSource =
-      new TweetSource {
-        // only fields needed by RequestInfo.isDuplicateOf()
-        private[this] val tweetQueryOption =
-          TweetQuery.Options(
-            TweetQuery.Include(
-              tweetFields = Set(
-                Tweet.CoreDataField.id,
-                Tweet.MediaField.id,
-                Tweet.ConversationControlField.id,
-                Tweet.EditControlField.id
+    def fromServ ces(
+      t etRepo: T etRepos ory.Opt onal,
+      getStatusT  l ne: T  l neServ ce.GetStatusT  l ne
+    ): T etS ce =
+      new T etS ce {
+        // only f elds needed by Request nfo. sDupl cateOf()
+        pr vate[t ] val t etQueryOpt on =
+          T etQuery.Opt ons(
+            T etQuery. nclude(
+              t etF elds = Set(
+                T et.CoreDataF eld. d,
+                T et. d aF eld. d,
+                T et.Conversat onControlF eld. d,
+                T et.Ed ControlF eld. d
               ),
-              pastedMedia = true
+              pasted d a = true
             )
           )
 
-        private[this] def loadTimeline(query: tls.TimelineQuery): Future[Seq[Long]] =
-          getStatusTimeline(Seq(query)).map(_.head.entries.map(_.statusId))
+        pr vate[t ] def loadT  l ne(query: tls.T  l neQuery): Future[Seq[Long]] =
+          getStatusT  l ne(Seq(query)).map(_. ad.entr es.map(_.status d))
 
-        override def loadUserTimelineIds(userId: UserId, maxCount: Int): Future[Seq[Long]] =
-          loadTimeline(
-            tls.TimelineQuery(
-              timelineType = tls.TimelineType.User,
-              timelineId = userId,
+        overr de def loadUserT  l ne ds(user d: User d, maxCount:  nt): Future[Seq[Long]] =
+          loadT  l ne(
+            tls.T  l neQuery(
+              t  l neType = tls.T  l neType.User,
+              t  l ne d = user d,
               maxCount = maxCount.toShort
             )
           )
 
-        override def loadNarrowcastTimelineIds(userId: UserId, maxCount: Int): Future[Seq[Long]] =
-          loadTimeline(
-            tls.TimelineQuery(
-              timelineType = tls.TimelineType.Narrowcasted,
-              timelineId = userId,
+        overr de def loadNarrowcastT  l ne ds(user d: User d, maxCount:  nt): Future[Seq[Long]] =
+          loadT  l ne(
+            tls.T  l neQuery(
+              t  l neType = tls.T  l neType.Narrowcasted,
+              t  l ne d = user d,
               maxCount = maxCount.toShort
             )
           )
 
-        override def loadTweets(tweetIds: Seq[TweetId]): Future[Seq[Tweet]] =
-          if (tweetIds.isEmpty) {
-            Future.value(Seq[Tweet]())
+        overr de def loadT ets(t et ds: Seq[T et d]): Future[Seq[T et]] =
+           f (t et ds. sEmpty) {
+            Future.value(Seq[T et]())
           } else {
-            Stitch
+            St ch
               .run(
-                Stitch.traverse(tweetIds) { tweetId => tweetRepo(tweetId, tweetQueryOption) }
+                St ch.traverse(t et ds) { t et d => t etRepo(t et d, t etQueryOpt on) }
               )
               .map(_.flatten)
           }
       }
   }
 
-  def apply(settings: Settings, tweetSource: TweetSource): Type = { reqInfo =>
-    if (reqInfo.isNullcast) {
-      // iff nullcast, we bypass duplication logic all together
+  def apply(sett ngs: Sett ngs, t etS ce: T etS ce): Type = { req nfo =>
+     f (req nfo. sNullcast) {
+      //  ff nullcast,   bypass dupl cat on log c all toget r
       Future.None
     } else {
-      val oldestAcceptableTimestamp = Time.now - settings.maxDuplicateAge
-      val userTweetIdsFut =
-        tweetSource.loadUserTimelineIds(reqInfo.userId, settings.numTweetsToCheck)
+      val oldestAcceptableT  stamp = T  .now - sett ngs.maxDupl cateAge
+      val userT et dsFut =
+        t etS ce.loadUserT  l ne ds(req nfo.user d, sett ngs.numT etsToC ck)
 
-      // Check the narrowcast timeline iff this is a narrowcasted tweet
-      val narrowcastTweetIdsFut =
-        if (reqInfo.isNarrowcast) {
-          tweetSource.loadNarrowcastTimelineIds(reqInfo.userId, settings.numTweetsToCheck)
+      // C ck t  narrowcast t  l ne  ff t   s a narrowcasted t et
+      val narrowcastT et dsFut =
+         f (req nfo. sNarrowcast) {
+          t etS ce.loadNarrowcastT  l ne ds(req nfo.user d, sett ngs.numT etsToC ck)
         } else {
           Future.value(Seq.empty)
         }
 
       for {
-        userTweetIds <- userTweetIdsFut
-        narrowcastTweetIds <- narrowcastTweetIdsFut
-        candidateTweets <- tweetSource.loadTweets(userTweetIds ++ narrowcastTweetIds)
-      } yield candidateTweets.find(reqInfo.isDuplicateOf(_, oldestAcceptableTimestamp)).map(_.id)
+        userT et ds <- userT et dsFut
+        narrowcastT et ds <- narrowcastT et dsFut
+        cand dateT ets <- t etS ce.loadT ets(userT et ds ++ narrowcastT et ds)
+      } y eld cand dateT ets.f nd(req nfo. sDupl cateOf(_, oldestAcceptableT  stamp)).map(_. d)
     }
   }
 }

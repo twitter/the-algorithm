@@ -1,79 +1,79 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import java.util.Map;
+ mport java.ut l.Map;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+ mport javax. nject. nject;
+ mport javax. nject.S ngleton;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+ mport com.google.common.collect. mmutableMap;
+ mport com.google.common.collect.Maps;
 
-import com.twitter.finagle.Service;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.ClientErrorException;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.search.earlybird_root.routers.FacetsRequestRouter;
-import com.twitter.search.earlybird_root.routers.RecencyRequestRouter;
-import com.twitter.search.earlybird_root.routers.RelevanceRequestRouter;
-import com.twitter.search.earlybird_root.routers.RequestRouter;
-import com.twitter.search.earlybird_root.routers.TermStatsRequestRouter;
-import com.twitter.search.earlybird_root.routers.TopTweetsRequestRouter;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd_root.common.Cl entErrorExcept on;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestType;
+ mport com.tw ter.search.earlyb rd_root.routers.FacetsRequestRouter;
+ mport com.tw ter.search.earlyb rd_root.routers.RecencyRequestRouter;
+ mport com.tw ter.search.earlyb rd_root.routers.RelevanceRequestRouter;
+ mport com.tw ter.search.earlyb rd_root.routers.RequestRouter;
+ mport com.tw ter.search.earlyb rd_root.routers.TermStatsRequestRouter;
+ mport com.tw ter.search.earlyb rd_root.routers.TopT etsRequestRouter;
+ mport com.tw ter.ut l.Future;
 
-@Singleton
-public class SuperRootRequestTypeRouter
-    extends Service<EarlybirdRequestContext, EarlybirdResponse>  {
+@S ngleton
+publ c class SuperRootRequestTypeRouter
+    extends Serv ce<Earlyb rdRequestContext, Earlyb rdResponse>  {
 
-  private final Map<EarlybirdRequestType, RequestRouter> routingMap;
+  pr vate f nal Map<Earlyb rdRequestType, RequestRouter> rout ngMap;
 
   /**
    * constructor
    */
-  @Inject
-  public SuperRootRequestTypeRouter(
+  @ nject
+  publ c SuperRootRequestTypeRouter(
       FacetsRequestRouter facetsRequestRouter,
       TermStatsRequestRouter termStatsRequestRouter,
-      TopTweetsRequestRouter topTweetsRequestRouter,
+      TopT etsRequestRouter topT etsRequestRouter,
       RecencyRequestRouter recencyRequestRouter,
       RelevanceRequestRouter relevanceRequestRouter
   ) {
-    routingMap = Maps.immutableEnumMap(
-        ImmutableMap.<EarlybirdRequestType, RequestRouter>builder()
-            .put(EarlybirdRequestType.FACETS, facetsRequestRouter)
-            .put(EarlybirdRequestType.TERM_STATS, termStatsRequestRouter)
-            .put(EarlybirdRequestType.TOP_TWEETS, topTweetsRequestRouter)
-            .put(EarlybirdRequestType.RECENCY, recencyRequestRouter)
-            .put(EarlybirdRequestType.STRICT_RECENCY, recencyRequestRouter)
-            .put(EarlybirdRequestType.RELEVANCE, relevanceRequestRouter)
-            .build());
+    rout ngMap = Maps. mmutableEnumMap(
+         mmutableMap.<Earlyb rdRequestType, RequestRouter>bu lder()
+            .put(Earlyb rdRequestType.FACETS, facetsRequestRouter)
+            .put(Earlyb rdRequestType.TERM_STATS, termStatsRequestRouter)
+            .put(Earlyb rdRequestType.TOP_TWEETS, topT etsRequestRouter)
+            .put(Earlyb rdRequestType.RECENCY, recencyRequestRouter)
+            .put(Earlyb rdRequestType.STR CT_RECENCY, recencyRequestRouter)
+            .put(Earlyb rdRequestType.RELEVANCE, relevanceRequestRouter)
+            .bu ld());
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequestContext requestContext) {
-    EarlybirdRequest request = requestContext.getRequest();
-    if (request.getSearchQuery() == null) {
-      return Future.exception(new ClientErrorException(
-          "Client must fill in search Query object in request"));
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(Earlyb rdRequestContext requestContext) {
+    Earlyb rdRequest request = requestContext.getRequest();
+     f (request.getSearchQuery() == null) {
+      return Future.except on(new Cl entErrorExcept on(
+          "Cl ent must f ll  n search Query object  n request"));
     }
 
-    EarlybirdRequestType requestType = requestContext.getEarlybirdRequestType();
+    Earlyb rdRequestType requestType = requestContext.getEarlyb rdRequestType();
 
-    if (routingMap.containsKey(requestType)) {
-      RequestRouter router = routingMap.get(requestType);
+     f (rout ngMap.conta nsKey(requestType)) {
+      RequestRouter router = rout ngMap.get(requestType);
       return router.route(requestContext);
     } else {
-      return Future.exception(
-          new ClientErrorException(
-            "Request type " + requestType + " is unsupported.  "
-                  + "Sorry this api is a bit hard to use.\n"
-                  + "for facets, call earlybirdRequest.setFacetsRequest\n"
-                  + "for termstats, call earluybirdRequest.setTermStatisticsRequest\n"
-                  + "for recency, strict recency, relevance or toptweets,\n"
-                  + "   call req.setSearchQuery() and req.getSearchQuery().setRankingMode()\n"
-                  + "   with the correct ranking mode and for strict recency call\n"
-                  + "   earlybirdRequest.setQuerySource(ThriftQuerySource.GNIP)\n"));
+      return Future.except on(
+          new Cl entErrorExcept on(
+            "Request type " + requestType + "  s unsupported.  "
+                  + "Sorry t  ap   s a b  hard to use.\n"
+                  + "for facets, call earlyb rdRequest.setFacetsRequest\n"
+                  + "for termstats, call earluyb rdRequest.setTermStat st csRequest\n"
+                  + "for recency, str ct recency, relevance or topt ets,\n"
+                  + "   call req.setSearchQuery() and req.getSearchQuery().setRank ngMode()\n"
+                  + "   w h t  correct rank ng mode and for str ct recency call\n"
+                  + "   earlyb rdRequest.setQueryS ce(Thr ftQueryS ce.GN P)\n"));
     }
   }
 }

@@ -1,70 +1,70 @@
 #pragma once
-#ifdef __cplusplus
+# fdef __cplusplus
 
-#include <twml/defines.h>
-#include <twml/TensorRecord.h>
+# nclude <twml/def nes.h>
+# nclude <twml/TensorRecord.h>
 
-#include <cstdint>
-#include <cmath>
-#include <vector>
+# nclude <cstd nt>
+# nclude <cmath>
+# nclude <vector>
 
-namespace twml {
+na space twml {
 
-class HashedDataRecordReader;
+class Has dDataRecordReader;
 
-class TWMLAPI HashedDataRecord : public TensorRecord {
- public:
-  typedef HashedDataRecordReader Reader;
+class TWMLAP  Has dDataRecord : publ c TensorRecord {
+ publ c:
+  typedef Has dDataRecordReader Reader;
 
-  HashedDataRecord(int num_labels=0, int num_weights=0):
+  Has dDataRecord( nt num_labels=0,  nt num_  ghts=0):
       m_keys(),
-      m_transformed_keys(),
+      m_transfor d_keys(),
       m_values(),
       m_codes(),
       m_types(),
       m_labels(num_labels, std::nanf("")),
-      m_weights(num_weights) {}
+      m_  ghts(num_  ghts) {}
 
-  void decode(HashedDataRecordReader &reader);
+  vo d decode(Has dDataRecordReader &reader);
 
-  const std::vector<int64_t> &keys() const { return m_keys; }
-  const std::vector<int64_t> &transformed_keys() const { return m_transformed_keys; }
+  const std::vector< nt64_t> &keys() const { return m_keys; }
+  const std::vector< nt64_t> &transfor d_keys() const { return m_transfor d_keys; }
   const std::vector<double> &values() const { return m_values; }
-  const std::vector<int64_t> &codes() const { return m_codes; }
-  const std::vector<uint8_t> &types() const { return m_types; }
+  const std::vector< nt64_t> &codes() const { return m_codes; }
+  const std::vector<u nt8_t> &types() const { return m_types; }
 
   const std::vector<float> &labels() const { return m_labels; }
-  const std::vector<float> &weights() const { return m_weights; }
+  const std::vector<float> &  ghts() const { return m_  ghts; }
 
-  void clear();
+  vo d clear();
 
-  uint64_t totalSize() const { return m_keys.size(); }
+  u nt64_t totalS ze() const { return m_keys.s ze(); }
 
-  void extendSize(int delta_size) {
-    int count = m_keys.size() + delta_size;
+  vo d extendS ze( nt delta_s ze) {
+     nt count = m_keys.s ze() + delta_s ze;
     m_keys.reserve(count);
-    m_transformed_keys.reserve(count);
+    m_transfor d_keys.reserve(count);
     m_values.reserve(count);
     m_codes.reserve(count);
     m_types.reserve(count);
   }
 
- private:
-  std::vector<int64_t> m_keys;
-  std::vector<int64_t> m_transformed_keys;
+ pr vate:
+  std::vector< nt64_t> m_keys;
+  std::vector< nt64_t> m_transfor d_keys;
   std::vector<double> m_values;
-  std::vector<int64_t> m_codes;
-  std::vector<uint8_t> m_types;
+  std::vector< nt64_t> m_codes;
+  std::vector<u nt8_t> m_types;
 
   std::vector<float> m_labels;
-  std::vector<float> m_weights;
+  std::vector<float> m_  ghts;
 
-  void addKey(int64_t key, int64_t transformed_key, int64_t code, uint8_t type, double value=1);
-  void addLabel(int64_t id, double value = 1);
-  void addWeight(int64_t id, double value);
+  vo d addKey( nt64_t key,  nt64_t transfor d_key,  nt64_t code, u nt8_t type, double value=1);
+  vo d addLabel( nt64_t  d, double value = 1);
+  vo d add  ght( nt64_t  d, double value);
 
-  friend class HashedDataRecordReader;
+  fr end class Has dDataRecordReader;
 };
 
 }
-#endif
+#end f

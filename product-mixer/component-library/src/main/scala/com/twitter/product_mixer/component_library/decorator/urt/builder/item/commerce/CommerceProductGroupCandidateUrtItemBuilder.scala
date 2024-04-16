@@ -1,42 +1,42 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.commerce
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.com rce
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.commerce.CommerceProductGroupCandidateUrtItemBuilder.CommerceProductGroupClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.CommerceProductGroupCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.commerce.CommerceProductGroupItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.com rce.Com rceProductGroupCand dateUrt emBu lder.Com rceProductGroupCl entEvent nfoEle nt
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.Com rceProductGroupCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.Cand dateUrtEntryBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseCl entEvent nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseFeedbackAct on nfoBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.com rce.Com rceProductGroup em
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object CommerceProductGroupCandidateUrtItemBuilder {
-  val CommerceProductGroupClientEventInfoElement: String = "commerce-product-group"
+object Com rceProductGroupCand dateUrt emBu lder {
+  val Com rceProductGroupCl entEvent nfoEle nt: Str ng = "com rce-product-group"
 }
 
-case class CommerceProductGroupCandidateUrtItemBuilder[-Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, CommerceProductGroupCandidate],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, CommerceProductGroupCandidate]
-  ]) extends CandidateUrtEntryBuilder[
+case class Com rceProductGroupCand dateUrt emBu lder[-Query <: P pel neQuery](
+  cl entEvent nfoBu lder: BaseCl entEvent nfoBu lder[Query, Com rceProductGroupCand date],
+  feedbackAct on nfoBu lder: Opt on[
+    BaseFeedbackAct on nfoBu lder[Query, Com rceProductGroupCand date]
+  ]) extends Cand dateUrtEntryBu lder[
       Query,
-      CommerceProductGroupCandidate,
-      CommerceProductGroupItem
+      Com rceProductGroupCand date,
+      Com rceProductGroup em
     ] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidate: CommerceProductGroupCandidate,
-    candidateFeatures: FeatureMap
-  ): CommerceProductGroupItem =
-    CommerceProductGroupItem(
-      id = candidate.id,
-      sortIndex = None,
-      clientEventInfo = clientEventInfoBuilder(
+    cand date: Com rceProductGroupCand date,
+    cand dateFeatures: FeatureMap
+  ): Com rceProductGroup em =
+    Com rceProductGroup em(
+       d = cand date. d,
+      sort ndex = None,
+      cl entEvent nfo = cl entEvent nfoBu lder(
         query,
-        candidate,
-        candidateFeatures,
-        Some(CommerceProductGroupClientEventInfoElement)),
-      feedbackActionInfo =
-        feedbackActionInfoBuilder.flatMap(_.apply(query, candidate, candidateFeatures))
+        cand date,
+        cand dateFeatures,
+        So (Com rceProductGroupCl entEvent nfoEle nt)),
+      feedbackAct on nfo =
+        feedbackAct on nfoBu lder.flatMap(_.apply(query, cand date, cand dateFeatures))
     )
 }

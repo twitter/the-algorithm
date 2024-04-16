@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-trait HasPreviousRecommendationsContext {
+tra  HasPrev ousRecom ndat onsContext {
 
-  def previouslyRecommendedUserIDs: Set[Long]
+  def prev ouslyRecom ndedUser Ds: Set[Long]
 
-  def previouslyFollowedUserIds: Set[Long]
+  def prev ouslyFollo dUser ds: Set[Long]
 
-  def skippedFollows: Set[Long] = {
-    previouslyRecommendedUserIDs.diff(previouslyFollowedUserIds)
+  def sk ppedFollows: Set[Long] = {
+    prev ouslyRecom ndedUser Ds.d ff(prev ouslyFollo dUser ds)
   }
 }

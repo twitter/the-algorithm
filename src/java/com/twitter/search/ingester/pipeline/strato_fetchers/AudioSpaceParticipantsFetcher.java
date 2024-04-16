@@ -1,36 +1,36 @@
-package com.twitter.search.ingester.pipeline.strato_fetchers;
+package com.tw ter.search. ngester.p pel ne.strato_fetc rs;
 
-import com.twitter.periscope.api.thriftjava.AudioSpacesLookupContext;
-import com.twitter.stitch.Stitch;
-import com.twitter.strato.catalog.Fetch;
-import com.twitter.strato.client.Client;
-import com.twitter.strato.client.Fetcher;
-import com.twitter.strato.data.Conv;
-import com.twitter.strato.thrift.TBaseConv;
-import com.twitter.ubs.thriftjava.Participants;
-import com.twitter.util.Future;
+ mport com.tw ter.per scope.ap .thr ftjava.Aud oSpacesLookupContext;
+ mport com.tw ter.st ch.St ch;
+ mport com.tw ter.strato.catalog.Fetch;
+ mport com.tw ter.strato.cl ent.Cl ent;
+ mport com.tw ter.strato.cl ent.Fetc r;
+ mport com.tw ter.strato.data.Conv;
+ mport com.tw ter.strato.thr ft.TBaseConv;
+ mport com.tw ter.ubs.thr ftjava.Part c pants;
+ mport com.tw ter.ut l.Future;
 
 /**
- * Fetches from the audio space participants strato column.
+ * Fetc s from t  aud o space part c pants strato column.
  */
-public class AudioSpaceParticipantsFetcher {
-  private static final String PARTICIPANTS_STRATO_COLUMN = "";
+publ c class Aud oSpacePart c pantsFetc r {
+  pr vate stat c f nal Str ng PART C PANTS_STRATO_COLUMN = "";
 
-  private static final AudioSpacesLookupContext
-      EMPTY_AUDIO_LOOKUP_CONTEXT = new AudioSpacesLookupContext();
+  pr vate stat c f nal Aud oSpacesLookupContext
+      EMPTY_AUD O_LOOKUP_CONTEXT = new Aud oSpacesLookupContext();
 
-  private final Fetcher<String, AudioSpacesLookupContext, Participants> fetcher;
+  pr vate f nal Fetc r<Str ng, Aud oSpacesLookupContext, Part c pants> fetc r;
 
-  public AudioSpaceParticipantsFetcher(Client stratoClient) {
-    fetcher = stratoClient.fetcher(
-        PARTICIPANTS_STRATO_COLUMN,
-        true, // enables checking types against catalog
-        Conv.stringConv(),
-        TBaseConv.forClass(AudioSpacesLookupContext.class),
-        TBaseConv.forClass(Participants.class));
+  publ c Aud oSpacePart c pantsFetc r(Cl ent stratoCl ent) {
+    fetc r = stratoCl ent.fetc r(
+        PART C PANTS_STRATO_COLUMN,
+        true, // enables c ck ng types aga nst catalog
+        Conv.str ngConv(),
+        TBaseConv.forClass(Aud oSpacesLookupContext.class),
+        TBaseConv.forClass(Part c pants.class));
   }
 
-  public Future<Fetch.Result<Participants>> fetch(String spaceId) {
-    return Stitch.run(fetcher.fetch(spaceId, EMPTY_AUDIO_LOOKUP_CONTEXT));
+  publ c Future<Fetch.Result<Part c pants>> fetch(Str ng space d) {
+    return St ch.run(fetc r.fetch(space d, EMPTY_AUD O_LOOKUP_CONTEXT));
   }
 }

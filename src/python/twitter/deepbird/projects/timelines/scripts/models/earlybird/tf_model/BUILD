@@ -1,8 +1,8 @@
-python3_library(
-    name = "libs_py3",
-    sources = ["*.py"],
-    dependencies = [
-        "src/python/twitter/deepbird/io",
+python3_l brary(
+    na  = "l bs_py3",
+    s ces = ["*.py"],
+    dependenc es = [
+        "src/python/tw ter/deepb rd/ o",
         "twml:twml-nodeps",
     ],
 )

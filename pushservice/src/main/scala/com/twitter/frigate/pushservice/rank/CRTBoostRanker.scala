@@ -1,54 +1,54 @@
-package com.twitter.frigate.pushservice.rank
+package com.tw ter.fr gate.pushserv ce.rank
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.thriftscala.CommonRecommendationType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Cand dateDeta ls
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
 
 /**
- *  This Ranker re-ranks MR candidates, boosting input CRTs.
- *  Relative ranking between input CRTs and rest of the candidates doesn't change
+ *  T  Ranker re-ranks MR cand dates, boost ng  nput CRTs.
+ *  Relat ve rank ng bet en  nput CRTs and rest of t  cand dates doesn't change
  *
- *  Ex: T: Tweet candidate, F: input CRT candidatess
+ *  Ex: T: T et cand date, F:  nput CRT cand datess
  *
  *  T3, F2, T1, T2, F1 => F2, F1, T3, T1, T2
  */
-case class CRTBoostRanker(statsReceiver: StatsReceiver) {
+case class CRTBoostRanker(statsRece ver: StatsRece ver) {
 
-  private val recsToBoostStat = statsReceiver.stat("recs_to_boost")
-  private val otherRecsStat = statsReceiver.stat("other_recs")
+  pr vate val recsToBoostStat = statsRece ver.stat("recs_to_boost")
+  pr vate val ot rRecsStat = statsRece ver.stat("ot r_recs")
 
-  private def boostCrtToTop(
-    inputCandidates: Seq[CandidateDetails[PushCandidate]],
-    crtToBoost: CommonRecommendationType
-  ): Seq[CandidateDetails[PushCandidate]] = {
-    val (upRankedCandidates, otherCandidates) =
-      inputCandidates.partition(_.candidate.commonRecType == crtToBoost)
-    recsToBoostStat.add(upRankedCandidates.size)
-    otherRecsStat.add(otherCandidates.size)
-    upRankedCandidates ++ otherCandidates
+  pr vate def boostCrtToTop(
+     nputCand dates: Seq[Cand dateDeta ls[PushCand date]],
+    crtToBoost: CommonRecom ndat onType
+  ): Seq[Cand dateDeta ls[PushCand date]] = {
+    val (upRankedCand dates, ot rCand dates) =
+       nputCand dates.part  on(_.cand date.commonRecType == crtToBoost)
+    recsToBoostStat.add(upRankedCand dates.s ze)
+    ot rRecsStat.add(ot rCand dates.s ze)
+    upRankedCand dates ++ ot rCand dates
   }
 
-  final def boostCrtsToTop(
-    inputCandidates: Seq[CandidateDetails[PushCandidate]],
-    crtsToBoost: Seq[CommonRecommendationType]
-  ): Seq[CandidateDetails[PushCandidate]] = {
-    crtsToBoost.headOption match {
-      case Some(crt) =>
-        val upRankedCandidates = boostCrtToTop(inputCandidates, crt)
-        boostCrtsToTop(upRankedCandidates, crtsToBoost.tail)
-      case None => inputCandidates
+  f nal def boostCrtsToTop(
+     nputCand dates: Seq[Cand dateDeta ls[PushCand date]],
+    crtsToBoost: Seq[CommonRecom ndat onType]
+  ): Seq[Cand dateDeta ls[PushCand date]] = {
+    crtsToBoost. adOpt on match {
+      case So (crt) =>
+        val upRankedCand dates = boostCrtToTop( nputCand dates, crt)
+        boostCrtsToTop(upRankedCand dates, crtsToBoost.ta l)
+      case None =>  nputCand dates
     }
   }
 
-  final def boostCrtsToTopStableOrder(
-    inputCandidates: Seq[CandidateDetails[PushCandidate]],
-    crtsToBoost: Seq[CommonRecommendationType]
-  ): Seq[CandidateDetails[PushCandidate]] = {
+  f nal def boostCrtsToTopStableOrder(
+     nputCand dates: Seq[Cand dateDeta ls[PushCand date]],
+    crtsToBoost: Seq[CommonRecom ndat onType]
+  ): Seq[Cand dateDeta ls[PushCand date]] = {
     val crtsToBoostSet = crtsToBoost.toSet
-    val (upRankedCandidates, otherCandidates) = inputCandidates.partition(candidateDetail =>
-      crtsToBoostSet.contains(candidateDetail.candidate.commonRecType))
+    val (upRankedCand dates, ot rCand dates) =  nputCand dates.part  on(cand dateDeta l =>
+      crtsToBoostSet.conta ns(cand dateDeta l.cand date.commonRecType))
 
-    upRankedCandidates ++ otherCandidates
+    upRankedCand dates ++ ot rCand dates
   }
 }

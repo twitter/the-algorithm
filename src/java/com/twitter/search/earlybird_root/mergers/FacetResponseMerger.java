@@ -1,353 +1,353 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.tw ter.search.earlyb rd_root. rgers;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Arrays;
+ mport java.ut l.Collect ons;
+ mport java.ut l.HashMap;
+ mport java.ut l.HashSet;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.google.common.collect.Sets;
+ mport com.google.common.collect.Sets;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.logging.DebugMessageBuilder;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.ranking.thriftjava.ThriftFacetRankingOptions;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.util.earlybird.FacetsResultsUtils;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftFacetCount;
-import com.twitter.search.earlybird.thrift.ThriftFacetCountMetadata;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
-import com.twitter.search.earlybird.thrift.ThriftFacetResults;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+ mport com.tw ter.search.common.logg ng.Debug ssageBu lder;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
+ mport com.tw ter.search.common.rank ng.thr ftjava.Thr ftFacetRank ngOpt ons;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.common.ut l.earlyb rd.FacetsResultsUt ls;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetCount;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetCount tadata;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetF eldResults;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetResults;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResults;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.ut l.Future;
 
 /**
- * Merger class to merge facets EarlybirdResponse objects
+ *  rger class to  rge facets Earlyb rdResponse objects
  */
-public class FacetResponseMerger extends EarlybirdResponseMerger {
-  private static final Logger LOG = LoggerFactory.getLogger(FacetResponseMerger.class);
+publ c class FacetResponse rger extends Earlyb rdResponse rger {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(FacetResponse rger.class);
 
-  private static final SearchTimerStats TIMER =
-      SearchTimerStats.export("merge_facets", TimeUnit.NANOSECONDS, false, true);
+  pr vate stat c f nal SearchT  rStats T MER =
+      SearchT  rStats.export(" rge_facets", T  Un .NANOSECONDS, false, true);
 
-  private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 0.9;
-  private final DebugMessageBuilder debugMessageBuilder;
+  pr vate stat c f nal double SUCCESSFUL_RESPONSE_THRESHOLD = 0.9;
+  pr vate f nal Debug ssageBu lder debug ssageBu lder;
 
 
   /**
-   * Constructor to create the merger
+   * Constructor to create t   rger
    */
-  public FacetResponseMerger(EarlybirdRequestContext requestContext,
-                             List<Future<EarlybirdResponse>> responses,
+  publ c FacetResponse rger(Earlyb rdRequestContext requestContext,
+                             L st<Future<Earlyb rdResponse>> responses,
                              ResponseAccumulator mode) {
     super(requestContext, responses, mode);
-    debugMessageBuilder = responseMessageBuilder.getDebugMessageBuilder();
-    debugMessageBuilder.verbose("--- Request Received: %s", requestContext.getRequest());
+    debug ssageBu lder = response ssageBu lder.getDebug ssageBu lder();
+    debug ssageBu lder.verbose("--- Request Rece ved: %s", requestContext.getRequest());
   }
 
-  @Override
-  protected SearchTimerStats getMergedResponseTimer() {
-    return TIMER;
+  @Overr de
+  protected SearchT  rStats get rgedResponseT  r() {
+    return T MER;
   }
 
-  @Override
+  @Overr de
   protected double getDefaultSuccessResponseThreshold() {
     return SUCCESSFUL_RESPONSE_THRESHOLD;
   }
 
-  @Override
-  protected EarlybirdResponse internalMerge(EarlybirdResponse facetsResponse) {
+  @Overr de
+  protected Earlyb rdResponse  nternal rge(Earlyb rdResponse facetsResponse) {
 
-    final Map<String, FacetsResultsUtils.FacetFieldInfo> facetFieldInfoMap =
+    f nal Map<Str ng, FacetsResultsUt ls.FacetF eld nfo> facetF eld nfoMap =
         new HashMap<>();
-    final Set<Long> userIDWhitelist = new HashSet<>();
+    f nal Set<Long> user DWh el st = new HashSet<>();
 
-    // First, parse the responses and build up our facet info map.
-    boolean termStatsFilteringMode = FacetsResultsUtils.prepareFieldInfoMap(
-        requestContext.getRequest().getFacetRequest(), facetFieldInfoMap);
-    // Iterate through all futures and get results.
-    collectResponsesAndPopulateMap(facetFieldInfoMap, userIDWhitelist);
+    // F rst, parse t  responses and bu ld up   facet  nfo map.
+    boolean termStatsF lter ngMode = FacetsResultsUt ls.prepareF eld nfoMap(
+        requestContext.getRequest().getFacetRequest(), facetF eld nfoMap);
+    //  erate through all futures and get results.
+    collectResponsesAndPopulateMap(facetF eld nfoMap, user DWh el st);
 
-    // Next, aggregate the top facets and update the blender response.
+    // Next, aggregate t  top facets and update t  blender response.
     facetsResponse
-        .setFacetResults(new ThriftFacetResults()
-            .setFacetFields(new HashMap<>())
-            .setUserIDWhitelist(userIDWhitelist));
+        .setFacetResults(new Thr ftFacetResults()
+            .setFacetF elds(new HashMap<>())
+            .setUser DWh el st(user DWh el st));
 
-    // keep track of how many facets a user contributed - this map gets reset for every field
-    Map<Long, Integer> perFieldAntiGamingMap = new HashMap<>();
+    // keep track of how many facets a user contr buted - t  map gets reset for every f eld
+    Map<Long,  nteger> perF eldAnt Gam ngMap = new HashMap<>();
 
-    // this one is used for images and twimges
-    Map<Long, Integer> imagesAntiGamingMap = new HashMap<>();
+    // t  one  s used for  mages and tw mges
+    Map<Long,  nteger>  magesAnt Gam ngMap = new HashMap<>();
 
-    Set<String> twimgDedupSet = null;
+    Set<Str ng> tw mgDedupSet = null;
 
-    for (final Map.Entry<String, FacetsResultsUtils.FacetFieldInfo> entry
-        : facetFieldInfoMap.entrySet()) {
-      // reset for each field
-      String field = entry.getKey();
-      final Map<Long, Integer> antiGamingMap;
-      if (field.equals(EarlybirdFieldConstant.IMAGES_FACET)
-          || field.equals(EarlybirdFieldConstant.TWIMG_FACET)) {
-        antiGamingMap = imagesAntiGamingMap;
+    for (f nal Map.Entry<Str ng, FacetsResultsUt ls.FacetF eld nfo> entry
+        : facetF eld nfoMap.entrySet()) {
+      // reset for each f eld
+      Str ng f eld = entry.getKey();
+      f nal Map<Long,  nteger> ant Gam ngMap;
+       f (f eld.equals(Earlyb rdF eldConstant. MAGES_FACET)
+          || f eld.equals(Earlyb rdF eldConstant.TW MG_FACET)) {
+        ant Gam ngMap =  magesAnt Gam ngMap;
       } else {
-        perFieldAntiGamingMap.clear();
-        antiGamingMap = perFieldAntiGamingMap;
+        perF eldAnt Gam ngMap.clear();
+        ant Gam ngMap = perF eldAnt Gam ngMap;
       }
 
-      ThriftFacetFieldResults results = new ThriftFacetFieldResults();
-      FacetsResultsUtils.FacetFieldInfo info = entry.getValue();
-      results.setTotalCount(info.totalCounts);
-      results.setTopFacets(new ArrayList<>());
-      FacetsResultsUtils.fillTopLanguages(info, results);
-      if (info.topFacets != null && !info.topFacets.isEmpty()) {
-        fillFacetFieldResults(info, antiGamingMap, results);
+      Thr ftFacetF eldResults results = new Thr ftFacetF eldResults();
+      FacetsResultsUt ls.FacetF eld nfo  nfo = entry.getValue();
+      results.setTotalCount( nfo.totalCounts);
+      results.setTopFacets(new ArrayL st<>());
+      FacetsResultsUt ls.f llTopLanguages( nfo, results);
+       f ( nfo.topFacets != null && ! nfo.topFacets. sEmpty()) {
+        f llFacetF eldResults( nfo, ant Gam ngMap, results);
       }
 
-      if (field.equals(EarlybirdFieldConstant.TWIMG_FACET)) {
-        if (twimgDedupSet == null) {
-          twimgDedupSet = Sets.newHashSet();
+       f (f eld.equals(Earlyb rdF eldConstant.TW MG_FACET)) {
+         f (tw mgDedupSet == null) {
+          tw mgDedupSet = Sets.newHashSet();
         }
-        FacetsResultsUtils.dedupTwimgFacet(twimgDedupSet, results, debugMessageBuilder);
+        FacetsResultsUt ls.dedupTw mgFacet(tw mgDedupSet, results, debug ssageBu lder);
       }
 
-      facetsResponse.getFacetResults().putToFacetFields(entry.getKey(), results);
+      facetsResponse.getFacetResults().putToFacetF elds(entry.getKey(), results);
     }
 
-    if (!termStatsFilteringMode) {
-      // in term stats filtering mode, if doing it here would break term stats filtering
-      FacetsResultsUtils.mergeTwimgResults(
+     f (!termStatsF lter ngMode) {
+      //  n term stats f lter ng mode,  f do ng    re would break term stats f lter ng
+      FacetsResultsUt ls. rgeTw mgResults(
           facetsResponse.getFacetResults(),
-          Collections.<ThriftFacetCount>reverseOrder(
-              FacetsResultsUtils.getFacetCountComparator(
+          Collect ons.<Thr ftFacetCount>reverseOrder(
+              FacetsResultsUt ls.getFacetCountComparator(
                   requestContext.getRequest().getFacetRequest())));
     }
 
-    // Update the numHitsProcessed on ThriftSearchResults.
-    int numHitsProcessed = 0;
-    int numPartitionsEarlyTerminated = 0;
-    for (EarlybirdResponse earlybirdResponse: accumulatedResponses.getSuccessResponses()) {
-      ThriftSearchResults searchResults = earlybirdResponse.getSearchResults();
-      if (searchResults != null) {
-        numHitsProcessed += searchResults.getNumHitsProcessed();
-        numPartitionsEarlyTerminated += searchResults.getNumPartitionsEarlyTerminated();
+    // Update t  numH sProcessed on Thr ftSearchResults.
+     nt numH sProcessed = 0;
+     nt numPart  onsEarlyTerm nated = 0;
+    for (Earlyb rdResponse earlyb rdResponse: accumulatedResponses.getSuccessResponses()) {
+      Thr ftSearchResults searchResults = earlyb rdResponse.getSearchResults();
+       f (searchResults != null) {
+        numH sProcessed += searchResults.getNumH sProcessed();
+        numPart  onsEarlyTerm nated += searchResults.getNumPart  onsEarlyTerm nated();
       }
     }
-    ThriftSearchResults searchResults = new ThriftSearchResults();
-    searchResults.setResults(new ArrayList<>());  // required field
-    searchResults.setNumHitsProcessed(numHitsProcessed);
-    searchResults.setNumPartitionsEarlyTerminated(numPartitionsEarlyTerminated);
+    Thr ftSearchResults searchResults = new Thr ftSearchResults();
+    searchResults.setResults(new ArrayL st<>());  // requ red f eld
+    searchResults.setNumH sProcessed(numH sProcessed);
+    searchResults.setNumPart  onsEarlyTerm nated(numPart  onsEarlyTerm nated);
     facetsResponse.setSearchResults(searchResults);
 
     LOG.debug("Facets call completed successfully: {}", facetsResponse);
 
-    FacetsResultsUtils.fixNativePhotoUrl(facetsResponse);
+    FacetsResultsUt ls.f xNat vePhotoUrl(facetsResponse);
     return facetsResponse;
   }
 
-  private void fillFacetFieldResults(FacetsResultsUtils.FacetFieldInfo facetFieldInfo,
-                                     Map<Long, Integer> antiGamingMap,
-                                     ThriftFacetFieldResults results) {
-    int minWeightedCount = 0;
-    int minSimpleCount = 0;
-    int maxPenaltyCount = Integer.MAX_VALUE;
-    double maxPenaltyCountRatio = 1;
-    boolean excludePossiblySensitiveFacets = false;
-    boolean onlyReturnFacetsWithDisplayTweet = false;
-    int maxHitsPerUser = -1;
+  pr vate vo d f llFacetF eldResults(FacetsResultsUt ls.FacetF eld nfo facetF eld nfo,
+                                     Map<Long,  nteger> ant Gam ngMap,
+                                     Thr ftFacetF eldResults results) {
+     nt m n  ghtedCount = 0;
+     nt m nS mpleCount = 0;
+     nt maxPenaltyCount =  nteger.MAX_VALUE;
+    double maxPenaltyCountRat o = 1;
+    boolean excludePoss blySens  veFacets = false;
+    boolean onlyReturnFacetsW hD splayT et = false;
+     nt maxH sPerUser = -1;
 
-    EarlybirdRequest request = requestContext.getRequest();
-    if (request.getFacetRequest() != null) {
-      ThriftFacetRankingOptions rankingOptions = request.getFacetRequest().getFacetRankingOptions();
+    Earlyb rdRequest request = requestContext.getRequest();
+     f (request.getFacetRequest() != null) {
+      Thr ftFacetRank ngOpt ons rank ngOpt ons = request.getFacetRequest().getFacetRank ngOpt ons();
 
-      if (request.getSearchQuery() != null) {
-        maxHitsPerUser = request.getSearchQuery().getMaxHitsPerUser();
+       f (request.getSearchQuery() != null) {
+        maxH sPerUser = request.getSearchQuery().getMaxH sPerUser();
       }
 
-      if (rankingOptions != null) {
-        LOG.debug("FacetsResponseMerger: Using rankingOptions={}", rankingOptions);
+       f (rank ngOpt ons != null) {
+        LOG.debug("FacetsResponse rger: Us ng rank ngOpt ons={}", rank ngOpt ons);
 
-        if (rankingOptions.isSetMinCount()) {
-          minWeightedCount = rankingOptions.getMinCount();
+         f (rank ngOpt ons. sSetM nCount()) {
+          m n  ghtedCount = rank ngOpt ons.getM nCount();
         }
-        if (rankingOptions.isSetMinSimpleCount()) {
-          minSimpleCount = rankingOptions.getMinSimpleCount();
+         f (rank ngOpt ons. sSetM nS mpleCount()) {
+          m nS mpleCount = rank ngOpt ons.getM nS mpleCount();
         }
-        if (rankingOptions.isSetMaxPenaltyCount()) {
-          maxPenaltyCount = rankingOptions.getMaxPenaltyCount();
+         f (rank ngOpt ons. sSetMaxPenaltyCount()) {
+          maxPenaltyCount = rank ngOpt ons.getMaxPenaltyCount();
         }
-        if (rankingOptions.isSetMaxPenaltyCountRatio()) {
-          maxPenaltyCountRatio = rankingOptions.getMaxPenaltyCountRatio();
+         f (rank ngOpt ons. sSetMaxPenaltyCountRat o()) {
+          maxPenaltyCountRat o = rank ngOpt ons.getMaxPenaltyCountRat o();
         }
-        if (rankingOptions.isSetExcludePossiblySensitiveFacets()) {
-          excludePossiblySensitiveFacets = rankingOptions.isExcludePossiblySensitiveFacets();
+         f (rank ngOpt ons. sSetExcludePoss blySens  veFacets()) {
+          excludePoss blySens  veFacets = rank ngOpt ons. sExcludePoss blySens  veFacets();
         }
-        if (rankingOptions.isSetOnlyReturnFacetsWithDisplayTweet()) {
-          onlyReturnFacetsWithDisplayTweet = rankingOptions.isOnlyReturnFacetsWithDisplayTweet();
+         f (rank ngOpt ons. sSetOnlyReturnFacetsW hD splayT et()) {
+          onlyReturnFacetsW hD splayT et = rank ngOpt ons. sOnlyReturnFacetsW hD splayT et();
         }
       }
     } else {
-      LOG.warn("earlybirdRequest.getFacetRequest() is null");
+      LOG.warn("earlyb rdRequest.getFacetRequest()  s null");
     }
 
-    ThriftFacetCount[] topFacetsArray = new ThriftFacetCount[facetFieldInfo.topFacets.size()];
+    Thr ftFacetCount[] topFacetsArray = new Thr ftFacetCount[facetF eld nfo.topFacets.s ze()];
 
-    facetFieldInfo.topFacets.values().toArray(topFacetsArray);
-    Arrays.sort(topFacetsArray, Collections.<ThriftFacetCount>reverseOrder(
-        FacetsResultsUtils.getFacetCountComparator(request.getFacetRequest())));
+    facetF eld nfo.topFacets.values().toArray(topFacetsArray);
+    Arrays.sort(topFacetsArray, Collect ons.<Thr ftFacetCount>reverseOrder(
+        FacetsResultsUt ls.getFacetCountComparator(request.getFacetRequest())));
 
-    int numResults = capFacetFieldWidth(facetFieldInfo.fieldRequest.numResults);
+     nt numResults = capFacetF eldW dth(facetF eld nfo.f eldRequest.numResults);
 
-    if (topFacetsArray.length < numResults) {
+     f (topFacetsArray.length < numResults) {
       numResults = topFacetsArray.length;
     }
 
-    int collected = 0;
-    for (int i = 0; i < topFacetsArray.length; ++i) {
-      ThriftFacetCount count = topFacetsArray[i];
+     nt collected = 0;
+    for ( nt   = 0;   < topFacetsArray.length; ++ ) {
+      Thr ftFacetCount count = topFacetsArray[ ];
 
-      if (onlyReturnFacetsWithDisplayTweet
-          && (!count.isSetMetadata() || !count.getMetadata().isSetStatusId()
-              || count.getMetadata().getStatusId() == -1)) {
-        // status id must be set
-        continue;
+       f (onlyReturnFacetsW hD splayT et
+          && (!count. sSet tadata() || !count.get tadata(). sSetStatus d()
+              || count.get tadata().getStatus d() == -1)) {
+        // status  d must be set
+        cont nue;
       }
 
-      if (excludePossiblySensitiveFacets && count.isSetMetadata()
-          && count.getMetadata().isStatusPossiblySensitive()) {
-        // the display tweet may be offensive or NSFW
-        if (DebugMessageBuilder.DEBUG_VERBOSE <= debugMessageBuilder.getDebugLevel()) {
-          debugMessageBuilder.verbose2("[%d] FacetsResponseMerger EXCLUDED: offensive or NSFW %s, "
-                                           + "explanation: %s",
-                                       i, facetCountSummary(count),
-                                       count.getMetadata().getExplanation());
+       f (excludePoss blySens  veFacets && count. sSet tadata()
+          && count.get tadata(). sStatusPoss blySens  ve()) {
+        // t  d splay t et may be offens ve or NSFW
+         f (Debug ssageBu lder.DEBUG_VERBOSE <= debug ssageBu lder.getDebugLevel()) {
+          debug ssageBu lder.verbose2("[%d] FacetsResponse rger EXCLUDED: offens ve or NSFW %s, "
+                                           + "explanat on: %s",
+                                        , facetCountSummary(count),
+                                       count.get tadata().getExplanat on());
         }
-        continue;
+        cont nue;
       }
 
-      boolean filterOutUser = false;
-      if (maxHitsPerUser != -1 && count.isSetMetadata()) {
-        ThriftFacetCountMetadata metadata = count.getMetadata();
-        if (!metadata.dontFilterUser) {
-          long twitterUserId = metadata.getTwitterUserId();
-          int numResultsFromUser = 1;
-          if (twitterUserId != -1) {
-            Integer perUser = antiGamingMap.get(twitterUserId);
-            if (perUser != null) {
+      boolean f lterOutUser = false;
+       f (maxH sPerUser != -1 && count. sSet tadata()) {
+        Thr ftFacetCount tadata  tadata = count.get tadata();
+         f (! tadata.dontF lterUser) {
+          long tw terUser d =  tadata.getTw terUser d();
+           nt numResultsFromUser = 1;
+           f (tw terUser d != -1) {
+             nteger perUser = ant Gam ngMap.get(tw terUser d);
+             f (perUser != null) {
               numResultsFromUser = perUser + 1;
-              filterOutUser = numResultsFromUser > maxHitsPerUser;
+              f lterOutUser = numResultsFromUser > maxH sPerUser;
             }
-            antiGamingMap.put(twitterUserId, numResultsFromUser);
+            ant Gam ngMap.put(tw terUser d, numResultsFromUser);
           }
         }
       }
 
-      // Filter facets those don't meet the basic criteria.
-      if (count.getSimpleCount() < minSimpleCount) {
-        if (DebugMessageBuilder.DEBUG_VERBOSE <= debugMessageBuilder.getDebugLevel()) {
-          debugMessageBuilder.verbose2(
-              "[%d] FacetsResponseMerger EXCLUDED: simpleCount:%d < minSimpleCount:%d, %s",
-              i, count.getSimpleCount(), minSimpleCount, facetCountSummary(count));
+      // F lter facets those don't  et t  bas c cr er a.
+       f (count.getS mpleCount() < m nS mpleCount) {
+         f (Debug ssageBu lder.DEBUG_VERBOSE <= debug ssageBu lder.getDebugLevel()) {
+          debug ssageBu lder.verbose2(
+              "[%d] FacetsResponse rger EXCLUDED: s mpleCount:%d < m nS mpleCount:%d, %s",
+               , count.getS mpleCount(), m nS mpleCount, facetCountSummary(count));
         }
-        continue;
+        cont nue;
       }
-      if (count.getWeightedCount() < minWeightedCount) {
-        if (DebugMessageBuilder.DEBUG_VERBOSE <= debugMessageBuilder.getDebugLevel()) {
-          debugMessageBuilder.verbose2(
-              "[%d] FacetsResponseMerger EXCLUDED: weightedCount:%d < minWeightedCount:%d, %s",
-              i, count.getWeightedCount(), minWeightedCount, facetCountSummary(count));
+       f (count.get  ghtedCount() < m n  ghtedCount) {
+         f (Debug ssageBu lder.DEBUG_VERBOSE <= debug ssageBu lder.getDebugLevel()) {
+          debug ssageBu lder.verbose2(
+              "[%d] FacetsResponse rger EXCLUDED:   ghtedCount:%d < m n  ghtedCount:%d, %s",
+               , count.get  ghtedCount(), m n  ghtedCount, facetCountSummary(count));
         }
-        continue;
+        cont nue;
       }
-      if (filterOutUser) {
-        if (DebugMessageBuilder.DEBUG_VERBOSE <= debugMessageBuilder.getDebugLevel()) {
-          debugMessageBuilder.verbose2(
-              "[%d] FacetsResponseMerger EXCLUDED: antiGaming filterd user: %d: %s",
-              i, count.getMetadata().getTwitterUserId(), facetCountSummary(count));
+       f (f lterOutUser) {
+         f (Debug ssageBu lder.DEBUG_VERBOSE <= debug ssageBu lder.getDebugLevel()) {
+          debug ssageBu lder.verbose2(
+              "[%d] FacetsResponse rger EXCLUDED: ant Gam ng f lterd user: %d: %s",
+               , count.get tadata().getTw terUser d(), facetCountSummary(count));
         }
-        continue;
+        cont nue;
       }
-      if (count.getPenaltyCount() > maxPenaltyCount) {
-        if (DebugMessageBuilder.DEBUG_VERBOSE <= debugMessageBuilder.getDebugLevel()) {
-          debugMessageBuilder.verbose2(
-              "[%d] FacetsResponseMerger EXCLUCED: penaltyCount:%.3f > maxPenaltyCount:%.3f, %s",
-              i, count.getPenaltyCount(), maxPenaltyCount, facetCountSummary(count));
+       f (count.getPenaltyCount() > maxPenaltyCount) {
+         f (Debug ssageBu lder.DEBUG_VERBOSE <= debug ssageBu lder.getDebugLevel()) {
+          debug ssageBu lder.verbose2(
+              "[%d] FacetsResponse rger EXCLUCED: penaltyCount:%.3f > maxPenaltyCount:%.3f, %s",
+               , count.getPenaltyCount(), maxPenaltyCount, facetCountSummary(count));
         }
-        continue;
+        cont nue;
       }
-      if (((double) count.getPenaltyCount() / count.getSimpleCount()) > maxPenaltyCountRatio) {
-        if (DebugMessageBuilder.DEBUG_VERBOSE <= debugMessageBuilder.getDebugLevel()) {
-          debugMessageBuilder.verbose2(
-              "[%d] FacetsResponseMerger EXCLUDED: penaltyCountRatio: %.3f > "
-                  + "maxPenaltyCountRatio:%.3f, %s",
-              i, (double) count.getPenaltyCount() / count.getSimpleCount(), maxPenaltyCountRatio,
+       f (((double) count.getPenaltyCount() / count.getS mpleCount()) > maxPenaltyCountRat o) {
+         f (Debug ssageBu lder.DEBUG_VERBOSE <= debug ssageBu lder.getDebugLevel()) {
+          debug ssageBu lder.verbose2(
+              "[%d] FacetsResponse rger EXCLUDED: penaltyCountRat o: %.3f > "
+                  + "maxPenaltyCountRat o:%.3f, %s",
+               , (double) count.getPenaltyCount() / count.getS mpleCount(), maxPenaltyCountRat o,
               facetCountSummary(count));
         }
-        continue;
+        cont nue;
       }
       results.addToTopFacets(count);
 
       collected++;
-      if (collected >= numResults) {
+       f (collected >= numResults) {
         break;
       }
     }
   }
 
-  private static int capFacetFieldWidth(int numResults) {
-    int ret = numResults;
-    if (numResults <= 0) {
-      // this in theory should not be allowed, but for now we issue the request with goodwill length
-      ret = 10;  // default to 10 for future merge code to terminate correctly
+  pr vate stat c  nt capFacetF eldW dth( nt numResults) {
+     nt ret = numResults;
+     f (numResults <= 0) {
+      // t   n t ory should not be allo d, but for now    ssue t  request w h goodw ll length
+      ret = 10;  // default to 10 for future  rge code to term nate correctly
     }
-    if (numResults >= 100) {
+     f (numResults >= 100) {
       ret = 100;
     }
     return ret;
   }
 
-  private static String facetCountSummary(final ThriftFacetCount count) {
-    if (count.isSetMetadata()) {
-      return String.format("Label: %s (s:%d, w:%d, p:%d, score:%.2f, sid:%d (%s))",
-          count.getFacetLabel(), count.getSimpleCount(), count.getWeightedCount(),
-          count.getPenaltyCount(), count.getScore(), count.getMetadata().getStatusId(),
-          count.getMetadata().getStatusLanguage());
+  pr vate stat c Str ng facetCountSummary(f nal Thr ftFacetCount count) {
+     f (count. sSet tadata()) {
+      return Str ng.format("Label: %s (s:%d, w:%d, p:%d, score:%.2f, s d:%d (%s))",
+          count.getFacetLabel(), count.getS mpleCount(), count.get  ghtedCount(),
+          count.getPenaltyCount(), count.getScore(), count.get tadata().getStatus d(),
+          count.get tadata().getStatusLanguage());
     } else {
-      return String.format("Label: %s (s:%d, w:%d, p:%d, score:%.2f)", count.getFacetLabel(),
-          count.getSimpleCount(), count.getWeightedCount(), count.getPenaltyCount(),
+      return Str ng.format("Label: %s (s:%d, w:%d, p:%d, score:%.2f)", count.getFacetLabel(),
+          count.getS mpleCount(), count.get  ghtedCount(), count.getPenaltyCount(),
           count.getScore());
     }
   }
 
-  // Iterate through the backend responses and fill up the FacetFieldInfo map.
-  private void collectResponsesAndPopulateMap(
-      final Map<String, FacetsResultsUtils.FacetFieldInfo> facetFieldInfoMap,
-      final Set<Long> userIDWhitelist) {
-    // Next, iterate through the backend responses.
-    int i = 0;
-    for (EarlybirdResponse facetsResponse : accumulatedResponses.getSuccessResponses()) {
-      if (facetsResponse.isSetFacetResults()) {
-        LOG.debug("Facet response from earlybird {} is {} ", i, facetsResponse.getFacetResults());
-        i++;
-        ThriftFacetResults facetResults = facetsResponse.getFacetResults();
-        if (facetResults.isSetUserIDWhitelist()) {
-          userIDWhitelist.addAll(facetResults.getUserIDWhitelist());
+  //  erate through t  backend responses and f ll up t  FacetF eld nfo map.
+  pr vate vo d collectResponsesAndPopulateMap(
+      f nal Map<Str ng, FacetsResultsUt ls.FacetF eld nfo> facetF eld nfoMap,
+      f nal Set<Long> user DWh el st) {
+    // Next,  erate through t  backend responses.
+     nt   = 0;
+    for (Earlyb rdResponse facetsResponse : accumulatedResponses.getSuccessResponses()) {
+       f (facetsResponse. sSetFacetResults()) {
+        LOG.debug("Facet response from earlyb rd {}  s {} ",  , facetsResponse.getFacetResults());
+         ++;
+        Thr ftFacetResults facetResults = facetsResponse.getFacetResults();
+         f (facetResults. sSetUser DWh el st()) {
+          user DWh el st.addAll(facetResults.getUser DWh el st());
         }
-        FacetsResultsUtils.fillFacetFieldInfo(
-            facetResults, facetFieldInfoMap,
-            userIDWhitelist);
+        FacetsResultsUt ls.f llFacetF eld nfo(
+            facetResults, facetF eld nfoMap,
+            user DWh el st);
       }
     }
-    LOG.debug("Earlybird facet response total size {}", i);
+    LOG.debug("Earlyb rd facet response total s ze {}",  );
   }
 }
 

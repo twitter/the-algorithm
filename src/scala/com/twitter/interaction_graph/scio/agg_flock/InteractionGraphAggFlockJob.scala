@@ -1,82 +1,82 @@
-package com.twitter.interaction_graph.scio.agg_flock
+package com.tw ter. nteract on_graph.sc o.agg_flock
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.dal.DAL.DiskFormat
-import com.twitter.beam.io.dal.DAL.PathLayout
-import com.twitter.beam.io.dal.DAL.WriteOptions
-import com.twitter.beam.job.ServiceIdentifierOptions
-import com.twitter.interaction_graph.scio.agg_flock.InteractionGraphAggFlockUtil._
-import com.twitter.interaction_graph.scio.common.DateUtil
-import com.twitter.interaction_graph.scio.common.FeatureGeneratorUtil
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.statebird.v2.thriftscala.Environment
-import com.twitter.util.Duration
-import java.time.Instant
-import org.joda.time.Interval
+ mport com.spot fy.sc o.Sc oContext
+ mport com.spot fy.sc o.values.SCollect on
+ mport com.tw ter.beam. o.dal.DAL
+ mport com.tw ter.beam. o.dal.DAL.D skFormat
+ mport com.tw ter.beam. o.dal.DAL.PathLa t
+ mport com.tw ter.beam. o.dal.DAL.Wr eOpt ons
+ mport com.tw ter.beam.job.Serv ce dent f erOpt ons
+ mport com.tw ter. nteract on_graph.sc o.agg_flock. nteract onGraphAggFlockUt l._
+ mport com.tw ter. nteract on_graph.sc o.common.DateUt l
+ mport com.tw ter. nteract on_graph.sc o.common.FeatureGeneratorUt l
+ mport com.tw ter. nteract on_graph.thr ftscala.Edge
+ mport com.tw ter. nteract on_graph.thr ftscala.FeatureNa 
+ mport com.tw ter. nteract on_graph.thr ftscala.Vertex
+ mport com.tw ter.sc o_ nternal.job.Sc oBeamJob
+ mport com.tw ter.stateb rd.v2.thr ftscala.Env ron nt
+ mport com.tw ter.ut l.Durat on
+ mport java.t  . nstant
+ mport org.joda.t  . nterval
 
-object InteractionGraphAggFlockJob extends ScioBeamJob[InteractionGraphAggFlockOption] {
-  override protected def configurePipeline(
-    scioContext: ScioContext,
-    pipelineOptions: InteractionGraphAggFlockOption
-  ): Unit = {
-    @transient
-    implicit lazy val sc: ScioContext = scioContext
-    implicit lazy val dateInterval: Interval = pipelineOptions.interval
+object  nteract onGraphAggFlockJob extends Sc oBeamJob[ nteract onGraphAggFlockOpt on] {
+  overr de protected def conf gureP pel ne(
+    sc oContext: Sc oContext,
+    p pel neOpt ons:  nteract onGraphAggFlockOpt on
+  ): Un  = {
+    @trans ent
+     mpl c  lazy val sc: Sc oContext = sc oContext
+     mpl c  lazy val date nterval:  nterval = p pel neOpt ons. nterval
 
-    val source = InteractionGraphAggFlockSource(pipelineOptions)
+    val s ce =  nteract onGraphAggFlockS ce(p pel neOpt ons)
 
-    val embiggenInterval = DateUtil.embiggen(dateInterval, Duration.fromDays(7))
+    val emb ggen nterval = DateUt l.emb ggen(date nterval, Durat on.fromDays(7))
 
-    val flockFollowsSnapshot = source.readFlockFollowsSnapshot(embiggenInterval)
+    val flockFollowsSnapshot = s ce.readFlockFollowsSnapshot(emb ggen nterval)
 
-    // the flock snapshot we're reading from has already been filtered for safe/valid users hence no filtering for safeUsers
+    // t  flock snapshot  're read ng from has already been f ltered for safe/val d users  nce no f lter ng for safeUsers
     val flockFollowsFeature =
-      getFlockFeatures(flockFollowsSnapshot, FeatureName.NumFollows, dateInterval)
+      getFlockFeatures(flockFollowsSnapshot, FeatureNa .NumFollows, date nterval)
 
     val flockMutualFollowsFeature = getMutualFollowFeature(flockFollowsFeature)
 
-    val allSCollections = Seq(flockFollowsFeature, flockMutualFollowsFeature)
+    val allSCollect ons = Seq(flockFollowsFeature, flockMutualFollowsFeature)
 
-    val allFeatures = SCollection.unionAll(allSCollections)
+    val allFeatures = SCollect on.un onAll(allSCollect ons)
 
-    val (vertex, edges) = FeatureGeneratorUtil.getFeatures(allFeatures)
+    val (vertex, edges) = FeatureGeneratorUt l.getFeatures(allFeatures)
 
-    val dalEnvironment: String = pipelineOptions
-      .as(classOf[ServiceIdentifierOptions])
-      .getEnvironment()
-    val dalWriteEnvironment = if (pipelineOptions.getDALWriteEnvironment != null) {
-      pipelineOptions.getDALWriteEnvironment
+    val dalEnv ron nt: Str ng = p pel neOpt ons
+      .as(classOf[Serv ce dent f erOpt ons])
+      .getEnv ron nt()
+    val dalWr eEnv ron nt =  f (p pel neOpt ons.getDALWr eEnv ron nt != null) {
+      p pel neOpt ons.getDALWr eEnv ron nt
     } else {
-      dalEnvironment
+      dalEnv ron nt
     }
 
     vertex.saveAsCustomOutput(
-      "Write Vertex Records",
-      DAL.writeSnapshot[Vertex](
-        InteractionGraphAggFlockVertexSnapshotScalaDataset,
-        PathLayout.DailyPath(pipelineOptions.getOutputPath + "/aggregated_flock_vertex_daily"),
-        Instant.ofEpochMilli(dateInterval.getEndMillis),
-        DiskFormat.Parquet,
-        Environment.valueOf(dalWriteEnvironment),
-        writeOption =
-          WriteOptions(numOfShards = Some((pipelineOptions.getNumberOfShards / 64.0).ceil.toInt))
+      "Wr e Vertex Records",
+      DAL.wr eSnapshot[Vertex](
+         nteract onGraphAggFlockVertexSnapshotScalaDataset,
+        PathLa t.Da lyPath(p pel neOpt ons.getOutputPath + "/aggregated_flock_vertex_da ly"),
+         nstant.ofEpochM ll (date nterval.getEndM ll s),
+        D skFormat.Parquet,
+        Env ron nt.valueOf(dalWr eEnv ron nt),
+        wr eOpt on =
+          Wr eOpt ons(numOfShards = So ((p pel neOpt ons.getNumberOfShards / 64.0).ce l.to nt))
       )
     )
 
     edges.saveAsCustomOutput(
-      "Write Edge Records",
-      DAL.writeSnapshot[Edge](
-        InteractionGraphAggFlockEdgeSnapshotScalaDataset,
-        PathLayout.DailyPath(pipelineOptions.getOutputPath + "/aggregated_flock_edge_daily"),
-        Instant.ofEpochMilli(dateInterval.getEndMillis),
-        DiskFormat.Parquet,
-        Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards))
+      "Wr e Edge Records",
+      DAL.wr eSnapshot[Edge](
+         nteract onGraphAggFlockEdgeSnapshotScalaDataset,
+        PathLa t.Da lyPath(p pel neOpt ons.getOutputPath + "/aggregated_flock_edge_da ly"),
+         nstant.ofEpochM ll (date nterval.getEndM ll s),
+        D skFormat.Parquet,
+        Env ron nt.valueOf(dalWr eEnv ron nt),
+        wr eOpt on = Wr eOpt ons(numOfShards = So (p pel neOpt ons.getNumberOfShards))
       )
     )
 

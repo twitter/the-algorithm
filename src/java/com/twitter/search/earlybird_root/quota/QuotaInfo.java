@@ -1,78 +1,78 @@
-package com.twitter.search.earlybird_root.quota;
+package com.tw ter.search.earlyb rd_root.quota;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
 /**
- * Simple container of quota related information.
+ * S mple conta ner of quota related  nformat on.
  */
-public class QuotaInfo {
-  public static final String DEFAULT_TIER_VALUE = "no_tier";
-  public static final boolean DEFAULT_ARCHIVE_ACCESS_VALUE = false;
+publ c class Quota nfo {
+  publ c stat c f nal Str ng DEFAULT_T ER_VALUE = "no_t er";
+  publ c stat c f nal boolean DEFAULT_ARCH VE_ACCESS_VALUE = false;
 
-  private final String quotaClientId;
-  private final String quotaEmail;
-  private final int quota;
-  private final boolean shouldEnforceQuota;
-  private final String clientTier;
-  private final boolean archiveAccess;
+  pr vate f nal Str ng quotaCl ent d;
+  pr vate f nal Str ng quotaEma l;
+  pr vate f nal  nt quota;
+  pr vate f nal boolean shouldEnforceQuota;
+  pr vate f nal Str ng cl entT er;
+  pr vate f nal boolean arch veAccess;
 
   /**
-   * Creates a new QuotaInfo object with the given clientId, quota and shouldEnforceQuota.
+   * Creates a new Quota nfo object w h t  g ven cl ent d, quota and shouldEnforceQuota.
    */
-  public QuotaInfo(
-      String quotaClientId,
-      String quotaEmail,
-      int quota,
+  publ c Quota nfo(
+      Str ng quotaCl ent d,
+      Str ng quotaEma l,
+       nt quota,
       boolean shouldEnforceQuota,
-      String clientTier,
-      boolean archiveAccess) {
-    this.quotaClientId = Preconditions.checkNotNull(quotaClientId);
-    this.quotaEmail = Preconditions.checkNotNull(quotaEmail);
-    this.quota = quota;
-    this.shouldEnforceQuota = shouldEnforceQuota;
-    this.clientTier = Preconditions.checkNotNull(clientTier);
-    this.archiveAccess = archiveAccess;
+      Str ng cl entT er,
+      boolean arch veAccess) {
+    t .quotaCl ent d = Precond  ons.c ckNotNull(quotaCl ent d);
+    t .quotaEma l = Precond  ons.c ckNotNull(quotaEma l);
+    t .quota = quota;
+    t .shouldEnforceQuota = shouldEnforceQuota;
+    t .cl entT er = Precond  ons.c ckNotNull(cl entT er);
+    t .arch veAccess = arch veAccess;
   }
 
   /**
-   * Returns the clientId for which we have the QuotaInfo.
+   * Returns t  cl ent d for wh ch   have t  Quota nfo.
    */
-  public String getQuotaClientId() {
-    return quotaClientId;
+  publ c Str ng getQuotaCl ent d() {
+    return quotaCl ent d;
   }
 
   /**
-   * Returns the email associated with this clientId.
+   * Returns t  ema l assoc ated w h t  cl ent d.
    */
-  public String getQuotaEmail() {
-    return quotaEmail;
+  publ c Str ng getQuotaEma l() {
+    return quotaEma l;
   }
 
   /**
-   * Returns the integer based quota for the stored client id.
+   * Returns t   nteger based quota for t  stored cl ent  d.
    */
-  public int getQuota() {
+  publ c  nt getQuota() {
     return quota;
   }
 
   /**
-   * Returns whether the quota should be enforced or not.
+   * Returns w t r t  quota should be enforced or not.
    */
-  public boolean shouldEnforceQuota() {
+  publ c boolean shouldEnforceQuota() {
     return shouldEnforceQuota;
   }
 
   /**
-   * Return tier info about the client.
+   * Return t er  nfo about t  cl ent.
    */
-  public String getClientTier() {
-    return clientTier;
+  publ c Str ng getCl entT er() {
+    return cl entT er;
   }
 
   /**
-   * Returns whether the client has access to the full archive.
+   * Returns w t r t  cl ent has access to t  full arch ve.
    */
-  public boolean hasArchiveAccess() {
-    return archiveAccess;
+  publ c boolean hasArch veAccess() {
+    return arch veAccess;
   }
 }

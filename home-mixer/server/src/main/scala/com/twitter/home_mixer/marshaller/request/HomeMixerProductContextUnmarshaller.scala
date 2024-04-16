@@ -1,62 +1,62 @@
-package com.twitter.home_mixer.marshaller.request
+package com.tw ter.ho _m xer.marshaller.request
 
-import com.twitter.home_mixer.model.request.FollowingProductContext
-import com.twitter.home_mixer.model.request.ForYouProductContext
-import com.twitter.home_mixer.model.request.ListRecommendedUsersProductContext
-import com.twitter.home_mixer.model.request.ListTweetsProductContext
-import com.twitter.home_mixer.model.request.ScoredTweetsProductContext
-import com.twitter.home_mixer.model.request.SubscribedProductContext
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.model.marshalling.request.ProductContext
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.model.request.Follow ngProductContext
+ mport com.tw ter.ho _m xer.model.request.For ProductContext
+ mport com.tw ter.ho _m xer.model.request.L stRecom ndedUsersProductContext
+ mport com.tw ter.ho _m xer.model.request.L stT etsProductContext
+ mport com.tw ter.ho _m xer.model.request.ScoredT etsProductContext
+ mport com.tw ter.ho _m xer.model.request.Subscr bedProductContext
+ mport com.tw ter.ho _m xer.{thr ftscala => t}
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.ProductContext
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class HomeMixerProductContextUnmarshaller @Inject() (
-  deviceContextUnmarshaller: DeviceContextUnmarshaller) {
+@S ngleton
+class Ho M xerProductContextUnmarshaller @ nject() (
+  dev ceContextUnmarshaller: Dev ceContextUnmarshaller) {
 
   def apply(productContext: t.ProductContext): ProductContext = productContext match {
-    case t.ProductContext.Following(p) =>
-      FollowingProductContext(
-        deviceContext = p.deviceContext.map(deviceContextUnmarshaller(_)),
-        seenTweetIds = p.seenTweetIds,
-        dspClientContext = p.dspClientContext
+    case t.ProductContext.Follow ng(p) =>
+      Follow ngProductContext(
+        dev ceContext = p.dev ceContext.map(dev ceContextUnmarshaller(_)),
+        seenT et ds = p.seenT et ds,
+        dspCl entContext = p.dspCl entContext
       )
-    case t.ProductContext.ForYou(p) =>
-      ForYouProductContext(
-        deviceContext = p.deviceContext.map(deviceContextUnmarshaller(_)),
-        seenTweetIds = p.seenTweetIds,
-        dspClientContext = p.dspClientContext,
-        pushToHomeTweetId = p.pushToHomeTweetId
+    case t.ProductContext.For (p) =>
+      For ProductContext(
+        dev ceContext = p.dev ceContext.map(dev ceContextUnmarshaller(_)),
+        seenT et ds = p.seenT et ds,
+        dspCl entContext = p.dspCl entContext,
+        pushToHo T et d = p.pushToHo T et d
       )
-    case t.ProductContext.ListManagement(p) =>
-      throw new UnsupportedOperationException(s"This product is no longer used")
-    case t.ProductContext.ScoredTweets(p) =>
-      ScoredTweetsProductContext(
-        deviceContext = p.deviceContext.map(deviceContextUnmarshaller(_)),
-        seenTweetIds = p.seenTweetIds,
-        servedTweetIds = p.servedTweetIds,
-        backfillTweetIds = p.backfillTweetIds
+    case t.ProductContext.L stManage nt(p) =>
+      throw new UnsupportedOperat onExcept on(s"T  product  s no longer used")
+    case t.ProductContext.ScoredT ets(p) =>
+      ScoredT etsProductContext(
+        dev ceContext = p.dev ceContext.map(dev ceContextUnmarshaller(_)),
+        seenT et ds = p.seenT et ds,
+        servedT et ds = p.servedT et ds,
+        backf llT et ds = p.backf llT et ds
       )
-    case t.ProductContext.ListTweets(p) =>
-      ListTweetsProductContext(
-        listId = p.listId,
-        deviceContext = p.deviceContext.map(deviceContextUnmarshaller(_)),
-        dspClientContext = p.dspClientContext
+    case t.ProductContext.L stT ets(p) =>
+      L stT etsProductContext(
+        l st d = p.l st d,
+        dev ceContext = p.dev ceContext.map(dev ceContextUnmarshaller(_)),
+        dspCl entContext = p.dspCl entContext
       )
-    case t.ProductContext.ListRecommendedUsers(p) =>
-      ListRecommendedUsersProductContext(
-        listId = p.listId,
-        selectedUserIds = p.selectedUserIds,
-        excludedUserIds = p.excludedUserIds,
-        listName = p.listName
+    case t.ProductContext.L stRecom ndedUsers(p) =>
+      L stRecom ndedUsersProductContext(
+        l st d = p.l st d,
+        selectedUser ds = p.selectedUser ds,
+        excludedUser ds = p.excludedUser ds,
+        l stNa  = p.l stNa 
       )
-    case t.ProductContext.Subscribed(p) =>
-      SubscribedProductContext(
-        deviceContext = p.deviceContext.map(deviceContextUnmarshaller(_)),
-        seenTweetIds = p.seenTweetIds,
+    case t.ProductContext.Subscr bed(p) =>
+      Subscr bedProductContext(
+        dev ceContext = p.dev ceContext.map(dev ceContextUnmarshaller(_)),
+        seenT et ds = p.seenT et ds,
       )
-    case t.ProductContext.UnknownUnionField(field) =>
-      throw new UnsupportedOperationException(s"Unknown display context: ${field.field.name}")
+    case t.ProductContext.UnknownUn onF eld(f eld) =>
+      throw new UnsupportedOperat onExcept on(s"Unknown d splay context: ${f eld.f eld.na }")
   }
 }

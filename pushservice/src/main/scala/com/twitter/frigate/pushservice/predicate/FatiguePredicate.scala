@@ -1,74 +1,74 @@
-package com.twitter.frigate.pushservice.predicate
+package com.tw ter.fr gate.pushserv ce.pred cate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.predicate.FatiguePredicate._
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.frigate.thriftscala.{NotificationDisplayLocation => DisplayLocation}
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.util.Duration
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.pred cate.Fat guePred cate._
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
+ mport com.tw ter.fr gate.thr ftscala.{Not f cat onD splayLocat on => D splayLocat on}
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter.ut l.Durat on
 
-object FatiguePredicate {
+object Fat guePred cate {
 
   /**
-   * Predicate that operates on a candidate, and applies custom fatigue rules for the slice of history only
-   * corresponding to a given rec type.
+   * Pred cate that operates on a cand date, and appl es custom fat gue rules for t  sl ce of  tory only
+   * correspond ng to a g ven rec type.
    *
-   * @param interval
-   * @param maxInInterval
-   * @param minInterval
-   * @param recommendationType
-   * @param statsReceiver
+   * @param  nterval
+   * @param max n nterval
+   * @param m n nterval
+   * @param recom ndat onType
+   * @param statsRece ver
    * @return
    */
   def recTypeOnly(
-    interval: Duration,
-    maxInInterval: Int,
-    minInterval: Duration,
-    recommendationType: CommonRecommendationType,
-    notificationDisplayLocation: DisplayLocation = DisplayLocation.PushToMobileDevice
+     nterval: Durat on,
+    max n nterval:  nt,
+    m n nterval: Durat on,
+    recom ndat onType: CommonRecom ndat onType,
+    not f cat onD splayLocat on: D splayLocat on = D splayLocat on.PushToMob leDev ce
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    build(
-      interval = interval,
-      maxInInterval = maxInInterval,
-      minInterval = minInterval,
-      filterHistory = recOnlyFilter(recommendationType),
-      notificationDisplayLocation = notificationDisplayLocation
-    ).flatContraMap { candidate: PushCandidate => candidate.target.history }
-      .withStats(statsReceiver.scope(s"predicate_${recTypeOnlyFatigue}"))
-      .withName(recTypeOnlyFatigue)
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date] = {
+    bu ld(
+       nterval =  nterval,
+      max n nterval = max n nterval,
+      m n nterval = m n nterval,
+      f lter tory = recOnlyF lter(recom ndat onType),
+      not f cat onD splayLocat on = not f cat onD splayLocat on
+    ).flatContraMap { cand date: PushCand date => cand date.target. tory }
+      .w hStats(statsRece ver.scope(s"pred cate_${recTypeOnlyFat gue}"))
+      .w hNa (recTypeOnlyFat gue)
   }
 
   /**
-   * Predicate that operates on a candidate, and applies custom fatigue rules for the slice of history only
-   * corresponding to specified rec types
+   * Pred cate that operates on a cand date, and appl es custom fat gue rules for t  sl ce of  tory only
+   * correspond ng to spec f ed rec types
    *
-   * @param interval
-   * @param maxInInterval
-   * @param minInterval
-   * @param statsReceiver
+   * @param  nterval
+   * @param max n nterval
+   * @param m n nterval
+   * @param statsRece ver
    * @return
    */
   def recTypeSetOnly(
-    interval: Duration,
-    maxInInterval: Int,
-    minInterval: Duration,
-    recTypes: Set[CommonRecommendationType],
-    notificationDisplayLocation: DisplayLocation = DisplayLocation.PushToMobileDevice
+     nterval: Durat on,
+    max n nterval:  nt,
+    m n nterval: Durat on,
+    recTypes: Set[CommonRecom ndat onType],
+    not f cat onD splayLocat on: D splayLocat on = D splayLocat on.PushToMob leDev ce
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    val name = "rec_type_set_fatigue"
-    build(
-      interval = interval,
-      maxInInterval = maxInInterval,
-      minInterval = minInterval,
-      filterHistory = recTypesOnlyFilter(recTypes),
-      notificationDisplayLocation = notificationDisplayLocation
-    ).flatContraMap { candidate: PushCandidate => candidate.target.history }
-      .withStats(statsReceiver.scope(s"${name}_predicate"))
-      .withName(name)
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date] = {
+    val na  = "rec_type_set_fat gue"
+    bu ld(
+       nterval =  nterval,
+      max n nterval = max n nterval,
+      m n nterval = m n nterval,
+      f lter tory = recTypesOnlyF lter(recTypes),
+      not f cat onD splayLocat on = not f cat onD splayLocat on
+    ).flatContraMap { cand date: PushCand date => cand date.target. tory }
+      .w hStats(statsRece ver.scope(s"${na }_pred cate"))
+      .w hNa (na )
   }
 }

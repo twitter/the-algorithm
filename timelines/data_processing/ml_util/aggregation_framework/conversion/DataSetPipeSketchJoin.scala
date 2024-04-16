@@ -1,46 +1,46 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.convers on
 
-import com.twitter.bijection.Injection
-import com.twitter.ml.api._
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.scalding.TypedPipe
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.ml.ap ._
+ mport com.tw ter.ml.ap .ut l.SR chDataRecord
+ mport com.tw ter.scald ng.TypedP pe
 
-object DataSetPipeSketchJoin {
+object DataSetP peSketchJo n {
   val DefaultSketchNumReducers = 500
-  val dataRecordMerger: DataRecordMerger = new DataRecordMerger
-  implicit val str2Byte: String => Array[Byte] =
-    implicitly[Injection[String, Array[Byte]]].toFunction
+  val dataRecord rger: DataRecord rger = new DataRecord rger
+   mpl c  val str2Byte: Str ng => Array[Byte] =
+     mpl c ly[ nject on[Str ng, Array[Byte]]].toFunct on
 
-  /* Computes a left sketch join on a set of skewed keys. */
+  /* Computes a left sketch jo n on a set of ske d keys. */
   def apply(
-    inputDataSet: DataSetPipe,
-    skewedJoinKeys: Product,
-    joinFeaturesDataSet: DataSetPipe,
-    sketchNumReducers: Int = DefaultSketchNumReducers
-  ): DataSetPipe = {
-    val joinKeyList = skewedJoinKeys.productIterator.toList.asInstanceOf[List[Feature[_]]]
+     nputDataSet: DataSetP pe,
+    ske dJo nKeys: Product,
+    jo nFeaturesDataSet: DataSetP pe,
+    sketchNumReducers:  nt = DefaultSketchNumReducers
+  ): DataSetP pe = {
+    val jo nKeyL st = ske dJo nKeys.product erator.toL st.as nstanceOf[L st[Feature[_]]]
 
-    def makeKey(record: DataRecord): String =
-      joinKeyList
-        .map(SRichDataRecord(record).getFeatureValue(_))
-        .toString
+    def makeKey(record: DataRecord): Str ng =
+      jo nKeyL st
+        .map(SR chDataRecord(record).getFeatureValue(_))
+        .toStr ng
 
-    def byKey(pipe: DataSetPipe): TypedPipe[(String, DataRecord)] =
-      pipe.records.map(record => (makeKey(record), record))
+    def byKey(p pe: DataSetP pe): TypedP pe[(Str ng, DataRecord)] =
+      p pe.records.map(record => (makeKey(record), record))
 
-    val joinedRecords = byKey(inputDataSet)
+    val jo nedRecords = byKey( nputDataSet)
       .sketch(sketchNumReducers)
-      .leftJoin(byKey(joinFeaturesDataSet))
+      .leftJo n(byKey(jo nFeaturesDataSet))
       .values
       .map {
-        case (inputRecord, joinFeaturesOpt) =>
-          joinFeaturesOpt.foreach { joinRecord => dataRecordMerger.merge(inputRecord, joinRecord) }
-          inputRecord
+        case ( nputRecord, jo nFeaturesOpt) =>
+          jo nFeaturesOpt.foreach { jo nRecord => dataRecord rger. rge( nputRecord, jo nRecord) }
+           nputRecord
       }
 
-    DataSetPipe(
-      joinedRecords,
-      FeatureContext.merge(inputDataSet.featureContext, joinFeaturesDataSet.featureContext)
+    DataSetP pe(
+      jo nedRecords,
+      FeatureContext. rge( nputDataSet.featureContext, jo nFeaturesDataSet.featureContext)
     )
   }
 }

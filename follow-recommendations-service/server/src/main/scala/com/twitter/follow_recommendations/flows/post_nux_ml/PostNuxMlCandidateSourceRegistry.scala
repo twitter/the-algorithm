@@ -1,103 +1,103 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+package com.tw ter.follow_recom ndat ons.flows.post_nux_ml
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.CandidateSourceRegistry
-import com.twitter.follow_recommendations.common.base.EnrichedCandidateSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ForwardEmailBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ForwardPhoneBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ReverseEmailBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ReversePhoneBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.crowd_search_accounts.CrowdSearchAccountsSource
-import com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts.TopOrganicFollowsAccountsSource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopCountrySource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopCountryBackFillSource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopGeohashQualityFollowSource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopGeohashSource
-import com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow.PPMILocaleFollowSource
-import com.twitter.follow_recommendations.common.candidate_sources.real_graph.RealGraphOonV2Source
-import com.twitter.follow_recommendations.common.candidate_sources.recent_engagement.RecentEngagementNonDirectFollowSource
-import com.twitter.follow_recommendations.common.candidate_sources.recent_engagement.RepeatedProfileVisitsSource
-import com.twitter.follow_recommendations.common.candidate_sources.salsa.RecentEngagementDirectFollowSalsaExpansionSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims.LinearRegressionFollow2vecNearestNeighborsStore
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentEngagementSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentFollowingSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.stp.OnlineSTPSourceScorer
-import com.twitter.follow_recommendations.common.candidate_sources.stp.OfflineStrongTiePredictionSource
-import com.twitter.follow_recommendations.common.candidate_sources.triangular_loops.TriangularLoopsSource
-import com.twitter.follow_recommendations.common.candidate_sources.user_user_graph.UserUserGraphCandidateSource
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.base.Cand dateS ceReg stry
+ mport com.tw ter.follow_recom ndat ons.common.base.Enr c dCand dateS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.addressbook.ForwardEma lBookS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.addressbook.ForwardPhoneBookS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.addressbook.ReverseEma lBookS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.addressbook.ReversePhoneBookS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.crowd_search_accounts.CrowdSearchAccountsS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.top_organ c_follows_accounts.TopOrgan cFollowsAccountsS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.geo.PopCountryS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.geo.PopCountryBackF llS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.geo.PopGeohashQual yFollowS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.geo.PopGeohashS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.ppm _locale_follow.PPM LocaleFollowS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.real_graph.RealGraphOonV2S ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.recent_engage nt.RecentEngage ntNonD rectFollowS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.recent_engage nt.RepeatedProf leV s sS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.salsa.RecentEngage ntD rectFollowSalsaExpans onS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms.L nearRegress onFollow2vecNearestNe ghborsStore
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms_expans on.RecentEngage ntS m larUsersS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms_expans on.RecentFollow ngS m larUsersS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.stp.Onl neSTPS ceScorer
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.stp.Offl neStrongT ePred ct onS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.tr angular_loops.Tr angularLoopsS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.user_user_graph.UserUserGraphCand dateS ce
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class PostNuxMlCandidateSourceRegistry @Inject() (
-  crowdSearchAccountsCandidateSource: CrowdSearchAccountsSource,
-  topOrganicFollowsAccountsSource: TopOrganicFollowsAccountsSource,
-  linearRegressionfollow2vecNearestNeighborsStore: LinearRegressionFollow2vecNearestNeighborsStore,
-  forwardEmailBookSource: ForwardEmailBookSource,
-  forwardPhoneBookSource: ForwardPhoneBookSource,
-  offlineStrongTiePredictionSource: OfflineStrongTiePredictionSource,
-  onlineSTPSource: OnlineSTPSourceScorer,
-  popCountrySource: PopCountrySource,
-  popCountryBackFillSource: PopCountryBackFillSource,
-  popGeohashSource: PopGeohashSource,
-  recentEngagementDirectFollowSimilarUsersSource: RecentEngagementSimilarUsersSource,
-  recentEngagementNonDirectFollowSource: RecentEngagementNonDirectFollowSource,
-  recentEngagementDirectFollowSalsaExpansionSource: RecentEngagementDirectFollowSalsaExpansionSource,
-  recentFollowingSimilarUsersSource: RecentFollowingSimilarUsersSource,
-  realGraphOonV2Source: RealGraphOonV2Source,
-  repeatedProfileVisitSource: RepeatedProfileVisitsSource,
-  reverseEmailBookSource: ReverseEmailBookSource,
-  reversePhoneBookSource: ReversePhoneBookSource,
-  triangularLoopsSource: TriangularLoopsSource,
-  userUserGraphCandidateSource: UserUserGraphCandidateSource,
-  ppmiLocaleFollowSource: PPMILocaleFollowSource,
-  popGeohashQualityFollowSource: PopGeohashQualityFollowSource,
-  baseStatsReceiver: StatsReceiver,
-) extends CandidateSourceRegistry[PostNuxMlRequest, CandidateUser] {
-  import EnrichedCandidateSource._
+@S ngleton
+class PostNuxMlCand dateS ceReg stry @ nject() (
+  crowdSearchAccountsCand dateS ce: CrowdSearchAccountsS ce,
+  topOrgan cFollowsAccountsS ce: TopOrgan cFollowsAccountsS ce,
+  l nearRegress onfollow2vecNearestNe ghborsStore: L nearRegress onFollow2vecNearestNe ghborsStore,
+  forwardEma lBookS ce: ForwardEma lBookS ce,
+  forwardPhoneBookS ce: ForwardPhoneBookS ce,
+  offl neStrongT ePred ct onS ce: Offl neStrongT ePred ct onS ce,
+  onl neSTPS ce: Onl neSTPS ceScorer,
+  popCountryS ce: PopCountryS ce,
+  popCountryBackF llS ce: PopCountryBackF llS ce,
+  popGeohashS ce: PopGeohashS ce,
+  recentEngage ntD rectFollowS m larUsersS ce: RecentEngage ntS m larUsersS ce,
+  recentEngage ntNonD rectFollowS ce: RecentEngage ntNonD rectFollowS ce,
+  recentEngage ntD rectFollowSalsaExpans onS ce: RecentEngage ntD rectFollowSalsaExpans onS ce,
+  recentFollow ngS m larUsersS ce: RecentFollow ngS m larUsersS ce,
+  realGraphOonV2S ce: RealGraphOonV2S ce,
+  repeatedProf leV s S ce: RepeatedProf leV s sS ce,
+  reverseEma lBookS ce: ReverseEma lBookS ce,
+  reversePhoneBookS ce: ReversePhoneBookS ce,
+  tr angularLoopsS ce: Tr angularLoopsS ce,
+  userUserGraphCand dateS ce: UserUserGraphCand dateS ce,
+  ppm LocaleFollowS ce: PPM LocaleFollowS ce,
+  popGeohashQual yFollowS ce: PopGeohashQual yFollowS ce,
+  baseStatsRece ver: StatsRece ver,
+) extends Cand dateS ceReg stry[PostNuxMlRequest, Cand dateUser] {
+   mport Enr c dCand dateS ce._
 
-  override val statsReceiver = baseStatsReceiver
-    .scope("post_nux_ml_flow", "candidate_sources")
+  overr de val statsRece ver = baseStatsRece ver
+    .scope("post_nux_ml_flow", "cand date_s ces")
 
-  // sources primarily based on social graph signals
-  private[this] val socialSources = Seq(
-    linearRegressionfollow2vecNearestNeighborsStore.mapKeys[PostNuxMlRequest](
-      _.getOptionalUserId.toSeq),
-    forwardEmailBookSource,
-    forwardPhoneBookSource,
-    offlineStrongTiePredictionSource,
-    onlineSTPSource,
-    reverseEmailBookSource,
-    reversePhoneBookSource,
-    triangularLoopsSource,
+  // s ces pr mar ly based on soc al graph s gnals
+  pr vate[t ] val soc alS ces = Seq(
+    l nearRegress onfollow2vecNearestNe ghborsStore.mapKeys[PostNuxMlRequest](
+      _.getOpt onalUser d.toSeq),
+    forwardEma lBookS ce,
+    forwardPhoneBookS ce,
+    offl neStrongT ePred ct onS ce,
+    onl neSTPS ce,
+    reverseEma lBookS ce,
+    reversePhoneBookS ce,
+    tr angularLoopsS ce,
   )
 
-  // sources primarily based on geo signals
-  private[this] val geoSources = Seq(
-    popCountrySource,
-    popCountryBackFillSource,
-    popGeohashSource,
-    popGeohashQualityFollowSource,
-    topOrganicFollowsAccountsSource,
-    crowdSearchAccountsCandidateSource,
-    ppmiLocaleFollowSource,
+  // s ces pr mar ly based on geo s gnals
+  pr vate[t ] val geoS ces = Seq(
+    popCountryS ce,
+    popCountryBackF llS ce,
+    popGeohashS ce,
+    popGeohashQual yFollowS ce,
+    topOrgan cFollowsAccountsS ce,
+    crowdSearchAccountsCand dateS ce,
+    ppm LocaleFollowS ce,
   )
 
-  // sources primarily based on recent activity signals
-  private[this] val activitySources = Seq(
-    repeatedProfileVisitSource,
-    recentEngagementDirectFollowSalsaExpansionSource.mapKeys[PostNuxMlRequest](
-      _.getOptionalUserId.toSeq),
-    recentEngagementDirectFollowSimilarUsersSource,
-    recentEngagementNonDirectFollowSource.mapKeys[PostNuxMlRequest](_.getOptionalUserId.toSeq),
-    recentFollowingSimilarUsersSource,
-    realGraphOonV2Source,
-    userUserGraphCandidateSource,
+  // s ces pr mar ly based on recent act v y s gnals
+  pr vate[t ] val act v yS ces = Seq(
+    repeatedProf leV s S ce,
+    recentEngage ntD rectFollowSalsaExpans onS ce.mapKeys[PostNuxMlRequest](
+      _.getOpt onalUser d.toSeq),
+    recentEngage ntD rectFollowS m larUsersS ce,
+    recentEngage ntNonD rectFollowS ce.mapKeys[PostNuxMlRequest](_.getOpt onalUser d.toSeq),
+    recentFollow ngS m larUsersS ce,
+    realGraphOonV2S ce,
+    userUserGraphCand dateS ce,
   )
 
-  override val sources: Set[CandidateSource[PostNuxMlRequest, CandidateUser]] = (
-    geoSources ++ socialSources ++ activitySources
+  overr de val s ces: Set[Cand dateS ce[PostNuxMlRequest, Cand dateUser]] = (
+    geoS ces ++ soc alS ces ++ act v yS ces
   ).toSet
 }

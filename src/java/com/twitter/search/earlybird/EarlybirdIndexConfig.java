@@ -1,190 +1,190 @@
-package com.twitter.search.earlybird;
+package com.tw ter.search.earlyb rd;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Pred cate;
+ mport com.google.common.base.Pred cates;
 
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.store.Directory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .lucene. ndex. ndexWr erConf g;
+ mport org.apac .lucene.store.D rectory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.decider.Decider;
-import com.twitter.search.common.schema.DynamicSchema;
-import com.twitter.search.common.schema.base.Schema.SchemaValidationException;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdSchemaCreateTool;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.util.CloseResourceUtil;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsFactory;
-import com.twitter.search.earlybird.document.DocumentFactory;
-import com.twitter.search.earlybird.document.ThriftIndexingEventDocumentFactory;
-import com.twitter.search.earlybird.document.ThriftIndexingEventUpdateFactory;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.partition.PartitionConfig;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
-import com.twitter.search.earlybird.partition.SegmentSyncInfo;
-import com.twitter.search.earlybird.partition.UserPartitionUtil;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.search.common.sc ma.Dynam cSc ma;
+ mport com.tw ter.search.common.sc ma.base.Sc ma.Sc maVal dat onExcept on;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdSc maCreateTool;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ft ndex ngEvent;
+ mport com.tw ter.search.common.ut l.CloseRes ceUt l;
+ mport com.tw ter.search.common.ut l. o.flushable.DataDeser al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntData;
+ mport com.tw ter.search.core.earlyb rd. ndex.extens ons.Earlyb rd ndexExtens onsFactory;
+ mport com.tw ter.search.earlyb rd.docu nt.Docu ntFactory;
+ mport com.tw ter.search.earlyb rd.docu nt.Thr ft ndex ngEventDocu ntFactory;
+ mport com.tw ter.search.earlyb rd.docu nt.Thr ft ndex ngEventUpdateFactory;
+ mport com.tw ter.search.earlyb rd.except on.Cr  calExcept onHandler;
+ mport com.tw ter.search.earlyb rd.part  on.Part  onConf g;
+ mport com.tw ter.search.earlyb rd.part  on.Search ndex ng tr cSet;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntSync nfo;
+ mport com.tw ter.search.earlyb rd.part  on.UserPart  onUt l;
 
 /**
- * Collection of required indexing entities that differ in the various Earlybird clusters.
+ * Collect on of requ red  ndex ng ent  es that d ffer  n t  var ous Earlyb rd clusters.
  */
-public abstract class EarlybirdIndexConfig {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdIndexConfig.class);
+publ c abstract class Earlyb rd ndexConf g {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rd ndexConf g.class);
 
-  private final EarlybirdCluster cluster;
-  private final DynamicSchema schema;
-  private final Decider decider;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  protected final CriticalExceptionHandler criticalExceptionHandler;
+  pr vate f nal Earlyb rdCluster cluster;
+  pr vate f nal Dynam cSc ma sc ma;
+  pr vate f nal Dec der dec der;
+  pr vate f nal Search ndex ng tr cSet search ndex ng tr cSet;
+  protected f nal Cr  calExcept onHandler cr  calExcept onHandler;
 
   /**
-   * Creates a new index config using an applicable schema built for the provided cluster.
+   * Creates a new  ndex conf g us ng an appl cable sc ma bu lt for t  prov ded cluster.
    */
-  protected EarlybirdIndexConfig(
-      EarlybirdCluster cluster, Decider decider, SearchIndexingMetricSet searchIndexingMetricSet,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    this(cluster, buildSchema(cluster), decider, searchIndexingMetricSet,
-        criticalExceptionHandler);
+  protected Earlyb rd ndexConf g(
+      Earlyb rdCluster cluster, Dec der dec der, Search ndex ng tr cSet search ndex ng tr cSet,
+      Cr  calExcept onHandler cr  calExcept onHandler) {
+    t (cluster, bu ldSc ma(cluster), dec der, search ndex ng tr cSet,
+        cr  calExcept onHandler);
   }
 
-  @VisibleForTesting
-  protected EarlybirdIndexConfig(
-      EarlybirdCluster cluster,
-      DynamicSchema schema,
-      Decider decider,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    this.cluster = cluster;
-    this.schema = schema;
-    this.decider = decider;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    LOG.info("This Earlybird uses index config: " + this.getClass().getSimpleName());
+  @V s bleForTest ng
+  protected Earlyb rd ndexConf g(
+      Earlyb rdCluster cluster,
+      Dynam cSc ma sc ma,
+      Dec der dec der,
+      Search ndex ng tr cSet search ndex ng tr cSet,
+      Cr  calExcept onHandler cr  calExcept onHandler) {
+    t .cluster = cluster;
+    t .sc ma = sc ma;
+    t .dec der = dec der;
+    t .search ndex ng tr cSet = search ndex ng tr cSet;
+    t .cr  calExcept onHandler = cr  calExcept onHandler;
+    LOG. nfo("T  Earlyb rd uses  ndex conf g: " + t .getClass().getS mpleNa ());
   }
 
-  private static DynamicSchema buildSchema(EarlybirdCluster cluster) {
+  pr vate stat c Dynam cSc ma bu ldSc ma(Earlyb rdCluster cluster) {
     try {
-      return EarlybirdSchemaCreateTool.buildSchema(cluster);
-    } catch (SchemaValidationException e) {
-      throw new RuntimeException(e);
+      return Earlyb rdSc maCreateTool.bu ldSc ma(cluster);
+    } catch (Sc maVal dat onExcept on e) {
+      throw new Runt  Except on(e);
     }
   }
 
   /**
-   * Creates the appropriate document factory for this earlybird.
+   * Creates t  appropr ate docu nt factory for t  earlyb rd.
    */
-  public final DocumentFactory<ThriftIndexingEvent> createDocumentFactory() {
-    return new ThriftIndexingEventDocumentFactory(
-        getSchema(), getCluster(), decider, searchIndexingMetricSet,
-        criticalExceptionHandler);
+  publ c f nal Docu ntFactory<Thr ft ndex ngEvent> createDocu ntFactory() {
+    return new Thr ft ndex ngEventDocu ntFactory(
+        getSc ma(), getCluster(), dec der, search ndex ng tr cSet,
+        cr  calExcept onHandler);
   }
 
   /**
-   * Creates a document factory for ThriftIndexingEvents that are updates to the index.
+   * Creates a docu nt factory for Thr ft ndex ngEvents that are updates to t   ndex.
    */
-  public final DocumentFactory<ThriftIndexingEvent> createUpdateFactory() {
-    return new ThriftIndexingEventUpdateFactory(
-        getSchema(), getCluster(), decider, criticalExceptionHandler);
+  publ c f nal Docu ntFactory<Thr ft ndex ngEvent> createUpdateFactory() {
+    return new Thr ft ndex ngEventUpdateFactory(
+        getSc ma(), getCluster(), dec der, cr  calExcept onHandler);
   }
 
   /**
-   * Return the EarlybirdCluster enum identifying the cluster this config is for.
+   * Return t  Earlyb rdCluster enum  dent fy ng t  cluster t  conf g  s for.
    */
-  public final EarlybirdCluster getCluster() {
+  publ c f nal Earlyb rdCluster getCluster() {
     return cluster;
   }
 
   /**
-   * Return the default filter for UserUpdatesTable - for the archive cluster keep
-   * users that belong to the current partition.
+   * Return t  default f lter for UserUpdatesTable - for t  arch ve cluster keep
+   * users that belong to t  current part  on.
    */
-  public final Predicate<Long> getUserTableFilter(PartitionConfig partitionConfig) {
-    if (EarlybirdCluster.isArchive(getCluster())) {
-      return UserPartitionUtil.filterUsersByPartitionPredicate(partitionConfig);
+  publ c f nal Pred cate<Long> getUserTableF lter(Part  onConf g part  onConf g) {
+     f (Earlyb rdCluster. sArch ve(getCluster())) {
+      return UserPart  onUt l.f lterUsersByPart  onPred cate(part  onConf g);
     }
 
-    return Predicates.alwaysTrue();
+    return Pred cates.alwaysTrue();
   }
 
   /**
-   * Creates a new Lucene {@link Directory} to be used for indexing documents.
+   * Creates a new Lucene {@l nk D rectory} to be used for  ndex ng docu nts.
    */
-  public abstract Directory newLuceneDirectory(SegmentSyncInfo segmentSyncInfo) throws IOException;
+  publ c abstract D rectory newLuceneD rectory(Seg ntSync nfo seg ntSync nfo) throws  OExcept on;
 
   /**
-   * Creates a new Lucene IndexWriterConfig that can be used for creating a segment writer for a
-   * new segment.
+   * Creates a new Lucene  ndexWr erConf g that can be used for creat ng a seg nt wr er for a
+   * new seg nt.
    */
-  public abstract IndexWriterConfig newIndexWriterConfig();
+  publ c abstract  ndexWr erConf g new ndexWr erConf g();
 
   /**
-   * Creates a new SegmentData object to add documents to.
+   * Creates a new Seg ntData object to add docu nts to.
    */
-  public abstract EarlybirdIndexSegmentData newSegmentData(
-      int maxSegmentSize,
-      long timeSliceID,
-      Directory dir,
-      EarlybirdIndexExtensionsFactory extensionsFactory);
+  publ c abstract Earlyb rd ndexSeg ntData newSeg ntData(
+       nt maxSeg ntS ze,
+      long t  Sl ce D,
+      D rectory d r,
+      Earlyb rd ndexExtens onsFactory extens onsFactory);
 
   /**
-   * Loads a flushed index for the given segment.
+   * Loads a flus d  ndex for t  g ven seg nt.
    */
-  public abstract EarlybirdIndexSegmentData loadSegmentData(
-      FlushInfo flushInfo,
-      DataDeserializer dataInputStream,
-      Directory dir,
-      EarlybirdIndexExtensionsFactory extensionsFactory) throws IOException;
+  publ c abstract Earlyb rd ndexSeg ntData loadSeg ntData(
+      Flush nfo flush nfo,
+      DataDeser al zer data nputStream,
+      D rectory d r,
+      Earlyb rd ndexExtens onsFactory extens onsFactory) throws  OExcept on;
 
   /**
-   * Creates a new segment optimizer for the given segment data.
+   * Creates a new seg nt opt m zer for t  g ven seg nt data.
    */
-  public abstract EarlybirdIndexSegmentData optimize(
-      EarlybirdIndexSegmentData earlybirdIndexSegmentData) throws IOException;
+  publ c abstract Earlyb rd ndexSeg ntData opt m ze(
+      Earlyb rd ndexSeg ntData earlyb rd ndexSeg ntData) throws  OExcept on;
 
   /**
-   * Whether the index is stored on disk or not. If an index is not on disk, it is presumed to be
-   * in memory.
+   * W t r t   ndex  s stored on d sk or not.  f an  ndex  s not on d sk,    s presu d to be
+   *  n  mory.
    */
-  public abstract boolean isIndexStoredOnDisk();
+  publ c abstract boolean  s ndexStoredOnD sk();
 
   /**
-   * Whether documents are search in LIFO ordering (RT mode), or default (Lucene) FIFO ordering
+   * W t r docu nts are search  n L FO order ng (RT mode), or default (Lucene) F FO order ng
    */
-  public final boolean isUsingLIFODocumentOrdering() {
-    return !isIndexStoredOnDisk();
+  publ c f nal boolean  sUs ngL FODocu ntOrder ng() {
+    return ! s ndexStoredOnD sk();
   }
 
   /**
-   * Whether this index supports out-of-order indexing
+   * W t r t   ndex supports out-of-order  ndex ng
    */
-  public abstract boolean supportOutOfOrderIndexing();
+  publ c abstract boolean supportOutOfOrder ndex ng();
 
   /**
-   * Returns a CloseResourceUtil used for closing resources.
+   * Returns a CloseRes ceUt l used for clos ng res ces.
    */
-  public abstract CloseResourceUtil getResourceCloser();
+  publ c abstract CloseRes ceUt l getRes ceCloser();
 
   /**
-   * Returns the schema for this index configuration.
+   * Returns t  sc ma for t   ndex conf gurat on.
    */
-  public final DynamicSchema getSchema() {
-    return schema;
+  publ c f nal Dynam cSc ma getSc ma() {
+    return sc ma;
   }
 
   /**
-   * Returns the decider used by this EarlybirdIndexConfig instance.
+   * Returns t  dec der used by t  Earlyb rd ndexConf g  nstance.
    */
-  public Decider getDecider() {
-    return decider;
+  publ c Dec der getDec der() {
+    return dec der;
   }
 
-  public SearchIndexingMetricSet getSearchIndexingMetricSet() {
-    return searchIndexingMetricSet;
+  publ c Search ndex ng tr cSet getSearch ndex ng tr cSet() {
+    return search ndex ng tr cSet;
   }
 }

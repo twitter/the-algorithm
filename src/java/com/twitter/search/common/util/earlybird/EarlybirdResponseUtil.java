@@ -1,39 +1,39 @@
-package com.twitter.search.common.util.earlybird;
+package com.tw ter.search.common.ut l.earlyb rd;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Collect ons;
+ mport java.ut l.HashSet;
+ mport java.ut l.L st;
+ mport java.ut l.Set;
+ mport java.ut l.stream.Collectors;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.search.adaptive.adaptive_results.thriftjava.TweetSource;
-import com.twitter.search.common.logging.ObjectKey;
-import com.twitter.search.common.runtime.DebugManager;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftTweetSource;
+ mport com.tw ter.search.adapt ve.adapt ve_results.thr ftjava.T etS ce;
+ mport com.tw ter.search.common.logg ng.ObjectKey;
+ mport com.tw ter.search.common.runt  .DebugManager;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchQuery;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResults;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftT etS ce;
 
-/** Utility methods that work on EarlybirdResponses. */
-public final class EarlybirdResponseUtil {
-  private EarlybirdResponseUtil() {
+/** Ut l y  thods that work on Earlyb rdResponses. */
+publ c f nal class Earlyb rdResponseUt l {
+  pr vate Earlyb rdResponseUt l() {
   }
 
   /**
-   * Returns the results in the given EarlybirdResponse.
+   * Returns t  results  n t  g ven Earlyb rdResponse.
    *
-   * @param response The EarlybirdResponse.
-   * @return The results in the given EarlybirdResponse, or {@code null} if the response is
-   *         {@code null} or the results are not set.
+   * @param response T  Earlyb rdResponse.
+   * @return T  results  n t  g ven Earlyb rdResponse, or {@code null}  f t  response  s
+   *         {@code null} or t  results are not set.
    */
-  public static ThriftSearchResults getResults(EarlybirdResponse response) {
-    if ((response == null) || !response.isSetSearchResults()) {
+  publ c stat c Thr ftSearchResults getResults(Earlyb rdResponse response) {
+     f ((response == null) || !response. sSetSearchResults()) {
       return null;
     }
 
@@ -41,164 +41,164 @@ public final class EarlybirdResponseUtil {
   }
 
   /**
-   * Determines if the given EarlybirdResponse has results.
+   * Determ nes  f t  g ven Earlyb rdResponse has results.
    *
-   * @param response The EarlybirdResponse.
-   * @return {@code true} if the given EarlybirdResponse has results; {@code false} otherwise.
+   * @param response T  Earlyb rdResponse.
+   * @return {@code true}  f t  g ven Earlyb rdResponse has results; {@code false} ot rw se.
    */
-  public static boolean hasResults(EarlybirdResponse response) {
-    ThriftSearchResults results = getResults(response);
-    return (results != null) && results.isSetResults() && !results.getResults().isEmpty();
+  publ c stat c boolean hasResults(Earlyb rdResponse response) {
+    Thr ftSearchResults results = getResults(response);
+    return (results != null) && results. sSetResults() && !results.getResults(). sEmpty();
   }
 
   /**
-   * Returns the number of results in the given EarlybirdResponse.
+   * Returns t  number of results  n t  g ven Earlyb rdResponse.
    *
-   * @param response The EarlybirdResponse.
-   * @return The number of results in the given EarlybirdResponse.
+   * @param response T  Earlyb rdResponse.
+   * @return T  number of results  n t  g ven Earlyb rdResponse.
    */
-  public static int getNumResults(EarlybirdResponse response) {
-    return hasResults(response) ? response.getSearchResults().getResultsSize() : 0;
+  publ c stat c  nt getNumResults(Earlyb rdResponse response) {
+    return hasResults(response) ? response.getSearchResults().getResultsS ze() : 0;
   }
 
   /**
-   * Determines the response is early-terminated.
+   * Determ nes t  response  s early-term nated.
    *
-   * @param response The EarlybirdResponse.
-   * @return {@code true} if the response is early-terminated; {@code false} otherwise.
+   * @param response T  Earlyb rdResponse.
+   * @return {@code true}  f t  response  s early-term nated; {@code false} ot rw se.
    */
-  public static boolean isEarlyTerminated(EarlybirdResponse response) {
-    Preconditions.checkNotNull(response);
-    return response.isSetEarlyTerminationInfo()
-        && response.getEarlyTerminationInfo().isEarlyTerminated();
+  publ c stat c boolean  sEarlyTerm nated(Earlyb rdResponse response) {
+    Precond  ons.c ckNotNull(response);
+    return response. sSetEarlyTerm nat on nfo()
+        && response.getEarlyTerm nat on nfo(). sEarlyTerm nated();
   }
 
   /**
-   * Returns if the response should be considered failed for purposes of stats and logging.
+   * Returns  f t  response should be cons dered fa led for purposes of stats and logg ng.
    */
-  public static boolean responseConsideredFailed(EarlybirdResponseCode code) {
-    return code != EarlybirdResponseCode.SUCCESS
-        && code != EarlybirdResponseCode.REQUEST_BLOCKED_ERROR
-        && code != EarlybirdResponseCode.TIER_SKIPPED;
+  publ c stat c boolean responseCons deredFa led(Earlyb rdResponseCode code) {
+    return code != Earlyb rdResponseCode.SUCCESS
+        && code != Earlyb rdResponseCode.REQUEST_BLOCKED_ERROR
+        && code != Earlyb rdResponseCode.T ER_SK PPED;
   }
 
   /**
-   * Extract results from Earlybird response.
+   * Extract results from Earlyb rd response.
    */
-  public static List<ThriftSearchResult> extractResultsFromEarlybirdResponse(
-      EarlybirdResponse response) {
+  publ c stat c L st<Thr ftSearchResult> extractResultsFromEarlyb rdResponse(
+      Earlyb rdResponse response) {
     return hasResults(response)
-        ? response.getSearchResults().getResults() : Collections.emptyList();
+        ? response.getSearchResults().getResults() : Collect ons.emptyL st();
   }
 
   /**
-   * Log the Earlybird response as a candidate source.
+   * Log t  Earlyb rd response as a cand date s ce.
    */
-  public static EarlybirdResponse debugLogAsCandidateSource(
-      EarlybirdResponse response, TweetSource tweetSource) {
-    List<ThriftSearchResult> results = extractResultsFromEarlybirdResponse(response);
-    debugLogAsCandidateSourceHelper(results, tweetSource);
+  publ c stat c Earlyb rdResponse debugLogAsCand dateS ce(
+      Earlyb rdResponse response, T etS ce t etS ce) {
+    L st<Thr ftSearchResult> results = extractResultsFromEarlyb rdResponse(response);
+    debugLogAsCand dateS ce lper(results, t etS ce);
     return response;
   }
 
   /**
-   * Log a list of ThriftSearchResult as a candidate source.
+   * Log a l st of Thr ftSearchResult as a cand date s ce.
    */
-  public static List<ThriftSearchResult> debugLogAsCandidateSource(
-      List<ThriftSearchResult> results, TweetSource tweetSource) {
-    debugLogAsCandidateSourceHelper(results, tweetSource);
+  publ c stat c L st<Thr ftSearchResult> debugLogAsCand dateS ce(
+      L st<Thr ftSearchResult> results, T etS ce t etS ce) {
+    debugLogAsCand dateS ce lper(results, t etS ce);
     return results;
   }
 
-  private static void debugLogAsCandidateSourceHelper(
-      List<ThriftSearchResult> results, TweetSource tweetSource) {
-    // debug message for Earlybird relevance candidate source
-    List<String> strIds = results
+  pr vate stat c vo d debugLogAsCand dateS ce lper(
+      L st<Thr ftSearchResult> results, T etS ce t etS ce) {
+    // debug  ssage for Earlyb rd relevance cand date s ce
+    L st<Str ng> str ds = results
         .stream()
-        .map(ThriftSearchResult::getId)
-        .map(Object::toString)
-        .collect(Collectors.toList());
-    ObjectKey debugMsgKey = ObjectKey.createTweetCandidateSourceKey(
-        tweetSource.name());
-    DebugManager.perObjectBasic(
+        .map(Thr ftSearchResult::get d)
+        .map(Object::toStr ng)
+        .collect(Collectors.toL st());
+    ObjectKey debugMsgKey = ObjectKey.createT etCand dateS ceKey(
+        t etS ce.na ());
+    DebugManager.perObjectBas c(
         debugMsgKey,
-        String.format("[%s][%s] results: %s", debugMsgKey.getType(), debugMsgKey.getId(), strIds));
+        Str ng.format("[%s][%s] results: %s", debugMsgKey.getType(), debugMsgKey.get d(), str ds));
   }
 
   /**
-   * Extract the real time response from an existing response
+   * Extract t  real t   response from an ex st ng response
    */
-  public static EarlybirdResponse extractRealtimeResponse(EarlybirdResponse response) {
-    EarlybirdResponse realtimeResponse = response.deepCopy();
-    if (EarlybirdResponseUtil.hasResults(response)) {
-      List<ThriftSearchResult> realtimeResults = realtimeResponse.getSearchResults().getResults();
-      realtimeResults.clear();
-      for (ThriftSearchResult result : response.getSearchResults().getResults()) {
-        if (result.getTweetSource() == ThriftTweetSource.REALTIME_CLUSTER) {
-          realtimeResults.add(result);
+  publ c stat c Earlyb rdResponse extractRealt  Response(Earlyb rdResponse response) {
+    Earlyb rdResponse realt  Response = response.deepCopy();
+     f (Earlyb rdResponseUt l.hasResults(response)) {
+      L st<Thr ftSearchResult> realt  Results = realt  Response.getSearchResults().getResults();
+      realt  Results.clear();
+      for (Thr ftSearchResult result : response.getSearchResults().getResults()) {
+         f (result.getT etS ce() == Thr ftT etS ce.REALT ME_CLUSTER) {
+          realt  Results.add(result);
         }
       }
     }
 
-    return realtimeResponse;
+    return realt  Response;
   }
 
   /**
-   * Returns an EarlybirdResponse that should be returned by roots when a tier was skipped.
+   * Returns an Earlyb rdResponse that should be returned by roots w n a t er was sk pped.
    *
-   * @param minId The minSearchedStatusID to be set on the response.
-   * @param maxId The maxSearchedStatusID to be set on the response.
-   * @param debugMsg The debug message to be set on the response.
-   * @return A response that should be returned by roots when a tier was skipped.
+   * @param m n d T  m nSearc dStatus D to be set on t  response.
+   * @param max d T  maxSearc dStatus D to be set on t  response.
+   * @param debugMsg T  debug  ssage to be set on t  response.
+   * @return A response that should be returned by roots w n a t er was sk pped.
    */
-  public static EarlybirdResponse tierSkippedRootResponse(long minId, long maxId, String debugMsg) {
-    return new EarlybirdResponse(EarlybirdResponseCode.SUCCESS, 0)
-      .setSearchResults(new ThriftSearchResults()
-                        .setResults(new ArrayList<>())
-                        .setMinSearchedStatusID(minId)
-                        .setMaxSearchedStatusID(maxId))
-      .setDebugString(debugMsg);
+  publ c stat c Earlyb rdResponse t erSk ppedRootResponse(long m n d, long max d, Str ng debugMsg) {
+    return new Earlyb rdResponse(Earlyb rdResponseCode.SUCCESS, 0)
+      .setSearchResults(new Thr ftSearchResults()
+                        .setResults(new ArrayL st<>())
+                        .setM nSearc dStatus D(m n d)
+                        .setMaxSearc dStatus D(max d))
+      .setDebugStr ng(debugMsg);
   }
 
   /**
-   * Determines if the given response is a success response.
+   * Determ nes  f t  g ven response  s a success response.
    *
-   * A response is considered successful if it's not null and has either a SUCCESS, TIER_SKIPPED or
+   * A response  s cons dered successful  f  's not null and has e  r a SUCCESS, T ER_SK PPED or
    * REQUEST_BLOCKED_ERROR response code.
    *
-   * @param response The response to check.
-   * @return Whether the given response is successful or not.
+   * @param response T  response to c ck.
+   * @return W t r t  g ven response  s successful or not.
    */
-  public static boolean isSuccessfulResponse(EarlybirdResponse response) {
+  publ c stat c boolean  sSuccessfulResponse(Earlyb rdResponse response) {
     return response != null
-      && (response.getResponseCode() == EarlybirdResponseCode.SUCCESS
-          || response.getResponseCode() == EarlybirdResponseCode.TIER_SKIPPED
-          || response.getResponseCode() == EarlybirdResponseCode.REQUEST_BLOCKED_ERROR);
+      && (response.getResponseCode() == Earlyb rdResponseCode.SUCCESS
+          || response.getResponseCode() == Earlyb rdResponseCode.T ER_SK PPED
+          || response.getResponseCode() == Earlyb rdResponseCode.REQUEST_BLOCKED_ERROR);
   }
 
   /**
-   * Finds all unexpected nullcast statuses within the given result. A nullcast status is
-   * unexpected iff:
-   *   1. the tweet is a nullcast tweet.
-   *   2. the tweet is NOT explicitly requested with {@link ThriftSearchQuery#searchStatusIds}
+   * F nds all unexpected nullcast statuses w h n t  g ven result. A nullcast status  s
+   * unexpected  ff:
+   *   1. t  t et  s a nullcast t et.
+   *   2. t  t et  s NOT expl c ly requested w h {@l nk Thr ftSearchQuery#searchStatus ds}
    */
-  public static Set<Long> findUnexpectedNullcastStatusIds(
-      ThriftSearchResults thriftSearchResults, EarlybirdRequest request) {
-    Set<Long> statusIds = new HashSet<>();
-    for (ThriftSearchResult result : thriftSearchResults.getResults()) {
-      if (resultIsNullcast(result) && !isSearchStatusId(request, result.getId())) {
-        statusIds.add(result.getId());
+  publ c stat c Set<Long> f ndUnexpectedNullcastStatus ds(
+      Thr ftSearchResults thr ftSearchResults, Earlyb rdRequest request) {
+    Set<Long> status ds = new HashSet<>();
+    for (Thr ftSearchResult result : thr ftSearchResults.getResults()) {
+       f (result sNullcast(result) && ! sSearchStatus d(request, result.get d())) {
+        status ds.add(result.get d());
       }
     }
-    return statusIds;
+    return status ds;
   }
 
-  private static boolean isSearchStatusId(EarlybirdRequest request, long id) {
-    return request.getSearchQuery().isSetSearchStatusIds()
-        && request.getSearchQuery().getSearchStatusIds().contains(id);
+  pr vate stat c boolean  sSearchStatus d(Earlyb rdRequest request, long  d) {
+    return request.getSearchQuery(). sSetSearchStatus ds()
+        && request.getSearchQuery().getSearchStatus ds().conta ns( d);
   }
 
-  private static boolean resultIsNullcast(ThriftSearchResult result) {
-    return result.isSetMetadata() && result.getMetadata().isIsNullcast();
+  pr vate stat c boolean result sNullcast(Thr ftSearchResult result) {
+    return result. sSet tadata() && result.get tadata(). s sNullcast();
   }
 }

@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.event
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.event
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.event.EventSummaryDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.event.CellEventSummaryDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.event.HeroEventSummaryDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.event.CellWithProminentSocialContextEventSummaryDisplayType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.event.EventSummaryD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.event.CellEventSummaryD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.event. roEventSummaryD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.event.CellW hProm nentSoc alContextEventSummaryD splayType
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class EventSummaryDisplayTypeMarshaller @Inject() () {
+@S ngleton
+class EventSummaryD splayTypeMarshaller @ nject() () {
 
   def apply(
-    eventSummaryDisplayType: EventSummaryDisplayType
-  ): urt.EventSummaryDisplayType = eventSummaryDisplayType match {
-    case CellEventSummaryDisplayType =>
-      urt.EventSummaryDisplayType.Cell
-    case HeroEventSummaryDisplayType =>
-      urt.EventSummaryDisplayType.Hero
-    case CellWithProminentSocialContextEventSummaryDisplayType =>
-      urt.EventSummaryDisplayType.CellWithProminentSocialContext
+    eventSummaryD splayType: EventSummaryD splayType
+  ): urt.EventSummaryD splayType = eventSummaryD splayType match {
+    case CellEventSummaryD splayType =>
+      urt.EventSummaryD splayType.Cell
+    case  roEventSummaryD splayType =>
+      urt.EventSummaryD splayType. ro
+    case CellW hProm nentSoc alContextEventSummaryD splayType =>
+      urt.EventSummaryD splayType.CellW hProm nentSoc alContext
   }
 }

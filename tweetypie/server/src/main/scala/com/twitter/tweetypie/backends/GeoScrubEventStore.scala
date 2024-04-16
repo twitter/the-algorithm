@@ -1,84 +1,84 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package backends
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.bijections.Bijections._
-import com.twitter.storage.client.manhattan.kv._
-import com.twitter.storage.client.manhattan.kv.impl._
-import com.twitter.util.Time
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.storage.cl ent.manhattan.b ject ons.B ject ons._
+ mport com.tw ter.storage.cl ent.manhattan.kv._
+ mport com.tw ter.storage.cl ent.manhattan.kv. mpl._
+ mport com.tw ter.ut l.T  
 
 /**
- * Read and write the timestamp of the last delete_location_data request
- * for a user. This is used as a safeguard to prevent leaking geo data
- * with tweets that have not yet been scrubbed or were missed during the
- * geo scrubbing process.
+ * Read and wr e t  t  stamp of t  last delete_locat on_data request
+ * for a user. T   s used as a safeguard to prevent leak ng geo data
+ * w h t ets that have not yet been scrubbed or  re m ssed dur ng t 
+ * geo scrubb ng process.
  */
 object GeoScrubEventStore {
-  type GetGeoScrubTimestamp = UserId => Stitch[Option[Time]]
-  type SetGeoScrubTimestamp = FutureArrow[(UserId, Time), Unit]
+  type GetGeoScrubT  stamp = User d => St ch[Opt on[T  ]]
+  type SetGeoScrubT  stamp = FutureArrow[(User d, T  ), Un ]
 
-  private[this] val KeyDesc =
-    KeyDescriptor(
-      Component(LongInjection),
-      Component(LongInjection, StringInjection)
-    ).withDataset("geo_scrub")
+  pr vate[t ] val KeyDesc =
+    KeyDescr ptor(
+      Component(Long nject on),
+      Component(Long nject on, Str ng nject on)
+    ).w hDataset("geo_scrub")
 
-  private[this] val ValDesc = ValueDescriptor(LongInjection)
+  pr vate[t ] val ValDesc = ValueDescr ptor(Long nject on)
 
-  // This modulus determines how user ids get assigned to PKeys, and
-  // thus to shards within the MH cluster. The origin of the specific
-  // value has been lost to time, but it's important that we don't
-  // change it, or else the existing data will be inaccessible.
-  private[this] val PKeyModulus: Long = 25000L
+  // T  modulus determ nes how user  ds get ass gned to PKeys, and
+  // thus to shards w h n t  MH cluster. T  or g n of t  spec f c
+  // value has been lost to t  , but  's  mportant that   don't
+  // change  , or else t  ex st ng data w ll be  naccess ble.
+  pr vate[t ] val PKeyModulus: Long = 25000L
 
-  private[this] def toKey(userId: Long) =
+  pr vate[t ] def toKey(user d: Long) =
     KeyDesc
-      .withPkey(userId % PKeyModulus)
-      .withLkey(userId, "_last_scrub")
+      .w hPkey(user d % PKeyModulus)
+      .w hLkey(user d, "_last_scrub")
 
-  def apply(client: ManhattanKVClient, config: Config, ctx: Backend.Context): GeoScrubEventStore = {
+  def apply(cl ent: ManhattanKVCl ent, conf g: Conf g, ctx: Backend.Context): GeoScrubEventStore = {
     new GeoScrubEventStore {
-      val getGeoScrubTimestamp: UserId => Stitch[Option[Time]] = {
-        val endpoint = config.read.endpoint(client)
+      val getGeoScrubT  stamp: User d => St ch[Opt on[T  ]] = {
+        val endpo nt = conf g.read.endpo nt(cl ent)
 
-        (userId: UserId) => {
-          endpoint
-            .get(toKey(userId), ValDesc)
-            .map(_.map(value => Time.fromMilliseconds(value.contents)))
+        (user d: User d) => {
+          endpo nt
+            .get(toKey(user d), ValDesc)
+            .map(_.map(value => T  .fromM ll seconds(value.contents)))
         }
       }
 
-      val setGeoScrubTimestamp: SetGeoScrubTimestamp = {
-        val endpoint = config.write.endpoint(client)
+      val setGeoScrubT  stamp: SetGeoScrubT  stamp = {
+        val endpo nt = conf g.wr e.endpo nt(cl ent)
 
         FutureArrow {
-          case (userId, timestamp) =>
-            val key = toKey(userId)
+          case (user d, t  stamp) =>
+            val key = toKey(user d)
 
-            // Use the geo scrub timestamp as the MH entry timestamp. This
-            // ensures that whatever timestamp is highest will win any
+            // Use t  geo scrub t  stamp as t  MH entry t  stamp. T 
+            // ensures that whatever t  stamp  s h g st w ll w n any
             // update races.
-            val value = ValDesc.withValue(timestamp.inMilliseconds, timestamp)
-            Stitch.run(endpoint.insert(key, value))
+            val value = ValDesc.w hValue(t  stamp. nM ll seconds, t  stamp)
+            St ch.run(endpo nt. nsert(key, value))
         }
       }
     }
   }
 
-  case class EndpointConfig(requestTimeout: Duration, maxRetryCount: Int) {
-    def endpoint(client: ManhattanKVClient): ManhattanKVEndpoint =
-      ManhattanKVEndpointBuilder(client)
-        .defaultMaxTimeout(requestTimeout)
+  case class Endpo ntConf g(requestT  out: Durat on, maxRetryCount:  nt) {
+    def endpo nt(cl ent: ManhattanKVCl ent): ManhattanKVEndpo nt =
+      ManhattanKVEndpo ntBu lder(cl ent)
+        .defaultMaxT  out(requestT  out)
         .maxRetryCount(maxRetryCount)
-        .build()
+        .bu ld()
   }
 
-  case class Config(read: EndpointConfig, write: EndpointConfig)
+  case class Conf g(read: Endpo ntConf g, wr e: Endpo ntConf g)
 }
 
-trait GeoScrubEventStore {
-  import GeoScrubEventStore._
-  val getGeoScrubTimestamp: GetGeoScrubTimestamp
-  val setGeoScrubTimestamp: SetGeoScrubTimestamp
+tra  GeoScrubEventStore {
+   mport GeoScrubEventStore._
+  val getGeoScrubT  stamp: GetGeoScrubT  stamp
+  val setGeoScrubT  stamp: SetGeoScrubT  stamp
 }

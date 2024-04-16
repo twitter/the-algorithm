@@ -1,33 +1,33 @@
-package com.twitter.search.earlybird.index;
+package com.tw ter.search.earlyb rd. ndex;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentWriter.InvertedDocConsumerBuilder;
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentWriter.StoredFieldsConsumerBuilder;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdRealtimeIndexExtensionsData;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rdRealt   ndexSeg ntWr er. nvertedDocConsu rBu lder;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rdRealt   ndexSeg ntWr er.StoredF eldsConsu rBu lder;
+ mport com.tw ter.search.core.earlyb rd. ndex.extens ons.Earlyb rdRealt   ndexExtens onsData;
 
-public class TweetSearchRealtimeIndexExtensionsData
-    implements EarlybirdRealtimeIndexExtensionsData {
-  @Override
-  public void createStoredFieldsConsumer(StoredFieldsConsumerBuilder builder) {
-    // no extensions necessary here
+publ c class T etSearchRealt   ndexExtens onsData
+     mple nts Earlyb rdRealt   ndexExtens onsData {
+  @Overr de
+  publ c vo d createStoredF eldsConsu r(StoredF eldsConsu rBu lder bu lder) {
+    // no extens ons necessary  re
   }
 
-  @Override
-  public void createInvertedDocConsumer(InvertedDocConsumerBuilder builder) {
-    if (EarlybirdFieldConstant.ID_FIELD.getFieldName().equals(builder.getFieldName())) {
-      // The tweet ID should've already been added to the tweet ID <-> doc ID mapper.
-      builder.setUseDefaultConsumer(false);
+  @Overr de
+  publ c vo d create nvertedDocConsu r( nvertedDocConsu rBu lder bu lder) {
+     f (Earlyb rdF eldConstant. D_F ELD.getF eldNa ().equals(bu lder.getF eldNa ())) {
+      // T  t et  D should've already been added to t  t et  D <-> doc  D mapper.
+      bu lder.setUseDefaultConsu r(false);
     }
 
-    if (EarlybirdFieldConstant.CREATED_AT_FIELD.getFieldName().equals(builder.getFieldName())) {
-      RealtimeTimeMapper timeMapper = (RealtimeTimeMapper) builder.getSegmentData().getTimeMapper();
-      builder.addConsumer(new TimeMappingWriter(timeMapper));
-      builder.setUseDefaultConsumer(false);
+     f (Earlyb rdF eldConstant.CREATED_AT_F ELD.getF eldNa ().equals(bu lder.getF eldNa ())) {
+      Realt  T  Mapper t  Mapper = (Realt  T  Mapper) bu lder.getSeg ntData().getT  Mapper();
+      bu lder.addConsu r(new T  Mapp ngWr er(t  Mapper));
+      bu lder.setUseDefaultConsu r(false);
     }
   }
 
-  @Override
-  public void setupExtensions(EarlybirdIndexSegmentAtomicReader atomicReader) {
+  @Overr de
+  publ c vo d setupExtens ons(Earlyb rd ndexSeg ntAtom cReader atom cReader) {
   }
 }

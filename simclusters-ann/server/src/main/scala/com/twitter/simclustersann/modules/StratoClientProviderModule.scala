@@ -1,20 +1,20 @@
-package com.twitter.simclustersann.modules
+package com.tw ter.s mclustersann.modules
 
-import com.google.inject.Provides
-import javax.inject.Singleton
-import com.twitter.inject.TwitterModule
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.strato.client.Client
-import com.twitter.strato.client.Strato
+ mport com.google. nject.Prov des
+ mport javax. nject.S ngleton
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.strato.cl ent.Cl ent
+ mport com.tw ter.strato.cl ent.Strato
 
-object StratoClientProviderModule extends TwitterModule {
+object StratoCl entProv derModule extends Tw terModule {
 
-  @Singleton
-  @Provides
-  def providesCache(
-    serviceIdentifier: ServiceIdentifier,
-  ): Client = Strato.client
-    .withMutualTls(serviceIdentifier)
-    .build()
+  @S ngleton
+  @Prov des
+  def prov desCac (
+    serv ce dent f er: Serv ce dent f er,
+  ): Cl ent = Strato.cl ent
+    .w hMutualTls(serv ce dent f er)
+    .bu ld()
 
 }

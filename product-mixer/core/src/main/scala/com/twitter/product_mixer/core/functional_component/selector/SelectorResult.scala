@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.functional_component.selector
+package com.tw ter.product_m xer.core.funct onal_component.selector
 
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
 
 /**
- * The result of a [[Selector]] where items that were added
- * to the [[result]] are removed from the [[remainingCandidates]]
+ * T  result of a [[Selector]] w re  ems that  re added
+ * to t  [[result]] are removed from t  [[rema n ngCand dates]]
  */
 case class SelectorResult(
-  remainingCandidates: Seq[CandidateWithDetails],
-  result: Seq[CandidateWithDetails])
+  rema n ngCand dates: Seq[Cand dateW hDeta ls],
+  result: Seq[Cand dateW hDeta ls])

@@ -1,180 +1,180 @@
-package com.twitter.search.earlybird.search;
+package com.tw ter.search.earlyb rd.search;
 
-import java.util.List;
-import javax.annotation.Nullable;
+ mport java.ut l.L st;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.search.Query;
+ mport org.apac .lucene.search.Query;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.query.HitAttributeHelper;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.earlybird.QualityFactor;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.queryparser.util.IdTimeRanges;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.query.H Attr bute lper;
+ mport com.tw ter.search.common.search.Term nat onTracker;
+ mport com.tw ter.search.earlyb rd.Qual yFactor;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchQuery;
+ mport com.tw ter.search.queryparser.ut l. dT  Ranges;
 
-public class SearchRequestInfo {
-  private final ThriftSearchQuery searchQuery;
-  private final Query luceneQuery;
-  private final boolean collectConversationId;
-  private final boolean collectResultLocation;
-  private final boolean getInReplyToStatusId;
-  private final boolean getReferenceAuthorId;
-  private final boolean getFromUserId;
-  private final boolean collectExclusiveConversationAuthorId;
+publ c class SearchRequest nfo {
+  pr vate f nal Thr ftSearchQuery searchQuery;
+  pr vate f nal Query luceneQuery;
+  pr vate f nal boolean collectConversat on d;
+  pr vate f nal boolean collectResultLocat on;
+  pr vate f nal boolean get nReplyToStatus d;
+  pr vate f nal boolean getReferenceAuthor d;
+  pr vate f nal boolean getFromUser d;
+  pr vate f nal boolean collectExclus veConversat onAuthor d;
 
-  private final int numResultsRequested;
-  private final int maxHitsToProcess;
-  private final List<String> facetFieldNames;
-  private long timestamp;
+  pr vate f nal  nt numResultsRequested;
+  pr vate f nal  nt maxH sToProcess;
+  pr vate f nal L st<Str ng> facetF eldNa s;
+  pr vate long t  stamp;
 
-  private final TerminationTracker terminationTracker;
+  pr vate f nal Term nat onTracker term nat onTracker;
 
-  protected final QualityFactor qualityFactor;
+  protected f nal Qual yFactor qual yFactor;
 
-  // Set if we want to collect per-field hit attributes for this request.
+  // Set  f   want to collect per-f eld h  attr butes for t  request.
   @Nullable
-  private HitAttributeHelper hitAttributeHelper;
+  pr vate H Attr bute lper h Attr bute lper;
 
-  private IdTimeRanges idTimeRanges;
+  pr vate  dT  Ranges  dT  Ranges;
 
-  private static final int DEFAULT_MAX_HITS = 1000;
+  pr vate stat c f nal  nt DEFAULT_MAX_H TS = 1000;
 
-  private static final SearchCounter RESET_MAX_HITS_TO_PROCESS_COUNTER =
-      SearchCounter.export("search_request_info_reset_max_hits_to_process");
+  pr vate stat c f nal SearchCounter RESET_MAX_H TS_TO_PROCESS_COUNTER =
+      SearchCounter.export("search_request_ nfo_reset_max_h s_to_process");
 
-  public SearchRequestInfo(
-      ThriftSearchQuery searchQuery,
+  publ c SearchRequest nfo(
+      Thr ftSearchQuery searchQuery,
       Query luceneQuery,
-      TerminationTracker terminationTracker) {
-    this(searchQuery, luceneQuery, terminationTracker, null);
+      Term nat onTracker term nat onTracker) {
+    t (searchQuery, luceneQuery, term nat onTracker, null);
   }
 
-  public SearchRequestInfo(
-      ThriftSearchQuery searchQuery,
+  publ c SearchRequest nfo(
+      Thr ftSearchQuery searchQuery,
       Query luceneQuery,
-      TerminationTracker terminationTracker,
-      QualityFactor qualityFactor) {
-    Preconditions.checkNotNull(searchQuery.getCollectorParams());
-    Preconditions.checkNotNull(terminationTracker);
+      Term nat onTracker term nat onTracker,
+      Qual yFactor qual yFactor) {
+    Precond  ons.c ckNotNull(searchQuery.getCollectorParams());
+    Precond  ons.c ckNotNull(term nat onTracker);
 
-    this.searchQuery = searchQuery;
-    this.luceneQuery = luceneQuery;
-    this.collectConversationId = searchQuery.isCollectConversationId();
-    if (searchQuery.isSetResultMetadataOptions()) {
-      this.collectResultLocation = searchQuery.getResultMetadataOptions().isGetResultLocation();
-      this.getInReplyToStatusId = searchQuery.getResultMetadataOptions().isGetInReplyToStatusId();
-      this.getReferenceAuthorId =
-          searchQuery.getResultMetadataOptions().isGetReferencedTweetAuthorId();
-      this.getFromUserId = searchQuery.getResultMetadataOptions().isGetFromUserId();
-      this.collectExclusiveConversationAuthorId =
-          searchQuery.getResultMetadataOptions().isGetExclusiveConversationAuthorId();
+    t .searchQuery = searchQuery;
+    t .luceneQuery = luceneQuery;
+    t .collectConversat on d = searchQuery. sCollectConversat on d();
+     f (searchQuery. sSetResult tadataOpt ons()) {
+      t .collectResultLocat on = searchQuery.getResult tadataOpt ons(). sGetResultLocat on();
+      t .get nReplyToStatus d = searchQuery.getResult tadataOpt ons(). sGet nReplyToStatus d();
+      t .getReferenceAuthor d =
+          searchQuery.getResult tadataOpt ons(). sGetReferencedT etAuthor d();
+      t .getFromUser d = searchQuery.getResult tadataOpt ons(). sGetFromUser d();
+      t .collectExclus veConversat onAuthor d =
+          searchQuery.getResult tadataOpt ons(). sGetExclus veConversat onAuthor d();
     } else {
-      this.collectResultLocation = false;
-      this.getInReplyToStatusId = false;
-      this.getReferenceAuthorId = false;
-      this.getFromUserId = false;
-      this.collectExclusiveConversationAuthorId = false;
+      t .collectResultLocat on = false;
+      t .get nReplyToStatus d = false;
+      t .getReferenceAuthor d = false;
+      t .getFromUser d = false;
+      t .collectExclus veConversat onAuthor d = false;
     }
 
-    this.qualityFactor = qualityFactor;
+    t .qual yFactor = qual yFactor;
 
-    this.numResultsRequested = searchQuery.getCollectorParams().getNumResultsToReturn();
-    this.maxHitsToProcess = calculateMaxHitsToProcess(searchQuery);
-    this.terminationTracker = terminationTracker;
-    this.facetFieldNames = searchQuery.getFacetFieldNames();
+    t .numResultsRequested = searchQuery.getCollectorParams().getNumResultsToReturn();
+    t .maxH sToProcess = calculateMaxH sToProcess(searchQuery);
+    t .term nat onTracker = term nat onTracker;
+    t .facetF eldNa s = searchQuery.getFacetF eldNa s();
   }
 
   /**
-   * Gets the value to be used as max hits to process for this query. The base class gets it from
-   * the searchQuery directly, and uses a default if that's not set.
+   * Gets t  value to be used as max h s to process for t  query. T  base class gets   from
+   * t  searchQuery d rectly, and uses a default  f that's not set.
    *
-   * Subclasses can override this to compute a different value for max hits to process.
+   * Subclasses can overr de t  to compute a d fferent value for max h s to process.
    */
-  protected int calculateMaxHitsToProcess(ThriftSearchQuery thriftSearchQuery) {
-    int maxHits = thriftSearchQuery.getCollectorParams().isSetTerminationParams()
-        ? thriftSearchQuery.getCollectorParams().getTerminationParams().getMaxHitsToProcess() : 0;
+  protected  nt calculateMaxH sToProcess(Thr ftSearchQuery thr ftSearchQuery) {
+     nt maxH s = thr ftSearchQuery.getCollectorParams(). sSetTerm nat onParams()
+        ? thr ftSearchQuery.getCollectorParams().getTerm nat onParams().getMaxH sToProcess() : 0;
 
-    if (maxHits <= 0) {
-      maxHits = DEFAULT_MAX_HITS;
-      RESET_MAX_HITS_TO_PROCESS_COUNTER.increment();
+     f (maxH s <= 0) {
+      maxH s = DEFAULT_MAX_H TS;
+      RESET_MAX_H TS_TO_PROCESS_COUNTER. ncre nt();
     }
-    return maxHits;
+    return maxH s;
   }
 
-  public final ThriftSearchQuery getSearchQuery() {
-    return this.searchQuery;
+  publ c f nal Thr ftSearchQuery getSearchQuery() {
+    return t .searchQuery;
   }
 
-  public Query getLuceneQuery() {
+  publ c Query getLuceneQuery() {
     return luceneQuery;
   }
 
-  public final int getNumResultsRequested() {
+  publ c f nal  nt getNumResultsRequested() {
     return numResultsRequested;
   }
 
-  public final int getMaxHitsToProcess() {
-    return maxHitsToProcess;
+  publ c f nal  nt getMaxH sToProcess() {
+    return maxH sToProcess;
   }
 
-  public boolean isCollectConversationId() {
-    return collectConversationId;
+  publ c boolean  sCollectConversat on d() {
+    return collectConversat on d;
   }
 
-  public boolean isCollectResultLocation() {
-    return collectResultLocation;
+  publ c boolean  sCollectResultLocat on() {
+    return collectResultLocat on;
   }
 
-  public boolean isGetInReplyToStatusId() {
-    return getInReplyToStatusId;
+  publ c boolean  sGet nReplyToStatus d() {
+    return get nReplyToStatus d;
   }
 
-  public boolean isGetReferenceAuthorId() {
-    return getReferenceAuthorId;
+  publ c boolean  sGetReferenceAuthor d() {
+    return getReferenceAuthor d;
   }
 
-  public boolean isCollectExclusiveConversationAuthorId() {
-    return collectExclusiveConversationAuthorId;
+  publ c boolean  sCollectExclus veConversat onAuthor d() {
+    return collectExclus veConversat onAuthor d;
   }
 
-  public final IdTimeRanges getIdTimeRanges() {
-    return idTimeRanges;
+  publ c f nal  dT  Ranges get dT  Ranges() {
+    return  dT  Ranges;
   }
 
-  public SearchRequestInfo setIdTimeRanges(IdTimeRanges newIdTimeRanges) {
-    this.idTimeRanges = newIdTimeRanges;
-    return this;
+  publ c SearchRequest nfo set dT  Ranges( dT  Ranges new dT  Ranges) {
+    t . dT  Ranges = new dT  Ranges;
+    return t ;
   }
 
-  public SearchRequestInfo setTimestamp(long newTimestamp) {
-    this.timestamp = newTimestamp;
-    return this;
+  publ c SearchRequest nfo setT  stamp(long newT  stamp) {
+    t .t  stamp = newT  stamp;
+    return t ;
   }
 
-  public long getTimestamp() {
-    return timestamp;
+  publ c long getT  stamp() {
+    return t  stamp;
   }
 
-  public TerminationTracker getTerminationTracker() {
-    return this.terminationTracker;
+  publ c Term nat onTracker getTerm nat onTracker() {
+    return t .term nat onTracker;
   }
 
   @Nullable
-  public HitAttributeHelper getHitAttributeHelper() {
-    return hitAttributeHelper;
+  publ c H Attr bute lper getH Attr bute lper() {
+    return h Attr bute lper;
   }
 
-  public void setHitAttributeHelper(@Nullable HitAttributeHelper hitAttributeHelper) {
-    this.hitAttributeHelper = hitAttributeHelper;
+  publ c vo d setH Attr bute lper(@Nullable H Attr bute lper h Attr bute lper) {
+    t .h Attr bute lper = h Attr bute lper;
   }
 
-  public List<String> getFacetFieldNames() {
-    return facetFieldNames;
+  publ c L st<Str ng> getFacetF eldNa s() {
+    return facetF eldNa s;
   }
 
-  public boolean isGetFromUserId() {
-    return getFromUserId;
+  publ c boolean  sGetFromUser d() {
+    return getFromUser d;
   }
 }

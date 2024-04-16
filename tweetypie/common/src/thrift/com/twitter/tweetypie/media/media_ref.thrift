@@ -1,20 +1,20 @@
-namespace java com.twitter.tweetypie.media.thriftjava
-#@namespace scala com.twitter.tweetypie.media.thriftscala
-#@namespace strato com.twitter.tweetypie.media
-namespace py gen.twitter.tweetypie.media
-namespace rb TweetyPie
+na space java com.tw ter.t etyp e. d a.thr ftjava
+#@na space scala com.tw ter.t etyp e. d a.thr ftscala
+#@na space strato com.tw ter.t etyp e. d a
+na space py gen.tw ter.t etyp e. d a
+na space rb T etyP e
 
 
 /**
-* A MediaRef represents a reference to a piece of media in MediaInfoService, along with metadata
-* about the source Tweet that the media came from in case of pasted media.
+* A  d aRef represents a reference to a p ece of  d a  n  d a nfoServ ce, along w h  tadata
+* about t  s ce T et that t   d a ca  from  n case of pasted  d a.
 **/
-struct MediaRef {
-  1: string generic_media_key (personalDataType = 'MediaId')
+struct  d aRef {
+  1: str ng gener c_ d a_key (personalDataType = ' d a d')
 
-  // For Tweets with pasted media, the id of the Tweet where this media was copied from
-  2: optional i64 source_tweet_id (personalDataType = 'TweetId')
+  // For T ets w h pasted  d a, t   d of t  T et w re t   d a was cop ed from
+  2: opt onal  64 s ce_t et_ d (personalDataType = 'T et d')
 
-  // The author of source_tweet_id
-  3: optional i64 source_user_id (personalDataType = 'UserId')
-}(persisted='true', hasPersonalData='true')
+  // T  author of s ce_t et_ d
+  3: opt onal  64 s ce_user_ d (personalDataType = 'User d')
+}(pers sted='true', hasPersonalData='true')

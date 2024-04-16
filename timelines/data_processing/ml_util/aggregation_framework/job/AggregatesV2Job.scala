@@ -1,53 +1,53 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.job
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.job
 
-import com.twitter.algebird.Semigroup
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataRecordMerger
-import com.twitter.summingbird.Platform
-import com.twitter.summingbird.Producer
-import com.twitter.summingbird.TailProducer
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateSource
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateStore
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKey
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
+ mport com.tw ter.algeb rd.Sem group
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .DataRecord rger
+ mport com.tw ter.summ ngb rd.Platform
+ mport com.tw ter.summ ngb rd.Producer
+ mport com.tw ter.summ ngb rd.Ta lProducer
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.AggregateS ce
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.AggregateStore
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.Aggregat onKey
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.TypedAggregateGroup
 
 object AggregatesV2Job {
-  private lazy val merger = new DataRecordMerger
+  pr vate lazy val  rger = new DataRecord rger
 
   /**
-   * Merges all "incremental" records with the same aggregation key
-   * into a single record.
+   *  rges all " ncre ntal" records w h t  sa  aggregat on key
+   *  nto a s ngle record.
    *
-   * @param recordsPerKey A set of (AggregationKey, DataRecord) tuples
-   *   known to share the same AggregationKey
-   * @return A single merged datarecord
+   * @param recordsPerKey A set of (Aggregat onKey, DataRecord) tuples
+   *   known to share t  sa  Aggregat onKey
+   * @return A s ngle  rged datarecord
    */
-  def mergeRecords(recordsPerKey: Set[(AggregationKey, DataRecord)]): DataRecord =
+  def  rgeRecords(recordsPerKey: Set[(Aggregat onKey, DataRecord)]): DataRecord =
     recordsPerKey.foldLeft(new DataRecord) {
-      case (merged: DataRecord, (key: AggregationKey, elem: DataRecord)) => {
-        merger.merge(merged, elem)
-        merged
+      case ( rged: DataRecord, (key: Aggregat onKey, elem: DataRecord)) => {
+         rger. rge( rged, elem)
+         rged
       }
     }
 
   /**
-   * Given a set of aggregates to compute and a datarecord, extract key-value
-   * pairs to output to the summingbird store.
+   * G ven a set of aggregates to compute and a datarecord, extract key-value
+   * pa rs to output to t  summ ngb rd store.
    *
-   * @param dataRecord input data record
+   * @param dataRecord  nput data record
    * @param aggregates set of aggregates to compute
-   * @param featureCounters counters to apply to each input data record
+   * @param featureCounters counters to apply to each  nput data record
    * @return computed aggregates
    */
   def computeAggregates(
     dataRecord: DataRecord,
     aggregates: Set[TypedAggregateGroup[_]],
     featureCounters: Seq[DataRecordFeatureCounter]
-  ): Map[AggregationKey, DataRecord] = {
+  ): Map[Aggregat onKey, DataRecord] = {
     val computedAggregates = aggregates
-      .flatMap(_.computeAggregateKVPairs(dataRecord))
-      .groupBy { case (aggregationKey: AggregationKey, _) => aggregationKey }
-      .mapValues(mergeRecords)
+      .flatMap(_.computeAggregateKVPa rs(dataRecord))
+      .groupBy { case (aggregat onKey: Aggregat onKey, _) => aggregat onKey }
+      .mapValues( rgeRecords)
 
     featureCounters.foreach(counter =>
       computedAggregates.map(agg => DataRecordFeatureCounter(counter, agg._2)))
@@ -57,107 +57,107 @@ object AggregatesV2Job {
   }
 
   /**
-   * Util method to apply a filter on containment in an optional set.
+   * Ut l  thod to apply a f lter on conta n nt  n an opt onal set.
    *
-   * @param setOptional Optional set of items to check containment in.
-   * @param toCheck Item to check if contained in set.
-   * @return If the optional set is None, returns true.
+   * @param setOpt onal Opt onal set of  ems to c ck conta n nt  n.
+   * @param toC ck  em to c ck  f conta ned  n set.
+   * @return  f t  opt onal set  s None, returns true.
    */
-  def setFilter[T](setOptional: Option[Set[T]], toCheck: T): Boolean =
-    setOptional.map(_.contains(toCheck)).getOrElse(true)
+  def setF lter[T](setOpt onal: Opt on[Set[T]], toC ck: T): Boolean =
+    setOpt onal.map(_.conta ns(toC ck)).getOrElse(true)
 
   /**
-   * Util for filtering a collection of `TypedAggregateGroup`
+   * Ut l for f lter ng a collect on of `TypedAggregateGroup`
    *
    * @param aggregates a set of aggregates
-   * @param sourceNames Optional filter on which AggregateGroups to process
-   *                    based on the name of the input source.
-   * @param storeNames Optional filter on which AggregateGroups to process
-   *                   based on the name of the output store.
-   * @return filtered aggregates
+   * @param s ceNa s Opt onal f lter on wh ch AggregateGroups to process
+   *                    based on t  na  of t   nput s ce.
+   * @param storeNa s Opt onal f lter on wh ch AggregateGroups to process
+   *                   based on t  na  of t  output store.
+   * @return f ltered aggregates
    */
-  def filterAggregates(
+  def f lterAggregates(
     aggregates: Set[TypedAggregateGroup[_]],
-    sourceNames: Option[Set[String]],
-    storeNames: Option[Set[String]]
+    s ceNa s: Opt on[Set[Str ng]],
+    storeNa s: Opt on[Set[Str ng]]
   ): Set[TypedAggregateGroup[_]] =
     aggregates
-      .filter { aggregateGroup =>
-        val sourceName = aggregateGroup.inputSource.name
-        val storeName = aggregateGroup.outputStore.name
-        val containsSource = setFilter(sourceNames, sourceName)
-        val containsStore = setFilter(storeNames, storeName)
-        containsSource && containsStore
+      .f lter { aggregateGroup =>
+        val s ceNa  = aggregateGroup. nputS ce.na 
+        val storeNa  = aggregateGroup.outputStore.na 
+        val conta nsS ce = setF lter(s ceNa s, s ceNa )
+        val conta nsStore = setF lter(storeNa s, storeNa )
+        conta nsS ce && conta nsStore
       }
 
   /**
-   * The core summingbird job code.
+   * T  core summ ngb rd job code.
    *
-   * For each aggregate in the set passed in, the job
-   * processes all datarecords in the input producer
-   * stream to generate "incremental" contributions to
-   * these aggregates, and emits them grouped by
-   * aggregation key so that summingbird can aggregate them.
+   * For each aggregate  n t  set passed  n, t  job
+   * processes all datarecords  n t   nput producer
+   * stream to generate " ncre ntal" contr but ons to
+   * t se aggregates, and em s t m grouped by
+   * aggregat on key so that summ ngb rd can aggregate t m.
    *
-   * It is important that after applying the sourceNameFilter and storeNameFilter,
-   * all the result AggregateGroups share the same startDate, otherwise the job
-   * will fail or give invalid results.
+   *    s  mportant that after apply ng t  s ceNa F lter and storeNa F lter,
+   * all t  result AggregateGroups share t  sa  startDate, ot rw se t  job
+   * w ll fa l or g ve  nval d results.
    *
    * @param aggregateSet A set of aggregates to compute. All aggregates
-   *   in this set that pass the sourceNameFilter and storeNameFilter
-   *   defined below, if any, will be computed.
-   * @param aggregateSourceToSummingbird Function that maps from our logical
-   *   AggregateSource abstraction to the underlying physical summingbird
-   *   producer of data records to aggregate (e.g. scalding/eventbus source)
-   * @param aggregateStoreToSummingbird Function that maps from our logical
-   *   AggregateStore abstraction to the underlying physical summingbird
-   *   store to write output aggregate records to (e.g. mahattan for scalding,
-   *   or memcache for heron)
-   * @param featureCounters counters to use with each input DataRecord
-   * @return summingbird tail producer
+   *    n t  set that pass t  s ceNa F lter and storeNa F lter
+   *   def ned below,  f any, w ll be computed.
+   * @param aggregateS ceToSumm ngb rd Funct on that maps from   log cal
+   *   AggregateS ce abstract on to t  underly ng phys cal summ ngb rd
+   *   producer of data records to aggregate (e.g. scald ng/eventbus s ce)
+   * @param aggregateStoreToSumm ngb rd Funct on that maps from   log cal
+   *   AggregateStore abstract on to t  underly ng phys cal summ ngb rd
+   *   store to wr e output aggregate records to (e.g. mahattan for scald ng,
+   *   or  mcac  for  ron)
+   * @param featureCounters counters to use w h each  nput DataRecord
+   * @return summ ngb rd ta l producer
    */
   def generateJobGraph[P <: Platform[P]](
     aggregateSet: Set[TypedAggregateGroup[_]],
-    aggregateSourceToSummingbird: AggregateSource => Option[Producer[P, DataRecord]],
-    aggregateStoreToSummingbird: AggregateStore => Option[P#Store[AggregationKey, DataRecord]],
+    aggregateS ceToSumm ngb rd: AggregateS ce => Opt on[Producer[P, DataRecord]],
+    aggregateStoreToSumm ngb rd: AggregateStore => Opt on[P#Store[Aggregat onKey, DataRecord]],
     featureCounters: Seq[DataRecordFeatureCounter] = Seq.empty
   )(
-    implicit semigroup: Semigroup[DataRecord]
-  ): TailProducer[P, Any] = {
-    val tailProducerList: List[TailProducer[P, Any]] = aggregateSet
-      .groupBy { aggregate => (aggregate.inputSource, aggregate.outputStore) }
+     mpl c  sem group: Sem group[DataRecord]
+  ): Ta lProducer[P, Any] = {
+    val ta lProducerL st: L st[Ta lProducer[P, Any]] = aggregateSet
+      .groupBy { aggregate => (aggregate. nputS ce, aggregate.outputStore) }
       .flatMap {
         case (
-              (inputSource: AggregateSource, outputStore: AggregateStore),
-              aggregatesInThisStore
+              ( nputS ce: AggregateS ce, outputStore: AggregateStore),
+              aggregates nT Store
             ) => {
-          val producerOpt = aggregateSourceToSummingbird(inputSource)
-          val storeOpt = aggregateStoreToSummingbird(outputStore)
+          val producerOpt = aggregateS ceToSumm ngb rd( nputS ce)
+          val storeOpt = aggregateStoreToSumm ngb rd(outputStore)
 
           (producerOpt, storeOpt) match {
-            case (Some(producer), Some(store)) =>
-              Some(
+            case (So (producer), So (store)) =>
+              So (
                 producer
-                  .flatMap(computeAggregates(_, aggregatesInThisStore, featureCounters))
-                  .name("FLATMAP")
+                  .flatMap(computeAggregates(_, aggregates nT Store, featureCounters))
+                  .na ("FLATMAP")
                   .sumByKey(store)
-                  .name("SUMMER")
+                  .na ("SUMMER")
               )
             case _ => None
           }
         }
       }
-      .toList
+      .toL st
 
-    tailProducerList.reduceLeft { (left, right) => left.also(right) }
+    ta lProducerL st.reduceLeft { (left, r ght) => left.also(r ght) }
   }
 
-  def aggregateNames(aggregateSet: Set[TypedAggregateGroup[_]]) = {
+  def aggregateNa s(aggregateSet: Set[TypedAggregateGroup[_]]) = {
     aggregateSet
       .map(typedGroup =>
         (
-          typedGroup.aggregatePrefix,
-          typedGroup.individualAggregateDescriptors
-            .flatMap(_.outputFeatures.map(_.getFeatureName)).mkString(",")))
+          typedGroup.aggregatePref x,
+          typedGroup. nd v dualAggregateDescr ptors
+            .flatMap(_.outputFeatures.map(_.getFeatureNa )).mkStr ng(",")))
   }.toMap
 }

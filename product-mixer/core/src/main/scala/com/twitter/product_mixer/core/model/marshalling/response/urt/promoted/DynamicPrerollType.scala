@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted
 
-sealed trait DynamicPrerollType
+sealed tra  Dynam cPrerollType
 
-object Amplify extends DynamicPrerollType
-object Marketplace extends DynamicPrerollType
-object LiveTvEvent extends DynamicPrerollType
+object Ampl fy extends Dynam cPrerollType
+object Marketplace extends Dynam cPrerollType
+object L veTvEvent extends Dynam cPrerollType

@@ -1,108 +1,108 @@
-package com.twitter.tweetypie
-package media
+package com.tw ter.t etyp e
+package  d a
 
-import com.twitter.logging.Logger
-import com.twitter.tweetypie.thriftscala.MediaEntity
-import com.twitter.tweetypie.thriftscala.UrlEntity
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.t etyp e.thr ftscala. d aEnt y
+ mport com.tw ter.t etyp e.thr ftscala.UrlEnt y
 
 /**
- * Creating and parsing tweet media entity URLs.
+ * Creat ng and pars ng t et  d a ent y URLs.
  *
- * There are four kinds of URL in a media entity:
+ * T re are f  k nds of URL  n a  d a ent y:
  *
- *   - Display URLs: pic.twitter.com aliases for the short URL, for
- *     embedding in the tweet text.
+ *   - D splay URLs: p c.tw ter.com al ases for t  short URL, for
+ *     embedd ng  n t  t et text.
  *
- *   - Short URLs: regular t.co URLs that expand to the permalink URL.
+ *   - Short URLs: regular t.co URLs that expand to t  permal nk URL.
  *
- *   - Permalink URLs: link to a page that displays the media after
- *     doing authorization
+ *   - Permal nk URLs: l nk to a page that d splays t   d a after
+ *     do ng author zat on
  *
- *   - Asset URLs: links to the actual media asset.
+ *   - Asset URLs: l nks to t  actual  d a asset.
  *
  */
-object MediaUrl {
-  private[this] val log = Logger(getClass)
+object  d aUrl {
+  pr vate[t ] val log = Logger(getClass)
 
   /**
-   * The URL that should be filled in to the displayUrl field of the
-   * media entity. This URL behaves exactly the same as a t.co link
-   * (only the domain is different.)
+   * T  URL that should be f lled  n to t  d splayUrl f eld of t 
+   *  d a ent y. T  URL behaves exactly t  sa  as a t.co l nk
+   * (only t  doma n  s d fferent.)
    */
-  object Display {
-    val Root = "pic.twitter.com/"
+  object D splay {
+    val Root = "p c.tw ter.com/"
 
-    def fromTcoSlug(tcoSlug: String): String = Root + tcoSlug
+    def fromTcoSlug(tcoSlug: Str ng): Str ng = Root + tcoSlug
   }
 
   /**
-   * The link target for the link in the tweet text (the expanded URL
-   * for the media, copied from the URL entity.) For native photos,
-   * this is the tweet permalink page.
+   * T  l nk target for t  l nk  n t  t et text (t  expanded URL
+   * for t   d a, cop ed from t  URL ent y.) For nat ve photos,
+   * t   s t  t et permal nk page.
    *
-   * For users without a screen name ("handleless" or NoScreenName users)
-   * a permalink to /i/status/:tweet_id is used.
+   * For users w hout a screen na  ("handleless" or NoScreenNa  users)
+   * a permal nk to / /status/:t et_ d  s used.
    */
-  object Permalink {
-    val Root = "https://twitter.com/"
-    val Internal = "i"
-    val PhotoSuffix = "/photo/1"
-    val VideoSuffix = "/video/1"
+  object Permal nk {
+    val Root = "https://tw ter.com/"
+    val  nternal = " "
+    val PhotoSuff x = "/photo/1"
+    val V deoSuff x = "/v deo/1"
 
-    def apply(screenName: String, tweetId: TweetId, isVideo: Boolean): String =
+    def apply(screenNa : Str ng, t et d: T et d,  sV deo: Boolean): Str ng =
       Root +
-        (if (screenName.isEmpty) Internal else screenName) +
+        ( f (screenNa . sEmpty)  nternal else screenNa ) +
         "/status/" +
-        tweetId +
-        (if (isVideo) VideoSuffix else PhotoSuffix)
+        t et d +
+        ( f ( sV deo) V deoSuff x else PhotoSuff x)
 
-    private[this] val PermalinkRegex =
-      """https?://twitter.com/(?:#!/)?\w+/status/(\d+)/(?:photo|video)/\d+""".r
+    pr vate[t ] val Permal nkRegex =
+      """https?://tw ter.com/(?:#!/)?\w+/status/(\d+)/(?:photo|v deo)/\d+""".r
 
-    private[this] def getTweetId(permalink: String): Option[TweetId] =
-      permalink match {
-        case PermalinkRegex(tweetIdStr) =>
+    pr vate[t ] def getT et d(permal nk: Str ng): Opt on[T et d] =
+      permal nk match {
+        case Permal nkRegex(t et dStr) =>
           try {
-            Some(tweetIdStr.toLong)
+            So (t et dStr.toLong)
           } catch {
-            // Digits too big to fit in a Long
-            case _: NumberFormatException => None
+            // D g s too b g to f   n a Long
+            case _: NumberFormatExcept on => None
           }
         case _ => None
       }
 
-    def getTweetId(urlEntity: UrlEntity): Option[TweetId] =
-      urlEntity.expanded.flatMap(getTweetId)
+    def getT et d(urlEnt y: UrlEnt y): Opt on[T et d] =
+      urlEnt y.expanded.flatMap(getT et d)
 
-    def hasTweetId(permalink: String, tweetId: TweetId): Boolean =
-      getTweetId(permalink).contains(tweetId)
+    def hasT et d(permal nk: Str ng, t et d: T et d): Boolean =
+      getT et d(permal nk).conta ns(t et d)
 
-    def hasTweetId(mediaEntity: MediaEntity, tweetId: TweetId): Boolean =
-      hasTweetId(mediaEntity.expandedUrl, tweetId)
+    def hasT et d( d aEnt y:  d aEnt y, t et d: T et d): Boolean =
+      hasT et d( d aEnt y.expandedUrl, t et d)
 
-    def hasTweetId(urlEntity: UrlEntity, tweetId: TweetId): Boolean =
-      getTweetId(urlEntity).contains(tweetId)
+    def hasT et d(urlEnt y: UrlEnt y, t et d: T et d): Boolean =
+      getT et d(urlEnt y).conta ns(t et d)
   }
 
   /**
-   * Converts a url that starts with "https://" to one that starts with "http://".
+   * Converts a url that starts w h "https://" to one that starts w h "http://".
    */
-  def httpsToHttp(url: String): String =
+  def httpsToHttp(url: Str ng): Str ng =
     url.replace("https://", "http://")
 
   /**
-   * Gets the last path element from an asset url.  This exists temporarily to support
-   * the now deprecated mediaPath element in MediaEntity.
+   * Gets t  last path ele nt from an asset url.  T  ex sts temporar ly to support
+   * t  now deprecated  d aPath ele nt  n  d aEnt y.
    */
-  def mediaPathFromUrl(url: String): String =
-    url.lastIndexOf('/') match {
+  def  d aPathFromUrl(url: Str ng): Str ng =
+    url.last ndexOf('/') match {
       case -1 =>
-        log.error("Invalid media path. Could not find last element: " + url)
-        // Better to return a broken preview URL to the client
-        // than to fail the whole request.
+        log.error(" nval d  d a path. Could not f nd last ele nt: " + url)
+        // Better to return a broken prev ew URL to t  cl ent
+        // than to fa l t  whole request.
         ""
 
-      case idx =>
-        url.substring(idx + 1)
+      case  dx =>
+        url.substr ng( dx + 1)
     }
 }

@@ -1,265 +1,265 @@
-package com.twitter.simclusters_v2.scalding.offline_tweets
+package com.tw ter.s mclusters_v2.scald ng.offl ne_t ets
 
-import com.twitter.algebird.Aggregator.size
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.Args
-import com.twitter.scalding.DateOps
-import com.twitter.scalding.DateParser
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.Duration
-import com.twitter.scalding.Execution
-import com.twitter.scalding.Hours
-import com.twitter.scalding.RichDate
-import com.twitter.scalding.TypedTsv
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite.WriteExtension
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.Timestamp
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.hdfs_sources.DataPaths
-import com.twitter.simclusters_v2.hdfs_sources.OfflineClusterTopMediaTweets20M145K2020ScalaDataset
-import com.twitter.simclusters_v2.scalding.common.LogFavBasedPersistentTweetEmbeddingMhExportSource
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.DayPartitionedClusterId
-import com.twitter.simclusters_v2.thriftscala.PersistentSimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.TweetWithScore
-import com.twitter.simclusters_v2.thriftscala.TweetsWithScore
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.tweetsource.common.thriftscala.MediaType
-import com.twitter.tweetsource.common.thriftscala.UnhydratedFlatTweet
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
-import java.text.SimpleDateFormat
+ mport com.tw ter.algeb rd.Aggregator.s ze
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.scald ng.typed.TypedP pe
+ mport com.tw ter.scald ng.Args
+ mport com.tw ter.scald ng.DateOps
+ mport com.tw ter.scald ng.DateParser
+ mport com.tw ter.scald ng.DateRange
+ mport com.tw ter.scald ng.Days
+ mport com.tw ter.scald ng.Durat on
+ mport com.tw ter.scald ng.Execut on
+ mport com.tw ter.scald ng.H s
+ mport com.tw ter.scald ng.R chDate
+ mport com.tw ter.scald ng.TypedTsv
+ mport com.tw ter.scald ng.Un que D
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e.D
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e.Wr eExtens on
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.common.T  stamp
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.DataPaths
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.Offl neClusterTop d aT ets20M145K2020ScalaDataset
+ mport com.tw ter.s mclusters_v2.scald ng.common.LogFavBasedPers stentT etEmbedd ngMhExportS ce
+ mport com.tw ter.s mclusters_v2.scald ng.common.Ut l
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.ExternalDataS ces
+ mport com.tw ter.s mclusters_v2.thr ftscala.DayPart  onedCluster d
+ mport com.tw ter.s mclusters_v2.thr ftscala.Pers stentS mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.thr ftscala.T etW hScore
+ mport com.tw ter.s mclusters_v2.thr ftscala.T etsW hScore
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.t ets ce.common.thr ftscala. d aType
+ mport com.tw ter.t ets ce.common.thr ftscala.UnhydratedFlatT et
+ mport com.tw ter.wtf.scald ng.jobs.common.AdhocExecut onApp
+ mport com.tw ter.wtf.scald ng.jobs.common.Sc duledExecut onApp
+ mport java.ut l.T  Zone
+ mport java.text.S mpleDateFormat
 
-object ClusterTopTweetsJob {
+object ClusterTopT etsJob {
 
-  def serviceIdentifier(zone: String, env: String): ServiceIdentifier = ServiceIdentifier(
+  def serv ce dent f er(zone: Str ng, env: Str ng): Serv ce dent f er = Serv ce dent f er(
     role = "cassowary",
-    service = "offline_cluster_top_media_tweets_20M_145K_2020",
-    environment = env,
+    serv ce = "offl ne_cluster_top_ d a_t ets_20M_145K_2020",
+    env ron nt = env,
     zone = zone
   )
 
-  private def isMediaTweet(tweet: UnhydratedFlatTweet): Boolean = {
-    tweet.media.exists { mediaSeq =>
-      mediaSeq.exists { e =>
-        e.mediaType.contains(MediaType.Video)
+  pr vate def  s d aT et(t et: UnhydratedFlatT et): Boolean = {
+    t et. d a.ex sts {  d aSeq =>
+       d aSeq.ex sts { e =>
+        e. d aType.conta ns( d aType.V deo)
       }
     }
   }
 
-  private val dateFormatter = new SimpleDateFormat("yyyy-MM-dd")
+  pr vate val dateFormatter = new S mpleDateFormat("yyyy-MM-dd")
 
-  def getClusterTopMediaTweets(
-    persistentEmbeddingPipe: TypedPipe[((TweetId, Timestamp), PersistentSimClustersEmbedding)],
-    tweetSourcePipe: TypedPipe[UnhydratedFlatTweet],
-    maxTweetsPerClusterPerPartition: Int
-  ): TypedPipe[(DayPartitionedClusterId, Seq[(TweetId, Double)])] = {
-    val mediaTweetsPipe = tweetSourcePipe.collect {
-      case tweet if isMediaTweet(tweet) => (tweet.tweetId, ())
+  def getClusterTop d aT ets(
+    pers stentEmbedd ngP pe: TypedP pe[((T et d, T  stamp), Pers stentS mClustersEmbedd ng)],
+    t etS ceP pe: TypedP pe[UnhydratedFlatT et],
+    maxT etsPerClusterPerPart  on:  nt
+  ): TypedP pe[(DayPart  onedCluster d, Seq[(T et d, Double)])] = {
+    val  d aT etsP pe = t etS ceP pe.collect {
+      case t et  f  s d aT et(t et) => (t et.t et d, ())
     }
 
-    val tweetEmbeddingsPipe: TypedPipe[(TweetId, (Int, Double))] = {
-      persistentEmbeddingPipe.collect {
-        case ((tweetId, timestamp), persistentEmbedding)
-            if timestamp == 1L => // 1L is the longest L2 embedding
+    val t etEmbedd ngsP pe: TypedP pe[(T et d, ( nt, Double))] = {
+      pers stentEmbedd ngP pe.collect {
+        case ((t et d, t  stamp), pers stentEmbedd ng)
+             f t  stamp == 1L => // 1L  s t  longest L2 embedd ng
 
-          persistentEmbedding.embedding.embedding.map { clusterWithScore =>
-            (tweetId, (clusterWithScore.clusterId, clusterWithScore.score))
+          pers stentEmbedd ng.embedd ng.embedd ng.map { clusterW hScore =>
+            (t et d, (clusterW hScore.cluster d, clusterW hScore.score))
           }
       }.flatten
     }
 
-    mediaTweetsPipe
-      .join(tweetEmbeddingsPipe)
-      .withReducers(2000)
+     d aT etsP pe
+      .jo n(t etEmbedd ngsP pe)
+      .w hReducers(2000)
       .map {
-        case (tweetId, ((), (clusterId, score))) =>
-          val dayPartition = dateFormatter.format(SnowflakeId(tweetId).time.inMilliseconds)
-          ((clusterId, dayPartition), Seq((tweetId, score)))
+        case (t et d, ((), (cluster d, score))) =>
+          val dayPart  on = dateFormatter.format(Snowflake d(t et d).t  . nM ll seconds)
+          ((cluster d, dayPart  on), Seq((t et d, score)))
       }
       .sumByKey
-      .mapValues(_.sortBy(-_._2).take(maxTweetsPerClusterPerPartition))
-      .map { case ((cid, partition), values) => (DayPartitionedClusterId(cid, partition), values) }
+      .mapValues(_.sortBy(-_._2).take(maxT etsPerClusterPerPart  on))
+      .map { case ((c d, part  on), values) => (DayPart  onedCluster d(c d, part  on), values) }
   }
 
-  // Convert to Manhattan compatible format
+  // Convert to Manhattan compat ble format
   def toKeyVal(
-    clusterTopTweets: TypedPipe[(DayPartitionedClusterId, Seq[(TweetId, Double)])],
-  ): TypedPipe[KeyVal[DayPartitionedClusterId, TweetsWithScore]] = {
-    clusterTopTweets.map {
-      case (key, tweetsWithScores) =>
-        val thrift = tweetsWithScores.map { t => TweetWithScore(t._1, t._2) }
-        KeyVal(key, TweetsWithScore(thrift))
+    clusterTopT ets: TypedP pe[(DayPart  onedCluster d, Seq[(T et d, Double)])],
+  ): TypedP pe[KeyVal[DayPart  onedCluster d, T etsW hScore]] = {
+    clusterTopT ets.map {
+      case (key, t etsW hScores) =>
+        val thr ft = t etsW hScores.map { t => T etW hScore(t._1, t._2) }
+        KeyVal(key, T etsW hScore(thr ft))
     }
   }
 }
 
 /**
- * Scheduled job. Runs every couple of hours (check the .yaml for exact cron schedule).
- * Reads 21 days of tweets, and the most recent persistent tweet embeddings from a Manhattan dump.
- * It outputs a clusterId-> List[tweetId] index.
+ * Sc duled job. Runs every couple of h s (c ck t  .yaml for exact cron sc dule).
+ * Reads 21 days of t ets, and t  most recent pers stent t et embedd ngs from a Manhattan dump.
+ *   outputs a cluster d-> L st[t et d]  ndex.
 
-capesospy-v2 update --build_locally --start_cron \
-offline_cluster_top_media_tweets_20M_145K_2020 src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capesospy-v2 update --bu ld_locally --start_cron \
+offl ne_cluster_top_ d a_t ets_20M_145K_2020 src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc3.yaml
  */
-object ClusterTopMediaTweets20M145K2020BatchJob extends ScheduledExecutionApp {
-  override def firstTime: RichDate = RichDate("2021-08-29")
+object ClusterTop d aT ets20M145K2020BatchJob extends Sc duledExecut onApp {
+  overr de def f rstT  : R chDate = R chDate("2021-08-29")
 
-  override def batchIncrement: Duration = Hours(3)
+  overr de def batch ncre nt: Durat on = H s(3)
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
 
-    // max public tweet has 21 days. read 1 day fewer go give some buffer
+    // max publ c t et has 21 days. read 1 day fe r go g ve so  buffer
     val lookbackDateRange = dateRange.prepend(Days(21))
 
-    val tweetSource: TypedPipe[UnhydratedFlatTweet] =
-      ExternalDataSources.flatTweetsSource(lookbackDateRange)
+    val t etS ce: TypedP pe[UnhydratedFlatT et] =
+      ExternalDataS ces.flatT etsS ce(lookbackDateRange)
 
-    val persistentEmbeddingPipe: TypedPipe[
-      ((TweetId, Timestamp), PersistentSimClustersEmbedding)
+    val pers stentEmbedd ngP pe: TypedP pe[
+      ((T et d, T  stamp), Pers stentS mClustersEmbedd ng)
     ] =
-      TypedPipe.from(
-        new LogFavBasedPersistentTweetEmbeddingMhExportSource(
+      TypedP pe.from(
+        new LogFavBasedPers stentT etEmbedd ngMhExportS ce(
           range = lookbackDateRange,
-          serviceIdentifier = ClusterTopTweetsJob.serviceIdentifier(args("zone"), args("env"))
+          serv ce dent f er = ClusterTopT etsJob.serv ce dent f er(args("zone"), args("env"))
         ))
 
-    val maxTweetsPerClusterPerPartition = 1200
+    val maxT etsPerClusterPerPart  on = 1200
 
-    val dailyClusterTopTweets = ClusterTopTweetsJob.getClusterTopMediaTweets(
-      persistentEmbeddingPipe,
-      tweetSource,
-      maxTweetsPerClusterPerPartition
+    val da lyClusterTopT ets = ClusterTopT etsJob.getClusterTop d aT ets(
+      pers stentEmbedd ngP pe,
+      t etS ce,
+      maxT etsPerClusterPerPart  on
     )
 
-    val keyValPipe: TypedPipe[KeyVal[DayPartitionedClusterId, TweetsWithScore]] =
-      ClusterTopTweetsJob.toKeyVal(dailyClusterTopTweets)
+    val keyValP pe: TypedP pe[KeyVal[DayPart  onedCluster d, T etsW hScore]] =
+      ClusterTopT etsJob.toKeyVal(da lyClusterTopT ets)
 
-    keyValPipe
-      .writeDALVersionedKeyValExecution(
-        OfflineClusterTopMediaTweets20M145K2020ScalaDataset,
-        D.Suffix(DataPaths.OfflineClusterTopMediaTweets2020DatasetPath)
+    keyValP pe
+      .wr eDALVers onedKeyValExecut on(
+        Offl neClusterTop d aT ets20M145K2020ScalaDataset,
+        D.Suff x(DataPaths.Offl neClusterTop d aT ets2020DatasetPath)
       )
   }
 }
 
 /**
-Adhoc debugging job. Uses Entity Embeddings dataset to infer user interests
+Adhoc debugg ng job. Uses Ent y Embedd ngs dataset to  nfer user  nterests
 
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/offline_tweets/ &&\
-scalding remote run \
-  --main-class com.twitter.simclusters_v2.scalding.offline_tweets.AdhocClusterTopMediaTweetsJob \
-  --target src/scala/com/twitter/simclusters_v2/scalding/offline_tweets/:offline_cluster_top_media_tweets_20M_145K_2020-adhoc \
+./bazel bundle src/scala/com/tw ter/s mclusters_v2/scald ng/offl ne_t ets/ &&\
+scald ng remote run \
+  --ma n-class com.tw ter.s mclusters_v2.scald ng.offl ne_t ets.AdhocClusterTop d aT etsJob \
+  --target src/scala/com/tw ter/s mclusters_v2/scald ng/offl ne_t ets/:offl ne_cluster_top_ d a_t ets_20M_145K_2020-adhoc \
   --user cassowary \
-  -- --output_dir /scratch_user/cassowary/your_ldap --date 2021-08-30 --zone atla --env prod --email your_ldap@twitter.com
+  -- --output_d r /scratch_user/cassowary/y _ldap --date 2021-08-30 --zone atla --env prod --ema l y _ldap@tw ter.com
  */
-object AdhocClusterTopMediaTweetsJob extends AdhocExecutionApp {
+object AdhocClusterTop d aT etsJob extends AdhocExecut onApp {
 
   /**
-   * Run some stat analysis on the results, such as the number of tweets in a cluster, tweet score
-   * distributions, etc.
+   * Run so  stat analys s on t  results, such as t  number of t ets  n a cluster, t et score
+   * d str but ons, etc.
    *
-   * Ideally works on 1 day data only. If multiple days data are passed in, it'll aggregate over
-   * multiple days anyway
+   *  deally works on 1 day data only.  f mult ple days data are passed  n,  'll aggregate over
+   * mult ple days anyway
    */
   def analyzeClusterResults(
-    clusterTopTweets: TypedPipe[(DayPartitionedClusterId, Seq[(TweetId, Double)])]
-  ): Execution[String] = {
+    clusterTopT ets: TypedP pe[(DayPart  onedCluster d, Seq[(T et d, Double)])]
+  ): Execut on[Str ng] = {
 
-    val tweetSizeExec = Util.printSummaryOfNumericColumn(
-      clusterTopTweets.map { case (_, tweets) => tweets.size },
-      columnName = Some("Tweet size distribution of clusters")
+    val t etS zeExec = Ut l.pr ntSummaryOfNu r cColumn(
+      clusterTopT ets.map { case (_, t ets) => t ets.s ze },
+      columnNa  = So ("T et s ze d str but on of clusters")
     )
 
-    val scoreDistExec = Util.printSummaryOfNumericColumn(
-      clusterTopTweets.flatMap(_._2.map(_._2)),
-      columnName = Some("Score distribution of the tweets")
+    val scoreD stExec = Ut l.pr ntSummaryOfNu r cColumn(
+      clusterTopT ets.flatMap(_._2.map(_._2)),
+      columnNa  = So ("Score d str but on of t  t ets")
     )
 
     val numClustersExec =
-      clusterTopTweets.map(_._1._1).distinct.aggregate(size).getOrElseExecution(0L)
+      clusterTopT ets.map(_._1._1).d st nct.aggregate(s ze).getOrElseExecut on(0L)
 
-    val numTweetsExec =
-      clusterTopTweets.flatMap(_._2.map(_._1)).distinct.aggregate(size).getOrElseExecution(0L)
+    val numT etsExec =
+      clusterTopT ets.flatMap(_._2.map(_._1)).d st nct.aggregate(s ze).getOrElseExecut on(0L)
 
-    Execution.zip(tweetSizeExec, scoreDistExec, numClustersExec, numTweetsExec).map {
-      case (tweetSizeDist, scoreDist, numClusters, numTweets) =>
+    Execut on.z p(t etS zeExec, scoreD stExec, numClustersExec, numT etsExec).map {
+      case (t etS zeD st, scoreD st, numClusters, numT ets) =>
         s""" 
-          |Number of unique tweets = $numTweets
+          |Number of un que t ets = $numT ets
           |Number of clusters = $numClusters
           |------------------------
-          |$tweetSizeDist
+          |$t etS zeD st
           |------------------------
-          |$scoreDist
-          |""".stripMargin
+          |$scoreD st
+          |""".str pMarg n
     }
   }
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val startTime = System.currentTimeMillis()
-    Execution.withArgs { args =>
-      Execution.getMode.flatMap { implicit mode =>
-        implicit val dateRange: DateRange =
-          DateRange.parse(args.list("date"))(DateOps.UTC, DateParser.default)
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
+    val startT   = System.currentT  M ll s()
+    Execut on.w hArgs { args =>
+      Execut on.getMode.flatMap {  mpl c  mode =>
+         mpl c  val dateRange: DateRange =
+          DateRange.parse(args.l st("date"))(DateOps.UTC, DateParser.default)
 
-        val outputDir = args("output_dir")
+        val outputD r = args("output_d r")
 
-        val maxTweetsPerCluster = 100
+        val maxT etsPerCluster = 100
 
-        // max public tweet has 21 days. read 1 day fewer go give some buffer
+        // max publ c t et has 21 days. read 1 day fe r go g ve so  buffer
         val lookbackDateRange = dateRange.prepend(Days(21))
 
-        val tweetSource: TypedPipe[UnhydratedFlatTweet] =
-          ExternalDataSources.flatTweetsSource(lookbackDateRange)
+        val t etS ce: TypedP pe[UnhydratedFlatT et] =
+          ExternalDataS ces.flatT etsS ce(lookbackDateRange)
 
-        val persistentEmbeddingPipe: TypedPipe[
-          ((TweetId, Timestamp), PersistentSimClustersEmbedding)
+        val pers stentEmbedd ngP pe: TypedP pe[
+          ((T et d, T  stamp), Pers stentS mClustersEmbedd ng)
         ] =
-          TypedPipe.from(
-            new LogFavBasedPersistentTweetEmbeddingMhExportSource(
+          TypedP pe.from(
+            new LogFavBasedPers stentT etEmbedd ngMhExportS ce(
               range = lookbackDateRange,
-              serviceIdentifier = ClusterTopTweetsJob.serviceIdentifier(args("zone"), args("env"))
+              serv ce dent f er = ClusterTopT etsJob.serv ce dent f er(args("zone"), args("env"))
             ))
 
-        val results = ClusterTopTweetsJob.getClusterTopMediaTweets(
-          persistentEmbeddingPipe,
-          tweetSource,
-          maxTweetsPerCluster
+        val results = ClusterTopT etsJob.getClusterTop d aT ets(
+          pers stentEmbedd ngP pe,
+          t etS ce,
+          maxT etsPerCluster
         )
-        analyzeClusterResults(TypedPipe.empty)
-          .flatMap { distributions =>
-            val timeTakenMin = (System.currentTimeMillis() - startTime) / 60000
+        analyzeClusterResults(TypedP pe.empty)
+          .flatMap { d str but ons =>
+            val t  TakenM n = (System.currentT  M ll s() - startT  ) / 60000
             val text =
               s"""
-                 | AdhocClusterTopMediaTweetsJob finished on: $dateRange.
-                 | Time taken: $timeTakenMin minutes.
-                 | maxTweetsPerCluster: $maxTweetsPerCluster.
-                 | output_dir: $outputDir
+                 | AdhocClusterTop d aT etsJob f n s d on: $dateRange.
+                 | T   taken: $t  TakenM n m nutes.
+                 | maxT etsPerCluster: $maxT etsPerCluster.
+                 | output_d r: $outputD r
                  | 
-                 | $distributions
-              """.stripMargin
-            Util.sendEmail(text, "AdhocClusterTopMediaTweetsJob finished.", args("email"))
+                 | $d str but ons
+              """.str pMarg n
+            Ut l.sendEma l(text, "AdhocClusterTop d aT etsJob f n s d.", args("ema l"))
 
             results
-              .writeExecution(TypedTsv(outputDir))
+              .wr eExecut on(TypedTsv(outputD r))
           }
       }
     }

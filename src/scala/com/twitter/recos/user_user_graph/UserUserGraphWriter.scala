@@ -1,83 +1,83 @@
-package com.twitter.recos.user_user_graph
+package com.tw ter.recos.user_user_graph
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.kafka.consumers.FinagleKafkaConsumerBuilder
-import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph
-import com.twitter.graphjet.bipartite.segment.NodeMetadataLeftIndexedBipartiteGraphSegment
-import com.twitter.recos.hose.common.UnifiedGraphWriter
-import com.twitter.recos.internal.thriftscala.RecosHoseMessage
-import com.twitter.recos.util.Action
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f natra.kafka.consu rs.F nagleKafkaConsu rBu lder
+ mport com.tw ter.graphjet.b part e.Node tadataLeft ndexedPo rLawMult Seg ntB part eGraph
+ mport com.tw ter.graphjet.b part e.seg nt.Node tadataLeft ndexedB part eGraphSeg nt
+ mport com.tw ter.recos.hose.common.Un f edGraphWr er
+ mport com.tw ter.recos. nternal.thr ftscala.RecosHose ssage
+ mport com.tw ter.recos.ut l.Act on
 
-case class UserUserGraphWriter(
-  shardId: String,
-  env: String,
-  hosename: String,
-  bufferSize: Int,
-  kafkaConsumerBuilder: FinagleKafkaConsumerBuilder[String, RecosHoseMessage],
-  clientId: String,
-  statsReceiver: StatsReceiver)
-    extends UnifiedGraphWriter[
-      NodeMetadataLeftIndexedBipartiteGraphSegment,
-      NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph
+case class UserUserGraphWr er(
+  shard d: Str ng,
+  env: Str ng,
+  hosena : Str ng,
+  bufferS ze:  nt,
+  kafkaConsu rBu lder: F nagleKafkaConsu rBu lder[Str ng, RecosHose ssage],
+  cl ent d: Str ng,
+  statsRece ver: StatsRece ver)
+    extends Un f edGraphWr er[
+      Node tadataLeft ndexedB part eGraphSeg nt,
+      Node tadataLeft ndexedPo rLawMult Seg ntB part eGraph
     ] {
 
-  // The max throughput for each kafka consumer is around 25MB/s
+  // T  max throughput for each kafka consu r  s around 25MB/s
   // Use 3 processors for 75MB/s catch-up speed.
-  val consumerNum: Int = 3
-  // Leave 2 Segments for live writer
-  val catchupWriterNum: Int = RecosConfig.maxNumSegments - 2
+  val consu rNum:  nt = 3
+  // Leave 2 Seg nts for l ve wr er
+  val catchupWr erNum:  nt = RecosConf g.maxNumSeg nts - 2
 
-  import UserUserGraphWriter._
+   mport UserUserGraphWr er._
 
-  private def getEdgeType(action: Byte): Byte = {
-    if (action == Action.Follow.id) {
+  pr vate def getEdgeType(act on: Byte): Byte = {
+     f (act on == Act on.Follow. d) {
       UserEdgeTypeMask.FOLLOW
-    } else if (action == Action.Mention.id) {
-      UserEdgeTypeMask.MENTION
-    } else if (action == Action.MediaTag.id) {
-      UserEdgeTypeMask.MEDIATAG
+    } else  f (act on == Act on. nt on. d) {
+      UserEdgeTypeMask.MENT ON
+    } else  f (act on == Act on. d aTag. d) {
+      UserEdgeTypeMask.MED ATAG
     } else {
-      throw new IllegalArgumentException("getEdgeType: Illegal edge type argument " + action)
+      throw new  llegalArgu ntExcept on("getEdgeType:  llegal edge type argu nt " + act on)
     }
   }
 
   /**
-   * Adds a RecosHoseMessage to the graph. used by live writer to insert edges to the
-   * current segment
+   * Adds a RecosHose ssage to t  graph. used by l ve wr er to  nsert edges to t 
+   * current seg nt
    */
-  override def addEdgeToGraph(
-    graph: NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph,
-    recosHoseMessage: RecosHoseMessage
-  ): Unit = {
+  overr de def addEdgeToGraph(
+    graph: Node tadataLeft ndexedPo rLawMult Seg ntB part eGraph,
+    recosHose ssage: RecosHose ssage
+  ): Un  = {
     graph.addEdge(
-      recosHoseMessage.leftId,
-      recosHoseMessage.rightId,
-      getEdgeType(recosHoseMessage.action),
-      recosHoseMessage.edgeMetadata.getOrElse(0L),
+      recosHose ssage.left d,
+      recosHose ssage.r ght d,
+      getEdgeType(recosHose ssage.act on),
+      recosHose ssage.edge tadata.getOrElse(0L),
       EMTPY_NODE_METADATA,
       EMTPY_NODE_METADATA
     )
   }
 
   /**
-   * Adds a RecosHoseMessage to the given segment in the graph. Used by catch up writers to
-   * insert edges to non-current (old) segments
+   * Adds a RecosHose ssage to t  g ven seg nt  n t  graph. Used by catch up wr ers to
+   *  nsert edges to non-current (old) seg nts
    */
-  override def addEdgeToSegment(
-    segment: NodeMetadataLeftIndexedBipartiteGraphSegment,
-    recosHoseMessage: RecosHoseMessage
-  ): Unit = {
-    segment.addEdge(
-      recosHoseMessage.leftId,
-      recosHoseMessage.rightId,
-      getEdgeType(recosHoseMessage.action),
-      recosHoseMessage.edgeMetadata.getOrElse(0L),
+  overr de def addEdgeToSeg nt(
+    seg nt: Node tadataLeft ndexedB part eGraphSeg nt,
+    recosHose ssage: RecosHose ssage
+  ): Un  = {
+    seg nt.addEdge(
+      recosHose ssage.left d,
+      recosHose ssage.r ght d,
+      getEdgeType(recosHose ssage.act on),
+      recosHose ssage.edge tadata.getOrElse(0L),
       EMTPY_NODE_METADATA,
       EMTPY_NODE_METADATA
     )
   }
 }
 
-private object UserUserGraphWriter {
-  final val EMTPY_NODE_METADATA = new Array[Array[Int]](1)
+pr vate object UserUserGraphWr er {
+  f nal val EMTPY_NODE_METADATA = new Array[Array[ nt]](1)
 }

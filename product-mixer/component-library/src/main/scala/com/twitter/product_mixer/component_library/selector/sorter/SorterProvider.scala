@@ -1,40 +1,40 @@
-package com.twitter.product_mixer.component_library.selector.sorter
+package com.tw ter.product_m xer.component_l brary.selector.sorter
 
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * Makes a [[Sorter]] to run for the given input based on the
- * [[PipelineQuery]], the `remainingCandidates`, and the `result`.
+ * Makes a [[Sorter]] to run for t  g ven  nput based on t 
+ * [[P pel neQuery]], t  `rema n ngCand dates`, and t  `result`.
  *
- * @note this should be used to choose between different [[Sorter]]s,
- *       if you want to conditionally sort wrap your [[Sorter]] with
- *       [[com.twitter.product_mixer.component_library.selector.SelectConditionally]] instead.
+ * @note t  should be used to choose bet en d fferent [[Sorter]]s,
+ *        f   want to cond  onally sort wrap y  [[Sorter]] w h
+ *       [[com.tw ter.product_m xer.component_l brary.selector.SelectCond  onally]]  nstead.
  */
-trait SorterProvider {
+tra  SorterProv der {
 
-  /** Makes a [[Sorter]] for the given inputs */
+  /** Makes a [[Sorter]] for t  g ven  nputs */
   def sorter(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+    query: P pel neQuery,
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): Sorter
 }
 
 /**
- * Sorts the candidates
+ * Sorts t  cand dates
  *
- * All [[Sorter]]s also implement [[SorterProvider]] to provide themselves for convenience.
+ * All [[Sorter]]s also  mple nt [[SorterProv der]] to prov de t mselves for conven ence.
  */
-trait Sorter { self: SorterProvider =>
+tra  Sorter { self: SorterProv der =>
 
-  /** Sorts the `candidates` */
-  def sort[Candidate <: CandidateWithDetails](candidates: Seq[Candidate]): Seq[Candidate]
+  /** Sorts t  `cand dates` */
+  def sort[Cand date <: Cand dateW hDeta ls](cand dates: Seq[Cand date]): Seq[Cand date]
 
-  /** Any [[Sorter]] can be used in place of a [[SorterProvider]] to provide itself */
-  override final def sorter(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+  /** Any [[Sorter]] can be used  n place of a [[SorterProv der]] to prov de  self */
+  overr de f nal def sorter(
+    query: P pel neQuery,
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): Sorter = self
 }

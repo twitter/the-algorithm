@@ -1,176 +1,176 @@
-package com.twitter.simclusters_v2.summingbird.stores
+package com.tw ter.s mclusters_v2.summ ngb rd.stores
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.summingbird.common.Implicits.batcher
-import com.twitter.simclusters_v2.summingbird.common.Implicits.topKClustersWithScoresCodec
-import com.twitter.simclusters_v2.summingbird.common.Implicits.topKClustersWithScoresMonoid
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.Environment
-import com.twitter.simclusters_v2.summingbird.common.ClientConfigs
-import com.twitter.simclusters_v2.summingbird.common.Configs
-import com.twitter.simclusters_v2.summingbird.common.Implicits
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus.algebra.MergeableStore
-import com.twitter.storehaus_internal.memcache.Memcache
-import com.twitter.summingbird.batch.BatchID
-import com.twitter.summingbird.store.ClientStore
-import com.twitter.summingbird_internal.bijection.BatchPairImplicits
-import com.twitter.util.Duration
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common. mpl c s.batc r
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common. mpl c s.topKClustersW hScoresCodec
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common. mpl c s.topKClustersW hScoresMono d
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.S mClustersProf le.Env ron nt
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.Cl entConf gs
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.Conf gs
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common. mpl c s
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.S mClustersProf le
+ mport com.tw ter.s mclusters_v2.thr ftscala._
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.storehaus.algebra. rgeableStore
+ mport com.tw ter.storehaus_ nternal. mcac . mcac 
+ mport com.tw ter.summ ngb rd.batch.Batch D
+ mport com.tw ter.summ ngb rd.store.Cl entStore
+ mport com.tw ter.summ ngb rd_ nternal.b ject on.BatchPa r mpl c s
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
 
-object TopKClustersForTweetReadableStore {
+object TopKClustersForT etReadableStore {
 
-  private[summingbird] final lazy val onlineMergeableStore: (
-    String,
-    ServiceIdentifier
-  ) => MergeableStore[(EntityWithVersion, BatchID), TopKClustersWithScores] = {
-    (storePath: String, serviceIdentifier: ServiceIdentifier) =>
-      Memcache.getMemcacheStore[(EntityWithVersion, BatchID), TopKClustersWithScores](
-        ClientConfigs.tweetTopKClustersMemcacheConfig(storePath, serviceIdentifier)
+  pr vate[summ ngb rd] f nal lazy val onl ne rgeableStore: (
+    Str ng,
+    Serv ce dent f er
+  ) =>  rgeableStore[(Ent yW hVers on, Batch D), TopKClustersW hScores] = {
+    (storePath: Str ng, serv ce dent f er: Serv ce dent f er) =>
+       mcac .get mcac Store[(Ent yW hVers on, Batch D), TopKClustersW hScores](
+        Cl entConf gs.t etTopKClusters mcac Conf g(storePath, serv ce dent f er)
       )(
-        BatchPairImplicits.keyInjection[EntityWithVersion](Implicits.topKClustersKeyCodec),
-        topKClustersWithScoresCodec,
-        topKClustersWithScoresMonoid
+        BatchPa r mpl c s.key nject on[Ent yW hVers on]( mpl c s.topKClustersKeyCodec),
+        topKClustersW hScoresCodec,
+        topKClustersW hScoresMono d
       )
   }
 
-  final lazy val defaultStore: (
-    String,
-    ServiceIdentifier
-  ) => ReadableStore[EntityWithVersion, TopKClustersWithScores] = {
-    (storePath: String, serviceIdentifier: ServiceIdentifier) =>
-      // note that DefaultTopKClustersForEntityReadableStore is reused here because they share the
-      // same structure
-      TopKClustersForEntityReadableStore(
-        ClientStore(this.onlineMergeableStore(storePath, serviceIdentifier), Configs.batchesToKeep))
+  f nal lazy val defaultStore: (
+    Str ng,
+    Serv ce dent f er
+  ) => ReadableStore[Ent yW hVers on, TopKClustersW hScores] = {
+    (storePath: Str ng, serv ce dent f er: Serv ce dent f er) =>
+      // note that DefaultTopKClustersForEnt yReadableStore  s reused  re because t y share t 
+      // sa  structure
+      TopKClustersForEnt yReadableStore(
+        Cl entStore(t .onl ne rgeableStore(storePath, serv ce dent f er), Conf gs.batc sToKeep))
   }
 }
 
-case class TweetKey(
-  tweetId: Long,
-  modelVersion: String,
-  embeddingType: EmbeddingType = EmbeddingType.FavBasedTweet,
-  halfLife: Duration = Configs.HalfLife) {
+case class T etKey(
+  t et d: Long,
+  modelVers on: Str ng,
+  embedd ngType: Embedd ngType = Embedd ngType.FavBasedT et,
+  halfL fe: Durat on = Conf gs.HalfL fe) {
 
-  lazy val modelVersionThrift: ModelVersion = ModelVersions.toModelVersion(modelVersion)
+  lazy val modelVers onThr ft: ModelVers on = ModelVers ons.toModelVers on(modelVers on)
 
-  lazy val simClustersEmbeddingId: SimClustersEmbeddingId =
-    SimClustersEmbeddingId(embeddingType, modelVersionThrift, InternalId.TweetId(tweetId))
+  lazy val s mClustersEmbedd ng d: S mClustersEmbedd ng d =
+    S mClustersEmbedd ng d(embedd ngType, modelVers onThr ft,  nternal d.T et d(t et d))
 }
 
-object TweetKey {
+object T etKey {
 
-  def apply(simClustersEmbeddingId: SimClustersEmbeddingId): TweetKey = {
-    simClustersEmbeddingId match {
-      case SimClustersEmbeddingId(embeddingType, modelVersion, InternalId.TweetId(tweetId)) =>
-        TweetKey(tweetId, ModelVersions.toKnownForModelVersion(modelVersion), embeddingType)
-      case id =>
-        throw new IllegalArgumentException(s"Invalid $id for TweetKey")
+  def apply(s mClustersEmbedd ng d: S mClustersEmbedd ng d): T etKey = {
+    s mClustersEmbedd ng d match {
+      case S mClustersEmbedd ng d(embedd ngType, modelVers on,  nternal d.T et d(t et d)) =>
+        T etKey(t et d, ModelVers ons.toKnownForModelVers on(modelVers on), embedd ngType)
+      case  d =>
+        throw new  llegalArgu ntExcept on(s" nval d $ d for T etKey")
     }
   }
 
 }
 
-case class TopKClustersForTweetKeyReadableStore(
-  proxyMap: Map[(EmbeddingType, String), ReadableStore[EntityWithVersion, TopKClustersWithScores]],
-  halfLifeDuration: Duration,
-  topKClustersWithScoresToSeq: TopKClustersWithScores => Seq[(Int, Double)],
-  maxResult: Option[Int] = None)
-    extends ReadableStore[TweetKey, Seq[(Int, Double)]] {
+case class TopKClustersForT etKeyReadableStore(
+  proxyMap: Map[(Embedd ngType, Str ng), ReadableStore[Ent yW hVers on, TopKClustersW hScores]],
+  halfL feDurat on: Durat on,
+  topKClustersW hScoresToSeq: TopKClustersW hScores => Seq[( nt, Double)],
+  maxResult: Opt on[ nt] = None)
+    extends ReadableStore[T etKey, Seq[( nt, Double)]] {
 
-  private val modifiedProxyMap = proxyMap.map {
-    case ((embeddingType, modelVersion), proxy) =>
-      (embeddingType, modelVersion) -> proxy.composeKeyMapping { key: TweetKey =>
-        EntityWithVersion(
-          SimClusterEntity.TweetId(key.tweetId),
-          // Fast fail if the model version is invalid.
-          ModelVersions.toModelVersion(modelVersion))
+  pr vate val mod f edProxyMap = proxyMap.map {
+    case ((embedd ngType, modelVers on), proxy) =>
+      (embedd ngType, modelVers on) -> proxy.composeKeyMapp ng { key: T etKey =>
+        Ent yW hVers on(
+          S mClusterEnt y.T et d(key.t et d),
+          // Fast fa l  f t  model vers on  s  nval d.
+          ModelVers ons.toModelVers on(modelVers on))
       }
   }
 
-  override def multiGet[K1 <: TweetKey](
+  overr de def mult Get[K1 <: T etKey](
     keys: Set[K1]
-  ): Map[K1, Future[Option[Seq[(Int, Double)]]]] = {
-    val (validKeys, invalidKeys) = keys.partition { tweetKey =>
-      proxyMap.contains((tweetKey.embeddingType, tweetKey.modelVersion)) &&
-      halfLifeDuration.inMilliseconds == Configs.HalfLifeInMs
+  ): Map[K1, Future[Opt on[Seq[( nt, Double)]]]] = {
+    val (val dKeys,  nval dKeys) = keys.part  on { t etKey =>
+      proxyMap.conta ns((t etKey.embedd ngType, t etKey.modelVers on)) &&
+      halfL feDurat on. nM ll seconds == Conf gs.HalfL fe nMs
     }
 
-    val resultsFuture = validKeys.groupBy(key => (key.embeddingType, key.modelVersion)).flatMap {
+    val resultsFuture = val dKeys.groupBy(key => (key.embedd ngType, key.modelVers on)).flatMap {
       case (typeModelTuple, subKeys) =>
-        modifiedProxyMap(typeModelTuple).multiGet(subKeys)
+        mod f edProxyMap(typeModelTuple).mult Get(subKeys)
     }
 
-    resultsFuture.mapValues { topKClustersWithScoresFut =>
-      for (topKClustersWithScoresOpt <- topKClustersWithScoresFut) yield {
+    resultsFuture.mapValues { topKClustersW hScoresFut =>
+      for (topKClustersW hScoresOpt <- topKClustersW hScoresFut) y eld {
         for {
-          topKClustersWithScores <- topKClustersWithScoresOpt
-        } yield {
-          val results = topKClustersWithScoresToSeq(topKClustersWithScores)
+          topKClustersW hScores <- topKClustersW hScoresOpt
+        } y eld {
+          val results = topKClustersW hScoresToSeq(topKClustersW hScores)
           maxResult match {
-            case Some(max) =>
+            case So (max) =>
               results.take(max)
             case None =>
               results
           }
         }
       }
-    } ++ invalidKeys.map { key => (key, Future.None) }.toMap
+    } ++  nval dKeys.map { key => (key, Future.None) }.toMap
   }
 }
 
-object TopKClustersForTweetKeyReadableStore {
-  // Use Prod cache by default
+object TopKClustersForT etKeyReadableStore {
+  // Use Prod cac  by default
   def defaultProxyMap(
-    serviceIdentifier: ServiceIdentifier
-  ): Map[(EmbeddingType, String), ReadableStore[EntityWithVersion, TopKClustersWithScores]] =
-    SimClustersProfile.tweetJobProfileMap(Environment.Prod).mapValues { profile =>
-      TopKClustersForTweetReadableStore
-        .defaultStore(profile.clusterTopKTweetsPath, serviceIdentifier)
+    serv ce dent f er: Serv ce dent f er
+  ): Map[(Embedd ngType, Str ng), ReadableStore[Ent yW hVers on, TopKClustersW hScores]] =
+    S mClustersProf le.t etJobProf leMap(Env ron nt.Prod).mapValues { prof le =>
+      TopKClustersForT etReadableStore
+        .defaultStore(prof le.clusterTopKT etsPath, serv ce dent f er)
     }
-  val defaultHalfLife: Duration = Duration.fromMilliseconds(Configs.HalfLifeInMs)
+  val defaultHalfL fe: Durat on = Durat on.fromM ll seconds(Conf gs.HalfL fe nMs)
 
   def defaultStore(
-    serviceIdentifier: ServiceIdentifier
-  ): ReadableStore[TweetKey, Seq[(Int, Double)]] =
-    TopKClustersForTweetKeyReadableStore(
-      defaultProxyMap(serviceIdentifier),
-      defaultHalfLife,
-      getTopClustersWithScoresByFavClusterNormalizedScore
+    serv ce dent f er: Serv ce dent f er
+  ): ReadableStore[T etKey, Seq[( nt, Double)]] =
+    TopKClustersForT etKeyReadableStore(
+      defaultProxyMap(serv ce dent f er),
+      defaultHalfL fe,
+      getTopClustersW hScoresByFavClusterNormal zedScore
     )
 
-  def overrideLimitDefaultStore(
-    maxResult: Int,
-    serviceIdentifier: ServiceIdentifier
-  ): ReadableStore[TweetKey, Seq[(Int, Double)]] = {
-    TopKClustersForTweetKeyReadableStore(
-      defaultProxyMap(serviceIdentifier),
-      defaultHalfLife,
-      getTopClustersWithScoresByFavClusterNormalizedScore,
-      Some(maxResult)
+  def overr deL m DefaultStore(
+    maxResult:  nt,
+    serv ce dent f er: Serv ce dent f er
+  ): ReadableStore[T etKey, Seq[( nt, Double)]] = {
+    TopKClustersForT etKeyReadableStore(
+      defaultProxyMap(serv ce dent f er),
+      defaultHalfL fe,
+      getTopClustersW hScoresByFavClusterNormal zedScore,
+      So (maxResult)
     )
   }
 
-  private def getTopClustersWithScoresByFavClusterNormalizedScore(
-    topKClustersWithScores: TopKClustersWithScores
-  ): Seq[(Int, Double)] = {
+  pr vate def getTopClustersW hScoresByFavClusterNormal zedScore(
+    topKClustersW hScores: TopKClustersW hScores
+  ): Seq[( nt, Double)] = {
     {
       for {
-        clusterIdWIthScores <- topKClustersWithScores.topClustersByFavClusterNormalizedScore
-      } yield {
+        cluster dW hScores <- topKClustersW hScores.topClustersByFavClusterNormal zedScore
+      } y eld {
         (
           for {
-            (clusterId, scores) <- clusterIdWIthScores
-            favClusterNormalized8HrHalfLifeScore <- scores.favClusterNormalized8HrHalfLifeScore
-            if favClusterNormalized8HrHalfLifeScore.value > 0.0
-          } yield {
-            clusterId -> favClusterNormalized8HrHalfLifeScore.value
+            (cluster d, scores) <- cluster dW hScores
+            favClusterNormal zed8HrHalfL feScore <- scores.favClusterNormal zed8HrHalfL feScore
+             f favClusterNormal zed8HrHalfL feScore.value > 0.0
+          } y eld {
+            cluster d -> favClusterNormal zed8HrHalfL feScore.value
           }
         ).toSeq.sortBy(-_._2)
       }
-    }.getOrElse(Nil)
+    }.getOrElse(N l)
   }
 
 }

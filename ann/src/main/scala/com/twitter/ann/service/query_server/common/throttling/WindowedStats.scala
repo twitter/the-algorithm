@@ -1,19 +1,19 @@
-package com.twitter.ann.service.query_server.common.throttling
+package com.tw ter.ann.serv ce.query_server.common.throttl ng
 
 /**
- * A simple ring buffer that keeps track of long values over `window`.
+ * A s mple r ng buffer that keeps track of long values over `w ndow`.
  */
-private[throttling] class WindowedStats(window: Int) {
-  private[this] val buffer = new Array[Long](window)
-  private[this] var index = 0
-  private[this] var sumValue = 0L
-  private[this] var count = 0
+pr vate[throttl ng] class W ndo dStats(w ndow:  nt) {
+  pr vate[t ] val buffer = new Array[Long](w ndow)
+  pr vate[t ] var  ndex = 0
+  pr vate[t ] var sumValue = 0L
+  pr vate[t ] var count = 0
 
-  def add(v: Long): Unit = {
-    count = math.min(count + 1, window)
-    val old = buffer(index)
-    buffer(index) = v
-    index = (index + 1) % window
+  def add(v: Long): Un  = {
+    count = math.m n(count + 1, w ndow)
+    val old = buffer( ndex)
+    buffer( ndex) = v
+     ndex = ( ndex + 1) % w ndow
     sumValue += v - old
   }
 

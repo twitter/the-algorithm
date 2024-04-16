@@ -1,53 +1,53 @@
-package com.twitter.search.earlybird;
+package com.tw ter.search.earlyb rd;
 
-import com.twitter.finagle.thrift.ThriftClientRequest;
-import com.twitter.search.common.dark.DarkProxy;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.util.Duration;
+ mport com.tw ter.f nagle.thr ft.Thr ftCl entRequest;
+ mport com.tw ter.search.common.dark.DarkProxy;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdServ ce;
+ mport com.tw ter.ut l.Durat on;
 
 /**
- * Manages a finagle server underneath, which can be recreated.
+ * Manages a f nagle server underneath, wh ch can be recreated.
  *
- * This class is not thread-safe. It is up to the concrete implementations and their callers to
- * correctly synchronize calls to these methods (for example, to make sure that there is no race
- * condition if startProductionFinagleServer() and stopProductionFinagleServer() are called
- * concurrently from two different threads).
+ * T  class  s not thread-safe.    s up to t  concrete  mple ntat ons and t  r callers to
+ * correctly synchron ze calls to t se  thods (for example, to make sure that t re  s no race
+ * cond  on  f startProduct onF nagleServer() and stopProduct onF nagleServer() are called
+ * concurrently from two d fferent threads).
  */
-public interface EarlybirdFinagleServerManager {
+publ c  nterface Earlyb rdF nagleServerManager {
   /**
-   * Determines if the warm up finagle server is currently running
+   * Determ nes  f t  warm up f nagle server  s currently runn ng
    */
-  boolean isWarmUpServerRunning();
+  boolean  sWarmUpServerRunn ng();
 
   /**
-   * Starts up the warm up finagle server on the given port.
+   * Starts up t  warm up f nagle server on t  g ven port.
    */
-  void startWarmUpFinagleServer(
-      EarlybirdService.ServiceIface serviceIface,
-      String serviceName,
-      int port);
+  vo d startWarmUpF nagleServer(
+      Earlyb rdServ ce.Serv ce face serv ce face,
+      Str ng serv ceNa ,
+       nt port);
 
   /**
-   * Stops the warm up finagle server, after waiting for at most the given amount of time.
+   * Stops t  warm up f nagle server, after wa  ng for at most t  g ven amount of t  .
    */
-  void stopWarmUpFinagleServer(Duration serverCloseWaitTime) throws InterruptedException;
+  vo d stopWarmUpF nagleServer(Durat on serverCloseWa T  ) throws  nterruptedExcept on;
 
   /**
-   * Determines if the production finagle server is currently running.
+   * Determ nes  f t  product on f nagle server  s currently runn ng.
    */
-  boolean isProductionServerRunning();
+  boolean  sProduct onServerRunn ng();
 
   /**
-   * Starts up the production finagle server on the given port.
+   * Starts up t  product on f nagle server on t  g ven port.
    */
-  void startProductionFinagleServer(
-      DarkProxy<ThriftClientRequest, byte[]> darkProxy,
-      EarlybirdService.ServiceIface serviceIface,
-      String serviceName,
-      int port);
+  vo d startProduct onF nagleServer(
+      DarkProxy<Thr ftCl entRequest, byte[]> darkProxy,
+      Earlyb rdServ ce.Serv ce face serv ce face,
+      Str ng serv ceNa ,
+       nt port);
 
   /**
-   * Stops the production finagle server after waiting for at most the given amount of time.
+   * Stops t  product on f nagle server after wa  ng for at most t  g ven amount of t  .
    */
-  void stopProductionFinagleServer(Duration serverCloseWaitTime) throws InterruptedException;
+  vo d stopProduct onF nagleServer(Durat on serverCloseWa T  ) throws  nterruptedExcept on;
 }

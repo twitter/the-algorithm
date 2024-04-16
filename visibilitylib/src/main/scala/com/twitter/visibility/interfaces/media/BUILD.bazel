@@ -1,16 +1,16 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = False,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "mediaservices/media-util",
-        "stitch/stitch-core",
-        "visibility/lib/src/main/scala/com/twitter/visibility",
-        "visibility/lib/src/main/scala/com/twitter/visibility/builder/media",
-        "visibility/lib/src/main/scala/com/twitter/visibility/builder/users",
-        "visibility/lib/src/main/scala/com/twitter/visibility/features",
-        "visibility/lib/src/main/scala/com/twitter/visibility/rules/providers",
-        "visibility/lib/src/main/scala/com/twitter/visibility/rules/utils",
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    str ct_deps = False,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        " d aserv ces/ d a-ut l",
+        "st ch/st ch-core",
+        "v s b l y/l b/src/ma n/scala/com/tw ter/v s b l y",
+        "v s b l y/l b/src/ma n/scala/com/tw ter/v s b l y/bu lder/ d a",
+        "v s b l y/l b/src/ma n/scala/com/tw ter/v s b l y/bu lder/users",
+        "v s b l y/l b/src/ma n/scala/com/tw ter/v s b l y/features",
+        "v s b l y/l b/src/ma n/scala/com/tw ter/v s b l y/rules/prov ders",
+        "v s b l y/l b/src/ma n/scala/com/tw ter/v s b l y/rules/ut ls",
     ],
 )

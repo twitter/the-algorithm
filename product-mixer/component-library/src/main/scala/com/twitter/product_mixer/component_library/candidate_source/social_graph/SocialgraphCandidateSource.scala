@@ -1,57 +1,57 @@
-package com.twitter.product_mixer.component_library.candidate_source.social_graph
+package com.tw ter.product_m xer.component_l brary.cand date_s ce.soc al_graph
 
-import com.twitter.product_mixer.component_library.model.candidate.CursorType
-import com.twitter.product_mixer.component_library.model.candidate.NextCursor
-import com.twitter.product_mixer.component_library.model.candidate.PreviousCursor
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyViewFetcherSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.socialgraph.thriftscala
-import com.twitter.socialgraph.thriftscala.IdsRequest
-import com.twitter.socialgraph.thriftscala.IdsResult
-import com.twitter.socialgraph.util.ByteBufferUtil
-import com.twitter.strato.client.Fetcher
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.CursorType
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.NextCursor
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.Prev ousCursor
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.strato.StratoKeyV ewFetc rS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.soc algraph.thr ftscala
+ mport com.tw ter.soc algraph.thr ftscala. dsRequest
+ mport com.tw ter.soc algraph.thr ftscala. dsResult
+ mport com.tw ter.soc algraph.ut l.ByteBufferUt l
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-sealed trait SocialgraphResponse
-case class SocialgraphResult(id: Long) extends SocialgraphResponse
-case class SocialgraphCursor(cursor: Long, cursorType: CursorType) extends SocialgraphResponse
+sealed tra  Soc algraphResponse
+case class Soc algraphResult( d: Long) extends Soc algraphResponse
+case class Soc algraphCursor(cursor: Long, cursorType: CursorType) extends Soc algraphResponse
 
-@Singleton
-class SocialgraphCandidateSource @Inject() (
-  override val fetcher: Fetcher[thriftscala.IdsRequest, Option[
-    thriftscala.RequestContext
-  ], thriftscala.IdsResult])
-    extends StratoKeyViewFetcherSource[
-      thriftscala.IdsRequest,
-      Option[thriftscala.RequestContext],
-      thriftscala.IdsResult,
-      SocialgraphResponse
+@S ngleton
+class Soc algraphCand dateS ce @ nject() (
+  overr de val fetc r: Fetc r[thr ftscala. dsRequest, Opt on[
+    thr ftscala.RequestContext
+  ], thr ftscala. dsResult])
+    extends StratoKeyV ewFetc rS ce[
+      thr ftscala. dsRequest,
+      Opt on[thr ftscala.RequestContext],
+      thr ftscala. dsResult,
+      Soc algraphResponse
     ] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("Socialgraph")
+  overr de val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er("Soc algraph")
 
-  override def stratoResultTransformer(
-    stratoKey: IdsRequest,
-    stratoResult: IdsResult
-  ): Seq[SocialgraphResponse] = {
+  overr de def stratoResultTransfor r(
+    stratoKey:  dsRequest,
+    stratoResult:  dsResult
+  ): Seq[Soc algraphResponse] = {
     val prevCursor =
-      SocialgraphCursor(ByteBufferUtil.toLong(stratoResult.pageResult.prevCursor), PreviousCursor)
-    /* When an end cursor is passed to Socialgraph,
-     * Socialgraph returns the start cursor. To prevent
-     * clients from circularly fetching the timeline again,
-     * if we see a start cursor returned from Socialgraph,
-     * we replace it with an end cursor.
+      Soc algraphCursor(ByteBufferUt l.toLong(stratoResult.pageResult.prevCursor), Prev ousCursor)
+    /* W n an end cursor  s passed to Soc algraph,
+     * Soc algraph returns t  start cursor. To prevent
+     * cl ents from c rcularly fetch ng t  t  l ne aga n,
+     *  f   see a start cursor returned from Soc algraph,
+     *   replace   w h an end cursor.
      */
-    val nextCursor = ByteBufferUtil.toLong(stratoResult.pageResult.nextCursor) match {
-      case SocialgraphCursorConstants.StartCursor =>
-        SocialgraphCursor(SocialgraphCursorConstants.EndCursor, NextCursor)
-      case cursor => SocialgraphCursor(cursor, NextCursor)
+    val nextCursor = ByteBufferUt l.toLong(stratoResult.pageResult.nextCursor) match {
+      case Soc algraphCursorConstants.StartCursor =>
+        Soc algraphCursor(Soc algraphCursorConstants.EndCursor, NextCursor)
+      case cursor => Soc algraphCursor(cursor, NextCursor)
     }
 
-    stratoResult.ids
-      .map { id =>
-        SocialgraphResult(id)
+    stratoResult. ds
+      .map {  d =>
+        Soc algraphResult( d)
       } ++ Seq(nextCursor, prevCursor)
   }
 }

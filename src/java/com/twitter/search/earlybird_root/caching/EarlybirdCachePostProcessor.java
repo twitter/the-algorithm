@@ -1,22 +1,22 @@
-package com.twitter.search.earlybird_root.caching;
+package com.tw ter.search.earlyb rd_root.cach ng;
 
-import com.google.common.base.Optional;
+ mport com.google.common.base.Opt onal;
 
-import com.twitter.search.common.caching.filter.CachePostProcessor;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+ mport com.tw ter.search.common.cach ng.f lter.Cac PostProcessor;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
 
-public class EarlybirdCachePostProcessor
-    extends CachePostProcessor<EarlybirdRequestContext, EarlybirdResponse> {
+publ c class Earlyb rdCac PostProcessor
+    extends Cac PostProcessor<Earlyb rdRequestContext, Earlyb rdResponse> {
 
-  @Override
-  public final void recordCacheHit(EarlybirdResponse response) {
-    response.setCacheHit(true);
+  @Overr de
+  publ c f nal vo d recordCac H (Earlyb rdResponse response) {
+    response.setCac H (true);
   }
 
-  @Override
-  public Optional<EarlybirdResponse> processCacheResponse(EarlybirdRequestContext originalRequest,
-                                                          EarlybirdResponse cacheResponse) {
-    return Optional.of(cacheResponse);
+  @Overr de
+  publ c Opt onal<Earlyb rdResponse> processCac Response(Earlyb rdRequestContext or g nalRequest,
+                                                          Earlyb rdResponse cac Response) {
+    return Opt onal.of(cac Response);
   }
 }

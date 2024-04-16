@@ -1,38 +1,38 @@
-package com.twitter.follow_recommendations.products.home_timeline.configapi
+package com.tw ter.follow_recom ndat ons.products.ho _t  l ne.conf gap 
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.t  l nes.conf gap .Durat onConvers on
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .HasDurat onConvers on
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.ut l.Durat on
 
-object HomeTimelineParams {
+object Ho T  l neParams {
   object EnableProduct extends Param[Boolean](false)
 
-  object DefaultMaxResults extends Param[Int](20)
+  object DefaultMaxResults extends Param[ nt](20)
 
-  object EnableWritingServingHistory
-      extends FSParam[Boolean]("home_timeline_enable_writing_serving_history", false)
+  object EnableWr  ngServ ng tory
+      extends FSParam[Boolean]("ho _t  l ne_enable_wr  ng_serv ng_ tory", false)
 
-  object DurationGuardrailToForceSuggest
-      extends FSBoundedParam[Duration](
-        name = "home_timeline_duration_guardrail_to_force_suggest_in_hours",
-        default = 0.hours,
-        min = 0.hours,
-        max = 1000.hours)
-      with HasDurationConversion {
-    override val durationConversion: DurationConversion = DurationConversion.FromHours
+  object Durat onGuardra lToForceSuggest
+      extends FSBoundedParam[Durat on](
+        na  = "ho _t  l ne_durat on_guardra l_to_force_suggest_ n_h s",
+        default = 0.h s,
+        m n = 0.h s,
+        max = 1000.h s)
+      w h HasDurat onConvers on {
+    overr de val durat onConvers on: Durat onConvers on = Durat onConvers on.FromH s
   }
 
-  object SuggestBasedFatigueDuration
-      extends FSBoundedParam[Duration](
-        name = "home_timeline_suggest_based_fatigue_duration_in_hours",
-        default = 0.hours,
-        min = 0.hours,
-        max = 1000.hours)
-      with HasDurationConversion {
-    override val durationConversion: DurationConversion = DurationConversion.FromHours
+  object SuggestBasedFat gueDurat on
+      extends FSBoundedParam[Durat on](
+        na  = "ho _t  l ne_suggest_based_fat gue_durat on_ n_h s",
+        default = 0.h s,
+        m n = 0.h s,
+        max = 1000.h s)
+      w h HasDurat onConvers on {
+    overr de val durat onConvers on: Durat onConvers on = Durat onConvers on.FromH s
   }
 }

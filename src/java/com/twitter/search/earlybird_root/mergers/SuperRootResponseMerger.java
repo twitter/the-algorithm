@@ -1,686 +1,686 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.tw ter.search.earlyb rd_root. rgers;
 
-import java.util.Collections;
-import java.util.List;
-import javax.annotation.Nullable;
+ mport java.ut l.Collect ons;
+ mport java.ut l.L st;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.Lists;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.cac .Cac Bu lder;
+ mport com.google.common.cac .Cac Loader;
+ mport com.google.common.cac .Load ngCac ;
+ mport com.google.common.collect.L sts;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.futures.Futures;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.query.thriftjava.EarlyTerminationInfo;
-import com.twitter.search.common.relevance.utils.ResultComparators;
-import com.twitter.search.common.search.EarlyTerminationState;
-import com.twitter.search.common.util.FinagleUtil;
-import com.twitter.search.common.util.earlybird.EarlybirdResponseMergeUtil;
-import com.twitter.search.common.util.earlybird.EarlybirdResponseUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftTweetSource;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdServiceResponse;
-import com.twitter.util.Function;
-import com.twitter.util.Function0;
-import com.twitter.util.Future;
+ mport com.tw ter.common.collect ons.Pa r;
+ mport com.tw ter.common.quant y.Amount;
+ mport com.tw ter.common.quant y.T  ;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common.futures.Futures;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.part  on ng.snowflakeparser.Snowflake dParser;
+ mport com.tw ter.search.common.query.thr ftjava.EarlyTerm nat on nfo;
+ mport com.tw ter.search.common.relevance.ut ls.ResultComparators;
+ mport com.tw ter.search.common.search.EarlyTerm nat onState;
+ mport com.tw ter.search.common.ut l.F nagleUt l;
+ mport com.tw ter.search.common.ut l.earlyb rd.Earlyb rdResponse rgeUt l;
+ mport com.tw ter.search.common.ut l.earlyb rd.Earlyb rdResponseUt l;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchQuery;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchRank ngMode;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResults;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftT etS ce;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdFeatureSc ma rger;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdServ ceResponse;
+ mport com.tw ter.ut l.Funct on;
+ mport com.tw ter.ut l.Funct on0;
+ mport com.tw ter.ut l.Future;
 
-/** Utility functions for merging recency and relevance results. */
-public class SuperRootResponseMerger {
-  private static final Logger LOG = LoggerFactory.getLogger(SuperRootResponseMerger.class);
-  private static final String ALL_STATS_PREFIX = "superroot_response_merger_";
+/** Ut l y funct ons for  rg ng recency and relevance results. */
+publ c class SuperRootResponse rger {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(SuperRootResponse rger.class);
+  pr vate stat c f nal Str ng ALL_STATS_PREF X = "superroot_response_ rger_";
 
-  private static final SearchCounter FULL_ARCHIVE_MIN_ID_GREATER_THAN_REALTIME_MIN_ID =
-    SearchCounter.export("full_archive_min_id_greater_than_realtime_min_id");
+  pr vate stat c f nal SearchCounter FULL_ARCH VE_M N_ D_GREATER_THAN_REALT ME_M N_ D =
+    SearchCounter.export("full_arch ve_m n_ d_greater_than_realt  _m n_ d");
 
-  private static final String ERROR_FORMAT = "%s%s_errors_from_cluster_%s_%s";
+  pr vate stat c f nal Str ng ERROR_FORMAT = "%s%s_errors_from_cluster_%s_%s";
 
-  private final ThriftSearchRankingMode rankingMode;
-  private final EarlybirdFeatureSchemaMerger featureSchemaMerger;
-  private final String featureStatPrefix;
-  private final Clock clock;
-  private final String rankingModeStatPrefix;
+  pr vate f nal Thr ftSearchRank ngMode rank ngMode;
+  pr vate f nal Earlyb rdFeatureSc ma rger featureSc ma rger;
+  pr vate f nal Str ng featureStatPref x;
+  pr vate f nal Clock clock;
+  pr vate f nal Str ng rank ngModeStatPref x;
 
-  private final SearchCounter mergedResponseSearchResultsNotSet;
-  private final SearchCounter invalidMinStatusId;
-  private final SearchCounter invalidMaxStatusId;
-  private final SearchCounter noMinIds;
-  private final SearchCounter noMaxIds;
-  private final SearchCounter mergedResponses;
-  private final SearchCounter mergedResponsesWithExactDups;
-  private final LoadingCache<Pair<ThriftTweetSource, ThriftTweetSource>, SearchCounter> dupsStats;
+  pr vate f nal SearchCounter  rgedResponseSearchResultsNotSet;
+  pr vate f nal SearchCounter  nval dM nStatus d;
+  pr vate f nal SearchCounter  nval dMaxStatus d;
+  pr vate f nal SearchCounter noM n ds;
+  pr vate f nal SearchCounter noMax ds;
+  pr vate f nal SearchCounter  rgedResponses;
+  pr vate f nal SearchCounter  rgedResponsesW hExactDups;
+  pr vate f nal Load ngCac <Pa r<Thr ftT etS ce, Thr ftT etS ce>, SearchCounter> dupsStats;
 
-  private static final EarlybirdResponse EMPTY_RESPONSE =
-      new EarlybirdResponse(EarlybirdResponseCode.SUCCESS, 0)
-          .setSearchResults(new ThriftSearchResults()
-              .setResults(Lists.<ThriftSearchResult>newArrayList()));
+  pr vate stat c f nal Earlyb rdResponse EMPTY_RESPONSE =
+      new Earlyb rdResponse(Earlyb rdResponseCode.SUCCESS, 0)
+          .setSearchResults(new Thr ftSearchResults()
+              .setResults(L sts.<Thr ftSearchResult>newArrayL st()));
 
   /**
-   * Creates a new SuperRootResponseMerger instance.
-   * @param rankingMode The ranking mode to use when merging results.
-   * @param featureSchemaMerger The merger that can merge feature schema from different tiers.
-   * @param clock The clock that will be used to merge results.
+   * Creates a new SuperRootResponse rger  nstance.
+   * @param rank ngMode T  rank ng mode to use w n  rg ng results.
+   * @param featureSc ma rger T   rger that can  rge feature sc ma from d fferent t ers.
+   * @param clock T  clock that w ll be used to  rge results.
    */
-  public SuperRootResponseMerger(ThriftSearchRankingMode rankingMode,
-                                 EarlybirdFeatureSchemaMerger featureSchemaMerger,
+  publ c SuperRootResponse rger(Thr ftSearchRank ngMode rank ngMode,
+                                 Earlyb rdFeatureSc ma rger featureSc ma rger,
                                  Clock clock) {
-    this.rankingModeStatPrefix = rankingMode.name().toLowerCase();
+    t .rank ngModeStatPref x = rank ngMode.na ().toLo rCase();
 
-    this.rankingMode = rankingMode;
-    this.featureSchemaMerger = featureSchemaMerger;
-    this.clock = clock;
-    this.featureStatPrefix = "superroot_" + rankingMode.name().toLowerCase();
+    t .rank ngMode = rank ngMode;
+    t .featureSc ma rger = featureSc ma rger;
+    t .clock = clock;
+    t .featureStatPref x = "superroot_" + rank ngMode.na ().toLo rCase();
 
-    mergedResponseSearchResultsNotSet = SearchCounter.export(
-        ALL_STATS_PREFIX + rankingModeStatPrefix + "_merged_response_search_results_not_set");
-    invalidMinStatusId =
-      SearchCounter.export(ALL_STATS_PREFIX + rankingModeStatPrefix + "_invalid_min_status_id");
-    invalidMaxStatusId =
-      SearchCounter.export(ALL_STATS_PREFIX + rankingModeStatPrefix + "_invalid_max_status_id");
-    noMinIds = SearchCounter.export(ALL_STATS_PREFIX + rankingModeStatPrefix + "_no_min_ids");
-    noMaxIds = SearchCounter.export(ALL_STATS_PREFIX + rankingModeStatPrefix + "_no_max_ids");
-    mergedResponses = SearchCounter.export(ALL_STATS_PREFIX + rankingModeStatPrefix
-      + "_merged_responses");
-    mergedResponsesWithExactDups =
-      SearchCounter.export(ALL_STATS_PREFIX + rankingModeStatPrefix
-        + "_merged_responses_with_exact_dups");
-    dupsStats = CacheBuilder.newBuilder()
-      .build(new CacheLoader<Pair<ThriftTweetSource, ThriftTweetSource>, SearchCounter>() {
-          @Override
-          public SearchCounter load(Pair<ThriftTweetSource, ThriftTweetSource> key) {
+     rgedResponseSearchResultsNotSet = SearchCounter.export(
+        ALL_STATS_PREF X + rank ngModeStatPref x + "_ rged_response_search_results_not_set");
+     nval dM nStatus d =
+      SearchCounter.export(ALL_STATS_PREF X + rank ngModeStatPref x + "_ nval d_m n_status_ d");
+     nval dMaxStatus d =
+      SearchCounter.export(ALL_STATS_PREF X + rank ngModeStatPref x + "_ nval d_max_status_ d");
+    noM n ds = SearchCounter.export(ALL_STATS_PREF X + rank ngModeStatPref x + "_no_m n_ ds");
+    noMax ds = SearchCounter.export(ALL_STATS_PREF X + rank ngModeStatPref x + "_no_max_ ds");
+     rgedResponses = SearchCounter.export(ALL_STATS_PREF X + rank ngModeStatPref x
+      + "_ rged_responses");
+     rgedResponsesW hExactDups =
+      SearchCounter.export(ALL_STATS_PREF X + rank ngModeStatPref x
+        + "_ rged_responses_w h_exact_dups");
+    dupsStats = Cac Bu lder.newBu lder()
+      .bu ld(new Cac Loader<Pa r<Thr ftT etS ce, Thr ftT etS ce>, SearchCounter>() {
+          @Overr de
+          publ c SearchCounter load(Pa r<Thr ftT etS ce, Thr ftT etS ce> key) {
             return SearchCounter.export(
-                ALL_STATS_PREFIX + rankingModeStatPrefix + "_merged_responses_with_exact_dups_"
-                + key.getFirst().name() + "_" + key.getSecond().name());
+                ALL_STATS_PREF X + rank ngModeStatPref x + "_ rged_responses_w h_exact_dups_"
+                + key.getF rst().na () + "_" + key.getSecond().na ());
           }
         });
   }
 
-  private void incrErrorCount(String cluster, @Nullable EarlybirdResponse response) {
-    String cause;
-    if (response != null) {
-      cause = response.getResponseCode().name().toLowerCase();
+  pr vate vo d  ncrErrorCount(Str ng cluster, @Nullable Earlyb rdResponse response) {
+    Str ng cause;
+     f (response != null) {
+      cause = response.getResponseCode().na ().toLo rCase();
     } else {
       cause = "null_response";
     }
-    String statName = String.format(
-      ERROR_FORMAT, ALL_STATS_PREFIX, rankingModeStatPrefix, cluster, cause
+    Str ng statNa  = Str ng.format(
+      ERROR_FORMAT, ALL_STATS_PREF X, rank ngModeStatPref x, cluster, cause
     );
 
-    SearchCounter.export(statName).increment();
+    SearchCounter.export(statNa ). ncre nt();
   }
 
   /**
-   * Merges the given response futures.
+   *  rges t  g ven response futures.
    *
-   * @param earlybirdRequestContext The earlybird request.
-   * @param realtimeResponseFuture The response from the realtime cluster.
-   * @param protectedResponseFuture The response from the protected cluster.
-   * @param fullArchiveResponseFuture The response from the full archive cluster.
-   * @return A future with the merged results.
+   * @param earlyb rdRequestContext T  earlyb rd request.
+   * @param realt  ResponseFuture T  response from t  realt   cluster.
+   * @param protectedResponseFuture T  response from t  protected cluster.
+   * @param fullArch veResponseFuture T  response from t  full arch ve cluster.
+   * @return A future w h t   rged results.
    */
-  public Future<EarlybirdResponse> mergeResponseFutures(
-      final EarlybirdRequestContext earlybirdRequestContext,
-      final Future<EarlybirdServiceResponse> realtimeResponseFuture,
-      final Future<EarlybirdServiceResponse> protectedResponseFuture,
-      final Future<EarlybirdServiceResponse> fullArchiveResponseFuture) {
-    Future<EarlybirdResponse> mergedResponseFuture = Futures.map(
-        realtimeResponseFuture, protectedResponseFuture, fullArchiveResponseFuture,
-        new Function0<EarlybirdResponse>() {
-          @Override
-          public EarlybirdResponse apply() {
-            // If the realtime response is not valid, return an error response.
-            // Also, the realtime service should always be called.
-            EarlybirdServiceResponse realtimeResponse = Futures.get(realtimeResponseFuture);
+  publ c Future<Earlyb rdResponse>  rgeResponseFutures(
+      f nal Earlyb rdRequestContext earlyb rdRequestContext,
+      f nal Future<Earlyb rdServ ceResponse> realt  ResponseFuture,
+      f nal Future<Earlyb rdServ ceResponse> protectedResponseFuture,
+      f nal Future<Earlyb rdServ ceResponse> fullArch veResponseFuture) {
+    Future<Earlyb rdResponse>  rgedResponseFuture = Futures.map(
+        realt  ResponseFuture, protectedResponseFuture, fullArch veResponseFuture,
+        new Funct on0<Earlyb rdResponse>() {
+          @Overr de
+          publ c Earlyb rdResponse apply() {
+            //  f t  realt   response  s not val d, return an error response.
+            // Also, t  realt   serv ce should always be called.
+            Earlyb rdServ ceResponse realt  Response = Futures.get(realt  ResponseFuture);
 
-            if (realtimeResponse.getServiceState().serviceWasRequested()
-                && (!realtimeResponse.getServiceState().serviceWasCalled()
-                    || !EarlybirdResponseMergeUtil.isValidResponse(
-                        realtimeResponse.getResponse()))) {
+             f (realt  Response.getServ ceState().serv ceWasRequested()
+                && (!realt  Response.getServ ceState().serv ceWasCalled()
+                    || !Earlyb rdResponse rgeUt l. sVal dResponse(
+                        realt  Response.getResponse()))) {
 
-              incrErrorCount("realtime", realtimeResponse.getResponse());
-              return EarlybirdResponseMergeUtil.transformInvalidResponse(
-                  realtimeResponse.getResponse(), "realtime");
+               ncrErrorCount("realt  ", realt  Response.getResponse());
+              return Earlyb rdResponse rgeUt l.transform nval dResponse(
+                  realt  Response.getResponse(), "realt  ");
             }
 
-            // If we have a protected response and it's not valid, return an error response.
-            EarlybirdServiceResponse protectedResponse = Futures.get(protectedResponseFuture);
-            if (protectedResponse.getServiceState().serviceWasCalled()) {
-              if (!EarlybirdResponseMergeUtil.isValidResponse(protectedResponse.getResponse())) {
-                incrErrorCount("protected", protectedResponse.getResponse());
+            //  f   have a protected response and  's not val d, return an error response.
+            Earlyb rdServ ceResponse protectedResponse = Futures.get(protectedResponseFuture);
+             f (protectedResponse.getServ ceState().serv ceWasCalled()) {
+               f (!Earlyb rdResponse rgeUt l. sVal dResponse(protectedResponse.getResponse())) {
+                 ncrErrorCount("protected", protectedResponse.getResponse());
 
-                return EarlybirdResponseMergeUtil.transformInvalidResponse(
+                return Earlyb rdResponse rgeUt l.transform nval dResponse(
                     protectedResponse.getResponse(), "protected");
               }
             }
 
-            // If we have a full archive response, check if it's valid.
-            EarlybirdServiceResponse fullArchiveResponse = Futures.get(fullArchiveResponseFuture);
-            boolean archiveHasError =
-              fullArchiveResponse.getServiceState().serviceWasCalled()
-              && !EarlybirdResponseMergeUtil.isValidResponse(fullArchiveResponse.getResponse());
+            //  f   have a full arch ve response, c ck  f  's val d.
+            Earlyb rdServ ceResponse fullArch veResponse = Futures.get(fullArch veResponseFuture);
+            boolean arch veHasError =
+              fullArch veResponse.getServ ceState().serv ceWasCalled()
+              && !Earlyb rdResponse rgeUt l. sVal dResponse(fullArch veResponse.getResponse());
 
-            // Merge the responses.
-            EarlybirdResponse mergedResponse = mergeResponses(
-                earlybirdRequestContext,
-                realtimeResponse.getResponse(),
+            //  rge t  responses.
+            Earlyb rdResponse  rgedResponse =  rgeResponses(
+                earlyb rdRequestContext,
+                realt  Response.getResponse(),
                 protectedResponse.getResponse(),
-                fullArchiveResponse.getResponse());
+                fullArch veResponse.getResponse());
 
-            // If the realtime clusters didn't return any results, and the full archive cluster
-            // returned an error response, return an error merged response.
-            if (archiveHasError && !EarlybirdResponseUtil.hasResults(mergedResponse)) {
-              incrErrorCount("full_archive", fullArchiveResponse.getResponse());
+            //  f t  realt   clusters d dn't return any results, and t  full arch ve cluster
+            // returned an error response, return an error  rged response.
+             f (arch veHasError && !Earlyb rdResponseUt l.hasResults( rgedResponse)) {
+               ncrErrorCount("full_arch ve", fullArch veResponse.getResponse());
 
-              return EarlybirdResponseMergeUtil.failedEarlybirdResponse(
-                  fullArchiveResponse.getResponse().getResponseCode(),
-                  "realtime clusters had no results and archive cluster response had error");
+              return Earlyb rdResponse rgeUt l.fa ledEarlyb rdResponse(
+                  fullArch veResponse.getResponse().getResponseCode(),
+                  "realt   clusters had no results and arch ve cluster response had error");
             }
 
-            // Corner case: the realtime response could have exactly numRequested results, and could
-            // be exhausted (not early-terminated). In this case, the request should not have been
-            // sent to the full archive cluster.
-            //   - If the full archive cluster is not available, or was not requested, then we don't
-            //     need to change anything.
-            //   - If the full archive cluster is available and was requested (but wasn't hit
-            //     because we found enough results in the realtime cluster), then we should set the
-            //     early-termination flag on the merged response, to indicate that we potentially
-            //     have more results for this query in our index.
-            if ((fullArchiveResponse.getServiceState()
-                 == EarlybirdServiceResponse.ServiceState.SERVICE_NOT_CALLED)
-                && !EarlybirdResponseUtil.isEarlyTerminated(realtimeResponse.getResponse())) {
-              EarlyTerminationInfo earlyTerminationInfo = new EarlyTerminationInfo(true);
-              earlyTerminationInfo.setEarlyTerminationReason(
-                  EarlyTerminationState.TERMINATED_NUM_RESULTS_EXCEEDED.getTerminationReason());
-              mergedResponse.setEarlyTerminationInfo(earlyTerminationInfo);
+            // Corner case: t  realt   response could have exactly numRequested results, and could
+            // be exhausted (not early-term nated).  n t  case, t  request should not have been
+            // sent to t  full arch ve cluster.
+            //   -  f t  full arch ve cluster  s not ava lable, or was not requested, t n   don't
+            //     need to change anyth ng.
+            //   -  f t  full arch ve cluster  s ava lable and was requested (but wasn't h 
+            //     because   found enough results  n t  realt   cluster), t n   should set t 
+            //     early-term nat on flag on t   rged response, to  nd cate that   potent ally
+            //     have more results for t  query  n    ndex.
+             f ((fullArch veResponse.getServ ceState()
+                 == Earlyb rdServ ceResponse.Serv ceState.SERV CE_NOT_CALLED)
+                && !Earlyb rdResponseUt l. sEarlyTerm nated(realt  Response.getResponse())) {
+              EarlyTerm nat on nfo earlyTerm nat on nfo = new EarlyTerm nat on nfo(true);
+              earlyTerm nat on nfo.setEarlyTerm nat onReason(
+                  EarlyTerm nat onState.TERM NATED_NUM_RESULTS_EXCEEDED.getTerm nat onReason());
+               rgedResponse.setEarlyTerm nat on nfo(earlyTerm nat on nfo);
             }
 
-            // If we've exhausted all clusters, set the minSearchedStatusID to 0.
-            if (!EarlybirdResponseUtil.isEarlyTerminated(mergedResponse)) {
-              mergedResponse.getSearchResults().setMinSearchedStatusID(0);
+            //  f  've exhausted all clusters, set t  m nSearc dStatus D to 0.
+             f (!Earlyb rdResponseUt l. sEarlyTerm nated( rgedResponse)) {
+               rgedResponse.getSearchResults().setM nSearc dStatus D(0);
             }
 
-            return mergedResponse;
+            return  rgedResponse;
           }
         });
 
-    // Handle all merging exceptions.
-    return handleResponseException(mergedResponseFuture,
-                                   "Exception thrown while merging responses.");
+    // Handle all  rg ng except ons.
+    return handleResponseExcept on( rgedResponseFuture,
+                                   "Except on thrown wh le  rg ng responses.");
   }
 
   /**
-   * Merge the results in the given responses.
+   *  rge t  results  n t  g ven responses.
    *
-   * @param earlybirdRequestContext The earlybird request context.
-   * @param realtimeResponse The response from the realtime cluster.
-   * @param protectedResponse The response from the protected cluster.
-   * @param fullArchiveResponse The response from the full archive cluster.
-   * @return The merged response.
+   * @param earlyb rdRequestContext T  earlyb rd request context.
+   * @param realt  Response T  response from t  realt   cluster.
+   * @param protectedResponse T  response from t  protected cluster.
+   * @param fullArch veResponse T  response from t  full arch ve cluster.
+   * @return T   rged response.
    */
-  private EarlybirdResponse mergeResponses(
-      EarlybirdRequestContext earlybirdRequestContext,
-      @Nullable EarlybirdResponse realtimeResponse,
-      @Nullable EarlybirdResponse protectedResponse,
-      @Nullable EarlybirdResponse fullArchiveResponse) {
+  pr vate Earlyb rdResponse  rgeResponses(
+      Earlyb rdRequestContext earlyb rdRequestContext,
+      @Nullable Earlyb rdResponse realt  Response,
+      @Nullable Earlyb rdResponse protectedResponse,
+      @Nullable Earlyb rdResponse fullArch veResponse) {
 
-    EarlybirdRequest request = earlybirdRequestContext.getRequest();
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
-    int numResultsRequested;
+    Earlyb rdRequest request = earlyb rdRequestContext.getRequest();
+    Thr ftSearchQuery searchQuery = request.getSearchQuery();
+     nt numResultsRequested;
 
-    if (request.isSetNumResultsToReturnAtRoot()) {
+     f (request. sSetNumResultsToReturnAtRoot()) {
       numResultsRequested = request.getNumResultsToReturnAtRoot();
     } else {
       numResultsRequested = searchQuery.getNumResults();
     }
 
-    Preconditions.checkState(numResultsRequested > 0);
+    Precond  ons.c ckState(numResultsRequested > 0);
 
-    EarlybirdResponse mergedResponse = EMPTY_RESPONSE.deepCopy();
-    if ((realtimeResponse != null)
-        && (realtimeResponse.getResponseCode() != EarlybirdResponseCode.TIER_SKIPPED)) {
-      mergedResponse = realtimeResponse.deepCopy();
+    Earlyb rdResponse  rgedResponse = EMPTY_RESPONSE.deepCopy();
+     f ((realt  Response != null)
+        && (realt  Response.getResponseCode() != Earlyb rdResponseCode.T ER_SK PPED)) {
+       rgedResponse = realt  Response.deepCopy();
     }
 
-    if (!mergedResponse.isSetSearchResults()) {
-      mergedResponseSearchResultsNotSet.increment();
-      mergedResponse.setSearchResults(
-          new ThriftSearchResults(Lists.<ThriftSearchResult>newArrayList()));
+     f (! rgedResponse. sSetSearchResults()) {
+       rgedResponseSearchResultsNotSet. ncre nt();
+       rgedResponse.setSearchResults(
+          new Thr ftSearchResults(L sts.<Thr ftSearchResult>newArrayL st()));
     }
 
-    // If either the realtime or the full archive response is early-terminated, we want the merged
-    // response to be early-terminated too. The early-termination flag from the realtime response
-    // carries over to the merged response, because mergedResponse is just a deep copy of the
-    // realtime response. So we only need to check the early-termination flag of the full archive
+    //  f e  r t  realt   or t  full arch ve response  s early-term nated,   want t   rged
+    // response to be early-term nated too. T  early-term nat on flag from t  realt   response
+    // carr es over to t   rged response, because  rgedResponse  s just a deep copy of t 
+    // realt   response. So   only need to c ck t  early-term nat on flag of t  full arch ve
     // response.
-    if ((fullArchiveResponse != null)
-        && EarlybirdResponseUtil.isEarlyTerminated(fullArchiveResponse)) {
-      mergedResponse.setEarlyTerminationInfo(fullArchiveResponse.getEarlyTerminationInfo());
+     f ((fullArch veResponse != null)
+        && Earlyb rdResponseUt l. sEarlyTerm nated(fullArch veResponse)) {
+       rgedResponse.setEarlyTerm nat on nfo(fullArch veResponse.getEarlyTerm nat on nfo());
     }
 
-    // If realtime has empty results and protected has some results then we copy the early
-    // termination information if that is present
-    if (protectedResponse != null
-        && mergedResponse.getSearchResults().getResults().isEmpty()
-        && !protectedResponse.getSearchResults().getResults().isEmpty()
-        && EarlybirdResponseUtil.isEarlyTerminated(protectedResponse)) {
-      mergedResponse.setEarlyTerminationInfo(protectedResponse.getEarlyTerminationInfo());
+    //  f realt   has empty results and protected has so  results t n   copy t  early
+    // term nat on  nformat on  f that  s present
+     f (protectedResponse != null
+        &&  rgedResponse.getSearchResults().getResults(). sEmpty()
+        && !protectedResponse.getSearchResults().getResults(). sEmpty()
+        && Earlyb rdResponseUt l. sEarlyTerm nated(protectedResponse)) {
+       rgedResponse.setEarlyTerm nat on nfo(protectedResponse.getEarlyTerm nat on nfo());
     }
 
-    // Merge the results.
-    List<ThriftSearchResult> mergedResults = mergeResults(
-        numResultsRequested, realtimeResponse, protectedResponse, fullArchiveResponse);
+    //  rge t  results.
+    L st<Thr ftSearchResult>  rgedResults =  rgeResults(
+        numResultsRequested, realt  Response, protectedResponse, fullArch veResponse);
 
-    // Trim the merged results if necessary.
-    boolean resultsTrimmed = false;
-    if (mergedResults.size() > numResultsRequested
-        && !(searchQuery.isSetRelevanceOptions()
-             && searchQuery.getRelevanceOptions().isReturnAllResults())) {
-      // If we have more results than requested, trim the result list and re-adjust
-      // minSearchedStatusID.
-      mergedResults = mergedResults.subList(0, numResultsRequested);
+    // Tr m t   rged results  f necessary.
+    boolean resultsTr m d = false;
+     f ( rgedResults.s ze() > numResultsRequested
+        && !(searchQuery. sSetRelevanceOpt ons()
+             && searchQuery.getRelevanceOpt ons(). sReturnAllResults())) {
+      //  f   have more results than requested, tr m t  result l st and re-adjust
+      // m nSearc dStatus D.
+       rgedResults =  rgedResults.subL st(0, numResultsRequested);
 
-      // Mark early termination in merged response
-      if (!EarlybirdResponseUtil.isEarlyTerminated(mergedResponse)) {
-        EarlyTerminationInfo earlyTerminationInfo = new EarlyTerminationInfo(true);
-        earlyTerminationInfo.setEarlyTerminationReason(
-            EarlyTerminationState.TERMINATED_NUM_RESULTS_EXCEEDED.getTerminationReason());
-        mergedResponse.setEarlyTerminationInfo(earlyTerminationInfo);
+      // Mark early term nat on  n  rged response
+       f (!Earlyb rdResponseUt l. sEarlyTerm nated( rgedResponse)) {
+        EarlyTerm nat on nfo earlyTerm nat on nfo = new EarlyTerm nat on nfo(true);
+        earlyTerm nat on nfo.setEarlyTerm nat onReason(
+            EarlyTerm nat onState.TERM NATED_NUM_RESULTS_EXCEEDED.getTerm nat onReason());
+         rgedResponse.setEarlyTerm nat on nfo(earlyTerm nat on nfo);
       }
 
-      resultsTrimmed = true;
+      resultsTr m d = true;
     }
 
-    mergedResponse.getSearchResults().setResults(mergedResults);
-    featureSchemaMerger.mergeFeatureSchemaAcrossClusters(
-        earlybirdRequestContext,
-        mergedResponse,
-        featureStatPrefix,
-        realtimeResponse,
+     rgedResponse.getSearchResults().setResults( rgedResults);
+    featureSc ma rger. rgeFeatureSc maAcrossClusters(
+        earlyb rdRequestContext,
+         rgedResponse,
+        featureStatPref x,
+        realt  Response,
         protectedResponse,
-        fullArchiveResponse);
+        fullArch veResponse);
 
-    // Set the minSearchedStatusID and maxSearchedStatusID fields on the merged response.
-    setMinSearchedStatusId(mergedResponse, realtimeResponse, protectedResponse, fullArchiveResponse,
-        resultsTrimmed);
-    setMaxSearchedStatusId(mergedResponse, realtimeResponse, protectedResponse,
-        fullArchiveResponse);
+    // Set t  m nSearc dStatus D and maxSearc dStatus D f elds on t   rged response.
+    setM nSearc dStatus d( rgedResponse, realt  Response, protectedResponse, fullArch veResponse,
+        resultsTr m d);
+    setMaxSearc dStatus d( rgedResponse, realt  Response, protectedResponse,
+        fullArch veResponse);
 
-    int numRealtimeSearchedSegments =
-        (realtimeResponse != null && realtimeResponse.isSetNumSearchedSegments())
-            ? realtimeResponse.getNumSearchedSegments()
+     nt numRealt  Searc dSeg nts =
+        (realt  Response != null && realt  Response. sSetNumSearc dSeg nts())
+            ? realt  Response.getNumSearc dSeg nts()
             : 0;
 
-    int numProtectedSearchedSegments =
-        (protectedResponse != null && protectedResponse.isSetNumSearchedSegments())
-            ? protectedResponse.getNumSearchedSegments()
+     nt numProtectedSearc dSeg nts =
+        (protectedResponse != null && protectedResponse. sSetNumSearc dSeg nts())
+            ? protectedResponse.getNumSearc dSeg nts()
             : 0;
 
-    int numArchiveSearchedSegments =
-        (fullArchiveResponse != null && fullArchiveResponse.isSetNumSearchedSegments())
-            ? fullArchiveResponse.getNumSearchedSegments()
+     nt numArch veSearc dSeg nts =
+        (fullArch veResponse != null && fullArch veResponse. sSetNumSearc dSeg nts())
+            ? fullArch veResponse.getNumSearc dSeg nts()
             : 0;
 
-    mergedResponse.setNumSearchedSegments(
-        numRealtimeSearchedSegments + numProtectedSearchedSegments + numArchiveSearchedSegments);
+     rgedResponse.setNumSearc dSeg nts(
+        numRealt  Searc dSeg nts + numProtectedSearc dSeg nts + numArch veSearc dSeg nts);
 
-    if (earlybirdRequestContext.getRequest().getDebugMode() > 0) {
-      mergedResponse.setDebugString(
-          mergeClusterDebugStrings(realtimeResponse, protectedResponse, fullArchiveResponse));
+     f (earlyb rdRequestContext.getRequest().getDebugMode() > 0) {
+       rgedResponse.setDebugStr ng(
+           rgeClusterDebugStr ngs(realt  Response, protectedResponse, fullArch veResponse));
     }
 
-    return mergedResponse;
+    return  rgedResponse;
   }
 
   /**
-   * Merges the given responses.
+   *  rges t  g ven responses.
    *
-   * @param numResults the number of results requested
-   * @param realtimeResponse the response from the realtime response
-   * @param protectedResponse the response from the protected response
-   * @param fullArchiveResponse the response from the full archive response
-   * @return the list of merged results
+   * @param numResults t  number of results requested
+   * @param realt  Response t  response from t  realt   response
+   * @param protectedResponse t  response from t  protected response
+   * @param fullArch veResponse t  response from t  full arch ve response
+   * @return t  l st of  rged results
    */
-  private List<ThriftSearchResult> mergeResults(int numResults,
-                                                @Nullable EarlybirdResponse realtimeResponse,
-                                                @Nullable EarlybirdResponse protectedResponse,
-                                                @Nullable EarlybirdResponse fullArchiveResponse) {
-    mergedResponses.increment();
-    // We first merge the results from the two realtime clusters, Realtime cluster and
-    // Realtime Protected Tweets cluster
-    List<ThriftSearchResult> mergedResults = mergePublicAndProtectedRealtimeResults(
+  pr vate L st<Thr ftSearchResult>  rgeResults( nt numResults,
+                                                @Nullable Earlyb rdResponse realt  Response,
+                                                @Nullable Earlyb rdResponse protectedResponse,
+                                                @Nullable Earlyb rdResponse fullArch veResponse) {
+     rgedResponses. ncre nt();
+    //   f rst  rge t  results from t  two realt   clusters, Realt   cluster and
+    // Realt   Protected T ets cluster
+    L st<Thr ftSearchResult>  rgedResults =  rgePubl cAndProtectedRealt  Results(
         numResults,
-        realtimeResponse,
+        realt  Response,
         protectedResponse,
-        fullArchiveResponse,
+        fullArch veResponse,
         clock);
 
-    EarlybirdResponseMergeUtil.addResultsToList(mergedResults, fullArchiveResponse,
-                                                ThriftTweetSource.FULL_ARCHIVE_CLUSTER);
+    Earlyb rdResponse rgeUt l.addResultsToL st( rgedResults, fullArch veResponse,
+                                                Thr ftT etS ce.FULL_ARCH VE_CLUSTER);
 
-    List<ThriftSearchResult> distinctMergedResults =
-        EarlybirdResponseMergeUtil.distinctByStatusId(mergedResults, dupsStats);
-    if (mergedResults != distinctMergedResults) {
-      mergedResponsesWithExactDups.increment();
+    L st<Thr ftSearchResult> d st nct rgedResults =
+        Earlyb rdResponse rgeUt l.d st nctByStatus d( rgedResults, dupsStats);
+     f ( rgedResults != d st nct rgedResults) {
+       rgedResponsesW hExactDups. ncre nt();
     }
 
-    if (rankingMode == ThriftSearchRankingMode.RELEVANCE
-        || rankingMode == ThriftSearchRankingMode.TOPTWEETS) {
-      distinctMergedResults.sort(ResultComparators.SCORE_COMPARATOR);
+     f (rank ngMode == Thr ftSearchRank ngMode.RELEVANCE
+        || rank ngMode == Thr ftSearchRank ngMode.TOPTWEETS) {
+      d st nct rgedResults.sort(ResultComparators.SCORE_COMPARATOR);
     } else {
-      distinctMergedResults.sort(ResultComparators.ID_COMPARATOR);
+      d st nct rgedResults.sort(ResultComparators. D_COMPARATOR);
     }
 
-    return distinctMergedResults;
+    return d st nct rgedResults;
   }
 
   /**
-   * Method for merging tweets from protected and realtime clusters
-   *  - realtime, guaranteed newer than any archive tweets
-   *  - protected, also realtime, but with a potentially larger window (optional)
-   *  - archive, public, guaranteed older than any public realtime tweets (optional, used for
-   *    id limits, *not added to results*)
-   * It adds the ThriftSearchResults from protected tweets to the realtimeResponse
+   *  thod for  rg ng t ets from protected and realt   clusters
+   *  - realt  , guaranteed ne r than any arch ve t ets
+   *  - protected, also realt  , but w h a potent ally larger w ndow (opt onal)
+   *  - arch ve, publ c, guaranteed older than any publ c realt   t ets (opt onal, used for
+   *     d l m s, *not added to results*)
+   *   adds t  Thr ftSearchResults from protected t ets to t  realt  Response
    *
-   * Algorithm diagram: (with newer tweets at the top)
-   *               ------------------------------------  <--- protected maxSearchedStatusID
-   *               |C:Newest protected realtime tweets|
-   *               | (does not exist if realtime      |
-   *               | maxID >= protected maxID)        |
+   * Algor hm d agram: (w h ne r t ets at t  top)
+   *               ------------------------------------  <--- protected maxSearc dStatus D
+   *               |C:Ne st protected realt   t ets|
+   *               | (does not ex st  f realt        |
+   *               | max D >= protected max D)        |
    *
    *               |     ------------------------     |  <--- 60 seconds ago
-   *               |D:Newer protected realtime tweets |
-   *               | (does not exist if realtime      |
-   *               | maxID >= 60 seconds ago)         |
-   * ----------    |     ------------------------     |  <--- public realtime maxSearchedStatusID
-   * |A:Public|    |E:Automatically valid protected   |
-   * |realtime|    |realtime tweets                   |
-   * ----------    |     ------------------------     |  <--- public realtime minSearchedStatusID
+   *               |D:Ne r protected realt   t ets |
+   *               | (does not ex st  f realt        |
+   *               | max D >= 60 seconds ago)         |
+   * ----------    |     ------------------------     |  <--- publ c realt   maxSearc dStatus D
+   * |A:Publ c|    |E:Automat cally val d protected   |
+   * |realt  |    |realt   t ets                   |
+   * ----------    |     ------------------------     |  <--- publ c realt   m nSearc dStatus D
    *               |                                  |
-   * ----------    |  E if archive is present         |  <--- public archive maxSearchedStatusID
-   * ----------    |  E if archive is present         |  <--- public archive maxSearchedStatusID
-   * |B:Public|    |  F is archive is not present     |
-   * |archive |    |                                  |
-   * ----------    |     ------------------------     |  <--- public archive minSearchedStatusID
-   *               |F:Older protected realtime tweets |
-   *               | (does not exist if protected     |
-   *               | minID >= public minID)           |
-   *               ------------------------------------  <--- protected minSearchedStatusID
-   * Step 1: Select tweets from groups A, and E. If this is enough, return them
-   * Step 2: Select tweets from groups A, E, and F. If this is enough, return them
-   * Step 3: Select tweets from groups A, D, E, and F and return them
+   * ----------    |  E  f arch ve  s present         |  <--- publ c arch ve maxSearc dStatus D
+   * ----------    |  E  f arch ve  s present         |  <--- publ c arch ve maxSearc dStatus D
+   * |B:Publ c|    |  F  s arch ve  s not present     |
+   * |arch ve |    |                                  |
+   * ----------    |     ------------------------     |  <--- publ c arch ve m nSearc dStatus D
+   *               |F:Older protected realt   t ets |
+   *               | (does not ex st  f protected     |
+   *               | m n D >= publ c m n D)           |
+   *               ------------------------------------  <--- protected m nSearc dStatus D
+   * Step 1: Select t ets from groups A, and E.  f t   s enough, return t m
+   * Step 2: Select t ets from groups A, E, and F.  f t   s enough, return t m
+   * Step 3: Select t ets from groups A, D, E, and F and return t m
    *
-   * There are two primary tradeoffs, both of which favor public tweets:
-   *  (1) Benefit: While public indexing latency is < 60s, auto-updating never misses public tweets
-   *      Cost:    Absence of public tweets may delay protected tweets from being searchable for 60s
-   *  (2) Benefit: No failure or delay from the protected cluster will affect realtime results
-   *      Cost:    If the protected cluster indexes more slowly, auto-update may miss its tweets
+   * T re are two pr mary tradeoffs, both of wh ch favor publ c t ets:
+   *  (1) Benef : Wh le publ c  ndex ng latency  s < 60s, auto-updat ng never m sses publ c t ets
+   *      Cost:    Absence of publ c t ets may delay protected t ets from be ng searchable for 60s
+   *  (2) Benef : No fa lure or delay from t  protected cluster w ll affect realt   results
+   *      Cost:     f t  protected cluster  ndexes more slowly, auto-update may m ss  s t ets
    *
-   * @param fullArchiveTweets - used solely for generating anchor points, not merged in.
+   * @param fullArch veT ets - used solely for generat ng anchor po nts, not  rged  n.
    */
-  @VisibleForTesting
-  static List<ThriftSearchResult> mergePublicAndProtectedRealtimeResults(
-      int numRequested,
-      EarlybirdResponse realtimeTweets,
-      EarlybirdResponse realtimeProtectedTweets,
-      @Nullable EarlybirdResponse fullArchiveTweets,
+  @V s bleForTest ng
+  stat c L st<Thr ftSearchResult>  rgePubl cAndProtectedRealt  Results(
+       nt numRequested,
+      Earlyb rdResponse realt  T ets,
+      Earlyb rdResponse realt  ProtectedT ets,
+      @Nullable Earlyb rdResponse fullArch veT ets,
       Clock clock) {
-    // See which results will actually be used
-    boolean isRealtimeUsable = EarlybirdResponseUtil.hasResults(realtimeTweets);
-    boolean isArchiveUsable = EarlybirdResponseUtil.hasResults(fullArchiveTweets);
-    boolean isProtectedUsable = EarlybirdResponseUtil.hasResults(realtimeProtectedTweets);
+    // See wh ch results w ll actually be used
+    boolean  sRealt  Usable = Earlyb rdResponseUt l.hasResults(realt  T ets);
+    boolean  sArch veUsable = Earlyb rdResponseUt l.hasResults(fullArch veT ets);
+    boolean  sProtectedUsable = Earlyb rdResponseUt l.hasResults(realt  ProtectedT ets);
 
-    long minId = Long.MIN_VALUE;
-    long maxId = Long.MAX_VALUE;
-    if (isRealtimeUsable) {
-      // Determine the actual upper/lower bounds on the tweet id
-      if (realtimeTweets.getSearchResults().isSetMinSearchedStatusID()) {
-        minId = realtimeTweets.getSearchResults().getMinSearchedStatusID();
+    long m n d = Long.M N_VALUE;
+    long max d = Long.MAX_VALUE;
+     f ( sRealt  Usable) {
+      // Determ ne t  actual upper/lo r bounds on t  t et  d
+       f (realt  T ets.getSearchResults(). sSetM nSearc dStatus D()) {
+        m n d = realt  T ets.getSearchResults().getM nSearc dStatus D();
       }
-      if (realtimeTweets.getSearchResults().isSetMaxSearchedStatusID()) {
-        maxId = realtimeTweets.getSearchResults().getMaxSearchedStatusID();
+       f (realt  T ets.getSearchResults(). sSetMaxSearc dStatus D()) {
+        max d = realt  T ets.getSearchResults().getMaxSearc dStatus D();
       }
 
-      int justRight = realtimeTweets.getSearchResults().getResultsSize();
-      if (isArchiveUsable) {
-        justRight += fullArchiveTweets.getSearchResults().getResultsSize();
-        if (fullArchiveTweets.getSearchResults().isSetMinSearchedStatusID()) {
-          long fullArchiveMinId = fullArchiveTweets.getSearchResults().getMinSearchedStatusID();
-          if (fullArchiveMinId <= minId) {
-            minId = fullArchiveMinId;
+       nt justR ght = realt  T ets.getSearchResults().getResultsS ze();
+       f ( sArch veUsable) {
+        justR ght += fullArch veT ets.getSearchResults().getResultsS ze();
+         f (fullArch veT ets.getSearchResults(). sSetM nSearc dStatus D()) {
+          long fullArch veM n d = fullArch veT ets.getSearchResults().getM nSearc dStatus D();
+           f (fullArch veM n d <= m n d) {
+            m n d = fullArch veM n d;
           } else {
-            FULL_ARCHIVE_MIN_ID_GREATER_THAN_REALTIME_MIN_ID.increment();
+            FULL_ARCH VE_M N_ D_GREATER_THAN_REALT ME_M N_ D. ncre nt();
           }
         }
       }
-      if (isProtectedUsable) {
-        for (ThriftSearchResult result : realtimeProtectedTweets.getSearchResults().getResults()) {
-          if (result.getId() >= minId && result.getId() <= maxId) {
-            justRight++;
+       f ( sProtectedUsable) {
+        for (Thr ftSearchResult result : realt  ProtectedT ets.getSearchResults().getResults()) {
+           f (result.get d() >= m n d && result.get d() <= max d) {
+            justR ght++;
           }
         }
       }
-      if (justRight < numRequested) {
-        // Since this is only used as an upper bound, old (pre-2010) ids are still handled correctly
-        maxId = Math.max(
-            maxId,
-            SnowflakeIdParser.generateValidStatusId(
-                clock.nowMillis() - Amount.of(60, Time.SECONDS).as(Time.MILLISECONDS), 0));
+       f (justR ght < numRequested) {
+        // S nce t   s only used as an upper bound, old (pre-2010)  ds are st ll handled correctly
+        max d = Math.max(
+            max d,
+            Snowflake dParser.generateVal dStatus d(
+                clock.nowM ll s() - Amount.of(60, T  .SECONDS).as(T  .M LL SECONDS), 0));
       }
     }
 
-    List<ThriftSearchResult> mergedSearchResults = Lists.newArrayListWithCapacity(numRequested * 2);
+    L st<Thr ftSearchResult>  rgedSearchResults = L sts.newArrayL stW hCapac y(numRequested * 2);
 
-    // Add valid tweets in order of priority: protected, then realtime
-    // Only add results that are within range (that check only matters for protected)
-    if (isProtectedUsable) {
-      EarlybirdResponseMergeUtil.markWithTweetSource(
-          realtimeProtectedTweets.getSearchResults().getResults(),
-          ThriftTweetSource.REALTIME_PROTECTED_CLUSTER);
-      for (ThriftSearchResult result : realtimeProtectedTweets.getSearchResults().getResults()) {
-        if (result.getId() <= maxId && result.getId() >= minId) {
-          mergedSearchResults.add(result);
+    // Add val d t ets  n order of pr or y: protected, t n realt  
+    // Only add results that are w h n range (that c ck only matters for protected)
+     f ( sProtectedUsable) {
+      Earlyb rdResponse rgeUt l.markW hT etS ce(
+          realt  ProtectedT ets.getSearchResults().getResults(),
+          Thr ftT etS ce.REALT ME_PROTECTED_CLUSTER);
+      for (Thr ftSearchResult result : realt  ProtectedT ets.getSearchResults().getResults()) {
+         f (result.get d() <= max d && result.get d() >= m n d) {
+           rgedSearchResults.add(result);
         }
       }
     }
 
-    if (isRealtimeUsable) {
-      EarlybirdResponseMergeUtil.addResultsToList(
-          mergedSearchResults, realtimeTweets, ThriftTweetSource.REALTIME_CLUSTER);
+     f ( sRealt  Usable) {
+      Earlyb rdResponse rgeUt l.addResultsToL st(
+           rgedSearchResults, realt  T ets, Thr ftT etS ce.REALT ME_CLUSTER);
     }
 
-    // Set the minSearchedStatusID and maxSearchedStatusID on the protected response to the
-    // minId and maxId that were used to trim the protected results.
-    // This is needed in order to correctly set these IDs on the merged response.
-    ThriftSearchResults protectedResults =
-      EarlybirdResponseUtil.getResults(realtimeProtectedTweets);
-    if ((protectedResults != null)
-        && protectedResults.isSetMinSearchedStatusID()
-        && (protectedResults.getMinSearchedStatusID() < minId)) {
-      protectedResults.setMinSearchedStatusID(minId);
+    // Set t  m nSearc dStatus D and maxSearc dStatus D on t  protected response to t 
+    // m n d and max d that  re used to tr m t  protected results.
+    // T   s needed  n order to correctly set t se  Ds on t   rged response.
+    Thr ftSearchResults protectedResults =
+      Earlyb rdResponseUt l.getResults(realt  ProtectedT ets);
+     f ((protectedResults != null)
+        && protectedResults. sSetM nSearc dStatus D()
+        && (protectedResults.getM nSearc dStatus D() < m n d)) {
+      protectedResults.setM nSearc dStatus D(m n d);
     }
-    if ((protectedResults != null)
-        && protectedResults.isSetMaxSearchedStatusID()
-        && (protectedResults.getMaxSearchedStatusID() > maxId)) {
-      realtimeProtectedTweets.getSearchResults().setMaxSearchedStatusID(maxId);
+     f ((protectedResults != null)
+        && protectedResults. sSetMaxSearc dStatus D()
+        && (protectedResults.getMaxSearc dStatus D() > max d)) {
+      realt  ProtectedT ets.getSearchResults().setMaxSearc dStatus D(max d);
     }
 
-    return mergedSearchResults;
+    return  rgedSearchResults;
   }
 
   /**
-   * Merges the debug strings of the given cluster responses.
+   *  rges t  debug str ngs of t  g ven cluster responses.
    *
-   * @param realtimeResponse The response from the realtime cluster.
-   * @param protectedResponse The response from the protected cluster.
-   * @param fullArchiveResponse The response from the full archive cluster.
-   * @return The merged debug string.
+   * @param realt  Response T  response from t  realt   cluster.
+   * @param protectedResponse T  response from t  protected cluster.
+   * @param fullArch veResponse T  response from t  full arch ve cluster.
+   * @return T   rged debug str ng.
    */
-  public static String mergeClusterDebugStrings(@Nullable EarlybirdResponse realtimeResponse,
-                                                @Nullable EarlybirdResponse protectedResponse,
-                                                @Nullable EarlybirdResponse fullArchiveResponse) {
-    StringBuilder sb = new StringBuilder();
-    if ((realtimeResponse != null) && realtimeResponse.isSetDebugString()) {
-      sb.append("Realtime response: ").append(realtimeResponse.getDebugString());
+  publ c stat c Str ng  rgeClusterDebugStr ngs(@Nullable Earlyb rdResponse realt  Response,
+                                                @Nullable Earlyb rdResponse protectedResponse,
+                                                @Nullable Earlyb rdResponse fullArch veResponse) {
+    Str ngBu lder sb = new Str ngBu lder();
+     f ((realt  Response != null) && realt  Response. sSetDebugStr ng()) {
+      sb.append("Realt   response: ").append(realt  Response.getDebugStr ng());
     }
-    if ((protectedResponse != null) && protectedResponse.isSetDebugString()) {
-      if (sb.length() > 0) {
+     f ((protectedResponse != null) && protectedResponse. sSetDebugStr ng()) {
+       f (sb.length() > 0) {
         sb.append("\n");
       }
-      sb.append("Protected response: ").append(protectedResponse.getDebugString());
+      sb.append("Protected response: ").append(protectedResponse.getDebugStr ng());
     }
-    if ((fullArchiveResponse != null) && fullArchiveResponse.isSetDebugString()) {
-      if (sb.length() > 0) {
+     f ((fullArch veResponse != null) && fullArch veResponse. sSetDebugStr ng()) {
+       f (sb.length() > 0) {
         sb.append("\n");
       }
-      sb.append("Full archive response: ").append(fullArchiveResponse.getDebugString());
+      sb.append("Full arch ve response: ").append(fullArch veResponse.getDebugStr ng());
     }
 
-    if (sb.length() == 0) {
+     f (sb.length() == 0) {
       return null;
     }
-    return sb.toString();
+    return sb.toStr ng();
   }
 
   /**
-   * Sets the minSearchedStatusID field on the merged response.
+   * Sets t  m nSearc dStatus D f eld on t   rged response.
    *
-   * @param mergedResponse The merged response.
-   * @param fullArchiveResponse The full archive response.
-   * @param resultsTrimmed Whether the merged response results were trimmed.
+   * @param  rgedResponse T   rged response.
+   * @param fullArch veResponse T  full arch ve response.
+   * @param resultsTr m d W t r t   rged response results  re tr m d.
    */
-  private void setMinSearchedStatusId(EarlybirdResponse mergedResponse,
-      EarlybirdResponse realtimeResponse,
-      EarlybirdResponse protectedResponse,
-      EarlybirdResponse fullArchiveResponse,
-      boolean resultsTrimmed) {
-    Preconditions.checkNotNull(mergedResponse.getSearchResults());
-    if (resultsTrimmed) {
-      // We got more results that we asked for and we trimmed them.
-      // Set minSearchedStatusID to the ID of the oldest result.
-      ThriftSearchResults searchResults = mergedResponse.getSearchResults();
-      if (searchResults.getResultsSize() > 0) {
-        List<ThriftSearchResult> results = searchResults.getResults();
-        long lastResultId = results.get(results.size() - 1).getId();
-        searchResults.setMinSearchedStatusID(lastResultId);
+  pr vate vo d setM nSearc dStatus d(Earlyb rdResponse  rgedResponse,
+      Earlyb rdResponse realt  Response,
+      Earlyb rdResponse protectedResponse,
+      Earlyb rdResponse fullArch veResponse,
+      boolean resultsTr m d) {
+    Precond  ons.c ckNotNull( rgedResponse.getSearchResults());
+     f (resultsTr m d) {
+      //   got more results that   asked for and   tr m d t m.
+      // Set m nSearc dStatus D to t   D of t  oldest result.
+      Thr ftSearchResults searchResults =  rgedResponse.getSearchResults();
+       f (searchResults.getResultsS ze() > 0) {
+        L st<Thr ftSearchResult> results = searchResults.getResults();
+        long lastResult d = results.get(results.s ze() - 1).get d();
+        searchResults.setM nSearc dStatus D(lastResult d);
       }
       return;
     }
 
-    // We did not get more results that we asked for. Get the min of the minSearchedStatusIDs of
-    // the merged responses.
-    List<Long> minIDs = Lists.newArrayList();
-    if (fullArchiveResponse != null
-        && fullArchiveResponse.isSetSearchResults()
-        && fullArchiveResponse.getSearchResults().isSetMinSearchedStatusID()) {
-      minIDs.add(fullArchiveResponse.getSearchResults().getMinSearchedStatusID());
-      if (mergedResponse.getSearchResults().isSetMinSearchedStatusID()
-          && mergedResponse.getSearchResults().getMinSearchedStatusID()
-          < fullArchiveResponse.getSearchResults().getMinSearchedStatusID()) {
-        invalidMinStatusId.increment();
+    //   d d not get more results that   asked for. Get t  m n of t  m nSearc dStatus Ds of
+    // t   rged responses.
+    L st<Long> m n Ds = L sts.newArrayL st();
+     f (fullArch veResponse != null
+        && fullArch veResponse. sSetSearchResults()
+        && fullArch veResponse.getSearchResults(). sSetM nSearc dStatus D()) {
+      m n Ds.add(fullArch veResponse.getSearchResults().getM nSearc dStatus D());
+       f ( rgedResponse.getSearchResults(). sSetM nSearc dStatus D()
+          &&  rgedResponse.getSearchResults().getM nSearc dStatus D()
+          < fullArch veResponse.getSearchResults().getM nSearc dStatus D()) {
+         nval dM nStatus d. ncre nt();
       }
     }
 
-    if (protectedResponse != null
-        && !EarlybirdResponseUtil.hasResults(realtimeResponse)
-        && EarlybirdResponseUtil.hasResults(protectedResponse)
-        && protectedResponse.getSearchResults().isSetMinSearchedStatusID()) {
-      minIDs.add(protectedResponse.getSearchResults().getMinSearchedStatusID());
+     f (protectedResponse != null
+        && !Earlyb rdResponseUt l.hasResults(realt  Response)
+        && Earlyb rdResponseUt l.hasResults(protectedResponse)
+        && protectedResponse.getSearchResults(). sSetM nSearc dStatus D()) {
+      m n Ds.add(protectedResponse.getSearchResults().getM nSearc dStatus D());
     }
 
-    if (mergedResponse.getSearchResults().isSetMinSearchedStatusID()) {
-      minIDs.add(mergedResponse.getSearchResults().getMinSearchedStatusID());
+     f ( rgedResponse.getSearchResults(). sSetM nSearc dStatus D()) {
+      m n Ds.add( rgedResponse.getSearchResults().getM nSearc dStatus D());
     }
 
-    if (!minIDs.isEmpty()) {
-      mergedResponse.getSearchResults().setMinSearchedStatusID(Collections.min(minIDs));
+     f (!m n Ds. sEmpty()) {
+       rgedResponse.getSearchResults().setM nSearc dStatus D(Collect ons.m n(m n Ds));
     } else {
-      noMinIds.increment();
+      noM n ds. ncre nt();
     }
   }
 
   /**
-   * Sets the maxSearchedStatusID field on the merged response.
+   * Sets t  maxSearc dStatus D f eld on t   rged response.
    *
-   * @param mergedResponse The merged response.
-   * @param fullArchiveResponse The full archive response.
+   * @param  rgedResponse T   rged response.
+   * @param fullArch veResponse T  full arch ve response.
    */
-  private void setMaxSearchedStatusId(EarlybirdResponse mergedResponse,
-      EarlybirdResponse realtimeResponse,
-      EarlybirdResponse protectedResponse,
-      EarlybirdResponse fullArchiveResponse) {
+  pr vate vo d setMaxSearc dStatus d(Earlyb rdResponse  rgedResponse,
+      Earlyb rdResponse realt  Response,
+      Earlyb rdResponse protectedResponse,
+      Earlyb rdResponse fullArch veResponse) {
 
-    Preconditions.checkNotNull(mergedResponse.getSearchResults());
-    List<Long> maxIDs = Lists.newArrayList();
-    if (fullArchiveResponse != null
-        && fullArchiveResponse.isSetSearchResults()
-        && fullArchiveResponse.getSearchResults().isSetMaxSearchedStatusID()) {
-      maxIDs.add(fullArchiveResponse.getSearchResults().getMaxSearchedStatusID());
-      if (mergedResponse.getSearchResults().isSetMaxSearchedStatusID()
-          && fullArchiveResponse.getSearchResults().getMaxSearchedStatusID()
-          > mergedResponse.getSearchResults().getMaxSearchedStatusID()) {
-        invalidMaxStatusId.increment();
+    Precond  ons.c ckNotNull( rgedResponse.getSearchResults());
+    L st<Long> max Ds = L sts.newArrayL st();
+     f (fullArch veResponse != null
+        && fullArch veResponse. sSetSearchResults()
+        && fullArch veResponse.getSearchResults(). sSetMaxSearc dStatus D()) {
+      max Ds.add(fullArch veResponse.getSearchResults().getMaxSearc dStatus D());
+       f ( rgedResponse.getSearchResults(). sSetMaxSearc dStatus D()
+          && fullArch veResponse.getSearchResults().getMaxSearc dStatus D()
+          >  rgedResponse.getSearchResults().getMaxSearc dStatus D()) {
+         nval dMaxStatus d. ncre nt();
       }
     }
 
-    if (protectedResponse != null
-        && !EarlybirdResponseUtil.hasResults(realtimeResponse)
-        && EarlybirdResponseUtil.hasResults(protectedResponse)
-        && protectedResponse.getSearchResults().isSetMaxSearchedStatusID()) {
+     f (protectedResponse != null
+        && !Earlyb rdResponseUt l.hasResults(realt  Response)
+        && Earlyb rdResponseUt l.hasResults(protectedResponse)
+        && protectedResponse.getSearchResults(). sSetMaxSearc dStatus D()) {
 
-      maxIDs.add(protectedResponse.getSearchResults().getMaxSearchedStatusID());
+      max Ds.add(protectedResponse.getSearchResults().getMaxSearc dStatus D());
     }
 
-    if (mergedResponse.getSearchResults().isSetMaxSearchedStatusID()) {
-      maxIDs.add(mergedResponse.getSearchResults().getMaxSearchedStatusID());
+     f ( rgedResponse.getSearchResults(). sSetMaxSearc dStatus D()) {
+      max Ds.add( rgedResponse.getSearchResults().getMaxSearc dStatus D());
     }
 
-    ThriftSearchResults searchResults = mergedResponse.getSearchResults();
-    if (searchResults.getResultsSize() > 0) {
-      List<ThriftSearchResult> results = searchResults.getResults();
-      maxIDs.add(results.get(0).getId());
+    Thr ftSearchResults searchResults =  rgedResponse.getSearchResults();
+     f (searchResults.getResultsS ze() > 0) {
+      L st<Thr ftSearchResult> results = searchResults.getResults();
+      max Ds.add(results.get(0).get d());
     }
 
-    if (!maxIDs.isEmpty()) {
-      mergedResponse.getSearchResults().setMaxSearchedStatusID(Collections.max(maxIDs));
+     f (!max Ds. sEmpty()) {
+       rgedResponse.getSearchResults().setMaxSearc dStatus D(Collect ons.max(max Ds));
     } else {
-      noMaxIds.increment();
+      noMax ds. ncre nt();
     }
   }
 
   /**
-   * Handles exceptions thrown while merging responses. Timeout exceptions are converted to
-   * SERVER_TIMEOUT_ERROR responses. All other exceptions are converted to PERSISTENT_ERROR
+   * Handles except ons thrown wh le  rg ng responses. T  out except ons are converted to
+   * SERVER_T MEOUT_ERROR responses. All ot r except ons are converted to PERS STENT_ERROR
    * responses.
    */
-  private Future<EarlybirdResponse> handleResponseException(
-      Future<EarlybirdResponse> responseFuture, final String debugMsg) {
+  pr vate Future<Earlyb rdResponse> handleResponseExcept on(
+      Future<Earlyb rdResponse> responseFuture, f nal Str ng debugMsg) {
     return responseFuture.handle(
-        new Function<Throwable, EarlybirdResponse>() {
-          @Override
-          public EarlybirdResponse apply(Throwable t) {
-            EarlybirdResponseCode responseCode = EarlybirdResponseCode.PERSISTENT_ERROR;
-            if (FinagleUtil.isTimeoutException(t)) {
-              responseCode = EarlybirdResponseCode.SERVER_TIMEOUT_ERROR;
+        new Funct on<Throwable, Earlyb rdResponse>() {
+          @Overr de
+          publ c Earlyb rdResponse apply(Throwable t) {
+            Earlyb rdResponseCode responseCode = Earlyb rdResponseCode.PERS STENT_ERROR;
+             f (F nagleUt l. sT  outExcept on(t)) {
+              responseCode = Earlyb rdResponseCode.SERVER_T MEOUT_ERROR;
             }
-            EarlybirdResponse response = new EarlybirdResponse(responseCode, 0);
-            response.setDebugString(debugMsg + "\n" + t);
+            Earlyb rdResponse response = new Earlyb rdResponse(responseCode, 0);
+            response.setDebugStr ng(debugMsg + "\n" + t);
             return response;
           }
         });

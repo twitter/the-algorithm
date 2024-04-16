@@ -1,19 +1,19 @@
-package com.twitter.tweetypie.repository
+package com.tw ter.t etyp e.repos ory
 
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.tweetypie.UserId
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.t etyp e.User d
 
-object StratoSuperFollowEligibleRepository {
-  type Type = UserId => Stitch[Boolean]
+object StratoSuperFollowEl g bleRepos ory {
+  type Type = User d => St ch[Boolean]
 
-  val column = "audiencerewards/audienceRewardsService/getSuperFollowEligibility.User"
+  val column = "aud encerewards/aud enceRewardsServ ce/getSuperFollowEl g b l y.User"
 
-  def apply(client: StratoClient): Type = {
-    val fetcher: Fetcher[UserId, Unit, Boolean] =
-      client.fetcher[UserId, Boolean](column)
+  def apply(cl ent: StratoCl ent): Type = {
+    val fetc r: Fetc r[User d, Un , Boolean] =
+      cl ent.fetc r[User d, Boolean](column)
 
-    userId => fetcher.fetch(userId).map(_.v.getOrElse(false))
+    user d => fetc r.fetch(user d).map(_.v.getOrElse(false))
   }
 }

@@ -1,17 +1,17 @@
 syntax = "proto3";
 
-package tensorflow.serving;
+package tensorflow.serv ng;
 
-import "tensorflow_serving/apis/model.proto";
-import "tensorflow_serving/config/logging_config.proto";
+ mport "tensorflow_serv ng/ap s/model.proto";
+ mport "tensorflow_serv ng/conf g/logg ng_conf g.proto";
 
-option cc_enable_arenas = true;
+opt on cc_enable_arenas = true;
 
-// Metadata logged along with the request logs.
-message LogMetadata {
+//  tadata logged along w h t  request logs.
+ ssage Log tadata {
   ModelSpec model_spec = 1;
-  SamplingConfig sampling_config = 2;
-  // List of tags used to load the relevant MetaGraphDef from SavedModel.
-  repeated string saved_model_tags = 3;
-  // TODO(b/33279154): Add more metadata as mentioned in the bug.
+  Sampl ngConf g sampl ng_conf g = 2;
+  // L st of tags used to load t  relevant  taGraphDef from SavedModel.
+  repeated str ng saved_model_tags = 3;
+  // TODO(b/33279154): Add more  tadata as  nt oned  n t  bug.
 }

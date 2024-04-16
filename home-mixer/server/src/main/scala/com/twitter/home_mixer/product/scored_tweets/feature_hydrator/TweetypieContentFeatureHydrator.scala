@@ -1,144 +1,144 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator
 
-import com.twitter.escherbird.{thriftscala => esb}
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.model.HomeFeatures.MediaUnderstandingAnnotationIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TweetypieContentRepository
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.content.ContentFeatureAdapter
-import com.twitter.home_mixer.util.ObservedKeyValueResultHandler
-import com.twitter.home_mixer.util.tweetypie.content.FeatureExtractionHelper
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.servo.keyvalue.KeyValueResult
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.prediction.common.util.MediaUnderstandingAnnotations
-import com.twitter.tweetypie.{thriftscala => tp}
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
+ mport com.tw ter.esc rb rd.{thr ftscala => esb}
+ mport com.tw ter.f nagle.stats.Stat
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ho _m xer.model.Ho Features. d aUnderstand ngAnnotat on dsFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.S ceT et dFeature
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.T etyp eContentRepos ory
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.adapters.content.ContentFeatureAdapter
+ mport com.tw ter.ho _m xer.ut l.ObservedKeyValueResultHandler
+ mport com.tw ter.ho _m xer.ut l.t etyp e.content.FeatureExtract on lper
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.FeatureW hDefaultOnFa lure
+ mport com.tw ter.product_m xer.core.feature.datarecord.DataRecord nAFeature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BulkCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.ut l.OffloadFuturePools
+ mport com.tw ter.servo.keyvalue.KeyValueResult
+ mport com.tw ter.servo.repos ory.KeyValueRepos ory
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.pred ct on.common.ut l. d aUnderstand ngAnnotat ons
+ mport com.tw ter.t etyp e.{thr ftscala => tp}
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.Try
+ mport javax. nject. nject
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
+ mport scala.collect on.JavaConverters._
 
-object TweetypieContentDataRecordFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+object T etyp eContentDataRecordFeature
+    extends DataRecord nAFeature[T etCand date]
+    w h FeatureW hDefaultOnFa lure[T etCand date, DataRecord] {
+  overr de def defaultValue: DataRecord = new DataRecord()
 }
 
-@Singleton
-class TweetypieContentFeatureHydrator @Inject() (
-  @Named(TweetypieContentRepository) client: KeyValueRepository[Seq[Long], Long, tp.Tweet],
-  override val statsReceiver: StatsReceiver)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate]
-    with ObservedKeyValueResultHandler {
+@S ngleton
+class T etyp eContentFeatureHydrator @ nject() (
+  @Na d(T etyp eContentRepos ory) cl ent: KeyValueRepos ory[Seq[Long], Long, tp.T et],
+  overr de val statsRece ver: StatsRece ver)
+    extends BulkCand dateFeatureHydrator[P pel neQuery, T etCand date]
+    w h ObservedKeyValueResultHandler {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("TweetypieContent")
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er("T etyp eContent")
 
-  override val features: Set[Feature[_, _]] = Set(
-    MediaUnderstandingAnnotationIdsFeature,
-    TweetypieContentDataRecordFeature
+  overr de val features: Set[Feature[_, _]] = Set(
+     d aUnderstand ngAnnotat on dsFeature,
+    T etyp eContentDataRecordFeature
   )
 
-  override val statScope: String = identifier.toString
+  overr de val statScope: Str ng =  dent f er.toStr ng
 
-  private val bulkRequestLatencyStat =
-    statsReceiver.scope(statScope).scope("bulkRequest").stat("latency_ms")
-  private val postTransformerLatencyStat =
-    statsReceiver.scope(statScope).scope("postTransformer").stat("latency_ms")
-  private val bulkPostTransformerLatencyStat =
-    statsReceiver.scope(statScope).scope("bulkPostTransformer").stat("latency_ms")
+  pr vate val bulkRequestLatencyStat =
+    statsRece ver.scope(statScope).scope("bulkRequest").stat("latency_ms")
+  pr vate val postTransfor rLatencyStat =
+    statsRece ver.scope(statScope).scope("postTransfor r").stat("latency_ms")
+  pr vate val bulkPostTransfor rLatencyStat =
+    statsRece ver.scope(statScope).scope("bulkPostTransfor r").stat("latency_ms")
 
-  private val DefaultDataRecord: DataRecord = new DataRecord()
+  pr vate val DefaultDataRecord: DataRecord = new DataRecord()
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
-    val tweetIdsToHydrate = candidates.map(getCandidateOriginalTweetId).distinct
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
+    val t et dsToHydrate = cand dates.map(getCand dateOr g nalT et d).d st nct
 
-    val response: Future[KeyValueResult[Long, tp.Tweet]] = Stat.timeFuture(bulkRequestLatencyStat) {
-      if (tweetIdsToHydrate.isEmpty) Future.value(KeyValueResult.empty)
-      else client(tweetIdsToHydrate)
+    val response: Future[KeyValueResult[Long, tp.T et]] = Stat.t  Future(bulkRequestLatencyStat) {
+       f (t et dsToHydrate. sEmpty) Future.value(KeyValueResult.empty)
+      else cl ent(t et dsToHydrate)
     }
 
     response.flatMap { result =>
-      Stat.timeFuture(bulkPostTransformerLatencyStat) {
+      Stat.t  Future(bulkPostTransfor rLatencyStat) {
         OffloadFuturePools
-          .parallelize[CandidateWithFeatures[TweetCandidate], Try[(Seq[Long], DataRecord)]](
-            candidates,
-            parTransformer(result, _),
-            parallelism = 32,
+          .parallel ze[Cand dateW hFeatures[T etCand date], Try[(Seq[Long], DataRecord)]](
+            cand dates,
+            parTransfor r(result, _),
+            parallel sm = 32,
             default = Return((Seq.empty, DefaultDataRecord))
           ).map {
             _.map {
               case Return(result) =>
-                FeatureMapBuilder()
-                  .add(MediaUnderstandingAnnotationIdsFeature, result._1)
-                  .add(TweetypieContentDataRecordFeature, result._2)
-                  .build()
+                FeatureMapBu lder()
+                  .add( d aUnderstand ngAnnotat on dsFeature, result._1)
+                  .add(T etyp eContentDataRecordFeature, result._2)
+                  .bu ld()
               case Throw(e) =>
-                FeatureMapBuilder()
-                  .add(MediaUnderstandingAnnotationIdsFeature, Throw(e))
-                  .add(TweetypieContentDataRecordFeature, Throw(e))
-                  .build()
+                FeatureMapBu lder()
+                  .add( d aUnderstand ngAnnotat on dsFeature, Throw(e))
+                  .add(T etyp eContentDataRecordFeature, Throw(e))
+                  .bu ld()
             }
           }
       }
     }
   }
 
-  private def parTransformer(
-    result: KeyValueResult[Long, tp.Tweet],
-    candidate: CandidateWithFeatures[TweetCandidate]
+  pr vate def parTransfor r(
+    result: KeyValueResult[Long, tp.T et],
+    cand date: Cand dateW hFeatures[T etCand date]
   ): Try[(Seq[Long], DataRecord)] = {
-    val originalTweetId = Some(getCandidateOriginalTweetId(candidate))
-    val value = observedGet(key = originalTweetId, keyValueResult = result)
-    Stat.time(postTransformerLatencyStat)(postTransformer(value))
+    val or g nalT et d = So (getCand dateOr g nalT et d(cand date))
+    val value = observedGet(key = or g nalT et d, keyValueResult = result)
+    Stat.t  (postTransfor rLatencyStat)(postTransfor r(value))
   }
 
-  private def postTransformer(
-    result: Try[Option[tp.Tweet]]
+  pr vate def postTransfor r(
+    result: Try[Opt on[tp.T et]]
   ): Try[(Seq[Long], DataRecord)] = {
-    result.map { tweet =>
-      val transformedValue = tweet.map(FeatureExtractionHelper.extractFeatures)
-      val semanticAnnotations = transformedValue
+    result.map { t et =>
+      val transfor dValue = t et.map(FeatureExtract on lper.extractFeatures)
+      val semant cAnnotat ons = transfor dValue
         .flatMap { contentFeatures =>
-          contentFeatures.semanticCoreAnnotations.map {
-            getNonSensitiveHighRecallMediaUnderstandingAnnotationEntityIds
+          contentFeatures.semant cCoreAnnotat ons.map {
+            getNonSens  veH ghRecall d aUnderstand ngAnnotat onEnt y ds
           }
         }.getOrElse(Seq.empty)
-      val dataRecord = ContentFeatureAdapter.adaptToDataRecords(transformedValue).asScala.head
-      (semanticAnnotations, dataRecord)
+      val dataRecord = ContentFeatureAdapter.adaptToDataRecords(transfor dValue).asScala. ad
+      (semant cAnnotat ons, dataRecord)
     }
   }
 
-  private def getCandidateOriginalTweetId(
-    candidate: CandidateWithFeatures[TweetCandidate]
+  pr vate def getCand dateOr g nalT et d(
+    cand date: Cand dateW hFeatures[T etCand date]
   ): Long = {
-    candidate.features
-      .getOrElse(SourceTweetIdFeature, None).getOrElse(candidate.candidate.id)
+    cand date.features
+      .getOrElse(S ceT et dFeature, None).getOrElse(cand date.cand date. d)
   }
 
-  private def getNonSensitiveHighRecallMediaUnderstandingAnnotationEntityIds(
-    semanticCoreAnnotations: Seq[esb.TweetEntityAnnotation]
+  pr vate def getNonSens  veH ghRecall d aUnderstand ngAnnotat onEnt y ds(
+    semant cCoreAnnotat ons: Seq[esb.T etEnt yAnnotat on]
   ): Seq[Long] =
-    semanticCoreAnnotations
-      .filter(MediaUnderstandingAnnotations.isEligibleNonSensitiveHighRecallMUAnnotation)
-      .map(_.entityId)
+    semant cCoreAnnotat ons
+      .f lter( d aUnderstand ngAnnotat ons. sEl g bleNonSens  veH ghRecallMUAnnotat on)
+      .map(_.ent y d)
 }

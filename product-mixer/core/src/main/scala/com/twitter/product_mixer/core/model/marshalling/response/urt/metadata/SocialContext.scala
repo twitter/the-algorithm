@@ -1,49 +1,49 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata
 
-sealed trait SocialContext
+sealed tra  Soc alContext
 
-trait HasSocialContext {
-  def socialContext: Option[SocialContext]
+tra  HasSoc alContext {
+  def soc alContext: Opt on[Soc alContext]
 }
 
-sealed trait GeneralContextType
-case object LikeGeneralContextType extends GeneralContextType
+sealed tra  GeneralContextType
+case object L keGeneralContextType extends GeneralContextType
 case object FollowGeneralContextType extends GeneralContextType
-case object MomentGeneralContextType extends GeneralContextType
+case object Mo ntGeneralContextType extends GeneralContextType
 case object ReplyGeneralContextType extends GeneralContextType
-case object ConversationGeneralContextType extends GeneralContextType
-case object PinGeneralContextType extends GeneralContextType
+case object Conversat onGeneralContextType extends GeneralContextType
+case object P nGeneralContextType extends GeneralContextType
 case object TextOnlyGeneralContextType extends GeneralContextType
-case object FacePileGeneralContextType extends GeneralContextType
-case object MegaPhoneGeneralContextType extends GeneralContextType
-case object BirdGeneralContextType extends GeneralContextType
+case object FaceP leGeneralContextType extends GeneralContextType
+case object  gaPhoneGeneralContextType extends GeneralContextType
+case object B rdGeneralContextType extends GeneralContextType
 case object FeedbackGeneralContextType extends GeneralContextType
-case object TopicGeneralContextType extends GeneralContextType
-case object ListGeneralContextType extends GeneralContextType
-case object RetweetGeneralContextType extends GeneralContextType
-case object LocationGeneralContextType extends GeneralContextType
-case object CommunityGeneralContextType extends GeneralContextType
+case object Top cGeneralContextType extends GeneralContextType
+case object L stGeneralContextType extends GeneralContextType
+case object Ret etGeneralContextType extends GeneralContextType
+case object Locat onGeneralContextType extends GeneralContextType
+case object Commun yGeneralContextType extends GeneralContextType
 case object NewUserGeneralContextType extends GeneralContextType
-case object SmartblockExpirationGeneralContextType extends GeneralContextType
-case object TrendingGeneralContextType extends GeneralContextType
+case object SmartblockExp rat onGeneralContextType extends GeneralContextType
+case object Trend ngGeneralContextType extends GeneralContextType
 case object SparkleGeneralContextType extends GeneralContextType
 case object SpacesGeneralContextType extends GeneralContextType
-case object ReplyPinGeneralContextType extends GeneralContextType
+case object ReplyP nGeneralContextType extends GeneralContextType
 
 case class GeneralContext(
   contextType: GeneralContextType,
-  text: String,
-  url: Option[String],
-  contextImageUrls: Option[List[String]],
-  landingUrl: Option[Url])
-    extends SocialContext
+  text: Str ng,
+  url: Opt on[Str ng],
+  context mageUrls: Opt on[L st[Str ng]],
+  land ngUrl: Opt on[Url])
+    extends Soc alContext
 
-sealed trait TopicContextFunctionalityType
-case object BasicTopicContextFunctionalityType extends TopicContextFunctionalityType
-case object RecommendationTopicContextFunctionalityType extends TopicContextFunctionalityType
-case object RecWithEducationTopicContextFunctionalityType extends TopicContextFunctionalityType
+sealed tra  Top cContextFunct onal yType
+case object Bas cTop cContextFunct onal yType extends Top cContextFunct onal yType
+case object Recom ndat onTop cContextFunct onal yType extends Top cContextFunct onal yType
+case object RecW hEducat onTop cContextFunct onal yType extends Top cContextFunct onal yType
 
-case class TopicContext(
-  topicId: String,
-  functionalityType: Option[TopicContextFunctionalityType])
-    extends SocialContext
+case class Top cContext(
+  top c d: Str ng,
+  funct onal yType: Opt on[Top cContextFunct onal yType])
+    extends Soc alContext

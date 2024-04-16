@@ -1,44 +1,44 @@
-package com.twitter.cr_mixer.module.thrift_client
+package com.tw ter.cr_m xer.module.thr ft_cl ent
 
-import com.twitter.app.Flag
-import com.twitter.cr_mixer.module.core.TimeoutConfigModule.UtegClientTimeoutFlagName
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.service.ReqRep
-import com.twitter.finagle.service.ResponseClass
-import com.twitter.finagle.service.RetryBudget
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.UserTweetEntityGraph
-import com.twitter.util.Duration
-import com.twitter.util.Throw
+ mport com.tw ter.app.Flag
+ mport com.tw ter.cr_m xer.module.core.T  outConf gModule.UtegCl entT  outFlagNa 
+ mport com.tw ter.f nagle.Thr ftMux
+ mport com.tw ter.f nagle.mux.Cl entD scardedRequestExcept on
+ mport com.tw ter.f nagle.serv ce.ReqRep
+ mport com.tw ter.f nagle.serv ce.ResponseClass
+ mport com.tw ter.f nagle.serv ce.RetryBudget
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport com.tw ter. nject. njector
+ mport com.tw ter. nject.thr ft.modules.Thr ft thodBu lderCl entModule
+ mport com.tw ter.recos.user_t et_ent y_graph.thr ftscala.UserT etEnt yGraph
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Throw
 
-object UserTweetEntityGraphClientModule
-    extends ThriftMethodBuilderClientModule[
-      UserTweetEntityGraph.ServicePerEndpoint,
-      UserTweetEntityGraph.MethodPerEndpoint
+object UserT etEnt yGraphCl entModule
+    extends Thr ft thodBu lderCl entModule[
+      UserT etEnt yGraph.Serv cePerEndpo nt,
+      UserT etEnt yGraph. thodPerEndpo nt
     ]
-    with MtlsClient {
+    w h MtlsCl ent {
 
-  override val label = "user-tweet-entity-graph"
-  override val dest = "/s/cassowary/user_tweet_entity_graph"
-  private val userTweetEntityGraphClientTimeout: Flag[Duration] =
-    flag[Duration](UtegClientTimeoutFlagName, "user tweet entity graph client timeout")
-  override def requestTimeout: Duration = userTweetEntityGraphClientTimeout()
+  overr de val label = "user-t et-ent y-graph"
+  overr de val dest = "/s/cassowary/user_t et_ent y_graph"
+  pr vate val userT etEnt yGraphCl entT  out: Flag[Durat on] =
+    flag[Durat on](UtegCl entT  outFlagNa , "user t et ent y graph cl ent t  out")
+  overr de def requestT  out: Durat on = userT etEnt yGraphCl entT  out()
 
-  override def retryBudget: RetryBudget = RetryBudget.Empty
+  overr de def retryBudget: RetryBudget = RetryBudget.Empty
 
-  override def configureThriftMuxClient(
-    injector: Injector,
-    client: ThriftMux.Client
-  ): ThriftMux.Client =
+  overr de def conf gureThr ftMuxCl ent(
+     njector:  njector,
+    cl ent: Thr ftMux.Cl ent
+  ): Thr ftMux.Cl ent =
     super
-      .configureThriftMuxClient(injector, client)
-      .withStatsReceiver(injector.instance[StatsReceiver].scope("clnt"))
-      .withResponseClassifier {
-        case ReqRep(_, Throw(_: ClientDiscardedRequestException)) => ResponseClass.Ignorable
+      .conf gureThr ftMuxCl ent( njector, cl ent)
+      .w hStatsRece ver( njector. nstance[StatsRece ver].scope("clnt"))
+      .w hResponseClass f er {
+        case ReqRep(_, Throw(_: Cl entD scardedRequestExcept on)) => ResponseClass. gnorable
       }
 
 }

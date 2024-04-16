@@ -1,29 +1,29 @@
-package com.twitter.home_mixer.module
+package com.tw ter.ho _m xer.module
 
-import com.twitter.finatra.thrift.exceptions.ExceptionMapper
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.util.logging.Logging
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ProductDisabled
-import com.twitter.scrooge.ThriftException
-import com.twitter.util.Future
-import javax.inject.Singleton
+ mport com.tw ter.f natra.thr ft.except ons.Except onMapper
+ mport com.tw ter.ho _m xer.{thr ftscala => t}
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.ProductD sabled
+ mport com.tw ter.scrooge.Thr ftExcept on
+ mport com.tw ter.ut l.Future
+ mport javax. nject.S ngleton
 
-@Singleton
-class PipelineFailureExceptionMapper
-    extends ExceptionMapper[PipelineFailure, ThriftException]
-    with Logging {
+@S ngleton
+class P pel neFa lureExcept onMapper
+    extends Except onMapper[P pel neFa lure, Thr ftExcept on]
+    w h Logg ng {
 
-  def handleException(throwable: PipelineFailure): Future[ThriftException] = {
+  def handleExcept on(throwable: P pel neFa lure): Future[Thr ftExcept on] = {
     throwable match {
-      // SliceService (unlike UrtService) throws an exception when the requested product is disabled
-      case PipelineFailure(ProductDisabled, reason, _, _) =>
-        Future.exception(
-          t.ValidationExceptionList(errors =
-            Seq(t.ValidationException(t.ValidationErrorCode.ProductDisabled, reason))))
+      // Sl ceServ ce (unl ke UrtServ ce) throws an except on w n t  requested product  s d sabled
+      case P pel neFa lure(ProductD sabled, reason, _, _) =>
+        Future.except on(
+          t.Val dat onExcept onL st(errors =
+            Seq(t.Val dat onExcept on(t.Val dat onErrorCode.ProductD sabled, reason))))
       case _ =>
-        error("Unhandled PipelineFailure", throwable)
-        Future.exception(throwable)
+        error("Unhandled P pel neFa lure", throwable)
+        Future.except on(throwable)
     }
   }
 }

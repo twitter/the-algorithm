@@ -1,13 +1,13 @@
-create_thrift_libraries(
-    base_name = "thrift",
-    sources = ["**/*.thrift"],
+create_thr ft_l brar es(
+    base_na  = "thr ft",
+    s ces = ["**/*.thr ft"],
     platform = "java8",
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
     generate_languages = [
         "java",
         "scala",
         "strato",
     ],
-    provides_java_name = "servo-repo-thrift-java",
-    provides_scala_name = "servo-repo-thrift-scala",
+    prov des_java_na  = "servo-repo-thr ft-java",
+    prov des_scala_na  = "servo-repo-thr ft-scala",
 )

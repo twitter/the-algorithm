@@ -1,59 +1,59 @@
-package com.twitter.product_mixer.core.pipeline.step.query_feature_hydrator
+package com.tw ter.product_m xer.core.p pel ne.step.query_feature_hydrator
 
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseQueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasAsyncFeatureMap
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BaseQueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.P pel neStep dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasAsyncFeatureMap
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasQuery
+ mport com.tw ter.product_m xer.core.p pel ne.step.Step
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.product_m xer.core.serv ce.query_feature_hydrator_executor.QueryFeatureHydratorExecutor
+ mport com.tw ter.st ch.Arrow
+ mport javax. nject. nject
 
 /**
- * A query level feature hydration step, it takes the input list of candidates and the given
- * hydrators and executes them. The [[State]] object is responsible for merging the resulting
- * feature maps with the hydrated ones in its updateCandidatesWithFeatures.
+ * A query level feature hydrat on step,   takes t   nput l st of cand dates and t  g ven
+ * hydrators and executes t m. T  [[State]] object  s respons ble for  rg ng t  result ng
+ * feature maps w h t  hydrated ones  n  s updateCand datesW hFeatures.
  *
  * @param queryFeatureHydratorExecutor Hydrator Executor
- * @tparam Query Type of PipelineQuery domain model
- * @tparam State The pipeline state domain model.
+ * @tparam Query Type of P pel neQuery doma n model
+ * @tparam State T  p pel ne state doma n model.
  */
 case class QueryFeatureHydratorStep[
-  Query <: PipelineQuery,
-  State <: HasQuery[Query, State] with HasAsyncFeatureMap[State]] @Inject() (
+  Query <: P pel neQuery,
+  State <: HasQuery[Query, State] w h HasAsyncFeatureMap[State]] @ nject() (
   queryFeatureHydratorExecutor: QueryFeatureHydratorExecutor)
-    extends Step[State, QueryFeatureHydratorStepConfig[
+    extends Step[State, QueryFeatureHydratorStepConf g[
       Query
     ], Query, QueryFeatureHydratorExecutor.Result] {
-  override def isEmpty(config: QueryFeatureHydratorStepConfig[Query]): Boolean =
-    config.hydrators.isEmpty
+  overr de def  sEmpty(conf g: QueryFeatureHydratorStepConf g[Query]): Boolean =
+    conf g.hydrators. sEmpty
 
-  override def adaptInput(state: State, config: QueryFeatureHydratorStepConfig[Query]): Query =
+  overr de def adapt nput(state: State, conf g: QueryFeatureHydratorStepConf g[Query]): Query =
     state.query
 
-  override def arrow(
-    config: QueryFeatureHydratorStepConfig[Query],
+  overr de def arrow(
+    conf g: QueryFeatureHydratorStepConf g[Query],
     context: Executor.Context
   ): Arrow[Query, QueryFeatureHydratorExecutor.Result] =
     queryFeatureHydratorExecutor.arrow(
-      config.hydrators,
-      config.validPipelineStepIdentifiers,
+      conf g.hydrators,
+      conf g.val dP pel neStep dent f ers,
       context)
 
-  override def updateState(
+  overr de def updateState(
     state: State,
     executorResult: QueryFeatureHydratorExecutor.Result,
-    config: QueryFeatureHydratorStepConfig[Query]
+    conf g: QueryFeatureHydratorStepConf g[Query]
   ): State = {
     val updatedQuery = state.query
-      .withFeatureMap(executorResult.featureMap).asInstanceOf[Query]
+      .w hFeatureMap(executorResult.featureMap).as nstanceOf[Query]
     state
       .updateQuery(updatedQuery).addAsyncFeatureMap(executorResult.asyncFeatureMap)
   }
 }
 
-case class QueryFeatureHydratorStepConfig[Query <: PipelineQuery](
+case class QueryFeatureHydratorStepConf g[Query <: P pel neQuery](
   hydrators: Seq[BaseQueryFeatureHydrator[Query, _]],
-  validPipelineStepIdentifiers: Set[PipelineStepIdentifier])
+  val dP pel neStep dent f ers: Set[P pel neStep dent f er])

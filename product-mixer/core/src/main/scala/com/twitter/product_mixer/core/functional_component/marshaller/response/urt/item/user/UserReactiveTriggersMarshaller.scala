@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.user
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.user
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.reaction.TimelineReactionMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserReactiveTriggers
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.react on.T  l neReact onMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.user.UserReact veTr ggers
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class UserReactiveTriggersMarshaller @Inject() (
-  timelineReactionMarshaller: TimelineReactionMarshaller) {
+@S ngleton
+class UserReact veTr ggersMarshaller @ nject() (
+  t  l neReact onMarshaller: T  l neReact onMarshaller) {
 
-  def apply(userReactiveTriggers: UserReactiveTriggers): urt.UserReactiveTriggers = {
-    urt.UserReactiveTriggers(
-      onFollow = userReactiveTriggers.onFollow.map(timelineReactionMarshaller(_)))
+  def apply(userReact veTr ggers: UserReact veTr ggers): urt.UserReact veTr ggers = {
+    urt.UserReact veTr ggers(
+      onFollow = userReact veTr ggers.onFollow.map(t  l neReact onMarshaller(_)))
   }
 }

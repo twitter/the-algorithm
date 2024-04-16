@@ -1,18 +1,18 @@
-package com.twitter.search.core.earlybird.index.column;
+package com.tw ter.search.core.earlyb rd. ndex.column;
 
 /**
- * A ColumnStrideFieldIndex implementation that always returns the same value.
+ * A ColumnStr deF eld ndex  mple ntat on that always returns t  sa  value.
  */
-public class ConstantColumnStrideFieldIndex extends ColumnStrideFieldIndex {
-  private final long defaultValue;
+publ c class ConstantColumnStr deF eld ndex extends ColumnStr deF eld ndex {
+  pr vate f nal long defaultValue;
 
-  public ConstantColumnStrideFieldIndex(String name, long defaultValue) {
-    super(name);
-    this.defaultValue = defaultValue;
+  publ c ConstantColumnStr deF eld ndex(Str ng na , long defaultValue) {
+    super(na );
+    t .defaultValue = defaultValue;
   }
 
-  @Override
-  public long get(int docID) {
+  @Overr de
+  publ c long get( nt doc D) {
     return defaultValue;
   }
 }

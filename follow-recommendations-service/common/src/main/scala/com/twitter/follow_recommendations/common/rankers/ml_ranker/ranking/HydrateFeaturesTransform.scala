@@ -1,55 +1,55 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.ranking
+package com.tw ter.follow_recom ndat ons.common.rankers.ml_ranker.rank ng
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.GatedTransform
-import com.twitter.follow_recommendations.common.base.StatsUtil.profileStitchMapResults
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.feature_hydration.sources.UserScoringFeatureSource
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDebugOptions
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.follow_recommendations.common.models.RichDataRecord
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.logging.Logging
+ mport com.google. nject. nject
+ mport com.google. nject.S ngleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.base.GatedTransform
+ mport com.tw ter.follow_recom ndat ons.common.base.StatsUt l.prof leSt chMapResults
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.common.HasPreFetc dFeature
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.s ces.UserScor ngFeatureS ce
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.HasDebugOpt ons
+ mport com.tw ter.follow_recom ndat ons.common.models.HasD splayLocat on
+ mport com.tw ter.follow_recom ndat ons.common.models.HasS m larToContext
+ mport com.tw ter.follow_recom ndat ons.common.models.R chDataRecord
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport com.tw ter.ut l.logg ng.Logg ng
 
 /**
- * Hydrate features given target and candidates lists.
- * This is a required step before MlRanker.
- * If a feature is not hydrated before MlRanker is triggered, a runtime exception will be thrown
+ * Hydrate features g ven target and cand dates l sts.
+ * T   s a requ red step before MlRanker.
+ *  f a feature  s not hydrated before MlRanker  s tr ggered, a runt   except on w ll be thrown
  */
-@Singleton
+@S ngleton
 class HydrateFeaturesTransform[
-  Target <: HasClientContext with HasParams with HasDebugOptions with HasPreFetchedFeature with HasSimilarToContext with HasDisplayLocation] @Inject() (
-  userScoringFeatureSource: UserScoringFeatureSource,
-  stats: StatsReceiver)
-    extends GatedTransform[Target, CandidateUser]
-    with Logging {
+  Target <: HasCl entContext w h HasParams w h HasDebugOpt ons w h HasPreFetc dFeature w h HasS m larToContext w h HasD splayLocat on] @ nject() (
+  userScor ngFeatureS ce: UserScor ngFeatureS ce,
+  stats: StatsRece ver)
+    extends GatedTransform[Target, Cand dateUser]
+    w h Logg ng {
 
-  private val hydrateFeaturesStats = stats.scope("hydrate_features")
+  pr vate val hydrateFeaturesStats = stats.scope("hydrate_features")
 
-  def transform(target: Target, candidates: Seq[CandidateUser]): Stitch[Seq[CandidateUser]] = {
+  def transform(target: Target, cand dates: Seq[Cand dateUser]): St ch[Seq[Cand dateUser]] = {
     // get features
-    val featureMapStitch: Stitch[Map[CandidateUser, DataRecord]] =
-      profileStitchMapResults(
-        userScoringFeatureSource.hydrateFeatures(target, candidates),
+    val featureMapSt ch: St ch[Map[Cand dateUser, DataRecord]] =
+      prof leSt chMapResults(
+        userScor ngFeatureS ce.hydrateFeatures(target, cand dates),
         hydrateFeaturesStats)
 
-    featureMapStitch.map { featureMap =>
-      candidates
-        .map { candidate =>
-          val dataRecord = featureMap(candidate)
-          // add debugRecord only when the request parameter is set
-          val debugDataRecord = if (target.debugOptions.exists(_.fetchDebugInfo)) {
-            Some(candidate.toDebugDataRecord(dataRecord, userScoringFeatureSource.featureContext))
+    featureMapSt ch.map { featureMap =>
+      cand dates
+        .map { cand date =>
+          val dataRecord = featureMap(cand date)
+          // add debugRecord only w n t  request para ter  s set
+          val debugDataRecord =  f (target.debugOpt ons.ex sts(_.fetchDebug nfo)) {
+            So (cand date.toDebugDataRecord(dataRecord, userScor ngFeatureS ce.featureContext))
           } else None
-          candidate.copy(
-            dataRecord = Some(RichDataRecord(Some(dataRecord), debugDataRecord))
+          cand date.copy(
+            dataRecord = So (R chDataRecord(So (dataRecord), debugDataRecord))
           )
         }
     }

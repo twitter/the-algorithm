@@ -1,156 +1,156 @@
-package com.twitter.visibility.engine
+package com.tw ter.v s b l y.eng ne
 
-import com.twitter.abdecider.NullABDecider
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import com.twitter.visibility.builder.VisibilityResultBuilder
-import com.twitter.visibility.features._
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.rules.Rule.DisabledRuleResult
-import com.twitter.visibility.rules.Rule.EvaluatedRuleResult
-import com.twitter.visibility.rules.State._
-import com.twitter.visibility.rules._
-import com.twitter.visibility.rules.providers.ProvidedEvaluationContext
-import com.twitter.visibility.rules.providers.PolicyProvider
+ mport com.tw ter.abdec der.NullABDec der
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.Try
+ mport com.tw ter.v s b l y.bu lder.V s b l yResultBu lder
+ mport com.tw ter.v s b l y.features._
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.rules.Rule.D sabledRuleResult
+ mport com.tw ter.v s b l y.rules.Rule.EvaluatedRuleResult
+ mport com.tw ter.v s b l y.rules.State._
+ mport com.tw ter.v s b l y.rules._
+ mport com.tw ter.v s b l y.rules.prov ders.Prov dedEvaluat onContext
+ mport com.tw ter.v s b l y.rules.prov ders.Pol cyProv der
 
-class VisibilityRulePreprocessor private (
-  metricsRecorder: VisibilityResultsMetricRecorder,
-  policyProviderOpt: Option[PolicyProvider] = None) {
+class V s b l yRulePreprocessor pr vate (
+   tr csRecorder: V s b l yResults tr cRecorder,
+  pol cyProv derOpt: Opt on[Pol cyProv der] = None) {
 
-  private[engine] def filterEvaluableRules(
-    evaluationContext: ProvidedEvaluationContext,
-    resultBuilder: VisibilityResultBuilder,
+  pr vate[eng ne] def f lterEvaluableRules(
+    evaluat onContext: Prov dedEvaluat onContext,
+    resultBu lder: V s b l yResultBu lder,
     rules: Seq[Rule]
-  ): (VisibilityResultBuilder, Seq[Rule]) = {
-    val (builder, ruleList) = rules.foldLeft((resultBuilder, Seq.empty[Rule])) {
-      case ((builder, nextPassRules), rule) =>
-        if (evaluationContext.ruleEnabledInContext(rule)) {
-          val missingFeatures: Set[Feature[_]] = rule.featureDependencies.collect {
-            case feature: Feature[_] if !builder.featureMap.contains(feature) => feature
+  ): (V s b l yResultBu lder, Seq[Rule]) = {
+    val (bu lder, ruleL st) = rules.foldLeft((resultBu lder, Seq.empty[Rule])) {
+      case ((bu lder, nextPassRules), rule) =>
+         f (evaluat onContext.ruleEnabled nContext(rule)) {
+          val m ss ngFeatures: Set[Feature[_]] = rule.featureDependenc es.collect {
+            case feature: Feature[_]  f !bu lder.featureMap.conta ns(feature) => feature
           }
 
-          if (missingFeatures.isEmpty) {
-            (builder, nextPassRules :+ rule)
+           f (m ss ngFeatures. sEmpty) {
+            (bu lder, nextPassRules :+ rule)
           } else {
-            metricsRecorder.recordRuleMissingFeatures(rule.name, missingFeatures)
+             tr csRecorder.recordRuleM ss ngFeatures(rule.na , m ss ngFeatures)
             (
-              builder.withRuleResult(
+              bu lder.w hRuleResult(
                 rule,
-                RuleResult(NotEvaluated, MissingFeature(missingFeatures))
+                RuleResult(NotEvaluated, M ss ngFeature(m ss ngFeatures))
               ),
               nextPassRules
             )
           }
         } else {
-          (builder.withRuleResult(rule, DisabledRuleResult), nextPassRules)
+          (bu lder.w hRuleResult(rule, D sabledRuleResult), nextPassRules)
         }
     }
-    (builder, ruleList)
+    (bu lder, ruleL st)
   }
 
-  private[visibility] def preFilterRules(
-    evaluationContext: ProvidedEvaluationContext,
+  pr vate[v s b l y] def preF lterRules(
+    evaluat onContext: Prov dedEvaluat onContext,
     resolvedFeatureMap: Map[Feature[_], Any],
-    resultBuilder: VisibilityResultBuilder,
+    resultBu lder: V s b l yResultBu lder,
     rules: Seq[Rule]
-  ): (VisibilityResultBuilder, Seq[Rule]) = {
-    val isResolvedFeatureMap = resultBuilder.featureMap.isInstanceOf[ResolvedFeatureMap]
-    val (builder, ruleList) = rules.foldLeft((resultBuilder, Seq.empty[Rule])) {
-      case ((builder, nextPassRules), rule) =>
-        rule.preFilter(evaluationContext, resolvedFeatureMap, NullABDecider) match {
-          case NeedsFullEvaluation =>
-            (builder, nextPassRules :+ rule)
-          case NotFiltered =>
-            (builder, nextPassRules :+ rule)
-          case Filtered if isResolvedFeatureMap =>
-            (builder, nextPassRules :+ rule)
-          case Filtered =>
-            (builder.withRuleResult(rule, EvaluatedRuleResult), nextPassRules)
+  ): (V s b l yResultBu lder, Seq[Rule]) = {
+    val  sResolvedFeatureMap = resultBu lder.featureMap. s nstanceOf[ResolvedFeatureMap]
+    val (bu lder, ruleL st) = rules.foldLeft((resultBu lder, Seq.empty[Rule])) {
+      case ((bu lder, nextPassRules), rule) =>
+        rule.preF lter(evaluat onContext, resolvedFeatureMap, NullABDec der) match {
+          case NeedsFullEvaluat on =>
+            (bu lder, nextPassRules :+ rule)
+          case NotF ltered =>
+            (bu lder, nextPassRules :+ rule)
+          case F ltered  f  sResolvedFeatureMap =>
+            (bu lder, nextPassRules :+ rule)
+          case F ltered =>
+            (bu lder.w hRuleResult(rule, EvaluatedRuleResult), nextPassRules)
         }
     }
-    (builder, ruleList)
+    (bu lder, ruleL st)
   }
 
-  private[visibility] def evaluate(
-    evaluationContext: ProvidedEvaluationContext,
+  pr vate[v s b l y] def evaluate(
+    evaluat onContext: Prov dedEvaluat onContext,
     safetyLevel: SafetyLevel,
-    resultBuilder: VisibilityResultBuilder
-  ): (VisibilityResultBuilder, Seq[Rule]) = {
-    val visibilityPolicy = policyProviderOpt match {
-      case Some(policyProvider) =>
-        policyProvider.policyForSurface(safetyLevel)
+    resultBu lder: V s b l yResultBu lder
+  ): (V s b l yResultBu lder, Seq[Rule]) = {
+    val v s b l yPol cy = pol cyProv derOpt match {
+      case So (pol cyProv der) =>
+        pol cyProv der.pol cyForSurface(safetyLevel)
       case None => RuleBase.RuleMap(safetyLevel)
     }
 
-    if (evaluationContext.params(safetyLevel.enabledParam)) {
-      evaluate(evaluationContext, visibilityPolicy, resultBuilder)
+     f (evaluat onContext.params(safetyLevel.enabledParam)) {
+      evaluate(evaluat onContext, v s b l yPol cy, resultBu lder)
     } else {
-      metricsRecorder.recordAction(safetyLevel, "disabled")
+       tr csRecorder.recordAct on(safetyLevel, "d sabled")
 
-      val rules: Seq[Rule] = visibilityPolicy.forContentId(resultBuilder.contentId)
-      val skippedResultBuilder = resultBuilder
-        .withRuleResultMap(rules.map(r => r -> RuleResult(Allow, Skipped)).toMap)
-        .withVerdict(verdict = Allow)
-        .withFinished(finished = true)
+      val rules: Seq[Rule] = v s b l yPol cy.forContent d(resultBu lder.content d)
+      val sk ppedResultBu lder = resultBu lder
+        .w hRuleResultMap(rules.map(r => r -> RuleResult(Allow, Sk pped)).toMap)
+        .w hVerd ct(verd ct = Allow)
+        .w hF n s d(f n s d = true)
 
-      (skippedResultBuilder, rules)
+      (sk ppedResultBu lder, rules)
     }
   }
 
-  private[visibility] def evaluate(
-    evaluationContext: ProvidedEvaluationContext,
-    visibilityPolicy: VisibilityPolicy,
-    resultBuilder: VisibilityResultBuilder,
-  ): (VisibilityResultBuilder, Seq[Rule]) = {
+  pr vate[v s b l y] def evaluate(
+    evaluat onContext: Prov dedEvaluat onContext,
+    v s b l yPol cy: V s b l yPol cy,
+    resultBu lder: V s b l yResultBu lder,
+  ): (V s b l yResultBu lder, Seq[Rule]) = {
 
-    val rules: Seq[Rule] = visibilityPolicy.forContentId(resultBuilder.contentId)
+    val rules: Seq[Rule] = v s b l yPol cy.forContent d(resultBu lder.content d)
 
-    val (secondPassBuilder, secondPassRules) =
-      filterEvaluableRules(evaluationContext, resultBuilder, rules)
+    val (secondPassBu lder, secondPassRules) =
+      f lterEvaluableRules(evaluat onContext, resultBu lder, rules)
 
-    val secondPassFeatureMap = secondPassBuilder.featureMap
+    val secondPassFeatureMap = secondPassBu lder.featureMap
 
     val secondPassConstantFeatures: Set[Feature[_]] = RuleBase
       .getFeaturesForRules(secondPassRules)
-      .filter(secondPassFeatureMap.containsConstant(_))
+      .f lter(secondPassFeatureMap.conta nsConstant(_))
 
     val secondPassFeatureValues: Set[(Feature[_], Any)] = secondPassConstantFeatures.map {
       feature =>
         Try(secondPassFeatureMap.getConstant(feature)) match {
           case Return(value) => (feature, value)
           case Throw(ex) =>
-            metricsRecorder.recordFailedFeature(feature, ex)
-            (feature, FeatureFailedPlaceholderObject(ex))
+             tr csRecorder.recordFa ledFeature(feature, ex)
+            (feature, FeatureFa ledPlaceholderObject(ex))
         }
     }
 
     val resolvedFeatureMap: Map[Feature[_], Any] =
-      secondPassFeatureValues.filterNot {
-        case (_, value) => value.isInstanceOf[FeatureFailedPlaceholderObject]
+      secondPassFeatureValues.f lterNot {
+        case (_, value) => value. s nstanceOf[FeatureFa ledPlaceholderObject]
       }.toMap
 
-    val (preFilteredResultBuilder, preFilteredRules) = preFilterRules(
-      evaluationContext,
+    val (preF lteredResultBu lder, preF lteredRules) = preF lterRules(
+      evaluat onContext,
       resolvedFeatureMap,
-      secondPassBuilder,
+      secondPassBu lder,
       secondPassRules
     )
 
-    val preFilteredFeatureMap =
+    val preF lteredFeatureMap =
       RuleBase.removeUnusedFeaturesFromFeatureMap(
-        preFilteredResultBuilder.featureMap,
-        preFilteredRules)
+        preF lteredResultBu lder.featureMap,
+        preF lteredRules)
 
-    (preFilteredResultBuilder.withFeatureMap(preFilteredFeatureMap), preFilteredRules)
+    (preF lteredResultBu lder.w hFeatureMap(preF lteredFeatureMap), preF lteredRules)
   }
 }
 
-object VisibilityRulePreprocessor {
+object V s b l yRulePreprocessor {
   def apply(
-    metricsRecorder: VisibilityResultsMetricRecorder,
-    policyProviderOpt: Option[PolicyProvider] = None
-  ): VisibilityRulePreprocessor = {
-    new VisibilityRulePreprocessor(metricsRecorder, policyProviderOpt)
+     tr csRecorder: V s b l yResults tr cRecorder,
+    pol cyProv derOpt: Opt on[Pol cyProv der] = None
+  ): V s b l yRulePreprocessor = {
+    new V s b l yRulePreprocessor( tr csRecorder, pol cyProv derOpt)
   }
 }

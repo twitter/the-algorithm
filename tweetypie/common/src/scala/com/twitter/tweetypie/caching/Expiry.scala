@@ -1,34 +1,34 @@
-package com.twitter.tweetypie.caching
+package com.tw ter.t etyp e.cach ng
 
-import com.twitter.util.Duration
-import com.twitter.util.Time
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.T  
 
 /**
- * Helpers for creating common expiry functions.
+ *  lpers for creat ng common exp ry funct ons.
  *
- * An expiry function maps from the value to a time in the future when
- * the value should expire from cache. These are useful in the
- * implementation of a [[ValueSerializer]].
+ * An exp ry funct on maps from t  value to a t    n t  future w n
+ * t  value should exp re from cac . T se are useful  n t 
+ *  mple ntat on of a [[ValueSer al zer]].
  */
-object Expiry {
+object Exp ry {
 
   /**
-   * Return a time that indicates to memcached to never expire this
+   * Return a t   that  nd cates to  mcac d to never exp re t 
    * value.
    *
-   * This function takes [[Any]] so that it can be used at any value
-   * type, since it doesn't examine the value at all.
+   * T  funct on takes [[Any]] so that   can be used at any value
+   * type, s nce   doesn't exam ne t  value at all.
    */
-  val Never: Any => Time =
-    _ => Time.Top
+  val Never: Any => T   =
+    _ => T  .Top
 
   /**
-   * Return function that indicates to memcached that the value should
-   * not be used after the `ttl` has elapsed.
+   * Return funct on that  nd cates to  mcac d that t  value should
+   * not be used after t  `ttl` has elapsed.
    *
-   * This function takes [[Any]] so that it can be used at any value
-   * type, since it doesn't examine the value at all.
+   * T  funct on takes [[Any]] so that   can be used at any value
+   * type, s nce   doesn't exam ne t  value at all.
    */
-  def byAge(ttl: Duration): Any => Time =
-    _ => Time.now + ttl
+  def byAge(ttl: Durat on): Any => T   =
+    _ => T  .now + ttl
 }

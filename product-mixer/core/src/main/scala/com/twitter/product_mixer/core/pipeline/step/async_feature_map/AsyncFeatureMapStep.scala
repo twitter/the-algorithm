@@ -1,70 +1,70 @@
-package com.twitter.product_mixer.core.pipeline.step.async_feature_map
+package com.tw ter.product_m xer.core.p pel ne.step.async_feature_map
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap.AsyncFeatureMap
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasAsyncFeatureMap
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.async_feature_map_executor.AsyncFeatureMapExecutor
-import com.twitter.product_mixer.core.service.async_feature_map_executor.AsyncFeatureMapExecutorResults
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.asyncfeaturemap.AsyncFeatureMap
+ mport com.tw ter.product_m xer.core.model.common. dent f er.P pel neStep dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasAsyncFeatureMap
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasQuery
+ mport com.tw ter.product_m xer.core.p pel ne.step.Step
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.product_m xer.core.serv ce.async_feature_map_executor.AsyncFeatureMapExecutor
+ mport com.tw ter.product_m xer.core.serv ce.async_feature_map_executor.AsyncFeatureMapExecutorResults
+ mport com.tw ter.st ch.Arrow
+ mport javax. nject. nject
 
 /**
- * Async Feature Hydrator Step, it takes an existing asyn feature map and executes any hydration
- * needed before the next step. The state object is responsible for keeping the updated query
- * with the updated feature map.
+ * Async Feature Hydrator Step,   takes an ex st ng asyn feature map and executes any hydrat on
+ * needed before t  next step. T  state object  s respons ble for keep ng t  updated query
+ * w h t  updated feature map.
  *
  * @param asyncFeatureMapExecutor Async feature map executor
  *
- * @tparam Query Type of PipelineQuery domain model
- * @tparam State The pipeline state domain model.
+ * @tparam Query Type of P pel neQuery doma n model
+ * @tparam State T  p pel ne state doma n model.
  */
 case class AsyncFeatureMapStep[
-  Query <: PipelineQuery,
-  State <: HasQuery[Query, State] with HasAsyncFeatureMap[State]] @Inject() (
+  Query <: P pel neQuery,
+  State <: HasQuery[Query, State] w h HasAsyncFeatureMap[State]] @ nject() (
   asyncFeatureMapExecutor: AsyncFeatureMapExecutor)
     extends Step[
       State,
-      AsyncFeatureMapStepConfig,
+      AsyncFeatureMapStepConf g,
       AsyncFeatureMap,
       AsyncFeatureMapExecutorResults
     ] {
-  override def isEmpty(config: AsyncFeatureMapStepConfig): Boolean = false
+  overr de def  sEmpty(conf g: AsyncFeatureMapStepConf g): Boolean = false
 
-  override def adaptInput(
+  overr de def adapt nput(
     state: State,
-    config: AsyncFeatureMapStepConfig
+    conf g: AsyncFeatureMapStepConf g
   ): AsyncFeatureMap = state.asyncFeatureMap
 
-  override def arrow(
-    config: AsyncFeatureMapStepConfig,
+  overr de def arrow(
+    conf g: AsyncFeatureMapStepConf g,
     context: Executor.Context
   ): Arrow[AsyncFeatureMap, AsyncFeatureMapExecutorResults] =
-    asyncFeatureMapExecutor.arrow(config.stepToHydrateFor, config.currentStep, context)
+    asyncFeatureMapExecutor.arrow(conf g.stepToHydrateFor, conf g.currentStep, context)
 
-  override def updateState(
+  overr de def updateState(
     state: State,
     executorResult: AsyncFeatureMapExecutorResults,
-    config: AsyncFeatureMapStepConfig
+    conf g: AsyncFeatureMapStepConf g
   ): State = {
     val hydratedFeatureMap =
-      executorResult.featureMapsByStep.getOrElse(config.stepToHydrateFor, FeatureMap.empty)
-    if (hydratedFeatureMap.isEmpty) {
+      executorResult.featureMapsByStep.getOrElse(conf g.stepToHydrateFor, FeatureMap.empty)
+     f (hydratedFeatureMap. sEmpty) {
       state
     } else {
       val updatedFeatureMap = state.query.features
         .getOrElse(FeatureMap.empty) ++ hydratedFeatureMap
       state.updateQuery(
         state.query
-          .withFeatureMap(updatedFeatureMap).asInstanceOf[Query])
+          .w hFeatureMap(updatedFeatureMap).as nstanceOf[Query])
     }
   }
 }
 
-case class AsyncFeatureMapStepConfig(
-  stepToHydrateFor: PipelineStepIdentifier,
-  currentStep: PipelineStepIdentifier)
+case class AsyncFeatureMapStepConf g(
+  stepToHydrateFor: P pel neStep dent f er,
+  currentStep: P pel neStep dent f er)

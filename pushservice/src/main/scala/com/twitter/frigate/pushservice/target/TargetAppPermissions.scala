@@ -1,10 +1,10 @@
-package com.twitter.frigate.pushservice.target
+package com.tw ter.fr gate.pushserv ce.target
 
-import com.twitter.permissions_storage.thriftscala.AppPermission
-import com.twitter.util.Future
+ mport com.tw ter.perm ss ons_storage.thr ftscala.AppPerm ss on
+ mport com.tw ter.ut l.Future
 
-trait TargetAppPermissions {
+tra  TargetAppPerm ss ons {
 
-  def appPermissions: Future[Option[AppPermission]]
+  def appPerm ss ons: Future[Opt on[AppPerm ss on]]
 
 }

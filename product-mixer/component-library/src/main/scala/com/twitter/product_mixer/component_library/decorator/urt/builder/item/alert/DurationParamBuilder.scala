@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.alert
 
-import com.twitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert.BaseDurationBuilder
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.ShowAlertCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. em.alert.BaseDurat onBu lder
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.ut l.Durat on
 
-case class DurationParamBuilder(
-  durationParam: Param[Duration])
-    extends BaseDurationBuilder[PipelineQuery] {
+case class Durat onParamBu lder(
+  durat onParam: Param[Durat on])
+    extends BaseDurat onBu lder[P pel neQuery] {
 
   def apply(
-    query: PipelineQuery,
-    candidate: ShowAlertCandidate,
+    query: P pel neQuery,
+    cand date: ShowAlertCand date,
     features: FeatureMap
-  ): Option[Duration] =
-    Some(query.params(durationParam))
+  ): Opt on[Durat on] =
+    So (query.params(durat onParam))
 }

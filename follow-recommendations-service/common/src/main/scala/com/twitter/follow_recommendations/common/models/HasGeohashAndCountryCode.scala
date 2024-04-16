@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-trait HasGeohashAndCountryCode {
-  def geohashAndCountryCode: Option[GeohashAndCountryCode]
+tra  HasGeohashAndCountryCode {
+  def geohashAndCountryCode: Opt on[GeohashAndCountryCode]
 }

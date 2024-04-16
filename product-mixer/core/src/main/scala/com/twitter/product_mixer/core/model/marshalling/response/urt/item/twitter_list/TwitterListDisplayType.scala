@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.tw ter_l st
 
-sealed trait TwitterListDisplayType
+sealed tra  Tw terL stD splayType
 
-case object List extends TwitterListDisplayType
-case object ListTile extends TwitterListDisplayType
-case object ListWithPin extends TwitterListDisplayType
-case object ListWithSubscribe extends TwitterListDisplayType
+case object L st extends Tw terL stD splayType
+case object L stT le extends Tw terL stD splayType
+case object L stW hP n extends Tw terL stD splayType
+case object L stW hSubscr be extends Tw terL stD splayType

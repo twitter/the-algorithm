@@ -1,37 +1,37 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.offl ne_aggregates
 
-import com.twitter.ml.api.FeatureContext
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateGroup
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateType.AggregateType
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
-import scala.jdk.CollectionConverters.asJavaIterableConverter
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.AggregateGroup
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.AggregateType.AggregateType
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.TypedAggregateGroup
+ mport scala.jdk.Collect onConverters.asJava erableConverter
 
-// A helper class deriving aggregate feature info from the given configuration parameters.
-class AggregateFeatureInfo(
+// A  lper class der v ng aggregate feature  nfo from t  g ven conf gurat on para ters.
+class AggregateFeature nfo(
   val aggregateGroups: Set[AggregateGroup],
   val aggregateType: AggregateType) {
 
-  private val typedAggregateGroups = aggregateGroups.flatMap(_.buildTypedAggregateGroups()).toList
+  pr vate val typedAggregateGroups = aggregateGroups.flatMap(_.bu ldTypedAggregateGroups()).toL st
 
   val featureContext: FeatureContext =
     new FeatureContext(
       (typedAggregateGroups.flatMap(_.allOutputFeatures) ++
         typedAggregateGroups.flatMap(_.allOutputKeys) ++
-        Seq(TypedAggregateGroup.timestampFeature)).asJava)
+        Seq(TypedAggregateGroup.t  stampFeature)).asJava)
 
   val feature: BaseAggregateRootFeature =
-    AggregateFeatureInfo.pickFeature(aggregateType)
+    AggregateFeature nfo.p ckFeature(aggregateType)
 }
 
-object AggregateFeatureInfo {
+object AggregateFeature nfo {
   val features: Set[BaseAggregateRootFeature] =
     Set(PartAAggregateRootFeature, PartBAggregateRootFeature)
 
-  def pickFeature(aggregateType: AggregateType): BaseAggregateRootFeature = {
-    val filtered = features.filter(_.aggregateTypes.contains(aggregateType))
-    require(
-      filtered.size == 1,
-      "requested AggregateType must be backed by exactly one physical store.")
-    filtered.head
+  def p ckFeature(aggregateType: AggregateType): BaseAggregateRootFeature = {
+    val f ltered = features.f lter(_.aggregateTypes.conta ns(aggregateType))
+    requ re(
+      f ltered.s ze == 1,
+      "requested AggregateType must be backed by exactly one phys cal store.")
+    f ltered. ad
   }
 }

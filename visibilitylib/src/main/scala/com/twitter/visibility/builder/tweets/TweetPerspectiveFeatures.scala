@@ -1,54 +1,54 @@
-package com.twitter.visibility.builder.tweets
+package com.tw ter.v s b l y.bu lder.t ets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.TweetPerspectiveSource
-import com.twitter.visibility.features.ViewerReportedTweet
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.common.T etPerspect veS ce
+ mport com.tw ter.v s b l y.features.V e rReportedT et
 
-class TweetPerspectiveFeatures(
-  tweetPerspectiveSource: TweetPerspectiveSource,
-  statsReceiver: StatsReceiver) {
+class T etPerspect veFeatures(
+  t etPerspect veS ce: T etPerspect veS ce,
+  statsRece ver: StatsRece ver) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("tweet_perspective_features")
-  private[this] val reportedStats = scopedStatsReceiver.scope("reported")
+  pr vate[t ] val scopedStatsRece ver = statsRece ver.scope("t et_perspect ve_features")
+  pr vate[t ] val reportedStats = scopedStatsRece ver.scope("reported")
 
-  def forTweet(
-    tweet: Tweet,
-    viewerId: Option[Long],
-    enableFetchReportedPerspective: Boolean
-  ): FeatureMapBuilder => FeatureMapBuilder =
-    _.withFeature(
-      ViewerReportedTweet,
-      tweetIsReported(tweet, viewerId, enableFetchReportedPerspective))
+  def forT et(
+    t et: T et,
+    v e r d: Opt on[Long],
+    enableFetchReportedPerspect ve: Boolean
+  ): FeatureMapBu lder => FeatureMapBu lder =
+    _.w hFeature(
+      V e rReportedT et,
+      t et sReported(t et, v e r d, enableFetchReportedPerspect ve))
 
-  private[builder] def tweetIsReported(
-    tweet: Tweet,
-    viewerId: Option[Long],
-    enableFetchReportedPerspective: Boolean = true
-  ): Stitch[Boolean] = {
-    ((tweet.perspective, viewerId) match {
-      case (Some(perspective), _) =>
-        Stitch.value(perspective.reported).onSuccess { _ =>
-          reportedStats.counter("already_hydrated").incr()
+  pr vate[bu lder] def t et sReported(
+    t et: T et,
+    v e r d: Opt on[Long],
+    enableFetchReportedPerspect ve: Boolean = true
+  ): St ch[Boolean] = {
+    ((t et.perspect ve, v e r d) match {
+      case (So (perspect ve), _) =>
+        St ch.value(perspect ve.reported).onSuccess { _ =>
+          reportedStats.counter("already_hydrated"). ncr()
         }
-      case (None, Some(viewerId)) =>
-        if (enableFetchReportedPerspective) {
-          tweetPerspectiveSource.reported(tweet.id, viewerId).onSuccess { _ =>
-            reportedStats.counter("request").incr()
+      case (None, So (v e r d)) =>
+         f (enableFetchReportedPerspect ve) {
+          t etPerspect veS ce.reported(t et. d, v e r d).onSuccess { _ =>
+            reportedStats.counter("request"). ncr()
           }
         } else {
-          Stitch.False.onSuccess { _ =>
-            reportedStats.counter("light_request").incr()
+          St ch.False.onSuccess { _ =>
+            reportedStats.counter("l ght_request"). ncr()
           }
         }
       case _ =>
-        Stitch.False.onSuccess { _ =>
-          reportedStats.counter("empty").incr()
+        St ch.False.onSuccess { _ =>
+          reportedStats.counter("empty"). ncr()
         }
     }).onSuccess { _ =>
-      reportedStats.counter("").incr()
+      reportedStats.counter(""). ncr()
     }
   }
 }

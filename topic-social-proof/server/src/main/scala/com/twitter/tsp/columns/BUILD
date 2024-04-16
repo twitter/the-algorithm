@@ -1,12 +1,12 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     tags = [
-        "bazel-compatible",
+        "bazel-compat ble",
     ],
-    dependencies = [
-        "stitch/stitch-storehaus",
-        "strato/src/main/scala/com/twitter/strato/fed",
-        "topic-social-proof/server/src/main/scala/com/twitter/tsp/service",
-        "topic-social-proof/server/src/main/thrift:thrift-scala",
+    dependenc es = [
+        "st ch/st ch-storehaus",
+        "strato/src/ma n/scala/com/tw ter/strato/fed",
+        "top c-soc al-proof/server/src/ma n/scala/com/tw ter/tsp/serv ce",
+        "top c-soc al-proof/server/src/ma n/thr ft:thr ft-scala",
     ],
 )

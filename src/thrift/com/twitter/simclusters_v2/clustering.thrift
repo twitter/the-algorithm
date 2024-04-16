@@ -1,18 +1,18 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.clustering
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+na space java com.tw ter.s mclusters_v2.thr ftjava
+na space py gen.tw ter.s mclusters_v2.cluster ng
+#@na space scala com.tw ter.s mclusters_v2.thr ftscala
+#@na space strato com.tw ter.s mclusters_v2
 
 /**
- * Struct that represents an ordered list of producer clusters.
- * The list is meant to be ordered by decreasing cluster size.
+ * Struct that represents an ordered l st of producer clusters.
+ * T  l st  s  ant to be ordered by decreas ng cluster s ze.
  **/
-struct OrderedClustersAndMembers {
-  1: required list<set<i64>> orderedClustersAndMembers (personalDataType = 'UserId')
-  // work around BQ not supporting nested struct such as list<set>
-  2: optional list<ClusterMembers> orderedClustersAndMembersStruct (personalDataType = 'UserId')
-}(persisted = 'true', hasPersonalData = 'true')
+struct OrderedClustersAnd mbers {
+  1: requ red l st<set< 64>> orderedClustersAnd mbers (personalDataType = 'User d')
+  // work around BQ not support ng nested struct such as l st<set>
+  2: opt onal l st<Cluster mbers> orderedClustersAnd mbersStruct (personalDataType = 'User d')
+}(pers sted = 'true', hasPersonalData = 'true')
 
-struct ClusterMembers {
-  1: required set<i64> clusterMembers (personalDataType = 'UserId')
-}(persisted = 'true', hasPersonalData = 'true')
+struct Cluster mbers {
+  1: requ red set< 64> cluster mbers (personalDataType = 'User d')
+}(pers sted = 'true', hasPersonalData = 'true')

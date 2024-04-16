@@ -1,150 +1,150 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
-import com.twitter.timelineservice.{thriftscala => tls}
-import com.twitter.tweetypie.backends.TimelineService
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.t  l neserv ce.{thr ftscala => tls}
+ mport com.tw ter.t etyp e.backends.T  l neServ ce
+ mport com.tw ter.t etyp e.thr ftscala._
 
-trait TlsTimelineUpdatingStore
-    extends TweetStoreBase[TlsTimelineUpdatingStore]
-    with AsyncInsertTweet.Store
-    with AsyncDeleteTweet.Store
-    with AsyncUndeleteTweet.Store {
-  def wrap(w: TweetStore.Wrap): TlsTimelineUpdatingStore =
-    new TweetStoreWrapper(w, this)
-      with TlsTimelineUpdatingStore
-      with AsyncInsertTweet.StoreWrapper
-      with AsyncDeleteTweet.StoreWrapper
-      with AsyncUndeleteTweet.StoreWrapper
+tra  TlsT  l neUpdat ngStore
+    extends T etStoreBase[TlsT  l neUpdat ngStore]
+    w h Async nsertT et.Store
+    w h AsyncDeleteT et.Store
+    w h AsyncUndeleteT et.Store {
+  def wrap(w: T etStore.Wrap): TlsT  l neUpdat ngStore =
+    new T etStoreWrapper(w, t )
+      w h TlsT  l neUpdat ngStore
+      w h Async nsertT et.StoreWrapper
+      w h AsyncDeleteT et.StoreWrapper
+      w h AsyncUndeleteT et.StoreWrapper
 }
 
 /**
- * An implementation of TweetStore that sends update events to
- * the Timeline Service.
+ * An  mple ntat on of T etStore that sends update events to
+ * t  T  l ne Serv ce.
  */
-object TlsTimelineUpdatingStore {
-  val Action: AsyncWriteAction.TimelineUpdate.type = AsyncWriteAction.TimelineUpdate
+object TlsT  l neUpdat ngStore {
+  val Act on: AsyncWr eAct on.T  l neUpdate.type = AsyncWr eAct on.T  l neUpdate
 
   /**
-   * Converts a TweetyPie Tweet to tls.Tweet
+   * Converts a T etyP e T et to tls.T et
    *
-   * @param explicitCreatedAt when Some, overrides the default getTimestamp defined in package
-   * object com.twitter.tweetypie
+   * @param expl c CreatedAt w n So , overr des t  default getT  stamp def ned  n package
+   * object com.tw ter.t etyp e
    */
-  def tweetToTLSFullTweet(
-    hasMedia: Tweet => Boolean
+  def t etToTLSFullT et(
+    has d a: T et => Boolean
   )(
-    tweet: Tweet,
-    explicitCreatedAt: Option[Time],
-    noteTweetMentionedUserIds: Option[Seq[Long]]
-  ): tls.FullTweet =
-    tls.FullTweet(
-      userId = getUserId(tweet),
-      tweetId = tweet.id,
-      mentionedUserIds =
-        noteTweetMentionedUserIds.getOrElse(getMentions(tweet).flatMap(_.userId)).toSet,
-      isNullcasted = TweetLenses.nullcast.get(tweet),
-      conversationId = TweetLenses.conversationId.get(tweet).getOrElse(tweet.id),
+    t et: T et,
+    expl c CreatedAt: Opt on[T  ],
+    noteT et nt onedUser ds: Opt on[Seq[Long]]
+  ): tls.FullT et =
+    tls.FullT et(
+      user d = getUser d(t et),
+      t et d = t et. d,
+       nt onedUser ds =
+        noteT et nt onedUser ds.getOrElse(get nt ons(t et).flatMap(_.user d)).toSet,
+       sNullcasted = T etLenses.nullcast.get(t et),
+      conversat on d = T etLenses.conversat on d.get(t et).getOrElse(t et. d),
       narrowcastGeos = Set.empty,
-      createdAtMs = explicitCreatedAt.getOrElse(getTimestamp(tweet)).inMillis,
-      hasMedia = hasMedia(tweet),
-      directedAtUserId = TweetLenses.directedAtUser.get(tweet).map(_.userId),
-      retweet = getShare(tweet).map { share =>
-        tls.Retweet(
-          sourceUserId = share.sourceUserId,
-          sourceTweetId = share.sourceStatusId,
-          parentTweetId = Some(share.parentStatusId)
+      createdAtMs = expl c CreatedAt.getOrElse(getT  stamp(t et)). nM ll s,
+      has d a = has d a(t et),
+      d rectedAtUser d = T etLenses.d rectedAtUser.get(t et).map(_.user d),
+      ret et = getShare(t et).map { share =>
+        tls.Ret et(
+          s ceUser d = share.s ceUser d,
+          s ceT et d = share.s ceStatus d,
+          parentT et d = So (share.parentStatus d)
         )
       },
-      reply = getReply(tweet).map { reply =>
+      reply = getReply(t et).map { reply =>
         tls.Reply(
-          inReplyToUserId = reply.inReplyToUserId,
-          inReplyToTweetId = reply.inReplyToStatusId
+           nReplyToUser d = reply. nReplyToUser d,
+           nReplyToT et d = reply. nReplyToStatus d
         )
       },
-      quote = tweet.quotedTweet.map { qt =>
+      quote = t et.quotedT et.map { qt =>
         tls.Quote(
-          quotedUserId = qt.userId,
-          quotedTweetId = qt.tweetId
+          quotedUser d = qt.user d,
+          quotedT et d = qt.t et d
         )
       },
-      mediaTags = tweet.mediaTags,
-      text = Some(getText(tweet))
+       d aTags = t et. d aTags,
+      text = So (getText(t et))
     )
 
   val logger: Logger = Logger(getClass)
 
-  def logValidationFailed(stats: StatsReceiver): tls.ProcessEventResult => Unit = {
-    case tls.ProcessEventResult(tls.ProcessEventResultType.ValidationFailed, errors) =>
-      logger.error(s"Validation Failed in processEvent2: $errors")
-      stats.counter("processEvent2_validation_failed").incr()
+  def logVal dat onFa led(stats: StatsRece ver): tls.ProcessEventResult => Un  = {
+    case tls.ProcessEventResult(tls.ProcessEventResultType.Val dat onFa led, errors) =>
+      logger.error(s"Val dat on Fa led  n processEvent2: $errors")
+      stats.counter("processEvent2_val dat on_fa led"). ncr()
     case _ => ()
   }
 
   def apply(
-    processEvent2: TimelineService.ProcessEvent2,
-    hasMedia: Tweet => Boolean,
-    stats: StatsReceiver
-  ): TlsTimelineUpdatingStore = {
-    val toTlsTweet = tweetToTLSFullTweet(hasMedia) _
+    processEvent2: T  l neServ ce.ProcessEvent2,
+    has d a: T et => Boolean,
+    stats: StatsRece ver
+  ): TlsT  l neUpdat ngStore = {
+    val toTlsT et = t etToTLSFullT et(has d a) _
 
     val processAndLog =
-      processEvent2.andThen(FutureArrow.fromFunction(logValidationFailed(stats)))
+      processEvent2.andT n(FutureArrow.fromFunct on(logVal dat onFa led(stats)))
 
-    new TlsTimelineUpdatingStore {
-      override val asyncInsertTweet: FutureEffect[AsyncInsertTweet.Event] =
+    new TlsT  l neUpdat ngStore {
+      overr de val async nsertT et: FutureEffect[Async nsertT et.Event] =
         processAndLog
-          .contramap[AsyncInsertTweet.Event] { event =>
-            tls.Event.FullTweetCreate(
-              tls.FullTweetCreateEvent(
-                toTlsTweet(event.tweet, Some(event.timestamp), event.noteTweetMentionedUserIds),
-                event.timestamp.inMillis,
+          .contramap[Async nsertT et.Event] { event =>
+            tls.Event.FullT etCreate(
+              tls.FullT etCreateEvent(
+                toTlsT et(event.t et, So (event.t  stamp), event.noteT et nt onedUser ds),
+                event.t  stamp. nM ll s,
                 featureContext = event.featureContext
               )
             )
           }
-          .asFutureEffect[AsyncInsertTweet.Event]
+          .asFutureEffect[Async nsertT et.Event]
 
-      override val retryAsyncInsertTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncInsertTweet.Event]
+      overr de val retryAsync nsertT et: FutureEffect[
+        T etStoreRetryEvent[Async nsertT et.Event]
       ] =
-        TweetStore.retry(Action, asyncInsertTweet)
+        T etStore.retry(Act on, async nsertT et)
 
-      override val asyncUndeleteTweet: FutureEffect[AsyncUndeleteTweet.Event] =
+      overr de val asyncUndeleteT et: FutureEffect[AsyncUndeleteT et.Event] =
         processAndLog
-          .contramap[AsyncUndeleteTweet.Event] { event =>
-            tls.Event.FullTweetRestore(
-              tls.FullTweetRestoreEvent(
-                toTlsTweet(event.tweet, None, None),
-                event.deletedAt.map(_.inMillis)
+          .contramap[AsyncUndeleteT et.Event] { event =>
+            tls.Event.FullT etRestore(
+              tls.FullT etRestoreEvent(
+                toTlsT et(event.t et, None, None),
+                event.deletedAt.map(_. nM ll s)
               )
             )
           }
-          .asFutureEffect[AsyncUndeleteTweet.Event]
+          .asFutureEffect[AsyncUndeleteT et.Event]
 
-      override val retryAsyncUndeleteTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncUndeleteTweet.Event]
+      overr de val retryAsyncUndeleteT et: FutureEffect[
+        T etStoreRetryEvent[AsyncUndeleteT et.Event]
       ] =
-        TweetStore.retry(Action, asyncUndeleteTweet)
+        T etStore.retry(Act on, asyncUndeleteT et)
 
-      override val asyncDeleteTweet: FutureEffect[AsyncDeleteTweet.Event] =
+      overr de val asyncDeleteT et: FutureEffect[AsyncDeleteT et.Event] =
         processAndLog
-          .contramap[AsyncDeleteTweet.Event] { event =>
-            tls.Event.FullTweetDelete(
-              tls.FullTweetDeleteEvent(
-                toTlsTweet(event.tweet, None, None),
-                event.timestamp.inMillis,
-                isUserErasure = Some(event.isUserErasure),
-                isBounceDelete = Some(event.isBounceDelete)
+          .contramap[AsyncDeleteT et.Event] { event =>
+            tls.Event.FullT etDelete(
+              tls.FullT etDeleteEvent(
+                toTlsT et(event.t et, None, None),
+                event.t  stamp. nM ll s,
+                 sUserErasure = So (event. sUserErasure),
+                 sBounceDelete = So (event. sBounceDelete)
               )
             )
           }
-          .asFutureEffect[AsyncDeleteTweet.Event]
+          .asFutureEffect[AsyncDeleteT et.Event]
 
-      override val retryAsyncDeleteTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncDeleteTweet.Event]
+      overr de val retryAsyncDeleteT et: FutureEffect[
+        T etStoreRetryEvent[AsyncDeleteT et.Event]
       ] =
-        TweetStore.retry(Action, asyncDeleteTweet)
+        T etStore.retry(Act on, asyncDeleteT et)
     }
   }
 }

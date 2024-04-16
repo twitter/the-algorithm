@@ -1,42 +1,42 @@
-package com.twitter.ann.annoy
+package com.tw ter.ann.annoy
 
-import com.twitter.ann.annoy.AnnoyCommon._
-import com.twitter.ann.common._
-import com.twitter.ann.file_store.ReadableIndexIdFileStore
-import com.twitter.bijection.Injection
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.util.FuturePool
+ mport com.tw ter.ann.annoy.AnnoyCommon._
+ mport com.tw ter.ann.common._
+ mport com.tw ter.ann.f le_store.Readable ndex dF leStore
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.search.common.f le.AbstractF le
+ mport com.tw ter.ut l.FuturePool
 
-private[annoy] object TypedAnnoyQueryIndexWithFile {
-  private[annoy] def apply[T, D <: Distance[D]](
-    dimension: Int,
-    metric: Metric[D],
-    injection: Injection[T, Array[Byte]],
+pr vate[annoy] object TypedAnnoyQuery ndexW hF le {
+  pr vate[annoy] def apply[T, D <: D stance[D]](
+    d  ns on:  nt,
+     tr c:  tr c[D],
+     nject on:  nject on[T, Array[Byte]],
     futurePool: FuturePool,
-    directory: AbstractFile
-  ): Queryable[T, AnnoyRuntimeParams, D] = {
-    val deserializer =
-      new TypedAnnoyQueryIndexWithFile(dimension, metric, futurePool, injection)
-    deserializer.fromDirectory(directory)
+    d rectory: AbstractF le
+  ): Queryable[T, AnnoyRunt  Params, D] = {
+    val deser al zer =
+      new TypedAnnoyQuery ndexW hF le(d  ns on,  tr c, futurePool,  nject on)
+    deser al zer.fromD rectory(d rectory)
   }
 }
 
-private[this] class TypedAnnoyQueryIndexWithFile[T, D <: Distance[D]](
-  dimension: Int,
-  metric: Metric[D],
+pr vate[t ] class TypedAnnoyQuery ndexW hF le[T, D <: D stance[D]](
+  d  ns on:  nt,
+   tr c:  tr c[D],
   futurePool: FuturePool,
-  injection: Injection[T, Array[Byte]])
-    extends QueryableDeserialization[
+   nject on:  nject on[T, Array[Byte]])
+    extends QueryableDeser al zat on[
       T,
-      AnnoyRuntimeParams,
+      AnnoyRunt  Params,
       D,
-      Queryable[T, AnnoyRuntimeParams, D]
+      Queryable[T, AnnoyRunt  Params, D]
     ] {
-  override def fromDirectory(directory: AbstractFile): Queryable[T, AnnoyRuntimeParams, D] = {
-    val index = RawAnnoyQueryIndex(dimension, metric, futurePool, directory)
+  overr de def fromD rectory(d rectory: AbstractF le): Queryable[T, AnnoyRunt  Params, D] = {
+    val  ndex = RawAnnoyQuery ndex(d  ns on,  tr c, futurePool, d rectory)
 
-    val indexIdFile = directory.getChild(IndexIdMappingFileName)
-    val readableFileStore = ReadableIndexIdFileStore(indexIdFile, injection)
-    IndexTransformer.transformQueryable(index, readableFileStore)
+    val  ndex dF le = d rectory.getCh ld( ndex dMapp ngF leNa )
+    val readableF leStore = Readable ndex dF leStore( ndex dF le,  nject on)
+     ndexTransfor r.transformQueryable( ndex, readableF leStore)
   }
 }

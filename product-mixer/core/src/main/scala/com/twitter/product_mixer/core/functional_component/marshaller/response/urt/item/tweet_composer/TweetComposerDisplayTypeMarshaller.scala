@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet_composer
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.t et_composer
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet_composer.Reply
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet_composer.TweetComposerDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet_composer.TweetComposerSelfThread
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t et_composer.Reply
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t et_composer.T etComposerD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t et_composer.T etComposerSelfThread
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TweetComposerDisplayTypeMarshaller @Inject() () {
+@S ngleton
+class T etComposerD splayTypeMarshaller @ nject() () {
 
-  def apply(displayType: TweetComposerDisplayType): urt.TweetComposerDisplayType =
-    displayType match {
-      case TweetComposerSelfThread => urt.TweetComposerDisplayType.SelfThread
-      case Reply => urt.TweetComposerDisplayType.Reply
+  def apply(d splayType: T etComposerD splayType): urt.T etComposerD splayType =
+    d splayType match {
+      case T etComposerSelfThread => urt.T etComposerD splayType.SelfThread
+      case Reply => urt.T etComposerD splayType.Reply
     }
 }

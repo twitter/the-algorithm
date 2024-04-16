@@ -1,42 +1,42 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import java.util.Map;
-import java.util.Random;
+ mport java.ut l.Map;
+ mport java.ut l.Random;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.root.PartitionLoggingSupport;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+ mport com.tw ter.search.common.root.Part  onLogg ngSupport;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
 
-public class EarlybirdServicePartitionLoggingSupport
-    extends PartitionLoggingSupport.DefaultPartitionLoggingSupport<EarlybirdRequestContext> {
-  private static final Logger PARTITION_LOG = LoggerFactory.getLogger("partitionLogger");
+publ c class Earlyb rdServ cePart  onLogg ngSupport
+    extends Part  onLogg ngSupport.DefaultPart  onLogg ngSupport<Earlyb rdRequestContext> {
+  pr vate stat c f nal Logger PART T ON_LOG = LoggerFactory.getLogger("part  onLogger");
 
-  private static final long LATENCY_LOG_PARTITIONS_THRESHOLD_MS = 500;
-  private static final double FRACTION_OF_REQUESTS_TO_LOG = 1.0 / 500.0;
+  pr vate stat c f nal long LATENCY_LOG_PART T ONS_THRESHOLD_MS = 500;
+  pr vate stat c f nal double FRACT ON_OF_REQUESTS_TO_LOG = 1.0 / 500.0;
 
-  private final Random random = new Random();
+  pr vate f nal Random random = new Random();
 
-  @Override
-  public void logPartitionLatencies(EarlybirdRequestContext requestContext,
-                                    String tierName,
-                                    Map<Integer, Long> partitionLatenciesMicros,
+  @Overr de
+  publ c vo d logPart  onLatenc es(Earlyb rdRequestContext requestContext,
+                                    Str ng t erNa ,
+                                    Map< nteger, Long> part  onLatenc esM cros,
                                     long latencyMs) {
-    String logReason = null;
+    Str ng logReason = null;
 
-    if (random.nextFloat() <= FRACTION_OF_REQUESTS_TO_LOG) {
+     f (random.nextFloat() <= FRACT ON_OF_REQUESTS_TO_LOG) {
       logReason = "randomSample";
-    } else if (latencyMs > LATENCY_LOG_PARTITIONS_THRESHOLD_MS) {
+    } else  f (latencyMs > LATENCY_LOG_PART T ONS_THRESHOLD_MS) {
       logReason = "slow";
     }
 
-    EarlybirdRequest request = requestContext.getRequest();
-    if (logReason != null && request.isSetSearchQuery()) {
-      PARTITION_LOG.info("{};{};{};{};{};{}", tierName, logReason, latencyMs,
-          partitionLatenciesMicros, request.getClientRequestID(),
-          request.getSearchQuery().getSerializedQuery());
+    Earlyb rdRequest request = requestContext.getRequest();
+     f (logReason != null && request. sSetSearchQuery()) {
+      PART T ON_LOG. nfo("{};{};{};{};{};{}", t erNa , logReason, latencyMs,
+          part  onLatenc esM cros, request.getCl entRequest D(),
+          request.getSearchQuery().getSer al zedQuery());
     }
   }
 }

@@ -1,91 +1,91 @@
-package com.twitter.frigate.pushservice.predicate
+package com.tw ter.fr gate.pushserv ce.pred cate
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.TargetUser
-import com.twitter.frigate.common.candidate.CaretFeedbackHistory
-import com.twitter.frigate.common.candidate.FrigateHistory
-import com.twitter.frigate.common.candidate.HTLVisitHistory
-import com.twitter.frigate.common.candidate.TargetABDecider
-import com.twitter.frigate.common.history.History
-import com.twitter.frigate.common.predicate.FrigateHistoryFatiguePredicate.TimeSeries
-import com.twitter.frigate.common.predicate.ntab_caret_fatigue.NtabCaretClickFatiguePredicateHelper
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.common.util.FeatureSwitchParams
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.notificationservice.thriftscala.CaretFeedbackDetails
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.frigate.common.predicate.{FatiguePredicate => CommonFatiguePredicate}
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.TargetUser
+ mport com.tw ter.fr gate.common.cand date.CaretFeedback tory
+ mport com.tw ter.fr gate.common.cand date.Fr gate tory
+ mport com.tw ter.fr gate.common.cand date.HTLV s  tory
+ mport com.tw ter.fr gate.common.cand date.TargetABDec der
+ mport com.tw ter.fr gate.common. tory. tory
+ mport com.tw ter.fr gate.common.pred cate.Fr gate toryFat guePred cate.T  Ser es
+ mport com.tw ter.fr gate.common.pred cate.ntab_caret_fat gue.NtabCaretCl ckFat guePred cate lper
+ mport com.tw ter.fr gate.common.rec_types.RecTypes
+ mport com.tw ter.fr gate.common.ut l.FeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter.not f cat onserv ce.thr ftscala.CaretFeedbackDeta ls
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.fr gate.common.pred cate.{Fat guePred cate => CommonFat guePred cate}
 
-object TargetNtabCaretClickFatiguePredicate {
-  import NtabCaretClickFatiguePredicateHelper._
+object TargetNtabCaretCl ckFat guePred cate {
+   mport NtabCaretCl ckFat guePred cate lper._
 
-  private val MagicRecsCategory = "MagicRecs"
+  pr vate val Mag cRecsCategory = "Mag cRecs"
 
   def apply[
-    T <: TargetUser with TargetABDecider with CaretFeedbackHistory with FrigateHistory with HTLVisitHistory
+    T <: TargetUser w h TargetABDec der w h CaretFeedback tory w h Fr gate tory w h HTLV s  tory
   ](
-    filterHistory: TimeSeries => TimeSeries =
-      CommonFatiguePredicate.recTypesOnlyFilter(RecTypes.sharedNTabCaretFatigueTypes),
-    filterCaretFeedbackHistory: TargetUser with TargetABDecider with CaretFeedbackHistory => Seq[
-      CaretFeedbackDetails
-    ] => Seq[CaretFeedbackDetails] =
-      CaretFeedbackHistoryFilter.caretFeedbackHistoryFilter(Seq(MagicRecsCategory)),
-    calculateFatiguePeriod: Seq[CaretFeedbackDetails] => Duration = calculateFatiguePeriodMagicRecs,
-    useMostRecentDislikeTime: Boolean = false,
-    name: String = "NtabCaretClickFatiguePredicate"
+    f lter tory: T  Ser es => T  Ser es =
+      CommonFat guePred cate.recTypesOnlyF lter(RecTypes.sharedNTabCaretFat gueTypes),
+    f lterCaretFeedback tory: TargetUser w h TargetABDec der w h CaretFeedback tory => Seq[
+      CaretFeedbackDeta ls
+    ] => Seq[CaretFeedbackDeta ls] =
+      CaretFeedback toryF lter.caretFeedback toryF lter(Seq(Mag cRecsCategory)),
+    calculateFat guePer od: Seq[CaretFeedbackDeta ls] => Durat on = calculateFat guePer odMag cRecs,
+    useMostRecentD sl keT  : Boolean = false,
+    na : Str ng = "NtabCaretCl ckFat guePred cate"
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[T] = {
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[T] = {
 
-    val scopedStats = statsReceiver.scope(name)
+    val scopedStats = statsRece ver.scope(na )
     val crtStats = scopedStats.scope("crt")
-    Predicate
+    Pred cate
       .fromAsync { target: T =>
-        Future.join(target.history, target.caretFeedbacks).map {
-          case (history, Some(feedbackDetails)) => {
-            val feedbackDetailsDeduped = dedupFeedbackDetails(
-              filterCaretFeedbackHistory(target)(feedbackDetails),
+        Future.jo n(target. tory, target.caretFeedbacks).map {
+          case ( tory, So (feedbackDeta ls)) => {
+            val feedbackDeta lsDeduped = dedupFeedbackDeta ls(
+              f lterCaretFeedback tory(target)(feedbackDeta ls),
               scopedStats
             )
 
-            val fatiguePeriod =
-              if (hasUserDislikeInLast30Days(feedbackDetailsDeduped) && target.params(
-                  PushFeatureSwitchParams.EnableReducedFatigueRulesForSeeLessOften)) {
-                durationToFilterMRForSeeLessOftenExpt(
-                  feedbackDetailsDeduped,
-                  target.params(FeatureSwitchParams.NumberOfDaysToFilterMRForSeeLessOften),
-                  target.params(FeatureSwitchParams.NumberOfDaysToReducePushCapForSeeLessOften),
+            val fat guePer od =
+               f (hasUserD sl ke nLast30Days(feedbackDeta lsDeduped) && target.params(
+                  PushFeatureSw chParams.EnableReducedFat gueRulesForSeeLessOften)) {
+                durat onToF lterMRForSeeLessOftenExpt(
+                  feedbackDeta lsDeduped,
+                  target.params(FeatureSw chParams.NumberOfDaysToF lterMRForSeeLessOften),
+                  target.params(FeatureSw chParams.NumberOfDaysToReducePushCapForSeeLessOften),
                   scopedStats
                 )
               } else {
-                calculateFatiguePeriod(feedbackDetailsDeduped)
+                calculateFat guePer od(feedbackDeta lsDeduped)
               }
 
-            val crtlist = feedbackDetailsDeduped
+            val crtl st = feedbackDeta lsDeduped
               .flatMap { fd =>
-                fd.genericNotificationMetadata.map { gm =>
-                  gm.genericType.name
+                fd.gener cNot f cat on tadata.map { gm =>
+                  gm.gener cType.na 
                 }
-              }.distinct.sorted.mkString("-")
+              }.d st nct.sorted.mkStr ng("-")
 
-            if (fatiguePeriod > 0.days) {
-              crtStats.scope(crtlist).counter("fatigued").incr()
+             f (fat guePer od > 0.days) {
+              crtStats.scope(crtl st).counter("fat gued"). ncr()
             } else {
-              crtStats.scope(crtlist).counter("non_fatigued").incr()
+              crtStats.scope(crtl st).counter("non_fat gued"). ncr()
             }
 
             val hasRecentSent =
-              hasRecentSend(History(filterHistory(history.history.toSeq).toMap), fatiguePeriod)
+              hasRecentSend( tory(f lter tory( tory. tory.toSeq).toMap), fat guePer od)
             !hasRecentSent
           }
           case _ => true
         }
       }
-      .withStats(scopedStats)
-      .withName(name)
+      .w hStats(scopedStats)
+      .w hNa (na )
   }
 }

@@ -1,27 +1,27 @@
-package com.twitter.search.ingester.pipeline.wire;
+package com.tw ter.search. ngester.p pel ne.w re;
 
-import javax.naming.NamingException;
+ mport javax.nam ng.Nam ngExcept on;
 
-import com.twitter.search.common.partitioning.base.PartitionMappingManager;
-import com.twitter.search.common.util.io.kafka.SearchPartitioner;
+ mport com.tw ter.search.common.part  on ng.base.Part  onMapp ngManager;
+ mport com.tw ter.search.common.ut l. o.kafka.SearchPart  oner;
 
 /**
- * A variant of {@code SearchPartitioner} which retrieves {@code PartitionMappingManager} from
- * {@code WireModule}.
+ * A var ant of {@code SearchPart  oner} wh ch retr eves {@code Part  onMapp ngManager} from
+ * {@code W reModule}.
  *
- * Note that the value object has to implement {@code Partitionable}.
+ * Note that t  value object has to  mple nt {@code Part  onable}.
  */
-public class IngesterPartitioner extends SearchPartitioner {
+publ c class  ngesterPart  oner extends SearchPart  oner {
 
-  public IngesterPartitioner() {
-    super(getPartitionMappingManager());
+  publ c  ngesterPart  oner() {
+    super(getPart  onMapp ngManager());
   }
 
-  private static PartitionMappingManager getPartitionMappingManager() {
+  pr vate stat c Part  onMapp ngManager getPart  onMapp ngManager() {
     try {
-      return WireModule.getWireModule().getPartitionMappingManager();
-    } catch (NamingException e) {
-      throw new RuntimeException(e);
+      return W reModule.getW reModule().getPart  onMapp ngManager();
+    } catch (Nam ngExcept on e) {
+      throw new Runt  Except on(e);
     }
   }
 }

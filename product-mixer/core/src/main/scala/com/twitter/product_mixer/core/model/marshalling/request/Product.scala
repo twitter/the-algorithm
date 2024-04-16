@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.model.marshalling.request
+package com.tw ter.product_m xer.core.model.marshall ng.request
 
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.identifier.ProductIdentifier
+ mport com.tw ter.product_m xer.core.model.common.Component
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Product dent f er
 
-trait Product extends Component {
+tra  Product extends Component {
 
   /**
-   * Identifier names on products can be used to create Feature Switch rules by product,
-   * which useful if bucketing occurs in a component shared by multiple products.
+   *  dent f er na s on products can be used to create Feature Sw ch rules by product,
+   * wh ch useful  f bucket ng occurs  n a component shared by mult ple products.
    *
-   * @see [[com.twitter.product_mixer.core.product.ProductParamConfig.supportedClientFSName]]
+   * @see [[com.tw ter.product_m xer.core.product.ProductParamConf g.supportedCl entFSNa ]]
    */
-  override val identifier: ProductIdentifier
+  overr de val  dent f er: Product dent f er
 
   /**
-   * To support StringCenter, override this val to `Some("name-of-string-center-project")` and
-   * include the `ProductScopeStringCenterModule` in the server's modules list
+   * To support Str ngCenter, overr de t  val to `So ("na -of-str ng-center-project")` and
+   *  nclude t  `ProductScopeStr ngCenterModule`  n t  server's modules l st
    */
-  val stringCenterProject: Option[String] = None
+  val str ngCenterProject: Opt on[Str ng] = None
 }
 
-trait HasProduct {
+tra  HasProduct {
   def product: Product
 }

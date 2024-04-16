@@ -1,10 +1,10 @@
-package com.twitter.unified_user_actions.client.config
+package com.tw ter.un f ed_user_act ons.cl ent.conf g
 
 object Constants {
-  val UuaKafkaTopicName = "unified_user_actions"
-  val UuaEngagementOnlyKafkaTopicName = "unified_user_actions_engagements"
-  val UuaKafkaProdClusterName = "/s/kafka/bluebird-1"
-  val UuaKafkaStagingClusterName = "/s/kafka/custdevel"
+  val UuaKafkaTop cNa  = "un f ed_user_act ons"
+  val UuaEngage ntOnlyKafkaTop cNa  = "un f ed_user_act ons_engage nts"
+  val UuaKafkaProdClusterNa  = "/s/kafka/blueb rd-1"
+  val UuaKafkaStag ngClusterNa  = "/s/kafka/custdevel"
   val UuaProdEnv = "prod"
-  val UuaStagingEnv = "staging"
+  val UuaStag ngEnv = "stag ng"
 }

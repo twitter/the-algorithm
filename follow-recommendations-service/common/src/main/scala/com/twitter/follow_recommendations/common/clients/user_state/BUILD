@@ -1,17 +1,17 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/net/codingwell:scala-guice",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/clients/cache",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/clients/strato",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/configapi/deciders",
-        "stitch/stitch-core",
-        "strato/src/main/scala/com/twitter/strato/client",
-        "user-signal-service/thrift/src/main/thrift:thrift-scala",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/com/google/ nject:gu ce",
+        "3rdparty/jvm/net/cod ng ll:scala-gu ce",
+        "3rdparty/jvm/org/slf4j:slf4j-ap ",
+        "follow-recom ndat ons-serv ce/common/src/ma n/scala/com/tw ter/follow_recom ndat ons/common/cl ents/cac ",
+        "follow-recom ndat ons-serv ce/common/src/ma n/scala/com/tw ter/follow_recom ndat ons/common/cl ents/strato",
+        "follow-recom ndat ons-serv ce/server/src/ma n/scala/com/tw ter/follow_recom ndat ons/conf gap /dec ders",
+        "st ch/st ch-core",
+        "strato/src/ma n/scala/com/tw ter/strato/cl ent",
+        "user-s gnal-serv ce/thr ft/src/ma n/thr ft:thr ft-scala",
     ],
 )

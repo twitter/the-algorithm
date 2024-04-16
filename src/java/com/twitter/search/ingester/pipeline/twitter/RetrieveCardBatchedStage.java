@@ -1,244 +1,244 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.tw ter.search. ngester.p pel ne.tw ter;
 
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import javax.naming.NamingException;
+ mport java.net.Malfor dURLExcept on;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Collect ons;
+ mport java.ut l.HashMap;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
+ mport javax.nam ng.Nam ngExcept on;
 
-import com.google.common.collect.Maps;
+ mport com.google.common.collect.Maps;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.stage.StageTimer;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons.p pel ne.StageExcept on;
+ mport org.apac .commons.p pel ne.stage.StageT  r;
+ mport org.apac .commons.p pel ne.val dat on.Consu dTypes;
+ mport org.apac .commons.p pel ne.val dat on.ProducesConsu d;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.text.language.LocaleUtil;
-import com.twitter.expandodo.thriftjava.Card2;
-import com.twitter.mediaservices.commons.tweetmedia.thrift_java.MediaInfo;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.util.BatchingClient;
-import com.twitter.search.ingester.pipeline.util.CardFieldUtil;
-import com.twitter.search.ingester.pipeline.util.IngesterStageTimer;
-import com.twitter.search.ingester.pipeline.util.ResponseNotReturnedException;
-import com.twitter.spiderduck.common.URLUtils;
-import com.twitter.tweetypie.thriftjava.GetTweetOptions;
-import com.twitter.tweetypie.thriftjava.GetTweetResult;
-import com.twitter.tweetypie.thriftjava.GetTweetsRequest;
-import com.twitter.tweetypie.thriftjava.MediaEntity;
-import com.twitter.tweetypie.thriftjava.StatusState;
-import com.twitter.tweetypie.thriftjava.Tweet;
-import com.twitter.tweetypie.thriftjava.TweetService;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+ mport com.tw ter.common.text.language.LocaleUt l;
+ mport com.tw ter.expandodo.thr ftjava.Card2;
+ mport com.tw ter. d aserv ces.commons.t et d a.thr ft_java. d a nfo;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftExpandedUrl;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search. ngester.model. ngesterTw ter ssage;
+ mport com.tw ter.search. ngester.p pel ne.ut l.Batch ngCl ent;
+ mport com.tw ter.search. ngester.p pel ne.ut l.CardF eldUt l;
+ mport com.tw ter.search. ngester.p pel ne.ut l. ngesterStageT  r;
+ mport com.tw ter.search. ngester.p pel ne.ut l.ResponseNotReturnedExcept on;
+ mport com.tw ter.sp derduck.common.URLUt ls;
+ mport com.tw ter.t etyp e.thr ftjava.GetT etOpt ons;
+ mport com.tw ter.t etyp e.thr ftjava.GetT etResult;
+ mport com.tw ter.t etyp e.thr ftjava.GetT etsRequest;
+ mport com.tw ter.t etyp e.thr ftjava. d aEnt y;
+ mport com.tw ter.t etyp e.thr ftjava.StatusState;
+ mport com.tw ter.t etyp e.thr ftjava.T et;
+ mport com.tw ter.t etyp e.thr ftjava.T etServ ce;
+ mport com.tw ter.ut l.Funct on;
+ mport com.tw ter.ut l.Future;
 
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducesConsumed
-public class RetrieveCardBatchedStage extends TwitterBaseStage
-    <IngesterTwitterMessage, IngesterTwitterMessage> {
-  private static final Logger LOG = LoggerFactory.getLogger(RetrieveCardBatchedStage.class);
+@Consu dTypes( ngesterTw ter ssage.class)
+@ProducesConsu d
+publ c class Retr eveCardBatc dStage extends Tw terBaseStage
+    < ngesterTw ter ssage,  ngesterTw ter ssage> {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Retr eveCardBatc dStage.class);
 
-  private static final String CARDS_PLATFORM_KEY = "iPhone-13";
-  private int batchSize = 10;
+  pr vate stat c f nal Str ng CARDS_PLATFORM_KEY = " Phone-13";
+  pr vate  nt batchS ze = 10;
 
-  private SearchRateCounter totalTweets;
-  private SearchRateCounter tweetsWithCards;
-  private SearchRateCounter tweetsWithoutCards;
-  private SearchRateCounter tweetsWithAnimatedGifMediaInfo;
-  private SearchRateCounter cardsWithName;
-  private SearchRateCounter cardsWithDomain;
-  private SearchRateCounter cardsWithTitles;
-  private SearchRateCounter cardsWithDescriptions;
-  private SearchRateCounter cardsWithUnknownLanguage;
-  private SearchRateCounter tweetsNotFound;
-  private SearchRateCounter malformedUrls;
-  private SearchRateCounter urlMismatches;
-  private SearchRateCounter cardExceptions;
-  private SearchRateCounter cardExceptionTweets;
-  private StageTimer retrieveCardsTimer;
+  pr vate SearchRateCounter totalT ets;
+  pr vate SearchRateCounter t etsW hCards;
+  pr vate SearchRateCounter t etsW houtCards;
+  pr vate SearchRateCounter t etsW hAn matedG f d a nfo;
+  pr vate SearchRateCounter cardsW hNa ;
+  pr vate SearchRateCounter cardsW hDoma n;
+  pr vate SearchRateCounter cardsW hT les;
+  pr vate SearchRateCounter cardsW hDescr pt ons;
+  pr vate SearchRateCounter cardsW hUnknownLanguage;
+  pr vate SearchRateCounter t etsNotFound;
+  pr vate SearchRateCounter malfor dUrls;
+  pr vate SearchRateCounter urlM smatc s;
+  pr vate SearchRateCounter cardExcept ons;
+  pr vate SearchRateCounter cardExcept onT ets;
+  pr vate StageT  r retr eveCardsT  r;
 
-  private String cardNamePrefix;
-  // Since there is only one thread executing this stage (although that could potentially be
-  // changed in the pipeline config), no need to be thread safe.
-  private static final Map<String, SearchRateCounter> CARD_NAME_STATS = new HashMap<>();
+  pr vate Str ng cardNa Pref x;
+  // S nce t re  s only one thread execut ng t  stage (although that could potent ally be
+  // changed  n t  p pel ne conf g), no need to be thread safe.
+  pr vate stat c f nal Map<Str ng, SearchRateCounter> CARD_NAME_STATS = new HashMap<>();
 
-  private static TweetService.ServiceToClient tweetyPieService;
-  private BatchingClient<Long, Card2> cardsClient;
+  pr vate stat c T etServ ce.Serv ceToCl ent t etyP eServ ce;
+  pr vate Batch ngCl ent<Long, Card2> cardsCl ent;
 
-  private String tweetypieClientId = null;
+  pr vate Str ng t etyp eCl ent d = null;
 
-  // Can be overridden in the corresponding pipeline-ingester.*.xml config.
-  // By default protected tweets are filtered out.
-  // Only in the protected ingester pipeline is this set to false.
-  private boolean filterProtected = true;
+  // Can be overr dden  n t  correspond ng p pel ne- ngester.*.xml conf g.
+  // By default protected t ets are f ltered out.
+  // Only  n t  protected  ngester p pel ne  s t  set to false.
+  pr vate boolean f lterProtected = true;
 
-  @Override
-  public void initStats() {
-    super.initStats();
-    cardNamePrefix = getStageNamePrefix() + "_card_name_";
-    totalTweets = SearchRateCounter.export(getStageNamePrefix() + "_total_tweets");
-    tweetsWithCards = SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_cards");
-    tweetsWithoutCards = SearchRateCounter.export(getStageNamePrefix() + "_tweets_without_cards");
-    tweetsWithAnimatedGifMediaInfo =
-        SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_animated_gif_media_info");
-    cardsWithName = SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_card_name");
-    cardsWithDomain = SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_card_domain");
-    cardsWithTitles = SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_card_titles");
-    cardsWithDescriptions =
-        SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_card_descriptions");
-    cardsWithUnknownLanguage =
-        SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_unknown_card_lanuage");
-    tweetsNotFound = SearchRateCounter.export(getStageNamePrefix() + "_tweets_not_found");
-    malformedUrls = SearchRateCounter.export(getStageNamePrefix() + "_malformed_urls");
-    urlMismatches = SearchRateCounter.export(getStageNamePrefix() + "_url_mismatches");
-    cardExceptions = SearchRateCounter.export(getStageNamePrefix() + "_card_exceptions");
-    cardExceptionTweets =
-        SearchRateCounter.export(getStageNamePrefix() + "_card_exception_tweets");
-    retrieveCardsTimer = new IngesterStageTimer(getStageNamePrefix() + "_request_timer");
+  @Overr de
+  publ c vo d  n Stats() {
+    super. n Stats();
+    cardNa Pref x = getStageNa Pref x() + "_card_na _";
+    totalT ets = SearchRateCounter.export(getStageNa Pref x() + "_total_t ets");
+    t etsW hCards = SearchRateCounter.export(getStageNa Pref x() + "_t ets_w h_cards");
+    t etsW houtCards = SearchRateCounter.export(getStageNa Pref x() + "_t ets_w hout_cards");
+    t etsW hAn matedG f d a nfo =
+        SearchRateCounter.export(getStageNa Pref x() + "_t ets_w h_an mated_g f_ d a_ nfo");
+    cardsW hNa  = SearchRateCounter.export(getStageNa Pref x() + "_t ets_w h_card_na ");
+    cardsW hDoma n = SearchRateCounter.export(getStageNa Pref x() + "_t ets_w h_card_doma n");
+    cardsW hT les = SearchRateCounter.export(getStageNa Pref x() + "_t ets_w h_card_t les");
+    cardsW hDescr pt ons =
+        SearchRateCounter.export(getStageNa Pref x() + "_t ets_w h_card_descr pt ons");
+    cardsW hUnknownLanguage =
+        SearchRateCounter.export(getStageNa Pref x() + "_t ets_w h_unknown_card_lanuage");
+    t etsNotFound = SearchRateCounter.export(getStageNa Pref x() + "_t ets_not_found");
+    malfor dUrls = SearchRateCounter.export(getStageNa Pref x() + "_malfor d_urls");
+    urlM smatc s = SearchRateCounter.export(getStageNa Pref x() + "_url_m smatc s");
+    cardExcept ons = SearchRateCounter.export(getStageNa Pref x() + "_card_except ons");
+    cardExcept onT ets =
+        SearchRateCounter.export(getStageNa Pref x() + "_card_except on_t ets");
+    retr eveCardsT  r = new  ngesterStageT  r(getStageNa Pref x() + "_request_t  r");
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    super.doInnerPreprocess();
-    tweetyPieService = wireModule.getTweetyPieClient(tweetypieClientId);
-    cardsClient = new BatchingClient<>(this::batchRetrieveURLs, batchSize);
+  @Overr de
+  protected vo d do nnerPreprocess() throws StageExcept on, Nam ngExcept on {
+    super.do nnerPreprocess();
+    t etyP eServ ce = w reModule.getT etyP eCl ent(t etyp eCl ent d);
+    cardsCl ent = new Batch ngCl ent<>(t ::batchRetr eveURLs, batchS ze);
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this,
-          "Received object of incorrect type: " + obj.getClass().getName());
+  @Overr de
+  publ c vo d  nnerProcess(Object obj) throws StageExcept on {
+     f (!(obj  nstanceof  ngesterTw ter ssage)) {
+      throw new StageExcept on(t ,
+          "Rece ved object of  ncorrect type: " + obj.getClass().getNa ());
     }
 
-    IngesterTwitterMessage message = (IngesterTwitterMessage) obj;
+     ngesterTw ter ssage  ssage = ( ngesterTw ter ssage) obj;
 
-    cardsClient.call(message.getTweetId())
-        .onSuccess(Function.cons(card -> {
-          updateMessage(message, card);
-          emitAndCount(message);
+    cardsCl ent.call( ssage.getT et d())
+        .onSuccess(Funct on.cons(card -> {
+          update ssage( ssage, card);
+          em AndCount( ssage);
         }))
-        .onFailure(Function.cons(exception -> {
-          if (!(exception instanceof ResponseNotReturnedException)) {
-            cardExceptionTweets.increment();
+        .onFa lure(Funct on.cons(except on -> {
+           f (!(except on  nstanceof ResponseNotReturnedExcept on)) {
+            cardExcept onT ets. ncre nt();
           }
 
-          emitAndCount(message);
+          em AndCount( ssage);
         }));
   }
 
-  private Future<Map<Long, Card2>> batchRetrieveURLs(Set<Long> keys) {
-    retrieveCardsTimer.start();
-    totalTweets.increment(keys.size());
+  pr vate Future<Map<Long, Card2>> batchRetr eveURLs(Set<Long> keys) {
+    retr eveCardsT  r.start();
+    totalT ets. ncre nt(keys.s ze());
 
-    GetTweetOptions options = new GetTweetOptions()
-        .setInclude_cards(true)
+    GetT etOpt ons opt ons = new GetT etOpt ons()
+        .set nclude_cards(true)
         .setCards_platform_key(CARDS_PLATFORM_KEY)
-        .setBypass_visibility_filtering(!filterProtected);
+        .setBypass_v s b l y_f lter ng(!f lterProtected);
 
-    GetTweetsRequest request = new GetTweetsRequest()
-        .setOptions(options)
-        .setTweet_ids(new ArrayList<>(keys));
+    GetT etsRequest request = new GetT etsRequest()
+        .setOpt ons(opt ons)
+        .setT et_ ds(new ArrayL st<>(keys));
 
-    return tweetyPieService.get_tweets(request)
-        .onFailure(throwable -> {
-          cardExceptions.increment();
-          LOG.error("TweetyPie server threw an exception while requesting tweetIds: "
-              + request.getTweet_ids(), throwable);
+    return t etyP eServ ce.get_t ets(request)
+        .onFa lure(throwable -> {
+          cardExcept ons. ncre nt();
+          LOG.error("T etyP e server threw an except on wh le request ng t et ds: "
+              + request.getT et_ ds(), throwable);
           return null;
         })
-        .map(this::createIdToCardMap);
+        .map(t ::create dToCardMap);
   }
 
-  private void updateMessage(IngesterTwitterMessage message, Card2 card) {
-    tweetsWithCards.increment();
+  pr vate vo d update ssage( ngesterTw ter ssage  ssage, Card2 card) {
+    t etsW hCards. ncre nt();
 
-    String cardName = card.getName().toLowerCase();
-    addCardNameToStats(cardName);
-    message.setCardName(cardName);
-    cardsWithName.increment();
-    message.setCardUrl(card.getUrl());
+    Str ng cardNa  = card.getNa ().toLo rCase();
+    addCardNa ToStats(cardNa );
+     ssage.setCardNa (cardNa );
+    cardsW hNa . ncre nt();
+     ssage.setCardUrl(card.getUrl());
 
-    String url = getLastHop(message, card.getUrl());
-    if (url != null) {
+    Str ng url = getLastHop( ssage, card.getUrl());
+     f (url != null) {
       try {
-        String domain = URLUtils.getDomainFromURL(url);
-        message.setCardDomain(domain.toLowerCase());
-        cardsWithDomain.increment();
-      } catch (MalformedURLException e) {
-        malformedUrls.increment();
-        if (LOG.isDebugEnabled()) {
-          LOG.debug("Tweet ID {} has a malformed card last hop URL: {}", message.getId(), url);
+        Str ng doma n = URLUt ls.getDoma nFromURL(url);
+         ssage.setCardDoma n(doma n.toLo rCase());
+        cardsW hDoma n. ncre nt();
+      } catch (Malfor dURLExcept on e) {
+        malfor dUrls. ncre nt();
+         f (LOG. sDebugEnabled()) {
+          LOG.debug("T et  D {} has a malfor d card last hop URL: {}",  ssage.get d(), url);
         }
       }
     } else {
-      // This happens with retweet. Basically when retrieve card for a retweet, we
-      // get a card associated with the original tweet, so the tco won't match.
-      // As of Sep 2014, this seems to be the intended behavior and has been running
-      // like this for over a year.
-      urlMismatches.increment();
+      // T  happens w h ret et. Bas cally w n retr eve card for a ret et,  
+      // get a card assoc ated w h t  or g nal t et, so t  tco won't match.
+      // As of Sep 2014, t  seems to be t   ntended behav or and has been runn ng
+      // l ke t  for over a year.
+      urlM smatc s. ncre nt();
     }
 
-    message.setCardTitle(
-        CardFieldUtil.extractBindingValue(CardFieldUtil.TITLE_BINDING_KEY, card));
-    if (message.getCardTitle() != null) {
-      cardsWithTitles.increment();
+     ssage.setCardT le(
+        CardF eldUt l.extractB nd ngValue(CardF eldUt l.T TLE_B ND NG_KEY, card));
+     f ( ssage.getCardT le() != null) {
+      cardsW hT les. ncre nt();
     }
-    message.setCardDescription(
-        CardFieldUtil.extractBindingValue(CardFieldUtil.DESCRIPTION_BINDING_KEY, card));
-    if (message.getCardDescription() != null) {
-      cardsWithDescriptions.increment();
+     ssage.setCardDescr pt on(
+        CardF eldUt l.extractB nd ngValue(CardF eldUt l.DESCR PT ON_B ND NG_KEY, card));
+     f ( ssage.getCardDescr pt on() != null) {
+      cardsW hDescr pt ons. ncre nt();
     }
-    CardFieldUtil.deriveCardLang(message);
-    if (LocaleUtil.UNKNOWN.getLanguage().equals(message.getCardLang())) {
-      cardsWithUnknownLanguage.increment();
+    CardF eldUt l.der veCardLang( ssage);
+     f (LocaleUt l.UNKNOWN.getLanguage().equals( ssage.getCardLang())) {
+      cardsW hUnknownLanguage. ncre nt();
     }
   }
 
-  private Map<Long, Card2> createIdToCardMap(List<GetTweetResult> listResult) {
+  pr vate Map<Long, Card2> create dToCardMap(L st<GetT etResult> l stResult) {
     Map<Long, Card2> responseMap = Maps.newHashMap();
-    for (GetTweetResult entry : listResult) {
-      if (entry.isSetTweet()
-          && entry.isSetTweet_state()
-          && (entry.getTweet_state() == StatusState.FOUND)) {
-        long id = entry.getTweet_id();
-        if (entry.getTweet().isSetCard2()) {
-          responseMap.put(id, entry.getTweet().getCard2());
+    for (GetT etResult entry : l stResult) {
+       f (entry. sSetT et()
+          && entry. sSetT et_state()
+          && (entry.getT et_state() == StatusState.FOUND)) {
+        long  d = entry.getT et_ d();
+         f (entry.getT et(). sSetCard2()) {
+          responseMap.put( d, entry.getT et().getCard2());
         } else {
-          // Short-term fix for removal of animated GIF cards --
-          // if the tweet contains an animated GIF, create a card based on media entity data
-          Card2 card = createCardForAnimatedGif(entry.getTweet());
-          if (card != null) {
-            responseMap.put(id, card);
-            tweetsWithAnimatedGifMediaInfo.increment();
+          // Short-term f x for removal of an mated G F cards --
+          //  f t  t et conta ns an an mated G F, create a card based on  d a ent y data
+          Card2 card = createCardForAn matedG f(entry.getT et());
+           f (card != null) {
+            responseMap.put( d, card);
+            t etsW hAn matedG f d a nfo. ncre nt();
           } else {
-            tweetsWithoutCards.increment();
+            t etsW houtCards. ncre nt();
           }
         }
       } else {
-        tweetsNotFound.increment();
+        t etsNotFound. ncre nt();
       }
     }
     return responseMap;
   }
 
-  private Card2 createCardForAnimatedGif(Tweet tweet) {
-    if (tweet.getMediaSize() > 0) {
-      for (MediaEntity mediaEntity : tweet.getMedia()) {
-        MediaInfo mediaInfo = mediaEntity.getMedia_info();
-        if (mediaInfo != null && mediaInfo.getSetField() == MediaInfo._Fields.ANIMATED_GIF_INFO) {
+  pr vate Card2 createCardForAn matedG f(T et t et) {
+     f (t et.get d aS ze() > 0) {
+      for ( d aEnt y  d aEnt y : t et.get d a()) {
+         d a nfo  d a nfo =  d aEnt y.get d a_ nfo();
+         f ( d a nfo != null &&  d a nfo.getSetF eld() ==  d a nfo._F elds.AN MATED_G F_ NFO) {
           Card2 card = new Card2();
-          card.setName("animated_gif");
-          // Use the original compressed URL for the media entity to match existing card URLs
-          card.setUrl(mediaEntity.getUrl());
-          card.setBinding_values(Collections.emptyList());
+          card.setNa ("an mated_g f");
+          // Use t  or g nal compressed URL for t   d a ent y to match ex st ng card URLs
+          card.setUrl( d aEnt y.getUrl());
+          card.setB nd ng_values(Collect ons.emptyL st());
 
           return card;
         }
@@ -247,42 +247,42 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
     return null;
   }
 
-  // Unfortunately the url returned in the card data is not the last hop
-  private String getLastHop(IngesterTwitterMessage message, String url) {
-    if (message.getExpandedUrlMap() != null) {
-      ThriftExpandedUrl expanded = message.getExpandedUrlMap().get(url);
-      if ((expanded != null) && expanded.isSetCanonicalLastHopUrl()) {
-        return expanded.getCanonicalLastHopUrl();
+  // Unfortunately t  url returned  n t  card data  s not t  last hop
+  pr vate Str ng getLastHop( ngesterTw ter ssage  ssage, Str ng url) {
+     f ( ssage.getExpandedUrlMap() != null) {
+      Thr ftExpandedUrl expanded =  ssage.getExpandedUrlMap().get(url);
+       f ((expanded != null) && expanded. sSetCanon calLastHopUrl()) {
+        return expanded.getCanon calLastHopUrl();
       }
     }
     return null;
   }
 
-  // Used by commons-pipeline and set via the xml config
-  public void setFilterProtected(boolean filterProtected) {
-    LOG.info("Filtering protected tweets: {}", filterProtected);
-    this.filterProtected = filterProtected;
+  // Used by commons-p pel ne and set v a t  xml conf g
+  publ c vo d setF lterProtected(boolean f lterProtected) {
+    LOG. nfo("F lter ng protected t ets: {}", f lterProtected);
+    t .f lterProtected = f lterProtected;
   }
 
-  public void setTweetypieClientId(String tweetypieClientId) {
-    LOG.info("Using tweetypieClientId: {}", tweetypieClientId);
-    this.tweetypieClientId = tweetypieClientId;
+  publ c vo d setT etyp eCl ent d(Str ng t etyp eCl ent d) {
+    LOG. nfo("Us ng t etyp eCl ent d: {}", t etyp eCl ent d);
+    t .t etyp eCl ent d = t etyp eCl ent d;
   }
 
-  public void setInternalBatchSize(int internalBatchSize) {
-    this.batchSize = internalBatchSize;
+  publ c vo d set nternalBatchS ze( nt  nternalBatchS ze) {
+    t .batchS ze =  nternalBatchS ze;
   }
 
   /**
-   * For each card name, we add a rate counter to observe what kinds of card we're actually
-   * indexing, and with what rate.
+   * For each card na ,   add a rate counter to observe what k nds of card  're actually
+   *  ndex ng, and w h what rate.
    */
-  private void addCardNameToStats(String cardName) {
-    SearchRateCounter cardNameCounter = CARD_NAME_STATS.get(cardName);
-    if (cardNameCounter == null) {
-      cardNameCounter = SearchRateCounter.export(cardNamePrefix + cardName);
-      CARD_NAME_STATS.put(cardName, cardNameCounter);
+  pr vate vo d addCardNa ToStats(Str ng cardNa ) {
+    SearchRateCounter cardNa Counter = CARD_NAME_STATS.get(cardNa );
+     f (cardNa Counter == null) {
+      cardNa Counter = SearchRateCounter.export(cardNa Pref x + cardNa );
+      CARD_NAME_STATS.put(cardNa , cardNa Counter);
     }
-    cardNameCounter.increment();
+    cardNa Counter. ncre nt();
   }
 }

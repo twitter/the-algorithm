@@ -1,74 +1,74 @@
-package com.twitter.search.earlybird_root.routers;
+package com.tw ter.search.earlyb rd_root.routers;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+ mport javax. nject.Na d;
+ mport javax. nject.S ngleton;
 
-import com.google.inject.Provides;
+ mport com.google. nject.Prov des;
 
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
-import com.twitter.search.earlybird_root.filters.FullArchiveServingRangeProvider;
-import com.twitter.search.earlybird_root.filters.RealtimeServingRangeProvider;
-import com.twitter.search.earlybird_root.filters.ServingRangeProvider;
+ mport com.tw ter. nject.Tw terModule;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.earlyb rd_root.f lters.Earlyb rdT  RangeF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters.FullArch veServ ngRangeProv der;
+ mport com.tw ter.search.earlyb rd_root.f lters.Realt  Serv ngRangeProv der;
+ mport com.tw ter.search.earlyb rd_root.f lters.Serv ngRangeProv der;
 
-public class RelevanceRequestRouterModule extends TwitterModule {
-  public static final String FULL_ARCHIVE_TIME_RANGE_FILTER =
-      "relevance_full_archive_time_range_filter";
-  public static final String REALTIME_TIME_RANGE_FILTER =
-      "relevance_realtime_time_range_filter";
-  public static final String PROTECTED_TIME_RANGE_FILTER =
-      "relevance_protected_time_range_filter";
+publ c class RelevanceRequestRouterModule extends Tw terModule {
+  publ c stat c f nal Str ng FULL_ARCH VE_T ME_RANGE_F LTER =
+      "relevance_full_arch ve_t  _range_f lter";
+  publ c stat c f nal Str ng REALT ME_T ME_RANGE_F LTER =
+      "relevance_realt  _t  _range_f lter";
+  publ c stat c f nal Str ng PROTECTED_T ME_RANGE_F LTER =
+      "relevance_protected_t  _range_f lter";
 
-  public static final String REALTIME_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY =
-      "superroot_relevance_realtime_serving_range_boundary_hours_ago";
-  public static final String FULL_ARCHIVE_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY =
-      "superroot_relevance_full_archive_serving_range_boundary_hours_ago";
-  public static final String PROTECTED_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY =
-      "superroot_relevance_protected_serving_range_boundary_hours_ago";
+  publ c stat c f nal Str ng REALT ME_SERV NG_RANGE_BOUNDARY_HOURS_AGO_DEC DER_KEY =
+      "superroot_relevance_realt  _serv ng_range_boundary_h s_ago";
+  publ c stat c f nal Str ng FULL_ARCH VE_SERV NG_RANGE_BOUNDARY_HOURS_AGO_DEC DER_KEY =
+      "superroot_relevance_full_arch ve_serv ng_range_boundary_h s_ago";
+  publ c stat c f nal Str ng PROTECTED_SERV NG_RANGE_BOUNDARY_HOURS_AGO_DEC DER_KEY =
+      "superroot_relevance_protected_serv ng_range_boundary_h s_ago";
 
-  private ServingRangeProvider getFullArchiveServingRangeProvider(final SearchDecider decider)
-      throws Exception {
-    return new FullArchiveServingRangeProvider(
-        decider, FULL_ARCHIVE_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY);
+  pr vate Serv ngRangeProv der getFullArch veServ ngRangeProv der(f nal SearchDec der dec der)
+      throws Except on {
+    return new FullArch veServ ngRangeProv der(
+        dec der, FULL_ARCH VE_SERV NG_RANGE_BOUNDARY_HOURS_AGO_DEC DER_KEY);
   }
 
-  private ServingRangeProvider getRealtimeServingRangeProvider(final SearchDecider decider)
-      throws Exception {
-    return new RealtimeServingRangeProvider(
-        decider, REALTIME_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY);
+  pr vate Serv ngRangeProv der getRealt  Serv ngRangeProv der(f nal SearchDec der dec der)
+      throws Except on {
+    return new Realt  Serv ngRangeProv der(
+        dec der, REALT ME_SERV NG_RANGE_BOUNDARY_HOURS_AGO_DEC DER_KEY);
   }
 
-  private ServingRangeProvider getProtectedServingRangeProvider(final SearchDecider decider)
-      throws Exception {
-    return new RealtimeServingRangeProvider(
-        decider, PROTECTED_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY);
+  pr vate Serv ngRangeProv der getProtectedServ ngRangeProv der(f nal SearchDec der dec der)
+      throws Except on {
+    return new Realt  Serv ngRangeProv der(
+        dec der, PROTECTED_SERV NG_RANGE_BOUNDARY_HOURS_AGO_DEC DER_KEY);
   }
 
-  @Provides
-  @Singleton
-  @Named(FULL_ARCHIVE_TIME_RANGE_FILTER)
-  private EarlybirdTimeRangeFilter providesFullArchiveTimeRangeFilter(SearchDecider decider)
-      throws Exception {
-    return EarlybirdTimeRangeFilter.newTimeRangeFilterWithoutQueryRewriter(
-        getFullArchiveServingRangeProvider(decider));
+  @Prov des
+  @S ngleton
+  @Na d(FULL_ARCH VE_T ME_RANGE_F LTER)
+  pr vate Earlyb rdT  RangeF lter prov desFullArch veT  RangeF lter(SearchDec der dec der)
+      throws Except on {
+    return Earlyb rdT  RangeF lter.newT  RangeF lterW houtQueryRewr er(
+        getFullArch veServ ngRangeProv der(dec der));
   }
 
-  @Provides
-  @Singleton
-  @Named(REALTIME_TIME_RANGE_FILTER)
-  private EarlybirdTimeRangeFilter providesRealtimeTimeRangeFilter(SearchDecider decider)
-      throws Exception {
-    return EarlybirdTimeRangeFilter.newTimeRangeFilterWithoutQueryRewriter(
-        getRealtimeServingRangeProvider(decider));
+  @Prov des
+  @S ngleton
+  @Na d(REALT ME_T ME_RANGE_F LTER)
+  pr vate Earlyb rdT  RangeF lter prov desRealt  T  RangeF lter(SearchDec der dec der)
+      throws Except on {
+    return Earlyb rdT  RangeF lter.newT  RangeF lterW houtQueryRewr er(
+        getRealt  Serv ngRangeProv der(dec der));
   }
 
-  @Provides
-  @Singleton
-  @Named(PROTECTED_TIME_RANGE_FILTER)
-  private EarlybirdTimeRangeFilter providesProtectedTimeRangeFilter(SearchDecider decider)
-      throws Exception {
-    return EarlybirdTimeRangeFilter.newTimeRangeFilterWithoutQueryRewriter(
-        getProtectedServingRangeProvider(decider));
+  @Prov des
+  @S ngleton
+  @Na d(PROTECTED_T ME_RANGE_F LTER)
+  pr vate Earlyb rdT  RangeF lter prov desProtectedT  RangeF lter(SearchDec der dec der)
+      throws Except on {
+    return Earlyb rdT  RangeF lter.newT  RangeF lterW houtQueryRewr er(
+        getProtectedServ ngRangeProv der(dec der));
   }
 }

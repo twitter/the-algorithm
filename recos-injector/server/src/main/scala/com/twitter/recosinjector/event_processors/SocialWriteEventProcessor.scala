@@ -1,32 +1,32 @@
-package com.twitter.recosinjector.event_processors
+package com.tw ter.recos njector.event_processors
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recosinjector.edges.{EventToMessageBuilder, UserUserEdge}
-import com.twitter.recosinjector.publishers.KafkaEventPublisher
-import com.twitter.scrooge.ThriftStructCodec
-import com.twitter.socialgraph.thriftscala.WriteEvent
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.recos njector.edges.{EventTo ssageBu lder, UserUserEdge}
+ mport com.tw ter.recos njector.publ s rs.KafkaEventPubl s r
+ mport com.tw ter.scrooge.Thr ftStructCodec
+ mport com.tw ter.soc algraph.thr ftscala.Wr eEvent
+ mport com.tw ter.ut l.Future
 
 /**
- * This processor listens to events from social graphs services. In particular, a major use case is
- * to listen to user-user follow events.
+ * T  processor l stens to events from soc al graphs serv ces.  n part cular, a major use case  s
+ * to l sten to user-user follow events.
  */
-class SocialWriteEventProcessor(
-  override val eventBusStreamName: String,
-  override val thriftStruct: ThriftStructCodec[WriteEvent],
-  override val serviceIdentifier: ServiceIdentifier,
-  kafkaEventPublisher: KafkaEventPublisher,
-  userUserGraphTopic: String,
-  userUserGraphMessageBuilder: EventToMessageBuilder[WriteEvent, UserUserEdge]
+class Soc alWr eEventProcessor(
+  overr de val eventBusStreamNa : Str ng,
+  overr de val thr ftStruct: Thr ftStructCodec[Wr eEvent],
+  overr de val serv ce dent f er: Serv ce dent f er,
+  kafkaEventPubl s r: KafkaEventPubl s r,
+  userUserGraphTop c: Str ng,
+  userUserGraph ssageBu lder: EventTo ssageBu lder[Wr eEvent, UserUserEdge]
 )(
-  override implicit val statsReceiver: StatsReceiver)
-    extends EventBusProcessor[WriteEvent] {
+  overr de  mpl c  val statsRece ver: StatsRece ver)
+    extends EventBusProcessor[Wr eEvent] {
 
-  override def processEvent(event: WriteEvent): Future[Unit] = {
-    userUserGraphMessageBuilder.processEvent(event).map { edges =>
+  overr de def processEvent(event: Wr eEvent): Future[Un ] = {
+    userUserGraph ssageBu lder.processEvent(event).map { edges =>
       edges.foreach { edge =>
-        kafkaEventPublisher.publish(edge.convertToRecosHoseMessage, userUserGraphTopic)
+        kafkaEventPubl s r.publ sh(edge.convertToRecosHose ssage, userUserGraphTop c)
       }
     }
   }

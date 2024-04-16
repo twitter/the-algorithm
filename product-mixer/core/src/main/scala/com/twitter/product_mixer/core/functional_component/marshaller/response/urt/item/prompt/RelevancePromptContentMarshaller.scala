@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.prompt
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.prompt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.CallbackMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptContent
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.CallbackMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.prompt.RelevancePromptContent
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class RelevancePromptContentMarshaller @Inject() (
+@S ngleton
+class RelevancePromptContentMarshaller @ nject() (
   callbackMarshaller: CallbackMarshaller,
-  relevancePromptDisplayTypeMarshaller: RelevancePromptDisplayTypeMarshaller,
+  relevancePromptD splayTypeMarshaller: RelevancePromptD splayTypeMarshaller,
   relevancePromptFollowUpFeedbackTypeMarshaller: RelevancePromptFollowUpFeedbackTypeMarshaller) {
 
   def apply(relevancePromptContent: RelevancePromptContent): urt.RelevancePrompt =
     urt.RelevancePrompt(
-      title = relevancePromptContent.title,
-      confirmation = relevancePromptContent.confirmation,
-      isRelevantText = relevancePromptContent.isRelevantText,
+      t le = relevancePromptContent.t le,
+      conf rmat on = relevancePromptContent.conf rmat on,
+       sRelevantText = relevancePromptContent. sRelevantText,
       notRelevantText = relevancePromptContent.notRelevantText,
-      isRelevantCallback = callbackMarshaller(relevancePromptContent.isRelevantCallback),
+       sRelevantCallback = callbackMarshaller(relevancePromptContent. sRelevantCallback),
       notRelevantCallback = callbackMarshaller(relevancePromptContent.notRelevantCallback),
-      displayType = relevancePromptDisplayTypeMarshaller(relevancePromptContent.displayType),
-      isRelevantFollowUp = relevancePromptContent.isRelevantFollowUp.map(
+      d splayType = relevancePromptD splayTypeMarshaller(relevancePromptContent.d splayType),
+       sRelevantFollowUp = relevancePromptContent. sRelevantFollowUp.map(
         relevancePromptFollowUpFeedbackTypeMarshaller(_)),
       notRelevantFollowUp = relevancePromptContent.notRelevantFollowUp.map(
         relevancePromptFollowUpFeedbackTypeMarshaller(_))

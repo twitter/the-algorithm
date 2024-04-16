@@ -1,64 +1,64 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.generic_summary
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.gener c_summary
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.generic_summary.GenericSummaryCandidateUrtItemBuilder.GenericSummaryClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.GenericSummaryCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary.GenericSummaryItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary.GenericSummaryItemDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.media.Media
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.util.Time
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.gener c_summary.Gener cSummaryCand dateUrt emBu lder.Gener cSummaryCl entEvent nfoEle nt
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.Gener cSummaryCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.Cand dateUrtEntryBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseCl entEvent nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseFeedbackAct on nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.r chtext.BaseR chTextBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.gener c_summary.Gener cSummary em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.gener c_summary.Gener cSummary emD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. d a. d a
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.Promoted tadata
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.ut l.T  
 
-object GenericSummaryCandidateUrtItemBuilder {
-  val GenericSummaryClientEventInfoElement: String = "genericsummary"
+object Gener cSummaryCand dateUrt emBu lder {
+  val Gener cSummaryCl entEvent nfoEle nt: Str ng = "gener csummary"
 }
 
-case class GenericSummaryCandidateUrtItemBuilder[-Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, GenericSummaryCandidate],
-  headlineRichTextBuilder: BaseRichTextBuilder[Query, GenericSummaryCandidate],
-  displayType: GenericSummaryItemDisplayType,
-  genericSummaryContextCandidateUrtItemBuilder: Option[
-    GenericSummaryContextBuilder[Query, GenericSummaryCandidate]
+case class Gener cSummaryCand dateUrt emBu lder[-Query <: P pel neQuery](
+  cl entEvent nfoBu lder: BaseCl entEvent nfoBu lder[Query, Gener cSummaryCand date],
+   adl neR chTextBu lder: BaseR chTextBu lder[Query, Gener cSummaryCand date],
+  d splayType: Gener cSummary emD splayType,
+  gener cSummaryContextCand dateUrt emBu lder: Opt on[
+    Gener cSummaryContextBu lder[Query, Gener cSummaryCand date]
   ] = None,
-  genericSummaryActionCandidateUrtItemBuilder: Option[
-    GenericSummaryActionBuilder[Query, GenericSummaryCandidate]
+  gener cSummaryAct onCand dateUrt emBu lder: Opt on[
+    Gener cSummaryAct onBu lder[Query, Gener cSummaryCand date]
   ] = None,
-  timestamp: Option[Time] = None,
-  userAttributionIds: Option[Seq[Long]] = None,
-  media: Option[Media] = None,
-  promotedMetadata: Option[PromotedMetadata] = None,
-  feedbackActionInfoBuilder: Option[BaseFeedbackActionInfoBuilder[Query, GenericSummaryCandidate]] =
+  t  stamp: Opt on[T  ] = None,
+  userAttr but on ds: Opt on[Seq[Long]] = None,
+   d a: Opt on[ d a] = None,
+  promoted tadata: Opt on[Promoted tadata] = None,
+  feedbackAct on nfoBu lder: Opt on[BaseFeedbackAct on nfoBu lder[Query, Gener cSummaryCand date]] =
     None)
-    extends CandidateUrtEntryBuilder[Query, GenericSummaryCandidate, GenericSummaryItem] {
+    extends Cand dateUrtEntryBu lder[Query, Gener cSummaryCand date, Gener cSummary em] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    genericSummaryCandidate: GenericSummaryCandidate,
-    candidateFeatures: FeatureMap
-  ): GenericSummaryItem = GenericSummaryItem(
-    id = genericSummaryCandidate.id,
-    sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-    clientEventInfo = clientEventInfoBuilder(
+    gener cSummaryCand date: Gener cSummaryCand date,
+    cand dateFeatures: FeatureMap
+  ): Gener cSummary em = Gener cSummary em(
+     d = gener cSummaryCand date. d,
+    sort ndex = None, // Sort  ndexes are automat cally set  n t  doma n marshaller phase
+    cl entEvent nfo = cl entEvent nfoBu lder(
       query,
-      genericSummaryCandidate,
-      candidateFeatures,
-      Some(GenericSummaryClientEventInfoElement)),
-    feedbackActionInfo =
-      feedbackActionInfoBuilder.flatMap(_.apply(query, genericSummaryCandidate, candidateFeatures)),
-    headline = headlineRichTextBuilder.apply(query, genericSummaryCandidate, candidateFeatures),
-    displayType = displayType,
-    userAttributionIds = userAttributionIds.getOrElse(Seq.empty),
-    media = media,
-    context = genericSummaryContextCandidateUrtItemBuilder.map(
-      _.apply(query, genericSummaryCandidate, candidateFeatures)),
-    timestamp = timestamp,
-    onClickAction = genericSummaryActionCandidateUrtItemBuilder.map(
-      _.apply(query, genericSummaryCandidate, candidateFeatures)),
-    promotedMetadata = promotedMetadata
+      gener cSummaryCand date,
+      cand dateFeatures,
+      So (Gener cSummaryCl entEvent nfoEle nt)),
+    feedbackAct on nfo =
+      feedbackAct on nfoBu lder.flatMap(_.apply(query, gener cSummaryCand date, cand dateFeatures)),
+     adl ne =  adl neR chTextBu lder.apply(query, gener cSummaryCand date, cand dateFeatures),
+    d splayType = d splayType,
+    userAttr but on ds = userAttr but on ds.getOrElse(Seq.empty),
+     d a =  d a,
+    context = gener cSummaryContextCand dateUrt emBu lder.map(
+      _.apply(query, gener cSummaryCand date, cand dateFeatures)),
+    t  stamp = t  stamp,
+    onCl ckAct on = gener cSummaryAct onCand dateUrt emBu lder.map(
+      _.apply(query, gener cSummaryCand date, cand dateFeatures)),
+    promoted tadata = promoted tadata
   )
 }

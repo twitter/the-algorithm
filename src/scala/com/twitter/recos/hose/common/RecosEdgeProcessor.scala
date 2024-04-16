@@ -1,40 +1,40 @@
-package com.twitter.recos.hose.common
+package com.tw ter.recos.hose.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.internal.thriftscala.RecosHoseMessage
-import com.twitter.util.Future
-import org.apache.kafka.clients.consumer.ConsumerRecord
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.recos. nternal.thr ftscala.RecosHose ssage
+ mport com.tw ter.ut l.Future
+ mport org.apac .kafka.cl ents.consu r.Consu rRecord
 
 /**
- * The class processes RecosHoseMessage and inserts the message as an edge into a recos graph.
+ * T  class processes RecosHose ssage and  nserts t   ssage as an edge  nto a recos graph.
  */
 case class RecosEdgeProcessor(
   edgeCollector: EdgeCollector
 )(
-  implicit statsReceiver: StatsReceiver) {
+   mpl c  statsRece ver: StatsRece ver) {
 
-  private val scopedStats = statsReceiver.scope("RecosEdgeProcessor")
+  pr vate val scopedStats = statsRece ver.scope("RecosEdgeProcessor")
 
-  private val processEventsCounter = scopedStats.counter("process_events")
-  private val nullPointerEventCounter = scopedStats.counter("null_pointer_num")
-  private val errorCounter = scopedStats.counter("process_errors")
+  pr vate val processEventsCounter = scopedStats.counter("process_events")
+  pr vate val nullPo nterEventCounter = scopedStats.counter("null_po nter_num")
+  pr vate val errorCounter = scopedStats.counter("process_errors")
 
-  def process(record: ConsumerRecord[String, RecosHoseMessage]): Future[Unit] = {
-    processEventsCounter.incr()
-    val message = record.value()
+  def process(record: Consu rRecord[Str ng, RecosHose ssage]): Future[Un ] = {
+    processEventsCounter. ncr()
+    val  ssage = record.value()
     try {
-      // the message is nullable
-      if (message != null) {
-        edgeCollector.addEdge(message)
+      // t   ssage  s nullable
+       f ( ssage != null) {
+        edgeCollector.addEdge( ssage)
       } else {
-        nullPointerEventCounter.incr()
+        nullPo nterEventCounter. ncr()
       }
-      Future.Unit
+      Future.Un 
     } catch {
       case e: Throwable =>
-        errorCounter.incr()
-        e.printStackTrace()
-        Future.Unit
+        errorCounter. ncr()
+        e.pr ntStackTrace()
+        Future.Un 
     }
   }
 

@@ -1,35 +1,35 @@
-package com.twitter.follow_recommendations.configapi.params
+package com.tw ter.follow_recom ndat ons.conf gap .params
 
-import com.twitter.follow_recommendations.models.CandidateSourceType
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.follow_recom ndat ons.models.Cand dateS ceType
+ mport com.tw ter.t  l nes.conf gap .FSEnumParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
 /**
- * When adding Producer side experiments, make sure to register the FS Key in [[ProducerFeatureFilter]]
- * in [[FeatureSwitchesModule]], otherwise, the FS will not work.
+ * W n add ng Producer s de exper  nts, make sure to reg ster t  FS Key  n [[ProducerFeatureF lter]]
+ *  n [[FeatureSw c sModule]], ot rw se, t  FS w ll not work.
  */
 object GlobalParams {
 
-  object EnableCandidateParamHydrations
-      extends FSParam[Boolean]("frs_receiver_enable_candidate_params", false)
+  object EnableCand dateParamHydrat ons
+      extends FSParam[Boolean]("frs_rece ver_enable_cand date_params", false)
 
-  object KeepUserCandidate
-      extends FSParam[Boolean]("frs_receiver_holdback_keep_user_candidate", true)
+  object KeepUserCand date
+      extends FSParam[Boolean]("frs_rece ver_holdback_keep_user_cand date", true)
 
-  object KeepSocialUserCandidate
-      extends FSParam[Boolean]("frs_receiver_holdback_keep_social_user_candidate", true)
+  object KeepSoc alUserCand date
+      extends FSParam[Boolean]("frs_rece ver_holdback_keep_soc al_user_cand date", true)
 
-  case object EnableGFSSocialProofTransform
-      extends FSParam("social_proof_transform_use_graph_feature_service", true)
+  case object EnableGFSSoc alProofTransform
+      extends FSParam("soc al_proof_transform_use_graph_feature_serv ce", true)
 
   case object EnableWhoToFollowProducts extends FSParam("who_to_follow_product_enabled", true)
 
-  case object CandidateSourcesToFilter
-      extends FSEnumParam[CandidateSourceType.type](
-        "candidate_sources_type_filter_id",
-        CandidateSourceType.None,
-        CandidateSourceType)
+  case object Cand dateS cesToF lter
+      extends FSEnumParam[Cand dateS ceType.type](
+        "cand date_s ces_type_f lter_ d",
+        Cand dateS ceType.None,
+        Cand dateS ceType)
 
-  object EnableRecommendationFlowLogs
-      extends FSParam[Boolean]("frs_recommendation_flow_logs_enabled", false)
+  object EnableRecom ndat onFlowLogs
+      extends FSParam[Boolean]("frs_recom ndat on_flow_logs_enabled", false)
 }

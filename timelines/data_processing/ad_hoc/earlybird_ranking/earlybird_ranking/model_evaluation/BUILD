@@ -1,36 +1,36 @@
-scala_library(
-    name = "model_evaluation",
-    sources = ["*.scala"],
+scala_l brary(
+    na  = "model_evaluat on",
+    s ces = ["*.scala"],
     platform = "java8",
-    strict_deps = False,
-    dependencies = [
-        "3rdparty/src/jvm/com/twitter/scalding:json",
-        "src/scala/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/ml/api/prediction_engine",
-        "src/scala/com/twitter/ml/api/util",
-        "src/scala/com/twitter/scalding_internal/job",
-        "src/scala/com/twitter/timelines/prediction/adapters/recap",
-        "src/scala/com/twitter/timelines/prediction/features/recap",
-        "timelines/data_processing/ad_hoc/earlybird_ranking/common",
-        "timelines/data_processing/util:rich-request",
-        "timelines/data_processing/util/example",
-        "timelines/data_processing/util/execution",
-        "twadoop_config/configuration/log_categories/group/timelines:timelineservice_injection_request_log-scala",
+    str ct_deps = False,
+    dependenc es = [
+        "3rdparty/src/jvm/com/tw ter/scald ng:json",
+        "src/scala/com/tw ter/ml/ap :ap -base",
+        "src/scala/com/tw ter/ml/ap /pred ct on_eng ne",
+        "src/scala/com/tw ter/ml/ap /ut l",
+        "src/scala/com/tw ter/scald ng_ nternal/job",
+        "src/scala/com/tw ter/t  l nes/pred ct on/adapters/recap",
+        "src/scala/com/tw ter/t  l nes/pred ct on/features/recap",
+        "t  l nes/data_process ng/ad_hoc/earlyb rd_rank ng/common",
+        "t  l nes/data_process ng/ut l:r ch-request",
+        "t  l nes/data_process ng/ut l/example",
+        "t  l nes/data_process ng/ut l/execut on",
+        "twadoop_conf g/conf gurat on/log_categor es/group/t  l nes:t  l neserv ce_ nject on_request_log-scala",
     ],
 )
 
-hadoop_binary(
-    name = "bin",
-    basename = "earlybird_model_evaluation-deploy",
-    main = "com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.model_evaluation.EarlybirdModelEvaluationJob",
+hadoop_b nary(
+    na  = "b n",
+    basena  = "earlyb rd_model_evaluat on-deploy",
+    ma n = "com.tw ter.t  l nes.data_process ng.ad_hoc.earlyb rd_rank ng.model_evaluat on.Earlyb rdModelEvaluat onJob",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":model_evaluation",
+    dependenc es = [
+        ":model_evaluat on",
     ],
 )

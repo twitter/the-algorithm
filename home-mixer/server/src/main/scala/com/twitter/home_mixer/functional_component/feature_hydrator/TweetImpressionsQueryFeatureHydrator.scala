@@ -1,87 +1,87 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.tw ter.ho _m xer.funct onal_component.feature_hydrator
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures.TweetImpressionsFeature
-import com.twitter.home_mixer.model.request.HasSeenTweetIds
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.impression.{thriftscala => t}
-import com.twitter.timelines.impressionstore.store.ManhattanTweetImpressionStoreClient
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.ho _m xer.model.Ho Features.T et mpress onsFeature
+ mport com.tw ter.ho _m xer.model.request.HasSeenT et ds
+ mport com.tw ter.ho _m xer.serv ce.Ho M xerAlertConf g
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes. mpress on.{thr ftscala => t}
+ mport com.tw ter.t  l nes. mpress onstore.store.ManhattanT et mpress onStoreCl ent
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.T  
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-case class TweetImpressionsQueryFeatureHydrator[
-  Query <: PipelineQuery with HasSeenTweetIds] @Inject() (
-  manhattanTweetImpressionStoreClient: ManhattanTweetImpressionStoreClient)
+@S ngleton
+case class T et mpress onsQueryFeatureHydrator[
+  Query <: P pel neQuery w h HasSeenT et ds] @ nject() (
+  manhattanT et mpress onStoreCl ent: ManhattanT et mpress onStoreCl ent)
     extends QueryFeatureHydrator[Query] {
 
-  private val TweetImpressionTTL = 2.days
-  private val TweetImpressionCap = 5000
+  pr vate val T et mpress onTTL = 2.days
+  pr vate val T et mpress onCap = 5000
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("TweetImpressions")
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er("T et mpress ons")
 
-  override val features: Set[Feature[_, _]] = Set(TweetImpressionsFeature)
+  overr de val features: Set[Feature[_, _]] = Set(T et mpress onsFeature)
 
-  override def hydrate(query: Query): Stitch[FeatureMap] = {
-    manhattanTweetImpressionStoreClient.get(query.getRequiredUserId).map { entriesOpt =>
-      val entries = entriesOpt.map(_.entries).toSeq.flatten
-      val updatedImpressions =
-        if (query.seenTweetIds.forall(_.isEmpty)) entries
-        else updateTweetImpressions(entries, query.seenTweetIds.get)
+  overr de def hydrate(query: Query): St ch[FeatureMap] = {
+    manhattanT et mpress onStoreCl ent.get(query.getRequ redUser d).map { entr esOpt =>
+      val entr es = entr esOpt.map(_.entr es).toSeq.flatten
+      val updated mpress ons =
+         f (query.seenT et ds.forall(_. sEmpty)) entr es
+        else updateT et mpress ons(entr es, query.seenT et ds.get)
 
-      FeatureMapBuilder().add(TweetImpressionsFeature, updatedImpressions).build()
+      FeatureMapBu lder().add(T et mpress onsFeature, updated mpress ons).bu ld()
     }
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.8)
+  overr de val alerts = Seq(
+    Ho M xerAlertConf g.Bus nessH s.defaultSuccessRateAlert(99.8)
   )
 
   /**
-   * 1) Check timestamps and remove expired tweets based on [[TweetImpressionTTL]]
-   * 2) Filter duplicates between current tweets and those in the impression store (remove older ones)
-   * 3) Prepend new (Timestamp, Seq[TweetIds]) to the tweets from the impression store
-   * 4) Truncate older tweets if sum of all tweets across timestamps >= [[TweetImpressionCap]],
+   * 1) C ck t  stamps and remove exp red t ets based on [[T et mpress onTTL]]
+   * 2) F lter dupl cates bet en current t ets and those  n t   mpress on store (remove older ones)
+   * 3) Prepend new (T  stamp, Seq[T et ds]) to t  t ets from t   mpress on store
+   * 4) Truncate older t ets  f sum of all t ets across t  stamps >= [[T et mpress onCap]],
    */
-  private[feature_hydrator] def updateTweetImpressions(
-    tweetImpressionsFromStore: Seq[t.TweetImpressionsEntry],
-    seenIdsFromClient: Seq[Long],
-    currentTime: Long = Time.now.inMilliseconds,
-    tweetImpressionTTL: Duration = TweetImpressionTTL,
-    tweetImpressionCap: Int = TweetImpressionCap,
-  ): Seq[t.TweetImpressionsEntry] = {
-    val seenIdsFromClientSet = seenIdsFromClient.toSet
-    val dedupedTweetImpressionsFromStore: Seq[t.TweetImpressionsEntry] = tweetImpressionsFromStore
+  pr vate[feature_hydrator] def updateT et mpress ons(
+    t et mpress onsFromStore: Seq[t.T et mpress onsEntry],
+    seen dsFromCl ent: Seq[Long],
+    currentT  : Long = T  .now. nM ll seconds,
+    t et mpress onTTL: Durat on = T et mpress onTTL,
+    t et mpress onCap:  nt = T et mpress onCap,
+  ): Seq[t.T et mpress onsEntry] = {
+    val seen dsFromCl entSet = seen dsFromCl ent.toSet
+    val dedupedT et mpress onsFromStore: Seq[t.T et mpress onsEntry] = t et mpress onsFromStore
       .collect {
-        case t.TweetImpressionsEntry(ts, tweetIds)
-            if Time.fromMilliseconds(ts).untilNow < tweetImpressionTTL =>
-          t.TweetImpressionsEntry(ts, tweetIds.filterNot(seenIdsFromClientSet.contains))
-      }.filter { _.tweetIds.nonEmpty }
+        case t.T et mpress onsEntry(ts, t et ds)
+             f T  .fromM ll seconds(ts).unt lNow < t et mpress onTTL =>
+          t.T et mpress onsEntry(ts, t et ds.f lterNot(seen dsFromCl entSet.conta ns))
+      }.f lter { _.t et ds.nonEmpty }
 
-    val mergedTweetImpressionsEntries =
-      t.TweetImpressionsEntry(currentTime, seenIdsFromClient) +: dedupedTweetImpressionsFromStore
-    val initialTweetImpressionsWithCap = (Seq.empty[t.TweetImpressionsEntry], tweetImpressionCap)
+    val  rgedT et mpress onsEntr es =
+      t.T et mpress onsEntry(currentT  , seen dsFromCl ent) +: dedupedT et mpress onsFromStore
+    val  n  alT et mpress onsW hCap = (Seq.empty[t.T et mpress onsEntry], t et mpress onCap)
 
-    val (truncatedTweetImpressionsEntries: Seq[t.TweetImpressionsEntry], _) =
-      mergedTweetImpressionsEntries
-        .foldLeft(initialTweetImpressionsWithCap) {
+    val (truncatedT et mpress onsEntr es: Seq[t.T et mpress onsEntry], _) =
+       rgedT et mpress onsEntr es
+        .foldLeft( n  alT et mpress onsW hCap) {
           case (
-                (tweetImpressions: Seq[t.TweetImpressionsEntry], remainingCap),
-                t.TweetImpressionsEntry(ts, tweetIds)) if remainingCap > 0 =>
+                (t et mpress ons: Seq[t.T et mpress onsEntry], rema n ngCap),
+                t.T et mpress onsEntry(ts, t et ds))  f rema n ngCap > 0 =>
             (
-              t.TweetImpressionsEntry(ts, tweetIds.take(remainingCap)) +: tweetImpressions,
-              remainingCap - tweetIds.size)
-          case (tweetImpressionsWithCap, _) => tweetImpressionsWithCap
+              t.T et mpress onsEntry(ts, t et ds.take(rema n ngCap)) +: t et mpress ons,
+              rema n ngCap - t et ds.s ze)
+          case (t et mpress onsW hCap, _) => t et mpress onsW hCap
         }
-    truncatedTweetImpressionsEntries.reverse
+    truncatedT et mpress onsEntr es.reverse
   }
 }

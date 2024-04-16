@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.core.pipeline
+package com.tw ter.product_m xer.core.p pel ne
 
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.pipeline.state.HasExecutorResults
-import com.twitter.product_mixer.core.pipeline.state.HasResult
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f erStack
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasExecutorResults
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasResult
 
 /**
- * A pipeline builder that is responsible for taking a PipelineConfig and creating a final pipeline
- * from it. It provides an [[NewPipelineArrowBuilder]] for composing the pipeline's underlying arrow
+ * A p pel ne bu lder that  s respons ble for tak ng a P pel neConf g and creat ng a f nal p pel ne
+ * from  .   prov des an [[NewP pel neArrowBu lder]] for compos ng t  p pel ne's underly ng arrow
  * from [[Step]]s.
  *
- * @tparam Config The Pipeline Config
- * @tparam PipelineArrowResult The expected final result
- * @tparam PipelineArrowState State object for maintaining state across the pipeline.
- * @tparam OutputPipeline The final pipeline
+ * @tparam Conf g T  P pel ne Conf g
+ * @tparam P pel neArrowResult T  expected f nal result
+ * @tparam P pel neArrowState State object for ma nta n ng state across t  p pel ne.
+ * @tparam OutputP pel ne T  f nal p pel ne
  */
-trait NewPipelineBuilder[
-  Config <: PipelineConfig,
-  PipelineArrowResult,
-  PipelineArrowState <: HasExecutorResults[PipelineArrowState] with HasResult[PipelineArrowResult],
-  OutputPipeline <: Pipeline[_, _]] {
+tra  NewP pel neBu lder[
+  Conf g <: P pel neConf g,
+  P pel neArrowResult,
+  P pel neArrowState <: HasExecutorResults[P pel neArrowState] w h HasResult[P pel neArrowResult],
+  OutputP pel ne <: P pel ne[_, _]] {
 
-  type ArrowResult = PipelineArrowResult
-  type ArrowState = PipelineArrowState
+  type ArrowResult = P pel neArrowResult
+  type ArrowState = P pel neArrowState
 
-  def build(
-    parentComponentIdentifierStack: ComponentIdentifierStack,
-    arrowBuilder: NewPipelineArrowBuilder[ArrowResult, ArrowState],
-    config: Config
-  ): OutputPipeline
+  def bu ld(
+    parentComponent dent f erStack: Component dent f erStack,
+    arrowBu lder: NewP pel neArrowBu lder[ArrowResult, ArrowState],
+    conf g: Conf g
+  ): OutputP pel ne
 }

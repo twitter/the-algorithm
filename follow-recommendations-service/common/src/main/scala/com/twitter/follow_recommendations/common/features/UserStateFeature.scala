@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.common.features
+package com.tw ter.follow_recom ndat ons.common.features
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.core_workflows.user_model.thr ftscala.UserState
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-case object UserStateFeature extends Feature[PipelineQuery, Option[UserState]] {}
+case object UserStateFeature extends Feature[P pel neQuery, Opt on[UserState]] {}

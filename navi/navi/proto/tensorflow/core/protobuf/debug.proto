@@ -2,93 +2,93 @@ syntax = "proto3";
 
 package tensorflow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "DebugProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "DebugProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.fra work";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
-// Option for watching a node in TensorFlow Debugger (tfdbg).
-message DebugTensorWatch {
-  // Name of the node to watch.
-  // Use "*" for wildcard. But note: currently, regex is not supported in
+// Opt on for watch ng a node  n TensorFlow Debugger (tfdbg).
+ ssage DebugTensorWatch {
+  // Na  of t  node to watch.
+  // Use "*" for w ldcard. But note: currently, regex  s not supported  n
   // general.
-  string node_name = 1;
+  str ng node_na  = 1;
 
   // Output slot to watch.
-  // The semantics of output_slot == -1 is that all outputs of the node
-  // will be watched (i.e., a wildcard).
-  // Other negative values of output_slot are invalid and will lead to
+  // T  semant cs of output_slot == -1  s that all outputs of t  node
+  // w ll be watc d ( .e., a w ldcard).
+  // Ot r negat ve values of output_slot are  nval d and w ll lead to
   // errors currently.
-  int32 output_slot = 2;
+   nt32 output_slot = 2;
 
-  // Name(s) of the debugging op(s).
+  // Na (s) of t  debugg ng op(s).
   // One or more than one probes on a tensor.
-  // e.g., {"DebugIdentity", "DebugNanCount"}
-  repeated string debug_ops = 3;
+  // e.g., {"Debug dent y", "DebugNanCount"}
+  repeated str ng debug_ops = 3;
 
   // URL(s) for debug targets(s).
   //
   // Supported URL formats are:
-  //   - file:///foo/tfdbg_dump: Writes out Event content to file
-  //     /foo/tfdbg_dump.  Assumes all directories can be created if they don't
-  //     already exist.
-  //   - grpc://localhost:11011: Sends an RPC request to an EventListener
-  //     service running at localhost:11011 with the event.
-  //   - memcbk:///event_key: Routes tensors to clients using the
-  //     callback registered with the DebugCallbackRegistry for event_key.
+  //   - f le:///foo/tfdbg_dump: Wr es out Event content to f le
+  //     /foo/tfdbg_dump.  Assu s all d rector es can be created  f t y don't
+  //     already ex st.
+  //   - grpc://localhost:11011: Sends an RPC request to an EventL stener
+  //     serv ce runn ng at localhost:11011 w h t  event.
+  //   -  mcbk:///event_key: Routes tensors to cl ents us ng t 
+  //     callback reg stered w h t  DebugCallbackReg stry for event_key.
   //
-  // Each debug op listed in debug_ops will publish its output tensor (debug
-  // signal) to all URLs in debug_urls.
+  // Each debug op l sted  n debug_ops w ll publ sh  s output tensor (debug
+  // s gnal) to all URLs  n debug_urls.
   //
-  // N.B. Session::Run() supports concurrent invocations of the same inputs
-  // (feed keys), outputs and target nodes. If such concurrent invocations
-  // are to be debugged, the callers of Session::Run() must use distinct
-  // debug_urls to make sure that the streamed or dumped events do not overlap
-  // among the invocations.
-  // TODO(cais): More visible documentation of this in g3docs.
-  repeated string debug_urls = 4;
+  // N.B. Sess on::Run() supports concurrent  nvocat ons of t  sa   nputs
+  // (feed keys), outputs and target nodes.  f such concurrent  nvocat ons
+  // are to be debugged, t  callers of Sess on::Run() must use d st nct
+  // debug_urls to make sure that t  strea d or dumped events do not overlap
+  // among t   nvocat ons.
+  // TODO(ca s): More v s ble docu ntat on of t   n g3docs.
+  repeated str ng debug_urls = 4;
 
-  // Do not error out if debug op creation fails (e.g., due to dtype
-  // incompatibility). Instead, just log the failure.
-  bool tolerate_debug_op_creation_failures = 5;
+  // Do not error out  f debug op creat on fa ls (e.g., due to dtype
+  //  ncompat b l y).  nstead, just log t  fa lure.
+  bool tolerate_debug_op_creat on_fa lures = 5;
 }
 
-// Options for initializing DebuggerState in TensorFlow Debugger (tfdbg).
-message DebugOptions {
-  // Debugging options
+// Opt ons for  n  al z ng DebuggerState  n TensorFlow Debugger (tfdbg).
+ ssage DebugOpt ons {
+  // Debugg ng opt ons
   repeated DebugTensorWatch debug_tensor_watch_opts = 4;
 
-  // Caller-specified global step count.
-  // Note that this is distinct from the session run count and the executor
+  // Caller-spec f ed global step count.
+  // Note that t   s d st nct from t  sess on run count and t  executor
   // step count.
-  int64 global_step = 10;
+   nt64 global_step = 10;
 
-  // Whether the total disk usage of tfdbg is to be reset to zero
-  // in this Session.run call. This is used by wrappers and hooks
-  // such as the local CLI ones to indicate that the dumped tensors
-  // are cleaned up from the disk after each Session.run.
-  bool reset_disk_byte_usage = 11;
+  // W t r t  total d sk usage of tfdbg  s to be reset to zero
+  //  n t  Sess on.run call. T   s used by wrappers and hooks
+  // such as t  local CL  ones to  nd cate that t  dumped tensors
+  // are cleaned up from t  d sk after each Sess on.run.
+  bool reset_d sk_byte_usage = 11;
 }
 
-message DebuggedSourceFile {
-  // The host name on which a source code file is located.
-  string host = 1;
+ ssage DebuggedS ceF le {
+  // T  host na  on wh ch a s ce code f le  s located.
+  str ng host = 1;
 
-  // Path to the source code file.
-  string file_path = 2;
+  // Path to t  s ce code f le.
+  str ng f le_path = 2;
 
-  // The timestamp at which the source code file is last modified.
-  int64 last_modified = 3;
+  // T  t  stamp at wh ch t  s ce code f le  s last mod f ed.
+   nt64 last_mod f ed = 3;
 
-  // Byte size of the file.
-  int64 bytes = 4;
+  // Byte s ze of t  f le.
+   nt64 bytes = 4;
 
-  // Line-by-line content of the source code file.
-  repeated string lines = 5;
+  // L ne-by-l ne content of t  s ce code f le.
+  repeated str ng l nes = 5;
 }
 
-message DebuggedSourceFiles {
-  // A collection of source code files.
-  repeated DebuggedSourceFile source_files = 1;
+ ssage DebuggedS ceF les {
+  // A collect on of s ce code f les.
+  repeated DebuggedS ceF le s ce_f les = 1;
 }

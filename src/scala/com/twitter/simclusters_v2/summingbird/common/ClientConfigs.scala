@@ -1,81 +1,81 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.tw ter.s mclusters_v2.summ ngb rd.common
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.storehaus_internal.memcache.ConnectionConfig
-import com.twitter.storehaus_internal.memcache.MemcacheConfig
-import com.twitter.storehaus_internal.util.KeyPrefix
-import com.twitter.storehaus_internal.util.TTL
-import com.twitter.strato.client.Strato
-import com.twitter.strato.client.{Client => StratoClient}
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.storehaus_ nternal. mcac .Connect onConf g
+ mport com.tw ter.storehaus_ nternal. mcac . mcac Conf g
+ mport com.tw ter.storehaus_ nternal.ut l.KeyPref x
+ mport com.tw ter.storehaus_ nternal.ut l.TTL
+ mport com.tw ter.strato.cl ent.Strato
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
 
-object ClientConfigs {
+object Cl entConf gs {
 
-  com.twitter.server.Init() // necessary in order to use WilyNS path
+  com.tw ter.server. n () // necessary  n order to use W lyNS path
 
-  final lazy val simClustersCoreAltCachePath =
-    "/srv#/prod/local/cache/simclusters_core_alt"
+  f nal lazy val s mClustersCoreAltCac Path =
+    "/srv#/prod/local/cac /s mclusters_core_alt"
 
-  final lazy val simClustersCoreAltLightCachePath =
-    "/srv#/prod/local/cache/simclusters_core_alt_light"
+  f nal lazy val s mClustersCoreAltL ghtCac Path =
+    "/srv#/prod/local/cac /s mclusters_core_alt_l ght"
 
-  final lazy val develSimClustersCoreCachePath =
-    "/srv#/test/local/cache/twemcache_simclusters_core"
+  f nal lazy val develS mClustersCoreCac Path =
+    "/srv#/test/local/cac /t mcac _s mclusters_core"
 
-  final lazy val develSimClustersCoreLightCachePath =
-    "/srv#/test/local/cache/twemcache_simclusters_core_light"
+  f nal lazy val develS mClustersCoreL ghtCac Path =
+    "/srv#/test/local/cac /t mcac _s mclusters_core_l ght"
 
-  final lazy val logFavBasedTweet20M145K2020StratoPath =
-    "recommendations/simclusters_v2/embeddings/logFavBasedTweet20M145K2020Persistent"
+  f nal lazy val logFavBasedT et20M145K2020StratoPath =
+    "recom ndat ons/s mclusters_v2/embedd ngs/logFavBasedT et20M145K2020Pers stent"
 
-  final lazy val logFavBasedTweet20M145K2020UncachedStratoPath =
-    "recommendations/simclusters_v2/embeddings/logFavBasedTweet20M145K2020-UNCACHED"
+  f nal lazy val logFavBasedT et20M145K2020Uncac dStratoPath =
+    "recom ndat ons/s mclusters_v2/embedd ngs/logFavBasedT et20M145K2020-UNCACHED"
 
-  final lazy val develLogFavBasedTweet20M145K2020StratoPath =
-    "recommendations/simclusters_v2/embeddings/logFavBasedTweet20M145K2020Devel"
+  f nal lazy val develLogFavBasedT et20M145K2020StratoPath =
+    "recom ndat ons/s mclusters_v2/embedd ngs/logFavBasedT et20M145K2020Devel"
 
-  final lazy val entityClusterScoreMemcacheConfig: (String, ServiceIdentifier) => MemcacheConfig = {
-    (path: String, serviceIdentifier: ServiceIdentifier) =>
-      new MemcacheConfig {
-        val connectionConfig: ConnectionConfig = ConnectionConfig(path, serviceIdentifier = serviceIdentifier)
-        override val keyPrefix: KeyPrefix = KeyPrefix(s"ecs_")
-        override val ttl: TTL = TTL(8.hours)
+  f nal lazy val ent yClusterScore mcac Conf g: (Str ng, Serv ce dent f er) =>  mcac Conf g = {
+    (path: Str ng, serv ce dent f er: Serv ce dent f er) =>
+      new  mcac Conf g {
+        val connect onConf g: Connect onConf g = Connect onConf g(path, serv ce dent f er = serv ce dent f er)
+        overr de val keyPref x: KeyPref x = KeyPref x(s"ecs_")
+        overr de val ttl: TTL = TTL(8.h s)
       }
   }
 
-  // note: this should in dedicated cache for tweet
-  final lazy val tweetTopKClustersMemcacheConfig: (String, ServiceIdentifier) => MemcacheConfig = {
-    (path: String, serviceIdentifier: ServiceIdentifier) =>
-      new MemcacheConfig {
-        val connectionConfig: ConnectionConfig =
-          ConnectionConfig(path, serviceIdentifier = serviceIdentifier)
-        override val keyPrefix: KeyPrefix = KeyPrefix(s"etk_")
-        override val ttl: TTL = TTL(2.days)
+  // note: t  should  n ded cated cac  for t et
+  f nal lazy val t etTopKClusters mcac Conf g: (Str ng, Serv ce dent f er) =>  mcac Conf g = {
+    (path: Str ng, serv ce dent f er: Serv ce dent f er) =>
+      new  mcac Conf g {
+        val connect onConf g: Connect onConf g =
+          Connect onConf g(path, serv ce dent f er = serv ce dent f er)
+        overr de val keyPref x: KeyPref x = KeyPref x(s"etk_")
+        overr de val ttl: TTL = TTL(2.days)
       }
   }
 
-  // note: this should in dedicated cache for tweet
-  final lazy val clusterTopTweetsMemcacheConfig: (String, ServiceIdentifier) => MemcacheConfig = {
-    (path: String, serviceIdentifier: ServiceIdentifier) =>
-      new MemcacheConfig {
-        val connectionConfig: ConnectionConfig =
-          ConnectionConfig(path, serviceIdentifier = serviceIdentifier)
-        override val keyPrefix: KeyPrefix = KeyPrefix(s"ctkt_")
-        override val ttl: TTL = TTL(8.hours)
+  // note: t  should  n ded cated cac  for t et
+  f nal lazy val clusterTopT ets mcac Conf g: (Str ng, Serv ce dent f er) =>  mcac Conf g = {
+    (path: Str ng, serv ce dent f er: Serv ce dent f er) =>
+      new  mcac Conf g {
+        val connect onConf g: Connect onConf g =
+          Connect onConf g(path, serv ce dent f er = serv ce dent f er)
+        overr de val keyPref x: KeyPref x = KeyPref x(s"ctkt_")
+        overr de val ttl: TTL = TTL(8.h s)
       }
   }
 
-  final lazy val stratoClient: ServiceIdentifier => StratoClient = { serviceIdentifier =>
-    Strato.client
-      .withRequestTimeout(2.seconds)
-      .withMutualTls(serviceIdentifier)
-      .build()
+  f nal lazy val stratoCl ent: Serv ce dent f er => StratoCl ent = { serv ce dent f er =>
+    Strato.cl ent
+      .w hRequestT  out(2.seconds)
+      .w hMutualTls(serv ce dent f er)
+      .bu ld()
   }
 
-  // thrift client id
-  private final lazy val thriftClientId: String => ClientId = { env: String =>
-    ClientId(s"simclusters_v2_summingbird.$env")
+  // thr ft cl ent  d
+  pr vate f nal lazy val thr ftCl ent d: Str ng => Cl ent d = { env: Str ng =>
+    Cl ent d(s"s mclusters_v2_summ ngb rd.$env")
   }
 
 }

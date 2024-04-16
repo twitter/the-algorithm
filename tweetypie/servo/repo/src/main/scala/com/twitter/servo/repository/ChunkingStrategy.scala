@@ -1,49 +1,49 @@
-package com.twitter.servo.repository
+package com.tw ter.servo.repos ory
 
-object ChunkingStrategy {
+object Chunk ngStrategy {
 
   /**
-   * A chunking strategy for breaking a query into fixed size chunks, with the last
-   * chunk possibly being any size between 1 and chunkSize.
+   * A chunk ng strategy for break ng a query  nto f xed s ze chunks, w h t  last
+   * chunk poss bly be ng any s ze bet en 1 and chunkS ze.
    */
-  def fixedSize[K](chunkSize: Int): Seq[K] => Seq[Seq[K]] = {
-    fixedSize(chunkSize, keysAsQuery[K])
+  def f xedS ze[K](chunkS ze:  nt): Seq[K] => Seq[Seq[K]] = {
+    f xedS ze(chunkS ze, keysAsQuery[K])
   }
 
   /**
-   * A chunking strategy for breaking a query into fixed size chunks, with the last
-   * chunk possibly being any size between 1 and chunkSize.
+   * A chunk ng strategy for break ng a query  nto f xed s ze chunks, w h t  last
+   * chunk poss bly be ng any s ze bet en 1 and chunkS ze.
    */
-  def fixedSize[Q <: Seq[K], K](
-    chunkSize: Int,
-    newQuery: SubqueryBuilder[Q, K]
+  def f xedS ze[Q <: Seq[K], K](
+    chunkS ze:  nt,
+    newQuery: SubqueryBu lder[Q, K]
   ): Q => Seq[Q] = { query =>
-    query.distinct.grouped(chunkSize) map { newQuery(_, query) } toSeq
+    query.d st nct.grouped(chunkS ze) map { newQuery(_, query) } toSeq
   }
 
   /**
-   * A chunking strategy for breaking a query into roughly equal sized chunks no
-   * larger than maxSize.  The last chunk may be slightly smaller due to rounding.
+   * A chunk ng strategy for break ng a query  nto roughly equal s zed chunks no
+   * larger than maxS ze.  T  last chunk may be sl ghtly smaller due to round ng.
    */
-  def equalSize[K](maxSize: Int): Seq[K] => Seq[Seq[K]] = {
-    equalSize(maxSize, keysAsQuery[K])
+  def equalS ze[K](maxS ze:  nt): Seq[K] => Seq[Seq[K]] = {
+    equalS ze(maxS ze, keysAsQuery[K])
   }
 
   /**
-   * A chunking strategy for breaking a query into roughly equal sized chunks no
-   * larger than maxSize.  The last chunk may be slightly smaller due to rounding.
+   * A chunk ng strategy for break ng a query  nto roughly equal s zed chunks no
+   * larger than maxS ze.  T  last chunk may be sl ghtly smaller due to round ng.
    */
-  def equalSize[Q <: Seq[K], K](
-    maxSize: Int,
-    newQuery: SubqueryBuilder[Q, K]
+  def equalS ze[Q <: Seq[K], K](
+    maxS ze:  nt,
+    newQuery: SubqueryBu lder[Q, K]
   ): Q => Seq[Q] = { query =>
     {
-      if (query.size <= maxSize) {
+       f (query.s ze <= maxS ze) {
         Seq(query)
       } else {
-        val chunkCount = math.ceil(query.size / maxSize.toDouble)
-        val chunkSize = math.ceil(query.size / chunkCount).toInt
-        query.distinct.grouped(chunkSize) map { newQuery(_, query) } toSeq
+        val chunkCount = math.ce l(query.s ze / maxS ze.toDouble)
+        val chunkS ze = math.ce l(query.s ze / chunkCount).to nt
+        query.d st nct.grouped(chunkS ze) map { newQuery(_, query) } toSeq
       }
     }
   }

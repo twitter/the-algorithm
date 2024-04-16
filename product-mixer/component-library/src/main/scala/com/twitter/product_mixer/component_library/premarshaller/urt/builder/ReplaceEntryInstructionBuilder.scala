@@ -1,62 +1,62 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ReplaceEntryTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.ReplaceEntryT  l ne nstruct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.CursorOperat on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.CursorType
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * Selects one or more [[TimelineEntry]] instance from the input timeline entries.
+ * Selects one or more [[T  l neEntry]]  nstance from t   nput t  l ne entr es.
  *
- * @tparam Query The domain model for the [[PipelineQuery]] used as input.
+ * @tparam Query T  doma n model for t  [[P pel neQuery]] used as  nput.
  */
-trait EntriesToReplace[-Query <: PipelineQuery] {
-  def apply(query: Query, entries: Seq[TimelineEntry]): Seq[TimelineEntry]
+tra  Entr esToReplace[-Query <: P pel neQuery] {
+  def apply(query: Query, entr es: Seq[T  l neEntry]): Seq[T  l neEntry]
 }
 
 /**
- * Selects all entries with a non-empty valid entryIdToReplace.
+ * Selects all entr es w h a non-empty val d entry dToReplace.
  *
- * @note this will result in multiple [[ReplaceEntryTimelineInstruction]]s
+ * @note t  w ll result  n mult ple [[ReplaceEntryT  l ne nstruct on]]s
  */
-case object ReplaceAllEntries extends EntriesToReplace[PipelineQuery] {
-  def apply(query: PipelineQuery, entries: Seq[TimelineEntry]): Seq[TimelineEntry] =
-    entries.filter(_.entryIdToReplace.isDefined)
+case object ReplaceAllEntr es extends Entr esToReplace[P pel neQuery] {
+  def apply(query: P pel neQuery, entr es: Seq[T  l neEntry]): Seq[T  l neEntry] =
+    entr es.f lter(_.entry dToReplace. sDef ned)
 }
 
 /**
- * Selects a replaceable URT [[CursorOperation]] from the timeline entries, that matches the
- * input cursorType.
+ * Selects a replaceable URT [[CursorOperat on]] from t  t  l ne entr es, that matc s t 
+ *  nput cursorType.
  */
-case class ReplaceUrtCursor(cursorType: CursorType) extends EntriesToReplace[PipelineQuery] {
-  override def apply(query: PipelineQuery, entries: Seq[TimelineEntry]): Seq[TimelineEntry] =
-    entries.collectFirst {
-      case cursorOperation: CursorOperation
-          if cursorOperation.cursorType == cursorType && cursorOperation.entryIdToReplace.isDefined =>
-        cursorOperation
+case class ReplaceUrtCursor(cursorType: CursorType) extends Entr esToReplace[P pel neQuery] {
+  overr de def apply(query: P pel neQuery, entr es: Seq[T  l neEntry]): Seq[T  l neEntry] =
+    entr es.collectF rst {
+      case cursorOperat on: CursorOperat on
+           f cursorOperat on.cursorType == cursorType && cursorOperat on.entry dToReplace. sDef ned =>
+        cursorOperat on
     }.toSeq
 }
 
 /**
- * Create a ReplaceEntry instruction
+ * Create a ReplaceEntry  nstruct on
  *
- * @param entriesToReplace   each replace instruction can contain only one entry. Users specify which
- *                           entry to replace using [[EntriesToReplace]]. If multiple entries are
- *                           specified, multiple [[ReplaceEntryTimelineInstruction]]s will be created.
- * @param includeInstruction whether the instruction should be included in the response
+ * @param entr esToReplace   each replace  nstruct on can conta n only one entry. Users spec fy wh ch
+ *                           entry to replace us ng [[Entr esToReplace]].  f mult ple entr es are
+ *                           spec f ed, mult ple [[ReplaceEntryT  l ne nstruct on]]s w ll be created.
+ * @param  nclude nstruct on w t r t   nstruct on should be  ncluded  n t  response
  */
-case class ReplaceEntryInstructionBuilder[Query <: PipelineQuery](
-  entriesToReplace: EntriesToReplace[Query],
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends UrtInstructionBuilder[Query, ReplaceEntryTimelineInstruction] {
+case class ReplaceEntry nstruct onBu lder[Query <: P pel neQuery](
+  entr esToReplace: Entr esToReplace[Query],
+  overr de val  nclude nstruct on:  nclude nstruct on[Query] = Always nclude)
+    extends Urt nstruct onBu lder[Query, ReplaceEntryT  l ne nstruct on] {
 
-  override def build(
+  overr de def bu ld(
     query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[ReplaceEntryTimelineInstruction] = {
-    if (includeInstruction(query, entries))
-      entriesToReplace(query, entries).map(ReplaceEntryTimelineInstruction)
+    entr es: Seq[T  l neEntry]
+  ): Seq[ReplaceEntryT  l ne nstruct on] = {
+     f ( nclude nstruct on(query, entr es))
+      entr esToReplace(query, entr es).map(ReplaceEntryT  l ne nstruct on)
     else
       Seq.empty
   }

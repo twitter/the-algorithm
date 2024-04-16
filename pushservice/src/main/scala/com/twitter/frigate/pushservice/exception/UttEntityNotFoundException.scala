@@ -1,12 +1,12 @@
-package com.twitter.frigate.pushservice.exception
+package com.tw ter.fr gate.pushserv ce.except on
 
-import scala.util.control.NoStackTrace
+ mport scala.ut l.control.NoStackTrace
 
 /**
- * Throw exception if UttEntity is not found where it might be a required data field
+ * Throw except on  f UttEnt y  s not found w re   m ght be a requ red data f eld
  *
- * @param message Exception message
+ * @param  ssage Except on  ssage
  */
-class UttEntityNotFoundException(private val message: String)
-    extends Exception(message)
-    with NoStackTrace
+class UttEnt yNotFoundExcept on(pr vate val  ssage: Str ng)
+    extends Except on( ssage)
+    w h NoStackTrace

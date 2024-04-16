@@ -1,41 +1,41 @@
-package com.twitter.ann.common
+package com.tw ter.ann.common
 
-import com.twitter.stitch.Stitch
+ mport com.tw ter.st ch.St ch
 
 /**
- * This is a trait that allows you to query for nearest neighbors given an arbitrary type T1. This is
- * in contrast to a regular com.twitter.ann.common.Appendable, which takes an embedding as the input
- * argument.
+ * T   s a tra  that allows   to query for nearest ne ghbors g ven an arb rary type T1. T   s
+ *  n contrast to a regular com.tw ter.ann.common.Appendable, wh ch takes an embedd ng as t   nput
+ * argu nt.
  *
- * This interface uses the Stitch API for batching. See go/stitch for details on how to use it.
+ * T   nterface uses t  St ch AP  for batch ng. See go/st ch for deta ls on how to use  .
  *
- * @tparam T1 type of the query.
- * @tparam T2 type of the result.
- * @tparam P runtime parameters supported by the index.
- * @tparam D distance function used in the index.
+ * @tparam T1 type of t  query.
+ * @tparam T2 type of t  result.
+ * @tparam P runt   para ters supported by t   ndex.
+ * @tparam D d stance funct on used  n t   ndex.
  */
-trait QueryableById[T1, T2, P <: RuntimeParams, D <: Distance[D]] {
-  def queryById(
-    id: T1,
-    numOfNeighbors: Int,
-    runtimeParams: P
-  ): Stitch[List[T2]]
+tra  QueryableBy d[T1, T2, P <: Runt  Params, D <: D stance[D]] {
+  def queryBy d(
+     d: T1,
+    numOfNe ghbors:  nt,
+    runt  Params: P
+  ): St ch[L st[T2]]
 
-  def queryByIdWithDistance(
-    id: T1,
-    numOfNeighbors: Int,
-    runtimeParams: P
-  ): Stitch[List[NeighborWithDistance[T2, D]]]
+  def queryBy dW hD stance(
+     d: T1,
+    numOfNe ghbors:  nt,
+    runt  Params: P
+  ): St ch[L st[Ne ghborW hD stance[T2, D]]]
 
-  def batchQueryById(
-    ids: Seq[T1],
-    numOfNeighbors: Int,
-    runtimeParams: P
-  ): Stitch[List[NeighborWithSeed[T1, T2]]]
+  def batchQueryBy d(
+     ds: Seq[T1],
+    numOfNe ghbors:  nt,
+    runt  Params: P
+  ): St ch[L st[Ne ghborW hSeed[T1, T2]]]
 
-  def batchQueryWithDistanceById(
-    ids: Seq[T1],
-    numOfNeighbors: Int,
-    runtimeParams: P
-  ): Stitch[List[NeighborWithDistanceWithSeed[T1, T2, D]]]
+  def batchQueryW hD stanceBy d(
+     ds: Seq[T1],
+    numOfNe ghbors:  nt,
+    runt  Params: P
+  ): St ch[L st[Ne ghborW hD stanceW hSeed[T1, T2, D]]]
 }

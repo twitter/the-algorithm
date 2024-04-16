@@ -1,139 +1,139 @@
-package com.twitter.search.core.earlybird.index;
+package com.tw ter.search.core.earlyb rd. ndex;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
+ mport java. o. OExcept on;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
 
-import com.google.common.collect.Sets;
+ mport com.google.common.collect.Sets;
 
-import org.apache.lucene.index.FieldInfos;
-import org.apache.lucene.index.Fields;
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.DocIdSetIterator;
+ mport org.apac .lucene. ndex.F eld nfos;
+ mport org.apac .lucene. ndex.F elds;
+ mport org.apac .lucene. ndex.LeafReader;
+ mport org.apac .lucene. ndex.Nu r cDocValues;
+ mport org.apac .lucene. ndex.Post ngsEnum;
+ mport org.apac .lucene. ndex.Term;
+ mport org.apac .lucene.search.Doc dSet erator;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.facets.AbstractFacetCountingArray;
-import com.twitter.search.core.earlybird.facets.FacetIDMap;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.index.inverted.DeletedDocs;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.core.earlyb rd.facets.AbstractFacetCount ngArray;
+ mport com.tw ter.search.core.earlyb rd.facets.Facet DMap;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetLabelProv der;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted.DeletedDocs;
 
 /**
- * Base class for atomic Earlybird segment readers.
+ * Base class for atom c Earlyb rd seg nt readers.
  */
-public abstract class EarlybirdIndexSegmentAtomicReader extends LeafReader {
-  public static final int TERM_NOT_FOUND = -1;
+publ c abstract class Earlyb rd ndexSeg ntAtom cReader extends LeafReader {
+  publ c stat c f nal  nt TERM_NOT_FOUND = -1;
 
-  private final DeletedDocs.View deletesView;
-  private final EarlybirdIndexSegmentData segmentData;
-  protected final EarlybirdIndexSegmentData.SyncData syncData;
+  pr vate f nal DeletedDocs.V ew deletesV ew;
+  pr vate f nal Earlyb rd ndexSeg ntData seg ntData;
+  protected f nal Earlyb rd ndexSeg ntData.SyncData syncData;
 
-  private FieldInfos fieldInfos;
+  pr vate F eld nfos f eld nfos;
 
   /**
-   * Creates a new atomic reader for this Earlybird segment.
+   * Creates a new atom c reader for t  Earlyb rd seg nt.
    */
-  public EarlybirdIndexSegmentAtomicReader(EarlybirdIndexSegmentData segmentData) {
+  publ c Earlyb rd ndexSeg ntAtom cReader(Earlyb rd ndexSeg ntData seg ntData) {
     super();
-    this.segmentData = segmentData;
-    this.syncData = segmentData.getSyncData();
-    this.deletesView = segmentData.getDeletedDocs().getView();
-    // fieldInfos will be initialized lazily if required
-    this.fieldInfos = null;
+    t .seg ntData = seg ntData;
+    t .syncData = seg ntData.getSyncData();
+    t .deletesV ew = seg ntData.getDeletedDocs().getV ew();
+    // f eld nfos w ll be  n  al zed laz ly  f requ red
+    t .f eld nfos = null;
   }
 
-  public int getSmallestDocID() {
-    return syncData.getSmallestDocID();
+  publ c  nt getSmallestDoc D() {
+    return syncData.getSmallestDoc D();
   }
 
-  public final FacetIDMap getFacetIDMap() {
-    return segmentData.getFacetIDMap();
+  publ c f nal Facet DMap getFacet DMap() {
+    return seg ntData.getFacet DMap();
   }
 
-  public final Map<String, FacetLabelProvider> getFacetLabelProviders() {
-    return segmentData.getFacetLabelProviders();
+  publ c f nal Map<Str ng, FacetLabelProv der> getFacetLabelProv ders() {
+    return seg ntData.getFacetLabelProv ders();
   }
 
-  public AbstractFacetCountingArray getFacetCountingArray() {
-    return segmentData.getFacetCountingArray();
+  publ c AbstractFacetCount ngArray getFacetCount ngArray() {
+    return seg ntData.getFacetCount ngArray();
   }
 
-  public final FacetLabelProvider getFacetLabelProviders(Schema.FieldInfo field) {
-    String facetName = field.getFieldType().getFacetName();
-    return facetName != null && segmentData.getFacetLabelProviders() != null
-            ? segmentData.getFacetLabelProviders().get(facetName) : null;
+  publ c f nal FacetLabelProv der getFacetLabelProv ders(Sc ma.F eld nfo f eld) {
+    Str ng facetNa  = f eld.getF eldType().getFacetNa ();
+    return facetNa  != null && seg ntData.getFacetLabelProv ders() != null
+            ? seg ntData.getFacetLabelProv ders().get(facetNa ) : null;
   }
 
-  @Override
-  public FieldInfos getFieldInfos() {
-    if (fieldInfos == null) {
-      // TwitterInMemoryIndexReader is constructed per query, and this call is only needed for
-      // optimize. We wouldn't want to create a new FieldInfos per search, so we deffer it.
-      Schema schema = segmentData.getSchema();
-      final Set<String> fieldSet = Sets.newHashSet(segmentData.getPerFieldMap().keySet());
-      fieldSet.addAll(segmentData.getDocValuesManager().getDocValueNames());
-      fieldInfos = schema.getLuceneFieldInfos(input -> input != null && fieldSet.contains(input));
+  @Overr de
+  publ c F eld nfos getF eld nfos() {
+     f (f eld nfos == null) {
+      // Tw ter n mory ndexReader  s constructed per query, and t  call  s only needed for
+      // opt m ze.   wouldn't want to create a new F eld nfos per search, so   deffer  .
+      Sc ma sc ma = seg ntData.getSc ma();
+      f nal Set<Str ng> f eldSet = Sets.newHashSet(seg ntData.getPerF eldMap().keySet());
+      f eldSet.addAll(seg ntData.getDocValuesManager().getDocValueNa s());
+      f eld nfos = sc ma.getLuceneF eld nfos( nput ->  nput != null && f eldSet.conta ns( nput));
     }
-    return fieldInfos;
+    return f eld nfos;
   }
 
   /**
-   * Returns the ID that was assigned to the given term in
-   * {@link com.twitter.search.core.earlybird.index.inverted.InvertedRealtimeIndex}
+   * Returns t   D that was ass gned to t  g ven term  n
+   * {@l nk com.tw ter.search.core.earlyb rd. ndex. nverted. nvertedRealt   ndex}
    */
-  public abstract int getTermID(Term t) throws IOException;
+  publ c abstract  nt getTerm D(Term t) throws  OExcept on;
 
   /**
-   * Returns the oldest posting for the given term
-   * NOTE: This method may return a deleted doc id.
+   * Returns t  oldest post ng for t  g ven term
+   * NOTE: T   thod may return a deleted doc  d.
    */
-  public abstract int getOldestDocID(Term t) throws IOException;
+  publ c abstract  nt getOldestDoc D(Term t) throws  OExcept on;
 
-  @Override
-  public abstract NumericDocValues getNumericDocValues(String field) throws IOException;
+  @Overr de
+  publ c abstract Nu r cDocValues getNu r cDocValues(Str ng f eld) throws  OExcept on;
 
   /**
-   * Determines if this reader has any documents to traverse. Note that it is possible for the tweet
-   * ID mapper to have documents, but for this reader to not see them yet. In this case, this method
-   * will return false.
+   * Determ nes  f t  reader has any docu nts to traverse. Note that    s poss ble for t  t et
+   *  D mapper to have docu nts, but for t  reader to not see t m yet.  n t  case, t   thod
+   * w ll return false.
    */
-  public boolean hasDocs() {
-    return segmentData.numDocs() > 0;
+  publ c boolean hasDocs() {
+    return seg ntData.numDocs() > 0;
   }
 
   /**
-   * Returns the newest posting for the given term
+   * Returns t  ne st post ng for t  g ven term
    */
-  public final int getNewestDocID(Term term) throws IOException {
-    PostingsEnum td = postings(term);
-    if (td == null) {
-      return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+  publ c f nal  nt getNe stDoc D(Term term) throws  OExcept on {
+    Post ngsEnum td = post ngs(term);
+     f (td == null) {
+      return Earlyb rd ndexSeg ntAtom cReader.TERM_NOT_FOUND;
     }
 
-    if (td.nextDoc() != DocIdSetIterator.NO_MORE_DOCS) {
-      return td.docID();
+     f (td.nextDoc() != Doc dSet erator.NO_MORE_DOCS) {
+      return td.doc D();
     } else {
-      return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+      return Earlyb rd ndexSeg ntAtom cReader.TERM_NOT_FOUND;
     }
   }
 
-  public final DeletedDocs.View getDeletesView() {
-    return deletesView;
+  publ c f nal DeletedDocs.V ew getDeletesV ew() {
+    return deletesV ew;
   }
 
-  @Override
-  public final Fields getTermVectors(int docID) {
-    // Earlybird does not use term vectors.
+  @Overr de
+  publ c f nal F elds getTermVectors( nt doc D) {
+    // Earlyb rd does not use term vectors.
     return null;
   }
 
-  public EarlybirdIndexSegmentData getSegmentData() {
-    return segmentData;
+  publ c Earlyb rd ndexSeg ntData getSeg ntData() {
+    return seg ntData;
   }
 
-  public Schema getSchema() {
-    return segmentData.getSchema();
+  publ c Sc ma getSc ma() {
+    return seg ntData.getSc ma();
   }
 }

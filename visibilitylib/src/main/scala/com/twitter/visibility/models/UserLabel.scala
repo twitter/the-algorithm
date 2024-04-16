@@ -1,124 +1,124 @@
-package com.twitter.visibility.models
+package com.tw ter.v s b l y.models
 
-import com.twitter.gizmoduck.{thriftscala => t}
-import com.twitter.util.Time
-import com.twitter.visibility.util.NamingUtils
+ mport com.tw ter.g zmoduck.{thr ftscala => t}
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.v s b l y.ut l.Nam ngUt ls
 
-sealed trait UserLabelValue extends SafetyLabelType {
-  lazy val name: String = NamingUtils.getFriendlyName(this)
+sealed tra  UserLabelValue extends SafetyLabelType {
+  lazy val na : Str ng = Nam ngUt ls.getFr endlyNa (t )
 }
 
 case class UserLabel(
-  id: Long,
-  createdAt: Time,
-  createdBy: String,
+   d: Long,
+  createdAt: T  ,
+  createdBy: Str ng,
   labelValue: UserLabelValue,
-  source: Option[LabelSource] = None)
+  s ce: Opt on[LabelS ce] = None)
 
 object UserLabelValue extends SafetyLabelType {
 
-  private lazy val nameToValueMap: Map[String, UserLabelValue] =
-    List.map(l => l.name.toLowerCase -> l).toMap
-  def fromName(name: String): Option[UserLabelValue] = nameToValueMap.get(name.toLowerCase)
+  pr vate lazy val na ToValueMap: Map[Str ng, UserLabelValue] =
+    L st.map(l => l.na .toLo rCase -> l).toMap
+  def fromNa (na : Str ng): Opt on[UserLabelValue] = na ToValueMap.get(na .toLo rCase)
 
-  private val UnknownThriftUserLabelValue =
+  pr vate val UnknownThr ftUserLabelValue =
     t.LabelValue.EnumUnknownLabelValue(UnknownEnumValue)
 
-  private lazy val thriftToModelMap: Map[t.LabelValue, UserLabelValue] = Map(
-    t.LabelValue.Abusive -> Abusive,
-    t.LabelValue.AbusiveHighRecall -> AbusiveHighRecall,
+  pr vate lazy val thr ftToModelMap: Map[t.LabelValue, UserLabelValue] = Map(
+    t.LabelValue.Abus ve -> Abus ve,
+    t.LabelValue.Abus veH ghRecall -> Abus veH ghRecall,
     t.LabelValue.AgathaSpamTopUser -> AgathaSpamTopUser,
-    t.LabelValue.BirdwatchDisabled -> BirdwatchDisabled,
-    t.LabelValue.BlinkBad -> BlinkBad,
-    t.LabelValue.BlinkQuestionable -> BlinkQuestionable,
-    t.LabelValue.BlinkWorst -> BlinkWorst,
-    t.LabelValue.Compromised -> Compromised,
-    t.LabelValue.DelayedRemediation -> DelayedRemediation,
+    t.LabelValue.B rdwatchD sabled -> B rdwatchD sabled,
+    t.LabelValue.Bl nkBad -> Bl nkBad,
+    t.LabelValue.Bl nkQuest onable -> Bl nkQuest onable,
+    t.LabelValue.Bl nkWorst -> Bl nkWorst,
+    t.LabelValue.Comprom sed -> Comprom sed,
+    t.LabelValue.DelayedRe d at on -> DelayedRe d at on,
     t.LabelValue.DoNotCharge -> DoNotCharge,
-    t.LabelValue.DoNotAmplify -> DoNotAmplify,
+    t.LabelValue.DoNotAmpl fy -> DoNotAmpl fy,
     t.LabelValue.DownrankSpamReply -> DownrankSpamReply,
-    t.LabelValue.DuplicateContent -> DuplicateContent,
-    t.LabelValue.EngagementSpammer -> EngagementSpammer,
-    t.LabelValue.EngagementSpammerHighRecall -> EngagementSpammerHighRecall,
-    t.LabelValue.ExperimentalPfmUser1 -> ExperimentalPfmUser1,
-    t.LabelValue.ExperimentalPfmUser2 -> ExperimentalPfmUser2,
-    t.LabelValue.ExperimentalPfmUser3 -> ExperimentalPfmUser3,
-    t.LabelValue.ExperimentalPfmUser4 -> ExperimentalPfmUser4,
-    t.LabelValue.ExperimentalSeh1 -> ExperimentalSeh1,
-    t.LabelValue.ExperimentalSeh2 -> ExperimentalSeh2,
-    t.LabelValue.ExperimentalSeh3 -> ExperimentalSeh3,
-    t.LabelValue.ExperimentalSehUser4 -> ExperimentalSehUser4,
-    t.LabelValue.ExperimentalSehUser5 -> ExperimentalSehUser5,
-    t.LabelValue.ExperimentalSensitiveIllegal1 -> ExperimentalSensitiveIllegal1,
-    t.LabelValue.ExperimentalSensitiveIllegal2 -> ExperimentalSensitiveIllegal2,
-    t.LabelValue.FakeSignupDeferredRemediation -> FakeSignupDeferredRemediation,
-    t.LabelValue.FakeSignupHoldback -> FakeSignupHoldback,
-    t.LabelValue.GoreAndViolenceHighPrecision -> GoreAndViolenceHighPrecision,
-    t.LabelValue.GoreAndViolenceReportedHeuristics -> GoreAndViolenceReportedHeuristics,
-    t.LabelValue.HealthExperimentation1 -> HealthExperimentation1,
-    t.LabelValue.HealthExperimentation2 -> HealthExperimentation2,
-    t.LabelValue.HighRiskVerification -> HighRiskVerification,
-    t.LabelValue.LikelyIvs -> LikelyIvs,
-    t.LabelValue.LiveLowQuality -> LiveLowQuality,
-    t.LabelValue.LowQuality -> LowQuality,
-    t.LabelValue.LowQualityHighRecall -> LowQualityHighRecall,
+    t.LabelValue.Dupl cateContent -> Dupl cateContent,
+    t.LabelValue.Engage ntSpam r -> Engage ntSpam r,
+    t.LabelValue.Engage ntSpam rH ghRecall -> Engage ntSpam rH ghRecall,
+    t.LabelValue.Exper  ntalPfmUser1 -> Exper  ntalPfmUser1,
+    t.LabelValue.Exper  ntalPfmUser2 -> Exper  ntalPfmUser2,
+    t.LabelValue.Exper  ntalPfmUser3 -> Exper  ntalPfmUser3,
+    t.LabelValue.Exper  ntalPfmUser4 -> Exper  ntalPfmUser4,
+    t.LabelValue.Exper  ntalSeh1 -> Exper  ntalSeh1,
+    t.LabelValue.Exper  ntalSeh2 -> Exper  ntalSeh2,
+    t.LabelValue.Exper  ntalSeh3 -> Exper  ntalSeh3,
+    t.LabelValue.Exper  ntalSehUser4 -> Exper  ntalSehUser4,
+    t.LabelValue.Exper  ntalSehUser5 -> Exper  ntalSehUser5,
+    t.LabelValue.Exper  ntalSens  ve llegal1 -> Exper  ntalSens  ve llegal1,
+    t.LabelValue.Exper  ntalSens  ve llegal2 -> Exper  ntalSens  ve llegal2,
+    t.LabelValue.FakeS gnupDeferredRe d at on -> FakeS gnupDeferredRe d at on,
+    t.LabelValue.FakeS gnupHoldback -> FakeS gnupHoldback,
+    t.LabelValue.GoreAndV olenceH ghPrec s on -> GoreAndV olenceH ghPrec s on,
+    t.LabelValue.GoreAndV olenceReported ur st cs -> GoreAndV olenceReported ur st cs,
+    t.LabelValue. althExper  ntat on1 ->  althExper  ntat on1,
+    t.LabelValue. althExper  ntat on2 ->  althExper  ntat on2,
+    t.LabelValue.H ghR skVer f cat on -> H ghR skVer f cat on,
+    t.LabelValue.L kely vs -> L kely vs,
+    t.LabelValue.L veLowQual y -> L veLowQual y,
+    t.LabelValue.LowQual y -> LowQual y,
+    t.LabelValue.LowQual yH ghRecall -> LowQual yH ghRecall,
     t.LabelValue.NotGraduated -> NotGraduated,
-    t.LabelValue.NotificationSpamHeuristics -> NotificationSpamHeuristics,
-    t.LabelValue.NsfwAvatarImage -> NsfwAvatarImage,
-    t.LabelValue.NsfwBannerImage -> NsfwBannerImage,
-    t.LabelValue.NsfwHighPrecision -> NsfwHighPrecision,
-    t.LabelValue.NsfwHighRecall -> NsfwHighRecall,
+    t.LabelValue.Not f cat onSpam ur st cs -> Not f cat onSpam ur st cs,
+    t.LabelValue.NsfwAvatar mage -> NsfwAvatar mage,
+    t.LabelValue.NsfwBanner mage -> NsfwBanner mage,
+    t.LabelValue.NsfwH ghPrec s on -> NsfwH ghPrec s on,
+    t.LabelValue.NsfwH ghRecall -> NsfwH ghRecall,
     t.LabelValue.NsfwNearPerfect -> NsfwNearPerfect,
-    t.LabelValue.NsfwReportedHeuristics -> NsfwReportedHeuristics,
-    t.LabelValue.NsfwSensitive -> NsfwSensitive,
+    t.LabelValue.NsfwReported ur st cs -> NsfwReported ur st cs,
+    t.LabelValue.NsfwSens  ve -> NsfwSens  ve,
     t.LabelValue.NsfwText -> NsfwText,
     t.LabelValue.ReadOnly -> ReadOnly,
-    t.LabelValue.RecentAbuseStrike -> RecentAbuseStrike,
-    t.LabelValue.RecentMisinfoStrike -> RecentMisinfoStrike,
-    t.LabelValue.RecentProfileModification -> RecentProfileModification,
-    t.LabelValue.RecentSuspension -> RecentSuspension,
-    t.LabelValue.RecommendationsBlacklist -> RecommendationsBlacklist,
-    t.LabelValue.SearchBlacklist -> SearchBlacklist,
+    t.LabelValue.RecentAbuseStr ke -> RecentAbuseStr ke,
+    t.LabelValue.RecentM s nfoStr ke -> RecentM s nfoStr ke,
+    t.LabelValue.RecentProf leMod f cat on -> RecentProf leMod f cat on,
+    t.LabelValue.RecentSuspens on -> RecentSuspens on,
+    t.LabelValue.Recom ndat onsBlackl st -> Recom ndat onsBlackl st,
+    t.LabelValue.SearchBlackl st -> SearchBlackl st,
     t.LabelValue.SoftReadOnly -> SoftReadOnly,
-    t.LabelValue.SpamHighRecall -> SpamHighRecall,
-    t.LabelValue.SpammyUserModelHighPrecision -> SpammyUserModelHighPrecision,
-    t.LabelValue.StateMediaAccount -> StateMediaAccount,
-    t.LabelValue.TsViolation -> TsViolation,
-    t.LabelValue.UnconfirmedEmailSignup -> UnconfirmedEmailSignup,
+    t.LabelValue.SpamH ghRecall -> SpamH ghRecall,
+    t.LabelValue.Spam UserModelH ghPrec s on -> Spam UserModelH ghPrec s on,
+    t.LabelValue.State d aAccount -> State d aAccount,
+    t.LabelValue.TsV olat on -> TsV olat on,
+    t.LabelValue.Unconf r dEma lS gnup -> Unconf r dEma lS gnup,
     t.LabelValue.LegalOpsCase -> LegalOpsCase,
-    t.LabelValue.AutomationHighRecall -> Deprecated,
-    t.LabelValue.AutomationHighRecallHoldback -> Deprecated,
-    t.LabelValue.BouncerUserFiltered -> Deprecated,
-    t.LabelValue.DeprecatedListBannerPdna -> Deprecated,
-    t.LabelValue.DeprecatedMigration50 -> Deprecated,
-    t.LabelValue.DmSpammer -> Deprecated,
-    t.LabelValue.DuplicateContentHoldback -> Deprecated,
-    t.LabelValue.FakeAccountExperiment -> Deprecated,
+    t.LabelValue.Automat onH ghRecall -> Deprecated,
+    t.LabelValue.Automat onH ghRecallHoldback -> Deprecated,
+    t.LabelValue.BouncerUserF ltered -> Deprecated,
+    t.LabelValue.DeprecatedL stBannerPdna -> Deprecated,
+    t.LabelValue.DeprecatedM grat on50 -> Deprecated,
+    t.LabelValue.DmSpam r -> Deprecated,
+    t.LabelValue.Dupl cateContentHoldback -> Deprecated,
+    t.LabelValue.FakeAccountExper  nt -> Deprecated,
     t.LabelValue.FakeAccountReadonly -> Deprecated,
     t.LabelValue.FakeAccountRecaptcha -> Deprecated,
     t.LabelValue.FakeAccountSspc -> Deprecated,
-    t.LabelValue.FakeAccountVoiceReadonly -> Deprecated,
-    t.LabelValue.FakeEngagement -> Deprecated,
+    t.LabelValue.FakeAccountVo ceReadonly -> Deprecated,
+    t.LabelValue.FakeEngage nt -> Deprecated,
     t.LabelValue.HasBeenSuspended -> Deprecated,
-    t.LabelValue.HighProfile -> Deprecated,
-    t.LabelValue.NotificationsSpike -> Deprecated,
-    t.LabelValue.NsfaProfileHighRecall -> Deprecated,
-    t.LabelValue.NsfwUserName -> Deprecated,
-    t.LabelValue.PotentiallyCompromised -> Deprecated,
-    t.LabelValue.ProfileAdsBlacklist -> Deprecated,
-    t.LabelValue.RatelimitDms -> Deprecated,
-    t.LabelValue.RatelimitFavorites -> Deprecated,
-    t.LabelValue.RatelimitFollows -> Deprecated,
-    t.LabelValue.RatelimitRetweets -> Deprecated,
-    t.LabelValue.RatelimitTweets -> Deprecated,
-    t.LabelValue.RecentCompromised -> Deprecated,
-    t.LabelValue.RevenueOnlyHsSignal -> Deprecated,
-    t.LabelValue.SearchBlacklistHoldback -> Deprecated,
-    t.LabelValue.SpamHighRecallHoldback -> Deprecated,
+    t.LabelValue.H ghProf le -> Deprecated,
+    t.LabelValue.Not f cat onsSp ke -> Deprecated,
+    t.LabelValue.NsfaProf leH ghRecall -> Deprecated,
+    t.LabelValue.NsfwUserNa  -> Deprecated,
+    t.LabelValue.Potent allyComprom sed -> Deprecated,
+    t.LabelValue.Prof leAdsBlackl st -> Deprecated,
+    t.LabelValue.Ratel m Dms -> Deprecated,
+    t.LabelValue.Ratel m Favor es -> Deprecated,
+    t.LabelValue.Ratel m Follows -> Deprecated,
+    t.LabelValue.Ratel m Ret ets -> Deprecated,
+    t.LabelValue.Ratel m T ets -> Deprecated,
+    t.LabelValue.RecentComprom sed -> Deprecated,
+    t.LabelValue.RevenueOnlyHsS gnal -> Deprecated,
+    t.LabelValue.SearchBlackl stHoldback -> Deprecated,
+    t.LabelValue.SpamH ghRecallHoldback -> Deprecated,
     t.LabelValue.SpamRepeatOffender -> Deprecated,
-    t.LabelValue.SpammerExperiment -> Deprecated,
-    t.LabelValue.TrendBlacklist -> Deprecated,
-    t.LabelValue.VerifiedDeceptiveIdentity -> Deprecated,
+    t.LabelValue.Spam rExper  nt -> Deprecated,
+    t.LabelValue.TrendBlackl st -> Deprecated,
+    t.LabelValue.Ver f edDecept ve dent y -> Deprecated,
     t.LabelValue.BrandSafetyNsfaAggregate -> Deprecated,
     t.LabelValue.Pcf -> Deprecated,
     t.LabelValue.Reserved97 -> Deprecated,
@@ -133,79 +133,79 @@ object UserLabelValue extends SafetyLabelType {
     t.LabelValue.Reserved106 -> Deprecated
   )
 
-  private lazy val modelToThriftMap: Map[UserLabelValue, t.LabelValue] =
-    (for ((k, v) <- thriftToModelMap) yield (v, k)) ++ Map(
+  pr vate lazy val modelToThr ftMap: Map[UserLabelValue, t.LabelValue] =
+    (for ((k, v) <- thr ftToModelMap) y eld (v, k)) ++ Map(
       Deprecated -> t.LabelValue.EnumUnknownLabelValue(DeprecatedEnumValue),
     )
 
-  case object Abusive extends UserLabelValue
-  case object AbusiveHighRecall extends UserLabelValue
+  case object Abus ve extends UserLabelValue
+  case object Abus veH ghRecall extends UserLabelValue
   case object AgathaSpamTopUser extends UserLabelValue
-  case object BirdwatchDisabled extends UserLabelValue
-  case object BlinkBad extends UserLabelValue
-  case object BlinkQuestionable extends UserLabelValue
-  case object BlinkWorst extends UserLabelValue
-  case object Compromised extends UserLabelValue
-  case object DelayedRemediation extends UserLabelValue
-  case object DoNotAmplify extends UserLabelValue
+  case object B rdwatchD sabled extends UserLabelValue
+  case object Bl nkBad extends UserLabelValue
+  case object Bl nkQuest onable extends UserLabelValue
+  case object Bl nkWorst extends UserLabelValue
+  case object Comprom sed extends UserLabelValue
+  case object DelayedRe d at on extends UserLabelValue
+  case object DoNotAmpl fy extends UserLabelValue
   case object DoNotCharge extends UserLabelValue
   case object DownrankSpamReply extends UserLabelValue
-  case object DuplicateContent extends UserLabelValue
-  case object EngagementSpammer extends UserLabelValue
-  case object EngagementSpammerHighRecall extends UserLabelValue
-  case object ExperimentalPfmUser1 extends UserLabelValue
-  case object ExperimentalPfmUser2 extends UserLabelValue
-  case object ExperimentalPfmUser3 extends UserLabelValue
-  case object ExperimentalPfmUser4 extends UserLabelValue
-  case object ExperimentalSeh1 extends UserLabelValue
-  case object ExperimentalSeh2 extends UserLabelValue
-  case object ExperimentalSeh3 extends UserLabelValue
-  case object ExperimentalSehUser4 extends UserLabelValue
-  case object ExperimentalSehUser5 extends UserLabelValue
-  case object ExperimentalSensitiveIllegal1 extends UserLabelValue
-  case object ExperimentalSensitiveIllegal2 extends UserLabelValue
-  case object FakeSignupDeferredRemediation extends UserLabelValue
-  case object FakeSignupHoldback extends UserLabelValue
-  case object GoreAndViolenceHighPrecision extends UserLabelValue
-  case object GoreAndViolenceReportedHeuristics extends UserLabelValue
-  case object HealthExperimentation1 extends UserLabelValue
-  case object HealthExperimentation2 extends UserLabelValue
-  case object HighRiskVerification extends UserLabelValue
+  case object Dupl cateContent extends UserLabelValue
+  case object Engage ntSpam r extends UserLabelValue
+  case object Engage ntSpam rH ghRecall extends UserLabelValue
+  case object Exper  ntalPfmUser1 extends UserLabelValue
+  case object Exper  ntalPfmUser2 extends UserLabelValue
+  case object Exper  ntalPfmUser3 extends UserLabelValue
+  case object Exper  ntalPfmUser4 extends UserLabelValue
+  case object Exper  ntalSeh1 extends UserLabelValue
+  case object Exper  ntalSeh2 extends UserLabelValue
+  case object Exper  ntalSeh3 extends UserLabelValue
+  case object Exper  ntalSehUser4 extends UserLabelValue
+  case object Exper  ntalSehUser5 extends UserLabelValue
+  case object Exper  ntalSens  ve llegal1 extends UserLabelValue
+  case object Exper  ntalSens  ve llegal2 extends UserLabelValue
+  case object FakeS gnupDeferredRe d at on extends UserLabelValue
+  case object FakeS gnupHoldback extends UserLabelValue
+  case object GoreAndV olenceH ghPrec s on extends UserLabelValue
+  case object GoreAndV olenceReported ur st cs extends UserLabelValue
+  case object  althExper  ntat on1 extends UserLabelValue
+  case object  althExper  ntat on2 extends UserLabelValue
+  case object H ghR skVer f cat on extends UserLabelValue
   case object LegalOpsCase extends UserLabelValue
-  case object LikelyIvs extends UserLabelValue
-  case object LiveLowQuality extends UserLabelValue
-  case object LowQuality extends UserLabelValue
-  case object LowQualityHighRecall extends UserLabelValue
-  case object NotificationSpamHeuristics extends UserLabelValue
+  case object L kely vs extends UserLabelValue
+  case object L veLowQual y extends UserLabelValue
+  case object LowQual y extends UserLabelValue
+  case object LowQual yH ghRecall extends UserLabelValue
+  case object Not f cat onSpam ur st cs extends UserLabelValue
   case object NotGraduated extends UserLabelValue
-  case object NsfwAvatarImage extends UserLabelValue
-  case object NsfwBannerImage extends UserLabelValue
-  case object NsfwHighPrecision extends UserLabelValue
-  case object NsfwHighRecall extends UserLabelValue
+  case object NsfwAvatar mage extends UserLabelValue
+  case object NsfwBanner mage extends UserLabelValue
+  case object NsfwH ghPrec s on extends UserLabelValue
+  case object NsfwH ghRecall extends UserLabelValue
   case object NsfwNearPerfect extends UserLabelValue
-  case object NsfwReportedHeuristics extends UserLabelValue
-  case object NsfwSensitive extends UserLabelValue
+  case object NsfwReported ur st cs extends UserLabelValue
+  case object NsfwSens  ve extends UserLabelValue
   case object NsfwText extends UserLabelValue
   case object ReadOnly extends UserLabelValue
-  case object RecentAbuseStrike extends UserLabelValue
-  case object RecentProfileModification extends UserLabelValue
-  case object RecentMisinfoStrike extends UserLabelValue
-  case object RecentSuspension extends UserLabelValue
-  case object RecommendationsBlacklist extends UserLabelValue
-  case object SearchBlacklist extends UserLabelValue
+  case object RecentAbuseStr ke extends UserLabelValue
+  case object RecentProf leMod f cat on extends UserLabelValue
+  case object RecentM s nfoStr ke extends UserLabelValue
+  case object RecentSuspens on extends UserLabelValue
+  case object Recom ndat onsBlackl st extends UserLabelValue
+  case object SearchBlackl st extends UserLabelValue
   case object SoftReadOnly extends UserLabelValue
-  case object SpamHighRecall extends UserLabelValue
-  case object SpammyUserModelHighPrecision extends UserLabelValue
-  case object StateMediaAccount extends UserLabelValue
-  case object TsViolation extends UserLabelValue
-  case object UnconfirmedEmailSignup extends UserLabelValue
+  case object SpamH ghRecall extends UserLabelValue
+  case object Spam UserModelH ghPrec s on extends UserLabelValue
+  case object State d aAccount extends UserLabelValue
+  case object TsV olat on extends UserLabelValue
+  case object Unconf r dEma lS gnup extends UserLabelValue
 
   case object Deprecated extends UserLabelValue
   case object Unknown extends UserLabelValue
 
-  def fromThrift(userLabelValue: t.LabelValue): UserLabelValue = {
-    thriftToModelMap.get(userLabelValue) match {
-      case Some(safetyLabelType) => safetyLabelType
+  def fromThr ft(userLabelValue: t.LabelValue): UserLabelValue = {
+    thr ftToModelMap.get(userLabelValue) match {
+      case So (safetyLabelType) => safetyLabelType
       case _ =>
         userLabelValue match {
           case t.LabelValue.EnumUnknownLabelValue(DeprecatedEnumValue) => Deprecated
@@ -215,30 +215,30 @@ object UserLabelValue extends SafetyLabelType {
     }
   }
 
-  def toThrift(userLabelValue: UserLabelValue): t.LabelValue =
-    modelToThriftMap.get((userLabelValue)).getOrElse(UnknownThriftUserLabelValue)
+  def toThr ft(userLabelValue: UserLabelValue): t.LabelValue =
+    modelToThr ftMap.get((userLabelValue)).getOrElse(UnknownThr ftUserLabelValue)
 
-  val List: List[UserLabelValue] = t.LabelValue.list.map(fromThrift)
+  val L st: L st[UserLabelValue] = t.LabelValue.l st.map(fromThr ft)
 }
 
 object UserLabel {
-  def fromThrift(userLabel: t.Label): UserLabel = {
+  def fromThr ft(userLabel: t.Label): UserLabel = {
     UserLabel(
-      userLabel.id,
-      Time.fromMilliseconds(userLabel.createdAtMsec),
+      userLabel. d,
+      T  .fromM ll seconds(userLabel.createdAtMsec),
       userLabel.byUser,
-      UserLabelValue.fromThrift(userLabel.labelValue),
-      userLabel.source.flatMap(LabelSource.fromString)
+      UserLabelValue.fromThr ft(userLabel.labelValue),
+      userLabel.s ce.flatMap(LabelS ce.fromStr ng)
     )
   }
 
-  def toThrift(userLabel: UserLabel): t.Label = {
+  def toThr ft(userLabel: UserLabel): t.Label = {
     t.Label(
-      userLabel.id,
-      UserLabelValue.toThrift(userLabel.labelValue),
-      userLabel.createdAt.inMillis,
+      userLabel. d,
+      UserLabelValue.toThr ft(userLabel.labelValue),
+      userLabel.createdAt. nM ll s,
       byUser = userLabel.createdBy,
-      source = userLabel.source.map(_.name)
+      s ce = userLabel.s ce.map(_.na )
     )
   }
 }

@@ -1,78 +1,78 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.context.thriftscala.Viewer
-import com.twitter.featureswitches.Recipient
-import com.twitter.featureswitches.TOOClient
-import com.twitter.featureswitches.UserAgent
-import com.twitter.tweetypie.StatsReceiver
-import com.twitter.tweetypie.User
-import com.twitter.tweetypie.UserId
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.repository.UserViewerRecipient.UserIdMismatchException
+ mport com.tw ter.context.thr ftscala.V e r
+ mport com.tw ter.featuresw c s.Rec p ent
+ mport com.tw ter.featuresw c s.TOOCl ent
+ mport com.tw ter.featuresw c s.UserAgent
+ mport com.tw ter.t etyp e.StatsRece ver
+ mport com.tw ter.t etyp e.User
+ mport com.tw ter.t etyp e.User d
+ mport com.tw ter.t etyp e.cl ent_ d.Cl ent d lper
+ mport com.tw ter.t etyp e.repos ory.UserV e rRec p ent.User dM smatchExcept on
 
 /**
- * Provides a Recipient backed by a Gizmoduck User and TwitterContext Viewer for
- * use in FeatureSwitch validation.
+ * Prov des a Rec p ent backed by a G zmoduck User and Tw terContext V e r for
+ * use  n FeatureSw ch val dat on.
  */
-object UserViewerRecipient {
-  object UserIdMismatchException extends Exception
+object UserV e rRec p ent {
+  object User dM smatchExcept on extends Except on
 
-  def apply(user: User, viewer: Viewer, stats: StatsReceiver): Option[Recipient] = {
-    // This is a workaround for thrift API clients that allow users to Tweet on behalf
-    // of other Twitter users. This is similar to go/contributors, however some platforms
-    // have enabled workflows that don't use the go/contributors auth platform, and
-    // therefore the TwitterContext Viewer isn't set up correctly for contributor requests.
-    if (viewer.userId.contains(user.id)) {
-      Some(new UserViewerRecipient(user, viewer))
+  def apply(user: User, v e r: V e r, stats: StatsRece ver): Opt on[Rec p ent] = {
+    // T   s a workaround for thr ft AP  cl ents that allow users to T et on behalf
+    // of ot r Tw ter users. T   s s m lar to go/contr butors, ho ver so  platforms
+    // have enabled workflows that don't use t  go/contr butors auth platform, and
+    // t refore t  Tw terContext V e r  sn't set up correctly for contr butor requests.
+     f (v e r.user d.conta ns(user. d)) {
+      So (new UserV e rRec p ent(user, v e r))
     } else {
-      val mismatchScope = stats.scope(s"user_viewer_mismatch")
-      ClientIdHelper.default.effectiveClientIdRoot.foreach { clientId =>
-        mismatchScope.scope("client").counter(clientId).incr()
+      val m smatchScope = stats.scope(s"user_v e r_m smatch")
+      Cl ent d lper.default.effect veCl ent dRoot.foreach { cl ent d =>
+        m smatchScope.scope("cl ent").counter(cl ent d). ncr()
       }
-      mismatchScope.counter("total").incr()
+      m smatchScope.counter("total"). ncr()
       None
     }
   }
 }
 
-class UserViewerRecipient(
+class UserV e rRec p ent(
   user: User,
-  viewer: Viewer)
-    extends Recipient {
+  v e r: V e r)
+    extends Rec p ent {
 
-  if (!viewer.userId.contains(user.id)) {
-    throw UserIdMismatchException
+   f (!v e r.user d.conta ns(user. d)) {
+    throw User dM smatchExcept on
   }
 
-  override def userId: Option[UserId] = viewer.userId
+  overr de def user d: Opt on[User d] = v e r.user d
 
-  override def userRoles: Option[Set[String]] = user.roles.map(_.roles.toSet)
+  overr de def userRoles: Opt on[Set[Str ng]] = user.roles.map(_.roles.toSet)
 
-  override def deviceId: Option[String] = viewer.deviceId
+  overr de def dev ce d: Opt on[Str ng] = v e r.dev ce d
 
-  override def guestId: Option[Long] = viewer.guestId
+  overr de def guest d: Opt on[Long] = v e r.guest d
 
-  override def languageCode: Option[String] = viewer.requestLanguageCode
+  overr de def languageCode: Opt on[Str ng] = v e r.requestLanguageCode
 
-  override def signupCountryCode: Option[String] = user.safety.flatMap(_.signupCountryCode)
+  overr de def s gnupCountryCode: Opt on[Str ng] = user.safety.flatMap(_.s gnupCountryCode)
 
-  override def countryCode: Option[String] = viewer.requestCountryCode
+  overr de def countryCode: Opt on[Str ng] = v e r.requestCountryCode
 
-  override def userAgent: Option[UserAgent] = viewer.userAgent.flatMap(UserAgent(_))
+  overr de def userAgent: Opt on[UserAgent] = v e r.userAgent.flatMap(UserAgent(_))
 
-  override def isManifest: Boolean = false
+  overr de def  sMan fest: Boolean = false
 
-  override def isVerified: Option[Boolean] = user.safety.map(_.verified)
+  overr de def  sVer f ed: Opt on[Boolean] = user.safety.map(_.ver f ed)
 
-  override def clientApplicationId: Option[Long] = viewer.clientApplicationId
-
-  @Deprecated
-  override def isTwoffice: Option[Boolean] = None
+  overr de def cl entAppl cat on d: Opt on[Long] = v e r.cl entAppl cat on d
 
   @Deprecated
-  override def tooClient: Option[TOOClient] = None
+  overr de def  sTwoff ce: Opt on[Boolean] = None
 
   @Deprecated
-  override def highWaterMark: Option[Long] = None
+  overr de def tooCl ent: Opt on[TOOCl ent] = None
+
+  @Deprecated
+  overr de def h ghWaterMark: Opt on[Long] = None
 }

@@ -1,39 +1,39 @@
-package com.twitter.cr_mixer.filter
+package com.tw ter.cr_m xer.f lter
 
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
-import javax.inject.Singleton
-import com.twitter.conversions.DurationOps._
+ mport com.tw ter.cr_m xer.model.Cand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model. n  alCand date
+ mport com.tw ter.cr_m xer.param.GlobalParams
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
+ mport javax. nject.S ngleton
+ mport com.tw ter.convers ons.Durat onOps._
 
-@Singleton
-case class TweetAgeFilter() extends FilterBase {
-  override val name: String = this.getClass.getCanonicalName
+@S ngleton
+case class T etAgeF lter() extends F lterBase {
+  overr de val na : Str ng = t .getClass.getCanon calNa 
 
-  override type ConfigType = Duration
+  overr de type Conf gType = Durat on
 
-  override def filter(
-    candidates: Seq[Seq[InitialCandidate]],
-    maxTweetAge: Duration
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    if (maxTweetAge >= 720.hours) {
-      Future.value(candidates)
+  overr de def f lter(
+    cand dates: Seq[Seq[ n  alCand date]],
+    maxT etAge: Durat on
+  ): Future[Seq[Seq[ n  alCand date]]] = {
+     f (maxT etAge >= 720.h s) {
+      Future.value(cand dates)
     } else {
-      // Tweet IDs are approximately chronological (see http://go/snowflake),
-      // so we are building the earliest tweet id once,
-      // and pass that as the value to filter candidates for each CandidateGenerationModel.
-      val earliestTweetId = SnowflakeId.firstIdFor(Time.now - maxTweetAge)
-      Future.value(candidates.map(_.filter(_.tweetId >= earliestTweetId)))
+      // T et  Ds are approx mately chronolog cal (see http://go/snowflake),
+      // so   are bu ld ng t  earl est t et  d once,
+      // and pass that as t  value to f lter cand dates for each Cand dateGenerat onModel.
+      val earl estT et d = Snowflake d.f rst dFor(T  .now - maxT etAge)
+      Future.value(cand dates.map(_.f lter(_.t et d >= earl estT et d)))
     }
   }
 
-  override def requestToConfig[CGQueryType <: CandidateGeneratorQuery](
+  overr de def requestToConf g[CGQueryType <: Cand dateGeneratorQuery](
     query: CGQueryType
-  ): Duration = {
-    query.params(GlobalParams.MaxTweetAgeHoursParam)
+  ): Durat on = {
+    query.params(GlobalParams.MaxT etAgeH sParam)
   }
 }

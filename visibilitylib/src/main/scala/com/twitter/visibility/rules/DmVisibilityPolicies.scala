@@ -1,130 +1,130 @@
-package com.twitter.visibility.rules
+package com.tw ter.v s b l y.rules
 
-import com.twitter.visibility.configapi.params.RuleParams
-import com.twitter.visibility.rules.DmConversationRules._
-import com.twitter.visibility.rules.DmEventRules._
-import com.twitter.visibility.rules.PolicyLevelRuleParams.ruleParams
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams
+ mport com.tw ter.v s b l y.rules.DmConversat onRules._
+ mport com.tw ter.v s b l y.rules.DmEventRules._
+ mport com.tw ter.v s b l y.rules.Pol cyLevelRuleParams.ruleParams
 
-object SensitiveMediaSettingsDirectMessagesBaseRules {
-  val policyRuleParams = Map[Rule, PolicyLevelRuleParams](
-    NsfwHighPrecisionInterstitialAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaDirectMessagesRulesParam),
-    GoreAndViolenceHighPrecisionAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaDirectMessagesRulesParam),
-    NsfwReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaDirectMessagesRulesParam),
-    GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaDirectMessagesRulesParam),
-    NsfwCardImageAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaDirectMessagesRulesParam)
+object Sens  ve d aSett ngsD rect ssagesBaseRules {
+  val pol cyRuleParams = Map[Rule, Pol cyLevelRuleParams](
+    NsfwH ghPrec s on nterst  alAllUsersT etLabelRule -> ruleParams(
+      RuleParams.EnableLegacySens  ve d aD rect ssagesRulesParam),
+    GoreAndV olenceH ghPrec s onAllUsersT etLabelRule -> ruleParams(
+      RuleParams.EnableLegacySens  ve d aD rect ssagesRulesParam),
+    NsfwReported ur st csAllUsersT etLabelRule -> ruleParams(
+      RuleParams.EnableLegacySens  ve d aD rect ssagesRulesParam),
+    GoreAndV olenceReported ur st csAllUsersT etLabelRule -> ruleParams(
+      RuleParams.EnableLegacySens  ve d aD rect ssagesRulesParam),
+    NsfwCard mageAllUsersT etLabelRule -> ruleParams(
+      RuleParams.EnableLegacySens  ve d aD rect ssagesRulesParam)
   )
 }
 
-case object DirectMessagesPolicy
-    extends VisibilityPolicy(
-      tweetRules = TweetDetailPolicy.tweetRules.diff(LimitedEngagementBaseRules.tweetRules),
+case object D rect ssagesPol cy
+    extends V s b l yPol cy(
+      t etRules = T etDeta lPol cy.t etRules.d ff(L m edEngage ntBaseRules.t etRules),
       dmRules = Seq(
-        DeactivatedAuthorRule,
+        Deact vatedAuthorRule,
         ErasedAuthorRule
       ),
-      policyRuleParams = SensitiveMediaSettingsDirectMessagesBaseRules.policyRuleParams
+      pol cyRuleParams = Sens  ve d aSett ngsD rect ssagesBaseRules.pol cyRuleParams
     )
 
-case object DirectMessagesMutedUsersPolicy
-    extends VisibilityPolicy(
+case object D rect ssagesMutedUsersPol cy
+    extends V s b l yPol cy(
       userRules = Seq(SuspendedAuthorRule)
     )
 
-case object DirectMessagesSearchPolicy
-    extends VisibilityPolicy(
-      dmConversationRules = Seq(
-        DropDmConversationWithUndefinedConversationInfoRule,
-        DropDmConversationWithUndefinedConversationTimelineRule,
-        DropInaccessibleDmConversationRule,
-        DropEmptyDmConversationRule,
-        DropOneToOneDmConversationWithUnavailableParticipantsRule
+case object D rect ssagesSearchPol cy
+    extends V s b l yPol cy(
+      dmConversat onRules = Seq(
+        DropDmConversat onW hUndef nedConversat on nfoRule,
+        DropDmConversat onW hUndef nedConversat onT  l neRule,
+        Drop naccess bleDmConversat onRule,
+        DropEmptyDmConversat onRule,
+        DropOneToOneDmConversat onW hUnava lablePart c pantsRule
       ),
       dmEventRules = Seq(
-        InaccessibleDmEventDropRule,
-        HiddenAndDeletedDmEventDropRule,
-        MessageCreateEventWithUnavailableSenderDropRule),
-      userRules = Seq(ErasedAuthorRule, DeactivatedAuthorRule, SuspendedAuthorRule),
-      tweetRules =
-        Seq(ViewerBlocksAuthorRule, ViewerMutesAuthorRule) ++ TweetDetailPolicy.tweetRules.diff(
-          LimitedEngagementBaseRules.tweetRules),
-      policyRuleParams = SensitiveMediaSettingsDirectMessagesBaseRules.policyRuleParams
+         naccess bleDmEventDropRule,
+        H ddenAndDeletedDmEventDropRule,
+         ssageCreateEventW hUnava lableSenderDropRule),
+      userRules = Seq(ErasedAuthorRule, Deact vatedAuthorRule, SuspendedAuthorRule),
+      t etRules =
+        Seq(V e rBlocksAuthorRule, V e rMutesAuthorRule) ++ T etDeta lPol cy.t etRules.d ff(
+          L m edEngage ntBaseRules.t etRules),
+      pol cyRuleParams = Sens  ve d aSett ngsD rect ssagesBaseRules.pol cyRuleParams
     )
 
-case object DirectMessagesPinnedPolicy
-    extends VisibilityPolicy(
-      dmConversationRules = Seq(
-        DropDmConversationWithUndefinedConversationInfoRule,
-        DropDmConversationWithUndefinedConversationTimelineRule,
-        DropInaccessibleDmConversationRule,
-        DropEmptyDmConversationRule,
-        DropOneToOneDmConversationWithUnavailableParticipantsRule
+case object D rect ssagesP nnedPol cy
+    extends V s b l yPol cy(
+      dmConversat onRules = Seq(
+        DropDmConversat onW hUndef nedConversat on nfoRule,
+        DropDmConversat onW hUndef nedConversat onT  l neRule,
+        Drop naccess bleDmConversat onRule,
+        DropEmptyDmConversat onRule,
+        DropOneToOneDmConversat onW hUnava lablePart c pantsRule
       ),
       dmEventRules = Seq(
-        InaccessibleDmEventDropRule,
-        HiddenAndDeletedDmEventDropRule,
-        MessageCreateEventWithUnavailableSenderDropRule),
-      userRules = Seq(ErasedAuthorRule, DeactivatedAuthorRule, SuspendedAuthorRule),
-      tweetRules =
-        Seq(ViewerBlocksAuthorRule, ViewerMutesAuthorRule) ++ TweetDetailPolicy.tweetRules.diff(
-          LimitedEngagementBaseRules.tweetRules),
-      policyRuleParams = SensitiveMediaSettingsDirectMessagesBaseRules.policyRuleParams
+         naccess bleDmEventDropRule,
+        H ddenAndDeletedDmEventDropRule,
+         ssageCreateEventW hUnava lableSenderDropRule),
+      userRules = Seq(ErasedAuthorRule, Deact vatedAuthorRule, SuspendedAuthorRule),
+      t etRules =
+        Seq(V e rBlocksAuthorRule, V e rMutesAuthorRule) ++ T etDeta lPol cy.t etRules.d ff(
+          L m edEngage ntBaseRules.t etRules),
+      pol cyRuleParams = Sens  ve d aSett ngsD rect ssagesBaseRules.pol cyRuleParams
     )
 
-case object DirectMessagesConversationListPolicy
-    extends VisibilityPolicy(
-      dmConversationRules = Seq(
-        DropDmConversationWithUndefinedConversationInfoRule,
-        DropDmConversationWithUndefinedConversationTimelineRule,
-        DropInaccessibleDmConversationRule,
-        DropEmptyDmConversationRule,
-        DropOneToOneDmConversationWithUnavailableParticipantsRule
+case object D rect ssagesConversat onL stPol cy
+    extends V s b l yPol cy(
+      dmConversat onRules = Seq(
+        DropDmConversat onW hUndef nedConversat on nfoRule,
+        DropDmConversat onW hUndef nedConversat onT  l neRule,
+        Drop naccess bleDmConversat onRule,
+        DropEmptyDmConversat onRule,
+        DropOneToOneDmConversat onW hUnava lablePart c pantsRule
       ),
-      userRules = Seq(ErasedAuthorRule, DeactivatedAuthorRule, SuspendedAuthorRule),
-      tweetRules =
-        Seq(ViewerBlocksAuthorRule, ViewerMutesAuthorRule) ++ TweetDetailPolicy.tweetRules.diff(
-          LimitedEngagementBaseRules.tweetRules),
-      policyRuleParams = SensitiveMediaSettingsDirectMessagesBaseRules.policyRuleParams
+      userRules = Seq(ErasedAuthorRule, Deact vatedAuthorRule, SuspendedAuthorRule),
+      t etRules =
+        Seq(V e rBlocksAuthorRule, V e rMutesAuthorRule) ++ T etDeta lPol cy.t etRules.d ff(
+          L m edEngage ntBaseRules.t etRules),
+      pol cyRuleParams = Sens  ve d aSett ngsD rect ssagesBaseRules.pol cyRuleParams
     )
 
-case object DirectMessagesConversationTimelinePolicy
-    extends VisibilityPolicy(
+case object D rect ssagesConversat onT  l nePol cy
+    extends V s b l yPol cy(
       dmEventRules = Seq(
-        InaccessibleDmEventDropRule,
-        HiddenAndDeletedDmEventDropRule,
-        MessageCreateEventWithUnavailableSenderDropRule),
-      userRules = Seq(ErasedAuthorRule, DeactivatedAuthorRule, SuspendedAuthorRule),
-      tweetRules =
-        Seq(ViewerBlocksAuthorRule, ViewerMutesAuthorRule) ++ TweetDetailPolicy.tweetRules.diff(
-          LimitedEngagementBaseRules.tweetRules),
-      policyRuleParams = SensitiveMediaSettingsDirectMessagesBaseRules.policyRuleParams
+         naccess bleDmEventDropRule,
+        H ddenAndDeletedDmEventDropRule,
+         ssageCreateEventW hUnava lableSenderDropRule),
+      userRules = Seq(ErasedAuthorRule, Deact vatedAuthorRule, SuspendedAuthorRule),
+      t etRules =
+        Seq(V e rBlocksAuthorRule, V e rMutesAuthorRule) ++ T etDeta lPol cy.t etRules.d ff(
+          L m edEngage ntBaseRules.t etRules),
+      pol cyRuleParams = Sens  ve d aSett ngsD rect ssagesBaseRules.pol cyRuleParams
     )
 
-case object DirectMessagesInboxPolicy
-    extends VisibilityPolicy(
-      dmConversationRules = Seq(
-        DropDmConversationWithUndefinedConversationInfoRule,
-        DropDmConversationWithUndefinedConversationTimelineRule,
-        DropInaccessibleDmConversationRule,
-        DropEmptyDmConversationRule,
-        DropOneToOneDmConversationWithUnavailableParticipantsRule
+case object D rect ssages nboxPol cy
+    extends V s b l yPol cy(
+      dmConversat onRules = Seq(
+        DropDmConversat onW hUndef nedConversat on nfoRule,
+        DropDmConversat onW hUndef nedConversat onT  l neRule,
+        Drop naccess bleDmConversat onRule,
+        DropEmptyDmConversat onRule,
+        DropOneToOneDmConversat onW hUnava lablePart c pantsRule
       ),
       dmEventRules = Seq(
-        InaccessibleDmEventDropRule,
-        HiddenAndDeletedDmEventDropRule,
-        DmEventInOneToOneConversationWithUnavailableUserDropRule,
-        MessageCreateEventWithUnavailableSenderDropRule,
-        NonPerspectivalDmEventDropRule,
-        WelcomeMessageCreateEventOnlyVisibleToRecipientDropRule,
-        GroupEventInOneToOneConversationDropRule
+         naccess bleDmEventDropRule,
+        H ddenAndDeletedDmEventDropRule,
+        DmEvent nOneToOneConversat onW hUnava lableUserDropRule,
+         ssageCreateEventW hUnava lableSenderDropRule,
+        NonPerspect valDmEventDropRule,
+         lco  ssageCreateEventOnlyV s bleToRec p entDropRule,
+        GroupEvent nOneToOneConversat onDropRule
       ),
-      userRules = Seq(ErasedAuthorRule, DeactivatedAuthorRule, SuspendedAuthorRule),
-      tweetRules =
-        Seq(ViewerBlocksAuthorRule, ViewerMutesAuthorRule) ++ TweetDetailPolicy.tweetRules.diff(
-          LimitedEngagementBaseRules.tweetRules),
-      policyRuleParams = SensitiveMediaSettingsDirectMessagesBaseRules.policyRuleParams
+      userRules = Seq(ErasedAuthorRule, Deact vatedAuthorRule, SuspendedAuthorRule),
+      t etRules =
+        Seq(V e rBlocksAuthorRule, V e rMutesAuthorRule) ++ T etDeta lPol cy.t etRules.d ff(
+          L m edEngage ntBaseRules.t etRules),
+      pol cyRuleParams = Sens  ve d aSett ngsD rect ssagesBaseRules.pol cyRuleParams
     )

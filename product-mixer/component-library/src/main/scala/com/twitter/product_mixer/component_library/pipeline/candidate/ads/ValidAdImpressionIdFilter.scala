@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+package com.tw ter.product_m xer.component_l brary.p pel ne.cand date.ads
 
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.ads.AdsCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lterResult
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
-object ValidAdImpressionIdFilter extends Filter[PipelineQuery, AdsCandidate] {
-  override val identifier: FilterIdentifier = FilterIdentifier("ValidAdImpressionId")
+object Val dAd mpress on dF lter extends F lter[P pel neQuery, AdsCand date] {
+  overr de val  dent f er: F lter dent f er = F lter dent f er("Val dAd mpress on d")
 
-  override def apply(
-    query: PipelineQuery,
-    candidatesWithFeatures: Seq[CandidateWithFeatures[AdsCandidate]]
-  ): Stitch[FilterResult[AdsCandidate]] = {
-    val (kept, removed) = candidatesWithFeatures
-      .map(_.candidate)
-      .partition(candidate => candidate.adImpression.impressionString.exists(_.nonEmpty))
+  overr de def apply(
+    query: P pel neQuery,
+    cand datesW hFeatures: Seq[Cand dateW hFeatures[AdsCand date]]
+  ): St ch[F lterResult[AdsCand date]] = {
+    val (kept, removed) = cand datesW hFeatures
+      .map(_.cand date)
+      .part  on(cand date => cand date.ad mpress on. mpress onStr ng.ex sts(_.nonEmpty))
 
-    Stitch.value(FilterResult(kept, removed))
+    St ch.value(F lterResult(kept, removed))
   }
 }

@@ -1,66 +1,66 @@
-package com.twitter.tweetypie.serverutil.logcachewrites
+package com.tw ter.t etyp e.serverut l.logcac wr es
 
-import com.twitter.servo.cache.Checksum
-import com.twitter.servo.cache.CacheWrapper
-import com.twitter.util.Future
-import com.twitter.util.logging.Logger
-import scala.util.control.NonFatal
+ mport com.tw ter.servo.cac .C cksum
+ mport com.tw ter.servo.cac .Cac Wrapper
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.logg ng.Logger
+ mport scala.ut l.control.NonFatal
 
-trait WriteLoggingCache[K, V] extends CacheWrapper[K, V] {
-  // Use getClass so we can see which implementation is actually failing.
-  private[this] lazy val logFailureLogger = Logger(getClass)
+tra  Wr eLogg ngCac [K, V] extends Cac Wrapper[K, V] {
+  // Use getClass so   can see wh ch  mple ntat on  s actually fa l ng.
+  pr vate[t ] lazy val logFa lureLogger = Logger(getClass)
 
   def selectKey(k: K): Boolean
   def select(k: K, v: V): Boolean
-  def log(action: String, k: K, v: Option[V]): Unit
+  def log(act on: Str ng, k: K, v: Opt on[V]): Un 
 
-  def safeLog(action: String, k: K, v: Option[V]): Unit =
+  def safeLog(act on: Str ng, k: K, v: Opt on[V]): Un  =
     try {
-      log(action, k, v)
+      log(act on, k, v)
     } catch {
       case NonFatal(e) =>
-        // The exception occurred in logging, and we don't want to fail the
-        // request with the logging failure if this happens, so log it and carry
+        // T  except on occurred  n logg ng, and   don't want to fa l t 
+        // request w h t  logg ng fa lure  f t  happens, so log   and carry
         // on.
-        logFailureLogger.error("Logging cache write", e)
+        logFa lureLogger.error("Logg ng cac  wr e", e)
     }
 
-  override def add(k: K, v: V): Future[Boolean] =
-    // Call the selection function before doing the work. Since it's highly
-    // likely that the Future will succeed, it's cheaper to call the function
-    // before we make the call so that we can avoid creating the callback and
-    // attaching it to the Future if we would not log.
-    if (select(k, v)) {
-      underlyingCache.add(k, v).onSuccess(r => if (r) safeLog("add", k, Some(v)))
+  overr de def add(k: K, v: V): Future[Boolean] =
+    // Call t  select on funct on before do ng t  work. S nce  's h ghly
+    // l kely that t  Future w ll succeed,  's c aper to call t  funct on
+    // before   make t  call so that   can avo d creat ng t  callback and
+    // attach ng   to t  Future  f   would not log.
+     f (select(k, v)) {
+      underly ngCac .add(k, v).onSuccess(r =>  f (r) safeLog("add", k, So (v)))
     } else {
-      underlyingCache.add(k, v)
+      underly ngCac .add(k, v)
     }
 
-  override def checkAndSet(k: K, v: V, checksum: Checksum): Future[Boolean] =
-    if (select(k, v)) {
-      underlyingCache.checkAndSet(k, v, checksum).onSuccess(r => if (r) safeLog("cas", k, Some(v)))
+  overr de def c ckAndSet(k: K, v: V, c cksum: C cksum): Future[Boolean] =
+     f (select(k, v)) {
+      underly ngCac .c ckAndSet(k, v, c cksum).onSuccess(r =>  f (r) safeLog("cas", k, So (v)))
     } else {
-      underlyingCache.checkAndSet(k, v, checksum)
+      underly ngCac .c ckAndSet(k, v, c cksum)
     }
 
-  override def set(k: K, v: V): Future[Unit] =
-    if (select(k, v)) {
-      underlyingCache.set(k, v).onSuccess(_ => safeLog("set", k, Some(v)))
+  overr de def set(k: K, v: V): Future[Un ] =
+     f (select(k, v)) {
+      underly ngCac .set(k, v).onSuccess(_ => safeLog("set", k, So (v)))
     } else {
-      underlyingCache.set(k, v)
+      underly ngCac .set(k, v)
     }
 
-  override def replace(k: K, v: V): Future[Boolean] =
-    if (select(k, v)) {
-      underlyingCache.replace(k, v).onSuccess(r => if (r) safeLog("replace", k, Some(v)))
+  overr de def replace(k: K, v: V): Future[Boolean] =
+     f (select(k, v)) {
+      underly ngCac .replace(k, v).onSuccess(r =>  f (r) safeLog("replace", k, So (v)))
     } else {
-      underlyingCache.replace(k, v)
+      underly ngCac .replace(k, v)
     }
 
-  override def delete(k: K): Future[Boolean] =
-    if (selectKey(k)) {
-      underlyingCache.delete(k).onSuccess(r => if (r) safeLog("delete", k, None))
+  overr de def delete(k: K): Future[Boolean] =
+     f (selectKey(k)) {
+      underly ngCac .delete(k).onSuccess(r =>  f (r) safeLog("delete", k, None))
     } else {
-      underlyingCache.delete(k)
+      underly ngCac .delete(k)
     }
 }

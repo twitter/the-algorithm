@@ -1,228 +1,228 @@
-package com.twitter.search.common.schema;
+package com.tw ter.search.common.sc ma;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+ mport java. o. OExcept on;
+ mport java.ut l.L st;
+ mport java.ut l.logg ng.Level;
+ mport java.ut l.logg ng.Logger;
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
-import com.twitter.common.text.util.PositionIncrementAttributeSerializer;
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.search.common.schema.base.FieldNameToIdMapping;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftField;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldData;
-import com.twitter.search.common.schema.thriftjava.ThriftGeoCoordinate;
-import com.twitter.search.common.util.analysis.CharTermAttributeSerializer;
-import com.twitter.search.common.util.analysis.LongTermAttributeSerializer;
-import com.twitter.search.common.util.analysis.LongTermsTokenStream;
-import com.twitter.search.common.util.analysis.PayloadAttributeSerializer;
-import com.twitter.search.common.util.analysis.PayloadWeightedTokenizer;
-import com.twitter.search.common.util.spatial.GeoUtil;
+ mport com.tw ter.common.text.ut l.Pos  on ncre ntAttr buteSer al zer;
+ mport com.tw ter.common.text.ut l.TokenStreamSer al zer;
+ mport com.tw ter.search.common.sc ma.base.F eldNa To dMapp ng;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftDocu nt;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftF eld;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftF eldData;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftGeoCoord nate;
+ mport com.tw ter.search.common.ut l.analys s.CharTermAttr buteSer al zer;
+ mport com.tw ter.search.common.ut l.analys s.LongTermAttr buteSer al zer;
+ mport com.tw ter.search.common.ut l.analys s.LongTermsTokenStream;
+ mport com.tw ter.search.common.ut l.analys s.PayloadAttr buteSer al zer;
+ mport com.tw ter.search.common.ut l.analys s.Payload  ghtedToken zer;
+ mport com.tw ter.search.common.ut l.spat al.GeoUt l;
 
 /**
- * Builder class for building ThriftDocuments.
+ * Bu lder class for bu ld ng Thr ftDocu nts.
  */
-public class ThriftDocumentBuilder {
-  private static final Logger LOG = Logger.getLogger(ThriftDocumentBuilder.class.getName());
+publ c class Thr ftDocu ntBu lder {
+  pr vate stat c f nal Logger LOG = Logger.getLogger(Thr ftDocu ntBu lder.class.getNa ());
 
-  protected final ThriftDocument doc = new ThriftDocument();
-  protected final FieldNameToIdMapping idMapping;
+  protected f nal Thr ftDocu nt doc = new Thr ftDocu nt();
+  protected f nal F eldNa To dMapp ng  dMapp ng;
 
-  private static final ThreadLocal<TokenStreamSerializer> PAYLOAD_WEIGHTED_SERIALIZER_PER_THREAD =
-      new ThreadLocal<TokenStreamSerializer>() {
-        @Override
-        protected TokenStreamSerializer initialValue() {
-          return TokenStreamSerializer.builder()
-              .add(new CharTermAttributeSerializer())
-              .add(new PositionIncrementAttributeSerializer())
-              .add(new PayloadAttributeSerializer())
-              .build();
+  pr vate stat c f nal ThreadLocal<TokenStreamSer al zer> PAYLOAD_WE GHTED_SER AL ZER_PER_THREAD =
+      new ThreadLocal<TokenStreamSer al zer>() {
+        @Overr de
+        protected TokenStreamSer al zer  n  alValue() {
+          return TokenStreamSer al zer.bu lder()
+              .add(new CharTermAttr buteSer al zer())
+              .add(new Pos  on ncre ntAttr buteSer al zer())
+              .add(new PayloadAttr buteSer al zer())
+              .bu ld();
         }
       };
 
-  private static final ThreadLocal<TokenStreamSerializer> LONG_TERM_SERIALIZER_PER_THREAD =
-          new ThreadLocal<TokenStreamSerializer>() {
-            @Override
-            protected TokenStreamSerializer initialValue() {
-              return TokenStreamSerializer.builder()
-                  .add(new LongTermAttributeSerializer())
-                  .build();
+  pr vate stat c f nal ThreadLocal<TokenStreamSer al zer> LONG_TERM_SER AL ZER_PER_THREAD =
+          new ThreadLocal<TokenStreamSer al zer>() {
+            @Overr de
+            protected TokenStreamSer al zer  n  alValue() {
+              return TokenStreamSer al zer.bu lder()
+                  .add(new LongTermAttr buteSer al zer())
+                  .bu ld();
             }
           };
 
-  public ThriftDocumentBuilder(FieldNameToIdMapping idMapping) {
-    this.idMapping = idMapping;
+  publ c Thr ftDocu ntBu lder(F eldNa To dMapp ng  dMapp ng) {
+    t . dMapp ng =  dMapp ng;
   }
 
-  protected void prepareToBuild() {
-    // left empty, subclass can override this.
+  protected vo d prepareToBu ld() {
+    // left empty, subclass can overr de t .
   }
 
-  public ThriftDocument build() {
-    prepareToBuild();
+  publ c Thr ftDocu nt bu ld() {
+    prepareToBu ld();
     return doc;
   }
 
   /**
-   * Add a long field. This is indexed as a
-   * {@link com.twitter.search.common.util.analysis.LongTermAttribute}
+   * Add a long f eld. T   s  ndexed as a
+   * {@l nk com.tw ter.search.common.ut l.analys s.LongTermAttr bute}
    */
-  public final ThriftDocumentBuilder withLongField(String fieldName, long value) {
-    ThriftFieldData fieldData = new ThriftFieldData().setLongValue(value);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+  publ c f nal Thr ftDocu ntBu lder w hLongF eld(Str ng f eldNa , long value) {
+    Thr ftF eldData f eldData = new Thr ftF eldData().setLongValue(value);
+    Thr ftF eld f eld = new Thr ftF eld()
+        .setF eldConf g d( dMapp ng.getF eld D(f eldNa )).setF eldData(f eldData);
+    doc.addToF elds(f eld);
+    return t ;
   }
 
   /**
-   * Add an int field. This is indexed as a
-   * {@link com.twitter.search.common.util.analysis.IntTermAttribute}
+   * Add an  nt f eld. T   s  ndexed as a
+   * {@l nk com.tw ter.search.common.ut l.analys s. ntTermAttr bute}
    */
-  public final ThriftDocumentBuilder withIntField(String fieldName, int value) {
-    ThriftFieldData fieldData = new ThriftFieldData().setIntValue(value);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+  publ c f nal Thr ftDocu ntBu lder w h ntF eld(Str ng f eldNa ,  nt value) {
+    Thr ftF eldData f eldData = new Thr ftF eldData().set ntValue(value);
+    Thr ftF eld f eld = new Thr ftF eld()
+        .setF eldConf g d( dMapp ng.getF eld D(f eldNa )).setF eldData(f eldData);
+    doc.addToF elds(f eld);
+    return t ;
   }
 
   /**
-   * Add a field whose value is a single byte.
+   * Add a f eld whose value  s a s ngle byte.
    */
-  public final ThriftDocumentBuilder withByteField(String fieldName, byte value) {
-    ThriftFieldData fieldData = new ThriftFieldData().setByteValue(value);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+  publ c f nal Thr ftDocu ntBu lder w hByteF eld(Str ng f eldNa , byte value) {
+    Thr ftF eldData f eldData = new Thr ftF eldData().setByteValue(value);
+    Thr ftF eld f eld = new Thr ftF eld()
+        .setF eldConf g d( dMapp ng.getF eld D(f eldNa )).setF eldData(f eldData);
+    doc.addToF elds(f eld);
+    return t ;
   }
 
   /**
-   * Add a field whose value is a byte array.
+   * Add a f eld whose value  s a byte array.
    */
-  public final ThriftDocumentBuilder withBytesField(String fieldName, byte[] value) {
-    ThriftFieldData fieldData = new ThriftFieldData().setBytesValue(value);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+  publ c f nal Thr ftDocu ntBu lder w hBytesF eld(Str ng f eldNa , byte[] value) {
+    Thr ftF eldData f eldData = new Thr ftF eldData().setBytesValue(value);
+    Thr ftF eld f eld = new Thr ftF eld()
+        .setF eldConf g d( dMapp ng.getF eld D(f eldNa )).setF eldData(f eldData);
+    doc.addToF elds(f eld);
+    return t ;
   }
 
   /**
-   * Add a field whose value is a float.
+   * Add a f eld whose value  s a float.
    */
-  public final ThriftDocumentBuilder withFloatField(String fieldName, float value) {
-    ThriftFieldData fieldData = new ThriftFieldData().setFloatValue(value);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+  publ c f nal Thr ftDocu ntBu lder w hFloatF eld(Str ng f eldNa , float value) {
+    Thr ftF eldData f eldData = new Thr ftF eldData().setFloatValue(value);
+    Thr ftF eld f eld = new Thr ftF eld()
+        .setF eldConf g d( dMapp ng.getF eld D(f eldNa )).setF eldData(f eldData);
+    doc.addToF elds(f eld);
+    return t ;
   }
 
   /**
-   * Added a field whose value is a Lucene TokenStream.
-   * The Lucene TokenStream is serialized using Twitter's
-   * {@link com.twitter.common.text.util.TokenStreamSerializer}
+   * Added a f eld whose value  s a Lucene TokenStream.
+   * T  Lucene TokenStream  s ser al zed us ng Tw ter's
+   * {@l nk com.tw ter.common.text.ut l.TokenStreamSer al zer}
    */
-  public final ThriftDocumentBuilder withTokenStreamField(String fieldName,
-                                                          @Nullable String tokenStreamText,
+  publ c f nal Thr ftDocu ntBu lder w hTokenStreamF eld(Str ng f eldNa ,
+                                                          @Nullable Str ng tokenStreamText,
                                                           byte[] tokenStream) {
-    if (tokenStream == null) {
-      return this;
+     f (tokenStream == null) {
+      return t ;
     }
-    ThriftFieldData fieldData = new ThriftFieldData()
-        .setStringValue(tokenStreamText).setTokenStreamValue(tokenStream);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+    Thr ftF eldData f eldData = new Thr ftF eldData()
+        .setStr ngValue(tokenStreamText).setTokenStreamValue(tokenStream);
+    Thr ftF eld f eld = new Thr ftF eld()
+        .setF eldConf g d( dMapp ng.getF eld D(f eldNa )).setF eldData(f eldData);
+    doc.addToF elds(f eld);
+    return t ;
   }
 
   /**
-   * Add a field whose value is a String.
-   * @param fieldName Name of the field where the string will be added.
-   * @param text This string is indexed as is (not analyzed).
+   * Add a f eld whose value  s a Str ng.
+   * @param f eldNa  Na  of t  f eld w re t  str ng w ll be added.
+   * @param text T  str ng  s  ndexed as  s (not analyzed).
    */
-  public final ThriftDocumentBuilder withStringField(String fieldName, String text) {
-    if (text == null || text.isEmpty()) {
-      return this;
+  publ c f nal Thr ftDocu ntBu lder w hStr ngF eld(Str ng f eldNa , Str ng text) {
+     f (text == null || text. sEmpty()) {
+      return t ;
     }
 
-    ThriftFieldData fieldData = new ThriftFieldData().setStringValue(text);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+    Thr ftF eldData f eldData = new Thr ftF eldData().setStr ngValue(text);
+    Thr ftF eld f eld = new Thr ftF eld()
+        .setF eldConf g d( dMapp ng.getF eld D(f eldNa )).setF eldData(f eldData);
+    doc.addToF elds(f eld);
+    return t ;
   }
 
   /**
-   * Add a field whose value is a geo coordinate.
-   * Earlybird will process the coordinates into geo hashes before indexing.
+   * Add a f eld whose value  s a geo coord nate.
+   * Earlyb rd w ll process t  coord nates  nto geo has s before  ndex ng.
    */
-  public final ThriftDocumentBuilder withGeoField(String fieldName,
-                                                  double lat, double lon, int acc) {
-    if (!GeoUtil.validateGeoCoordinates(lat, lon)) {
-      // If the geo coordinates are invalid, don't add any field.
-      return this;
+  publ c f nal Thr ftDocu ntBu lder w hGeoF eld(Str ng f eldNa ,
+                                                  double lat, double lon,  nt acc) {
+     f (!GeoUt l.val dateGeoCoord nates(lat, lon)) {
+      //  f t  geo coord nates are  nval d, don't add any f eld.
+      return t ;
     }
-    ThriftGeoCoordinate coord = new ThriftGeoCoordinate();
+    Thr ftGeoCoord nate coord = new Thr ftGeoCoord nate();
     coord.setLat(lat);
     coord.setLon(lon);
     coord.setAccuracy(acc);
 
-    ThriftFieldData fieldData = new ThriftFieldData().setGeoCoordinate(coord);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+    Thr ftF eldData f eldData = new Thr ftF eldData().setGeoCoord nate(coord);
+    Thr ftF eld f eld = new Thr ftF eld()
+        .setF eldConf g d( dMapp ng.getF eld D(f eldNa )).setF eldData(f eldData);
+    doc.addToF elds(f eld);
+    return t ;
   }
 
   /**
-   * Added a list of tokens that are weighted. The weights are stored inside payload.
-   * See {@link com.twitter.search.common.util.analysis.PayloadWeightedTokenizer} for more details.
+   * Added a l st of tokens that are   ghted. T    ghts are stored  ns de payload.
+   * See {@l nk com.tw ter.search.common.ut l.analys s.Payload  ghtedToken zer} for more deta ls.
    */
-  public final ThriftDocumentBuilder withPayloadWeightTokenStreamField(String fieldName,
-                                                                       String tokens) {
-    byte[] serialized;
+  publ c f nal Thr ftDocu ntBu lder w hPayload  ghtTokenStreamF eld(Str ng f eldNa ,
+                                                                       Str ng tokens) {
+    byte[] ser al zed;
     try {
-      PayloadWeightedTokenizer tokenizer = new PayloadWeightedTokenizer(tokens);
-      serialized = PAYLOAD_WEIGHTED_SERIALIZER_PER_THREAD.get().serialize(tokenizer);
-      tokenizer.close();
-    } catch (IOException e) {
-      LOG.log(Level.WARNING,
-          "Failed to add PayloadWeightedTokenizer field. Bad token weight list: " + tokens, e);
-      return this;
-    } catch (NumberFormatException e) {
-      LOG.log(Level.WARNING,
-          "Failed to add PayloadWeightedTokenizer field. Cannot parse token weight: " + tokens, e);
-      return this;
+      Payload  ghtedToken zer token zer = new Payload  ghtedToken zer(tokens);
+      ser al zed = PAYLOAD_WE GHTED_SER AL ZER_PER_THREAD.get().ser al ze(token zer);
+      token zer.close();
+    } catch ( OExcept on e) {
+      LOG.log(Level.WARN NG,
+          "Fa led to add Payload  ghtedToken zer f eld. Bad token   ght l st: " + tokens, e);
+      return t ;
+    } catch (NumberFormatExcept on e) {
+      LOG.log(Level.WARN NG,
+          "Fa led to add Payload  ghtedToken zer f eld. Cannot parse token   ght: " + tokens, e);
+      return t ;
     }
-    withTokenStreamField(fieldName, tokens, serialized);
-    return this;
+    w hTokenStreamF eld(f eldNa , tokens, ser al zed);
+    return t ;
   }
 
   /**
-   * Add a field whose value is a list of longs.
-   * Each long is encoded into a LongTermAttribute.
-   * The field will contain a LongTermTokenStream.
+   * Add a f eld whose value  s a l st of longs.
+   * Each long  s encoded  nto a LongTermAttr bute.
+   * T  f eld w ll conta n a LongTermTokenStream.
    */
-  public final ThriftDocumentBuilder withLongIDsField(String fieldName,
-      List<Long> longList)  throws IOException {
+  publ c f nal Thr ftDocu ntBu lder w hLong DsF eld(Str ng f eldNa ,
+      L st<Long> longL st)  throws  OExcept on {
 
-    if (longList == null || longList.isEmpty()) {
-        return this;
+     f (longL st == null || longL st. sEmpty()) {
+        return t ;
     }
-    LongTermsTokenStream stream = new LongTermsTokenStream(longList);
+    LongTermsTokenStream stream = new LongTermsTokenStream(longL st);
     stream.reset();
-    byte[] serializedStream = LONG_TERM_SERIALIZER_PER_THREAD.get().serialize(stream);
+    byte[] ser al zedStream = LONG_TERM_SER AL ZER_PER_THREAD.get().ser al ze(stream);
 
-    ThriftFieldData fieldData = new ThriftFieldData().setTokenStreamValue(serializedStream);
-    ThriftField field = new ThriftField()
-        .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
-    doc.addToFields(field);
-    return this;
+    Thr ftF eldData f eldData = new Thr ftF eldData().setTokenStreamValue(ser al zedStream);
+    Thr ftF eld f eld = new Thr ftF eld()
+        .setF eldConf g d( dMapp ng.getF eld D(f eldNa )).setF eldData(f eldData);
+    doc.addToF elds(f eld);
+    return t ;
   }
 }

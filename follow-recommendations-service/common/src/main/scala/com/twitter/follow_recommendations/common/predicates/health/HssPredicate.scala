@@ -1,94 +1,94 @@
-package com.twitter.follow_recommendations.common.predicates.hss
+package com.tw ter.follow_recom ndat ons.common.pred cates.hss
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.follow_recommendations.common.models.FilterReason.FailOpen
-import com.twitter.hss.api.thriftscala.SignalValue
-import com.twitter.hss.api.thriftscala.UserHealthSignal.AgathaCseDouble
-import com.twitter.hss.api.thriftscala.UserHealthSignal.NsfwAgathaUserScoreDouble
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.hss.user_signals.api.HealthSignalsOnUserClientColumn
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.logging.Logging
-import com.twitter.util.Duration
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.ut l.DefaultT  r
+ mport com.tw ter.follow_recom ndat ons.common.base.Pred cate
+ mport com.tw ter.follow_recom ndat ons.common.base.Pred cateResult
+ mport com.tw ter.follow_recom ndat ons.common.base.StatsUt l
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.F lterReason
+ mport com.tw ter.follow_recom ndat ons.common.models.F lterReason.Fa lOpen
+ mport com.tw ter.hss.ap .thr ftscala.S gnalValue
+ mport com.tw ter.hss.ap .thr ftscala.User althS gnal.AgathaCseDouble
+ mport com.tw ter.hss.ap .thr ftscala.User althS gnal.NsfwAgathaUserScoreDouble
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.generated.cl ent.hss.user_s gnals.ap . althS gnalsOnUserCl entColumn
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport com.tw ter.ut l.Durat on
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * Filter out candidates based on Health Signal Store (HSS) health signals
+ * F lter out cand dates based on  alth S gnal Store (HSS)  alth s gnals
  */
-@Singleton
-case class HssPredicate @Inject() (
-  healthSignalsOnUserClientColumn: HealthSignalsOnUserClientColumn,
-  statsReceiver: StatsReceiver)
-    extends Predicate[(HasClientContext with HasParams, CandidateUser)]
-    with Logging {
+@S ngleton
+case class HssPred cate @ nject() (
+   althS gnalsOnUserCl entColumn:  althS gnalsOnUserCl entColumn,
+  statsRece ver: StatsRece ver)
+    extends Pred cate[(HasCl entContext w h HasParams, Cand dateUser)]
+    w h Logg ng {
 
-  private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getName)
+  pr vate val stats: StatsRece ver = statsRece ver.scope(t .getClass.getNa )
 
-  override def apply(
-    pair: (HasClientContext with HasParams, CandidateUser)
-  ): Stitch[PredicateResult] = {
-    val (request, candidate) = pair
-    StatsUtil.profileStitch(
-      getHssPredicateResult(request, candidate),
-      stats.scope("getHssPredicateResult")
+  overr de def apply(
+    pa r: (HasCl entContext w h HasParams, Cand dateUser)
+  ): St ch[Pred cateResult] = {
+    val (request, cand date) = pa r
+    StatsUt l.prof leSt ch(
+      getHssPred cateResult(request, cand date),
+      stats.scope("getHssPred cateResult")
     )
   }
 
-  private def getHssPredicateResult(
-    request: HasClientContext with HasParams,
-    candidate: CandidateUser
-  ): Stitch[PredicateResult] = {
+  pr vate def getHssPred cateResult(
+    request: HasCl entContext w h HasParams,
+    cand date: Cand dateUser
+  ): St ch[Pred cateResult] = {
 
-    val hssCseScoreThreshold: Double = request.params(HssPredicateParams.HssCseScoreThreshold)
-    val hssNsfwScoreThreshold: Double = request.params(HssPredicateParams.HssNsfwScoreThreshold)
-    val timeout: Duration = request.params(HssPredicateParams.HssApiTimeout)
+    val hssCseScoreThreshold: Double = request.params(HssPred cateParams.HssCseScoreThreshold)
+    val hssNsfwScoreThreshold: Double = request.params(HssPred cateParams.HssNsfwScoreThreshold)
+    val t  out: Durat on = request.params(HssPred cateParams.HssAp T  out)
 
-    healthSignalsOnUserClientColumn.fetcher
-      .fetch(candidate.id, Seq(AgathaCseDouble, NsfwAgathaUserScoreDouble))
+     althS gnalsOnUserCl entColumn.fetc r
+      .fetch(cand date. d, Seq(AgathaCseDouble, NsfwAgathaUserScoreDouble))
       .map { fetchResult =>
         fetchResult.v match {
-          case Some(response) =>
-            val agathaCseScoreDouble: Double = userHealthSignalValueToDoubleOpt(
-              response.signalValues.get(AgathaCseDouble)).getOrElse(0d)
-            val agathaNsfwScoreDouble: Double = userHealthSignalValueToDoubleOpt(
-              response.signalValues.get(NsfwAgathaUserScoreDouble)).getOrElse(0d)
+          case So (response) =>
+            val agathaCseScoreDouble: Double = user althS gnalValueToDoubleOpt(
+              response.s gnalValues.get(AgathaCseDouble)).getOrElse(0d)
+            val agathaNsfwScoreDouble: Double = user althS gnalValueToDoubleOpt(
+              response.s gnalValues.get(NsfwAgathaUserScoreDouble)).getOrElse(0d)
 
-            stats.stat("agathaCseScoreDistribution").add(agathaCseScoreDouble.toFloat)
-            stats.stat("agathaNsfwScoreDistribution").add(agathaNsfwScoreDouble.toFloat)
+            stats.stat("agathaCseScoreD str but on").add(agathaCseScoreDouble.toFloat)
+            stats.stat("agathaNsfwScoreD str but on").add(agathaNsfwScoreDouble.toFloat)
 
             /**
-             * Only filter out the candidate when it has both high Agatha CSE score and NSFW score, as the Agatha CSE
-             * model is an old one that may not be precise or have high recall.
+             * Only f lter out t  cand date w n   has both h gh Agatha CSE score and NSFW score, as t  Agatha CSE
+             * model  s an old one that may not be prec se or have h gh recall.
              */
-            if (agathaCseScoreDouble >= hssCseScoreThreshold && agathaNsfwScoreDouble >= hssNsfwScoreThreshold) {
-              PredicateResult.Invalid(Set(FilterReason.HssSignal))
+             f (agathaCseScoreDouble >= hssCseScoreThreshold && agathaNsfwScoreDouble >= hssNsfwScoreThreshold) {
+              Pred cateResult. nval d(Set(F lterReason.HssS gnal))
             } else {
-              PredicateResult.Valid
+              Pred cateResult.Val d
             }
           case None =>
-            PredicateResult.Valid
+            Pred cateResult.Val d
         }
       }
-      .within(timeout)(DefaultTimer)
+      .w h n(t  out)(DefaultT  r)
       .rescue {
-        case e: Exception =>
-          stats.scope("rescued").counter(e.getClass.getSimpleName).incr()
-          Stitch(PredicateResult.Invalid(Set(FailOpen)))
+        case e: Except on =>
+          stats.scope("rescued").counter(e.getClass.getS mpleNa ). ncr()
+          St ch(Pred cateResult. nval d(Set(Fa lOpen)))
       }
   }
 
-  private def userHealthSignalValueToDoubleOpt(signalValue: Option[SignalValue]): Option[Double] = {
-    signalValue match {
-      case Some(SignalValue.DoubleValue(value)) => Some(value)
+  pr vate def user althS gnalValueToDoubleOpt(s gnalValue: Opt on[S gnalValue]): Opt on[Double] = {
+    s gnalValue match {
+      case So (S gnalValue.DoubleValue(value)) => So (value)
       case _ => None
     }
   }

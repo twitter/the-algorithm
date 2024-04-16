@@ -1,90 +1,90 @@
-package com.twitter.cr_mixer.module
-package similarity_engine
+package com.tw ter.cr_m xer.module
+package s m lar y_eng ne
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.param.decider.DeciderConstants
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.DeciderConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.TweetBasedUserTweetGraphSimilarityEngine
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hashing.KeyHasher
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.recos.user_tweet_graph.thriftscala.UserTweetGraph
-import com.twitter.relevance_platform.common.injection.LZ4Injection
-import com.twitter.relevance_platform.common.injection.SeqObjectInjection
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.twistly.thriftscala.TweetRecentEngagedUsers
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.cr_m xer.model.T etW hScore
+ mport com.tw ter.cr_m xer.conf g.T  outConf g
+ mport com.tw ter.cr_m xer.param.dec der.CrM xerDec der
+ mport com.tw ter.cr_m xer.param.dec der.Dec derConstants
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S m lar yEng ne.Dec derConf g
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S m lar yEng ne.Gat ngConf g
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S m lar yEng ne.S m lar yEng neConf g
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.StandardS m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.T etBasedUserT etGraphS m lar yEng ne
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.f nagle. mcac d.{Cl ent =>  mcac dCl ent}
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.hash ng.KeyHas r
+ mport com.tw ter. rm .store.common.Observed mcac dReadableStore
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.recos.user_t et_graph.thr ftscala.UserT etGraph
+ mport com.tw ter.relevance_platform.common. nject on.LZ4 nject on
+ mport com.tw ter.relevance_platform.common. nject on.SeqObject nject on
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.tw stly.thr ftscala.T etRecentEngagedUsers
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-object TweetBasedUserTweetGraphSimilarityEngineModule extends TwitterModule {
+object T etBasedUserT etGraphS m lar yEng neModule extends Tw terModule {
 
-  private val keyHasher: KeyHasher = KeyHasher.FNV1A_64
+  pr vate val keyHas r: KeyHas r = KeyHas r.FNV1A_64
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.TweetBasedUserTweetGraphSimilarityEngine)
-  def providesTweetBasedUserTweetGraphSimilarityEngine(
-    userTweetGraphService: UserTweetGraph.MethodPerEndpoint,
-    tweetRecentEngagedUserStore: ReadableStore[TweetId, TweetRecentEngagedUsers],
-    @Named(ModuleNames.UnifiedCache) crMixerUnifiedCacheClient: MemcachedClient,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-    decider: CrMixerDecider
-  ): StandardSimilarityEngine[
-    TweetBasedUserTweetGraphSimilarityEngine.Query,
-    TweetWithScore
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.T etBasedUserT etGraphS m lar yEng ne)
+  def prov desT etBasedUserT etGraphS m lar yEng ne(
+    userT etGraphServ ce: UserT etGraph. thodPerEndpo nt,
+    t etRecentEngagedUserStore: ReadableStore[T et d, T etRecentEngagedUsers],
+    @Na d(ModuleNa s.Un f edCac ) crM xerUn f edCac Cl ent:  mcac dCl ent,
+    t  outConf g: T  outConf g,
+    statsRece ver: StatsRece ver,
+    dec der: CrM xerDec der
+  ): StandardS m lar yEng ne[
+    T etBasedUserT etGraphS m lar yEng ne.Query,
+    T etW hScore
   ] = {
 
-    val underlyingStore = TweetBasedUserTweetGraphSimilarityEngine(
-      userTweetGraphService,
-      tweetRecentEngagedUserStore,
-      statsReceiver)
+    val underly ngStore = T etBasedUserT etGraphS m lar yEng ne(
+      userT etGraphServ ce,
+      t etRecentEngagedUserStore,
+      statsRece ver)
 
-    val memCachedStore: ReadableStore[
-      TweetBasedUserTweetGraphSimilarityEngine.Query,
+    val  mCac dStore: ReadableStore[
+      T etBasedUserT etGraphS m lar yEng ne.Query,
       Seq[
-        TweetWithScore
+        T etW hScore
       ]
     ] =
-      ObservedMemcachedReadableStore
-        .fromCacheClient(
-          backingStore = underlyingStore,
-          cacheClient = crMixerUnifiedCacheClient,
-          ttl = 10.minutes
+      Observed mcac dReadableStore
+        .fromCac Cl ent(
+          back ngStore = underly ngStore,
+          cac Cl ent = crM xerUn f edCac Cl ent,
+          ttl = 10.m nutes
         )(
-          valueInjection = LZ4Injection.compose(SeqObjectInjection[TweetWithScore]()),
-          statsReceiver = statsReceiver.scope("tweet_based_user_tweet_graph_store_memcache"),
-          keyToString = { k =>
-            //Example Query CRMixer:TweetBasedUTG:1234567890ABCDEF
-            f"CRMixer:TweetBasedUTG:${keyHasher.hashKey(k.toString.getBytes)}%X"
+          value nject on = LZ4 nject on.compose(SeqObject nject on[T etW hScore]()),
+          statsRece ver = statsRece ver.scope("t et_based_user_t et_graph_store_ mcac "),
+          keyToStr ng = { k =>
+            //Example Query CRM xer:T etBasedUTG:1234567890ABCDEF
+            f"CRM xer:T etBasedUTG:${keyHas r.hashKey(k.toStr ng.getBytes)}%X"
           }
         )
 
-    new StandardSimilarityEngine[
-      TweetBasedUserTweetGraphSimilarityEngine.Query,
-      TweetWithScore
+    new StandardS m lar yEng ne[
+      T etBasedUserT etGraphS m lar yEng ne.Query,
+      T etW hScore
     ](
-      implementingStore = memCachedStore,
-      identifier = SimilarityEngineType.TweetBasedUserTweetGraph,
-      globalStats = statsReceiver,
-      engineConfig = SimilarityEngineConfig(
-        timeout = timeoutConfig.similarityEngineTimeout,
-        gatingConfig = GatingConfig(
-          deciderConfig =
-            Some(DeciderConfig(decider, DeciderConstants.enableUserTweetGraphTrafficDeciderKey)),
-          enableFeatureSwitch = None
+       mple nt ngStore =  mCac dStore,
+       dent f er = S m lar yEng neType.T etBasedUserT etGraph,
+      globalStats = statsRece ver,
+      eng neConf g = S m lar yEng neConf g(
+        t  out = t  outConf g.s m lar yEng neT  out,
+        gat ngConf g = Gat ngConf g(
+          dec derConf g =
+            So (Dec derConf g(dec der, Dec derConstants.enableUserT etGraphTraff cDec derKey)),
+          enableFeatureSw ch = None
         )
       )
     )

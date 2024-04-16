@@ -1,62 +1,62 @@
-package com.twitter.product_mixer.component_library.filter
+package com.tw ter.product_m xer.component_l brary.f lter
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lterResult
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
-object FeatureFilter {
+object FeatureF lter {
 
   /**
-   * Builds a Filter using the Feature name as the FilterIdentifier
+   * Bu lds a F lter us ng t  Feature na  as t  F lter dent f er
    *
-   * @see [[FeatureFilter.fromFeature(identifier, feature)]]
+   * @see [[FeatureF lter.fromFeature( dent f er, feature)]]
    */
-  def fromFeature[Candidate <: UniversalNoun[Any]](
-    feature: Feature[Candidate, Boolean]
-  ): Filter[PipelineQuery, Candidate] =
-    FeatureFilter.fromFeature(FilterIdentifier(feature.toString), feature)
+  def fromFeature[Cand date <: Un versalNoun[Any]](
+    feature: Feature[Cand date, Boolean]
+  ): F lter[P pel neQuery, Cand date] =
+    FeatureF lter.fromFeature(F lter dent f er(feature.toStr ng), feature)
 
   /**
-   * Builds a Filter that keeps candidates when the provided Boolean Feature is present and True.
-   * If the Feature is missing or False, the candidate is removed.
+   * Bu lds a F lter that keeps cand dates w n t  prov ded Boolean Feature  s present and True.
+   *  f t  Feature  s m ss ng or False, t  cand date  s removed.
    *
    *  {{{
-   *  Filter.fromFeature(
-   *    FilterIdentifier("SomeFilter"),
-   *    feature = SomeFeature
+   *  F lter.fromFeature(
+   *    F lter dent f er("So F lter"),
+   *    feature = So Feature
    *  )
    *  }}}
    *
-   * @param identifier A FilterIdentifier for the new filter
-   * @param feature A feature of [Candidate, Boolean] type used to determine whether Candidates will be kept
-   *                            when this feature is present and true otherwise they will be removed.
+   * @param  dent f er A F lter dent f er for t  new f lter
+   * @param feature A feature of [Cand date, Boolean] type used to determ ne w t r Cand dates w ll be kept
+   *                            w n t  feature  s present and true ot rw se t y w ll be removed.
    */
-  def fromFeature[Candidate <: UniversalNoun[Any]](
-    identifier: FilterIdentifier,
-    feature: Feature[Candidate, Boolean]
-  ): Filter[PipelineQuery, Candidate] = {
-    val i = identifier
+  def fromFeature[Cand date <: Un versalNoun[Any]](
+     dent f er: F lter dent f er,
+    feature: Feature[Cand date, Boolean]
+  ): F lter[P pel neQuery, Cand date] = {
+    val   =  dent f er
 
-    new Filter[PipelineQuery, Candidate] {
-      override val identifier: FilterIdentifier = i
+    new F lter[P pel neQuery, Cand date] {
+      overr de val  dent f er: F lter dent f er =  
 
-      override def apply(
-        query: PipelineQuery,
-        candidates: Seq[CandidateWithFeatures[Candidate]]
-      ): Stitch[FilterResult[Candidate]] = {
-        val (keptCandidates, removedCandidates) = candidates.partition { filterCandidate =>
-          filterCandidate.features.getOrElse(feature, false)
+      overr de def apply(
+        query: P pel neQuery,
+        cand dates: Seq[Cand dateW hFeatures[Cand date]]
+      ): St ch[F lterResult[Cand date]] = {
+        val (keptCand dates, removedCand dates) = cand dates.part  on { f lterCand date =>
+          f lterCand date.features.getOrElse(feature, false)
         }
 
-        Stitch.value(
-          FilterResult(
-            kept = keptCandidates.map(_.candidate),
-            removed = removedCandidates.map(_.candidate)))
+        St ch.value(
+          F lterResult(
+            kept = keptCand dates.map(_.cand date),
+            removed = removedCand dates.map(_.cand date)))
       }
     }
   }

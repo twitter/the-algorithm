@@ -1,11 +1,11 @@
-scala_library(
-    sources = [
+scala_l brary(
+    s ces = [
         "*.scala",
     ],
-    compiler_option_sets = ["fatal_warnings"],
-    # Our runtime is using Java 11, but for compatibility with other internal libraries that
-    # are still on Java 8, we'll make our target platform to be Java 8 as well until everyone can
-    # migrate.
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    #   runt    s us ng Java 11, but for compat b l y w h ot r  nternal l brar es that
+    # are st ll on Java 8,  'll make   target platform to be Java 8 as  ll unt l everyone can
+    # m grate.
     platform = "java8",
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
 )

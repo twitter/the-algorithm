@@ -1,34 +1,34 @@
-package com.twitter.usersignalservice.module
+package com.tw ter.users gnalserv ce.module
 
-import com.google.inject.Provides
-import javax.inject.Singleton
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.conversions.DurationOps._
-import com.twitter.storehaus_internal.memcache.MemcacheStore
-import com.twitter.storehaus_internal.util.ZkEndPoint
-import com.twitter.storehaus_internal.util.ClientName
+ mport com.google. nject.Prov des
+ mport javax. nject.S ngleton
+ mport com.tw ter.f nagle. mcac d.Cl ent
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.storehaus_ nternal. mcac . mcac Store
+ mport com.tw ter.storehaus_ nternal.ut l.ZkEndPo nt
+ mport com.tw ter.storehaus_ nternal.ut l.Cl entNa 
 
-object CacheModule extends TwitterModule {
-  private val cacheDest =
-    flag[String](name = "cache_module.dest", help = "Path to memcache service")
-  private val timeout =
-    flag[Int](name = "memcache.timeout", help = "Memcache client timeout")
+object Cac Module extends Tw terModule {
+  pr vate val cac Dest =
+    flag[Str ng](na  = "cac _module.dest",  lp = "Path to  mcac  serv ce")
+  pr vate val t  out =
+    flag[ nt](na  = " mcac .t  out",  lp = " mcac  cl ent t  out")
 
-  @Singleton
-  @Provides
-  def providesCache(
-    serviceIdentifier: ServiceIdentifier,
-    stats: StatsReceiver
-  ): Client =
-    MemcacheStore.memcachedClient(
-      name = ClientName("memcache_user_signal_service"),
-      dest = ZkEndPoint(cacheDest()),
-      timeout = timeout().milliseconds,
-      retries = 0,
-      statsReceiver = stats.scope("memcache"),
-      serviceIdentifier = serviceIdentifier
+  @S ngleton
+  @Prov des
+  def prov desCac (
+    serv ce dent f er: Serv ce dent f er,
+    stats: StatsRece ver
+  ): Cl ent =
+     mcac Store. mcac dCl ent(
+      na  = Cl entNa (" mcac _user_s gnal_serv ce"),
+      dest = ZkEndPo nt(cac Dest()),
+      t  out = t  out().m ll seconds,
+      retr es = 0,
+      statsRece ver = stats.scope(" mcac "),
+      serv ce dent f er = serv ce dent f er
     )
 }

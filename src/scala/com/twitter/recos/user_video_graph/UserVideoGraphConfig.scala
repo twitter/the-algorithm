@@ -1,39 +1,39 @@
-package com.twitter.recos.user_video_graph
+package com.tw ter.recos.user_v deo_graph
 
-import com.twitter.recos.graph_common.MultiSegmentPowerLawBipartiteGraphBuilder.GraphBuilderConfig
+ mport com.tw ter.recos.graph_common.Mult Seg ntPo rLawB part eGraphBu lder.GraphBu lderConf g
 
 /**
- * The class holds all the config parameters for recos graph.
+ * T  class holds all t  conf g para ters for recos graph.
  */
-object RecosConfig {
-  val maxNumSegments: Int = 8
-  val maxNumEdgesPerSegment: Int =
-    (1 << 28) // 268M edges per segment, should be able to include 2 days' data
-  val expectedNumLeftNodes: Int =
+object RecosConf g {
+  val maxNumSeg nts:  nt = 8
+  val maxNumEdgesPerSeg nt:  nt =
+    (1 << 28) // 268M edges per seg nt, should be able to  nclude 2 days' data
+  val expectedNumLeftNodes:  nt =
     (1 << 26) // should correspond to 67M nodes storage
-  val expectedMaxLeftDegree: Int = 64
-  val leftPowerLawExponent: Double = 16.0 // steep power law as most nodes will have a small degree
-  val expectedNumRightNodes: Int = (1 << 26) // 67M nodes
-  val expectedMaxRightDegree: Int = scala.math.pow(1024, 2).toInt // some nodes will be very popular
-  val rightPowerLawExponent: Double = 4.0 // this will be less steep
+  val expectedMaxLeftDegree:  nt = 64
+  val leftPo rLawExponent: Double = 16.0 // steep po r law as most nodes w ll have a small degree
+  val expectedNumR ghtNodes:  nt = (1 << 26) // 67M nodes
+  val expectedMaxR ghtDegree:  nt = scala.math.pow(1024, 2).to nt // so  nodes w ll be very popular
+  val r ghtPo rLawExponent: Double = 4.0 // t  w ll be less steep
 
-  val graphBuilderConfig = GraphBuilderConfig(
-    maxNumSegments = maxNumSegments,
-    maxNumEdgesPerSegment = maxNumEdgesPerSegment,
+  val graphBu lderConf g = GraphBu lderConf g(
+    maxNumSeg nts = maxNumSeg nts,
+    maxNumEdgesPerSeg nt = maxNumEdgesPerSeg nt,
     expectedNumLeftNodes = expectedNumLeftNodes,
     expectedMaxLeftDegree = expectedMaxLeftDegree,
-    leftPowerLawExponent = leftPowerLawExponent,
-    expectedNumRightNodes = expectedNumRightNodes,
-    expectedMaxRightDegree = expectedMaxRightDegree,
-    rightPowerLawExponent = rightPowerLawExponent
+    leftPo rLawExponent = leftPo rLawExponent,
+    expectedNumR ghtNodes = expectedNumR ghtNodes,
+    expectedMaxR ghtDegree = expectedMaxR ghtDegree,
+    r ghtPo rLawExponent = r ghtPo rLawExponent
   )
 
-  println("RecosConfig -          maxNumSegments " + maxNumSegments)
-  println("RecosConfig -   maxNumEdgesPerSegment " + maxNumEdgesPerSegment)
-  println("RecosConfig -    expectedNumLeftNodes " + expectedNumLeftNodes)
-  println("RecosConfig -   expectedMaxLeftDegree " + expectedMaxLeftDegree)
-  println("RecosConfig -    leftPowerLawExponent " + leftPowerLawExponent)
-  println("RecosConfig -   expectedNumRightNodes " + expectedNumRightNodes)
-  println("RecosConfig -  expectedMaxRightDegree " + expectedMaxRightDegree)
-  println("RecosConfig -   rightPowerLawExponent " + rightPowerLawExponent)
+  pr ntln("RecosConf g -          maxNumSeg nts " + maxNumSeg nts)
+  pr ntln("RecosConf g -   maxNumEdgesPerSeg nt " + maxNumEdgesPerSeg nt)
+  pr ntln("RecosConf g -    expectedNumLeftNodes " + expectedNumLeftNodes)
+  pr ntln("RecosConf g -   expectedMaxLeftDegree " + expectedMaxLeftDegree)
+  pr ntln("RecosConf g -    leftPo rLawExponent " + leftPo rLawExponent)
+  pr ntln("RecosConf g -   expectedNumR ghtNodes " + expectedNumR ghtNodes)
+  pr ntln("RecosConf g -  expectedMaxR ghtDegree " + expectedMaxR ghtDegree)
+  pr ntln("RecosConf g -   r ghtPo rLawExponent " + r ghtPo rLawExponent)
 }

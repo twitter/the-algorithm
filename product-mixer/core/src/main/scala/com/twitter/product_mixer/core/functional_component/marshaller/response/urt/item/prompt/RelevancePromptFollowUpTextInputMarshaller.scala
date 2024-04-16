@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.prompt
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.prompt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.CallbackMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptFollowUpTextInput
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.CallbackMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.prompt.RelevancePromptFollowUpText nput
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class RelevancePromptFollowUpTextInputMarshaller @Inject() (
+@S ngleton
+class RelevancePromptFollowUpText nputMarshaller @ nject() (
   callbackMarshaller: CallbackMarshaller) {
 
   def apply(
-    relevancePromptFollowUpTextInput: RelevancePromptFollowUpTextInput
-  ): urt.RelevancePromptFollowUpTextInput = urt.RelevancePromptFollowUpTextInput(
-    context = relevancePromptFollowUpTextInput.context,
-    textFieldPlaceholder = relevancePromptFollowUpTextInput.textFieldPlaceholder,
-    sendTextCallback = callbackMarshaller(relevancePromptFollowUpTextInput.sendTextCallback)
+    relevancePromptFollowUpText nput: RelevancePromptFollowUpText nput
+  ): urt.RelevancePromptFollowUpText nput = urt.RelevancePromptFollowUpText nput(
+    context = relevancePromptFollowUpText nput.context,
+    textF eldPlaceholder = relevancePromptFollowUpText nput.textF eldPlaceholder,
+    sendTextCallback = callbackMarshaller(relevancePromptFollowUpText nput.sendTextCallback)
   )
 }

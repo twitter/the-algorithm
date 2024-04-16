@@ -1,17 +1,17 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.scalding
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.scald ng
 
-import com.twitter.scalding_internal.job.RequiredBinaryComparators.ordSer
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKey
-import com.twitter.scalding.serialization.macros.impl.ordered_serialization.runtime_helpers.MacroEqualityOrderedSerialization
+ mport com.tw ter.scald ng_ nternal.job.Requ redB naryComparators.ordSer
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.Aggregat onKey
+ mport com.tw ter.scald ng.ser al zat on.macros. mpl.ordered_ser al zat on.runt  _ lpers.MacroEqual yOrderedSer al zat on
 
-object AggregationKeyOrdering extends Ordering[AggregationKey] {
-  implicit val featureMapsOrdering: MacroEqualityOrderedSerialization[
-    (Map[Long, Long], Map[Long, String])
-  ] = ordSer[(Map[Long, Long], Map[Long, String])]
+object Aggregat onKeyOrder ng extends Order ng[Aggregat onKey] {
+   mpl c  val featureMapsOrder ng: MacroEqual yOrderedSer al zat on[
+    (Map[Long, Long], Map[Long, Str ng])
+  ] = ordSer[(Map[Long, Long], Map[Long, Str ng])]
 
-  override def compare(left: AggregationKey, right: AggregationKey): Int =
-    featureMapsOrdering.compare(
-      AggregationKey.unapply(left).get,
-      AggregationKey.unapply(right).get
+  overr de def compare(left: Aggregat onKey, r ght: Aggregat onKey):  nt =
+    featureMapsOrder ng.compare(
+      Aggregat onKey.unapply(left).get,
+      Aggregat onKey.unapply(r ght).get
     )
 }

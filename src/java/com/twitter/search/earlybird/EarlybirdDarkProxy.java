@@ -1,113 +1,113 @@
-package com.twitter.search.earlybird;
+package com.tw ter.search.earlyb rd;
 
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.collect.L sts;
 
-import org.apache.thrift.protocol.TCompactProtocol;
+ mport org.apac .thr ft.protocol.TCompactProtocol;
 
-import com.twitter.finagle.ThriftMux;
-import com.twitter.finagle.builder.ClientBuilder;
-import com.twitter.finagle.builder.ClientConfig.Yes;
-import com.twitter.finagle.mtls.client.MtlsThriftMuxClient;
-import com.twitter.finagle.stats.StatsReceiver;
-import com.twitter.finagle.thrift.ClientId;
-import com.twitter.finagle.thrift.ThriftClientRequest;
-import com.twitter.finagle.zipkin.thrift.ZipkinTracer;
-import com.twitter.search.common.dark.DarkProxy;
-import com.twitter.search.common.dark.ResolverProxy;
-import com.twitter.search.common.dark.ServerSetResolver;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.util.thrift.BytesToThriftFilter;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.util.Duration;
+ mport com.tw ter.f nagle.Thr ftMux;
+ mport com.tw ter.f nagle.bu lder.Cl entBu lder;
+ mport com.tw ter.f nagle.bu lder.Cl entConf g.Yes;
+ mport com.tw ter.f nagle.mtls.cl ent.MtlsThr ftMuxCl ent;
+ mport com.tw ter.f nagle.stats.StatsRece ver;
+ mport com.tw ter.f nagle.thr ft.Cl ent d;
+ mport com.tw ter.f nagle.thr ft.Thr ftCl entRequest;
+ mport com.tw ter.f nagle.z pk n.thr ft.Z pk nTracer;
+ mport com.tw ter.search.common.dark.DarkProxy;
+ mport com.tw ter.search.common.dark.ResolverProxy;
+ mport com.tw ter.search.common.dark.ServerSetResolver;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.common.ut l.thr ft.BytesToThr ftF lter;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdProperty;
+ mport com.tw ter.ut l.Durat on;
 
-public class EarlybirdDarkProxy {
-  private static final String WARM_UP_DECIDER_KEY_PREFIX = "warmup_";
+publ c class Earlyb rdDarkProxy {
+  pr vate stat c f nal Str ng WARM_UP_DEC DER_KEY_PREF X = "warmup_";
 
-  private static final int DARK_REQUESTS_TOTAL_REQUEST_TIMEOUT_MS =
-      EarlybirdConfig.getInt("dark_requests_total_request_timeout_ms", 800);
-  private static final int DARK_REQUESTS_INDIVIDUAL_REQUEST_TIMEOUT_MS =
-      EarlybirdConfig.getInt("dark_requests_individual_request_timeout_ms", 800);
-  private static final int DARK_REQUESTS_CONNECT_TIMEOUT_MS =
-      EarlybirdConfig.getInt("dark_requests_connect_timeout_ms", 500);
-  private static final int DARK_REQUESTS_NUM_RETRIES =
-      EarlybirdConfig.getInt("dark_requests_num_retries", 1);
-  private static final String DARK_REQUESTS_FINAGLE_CLIENT_ID =
-      EarlybirdConfig.getString("dark_requests_finagle_client_id", "earlybird_warmup");
+  pr vate stat c f nal  nt DARK_REQUESTS_TOTAL_REQUEST_T MEOUT_MS =
+      Earlyb rdConf g.get nt("dark_requests_total_request_t  out_ms", 800);
+  pr vate stat c f nal  nt DARK_REQUESTS_ ND V DUAL_REQUEST_T MEOUT_MS =
+      Earlyb rdConf g.get nt("dark_requests_ nd v dual_request_t  out_ms", 800);
+  pr vate stat c f nal  nt DARK_REQUESTS_CONNECT_T MEOUT_MS =
+      Earlyb rdConf g.get nt("dark_requests_connect_t  out_ms", 500);
+  pr vate stat c f nal  nt DARK_REQUESTS_NUM_RETR ES =
+      Earlyb rdConf g.get nt("dark_requests_num_retr es", 1);
+  pr vate stat c f nal Str ng DARK_REQUESTS_F NAGLE_CL ENT_ D =
+      Earlyb rdConf g.getStr ng("dark_requests_f nagle_cl ent_ d", "earlyb rd_warmup");
 
-  private final DarkProxy<ThriftClientRequest, byte[]> darkProxy;
+  pr vate f nal DarkProxy<Thr ftCl entRequest, byte[]> darkProxy;
 
-  public EarlybirdDarkProxy(SearchDecider searchDecider,
-                            StatsReceiver statsReceiver,
-                            EarlybirdServerSetManager earlybirdServerSetManager,
-                            EarlybirdWarmUpManager earlybirdWarmUpManager,
-                            String clusterName) {
-    darkProxy = newDarkProxy(searchDecider,
-                             statsReceiver,
-                             earlybirdServerSetManager,
-                             earlybirdWarmUpManager,
-                             clusterName);
+  publ c Earlyb rdDarkProxy(SearchDec der searchDec der,
+                            StatsRece ver statsRece ver,
+                            Earlyb rdServerSetManager earlyb rdServerSetManager,
+                            Earlyb rdWarmUpManager earlyb rdWarmUpManager,
+                            Str ng clusterNa ) {
+    darkProxy = newDarkProxy(searchDec der,
+                             statsRece ver,
+                             earlyb rdServerSetManager,
+                             earlyb rdWarmUpManager,
+                             clusterNa );
   }
 
-  public DarkProxy<ThriftClientRequest, byte[]> getDarkProxy() {
+  publ c DarkProxy<Thr ftCl entRequest, byte[]> getDarkProxy() {
     return darkProxy;
   }
 
-  @VisibleForTesting
-  protected DarkProxy<ThriftClientRequest, byte[]> newDarkProxy(
-      SearchDecider searchDecider,
-      StatsReceiver statsReceiver,
-      EarlybirdServerSetManager earlybirdServerSetManager,
-      final EarlybirdWarmUpManager earlybirdWarmUpManager,
-      String clusterName) {
+  @V s bleForTest ng
+  protected DarkProxy<Thr ftCl entRequest, byte[]> newDarkProxy(
+      SearchDec der searchDec der,
+      StatsRece ver statsRece ver,
+      Earlyb rdServerSetManager earlyb rdServerSetManager,
+      f nal Earlyb rdWarmUpManager earlyb rdWarmUpManager,
+      Str ng clusterNa ) {
     ResolverProxy resolverProxy = new ResolverProxy();
     ServerSetResolver.SelfServerSetResolver selfServerSetResolver =
         new ServerSetResolver.SelfServerSetResolver(
-            earlybirdServerSetManager.getServerSetIdentifier(), resolverProxy);
-    selfServerSetResolver.init();
+            earlyb rdServerSetManager.getServerSet dent f er(), resolverProxy);
+    selfServerSetResolver. n ();
 
-    final String clusterNameForDeciderKey = clusterName.toLowerCase().replaceAll("-", "_");
-    final String warmUpServerSetIdentifier = earlybirdWarmUpManager.getServerSetIdentifier();
-    DarkProxy newDarkProxy = new DarkProxy<ThriftClientRequest, byte[]>(
+    f nal Str ng clusterNa ForDec derKey = clusterNa .toLo rCase().replaceAll("-", "_");
+    f nal Str ng warmUpServerSet dent f er = earlyb rdWarmUpManager.getServerSet dent f er();
+    DarkProxy newDarkProxy = new DarkProxy<Thr ftCl entRequest, byte[]>(
         selfServerSetResolver,
-        newClientBuilder(statsReceiver),
+        newCl entBu lder(statsRece ver),
         resolverProxy,
-        searchDecider,
-        Lists.newArrayList(warmUpServerSetIdentifier),
-        new BytesToThriftFilter(),
-        statsReceiver) {
-      @Override
-      protected String getServicePathDeciderKey(String servicePath) {
-        if (warmUpServerSetIdentifier.equals(servicePath)) {
-          return WARM_UP_DECIDER_KEY_PREFIX + clusterNameForDeciderKey;
+        searchDec der,
+        L sts.newArrayL st(warmUpServerSet dent f er),
+        new BytesToThr ftF lter(),
+        statsRece ver) {
+      @Overr de
+      protected Str ng getServ cePathDec derKey(Str ng serv cePath) {
+         f (warmUpServerSet dent f er.equals(serv cePath)) {
+          return WARM_UP_DEC DER_KEY_PREF X + clusterNa ForDec derKey;
         }
 
-        return clusterNameForDeciderKey;
+        return clusterNa ForDec derKey;
       }
     };
 
-    newDarkProxy.init();
+    newDarkProxy. n ();
     return newDarkProxy;
   }
 
-  private ClientBuilder<ThriftClientRequest, byte[], ?, Yes, Yes> newClientBuilder(
-      StatsReceiver statsReceiver) {
-    return ClientBuilder.get()
+  pr vate Cl entBu lder<Thr ftCl entRequest, byte[], ?, Yes, Yes> newCl entBu lder(
+      StatsRece ver statsRece ver) {
+    return Cl entBu lder.get()
         .daemon(true)
-        .timeout(Duration.apply(DARK_REQUESTS_TOTAL_REQUEST_TIMEOUT_MS, TimeUnit.MILLISECONDS))
-        .requestTimeout(
-            Duration.apply(DARK_REQUESTS_INDIVIDUAL_REQUEST_TIMEOUT_MS, TimeUnit.MILLISECONDS))
-        .tcpConnectTimeout(Duration.apply(DARK_REQUESTS_CONNECT_TIMEOUT_MS, TimeUnit.MILLISECONDS))
-        .retries(DARK_REQUESTS_NUM_RETRIES)
-        .reportTo(statsReceiver)
-        .tracer(ZipkinTracer.mk(statsReceiver))
-        .stack(new MtlsThriftMuxClient(
-            ThriftMux.client())
-            .withMutualTls(EarlybirdProperty.getServiceIdentifier())
-            .withProtocolFactory(new TCompactProtocol.Factory())
-            .withClientId(new ClientId(DARK_REQUESTS_FINAGLE_CLIENT_ID)));
+        .t  out(Durat on.apply(DARK_REQUESTS_TOTAL_REQUEST_T MEOUT_MS, T  Un .M LL SECONDS))
+        .requestT  out(
+            Durat on.apply(DARK_REQUESTS_ ND V DUAL_REQUEST_T MEOUT_MS, T  Un .M LL SECONDS))
+        .tcpConnectT  out(Durat on.apply(DARK_REQUESTS_CONNECT_T MEOUT_MS, T  Un .M LL SECONDS))
+        .retr es(DARK_REQUESTS_NUM_RETR ES)
+        .reportTo(statsRece ver)
+        .tracer(Z pk nTracer.mk(statsRece ver))
+        .stack(new MtlsThr ftMuxCl ent(
+            Thr ftMux.cl ent())
+            .w hMutualTls(Earlyb rdProperty.getServ ce dent f er())
+            .w hProtocolFactory(new TCompactProtocol.Factory())
+            .w hCl ent d(new Cl ent d(DARK_REQUESTS_F NAGLE_CL ENT_ D)));
   }
 }

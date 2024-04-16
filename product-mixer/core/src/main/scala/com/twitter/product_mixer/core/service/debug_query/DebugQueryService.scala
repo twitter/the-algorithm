@@ -1,109 +1,109 @@
-package com.twitter.product_mixer.core.service.debug_query
+package com.tw ter.product_m xer.core.serv ce.debug_query
 
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.twitter.finagle.Service
-import com.twitter.finagle.context.Contexts
-import com.twitter.finagle.tracing.Trace.traceLocal
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.transport.Transport
-import com.twitter.product_mixer.core.functional_component.configapi.ParamsBuilder
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.product.ProductPipeline
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineRequest
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistry
-import com.twitter.product_mixer.core.{thriftscala => t}
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.scrooge.{Request => ScroogeRequest}
-import com.twitter.scrooge.{Response => ScroogeResponse}
-import com.twitter.stitch.Stitch
-import com.twitter.turntable.context.TurntableRequestContextKey
-import com.twitter.util.jackson.ScalaObjectMapper
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.reflect.runtime.universe.TypeTag
+ mport com.fasterxml.jackson.datab nd.Ser al zat onFeature
+ mport com.tw ter.f nagle.Serv ce
+ mport com.tw ter.f nagle.context.Contexts
+ mport com.tw ter.f nagle.trac ng.Trace.traceLocal
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.transport.Transport
+ mport com.tw ter.product_m xer.core.funct onal_component.conf gap .ParamsBu lder
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f erStack
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Product
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Request
+ mport com.tw ter.product_m xer.core.p pel ne.product.ProductP pel ne
+ mport com.tw ter.product_m xer.core.p pel ne.product.ProductP pel neRequest
+ mport com.tw ter.product_m xer.core.product.reg stry.ProductP pel neReg stry
+ mport com.tw ter.product_m xer.core.{thr ftscala => t}
+ mport com.tw ter.scrooge.Thr ftStruct
+ mport com.tw ter.scrooge.{Request => ScroogeRequest}
+ mport com.tw ter.scrooge.{Response => ScroogeResponse}
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.turntable.context.TurntableRequestContextKey
+ mport com.tw ter.ut l.jackson.ScalaObjectMapper
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport scala.reflect.runt  .un verse.TypeTag
 
 /**
- * Returns the complete execution log for a pipeline query. These endpoints are intended for
- * debugging (primarily through Turntable).
+ * Returns t  complete execut on log for a p pel ne query. T se endpo nts are  ntended for
+ * debugg ng (pr mar ly through Turntable).
  */
-@Singleton
-class DebugQueryService @Inject() (
-  productPipelineRegistry: ProductPipelineRegistry,
-  paramsBuilder: ParamsBuilder,
-  authorizationService: AuthorizationService) {
+@S ngleton
+class DebugQueryServ ce @ nject() (
+  productP pel neReg stry: ProductP pel neReg stry,
+  paramsBu lder: ParamsBu lder,
+  author zat onServ ce: Author zat onServ ce) {
 
-  private val mapper =
-    ScalaObjectMapper.builder
-      .withAdditionalJacksonModules(Seq(ParamsSerializerModule))
-      .withSerializationConfig(
+  pr vate val mapper =
+    ScalaObjectMapper.bu lder
+      .w hAdd  onalJacksonModules(Seq(ParamsSer al zerModule))
+      .w hSer al zat onConf g(
         Map(
-          // These are copied from the default serialization config.
-          SerializationFeature.WRITE_DATES_AS_TIMESTAMPS -> false,
-          SerializationFeature.WRITE_ENUMS_USING_TO_STRING -> true,
-          // Generally we want to be defensive when serializing since we don't control everything that's
-          // serialized. This issue also came up when trying to serialize Unit as part of sync side effects.
-          SerializationFeature.FAIL_ON_EMPTY_BEANS -> false,
+          // T se are cop ed from t  default ser al zat on conf g.
+          Ser al zat onFeature.WR TE_DATES_AS_T MESTAMPS -> false,
+          Ser al zat onFeature.WR TE_ENUMS_US NG_TO_STR NG -> true,
+          // Generally   want to be defens ve w n ser al z ng s nce   don't control everyth ng that's
+          // ser al zed. T   ssue also ca  up w n try ng to ser al ze Un  as part of sync s de effects.
+          Ser al zat onFeature.FA L_ON_EMPTY_BEANS -> false,
         ))
-      // The default implementation represents numbers as JSON Numbers (i.e. Double with 53 bit precision
-      // which leads to Snowflake IDs being cropped in the case of tweets.
-      .withNumbersAsStrings(true)
+      // T  default  mple ntat on represents numbers as JSON Numbers ( .e. Double w h 53 b  prec s on
+      // wh ch leads to Snowflake  Ds be ng cropped  n t  case of t ets.
+      .w hNumbersAsStr ngs(true)
       .objectMapper
 
   def apply[
-    ThriftRequest <: ThriftStruct with Product1[MixerServiceRequest],
-    MixerServiceRequest <: ThriftStruct,
-    MixerRequest <: Request
+    Thr ftRequest <: Thr ftStruct w h Product1[M xerServ ceRequest],
+    M xerServ ceRequest <: Thr ftStruct,
+    M xerRequest <: Request
   ](
-    unmarshaller: MixerServiceRequest => MixerRequest
+    unmarshaller: M xerServ ceRequest => M xerRequest
   )(
-    implicit requestTypeTag: TypeTag[MixerRequest]
-  ): Service[ScroogeRequest[ThriftRequest], ScroogeResponse[t.PipelineExecutionResult]] = {
-    (thriftRequest: ScroogeRequest[ThriftRequest]) =>
+     mpl c  requestTypeTag: TypeTag[M xerRequest]
+  ): Serv ce[ScroogeRequest[Thr ftRequest], ScroogeResponse[t.P pel neExecut onResult]] = {
+    (thr ftRequest: ScroogeRequest[Thr ftRequest]) =>
       {
 
-        val request = unmarshaller(thriftRequest.args._1)
-        val params = paramsBuilder.build(
-          clientContext = request.clientContext,
+        val request = unmarshaller(thr ftRequest.args._1)
+        val params = paramsBu lder.bu ld(
+          cl entContext = request.cl entContext,
           product = request.product,
-          featureOverrides = request.debugParams.flatMap(_.featureOverrides).getOrElse(Map.empty)
+          featureOverr des = request.debugParams.flatMap(_.featureOverr des).getOrElse(Map.empty)
         )
 
-        val productPipeline = productPipelineRegistry
-          .getProductPipeline[MixerRequest, Any](request.product)
-        verifyRequestAuthorization(request.product, productPipeline)
+        val productP pel ne = productP pel neReg stry
+          .getProductP pel ne[M xerRequest, Any](request.product)
+        ver fyRequestAuthor zat on(request.product, productP pel ne)
         Contexts.broadcast.letClear(TurntableRequestContextKey) {
-          Stitch
-            .run(productPipeline
-              .arrow(ProductPipelineRequest(request, params)).map { detailedResult =>
-                // Serialization can be slow so a trace is useful both for optimization by the Promix
-                // team and to give visibility to customers.
-                val serializedJSON =
-                  traceLocal("serialize_debug_response")(mapper.writeValueAsString(detailedResult))
-                t.PipelineExecutionResult(serializedJSON)
+          St ch
+            .run(productP pel ne
+              .arrow(ProductP pel neRequest(request, params)).map { deta ledResult =>
+                // Ser al zat on can be slow so a trace  s useful both for opt m zat on by t  Prom x
+                // team and to g ve v s b l y to custo rs.
+                val ser al zedJSON =
+                  traceLocal("ser al ze_debug_response")(mapper.wr eValueAsStr ng(deta ledResult))
+                t.P pel neExecut onResult(ser al zedJSON)
               })
             .map(ScroogeResponse(_))
         }
       }
   }
 
-  private def verifyRequestAuthorization(
+  pr vate def ver fyRequestAuthor zat on(
     product: Product,
-    productPipeline: ProductPipeline[_, _]
-  ): Unit = {
-    val serviceIdentifier = ServiceIdentifier.fromCertificate(Transport.peerCertificate)
+    productP pel ne: ProductP pel ne[_, _]
+  ): Un  = {
+    val serv ce dent f er = Serv ce dent f er.fromCert f cate(Transport.peerCert f cate)
     val requestContext = Contexts.broadcast
-      .get(TurntableRequestContextKey).getOrElse(throw MissingTurntableRequestContextException)
+      .get(TurntableRequestContextKey).getOrElse(throw M ss ngTurntableRequestContextExcept on)
 
-    val componentStack = ComponentIdentifierStack(productPipeline.identifier, product.identifier)
-    authorizationService.verifyRequestAuthorization(
+    val componentStack = Component dent f erStack(productP pel ne. dent f er, product. dent f er)
+    author zat onServ ce.ver fyRequestAuthor zat on(
       componentStack,
-      serviceIdentifier,
-      productPipeline.debugAccessPolicies,
+      serv ce dent f er,
+      productP pel ne.debugAccessPol c es,
       requestContext)
   }
 }
 
-object MissingTurntableRequestContextException
-    extends Exception("Request is missing turntable request context")
+object M ss ngTurntableRequestContextExcept on
+    extends Except on("Request  s m ss ng turntable request context")

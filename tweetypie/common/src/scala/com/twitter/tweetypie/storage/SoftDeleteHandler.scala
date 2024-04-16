@@ -1,20 +1,20 @@
-package com.twitter.tweetypie.storage
+package com.tw ter.t etyp e.storage
 
-import com.twitter.util.Time
+ mport com.tw ter.ut l.T  
 
 object SoftDeleteHandler {
   def apply(
-    insert: ManhattanOperations.Insert,
-    scribe: Scribe
-  ): TweetStorageClient.SoftDelete =
-    tweetId => {
-      val mhTimestamp = Time.now
-      val softDeleteRecord = TweetStateRecord
-        .SoftDeleted(tweetId, mhTimestamp.inMillis)
-        .toTweetMhRecord
+     nsert: ManhattanOperat ons. nsert,
+    scr be: Scr be
+  ): T etStorageCl ent.SoftDelete =
+    t et d => {
+      val mhT  stamp = T  .now
+      val softDeleteRecord = T etStateRecord
+        .SoftDeleted(t et d, mhT  stamp. nM ll s)
+        .toT etMhRecord
 
-      insert(softDeleteRecord).onSuccess { _ =>
-        scribe.logRemoved(tweetId, mhTimestamp, isSoftDeleted = true)
+       nsert(softDeleteRecord).onSuccess { _ =>
+        scr be.logRemoved(t et d, mhT  stamp,  sSoftDeleted = true)
       }
     }
 }

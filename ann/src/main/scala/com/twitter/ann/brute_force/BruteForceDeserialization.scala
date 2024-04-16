@@ -1,63 +1,63 @@
-package com.twitter.ann.brute_force
+package com.tw ter.ann.brute_force
 
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.ann.common.{Distance, EntityEmbedding, Metric, QueryableDeserialization}
-import com.twitter.ann.serialization.{PersistedEmbeddingInjection, ThriftIteratorIO}
-import com.twitter.ann.serialization.thriftscala.PersistedEmbedding
-import com.twitter.search.common.file.{AbstractFile, LocalFile}
-import com.twitter.util.FuturePool
-import java.io.File
+ mport com.google.common.annotat ons.V s bleForTest ng
+ mport com.tw ter.ann.common.{D stance, Ent yEmbedd ng,  tr c, QueryableDeser al zat on}
+ mport com.tw ter.ann.ser al zat on.{Pers stedEmbedd ng nject on, Thr ft erator O}
+ mport com.tw ter.ann.ser al zat on.thr ftscala.Pers stedEmbedd ng
+ mport com.tw ter.search.common.f le.{AbstractF le, LocalF le}
+ mport com.tw ter.ut l.FuturePool
+ mport java. o.F le
 
 /**
- * @param factory creates a BruteForceIndex from the arguments. This is only exposed for testing.
- *                If for some reason you pass this arg in make sure that it eagerly consumes the
- *                iterator. If you don't you might close the input stream that the iterator is
- *                using.
- * @tparam T the id of the embeddings
+ * @param factory creates a BruteForce ndex from t  argu nts. T   s only exposed for test ng.
+ *                 f for so  reason   pass t  arg  n make sure that   eagerly consu s t 
+ *                 erator.  f   don't   m ght close t   nput stream that t   erator  s
+ *                us ng.
+ * @tparam T t   d of t  embedd ngs
  */
-class BruteForceDeserialization[T, D <: Distance[D]] @VisibleForTesting private[brute_force] (
-  metric: Metric[D],
-  embeddingInjection: PersistedEmbeddingInjection[T],
+class BruteForceDeser al zat on[T, D <: D stance[D]] @V s bleForTest ng pr vate[brute_force] (
+   tr c:  tr c[D],
+  embedd ng nject on: Pers stedEmbedd ng nject on[T],
   futurePool: FuturePool,
-  thriftIteratorIO: ThriftIteratorIO[PersistedEmbedding],
-  factory: (Metric[D], FuturePool, Iterator[EntityEmbedding[T]]) => BruteForceIndex[T, D])
-    extends QueryableDeserialization[T, BruteForceRuntimeParams.type, D, BruteForceIndex[T, D]] {
-  import BruteForceIndex._
+  thr ft erator O: Thr ft erator O[Pers stedEmbedd ng],
+  factory: ( tr c[D], FuturePool,  erator[Ent yEmbedd ng[T]]) => BruteForce ndex[T, D])
+    extends QueryableDeser al zat on[T, BruteForceRunt  Params.type, D, BruteForce ndex[T, D]] {
+   mport BruteForce ndex._
 
-  def this(
-    metric: Metric[D],
-    embeddingInjection: PersistedEmbeddingInjection[T],
+  def t (
+     tr c:  tr c[D],
+    embedd ng nject on: Pers stedEmbedd ng nject on[T],
     futurePool: FuturePool,
-    thriftIteratorIO: ThriftIteratorIO[PersistedEmbedding]
+    thr ft erator O: Thr ft erator O[Pers stedEmbedd ng]
   ) = {
-    this(
-      metric,
-      embeddingInjection,
+    t (
+       tr c,
+      embedd ng nject on,
       futurePool,
-      thriftIteratorIO,
-      factory = BruteForceIndex.apply[T, D]
+      thr ft erator O,
+      factory = BruteForce ndex.apply[T, D]
     )
   }
 
-  override def fromDirectory(
-    serializationDirectory: AbstractFile
-  ): BruteForceIndex[T, D] = {
-    val file = File.createTempFile(DataFileName, "tmp")
-    file.deleteOnExit()
-    val temp = new LocalFile(file)
-    val dataFile = serializationDirectory.getChild(DataFileName)
-    dataFile.copyTo(temp)
-    val inputStream = temp.getByteSource.openBufferedStream()
+  overr de def fromD rectory(
+    ser al zat onD rectory: AbstractF le
+  ): BruteForce ndex[T, D] = {
+    val f le = F le.createTempF le(DataF leNa , "tmp")
+    f le.deleteOnEx ()
+    val temp = new LocalF le(f le)
+    val dataF le = ser al zat onD rectory.getCh ld(DataF leNa )
+    dataF le.copyTo(temp)
+    val  nputStream = temp.getByteS ce.openBufferedStream()
     try {
-      val iterator: Iterator[PersistedEmbedding] = thriftIteratorIO.fromInputStream(inputStream)
+      val  erator:  erator[Pers stedEmbedd ng] = thr ft erator O.from nputStream( nputStream)
 
-      val embeddings = iterator.map { thriftEmbedding =>
-        embeddingInjection.invert(thriftEmbedding).get
+      val embedd ngs =  erator.map { thr ftEmbedd ng =>
+        embedd ng nject on. nvert(thr ftEmbedd ng).get
       }
 
-      factory(metric, futurePool, embeddings)
-    } finally {
-      inputStream.close()
+      factory( tr c, futurePool, embedd ngs)
+    } f nally {
+       nputStream.close()
       temp.delete()
     }
   }

@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.component_library.model.cursor
+package com.tw ter.product_m xer.component_l brary.model.cursor
 
-import com.twitter.product_mixer.core.pipeline.PipelineCursor
-import com.twitter.product_mixer.core.pipeline.UrtPipelineCursor
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.{
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neCursor
+ mport com.tw ter.product_m xer.core.p pel ne.UrtP pel neCursor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.sl ce.CursorType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.{
   CursorType => UrtCursorType
 }
 
 /**
- * Cursor model that may be used when cursoring over an ordered candidate source.
+ * Cursor model that may be used w n cursor ng over an ordered cand date s ce.
  *
- * @param initialSortIndex See [[UrtPipelineCursor]]
- * @param id represents the ID of the element, typically the top element for a top cursor or the
- *           bottom element for a bottom cursor, in an ordered candidate list
- * @param gapBoundaryId represents the ID of the gap boundary element, which in gap cursors is the
- *                      opposite bound of the gap to be filled with the cursor
+ * @param  n  alSort ndex See [[UrtP pel neCursor]]
+ * @param  d represents t   D of t  ele nt, typ cally t  top ele nt for a top cursor or t 
+ *           bottom ele nt for a bottom cursor,  n an ordered cand date l st
+ * @param gapBoundary d represents t   D of t  gap boundary ele nt, wh ch  n gap cursors  s t 
+ *                      oppos e bound of t  gap to be f lled w h t  cursor
  */
 case class UrtOrderedCursor(
-  override val initialSortIndex: Long,
-  id: Option[Long],
-  cursorType: Option[UrtCursorType],
-  gapBoundaryId: Option[Long] = None)
-    extends UrtPipelineCursor
+  overr de val  n  alSort ndex: Long,
+   d: Opt on[Long],
+  cursorType: Opt on[UrtCursorType],
+  gapBoundary d: Opt on[Long] = None)
+    extends UrtP pel neCursor
 
 case class OrderedCursor(
-  id: Option[Long],
-  cursorType: Option[CursorType],
-  gapBoundaryId: Option[Long] = None)
-    extends PipelineCursor
+   d: Opt on[Long],
+  cursorType: Opt on[CursorType],
+  gapBoundary d: Opt on[Long] = None)
+    extends P pel neCursor

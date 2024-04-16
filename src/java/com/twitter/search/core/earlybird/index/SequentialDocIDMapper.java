@@ -1,87 +1,87 @@
-package com.twitter.search.core.earlybird.index;
+package com.tw ter.search.core.earlyb rd. ndex;
 
 /**
- * A doc ID mapper that assigns doc IDs sequentially in decreasing order, starting with the given
- * max ID. Used by Expertsearch, which doesn't index tweets.
+ * A doc  D mapper that ass gns doc  Ds sequent ally  n decreas ng order, start ng w h t  g ven
+ * max  D. Used by Expertsearch, wh ch doesn't  ndex t ets.
  */
-public class SequentialDocIDMapper implements DocIDToTweetIDMapper {
-  private final int maxSegmentSize;
-  private int lastAssignedDocId;
+publ c class Sequent alDoc DMapper  mple nts Doc DToT et DMapper {
+  pr vate f nal  nt maxSeg ntS ze;
+  pr vate  nt lastAss gnedDoc d;
 
-  public SequentialDocIDMapper(int maxSegmentSize) {
-    this.maxSegmentSize = maxSegmentSize;
-    lastAssignedDocId = maxSegmentSize;
+  publ c Sequent alDoc DMapper( nt maxSeg ntS ze) {
+    t .maxSeg ntS ze = maxSeg ntS ze;
+    lastAss gnedDoc d = maxSeg ntS ze;
   }
 
-  @Override
-  public long getTweetID(int docID) {
-    // Should be used only at segment optimization time and in tests.
-    if ((docID < lastAssignedDocId) || (docID >= maxSegmentSize)) {
-      return ID_NOT_FOUND;
+  @Overr de
+  publ c long getT et D( nt doc D) {
+    // Should be used only at seg nt opt m zat on t   and  n tests.
+     f ((doc D < lastAss gnedDoc d) || (doc D >= maxSeg ntS ze)) {
+      return  D_NOT_FOUND;
     }
 
-    return docID;
+    return doc D;
   }
 
-  @Override
-  public int getDocID(long tweetID) {
-    // Should be used only at segment optimization time and in tests.
-    if ((tweetID < lastAssignedDocId) || (tweetID >= maxSegmentSize)) {
-      return ID_NOT_FOUND;
+  @Overr de
+  publ c  nt getDoc D(long t et D) {
+    // Should be used only at seg nt opt m zat on t   and  n tests.
+     f ((t et D < lastAss gnedDoc d) || (t et D >= maxSeg ntS ze)) {
+      return  D_NOT_FOUND;
     }
 
-    return (int) tweetID;
+    return ( nt) t et D;
   }
 
-  @Override
-  public int getNumDocs() {
-    return maxSegmentSize - lastAssignedDocId;
+  @Overr de
+  publ c  nt getNumDocs() {
+    return maxSeg ntS ze - lastAss gnedDoc d;
   }
 
-  @Override
-  public int getNextDocID(int docID) {
-    int nextDocID = docID + 1;
+  @Overr de
+  publ c  nt getNextDoc D( nt doc D) {
+     nt nextDoc D = doc D + 1;
 
-    // nextDocID is larger than any doc ID that can be assigned by this mapper.
-    if (nextDocID >= maxSegmentSize) {
-      return ID_NOT_FOUND;
+    // nextDoc D  s larger than any doc  D that can be ass gned by t  mapper.
+     f (nextDoc D >= maxSeg ntS ze) {
+      return  D_NOT_FOUND;
     }
 
-    // nextDocID is smaller than any doc ID assigned by this mapper so far.
-    if (nextDocID < lastAssignedDocId) {
-      return lastAssignedDocId;
+    // nextDoc D  s smaller than any doc  D ass gned by t  mapper so far.
+     f (nextDoc D < lastAss gnedDoc d) {
+      return lastAss gnedDoc d;
     }
 
-    // nextDocID is in the range of doc IDs assigned by this mapper.
-    return nextDocID;
+    // nextDoc D  s  n t  range of doc  Ds ass gned by t  mapper.
+    return nextDoc D;
   }
 
-  @Override
-  public int getPreviousDocID(int docID) {
-    int previousDocID = docID - 1;
+  @Overr de
+  publ c  nt getPrev ousDoc D( nt doc D) {
+     nt prev ousDoc D = doc D - 1;
 
-    // previousDocID is larger than any doc ID that can be assigned by this mapper.
-    if (previousDocID >= maxSegmentSize) {
-      return maxSegmentSize - 1;
+    // prev ousDoc D  s larger than any doc  D that can be ass gned by t  mapper.
+     f (prev ousDoc D >= maxSeg ntS ze) {
+      return maxSeg ntS ze - 1;
     }
 
-    // previousDocID is smaller than any doc ID assigned by this mapper so far.
-    if (previousDocID < lastAssignedDocId) {
-      return ID_NOT_FOUND;
+    // prev ousDoc D  s smaller than any doc  D ass gned by t  mapper so far.
+     f (prev ousDoc D < lastAss gnedDoc d) {
+      return  D_NOT_FOUND;
     }
 
-    // previousDocID is in the range of doc IDs assigned by this mapper.
-    return previousDocID;
+    // prev ousDoc D  s  n t  range of doc  Ds ass gned by t  mapper.
+    return prev ousDoc D;
   }
 
-  @Override
-  public int addMapping(final long tweetID) {
-    return --lastAssignedDocId;
+  @Overr de
+  publ c  nt addMapp ng(f nal long t et D) {
+    return --lastAss gnedDoc d;
   }
 
-  @Override
-  public DocIDToTweetIDMapper optimize() {
-    // Segments that use this DocIDToTweetIDMapper should never be optimized.
-    throw new UnsupportedOperationException("SequentialDocIDMapper cannot be optimized.");
+  @Overr de
+  publ c Doc DToT et DMapper opt m ze() {
+    // Seg nts that use t  Doc DToT et DMapper should never be opt m zed.
+    throw new UnsupportedOperat onExcept on("Sequent alDoc DMapper cannot be opt m zed.");
   }
 }

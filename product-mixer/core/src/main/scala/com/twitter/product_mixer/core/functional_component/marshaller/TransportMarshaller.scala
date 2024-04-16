@@ -1,42 +1,42 @@
-package com.twitter.product_mixer.core.functional_component.marshaller
+package com.tw ter.product_m xer.core.funct onal_component.marshaller
 
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.identifier.TransportMarshallerIdentifier
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
+ mport com.tw ter.product_m xer.core.model.common.Component
+ mport com.tw ter.product_m xer.core.model.common. dent f er.TransportMarshaller dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.HasMarshall ng
 
 object TransportMarshaller {
 
-  /** Avoid `malformed class name` exceptions due to the presence of the `$` character */
-  def getSimpleName[T](c: Class[T]): String = {
-    c.getName.lastIndexOf("$") match {
-      case -1 => c.getSimpleName
-      case index => c.getName.substring(index + 1)
+  /** Avo d `malfor d class na ` except ons due to t  presence of t  `$` character */
+  def getS mpleNa [T](c: Class[T]): Str ng = {
+    c.getNa .last ndexOf("$") match {
+      case -1 => c.getS mpleNa 
+      case  ndex => c.getNa .substr ng( ndex + 1)
     }
   }
 }
 
 /**
- * Marshals a [[MarshallerInput]] into a type that can be sent over the wire
+ * Marshals a [[Marshaller nput]]  nto a type that can be sent over t  w re
  *
- * This transformation should be mechanical and not contain business logic
+ * T  transformat on should be  chan cal and not conta n bus ness log c
  *
- * @note this is different from `com.twitter.product_mixer.core.functional_component.premarshaller`
- *       which can contain business logic.
+ * @note t   s d fferent from `com.tw ter.product_m xer.core.funct onal_component.premarshaller`
+ *       wh ch can conta n bus ness log c.
  */
-trait TransportMarshaller[-MarshallerInput <: HasMarshalling, +MarshallerOutput] extends Component {
+tra  TransportMarshaller[-Marshaller nput <: HasMarshall ng, +MarshallerOutput] extends Component {
 
-  override val identifier: TransportMarshallerIdentifier
+  overr de val  dent f er: TransportMarshaller dent f er
 
-  def apply(input: MarshallerInput): MarshallerOutput
+  def apply( nput: Marshaller nput): MarshallerOutput
 }
 
 /**
- * No op marshalling that passes through a [[HasMarshalling]] into any type. This is useful if
- * the response does not need to be sent over the wire, such as with a
- * [[com.twitter.product_mixer.core.functional_component.candidate_source.product_pipeline.ProductPipelineCandidateSource]]
+ * No op marshall ng that passes through a [[HasMarshall ng]]  nto any type. T   s useful  f
+ * t  response does not need to be sent over t  w re, such as w h a
+ * [[com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.product_p pel ne.ProductP pel neCand dateS ce]]
  */
-object NoOpTransportMarshaller extends TransportMarshaller[HasMarshalling, Any] {
-  override val identifier: TransportMarshallerIdentifier = TransportMarshallerIdentifier("NoOp")
+object NoOpTransportMarshaller extends TransportMarshaller[HasMarshall ng, Any] {
+  overr de val  dent f er: TransportMarshaller dent f er = TransportMarshaller dent f er("NoOp")
 
-  override def apply(input: HasMarshalling): Any = input
+  overr de def apply( nput: HasMarshall ng): Any =  nput
 }

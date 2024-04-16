@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.prompt
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.prompt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.PromptContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptContent
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.prompt.PromptContent
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.prompt.RelevancePromptContent
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class PromptContentMarshaller @Inject() (
+@S ngleton
+class PromptContentMarshaller @ nject() (
   relevancePromptContentMarshaller: RelevancePromptContentMarshaller) {
 
   def apply(promptContent: PromptContent): urt.PromptContent = promptContent match {

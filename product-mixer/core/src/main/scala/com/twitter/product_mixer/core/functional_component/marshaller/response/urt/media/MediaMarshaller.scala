@@ -1,23 +1,23 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. d a
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.media.Media
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. d a. d a
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class MediaMarshaller @Inject() (
-  mediaEntityMarshaller: MediaEntityMarshaller,
-  mediaKeyMarshaller: MediaKeyMarshaller,
+@S ngleton
+class  d aMarshaller @ nject() (
+   d aEnt yMarshaller:  d aEnt yMarshaller,
+   d aKeyMarshaller:  d aKeyMarshaller,
   rectMarshaller: RectMarshaller,
-  aspectRatioMarshaller: AspectRatioMarshaller) {
+  aspectRat oMarshaller: AspectRat oMarshaller) {
 
-  def apply(media: Media): urt.Media = urt.Media(
-    mediaEntity = media.mediaEntity.map(mediaEntityMarshaller(_)),
-    mediaKey = media.mediaKey.map(mediaKeyMarshaller(_)),
-    imagePossibleCropping = media.imagePossibleCropping.map { rects =>
+  def apply( d a:  d a): urt. d a = urt. d a(
+     d aEnt y =  d a. d aEnt y.map( d aEnt yMarshaller(_)),
+     d aKey =  d a. d aKey.map( d aKeyMarshaller(_)),
+     magePoss bleCropp ng =  d a. magePoss bleCropp ng.map { rects =>
       rects.map(rectMarshaller(_))
     },
-    aspectRatio = media.aspectRatio.map(aspectRatioMarshaller(_))
+    aspectRat o =  d a.aspectRat o.map(aspectRat oMarshaller(_))
   )
 }

@@ -1,28 +1,28 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.client.{Client => StratoClient}
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
 
 /**
- * Repository for fetching UserIds that have unmentioned themselves from a conversation.
+ * Repos ory for fetch ng User ds that have un nt oned t mselves from a conversat on.
  */
-object UnmentionedEntitiesRepository {
-  type Type = (ConversationId, Seq[UserId]) => Stitch[Option[Seq[UserId]]]
+object Un nt onedEnt  esRepos ory {
+  type Type = (Conversat on d, Seq[User d]) => St ch[Opt on[Seq[User d]]]
 
-  val column = "consumer-privacy/mentions-management/getUnmentionedUsersFromConversation"
-  case class GetUnmentionView(userIds: Option[Seq[Long]])
+  val column = "consu r-pr vacy/ nt ons-manage nt/getUn nt onedUsersFromConversat on"
+  case class GetUn nt onV ew(user ds: Opt on[Seq[Long]])
 
-  def apply(client: StratoClient): Type = {
-    val fetcher: Fetcher[Long, GetUnmentionView, Seq[Long]] =
-      client.fetcher[Long, GetUnmentionView, Seq[Long]](column)
+  def apply(cl ent: StratoCl ent): Type = {
+    val fetc r: Fetc r[Long, GetUn nt onV ew, Seq[Long]] =
+      cl ent.fetc r[Long, GetUn nt onV ew, Seq[Long]](column)
 
-    (conversationId, userIds) =>
-      if (userIds.nonEmpty) {
-        fetcher.fetch(conversationId, GetUnmentionView(Some(userIds))).map(_.v)
+    (conversat on d, user ds) =>
+       f (user ds.nonEmpty) {
+        fetc r.fetch(conversat on d, GetUn nt onV ew(So (user ds))).map(_.v)
       } else {
-        Stitch.None
+        St ch.None
       }
   }
 }

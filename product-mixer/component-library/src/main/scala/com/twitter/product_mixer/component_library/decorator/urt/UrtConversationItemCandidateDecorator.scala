@@ -1,44 +1,44 @@
-package com.twitter.product_mixer.component_library.decorator.urt
+package com.tw ter.product_m xer.component_l brary.decorator.urt
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.tweet.TweetCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.component_library.model.presentation.urt.ConversationModuleItem
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.decorator.Decoration
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.DecoratorIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ModuleItemTreeDisplay
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.t et.T etCand dateUrt emBu lder
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.BaseT etCand date
+ mport com.tw ter.product_m xer.component_l brary.model.presentat on.urt.Conversat onModule em
+ mport com.tw ter.product_m xer.component_l brary.model.presentat on.urt.Urt emPresentat on
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Cand dateDecorator
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Decorat on
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Decorator dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.Module emTreeD splay
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
-case class UrtConversationItemCandidateDecorator[
-  Query <: PipelineQuery,
-  Candidate <: BaseTweetCandidate
+case class UrtConversat on emCand dateDecorator[
+  Query <: P pel neQuery,
+  Cand date <: BaseT etCand date
 ](
-  tweetCandidateUrtItemBuilder: TweetCandidateUrtItemBuilder[Query, Candidate],
-  override val identifier: DecoratorIdentifier = DecoratorIdentifier("UrtConversationItem"))
-    extends CandidateDecorator[Query, Candidate] {
+  t etCand dateUrt emBu lder: T etCand dateUrt emBu lder[Query, Cand date],
+  overr de val  dent f er: Decorator dent f er = Decorator dent f er("UrtConversat on em"))
+    extends Cand dateDecorator[Query, Cand date] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[Seq[Decoration]] = {
-    val candidatePresentations = candidates.view.zipWithIndex.map {
-      case (candidate, index) =>
-        val itemPresentation = new UrtItemPresentation(
-          timelineItem = tweetCandidateUrtItemBuilder(
-            pipelineQuery = query,
-            tweetCandidate = candidate.candidate,
-            candidateFeatures = candidate.features)
-        ) with ConversationModuleItem {
-          override val treeDisplay: Option[ModuleItemTreeDisplay] = None
-          override val dispensable: Boolean = index < candidates.length - 1
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): St ch[Seq[Decorat on]] = {
+    val cand datePresentat ons = cand dates.v ew.z pW h ndex.map {
+      case (cand date,  ndex) =>
+        val  emPresentat on = new Urt emPresentat on(
+          t  l ne em = t etCand dateUrt emBu lder(
+            p pel neQuery = query,
+            t etCand date = cand date.cand date,
+            cand dateFeatures = cand date.features)
+        ) w h Conversat onModule em {
+          overr de val treeD splay: Opt on[Module emTreeD splay] = None
+          overr de val d spensable: Boolean =  ndex < cand dates.length - 1
         }
 
-        Decoration(candidate.candidate, itemPresentation)
+        Decorat on(cand date.cand date,  emPresentat on)
     }
 
-    Stitch.value(candidatePresentations)
+    St ch.value(cand datePresentat ons)
   }
 }

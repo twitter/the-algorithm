@@ -1,27 +1,27 @@
-package com.twitter.follow_recommendations.common.rankers.common
+package com.tw ter.follow_recom ndat ons.common.rankers.common
 
-object RankerId extends Enumeration {
-  type RankerId = Value
+object Ranker d extends Enu rat on {
+  type Ranker d = Value
 
-  val RandomRanker: RankerId = Value("random")
-  // The production PostNUX ML warm-start auto-retraining model ranker
-  val PostNuxProdRanker: RankerId = Value("postnux_prod")
-  val None: RankerId = Value("none")
+  val RandomRanker: Ranker d = Value("random")
+  // T  product on PostNUX ML warm-start auto-retra n ng model ranker
+  val PostNuxProdRanker: Ranker d = Value("postnux_prod")
+  val None: Ranker d = Value("none")
 
-  // Sampling from the Placket-Luce distribution. Applied after ranker step. Its ranker id is mainly used for logging.
-  val PlacketLuceSamplingTransformer: RankerId = Value("placket_luce_sampling_transformer")
+  // Sampl ng from t  Placket-Luce d str but on. Appl ed after ranker step.  s ranker  d  s ma nly used for logg ng.
+  val PlacketLuceSampl ngTransfor r: Ranker d = Value("placket_luce_sampl ng_transfor r")
 
-  def getRankerByName(name: String): Option[RankerId] =
-    RankerId.values.toSeq.find(_.equals(Value(name)))
+  def getRankerByNa (na : Str ng): Opt on[Ranker d] =
+    Ranker d.values.toSeq.f nd(_.equals(Value(na )))
 
 }
 
 /**
- * ML model based heavy ranker ids.
+ * ML model based  avy ranker  ds.
  */
-object ModelBasedHeavyRankerId {
-  import RankerId._
-  val HeavyRankerIds: Set[String] = Set(
-    PostNuxProdRanker.toString,
+object ModelBased avyRanker d {
+   mport Ranker d._
+  val  avyRanker ds: Set[Str ng] = Set(
+    PostNuxProdRanker.toStr ng,
   )
 }

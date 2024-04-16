@@ -1,169 +1,169 @@
-package com.twitter.servo.util
+package com.tw ter.servo.ut l
 
-import com.twitter.finagle.Backoff
-import com.twitter.finagle.service.{RetryBudget, RetryPolicy}
-import com.twitter.finagle.stats.{Counter, StatsReceiver}
-import com.twitter.util._
-import java.util.concurrent.CancellationException
-import scala.util.control.NonFatal
+ mport com.tw ter.f nagle.Backoff
+ mport com.tw ter.f nagle.serv ce.{RetryBudget, RetryPol cy}
+ mport com.tw ter.f nagle.stats.{Counter, StatsRece ver}
+ mport com.tw ter.ut l._
+ mport java.ut l.concurrent.Cancellat onExcept on
+ mport scala.ut l.control.NonFatal
 
 /**
- * A RetryHandler can wrap an arbitrary Future-producing operation with retry logic, where the
- * operation may conditionally be retried multiple times.
+ * A RetryHandler can wrap an arb rary Future-produc ng operat on w h retry log c, w re t 
+ * operat on may cond  onally be retr ed mult ple t  s.
  */
-trait RetryHandler[-A] {
+tra  RetryHandler[-A] {
 
   /**
-   * Executes the given operation and performs any applicable retries.
+   * Executes t  g ven operat on and performs any appl cable retr es.
    */
   def apply[A2 <: A](f: => Future[A2]): Future[A2]
 
   /**
-   * Wraps an arbitrary function with this RetryHandler's retrying logic.
+   * Wraps an arb rary funct on w h t  RetryHandler's retry ng log c.
    */
   def wrap[A2 <: A, B](f: B => Future[A2]): B => Future[A2] =
-    b => this(f(b))
+    b => t (f(b))
 }
 
 object RetryHandler {
 
   /**
-   * Builds a RetryHandler that retries according to the given RetryPolicy.  Retries, if any,
-   * will be scheduled on the given Timer to be executed after the appropriate backoff, if any.
-   * Retries will be limited according the given `RetryBudget`.
+   * Bu lds a RetryHandler that retr es accord ng to t  g ven RetryPol cy.  Retr es,  f any,
+   * w ll be sc duled on t  g ven T  r to be executed after t  appropr ate backoff,  f any.
+   * Retr es w ll be l m ed accord ng t  g ven `RetryBudget`.
    */
   def apply[A](
-    policy: RetryPolicy[Try[A]],
-    timer: Timer,
-    statsReceiver: StatsReceiver,
+    pol cy: RetryPol cy[Try[A]],
+    t  r: T  r,
+    statsRece ver: StatsRece ver,
     budget: RetryBudget = RetryBudget()
   ): RetryHandler[A] = {
-    val firstTryCounter = statsReceiver.counter("first_try")
-    val retriesCounter = statsReceiver.counter("retries")
-    val budgetExhausedCounter = statsReceiver.counter("budget_exhausted")
+    val f rstTryCounter = statsRece ver.counter("f rst_try")
+    val retr esCounter = statsRece ver.counter("retr es")
+    val budgetExhausedCounter = statsRece ver.counter("budget_exhausted")
 
     new RetryHandler[A] {
       def apply[A2 <: A](f: => Future[A2]): Future[A2] = {
-        firstTryCounter.incr()
-        budget.deposit()
-        retry[A2](policy, timer, retriesCounter, budgetExhausedCounter, budget)(f)
+        f rstTryCounter. ncr()
+        budget.depos ()
+        retry[A2](pol cy, t  r, retr esCounter, budgetExhausedCounter, budget)(f)
       }
     }
   }
 
   /**
-   * Builds a RetryHandler that will only retry on failures that are handled by the given policy,
-   * and does not consider any successful future for retries.
+   * Bu lds a RetryHandler that w ll only retry on fa lures that are handled by t  g ven pol cy,
+   * and does not cons der any successful future for retr es.
    */
-  def failuresOnly[A](
-    policy: RetryPolicy[Try[Nothing]],
-    timer: Timer,
-    statsReceiver: StatsReceiver,
+  def fa luresOnly[A](
+    pol cy: RetryPol cy[Try[Noth ng]],
+    t  r: T  r,
+    statsRece ver: StatsRece ver,
     budget: RetryBudget = RetryBudget()
   ): RetryHandler[A] =
-    apply(failureOnlyRetryPolicy(policy), timer, statsReceiver, budget)
+    apply(fa lureOnlyRetryPol cy(pol cy), t  r, statsRece ver, budget)
 
   /**
-   * Builds a RetryHandler that will retry any failure according to the given backoff schedule,
-   * until either either the operation succeeds or all backoffs are exhausted.
+   * Bu lds a RetryHandler that w ll retry any fa lure accord ng to t  g ven backoff sc dule,
+   * unt l e  r e  r t  operat on succeeds or all backoffs are exhausted.
    */
-  def failuresOnly[A](
-    backoffs: Stream[Duration],
-    timer: Timer,
-    stats: StatsReceiver,
+  def fa luresOnly[A](
+    backoffs: Stream[Durat on],
+    t  r: T  r,
+    stats: StatsRece ver,
     budget: RetryBudget
   ): RetryHandler[A] =
-    failuresOnly(
-      RetryPolicy.backoff[Try[Nothing]](Backoff.fromStream(backoffs)) { case Throw(_) => true },
-      timer,
+    fa luresOnly(
+      RetryPol cy.backoff[Try[Noth ng]](Backoff.fromStream(backoffs)) { case Throw(_) => true },
+      t  r,
       stats,
       budget
     )
 
   /**
-   * Builds a RetryHandler that will retry any failure according to the given backoff schedule,
-   * until either either the operation succeeds or all backoffs are exhausted.
+   * Bu lds a RetryHandler that w ll retry any fa lure accord ng to t  g ven backoff sc dule,
+   * unt l e  r e  r t  operat on succeeds or all backoffs are exhausted.
    */
-  def failuresOnly[A](
-    backoffs: Stream[Duration],
-    timer: Timer,
-    stats: StatsReceiver
+  def fa luresOnly[A](
+    backoffs: Stream[Durat on],
+    t  r: T  r,
+    stats: StatsRece ver
   ): RetryHandler[A] =
-    failuresOnly(backoffs, timer, stats, RetryBudget())
+    fa luresOnly(backoffs, t  r, stats, RetryBudget())
 
   /**
-   * Converts a RetryPolicy that only handles failures (Throw) to a RetryPolicy that also
-   * handles successes (Return), by flagging that successes need not be retried.
+   * Converts a RetryPol cy that only handles fa lures (Throw) to a RetryPol cy that also
+   * handles successes (Return), by flagg ng that successes need not be retr ed.
    */
-  def failureOnlyRetryPolicy[A](policy: RetryPolicy[Try[Nothing]]): RetryPolicy[Try[A]] =
-    RetryPolicy[Try[A]] {
+  def fa lureOnlyRetryPol cy[A](pol cy: RetryPol cy[Try[Noth ng]]): RetryPol cy[Try[A]] =
+    RetryPol cy[Try[A]] {
       case Return(_) => None
       case Throw(ex) =>
-        policy(Throw(ex)) map {
-          case (backoff, p2) => (backoff, failureOnlyRetryPolicy(p2))
+        pol cy(Throw(ex)) map {
+          case (backoff, p2) => (backoff, fa lureOnlyRetryPol cy(p2))
         }
     }
 
-  private[this] def retry[A](
-    policy: RetryPolicy[Try[A]],
-    timer: Timer,
-    retriesCounter: Counter,
+  pr vate[t ] def retry[A](
+    pol cy: RetryPol cy[Try[A]],
+    t  r: T  r,
+    retr esCounter: Counter,
     budgetExhausedCounter: Counter,
     budget: RetryBudget
   )(
     f: => Future[A]
   ): Future[A] = {
-    forceFuture(f).transform { transformed =>
-      policy(transformed) match {
-        case Some((backoff, nextPolicy)) =>
-          if (budget.tryWithdraw()) {
-            retriesCounter.incr()
-            schedule(backoff, timer) {
-              retry(nextPolicy, timer, retriesCounter, budgetExhausedCounter, budget)(f)
+    forceFuture(f).transform { transfor d =>
+      pol cy(transfor d) match {
+        case So ((backoff, nextPol cy)) =>
+           f (budget.tryW hdraw()) {
+            retr esCounter. ncr()
+            sc dule(backoff, t  r) {
+              retry(nextPol cy, t  r, retr esCounter, budgetExhausedCounter, budget)(f)
             }
           } else {
-            budgetExhausedCounter.incr()
-            Future.const(transformed)
+            budgetExhausedCounter. ncr()
+            Future.const(transfor d)
           }
         case None =>
-          Future.const(transformed)
+          Future.const(transfor d)
       }
     }
   }
 
-  // similar to finagle's RetryExceptionsFilter
-  private[this] def schedule[A](d: Duration, timer: Timer)(f: => Future[A]) = {
-    if (d.inNanoseconds > 0) {
-      val promise = new Promise[A]
-      val task = timer.schedule(Time.now + d) {
-        if (!promise.isDefined) {
+  // s m lar to f nagle's RetryExcept onsF lter
+  pr vate[t ] def sc dule[A](d: Durat on, t  r: T  r)(f: => Future[A]) = {
+     f (d. nNanoseconds > 0) {
+      val prom se = new Prom se[A]
+      val task = t  r.sc dule(T  .now + d) {
+         f (!prom se. sDef ned) {
           try {
-            promise.become(f)
+            prom se.beco (f)
           } catch {
             case NonFatal(cause) =>
-            // Ignore any exceptions thrown by Promise#become(). This usually means that the promise
-            // was already defined and cannot be transformed.
+            //  gnore any except ons thrown by Prom se#beco (). T  usually  ans that t  prom se
+            // was already def ned and cannot be transfor d.
           }
         }
       }
-      promise.setInterruptHandler {
+      prom se.set nterruptHandler {
         case cause =>
           task.cancel()
-          val cancellation = new CancellationException
-          cancellation.initCause(cause)
-          promise.updateIfEmpty(Throw(cancellation))
+          val cancellat on = new Cancellat onExcept on
+          cancellat on. n Cause(cause)
+          prom se.update fEmpty(Throw(cancellat on))
       }
-      promise
+      prom se
     } else forceFuture(f)
   }
 
-  // (Future { f } flatten), but without the allocation
-  private[this] def forceFuture[A](f: => Future[A]) = {
+  // (Future { f } flatten), but w hout t  allocat on
+  pr vate[t ] def forceFuture[A](f: => Future[A]) = {
     try {
       f
     } catch {
       case NonFatal(cause) =>
-        Future.exception(cause)
+        Future.except on(cause)
     }
   }
 }

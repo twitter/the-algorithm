@@ -1,34 +1,34 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import javax.inject.Inject;
+ mport javax. nject. nject;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.ut l.Future;
 
-/** A filter that sets the EarlybirdRequest.clientRequestTimeMs field if it's not already set. */
-public class ClientRequestTimeFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  private static final SearchCounter CLIENT_REQUEST_TIME_MS_UNSET_COUNTER =
-      SearchCounter.export("client_request_time_ms_unset");
+/** A f lter that sets t  Earlyb rdRequest.cl entRequestT  Ms f eld  f  's not already set. */
+publ c class Cl entRequestT  F lter extends S mpleF lter<Earlyb rdRequest, Earlyb rdResponse> {
+  pr vate stat c f nal SearchCounter CL ENT_REQUEST_T ME_MS_UNSET_COUNTER =
+      SearchCounter.export("cl ent_request_t  _ms_unset");
 
-  private final Clock clock;
+  pr vate f nal Clock clock;
 
-  @Inject
-  public ClientRequestTimeFilter(Clock clock) {
-    this.clock = clock;
+  @ nject
+  publ c Cl entRequestT  F lter(Clock clock) {
+    t .clock = clock;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
-    if (!request.isSetClientRequestTimeMs()) {
-      CLIENT_REQUEST_TIME_MS_UNSET_COUNTER.increment();
-      request.setClientRequestTimeMs(clock.nowMillis());
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(Earlyb rdRequest request,
+                                         Serv ce<Earlyb rdRequest, Earlyb rdResponse> serv ce) {
+     f (!request. sSetCl entRequestT  Ms()) {
+      CL ENT_REQUEST_T ME_MS_UNSET_COUNTER. ncre nt();
+      request.setCl entRequestT  Ms(clock.nowM ll s());
     }
-    return service.apply(request);
+    return serv ce.apply(request);
   }
 }

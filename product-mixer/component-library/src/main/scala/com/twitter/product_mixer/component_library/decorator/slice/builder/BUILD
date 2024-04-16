@@ -1,17 +1,17 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/decorator/slice/builder",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "product-m xer/component-l brary/src/ma n/scala/com/tw ter/product_m xer/component_l brary/model/cand date",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/decorator/sl ce/bu lder",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/p pel ne",
     ],
     exports = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/decorator/slice/builder",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
+        "product-m xer/component-l brary/src/ma n/scala/com/tw ter/product_m xer/component_l brary/model/cand date",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/decorator/sl ce/bu lder",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/p pel ne",
     ],
 )

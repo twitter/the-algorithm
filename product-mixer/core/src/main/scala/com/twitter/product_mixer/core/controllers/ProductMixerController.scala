@@ -1,70 +1,70 @@
-package com.twitter.product_mixer.core.controllers
+package com.tw ter.product_m xer.core.controllers
 
-import com.twitter.finagle.http.Request
-import com.twitter.finagle.http.Response
-import com.twitter.finagle.http.Status
-import com.twitter.finagle.http.RouteIndex
-import com.twitter.finatra.http.Controller
-import com.twitter.scrooge.ThriftMethod
-import com.twitter.inject.Injector
-import com.twitter.inject.annotations.Flags
-import com.twitter.product_mixer.core.model.common.identifier.ProductIdentifier
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ServiceLocal
-import com.twitter.product_mixer.core.service.component_registry.ComponentRegistry
-import com.twitter.product_mixer.core.service.component_registry.{
-  RegisteredComponent => ComponentRegistryRegisteredComponent
+ mport com.tw ter.f nagle.http.Request
+ mport com.tw ter.f nagle.http.Response
+ mport com.tw ter.f nagle.http.Status
+ mport com.tw ter.f nagle.http.Route ndex
+ mport com.tw ter.f natra.http.Controller
+ mport com.tw ter.scrooge.Thr ft thod
+ mport com.tw ter. nject. njector
+ mport com.tw ter. nject.annotat ons.Flags
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Product dent f er
+ mport com.tw ter.product_m xer.core.module.product_m xer_flags.ProductM xerFlagModule.Serv ceLocal
+ mport com.tw ter.product_m xer.core.serv ce.component_reg stry.ComponentReg stry
+ mport com.tw ter.product_m xer.core.serv ce.component_reg stry.{
+  Reg steredComponent => ComponentReg stryReg steredComponent
 }
-import com.twitter.util.Future
-import java.net.URLEncoder
+ mport com.tw ter.ut l.Future
+ mport java.net.URLEncoder
 
 /**
- * Register endpoints necessary for enabling Product Mixer tooling such as alerts, dashboard
- * generation and Turntable.
+ * Reg ster endpo nts necessary for enabl ng Product M xer tool ng such as alerts, dashboard
+ * generat on and Turntable.
  *
- * @param debugEndpoint a debug endpoint to run queries against. This feature is experimental and we
- *                      do not recommend that teams use it yet. Providing [[None]] will disable
- *                      debug queries.
- * @tparam ServiceIface a thrift service containing the [[debugEndpoint]]
+ * @param debugEndpo nt a debug endpo nt to run quer es aga nst. T  feature  s exper  ntal and  
+ *                      do not recom nd that teams use   yet. Prov d ng [[None]] w ll d sable
+ *                      debug quer es.
+ * @tparam Serv ce face a thr ft serv ce conta n ng t  [[debugEndpo nt]]
  */
-case class ProductMixerController[ServiceIface](
-  injector: Injector,
-  debugEndpoint: ThriftMethod,
+case class ProductM xerController[Serv ce face](
+   njector:  njector,
+  debugEndpo nt: Thr ft thod,
 )(
-  implicit val serviceIFace: Manifest[ServiceIface])
+   mpl c  val serv ce Face: Man fest[Serv ce face])
     extends Controller {
 
-  val isLocal: Boolean = injector.instance[Boolean](Flags.named(ServiceLocal))
+  val  sLocal: Boolean =  njector. nstance[Boolean](Flags.na d(Serv ceLocal))
 
-  if (!isLocal) {
-    prefix("/admin/product-mixer") {
-      val productNamesFut: Future[Seq[String]] =
-        injector.instance[ComponentRegistry].get.map { componentRegistry =>
-          componentRegistry.getAllRegisteredComponents.collect {
-            case ComponentRegistryRegisteredComponent(identifier: ProductIdentifier, _, _) =>
-              identifier.name
+   f (! sLocal) {
+    pref x("/adm n/product-m xer") {
+      val productNa sFut: Future[Seq[Str ng]] =
+         njector. nstance[ComponentReg stry].get.map { componentReg stry =>
+          componentReg stry.getAllReg steredComponents.collect {
+            case ComponentReg stryReg steredComponent( dent f er: Product dent f er, _, _) =>
+               dent f er.na 
           }
         }
 
-      productNamesFut.map { productNames =>
-        productNames.foreach { productName =>
+      productNa sFut.map { productNa s =>
+        productNa s.foreach { productNa  =>
           get(
-            route = "/debug-query/" + productName,
-            admin = true,
-            index = Some(RouteIndex(alias = "Query " + productName, group = "Feeds/Debug Query"))
+            route = "/debug-query/" + productNa ,
+            adm n = true,
+             ndex = So (Route ndex(al as = "Query " + productNa , group = "Feeds/Debug Query"))
           ) { _: Request =>
             val auroraPath =
-              URLEncoder.encode(System.getProperty("aurora.instanceKey", ""), "UTF-8")
+              URLEncoder.encode(System.getProperty("aurora. nstanceKey", ""), "UTF-8")
 
-            // Extract service name from clientId since there isn't a specific flag for that
-            val serviceName = injector
-              .instance[String](Flags.named("thrift.clientId"))
-              .split("\\.")(0)
+            // Extract serv ce na  from cl ent d s nce t re  sn't a spec f c flag for that
+            val serv ceNa  =  njector
+              . nstance[Str ng](Flags.na d("thr ft.cl ent d"))
+              .spl ("\\.")(0)
 
-            val redirectUrl =
-              s"https://feeds.twitter.biz/dtab/$serviceName/$productName?servicePath=$auroraPath"
+            val red rectUrl =
+              s"https://feeds.tw ter.b z/dtab/$serv ceNa /$productNa ?serv cePath=$auroraPath"
 
             val response = Response().status(Status.Found)
-            response.location = redirectUrl
+            response.locat on = red rectUrl
             response
           }
         }
@@ -72,8 +72,8 @@ case class ProductMixerController[ServiceIface](
     }
   }
 
-  prefix("/product-mixer") {
-    get(route = "/component-registry")(GetComponentRegistryHandler(injector).apply)
-    get(route = "/debug-configuration")(GetDebugConfigurationHandler(debugEndpoint).apply)
+  pref x("/product-m xer") {
+    get(route = "/component-reg stry")(GetComponentReg stryHandler( njector).apply)
+    get(route = "/debug-conf gurat on")(GetDebugConf gurat onHandler(debugEndpo nt).apply)
   }
 }

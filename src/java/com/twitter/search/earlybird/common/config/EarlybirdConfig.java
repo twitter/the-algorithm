@@ -1,363 +1,363 @@
-package com.twitter.search.earlybird.common.config;
+package com.tw ter.search.earlyb rd.common.conf g;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import javax.annotation.Nullable;
+ mport java.ut l.Date;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.collect.ImmutableMap;
+ mport com.google.common.collect. mmutableMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.aurora.AuroraInstanceKey;
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.config.ConfigFile;
-import com.twitter.search.common.config.ConfigurationException;
-import com.twitter.search.common.config.SearchPenguinVersionsConfig;
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers on;
+ mport com.tw ter.search.common.aurora.Aurora nstanceKey;
+ mport com.tw ter.search.common.conf g.Conf g;
+ mport com.tw ter.search.common.conf g.Conf gF le;
+ mport com.tw ter.search.common.conf g.Conf gurat onExcept on;
+ mport com.tw ter.search.common.conf g.SearchPengu nVers onsConf g;
 
-public final class EarlybirdConfig {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdConfig.class);
+publ c f nal class Earlyb rdConf g {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rdConf g.class);
 
-  private static final String DEFAULT_CONFIG_FILE = "earlybird-search.yml";
-  private static final String LATE_TWEET_BUFFER_KEY = "late_tweet_buffer";
+  pr vate stat c f nal Str ng DEFAULT_CONF G_F LE = "earlyb rd-search.yml";
+  pr vate stat c f nal Str ng LATE_TWEET_BUFFER_KEY = "late_t et_buffer";
 
-  public static final String EARLYBIRD_ZK_CONFIG_DIR = "/twitter/search/production/earlybird/";
-  public static final String EARLYBIRD_CONFIG_DIR = "earlybird/config";
+  publ c stat c f nal Str ng EARLYB RD_ZK_CONF G_D R = "/tw ter/search/product on/earlyb rd/";
+  publ c stat c f nal Str ng EARLYB RD_CONF G_D R = "earlyb rd/conf g";
 
-  public static final String USER_SNAPSHOT_BASE_DIR = "user_snapshot_base_dir";
+  publ c stat c f nal Str ng USER_SNAPSHOT_BASE_D R = "user_snapshot_base_d r";
 
-  private static volatile ConfigFile earlybirdConfig = null;
-  private static volatile Map<String, Object> overrideValueMap = ImmutableMap.of();
+  pr vate stat c volat le Conf gF le earlyb rdConf g = null;
+  pr vate stat c volat le Map<Str ng, Object> overr deValueMap =  mmutableMap.of();
 
-  private static String logDirOverride = null;
-  private static AuroraInstanceKey auroraInstanceKey = null;
+  pr vate stat c Str ng logD rOverr de = null;
+  pr vate stat c Aurora nstanceKey aurora nstanceKey = null;
 
-  private static int adminPort;
+  pr vate stat c  nt adm nPort;
 
-  private EarlybirdConfig() { }
+  pr vate Earlyb rdConf g() { }
 
-  private static final class PenguinVersionHolder {
-    private static final PenguinVersion PENGUIN_VERSION_SINGLETON =
-        SearchPenguinVersionsConfig.getSingleSupportedVersion(
-            EarlybirdProperty.PENGUIN_VERSION.get());
-    private static final byte PENGUIN_VERSION_BYTE_VALUE =
-        PENGUIN_VERSION_SINGLETON.getByteValue();
+  pr vate stat c f nal class Pengu nVers onHolder {
+    pr vate stat c f nal Pengu nVers on PENGU N_VERS ON_S NGLETON =
+        SearchPengu nVers onsConf g.getS ngleSupportedVers on(
+            Earlyb rdProperty.PENGU N_VERS ON.get());
+    pr vate stat c f nal byte PENGU N_VERS ON_BYTE_VALUE =
+        PENGU N_VERS ON_S NGLETON.getByteValue();
   }
 
-  public static byte getPenguinVersionByte() {
-    return PenguinVersionHolder.PENGUIN_VERSION_BYTE_VALUE;
+  publ c stat c byte getPengu nVers onByte() {
+    return Pengu nVers onHolder.PENGU N_VERS ON_BYTE_VALUE;
   }
 
-  public static PenguinVersion getPenguinVersion() {
-    return PenguinVersionHolder.PENGUIN_VERSION_SINGLETON;
+  publ c stat c Pengu nVers on getPengu nVers on() {
+    return Pengu nVers onHolder.PENGU N_VERS ON_S NGLETON;
   }
 
   /**
-   * Reads the earlybird configuration from the given file.
+   * Reads t  earlyb rd conf gurat on from t  g ven f le.
    */
-  public static synchronized void init(@Nullable String configFile) {
-    if (earlybirdConfig == null) {
-      String file = configFile == null ? DEFAULT_CONFIG_FILE : configFile;
-      earlybirdConfig = new ConfigFile(EARLYBIRD_CONFIG_DIR, file);
+  publ c stat c synchron zed vo d  n (@Nullable Str ng conf gF le) {
+     f (earlyb rdConf g == null) {
+      Str ng f le = conf gF le == null ? DEFAULT_CONF G_F LE : conf gF le;
+      earlyb rdConf g = new Conf gF le(EARLYB RD_CONF G_D R, f le);
     }
   }
 
-  public static synchronized void setOverrideValues(Map<String, Object> overrideValues) {
-    overrideValueMap = ImmutableMap.copyOf(overrideValues);
+  publ c stat c synchron zed vo d setOverr deValues(Map<Str ng, Object> overr deValues) {
+    overr deValueMap =  mmutableMap.copyOf(overr deValues);
   }
 
   /**
-   * Pack all values in a string that can be printed for informational purposes.
-   * @return the string.
+   * Pack all values  n a str ng that can be pr nted for  nformat onal purposes.
+   * @return t  str ng.
    */
-  public static String allValuesAsString() {
-    Map<String, String> stringMap = earlybirdConfig.getStringMap();
+  publ c stat c Str ng allValuesAsStr ng() {
+    Map<Str ng, Str ng> str ngMap = earlyb rdConf g.getStr ngMap();
 
-    StringBuilder stringBuilder = new StringBuilder();
+    Str ngBu lder str ngBu lder = new Str ngBu lder();
 
-    stringBuilder.append("Config environment: " + Config.getEnvironment() + "\n\n");
-    stringBuilder.append(
-        String.format("Values from earlybird-search.yml (total %d):\n", stringMap.size()));
+    str ngBu lder.append("Conf g env ron nt: " + Conf g.getEnv ron nt() + "\n\n");
+    str ngBu lder.append(
+        Str ng.format("Values from earlyb rd-search.yml (total %d):\n", str ngMap.s ze()));
 
-    stringMap.forEach((key, value) -> {
-      stringBuilder.append(String.format("  %s: %s\n", key, value.toString()));
-      if (overrideValueMap.containsKey(key)) {
-        stringBuilder.append(String.format(
-          "    override value: %s\n", overrideValueMap.get(key).toString()));
+    str ngMap.forEach((key, value) -> {
+      str ngBu lder.append(Str ng.format("  %s: %s\n", key, value.toStr ng()));
+       f (overr deValueMap.conta nsKey(key)) {
+        str ngBu lder.append(Str ng.format(
+          "    overr de value: %s\n", overr deValueMap.get(key).toStr ng()));
       }
     });
 
-    stringBuilder.append(String.format(
-        "\n\nAll command-line overrides (total: %d):\n", overrideValueMap.size()));
-    overrideValueMap.forEach((key, value) -> {
-      stringBuilder.append(String.format("  %s: %s\n", key, value.toString()));
+    str ngBu lder.append(Str ng.format(
+        "\n\nAll command-l ne overr des (total: %d):\n", overr deValueMap.s ze()));
+    overr deValueMap.forEach((key, value) -> {
+      str ngBu lder.append(Str ng.format("  %s: %s\n", key, value.toStr ng()));
     });
 
-    return stringBuilder.toString();
+    return str ngBu lder.toStr ng();
   }
 
   /**
-   * Returns the value of the given property as a string. If the property is not set, a runtime
-   * exception is thrown.
+   * Returns t  value of t  g ven property as a str ng.  f t  property  s not set, a runt  
+   * except on  s thrown.
    */
-  public static String getString(String property) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (String) overrideValue;
+  publ c stat c Str ng getStr ng(Str ng property) {
+    Object overr deValue = overr deValueMap.get(property);
+     f (overr deValue != null) {
+      return (Str ng) overr deValue;
     }
 
     try {
-      return earlybirdConfig.getString(property);
-    } catch (ConfigurationException e) {
-      LOG.error("Fatal error: could not get config string " + property, e);
-      throw new RuntimeException(e);
+      return earlyb rdConf g.getStr ng(property);
+    } catch (Conf gurat onExcept on e) {
+      LOG.error("Fatal error: could not get conf g str ng " + property, e);
+      throw new Runt  Except on(e);
     }
   }
 
   /**
-   * Returns the value of the given property as a string.
+   * Returns t  value of t  g ven property as a str ng.
    */
-  public static String getString(String property, String defaultValue) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (String) overrideValue;
+  publ c stat c Str ng getStr ng(Str ng property, Str ng defaultValue) {
+    Object overr deValue = overr deValueMap.get(property);
+     f (overr deValue != null) {
+      return (Str ng) overr deValue;
     }
 
-    return earlybirdConfig.getString(property, defaultValue);
+    return earlyb rdConf g.getStr ng(property, defaultValue);
   }
 
   /**
-   * Returns the value of the given property as an integer. If the property is not set, a runtime
-   * exception is thrown.
+   * Returns t  value of t  g ven property as an  nteger.  f t  property  s not set, a runt  
+   * except on  s thrown.
    */
-  public static int getInt(String property) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (int) overrideValue;
+  publ c stat c  nt get nt(Str ng property) {
+    Object overr deValue = overr deValueMap.get(property);
+     f (overr deValue != null) {
+      return ( nt) overr deValue;
     }
 
     try {
-      return earlybirdConfig.getInt(property);
-    } catch (ConfigurationException e) {
-      LOG.error("Fatal error: could not get config int " + property, e);
-      throw new RuntimeException(e);
+      return earlyb rdConf g.get nt(property);
+    } catch (Conf gurat onExcept on e) {
+      LOG.error("Fatal error: could not get conf g  nt " + property, e);
+      throw new Runt  Except on(e);
     }
   }
 
   /**
-   * Returns the value of the given property as an integer.
+   * Returns t  value of t  g ven property as an  nteger.
    */
-  public static int getInt(String property, int defaultValue) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (int) overrideValue;
+  publ c stat c  nt get nt(Str ng property,  nt defaultValue) {
+    Object overr deValue = overr deValueMap.get(property);
+     f (overr deValue != null) {
+      return ( nt) overr deValue;
     }
 
-    return earlybirdConfig.getInt(property, defaultValue);
+    return earlyb rdConf g.get nt(property, defaultValue);
   }
 
   /**
-   * Returns the value of the given property as a double.
+   * Returns t  value of t  g ven property as a double.
    */
-  public static double getDouble(String property, double defaultValue) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (double) overrideValue;
+  publ c stat c double getDouble(Str ng property, double defaultValue) {
+    Object overr deValue = overr deValueMap.get(property);
+     f (overr deValue != null) {
+      return (double) overr deValue;
     }
 
-    return earlybirdConfig.getDouble(property, defaultValue);
+    return earlyb rdConf g.getDouble(property, defaultValue);
   }
 
   /**
-   * Returns the value of the given property as a long. If the property is not set, a runtime
-   * exception is thrown.
+   * Returns t  value of t  g ven property as a long.  f t  property  s not set, a runt  
+   * except on  s thrown.
    */
-  public static long getLong(String property) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (long) overrideValue;
+  publ c stat c long getLong(Str ng property) {
+    Object overr deValue = overr deValueMap.get(property);
+     f (overr deValue != null) {
+      return (long) overr deValue;
     }
 
     try {
-      return earlybirdConfig.getLong(property);
-    } catch (ConfigurationException e) {
-      LOG.error("Fatal error: could not get config long " + property, e);
-      throw new RuntimeException(e);
+      return earlyb rdConf g.getLong(property);
+    } catch (Conf gurat onExcept on e) {
+      LOG.error("Fatal error: could not get conf g long " + property, e);
+      throw new Runt  Except on(e);
     }
   }
 
   /**
-   * Returns the value of the given property as a long.
+   * Returns t  value of t  g ven property as a long.
    */
-  public static long getLong(String property, long defaultValue) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (long) overrideValue;
+  publ c stat c long getLong(Str ng property, long defaultValue) {
+    Object overr deValue = overr deValueMap.get(property);
+     f (overr deValue != null) {
+      return (long) overr deValue;
     }
 
-    return earlybirdConfig.getLong(property, defaultValue);
+    return earlyb rdConf g.getLong(property, defaultValue);
   }
 
   /**
-   * Returns the value of the given property as a boolean. If the property is not set, a runtime
-   * exception is thrown.
+   * Returns t  value of t  g ven property as a boolean.  f t  property  s not set, a runt  
+   * except on  s thrown.
    */
-  public static boolean getBool(String property) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (boolean) overrideValue;
+  publ c stat c boolean getBool(Str ng property) {
+    Object overr deValue = overr deValueMap.get(property);
+     f (overr deValue != null) {
+      return (boolean) overr deValue;
     }
 
     try {
-      return earlybirdConfig.getBool(property);
-    } catch (ConfigurationException e) {
-      LOG.error("Fatal error: could not get config boolean " + property, e);
-      throw new RuntimeException(e);
+      return earlyb rdConf g.getBool(property);
+    } catch (Conf gurat onExcept on e) {
+      LOG.error("Fatal error: could not get conf g boolean " + property, e);
+      throw new Runt  Except on(e);
     }
   }
 
   /**
-   * Returns the value of the given property as a boolean.
+   * Returns t  value of t  g ven property as a boolean.
    */
-  public static boolean getBool(String property, boolean defaultValue) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (boolean) overrideValue;
+  publ c stat c boolean getBool(Str ng property, boolean defaultValue) {
+    Object overr deValue = overr deValueMap.get(property);
+     f (overr deValue != null) {
+      return (boolean) overr deValue;
     }
 
-    return earlybirdConfig.getBool(property, defaultValue);
+    return earlyb rdConf g.getBool(property, defaultValue);
   }
 
   /**
-   * Returns the value of the given property as a date.
+   * Returns t  value of t  g ven property as a date.
    */
-  public static Date getDate(String property) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (Date) overrideValue;
+  publ c stat c Date getDate(Str ng property) {
+    Object overr deValue = overr deValueMap.get(property);
+     f (overr deValue != null) {
+      return (Date) overr deValue;
     }
 
-    Date date = (Date) earlybirdConfig.getObject(property, null);
-    if (date == null) {
-      throw new RuntimeException("Could not get config date: " + property);
+    Date date = (Date) earlyb rdConf g.getObject(property, null);
+     f (date == null) {
+      throw new Runt  Except on("Could not get conf g date: " + property);
     }
     return date;
   }
 
   /**
-   * Returns the value of the given property as a list of strings.
+   * Returns t  value of t  g ven property as a l st of str ngs.
    */
-  public static List<String> getListOfStrings(String property) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (List<String>) overrideValue;
+  publ c stat c L st<Str ng> getL stOfStr ngs(Str ng property) {
+    Object overr deValue = overr deValueMap.get(property);
+     f (overr deValue != null) {
+      return (L st<Str ng>) overr deValue;
     }
 
-    List<String> list = (List<String>) earlybirdConfig.getObject(property, null);
-    if (list == null) {
-      throw new RuntimeException("Could not get list of strings: " + property);
+    L st<Str ng> l st = (L st<Str ng>) earlyb rdConf g.getObject(property, null);
+     f (l st == null) {
+      throw new Runt  Except on("Could not get l st of str ngs: " + property);
     }
-    return list;
+    return l st;
   }
 
   /**
-   * Returns the value of the given property as a map.
+   * Returns t  value of t  g ven property as a map.
    */
-  @SuppressWarnings("unchecked")
-  public static Map<String, Object> getMap(String property) {
-    Map<String, Object> map = (Map<String, Object>) earlybirdConfig.getObject(property, null);
-    if (map == null) {
-      throw new RuntimeException("Could not find config property: " + property);
+  @SuppressWarn ngs("unc cked")
+  publ c stat c Map<Str ng, Object> getMap(Str ng property) {
+    Map<Str ng, Object> map = (Map<Str ng, Object>) earlyb rdConf g.getObject(property, null);
+     f (map == null) {
+      throw new Runt  Except on("Could not f nd conf g property: " + property);
     }
     return map;
   }
 
-  public static int getMaxSegmentSize() {
-    return EarlybirdConfig.getInt("max_segment_size", 1 << 16);
+  publ c stat c  nt getMaxSeg ntS ze() {
+    return Earlyb rdConf g.get nt("max_seg nt_s ze", 1 << 16);
   }
 
   /**
-   * Returns the log properties file.
+   * Returns t  log propert es f le.
    */
-  public static String getLogPropertiesFile() {
+  publ c stat c Str ng getLogPropert esF le() {
     try {
-      String filename = earlybirdConfig.getString("log_properties_filename");
-      return earlybirdConfig.getConfigFilePath(filename);
-    } catch (ConfigurationException e) {
-      // Print here rather than use LOG - log was probably not initialized yet.
-      LOG.error("Fatal error: could not get log properties file", e);
-      throw new RuntimeException(e);
+      Str ng f lena  = earlyb rdConf g.getStr ng("log_propert es_f lena ");
+      return earlyb rdConf g.getConf gF lePath(f lena );
+    } catch (Conf gurat onExcept on e) {
+      // Pr nt  re rat r than use LOG - log was probably not  n  al zed yet.
+      LOG.error("Fatal error: could not get log propert es f le", e);
+      throw new Runt  Except on(e);
     }
   }
 
   /**
-   * Returns the log directory.
+   * Returns t  log d rectory.
    */
-  public static String getLogDir() {
-    if (logDirOverride != null) {
-      return logDirOverride;
+  publ c stat c Str ng getLogD r() {
+     f (logD rOverr de != null) {
+      return logD rOverr de;
     } else {
-      return EarlybirdConfig.getString("log_dir");
+      return Earlyb rdConf g.getStr ng("log_d r");
     }
   }
 
-  public static void overrideLogDir(String logDir) {
-    EarlybirdConfig.logDirOverride = logDir;
+  publ c stat c vo d overr deLogD r(Str ng logD r) {
+    Earlyb rdConf g.logD rOverr de = logD r;
   }
 
-  public static int getThriftPort() {
-    return EarlybirdProperty.THRIFT_PORT.get();
+  publ c stat c  nt getThr ftPort() {
+    return Earlyb rdProperty.THR FT_PORT.get();
   }
 
-  public static int getWarmUpThriftPort() {
-    return EarlybirdProperty.WARMUP_THRIFT_PORT.get();
+  publ c stat c  nt getWarmUpThr ftPort() {
+    return Earlyb rdProperty.WARMUP_THR FT_PORT.get();
   }
 
-  public static int getSearcherThreads() {
-    return EarlybirdProperty.SEARCHER_THREADS.get();
+  publ c stat c  nt getSearc rThreads() {
+    return Earlyb rdProperty.SEARCHER_THREADS.get();
   }
 
-  public static int getLateTweetBuffer() {
-    return getInt(LATE_TWEET_BUFFER_KEY);
+  publ c stat c  nt getLateT etBuffer() {
+    return get nt(LATE_TWEET_BUFFER_KEY);
   }
 
-  public static int getAdminPort() {
-    return adminPort;
+  publ c stat c  nt getAdm nPort() {
+    return adm nPort;
   }
 
-  public static void setAdminPort(int adminPort) {
-    EarlybirdConfig.adminPort = adminPort;
+  publ c stat c vo d setAdm nPort( nt adm nPort) {
+    Earlyb rdConf g.adm nPort = adm nPort;
   }
 
-  public static boolean isRealtimeOrProtected() {
-    String earlybirdName = EarlybirdProperty.EARLYBIRD_NAME.get();
-    return earlybirdName.contains("realtime") || earlybirdName.contains("protected");
+  publ c stat c boolean  sRealt  OrProtected() {
+    Str ng earlyb rdNa  = Earlyb rdProperty.EARLYB RD_NAME.get();
+    return earlyb rdNa .conta ns("realt  ") || earlyb rdNa .conta ns("protected");
   }
 
-  public static boolean consumeUserScrubGeoEvents() {
-    return EarlybirdProperty.CONSUME_GEO_SCRUB_EVENTS.get();
+  publ c stat c boolean consu UserScrubGeoEvents() {
+    return Earlyb rdProperty.CONSUME_GEO_SCRUB_EVENTS.get();
   }
 
   @Nullable
-  public static AuroraInstanceKey getAuroraInstanceKey() {
-    return auroraInstanceKey;
+  publ c stat c Aurora nstanceKey getAurora nstanceKey() {
+    return aurora nstanceKey;
   }
 
-  public static void setAuroraInstanceKey(AuroraInstanceKey auroraInstanceKey) {
-    EarlybirdConfig.auroraInstanceKey = auroraInstanceKey;
+  publ c stat c vo d setAurora nstanceKey(Aurora nstanceKey aurora nstanceKey) {
+    Earlyb rdConf g.aurora nstanceKey = aurora nstanceKey;
   }
 
-  public static boolean isAurora() {
-    return auroraInstanceKey != null;
+  publ c stat c boolean  sAurora() {
+    return aurora nstanceKey != null;
   }
 
-  public static void setForTests(String property, Object value) {
-    earlybirdConfig.setForTests(DEFAULT_CONFIG_FILE, property, value);
+  publ c stat c vo d setForTests(Str ng property, Object value) {
+    earlyb rdConf g.setForTests(DEFAULT_CONF G_F LE, property, value);
   }
 
-  public static synchronized void clearForTests() {
-    earlybirdConfig = new ConfigFile(EARLYBIRD_CONFIG_DIR, DEFAULT_CONFIG_FILE);
+  publ c stat c synchron zed vo d clearForTests() {
+    earlyb rdConf g = new Conf gF le(EARLYB RD_CONF G_D R, DEFAULT_CONF G_F LE);
   }
 }

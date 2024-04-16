@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.RosettaColor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.color.RosettaColor
 
 case class Badge(
-  text: Option[String],
-  textColorName: Option[RosettaColor],
-  backgroundColorName: Option[RosettaColor])
+  text: Opt on[Str ng],
+  textColorNa : Opt on[RosettaColor],
+  backgroundColorNa : Opt on[RosettaColor])

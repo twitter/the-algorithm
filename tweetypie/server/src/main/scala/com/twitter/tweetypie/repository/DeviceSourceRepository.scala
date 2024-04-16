@@ -1,75 +1,75 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.passbird.clientapplication.thriftscala.ClientApplication
-import com.twitter.passbird.clientapplication.thriftscala.GetClientApplicationsResponse
-import com.twitter.servo.cache.ScopedCacheKey
-import com.twitter.stitch.MapGroup
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.DeviceSource
+ mport com.tw ter.passb rd.cl entappl cat on.thr ftscala.Cl entAppl cat on
+ mport com.tw ter.passb rd.cl entappl cat on.thr ftscala.GetCl entAppl cat onsResponse
+ mport com.tw ter.servo.cac .ScopedCac Key
+ mport com.tw ter.st ch.MapGroup
+ mport com.tw ter.st ch.NotFound
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.thr ftscala.Dev ceS ce
 
-// converts the device source parameter value to lower-case, to make the cached
-// key case-insensitive
-case class DeviceSourceKey(param: String) extends ScopedCacheKey("t", "ds", 1, param.toLowerCase)
+// converts t  dev ce s ce para ter value to lo r-case, to make t  cac d
+// key case- nsens  ve
+case class Dev ceS ceKey(param: Str ng) extends ScopedCac Key("t", "ds", 1, param.toLo rCase)
 
-object DeviceSourceRepository {
-  type Type = String => Stitch[DeviceSource]
+object Dev ceS ceRepos ory {
+  type Type = Str ng => St ch[Dev ceS ce]
 
-  type GetClientApplications = FutureArrow[Seq[Long], GetClientApplicationsResponse]
+  type GetCl entAppl cat ons = FutureArrow[Seq[Long], GetCl entAppl cat onsResponse]
 
-  val DefaultUrl = "https://help.twitter.com/en/using-twitter/how-to-tweet#source-labels"
+  val DefaultUrl = "https:// lp.tw ter.com/en/us ng-tw ter/how-to-t et#s ce-labels"
 
-  def formatUrl(name: String, url: String): String = s"""<a href="$url">$name</a>"""
+  def formatUrl(na : Str ng, url: Str ng): Str ng = s"""<a href="$url">$na </a>"""
 
   /**
-   * Construct an html a tag from the client application
-   * name and url for the display field because some
-   * clients depend on this.
+   * Construct an html a tag from t  cl ent appl cat on
+   * na  and url for t  d splay f eld because so 
+   * cl ents depend on t .
    */
-  def deviceSourceDisplay(
-    name: String,
-    urlOpt: Option[String]
-  ): String =
+  def dev ceS ceD splay(
+    na : Str ng,
+    urlOpt: Opt on[Str ng]
+  ): Str ng =
     urlOpt match {
-      case Some(url) => formatUrl(name = name, url = url) // data sanitized by passbird
+      case So (url) => formatUrl(na  = na , url = url) // data san  zed by passb rd
       case None =>
-        formatUrl(name = name, url = DefaultUrl) // data sanitized by passbird
+        formatUrl(na  = na , url = DefaultUrl) // data san  zed by passb rd
     }
 
-  def toDeviceSource(app: ClientApplication): DeviceSource =
-    DeviceSource(
-      // The id field used to represent the id of a row
-      // in the now deprecated device_sources mysql table.
-      id = 0L,
-      parameter = "oauth:" + app.id,
-      internalName = "oauth:" + app.id,
-      name = app.name,
+  def toDev ceS ce(app: Cl entAppl cat on): Dev ceS ce =
+    Dev ceS ce(
+      // T   d f eld used to represent t   d of a row
+      //  n t  now deprecated dev ce_s ces  sql table.
+       d = 0L,
+      para ter = "oauth:" + app. d,
+       nternalNa  = "oauth:" + app. d,
+      na  = app.na ,
       url = app.url.getOrElse(""),
-      display = deviceSourceDisplay(app.name, app.url),
-      clientAppId = Some(app.id)
+      d splay = dev ceS ceD splay(app.na , app.url),
+      cl entApp d = So (app. d)
     )
 
   def apply(
-    parseAppId: String => Option[Long],
-    getClientApplications: GetClientApplications
-  ): DeviceSourceRepository.Type = {
-    val getClientApplicationsGroup = new MapGroup[Long, DeviceSource] {
-      def run(ids: Seq[Long]): Future[Long => Try[DeviceSource]] =
-        getClientApplications(ids).map { response => id =>
-          response.found.get(id) match {
-            case Some(app) => Return(toDeviceSource(app))
+    parseApp d: Str ng => Opt on[Long],
+    getCl entAppl cat ons: GetCl entAppl cat ons
+  ): Dev ceS ceRepos ory.Type = {
+    val getCl entAppl cat onsGroup = new MapGroup[Long, Dev ceS ce] {
+      def run( ds: Seq[Long]): Future[Long => Try[Dev ceS ce]] =
+        getCl entAppl cat ons( ds).map { response =>  d =>
+          response.found.get( d) match {
+            case So (app) => Return(toDev ceS ce(app))
             case None => Throw(NotFound)
           }
         }
     }
 
-    appIdStr =>
-      parseAppId(appIdStr) match {
-        case Some(appId) =>
-          Stitch.call(appId, getClientApplicationsGroup)
+    app dStr =>
+      parseApp d(app dStr) match {
+        case So (app d) =>
+          St ch.call(app d, getCl entAppl cat onsGroup)
         case None =>
-          Stitch.exception(NotFound)
+          St ch.except on(NotFound)
       }
   }
 }

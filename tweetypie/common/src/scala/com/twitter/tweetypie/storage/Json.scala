@@ -1,17 +1,17 @@
-package com.twitter.tweetypie.storage
+package com.tw ter.t etyp e.storage
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
+ mport com.fasterxml.jackson.datab nd.ObjectMapper
+ mport com.fasterxml.jackson.module.scala.DefaultScalaModule
 
 object Json {
-  val TimestampKey = "timestamp"
-  val SoftDeleteTimestampKey = "softdelete_timestamp"
+  val T  stampKey = "t  stamp"
+  val SoftDeleteT  stampKey = "softdelete_t  stamp"
 
-  private val mapper = new ObjectMapper
-  mapper.registerModule(DefaultScalaModule)
+  pr vate val mapper = new ObjectMapper
+  mapper.reg sterModule(DefaultScalaModule)
 
-  def encode(m: Map[String, Any]): Array[Byte] = mapper.writeValueAsBytes(m)
+  def encode(m: Map[Str ng, Any]): Array[Byte] = mapper.wr eValueAsBytes(m)
 
-  def decode(arr: Array[Byte]): Map[String, Any] =
-    mapper.readValue[Map[String, Any]](arr, classOf[Map[String, Any]])
+  def decode(arr: Array[Byte]): Map[Str ng, Any] =
+    mapper.readValue[Map[Str ng, Any]](arr, classOf[Map[Str ng, Any]])
 }

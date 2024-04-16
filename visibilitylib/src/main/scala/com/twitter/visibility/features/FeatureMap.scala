@@ -1,53 +1,53 @@
-package com.twitter.visibility.features
+package com.tw ter.v s b l y.features
 
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import scala.language.existentials
+ mport com.tw ter.f nagle.mux.Cl entD scardedRequestExcept on
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.st ch.St ch
+ mport scala.language.ex stent als
 
-class MissingFeatureException(feature: Feature[_]) extends Exception("Missing value for " + feature)
+class M ss ngFeatureExcept on(feature: Feature[_]) extends Except on("M ss ng value for " + feature)
 
-case class FeatureFailedException(feature: Feature[_], exception: Throwable) extends Exception
+case class FeatureFa ledExcept on(feature: Feature[_], except on: Throwable) extends Except on
 
-private[visibility] case class FeatureFailedPlaceholderObject(throwable: Throwable)
+pr vate[v s b l y] case class FeatureFa ledPlaceholderObject(throwable: Throwable)
 
 class FeatureMap(
-  val map: Map[Feature[_], Stitch[_]],
+  val map: Map[Feature[_], St ch[_]],
   val constantMap: Map[Feature[_], Any]) {
 
-  def contains[T](feature: Feature[T]): Boolean =
-    constantMap.contains(feature) || map.contains(feature)
+  def conta ns[T](feature: Feature[T]): Boolean =
+    constantMap.conta ns(feature) || map.conta ns(feature)
 
-  def containsConstant[T](feature: Feature[T]): Boolean = constantMap.contains(feature)
+  def conta nsConstant[T](feature: Feature[T]): Boolean = constantMap.conta ns(feature)
 
-  lazy val size: Int = keys.size
+  lazy val s ze:  nt = keys.s ze
 
   lazy val keys: Set[Feature[_]] = constantMap.keySet ++ map.keySet
 
-  def get[T](feature: Feature[T]): Stitch[T] = {
+  def get[T](feature: Feature[T]): St ch[T] = {
     map.get(feature) match {
-      case _ if constantMap.contains(feature) =>
-        Stitch.value(getConstant(feature))
-      case Some(x) =>
-        x.asInstanceOf[Stitch[T]]
+      case _  f constantMap.conta ns(feature) =>
+        St ch.value(getConstant(feature))
+      case So (x) =>
+        x.as nstanceOf[St ch[T]]
       case _ =>
-        Stitch.exception(new MissingFeatureException(feature))
+        St ch.except on(new M ss ngFeatureExcept on(feature))
     }
   }
 
   def getConstant[T](feature: Feature[T]): T = {
     constantMap.get(feature) match {
-      case Some(x) =>
-        x.asInstanceOf[T]
+      case So (x) =>
+        x.as nstanceOf[T]
       case _ =>
-        throw new MissingFeatureException(feature)
+        throw new M ss ngFeatureExcept on(feature)
     }
   }
 
   def -[T](key: Feature[T]): FeatureMap = new FeatureMap(map - key, constantMap - key)
 
-  override def toString: String = "FeatureMap(%s, %s)".format(map, constantMap)
+  overr de def toStr ng: Str ng = "FeatureMap(%s, %s)".format(map, constantMap)
 }
 
 object FeatureMap {
@@ -56,30 +56,30 @@ object FeatureMap {
 
   def resolve(
     featureMap: FeatureMap,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): Stitch[ResolvedFeatureMap] = {
-    val featureMapHydrationStatsReceiver = statsReceiver.scope("feature_map_hydration")
+    statsRece ver: StatsRece ver = NullStatsRece ver
+  ): St ch[ResolvedFeatureMap] = {
+    val featureMapHydrat onStatsRece ver = statsRece ver.scope("feature_map_hydrat on")
 
-    Stitch
+    St ch
       .traverse(featureMap.map.toSeq) {
-        case (feature, value: Stitch[_]) =>
-          val featureStatsReceiver = featureMapHydrationStatsReceiver.scope(feature.name)
-          lazy val featureFailureStat = featureStatsReceiver.scope("failures")
-          val featureStitch: Stitch[(Feature[_], Any)] = value
+        case (feature, value: St ch[_]) =>
+          val featureStatsRece ver = featureMapHydrat onStatsRece ver.scope(feature.na )
+          lazy val featureFa lureStat = featureStatsRece ver.scope("fa lures")
+          val featureSt ch: St ch[(Feature[_], Any)] = value
             .map { resolvedValue =>
-              featureStatsReceiver.counter("success").incr()
+              featureStatsRece ver.counter("success"). ncr()
               (feature, resolvedValue)
             }
 
-          featureStitch
+          featureSt ch
             .handle {
-              case ffe: FeatureFailedException =>
-                featureFailureStat.counter().incr()
-                featureFailureStat.counter(ffe.exception.getClass.getName).incr()
-                (feature, FeatureFailedPlaceholderObject(ffe.exception))
+              case ffe: FeatureFa ledExcept on =>
+                featureFa lureStat.counter(). ncr()
+                featureFa lureStat.counter(ffe.except on.getClass.getNa ). ncr()
+                (feature, FeatureFa ledPlaceholderObject(ffe.except on))
             }
             .ensure {
-              featureStatsReceiver.counter("requests").incr()
+              featureStatsRece ver.counter("requests"). ncr()
             }
       }
       .map { resolvedFeatures: Seq[(Feature[_], Any)] =>
@@ -87,14 +87,14 @@ object FeatureMap {
       }
   }
 
-  def rescueFeatureTuple(kv: (Feature[_], Stitch[_])): (Feature[_], Stitch[_]) = {
+  def rescueFeatureTuple(kv: (Feature[_], St ch[_])): (Feature[_], St ch[_]) = {
     val (k, v) = kv
 
     val rescueValue = v.rescue {
       case e =>
         e match {
-          case cdre: ClientDiscardedRequestException => Stitch.exception(cdre)
-          case _ => Stitch.exception(FeatureFailedException(k, e))
+          case cdre: Cl entD scardedRequestExcept on => St ch.except on(cdre)
+          case _ => St ch.except on(FeatureFa ledExcept on(k, e))
         }
     }
 
@@ -102,16 +102,16 @@ object FeatureMap {
   }
 }
 
-class ResolvedFeatureMap(private[visibility] val resolvedMap: Map[Feature[_], Any])
+class ResolvedFeatureMap(pr vate[v s b l y] val resolvedMap: Map[Feature[_], Any])
     extends FeatureMap(Map.empty, resolvedMap) {
 
-  override def equals(other: Any): Boolean = other match {
-    case otherResolvedFeatureMap: ResolvedFeatureMap =>
-      this.resolvedMap.equals(otherResolvedFeatureMap.resolvedMap)
+  overr de def equals(ot r: Any): Boolean = ot r match {
+    case ot rResolvedFeatureMap: ResolvedFeatureMap =>
+      t .resolvedMap.equals(ot rResolvedFeatureMap.resolvedMap)
     case _ => false
   }
 
-  override def toString: String = "ResolvedFeatureMap(%s)".format(resolvedMap)
+  overr de def toStr ng: Str ng = "ResolvedFeatureMap(%s)".format(resolvedMap)
 }
 
 object ResolvedFeatureMap {

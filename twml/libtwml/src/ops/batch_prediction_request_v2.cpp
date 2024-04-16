@@ -1,224 +1,224 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+# nclude "tensorflow/core/fra work/op.h"
+# nclude "tensorflow/core/fra work/shape_ nference.h"
+# nclude "tensorflow/core/fra work/op_kernel.h"
 
-#include <cstdint>
-#include <twml.h>
-#include "tensorflow_utils.h"
-#include "resource_utils.h"
+# nclude <cstd nt>
+# nclude <twml.h>
+# nclude "tensorflow_ut ls.h"
+# nclude "res ce_ut ls.h"
 
-#include <iterator>
+# nclude < erator>
 
-template<typename InputType, typename RecordType>
-class DecodeBatchPredictionRequestKernel : public OpKernel {
- public:
-  explicit DecodeBatchPredictionRequestKernel(OpKernelConstruction* context)
+template<typena   nputType, typena  RecordType>
+class DecodeBatchPred ct onRequestKernel : publ c OpKernel {
+ publ c:
+  expl c  DecodeBatchPred ct onRequestKernel(OpKernelConstruct on* context)
       : OpKernel(context) {
-    std::vector<int64> keep_features;
-    std::vector<int64> keep_codes;
+    std::vector< nt64> keep_features;
+    std::vector< nt64> keep_codes;
 
-    std::vector<int64> label_features;
-    std::vector<int64> weight_features;
+    std::vector< nt64> label_features;
+    std::vector< nt64>   ght_features;
 
-    OP_REQUIRES_OK(context, context->GetAttr("keep_features", &keep_features));
-    OP_REQUIRES_OK(context, context->GetAttr("keep_codes", &keep_codes));
+    OP_REQU RES_OK(context, context->GetAttr("keep_features", &keep_features));
+    OP_REQU RES_OK(context, context->GetAttr("keep_codes", &keep_codes));
 
-    OP_REQUIRES_OK(context, context->GetAttr("label_features", &label_features));
-    OP_REQUIRES_OK(context, context->GetAttr("weight_features", &weight_features));
-    OP_REQUIRES_OK(context, context->GetAttr("decode_mode", &m_decode_mode));
+    OP_REQU RES_OK(context, context->GetAttr("label_features", &label_features));
+    OP_REQU RES_OK(context, context->GetAttr("  ght_features", &  ght_features));
+    OP_REQU RES_OK(context, context->GetAttr("decode_mode", &m_decode_mode));
 
-    OP_REQUIRES(context, keep_features.size() == keep_codes.size(),
-                errors::InvalidArgument("keep keys and values must have same size."));
+    OP_REQU RES(context, keep_features.s ze() == keep_codes.s ze(),
+                errors:: nval dArgu nt("keep keys and values must have sa  s ze."));
 
-#ifdef USE_DENSE_HASH
+# fdef USE_DENSE_HASH
     m_keep_map.set_empty_key(0);
     m_labels_map.set_empty_key(0);
-    m_weights_map.set_empty_key(0);
-#endif  // USE_DENSE_HASH
+    m_  ghts_map.set_empty_key(0);
+#end f  // USE_DENSE_HASH
 
-    for (uint64_t i = 0; i < keep_features.size(); i++) {
-      m_keep_map[keep_features[i]] = keep_codes[i];
+    for (u nt64_t   = 0;   < keep_features.s ze();  ++) {
+      m_keep_map[keep_features[ ]] = keep_codes[ ];
     }
 
-    for (uint64_t i = 0; i < label_features.size(); i++) {
-      m_labels_map[label_features[i]] = i;
+    for (u nt64_t   = 0;   < label_features.s ze();  ++) {
+      m_labels_map[label_features[ ]] =  ;
     }
 
-    for (uint64_t i = 0; i < weight_features.size(); i++) {
-      m_weights_map[weight_features[i]] = i;
+    for (u nt64_t   = 0;   <   ght_features.s ze();  ++) {
+      m_  ghts_map[  ght_features[ ]] =  ;
     }
   }
 
  protected:
-  twml::Map<int64_t, int64_t> m_keep_map;
-  twml::Map<int64_t, int64_t> m_labels_map;
-  twml::Map<int64_t, int64_t> m_weights_map;
-  int64 m_decode_mode;
+  twml::Map< nt64_t,  nt64_t> m_keep_map;
+  twml::Map< nt64_t,  nt64_t> m_labels_map;
+  twml::Map< nt64_t,  nt64_t> m_  ghts_map;
+   nt64 m_decode_mode;
 
-  template<typename ResourceType>
-  void Decode(OpKernelContext* context, ResourceType *resource) {
-    resource->input = context->input(0);
-    const uint8_t *input_bytes = getInputBytes<InputType>(resource->input, 0);
-    int num_labels = static_cast<int>(m_labels_map.size());
-    int num_weights = static_cast<int>(m_weights_map.size());
+  template<typena  Res ceType>
+  vo d Decode(OpKernelContext* context, Res ceType *res ce) {
+    res ce-> nput = context-> nput(0);
+    const u nt8_t * nput_bytes = get nputBytes< nputType>(res ce-> nput, 0);
+     nt num_labels = stat c_cast< nt>(m_labels_map.s ze());
+     nt num_  ghts = stat c_cast< nt>(m_  ghts_map.s ze());
 
-    typename RecordType::Reader reader;
-    twml::GenericBatchPredictionRequest<RecordType> bpr(num_labels, num_weights);
+    typena  RecordType::Reader reader;
+    twml::Gener cBatchPred ct onRequest<RecordType> bpr(num_labels, num_  ghts);
 
     reader.setKeepMap(&m_keep_map);
     reader.setLabelsMap(&m_labels_map);
-    reader.setBuffer(input_bytes);
+    reader.setBuffer( nput_bytes);
     reader.setDecodeMode(m_decode_mode);
-    // Do not set weight map if it is empty. This will take a faster path.
-    if (num_weights != 0) {
-        reader.setWeightsMap(&m_weights_map);
+    // Do not set   ght map  f    s empty. T  w ll take a faster path.
+     f (num_  ghts != 0) {
+        reader.set  ghtsMap(&m_  ghts_map);
     }
     bpr.decode(reader);
 
-    resource->common = std::move(bpr.common());
-    resource->records = std::move(bpr.requests());
+    res ce->common = std::move(bpr.common());
+    res ce->records = std::move(bpr.requests());
 
-    resource->num_labels = num_labels;
-    resource->num_weights = num_weights;
+    res ce->num_labels = num_labels;
+    res ce->num_  ghts = num_  ghts;
   }
 };
 
 
-REGISTER_OP("DecodeAndHashBatchPredictionRequestV2")
-.Attr("InputType: {uint8, string}")
-.Input("input_bytes: InputType")
-.Attr("keep_features: list(int)")
-.Attr("keep_codes: list(int)")
-.Attr("label_features: list(int)")
-.Attr("weight_features: list(int) = []")
-.Attr("decode_mode: int = 0")
-.Output("hashed_data_record_handle: resource")
-.SetShapeFn(shape_inference::ScalarShape)
+REG STER_OP("DecodeAndHashBatchPred ct onRequestV2")
+.Attr(" nputType: {u nt8, str ng}")
+. nput(" nput_bytes:  nputType")
+.Attr("keep_features: l st( nt)")
+.Attr("keep_codes: l st( nt)")
+.Attr("label_features: l st( nt)")
+.Attr("  ght_features: l st( nt) = []")
+.Attr("decode_mode:  nt = 0")
+.Output("has d_data_record_handle: res ce")
+.SetShapeFn(shape_ nference::ScalarShape)
 .Doc(R"doc(
-A tensorflow OP that decodes a list/batch of data records and creates a handle to the batch of hashed data records.
+A tensorflow OP that decodes a l st/batch of data records and creates a handle to t  batch of has d data records.
 
-Compared to DecodeAndHashBatchPredictionRequest, DecodeAndHashBatchPredictionRequestV2 is used for training instead
-of serving. Thus label_features and weight_features[optional] must be passed, and labels and weights are extracted in
-the output.
-DecodeAndHashBatchPredictionRequestV2 controls what DataRecords we want to process together in a batch in training.
-For instance, we can put all instances for a query in the same batch when training a ranking model.
-Notice that this OP was added separately to make sure we would not break the API for DecodeAndHashBatchPredictionRequest.
-It requires some discussions if we merge the two ops into a single .cpp file in a future API revision.
+Compared to DecodeAndHashBatchPred ct onRequest, DecodeAndHashBatchPred ct onRequestV2  s used for tra n ng  nstead
+of serv ng. Thus label_features and   ght_features[opt onal] must be passed, and labels and   ghts are extracted  n
+t  output.
+DecodeAndHashBatchPred ct onRequestV2 controls what DataRecords   want to process toget r  n a batch  n tra n ng.
+For  nstance,   can put all  nstances for a query  n t  sa  batch w n tra n ng a rank ng model.
+Not ce that t  OP was added separately to make sure   would not break t  AP  for DecodeAndHashBatchPred ct onRequest.
+  requ res so  d scuss ons  f    rge t  two ops  nto a s ngle .cpp f le  n a future AP  rev s on.
 
 Attr
-  keep_features: a list of int ids to keep.
-  keep_codes: their corresponding code.
-  label_features: list of feature ids representing the labels.
-  weight_features: list of feature ids representing the weights. Defaults to empty list.
-  decode_mode: integer, indicates which decoding method to use. Let a sparse continuous
-    have a feature_name and a dict of {name: value}. 0 indicates feature_ids are computed
-    as hash(name). 1 indicates feature_ids are computed as hash(feature_name, name)
+  keep_features: a l st of  nt  ds to keep.
+  keep_codes: t  r correspond ng code.
+  label_features: l st of feature  ds represent ng t  labels.
+    ght_features: l st of feature  ds represent ng t    ghts. Defaults to empty l st.
+  decode_mode:  nteger,  nd cates wh ch decod ng  thod to use. Let a sparse cont nuous
+    have a feature_na  and a d ct of {na : value}. 0  nd cates feature_ ds are computed
+    as hash(na ). 1  nd cates feature_ ds are computed as hash(feature_na , na )
 
-Input
-  input_bytes: Input tensor containing the serialized batch of BatchPredictionRequest.
+ nput
+   nput_bytes:  nput tensor conta n ng t  ser al zed batch of BatchPred ct onRequest.
 
 Outputs
-  hashed_data_record_handle: A resource handle to the HashedDataRecordResource containing batch of HashedDataRecords.
+  has d_data_record_handle: A res ce handle to t  Has dDataRecordRes ce conta n ng batch of Has dDataRecords.
 )doc");
 
-template<typename InputType>
-class DecodeAndHashBatchPredictionRequestV2 :
-    public DecodeBatchPredictionRequestKernel<InputType, twml::HashedDataRecord> {
+template<typena   nputType>
+class DecodeAndHashBatchPred ct onRequestV2 :
+    publ c DecodeBatchPred ct onRequestKernel< nputType, twml::Has dDataRecord> {
 
-public:
-  DecodeAndHashBatchPredictionRequestV2(OpKernelConstruction *context)
-    : DecodeBatchPredictionRequestKernel<InputType, twml::HashedDataRecord>(context) {
+publ c:
+  DecodeAndHashBatchPred ct onRequestV2(OpKernelConstruct on *context)
+    : DecodeBatchPred ct onRequestKernel< nputType, twml::Has dDataRecord>(context) {
   }
 
- private:
-  void Compute(OpKernelContext* context) override {
+ pr vate:
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      HashedDataRecordResource *resource = nullptr;
-      OP_REQUIRES_OK(
+      Has dDataRecordRes ce *res ce = nullptr;
+      OP_REQU RES_OK(
         context,
-        makeResourceHandle<HashedDataRecordResource>(context, 0, &resource));
+        makeRes ceHandle<Has dDataRecordRes ce>(context, 0, &res ce));
 
-      this->Decode(context, resource);
+      t ->Decode(context, res ce);
 
       // Each datarecord has a copy of common features.
-      // Initialize total_size by common_size * num_records
-      int64 common_size = static_cast<int64>(resource->common.totalSize());
-      int64 num_records = static_cast<int64>(resource->records.size());
-      int64 total_size = common_size * num_records;
-      for (const auto &record : resource->records) {
-        total_size += static_cast<int64>(record.totalSize());
+      //  n  al ze total_s ze by common_s ze * num_records
+       nt64 common_s ze = stat c_cast< nt64>(res ce->common.totalS ze());
+       nt64 num_records = stat c_cast< nt64>(res ce->records.s ze());
+       nt64 total_s ze = common_s ze * num_records;
+      for (const auto &record : res ce->records) {
+        total_s ze += stat c_cast< nt64>(record.totalS ze());
       }
 
-      resource->total_size = total_size;
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      res ce->total_s ze = total_s ze;
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-REGISTER_OP("DecodeBatchPredictionRequestV2")
-.Attr("InputType: {uint8, string}")
-.Input("input_bytes: InputType")
-.Attr("keep_features: list(int)")
-.Attr("keep_codes: list(int)")
-.Attr("label_features: list(int)")
-.Attr("weight_features: list(int) = []")
-.Attr("decode_mode: int = 0")
-.Output("data_record_handle: resource")
-.SetShapeFn(shape_inference::ScalarShape)
+REG STER_OP("DecodeBatchPred ct onRequestV2")
+.Attr(" nputType: {u nt8, str ng}")
+. nput(" nput_bytes:  nputType")
+.Attr("keep_features: l st( nt)")
+.Attr("keep_codes: l st( nt)")
+.Attr("label_features: l st( nt)")
+.Attr("  ght_features: l st( nt) = []")
+.Attr("decode_mode:  nt = 0")
+.Output("data_record_handle: res ce")
+.SetShapeFn(shape_ nference::ScalarShape)
 .Doc(R"doc(
-A tensorflow OP that decodes batch prediction request and creates a handle to the batch of data records.
+A tensorflow OP that decodes batch pred ct on request and creates a handle to t  batch of data records.
 
 Attr
-  keep_features: a list of int ids to keep.
-  keep_codes: their corresponding code.
-  shared_name: name used by the resource handle inside the resource manager.
-  label_features: list of feature ids representing the labels.
-  weight_features: list of feature ids representing the weights. Defaults to empty list.
+  keep_features: a l st of  nt  ds to keep.
+  keep_codes: t  r correspond ng code.
+  shared_na : na  used by t  res ce handle  ns de t  res ce manager.
+  label_features: l st of feature  ds represent ng t  labels.
+    ght_features: l st of feature  ds represent ng t    ghts. Defaults to empty l st.
   decode_mode: reserved, do not use.
 
-Input
-  input_bytes: Input tensor containing the serialized batch of BatchPredictionRequest.
+ nput
+   nput_bytes:  nput tensor conta n ng t  ser al zed batch of BatchPred ct onRequest.
 
 Outputs
-  data_record_handle: A resource handle to the DataRecordResource containing batch of DataRecords.
+  data_record_handle: A res ce handle to t  DataRecordRes ce conta n ng batch of DataRecords.
 )doc");
 
 
-template<typename InputType>
-class DecodeBatchPredictionRequestV2 :
-    public DecodeBatchPredictionRequestKernel<InputType, twml::DataRecord> {
-public:
-  DecodeBatchPredictionRequestV2(OpKernelConstruction *context)
-    : DecodeBatchPredictionRequestKernel<InputType, twml::DataRecord>(context) {
+template<typena   nputType>
+class DecodeBatchPred ct onRequestV2 :
+    publ c DecodeBatchPred ct onRequestKernel< nputType, twml::DataRecord> {
+publ c:
+  DecodeBatchPred ct onRequestV2(OpKernelConstruct on *context)
+    : DecodeBatchPred ct onRequestKernel< nputType, twml::DataRecord>(context) {
   }
 
-private:
-  void Compute(OpKernelContext* context) override {
+pr vate:
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      DataRecordResource *resource = nullptr;
-      OP_REQUIRES_OK(
+      DataRecordRes ce *res ce = nullptr;
+      OP_REQU RES_OK(
         context,
-        makeResourceHandle<DataRecordResource>(context, 0, &resource));
-      this->Decode(context, resource);
-      resource->keep_map = &(this->m_keep_map);
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+        makeRes ceHandle<DataRecordRes ce>(context, 0, &res ce));
+      t ->Decode(context, res ce);
+      res ce->keep_map = &(t ->m_keep_map);
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-#define REGISTER_DECODE_OPS(InputType)                      \
-    REGISTER_KERNEL_BUILDER(                                \
-        Name("DecodeAndHashBatchPredictionRequestV2")       \
-        .Device(DEVICE_CPU)                                 \
-        .TypeConstraint<InputType>("InputType"),            \
-        DecodeAndHashBatchPredictionRequestV2<InputType>);  \
-    REGISTER_KERNEL_BUILDER(                                \
-        Name("DecodeBatchPredictionRequestV2")              \
-        .Device(DEVICE_CPU)                                 \
-        .TypeConstraint<InputType>("InputType"),            \
-        DecodeBatchPredictionRequestV2<InputType>);         \
+#def ne REG STER_DECODE_OPS( nputType)                      \
+    REG STER_KERNEL_BU LDER(                                \
+        Na ("DecodeAndHashBatchPred ct onRequestV2")       \
+        .Dev ce(DEV CE_CPU)                                 \
+        .TypeConstra nt< nputType>(" nputType"),            \
+        DecodeAndHashBatchPred ct onRequestV2< nputType>);  \
+    REG STER_KERNEL_BU LDER(                                \
+        Na ("DecodeBatchPred ct onRequestV2")              \
+        .Dev ce(DEV CE_CPU)                                 \
+        .TypeConstra nt< nputType>(" nputType"),            \
+        DecodeBatchPred ct onRequestV2< nputType>);         \
 
-REGISTER_DECODE_OPS(uint8)
-REGISTER_DECODE_OPS(string)
+REG STER_DECODE_OPS(u nt8)
+REG STER_DECODE_OPS(str ng)

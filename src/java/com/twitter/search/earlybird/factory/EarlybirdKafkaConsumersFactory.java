@@ -1,19 +1,19 @@
-package com.twitter.search.earlybird.factory;
+package com.tw ter.search.earlyb rd.factory;
 
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+ mport org.apac .kafka.cl ents.consu r.KafkaConsu r;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftVers onedEvents;
 
-public interface EarlybirdKafkaConsumersFactory {
+publ c  nterface Earlyb rdKafkaConsu rsFactory {
   /**
-   * Create a kafka consumer with default records to be polled.
+   * Create a kafka consu r w h default records to be polled.
    */
-  KafkaConsumer<Long, ThriftVersionedEvents> createKafkaConsumer(
-      String clientID);
+  KafkaConsu r<Long, Thr ftVers onedEvents> createKafkaConsu r(
+      Str ng cl ent D);
 
   /**
-   * Create a kafka consumer with a set number of records to be polled.
+   * Create a kafka consu r w h a set number of records to be polled.
    */
-  KafkaConsumer<Long, ThriftVersionedEvents> createKafkaConsumer(
-      String clientID, int maxPollRecords);
+  KafkaConsu r<Long, Thr ftVers onedEvents> createKafkaConsu r(
+      Str ng cl ent D,  nt maxPollRecords);
 }

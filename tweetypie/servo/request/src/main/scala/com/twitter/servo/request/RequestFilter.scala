@@ -1,119 +1,119 @@
-package com.twitter.servo.request
+package com.tw ter.servo.request
 
-import com.twitter.finagle.tracing.TraceId
-import com.twitter.servo.util.{FunctionArrow, Effect, FutureArrow, FutureEffect, Observable}
-import com.twitter.util.{Future, Try}
+ mport com.tw ter.f nagle.trac ng.Trace d
+ mport com.tw ter.servo.ut l.{Funct onArrow, Effect, FutureArrow, FutureEffect, Observable}
+ mport com.tw ter.ut l.{Future, Try}
 
 /**
- * Useful mixins for request types.
+ * Useful m x ns for request types.
  */
-trait HasTraceId {
+tra  HasTrace d {
 
   /**
-   * The Finagle TraceId of the request.
+   * T  F nagle Trace d of t  request.
    */
-  def traceId: TraceId
+  def trace d: Trace d
 }
 
 /**
- * A collection of RequestFilter factory functions.
+ * A collect on of RequestF lter factory funct ons.
  *
- * type RequestFilter[A] = FutureArrow[A, A]
+ * type RequestF lter[A] = FutureArrow[A, A]
  */
-object RequestFilter {
+object RequestF lter {
 
   /**
-   * Produce a RequestFilter from a function `A => Future[A]`.
+   * Produce a RequestF lter from a funct on `A => Future[A]`.
    */
-  def apply[A](f: A => Future[A]): RequestFilter[A] = FutureArrow(f)
+  def apply[A](f: A => Future[A]): RequestF lter[A] = FutureArrow(f)
 
   /**
-   * Produce a RequestFilter from a function `A => Try[A]`.
+   * Produce a RequestF lter from a funct on `A => Try[A]`.
    *
-   * The Try is evaluated within a Future. Thus, Throw results are translated
-   * to `Future.exception`s.
+   * T  Try  s evaluated w h n a Future. Thus, Throw results are translated
+   * to `Future.except on`s.
    */
-  def fromTry[A](f: A => Try[A]): RequestFilter[A] = FutureArrow.fromTry(f)
+  def fromTry[A](f: A => Try[A]): RequestF lter[A] = FutureArrow.fromTry(f)
 
   /**
-   * A no-op RequestFilter; it simply returns the request.
+   * A no-op RequestF lter;   s mply returns t  request.
    *
-   * This forms a monoid with `append`.
+   * T  forms a mono d w h `append`.
    */
-  def identity[A]: RequestFilter[A] = FutureArrow.identity
+  def  dent y[A]: RequestF lter[A] = FutureArrow. dent y
 
   /**
-   * Appends two RequestFilters together.
+   * Appends two RequestF lters toget r.
    *
-   * This forms a monoid with 'identity'.
+   * T  forms a mono d w h ' dent y'.
    */
-  def append[A](a: RequestFilter[A], b: RequestFilter[A]): RequestFilter[A] =
+  def append[A](a: RequestF lter[A], b: RequestF lter[A]): RequestF lter[A] =
     FutureArrow.append(a, b)
 
   /**
-   * Compose an ordered series of RequestFilters into a single object.
+   * Compose an ordered ser es of RequestF lters  nto a s ngle object.
    */
-  def all[A](filters: RequestFilter[A]*): RequestFilter[A] =
-    filters.foldLeft(identity[A])(append)
+  def all[A](f lters: RequestF lter[A]*): RequestF lter[A] =
+    f lters.foldLeft( dent y[A])(append)
 
   /**
-   * Produce a RequestFilter that applies a side-effect, returning the argument
-   * request as-is.
+   * Produce a RequestF lter that appl es a s de-effect, return ng t  argu nt
+   * request as- s.
    */
-  def effect[A](effect: Effect[A]): RequestFilter[A] =
-    FutureArrow.fromFunctionArrow(FunctionArrow.effect(effect))
+  def effect[A](effect: Effect[A]): RequestF lter[A] =
+    FutureArrow.fromFunct onArrow(Funct onArrow.effect(effect))
 
   /**
-   * Produce a RequestFilter that applies a side-effect, returning the argument
-   * request as-is.
+   * Produce a RequestF lter that appl es a s de-effect, return ng t  argu nt
+   * request as- s.
    */
-  def effect[A](effect: FutureEffect[A]): RequestFilter[A] = FutureArrow.effect(effect)
+  def effect[A](effect: FutureEffect[A]): RequestF lter[A] = FutureArrow.effect(effect)
 
   /**
-   * Returns a new request filter where all Futures returned from `a` have their
-   * `masked` method called
+   * Returns a new request f lter w re all Futures returned from `a` have t  r
+   * `masked`  thod called
    */
-  def masked[A](a: RequestFilter[A]): RequestFilter[A] = a.masked
+  def masked[A](a: RequestF lter[A]): RequestF lter[A] = a.masked
 
   /**
-   * Produces a RequestFilter that proxies to one of two others, depending on a
-   * predicate.
+   * Produces a RequestF lter that prox es to one of two ot rs, depend ng on a
+   * pred cate.
    */
   def choose[A](
-    predicate: A => Boolean,
-    ifTrue: RequestFilter[A],
-    ifFalse: RequestFilter[A]
-  ): RequestFilter[A] =
-    FutureArrow.choose(predicate, ifTrue, ifFalse)
+    pred cate: A => Boolean,
+     fTrue: RequestF lter[A],
+     fFalse: RequestF lter[A]
+  ): RequestF lter[A] =
+    FutureArrow.choose(pred cate,  fTrue,  fFalse)
 
   /**
-   * Guard the application of a filter on a predicate. The filter is applied
-   * if the predicate returns true, otherwise, the request is simply returned.
+   * Guard t  appl cat on of a f lter on a pred cate. T  f lter  s appl ed
+   *  f t  pred cate returns true, ot rw se, t  request  s s mply returned.
    */
-  def onlyIf[A](predicate: A => Boolean, f: RequestFilter[A]): RequestFilter[A] =
-    FutureArrow.onlyIf(predicate, f)
+  def only f[A](pred cate: A => Boolean, f: RequestF lter[A]): RequestF lter[A] =
+    FutureArrow.only f(pred cate, f)
 
   /**
-   * Produces a RequestFilter that authorizes requests by applying an
-   * authorization function `A => Future[Unit]`. If the authorizer function
-   * results in a Future exception, requests are failed. Otherwise, they pass.
+   * Produces a RequestF lter that author zes requests by apply ng an
+   * author zat on funct on `A => Future[Un ]`.  f t  author zer funct on
+   * results  n a Future except on, requests are fa led. Ot rw se, t y pass.
    */
-  def authorized[A <: Observable](authorizer: ClientRequestAuthorizer): RequestFilter[A] =
-    RequestFilter[A] { request =>
-      authorizer(request.requestName, request.clientIdString) map { _ =>
+  def author zed[A <: Observable](author zer: Cl entRequestAuthor zer): RequestF lter[A] =
+    RequestF lter[A] { request =>
+      author zer(request.requestNa , request.cl ent dStr ng) map { _ =>
         request
       }
     }
 
   /**
-   * Produces a RequestFilter that applies a ClientRequestObserver to requests.
+   * Produces a RequestF lter that appl es a Cl entRequestObserver to requests.
    *
-   * Used to increment counters and track stats for requests.
+   * Used to  ncre nt counters and track stats for requests.
    */
-  def observed[A <: Observable](observer: ClientRequestObserver): RequestFilter[A] =
-    RequestFilter[A] { request =>
-      val clientIdScopesOpt = request.clientIdString map { Seq(_) }
-      observer(request.requestName, clientIdScopesOpt) map { _ =>
+  def observed[A <: Observable](observer: Cl entRequestObserver): RequestF lter[A] =
+    RequestF lter[A] { request =>
+      val cl ent dScopesOpt = request.cl ent dStr ng map { Seq(_) }
+      observer(request.requestNa , cl ent dScopesOpt) map { _ =>
         request
       }
     }

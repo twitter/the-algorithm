@@ -1,44 +1,44 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.BottomTermination
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TerminateTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineTerminationDirection
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TopAndBottomTermination
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TopTermination
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.BottomTerm nat on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.Term nateT  l ne nstruct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neTerm nat onD rect on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.TopAndBottomTerm nat on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.TopTerm nat on
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-sealed trait TerminateInstructionBuilder[Query <: PipelineQuery]
-    extends UrtInstructionBuilder[Query, TerminateTimelineInstruction] {
+sealed tra  Term nate nstruct onBu lder[Query <: P pel neQuery]
+    extends Urt nstruct onBu lder[Query, Term nateT  l ne nstruct on] {
 
-  def direction: TimelineTerminationDirection
+  def d rect on: T  l neTerm nat onD rect on
 
-  override def build(
+  overr de def bu ld(
     query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[TerminateTimelineInstruction] =
-    if (includeInstruction(query, entries))
-      Seq(TerminateTimelineInstruction(terminateTimelineDirection = direction))
+    entr es: Seq[T  l neEntry]
+  ): Seq[Term nateT  l ne nstruct on] =
+     f ( nclude nstruct on(query, entr es))
+      Seq(Term nateT  l ne nstruct on(term nateT  l neD rect on = d rect on))
     else Seq.empty
 }
 
-case class TerminateTopInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends TerminateInstructionBuilder[Query] {
+case class Term nateTop nstruct onBu lder[Query <: P pel neQuery](
+  overr de val  nclude nstruct on:  nclude nstruct on[Query] = Always nclude)
+    extends Term nate nstruct onBu lder[Query] {
 
-  override val direction = TopTermination
+  overr de val d rect on = TopTerm nat on
 }
 
-case class TerminateBottomInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends TerminateInstructionBuilder[Query] {
+case class Term nateBottom nstruct onBu lder[Query <: P pel neQuery](
+  overr de val  nclude nstruct on:  nclude nstruct on[Query] = Always nclude)
+    extends Term nate nstruct onBu lder[Query] {
 
-  override val direction = BottomTermination
+  overr de val d rect on = BottomTerm nat on
 }
 
-case class TerminateTopAndBottomInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends TerminateInstructionBuilder[Query] {
+case class Term nateTopAndBottom nstruct onBu lder[Query <: P pel neQuery](
+  overr de val  nclude nstruct on:  nclude nstruct on[Query] = Always nclude)
+    extends Term nate nstruct onBu lder[Query] {
 
-  override val direction = TopAndBottomTermination
+  overr de val d rect on = TopAndBottomTerm nat on
 }

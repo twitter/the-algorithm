@@ -1,85 +1,85 @@
-package com.twitter.unified_user_actions.adapter.uua_aggregates
+package com.tw ter.un f ed_user_act ons.adapter.uua_aggregates
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.iesource.thriftscala.ClientEventContext
-import com.twitter.iesource.thriftscala.EngagingContext
-import com.twitter.unified_user_actions.adapter.AbstractAdapter
-import com.twitter.iesource.thriftscala.InteractionType
-import com.twitter.iesource.thriftscala.InteractionEvent
-import com.twitter.unified_user_actions.adapter.common.AdapterUtils
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.EventMetadata
-import com.twitter.unified_user_actions.thriftscala.KeyedUuaTweet
-import com.twitter.unified_user_actions.thriftscala.SourceLineage
-import com.twitter.unified_user_actions.thriftscala.UserIdentifier
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. es ce.thr ftscala.Cl entEventContext
+ mport com.tw ter. es ce.thr ftscala.Engag ngContext
+ mport com.tw ter.un f ed_user_act ons.adapter.AbstractAdapter
+ mport com.tw ter. es ce.thr ftscala. nteract onType
+ mport com.tw ter. es ce.thr ftscala. nteract onEvent
+ mport com.tw ter.un f ed_user_act ons.adapter.common.AdapterUt ls
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Act onType
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Event tadata
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.KeyedUuaT et
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.S ceL neage
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.User dent f er
 
 /**
- * This is to read directly from InteractionEvents
+ * T   s to read d rectly from  nteract onEvents
  */
-class RekeyUuaFromInteractionEventsAdapter
-    extends AbstractAdapter[InteractionEvent, Long, KeyedUuaTweet] {
+class RekeyUuaFrom nteract onEventsAdapter
+    extends AbstractAdapter[ nteract onEvent, Long, KeyedUuaT et] {
 
-  import RekeyUuaFromInteractionEventsAdapter._
-  override def adaptOneToKeyedMany(
-    input: InteractionEvent,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): Seq[(Long, KeyedUuaTweet)] =
-    adaptEvent(input, statsReceiver).map { e => (e.tweetId, e) }
+   mport RekeyUuaFrom nteract onEventsAdapter._
+  overr de def adaptOneToKeyedMany(
+     nput:  nteract onEvent,
+    statsRece ver: StatsRece ver = NullStatsRece ver
+  ): Seq[(Long, KeyedUuaT et)] =
+    adaptEvent( nput, statsRece ver).map { e => (e.t et d, e) }
 }
 
-object RekeyUuaFromInteractionEventsAdapter {
+object RekeyUuaFrom nteract onEventsAdapter {
 
   def adaptEvent(
-    e: InteractionEvent,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): Seq[KeyedUuaTweet] =
-    Option(e).flatMap { e =>
-      e.interactionType.flatMap {
-        case InteractionType.TweetRenderImpression if !isDetailImpression(e.engagingContext) =>
+    e:  nteract onEvent,
+    statsRece ver: StatsRece ver = NullStatsRece ver
+  ): Seq[KeyedUuaT et] =
+    Opt on(e).flatMap { e =>
+      e. nteract onType.flatMap {
+        case  nteract onType.T etRender mpress on  f ! sDeta l mpress on(e.engag ngContext) =>
           getRekeyedUUA(
-            input = e,
-            actionType = ActionType.ClientTweetRenderImpression,
-            sourceLineage = SourceLineage.ClientEvents,
-            statsReceiver = statsReceiver)
+             nput = e,
+            act onType = Act onType.Cl entT etRender mpress on,
+            s ceL neage = S ceL neage.Cl entEvents,
+            statsRece ver = statsRece ver)
         case _ => None
       }
     }.toSeq
 
   def getRekeyedUUA(
-    input: InteractionEvent,
-    actionType: ActionType,
-    sourceLineage: SourceLineage,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): Option[KeyedUuaTweet] =
-    input.engagingUserId match {
-      // please see https://docs.google.com/document/d/1-fy2S-8-YMRQgEN0Sco0OLTmeOIUdqgiZ5G1KwTHt2g/edit#
-      // in order to withstand of potential attacks, we filter out the logged-out users.
-      // Checking user id is 0 is the reverse engineering of
-      // https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/iesource/thrift/src/main/thrift/com/twitter/iesource/interaction_event.thrift?L220
-      // https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/iesource/common/src/main/scala/com/twitter/iesource/common/converters/client/LogEventConverter.scala?L198
+     nput:  nteract onEvent,
+    act onType: Act onType,
+    s ceL neage: S ceL neage,
+    statsRece ver: StatsRece ver = NullStatsRece ver
+  ): Opt on[KeyedUuaT et] =
+     nput.engag ngUser d match {
+      // please see https://docs.google.com/docu nt/d/1-fy2S-8-YMRQgEN0Sco0OLT O Udqg Z5G1KwTHt2g/ed #
+      //  n order to w hstand of potent al attacks,   f lter out t  logged-out users.
+      // C ck ng user  d  s 0  s t  reverse eng neer ng of
+      // https://s cegraph.tw ter.b z/g .tw ter.b z/s ce/-/blob/ es ce/thr ft/src/ma n/thr ft/com/tw ter/ es ce/ nteract on_event.thr ft?L220
+      // https://s cegraph.tw ter.b z/g .tw ter.b z/s ce/-/blob/ es ce/common/src/ma n/scala/com/tw ter/ es ce/common/converters/cl ent/LogEventConverter.scala?L198
       case 0L =>
-        statsReceiver.counter("loggedOutEvents").incr()
+        statsRece ver.counter("loggedOutEvents"). ncr()
         None
       case _ =>
-        Some(
-          KeyedUuaTweet(
-            tweetId = input.targetId,
-            actionType = actionType,
-            userIdentifier = UserIdentifier(userId = Some(input.engagingUserId)),
-            eventMetadata = EventMetadata(
-              sourceTimestampMs = input.triggeredTimestampMillis.getOrElse(input.timestampMillis),
-              receivedTimestampMs = AdapterUtils.currentTimestampMs,
-              sourceLineage = sourceLineage
+        So (
+          KeyedUuaT et(
+            t et d =  nput.target d,
+            act onType = act onType,
+            user dent f er = User dent f er(user d = So ( nput.engag ngUser d)),
+            event tadata = Event tadata(
+              s ceT  stampMs =  nput.tr ggeredT  stampM ll s.getOrElse( nput.t  stampM ll s),
+              rece vedT  stampMs = AdapterUt ls.currentT  stampMs,
+              s ceL neage = s ceL neage
             )
           ))
     }
 
-  def isDetailImpression(engagingContext: EngagingContext): Boolean =
-    engagingContext match {
-      case EngagingContext.ClientEventContext(
-            ClientEventContext(_, _, _, _, _, _, _, Some(isDetailsImpression), _)
-          ) if isDetailsImpression =>
+  def  sDeta l mpress on(engag ngContext: Engag ngContext): Boolean =
+    engag ngContext match {
+      case Engag ngContext.Cl entEventContext(
+            Cl entEventContext(_, _, _, _, _, _, _, So ( sDeta ls mpress on), _)
+          )  f  sDeta ls mpress on =>
         true
       case _ => false
     }

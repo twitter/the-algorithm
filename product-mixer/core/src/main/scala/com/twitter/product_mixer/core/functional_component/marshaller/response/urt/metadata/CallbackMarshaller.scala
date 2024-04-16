@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Callback
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class CallbackMarshaller @Inject() () {
+@S ngleton
+class CallbackMarshaller @ nject() () {
 
   def apply(callback: Callback): urt.Callback = urt.Callback(
-    endpoint = callback.endpoint
+    endpo nt = callback.endpo nt
   )
 }

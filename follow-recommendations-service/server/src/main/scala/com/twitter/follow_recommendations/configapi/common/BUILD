@@ -1,8 +1,8 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "configapi/configapi-core",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "conf gap /conf gap -core",
     ],
 )

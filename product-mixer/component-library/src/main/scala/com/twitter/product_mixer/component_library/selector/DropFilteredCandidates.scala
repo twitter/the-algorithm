@@ -1,48 +1,48 @@
-package com.twitter.product_mixer.component_library.selector
+package com.tw ter.product_m xer.component_l brary.selector
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Spec f cP pel ne
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Spec f cP pel nes
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.SelectorResult
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * Predicate which will be applied to each candidate. True indicates that the candidate will be
+ * Pred cate wh ch w ll be appl ed to each cand date. True  nd cates that t  cand date w ll be
  * kept.
  */
-trait ShouldKeepCandidate {
-  def apply(candidateWithDetails: CandidateWithDetails): Boolean
+tra  ShouldKeepCand date {
+  def apply(cand dateW hDeta ls: Cand dateW hDeta ls): Boolean
 }
 
-object DropFilteredCandidates {
-  def apply(candidatePipeline: CandidatePipelineIdentifier, filter: ShouldKeepCandidate) =
-    new DropFilteredCandidates(SpecificPipeline(candidatePipeline), filter)
+object DropF lteredCand dates {
+  def apply(cand dateP pel ne: Cand dateP pel ne dent f er, f lter: ShouldKeepCand date) =
+    new DropF lteredCand dates(Spec f cP pel ne(cand dateP pel ne), f lter)
 
-  def apply(candidatePipelines: Set[CandidatePipelineIdentifier], filter: ShouldKeepCandidate) =
-    new DropFilteredCandidates(SpecificPipelines(candidatePipelines), filter)
+  def apply(cand dateP pel nes: Set[Cand dateP pel ne dent f er], f lter: ShouldKeepCand date) =
+    new DropF lteredCand dates(Spec f cP pel nes(cand dateP pel nes), f lter)
 }
 
 /**
- * Limit candidates from certain candidates sources to those which satisfy the provided predicate.
+ * L m  cand dates from certa n cand dates s ces to those wh ch sat sfy t  prov ded pred cate.
  */
-case class DropFilteredCandidates(
-  override val pipelineScope: CandidateScope,
-  filter: ShouldKeepCandidate)
-    extends Selector[PipelineQuery] {
+case class DropF lteredCand dates(
+  overr de val p pel neScope: Cand dateScope,
+  f lter: ShouldKeepCand date)
+    extends Selector[P pel neQuery] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+  overr de def apply(
+    query: P pel neQuery,
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
-    val candidatesUpdated = remainingCandidates.filter { candidate =>
-      if (pipelineScope.contains(candidate)) filter.apply(candidate)
+    val cand datesUpdated = rema n ngCand dates.f lter { cand date =>
+       f (p pel neScope.conta ns(cand date)) f lter.apply(cand date)
       else true
     }
 
-    SelectorResult(remainingCandidates = candidatesUpdated, result = result)
+    SelectorResult(rema n ngCand dates = cand datesUpdated, result = result)
   }
 }

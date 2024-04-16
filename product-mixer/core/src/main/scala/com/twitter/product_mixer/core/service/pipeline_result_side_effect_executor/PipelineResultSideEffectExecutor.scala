@@ -1,91 +1,91 @@
-package com.twitter.product_mixer.core.service.pipeline_result_side_effect_executor
+package com.tw ter.product_m xer.core.serv ce.p pel ne_result_s de_effect_executor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.side_effect.ExecuteSynchronously
-import com.twitter.product_mixer.core.functional_component.side_effect.FailOpen
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect.Inputs
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.product_mixer.core.service.pipeline_result_side_effect_executor.PipelineResultSideEffectExecutor._
-import com.twitter.stitch.Arrow
-import com.twitter.util.Return
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.core.funct onal_component.s de_effect.ExecuteSynchronously
+ mport com.tw ter.product_m xer.core.funct onal_component.s de_effect.Fa lOpen
+ mport com.tw ter.product_m xer.core.funct onal_component.s de_effect.P pel neResultS deEffect
+ mport com.tw ter.product_m xer.core.funct onal_component.s de_effect.P pel neResultS deEffect. nputs
+ mport com.tw ter.product_m xer.core.model.common.Cond  onally
+ mport com.tw ter.product_m xer.core.model.common. dent f er.S deEffect dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.HasMarshall ng
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.product_m xer.core.serv ce.ExecutorResult
+ mport com.tw ter.product_m xer.core.serv ce.p pel ne_result_s de_effect_executor.P pel neResultS deEffectExecutor._
+ mport com.tw ter.st ch.Arrow
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Try
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class PipelineResultSideEffectExecutor @Inject() (override val statsReceiver: StatsReceiver)
+@S ngleton
+class P pel neResultS deEffectExecutor @ nject() (overr de val statsRece ver: StatsRece ver)
     extends Executor {
-  def arrow[Query <: PipelineQuery, MixerDomainResultType <: HasMarshalling](
-    sideEffects: Seq[PipelineResultSideEffect[Query, MixerDomainResultType]],
+  def arrow[Query <: P pel neQuery, M xerDoma nResultType <: HasMarshall ng](
+    s deEffects: Seq[P pel neResultS deEffect[Query, M xerDoma nResultType]],
     context: Executor.Context
-  ): Arrow[Inputs[Query, MixerDomainResultType], PipelineResultSideEffectExecutor.Result] = {
+  ): Arrow[ nputs[Query, M xerDoma nResultType], P pel neResultS deEffectExecutor.Result] = {
 
-    val individualArrows: Seq[
-      Arrow[Inputs[Query, MixerDomainResultType], (SideEffectIdentifier, SideEffectResultType)]
-    ] = sideEffects.map {
-      case synchronousSideEffect: ExecuteSynchronously =>
-        val failsRequestIfThrows = {
-          wrapComponentWithExecutorBookkeeping(context, synchronousSideEffect.identifier)(
-            Arrow.flatMap(synchronousSideEffect.apply))
+    val  nd v dualArrows: Seq[
+      Arrow[ nputs[Query, M xerDoma nResultType], (S deEffect dent f er, S deEffectResultType)]
+    ] = s deEffects.map {
+      case synchronousS deEffect: ExecuteSynchronously =>
+        val fa lsRequest fThrows = {
+          wrapComponentW hExecutorBookkeep ng(context, synchronousS deEffect. dent f er)(
+            Arrow.flatMap(synchronousS deEffect.apply))
         }
-        synchronousSideEffect match {
-          case failOpen: FailOpen =>
-            // lift the failure
-            failsRequestIfThrows.liftToTry.map(t =>
-              (failOpen.identifier, SynchronousSideEffectResult(t)))
+        synchronousS deEffect match {
+          case fa lOpen: Fa lOpen =>
+            // l ft t  fa lure
+            fa lsRequest fThrows.l ftToTry.map(t =>
+              (fa lOpen. dent f er, SynchronousS deEffectResult(t)))
           case _ =>
-            // don't encapsulate the failure
-            failsRequestIfThrows.map(_ =>
-              (synchronousSideEffect.identifier, SynchronousSideEffectResult(Return.Unit)))
+            // don't encapsulate t  fa lure
+            fa lsRequest fThrows.map(_ =>
+              (synchronousS deEffect. dent f er, SynchronousS deEffectResult(Return.Un )))
         }
 
-      case sideEffect =>
+      case s deEffect =>
         Arrow
           .async(
-            wrapComponentWithExecutorBookkeeping(context, sideEffect.identifier)(
-              Arrow.flatMap(sideEffect.apply)))
-          .andThen(Arrow.value((sideEffect.identifier, SideEffectResult)))
+            wrapComponentW hExecutorBookkeep ng(context, s deEffect. dent f er)(
+              Arrow.flatMap(s deEffect.apply)))
+          .andT n(Arrow.value((s deEffect. dent f er, S deEffectResult)))
     }
 
-    val conditionallyRunArrows = sideEffects.zip(individualArrows).map {
+    val cond  onallyRunArrows = s deEffects.z p( nd v dualArrows).map {
       case (
-            sideEffect: Conditionally[
-              PipelineResultSideEffect.Inputs[Query, MixerDomainResultType] @unchecked
+            s deEffect: Cond  onally[
+              P pel neResultS deEffect. nputs[Query, M xerDoma nResultType] @unc cked
             ],
             arrow) =>
-        Arrow.ifelse[
-          Inputs[Query, MixerDomainResultType],
-          (SideEffectIdentifier, SideEffectResultType)](
-          input => sideEffect.onlyIf(input),
+        Arrow. felse[
+           nputs[Query, M xerDoma nResultType],
+          (S deEffect dent f er, S deEffectResultType)](
+           nput => s deEffect.only f( nput),
           arrow,
-          Arrow.value((sideEffect.identifier, TurnedOffByConditionally)))
+          Arrow.value((s deEffect. dent f er, TurnedOffByCond  onally)))
       case (_, arrow) => arrow
     }
 
     Arrow
-      .collect(conditionallyRunArrows)
+      .collect(cond  onallyRunArrows)
       .map(results => Result(results))
   }
 }
 
-object PipelineResultSideEffectExecutor {
-  case class Result(sideEffects: Seq[(SideEffectIdentifier, SideEffectResultType)])
+object P pel neResultS deEffectExecutor {
+  case class Result(s deEffects: Seq[(S deEffect dent f er, S deEffectResultType)])
       extends ExecutorResult
 
-  sealed trait SideEffectResultType
+  sealed tra  S deEffectResultType
 
-  /** The [[PipelineResultSideEffect]] was executed asynchronously in a fire-and-forget way so no result will be available */
-  case object SideEffectResult extends SideEffectResultType
+  /** T  [[P pel neResultS deEffect]] was executed asynchronously  n a f re-and-forget way so no result w ll be ava lable */
+  case object S deEffectResult extends S deEffectResultType
 
-  /** The result of the [[PipelineResultSideEffect]] that was executed with [[ExecuteSynchronously]] */
-  case class SynchronousSideEffectResult(result: Try[Unit]) extends SideEffectResultType
+  /** T  result of t  [[P pel neResultS deEffect]] that was executed w h [[ExecuteSynchronously]] */
+  case class SynchronousS deEffectResult(result: Try[Un ]) extends S deEffectResultType
 
-  /** The result for when a [[PipelineResultSideEffect]] is turned off by [[Conditionally]]'s [[Conditionally.onlyIf]] */
-  case object TurnedOffByConditionally extends SideEffectResultType
+  /** T  result for w n a [[P pel neResultS deEffect]]  s turned off by [[Cond  onally]]'s [[Cond  onally.only f]] */
+  case object TurnedOffByCond  onally extends S deEffectResultType
 }

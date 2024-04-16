@@ -1,56 +1,56 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import java.util.Optional;
+ mport java.ut l.Opt onal;
 
-import javax.inject.Inject;
+ mport javax. nject. nject;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird_root.quota.ClientIdQuotaManager;
-import com.twitter.search.earlybird_root.quota.QuotaInfo;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.earlyb rd.common.Cl ent dUt l;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd_root.quota.Cl ent dQuotaManager;
+ mport com.tw ter.search.earlyb rd_root.quota.Quota nfo;
+ mport com.tw ter.ut l.Future;
 
-public class ClientIdArchiveAccessFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  private static final String UNAUTHORIZED_ARCHIVE_ACCESS_COUNTER_PATTERN =
-      "unauthorized_access_to_full_archive_by_client_%s";
+publ c class Cl ent dArch veAccessF lter extends S mpleF lter<Earlyb rdRequest, Earlyb rdResponse> {
+  pr vate stat c f nal Str ng UNAUTHOR ZED_ARCH VE_ACCESS_COUNTER_PATTERN =
+      "unauthor zed_access_to_full_arch ve_by_cl ent_%s";
 
-  private final ClientIdQuotaManager quotaManager;
+  pr vate f nal Cl ent dQuotaManager quotaManager;
 
   /**
-   * Construct the filter by using ClientIdQuotaManager
+   * Construct t  f lter by us ng Cl ent dQuotaManager
    */
-  @Inject
-  public ClientIdArchiveAccessFilter(ClientIdQuotaManager quotaManager) {
-    this.quotaManager = Preconditions.checkNotNull(quotaManager);
+  @ nject
+  publ c Cl ent dArch veAccessF lter(Cl ent dQuotaManager quotaManager) {
+    t .quotaManager = Precond  ons.c ckNotNull(quotaManager);
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
-    String clientId = ClientIdUtil.getClientIdFromRequest(request);
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(Earlyb rdRequest request,
+                                         Serv ce<Earlyb rdRequest, Earlyb rdResponse> serv ce) {
+    Str ng cl ent d = Cl ent dUt l.getCl ent dFromRequest(request);
 
-    Optional<QuotaInfo> quotaInfoOptional = quotaManager.getQuotaForClient(clientId);
-    QuotaInfo quotaInfo = quotaInfoOptional.orElseGet(quotaManager::getCommonPoolQuota);
-    if (!quotaInfo.hasArchiveAccess() && request.isGetOlderResults()) {
-      SearchCounter unauthorizedArchiveAccessCounter = SearchCounter.export(
-          String.format(UNAUTHORIZED_ARCHIVE_ACCESS_COUNTER_PATTERN, clientId));
-      unauthorizedArchiveAccessCounter.increment();
+    Opt onal<Quota nfo> quota nfoOpt onal = quotaManager.getQuotaForCl ent(cl ent d);
+    Quota nfo quota nfo = quota nfoOpt onal.orElseGet(quotaManager::getCommonPoolQuota);
+     f (!quota nfo.hasArch veAccess() && request. sGetOlderResults()) {
+      SearchCounter unauthor zedArch veAccessCounter = SearchCounter.export(
+          Str ng.format(UNAUTHOR ZED_ARCH VE_ACCESS_COUNTER_PATTERN, cl ent d));
+      unauthor zedArch veAccessCounter. ncre nt();
 
-      String message = String.format(
-          "Client %s is not whitelisted for archive access. Request access at go/searchquota.",
-          clientId);
-      EarlybirdResponse response = new EarlybirdResponse(
-          EarlybirdResponseCode.QUOTA_EXCEEDED_ERROR, 0)
-          .setDebugString(message);
+      Str ng  ssage = Str ng.format(
+          "Cl ent %s  s not wh el sted for arch ve access. Request access at go/searchquota.",
+          cl ent d);
+      Earlyb rdResponse response = new Earlyb rdResponse(
+          Earlyb rdResponseCode.QUOTA_EXCEEDED_ERROR, 0)
+          .setDebugStr ng( ssage);
       return Future.value(response);
     }
-    return service.apply(request);
+    return serv ce.apply(request);
   }
 }

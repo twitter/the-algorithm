@@ -1,93 +1,93 @@
-package com.twitter.servo.store
+package com.tw ter.servo.store
 
-import com.twitter.servo.util.Gate
-import com.twitter.util.Future
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.ut l.Future
 
 /**
- * models a write-store of key/values
+ * models a wr e-store of key/values
  */
-trait Store[K, V] {
+tra  Store[K, V] {
   def create(value: V): Future[V]
-  def update(value: V): Future[Unit]
-  def destroy(key: K): Future[Unit]
+  def update(value: V): Future[Un ]
+  def destroy(key: K): Future[Un ]
 }
 
 object Store {
 
   /**
-   * Filter store operations based on either the key or the value. If the gate passes then forward
-   * the operation to the underlying store, if not then forward the operation to a null store
-   * (effectively a no-op)
+   * F lter store operat ons based on e  r t  key or t  value.  f t  gate passes t n forward
+   * t  operat on to t  underly ng store,  f not t n forward t  operat on to a null store
+   * (effect vely a no-op)
    */
-  def filtered[K, V](store: Store[K, V], filterKey: Gate[K], filterValue: Gate[V]) =
-    new GatedStore(store, new NullStore[K, V], filterKey, filterValue)
+  def f ltered[K, V](store: Store[K, V], f lterKey: Gate[K], f lterValue: Gate[V]) =
+    new GatedStore(store, new NullStore[K, V], f lterKey, f lterValue)
 
   /**
-   * A store type that selects between one of two underlying stores based on the key/value of the
-   * operation. If the key/value gate passes, forward the operation to the primary store, otherwise
-   * forward the operation to the secondary store.
+   * A store type that selects bet en one of two underly ng stores based on t  key/value of t 
+   * operat on.  f t  key/value gate passes, forward t  operat on to t  pr mary store, ot rw se
+   * forward t  operat on to t  secondary store.
    */
   def gated[K, V](
-    primary: Store[K, V],
+    pr mary: Store[K, V],
     secondary: Store[K, V],
-    usePrimaryKey: Gate[K],
-    usePrimaryValue: Gate[V]
-  ) = new GatedStore(primary, secondary, usePrimaryKey, usePrimaryValue)
+    usePr maryKey: Gate[K],
+    usePr maryValue: Gate[V]
+  ) = new GatedStore(pr mary, secondary, usePr maryKey, usePr maryValue)
 
   /**
-   * A store type that selects between one of two underlying stores based on a predicative value,
-   * which may change dynamically at runtime.
+   * A store type that selects bet en one of two underly ng stores based on a pred cat ve value,
+   * wh ch may change dynam cally at runt  .
    */
-  def deciderable[K, V](
-    primary: Store[K, V],
+  def dec derable[K, V](
+    pr mary: Store[K, V],
     backup: Store[K, V],
-    primaryIsAvailable: => Boolean
-  ) = new DeciderableStore(primary, backup, primaryIsAvailable)
+    pr mary sAva lable: => Boolean
+  ) = new Dec derableStore(pr mary, backup, pr mary sAva lable)
 }
 
-trait StoreWrapper[K, V] extends Store[K, V] {
-  def underlyingStore: Store[K, V]
+tra  StoreWrapper[K, V] extends Store[K, V] {
+  def underly ngStore: Store[K, V]
 
-  override def create(value: V) = underlyingStore.create(value)
-  override def update(value: V) = underlyingStore.update(value)
-  override def destroy(key: K) = underlyingStore.destroy(key)
+  overr de def create(value: V) = underly ngStore.create(value)
+  overr de def update(value: V) = underly ngStore.update(value)
+  overr de def destroy(key: K) = underly ngStore.destroy(key)
 }
 
 class NullStore[K, V] extends Store[K, V] {
-  override def create(value: V) = Future.value(value)
-  override def update(value: V) = Future.Done
-  override def destroy(key: K) = Future.Done
+  overr de def create(value: V) = Future.value(value)
+  overr de def update(value: V) = Future.Done
+  overr de def destroy(key: K) = Future.Done
 }
 
 /**
- * A Store type that selects between one of two underlying stores based
- * on the key/value, which may change dynamically at runtime.
+ * A Store type that selects bet en one of two underly ng stores based
+ * on t  key/value, wh ch may change dynam cally at runt  .
  */
-private[servo] class GatedStore[K, V](
-  primary: Store[K, V],
+pr vate[servo] class GatedStore[K, V](
+  pr mary: Store[K, V],
   secondary: Store[K, V],
-  usePrimaryKey: Gate[K],
-  usePrimaryValue: Gate[V])
+  usePr maryKey: Gate[K],
+  usePr maryValue: Gate[V])
     extends Store[K, V] {
-  private[this] def pick[T](item: T, gate: Gate[T]) = if (gate(item)) primary else secondary
+  pr vate[t ] def p ck[T]( em: T, gate: Gate[T]) =  f (gate( em)) pr mary else secondary
 
-  override def create(value: V) = pick(value, usePrimaryValue).create(value)
-  override def update(value: V) = pick(value, usePrimaryValue).update(value)
-  override def destroy(key: K) = pick(key, usePrimaryKey).destroy(key)
+  overr de def create(value: V) = p ck(value, usePr maryValue).create(value)
+  overr de def update(value: V) = p ck(value, usePr maryValue).update(value)
+  overr de def destroy(key: K) = p ck(key, usePr maryKey).destroy(key)
 }
 
 /**
- * A Store type that selects between one of two underlying stores based
- * on a predicative value, which may change dynamically at runtime.
+ * A Store type that selects bet en one of two underly ng stores based
+ * on a pred cat ve value, wh ch may change dynam cally at runt  .
  */
-class DeciderableStore[K, V](
-  primary: Store[K, V],
+class Dec derableStore[K, V](
+  pr mary: Store[K, V],
   backup: Store[K, V],
-  primaryIsAvailable: => Boolean)
+  pr mary sAva lable: => Boolean)
     extends Store[K, V] {
-  private[this] def pick = if (primaryIsAvailable) primary else backup
+  pr vate[t ] def p ck =  f (pr mary sAva lable) pr mary else backup
 
-  override def create(value: V) = pick.create(value)
-  override def update(value: V) = pick.update(value)
-  override def destroy(key: K) = pick.destroy(key)
+  overr de def create(value: V) = p ck.create(value)
+  overr de def update(value: V) = p ck.update(value)
+  overr de def destroy(key: K) = p ck.destroy(key)
 }

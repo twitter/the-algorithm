@@ -1,99 +1,99 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.botmaker.thriftscala.BotMakerResponse
-import com.twitter.bouncer.thriftscala.Bounce
-import com.twitter.finagle.tracing.Trace
-import com.twitter.relevance.feature_store.thriftscala.FeatureData
-import com.twitter.relevance.feature_store.thriftscala.FeatureValue.StrValue
-import com.twitter.service.gen.scarecrow.thriftscala.TieredAction
-import com.twitter.service.gen.scarecrow.thriftscala.TieredActionResult
-import com.twitter.tweetypie.core.TweetCreateFailure
-import com.twitter.tweetypie.thriftscala.TweetCreateState
+ mport com.tw ter.botmaker.thr ftscala.BotMakerResponse
+ mport com.tw ter.bouncer.thr ftscala.Bounce
+ mport com.tw ter.f nagle.trac ng.Trace
+ mport com.tw ter.relevance.feature_store.thr ftscala.FeatureData
+ mport com.tw ter.relevance.feature_store.thr ftscala.FeatureValue.StrValue
+ mport com.tw ter.serv ce.gen.scarecrow.thr ftscala.T eredAct on
+ mport com.tw ter.serv ce.gen.scarecrow.thr ftscala.T eredAct onResult
+ mport com.tw ter.t etyp e.core.T etCreateFa lure
+ mport com.tw ter.t etyp e.thr ftscala.T etCreateState
 
 object Spam {
-  sealed trait Result
+  sealed tra  Result
   case object Allow extends Result
-  case object SilentFail extends Result
-  case object DisabledByIpiPolicy extends Result
+  case object S lentFa l extends Result
+  case object D sabledBy p Pol cy extends Result
 
   val AllowFuture: Future[Allow.type] = Future.value(Allow)
-  val SilentFailFuture: Future[SilentFail.type] = Future.value(SilentFail)
-  val DisabledByIpiPolicyFuture: Future[DisabledByIpiPolicy.type] =
-    Future.value(DisabledByIpiPolicy)
+  val S lentFa lFuture: Future[S lentFa l.type] = Future.value(S lentFa l)
+  val D sabledBy p Pol cyFuture: Future[D sabledBy p Pol cy.type] =
+    Future.value(D sabledBy p Pol cy)
 
-  def DisabledByIpiFailure(
-    userName: Option[String],
-    customDenyMessage: Option[String] = None
-  ): TweetCreateFailure.State = {
-    val errorMsg = (customDenyMessage, userName) match {
-      case (Some(denyMessage), _) => denyMessage
-      case (_, Some(name)) => s"Some actions on this ${name} Tweet have been disabled by Twitter."
-      case _ => "Some actions on this Tweet have been disabled by Twitter."
+  def D sabledBy p Fa lure(
+    userNa : Opt on[Str ng],
+    customDeny ssage: Opt on[Str ng] = None
+  ): T etCreateFa lure.State = {
+    val errorMsg = (customDeny ssage, userNa ) match {
+      case (So (deny ssage), _) => deny ssage
+      case (_, So (na )) => s"So  act ons on t  ${na } T et have been d sabled by Tw ter."
+      case _ => "So  act ons on t  T et have been d sabled by Tw ter."
     }
-    TweetCreateFailure.State(TweetCreateState.DisabledByIpiPolicy, Some(errorMsg))
+    T etCreateFa lure.State(T etCreateState.D sabledBy p Pol cy, So (errorMsg))
   }
 
-  type Checker[T] = T => Future[Result]
+  type C cker[T] = T => Future[Result]
 
   /**
-   * Dummy spam checker that always allows requests.
+   * Dum  spam c cker that always allows requests.
    */
-  val DoNotCheckSpam: Checker[AnyRef] = _ => AllowFuture
+  val DoNotC ckSpam: C cker[AnyRef] = _ => AllowFuture
 
-  def gated[T](gate: Gate[Unit])(checker: Checker[T]): Checker[T] =
-    req => if (gate()) checker(req) else AllowFuture
+  def gated[T](gate: Gate[Un ])(c cker: C cker[T]): C cker[T] =
+    req =>  f (gate()) c cker(req) else AllowFuture
 
-  def selected[T](gate: Gate[Unit])(ifTrue: Checker[T], ifFalse: Checker[T]): Checker[T] =
-    req => gate.select(ifTrue, ifFalse)()(req)
+  def selected[T](gate: Gate[Un ])( fTrue: C cker[T],  fFalse: C cker[T]): C cker[T] =
+    req => gate.select( fTrue,  fFalse)()(req)
 
-  def withEffect[T](check: Checker[T], effect: T => Unit): T => Future[Result] = { t: T =>
+  def w hEffect[T](c ck: C cker[T], effect: T => Un ): T => Future[Result] = { t: T =>
     effect(t)
-    check(t)
+    c ck(t)
   }
 
   /**
-   * Wrapper that implicitly allows retweet or tweet creation when spam
-   * checking fails.
+   * Wrapper that  mpl c ly allows ret et or t et creat on w n spam
+   * c ck ng fa ls.
    */
-  def allowOnException[T](checker: Checker[T]): Checker[T] =
+  def allowOnExcept on[T](c cker: C cker[T]): C cker[T] =
     req =>
-      checker(req).rescue {
-        case e: TweetCreateFailure => Future.exception(e)
+      c cker(req).rescue {
+        case e: T etCreateFa lure => Future.except on(e)
         case _ => AllowFuture
       }
 
   /**
-   * Handler for scarecrow result to be used by a Checker.
+   * Handler for scarecrow result to be used by a C cker.
    */
   def handleScarecrowResult(
-    stats: StatsReceiver
+    stats: StatsRece ver
   )(
-    handler: PartialFunction[(TieredActionResult, Option[Bounce], Option[String]), Future[Result]]
-  ): Checker[TieredAction] =
+    handler: Part alFunct on[(T eredAct onResult, Opt on[Bounce], Opt on[Str ng]), Future[Result]]
+  ): C cker[T eredAct on] =
     result => {
-      stats.scope("scarecrow_result").counter(result.resultCode.name).incr()
-      Trace.record("com.twitter.tweetypie.Spam.scarecrow_result=" + result.resultCode.name)
+      stats.scope("scarecrow_result").counter(result.resultCode.na ). ncr()
+      Trace.record("com.tw ter.t etyp e.Spam.scarecrow_result=" + result.resultCode.na )
       /*
-       * A bot can return a custom DenyMessage
+       * A bot can return a custom Deny ssage
        *
-       * If it does, we substitute this for the 'message' in the ValidationError.
+       *  f   does,   subst ute t  for t  ' ssage'  n t  Val dat onError.
        */
-      val customDenyMessage: Option[String] = for {
+      val customDeny ssage: Opt on[Str ng] = for {
         botMakeResponse: BotMakerResponse <- result.botMakerResponse
         outputFeatures <- botMakeResponse.outputFeatures
-        denyMessageFeature: FeatureData <- outputFeatures.get("DenyMessage")
-        denyMessageFeatureValue <- denyMessageFeature.featureValue
-        denyMessage <- denyMessageFeatureValue match {
-          case stringValue: StrValue =>
-            Some(stringValue.strValue)
+        deny ssageFeature: FeatureData <- outputFeatures.get("Deny ssage")
+        deny ssageFeatureValue <- deny ssageFeature.featureValue
+        deny ssage <- deny ssageFeatureValue match {
+          case str ngValue: StrValue =>
+            So (str ngValue.strValue)
           case _ =>
             None
         }
-      } yield denyMessage
+      } y eld deny ssage
       handler.applyOrElse(
-        (result.resultCode, result.bounce, customDenyMessage),
-        withEffect(DoNotCheckSpam, (_: AnyRef) => stats.counter("unexpected_result").incr())
+        (result.resultCode, result.bounce, customDeny ssage),
+        w hEffect(DoNotC ckSpam, (_: AnyRef) => stats.counter("unexpected_result"). ncr())
       )
     }
 }

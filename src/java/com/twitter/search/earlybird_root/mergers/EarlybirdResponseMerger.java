@@ -1,503 +1,503 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.tw ter.search.earlyb rd_root. rgers;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+ mport java.ut l.Collect ons;
+ mport java.ut l.HashSet;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
 
-import scala.runtime.BoxedUnit;
+ mport scala.runt  .BoxedUn ;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Opt onal;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect. mmutableL st;
+ mport com.google.common.collect.L sts;
+ mport com.google.common.collect.Maps;
+ mport com.google.common.collect.Sets;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.util.FinagleUtil;
-import com.twitter.search.common.util.earlybird.EarlybirdResponseMergeUtil;
-import com.twitter.search.common.util.earlybird.ResultsUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdDebugInfo;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.collectors.MultiwayMergeCollector;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestUtil;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.common.ut l.F nagleUt l;
+ mport com.tw ter.search.common.ut l.earlyb rd.Earlyb rdResponse rgeUt l;
+ mport com.tw ter.search.common.ut l.earlyb rd.ResultsUt l;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdDebug nfo;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResults;
+ mport com.tw ter.search.earlyb rd_root.collectors.Mult way rgeCollector;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdFeatureSc ma rger;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestType;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestUt l;
+ mport com.tw ter.ut l.Funct on;
+ mport com.tw ter.ut l.Future;
 
 /**
- * Base EarlybirdResponseMerger containing basic logic to merge EarlybirdResponse objects
+ * Base Earlyb rdResponse rger conta n ng bas c log c to  rge Earlyb rdResponse objects
  */
-public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMergePredicate {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdResponseMerger.class);
-  private static final Logger MIN_SEARCHED_STATUS_ID_LOGGER =
-      LoggerFactory.getLogger("MinSearchedStatusIdLogger");
+publ c abstract class Earlyb rdResponse rger  mple nts EarlyTerm nateT er rgePred cate {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rdResponse rger.class);
+  pr vate stat c f nal Logger M N_SEARCHED_STATUS_ D_LOGGER =
+      LoggerFactory.getLogger("M nSearc dStatus dLogger");
 
-  private static final SearchCounter NO_SEARCH_RESULT_COUNTER =
+  pr vate stat c f nal SearchCounter NO_SEARCH_RESULT_COUNTER =
       SearchCounter.export("no_search_result_count");
-  private static final SearchCounter NO_RESPONSES_TO_MERGE =
-      SearchCounter.export("no_responses_to_merge");
-  private static final SearchCounter EARLYBIRD_RESPONSE_NO_MORE_RESULTS =
-      SearchCounter.export("merger_earlybird_response_no_more_results");
-  private static final String PARTITION_OR_TIER_COUNTER_NAME_FORMAT =
-      "merger_waited_for_response_from_%s_counter";
-  private static final String PARTITION_OR_TIER_ERROR_COUNTER_NAME_FORMAT =
-      "merger_num_error_responses_from_%s";
-  private static final String PARTITION_OR_TIER_RESPONSE_CODE_COUNTER_NAME_FORMAT =
-      "merger_earlybird_response_code_from_%s_%s";
+  pr vate stat c f nal SearchCounter NO_RESPONSES_TO_MERGE =
+      SearchCounter.export("no_responses_to_ rge");
+  pr vate stat c f nal SearchCounter EARLYB RD_RESPONSE_NO_MORE_RESULTS =
+      SearchCounter.export(" rger_earlyb rd_response_no_more_results");
+  pr vate stat c f nal Str ng PART T ON_OR_T ER_COUNTER_NAME_FORMAT =
+      " rger_wa ed_for_response_from_%s_counter";
+  pr vate stat c f nal Str ng PART T ON_OR_T ER_ERROR_COUNTER_NAME_FORMAT =
+      " rger_num_error_responses_from_%s";
+  pr vate stat c f nal Str ng PART T ON_OR_T ER_RESPONSE_CODE_COUNTER_NAME_FORMAT =
+      " rger_earlyb rd_response_code_from_%s_%s";
 
-  protected final EarlybirdResponseDebugMessageBuilder responseMessageBuilder;
-  protected final EarlybirdRequestContext requestContext;
-  protected final ImmutableList<Future<EarlybirdResponse>> responses;
+  protected f nal Earlyb rdResponseDebug ssageBu lder response ssageBu lder;
+  protected f nal Earlyb rdRequestContext requestContext;
+  protected f nal  mmutableL st<Future<Earlyb rdResponse>> responses;
   protected AccumulatedResponses accumulatedResponses;
 
 
-  @VisibleForTesting
-  static final Map<EarlybirdRequestType, SearchCounter> MERGER_CREATED_STATS =
-      perRequestTypeCounterImmutableMap("earlybird_response_merger_%s_created_count");
+  @V s bleForTest ng
+  stat c f nal Map<Earlyb rdRequestType, SearchCounter> MERGER_CREATED_STATS =
+      perRequestTypeCounter mmutableMap("earlyb rd_response_ rger_%s_created_count");
 
-  @VisibleForTesting
-  static final Map<EarlybirdRequestType, SearchCounter>
-    MIN_SEARCHED_STATUS_ID_LARGER_THAN_REQUEST_MAX_ID = perRequestTypeCounterImmutableMap(
-        "merger_%s_min_searched_status_id_larger_than_request_max_id");
+  @V s bleForTest ng
+  stat c f nal Map<Earlyb rdRequestType, SearchCounter>
+    M N_SEARCHED_STATUS_ D_LARGER_THAN_REQUEST_MAX_ D = perRequestTypeCounter mmutableMap(
+        " rger_%s_m n_searc d_status_ d_larger_than_request_max_ d");
 
-  @VisibleForTesting
-  static final Map<EarlybirdRequestType, SearchCounter>
-    MIN_SEARCHED_STATUS_ID_LARGER_THAN_REQUEST_UNTIL_TIME = perRequestTypeCounterImmutableMap(
-        "merger_%s_min_searched_status_id_larger_than_request_until_time");
+  @V s bleForTest ng
+  stat c f nal Map<Earlyb rdRequestType, SearchCounter>
+    M N_SEARCHED_STATUS_ D_LARGER_THAN_REQUEST_UNT L_T ME = perRequestTypeCounter mmutableMap(
+        " rger_%s_m n_searc d_status_ d_larger_than_request_unt l_t  ");
 
-  private static Map<EarlybirdRequestType, SearchCounter> perRequestTypeCounterImmutableMap(
-      String statPattern) {
-    Map<EarlybirdRequestType, SearchCounter> statsMap = Maps.newEnumMap(EarlybirdRequestType.class);
-    for (EarlybirdRequestType earlybirdRequestType : EarlybirdRequestType.values()) {
-      String statName = String.format(statPattern, earlybirdRequestType.getNormalizedName());
-      statsMap.put(earlybirdRequestType, SearchCounter.export(statName));
+  pr vate stat c Map<Earlyb rdRequestType, SearchCounter> perRequestTypeCounter mmutableMap(
+      Str ng statPattern) {
+    Map<Earlyb rdRequestType, SearchCounter> statsMap = Maps.newEnumMap(Earlyb rdRequestType.class);
+    for (Earlyb rdRequestType earlyb rdRequestType : Earlyb rdRequestType.values()) {
+      Str ng statNa  = Str ng.format(statPattern, earlyb rdRequestType.getNormal zedNa ());
+      statsMap.put(earlyb rdRequestType, SearchCounter.export(statNa ));
     }
 
-    return Maps.immutableEnumMap(statsMap);
+    return Maps. mmutableEnumMap(statsMap);
   }
 
-  public static final com.google.common.base.Function<EarlybirdResponse, Map<Long, Integer>>
-    HIT_COUNT_GETTER =
+  publ c stat c f nal com.google.common.base.Funct on<Earlyb rdResponse, Map<Long,  nteger>>
+    H T_COUNT_GETTER =
       response -> response.getSearchResults() == null
         ? null
-        : response.getSearchResults().getHitCounts();
+        : response.getSearchResults().getH Counts();
 
-  private final ChainMerger chainMerger;
+  pr vate f nal Cha n rger cha n rger;
 
-  private class ChainMerger {
-    private final EarlybirdRequestContext requestContext;
-    private final ResponseAccumulator responseAccumulator;
-    private final List<Future<EarlybirdResponse>> responses;
-    private final EarlybirdResponseDebugMessageBuilder responseMessageBuilder;
-    private int currentFutureIndex = -1;
+  pr vate class Cha n rger {
+    pr vate f nal Earlyb rdRequestContext requestContext;
+    pr vate f nal ResponseAccumulator responseAccumulator;
+    pr vate f nal L st<Future<Earlyb rdResponse>> responses;
+    pr vate f nal Earlyb rdResponseDebug ssageBu lder response ssageBu lder;
+    pr vate  nt currentFuture ndex = -1;
 
-    public ChainMerger(EarlybirdRequestContext requestContext,
+    publ c Cha n rger(Earlyb rdRequestContext requestContext,
                        ResponseAccumulator responseAccumulator,
-                       List<Future<EarlybirdResponse>> responses,
-                       EarlybirdResponseDebugMessageBuilder responseMessageBuilder) {
-      this.requestContext = requestContext;
-      this.responseAccumulator = responseAccumulator;
-      this.responses = responses;
-      this.responseMessageBuilder = responseMessageBuilder;
+                       L st<Future<Earlyb rdResponse>> responses,
+                       Earlyb rdResponseDebug ssageBu lder response ssageBu lder) {
+      t .requestContext = requestContext;
+      t .responseAccumulator = responseAccumulator;
+      t .responses = responses;
+      t .response ssageBu lder = response ssageBu lder;
     }
 
-    public Future<EarlybirdResponse> merge() {
+    publ c Future<Earlyb rdResponse>  rge() {
       // 'responseFutures' should always be sorted.
-      // When returned by EarlybirdScatterGather service, the responses are sorted by partition ID.
-      // When returned by EarlybirdChainedScatterGatherService,
-      // responses are sorted descending by tier start date. See:
-      // com.twitter.search.earlybird_root.EarlybirdChainedScatterGatherService.TIER_COMPARATOR.
+      // W n returned by Earlyb rdScatterGat r serv ce, t  responses are sorted by part  on  D.
+      // W n returned by Earlyb rdCha nedScatterGat rServ ce,
+      // responses are sorted descend ng by t er start date. See:
+      // com.tw ter.search.earlyb rd_root.Earlyb rdCha nedScatterGat rServ ce.T ER_COMPARATOR.
       //
-      // When merging responses from partitions, we want to wait for responses from all partitions,
-      // so the order in which we wait for those results does not matter. When merging responses
-      // from tiers, we want to wait for the response from the latest. If we don't need any more
-      // responses to compute the final response, then we don't need to wait for the responses from
-      // other tiers. If we cannot terminate early, then we want to wait for the responses from the
-      // second tier, and so on.
+      // W n  rg ng responses from part  ons,   want to wa  for responses from all part  ons,
+      // so t  order  n wh ch   wa  for those results does not matter. W n  rg ng responses
+      // from t ers,   want to wa  for t  response from t  latest.  f   don't need any more
+      // responses to compute t  f nal response, t n   don't need to wa  for t  responses from
+      // ot r t ers.  f   cannot term nate early, t n   want to wa  for t  responses from t 
+      // second t er, and so on.
       //
-      // We do not need to have any explicit synchronization, because:
-      //   1. The callbacks for future_i are set by the flatMap() callback on future_{i-1} (when
-      //      recursively calling merge() inside the flatMap()).
-      //   2. Before setting the callbacks on future_i, future_{i-1}.flatMap() adds the response
-      //      results to mergeHelper.
-      //   3. When the callbacks on future_i are set, the memory barrier between
-      //      thread_running_future_{i-1} and thread_running_future_i is crossed. This guarantees
-      //      that thread_running_future_i will see the updates to mergeHelper before it sees the
-      //      callbacks. (Or thread_running_future_{i-1} == thread_running_future_i, in which case
-      //      synchronization is not an issue, and correctness is guarateed by the order in which
-      //      things will run.)
-      //   4. The same reasoning applies to currentFutureIndex.
+      //   do not need to have any expl c  synchron zat on, because:
+      //   1. T  callbacks for future_  are set by t  flatMap() callback on future_{ -1} (w n
+      //      recurs vely call ng  rge()  ns de t  flatMap()).
+      //   2. Before sett ng t  callbacks on future_ , future_{ -1}.flatMap() adds t  response
+      //      results to  rge lper.
+      //   3. W n t  callbacks on future_  are set, t   mory barr er bet en
+      //      thread_runn ng_future_{ -1} and thread_runn ng_future_   s crossed. T  guarantees
+      //      that thread_runn ng_future_  w ll see t  updates to  rge lper before   sees t 
+      //      callbacks. (Or thread_runn ng_future_{ -1} == thread_runn ng_future_ ,  n wh ch case
+      //      synchron zat on  s not an  ssue, and correctness  s guarateed by t  order  n wh ch
+      //      th ngs w ll run.)
+      //   4. T  sa  reason ng appl es to currentFuture ndex.
 
-      ++currentFutureIndex;
-      if (currentFutureIndex >= responses.size()) {
-        return Future.value(getTimedMergedResponse(responseAccumulator.getAccumulatedResults()));
+      ++currentFuture ndex;
+       f (currentFuture ndex >= responses.s ze()) {
+        return Future.value(getT  d rgedResponse(responseAccumulator.getAccumulatedResults()));
       }
 
-      final String partitionTierName =
-          responseAccumulator.getNameForLogging(currentFutureIndex, responses.size());
-      final String nameForEarlybirdResponseCodeStats =
-          responseAccumulator.getNameForEarlybirdResponseCodeStats(
-              currentFutureIndex, responses.size());
+      f nal Str ng part  onT erNa  =
+          responseAccumulator.getNa ForLogg ng(currentFuture ndex, responses.s ze());
+      f nal Str ng na ForEarlyb rdResponseCodeStats =
+          responseAccumulator.getNa ForEarlyb rdResponseCodeStats(
+              currentFuture ndex, responses.s ze());
 
-      // If a tier in the chain throws an exception, convert it to a null response, and let the
-      // mergeHelper handle it appropriately.
-      return responses.get(currentFutureIndex)
-        .handle(Function.func(t -> {
-          if (FinagleUtil.isCancelException(t)) {
-            return new EarlybirdResponse()
-                .setResponseCode(EarlybirdResponseCode.CLIENT_CANCEL_ERROR);
-          } else if (FinagleUtil.isTimeoutException(t)) {
-            return new EarlybirdResponse()
-                .setResponseCode(EarlybirdResponseCode.SERVER_TIMEOUT_ERROR);
+      //  f a t er  n t  cha n throws an except on, convert   to a null response, and let t 
+      //  rge lper handle   appropr ately.
+      return responses.get(currentFuture ndex)
+        .handle(Funct on.func(t -> {
+           f (F nagleUt l. sCancelExcept on(t)) {
+            return new Earlyb rdResponse()
+                .setResponseCode(Earlyb rdResponseCode.CL ENT_CANCEL_ERROR);
+          } else  f (F nagleUt l. sT  outExcept on(t)) {
+            return new Earlyb rdResponse()
+                .setResponseCode(Earlyb rdResponseCode.SERVER_T MEOUT_ERROR);
           } else {
             SearchCounter.export(
-                String.format(PARTITION_OR_TIER_ERROR_COUNTER_NAME_FORMAT, partitionTierName))
-                .increment();
-            if (responseMessageBuilder.isDebugMode()) {
-              responseMessageBuilder.debugAndLogWarning(
-                  String.format("[%s] failed, exception [%s]",
-                      partitionTierName, t.toString()));
+                Str ng.format(PART T ON_OR_T ER_ERROR_COUNTER_NAME_FORMAT, part  onT erNa ))
+                . ncre nt();
+             f (response ssageBu lder. sDebugMode()) {
+              response ssageBu lder.debugAndLogWarn ng(
+                  Str ng.format("[%s] fa led, except on [%s]",
+                      part  onT erNa , t.toStr ng()));
             }
-            LOG.warn("exception response from: " + partitionTierName, t);
-            return new EarlybirdResponse()
-                .setResponseCode(EarlybirdResponseCode.TRANSIENT_ERROR);
+            LOG.warn("except on response from: " + part  onT erNa , t);
+            return new Earlyb rdResponse()
+                .setResponseCode(Earlyb rdResponseCode.TRANS ENT_ERROR);
           }
         }))
-        .flatMap(Function.func(response -> {
-          Preconditions.checkNotNull(response);
+        .flatMap(Funct on.func(response -> {
+          Precond  ons.c ckNotNull(response);
 
           SearchCounter.export(
-              String.format(PARTITION_OR_TIER_RESPONSE_CODE_COUNTER_NAME_FORMAT,
-                            nameForEarlybirdResponseCodeStats,
-                            response.getResponseCode().name().toLowerCase()))
-              .increment();
+              Str ng.format(PART T ON_OR_T ER_RESPONSE_CODE_COUNTER_NAME_FORMAT,
+                            na ForEarlyb rdResponseCodeStats,
+                            response.getResponseCode().na ().toLo rCase()))
+              . ncre nt();
 
-          if ((response.getResponseCode() != EarlybirdResponseCode.PARTITION_SKIPPED)
-              && (response.getResponseCode() != EarlybirdResponseCode.TIER_SKIPPED)) {
+           f ((response.getResponseCode() != Earlyb rdResponseCode.PART T ON_SK PPED)
+              && (response.getResponseCode() != Earlyb rdResponseCode.T ER_SK PPED)) {
             SearchCounter.export(
-                String.format(PARTITION_OR_TIER_COUNTER_NAME_FORMAT, partitionTierName))
-              .increment();
+                Str ng.format(PART T ON_OR_T ER_COUNTER_NAME_FORMAT, part  onT erNa ))
+              . ncre nt();
           }
 
-          if (response.getResponseCode() == EarlybirdResponseCode.CLIENT_CANCEL_ERROR) {
-            // the request has been cancelled, no need to proceed
+           f (response.getResponseCode() == Earlyb rdResponseCode.CL ENT_CANCEL_ERROR) {
+            // t  request has been cancelled, no need to proceed
             return Future.value(response);
           }
 
-          rewriteResponseCodeIfSearchResultsMissing(requestContext, partitionTierName, response);
-          responseMessageBuilder.logResponseDebugInfo(
+          rewr eResponseCode fSearchResultsM ss ng(requestContext, part  onT erNa , response);
+          response ssageBu lder.logResponseDebug nfo(
               requestContext.getRequest(),
-              partitionTierName,
+              part  onT erNa ,
               response);
           responseAccumulator.addResponse(
-              responseMessageBuilder,
+              response ssageBu lder,
               requestContext.getRequest(),
               response);
 
-          if (responseAccumulator.shouldEarlyTerminateMerge(EarlybirdResponseMerger.this)) {
-            return Future.value(getTimedMergedResponse(
+           f (responseAccumulator.shouldEarlyTerm nate rge(Earlyb rdResponse rger.t )) {
+            return Future.value(getT  d rgedResponse(
                 responseAccumulator.getAccumulatedResults()));
           }
-          return merge();
+          return  rge();
         }));
     }
   }
 
-  private void rewriteResponseCodeIfSearchResultsMissing(
-      EarlybirdRequestContext earlybirdRequestContext,
-      String partitionTierName,
-      EarlybirdResponse response) {
-    // We always require searchResults to be set, even for term stats and facet requests.
-    // This is because searchResults contains important info such as pagination cursors
-    // like minSearchStatusId and minSearchedTimeSinceEpoch.
-    // We expect all successful responses to have searchResults set.
-    if (response.isSetResponseCode()
-        && response.getResponseCode() == EarlybirdResponseCode.SUCCESS
+  pr vate vo d rewr eResponseCode fSearchResultsM ss ng(
+      Earlyb rdRequestContext earlyb rdRequestContext,
+      Str ng part  onT erNa ,
+      Earlyb rdResponse response) {
+    //   always requ re searchResults to be set, even for term stats and facet requests.
+    // T   s because searchResults conta ns  mportant  nfo such as pag nat on cursors
+    // l ke m nSearchStatus d and m nSearc dT  S nceEpoch.
+    //   expect all successful responses to have searchResults set.
+     f (response. sSetResponseCode()
+        && response.getResponseCode() == Earlyb rdResponseCode.SUCCESS
         && response.getSearchResults() == null) {
-      NO_SEARCH_RESULT_COUNTER.increment();
-      LOG.warn("Received Earlybird response with null searchResults from [{}]"
-               + " EarlybirdRequest [{}] EarlybirdResponse [{}] ",
-               partitionTierName, earlybirdRequestContext.getRequest(), response);
-      response.setResponseCode(EarlybirdResponseCode.TRANSIENT_ERROR);
+      NO_SEARCH_RESULT_COUNTER. ncre nt();
+      LOG.warn("Rece ved Earlyb rd response w h null searchResults from [{}]"
+               + " Earlyb rdRequest [{}] Earlyb rdResponse [{}] ",
+               part  onT erNa , earlyb rdRequestContext.getRequest(), response);
+      response.setResponseCode(Earlyb rdResponseCode.TRANS ENT_ERROR);
     }
   }
 
   /**
-   * Construct a EarlybirdResponseMerger to merge responses from multiple partitions or tiers
+   * Construct a Earlyb rdResponse rger to  rge responses from mult ple part  ons or t ers
    * based on mode.
    */
-  EarlybirdResponseMerger(EarlybirdRequestContext requestContext,
-                          List<Future<EarlybirdResponse>> responses,
+  Earlyb rdResponse rger(Earlyb rdRequestContext requestContext,
+                          L st<Future<Earlyb rdResponse>> responses,
                           ResponseAccumulator responseAccumulator) {
-    this.requestContext = requestContext;
-    this.responses = ImmutableList.copyOf(responses);
-    this.responseMessageBuilder =
-        new EarlybirdResponseDebugMessageBuilder(requestContext.getRequest());
-    this.chainMerger = new ChainMerger(requestContext, responseAccumulator, responses,
-        responseMessageBuilder);
+    t .requestContext = requestContext;
+    t .responses =  mmutableL st.copyOf(responses);
+    t .response ssageBu lder =
+        new Earlyb rdResponseDebug ssageBu lder(requestContext.getRequest());
+    t .cha n rger = new Cha n rger(requestContext, responseAccumulator, responses,
+        response ssageBu lder);
   }
 
   /**
-   * Get a response merger to merge the given responses.
+   * Get a response  rger to  rge t  g ven responses.
    */
-  public static EarlybirdResponseMerger getResponseMerger(
-      EarlybirdRequestContext requestContext,
-      List<Future<EarlybirdResponse>> responses,
-      ResponseAccumulator helper,
-      EarlybirdCluster cluster,
-      EarlybirdFeatureSchemaMerger featureSchemaMerger,
-      int numPartitions) {
-    EarlybirdRequestType type = requestContext.getEarlybirdRequestType();
-    MERGER_CREATED_STATS.get(type).increment();
-    switch (type) {
+  publ c stat c Earlyb rdResponse rger getResponse rger(
+      Earlyb rdRequestContext requestContext,
+      L st<Future<Earlyb rdResponse>> responses,
+      ResponseAccumulator  lper,
+      Earlyb rdCluster cluster,
+      Earlyb rdFeatureSc ma rger featureSc ma rger,
+       nt numPart  ons) {
+    Earlyb rdRequestType type = requestContext.getEarlyb rdRequestType();
+    MERGER_CREATED_STATS.get(type). ncre nt();
+    sw ch (type) {
       case FACETS:
-        return new FacetResponseMerger(requestContext, responses, helper);
+        return new FacetResponse rger(requestContext, responses,  lper);
       case TERM_STATS:
-        return new TermStatisticsResponseMerger(requestContext, responses, helper);
+        return new TermStat st csResponse rger(requestContext, responses,  lper);
       case RECENCY:
-        return new RecencyResponseMerger(requestContext, responses, helper, featureSchemaMerger);
-      case STRICT_RECENCY:
-        return new StrictRecencyResponseMerger(
-            requestContext, responses, helper, featureSchemaMerger, cluster);
+        return new RecencyResponse rger(requestContext, responses,  lper, featureSc ma rger);
+      case STR CT_RECENCY:
+        return new Str ctRecencyResponse rger(
+            requestContext, responses,  lper, featureSc ma rger, cluster);
       case RELEVANCE:
-        return new RelevanceResponseMerger(
-            requestContext, responses, helper, featureSchemaMerger, numPartitions);
+        return new RelevanceResponse rger(
+            requestContext, responses,  lper, featureSc ma rger, numPart  ons);
       case TOP_TWEETS:
-        return new TopTweetsResponseMerger(requestContext, responses, helper);
+        return new TopT etsResponse rger(requestContext, responses,  lper);
       default:
-        throw new RuntimeException("EarlybirdRequestType " + type + "is not supported by merge");
+        throw new Runt  Except on("Earlyb rdRequestType " + type + " s not supported by  rge");
     }
   }
 
   /**
-   * This method can perform two types of merges:
-   *   1. merge responses within a tier from different partitions.
-   *   2. merge responses from multiple tiers.
+   * T   thod can perform two types of  rges:
+   *   1.  rge responses w h n a t er from d fferent part  ons.
+   *   2.  rge responses from mult ple t ers.
    */
-  public final Future<EarlybirdResponse> merge() {
-    return chainMerger.merge()
-        .onSuccess(checkMinSearchedStatusIdFunction(
-                 "max_id",
-                 EarlybirdRequestUtil.getRequestMaxId(requestContext.getParsedQuery()),
-                 MIN_SEARCHED_STATUS_ID_LARGER_THAN_REQUEST_MAX_ID.get(
-                     requestContext.getEarlybirdRequestType())))
-        .onSuccess(checkMinSearchedStatusIdFunction(
-                 "until_time",
-                 EarlybirdRequestUtil.getRequestMaxIdFromUntilTime(requestContext.getParsedQuery()),
-                 MIN_SEARCHED_STATUS_ID_LARGER_THAN_REQUEST_UNTIL_TIME.get(
-                     requestContext.getEarlybirdRequestType())));
+  publ c f nal Future<Earlyb rdResponse>  rge() {
+    return cha n rger. rge()
+        .onSuccess(c ckM nSearc dStatus dFunct on(
+                 "max_ d",
+                 Earlyb rdRequestUt l.getRequestMax d(requestContext.getParsedQuery()),
+                 M N_SEARCHED_STATUS_ D_LARGER_THAN_REQUEST_MAX_ D.get(
+                     requestContext.getEarlyb rdRequestType())))
+        .onSuccess(c ckM nSearc dStatus dFunct on(
+                 "unt l_t  ",
+                 Earlyb rdRequestUt l.getRequestMax dFromUnt lT  (requestContext.getParsedQuery()),
+                 M N_SEARCHED_STATUS_ D_LARGER_THAN_REQUEST_UNT L_T ME.get(
+                     requestContext.getEarlyb rdRequestType())));
   }
 
   /**
-   * Returns the function that checks if the minSearchedStatusID on the merged response is higher
-   * than the max ID in the request.
+   * Returns t  funct on that c cks  f t  m nSearc dStatus D on t   rged response  s h g r
+   * than t  max  D  n t  request.
    */
-  private Function<EarlybirdResponse, BoxedUnit> checkMinSearchedStatusIdFunction(
-      final String operator, final Optional<Long> requestMaxId, final SearchCounter stat) {
-    return Function.cons(mergedResponse -> {
-      if (requestMaxId.isPresent()
-          && requestMaxId.get() != Long.MAX_VALUE
-          && (mergedResponse.getResponseCode() == EarlybirdResponseCode.SUCCESS)
-          && mergedResponse.isSetSearchResults()
-          && mergedResponse.getSearchResults().isSetMinSearchedStatusID()) {
-        long minSearchedStatusId = mergedResponse.getSearchResults().getMinSearchedStatusID();
-        // We sometimes set minSearchedStatusId = max_id + 1 when a request times out even
+  pr vate Funct on<Earlyb rdResponse, BoxedUn > c ckM nSearc dStatus dFunct on(
+      f nal Str ng operator, f nal Opt onal<Long> requestMax d, f nal SearchCounter stat) {
+    return Funct on.cons( rgedResponse -> {
+       f (requestMax d. sPresent()
+          && requestMax d.get() != Long.MAX_VALUE
+          && ( rgedResponse.getResponseCode() == Earlyb rdResponseCode.SUCCESS)
+          &&  rgedResponse. sSetSearchResults()
+          &&  rgedResponse.getSearchResults(). sSetM nSearc dStatus D()) {
+        long m nSearc dStatus d =  rgedResponse.getSearchResults().getM nSearc dStatus D();
+        //   so t  s set m nSearc dStatus d = max_ d + 1 w n a request t  s out even
         // before any search happens.
-        // Check SEARCH-10134 for more details.
-        if (minSearchedStatusId > requestMaxId.get() + 1) {
-          stat.increment();
-          String logMessage = "Response has a minSearchedStatusID ({}) larger than request "
+        // C ck SEARCH-10134 for more deta ls.
+         f (m nSearc dStatus d > requestMax d.get() + 1) {
+          stat. ncre nt();
+          Str ng log ssage = "Response has a m nSearc dStatus D ({}) larger than request "
               + operator + " ({})."
               + "\nrequest type: {}"
               + "\nrequest: {}"
-              + "\nmerged response: {}"
+              + "\n rged response: {}"
               + "\nSuccessful accumulated responses:";
-          List<Object> logMessageParams = Lists.newArrayList();
-          logMessageParams.add(minSearchedStatusId);
-          logMessageParams.add(requestMaxId.get());
-          logMessageParams.add(requestContext.getEarlybirdRequestType());
-          logMessageParams.add(requestContext.getRequest());
-          logMessageParams.add(mergedResponse);
-          for (EarlybirdResponse response : accumulatedResponses.getSuccessResponses()) {
-            logMessage += "\naccumulated response: {}";
-            logMessageParams.add(response);
+          L st<Object> log ssageParams = L sts.newArrayL st();
+          log ssageParams.add(m nSearc dStatus d);
+          log ssageParams.add(requestMax d.get());
+          log ssageParams.add(requestContext.getEarlyb rdRequestType());
+          log ssageParams.add(requestContext.getRequest());
+          log ssageParams.add( rgedResponse);
+          for (Earlyb rdResponse response : accumulatedResponses.getSuccessResponses()) {
+            log ssage += "\naccumulated response: {}";
+            log ssageParams.add(response);
           }
-          MIN_SEARCHED_STATUS_ID_LOGGER.warn(logMessage, logMessageParams.toArray());
+          M N_SEARCHED_STATUS_ D_LOGGER.warn(log ssage, log ssageParams.toArray());
         }
       }
     });
   }
 
-  private EarlybirdResponse getTimedMergedResponse(AccumulatedResponses accResponses) {
-    long start = System.nanoTime();
+  pr vate Earlyb rdResponse getT  d rgedResponse(AccumulatedResponses accResponses) {
+    long start = System.nanoT  ();
     try {
-      return getMergedResponse(accResponses);
-    } finally {
-      long totalTime = System.nanoTime() - start;
-      getMergedResponseTimer().timerIncrement(totalTime);
+      return get rgedResponse(accResponses);
+    } f nally {
+      long totalT   = System.nanoT  () - start;
+      get rgedResponseT  r().t  r ncre nt(totalT  );
     }
   }
 
-  private EarlybirdResponse initializeMergedSuccessResponseFromAccumulatedResponses() {
-    EarlybirdResponse mergedResponse = new EarlybirdResponse();
+  pr vate Earlyb rdResponse  n  al ze rgedSuccessResponseFromAccumulatedResponses() {
+    Earlyb rdResponse  rgedResponse = new Earlyb rdResponse();
 
-    AccumulatedResponses.PartitionCounts partitionCounts =
-        accumulatedResponses.getPartitionCounts();
+    AccumulatedResponses.Part  onCounts part  onCounts =
+        accumulatedResponses.getPart  onCounts();
 
-    mergedResponse.setNumPartitions(partitionCounts.getNumPartitions())
-        .setNumSuccessfulPartitions(partitionCounts.getNumSuccessfulPartitions())
-        .setPerTierResponse(partitionCounts.getPerTierResponse())
-        .setNumSearchedSegments(accumulatedResponses.getNumSearchedSegments());
+     rgedResponse.setNumPart  ons(part  onCounts.getNumPart  ons())
+        .setNumSuccessfulPart  ons(part  onCounts.getNumSuccessfulPart  ons())
+        .setPerT erResponse(part  onCounts.getPerT erResponse())
+        .setNumSearc dSeg nts(accumulatedResponses.getNumSearc dSeg nts());
 
-    mergedResponse.setEarlyTerminationInfo(accumulatedResponses.getMergedEarlyTerminationInfo());
-    mergedResponse.setResponseCode(EarlybirdResponseCode.SUCCESS);
+     rgedResponse.setEarlyTerm nat on nfo(accumulatedResponses.get rgedEarlyTerm nat on nfo());
+     rgedResponse.setResponseCode(Earlyb rdResponseCode.SUCCESS);
 
-    return mergedResponse;
+    return  rgedResponse;
   }
 
-  private EarlybirdResponse getMergedResponse(AccumulatedResponses accResponses) {
+  pr vate Earlyb rdResponse get rgedResponse(AccumulatedResponses accResponses) {
     accumulatedResponses = accResponses;
-    EarlybirdResponse mergedResponse;
+    Earlyb rdResponse  rgedResponse;
 
-    if (accumulatedResponses.getSuccessResponses().isEmpty()
+     f (accumulatedResponses.getSuccessResponses(). sEmpty()
         && !accumulatedResponses.foundError()) {
-      // No successful or error responses. This means that all tiers / partitions are intentionally
-      // skipped. Return a blank successful response.
-      NO_RESPONSES_TO_MERGE.increment();
-      mergedResponse = new EarlybirdResponse()
-          .setResponseCode(EarlybirdResponseCode.SUCCESS)
-          .setSearchResults(new ThriftSearchResults())
-          .setDebugString("No responses to merge, probably because all tiers/partitions "
-              + "were skipped.");
-    } else if (accumulatedResponses.isMergingAcrossTiers()) {
-      mergedResponse = getMergedResponseAcrossTiers();
+      // No successful or error responses. T   ans that all t ers / part  ons are  ntent onally
+      // sk pped. Return a blank successful response.
+      NO_RESPONSES_TO_MERGE. ncre nt();
+       rgedResponse = new Earlyb rdResponse()
+          .setResponseCode(Earlyb rdResponseCode.SUCCESS)
+          .setSearchResults(new Thr ftSearchResults())
+          .setDebugStr ng("No responses to  rge, probably because all t ers/part  ons "
+              + " re sk pped.");
+    } else  f (accumulatedResponses. s rg ngAcrossT ers()) {
+       rgedResponse = get rgedResponseAcrossT ers();
     } else {
-      mergedResponse = getMergedResponseAcrossPartitions();
+       rgedResponse = get rgedResponseAcrossPart  ons();
     }
 
-    saveMergedDebugString(mergedResponse);
-    return mergedResponse;
+    save rgedDebugStr ng( rgedResponse);
+    return  rgedResponse;
   }
 
-  private EarlybirdResponse getMergedResponseAcrossTiers() {
-    Preconditions.checkState(
-        !accumulatedResponses.getSuccessResponses().isEmpty()
+  pr vate Earlyb rdResponse get rgedResponseAcrossT ers() {
+    Precond  ons.c ckState(
+        !accumulatedResponses.getSuccessResponses(). sEmpty()
             || accumulatedResponses.foundError());
 
-    // When merging across tiers, if we have one failed tier, we should fail the whole
-    // response. Note that due to early termination, if a tier that is old fails
-    // but the newer tiers return enough results, the failed tier won't show up
-    // here in accumulatedResponses -- the only tiers that show up here
-    // will be successful.
-    if (accumulatedResponses.foundError()) {
-      // The TierResponseAccumulator early terminates on the first error, so we should
-      // never get more than one error. This means that the getMergedErrorResponse will
-      // return an error response with the error code of that one error, and will never
-      // have to decide which error response to return if the error responses are all
-      // different.
+    // W n  rg ng across t ers,  f   have one fa led t er,   should fa l t  whole
+    // response. Note that due to early term nat on,  f a t er that  s old fa ls
+    // but t  ne r t ers return enough results, t  fa led t er won't show up
+    //  re  n accumulatedResponses -- t  only t ers that show up  re
+    // w ll be successful.
+     f (accumulatedResponses.foundError()) {
+      // T  T erResponseAccumulator early term nates on t  f rst error, so   should
+      // never get more than one error. T   ans that t  get rgedErrorResponse w ll
+      // return an error response w h t  error code of that one error, and w ll never
+      // have to dec de wh ch error response to return  f t  error responses are all
+      // d fferent.
 
-      // Perhaps we should just return accumulatedResponses.getErrorResponses().get(0);
-      Preconditions.checkState(accumulatedResponses.getErrorResponses().size() == 1);
-      return accumulatedResponses.getMergedErrorResponse();
+      // Perhaps   should just return accumulatedResponses.getErrorResponses().get(0);
+      Precond  ons.c ckState(accumulatedResponses.getErrorResponses().s ze() == 1);
+      return accumulatedResponses.get rgedErrorResponse();
     } else {
-      EarlybirdResponse mergedResponse = initializeMergedSuccessResponseFromAccumulatedResponses();
-      return internalMerge(mergedResponse);
+      Earlyb rdResponse  rgedResponse =  n  al ze rgedSuccessResponseFromAccumulatedResponses();
+      return  nternal rge( rgedResponse);
     }
   }
 
-  private EarlybirdResponse getMergedResponseAcrossPartitions() {
-    Preconditions.checkState(
-        !accumulatedResponses.getSuccessResponses().isEmpty()
+  pr vate Earlyb rdResponse get rgedResponseAcrossPart  ons() {
+    Precond  ons.c ckState(
+        !accumulatedResponses.getSuccessResponses(). sEmpty()
             || accumulatedResponses.foundError());
 
-    EarlybirdResponse mergedResponse;
+    Earlyb rdResponse  rgedResponse;
 
-    // Unlike tier merging, one failed response doesn't mean the merged response should
-    // fail. If we have successful responses we can check the success ratio and if its
-    // good we can still return a successful merge.
-    if (!accumulatedResponses.getSuccessResponses().isEmpty()) {
-      // We have at least one successful response, but still need to check the success ratio.
-      // mergedResponse is a SUCCESS response after this call, but we will
-      // set it to failure below if necessary.
-      mergedResponse = initializeMergedSuccessResponseFromAccumulatedResponses();
+    // Unl ke t er  rg ng, one fa led response doesn't  an t   rged response should
+    // fa l.  f   have successful responses   can c ck t  success rat o and  f  s
+    // good   can st ll return a successful  rge.
+     f (!accumulatedResponses.getSuccessResponses(). sEmpty()) {
+      //   have at least one successful response, but st ll need to c ck t  success rat o.
+      //  rgedResponse  s a SUCCESS response after t  call, but   w ll
+      // set   to fa lure below  f necessary.
+       rgedResponse =  n  al ze rgedSuccessResponseFromAccumulatedResponses();
 
-      int numSuccessResponses = mergedResponse.getNumSuccessfulPartitions();
-      int numPartitions = mergedResponse.getNumPartitions();
+       nt numSuccessResponses =  rgedResponse.getNumSuccessfulPart  ons();
+       nt numPart  ons =  rgedResponse.getNumPart  ons();
       double successThreshold = getSuccessResponseThreshold();
-      if (checkSuccessPartitionRatio(numSuccessResponses, numPartitions, successThreshold)) {
-        // Success! Proceed with merging.
-        mergedResponse.setResponseCode(EarlybirdResponseCode.SUCCESS);
-        mergedResponse = internalMerge(mergedResponse);
+       f (c ckSuccessPart  onRat o(numSuccessResponses, numPart  ons, successThreshold)) {
+        // Success! Proceed w h  rg ng.
+         rgedResponse.setResponseCode(Earlyb rdResponseCode.SUCCESS);
+         rgedResponse =  nternal rge( rgedResponse);
       } else {
-        responseMessageBuilder.logBelowSuccessThreshold(
-            requestContext.getRequest().getSearchQuery(), numSuccessResponses, numPartitions,
+        response ssageBu lder.logBelowSuccessThreshold(
+            requestContext.getRequest().getSearchQuery(), numSuccessResponses, numPart  ons,
             successThreshold);
-        mergedResponse.setResponseCode(EarlybirdResponseCode.TOO_MANY_PARTITIONS_FAILED_ERROR);
+         rgedResponse.setResponseCode(Earlyb rdResponseCode.TOO_MANY_PART T ONS_FA LED_ERROR);
       }
     } else {
-      mergedResponse = accumulatedResponses.getMergedErrorResponse();
+       rgedResponse = accumulatedResponses.get rgedErrorResponse();
     }
 
-    return mergedResponse;
+    return  rgedResponse;
   }
 
   /**
-   * Derive class should implement the logic to merge the specific type of results (recency,
-   * relevance, Top Tweets, etc..)
+   * Der ve class should  mple nt t  log c to  rge t  spec f c type of results (recency,
+   * relevance, Top T ets, etc..)
    */
-  protected abstract EarlybirdResponse internalMerge(EarlybirdResponse response);
+  protected abstract Earlyb rdResponse  nternal rge(Earlyb rdResponse response);
 
-  protected abstract SearchTimerStats getMergedResponseTimer();
+  protected abstract SearchT  rStats get rgedResponseT  r();
 
   /**
-   * Do we have enough results so far that we can early terminate and not continue onto next tier?
+   * Do   have enough results so far that   can early term nate and not cont nue onto next t er?
    */
-  public boolean shouldEarlyTerminateTierMerge(int totalResultsFromSuccessfulShards,
-                                                  boolean foundEarlyTermination) {
-    // We are taking the most conservative tier response merging.
-    // This is the most conservative merge logic --- as long as we have some results, we should
-    // not return anything from the next tier. This may cause not ideal experience where a
-    // page is not full, but the use can still scroll further.
+  publ c boolean shouldEarlyTerm nateT er rge( nt totalResultsFromSuccessfulShards,
+                                                  boolean foundEarlyTerm nat on) {
+    //   are tak ng t  most conservat ve t er response  rg ng.
+    // T   s t  most conservat ve  rge log c --- as long as   have so  results,   should
+    // not return anyth ng from t  next t er. T  may cause not  deal exper ence w re a
+    // page  s not full, but t  use can st ll scroll furt r.
 
-    return foundEarlyTermination || totalResultsFromSuccessfulShards >= 1;
+    return foundEarlyTerm nat on || totalResultsFromSuccessfulShards >= 1;
   }
 
-  private void saveMergedDebugString(EarlybirdResponse mergedResponse) {
-    if (responseMessageBuilder.isDebugMode()) {
-      String message = responseMessageBuilder.debugString();
-      mergedResponse.setDebugString(message);
-      if (!accumulatedResponses.getSuccessResponses().isEmpty()
-          && accumulatedResponses.getSuccessResponses().get(0).isSetDebugInfo()) {
+  pr vate vo d save rgedDebugStr ng(Earlyb rdResponse  rgedResponse) {
+     f (response ssageBu lder. sDebugMode()) {
+      Str ng  ssage = response ssageBu lder.debugStr ng();
+       rgedResponse.setDebugStr ng( ssage);
+       f (!accumulatedResponses.getSuccessResponses(). sEmpty()
+          && accumulatedResponses.getSuccessResponses().get(0). sSetDebug nfo()) {
 
-        EarlybirdDebugInfo debugInfo =
-            accumulatedResponses.getSuccessResponses().get(0).getDebugInfo();
-        mergedResponse.setDebugInfo(debugInfo);
+        Earlyb rdDebug nfo debug nfo =
+            accumulatedResponses.getSuccessResponses().get(0).getDebug nfo();
+         rgedResponse.setDebug nfo(debug nfo);
       }
     }
   }
 
-  private double getSuccessResponseThreshold() {
-    EarlybirdRequest request = requestContext.getRequest();
-    if (request.isSetSuccessfulResponseThreshold()) {
+  pr vate double getSuccessResponseThreshold() {
+    Earlyb rdRequest request = requestContext.getRequest();
+     f (request. sSetSuccessfulResponseThreshold()) {
       double successfulResponseThreshold = request.getSuccessfulResponseThreshold();
-      Preconditions.checkArgument(successfulResponseThreshold > 0,
-          "Invalid successfulResponseThreshold %s", successfulResponseThreshold);
-      Preconditions.checkArgument(successfulResponseThreshold <= 1.0,
-          "Invalid successfulResponseThreshold %s", successfulResponseThreshold);
+      Precond  ons.c ckArgu nt(successfulResponseThreshold > 0,
+          " nval d successfulResponseThreshold %s", successfulResponseThreshold);
+      Precond  ons.c ckArgu nt(successfulResponseThreshold <= 1.0,
+          " nval d successfulResponseThreshold %s", successfulResponseThreshold);
       return successfulResponseThreshold;
     } else {
       return getDefaultSuccessResponseThreshold();
@@ -506,99 +506,99 @@ public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMerge
 
   protected abstract double getDefaultSuccessResponseThreshold();
 
-  private static boolean checkSuccessPartitionRatio(
-      int numSuccessResponses,
-      int numPartitions,
+  pr vate stat c boolean c ckSuccessPart  onRat o(
+       nt numSuccessResponses,
+       nt numPart  ons,
       double goodResponseThreshold) {
-    Preconditions.checkArgument(goodResponseThreshold > 0.0,
-        "Invalid goodResponseThreshold %s", goodResponseThreshold);
-    return numSuccessResponses >= (numPartitions * goodResponseThreshold);
+    Precond  ons.c ckArgu nt(goodResponseThreshold > 0.0,
+        " nval d goodResponseThreshold %s", goodResponseThreshold);
+    return numSuccessResponses >= (numPart  ons * goodResponseThreshold);
   }
 
   /**
-   * Merge hit counts from all results.
+   *  rge h  counts from all results.
    */
-  protected Map<Long, Integer> aggregateHitCountMap() {
-    Map<Long, Integer> hitCounts = ResultsUtil
-        .aggregateCountMap(accumulatedResponses.getSuccessResponses(), HIT_COUNT_GETTER);
-    if (hitCounts.size() > 0) {
-      if (responseMessageBuilder.isDebugMode()) {
-        responseMessageBuilder.append("Hit counts:\n");
-        for (Map.Entry<Long, Integer> entry : hitCounts.entrySet()) {
-          responseMessageBuilder.append(String.format("  %10s seconds: %d hits\n",
+  protected Map<Long,  nteger> aggregateH CountMap() {
+    Map<Long,  nteger> h Counts = ResultsUt l
+        .aggregateCountMap(accumulatedResponses.getSuccessResponses(), H T_COUNT_GETTER);
+     f (h Counts.s ze() > 0) {
+       f (response ssageBu lder. sDebugMode()) {
+        response ssageBu lder.append("H  counts:\n");
+        for (Map.Entry<Long,  nteger> entry : h Counts.entrySet()) {
+          response ssageBu lder.append(Str ng.format("  %10s seconds: %d h s\n",
               entry.getKey() / 1000, entry.getValue()));
         }
       }
-      return hitCounts;
+      return h Counts;
     }
     return null;
   }
 
   /**
-   * Returns the number of results to keep as part of merge-collection.
+   * Returns t  number of results to keep as part of  rge-collect on.
    */
-  protected final int computeNumResultsToKeep() {
-    return EarlybirdResponseMergeUtil.computeNumResultsToKeep(requestContext.getRequest());
+  protected f nal  nt computeNumResultsToKeep() {
+    return Earlyb rdResponse rgeUt l.computeNumResultsToKeep(requestContext.getRequest());
   }
 
   /**
-   * Remove exact duplicates (same id) from the result set.
+   * Remove exact dupl cates (sa   d) from t  result set.
    */
-  protected static void trimExactDups(ThriftSearchResults searchResults, TrimStats trimStats) {
-    int numResults = searchResults.getResultsSize();
-    List<ThriftSearchResult> oldResults = searchResults.getResults();
-    List<ThriftSearchResult> newResults = Lists.newArrayListWithCapacity(numResults);
-    HashSet<Long> resultSet = Sets.newHashSetWithExpectedSize(numResults);
+  protected stat c vo d tr mExactDups(Thr ftSearchResults searchResults, Tr mStats tr mStats) {
+     nt numResults = searchResults.getResultsS ze();
+    L st<Thr ftSearchResult> oldResults = searchResults.getResults();
+    L st<Thr ftSearchResult> newResults = L sts.newArrayL stW hCapac y(numResults);
+    HashSet<Long> resultSet = Sets.newHashSetW hExpectedS ze(numResults);
 
-    for (ThriftSearchResult result : oldResults) {
-      if (resultSet.contains(result.getId())) {
-        trimStats.increaseRemovedDupsCount();
-        continue;
+    for (Thr ftSearchResult result : oldResults) {
+       f (resultSet.conta ns(result.get d())) {
+        tr mStats. ncreaseRemovedDupsCount();
+        cont nue;
       }
 
       newResults.add(result);
-      resultSet.add(result.getId());
+      resultSet.add(result.get d());
     }
 
     searchResults.setResults(newResults);
   }
 
-  protected final int addResponsesToCollector(MultiwayMergeCollector collector) {
-    int totalResultSize = 0;
-    for (EarlybirdResponse response : accumulatedResponses.getSuccessResponses()) {
-      if (response.isSetSearchResults()) {
-        totalResultSize += response.getSearchResults().getResultsSize();
+  protected f nal  nt addResponsesToCollector(Mult way rgeCollector collector) {
+     nt totalResultS ze = 0;
+    for (Earlyb rdResponse response : accumulatedResponses.getSuccessResponses()) {
+       f (response. sSetSearchResults()) {
+        totalResultS ze += response.getSearchResults().getResultsS ze();
       }
       collector.addResponse(response);
     }
-    return totalResultSize;
+    return totalResultS ze;
   }
 
   /**
-   * Given a sorted searchResults (for recency, sorted by ID; for relevance, sorted by score),
-   * returns the first 'computeNumResultsToKeep()' number of results.
+   * G ven a sorted searchResults (for recency, sorted by  D; for relevance, sorted by score),
+   * returns t  f rst 'computeNumResultsToKeep()' number of results.
    *
-   * @param searchResults the searchResults to be truncated.
+   * @param searchResults t  searchResults to be truncated.
    */
-  protected final void truncateResults(ThriftSearchResults searchResults, TrimStats trimStats) {
-    int numResultsRequested = computeNumResultsToKeep();
+  protected f nal vo d truncateResults(Thr ftSearchResults searchResults, Tr mStats tr mStats) {
+     nt numResultsRequested = computeNumResultsToKeep();
 
-    int to = numResultsRequested == Integer.MAX_VALUE ? searchResults.getResultsSize()
-        : Math.min(numResultsRequested, searchResults.getResultsSize());
-    if (searchResults.getResultsSize() > to) {
-      trimStats.setResultsTruncatedFromTailCount(searchResults.getResultsSize() - to);
+     nt to = numResultsRequested ==  nteger.MAX_VALUE ? searchResults.getResultsS ze()
+        : Math.m n(numResultsRequested, searchResults.getResultsS ze());
+     f (searchResults.getResultsS ze() > to) {
+      tr mStats.setResultsTruncatedFromTa lCount(searchResults.getResultsS ze() - to);
 
-      if (to > 0) {
-        searchResults.setResults(searchResults.getResults().subList(0, to));
+       f (to > 0) {
+        searchResults.setResults(searchResults.getResults().subL st(0, to));
       } else {
-        // No more results for the next page
-        EARLYBIRD_RESPONSE_NO_MORE_RESULTS.increment();
-        searchResults.setResults(Collections.<ThriftSearchResult>emptyList());
+        // No more results for t  next page
+        EARLYB RD_RESPONSE_NO_MORE_RESULTS. ncre nt();
+        searchResults.setResults(Collect ons.<Thr ftSearchResult>emptyL st());
       }
     }
   }
 
-  EarlybirdRequest getEarlybirdRequest() {
+  Earlyb rdRequest getEarlyb rdRequest() {
     return requestContext.getRequest();
   }
 }

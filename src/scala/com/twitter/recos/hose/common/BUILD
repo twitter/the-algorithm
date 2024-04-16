@@ -1,15 +1,15 @@
-scala_library(
-    sources = ["*.scala"],
-    strict_deps = False,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/graphjet",
-        "3rdparty/jvm/org/apache/kafka:rosette-kafka",
-        "finagle/finagle-stats/src/main/scala",
-        "kafka/finagle-kafka/finatra-kafka/src/main/scala",
-        "kafka/libs/src/main/scala/com/twitter/kafka/client/processor",
-        "servo/repo/src/main/scala",
-        "src/scala/com/twitter/recos/util:recos-util",
-        "src/thrift/com/twitter/recos:recos-internal-scala",
+scala_l brary(
+    s ces = ["*.scala"],
+    str ct_deps = False,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/com/tw ter/graphjet",
+        "3rdparty/jvm/org/apac /kafka:rosette-kafka",
+        "f nagle/f nagle-stats/src/ma n/scala",
+        "kafka/f nagle-kafka/f natra-kafka/src/ma n/scala",
+        "kafka/l bs/src/ma n/scala/com/tw ter/kafka/cl ent/processor",
+        "servo/repo/src/ma n/scala",
+        "src/scala/com/tw ter/recos/ut l:recos-ut l",
+        "src/thr ft/com/tw ter/recos:recos- nternal-scala",
     ],
 )

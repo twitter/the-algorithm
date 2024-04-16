@@ -1,15 +1,15 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/lihaoyi:sourcecode",
-        "util/util-core",
-        "util/util-jackson/src/main/scala/com/twitter/util/jackson",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/com/l haoy :s cecode",
+        "ut l/ut l-core",
+        "ut l/ut l-jackson/src/ma n/scala/com/tw ter/ut l/jackson",
     ],
     exports = [
-        "3rdparty/jvm/com/lihaoyi:sourcecode",
+        "3rdparty/jvm/com/l haoy :s cecode",
     ],
 )

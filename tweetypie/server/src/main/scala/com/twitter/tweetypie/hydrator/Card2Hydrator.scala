@@ -1,76 +1,76 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.expandodo.thriftscala.Card2
-import com.twitter.expandodo.thriftscala.Card2RequestOptions
-import com.twitter.featureswitches.v2.FeatureSwitchResults
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.CardReferenceUriExtractor
-import com.twitter.tweetypie.core.NonTombstone
-import com.twitter.tweetypie.core.ValueState
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.expandodo.thr ftscala.Card2
+ mport com.tw ter.expandodo.thr ftscala.Card2RequestOpt ons
+ mport com.tw ter.featuresw c s.v2.FeatureSw chResults
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.core.CardReferenceUr Extractor
+ mport com.tw ter.t etyp e.core.NonTombstone
+ mport com.tw ter.t etyp e.core.ValueState
+ mport com.tw ter.t etyp e.repos ory._
+ mport com.tw ter.t etyp e.thr ftscala._
 
 object Card2Hydrator {
-  type Type = ValueHydrator[Option[Card2], Ctx]
+  type Type = ValueHydrator[Opt on[Card2], Ctx]
 
   case class Ctx(
-    urlEntities: Seq[UrlEntity],
-    mediaEntities: Seq[MediaEntity],
-    cardReference: Option[CardReference],
-    underlyingTweetCtx: TweetCtx,
-    featureSwitchResults: Option[FeatureSwitchResults])
-      extends TweetCtx.Proxy
+    urlEnt  es: Seq[UrlEnt y],
+     d aEnt  es: Seq[ d aEnt y],
+    cardReference: Opt on[CardReference],
+    underly ngT etCtx: T etCtx,
+    featureSw chResults: Opt on[FeatureSw chResults])
+      extends T etCtx.Proxy
 
-  val hydratedField: FieldByPath = fieldByPath(Tweet.Card2Field)
-  val hydrationUrlBlockListKey = "card_hydration_blocklist"
+  val hydratedF eld: F eldByPath = f eldByPath(T et.Card2F eld)
+  val hydrat onUrlBlockL stKey = "card_hydrat on_blockl st"
 
-  def apply(repo: Card2Repository.Type): ValueHydrator[Option[Card2], Ctx] =
-    ValueHydrator[Option[Card2], Ctx] { (_, ctx) =>
-      val repoCtx = requestOptions(ctx)
-      val filterURLs = ctx.featureSwitchResults
-        .flatMap(_.getStringArray(hydrationUrlBlockListKey, false))
+  def apply(repo: Card2Repos ory.Type): ValueHydrator[Opt on[Card2], Ctx] =
+    ValueHydrator[Opt on[Card2], Ctx] { (_, ctx) =>
+      val repoCtx = requestOpt ons(ctx)
+      val f lterURLs = ctx.featureSw chResults
+        .flatMap(_.getStr ngArray(hydrat onUrlBlockL stKey, false))
         .getOrElse(Seq())
 
       val requests =
         ctx.cardReference match {
-          case Some(CardReferenceUriExtractor(cardUri)) =>
-            cardUri match {
-              case NonTombstone(uri) if !filterURLs.contains(uri) =>
-                Seq((UrlCard2Key(uri), repoCtx))
-              case _ => Nil
+          case So (CardReferenceUr Extractor(cardUr )) =>
+            cardUr  match {
+              case NonTombstone(ur )  f !f lterURLs.conta ns(ur ) =>
+                Seq((UrlCard2Key(ur ), repoCtx))
+              case _ => N l
             }
           case _ =>
-            ctx.urlEntities
-              .filterNot(e => e.expanded.exists(filterURLs.contains))
+            ctx.urlEnt  es
+              .f lterNot(e => e.expanded.ex sts(f lterURLs.conta ns))
               .map(e => (UrlCard2Key(e.url), repoCtx))
         }
 
-      Stitch
+      St ch
         .traverse(requests) {
-          case (key, opts) => repo(key, opts).liftNotFoundToOption
-        }.liftToTry.map {
+          case (key, opts) => repo(key, opts).l ftNotFoundToOpt on
+        }.l ftToTry.map {
           case Return(results) =>
-            results.flatten.lastOption match {
-              case None => ValueState.UnmodifiedNone
-              case res => ValueState.modified(res)
+            results.flatten.lastOpt on match {
+              case None => ValueState.Unmod f edNone
+              case res => ValueState.mod f ed(res)
             }
-          case Throw(_) => ValueState.partial(None, hydratedField)
+          case Throw(_) => ValueState.part al(None, hydratedF eld)
         }
-    }.onlyIf { (curr, ctx) =>
-      curr.isEmpty &&
-      ctx.tweetFieldRequested(Tweet.Card2Field) &&
+    }.only f { (curr, ctx) =>
+      curr. sEmpty &&
+      ctx.t etF eldRequested(T et.Card2F eld) &&
       ctx.opts.cardsPlatformKey.nonEmpty &&
-      !ctx.isRetweet &&
-      ctx.mediaEntities.isEmpty &&
-      (ctx.cardReference.nonEmpty || ctx.urlEntities.nonEmpty)
+      !ctx. sRet et &&
+      ctx. d aEnt  es. sEmpty &&
+      (ctx.cardReference.nonEmpty || ctx.urlEnt  es.nonEmpty)
     }
 
-  private[this] def requestOptions(ctx: Ctx) =
-    Card2RequestOptions(
+  pr vate[t ] def requestOpt ons(ctx: Ctx) =
+    Card2RequestOpt ons(
       platformKey = ctx.opts.cardsPlatformKey.get,
-      perspectiveUserId = ctx.opts.forUserId,
+      perspect veUser d = ctx.opts.forUser d,
       allowNonTcoUrls = ctx.cardReference.nonEmpty,
-      languageTag = Some(ctx.opts.languageTag)
+      languageTag = So (ctx.opts.languageTag)
     )
 }

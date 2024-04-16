@@ -1,390 +1,390 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.twitter_text
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.r chtext.tw ter_text
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.ReferenceObject
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextAlignment
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextEntity
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextFormat
-import scala.annotation.tailrec
-import scala.collection.mutable
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.ReferenceObject
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chText
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chTextAl gn nt
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chTextEnt y
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chTextFormat
+ mport scala.annotat on.ta lrec
+ mport scala.collect on.mutable
 
-object TwitterTextRenderer {
+object Tw terTextRenderer {
 
   /**
-   * Creates a new [[TwitterTextRenderer]] instance.
-   * @param text      The initial text representation
-   * @param rtl       Defines whether this text is in an RTL language
-   * @param alignment Assigns the [[RichTextAlignment]] of the given text for display
-   * @return          A new [[TwitterTextRenderer]] instance
+   * Creates a new [[Tw terTextRenderer]]  nstance.
+   * @param text      T   n  al text representat on
+   * @param rtl       Def nes w t r t  text  s  n an RTL language
+   * @param al gn nt Ass gns t  [[R chTextAl gn nt]] of t  g ven text for d splay
+   * @return          A new [[Tw terTextRenderer]]  nstance
    */
   def apply(
-    text: String,
-    rtl: Option[Boolean] = None,
-    alignment: Option[RichTextAlignment] = None
-  ): TwitterTextRenderer = {
-    TwitterTextRenderer(rtl, alignment).append(text)
+    text: Str ng,
+    rtl: Opt on[Boolean] = None,
+    al gn nt: Opt on[R chTextAl gn nt] = None
+  ): Tw terTextRenderer = {
+    Tw terTextRenderer(rtl, al gn nt).append(text)
   }
 
   /**
-   * Creates a new [[TwitterTextRenderer]] instance from a product-mixer [[RichText]] object.
-   * Converts Unicode entity indexes into JVM String indexes.
-   * @param richText  The product-mixer [[RichText]] representation
-   * @return          A new [[TwitterTextRenderer]] instance
+   * Creates a new [[Tw terTextRenderer]]  nstance from a product-m xer [[R chText]] object.
+   * Converts Un code ent y  ndexes  nto JVM Str ng  ndexes.
+   * @param r chText  T  product-m xer [[R chText]] representat on
+   * @return          A new [[Tw terTextRenderer]]  nstance
    */
-  def fromRichText(richText: RichText): TwitterTextRenderer = {
-    val builder = TwitterTextRenderer(richText.text, richText.rtl, richText.alignment)
-    richText.entities.foreach { e =>
-      val startIndex = richText.text.offsetByCodePoints(0, e.fromIndex)
-      val endIndex = richText.text.offsetByCodePoints(0, e.toIndex)
+  def fromR chText(r chText: R chText): Tw terTextRenderer = {
+    val bu lder = Tw terTextRenderer(r chText.text, r chText.rtl, r chText.al gn nt)
+    r chText.ent  es.foreach { e =>
+      val start ndex = r chText.text.offsetByCodePo nts(0, e.from ndex)
+      val end ndex = r chText.text.offsetByCodePo nts(0, e.to ndex)
       e.format.foreach { f =>
-        builder.setFormat(startIndex, endIndex, f)
+        bu lder.setFormat(start ndex, end ndex, f)
       }
       e.ref.foreach { r =>
-        builder.setRefObject(startIndex, endIndex, r)
+        bu lder.setRefObject(start ndex, end ndex, r)
       }
     }
-    builder
+    bu lder
   }
 
-  private def buildRichTextEntity(
-    text: String,
-    entity: TwitterTextRendererEntity[_]
-  ): RichTextEntity = {
-    val fromIndex = text.codePointCount(0, entity.startIndex)
-    val toIndex = text.codePointCount(0, entity.endIndex)
+  pr vate def bu ldR chTextEnt y(
+    text: Str ng,
+    ent y: Tw terTextRendererEnt y[_]
+  ): R chTextEnt y = {
+    val from ndex = text.codePo ntCount(0, ent y.start ndex)
+    val to ndex = text.codePo ntCount(0, ent y.end ndex)
 
-    entity.value match {
-      case format: RichTextFormat =>
-        RichTextEntity(fromIndex, toIndex, ref = None, format = Some(format))
+    ent y.value match {
+      case format: R chTextFormat =>
+        R chTextEnt y(from ndex, to ndex, ref = None, format = So (format))
       case ref: ReferenceObject =>
-        RichTextEntity(fromIndex, toIndex, ref = Some(ref), format = None)
+        R chTextEnt y(from ndex, to ndex, ref = So (ref), format = None)
     }
   }
 }
 
-case class TwitterTextRenderer(
-  rtl: Option[Boolean],
-  alignment: Option[RichTextAlignment],
+case class Tw terTextRenderer(
+  rtl: Opt on[Boolean],
+  al gn nt: Opt on[R chTextAl gn nt],
 ) {
-  private[this] val textBuilder = new mutable.StringBuilder()
+  pr vate[t ] val textBu lder = new mutable.Str ngBu lder()
 
-  private[richtext] val formatBuffer =
-    mutable.ArrayBuffer[TwitterTextRendererEntity[RichTextFormat]]()
-  private[richtext] val refObjectBuffer =
-    mutable.ArrayBuffer[TwitterTextRendererEntity[ReferenceObject]]()
+  pr vate[r chtext] val formatBuffer =
+    mutable.ArrayBuffer[Tw terTextRendererEnt y[R chTextFormat]]()
+  pr vate[r chtext] val refObjectBuffer =
+    mutable.ArrayBuffer[Tw terTextRendererEnt y[ReferenceObject]]()
 
   /**
-   * Appends a string with attached [[RichTextFormat]] and [[ReferenceObject]] information.
-   * @param string    The text to append to the end of the existing text
-   * @param format    The [[RichTextFormat]] assigned to the new text
-   * @param refObject The [[ReferenceObject]] assigned to the new text
-   * @return          this
+   * Appends a str ng w h attac d [[R chTextFormat]] and [[ReferenceObject]]  nformat on.
+   * @param str ng    T  text to append to t  end of t  ex st ng text
+   * @param format    T  [[R chTextFormat]] ass gned to t  new text
+   * @param refObject T  [[ReferenceObject]] ass gned to t  new text
+   * @return          t 
    */
   def append(
-    string: String,
-    format: Option[RichTextFormat] = None,
-    refObject: Option[ReferenceObject] = None
-  ): TwitterTextRenderer = {
-    if (string.nonEmpty) {
-      val start = textBuilder.length
-      val end = start + string.length
+    str ng: Str ng,
+    format: Opt on[R chTextFormat] = None,
+    refObject: Opt on[ReferenceObject] = None
+  ): Tw terTextRenderer = {
+     f (str ng.nonEmpty) {
+      val start = textBu lder.length
+      val end = start + str ng.length
       format.foreach { f =>
-        formatBuffer.append(TwitterTextRendererEntity(start, end, f))
+        formatBuffer.append(Tw terTextRendererEnt y(start, end, f))
       }
       refObject.foreach { r =>
-        refObjectBuffer.append(TwitterTextRendererEntity(start, end, r))
+        refObjectBuffer.append(Tw terTextRendererEnt y(start, end, r))
       }
-      textBuilder.append(string)
+      textBu lder.append(str ng)
     }
-    this
+    t 
   }
 
   /**
-   * Builds a new [[RichText]] thrift instance with Unicode entity ranges.
+   * Bu lds a new [[R chText]] thr ft  nstance w h Un code ent y ranges.
    */
-  def build: RichText = {
-    val richTextString = this.text
-    val richTextEntities = this.entities
+  def bu ld: R chText = {
+    val r chTextStr ng = t .text
+    val r chTextEnt  es = t .ent  es
       .map { e =>
-        TwitterTextRenderer.buildRichTextEntity(richTextString, e)
+        Tw terTextRenderer.bu ldR chTextEnt y(r chTextStr ng, e)
       }
 
-    RichText(
-      text = richTextString,
+    R chText(
+      text = r chTextStr ng,
       rtl = rtl,
-      alignment = alignment,
-      entities = richTextEntities.toList
+      al gn nt = al gn nt,
+      ent  es = r chTextEnt  es.toL st
     )
   }
 
   /**
-   * Modifies the TwitterTextRenderer with the provided [[TwitterTextRendererProcessor]]
+   * Mod f es t  Tw terTextRenderer w h t  prov ded [[Tw terTextRendererProcessor]]
    */
-  def transform(twitterTextProcessor: TwitterTextRendererProcessor): TwitterTextRenderer = {
-    twitterTextProcessor.process(this)
+  def transform(tw terTextProcessor: Tw terTextRendererProcessor): Tw terTextRenderer = {
+    tw terTextProcessor.process(t )
   }
 
   /**
-   * Builds and returns a sorted list of [[TwitterTextRendererEntity]] with JVM String index entity ranges.
+   * Bu lds and returns a sorted l st of [[Tw terTextRendererEnt y]] w h JVM Str ng  ndex ent y ranges.
    */
-  def entities: Seq[TwitterTextRendererEntity[_]] = {
-    buildEntities(formatBuffer.toList, refObjectBuffer.toList)
+  def ent  es: Seq[Tw terTextRendererEnt y[_]] = {
+    bu ldEnt  es(formatBuffer.toL st, refObjectBuffer.toL st)
   }
 
   /**
-   * Assigns a [[RichTextFormat]] to the given range while keeping existing formatting information.
-   * New formatting will only be assigned to unformatted text ranges.
-   * @param start  Start index to apply formatting (inclusive)
-   * @param end    End index to apply formatting (exclusive)
-   * @param format The format to assign
-   * @return       this
+   * Ass gns a [[R chTextFormat]] to t  g ven range wh le keep ng ex st ng formatt ng  nformat on.
+   * New formatt ng w ll only be ass gned to unformatted text ranges.
+   * @param start  Start  ndex to apply formatt ng ( nclus ve)
+   * @param end    End  ndex to apply formatt ng (exclus ve)
+   * @param format T  format to ass gn
+   * @return       t 
    */
-  def mergeFormat(start: Int, end: Int, format: RichTextFormat): TwitterTextRenderer = {
-    validateRange(start, end)
-    var injectionIndex: Option[Int] = None
-    var entity = TwitterTextRendererEntity(start, end, format)
+  def  rgeFormat(start:  nt, end:  nt, format: R chTextFormat): Tw terTextRenderer = {
+    val dateRange(start, end)
+    var  nject on ndex: Opt on[ nt] = None
+    var ent y = Tw terTextRendererEnt y(start, end, format)
 
-    val buffer = mutable.ArrayBuffer[TwitterTextRendererEntity[RichTextFormat]]()
-    val iterator = formatBuffer.zipWithIndex.reverseIterator
+    val buffer = mutable.ArrayBuffer[Tw terTextRendererEnt y[R chTextFormat]]()
+    val  erator = formatBuffer.z pW h ndex.reverse erator
 
-    while (iterator.hasNext && injectionIndex.isEmpty) {
-      iterator.next match {
-        case (e, i) if e.startIndex >= end =>
+    wh le ( erator.hasNext &&  nject on ndex. sEmpty) {
+       erator.next match {
+        case (e,  )  f e.start ndex >= end =>
           buffer.append(e)
 
-        case (e, i) if e.enclosedIn(entity.startIndex, entity.endIndex) =>
-          val endEntity = entity.copy(startIndex = e.endIndex)
-          if (endEntity.nonEmpty) { buffer.append(endEntity) }
+        case (e,  )  f e.enclosed n(ent y.start ndex, ent y.end ndex) =>
+          val endEnt y = ent y.copy(start ndex = e.end ndex)
+           f (endEnt y.nonEmpty) { buffer.append(endEnt y) }
           buffer.append(e)
-          entity = entity.copy(endIndex = e.startIndex)
+          ent y = ent y.copy(end ndex = e.start ndex)
 
-        case (e, i) if e.encloses(entity.startIndex, entity.endIndex) =>
-          buffer.append(e.copy(startIndex = entity.endIndex))
-          buffer.append(e.copy(endIndex = entity.startIndex))
-          injectionIndex = Some(i + 1)
+        case (e,  )  f e.encloses(ent y.start ndex, ent y.end ndex) =>
+          buffer.append(e.copy(start ndex = ent y.end ndex))
+          buffer.append(e.copy(end ndex = ent y.start ndex))
+           nject on ndex = So (  + 1)
 
-        case (e, i) if e.startsBetween(entity.startIndex, entity.endIndex) =>
+        case (e,  )  f e.startsBet en(ent y.start ndex, ent y.end ndex) =>
           buffer.append(e)
-          entity = entity.copy(endIndex = e.startIndex)
+          ent y = ent y.copy(end ndex = e.start ndex)
 
-        case (e, i) if e.endsBetween(entity.startIndex, entity.endIndex) =>
+        case (e,  )  f e.endsBet en(ent y.start ndex, ent y.end ndex) =>
           buffer.append(e)
-          entity = entity.copy(startIndex = e.endIndex)
-          injectionIndex = Some(i + 1)
+          ent y = ent y.copy(start ndex = e.end ndex)
+           nject on ndex = So (  + 1)
 
-        case (e, i) if e.endIndex <= entity.startIndex =>
+        case (e,  )  f e.end ndex <= ent y.start ndex =>
           buffer.append(e)
-          injectionIndex = Some(i + 1)
+           nject on ndex = So (  + 1)
 
-        case _ => // do nothing
+        case _ => // do noth ng
       }
     }
 
-    val index = injectionIndex.map(_ - 1).getOrElse(0)
-    formatBuffer.remove(index, formatBuffer.length - index)
+    val  ndex =  nject on ndex.map(_ - 1).getOrElse(0)
+    formatBuffer.remove( ndex, formatBuffer.length -  ndex)
     formatBuffer.appendAll(buffer.reverse)
 
-    if (entity.nonEmpty) {
-      formatBuffer.insert(injectionIndex.getOrElse(0), entity)
+     f (ent y.nonEmpty) {
+      formatBuffer. nsert( nject on ndex.getOrElse(0), ent y)
     }
 
-    this
+    t 
   }
 
   /**
-   * Removes text, formatting, and refObject information from the given range.
-   * @param start  Start index to apply formatting (inclusive)
-   * @param end    End index to apply formatting (exclusive)
-   * @return       this
+   * Removes text, formatt ng, and refObject  nformat on from t  g ven range.
+   * @param start  Start  ndex to apply formatt ng ( nclus ve)
+   * @param end    End  ndex to apply formatt ng (exclus ve)
+   * @return       t 
    */
-  def remove(start: Int, end: Int): TwitterTextRenderer = replace(start, end, "")
+  def remove(start:  nt, end:  nt): Tw terTextRenderer = replace(start, end, "")
 
   /**
-   * Replaces text, formatting, and refObject information in the given range.
-   * @param start     Start index to apply formatting (inclusive)
-   * @param end       End index to apply formatting (exclusive)
-   * @param string    The new text to insert
-   * @param format    The [[RichTextFormat]] assigned to the new text
-   * @param refObject The [[ReferenceObject]] assigned to the new text
-   * @return          this
+   * Replaces text, formatt ng, and refObject  nformat on  n t  g ven range.
+   * @param start     Start  ndex to apply formatt ng ( nclus ve)
+   * @param end       End  ndex to apply formatt ng (exclus ve)
+   * @param str ng    T  new text to  nsert
+   * @param format    T  [[R chTextFormat]] ass gned to t  new text
+   * @param refObject T  [[ReferenceObject]] ass gned to t  new text
+   * @return          t 
    */
   def replace(
-    start: Int,
-    end: Int,
-    string: String,
-    format: Option[RichTextFormat] = None,
-    refObject: Option[ReferenceObject] = None
-  ): TwitterTextRenderer = {
-    validateRange(start, end)
+    start:  nt,
+    end:  nt,
+    str ng: Str ng,
+    format: Opt on[R chTextFormat] = None,
+    refObject: Opt on[ReferenceObject] = None
+  ): Tw terTextRenderer = {
+    val dateRange(start, end)
 
-    val newEnd = start + string.length
-    val formatInjectIndex = removeAndOffsetFormats(start, end, string.length)
-    val refObjectInjectIndex = removeAndOffsetRefObjects(start, end, string.length)
+    val newEnd = start + str ng.length
+    val format nject ndex = removeAndOffsetFormats(start, end, str ng.length)
+    val refObject nject ndex = removeAndOffsetRefObjects(start, end, str ng.length)
     format.foreach { f =>
-      formatBuffer.insert(formatInjectIndex, TwitterTextRendererEntity(start, newEnd, f))
+      formatBuffer. nsert(format nject ndex, Tw terTextRendererEnt y(start, newEnd, f))
     }
     refObject.foreach { r =>
-      refObjectBuffer.insert(refObjectInjectIndex, TwitterTextRendererEntity(start, newEnd, r))
+      refObjectBuffer. nsert(refObject nject ndex, Tw terTextRendererEnt y(start, newEnd, r))
     }
-    textBuilder.replace(start, end, string)
+    textBu lder.replace(start, end, str ng)
 
-    this
+    t 
   }
 
   /**
-   * Assigns a [[RichTextFormat]] to the given range. Trims existing format ranges that overlap the
-   * new format range. Removes format ranges that fall within the new range.
-   * @param start  Start index to apply formatting (inclusive)
-   * @param end    End index to apply formatting (exclusive)
-   * @param format The format to assign
-   * @return       this
+   * Ass gns a [[R chTextFormat]] to t  g ven range. Tr ms ex st ng format ranges that overlap t 
+   * new format range. Removes format ranges that fall w h n t  new range.
+   * @param start  Start  ndex to apply formatt ng ( nclus ve)
+   * @param end    End  ndex to apply formatt ng (exclus ve)
+   * @param format T  format to ass gn
+   * @return       t 
    */
-  def setFormat(start: Int, end: Int, format: RichTextFormat): TwitterTextRenderer = {
-    validateRange(start, end)
-    val bufferIndex = removeAndOffsetFormats(start, end, end - start)
-    formatBuffer.insert(bufferIndex, TwitterTextRendererEntity(start, end, format))
+  def setFormat(start:  nt, end:  nt, format: R chTextFormat): Tw terTextRenderer = {
+    val dateRange(start, end)
+    val buffer ndex = removeAndOffsetFormats(start, end, end - start)
+    formatBuffer. nsert(buffer ndex, Tw terTextRendererEnt y(start, end, format))
 
-    this
+    t 
   }
 
-  private[this] def removeAndOffsetFormats(start: Int, end: Int, newSize: Int): Int = {
-    val newEnd = start + newSize
+  pr vate[t ] def removeAndOffsetFormats(start:  nt, end:  nt, newS ze:  nt):  nt = {
+    val newEnd = start + newS ze
     val offset = newEnd - end
-    var injectionIndex: Option[Int] = None
+    var  nject on ndex: Opt on[ nt] = None
 
-    val buffer = mutable.ArrayBuffer[TwitterTextRendererEntity[RichTextFormat]]()
-    val iterator = formatBuffer.zipWithIndex.reverseIterator
+    val buffer = mutable.ArrayBuffer[Tw terTextRendererEnt y[R chTextFormat]]()
+    val  erator = formatBuffer.z pW h ndex.reverse erator
 
-    while (iterator.hasNext && injectionIndex.isEmpty) {
-      iterator.next match {
-        case (e, i) if e.startIndex >= end =>
+    wh le ( erator.hasNext &&  nject on ndex. sEmpty) {
+       erator.next match {
+        case (e,  )  f e.start ndex >= end =>
           buffer.append(e.offset(offset))
-        case (e, i) if e.encloses(start, end) =>
-          buffer.append(e.copy(startIndex = newEnd, endIndex = e.endIndex + offset))
-          buffer.append(e.copy(endIndex = e.endIndex + offset))
-          injectionIndex = Some(i + 1)
-        case (e, i) if e.endsBetween(start, end) =>
-          buffer.append(e.copy(endIndex = start))
-          injectionIndex = Some(i + 1)
-        case (e, i) if e.startsBetween(start, end) =>
-          buffer.append(e.copy(startIndex = newEnd, endIndex = e.endIndex + offset))
-        case (e, i) if e.endIndex <= start =>
+        case (e,  )  f e.encloses(start, end) =>
+          buffer.append(e.copy(start ndex = newEnd, end ndex = e.end ndex + offset))
+          buffer.append(e.copy(end ndex = e.end ndex + offset))
+           nject on ndex = So (  + 1)
+        case (e,  )  f e.endsBet en(start, end) =>
+          buffer.append(e.copy(end ndex = start))
+           nject on ndex = So (  + 1)
+        case (e,  )  f e.startsBet en(start, end) =>
+          buffer.append(e.copy(start ndex = newEnd, end ndex = e.end ndex + offset))
+        case (e,  )  f e.end ndex <= start =>
           buffer.append(e)
-          injectionIndex = Some(i + 1)
-        case _ => // do nothing
+           nject on ndex = So (  + 1)
+        case _ => // do noth ng
       }
     }
-    val index = injectionIndex.map(_ - 1).getOrElse(0)
-    formatBuffer.remove(index, formatBuffer.length - index)
+    val  ndex =  nject on ndex.map(_ - 1).getOrElse(0)
+    formatBuffer.remove( ndex, formatBuffer.length -  ndex)
     formatBuffer.appendAll(buffer.reverse)
 
-    injectionIndex.getOrElse(0)
+     nject on ndex.getOrElse(0)
   }
 
-  private[this] def validateRange(start: Int, end: Int): Unit = {
-    require(
-      start >= 0 && start < textBuilder.length && end > start && end <= textBuilder.length,
-      s"The start ($start) and end ($end) indexes must be within the text range (0..${textBuilder.length})"
+  pr vate[t ] def val dateRange(start:  nt, end:  nt): Un  = {
+    requ re(
+      start >= 0 && start < textBu lder.length && end > start && end <= textBu lder.length,
+      s"T  start ($start) and end ($end)  ndexes must be w h n t  text range (0..${textBu lder.length})"
     )
   }
 
   /**
-   * Assigns a [[ReferenceObject]] to the given range. Since it makes little sense to trim object
-   * ranges, existing intersecting or overlapping ranges are removed entirely.
-   * @param start  Start index to apply formatting (inclusive)
-   * @param end       End index to apply formatting (exclusive)
-   * @param refObject The [[ReferenceObject]] to assign
-   * @return          this
+   * Ass gns a [[ReferenceObject]] to t  g ven range. S nce   makes l tle sense to tr m object
+   * ranges, ex st ng  ntersect ng or overlapp ng ranges are removed ent rely.
+   * @param start  Start  ndex to apply formatt ng ( nclus ve)
+   * @param end       End  ndex to apply formatt ng (exclus ve)
+   * @param refObject T  [[ReferenceObject]] to ass gn
+   * @return          t 
    */
-  def setRefObject(start: Int, end: Int, refObject: ReferenceObject): TwitterTextRenderer = {
-    validateRange(start, end)
-    val bufferIndex = removeAndOffsetRefObjects(start, end, end - start)
-    refObjectBuffer.insert(bufferIndex, TwitterTextRendererEntity(start, end, refObject))
+  def setRefObject(start:  nt, end:  nt, refObject: ReferenceObject): Tw terTextRenderer = {
+    val dateRange(start, end)
+    val buffer ndex = removeAndOffsetRefObjects(start, end, end - start)
+    refObjectBuffer. nsert(buffer ndex, Tw terTextRendererEnt y(start, end, refObject))
 
-    this
+    t 
   }
 
-  private[this] def removeAndOffsetRefObjects(start: Int, end: Int, newSize: Int): Int = {
-    val newEnd = start + newSize
+  pr vate[t ] def removeAndOffsetRefObjects(start:  nt, end:  nt, newS ze:  nt):  nt = {
+    val newEnd = start + newS ze
     val offset = newEnd - end
-    var injectionIndex: Option[Int] = None
+    var  nject on ndex: Opt on[ nt] = None
 
-    val buffer = mutable.ArrayBuffer[TwitterTextRendererEntity[ReferenceObject]]()
-    val iterator = refObjectBuffer.zipWithIndex.reverseIterator
+    val buffer = mutable.ArrayBuffer[Tw terTextRendererEnt y[ReferenceObject]]()
+    val  erator = refObjectBuffer.z pW h ndex.reverse erator
 
-    while (iterator.hasNext && injectionIndex.isEmpty) {
-      iterator.next match {
-        case (e, i) if e.startIndex >= end => buffer.append(e.offset(offset))
-        case (e, i) if e.endIndex <= start => injectionIndex = Some(i + 1)
-        case _ => // do nothing
+    wh le ( erator.hasNext &&  nject on ndex. sEmpty) {
+       erator.next match {
+        case (e,  )  f e.start ndex >= end => buffer.append(e.offset(offset))
+        case (e,  )  f e.end ndex <= start =>  nject on ndex = So (  + 1)
+        case _ => // do noth ng
       }
     }
-    val index = injectionIndex.getOrElse(0)
-    refObjectBuffer.remove(index, refObjectBuffer.length - index)
+    val  ndex =  nject on ndex.getOrElse(0)
+    refObjectBuffer.remove( ndex, refObjectBuffer.length -  ndex)
     refObjectBuffer.appendAll(buffer.reverse)
 
-    index
+     ndex
   }
 
   /**
-   * Builds and returns the full TwitterTextRenderer text with any changes applied to the builder instance.
+   * Bu lds and returns t  full Tw terTextRenderer text w h any changes appl ed to t  bu lder  nstance.
    */
-  def text: String = {
-    textBuilder.mkString
+  def text: Str ng = {
+    textBu lder.mkStr ng
   }
 
-  @tailrec
-  private def buildEntities(
-    formats: List[TwitterTextRendererEntity[RichTextFormat]],
-    refs: List[TwitterTextRendererEntity[ReferenceObject]],
-    acc: List[TwitterTextRendererEntity[_]] = List()
-  ): Seq[TwitterTextRendererEntity[_]] = {
+  @ta lrec
+  pr vate def bu ldEnt  es(
+    formats: L st[Tw terTextRendererEnt y[R chTextFormat]],
+    refs: L st[Tw terTextRendererEnt y[ReferenceObject]],
+    acc: L st[Tw terTextRendererEnt y[_]] = L st()
+  ): Seq[Tw terTextRendererEnt y[_]] = {
     (formats, refs) match {
-      case (Nil, Nil) => acc
-      case (remainingFormats, Nil) => acc ++ remainingFormats
-      case (Nil, remainingRefs) => acc ++ remainingRefs
+      case (N l, N l) => acc
+      case (rema n ngFormats, N l) => acc ++ rema n ngFormats
+      case (N l, rema n ngRefs) => acc ++ rema n ngRefs
 
-      case (format +: remainingFormats, ref +: remainingRefs)
-          if format.startIndex < ref.startIndex || (format.startIndex == ref.startIndex && format.endIndex < ref.endIndex) =>
-        buildEntities(remainingFormats, refs, acc :+ format)
+      case (format +: rema n ngFormats, ref +: rema n ngRefs)
+           f format.start ndex < ref.start ndex || (format.start ndex == ref.start ndex && format.end ndex < ref.end ndex) =>
+        bu ldEnt  es(rema n ngFormats, refs, acc :+ format)
 
-      case (format +: remainingFormats, ref +: remainingRefs)
-          if format.startIndex == ref.startIndex && format.endIndex == ref.endIndex =>
-        buildEntities(remainingFormats, remainingRefs, acc :+ format :+ ref)
+      case (format +: rema n ngFormats, ref +: rema n ngRefs)
+           f format.start ndex == ref.start ndex && format.end ndex == ref.end ndex =>
+        bu ldEnt  es(rema n ngFormats, rema n ngRefs, acc :+ format :+ ref)
 
-      case (_, ref +: remainingRefs) =>
-        buildEntities(formats, remainingRefs, acc :+ ref)
+      case (_, ref +: rema n ngRefs) =>
+        bu ldEnt  es(formats, rema n ngRefs, acc :+ ref)
     }
   }
 }
 
-case class TwitterTextRendererEntity[+T] private[richtext] (
-  startIndex: Int,
-  endIndex: Int,
+case class Tw terTextRendererEnt y[+T] pr vate[r chtext] (
+  start ndex:  nt,
+  end ndex:  nt,
   value: T) {
-  require(startIndex <= endIndex, "startIndex must be <= than endIndex")
+  requ re(start ndex <= end ndex, "start ndex must be <= than end ndex")
 
-  def nonEmpty: Boolean = !isEmpty
+  def nonEmpty: Boolean = ! sEmpty
 
-  def isEmpty: Boolean = startIndex == endIndex
+  def  sEmpty: Boolean = start ndex == end ndex
 
-  private[richtext] def enclosedIn(start: Int, end: Int): Boolean = {
-    start <= startIndex && endIndex <= end
+  pr vate[r chtext] def enclosed n(start:  nt, end:  nt): Boolean = {
+    start <= start ndex && end ndex <= end
   }
 
-  private[richtext] def encloses(start: Int, end: Int): Boolean = {
-    startIndex < start && end < endIndex
+  pr vate[r chtext] def encloses(start:  nt, end:  nt): Boolean = {
+    start ndex < start && end < end ndex
   }
 
-  private[richtext] def endsBetween(start: Int, end: Int): Boolean = {
-    start < endIndex && endIndex <= end && startIndex < start
+  pr vate[r chtext] def endsBet en(start:  nt, end:  nt): Boolean = {
+    start < end ndex && end ndex <= end && start ndex < start
   }
 
-  private[richtext] def offset(num: Int): TwitterTextRendererEntity[T] = {
-    copy(startIndex = startIndex + num, endIndex = endIndex + num)
+  pr vate[r chtext] def offset(num:  nt): Tw terTextRendererEnt y[T] = {
+    copy(start ndex = start ndex + num, end ndex = end ndex + num)
   }
 
-  private[richtext] def startsBetween(start: Int, end: Int): Boolean = {
-    startIndex >= start && startIndex < end && endIndex > end
+  pr vate[r chtext] def startsBet en(start:  nt, end:  nt): Boolean = {
+    start ndex >= start && start ndex < end && end ndex > end
   }
 }

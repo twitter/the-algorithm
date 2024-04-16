@@ -1,24 +1,24 @@
-package com.twitter.unified_user_actions.client.config
+package com.tw ter.un f ed_user_act ons.cl ent.conf g
 
-sealed trait ClusterConfig {
-  val name: String
-  val environment: EnvironmentConfig
+sealed tra  ClusterConf g {
+  val na : Str ng
+  val env ron nt: Env ron ntConf g
 }
 
 object Clusters {
   /*
-   * Our production cluster for external consumption. Our SLAs are enforced.
+   *   product on cluster for external consumpt on.   SLAs are enforced.
    */
-  case object ProdCluster extends ClusterConfig {
-    override val name: String = Constants.UuaKafkaProdClusterName
-    override val environment: EnvironmentConfig = Environments.Prod
+  case object ProdCluster extends ClusterConf g {
+    overr de val na : Str ng = Constants.UuaKafkaProdClusterNa 
+    overr de val env ron nt: Env ron ntConf g = Env ron nts.Prod
   }
 
   /*
-   * Our staging cluster for external development and pre-releases. No SLAs are enforced.
+   *   stag ng cluster for external develop nt and pre-releases. No SLAs are enforced.
    */
-  case object StagingCluster extends ClusterConfig {
-    override val name: String = Constants.UuaKafkaStagingClusterName
-    override val environment: EnvironmentConfig = Environments.Staging
+  case object Stag ngCluster extends ClusterConf g {
+    overr de val na : Str ng = Constants.UuaKafkaStag ngClusterNa 
+    overr de val env ron nt: Env ron ntConf g = Env ron nts.Stag ng
   }
 }

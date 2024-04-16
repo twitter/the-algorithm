@@ -1,483 +1,483 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work
 
-import com.twitter.ml.api._
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregateFeature
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetric
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetricCommon
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetricCommon._
-import com.twitter.timelines.data_processing.ml_util.transforms.OneToSomeTransform
-import com.twitter.util.Duration
-import com.twitter.util.Try
-import java.lang.{Boolean => JBoolean}
-import java.lang.{Double => JDouble}
-import java.lang.{Long => JLong}
-import java.util.{Set => JSet}
-import scala.annotation.tailrec
-import scala.language.existentials
-import scala.collection.JavaConverters._
-import scala.util.matching.Regex
+ mport com.tw ter.ml.ap ._
+ mport com.tw ter.ml.ap .constant.SharedFeatures
+ mport com.tw ter.ml.ap .ut l.SR chDataRecord
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. tr cs.AggregateFeature
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. tr cs.Aggregat on tr c
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. tr cs.Aggregat on tr cCommon
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. tr cs.Aggregat on tr cCommon._
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.transforms.OneToSo Transform
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Try
+ mport java.lang.{Boolean => JBoolean}
+ mport java.lang.{Double => JDouble}
+ mport java.lang.{Long => JLong}
+ mport java.ut l.{Set => JSet}
+ mport scala.annotat on.ta lrec
+ mport scala.language.ex stent als
+ mport scala.collect on.JavaConverters._
+ mport scala.ut l.match ng.Regex
 
 /**
- * A case class contained precomputed data useful to quickly
- * process operations over an aggregate.
+ * A case class conta ned precomputed data useful to qu ckly
+ * process operat ons over an aggregate.
  *
- * @param query The underlying feature being aggregated
- * @param metric The aggregation metric
- * @param outputFeatures The output features that aggregation will produce
- * @param outputFeatureIds The precomputed hashes of the above outputFeatures
+ * @param query T  underly ng feature be ng aggregated
+ * @param  tr c T  aggregat on  tr c
+ * @param outputFeatures T  output features that aggregat on w ll produce
+ * @param outputFeature ds T  precomputed has s of t  above outputFeatures
  */
-case class PrecomputedAggregateDescriptor[T](
+case class PrecomputedAggregateDescr ptor[T](
   query: AggregateFeature[T],
-  metric: AggregationMetric[T, _],
-  outputFeatures: List[Feature[_]],
-  outputFeatureIds: List[JLong])
+   tr c: Aggregat on tr c[T, _],
+  outputFeatures: L st[Feature[_]],
+  outputFeature ds: L st[JLong])
 
 object TypedAggregateGroup {
 
   /**
-   * Recursive function that generates all combinations of value
-   * assignments for a collection of sparse binary features.
+   * Recurs ve funct on that generates all comb nat ons of value
+   * ass gn nts for a collect on of sparse b nary features.
    *
-   * @param sparseBinaryIdValues list of sparse binary feature ids and possible values they can take
-   * @return A set of maps, where each map represents one possible assignment of values to ids
+   * @param sparseB nary dValues l st of sparse b nary feature  ds and poss ble values t y can take
+   * @return A set of maps, w re each map represents one poss ble ass gn nt of values to  ds
    */
-  def sparseBinaryPermutations(
-    sparseBinaryIdValues: List[(Long, Set[String])]
-  ): Set[Map[Long, String]] = sparseBinaryIdValues match {
-    case (id, values) +: rest =>
-      tailRecSparseBinaryPermutations(
-        existingPermutations = values.map(value => Map(id -> value)),
-        remainingIdValues = rest
+  def sparseB naryPermutat ons(
+    sparseB nary dValues: L st[(Long, Set[Str ng])]
+  ): Set[Map[Long, Str ng]] = sparseB nary dValues match {
+    case ( d, values) +: rest =>
+      ta lRecSparseB naryPermutat ons(
+        ex st ngPermutat ons = values.map(value => Map( d -> value)),
+        rema n ng dValues = rest
       )
-    case Nil => Set.empty
+    case N l => Set.empty
   }
 
-  @tailrec private[this] def tailRecSparseBinaryPermutations(
-    existingPermutations: Set[Map[Long, String]],
-    remainingIdValues: List[(Long, Set[String])]
-  ): Set[Map[Long, String]] = remainingIdValues match {
-    case Nil => existingPermutations
-    case (id, values) +: rest =>
-      tailRecSparseBinaryPermutations(
-        existingPermutations.flatMap { existingIdValueMap =>
-          values.map(value => existingIdValueMap ++ Map(id -> value))
+  @ta lrec pr vate[t ] def ta lRecSparseB naryPermutat ons(
+    ex st ngPermutat ons: Set[Map[Long, Str ng]],
+    rema n ng dValues: L st[(Long, Set[Str ng])]
+  ): Set[Map[Long, Str ng]] = rema n ng dValues match {
+    case N l => ex st ngPermutat ons
+    case ( d, values) +: rest =>
+      ta lRecSparseB naryPermutat ons(
+        ex st ngPermutat ons.flatMap { ex st ng dValueMap =>
+          values.map(value => ex st ng dValueMap ++ Map( d -> value))
         },
         rest
       )
   }
 
-  val SparseFeatureSuffix = ".member"
-  def sparseFeature(sparseBinaryFeature: Feature[_]): Feature[String] =
+  val SparseFeatureSuff x = ". mber"
+  def sparseFeature(sparseB naryFeature: Feature[_]): Feature[Str ng] =
     new Feature.Text(
-      sparseBinaryFeature.getDenseFeatureName + SparseFeatureSuffix,
-      AggregationMetricCommon.derivePersonalDataTypes(Some(sparseBinaryFeature)))
+      sparseB naryFeature.getDenseFeatureNa  + SparseFeatureSuff x,
+      Aggregat on tr cCommon.der vePersonalDataTypes(So (sparseB naryFeature)))
 
-  /* Throws exception if obj not an instance of U */
-  private[this] def validate[U](obj: Any): U = {
-    require(obj.isInstanceOf[U])
-    obj.asInstanceOf[U]
+  /* Throws except on  f obj not an  nstance of U */
+  pr vate[t ] def val date[U](obj: Any): U = {
+    requ re(obj. s nstanceOf[U])
+    obj.as nstanceOf[U]
   }
 
-  private[this] def getFeatureOpt[U](dataRecord: DataRecord, feature: Feature[U]): Option[U] =
-    Option(SRichDataRecord(dataRecord).getFeatureValue(feature)).map(validate[U](_))
+  pr vate[t ] def getFeatureOpt[U](dataRecord: DataRecord, feature: Feature[U]): Opt on[U] =
+    Opt on(SR chDataRecord(dataRecord).getFeatureValue(feature)).map(val date[U](_))
 
   /**
-   * Get a mapping from feature ids
-   * (including individual sparse elements of a sparse feature) to values
-   * from the given data record, for a given feature type.
+   * Get a mapp ng from feature  ds
+   * ( nclud ng  nd v dual sparse ele nts of a sparse feature) to values
+   * from t  g ven data record, for a g ven feature type.
    *
    * @param dataRecord Data record to get features from
-   * @param keysToAggregate key features to get id-value mappings for
-   * @param featureType Feature type to get id-value maps for
+   * @param keysToAggregate key features to get  d-value mapp ngs for
+   * @param featureType Feature type to get  d-value maps for
    */
-  def getKeyFeatureIdValues[U](
+  def getKeyFeature dValues[U](
     dataRecord: DataRecord,
     keysToAggregate: Set[Feature[_]],
     featureType: FeatureType
-  ): Set[(Long, Option[U])] = {
-    val featuresOfThisType: Set[Feature[U]] = keysToAggregate
-      .filter(_.getFeatureType == featureType)
-      .map(validate[Feature[U]])
+  ): Set[(Long, Opt on[U])] = {
+    val featuresOfT Type: Set[Feature[U]] = keysToAggregate
+      .f lter(_.getFeatureType == featureType)
+      .map(val date[Feature[U]])
 
-    featuresOfThisType
+    featuresOfT Type
       .map { feature: Feature[U] =>
-        val featureId: Long = getDenseFeatureId(feature)
-        val featureOpt: Option[U] = getFeatureOpt(dataRecord, feature)
-        (featureId, featureOpt)
+        val feature d: Long = getDenseFeature d(feature)
+        val featureOpt: Opt on[U] = getFeatureOpt(dataRecord, feature)
+        (feature d, featureOpt)
       }
   }
 
-  // TypedAggregateGroup may transform the aggregate keys for internal use. This method generates
-  // denseFeatureIds for the transformed feature.
-  def getDenseFeatureId(feature: Feature[_]): Long =
-    if (feature.getFeatureType != FeatureType.SPARSE_BINARY) {
-      feature.getDenseFeatureId
+  // TypedAggregateGroup may transform t  aggregate keys for  nternal use. T   thod generates
+  // denseFeature ds for t  transfor d feature.
+  def getDenseFeature d(feature: Feature[_]): Long =
+     f (feature.getFeatureType != FeatureType.SPARSE_B NARY) {
+      feature.getDenseFeature d
     } else {
-      sparseFeature(feature).getDenseFeatureId
+      sparseFeature(feature).getDenseFeature d
     }
 
   /**
-   * Return denseFeatureIds for the input features after applying the custom transformation that
-   * TypedAggregateGroup applies to its keysToAggregate.
+   * Return denseFeature ds for t   nput features after apply ng t  custom transformat on that
+   * TypedAggregateGroup appl es to  s keysToAggregate.
    *
-   * @param keysToAggregate key features to get id for
+   * @param keysToAggregate key features to get  d for
    */
-  def getKeyFeatureIds(keysToAggregate: Set[Feature[_]]): Set[Long] =
-    keysToAggregate.map(getDenseFeatureId)
+  def getKeyFeature ds(keysToAggregate: Set[Feature[_]]): Set[Long] =
+    keysToAggregate.map(getDenseFeature d)
 
-  def checkIfAllKeysExist[U](featureIdValueMap: Map[Long, Option[U]]): Boolean =
-    featureIdValueMap.forall { case (_, valueOpt) => valueOpt.isDefined }
+  def c ck fAllKeysEx st[U](feature dValueMap: Map[Long, Opt on[U]]): Boolean =
+    feature dValueMap.forall { case (_, valueOpt) => valueOpt. sDef ned }
 
-  def liftOptions[U](featureIdValueMap: Map[Long, Option[U]]): Map[Long, U] =
-    featureIdValueMap
+  def l ftOpt ons[U](feature dValueMap: Map[Long, Opt on[U]]): Map[Long, U] =
+    feature dValueMap
       .flatMap {
-        case (id, valueOpt) =>
-          valueOpt.map { value => (id, value) }
+        case ( d, valueOpt) =>
+          valueOpt.map { value => ( d, value) }
       }
 
-  val timestampFeature: Feature[JLong] = SharedFeatures.TIMESTAMP
+  val t  stampFeature: Feature[JLong] = SharedFeatures.T MESTAMP
 
   /**
-   * Builds all valid aggregation keys (for the output store) from
-   * a datarecord and a spec listing the keys to aggregate. There
-   * can be multiple aggregation keys generated from a single data
-   * record when grouping by sparse binary features, for which multiple
-   * values can be set within the data record.
+   * Bu lds all val d aggregat on keys (for t  output store) from
+   * a datarecord and a spec l st ng t  keys to aggregate. T re
+   * can be mult ple aggregat on keys generated from a s ngle data
+   * record w n group ng by sparse b nary features, for wh ch mult ple
+   * values can be set w h n t  data record.
    *
    * @param dataRecord Data record to read values for key features from
-   * @return A set of AggregationKeys encoding the values of all keys
+   * @return A set of Aggregat onKeys encod ng t  values of all keys
    */
-  def buildAggregationKeys(
+  def bu ldAggregat onKeys(
     dataRecord: DataRecord,
     keysToAggregate: Set[Feature[_]]
-  ): Set[AggregationKey] = {
-    val discreteAggregationKeys = getKeyFeatureIdValues[Long](
+  ): Set[Aggregat onKey] = {
+    val d screteAggregat onKeys = getKeyFeature dValues[Long](
       dataRecord,
       keysToAggregate,
-      FeatureType.DISCRETE
+      FeatureType.D SCRETE
     ).toMap
 
-    val textAggregationKeys = getKeyFeatureIdValues[String](
+    val textAggregat onKeys = getKeyFeature dValues[Str ng](
       dataRecord,
       keysToAggregate,
-      FeatureType.STRING
+      FeatureType.STR NG
     ).toMap
 
-    val sparseBinaryIdValues = getKeyFeatureIdValues[JSet[String]](
+    val sparseB nary dValues = getKeyFeature dValues[JSet[Str ng]](
       dataRecord,
       keysToAggregate,
-      FeatureType.SPARSE_BINARY
+      FeatureType.SPARSE_B NARY
     ).map {
-      case (id, values) =>
+      case ( d, values) =>
         (
-          id,
+           d,
           values
             .map(_.asScala.toSet)
-            .getOrElse(Set.empty[String])
+            .getOrElse(Set.empty[Str ng])
         )
-    }.toList
+    }.toL st
 
-    if (checkIfAllKeysExist(discreteAggregationKeys) &&
-      checkIfAllKeysExist(textAggregationKeys)) {
-      if (sparseBinaryIdValues.nonEmpty) {
-        sparseBinaryPermutations(sparseBinaryIdValues).map { sparseBinaryTextKeys =>
-          AggregationKey(
-            discreteFeaturesById = liftOptions(discreteAggregationKeys),
-            textFeaturesById = liftOptions(textAggregationKeys) ++ sparseBinaryTextKeys
+     f (c ck fAllKeysEx st(d screteAggregat onKeys) &&
+      c ck fAllKeysEx st(textAggregat onKeys)) {
+       f (sparseB nary dValues.nonEmpty) {
+        sparseB naryPermutat ons(sparseB nary dValues).map { sparseB naryTextKeys =>
+          Aggregat onKey(
+            d screteFeaturesBy d = l ftOpt ons(d screteAggregat onKeys),
+            textFeaturesBy d = l ftOpt ons(textAggregat onKeys) ++ sparseB naryTextKeys
           )
         }
       } else {
         Set(
-          AggregationKey(
-            discreteFeaturesById = liftOptions(discreteAggregationKeys),
-            textFeaturesById = liftOptions(textAggregationKeys)
+          Aggregat onKey(
+            d screteFeaturesBy d = l ftOpt ons(d screteAggregat onKeys),
+            textFeaturesBy d = l ftOpt ons(textAggregat onKeys)
           )
         )
       }
-    } else Set.empty[AggregationKey]
+    } else Set.empty[Aggregat onKey]
   }
 
 }
 
 /**
- * Specifies one or more related aggregate(s) to compute in the summingbird job.
+ * Spec f es one or more related aggregate(s) to compute  n t  summ ngb rd job.
  *
- * @param inputSource Source to compute this aggregate over
- * @param preTransforms Sequence of [[com.twitter.ml.api.RichITransform]] that transform
- * data records pre-aggregation (e.g. discretization, renaming)
- * @param samplingTransformOpt Optional [[OneToSomeTransform]] that transform data
- * record to optional data record (e.g. for sampling) before aggregation
- * @param aggregatePrefix Prefix to use for naming resultant aggregate features
- * @param keysToAggregate Features to group by when computing the aggregates
- * (e.g. USER_ID, AUTHOR_ID)
- * @param featuresToAggregate Features to aggregate (e.g. blender_score or is_photo)
- * @param labels Labels to cross the features with to make pair features, if any.
- * use Label.All if you don't want to cross with a label.
- * @param metrics Aggregation metrics to compute (e.g. count, mean)
- * @param halfLives Half lives to use for the aggregations, to be crossed with the above.
- * use Duration.Top for "forever" aggregations over an infinite time window (no decay).
- * @param outputStore Store to output this aggregate to
- * @param includeAnyFeature Aggregate label counts for any feature value
- * @param includeAnyLabel Aggregate feature counts for any label value (e.g. all impressions)
+ * @param  nputS ce S ce to compute t  aggregate over
+ * @param preTransforms Sequence of [[com.tw ter.ml.ap .R ch Transform]] that transform
+ * data records pre-aggregat on (e.g. d scret zat on, renam ng)
+ * @param sampl ngTransformOpt Opt onal [[OneToSo Transform]] that transform data
+ * record to opt onal data record (e.g. for sampl ng) before aggregat on
+ * @param aggregatePref x Pref x to use for nam ng resultant aggregate features
+ * @param keysToAggregate Features to group by w n comput ng t  aggregates
+ * (e.g. USER_ D, AUTHOR_ D)
+ * @param featuresToAggregate Features to aggregate (e.g. blender_score or  s_photo)
+ * @param labels Labels to cross t  features w h to make pa r features,  f any.
+ * use Label.All  f   don't want to cross w h a label.
+ * @param  tr cs Aggregat on  tr cs to compute (e.g. count,  an)
+ * @param halfL ves Half l ves to use for t  aggregat ons, to be crossed w h t  above.
+ * use Durat on.Top for "forever" aggregat ons over an  nf n e t   w ndow (no decay).
+ * @param outputStore Store to output t  aggregate to
+ * @param  ncludeAnyFeature Aggregate label counts for any feature value
+ * @param  ncludeAnyLabel Aggregate feature counts for any label value (e.g. all  mpress ons)
  *
- * The overall config for the summingbird job consists of a list of "AggregateGroup"
- * case class objects, which get translated into strongly typed "TypedAggregateGroup"
- * case class objects. A single TypedAggregateGroup always groups input data records from
- * ''inputSource'' by a single set of aggregation keys (''featuresToAggregate'').
- * Within these groups, we perform a comprehensive cross of:
+ * T  overall conf g for t  summ ngb rd job cons sts of a l st of "AggregateGroup"
+ * case class objects, wh ch get translated  nto strongly typed "TypedAggregateGroup"
+ * case class objects. A s ngle TypedAggregateGroup always groups  nput data records from
+ * '' nputS ce'' by a s ngle set of aggregat on keys (''featuresToAggregate'').
+ * W h n t se groups,   perform a compre ns ve cross of:
  *
- * ''featuresToAggregate'' x ''labels'' x ''metrics'' x ''halfLives''
+ * ''featuresToAggregate'' x ''labels'' x '' tr cs'' x ''halfL ves''
  *
- * All the resultant aggregate features are assigned a human-readable feature name
- * beginning with ''aggregatePrefix'', and are written to DataRecords that get
- * aggregated and written to the store specified by ''outputStore''.
+ * All t  resultant aggregate features are ass gned a human-readable feature na 
+ * beg nn ng w h ''aggregatePref x'', and are wr ten to DataRecords that get
+ * aggregated and wr ten to t  store spec f ed by ''outputStore''.
  *
- * Illustrative example. Suppose we define our spec as follows:
+ *  llustrat ve example. Suppose   def ne   spec as follows:
  *
  * TypedAggregateGroup(
- *   inputSource         = "timelines_recap_daily",
- *   aggregatePrefix     = "user_author_aggregate",
- *   keysToAggregate     = Set(USER_ID, AUTHOR_ID),
+ *    nputS ce         = "t  l nes_recap_da ly",
+ *   aggregatePref x     = "user_author_aggregate",
+ *   keysToAggregate     = Set(USER_ D, AUTHOR_ D),
  *   featuresToAggregate = Set(RecapFeatures.TEXT_SCORE, RecapFeatures.BLENDER_SCORE),
- *   labels              = Set(RecapFeatures.IS_FAVORITED, RecapFeatures.IS_REPLIED),
- *   metrics             = Set(CountMetric, MeanMetric),
- *   halfLives           = Set(7.Days, 30.Days),
+ *   labels              = Set(RecapFeatures. S_FAVOR TED, RecapFeatures. S_REPL ED),
+ *    tr cs             = Set(Count tr c,  an tr c),
+ *   halfL ves           = Set(7.Days, 30.Days),
  *   outputStore         = "user_author_aggregate_store"
  * )
  *
- * This will process data records from the source named "timelines_recap_daily"
- * (see AggregateSource.scala for more details on how to add your own source)
- * It will produce a total of 2x2x2x2 = 16 aggregation features, named like:
+ * T  w ll process data records from t  s ce na d "t  l nes_recap_da ly"
+ * (see AggregateS ce.scala for more deta ls on how to add y  own s ce)
+ *   w ll produce a total of 2x2x2x2 = 16 aggregat on features, na d l ke:
  *
- * user_author_aggregate.pair.recap.engagement.is_favorited.recap.searchfeature.blender_score.count.7days
- * user_author_aggregate.pair.recap.engagement.is_favorited.recap.searchfeature.blender_score.count.30days
- * user_author_aggregate.pair.recap.engagement.is_favorited.recap.searchfeature.blender_score.mean.7days
+ * user_author_aggregate.pa r.recap.engage nt. s_favor ed.recap.searchfeature.blender_score.count.7days
+ * user_author_aggregate.pa r.recap.engage nt. s_favor ed.recap.searchfeature.blender_score.count.30days
+ * user_author_aggregate.pa r.recap.engage nt. s_favor ed.recap.searchfeature.blender_score. an.7days
  *
  * ... (and so on)
  *
- * and all the result features will be stored in DataRecords, summed up, and written
- * to the output store defined by the name "user_author_aggregate_store".
- * (see AggregateStore.scala for details on how to add your own store).
+ * and all t  result features w ll be stored  n DataRecords, sum d up, and wr ten
+ * to t  output store def ned by t  na  "user_author_aggregate_store".
+ * (see AggregateStore.scala for deta ls on how to add y  own store).
  *
- * If you do not want a full cross, split up your config into multiple TypedAggregateGroup
- * objects. Splitting is strongly advised to avoid blowing up and creating invalid
- * or unnecessary combinations of aggregate features (note that some combinations
- * are useless or invalid e.g. computing the mean of a binary feature). Splitting
- * also does not cost anything in terms of real-time performance, because all
- * Aggregate objects in the master spec that share the same ''keysToAggregate'', the
- * same ''inputSource'' and the same ''outputStore'' are grouped by the summingbird
- * job logic and stored into a single DataRecord in the output store. Overlapping
- * aggregates will also automatically be deduplicated so don't worry about overlaps.
+ *  f   do not want a full cross, spl  up y  conf g  nto mult ple TypedAggregateGroup
+ * objects. Spl t ng  s strongly adv sed to avo d blow ng up and creat ng  nval d
+ * or unnecessary comb nat ons of aggregate features (note that so  comb nat ons
+ * are useless or  nval d e.g. comput ng t   an of a b nary feature). Spl t ng
+ * also does not cost anyth ng  n terms of real-t   performance, because all
+ * Aggregate objects  n t  master spec that share t  sa  ''keysToAggregate'', t 
+ * sa  '' nputS ce'' and t  sa  ''outputStore'' are grouped by t  summ ngb rd
+ * job log c and stored  nto a s ngle DataRecord  n t  output store. Overlapp ng
+ * aggregates w ll also automat cally be dedupl cated so don't worry about overlaps.
  */
 case class TypedAggregateGroup[T](
-  inputSource: AggregateSource,
-  aggregatePrefix: String,
+   nputS ce: AggregateS ce,
+  aggregatePref x: Str ng,
   keysToAggregate: Set[Feature[_]],
   featuresToAggregate: Set[Feature[T]],
   labels: Set[_ <: Feature[JBoolean]],
-  metrics: Set[AggregationMetric[T, _]],
-  halfLives: Set[Duration],
+   tr cs: Set[Aggregat on tr c[T, _]],
+  halfL ves: Set[Durat on],
   outputStore: AggregateStore,
-  preTransforms: Seq[OneToSomeTransform] = Seq.empty,
-  includeAnyFeature: Boolean = true,
-  includeAnyLabel: Boolean = true,
-  aggExclusionRegex: Seq[String] = Seq.empty) {
-  import TypedAggregateGroup._
+  preTransforms: Seq[OneToSo Transform] = Seq.empty,
+   ncludeAnyFeature: Boolean = true,
+   ncludeAnyLabel: Boolean = true,
+  aggExclus onRegex: Seq[Str ng] = Seq.empty) {
+   mport TypedAggregateGroup._
 
-  val compiledRegexes = aggExclusionRegex.map(new Regex(_))
+  val comp ledRegexes = aggExclus onRegex.map(new Regex(_))
 
-  // true if should drop, false if should keep
-  def filterOutAggregateFeature(
-    feature: PrecomputedAggregateDescriptor[_],
+  // true  f should drop, false  f should keep
+  def f lterOutAggregateFeature(
+    feature: PrecomputedAggregateDescr ptor[_],
     regexes: Seq[Regex]
   ): Boolean = {
-    if (regexes.nonEmpty)
-      feature.outputFeatures.exists { feature =>
-        regexes.exists { re => re.findFirstMatchIn(feature.getDenseFeatureName).nonEmpty }
+     f (regexes.nonEmpty)
+      feature.outputFeatures.ex sts { feature =>
+        regexes.ex sts { re => re.f ndF rstMatch n(feature.getDenseFeatureNa ).nonEmpty }
       }
     else false
   }
 
-  def buildAggregationKeys(
+  def bu ldAggregat onKeys(
     dataRecord: DataRecord
-  ): Set[AggregationKey] = {
-    TypedAggregateGroup.buildAggregationKeys(dataRecord, keysToAggregate)
+  ): Set[Aggregat onKey] = {
+    TypedAggregateGroup.bu ldAggregat onKeys(dataRecord, keysToAggregate)
   }
 
   /**
-   * This val precomputes descriptors for all individual aggregates in this group
-   * (of type ''AggregateFeature''). Also precompute hashes of all aggregation
-   * "output" features generated by these operators for faster
-   * run-time performance (this turns out to be a primary CPU bottleneck).
-   * Ex: for the mean operator, "sum" and "count" are output features
+   * T  val precomputes descr ptors for all  nd v dual aggregates  n t  group
+   * (of type ''AggregateFeature''). Also precompute has s of all aggregat on
+   * "output" features generated by t se operators for faster
+   * run-t   performance (t  turns out to be a pr mary CPU bottleneck).
+   * Ex: for t   an operator, "sum" and "count" are output features
    */
-  val individualAggregateDescriptors: Set[PrecomputedAggregateDescriptor[T]] = {
+  val  nd v dualAggregateDescr ptors: Set[PrecomputedAggregateDescr ptor[T]] = {
     /*
-     * By default, in additional to all feature-label crosses, also
-     * compute in aggregates over each feature and label without crossing
+     * By default,  n add  onal to all feature-label crosses, also
+     * compute  n aggregates over each feature and label w hout cross ng
      */
-    val labelOptions = labels.map(Option(_)) ++
-      (if (includeAnyLabel) Set(None) else Set.empty)
-    val featureOptions = featuresToAggregate.map(Option(_)) ++
-      (if (includeAnyFeature) Set(None) else Set.empty)
+    val labelOpt ons = labels.map(Opt on(_)) ++
+      ( f ( ncludeAnyLabel) Set(None) else Set.empty)
+    val featureOpt ons = featuresToAggregate.map(Opt on(_)) ++
+      ( f ( ncludeAnyFeature) Set(None) else Set.empty)
     for {
-      feature <- featureOptions
-      label <- labelOptions
-      metric <- metrics
-      halfLife <- halfLives
-    } yield {
-      val query = AggregateFeature[T](aggregatePrefix, feature, label, halfLife)
+      feature <- featureOpt ons
+      label <- labelOpt ons
+       tr c <-  tr cs
+      halfL fe <- halfL ves
+    } y eld {
+      val query = AggregateFeature[T](aggregatePref x, feature, label, halfL fe)
 
-      val aggregateOutputFeatures = metric.getOutputFeatures(query)
-      val aggregateOutputFeatureIds = metric.getOutputFeatureIds(query)
-      PrecomputedAggregateDescriptor(
+      val aggregateOutputFeatures =  tr c.getOutputFeatures(query)
+      val aggregateOutputFeature ds =  tr c.getOutputFeature ds(query)
+      PrecomputedAggregateDescr ptor(
         query,
-        metric,
+         tr c,
         aggregateOutputFeatures,
-        aggregateOutputFeatureIds
+        aggregateOutputFeature ds
       )
     }
-  }.filterNot(filterOutAggregateFeature(_, compiledRegexes))
+  }.f lterNot(f lterOutAggregateFeature(_, comp ledRegexes))
 
-  /* Precomputes a map from all generated aggregate feature ids to their half lives. */
-  val continuousFeatureIdsToHalfLives: Map[Long, Duration] =
-    individualAggregateDescriptors.flatMap { descriptor =>
-      descriptor.outputFeatures
+  /* Precomputes a map from all generated aggregate feature  ds to t  r half l ves. */
+  val cont nuousFeature dsToHalfL ves: Map[Long, Durat on] =
+     nd v dualAggregateDescr ptors.flatMap { descr ptor =>
+      descr ptor.outputFeatures
         .flatMap { feature =>
-          if (feature.getFeatureType() == FeatureType.CONTINUOUS) {
-            Try(feature.asInstanceOf[Feature[JDouble]]).toOption
-              .map(feature => (feature.getFeatureId(), descriptor.query.halfLife))
+           f (feature.getFeatureType() == FeatureType.CONT NUOUS) {
+            Try(feature.as nstanceOf[Feature[JDouble]]).toOpt on
+              .map(feature => (feature.getFeature d(), descr ptor.query.halfL fe))
           } else None
         }
     }.toMap
 
   /*
-   * Sparse binary keys become individual string keys in the output.
-   * e.g. group by "words.in.tweet", output key: "words.in.tweet.member"
+   * Sparse b nary keys beco   nd v dual str ng keys  n t  output.
+   * e.g. group by "words. n.t et", output key: "words. n.t et. mber"
    */
   val allOutputKeys: Set[Feature[_]] = keysToAggregate.map { key =>
-    if (key.getFeatureType == FeatureType.SPARSE_BINARY) sparseFeature(key)
+     f (key.getFeatureType == FeatureType.SPARSE_B NARY) sparseFeature(key)
     else key
   }
 
-  val allOutputFeatures: Set[Feature[_]] = individualAggregateDescriptors.flatMap {
-    case PrecomputedAggregateDescriptor(
+  val allOutputFeatures: Set[Feature[_]] =  nd v dualAggregateDescr ptors.flatMap {
+    case PrecomputedAggregateDescr ptor(
           query,
-          metric,
+           tr c,
           outputFeatures,
-          outputFeatureIds
+          outputFeature ds
         ) =>
       outputFeatures
   }
 
-  val aggregateContext: FeatureContext = new FeatureContext(allOutputFeatures.toList.asJava)
+  val aggregateContext: FeatureContext = new FeatureContext(allOutputFeatures.toL st.asJava)
 
   /**
-   * Adds all aggregates in this group found in the two input data records
-   * into a result, mutating the result. Uses a while loop for an
-   * approximately 10% gain in speed over a for comprehension.
+   * Adds all aggregates  n t  group found  n t  two  nput data records
+   *  nto a result, mutat ng t  result. Uses a wh le loop for an
+   * approx mately 10% ga n  n speed over a for compre ns on.
    *
-   * WARNING: mutates ''result''
+   * WARN NG: mutates ''result''
    *
-   * @param result The output data record to mutate
-   * @param left The left data record to add
-   * @param right The right data record to add
+   * @param result T  output data record to mutate
+   * @param left T  left data record to add
+   * @param r ght T  r ght data record to add
    */
-  def mutatePlus(result: DataRecord, left: DataRecord, right: DataRecord): Unit = {
-    val featureIterator = individualAggregateDescriptors.iterator
-    while (featureIterator.hasNext) {
-      val descriptor = featureIterator.next
-      descriptor.metric.mutatePlus(
+  def mutatePlus(result: DataRecord, left: DataRecord, r ght: DataRecord): Un  = {
+    val feature erator =  nd v dualAggregateDescr ptors. erator
+    wh le (feature erator.hasNext) {
+      val descr ptor = feature erator.next
+      descr ptor. tr c.mutatePlus(
         result,
         left,
-        right,
-        descriptor.query,
-        Some(descriptor.outputFeatureIds)
+        r ght,
+        descr ptor.query,
+        So (descr ptor.outputFeature ds)
       )
     }
   }
 
   /**
-   * Apply preTransforms sequentially. If any transform results in a dropped (None)
-   * DataRecord, then entire tranform sequence will result in a dropped DataRecord.
+   * Apply preTransforms sequent ally.  f any transform results  n a dropped (None)
+   * DataRecord, t n ent re tranform sequence w ll result  n a dropped DataRecord.
    * Note that preTransforms are order-dependent.
    */
-  private[this] def sequentiallyTransform(dataRecord: DataRecord): Option[DataRecord] = {
-    val recordOpt = Option(new DataRecord(dataRecord))
+  pr vate[t ] def sequent allyTransform(dataRecord: DataRecord): Opt on[DataRecord] = {
+    val recordOpt = Opt on(new DataRecord(dataRecord))
     preTransforms.foldLeft(recordOpt) {
-      case (Some(previousRecord), preTransform) =>
-        preTransform(previousRecord)
-      case _ => Option.empty[DataRecord]
+      case (So (prev ousRecord), preTransform) =>
+        preTransform(prev ousRecord)
+      case _ => Opt on.empty[DataRecord]
     }
   }
 
   /**
-   * Given a data record, apply transforms and fetch the incremental contributions to
-   * each configured aggregate from this data record, and store these in an output data record.
+   * G ven a data record, apply transforms and fetch t   ncre ntal contr but ons to
+   * each conf gured aggregate from t  data record, and store t se  n an output data record.
    *
-   * @param dataRecord Input data record to aggregate.
-   * @return A set of tuples (AggregationKey, DataRecord) whose first entry is an
-   * AggregationKey indicating what keys we're grouping by, and whose second entry
-   * is an output data record with incremental contributions to the aggregate value(s)
+   * @param dataRecord  nput data record to aggregate.
+   * @return A set of tuples (Aggregat onKey, DataRecord) whose f rst entry  s an
+   * Aggregat onKey  nd cat ng what keys  're group ng by, and whose second entry
+   *  s an output data record w h  ncre ntal contr but ons to t  aggregate value(s)
    */
-  def computeAggregateKVPairs(dataRecord: DataRecord): Set[(AggregationKey, DataRecord)] = {
-    sequentiallyTransform(dataRecord)
+  def computeAggregateKVPa rs(dataRecord: DataRecord): Set[(Aggregat onKey, DataRecord)] = {
+    sequent allyTransform(dataRecord)
       .flatMap { dataRecord =>
-        val aggregationKeys = buildAggregationKeys(dataRecord)
-        val increment = new DataRecord
+        val aggregat onKeys = bu ldAggregat onKeys(dataRecord)
+        val  ncre nt = new DataRecord
 
-        val isNonEmptyIncrement = individualAggregateDescriptors
-          .map { descriptor =>
-            descriptor.metric.setIncrement(
-              output = increment,
-              input = dataRecord,
-              query = descriptor.query,
-              timestampFeature = inputSource.timestampFeature,
-              aggregateOutputs = Some(descriptor.outputFeatureIds)
+        val  sNonEmpty ncre nt =  nd v dualAggregateDescr ptors
+          .map { descr ptor =>
+            descr ptor. tr c.set ncre nt(
+              output =  ncre nt,
+               nput = dataRecord,
+              query = descr ptor.query,
+              t  stampFeature =  nputS ce.t  stampFeature,
+              aggregateOutputs = So (descr ptor.outputFeature ds)
             )
           }
-          .exists(identity)
+          .ex sts( dent y)
 
-        if (isNonEmptyIncrement) {
-          SRichDataRecord(increment).setFeatureValue(
-            timestampFeature,
-            getTimestamp(dataRecord, inputSource.timestampFeature)
+         f ( sNonEmpty ncre nt) {
+          SR chDataRecord( ncre nt).setFeatureValue(
+            t  stampFeature,
+            getT  stamp(dataRecord,  nputS ce.t  stampFeature)
           )
-          Some(aggregationKeys.map(key => (key, increment)))
+          So (aggregat onKeys.map(key => (key,  ncre nt)))
         } else {
           None
         }
       }
-      .getOrElse(Set.empty[(AggregationKey, DataRecord)])
+      .getOrElse(Set.empty[(Aggregat onKey, DataRecord)])
   }
 
-  def outputFeaturesToRenamedOutputFeatures(prefix: String): Map[Feature[_], Feature[_]] = {
-    require(prefix.nonEmpty)
+  def outputFeaturesToRena dOutputFeatures(pref x: Str ng): Map[Feature[_], Feature[_]] = {
+    requ re(pref x.nonEmpty)
 
     allOutputFeatures.map { feature =>
-      if (feature.isSetFeatureName) {
-        val renamedFeatureName = prefix + feature.getDenseFeatureName
+       f (feature. sSetFeatureNa ) {
+        val rena dFeatureNa  = pref x + feature.getDenseFeatureNa 
         val personalDataTypes =
-          if (feature.getPersonalDataTypes.isPresent) feature.getPersonalDataTypes.get()
+           f (feature.getPersonalDataTypes. sPresent) feature.getPersonalDataTypes.get()
           else null
 
-        val renamedFeature = feature.getFeatureType match {
-          case FeatureType.BINARY =>
-            new Feature.Binary(renamedFeatureName, personalDataTypes)
-          case FeatureType.DISCRETE =>
-            new Feature.Discrete(renamedFeatureName, personalDataTypes)
-          case FeatureType.STRING =>
-            new Feature.Text(renamedFeatureName, personalDataTypes)
-          case FeatureType.CONTINUOUS =>
-            new Feature.Continuous(renamedFeatureName, personalDataTypes)
-          case FeatureType.SPARSE_BINARY =>
-            new Feature.SparseBinary(renamedFeatureName, personalDataTypes)
-          case FeatureType.SPARSE_CONTINUOUS =>
-            new Feature.SparseContinuous(renamedFeatureName, personalDataTypes)
+        val rena dFeature = feature.getFeatureType match {
+          case FeatureType.B NARY =>
+            new Feature.B nary(rena dFeatureNa , personalDataTypes)
+          case FeatureType.D SCRETE =>
+            new Feature.D screte(rena dFeatureNa , personalDataTypes)
+          case FeatureType.STR NG =>
+            new Feature.Text(rena dFeatureNa , personalDataTypes)
+          case FeatureType.CONT NUOUS =>
+            new Feature.Cont nuous(rena dFeatureNa , personalDataTypes)
+          case FeatureType.SPARSE_B NARY =>
+            new Feature.SparseB nary(rena dFeatureNa , personalDataTypes)
+          case FeatureType.SPARSE_CONT NUOUS =>
+            new Feature.SparseCont nuous(rena dFeatureNa , personalDataTypes)
         }
-        feature -> renamedFeature
+        feature -> rena dFeature
       } else {
         feature -> feature
       }

@@ -1,125 +1,125 @@
-package com.twitter.simclusters_v2.scalding
+package com.tw ter.s mclusters_v2.scald ng
 
-import com.twitter.algebird.Semigroup
-import com.twitter.bijection.Injection
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecution
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecutionArgs
-import com.twitter.scalding_internal.job.analytics_batch.BatchDescription
-import com.twitter.scalding_internal.job.analytics_batch.BatchFirstTime
-import com.twitter.scalding_internal.job.analytics_batch.BatchIncrement
-import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledExecutionApp
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala._
+ mport com.tw ter.algeb rd.Sem group
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.dal.cl ent.dataset.KeyValDALDataset
+ mport com.tw ter.scald ng.TypedP pe
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e._
+ mport com.tw ter.scald ng_ nternal.job.Tw terExecut onApp
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.Analyt csBatchExecut on
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.Analyt csBatchExecut onArgs
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.BatchDescr pt on
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.BatchF rstT  
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.Batch ncre nt
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.Tw terSc duledExecut onApp
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.common.Cluster d
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.s mclusters_v2.hdfs_s ces._
+ mport com.tw ter.s mclusters_v2.scald ng.common.Ut l
+ mport com.tw ter.s mclusters_v2.thr ftscala._
 
 /**
- * This file implements the job for computing users' interestedIn vector from KnownFor data set.
+ * T  f le  mple nts t  job for comput ng users'  nterested n vector from KnownFor data set.
  *
- * It reads the UserUserNormalizedGraphScalaDataset to get user-user follow + fav graph, and then
- * based on the known-for clusters of each followed/faved user, we calculate how much a user is
- * interestedIn a cluster.
+ *   reads t  UserUserNormal zedGraphScalaDataset to get user-user follow + fav graph, and t n
+ * based on t  known-for clusters of each follo d/faved user,   calculate how much a user  s
+ *  nterested n a cluster.
  */
 
 /**
- * Production job for computing interestedIn data set for the model version 20M145K2020.
+ * Product on job for comput ng  nterested n data set for t  model vers on 20M145K2020.
  *
- * To deploy the job:
+ * To deploy t  job:
  *
- * capesospy-v2 update --build_locally --start_cron interested_in_for_20M_145k_2020 \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+ * capesospy-v2 update --bu ld_locally --start_cron  nterested_ n_for_20M_145k_2020 \
+ src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc.yaml
  */
-object InterestedInFromKnownFor20M145K2020 extends InterestedInFromKnownForBatchBase {
-  override val firstTime: String = "2020-10-06"
-  override val outputKVDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsInterestedIn]] =
-    SimclustersV2RawInterestedIn20M145K2020ScalaDataset
-  override val outputPath: String = InternalDataPaths.RawInterestedIn2020Path
-  override val knownForModelVersion: String = ModelVersions.Model20M145K2020
-  override val knownForDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]] =
-    SimclustersV2KnownFor20M145K2020ScalaDataset
+object  nterested nFromKnownFor20M145K2020 extends  nterested nFromKnownForBatchBase {
+  overr de val f rstT  : Str ng = "2020-10-06"
+  overr de val outputKVDataset: KeyValDALDataset[KeyVal[Long, ClustersUser s nterested n]] =
+    S mclustersV2Raw nterested n20M145K2020ScalaDataset
+  overr de val outputPath: Str ng =  nternalDataPaths.Raw nterested n2020Path
+  overr de val knownForModelVers on: Str ng = ModelVers ons.Model20M145K2020
+  overr de val knownForDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUser sKnownFor]] =
+    S mclustersV2KnownFor20M145K2020ScalaDataset
 }
 
 /**
- * base class for the main logic of computing interestedIn from KnownFor data set.
+ * base class for t  ma n log c of comput ng  nterested n from KnownFor data set.
  */
-trait InterestedInFromKnownForBatchBase extends TwitterScheduledExecutionApp {
-  implicit val tz = DateOps.UTC
-  implicit val parser = DateParser.default
+tra   nterested nFromKnownForBatchBase extends Tw terSc duledExecut onApp {
+   mpl c  val tz = DateOps.UTC
+   mpl c  val parser = DateParser.default
 
-  def firstTime: String
-  val batchIncrement: Duration = Days(7)
-  val lookBackDays: Duration = Days(30)
+  def f rstT  : Str ng
+  val batch ncre nt: Durat on = Days(7)
+  val lookBackDays: Durat on = Days(30)
 
-  def outputKVDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsInterestedIn]]
-  def outputPath: String
-  def knownForModelVersion: String
-  def knownForDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]]
+  def outputKVDataset: KeyValDALDataset[KeyVal[Long, ClustersUser s nterested n]]
+  def outputPath: Str ng
+  def knownForModelVers on: Str ng
+  def knownForDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUser sKnownFor]]
 
-  private lazy val execArgs = AnalyticsBatchExecutionArgs(
-    batchDesc = BatchDescription(this.getClass.getName.replace("$", "")),
-    firstTime = BatchFirstTime(RichDate(firstTime)),
-    lastTime = None,
-    batchIncrement = BatchIncrement(batchIncrement)
+  pr vate lazy val execArgs = Analyt csBatchExecut onArgs(
+    batchDesc = BatchDescr pt on(t .getClass.getNa .replace("$", "")),
+    f rstT   = BatchF rstT  (R chDate(f rstT  )),
+    lastT   = None,
+    batch ncre nt = Batch ncre nt(batch ncre nt)
   )
 
-  override def scheduledJob: Execution[Unit] = AnalyticsBatchExecution(execArgs) {
-    implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        Execution.withArgs { args =>
-          val normalizedGraph =
-            DAL.readMostRecentSnapshot(UserUserNormalizedGraphScalaDataset).toTypedPipe
-          val knownFor = KnownForSources.fromKeyVal(
-            DAL.readMostRecentSnapshot(knownForDALDataset, dateRange.extend(Days(30))).toTypedPipe,
-            knownForModelVersion
+  overr de def sc duledJob: Execut on[Un ] = Analyt csBatchExecut on(execArgs) {
+     mpl c  dateRange =>
+      Execut on.w h d {  mpl c  un que d =>
+        Execut on.w hArgs { args =>
+          val normal zedGraph =
+            DAL.readMostRecentSnapshot(UserUserNormal zedGraphScalaDataset).toTypedP pe
+          val knownFor = KnownForS ces.fromKeyVal(
+            DAL.readMostRecentSnapshot(knownForDALDataset, dateRange.extend(Days(30))).toTypedP pe,
+            knownForModelVers on
           )
 
-          val socialProofThreshold = args.int("socialProofThreshold", 2)
-          val maxClustersPerUser = args.int("maxClustersPerUser", 50)
+          val soc alProofThreshold = args. nt("soc alProofThreshold", 2)
+          val maxClustersPerUser = args. nt("maxClustersPerUser", 50)
 
-          val result = InterestedInFromKnownFor
+          val result =  nterested nFromKnownFor
             .run(
-              normalizedGraph,
+              normal zedGraph,
               knownFor,
-              socialProofThreshold,
+              soc alProofThreshold,
               maxClustersPerUser,
-              knownForModelVersion
+              knownForModelVers on
             )
 
-          val writeKeyValResultExec = result
-            .map { case (userId, clusters) => KeyVal(userId, clusters) }
-            .writeDALVersionedKeyValExecution(
+          val wr eKeyValResultExec = result
+            .map { case (user d, clusters) => KeyVal(user d, clusters) }
+            .wr eDALVers onedKeyValExecut on(
               outputKVDataset,
-              D.Suffix(outputPath)
+              D.Suff x(outputPath)
             )
 
-          // read previous data set for validation purpose
-          val previousDataset = if (RichDate(firstTime).timestamp != dateRange.start.timestamp) {
+          // read prev ous data set for val dat on purpose
+          val prev ousDataset =  f (R chDate(f rstT  ).t  stamp != dateRange.start.t  stamp) {
             DAL
-              .readMostRecentSnapshot(outputKVDataset, dateRange.prepend(lookBackDays)).toTypedPipe
+              .readMostRecentSnapshot(outputKVDataset, dateRange.prepend(lookBackDays)).toTypedP pe
               .map {
-                case KeyVal(user, interestedIn) =>
-                  (user, interestedIn)
+                case KeyVal(user,  nterested n) =>
+                  (user,  nterested n)
               }
           } else {
-            TypedPipe.empty
+            TypedP pe.empty
           }
 
-          Util.printCounters(
-            Execution
-              .zip(
-                writeKeyValResultExec,
-                InterestedInFromKnownFor.dataSetStats(result, "NewResult"),
-                InterestedInFromKnownFor.dataSetStats(previousDataset, "OldResult")
-              ).unit
+          Ut l.pr ntCounters(
+            Execut on
+              .z p(
+                wr eKeyValResultExec,
+                 nterested nFromKnownFor.dataSetStats(result, "NewResult"),
+                 nterested nFromKnownFor.dataSetStats(prev ousDataset, "OldResult")
+              ).un 
           )
         }
       }
@@ -127,304 +127,304 @@ trait InterestedInFromKnownForBatchBase extends TwitterScheduledExecutionApp {
 }
 
 /**
- * Adhoc job to compute user interestedIn.
+ * Adhoc job to compute user  nterested n.
  *
- * scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding:interested_in_adhoc \
+ * scald ng remote run --target src/scala/com/tw ter/s mclusters_v2/scald ng: nterested_ n_adhoc \
  * --user recos-platform \
- * --submitter hadoopnest2.atla.twitter.com \
- * --main-class com.twitter.simclusters_v2.scalding.InterestedInFromKnownForAdhoc -- \
- * --date 2019-08-26  --outputDir /user/recos-platform/adhoc/simclusters_interested_in_log_fav
+ * --subm ter hadoopnest2.atla.tw ter.com \
+ * --ma n-class com.tw ter.s mclusters_v2.scald ng. nterested nFromKnownForAdhoc -- \
+ * --date 2019-08-26  --outputD r /user/recos-platform/adhoc/s mclusters_ nterested_ n_log_fav
  */
-object InterestedInFromKnownForAdhoc extends TwitterExecutionApp {
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
-          val normalizedGraph = TypedPipe.from(
-            UserAndNeighborsFixedPathSource(args("graphInputDir"))
+object  nterested nFromKnownForAdhoc extends Tw terExecut onApp {
+  def job: Execut on[Un ] =
+    Execut on.getConf gMode.flatMap {
+      case (conf g, mode) =>
+        Execut on.w h d {  mpl c  un que d =>
+          val args = conf g.getArgs
+          val normal zedGraph = TypedP pe.from(
+            UserAndNe ghborsF xedPathS ce(args("graph nputD r"))
           )
-          val socialProofThreshold = args.int("socialProofThreshold", 2)
-          val maxClustersPerUser = args.int("maxClustersPerUser", 20)
-          val knownForModelVersion = args("knownForModelVersion")
-          val knownFor = KnownForSources.readKnownFor(args("knownForInputDir"))
+          val soc alProofThreshold = args. nt("soc alProofThreshold", 2)
+          val maxClustersPerUser = args. nt("maxClustersPerUser", 20)
+          val knownForModelVers on = args("knownForModelVers on")
+          val knownFor = KnownForS ces.readKnownFor(args("knownFor nputD r"))
 
-          val outputSink = AdhocKeyValSources.interestedInSource(args("outputDir"))
-          Util.printCounters(
-            InterestedInFromKnownFor
+          val outputS nk = AdhocKeyValS ces. nterested nS ce(args("outputD r"))
+          Ut l.pr ntCounters(
+             nterested nFromKnownFor
               .run(
-                normalizedGraph,
+                normal zedGraph,
                 knownFor,
-                socialProofThreshold,
+                soc alProofThreshold,
                 maxClustersPerUser,
-                knownForModelVersion
-              ).writeExecution(outputSink)
+                knownForModelVers on
+              ).wr eExecut on(outputS nk)
           )
         }
     }
 }
 
 /**
- * Adhoc job to check the output of an adhoc interestedInSource.
+ * Adhoc job to c ck t  output of an adhoc  nterested nS ce.
  */
-object DumpInterestedInAdhoc extends TwitterExecutionApp {
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
-          val users = args.list("users").map(_.toLong).toSet
-          val input = TypedPipe.from(AdhocKeyValSources.interestedInSource(args("inputDir")))
-          input.filter { case (userId, rec) => users.contains(userId) }.toIterableExecution.map {
-            s => println(s.map(Util.prettyJsonMapper.writeValueAsString).mkString("\n"))
+object Dump nterested nAdhoc extends Tw terExecut onApp {
+  def job: Execut on[Un ] =
+    Execut on.getConf gMode.flatMap {
+      case (conf g, mode) =>
+        Execut on.w h d {  mpl c  un que d =>
+          val args = conf g.getArgs
+          val users = args.l st("users").map(_.toLong).toSet
+          val  nput = TypedP pe.from(AdhocKeyValS ces. nterested nS ce(args(" nputD r")))
+           nput.f lter { case (user d, rec) => users.conta ns(user d) }.to erableExecut on.map {
+            s => pr ntln(s.map(Ut l.prettyJsonMapper.wr eValueAsStr ng).mkStr ng("\n"))
           }
         }
     }
 }
 
 /**
- * Helper functions
+ *  lper funct ons
  */
-object InterestedInFromKnownFor {
-  private def ifNanMake0(x: Double): Double = if (x.isNaN) 0.0 else x
+object  nterested nFromKnownFor {
+  pr vate def  fNanMake0(x: Double): Double =  f (x. sNaN) 0.0 else x
 
-  case class SrcClusterIntermediateInfo(
+  case class SrcCluster nter d ate nfo(
     followScore: Double,
-    followScoreProducerNormalized: Double,
+    followScoreProducerNormal zed: Double,
     favScore: Double,
-    favScoreProducerNormalized: Double,
+    favScoreProducerNormal zed: Double,
     logFavScore: Double,
-    logFavScoreProducerNormalized: Double,
-    followSocialProof: List[Long],
-    favSocialProof: List[Long]) {
-    // overriding for the sake of unit tests
-    override def equals(obj: scala.Any): Boolean = {
+    logFavScoreProducerNormal zed: Double,
+    followSoc alProof: L st[Long],
+    favSoc alProof: L st[Long]) {
+    // overr d ng for t  sake of un  tests
+    overr de def equals(obj: scala.Any): Boolean = {
       obj match {
-        case that: SrcClusterIntermediateInfo =>
+        case that: SrcCluster nter d ate nfo =>
           math.abs(followScore - that.followScore) < 1e-5 &&
-            math.abs(followScoreProducerNormalized - that.followScoreProducerNormalized) < 1e-5 &&
+            math.abs(followScoreProducerNormal zed - that.followScoreProducerNormal zed) < 1e-5 &&
             math.abs(favScore - that.favScore) < 1e-5 &&
-            math.abs(favScoreProducerNormalized - that.favScoreProducerNormalized) < 1e-5 &&
+            math.abs(favScoreProducerNormal zed - that.favScoreProducerNormal zed) < 1e-5 &&
             math.abs(logFavScore - that.logFavScore) < 1e-5 &&
-            math.abs(logFavScoreProducerNormalized - that.logFavScoreProducerNormalized) < 1e-5 &&
-            followSocialProof.toSet == that.followSocialProof.toSet &&
-            favSocialProof.toSet == that.favSocialProof.toSet
+            math.abs(logFavScoreProducerNormal zed - that.logFavScoreProducerNormal zed) < 1e-5 &&
+            followSoc alProof.toSet == that.followSoc alProof.toSet &&
+            favSoc alProof.toSet == that.favSoc alProof.toSet
         case _ => false
       }
     }
   }
 
-  implicit object SrcClusterIntermediateInfoSemigroup
-      extends Semigroup[SrcClusterIntermediateInfo] {
-    override def plus(
-      left: SrcClusterIntermediateInfo,
-      right: SrcClusterIntermediateInfo
-    ): SrcClusterIntermediateInfo = {
-      SrcClusterIntermediateInfo(
-        followScore = left.followScore + right.followScore,
-        followScoreProducerNormalized =
-          left.followScoreProducerNormalized + right.followScoreProducerNormalized,
-        favScore = left.favScore + right.favScore,
-        favScoreProducerNormalized =
-          left.favScoreProducerNormalized + right.favScoreProducerNormalized,
-        logFavScore = left.logFavScore + right.logFavScore,
-        logFavScoreProducerNormalized =
-          left.logFavScoreProducerNormalized + right.logFavScoreProducerNormalized,
-        followSocialProof =
-          Semigroup.plus(left.followSocialProof, right.followSocialProof).distinct,
-        favSocialProof = Semigroup.plus(left.favSocialProof, right.favSocialProof).distinct
+   mpl c  object SrcCluster nter d ate nfoSem group
+      extends Sem group[SrcCluster nter d ate nfo] {
+    overr de def plus(
+      left: SrcCluster nter d ate nfo,
+      r ght: SrcCluster nter d ate nfo
+    ): SrcCluster nter d ate nfo = {
+      SrcCluster nter d ate nfo(
+        followScore = left.followScore + r ght.followScore,
+        followScoreProducerNormal zed =
+          left.followScoreProducerNormal zed + r ght.followScoreProducerNormal zed,
+        favScore = left.favScore + r ght.favScore,
+        favScoreProducerNormal zed =
+          left.favScoreProducerNormal zed + r ght.favScoreProducerNormal zed,
+        logFavScore = left.logFavScore + r ght.logFavScore,
+        logFavScoreProducerNormal zed =
+          left.logFavScoreProducerNormal zed + r ght.logFavScoreProducerNormal zed,
+        followSoc alProof =
+          Sem group.plus(left.followSoc alProof, r ght.followSoc alProof).d st nct,
+        favSoc alProof = Sem group.plus(left.favSoc alProof, r ght.favSoc alProof).d st nct
       )
     }
   }
 
   /**
-   * @param adjacencyLists User-User follow/fav graph
-   * @param knownFor KnownFor data set. Each user can be known for several clusters with certain
-   *                 knownFor weights.
-   * @param socialProofThreshold A user will only be interested in a cluster if they follow/fav at
-   *                             least certain number of users known for this cluster.
-   * @param uniqueId required for these Stat
+   * @param adjacencyL sts User-User follow/fav graph
+   * @param knownFor KnownFor data set. Each user can be known for several clusters w h certa n
+   *                 knownFor   ghts.
+   * @param soc alProofThreshold A user w ll only be  nterested  n a cluster  f t y follow/fav at
+   *                             least certa n number of users known for t  cluster.
+   * @param un que d requ red for t se Stat
    * @return
    */
-  def userClusterPairsWithoutNormalization(
-    adjacencyLists: TypedPipe[UserAndNeighbors],
-    knownFor: TypedPipe[(Long, Array[(Int, Float)])],
-    socialProofThreshold: Int
+  def userClusterPa rsW houtNormal zat on(
+    adjacencyL sts: TypedP pe[UserAndNe ghbors],
+    knownFor: TypedP pe[(Long, Array[( nt, Float)])],
+    soc alProofThreshold:  nt
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[((Long, Int), SrcClusterIntermediateInfo)] = {
-    val edgesToUsersWithKnownFor = Stat("num_edges_to_users_with_known_for")
-    val srcDestClusterTriples = Stat("num_src_dest_cluster_triples")
-    val srcClusterPairsBeforeSocialProofThresholding =
-      Stat("num_src_cluster_pairs_before_social_proof_thresholding")
-    val srcClusterPairsAfterSocialProofThresholding =
-      Stat("num_src_cluster_pairs_after_social_proof_thresholding")
+     mpl c  un que d: Un que D
+  ): TypedP pe[((Long,  nt), SrcCluster nter d ate nfo)] = {
+    val edgesToUsersW hKnownFor = Stat("num_edges_to_users_w h_known_for")
+    val srcDestClusterTr ples = Stat("num_src_dest_cluster_tr ples")
+    val srcClusterPa rsBeforeSoc alProofThreshold ng =
+      Stat("num_src_cluster_pa rs_before_soc al_proof_threshold ng")
+    val srcClusterPa rsAfterSoc alProofThreshold ng =
+      Stat("num_src_cluster_pa rs_after_soc al_proof_threshold ng")
 
-    val edges = adjacencyLists.flatMap {
-      case UserAndNeighbors(srcId, neighborsWithWeights) =>
-        neighborsWithWeights.map { neighborWithWeights =>
+    val edges = adjacencyL sts.flatMap {
+      case UserAndNe ghbors(src d, ne ghborsW h  ghts) =>
+        ne ghborsW h  ghts.map { ne ghborW h  ghts =>
           (
-            neighborWithWeights.neighborId,
-            neighborWithWeights.copy(neighborId = srcId)
+            ne ghborW h  ghts.ne ghbor d,
+            ne ghborW h  ghts.copy(ne ghbor d = src d)
           )
         }
     }
 
-    implicit val l2b: Long => Array[Byte] = Injection.long2BigEndian
+     mpl c  val l2b: Long => Array[Byte] =  nject on.long2B gEnd an
 
     edges
       .sketch(4000)
-      .join(knownFor)
+      .jo n(knownFor)
       .flatMap {
-        case (destId, (srcWithWeights, clusterArray)) =>
-          edgesToUsersWithKnownFor.inc()
-          clusterArray.toList.map {
-            case (clusterId, knownForScoreF) =>
+        case (dest d, (srcW h  ghts, clusterArray)) =>
+          edgesToUsersW hKnownFor. nc()
+          clusterArray.toL st.map {
+            case (cluster d, knownForScoreF) =>
               val knownForScore = math.max(0.0, knownForScoreF.toDouble)
 
-              srcDestClusterTriples.inc()
+              srcDestClusterTr ples. nc()
               val followScore =
-                if (srcWithWeights.isFollowed.contains(true)) knownForScore else 0.0
-              val followScoreProducerNormalizedOnly =
-                srcWithWeights.followScoreNormalizedByNeighborFollowersL2.getOrElse(
+                 f (srcW h  ghts. sFollo d.conta ns(true)) knownForScore else 0.0
+              val followScoreProducerNormal zedOnly =
+                srcW h  ghts.followScoreNormal zedByNe ghborFollo rsL2.getOrElse(
                   0.0) * knownForScore
               val favScore =
-                srcWithWeights.favScoreHalfLife100Days.getOrElse(0.0) * knownForScore
+                srcW h  ghts.favScoreHalfL fe100Days.getOrElse(0.0) * knownForScore
 
-              val favScoreProducerNormalizedOnly =
-                srcWithWeights.favScoreHalfLife100DaysNormalizedByNeighborFaversL2.getOrElse(
+              val favScoreProducerNormal zedOnly =
+                srcW h  ghts.favScoreHalfL fe100DaysNormal zedByNe ghborFaversL2.getOrElse(
                   0.0) * knownForScore
 
-              val logFavScore = srcWithWeights.logFavScore.getOrElse(0.0) * knownForScore
+              val logFavScore = srcW h  ghts.logFavScore.getOrElse(0.0) * knownForScore
 
-              val logFavScoreProducerNormalizedOnly = srcWithWeights.logFavScoreL2Normalized
+              val logFavScoreProducerNormal zedOnly = srcW h  ghts.logFavScoreL2Normal zed
                 .getOrElse(0.0) * knownForScore
 
-              val followSocialProof = if (srcWithWeights.isFollowed.contains(true)) {
-                List(destId)
-              } else Nil
-              val favSocialProof = if (srcWithWeights.favScoreHalfLife100Days.exists(_ > 0)) {
-                List(destId)
-              } else Nil
+              val followSoc alProof =  f (srcW h  ghts. sFollo d.conta ns(true)) {
+                L st(dest d)
+              } else N l
+              val favSoc alProof =  f (srcW h  ghts.favScoreHalfL fe100Days.ex sts(_ > 0)) {
+                L st(dest d)
+              } else N l
 
               (
-                (srcWithWeights.neighborId, clusterId),
-                SrcClusterIntermediateInfo(
+                (srcW h  ghts.ne ghbor d, cluster d),
+                SrcCluster nter d ate nfo(
                   followScore,
-                  followScoreProducerNormalizedOnly,
+                  followScoreProducerNormal zedOnly,
                   favScore,
-                  favScoreProducerNormalizedOnly,
+                  favScoreProducerNormal zedOnly,
                   logFavScore,
-                  logFavScoreProducerNormalizedOnly,
-                  followSocialProof,
-                  favSocialProof
+                  logFavScoreProducerNormal zedOnly,
+                  followSoc alProof,
+                  favSoc alProof
                 )
               )
           }
       }
       .sumByKey
-      .withReducers(10000)
-      .filter {
-        case ((_, _), SrcClusterIntermediateInfo(_, _, _, _, _, _, followProof, favProof)) =>
-          srcClusterPairsBeforeSocialProofThresholding.inc()
-          val distinctSocialProof = (followProof ++ favProof).toSet
-          val result = distinctSocialProof.size >= socialProofThreshold
-          if (result) {
-            srcClusterPairsAfterSocialProofThresholding.inc()
+      .w hReducers(10000)
+      .f lter {
+        case ((_, _), SrcCluster nter d ate nfo(_, _, _, _, _, _, followProof, favProof)) =>
+          srcClusterPa rsBeforeSoc alProofThreshold ng. nc()
+          val d st nctSoc alProof = (followProof ++ favProof).toSet
+          val result = d st nctSoc alProof.s ze >= soc alProofThreshold
+           f (result) {
+            srcClusterPa rsAfterSoc alProofThreshold ng. nc()
           }
           result
       }
   }
 
   /**
-   * Add the cluster-level l2 norm scores, and use them to normalize follow/fav scores.
+   * Add t  cluster-level l2 norm scores, and use t m to normal ze follow/fav scores.
    */
-  def attachNormalizedScores(
-    intermediate: TypedPipe[((Long, Int), SrcClusterIntermediateInfo)]
+  def attachNormal zedScores(
+     nter d ate: TypedP pe[((Long,  nt), SrcCluster nter d ate nfo)]
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[(Long, List[(Int, UserToInterestedInClusterScores)])] = {
+     mpl c  un que d: Un que D
+  ): TypedP pe[(Long, L st[( nt, UserTo nterested nClusterScores)])] = {
 
     def square(x: Double): Double = x * x
 
     val clusterCountsAndNorms =
-      intermediate
+       nter d ate
         .map {
           case (
-                (_, clusterId),
-                SrcClusterIntermediateInfo(
+                (_, cluster d),
+                SrcCluster nter d ate nfo(
                   followScore,
-                  followScoreProducerNormalizedOnly,
+                  followScoreProducerNormal zedOnly,
                   favScore,
-                  favScoreProducerNormalizedOnly,
+                  favScoreProducerNormal zedOnly,
                   logFavScore,
-                  logFavScoreProducerNormalizedOnly,
+                  logFavScoreProducerNormal zedOnly,
                   _,
                   _
                 )
               ) =>
             (
-              clusterId,
+              cluster d,
               (
                 1,
                 square(followScore),
-                square(followScoreProducerNormalizedOnly),
+                square(followScoreProducerNormal zedOnly),
                 square(favScore),
-                square(favScoreProducerNormalizedOnly),
+                square(favScoreProducerNormal zedOnly),
                 square(logFavScore),
-                square(logFavScoreProducerNormalizedOnly)
+                square(logFavScoreProducerNormal zedOnly)
               )
             )
         }
         .sumByKey
-        //        .withReducers(100)
+        //        .w hReducers(100)
         .map {
           case (
-                clusterId,
+                cluster d,
                 (
                   cnt,
                   squareFollowScore,
-                  squareFollowScoreProducerNormalizedOnly,
+                  squareFollowScoreProducerNormal zedOnly,
                   squareFavScore,
-                  squareFavScoreProducerNormalizedOnly,
+                  squareFavScoreProducerNormal zedOnly,
                   squareLogFavScore,
-                  squareLogFavScoreProducerNormalizedOnly
+                  squareLogFavScoreProducerNormal zedOnly
                 )) =>
             (
-              clusterId,
+              cluster d,
               (
                 cnt,
                 math.sqrt(squareFollowScore),
-                math.sqrt(squareFollowScoreProducerNormalizedOnly),
+                math.sqrt(squareFollowScoreProducerNormal zedOnly),
                 math.sqrt(squareFavScore),
-                math.sqrt(squareFavScoreProducerNormalizedOnly),
+                math.sqrt(squareFavScoreProducerNormal zedOnly),
                 math.sqrt(squareLogFavScore),
-                math.sqrt(squareLogFavScoreProducerNormalizedOnly)
+                math.sqrt(squareLogFavScoreProducerNormal zedOnly)
               ))
         }
 
-    implicit val i2b: Int => Array[Byte] = Injection.int2BigEndian
+     mpl c  val  2b:  nt => Array[Byte] =  nject on. nt2B gEnd an
 
-    intermediate
+     nter d ate
       .map {
-        case ((srcId, clusterId), clusterScoresTuple) =>
-          (clusterId, (srcId, clusterScoresTuple))
+        case ((src d, cluster d), clusterScoresTuple) =>
+          (cluster d, (src d, clusterScoresTuple))
       }
       .sketch(reducers = 900)
-      .join(clusterCountsAndNorms)
+      .jo n(clusterCountsAndNorms)
       .map {
         case (
-              clusterId,
+              cluster d,
               (
                 (
-                  srcId,
-                  SrcClusterIntermediateInfo(
+                  src d,
+                  SrcCluster nter d ate nfo(
                     followScore,
-                    followScoreProducerNormalizedOnly,
+                    followScoreProducerNormal zedOnly,
                     favScore,
-                    favScoreProducerNormalizedOnly,
+                    favScoreProducerNormal zedOnly,
                     logFavScore,
-                    logFavScoreProducerNormalizedOnly, // not used for now
+                    logFavScoreProducerNormal zedOnly, // not used for now
                     followProof,
                     favProof
                   )
@@ -432,235 +432,235 @@ object InterestedInFromKnownFor {
                 (
                   cnt,
                   followNorm,
-                  followProducerNormalizedNorm,
+                  followProducerNormal zedNorm,
                   favNorm,
-                  favProducerNormalizedNorm,
+                  favProducerNormal zedNorm,
                   logFavNorm,
-                  logFavProducerNormalizedNorm // not used for now
+                  logFavProducerNormal zedNorm // not used for now
                 )
               )
             ) =>
           (
-            srcId,
-            List(
+            src d,
+            L st(
               (
-                clusterId,
-                UserToInterestedInClusterScores(
-                  followScore = Some(ifNanMake0(followScore)),
-                  followScoreClusterNormalizedOnly = Some(ifNanMake0(followScore / followNorm)),
-                  followScoreProducerNormalizedOnly =
-                    Some(ifNanMake0(followScoreProducerNormalizedOnly)),
-                  followScoreClusterAndProducerNormalized = Some(
-                    ifNanMake0(followScoreProducerNormalizedOnly / followProducerNormalizedNorm)),
-                  favScore = Some(ifNanMake0(favScore)),
-                  favScoreClusterNormalizedOnly = Some(ifNanMake0(favScore / favNorm)),
-                  favScoreProducerNormalizedOnly = Some(ifNanMake0(favScoreProducerNormalizedOnly)),
-                  favScoreClusterAndProducerNormalized =
-                    Some(ifNanMake0(favScoreProducerNormalizedOnly / favProducerNormalizedNorm)),
-                  usersBeingFollowed = Some(followProof),
-                  usersThatWereFaved = Some(favProof),
-                  numUsersInterestedInThisClusterUpperBound = Some(cnt),
-                  logFavScore = Some(ifNanMake0(logFavScore)),
-                  logFavScoreClusterNormalizedOnly = Some(ifNanMake0(logFavScore / logFavNorm))
+                cluster d,
+                UserTo nterested nClusterScores(
+                  followScore = So ( fNanMake0(followScore)),
+                  followScoreClusterNormal zedOnly = So ( fNanMake0(followScore / followNorm)),
+                  followScoreProducerNormal zedOnly =
+                    So ( fNanMake0(followScoreProducerNormal zedOnly)),
+                  followScoreClusterAndProducerNormal zed = So (
+                     fNanMake0(followScoreProducerNormal zedOnly / followProducerNormal zedNorm)),
+                  favScore = So ( fNanMake0(favScore)),
+                  favScoreClusterNormal zedOnly = So ( fNanMake0(favScore / favNorm)),
+                  favScoreProducerNormal zedOnly = So ( fNanMake0(favScoreProducerNormal zedOnly)),
+                  favScoreClusterAndProducerNormal zed =
+                    So ( fNanMake0(favScoreProducerNormal zedOnly / favProducerNormal zedNorm)),
+                  usersBe ngFollo d = So (followProof),
+                  usersThat reFaved = So (favProof),
+                  numUsers nterested nT ClusterUpperBound = So (cnt),
+                  logFavScore = So ( fNanMake0(logFavScore)),
+                  logFavScoreClusterNormal zedOnly = So ( fNanMake0(logFavScore / logFavNorm))
                 ))
             )
           )
       }
       .sumByKey
-      //      .withReducers(1000)
-      .toTypedPipe
+      //      .w hReducers(1000)
+      .toTypedP pe
   }
 
   /**
-   * aggregate cluster scores for each user, to be used instead of attachNormalizedScores
-   * when we donot want to compute cluster-level l2 norm scores
+   * aggregate cluster scores for each user, to be used  nstead of attachNormal zedScores
+   * w n   donot want to compute cluster-level l2 norm scores
    */
   def groupClusterScores(
-    intermediate: TypedPipe[((Long, Int), SrcClusterIntermediateInfo)]
+     nter d ate: TypedP pe[((Long,  nt), SrcCluster nter d ate nfo)]
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[(Long, List[(Int, UserToInterestedInClusterScores)])] = {
+     mpl c  un que d: Un que D
+  ): TypedP pe[(Long, L st[( nt, UserTo nterested nClusterScores)])] = {
 
-    intermediate
+     nter d ate
       .map {
         case (
-              (srcId, clusterId),
-              SrcClusterIntermediateInfo(
+              (src d, cluster d),
+              SrcCluster nter d ate nfo(
                 followScore,
-                followScoreProducerNormalizedOnly,
+                followScoreProducerNormal zedOnly,
                 favScore,
-                favScoreProducerNormalizedOnly,
+                favScoreProducerNormal zedOnly,
                 logFavScore,
-                logFavScoreProducerNormalizedOnly,
+                logFavScoreProducerNormal zedOnly,
                 followProof,
                 favProof
               )
             ) =>
           (
-            srcId,
-            List(
+            src d,
+            L st(
               (
-                clusterId,
-                UserToInterestedInClusterScores(
-                  followScore = Some(ifNanMake0(followScore)),
-                  followScoreProducerNormalizedOnly =
-                    Some(ifNanMake0(followScoreProducerNormalizedOnly)),
-                  favScore = Some(ifNanMake0(favScore)),
-                  favScoreProducerNormalizedOnly = Some(ifNanMake0(favScoreProducerNormalizedOnly)),
-                  usersBeingFollowed = Some(followProof),
-                  usersThatWereFaved = Some(favProof),
-                  logFavScore = Some(ifNanMake0(logFavScore)),
+                cluster d,
+                UserTo nterested nClusterScores(
+                  followScore = So ( fNanMake0(followScore)),
+                  followScoreProducerNormal zedOnly =
+                    So ( fNanMake0(followScoreProducerNormal zedOnly)),
+                  favScore = So ( fNanMake0(favScore)),
+                  favScoreProducerNormal zedOnly = So ( fNanMake0(favScoreProducerNormal zedOnly)),
+                  usersBe ngFollo d = So (followProof),
+                  usersThat reFaved = So (favProof),
+                  logFavScore = So ( fNanMake0(logFavScore)),
                 ))
             )
           )
       }
       .sumByKey
-      .withReducers(1000)
-      .toTypedPipe
+      .w hReducers(1000)
+      .toTypedP pe
   }
 
   /**
-   * For each user, only keep up to a certain number of clusters.
-   * @param allInterests user with a list of interestedIn clusters.
+   * For each user, only keep up to a certa n number of clusters.
+   * @param all nterests user w h a l st of  nterested n clusters.
    * @param maxClustersPerUser number of clusters to keep for each user
-   * @param knownForModelVersion known for model version
-   * @param uniqueId required for these Stat
+   * @param knownForModelVers on known for model vers on
+   * @param un que d requ red for t se Stat
    * @return
    */
   def keepOnlyTopClusters(
-    allInterests: TypedPipe[(Long, List[(Int, UserToInterestedInClusterScores)])],
-    maxClustersPerUser: Int,
-    knownForModelVersion: String
+    all nterests: TypedP pe[(Long, L st[( nt, UserTo nterested nClusterScores)])],
+    maxClustersPerUser:  nt,
+    knownForModelVers on: Str ng
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[(Long, ClustersUserIsInterestedIn)] = {
-    val userClusterPairsBeforeUserTruncation =
-      Stat("num_user_cluster_pairs_before_user_truncation")
-    val userClusterPairsAfterUserTruncation =
-      Stat("num_user_cluster_pairs_after_user_truncation")
-    val usersWithALotOfClusters =
-      Stat(s"num_users_with_more_than_${maxClustersPerUser}_clusters")
+     mpl c  un que d: Un que D
+  ): TypedP pe[(Long, ClustersUser s nterested n)] = {
+    val userClusterPa rsBeforeUserTruncat on =
+      Stat("num_user_cluster_pa rs_before_user_truncat on")
+    val userClusterPa rsAfterUserTruncat on =
+      Stat("num_user_cluster_pa rs_after_user_truncat on")
+    val usersW hALotOfClusters =
+      Stat(s"num_users_w h_more_than_${maxClustersPerUser}_clusters")
 
-    allInterests
+    all nterests
       .map {
-        case (srcId, fullClusterList) =>
-          userClusterPairsBeforeUserTruncation.incBy(fullClusterList.size)
-          val truncatedClusters = if (fullClusterList.size > maxClustersPerUser) {
-            usersWithALotOfClusters.inc()
-            fullClusterList
+        case (src d, fullClusterL st) =>
+          userClusterPa rsBeforeUserTruncat on. ncBy(fullClusterL st.s ze)
+          val truncatedClusters =  f (fullClusterL st.s ze > maxClustersPerUser) {
+            usersW hALotOfClusters. nc()
+            fullClusterL st
               .sortBy {
                 case (_, clusterScores) =>
                   (
                     -clusterScores.favScore.getOrElse(0.0),
                     -clusterScores.logFavScore.getOrElse(0.0),
                     -clusterScores.followScore.getOrElse(0.0),
-                    -clusterScores.logFavScoreClusterNormalizedOnly.getOrElse(0.0),
-                    -clusterScores.followScoreProducerNormalizedOnly.getOrElse(0.0)
+                    -clusterScores.logFavScoreClusterNormal zedOnly.getOrElse(0.0),
+                    -clusterScores.followScoreProducerNormal zedOnly.getOrElse(0.0)
                   )
               }
               .take(maxClustersPerUser)
           } else {
-            fullClusterList
+            fullClusterL st
           }
-          userClusterPairsAfterUserTruncation.incBy(truncatedClusters.size)
-          (srcId, ClustersUserIsInterestedIn(knownForModelVersion, truncatedClusters.toMap))
+          userClusterPa rsAfterUserTruncat on. ncBy(truncatedClusters.s ze)
+          (src d, ClustersUser s nterested n(knownForModelVers on, truncatedClusters.toMap))
       }
   }
 
   def run(
-    adjacencyLists: TypedPipe[UserAndNeighbors],
-    knownFor: TypedPipe[(UserId, Array[(ClusterId, Float)])],
-    socialProofThreshold: Int,
-    maxClustersPerUser: Int,
-    knownForModelVersion: String
+    adjacencyL sts: TypedP pe[UserAndNe ghbors],
+    knownFor: TypedP pe[(User d, Array[(Cluster d, Float)])],
+    soc alProofThreshold:  nt,
+    maxClustersPerUser:  nt,
+    knownForModelVers on: Str ng
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
+     mpl c  un que d: Un que D
+  ): TypedP pe[(User d, ClustersUser s nterested n)] = {
     keepOnlyTopClusters(
-      attachNormalizedScores(
-        userClusterPairsWithoutNormalization(
-          adjacencyLists,
+      attachNormal zedScores(
+        userClusterPa rsW houtNormal zat on(
+          adjacencyL sts,
           knownFor,
-          socialProofThreshold
+          soc alProofThreshold
         )
       ),
       maxClustersPerUser,
-      knownForModelVersion
+      knownForModelVers on
     )
   }
 
   /**
-   * run the interestedIn job, cluster normalized scores are not attached to user's clusters.
+   * run t   nterested n job, cluster normal zed scores are not attac d to user's clusters.
    */
-  def runWithoutClusterNormalizedScores(
-    adjacencyLists: TypedPipe[UserAndNeighbors],
-    knownFor: TypedPipe[(UserId, Array[(ClusterId, Float)])],
-    socialProofThreshold: Int,
-    maxClustersPerUser: Int,
-    knownForModelVersion: String
+  def runW houtClusterNormal zedScores(
+    adjacencyL sts: TypedP pe[UserAndNe ghbors],
+    knownFor: TypedP pe[(User d, Array[(Cluster d, Float)])],
+    soc alProofThreshold:  nt,
+    maxClustersPerUser:  nt,
+    knownForModelVers on: Str ng
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
+     mpl c  un que d: Un que D
+  ): TypedP pe[(User d, ClustersUser s nterested n)] = {
     keepOnlyTopClusters(
       groupClusterScores(
-        userClusterPairsWithoutNormalization(
-          adjacencyLists,
+        userClusterPa rsW houtNormal zat on(
+          adjacencyL sts,
           knownFor,
-          socialProofThreshold
+          soc alProofThreshold
         )
       ),
       maxClustersPerUser,
-      knownForModelVersion
+      knownForModelVers on
     )
   }
 
   /**
-   * print out some basic stats of the data set to make sure things are not broken
+   * pr nt out so  bas c stats of t  data set to make sure th ngs are not broken
    */
   def dataSetStats(
-    interestedInData: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    dataSetName: String = ""
-  ): Execution[Unit] = {
+     nterested nData: TypedP pe[(User d, ClustersUser s nterested n)],
+    dataSetNa : Str ng = ""
+  ): Execut on[Un ] = {
 
-    Execution
-      .zip(
-        Util.printSummaryOfNumericColumn(
-          interestedInData.map {
-            case (user, interestedIn) =>
-              interestedIn.clusterIdToScores.size
+    Execut on
+      .z p(
+        Ut l.pr ntSummaryOfNu r cColumn(
+           nterested nData.map {
+            case (user,  nterested n) =>
+               nterested n.cluster dToScores.s ze
           },
-          Some(s"$dataSetName UserInterestedIn Size")
+          So (s"$dataSetNa  User nterested n S ze")
         ),
-        Util.printSummaryOfNumericColumn(
-          interestedInData.flatMap {
-            case (user, interestedIn) =>
-              interestedIn.clusterIdToScores.map {
+        Ut l.pr ntSummaryOfNu r cColumn(
+           nterested nData.flatMap {
+            case (user,  nterested n) =>
+               nterested n.cluster dToScores.map {
                 case (_, scores) =>
                   scores.favScore.getOrElse(0.0)
               }
           },
-          Some(s"$dataSetName UserInterestedIn favScore")
+          So (s"$dataSetNa  User nterested n favScore")
         ),
-        Util.printSummaryOfNumericColumn(
-          interestedInData.flatMap {
-            case (user, interestedIn) =>
-              interestedIn.clusterIdToScores.map {
+        Ut l.pr ntSummaryOfNu r cColumn(
+           nterested nData.flatMap {
+            case (user,  nterested n) =>
+               nterested n.cluster dToScores.map {
                 case (_, scores) =>
-                  scores.favScoreClusterNormalizedOnly.getOrElse(0.0)
+                  scores.favScoreClusterNormal zedOnly.getOrElse(0.0)
               }
           },
-          Some(s"$dataSetName UserInterestedIn favScoreClusterNormalizedOnly")
+          So (s"$dataSetNa  User nterested n favScoreClusterNormal zedOnly")
         ),
-        Util.printSummaryOfNumericColumn(
-          interestedInData.flatMap {
-            case (user, interestedIn) =>
-              interestedIn.clusterIdToScores.map {
+        Ut l.pr ntSummaryOfNu r cColumn(
+           nterested nData.flatMap {
+            case (user,  nterested n) =>
+               nterested n.cluster dToScores.map {
                 case (_, scores) =>
-                  scores.logFavScoreClusterNormalizedOnly.getOrElse(0.0)
+                  scores.logFavScoreClusterNormal zedOnly.getOrElse(0.0)
               }
           },
-          Some(s"$dataSetName UserInterestedIn logFavScoreClusterNormalizedOnly")
+          So (s"$dataSetNa  User nterested n logFavScoreClusterNormal zedOnly")
         )
-      ).unit
+      ).un 
   }
 }

@@ -1,10 +1,10 @@
-# pylint: disable=wildcard-import
+# pyl nt: d sable=w ldcard- mport
 """
-This module contains the Trainer and DataRecordTrainer classes.
-Trainers wrap a
-`tf.estimator.Estimator
-<https://www.tensorflow.org/versions/master/api_docs/python/tf/estimator/Estimator>`_.
+T  module conta ns t  Tra ner and DataRecordTra ner classes.
+Tra ners wrap a
+`tf.est mator.Est mator
+<https://www.tensorflow.org/vers ons/master/ap _docs/python/tf/est mator/Est mator>`_.
 """
 
-from .trainer import Trainer  # noqa: F401
-from .data_record_trainer import DataRecordTrainer  # noqa: F401
+from .tra ner  mport Tra ner  # noqa: F401
+from .data_record_tra ner  mport DataRecordTra ner  # noqa: F401

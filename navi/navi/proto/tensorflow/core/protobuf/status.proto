@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package tensorflow;
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
-// If included as a payload, this message flags the Status to be a "derived"
-// Status. Used by StatusGroup to ignore certain Statuses when reporting
+//  f  ncluded as a payload, t   ssage flags t  Status to be a "der ved"
+// Status. Used by StatusGroup to  gnore certa n Statuses w n report ng
 // errors to end users.
-message DerivedStatus {}
+ ssage Der vedStatus {}

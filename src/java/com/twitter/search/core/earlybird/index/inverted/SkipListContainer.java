@@ -1,738 +1,738 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import java.io.IOException;
-import java.util.Random;
+ mport java. o. OExcept on;
+ mport java.ut l.Random;
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
+ mport com.tw ter.search.common.ut l. o.flushable.DataDeser al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.DataSer al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.common.ut l. o.flushable.Flushable;
 
-import static com.twitter.search.core.earlybird.index.inverted.PayloadUtil.EMPTY_PAYLOAD;
+ mport stat c com.tw ter.search.core.earlyb rd. ndex. nverted.PayloadUt l.EMPTY_PAYLOAD;
 
 /**
- * This is a skip list container implementation backed by {@link IntBlockPool}.
+ * T   s a sk p l st conta ner  mple ntat on backed by {@l nk  ntBlockPool}.
  *
- * Skip list is a data structure similar to linked list, but with a hierarchy of lists
- * each skipping over fewer elements, and the bottom hierarchy does NOT skip any elements.
- * @see <a href="http://en.wikipedia.org/wiki/Skip_list">Skip List Wikipedia</a>
+ * Sk p l st  s a data structure s m lar to l nked l st, but w h a h erarchy of l sts
+ * each sk pp ng over fe r ele nts, and t  bottom h erarchy does NOT sk p any ele nts.
+ * @see <a href="http://en.w k ped a.org/w k /Sk p_l st">Sk p L st W k ped a</a>
  *
- * This implementation is lock free and thread safe with ONE writer thread and MULTIPLE reader
+ * T   mple ntat on  s lock free and thread safe w h ONE wr er thread and MULT PLE reader
  * threads.
  *
- * This implementation could contain one or more skip lists, and they are all backed by
- * the same {@link IntBlockPool}.
+ * T   mple ntat on could conta n one or more sk p l sts, and t y are all backed by
+ * t  sa  {@l nk  ntBlockPool}.
  *
- * Values are actually stored as integers; however search key is implemented as a generic type.
- * Inserts of values that already exist are stored as subsequent elements. This is used to support
- * positions and term frequency.
+ * Values are actually stored as  ntegers; ho ver search key  s  mple nted as a gener c type.
+ *  nserts of values that already ex st are stored as subsequent ele nts. T   s used to support
+ * pos  ons and term frequency.
  *
- * Also reserve the integer after value to store next ordinal pointer information. We avoid storing
- * pointers to the next element in the tower by allocating them contiguously. To descend the tower,
- * we just increment the pointer.
+ * Also reserve t   nteger after value to store next ord nal po nter  nformat on.   avo d stor ng
+ * po nters to t  next ele nt  n t  to r by allocat ng t m cont guously. To descend t  to r,
+ *   just  ncre nt t  po nter.
  *
- * This skip list can also store positions as integers. It allocates them before it allocates the
- * value (the value is a doc ID if we are using positions). This means that we can access the
- * position by simply decrementing the value pointer.
+ * T  sk p l st can also store pos  ons as  ntegers.   allocates t m before   allocates t 
+ * value (t  value  s a doc  D  f   are us ng pos  ons). T   ans that   can access t 
+ * pos  on by s mply decre nt ng t  value po nter.
  *
- * To understand how the skip list works, first understand how insert works, then the rest will be
- * more comprehendable.
+ * To understand how t  sk p l st works, f rst understand how  nsert works, t n t  rest w ll be
+ * more compre ndable.
  *
- * A skip list will be implemented in a circle linked way:
- *   - the list head node will have the sentinel value, which is the advisory greatest value
- *     provided by comparator.
- *   - Real first value will be pointed by the list head node.
- *   - Real last value will point to the list head.
+ * A sk p l st w ll be  mple nted  n a c rcle l nked way:
+ *   - t  l st  ad node w ll have t  sent nel value, wh ch  s t  adv sory greatest value
+ *     prov ded by comparator.
+ *   - Real f rst value w ll be po nted by t  l st  ad node.
+ *   - Real last value w ll po nt to t  l st  ad.
  *
- * Constraints:
- *   - Does NOT support negative value.
+ * Constra nts:
+ *   - Does NOT support negat ve value.
  *
- * Simple Viz:
+ * S mple V z:
  *
- * Empty list with max tower height 5. S = Sentinel value, I = Initial value.
- *    | s| 0| 0| 0| 0| 0| i| i| i| i| i| i| i| i| i| i|
+ * Empty l st w h max to r   ght 5. S = Sent nel value,   =  n  al value.
+ *    | s| 0| 0| 0| 0| 0|  |  |  |  |  |  |  |  |  |  |
  *
- * One possible situation after inserting 4, 6, 5.
+ * One poss ble s uat on after  nsert ng 4, 6, 5.
  *    | s| 6| 6| 9| 0| 0| 4|13|13| 6| 0| 0| 0| 5| 9| 9|
  */
-public class SkipListContainer<K> implements Flushable {
+publ c class Sk pL stConta ner<K>  mple nts Flushable {
   /**
-   * The list head of first skip list in the container, this is for convenient usage,
-   * so application use only one skip list does not need to keep track of the list head.
+   * T  l st  ad of f rst sk p l st  n t  conta ner, t   s for conven ent usage,
+   * so appl cat on use only one sk p l st does not need to keep track of t  l st  ad.
    */
-  static final int FIRST_LIST_HEAD = 0;
+  stat c f nal  nt F RST_L ST_HEAD = 0;
 
   /**
-   * Initial value used when initialize int block pool. Notice -1 is not used here in order to give
-   * application more freedom because -1 is a special value when doing bit manipulations.
+   *  n  al value used w n  n  al ze  nt block pool. Not ce -1  s not used  re  n order to g ve
+   * appl cat on more freedom because -1  s a spec al value w n do ng b  man pulat ons.
    */
-  static final int INITIAL_VALUE = -2;
+  stat c f nal  nt  N T AL_VALUE = -2;
 
   /**
-   *  Maximum tower height of this skip list and chance to grow tower by level.
+   *  Max mum to r   ght of t  sk p l st and chance to grow to r by level.
    *
-   *  Notice these two values could affect the memory usage and the performance.
-   *  Ideally they should be calculated based on the potential size of the skip list.
+   *  Not ce t se two values could affect t   mory usage and t  performance.
+   *   deally t y should be calculated based on t  potent al s ze of t  sk p l st.
    *
-   *  Given n is the number of elements in the skip list, the memory usage is in O(n).
+   *  G ven n  s t  number of ele nts  n t  sk p l st, t   mory usage  s  n O(n).
    *
-   *  More precisely,
+   *  More prec sely,
    *
-   *  the memory is mainly used for the following data:
+   *  t   mory  s ma nly used for t  follow ng data:
    *
-   *  header_tower  = O(maxTowerHeight + 1)
+   *   ader_to r  = O(maxTo r  ght + 1)
    *  value         = O(n)
-   *  next_pointers = O(n * (1 - growTowerChance^(maxTowerHeight + 1)) / (1 - growTowerChance))
+   *  next_po nters = O(n * (1 - growTo rChance^(maxTo r  ght + 1)) / (1 - growTo rChance))
    *
-   * thus, the total memory usage is in O(header_tower + value + next_pointers).
+   * thus, t  total  mory usage  s  n O( ader_to r + value + next_po nters).
    *
-   * Default value for maximum tower height and grow tower chance, these two numbers are chosen
-   * arbitrarily now.
+   * Default value for max mum to r   ght and grow to r chance, t se two numbers are chosen
+   * arb rar ly now.
    */
-  @VisibleForTesting
-  public static final int MAX_TOWER_HEIGHT = 10;
-  private static final float GROW_TOWER_CHANCE = 0.2f;
+  @V s bleForTest ng
+  publ c stat c f nal  nt MAX_TOWER_HE GHT = 10;
+  pr vate stat c f nal float GROW_TOWER_CHANCE = 0.2f;
 
-  public enum HasPositions {
+  publ c enum HasPos  ons {
     YES,
     NO
   }
 
-  public enum HasPayloads {
+  publ c enum HasPayloads {
     YES,
     NO
   }
 
-  static final int INVALID_POSITION = -3;
+  stat c f nal  nt  NVAL D_POS T ON = -3;
 
-  /** Memory barrier. */
-  private volatile int maxPoolPointer;
+  /**  mory barr er. */
+  pr vate volat le  nt maxPoolPo nter;
 
   /** Actual storage data structure. */
-  private final IntBlockPool blockPool;
+  pr vate f nal  ntBlockPool blockPool;
 
   /**
-   * Default comparator used to determine the order between two given values or between one key and
-   * another value.
+   * Default comparator used to determ ne t  order bet en two g ven values or bet en one key and
+   * anot r value.
    *
-   * Notice this comparator is shared by all threads using this skip list, so it is not thread safe
-   * if it is maintaining some states. However, {@link #search}, {@link #insert}, and
-   * {@link #searchCeil} support passed in comparator as a parameter, which should be thread safe if
-   * managed by the caller properly.
+   * Not ce t  comparator  s shared by all threads us ng t  sk p l st, so    s not thread safe
+   *  f    s ma nta n ng so  states. Ho ver, {@l nk #search}, {@l nk # nsert}, and
+   * {@l nk #searchCe l} support passed  n comparator as a para ter, wh ch should be thread safe  f
+   * managed by t  caller properly.
    */
-  private final SkipListComparator<K> defaultComparator;
+  pr vate f nal Sk pL stComparator<K> defaultComparator;
 
-  /** Random generator used to decide if to grow tower by one level or not. */
-  private final Random random = new Random();
+  /** Random generator used to dec de  f to grow to r by one level or not. */
+  pr vate f nal Random random = new Random();
 
   /**
-   * Used by writer thread to record last pointers at each level. Notice it is ok to have it as an
-   * instance field because we would only have one writer thread.
+   * Used by wr er thread to record last po nters at each level. Not ce    s ok to have   as an
+   *  nstance f eld because   would only have one wr er thread.
    */
-  private final int[] lastPointers;
+  pr vate f nal  nt[] lastPo nters;
 
   /**
-   * Whether the skip list contains positions. Used for text fields.
+   * W t r t  sk p l st conta ns pos  ons. Used for text f elds.
    */
-  private final HasPositions hasPositions;
+  pr vate f nal HasPos  ons hasPos  ons;
 
-  private final HasPayloads hasPayloads;
+  pr vate f nal HasPayloads hasPayloads;
 
   /**
-   * Creates a new probabilistic skip list, using the provided comparator to compare keys
+   * Creates a new probab l st c sk p l st, us ng t  prov ded comparator to compare keys
    * of type K.
    *
-   * @param comparator a comparator used to compare integer values.
+   * @param comparator a comparator used to compare  nteger values.
    */
-  public SkipListContainer(
-      SkipListComparator<K> comparator,
-      HasPositions hasPositions,
+  publ c Sk pL stConta ner(
+      Sk pL stComparator<K> comparator,
+      HasPos  ons hasPos  ons,
       HasPayloads hasPayloads,
-      String name
+      Str ng na 
   ) {
-    this(comparator, new IntBlockPool(INITIAL_VALUE, name), hasPositions, hasPayloads);
+    t (comparator, new  ntBlockPool( N T AL_VALUE, na ), hasPos  ons, hasPayloads);
   }
 
   /**
    * Base constructor, also used by flush handler.
    */
-  private SkipListContainer(
-      SkipListComparator<K> comparator,
-      IntBlockPool blockPool,
-      HasPositions hasPositions,
+  pr vate Sk pL stConta ner(
+      Sk pL stComparator<K> comparator,
+       ntBlockPool blockPool,
+      HasPos  ons hasPos  ons,
       HasPayloads hasPayloads) {
-    // Sentinel value specified by the comparator cannot equal to INITIAL_VALUE.
-    Preconditions.checkArgument(comparator.getSentinelValue() != INITIAL_VALUE);
+    // Sent nel value spec f ed by t  comparator cannot equal to  N T AL_VALUE.
+    Precond  ons.c ckArgu nt(comparator.getSent nelValue() !=  N T AL_VALUE);
 
-    this.defaultComparator = comparator;
-    this.lastPointers = new int[MAX_TOWER_HEIGHT];
-    this.blockPool = blockPool;
-    this.hasPositions = hasPositions;
-    this.hasPayloads = hasPayloads;
+    t .defaultComparator = comparator;
+    t .lastPo nters = new  nt[MAX_TOWER_HE GHT];
+    t .blockPool = blockPool;
+    t .hasPos  ons = hasPos  ons;
+    t .hasPayloads = hasPayloads;
   }
 
   /**
-   * Search for the index of the greatest value which has key less than or equal to the given key.
+   * Search for t   ndex of t  greatest value wh ch has key less than or equal to t  g ven key.
    *
-   * This is more like a floor search function. See {@link #searchCeil} for ceil search.
+   * T   s more l ke a floor search funct on. See {@l nk #searchCe l} for ce l search.
    *
-   * @param key target key will be searched.
-   * @param skipListHead index of the header tower of the skip list will be searched.
-   * @param comparator comparator used for comparison when traversing through the skip list.
-   * @param searchFinger {@link SkipListSearchFinger} to accelerate search speed,
-   *                     notice the search finger must be before the key.
-   * @return the index of the greatest value which is less than or equal to given value,
-   *         will return skipListHead if given value has no greater or equal values.
+   * @param key target key w ll be searc d.
+   * @param sk pL st ad  ndex of t   ader to r of t  sk p l st w ll be searc d.
+   * @param comparator comparator used for compar son w n travers ng through t  sk p l st.
+   * @param searchF nger {@l nk Sk pL stSearchF nger} to accelerate search speed,
+   *                     not ce t  search f nger must be before t  key.
+   * @return t   ndex of t  greatest value wh ch  s less than or equal to g ven value,
+   *         w ll return sk pL st ad  f g ven value has no greater or equal values.
    */
-  public int search(
+  publ c  nt search(
       K key,
-      int skipListHead,
-      SkipListComparator<K> comparator,
-      @Nullable SkipListSearchFinger searchFinger) {
+       nt sk pL st ad,
+      Sk pL stComparator<K> comparator,
+      @Nullable Sk pL stSearchF nger searchF nger) {
     assert comparator != null;
-    // Start at the header tower.
-    int currentPointer = skipListHead;
+    // Start at t   ader to r.
+     nt currentPo nter = sk pL st ad;
 
-    // Instantiate nextPointer and nextValue outside of the for loop so we can use the value
-    // directly after for loop.
-    int nextPointer = getForwardPointer(currentPointer, MAX_TOWER_HEIGHT - 1);
-    int nextValue = getValue(nextPointer);
+    //  nstant ate nextPo nter and nextValue outs de of t  for loop so   can use t  value
+    // d rectly after for loop.
+     nt nextPo nter = getForwardPo nter(currentPo nter, MAX_TOWER_HE GHT - 1);
+     nt nextValue = getValue(nextPo nter);
 
     // Top down traversal.
-    for (int currentLevel = MAX_TOWER_HEIGHT - 1; currentLevel >= 0; currentLevel--) {
-      nextPointer = getForwardPointer(currentPointer, currentLevel);
-      nextValue = getValue(nextPointer);
+    for ( nt currentLevel = MAX_TOWER_HE GHT - 1; currentLevel >= 0; currentLevel--) {
+      nextPo nter = getForwardPo nter(currentPo nter, currentLevel);
+      nextValue = getValue(nextPo nter);
 
-      // Jump to search finger at current level.
-      if (searchFinger != null) {
-        final int fingerPointer = searchFinger.getPointer(currentLevel);
-         assert searchFinger.isInitialPointer(fingerPointer)
-            || comparator.compareKeyWithValue(key, getValue(fingerPointer), INVALID_POSITION) >= 0;
+      // Jump to search f nger at current level.
+       f (searchF nger != null) {
+        f nal  nt f ngerPo nter = searchF nger.getPo nter(currentLevel);
+         assert searchF nger. s n  alPo nter(f ngerPo nter)
+            || comparator.compareKeyW hValue(key, getValue(f ngerPo nter),  NVAL D_POS T ON) >= 0;
 
-        if (!searchFinger.isInitialPointer(fingerPointer)
-            && comparator.compareValues(getValue(fingerPointer), nextValue) >= 0) {
-          currentPointer = fingerPointer;
-          nextPointer = getForwardPointer(currentPointer, currentLevel);
-          nextValue = getValue(nextPointer);
+         f (!searchF nger. s n  alPo nter(f ngerPo nter)
+            && comparator.compareValues(getValue(f ngerPo nter), nextValue) >= 0) {
+          currentPo nter = f ngerPo nter;
+          nextPo nter = getForwardPo nter(currentPo nter, currentLevel);
+          nextValue = getValue(nextPo nter);
         }
       }
 
       // Move forward.
-      while (comparator.compareKeyWithValue(key, nextValue, INVALID_POSITION) > 0) {
-        currentPointer = nextPointer;
+      wh le (comparator.compareKeyW hValue(key, nextValue,  NVAL D_POS T ON) > 0) {
+        currentPo nter = nextPo nter;
 
-        nextPointer = getForwardPointer(currentPointer, currentLevel);
-        nextValue = getValue(nextPointer);
+        nextPo nter = getForwardPo nter(currentPo nter, currentLevel);
+        nextValue = getValue(nextPo nter);
       }
 
-      // Advance search finger.
-      if (searchFinger != null && currentPointer != skipListHead) {
-        final int currentValue = getValue(currentPointer);
-        final int fingerPointer = searchFinger.getPointer(currentLevel);
+      // Advance search f nger.
+       f (searchF nger != null && currentPo nter != sk pL st ad) {
+        f nal  nt currentValue = getValue(currentPo nter);
+        f nal  nt f ngerPo nter = searchF nger.getPo nter(currentLevel);
 
-        if (searchFinger.isInitialPointer(fingerPointer)
-            || comparator.compareValues(currentValue, getValue(fingerPointer)) > 0) {
-          searchFinger.setPointer(currentLevel, currentPointer);
+         f (searchF nger. s n  alPo nter(f ngerPo nter)
+            || comparator.compareValues(currentValue, getValue(f ngerPo nter)) > 0) {
+          searchF nger.setPo nter(currentLevel, currentPo nter);
         }
       }
     }
 
-    // Return next pointer if next value matches searched value; otherwise return currentPointer.
-    return comparator.compareKeyWithValue(key, nextValue, INVALID_POSITION) == 0
-        ? nextPointer : currentPointer;
+    // Return next po nter  f next value matc s searc d value; ot rw se return currentPo nter.
+    return comparator.compareKeyW hValue(key, nextValue,  NVAL D_POS T ON) == 0
+        ? nextPo nter : currentPo nter;
   }
 
   /**
-   * Perform search with {@link #defaultComparator}.
-   * Notice {@link #defaultComparator} is not thread safe if it is keeping some states.
+   * Perform search w h {@l nk #defaultComparator}.
+   * Not ce {@l nk #defaultComparator}  s not thread safe  f    s keep ng so  states.
    */
-  public int search(K key, int skipListHead, @Nullable SkipListSearchFinger searchFinger) {
-    return search(key, skipListHead, this.defaultComparator, searchFinger);
+  publ c  nt search(K key,  nt sk pL st ad, @Nullable Sk pL stSearchF nger searchF nger) {
+    return search(key, sk pL st ad, t .defaultComparator, searchF nger);
   }
 
   /**
-   * Ceil search on given {@param key}.
+   * Ce l search on g ven {@param key}.
    *
-   * @param key target key will be searched.
-   * @param skipListHead index of the header tower of the skip list will be searched.
-   * @param comparator comparator used for comparison when traversing through the skip list.
-   * @param searchFinger {@link SkipListSearchFinger} to accelerate search speed.
-   * @return index of the smallest value with key greater or equal to the given key.
+   * @param key target key w ll be searc d.
+   * @param sk pL st ad  ndex of t   ader to r of t  sk p l st w ll be searc d.
+   * @param comparator comparator used for compar son w n travers ng through t  sk p l st.
+   * @param searchF nger {@l nk Sk pL stSearchF nger} to accelerate search speed.
+   * @return  ndex of t  smallest value w h key greater or equal to t  g ven key.
    */
-  public int searchCeil(
+  publ c  nt searchCe l(
       K key,
-      int skipListHead,
-      SkipListComparator<K> comparator,
-      @Nullable SkipListSearchFinger searchFinger) {
+       nt sk pL st ad,
+      Sk pL stComparator<K> comparator,
+      @Nullable Sk pL stSearchF nger searchF nger) {
     assert comparator != null;
 
     // Perform regular search.
-    final int foundPointer = search(key, skipListHead, comparator, searchFinger);
+    f nal  nt foundPo nter = search(key, sk pL st ad, comparator, searchF nger);
 
-    // Return foundPointer if it is not the list head and the pointed value has key equal to the
-    // given key; otherwise, return next pointer.
-    if (foundPointer != skipListHead
-        && comparator.compareKeyWithValue(key, getValue(foundPointer), INVALID_POSITION) == 0) {
-      return foundPointer;
+    // Return foundPo nter  f    s not t  l st  ad and t  po nted value has key equal to t 
+    // g ven key; ot rw se, return next po nter.
+     f (foundPo nter != sk pL st ad
+        && comparator.compareKeyW hValue(key, getValue(foundPo nter),  NVAL D_POS T ON) == 0) {
+      return foundPo nter;
     } else {
-      return getNextPointer(foundPointer);
+      return getNextPo nter(foundPo nter);
     }
   }
 
   /**
-   * Perform searchCeil with {@link #defaultComparator}.
-   * Notice {@link #defaultComparator} is not thread safe if it is keeping some states.
+   * Perform searchCe l w h {@l nk #defaultComparator}.
+   * Not ce {@l nk #defaultComparator}  s not thread safe  f    s keep ng so  states.
    */
-  public int searchCeil(
-      K key, int skipListHead, @Nullable SkipListSearchFinger searchFinger) {
-    return searchCeil(key, skipListHead, this.defaultComparator, searchFinger);
+  publ c  nt searchCe l(
+      K key,  nt sk pL st ad, @Nullable Sk pL stSearchF nger searchF nger) {
+    return searchCe l(key, sk pL st ad, t .defaultComparator, searchF nger);
   }
 
   /**
-   * Insert a new value into the skip list.
+   *  nsert a new value  nto t  sk p l st.
    *
-   * Notice inserting supports duplicate keys and duplicate values.
+   * Not ce  nsert ng supports dupl cate keys and dupl cate values.
    *
-   * Duplicate keys with different values or positions will be inserted consecutively.
-   * Duplciate keys with identical values will be ignored, and the duplicate will not be stored in
-   * the posting list.
+   * Dupl cate keys w h d fferent values or pos  ons w ll be  nserted consecut vely.
+   * Duplc ate keys w h  dent cal values w ll be  gnored, and t  dupl cate w ll not be stored  n
+   * t  post ng l st.
    *
-   * @param key is the key of the given value.
-   * @param value is the value will be inserted, cannot be {@link #getSentinelValue()}.
-   * @param skipListHead index of the header tower of the skip list will accept the new value.
-   * @param comparator comparator used for comparison when traversing through the skip list.
-   * @return whether this value exists in the posting list. Note that this will return true even
-   * if it is a new position.
+   * @param key  s t  key of t  g ven value.
+   * @param value  s t  value w ll be  nserted, cannot be {@l nk #getSent nelValue()}.
+   * @param sk pL st ad  ndex of t   ader to r of t  sk p l st w ll accept t  new value.
+   * @param comparator comparator used for compar son w n travers ng through t  sk p l st.
+   * @return w t r t  value ex sts  n t  post ng l st. Note that t  w ll return true even
+   *  f    s a new pos  on.
    */
-  public boolean insert(K key, int value, int position, int[] payload, int skipListHead,
-                    SkipListComparator<K> comparator) {
-    Preconditions.checkArgument(comparator != null);
-    Preconditions.checkArgument(value != getSentinelValue());
+  publ c boolean  nsert(K key,  nt value,  nt pos  on,  nt[] payload,  nt sk pL st ad,
+                    Sk pL stComparator<K> comparator) {
+    Precond  ons.c ckArgu nt(comparator != null);
+    Precond  ons.c ckArgu nt(value != getSent nelValue());
 
-    // Start at the header tower.
-    int currentPointer = skipListHead;
+    // Start at t   ader to r.
+     nt currentPo nter = sk pL st ad;
 
-    // Initialize lastPointers.
-    for (int i = 0; i < MAX_TOWER_HEIGHT; i++) {
-      this.lastPointers[i] = INITIAL_VALUE;
+    //  n  al ze lastPo nters.
+    for ( nt   = 0;   < MAX_TOWER_HE GHT;  ++) {
+      t .lastPo nters[ ] =  N T AL_VALUE;
     }
-    int nextPointer = INITIAL_VALUE;
+     nt nextPo nter =  N T AL_VALUE;
 
     // Top down traversal.
-    for (int currentLevel = MAX_TOWER_HEIGHT - 1; currentLevel >= 0; currentLevel--) {
-      nextPointer = getForwardPointer(currentPointer, currentLevel);
-      int nextValue = getValue(nextPointer);
+    for ( nt currentLevel = MAX_TOWER_HE GHT - 1; currentLevel >= 0; currentLevel--) {
+      nextPo nter = getForwardPo nter(currentPo nter, currentLevel);
+       nt nextValue = getValue(nextPo nter);
 
-      int nextPosition = getPosition(nextPointer);
-      while (comparator.compareKeyWithValue(key, nextValue, nextPosition) > 0) {
-        currentPointer = nextPointer;
+       nt nextPos  on = getPos  on(nextPo nter);
+      wh le (comparator.compareKeyW hValue(key, nextValue, nextPos  on) > 0) {
+        currentPo nter = nextPo nter;
 
-        nextPointer = getForwardPointer(currentPointer, currentLevel);
-        nextValue = getValue(nextPointer);
-        nextPosition = getPosition(nextPointer);
+        nextPo nter = getForwardPo nter(currentPo nter, currentLevel);
+        nextValue = getValue(nextPo nter);
+        nextPos  on = getPos  on(nextPo nter);
       }
 
-      // Store last pointers.
-      lastPointers[currentLevel] = currentPointer;
+      // Store last po nters.
+      lastPo nters[currentLevel] = currentPo nter;
     }
 
-    // we use isDuplicateValue to determine if a value already exists in a posting list (even if it
-    // is a new position). We need to check both current pointer and next pointer in case this is
-    // the largest position we have seen for this value in this skip list. In that case, nextPointer
-    // will point to a larger value, but we want to check the smaller one to see if it is the same
-    // value. For example, if we have [(1, 2), (2, 4)] and we want to insert (1, 3), then
-    // nextPointer will point to (2, 4), but we want to check the doc ID of (1, 2) to see if it has
-    // the same document ID.
-    boolean isDuplicateValue = getValue(currentPointer) == value || getValue(nextPointer) == value;
+    //   use  sDupl cateValue to determ ne  f a value already ex sts  n a post ng l st (even  f  
+    //  s a new pos  on).   need to c ck both current po nter and next po nter  n case t   s
+    // t  largest pos  on   have seen for t  value  n t  sk p l st.  n that case, nextPo nter
+    // w ll po nt to a larger value, but   want to c ck t  smaller one to see  f    s t  sa 
+    // value. For example,  f   have [(1, 2), (2, 4)] and   want to  nsert (1, 3), t n
+    // nextPo nter w ll po nt to (2, 4), but   want to c ck t  doc  D of (1, 2) to see  f   has
+    // t  sa  docu nt  D.
+    boolean  sDupl cateValue = getValue(currentPo nter) == value || getValue(nextPo nter) == value;
 
-    if (comparator.compareKeyWithValue(key, getValue(nextPointer), getPosition(nextPointer)) != 0) {
-      if (hasPayloads == HasPayloads.YES) {
-        Preconditions.checkNotNull(payload);
-        // If this skip list has payloads, we store the payload immediately before the document ID
-        // and position (iff the position exists) in the block pool. We store payloads before
-        // positions because they are variable length, and reading past them would require knowing
-        // the size of the payload. We don't store payloads after the doc ID because we have a
-        // variable number of pointers after the doc ID, and we would have no idea where the
-        // pointers stop and the payload starts.
-        for (int n : payload) {
-          this.blockPool.add(n);
+     f (comparator.compareKeyW hValue(key, getValue(nextPo nter), getPos  on(nextPo nter)) != 0) {
+       f (hasPayloads == HasPayloads.YES) {
+        Precond  ons.c ckNotNull(payload);
+        //  f t  sk p l st has payloads,   store t  payload  m d ately before t  docu nt  D
+        // and pos  on ( ff t  pos  on ex sts)  n t  block pool.   store payloads before
+        // pos  ons because t y are var able length, and read ng past t m would requ re know ng
+        // t  s ze of t  payload.   don't store payloads after t  doc  D because   have a
+        // var able number of po nters after t  doc  D, and   would have no  dea w re t 
+        // po nters stop and t  payload starts.
+        for ( nt n : payload) {
+          t .blockPool.add(n);
         }
       }
 
-      if (hasPositions == HasPositions.YES) {
-        // If this skip list has positions, we store the position before the document ID in the
+       f (hasPos  ons == HasPos  ons.YES) {
+        //  f t  sk p l st has pos  ons,   store t  pos  on before t  docu nt  D  n t 
         // block pool.
-        this.blockPool.add(position);
+        t .blockPool.add(pos  on);
       }
 
-      // Insert value.
-      final int insertedPointer = this.blockPool.add(value);
+      //  nsert value.
+      f nal  nt  nsertedPo nter = t .blockPool.add(value);
 
-      // Insert outgoing pointers.
-      final int height = getRandomTowerHeight();
-      for (int currentLevel = 0; currentLevel < height; currentLevel++) {
-        this.blockPool.add(getForwardPointer(lastPointers[currentLevel], currentLevel));
+      //  nsert outgo ng po nters.
+      f nal  nt   ght = getRandomTo r  ght();
+      for ( nt currentLevel = 0; currentLevel <   ght; currentLevel++) {
+        t .blockPool.add(getForwardPo nter(lastPo nters[currentLevel], currentLevel));
       }
 
-      this.sync();
+      t .sync();
 
-      // Update incoming pointers.
-      for (int currentLevel = 0; currentLevel < height; currentLevel++) {
-        setForwardPointer(lastPointers[currentLevel], currentLevel, insertedPointer);
+      // Update  ncom ng po nters.
+      for ( nt currentLevel = 0; currentLevel <   ght; currentLevel++) {
+        setForwardPo nter(lastPo nters[currentLevel], currentLevel,  nsertedPo nter);
       }
 
-      this.sync();
+      t .sync();
     }
 
-    return isDuplicateValue;
+    return  sDupl cateValue;
   }
 
   /**
-   * Delete a given key from skip list
+   * Delete a g ven key from sk p l st
    *
-   * @param key the key of the given value
-   * @param skipListHead index of the header tower of the skip list will accept the new value
-   * @param comparator comparator used for comparison when traversing through the skip list
-   * @return smallest value in the container. Returns {@link #INITIAL_VALUE} if the
-   * key does not exist.
+   * @param key t  key of t  g ven value
+   * @param sk pL st ad  ndex of t   ader to r of t  sk p l st w ll accept t  new value
+   * @param comparator comparator used for compar son w n travers ng through t  sk p l st
+   * @return smallest value  n t  conta ner. Returns {@l nk # N T AL_VALUE}  f t 
+   * key does not ex st.
    */
-  public int delete(K key, int skipListHead, SkipListComparator<K> comparator) {
+  publ c  nt delete(K key,  nt sk pL st ad, Sk pL stComparator<K> comparator) {
     boolean foundKey = false;
 
-    for (int currentLevel = MAX_TOWER_HEIGHT - 1; currentLevel >= 0; currentLevel--) {
-      int currentPointer = skipListHead;
-      int nextValue = getValue(getForwardPointer(currentPointer, currentLevel));
+    for ( nt currentLevel = MAX_TOWER_HE GHT - 1; currentLevel >= 0; currentLevel--) {
+       nt currentPo nter = sk pL st ad;
+       nt nextValue = getValue(getForwardPo nter(currentPo nter, currentLevel));
 
-      // First we skip over all the nodes that are smaller than our key.
-      while (comparator.compareKeyWithValue(key, nextValue, INVALID_POSITION) > 0) {
-        currentPointer = getForwardPointer(currentPointer, currentLevel);
-        nextValue = getValue(getForwardPointer(currentPointer, currentLevel));
+      // F rst   sk p over all t  nodes that are smaller than   key.
+      wh le (comparator.compareKeyW hValue(key, nextValue,  NVAL D_POS T ON) > 0) {
+        currentPo nter = getForwardPo nter(currentPo nter, currentLevel);
+        nextValue = getValue(getForwardPo nter(currentPo nter, currentLevel));
       }
 
-      Preconditions.checkState(currentPointer != INITIAL_VALUE);
+      Precond  ons.c ckState(currentPo nter !=  N T AL_VALUE);
 
-      // If we don't find the node at this level that's OK, keep searching on a lower one.
-      if (comparator.compareKeyWithValue(key, nextValue, INVALID_POSITION) != 0) {
-        continue;
+      //  f   don't f nd t  node at t  level that's OK, keep search ng on a lo r one.
+       f (comparator.compareKeyW hValue(key, nextValue,  NVAL D_POS T ON) != 0) {
+        cont nue;
       }
 
-      // We found an element to delete.
+      //   found an ele nt to delete.
       foundKey = true;
 
-      // Otherwise, save the current pointer. Right now, current pointer points to the first element
-      // that has the same value as key.
-      int savedPointer = currentPointer;
+      // Ot rw se, save t  current po nter. R ght now, current po nter po nts to t  f rst ele nt
+      // that has t  sa  value as key.
+       nt savedPo nter = currentPo nter;
 
-      currentPointer = getForwardPointer(currentPointer, currentLevel);
-      // Then, walk over every element that is equal to the key.
-      while (comparator.compareKeyWithValue(key, getValue(currentPointer), INVALID_POSITION) == 0) {
-        currentPointer = getForwardPointer(currentPointer, currentLevel);
+      currentPo nter = getForwardPo nter(currentPo nter, currentLevel);
+      // T n, walk over every ele nt that  s equal to t  key.
+      wh le (comparator.compareKeyW hValue(key, getValue(currentPo nter),  NVAL D_POS T ON) == 0) {
+        currentPo nter = getForwardPo nter(currentPo nter, currentLevel);
       }
 
-      // update the saved pointer to point to the first non-equal element of the skip list.
-      setForwardPointer(savedPointer, currentLevel, currentPointer);
+      // update t  saved po nter to po nt to t  f rst non-equal ele nt of t  sk p l st.
+      setForwardPo nter(savedPo nter, currentLevel, currentPo nter);
     }
 
-    // Something has changed, need to sync up here.
-    if (foundKey) {
-      this.sync();
-      // return smallest value, might be used as first postings later
-      return getSmallestValue(skipListHead);
+    // So th ng has changed, need to sync up  re.
+     f (foundKey) {
+      t .sync();
+      // return smallest value, m ght be used as f rst post ngs later
+      return getSmallestValue(sk pL st ad);
     }
 
-    return INITIAL_VALUE;
+    return  N T AL_VALUE;
   }
 
   /**
-   * Perform insert with {@link #defaultComparator}.
-   * Notice {@link #defaultComparator} is not thread safe if it is keeping some states.
+   * Perform  nsert w h {@l nk #defaultComparator}.
+   * Not ce {@l nk #defaultComparator}  s not thread safe  f    s keep ng so  states.
    */
-  public boolean insert(K key, int value, int skipListHead) {
-    return insert(key, value, INVALID_POSITION, EMPTY_PAYLOAD, skipListHead,
-        this.defaultComparator);
+  publ c boolean  nsert(K key,  nt value,  nt sk pL st ad) {
+    return  nsert(key, value,  NVAL D_POS T ON, EMPTY_PAYLOAD, sk pL st ad,
+        t .defaultComparator);
   }
 
-  public boolean insert(K key, int value, int position, int[] payload, int skipListHead) {
-    return insert(key, value, position, payload, skipListHead, this.defaultComparator);
+  publ c boolean  nsert(K key,  nt value,  nt pos  on,  nt[] payload,  nt sk pL st ad) {
+    return  nsert(key, value, pos  on, payload, sk pL st ad, t .defaultComparator);
   }
 
   /**
-   * Perform delete with {@link #defaultComparator}.
-   * Notice {@link #defaultComparator} is not thread safe if it is keeping some states.
+   * Perform delete w h {@l nk #defaultComparator}.
+   * Not ce {@l nk #defaultComparator}  s not thread safe  f    s keep ng so  states.
    */
-  public int delete(K key, int skipListHead) {
-    return delete(key, skipListHead, this.defaultComparator);
+  publ c  nt delete(K key,  nt sk pL st ad) {
+    return delete(key, sk pL st ad, t .defaultComparator);
   }
 
   /**
-   * Get the pointer of next value pointed by the given pointer.
+   * Get t  po nter of next value po nted by t  g ven po nter.
    *
-   * @param pointer reference to the current value.
-   * @return pointer of next value.
+   * @param po nter reference to t  current value.
+   * @return po nter of next value.
    */
-  public int getNextPointer(int pointer) {
-    return getForwardPointer(pointer, 0);
+  publ c  nt getNextPo nter( nt po nter) {
+    return getForwardPo nter(po nter, 0);
   }
 
   /**
-   * Get the value pointed by a pointer, this is a dereference process.
+   * Get t  value po nted by a po nter, t   s a dereference process.
    *
-   * @param pointer is an array index on this.blockPool.
-   * @return value pointed pointed by the pointer.
+   * @param po nter  s an array  ndex on t .blockPool.
+   * @return value po nted po nted by t  po nter.
    */
-  public int getValue(int pointer) {
-    int value = blockPool.get(pointer);
+  publ c  nt getValue( nt po nter) {
+     nt value = blockPool.get(po nter);
 
-    // Visibility race
-    if (value == INITIAL_VALUE) {
-      // Volatile read to cross the memory barrier again.
-      final boolean isSafe = isPointerSafe(pointer);
-      assert isSafe;
+    // V s b l y race
+     f (value ==  N T AL_VALUE) {
+      // Volat le read to cross t   mory barr er aga n.
+      f nal boolean  sSafe =  sPo nterSafe(po nter);
+      assert  sSafe;
 
-      // Re-read the pointer again
-      value = blockPool.get(pointer);
+      // Re-read t  po nter aga n
+      value = blockPool.get(po nter);
     }
 
     return value;
   }
 
-  public int getSmallestValue(int skipListHeader) {
-    return getValue(getForwardPointer(skipListHeader, 0));
+  publ c  nt getSmallestValue( nt sk pL st ader) {
+    return getValue(getForwardPo nter(sk pL st ader, 0));
   }
 
   /**
-   * Builder of a forward search finger with header tower index.
+   * Bu lder of a forward search f nger w h  ader to r  ndex.
    *
-   * @return a new {@link SkipListSearchFinger} object.
+   * @return a new {@l nk Sk pL stSearchF nger} object.
    */
-  public SkipListSearchFinger buildSearchFinger() {
-    return new SkipListSearchFinger(MAX_TOWER_HEIGHT);
+  publ c Sk pL stSearchF nger bu ldSearchF nger() {
+    return new Sk pL stSearchF nger(MAX_TOWER_HE GHT);
   }
 
   /**
-   * Added another skip list into the int pool.
+   * Added anot r sk p l st  nto t   nt pool.
    *
-   * @return index of the header tower of the newly created skip list.
+   * @return  ndex of t   ader to r of t  newly created sk p l st.
    */
-  public int newSkipList() {
-    // Virtual value of header.
-    final int sentinelValue = getSentinelValue();
-    if (hasPositions == HasPositions.YES) {
-      this.blockPool.add(INVALID_POSITION);
+  publ c  nt newSk pL st() {
+    // V rtual value of  ader.
+    f nal  nt sent nelValue = getSent nelValue();
+     f (hasPos  ons == HasPos  ons.YES) {
+      t .blockPool.add( NVAL D_POS T ON);
     }
-    final int skipListHead = this.blockPool.add(sentinelValue);
+    f nal  nt sk pL st ad = t .blockPool.add(sent nelValue);
 
-    // Build header tower, initially point all the pointers to
-    //   itself since no value has been inserted.
-    for (int i = 0; i < MAX_TOWER_HEIGHT; i++) {
-      this.blockPool.add(skipListHead);
+    // Bu ld  ader to r,  n  ally po nt all t  po nters to
+    //    self s nce no value has been  nserted.
+    for ( nt   = 0;   < MAX_TOWER_HE GHT;  ++) {
+      t .blockPool.add(sk pL st ad);
     }
 
-    this.sync();
+    t .sync();
 
-    return skipListHead;
+    return sk pL st ad;
   }
 
   /**
-   * Check if the block pool has been initiated by {@link #newSkipList}.
+   * C ck  f t  block pool has been  n  ated by {@l nk #newSk pL st}.
    */
-  public boolean isEmpty() {
-    return this.blockPool.length() == 0;
+  publ c boolean  sEmpty() {
+    return t .blockPool.length() == 0;
   }
 
   /**
-   * Write to the volatile variable to cross memory barrier. maxPoolPointer is the memory barrier
+   * Wr e to t  volat le var able to cross  mory barr er. maxPoolPo nter  s t   mory barr er
    * for new appends.
    */
-  private void sync() {
-    this.maxPoolPointer = this.blockPool.length();
+  pr vate vo d sync() {
+    t .maxPoolPo nter = t .blockPool.length();
   }
 
   /**
-   * Read from volatile variable to cross memory barrier.
+   * Read from volat le var able to cross  mory barr er.
    *
-   * @param pointer is an block pool index.
-   * @return boolean indicate if given pointer is within the range of max pool pointer.
+   * @param po nter  s an block pool  ndex.
+   * @return boolean  nd cate  f g ven po nter  s w h n t  range of max pool po nter.
    */
-  private boolean isPointerSafe(int pointer) {
-    return pointer <= this.maxPoolPointer;
+  pr vate boolean  sPo nterSafe( nt po nter) {
+    return po nter <= t .maxPoolPo nter;
   }
 
   /**
-   * Get the position associated with the doc ID pointed to by pointer.
-   * @param pointer aka doc ID pointer.
-   * @return The value of the position for that doc ID. Returns INVALID_POSITION if the skip list
-   * does not have positions, or if there is no position for that pointer.
+   * Get t  pos  on assoc ated w h t  doc  D po nted to by po nter.
+   * @param po nter aka doc  D po nter.
+   * @return T  value of t  pos  on for that doc  D. Returns  NVAL D_POS T ON  f t  sk p l st
+   * does not have pos  ons, or  f t re  s no pos  on for that po nter.
    */
-  public int getPosition(int pointer) {
-    if (hasPositions == HasPositions.NO) {
-      return INVALID_POSITION;
+  publ c  nt getPos  on( nt po nter) {
+     f (hasPos  ons == HasPos  ons.NO) {
+      return  NVAL D_POS T ON;
     }
-    // if this skip list has positions, the position will always be inserted into the block pool
-    // immediately before the doc ID.
-    return getValue(pointer - 1);
+    //  f t  sk p l st has pos  ons, t  pos  on w ll always be  nserted  nto t  block pool
+    //  m d ately before t  doc  D.
+    return getValue(po nter - 1);
   }
 
   /**
-   * Get the payload pointer from a normal pointer (e.g. one returned from the {@link this#search}
-   * method).
+   * Get t  payload po nter from a normal po nter (e.g. one returned from t  {@l nk t #search}
+   *  thod).
    */
-  public int getPayloadPointer(int pointer) {
-    Preconditions.checkState(hasPayloads == HasPayloads.YES,
-        "getPayloadPointer() should only be called on a skip list that supports payloads.");
+  publ c  nt getPayloadPo nter( nt po nter) {
+    Precond  ons.c ckState(hasPayloads == HasPayloads.YES,
+        "getPayloadPo nter() should only be called on a sk p l st that supports payloads.");
 
-    // if this skip list has payloads, the payload will always be inserted into the block pool
-    // before the doc ID, and before the position if there is a position.
-    int positionOffset = hasPositions == HasPositions.YES ? 1 : 0;
+    //  f t  sk p l st has payloads, t  payload w ll always be  nserted  nto t  block pool
+    // before t  doc  D, and before t  pos  on  f t re  s a pos  on.
+     nt pos  onOffset = hasPos  ons == HasPos  ons.YES ? 1 : 0;
 
-    return pointer - 1 - positionOffset;
+    return po nter - 1 - pos  onOffset;
   }
 
 
-  int getPoolSize() {
-    return this.blockPool.length();
+   nt getPoolS ze() {
+    return t .blockPool.length();
   }
 
 
-  IntBlockPool getBlockPool() {
+   ntBlockPool getBlockPool() {
     return blockPool;
   }
 
-  public HasPayloads getHasPayloads() {
+  publ c HasPayloads getHasPayloads() {
     return hasPayloads;
   }
 
   /******************
-   * Helper Methods *
+   *  lper  thods *
    ******************/
 
   /**
-   * Get the next forward pointer on a given level.
+   * Get t  next forward po nter on a g ven level.
    *
-   * @param pointer is an array index on this.blockPool, might be SENTINEL_VALUE.
-   * @param level indicates the level of the forward pointer will be acquired. It is zero indexed.
-   * @return next forward pointer on the given level, might be SENTINEL_VALUE.
+   * @param po nter  s an array  ndex on t .blockPool, m ght be SENT NEL_VALUE.
+   * @param level  nd cates t  level of t  forward po nter w ll be acqu red.    s zero  ndexed.
+   * @return next forward po nter on t  g ven level, m ght be SENT NEL_VALUE.
    */
-  private int getForwardPointer(int pointer, int level) {
-    final int pointerIndex = pointer + level + 1;
+  pr vate  nt getForwardPo nter( nt po nter,  nt level) {
+    f nal  nt po nter ndex = po nter + level + 1;
 
-    int forwardPointer = blockPool.get(pointerIndex);
+     nt forwardPo nter = blockPool.get(po nter ndex);
 
-    // Visibility race
-    if (forwardPointer == INITIAL_VALUE) {
-      // Volatile read to cross the memory barrier again.
-      final boolean isSafe = isPointerSafe(pointerIndex);
-      assert isSafe;
+    // V s b l y race
+     f (forwardPo nter ==  N T AL_VALUE) {
+      // Volat le read to cross t   mory barr er aga n.
+      f nal boolean  sSafe =  sPo nterSafe(po nter ndex);
+      assert  sSafe;
 
-      // Re-read the pointer again
-      forwardPointer = blockPool.get(pointerIndex);
+      // Re-read t  po nter aga n
+      forwardPo nter = blockPool.get(po nter ndex);
     }
 
-    return forwardPointer;
+    return forwardPo nter;
   }
 
  /**
-   * Set the next forward pointer on a given level.
+   * Set t  next forward po nter on a g ven level.
    *
-   * @param pointer points to the value, of which the pointer value will be updated.
-   * @param level indicates the level of the forward pointer will be set. It is zero indexed.
-   * @param target the value fo the target pointer which will be set.
+   * @param po nter po nts to t  value, of wh ch t  po nter value w ll be updated.
+   * @param level  nd cates t  level of t  forward po nter w ll be set.    s zero  ndexed.
+   * @param target t  value fo t  target po nter wh ch w ll be set.
    */
-  private void setForwardPointer(int pointer, int level, int target) {
-    // Update header tower if given pointer points to headerTower.
-    setPointer(pointer + level + 1, target);
+  pr vate vo d setForwardPo nter( nt po nter,  nt level,  nt target) {
+    // Update  ader to r  f g ven po nter po nts to  aderTo r.
+    setPo nter(po nter + level + 1, target);
   }
 
   /**
-   * Set the value pointed by pointer
-   * @param pointer point to the actual position in the pool
-   * @param target the value we are going to set
+   * Set t  value po nted by po nter
+   * @param po nter po nt to t  actual pos  on  n t  pool
+   * @param target t  value   are go ng to set
    */
-  private void setPointer(int pointer, int target) {
-    blockPool.set(pointer, target);
+  pr vate vo d setPo nter( nt po nter,  nt target) {
+    blockPool.set(po nter, target);
   }
 
   /**
-   * Getter of the sentinel value used by this skip list. The sentinel value should be provided
-   * by the comparator.
+   * Getter of t  sent nel value used by t  sk p l st. T  sent nel value should be prov ded
+   * by t  comparator.
    *
-   * @return sentinel value used by this skip list.
+   * @return sent nel value used by t  sk p l st.
    */
-  int getSentinelValue() {
-    return defaultComparator.getSentinelValue();
+   nt getSent nelValue() {
+    return defaultComparator.getSent nelValue();
   }
 
   /**
-   * Return a height h in range [1, maxTowerHeight], each number with chance
-   * growTowerChance ^ (h - 1).
+   * Return a   ght h  n range [1, maxTo r  ght], each number w h chance
+   * growTo rChance ^ (h - 1).
    *
-   * @return a integer indicating height.
+   * @return a  nteger  nd cat ng   ght.
    */
-  private int getRandomTowerHeight() {
-    int height = 1;
-    while (height < MAX_TOWER_HEIGHT && random.nextFloat() < GROW_TOWER_CHANCE) {
-      height++;
+  pr vate  nt getRandomTo r  ght() {
+     nt   ght = 1;
+    wh le (  ght < MAX_TOWER_HE GHT && random.nextFloat() < GROW_TOWER_CHANCE) {
+        ght++;
     }
-    return height;
+    return   ght;
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FlushHandler<K> getFlushHandler() {
-    return new FlushHandler<>(this);
+  @SuppressWarn ngs("unc cked")
+  @Overr de
+  publ c FlushHandler<K> getFlushHandler() {
+    return new FlushHandler<>(t );
   }
 
-  public static class FlushHandler<K> extends Flushable.Handler<SkipListContainer<K>> {
-    private final SkipListComparator<K> comparator;
-    private static final String BLOCK_POOL_PROP_NAME = "blockPool";
-    private static final String HAS_POSITIONS_PROP_NAME = "hasPositions";
-    private static final String HAS_PAYLOADS_PROP_NAME = "hasPayloads";
+  publ c stat c class FlushHandler<K> extends Flushable.Handler<Sk pL stConta ner<K>> {
+    pr vate f nal Sk pL stComparator<K> comparator;
+    pr vate stat c f nal Str ng BLOCK_POOL_PROP_NAME = "blockPool";
+    pr vate stat c f nal Str ng HAS_POS T ONS_PROP_NAME = "hasPos  ons";
+    pr vate stat c f nal Str ng HAS_PAYLOADS_PROP_NAME = "hasPayloads";
 
-    public FlushHandler(SkipListContainer<K> objectToFlush) {
+    publ c FlushHandler(Sk pL stConta ner<K> objectToFlush) {
       super(objectToFlush);
-      this.comparator = objectToFlush.defaultComparator;
+      t .comparator = objectToFlush.defaultComparator;
     }
 
-    public FlushHandler(SkipListComparator<K> comparator) {
-      this.comparator = comparator;
+    publ c FlushHandler(Sk pL stComparator<K> comparator) {
+      t .comparator = comparator;
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      long startTime = getClock().nowMillis();
-      SkipListContainer<K> objectToFlush = getObjectToFlush();
-      flushInfo.addBooleanProperty(HAS_POSITIONS_PROP_NAME,
-          objectToFlush.hasPositions == HasPositions.YES);
-      flushInfo.addBooleanProperty(HAS_PAYLOADS_PROP_NAME,
+    @Overr de
+    protected vo d doFlush(Flush nfo flush nfo, DataSer al zer out) throws  OExcept on {
+      long startT   = getClock().nowM ll s();
+      Sk pL stConta ner<K> objectToFlush = getObjectToFlush();
+      flush nfo.addBooleanProperty(HAS_POS T ONS_PROP_NAME,
+          objectToFlush.hasPos  ons == HasPos  ons.YES);
+      flush nfo.addBooleanProperty(HAS_PAYLOADS_PROP_NAME,
           objectToFlush.hasPayloads == HasPayloads.YES);
 
       objectToFlush.blockPool.getFlushHandler()
-          .flush(flushInfo.newSubProperties(BLOCK_POOL_PROP_NAME), out);
-      getFlushTimerStats().timerIncrement(getClock().nowMillis() - startTime);
+          .flush(flush nfo.newSubPropert es(BLOCK_POOL_PROP_NAME), out);
+      getFlushT  rStats().t  r ncre nt(getClock().nowM ll s() - startT  );
     }
 
-    @Override
-    protected SkipListContainer<K> doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
-      long startTime = getClock().nowMillis();
-      IntBlockPool blockPool = (new IntBlockPool.FlushHandler()).load(
-          flushInfo.getSubProperties(BLOCK_POOL_PROP_NAME), in);
-      getLoadTimerStats().timerIncrement(getClock().nowMillis() - startTime);
+    @Overr de
+    protected Sk pL stConta ner<K> doLoad(Flush nfo flush nfo, DataDeser al zer  n)
+        throws  OExcept on {
+      long startT   = getClock().nowM ll s();
+       ntBlockPool blockPool = (new  ntBlockPool.FlushHandler()).load(
+          flush nfo.getSubPropert es(BLOCK_POOL_PROP_NAME),  n);
+      getLoadT  rStats().t  r ncre nt(getClock().nowM ll s() - startT  );
 
-      HasPositions hasPositions = flushInfo.getBooleanProperty(HAS_POSITIONS_PROP_NAME)
-          ? HasPositions.YES : HasPositions.NO;
-      HasPayloads hasPayloads = flushInfo.getBooleanProperty(HAS_PAYLOADS_PROP_NAME)
+      HasPos  ons hasPos  ons = flush nfo.getBooleanProperty(HAS_POS T ONS_PROP_NAME)
+          ? HasPos  ons.YES : HasPos  ons.NO;
+      HasPayloads hasPayloads = flush nfo.getBooleanProperty(HAS_PAYLOADS_PROP_NAME)
           ? HasPayloads.YES : HasPayloads.NO;
 
-      return new SkipListContainer<>(
-          this.comparator,
+      return new Sk pL stConta ner<>(
+          t .comparator,
           blockPool,
-          hasPositions,
+          hasPos  ons,
           hasPayloads);
     }
   }

@@ -1,40 +1,40 @@
-package com.twitter.search.earlybird.util;
+package com.tw ter.search.earlyb rd.ut l;
 
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.concurrent.T  Un ;
 
 /**
- * Specifies how much time do we wait when shutting down a task.
+ * Spec f es how much t   do   wa  w n shutt ng down a task.
  */
-public class ShutdownWaitTimeParams {
-  private long waitDuration;
-  private TimeUnit waitUnit;
+publ c class ShutdownWa T  Params {
+  pr vate long wa Durat on;
+  pr vate T  Un  wa Un ;
 
-  public ShutdownWaitTimeParams(long waitDuration, TimeUnit waitUnit) {
-    this.waitDuration = waitDuration;
-    this.waitUnit = waitUnit;
+  publ c ShutdownWa T  Params(long wa Durat on, T  Un  wa Un ) {
+    t .wa Durat on = wa Durat on;
+    t .wa Un  = wa Un ;
   }
 
-  public long getWaitDuration() {
-    return waitDuration;
+  publ c long getWa Durat on() {
+    return wa Durat on;
   }
 
-  public TimeUnit getWaitUnit() {
-    return waitUnit;
-  }
-
-  /**
-   * Returns a ShutdownWaitTimeParams instance that instructs the caller to wait indefinitely for
-   * the task to shut down.
-   */
-  public static ShutdownWaitTimeParams indefinitely() {
-    return new ShutdownWaitTimeParams(Long.MAX_VALUE, TimeUnit.DAYS);
+  publ c T  Un  getWa Un () {
+    return wa Un ;
   }
 
   /**
-   * Returns a ShutdownWaitTimeParams instance that instructs the caller to shut down the task
-   * immediately.
+   * Returns a ShutdownWa T  Params  nstance that  nstructs t  caller to wa   ndef n ely for
+   * t  task to shut down.
    */
-  public static ShutdownWaitTimeParams immediately() {
-    return new ShutdownWaitTimeParams(0, TimeUnit.MILLISECONDS);
+  publ c stat c ShutdownWa T  Params  ndef n ely() {
+    return new ShutdownWa T  Params(Long.MAX_VALUE, T  Un .DAYS);
+  }
+
+  /**
+   * Returns a ShutdownWa T  Params  nstance that  nstructs t  caller to shut down t  task
+   *  m d ately.
+   */
+  publ c stat c ShutdownWa T  Params  m d ately() {
+    return new ShutdownWa T  Params(0, T  Un .M LL SECONDS);
   }
 }

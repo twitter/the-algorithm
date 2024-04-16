@@ -1,45 +1,45 @@
-package com.twitter.visibility.rules
+package com.tw ter.v s b l y.rules
 
-object ComposableActions {
+object ComposableAct ons {
 
-  object ComposableActionsWithConversationSectionAbusiveQuality {
+  object ComposableAct onsW hConversat onSect onAbus veQual y {
     def unapply(
-      composableActions: TweetInterstitial
-    ): Option[ConversationSectionAbusiveQuality.type] = {
-      composableActions.abusiveQuality
+      composableAct ons: T et nterst  al
+    ): Opt on[Conversat onSect onAbus veQual y.type] = {
+      composableAct ons.abus veQual y
     }
   }
 
-  object ComposableActionsWithSoftIntervention {
-    def unapply(composableActions: TweetInterstitial): Option[SoftIntervention] = {
-      composableActions.softIntervention match {
-        case Some(si: SoftIntervention) => Some(si)
+  object ComposableAct onsW hSoft ntervent on {
+    def unapply(composableAct ons: T et nterst  al): Opt on[Soft ntervent on] = {
+      composableAct ons.soft ntervent on match {
+        case So (s : Soft ntervent on) => So (s )
         case _ => None
       }
     }
   }
 
-  object ComposableActionsWithInterstitialLimitedEngagements {
-    def unapply(composableActions: TweetInterstitial): Option[InterstitialLimitedEngagements] = {
-      composableActions.interstitial match {
-        case Some(ile: InterstitialLimitedEngagements) => Some(ile)
+  object ComposableAct onsW h nterst  alL m edEngage nts {
+    def unapply(composableAct ons: T et nterst  al): Opt on[ nterst  alL m edEngage nts] = {
+      composableAct ons. nterst  al match {
+        case So ( le:  nterst  alL m edEngage nts) => So ( le)
         case _ => None
       }
     }
   }
 
-  object ComposableActionsWithInterstitial {
-    def unapply(composableActions: TweetInterstitial): Option[Interstitial] = {
-      composableActions.interstitial match {
-        case Some(i: Interstitial) => Some(i)
+  object ComposableAct onsW h nterst  al {
+    def unapply(composableAct ons: T et nterst  al): Opt on[ nterst  al] = {
+      composableAct ons. nterst  al match {
+        case So ( :  nterst  al) => So ( )
         case _ => None
       }
     }
   }
 
-  object ComposableActionsWithAppealable {
-    def unapply(composableActions: TweetInterstitial): Option[Appealable] = {
-      composableActions.appealable
+  object ComposableAct onsW hAppealable {
+    def unapply(composableAct ons: T et nterst  al): Opt on[Appealable] = {
+      composableAct ons.appealable
     }
   }
 }

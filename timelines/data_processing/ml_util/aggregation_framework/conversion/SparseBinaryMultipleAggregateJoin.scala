@@ -1,109 +1,109 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.convers on
 
-import com.twitter.bijection.Injection
-import com.twitter.ml.api._
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup.sparseFeature
-import scala.collection.JavaConverters._
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.ml.ap ._
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.ml.ap .ut l.SR chDataRecord
+ mport com.tw ter.scald ng.typed.TypedP pe
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.TypedAggregateGroup.sparseFeature
+ mport scala.collect on.JavaConverters._
 
-case class SparseJoinConfig(
-  aggregates: DataSetPipe,
-  sparseKey: Feature.SparseBinary,
-  mergePolicies: SparseBinaryMergePolicy*)
+case class SparseJo nConf g(
+  aggregates: DataSetP pe,
+  sparseKey: Feature.SparseB nary,
+   rgePol c es: SparseB nary rgePol cy*)
 
-object SparseBinaryMultipleAggregateJoin {
-  type CommonMap = (String, ((Feature.SparseBinary, String), DataRecord))
+object SparseB naryMult pleAggregateJo n {
+  type CommonMap = (Str ng, ((Feature.SparseB nary, Str ng), DataRecord))
 
   def apply(
-    source: DataSetPipe,
+    s ce: DataSetP pe,
     commonKey: Feature[_],
-    joinConfigs: Set[SparseJoinConfig],
-    rightJoin: Boolean = false,
-    isSketchJoin: Boolean = false,
-    numSketchJoinReducers: Int = 0
-  ): DataSetPipe = {
-    val emptyPipe: TypedPipe[CommonMap] = TypedPipe.empty
-    val aggregateMaps: Set[TypedPipe[CommonMap]] = joinConfigs.map { joinConfig =>
-      joinConfig.aggregates.records.map { record =>
+    jo nConf gs: Set[SparseJo nConf g],
+    r ghtJo n: Boolean = false,
+     sSketchJo n: Boolean = false,
+    numSketchJo nReducers:  nt = 0
+  ): DataSetP pe = {
+    val emptyP pe: TypedP pe[CommonMap] = TypedP pe.empty
+    val aggregateMaps: Set[TypedP pe[CommonMap]] = jo nConf gs.map { jo nConf g =>
+      jo nConf g.aggregates.records.map { record =>
         val sparseKeyValue =
-          SRichDataRecord(record).getFeatureValue(sparseFeature(joinConfig.sparseKey)).toString
-        val commonKeyValue = SRichDataRecord(record).getFeatureValue(commonKey).toString
-        (commonKeyValue, ((joinConfig.sparseKey, sparseKeyValue), record))
+          SR chDataRecord(record).getFeatureValue(sparseFeature(jo nConf g.sparseKey)).toStr ng
+        val commonKeyValue = SR chDataRecord(record).getFeatureValue(commonKey).toStr ng
+        (commonKeyValue, ((jo nConf g.sparseKey, sparseKeyValue), record))
       }
     }
 
     val commonKeyToAggregateMap = aggregateMaps
-      .foldLeft(emptyPipe) {
-        case (union: TypedPipe[CommonMap], next: TypedPipe[CommonMap]) =>
-          union ++ next
+      .foldLeft(emptyP pe) {
+        case (un on: TypedP pe[CommonMap], next: TypedP pe[CommonMap]) =>
+          un on ++ next
       }
       .group
-      .toList
+      .toL st
       .map {
         case (commonKeyValue, aggregateTuples) =>
           (commonKeyValue, aggregateTuples.toMap)
       }
 
-    val commonKeyToRecordMap = source.records
+    val commonKeyToRecordMap = s ce.records
       .map { record =>
-        val commonKeyValue = SRichDataRecord(record).getFeatureValue(commonKey).toString
+        val commonKeyValue = SR chDataRecord(record).getFeatureValue(commonKey).toStr ng
         (commonKeyValue, record)
       }
 
-    // rightJoin is not supported by Sketched, so rightJoin will be ignored if isSketchJoin is set
-    implicit val string2Byte = (value: String) => Injection[String, Array[Byte]](value)
-    val intermediateRecords = if (isSketchJoin) {
+    // r ghtJo n  s not supported by Sketc d, so r ghtJo n w ll be  gnored  f  sSketchJo n  s set
+     mpl c  val str ng2Byte = (value: Str ng) =>  nject on[Str ng, Array[Byte]](value)
+    val  nter d ateRecords =  f ( sSketchJo n) {
       commonKeyToRecordMap.group
-        .sketch(numSketchJoinReducers)
-        .leftJoin(commonKeyToAggregateMap)
-        .toTypedPipe
-    } else if (rightJoin) {
+        .sketch(numSketchJo nReducers)
+        .leftJo n(commonKeyToAggregateMap)
+        .toTypedP pe
+    } else  f (r ghtJo n) {
       commonKeyToAggregateMap
-        .rightJoin(commonKeyToRecordMap)
+        .r ghtJo n(commonKeyToRecordMap)
         .mapValues(_.swap)
-        .toTypedPipe
+        .toTypedP pe
     } else {
-      commonKeyToRecordMap.leftJoin(commonKeyToAggregateMap).toTypedPipe
+      commonKeyToRecordMap.leftJo n(commonKeyToAggregateMap).toTypedP pe
     }
 
-    val joinedRecords = intermediateRecords
+    val jo nedRecords =  nter d ateRecords
       .map {
-        case (commonKeyValue, (inputRecord, aggregateTupleMapOpt)) =>
+        case (commonKeyValue, ( nputRecord, aggregateTupleMapOpt)) =>
           aggregateTupleMapOpt.foreach { aggregateTupleMap =>
-            joinConfigs.foreach { joinConfig =>
-              val sparseKeyValues = Option(
-                SRichDataRecord(inputRecord)
-                  .getFeatureValue(joinConfig.sparseKey)
-              ).map(_.asScala.toList)
-                .getOrElse(List.empty[String])
+            jo nConf gs.foreach { jo nConf g =>
+              val sparseKeyValues = Opt on(
+                SR chDataRecord( nputRecord)
+                  .getFeatureValue(jo nConf g.sparseKey)
+              ).map(_.asScala.toL st)
+                .getOrElse(L st.empty[Str ng])
 
               val aggregateRecords = sparseKeyValues.flatMap { sparseKeyValue =>
-                aggregateTupleMap.get((joinConfig.sparseKey, sparseKeyValue))
+                aggregateTupleMap.get((jo nConf g.sparseKey, sparseKeyValue))
               }
 
-              joinConfig.mergePolicies.foreach { mergePolicy =>
-                mergePolicy.mergeRecord(
-                  inputRecord,
+              jo nConf g. rgePol c es.foreach {  rgePol cy =>
+                 rgePol cy. rgeRecord(
+                   nputRecord,
                   aggregateRecords,
-                  joinConfig.aggregates.featureContext
+                  jo nConf g.aggregates.featureContext
                 )
               }
             }
           }
-          inputRecord
+           nputRecord
       }
 
-    val joinedFeatureContext = joinConfigs
-      .foldLeft(source.featureContext) {
-        case (left, joinConfig) =>
-          joinConfig.mergePolicies.foldLeft(left) {
-            case (soFar, mergePolicy) =>
-              mergePolicy.mergeContext(soFar, joinConfig.aggregates.featureContext)
+    val jo nedFeatureContext = jo nConf gs
+      .foldLeft(s ce.featureContext) {
+        case (left, jo nConf g) =>
+          jo nConf g. rgePol c es.foldLeft(left) {
+            case (soFar,  rgePol cy) =>
+               rgePol cy. rgeContext(soFar, jo nConf g.aggregates.featureContext)
           }
       }
 
-    DataSetPipe(joinedRecords, joinedFeatureContext)
+    DataSetP pe(jo nedRecords, jo nedFeatureContext)
   }
 }

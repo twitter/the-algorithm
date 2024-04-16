@@ -1,113 +1,113 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import com.twitter.search.common.partitioning.base.Segment;
+ mport com.tw ter.search.common.part  on ng.base.Seg nt;
 
 /**
- * Representation for segment sync state, the local and hdfs file locations, as well as the
- * current in-memory sync states maintained by earlybirds.
+ * Representat on for seg nt sync state, t  local and hdfs f le locat ons, as  ll as t 
+ * current  n- mory sync states ma nta ned by earlyb rds.
  */
-public class SegmentSyncInfo {
-  // Is this segment loaded from disk?
-  private volatile boolean loaded = false;
-  // Has this segment been flushed to disk, and uploaded to HDFS if uploading is enabled?
-  private volatile boolean flushed = false;
-  // Time when the segment was flushed to local disk
-  private volatile long flushTimeMillis = 0;
+publ c class Seg ntSync nfo {
+  //  s t  seg nt loaded from d sk?
+  pr vate volat le boolean loaded = false;
+  // Has t  seg nt been flus d to d sk, and uploaded to HDFS  f upload ng  s enabled?
+  pr vate volat le boolean flus d = false;
+  // T   w n t  seg nt was flus d to local d sk
+  pr vate volat le long flushT  M ll s = 0;
 
-  private final Segment segment;
-  private final SegmentSyncConfig syncConfig;
-  private final String localSyncDir;
-  private final String hdfsFlushDir;
-  private final String hdfsSyncDirPrefix;
-  private final String hdfsUploadDirPrefix;
-  private final String hdfsTempFlushDir;
+  pr vate f nal Seg nt seg nt;
+  pr vate f nal Seg ntSyncConf g syncConf g;
+  pr vate f nal Str ng localSyncD r;
+  pr vate f nal Str ng hdfsFlushD r;
+  pr vate f nal Str ng hdfsSyncD rPref x;
+  pr vate f nal Str ng hdfsUploadD rPref x;
+  pr vate f nal Str ng hdfsTempFlushD r;
 
-  @VisibleForTesting
-  public SegmentSyncInfo(SegmentSyncConfig syncConfig, Segment segment) {
-    this.segment = segment;
-    this.syncConfig = syncConfig;
-    this.localSyncDir = syncConfig.getLocalSyncDirName(segment);
-    this.hdfsSyncDirPrefix = syncConfig.getHdfsSyncDirNamePrefix(segment);
-    this.hdfsUploadDirPrefix = syncConfig.getHdfsUploadDirNamePrefix(segment);
-    this.hdfsFlushDir = syncConfig.getHdfsFlushDirName(segment);
-    this.hdfsTempFlushDir = syncConfig.getHdfsTempFlushDirName(segment);
+  @V s bleForTest ng
+  publ c Seg ntSync nfo(Seg ntSyncConf g syncConf g, Seg nt seg nt) {
+    t .seg nt = seg nt;
+    t .syncConf g = syncConf g;
+    t .localSyncD r = syncConf g.getLocalSyncD rNa (seg nt);
+    t .hdfsSyncD rPref x = syncConf g.getHdfsSyncD rNa Pref x(seg nt);
+    t .hdfsUploadD rPref x = syncConf g.getHdfsUploadD rNa Pref x(seg nt);
+    t .hdfsFlushD r = syncConf g.getHdfsFlushD rNa (seg nt);
+    t .hdfsTempFlushD r = syncConf g.getHdfsTempFlushD rNa (seg nt);
   }
 
-  public boolean isLoaded() {
+  publ c boolean  sLoaded() {
     return loaded;
   }
 
-  public boolean isFlushed() {
-    return flushed;
+  publ c boolean  sFlus d() {
+    return flus d;
   }
 
-  public long getFlushTimeMillis() {
-    return flushTimeMillis;
+  publ c long getFlushT  M ll s() {
+    return flushT  M ll s;
   }
 
-  public String getLocalSyncDir() {
-    return localSyncDir;
+  publ c Str ng getLocalSyncD r() {
+    return localSyncD r;
   }
 
-  public SegmentSyncConfig getSegmentSyncConfig() {
-    return syncConfig;
+  publ c Seg ntSyncConf g getSeg ntSyncConf g() {
+    return syncConf g;
   }
 
-  public String getLocalLuceneSyncDir() {
-    // For archive search this name depends on the end date of the segment, which can change,
-    // so we cannot pre-compute this in the constructor.
-    // This should only be used in the on-disk archive.
-    return syncConfig.getLocalLuceneSyncDirName(segment);
+  publ c Str ng getLocalLuceneSyncD r() {
+    // For arch ve search t  na  depends on t  end date of t  seg nt, wh ch can change,
+    // so   cannot pre-compute t   n t  constructor.
+    // T  should only be used  n t  on-d sk arch ve.
+    return syncConf g.getLocalLuceneSyncD rNa (seg nt);
   }
 
-  public String getHdfsFlushDir() {
-    return hdfsFlushDir;
+  publ c Str ng getHdfsFlushD r() {
+    return hdfsFlushD r;
   }
 
-  public String getHdfsSyncDirPrefix() {
-    return hdfsSyncDirPrefix;
+  publ c Str ng getHdfsSyncD rPref x() {
+    return hdfsSyncD rPref x;
   }
 
-  public String getHdfsUploadDirPrefix() {
-    return hdfsUploadDirPrefix;
+  publ c Str ng getHdfsUploadD rPref x() {
+    return hdfsUploadD rPref x;
   }
 
-  public String getHdfsTempFlushDir() {
-    return hdfsTempFlushDir;
+  publ c Str ng getHdfsTempFlushD r() {
+    return hdfsTempFlushD r;
   }
 
-  public void setLoaded(boolean isLoaded) {
-    this.loaded = isLoaded;
-  }
-
-  /**
-   * Stores the flushing state for this segment.
-   */
-  public void setFlushed(boolean isFlushed) {
-    if (isFlushed) {
-      this.flushTimeMillis = System.currentTimeMillis();
-    }
-    this.flushed = isFlushed;
+  publ c vo d setLoaded(boolean  sLoaded) {
+    t .loaded =  sLoaded;
   }
 
   /**
-   * Adds debug information about the loaded and flushed status of this segment to the given
-   * StringBuilder.
+   * Stores t  flush ng state for t  seg nt.
    */
-  public void addDebugInfo(StringBuilder builder) {
-    builder.append("[");
-    int startLength = builder.length();
-    if (loaded) {
-      builder.append("loaded, ");
+  publ c vo d setFlus d(boolean  sFlus d) {
+     f ( sFlus d) {
+      t .flushT  M ll s = System.currentT  M ll s();
     }
-    if (flushed) {
-      builder.append("flushed, ");
+    t .flus d =  sFlus d;
+  }
+
+  /**
+   * Adds debug  nformat on about t  loaded and flus d status of t  seg nt to t  g ven
+   * Str ngBu lder.
+   */
+  publ c vo d addDebug nfo(Str ngBu lder bu lder) {
+    bu lder.append("[");
+     nt startLength = bu lder.length();
+     f (loaded) {
+      bu lder.append("loaded, ");
     }
-    if (startLength < builder.length()) {
-      builder.setLength(builder.length() - 2);
+     f (flus d) {
+      bu lder.append("flus d, ");
     }
-    builder.append("]");
+     f (startLength < bu lder.length()) {
+      bu lder.setLength(bu lder.length() - 2);
+    }
+    bu lder.append("]");
   }
 }

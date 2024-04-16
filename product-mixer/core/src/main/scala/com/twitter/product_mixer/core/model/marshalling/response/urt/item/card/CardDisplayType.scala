@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.card
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.card
 
-sealed trait CardDisplayType
+sealed tra  CardD splayType
 
-case object HeroDisplayType extends CardDisplayType
-case object CellDisplayType extends CardDisplayType
-case object TweetCardDisplayType extends CardDisplayType
+case object  roD splayType extends CardD splayType
+case object CellD splayType extends CardD splayType
+case object T etCardD splayType extends CardD splayType

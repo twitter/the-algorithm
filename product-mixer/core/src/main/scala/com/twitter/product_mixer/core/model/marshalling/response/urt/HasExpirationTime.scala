@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt
 
-import com.twitter.util.Time
+ mport com.tw ter.ut l.T  
 
-trait HasExpirationTime {
-  def expirationTime: Option[Time] = None
+tra  HasExp rat onT   {
+  def exp rat onT  : Opt on[T  ] = None
 
-  final def expirationTimeInMillis: Option[Long] = expirationTime.map(_.inMillis)
+  f nal def exp rat onT   nM ll s: Opt on[Long] = exp rat onT  .map(_. nM ll s)
 }

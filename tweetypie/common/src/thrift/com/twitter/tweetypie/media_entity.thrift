@@ -1,135 +1,135 @@
-namespace java com.twitter.tweetypie.thriftjava
-#@namespace scala com.twitter.tweetypie.thriftscala
-#@namespace strato com.twitter.tweetypie
-namespace py gen.twitter.tweetypie.media_entity
-namespace rb TweetyPie.media_entity
-namespace go tweetypie.media_entity
+na space java com.tw ter.t etyp e.thr ftjava
+#@na space scala com.tw ter.t etyp e.thr ftscala
+#@na space strato com.tw ter.t etyp e
+na space py gen.tw ter.t etyp e. d a_ent y
+na space rb T etyP e. d a_ent y
+na space go t etyp e. d a_ent y
 
-include "com/twitter/mediaservices/commons/MediaInformation.thrift"
-include "com/twitter/mediaservices/commons/MediaCommon.thrift"
-include "com/twitter/mediaservices/commons/TweetMedia.thrift"
+ nclude "com/tw ter/ d aserv ces/commons/ d a nformat on.thr ft"
+ nclude "com/tw ter/ d aserv ces/commons/ d aCommon.thr ft"
+ nclude "com/tw ter/ d aserv ces/commons/T et d a.thr ft"
 
 /**
  * DEPRECATED
  * An RGB color.
  *
- * Each i8 should be interpreted as unsigned, ranging in value from 0 to
- * 255. Borrowed from gizmoduck/user.thrift.
+ * Each  8 should be  nterpreted as uns gned, rang ng  n value from 0 to
+ * 255. Borro d from g zmoduck/user.thr ft.
  *
- * The way in which we use ColorValue here is as metadata for a media file,
- * so it needs to be annotated as having personal data. Fields that are of
- * structured types cannot be annotated, so we have to put the annotation
- * on the structure itself's fields even though it's more confusing to do so
- * and could introduce issues if someone else reuses ColorValue outside of
- * the context of a media file.
+ * T  way  n wh ch   use ColorValue  re  s as  tadata for a  d a f le,
+ * so   needs to be annotated as hav ng personal data. F elds that are of
+ * structured types cannot be annotated, so   have to put t  annotat on
+ * on t  structure  self's f elds even though  's more confus ng to do so
+ * and could  ntroduce  ssues  f so one else reuses ColorValue outs de of
+ * t  context of a  d a f le.
  */
 struct ColorValue {
-  1: i8 red  (personalDataType = 'MediaFile')
-  2: i8 green (personalDataType = 'MediaFile')
-  3: i8 blue (personalDataType = 'MediaFile')
-}(persisted = 'true', hasPersonalData = 'true')
+  1:  8 red  (personalDataType = ' d aF le')
+  2:  8 green (personalDataType = ' d aF le')
+  3:  8 blue (personalDataType = ' d aF le')
+}(pers sted = 'true', hasPersonalData = 'true')
 
-struct MediaEntity {
-  1: i16 from_index (personalDataType = 'MediaFile')
-  2: i16 to_index (personalDataType = 'MediaFile')
-
-  /**
-   * The shortened t.co url found in the tweet text.
-   */
-  3: string url (personalDataType = 'ShortUrl')
+struct  d aEnt y {
+  1:  16 from_ ndex (personalDataType = ' d aF le')
+  2:  16 to_ ndex (personalDataType = ' d aF le')
 
   /**
-   * The text to display in place of the shortened url.
+   * T  shortened t.co url found  n t  t et text.
    */
-  4: string display_url (personalDataType = 'LongUrl')
+  3: str ng url (personalDataType = 'ShortUrl')
 
   /**
-   * The url to the media asset (a preview image in the case of a video).
+   * T  text to d splay  n place of t  shortened url.
    */
-  5: string media_url (personalDataType = 'LongUrl')
+  4: str ng d splay_url (personalDataType = 'LongUrl')
 
   /**
-   * The https version of media_url.
+   * T  url to t   d a asset (a prev ew  mage  n t  case of a v deo).
    */
-  6: string media_url_https (personalDataType = 'LongUrl')
+  5: str ng  d a_url (personalDataType = 'LongUrl')
 
   /**
-   * The expanded media permalink.
+   * T  https vers on of  d a_url.
    */
-  7: string expanded_url (personalDataType = 'LongUrl')
+  6: str ng  d a_url_https (personalDataType = 'LongUrl')
 
-  8: MediaCommon.MediaId media_id (strato.space = "Media", strato.name = "media", personalDataType = 'MediaId')
+  /**
+   * T  expanded  d a permal nk.
+   */
+  7: str ng expanded_url (personalDataType = 'LongUrl')
+
+  8:  d aCommon. d a d  d a_ d (strato.space = " d a", strato.na  = " d a", personalDataType = ' d a d')
   9: bool nsfw
-  10: set<TweetMedia.MediaSize> sizes
-  11: string media_path
-  12: optional bool is_protected
+  10: set<T et d a. d aS ze> s zes
+  11: str ng  d a_path
+  12: opt onal bool  s_protected
 
   /**
-   * The tweet that this MediaEntity was originally attached to.  This value will be set if this
-   * MediaEntity is either on a retweet or a tweet with pasted-pic.
+   * T  t et that t   d aEnt y was or g nally attac d to.  T  value w ll be set  f t 
+   *  d aEnt y  s e  r on a ret et or a t et w h pasted-p c.
    */
-  13: optional i64 source_status_id (strato.space = "Tweet", strato.name = "sourceStatus", personalDataType = 'TweetId')
+  13: opt onal  64 s ce_status_ d (strato.space = "T et", strato.na  = "s ceStatus", personalDataType = 'T et d')
 
 
   /**
-   * The user to attribute views of the media to.
+   * T  user to attr bute v ews of t   d a to.
    *
-   * This field should be set when the media's attributableUserId field does not match the current
-   * Tweet's owner.  Retweets of a Tweet with media and "managed media" are some reasons this may
-   * occur.  When the value is None any views should be attributed to the tweet's owner.
+   * T  f eld should be set w n t   d a's attr butableUser d f eld does not match t  current
+   * T et's owner.  Ret ets of a T et w h  d a and "managed  d a" are so  reasons t  may
+   * occur.  W n t  value  s None any v ews should be attr buted to t  t et's owner.
    **/
-  14: optional i64 source_user_id (strato.space = "User", strato.name = "sourceUser", personalDataType = 'UserId')
+  14: opt onal  64 s ce_user_ d (strato.space = "User", strato.na  = "s ceUser", personalDataType = 'User d')
 
   /**
-   * Additional information specific to the media type.
+   * Add  onal  nformat on spec f c to t   d a type.
    *
-   * This field is optional with images (as the image information is in the
-   * previous fields), but required for animated GIF and native video (as, in
-   * this case, the previous fields only describe the preview image).
+   * T  f eld  s opt onal w h  mages (as t   mage  nformat on  s  n t 
+   * prev ous f elds), but requ red for an mated G F and nat ve v deo (as,  n
+   * t  case, t  prev ous f elds only descr be t  prev ew  mage).
    */
-  15: optional TweetMedia.MediaInfo media_info
+  15: opt onal T et d a. d a nfo  d a_ nfo
 
   /**
    * DEPRECATED
-   * The dominant color for the entire image (or keyframe for video or GIF).
+   * T  dom nant color for t  ent re  mage (or keyfra  for v deo or G F).
    *
-   * This can be used for placeholders while the media downloads (either a
-   * solid color or a gradient using the grid).
+   * T  can be used for placeholders wh le t   d a downloads (e  r a
+   * sol d color or a grad ent us ng t  gr d).
    */
-  16: optional ColorValue dominant_color_overall
+  16: opt onal ColorValue dom nant_color_overall
 
   /**
    * DEPRECATED
-   * Dominant color of each quadrant of the image (keyframe for video or GIF).
+   * Dom nant color of each quadrant of t   mage (keyfra  for v deo or G F).
    *
-   * If present this list should have 4 elements, corresponding to
-   * [top_left, top_right, bottom_left, bottom_right]
+   *  f present t  l st should have 4 ele nts, correspond ng to
+   * [top_left, top_r ght, bottom_left, bottom_r ght]
    */
-  17: optional list<ColorValue> dominant_color_grid
+  17: opt onal l st<ColorValue> dom nant_color_gr d
 
-  // obsolete 18: optional map<string, binary> extensions
+  // obsolete 18: opt onal map<str ng, b nary> extens ons
 
   /**
-   * Stratostore extension points data encoded as a Strato record.
+   * Stratostore extens on po nts data encoded as a Strato record.
    */
-  19: optional binary extensions_reply
+  19: opt onal b nary extens ons_reply
 
   /**
-   * Holds metadata defined by the user for the tweet-asset relationship.
+   * Holds  tadata def ned by t  user for t  t et-asset relat onsh p.
    */
-  20: optional MediaInformation.UserDefinedProductMetadata metadata
+  20: opt onal  d a nformat on.UserDef nedProduct tadata  tadata
 
   /**
-   * Media key used to interact with the media systems.
+   *  d a key used to  nteract w h t   d a systems.
    */
-  21: optional MediaCommon.MediaKey media_key
+  21: opt onal  d aCommon. d aKey  d a_key
 
   /**
-   * Flexible structure for additional media metadata.  This field is only
-   * included in a read-path request if specifically requested.  It will
-   * always be included, when applicable, in write-path responses.
+   * Flex ble structure for add  onal  d a  tadata.  T  f eld  s only
+   *  ncluded  n a read-path request  f spec f cally requested.    w ll
+   * always be  ncluded, w n appl cable,  n wr e-path responses.
    */
-  22: optional MediaInformation.AdditionalMetadata additional_metadata
+  22: opt onal  d a nformat on.Add  onal tadata add  onal_ tadata
 
-}(persisted='true', hasPersonalData = 'true')
+}(pers sted='true', hasPersonalData = 'true')
 

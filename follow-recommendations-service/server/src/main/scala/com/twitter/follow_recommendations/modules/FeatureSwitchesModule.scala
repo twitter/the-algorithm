@@ -1,83 +1,83 @@
-package com.twitter.follow_recommendations.modules
+package com.tw ter.follow_recom ndat ons.modules
 
-import com.google.inject.Provides
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.featureswitches.v2.Feature
-import com.twitter.featureswitches.v2.FeatureFilter
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.featureswitches.v2.builder.FeatureSwitchesBuilder
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants.PRODUCER_SIDE_FEATURE_SWITCHES
-import com.twitter.inject.TwitterModule
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.abdec der.Logg ngABDec der
+ mport com.tw ter.featuresw c s.v2.Feature
+ mport com.tw ter.featuresw c s.v2.FeatureF lter
+ mport com.tw ter.featuresw c s.v2.FeatureSw c s
+ mport com.tw ter.featuresw c s.v2.bu lder.FeatureSw c sBu lder
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.constants.Gu ceNa dConstants.PRODUCER_S DE_FEATURE_SW TCHES
+ mport com.tw ter. nject.Tw terModule
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-object FeaturesSwitchesModule extends TwitterModule {
-  private val DefaultConfigRepoPath = "/usr/local/config"
-  private val FeaturesPath = "/features/onboarding/follow-recommendations-service/main"
-  val isLocal = flag("configrepo.local", false, "Is the server running locally or in a DC")
-  val localConfigRepoPath = flag(
-    "local.configrepo",
-    System.getProperty("user.home") + "/workspace/config",
-    "Path to your local config repo"
+object FeaturesSw c sModule extends Tw terModule {
+  pr vate val DefaultConf gRepoPath = "/usr/local/conf g"
+  pr vate val FeaturesPath = "/features/onboard ng/follow-recom ndat ons-serv ce/ma n"
+  val  sLocal = flag("conf grepo.local", false, " s t  server runn ng locally or  n a DC")
+  val localConf gRepoPath = flag(
+    "local.conf grepo",
+    System.getProperty("user.ho ") + "/workspace/conf g",
+    "Path to y  local conf g repo"
   )
 
-  @Provides
-  @Singleton
-  def providesFeatureSwitches(
-    abDecider: LoggingABDecider,
-    statsReceiver: StatsReceiver
-  ): FeatureSwitches = {
-    val configRepoPath = if (isLocal()) {
-      localConfigRepoPath()
+  @Prov des
+  @S ngleton
+  def prov desFeatureSw c s(
+    abDec der: Logg ngABDec der,
+    statsRece ver: StatsRece ver
+  ): FeatureSw c s = {
+    val conf gRepoPath =  f ( sLocal()) {
+      localConf gRepoPath()
     } else {
-      DefaultConfigRepoPath
+      DefaultConf gRepoPath
     }
 
-    FeatureSwitchesBuilder
-      .createDefault(FeaturesPath, abDecider, Some(statsReceiver))
-      .configRepoAbsPath(configRepoPath)
-      .serviceDetailsFromAurora()
-      .build()
+    FeatureSw c sBu lder
+      .createDefault(FeaturesPath, abDec der, So (statsRece ver))
+      .conf gRepoAbsPath(conf gRepoPath)
+      .serv ceDeta lsFromAurora()
+      .bu ld()
   }
 
-  @Provides
-  @Singleton
-  @Named(PRODUCER_SIDE_FEATURE_SWITCHES)
-  def providesProducerFeatureSwitches(
-    abDecider: LoggingABDecider,
-    statsReceiver: StatsReceiver
-  ): FeatureSwitches = {
-    val configRepoPath = if (isLocal()) {
-      localConfigRepoPath()
+  @Prov des
+  @S ngleton
+  @Na d(PRODUCER_S DE_FEATURE_SW TCHES)
+  def prov desProducerFeatureSw c s(
+    abDec der: Logg ngABDec der,
+    statsRece ver: StatsRece ver
+  ): FeatureSw c s = {
+    val conf gRepoPath =  f ( sLocal()) {
+      localConf gRepoPath()
     } else {
-      DefaultConfigRepoPath
+      DefaultConf gRepoPath
     }
 
     /**
-     * Feature Switches evaluate all tied FS Keys on Params construction time, which is very inefficient
-     * for producer/candidate side holdbacks because we have 100s of candidates, and 100s of FS which result
-     * in 10,000 FS evaluations when we want 1 per candidate (100 total), so we create a new FS Client
-     * which has a [[ProducerFeatureFilter]] set for feature filter to reduce the FS Keys we evaluate.
+     * Feature Sw c s evaluate all t ed FS Keys on Params construct on t  , wh ch  s very  neff c ent
+     * for producer/cand date s de holdbacks because   have 100s of cand dates, and 100s of FS wh ch result
+     *  n 10,000 FS evaluat ons w n   want 1 per cand date (100 total), so   create a new FS Cl ent
+     * wh ch has a [[ProducerFeatureF lter]] set for feature f lter to reduce t  FS Keys   evaluate.
      */
-    FeatureSwitchesBuilder
-      .createDefault(FeaturesPath, abDecider, Some(statsReceiver.scope("producer_side_fs")))
-      .configRepoAbsPath(configRepoPath)
-      .serviceDetailsFromAurora()
-      .addFeatureFilter(ProducerFeatureFilter)
-      .build()
+    FeatureSw c sBu lder
+      .createDefault(FeaturesPath, abDec der, So (statsRece ver.scope("producer_s de_fs")))
+      .conf gRepoAbsPath(conf gRepoPath)
+      .serv ceDeta lsFromAurora()
+      .addFeatureF lter(ProducerFeatureF lter)
+      .bu ld()
   }
 }
 
-case object ProducerFeatureFilter extends FeatureFilter {
-  private val AllowedKeys = Set(
-    "post_nux_ml_flow_candidate_user_scorer_id",
-    "frs_receiver_holdback_keep_social_user_candidate",
-    "frs_receiver_holdback_keep_user_candidate")
+case object ProducerFeatureF lter extends FeatureF lter {
+  pr vate val Allo dKeys = Set(
+    "post_nux_ml_flow_cand date_user_scorer_ d",
+    "frs_rece ver_holdback_keep_soc al_user_cand date",
+    "frs_rece ver_holdback_keep_user_cand date")
 
-  override def filter(feature: Feature): Option[Feature] = {
-    if (AllowedKeys.exists(feature.parameters.contains)) {
-      Some(feature)
+  overr de def f lter(feature: Feature): Opt on[Feature] = {
+     f (Allo dKeys.ex sts(feature.para ters.conta ns)) {
+      So (feature)
     } else {
       None
     }

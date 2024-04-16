@@ -1,2 +1,2 @@
-# Promoted Accounts Candidate Source
+# Promoted Accounts Cand date S ce
 Promoted accounts returned from Ads server.

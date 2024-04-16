@@ -1,3 +1,3 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-case class GeohashAndCountryCode(geohash: Option[String], countryCode: Option[String])
+case class GeohashAndCountryCode(geohash: Opt on[Str ng], countryCode: Opt on[Str ng])

@@ -1,59 +1,59 @@
-package com.twitter.servo.cache
+package com.tw ter.servo.cac 
 
-import com.twitter.util.{Duration, Future}
+ mport com.tw ter.ut l.{Durat on, Future}
 
 /**
- * [[Memcache]] is a Cache with types that reflect the memcached protocol. Keys are strings and
+ * [[ mcac ]]  s a Cac  w h types that reflect t   mcac d protocol. Keys are str ngs and
  * values are byte arrays.
  */
-trait Memcache extends TtlCache[String, Array[Byte]] {
-  def incr(key: String, delta: Long = 1): Future[Option[Long]]
-  def decr(key: String, delta: Long = 1): Future[Option[Long]]
+tra   mcac  extends TtlCac [Str ng, Array[Byte]] {
+  def  ncr(key: Str ng, delta: Long = 1): Future[Opt on[Long]]
+  def decr(key: Str ng, delta: Long = 1): Future[Opt on[Long]]
 }
 
 /**
- * allows one Memcache to wrap another
+ * allows one  mcac  to wrap anot r
  */
-trait MemcacheWrapper extends TtlCacheWrapper[String, Array[Byte]] with Memcache {
-  override def underlyingCache: Memcache
+tra   mcac Wrapper extends TtlCac Wrapper[Str ng, Array[Byte]] w h  mcac  {
+  overr de def underly ngCac :  mcac 
 
-  override def incr(key: String, delta: Long = 1) = underlyingCache.incr(key, delta)
-  override def decr(key: String, delta: Long = 1) = underlyingCache.decr(key, delta)
+  overr de def  ncr(key: Str ng, delta: Long = 1) = underly ngCac . ncr(key, delta)
+  overr de def decr(key: Str ng, delta: Long = 1) = underly ngCac .decr(key, delta)
 }
 
 /**
- * Switch between two caches with a decider value
+ * Sw ch bet en two cac s w h a dec der value
  */
-class DeciderableMemcache(primary: Memcache, secondary: Memcache, isAvailable: => Boolean)
-    extends MemcacheWrapper {
-  override def underlyingCache = if (isAvailable) primary else secondary
+class Dec derable mcac (pr mary:  mcac , secondary:  mcac ,  sAva lable: => Boolean)
+    extends  mcac Wrapper {
+  overr de def underly ngCac  =  f ( sAva lable) pr mary else secondary
 }
 
 /**
- * [[MemcacheCache]] converts a [[Memcache]] to a [[Cache[K, V]]] using a [[Serializer]] for values
- * and a [[KeyTransformer]] for keys.
+ * [[ mcac Cac ]] converts a [[ mcac ]] to a [[Cac [K, V]]] us ng a [[Ser al zer]] for values
+ * and a [[KeyTransfor r]] for keys.
  *
- * The value serializer is bidirectional. Keys are serialized using a one-way transformation
- * method, which defaults to _.toString.
+ * T  value ser al zer  s b d rect onal. Keys are ser al zed us ng a one-way transformat on
+ *  thod, wh ch defaults to _.toStr ng.
  */
-class MemcacheCache[K, V](
-  memcache: Memcache,
-  ttl: Duration,
-  serializer: Serializer[V],
-  transformKey: KeyTransformer[K] = new ToStringKeyTransformer[K]: ToStringKeyTransformer[K])
-    extends CacheWrapper[K, V] {
-  override val underlyingCache = new KeyValueTransformingCache(
-    new SimpleTtlCacheToCache(memcache, ttl),
-    serializer,
+class  mcac Cac [K, V](
+   mcac :  mcac ,
+  ttl: Durat on,
+  ser al zer: Ser al zer[V],
+  transformKey: KeyTransfor r[K] = new ToStr ngKeyTransfor r[K]: ToStr ngKeyTransfor r[K])
+    extends Cac Wrapper[K, V] {
+  overr de val underly ngCac  = new KeyValueTransform ngCac (
+    new S mpleTtlCac ToCac ( mcac , ttl),
+    ser al zer,
     transformKey
   )
 
-  def incr(key: K, delta: Int = 1): Future[Option[Long]] = {
-    if (delta >= 0)
-      memcache.incr(transformKey(key), delta)
+  def  ncr(key: K, delta:  nt = 1): Future[Opt on[Long]] = {
+     f (delta >= 0)
+       mcac . ncr(transformKey(key), delta)
     else
-      memcache.decr(transformKey(key), -delta)
+       mcac .decr(transformKey(key), -delta)
   }
 
-  def decr(key: K, delta: Int = 1): Future[Option[Long]] = incr(key, -delta)
+  def decr(key: K, delta:  nt = 1): Future[Opt on[Long]] =  ncr(key, -delta)
 }

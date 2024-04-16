@@ -1,160 +1,160 @@
-package com.twitter.search.earlybird.util;
+package com.tw ter.search.earlyb rd.ut l;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Arrays;
+ mport java.ut l.L st;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
 /**
- * A histogram of int values with arbitrary buckets.
+ * A  togram of  nt values w h arb rary buckets.
  * Keeps a count for each bucket, and a sum of values for each bucket.
- * The histogram view is returned as a list of {@link Histogram.Entry}s.
+ * T   togram v ew  s returned as a l st of {@l nk  togram.Entry}s.
  * <p/>
- * Bucket boundaries are inclusive on the upper boundaries. Given buckets of [0, 10, 100],
- * items will be places in 4 bins, { X <= 0, 0 < X <= 10, 10 < X <= 100, X > 100 }.
+ * Bucket boundar es are  nclus ve on t  upper boundar es. G ven buckets of [0, 10, 100],
+ *  ems w ll be places  n 4 b ns, { X <= 0, 0 < X <= 10, 10 < X <= 100, X > 100 }.
  * <p/>
- * This class is not thread safe.
+ * T  class  s not thread safe.
  *
  */
-public class Histogram {
-  private final double[] buckets;
-  private final int[] itemsCount;
-  private final long[] itemsSum;
-  private int totalCount;
-  private long totalSum;
+publ c class  togram {
+  pr vate f nal double[] buckets;
+  pr vate f nal  nt[]  emsCount;
+  pr vate f nal long[]  emsSum;
+  pr vate  nt totalCount;
+  pr vate long totalSum;
 
-  public static class Entry {
-    private final String bucketName;
-    private final int count;
-    private final double countPercent;
-    private final double countCumulative;
-    private final long sum;
-    private final double sumPercent;
-    private final double sumCumulative;
+  publ c stat c class Entry {
+    pr vate f nal Str ng bucketNa ;
+    pr vate f nal  nt count;
+    pr vate f nal double countPercent;
+    pr vate f nal double countCumulat ve;
+    pr vate f nal long sum;
+    pr vate f nal double sumPercent;
+    pr vate f nal double sumCumulat ve;
 
-    Entry(String bucketName,
-          int count, double countPercent, double countCumulative,
-          long sum, double sumPercent, double sumCumulative) {
-      this.bucketName = bucketName;
-      this.count = count;
-      this.countPercent = countPercent;
-      this.countCumulative = countCumulative;
-      this.sum = sum;
-      this.sumPercent = sumPercent;
-      this.sumCumulative = sumCumulative;
+    Entry(Str ng bucketNa ,
+           nt count, double countPercent, double countCumulat ve,
+          long sum, double sumPercent, double sumCumulat ve) {
+      t .bucketNa  = bucketNa ;
+      t .count = count;
+      t .countPercent = countPercent;
+      t .countCumulat ve = countCumulat ve;
+      t .sum = sum;
+      t .sumPercent = sumPercent;
+      t .sumCumulat ve = sumCumulat ve;
     }
 
-    public String getBucketName() {
-      return bucketName;
+    publ c Str ng getBucketNa () {
+      return bucketNa ;
     }
 
-    public int getCount() {
+    publ c  nt getCount() {
       return count;
     }
 
-    public double getCountPercent() {
+    publ c double getCountPercent() {
       return countPercent;
     }
 
-    public double getCountCumulative() {
-      return countCumulative;
+    publ c double getCountCumulat ve() {
+      return countCumulat ve;
     }
 
-    public long getSum() {
+    publ c long getSum() {
       return sum;
     }
 
-    public double getSumPercent() {
+    publ c double getSumPercent() {
       return sumPercent;
     }
 
-    public double getSumCumulative() {
-      return sumCumulative;
+    publ c double getSumCumulat ve() {
+      return sumCumulat ve;
     }
   }
 
   /**
-   * No buckets will put all items into a single bin.
-   * @param buckets the buckets to use for binnning data.
-   *       An item will be put in bin i if item <= buckets[i] and > buckets[i-1]
-   *       The bucket values must be strictly increasing.
+   * No buckets w ll put all  ems  nto a s ngle b n.
+   * @param buckets t  buckets to use for b nnn ng data.
+   *       An  em w ll be put  n b n    f  em <= buckets[ ] and > buckets[ -1]
+   *       T  bucket values must be str ctly  ncreas ng.
    */
-  public Histogram(double... buckets) {
-    Preconditions.checkNotNull(buckets);
-    this.buckets = new double[buckets.length];
-    for (int i = 0; i < buckets.length; i++) {
-      this.buckets[i] = buckets[i];
-      if (i > 0) {
-        Preconditions.checkState(this.buckets[i - 1] < this.buckets[i],
-               "Histogram buckets must me strictly increasing: " + Arrays.toString(buckets));
+  publ c  togram(double... buckets) {
+    Precond  ons.c ckNotNull(buckets);
+    t .buckets = new double[buckets.length];
+    for ( nt   = 0;   < buckets.length;  ++) {
+      t .buckets[ ] = buckets[ ];
+       f (  > 0) {
+        Precond  ons.c ckState(t .buckets[  - 1] < t .buckets[ ],
+               " togram buckets must   str ctly  ncreas ng: " + Arrays.toStr ng(buckets));
       }
     }
-    this.itemsCount = new int[buckets.length + 1];
-    this.itemsSum = new long[buckets.length + 1];
-    this.totalCount = 0;
-    this.totalSum = 0;
+    t . emsCount = new  nt[buckets.length + 1];
+    t . emsSum = new long[buckets.length + 1];
+    t .totalCount = 0;
+    t .totalSum = 0;
   }
 
   /**
-   * Add the given item to the appropriate bucket.
+   * Add t  g ven  em to t  appropr ate bucket.
    */
-  public void addItem(double item) {
-    int i = 0;
-    for (; i < this.buckets.length; i++) {
-      if (item <= buckets[i]) {
+  publ c vo d add em(double  em) {
+     nt   = 0;
+    for (;   < t .buckets.length;  ++) {
+       f ( em <= buckets[ ]) {
         break;
       }
     }
-    this.itemsCount[i]++;
-    this.totalCount++;
-    this.itemsSum[i] += item;
-    this.totalSum += item;
+    t . emsCount[ ]++;
+    t .totalCount++;
+    t . emsSum[ ] +=  em;
+    t .totalSum +=  em;
   }
 
   /**
-   * returns the current view of all the bins.
+   * returns t  current v ew of all t  b ns.
    */
-  public List<Entry> entries() {
-    List<Entry> entries = new ArrayList<>(this.itemsCount.length);
-    double countCumulative = 0;
-    double sumCumulative = 0;
-    for (int i = 0; i < this.itemsCount.length; i++) {
-      String bucketName;
-      if (i < this.buckets.length) {
-        bucketName = "<= " + this.buckets[i];
-      } else if (this.buckets.length > 0) {
-        bucketName = " > " + this.buckets[this.buckets.length - 1];
+  publ c L st<Entry> entr es() {
+    L st<Entry> entr es = new ArrayL st<>(t . emsCount.length);
+    double countCumulat ve = 0;
+    double sumCumulat ve = 0;
+    for ( nt   = 0;   < t . emsCount.length;  ++) {
+      Str ng bucketNa ;
+       f (  < t .buckets.length) {
+        bucketNa  = "<= " + t .buckets[ ];
+      } else  f (t .buckets.length > 0) {
+        bucketNa  = " > " + t .buckets[t .buckets.length - 1];
       } else {
-        bucketName = " * ";
+        bucketNa  = " * ";
       }
 
-      int count = this.itemsCount[i];
-      double countPercent = this.totalCount == 0 ? 0 : ((double) this.itemsCount[i]) / totalCount;
-      countCumulative += countPercent;
+       nt count = t . emsCount[ ];
+      double countPercent = t .totalCount == 0 ? 0 : ((double) t . emsCount[ ]) / totalCount;
+      countCumulat ve += countPercent;
 
-      long sum = this.itemsSum[i];
-      double sumPercent = this.totalSum == 0 ? 0 : ((double) this.itemsSum[i]) / totalSum;
-      sumCumulative += sumPercent;
+      long sum = t . emsSum[ ];
+      double sumPercent = t .totalSum == 0 ? 0 : ((double) t . emsSum[ ]) / totalSum;
+      sumCumulat ve += sumPercent;
 
-      Entry e = new Entry(bucketName, count, countPercent, countCumulative,
-                          sum, sumPercent, sumCumulative);
-      entries.add(e);
+      Entry e = new Entry(bucketNa , count, countPercent, countCumulat ve,
+                          sum, sumPercent, sumCumulat ve);
+      entr es.add(e);
     }
-    return entries;
+    return entr es;
   }
 
   /**
-   * Returns total number of items seen.
+   * Returns total number of  ems seen.
    */
-  public int getTotalCount() {
+  publ c  nt getTotalCount() {
     return totalCount;
   }
 
   /**
-   * Returns sum of all the items seen.
+   * Returns sum of all t   ems seen.
    */
-  public long getTotalSum() {
+  publ c long getTotalSum() {
     return totalSum;
   }
 }

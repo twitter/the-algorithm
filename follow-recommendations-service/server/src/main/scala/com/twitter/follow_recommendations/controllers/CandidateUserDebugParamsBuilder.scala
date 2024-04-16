@@ -1,25 +1,25 @@
-package com.twitter.follow_recommendations.controllers
+package com.tw ter.follow_recom ndat ons.controllers
 
-import com.twitter.follow_recommendations.common.models._
-import com.twitter.follow_recommendations.configapi.ParamsFactory
-import com.twitter.follow_recommendations.models.CandidateUserDebugParams
-import com.twitter.follow_recommendations.models.FeatureValue
-import com.twitter.follow_recommendations.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.common.models._
+ mport com.tw ter.follow_recom ndat ons.conf gap .ParamsFactory
+ mport com.tw ter.follow_recom ndat ons.models.Cand dateUserDebugParams
+ mport com.tw ter.follow_recom ndat ons.models.FeatureValue
+ mport com.tw ter.follow_recom ndat ons.{thr ftscala => t}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class CandidateUserDebugParamsBuilder @Inject() (paramsFactory: ParamsFactory) {
-  def fromThrift(req: t.ScoringUserRequest): CandidateUserDebugParams = {
-    val clientContext = ClientContextConverter.fromThrift(req.clientContext)
-    val displayLocation = DisplayLocation.fromThrift(req.displayLocation)
+@S ngleton
+class Cand dateUserDebugParamsBu lder @ nject() (paramsFactory: ParamsFactory) {
+  def fromThr ft(req: t.Scor ngUserRequest): Cand dateUserDebugParams = {
+    val cl entContext = Cl entContextConverter.fromThr ft(req.cl entContext)
+    val d splayLocat on = D splayLocat on.fromThr ft(req.d splayLocat on)
 
-    CandidateUserDebugParams(req.candidates.map { candidate =>
-      candidate.userId -> paramsFactory(
-        clientContext,
-        displayLocation,
-        candidate.featureOverrides
-          .map(_.mapValues(FeatureValue.fromThrift).toMap).getOrElse(Map.empty))
+    Cand dateUserDebugParams(req.cand dates.map { cand date =>
+      cand date.user d -> paramsFactory(
+        cl entContext,
+        d splayLocat on,
+        cand date.featureOverr des
+          .map(_.mapValues(FeatureValue.fromThr ft).toMap).getOrElse(Map.empty))
     }.toMap)
   }
 }

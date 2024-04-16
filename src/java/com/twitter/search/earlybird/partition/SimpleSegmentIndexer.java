@@ -1,191 +1,191 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+ mport java. o. OExcept on;
+ mport java.ut l.concurrent.T  Un ;
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.base.Stopwatch;
+ mport com.google.common.base.Stopwatch;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.index.EarlybirdSegment;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
+ mport com.tw ter.search.common. tr cs.SearchT  r;
+ mport com.tw ter.search.common.ut l. o.recordreader.RecordReader;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.docu nt.T etDocu nt;
+ mport com.tw ter.search.earlyb rd. ndex.Earlyb rdSeg nt;
 
 /**
- * SimpleSegmentIndex indexes all Tweets for a *complete* segment. It does not index any updates or
+ * S mpleSeg nt ndex  ndexes all T ets for a *complete* seg nt.   does not  ndex any updates or
  * deletes.
  */
-public class SimpleSegmentIndexer {
-  private static final Logger LOG = LoggerFactory.getLogger(SimpleSegmentIndexer.class);
+publ c class S mpleSeg nt ndexer {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(S mpleSeg nt ndexer.class);
 
   /**
-   * If not null, this segment is appended at the end after indexing finishes.
+   *  f not null, t  seg nt  s appended at t  end after  ndex ng f n s s.
    */
   @Nullable
-  private final SegmentInfo segmentToAppend;
+  pr vate f nal Seg nt nfo seg ntToAppend;
 
-  private final RecordReader<TweetDocument> tweetReader;
-  private final SearchIndexingMetricSet partitionIndexingMetricSet;
+  pr vate f nal RecordReader<T etDocu nt> t etReader;
+  pr vate f nal Search ndex ng tr cSet part  on ndex ng tr cSet;
 
-  // Segment we are indexing.
-  private EarlybirdSegment indexingSegment;
+  // Seg nt   are  ndex ng.
+  pr vate Earlyb rdSeg nt  ndex ngSeg nt;
 
-  // Total number of statuses indexed in this segment.
-  private long segmentSize = 0;
+  // Total number of statuses  ndexed  n t  seg nt.
+  pr vate long seg ntS ze = 0;
 
-  public SimpleSegmentIndexer(
-      RecordReader<TweetDocument> tweetReader,
-      SearchIndexingMetricSet partitionIndexingMetricSet) {
-    this(tweetReader, partitionIndexingMetricSet, null);
+  publ c S mpleSeg nt ndexer(
+      RecordReader<T etDocu nt> t etReader,
+      Search ndex ng tr cSet part  on ndex ng tr cSet) {
+    t (t etReader, part  on ndex ng tr cSet, null);
   }
 
-  public SimpleSegmentIndexer(RecordReader<TweetDocument> tweetReader,
-                              SearchIndexingMetricSet partitionIndexingMetricSet,
-                              @Nullable SegmentInfo segmentToAppend) {
-    this.tweetReader = tweetReader;
-    this.segmentToAppend = segmentToAppend;
-    this.partitionIndexingMetricSet = partitionIndexingMetricSet;
+  publ c S mpleSeg nt ndexer(RecordReader<T etDocu nt> t etReader,
+                              Search ndex ng tr cSet part  on ndex ng tr cSet,
+                              @Nullable Seg nt nfo seg ntToAppend) {
+    t .t etReader = t etReader;
+    t .seg ntToAppend = seg ntToAppend;
+    t .part  on ndex ng tr cSet = part  on ndex ng tr cSet;
   }
 
-  private boolean shouldIndexSegment(SegmentInfo segmentInfo) {
-    if (!segmentInfo.isEnabled()) {
+  pr vate boolean should ndexSeg nt(Seg nt nfo seg nt nfo) {
+     f (!seg nt nfo. sEnabled()) {
       return false;
     }
 
-    if (segmentToAppend != null) {
+     f (seg ntToAppend != null) {
       return true;
     }
 
-    return !segmentInfo.isComplete()
-        && !segmentInfo.isIndexing()
-        && !segmentInfo.getSyncInfo().isLoaded();
+    return !seg nt nfo. sComplete()
+        && !seg nt nfo. s ndex ng()
+        && !seg nt nfo.getSync nfo(). sLoaded();
   }
 
   /**
-   * Indexes all tweets for a complete segment.
+   *  ndexes all t ets for a complete seg nt.
    */
-  public boolean indexSegment(SegmentInfo segmentInfo) {
-    LOG.info("Indexing segment " + segmentInfo.getSegmentName());
-    if (!shouldIndexSegment(segmentInfo)) {
+  publ c boolean  ndexSeg nt(Seg nt nfo seg nt nfo) {
+    LOG. nfo(" ndex ng seg nt " + seg nt nfo.getSeg ntNa ());
+     f (!should ndexSeg nt(seg nt nfo)) {
       return false;
     }
 
-    // If we're starting to index, we're not complete, will become complete if we
-    // were successful here.
-    segmentInfo.setComplete(false);
+    //  f  're start ng to  ndex,  're not complete, w ll beco  complete  f  
+    //  re successful  re.
+    seg nt nfo.setComplete(false);
 
     try {
-      segmentInfo.setIndexing(true);
-      indexingSegment = segmentInfo.getIndexSegment();
+      seg nt nfo.set ndex ng(true);
+       ndex ngSeg nt = seg nt nfo.get ndexSeg nt();
 
-      // if we're updating the segment, then we'll index only the new available days
-      // and then append the lucene index from the old segment
-      // If segmentToAppend is not null, it means we are updating a segment.
-      if (indexingSegment.tryToLoadExistingIndex()) {
-        segmentInfo.getSyncInfo().setLoaded(true);
-        LOG.info("Loaded existing index for " + segmentInfo + ", not indexing.");
+      //  f  're updat ng t  seg nt, t n  'll  ndex only t  new ava lable days
+      // and t n append t  lucene  ndex from t  old seg nt
+      //  f seg ntToAppend  s not null,    ans   are updat ng a seg nt.
+       f ( ndex ngSeg nt.tryToLoadEx st ng ndex()) {
+        seg nt nfo.getSync nfo().setLoaded(true);
+        LOG. nfo("Loaded ex st ng  ndex for " + seg nt nfo + ", not  ndex ng.");
       } else {
-        indexingLoop();
-        if (segmentToAppend != null) {
-          indexingSegment.append(segmentToAppend.getIndexSegment());
+         ndex ngLoop();
+         f (seg ntToAppend != null) {
+           ndex ngSeg nt.append(seg ntToAppend.get ndexSeg nt());
         }
       }
 
-      segmentInfo.setIndexing(false);
-      segmentInfo.setComplete(true);
-      segmentInfo.setWasIndexed(true);
-      LOG.info("Successfully indexed segment " + segmentInfo.getSegmentName());
+      seg nt nfo.set ndex ng(false);
+      seg nt nfo.setComplete(true);
+      seg nt nfo.setWas ndexed(true);
+      LOG. nfo("Successfully  ndexed seg nt " + seg nt nfo.getSeg ntNa ());
       return true;
-    } catch (Exception e) {
-      LOG.error("Exception while indexing IndexSegment " + segmentInfo
-          + " after " + indexingSegment.getIndexStats().getStatusCount() + " documents.", e);
-      partitionIndexingMetricSet.simpleSegmentIndexerExceptionCounter.increment();
+    } catch (Except on e) {
+      LOG.error("Except on wh le  ndex ng  ndexSeg nt " + seg nt nfo
+          + " after " +  ndex ngSeg nt.get ndexStats().getStatusCount() + " docu nts.", e);
+      part  on ndex ng tr cSet.s mpleSeg nt ndexerExcept onCounter. ncre nt();
 
-      LOG.warn("Failed to load a new day into full archive. Cleaning up segment: "
-          + indexingSegment.getSegmentName());
+      LOG.warn("Fa led to load a new day  nto full arch ve. Clean ng up seg nt: "
+          +  ndex ngSeg nt.getSeg ntNa ());
 
-      // Clean up the lucene dir if it exists. Earlybird will retry loading the new day again later.
-      if (!segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately()) {
-        LOG.error("Failed to clean up index segment folder after indexing failures.");
+      // Clean up t  lucene d r  f   ex sts. Earlyb rd w ll retry load ng t  new day aga n later.
+       f (!seg nt nfo.deleteLocal ndexedSeg ntD rectory m d ately()) {
+        LOG.error("Fa led to clean up  ndex seg nt folder after  ndex ng fa lures.");
       }
 
       return false;
-    } finally {
-      if (tweetReader != null) {
-        tweetReader.stop();
+    } f nally {
+       f (t etReader != null) {
+        t etReader.stop();
       }
-      segmentInfo.setIndexing(false);
+      seg nt nfo.set ndex ng(false);
     }
   }
 
-  // Indexes a document if available.  Returns true if index was updated.
-  protected boolean indexDocument(TweetDocument tweetDocument) throws IOException {
-    if (tweetDocument == null) {
+  //  ndexes a docu nt  f ava lable.  Returns true  f  ndex was updated.
+  protected boolean  ndexDocu nt(T etDocu nt t etDocu nt) throws  OExcept on {
+     f (t etDocu nt == null) {
       return false;
     }
 
-    SearchTimer timer = partitionIndexingMetricSet.statusStats.startNewTimer();
-    indexingSegment.addDocument(tweetDocument);
-    partitionIndexingMetricSet.statusStats.stopTimerAndIncrement(timer);
-    segmentSize++;
+    SearchT  r t  r = part  on ndex ng tr cSet.statusStats.startNewT  r();
+     ndex ngSeg nt.addDocu nt(t etDocu nt);
+    part  on ndex ng tr cSet.statusStats.stopT  rAnd ncre nt(t  r);
+    seg ntS ze++;
     return true;
   }
 
   /**
-   * Indexes all tweets for this segment, until no more tweets are available.
+   *  ndexes all t ets for t  seg nt, unt l no more t ets are ava lable.
    *
-   * @throws InterruptedException If the thread is interrupted while indexing tweets.
-   * @throws IOException If there's a problem reading or indexing tweets.
+   * @throws  nterruptedExcept on  f t  thread  s  nterrupted wh le  ndex ng t ets.
+   * @throws  OExcept on  f t re's a problem read ng or  ndex ng t ets.
    */
-  public void indexingLoop() throws InterruptedException, IOException {
+  publ c vo d  ndex ngLoop() throws  nterruptedExcept on,  OExcept on {
     Stopwatch stopwatch = Stopwatch.createStarted();
 
-    Stopwatch readingStopwatch = Stopwatch.createUnstarted();
-    Stopwatch indexingStopwatch = Stopwatch.createUnstarted();
+    Stopwatch read ngStopwatch = Stopwatch.createUnstarted();
+    Stopwatch  ndex ngStopwatch = Stopwatch.createUnstarted();
 
-    int indexedDocumentsCount = 0;
-    SearchLongGauge timeToIndexSegment = SearchLongGauge.export("time_to_index_segment");
-    timeToIndexSegment.set(0);
-    if (tweetReader != null) {
-      while (!tweetReader.isExhausted() && !Thread.currentThread().isInterrupted()) {
-        readingStopwatch.start();
-        TweetDocument tweetDocument = tweetReader.readNext();
-        readingStopwatch.stop();
+     nt  ndexedDocu ntsCount = 0;
+    SearchLongGauge t  To ndexSeg nt = SearchLongGauge.export("t  _to_ ndex_seg nt");
+    t  To ndexSeg nt.set(0);
+     f (t etReader != null) {
+      wh le (!t etReader. sExhausted() && !Thread.currentThread(). s nterrupted()) {
+        read ngStopwatch.start();
+        T etDocu nt t etDocu nt = t etReader.readNext();
+        read ngStopwatch.stop();
 
-        indexingStopwatch.start();
-        boolean documentIndexed = indexDocument(tweetDocument);
-        indexingStopwatch.stop();
+         ndex ngStopwatch.start();
+        boolean docu nt ndexed =  ndexDocu nt(t etDocu nt);
+         ndex ngStopwatch.stop();
 
-        if (!documentIndexed) {
-          // No documents waiting to be indexed.  Take a nap.
+         f (!docu nt ndexed) {
+          // No docu nts wa  ng to be  ndexed.  Take a nap.
           Thread.sleep(10);
         } else {
-          indexedDocumentsCount++;
+           ndexedDocu ntsCount++;
         }
 
-        if (segmentSize >= EarlybirdConfig.getMaxSegmentSize()) {
-          LOG.error("Reached max segment size " + segmentSize + ", stopping indexer");
-          partitionIndexingMetricSet.maxSegmentSizeReachedCounter.increment();
-          tweetReader.stop();
+         f (seg ntS ze >= Earlyb rdConf g.getMaxSeg ntS ze()) {
+          LOG.error("Reac d max seg nt s ze " + seg ntS ze + ", stopp ng  ndexer");
+          part  on ndex ng tr cSet.maxSeg ntS zeReac dCounter. ncre nt();
+          t etReader.stop();
           break;
         }
       }
     }
 
-    timeToIndexSegment.set(stopwatch.elapsed(TimeUnit.MILLISECONDS));
+    t  To ndexSeg nt.set(stopwatch.elapsed(T  Un .M LL SECONDS));
 
-    LOG.info("SimpleSegmentIndexer finished: {}. Documents: {}",
-        indexingSegment.getSegmentName(), indexedDocumentsCount);
-    LOG.info("Time taken: {}, Reading time: {}, Indexing time: {}",
-        stopwatch, readingStopwatch, indexingStopwatch);
-    LOG.info("Total Memory: {}, Free Memory: {}",
-        Runtime.getRuntime().totalMemory(), Runtime.getRuntime().freeMemory());
+    LOG. nfo("S mpleSeg nt ndexer f n s d: {}. Docu nts: {}",
+         ndex ngSeg nt.getSeg ntNa (),  ndexedDocu ntsCount);
+    LOG. nfo("T   taken: {}, Read ng t  : {},  ndex ng t  : {}",
+        stopwatch, read ngStopwatch,  ndex ngStopwatch);
+    LOG. nfo("Total  mory: {}, Free  mory: {}",
+        Runt  .getRunt  ().total mory(), Runt  .getRunt  ().free mory());
   }
 }

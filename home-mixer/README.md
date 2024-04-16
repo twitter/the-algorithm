@@ -1,101 +1,101 @@
-Home Mixer
+Ho  M xer
 ==========
 
-Home Mixer is the main service used to construct and serve Twitter's Home Timelines. It currently
-powers:
-- For you - best Tweets from people you follow + recommended out-of-network content
-- Following - reverse chronological Tweets from people you follow
-- Lists - reverse chronological Tweets from List members
+Ho  M xer  s t  ma n serv ce used to construct and serve Tw ter's Ho  T  l nes.   currently
+po rs:
+- For   - best T ets from people   follow + recom nded out-of-network content
+- Follow ng - reverse chronolog cal T ets from people   follow
+- L sts - reverse chronolog cal T ets from L st  mbers
 
-Home Mixer is built on Product Mixer, our custom Scala framework that facilitates building
+Ho  M xer  s bu lt on Product M xer,   custom Scala fra work that fac l ates bu ld ng
 feeds of content.
 
-## Overview
+## Overv ew
 
-The For You recommendation algorithm in Home Mixer involves the following stages:
+T  For   recom ndat on algor hm  n Ho  M xer  nvolves t  follow ng stages:
 
-- Candidate Generation - fetch Tweets from various Candidate Sources. For example:
-    - Earlybird Search Index
-    - User Tweet Entity Graph
-    - Cr Mixer
-    - Follow Recommendations Service
-- Feature Hydration
-    - Fetch the ~6000 features needed for ranking
-- Scoring and Ranking using ML model
-- Filters and Heuristics. For example:
-    - Author Diversity
-    - Content Balance (In network vs Out of Network)
-    - Feedback fatigue
-    - Deduplication / previously seen Tweets removal
-    - Visibility Filtering (blocked, muted authors/tweets, NSFW settings)
-- Mixing - integrate Tweets with non-Tweet content
+- Cand date Generat on - fetch T ets from var ous Cand date S ces. For example:
+    - Earlyb rd Search  ndex
+    - User T et Ent y Graph
+    - Cr M xer
+    - Follow Recom ndat ons Serv ce
+- Feature Hydrat on
+    - Fetch t  ~6000 features needed for rank ng
+- Scor ng and Rank ng us ng ML model
+- F lters and  ur st cs. For example:
+    - Author D vers y
+    - Content Balance ( n network vs Out of Network)
+    - Feedback fat gue
+    - Dedupl cat on / prev ously seen T ets removal
+    - V s b l y F lter ng (blocked, muted authors/t ets, NSFW sett ngs)
+- M x ng -  ntegrate T ets w h non-T et content
     - Ads
     - Who-to-follow modules
     - Prompts
-- Product Features and Serving
-    - Conversation Modules for replies
-    - Social Context
-    - Timeline Navigation
-    - Edited Tweets
-    - Feedback options
-    - Pagination and cursoring
-    - Observability and logging
-    - Client instructions and content marshalling
+- Product Features and Serv ng
+    - Conversat on Modules for repl es
+    - Soc al Context
+    - T  l ne Nav gat on
+    - Ed ed T ets
+    - Feedback opt ons
+    - Pag nat on and cursor ng
+    - Observab l y and logg ng
+    - Cl ent  nstruct ons and content marshall ng
 
-## Pipeline Structure
+## P pel ne Structure
 
 ### General
 
-Product Mixer services like Home Mixer are structured around Pipelines that split the execution
-into transparent and structured steps.
+Product M xer serv ces l ke Ho  M xer are structured around P pel nes that spl  t  execut on
+ nto transparent and structured steps.
 
-Requests first go to Product Pipelines, which are used to select which Mixer Pipeline or
-Recommendation Pipeline to run for a given request. Each Mixer or Recommendation
-Pipeline may run multiple Candidate Pipelines to fetch candidates to include in the response.
+Requests f rst go to Product P pel nes, wh ch are used to select wh ch M xer P pel ne or
+Recom ndat on P pel ne to run for a g ven request. Each M xer or Recom ndat on
+P pel ne may run mult ple Cand date P pel nes to fetch cand dates to  nclude  n t  response.
 
-Mixer Pipelines combine the results of multiple heterogeneous Candidate Pipelines together
-(e.g. ads, tweets, users) while Recommendation Pipelines are used to score (via Scoring Pipelines)
-and rank the results of homogenous Candidate Pipelines so that the top ranked ones can be returned.
-These pipelines also marshall candidates into a domain object and then into a transport object
-to return to the caller.
+M xer P pel nes comb ne t  results of mult ple  terogeneous Cand date P pel nes toget r
+(e.g. ads, t ets, users) wh le Recom ndat on P pel nes are used to score (v a Scor ng P pel nes)
+and rank t  results of homogenous Cand date P pel nes so that t  top ranked ones can be returned.
+T se p pel nes also marshall cand dates  nto a doma n object and t n  nto a transport object
+to return to t  caller.
 
-Candidate Pipelines fetch candidates from underlying Candidate Sources and perform some basic
-operations on the Candidates, such as filtering out unwanted candidates, applying decorations,
-and hydrating features.
+Cand date P pel nes fetch cand dates from underly ng Cand date S ces and perform so  bas c
+operat ons on t  Cand dates, such as f lter ng out unwanted cand dates, apply ng decorat ons,
+and hydrat ng features.
 
-The sections below describe the high level pipeline structure (non-exhaustive) for the main Home
-Timeline tabs powered by Home Mixer.
+T  sect ons below descr be t  h gh level p pel ne structure (non-exhaust ve) for t  ma n Ho 
+T  l ne tabs po red by Ho  M xer.
 
-### For You
+### For  
 
-- ForYouProductPipelineConfig
-    - ForYouScoredTweetsMixerPipelineConfig (main orchestration layer - mixes Tweets with ads and users)
-        - ForYouScoredTweetsCandidatePipelineConfig (fetch Tweets)
-            - ScoredTweetsRecommendationPipelineConfig (main Tweet recommendation layer)
-                - Fetch Tweet Candidates
-                    - ScoredTweetsInNetworkCandidatePipelineConfig
-                    - ScoredTweetsTweetMixerCandidatePipelineConfig
-                    - ScoredTweetsUtegCandidatePipelineConfig
-                    - ScoredTweetsFrsCandidatePipelineConfig
-                - Feature Hydration and Scoring
-                    - ScoredTweetsScoringPipelineConfig
-        - ForYouConversationServiceCandidatePipelineConfig (backup reverse chron pipeline in case Scored Tweets fails)
-        - ForYouAdsCandidatePipelineConfig (fetch ads)
-        - ForYouWhoToFollowCandidatePipelineConfig (fetch users to recommend)
+- For ProductP pel neConf g
+    - For ScoredT etsM xerP pel neConf g (ma n orc strat on layer - m xes T ets w h ads and users)
+        - For ScoredT etsCand dateP pel neConf g (fetch T ets)
+            - ScoredT etsRecom ndat onP pel neConf g (ma n T et recom ndat on layer)
+                - Fetch T et Cand dates
+                    - ScoredT ets nNetworkCand dateP pel neConf g
+                    - ScoredT etsT etM xerCand dateP pel neConf g
+                    - ScoredT etsUtegCand dateP pel neConf g
+                    - ScoredT etsFrsCand dateP pel neConf g
+                - Feature Hydrat on and Scor ng
+                    - ScoredT etsScor ngP pel neConf g
+        - For Conversat onServ ceCand dateP pel neConf g (backup reverse chron p pel ne  n case Scored T ets fa ls)
+        - For AdsCand dateP pel neConf g (fetch ads)
+        - For WhoToFollowCand dateP pel neConf g (fetch users to recom nd)
 
-### Following
+### Follow ng
 
-- FollowingProductPipelineConfig
-    - FollowingMixerPipelineConfig
-        - FollowingEarlybirdCandidatePipelineConfig (fetch tweets from Search Index)
-        - ConversationServiceCandidatePipelineConfig (fetch ancestors for conversation modules)
-        - FollowingAdsCandidatePipelineConfig (fetch ads)
-        - FollowingWhoToFollowCandidatePipelineConfig (fetch users to recommend)
+- Follow ngProductP pel neConf g
+    - Follow ngM xerP pel neConf g
+        - Follow ngEarlyb rdCand dateP pel neConf g (fetch t ets from Search  ndex)
+        - Conversat onServ ceCand dateP pel neConf g (fetch ancestors for conversat on modules)
+        - Follow ngAdsCand dateP pel neConf g (fetch ads)
+        - Follow ngWhoToFollowCand dateP pel neConf g (fetch users to recom nd)
 
-### Lists
+### L sts
 
-- ListTweetsProductPipelineConfig
-    - ListTweetsMixerPipelineConfig
-        - ListTweetsTimelineServiceCandidatePipelineConfig (fetch tweets from timeline service)
-        - ConversationServiceCandidatePipelineConfig (fetch ancestors for conversation modules)
-        - ListTweetsAdsCandidatePipelineConfig (fetch ads)
+- L stT etsProductP pel neConf g
+    - L stT etsM xerP pel neConf g
+        - L stT etsT  l neServ ceCand dateP pel neConf g (fetch t ets from t  l ne serv ce)
+        - Conversat onServ ceCand dateP pel neConf g (fetch ancestors for conversat on modules)
+        - L stT etsAdsCand dateP pel neConf g (fetch ads)

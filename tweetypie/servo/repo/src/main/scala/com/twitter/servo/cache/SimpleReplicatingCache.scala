@@ -1,101 +1,101 @@
-package com.twitter.servo.cache
+package com.tw ter.servo.cac 
 
-import com.twitter.servo.keyvalue._
-import com.twitter.servo.util.{OptionOrdering, TryOrdering}
-import com.twitter.util.{Future, Return, Throw, Time, Try}
+ mport com.tw ter.servo.keyvalue._
+ mport com.tw ter.servo.ut l.{Opt onOrder ng, TryOrder ng}
+ mport com.tw ter.ut l.{Future, Return, Throw, T  , Try}
 
-object SimpleReplicatingCache {
+object S mpleRepl cat ngCac  {
 
   /**
-   * Builds a SimpleReplicatingCache that writes a value multiple times to the same underlying
-   * cache but under different keys.  If the underlying cache is backed by enough shards, there
-   * is a good chance that the different keys will end up on different shards, giving you similar
-   * behavior to having multiple distinct caches.
+   * Bu lds a S mpleRepl cat ngCac  that wr es a value mult ple t  s to t  sa  underly ng
+   * cac  but under d fferent keys.   f t  underly ng cac   s backed by enough shards, t re
+   *  s a good chance that t  d fferent keys w ll end up on d fferent shards, g v ng   s m lar
+   * behav or to hav ng mult ple d st nct cac s.
    */
   def apply[K, K2, V](
-    underlying: LockingCache[K2, Cached[V]],
-    keyReplicator: (K, Int) => K2,
-    replicas: Int = 2
-  ) = new SimpleReplicatingCache(
-    (0 until replicas).toSeq map { replica =>
-      new KeyTransformingLockingCache(
-        underlying,
-        (key: K) => keyReplicator(key, replica)
+    underly ng: Lock ngCac [K2, Cac d[V]],
+    keyRepl cator: (K,  nt) => K2,
+    repl cas:  nt = 2
+  ) = new S mpleRepl cat ngCac (
+    (0 unt l repl cas).toSeq map { repl ca =>
+      new KeyTransform ngLock ngCac (
+        underly ng,
+        (key: K) => keyRepl cator(key, repl ca)
       )
     }
   )
 }
 
 /**
- * A very simple replicating cache implementation.  It writes the same key/value pair to
- * multiple underlying caches. On read, each underlying cache is queried with the key; if the
- * results are not all the same for a given key, then the most recent value is chosen and
- * replicated to all caches.
+ * A very s mple repl cat ng cac   mple ntat on.    wr es t  sa  key/value pa r to
+ * mult ple underly ng cac s. On read, each underly ng cac   s quer ed w h t  key;  f t 
+ * results are not all t  sa  for a g ven key, t n t  most recent value  s chosen and
+ * repl cated to all cac s.
  *
- * Some cache operations are not currently supported, because their semantics are a little fuzzy
- * in the replication case.  Specifically: add and checkAndSet.
+ * So  cac  operat ons are not currently supported, because t  r semant cs are a l tle fuzzy
+ *  n t  repl cat on case.  Spec f cally: add and c ckAndSet.
  */
-class SimpleReplicatingCache[K, V](underlyingCaches: Seq[LockingCache[K, Cached[V]]])
-    extends LockingCache[K, Cached[V]] {
-  private type CsValue = (Try[Cached[V]], Checksum)
+class S mpleRepl cat ngCac [K, V](underly ngCac s: Seq[Lock ngCac [K, Cac d[V]]])
+    extends Lock ngCac [K, Cac d[V]] {
+  pr vate type CsValue = (Try[Cac d[V]], C cksum)
 
-  private val cachedOrdering = new Ordering[Cached[V]] {
-    // sort by ascending timestamp
-    def compare(a: Cached[V], b: Cached[V]) = a.cachedAt.compare(b.cachedAt)
+  pr vate val cac dOrder ng = new Order ng[Cac d[V]] {
+    // sort by ascend ng t  stamp
+    def compare(a: Cac d[V], b: Cac d[V]) = a.cac dAt.compare(b.cac dAt)
   }
 
-  private val csValueOrdering = new Ordering[CsValue] {
-    // order by Try[V], ignore checksum
-    val subordering = TryOrdering(cachedOrdering)
-    def compare(a: CsValue, b: CsValue) = subordering.compare(a._1, b._1)
+  pr vate val csValueOrder ng = new Order ng[CsValue] {
+    // order by Try[V],  gnore c cksum
+    val suborder ng = TryOrder ng(cac dOrder ng)
+    def compare(a: CsValue, b: CsValue) = suborder ng.compare(a._1, b._1)
   }
 
-  private val tryOptionCsValueOrdering = TryOrdering(OptionOrdering(csValueOrdering))
-  private val tryOptionCachedOrdering = TryOrdering(OptionOrdering(cachedOrdering))
+  pr vate val tryOpt onCsValueOrder ng = TryOrder ng(Opt onOrder ng(csValueOrder ng))
+  pr vate val tryOpt onCac dOrder ng = TryOrder ng(Opt onOrder ng(cac dOrder ng))
 
   /**
-   * release any underlying resources
+   * release any underly ng res ces
    */
-  def release(): Unit = {
-    underlyingCaches foreach { _.release() }
+  def release(): Un  = {
+    underly ngCac s foreach { _.release() }
   }
 
   /**
-   * Fetches from all underlying caches in parallel, and if results differ, will choose a
-   * winner and push updated results back to the stale caches.
+   * Fetc s from all underly ng cac s  n parallel, and  f results d ffer, w ll choose a
+   * w nner and push updated results back to t  stale cac s.
    */
-  def get(keys: Seq[K]): Future[KeyValueResult[K, Cached[V]]] = {
-    getWithChecksum(keys) map { csKvRes =>
-      val resBldr = new KeyValueResultBuilder[K, Cached[V]]
+  def get(keys: Seq[K]): Future[KeyValueResult[K, Cac d[V]]] = {
+    getW hC cksum(keys) map { csKvRes =>
+      val resBldr = new KeyValueResultBu lder[K, Cac d[V]]
 
       csKvRes.found foreach {
         case (k, (Return(v), _)) => resBldr.addFound(k, v)
-        case (k, (Throw(t), _)) => resBldr.addFailed(k, t)
+        case (k, (Throw(t), _)) => resBldr.addFa led(k, t)
       }
 
       resBldr.addNotFound(csKvRes.notFound)
-      resBldr.addFailed(csKvRes.failed)
+      resBldr.addFa led(csKvRes.fa led)
       resBldr.result()
     }
   }
 
   /**
-   * Fetches from all underlying caches in parallel, and if results differ, will choose a
-   * winner and push updated results back to the stale caches.
+   * Fetc s from all underly ng cac s  n parallel, and  f results d ffer, w ll choose a
+   * w nner and push updated results back to t  stale cac s.
    */
-  def getWithChecksum(keys: Seq[K]): Future[CsKeyValueResult[K, Cached[V]]] = {
+  def getW hC cksum(keys: Seq[K]): Future[CsKeyValueResult[K, Cac d[V]]] = {
     Future.collect {
-      underlyingCaches map { underlying =>
-        underlying.getWithChecksum(keys)
+      underly ngCac s map { underly ng =>
+        underly ng.getW hC cksum(keys)
       }
-    } map { underlyingResults =>
-      val resBldr = new KeyValueResultBuilder[K, CsValue]
+    } map { underly ngResults =>
+      val resBldr = new KeyValueResultBu lder[K, CsValue]
 
       for (key <- keys) {
-        val keyResults = underlyingResults map { _(key) }
-        resBldr(key) = getAndReplicate(key, keyResults) map {
-          // treat evictions as misses
-          case Some((Return(c), _)) if c.status == CachedValueStatus.Evicted => None
+        val keyResults = underly ngResults map { _(key) }
+        resBldr(key) = getAndRepl cate(key, keyResults) map {
+          // treat ev ct ons as m sses
+          case So ((Return(c), _))  f c.status == Cac dValueStatus.Ev cted => None
           case v => v
         }
       }
@@ -105,24 +105,24 @@ class SimpleReplicatingCache[K, V](underlyingCaches: Seq[LockingCache[K, Cached[
   }
 
   /**
-   * Looks at all the returned values for a given set of replication keys, returning the most recent
-   * cached value if available, or indicate a miss if applicable, or return a failure if all
-   * keys failed.  If a cached value is returned, and some keys don't have that cached value,
-   * the cached value will be replicated to those keys, possibly overwriting stale data.
+   * Looks at all t  returned values for a g ven set of repl cat on keys, return ng t  most recent
+   * cac d value  f ava lable, or  nd cate a m ss  f appl cable, or return a fa lure  f all
+   * keys fa led.   f a cac d value  s returned, and so  keys don't have that cac d value,
+   * t  cac d value w ll be repl cated to those keys, poss bly overwr  ng stale data.
    */
-  private def getAndReplicate(
+  pr vate def getAndRepl cate(
     key: K,
-    keyResults: Seq[Try[Option[CsValue]]]
-  ): Try[Option[CsValue]] = {
-    val max = keyResults.max(tryOptionCsValueOrdering)
+    keyResults: Seq[Try[Opt on[CsValue]]]
+  ): Try[Opt on[CsValue]] = {
+    val max = keyResults.max(tryOpt onCsValueOrder ng)
 
     max match {
-      // if one of the replication keys returned a cached value, then make sure all replication
-      // keys contain that cached value.
-      case Return(Some((Return(cached), cs))) =>
-        for ((underlying, keyResult) <- underlyingCaches zip keyResults) {
-          if (keyResult != max) {
-            replicate(key, cached, keyResult, underlying)
+      //  f one of t  repl cat on keys returned a cac d value, t n make sure all repl cat on
+      // keys conta n that cac d value.
+      case Return(So ((Return(cac d), cs))) =>
+        for ((underly ng, keyResult) <- underly ngCac s z p keyResults) {
+           f (keyResult != max) {
+            repl cate(key, cac d, keyResult, underly ng)
           }
         }
       case _ =>
@@ -131,101 +131,101 @@ class SimpleReplicatingCache[K, V](underlyingCaches: Seq[LockingCache[K, Cached[
     max
   }
 
-  private def replicate(
+  pr vate def repl cate(
     key: K,
-    cached: Cached[V],
-    current: Try[Option[CsValue]],
-    underlying: LockingCache[K, Cached[V]]
-  ): Future[Unit] = {
+    cac d: Cac d[V],
+    current: Try[Opt on[CsValue]],
+    underly ng: Lock ngCac [K, Cac d[V]]
+  ): Future[Un ] = {
     current match {
       case Throw(_) =>
-        // if we failed to read a particular value, we don't want to write to that key
-        // because that key could potentially have the real newest value
-        Future.Unit
+        //  f   fa led to read a part cular value,   don't want to wr e to that key
+        // because that key could potent ally have t  real ne st value
+        Future.Un 
       case Return(None) =>
-        // add rather than set, and fail if another value is written first
-        underlying.add(key, cached).unit
-      case Return(Some((_, cs))) =>
-        underlying.checkAndSet(key, cached, cs).unit
+        // add rat r than set, and fa l  f anot r value  s wr ten f rst
+        underly ng.add(key, cac d).un 
+      case Return(So ((_, cs))) =>
+        underly ng.c ckAndSet(key, cac d, cs).un 
     }
   }
 
   /**
    * Currently not supported.  Use set or lockAndSet.
    */
-  def add(key: K, value: Cached[V]): Future[Boolean] = {
-    Future.exception(new UnsupportedOperationException("use set or lockAndSet"))
+  def add(key: K, value: Cac d[V]): Future[Boolean] = {
+    Future.except on(new UnsupportedOperat onExcept on("use set or lockAndSet"))
   }
 
   /**
    * Currently not supported.
    */
-  def checkAndSet(key: K, value: Cached[V], checksum: Checksum): Future[Boolean] = {
-    Future.exception(new UnsupportedOperationException("use set or lockAndSet"))
+  def c ckAndSet(key: K, value: Cac d[V], c cksum: C cksum): Future[Boolean] = {
+    Future.except on(new UnsupportedOperat onExcept on("use set or lockAndSet"))
   }
 
   /**
-   * Calls set on all underlying caches.  If at least one set succeeds, Future.Unit is
-   * returned.  If all fail, a Future.exception will be returned.
+   * Calls set on all underly ng cac s.   f at least one set succeeds, Future.Un   s
+   * returned.   f all fa l, a Future.except on w ll be returned.
    */
-  def set(key: K, value: Cached[V]): Future[Unit] = {
-    liftAndCollect {
-      underlyingCaches map { _.set(key, value) }
-    } flatMap { seqTryUnits =>
-      // return Future.Unit if any underlying call succeeded, otherwise return
-      // the first failure.
-      if (seqTryUnits exists { _.isReturn })
-        Future.Unit
+  def set(key: K, value: Cac d[V]): Future[Un ] = {
+    l ftAndCollect {
+      underly ngCac s map { _.set(key, value) }
+    } flatMap { seqTryUn s =>
+      // return Future.Un   f any underly ng call succeeded, ot rw se return
+      // t  f rst fa lure.
+       f (seqTryUn s ex sts { _. sReturn })
+        Future.Un 
       else
-        Future.const(seqTryUnits.head)
+        Future.const(seqTryUn s. ad)
     }
   }
 
   /**
-   * Calls lockAndSet on the underlying cache for all replication keys.  If at least one
-   * underlying call succeeds, a successful result will be returned.
+   * Calls lockAndSet on t  underly ng cac  for all repl cat on keys.   f at least one
+   * underly ng call succeeds, a successful result w ll be returned.
    */
-  def lockAndSet(key: K, handler: LockingCache.Handler[Cached[V]]): Future[Option[Cached[V]]] = {
-    liftAndCollect {
-      underlyingCaches map { _.lockAndSet(key, handler) }
-    } flatMap { seqTryOptionCached =>
-      Future.const(seqTryOptionCached.max(tryOptionCachedOrdering))
+  def lockAndSet(key: K, handler: Lock ngCac .Handler[Cac d[V]]): Future[Opt on[Cac d[V]]] = {
+    l ftAndCollect {
+      underly ngCac s map { _.lockAndSet(key, handler) }
+    } flatMap { seqTryOpt onCac d =>
+      Future.const(seqTryOpt onCac d.max(tryOpt onCac dOrder ng))
     }
   }
 
   /**
-   * Returns Future(true) if any of the underlying caches return Future(true); otherwise,
-   * returns Future(false) if any of the underlying caches return Future(false); otherwise,
-   * returns the first failure.
+   * Returns Future(true)  f any of t  underly ng cac s return Future(true); ot rw se,
+   * returns Future(false)  f any of t  underly ng cac s return Future(false); ot rw se,
+   * returns t  f rst fa lure.
    */
-  def replace(key: K, value: Cached[V]): Future[Boolean] = {
-    liftAndCollect {
-      underlyingCaches map { _.replace(key, value) }
+  def replace(key: K, value: Cac d[V]): Future[Boolean] = {
+    l ftAndCollect {
+      underly ngCac s map { _.replace(key, value) }
     } flatMap { seqTryBools =>
-      if (seqTryBools.contains(Return.True))
+       f (seqTryBools.conta ns(Return.True))
         Future.value(true)
-      else if (seqTryBools.contains(Return.False))
+      else  f (seqTryBools.conta ns(Return.False))
         Future.value(false)
       else
-        Future.const(seqTryBools.head)
+        Future.const(seqTryBools. ad)
     }
   }
 
   /**
-   * Performing an actual deletion on the underlying caches is not a good idea in the face
-   * of potential failure, because failing to remove all values would allow a cached value to
-   * be resurrected.  Instead, delete actually does a replace on the underlying caches with a
-   * CachedValueStatus of Evicted, which will be treated as a miss on read.
+   * Perform ng an actual delet on on t  underly ng cac s  s not a good  dea  n t  face
+   * of potent al fa lure, because fa l ng to remove all values would allow a cac d value to
+   * be resurrected.   nstead, delete actually does a replace on t  underly ng cac s w h a
+   * Cac dValueStatus of Ev cted, wh ch w ll be treated as a m ss on read.
    */
   def delete(key: K): Future[Boolean] = {
-    replace(key, Cached(None, CachedValueStatus.Evicted, Time.now))
+    replace(key, Cac d(None, Cac dValueStatus.Ev cted, T  .now))
   }
 
   /**
-   * Convets a Seq[Future[A]] into a Future[Seq[Try[A]]], isolating failures into Trys, instead
-   * of allowing the entire Future to failure.
+   * Convets a Seq[Future[A]]  nto a Future[Seq[Try[A]]],  solat ng fa lures  nto Trys,  nstead
+   * of allow ng t  ent re Future to fa lure.
    */
-  private def liftAndCollect[A](seq: Seq[Future[A]]): Future[Seq[Try[A]]] = {
+  pr vate def l ftAndCollect[A](seq: Seq[Future[A]]): Future[Seq[Try[A]]] = {
     Future.collect { seq map { _ transform { Future(_) } } }
   }
 }

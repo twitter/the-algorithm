@@ -1,53 +1,53 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.tw ter.cr_m xer.s m lar y_eng ne
 
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.Stats
-import com.twitter.product_mixer.core.thriftscala.ClientContext
-import com.twitter.qig_ranker.thriftscala.Product
-import com.twitter.qig_ranker.thriftscala.ProductContext
-import com.twitter.qig_ranker.thriftscala.QigRanker
-import com.twitter.qig_ranker.thriftscala.QigRankerProductResponse
-import com.twitter.qig_ranker.thriftscala.QigRankerRequest
-import com.twitter.qig_ranker.thriftscala.QigRankerResponse
-import com.twitter.qig_ranker.thriftscala.TwistlySimilarTweetsProductContext
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.util.Future
-import javax.inject.Singleton
+ mport com.tw ter.cr_m xer.model.S m lar yEng ne nfo
+ mport com.tw ter.cr_m xer.model.T etW hScore
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Stats
+ mport com.tw ter.product_m xer.core.thr ftscala.Cl entContext
+ mport com.tw ter.q g_ranker.thr ftscala.Product
+ mport com.tw ter.q g_ranker.thr ftscala.ProductContext
+ mport com.tw ter.q g_ranker.thr ftscala.Q gRanker
+ mport com.tw ter.q g_ranker.thr ftscala.Q gRankerProductResponse
+ mport com.tw ter.q g_ranker.thr ftscala.Q gRankerRequest
+ mport com.tw ter.q g_ranker.thr ftscala.Q gRankerResponse
+ mport com.tw ter.q g_ranker.thr ftscala.Tw stlyS m larT etsProductContext
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.conf gap 
+ mport com.tw ter.ut l.Future
+ mport javax. nject.S ngleton
 
 /**
- * This store looks for similar tweets from QueryInteractionGraph (QIG) for a source tweet id.
- * For a given query tweet, QIG returns us the similar tweets that have an overlap of engagements
- * (with the query tweet) on different search queries
+ * T  store looks for s m lar t ets from Query nteract onGraph (Q G) for a s ce t et  d.
+ * For a g ven query t et, Q G returns us t  s m lar t ets that have an overlap of engage nts
+ * (w h t  query t et) on d fferent search quer es
  */
-@Singleton
-case class TweetBasedQigSimilarityEngine(
-  qigRanker: QigRanker.MethodPerEndpoint,
-  statsReceiver: StatsReceiver)
+@S ngleton
+case class T etBasedQ gS m lar yEng ne(
+  q gRanker: Q gRanker. thodPerEndpo nt,
+  statsRece ver: StatsRece ver)
     extends ReadableStore[
-      TweetBasedQigSimilarityEngine.Query,
-      Seq[TweetWithScore]
+      T etBasedQ gS m lar yEng ne.Query,
+      Seq[T etW hScore]
     ] {
 
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val fetchCandidatesStat = stats.scope("fetchCandidates")
+  pr vate val stats = statsRece ver.scope(t .getClass.getS mpleNa )
+  pr vate val fetchCand datesStat = stats.scope("fetchCand dates")
 
-  override def get(
-    query: TweetBasedQigSimilarityEngine.Query
-  ): Future[Option[Seq[TweetWithScore]]] = {
-    query.sourceId match {
-      case InternalId.TweetId(tweetId) =>
-        val qigSimilarTweetsRequest = getQigSimilarTweetsRequest(tweetId)
+  overr de def get(
+    query: T etBasedQ gS m lar yEng ne.Query
+  ): Future[Opt on[Seq[T etW hScore]]] = {
+    query.s ce d match {
+      case  nternal d.T et d(t et d) =>
+        val q gS m larT etsRequest = getQ gS m larT etsRequest(t et d)
 
-        Stats.trackOption(fetchCandidatesStat) {
-          qigRanker
-            .getSimilarCandidates(qigSimilarTweetsRequest)
-            .map { qigSimilarTweetsResponse =>
-              getCandidatesFromQigResponse(qigSimilarTweetsResponse)
+        Stats.trackOpt on(fetchCand datesStat) {
+          q gRanker
+            .getS m larCand dates(q gS m larT etsRequest)
+            .map { q gS m larT etsResponse =>
+              getCand datesFromQ gResponse(q gS m larT etsResponse)
             }
         }
       case _ =>
@@ -55,58 +55,58 @@ case class TweetBasedQigSimilarityEngine(
     }
   }
 
-  private def getQigSimilarTweetsRequest(
-    tweetId: Long
-  ): QigRankerRequest = {
-    // Note: QigRanker needs a non-empty userId to be passed to return results.
-    // We are passing in a dummy userId until we fix this on QigRanker side
-    val clientContext = ClientContext(userId = Some(0L))
-    val productContext = ProductContext.TwistlySimilarTweetsProductContext(
-      TwistlySimilarTweetsProductContext(tweetId = tweetId))
+  pr vate def getQ gS m larT etsRequest(
+    t et d: Long
+  ): Q gRankerRequest = {
+    // Note: Q gRanker needs a non-empty user d to be passed to return results.
+    //   are pass ng  n a dum  user d unt l   f x t  on Q gRanker s de
+    val cl entContext = Cl entContext(user d = So (0L))
+    val productContext = ProductContext.Tw stlyS m larT etsProductContext(
+      Tw stlyS m larT etsProductContext(t et d = t et d))
 
-    QigRankerRequest(
-      clientContext = clientContext,
-      product = Product.TwistlySimilarTweets,
-      productContext = Some(productContext),
+    Q gRankerRequest(
+      cl entContext = cl entContext,
+      product = Product.Tw stlyS m larT ets,
+      productContext = So (productContext),
     )
   }
 
-  private def getCandidatesFromQigResponse(
-    qigSimilarTweetsResponse: QigRankerResponse
-  ): Option[Seq[TweetWithScore]] = {
-    qigSimilarTweetsResponse.productResponse match {
-      case QigRankerProductResponse
-            .TwistlySimilarTweetCandidatesResponse(response) =>
-        val tweetsWithScore = response.similarTweets
-          .map { similarTweetResult =>
-            TweetWithScore(
-              similarTweetResult.tweetResult.tweetId,
-              similarTweetResult.tweetResult.score.getOrElse(0L))
+  pr vate def getCand datesFromQ gResponse(
+    q gS m larT etsResponse: Q gRankerResponse
+  ): Opt on[Seq[T etW hScore]] = {
+    q gS m larT etsResponse.productResponse match {
+      case Q gRankerProductResponse
+            .Tw stlyS m larT etCand datesResponse(response) =>
+        val t etsW hScore = response.s m larT ets
+          .map { s m larT etResult =>
+            T etW hScore(
+              s m larT etResult.t etResult.t et d,
+              s m larT etResult.t etResult.score.getOrElse(0L))
           }
-        Some(tweetsWithScore)
+        So (t etsW hScore)
 
       case _ => None
     }
   }
 }
 
-object TweetBasedQigSimilarityEngine {
+object T etBasedQ gS m lar yEng ne {
 
-  def toSimilarityEngineInfo(score: Double): SimilarityEngineInfo = {
-    SimilarityEngineInfo(
-      similarityEngineType = SimilarityEngineType.Qig,
-      modelId = None,
-      score = Some(score))
+  def toS m lar yEng ne nfo(score: Double): S m lar yEng ne nfo = {
+    S m lar yEng ne nfo(
+      s m lar yEng neType = S m lar yEng neType.Q g,
+      model d = None,
+      score = So (score))
   }
 
-  case class Query(sourceId: InternalId)
+  case class Query(s ce d:  nternal d)
 
   def fromParams(
-    sourceId: InternalId,
-    params: configapi.Params,
-  ): EngineQuery[Query] = {
-    EngineQuery(
-      Query(sourceId = sourceId),
+    s ce d:  nternal d,
+    params: conf gap .Params,
+  ): Eng neQuery[Query] = {
+    Eng neQuery(
+      Query(s ce d = s ce d),
       params
     )
   }

@@ -1,9 +1,9 @@
-scala_library(
-    sources = ["*.scala"],
+scala_l brary(
+    s ces = ["*.scala"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "servo/decider",
-        "timelineranker/server/config",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "servo/dec der",
+        "t  l neranker/server/conf g",
     ],
 )

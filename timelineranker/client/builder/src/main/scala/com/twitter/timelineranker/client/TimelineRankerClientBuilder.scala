@@ -1,89 +1,89 @@
-package com.twitter.timelineranker.client
+package com.tw ter.t  l neranker.cl ent
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.builder.ClientBuilder
-import com.twitter.finagle.mtls.authentication.EmptyServiceIdentifier
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsClientBuilder._
-import com.twitter.finagle.param.OppTls
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.service.RetryPolicy._
-import com.twitter.finagle.ssl.OpportunisticTls
-import com.twitter.finagle.thrift.ThriftClientRequest
-import com.twitter.servo.client.Environment.Local
-import com.twitter.servo.client.Environment.Staging
-import com.twitter.servo.client.Environment.Production
-import com.twitter.servo.client.Environment
-import com.twitter.servo.client.FinagleClientBuilder
-import com.twitter.util.Try
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.bu lder.Cl entBu lder
+ mport com.tw ter.f nagle.mtls.aut nt cat on.EmptyServ ce dent f er
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.mtls.cl ent.MtlsCl entBu lder._
+ mport com.tw ter.f nagle.param.OppTls
+ mport com.tw ter.f nagle.serv ce.RetryPol cy
+ mport com.tw ter.f nagle.serv ce.RetryPol cy._
+ mport com.tw ter.f nagle.ssl.Opportun st cTls
+ mport com.tw ter.f nagle.thr ft.Thr ftCl entRequest
+ mport com.tw ter.servo.cl ent.Env ron nt.Local
+ mport com.tw ter.servo.cl ent.Env ron nt.Stag ng
+ mport com.tw ter.servo.cl ent.Env ron nt.Product on
+ mport com.tw ter.servo.cl ent.Env ron nt
+ mport com.tw ter.servo.cl ent.F nagleCl entBu lder
+ mport com.tw ter.ut l.Try
+ mport com.tw ter.ut l.Durat on
 
-sealed trait TimelineRankerClientBuilderBase {
-  def DefaultName: String = "timelineranker"
+sealed tra  T  l neRankerCl entBu lderBase {
+  def DefaultNa : Str ng = "t  l neranker"
 
-  def DefaultProdDest: String
+  def DefaultProdDest: Str ng
 
-  def DefaultProdRequestTimeout: Duration = 2.seconds
-  def DefaultProdTimeout: Duration = 3.seconds
-  def DefaultProdRetryPolicy: RetryPolicy[Try[Nothing]] =
-    tries(2, TimeoutAndWriteExceptionsOnly orElse ChannelClosedExceptionsOnly)
+  def DefaultProdRequestT  out: Durat on = 2.seconds
+  def DefaultProdT  out: Durat on = 3.seconds
+  def DefaultProdRetryPol cy: RetryPol cy[Try[Noth ng]] =
+    tr es(2, T  outAndWr eExcept onsOnly orElse ChannelClosedExcept onsOnly)
 
-  def DefaultLocalTcpConnectTimeout: Duration = 1.second
-  def DefaultLocalConnectTimeout: Duration = 1.second
-  def DefaultLocalRetryPolicy: RetryPolicy[Try[Nothing]] = tries(2, TimeoutAndWriteExceptionsOnly)
+  def DefaultLocalTcpConnectT  out: Durat on = 1.second
+  def DefaultLocalConnectT  out: Durat on = 1.second
+  def DefaultLocalRetryPol cy: RetryPol cy[Try[Noth ng]] = tr es(2, T  outAndWr eExcept onsOnly)
 
   def apply(
-    finagleClientBuilder: FinagleClientBuilder,
-    environment: Environment,
-    name: String = DefaultName,
-    serviceIdentifier: ServiceIdentifier = EmptyServiceIdentifier,
-    opportunisticTlsOpt: Option[OpportunisticTls.Level] = None,
-  ): ClientBuilder.Complete[ThriftClientRequest, Array[Byte]] = {
-    val defaultBuilder = finagleClientBuilder.thriftMuxClientBuilder(name)
-    val destination = getDestOverride(environment)
+    f nagleCl entBu lder: F nagleCl entBu lder,
+    env ron nt: Env ron nt,
+    na : Str ng = DefaultNa ,
+    serv ce dent f er: Serv ce dent f er = EmptyServ ce dent f er,
+    opportun st cTlsOpt: Opt on[Opportun st cTls.Level] = None,
+  ): Cl entBu lder.Complete[Thr ftCl entRequest, Array[Byte]] = {
+    val defaultBu lder = f nagleCl entBu lder.thr ftMuxCl entBu lder(na )
+    val dest nat on = getDestOverr de(env ron nt)
 
-    val partialClient = environment match {
-      case Production | Staging =>
-        defaultBuilder
-          .requestTimeout(DefaultProdRequestTimeout)
-          .timeout(DefaultProdTimeout)
-          .retryPolicy(DefaultProdRetryPolicy)
-          .daemon(daemonize = true)
-          .dest(destination)
-          .mutualTls(serviceIdentifier)
+    val part alCl ent = env ron nt match {
+      case Product on | Stag ng =>
+        defaultBu lder
+          .requestT  out(DefaultProdRequestT  out)
+          .t  out(DefaultProdT  out)
+          .retryPol cy(DefaultProdRetryPol cy)
+          .daemon(daemon ze = true)
+          .dest(dest nat on)
+          .mutualTls(serv ce dent f er)
       case Local =>
-        defaultBuilder
-          .tcpConnectTimeout(DefaultLocalTcpConnectTimeout)
-          .connectTimeout(DefaultLocalConnectTimeout)
-          .retryPolicy(DefaultLocalRetryPolicy)
-          .failFast(enabled = false)
-          .daemon(daemonize = false)
-          .dest(destination)
-          .mutualTls(serviceIdentifier)
+        defaultBu lder
+          .tcpConnectT  out(DefaultLocalTcpConnectT  out)
+          .connectT  out(DefaultLocalConnectT  out)
+          .retryPol cy(DefaultLocalRetryPol cy)
+          .fa lFast(enabled = false)
+          .daemon(daemon ze = false)
+          .dest(dest nat on)
+          .mutualTls(serv ce dent f er)
     }
 
-    opportunisticTlsOpt match {
-      case Some(_) =>
-        val opportunisticTlsParam = OppTls(level = opportunisticTlsOpt)
-        partialClient
-          .configured(opportunisticTlsParam)
-      case None => partialClient
+    opportun st cTlsOpt match {
+      case So (_) =>
+        val opportun st cTlsParam = OppTls(level = opportun st cTlsOpt)
+        part alCl ent
+          .conf gured(opportun st cTlsParam)
+      case None => part alCl ent
     }
   }
 
-  private def getDestOverride(environment: Environment): String = {
+  pr vate def getDestOverr de(env ron nt: Env ron nt): Str ng = {
     val defaultDest = DefaultProdDest
-    environment match {
-      // Allow overriding the target TimelineRanker instance in staging.
-      // This is typically useful for redline testing of TimelineRanker.
-      case Staging =>
-        sys.props.getOrElse("target.timelineranker.instance", defaultDest)
+    env ron nt match {
+      // Allow overr d ng t  target T  l neRanker  nstance  n stag ng.
+      // T   s typ cally useful for redl ne test ng of T  l neRanker.
+      case Stag ng =>
+        sys.props.getOrElse("target.t  l neranker. nstance", defaultDest)
       case _ =>
         defaultDest
     }
   }
 }
 
-object TimelineRankerClientBuilder extends TimelineRankerClientBuilderBase {
-  override def DefaultProdDest: String = "/s/timelineranker/timelineranker"
+object T  l neRankerCl entBu lder extends T  l neRankerCl entBu lderBase {
+  overr de def DefaultProdDest: Str ng = "/s/t  l neranker/t  l neranker"
 }

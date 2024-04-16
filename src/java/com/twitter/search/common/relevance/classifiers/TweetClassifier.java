@@ -1,118 +1,118 @@
-package com.twitter.search.common.relevance.classifiers;
+package com.tw ter.search.common.relevance.class f ers;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.search.common.relevance.entities.TwitterMessage;
+ mport com.tw ter.search.common.relevance.ent  es.Tw ter ssage;
 
 /**
- * Interface to perform feature classification for a single
- * @TwitterMessage object, or a group of them.
+ *  nterface to perform feature class f cat on for a s ngle
+ * @Tw ter ssage object, or a group of t m.
  *
- * Classification includes two steps: feature extraction, and
- * quality evaluation. During feature extraction, any interesting
- * feature that is deemed useful for subsequent quality analysis
- * is extracted from the @TwitterMessage object. Quality evaluation
- * is then done by a group of @TweetEvaluator objects associated
- * with the classifier, by using the various features extracted in the
- * previous step.
+ * Class f cat on  ncludes two steps: feature extract on, and
+ * qual y evaluat on. Dur ng feature extract on, any  nterest ng
+ * feature that  s dee d useful for subsequent qual y analys s
+ *  s extracted from t  @Tw ter ssage object. Qual y evaluat on
+ *  s t n done by a group of @T etEvaluator objects assoc ated
+ * w h t  class f er, by us ng t  var ous features extracted  n t 
+ * prev ous step.
  *
- * Feature extraction and quality evaluation results are stored in
- * @TweetFeatures field of the @TwitterMessage object, which is defined
- * in src/main/thrift/classifier.thrift.
+ * Feature extract on and qual y evaluat on results are stored  n
+ * @T etFeatures f eld of t  @Tw ter ssage object, wh ch  s def ned
+ *  n src/ma n/thr ft/class f er.thr ft.
  */
-public abstract class TweetClassifier {
+publ c abstract class T etClass f er {
   /**
-   * A list of TweetQualityEvaluators which are invoked after
-   * feature extraction is done. If null, no quality evaluation
-   * is done.
+   * A l st of T etQual yEvaluators wh ch are  nvoked after
+   * feature extract on  s done.  f null, no qual y evaluat on
+   *  s done.
    */
-  protected Iterable<TweetEvaluator> qualityEvaluators = null;
+  protected  erable<T etEvaluator> qual yEvaluators = null;
 
   /**
-   * Passed in TwitterMessage is examined and any extractable
-   * features are saved in TweetFeatures field of TwitterMessage.
-   * Then TweetQualityEvaluators are applied to compute various
-   * quality values.
+   * Passed  n Tw ter ssage  s exam ned and any extractable
+   * features are saved  n T etFeatures f eld of Tw ter ssage.
+   * T n T etQual yEvaluators are appl ed to compute var ous
+   * qual y values.
    *
-   * @param tweet TwitterMessage to perform classification on.
+   * @param t et Tw ter ssage to perform class f cat on on.
    */
-  public void classifyTweet(final TwitterMessage tweet) {
-    Preconditions.checkNotNull(tweet);
+  publ c vo d class fyT et(f nal Tw ter ssage t et) {
+    Precond  ons.c ckNotNull(t et);
 
     // extract features
-    extractFeatures(tweet);
+    extractFeatures(t et);
 
-    // compute quality
-    evaluate(tweet);
+    // compute qual y
+    evaluate(t et);
   }
 
   /**
-   * Classify a group of TwitterMessages and store features in their corresponding
-   * TweetFeatures fields.
+   * Class fy a group of Tw ter ssages and store features  n t  r correspond ng
+   * T etFeatures f elds.
    *
-   * This default implementation just iterates through the map and classifies each
-   * individual tweet. Batching for better performance, if applicable, can be implemented by
+   * T  default  mple ntat on just  erates through t  map and class f es each
+   *  nd v dual t et. Batch ng for better performance,  f appl cable, can be  mple nted by
    * concrete subclasses.
    *
-   * @param tweets TwitterMessages to perform classification on.
+   * @param t ets Tw ter ssages to perform class f cat on on.
    */
-  public void classifyTweets(final Iterable<TwitterMessage> tweets) {
-    extractFeatures(tweets);
-    evaluate(tweets);
+  publ c vo d class fyT ets(f nal  erable<Tw ter ssage> t ets) {
+    extractFeatures(t ets);
+    evaluate(t ets);
   }
 
   /**
-   * Use the specified list of TweetQualityEvaluators for this classifier.
+   * Use t  spec f ed l st of T etQual yEvaluators for t  class f er.
    *
-   * @param evaluators list of TweetQualityEvaluators to be used with this classifier.
+   * @param evaluators l st of T etQual yEvaluators to be used w h t  class f er.
    */
-  protected void setQualityEvaluators(final Iterable<TweetEvaluator> qualityEvaluators) {
-    Preconditions.checkNotNull(qualityEvaluators);
-    this.qualityEvaluators = qualityEvaluators;
+  protected vo d setQual yEvaluators(f nal  erable<T etEvaluator> qual yEvaluators) {
+    Precond  ons.c ckNotNull(qual yEvaluators);
+    t .qual yEvaluators = qual yEvaluators;
   }
 
 
   /**
-   * Extract interesting features from a single TwitterMessage for classification.
+   * Extract  nterest ng features from a s ngle Tw ter ssage for class f cat on.
    *
-   * @param tweet TwitterMessage to extract interesting features for
+   * @param t et Tw ter ssage to extract  nterest ng features for
    */
-  protected abstract void extractFeatures(final TwitterMessage tweet);
+  protected abstract vo d extractFeatures(f nal Tw ter ssage t et);
 
   /**
-   * Extract interesting features from a list of TwitterMessages for classification.
-   * @param tweets list of TwitterMessages to extract interesting features for
+   * Extract  nterest ng features from a l st of Tw ter ssages for class f cat on.
+   * @param t ets l st of Tw ter ssages to extract  nterest ng features for
    */
-  protected void extractFeatures(final Iterable<TwitterMessage> tweets) {
-    for (TwitterMessage tweet: tweets) {
-      extractFeatures(tweet);
+  protected vo d extractFeatures(f nal  erable<Tw ter ssage> t ets) {
+    for (Tw ter ssage t et: t ets) {
+      extractFeatures(t et);
     }
   }
 
   /**
-   * Given a TwitterMessage which already has its features extracted,
-   * perform quality evaluation.
+   * G ven a Tw ter ssage wh ch already has  s features extracted,
+   * perform qual y evaluat on.
    *
-   * @param tweet TwitterMessage to perform quality evaluation for
+   * @param t et Tw ter ssage to perform qual y evaluat on for
    */
-  protected void evaluate(final TwitterMessage tweet) {
-    if (qualityEvaluators == null) {
+  protected vo d evaluate(f nal Tw ter ssage t et) {
+     f (qual yEvaluators == null) {
       return;
     }
-    for (TweetEvaluator evaluator : qualityEvaluators) {
-      evaluator.evaluate(tweet);
+    for (T etEvaluator evaluator : qual yEvaluators) {
+      evaluator.evaluate(t et);
     }
   }
 
   /**
-   * Given a list of TwitterMessages which already have their features extracted,
-   * perform quality evaluation.
+   * G ven a l st of Tw ter ssages wh ch already have t  r features extracted,
+   * perform qual y evaluat on.
    *
-   * @param tweets list of TwitterMessages to perform quality evaluation for
+   * @param t ets l st of Tw ter ssages to perform qual y evaluat on for
    */
-  protected void evaluate(final Iterable<TwitterMessage> tweets) {
-    for (TwitterMessage tweet: tweets) {
-      evaluate(tweet);
+  protected vo d evaluate(f nal  erable<Tw ter ssage> t ets) {
+    for (Tw ter ssage t et: t ets) {
+      evaluate(t et);
     }
   }
 }

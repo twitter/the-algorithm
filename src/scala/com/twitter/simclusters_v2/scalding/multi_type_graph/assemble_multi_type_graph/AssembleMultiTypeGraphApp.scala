@@ -1,74 +1,74 @@
-package com.twitter.simclusters_v2.scalding
-package multi_type_graph.assemble_multi_type_graph
+package com.tw ter.s mclusters_v2.scald ng
+package mult _type_graph.assemble_mult _type_graph
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.dal.client.dataset.SnapshotDALDataset
-import com.twitter.scalding.Days
-import com.twitter.scalding.Duration
-import com.twitter.scalding.RichDate
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.thriftscala.LeftNode
-import com.twitter.simclusters_v2.thriftscala.RightNodeTypeStruct
-import com.twitter.simclusters_v2.thriftscala.RightNodeWithEdgeWeightList
-import com.twitter.simclusters_v2.thriftscala.NounWithFrequencyList
-import com.twitter.simclusters_v2.thriftscala.MultiTypeGraphEdge
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import com.twitter.simclusters_v2.hdfs_sources._
+ mport com.tw ter.dal.cl ent.dataset.KeyValDALDataset
+ mport com.tw ter.dal.cl ent.dataset.SnapshotDALDataset
+ mport com.tw ter.scald ng.Days
+ mport com.tw ter.scald ng.Durat on
+ mport com.tw ter.scald ng.R chDate
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.thr ftscala.LeftNode
+ mport com.tw ter.s mclusters_v2.thr ftscala.R ghtNodeTypeStruct
+ mport com.tw ter.s mclusters_v2.thr ftscala.R ghtNodeW hEdge  ghtL st
+ mport com.tw ter.s mclusters_v2.thr ftscala.NounW hFrequencyL st
+ mport com.tw ter.s mclusters_v2.thr ftscala.Mult TypeGraphEdge
+ mport com.tw ter.wtf.scald ng.jobs.common.AdhocExecut onApp
+ mport com.tw ter.wtf.scald ng.jobs.common.Sc duledExecut onApp
+ mport com.tw ter.s mclusters_v2.hdfs_s ces._
 
 /**
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/multi_type_graph/assemble_multi_type_graph:multi_type_graph-adhoc
-scalding remote run \
+./bazel bundle src/scala/com/tw ter/s mclusters_v2/scald ng/mult _type_graph/assemble_mult _type_graph:mult _type_graph-adhoc
+scald ng remote run \
 --user cassowary \
---keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
---principal service_acoount@TWITTER.BIZ \
---cluster bluebird-qus1 \
---main-class com.twitter.simclusters_v2.scalding.multi_type_graph.assemble_multi_type_graph.AssembleMultiTypeGraphAdhocApp \
---target src/scala/com/twitter/simclusters_v2/scalding/multi_type_graph/assemble_multi_type_graph:multi_type_graph-adhoc \
---hadoop-properties "mapreduce.reduce.memory.mb=8192 mapreduce.map.memory.mb=8192 mapreduce.map.java.opts='-Xmx7618M' mapreduce.reduce.java.opts='-Xmx7618M' mapreduce.task.timeout=3600000" \
--- --date 2021-07-10 --outputDir /gcs/user/cassowary/adhoc/your_ldap/multi_type/multi_type
+--keytab /var/l b/tss/keys/fluffy/keytabs/cl ent/cassowary.keytab \
+--pr nc pal serv ce_acoount@TW TTER.B Z \
+--cluster blueb rd-qus1 \
+--ma n-class com.tw ter.s mclusters_v2.scald ng.mult _type_graph.assemble_mult _type_graph.AssembleMult TypeGraphAdhocApp \
+--target src/scala/com/tw ter/s mclusters_v2/scald ng/mult _type_graph/assemble_mult _type_graph:mult _type_graph-adhoc \
+--hadoop-propert es "mapreduce.reduce. mory.mb=8192 mapreduce.map. mory.mb=8192 mapreduce.map.java.opts='-Xmx7618M' mapreduce.reduce.java.opts='-Xmx7618M' mapreduce.task.t  out=3600000" \
+-- --date 2021-07-10 --outputD r /gcs/user/cassowary/adhoc/y _ldap/mult _type/mult _type
 
-To run using scalding_job target:
-scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/multi_type_graph/assemble_multi_type_graph:multi_type_graph-adhoc
+To run us ng scald ng_job target:
+scald ng remote run --target src/scala/com/tw ter/s mclusters_v2/scald ng/mult _type_graph/assemble_mult _type_graph:mult _type_graph-adhoc
  */
 
-object AssembleMultiTypeGraphAdhocApp extends AssembleMultiTypeGraphBaseApp with AdhocExecutionApp {
-  override val isAdhoc: Boolean = true
-  override val truncatedMultiTypeGraphMHOutputPath: String = "truncated_graph_mh"
-  override val topKRightNounsMHOutputPath: String = "top_k_right_nouns_mh"
-  override val fullMultiTypeGraphThriftOutputPath: String = "full_graph_thrift"
-  override val truncatedMultiTypeGraphKeyValDataset: KeyValDALDataset[
-    KeyVal[LeftNode, RightNodeWithEdgeWeightList]
-  ] = TruncatedMultiTypeGraphAdhocScalaDataset
-  override val topKRightNounsKeyValDataset: KeyValDALDataset[
-    KeyVal[RightNodeTypeStruct, NounWithFrequencyList]
-  ] = TopKRightNounsAdhocScalaDataset
-  override val fullMultiTypeGraphSnapshotDataset: SnapshotDALDataset[MultiTypeGraphEdge] =
-    FullMultiTypeGraphAdhocScalaDataset
+object AssembleMult TypeGraphAdhocApp extends AssembleMult TypeGraphBaseApp w h AdhocExecut onApp {
+  overr de val  sAdhoc: Boolean = true
+  overr de val truncatedMult TypeGraphMHOutputPath: Str ng = "truncated_graph_mh"
+  overr de val topKR ghtNounsMHOutputPath: Str ng = "top_k_r ght_nouns_mh"
+  overr de val fullMult TypeGraphThr ftOutputPath: Str ng = "full_graph_thr ft"
+  overr de val truncatedMult TypeGraphKeyValDataset: KeyValDALDataset[
+    KeyVal[LeftNode, R ghtNodeW hEdge  ghtL st]
+  ] = TruncatedMult TypeGraphAdhocScalaDataset
+  overr de val topKR ghtNounsKeyValDataset: KeyValDALDataset[
+    KeyVal[R ghtNodeTypeStruct, NounW hFrequencyL st]
+  ] = TopKR ghtNounsAdhocScalaDataset
+  overr de val fullMult TypeGraphSnapshotDataset: SnapshotDALDataset[Mult TypeGraphEdge] =
+    FullMult TypeGraphAdhocScalaDataset
 }
 
 /**
-To deploy the job:
+To deploy t  job:
 
-capesospy-v2 update --build_locally \
- --start_cron assemble_multi_type_graph \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+capesospy-v2 update --bu ld_locally \
+ --start_cron assemble_mult _type_graph \
+ src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc.yaml
  */
-object AssembleMultiTypeGraphBatchApp
-    extends AssembleMultiTypeGraphBaseApp
-    with ScheduledExecutionApp {
-  override val isAdhoc: Boolean = false
-  override val truncatedMultiTypeGraphMHOutputPath: String = "truncated_graph_mh"
-  override val topKRightNounsMHOutputPath: String = "top_k_right_nouns_mh"
-  override val fullMultiTypeGraphThriftOutputPath: String = "full_graph_thrift"
-  override val truncatedMultiTypeGraphKeyValDataset: KeyValDALDataset[
-    KeyVal[LeftNode, RightNodeWithEdgeWeightList]
-  ] = TruncatedMultiTypeGraphScalaDataset
-  override val topKRightNounsKeyValDataset: KeyValDALDataset[
-    KeyVal[RightNodeTypeStruct, NounWithFrequencyList]
-  ] = TopKRightNounsScalaDataset
-  override val fullMultiTypeGraphSnapshotDataset: SnapshotDALDataset[MultiTypeGraphEdge] =
-    FullMultiTypeGraphScalaDataset
-  override val firstTime: RichDate = RichDate("2021-08-21")
-  override val batchIncrement: Duration = Days(7)
+object AssembleMult TypeGraphBatchApp
+    extends AssembleMult TypeGraphBaseApp
+    w h Sc duledExecut onApp {
+  overr de val  sAdhoc: Boolean = false
+  overr de val truncatedMult TypeGraphMHOutputPath: Str ng = "truncated_graph_mh"
+  overr de val topKR ghtNounsMHOutputPath: Str ng = "top_k_r ght_nouns_mh"
+  overr de val fullMult TypeGraphThr ftOutputPath: Str ng = "full_graph_thr ft"
+  overr de val truncatedMult TypeGraphKeyValDataset: KeyValDALDataset[
+    KeyVal[LeftNode, R ghtNodeW hEdge  ghtL st]
+  ] = TruncatedMult TypeGraphScalaDataset
+  overr de val topKR ghtNounsKeyValDataset: KeyValDALDataset[
+    KeyVal[R ghtNodeTypeStruct, NounW hFrequencyL st]
+  ] = TopKR ghtNounsScalaDataset
+  overr de val fullMult TypeGraphSnapshotDataset: SnapshotDALDataset[Mult TypeGraphEdge] =
+    FullMult TypeGraphScalaDataset
+  overr de val f rstT  : R chDate = R chDate("2021-08-21")
+  overr de val batch ncre nt: Durat on = Days(7)
 }

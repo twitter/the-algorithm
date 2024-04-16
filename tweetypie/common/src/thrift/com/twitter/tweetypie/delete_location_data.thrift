@@ -1,32 +1,32 @@
-namespace java com.twitter.tweetypie.thriftjava
-#@namespace scala com.twitter.tweetypie.thriftscala
-namespace py gen.twitter.tweetypie
-namespace rb TweetyPie
-namespace go tweetypie
+na space java com.tw ter.t etyp e.thr ftjava
+#@na space scala com.tw ter.t etyp e.thr ftscala
+na space py gen.tw ter.t etyp e
+na space rb T etyP e
+na space go t etyp e
 
 /**
- * Event that triggers deletion of the geo information on tweets created
- * at timestamp_ms or earlier.
+ * Event that tr ggers delet on of t  geo  nformat on on t ets created
+ * at t  stamp_ms or earl er.
  */
-struct DeleteLocationData {
+struct DeleteLocat onData {
   /**
-   * The id of the user whose tweets should have their geo information
+   * T   d of t  user whose t ets should have t  r geo  nformat on
    * removed.
    */
-  1: required i64 user_id (personalDataType='UserId')
+  1: requ red  64 user_ d (personalDataType='User d')
 
   /**
-   * The time at which this request was initiated. Tweets by this user
-   * whose snowflake ids contain timestamps less than or equal to this
-   * value will no longer be returned with geo information.
+   * T  t   at wh ch t  request was  n  ated. T ets by t  user
+   * whose snowflake  ds conta n t  stamps less than or equal to t 
+   * value w ll no longer be returned w h geo  nformat on.
    */
-  2: required i64 timestamp_ms
+  2: requ red  64 t  stamp_ms
 
   /**
-   * The last time this user requested deletion of location data prior
-   * to this request. This value may be omitted, but should be included
-   * if available for implementation efficiency, since it eliminates the
-   * need to scan tweets older than this value for geo information.
+   * T  last t   t  user requested delet on of locat on data pr or
+   * to t  request. T  value may be om ted, but should be  ncluded
+   *  f ava lable for  mple ntat on eff c ency, s nce   el m nates t 
+   * need to scan t ets older than t  value for geo  nformat on.
    */
-  3: optional i64 last_timestamp_ms
-}(persisted='true', hasPersonalData='true')
+  3: opt onal  64 last_t  stamp_ms
+}(pers sted='true', hasPersonalData='true')

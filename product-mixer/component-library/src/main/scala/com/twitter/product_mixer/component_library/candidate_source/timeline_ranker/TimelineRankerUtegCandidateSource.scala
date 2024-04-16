@@ -1,49 +1,49 @@
-package com.twitter.product_mixer.component_library.candidate_source.timeline_ranker
+package com.tw ter.product_m xer.component_l brary.cand date_s ce.t  l ne_ranker
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.UnexpectedCandidateResult
-import com.twitter.stitch.Stitch
-import com.twitter.timelineranker.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ceW hExtractedFeatures
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand datesW hS ceFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.UnexpectedCand dateResult
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l neranker.{thr ftscala => t}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * Source tweets of retweets present in Timeline Ranker candidates list.
- * These tweets are used only for further ranking. They are not returned to the end user.
+ * S ce t ets of ret ets present  n T  l ne Ranker cand dates l st.
+ * T se t ets are used only for furt r rank ng. T y are not returned to t  end user.
  */
-case object TimelineRankerUtegSourceTweetsFeature
-    extends Feature[PipelineQuery, Seq[t.CandidateTweet]]
+case object T  l neRankerUtegS ceT etsFeature
+    extends Feature[P pel neQuery, Seq[t.Cand dateT et]]
 
-@Singleton
-class TimelineRankerUtegCandidateSource @Inject() (
-  timelineRankerClient: t.TimelineRanker.MethodPerEndpoint)
-    extends CandidateSourceWithExtractedFeatures[t.UtegLikedByTweetsQuery, t.CandidateTweet] {
+@S ngleton
+class T  l neRankerUtegCand dateS ce @ nject() (
+  t  l neRankerCl ent: t.T  l neRanker. thodPerEndpo nt)
+    extends Cand dateS ceW hExtractedFeatures[t.UtegL kedByT etsQuery, t.Cand dateT et] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier("TimelineRankerUteg")
+  overr de val  dent f er: Cand dateS ce dent f er =
+    Cand dateS ce dent f er("T  l neRankerUteg")
 
-  override def apply(
-    request: t.UtegLikedByTweetsQuery
-  ): Stitch[CandidatesWithSourceFeatures[t.CandidateTweet]] = {
-    Stitch
-      .callFuture(timelineRankerClient.getUtegLikedByTweetCandidates(Seq(request)))
+  overr de def apply(
+    request: t.UtegL kedByT etsQuery
+  ): St ch[Cand datesW hS ceFeatures[t.Cand dateT et]] = {
+    St ch
+      .callFuture(t  l neRankerCl ent.getUtegL kedByT etCand dates(Seq(request)))
       .map { response =>
-        val result = response.headOption.getOrElse(
-          throw PipelineFailure(UnexpectedCandidateResult, "Empty Timeline Ranker response"))
-        val candidates = result.candidates.toSeq.flatten
-        val sourceTweets = result.sourceTweets.toSeq.flatten
+        val result = response. adOpt on.getOrElse(
+          throw P pel neFa lure(UnexpectedCand dateResult, "Empty T  l ne Ranker response"))
+        val cand dates = result.cand dates.toSeq.flatten
+        val s ceT ets = result.s ceT ets.toSeq.flatten
 
-        val candidateSourceFeatures = FeatureMapBuilder()
-          .add(TimelineRankerUtegSourceTweetsFeature, sourceTweets)
-          .build()
+        val cand dateS ceFeatures = FeatureMapBu lder()
+          .add(T  l neRankerUtegS ceT etsFeature, s ceT ets)
+          .bu ld()
 
-        CandidatesWithSourceFeatures(candidates = candidates, features = candidateSourceFeatures)
+        Cand datesW hS ceFeatures(cand dates = cand dates, features = cand dateS ceFeatures)
       }
   }
 }

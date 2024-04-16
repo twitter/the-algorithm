@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.component_library.scorer.common
+package com.tw ter.product_m xer.component_l brary.scorer.common
 
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes.conf gap .Param
 
 /**
- * Selector for choosing which Model ID/Name to use when calling an underlying ML Model Service.
+ * Selector for choos ng wh ch Model  D/Na  to use w n call ng an underly ng ML Model Serv ce.
  */
-trait ModelSelector[-Query <: PipelineQuery] {
-  def apply(query: Query): Option[String]
+tra  ModelSelector[-Query <: P pel neQuery] {
+  def apply(query: Query): Opt on[Str ng]
 }
 
 /**
- * Simple Model ID Selector that chooses model based off of a Param object.
- * @param param ConfigAPI Param that decides the model id.
+ * S mple Model  D Selector that chooses model based off of a Param object.
+ * @param param Conf gAP  Param that dec des t  model  d.
  */
-case class ParamModelSelector[Query <: PipelineQuery](param: Param[String])
+case class ParamModelSelector[Query <: P pel neQuery](param: Param[Str ng])
     extends ModelSelector[Query] {
-  override def apply(query: Query): Option[String] = Some(query.params(param))
+  overr de def apply(query: Query): Opt on[Str ng] = So (query.params(param))
 }
 
 /**
- * Static Selector that chooses the same model name always
- * @param modelName The model name to use.
+ * Stat c Selector that chooses t  sa  model na  always
+ * @param modelNa  T  model na  to use.
  */
-case class StaticModelSelector(modelName: String) extends ModelSelector[PipelineQuery] {
-  override def apply(query: PipelineQuery): Option[String] = Some(modelName)
+case class Stat cModelSelector(modelNa : Str ng) extends ModelSelector[P pel neQuery] {
+  overr de def apply(query: P pel neQuery): Opt on[Str ng] = So (modelNa )
 }

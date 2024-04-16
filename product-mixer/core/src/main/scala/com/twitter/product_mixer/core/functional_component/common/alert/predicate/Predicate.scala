@@ -1,52 +1,52 @@
-package com.twitter.product_mixer.core.functional_component.common.alert.predicate
+package com.tw ter.product_m xer.core.funct onal_component.common.alert.pred cate
 
 /**
- * [[Predicate]]s will trigger if the metric's value is past the
- * `threshold` for `datapointsPastThreshold` or more datapoints
- * in a given `duration`
+ * [[Pred cate]]s w ll tr gger  f t   tr c's value  s past t 
+ * `threshold` for `datapo ntsPastThreshold` or more datapo nts
+ *  n a g ven `durat on`
  *
- * @see [[https://docbird.twitter.biz/mon/reference.html#predicate Predicate]]
+ * @see [[https://docb rd.tw ter.b z/mon/reference.html#pred cate Pred cate]]
  */
-trait Predicate {
+tra  Pred cate {
 
-  /** @see [[https://docbird.twitter.biz/mon/reference.html#predicate OPERATOR]] */
+  /** @see [[https://docb rd.tw ter.b z/mon/reference.html#pred cate OPERATOR]] */
   val operator: Operator
 
-  /** @see [[https://docbird.twitter.biz/mon/reference.html#predicate THRESHOLD]] */
+  /** @see [[https://docb rd.tw ter.b z/mon/reference.html#pred cate THRESHOLD]] */
   val threshold: Double
 
   /**
-   * The number of datapoints in a given duration beyond the threshold that will trigger an alert
-   * @see [[https://docbird.twitter.biz/mon/reference.html#predicate DATAPOINTS]]
+   * T  number of datapo nts  n a g ven durat on beyond t  threshold that w ll tr gger an alert
+   * @see [[https://docb rd.tw ter.b z/mon/reference.html#pred cate DATAPO NTS]]
    */
-  val datapointsPastThreshold: Int
+  val datapo ntsPastThreshold:  nt
 
   /**
-   * @note if using a [[metricGranularity]] of [[Minutes]] then this must be >= 3
-   * @see [[https://docbird.twitter.biz/mon/reference.html#predicate DURATION]]
+   * @note  f us ng a [[ tr cGranular y]] of [[M nutes]] t n t  must be >= 3
+   * @see [[https://docb rd.tw ter.b z/mon/reference.html#pred cate DURAT ON]]
    */
-  val duration: Int
+  val durat on:  nt
 
   /**
-   * Specifies the metric granularity
-   * @see [[https://docbird.twitter.biz/mon/reference.html#predicate DURATION]]
+   * Spec f es t   tr c granular y
+   * @see [[https://docb rd.tw ter.b z/mon/reference.html#pred cate DURAT ON]]
    */
-  val metricGranularity: MetricGranularity
+  val  tr cGranular y:  tr cGranular y
 
-  require(
-    datapointsPastThreshold > 0,
-    s"`datapointsPastThreshold` must be > 0 but got `datapointsPastThreshold` = $datapointsPastThreshold"
+  requ re(
+    datapo ntsPastThreshold > 0,
+    s"`datapo ntsPastThreshold` must be > 0 but got `datapo ntsPastThreshold` = $datapo ntsPastThreshold"
   )
 
-  require(
-    datapointsPastThreshold <= duration,
-    s"`datapointsPastThreshold` must be <= than `duration.inMinutes` but got `datapointsPastThreshold` = $datapointsPastThreshold `duration` = $duration"
+  requ re(
+    datapo ntsPastThreshold <= durat on,
+    s"`datapo ntsPastThreshold` must be <= than `durat on. nM nutes` but got `datapo ntsPastThreshold` = $datapo ntsPastThreshold `durat on` = $durat on"
   )
-  require(
-    metricGranularity != Minutes || duration >= 3,
-    s"Predicate durations must be at least 3 minutes but got $duration"
+  requ re(
+     tr cGranular y != M nutes || durat on >= 3,
+    s"Pred cate durat ons must be at least 3 m nutes but got $durat on"
   )
 }
 
-/** [[ThroughputPredicate]]s are predicates that can trigger when the throughput is too low or high */
-trait ThroughputPredicate extends Predicate
+/** [[ThroughputPred cate]]s are pred cates that can tr gger w n t  throughput  s too low or h gh */
+tra  ThroughputPred cate extends Pred cate

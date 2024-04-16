@@ -1,38 +1,38 @@
-package com.twitter.home_mixer.product.list_recommended_users.candidate_source
+package com.tw ter.ho _m xer.product.l st_recom nded_users.cand date_s ce
 
-import com.twitter.hermit.candidate.{thriftscala => t}
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.recommendations.similarity.SimilarUsersBySimsOnUserClientColumn
+ mport com.tw ter. rm .cand date.{thr ftscala => t}
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.strato.generated.cl ent.recom ndat ons.s m lar y.S m larUsersByS msOnUserCl entColumn
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class SimilarityBasedUsersCandidateSource @Inject() (
-  similarUsersBySimsOnUserClientColumn: SimilarUsersBySimsOnUserClientColumn)
-    extends CandidateSource[Seq[Long], t.Candidate] {
+@S ngleton
+class S m lar yBasedUsersCand dateS ce @ nject() (
+  s m larUsersByS msOnUserCl entColumn: S m larUsersByS msOnUserCl entColumn)
+    extends Cand dateS ce[Seq[Long], t.Cand date] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier("SimilarityBasedUsers")
+  overr de val  dent f er: Cand dateS ce dent f er =
+    Cand dateS ce dent f er("S m lar yBasedUsers")
 
-  private val fetcher: Fetcher[Long, Unit, t.Candidates] =
-    similarUsersBySimsOnUserClientColumn.fetcher
+  pr vate val fetc r: Fetc r[Long, Un , t.Cand dates] =
+    s m larUsersByS msOnUserCl entColumn.fetc r
 
-  private val MaxCandidatesToKeep = 4000
+  pr vate val MaxCand datesToKeep = 4000
 
-  override def apply(request: Seq[Long]): Stitch[Seq[t.Candidate]] = {
-    Stitch
+  overr de def apply(request: Seq[Long]): St ch[Seq[t.Cand date]] = {
+    St ch
       .collect {
-        request.map { userId =>
-          fetcher
-            .fetch(userId, Unit).map { result =>
-              result.v.map(_.candidates).getOrElse(Seq.empty)
-            }.map { candidates =>
-              val sortedCandidates = candidates.sortBy(-_.score)
-              sortedCandidates.take(MaxCandidatesToKeep)
+        request.map { user d =>
+          fetc r
+            .fetch(user d, Un ).map { result =>
+              result.v.map(_.cand dates).getOrElse(Seq.empty)
+            }.map { cand dates =>
+              val sortedCand dates = cand dates.sortBy(-_.score)
+              sortedCand dates.take(MaxCand datesToKeep)
             }
         }
       }.map(_.flatten)

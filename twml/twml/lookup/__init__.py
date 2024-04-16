@@ -1,11 +1,11 @@
-from tensorflow.python.ops.lookup_ops import (
-  index_table_from_file,
-  index_table_from_tensor,
-  index_to_string_table_from_file
+from tensorflow.python.ops.lookup_ops  mport (
+   ndex_table_from_f le,
+   ndex_table_from_tensor,
+   ndex_to_str ng_table_from_f le
 )  # noqa: F401
 
 
 """
-NOTE: Using `from tensorflow.python.ops.lookup_ops import index_table_from_tensor` in the code works.
-This stub exists because it was easier to refactor code because twml is widely used.
+NOTE: Us ng `from tensorflow.python.ops.lookup_ops  mport  ndex_table_from_tensor`  n t  code works.
+T  stub ex sts because   was eas er to refactor code because twml  s w dely used.
 """

@@ -1,108 +1,108 @@
-package com.twitter.timelineranker.util
+package com.tw ter.t  l neranker.ut l
 
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.UserId
+ mport com.tw ter.search.earlyb rd.thr ftscala.Thr ftSearchResult
+ mport com.tw ter.t  l nes.model.T et d
+ mport com.tw ter.t  l nes.model.User d
 
-object SearchResultUtil {
+object SearchResultUt l {
   val DefaultScore = 0.0
-  def getScore(result: ThriftSearchResult): Double = {
-    result.metadata.flatMap(_.score).filterNot(_.isNaN).getOrElse(DefaultScore)
+  def getScore(result: Thr ftSearchResult): Double = {
+    result. tadata.flatMap(_.score).f lterNot(_. sNaN).getOrElse(DefaultScore)
   }
 
-  def isRetweet(result: ThriftSearchResult): Boolean = {
-    result.metadata.flatMap(_.isRetweet).getOrElse(false)
+  def  sRet et(result: Thr ftSearchResult): Boolean = {
+    result. tadata.flatMap(_. sRet et).getOrElse(false)
   }
 
-  def isReply(result: ThriftSearchResult): Boolean = {
-    result.metadata.flatMap(_.isReply).getOrElse(false)
+  def  sReply(result: Thr ftSearchResult): Boolean = {
+    result. tadata.flatMap(_. sReply).getOrElse(false)
   }
 
-  def isEligibleReply(result: ThriftSearchResult): Boolean = {
-    isReply(result) && !isRetweet(result)
+  def  sEl g bleReply(result: Thr ftSearchResult): Boolean = {
+     sReply(result) && ! sRet et(result)
   }
 
-  def authorId(result: ThriftSearchResult): Option[UserId] = {
-    // fromUserId defaults to 0L if unset. None is cleaner
-    result.metadata.map(_.fromUserId).filter(_ != 0L)
+  def author d(result: Thr ftSearchResult): Opt on[User d] = {
+    // fromUser d defaults to 0L  f unset. None  s cleaner
+    result. tadata.map(_.fromUser d).f lter(_ != 0L)
   }
 
-  def referencedTweetAuthorId(result: ThriftSearchResult): Option[UserId] = {
-    // referencedTweetAuthorId defaults to 0L by default. None is cleaner
-    result.metadata.map(_.referencedTweetAuthorId).filter(_ != 0L)
+  def referencedT etAuthor d(result: Thr ftSearchResult): Opt on[User d] = {
+    // referencedT etAuthor d defaults to 0L by default. None  s cleaner
+    result. tadata.map(_.referencedT etAuthor d).f lter(_ != 0L)
   }
 
   /**
-   * Extended replies are replies, that are not retweets (see below), from a followed userId
-   * towards a non-followed userId.
+   * Extended repl es are repl es, that are not ret ets (see below), from a follo d user d
+   * towards a non-follo d user d.
    *
-   * In Thrift SearchResult it is possible to have both isRetweet and isReply set to true,
-   * in the case of the retweeted reply. This is confusing edge case as the retweet object
-   * is not itself a reply, but the original tweet is reply.
+   *  n Thr ft SearchResult    s poss ble to have both  sRet et and  sReply set to true,
+   *  n t  case of t  ret eted reply. T   s confus ng edge case as t  ret et object
+   *  s not  self a reply, but t  or g nal t et  s reply.
    */
-  def isExtendedReply(followedUserIds: Seq[UserId])(result: ThriftSearchResult): Boolean = {
-    isEligibleReply(result) &&
-    authorId(result).exists(followedUserIds.contains(_)) && // author is followed
-    referencedTweetAuthorId(result).exists(!followedUserIds.contains(_)) // referenced author is not
+  def  sExtendedReply(follo dUser ds: Seq[User d])(result: Thr ftSearchResult): Boolean = {
+     sEl g bleReply(result) &&
+    author d(result).ex sts(follo dUser ds.conta ns(_)) && // author  s follo d
+    referencedT etAuthor d(result).ex sts(!follo dUser ds.conta ns(_)) // referenced author  s not
   }
 
   /**
-   * If a tweet is a reply that is not a retweet, and both the user follows both the reply author
-   * and the reply parent's author
+   *  f a t et  s a reply that  s not a ret et, and both t  user follows both t  reply author
+   * and t  reply parent's author
    */
-  def isInNetworkReply(followedUserIds: Seq[UserId])(result: ThriftSearchResult): Boolean = {
-    isEligibleReply(result) &&
-    authorId(result).exists(followedUserIds.contains(_)) && // author is followed
-    referencedTweetAuthorId(result).exists(followedUserIds.contains(_)) // referenced author is
+  def  s nNetworkReply(follo dUser ds: Seq[User d])(result: Thr ftSearchResult): Boolean = {
+     sEl g bleReply(result) &&
+    author d(result).ex sts(follo dUser ds.conta ns(_)) && // author  s follo d
+    referencedT etAuthor d(result).ex sts(follo dUser ds.conta ns(_)) // referenced author  s
   }
 
   /**
-   * If a tweet is a retweet, and user follows author of outside tweet but not following author of
-   * source/inner tweet. This tweet is also called oon-retweet
+   *  f a t et  s a ret et, and user follows author of outs de t et but not follow ng author of
+   * s ce/ nner t et. T  t et  s also called oon-ret et
    */
-  def isOutOfNetworkRetweet(followedUserIds: Seq[UserId])(result: ThriftSearchResult): Boolean = {
-    isRetweet(result) &&
-    authorId(result).exists(followedUserIds.contains(_)) && // author is followed
-    referencedTweetAuthorId(result).exists(!followedUserIds.contains(_)) // referenced author is not
+  def  sOutOfNetworkRet et(follo dUser ds: Seq[User d])(result: Thr ftSearchResult): Boolean = {
+     sRet et(result) &&
+    author d(result).ex sts(follo dUser ds.conta ns(_)) && // author  s follo d
+    referencedT etAuthor d(result).ex sts(!follo dUser ds.conta ns(_)) // referenced author  s not
   }
 
   /**
-   * From official documentation in thrift on sharedStatusId:
-   * When isRetweet (or packed features equivalent) is true, this is the status id of the
-   * original tweet. When isReply and getReplySource are true, this is the status id of the
-   * original tweet. In all other circumstances this is 0.
+   * From off c al docu ntat on  n thr ft on sharedStatus d:
+   * W n  sRet et (or packed features equ valent)  s true, t   s t  status  d of t 
+   * or g nal t et. W n  sReply and getReplyS ce are true, t   s t  status  d of t 
+   * or g nal t et.  n all ot r c rcumstances t   s 0.
    *
-   * If a tweet is a retweet of a reply, this is the status id of the reply (the original tweet
-   * of the retweet), not the reply's in-reply-to tweet status id.
+   *  f a t et  s a ret et of a reply, t   s t  status  d of t  reply (t  or g nal t et
+   * of t  ret et), not t  reply's  n-reply-to t et status  d.
    */
-  def getSourceTweetId(result: ThriftSearchResult): Option[TweetId] = {
-    result.metadata.map(_.sharedStatusId).filter(_ != 0L)
+  def getS ceT et d(result: Thr ftSearchResult): Opt on[T et d] = {
+    result. tadata.map(_.sharedStatus d).f lter(_ != 0L)
   }
 
-  def getRetweetSourceTweetId(result: ThriftSearchResult): Option[TweetId] = {
-    if (isRetweet(result)) {
-      getSourceTweetId(result)
+  def getRet etS ceT et d(result: Thr ftSearchResult): Opt on[T et d] = {
+     f ( sRet et(result)) {
+      getS ceT et d(result)
     } else {
       None
     }
   }
 
-  def getInReplyToTweetId(result: ThriftSearchResult): Option[TweetId] = {
-    if (isReply(result)) {
-      getSourceTweetId(result)
+  def get nReplyToT et d(result: Thr ftSearchResult): Opt on[T et d] = {
+     f ( sReply(result)) {
+      getS ceT et d(result)
     } else {
       None
     }
   }
 
-  def getReplyRootTweetId(result: ThriftSearchResult): Option[TweetId] = {
-    if (isEligibleReply(result)) {
+  def getReplyRootT et d(result: Thr ftSearchResult): Opt on[T et d] = {
+     f ( sEl g bleReply(result)) {
       for {
-        meta <- result.metadata
-        extraMeta <- meta.extraMetadata
-        conversationId <- extraMeta.conversationId
-      } yield {
-        conversationId
+         ta <- result. tadata
+        extra ta <-  ta.extra tadata
+        conversat on d <- extra ta.conversat on d
+      } y eld {
+        conversat on d
       }
     } else {
       None
@@ -110,14 +110,14 @@ object SearchResultUtil {
   }
 
   /**
-   * For retweet: selfTweetId + sourceTweetId, (however selfTweetId is redundant here, since Health
-   * score retweet by tweetId == sourceTweetId)
-   * For replies: selfTweetId + immediate ancestor tweetId + root ancestor tweetId.
-   * Use set to de-duplicate the case when source tweet == root tweet. (like A->B, B is root and source).
+   * For ret et: selfT et d + s ceT et d, (ho ver selfT et d  s redundant  re, s nce  alth
+   * score ret et by t et d == s ceT et d)
+   * For repl es: selfT et d +  m d ate ancestor t et d + root ancestor t et d.
+   * Use set to de-dupl cate t  case w n s ce t et == root t et. (l ke A->B, B  s root and s ce).
    */
-  def getOriginalTweetIdAndAncestorTweetIds(searchResult: ThriftSearchResult): Set[TweetId] = {
-    Set(searchResult.id) ++
-      SearchResultUtil.getSourceTweetId(searchResult).toSet ++
-      SearchResultUtil.getReplyRootTweetId(searchResult).toSet
+  def getOr g nalT et dAndAncestorT et ds(searchResult: Thr ftSearchResult): Set[T et d] = {
+    Set(searchResult. d) ++
+      SearchResultUt l.getS ceT et d(searchResult).toSet ++
+      SearchResultUt l.getReplyRootT et d(searchResult).toSet
   }
 }

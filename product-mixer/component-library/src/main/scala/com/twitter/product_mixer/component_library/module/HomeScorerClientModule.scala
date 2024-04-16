@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.component_library.module
+package com.tw ter.product_m xer.component_l brary.module
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.home_scorer.{thriftscala => t}
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.convers ons.PercentOps._
+ mport com.tw ter.f nagle.thr ftmux. thodBu lder
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport com.tw ter. nject. njector
+ mport com.tw ter. nject.thr ft.modules.Thr ft thodBu lderCl entModule
+ mport com.tw ter.ho _scorer.{thr ftscala => t}
+ mport com.tw ter.ut l.Durat on
 
-object HomeScorerClientModule
-    extends ThriftMethodBuilderClientModule[
-      t.HomeScorer.ServicePerEndpoint,
-      t.HomeScorer.MethodPerEndpoint
+object Ho ScorerCl entModule
+    extends Thr ft thodBu lderCl entModule[
+      t.Ho Scorer.Serv cePerEndpo nt,
+      t.Ho Scorer. thodPerEndpo nt
     ]
-    with MtlsClient {
+    w h MtlsCl ent {
 
-  override val label = "home-scorer"
-  override val dest = "/s/home-scorer/home-scorer"
+  overr de val label = "ho -scorer"
+  overr de val dest = "/s/ho -scorer/ho -scorer"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    methodBuilder
-      .withTimeoutPerRequest(1200.millis)
-      .withTimeoutTotal(2400.millis)
-      .idempotent(1.percent)
+  overr de protected def conf gure thodBu lder(
+     njector:  njector,
+     thodBu lder:  thodBu lder
+  ):  thodBu lder = {
+     thodBu lder
+      .w hT  outPerRequest(1200.m ll s)
+      .w hT  outTotal(2400.m ll s)
+      . dempotent(1.percent)
   }
 
-  override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+  overr de protected def sess onAcqu s  onT  out: Durat on = 500.m ll seconds
 }

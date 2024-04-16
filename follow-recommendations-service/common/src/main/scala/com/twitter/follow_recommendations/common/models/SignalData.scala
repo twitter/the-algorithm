@@ -1,41 +1,41 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.usersignalservice.thriftscala.Signal
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.users gnalserv ce.thr ftscala.S gnalType
+ mport com.tw ter.users gnalserv ce.thr ftscala.S gnal
 
-trait SignalData {
-  val userId: Long
-  val signalType: SignalType
+tra  S gnalData {
+  val user d: Long
+  val s gnalType: S gnalType
 }
 
-case class RecentFollowsSignal(
-  override val userId: Long,
-  override val signalType: SignalType,
-  followedUserId: Long,
-  timestamp: Long)
-    extends SignalData
+case class RecentFollowsS gnal(
+  overr de val user d: Long,
+  overr de val s gnalType: S gnalType,
+  follo dUser d: Long,
+  t  stamp: Long)
+    extends S gnalData
 
-object RecentFollowsSignal {
+object RecentFollowsS gnal {
 
-  def fromUssSignal(targetUserId: Long, signal: Signal): RecentFollowsSignal = {
-    val InternalId.UserId(followedUserId) = signal.targetInternalId.getOrElse(
-      throw new IllegalArgumentException("RecentFollow Signal does not have internalId"))
+  def fromUssS gnal(targetUser d: Long, s gnal: S gnal): RecentFollowsS gnal = {
+    val  nternal d.User d(follo dUser d) = s gnal.target nternal d.getOrElse(
+      throw new  llegalArgu ntExcept on("RecentFollow S gnal does not have  nternal d"))
 
-    RecentFollowsSignal(
-      userId = targetUserId,
-      followedUserId = followedUserId,
-      timestamp = signal.timestamp,
-      signalType = signal.signalType
+    RecentFollowsS gnal(
+      user d = targetUser d,
+      follo dUser d = follo dUser d,
+      t  stamp = s gnal.t  stamp,
+      s gnalType = s gnal.s gnalType
     )
   }
 
-  def getRecentFollowedUserIds(
-    signalDataMap: Option[Map[SignalType, Seq[SignalData]]]
-  ): Option[Seq[Long]] = {
-    signalDataMap.map(_.getOrElse(SignalType.AccountFollow, default = Seq.empty).flatMap {
-      case RecentFollowsSignal(userId, signalType, followedUserId, timestamp) =>
-        Some(followedUserId)
+  def getRecentFollo dUser ds(
+    s gnalDataMap: Opt on[Map[S gnalType, Seq[S gnalData]]]
+  ): Opt on[Seq[Long]] = {
+    s gnalDataMap.map(_.getOrElse(S gnalType.AccountFollow, default = Seq.empty).flatMap {
+      case RecentFollowsS gnal(user d, s gnalType, follo dUser d, t  stamp) =>
+        So (follo dUser d)
       case _ => None
     })
   }

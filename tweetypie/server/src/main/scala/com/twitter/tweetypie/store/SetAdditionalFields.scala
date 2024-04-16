@@ -1,154 +1,154 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.t etyp e.thr ftscala._
 
-object SetAdditionalFields extends TweetStore.SyncModule {
+object SetAdd  onalF elds extends T etStore.SyncModule {
 
-  case class Event(additionalFields: Tweet, userId: UserId, timestamp: Time)
-      extends SyncTweetStoreEvent("set_additional_fields") {
+  case class Event(add  onalF elds: T et, user d: User d, t  stamp: T  )
+      extends SyncT etStoreEvent("set_add  onal_f elds") {
 
-    def toAsyncRequest: AsyncSetAdditionalFieldsRequest =
-      AsyncSetAdditionalFieldsRequest(
-        additionalFields = additionalFields,
-        userId = userId,
-        timestamp = timestamp.inMillis
+    def toAsyncRequest: AsyncSetAdd  onalF eldsRequest =
+      AsyncSetAdd  onalF eldsRequest(
+        add  onalF elds = add  onalF elds,
+        user d = user d,
+        t  stamp = t  stamp. nM ll s
       )
   }
 
-  trait Store {
-    val setAdditionalFields: FutureEffect[Event]
+  tra  Store {
+    val setAdd  onalF elds: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val setAdditionalFields: FutureEffect[Event] = wrap(underlying.setAdditionalFields)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val setAdd  onalF elds: FutureEffect[Event] = wrap(underly ng.setAdd  onalF elds)
   }
 
   object Store {
     def apply(
-      manhattanStore: ManhattanTweetStore,
-      cachingTweetStore: CachingTweetStore,
+      manhattanStore: ManhattanT etStore,
+      cach ngT etStore: Cach ngT etStore,
       asyncEnqueueStore: AsyncEnqueueStore,
       logLensStore: LogLensStore
     ): Store =
       new Store {
-        override val setAdditionalFields: FutureEffect[Event] =
-          FutureEffect.sequentially(
-            logLensStore.setAdditionalFields,
-            manhattanStore.setAdditionalFields,
-            // Ignore failures but wait for completion to ensure we attempted to update cache before
-            // running async tasks, in particular publishing an event to EventBus.
-            cachingTweetStore.ignoreFailuresUponCompletion.setAdditionalFields,
-            asyncEnqueueStore.setAdditionalFields
+        overr de val setAdd  onalF elds: FutureEffect[Event] =
+          FutureEffect.sequent ally(
+            logLensStore.setAdd  onalF elds,
+            manhattanStore.setAdd  onalF elds,
+            //  gnore fa lures but wa  for complet on to ensure   attempted to update cac  before
+            // runn ng async tasks,  n part cular publ sh ng an event to EventBus.
+            cach ngT etStore. gnoreFa luresUponComplet on.setAdd  onalF elds,
+            asyncEnqueueStore.setAdd  onalF elds
           )
       }
   }
 }
 
-object AsyncSetAdditionalFields extends TweetStore.AsyncModule {
+object AsyncSetAdd  onalF elds extends T etStore.AsyncModule {
 
   object Event {
     def fromAsyncRequest(
-      request: AsyncSetAdditionalFieldsRequest,
+      request: AsyncSetAdd  onalF eldsRequest,
       user: User
-    ): TweetStoreEventOrRetry[Event] =
-      TweetStoreEventOrRetry(
+    ): T etStoreEventOrRetry[Event] =
+      T etStoreEventOrRetry(
         Event(
-          additionalFields = request.additionalFields,
-          userId = request.userId,
-          optUser = Some(user),
-          timestamp = Time.fromMilliseconds(request.timestamp)
+          add  onalF elds = request.add  onalF elds,
+          user d = request.user d,
+          optUser = So (user),
+          t  stamp = T  .fromM ll seconds(request.t  stamp)
         ),
-        request.retryAction,
+        request.retryAct on,
         RetryEvent
       )
   }
 
-  case class Event(additionalFields: Tweet, userId: UserId, optUser: Option[User], timestamp: Time)
-      extends AsyncTweetStoreEvent("async_set_additional_fields")
-      with TweetStoreTweetEvent {
+  case class Event(add  onalF elds: T et, user d: User d, optUser: Opt on[User], t  stamp: T  )
+      extends AsyncT etStoreEvent("async_set_add  onal_f elds")
+      w h T etStoreT etEvent {
 
-    def toAsyncRequest(action: Option[AsyncWriteAction] = None): AsyncSetAdditionalFieldsRequest =
-      AsyncSetAdditionalFieldsRequest(
-        additionalFields = additionalFields,
-        retryAction = action,
-        userId = userId,
-        timestamp = timestamp.inMillis
+    def toAsyncRequest(act on: Opt on[AsyncWr eAct on] = None): AsyncSetAdd  onalF eldsRequest =
+      AsyncSetAdd  onalF eldsRequest(
+        add  onalF elds = add  onalF elds,
+        retryAct on = act on,
+        user d = user d,
+        t  stamp = t  stamp. nM ll s
       )
 
-    override def toTweetEventData: Seq[TweetEventData] =
+    overr de def toT etEventData: Seq[T etEventData] =
       Seq(
-        TweetEventData.AdditionalFieldUpdateEvent(
-          AdditionalFieldUpdateEvent(
-            updatedFields = additionalFields,
-            userId = optUser.map(_.id)
+        T etEventData.Add  onalF eldUpdateEvent(
+          Add  onalF eldUpdateEvent(
+            updatedF elds = add  onalF elds,
+            user d = optUser.map(_. d)
           )
         )
       )
 
-    override def enqueueRetry(service: ThriftTweetService, action: AsyncWriteAction): Future[Unit] =
-      service.asyncSetAdditionalFields(toAsyncRequest(Some(action)))
+    overr de def enqueueRetry(serv ce: Thr ftT etServ ce, act on: AsyncWr eAct on): Future[Un ] =
+      serv ce.asyncSetAdd  onalF elds(toAsyncRequest(So (act on)))
   }
 
-  case class RetryEvent(action: AsyncWriteAction, event: Event)
-      extends TweetStoreRetryEvent[Event] {
+  case class RetryEvent(act on: AsyncWr eAct on, event: Event)
+      extends T etStoreRetryEvent[Event] {
 
-    override val eventType: AsyncWriteEventType.SetAdditionalFields.type =
-      AsyncWriteEventType.SetAdditionalFields
-    override val scribedTweetOnFailure: None.type = None
+    overr de val eventType: AsyncWr eEventType.SetAdd  onalF elds.type =
+      AsyncWr eEventType.SetAdd  onalF elds
+    overr de val scr bedT etOnFa lure: None.type = None
   }
 
-  trait Store {
-    val asyncSetAdditionalFields: FutureEffect[Event]
-    val retryAsyncSetAdditionalFields: FutureEffect[TweetStoreRetryEvent[Event]]
+  tra  Store {
+    val asyncSetAdd  onalF elds: FutureEffect[Event]
+    val retryAsyncSetAdd  onalF elds: FutureEffect[T etStoreRetryEvent[Event]]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val asyncSetAdditionalFields: FutureEffect[Event] = wrap(
-      underlying.asyncSetAdditionalFields)
-    override val retryAsyncSetAdditionalFields: FutureEffect[TweetStoreRetryEvent[Event]] = wrap(
-      underlying.retryAsyncSetAdditionalFields)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val asyncSetAdd  onalF elds: FutureEffect[Event] = wrap(
+      underly ng.asyncSetAdd  onalF elds)
+    overr de val retryAsyncSetAdd  onalF elds: FutureEffect[T etStoreRetryEvent[Event]] = wrap(
+      underly ng.retryAsyncSetAdd  onalF elds)
   }
 
   object Store {
     def apply(
-      replicatingStore: ReplicatingTweetStore,
-      eventBusEnqueueStore: TweetEventBusStore
+      repl cat ngStore: Repl cat ngT etStore,
+      eventBusEnqueueStore: T etEventBusStore
     ): Store = {
-      val stores: Seq[Store] = Seq(replicatingStore, eventBusEnqueueStore)
+      val stores: Seq[Store] = Seq(repl cat ngStore, eventBusEnqueueStore)
 
-      def build[E <: TweetStoreEvent](extract: Store => FutureEffect[E]): FutureEffect[E] =
-        FutureEffect.inParallel[E](stores.map(extract): _*)
+      def bu ld[E <: T etStoreEvent](extract: Store => FutureEffect[E]): FutureEffect[E] =
+        FutureEffect. nParallel[E](stores.map(extract): _*)
 
       new Store {
-        override val asyncSetAdditionalFields: FutureEffect[Event] = build(
-          _.asyncSetAdditionalFields)
-        override val retryAsyncSetAdditionalFields: FutureEffect[TweetStoreRetryEvent[Event]] =
-          build(_.retryAsyncSetAdditionalFields)
+        overr de val asyncSetAdd  onalF elds: FutureEffect[Event] = bu ld(
+          _.asyncSetAdd  onalF elds)
+        overr de val retryAsyncSetAdd  onalF elds: FutureEffect[T etStoreRetryEvent[Event]] =
+          bu ld(_.retryAsyncSetAdd  onalF elds)
       }
     }
   }
 }
 
-object ReplicatedSetAdditionalFields extends TweetStore.ReplicatedModule {
+object Repl catedSetAdd  onalF elds extends T etStore.Repl catedModule {
 
-  case class Event(additionalFields: Tweet)
-      extends ReplicatedTweetStoreEvent("replicated_set_additional_fields")
+  case class Event(add  onalF elds: T et)
+      extends Repl catedT etStoreEvent("repl cated_set_add  onal_f elds")
 
-  trait Store {
-    val replicatedSetAdditionalFields: FutureEffect[Event]
+  tra  Store {
+    val repl catedSetAdd  onalF elds: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val replicatedSetAdditionalFields: FutureEffect[Event] = wrap(
-      underlying.replicatedSetAdditionalFields)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val repl catedSetAdd  onalF elds: FutureEffect[Event] = wrap(
+      underly ng.repl catedSetAdd  onalF elds)
   }
 
   object Store {
-    def apply(cachingTweetStore: CachingTweetStore): Store = {
+    def apply(cach ngT etStore: Cach ngT etStore): Store = {
       new Store {
-        override val replicatedSetAdditionalFields: FutureEffect[Event] =
-          cachingTweetStore.replicatedSetAdditionalFields
+        overr de val repl catedSetAdd  onalF elds: FutureEffect[Event] =
+          cach ngT etStore.repl catedSetAdd  onalF elds
       }
     }
   }

@@ -1,16 +1,16 @@
-package com.twitter.frigate.pushservice.store
+package com.tw ter.fr gate.pushserv ce.store
 
-import com.twitter.interests_discovery.thriftscala.InterestsDiscoveryService
-import com.twitter.interests_discovery.thriftscala.RecommendedListsRequest
-import com.twitter.interests_discovery.thriftscala.RecommendedListsResponse
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter. nterests_d scovery.thr ftscala. nterestsD scoveryServ ce
+ mport com.tw ter. nterests_d scovery.thr ftscala.Recom ndedL stsRequest
+ mport com.tw ter. nterests_d scovery.thr ftscala.Recom ndedL stsResponse
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
-case class InterestDiscoveryStore(
-  client: InterestsDiscoveryService.MethodPerEndpoint)
-    extends ReadableStore[RecommendedListsRequest, RecommendedListsResponse] {
+case class  nterestD scoveryStore(
+  cl ent:  nterestsD scoveryServ ce. thodPerEndpo nt)
+    extends ReadableStore[Recom ndedL stsRequest, Recom ndedL stsResponse] {
 
-  override def get(request: RecommendedListsRequest): Future[Option[RecommendedListsResponse]] = {
-    client.getListRecos(request).map(Some(_))
+  overr de def get(request: Recom ndedL stsRequest): Future[Opt on[Recom ndedL stsResponse]] = {
+    cl ent.getL stRecos(request).map(So (_))
   }
 }

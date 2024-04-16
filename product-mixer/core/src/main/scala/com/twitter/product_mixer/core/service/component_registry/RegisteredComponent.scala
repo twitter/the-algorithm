@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.service.component_registry
+package com.tw ter.product_m xer.core.serv ce.component_reg stry
 
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
+ mport com.tw ter.product_m xer.core.model.common.Component
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
 
-object RegisteredComponent {
-  // Sort by ComponentIdentifier which has its own implicit ordering defined
-  implicit val ordering: Ordering[RegisteredComponent] =
-    Ordering.by[RegisteredComponent, ComponentIdentifier](_.component.identifier)
+object Reg steredComponent {
+  // Sort by Component dent f er wh ch has  s own  mpl c  order ng def ned
+   mpl c  val order ng: Order ng[Reg steredComponent] =
+    Order ng.by[Reg steredComponent, Component dent f er](_.component. dent f er)
 }
 
-case class RegisteredComponent(
-  identifier: ComponentIdentifier,
+case class Reg steredComponent(
+   dent f er: Component dent f er,
   component: Component,
-  sourceFile: String)
+  s ceF le: Str ng)

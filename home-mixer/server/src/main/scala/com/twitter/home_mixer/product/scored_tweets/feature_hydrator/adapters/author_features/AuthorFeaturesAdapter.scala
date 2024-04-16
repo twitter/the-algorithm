@@ -1,92 +1,92 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.author_features
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.adapters.author_features
 
-import com.twitter.home_mixer.util.DataRecordUtil
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.util.CompactDataRecordConverter
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.timelines.author_features.v1.{thriftjava => af}
-import com.twitter.timelines.prediction.common.adapters.TimelinesAdapterBase
-import com.twitter.timelines.prediction.common.aggregates.TimelinesAggregationConfig
-import com.twitter.timelines.prediction.features.user_health.UserHealthFeatures
-import scala.collection.JavaConverters._
+ mport com.tw ter.ho _m xer.ut l.DataRecordUt l
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ml.ap .ut l.CompactDataRecordConverter
+ mport com.tw ter.ml.ap .ut l.FDsl._
+ mport com.tw ter.t  l nes.author_features.v1.{thr ftjava => af}
+ mport com.tw ter.t  l nes.pred ct on.common.adapters.T  l nesAdapterBase
+ mport com.tw ter.t  l nes.pred ct on.common.aggregates.T  l nesAggregat onConf g
+ mport com.tw ter.t  l nes.pred ct on.features.user_ alth.User althFeatures
+ mport scala.collect on.JavaConverters._
 
-object AuthorFeaturesAdapter extends TimelinesAdapterBase[af.AuthorFeatures] {
+object AuthorFeaturesAdapter extends T  l nesAdapterBase[af.AuthorFeatures] {
 
-  private val Prefix = "original_author.timelines.original_author_aggregates."
+  pr vate val Pref x = "or g nal_author.t  l nes.or g nal_author_aggregates."
 
-  private val typedAggregateGroups =
-    TimelinesAggregationConfig.originalAuthorAggregatesV1.buildTypedAggregateGroups()
+  pr vate val typedAggregateGroups =
+    T  l nesAggregat onConf g.or g nalAuthorAggregatesV1.bu ldTypedAggregateGroups()
 
-  private val aggregateFeaturesRenameMap: Map[Feature[_], Feature[_]] =
-    typedAggregateGroups.map(_.outputFeaturesToRenamedOutputFeatures(Prefix)).reduce(_ ++ _)
+  pr vate val aggregateFeaturesRena Map: Map[Feature[_], Feature[_]] =
+    typedAggregateGroups.map(_.outputFeaturesToRena dOutputFeatures(Pref x)).reduce(_ ++ _)
 
-  private val prefixedOriginalAuthorAggregateFeatures =
+  pr vate val pref xedOr g nalAuthorAggregateFeatures =
     typedAggregateGroups.flatMap(_.allOutputFeatures).map { feature =>
-      aggregateFeaturesRenameMap.getOrElse(feature, feature)
+      aggregateFeaturesRena Map.getOrElse(feature, feature)
     }
 
-  private val authorFeatures = prefixedOriginalAuthorAggregateFeatures ++ Seq(
-    UserHealthFeatures.AuthorState,
-    UserHealthFeatures.NumAuthorFollowers,
-    UserHealthFeatures.NumAuthorConnectDays,
-    UserHealthFeatures.NumAuthorConnect
+  pr vate val authorFeatures = pref xedOr g nalAuthorAggregateFeatures ++ Seq(
+    User althFeatures.AuthorState,
+    User althFeatures.NumAuthorFollo rs,
+    User althFeatures.NumAuthorConnectDays,
+    User althFeatures.NumAuthorConnect
   )
 
-  private val aggregateFeatureContext: FeatureContext =
+  pr vate val aggregateFeatureContext: FeatureContext =
     new FeatureContext(typedAggregateGroups.flatMap(_.allOutputFeatures).asJava)
 
-  private lazy val prefixedAggregateFeatureContext: FeatureContext =
-    new FeatureContext(prefixedOriginalAuthorAggregateFeatures.asJava)
+  pr vate lazy val pref xedAggregateFeatureContext: FeatureContext =
+    new FeatureContext(pref xedOr g nalAuthorAggregateFeatures.asJava)
 
-  override val getFeatureContext: FeatureContext = new FeatureContext(authorFeatures: _*)
+  overr de val getFeatureContext: FeatureContext = new FeatureContext(authorFeatures: _*)
 
-  override val commonFeatures: Set[Feature[_]] = Set.empty
+  overr de val commonFeatures: Set[Feature[_]] = Set.empty
 
-  private val compactDataRecordConverter = new CompactDataRecordConverter()
+  pr vate val compactDataRecordConverter = new CompactDataRecordConverter()
 
-  override def adaptToDataRecords(
+  overr de def adaptToDataRecords(
     authorFeatures: af.AuthorFeatures
-  ): java.util.List[DataRecord] = {
+  ): java.ut l.L st[DataRecord] = {
     val dataRecord =
-      if (authorFeatures.aggregates != null) {
-        val originalAuthorAggregatesDataRecord =
+       f (authorFeatures.aggregates != null) {
+        val or g nalAuthorAggregatesDataRecord =
           compactDataRecordConverter.compactDataRecordToDataRecord(authorFeatures.aggregates)
 
-        DataRecordUtil.applyRename(
-          originalAuthorAggregatesDataRecord,
+        DataRecordUt l.applyRena (
+          or g nalAuthorAggregatesDataRecord,
           aggregateFeatureContext,
-          prefixedAggregateFeatureContext,
-          aggregateFeaturesRenameMap)
+          pref xedAggregateFeatureContext,
+          aggregateFeaturesRena Map)
       } else new DataRecord
 
-    if (authorFeatures.user_health != null) {
-      val userHealth = authorFeatures.user_health
+     f (authorFeatures.user_ alth != null) {
+      val user alth = authorFeatures.user_ alth
 
-      if (userHealth.user_state != null) {
+       f (user alth.user_state != null) {
         dataRecord.setFeatureValue(
-          UserHealthFeatures.AuthorState,
-          userHealth.user_state.getValue.toLong
+          User althFeatures.AuthorState,
+          user alth.user_state.getValue.toLong
         )
       }
 
       dataRecord.setFeatureValue(
-        UserHealthFeatures.NumAuthorFollowers,
-        userHealth.num_followers.toDouble
+        User althFeatures.NumAuthorFollo rs,
+        user alth.num_follo rs.toDouble
       )
 
       dataRecord.setFeatureValue(
-        UserHealthFeatures.NumAuthorConnectDays,
-        userHealth.num_connect_days.toDouble
+        User althFeatures.NumAuthorConnectDays,
+        user alth.num_connect_days.toDouble
       )
 
       dataRecord.setFeatureValue(
-        UserHealthFeatures.NumAuthorConnect,
-        userHealth.num_connect.toDouble
+        User althFeatures.NumAuthorConnect,
+        user alth.num_connect.toDouble
       )
     }
 
-    List(dataRecord).asJava
+    L st(dataRecord).asJava
   }
 }

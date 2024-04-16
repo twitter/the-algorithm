@@ -1,69 +1,69 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+package com.tw ter.search.common.ut l.ml.pred ct on_eng ne;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.function.Supplier;
+ mport java. o. OExcept on;
+ mport java.ut l.Collect ons;
+ mport java.ut l.Map;
+ mport java.ut l.funct on.Suppl er;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.ml.api.FeatureContext;
-import com.twitter.mlv2.trees.predictor.CartTree;
-import com.twitter.mlv2.trees.scorer.DecisionForestScorer;
-import com.twitter.search.common.file.AbstractFile;
-import com.twitter.search.common.util.ml.models_manager.BaseModelsManager;
+ mport com.tw ter.ml.ap .FeatureContext;
+ mport com.tw ter.mlv2.trees.pred ctor.CartTree;
+ mport com.tw ter.mlv2.trees.scorer.Dec s onForestScorer;
+ mport com.tw ter.search.common.f le.AbstractF le;
+ mport com.tw ter.search.common.ut l.ml.models_manager.BaseModelsManager;
 
 /**
- * Loads Decision Forest based models and keep them in memory. Can also be scheduled to reload
- * models periodically.
+ * Loads Dec s on Forest based models and keep t m  n  mory. Can also be sc duled to reload
+ * models per od cally.
  *
- * Note: Each instance is tied to a single {@link FeatureContext} instance. So, to load models
- * for different tasks, you should use different instances of the this class.
+ * Note: Each  nstance  s t ed to a s ngle {@l nk FeatureContext}  nstance. So, to load models
+ * for d fferent tasks,   should use d fferent  nstances of t  t  class.
  */
-public class DecisionForestModelsManager extends BaseModelsManager<DecisionForestScorer<CartTree>> {
-  private static final String MODEL_FILE_NAME = "model.json";
+publ c class Dec s onForestModelsManager extends BaseModelsManager<Dec s onForestScorer<CartTree>> {
+  pr vate stat c f nal Str ng MODEL_F LE_NAME = "model.json";
 
-  private final FeatureContext featureContext;
+  pr vate f nal FeatureContext featureContext;
 
-  DecisionForestModelsManager(
-      Supplier<Map<String, AbstractFile>> activeModelsSupplier,
+  Dec s onForestModelsManager(
+      Suppl er<Map<Str ng, AbstractF le>> act veModelsSuppl er,
       FeatureContext featureContext,
-      boolean shouldUnloadInactiveModels,
-      String statsPrefix
+      boolean shouldUnload nact veModels,
+      Str ng statsPref x
   ) {
-    super(activeModelsSupplier, shouldUnloadInactiveModels, statsPrefix);
-    this.featureContext = featureContext;
+    super(act veModelsSuppl er, shouldUnload nact veModels, statsPref x);
+    t .featureContext = featureContext;
   }
 
-  @Override
-  public DecisionForestScorer<CartTree> readModelFromDirectory(AbstractFile modelBaseDir)
-      throws IOException {
-    String modelFilePath = modelBaseDir.getChild(MODEL_FILE_NAME).getPath();
-    return DecisionForestScorer.createCartTreeScorer(modelFilePath, featureContext);
+  @Overr de
+  publ c Dec s onForestScorer<CartTree> readModelFromD rectory(AbstractF le modelBaseD r)
+      throws  OExcept on {
+    Str ng modelF lePath = modelBaseD r.getCh ld(MODEL_F LE_NAME).getPath();
+    return Dec s onForestScorer.createCartTreeScorer(modelF lePath, featureContext);
   }
 
   /**
-   * Creates an instance that loads the models specified in a configuration file.
+   * Creates an  nstance that loads t  models spec f ed  n a conf gurat on f le.
    *
-   * Note that if the configuration file changes and it doesn't include a model that was present
-   * before, the model will be removed (i.e. it unloads models that are not active anymore).
+   * Note that  f t  conf gurat on f le changes and   doesn't  nclude a model that was present
+   * before, t  model w ll be removed ( .e.   unloads models that are not act ve anymore).
    */
-  public static DecisionForestModelsManager createUsingConfigFile(
-      AbstractFile configFile, FeatureContext featureContext, String statsPrefix) {
-    Preconditions.checkArgument(
-        configFile.canRead(), "Config file is not readable: %s", configFile.getPath());
-    return new DecisionForestModelsManager(
-        new ConfigSupplier(configFile), featureContext, true, statsPrefix);
+  publ c stat c Dec s onForestModelsManager createUs ngConf gF le(
+      AbstractF le conf gF le, FeatureContext featureContext, Str ng statsPref x) {
+    Precond  ons.c ckArgu nt(
+        conf gF le.canRead(), "Conf g f le  s not readable: %s", conf gF le.getPath());
+    return new Dec s onForestModelsManager(
+        new Conf gSuppl er(conf gF le), featureContext, true, statsPref x);
   }
 
   /**
-   * Creates a no-op instance. It can be used for tests or when the models are disabled.
+   * Creates a no-op  nstance.   can be used for tests or w n t  models are d sabled.
    */
-  public static DecisionForestModelsManager createNoOp(String statsPrefix) {
-    return new DecisionForestModelsManager(
-        Collections::emptyMap, new FeatureContext(), false, statsPrefix) {
-      @Override
-      public void run() { }
+  publ c stat c Dec s onForestModelsManager createNoOp(Str ng statsPref x) {
+    return new Dec s onForestModelsManager(
+        Collect ons::emptyMap, new FeatureContext(), false, statsPref x) {
+      @Overr de
+      publ c vo d run() { }
     };
   }
 }

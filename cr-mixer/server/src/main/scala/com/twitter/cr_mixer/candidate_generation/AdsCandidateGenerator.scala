@@ -1,140 +1,140 @@
-package com.twitter.cr_mixer.candidate_generation
+package com.tw ter.cr_m xer.cand date_generat on
 
-import com.twitter.cr_mixer.blender.AdsBlender
-import com.twitter.cr_mixer.logging.AdsRecommendationsScribeLogger
-import com.twitter.cr_mixer.model.AdsCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.BlendedAdsCandidate
-import com.twitter.cr_mixer.model.InitialAdsCandidate
-import com.twitter.cr_mixer.model.RankedAdsCandidate
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.param.AdsParams
-import com.twitter.cr_mixer.param.ConsumersBasedUserAdGraphParams
-import com.twitter.cr_mixer.source_signal.RealGraphInSourceGraphFetcher
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.cr_mixer.source_signal.UssSourceSignalFetcher
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.util.Future
+ mport com.tw ter.cr_m xer.blender.AdsBlender
+ mport com.tw ter.cr_m xer.logg ng.AdsRecom ndat onsScr beLogger
+ mport com.tw ter.cr_m xer.model.AdsCand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model.BlendedAdsCand date
+ mport com.tw ter.cr_m xer.model. n  alAdsCand date
+ mport com.tw ter.cr_m xer.model.RankedAdsCand date
+ mport com.tw ter.cr_m xer.model.S ce nfo
+ mport com.tw ter.cr_m xer.param.AdsParams
+ mport com.tw ter.cr_m xer.param.Consu rsBasedUserAdGraphParams
+ mport com.tw ter.cr_m xer.s ce_s gnal.RealGraph nS ceGraphFetc r
+ mport com.tw ter.cr_m xer.s ce_s gnal.S ceFetc r.Fetc rQuery
+ mport com.tw ter.cr_m xer.s ce_s gnal.UssS ceS gnalFetc r
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.ut l.StatsUt l
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.ut l.Future
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class AdsCandidateGenerator @Inject() (
-  ussSourceSignalFetcher: UssSourceSignalFetcher,
-  realGraphInSourceGraphFetcher: RealGraphInSourceGraphFetcher,
-  adsCandidateSourceRouter: AdsCandidateSourcesRouter,
+@S ngleton
+class AdsCand dateGenerator @ nject() (
+  ussS ceS gnalFetc r: UssS ceS gnalFetc r,
+  realGraph nS ceGraphFetc r: RealGraph nS ceGraphFetc r,
+  adsCand dateS ceRouter: AdsCand dateS cesRouter,
   adsBlender: AdsBlender,
-  scribeLogger: AdsRecommendationsScribeLogger,
-  globalStats: StatsReceiver) {
+  scr beLogger: AdsRecom ndat onsScr beLogger,
+  globalStats: StatsRece ver) {
 
-  private val stats: StatsReceiver = globalStats.scope(this.getClass.getCanonicalName)
-  private val fetchSourcesStats = stats.scope("fetchSources")
-  private val fetchRealGraphSeedsStats = stats.scope("fetchRealGraphSeeds")
-  private val fetchCandidatesStats = stats.scope("fetchCandidates")
-  private val interleaveStats = stats.scope("interleave")
-  private val rankStats = stats.scope("rank")
+  pr vate val stats: StatsRece ver = globalStats.scope(t .getClass.getCanon calNa )
+  pr vate val fetchS cesStats = stats.scope("fetchS ces")
+  pr vate val fetchRealGraphSeedsStats = stats.scope("fetchRealGraphSeeds")
+  pr vate val fetchCand datesStats = stats.scope("fetchCand dates")
+  pr vate val  nterleaveStats = stats.scope(" nterleave")
+  pr vate val rankStats = stats.scope("rank")
 
-  def get(query: AdsCandidateGeneratorQuery): Future[Seq[RankedAdsCandidate]] = {
+  def get(query: AdsCand dateGeneratorQuery): Future[Seq[RankedAdsCand date]] = {
     val allStats = stats.scope("all")
-    val perProductStats = stats.scope("perProduct", query.product.toString)
+    val perProductStats = stats.scope("perProduct", query.product.toStr ng)
 
-    StatsUtil.trackItemsStats(allStats) {
-      StatsUtil.trackItemsStats(perProductStats) {
+    StatsUt l.track emsStats(allStats) {
+      StatsUt l.track emsStats(perProductStats) {
         for {
-          // fetch source signals
-          sourceSignals <- StatsUtil.trackBlockStats(fetchSourcesStats) {
-            fetchSources(query)
+          // fetch s ce s gnals
+          s ceS gnals <- StatsUt l.trackBlockStats(fetchS cesStats) {
+            fetchS ces(query)
           }
-          realGraphSeeds <- StatsUtil.trackItemMapStats(fetchRealGraphSeedsStats) {
+          realGraphSeeds <- StatsUt l.track emMapStats(fetchRealGraphSeedsStats) {
             fetchSeeds(query)
           }
-          // get initial candidates from similarity engines
-          // hydrate lineItemInfo and filter out non active ads
-          initialCandidates <- StatsUtil.trackBlockStats(fetchCandidatesStats) {
-            fetchCandidates(query, sourceSignals, realGraphSeeds)
+          // get  n  al cand dates from s m lar y eng nes
+          // hydrate l ne em nfo and f lter out non act ve ads
+           n  alCand dates <- StatsUt l.trackBlockStats(fetchCand datesStats) {
+            fetchCand dates(query, s ceS gnals, realGraphSeeds)
           }
 
-          // blend candidates
-          blendedCandidates <- StatsUtil.trackItemsStats(interleaveStats) {
-            interleave(initialCandidates)
+          // blend cand dates
+          blendedCand dates <- StatsUt l.track emsStats( nterleaveStats) {
+             nterleave( n  alCand dates)
           }
 
-          rankedCandidates <- StatsUtil.trackItemsStats(rankStats) {
+          rankedCand dates <- StatsUt l.track emsStats(rankStats) {
             rank(
-              blendedCandidates,
+              blendedCand dates,
               query.params(AdsParams.EnableScoreBoost),
-              query.params(AdsParams.AdsCandidateGenerationScoreBoostFactor),
+              query.params(AdsParams.AdsCand dateGenerat onScoreBoostFactor),
               rankStats)
           }
-        } yield {
-          rankedCandidates.take(query.maxNumResults)
+        } y eld {
+          rankedCand dates.take(query.maxNumResults)
         }
       }
     }
 
   }
 
-  def fetchSources(
-    query: AdsCandidateGeneratorQuery
-  ): Future[Set[SourceInfo]] = {
-    val fetcherQuery =
-      FetcherQuery(query.userId, query.product, query.userState, query.params)
-    ussSourceSignalFetcher.get(fetcherQuery).map(_.getOrElse(Seq.empty).toSet)
+  def fetchS ces(
+    query: AdsCand dateGeneratorQuery
+  ): Future[Set[S ce nfo]] = {
+    val fetc rQuery =
+      Fetc rQuery(query.user d, query.product, query.userState, query.params)
+    ussS ceS gnalFetc r.get(fetc rQuery).map(_.getOrElse(Seq.empty).toSet)
   }
 
-  private def fetchCandidates(
-    query: AdsCandidateGeneratorQuery,
-    sourceSignals: Set[SourceInfo],
-    realGraphSeeds: Map[UserId, Double]
-  ): Future[Seq[Seq[InitialAdsCandidate]]] = {
-    scribeLogger.scribeInitialAdsCandidates(
+  pr vate def fetchCand dates(
+    query: AdsCand dateGeneratorQuery,
+    s ceS gnals: Set[S ce nfo],
+    realGraphSeeds: Map[User d, Double]
+  ): Future[Seq[Seq[ n  alAdsCand date]]] = {
+    scr beLogger.scr be n  alAdsCand dates(
       query,
-      adsCandidateSourceRouter
-        .fetchCandidates(query.userId, sourceSignals, realGraphSeeds, query.params),
-      query.params(AdsParams.EnableScribe)
+      adsCand dateS ceRouter
+        .fetchCand dates(query.user d, s ceS gnals, realGraphSeeds, query.params),
+      query.params(AdsParams.EnableScr be)
     )
 
   }
 
-  private def fetchSeeds(
-    query: AdsCandidateGeneratorQuery
-  ): Future[Map[UserId, Double]] = {
-    if (query.params(ConsumersBasedUserAdGraphParams.EnableSourceParam)) {
-      realGraphInSourceGraphFetcher
-        .get(FetcherQuery(query.userId, query.product, query.userState, query.params))
-        .map(_.map(_.seedWithScores).getOrElse(Map.empty))
-    } else Future.value(Map.empty[UserId, Double])
+  pr vate def fetchSeeds(
+    query: AdsCand dateGeneratorQuery
+  ): Future[Map[User d, Double]] = {
+     f (query.params(Consu rsBasedUserAdGraphParams.EnableS ceParam)) {
+      realGraph nS ceGraphFetc r
+        .get(Fetc rQuery(query.user d, query.product, query.userState, query.params))
+        .map(_.map(_.seedW hScores).getOrElse(Map.empty))
+    } else Future.value(Map.empty[User d, Double])
   }
 
-  private def interleave(
-    candidates: Seq[Seq[InitialAdsCandidate]]
-  ): Future[Seq[BlendedAdsCandidate]] = {
+  pr vate def  nterleave(
+    cand dates: Seq[Seq[ n  alAdsCand date]]
+  ): Future[Seq[BlendedAdsCand date]] = {
     adsBlender
-      .blend(candidates)
+      .blend(cand dates)
   }
 
-  private def rank(
-    candidates: Seq[BlendedAdsCandidate],
+  pr vate def rank(
+    cand dates: Seq[BlendedAdsCand date],
     enableScoreBoost: Boolean,
     scoreBoostFactor: Double,
-    statsReceiver: StatsReceiver,
-  ): Future[Seq[RankedAdsCandidate]] = {
+    statsRece ver: StatsRece ver,
+  ): Future[Seq[RankedAdsCand date]] = {
 
-    val candidateSize = candidates.size
-    val rankedCandidates = candidates.zipWithIndex.map {
-      case (candidate, index) =>
-        val score = 0.5 + 0.5 * ((candidateSize - index).toDouble / candidateSize)
-        val boostedScore = if (enableScoreBoost) {
-          statsReceiver.stat("boostedScore").add((100.0 * score * scoreBoostFactor).toFloat)
+    val cand dateS ze = cand dates.s ze
+    val rankedCand dates = cand dates.z pW h ndex.map {
+      case (cand date,  ndex) =>
+        val score = 0.5 + 0.5 * ((cand dateS ze -  ndex).toDouble / cand dateS ze)
+        val boostedScore =  f (enableScoreBoost) {
+          statsRece ver.stat("boostedScore").add((100.0 * score * scoreBoostFactor).toFloat)
           score * scoreBoostFactor
         } else {
-          statsReceiver.stat("score").add((100.0 * score).toFloat)
+          statsRece ver.stat("score").add((100.0 * score).toFloat)
           score
         }
-        candidate.toRankedAdsCandidate(boostedScore)
+        cand date.toRankedAdsCand date(boostedScore)
     }
-    Future.value(rankedCandidates)
+    Future.value(rankedCand dates)
   }
 }

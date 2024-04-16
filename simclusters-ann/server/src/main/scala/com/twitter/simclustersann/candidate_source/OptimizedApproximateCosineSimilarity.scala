@@ -1,112 +1,112 @@
-package com.twitter.simclustersann.candidate_source
+package com.tw ter.s mclustersann.cand date_s ce
 
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclustersann.thriftscala.ScoringAlgorithm
-import com.twitter.simclustersann.thriftscala.SimClustersANNConfig
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Duration
-import com.twitter.util.Time
+ mport com.tw ter.s mclusters_v2.common.Cluster d
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng d
+ mport com.tw ter.s mclustersann.thr ftscala.Scor ngAlgor hm
+ mport com.tw ter.s mclustersann.thr ftscala.S mClustersANNConf g
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.T  
 
 /**
- * Compared with ApproximateCosineSimilarity, this implementation:
- * - moves some computation aroudn to reduce allocations
- * - uses a single hashmap to store both scores and normalization coefficients
- * - uses some java collections in place of scala ones
- * Testing is still in progress, but this implementation shows significant (> 2x) improvements in
- * CPU utilization and allocations with 800 tweets per cluster.
+ * Compared w h Approx mateCos neS m lar y, t   mple ntat on:
+ * - moves so  computat on aroudn to reduce allocat ons
+ * - uses a s ngle hashmap to store both scores and normal zat on coeff c ents
+ * - uses so  java collect ons  n place of scala ones
+ * Test ng  s st ll  n progress, but t   mple ntat on shows s gn f cant (> 2x)  mprove nts  n
+ * CPU ut l zat on and allocat ons w h 800 t ets per cluster.
  */
-object OptimizedApproximateCosineSimilarity extends ApproximateCosineSimilarity {
+object Opt m zedApprox mateCos neS m lar y extends Approx mateCos neS m lar y {
 
-  final val InitialCandidateMapSize = 16384
+  f nal val  n  alCand dateMapS ze = 16384
   val MaxNumResultsUpperBound = 1000
-  final val MaxTweetCandidateAgeUpperBound = 175200
+  f nal val MaxT etCand dateAgeUpperBound = 175200
 
-  private def parseTweetId(embeddingId: SimClustersEmbeddingId): Option[TweetId] = {
-    embeddingId.internalId match {
-      case InternalId.TweetId(tweetId) =>
-        Some(tweetId)
+  pr vate def parseT et d(embedd ng d: S mClustersEmbedd ng d): Opt on[T et d] = {
+    embedd ng d. nternal d match {
+      case  nternal d.T et d(t et d) =>
+        So (t et d)
       case _ =>
         None
     }
   }
 
-  override def apply(
-    sourceEmbedding: SimClustersEmbedding,
-    sourceEmbeddingId: SimClustersEmbeddingId,
-    config: SimClustersANNConfig,
-    candidateScoresStat: Int => Unit,
-    clusterTweetsMap: Map[ClusterId, Option[Seq[(TweetId, Double)]]] = Map.empty,
-    clusterTweetsMapArray: Map[ClusterId, Option[Array[(TweetId, Double)]]] = Map.empty
-  ): Seq[ScoredTweet] = {
-    val now = Time.now
-    val earliestTweetId =
-      if (config.maxTweetCandidateAgeHours >= MaxTweetCandidateAgeUpperBound)
-        0L // Disable max tweet age filter
+  overr de def apply(
+    s ceEmbedd ng: S mClustersEmbedd ng,
+    s ceEmbedd ng d: S mClustersEmbedd ng d,
+    conf g: S mClustersANNConf g,
+    cand dateScoresStat:  nt => Un ,
+    clusterT etsMap: Map[Cluster d, Opt on[Seq[(T et d, Double)]]] = Map.empty,
+    clusterT etsMapArray: Map[Cluster d, Opt on[Array[(T et d, Double)]]] = Map.empty
+  ): Seq[ScoredT et] = {
+    val now = T  .now
+    val earl estT et d =
+       f (conf g.maxT etCand dateAgeH s >= MaxT etCand dateAgeUpperBound)
+        0L // D sable max t et age f lter
       else
-        SnowflakeId.firstIdFor(now - Duration.fromHours(config.maxTweetCandidateAgeHours))
-    val latestTweetId =
-      SnowflakeId.firstIdFor(now - Duration.fromHours(config.minTweetCandidateAgeHours))
+        Snowflake d.f rst dFor(now - Durat on.fromH s(conf g.maxT etCand dateAgeH s))
+    val latestT et d =
+      Snowflake d.f rst dFor(now - Durat on.fromH s(conf g.m nT etCand dateAgeH s))
 
-    val candidateScoresMap = new java.util.HashMap[Long, (Double, Double)](InitialCandidateMapSize)
+    val cand dateScoresMap = new java.ut l.HashMap[Long, (Double, Double)]( n  alCand dateMapS ze)
 
-    val sourceTweetId = parseTweetId(sourceEmbeddingId).getOrElse(0L)
+    val s ceT et d = parseT et d(s ceEmbedd ng d).getOrElse(0L)
 
-    clusterTweetsMap.foreach {
-      case (clusterId, Some(tweetScores)) if sourceEmbedding.contains(clusterId) =>
-        val sourceClusterScore = sourceEmbedding.getOrElse(clusterId)
+    clusterT etsMap.foreach {
+      case (cluster d, So (t etScores))  f s ceEmbedd ng.conta ns(cluster d) =>
+        val s ceClusterScore = s ceEmbedd ng.getOrElse(cluster d)
 
-        for (i <- 0 until Math.min(tweetScores.size, config.maxTopTweetsPerCluster)) {
-          val (tweetId, score) = tweetScores(i)
+        for (  <- 0 unt l Math.m n(t etScores.s ze, conf g.maxTopT etsPerCluster)) {
+          val (t et d, score) = t etScores( )
 
-          if (tweetId >= earliestTweetId &&
-            tweetId <= latestTweetId &&
-            tweetId != sourceTweetId) {
+           f (t et d >= earl estT et d &&
+            t et d <= latestT et d &&
+            t et d != s ceT et d) {
 
-            val scores = candidateScoresMap.getOrDefault(tweetId, (0.0, 0.0))
+            val scores = cand dateScoresMap.getOrDefault(t et d, (0.0, 0.0))
             val newScores = (
-              scores._1 + score * sourceClusterScore,
+              scores._1 + score * s ceClusterScore,
               scores._2 + score * score,
             )
-            candidateScoresMap.put(tweetId, newScores)
+            cand dateScoresMap.put(t et d, newScores)
           }
         }
       case _ => ()
     }
 
-    candidateScoresStat(candidateScoresMap.size)
+    cand dateScoresStat(cand dateScoresMap.s ze)
 
-    val normFn: (Long, (Double, Double)) => (Long, Double) = config.annAlgorithm match {
-      case ScoringAlgorithm.LogCosineSimilarity =>
-        (candidateId: Long, score: (Double, Double)) =>
-          candidateId -> score._1 / sourceEmbedding.logNorm / math.log(1 + score._2)
-      case ScoringAlgorithm.CosineSimilarity =>
-        (candidateId: Long, score: (Double, Double)) =>
-          candidateId -> score._1 / sourceEmbedding.l2norm / math.sqrt(score._2)
-      case ScoringAlgorithm.CosineSimilarityNoSourceEmbeddingNormalization =>
-        (candidateId: Long, score: (Double, Double)) =>
-          candidateId -> score._1 / math.sqrt(score._2)
-      case ScoringAlgorithm.DotProduct =>
-        (candidateId: Long, score: (Double, Double)) => (candidateId, score._1)
+    val normFn: (Long, (Double, Double)) => (Long, Double) = conf g.annAlgor hm match {
+      case Scor ngAlgor hm.LogCos neS m lar y =>
+        (cand date d: Long, score: (Double, Double)) =>
+          cand date d -> score._1 / s ceEmbedd ng.logNorm / math.log(1 + score._2)
+      case Scor ngAlgor hm.Cos neS m lar y =>
+        (cand date d: Long, score: (Double, Double)) =>
+          cand date d -> score._1 / s ceEmbedd ng.l2norm / math.sqrt(score._2)
+      case Scor ngAlgor hm.Cos neS m lar yNoS ceEmbedd ngNormal zat on =>
+        (cand date d: Long, score: (Double, Double)) =>
+          cand date d -> score._1 / math.sqrt(score._2)
+      case Scor ngAlgor hm.DotProduct =>
+        (cand date d: Long, score: (Double, Double)) => (cand date d, score._1)
     }
 
-    val scoredTweets: java.util.ArrayList[(Long, Double)] =
-      new java.util.ArrayList(candidateScoresMap.size)
+    val scoredT ets: java.ut l.ArrayL st[(Long, Double)] =
+      new java.ut l.ArrayL st(cand dateScoresMap.s ze)
 
-    val it = candidateScoresMap.entrySet().iterator()
-    while (it.hasNext) {
-      val mapEntry = it.next()
-      val normedScore = normFn(mapEntry.getKey, mapEntry.getValue)
-      if (normedScore._2 >= config.minScore)
-        scoredTweets.add(normedScore)
+    val   = cand dateScoresMap.entrySet(). erator()
+    wh le ( .hasNext) {
+      val mapEntry =  .next()
+      val nor dScore = normFn(mapEntry.getKey, mapEntry.getValue)
+       f (nor dScore._2 >= conf g.m nScore)
+        scoredT ets.add(nor dScore)
     }
-    import scala.collection.JavaConverters._
+     mport scala.collect on.JavaConverters._
 
-    scoredTweets.asScala
+    scoredT ets.asScala
       .sortBy(-_._2)
-      .take(Math.min(config.maxNumResults, MaxNumResultsUpperBound))
+      .take(Math.m n(conf g.maxNumResults, MaxNumResultsUpperBound))
   }
 }

@@ -1,16 +1,16 @@
-package com.twitter.frigate.pushservice.module
+package com.tw ter.fr gate.pushserv ce.module
 
-import com.google.inject.Provides
-import javax.inject.Singleton
-import com.twitter.discovery.common.nackwarmupfilter.NackWarmupFilter
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.util.Duration
+ mport com.google. nject.Prov des
+ mport javax. nject.S ngleton
+ mport com.tw ter.d scovery.common.nackwarmupf lter.NackWarmupF lter
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.ut l.Durat on
 
-object FilterModule extends TwitterModule {
-  @Singleton
-  @Provides
-  def providesNackWarmupFilter(
-    @Flag(FlagName.nackWarmupDuration) warmupDuration: Duration
-  ): NackWarmupFilter = new NackWarmupFilter(warmupDuration)
+object F lterModule extends Tw terModule {
+  @S ngleton
+  @Prov des
+  def prov desNackWarmupF lter(
+    @Flag(FlagNa .nackWarmupDurat on) warmupDurat on: Durat on
+  ): NackWarmupF lter = new NackWarmupF lter(warmupDurat on)
 }

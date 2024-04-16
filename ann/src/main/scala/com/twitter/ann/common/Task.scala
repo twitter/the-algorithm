@@ -1,120 +1,120 @@
-package com.twitter.ann.common
+package com.tw ter.ann.common
 
-import com.twitter.finagle.stats.CategorizingExceptionStatsHandler
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.tracing.DefaultTracer
-import com.twitter.finagle.tracing.Trace
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.finagle.util.Rng
-import com.twitter.inject.logging.MDCKeys
-import com.twitter.util.Closable
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
-import com.twitter.util.Timer
-import com.twitter.util.logging.Logging
-import java.util.concurrent.atomic.AtomicInteger
-import org.slf4j.MDC
+ mport com.tw ter.f nagle.stats.Categor z ngExcept onStatsHandler
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.trac ng.DefaultTracer
+ mport com.tw ter.f nagle.trac ng.Trace
+ mport com.tw ter.f nagle.ut l.DefaultT  r
+ mport com.tw ter.f nagle.ut l.Rng
+ mport com.tw ter. nject.logg ng.MDCKeys
+ mport com.tw ter.ut l.Closable
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.ut l.T  r
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport java.ut l.concurrent.atom c.Atom c nteger
+ mport org.slf4j.MDC
 
 /**
- * A Task that will be scheduled to execute periodically on every interval. If a task takes
- * longer than an interval to complete, it will be immediately scheduled to run.
+ * A Task that w ll be sc duled to execute per od cally on every  nterval.  f a task takes
+ * longer than an  nterval to complete,   w ll be  m d ately sc duled to run.
  */
-trait Task extends Closable { self: Logging =>
+tra  Task extends Closable { self: Logg ng =>
 
-  // Exposed if the implementation of `task` need to report failures
-  val exnStatsHandler = new CategorizingExceptionStatsHandler(categorizer = _ => Some("failures"))
+  // Exposed  f t   mple ntat on of `task` need to report fa lures
+  val exnStatsHandler = new Categor z ngExcept onStatsHandler(categor zer = _ => So ("fa lures"))
 
-  protected val statsReceiver: StatsReceiver
-  private val totalTasks = statsReceiver.counter("total")
-  private val successfulTasks = statsReceiver.counter("success")
-  private val taskLatency = statsReceiver.stat("latency_ms")
+  protected val statsRece ver: StatsRece ver
+  pr vate val totalTasks = statsRece ver.counter("total")
+  pr vate val successfulTasks = statsRece ver.counter("success")
+  pr vate val taskLatency = statsRece ver.stat("latency_ms")
 
-  private val activeTasks = new AtomicInteger(0)
+  pr vate val act veTasks = new Atom c nteger(0)
 
   protected[common] val rng: Rng = Rng.threadLocal
-  protected[common] val timer: Timer = DefaultTimer
+  protected[common] val t  r: T  r = DefaultT  r
 
-  @volatile private var taskLoop: Future[Unit] = null
+  @volat le pr vate var taskLoop: Future[Un ] = null
 
-  /** Execute the task wih bookkeeping **/
-  private def run(): Future[Unit] = {
-    totalTasks.incr()
-    activeTasks.getAndIncrement()
+  /** Execute t  task w h bookkeep ng **/
+  pr vate def run(): Future[Un ] = {
+    totalTasks. ncr()
+    act veTasks.getAnd ncre nt()
 
-    val start = Time.now
-    val runningTask =
-      // Setup a new trace root for this task. We also want logs to contain
-      // the same trace information finatra populates for requests.
-      // See com.twitter.finatra.thrift.filters.TraceIdMDCFilter
-      Trace.letTracerAndNextId(DefaultTracer) {
+    val start = T  .now
+    val runn ngTask =
+      // Setup a new trace root for t  task.   also want logs to conta n
+      // t  sa  trace  nformat on f natra populates for requests.
+      // See com.tw ter.f natra.thr ft.f lters.Trace dMDCF lter
+      Trace.letTracerAndNext d(DefaultTracer) {
         val trace = Trace()
-        MDC.put(MDCKeys.TraceId, trace.id.traceId.toString)
-        MDC.put(MDCKeys.TraceSampled, trace.id._sampled.getOrElse(false).toString)
-        MDC.put(MDCKeys.TraceSpanId, trace.id.spanId.toString)
+        MDC.put(MDCKeys.Trace d, trace. d.trace d.toStr ng)
+        MDC.put(MDCKeys.TraceSampled, trace. d._sampled.getOrElse(false).toStr ng)
+        MDC.put(MDCKeys.TraceSpan d, trace. d.span d.toStr ng)
 
-        info(s"starting task ${getClass.toString}")
+         nfo(s"start ng task ${getClass.toStr ng}")
         task()
           .onSuccess({ _ =>
-            info(s"completed task ${getClass.toString}")
-            successfulTasks.incr()
+             nfo(s"completed task ${getClass.toStr ng}")
+            successfulTasks. ncr()
           })
-          .onFailure({ e =>
-            warn(s"failed task. ", e)
-            exnStatsHandler.record(statsReceiver, e)
+          .onFa lure({ e =>
+            warn(s"fa led task. ", e)
+            exnStatsHandler.record(statsRece ver, e)
           })
       }
 
-    runningTask.transform { _ =>
-      val elapsed = Time.now - start
-      activeTasks.getAndDecrement()
-      taskLatency.add(elapsed.inMilliseconds)
+    runn ngTask.transform { _ =>
+      val elapsed = T  .now - start
+      act veTasks.getAndDecre nt()
+      taskLatency.add(elapsed. nM ll seconds)
 
       Future
-        .sleep(taskInterval)(timer)
+        .sleep(task nterval)(t  r)
         .before(run())
     }
   }
 
   // Body of a task to run
-  protected def task(): Future[Unit]
+  protected def task(): Future[Un ]
 
-  // Task interval
-  protected def taskInterval: Duration
+  // Task  nterval
+  protected def task nterval: Durat on
 
   /**
-   * Start the task after random jitter
+   * Start t  task after random j ter
    */
-  final def jitteredStart(): Unit = synchronized {
-    if (taskLoop != null) {
-      throw new RuntimeException(s"task already started")
+  f nal def j teredStart(): Un  = synchron zed {
+     f (taskLoop != null) {
+      throw new Runt  Except on(s"task already started")
     } else {
-      val jitterNs = rng.nextLong(taskInterval.inNanoseconds)
-      val jitter = Duration.fromNanoseconds(jitterNs)
+      val j terNs = rng.nextLong(task nterval. nNanoseconds)
+      val j ter = Durat on.fromNanoseconds(j terNs)
 
       taskLoop = Future
-        .sleep(jitter)(timer)
+        .sleep(j ter)(t  r)
         .before(run())
     }
   }
 
   /**
-   * Start the task without applying any delay
+   * Start t  task w hout apply ng any delay
    */
-  final def startImmediately(): Unit = synchronized {
-    if (taskLoop != null) {
-      throw new RuntimeException(s"task already started")
+  f nal def start m d ately(): Un  = synchron zed {
+     f (taskLoop != null) {
+      throw new Runt  Except on(s"task already started")
     } else {
       taskLoop = run()
     }
   }
 
   /**
-   * Close the task. A closed task cannot be restarted.
+   * Close t  task. A closed task cannot be restarted.
    */
-  override def close(deadline: Time): Future[Unit] = {
-    if (taskLoop != null) {
-      taskLoop.raise(new InterruptedException("task closed"))
+  overr de def close(deadl ne: T  ): Future[Un ] = {
+     f (taskLoop != null) {
+      taskLoop.ra se(new  nterruptedExcept on("task closed"))
     }
     Future.Done
   }

@@ -1,292 +1,292 @@
-package com.twitter.frigate.pushservice.predicate
+package com.tw ter.fr gate.pushserv ce.pred cate
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.TargetUser
-import com.twitter.frigate.common.candidate.FrigateHistory
-import com.twitter.frigate.common.candidate.HTLVisitHistory
-import com.twitter.frigate.common.candidate.TargetABDecider
-import com.twitter.frigate.common.candidate.UserDetails
-import com.twitter.frigate.common.predicate.TargetUserPredicates
-import com.twitter.frigate.common.predicate.{FatiguePredicate => CommonFatiguePredicate}
-import com.twitter.frigate.common.store.deviceinfo.MobileClientType
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.target.TargetScoringDetails
-import com.twitter.frigate.pushservice.util.PushCapUtil
-import com.twitter.frigate.thriftscala.NotificationDisplayLocation
-import com.twitter.frigate.thriftscala.{CommonRecommendationType => CRT}
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
-import com.twitter.util.Future
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.TargetUser
+ mport com.tw ter.fr gate.common.cand date.Fr gate tory
+ mport com.tw ter.fr gate.common.cand date.HTLV s  tory
+ mport com.tw ter.fr gate.common.cand date.TargetABDec der
+ mport com.tw ter.fr gate.common.cand date.UserDeta ls
+ mport com.tw ter.fr gate.common.pred cate.TargetUserPred cates
+ mport com.tw ter.fr gate.common.pred cate.{Fat guePred cate => CommonFat guePred cate}
+ mport com.tw ter.fr gate.common.store.dev ce nfo.Mob leCl entType
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.target.TargetScor ngDeta ls
+ mport com.tw ter.fr gate.pushserv ce.ut l.PushCapUt l
+ mport com.tw ter.fr gate.thr ftscala.Not f cat onD splayLocat on
+ mport com.tw ter.fr gate.thr ftscala.{CommonRecom ndat onType => CRT}
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
 
-object TargetPredicates {
+object TargetPred cates {
 
-  def paramPredicate[T <: Target](
+  def paramPred cate[T <: Target](
     param: Param[Boolean]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[T] = {
-    val name = param.getClass.getSimpleName.stripSuffix("$")
-    Predicate
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[T] = {
+    val na  = param.getClass.getS mpleNa .str pSuff x("$")
+    Pred cate
       .from { target: T => target.params(param) }
-      .withStats(statsReceiver.scope(s"param_${name}_controlled_predicate"))
-      .withName(s"param_${name}_controlled_predicate")
+      .w hStats(statsRece ver.scope(s"param_${na }_controlled_pred cate"))
+      .w hNa (s"param_${na }_controlled_pred cate")
   }
 
   /**
-   * Use the predicate except fn is true., Same as the candidate version but for Target
+   * Use t  pred cate except fn  s true., Sa  as t  cand date vers on but for Target
    */
-  def exceptedPredicate[T <: TargetUser](
-    name: String,
+  def exceptedPred cate[T <: TargetUser](
+    na : Str ng,
     fn: T => Future[Boolean],
-    predicate: Predicate[T]
+    pred cate: Pred cate[T]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[T] = {
-    Predicate
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[T] = {
+    Pred cate
       .fromAsync { e: T => fn(e) }
-      .or(predicate)
-      .withStats(statsReceiver.scope(name))
-      .withName(name)
+      .or(pred cate)
+      .w hStats(statsRece ver.scope(na ))
+      .w hNa (na )
   }
 
   /**
-   * Refresh For push handler target user predicate to fatigue on visiting Home timeline
+   * Refresh For push handler target user pred cate to fat gue on v s  ng Ho  t  l ne
    */
-  def targetHTLVisitPredicate[
-    T <: TargetUser with UserDetails with TargetABDecider with HTLVisitHistory
+  def targetHTLV s Pred cate[
+    T <: TargetUser w h UserDeta ls w h TargetABDec der w h HTLV s  tory
   ](
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[T] = {
-    val name = "target_htl_visit_predicate"
-    Predicate
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[T] = {
+    val na  = "target_htl_v s _pred cate"
+    Pred cate
       .fromAsync { target: T =>
-        val hoursToFatigue = target.params(PushFeatureSwitchParams.HTLVisitFatigueTime)
-        TargetUserPredicates
-          .homeTimelineFatigue(hoursToFatigue.hours)
+        val h sToFat gue = target.params(PushFeatureSw chParams.HTLV s Fat gueT  )
+        TargetUserPred cates
+          .ho T  l neFat gue(h sToFat gue.h s)
           .apply(Seq(target))
-          .map(_.head)
+          .map(_. ad)
       }
-      .withStats(statsReceiver.scope(name))
-      .withName(name)
+      .w hStats(statsRece ver.scope(na ))
+      .w hNa (na )
   }
 
-  def targetPushBitEnabledPredicate[T <: Target](
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[T] = {
-    val name = "push_bit_enabled"
-    val scopedStats = statsReceiver.scope(s"targetpredicate_$name")
+  def targetPushB EnabledPred cate[T <: Target](
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[T] = {
+    val na  = "push_b _enabled"
+    val scopedStats = statsRece ver.scope(s"targetpred cate_$na ")
 
-    Predicate
+    Pred cate
       .fromAsync { target: T =>
-        target.deviceInfo
-          .map { info =>
-            info.exists { deviceInfo =>
-              deviceInfo.isRecommendationsEligible ||
-              deviceInfo.isNewsEligible ||
-              deviceInfo.isTopicsEligible ||
-              deviceInfo.isSpacesEligible
+        target.dev ce nfo
+          .map {  nfo =>
+             nfo.ex sts { dev ce nfo =>
+              dev ce nfo. sRecom ndat onsEl g ble ||
+              dev ce nfo. sNewsEl g ble ||
+              dev ce nfo. sTop csEl g ble ||
+              dev ce nfo. sSpacesEl g ble
             }
           }
-      }.withStats(scopedStats)
-      .withName(name)
+      }.w hStats(scopedStats)
+      .w hNa (na )
   }
 
-  def targetFatiguePredicate[T <: Target](
+  def targetFat guePred cate[T <: Target](
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[T] = {
-    val name = "target_fatigue_predicate"
-    val predicateStatScope = statsReceiver.scope(name)
-    Predicate
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[T] = {
+    val na  = "target_fat gue_pred cate"
+    val pred cateStatScope = statsRece ver.scope(na )
+    Pred cate
       .fromAsync { target: T =>
-        PushCapUtil
-          .getPushCapFatigue(target, predicateStatScope)
-          .flatMap { pushCapInfo =>
-            CommonFatiguePredicate
-              .magicRecsPushTargetFatiguePredicate(
-                interval = pushCapInfo.fatigueInterval,
-                maxInInterval = pushCapInfo.pushcap
+        PushCapUt l
+          .getPushCapFat gue(target, pred cateStatScope)
+          .flatMap { pushCap nfo =>
+            CommonFat guePred cate
+              .mag cRecsPushTargetFat guePred cate(
+                 nterval = pushCap nfo.fat gue nterval,
+                max n nterval = pushCap nfo.pushcap
               )
               .apply(Seq(target))
-              .map(_.headOption.getOrElse(false))
+              .map(_. adOpt on.getOrElse(false))
           }
       }
-      .withStats(predicateStatScope)
-      .withName(name)
+      .w hStats(pred cateStatScope)
+      .w hNa (na )
   }
 
-  def teamExceptedPredicate[T <: TargetUser](
-    predicate: NamedPredicate[T]
+  def teamExceptedPred cate[T <: TargetUser](
+    pred cate: Na dPred cate[T]
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[T] = {
-    Predicate
-      .fromAsync { t: T => t.isTeamMember }
-      .or(predicate)
-      .withStats(stats.scope(predicate.name))
-      .withName(predicate.name)
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[T] = {
+    Pred cate
+      .fromAsync { t: T => t. sTeam mber }
+      .or(pred cate)
+      .w hStats(stats.scope(pred cate.na ))
+      .w hNa (pred cate.na )
   }
 
-  def targetValidMobileSDKPredicate[T <: Target](
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[T] = {
-    val name = "valid_mobile_sdk"
-    val scopedStats = statsReceiver.scope(s"targetpredicate_$name")
+  def targetVal dMob leSDKPred cate[T <: Target](
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[T] = {
+    val na  = "val d_mob le_sdk"
+    val scopedStats = statsRece ver.scope(s"targetpred cate_$na ")
 
-    Predicate
+    Pred cate
       .fromAsync { target: T =>
-        TargetUserPredicates.validMobileSDKPredicate
-          .apply(Seq(target)).map(_.headOption.getOrElse(false))
-      }.withStats(scopedStats)
-      .withName(name)
+        TargetUserPred cates.val dMob leSDKPred cate
+          .apply(Seq(target)).map(_. adOpt on.getOrElse(false))
+      }.w hStats(scopedStats)
+      .w hNa (na )
   }
 
-  def magicRecsMinDurationSinceSent[T <: Target](
+  def mag cRecsM nDurat onS nceSent[T <: Target](
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[T] = {
-    val name = "target_min_duration_since_push"
-    Predicate
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[T] = {
+    val na  = "target_m n_durat on_s nce_push"
+    Pred cate
       .fromAsync { target: T =>
-        PushCapUtil.getMinDurationSincePush(target, statsReceiver).flatMap { minDurationSincePush =>
-          CommonFatiguePredicate
-            .magicRecsMinDurationSincePush(interval = minDurationSincePush)
-            .apply(Seq(target)).map(_.head)
+        PushCapUt l.getM nDurat onS ncePush(target, statsRece ver).flatMap { m nDurat onS ncePush =>
+          CommonFat guePred cate
+            .mag cRecsM nDurat onS ncePush( nterval = m nDurat onS ncePush)
+            .apply(Seq(target)).map(_. ad)
         }
       }
-      .withStats(statsReceiver.scope(name))
-      .withName(name)
+      .w hStats(statsRece ver.scope(na ))
+      .w hNa (na )
   }
 
-  def optoutProbPredicate[
-    T <: TargetUser with TargetABDecider with TargetScoringDetails with FrigateHistory
+  def optoutProbPred cate[
+    T <: TargetUser w h TargetABDec der w h TargetScor ngDeta ls w h Fr gate tory
   ](
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[T] = {
-    val name = "target_has_high_optout_probability"
-    Predicate
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[T] = {
+    val na  = "target_has_h gh_optout_probab l y"
+    Pred cate
       .fromAsync { target: T =>
-        val isNewUser = target.is30DayNewUserFromSnowflakeIdTime
-        if (isNewUser) {
-          statsReceiver.scope(name).counter("all_new_users").incr()
+        val  sNewUser = target. s30DayNewUserFromSnowflake dT  
+         f ( sNewUser) {
+          statsRece ver.scope(na ).counter("all_new_users"). ncr()
         }
-        target.bucketOptoutProbability
+        target.bucketOptoutProbab l y
           .flatMap {
-            case Some(optoutProb) =>
-              if (optoutProb >= target.params(PushFeatureSwitchParams.BucketOptoutThresholdParam)) {
-                CommonFatiguePredicate
-                  .magicRecsPushTargetFatiguePredicate(
-                    interval = 24.hours,
-                    maxInInterval = target.params(PushFeatureSwitchParams.OptoutExptPushCapParam)
+            case So (optoutProb) =>
+               f (optoutProb >= target.params(PushFeatureSw chParams.BucketOptoutThresholdParam)) {
+                CommonFat guePred cate
+                  .mag cRecsPushTargetFat guePred cate(
+                     nterval = 24.h s,
+                    max n nterval = target.params(PushFeatureSw chParams.OptoutExptPushCapParam)
                   )
                   .apply(Seq(target))
                   .map { values =>
-                    val isValid = values.headOption.getOrElse(false)
-                    if (!isValid && isNewUser) {
-                      statsReceiver.scope(name).counter("filtered_new_users").incr()
+                    val  sVal d = values. adOpt on.getOrElse(false)
+                     f (! sVal d &&  sNewUser) {
+                      statsRece ver.scope(na ).counter("f ltered_new_users"). ncr()
                     }
-                    isValid
+                     sVal d
                   }
               } else Future.True
             case _ => Future.True
           }
       }
-      .withStats(statsReceiver.scope(name))
-      .withName(name)
+      .w hStats(statsRece ver.scope(na ))
+      .w hNa (na )
   }
 
   /**
-   * Predicate used to specify CRT fatigue given interval and max number of candidates within interval.
-   * @param crt                   The specific CRT that this predicate is being applied to
-   * @param intervalParam         The fatigue interval
-   * @param maxInIntervalParam    The max number of the given CRT's candidates that are acceptable
-   *                              in the interval
-   * @param stats                 StatsReceiver
-   * @return                      Target Predicate
+   * Pred cate used to spec fy CRT fat gue g ven  nterval and max number of cand dates w h n  nterval.
+   * @param crt                   T  spec f c CRT that t  pred cate  s be ng appl ed to
+   * @param  ntervalParam         T  fat gue  nterval
+   * @param max n ntervalParam    T  max number of t  g ven CRT's cand dates that are acceptable
+   *                               n t   nterval
+   * @param stats                 StatsRece ver
+   * @return                      Target Pred cate
    */
-  def pushRecTypeFatiguePredicate(
+  def pushRecTypeFat guePred cate(
     crt: CRT,
-    intervalParam: Param[Duration],
-    maxInIntervalParam: FSBoundedParam[Int],
-    stats: StatsReceiver
-  ): Predicate[Target] =
-    Predicate.fromAsync { target: Target =>
-      val interval = target.params(intervalParam)
-      val maxIninterval = target.params(maxInIntervalParam)
-      CommonFatiguePredicate
-        .recTypeTargetFatiguePredicate(
-          interval = interval,
-          maxInInterval = maxIninterval,
-          recommendationType = crt,
-          notificationDisplayLocation = NotificationDisplayLocation.PushToMobileDevice,
-          minInterval = 30.minutes
-        )(stats.scope(s"${crt}_push_candidate_fatigue")).apply(Seq(target)).map(_.head)
+     ntervalParam: Param[Durat on],
+    max n ntervalParam: FSBoundedParam[ nt],
+    stats: StatsRece ver
+  ): Pred cate[Target] =
+    Pred cate.fromAsync { target: Target =>
+      val  nterval = target.params( ntervalParam)
+      val max n nterval = target.params(max n ntervalParam)
+      CommonFat guePred cate
+        .recTypeTargetFat guePred cate(
+           nterval =  nterval,
+          max n nterval = max n nterval,
+          recom ndat onType = crt,
+          not f cat onD splayLocat on = Not f cat onD splayLocat on.PushToMob leDev ce,
+          m n nterval = 30.m nutes
+        )(stats.scope(s"${crt}_push_cand date_fat gue")).apply(Seq(target)).map(_. ad)
     }
 
-  def inlineActionFatiguePredicate(
+  def  nl neAct onFat guePred cate(
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[Target] = {
-    val name = "inline_action_fatigue"
-    val predicateRequests = statsReceiver.scope(name).counter("requests")
-    val targetIsInExpt = statsReceiver.scope(name).counter("target_in_expt")
-    val predicateEnabled = statsReceiver.scope(name).counter("enabled")
-    val predicateDisabled = statsReceiver.scope(name).counter("disabled")
-    val inlineFatigueDisabled = statsReceiver.scope(name).counter("inline_fatigue_disabled")
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[Target] = {
+    val na  = " nl ne_act on_fat gue"
+    val pred cateRequests = statsRece ver.scope(na ).counter("requests")
+    val target s nExpt = statsRece ver.scope(na ).counter("target_ n_expt")
+    val pred cateEnabled = statsRece ver.scope(na ).counter("enabled")
+    val pred cateD sabled = statsRece ver.scope(na ).counter("d sabled")
+    val  nl neFat gueD sabled = statsRece ver.scope(na ).counter(" nl ne_fat gue_d sabled")
 
-    Predicate
+    Pred cate
       .fromAsync { target: Target =>
-        predicateRequests.incr()
-        if (target.params(PushFeatureSwitchParams.TargetInInlineActionAppVisitFatigue)) {
-          targetIsInExpt.incr()
-          target.inlineActionHistory.map { inlineHistory =>
-            if (inlineHistory.nonEmpty && target.params(
-                PushFeatureSwitchParams.EnableInlineActionAppVisitFatigue)) {
-              predicateEnabled.incr()
-              val inlineFatigue = target.params(PushFeatureSwitchParams.InlineActionAppVisitFatigue)
-              val lookbackInMs = inlineFatigue.ago.inMilliseconds
-              val filteredHistory = inlineHistory.filter {
-                case (time, _) => time > lookbackInMs
+        pred cateRequests. ncr()
+         f (target.params(PushFeatureSw chParams.Target n nl neAct onAppV s Fat gue)) {
+          target s nExpt. ncr()
+          target. nl neAct on tory.map {  nl ne tory =>
+             f ( nl ne tory.nonEmpty && target.params(
+                PushFeatureSw chParams.Enable nl neAct onAppV s Fat gue)) {
+              pred cateEnabled. ncr()
+              val  nl neFat gue = target.params(PushFeatureSw chParams. nl neAct onAppV s Fat gue)
+              val lookback nMs =  nl neFat gue.ago. nM ll seconds
+              val f ltered tory =  nl ne tory.f lter {
+                case (t  , _) => t   > lookback nMs
               }
-              filteredHistory.isEmpty
+              f ltered tory. sEmpty
             } else {
-              inlineFatigueDisabled.incr()
+               nl neFat gueD sabled. ncr()
               true
             }
           }
         } else {
-          predicateDisabled.incr()
+          pred cateD sabled. ncr()
           Future.True
         }
       }
-      .withStats(statsReceiver.scope(name))
-      .withName(name)
+      .w hStats(statsRece ver.scope(na ))
+      .w hNa (na )
   }
 
-  def webNotifsHoldback[T <: TargetUser with UserDetails with TargetABDecider](
+  def  bNot fsHoldback[T <: TargetUser w h UserDeta ls w h TargetABDec der](
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[T] = {
-    val name = "mr_web_notifs_holdback"
-    Predicate
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[T] = {
+    val na  = "mr_ b_not fs_holdback"
+    Pred cate
       .fromAsync { targetUserContext: T =>
-        targetUserContext.deviceInfo.map { deviceInfoOpt =>
-          val isPrimaryWeb = deviceInfoOpt.exists {
-            _.guessedPrimaryClient.exists { clientType =>
-              clientType == MobileClientType.Web
+        targetUserContext.dev ce nfo.map { dev ce nfoOpt =>
+          val  sPr mary b = dev ce nfoOpt.ex sts {
+            _.guessedPr maryCl ent.ex sts { cl entType =>
+              cl entType == Mob leCl entType. b
             }
           }
-          !(isPrimaryWeb && targetUserContext.params(PushFeatureSwitchParams.MRWebHoldbackParam))
+          !( sPr mary b && targetUserContext.params(PushFeatureSw chParams.MR bHoldbackParam))
         }
       }
-      .withStats(stats.scope(s"predicate_$name"))
-      .withName(name)
+      .w hStats(stats.scope(s"pred cate_$na "))
+      .w hNa (na )
   }
 }

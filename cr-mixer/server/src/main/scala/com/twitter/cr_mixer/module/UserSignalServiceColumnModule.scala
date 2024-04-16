@@ -1,30 +1,30 @@
-package com.twitter.cr_mixer.module
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.usersignalservice.thriftscala.BatchSignalRequest
-import com.twitter.usersignalservice.thriftscala.BatchSignalResponse
-import javax.inject.Named
+package com.tw ter.cr_m xer.module
+ mport com.google. nject.Prov des
+ mport com.google. nject.S ngleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.fr gate.common.store.strato.StratoFetchableStore
+ mport com.tw ter. rm .store.common.ObservedReadableStore
+ mport com.tw ter.users gnalserv ce.thr ftscala.BatchS gnalRequest
+ mport com.tw ter.users gnalserv ce.thr ftscala.BatchS gnalResponse
+ mport javax. nject.Na d
 
-object UserSignalServiceColumnModule extends TwitterModule {
-  private val UssColumnPath = "recommendations/user-signal-service/signals"
+object UserS gnalServ ceColumnModule extends Tw terModule {
+  pr vate val UssColumnPath = "recom ndat ons/user-s gnal-serv ce/s gnals"
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.UssStratoColumn)
-  def providesUserSignalServiceStore(
-    statsReceiver: StatsReceiver,
-    stratoClient: StratoClient,
-  ): ReadableStore[BatchSignalRequest, BatchSignalResponse] = {
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.UssStratoColumn)
+  def prov desUserS gnalServ ceStore(
+    statsRece ver: StatsRece ver,
+    stratoCl ent: StratoCl ent,
+  ): ReadableStore[BatchS gnalRequest, BatchS gnalResponse] = {
     ObservedReadableStore(
       StratoFetchableStore
-        .withUnitView[BatchSignalRequest, BatchSignalResponse](stratoClient, UssColumnPath))(
-      statsReceiver.scope("user_signal_service_store"))
+        .w hUn V ew[BatchS gnalRequest, BatchS gnalResponse](stratoCl ent, UssColumnPath))(
+      statsRece ver.scope("user_s gnal_serv ce_store"))
   }
 }

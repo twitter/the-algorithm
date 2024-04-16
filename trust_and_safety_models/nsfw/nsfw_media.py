@@ -1,466 +1,466 @@
-import kerastuner as kt
-import math
-import numpy as np
-import pandas as pd
-import random
-import sklearn.metrics
-import tensorflow as tf
-import os
-import glob
+ mport kerastuner as kt
+ mport math
+ mport numpy as np
+ mport pandas as pd
+ mport random
+ mport sklearn. tr cs
+ mport tensorflow as tf
+ mport os
+ mport glob
 
-from tqdm import tqdm
-from matplotlib import pyplot as plt
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from google.cloud import storage
+from tqdm  mport tqdm
+from matplotl b  mport pyplot as plt
+from tensorflow.keras.models  mport Sequent al
+from tensorflow.keras.layers  mport Dense
+from google.cloud  mport storage
 
-physical_devices = tf.config.list_physical_devices('GPU')
-physical_devices
+phys cal_dev ces = tf.conf g.l st_phys cal_dev ces('GPU')
+phys cal_dev ces
 
-tf.config.set_visible_devices([tf.config.PhysicalDevice(name='/physical_device:GPU:1', device_type='GPU')], 'GPU')
-tf.config.get_visible_devices('GPU')
+tf.conf g.set_v s ble_dev ces([tf.conf g.Phys calDev ce(na ='/phys cal_dev ce:GPU:1', dev ce_type='GPU')], 'GPU')
+tf.conf g.get_v s ble_dev ces('GPU')
 
-def decode_fn_embedding(example_proto):
+def decode_fn_embedd ng(example_proto):
   
-  feature_description = {
-    "embedding": tf.io.FixedLenFeature([256], dtype=tf.float32),
-    "labels": tf.io.FixedLenFeature([], dtype=tf.int64),
+  feature_descr pt on = {
+    "embedd ng": tf. o.F xedLenFeature([256], dtype=tf.float32),
+    "labels": tf. o.F xedLenFeature([], dtype=tf. nt64),
   }
   
-  example = tf.io.parse_single_example(
+  example = tf. o.parse_s ngle_example(
       example_proto,
-      feature_description
+      feature_descr pt on
   )
 
   return example
 
-def preprocess_embedding_example(example_dict, positive_label=1, features_as_dict=False):
-  labels = example_dict["labels"]
-  label = tf.math.reduce_any(labels == positive_label)
-  label = tf.cast(label, tf.int32)
-  embedding = example_dict["embedding"]
+def preprocess_embedd ng_example(example_d ct, pos  ve_label=1, features_as_d ct=False):
+  labels = example_d ct["labels"]
+  label = tf.math.reduce_any(labels == pos  ve_label)
+  label = tf.cast(label, tf. nt32)
+  embedd ng = example_d ct["embedd ng"]
   
-  if features_as_dict:
-    features = {"embedding": embedding}
+   f features_as_d ct:
+    features = {"embedd ng": embedd ng}
   else:
-    features = embedding
+    features = embedd ng
     
   return features, label
-input_root = ...
-sens_prev_input_root = ...
+ nput_root = ...
+sens_prev_ nput_root = ...
 
 use_sens_prev_data = True
-has_validation_data = True
-positive_label = 1
+has_val dat on_data = True
+pos  ve_label = 1
 
-train_batch_size = 256
-test_batch_size = 256
-validation_batch_size = 256
+tra n_batch_s ze = 256
+test_batch_s ze = 256
+val dat on_batch_s ze = 256
 
 do_resample = False
 def class_func(features, label):
   return label
 
-resample_fn = tf.data.experimental.rejection_resample(
-    class_func, target_dist = [0.5, 0.5], seed=0
+resample_fn = tf.data.exper  ntal.reject on_resample(
+    class_func, target_d st = [0.5, 0.5], seed=0
 )
-train_glob = f"{input_root}/train/tfrecord/*.tfrecord"
-train_files = tf.io.gfile.glob(train_glob)
+tra n_glob = f"{ nput_root}/tra n/tfrecord/*.tfrecord"
+tra n_f les = tf. o.gf le.glob(tra n_glob)
 
-if use_sens_prev_data:
-  train_sens_prev_glob = f"{sens_prev_input_root}/train/tfrecord/*.tfrecord"
-  train_sens_prev_files = tf.io.gfile.glob(train_sens_prev_glob)
-  train_files = train_files + train_sens_prev_files
+ f use_sens_prev_data:
+  tra n_sens_prev_glob = f"{sens_prev_ nput_root}/tra n/tfrecord/*.tfrecord"
+  tra n_sens_prev_f les = tf. o.gf le.glob(tra n_sens_prev_glob)
+  tra n_f les = tra n_f les + tra n_sens_prev_f les
   
-random.shuffle(train_files)
+random.shuffle(tra n_f les)
 
-if not len(train_files):
-  raise ValueError(f"Did not find any train files matching {train_glob}")
+ f not len(tra n_f les):
+  ra se ValueError(f"D d not f nd any tra n f les match ng {tra n_glob}")
 
 
-test_glob = f"{input_root}/test/tfrecord/*.tfrecord"
-test_files =  tf.io.gfile.glob(test_glob)
+test_glob = f"{ nput_root}/test/tfrecord/*.tfrecord"
+test_f les =  tf. o.gf le.glob(test_glob)
 
-if not len(test_files):
-  raise ValueError(f"Did not find any eval files matching {test_glob}")
+ f not len(test_f les):
+  ra se ValueError(f"D d not f nd any eval f les match ng {test_glob}")
   
-test_ds = tf.data.TFRecordDataset(test_files).map(decode_fn_embedding)
-test_ds = test_ds.map(lambda x: preprocess_embedding_example(x, positive_label=positive_label)).batch(batch_size=test_batch_size)
+test_ds = tf.data.TFRecordDataset(test_f les).map(decode_fn_embedd ng)
+test_ds = test_ds.map(lambda x: preprocess_embedd ng_example(x, pos  ve_label=pos  ve_label)).batch(batch_s ze=test_batch_s ze)
   
-if use_sens_prev_data:
-  test_sens_prev_glob = f"{sens_prev_input_root}/test/tfrecord/*.tfrecord"
-  test_sens_prev_files =  tf.io.gfile.glob(test_sens_prev_glob)
+ f use_sens_prev_data:
+  test_sens_prev_glob = f"{sens_prev_ nput_root}/test/tfrecord/*.tfrecord"
+  test_sens_prev_f les =  tf. o.gf le.glob(test_sens_prev_glob)
   
-  if not len(test_sens_prev_files):
-    raise ValueError(f"Did not find any eval files matching {test_sens_prev_glob}")
+   f not len(test_sens_prev_f les):
+    ra se ValueError(f"D d not f nd any eval f les match ng {test_sens_prev_glob}")
   
-  test_sens_prev_ds = tf.data.TFRecordDataset(test_sens_prev_files).map(decode_fn_embedding)
-  test_sens_prev_ds = test_sens_prev_ds.map(lambda x: preprocess_embedding_example(x, positive_label=positive_label)).batch(batch_size=test_batch_size)
+  test_sens_prev_ds = tf.data.TFRecordDataset(test_sens_prev_f les).map(decode_fn_embedd ng)
+  test_sens_prev_ds = test_sens_prev_ds.map(lambda x: preprocess_embedd ng_example(x, pos  ve_label=pos  ve_label)).batch(batch_s ze=test_batch_s ze)
 
-train_ds = tf.data.TFRecordDataset(train_files).map(decode_fn_embedding)
-train_ds = train_ds.map(lambda x: preprocess_embedding_example(x, positive_label=positive_label))
+tra n_ds = tf.data.TFRecordDataset(tra n_f les).map(decode_fn_embedd ng)
+tra n_ds = tra n_ds.map(lambda x: preprocess_embedd ng_example(x, pos  ve_label=pos  ve_label))
 
-if do_resample:
-  train_ds = train_ds.apply(resample_fn).map(lambda _,b:(b))
+ f do_resample:
+  tra n_ds = tra n_ds.apply(resample_fn).map(lambda _,b:(b))
 
-train_ds = train_ds.batch(batch_size=256).shuffle(buffer_size=10)
-train_ds = train_ds.repeat()
+tra n_ds = tra n_ds.batch(batch_s ze=256).shuffle(buffer_s ze=10)
+tra n_ds = tra n_ds.repeat()
   
 
-if has_validation_data: 
-  eval_glob = f"{input_root}/validation/tfrecord/*.tfrecord"
-  eval_files =  tf.io.gfile.glob(eval_glob)
+ f has_val dat on_data: 
+  eval_glob = f"{ nput_root}/val dat on/tfrecord/*.tfrecord"
+  eval_f les =  tf. o.gf le.glob(eval_glob)
     
-  if use_sens_prev_data:
-    eval_sens_prev_glob = f"{sens_prev_input_root}/validation/tfrecord/*.tfrecord"
-    eval_sens_prev_files = tf.io.gfile.glob(eval_sens_prev_glob)
-    eval_files =  eval_files + eval_sens_prev_files
+   f use_sens_prev_data:
+    eval_sens_prev_glob = f"{sens_prev_ nput_root}/val dat on/tfrecord/*.tfrecord"
+    eval_sens_prev_f les = tf. o.gf le.glob(eval_sens_prev_glob)
+    eval_f les =  eval_f les + eval_sens_prev_f les
     
     
-  if not len(eval_files):
-    raise ValueError(f"Did not find any eval files matching {eval_glob}")
+   f not len(eval_f les):
+    ra se ValueError(f"D d not f nd any eval f les match ng {eval_glob}")
   
-  eval_ds = tf.data.TFRecordDataset(eval_files).map(decode_fn_embedding)
-  eval_ds = eval_ds.map(lambda x: preprocess_embedding_example(x, positive_label=positive_label)).batch(batch_size=validation_batch_size)
+  eval_ds = tf.data.TFRecordDataset(eval_f les).map(decode_fn_embedd ng)
+  eval_ds = eval_ds.map(lambda x: preprocess_embedd ng_example(x, pos  ve_label=pos  ve_label)).batch(batch_s ze=val dat on_batch_s ze)
 
 else:
   
-  eval_ds = tf.data.TFRecordDataset(test_files).map(decode_fn_embedding)
-  eval_ds = eval_ds.map(lambda x: preprocess_embedding_example(x, positive_label=positive_label)).batch(batch_size=validation_batch_size)
-check_ds = tf.data.TFRecordDataset(train_files).map(decode_fn_embedding)
+  eval_ds = tf.data.TFRecordDataset(test_f les).map(decode_fn_embedd ng)
+  eval_ds = eval_ds.map(lambda x: preprocess_embedd ng_example(x, pos  ve_label=pos  ve_label)).batch(batch_s ze=val dat on_batch_s ze)
+c ck_ds = tf.data.TFRecordDataset(tra n_f les).map(decode_fn_embedd ng)
 cnt = 0
 pos_cnt = 0
-for example in tqdm(check_ds):
+for example  n tqdm(c ck_ds):
   label = example['labels']
-  if label == 1:
+   f label == 1:
     pos_cnt += 1
   cnt += 1
-print(f'{cnt} train entries with {pos_cnt} positive')
+pr nt(f'{cnt} tra n entr es w h {pos_cnt} pos  ve')
 
-metrics = []
+ tr cs = []
 
-metrics.append(
-  tf.keras.metrics.PrecisionAtRecall(
-    recall=0.9, num_thresholds=200, class_id=None, name=None, dtype=None
+ tr cs.append(
+  tf.keras. tr cs.Prec s onAtRecall(
+    recall=0.9, num_thresholds=200, class_ d=None, na =None, dtype=None
   )
 )
 
-metrics.append(
-  tf.keras.metrics.AUC(
+ tr cs.append(
+  tf.keras. tr cs.AUC(
     num_thresholds=200,
     curve="PR",
   )
 )
-def build_model(hp):
-  model = Sequential()
+def bu ld_model(hp):
+  model = Sequent al()
 
-  optimizer = tf.keras.optimizers.Adam(
-    learning_rate=0.001,
+  opt m zer = tf.keras.opt m zers.Adam(
+    learn ng_rate=0.001,
     beta_1=0.9,
     beta_2=0.999,
-    epsilon=1e-08,
+    eps lon=1e-08,
     amsgrad=False,
-    name="Adam",
+    na ="Adam",
   )
   
-  activation=hp.Choice("activation", ["tanh", "gelu"])
-  kernel_initializer=hp.Choice("kernel_initializer", ["he_uniform", "glorot_uniform"])
-  for i in range(hp.Int("num_layers", 1, 2)):
-    model.add(tf.keras.layers.BatchNormalization())
+  act vat on=hp.Cho ce("act vat on", ["tanh", "gelu"])
+  kernel_ n  al zer=hp.Cho ce("kernel_ n  al zer", [" _un form", "glorot_un form"])
+  for    n range(hp. nt("num_layers", 1, 2)):
+    model.add(tf.keras.layers.BatchNormal zat on())
 
-    units=hp.Int("units", min_value=128, max_value=256, step=128)
+    un s=hp. nt("un s", m n_value=128, max_value=256, step=128)
     
-    if i == 0:
+     f   == 0:
       model.add(
         Dense(
-          units=units,
-          activation=activation,
-          kernel_initializer=kernel_initializer,
-          input_shape=(None, 256)
+          un s=un s,
+          act vat on=act vat on,
+          kernel_ n  al zer=kernel_ n  al zer,
+           nput_shape=(None, 256)
         )
       )
     else:
       model.add(
         Dense(
-          units=units,
-          activation=activation,
-          kernel_initializer=kernel_initializer,
+          un s=un s,
+          act vat on=act vat on,
+          kernel_ n  al zer=kernel_ n  al zer,
         )
       )
     
-  model.add(Dense(1, activation='sigmoid', kernel_initializer=kernel_initializer))
-  model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=metrics)
+  model.add(Dense(1, act vat on='s gmo d', kernel_ n  al zer=kernel_ n  al zer))
+  model.comp le(opt m zer=opt m zer, loss='b nary_crossentropy',  tr cs= tr cs)
 
   return model
 
-tuner = kt.tuners.BayesianOptimization(
-  build_model,
-  objective=kt.Objective('val_loss', direction="min"),
-  max_trials=30,
-  directory='tuner_dir',
-  project_name='with_twitter_clip')
+tuner = kt.tuners.Bayes anOpt m zat on(
+  bu ld_model,
+  object ve=kt.Object ve('val_loss', d rect on="m n"),
+  max_tr als=30,
+  d rectory='tuner_d r',
+  project_na ='w h_tw ter_cl p')
 
-callbacks = [tf.keras.callbacks.EarlyStopping(
-    monitor='val_loss', min_delta=0, patience=5, verbose=0,
-    mode='auto', baseline=None, restore_best_weights=True
+callbacks = [tf.keras.callbacks.EarlyStopp ng(
+    mon or='val_loss', m n_delta=0, pat ence=5, verbose=0,
+    mode='auto', basel ne=None, restore_best_  ghts=True
 )]
 
 steps_per_epoch = 400
-tuner.search(train_ds,
+tuner.search(tra n_ds,
              epochs=100,
-             batch_size=256,
+             batch_s ze=256,
              steps_per_epoch=steps_per_epoch,
              verbose=2,
-             validation_data=eval_ds,
+             val dat on_data=eval_ds,
              callbacks=callbacks)
 
 tuner.results_summary()
 models = tuner.get_best_models(num_models=2)
 best_model = models[0]
 
-best_model.build(input_shape=(None, 256))
+best_model.bu ld( nput_shape=(None, 256))
 best_model.summary()
 
-tuner.get_best_hyperparameters()[0].values
+tuner.get_best_hyperpara ters()[0].values
 
-optimizer = tf.keras.optimizers.Adam(
-    learning_rate=0.001,
+opt m zer = tf.keras.opt m zers.Adam(
+    learn ng_rate=0.001,
     beta_1=0.9,
     beta_2=0.999,
-    epsilon=1e-08,
+    eps lon=1e-08,
     amsgrad=False,
-    name="Adam",
+    na ="Adam",
   )
-best_model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=metrics)
+best_model.comp le(opt m zer=opt m zer, loss='b nary_crossentropy',  tr cs= tr cs)
 best_model.summary()
 
-callbacks = [tf.keras.callbacks.EarlyStopping(
-    monitor='val_loss', min_delta=0, patience=10, verbose=0,
-    mode='auto', baseline=None, restore_best_weights=True
+callbacks = [tf.keras.callbacks.EarlyStopp ng(
+    mon or='val_loss', m n_delta=0, pat ence=10, verbose=0,
+    mode='auto', basel ne=None, restore_best_  ghts=True
 )]
-history = best_model.fit(train_ds, epochs=100, validation_data=eval_ds, steps_per_epoch=steps_per_epoch, callbacks=callbacks)
+ tory = best_model.f (tra n_ds, epochs=100, val dat on_data=eval_ds, steps_per_epoch=steps_per_epoch, callbacks=callbacks)
 
-model_name = 'twitter_hypertuned'
-model_path = f'models/nsfw_Keras_with_CLIP_{model_name}'
+model_na  = 'tw ter_hypertuned'
+model_path = f'models/nsfw_Keras_w h_CL P_{model_na }'
 tf.keras.models.save_model(best_model, model_path)
 
-def copy_local_directory_to_gcs(local_path, bucket, gcs_path):
-    """Recursively copy a directory of files to GCS.
+def copy_local_d rectory_to_gcs(local_path, bucket, gcs_path):
+    """Recurs vely copy a d rectory of f les to GCS.
 
-    local_path should be a directory and not have a trailing slash.
+    local_path should be a d rectory and not have a tra l ng slash.
     """
-    assert os.path.isdir(local_path)
-    for local_file in glob.glob(local_path + '/**'):
-        if not os.path.isfile(local_file):
-            dir_name = os.path.basename(os.path.normpath(local_file))
-            copy_local_directory_to_gcs(local_file, bucket, f"{gcs_path}/{dir_name}")
+    assert os.path. sd r(local_path)
+    for local_f le  n glob.glob(local_path + '/**'):
+         f not os.path. sf le(local_f le):
+            d r_na  = os.path.basena (os.path.normpath(local_f le))
+            copy_local_d rectory_to_gcs(local_f le, bucket, f"{gcs_path}/{d r_na }")
         else:
-          remote_path = os.path.join(gcs_path, local_file[1 + len(local_path) :])
+          remote_path = os.path.jo n(gcs_path, local_f le[1 + len(local_path) :])
           blob = bucket.blob(remote_path)
-          blob.upload_from_filename(local_file)
+          blob.upload_from_f lena (local_f le)
 
-client = storage.Client(project=...)
-bucket = client.get_bucket(...)
-copy_local_directory_to_gcs(model_path, bucket, model_path)
-copy_local_directory_to_gcs('tuner_dir', bucket, 'tuner_dir')
+cl ent = storage.Cl ent(project=...)
+bucket = cl ent.get_bucket(...)
+copy_local_d rectory_to_gcs(model_path, bucket, model_path)
+copy_local_d rectory_to_gcs('tuner_d r', bucket, 'tuner_d r')
 loaded_model = tf.keras.models.load_model(model_path)
-print(history.history.keys())
+pr nt( tory. tory.keys())
 
-plt.figure(figsize = (20, 5))
+plt.f gure(f gs ze = (20, 5))
 
 plt.subplot(1, 3, 1)
-plt.plot(history.history['auc'])
-plt.plot(history.history['val_auc'])
-plt.title('model auc')
+plt.plot( tory. tory['auc'])
+plt.plot( tory. tory['val_auc'])
+plt.t le('model auc')
 plt.ylabel('auc')
 plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
+plt.legend(['tra n', 'test'], loc='upper left')
 
 plt.subplot(1, 3, 2)
-plt.plot(history.history['loss'])
-plt.plot(history.history['val_loss'])
-plt.title('model loss')
+plt.plot( tory. tory['loss'])
+plt.plot( tory. tory['val_loss'])
+plt.t le('model loss')
 plt.ylabel('loss')
 plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
+plt.legend(['tra n', 'test'], loc='upper left')
 
 plt.subplot(1, 3, 3)
-plt.plot(history.history['precision_at_recall'])
-plt.plot(history.history['val_precision_at_recall'])
-plt.title('model precision at 0.9 recall')
-plt.ylabel('precision_at_recall')
+plt.plot( tory. tory['prec s on_at_recall'])
+plt.plot( tory. tory['val_prec s on_at_recall'])
+plt.t le('model prec s on at 0.9 recall')
+plt.ylabel('prec s on_at_recall')
 plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
+plt.legend(['tra n', 'test'], loc='upper left')
 
-plt.savefig('history_with_twitter_clip.pdf')
+plt.savef g(' tory_w h_tw ter_cl p.pdf')
 
 test_labels = []
 test_preds = []
 
-for batch_features, batch_labels in tqdm(test_ds):
-  test_preds.extend(loaded_model.predict_proba(batch_features))
+for batch_features, batch_labels  n tqdm(test_ds):
+  test_preds.extend(loaded_model.pred ct_proba(batch_features))
   test_labels.extend(batch_labels.numpy())
   
 test_sens_prev_labels = []
 test_sens_prev_preds = []
 
-for batch_features, batch_labels in tqdm(test_sens_prev_ds):
-  test_sens_prev_preds.extend(loaded_model.predict_proba(batch_features))
+for batch_features, batch_labels  n tqdm(test_sens_prev_ds):
+  test_sens_prev_preds.extend(loaded_model.pred ct_proba(batch_features))
   test_sens_prev_labels.extend(batch_labels.numpy())
   
 n_test_pos = 0
 n_test_neg = 0
 n_test = 0
 
-for label in test_labels:
+for label  n test_labels:
   n_test +=1
-  if label == 1:
+   f label == 1:
     n_test_pos +=1
   else:
     n_test_neg +=1
 
-print(f'n_test = {n_test}, n_pos = {n_test_pos}, n_neg = {n_test_neg}')
+pr nt(f'n_test = {n_test}, n_pos = {n_test_pos}, n_neg = {n_test_neg}')
 
 n_test_sens_prev_pos = 0
 n_test_sens_prev_neg = 0
 n_test_sens_prev = 0
 
-for label in test_sens_prev_labels:
+for label  n test_sens_prev_labels:
   n_test_sens_prev +=1
-  if label == 1:
+   f label == 1:
     n_test_sens_prev_pos +=1
   else:
     n_test_sens_prev_neg +=1
 
-print(f'n_test_sens_prev = {n_test_sens_prev}, n_pos_sens_prev = {n_test_sens_prev_pos}, n_neg = {n_test_sens_prev_neg}')
+pr nt(f'n_test_sens_prev = {n_test_sens_prev}, n_pos_sens_prev = {n_test_sens_prev_pos}, n_neg = {n_test_sens_prev_neg}')
 
-test_weights = np.ones(np.asarray(test_preds).shape)
+test_  ghts = np.ones(np.asarray(test_preds).shape)
 
 test_labels = np.asarray(test_labels)
 test_preds = np.asarray(test_preds)
-test_weights = np.asarray(test_weights)
+test_  ghts = np.asarray(test_  ghts)
 
-pr = sklearn.metrics.precision_recall_curve(
+pr = sklearn. tr cs.prec s on_recall_curve(
   test_labels, 
   test_preds)
 
-auc = sklearn.metrics.auc(pr[1], pr[0])
+auc = sklearn. tr cs.auc(pr[1], pr[0])
 plt.plot(pr[1], pr[0])
-plt.title("nsfw (MU test set)")
+plt.t le("nsfw (MU test set)")
 
-test_sens_prev_weights = np.ones(np.asarray(test_sens_prev_preds).shape)
+test_sens_prev_  ghts = np.ones(np.asarray(test_sens_prev_preds).shape)
 
 test_sens_prev_labels = np.asarray(test_sens_prev_labels)
 test_sens_prev_preds = np.asarray(test_sens_prev_preds)
-test_sens_prev_weights = np.asarray(test_sens_prev_weights)
+test_sens_prev_  ghts = np.asarray(test_sens_prev_  ghts)
 
-pr_sens_prev = sklearn.metrics.precision_recall_curve(
+pr_sens_prev = sklearn. tr cs.prec s on_recall_curve(
   test_sens_prev_labels, 
   test_sens_prev_preds)
 
-auc_sens_prev = sklearn.metrics.auc(pr_sens_prev[1], pr_sens_prev[0])
+auc_sens_prev = sklearn. tr cs.auc(pr_sens_prev[1], pr_sens_prev[0])
 plt.plot(pr_sens_prev[1], pr_sens_prev[0])
-plt.title("nsfw (sens prev test set)")
+plt.t le("nsfw (sens prev test set)")
 
-df = pd.DataFrame(
+df = pd.DataFra (
   {
     "label": test_labels.squeeze(), 
     "preds_keras": np.asarray(test_preds).flatten(),
   })
-plt.figure(figsize=(15, 10))
-df["preds_keras"].hist()
-plt.title("Keras predictions", size=20)
+plt.f gure(f gs ze=(15, 10))
+df["preds_keras"]. t()
+plt.t le("Keras pred ct ons", s ze=20)
 plt.xlabel('score')
 plt.ylabel("freq")
 
-plt.figure(figsize = (20, 5))
+plt.f gure(f gs ze = (20, 5))
 plt.subplot(1, 3, 1)
 
 plt.plot(pr[2], pr[0][0:-1])
 plt.xlabel("threshold")
-plt.ylabel("precision")
+plt.ylabel("prec s on")
 
 plt.subplot(1, 3, 2)
 
 plt.plot(pr[2], pr[1][0:-1])
 plt.xlabel("threshold")
 plt.ylabel("recall")
-plt.title("Keras", size=20)
+plt.t le("Keras", s ze=20)
 
 plt.subplot(1, 3, 3)
 
 plt.plot(pr[1], pr[0])
 plt.xlabel("recall")
-plt.ylabel("precision")
+plt.ylabel("prec s on")
 
-plt.savefig('with_twitter_clip.pdf')
+plt.savef g('w h_tw ter_cl p.pdf')
 
-def get_point_for_recall(recall_value, recall, precision):
-  idx = np.argmin(np.abs(recall - recall_value))
-  return (recall[idx], precision[idx])
+def get_po nt_for_recall(recall_value, recall, prec s on):
+   dx = np.argm n(np.abs(recall - recall_value))
+  return (recall[ dx], prec s on[ dx])
 
-def get_point_for_precision(precision_value, recall, precision):
-  idx = np.argmin(np.abs(precision - precision_value))
-  return (recall[idx], precision[idx])
-precision, recall, thresholds = pr
+def get_po nt_for_prec s on(prec s on_value, recall, prec s on):
+   dx = np.argm n(np.abs(prec s on - prec s on_value))
+  return (recall[ dx], prec s on[ dx])
+prec s on, recall, thresholds = pr
 
-auc_precision_recall = sklearn.metrics.auc(recall, precision)
+auc_prec s on_recall = sklearn. tr cs.auc(recall, prec s on)
 
-print(auc_precision_recall)
+pr nt(auc_prec s on_recall)
 
-plt.figure(figsize=(15, 10))
-plt.plot(recall, precision)
+plt.f gure(f gs ze=(15, 10))
+plt.plot(recall, prec s on)
 
 plt.xlabel("recall")
-plt.ylabel("precision")
+plt.ylabel("prec s on")
 
-ptAt50 = get_point_for_recall(0.5, recall, precision)
-print(ptAt50)
+ptAt50 = get_po nt_for_recall(0.5, recall, prec s on)
+pr nt(ptAt50)
 plt.plot( [ptAt50[0],ptAt50[0]], [0,ptAt50[1]], 'r')
 plt.plot([0, ptAt50[0]], [ptAt50[1], ptAt50[1]], 'r')
 
-ptAt90 = get_point_for_recall(0.9, recall, precision)
-print(ptAt90)
+ptAt90 = get_po nt_for_recall(0.9, recall, prec s on)
+pr nt(ptAt90)
 plt.plot( [ptAt90[0],ptAt90[0]], [0,ptAt90[1]], 'b')
 plt.plot([0, ptAt90[0]], [ptAt90[1], ptAt90[1]], 'b')
 
 ptAt50fmt = "%.4f" % ptAt50[1]
 ptAt90fmt = "%.4f" % ptAt90[1]
-aucFmt = "%.4f" % auc_precision_recall
-plt.title(
-  f"Keras (nsfw MU test)\nAUC={aucFmt}\np={ptAt50fmt} @ r=0.5\np={ptAt90fmt} @ r=0.9\nN_train={...}} ({...} pos), N_test={n_test} ({n_test_pos} pos)",
-  size=20
+aucFmt = "%.4f" % auc_prec s on_recall
+plt.t le(
+  f"Keras (nsfw MU test)\nAUC={aucFmt}\np={ptAt50fmt} @ r=0.5\np={ptAt90fmt} @ r=0.9\nN_tra n={...}} ({...} pos), N_test={n_test} ({n_test_pos} pos)",
+  s ze=20
 )
 plt.subplots_adjust(top=0.72)
-plt.savefig('recall_precision_nsfw_Keras_with_twitter_CLIP_MU_test.pdf')
+plt.savef g('recall_prec s on_nsfw_Keras_w h_tw ter_CL P_MU_test.pdf')
 
-precision, recall, thresholds = pr_sens_prev
+prec s on, recall, thresholds = pr_sens_prev
 
-auc_precision_recall = sklearn.metrics.auc(recall, precision)
-print(auc_precision_recall)
-plt.figure(figsize=(15, 10))
+auc_prec s on_recall = sklearn. tr cs.auc(recall, prec s on)
+pr nt(auc_prec s on_recall)
+plt.f gure(f gs ze=(15, 10))
 
-plt.plot(recall, precision)
+plt.plot(recall, prec s on)
 
 plt.xlabel("recall")
-plt.ylabel("precision")
+plt.ylabel("prec s on")
 
-ptAt50 = get_point_for_recall(0.5, recall, precision)
-print(ptAt50)
+ptAt50 = get_po nt_for_recall(0.5, recall, prec s on)
+pr nt(ptAt50)
 plt.plot( [ptAt50[0],ptAt50[0]], [0,ptAt50[1]], 'r')
 plt.plot([0, ptAt50[0]], [ptAt50[1], ptAt50[1]], 'r')
 
-ptAt90 = get_point_for_recall(0.9, recall, precision)
-print(ptAt90)
+ptAt90 = get_po nt_for_recall(0.9, recall, prec s on)
+pr nt(ptAt90)
 plt.plot( [ptAt90[0],ptAt90[0]], [0,ptAt90[1]], 'b')
 plt.plot([0, ptAt90[0]], [ptAt90[1], ptAt90[1]], 'b')
 
 ptAt50fmt = "%.4f" % ptAt50[1]
 ptAt90fmt = "%.4f" % ptAt90[1]
-aucFmt = "%.4f" % auc_precision_recall
-plt.title(
-  f"Keras (nsfw sens prev test)\nAUC={aucFmt}\np={ptAt50fmt} @ r=0.5\np={ptAt90fmt} @ r=0.9\nN_train={...} ({...} pos), N_test={n_test_sens_prev} ({n_test_sens_prev_pos} pos)",
-  size=20
+aucFmt = "%.4f" % auc_prec s on_recall
+plt.t le(
+  f"Keras (nsfw sens prev test)\nAUC={aucFmt}\np={ptAt50fmt} @ r=0.5\np={ptAt90fmt} @ r=0.9\nN_tra n={...} ({...} pos), N_test={n_test_sens_prev} ({n_test_sens_prev_pos} pos)",
+  s ze=20
 )
 plt.subplots_adjust(top=0.72)
-plt.savefig('recall_precision_nsfw_Keras_with_twitter_CLIP_sens_prev_test.pdf')
+plt.savef g('recall_prec s on_nsfw_Keras_w h_tw ter_CL P_sens_prev_test.pdf')

@@ -1,184 +1,184 @@
-package com.twitter.simclusters_v2.scalding
-package multi_type_graph.assemble_multi_type_graph
+package com.tw ter.s mclusters_v2.scald ng
+package mult _type_graph.assemble_mult _type_graph
 
-import com.twitter.dal.client.dataset.{KeyValDALDataset, SnapshotDALDataset}
-import com.twitter.scalding.{Execution, _}
-import com.twitter.scalding_internal.dalv2.DALWrite.{D, _}
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe.typedPipeToRichPipe
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.{
+ mport com.tw ter.dal.cl ent.dataset.{KeyValDALDataset, SnapshotDALDataset}
+ mport com.tw ter.scald ng.{Execut on, _}
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e.{D, _}
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.scald ng.common.TypedR chP pe.typedP peToR chP pe
+ mport com.tw ter.s mclusters_v2.scald ng.common.Ut l
+ mport com.tw ter.s mclusters_v2.thr ftscala.{
   LeftNode,
   Noun,
-  NounWithFrequency,
-  NounWithFrequencyList,
-  RightNodeType,
-  RightNodeTypeStruct,
-  RightNodeWithEdgeWeight,
-  RightNodeWithEdgeWeightList,
-  MultiTypeGraphEdge
+  NounW hFrequency,
+  NounW hFrequencyL st,
+  R ghtNodeType,
+  R ghtNodeTypeStruct,
+  R ghtNodeW hEdge  ght,
+  R ghtNodeW hEdge  ghtL st,
+  Mult TypeGraphEdge
 }
-import com.twitter.wtf.scalding.jobs.common.DateRangeExecutionApp
-import java.util.TimeZone
+ mport com.tw ter.wtf.scald ng.jobs.common.DateRangeExecut onApp
+ mport java.ut l.T  Zone
 
 /**
- * In this file, we assemble the multi_type_graph user-entity engagement signals
+ *  n t  f le,   assemble t  mult _type_graph user-ent y engage nt s gnals
  *
- * It works as follows and the following datasets are produced as a result:
+ *   works as follows and t  follow ng datasets are produced as a result:
  *
- * 1. FullGraph (fullMultiTypeGraphSnapshotDataset) : reads datasets from multiple sources and generates
- * a bipartite graph with LeftNode -> RightNode edges, capturing a user's engagement with varied entity types
+ * 1. FullGraph (fullMult TypeGraphSnapshotDataset) : reads datasets from mult ple s ces and generates
+ * a b part e graph w h LeftNode -> R ghtNode edges, captur ng a user's engage nt w h var ed ent y types
  *
- * 2. TruncatedGraph (truncatedMultiTypeGraphKeyValDataset): a truncated version of the FullGraph
- * where we only store the topK most frequently occurring RightNodes in the bipartite graph LeftNode -> RightNode
+ * 2. TruncatedGraph (truncatedMult TypeGraphKeyValDataset): a truncated vers on of t  FullGraph
+ * w re   only store t  topK most frequently occurr ng R ghtNodes  n t  b part e graph LeftNode -> R ghtNode
  *
- * 3. TopKNouns (topKRightNounsKeyValDataset): this stores the topK most frequent Nouns for each engagement type
- * Please note that this dataset is currently only being used for the debugger to find which nodes we consider as the
- * most frequently occurring, in FullGraph
+ * 3. TopKNouns (topKR ghtNounsKeyValDataset): t  stores t  topK most frequent Nouns for each engage nt type
+ * Please note that t  dataset  s currently only be ng used for t  debugger to f nd wh ch nodes   cons der as t 
+ * most frequently occurr ng,  n FullGraph
  */
 
-trait AssembleMultiTypeGraphBaseApp extends DateRangeExecutionApp {
-  val truncatedMultiTypeGraphKeyValDataset: KeyValDALDataset[
-    KeyVal[LeftNode, RightNodeWithEdgeWeightList]
+tra  AssembleMult TypeGraphBaseApp extends DateRangeExecut onApp {
+  val truncatedMult TypeGraphKeyValDataset: KeyValDALDataset[
+    KeyVal[LeftNode, R ghtNodeW hEdge  ghtL st]
   ]
-  val topKRightNounsKeyValDataset: KeyValDALDataset[
-    KeyVal[RightNodeTypeStruct, NounWithFrequencyList]
+  val topKR ghtNounsKeyValDataset: KeyValDALDataset[
+    KeyVal[R ghtNodeTypeStruct, NounW hFrequencyL st]
   ]
-  val fullMultiTypeGraphSnapshotDataset: SnapshotDALDataset[MultiTypeGraphEdge]
-  val isAdhoc: Boolean
-  val truncatedMultiTypeGraphMHOutputPath: String
-  val topKRightNounsMHOutputPath: String
-  val fullMultiTypeGraphThriftOutputPath: String
+  val fullMult TypeGraphSnapshotDataset: SnapshotDALDataset[Mult TypeGraphEdge]
+  val  sAdhoc: Boolean
+  val truncatedMult TypeGraphMHOutputPath: Str ng
+  val topKR ghtNounsMHOutputPath: Str ng
+  val fullMult TypeGraphThr ftOutputPath: Str ng
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    import Config._
-    import AssembleMultiTypeGraph._
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
+     mport Conf g._
+     mport AssembleMult TypeGraph._
 
-    val numKeysInTruncatedGraph = Stat("num_keys_truncated_mts")
-    val numKeysInTopKNounsGraph = Stat("num_keys_topk_nouns_mts")
+    val numKeys nTruncatedGraph = Stat("num_keys_truncated_mts")
+    val numKeys nTopKNounsGraph = Stat("num_keys_topk_nouns_mts")
 
-    val fullGraph: TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] =
-      getFullGraph().count("num_entries_full_graph")
+    val fullGraph: TypedP pe[(LeftNode, R ghtNodeW hEdge  ght)] =
+      getFullGraph().count("num_entr es_full_graph")
 
-    val topKRightNodes: TypedPipe[(RightNodeType, Seq[(Noun, Double)])] =
-      getTopKRightNounsWithFrequencies(
+    val topKR ghtNodes: TypedP pe[(R ghtNodeType, Seq[(Noun, Double)])] =
+      getTopKR ghtNounsW hFrequenc es(
         fullGraph,
-        TopKConfig,
-        GlobalDefaultMinFrequencyOfRightNodeType)
+        TopKConf g,
+        GlobalDefaultM nFrequencyOfR ghtNodeType)
 
-    val truncatedGraph: TypedPipe[(LeftNode, RightNodeWithEdgeWeight)] =
-      getTruncatedGraph(fullGraph, topKRightNodes).count("num_entries_truncated_graph")
+    val truncatedGraph: TypedP pe[(LeftNode, R ghtNodeW hEdge  ght)] =
+      getTruncatedGraph(fullGraph, topKR ghtNodes).count("num_entr es_truncated_graph")
 
-    // key transformations - truncated graph, keyed by LeftNode
-    val truncatedGraphKeyedBySrc: TypedPipe[(LeftNode, RightNodeWithEdgeWeightList)] =
+    // key transformat ons - truncated graph, keyed by LeftNode
+    val truncatedGraphKeyedBySrc: TypedP pe[(LeftNode, R ghtNodeW hEdge  ghtL st)] =
       truncatedGraph
         .map {
-          case (LeftNode.UserId(userId), rightNodeWithWeight) =>
-            userId -> List(rightNodeWithWeight)
+          case (LeftNode.User d(user d), r ghtNodeW h  ght) =>
+            user d -> L st(r ghtNodeW h  ght)
         }
         .sumByKey
         .map {
-          case (userId, rightNodeWithWeightList) =>
-            (LeftNode.UserId(userId), RightNodeWithEdgeWeightList(rightNodeWithWeightList))
+          case (user d, r ghtNodeW h  ghtL st) =>
+            (LeftNode.User d(user d), R ghtNodeW hEdge  ghtL st(r ghtNodeW h  ghtL st))
         }
 
-    // key transformation - topK nouns, keyed by the RightNodeNounType
-    val topKNounsKeyedByType: TypedPipe[(RightNodeTypeStruct, NounWithFrequencyList)] =
-      topKRightNodes
+    // key transformat on - topK nouns, keyed by t  R ghtNodeNounType
+    val topKNounsKeyedByType: TypedP pe[(R ghtNodeTypeStruct, NounW hFrequencyL st)] =
+      topKR ghtNodes
         .map {
-          case (rightNodeType, rightNounsWithScoresList) =>
-            val nounsListWithFrequency: Seq[NounWithFrequency] = rightNounsWithScoresList
+          case (r ghtNodeType, r ghtNounsW hScoresL st) =>
+            val nounsL stW hFrequency: Seq[NounW hFrequency] = r ghtNounsW hScoresL st
               .map {
                 case (noun, aggregatedFrequency) =>
-                  NounWithFrequency(noun, aggregatedFrequency)
+                  NounW hFrequency(noun, aggregatedFrequency)
               }
-            (RightNodeTypeStruct(rightNodeType), NounWithFrequencyList(nounsListWithFrequency))
+            (R ghtNodeTypeStruct(r ghtNodeType), NounW hFrequencyL st(nounsL stW hFrequency))
         }
 
-    //WriteExecs - truncated graph
-    val truncatedGraphTsvExec: Execution[Unit] =
-      truncatedGraphKeyedBySrc.writeExecution(
-        TypedTsv[(LeftNode, RightNodeWithEdgeWeightList)](AdhocRootPrefix + "truncated_graph_tsv"))
+    //Wr eExecs - truncated graph
+    val truncatedGraphTsvExec: Execut on[Un ] =
+      truncatedGraphKeyedBySrc.wr eExecut on(
+        TypedTsv[(LeftNode, R ghtNodeW hEdge  ghtL st)](AdhocRootPref x + "truncated_graph_tsv"))
 
-    val truncatedGraphDALExec: Execution[Unit] = truncatedGraphKeyedBySrc
+    val truncatedGraphDALExec: Execut on[Un ] = truncatedGraphKeyedBySrc
       .map {
-        case (leftNode, rightNodeWithWeightList) =>
-          numKeysInTruncatedGraph.inc()
-          KeyVal(leftNode, rightNodeWithWeightList)
+        case (leftNode, r ghtNodeW h  ghtL st) =>
+          numKeys nTruncatedGraph. nc()
+          KeyVal(leftNode, r ghtNodeW h  ghtL st)
       }
-      .writeDALVersionedKeyValExecution(
-        truncatedMultiTypeGraphKeyValDataset,
-        D.Suffix(
-          (if (!isAdhoc)
+      .wr eDALVers onedKeyValExecut on(
+        truncatedMult TypeGraphKeyValDataset,
+        D.Suff x(
+          ( f (! sAdhoc)
              RootPath
            else
-             AdhocRootPrefix)
-            + truncatedMultiTypeGraphMHOutputPath),
-        ExplicitEndTime(dateRange.`end`)
+             AdhocRootPref x)
+            + truncatedMult TypeGraphMHOutputPath),
+        Expl c EndT  (dateRange.`end`)
       )
 
-    //WriteExec - topK rightnouns
-    val topKNounsTsvExec: Execution[Unit] =
-      topKNounsKeyedByType.writeExecution(
-        TypedTsv[(RightNodeTypeStruct, NounWithFrequencyList)](
-          AdhocRootPrefix + "top_k_right_nouns_tsv"))
+    //Wr eExec - topK r ghtnouns
+    val topKNounsTsvExec: Execut on[Un ] =
+      topKNounsKeyedByType.wr eExecut on(
+        TypedTsv[(R ghtNodeTypeStruct, NounW hFrequencyL st)](
+          AdhocRootPref x + "top_k_r ght_nouns_tsv"))
 
-    // writing topKNouns MH dataset for debugger
-    val topKNounsDALExec: Execution[Unit] = topKNounsKeyedByType
+    // wr  ng topKNouns MH dataset for debugger
+    val topKNounsDALExec: Execut on[Un ] = topKNounsKeyedByType
       .map {
-        case (engagementType, rightList) =>
-          val rightListMH =
-            NounWithFrequencyList(rightList.nounWithFrequencyList.take(TopKRightNounsForMHDump))
-          numKeysInTopKNounsGraph.inc()
-          KeyVal(engagementType, rightListMH)
+        case (engage ntType, r ghtL st) =>
+          val r ghtL stMH =
+            NounW hFrequencyL st(r ghtL st.nounW hFrequencyL st.take(TopKR ghtNounsForMHDump))
+          numKeys nTopKNounsGraph. nc()
+          KeyVal(engage ntType, r ghtL stMH)
       }
-      .writeDALVersionedKeyValExecution(
-        topKRightNounsKeyValDataset,
-        D.Suffix(
-          (if (!isAdhoc)
+      .wr eDALVers onedKeyValExecut on(
+        topKR ghtNounsKeyValDataset,
+        D.Suff x(
+          ( f (! sAdhoc)
              RootPath
            else
-             AdhocRootPrefix)
-            + topKRightNounsMHOutputPath),
-        ExplicitEndTime(dateRange.`end`)
+             AdhocRootPref x)
+            + topKR ghtNounsMHOutputPath),
+        Expl c EndT  (dateRange.`end`)
       )
 
-    //WriteExec - fullGraph
-    val fullGraphDALExec: Execution[Unit] = fullGraph
+    //Wr eExec - fullGraph
+    val fullGraphDALExec: Execut on[Un ] = fullGraph
       .map {
-        case (leftNode, rightNodeWithWeight) =>
-          MultiTypeGraphEdge(leftNode, rightNodeWithWeight)
-      }.writeDALSnapshotExecution(
-        fullMultiTypeGraphSnapshotDataset,
-        D.Daily,
-        D.Suffix(
-          (if (!isAdhoc)
-             RootThriftPath
+        case (leftNode, r ghtNodeW h  ght) =>
+          Mult TypeGraphEdge(leftNode, r ghtNodeW h  ght)
+      }.wr eDALSnapshotExecut on(
+        fullMult TypeGraphSnapshotDataset,
+        D.Da ly,
+        D.Suff x(
+          ( f (! sAdhoc)
+             RootThr ftPath
            else
-             AdhocRootPrefix)
-            + fullMultiTypeGraphThriftOutputPath),
+             AdhocRootPref x)
+            + fullMult TypeGraphThr ftOutputPath),
         D.Parquet,
         dateRange.`end`
       )
 
-    if (isAdhoc) {
-      Util.printCounters(
-        Execution
-          .zip(
+     f ( sAdhoc) {
+      Ut l.pr ntCounters(
+        Execut on
+          .z p(
             truncatedGraphTsvExec,
             topKNounsTsvExec,
             truncatedGraphDALExec,
             topKNounsDALExec,
-            fullGraphDALExec).unit)
+            fullGraphDALExec).un )
     } else {
-      Util.printCounters(
-        Execution.zip(truncatedGraphDALExec, topKNounsDALExec, fullGraphDALExec).unit)
+      Ut l.pr ntCounters(
+        Execut on.z p(truncatedGraphDALExec, topKNounsDALExec, fullGraphDALExec).un )
     }
 
   }

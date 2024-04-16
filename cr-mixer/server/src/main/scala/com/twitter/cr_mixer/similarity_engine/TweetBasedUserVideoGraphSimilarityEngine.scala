@@ -1,116 +1,116 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.tw ter.cr_m xer.s m lar y_eng ne
 
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.cr_mixer.param.TweetBasedUserVideoGraphParams
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.recos.user_video_graph.thriftscala.RelatedTweetResponse
-import com.twitter.recos.user_video_graph.thriftscala.ConsumersBasedRelatedTweetRequest
-import com.twitter.recos.user_video_graph.thriftscala.TweetBasedRelatedTweetRequest
-import com.twitter.recos.user_video_graph.thriftscala.UserVideoGraph
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.timelines.configapi
-import com.twitter.twistly.thriftscala.TweetRecentEngagedUsers
-import com.twitter.util.Duration
-import javax.inject.Singleton
-import com.twitter.util.Future
-import com.twitter.util.Time
-import scala.concurrent.duration.HOURS
+ mport com.tw ter.cr_m xer.model.S m lar yEng ne nfo
+ mport com.tw ter.cr_m xer.model.T etW hScore
+ mport com.tw ter.cr_m xer.param.GlobalParams
+ mport com.tw ter.cr_m xer.param.T etBasedUserV deoGraphParams
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.ut l.StatsUt l
+ mport com.tw ter.recos.user_v deo_graph.thr ftscala.RelatedT etResponse
+ mport com.tw ter.recos.user_v deo_graph.thr ftscala.Consu rsBasedRelatedT etRequest
+ mport com.tw ter.recos.user_v deo_graph.thr ftscala.T etBasedRelatedT etRequest
+ mport com.tw ter.recos.user_v deo_graph.thr ftscala.UserV deoGraph
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.t  l nes.conf gap 
+ mport com.tw ter.tw stly.thr ftscala.T etRecentEngagedUsers
+ mport com.tw ter.ut l.Durat on
+ mport javax. nject.S ngleton
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
+ mport scala.concurrent.durat on.HOURS
 
 /**
- * This store looks for similar tweets from UserVideoGraph for a Source TweetId
- * For a query tweet,User Video Graph (UVG),
- * lets us find out which other video tweets share a lot of the same engagers with the query tweet
+ * T  store looks for s m lar t ets from UserV deoGraph for a S ce T et d
+ * For a query t et,User V deo Graph (UVG),
+ * lets us f nd out wh ch ot r v deo t ets share a lot of t  sa  engagers w h t  query t et
  */
-@Singleton
-case class TweetBasedUserVideoGraphSimilarityEngine(
-  userVideoGraphService: UserVideoGraph.MethodPerEndpoint,
-  tweetEngagedUsersStore: ReadableStore[TweetId, TweetRecentEngagedUsers],
-  statsReceiver: StatsReceiver)
+@S ngleton
+case class T etBasedUserV deoGraphS m lar yEng ne(
+  userV deoGraphServ ce: UserV deoGraph. thodPerEndpo nt,
+  t etEngagedUsersStore: ReadableStore[T et d, T etRecentEngagedUsers],
+  statsRece ver: StatsRece ver)
     extends ReadableStore[
-      TweetBasedUserVideoGraphSimilarityEngine.Query,
-      Seq[TweetWithScore]
+      T etBasedUserV deoGraphS m lar yEng ne.Query,
+      Seq[T etW hScore]
     ] {
 
-  import TweetBasedUserVideoGraphSimilarityEngine._
+   mport T etBasedUserV deoGraphS m lar yEng ne._
 
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val fetchCandidatesStat = stats.scope("fetchCandidates")
-  private val fetchCoverageExpansionCandidatesStat = stats.scope("fetchCoverageExpansionCandidates")
+  pr vate val stats = statsRece ver.scope(t .getClass.getS mpleNa )
+  pr vate val fetchCand datesStat = stats.scope("fetchCand dates")
+  pr vate val fetchCoverageExpans onCand datesStat = stats.scope("fetchCoverageExpans onCand dates")
 
-  override def get(
-    query: TweetBasedUserVideoGraphSimilarityEngine.Query
-  ): Future[Option[Seq[TweetWithScore]]] = {
+  overr de def get(
+    query: T etBasedUserV deoGraphS m lar yEng ne.Query
+  ): Future[Opt on[Seq[T etW hScore]]] = {
 
-    query.sourceId match {
-      case InternalId.TweetId(tweetId) if query.enableCoverageExpansionAllTweet =>
-        getCoverageExpansionCandidates(tweetId, query)
+    query.s ce d match {
+      case  nternal d.T et d(t et d)  f query.enableCoverageExpans onAllT et =>
+        getCoverageExpans onCand dates(t et d, query)
 
-      case InternalId.TweetId(tweetId) if query.enableCoverageExpansionOldTweet => // For Home
-        if (isOldTweet(tweetId)) getCoverageExpansionCandidates(tweetId, query)
-        else getCandidates(tweetId, query)
+      case  nternal d.T et d(t et d)  f query.enableCoverageExpans onOldT et => // For Ho 
+         f ( sOldT et(t et d)) getCoverageExpans onCand dates(t et d, query)
+        else getCand dates(t et d, query)
 
-      case InternalId.TweetId(tweetId) => getCandidates(tweetId, query)
+      case  nternal d.T et d(t et d) => getCand dates(t et d, query)
       case _ =>
         Future.value(None)
     }
   }
 
-  private def getCandidates(
-    tweetId: TweetId,
-    query: TweetBasedUserVideoGraphSimilarityEngine.Query
-  ): Future[Option[Seq[TweetWithScore]]] = {
-    StatsUtil.trackOptionItemsStats(fetchCandidatesStat) {
-      val tweetBasedRelatedTweetRequest = {
-        TweetBasedRelatedTweetRequest(
-          tweetId,
-          maxResults = Some(query.maxResults),
-          minCooccurrence = Some(query.minCooccurrence),
-          excludeTweetIds = Some(Seq(tweetId)),
-          minScore = Some(query.tweetBasedMinScore),
-          maxTweetAgeInHours = Some(query.maxTweetAgeInHours)
+  pr vate def getCand dates(
+    t et d: T et d,
+    query: T etBasedUserV deoGraphS m lar yEng ne.Query
+  ): Future[Opt on[Seq[T etW hScore]]] = {
+    StatsUt l.trackOpt on emsStats(fetchCand datesStat) {
+      val t etBasedRelatedT etRequest = {
+        T etBasedRelatedT etRequest(
+          t et d,
+          maxResults = So (query.maxResults),
+          m nCooccurrence = So (query.m nCooccurrence),
+          excludeT et ds = So (Seq(t et d)),
+          m nScore = So (query.t etBasedM nScore),
+          maxT etAge nH s = So (query.maxT etAge nH s)
         )
       }
-      toTweetWithScore(
-        userVideoGraphService.tweetBasedRelatedTweets(tweetBasedRelatedTweetRequest).map {
-          Some(_)
+      toT etW hScore(
+        userV deoGraphServ ce.t etBasedRelatedT ets(t etBasedRelatedT etRequest).map {
+          So (_)
         })
     }
   }
 
-  private def getCoverageExpansionCandidates(
-    tweetId: TweetId,
-    query: TweetBasedUserVideoGraphSimilarityEngine.Query
-  ): Future[Option[Seq[TweetWithScore]]] = {
-    StatsUtil
-      .trackOptionItemsStats(fetchCoverageExpansionCandidatesStat) {
-        tweetEngagedUsersStore
-          .get(tweetId).flatMap {
-            _.map { tweetRecentEngagedUsers =>
-              val consumerSeedSet =
-                tweetRecentEngagedUsers.recentEngagedUsers
+  pr vate def getCoverageExpans onCand dates(
+    t et d: T et d,
+    query: T etBasedUserV deoGraphS m lar yEng ne.Query
+  ): Future[Opt on[Seq[T etW hScore]]] = {
+    StatsUt l
+      .trackOpt on emsStats(fetchCoverageExpans onCand datesStat) {
+        t etEngagedUsersStore
+          .get(t et d).flatMap {
+            _.map { t etRecentEngagedUsers =>
+              val consu rSeedSet =
+                t etRecentEngagedUsers.recentEngagedUsers
                   .map {
-                    _.userId
-                  }.take(query.maxConsumerSeedsNum)
-              val consumersBasedRelatedTweetRequest =
-                ConsumersBasedRelatedTweetRequest(
-                  consumerSeedSet = consumerSeedSet,
-                  maxResults = Some(query.maxResults),
-                  minCooccurrence = Some(query.minCooccurrence),
-                  excludeTweetIds = Some(Seq(tweetId)),
-                  minScore = Some(query.consumersBasedMinScore),
-                  maxTweetAgeInHours = Some(query.maxTweetAgeInHours)
+                    _.user d
+                  }.take(query.maxConsu rSeedsNum)
+              val consu rsBasedRelatedT etRequest =
+                Consu rsBasedRelatedT etRequest(
+                  consu rSeedSet = consu rSeedSet,
+                  maxResults = So (query.maxResults),
+                  m nCooccurrence = So (query.m nCooccurrence),
+                  excludeT et ds = So (Seq(t et d)),
+                  m nScore = So (query.consu rsBasedM nScore),
+                  maxT etAge nH s = So (query.maxT etAge nH s)
                 )
 
-              toTweetWithScore(userVideoGraphService
-                .consumersBasedRelatedTweets(consumersBasedRelatedTweetRequest).map {
-                  Some(_)
+              toT etW hScore(userV deoGraphServ ce
+                .consu rsBasedRelatedT ets(consu rsBasedRelatedT etRequest).map {
+                  So (_)
                 })
             }.getOrElse(Future.value(None))
           }
@@ -119,63 +119,63 @@ case class TweetBasedUserVideoGraphSimilarityEngine(
 
 }
 
-object TweetBasedUserVideoGraphSimilarityEngine {
+object T etBasedUserV deoGraphS m lar yEng ne {
 
-  private val oldTweetCap: Duration = Duration(24, HOURS)
+  pr vate val oldT etCap: Durat on = Durat on(24, HOURS)
 
-  def toSimilarityEngineInfo(score: Double): SimilarityEngineInfo = {
-    SimilarityEngineInfo(
-      similarityEngineType = SimilarityEngineType.TweetBasedUserVideoGraph,
-      modelId = None,
-      score = Some(score))
+  def toS m lar yEng ne nfo(score: Double): S m lar yEng ne nfo = {
+    S m lar yEng ne nfo(
+      s m lar yEng neType = S m lar yEng neType.T etBasedUserV deoGraph,
+      model d = None,
+      score = So (score))
   }
 
-  private def toTweetWithScore(
-    relatedTweetResponseFut: Future[Option[RelatedTweetResponse]]
-  ): Future[Option[Seq[TweetWithScore]]] = {
-    relatedTweetResponseFut.map { relatedTweetResponseOpt =>
-      relatedTweetResponseOpt.map { relatedTweetResponse =>
-        val candidates =
-          relatedTweetResponse.tweets.map(tweet => TweetWithScore(tweet.tweetId, tweet.score))
-        candidates
+  pr vate def toT etW hScore(
+    relatedT etResponseFut: Future[Opt on[RelatedT etResponse]]
+  ): Future[Opt on[Seq[T etW hScore]]] = {
+    relatedT etResponseFut.map { relatedT etResponseOpt =>
+      relatedT etResponseOpt.map { relatedT etResponse =>
+        val cand dates =
+          relatedT etResponse.t ets.map(t et => T etW hScore(t et.t et d, t et.score))
+        cand dates
       }
     }
   }
 
-  private def isOldTweet(tweetId: TweetId): Boolean = {
-    SnowflakeId
-      .timeFromIdOpt(tweetId).forall { tweetTime => tweetTime < Time.now - oldTweetCap }
-    // If there's no snowflake timestamp, we have no idea when this tweet happened.
+  pr vate def  sOldT et(t et d: T et d): Boolean = {
+    Snowflake d
+      .t  From dOpt(t et d).forall { t etT   => t etT   < T  .now - oldT etCap }
+    //  f t re's no snowflake t  stamp,   have no  dea w n t  t et happened.
   }
 
   case class Query(
-    sourceId: InternalId,
-    maxResults: Int,
-    minCooccurrence: Int,
-    tweetBasedMinScore: Double,
-    consumersBasedMinScore: Double,
-    maxTweetAgeInHours: Int,
-    maxConsumerSeedsNum: Int,
-    enableCoverageExpansionOldTweet: Boolean,
-    enableCoverageExpansionAllTweet: Boolean)
+    s ce d:  nternal d,
+    maxResults:  nt,
+    m nCooccurrence:  nt,
+    t etBasedM nScore: Double,
+    consu rsBasedM nScore: Double,
+    maxT etAge nH s:  nt,
+    maxConsu rSeedsNum:  nt,
+    enableCoverageExpans onOldT et: Boolean,
+    enableCoverageExpans onAllT et: Boolean)
 
   def fromParams(
-    sourceId: InternalId,
-    params: configapi.Params,
-  ): EngineQuery[Query] = {
-    EngineQuery(
+    s ce d:  nternal d,
+    params: conf gap .Params,
+  ): Eng neQuery[Query] = {
+    Eng neQuery(
       Query(
-        sourceId = sourceId,
-        maxResults = params(GlobalParams.MaxCandidateNumPerSourceKeyParam),
-        minCooccurrence = params(TweetBasedUserVideoGraphParams.MinCoOccurrenceParam),
-        tweetBasedMinScore = params(TweetBasedUserVideoGraphParams.TweetBasedMinScoreParam),
-        consumersBasedMinScore = params(TweetBasedUserVideoGraphParams.ConsumersBasedMinScoreParam),
-        maxTweetAgeInHours = params(GlobalParams.MaxTweetAgeHoursParam).inHours,
-        maxConsumerSeedsNum = params(TweetBasedUserVideoGraphParams.MaxConsumerSeedsNumParam),
-        enableCoverageExpansionOldTweet =
-          params(TweetBasedUserVideoGraphParams.EnableCoverageExpansionOldTweetParam),
-        enableCoverageExpansionAllTweet =
-          params(TweetBasedUserVideoGraphParams.EnableCoverageExpansionAllTweetParam)
+        s ce d = s ce d,
+        maxResults = params(GlobalParams.MaxCand dateNumPerS ceKeyParam),
+        m nCooccurrence = params(T etBasedUserV deoGraphParams.M nCoOccurrenceParam),
+        t etBasedM nScore = params(T etBasedUserV deoGraphParams.T etBasedM nScoreParam),
+        consu rsBasedM nScore = params(T etBasedUserV deoGraphParams.Consu rsBasedM nScoreParam),
+        maxT etAge nH s = params(GlobalParams.MaxT etAgeH sParam). nH s,
+        maxConsu rSeedsNum = params(T etBasedUserV deoGraphParams.MaxConsu rSeedsNumParam),
+        enableCoverageExpans onOldT et =
+          params(T etBasedUserV deoGraphParams.EnableCoverageExpans onOldT etParam),
+        enableCoverageExpans onAllT et =
+          params(T etBasedUserV deoGraphParams.EnableCoverageExpans onAllT etParam)
       ),
       params
     )

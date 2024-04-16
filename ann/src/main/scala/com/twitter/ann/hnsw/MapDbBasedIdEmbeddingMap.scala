@@ -1,81 +1,81 @@
-package com.twitter.ann.hnsw
+package com.tw ter.ann.hnsw
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.bijection.Injection
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.search.common.file.AbstractFile
-import java.io.OutputStream
-import org.mapdb.DBMaker
-import org.mapdb.HTreeMap
-import org.mapdb.Serializer
-import scala.collection.JavaConverters._
+ mport com.tw ter.ann.common.Embedd ngType.Embedd ngVector
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.ml.ap .embedd ng.Embedd ng
+ mport com.tw ter.search.common.f le.AbstractF le
+ mport java. o.OutputStream
+ mport org.mapdb.DBMaker
+ mport org.mapdb.HTreeMap
+ mport org.mapdb.Ser al zer
+ mport scala.collect on.JavaConverters._
 
 /**
- * This class currently only support querying and creates map db on fly from thrift serialized embedding mapping
- * Implement index creation with this or altogether replace mapdb with some better performing solution as it takes a lot of time to create/query or precreate while serializing thrift embeddings
+ * T  class currently only support query ng and creates map db on fly from thr ft ser al zed embedd ng mapp ng
+ *  mple nt  ndex creat on w h t  or altoget r replace mapdb w h so  better perform ng solut on as   takes a lot of t   to create/query or precreate wh le ser al z ng thr ft embedd ngs
  */
-private[hnsw] object MapDbBasedIdEmbeddingMap {
+pr vate[hnsw] object MapDbBased dEmbedd ngMap {
 
   /**
-   * Loads id embedding mapping in mapDB based container leveraging memory mapped files.
-   * @param embeddingFile: Local/Hdfs file path for embeddings
-   * @param injection : Injection for typed Id T to Array[Byte]
+   * Loads  d embedd ng mapp ng  n mapDB based conta ner leverag ng  mory mapped f les.
+   * @param embedd ngF le: Local/Hdfs f le path for embedd ngs
+   * @param  nject on :  nject on for typed  d T to Array[Byte]
    */
   def loadAsReadonly[T](
-    embeddingFile: AbstractFile,
-    injection: Injection[T, Array[Byte]]
-  ): IdEmbeddingMap[T] = {
-    val diskDb = DBMaker
-      .tempFileDB()
+    embedd ngF le: AbstractF le,
+     nject on:  nject on[T, Array[Byte]]
+  ):  dEmbedd ngMap[T] = {
+    val d skDb = DBMaker
+      .tempF leDB()
       .concurrencyScale(32)
-      .fileMmapEnable()
-      .fileMmapEnableIfSupported()
-      .fileMmapPreclearDisable()
+      .f leMmapEnable()
+      .f leMmapEnable fSupported()
+      .f leMmapPreclearD sable()
       .cleanerHackEnable()
       .closeOnJvmShutdown()
       .make()
 
-    val mapDb = diskDb
-      .hashMap("mapdb", Serializer.BYTE_ARRAY, Serializer.FLOAT_ARRAY)
+    val mapDb = d skDb
+      .hashMap("mapdb", Ser al zer.BYTE_ARRAY, Ser al zer.FLOAT_ARRAY)
       .createOrOpen()
 
-    HnswIOUtil.loadEmbeddings(
-      embeddingFile,
-      injection,
-      new MapDbBasedIdEmbeddingMap(mapDb, injection)
+    Hnsw OUt l.loadEmbedd ngs(
+      embedd ngF le,
+       nject on,
+      new MapDbBased dEmbedd ngMap(mapDb,  nject on)
     )
   }
 }
 
-private[this] class MapDbBasedIdEmbeddingMap[T](
+pr vate[t ] class MapDbBased dEmbedd ngMap[T](
   mapDb: HTreeMap[Array[Byte], Array[Float]],
-  injection: Injection[T, Array[Byte]])
-    extends IdEmbeddingMap[T] {
-  override def putIfAbsent(id: T, embedding: EmbeddingVector): EmbeddingVector = {
-    val value = mapDb.putIfAbsent(injection.apply(id), embedding.toArray)
-    if (value == null) null else Embedding(value)
+   nject on:  nject on[T, Array[Byte]])
+    extends  dEmbedd ngMap[T] {
+  overr de def put fAbsent( d: T, embedd ng: Embedd ngVector): Embedd ngVector = {
+    val value = mapDb.put fAbsent( nject on.apply( d), embedd ng.toArray)
+     f (value == null) null else Embedd ng(value)
   }
 
-  override def put(id: T, embedding: EmbeddingVector): EmbeddingVector = {
-    val value = mapDb.put(injection.apply(id), embedding.toArray)
-    if (value == null) null else Embedding(value)
+  overr de def put( d: T, embedd ng: Embedd ngVector): Embedd ngVector = {
+    val value = mapDb.put( nject on.apply( d), embedd ng.toArray)
+     f (value == null) null else Embedd ng(value)
   }
 
-  override def get(id: T): EmbeddingVector = {
-    Embedding(mapDb.get(injection.apply(id)))
+  overr de def get( d: T): Embedd ngVector = {
+    Embedd ng(mapDb.get( nject on.apply( d)))
   }
 
-  override def iter(): Iterator[(T, EmbeddingVector)] = {
+  overr de def  er():  erator[(T, Embedd ngVector)] = {
     mapDb
       .entrySet()
-      .iterator()
+      . erator()
       .asScala
-      .map(entry => (injection.invert(entry.getKey).get, Embedding(entry.getValue)))
+      .map(entry => ( nject on. nvert(entry.getKey).get, Embedd ng(entry.getValue)))
   }
 
-  override def size(): Int = mapDb.size()
+  overr de def s ze():  nt = mapDb.s ze()
 
-  override def toDirectory(embeddingFile: OutputStream): Unit = {
-    HnswIOUtil.saveEmbeddings(embeddingFile, injection, iter())
+  overr de def toD rectory(embedd ngF le: OutputStream): Un  = {
+    Hnsw OUt l.saveEmbedd ngs(embedd ngF le,  nject on,  er())
   }
 }

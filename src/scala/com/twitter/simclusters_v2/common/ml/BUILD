@@ -1,12 +1,12 @@
-# This package/target is separate from other simclusters common packages because the ml/api dep is
-# large (350MB+). Having it as a separate target means that we can avoid bundling it with targets
-# that do not need it.
-scala_library(
+# T  package/target  s separate from ot r s mclusters common packages because t  ml/ap  dep  s
+# large (350MB+). Hav ng   as a separate target  ans that   can avo d bundl ng   w h targets
+# that do not need  .
+scala_l brary(
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/java/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/ml/api/util",
-        "src/scala/com/twitter/simclusters_v2/common",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "src/java/com/tw ter/ml/ap :ap -base",
+        "src/scala/com/tw ter/ml/ap /ut l",
+        "src/scala/com/tw ter/s mclusters_v2/common",
     ],
 )

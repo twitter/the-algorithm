@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.label
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.label
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.label.LabelItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.UrlMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.label.Label em
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class LabelItemMarshaller @Inject() (
-  displayTypeMarshaller: LabelDisplayTypeMarshaller,
+@S ngleton
+class Label emMarshaller @ nject() (
+  d splayTypeMarshaller: LabelD splayTypeMarshaller,
   urlMarshaller: UrlMarshaller) {
 
-  def apply(labelItem: LabelItem): urt.TimelineItemContent = {
-    urt.TimelineItemContent.Label(
+  def apply(label em: Label em): urt.T  l ne emContent = {
+    urt.T  l ne emContent.Label(
       urt.Label(
-        text = labelItem.text,
-        subtext = labelItem.subtext,
-        disclosureIndicator = labelItem.disclosureIndicator,
-        url = labelItem.url.map(urlMarshaller(_)),
-        displayType = labelItem.displayType.map(displayTypeMarshaller(_))
+        text = label em.text,
+        subtext = label em.subtext,
+        d sclosure nd cator = label em.d sclosure nd cator,
+        url = label em.url.map(urlMarshaller(_)),
+        d splayType = label em.d splayType.map(d splayTypeMarshaller(_))
       )
     )
   }

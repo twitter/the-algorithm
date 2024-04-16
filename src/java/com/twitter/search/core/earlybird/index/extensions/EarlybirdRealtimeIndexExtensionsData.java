@@ -1,20 +1,20 @@
-package com.twitter.search.core.earlybird.index.extensions;
+package com.tw ter.search.core.earlyb rd. ndex.extens ons;
 
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentWriter;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rdRealt   ndexSeg ntWr er;
 
 /**
- * An index extensions implementation for real-time Earlybird indexes.
+ * An  ndex extens ons  mple ntat on for real-t   Earlyb rd  ndexes.
  */
-public interface EarlybirdRealtimeIndexExtensionsData extends EarlybirdIndexExtensionsData {
+publ c  nterface Earlyb rdRealt   ndexExtens onsData extends Earlyb rd ndexExtens onsData {
   /**
-   * Optionally, an implementing class can provide a custom consumer for inverted fields (i.e. streams of tokens).
+   * Opt onally, an  mple nt ng class can prov de a custom consu r for  nverted f elds ( .e. streams of tokens).
    */
-  void createInvertedDocConsumer(
-      EarlybirdRealtimeIndexSegmentWriter.InvertedDocConsumerBuilder builder);
+  vo d create nvertedDocConsu r(
+      Earlyb rdRealt   ndexSeg ntWr er. nvertedDocConsu rBu lder bu lder);
 
   /**
-   * Optionally, an implementing class can provide a custom consumer for stored fields (e.g. doc values fields).
+   * Opt onally, an  mple nt ng class can prov de a custom consu r for stored f elds (e.g. doc values f elds).
    */
-  void createStoredFieldsConsumer(
-      EarlybirdRealtimeIndexSegmentWriter.StoredFieldsConsumerBuilder builder);
+  vo d createStoredF eldsConsu r(
+      Earlyb rdRealt   ndexSeg ntWr er.StoredF eldsConsu rBu lder bu lder);
 }

@@ -1,29 +1,29 @@
-package com.twitter.unified_user_actions.adapter
+package com.tw ter.un f ed_user_act ons.adapter
 
-import com.twitter.inject.Test
-import com.twitter.unified_user_actions.adapter.common.AdapterUtils
-import com.twitter.util.Time
+ mport com.tw ter. nject.Test
+ mport com.tw ter.un f ed_user_act ons.adapter.common.AdapterUt ls
+ mport com.tw ter.ut l.T  
 
-class AdapterUtilsSpec extends Test {
-  trait Fixture {
+class AdapterUt lsSpec extends Test {
+  tra  F xture {
 
-    val frozenTime: Time = Time.fromMilliseconds(1658949273000L)
+    val frozenT  : T   = T  .fromM ll seconds(1658949273000L)
     val languageCode = "en"
     val countryCode = "us"
   }
 
   test("tests") {
-    new Fixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val actual = Time.fromMilliseconds(AdapterUtils.currentTimestampMs)
-        assert(frozenTime === actual)
+    new F xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val actual = T  .fromM ll seconds(AdapterUt ls.currentT  stampMs)
+        assert(frozenT   === actual)
       }
 
-      val actionedTweetId = 1554576940756246272L
-      assert(AdapterUtils.getTimestampMsFromTweetId(actionedTweetId) === 1659474999976L)
+      val act onedT et d = 1554576940756246272L
+      assert(AdapterUt ls.getT  stampMsFromT et d(act onedT et d) === 1659474999976L)
 
-      assert(languageCode.toUpperCase === AdapterUtils.normalizeLanguageCode(languageCode))
-      assert(countryCode.toUpperCase === AdapterUtils.normalizeCountryCode(countryCode))
+      assert(languageCode.toUpperCase === AdapterUt ls.normal zeLanguageCode(languageCode))
+      assert(countryCode.toUpperCase === AdapterUt ls.normal zeCountryCode(countryCode))
     }
   }
 }

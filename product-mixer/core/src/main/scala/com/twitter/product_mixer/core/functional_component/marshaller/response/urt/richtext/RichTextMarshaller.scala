@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.r chtext
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chText
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class RichTextMarshaller @Inject() (
-  richTextEntityMarshaller: RichTextEntityMarshaller,
-  richTextAlignmentMarshaller: RichTextAlignmentMarshaller) {
+@S ngleton
+class R chTextMarshaller @ nject() (
+  r chTextEnt yMarshaller: R chTextEnt yMarshaller,
+  r chTextAl gn ntMarshaller: R chTextAl gn ntMarshaller) {
 
-  def apply(richText: RichText): urt.RichText = urt.RichText(
-    text = richText.text,
-    entities = richText.entities.map(richTextEntityMarshaller(_)),
-    rtl = richText.rtl,
-    alignment = richText.alignment.map(richTextAlignmentMarshaller(_))
+  def apply(r chText: R chText): urt.R chText = urt.R chText(
+    text = r chText.text,
+    ent  es = r chText.ent  es.map(r chTextEnt yMarshaller(_)),
+    rtl = r chText.rtl,
+    al gn nt = r chText.al gn nt.map(r chTextAl gn ntMarshaller(_))
   )
 }

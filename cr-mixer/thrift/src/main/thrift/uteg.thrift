@@ -1,31 +1,31 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+na space java com.tw ter.cr_m xer.thr ftjava
+#@na space scala com.tw ter.cr_m xer.thr ftscala
+#@na space strato com.tw ter.cr_m xer
 
-include "product.thrift"
-include "product_context.thrift"
+ nclude "product.thr ft"
+ nclude "product_context.thr ft"
 
-include "com/twitter/product_mixer/core/client_context.thrift"
-include "com/twitter/recos/recos_common.thrift"
+ nclude "com/tw ter/product_m xer/core/cl ent_context.thr ft"
+ nclude "com/tw ter/recos/recos_common.thr ft"
 
-struct UtegTweetRequest {
-	1: required client_context.ClientContext clientContext
-	2: required product.Product product
-	# Product-specific parameters should be placed in the Product Context
-	3: optional product_context.ProductContext productContext
-	4: optional list<i64> excludedTweetIds (personalDataType = 'TweetId')
-} (persisted='true', hasPersonalData='true')
+struct UtegT etRequest {
+	1: requ red cl ent_context.Cl entContext cl entContext
+	2: requ red product.Product product
+	# Product-spec f c para ters should be placed  n t  Product Context
+	3: opt onal product_context.ProductContext productContext
+	4: opt onal l st< 64> excludedT et ds (personalDataType = 'T et d')
+} (pers sted='true', hasPersonalData='true')
 
-struct UtegTweet {
-  // tweet id
-  1: required i64 tweetId(personalDataType = 'TweetId')
-  // sum of weights of seed users who engaged with the tweet.
-  // If a user engaged with the same tweet twice, liked it and retweeted it, then his/her weight was counted twice.
-  2: required double score
-  // user social proofs per engagement type
-  3: required map<recos_common.SocialProofType, list<i64>> socialProofByType(personalDataTypeKey='EngagementTypePrivate', personalDataTypeValue='UserId')
-} (persisted='true', hasPersonalData = 'true')
+struct UtegT et {
+  // t et  d
+  1: requ red  64 t et d(personalDataType = 'T et d')
+  // sum of   ghts of seed users who engaged w h t  t et.
+  //  f a user engaged w h t  sa  t et tw ce, l ked   and ret eted  , t n  / r   ght was counted tw ce.
+  2: requ red double score
+  // user soc al proofs per engage nt type
+  3: requ red map<recos_common.Soc alProofType, l st< 64>> soc alProofByType(personalDataTypeKey='Engage ntTypePr vate', personalDataTypeValue='User d')
+} (pers sted='true', hasPersonalData = 'true')
 
-struct UtegTweetResponse {
-  1: required list<UtegTweet> tweets
-} (persisted='true')
+struct UtegT etResponse {
+  1: requ red l st<UtegT et> t ets
+} (pers sted='true')

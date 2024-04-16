@@ -1,33 +1,33 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.FilteredState.Unavailable.BounceDeleted
-import com.twitter.tweetypie.core.FilteredState.Unavailable.SourceTweetNotFound
-import com.twitter.tweetypie.core.FilteredState.Unavailable.TweetDeleted
+ mport com.tw ter.st ch.NotFound
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.core.F lteredState.Unava lable.BounceDeleted
+ mport com.tw ter.t etyp e.core.F lteredState.Unava lable.S ceT etNotFound
+ mport com.tw ter.t etyp e.core.F lteredState.Unava lable.T etDeleted
 
-object ParentUserIdRepository {
-  type Type = Tweet => Stitch[Option[UserId]]
+object ParentUser dRepos ory {
+  type Type = T et => St ch[Opt on[User d]]
 
-  case class ParentTweetNotFound(tweetId: TweetId) extends Exception
+  case class ParentT etNotFound(t et d: T et d) extends Except on
 
-  def apply(tweetRepo: TweetRepository.Type): Type = {
-    val options = TweetQuery.Options(TweetQuery.Include(Set(Tweet.CoreDataField.id)))
+  def apply(t etRepo: T etRepos ory.Type): Type = {
+    val opt ons = T etQuery.Opt ons(T etQuery. nclude(Set(T et.CoreDataF eld. d)))
 
-    tweet =>
-      getShare(tweet) match {
-        case Some(share) if share.sourceStatusId == share.parentStatusId =>
-          Stitch.value(Some(share.sourceUserId))
-        case Some(share) =>
-          tweetRepo(share.parentStatusId, options)
-            .map(tweet => Some(getUserId(tweet)))
+    t et =>
+      getShare(t et) match {
+        case So (share)  f share.s ceStatus d == share.parentStatus d =>
+          St ch.value(So (share.s ceUser d))
+        case So (share) =>
+          t etRepo(share.parentStatus d, opt ons)
+            .map(t et => So (getUser d(t et)))
             .rescue {
-              case NotFound | TweetDeleted | BounceDeleted | SourceTweetNotFound(_) =>
-                Stitch.exception(ParentTweetNotFound(share.parentStatusId))
+              case NotFound | T etDeleted | BounceDeleted | S ceT etNotFound(_) =>
+                St ch.except on(ParentT etNotFound(share.parentStatus d))
             }
         case None =>
-          Stitch.None
+          St ch.None
       }
   }
 }

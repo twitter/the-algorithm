@@ -1,68 +1,68 @@
-package com.twitter.home_mixer.product.scored_tweets.query_transformer.earlybird
+package com.tw ter.ho _m xer.product.scored_t ets.query_transfor r.earlyb rd
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.core_workflows.user_model.{thriftscala => um}
-import com.twitter.home_mixer.model.HomeFeatures.UserStateFeature
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.product.scored_tweets.query_transformer.earlybird.EarlybirdInNetworkQueryTransformer._
-import com.twitter.product_mixer.component_library.feature_hydrator.query.social_graph.SGSFollowedUsersFeature
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.search.earlybird.{thriftscala => eb}
-import com.twitter.timelines.common.model.TweetKindOption
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.core_workflows.user_model.{thr ftscala => um}
+ mport com.tw ter.ho _m xer.model.Ho Features.UserStateFeature
+ mport com.tw ter.ho _m xer.model.request.HasDev ceContext
+ mport com.tw ter.ho _m xer.product.scored_t ets.query_transfor r.earlyb rd.Earlyb rd nNetworkQueryTransfor r._
+ mport com.tw ter.product_m xer.component_l brary.feature_hydrator.query.soc al_graph.SGSFollo dUsersFeature
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.qual y_factor.HasQual yFactorStatus
+ mport com.tw ter.search.earlyb rd.{thr ftscala => eb}
+ mport com.tw ter.t  l nes.common.model.T etK ndOpt on
 
-object EarlybirdInNetworkQueryTransformer {
-  private val DefaultSinceDuration = 24.hours
-  private val ExpandedSinceDuration = 48.hours
-  private val MaxTweetsToFetch = 600
-  private val TensorflowModel = Some("timelines_recap_replica")
+object Earlyb rd nNetworkQueryTransfor r {
+  pr vate val DefaultS nceDurat on = 24.h s
+  pr vate val ExpandedS nceDurat on = 48.h s
+  pr vate val MaxT etsToFetch = 600
+  pr vate val TensorflowModel = So ("t  l nes_recap_repl ca")
 
-  private val TweetKindOptions: TweetKindOption.ValueSet = TweetKindOption(
-    includeReplies = true,
-    includeRetweets = true,
-    includeOriginalTweetsAndQuotes = true,
-    includeExtendedReplies = true
+  pr vate val T etK ndOpt ons: T etK ndOpt on.ValueSet = T etK ndOpt on(
+     ncludeRepl es = true,
+     ncludeRet ets = true,
+     ncludeOr g nalT etsAndQuotes = true,
+     ncludeExtendedRepl es = true
   )
 
-  private val UserStatesForExtendedSinceDuration: Set[um.UserState] = Set(
-    um.UserState.Light,
-    um.UserState.MediumNonTweeter,
-    um.UserState.MediumTweeter,
+  pr vate val UserStatesForExtendedS nceDurat on: Set[um.UserState] = Set(
+    um.UserState.L ght,
+    um.UserState. d umNonT eter,
+    um.UserState. d umT eter,
     um.UserState.NearZero,
     um.UserState.New,
-    um.UserState.VeryLight
+    um.UserState.VeryL ght
   )
 }
 
-case class EarlybirdInNetworkQueryTransformer[
-  Query <: PipelineQuery with HasQualityFactorStatus with HasDeviceContext
+case class Earlyb rd nNetworkQueryTransfor r[
+  Query <: P pel neQuery w h HasQual yFactorStatus w h HasDev ceContext
 ](
-  candidatePipelineIdentifier: CandidatePipelineIdentifier,
-  override val clientId: Option[String])
-    extends CandidatePipelineQueryTransformer[Query, eb.EarlybirdRequest]
-    with EarlybirdQueryTransformer[Query] {
+  cand dateP pel ne dent f er: Cand dateP pel ne dent f er,
+  overr de val cl ent d: Opt on[Str ng])
+    extends Cand dateP pel neQueryTransfor r[Query, eb.Earlyb rdRequest]
+    w h Earlyb rdQueryTransfor r[Query] {
 
-  override val tweetKindOptions: TweetKindOption.ValueSet = TweetKindOptions
-  override val maxTweetsToFetch: Int = MaxTweetsToFetch
-  override val tensorflowModel: Option[String] = TensorflowModel
+  overr de val t etK ndOpt ons: T etK ndOpt on.ValueSet = T etK ndOpt ons
+  overr de val maxT etsToFetch:  nt = MaxT etsToFetch
+  overr de val tensorflowModel: Opt on[Str ng] = TensorflowModel
 
-  override def transform(query: Query): eb.EarlybirdRequest = {
+  overr de def transform(query: Query): eb.Earlyb rdRequest = {
 
     val userState = query.features.get.getOrElse(UserStateFeature, None)
 
-    val sinceDuration =
-      if (userState.exists(UserStatesForExtendedSinceDuration.contains)) ExpandedSinceDuration
-      else DefaultSinceDuration
+    val s nceDurat on =
+       f (userState.ex sts(UserStatesForExtendedS nceDurat on.conta ns)) ExpandedS nceDurat on
+      else DefaultS nceDurat on
 
-    val followedUserIds =
+    val follo dUser ds =
       query.features
         .map(
           _.getOrElse(
-            SGSFollowedUsersFeature,
-            Seq.empty)).toSeq.flatten.toSet + query.getRequiredUserId
+            SGSFollo dUsersFeature,
+            Seq.empty)).toSeq.flatten.toSet + query.getRequ redUser d
 
-    buildEarlybirdQuery(query, sinceDuration, followedUserIds)
+    bu ldEarlyb rdQuery(query, s nceDurat on, follo dUser ds)
   }
 }

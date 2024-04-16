@@ -1,83 +1,83 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+# nclude "tensorflow/core/fra work/op.h"
+# nclude "tensorflow/core/fra work/shape_ nference.h"
+# nclude "tensorflow/core/fra work/op_kernel.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
-#include <map>
-#include <vector>
-#include <set>
+# nclude <twml.h>
+# nclude "tensorflow_ut ls.h"
+# nclude <map>
+# nclude <vector>
+# nclude <set>
 
-REGISTER_OP("FeatureMask")
-.Attr("T: {int64, int8}")
-.Input("keep: T")
-.Attr("list_keep: list(int)")
+REG STER_OP("FeatureMask")
+.Attr("T: { nt64,  nt8}")
+. nput("keep: T")
+.Attr("l st_keep: l st( nt)")
 .Output("mask: bool")
 
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
 
-A tensorflow OP that creates a mask of the indices that should be kept.
+A tensorflow OP that creates a mask of t   nd ces that should be kept.
 
-Attribute
-list_keep: list of values which should be kept(list(int))
+Attr bute
+l st_keep: l st of values wh ch should be kept(l st( nt))
 
-Input
-  keep: Tensor for which we will apply the mask (int64, int8)
+ nput
+  keep: Tensor for wh ch   w ll apply t  mask ( nt64,  nt8)
 
 Outputs
   mask: boolean Tensor. (bool)
 
 )doc");
-template <typename T>
-class FeatureMask : public OpKernel {
- private:
-  std::set<int64> feature_set_keep;
+template <typena  T>
+class FeatureMask : publ c OpKernel {
+ pr vate:
+  std::set< nt64> feature_set_keep;
 
- public:
-  explicit FeatureMask(OpKernelConstruction* context)
+ publ c:
+  expl c  FeatureMask(OpKernelConstruct on* context)
       : OpKernel(context) {
-        std::vector<int64> feature_list_keep;
-        OP_REQUIRES_OK(context, context->GetAttr("list_keep", &feature_list_keep));
-        // create set that contains the content of the feature_list_keep, since tensorflow does not allow
-        // me to directly ouput the contents of list_keep to a set
-        feature_set_keep = std::set<int64>(feature_list_keep.begin(), feature_list_keep.end());
+        std::vector< nt64> feature_l st_keep;
+        OP_REQU RES_OK(context, context->GetAttr("l st_keep", &feature_l st_keep));
+        // create set that conta ns t  content of t  feature_l st_keep, s nce tensorflow does not allow
+        //   to d rectly ouput t  contents of l st_keep to a set
+        feature_set_keep = std::set< nt64>(feature_l st_keep.beg n(), feature_l st_keep.end());
       }
 
-  void Compute(OpKernelContext* context) override {
-    // Get size of the input_vector and create TensorShape shape
-    const Tensor& input = context->input(0);
+  vo d Compute(OpKernelContext* context) overr de {
+    // Get s ze of t   nput_vector and create TensorShape shape
+    const Tensor&  nput = context-> nput(0);
 
-    auto keep = input.flat<T>();
+    auto keep =  nput.flat<T>();
 
     // Create an output tensor
     Tensor* output_mask = nullptr;
 
-    // Output shape is determined and now we can copy the contents of the vector to the output Tensor.
-    const int total_size_out = static_cast<int>(keep.size());
+    // Output shape  s determ ned and now   can copy t  contents of t  vector to t  output Tensor.
+    const  nt total_s ze_out = stat c_cast< nt>(keep.s ze());
 
-    TensorShape shape_out = {total_size_out};
+    TensorShape shape_out = {total_s ze_out};
 
-    OP_REQUIRES_OK(context, context->allocate_output(0, shape_out, &output_mask));
+    OP_REQU RES_OK(context, context->allocate_output(0, shape_out, &output_mask));
 
     auto output_mask_ = output_mask->flat<bool>();
 
-    // Check if value is in set, output is boolean
-    for (int j = 0; j < keep.size(); j++){
+    // C ck  f value  s  n set, output  s boolean
+    for ( nt j = 0; j < keep.s ze(); j++){
       output_mask_(j) = (feature_set_keep.count(keep(j)));
     }
   }
 };
 
 
-#define REGISTER(Type)                        \
+#def ne REG STER(Type)                        \
                                               \
-  REGISTER_KERNEL_BUILDER(                    \
-  Name("FeatureMask")  \
-  .Device(DEVICE_CPU)                         \
-  .TypeConstraint<Type>("T"),                 \
+  REG STER_KERNEL_BU LDER(                    \
+  Na ("FeatureMask")  \
+  .Dev ce(DEV CE_CPU)                         \
+  .TypeConstra nt<Type>("T"),                 \
   FeatureMask<Type>);  \
 
-REGISTER(int64);
-REGISTER(int8);
+REG STER( nt64);
+REG STER( nt8);

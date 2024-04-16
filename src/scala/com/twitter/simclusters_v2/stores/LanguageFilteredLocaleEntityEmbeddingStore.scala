@@ -1,95 +1,95 @@
-package com.twitter.simclusters_v2.stores
+package com.tw ter.s mclusters_v2.stores
 
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.ClusterDetails
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter.s mclusters_v2.common.Cluster d
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.thr ftscala.ClusterDeta ls
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
 /**
- * Transfer a Entity SimClustersEmbedding to a language filtered embedding.
- * The new embedding only contains clusters whose main language is the same as the language field in
- * the SimClustersEmbeddingId.
+ * Transfer a Ent y S mClustersEmbedd ng to a language f ltered embedd ng.
+ * T  new embedd ng only conta ns clusters whose ma n language  s t  sa  as t  language f eld  n
+ * t  S mClustersEmbedd ng d.
  *
- * This store is special designed for Topic Tweet and Topic Follow Prompt.
- * Only support new Ids whose internalId is LocaleEntityId.
+ * T  store  s spec al des gned for Top c T et and Top c Follow Prompt.
+ * Only support new  ds whose  nternal d  s LocaleEnt y d.
  */
 @deprecated
-case class LanguageFilteredLocaleEntityEmbeddingStore(
-  underlyingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding],
-  clusterDetailsStore: ReadableStore[(ModelVersion, ClusterId), ClusterDetails],
-  composeKeyMapping: SimClustersEmbeddingId => SimClustersEmbeddingId)
-    extends ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] {
+case class LanguageF lteredLocaleEnt yEmbedd ngStore(
+  underly ngStore: ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng],
+  clusterDeta lsStore: ReadableStore[(ModelVers on, Cluster d), ClusterDeta ls],
+  composeKeyMapp ng: S mClustersEmbedd ng d => S mClustersEmbedd ng d)
+    extends ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng] {
 
-  import LanguageFilteredLocaleEntityEmbeddingStore._
+   mport LanguageF lteredLocaleEnt yEmbedd ngStore._
 
-  override def get(k: SimClustersEmbeddingId): Future[Option[SimClustersEmbedding]] = {
+  overr de def get(k: S mClustersEmbedd ng d): Future[Opt on[S mClustersEmbedd ng]] = {
     for {
-      maybeEmbedding <- underlyingStore.get(composeKeyMapping(k))
-      maybeFilteredEmbedding <- maybeEmbedding match {
-        case Some(embedding) =>
-          embeddingsLanguageFilter(k, embedding).map(Some(_))
+      maybeEmbedd ng <- underly ngStore.get(composeKeyMapp ng(k))
+      maybeF lteredEmbedd ng <- maybeEmbedd ng match {
+        case So (embedd ng) =>
+          embedd ngsLanguageF lter(k, embedd ng).map(So (_))
         case None =>
           Future.None
       }
-    } yield maybeFilteredEmbedding
+    } y eld maybeF lteredEmbedd ng
   }
 
-  private def embeddingsLanguageFilter(
-    sourceEmbeddingId: SimClustersEmbeddingId,
-    simClustersEmbedding: SimClustersEmbedding
-  ): Future[SimClustersEmbedding] = {
-    val language = getLanguage(sourceEmbeddingId)
-    val modelVersion = sourceEmbeddingId.modelVersion
+  pr vate def embedd ngsLanguageF lter(
+    s ceEmbedd ng d: S mClustersEmbedd ng d,
+    s mClustersEmbedd ng: S mClustersEmbedd ng
+  ): Future[S mClustersEmbedd ng] = {
+    val language = getLanguage(s ceEmbedd ng d)
+    val modelVers on = s ceEmbedd ng d.modelVers on
 
-    val clusterDetailKeys = simClustersEmbedding.sortedClusterIds.map { clusterId =>
-      (modelVersion, clusterId)
+    val clusterDeta lKeys = s mClustersEmbedd ng.sortedCluster ds.map { cluster d =>
+      (modelVers on, cluster d)
     }.toSet
 
     Future
       .collect {
-        clusterDetailsStore.multiGet(clusterDetailKeys)
-      }.map { clusterDetailsMap =>
-        simClustersEmbedding.embedding.filter {
-          case (clusterId, _) =>
-            isDominantLanguage(
+        clusterDeta lsStore.mult Get(clusterDeta lKeys)
+      }.map { clusterDeta lsMap =>
+        s mClustersEmbedd ng.embedd ng.f lter {
+          case (cluster d, _) =>
+             sDom nantLanguage(
               language,
-              clusterDetailsMap.getOrElse((modelVersion, clusterId), None))
+              clusterDeta lsMap.getOrElse((modelVers on, cluster d), None))
         }
-      }.map(SimClustersEmbedding(_))
+      }.map(S mClustersEmbedd ng(_))
   }
 
-  private def isDominantLanguage(
-    requestLang: String,
-    clusterDetails: Option[ClusterDetails]
+  pr vate def  sDom nantLanguage(
+    requestLang: Str ng,
+    clusterDeta ls: Opt on[ClusterDeta ls]
   ): Boolean =
-    clusterDetails match {
-      case Some(details) =>
-        val dominantLanguage =
-          details.languageToFractionDeviceLanguage.map { langMap =>
+    clusterDeta ls match {
+      case So (deta ls) =>
+        val dom nantLanguage =
+          deta ls.languageToFract onDev ceLanguage.map { langMap =>
             langMap.maxBy {
               case (_, score) => score
             }._1
           }
 
-        dominantLanguage.exists(_.equalsIgnoreCase(requestLang))
+        dom nantLanguage.ex sts(_.equals gnoreCase(requestLang))
       case _ => true
     }
 
 }
 
-object LanguageFilteredLocaleEntityEmbeddingStore {
+object LanguageF lteredLocaleEnt yEmbedd ngStore {
 
-  def getLanguage(simClustersEmbeddingId: SimClustersEmbeddingId): String = {
-    simClustersEmbeddingId match {
-      case SimClustersEmbeddingId(_, _, InternalId.LocaleEntityId(localeEntityId)) =>
-        localeEntityId.language
+  def getLanguage(s mClustersEmbedd ng d: S mClustersEmbedd ng d): Str ng = {
+    s mClustersEmbedd ng d match {
+      case S mClustersEmbedd ng d(_, _,  nternal d.LocaleEnt y d(localeEnt y d)) =>
+        localeEnt y d.language
       case _ =>
-        throw new IllegalArgumentException(
-          s"The Id $simClustersEmbeddingId doesn't contain Locale info")
+        throw new  llegalArgu ntExcept on(
+          s"T   d $s mClustersEmbedd ng d doesn't conta n Locale  nfo")
     }
   }
 

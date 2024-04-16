@@ -1,101 +1,101 @@
-package com.twitter.frigate.pushservice.adaptor
+package com.tw ter.fr gate.pushserv ce.adaptor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.frigate.common.base.CandidateSourceEligible
-import com.twitter.frigate.common.base.DiscoverTwitterCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.{PushFeatureSwitchParams => FS}
-import com.twitter.frigate.pushservice.predicate.DiscoverTwitterPredicate
-import com.twitter.frigate.pushservice.predicate.TargetPredicates
-import com.twitter.frigate.pushservice.util.PushAppPermissionUtil
-import com.twitter.frigate.pushservice.util.PushDeviceUtil
-import com.twitter.frigate.thriftscala.{CommonRecommendationType => CRT}
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Cand dateS ce
+ mport com.tw ter.fr gate.common.base.Cand dateS ceEl g ble
+ mport com.tw ter.fr gate.common.base.D scoverTw terCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.params.{PushFeatureSw chParams => FS}
+ mport com.tw ter.fr gate.pushserv ce.pred cate.D scoverTw terPred cate
+ mport com.tw ter.fr gate.pushserv ce.pred cate.TargetPred cates
+ mport com.tw ter.fr gate.pushserv ce.ut l.PushAppPerm ss onUt l
+ mport com.tw ter.fr gate.pushserv ce.ut l.PushDev ceUt l
+ mport com.tw ter.fr gate.thr ftscala.{CommonRecom ndat onType => CRT}
+ mport com.tw ter.ut l.Future
 
-class OnboardingPushCandidateAdaptor(
-  globalStats: StatsReceiver)
-    extends CandidateSource[Target, RawCandidate]
-    with CandidateSourceEligible[Target, RawCandidate] {
+class Onboard ngPushCand dateAdaptor(
+  globalStats: StatsRece ver)
+    extends Cand dateS ce[Target, RawCand date]
+    w h Cand dateS ceEl g ble[Target, RawCand date] {
 
-  override val name: String = this.getClass.getSimpleName
+  overr de val na : Str ng = t .getClass.getS mpleNa 
 
-  private[this] val stats = globalStats.scope(name)
-  private[this] val requestNum = stats.counter("request_num")
-  private[this] val addressBookCandNum = stats.counter("address_book_cand_num")
-  private[this] val completeOnboardingCandNum = stats.counter("complete_onboarding_cand_num")
+  pr vate[t ] val stats = globalStats.scope(na )
+  pr vate[t ] val requestNum = stats.counter("request_num")
+  pr vate[t ] val addressBookCandNum = stats.counter("address_book_cand_num")
+  pr vate[t ] val completeOnboard ngCandNum = stats.counter("complete_onboard ng_cand_num")
 
-  private def generateOnboardingPushRawCandidate(
+  pr vate def generateOnboard ngPushRawCand date(
     _target: Target,
     _commonRecType: CRT
-  ): RawCandidate = {
-    new RawCandidate with DiscoverTwitterCandidate {
-      override val target = _target
-      override val commonRecType = _commonRecType
+  ): RawCand date = {
+    new RawCand date w h D scoverTw terCand date {
+      overr de val target = _target
+      overr de val commonRecType = _commonRecType
     }
   }
 
-  private def getEligibleCandsForTarget(
+  pr vate def getEl g bleCandsForTarget(
     target: Target
-  ): Future[Option[Seq[RawCandidate]]] = {
-    val addressBookFatigue =
-      TargetPredicates
-        .pushRecTypeFatiguePredicate(
+  ): Future[Opt on[Seq[RawCand date]]] = {
+    val addressBookFat gue =
+      TargetPred cates
+        .pushRecTypeFat guePred cate(
           CRT.AddressBookUploadPush,
-          FS.FatigueForOnboardingPushes,
-          FS.MaxOnboardingPushInInterval,
-          stats)(Seq(target)).map(_.head)
-    val completeOnboardingFatigue =
-      TargetPredicates
-        .pushRecTypeFatiguePredicate(
-          CRT.CompleteOnboardingPush,
-          FS.FatigueForOnboardingPushes,
-          FS.MaxOnboardingPushInInterval,
-          stats)(Seq(target)).map(_.head)
+          FS.Fat gueForOnboard ngPus s,
+          FS.MaxOnboard ngPush n nterval,
+          stats)(Seq(target)).map(_. ad)
+    val completeOnboard ngFat gue =
+      TargetPred cates
+        .pushRecTypeFat guePred cate(
+          CRT.CompleteOnboard ngPush,
+          FS.Fat gueForOnboard ngPus s,
+          FS.MaxOnboard ngPush n nterval,
+          stats)(Seq(target)).map(_. ad)
 
     Future
-      .join(
-        target.appPermissions,
-        addressBookFatigue,
-        completeOnboardingFatigue
+      .jo n(
+        target.appPerm ss ons,
+        addressBookFat gue,
+        completeOnboard ngFat gue
       ).map {
-        case (appPermissionOpt, addressBookPredicate, completeOnboardingPredicate) =>
+        case (appPerm ss onOpt, addressBookPred cate, completeOnboard ngPred cate) =>
           val addressBookUploaded =
-            PushAppPermissionUtil.hasTargetUploadedAddressBook(appPermissionOpt)
-          val abUploadCandidate =
-            if (!addressBookUploaded && addressBookPredicate && target.params(
+            PushAppPerm ss onUt l.hasTargetUploadedAddressBook(appPerm ss onOpt)
+          val abUploadCand date =
+             f (!addressBookUploaded && addressBookPred cate && target.params(
                 FS.EnableAddressBookPush)) {
-              addressBookCandNum.incr()
-              Some(generateOnboardingPushRawCandidate(target, CRT.AddressBookUploadPush))
-            } else if (!addressBookUploaded && (completeOnboardingPredicate ||
-              target.params(FS.DisableOnboardingPushFatigue)) && target.params(
-                FS.EnableCompleteOnboardingPush)) {
-              completeOnboardingCandNum.incr()
-              Some(generateOnboardingPushRawCandidate(target, CRT.CompleteOnboardingPush))
+              addressBookCandNum. ncr()
+              So (generateOnboard ngPushRawCand date(target, CRT.AddressBookUploadPush))
+            } else  f (!addressBookUploaded && (completeOnboard ngPred cate ||
+              target.params(FS.D sableOnboard ngPushFat gue)) && target.params(
+                FS.EnableCompleteOnboard ngPush)) {
+              completeOnboard ngCandNum. ncr()
+              So (generateOnboard ngPushRawCand date(target, CRT.CompleteOnboard ngPush))
             } else None
 
-          val allCandidates =
-            Seq(abUploadCandidate).filter(_.isDefined).flatten
-          if (allCandidates.nonEmpty) Some(allCandidates) else None
+          val allCand dates =
+            Seq(abUploadCand date).f lter(_. sDef ned).flatten
+           f (allCand dates.nonEmpty) So (allCand dates) else None
       }
   }
 
-  override def get(inputTarget: Target): Future[Option[Seq[RawCandidate]]] = {
-    requestNum.incr()
-    val minDurationForMRElapsed =
-      DiscoverTwitterPredicate
-        .minDurationElapsedSinceLastMrPushPredicate(
-          name,
-          FS.MrMinDurationSincePushForOnboardingPushes,
-          stats)(Seq(inputTarget)).map(_.head)
-    minDurationForMRElapsed.flatMap { minDurationElapsed =>
-      if (minDurationElapsed) getEligibleCandsForTarget(inputTarget) else Future.None
+  overr de def get( nputTarget: Target): Future[Opt on[Seq[RawCand date]]] = {
+    requestNum. ncr()
+    val m nDurat onForMRElapsed =
+      D scoverTw terPred cate
+        .m nDurat onElapsedS nceLastMrPushPred cate(
+          na ,
+          FS.MrM nDurat onS ncePushForOnboard ngPus s,
+          stats)(Seq( nputTarget)).map(_. ad)
+    m nDurat onForMRElapsed.flatMap { m nDurat onElapsed =>
+       f (m nDurat onElapsed) getEl g bleCandsForTarget( nputTarget) else Future.None
     }
   }
 
-  override def isCandidateSourceAvailable(target: Target): Future[Boolean] = {
-    PushDeviceUtil
-      .isRecommendationsEligible(target).map(_ && target.params(FS.EnableOnboardingPushes))
+  overr de def  sCand dateS ceAva lable(target: Target): Future[Boolean] = {
+    PushDev ceUt l
+      . sRecom ndat onsEl g ble(target).map(_ && target.params(FS.EnableOnboard ngPus s))
   }
 }

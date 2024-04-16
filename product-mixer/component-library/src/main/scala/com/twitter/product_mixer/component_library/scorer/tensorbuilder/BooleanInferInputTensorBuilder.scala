@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.component_library.scorer.tensorbuilder
+package com.tw ter.product_m xer.component_l brary.scorer.tensorbu lder
 
-import inference.GrpcService.ModelInferRequest.InferInputTensor
+ mport  nference.GrpcServ ce.Model nferRequest. nfer nputTensor
 
-case object BooleanInferInputTensorBuilder extends InferInputTensorBuilder[Boolean] {
+case object Boolean nfer nputTensorBu lder extends  nfer nputTensorBu lder[Boolean] {
   def apply(
-    featureName: String,
+    featureNa : Str ng,
     featureValues: Seq[Boolean]
-  ): Seq[InferInputTensor] = {
-    val tensorShape = Seq(featureValues.size, 1)
-    InferInputTensorBuilder.buildBoolInferInputTensor(featureName, featureValues, tensorShape)
+  ): Seq[ nfer nputTensor] = {
+    val tensorShape = Seq(featureValues.s ze, 1)
+     nfer nputTensorBu lder.bu ldBool nfer nputTensor(featureNa , featureValues, tensorShape)
   }
 }

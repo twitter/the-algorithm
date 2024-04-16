@@ -1,26 +1,26 @@
-package com.twitter.unified_user_actions.service
+package com.tw ter.un f ed_user_act ons.serv ce
 
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.ibis.thriftscala.NotificationScribe
-import com.twitter.inject.server.TwitterServer
-import com.twitter.kafka.client.processor.AtLeastOnceProcessor
-import com.twitter.unified_user_actions.service.module.KafkaProcessorEmailNotificationEventModule
+ mport com.tw ter.f natra.dec der.modules.Dec derModule
+ mport com.tw ter.f natra.kafka.serde.UnKeyed
+ mport com.tw ter. b s.thr ftscala.Not f cat onScr be
+ mport com.tw ter. nject.server.Tw terServer
+ mport com.tw ter.kafka.cl ent.processor.AtLeastOnceProcessor
+ mport com.tw ter.un f ed_user_act ons.serv ce.module.KafkaProcessorEma lNot f cat onEventModule
 
-object EmailNotificationEventServiceMain extends EmailNotificationEventService
+object Ema lNot f cat onEventServ ceMa n extends Ema lNot f cat onEventServ ce
 
-class EmailNotificationEventService extends TwitterServer {
+class Ema lNot f cat onEventServ ce extends Tw terServer {
 
-  override val modules = Seq(
-    KafkaProcessorEmailNotificationEventModule,
-    DeciderModule
+  overr de val modules = Seq(
+    KafkaProcessorEma lNot f cat onEventModule,
+    Dec derModule
   )
 
-  override protected def setup(): Unit = {}
+  overr de protected def setup(): Un  = {}
 
-  override protected def start(): Unit = {
-    val processor = injector.instance[AtLeastOnceProcessor[UnKeyed, NotificationScribe]]
-    closeOnExit(processor)
+  overr de protected def start(): Un  = {
+    val processor =  njector. nstance[AtLeastOnceProcessor[UnKeyed, Not f cat onScr be]]
+    closeOnEx (processor)
     processor.start()
   }
 }

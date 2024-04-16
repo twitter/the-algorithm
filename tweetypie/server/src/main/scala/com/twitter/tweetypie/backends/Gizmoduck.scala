@@ -1,93 +1,93 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package backends
 
-import com.twitter.finagle.Backoff
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.gizmoduck.thriftscala.CountsUpdateField
-import com.twitter.gizmoduck.thriftscala.LookupContext
-import com.twitter.gizmoduck.thriftscala.ModifiedUser
-import com.twitter.gizmoduck.thriftscala.UserResult
-import com.twitter.gizmoduck.{thriftscala => gd}
-import com.twitter.servo.util.FutureArrow
-import com.twitter.tweetypie.core.OverCapacity
-import com.twitter.tweetypie.util.RetryPolicyBuilder
+ mport com.tw ter.f nagle.Backoff
+ mport com.tw ter.f nagle.serv ce.RetryPol cy
+ mport com.tw ter.g zmoduck.thr ftscala.CountsUpdateF eld
+ mport com.tw ter.g zmoduck.thr ftscala.LookupContext
+ mport com.tw ter.g zmoduck.thr ftscala.Mod f edUser
+ mport com.tw ter.g zmoduck.thr ftscala.UserResult
+ mport com.tw ter.g zmoduck.{thr ftscala => gd}
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t etyp e.core.OverCapac y
+ mport com.tw ter.t etyp e.ut l.RetryPol cyBu lder
 
-object Gizmoduck {
-  import Backend._
+object G zmoduck {
+   mport Backend._
 
-  type GetById = FutureArrow[(gd.LookupContext, Seq[UserId], Set[UserField]), Seq[gd.UserResult]]
-  type GetByScreenName =
-    FutureArrow[(gd.LookupContext, Seq[String], Set[UserField]), Seq[gd.UserResult]]
-  type IncrCount = FutureArrow[(UserId, gd.CountsUpdateField, Int), Unit]
-  type ModifyAndGet = FutureArrow[(gd.LookupContext, UserId, gd.ModifiedUser), gd.User]
+  type GetBy d = FutureArrow[(gd.LookupContext, Seq[User d], Set[UserF eld]), Seq[gd.UserResult]]
+  type GetByScreenNa  =
+    FutureArrow[(gd.LookupContext, Seq[Str ng], Set[UserF eld]), Seq[gd.UserResult]]
+  type  ncrCount = FutureArrow[(User d, gd.CountsUpdateF eld,  nt), Un ]
+  type Mod fyAndGet = FutureArrow[(gd.LookupContext, User d, gd.Mod f edUser), gd.User]
 
-  def fromClient(client: gd.UserService.MethodPerEndpoint): Gizmoduck =
-    new Gizmoduck {
-      val getById = FutureArrow((client.get _).tupled)
-      val getByScreenName = FutureArrow((client.getByScreenName _).tupled)
-      val incrCount = FutureArrow((client.incrCount _).tupled)
-      val modifyAndGet = FutureArrow((client.modifyAndGet _).tupled)
-      def ping(): Future[Unit] = client.get(gd.LookupContext(), Seq.empty, Set.empty).unit
+  def fromCl ent(cl ent: gd.UserServ ce. thodPerEndpo nt): G zmoduck =
+    new G zmoduck {
+      val getBy d = FutureArrow((cl ent.get _).tupled)
+      val getByScreenNa  = FutureArrow((cl ent.getByScreenNa  _).tupled)
+      val  ncrCount = FutureArrow((cl ent. ncrCount _).tupled)
+      val mod fyAndGet = FutureArrow((cl ent.mod fyAndGet _).tupled)
+      def p ng(): Future[Un ] = cl ent.get(gd.LookupContext(), Seq.empty, Set.empty).un 
     }
 
-  case class Config(
-    readTimeout: Duration,
-    writeTimeout: Duration,
-    modifyAndGetTimeout: Duration,
-    modifyAndGetTimeoutBackoffs: Stream[Duration],
-    defaultTimeoutBackoffs: Stream[Duration],
-    gizmoduckExceptionBackoffs: Stream[Duration]) {
+  case class Conf g(
+    readT  out: Durat on,
+    wr eT  out: Durat on,
+    mod fyAndGetT  out: Durat on,
+    mod fyAndGetT  outBackoffs: Stream[Durat on],
+    defaultT  outBackoffs: Stream[Durat on],
+    g zmoduckExcept onBackoffs: Stream[Durat on]) {
 
-    def apply(svc: Gizmoduck, ctx: Backend.Context): Gizmoduck =
-      new Gizmoduck {
-        val getById: FutureArrow[(LookupContext, Seq[UserId], Set[UserField]), Seq[UserResult]] =
-          policy("getById", readTimeout, ctx)(svc.getById)
-        val getByScreenName: FutureArrow[(LookupContext, Seq[String], Set[UserField]), Seq[
+    def apply(svc: G zmoduck, ctx: Backend.Context): G zmoduck =
+      new G zmoduck {
+        val getBy d: FutureArrow[(LookupContext, Seq[User d], Set[UserF eld]), Seq[UserResult]] =
+          pol cy("getBy d", readT  out, ctx)(svc.getBy d)
+        val getByScreenNa : FutureArrow[(LookupContext, Seq[Str ng], Set[UserF eld]), Seq[
           UserResult
-        ]] = policy("getByScreenName", readTimeout, ctx)(svc.getByScreenName)
-        val incrCount: FutureArrow[(UserId, CountsUpdateField, Int), Unit] =
-          policy("incrCount", writeTimeout, ctx)(svc.incrCount)
-        val modifyAndGet: FutureArrow[(LookupContext, UserId, ModifiedUser), User] = policy(
-          "modifyAndGet",
-          modifyAndGetTimeout,
+        ]] = pol cy("getByScreenNa ", readT  out, ctx)(svc.getByScreenNa )
+        val  ncrCount: FutureArrow[(User d, CountsUpdateF eld,  nt), Un ] =
+          pol cy(" ncrCount", wr eT  out, ctx)(svc. ncrCount)
+        val mod fyAndGet: FutureArrow[(LookupContext, User d, Mod f edUser), User] = pol cy(
+          "mod fyAndGet",
+          mod fyAndGetT  out,
           ctx,
-          timeoutBackoffs = modifyAndGetTimeoutBackoffs
-        )(svc.modifyAndGet)
-        def ping(): Future[Unit] = svc.ping()
+          t  outBackoffs = mod fyAndGetT  outBackoffs
+        )(svc.mod fyAndGet)
+        def p ng(): Future[Un ] = svc.p ng()
       }
 
-    private[this] def policy[A, B](
-      name: String,
-      requestTimeout: Duration,
+    pr vate[t ] def pol cy[A, B](
+      na : Str ng,
+      requestT  out: Durat on,
       ctx: Context,
-      timeoutBackoffs: Stream[Duration] = defaultTimeoutBackoffs
-    ): Builder[A, B] =
-      translateExceptions andThen
-        defaultPolicy(name, requestTimeout, retryPolicy(timeoutBackoffs), ctx)
+      t  outBackoffs: Stream[Durat on] = defaultT  outBackoffs
+    ): Bu lder[A, B] =
+      translateExcept ons andT n
+        defaultPol cy(na , requestT  out, retryPol cy(t  outBackoffs), ctx)
 
-    private[this] def translateExceptions[A, B]: Builder[A, B] =
-      _.translateExceptions {
-        case gd.OverCapacity(msg) => OverCapacity(s"gizmoduck: $msg")
+    pr vate[t ] def translateExcept ons[A, B]: Bu lder[A, B] =
+      _.translateExcept ons {
+        case gd.OverCapac y(msg) => OverCapac y(s"g zmoduck: $msg")
       }
 
-    private[this] def retryPolicy[B](timeoutBackoffs: Stream[Duration]): RetryPolicy[Try[B]] =
-      RetryPolicy.combine[Try[B]](
-        RetryPolicyBuilder.timeouts[B](timeoutBackoffs),
-        RetryPolicy.backoff(Backoff.fromStream(gizmoduckExceptionBackoffs)) {
-          case Throw(ex: gd.InternalServerError) => true
+    pr vate[t ] def retryPol cy[B](t  outBackoffs: Stream[Durat on]): RetryPol cy[Try[B]] =
+      RetryPol cy.comb ne[Try[B]](
+        RetryPol cyBu lder.t  outs[B](t  outBackoffs),
+        RetryPol cy.backoff(Backoff.fromStream(g zmoduckExcept onBackoffs)) {
+          case Throw(ex: gd. nternalServerError) => true
         }
       )
   }
 
-  implicit val warmup: Warmup[Gizmoduck] =
-    Warmup[Gizmoduck]("gizmoduck")(_.ping())
+   mpl c  val warmup: Warmup[G zmoduck] =
+    Warmup[G zmoduck]("g zmoduck")(_.p ng())
 }
 
-trait Gizmoduck {
-  import Gizmoduck._
-  val getById: GetById
-  val getByScreenName: GetByScreenName
-  val incrCount: IncrCount
-  val modifyAndGet: ModifyAndGet
-  def ping(): Future[Unit]
+tra  G zmoduck {
+   mport G zmoduck._
+  val getBy d: GetBy d
+  val getByScreenNa : GetByScreenNa 
+  val  ncrCount:  ncrCount
+  val mod fyAndGet: Mod fyAndGet
+  def p ng(): Future[Un ]
 }

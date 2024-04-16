@@ -1,168 +1,168 @@
-package com.twitter.interaction_graph.scio.agg_direct_interactions
+package com.tw ter. nteract on_graph.sc o.agg_d rect_ nteract ons
 
-import com.spotify.scio.ScioMetrics
-import com.spotify.scio.values.SCollection
-import com.twitter.interaction_graph.scio.common.FeatureGeneratorUtil
-import com.twitter.interaction_graph.scio.common.FeatureKey
-import com.twitter.interaction_graph.scio.common.InteractionGraphRawInput
-import com.twitter.interaction_graph.scio.common.UserUtil.DUMMY_USER_ID
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.timelineservice.thriftscala.ContextualizedFavoriteEvent
-import com.twitter.timelineservice.thriftscala.FavoriteEventUnion.Favorite
-import com.twitter.tweetsource.common.thriftscala.UnhydratedFlatTweet
-import com.twitter.tweetypie.thriftscala.TweetMediaTagEvent
+ mport com.spot fy.sc o.Sc o tr cs
+ mport com.spot fy.sc o.values.SCollect on
+ mport com.tw ter. nteract on_graph.sc o.common.FeatureGeneratorUt l
+ mport com.tw ter. nteract on_graph.sc o.common.FeatureKey
+ mport com.tw ter. nteract on_graph.sc o.common. nteract onGraphRaw nput
+ mport com.tw ter. nteract on_graph.sc o.common.UserUt l.DUMMY_USER_ D
+ mport com.tw ter. nteract on_graph.thr ftscala.Edge
+ mport com.tw ter. nteract on_graph.thr ftscala.FeatureNa 
+ mport com.tw ter. nteract on_graph.thr ftscala.Vertex
+ mport com.tw ter.t  l neserv ce.thr ftscala.Contextual zedFavor eEvent
+ mport com.tw ter.t  l neserv ce.thr ftscala.Favor eEventUn on.Favor e
+ mport com.tw ter.t ets ce.common.thr ftscala.UnhydratedFlatT et
+ mport com.tw ter.t etyp e.thr ftscala.T et d aTagEvent
 
-object InteractionGraphAggDirectInteractionsUtil {
+object  nteract onGraphAggD rect nteract onsUt l {
 
   val DefaultFeatureValue = 1L
 
-  def favouriteFeatures(
-    rawFavorites: SCollection[ContextualizedFavoriteEvent]
-  ): SCollection[(FeatureKey, Long)] = {
-    rawFavorites
-      .withName("fav features")
+  def fav  eFeatures(
+    rawFavor es: SCollect on[Contextual zedFavor eEvent]
+  ): SCollect on[(FeatureKey, Long)] = {
+    rawFavor es
+      .w hNa ("fav features")
       .flatMap { event =>
         event.event match {
-          case Favorite(e) if e.userId != e.tweetUserId =>
-            ScioMetrics.counter("process", "fav").inc()
-            Some(
-              FeatureKey(e.userId, e.tweetUserId, FeatureName.NumFavorites) -> DefaultFeatureValue)
+          case Favor e(e)  f e.user d != e.t etUser d =>
+            Sc o tr cs.counter("process", "fav"). nc()
+            So (
+              FeatureKey(e.user d, e.t etUser d, FeatureNa .NumFavor es) -> DefaultFeatureValue)
           case _ => None
         }
       }
 
   }
 
-  def mentionFeatures(
-    tweetSource: SCollection[UnhydratedFlatTweet]
-  ): SCollection[(FeatureKey, Long)] = {
-    tweetSource
-      .withName("mention features")
+  def  nt onFeatures(
+    t etS ce: SCollect on[UnhydratedFlatT et]
+  ): SCollect on[(FeatureKey, Long)] = {
+    t etS ce
+      .w hNa (" nt on features")
       .flatMap {
-        case s if s.shareSourceTweetId.isEmpty => // only for non-retweets
-          s.atMentionedUserIds
+        case s  f s.shareS ceT et d. sEmpty => // only for non-ret ets
+          s.at nt onedUser ds
             .map { users =>
-              users.toSet.map { uid: Long =>
-                ScioMetrics.counter("process", "mention").inc()
-                FeatureKey(s.userId, uid, FeatureName.NumMentions) -> DefaultFeatureValue
+              users.toSet.map { u d: Long =>
+                Sc o tr cs.counter("process", " nt on"). nc()
+                FeatureKey(s.user d, u d, FeatureNa .Num nt ons) -> DefaultFeatureValue
               }.toSeq
             }
-            .getOrElse(Nil)
+            .getOrElse(N l)
         case _ =>
-          Nil
+          N l
       }
   }
 
   def photoTagFeatures(
-    rawPhotoTags: SCollection[TweetMediaTagEvent]
-  ): SCollection[(FeatureKey, Long)] = {
+    rawPhotoTags: SCollect on[T et d aTagEvent]
+  ): SCollect on[(FeatureKey, Long)] = {
     rawPhotoTags
-      .withName("photo tag features")
+      .w hNa ("photo tag features")
       .flatMap { p =>
-        p.taggedUserIds.map { (p.userId, _) }
+        p.taggedUser ds.map { (p.user d, _) }
       }
       .collect {
-        case (src, dst) if src != dst =>
-          ScioMetrics.counter("process", "photo tag").inc()
-          FeatureKey(src, dst, FeatureName.NumPhotoTags) -> DefaultFeatureValue
+        case (src, dst)  f src != dst =>
+          Sc o tr cs.counter("process", "photo tag"). nc()
+          FeatureKey(src, dst, FeatureNa .NumPhotoTags) -> DefaultFeatureValue
       }
   }
 
-  def retweetFeatures(
-    tweetSource: SCollection[UnhydratedFlatTweet]
-  ): SCollection[(FeatureKey, Long)] = {
-    tweetSource
-      .withName("retweet features")
+  def ret etFeatures(
+    t etS ce: SCollect on[UnhydratedFlatT et]
+  ): SCollect on[(FeatureKey, Long)] = {
+    t etS ce
+      .w hNa ("ret et features")
       .collect {
-        case s if s.shareSourceUserId.exists(_ != s.userId) =>
-          ScioMetrics.counter("process", "share tweet").inc()
+        case s  f s.shareS ceUser d.ex sts(_ != s.user d) =>
+          Sc o tr cs.counter("process", "share t et"). nc()
           FeatureKey(
-            s.userId,
-            s.shareSourceUserId.get,
-            FeatureName.NumRetweets) -> DefaultFeatureValue
+            s.user d,
+            s.shareS ceUser d.get,
+            FeatureNa .NumRet ets) -> DefaultFeatureValue
       }
   }
 
-  def quotedTweetFeatures(
-    tweetSource: SCollection[UnhydratedFlatTweet]
-  ): SCollection[(FeatureKey, Long)] = {
-    tweetSource
-      .withName("quoted tweet features")
+  def quotedT etFeatures(
+    t etS ce: SCollect on[UnhydratedFlatT et]
+  ): SCollect on[(FeatureKey, Long)] = {
+    t etS ce
+      .w hNa ("quoted t et features")
       .collect {
-        case t if t.quotedTweetUserId.isDefined =>
-          ScioMetrics.counter("process", "quote tweet").inc()
+        case t  f t.quotedT etUser d. sDef ned =>
+          Sc o tr cs.counter("process", "quote t et"). nc()
           FeatureKey(
-            t.userId,
-            t.quotedTweetUserId.get,
-            FeatureName.NumTweetQuotes) -> DefaultFeatureValue
+            t.user d,
+            t.quotedT etUser d.get,
+            FeatureNa .NumT etQuotes) -> DefaultFeatureValue
       }
   }
 
-  def replyTweetFeatures(
-    tweetSource: SCollection[UnhydratedFlatTweet]
-  ): SCollection[(FeatureKey, Long)] = {
-    tweetSource
-      .withName("reply tweet features")
+  def replyT etFeatures(
+    t etS ce: SCollect on[UnhydratedFlatT et]
+  ): SCollect on[(FeatureKey, Long)] = {
+    t etS ce
+      .w hNa ("reply t et features")
       .collect {
-        case t if t.inReplyToUserId.isDefined =>
-          ScioMetrics.counter("process", "reply tweet").inc()
-          FeatureKey(t.userId, t.inReplyToUserId.get, FeatureName.NumReplies) -> DefaultFeatureValue
+        case t  f t. nReplyToUser d. sDef ned =>
+          Sc o tr cs.counter("process", "reply t et"). nc()
+          FeatureKey(t.user d, t. nReplyToUser d.get, FeatureNa .NumRepl es) -> DefaultFeatureValue
       }
   }
 
-  // we create edges to a dummy user id since creating a tweet has no destination id
-  def createTweetFeatures(
-    tweetSource: SCollection[UnhydratedFlatTweet]
-  ): SCollection[(FeatureKey, Long)] = {
-    tweetSource.withName("create tweet features").map { tweet =>
-      ScioMetrics.counter("process", "create tweet").inc()
-      FeatureKey(tweet.userId, DUMMY_USER_ID, FeatureName.NumCreateTweets) -> DefaultFeatureValue
+  //   create edges to a dum  user  d s nce creat ng a t et has no dest nat on  d
+  def createT etFeatures(
+    t etS ce: SCollect on[UnhydratedFlatT et]
+  ): SCollect on[(FeatureKey, Long)] = {
+    t etS ce.w hNa ("create t et features").map { t et =>
+      Sc o tr cs.counter("process", "create t et"). nc()
+      FeatureKey(t et.user d, DUMMY_USER_ D, FeatureNa .NumCreateT ets) -> DefaultFeatureValue
     }
   }
 
   def process(
-    rawFavorites: SCollection[ContextualizedFavoriteEvent],
-    tweetSource: SCollection[UnhydratedFlatTweet],
-    rawPhotoTags: SCollection[TweetMediaTagEvent],
-    safeUsers: SCollection[Long]
-  ): (SCollection[Vertex], SCollection[Edge]) = {
-    val favouriteInput = favouriteFeatures(rawFavorites)
-    val mentionInput = mentionFeatures(tweetSource)
-    val photoTagInput = photoTagFeatures(rawPhotoTags)
-    val retweetInput = retweetFeatures(tweetSource)
-    val quotedTweetInput = quotedTweetFeatures(tweetSource)
-    val replyInput = replyTweetFeatures(tweetSource)
-    val createTweetInput = createTweetFeatures(tweetSource)
+    rawFavor es: SCollect on[Contextual zedFavor eEvent],
+    t etS ce: SCollect on[UnhydratedFlatT et],
+    rawPhotoTags: SCollect on[T et d aTagEvent],
+    safeUsers: SCollect on[Long]
+  ): (SCollect on[Vertex], SCollect on[Edge]) = {
+    val fav  e nput = fav  eFeatures(rawFavor es)
+    val  nt on nput =  nt onFeatures(t etS ce)
+    val photoTag nput = photoTagFeatures(rawPhotoTags)
+    val ret et nput = ret etFeatures(t etS ce)
+    val quotedT et nput = quotedT etFeatures(t etS ce)
+    val reply nput = replyT etFeatures(t etS ce)
+    val createT et nput = createT etFeatures(t etS ce)
 
-    val allInput = SCollection.unionAll(
+    val all nput = SCollect on.un onAll(
       Seq(
-        favouriteInput,
-        mentionInput,
-        photoTagInput,
-        retweetInput,
-        quotedTweetInput,
-        replyInput,
-        createTweetInput
+        fav  e nput,
+         nt on nput,
+        photoTag nput,
+        ret et nput,
+        quotedT et nput,
+        reply nput,
+        createT et nput
       ))
 
-    val filteredFeatureInput = allInput
+    val f lteredFeature nput = all nput
       .keyBy(_._1.src)
-      .intersectByKey(safeUsers) // filter for safe users
+      . ntersectByKey(safeUsers) // f lter for safe users
       .values
       .collect {
-        case (FeatureKey(src, dst, feature), featureValue) if src != dst =>
+        case (FeatureKey(src, dst, feature), featureValue)  f src != dst =>
           FeatureKey(src, dst, feature) -> featureValue
       }
       .sumByKey
       .map {
         case (FeatureKey(src, dst, feature), featureValue) =>
           val age = 1
-          InteractionGraphRawInput(src, dst, feature, age, featureValue)
+           nteract onGraphRaw nput(src, dst, feature, age, featureValue)
       }
 
-    FeatureGeneratorUtil.getFeatures(filteredFeatureInput)
+    FeatureGeneratorUt l.getFeatures(f lteredFeature nput)
   }
 
 }

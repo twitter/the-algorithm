@@ -1,14 +1,14 @@
-package com.twitter.search.common.schema.base;
+package com.tw ter.search.common.sc ma.base;
 
-import javax.annotation.concurrent.Immutable;
-import javax.annotation.concurrent.ThreadSafe;
+ mport javax.annotat on.concurrent. mmutable;
+ mport javax.annotat on.concurrent.ThreadSafe;
 
 /**
- * This interface carries the same signature as Schema with the only difference that this schema
- * is immutable.  This should be used by short sessions and the class would guarantee the schema
- * would not change for the session.  A typical usage is like a search query session.
+ * T   nterface carr es t  sa  s gnature as Sc ma w h t  only d fference that t  sc ma
+ *  s  mmutable.  T  should be used by short sess ons and t  class would guarantee t  sc ma
+ * would not change for t  sess on.  A typ cal usage  s l ke a search query sess on.
  */
-@Immutable
+@ mmutable
 @ThreadSafe
-public interface ImmutableSchemaInterface extends Schema {
+publ c  nterface  mmutableSc ma nterface extends Sc ma {
 }

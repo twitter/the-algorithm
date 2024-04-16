@@ -1,63 +1,63 @@
-package com.twitter.simclusters_v2.scio
-package bq_generation.common
+package com.tw ter.s mclusters_v2.sc o
+package bq_generat on.common
 
-import com.twitter.algebird_internal.thriftscala.DecayedValue
-import com.twitter.simclusters_v2.thriftscala.FullClusterId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.Scores
-import com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores
-import com.twitter.snowflake.id.SnowflakeId
-import org.apache.avro.generic.GenericRecord
-import org.apache.beam.sdk.io.gcp.bigquery.SchemaAndRecord
-import org.apache.beam.sdk.transforms.SerializableFunction
-import scala.collection.JavaConverters._
+ mport com.tw ter.algeb rd_ nternal.thr ftscala.DecayedValue
+ mport com.tw ter.s mclusters_v2.thr ftscala.FullCluster d
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.tw ter.s mclusters_v2.thr ftscala.Scores
+ mport com.tw ter.s mclusters_v2.thr ftscala.TopKT etsW hScores
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport org.apac .avro.gener c.Gener cRecord
+ mport org.apac .beam.sdk. o.gcp.b gquery.Sc maAndRecord
+ mport org.apac .beam.sdk.transforms.Ser al zableFunct on
+ mport scala.collect on.JavaConverters._
 
-object IndexGenerationUtil {
-  // Function that parses [GenericRecord] results we read from BQ into [TopKTweetsForClusterKey]
-  def parseClusterTopKTweetsFn(tweetEmbeddingsHalfLife: Int) =
-    new SerializableFunction[SchemaAndRecord, TopKTweetsForClusterKey] {
-      override def apply(record: SchemaAndRecord): TopKTweetsForClusterKey = {
-        val genericRecord: GenericRecord = record.getRecord()
-        TopKTweetsForClusterKey(
-          clusterId = FullClusterId(
-            modelVersion = ModelVersion.Model20m145k2020,
-            clusterId = genericRecord.get("clusterId").toString.toInt
+object  ndexGenerat onUt l {
+  // Funct on that parses [Gener cRecord] results   read from BQ  nto [TopKT etsForClusterKey]
+  def parseClusterTopKT etsFn(t etEmbedd ngsHalfL fe:  nt) =
+    new Ser al zableFunct on[Sc maAndRecord, TopKT etsForClusterKey] {
+      overr de def apply(record: Sc maAndRecord): TopKT etsForClusterKey = {
+        val gener cRecord: Gener cRecord = record.getRecord()
+        TopKT etsForClusterKey(
+          cluster d = FullCluster d(
+            modelVers on = ModelVers on.Model20m145k2020,
+            cluster d = gener cRecord.get("cluster d").toStr ng.to nt
           ),
-          topKTweetsWithScores = parseTopKTweetsForClusterKeyColumn(
-            genericRecord,
-            "topKTweetsForClusterKey",
-            tweetEmbeddingsHalfLife),
+          topKT etsW hScores = parseTopKT etsForClusterKeyColumn(
+            gener cRecord,
+            "topKT etsForClusterKey",
+            t etEmbedd ngsHalfL fe),
         )
       }
     }
 
-  // Function that parses the topKTweetsForClusterKey column into [TopKTweetsWithScores]
-  def parseTopKTweetsForClusterKeyColumn(
-    genericRecord: GenericRecord,
-    columnName: String,
-    tweetEmbeddingsHalfLife: Int
-  ): TopKTweetsWithScores = {
-    val tweetScorePairs: java.util.List[GenericRecord] =
-      genericRecord.get(columnName).asInstanceOf[java.util.List[GenericRecord]]
-    val tweetIdToScoresMap = tweetScorePairs.asScala
-      .map((gr: GenericRecord) => {
-        // Retrieve the tweetId and tweetScore
-        val tweetId = gr.get("tweetId").toString.toLong
-        val tweetScore = gr.get("tweetScore").toString.toDouble
+  // Funct on that parses t  topKT etsForClusterKey column  nto [TopKT etsW hScores]
+  def parseTopKT etsForClusterKeyColumn(
+    gener cRecord: Gener cRecord,
+    columnNa : Str ng,
+    t etEmbedd ngsHalfL fe:  nt
+  ): TopKT etsW hScores = {
+    val t etScorePa rs: java.ut l.L st[Gener cRecord] =
+      gener cRecord.get(columnNa ).as nstanceOf[java.ut l.L st[Gener cRecord]]
+    val t et dToScoresMap = t etScorePa rs.asScala
+      .map((gr: Gener cRecord) => {
+        // Retr eve t  t et d and t etScore
+        val t et d = gr.get("t et d").toStr ng.toLong
+        val t etScore = gr.get("t etScore").toStr ng.toDouble
 
-        // Transform tweetScore into DecayedValue
-        // Ref: https://github.com/twitter/algebird/blob/develop/algebird-core/src/main/scala/com/twitter/algebird/DecayedValue.scala
-        val scaledTime =
-          SnowflakeId.unixTimeMillisFromId(tweetId) * math.log(2.0) / tweetEmbeddingsHalfLife
-        val decayedValue = DecayedValue(tweetScore, scaledTime)
+        // Transform t etScore  nto DecayedValue
+        // Ref: https://g hub.com/tw ter/algeb rd/blob/develop/algeb rd-core/src/ma n/scala/com/tw ter/algeb rd/DecayedValue.scala
+        val scaledT   =
+          Snowflake d.un xT  M ll sFrom d(t et d) * math.log(2.0) / t etEmbedd ngsHalfL fe
+        val decayedValue = DecayedValue(t etScore, scaledT  )
 
-        // Update the TopTweets Map
-        tweetId -> Scores(favClusterNormalized8HrHalfLifeScore = Some(decayedValue))
+        // Update t  TopT ets Map
+        t et d -> Scores(favClusterNormal zed8HrHalfL feScore = So (decayedValue))
       }).toMap
-    TopKTweetsWithScores(topTweetsByFavClusterNormalizedScore = Some(tweetIdToScoresMap))
+    TopKT etsW hScores(topT etsByFavClusterNormal zedScore = So (t et dToScoresMap))
   }
-  case class TopKTweetsForClusterKey(
-    clusterId: FullClusterId,
-    topKTweetsWithScores: TopKTweetsWithScores)
+  case class TopKT etsForClusterKey(
+    cluster d: FullCluster d,
+    topKT etsW hScores: TopKT etsW hScores)
 
 }

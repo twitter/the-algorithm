@@ -1,30 +1,30 @@
-package com.twitter.timelines.prediction.features.two_hop_features
+package com.tw ter.t  l nes.pred ct on.features.two_hop_features
 
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType
-import com.twitter.graph_feature_service.thriftscala.{EdgeType, FeatureType}
+ mport com.tw ter.dal.personal_data.thr ftjava.PersonalDataType
+ mport com.tw ter.graph_feature_serv ce.thr ftscala.{EdgeType, FeatureType}
 
-object TwoHopFeaturesConfig {
-  val leftEdgeTypes = Seq(EdgeType.Following, EdgeType.Favorite, EdgeType.MutualFollow)
-  val rightEdgeTypes = Seq(
-    EdgeType.FollowedBy,
-    EdgeType.FavoritedBy,
-    EdgeType.RetweetedBy,
-    EdgeType.MentionedBy,
+object TwoHopFeaturesConf g {
+  val leftEdgeTypes = Seq(EdgeType.Follow ng, EdgeType.Favor e, EdgeType.MutualFollow)
+  val r ghtEdgeTypes = Seq(
+    EdgeType.Follo dBy,
+    EdgeType.Favor edBy,
+    EdgeType.Ret etedBy,
+    EdgeType. nt onedBy,
     EdgeType.MutualFollow)
 
-  val edgeTypePairs: Seq[(EdgeType, EdgeType)] = {
-    for (leftEdgeType <- leftEdgeTypes; rightEdgeType <- rightEdgeTypes)
-      yield (leftEdgeType, rightEdgeType)
+  val edgeTypePa rs: Seq[(EdgeType, EdgeType)] = {
+    for (leftEdgeType <- leftEdgeTypes; r ghtEdgeType <- r ghtEdgeTypes)
+      y eld (leftEdgeType, r ghtEdgeType)
   }
 
-  val featureTypes: Seq[FeatureType] = edgeTypePairs.map(pair => FeatureType(pair._1, pair._2))
+  val featureTypes: Seq[FeatureType] = edgeTypePa rs.map(pa r => FeatureType(pa r._1, pa r._2))
 
   val personalDataTypesMap: Map[EdgeType, Set[PersonalDataType]] = Map(
-    EdgeType.Following -> Set(PersonalDataType.CountOfFollowersAndFollowees),
-    EdgeType.Favorite -> Set(
-      PersonalDataType.CountOfPrivateLikes,
-      PersonalDataType.CountOfPublicLikes),
-    EdgeType.MutualFollow -> Set(PersonalDataType.CountOfFollowersAndFollowees),
-    EdgeType.FollowedBy -> Set(PersonalDataType.CountOfFollowersAndFollowees)
+    EdgeType.Follow ng -> Set(PersonalDataType.CountOfFollo rsAndFollo es),
+    EdgeType.Favor e -> Set(
+      PersonalDataType.CountOfPr vateL kes,
+      PersonalDataType.CountOfPubl cL kes),
+    EdgeType.MutualFollow -> Set(PersonalDataType.CountOfFollo rsAndFollo es),
+    EdgeType.Follo dBy -> Set(PersonalDataType.CountOfFollo rsAndFollo es)
   )
 }

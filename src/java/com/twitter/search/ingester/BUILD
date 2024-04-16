@@ -1,30 +1,30 @@
 target(
-    name = "ingester-lib",
-    dependencies = [
-        "src/java/com/twitter/search/common/converter/earlybird",
-        "src/java/com/twitter/search/ingester/model",
-        "src/java/com/twitter/search/ingester/pipeline/app",
-        "src/java/com/twitter/search/ingester/pipeline/twitter",
-        "src/java/com/twitter/search/ingester/pipeline/twitter/engagements",
-        "src/java/com/twitter/search/ingester/pipeline/twitter/filters",
-        "src/java/com/twitter/search/ingester/pipeline/twitter/kafka",
-        "src/java/com/twitter/search/ingester/pipeline/twitter/thriftparse",
-        "src/java/com/twitter/search/ingester/pipeline/twitter/userupdates",
-        "src/java/com/twitter/search/ingester/pipeline/util",
-        "src/java/com/twitter/search/ingester/util/jndi",
+    na  = " ngester-l b",
+    dependenc es = [
+        "src/java/com/tw ter/search/common/converter/earlyb rd",
+        "src/java/com/tw ter/search/ ngester/model",
+        "src/java/com/tw ter/search/ ngester/p pel ne/app",
+        "src/java/com/tw ter/search/ ngester/p pel ne/tw ter",
+        "src/java/com/tw ter/search/ ngester/p pel ne/tw ter/engage nts",
+        "src/java/com/tw ter/search/ ngester/p pel ne/tw ter/f lters",
+        "src/java/com/tw ter/search/ ngester/p pel ne/tw ter/kafka",
+        "src/java/com/tw ter/search/ ngester/p pel ne/tw ter/thr ftparse",
+        "src/java/com/tw ter/search/ ngester/p pel ne/tw ter/userupdates",
+        "src/java/com/tw ter/search/ ngester/p pel ne/ut l",
+        "src/java/com/tw ter/search/ ngester/ut l/jnd ",
     ],
 )
 
-jvm_binary(
-    name = "ingester-binary",
-    basename = "ingester",
-    main = "com.twitter.search.ingester.pipeline.app.IngesterPipelineApplication\\$Main",
+jvm_b nary(
+    na  = " ngester-b nary",
+    basena  = " ngester",
+    ma n = "com.tw ter.search. ngester.p pel ne.app. ngesterP pel neAppl cat on\\$Ma n",
     platform = "java8",
     tags = [
-        "bazel-compatible",
+        "bazel-compat ble",
     ],
-    dependencies = [
-        ":ingester-lib",
-        "src/java/com/twitter/search/common/logging:search-log4j",
+    dependenc es = [
+        ": ngester-l b",
+        "src/java/com/tw ter/search/common/logg ng:search-log4j",
     ],
 )

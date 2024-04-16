@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddToModuleTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.AddToModuleT  l ne nstruct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neModule
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-case class AddToModuleInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends UrtInstructionBuilder[Query, AddToModuleTimelineInstruction] {
+case class AddToModule nstruct onBu lder[Query <: P pel neQuery](
+  overr de val  nclude nstruct on:  nclude nstruct on[Query] = Always nclude)
+    extends Urt nstruct onBu lder[Query, AddToModuleT  l ne nstruct on] {
 
-  override def build(
+  overr de def bu ld(
     query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[AddToModuleTimelineInstruction] = {
-    if (includeInstruction(query, entries)) {
-      val moduleEntries = entries.collect {
-        case module: TimelineModule => module
+    entr es: Seq[T  l neEntry]
+  ): Seq[AddToModuleT  l ne nstruct on] = {
+     f ( nclude nstruct on(query, entr es)) {
+      val moduleEntr es = entr es.collect {
+        case module: T  l neModule => module
       }
-      if (moduleEntries.nonEmpty) {
-        assert(moduleEntries.size == 1, "Currently we only support appending to one module")
-        moduleEntries.headOption.map { moduleEntry =>
-          AddToModuleTimelineInstruction(
-            moduleItems = moduleEntry.items,
-            moduleEntryId = moduleEntry.entryIdentifier,
-            // Currently configuring moduleItemEntryId and prepend fields are not supported.
-            moduleItemEntryId = None,
+       f (moduleEntr es.nonEmpty) {
+        assert(moduleEntr es.s ze == 1, "Currently   only support append ng to one module")
+        moduleEntr es. adOpt on.map { moduleEntry =>
+          AddToModuleT  l ne nstruct on(
+            module ems = moduleEntry. ems,
+            moduleEntry d = moduleEntry.entry dent f er,
+            // Currently conf gur ng module emEntry d and prepend f elds are not supported.
+            module emEntry d = None,
             prepend = None
           )
         }

@@ -1,79 +1,79 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package backends
 
-import com.twitter.finagle.Backoff
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.service.talon.thriftscala.ExpandRequest
-import com.twitter.service.talon.thriftscala.ExpandResponse
-import com.twitter.service.talon.thriftscala.ResponseCode
-import com.twitter.service.talon.thriftscala.ShortenRequest
-import com.twitter.service.talon.thriftscala.ShortenResponse
-import com.twitter.service.talon.{thriftscala => talon}
-import com.twitter.servo.util.FutureArrow
-import com.twitter.tweetypie.core.OverCapacity
-import com.twitter.tweetypie.util.RetryPolicyBuilder
+ mport com.tw ter.f nagle.Backoff
+ mport com.tw ter.f nagle.serv ce.RetryPol cy
+ mport com.tw ter.serv ce.talon.thr ftscala.ExpandRequest
+ mport com.tw ter.serv ce.talon.thr ftscala.ExpandResponse
+ mport com.tw ter.serv ce.talon.thr ftscala.ResponseCode
+ mport com.tw ter.serv ce.talon.thr ftscala.ShortenRequest
+ mport com.tw ter.serv ce.talon.thr ftscala.ShortenResponse
+ mport com.tw ter.serv ce.talon.{thr ftscala => talon}
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t etyp e.core.OverCapac y
+ mport com.tw ter.t etyp e.ut l.RetryPol cyBu lder
 
 object Talon {
-  import Backend._
+   mport Backend._
 
   type Expand = FutureArrow[talon.ExpandRequest, talon.ExpandResponse]
   type Shorten = FutureArrow[talon.ShortenRequest, talon.ShortenResponse]
 
-  case object TransientError extends Exception()
-  case object PermanentError extends Exception()
+  case object Trans entError extends Except on()
+  case object PermanentError extends Except on()
 
-  def fromClient(client: talon.Talon.MethodPerEndpoint): Talon =
+  def fromCl ent(cl ent: talon.Talon. thodPerEndpo nt): Talon =
     new Talon {
-      val shorten = FutureArrow(client.shorten _)
-      val expand = FutureArrow(client.expand _)
-      def ping(): Future[Unit] = client.serviceInfo().unit
+      val shorten = FutureArrow(cl ent.shorten _)
+      val expand = FutureArrow(cl ent.expand _)
+      def p ng(): Future[Un ] = cl ent.serv ce nfo().un 
     }
 
-  case class Config(
-    shortenTimeout: Duration,
-    expandTimeout: Duration,
-    timeoutBackoffs: Stream[Duration],
-    transientErrorBackoffs: Stream[Duration]) {
+  case class Conf g(
+    shortenT  out: Durat on,
+    expandT  out: Durat on,
+    t  outBackoffs: Stream[Durat on],
+    trans entErrorBackoffs: Stream[Durat on]) {
     def apply(svc: Talon, ctx: Backend.Context): Talon =
       new Talon {
         val shorten: FutureArrow[ShortenRequest, ShortenResponse] =
-          policy("shorten", shortenTimeout, shortenResponseCode, ctx)(svc.shorten)
+          pol cy("shorten", shortenT  out, shortenResponseCode, ctx)(svc.shorten)
         val expand: FutureArrow[ExpandRequest, ExpandResponse] =
-          policy("expand", expandTimeout, expandResponseCode, ctx)(svc.expand)
-        def ping(): Future[Unit] = svc.ping()
+          pol cy("expand", expandT  out, expandResponseCode, ctx)(svc.expand)
+        def p ng(): Future[Un ] = svc.p ng()
       }
 
-    private[this] def policy[A, B](
-      name: String,
-      requestTimeout: Duration,
+    pr vate[t ] def pol cy[A, B](
+      na : Str ng,
+      requestT  out: Durat on,
       getResponseCode: B => talon.ResponseCode,
       ctx: Context
-    ): Builder[A, B] =
-      handleResponseCodes(name, getResponseCode, ctx) andThen
-        defaultPolicy(name, requestTimeout, retryPolicy, ctx)
+    ): Bu lder[A, B] =
+      handleResponseCodes(na , getResponseCode, ctx) andT n
+        defaultPol cy(na , requestT  out, retryPol cy, ctx)
 
-    private[this] def retryPolicy[B]: RetryPolicy[Try[B]] =
-      RetryPolicy.combine[Try[B]](
-        RetryPolicyBuilder.timeouts[B](timeoutBackoffs),
-        RetryPolicy.backoff(Backoff.fromStream(transientErrorBackoffs)) {
-          case Throw(TransientError) => true
+    pr vate[t ] def retryPol cy[B]: RetryPol cy[Try[B]] =
+      RetryPol cy.comb ne[Try[B]](
+        RetryPol cyBu lder.t  outs[B](t  outBackoffs),
+        RetryPol cy.backoff(Backoff.fromStream(trans entErrorBackoffs)) {
+          case Throw(Trans entError) => true
         }
       )
 
-    private[this] def handleResponseCodes[A, B](
-      name: String,
+    pr vate[t ] def handleResponseCodes[A, B](
+      na : Str ng,
       extract: B => talon.ResponseCode,
       ctx: Context
-    ): Builder[A, B] = {
-      val scopedStats = ctx.stats.scope(name)
+    ): Bu lder[A, B] = {
+      val scopedStats = ctx.stats.scope(na )
       val responseCodeStats = scopedStats.scope("response_code")
-      _ andThen FutureArrow[B, B] { res =>
+      _ andT n FutureArrow[B, B] { res =>
         val responseCode = extract(res)
-        responseCodeStats.counter(responseCode.toString).incr()
+        responseCodeStats.counter(responseCode.toStr ng). ncr()
         responseCode match {
-          case talon.ResponseCode.TransientError => Future.exception(TransientError)
-          case talon.ResponseCode.PermanentError => Future.exception(PermanentError)
-          case talon.ResponseCode.ServerOverloaded => Future.exception(OverCapacity("talon"))
+          case talon.ResponseCode.Trans entError => Future.except on(Trans entError)
+          case talon.ResponseCode.PermanentError => Future.except on(PermanentError)
+          case talon.ResponseCode.ServerOverloaded => Future.except on(OverCapac y("talon"))
           case _ => Future.value(res)
         }
       }
@@ -83,12 +83,12 @@ object Talon {
   def shortenResponseCode(res: talon.ShortenResponse): ResponseCode = res.responseCode
   def expandResponseCode(res: talon.ExpandResponse): ResponseCode = res.responseCode
 
-  implicit val warmup: Warmup[Talon] = Warmup[Talon]("talon")(_.ping())
+   mpl c  val warmup: Warmup[Talon] = Warmup[Talon]("talon")(_.p ng())
 }
 
-trait Talon {
-  import Talon._
+tra  Talon {
+   mport Talon._
   val shorten: Shorten
   val expand: Expand
-  def ping(): Future[Unit]
+  def p ng(): Future[Un ]
 }

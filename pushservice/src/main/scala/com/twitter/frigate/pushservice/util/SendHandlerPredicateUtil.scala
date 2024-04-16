@@ -1,85 +1,85 @@
-package com.twitter.frigate.pushservice.util
+package com.tw ter.fr gate.pushserv ce.ut l
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.common.base.CandidateResult
-import com.twitter.frigate.common.base.Invalid
-import com.twitter.frigate.common.base.OK
-import com.twitter.frigate.common.base.Result
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.refresh_handler.ResultWithDebugInfo
-import com.twitter.frigate.pushservice.take.candidate_validator.SendHandlerPostCandidateValidator
-import com.twitter.frigate.pushservice.take.candidate_validator.SendHandlerPreCandidateValidator
-import com.twitter.frigate.pushservice.thriftscala.PushStatus
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Cand dateDeta ls
+ mport com.tw ter.fr gate.common.base.Cand dateResult
+ mport com.tw ter.fr gate.common.base. nval d
+ mport com.tw ter.fr gate.common.base.OK
+ mport com.tw ter.fr gate.common.base.Result
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.refresh_handler.ResultW hDebug nfo
+ mport com.tw ter.fr gate.pushserv ce.take.cand date_val dator.SendHandlerPostCand dateVal dator
+ mport com.tw ter.fr gate.pushserv ce.take.cand date_val dator.SendHandlerPreCand dateVal dator
+ mport com.tw ter.fr gate.pushserv ce.thr ftscala.PushStatus
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter.ut l.Future
 
-class SendHandlerPredicateUtil()(globalStats: StatsReceiver) {
-  implicit val statsReceiver: StatsReceiver =
+class SendHandlerPred cateUt l()(globalStats: StatsRece ver) {
+   mpl c  val statsRece ver: StatsRece ver =
     globalStats.scope("SendHandler")
-  private val validateStats: StatsReceiver = statsReceiver.scope("validate")
+  pr vate val val dateStats: StatsRece ver = statsRece ver.scope("val date")
 
-  private def updateFilteredStatusExptStats(candidate: PushCandidate, predName: String): Unit = {
+  pr vate def updateF lteredStatusExptStats(cand date: PushCand date, predNa : Str ng): Un  = {
 
     val recTypeStat = globalStats.scope(
-      candidate.commonRecType.toString
+      cand date.commonRecType.toStr ng
     )
 
-    recTypeStat.counter(PushStatus.Filtered.toString).incr()
+    recTypeStat.counter(PushStatus.F ltered.toStr ng). ncr()
     recTypeStat
-      .scope(PushStatus.Filtered.toString)
-      .counter(predName)
-      .incr()
+      .scope(PushStatus.F ltered.toStr ng)
+      .counter(predNa )
+      . ncr()
   }
 
   /**
-   * Parsing the candidateValidtor result into desired format for preValidation before ml filtering
-   * @param hydratedCandidates
-   * @param candidateValidator
+   * Pars ng t  cand dateVal dtor result  nto des red format for preVal dat on before ml f lter ng
+   * @param hydratedCand dates
+   * @param cand dateVal dator
    * @return
    */
-  def preValidationForCandidate(
-    hydratedCandidates: Seq[CandidateDetails[PushCandidate]],
-    candidateValidator: SendHandlerPreCandidateValidator
+  def preVal dat onForCand date(
+    hydratedCand dates: Seq[Cand dateDeta ls[PushCand date]],
+    cand dateVal dator: SendHandlerPreCand dateVal dator
   ): Future[
-    (Seq[CandidateDetails[PushCandidate]], Seq[CandidateResult[PushCandidate, Result]])
+    (Seq[Cand dateDeta ls[PushCand date]], Seq[Cand dateResult[PushCand date, Result]])
   ] = {
     val predResultFuture =
       Future.collect(
-        hydratedCandidates.map(hydratedCandidate =>
-          candidateValidator.validateCandidate(hydratedCandidate.candidate))
+        hydratedCand dates.map(hydratedCand date =>
+          cand dateVal dator.val dateCand date(hydratedCand date.cand date))
       )
 
     predResultFuture.map { results =>
       results
-        .zip(hydratedCandidates)
+        .z p(hydratedCand dates)
         .foldLeft(
           (
-            Seq.empty[CandidateDetails[PushCandidate]],
-            Seq.empty[CandidateResult[PushCandidate, Result]]
+            Seq.empty[Cand dateDeta ls[PushCand date]],
+            Seq.empty[Cand dateResult[PushCand date, Result]]
           )
         ) {
-          case ((goodCandidates, filteredCandidates), (result, candidateDetails)) =>
+          case ((goodCand dates, f lteredCand dates), (result, cand dateDeta ls)) =>
             result match {
               case None =>
-                (goodCandidates :+ candidateDetails, filteredCandidates)
-              case Some(pred: NamedPredicate[_]) =>
-                val r = Invalid(Some(pred.name))
+                (goodCand dates :+ cand dateDeta ls, f lteredCand dates)
+              case So (pred: Na dPred cate[_]) =>
+                val r =  nval d(So (pred.na ))
                 (
-                  goodCandidates,
-                  filteredCandidates :+ CandidateResult[PushCandidate, Result](
-                    candidateDetails.candidate,
-                    candidateDetails.source,
+                  goodCand dates,
+                  f lteredCand dates :+ Cand dateResult[PushCand date, Result](
+                    cand dateDeta ls.cand date,
+                    cand dateDeta ls.s ce,
                     r
                   )
                 )
-              case Some(_) =>
-                val r = Invalid(Some("Filtered by un-named predicate"))
+              case So (_) =>
+                val r =  nval d(So ("F ltered by un-na d pred cate"))
                 (
-                  goodCandidates,
-                  filteredCandidates :+ CandidateResult[PushCandidate, Result](
-                    candidateDetails.candidate,
-                    candidateDetails.source,
+                  goodCand dates,
+                  f lteredCand dates :+ Cand dateResult[PushCand date, Result](
+                    cand dateDeta ls.cand date,
+                    cand dateDeta ls.s ce,
                     r
                   )
                 )
@@ -89,40 +89,40 @@ class SendHandlerPredicateUtil()(globalStats: StatsReceiver) {
   }
 
   /**
-   * Parsing the candidateValidtor result into desired format for postValidation including and after ml filtering
-   * @param candidate
-   * @param candidateValidator
+   * Pars ng t  cand dateVal dtor result  nto des red format for postVal dat on  nclud ng and after ml f lter ng
+   * @param cand date
+   * @param cand dateVal dator
    * @return
    */
-  def postValidationForCandidate(
-    candidate: PushCandidate,
-    candidateValidator: SendHandlerPostCandidateValidator
-  ): Future[ResultWithDebugInfo] = {
+  def postVal dat onForCand date(
+    cand date: PushCand date,
+    cand dateVal dator: SendHandlerPostCand dateVal dator
+  ): Future[ResultW hDebug nfo] = {
     val predResultFuture =
-      candidateValidator.validateCandidate(candidate)
+      cand dateVal dator.val dateCand date(cand date)
 
     predResultFuture.map {
-      case (Some(pred: NamedPredicate[_])) =>
-        validateStats.counter("filtered_by_named_general_predicate").incr()
-        updateFilteredStatusExptStats(candidate, pred.name)
-        ResultWithDebugInfo(
-          Invalid(Some(pred.name)),
-          Nil
+      case (So (pred: Na dPred cate[_])) =>
+        val dateStats.counter("f ltered_by_na d_general_pred cate"). ncr()
+        updateF lteredStatusExptStats(cand date, pred.na )
+        ResultW hDebug nfo(
+           nval d(So (pred.na )),
+          N l
         )
 
-      case Some(_) =>
-        validateStats.counter("filtered_by_unnamed_general_predicate").incr()
-        updateFilteredStatusExptStats(candidate, predName = "unk")
-        ResultWithDebugInfo(
-          Invalid(Some("unnamed_candidate_predicate")),
-          Nil
+      case So (_) =>
+        val dateStats.counter("f ltered_by_unna d_general_pred cate"). ncr()
+        updateF lteredStatusExptStats(cand date, predNa  = "unk")
+        ResultW hDebug nfo(
+           nval d(So ("unna d_cand date_pred cate")),
+          N l
         )
 
       case _ =>
-        validateStats.counter("accepted_push_ok").incr()
-        ResultWithDebugInfo(
+        val dateStats.counter("accepted_push_ok"). ncr()
+        ResultW hDebug nfo(
           OK,
-          Nil
+          N l
         )
     }
   }

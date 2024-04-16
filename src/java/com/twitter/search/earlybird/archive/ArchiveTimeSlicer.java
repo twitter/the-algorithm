@@ -1,153 +1,153 @@
-package com.twitter.search.earlybird.archive;
+package com.tw ter.search.earlyb rd.arch ve;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+ mport java. o. OExcept on;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Calendar;
+ mport java.ut l.Collect ons;
+ mport java.ut l.Comparator;
+ mport java.ut l.Date;
+ mport java.ut l.L st;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Lists;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.base.Pred cate;
+ mport com.google.common.collect.L sts;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.util.io.MergingSortedRecordReader;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.earlybird.config.TierConfig;
-import com.twitter.search.earlybird.document.DocumentFactory;
-import com.twitter.search.earlybird.document.ThriftIndexingEventDocumentFactory;
-import com.twitter.search.earlybird.document.TweetDocument;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ft ndex ngEvent;
+ mport com.tw ter.search.common.ut l. o. rg ngSortedRecordReader;
+ mport com.tw ter.search.common.ut l. o.recordreader.RecordReader;
+ mport com.tw ter.search.earlyb rd.conf g.T erConf g;
+ mport com.tw ter.search.earlyb rd.docu nt.Docu ntFactory;
+ mport com.tw ter.search.earlyb rd.docu nt.Thr ft ndex ngEventDocu ntFactory;
+ mport com.tw ter.search.earlyb rd.docu nt.T etDocu nt;
 
 
 /**
- * Responsible for taking a number of daily status batches and partitioning them into time slices
- * which will be used to build segments.
+ * Respons ble for tak ng a number of da ly status batc s and part  on ng t m  nto t   sl ces
+ * wh ch w ll be used to bu ld seg nts.
  *
- * We try to put at most N number of tweets into a time slice.
+ *   try to put at most N number of t ets  nto a t   sl ce.
  */
-public class ArchiveTimeSlicer {
-  private static final Logger LOG = LoggerFactory.getLogger(ArchiveTimeSlicer.class);
+publ c class Arch veT  Sl cer {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Arch veT  Sl cer.class);
 
-  private static final Comparator<TweetDocument> ASCENDING =
-      (o1, o2) -> Long.compare(o1.getTweetID(), o2.getTweetID());
+  pr vate stat c f nal Comparator<T etDocu nt> ASCEND NG =
+      (o1, o2) -> Long.compare(o1.getT et D(), o2.getT et D());
 
-  private static final Comparator<TweetDocument> DESCENDING =
-      (o1, o2) -> Long.compare(o2.getTweetID(), o1.getTweetID());
+  pr vate stat c f nal Comparator<T etDocu nt> DESCEND NG =
+      (o1, o2) -> Long.compare(o2.getT et D(), o1.getT et D());
 
-  // Represents a number of daily batches which will go into a segment.
-  public static final class ArchiveTimeSlice {
-    private Date startDate;
-    private Date endDate;
-    private int statusCount;
-    private final DailyStatusBatches directory;
-    private final ArchiveEarlybirdIndexConfig earlybirdIndexConfig;
+  // Represents a number of da ly batc s wh ch w ll go  nto a seg nt.
+  publ c stat c f nal class Arch veT  Sl ce {
+    pr vate Date startDate;
+    pr vate Date endDate;
+    pr vate  nt statusCount;
+    pr vate f nal Da lyStatusBatc s d rectory;
+    pr vate f nal Arch veEarlyb rd ndexConf g earlyb rd ndexConf g;
 
-    // This list is always ordered from oldest day, to the newest day.
-    // For the on-disk archive, we reverse the days in getTweetReaders().
-    private final List<DailyStatusBatch> batches = Lists.newArrayList();
+    // T  l st  s always ordered from oldest day, to t  ne st day.
+    // For t  on-d sk arch ve,   reverse t  days  n getT etReaders().
+    pr vate f nal L st<Da lyStatusBatch> batc s = L sts.newArrayL st();
 
-    private ArchiveTimeSlice(DailyStatusBatches directory,
-                             ArchiveEarlybirdIndexConfig earlybirdIndexConfig) {
-      this.directory = directory;
-      this.earlybirdIndexConfig = earlybirdIndexConfig;
+    pr vate Arch veT  Sl ce(Da lyStatusBatc s d rectory,
+                             Arch veEarlyb rd ndexConf g earlyb rd ndexConf g) {
+      t .d rectory = d rectory;
+      t .earlyb rd ndexConf g = earlyb rd ndexConf g;
     }
 
-    public Date getEndDate() {
+    publ c Date getEndDate() {
       return endDate;
     }
 
-    public int getStatusCount() {
+    publ c  nt getStatusCount() {
       return statusCount;
     }
 
-    public int getNumHashPartitions() {
-      return batches.isEmpty() ? 0 : batches.get(0).getNumHashPartitions();
+    publ c  nt getNumHashPart  ons() {
+      return batc s. sEmpty() ? 0 : batc s.get(0).getNumHashPart  ons();
     }
 
     /**
-     * Returns a reader for reading tweets from this timeslice.
+     * Returns a reader for read ng t ets from t  t  sl ce.
      *
-     * @param archiveSegment The segment to which the timeslice belongs.
-     * @param documentFactory The ThriftIndexingEvent to TweetDocument converter.
-     * @param filter A filter that determines what dates should be read.
+     * @param arch veSeg nt T  seg nt to wh ch t  t  sl ce belongs.
+     * @param docu ntFactory T  Thr ft ndex ngEvent to T etDocu nt converter.
+     * @param f lter A f lter that determ nes what dates should be read.
      */
-    public RecordReader<TweetDocument> getStatusReader(
-        ArchiveSegment archiveSegment,
-        DocumentFactory<ThriftIndexingEvent> documentFactory,
-        Predicate<Date> filter) throws IOException {
-      // We no longer support ThriftStatus based document factories.
-      Preconditions.checkState(documentFactory instanceof ThriftIndexingEventDocumentFactory);
+    publ c RecordReader<T etDocu nt> getStatusReader(
+        Arch veSeg nt arch veSeg nt,
+        Docu ntFactory<Thr ft ndex ngEvent> docu ntFactory,
+        Pred cate<Date> f lter) throws  OExcept on {
+      //   no longer support Thr ftStatus based docu nt factor es.
+      Precond  ons.c ckState(docu ntFactory  nstanceof Thr ft ndex ngEventDocu ntFactory);
 
-      final int hashPartitionID = archiveSegment.getHashPartitionID();
-      List<RecordReader<TweetDocument>> readers = new ArrayList<>(batches.size());
-      List<DailyStatusBatch> orderedForReading = orderBatchesForReading(batches);
-      LOG.info("Creating new status reader for hashPartition: "
-          + hashPartitionID + " timeslice: " + getDescription());
+      f nal  nt hashPart  on D = arch veSeg nt.getHashPart  on D();
+      L st<RecordReader<T etDocu nt>> readers = new ArrayL st<>(batc s.s ze());
+      L st<Da lyStatusBatch> orderedForRead ng = orderBatc sForRead ng(batc s);
+      LOG. nfo("Creat ng new status reader for hashPart  on: "
+          + hashPart  on D + " t  sl ce: " + getDescr pt on());
 
-      for (DailyStatusBatch batch : orderedForReading) {
-        if (filter.apply(batch.getDate())) {
-          LOG.info("Adding reader for " + batch.getDate() + " " + getDescription());
-          PartitionedBatch partitionedBatch = batch.getPartition(hashPartitionID);
-          // Don't even try to create a reader if the partition is empty.
-          // There does not seem to be any problem in production now, but HDFS FileSystem's javadoc
-          // does indicate that listStatus() is allowed to throw a FileNotFoundException if the
-          // partition does not exist. This check makes the code more robust against future
-          // HDFS FileSystem implementation changes.
-          if (partitionedBatch.getStatusCount() > 0) {
-            RecordReader<TweetDocument> tweetReaders = partitionedBatch.getTweetReaders(
-                archiveSegment,
-                directory.getStatusPathToUseForDay(batch.getDate()),
-                documentFactory);
-            readers.add(tweetReaders);
+      for (Da lyStatusBatch batch : orderedForRead ng) {
+         f (f lter.apply(batch.getDate())) {
+          LOG. nfo("Add ng reader for " + batch.getDate() + " " + getDescr pt on());
+          Part  onedBatch part  onedBatch = batch.getPart  on(hashPart  on D);
+          // Don't even try to create a reader  f t  part  on  s empty.
+          // T re does not seem to be any problem  n product on now, but HDFS F leSystem's javadoc
+          // does  nd cate that l stStatus()  s allo d to throw a F leNotFoundExcept on  f t 
+          // part  on does not ex st. T  c ck makes t  code more robust aga nst future
+          // HDFS F leSystem  mple ntat on changes.
+           f (part  onedBatch.getStatusCount() > 0) {
+            RecordReader<T etDocu nt> t etReaders = part  onedBatch.getT etReaders(
+                arch veSeg nt,
+                d rectory.getStatusPathToUseForDay(batch.getDate()),
+                docu ntFactory);
+            readers.add(t etReaders);
           }
         } else {
-          LOG.info("Filtered reader for " + batch.getDate() + " " + getDescription());
+          LOG. nfo("F ltered reader for " + batch.getDate() + " " + getDescr pt on());
         }
       }
 
-      LOG.info("Creating reader for timeslice: " + getDescription()
-          + " with " + readers.size() + " readers");
+      LOG. nfo("Creat ng reader for t  sl ce: " + getDescr pt on()
+          + " w h " + readers.s ze() + " readers");
 
-      return new MergingSortedRecordReader<TweetDocument>(getMergingComparator(), readers);
+      return new  rg ngSortedRecordReader<T etDocu nt>(get rg ngComparator(), readers);
     }
 
-    private List<DailyStatusBatch> orderBatchesForReading(List<DailyStatusBatch> orderedBatches) {
-      // For the index formats using stock lucene, we want the most recent days to be indexed first.
-      // In the twitter in-memory optimized indexes, older tweets will be added first, and
-      // optimization will reverse the documents to make most recent tweets be first.
-      return this.earlybirdIndexConfig.isUsingLIFODocumentOrdering()
-          ? orderedBatches : Lists.reverse(orderedBatches);
+    pr vate L st<Da lyStatusBatch> orderBatc sForRead ng(L st<Da lyStatusBatch> orderedBatc s) {
+      // For t   ndex formats us ng stock lucene,   want t  most recent days to be  ndexed f rst.
+      //  n t  tw ter  n- mory opt m zed  ndexes, older t ets w ll be added f rst, and
+      // opt m zat on w ll reverse t  docu nts to make most recent t ets be f rst.
+      return t .earlyb rd ndexConf g. sUs ngL FODocu ntOrder ng()
+          ? orderedBatc s : L sts.reverse(orderedBatc s);
     }
 
-    private Comparator<TweetDocument> getMergingComparator() {
-      // We always want to retrieve larger tweet ids first.
-      // LIFO means that the smaller ids get inserted first --> ASCENDING order.
-      // FIFO would mean that we want to first insert the larger ids --> DESCENDING order.
-      return this.earlybirdIndexConfig.isUsingLIFODocumentOrdering()
-          ? ASCENDING : DESCENDING;
+    pr vate Comparator<T etDocu nt> get rg ngComparator() {
+      //   always want to retr eve larger t et  ds f rst.
+      // L FO  ans that t  smaller  ds get  nserted f rst --> ASCEND NG order.
+      // F FO would  an that   want to f rst  nsert t  larger  ds --> DESCEND NG order.
+      return t .earlyb rd ndexConf g. sUs ngL FODocu ntOrder ng()
+          ? ASCEND NG : DESCEND NG;
     }
 
     /**
-     * Returns the smallest indexed tweet ID in this timeslice for the given partition.
+     * Returns t  smallest  ndexed t et  D  n t  t  sl ce for t  g ven part  on.
      *
-     * @param hashPartitionID The partition.
+     * @param hashPart  on D T  part  on.
      */
-    public long getMinStatusID(int hashPartitionID) {
-      if (batches.isEmpty()) {
+    publ c long getM nStatus D( nt hashPart  on D) {
+       f (batc s. sEmpty()) {
         return 0;
       }
 
-      for (int i = 0; i < batches.size(); i++) {
-        long minStatusID = batches.get(i).getPartition(hashPartitionID).getMinStatusID();
-        if (minStatusID != DailyStatusBatch.EMPTY_BATCH_STATUS_ID) {
-          return minStatusID;
+      for ( nt   = 0;   < batc s.s ze();  ++) {
+        long m nStatus D = batc s.get( ).getPart  on(hashPart  on D).getM nStatus D();
+         f (m nStatus D != Da lyStatusBatch.EMPTY_BATCH_STATUS_ D) {
+          return m nStatus D;
         }
       }
 
@@ -155,19 +155,19 @@ public class ArchiveTimeSlicer {
     }
 
     /**
-     * Returns the highest indexed tweet ID in this timeslice for the given partition.
+     * Returns t  h g st  ndexed t et  D  n t  t  sl ce for t  g ven part  on.
      *
-     * @param hashPartitionID The partition.
+     * @param hashPart  on D T  part  on.
      */
-    public long getMaxStatusID(int hashPartitionID) {
-      if (batches.isEmpty()) {
+    publ c long getMaxStatus D( nt hashPart  on D) {
+       f (batc s. sEmpty()) {
         return Long.MAX_VALUE;
       }
 
-      for (int i = batches.size() - 1; i >= 0; i--) {
-        long maxStatusID = batches.get(i).getPartition(hashPartitionID).getMaxStatusID();
-        if (maxStatusID != DailyStatusBatch.EMPTY_BATCH_STATUS_ID) {
-          return maxStatusID;
+      for ( nt   = batc s.s ze() - 1;   >= 0;  --) {
+        long maxStatus D = batc s.get( ).getPart  on(hashPart  on D).getMaxStatus D();
+         f (maxStatus D != Da lyStatusBatch.EMPTY_BATCH_STATUS_ D) {
+          return maxStatus D;
         }
       }
 
@@ -175,148 +175,148 @@ public class ArchiveTimeSlicer {
     }
 
     /**
-     * Returns a string with some information for this timeslice.
+     * Returns a str ng w h so   nformat on for t  t  sl ce.
      */
-    public String getDescription() {
-      StringBuilder builder = new StringBuilder();
-      builder.append("TimeSlice[start date=");
-      builder.append(DailyStatusBatches.DATE_FORMAT.format(startDate));
-      builder.append(", end date=");
-      builder.append(DailyStatusBatches.DATE_FORMAT.format(endDate));
-      builder.append(", status count=");
-      builder.append(statusCount);
-      builder.append(", days count=");
-      builder.append(batches.size());
-      builder.append("]");
-      return builder.toString();
+    publ c Str ng getDescr pt on() {
+      Str ngBu lder bu lder = new Str ngBu lder();
+      bu lder.append("T  Sl ce[start date=");
+      bu lder.append(Da lyStatusBatc s.DATE_FORMAT.format(startDate));
+      bu lder.append(", end date=");
+      bu lder.append(Da lyStatusBatc s.DATE_FORMAT.format(endDate));
+      bu lder.append(", status count=");
+      bu lder.append(statusCount);
+      bu lder.append(", days count=");
+      bu lder.append(batc s.s ze());
+      bu lder.append("]");
+      return bu lder.toStr ng();
     }
   }
 
-  private final int maxSegmentSize;
-  private final DailyStatusBatches dailyStatusBatches;
-  private final Date tierStartDate;
-  private final Date tierEndDate;
-  private final ArchiveEarlybirdIndexConfig earlybirdIndexConfig;
+  pr vate f nal  nt maxSeg ntS ze;
+  pr vate f nal Da lyStatusBatc s da lyStatusBatc s;
+  pr vate f nal Date t erStartDate;
+  pr vate f nal Date t erEndDate;
+  pr vate f nal Arch veEarlyb rd ndexConf g earlyb rd ndexConf g;
 
-  private List<ArchiveTimeSlice> lastCachedTimeslices = null;
+  pr vate L st<Arch veT  Sl ce> lastCac dT  sl ces = null;
 
-  public ArchiveTimeSlicer(int maxSegmentSize,
-                           DailyStatusBatches dailyStatusBatches,
-                           ArchiveEarlybirdIndexConfig earlybirdIndexConfig) {
-    this(maxSegmentSize, dailyStatusBatches, TierConfig.DEFAULT_TIER_START_DATE,
-        TierConfig.DEFAULT_TIER_END_DATE, earlybirdIndexConfig);
+  publ c Arch veT  Sl cer( nt maxSeg ntS ze,
+                           Da lyStatusBatc s da lyStatusBatc s,
+                           Arch veEarlyb rd ndexConf g earlyb rd ndexConf g) {
+    t (maxSeg ntS ze, da lyStatusBatc s, T erConf g.DEFAULT_T ER_START_DATE,
+        T erConf g.DEFAULT_T ER_END_DATE, earlyb rd ndexConf g);
   }
 
-  public ArchiveTimeSlicer(int maxSegmentSize,
-                           DailyStatusBatches dailyStatusBatches,
-                           Date tierStartDate,
-                           Date tierEndDate,
-                           ArchiveEarlybirdIndexConfig earlybirdIndexConfig) {
-    this.maxSegmentSize = maxSegmentSize;
-    this.dailyStatusBatches = dailyStatusBatches;
-    this.tierStartDate = tierStartDate;
-    this.tierEndDate = tierEndDate;
-    this.earlybirdIndexConfig = earlybirdIndexConfig;
+  publ c Arch veT  Sl cer( nt maxSeg ntS ze,
+                           Da lyStatusBatc s da lyStatusBatc s,
+                           Date t erStartDate,
+                           Date t erEndDate,
+                           Arch veEarlyb rd ndexConf g earlyb rd ndexConf g) {
+    t .maxSeg ntS ze = maxSeg ntS ze;
+    t .da lyStatusBatc s = da lyStatusBatc s;
+    t .t erStartDate = t erStartDate;
+    t .t erEndDate = t erEndDate;
+    t .earlyb rd ndexConf g = earlyb rd ndexConf g;
   }
 
-  private boolean cacheIsValid() throws IOException {
-    return lastCachedTimeslices != null
-        && !lastCachedTimeslices.isEmpty()
-        && cacheIsValid(lastCachedTimeslices.get(lastCachedTimeslices.size() - 1).endDate);
+  pr vate boolean cac  sVal d() throws  OExcept on {
+    return lastCac dT  sl ces != null
+        && !lastCac dT  sl ces. sEmpty()
+        && cac  sVal d(lastCac dT  sl ces.get(lastCac dT  sl ces.s ze() - 1).endDate);
   }
 
-  private boolean cacheIsValid(Date lastDate) throws IOException {
-    if (lastCachedTimeslices == null || lastCachedTimeslices.isEmpty()) {
+  pr vate boolean cac  sVal d(Date lastDate) throws  OExcept on {
+     f (lastCac dT  sl ces == null || lastCac dT  sl ces. sEmpty()) {
       return false;
     }
 
-    // Check if we have a daily batch newer than the last batch used for the newest timeslice.
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(lastDate);
+    // C ck  f   have a da ly batch ne r than t  last batch used for t  ne st t  sl ce.
+    Calendar cal = Calendar.get nstance();
+    cal.setT  (lastDate);
     cal.add(Calendar.DATE, 1);
-    Date nextDate = cal.getTime();
+    Date nextDate = cal.getT  ();
 
-    boolean foundBatch = dailyStatusBatches.hasValidBatchForDay(nextDate);
+    boolean foundBatch = da lyStatusBatc s.hasVal dBatchForDay(nextDate);
 
-    LOG.info("Checking cache: Looked for valid batch for day {}. Found: {}",
-        DailyStatusBatches.DATE_FORMAT.format(nextDate), foundBatch);
+    LOG. nfo("C ck ng cac : Looked for val d batch for day {}. Found: {}",
+        Da lyStatusBatc s.DATE_FORMAT.format(nextDate), foundBatch);
 
     return !foundBatch;
   }
 
-  private boolean timesliceIsFull(ArchiveTimeSlice timeSlice, DailyStatusBatch batch) {
-    return timeSlice.statusCount + batch.getMaxPerPartitionStatusCount() > maxSegmentSize;
+  pr vate boolean t  sl ce sFull(Arch veT  Sl ce t  Sl ce, Da lyStatusBatch batch) {
+    return t  Sl ce.statusCount + batch.getMaxPerPart  onStatusCount() > maxSeg ntS ze;
   }
 
-  private void doTimeSlicing() throws IOException {
-    dailyStatusBatches.refresh();
+  pr vate vo d doT  Sl c ng() throws  OExcept on {
+    da lyStatusBatc s.refresh();
 
-    lastCachedTimeslices = Lists.newArrayList();
-    ArchiveTimeSlice currentTimeSlice = null;
+    lastCac dT  sl ces = L sts.newArrayL st();
+    Arch veT  Sl ce currentT  Sl ce = null;
 
-    // Iterate over each day and add it to the current timeslice, until it gets full.
-    for (DailyStatusBatch batch : dailyStatusBatches.getStatusBatches()) {
-      if (!batch.isValid()) {
-        LOG.warn("Skipping hole: " + batch.getDate());
-        continue;
+    //  erate over each day and add   to t  current t  sl ce, unt l   gets full.
+    for (Da lyStatusBatch batch : da lyStatusBatc s.getStatusBatc s()) {
+       f (!batch. sVal d()) {
+        LOG.warn("Sk pp ng hole: " + batch.getDate());
+        cont nue;
       }
 
-      if (currentTimeSlice == null || timesliceIsFull(currentTimeSlice, batch)) {
-        if (currentTimeSlice != null) {
-          LOG.info("Filled timeslice: " + currentTimeSlice.getDescription());
+       f (currentT  Sl ce == null || t  sl ce sFull(currentT  Sl ce, batch)) {
+         f (currentT  Sl ce != null) {
+          LOG. nfo("F lled t  sl ce: " + currentT  Sl ce.getDescr pt on());
         }
-        currentTimeSlice = new ArchiveTimeSlice(dailyStatusBatches, earlybirdIndexConfig);
-        currentTimeSlice.startDate = batch.getDate();
-        lastCachedTimeslices.add(currentTimeSlice);
+        currentT  Sl ce = new Arch veT  Sl ce(da lyStatusBatc s, earlyb rd ndexConf g);
+        currentT  Sl ce.startDate = batch.getDate();
+        lastCac dT  sl ces.add(currentT  Sl ce);
       }
 
-      currentTimeSlice.endDate = batch.getDate();
-      currentTimeSlice.statusCount += batch.getMaxPerPartitionStatusCount();
-      currentTimeSlice.batches.add(batch);
+      currentT  Sl ce.endDate = batch.getDate();
+      currentT  Sl ce.statusCount += batch.getMaxPerPart  onStatusCount();
+      currentT  Sl ce.batc s.add(batch);
     }
-    LOG.info("Last timeslice: {}", currentTimeSlice.getDescription());
+    LOG. nfo("Last t  sl ce: {}", currentT  Sl ce.getDescr pt on());
 
-    LOG.info("Done with time slicing. Number of timeslices: {}",
-        lastCachedTimeslices.size());
+    LOG. nfo("Done w h t   sl c ng. Number of t  sl ces: {}",
+        lastCac dT  sl ces.s ze());
   }
 
   /**
-   * Returns all timeslices for this earlybird.
+   * Returns all t  sl ces for t  earlyb rd.
    */
-  public List<ArchiveTimeSlice> getTimeSlices() throws IOException {
-    if (cacheIsValid()) {
-      return lastCachedTimeslices;
+  publ c L st<Arch veT  Sl ce> getT  Sl ces() throws  OExcept on {
+     f (cac  sVal d()) {
+      return lastCac dT  sl ces;
     }
 
-    LOG.info("Cache is outdated. Loading new daily batches now...");
+    LOG. nfo("Cac   s outdated. Load ng new da ly batc s now...");
 
-    doTimeSlicing();
+    doT  Sl c ng();
 
-    return lastCachedTimeslices != null ? Collections.unmodifiableList(lastCachedTimeslices) : null;
+    return lastCac dT  sl ces != null ? Collect ons.unmod f ableL st(lastCac dT  sl ces) : null;
   }
 
   /**
-   * Return the timeslices that overlap the tier start/end date ranges if they are specified
+   * Return t  t  sl ces that overlap t  t er start/end date ranges  f t y are spec f ed
    */
-  public List<ArchiveTimeSlice> getTimeSlicesInTierRange() throws IOException {
-    List<ArchiveTimeSlice> timeSlices = getTimeSlices();
-    if (tierStartDate == TierConfig.DEFAULT_TIER_START_DATE
-        && tierEndDate == TierConfig.DEFAULT_TIER_END_DATE) {
-      return timeSlices;
+  publ c L st<Arch veT  Sl ce> getT  Sl ces nT erRange() throws  OExcept on {
+    L st<Arch veT  Sl ce> t  Sl ces = getT  Sl ces();
+     f (t erStartDate == T erConf g.DEFAULT_T ER_START_DATE
+        && t erEndDate == T erConf g.DEFAULT_T ER_END_DATE) {
+      return t  Sl ces;
     }
 
-    List<ArchiveTimeSlice> filteredTimeSlice = Lists.newArrayList();
-    for (ArchiveTimeSlice timeSlice : timeSlices) {
-      if (timeSlice.startDate.before(tierEndDate) && !timeSlice.endDate.before(tierStartDate)) {
-        filteredTimeSlice.add(timeSlice);
+    L st<Arch veT  Sl ce> f lteredT  Sl ce = L sts.newArrayL st();
+    for (Arch veT  Sl ce t  Sl ce : t  Sl ces) {
+       f (t  Sl ce.startDate.before(t erEndDate) && !t  Sl ce.endDate.before(t erStartDate)) {
+        f lteredT  Sl ce.add(t  Sl ce);
       }
     }
 
-    return filteredTimeSlice;
+    return f lteredT  Sl ce;
   }
 
-  @VisibleForTesting
-  protected DailyStatusBatches getDailyStatusBatches() {
-    return dailyStatusBatches;
+  @V s bleForTest ng
+  protected Da lyStatusBatc s getDa lyStatusBatc s() {
+    return da lyStatusBatc s;
   }
 }

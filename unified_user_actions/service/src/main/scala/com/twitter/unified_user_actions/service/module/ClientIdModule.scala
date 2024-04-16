@@ -1,24 +1,24 @@
-package com.twitter.unified_user_actions.service.module
+package com.tw ter.un f ed_user_act ons.serv ce.module
 
-import com.google.inject.Provides
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nject.annotat ons.Flag
+ mport javax. nject.S ngleton
 
-object ClientIdModule extends TwitterModule {
-  private final val flagName = "thrift.client.id"
+object Cl ent dModule extends Tw terModule {
+  pr vate f nal val flagNa  = "thr ft.cl ent. d"
 
-  flag[String](
-    name = flagName,
-    help = "Thrift Client ID"
+  flag[Str ng](
+    na  = flagNa ,
+     lp = "Thr ft Cl ent  D"
   )
 
-  @Provides
-  @Singleton
-  def providesClientId(
-    @Flag(flagName) thriftClientId: String,
-  ): ClientId = ClientId(
-    name = thriftClientId
+  @Prov des
+  @S ngleton
+  def prov desCl ent d(
+    @Flag(flagNa ) thr ftCl ent d: Str ng,
+  ): Cl ent d = Cl ent d(
+    na  = thr ftCl ent d
   )
 }

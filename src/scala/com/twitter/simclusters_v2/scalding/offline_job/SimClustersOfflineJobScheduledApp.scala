@@ -1,113 +1,113 @@
-package com.twitter.simclusters_v2.scalding.offline_job
+package com.tw ter.s mclusters_v2.scald ng.offl ne_job
 
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJob._
-import com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJobUtil._
-import com.twitter.simclusters_v2.thriftscala.TweetAndClusterScores
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e._
+ mport com.tw ter.s mclusters_v2.hdfs_s ces._
+ mport com.tw ter.s mclusters_v2.scald ng.offl ne_job.S mClustersOffl neJob._
+ mport com.tw ter.s mclusters_v2.scald ng.offl ne_job.S mClustersOffl neJobUt l._
+ mport com.tw ter.s mclusters_v2.thr ftscala.T etAndClusterScores
+ mport com.tw ter.wtf.scald ng.jobs.common.Sc duledExecut onApp
+ mport java.ut l.T  Zone
 
 /**
- * The offline job runs every 12 hours, and save these two data sets to HDFS.
+ * T  offl ne job runs every 12 h s, and save t se two data sets to HDFS.
  *
- * capesospy-v2 update --build_locally --start_cron \
- * --start_cron offline_tweet_job src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+ * capesospy-v2 update --bu ld_locally --start_cron \
+ * --start_cron offl ne_t et_job src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc3.yaml
  */
-object SimClustersOfflineJobScheduledApp extends ScheduledExecutionApp {
-  import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
+object S mClustersOffl neJobSc duledApp extends Sc duledExecut onApp {
+   mport com.tw ter.s mclusters_v2.scald ng.common.TypedR chP pe._
 
-  private val tweetClusterScoresDatasetPath: String =
-    "/user/cassowary/processed/simclusters/tweet_cluster_scores"
-  private val tweetTopKClustersDatasetPath: String =
-    "/user/cassowary/processed/simclusters/tweet_top_k_clusters"
-  private val clusterTopKTweetsDatasetPath: String =
-    "/user/cassowary/processed/simclusters/cluster_top_k_tweets"
+  pr vate val t etClusterScoresDatasetPath: Str ng =
+    "/user/cassowary/processed/s mclusters/t et_cluster_scores"
+  pr vate val t etTopKClustersDatasetPath: Str ng =
+    "/user/cassowary/processed/s mclusters/t et_top_k_clusters"
+  pr vate val clusterTopKT etsDatasetPath: Str ng =
+    "/user/cassowary/processed/s mclusters/cluster_top_k_t ets"
 
-  override def batchIncrement: Duration = Hours(12)
+  overr de def batch ncre nt: Durat on = H s(12)
 
-  override def firstTime: RichDate = RichDate("2020-05-25")
+  overr de def f rstT  : R chDate = R chDate("2020-05-25")
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
 
-    val previousTweetClusterScores: TypedPipe[TweetAndClusterScores] =
-      if (firstTime.timestamp == dateRange.start.timestamp) { // if it is the first batch
-        TypedPipe.from(Nil)
+    val prev ousT etClusterScores: TypedP pe[T etAndClusterScores] =
+       f (f rstT  .t  stamp == dateRange.start.t  stamp) { //  f    s t  f rst batch
+        TypedP pe.from(N l)
       } else {
         DAL
           .readMostRecentSnapshot(
-            SimclustersOfflineTweetClusterScoresScalaDataset,
-            dateRange - batchIncrement
+            S mclustersOffl neT etClusterScoresScalaDataset,
+            dateRange - batch ncre nt
           )
-          .toTypedPipe
-          .count("NumPreviousTweetClusterScores")
+          .toTypedP pe
+          .count("NumPrev ousT etClusterScores")
       }
 
-    // we have to use some way to throw away old tweets, otherwise the data set will be growing
-    // all the time. We only keep the tweets that received at least 1 engagement in the last day.
-    // This parameter can be adjusted
-    val tweetsToKeep = getSubsetOfValidTweets(Days(1))
-      .count("NumTweetsToKeep")
+    //   have to use so  way to throw away old t ets, ot rw se t  data set w ll be grow ng
+    // all t  t  .   only keep t  t ets that rece ved at least 1 engage nt  n t  last day.
+    // T  para ter can be adjusted
+    val t etsToKeep = getSubsetOfVal dT ets(Days(1))
+      .count("NumT etsToKeep")
 
-    val updatedTweetClusterScores = computeAggregatedTweetClusterScores(
+    val updatedT etClusterScores = computeAggregatedT etClusterScores(
       dateRange,
-      readInterestedInScalaDataset(dateRange),
-      readTimelineFavoriteData(dateRange),
-      previousTweetClusterScores
-    ).map { tweetClusterScore =>
-        tweetClusterScore.tweetId -> tweetClusterScore
+      read nterested nScalaDataset(dateRange),
+      readT  l neFavor eData(dateRange),
+      prev ousT etClusterScores
+    ).map { t etClusterScore =>
+        t etClusterScore.t et d -> t etClusterScore
       }
-      .count("NumUpdatedTweetClusterScoresBeforeFiltering")
-      .join(tweetsToKeep.asKeys) // filter out invalid tweets
+      .count("NumUpdatedT etClusterScoresBeforeF lter ng")
+      .jo n(t etsToKeep.asKeys) // f lter out  nval d t ets
       .map {
-        case (_, (tweetClusterScore, _)) => tweetClusterScore
+        case (_, (t etClusterScore, _)) => t etClusterScore
       }
-      .count("NumUpdatedTweetClusterScores")
-      .forceToDisk
+      .count("NumUpdatedT etClusterScores")
+      .forceToD sk
 
-    val tweetTopKClusters = computeTweetTopKClusters(updatedTweetClusterScores)
-      .count("NumTweetTopKSaved")
-    val clusterTopKTweets = computeClusterTopKTweets(updatedTweetClusterScores)
+    val t etTopKClusters = computeT etTopKClusters(updatedT etClusterScores)
+      .count("NumT etTopKSaved")
+    val clusterTopKT ets = computeClusterTopKT ets(updatedT etClusterScores)
       .count("NumClusterTopKSaved")
 
-    val writeTweetClusterScoresExec = updatedTweetClusterScores
-      .writeDALSnapshotExecution(
-        SimclustersOfflineTweetClusterScoresScalaDataset,
-        D.Hourly, // note that we use hourly in order to make it flexible for hourly batch size
-        D.Suffix(tweetClusterScoresDatasetPath),
+    val wr eT etClusterScoresExec = updatedT etClusterScores
+      .wr eDALSnapshotExecut on(
+        S mclustersOffl neT etClusterScoresScalaDataset,
+        D.H ly, // note that   use h ly  n order to make   flex ble for h ly batch s ze
+        D.Suff x(t etClusterScoresDatasetPath),
         D.EBLzo(),
         dateRange.end
       )
 
-    val writeTweetTopKClustersExec = tweetTopKClusters
-      .writeDALSnapshotExecution(
-        SimclustersOfflineTweetTopKClustersScalaDataset,
-        D.Hourly, // note that we use hourly in order to make it flexible for hourly batch size
-        D.Suffix(tweetTopKClustersDatasetPath),
+    val wr eT etTopKClustersExec = t etTopKClusters
+      .wr eDALSnapshotExecut on(
+        S mclustersOffl neT etTopKClustersScalaDataset,
+        D.H ly, // note that   use h ly  n order to make   flex ble for h ly batch s ze
+        D.Suff x(t etTopKClustersDatasetPath),
         D.EBLzo(),
         dateRange.end
       )
 
-    val writeClusterTopKTweetsExec = clusterTopKTweets
-      .writeDALSnapshotExecution(
-        SimclustersOfflineClusterTopKTweetsScalaDataset,
-        D.Hourly, // note that we use hourly in order to make it flexible for hourly batch size
-        D.Suffix(clusterTopKTweetsDatasetPath),
+    val wr eClusterTopKT etsExec = clusterTopKT ets
+      .wr eDALSnapshotExecut on(
+        S mclustersOffl neClusterTopKT etsScalaDataset,
+        D.H ly, // note that   use h ly  n order to make   flex ble for h ly batch s ze
+        D.Suff x(clusterTopKT etsDatasetPath),
         D.EBLzo(),
         dateRange.end
       )
 
-    Execution
-      .zip(writeTweetClusterScoresExec, writeTweetTopKClustersExec, writeClusterTopKTweetsExec)
-      .unit
+    Execut on
+      .z p(wr eT etClusterScoresExec, wr eT etTopKClustersExec, wr eClusterTopKT etsExec)
+      .un 
   }
 
 }

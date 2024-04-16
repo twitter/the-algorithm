@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-trait HasProfileId {
-  def profileId: Long
+tra  HasProf le d {
+  def prof le d: Long
 }

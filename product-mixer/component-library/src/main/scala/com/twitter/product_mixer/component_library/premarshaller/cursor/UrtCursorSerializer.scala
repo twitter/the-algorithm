@@ -1,159 +1,159 @@
-package com.twitter.product_mixer.component_library.premarshaller.cursor
+package com.tw ter.product_m xer.component_l brary.premarshaller.cursor
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.component_library.model.cursor.UrtPassThroughCursor
-import com.twitter.product_mixer.component_library.model.cursor.UrtPlaceholderCursor
-import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedBloomFilterCursor
-import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedExcludeIdsCursor
-import com.twitter.product_mixer.component_library.premarshaller.cursor.CursorSerializer.CursorThriftSerializer
-import com.twitter.product_mixer.component_library.{thriftscala => t}
-import com.twitter.product_mixer.core.pipeline.PipelineCursorSerializer.deserializeCursor
-import com.twitter.product_mixer.core.pipeline.PipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineCursorSerializer
-import com.twitter.product_mixer.core.pipeline.UrtPipelineCursor
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.MalformedCursor
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.search.common.util.bloomfilter.AdaptiveLongIntBloomFilterSerializer
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.operation.CursorTypeMarshaller
+ mport com.tw ter.product_m xer.component_l brary.model.cursor.UrtOrderedCursor
+ mport com.tw ter.product_m xer.component_l brary.model.cursor.UrtPassThroughCursor
+ mport com.tw ter.product_m xer.component_l brary.model.cursor.UrtPlaceholderCursor
+ mport com.tw ter.product_m xer.component_l brary.model.cursor.UrtUnorderedBloomF lterCursor
+ mport com.tw ter.product_m xer.component_l brary.model.cursor.UrtUnorderedExclude dsCursor
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.cursor.CursorSer al zer.CursorThr ftSer al zer
+ mport com.tw ter.product_m xer.component_l brary.{thr ftscala => t}
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neCursorSer al zer.deser al zeCursor
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neCursor
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neCursorSer al zer
+ mport com.tw ter.product_m xer.core.p pel ne.UrtP pel neCursor
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure. llegalStateFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.Malfor dCursor
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.search.common.ut l.bloomf lter.Adapt veLong ntBloomF lterSer al zer
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.operat on.CursorTypeMarshaller
 
 /**
- * Handles serialization and deserialization for all supported URT cursors
+ * Handles ser al zat on and deser al zat on for all supported URT cursors
  */
-object UrtCursorSerializer extends PipelineCursorSerializer[UrtPipelineCursor] {
+object UrtCursorSer al zer extends P pel neCursorSer al zer[UrtP pel neCursor] {
 
-  val SerializedUrtPlaceholderCursor = CursorThriftSerializer.toString(
-    t.ProductMixerRequestCursor.UrtPlaceholderCursor(t.UrtPlaceholderCursor()))
+  val Ser al zedUrtPlaceholderCursor = CursorThr ftSer al zer.toStr ng(
+    t.ProductM xerRequestCursor.UrtPlaceholderCursor(t.UrtPlaceholderCursor()))
 
   val cursorTypeMarshaller = new CursorTypeMarshaller()
 
-  override def serializeCursor(cursor: UrtPipelineCursor): String =
+  overr de def ser al zeCursor(cursor: UrtP pel neCursor): Str ng =
     cursor match {
-      case UrtOrderedCursor(initialSortIndex, id, cursorType, gapBoundaryId) =>
-        val thriftCursor = t.ProductMixerRequestCursor.UrtOrderedCursor(
+      case UrtOrderedCursor( n  alSort ndex,  d, cursorType, gapBoundary d) =>
+        val thr ftCursor = t.ProductM xerRequestCursor.UrtOrderedCursor(
           t.UrtOrderedCursor(
-            initialSortIndex = initialSortIndex,
-            id = id,
+             n  alSort ndex =  n  alSort ndex,
+             d =  d,
             cursorType.map(cursorTypeMarshaller.apply),
-            gapBoundaryId = gapBoundaryId))
+            gapBoundary d = gapBoundary d))
 
-        CursorThriftSerializer.toString(thriftCursor)
-      case UrtUnorderedExcludeIdsCursor(initialSortIndex, excludedIds) =>
-        val thriftCursor = t.ProductMixerRequestCursor.UrtUnorderedExcludeIdsCursor(
-          t.UrtUnorderedExcludeIdsCursor(
-            initialSortIndex = initialSortIndex,
-            excludedIds = Some(excludedIds)))
+        CursorThr ftSer al zer.toStr ng(thr ftCursor)
+      case UrtUnorderedExclude dsCursor( n  alSort ndex, excluded ds) =>
+        val thr ftCursor = t.ProductM xerRequestCursor.UrtUnorderedExclude dsCursor(
+          t.UrtUnorderedExclude dsCursor(
+             n  alSort ndex =  n  alSort ndex,
+            excluded ds = So (excluded ds)))
 
-        CursorThriftSerializer.toString(thriftCursor)
-      case UrtUnorderedBloomFilterCursor(initialSortIndex, longIntBloomFilter) =>
-        val thriftCursor = t.ProductMixerRequestCursor.UrtUnorderedBloomFilterCursor(
-          t.UrtUnorderedBloomFilterCursor(
-            initialSortIndex = initialSortIndex,
-            serializedLongIntBloomFilter =
-              AdaptiveLongIntBloomFilterSerializer.serialize(longIntBloomFilter)
+        CursorThr ftSer al zer.toStr ng(thr ftCursor)
+      case UrtUnorderedBloomF lterCursor( n  alSort ndex, long ntBloomF lter) =>
+        val thr ftCursor = t.ProductM xerRequestCursor.UrtUnorderedBloomF lterCursor(
+          t.UrtUnorderedBloomF lterCursor(
+             n  alSort ndex =  n  alSort ndex,
+            ser al zedLong ntBloomF lter =
+              Adapt veLong ntBloomF lterSer al zer.ser al ze(long ntBloomF lter)
           ))
 
-        CursorThriftSerializer.toString(thriftCursor)
-      case UrtPassThroughCursor(initialSortIndex, cursorValue, cursorType) =>
-        val thriftCursor = t.ProductMixerRequestCursor.UrtPassThroughCursor(
+        CursorThr ftSer al zer.toStr ng(thr ftCursor)
+      case UrtPassThroughCursor( n  alSort ndex, cursorValue, cursorType) =>
+        val thr ftCursor = t.ProductM xerRequestCursor.UrtPassThroughCursor(
           t.UrtPassThroughCursor(
-            initialSortIndex = initialSortIndex,
+             n  alSort ndex =  n  alSort ndex,
             cursorValue = cursorValue,
             cursorType = cursorType.map(cursorTypeMarshaller.apply)
           ))
 
-        CursorThriftSerializer.toString(thriftCursor)
+        CursorThr ftSer al zer.toStr ng(thr ftCursor)
       case UrtPlaceholderCursor() =>
-        SerializedUrtPlaceholderCursor
+        Ser al zedUrtPlaceholderCursor
       case _ =>
-        throw PipelineFailure(IllegalStateFailure, "Unknown cursor type")
+        throw P pel neFa lure( llegalStateFa lure, "Unknown cursor type")
     }
 
-  def deserializeOrderedCursor(cursorString: String): Option[UrtOrderedCursor] = {
-    deserializeUrtCursor(
-      cursorString,
+  def deser al zeOrderedCursor(cursorStr ng: Str ng): Opt on[UrtOrderedCursor] = {
+    deser al zeUrtCursor(
+      cursorStr ng,
       {
-        case Some(
-              t.ProductMixerRequestCursor.UrtOrderedCursor(
-                t.UrtOrderedCursor(initialSortIndex, id, cursorType, gapBoundaryId))) =>
-          Some(
+        case So (
+              t.ProductM xerRequestCursor.UrtOrderedCursor(
+                t.UrtOrderedCursor( n  alSort ndex,  d, cursorType, gapBoundary d))) =>
+          So (
             UrtOrderedCursor(
-              initialSortIndex = initialSortIndex,
-              id = id,
+               n  alSort ndex =  n  alSort ndex,
+               d =  d,
               cursorType = cursorType.map(cursorTypeMarshaller.unmarshall),
-              gapBoundaryId))
+              gapBoundary d))
       }
     )
   }
 
-  def deserializeUnorderedExcludeIdsCursor(
-    cursorString: String
-  ): Option[UrtUnorderedExcludeIdsCursor] = {
-    deserializeUrtCursor(
-      cursorString,
+  def deser al zeUnorderedExclude dsCursor(
+    cursorStr ng: Str ng
+  ): Opt on[UrtUnorderedExclude dsCursor] = {
+    deser al zeUrtCursor(
+      cursorStr ng,
       {
-        case Some(
-              t.ProductMixerRequestCursor.UrtUnorderedExcludeIdsCursor(
-                t.UrtUnorderedExcludeIdsCursor(initialSortIndex, excludedIdsOpt))) =>
-          Some(
-            UrtUnorderedExcludeIdsCursor(
-              initialSortIndex = initialSortIndex,
-              excludedIds = excludedIdsOpt.getOrElse(Seq.empty)))
+        case So (
+              t.ProductM xerRequestCursor.UrtUnorderedExclude dsCursor(
+                t.UrtUnorderedExclude dsCursor( n  alSort ndex, excluded dsOpt))) =>
+          So (
+            UrtUnorderedExclude dsCursor(
+               n  alSort ndex =  n  alSort ndex,
+              excluded ds = excluded dsOpt.getOrElse(Seq.empty)))
       }
     )
   }
 
-  def deserializeUnorderedBloomFilterCursor(
-    cursorString: String
-  ): Option[UrtUnorderedBloomFilterCursor] = {
-    deserializeUrtCursor(
-      cursorString,
+  def deser al zeUnorderedBloomF lterCursor(
+    cursorStr ng: Str ng
+  ): Opt on[UrtUnorderedBloomF lterCursor] = {
+    deser al zeUrtCursor(
+      cursorStr ng,
       {
-        case Some(
-              t.ProductMixerRequestCursor.UrtUnorderedBloomFilterCursor(
-                t.UrtUnorderedBloomFilterCursor(initialSortIndex, serializedLongIntBloomFilter))) =>
-          val longIntBloomFilter = AdaptiveLongIntBloomFilterSerializer
-            .deserialize(serializedLongIntBloomFilter).getOrElse(
-              throw PipelineFailure(
-                MalformedCursor,
-                s"Failed to deserialize UrtUnorderedBloomFilterCursor from cursor string: $cursorString")
+        case So (
+              t.ProductM xerRequestCursor.UrtUnorderedBloomF lterCursor(
+                t.UrtUnorderedBloomF lterCursor( n  alSort ndex, ser al zedLong ntBloomF lter))) =>
+          val long ntBloomF lter = Adapt veLong ntBloomF lterSer al zer
+            .deser al ze(ser al zedLong ntBloomF lter).getOrElse(
+              throw P pel neFa lure(
+                Malfor dCursor,
+                s"Fa led to deser al ze UrtUnorderedBloomF lterCursor from cursor str ng: $cursorStr ng")
             )
 
-          Some(
-            UrtUnorderedBloomFilterCursor(
-              initialSortIndex = initialSortIndex,
-              longIntBloomFilter = longIntBloomFilter))
+          So (
+            UrtUnorderedBloomF lterCursor(
+               n  alSort ndex =  n  alSort ndex,
+              long ntBloomF lter = long ntBloomF lter))
       }
     )
   }
 
-  def deserializePassThroughCursor(cursorString: String): Option[UrtPassThroughCursor] = {
-    deserializeUrtCursor(
-      cursorString,
+  def deser al zePassThroughCursor(cursorStr ng: Str ng): Opt on[UrtPassThroughCursor] = {
+    deser al zeUrtCursor(
+      cursorStr ng,
       {
-        case Some(
-              t.ProductMixerRequestCursor
+        case So (
+              t.ProductM xerRequestCursor
                 .UrtPassThroughCursor(
-                  t.UrtPassThroughCursor(initialSortIndex, cursorValue, cursorType))) =>
-          Some(
+                  t.UrtPassThroughCursor( n  alSort ndex, cursorValue, cursorType))) =>
+          So (
             UrtPassThroughCursor(
-              initialSortIndex = initialSortIndex,
+               n  alSort ndex =  n  alSort ndex,
               cursorValue = cursorValue,
               cursorType = cursorType.map(cursorTypeMarshaller.unmarshall)))
       }
     )
   }
 
-  private def deserializeUrtCursor[Cursor <: PipelineCursor](
-    cursorString: String,
-    deserializePf: PartialFunction[Option[t.ProductMixerRequestCursor], Option[Cursor]]
-  ): Option[Cursor] = {
-    deserializeCursor[t.ProductMixerRequestCursor, Cursor](
-      cursorString,
-      CursorThriftSerializer,
-      deserializePf orElse {
-        case Some(t.ProductMixerRequestCursor.UrtPlaceholderCursor(t.UrtPlaceholderCursor())) =>
-          // Treat submitted placeholder cursor like an initial page load
+  pr vate def deser al zeUrtCursor[Cursor <: P pel neCursor](
+    cursorStr ng: Str ng,
+    deser al zePf: Part alFunct on[Opt on[t.ProductM xerRequestCursor], Opt on[Cursor]]
+  ): Opt on[Cursor] = {
+    deser al zeCursor[t.ProductM xerRequestCursor, Cursor](
+      cursorStr ng,
+      CursorThr ftSer al zer,
+      deser al zePf orElse {
+        case So (t.ProductM xerRequestCursor.UrtPlaceholderCursor(t.UrtPlaceholderCursor())) =>
+          // Treat subm ted placeholder cursor l ke an  n  al page load
           None
       },
     )

@@ -1,26 +1,26 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.stitch.Stitch
-import com.twitter.takedown.util.TakedownReasons
-import com.twitter.tseng.withholding.thriftscala.TakedownReason
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.takedown.ut l.TakedownReasons
+ mport com.tw ter.tseng.w hhold ng.thr ftscala.TakedownReason
 
 /**
- * Query TakedownReason objects from gizmoduck
+ * Query TakedownReason objects from g zmoduck
  *
- * No backfill job has been completed so there may exist users that have a takedown
- * country_code without a corresponding UnspecifiedReason takedown_reason.  Therefore,
- * read from both fields and merge into a set of TakedownReason, translating raw takedown
- * country_code into TakedownReason.UnspecifiedReason(country_code).
+ * No backf ll job has been completed so t re may ex st users that have a takedown
+ * country_code w hout a correspond ng Unspec f edReason takedown_reason.  T refore,
+ * read from both f elds and  rge  nto a set of TakedownReason, translat ng raw takedown
+ * country_code  nto TakedownReason.Unspec f edReason(country_code).
  */
-object UserTakedownRepository {
-  type Type = UserId => Stitch[Set[TakedownReason]]
+object UserTakedownRepos ory {
+  type Type = User d => St ch[Set[TakedownReason]]
 
-  val userQueryOptions: UserQueryOptions =
-    UserQueryOptions(Set(UserField.Takedowns), UserVisibility.All)
+  val userQueryOpt ons: UserQueryOpt ons =
+    UserQueryOpt ons(Set(UserF eld.Takedowns), UserV s b l y.All)
 
-  def apply(userRepo: UserRepository.Type): UserTakedownRepository.Type =
-    userId =>
-      userRepo(UserKey(userId = userId), userQueryOptions)
+  def apply(userRepo: UserRepos ory.Type): UserTakedownRepos ory.Type =
+    user d =>
+      userRepo(UserKey(user d = user d), userQueryOpt ons)
         .map(_.takedowns.map(TakedownReasons.userTakedownsToReasons).getOrElse(Set.empty))
 }

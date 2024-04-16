@@ -1,42 +1,42 @@
-#ifndef TWML_LIBTWML_INCLUDE_TWML_COMMON_H_
-#define TWML_LIBTWML_INCLUDE_TWML_COMMON_H_
+# fndef TWML_L BTWML_ NCLUDE_TWML_COMMON_H_
+#def ne TWML_L BTWML_ NCLUDE_TWML_COMMON_H_
 
-#define USE_ABSEIL_HASH 1
+#def ne USE_ABSE L_HASH 1
 
-#if defined(USE_ABSEIL_HASH)
-#include "absl/container/flat_hash_map.h"
-#include "absl/container/flat_hash_set.h"
-#elif defined(USE_DENSE_HASH)
-#include <sparsehash/dense_hash_map>
-#include <sparsehash/dense_hash_set>
+# f def ned(USE_ABSE L_HASH)
+# nclude "absl/conta ner/flat_hash_map.h"
+# nclude "absl/conta ner/flat_hash_set.h"
+#el f def ned(USE_DENSE_HASH)
+# nclude <sparsehash/dense_hash_map>
+# nclude <sparsehash/dense_hash_set>
 #else
-#include <unordered_map>
-#include <unordered_set>
-#endif  // USE_ABSEIL_HASH
+# nclude <unordered_map>
+# nclude <unordered_set>
+#end f  // USE_ABSE L_HASH
 
 
-namespace twml {
-#if defined(USE_ABSEIL_HASH)
-  template<typename KeyType, typename ValueType>
-    using Map = absl::flat_hash_map<KeyType, ValueType>;
+na space twml {
+# f def ned(USE_ABSE L_HASH)
+  template<typena  KeyType, typena  ValueType>
+    us ng Map = absl::flat_hash_map<KeyType, ValueType>;
 
-  template<typename KeyType>
-    using Set = absl::flat_hash_set<KeyType>;
-#elif defined(USE_DENSE_HASH)
-// Do not use this unless an proper empty key can be found.
-  template<typename KeyType, typename ValueType>
-    using Map = google::dense_hash_map<KeyType, ValueType>;
+  template<typena  KeyType>
+    us ng Set = absl::flat_hash_set<KeyType>;
+#el f def ned(USE_DENSE_HASH)
+// Do not use t  unless an proper empty key can be found.
+  template<typena  KeyType, typena  ValueType>
+    us ng Map = google::dense_hash_map<KeyType, ValueType>;
 
-  template<typename KeyType>
-    using Set = google::dense_hash_set<KeyType>;
+  template<typena  KeyType>
+    us ng Set = google::dense_hash_set<KeyType>;
 #else
-  template<typename KeyType, typename ValueType>
-    using Map = std::unordered_map<KeyType, ValueType>;
+  template<typena  KeyType, typena  ValueType>
+    us ng Map = std::unordered_map<KeyType, ValueType>;
 
-  template<typename KeyType>
-    using Set = std::unordered_set<KeyType>;
-#endif  // USE_DENSE_HASH
+  template<typena  KeyType>
+    us ng Set = std::unordered_set<KeyType>;
+#end f  // USE_DENSE_HASH
 
-}  // namespace twml
+}  // na space twml
 
-#endif  // TWML_LIBTWML_INCLUDE_TWML_COMMON_H_
+#end f  // TWML_L BTWML_ NCLUDE_TWML_COMMON_H_

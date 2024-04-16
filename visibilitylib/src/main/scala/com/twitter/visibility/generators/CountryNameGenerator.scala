@@ -1,57 +1,57 @@
-package com.twitter.visibility.generators
+package com.tw ter.v s b l y.generators
 
-import com.ibm.icu.util.ULocale
-import com.twitter.config.yaml.YamlMap
-import com.twitter.finagle.stats.StatsReceiver
+ mport com. bm. cu.ut l.ULocale
+ mport com.tw ter.conf g.yaml.YamlMap
+ mport com.tw ter.f nagle.stats.StatsRece ver
 
-object CountryNameGenerator {
+object CountryNa Generator {
 
-  private val AuroraFilesystemPath = "/usr/local/twitter-config/twitter/config/"
+  pr vate val AuroraF lesystemPath = "/usr/local/tw ter-conf g/tw ter/conf g/"
 
-  private val ContentBlockingSupportedCountryList = "takedown_countries.yml"
+  pr vate val ContentBlock ngSupportedCountryL st = "takedown_countr es.yml"
 
-  def providesFromConfigBus(statsReceiver: StatsReceiver): CountryNameGenerator = {
-    fromFile(AuroraFilesystemPath + ContentBlockingSupportedCountryList, statsReceiver)
+  def prov desFromConf gBus(statsRece ver: StatsRece ver): CountryNa Generator = {
+    fromF le(AuroraF lesystemPath + ContentBlock ngSupportedCountryL st, statsRece ver)
   }
 
-  def providesWithCustomMap(countryCodeMap: Map[String, String], statsReceiver: StatsReceiver) = {
-    new CountryNameGenerator(countryCodeMap, statsReceiver)
+  def prov desW hCustomMap(countryCodeMap: Map[Str ng, Str ng], statsRece ver: StatsRece ver) = {
+    new CountryNa Generator(countryCodeMap, statsRece ver)
   }
 
-  private def fromFile(fileName: String, statsReceiver: StatsReceiver) = {
-    val yamlConfig = YamlMap.load(fileName)
-    val countryCodeMap: Map[String, String] = yamlConfig.keySet.map { countryCode: String =>
-      val normalizedCode = countryCode.toUpperCase
-      val countryName: Option[String] =
-        yamlConfig.get(Seq(countryCode, "name")).asInstanceOf[Option[String]]
-      (normalizedCode, countryName.getOrElse(normalizedCode))
+  pr vate def fromF le(f leNa : Str ng, statsRece ver: StatsRece ver) = {
+    val yamlConf g = YamlMap.load(f leNa )
+    val countryCodeMap: Map[Str ng, Str ng] = yamlConf g.keySet.map { countryCode: Str ng =>
+      val normal zedCode = countryCode.toUpperCase
+      val countryNa : Opt on[Str ng] =
+        yamlConf g.get(Seq(countryCode, "na ")).as nstanceOf[Opt on[Str ng]]
+      (normal zedCode, countryNa .getOrElse(normal zedCode))
     }.toMap
-    new CountryNameGenerator(countryCodeMap, statsReceiver)
+    new CountryNa Generator(countryCodeMap, statsRece ver)
   }
 }
 
-class CountryNameGenerator(countryCodeMap: Map[String, String], statsReceiver: StatsReceiver) {
+class CountryNa Generator(countryCodeMap: Map[Str ng, Str ng], statsRece ver: StatsRece ver) {
 
-  private val scopedStatsReceiver = statsReceiver.scope("country_name_generator")
-  private val foundCountryReceiver = scopedStatsReceiver.counter("found")
-  private val missingCountryReceiver = scopedStatsReceiver.counter("missing")
+  pr vate val scopedStatsRece ver = statsRece ver.scope("country_na _generator")
+  pr vate val foundCountryRece ver = scopedStatsRece ver.counter("found")
+  pr vate val m ss ngCountryRece ver = scopedStatsRece ver.counter("m ss ng")
 
-  def getCountryName(code: String): String = {
-    val normalizedCode = code.toUpperCase
-    countryCodeMap.get(normalizedCode) match {
-      case Some(retrievedName) => {
-        foundCountryReceiver.incr()
-        retrievedName
+  def getCountryNa (code: Str ng): Str ng = {
+    val normal zedCode = code.toUpperCase
+    countryCodeMap.get(normal zedCode) match {
+      case So (retr evedNa ) => {
+        foundCountryRece ver. ncr()
+        retr evedNa 
       }
       case _ => {
-        missingCountryReceiver.incr()
-        val fallbackName =
-          new ULocale("", normalizedCode).getDisplayCountry(ULocale.forLanguageTag("en"))
+        m ss ngCountryRece ver. ncr()
+        val fallbackNa  =
+          new ULocale("", normal zedCode).getD splayCountry(ULocale.forLanguageTag("en"))
 
-        if (fallbackName == "")
-          normalizedCode
+         f (fallbackNa  == "")
+          normal zedCode
         else
-          fallbackName
+          fallbackNa 
       }
     }
   }

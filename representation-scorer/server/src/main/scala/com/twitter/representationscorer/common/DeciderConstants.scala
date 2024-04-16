@@ -1,7 +1,7 @@
-package com.twitter.representationscorer
+package com.tw ter.representat onscorer
 
-object DeciderConstants {
-  val enableSimClustersEmbeddingStoreTimeouts = "enable_sim_clusters_embedding_store_timeouts"
-  val simClustersEmbeddingStoreTimeoutValueMillis =
-    "sim_clusters_embedding_store_timeout_value_millis"
+object Dec derConstants {
+  val enableS mClustersEmbedd ngStoreT  outs = "enable_s m_clusters_embedd ng_store_t  outs"
+  val s mClustersEmbedd ngStoreT  outValueM ll s =
+    "s m_clusters_embedd ng_store_t  out_value_m ll s"
 }

@@ -1,51 +1,51 @@
-package com.twitter.product_mixer.core.module
+package com.tw ter.product_m xer.core.module
 
-import com.google.inject.Provides
-import com.twitter.abdecider.ABDeciderFactory
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.logging._
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ScribeABImpressions
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.abdec der.ABDec derFactory
+ mport com.tw ter.abdec der.Logg ngABDec der
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.logg ng._
+ mport com.tw ter.product_m xer.core.module.product_m xer_flags.ProductM xerFlagModule.Scr beAB mpress ons
+ mport javax. nject.S ngleton
 
-object ABDeciderModule extends TwitterModule {
-  private val YmlPath = "/usr/local/config/abdecider/abdecider.yml"
+object ABDec derModule extends Tw terModule {
+  pr vate val YmlPath = "/usr/local/conf g/abdec der/abdec der.yml"
 
-  @Provides
-  @Singleton
-  def provideLoggingABDecider(
-    @Flag(ScribeABImpressions) isScribeAbImpressions: Boolean,
-    stats: StatsReceiver
-  ): LoggingABDecider = {
-    val clientEventsHandler: HandlerFactory =
-      if (isScribeAbImpressions) {
-        QueueingHandler(
-          maxQueueSize = 10000,
-          handler = ScribeHandler(
-            category = "client_event",
+  @Prov des
+  @S ngleton
+  def prov deLogg ngABDec der(
+    @Flag(Scr beAB mpress ons)  sScr beAb mpress ons: Boolean,
+    stats: StatsRece ver
+  ): Logg ngABDec der = {
+    val cl entEventsHandler: HandlerFactory =
+       f ( sScr beAb mpress ons) {
+        Queue ngHandler(
+          maxQueueS ze = 10000,
+          handler = Scr beHandler(
+            category = "cl ent_event",
             formatter = BareFormatter,
-            level = Some(Level.INFO),
-            statsReceiver = stats.scope("abdecider"))
+            level = So (Level. NFO),
+            statsRece ver = stats.scope("abdec der"))
         )
       } else { () =>
         NullHandler
       }
 
     val factory = LoggerFactory(
-      node = "abdecider",
-      level = Some(Level.INFO),
+      node = "abdec der",
+      level = So (Level. NFO),
       useParents = false,
-      handlers = clientEventsHandler :: Nil
+      handlers = cl entEventsHandler :: N l
     )
 
-    val abDeciderFactory = ABDeciderFactory(
-      abDeciderYmlPath = YmlPath,
-      scribeLogger = Some(factory()),
-      environment = Some("production")
+    val abDec derFactory = ABDec derFactory(
+      abDec derYmlPath = YmlPath,
+      scr beLogger = So (factory()),
+      env ron nt = So ("product on")
     )
 
-    abDeciderFactory.buildWithLogging()
+    abDec derFactory.bu ldW hLogg ng()
   }
 }

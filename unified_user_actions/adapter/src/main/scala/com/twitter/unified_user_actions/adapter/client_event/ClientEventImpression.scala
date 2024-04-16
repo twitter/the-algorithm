@@ -1,32 +1,32 @@
-package com.twitter.unified_user_actions.adapter.client_event
+package com.tw ter.un f ed_user_act ons.adapter.cl ent_event
 
-import com.twitter.clientapp.thriftscala.EventNamespace
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.clientapp.thriftscala.{Item => LogEventItem}
-import com.twitter.logbase.thriftscala.LogBase
-import com.twitter.unified_user_actions.thriftscala._
-import com.twitter.unified_user_actions.thriftscala.Item.TweetInfo
+ mport com.tw ter.cl entapp.thr ftscala.EventNa space
+ mport com.tw ter.cl entapp.thr ftscala.LogEvent
+ mport com.tw ter.cl entapp.thr ftscala.{ em => LogEvent em}
+ mport com.tw ter.logbase.thr ftscala.LogBase
+ mport com.tw ter.un f ed_user_act ons.thr ftscala._
+ mport com.tw ter.un f ed_user_act ons.thr ftscala. em.T et nfo
 
-object ClientEventImpression {
-  object TweetLingerImpression extends BaseClientEvent(ActionType.ClientTweetLingerImpression) {
-    override def getUuaItem(
-      ceItem: LogEventItem,
+object Cl entEvent mpress on {
+  object T etL nger mpress on extends BaseCl entEvent(Act onType.Cl entT etL nger mpress on) {
+    overr de def getUua em(
+      ce em: LogEvent em,
       logEvent: LogEvent
-    ): Option[Item] = {
+    ): Opt on[ em] = {
       for {
-        actionTweetId <- ceItem.id
-        impressionDetails <- ceItem.impressionDetails
-        lingerStartTimestampMs <- impressionDetails.visibilityStart
-        lingerEndTimestampMs <- impressionDetails.visibilityEnd
-      } yield {
-        Item.TweetInfo(
-          ClientEventCommonUtils
-            .getBasicTweetInfo(actionTweetId, ceItem, logEvent.eventNamespace)
-            .copy(tweetActionInfo = Some(
-              TweetActionInfo.ClientTweetLingerImpression(
-                ClientTweetLingerImpression(
-                  lingerStartTimestampMs = lingerStartTimestampMs,
-                  lingerEndTimestampMs = lingerEndTimestampMs
+        act onT et d <- ce em. d
+         mpress onDeta ls <- ce em. mpress onDeta ls
+        l ngerStartT  stampMs <-  mpress onDeta ls.v s b l yStart
+        l ngerEndT  stampMs <-  mpress onDeta ls.v s b l yEnd
+      } y eld {
+         em.T et nfo(
+          Cl entEventCommonUt ls
+            .getBas cT et nfo(act onT et d, ce em, logEvent.eventNa space)
+            .copy(t etAct on nfo = So (
+              T etAct on nfo.Cl entT etL nger mpress on(
+                Cl entT etL nger mpress on(
+                  l ngerStartT  stampMs = l ngerStartT  stampMs,
+                  l ngerEndT  stampMs = l ngerEndT  stampMs
                 )
               ))))
       }
@@ -34,174 +34,174 @@ object ClientEventImpression {
   }
 
   /**
-   * To make parity with iesource's definition, render impression for quoted Tweets would emit
-   * 2 events: 1 for the quoting Tweet and 1 for the original Tweet!!!
+   * To make par y w h  es ce's def n  on, render  mpress on for quoted T ets would em 
+   * 2 events: 1 for t  quot ng T et and 1 for t  or g nal T et!!!
    */
-  object TweetRenderImpression extends BaseClientEvent(ActionType.ClientTweetRenderImpression) {
-    override def toUnifiedUserAction(logEvent: LogEvent): Seq[UnifiedUserAction] = {
+  object T etRender mpress on extends BaseCl entEvent(Act onType.Cl entT etRender mpress on) {
+    overr de def toUn f edUserAct on(logEvent: LogEvent): Seq[Un f edUserAct on] = {
 
-      val logBase: Option[LogBase] = logEvent.logBase
+      val logBase: Opt on[LogBase] = logEvent.logBase
 
       val raw = for {
-        ed <- logEvent.eventDetails.toSeq
-        items <- ed.items.toSeq
-        ceItem <- items
-        eventTimestamp <- logBase.flatMap(getSourceTimestamp)
-        uuaItem <- getUuaItem(ceItem, logEvent)
-        if isItemTypeValid(ceItem.itemType)
-      } yield {
-        val userIdentifier: UserIdentifier = UserIdentifier(
-          userId = logBase.flatMap(_.userId),
-          guestIdMarketing = logBase.flatMap(_.guestIdMarketing))
+        ed <- logEvent.eventDeta ls.toSeq
+         ems <- ed. ems.toSeq
+        ce em <-  ems
+        eventT  stamp <- logBase.flatMap(getS ceT  stamp)
+        uua em <- getUua em(ce em, logEvent)
+         f  s emTypeVal d(ce em. emType)
+      } y eld {
+        val user dent f er: User dent f er = User dent f er(
+          user d = logBase.flatMap(_.user d),
+          guest dMarket ng = logBase.flatMap(_.guest dMarket ng))
 
-        val productSurface: Option[ProductSurface] = ProductSurfaceUtils
-          .getProductSurface(logEvent.eventNamespace)
+        val productSurface: Opt on[ProductSurface] = ProductSurfaceUt ls
+          .getProductSurface(logEvent.eventNa space)
 
-        val eventMetaData: EventMetadata = ClientEventCommonUtils
-          .getEventMetadata(
-            eventTimestamp = eventTimestamp,
+        val event taData: Event tadata = Cl entEventCommonUt ls
+          .getEvent tadata(
+            eventT  stamp = eventT  stamp,
             logEvent = logEvent,
-            ceItem = ceItem,
+            ce em = ce em,
             productSurface = productSurface
           )
 
-        UnifiedUserAction(
-          userIdentifier = userIdentifier,
-          item = uuaItem,
-          actionType = ActionType.ClientTweetRenderImpression,
-          eventMetadata = eventMetaData,
+        Un f edUserAct on(
+          user dent f er = user dent f er,
+           em = uua em,
+          act onType = Act onType.Cl entT etRender mpress on,
+          event tadata = event taData,
           productSurface = productSurface,
-          productSurfaceInfo =
-            ProductSurfaceUtils.getProductSurfaceInfo(productSurface, ceItem, logEvent)
+          productSurface nfo =
+            ProductSurfaceUt ls.getProductSurface nfo(productSurface, ce em, logEvent)
         )
       }
 
       raw.flatMap { e =>
-        e.item match {
-          case TweetInfo(t) =>
-            // If it is an impression toward quoted Tweet we emit 2 impressions, 1 for quoting Tweet
-            // and 1 for the original Tweet.
-            if (t.quotedTweetId.isDefined) {
-              val originalItem = t.copy(
-                actionTweetId = t.quotedTweetId.get,
-                actionTweetAuthorInfo = t.quotedAuthorId.map(id => AuthorInfo(authorId = Some(id))),
-                quotingTweetId = Some(t.actionTweetId),
-                quotedTweetId = None,
-                inReplyToTweetId = None,
-                replyingTweetId = None,
-                retweetingTweetId = None,
-                retweetedTweetId = None,
-                quotedAuthorId = None,
-                retweetingAuthorId = None,
-                inReplyToAuthorId = None
+        e. em match {
+          case T et nfo(t) =>
+            //  f    s an  mpress on toward quoted T et   em  2  mpress ons, 1 for quot ng T et
+            // and 1 for t  or g nal T et.
+             f (t.quotedT et d. sDef ned) {
+              val or g nal em = t.copy(
+                act onT et d = t.quotedT et d.get,
+                act onT etAuthor nfo = t.quotedAuthor d.map( d => Author nfo(author d = So ( d))),
+                quot ngT et d = So (t.act onT et d),
+                quotedT et d = None,
+                 nReplyToT et d = None,
+                reply ngT et d = None,
+                ret et ngT et d = None,
+                ret etedT et d = None,
+                quotedAuthor d = None,
+                ret et ngAuthor d = None,
+                 nReplyToAuthor d = None
               )
-              val original = e.copy(item = TweetInfo(originalItem))
-              Seq(original, e)
+              val or g nal = e.copy( em = T et nfo(or g nal em))
+              Seq(or g nal, e)
             } else Seq(e)
-          case _ => Nil
+          case _ => N l
         }
       }
     }
   }
 
-  object TweetGalleryImpression extends BaseClientEvent(ActionType.ClientTweetGalleryImpression)
+  object T etGallery mpress on extends BaseCl entEvent(Act onType.Cl entT etGallery mpress on)
 
-  object TweetDetailsImpression extends BaseClientEvent(ActionType.ClientTweetDetailsImpression) {
+  object T etDeta ls mpress on extends BaseCl entEvent(Act onType.Cl entT etDeta ls mpress on) {
 
-    case class EventNamespaceInternal(
-      client: String,
-      page: String,
-      section: String,
-      component: String,
-      element: String,
-      action: String)
+    case class EventNa space nternal(
+      cl ent: Str ng,
+      page: Str ng,
+      sect on: Str ng,
+      component: Str ng,
+      ele nt: Str ng,
+      act on: Str ng)
 
-    def isTweetDetailsImpression(eventNamespaceOpt: Option[EventNamespace]): Boolean =
-      eventNamespaceOpt.exists { eventNamespace =>
-        val eventNamespaceInternal = EventNamespaceInternal(
-          client = eventNamespace.client.getOrElse(""),
-          page = eventNamespace.page.getOrElse(""),
-          section = eventNamespace.section.getOrElse(""),
-          component = eventNamespace.component.getOrElse(""),
-          element = eventNamespace.element.getOrElse(""),
-          action = eventNamespace.action.getOrElse(""),
+    def  sT etDeta ls mpress on(eventNa spaceOpt: Opt on[EventNa space]): Boolean =
+      eventNa spaceOpt.ex sts { eventNa space =>
+        val eventNa space nternal = EventNa space nternal(
+          cl ent = eventNa space.cl ent.getOrElse(""),
+          page = eventNa space.page.getOrElse(""),
+          sect on = eventNa space.sect on.getOrElse(""),
+          component = eventNa space.component.getOrElse(""),
+          ele nt = eventNa space.ele nt.getOrElse(""),
+          act on = eventNa space.act on.getOrElse(""),
         )
 
-        isIphoneAppOrMacAppOrIpadAppClientTweetDetailsImpression(
-          eventNamespaceInternal) || isAndroidAppClientTweetDetailsImpression(
-          eventNamespaceInternal) || isWebClientTweetDetailImpression(
-          eventNamespaceInternal) || isTweetDeckAppClientTweetDetailsImpression(
-          eventNamespaceInternal) || isOtherAppClientTweetDetailsImpression(eventNamespaceInternal)
+         s phoneAppOrMacAppOr padAppCl entT etDeta ls mpress on(
+          eventNa space nternal) ||  sAndro dAppCl entT etDeta ls mpress on(
+          eventNa space nternal) ||  s bCl entT etDeta l mpress on(
+          eventNa space nternal) ||  sT etDeckAppCl entT etDeta ls mpress on(
+          eventNa space nternal) ||  sOt rAppCl entT etDeta ls mpress on(eventNa space nternal)
       }
 
-    private def isWebClientTweetDetailImpression(
-      eventNamespace: EventNamespaceInternal
+    pr vate def  s bCl entT etDeta l mpress on(
+      eventNa space: EventNa space nternal
     ): Boolean = {
-      val eventNameSpaceStr =
-        eventNamespace.client + ":" + eventNamespace.page + ":" + eventNamespace.section + ":" + eventNamespace.component + ":" + eventNamespace.element + ":" + eventNamespace.action
-      eventNameSpaceStr.equalsIgnoreCase("m5:tweet::::show") || eventNameSpaceStr.equalsIgnoreCase(
-        "m5:tweet:landing:::show") || eventNameSpaceStr
-        .equalsIgnoreCase("m2:tweet::::impression") || eventNameSpaceStr.equalsIgnoreCase(
-        "m2:tweet::tweet::impression") || eventNameSpaceStr
-        .equalsIgnoreCase("LiteNativeWrapper:tweet::::show") || eventNameSpaceStr.equalsIgnoreCase(
-        "LiteNativeWrapper:tweet:landing:::show")
+      val eventNa SpaceStr =
+        eventNa space.cl ent + ":" + eventNa space.page + ":" + eventNa space.sect on + ":" + eventNa space.component + ":" + eventNa space.ele nt + ":" + eventNa space.act on
+      eventNa SpaceStr.equals gnoreCase("m5:t et::::show") || eventNa SpaceStr.equals gnoreCase(
+        "m5:t et:land ng:::show") || eventNa SpaceStr
+        .equals gnoreCase("m2:t et:::: mpress on") || eventNa SpaceStr.equals gnoreCase(
+        "m2:t et::t et:: mpress on") || eventNa SpaceStr
+        .equals gnoreCase("L eNat veWrapper:t et::::show") || eventNa SpaceStr.equals gnoreCase(
+        "L eNat veWrapper:t et:land ng:::show")
     }
 
-    private def isOtherAppClientTweetDetailsImpression(
-      eventNamespace: EventNamespaceInternal
+    pr vate def  sOt rAppCl entT etDeta ls mpress on(
+      eventNa space: EventNa space nternal
     ): Boolean = {
-      val excludedClients = Set(
-        "web",
+      val excludedCl ents = Set(
+        " b",
         "m5",
         "m2",
-        "LiteNativeWrapper",
-        "iphone",
-        "ipad",
+        "L eNat veWrapper",
+        " phone",
+        " pad",
         "mac",
-        "android",
-        "android_tablet",
+        "andro d",
+        "andro d_tablet",
         "deck")
-      (!excludedClients.contains(eventNamespace.client)) && eventNamespace.page
-        .equalsIgnoreCase("tweet") && eventNamespace.section
-        .equalsIgnoreCase("") && eventNamespace.component
-        .equalsIgnoreCase("tweet") && eventNamespace.element
-        .equalsIgnoreCase("") && eventNamespace.action.equalsIgnoreCase("impression")
+      (!excludedCl ents.conta ns(eventNa space.cl ent)) && eventNa space.page
+        .equals gnoreCase("t et") && eventNa space.sect on
+        .equals gnoreCase("") && eventNa space.component
+        .equals gnoreCase("t et") && eventNa space.ele nt
+        .equals gnoreCase("") && eventNa space.act on.equals gnoreCase(" mpress on")
     }
 
-    private def isTweetDeckAppClientTweetDetailsImpression(
-      eventNamespace: EventNamespaceInternal
+    pr vate def  sT etDeckAppCl entT etDeta ls mpress on(
+      eventNa space: EventNa space nternal
     ): Boolean =
-      eventNamespace.client
-        .equalsIgnoreCase("deck") && eventNamespace.page
-        .equalsIgnoreCase("tweet") && eventNamespace.section
-        .equalsIgnoreCase("") && eventNamespace.component
-        .equalsIgnoreCase("tweet") && eventNamespace.element
-        .equalsIgnoreCase("") && eventNamespace.action.equalsIgnoreCase("impression")
+      eventNa space.cl ent
+        .equals gnoreCase("deck") && eventNa space.page
+        .equals gnoreCase("t et") && eventNa space.sect on
+        .equals gnoreCase("") && eventNa space.component
+        .equals gnoreCase("t et") && eventNa space.ele nt
+        .equals gnoreCase("") && eventNa space.act on.equals gnoreCase(" mpress on")
 
-    private def isAndroidAppClientTweetDetailsImpression(
-      eventNamespace: EventNamespaceInternal
+    pr vate def  sAndro dAppCl entT etDeta ls mpress on(
+      eventNa space: EventNa space nternal
     ): Boolean =
-      (eventNamespace.client
-        .equalsIgnoreCase("android") || eventNamespace.client
-        .equalsIgnoreCase("android_tablet")) && eventNamespace.page
-        .equalsIgnoreCase("tweet") && eventNamespace.section.equalsIgnoreCase(
-        "") && (eventNamespace.component
-        .equalsIgnoreCase("tweet") || eventNamespace.component
-        .matches("^suggest.*_tweet.*$") || eventNamespace.component
-        .equalsIgnoreCase("")) && eventNamespace.element
-        .equalsIgnoreCase("") && eventNamespace.action.equalsIgnoreCase("impression")
+      (eventNa space.cl ent
+        .equals gnoreCase("andro d") || eventNa space.cl ent
+        .equals gnoreCase("andro d_tablet")) && eventNa space.page
+        .equals gnoreCase("t et") && eventNa space.sect on.equals gnoreCase(
+        "") && (eventNa space.component
+        .equals gnoreCase("t et") || eventNa space.component
+        .matc s("^suggest.*_t et.*$") || eventNa space.component
+        .equals gnoreCase("")) && eventNa space.ele nt
+        .equals gnoreCase("") && eventNa space.act on.equals gnoreCase(" mpress on")
 
-    private def isIphoneAppOrMacAppOrIpadAppClientTweetDetailsImpression(
-      eventNamespace: EventNamespaceInternal
+    pr vate def  s phoneAppOrMacAppOr padAppCl entT etDeta ls mpress on(
+      eventNa space: EventNa space nternal
     ): Boolean =
-      (eventNamespace.client
-        .equalsIgnoreCase("iphone") || eventNamespace.client
-        .equalsIgnoreCase("ipad") || eventNamespace.client
-        .equalsIgnoreCase("mac")) && eventNamespace.page.equalsIgnoreCase(
-        "tweet") && eventNamespace.section
-        .equalsIgnoreCase("") && (eventNamespace.component
-        .equalsIgnoreCase("tweet") || eventNamespace.component
-        .matches("^suggest.*_tweet.*$")) && eventNamespace.element
-        .equalsIgnoreCase("") && eventNamespace.action.equalsIgnoreCase("impression")
+      (eventNa space.cl ent
+        .equals gnoreCase(" phone") || eventNa space.cl ent
+        .equals gnoreCase(" pad") || eventNa space.cl ent
+        .equals gnoreCase("mac")) && eventNa space.page.equals gnoreCase(
+        "t et") && eventNa space.sect on
+        .equals gnoreCase("") && (eventNa space.component
+        .equals gnoreCase("t et") || eventNa space.component
+        .matc s("^suggest.*_t et.*$")) && eventNa space.ele nt
+        .equals gnoreCase("") && eventNa space.act on.equals gnoreCase(" mpress on")
   }
 }

@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.vert cal_gr d_ em
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEvent nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FeedbackAct on nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Url
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.EntryNa space
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne em
 
-sealed trait VerticalGridItem extends TimelineItem
+sealed tra  Vert calGr d em extends T  l ne em
 
-object VerticalGridItemTopicTile {
-  val VerticalGridItemTopicTileEntryNamespace = EntryNamespace("verticalgriditemtopictile")
+object Vert calGr d emTop cT le {
+  val Vert calGr d emTop cT leEntryNa space = EntryNa space("vert calgr d emtop ct le")
 }
 
-case class VerticalGridItemTopicTile(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  style: Option[VerticalGridItemTileStyle],
-  functionalityType: Option[VerticalGridItemTopicFunctionalityType],
-  url: Option[Url])
-    extends VerticalGridItem {
-  override val entryNamespace: EntryNamespace =
-    VerticalGridItemTopicTile.VerticalGridItemTopicTileEntryNamespace
+case class Vert calGr d emTop cT le(
+  overr de val  d: Long,
+  overr de val sort ndex: Opt on[Long],
+  overr de val cl entEvent nfo: Opt on[Cl entEvent nfo],
+  overr de val feedbackAct on nfo: Opt on[FeedbackAct on nfo],
+  style: Opt on[Vert calGr d emT leStyle],
+  funct onal yType: Opt on[Vert calGr d emTop cFunct onal yType],
+  url: Opt on[Url])
+    extends Vert calGr d em {
+  overr de val entryNa space: EntryNa space =
+    Vert calGr d emTop cT le.Vert calGr d emTop cT leEntryNa space
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  overr de def w hSort ndex(sort ndex: Long): T  l neEntry = copy(sort ndex = So (sort ndex))
 }

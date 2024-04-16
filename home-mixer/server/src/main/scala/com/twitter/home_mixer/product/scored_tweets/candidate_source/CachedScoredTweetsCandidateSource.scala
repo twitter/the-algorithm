@@ -1,24 +1,24 @@
-package com.twitter.home_mixer.product.scored_tweets.candidate_source
+package com.tw ter.ho _m xer.product.scored_t ets.cand date_s ce
 
-import com.twitter.home_mixer.util.CachedScoredTweetsHelper
-import com.twitter.home_mixer.{thriftscala => hmt}
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.ho _m xer.ut l.Cac dScoredT ets lper
+ mport com.tw ter.ho _m xer.{thr ftscala => hmt}
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class CachedScoredTweetsCandidateSource @Inject() ()
-    extends CandidateSource[PipelineQuery, hmt.ScoredTweet] {
+@S ngleton
+class Cac dScoredT etsCand dateS ce @ nject() ()
+    extends Cand dateS ce[P pel neQuery, hmt.ScoredT et] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier("CachedScoredTweets")
+  overr de val  dent f er: Cand dateS ce dent f er =
+    Cand dateS ce dent f er("Cac dScoredT ets")
 
-  override def apply(request: PipelineQuery): Stitch[Seq[hmt.ScoredTweet]] = {
-    Stitch.value(
-      request.features.map(CachedScoredTweetsHelper.unseenCachedScoredTweets).getOrElse(Seq.empty))
+  overr de def apply(request: P pel neQuery): St ch[Seq[hmt.ScoredT et]] = {
+    St ch.value(
+      request.features.map(Cac dScoredT ets lper.unseenCac dScoredT ets).getOrElse(Seq.empty))
   }
 }

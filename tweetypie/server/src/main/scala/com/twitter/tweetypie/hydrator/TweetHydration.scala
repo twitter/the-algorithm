@@ -1,198 +1,198 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.expandodo.thriftscala.Card
-import com.twitter.expandodo.thriftscala.Card2
-import com.twitter.servo.cache.Cached
-import com.twitter.servo.cache.CachedValueStatus
-import com.twitter.servo.cache.LockingCache
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.media.thriftscala.MediaRef
-import com.twitter.tweetypie.repository.PastedMedia
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.repository.TweetRepoCachePicker
-import com.twitter.tweetypie.repository.TweetResultRepository
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.util.Takedowns
-import com.twitter.util.Return
-import com.twitter.util.Throw
+ mport com.tw ter.expandodo.thr ftscala.Card
+ mport com.tw ter.expandodo.thr ftscala.Card2
+ mport com.tw ter.servo.cac .Cac d
+ mport com.tw ter.servo.cac .Cac dValueStatus
+ mport com.tw ter.servo.cac .Lock ngCac 
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e. d a.thr ftscala. d aRef
+ mport com.tw ter.t etyp e.repos ory.Pasted d a
+ mport com.tw ter.t etyp e.repos ory.T etQuery
+ mport com.tw ter.t etyp e.repos ory.T etRepoCac P cker
+ mport com.tw ter.t etyp e.repos ory.T etResultRepos ory
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport com.tw ter.t etyp e.ut l.Takedowns
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
 
-object TweetHydration {
+object T etHydrat on {
 
   /**
-   * Wires up a set of hydrators that include those whose results are cached on the tweet,
-   * and some whose results are not cached but depend upon the results of the former.
+   * W res up a set of hydrators that  nclude those whose results are cac d on t  t et,
+   * and so  whose results are not cac d but depend upon t  results of t  for r.
    */
   def apply(
-    hydratorStats: StatsReceiver,
-    hydrateFeatureSwitchResults: TweetDataValueHydrator,
-    hydrateMentions: MentionEntitiesHydrator.Type,
+    hydratorStats: StatsRece ver,
+    hydrateFeatureSw chResults: T etDataValueHydrator,
+    hydrate nt ons:  nt onEnt  esHydrator.Type,
     hydrateLanguage: LanguageHydrator.Type,
-    hydrateUrls: UrlEntitiesHydrator.Type,
-    hydrateQuotedTweetRef: QuotedTweetRefHydrator.Type,
-    hydrateQuotedTweetRefUrls: QuotedTweetRefUrlsHydrator.Type,
-    hydrateMediaCacheable: MediaEntitiesHydrator.Cacheable.Type,
-    hydrateReplyScreenName: ReplyScreenNameHydrator.Type,
-    hydrateConvoId: ConversationIdHydrator.Type,
-    hydratePerspective: PerspectiveHydrator.Type,
-    hydrateEditPerspective: EditPerspectiveHydrator.Type,
-    hydrateConversationMuted: ConversationMutedHydrator.Type,
-    hydrateContributor: ContributorHydrator.Type,
+    hydrateUrls: UrlEnt  esHydrator.Type,
+    hydrateQuotedT etRef: QuotedT etRefHydrator.Type,
+    hydrateQuotedT etRefUrls: QuotedT etRefUrlsHydrator.Type,
+    hydrate d aCac able:  d aEnt  esHydrator.Cac able.Type,
+    hydrateReplyScreenNa : ReplyScreenNa Hydrator.Type,
+    hydrateConvo d: Conversat on dHydrator.Type,
+    hydratePerspect ve: Perspect veHydrator.Type,
+    hydrateEd Perspect ve: Ed Perspect veHydrator.Type,
+    hydrateConversat onMuted: Conversat onMutedHydrator.Type,
+    hydrateContr butor: Contr butorHydrator.Type,
     hydrateTakedowns: TakedownHydrator.Type,
-    hydrateDirectedAt: DirectedAtHydrator.Type,
+    hydrateD rectedAt: D rectedAtHydrator.Type,
     hydrateGeoScrub: GeoScrubHydrator.Type,
-    hydrateCacheableRepairs: TweetDataValueHydrator,
-    hydrateMediaUncacheable: MediaEntitiesHydrator.Uncacheable.Type,
-    hydratePostCacheRepairs: TweetDataValueHydrator,
-    hydrateTweetLegacyFormat: TweetDataValueHydrator,
-    hydrateQuoteTweetVisibility: QuoteTweetVisibilityHydrator.Type,
-    hydrateQuotedTweet: QuotedTweetHydrator.Type,
-    hydratePastedMedia: PastedMediaHydrator.Type,
-    hydrateMediaRefs: MediaRefsHydrator.Type,
-    hydrateMediaTags: MediaTagsHydrator.Type,
-    hydrateClassicCards: CardHydrator.Type,
+    hydrateCac ableRepa rs: T etDataValueHydrator,
+    hydrate d aUncac able:  d aEnt  esHydrator.Uncac able.Type,
+    hydratePostCac Repa rs: T etDataValueHydrator,
+    hydrateT etLegacyFormat: T etDataValueHydrator,
+    hydrateQuoteT etV s b l y: QuoteT etV s b l yHydrator.Type,
+    hydrateQuotedT et: QuotedT etHydrator.Type,
+    hydratePasted d a: Pasted d aHydrator.Type,
+    hydrate d aRefs:  d aRefsHydrator.Type,
+    hydrate d aTags:  d aTagsHydrator.Type,
+    hydrateClass cCards: CardHydrator.Type,
     hydrateCard2: Card2Hydrator.Type,
-    hydrateContributorVisibility: ContributorVisibilityFilter.Type,
-    hydrateHasMedia: HasMediaHydrator.Type,
-    hydrateTweetCounts: TweetCountsHydrator.Type,
-    hydratePreviousTweetCounts: PreviousTweetCountsHydrator.Type,
+    hydrateContr butorV s b l y: Contr butorV s b l yF lter.Type,
+    hydrateHas d a: Has d aHydrator.Type,
+    hydrateT etCounts: T etCountsHydrator.Type,
+    hydratePrev ousT etCounts: Prev ousT etCountsHydrator.Type,
     hydratePlace: PlaceHydrator.Type,
-    hydrateDeviceSource: DeviceSourceHydrator.Type,
-    hydrateProfileGeo: ProfileGeoHydrator.Type,
-    hydrateSourceTweet: SourceTweetHydrator.Type,
-    hydrateIM1837State: IM1837FilterHydrator.Type,
-    hydrateIM2884State: IM2884FilterHydrator.Type,
-    hydrateIM3433State: IM3433FilterHydrator.Type,
-    hydrateTweetAuthorVisibility: TweetAuthorVisibilityHydrator.Type,
-    hydrateReportedTweetVisibility: ReportedTweetFilter.Type,
-    scrubSuperfluousUrlEntities: TweetDataValueHydrator,
-    copyFromSourceTweet: TweetDataValueHydrator,
-    hydrateTweetVisibility: TweetVisibilityHydrator.Type,
-    hydrateEscherbirdAnnotations: EscherbirdAnnotationHydrator.Type,
-    hydrateScrubEngagements: ScrubEngagementHydrator.Type,
-    hydrateConversationControl: ConversationControlHydrator.Type,
-    hydrateEditControl: EditControlHydrator.Type,
-    hydrateUnmentionData: UnmentionDataHydrator.Type,
-    hydrateNoteTweetSuffix: TweetDataValueHydrator
-  ): TweetDataValueHydrator = {
-    val scrubCachedTweet: TweetDataValueHydrator =
+    hydrateDev ceS ce: Dev ceS ceHydrator.Type,
+    hydrateProf leGeo: Prof leGeoHydrator.Type,
+    hydrateS ceT et: S ceT etHydrator.Type,
+    hydrate M1837State:  M1837F lterHydrator.Type,
+    hydrate M2884State:  M2884F lterHydrator.Type,
+    hydrate M3433State:  M3433F lterHydrator.Type,
+    hydrateT etAuthorV s b l y: T etAuthorV s b l yHydrator.Type,
+    hydrateReportedT etV s b l y: ReportedT etF lter.Type,
+    scrubSuperfluousUrlEnt  es: T etDataValueHydrator,
+    copyFromS ceT et: T etDataValueHydrator,
+    hydrateT etV s b l y: T etV s b l yHydrator.Type,
+    hydrateEsc rb rdAnnotat ons: Esc rb rdAnnotat onHydrator.Type,
+    hydrateScrubEngage nts: ScrubEngage ntHydrator.Type,
+    hydrateConversat onControl: Conversat onControlHydrator.Type,
+    hydrateEd Control: Ed ControlHydrator.Type,
+    hydrateUn nt onData: Un nt onDataHydrator.Type,
+    hydrateNoteT etSuff x: T etDataValueHydrator
+  ): T etDataValueHydrator = {
+    val scrubCac dT et: T etDataValueHydrator =
       ValueHydrator
-        .fromMutation[Tweet, TweetQuery.Options](
-          ScrubUncacheable.tweetMutation.countMutations(hydratorStats.counter("scrub_cached_tweet"))
+        .fromMutat on[T et, T etQuery.Opt ons](
+          ScrubUncac able.t etMutat on.countMutat ons(hydratorStats.counter("scrub_cac d_t et"))
         )
-        .lensed(TweetData.Lenses.tweet)
-        .onlyIf((td, opts) => opts.cause.reading(td.tweet.id))
+        .lensed(T etData.Lenses.t et)
+        .only f((td, opts) => opts.cause.read ng(td.t et. d))
 
-    // We perform independent hydrations of individual bits of
-    // data and pack the results into tuples instead of updating
-    // the tweet for each one in order to avoid making lots of
-    // copies of the tweet.
+    //   perform  ndependent hydrat ons of  nd v dual b s of
+    // data and pack t  results  nto tuples  nstead of updat ng
+    // t  t et for each one  n order to avo d mak ng lots of
+    // cop es of t  t et.
 
-    val hydratePrimaryCacheableFields: TweetDataValueHydrator =
-      ValueHydrator[TweetData, TweetQuery.Options] { (td, opts) =>
-        val ctx = TweetCtx.from(td, opts)
-        val tweet = td.tweet
+    val hydratePr maryCac ableF elds: T etDataValueHydrator =
+      ValueHydrator[T etData, T etQuery.Opt ons] { (td, opts) =>
+        val ctx = T etCtx.from(td, opts)
+        val t et = td.t et
 
-        val urlsMediaQuoteTweet: Stitch[
-          ValueState[(Seq[UrlEntity], Seq[MediaEntity], Option[QuotedTweet])]
+        val urls d aQuoteT et: St ch[
+          ValueState[(Seq[UrlEnt y], Seq[ d aEnt y], Opt on[QuotedT et])]
         ] =
           for {
-            urls <- hydrateUrls(getUrls(tweet), ctx)
-            (media, quotedTweet) <- Stitch.join(
-              hydrateMediaCacheable(
-                getMedia(tweet),
-                MediaEntityHydrator.Cacheable.Ctx(urls.value, ctx)
+            urls <- hydrateUrls(getUrls(t et), ctx)
+            ( d a, quotedT et) <- St ch.jo n(
+              hydrate d aCac able(
+                get d a(t et),
+                 d aEnt yHydrator.Cac able.Ctx(urls.value, ctx)
               ),
               for {
-                qtRef <- hydrateQuotedTweetRef(
-                  tweet.quotedTweet,
-                  QuotedTweetRefHydrator.Ctx(urls.value, ctx)
+                qtRef <- hydrateQuotedT etRef(
+                  t et.quotedT et,
+                  QuotedT etRefHydrator.Ctx(urls.value, ctx)
                 )
-                qtRefWithUrls <- hydrateQuotedTweetRefUrls(qtRef.value, ctx)
-              } yield {
-                ValueState(qtRefWithUrls.value, qtRef.state ++ qtRefWithUrls.state)
+                qtRefW hUrls <- hydrateQuotedT etRefUrls(qtRef.value, ctx)
+              } y eld {
+                ValueState(qtRefW hUrls.value, qtRef.state ++ qtRefW hUrls.state)
               }
             )
-          } yield {
-            ValueState.join(urls, media, quotedTweet)
+          } y eld {
+            ValueState.jo n(urls,  d a, quotedT et)
           }
 
-        val conversationId: Stitch[ValueState[Option[ConversationId]]] =
-          hydrateConvoId(getConversationId(tweet), ctx)
+        val conversat on d: St ch[ValueState[Opt on[Conversat on d]]] =
+          hydrateConvo d(getConversat on d(t et), ctx)
 
-        val mentions: Stitch[ValueState[Seq[MentionEntity]]] =
-          hydrateMentions(getMentions(tweet), ctx)
+        val  nt ons: St ch[ValueState[Seq[ nt onEnt y]]] =
+          hydrate nt ons(get nt ons(t et), ctx)
 
-        val replyScreenName: Stitch[ValueState[Option[Reply]]] =
-          hydrateReplyScreenName(getReply(tweet), ctx)
+        val replyScreenNa : St ch[ValueState[Opt on[Reply]]] =
+          hydrateReplyScreenNa (getReply(t et), ctx)
 
-        val directedAt: Stitch[ValueState[Option[DirectedAtUser]]] =
-          hydrateDirectedAt(
-            getDirectedAtUser(tweet),
-            DirectedAtHydrator.Ctx(
-              mentions = getMentions(tweet),
-              metadata = tweet.directedAtUserMetadata,
-              underlyingTweetCtx = ctx
+        val d rectedAt: St ch[ValueState[Opt on[D rectedAtUser]]] =
+          hydrateD rectedAt(
+            getD rectedAtUser(t et),
+            D rectedAtHydrator.Ctx(
+               nt ons = get nt ons(t et),
+               tadata = t et.d rectedAtUser tadata,
+              underly ngT etCtx = ctx
             )
           )
 
-        val language: Stitch[ValueState[Option[Language]]] =
-          hydrateLanguage(tweet.language, ctx)
+        val language: St ch[ValueState[Opt on[Language]]] =
+          hydrateLanguage(t et.language, ctx)
 
-        val contributor: Stitch[ValueState[Option[Contributor]]] =
-          hydrateContributor(tweet.contributor, ctx)
+        val contr butor: St ch[ValueState[Opt on[Contr butor]]] =
+          hydrateContr butor(t et.contr butor, ctx)
 
-        val geoScrub: Stitch[ValueState[(Option[GeoCoordinates], Option[PlaceId])]] =
+        val geoScrub: St ch[ValueState[(Opt on[GeoCoord nates], Opt on[Place d])]] =
           hydrateGeoScrub(
-            (TweetLenses.geoCoordinates(tweet), TweetLenses.placeId(tweet)),
+            (T etLenses.geoCoord nates(t et), T etLenses.place d(t et)),
             ctx
           )
 
-        Stitch
-          .joinMap(
-            urlsMediaQuoteTweet,
-            conversationId,
-            mentions,
-            replyScreenName,
-            directedAt,
+        St ch
+          .jo nMap(
+            urls d aQuoteT et,
+            conversat on d,
+             nt ons,
+            replyScreenNa ,
+            d rectedAt,
             language,
-            contributor,
+            contr butor,
             geoScrub
-          )(ValueState.join(_, _, _, _, _, _, _, _))
+          )(ValueState.jo n(_, _, _, _, _, _, _, _))
           .map { values =>
-            if (values.state.isEmpty) {
-              ValueState.unmodified(td)
+             f (values.state. sEmpty) {
+              ValueState.unmod f ed(td)
             } else {
               values.map {
                 case (
-                      (urls, media, quotedTweet),
-                      conversationId,
-                      mentions,
+                      (urls,  d a, quotedT et),
+                      conversat on d,
+                       nt ons,
                       reply,
-                      directedAt,
+                      d rectedAt,
                       language,
-                      contributor,
+                      contr butor,
                       coreGeo
                     ) =>
-                  val (coordinates, placeId) = coreGeo
+                  val (coord nates, place d) = coreGeo
                   td.copy(
-                    tweet = tweet.copy(
-                      coreData = tweet.coreData.map(
+                    t et = t et.copy(
+                      coreData = t et.coreData.map(
                         _.copy(
                           reply = reply,
-                          conversationId = conversationId,
-                          directedAtUser = directedAt,
-                          coordinates = coordinates,
-                          placeId = placeId
+                          conversat on d = conversat on d,
+                          d rectedAtUser = d rectedAt,
+                          coord nates = coord nates,
+                          place d = place d
                         )
                       ),
-                      urls = Some(urls),
-                      media = Some(media),
-                      mentions = Some(mentions),
+                      urls = So (urls),
+                       d a = So ( d a),
+                       nt ons = So ( nt ons),
                       language = language,
-                      quotedTweet = quotedTweet,
-                      contributor = contributor
+                      quotedT et = quotedT et,
+                      contr butor = contr butor
                     )
                   )
               }
@@ -200,246 +200,246 @@ object TweetHydration {
           }
       }
 
-    val assertNotScrubbed: TweetDataValueHydrator =
-      ValueHydrator.fromMutation[TweetData, TweetQuery.Options](
-        ScrubUncacheable
+    val assertNotScrubbed: T etDataValueHydrator =
+      ValueHydrator.fromMutat on[T etData, T etQuery.Opt ons](
+        ScrubUncac able
           .assertNotScrubbed(
-            "output of the cacheable tweet hydrator should not require scrubbing"
+            "output of t  cac able t et hydrator should not requ re scrubb ng"
           )
-          .lensed(TweetData.Lenses.tweet)
+          .lensed(T etData.Lenses.t et)
       )
 
-    val hydrateDependentUncacheableFields: TweetDataValueHydrator =
-      ValueHydrator[TweetData, TweetQuery.Options] { (td, opts) =>
-        val ctx = TweetCtx.from(td, opts)
-        val tweet = td.tweet
+    val hydrateDependentUncac ableF elds: T etDataValueHydrator =
+      ValueHydrator[T etData, T etQuery.Opt ons] { (td, opts) =>
+        val ctx = T etCtx.from(td, opts)
+        val t et = td.t et
 
-        val quotedTweetResult: Stitch[ValueState[Option[QuotedTweetResult]]] =
+        val quotedT etResult: St ch[ValueState[Opt on[QuotedT etResult]]] =
           for {
-            qtFilterState <- hydrateQuoteTweetVisibility(None, ctx)
-            quotedTweet <- hydrateQuotedTweet(
-              td.quotedTweetResult,
-              QuotedTweetHydrator.Ctx(qtFilterState.value, ctx)
+            qtF lterState <- hydrateQuoteT etV s b l y(None, ctx)
+            quotedT et <- hydrateQuotedT et(
+              td.quotedT etResult,
+              QuotedT etHydrator.Ctx(qtF lterState.value, ctx)
             )
-          } yield {
-            ValueState.join(qtFilterState, quotedTweet).map(_._2)
+          } y eld {
+            ValueState.jo n(qtF lterState, quotedT et).map(_._2)
           }
 
-        val pastedMedia: Stitch[ValueState[PastedMedia]] =
-          hydratePastedMedia(
-            PastedMediaHydrator.getPastedMedia(tweet),
-            PastedMediaHydrator.Ctx(getUrls(tweet), ctx)
+        val pasted d a: St ch[ValueState[Pasted d a]] =
+          hydratePasted d a(
+            Pasted d aHydrator.getPasted d a(t et),
+            Pasted d aHydrator.Ctx(getUrls(t et), ctx)
           )
 
-        val mediaTags: Stitch[ValueState[Option[TweetMediaTags]]] =
-          hydrateMediaTags(tweet.mediaTags, ctx)
+        val  d aTags: St ch[ValueState[Opt on[T et d aTags]]] =
+          hydrate d aTags(t et. d aTags, ctx)
 
-        val classicCards: Stitch[ValueState[Option[Seq[Card]]]] =
-          hydrateClassicCards(
-            tweet.cards,
-            CardHydrator.Ctx(getUrls(tweet), getMedia(tweet), ctx)
+        val class cCards: St ch[ValueState[Opt on[Seq[Card]]]] =
+          hydrateClass cCards(
+            t et.cards,
+            CardHydrator.Ctx(getUrls(t et), get d a(t et), ctx)
           )
 
-        val card2: Stitch[ValueState[Option[Card2]]] =
+        val card2: St ch[ValueState[Opt on[Card2]]] =
           hydrateCard2(
-            tweet.card2,
+            t et.card2,
             Card2Hydrator.Ctx(
-              getUrls(tweet),
-              getMedia(tweet),
-              getCardReference(tweet),
+              getUrls(t et),
+              get d a(t et),
+              getCardReference(t et),
               ctx,
-              td.featureSwitchResults
+              td.featureSw chResults
             )
           )
 
-        val contributorVisibility: Stitch[ValueState[Option[Contributor]]] =
-          hydrateContributorVisibility(tweet.contributor, ctx)
+        val contr butorV s b l y: St ch[ValueState[Opt on[Contr butor]]] =
+          hydrateContr butorV s b l y(t et.contr butor, ctx)
 
-        val takedowns: Stitch[ValueState[Option[Takedowns]]] =
+        val takedowns: St ch[ValueState[Opt on[Takedowns]]] =
           hydrateTakedowns(
-            None, // None because uncacheable hydrator doesn't depend on previous value
-            TakedownHydrator.Ctx(Takedowns.fromTweet(tweet), ctx)
+            None, // None because uncac able hydrator doesn't depend on prev ous value
+            TakedownHydrator.Ctx(Takedowns.fromT et(t et), ctx)
           )
 
-        val conversationControl: Stitch[ValueState[Option[ConversationControl]]] =
-          hydrateConversationControl(
-            tweet.conversationControl,
-            ConversationControlHydrator.Ctx(getConversationId(tweet), ctx)
+        val conversat onControl: St ch[ValueState[Opt on[Conversat onControl]]] =
+          hydrateConversat onControl(
+            t et.conversat onControl,
+            Conversat onControlHydrator.Ctx(getConversat on d(t et), ctx)
           )
 
-        // PreviousTweetCounts and Perspective hydration depends on tweet.editControl.edit_control_initial
-        // having been hydrated in EditControlHydrator; thus we are chaining them together.
-        val editControlWithDependencies: Stitch[
+        // Prev ousT etCounts and Perspect ve hydrat on depends on t et.ed Control.ed _control_ n  al
+        // hav ng been hydrated  n Ed ControlHydrator; thus   are cha n ng t m toget r.
+        val ed ControlW hDependenc es: St ch[
           ValueState[
             (
-              Option[EditControl],
-              Option[StatusPerspective],
-              Option[StatusCounts],
-              Option[TweetPerspective]
+              Opt on[Ed Control],
+              Opt on[StatusPerspect ve],
+              Opt on[StatusCounts],
+              Opt on[T etPerspect ve]
             )
           ]
         ] =
           for {
-            (edit, perspective) <- Stitch.join(
-              hydrateEditControl(tweet.editControl, ctx),
-              hydratePerspective(
-                tweet.perspective,
-                PerspectiveHydrator.Ctx(td.featureSwitchResults, ctx))
+            (ed , perspect ve) <- St ch.jo n(
+              hydrateEd Control(t et.ed Control, ctx),
+              hydratePerspect ve(
+                t et.perspect ve,
+                Perspect veHydrator.Ctx(td.featureSw chResults, ctx))
             )
-            (counts, editPerspective) <- Stitch.join(
-              hydratePreviousTweetCounts(
-                tweet.previousCounts,
-                PreviousTweetCountsHydrator.Ctx(edit.value, td.featureSwitchResults, ctx)),
-              hydrateEditPerspective(
-                tweet.editPerspective,
-                EditPerspectiveHydrator
-                  .Ctx(perspective.value, edit.value, td.featureSwitchResults, ctx))
+            (counts, ed Perspect ve) <- St ch.jo n(
+              hydratePrev ousT etCounts(
+                t et.prev ousCounts,
+                Prev ousT etCountsHydrator.Ctx(ed .value, td.featureSw chResults, ctx)),
+              hydrateEd Perspect ve(
+                t et.ed Perspect ve,
+                Ed Perspect veHydrator
+                  .Ctx(perspect ve.value, ed .value, td.featureSw chResults, ctx))
             )
-          } yield {
-            ValueState.join(edit, perspective, counts, editPerspective)
+          } y eld {
+            ValueState.jo n(ed , perspect ve, counts, ed Perspect ve)
           }
 
-        Stitch
-          .joinMap(
-            quotedTweetResult,
-            pastedMedia,
-            mediaTags,
-            classicCards,
+        St ch
+          .jo nMap(
+            quotedT etResult,
+            pasted d a,
+             d aTags,
+            class cCards,
             card2,
-            contributorVisibility,
+            contr butorV s b l y,
             takedowns,
-            conversationControl,
-            editControlWithDependencies
-          )(ValueState.join(_, _, _, _, _, _, _, _, _))
+            conversat onControl,
+            ed ControlW hDependenc es
+          )(ValueState.jo n(_, _, _, _, _, _, _, _, _))
           .map { values =>
-            if (values.state.isEmpty) {
-              ValueState.unmodified(td)
+             f (values.state. sEmpty) {
+              ValueState.unmod f ed(td)
             } else {
               values.map {
                 case (
-                      quotedTweetResult,
-                      pastedMedia,
-                      ownedMediaTags,
+                      quotedT etResult,
+                      pasted d a,
+                      owned d aTags,
                       cards,
                       card2,
-                      contributor,
+                      contr butor,
                       takedowns,
-                      conversationControl,
-                      (editControl, perspective, previousCounts, editPerspective)
+                      conversat onControl,
+                      (ed Control, perspect ve, prev ousCounts, ed Perspect ve)
                     ) =>
                   td.copy(
-                    tweet = tweet.copy(
-                      media = Some(pastedMedia.mediaEntities),
-                      mediaTags = pastedMedia.mergeTweetMediaTags(ownedMediaTags),
+                    t et = t et.copy(
+                       d a = So (pasted d a. d aEnt  es),
+                       d aTags = pasted d a. rgeT et d aTags(owned d aTags),
                       cards = cards,
                       card2 = card2,
-                      contributor = contributor,
+                      contr butor = contr butor,
                       takedownCountryCodes = takedowns.map(_.countryCodes.toSeq),
                       takedownReasons = takedowns.map(_.reasons.toSeq),
-                      conversationControl = conversationControl,
-                      editControl = editControl,
-                      previousCounts = previousCounts,
-                      perspective = perspective,
-                      editPerspective = editPerspective,
+                      conversat onControl = conversat onControl,
+                      ed Control = ed Control,
+                      prev ousCounts = prev ousCounts,
+                      perspect ve = perspect ve,
+                      ed Perspect ve = ed Perspect ve,
                     ),
-                    quotedTweetResult = quotedTweetResult
+                    quotedT etResult = quotedT etResult
                   )
               }
             }
           }
       }
 
-    val hydrateIndependentUncacheableFields: TweetDataEditHydrator =
-      EditHydrator[TweetData, TweetQuery.Options] { (td, opts) =>
-        val ctx = TweetCtx.from(td, opts)
-        val tweet = td.tweet
+    val hydrate ndependentUncac ableF elds: T etDataEd Hydrator =
+      Ed Hydrator[T etData, T etQuery.Opt ons] { (td, opts) =>
+        val ctx = T etCtx.from(td, opts)
+        val t et = td.t et
 
-        // Group together the results of hydrators that don't perform
-        // filtering, because we don't care about the precedence of
-        // exceptions from these hydrators, because the exceptions all
-        // indicate failures, and picking any failure will be
-        // fine. (All of the other hydrators might throw filtering
-        // exceptions, so we need to make sure that we give precedence
-        // to their failures.)
-        val hydratorsWithoutFiltering =
-          Stitch.joinMap(
-            hydrateTweetCounts(tweet.counts, TweetCountsHydrator.Ctx(td.featureSwitchResults, ctx)),
-            // Note: Place is cached in memcache, it is just not cached on the Tweet.
-            hydratePlace(tweet.place, ctx),
-            hydrateDeviceSource(tweet.deviceSource, ctx),
-            hydrateProfileGeo(tweet.profileGeoEnrichment, ctx)
-          )(ValueState.join(_, _, _, _))
+        // Group toget r t  results of hydrators that don't perform
+        // f lter ng, because   don't care about t  precedence of
+        // except ons from t se hydrators, because t  except ons all
+        //  nd cate fa lures, and p ck ng any fa lure w ll be
+        // f ne. (All of t  ot r hydrators m ght throw f lter ng
+        // except ons, so   need to make sure that   g ve precedence
+        // to t  r fa lures.)
+        val hydratorsW houtF lter ng =
+          St ch.jo nMap(
+            hydrateT etCounts(t et.counts, T etCountsHydrator.Ctx(td.featureSw chResults, ctx)),
+            // Note: Place  s cac d  n  mcac ,    s just not cac d on t  T et.
+            hydratePlace(t et.place, ctx),
+            hydrateDev ceS ce(t et.dev ceS ce, ctx),
+            hydrateProf leGeo(t et.prof leGeoEnr ch nt, ctx)
+          )(ValueState.jo n(_, _, _, _))
 
         /**
-         * Multiple hydrators throw visibility filtering exceptions so specify an order to achieve
-         * a deterministic hydration result while ensuring that any retweet has a source tweet:
-         * 1. hydrateSourceTweet throws SourceTweetNotFound, this is a detached-retweet so treat
-         *      the retweet hydration as if it were not found
-         * 2. hydrateTweetAuthorVisibility
-         * 3. hydrateSourceTweet (other than SourceTweetNotFound already handled above)
-         * 4. hydrateIM1837State
-         * 5. hydrateIM2884State
-         * 6. hydrateIM3433State
-         * 7. hydratorsWithoutFiltering miscellaneous exceptions (any visibility filtering
-         *      exceptions should win over failure of a hydrator)
+         * Mult ple hydrators throw v s b l y f lter ng except ons so spec fy an order to ach eve
+         * a determ n st c hydrat on result wh le ensur ng that any ret et has a s ce t et:
+         * 1. hydrateS ceT et throws S ceT etNotFound, t   s a detac d-ret et so treat
+         *      t  ret et hydrat on as  f    re not found
+         * 2. hydrateT etAuthorV s b l y
+         * 3. hydrateS ceT et (ot r than S ceT etNotFound already handled above)
+         * 4. hydrate M1837State
+         * 5. hydrate M2884State
+         * 6. hydrate M3433State
+         * 7. hydratorsW houtF lter ng m scellaneous except ons (any v s b l y f lter ng
+         *      except ons should w n over fa lure of a hydrator)
          */
-        val sourceTweetAndTweetAuthorResult =
-          Stitch
-            .joinMap(
-              hydrateSourceTweet(td.sourceTweetResult, ctx).liftToTry,
-              hydrateTweetAuthorVisibility((), ctx).liftToTry,
-              hydrateIM1837State((), ctx).liftToTry,
-              hydrateIM2884State((), ctx).liftToTry,
-              hydrateIM3433State((), ctx).liftToTry
+        val s ceT etAndT etAuthorResult =
+          St ch
+            .jo nMap(
+              hydrateS ceT et(td.s ceT etResult, ctx).l ftToTry,
+              hydrateT etAuthorV s b l y((), ctx).l ftToTry,
+              hydrate M1837State((), ctx).l ftToTry,
+              hydrate M2884State((), ctx).l ftToTry,
+              hydrate M3433State((), ctx).l ftToTry
             ) {
-              case (Throw(t @ FilteredState.Unavailable.SourceTweetNotFound(_)), _, _, _, _) =>
+              case (Throw(t @ F lteredState.Unava lable.S ceT etNotFound(_)), _, _, _, _) =>
                 Throw(t)
-              case (_, Throw(t), _, _, _) => Throw(t) // TweetAuthorVisibility
-              case (Throw(t), _, _, _, _) => Throw(t) // SourceTweet
-              case (_, _, Throw(t), _, _) => Throw(t) // IM1837State
-              case (_, _, _, Throw(t), _) => Throw(t) // IM2884State
-              case (_, _, _, _, Throw(t)) => Throw(t) // IM3433State
+              case (_, Throw(t), _, _, _) => Throw(t) // T etAuthorV s b l y
+              case (Throw(t), _, _, _, _) => Throw(t) // S ceT et
+              case (_, _, Throw(t), _, _) => Throw(t) //  M1837State
+              case (_, _, _, Throw(t), _) => Throw(t) //  M2884State
+              case (_, _, _, _, Throw(t)) => Throw(t) //  M3433State
               case (
-                    Return(sourceTweetResultValue),
-                    Return(authorVisibilityValue),
-                    Return(im1837Value),
-                    Return(im2884Value),
-                    Return(im3433Value)
+                    Return(s ceT etResultValue),
+                    Return(authorV s b l yValue),
+                    Return( m1837Value),
+                    Return( m2884Value),
+                    Return( m3433Value)
                   ) =>
                 Return(
                   ValueState
-                    .join(
-                      sourceTweetResultValue,
-                      authorVisibilityValue,
-                      im1837Value,
-                      im2884Value,
-                      im3433Value
+                    .jo n(
+                      s ceT etResultValue,
+                      authorV s b l yValue,
+                       m1837Value,
+                       m2884Value,
+                       m3433Value
                     )
                 )
-            }.lowerFromTry
+            }.lo rFromTry
 
-        StitchExceptionPrecedence(sourceTweetAndTweetAuthorResult)
-          .joinWith(hydratorsWithoutFiltering)(ValueState.join(_, _))
-          .toStitch
+        St chExcept onPrecedence(s ceT etAndT etAuthorResult)
+          .jo nW h(hydratorsW houtF lter ng)(ValueState.jo n(_, _))
+          .toSt ch
           .map { values =>
-            if (values.state.isEmpty) {
-              EditState.unit[TweetData]
+             f (values.state. sEmpty) {
+              Ed State.un [T etData]
             } else {
-              EditState[TweetData] { tweetData =>
-                val tweet = tweetData.tweet
+              Ed State[T etData] { t etData =>
+                val t et = t etData.t et
                 values.map {
                   case (
-                        (sourceTweetResult, _, _, _, _),
-                        (counts, place, deviceSource, profileGeo)
+                        (s ceT etResult, _, _, _, _),
+                        (counts, place, dev ceS ce, prof leGeo)
                       ) =>
-                    tweetData.copy(
-                      tweet = tweet.copy(
+                    t etData.copy(
+                      t et = t et.copy(
                         counts = counts,
                         place = place,
-                        deviceSource = deviceSource,
-                        profileGeoEnrichment = profileGeo
+                        dev ceS ce = dev ceS ce,
+                        prof leGeoEnr ch nt = prof leGeo
                       ),
-                      sourceTweetResult = sourceTweetResult
+                      s ceT etResult = s ceT etResult
                     )
                 }
               }
@@ -447,71 +447,71 @@ object TweetHydration {
           }
       }
 
-    val hydrateUnmentionDataToTweetData: TweetDataValueHydrator =
-      TweetHydration.setOnTweetData(
-        TweetData.Lenses.tweet.andThen(TweetLenses.unmentionData),
-        (td: TweetData, opts: TweetQuery.Options) =>
-          UnmentionDataHydrator
-            .Ctx(getConversationId(td.tweet), getMentions(td.tweet), TweetCtx.from(td, opts)),
-        hydrateUnmentionData
+    val hydrateUn nt onDataToT etData: T etDataValueHydrator =
+      T etHydrat on.setOnT etData(
+        T etData.Lenses.t et.andT n(T etLenses.un nt onData),
+        (td: T etData, opts: T etQuery.Opt ons) =>
+          Un nt onDataHydrator
+            .Ctx(getConversat on d(td.t et), get nt ons(td.t et), T etCtx.from(td, opts)),
+        hydrateUn nt onData
       )
 
-    val hydrateCacheableFields: TweetDataValueHydrator =
-      ValueHydrator.inSequence(
-        scrubCachedTweet,
-        hydratePrimaryCacheableFields,
-        // Relies on mentions being hydrated in hydratePrimaryCacheableFields
-        hydrateUnmentionDataToTweetData,
+    val hydrateCac ableF elds: T etDataValueHydrator =
+      ValueHydrator. nSequence(
+        scrubCac dT et,
+        hydratePr maryCac ableF elds,
+        // Rel es on  nt ons be ng hydrated  n hydratePr maryCac ableF elds
+        hydrateUn nt onDataToT etData,
         assertNotScrubbed,
-        hydrateCacheableRepairs
+        hydrateCac ableRepa rs
       )
 
-    // The conversation muted hydrator needs the conversation id,
-    // which comes from the primary cacheable fields, and the media hydrator
-    // needs the cacheable media entities.
-    val hydrateUncacheableMedia: TweetDataValueHydrator =
-      ValueHydrator[TweetData, TweetQuery.Options] { (td, opts) =>
-        val ctx = TweetCtx.from(td, opts)
-        val tweet = td.tweet
+    // T  conversat on muted hydrator needs t  conversat on  d,
+    // wh ch co s from t  pr mary cac able f elds, and t   d a hydrator
+    // needs t  cac able  d a ent  es.
+    val hydrateUncac able d a: T etDataValueHydrator =
+      ValueHydrator[T etData, T etQuery.Opt ons] { (td, opts) =>
+        val ctx = T etCtx.from(td, opts)
+        val t et = td.t et
 
-        val mediaCtx =
-          MediaEntityHydrator.Uncacheable.Ctx(td.tweet.mediaKeys, ctx)
+        val  d aCtx =
+           d aEnt yHydrator.Uncac able.Ctx(td.t et. d aKeys, ctx)
 
-        val media: Stitch[ValueState[Option[Seq[MediaEntity]]]] =
-          hydrateMediaUncacheable.liftOption.apply(td.tweet.media, mediaCtx)
+        val  d a: St ch[ValueState[Opt on[Seq[ d aEnt y]]]] =
+          hydrate d aUncac able.l ftOpt on.apply(td.t et. d a,  d aCtx)
 
-        val conversationMuted: Stitch[ValueState[Option[Boolean]]] =
-          hydrateConversationMuted(
-            tweet.conversationMuted,
-            ConversationMutedHydrator.Ctx(getConversationId(tweet), ctx)
+        val conversat onMuted: St ch[ValueState[Opt on[Boolean]]] =
+          hydrateConversat onMuted(
+            t et.conversat onMuted,
+            Conversat onMutedHydrator.Ctx(getConversat on d(t et), ctx)
           )
 
-        // MediaRefs need to be hydrated at this phase because they rely on the media field
-        // on the Tweet, which can get unset by later hydrators.
-        val mediaRefs: Stitch[ValueState[Option[Seq[MediaRef]]]] =
-          hydrateMediaRefs(
-            tweet.mediaRefs,
-            MediaRefsHydrator.Ctx(getMedia(tweet), getMediaKeys(tweet), getUrls(tweet), ctx)
+        //  d aRefs need to be hydrated at t  phase because t y rely on t   d a f eld
+        // on t  T et, wh ch can get unset by later hydrators.
+        val  d aRefs: St ch[ValueState[Opt on[Seq[ d aRef]]]] =
+          hydrate d aRefs(
+            t et. d aRefs,
+             d aRefsHydrator.Ctx(get d a(t et), get d aKeys(t et), getUrls(t et), ctx)
           )
 
-        Stitch
-          .joinMap(
-            media,
-            conversationMuted,
-            mediaRefs
-          )(ValueState.join(_, _, _))
+        St ch
+          .jo nMap(
+             d a,
+            conversat onMuted,
+             d aRefs
+          )(ValueState.jo n(_, _, _))
           .map { values =>
-            if (values.state.isEmpty) {
-              ValueState.unmodified(td)
+             f (values.state. sEmpty) {
+              ValueState.unmod f ed(td)
             } else {
-              val tweet = td.tweet
+              val t et = td.t et
               values.map {
-                case (media, conversationMuted, mediaRefs) =>
+                case ( d a, conversat onMuted,  d aRefs) =>
                   td.copy(
-                    tweet = tweet.copy(
-                      media = media,
-                      conversationMuted = conversationMuted,
-                      mediaRefs = mediaRefs
+                    t et = t et.copy(
+                       d a =  d a,
+                      conversat onMuted = conversat onMuted,
+                       d aRefs =  d aRefs
                     )
                   )
               }
@@ -519,330 +519,330 @@ object TweetHydration {
           }
       }
 
-    val hydrateHasMediaToTweetData: TweetDataValueHydrator =
-      TweetHydration.setOnTweetData(
-        TweetData.Lenses.tweet.andThen(TweetLenses.hasMedia),
-        (td: TweetData, opts: TweetQuery.Options) => td.tweet,
-        hydrateHasMedia
+    val hydrateHas d aToT etData: T etDataValueHydrator =
+      T etHydrat on.setOnT etData(
+        T etData.Lenses.t et.andT n(T etLenses.has d a),
+        (td: T etData, opts: T etQuery.Opt ons) => td.t et,
+        hydrateHas d a
       )
 
-    val hydrateReportedTweetVisibilityToTweetData: TweetDataValueHydrator = {
-      // Create a TweetDataValueHydrator that calls hydrateReportedTweetVisibility, which
-      // either throws a FilteredState.Unavailable or returns Unit.
-      ValueHydrator[TweetData, TweetQuery.Options] { (td, opts) =>
-        val ctx = ReportedTweetFilter.Ctx(td.tweet.perspective, TweetCtx.from(td, opts))
-        hydrateReportedTweetVisibility((), ctx).map { _ =>
-          ValueState.unmodified(td)
+    val hydrateReportedT etV s b l yToT etData: T etDataValueHydrator = {
+      // Create a T etDataValueHydrator that calls hydrateReportedT etV s b l y, wh ch
+      // e  r throws a F lteredState.Unava lable or returns Un .
+      ValueHydrator[T etData, T etQuery.Opt ons] { (td, opts) =>
+        val ctx = ReportedT etF lter.Ctx(td.t et.perspect ve, T etCtx.from(td, opts))
+        hydrateReportedT etV s b l y((), ctx).map { _ =>
+          ValueState.unmod f ed(td)
         }
       }
     }
 
-    val hydrateTweetVisibilityToTweetData: TweetDataValueHydrator =
-      TweetHydration.setOnTweetData(
-        TweetData.Lenses.suppress,
-        (td: TweetData, opts: TweetQuery.Options) =>
-          TweetVisibilityHydrator.Ctx(td.tweet, TweetCtx.from(td, opts)),
-        hydrateTweetVisibility
+    val hydrateT etV s b l yToT etData: T etDataValueHydrator =
+      T etHydrat on.setOnT etData(
+        T etData.Lenses.suppress,
+        (td: T etData, opts: T etQuery.Opt ons) =>
+          T etV s b l yHydrator.Ctx(td.t et, T etCtx.from(td, opts)),
+        hydrateT etV s b l y
       )
 
-    val hydrateEscherbirdAnnotationsToTweetAndCachedTweet: TweetDataValueHydrator =
-      TweetHydration.setOnTweetAndCachedTweet(
-        TweetLenses.escherbirdEntityAnnotations,
-        (td: TweetData, _: TweetQuery.Options) => td.tweet,
-        hydrateEscherbirdAnnotations
+    val hydrateEsc rb rdAnnotat onsToT etAndCac dT et: T etDataValueHydrator =
+      T etHydrat on.setOnT etAndCac dT et(
+        T etLenses.esc rb rdEnt yAnnotat ons,
+        (td: T etData, _: T etQuery.Opt ons) => td.t et,
+        hydrateEsc rb rdAnnotat ons
       )
 
-    val scrubEngagements: TweetDataValueHydrator =
-      TweetHydration.setOnTweetData(
-        TweetData.Lenses.tweetCounts,
-        (td: TweetData, _: TweetQuery.Options) => ScrubEngagementHydrator.Ctx(td.suppress),
-        hydrateScrubEngagements
+    val scrubEngage nts: T etDataValueHydrator =
+      T etHydrat on.setOnT etData(
+        T etData.Lenses.t etCounts,
+        (td: T etData, _: T etQuery.Opt ons) => ScrubEngage ntHydrator.Ctx(td.suppress),
+        hydrateScrubEngage nts
       )
 
     /**
-     * This is where we wire up all the separate hydrators into a single [[TweetDataValueHydrator]].
+     * T   s w re   w re up all t  separate hydrators  nto a s ngle [[T etDataValueHydrator]].
      *
-     * Each hydrator here is either a [[TweetDataValueHydrator]] or a [[TweetDataEditHydrator]].
-     * We use [[EditHydrator]]s for anything that needs to run in parallel ([[ValueHydrator]]s can
-     * only be run in sequence).
+     * Each hydrator  re  s e  r a [[T etDataValueHydrator]] or a [[T etDataEd Hydrator]].
+     *   use [[Ed Hydrator]]s for anyth ng that needs to run  n parallel ([[ValueHydrator]]s can
+     * only be run  n sequence).
      */
-    ValueHydrator.inSequence(
-      // Hydrate FeatureSwitchResults first, so they can be used by other hydrators if needed
-      hydrateFeatureSwitchResults,
-      EditHydrator
-        .inParallel(
+    ValueHydrator. nSequence(
+      // Hydrate FeatureSw chResults f rst, so t y can be used by ot r hydrators  f needed
+      hydrateFeatureSw chResults,
+      Ed Hydrator
+        . nParallel(
           ValueHydrator
-            .inSequence(
-              // The result of running these hydrators is saved as `cacheableTweetResult` and
-              // written back to cache via `cacheChangesEffect` in `hydrateRepo`
-              TweetHydration.captureCacheableTweetResult(
-                hydrateCacheableFields
+            . nSequence(
+              // T  result of runn ng t se hydrators  s saved as `cac ableT etResult` and
+              // wr ten back to cac  v a `cac ChangesEffect`  n `hydrateRepo`
+              T etHydrat on.captureCac ableT etResult(
+                hydrateCac ableF elds
               ),
-              // Uncacheable hydrators that depend only on the cacheable fields
-              hydrateUncacheableMedia,
-              // clean-up partially hydrated entities before any of the hydrators that look at
-              // url and media entities run, so that they never see bad entities.
-              hydratePostCacheRepairs,
-              // These hydrators are all dependent on each other and/or the previous hydrators
-              hydrateDependentUncacheableFields,
-              // Sets `hasMedia`. Comes after PastedMediaHydrator in order to include pasted
-              // pics as well as other media & urls.
-              hydrateHasMediaToTweetData
+              // Uncac able hydrators that depend only on t  cac able f elds
+              hydrateUncac able d a,
+              // clean-up part ally hydrated ent  es before any of t  hydrators that look at
+              // url and  d a ent  es run, so that t y never see bad ent  es.
+              hydratePostCac Repa rs,
+              // T se hydrators are all dependent on each ot r and/or t  prev ous hydrators
+              hydrateDependentUncac ableF elds,
+              // Sets `has d a`. Co s after Pasted d aHydrator  n order to  nclude pasted
+              // p cs as  ll as ot r  d a & urls.
+              hydrateHas d aToT etData
             )
-            .toEditHydrator,
-          // These hydrators do not rely on any other hydrators and so can be run in parallel
-          // with the above hydrators (and with each other)
-          hydrateIndependentUncacheableFields
+            .toEd Hydrator,
+          // T se hydrators do not rely on any ot r hydrators and so can be run  n parallel
+          // w h t  above hydrators (and w h each ot r)
+          hydrate ndependentUncac ableF elds
         )
         .toValueHydrator,
-      // Depends on reported perspectival having been hydrated in PerspectiveHydrator
-      hydrateReportedTweetVisibilityToTweetData,
-      // Remove superfluous urls entities when there is a corresponding MediaEntity for the same url
-      scrubSuperfluousUrlEntities,
-      // The copyFromSourceTweet hydrator needs to be located after the hydrators that produce the
-      // fields to copy. It must be located after PartialEntityCleaner (part of postCacheRepairs),
-      // which removes failed MediaEntities. It also depends on takedownCountryCodes having been
-      // hydrated in TakedownHydrator.
-      copyFromSourceTweet,
-      // depends on AdditionalFieldsHydrator and CopyFromSourceTweet to copy safety labels
-      hydrateTweetVisibilityToTweetData,
-      // for IPI'd tweets, we want to disable tweet engagement counts from being returned
-      // StatusCounts for replyCount, retweetCount.
-      // scrubEngagements hydrator must come after tweet visibility hydrator.
-      // tweet visibility hydrator emits the suppressed FilteredState needed for scrubbing.
-      scrubEngagements,
-      // this hydrator runs when writing the current tweet
-      // Escherbird comes last in order to consume a tweet that's as close as possible
-      // to the tweet written to tweet_events
-      hydrateEscherbirdAnnotationsToTweetAndCachedTweet
-        .onlyIf((td, opts) => opts.cause.writing(td.tweet.id)),
-      // Add an ellipsis to the end of the text for a Tweet that has a NoteTweet associated.
-      // This is so that the Tweet is displayed on the home timeline with an ellipsis, letting
-      // the User know that there's more to see.
-      hydrateNoteTweetSuffix,
+      // Depends on reported perspect val hav ng been hydrated  n Perspect veHydrator
+      hydrateReportedT etV s b l yToT etData,
+      // Remove superfluous urls ent  es w n t re  s a correspond ng  d aEnt y for t  sa  url
+      scrubSuperfluousUrlEnt  es,
+      // T  copyFromS ceT et hydrator needs to be located after t  hydrators that produce t 
+      // f elds to copy.   must be located after Part alEnt yCleaner (part of postCac Repa rs),
+      // wh ch removes fa led  d aEnt  es.   also depends on takedownCountryCodes hav ng been
+      // hydrated  n TakedownHydrator.
+      copyFromS ceT et,
+      // depends on Add  onalF eldsHydrator and CopyFromS ceT et to copy safety labels
+      hydrateT etV s b l yToT etData,
+      // for  P 'd t ets,   want to d sable t et engage nt counts from be ng returned
+      // StatusCounts for replyCount, ret etCount.
+      // scrubEngage nts hydrator must co  after t et v s b l y hydrator.
+      // t et v s b l y hydrator em s t  suppressed F lteredState needed for scrubb ng.
+      scrubEngage nts,
+      // t  hydrator runs w n wr  ng t  current t et
+      // Esc rb rd co s last  n order to consu  a t et that's as close as poss ble
+      // to t  t et wr ten to t et_events
+      hydrateEsc rb rdAnnotat onsToT etAndCac dT et
+        .only f((td, opts) => opts.cause.wr  ng(td.t et. d)),
+      // Add an ell ps s to t  end of t  text for a T et that has a NoteT et assoc ated.
+      // T   s so that t  T et  s d splayed on t  ho  t  l ne w h an ell ps s, lett ng
+      // t  User know that t re's more to see.
+      hydrateNoteT etSuff x,
       /**
-       * Post-cache repair of QT text and entities to support rendering on all clients
-       * Moving this to end of the pipeline to avoid/minimize chance of following hydrators
-       * depending on modified tweet text or entities.
-       * When we start persisting shortUrl in MH - permalink won't be empty. therefore,
-       * we won't run QuotedTweetRefHydrator and just hydrate expanded and display
-       * using QuotedTweetRefUrlsHydrator. We will use hydrated permalink to repair
-       * QT text and entities for non-upgraded clients in this step.
+       * Post-cac  repa r of QT text and ent  es to support render ng on all cl ents
+       * Mov ng t  to end of t  p pel ne to avo d/m n m ze chance of follow ng hydrators
+       * depend ng on mod f ed t et text or ent  es.
+       * W n   start pers st ng shortUrl  n MH - permal nk won't be empty. t refore,
+       *   won't run QuotedT etRefHydrator and just hydrate expanded and d splay
+       * us ng QuotedT etRefUrlsHydrator.   w ll use hydrated permal nk to repa r
+       * QT text and ent  es for non-upgraded cl ents  n t  step.
        * */
-      hydrateTweetLegacyFormat
+      hydrateT etLegacyFormat
     )
   }
 
   /**
-   * Returns a new hydrator that takes the produced result, and captures the result value
-   * in the `cacheableTweetResult` field of the enclosed `TweetData`.
+   * Returns a new hydrator that takes t  produced result, and captures t  result value
+   *  n t  `cac ableT etResult` f eld of t  enclosed `T etData`.
    */
-  def captureCacheableTweetResult(h: TweetDataValueHydrator): TweetDataValueHydrator =
-    ValueHydrator[TweetData, TweetQuery.Options] { (td, opts) =>
+  def captureCac ableT etResult(h: T etDataValueHydrator): T etDataValueHydrator =
+    ValueHydrator[T etData, T etQuery.Opt ons] { (td, opts) =>
       h(td, opts).map { v =>
-        // In addition to saving off a copy of ValueState, make sure that the TweetData inside
-        // the ValueState has its "completedHydrations" set to the ValueState.HydrationStates's
-        // completedHydrations.  This is used when converting to a CachedTweet.
+        //  n add  on to sav ng off a copy of ValueState, make sure that t  T etData  ns de
+        // t  ValueState has  s "completedHydrat ons" set to t  ValueState.Hydrat onStates's
+        // completedHydrat ons.  T   s used w n convert ng to a Cac dT et.
         v.map { td =>
           td.copy(
-            cacheableTweetResult = Some(v.map(_.addHydrated(v.state.completedHydrations)))
+            cac ableT etResult = So (v.map(_.addHydrated(v.state.completedHydrat ons)))
           )
         }
       }
     }
 
   /**
-   * Takes a ValueHydrator and a Lens and returns a `TweetDataValueHydrator` that does three things:
+   * Takes a ValueHydrator and a Lens and returns a `T etDataValueHydrator` that does three th ngs:
    *
-   * 1. Runs the ValueHydrator on the lensed value
-   * 2. Saves the result back to the main tweet using the lens
-   * 3. Saves the result back to the tweet in cacheableTweetResult using the lens
+   * 1. Runs t  ValueHydrator on t  lensed value
+   * 2. Saves t  result back to t  ma n t et us ng t  lens
+   * 3. Saves t  result back to t  t et  n cac ableT etResult us ng t  lens
    */
-  def setOnTweetAndCachedTweet[A, C](
-    l: Lens[Tweet, A],
-    mkCtx: (TweetData, TweetQuery.Options) => C,
+  def setOnT etAndCac dT et[A, C](
+    l: Lens[T et, A],
+    mkCtx: (T etData, T etQuery.Opt ons) => C,
     h: ValueHydrator[A, C]
-  ): TweetDataValueHydrator = {
-    // A lens that goes from TweetData -> tweet -> l
-    val tweetDataLens = TweetData.Lenses.tweet.andThen(l)
+  ): T etDataValueHydrator = {
+    // A lens that goes from T etData -> t et -> l
+    val t etDataLens = T etData.Lenses.t et.andT n(l)
 
-    // A lens that goes from TweetData -> cacheableTweetResult -> tweet -> l
-    val cachedTweetLens =
-      TweetLenses
-        .requireSome(TweetData.Lenses.cacheableTweetResult)
-        .andThen(TweetResult.Lenses.tweet)
-        .andThen(l)
+    // A lens that goes from T etData -> cac ableT etResult -> t et -> l
+    val cac dT etLens =
+      T etLenses
+        .requ reSo (T etData.Lenses.cac ableT etResult)
+        .andT n(T etResult.Lenses.t et)
+        .andT n(l)
 
-    ValueHydrator[TweetData, TweetQuery.Options] { (td, opts) =>
-      h.run(tweetDataLens.get(td), mkCtx(td, opts)).map { r =>
-        if (r.state.isEmpty) {
-          ValueState.unmodified(td)
+    ValueHydrator[T etData, T etQuery.Opt ons] { (td, opts) =>
+      h.run(t etDataLens.get(td), mkCtx(td, opts)).map { r =>
+         f (r.state. sEmpty) {
+          ValueState.unmod f ed(td)
         } else {
-          r.map { v => Lens.setAll(td, tweetDataLens -> v, cachedTweetLens -> v) }
+          r.map { v => Lens.setAll(td, t etDataLens -> v, cac dT etLens -> v) }
         }
       }
     }
   }
 
   /**
-   * Creates a `TweetDataValueHydrator` that hydrates a lensed value, overwriting
-   * the existing value.
+   * Creates a `T etDataValueHydrator` that hydrates a lensed value, overwr  ng
+   * t  ex st ng value.
    */
-  def setOnTweetData[A, C](
-    lens: Lens[TweetData, A],
-    mkCtx: (TweetData, TweetQuery.Options) => C,
+  def setOnT etData[A, C](
+    lens: Lens[T etData, A],
+    mkCtx: (T etData, T etQuery.Opt ons) => C,
     h: ValueHydrator[A, C]
-  ): TweetDataValueHydrator =
-    ValueHydrator[TweetData, TweetQuery.Options] { (td, opts) =>
+  ): T etDataValueHydrator =
+    ValueHydrator[T etData, T etQuery.Opt ons] { (td, opts) =>
       h.run(lens.get(td), mkCtx(td, opts)).map { r =>
-        if (r.state.isEmpty) ValueState.unmodified(td) else r.map(lens.set(td, _))
+         f (r.state. sEmpty) ValueState.unmod f ed(td) else r.map(lens.set(td, _))
       }
     }
 
   /**
-   * Produces an [[Effect]] that can be applied to a [[TweetDataValueHydrator]] to write updated
-   * values back to cache.
+   * Produces an [[Effect]] that can be appl ed to a [[T etDataValueHydrator]] to wr e updated
+   * values back to cac .
    */
-  def cacheChanges(
-    cache: LockingCache[TweetId, Cached[TweetData]],
-    stats: StatsReceiver
-  ): Effect[ValueState[TweetData]] = {
+  def cac Changes(
+    cac : Lock ngCac [T et d, Cac d[T etData]],
+    stats: StatsRece ver
+  ): Effect[ValueState[T etData]] = {
     val updatedCounter = stats.counter("updated")
     val unchangedCounter = stats.counter("unchanged")
-    val picker = new TweetRepoCachePicker[TweetData](_.cachedAt)
-    val cacheErrorCounter = stats.counter("cache_error")
-    val missingCacheableResultCounter = stats.counter("missing_cacheable_result")
+    val p cker = new T etRepoCac P cker[T etData](_.cac dAt)
+    val cac ErrorCounter = stats.counter("cac _error")
+    val m ss ngCac ableResultCounter = stats.counter("m ss ng_cac able_result")
 
-    Effect[TweetResult] { result =>
-      // cacheErrorEncountered will never be set on `cacheableTweetResult`, so we need to
-      // look at the outer tweet state.
-      val cacheErrorEncountered = result.state.cacheErrorEncountered
+    Effect[T etResult] { result =>
+      // cac ErrorEncountered w ll never be set on `cac ableT etResult`, so   need to
+      // look at t  outer t et state.
+      val cac ErrorEncountered = result.state.cac ErrorEncountered
 
-      result.value.cacheableTweetResult match {
-        case Some(ValueState(td, state)) if state.modified && !cacheErrorEncountered =>
-          val tweetData = td.addHydrated(state.completedHydrations)
-          val now = Time.now
-          val cached = Cached(Some(tweetData), CachedValueStatus.Found, now, Some(now))
-          val handler = LockingCache.PickingHandler(cached, picker)
+      result.value.cac ableT etResult match {
+        case So (ValueState(td, state))  f state.mod f ed && !cac ErrorEncountered =>
+          val t etData = td.addHydrated(state.completedHydrat ons)
+          val now = T  .now
+          val cac d = Cac d(So (t etData), Cac dValueStatus.Found, now, So (now))
+          val handler = Lock ngCac .P ck ngHandler(cac d, p cker)
 
-          updatedCounter.incr()
-          cache.lockAndSet(tweetData.tweet.id, handler)
+          updatedCounter. ncr()
+          cac .lockAndSet(t etData.t et. d, handler)
 
-        case Some(ValueState(_, _)) if cacheErrorEncountered =>
-          cacheErrorCounter.incr()
+        case So (ValueState(_, _))  f cac ErrorEncountered =>
+          cac ErrorCounter. ncr()
 
         case None =>
-          missingCacheableResultCounter.incr()
+          m ss ngCac ableResultCounter. ncr()
 
         case _ =>
-          unchangedCounter.incr()
+          unchangedCounter. ncr()
       }
     }
   }
 
   /**
-   * Wraps a hydrator with a check such that it only executes the hydrator if `queryFilter`
-   * returns true for the `TweetQuery.Option` in the `Ctx` value, and the specified
-   * `HydrationType` is not already marked as having been completed in
-   * `ctx.tweetData.completedHydrations`.  If these conditions pass, and the underlying
-   * hydrator is executed, and the result does not contain a field-level or total failure,
-   * then the resulting `HydrationState` is updated to indicate that the specified
-   * `HydrationType` has been completed.
+   * Wraps a hydrator w h a c ck such that   only executes t  hydrator  f `queryF lter`
+   * returns true for t  `T etQuery.Opt on`  n t  `Ctx` value, and t  spec f ed
+   * `Hydrat onType`  s not already marked as hav ng been completed  n
+   * `ctx.t etData.completedHydrat ons`.   f t se cond  ons pass, and t  underly ng
+   * hydrator  s executed, and t  result does not conta n a f eld-level or total fa lure,
+   * t n t  result ng `Hydrat onState`  s updated to  nd cate that t  spec f ed
+   * `Hydrat onType` has been completed.
    */
-  def completeOnlyOnce[A, C <: TweetCtx](
-    queryFilter: TweetQuery.Options => Boolean = _ => true,
-    hydrationType: HydrationType,
-    dependsOn: Set[HydrationType] = Set.empty,
+  def completeOnlyOnce[A, C <: T etCtx](
+    queryF lter: T etQuery.Opt ons => Boolean = _ => true,
+    hydrat onType: Hydrat onType,
+    dependsOn: Set[Hydrat onType] = Set.empty,
     hydrator: ValueHydrator[A, C]
   ): ValueHydrator[A, C] = {
-    val completedState = HydrationState.modified(hydrationType)
+    val completedState = Hydrat onState.mod f ed(hydrat onType)
 
     ValueHydrator[A, C] { (a, ctx) =>
       hydrator(a, ctx).map { res =>
-        if (res.state.failedFields.isEmpty &&
-          dependsOn.forall(ctx.completedHydrations.contains)) {
+         f (res.state.fa ledF elds. sEmpty &&
+          dependsOn.forall(ctx.completedHydrat ons.conta ns)) {
           // successful result!
-          if (!ctx.completedHydrations.contains(hydrationType)) {
+           f (!ctx.completedHydrat ons.conta ns(hydrat onType)) {
             res.copy(state = res.state ++ completedState)
           } else {
-            // forced rehydration - don't add hydrationType or change modified flag
+            // forced rehydrat on - don't add hydrat onType or change mod f ed flag
             res
           }
         } else {
-          // hydration failed or not all dependencies satisfied so don't mark as complete
+          // hydrat on fa led or not all dependenc es sat sf ed so don't mark as complete
           res
         }
       }
-    }.onlyIf { (a, ctx) =>
-      queryFilter(ctx.opts) &&
-      (!ctx.completedHydrations.contains(hydrationType))
+    }.only f { (a, ctx) =>
+      queryF lter(ctx.opts) &&
+      (!ctx.completedHydrat ons.conta ns(hydrat onType))
     }
   }
 
   /**
-   * Applies a `TweetDataValueHydrator` to a `TweetRepository.Type`-typed repository.
-   * The incoming `TweetQuery.Options` are first expanded using `optionsExpander`, and the
-   * resulting options passed to `repo` and `hydrator`.  The resulting tweet result
-   * objects are passed to `cacheChangesEffect` for possible write-back to cache.  Finally,
-   * the tweets are scrubbed according to the original input `TweetQuery.Options`.
+   * Appl es a `T etDataValueHydrator` to a `T etRepos ory.Type`-typed repos ory.
+   * T   ncom ng `T etQuery.Opt ons` are f rst expanded us ng `opt onsExpander`, and t 
+   * result ng opt ons passed to `repo` and `hydrator`.  T  result ng t et result
+   * objects are passed to `cac ChangesEffect` for poss ble wr e-back to cac .  F nally,
+   * t  t ets are scrubbed accord ng to t  or g nal  nput `T etQuery.Opt ons`.
    */
   def hydrateRepo(
-    hydrator: TweetDataValueHydrator,
-    cacheChangesEffect: Effect[TweetResult],
-    optionsExpander: TweetQueryOptionsExpander.Type
+    hydrator: T etDataValueHydrator,
+    cac ChangesEffect: Effect[T etResult],
+    opt onsExpander: T etQueryOpt onsExpander.Type
   )(
-    repo: TweetResultRepository.Type
-  ): TweetResultRepository.Type =
-    (tweetId: TweetId, originalOpts: TweetQuery.Options) => {
-      val expandedOpts = optionsExpander(originalOpts)
+    repo: T etResultRepos ory.Type
+  ): T etResultRepos ory.Type =
+    (t et d: T et d, or g nalOpts: T etQuery.Opt ons) => {
+      val expandedOpts = opt onsExpander(or g nalOpts)
 
       for {
-        repoResult <- repo(tweetId, expandedOpts)
+        repoResult <- repo(t et d, expandedOpts)
         hydratorResult <- hydrator(repoResult.value, expandedOpts)
-      } yield {
-        val hydratingRepoResult =
-          TweetResult(hydratorResult.value, repoResult.state ++ hydratorResult.state)
+      } y eld {
+        val hydrat ngRepoResult =
+          T etResult(hydratorResult.value, repoResult.state ++ hydratorResult.state)
 
-        if (originalOpts.cacheControl.writeToCache) {
-          cacheChangesEffect(hydratingRepoResult)
+         f (or g nalOpts.cac Control.wr eToCac ) {
+          cac ChangesEffect(hydrat ngRepoResult)
         }
 
-        UnrequestedFieldScrubber(originalOpts).scrub(hydratingRepoResult)
+        UnrequestedF eldScrubber(or g nalOpts).scrub(hydrat ngRepoResult)
       }
     }
 
   /**
-   * A trivial wrapper around a Stitch[_] to provide a `joinWith`
-   * method that lets us choose the precedence of exceptions.
+   * A tr v al wrapper around a St ch[_] to prov de a `jo nW h`
+   *  thod that lets us choose t  precedence of except ons.
    *
-   * This wrapper is useful for the case in which it's important that
-   * we specify which of the two exceptions wins (such as visibility
-   * filtering).
+   * T  wrapper  s useful for t  case  n wh ch  's  mportant that
+   *   spec fy wh ch of t  two except ons w ns (such as v s b l y
+   * f lter ng).
    *
-   * Since this is an [[AnyVal]], using this is no more expensive than
-   * inlining the joinWith method.
+   * S nce t   s an [[AnyVal]], us ng t   s no more expens ve than
+   *  nl n ng t  jo nW h  thod.
    */
-  // exposed for testing
-  case class StitchExceptionPrecedence[A](toStitch: Stitch[A]) extends AnyVal {
+  // exposed for test ng
+  case class St chExcept onPrecedence[A](toSt ch: St ch[A]) extends AnyVal {
 
     /**
-     * Concurrently evaluate two Stitch[_] values. This is different
-     * from Stitch.join in that any exception from the expression on
-     * the left hand side will take precedence over an exception on
-     * the right hand side. This means that an exception from the
-     * right-hand side will not short-circuit evaluation, but an
-     * exception on the left-hand side *will* short-circuit. This is
-     * desirable because it allows us to return the failure with as
-     * little latency as possible. (Compare to lifting *both* to Try,
-     * which would force us to wait for both computations to complete
-     * before returning, even if the one with the higher precedence is
-     * already known to be an exception.)
+     * Concurrently evaluate two St ch[_] values. T   s d fferent
+     * from St ch.jo n  n that any except on from t  express on on
+     * t  left hand s de w ll take precedence over an except on on
+     * t  r ght hand s de. T   ans that an except on from t 
+     * r ght-hand s de w ll not short-c rcu  evaluat on, but an
+     * except on on t  left-hand s de *w ll* short-c rcu . T   s
+     * des rable because   allows us to return t  fa lure w h as
+     * l tle latency as poss ble. (Compare to l ft ng *both* to Try,
+     * wh ch would force us to wa  for both computat ons to complete
+     * before return ng, even  f t  one w h t  h g r precedence  s
+     * already known to be an except on.)
      */
-    def joinWith[B, C](rhs: Stitch[B])(f: (A, B) => C): StitchExceptionPrecedence[C] =
-      StitchExceptionPrecedence {
-        Stitch
-          .joinMap(toStitch, rhs.liftToTry) { (a, tryB) => tryB.map(b => f(a, b)) }
-          .lowerFromTry
+    def jo nW h[B, C](rhs: St ch[B])(f: (A, B) => C): St chExcept onPrecedence[C] =
+      St chExcept onPrecedence {
+        St ch
+          .jo nMap(toSt ch, rhs.l ftToTry) { (a, tryB) => tryB.map(b => f(a, b)) }
+          .lo rFromTry
       }
   }
 }

@@ -1,99 +1,99 @@
-package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common
+package com.tw ter.t  l nes.data_process ng.ad_hoc.earlyb rd_rank ng.common
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.ITransform
-import com.twitter.ml.api.transform.CascadeTransform
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.search.common.features.SearchResultFeature
-import com.twitter.search.common.features.TweetFeature
-import com.twitter.timelines.prediction.features.itl.ITLFeatures._
-import scala.collection.JavaConverters._
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ml.ap . Transform
+ mport com.tw ter.ml.ap .transform.CascadeTransform
+ mport com.tw ter.ml.ap .ut l.SR chDataRecord
+ mport com.tw ter.search.common.features.SearchResultFeature
+ mport com.tw ter.search.common.features.T etFeature
+ mport com.tw ter.t  l nes.pred ct on.features. l. TLFeatures._
+ mport scala.collect on.JavaConverters._
 
-class EarlybirdTrainingRectweetConfiguration extends EarlybirdTrainingConfiguration {
+class Earlyb rdTra n ngRect etConf gurat on extends Earlyb rdTra n ngConf gurat on {
 
-  override val labels: Map[String, Feature.Binary] = Map(
-    "detail_expanded" -> IS_CLICKED,
-    "favorited" -> IS_FAVORITED,
-    "open_linked" -> IS_OPEN_LINKED,
-    "photo_expanded" -> IS_PHOTO_EXPANDED,
-    "profile_clicked" -> IS_PROFILE_CLICKED,
-    "replied" -> IS_REPLIED,
-    "retweeted" -> IS_RETWEETED,
-    "video_playback50" -> IS_VIDEO_PLAYBACK_50
+  overr de val labels: Map[Str ng, Feature.B nary] = Map(
+    "deta l_expanded" ->  S_CL CKED,
+    "favor ed" ->  S_FAVOR TED,
+    "open_l nked" ->  S_OPEN_L NKED,
+    "photo_expanded" ->  S_PHOTO_EXPANDED,
+    "prof le_cl cked" ->  S_PROF LE_CL CKED,
+    "repl ed" ->  S_REPL ED,
+    "ret eted" ->  S_RETWEETED,
+    "v deo_playback50" ->  S_V DEO_PLAYBACK_50
   )
 
-  override val PositiveSamplingRate: Double = 0.5
+  overr de val Pos  veSampl ngRate: Double = 0.5
 
-  override def featureToSearchResultFeatureMap: Map[Feature[_], SearchResultFeature] =
+  overr de def featureToSearchResultFeatureMap: Map[Feature[_], SearchResultFeature] =
     super.featureToSearchResultFeatureMap ++ Map(
-      TEXT_SCORE -> TweetFeature.TEXT_SCORE,
-      REPLY_COUNT -> TweetFeature.REPLY_COUNT,
-      RETWEET_COUNT -> TweetFeature.RETWEET_COUNT,
-      FAV_COUNT -> TweetFeature.FAVORITE_COUNT,
-      HAS_CARD -> TweetFeature.HAS_CARD_FLAG,
-      HAS_CONSUMER_VIDEO -> TweetFeature.HAS_CONSUMER_VIDEO_FLAG,
-      HAS_PRO_VIDEO -> TweetFeature.HAS_PRO_VIDEO_FLAG,
-      HAS_VINE -> TweetFeature.HAS_VINE_FLAG,
-      HAS_PERISCOPE -> TweetFeature.HAS_PERISCOPE_FLAG,
-      HAS_NATIVE_IMAGE -> TweetFeature.HAS_NATIVE_IMAGE_FLAG,
-      HAS_IMAGE -> TweetFeature.HAS_IMAGE_URL_FLAG,
-      HAS_NEWS -> TweetFeature.HAS_NEWS_URL_FLAG,
-      HAS_VIDEO -> TweetFeature.HAS_VIDEO_URL_FLAG,
-      // some features that exist for recap are not available in rectweet
+      TEXT_SCORE -> T etFeature.TEXT_SCORE,
+      REPLY_COUNT -> T etFeature.REPLY_COUNT,
+      RETWEET_COUNT -> T etFeature.RETWEET_COUNT,
+      FAV_COUNT -> T etFeature.FAVOR TE_COUNT,
+      HAS_CARD -> T etFeature.HAS_CARD_FLAG,
+      HAS_CONSUMER_V DEO -> T etFeature.HAS_CONSUMER_V DEO_FLAG,
+      HAS_PRO_V DEO -> T etFeature.HAS_PRO_V DEO_FLAG,
+      HAS_V NE -> T etFeature.HAS_V NE_FLAG,
+      HAS_PER SCOPE -> T etFeature.HAS_PER SCOPE_FLAG,
+      HAS_NAT VE_ MAGE -> T etFeature.HAS_NAT VE_ MAGE_FLAG,
+      HAS_ MAGE -> T etFeature.HAS_ MAGE_URL_FLAG,
+      HAS_NEWS -> T etFeature.HAS_NEWS_URL_FLAG,
+      HAS_V DEO -> T etFeature.HAS_V DEO_URL_FLAG,
+      // so  features that ex st for recap are not ava lable  n rect et
       //    HAS_TREND
-      //    HAS_MULTIPLE_HASHTAGS_OR_TRENDS
-      //    IS_OFFENSIVE
-      //    IS_REPLY
-      //    IS_RETWEET
-      IS_AUTHOR_BOT -> TweetFeature.IS_USER_BOT_FLAG,
-      IS_AUTHOR_SPAM -> TweetFeature.IS_USER_SPAM_FLAG,
-      IS_AUTHOR_NSFW -> TweetFeature.IS_USER_NSFW_FLAG,
-      //    FROM_VERIFIED_ACCOUNT
-      USER_REP -> TweetFeature.USER_REPUTATION,
-      //    EMBEDS_IMPRESSION_COUNT
+      //    HAS_MULT PLE_HASHTAGS_OR_TRENDS
+      //     S_OFFENS VE
+      //     S_REPLY
+      //     S_RETWEET
+       S_AUTHOR_BOT -> T etFeature. S_USER_BOT_FLAG,
+       S_AUTHOR_SPAM -> T etFeature. S_USER_SPAM_FLAG,
+       S_AUTHOR_NSFW -> T etFeature. S_USER_NSFW_FLAG,
+      //    FROM_VER F ED_ACCOUNT
+      USER_REP -> T etFeature.USER_REPUTAT ON,
+      //    EMBEDS_ MPRESS ON_COUNT
       //    EMBEDS_URL_COUNT
-      //    VIDEO_VIEW_COUNT
-      FAV_COUNT_V2 -> TweetFeature.FAVORITE_COUNT_V2,
-      RETWEET_COUNT_V2 -> TweetFeature.RETWEET_COUNT_V2,
-      REPLY_COUNT_V2 -> TweetFeature.REPLY_COUNT_V2,
-      IS_SENSITIVE -> TweetFeature.IS_SENSITIVE_CONTENT,
-      HAS_MULTIPLE_MEDIA -> TweetFeature.HAS_MULTIPLE_MEDIA_FLAG,
-      IS_AUTHOR_PROFILE_EGG -> TweetFeature.PROFILE_IS_EGG_FLAG,
-      IS_AUTHOR_NEW -> TweetFeature.IS_USER_NEW_FLAG,
-      NUM_MENTIONS -> TweetFeature.NUM_MENTIONS,
-      NUM_HASHTAGS -> TweetFeature.NUM_HASHTAGS,
-      HAS_VISIBLE_LINK -> TweetFeature.HAS_VISIBLE_LINK_FLAG,
-      HAS_LINK -> TweetFeature.HAS_LINK_FLAG
+      //    V DEO_V EW_COUNT
+      FAV_COUNT_V2 -> T etFeature.FAVOR TE_COUNT_V2,
+      RETWEET_COUNT_V2 -> T etFeature.RETWEET_COUNT_V2,
+      REPLY_COUNT_V2 -> T etFeature.REPLY_COUNT_V2,
+       S_SENS T VE -> T etFeature. S_SENS T VE_CONTENT,
+      HAS_MULT PLE_MED A -> T etFeature.HAS_MULT PLE_MED A_FLAG,
+       S_AUTHOR_PROF LE_EGG -> T etFeature.PROF LE_ S_EGG_FLAG,
+       S_AUTHOR_NEW -> T etFeature. S_USER_NEW_FLAG,
+      NUM_MENT ONS -> T etFeature.NUM_MENT ONS,
+      NUM_HASHTAGS -> T etFeature.NUM_HASHTAGS,
+      HAS_V S BLE_L NK -> T etFeature.HAS_V S BLE_L NK_FLAG,
+      HAS_L NK -> T etFeature.HAS_L NK_FLAG
     )
 
-  override def derivedFeaturesAdder: CascadeTransform = {
-    // only LINK_LANGUAGE availabe in rectweet. no LANGUAGE feature
-    val linkLanguageTransform = new ITransform {
-      private val linkLanguageFeature = new Feature.Continuous(TweetFeature.LINK_LANGUAGE.getName)
+  overr de def der vedFeaturesAdder: CascadeTransform = {
+    // only L NK_LANGUAGE ava labe  n rect et. no LANGUAGE feature
+    val l nkLanguageTransform = new  Transform {
+      pr vate val l nkLanguageFeature = new Feature.Cont nuous(T etFeature.L NK_LANGUAGE.getNa )
 
-      override def transformContext(featureContext: FeatureContext): FeatureContext =
+      overr de def transformContext(featureContext: FeatureContext): FeatureContext =
         featureContext.addFeatures(
-          linkLanguageFeature
+          l nkLanguageFeature
         )
 
-      override def transform(record: DataRecord): Unit = {
-        val srecord = SRichDataRecord(record)
+      overr de def transform(record: DataRecord): Un  = {
+        val srecord = SR chDataRecord(record)
 
-        srecord.getFeatureValueOpt(LINK_LANGUAGE).map { link_language =>
+        srecord.getFeatureValueOpt(L NK_LANGUAGE).map { l nk_language =>
           srecord.setFeatureValue(
-            linkLanguageFeature,
-            link_language.toDouble
+            l nkLanguageFeature,
+            l nk_language.toDouble
           )
         }
       }
     }
 
     new CascadeTransform(
-      List(
-        super.derivedFeaturesAdder,
-        linkLanguageTransform
+      L st(
+        super.der vedFeaturesAdder,
+        l nkLanguageTransform
       ).asJava
     )
   }

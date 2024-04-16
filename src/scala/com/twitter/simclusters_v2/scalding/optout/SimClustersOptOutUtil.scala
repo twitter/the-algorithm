@@ -1,72 +1,72 @@
-package com.twitter.simclusters_v2.scalding.optout
+package com.tw ter.s mclusters_v2.scald ng.optout
 
-import com.twitter.algebird.Aggregator.size
-import com.twitter.algebird.QTreeAggregatorLowerBound
-import com.twitter.octain.identifiers.thriftscala.RawId
-import com.twitter.octain.p13n.batch.P13NPreferencesScalaDataset
-import com.twitter.octain.p13n.preferences.CompositeInterest
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Execution
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.SemanticCoreEntityId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.ClusterType
-import com.twitter.simclusters_v2.thriftscala.SemanticCoreEntityWithScore
-import com.twitter.wtf.interest.thriftscala.Interest
+ mport com.tw ter.algeb rd.Aggregator.s ze
+ mport com.tw ter.algeb rd.QTreeAggregatorLo rBound
+ mport com.tw ter.octa n. dent f ers.thr ftscala.Raw d
+ mport com.tw ter.octa n.p13n.batch.P13NPreferencesScalaDataset
+ mport com.tw ter.octa n.p13n.preferences.Compos e nterest
+ mport com.tw ter.scald ng.DateRange
+ mport com.tw ter.scald ng.Execut on
+ mport com.tw ter.scald ng.TypedP pe
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.AllowCrossClusterSa DC
+ mport com.tw ter.s mclusters_v2.common.Cluster d
+ mport com.tw ter.s mclusters_v2.common.Semant cCoreEnt y d
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.s mclusters_v2.scald ng.common.Ut l
+ mport com.tw ter.s mclusters_v2.thr ftscala.ClusterType
+ mport com.tw ter.s mclusters_v2.thr ftscala.Semant cCoreEnt yW hScore
+ mport com.tw ter.wtf. nterest.thr ftscala. nterest
 
 /**
- * Opts out InterestedIn clusters based on clusters' entity embeddings. If a user opted out an
- * entity and the user also is interested in a cluster with that entity embedding, unlink the
- * user from that entity.
+ * Opts out  nterested n clusters based on clusters' ent y embedd ngs.  f a user opted out an
+ * ent y and t  user also  s  nterested  n a cluster w h that ent y embedd ng, unl nk t 
+ * user from that ent y.
  */
-object SimClustersOptOutUtil {
+object S mClustersOptOutUt l {
 
   /**
-   * Reads User's Your Twitter Data opt-out selections
+   * Reads User's Y  Tw ter Data opt-out select ons
    */
-  def getP13nOptOutSources(
+  def getP13nOptOutS ces(
     dateRange: DateRange,
     clusterType: ClusterType
-  ): TypedPipe[(UserId, Set[SemanticCoreEntityId])] = {
+  ): TypedP pe[(User d, Set[Semant cCoreEnt y d])] = {
     DAL
       .readMostRecentSnapshot(
         P13NPreferencesScalaDataset,
         dateRange
       )
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
-      .map { record => (record.id, record.preferences) }
+      .w hRemoteReadPol cy(AllowCrossClusterSa DC)
+      .toTypedP pe
+      .map { record => (record. d, record.preferences) }
       .flatMap {
-        case (RawId.UserId(userId), p13nPreferences) =>
-          val optedOutEntities = p13nPreferences.interestPreferences
+        case (Raw d.User d(user d), p13nPreferences) =>
+          val optedOutEnt  es = p13nPreferences. nterestPreferences
             .map { preference =>
-              preference.disabledInterests
+              preference.d sabled nterests
                 .collect {
-                  case CompositeInterest.RecommendationInterest(recInterest)
-                      if clusterType == ClusterType.InterestedIn =>
-                    recInterest.interest match {
-                      case Interest.SemanticEntityInterest(semanticCoreInterest) =>
-                        Some(semanticCoreInterest.entityId)
+                  case Compos e nterest.Recom ndat on nterest(rec nterest)
+                       f clusterType == ClusterType. nterested n =>
+                    rec nterest. nterest match {
+                      case  nterest.Semant cEnt y nterest(semant cCore nterest) =>
+                        So (semant cCore nterest.ent y d)
                       case _ =>
                         None
                     }
 
-                  case CompositeInterest.RecommendationKnownFor(recInterest)
-                      if clusterType == ClusterType.KnownFor =>
-                    recInterest.interest match {
-                      case Interest.SemanticEntityInterest(semanticCoreInterest) =>
-                        Some(semanticCoreInterest.entityId)
+                  case Compos e nterest.Recom ndat onKnownFor(rec nterest)
+                       f clusterType == ClusterType.KnownFor =>
+                    rec nterest. nterest match {
+                      case  nterest.Semant cEnt y nterest(semant cCore nterest) =>
+                        So (semant cCore nterest.ent y d)
                       case _ =>
                         None
                     }
                 }.flatten.toSet
             }.getOrElse(Set.empty)
-          if (optedOutEntities.nonEmpty) {
-            Some((userId, optedOutEntities))
+           f (optedOutEnt  es.nonEmpty) {
+            So ((user d, optedOutEnt  es))
           } else {
             None
           }
@@ -76,89 +76,89 @@ object SimClustersOptOutUtil {
   }
 
   /**
-   * Remove user's clusters whose inferred entity embeddings are opted out. Will retain the user
-   * entry in the pipe even if all the clusters are filtered out.
+   * Remove user's clusters whose  nferred ent y embedd ngs are opted out. W ll reta n t  user
+   * entry  n t  p pe even  f all t  clusters are f ltered out.
    */
-  def filterOptedOutClusters(
-    userToClusters: TypedPipe[(UserId, Seq[ClusterId])],
-    optedOutEntities: TypedPipe[(UserId, Set[SemanticCoreEntityId])],
-    legibleClusters: TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])]
-  ): TypedPipe[(UserId, Seq[ClusterId])] = {
+  def f lterOptedOutClusters(
+    userToClusters: TypedP pe[(User d, Seq[Cluster d])],
+    optedOutEnt  es: TypedP pe[(User d, Set[Semant cCoreEnt y d])],
+    leg bleClusters: TypedP pe[(Cluster d, Seq[Semant cCoreEnt yW hScore])]
+  ): TypedP pe[(User d, Seq[Cluster d])] = {
 
-    val inMemoryValidClusterToEntities =
-      legibleClusters
-        .mapValues(_.map(_.entityId).toSet)
+    val  n moryVal dClusterToEnt  es =
+      leg bleClusters
+        .mapValues(_.map(_.ent y d).toSet)
         .map(Map(_)).sum
 
     userToClusters
-      .leftJoin(optedOutEntities)
-      .mapWithValue(inMemoryValidClusterToEntities) {
-        case ((userId, (userClusters, optedOutEntitiesOpt)), validClusterToEntitiesOpt) =>
-          val optedOutEntitiesSet = optedOutEntitiesOpt.getOrElse(Set.empty)
-          val validClusterToEntities = validClusterToEntitiesOpt.getOrElse(Map.empty)
+      .leftJo n(optedOutEnt  es)
+      .mapW hValue( n moryVal dClusterToEnt  es) {
+        case ((user d, (userClusters, optedOutEnt  esOpt)), val dClusterToEnt  esOpt) =>
+          val optedOutEnt  esSet = optedOutEnt  esOpt.getOrElse(Set.empty)
+          val val dClusterToEnt  es = val dClusterToEnt  esOpt.getOrElse(Map.empty)
 
-          val clustersAfterOptOut = userClusters.filter { clusterId =>
-            val isClusterOptedOut = validClusterToEntities
-              .getOrElse(clusterId, Set.empty)
-              .intersect(optedOutEntitiesSet)
+          val clustersAfterOptOut = userClusters.f lter { cluster d =>
+            val  sClusterOptedOut = val dClusterToEnt  es
+              .getOrElse(cluster d, Set.empty)
+              . ntersect(optedOutEnt  esSet)
               .nonEmpty
-            !isClusterOptedOut
-          }.distinct
+            ! sClusterOptedOut
+          }.d st nct
 
-          (userId, clustersAfterOptOut)
+          (user d, clustersAfterOptOut)
       }
-      .filter { _._2.nonEmpty }
+      .f lter { _._2.nonEmpty }
   }
 
-  val AlertEmail = "no-reply@twitter.com"
+  val AlertEma l = "no-reply@tw ter.com"
 
   /**
-   * Does sanity check on the results, to make sure the opt out outputs are comparable to the
-   * raw version. If the delta in the number of users >= 0.1% or median of number of clusters per
-   * user >= 1%, send alert emails
+   * Does san y c ck on t  results, to make sure t  opt out outputs are comparable to t 
+   * raw vers on.  f t  delta  n t  number of users >= 0.1% or  d an of number of clusters per
+   * user >= 1%, send alert ema ls
    */
-  def sanityCheckAndSendEmail(
-    oldNumClustersPerUser: TypedPipe[Int],
-    newNumClustersPerUser: TypedPipe[Int],
-    modelVersion: String,
-    alertEmail: String
-  ): Execution[Unit] = {
-    val oldNumUsersExec = oldNumClustersPerUser.aggregate(size).toOptionExecution
-    val newNumUsersExec = newNumClustersPerUser.aggregate(size).toOptionExecution
+  def san yC ckAndSendEma l(
+    oldNumClustersPerUser: TypedP pe[ nt],
+    newNumClustersPerUser: TypedP pe[ nt],
+    modelVers on: Str ng,
+    alertEma l: Str ng
+  ): Execut on[Un ] = {
+    val oldNumUsersExec = oldNumClustersPerUser.aggregate(s ze).toOpt onExecut on
+    val newNumUsersExec = newNumClustersPerUser.aggregate(s ze).toOpt onExecut on
 
-    val oldMedianExec = oldNumClustersPerUser
-      .aggregate(QTreeAggregatorLowerBound(0.5))
-      .toOptionExecution
+    val old d anExec = oldNumClustersPerUser
+      .aggregate(QTreeAggregatorLo rBound(0.5))
+      .toOpt onExecut on
 
-    val newMedianExec = newNumClustersPerUser
-      .aggregate(QTreeAggregatorLowerBound(0.5))
-      .toOptionExecution
+    val new d anExec = newNumClustersPerUser
+      .aggregate(QTreeAggregatorLo rBound(0.5))
+      .toOpt onExecut on
 
-    Execution
-      .zip(oldNumUsersExec, newNumUsersExec, oldMedianExec, newMedianExec)
+    Execut on
+      .z p(oldNumUsersExec, newNumUsersExec, old d anExec, new d anExec)
       .map {
-        case (Some(oldNumUsers), Some(newNumUsers), Some(oldMedian), Some(newMedian)) =>
+        case (So (oldNumUsers), So (newNumUsers), So (old d an), So (new d an)) =>
           val deltaNum = (newNumUsers - oldNumUsers).toDouble / oldNumUsers.toDouble
-          val deltaMedian = (oldMedian - newMedian) / oldMedian
-          val message =
+          val delta d an = (old d an - new d an) / old d an
+          val  ssage =
             s"num users before optout=$oldNumUsers,\n" +
               s"num users after optout=$newNumUsers,\n" +
-              s"median num clusters per user before optout=$oldMedian,\n" +
-              s"median num clusters per user after optout=$newMedian\n"
+              s" d an num clusters per user before optout=$old d an,\n" +
+              s" d an num clusters per user after optout=$new d an\n"
 
-          println(message)
-          if (Math.abs(deltaNum) >= 0.001 || Math.abs(deltaMedian) >= 0.01) {
-            Util.sendEmail(
-              message,
-              s"Anomaly in $modelVersion opt out job. Please check cluster optout jobs in Eagleeye",
-              alertEmail
+          pr ntln( ssage)
+           f (Math.abs(deltaNum) >= 0.001 || Math.abs(delta d an) >= 0.01) {
+            Ut l.sendEma l(
+               ssage,
+              s"Anomaly  n $modelVers on opt out job. Please c ck cluster optout jobs  n Eagleeye",
+              alertEma l
             )
           }
         case err =>
-          Util.sendEmail(
-            err.toString(),
-            s"Anomaly in $modelVersion opt out job. Please check cluster optout jobs in Eagleeye",
-            alertEmail
+          Ut l.sendEma l(
+            err.toStr ng(),
+            s"Anomaly  n $modelVers on opt out job. Please c ck cluster optout jobs  n Eagleeye",
+            alertEma l
           )
       }
   }

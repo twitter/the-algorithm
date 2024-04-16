@@ -1,76 +1,76 @@
 """
-Module containing ClemNet.
+Module conta n ng ClemNet.
 """
-from typing import Any
+from typ ng  mport Any
 
-from .layers import ChannelWiseDense, KerasConv1D, ResidualLayer
-from .params import BlockParams, ClemNetParams
+from .layers  mport ChannelW seDense, KerasConv1D, Res dualLayer
+from .params  mport BlockParams, ClemNetParams
 
-import tensorflow as tf
-import tensorflow.compat.v1 as tf1
+ mport tensorflow as tf
+ mport tensorflow.compat.v1 as tf1
 
 
 class Block2(tf.keras.layers.Layer):
   """
-  Possible ClemNet block. Architecture is as follow:
-    Optional(DenseLayer + BN + Act)
-    Optional(ConvLayer + BN + Act)
-    Optional(Residual Layer)
+  Poss ble ClemNet block. Arch ecture  s as follow:
+    Opt onal(DenseLayer + BN + Act)
+    Opt onal(ConvLayer + BN + Act)
+    Opt onal(Res dual Layer)
 
   """
 
-  def __init__(self, params: BlockParams, **kwargs: Any):
-    super(Block2, self).__init__(**kwargs)
+  def __ n __(self, params: BlockParams, **kwargs: Any):
+    super(Block2, self).__ n __(**kwargs)
     self.params = params
 
-  def build(self, input_shape: tf.TensorShape) -> None:
+  def bu ld(self,  nput_shape: tf.TensorShape) -> None:
     assert (
-      len(input_shape) == 3
-    ), f"Tensor shape must be of length 3. Passed tensor of shape {input_shape}."
+      len( nput_shape) == 3
+    ), f"Tensor shape must be of length 3. Passed tensor of shape { nput_shape}."
 
-  def call(self, inputs: tf.Tensor, training: bool) -> tf.Tensor:
-    x = inputs
-    if self.params.dense:
-      x = ChannelWiseDense(**self.params.dense.dict())(inputs=x, training=training)
-      x = tf1.layers.batch_normalization(x, momentum=0.9999, training=training, axis=1)
-      x = tf.keras.layers.Activation(self.params.activation)(x)
+  def call(self,  nputs: tf.Tensor, tra n ng: bool) -> tf.Tensor:
+    x =  nputs
+     f self.params.dense:
+      x = ChannelW seDense(**self.params.dense.d ct())( nputs=x, tra n ng=tra n ng)
+      x = tf1.layers.batch_normal zat on(x, mo ntum=0.9999, tra n ng=tra n ng, ax s=1)
+      x = tf.keras.layers.Act vat on(self.params.act vat on)(x)
 
-    if self.params.conv:
-      x = KerasConv1D(**self.params.conv.dict())(inputs=x, training=training)
-      x = tf1.layers.batch_normalization(x, momentum=0.9999, training=training, axis=1)
-      x = tf.keras.layers.Activation(self.params.activation)(x)
+     f self.params.conv:
+      x = KerasConv1D(**self.params.conv.d ct())( nputs=x, tra n ng=tra n ng)
+      x = tf1.layers.batch_normal zat on(x, mo ntum=0.9999, tra n ng=tra n ng, ax s=1)
+      x = tf.keras.layers.Act vat on(self.params.act vat on)(x)
 
-    if self.params.residual:
-      x = ResidualLayer()(inputs=inputs, residual=x)
+     f self.params.res dual:
+      x = Res dualLayer()( nputs= nputs, res dual=x)
 
     return x
 
 
 class ClemNet(tf.keras.layers.Layer):
   """
-  A residual network stacking residual blocks composed of dense layers and convolutions.
+  A res dual network stack ng res dual blocks composed of dense layers and convolut ons.
   """
 
-  def __init__(self, params: ClemNetParams, **kwargs: Any):
-    super(ClemNet, self).__init__(**kwargs)
+  def __ n __(self, params: ClemNetParams, **kwargs: Any):
+    super(ClemNet, self).__ n __(**kwargs)
     self.params = params
 
-  def build(self, input_shape: tf.TensorShape) -> None:
-    assert len(input_shape) in (
+  def bu ld(self,  nput_shape: tf.TensorShape) -> None:
+    assert len( nput_shape)  n (
       2,
       3,
-    ), f"Tensor shape must be of length 3. Passed tensor of shape {input_shape}."
+    ), f"Tensor shape must be of length 3. Passed tensor of shape { nput_shape}."
 
-  def call(self, inputs: tf.Tensor, training: bool) -> tf.Tensor:
-    if len(inputs.shape) < 3:
-      inputs = tf.expand_dims(inputs, axis=-1)
+  def call(self,  nputs: tf.Tensor, tra n ng: bool) -> tf.Tensor:
+     f len( nputs.shape) < 3:
+       nputs = tf.expand_d ms( nputs, ax s=-1)
 
-    x = inputs
-    for block_params in self.params.blocks:
-      x = Block2(block_params)(inputs=x, training=training)
+    x =  nputs
+    for block_params  n self.params.blocks:
+      x = Block2(block_params)( nputs=x, tra n ng=tra n ng)
 
-    x = tf.keras.layers.Flatten(name="flattened")(x)
-    if self.params.top:
-      x = tf.keras.layers.Dense(units=self.params.top.n_labels, name="logits")(x)
+    x = tf.keras.layers.Flatten(na ="flattened")(x)
+     f self.params.top:
+      x = tf.keras.layers.Dense(un s=self.params.top.n_labels, na ="log s")(x)
 
     return x

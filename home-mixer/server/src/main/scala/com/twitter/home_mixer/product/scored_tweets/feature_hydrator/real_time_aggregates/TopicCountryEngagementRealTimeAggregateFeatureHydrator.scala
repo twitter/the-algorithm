@@ -1,64 +1,64 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.real_time_aggregates
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.real_t  _aggregates
 
-import com.google.inject.name.Named
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.model.HomeFeatures.TopicIdSocialContextFeature
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TopicCountryEngagementCache
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.cache.ReadCache
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateGroup
-import com.twitter.timelines.prediction.common.aggregates.real_time.TimelinesOnlineAggregationFeaturesOnlyConfig._
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.google. nject.na .Na d
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ho _m xer.model.Ho Features.Top c dSoc alContextFeature
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.Top cCountryEngage ntCac 
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.FeatureW hDefaultOnFa lure
+ mport com.tw ter.product_m xer.core.feature.datarecord.DataRecord nAFeature
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.servo.cac .ReadCac 
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.AggregateGroup
+ mport com.tw ter.t  l nes.pred ct on.common.aggregates.real_t  .T  l nesOnl neAggregat onFeaturesOnlyConf g._
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-object TopicCountryEngagementRealTimeAggregateFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+object Top cCountryEngage ntRealT  AggregateFeature
+    extends DataRecord nAFeature[T etCand date]
+    w h FeatureW hDefaultOnFa lure[T etCand date, DataRecord] {
+  overr de def defaultValue: DataRecord = new DataRecord()
 }
 
-@Singleton
-class TopicCountryEngagementRealTimeAggregateFeatureHydrator @Inject() (
-  @Named(TopicCountryEngagementCache) override val client: ReadCache[(Long, String), DataRecord],
-  override val statsReceiver: StatsReceiver)
-    extends BaseRealTimeAggregateBulkCandidateFeatureHydrator[(Long, String)] {
+@S ngleton
+class Top cCountryEngage ntRealT  AggregateFeatureHydrator @ nject() (
+  @Na d(Top cCountryEngage ntCac ) overr de val cl ent: ReadCac [(Long, Str ng), DataRecord],
+  overr de val statsRece ver: StatsRece ver)
+    extends BaseRealT  AggregateBulkCand dateFeatureHydrator[(Long, Str ng)] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("TopicCountryEngagementRealTimeAggregate")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("Top cCountryEngage ntRealT  Aggregate")
 
-  override val outputFeature: DataRecordInAFeature[TweetCandidate] =
-    TopicCountryEngagementRealTimeAggregateFeature
+  overr de val outputFeature: DataRecord nAFeature[T etCand date] =
+    Top cCountryEngage ntRealT  AggregateFeature
 
-  override val aggregateGroups: Seq[AggregateGroup] = Seq(
-    topicCountryRealTimeAggregates
+  overr de val aggregateGroups: Seq[AggregateGroup] = Seq(
+    top cCountryRealT  Aggregates
   )
 
-  override val aggregateGroupToPrefix: Map[AggregateGroup, String] = Map(
-    topicCountryRealTimeAggregates -> "topic-country_code.timelines.topic_country_engagement_real_time_aggregates."
+  overr de val aggregateGroupToPref x: Map[AggregateGroup, Str ng] = Map(
+    top cCountryRealT  Aggregates -> "top c-country_code.t  l nes.top c_country_engage nt_real_t  _aggregates."
   )
 
-  override def keysFromQueryAndCandidates(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Seq[Option[(Long, String)]] = {
-    candidates.map { candidate =>
-      val maybeTopicId = candidate.features
-        .getTry(TopicIdSocialContextFeature)
-        .toOption
+  overr de def keysFromQueryAndCand dates(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): Seq[Opt on[(Long, Str ng)]] = {
+    cand dates.map { cand date =>
+      val maybeTop c d = cand date.features
+        .getTry(Top c dSoc alContextFeature)
+        .toOpt on
         .flatten
 
-      val maybeCountryCode = query.clientContext.countryCode
+      val maybeCountryCode = query.cl entContext.countryCode
 
       for {
-        topicId <- maybeTopicId
+        top c d <- maybeTop c d
         countryCode <- maybeCountryCode
-      } yield (topicId, countryCode)
+      } y eld (top c d, countryCode)
     }
   }
 }

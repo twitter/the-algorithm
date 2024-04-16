@@ -1,130 +1,130 @@
-package com.twitter.search.core.earlybird.index;
+package com.tw ter.search.core.earlyb rd. ndex;
 
-import java.io.Closeable;
-import java.io.IOException;
+ mport java. o.Closeable;
+ mport java. o. OExcept on;
 
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.Collector;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.LeafCollector;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorable;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.store.Directory;
+ mport org.apac .lucene.docu nt.Docu nt;
+ mport org.apac .lucene. ndex. ndexReader;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene.search.Collector;
+ mport org.apac .lucene.search. ndexSearc r;
+ mport org.apac .lucene.search.LeafCollector;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .lucene.search.Scorable;
+ mport org.apac .lucene.search.ScoreMode;
+ mport org.apac .lucene.store.D rectory;
 
-import com.twitter.search.core.earlybird.index.column.ColumnStrideFieldIndex;
-import com.twitter.search.core.earlybird.index.column.DocValuesUpdate;
+ mport com.tw ter.search.core.earlyb rd. ndex.column.ColumnStr deF eld ndex;
+ mport com.tw ter.search.core.earlyb rd. ndex.column.DocValuesUpdate;
 
 /**
- * IndexSegmentWriter combines some common functionality between the Lucene and Realtime index
- * segment writers.
+ *  ndexSeg ntWr er comb nes so  common funct onal y bet en t  Lucene and Realt    ndex
+ * seg nt wr ers.
  */
-public abstract class EarlybirdIndexSegmentWriter implements Closeable {
+publ c abstract class Earlyb rd ndexSeg ntWr er  mple nts Closeable {
 
-  public EarlybirdIndexSegmentWriter() {
+  publ c Earlyb rd ndexSeg ntWr er() {
   }
 
   /**
-   * Gets the segment data this segment write is associated with.
+   * Gets t  seg nt data t  seg nt wr e  s assoc ated w h.
    * @return
    */
-  public abstract EarlybirdIndexSegmentData getSegmentData();
+  publ c abstract Earlyb rd ndexSeg ntData getSeg ntData();
 
   /**
-   * Appends terms from the document to the document matching the query. Does not replace a field or
-   * document, actually adds to the the field in the segment.
+   * Appends terms from t  docu nt to t  docu nt match ng t  query. Does not replace a f eld or
+   * docu nt, actually adds to t  t  f eld  n t  seg nt.
    */
-  public final void appendOutOfOrder(Query query, Document doc) throws IOException {
-    runQuery(query, docID -> appendOutOfOrder(doc, docID));
+  publ c f nal vo d appendOutOfOrder(Query query, Docu nt doc) throws  OExcept on {
+    runQuery(query, doc D -> appendOutOfOrder(doc, doc D));
   }
 
-  protected abstract void appendOutOfOrder(Document doc, int docId) throws IOException;
+  protected abstract vo d appendOutOfOrder(Docu nt doc,  nt doc d) throws  OExcept on;
 
   /**
-   * Deletes a document in this segment that matches this query.
+   * Deletes a docu nt  n t  seg nt that matc s t  query.
    */
-  public void deleteDocuments(Query query) throws IOException {
-    runQuery(query, docID -> getSegmentData().getDeletedDocs().deleteDoc(docID));
+  publ c vo d deleteDocu nts(Query query) throws  OExcept on {
+    runQuery(query, doc D -> getSeg ntData().getDeletedDocs().deleteDoc(doc D));
   }
 
   /**
-   * Updates the docvalues of a document in this segment that matches this query.
+   * Updates t  docvalues of a docu nt  n t  seg nt that matc s t  query.
    */
-  public void updateDocValues(Query query, String field, DocValuesUpdate update)
-      throws IOException {
-    runQuery(query, docID -> {
-        ColumnStrideFieldIndex docValues =
-            getSegmentData().getDocValuesManager().getColumnStrideFieldIndex(field);
-        if (docValues == null) {
+  publ c vo d updateDocValues(Query query, Str ng f eld, DocValuesUpdate update)
+      throws  OExcept on {
+    runQuery(query, doc D -> {
+        ColumnStr deF eld ndex docValues =
+            getSeg ntData().getDocValuesManager().getColumnStr deF eld ndex(f eld);
+         f (docValues == null) {
           return;
         }
 
-        update.update(docValues, docID);
+        update.update(docValues, doc D);
       });
   }
 
-  private void runQuery(final Query query, final OnHit onHit) throws IOException {
-    try (IndexReader reader = getSegmentData().createAtomicReader()) {
-      new IndexSearcher(reader).search(query, new Collector() {
-        @Override
-        public LeafCollector getLeafCollector(LeafReaderContext context) throws IOException {
+  pr vate vo d runQuery(f nal Query query, f nal OnH  onH ) throws  OExcept on {
+    try ( ndexReader reader = getSeg ntData().createAtom cReader()) {
+      new  ndexSearc r(reader).search(query, new Collector() {
+        @Overr de
+        publ c LeafCollector getLeafCollector(LeafReaderContext context) throws  OExcept on {
           return new LeafCollector() {
-            @Override
-            public void setScorer(Scorable scorer) {
+            @Overr de
+            publ c vo d setScorer(Scorable scorer) {
             }
 
-            @Override
-            public void collect(int docID) throws IOException {
-              onHit.hit(docID);
+            @Overr de
+            publ c vo d collect( nt doc D) throws  OExcept on {
+              onH .h (doc D);
             }
           };
         }
 
-        @Override
-        public ScoreMode scoreMode() {
+        @Overr de
+        publ c ScoreMode scoreMode() {
           return ScoreMode.COMPLETE_NO_SCORES;
         }
       });
     }
   }
 
-  private interface OnHit {
-    void hit(int docID) throws IOException;
+  pr vate  nterface OnH  {
+    vo d h ( nt doc D) throws  OExcept on;
   }
 
   /**
-   * Adds a new document to this segment. In production, this method should be called only by
+   * Adds a new docu nt to t  seg nt.  n product on, t   thod should be called only by
    * Expertsearch.
    */
-  public abstract void addDocument(Document doc) throws IOException;
+  publ c abstract vo d addDocu nt(Docu nt doc) throws  OExcept on;
 
   /**
-   * Adds a new tweet to this segment. This method should be called only by Earlybird.
+   * Adds a new t et to t  seg nt. T   thod should be called only by Earlyb rd.
    */
-  public abstract void addTweet(Document doc, long tweetId, boolean docIsOffensive)
-      throws IOException;
+  publ c abstract vo d addT et(Docu nt doc, long t et d, boolean doc sOffens ve)
+      throws  OExcept on;
 
   /**
-   * Returns the total number of documents in the segment.
+   * Returns t  total number of docu nts  n t  seg nt.
    */
-  public abstract int numDocs() throws IOException;
+  publ c abstract  nt numDocs() throws  OExcept on;
 
   /**
-   * Returns the number of documents in this segment without taking deleted docs into account.
-   * E.g. if 10 documents were added to this segments, and 5 were deleted,
-   * this method still returns 10.
+   * Returns t  number of docu nts  n t  seg nt w hout tak ng deleted docs  nto account.
+   * E.g.  f 10 docu nts  re added to t  seg nts, and 5  re deleted,
+   * t   thod st ll returns 10.
    */
-  public abstract int numDocsNoDelete() throws IOException;
+  publ c abstract  nt numDocsNoDelete() throws  OExcept on;
 
   /**
-   * Forces the underlying index to be merged down to a single segment.
+   * Forces t  underly ng  ndex to be  rged down to a s ngle seg nt.
    */
-  public abstract void forceMerge() throws IOException;
+  publ c abstract vo d force rge() throws  OExcept on;
 
   /**
-   * Appends the provides Lucene indexes to this segment.
+   * Appends t  prov des Lucene  ndexes to t  seg nt.
    */
-  public abstract void addIndexes(Directory... dirs) throws IOException;
+  publ c abstract vo d add ndexes(D rectory... d rs) throws  OExcept on;
 }

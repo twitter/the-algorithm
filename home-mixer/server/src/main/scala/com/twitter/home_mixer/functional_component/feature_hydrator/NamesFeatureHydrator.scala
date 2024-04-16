@@ -1,96 +1,96 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.tw ter.ho _m xer.funct onal_component.feature_hydrator
 
-import com.twitter.gizmoduck.{thriftscala => gt}
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.FavoritedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.FollowedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.RealNamesFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScreenNamesFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableNahFeedbackInfoParam
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.gizmoduck.Gizmoduck
-import com.twitter.util.Return
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.g zmoduck.{thr ftscala => gt}
+ mport com.tw ter.ho _m xer.model.Ho Features.Author dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Favor edByUser dsFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Follo dByUser dsFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.RealNa sFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.ScreenNa sFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.S ceUser dFeature
+ mport com.tw ter.ho _m xer.model.request.Follow ngProduct
+ mport com.tw ter.ho _m xer.param.Ho GlobalParams.EnableNahFeedback nfoParam
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BulkCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Cond  onally
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.g zmoduck.G zmoduck
+ mport com.tw ter.ut l.Return
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-protected case class ProfileNames(screenName: String, realName: String)
+protected case class Prof leNa s(screenNa : Str ng, realNa : Str ng)
 
-@Singleton
-class NamesFeatureHydrator @Inject() (gizmoduck: Gizmoduck)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate]
-    with Conditionally[PipelineQuery] {
+@S ngleton
+class Na sFeatureHydrator @ nject() (g zmoduck: G zmoduck)
+    extends BulkCand dateFeatureHydrator[P pel neQuery, T etCand date]
+    w h Cond  onally[P pel neQuery] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("Names")
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er("Na s")
 
-  override val features: Set[Feature[_, _]] = Set(ScreenNamesFeature, RealNamesFeature)
+  overr de val features: Set[Feature[_, _]] = Set(ScreenNa sFeature, RealNa sFeature)
 
-  override def onlyIf(query: PipelineQuery): Boolean = query.product match {
-    case FollowingProduct => query.params(EnableNahFeedbackInfoParam)
+  overr de def only f(query: P pel neQuery): Boolean = query.product match {
+    case Follow ngProduct => query.params(EnableNahFeedback nfoParam)
     case _ => true
   }
 
-  private val queryFields: Set[gt.QueryFields] = Set(gt.QueryFields.Profile)
+  pr vate val queryF elds: Set[gt.QueryF elds] = Set(gt.QueryF elds.Prof le)
 
   /**
-   * The UI currently only ever displays the first 2 names in social context lines
-   * E.g. "User and 3 others like" or "UserA and UserB liked"
+   * T  U  currently only ever d splays t  f rst 2 na s  n soc al context l nes
+   * E.g. "User and 3 ot rs l ke" or "UserA and UserB l ked"
    */
-  private val MaxCountUsers = 2
+  pr vate val MaxCountUsers = 2
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[Seq[FeatureMap]] = {
 
-    val candidateUserIdsMap = candidates.map { candidate =>
-      candidate.candidate.id ->
-        (candidate.features.getOrElse(FavoritedByUserIdsFeature, Nil).take(MaxCountUsers) ++
-          candidate.features.getOrElse(FollowedByUserIdsFeature, Nil).take(MaxCountUsers) ++
-          candidate.features.getOrElse(AuthorIdFeature, None) ++
-          candidate.features.getOrElse(SourceUserIdFeature, None)).distinct
+    val cand dateUser dsMap = cand dates.map { cand date =>
+      cand date.cand date. d ->
+        (cand date.features.getOrElse(Favor edByUser dsFeature, N l).take(MaxCountUsers) ++
+          cand date.features.getOrElse(Follo dByUser dsFeature, N l).take(MaxCountUsers) ++
+          cand date.features.getOrElse(Author dFeature, None) ++
+          cand date.features.getOrElse(S ceUser dFeature, None)).d st nct
     }.toMap
 
-    val distinctUserIds = candidateUserIdsMap.values.flatten.toSeq.distinct
+    val d st nctUser ds = cand dateUser dsMap.values.flatten.toSeq.d st nct
 
-    Stitch
-      .collectToTry(distinctUserIds.map(userId => gizmoduck.getUserById(userId, queryFields)))
+    St ch
+      .collectToTry(d st nctUser ds.map(user d => g zmoduck.getUserBy d(user d, queryF elds)))
       .map { allUsers =>
-        val idToProfileNamesMap = allUsers.flatMap {
+        val  dToProf leNa sMap = allUsers.flatMap {
           case Return(allUser) =>
-            allUser.profile
-              .map(profile => allUser.id -> ProfileNames(profile.screenName, profile.name))
+            allUser.prof le
+              .map(prof le => allUser. d -> Prof leNa s(prof le.screenNa , prof le.na ))
           case _ => None
         }.toMap
 
-        val validUserIds = idToProfileNamesMap.keySet
+        val val dUser ds =  dToProf leNa sMap.keySet
 
-        candidates.map { candidate =>
-          val combinedMap = candidateUserIdsMap
-            .getOrElse(candidate.candidate.id, Nil)
+        cand dates.map { cand date =>
+          val comb nedMap = cand dateUser dsMap
+            .getOrElse(cand date.cand date. d, N l)
             .flatMap {
-              case userId if validUserIds.contains(userId) =>
-                idToProfileNamesMap.get(userId).map(profileNames => userId -> profileNames)
+              case user d  f val dUser ds.conta ns(user d) =>
+                 dToProf leNa sMap.get(user d).map(prof leNa s => user d -> prof leNa s)
               case _ => None
             }
 
-          val perCandidateRealNameMap = combinedMap.map { case (k, v) => k -> v.realName }.toMap
-          val perCandidateScreenNameMap = combinedMap.map { case (k, v) => k -> v.screenName }.toMap
+          val perCand dateRealNa Map = comb nedMap.map { case (k, v) => k -> v.realNa  }.toMap
+          val perCand dateScreenNa Map = comb nedMap.map { case (k, v) => k -> v.screenNa  }.toMap
 
-          FeatureMapBuilder()
-            .add(ScreenNamesFeature, perCandidateScreenNameMap)
-            .add(RealNamesFeature, perCandidateRealNameMap)
-            .build()
+          FeatureMapBu lder()
+            .add(ScreenNa sFeature, perCand dateScreenNa Map)
+            .add(RealNa sFeature, perCand dateRealNa Map)
+            .bu ld()
         }
       }
   }

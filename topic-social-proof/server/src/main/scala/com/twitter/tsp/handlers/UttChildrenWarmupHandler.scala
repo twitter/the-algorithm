@@ -1,40 +1,40 @@
-package com.twitter.tsp.handlers
+package com.tw ter.tsp.handlers
 
-import com.twitter.inject.utils.Handler
-import com.twitter.topiclisting.FollowableTopicProductId
-import com.twitter.topiclisting.ProductId
-import com.twitter.topiclisting.TopicListingViewerContext
-import com.twitter.topiclisting.utt.UttLocalization
-import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter. nject.ut ls.Handler
+ mport com.tw ter.top cl st ng.FollowableTop cProduct d
+ mport com.tw ter.top cl st ng.Product d
+ mport com.tw ter.top cl st ng.Top cL st ngV e rContext
+ mport com.tw ter.top cl st ng.utt.UttLocal zat on
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /** *
- * We configure Warmer to help warm up the cache hit rate under `CachedUttClient/get_utt_taxonomy/cache_hit_rate`
- * In uttLocalization.getRecommendableTopics, we fetch all topics exist in UTT, and yet the process
- * is in fact fetching the complete UTT tree struct (by calling getUttChildren recursively), which could take 1 sec
- * Once we have the topics, we stored them in in-memory cache, and the cache hit rate is > 99%
+ *   conf gure War r to  lp warm up t  cac  h  rate under `Cac dUttCl ent/get_utt_taxono /cac _h _rate`
+ *  n uttLocal zat on.getRecom ndableTop cs,   fetch all top cs ex st  n UTT, and yet t  process
+ *  s  n fact fetch ng t  complete UTT tree struct (by call ng getUttCh ldren recurs vely), wh ch could take 1 sec
+ * Once   have t  top cs,   stored t m  n  n- mory cac , and t  cac  h  rate  s > 99%
  *
  */
-@Singleton
-class UttChildrenWarmupHandler @Inject() (uttLocalization: UttLocalization)
+@S ngleton
+class UttCh ldrenWarmupHandler @ nject() (uttLocal zat on: UttLocal zat on)
     extends Handler
-    with Logging {
+    w h Logg ng {
 
-  /** Executes the function of this handler. *   */
-  override def handle(): Unit = {
-    uttLocalization
-      .getRecommendableTopics(
-        productId = ProductId.Followable,
-        viewerContext = TopicListingViewerContext(languageCode = Some("en")),
-        enableInternationalTopics = true,
-        followableTopicProductId = FollowableTopicProductId.AllFollowable
+  /** Executes t  funct on of t  handler. *   */
+  overr de def handle(): Un  = {
+    uttLocal zat on
+      .getRecom ndableTop cs(
+        product d = Product d.Followable,
+        v e rContext = Top cL st ngV e rContext(languageCode = So ("en")),
+        enable nternat onalTop cs = true,
+        followableTop cProduct d = FollowableTop cProduct d.AllFollowable
       )
       .onSuccess { result =>
-        logger.info(s"successfully warmed up UttChildren. TopicId length = ${result.size}")
+        logger. nfo(s"successfully war d up UttCh ldren. Top c d length = ${result.s ze}")
       }
-      .onFailure { throwable =>
-        logger.info(s"failed to warm up UttChildren. Throwable = ${throwable}")
+      .onFa lure { throwable =>
+        logger. nfo(s"fa led to warm up UttCh ldren. Throwable = ${throwable}")
       }
   }
 }

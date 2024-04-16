@@ -1,140 +1,140 @@
-package com.twitter.product_mixer.core.model.common.presentation
+package com.tw ter.product_m xer.core.model.common.presentat on
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.UnexpectedCandidateResult
-import scala.collection.immutable.ListSet
-import scala.reflect.ClassTag
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.UnexpectedCand dateResult
+ mport scala.collect on. mmutable.L stSet
+ mport scala.reflect.ClassTag
 
-sealed trait CandidateWithDetails { self =>
-  def presentation: Option[UniversalPresentation]
+sealed tra  Cand dateW hDeta ls { self =>
+  def presentat on: Opt on[Un versalPresentat on]
   def features: FeatureMap
 
-  // last of the set because in ListSet, the last element is the first inserted one with O(1)
+  // last of t  set because  n L stSet, t  last ele nt  s t  f rst  nserted one w h O(1)
   // access
-  lazy val source: CandidatePipelineIdentifier = features.get(CandidatePipelines).last
-  lazy val sourcePosition: Int = features.get(CandidateSourcePosition)
+  lazy val s ce: Cand dateP pel ne dent f er = features.get(Cand dateP pel nes).last
+  lazy val s cePos  on:  nt = features.get(Cand dateS cePos  on)
 
   /**
-   * @see [[getCandidateId]]
+   * @see [[getCand date d]]
    */
-  def candidateIdLong: Long = getCandidateId[Long]
+  def cand date dLong: Long = getCand date d[Long]
 
   /**
-   * @see [[getCandidateId]]
+   * @see [[getCand date d]]
    */
-  def candidateIdString: String = getCandidateId[String]
+  def cand date dStr ng: Str ng = getCand date d[Str ng]
 
   /**
-   * Convenience method for retrieving a candidate ID off of the base [[CandidateWithDetails]] trait
-   * without manually pattern matching.
+   * Conven ence  thod for retr ev ng a cand date  D off of t  base [[Cand dateW hDeta ls]] tra 
+   * w hout manually pattern match ng.
    *
-   * @throws PipelineFailure if CandidateIdType does not match the expected Item Candidate Id type,
-   *                         or if invoked on a Module Candidate
+   * @throws P pel neFa lure  f Cand date dType does not match t  expected  em Cand date  d type,
+   *                         or  f  nvoked on a Module Cand date
    */
-  def getCandidateId[CandidateIdType](
+  def getCand date d[Cand date dType](
   )(
-    implicit tag: ClassTag[CandidateIdType]
-  ): CandidateIdType =
+     mpl c  tag: ClassTag[Cand date dType]
+  ): Cand date dType =
     self match {
-      case item: ItemCandidateWithDetails =>
-        item.candidate.id match {
-          case id: CandidateIdType => id
+      case  em:  emCand dateW hDeta ls =>
+         em.cand date. d match {
+          case  d: Cand date dType =>  d
           case _ =>
-            throw PipelineFailure(
-              UnexpectedCandidateResult,
-              s"Invalid Item Candidate ID type expected $tag for Item Candidate type ${item.candidate.getClass}")
+            throw P pel neFa lure(
+              UnexpectedCand dateResult,
+              s" nval d  em Cand date  D type expected $tag for  em Cand date type ${ em.cand date.getClass}")
         }
-      case _: ModuleCandidateWithDetails =>
-        throw PipelineFailure(
-          UnexpectedCandidateResult,
-          "Cannot retrieve Item Candidate ID for a Module")
+      case _: ModuleCand dateW hDeta ls =>
+        throw P pel neFa lure(
+          UnexpectedCand dateResult,
+          "Cannot retr eve  em Cand date  D for a Module")
     }
 
   /**
-   * Convenience method for retrieving a candidate off of the base [[CandidateWithDetails]] trait
-   * without manually pattern matching.
+   * Conven ence  thod for retr ev ng a cand date off of t  base [[Cand dateW hDeta ls]] tra 
+   * w hout manually pattern match ng.
    *
-   * @throws PipelineFailure if CandidateType does not match the expected Item Candidate type, or
-   *                         if invoked on a Module Candidate
+   * @throws P pel neFa lure  f Cand dateType does not match t  expected  em Cand date type, or
+   *                          f  nvoked on a Module Cand date
    */
-  def getCandidate[CandidateType <: UniversalNoun[_]](
+  def getCand date[Cand dateType <: Un versalNoun[_]](
   )(
-    implicit tag: ClassTag[CandidateType]
-  ): CandidateType =
+     mpl c  tag: ClassTag[Cand dateType]
+  ): Cand dateType =
     self match {
-      case ItemCandidateWithDetails(candidate: CandidateType, _, _) => candidate
-      case item: ItemCandidateWithDetails =>
-        throw PipelineFailure(
-          UnexpectedCandidateResult,
-          s"Invalid Item Candidate type expected $tag for Item Candidate type ${item.candidate.getClass}")
-      case _: ModuleCandidateWithDetails =>
-        throw PipelineFailure(
-          UnexpectedCandidateResult,
-          "Cannot retrieve Item Candidate for a Module")
+      case  emCand dateW hDeta ls(cand date: Cand dateType, _, _) => cand date
+      case  em:  emCand dateW hDeta ls =>
+        throw P pel neFa lure(
+          UnexpectedCand dateResult,
+          s" nval d  em Cand date type expected $tag for  em Cand date type ${ em.cand date.getClass}")
+      case _: ModuleCand dateW hDeta ls =>
+        throw P pel neFa lure(
+          UnexpectedCand dateResult,
+          "Cannot retr eve  em Cand date for a Module")
     }
 
   /**
-   * Convenience method for checking if this contains a certain candidate type
+   * Conven ence  thod for c ck ng  f t  conta ns a certa n cand date type
    *
-   * @throws PipelineFailure if CandidateType does not match the expected Item Candidate type, or
-   *                         if invoked on a Module Candidate
+   * @throws P pel neFa lure  f Cand dateType does not match t  expected  em Cand date type, or
+   *                          f  nvoked on a Module Cand date
    */
-  def isCandidateType[CandidateType <: UniversalNoun[_]](
+  def  sCand dateType[Cand dateType <: Un versalNoun[_]](
   )(
-    implicit tag: ClassTag[CandidateType]
+     mpl c  tag: ClassTag[Cand dateType]
   ): Boolean = self match {
-    case ItemCandidateWithDetails(_: CandidateType, _, _) => true
+    case  emCand dateW hDeta ls(_: Cand dateType, _, _) => true
     case _ => false
   }
 }
 
-case class ItemCandidateWithDetails(
-  override val candidate: UniversalNoun[Any],
-  presentation: Option[UniversalPresentation],
-  override val features: FeatureMap)
-    extends CandidateWithDetails
-    with CandidateWithFeatures[UniversalNoun[Any]]
+case class  emCand dateW hDeta ls(
+  overr de val cand date: Un versalNoun[Any],
+  presentat on: Opt on[Un versalPresentat on],
+  overr de val features: FeatureMap)
+    extends Cand dateW hDeta ls
+    w h Cand dateW hFeatures[Un versalNoun[Any]]
 
-case class ModuleCandidateWithDetails(
-  candidates: Seq[ItemCandidateWithDetails],
-  presentation: Option[ModulePresentation],
-  override val features: FeatureMap)
-    extends CandidateWithDetails
+case class ModuleCand dateW hDeta ls(
+  cand dates: Seq[ emCand dateW hDeta ls],
+  presentat on: Opt on[ModulePresentat on],
+  overr de val features: FeatureMap)
+    extends Cand dateW hDeta ls
 
-object ItemCandidateWithDetails {
+object  emCand dateW hDeta ls {
   def apply(
-    candidate: UniversalNoun[Any],
-    presentation: Option[UniversalPresentation],
-    source: CandidatePipelineIdentifier,
-    sourcePosition: Int,
+    cand date: Un versalNoun[Any],
+    presentat on: Opt on[Un versalPresentat on],
+    s ce: Cand dateP pel ne dent f er,
+    s cePos  on:  nt,
     features: FeatureMap
-  ): ItemCandidateWithDetails = {
+  ):  emCand dateW hDeta ls = {
     val newFeatureMap =
-      FeatureMapBuilder()
-        .add(CandidateSourcePosition, sourcePosition)
-        .add(CandidatePipelines, ListSet.empty + source).build() ++ features
-    ItemCandidateWithDetails(candidate, presentation, newFeatureMap)
+      FeatureMapBu lder()
+        .add(Cand dateS cePos  on, s cePos  on)
+        .add(Cand dateP pel nes, L stSet.empty + s ce).bu ld() ++ features
+     emCand dateW hDeta ls(cand date, presentat on, newFeatureMap)
   }
 }
 
-object ModuleCandidateWithDetails {
+object ModuleCand dateW hDeta ls {
   def apply(
-    candidates: Seq[ItemCandidateWithDetails],
-    presentation: Option[ModulePresentation],
-    source: CandidatePipelineIdentifier,
-    sourcePosition: Int,
+    cand dates: Seq[ emCand dateW hDeta ls],
+    presentat on: Opt on[ModulePresentat on],
+    s ce: Cand dateP pel ne dent f er,
+    s cePos  on:  nt,
     features: FeatureMap
-  ): ModuleCandidateWithDetails = {
+  ): ModuleCand dateW hDeta ls = {
     val newFeatureMap =
-      FeatureMapBuilder()
-        .add(CandidateSourcePosition, sourcePosition)
-        .add(CandidatePipelines, ListSet.empty + source).build() ++ features
+      FeatureMapBu lder()
+        .add(Cand dateS cePos  on, s cePos  on)
+        .add(Cand dateP pel nes, L stSet.empty + s ce).bu ld() ++ features
 
-    ModuleCandidateWithDetails(candidates, presentation, newFeatureMap)
+    ModuleCand dateW hDeta ls(cand dates, presentat on, newFeatureMap)
   }
 }

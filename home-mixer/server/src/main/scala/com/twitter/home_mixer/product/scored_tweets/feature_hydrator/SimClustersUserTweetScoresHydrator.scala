@@ -1,83 +1,83 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator
 
-import com.twitter.dal.personal_data.{thriftjava => pd}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.model.HomeFeatures.EarlybirdFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordOptionalFeature
-import com.twitter.product_mixer.core.feature.datarecord.DoubleDataRecordCompatible
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.Fetch
-import com.twitter.strato.generated.client.ml.featureStore.SimClustersUserInterestedInTweetEmbeddingDotProduct20M145K2020OnUserTweetEdgeClientColumn
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.dal.personal_data.{thr ftjava => pd}
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ho _m xer.model.Ho Features.Earlyb rdFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.datarecord.DataRecordOpt onalFeature
+ mport com.tw ter.product_m xer.core.feature.datarecord.DoubleDataRecordCompat ble
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BulkCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.ut l.OffloadFuturePools
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.catalog.Fetch
+ mport com.tw ter.strato.generated.cl ent.ml.featureStore.S mClustersUser nterested nT etEmbedd ngDotProduct20M145K2020OnUserT etEdgeCl entColumn
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-object SimClustersUserInterestedInTweetEmbeddingDataRecordFeature
-    extends DataRecordOptionalFeature[TweetCandidate, Double]
-    with DoubleDataRecordCompatible {
-  override val featureName: String =
-    "user-tweet.recommendations.sim_clusters_scores.user_interested_in_tweet_embedding_dot_product_20m_145k_2020"
-  override val personalDataTypes: Set[pd.PersonalDataType] =
-    Set(pd.PersonalDataType.InferredInterests)
+object S mClustersUser nterested nT etEmbedd ngDataRecordFeature
+    extends DataRecordOpt onalFeature[T etCand date, Double]
+    w h DoubleDataRecordCompat ble {
+  overr de val featureNa : Str ng =
+    "user-t et.recom ndat ons.s m_clusters_scores.user_ nterested_ n_t et_embedd ng_dot_product_20m_145k_2020"
+  overr de val personalDataTypes: Set[pd.PersonalDataType] =
+    Set(pd.PersonalDataType. nferred nterests)
 }
 
-@Singleton
-class SimClustersUserTweetScoresHydrator @Inject() (
-  simClustersColumn: SimClustersUserInterestedInTweetEmbeddingDotProduct20M145K2020OnUserTweetEdgeClientColumn,
-  statsReceiver: StatsReceiver)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@S ngleton
+class S mClustersUserT etScoresHydrator @ nject() (
+  s mClustersColumn: S mClustersUser nterested nT etEmbedd ngDotProduct20M145K2020OnUserT etEdgeCl entColumn,
+  statsRece ver: StatsRece ver)
+    extends BulkCand dateFeatureHydrator[P pel neQuery, T etCand date] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("SimClustersUserTweetScores")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("S mClustersUserT etScores")
 
-  override val features: Set[Feature[_, _]] = Set(
-    SimClustersUserInterestedInTweetEmbeddingDataRecordFeature)
+  overr de val features: Set[Feature[_, _]] = Set(
+    S mClustersUser nterested nT etEmbedd ngDataRecordFeature)
 
-  private val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
-  private val keyFoundCounter = scopedStatsReceiver.counter("key/found")
-  private val keyLossCounter = scopedStatsReceiver.counter("key/loss")
-  private val keyFailureCounter = scopedStatsReceiver.counter("key/failure")
-  private val keySkipCounter = scopedStatsReceiver.counter("key/skip")
+  pr vate val scopedStatsRece ver = statsRece ver.scope(getClass.getS mpleNa )
+  pr vate val keyFoundCounter = scopedStatsRece ver.counter("key/found")
+  pr vate val keyLossCounter = scopedStatsRece ver.counter("key/loss")
+  pr vate val keyFa lureCounter = scopedStatsRece ver.counter("key/fa lure")
+  pr vate val keySk pCounter = scopedStatsRece ver.counter("key/sk p")
 
-  private val DefaultFeatureMap = FeatureMapBuilder()
-    .add(SimClustersUserInterestedInTweetEmbeddingDataRecordFeature, None)
-    .build()
-  private val MinFavToHydrate = 9
+  pr vate val DefaultFeatureMap = FeatureMapBu lder()
+    .add(S mClustersUser nterested nT etEmbedd ngDataRecordFeature, None)
+    .bu ld()
+  pr vate val M nFavToHydrate = 9
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
-    Stitch.run {
-      Stitch.collect {
-        candidates.map { candidate =>
-          val ebFeatures = candidate.features.getOrElse(EarlybirdFeature, None)
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
+    St ch.run {
+      St ch.collect {
+        cand dates.map { cand date =>
+          val ebFeatures = cand date.features.getOrElse(Earlyb rdFeature, None)
           val favCount = ebFeatures.flatMap(_.favCountV2).getOrElse(0)
           
-          if (ebFeatures.isEmpty || favCount >= MinFavToHydrate) {
-            simClustersColumn.fetcher
-              .fetch((query.getRequiredUserId, candidate.candidate.id), Unit)
+           f (ebFeatures. sEmpty || favCount >= M nFavToHydrate) {
+            s mClustersColumn.fetc r
+              .fetch((query.getRequ redUser d, cand date.cand date. d), Un )
               .map {
                 case Fetch.Result(response, _) =>
-                  if (response.nonEmpty) keyFoundCounter.incr() else keyLossCounter.incr()
-                  FeatureMapBuilder()
-                    .add(SimClustersUserInterestedInTweetEmbeddingDataRecordFeature, response)
-                    .build()
+                   f (response.nonEmpty) keyFoundCounter. ncr() else keyLossCounter. ncr()
+                  FeatureMapBu lder()
+                    .add(S mClustersUser nterested nT etEmbedd ngDataRecordFeature, response)
+                    .bu ld()
                 case _ =>
-                  keyFailureCounter.incr()
+                  keyFa lureCounter. ncr()
                   DefaultFeatureMap
               }
           } else {
-            keySkipCounter.incr()
-            Stitch.value(DefaultFeatureMap)
+            keySk pCounter. ncr()
+            St ch.value(DefaultFeatureMap)
           }
         }
       }

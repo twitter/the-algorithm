@@ -1,340 +1,340 @@
-package com.twitter.home_mixer.product.scored_tweets
+package com.tw ter.ho _m xer.product.scored_t ets
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.functional_component.feature_hydrator.FeedbackHistoryQueryFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.ImpressionBloomFilterQueryFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.RealGraphInNetworkScoresQueryFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.RequestQueryFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.TweetImpressionsQueryFeatureHydrator
-import com.twitter.home_mixer.functional_component.filter.FeedbackFatigueFilter
-import com.twitter.home_mixer.functional_component.filter.PreviouslySeenTweetsFilter
-import com.twitter.home_mixer.functional_component.filter.PreviouslyServedTweetsFilter
-import com.twitter.home_mixer.functional_component.filter.RejectTweetFromViewerFilter
-import com.twitter.home_mixer.functional_component.filter.RetweetDeduplicationFilter
-import com.twitter.home_mixer.functional_component.side_effect.PublishClientSentImpressionsEventBusSideEffect
-import com.twitter.home_mixer.functional_component.side_effect.PublishClientSentImpressionsManhattanSideEffect
-import com.twitter.home_mixer.functional_component.side_effect.PublishImpressionBloomFilterSideEffect
-import com.twitter.home_mixer.functional_component.side_effect.UpdateLastNonPollingTimeSideEffect
-import com.twitter.home_mixer.model.HomeFeatures.ExclusiveConversationAuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsSupportAccountReplyFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableImpressionBloomFilter
-import com.twitter.home_mixer.param.HomeMixerFlagName.TargetFetchLatency
-import com.twitter.home_mixer.param.HomeMixerFlagName.TargetScoringLatency
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.CachedScoredTweetsCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsBackfillCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsFrsCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsInNetworkCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsListsCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsPopularVideosCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsTweetMixerCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.ScoredTweetsUtegCandidatePipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.CachedScoredTweetsQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.ListIdsQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.RealGraphQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.RealTimeInteractionGraphUserVertexQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.RequestTimeQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.TwhinUserEngagementQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.TwhinUserFollowQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.UserLanguagesFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.UserStateQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates.PartAAggregateQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates.PartBAggregateQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.real_time_aggregates.UserEngagementRealTimeAggregatesFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.filter.DuplicateConversationTweetsFilter
-import com.twitter.home_mixer.product.scored_tweets.filter.OutOfNetworkCompetitorFilter
-import com.twitter.home_mixer.product.scored_tweets.filter.OutOfNetworkCompetitorURLFilter
-import com.twitter.home_mixer.product.scored_tweets.filter.ScoredTweetsSocialContextFilter
-import com.twitter.home_mixer.product.scored_tweets.marshaller.ScoredTweetsResponseDomainMarshaller
-import com.twitter.home_mixer.product.scored_tweets.marshaller.ScoredTweetsResponseTransportMarshaller
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsResponse
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.MaxInNetworkResultsParam
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.MaxOutOfNetworkResultsParam
-import com.twitter.home_mixer.product.scored_tweets.scoring_pipeline.ScoredTweetsHeuristicScoringPipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.scoring_pipeline.ScoredTweetsModelScoringPipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.selector.KeepBestOutOfNetworkCandidatePerAuthorPerSuggestType
-import com.twitter.home_mixer.product.scored_tweets.side_effect.CachedScoredTweetsSideEffect
-import com.twitter.home_mixer.product.scored_tweets.side_effect.ScribeScoredCandidatesSideEffect
-import com.twitter.home_mixer.product.scored_tweets.side_effect.ScribeServedCommonFeaturesAndCandidateFeaturesSideEffect
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.component_library.feature_hydrator.query.async.AsyncQueryFeatureHydrator
-import com.twitter.product_mixer.component_library.feature_hydrator.query.impressed_tweets.ImpressedTweetsQueryFeatureHydrator
-import com.twitter.product_mixer.component_library.feature_hydrator.query.param_gated.ParamGatedQueryFeatureHydrator
-import com.twitter.product_mixer.component_library.feature_hydrator.query.social_graph.SGSFollowedUsersQueryFeatureHydrator
-import com.twitter.product_mixer.component_library.filter.PredicateFeatureFilter
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.component_library.selector.DropDuplicateCandidates
-import com.twitter.product_mixer.component_library.selector.DropFilteredMaxCandidates
-import com.twitter.product_mixer.component_library.selector.DropMaxCandidates
-import com.twitter.product_mixer.component_library.selector.IdAndClassDuplicationKey
-import com.twitter.product_mixer.component_library.selector.InsertAppendResults
-import com.twitter.product_mixer.component_library.selector.PickFirstCandidateMerger
-import com.twitter.product_mixer.component_library.selector.UpdateSortCandidates
-import com.twitter.product_mixer.component_library.selector.sorter.FeatureValueSorter
-import com.twitter.product_mixer.core.functional_component.common.AllExceptPipelines
-import com.twitter.product_mixer.core.functional_component.common.AllPipelines
-import com.twitter.product_mixer.core.functional_component.configapi.StaticParam
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.RecommendationPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ScoringPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.FailOpenPolicy
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.product_mixer.core.pipeline.recommendation.RecommendationPipelineConfig
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipelineConfig
-import com.twitter.product_mixer.core.quality_factor.BoundsWithDefault
-import com.twitter.product_mixer.core.quality_factor.LinearLatencyQualityFactorConfig
-import com.twitter.product_mixer.core.quality_factor.QualityFactorConfig
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.ho _m xer.funct onal_component.feature_hydrator.Feedback toryQueryFeatureHydrator
+ mport com.tw ter.ho _m xer.funct onal_component.feature_hydrator. mpress onBloomF lterQueryFeatureHydrator
+ mport com.tw ter.ho _m xer.funct onal_component.feature_hydrator.RealGraph nNetworkScoresQueryFeatureHydrator
+ mport com.tw ter.ho _m xer.funct onal_component.feature_hydrator.RequestQueryFeatureHydrator
+ mport com.tw ter.ho _m xer.funct onal_component.feature_hydrator.T et mpress onsQueryFeatureHydrator
+ mport com.tw ter.ho _m xer.funct onal_component.f lter.FeedbackFat gueF lter
+ mport com.tw ter.ho _m xer.funct onal_component.f lter.Prev ouslySeenT etsF lter
+ mport com.tw ter.ho _m xer.funct onal_component.f lter.Prev ouslyServedT etsF lter
+ mport com.tw ter.ho _m xer.funct onal_component.f lter.RejectT etFromV e rF lter
+ mport com.tw ter.ho _m xer.funct onal_component.f lter.Ret etDedupl cat onF lter
+ mport com.tw ter.ho _m xer.funct onal_component.s de_effect.Publ shCl entSent mpress onsEventBusS deEffect
+ mport com.tw ter.ho _m xer.funct onal_component.s de_effect.Publ shCl entSent mpress onsManhattanS deEffect
+ mport com.tw ter.ho _m xer.funct onal_component.s de_effect.Publ sh mpress onBloomF lterS deEffect
+ mport com.tw ter.ho _m xer.funct onal_component.s de_effect.UpdateLastNonPoll ngT  S deEffect
+ mport com.tw ter.ho _m xer.model.Ho Features.Exclus veConversat onAuthor dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nNetworkFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nReplyToT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. sSupportAccountReplyFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.ScoreFeature
+ mport com.tw ter.ho _m xer.param.Ho GlobalParams.Enable mpress onBloomF lter
+ mport com.tw ter.ho _m xer.param.Ho M xerFlagNa .TargetFetchLatency
+ mport com.tw ter.ho _m xer.param.Ho M xerFlagNa .TargetScor ngLatency
+ mport com.tw ter.ho _m xer.product.scored_t ets.cand date_p pel ne.Cac dScoredT etsCand dateP pel neConf g
+ mport com.tw ter.ho _m xer.product.scored_t ets.cand date_p pel ne.ScoredT etsBackf llCand dateP pel neConf g
+ mport com.tw ter.ho _m xer.product.scored_t ets.cand date_p pel ne.ScoredT etsFrsCand dateP pel neConf g
+ mport com.tw ter.ho _m xer.product.scored_t ets.cand date_p pel ne.ScoredT ets nNetworkCand dateP pel neConf g
+ mport com.tw ter.ho _m xer.product.scored_t ets.cand date_p pel ne.ScoredT etsL stsCand dateP pel neConf g
+ mport com.tw ter.ho _m xer.product.scored_t ets.cand date_p pel ne.ScoredT etsPopularV deosCand dateP pel neConf g
+ mport com.tw ter.ho _m xer.product.scored_t ets.cand date_p pel ne.ScoredT etsT etM xerCand dateP pel neConf g
+ mport com.tw ter.ho _m xer.product.scored_t ets.cand date_p pel ne.ScoredT etsUtegCand dateP pel neConf g
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.Cac dScoredT etsQueryFeatureHydrator
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.L st dsQueryFeatureHydrator
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.RealGraphQueryFeatureHydrator
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.RealT   nteract onGraphUserVertexQueryFeatureHydrator
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.RequestT  QueryFeatureHydrator
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.Twh nUserEngage ntQueryFeatureHydrator
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.Twh nUserFollowQueryFeatureHydrator
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.UserLanguagesFeatureHydrator
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.UserStateQueryFeatureHydrator
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.offl ne_aggregates.PartAAggregateQueryFeatureHydrator
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.offl ne_aggregates.PartBAggregateQueryFeatureHydrator
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.real_t  _aggregates.UserEngage ntRealT  AggregatesFeatureHydrator
+ mport com.tw ter.ho _m xer.product.scored_t ets.f lter.Dupl cateConversat onT etsF lter
+ mport com.tw ter.ho _m xer.product.scored_t ets.f lter.OutOfNetworkCompet orF lter
+ mport com.tw ter.ho _m xer.product.scored_t ets.f lter.OutOfNetworkCompet orURLF lter
+ mport com.tw ter.ho _m xer.product.scored_t ets.f lter.ScoredT etsSoc alContextF lter
+ mport com.tw ter.ho _m xer.product.scored_t ets.marshaller.ScoredT etsResponseDoma nMarshaller
+ mport com.tw ter.ho _m xer.product.scored_t ets.marshaller.ScoredT etsResponseTransportMarshaller
+ mport com.tw ter.ho _m xer.product.scored_t ets.model.ScoredT etsQuery
+ mport com.tw ter.ho _m xer.product.scored_t ets.model.ScoredT etsResponse
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParam.Max nNetworkResultsParam
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParam.MaxOutOfNetworkResultsParam
+ mport com.tw ter.ho _m xer.product.scored_t ets.scor ng_p pel ne.ScoredT ets ur st cScor ngP pel neConf g
+ mport com.tw ter.ho _m xer.product.scored_t ets.scor ng_p pel ne.ScoredT etsModelScor ngP pel neConf g
+ mport com.tw ter.ho _m xer.product.scored_t ets.selector.KeepBestOutOfNetworkCand datePerAuthorPerSuggestType
+ mport com.tw ter.ho _m xer.product.scored_t ets.s de_effect.Cac dScoredT etsS deEffect
+ mport com.tw ter.ho _m xer.product.scored_t ets.s de_effect.Scr beScoredCand datesS deEffect
+ mport com.tw ter.ho _m xer.product.scored_t ets.s de_effect.Scr beServedCommonFeaturesAndCand dateFeaturesS deEffect
+ mport com.tw ter.ho _m xer.{thr ftscala => t}
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.product_m xer.component_l brary.feature_hydrator.query.async.AsyncQueryFeatureHydrator
+ mport com.tw ter.product_m xer.component_l brary.feature_hydrator.query. mpressed_t ets. mpressedT etsQueryFeatureHydrator
+ mport com.tw ter.product_m xer.component_l brary.feature_hydrator.query.param_gated.ParamGatedQueryFeatureHydrator
+ mport com.tw ter.product_m xer.component_l brary.feature_hydrator.query.soc al_graph.SGSFollo dUsersQueryFeatureHydrator
+ mport com.tw ter.product_m xer.component_l brary.f lter.Pred cateFeatureF lter
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.component_l brary.selector.DropDupl cateCand dates
+ mport com.tw ter.product_m xer.component_l brary.selector.DropF lteredMaxCand dates
+ mport com.tw ter.product_m xer.component_l brary.selector.DropMaxCand dates
+ mport com.tw ter.product_m xer.component_l brary.selector. dAndClassDupl cat onKey
+ mport com.tw ter.product_m xer.component_l brary.selector. nsertAppendResults
+ mport com.tw ter.product_m xer.component_l brary.selector.P ckF rstCand date rger
+ mport com.tw ter.product_m xer.component_l brary.selector.UpdateSortCand dates
+ mport com.tw ter.product_m xer.component_l brary.selector.sorter.FeatureValueSorter
+ mport com.tw ter.product_m xer.core.funct onal_component.common.AllExceptP pel nes
+ mport com.tw ter.product_m xer.core.funct onal_component.common.AllP pel nes
+ mport com.tw ter.product_m xer.core.funct onal_component.conf gap .Stat cParam
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.TransportMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.premarshaller.Doma nMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.s de_effect.P pel neResultS deEffect
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Recom ndat onP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Scor ngP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on. emCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.Fa lOpenPol cy
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neConf g
+ mport com.tw ter.product_m xer.core.p pel ne.recom ndat on.Recom ndat onP pel neConf g
+ mport com.tw ter.product_m xer.core.p pel ne.scor ng.Scor ngP pel neConf g
+ mport com.tw ter.product_m xer.core.qual y_factor.BoundsW hDefault
+ mport com.tw ter.product_m xer.core.qual y_factor.L nearLatencyQual yFactorConf g
+ mport com.tw ter.product_m xer.core.qual y_factor.Qual yFactorConf g
+ mport com.tw ter.ut l.Durat on
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ScoredTweetsRecommendationPipelineConfig @Inject() (
-  scoredTweetsInNetworkCandidatePipelineConfig: ScoredTweetsInNetworkCandidatePipelineConfig,
-  scoredTweetsUtegCandidatePipelineConfig: ScoredTweetsUtegCandidatePipelineConfig,
-  scoredTweetsTweetMixerCandidatePipelineConfig: ScoredTweetsTweetMixerCandidatePipelineConfig,
-  scoredTweetsFrsCandidatePipelineConfig: ScoredTweetsFrsCandidatePipelineConfig,
-  scoredTweetsListsCandidatePipelineConfig: ScoredTweetsListsCandidatePipelineConfig,
-  scoredTweetsPopularVideosCandidatePipelineConfig: ScoredTweetsPopularVideosCandidatePipelineConfig,
-  scoredTweetsBackfillCandidatePipelineConfig: ScoredTweetsBackfillCandidatePipelineConfig,
-  cachedScoredTweetsCandidatePipelineConfig: CachedScoredTweetsCandidatePipelineConfig,
-  requestQueryFeatureHydrator: RequestQueryFeatureHydrator[ScoredTweetsQuery],
-  requestTimeQueryFeatureHydrator: RequestTimeQueryFeatureHydrator,
-  realTimeInteractionGraphUserVertexQueryFeatureHydrator: RealTimeInteractionGraphUserVertexQueryFeatureHydrator,
+@S ngleton
+class ScoredT etsRecom ndat onP pel neConf g @ nject() (
+  scoredT ets nNetworkCand dateP pel neConf g: ScoredT ets nNetworkCand dateP pel neConf g,
+  scoredT etsUtegCand dateP pel neConf g: ScoredT etsUtegCand dateP pel neConf g,
+  scoredT etsT etM xerCand dateP pel neConf g: ScoredT etsT etM xerCand dateP pel neConf g,
+  scoredT etsFrsCand dateP pel neConf g: ScoredT etsFrsCand dateP pel neConf g,
+  scoredT etsL stsCand dateP pel neConf g: ScoredT etsL stsCand dateP pel neConf g,
+  scoredT etsPopularV deosCand dateP pel neConf g: ScoredT etsPopularV deosCand dateP pel neConf g,
+  scoredT etsBackf llCand dateP pel neConf g: ScoredT etsBackf llCand dateP pel neConf g,
+  cac dScoredT etsCand dateP pel neConf g: Cac dScoredT etsCand dateP pel neConf g,
+  requestQueryFeatureHydrator: RequestQueryFeatureHydrator[ScoredT etsQuery],
+  requestT  QueryFeatureHydrator: RequestT  QueryFeatureHydrator,
+  realT   nteract onGraphUserVertexQueryFeatureHydrator: RealT   nteract onGraphUserVertexQueryFeatureHydrator,
   userStateQueryFeatureHydrator: UserStateQueryFeatureHydrator,
-  userEngagementRealTimeAggregatesFeatureHydrator: UserEngagementRealTimeAggregatesFeatureHydrator,
-  twhinUserEngagementQueryFeatureHydrator: TwhinUserEngagementQueryFeatureHydrator,
-  twhinUserFollowQueryFeatureHydrator: TwhinUserFollowQueryFeatureHydrator,
-  cachedScoredTweetsQueryFeatureHydrator: CachedScoredTweetsQueryFeatureHydrator,
-  sgsFollowedUsersQueryFeatureHydrator: SGSFollowedUsersQueryFeatureHydrator,
-  scoredTweetsModelScoringPipelineConfig: ScoredTweetsModelScoringPipelineConfig,
-  impressionBloomFilterQueryFeatureHydrator: ImpressionBloomFilterQueryFeatureHydrator[
-    ScoredTweetsQuery
+  userEngage ntRealT  AggregatesFeatureHydrator: UserEngage ntRealT  AggregatesFeatureHydrator,
+  twh nUserEngage ntQueryFeatureHydrator: Twh nUserEngage ntQueryFeatureHydrator,
+  twh nUserFollowQueryFeatureHydrator: Twh nUserFollowQueryFeatureHydrator,
+  cac dScoredT etsQueryFeatureHydrator: Cac dScoredT etsQueryFeatureHydrator,
+  sgsFollo dUsersQueryFeatureHydrator: SGSFollo dUsersQueryFeatureHydrator,
+  scoredT etsModelScor ngP pel neConf g: ScoredT etsModelScor ngP pel neConf g,
+   mpress onBloomF lterQueryFeatureHydrator:  mpress onBloomF lterQueryFeatureHydrator[
+    ScoredT etsQuery
   ],
-  manhattanTweetImpressionsQueryFeatureHydrator: TweetImpressionsQueryFeatureHydrator[
-    ScoredTweetsQuery
+  manhattanT et mpress onsQueryFeatureHydrator: T et mpress onsQueryFeatureHydrator[
+    ScoredT etsQuery
   ],
-  memcacheTweetImpressionsQueryFeatureHydrator: ImpressedTweetsQueryFeatureHydrator,
-  listIdsQueryFeatureHydrator: ListIdsQueryFeatureHydrator,
-  feedbackHistoryQueryFeatureHydrator: FeedbackHistoryQueryFeatureHydrator,
-  publishClientSentImpressionsEventBusSideEffect: PublishClientSentImpressionsEventBusSideEffect,
-  publishClientSentImpressionsManhattanSideEffect: PublishClientSentImpressionsManhattanSideEffect,
-  publishImpressionBloomFilterSideEffect: PublishImpressionBloomFilterSideEffect,
-  realGraphInNetworkScoresQueryFeatureHydrator: RealGraphInNetworkScoresQueryFeatureHydrator,
+   mcac T et mpress onsQueryFeatureHydrator:  mpressedT etsQueryFeatureHydrator,
+  l st dsQueryFeatureHydrator: L st dsQueryFeatureHydrator,
+  feedback toryQueryFeatureHydrator: Feedback toryQueryFeatureHydrator,
+  publ shCl entSent mpress onsEventBusS deEffect: Publ shCl entSent mpress onsEventBusS deEffect,
+  publ shCl entSent mpress onsManhattanS deEffect: Publ shCl entSent mpress onsManhattanS deEffect,
+  publ sh mpress onBloomF lterS deEffect: Publ sh mpress onBloomF lterS deEffect,
+  realGraph nNetworkScoresQueryFeatureHydrator: RealGraph nNetworkScoresQueryFeatureHydrator,
   realGraphQueryFeatureHydrator: RealGraphQueryFeatureHydrator,
   userLanguagesFeatureHydrator: UserLanguagesFeatureHydrator,
   partAAggregateQueryFeatureHydrator: PartAAggregateQueryFeatureHydrator,
   partBAggregateQueryFeatureHydrator: PartBAggregateQueryFeatureHydrator,
-  cachedScoredTweetsSideEffect: CachedScoredTweetsSideEffect,
-  scribeScoredCandidatesSideEffect: ScribeScoredCandidatesSideEffect,
-  scribeServedCommonFeaturesAndCandidateFeaturesSideEffect: ScribeServedCommonFeaturesAndCandidateFeaturesSideEffect,
-  updateLastNonPollingTimeSideEffect: UpdateLastNonPollingTimeSideEffect[
-    ScoredTweetsQuery,
-    ScoredTweetsResponse
+  cac dScoredT etsS deEffect: Cac dScoredT etsS deEffect,
+  scr beScoredCand datesS deEffect: Scr beScoredCand datesS deEffect,
+  scr beServedCommonFeaturesAndCand dateFeaturesS deEffect: Scr beServedCommonFeaturesAndCand dateFeaturesS deEffect,
+  updateLastNonPoll ngT  S deEffect: UpdateLastNonPoll ngT  S deEffect[
+    ScoredT etsQuery,
+    ScoredT etsResponse
   ],
-  @Flag(TargetFetchLatency) targetFetchLatency: Duration,
-  @Flag(TargetScoringLatency) targetScoringLatency: Duration)
-    extends RecommendationPipelineConfig[
-      ScoredTweetsQuery,
-      TweetCandidate,
-      ScoredTweetsResponse,
-      t.ScoredTweetsResponse
+  @Flag(TargetFetchLatency) targetFetchLatency: Durat on,
+  @Flag(TargetScor ngLatency) targetScor ngLatency: Durat on)
+    extends Recom ndat onP pel neConf g[
+      ScoredT etsQuery,
+      T etCand date,
+      ScoredT etsResponse,
+      t.ScoredT etsResponse
     ] {
 
-  override val identifier: RecommendationPipelineIdentifier =
-    RecommendationPipelineIdentifier("ScoredTweets")
+  overr de val  dent f er: Recom ndat onP pel ne dent f er =
+    Recom ndat onP pel ne dent f er("ScoredT ets")
 
-  private val SubscriptionReplyFilterId = "SubscriptionReply"
-  private val MaxBackfillTweets = 50
+  pr vate val Subscr pt onReplyF lter d = "Subscr pt onReply"
+  pr vate val MaxBackf llT ets = 50
 
-  private val scoringStep = RecommendationPipelineConfig.scoringPipelinesStep
+  pr vate val scor ngStep = Recom ndat onP pel neConf g.scor ngP pel nesStep
 
-  override val fetchQueryFeatures: Seq[QueryFeatureHydrator[ScoredTweetsQuery]] = Seq(
+  overr de val fetchQueryFeatures: Seq[QueryFeatureHydrator[ScoredT etsQuery]] = Seq(
     requestQueryFeatureHydrator,
-    realGraphInNetworkScoresQueryFeatureHydrator,
-    cachedScoredTweetsQueryFeatureHydrator,
-    sgsFollowedUsersQueryFeatureHydrator,
+    realGraph nNetworkScoresQueryFeatureHydrator,
+    cac dScoredT etsQueryFeatureHydrator,
+    sgsFollo dUsersQueryFeatureHydrator,
     ParamGatedQueryFeatureHydrator(
-      EnableImpressionBloomFilter,
-      impressionBloomFilterQueryFeatureHydrator
+      Enable mpress onBloomF lter,
+       mpress onBloomF lterQueryFeatureHydrator
     ),
-    manhattanTweetImpressionsQueryFeatureHydrator,
-    memcacheTweetImpressionsQueryFeatureHydrator,
-    listIdsQueryFeatureHydrator,
+    manhattanT et mpress onsQueryFeatureHydrator,
+     mcac T et mpress onsQueryFeatureHydrator,
+    l st dsQueryFeatureHydrator,
     userStateQueryFeatureHydrator,
-    AsyncQueryFeatureHydrator(scoringStep, feedbackHistoryQueryFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, realGraphQueryFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, requestTimeQueryFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, userLanguagesFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, userEngagementRealTimeAggregatesFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, realTimeInteractionGraphUserVertexQueryFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, twhinUserFollowQueryFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, twhinUserEngagementQueryFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, partAAggregateQueryFeatureHydrator),
-    AsyncQueryFeatureHydrator(scoringStep, partBAggregateQueryFeatureHydrator),
+    AsyncQueryFeatureHydrator(scor ngStep, feedback toryQueryFeatureHydrator),
+    AsyncQueryFeatureHydrator(scor ngStep, realGraphQueryFeatureHydrator),
+    AsyncQueryFeatureHydrator(scor ngStep, requestT  QueryFeatureHydrator),
+    AsyncQueryFeatureHydrator(scor ngStep, userLanguagesFeatureHydrator),
+    AsyncQueryFeatureHydrator(scor ngStep, userEngage ntRealT  AggregatesFeatureHydrator),
+    AsyncQueryFeatureHydrator(scor ngStep, realT   nteract onGraphUserVertexQueryFeatureHydrator),
+    AsyncQueryFeatureHydrator(scor ngStep, twh nUserFollowQueryFeatureHydrator),
+    AsyncQueryFeatureHydrator(scor ngStep, twh nUserEngage ntQueryFeatureHydrator),
+    AsyncQueryFeatureHydrator(scor ngStep, partAAggregateQueryFeatureHydrator),
+    AsyncQueryFeatureHydrator(scor ngStep, partBAggregateQueryFeatureHydrator),
   )
 
-  override val candidatePipelines: Seq[
-    CandidatePipelineConfig[ScoredTweetsQuery, _, _, TweetCandidate]
+  overr de val cand dateP pel nes: Seq[
+    Cand dateP pel neConf g[ScoredT etsQuery, _, _, T etCand date]
   ] = Seq(
-    cachedScoredTweetsCandidatePipelineConfig,
-    scoredTweetsInNetworkCandidatePipelineConfig,
-    scoredTweetsUtegCandidatePipelineConfig,
-    scoredTweetsTweetMixerCandidatePipelineConfig,
-    scoredTweetsFrsCandidatePipelineConfig,
-    scoredTweetsListsCandidatePipelineConfig,
-    scoredTweetsPopularVideosCandidatePipelineConfig,
-    scoredTweetsBackfillCandidatePipelineConfig
+    cac dScoredT etsCand dateP pel neConf g,
+    scoredT ets nNetworkCand dateP pel neConf g,
+    scoredT etsUtegCand dateP pel neConf g,
+    scoredT etsT etM xerCand dateP pel neConf g,
+    scoredT etsFrsCand dateP pel neConf g,
+    scoredT etsL stsCand dateP pel neConf g,
+    scoredT etsPopularV deosCand dateP pel neConf g,
+    scoredT etsBackf llCand dateP pel neConf g
   )
 
-  override val postCandidatePipelinesSelectors: Seq[Selector[ScoredTweetsQuery]] = Seq(
-    DropDuplicateCandidates(
-      pipelineScope = AllPipelines,
-      duplicationKey = IdAndClassDuplicationKey,
-      mergeStrategy = PickFirstCandidateMerger
+  overr de val postCand dateP pel nesSelectors: Seq[Selector[ScoredT etsQuery]] = Seq(
+    DropDupl cateCand dates(
+      p pel neScope = AllP pel nes,
+      dupl cat onKey =  dAndClassDupl cat onKey,
+       rgeStrategy = P ckF rstCand date rger
     ),
-    InsertAppendResults(AllPipelines)
+     nsertAppendResults(AllP pel nes)
   )
 
-  override val globalFilters: Seq[Filter[ScoredTweetsQuery, TweetCandidate]] = Seq(
-    // sort these to have the "cheaper" filters run first
-    RejectTweetFromViewerFilter,
-    RetweetDeduplicationFilter,
-    PreviouslySeenTweetsFilter,
-    PreviouslyServedTweetsFilter,
-    PredicateFeatureFilter.fromPredicate(
-      FilterIdentifier(SubscriptionReplyFilterId),
-      shouldKeepCandidate = { features =>
-        features.getOrElse(InReplyToTweetIdFeature, None).isEmpty ||
-        features.getOrElse(ExclusiveConversationAuthorIdFeature, None).isEmpty
+  overr de val globalF lters: Seq[F lter[ScoredT etsQuery, T etCand date]] = Seq(
+    // sort t se to have t  "c aper" f lters run f rst
+    RejectT etFromV e rF lter,
+    Ret etDedupl cat onF lter,
+    Prev ouslySeenT etsF lter,
+    Prev ouslyServedT etsF lter,
+    Pred cateFeatureF lter.fromPred cate(
+      F lter dent f er(Subscr pt onReplyF lter d),
+      shouldKeepCand date = { features =>
+        features.getOrElse( nReplyToT et dFeature, None). sEmpty ||
+        features.getOrElse(Exclus veConversat onAuthor dFeature, None). sEmpty
       }
     ),
-    FeedbackFatigueFilter
+    FeedbackFat gueF lter
   )
 
-  override val candidatePipelineFailOpenPolicies: Map[CandidatePipelineIdentifier, FailOpenPolicy] =
+  overr de val cand dateP pel neFa lOpenPol c es: Map[Cand dateP pel ne dent f er, Fa lOpenPol cy] =
     Map(
-      cachedScoredTweetsCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
-      scoredTweetsInNetworkCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
-      scoredTweetsUtegCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
-      scoredTweetsTweetMixerCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
-      scoredTweetsFrsCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
-      scoredTweetsListsCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
-      scoredTweetsPopularVideosCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
-      scoredTweetsBackfillCandidatePipelineConfig.identifier -> FailOpenPolicy.Always
+      cac dScoredT etsCand dateP pel neConf g. dent f er -> Fa lOpenPol cy.Always,
+      scoredT ets nNetworkCand dateP pel neConf g. dent f er -> Fa lOpenPol cy.Always,
+      scoredT etsUtegCand dateP pel neConf g. dent f er -> Fa lOpenPol cy.Always,
+      scoredT etsT etM xerCand dateP pel neConf g. dent f er -> Fa lOpenPol cy.Always,
+      scoredT etsFrsCand dateP pel neConf g. dent f er -> Fa lOpenPol cy.Always,
+      scoredT etsL stsCand dateP pel neConf g. dent f er -> Fa lOpenPol cy.Always,
+      scoredT etsPopularV deosCand dateP pel neConf g. dent f er -> Fa lOpenPol cy.Always,
+      scoredT etsBackf llCand dateP pel neConf g. dent f er -> Fa lOpenPol cy.Always
     )
 
-  override val scoringPipelineFailOpenPolicies: Map[ScoringPipelineIdentifier, FailOpenPolicy] =
+  overr de val scor ngP pel neFa lOpenPol c es: Map[Scor ngP pel ne dent f er, Fa lOpenPol cy] =
     Map(
-      ScoredTweetsHeuristicScoringPipelineConfig.identifier -> FailOpenPolicy.Always
+      ScoredT ets ur st cScor ngP pel neConf g. dent f er -> Fa lOpenPol cy.Always
     )
 
-  private val candidatePipelineQualityFactorConfig = LinearLatencyQualityFactorConfig(
-    qualityFactorBounds = BoundsWithDefault(minInclusive = 0.1, maxInclusive = 1.0, default = 0.95),
-    initialDelay = 60.seconds,
+  pr vate val cand dateP pel neQual yFactorConf g = L nearLatencyQual yFactorConf g(
+    qual yFactorBounds = BoundsW hDefault(m n nclus ve = 0.1, max nclus ve = 1.0, default = 0.95),
+     n  alDelay = 60.seconds,
     targetLatency = targetFetchLatency,
-    targetLatencyPercentile = 95.0,
+    targetLatencyPercent le = 95.0,
     delta = 0.00125
   )
 
-  private val scoringPipelineQualityFactorConfig =
-    candidatePipelineQualityFactorConfig.copy(targetLatency = targetScoringLatency)
+  pr vate val scor ngP pel neQual yFactorConf g =
+    cand dateP pel neQual yFactorConf g.copy(targetLatency = targetScor ngLatency)
 
-  override val qualityFactorConfigs: Map[ComponentIdentifier, QualityFactorConfig] = Map(
-    // candidate pipelines
-    scoredTweetsInNetworkCandidatePipelineConfig.identifier -> candidatePipelineQualityFactorConfig,
-    scoredTweetsUtegCandidatePipelineConfig.identifier -> candidatePipelineQualityFactorConfig,
-    scoredTweetsTweetMixerCandidatePipelineConfig.identifier -> candidatePipelineQualityFactorConfig,
-    scoredTweetsFrsCandidatePipelineConfig.identifier -> candidatePipelineQualityFactorConfig,
-    scoredTweetsListsCandidatePipelineConfig.identifier -> candidatePipelineQualityFactorConfig,
-    scoredTweetsPopularVideosCandidatePipelineConfig.identifier -> candidatePipelineQualityFactorConfig,
-    scoredTweetsBackfillCandidatePipelineConfig.identifier -> candidatePipelineQualityFactorConfig,
-    // scoring pipelines
-    scoredTweetsModelScoringPipelineConfig.identifier -> scoringPipelineQualityFactorConfig,
+  overr de val qual yFactorConf gs: Map[Component dent f er, Qual yFactorConf g] = Map(
+    // cand date p pel nes
+    scoredT ets nNetworkCand dateP pel neConf g. dent f er -> cand dateP pel neQual yFactorConf g,
+    scoredT etsUtegCand dateP pel neConf g. dent f er -> cand dateP pel neQual yFactorConf g,
+    scoredT etsT etM xerCand dateP pel neConf g. dent f er -> cand dateP pel neQual yFactorConf g,
+    scoredT etsFrsCand dateP pel neConf g. dent f er -> cand dateP pel neQual yFactorConf g,
+    scoredT etsL stsCand dateP pel neConf g. dent f er -> cand dateP pel neQual yFactorConf g,
+    scoredT etsPopularV deosCand dateP pel neConf g. dent f er -> cand dateP pel neQual yFactorConf g,
+    scoredT etsBackf llCand dateP pel neConf g. dent f er -> cand dateP pel neQual yFactorConf g,
+    // scor ng p pel nes
+    scoredT etsModelScor ngP pel neConf g. dent f er -> scor ngP pel neQual yFactorConf g,
   )
 
-  override val scoringPipelines: Seq[ScoringPipelineConfig[ScoredTweetsQuery, TweetCandidate]] =
+  overr de val scor ngP pel nes: Seq[Scor ngP pel neConf g[ScoredT etsQuery, T etCand date]] =
     Seq(
-      // scoring pipeline - run on non-cached candidates only since cached ones are already scored
-      scoredTweetsModelScoringPipelineConfig,
-      // re-scoring pipeline - run on all candidates since these are request specific
-      ScoredTweetsHeuristicScoringPipelineConfig
+      // scor ng p pel ne - run on non-cac d cand dates only s nce cac d ones are already scored
+      scoredT etsModelScor ngP pel neConf g,
+      // re-scor ng p pel ne - run on all cand dates s nce t se are request spec f c
+      ScoredT ets ur st cScor ngP pel neConf g
     )
 
-  override val postScoringFilters = Seq(
-    ScoredTweetsSocialContextFilter,
-    OutOfNetworkCompetitorFilter,
-    OutOfNetworkCompetitorURLFilter,
-    DuplicateConversationTweetsFilter,
-    PredicateFeatureFilter.fromPredicate(
-      FilterIdentifier("IsSupportAccountReply"),
-      shouldKeepCandidate = { features =>
-        !features.getOrElse(IsSupportAccountReplyFeature, false)
+  overr de val postScor ngF lters = Seq(
+    ScoredT etsSoc alContextF lter,
+    OutOfNetworkCompet orF lter,
+    OutOfNetworkCompet orURLF lter,
+    Dupl cateConversat onT etsF lter,
+    Pred cateFeatureF lter.fromPred cate(
+      F lter dent f er(" sSupportAccountReply"),
+      shouldKeepCand date = { features =>
+        !features.getOrElse( sSupportAccountReplyFeature, false)
       })
   )
 
-  override val resultSelectors: Seq[Selector[ScoredTweetsQuery]] = Seq(
-    KeepBestOutOfNetworkCandidatePerAuthorPerSuggestType(AllPipelines),
-    UpdateSortCandidates(AllPipelines, FeatureValueSorter.descending(ScoreFeature)),
-    DropFilteredMaxCandidates(
-      pipelineScope =
-        AllExceptPipelines(Set(scoredTweetsBackfillCandidatePipelineConfig.identifier)),
-      filter = {
-        case ItemCandidateWithDetails(_, _, features) =>
-          features.getOrElse(InNetworkFeature, false)
+  overr de val resultSelectors: Seq[Selector[ScoredT etsQuery]] = Seq(
+    KeepBestOutOfNetworkCand datePerAuthorPerSuggestType(AllP pel nes),
+    UpdateSortCand dates(AllP pel nes, FeatureValueSorter.descend ng(ScoreFeature)),
+    DropF lteredMaxCand dates(
+      p pel neScope =
+        AllExceptP pel nes(Set(scoredT etsBackf llCand dateP pel neConf g. dent f er)),
+      f lter = {
+        case  emCand dateW hDeta ls(_, _, features) =>
+          features.getOrElse( nNetworkFeature, false)
         case _ => false
       },
-      maxSelectionsParam = MaxInNetworkResultsParam
+      maxSelect onsParam = Max nNetworkResultsParam
     ),
-    DropFilteredMaxCandidates(
-      pipelineScope = AllPipelines,
-      filter = {
-        case ItemCandidateWithDetails(_, _, features) =>
-          !features.getOrElse(InNetworkFeature, false)
+    DropF lteredMaxCand dates(
+      p pel neScope = AllP pel nes,
+      f lter = {
+        case  emCand dateW hDeta ls(_, _, features) =>
+          !features.getOrElse( nNetworkFeature, false)
         case _ => false
       },
-      maxSelectionsParam = MaxOutOfNetworkResultsParam
+      maxSelect onsParam = MaxOutOfNetworkResultsParam
     ),
-    DropMaxCandidates(
-      candidatePipeline = scoredTweetsBackfillCandidatePipelineConfig.identifier,
-      maxSelectionsParam = StaticParam(MaxBackfillTweets)
+    DropMaxCand dates(
+      cand dateP pel ne = scoredT etsBackf llCand dateP pel neConf g. dent f er,
+      maxSelect onsParam = Stat cParam(MaxBackf llT ets)
     ),
-    InsertAppendResults(AllPipelines)
+     nsertAppendResults(AllP pel nes)
   )
 
-  override val resultSideEffects: Seq[
-    PipelineResultSideEffect[ScoredTweetsQuery, ScoredTweetsResponse]
+  overr de val resultS deEffects: Seq[
+    P pel neResultS deEffect[ScoredT etsQuery, ScoredT etsResponse]
   ] = Seq(
-    cachedScoredTweetsSideEffect,
-    publishClientSentImpressionsEventBusSideEffect,
-    publishClientSentImpressionsManhattanSideEffect,
-    publishImpressionBloomFilterSideEffect,
-    scribeScoredCandidatesSideEffect,
-    scribeServedCommonFeaturesAndCandidateFeaturesSideEffect,
-    updateLastNonPollingTimeSideEffect
+    cac dScoredT etsS deEffect,
+    publ shCl entSent mpress onsEventBusS deEffect,
+    publ shCl entSent mpress onsManhattanS deEffect,
+    publ sh mpress onBloomF lterS deEffect,
+    scr beScoredCand datesS deEffect,
+    scr beServedCommonFeaturesAndCand dateFeaturesS deEffect,
+    updateLastNonPoll ngT  S deEffect
   )
 
-  override val domainMarshaller: DomainMarshaller[
-    ScoredTweetsQuery,
-    ScoredTweetsResponse
-  ] = ScoredTweetsResponseDomainMarshaller
+  overr de val doma nMarshaller: Doma nMarshaller[
+    ScoredT etsQuery,
+    ScoredT etsResponse
+  ] = ScoredT etsResponseDoma nMarshaller
 
-  override val transportMarshaller: TransportMarshaller[
-    ScoredTweetsResponse,
-    t.ScoredTweetsResponse
-  ] = ScoredTweetsResponseTransportMarshaller
+  overr de val transportMarshaller: TransportMarshaller[
+    ScoredT etsResponse,
+    t.ScoredT etsResponse
+  ] = ScoredT etsResponseTransportMarshaller
 }

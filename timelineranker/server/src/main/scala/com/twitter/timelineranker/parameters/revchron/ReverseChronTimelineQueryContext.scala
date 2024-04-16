@@ -1,114 +1,114 @@
-package com.twitter.timelineranker.parameters.revchron
+package com.tw ter.t  l neranker.para ters.revchron
 
-import com.twitter.timelineranker.model.ReverseChronTimelineQuery
-import com.twitter.timelines.util.bounds.BoundsWithDefault
-import com.twitter.timelineservice.model.core.TimelineKind
-import com.twitter.timelineservice.model.core.TimelineLimits
+ mport com.tw ter.t  l neranker.model.ReverseChronT  l neQuery
+ mport com.tw ter.t  l nes.ut l.bounds.BoundsW hDefault
+ mport com.tw ter.t  l neserv ce.model.core.T  l neK nd
+ mport com.tw ter.t  l neserv ce.model.core.T  l neL m s
 
-object ReverseChronTimelineQueryContext {
-  val MaxCountLimit: Int = TimelineLimits.default.lengthLimit(TimelineKind.home)
-  val MaxCount: BoundsWithDefault[Int] = BoundsWithDefault[Int](0, MaxCountLimit, MaxCountLimit)
-  val MaxCountMultiplier: BoundsWithDefault[Double] = BoundsWithDefault[Double](0.5, 2.0, 1.0)
-  val MaxFollowedUsers: BoundsWithDefault[Int] = BoundsWithDefault[Int](1, 15000, 5000)
-  val TweetsFilteringLossageThresholdPercent: BoundsWithDefault[Int] =
-    BoundsWithDefault[Int](10, 100, 20)
-  val TweetsFilteringLossageLimitPercent: BoundsWithDefault[Int] =
-    BoundsWithDefault[Int](40, 65, 60)
+object ReverseChronT  l neQueryContext {
+  val MaxCountL m :  nt = T  l neL m s.default.lengthL m (T  l neK nd.ho )
+  val MaxCount: BoundsW hDefault[ nt] = BoundsW hDefault[ nt](0, MaxCountL m , MaxCountL m )
+  val MaxCountMult pl er: BoundsW hDefault[Double] = BoundsW hDefault[Double](0.5, 2.0, 1.0)
+  val MaxFollo dUsers: BoundsW hDefault[ nt] = BoundsW hDefault[ nt](1, 15000, 5000)
+  val T etsF lter ngLossageThresholdPercent: BoundsW hDefault[ nt] =
+    BoundsW hDefault[ nt](10, 100, 20)
+  val T etsF lter ngLossageL m Percent: BoundsW hDefault[ nt] =
+    BoundsW hDefault[ nt](40, 65, 60)
 
-  def getDefaultContext(query: ReverseChronTimelineQuery): ReverseChronTimelineQueryContext = {
-    new ReverseChronTimelineQueryContextImpl(
+  def getDefaultContext(query: ReverseChronT  l neQuery): ReverseChronT  l neQueryContext = {
+    new ReverseChronT  l neQueryContext mpl(
       query,
       getMaxCount = () => MaxCount.default,
-      getMaxCountMultiplier = () => MaxCountMultiplier.default,
-      getMaxFollowedUsers = () => MaxFollowedUsers.default,
-      getReturnEmptyWhenOverMaxFollows = () => true,
-      getDirectedAtNarrowastingViaSearch = () => false,
-      getPostFilteringBasedOnSearchMetadataEnabled = () => true,
-      getBackfillFilteredEntries = () => false,
-      getTweetsFilteringLossageThresholdPercent = () =>
-        TweetsFilteringLossageThresholdPercent.default,
-      getTweetsFilteringLossageLimitPercent = () => TweetsFilteringLossageLimitPercent.default
+      getMaxCountMult pl er = () => MaxCountMult pl er.default,
+      getMaxFollo dUsers = () => MaxFollo dUsers.default,
+      getReturnEmptyW nOverMaxFollows = () => true,
+      getD rectedAtNarrowast ngV aSearch = () => false,
+      getPostF lter ngBasedOnSearch tadataEnabled = () => true,
+      getBackf llF lteredEntr es = () => false,
+      getT etsF lter ngLossageThresholdPercent = () =>
+        T etsF lter ngLossageThresholdPercent.default,
+      getT etsF lter ngLossageL m Percent = () => T etsF lter ngLossageL m Percent.default
     )
   }
 }
 
-// Note that methods that return parameter value always use () to indicate that
-// side effects may be involved in their invocation.
-// for example, A likely side effect is to cause experiment impression.
-trait ReverseChronTimelineQueryContext {
-  def query: ReverseChronTimelineQuery
+// Note that  thods that return para ter value always use () to  nd cate that
+// s de effects may be  nvolved  n t  r  nvocat on.
+// for example, A l kely s de effect  s to cause exper  nt  mpress on.
+tra  ReverseChronT  l neQueryContext {
+  def query: ReverseChronT  l neQuery
 
-  // Maximum number of tweets to be returned to caller.
-  def maxCount(): Int
+  // Max mum number of t ets to be returned to caller.
+  def maxCount():  nt
 
-  // Multiplier applied to the number of tweets fetched from search expressed as percentage.
-  // It can be used to fetch more than the number tweets requested by a caller (to improve similarity)
+  // Mult pl er appl ed to t  number of t ets fetc d from search expressed as percentage.
+  //   can be used to fetch more than t  number t ets requested by a caller (to  mprove s m lar y)
   // or to fetch less than requested to reduce load.
-  def maxCountMultiplier(): Double
+  def maxCountMult pl er(): Double
 
-  // Maximum number of followed user accounts to use when materializing home timelines.
-  def maxFollowedUsers(): Int
+  // Max mum number of follo d user accounts to use w n mater al z ng ho  t  l nes.
+  def maxFollo dUsers():  nt
 
-  // When true, if the user follows more than maxFollowedUsers, return an empty timeline.
-  def returnEmptyWhenOverMaxFollows(): Boolean
+  // W n true,  f t  user follows more than maxFollo dUsers, return an empty t  l ne.
+  def returnEmptyW nOverMaxFollows(): Boolean
 
-  // When true, appends an operator for directed-at narrowcasting to the home materialization
+  // W n true, appends an operator for d rected-at narrowcast ng to t  ho  mater al zat on
   // search request
-  def directedAtNarrowcastingViaSearch(): Boolean
+  def d rectedAtNarrowcast ngV aSearch(): Boolean
 
-  // When true, requests additional metadata from search and use this metadata for post filtering.
-  def postFilteringBasedOnSearchMetadataEnabled(): Boolean
+  // W n true, requests add  onal  tadata from search and use t   tadata for post f lter ng.
+  def postF lter ngBasedOnSearch tadataEnabled(): Boolean
 
-  // Controls whether to back-fill timeline entries that get filtered out by TweetsPostFilter
-  // during home timeline materialization.
-  def backfillFilteredEntries(): Boolean
+  // Controls w t r to back-f ll t  l ne entr es that get f ltered out by T etsPostF lter
+  // dur ng ho  t  l ne mater al zat on.
+  def backf llF lteredEntr es(): Boolean
 
-  // If back-filling filtered entries is enabled and if number of tweets that get filtered out
-  // exceed this percentage then we will issue a second call to get more tweets.
-  def tweetsFilteringLossageThresholdPercent(): Int
+  //  f back-f ll ng f ltered entr es  s enabled and  f number of t ets that get f ltered out
+  // exceed t  percentage t n   w ll  ssue a second call to get more t ets.
+  def t etsF lter ngLossageThresholdPercent():  nt
 
-  // We need to ensure that the number of tweets requested by the second call
-  // are not unbounded (for example, if everything is filtered out in the first call)
-  // therefore we adjust the actual filtered out percentage to be no greater than
-  // the value below.
-  def tweetsFilteringLossageLimitPercent(): Int
+  //   need to ensure that t  number of t ets requested by t  second call
+  // are not unbounded (for example,  f everyth ng  s f ltered out  n t  f rst call)
+  // t refore   adjust t  actual f ltered out percentage to be no greater than
+  // t  value below.
+  def t etsF lter ngLossageL m Percent():  nt
 
-  // We need to indicate to search if we should use the archive cluster
-  // this option will come from ReverseChronTimelineQueryOptions and
-  // will be `true` by default if the options are not present.
-  def getTweetsFromArchiveIndex(): Boolean =
-    query.options.map(_.getTweetsFromArchiveIndex).getOrElse(true)
+  //   need to  nd cate to search  f   should use t  arch ve cluster
+  // t  opt on w ll co  from ReverseChronT  l neQueryOpt ons and
+  // w ll be `true` by default  f t  opt ons are not present.
+  def getT etsFromArch ve ndex(): Boolean =
+    query.opt ons.map(_.getT etsFromArch ve ndex).getOrElse(true)
 }
 
-class ReverseChronTimelineQueryContextImpl(
-  override val query: ReverseChronTimelineQuery,
-  getMaxCount: () => Int,
-  getMaxCountMultiplier: () => Double,
-  getMaxFollowedUsers: () => Int,
-  getReturnEmptyWhenOverMaxFollows: () => Boolean,
-  getDirectedAtNarrowastingViaSearch: () => Boolean,
-  getPostFilteringBasedOnSearchMetadataEnabled: () => Boolean,
-  getBackfillFilteredEntries: () => Boolean,
-  getTweetsFilteringLossageThresholdPercent: () => Int,
-  getTweetsFilteringLossageLimitPercent: () => Int)
-    extends ReverseChronTimelineQueryContext {
-  override def maxCount(): Int = { getMaxCount() }
-  override def maxCountMultiplier(): Double = { getMaxCountMultiplier() }
-  override def maxFollowedUsers(): Int = { getMaxFollowedUsers() }
-  override def backfillFilteredEntries(): Boolean = { getBackfillFilteredEntries() }
-  override def tweetsFilteringLossageThresholdPercent(): Int = {
-    getTweetsFilteringLossageThresholdPercent()
+class ReverseChronT  l neQueryContext mpl(
+  overr de val query: ReverseChronT  l neQuery,
+  getMaxCount: () =>  nt,
+  getMaxCountMult pl er: () => Double,
+  getMaxFollo dUsers: () =>  nt,
+  getReturnEmptyW nOverMaxFollows: () => Boolean,
+  getD rectedAtNarrowast ngV aSearch: () => Boolean,
+  getPostF lter ngBasedOnSearch tadataEnabled: () => Boolean,
+  getBackf llF lteredEntr es: () => Boolean,
+  getT etsF lter ngLossageThresholdPercent: () =>  nt,
+  getT etsF lter ngLossageL m Percent: () =>  nt)
+    extends ReverseChronT  l neQueryContext {
+  overr de def maxCount():  nt = { getMaxCount() }
+  overr de def maxCountMult pl er(): Double = { getMaxCountMult pl er() }
+  overr de def maxFollo dUsers():  nt = { getMaxFollo dUsers() }
+  overr de def backf llF lteredEntr es(): Boolean = { getBackf llF lteredEntr es() }
+  overr de def t etsF lter ngLossageThresholdPercent():  nt = {
+    getT etsF lter ngLossageThresholdPercent()
   }
-  override def tweetsFilteringLossageLimitPercent(): Int = {
-    getTweetsFilteringLossageLimitPercent()
+  overr de def t etsF lter ngLossageL m Percent():  nt = {
+    getT etsF lter ngLossageL m Percent()
   }
-  override def returnEmptyWhenOverMaxFollows(): Boolean = {
-    getReturnEmptyWhenOverMaxFollows()
+  overr de def returnEmptyW nOverMaxFollows(): Boolean = {
+    getReturnEmptyW nOverMaxFollows()
   }
-  override def directedAtNarrowcastingViaSearch(): Boolean = {
-    getDirectedAtNarrowastingViaSearch()
+  overr de def d rectedAtNarrowcast ngV aSearch(): Boolean = {
+    getD rectedAtNarrowast ngV aSearch()
   }
-  override def postFilteringBasedOnSearchMetadataEnabled(): Boolean = {
-    getPostFilteringBasedOnSearchMetadataEnabled()
+  overr de def postF lter ngBasedOnSearch tadataEnabled(): Boolean = {
+    getPostF lter ngBasedOnSearch tadataEnabled()
   }
 }

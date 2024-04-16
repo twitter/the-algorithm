@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.component_library.candidate_source.earlybird
+package com.tw ter.product_m xer.component_l brary.cand date_s ce.earlyb rd
 
-import com.twitter.search.earlybird.{thriftscala => t}
-import com.twitter.inject.Logging
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.search.earlyb rd.{thr ftscala => t}
+ mport com.tw ter. nject.Logg ng
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.st ch.St ch
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class EarlybirdTweetCandidateSource @Inject() (
-  earlybirdService: t.EarlybirdService.MethodPerEndpoint)
-    extends CandidateSource[t.EarlybirdRequest, t.ThriftSearchResult]
-    with Logging {
+@S ngleton
+class Earlyb rdT etCand dateS ce @ nject() (
+  earlyb rdServ ce: t.Earlyb rdServ ce. thodPerEndpo nt)
+    extends Cand dateS ce[t.Earlyb rdRequest, t.Thr ftSearchResult]
+    w h Logg ng {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("EarlybirdTweets")
+  overr de val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er("Earlyb rdT ets")
 
-  override def apply(request: t.EarlybirdRequest): Stitch[Seq[t.ThriftSearchResult]] = {
-    Stitch
-      .callFuture(earlybirdService.search(request))
-      .map { response: t.EarlybirdResponse =>
+  overr de def apply(request: t.Earlyb rdRequest): St ch[Seq[t.Thr ftSearchResult]] = {
+    St ch
+      .callFuture(earlyb rdServ ce.search(request))
+      .map { response: t.Earlyb rdResponse =>
         response.searchResults.map(_.results).getOrElse(Seq.empty)
       }
   }

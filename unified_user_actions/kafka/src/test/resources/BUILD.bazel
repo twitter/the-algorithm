@@ -1,4 +1,4 @@
-resources(
-    sources = ["*.xml"],
-    tags = ["bazel-compatible"],
+res ces(
+    s ces = ["*.xml"],
+    tags = ["bazel-compat ble"],
 )

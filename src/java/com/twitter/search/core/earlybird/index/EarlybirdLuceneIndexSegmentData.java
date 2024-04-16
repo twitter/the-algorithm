@@ -1,197 +1,197 @@
-package com.twitter.search.core.earlybird.index;
+package com.tw ter.search.core.earlyb rd. ndex;
 
-import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
+ mport java. o. OExcept on;
+ mport java.ut l.concurrent.ConcurrentHashMap;
 
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.store.Directory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .lucene. ndex. ndexWr erConf g;
+ mport org.apac .lucene. ndex.LeafReader;
+ mport org.apac .lucene.store.D rectory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.facets.AbstractFacetCountingArray;
-import com.twitter.search.core.earlybird.facets.FacetCountingArrayWriter;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideFieldIndex;
-import com.twitter.search.core.earlybird.index.column.DocValuesManager;
-import com.twitter.search.core.earlybird.index.column.OptimizedDocValuesManager;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsData;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsFactory;
-import com.twitter.search.core.earlybird.index.inverted.DeletedDocs;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.common.ut l. o.flushable.DataDeser al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.DataSer al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.common.ut l. o.flushable.Flushable;
+ mport com.tw ter.search.core.earlyb rd.facets.AbstractFacetCount ngArray;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetCount ngArrayWr er;
+ mport com.tw ter.search.core.earlyb rd. ndex.column.ColumnStr deF eld ndex;
+ mport com.tw ter.search.core.earlyb rd. ndex.column.DocValuesManager;
+ mport com.tw ter.search.core.earlyb rd. ndex.column.Opt m zedDocValuesManager;
+ mport com.tw ter.search.core.earlyb rd. ndex.extens ons.Earlyb rd ndexExtens onsData;
+ mport com.tw ter.search.core.earlyb rd. ndex.extens ons.Earlyb rd ndexExtens onsFactory;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted.DeletedDocs;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted. nverted ndex;
 
 /**
- * Implements {@link EarlybirdIndexSegmentData} for Lucene-based on-disk Earlybird segments.
+ *  mple nts {@l nk Earlyb rd ndexSeg ntData} for Lucene-based on-d sk Earlyb rd seg nts.
  */
-public final class EarlybirdLuceneIndexSegmentData extends EarlybirdIndexSegmentData {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdLuceneIndexSegmentData.class);
+publ c f nal class Earlyb rdLucene ndexSeg ntData extends Earlyb rd ndexSeg ntData {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rdLucene ndexSeg ntData.class);
 
-  private final Directory directory;
-  private final EarlybirdIndexExtensionsData indexExtension;
+  pr vate f nal D rectory d rectory;
+  pr vate f nal Earlyb rd ndexExtens onsData  ndexExtens on;
 
   /**
-   * Creates a new Lucene-based SegmentData instance from a lucene directory.
+   * Creates a new Lucene-based Seg ntData  nstance from a lucene d rectory.
    */
-  public EarlybirdLuceneIndexSegmentData(
-      Directory directory,
-      int maxSegmentSize,
-      long timeSliceID,
-      Schema schema,
-      DocIDToTweetIDMapper docIdToTweetIdMapper,
-      TimeMapper timeMapper,
-      EarlybirdIndexExtensionsFactory indexExtensionsFactory) {
-    this(
-        directory,
-        maxSegmentSize,
-        timeSliceID,
-        schema,
-        false, // isOptimized
-        0, // smallestDocId
+  publ c Earlyb rdLucene ndexSeg ntData(
+      D rectory d rectory,
+       nt maxSeg ntS ze,
+      long t  Sl ce D,
+      Sc ma sc ma,
+      Doc DToT et DMapper doc dToT et dMapper,
+      T  Mapper t  Mapper,
+      Earlyb rd ndexExtens onsFactory  ndexExtens onsFactory) {
+    t (
+        d rectory,
+        maxSeg ntS ze,
+        t  Sl ce D,
+        sc ma,
+        false, //  sOpt m zed
+        0, // smallestDoc d
         new ConcurrentHashMap<>(),
-        AbstractFacetCountingArray.EMPTY_ARRAY,
-        new OptimizedDocValuesManager(schema, maxSegmentSize),
-        docIdToTweetIdMapper,
-        timeMapper,
-        indexExtensionsFactory == null
-            ? null : indexExtensionsFactory.newLuceneIndexExtensionsData());
+        AbstractFacetCount ngArray.EMPTY_ARRAY,
+        new Opt m zedDocValuesManager(sc ma, maxSeg ntS ze),
+        doc dToT et dMapper,
+        t  Mapper,
+         ndexExtens onsFactory == null
+            ? null :  ndexExtens onsFactory.newLucene ndexExtens onsData());
   }
 
-  public EarlybirdLuceneIndexSegmentData(
-      Directory directory,
-      int maxSegmentSize,
-      long timeSliceID,
-      Schema schema,
-      boolean isOptimized,
-      int smallestDocID,
-      ConcurrentHashMap<String, InvertedIndex> perFieldMap,
-      AbstractFacetCountingArray facetCountingArray,
+  publ c Earlyb rdLucene ndexSeg ntData(
+      D rectory d rectory,
+       nt maxSeg ntS ze,
+      long t  Sl ce D,
+      Sc ma sc ma,
+      boolean  sOpt m zed,
+       nt smallestDoc D,
+      ConcurrentHashMap<Str ng,  nverted ndex> perF eldMap,
+      AbstractFacetCount ngArray facetCount ngArray,
       DocValuesManager docValuesManager,
-      DocIDToTweetIDMapper docIdToTweetIdMapper,
-      TimeMapper timeMapper,
-      EarlybirdIndexExtensionsData indexExtension) {
-    super(maxSegmentSize,
-          timeSliceID,
-          schema,
-          isOptimized,
-          smallestDocID,
-          perFieldMap,
+      Doc DToT et DMapper doc dToT et dMapper,
+      T  Mapper t  Mapper,
+      Earlyb rd ndexExtens onsData  ndexExtens on) {
+    super(maxSeg ntS ze,
+          t  Sl ce D,
+          sc ma,
+           sOpt m zed,
+          smallestDoc D,
+          perF eldMap,
           new ConcurrentHashMap<>(),
-          facetCountingArray,
+          facetCount ngArray,
           docValuesManager,
-          null, // facetLabelProviders
-          null, // facetIDMap
+          null, // facetLabelProv ders
+          null, // facet DMap
           DeletedDocs.NO_DELETES,
-          docIdToTweetIdMapper,
-          timeMapper);
-    this.directory = directory;
-    this.indexExtension = indexExtension;
+          doc dToT et dMapper,
+          t  Mapper);
+    t .d rectory = d rectory;
+    t . ndexExtens on =  ndexExtens on;
   }
 
-  public Directory getLuceneDirectory() {
-    return directory;
+  publ c D rectory getLuceneD rectory() {
+    return d rectory;
   }
 
-  @Override
-  public EarlybirdIndexExtensionsData getIndexExtensionsData() {
-    return indexExtension;
+  @Overr de
+  publ c Earlyb rd ndexExtens onsData get ndexExtens onsData() {
+    return  ndexExtens on;
   }
 
-  @Override
-  public FacetCountingArrayWriter createFacetCountingArrayWriter() {
+  @Overr de
+  publ c FacetCount ngArrayWr er createFacetCount ngArrayWr er() {
     return null;
   }
 
-  @Override
-  protected EarlybirdIndexSegmentAtomicReader doCreateAtomicReader() throws IOException {
-    // EarlybirdSegment creates one single EarlybirdIndexSegmentAtomicReader instance per segment
-    // and caches it, and the cached instance is recreated only when the segment's data changes.
-    // This is why this is a good place to reload all CSFs that should be loaded in RAM. Also, it's
-    // easier and less error-prone to do it here, than trying to track down all places that mutate
-    // the segment data and do it there.
-    LeafReader reader = getLeafReaderFromOptimizedDirectory(directory);
-    for (Schema.FieldInfo fieldInfo : getSchema().getFieldInfos()) {
-      // Load CSF into RAM based on configurations in the schema.
-      if (fieldInfo.getFieldType().getCsfType() != null
-          && fieldInfo.getFieldType().isCsfLoadIntoRam()) {
-        if (reader.getNumericDocValues(fieldInfo.getName()) != null) {
-          ColumnStrideFieldIndex index = getDocValuesManager().addColumnStrideField(
-              fieldInfo.getName(), fieldInfo.getFieldType());
-          index.load(reader, fieldInfo.getName());
+  @Overr de
+  protected Earlyb rd ndexSeg ntAtom cReader doCreateAtom cReader() throws  OExcept on {
+    // Earlyb rdSeg nt creates one s ngle Earlyb rd ndexSeg ntAtom cReader  nstance per seg nt
+    // and cac s  , and t  cac d  nstance  s recreated only w n t  seg nt's data changes.
+    // T   s why t   s a good place to reload all CSFs that should be loaded  n RAM. Also,  's
+    // eas er and less error-prone to do    re, than try ng to track down all places that mutate
+    // t  seg nt data and do   t re.
+    LeafReader reader = getLeafReaderFromOpt m zedD rectory(d rectory);
+    for (Sc ma.F eld nfo f eld nfo : getSc ma().getF eld nfos()) {
+      // Load CSF  nto RAM based on conf gurat ons  n t  sc ma.
+       f (f eld nfo.getF eldType().getCsfType() != null
+          && f eld nfo.getF eldType(). sCsfLoad ntoRam()) {
+         f (reader.getNu r cDocValues(f eld nfo.getNa ()) != null) {
+          ColumnStr deF eld ndex  ndex = getDocValuesManager().addColumnStr deF eld(
+              f eld nfo.getNa (), f eld nfo.getF eldType());
+           ndex.load(reader, f eld nfo.getNa ());
         } else {
-          LOG.warn("Field {} does not have NumericDocValues.", fieldInfo.getName());
+          LOG.warn("F eld {} does not have Nu r cDocValues.", f eld nfo.getNa ());
         }
       }
     }
 
-    return new EarlybirdLuceneIndexSegmentAtomicReader(this, directory);
+    return new Earlyb rdLucene ndexSeg ntAtom cReader(t , d rectory);
   }
 
-  @Override
-  public EarlybirdIndexSegmentWriter createEarlybirdIndexSegmentWriter(
-      IndexWriterConfig indexWriterConfig) throws IOException {
-    return new EarlybirdLuceneIndexSegmentWriter(this, indexWriterConfig);
+  @Overr de
+  publ c Earlyb rd ndexSeg ntWr er createEarlyb rd ndexSeg ntWr er(
+       ndexWr erConf g  ndexWr erConf g) throws  OExcept on {
+    return new Earlyb rdLucene ndexSeg ntWr er(t ,  ndexWr erConf g);
   }
 
-  @Override
-  public EarlybirdIndexSegmentData.AbstractSegmentDataFlushHandler getFlushHandler() {
-    return new OnDiskSegmentDataFlushHandler(this);
+  @Overr de
+  publ c Earlyb rd ndexSeg ntData.AbstractSeg ntDataFlushHandler getFlushHandler() {
+    return new OnD skSeg ntDataFlushHandler(t );
   }
 
-  public static class OnDiskSegmentDataFlushHandler
-      extends AbstractSegmentDataFlushHandler<EarlybirdIndexExtensionsData> {
-    private final Directory directory;
+  publ c stat c class OnD skSeg ntDataFlushHandler
+      extends AbstractSeg ntDataFlushHandler<Earlyb rd ndexExtens onsData> {
+    pr vate f nal D rectory d rectory;
 
-    public OnDiskSegmentDataFlushHandler(EarlybirdLuceneIndexSegmentData objectToFlush) {
+    publ c OnD skSeg ntDataFlushHandler(Earlyb rdLucene ndexSeg ntData objectToFlush) {
       super(objectToFlush);
-      this.directory = objectToFlush.directory;
+      t .d rectory = objectToFlush.d rectory;
     }
 
-    public OnDiskSegmentDataFlushHandler(
-        Schema schema,
-        Directory directory,
-        EarlybirdIndexExtensionsFactory indexExtensionsFactory,
-        Flushable.Handler<? extends DocIDToTweetIDMapper> docIdMapperFlushHandler,
-        Flushable.Handler<? extends TimeMapper> timeMapperFlushHandler) {
-      super(schema, indexExtensionsFactory, docIdMapperFlushHandler, timeMapperFlushHandler);
-      this.directory = directory;
+    publ c OnD skSeg ntDataFlushHandler(
+        Sc ma sc ma,
+        D rectory d rectory,
+        Earlyb rd ndexExtens onsFactory  ndexExtens onsFactory,
+        Flushable.Handler<? extends Doc DToT et DMapper> doc dMapperFlushHandler,
+        Flushable.Handler<? extends T  Mapper> t  MapperFlushHandler) {
+      super(sc ma,  ndexExtens onsFactory, doc dMapperFlushHandler, t  MapperFlushHandler);
+      t .d rectory = d rectory;
     }
 
-    @Override
-    protected EarlybirdIndexExtensionsData newIndexExtension() {
-      return indexExtensionsFactory.newLuceneIndexExtensionsData();
+    @Overr de
+    protected Earlyb rd ndexExtens onsData new ndexExtens on() {
+      return  ndexExtens onsFactory.newLucene ndexExtens onsData();
     }
 
-    @Override
-    protected void flushAdditionalDataStructures(
-        FlushInfo flushInfo, DataSerializer out, EarlybirdIndexSegmentData toFlush) {
+    @Overr de
+    protected vo d flushAdd  onalDataStructures(
+        Flush nfo flush nfo, DataSer al zer out, Earlyb rd ndexSeg ntData toFlush) {
     }
 
-    @Override
-    protected EarlybirdIndexSegmentData constructSegmentData(
-        FlushInfo flushInfo,
-        ConcurrentHashMap<String, InvertedIndex> perFieldMap,
-        int maxSegmentSize,
-        EarlybirdIndexExtensionsData indexExtension,
-        DocIDToTweetIDMapper docIdToTweetIdMapper,
-        TimeMapper timeMapper,
-        DataDeserializer in) {
-      return new EarlybirdLuceneIndexSegmentData(
-          directory,
-          maxSegmentSize,
-          flushInfo.getLongProperty(TIME_SLICE_ID_PROP_NAME),
-          schema,
-          flushInfo.getBooleanProperty(IS_OPTIMIZED_PROP_NAME),
-          flushInfo.getIntProperty(SMALLEST_DOCID_PROP_NAME),
-          perFieldMap,
-          AbstractFacetCountingArray.EMPTY_ARRAY,
-          new OptimizedDocValuesManager(schema, maxSegmentSize),
-          docIdToTweetIdMapper,
-          timeMapper,
-          indexExtension);
+    @Overr de
+    protected Earlyb rd ndexSeg ntData constructSeg ntData(
+        Flush nfo flush nfo,
+        ConcurrentHashMap<Str ng,  nverted ndex> perF eldMap,
+         nt maxSeg ntS ze,
+        Earlyb rd ndexExtens onsData  ndexExtens on,
+        Doc DToT et DMapper doc dToT et dMapper,
+        T  Mapper t  Mapper,
+        DataDeser al zer  n) {
+      return new Earlyb rdLucene ndexSeg ntData(
+          d rectory,
+          maxSeg ntS ze,
+          flush nfo.getLongProperty(T ME_SL CE_ D_PROP_NAME),
+          sc ma,
+          flush nfo.getBooleanProperty( S_OPT M ZED_PROP_NAME),
+          flush nfo.get ntProperty(SMALLEST_DOC D_PROP_NAME),
+          perF eldMap,
+          AbstractFacetCount ngArray.EMPTY_ARRAY,
+          new Opt m zedDocValuesManager(sc ma, maxSeg ntS ze),
+          doc dToT et dMapper,
+          t  Mapper,
+           ndexExtens on);
     }
   }
 }

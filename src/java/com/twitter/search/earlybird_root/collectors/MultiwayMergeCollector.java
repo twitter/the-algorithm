@@ -1,82 +1,82 @@
-package com.twitter.search.earlybird_root.collectors;
+package com.tw ter.search.earlyb rd_root.collectors;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+ mport java.ut l.Collect ons;
+ mport java.ut l.Comparator;
+ mport java.ut l.L st;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.L sts;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
 
 /**
- * Generic MultiwayMergeCollector class for doing k-way merge of earlybird responses
- * that takes a comparator and returns a list of results sorted by the comparator.
+ * Gener c Mult way rgeCollector class for do ng k-way  rge of earlyb rd responses
+ * that takes a comparator and returns a l st of results sorted by t  comparator.
  */
-public abstract class MultiwayMergeCollector<T> {
-  protected static final Logger LOG = LoggerFactory.getLogger(MultiwayMergeCollector.class);
+publ c abstract class Mult way rgeCollector<T> {
+  protected stat c f nal Logger LOG = LoggerFactory.getLogger(Mult way rgeCollector.class);
 
-  private final Comparator<T> resultComparator;
-  private final int numResponsesToMerge;
-  private final List<T> results = Lists.newArrayList();
-  private int numResponsesAdded = 0;
+  pr vate f nal Comparator<T> resultComparator;
+  pr vate f nal  nt numResponsesTo rge;
+  pr vate f nal L st<T> results = L sts.newArrayL st();
+  pr vate  nt numResponsesAdded = 0;
 
   /**
-   * Constructor that does multi way merge and takes in a custom predicate search result filter.
+   * Constructor that does mult  way  rge and takes  n a custom pred cate search result f lter.
    */
-  public MultiwayMergeCollector(int numResponses,
+  publ c Mult way rgeCollector( nt numResponses,
                                 Comparator<T> comparator) {
-    Preconditions.checkNotNull(comparator);
-    this.resultComparator = comparator;
-    this.numResponsesToMerge = numResponses;
+    Precond  ons.c ckNotNull(comparator);
+    t .resultComparator = comparator;
+    t .numResponsesTo rge = numResponses;
   }
 
   /**
-   * Add a single response from one partition, updates stats.
+   * Add a s ngle response from one part  on, updates stats.
    *
-   * @param response response from one partition
+   * @param response response from one part  on
    */
-  public final void addResponse(EarlybirdResponse response) {
-    // On prod, does it ever happen we receive more responses than numPartitions ?
-    Preconditions.checkArgument(numResponsesAdded++ < numResponsesToMerge,
-        String.format("Attempting to merge more than %d responses", numResponsesToMerge));
-    if (!isResponseValid(response)) {
+  publ c f nal vo d addResponse(Earlyb rdResponse response) {
+    // On prod, does   ever happen   rece ve more responses than numPart  ons ?
+    Precond  ons.c ckArgu nt(numResponsesAdded++ < numResponsesTo rge,
+        Str ng.format("Attempt ng to  rge more than %d responses", numResponsesTo rge));
+     f (! sResponseVal d(response)) {
       return;
     }
     collectStats(response);
-    List<T> resultsFromResponse = collectResults(response);
-    if (resultsFromResponse != null && resultsFromResponse.size() > 0) {
+    L st<T> resultsFromResponse = collectResults(response);
+     f (resultsFromResponse != null && resultsFromResponse.s ze() > 0) {
       results.addAll(resultsFromResponse);
     }
   }
 
   /**
-   * Parse the EarlybirdResponse and retrieve list of results to be appended.
+   * Parse t  Earlyb rdResponse and retr eve l st of results to be appended.
    *
-   * @param response earlybird response from where results are extracted
-   * @return  resultsList to be appended
+   * @param response earlyb rd response from w re results are extracted
+   * @return  resultsL st to be appended
    */
-  protected abstract List<T> collectResults(EarlybirdResponse response);
+  protected abstract L st<T> collectResults(Earlyb rdResponse response);
 
   /**
-   * It is recommended that sub-class overrides this function to add custom logic to
-   * collect more stat and call this base function.
+   *    s recom nded that sub-class overr des t  funct on to add custom log c to
+   * collect more stat and call t  base funct on.
    */
-  protected void collectStats(EarlybirdResponse response) {
+  protected vo d collectStats(Earlyb rdResponse response) {
   }
 
   /**
-   * Get full list of results, after addResponse calls have been invoked.
+   * Get full l st of results, after addResponse calls have been  nvoked.
    *
-   * @return list of results extracted from all EarlybirdResponses that have been collected so far
+   * @return l st of results extracted from all Earlyb rdResponses that have been collected so far
    */
-  protected final List<T> getResultsList() {
-    Collections.sort(results, resultComparator);
+  protected f nal L st<T> getResultsL st() {
+    Collect ons.sort(results, resultComparator);
     return results;
   }
 
-  protected abstract boolean isResponseValid(EarlybirdResponse response);
+  protected abstract boolean  sResponseVal d(Earlyb rdResponse response);
 }

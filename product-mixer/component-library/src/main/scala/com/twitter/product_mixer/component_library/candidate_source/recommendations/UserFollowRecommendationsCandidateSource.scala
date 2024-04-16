@@ -1,41 +1,41 @@
-package com.twitter.product_mixer.component_library.candidate_source.recommendations
+package com.tw ter.product_m xer.component_l brary.cand date_s ce.recom ndat ons
 
-import com.twitter.follow_recommendations.{thriftscala => fr}
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyViewFetcherSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.onboarding.follow_recommendations_service.GetRecommendationsClientColumn
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.{thr ftscala => fr}
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.strato.StratoKeyV ewFetc rS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.strato.generated.cl ent.onboard ng.follow_recom ndat ons_serv ce.GetRecom ndat onsCl entColumn
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * Returns a list of FollowRecommendations as [[fr.UserRecommendation]]s fetched from Strato
+ * Returns a l st of FollowRecom ndat ons as [[fr.UserRecom ndat on]]s fetc d from Strato
  */
-@Singleton
-class UserFollowRecommendationsCandidateSource @Inject() (
-  getRecommendationsClientColumn: GetRecommendationsClientColumn)
-    extends StratoKeyViewFetcherSource[
-      fr.RecommendationRequest,
-      Unit,
-      fr.RecommendationResponse,
-      fr.UserRecommendation
+@S ngleton
+class UserFollowRecom ndat onsCand dateS ce @ nject() (
+  getRecom ndat onsCl entColumn: GetRecom ndat onsCl entColumn)
+    extends StratoKeyV ewFetc rS ce[
+      fr.Recom ndat onRequest,
+      Un ,
+      fr.Recom ndat onResponse,
+      fr.UserRecom ndat on
     ] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    "FollowRecommendationsService")
+  overr de val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er(
+    "FollowRecom ndat onsServ ce")
 
-  override val fetcher: Fetcher[fr.RecommendationRequest, Unit, fr.RecommendationResponse] =
-    getRecommendationsClientColumn.fetcher
+  overr de val fetc r: Fetc r[fr.Recom ndat onRequest, Un , fr.Recom ndat onResponse] =
+    getRecom ndat onsCl entColumn.fetc r
 
-  override def stratoResultTransformer(
-    stratoKey: fr.RecommendationRequest,
-    stratoResult: fr.RecommendationResponse
-  ): Seq[fr.UserRecommendation] = {
-    stratoResult.recommendations.map {
-      case fr.Recommendation.User(userRec: fr.UserRecommendation) =>
+  overr de def stratoResultTransfor r(
+    stratoKey: fr.Recom ndat onRequest,
+    stratoResult: fr.Recom ndat onResponse
+  ): Seq[fr.UserRecom ndat on] = {
+    stratoResult.recom ndat ons.map {
+      case fr.Recom ndat on.User(userRec: fr.UserRecom ndat on) =>
         userRec
       case _ =>
-        throw new Exception("Invalid recommendation type returned from FRS")
+        throw new Except on(" nval d recom ndat on type returned from FRS")
     }
   }
 }

@@ -1,164 +1,164 @@
-package com.twitter.simclusters_v2.hdfs_sources
+package com.tw ter.s mclusters_v2.hdfs_s ces
 
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.bijection.Bufferable
-import com.twitter.bijection.Injection
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding_internal.source.lzo_scrooge.DailySuffixMostRecentLzoScrooge
-import com.twitter.scalding_internal.source.lzo_scrooge.FixedPathLzoScrooge
-import com.twitter.scalding_internal.source.lzo_scrooge.HourlySuffixMostRecentLzoScrooge
-import com.twitter.simclusters_v2.thriftscala._
+ mport com.tw ter.b ject on.scrooge.B naryScalaCodec
+ mport com.tw ter.b ject on.scrooge.CompactScalaCodec
+ mport com.tw ter.b ject on.Bufferable
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter. rm .cand date.thr ftscala.Cand dates
+ mport com.tw ter.scald ng.DateRange
+ mport com.tw ter.scald ng.commons.s ce.Vers onedKeyValS ce
+ mport com.tw ter.scald ng_ nternal.s ce.lzo_scrooge.Da lySuff xMostRecentLzoScrooge
+ mport com.tw ter.scald ng_ nternal.s ce.lzo_scrooge.F xedPathLzoScrooge
+ mport com.tw ter.scald ng_ nternal.s ce.lzo_scrooge.H lySuff xMostRecentLzoScrooge
+ mport com.tw ter.s mclusters_v2.thr ftscala._
 
-case class EdgeWithDecayedWtsFixedPathSource(path: String)
-    extends FixedPathLzoScrooge[EdgeWithDecayedWeights](path, EdgeWithDecayedWeights)
+case class EdgeW hDecayedWtsF xedPathS ce(path: Str ng)
+    extends F xedPathLzoScrooge[EdgeW hDecayed  ghts](path, EdgeW hDecayed  ghts)
 
-case class UserAndNeighborsFixedPathSource(path: String)
-    extends FixedPathLzoScrooge[UserAndNeighbors](path, UserAndNeighbors)
+case class UserAndNe ghborsF xedPathS ce(path: Str ng)
+    extends F xedPathLzoScrooge[UserAndNe ghbors](path, UserAndNe ghbors)
 
-case class NormsAndCountsFixedPathSource(path: String)
-    extends FixedPathLzoScrooge[NormsAndCounts](path, NormsAndCounts)
+case class NormsAndCountsF xedPathS ce(path: Str ng)
+    extends F xedPathLzoScrooge[NormsAndCounts](path, NormsAndCounts)
 
-case class UserToInterestedInClustersFixedPathSource(path: String)
-    extends FixedPathLzoScrooge[UserToInterestedInClusters](path, UserToInterestedInClusters)
+case class UserTo nterested nClustersF xedPathS ce(path: Str ng)
+    extends F xedPathLzoScrooge[UserTo nterested nClusters](path, UserTo nterested nClusters)
 
-case class TimelineDataExtractorFixedPathSource(path: String)
-    extends FixedPathLzoScrooge[ReferenceTweets](path, ReferenceTweets)
+case class T  l neDataExtractorF xedPathS ce(path: Str ng)
+    extends F xedPathLzoScrooge[ReferenceT ets](path, ReferenceT ets)
 
-case class TweetClusterScoresHourlySuffixSource(path: String, override val dateRange: DateRange)
-    extends HourlySuffixMostRecentLzoScrooge[TweetAndClusterScores](path, dateRange)
+case class T etClusterScoresH lySuff xS ce(path: Str ng, overr de val dateRange: DateRange)
+    extends H lySuff xMostRecentLzoScrooge[T etAndClusterScores](path, dateRange)
 
-case class TweetTopKClustersHourlySuffixSource(path: String, override val dateRange: DateRange)
-    extends HourlySuffixMostRecentLzoScrooge[TweetTopKClustersWithScores](
+case class T etTopKClustersH lySuff xS ce(path: Str ng, overr de val dateRange: DateRange)
+    extends H lySuff xMostRecentLzoScrooge[T etTopKClustersW hScores](
       path,
       dateRange
     )
 
-case class ClusterTopKTweetsHourlySuffixSource(path: String, override val dateRange: DateRange)
-    extends HourlySuffixMostRecentLzoScrooge[ClusterTopKTweetsWithScores](
+case class ClusterTopKT etsH lySuff xS ce(path: Str ng, overr de val dateRange: DateRange)
+    extends H lySuff xMostRecentLzoScrooge[ClusterTopKT etsW hScores](
       path,
       dateRange
     )
 
-case class TweetSimilarityUnhydratedPairsSource(path: String, override val dateRange: DateRange)
-    extends DailySuffixMostRecentLzoScrooge[LabelledTweetPairs](
+case class T etS m lar yUnhydratedPa rsS ce(path: Str ng, overr de val dateRange: DateRange)
+    extends Da lySuff xMostRecentLzoScrooge[LabelledT etPa rs](
       path,
       dateRange
     )
 
-case class WTFCandidatesSource(path: String)
-    extends FixedPathLzoScrooge[Candidates](path, Candidates)
+case class WTFCand datesS ce(path: Str ng)
+    extends F xedPathLzoScrooge[Cand dates](path, Cand dates)
 
-case class EmbeddingsLiteSource(path: String)
-    extends FixedPathLzoScrooge[EmbeddingsLite](path, EmbeddingsLite)
+case class Embedd ngsL eS ce(path: Str ng)
+    extends F xedPathLzoScrooge[Embedd ngsL e](path, Embedd ngsL e)
 
-object AdhocKeyValSources {
-  def interestedInSource(path: String): VersionedKeyValSource[Long, ClustersUserIsInterestedIn] = {
-    implicit val keyInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
-    implicit val valInject: Injection[ClustersUserIsInterestedIn, Array[Byte]] =
-      CompactScalaCodec(ClustersUserIsInterestedIn)
-    VersionedKeyValSource[Long, ClustersUserIsInterestedIn](path)
+object AdhocKeyValS ces {
+  def  nterested nS ce(path: Str ng): Vers onedKeyValS ce[Long, ClustersUser s nterested n] = {
+     mpl c  val key nject:  nject on[Long, Array[Byte]] =  nject on.long2B gEnd an
+     mpl c  val val nject:  nject on[ClustersUser s nterested n, Array[Byte]] =
+      CompactScalaCodec(ClustersUser s nterested n)
+    Vers onedKeyValS ce[Long, ClustersUser s nterested n](path)
   }
 
-  def clusterDetailsSource(path: String): VersionedKeyValSource[(String, Int), ClusterDetails] = {
-    implicit val keyInject: Injection[(String, Int), Array[Byte]] =
-      Bufferable.injectionOf[(String, Int)]
-    implicit val valInject: Injection[ClusterDetails, Array[Byte]] =
-      CompactScalaCodec(ClusterDetails)
-    VersionedKeyValSource[(String, Int), ClusterDetails](path)
+  def clusterDeta lsS ce(path: Str ng): Vers onedKeyValS ce[(Str ng,  nt), ClusterDeta ls] = {
+     mpl c  val key nject:  nject on[(Str ng,  nt), Array[Byte]] =
+      Bufferable. nject onOf[(Str ng,  nt)]
+     mpl c  val val nject:  nject on[ClusterDeta ls, Array[Byte]] =
+      CompactScalaCodec(ClusterDeta ls)
+    Vers onedKeyValS ce[(Str ng,  nt), ClusterDeta ls](path)
   }
 
-  def bipartiteQualitySource(
-    path: String
-  ): VersionedKeyValSource[(String, Int), BipartiteClusterQuality] = {
-    implicit val keyInject: Injection[(String, Int), Array[Byte]] =
-      Bufferable.injectionOf[(String, Int)]
-    implicit val valInject: Injection[BipartiteClusterQuality, Array[Byte]] =
-      CompactScalaCodec(BipartiteClusterQuality)
-    VersionedKeyValSource[(String, Int), BipartiteClusterQuality](path)
+  def b part eQual yS ce(
+    path: Str ng
+  ): Vers onedKeyValS ce[(Str ng,  nt), B part eClusterQual y] = {
+     mpl c  val key nject:  nject on[(Str ng,  nt), Array[Byte]] =
+      Bufferable. nject onOf[(Str ng,  nt)]
+     mpl c  val val nject:  nject on[B part eClusterQual y, Array[Byte]] =
+      CompactScalaCodec(B part eClusterQual y)
+    Vers onedKeyValS ce[(Str ng,  nt), B part eClusterQual y](path)
   }
 
-  def entityToClustersSource(
-    path: String
-  ): VersionedKeyValSource[SimClustersEmbeddingId, SimClustersEmbedding] = {
-    implicit val keyInject: Injection[SimClustersEmbeddingId, Array[Byte]] =
-      BinaryScalaCodec(SimClustersEmbeddingId)
-    implicit val valInject: Injection[SimClustersEmbedding, Array[Byte]] =
-      BinaryScalaCodec(SimClustersEmbedding)
-    VersionedKeyValSource[SimClustersEmbeddingId, SimClustersEmbedding](path)
+  def ent yToClustersS ce(
+    path: Str ng
+  ): Vers onedKeyValS ce[S mClustersEmbedd ng d, S mClustersEmbedd ng] = {
+     mpl c  val key nject:  nject on[S mClustersEmbedd ng d, Array[Byte]] =
+      B naryScalaCodec(S mClustersEmbedd ng d)
+     mpl c  val val nject:  nject on[S mClustersEmbedd ng, Array[Byte]] =
+      B naryScalaCodec(S mClustersEmbedd ng)
+    Vers onedKeyValS ce[S mClustersEmbedd ng d, S mClustersEmbedd ng](path)
   }
 
-  def clusterToEntitiesSource(
-    path: String
-  ): VersionedKeyValSource[SimClustersEmbeddingId, InternalIdEmbedding] = {
-    implicit val keyInject: Injection[SimClustersEmbeddingId, Array[Byte]] = BinaryScalaCodec(
-      SimClustersEmbeddingId)
-    implicit val valInject: Injection[InternalIdEmbedding, Array[Byte]] =
-      BinaryScalaCodec(InternalIdEmbedding)
-    VersionedKeyValSource[SimClustersEmbeddingId, InternalIdEmbedding](path)
+  def clusterToEnt  esS ce(
+    path: Str ng
+  ): Vers onedKeyValS ce[S mClustersEmbedd ng d,  nternal dEmbedd ng] = {
+     mpl c  val key nject:  nject on[S mClustersEmbedd ng d, Array[Byte]] = B naryScalaCodec(
+      S mClustersEmbedd ng d)
+     mpl c  val val nject:  nject on[ nternal dEmbedd ng, Array[Byte]] =
+      B naryScalaCodec( nternal dEmbedd ng)
+    Vers onedKeyValS ce[S mClustersEmbedd ng d,  nternal dEmbedd ng](path)
   }
 
-  // For storing producer-simclusters embeddings
-  def topProducerToClusterEmbeddingsSource(
-    path: String
-  ): VersionedKeyValSource[Long, TopSimClustersWithScore] = {
-    implicit val keyInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
-    implicit val valInject: Injection[TopSimClustersWithScore, Array[Byte]] =
-      CompactScalaCodec(TopSimClustersWithScore)
-    VersionedKeyValSource[Long, TopSimClustersWithScore](path)
+  // For stor ng producer-s mclusters embedd ngs
+  def topProducerToClusterEmbedd ngsS ce(
+    path: Str ng
+  ): Vers onedKeyValS ce[Long, TopS mClustersW hScore] = {
+     mpl c  val key nject:  nject on[Long, Array[Byte]] =  nject on.long2B gEnd an
+     mpl c  val val nject:  nject on[TopS mClustersW hScore, Array[Byte]] =
+      CompactScalaCodec(TopS mClustersW hScore)
+    Vers onedKeyValS ce[Long, TopS mClustersW hScore](path)
   }
 
-  // For storing producer-simclusters embeddings
-  def topClusterEmbeddingsToProducerSource(
-    path: String
-  ): VersionedKeyValSource[PersistedFullClusterId, TopProducersWithScore] = {
-    implicit val keyInject: Injection[PersistedFullClusterId, Array[Byte]] =
-      CompactScalaCodec(PersistedFullClusterId)
-    implicit val valInject: Injection[TopProducersWithScore, Array[Byte]] =
-      CompactScalaCodec(TopProducersWithScore)
-    VersionedKeyValSource[PersistedFullClusterId, TopProducersWithScore](path)
+  // For stor ng producer-s mclusters embedd ngs
+  def topClusterEmbedd ngsToProducerS ce(
+    path: Str ng
+  ): Vers onedKeyValS ce[Pers stedFullCluster d, TopProducersW hScore] = {
+     mpl c  val key nject:  nject on[Pers stedFullCluster d, Array[Byte]] =
+      CompactScalaCodec(Pers stedFullCluster d)
+     mpl c  val val nject:  nject on[TopProducersW hScore, Array[Byte]] =
+      CompactScalaCodec(TopProducersW hScore)
+    Vers onedKeyValS ce[Pers stedFullCluster d, TopProducersW hScore](path)
   }
 
-  def userToInferredEntitiesSource(
-    path: String
-  ): VersionedKeyValSource[Long, SimClustersInferredEntities] = {
-    implicit val keyInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
-    implicit val valInject: Injection[SimClustersInferredEntities, Array[Byte]] =
-      CompactScalaCodec(SimClustersInferredEntities)
-    VersionedKeyValSource[Long, SimClustersInferredEntities](path)
+  def userTo nferredEnt  esS ce(
+    path: Str ng
+  ): Vers onedKeyValS ce[Long, S mClusters nferredEnt  es] = {
+     mpl c  val key nject:  nject on[Long, Array[Byte]] =  nject on.long2B gEnd an
+     mpl c  val val nject:  nject on[S mClusters nferredEnt  es, Array[Byte]] =
+      CompactScalaCodec(S mClusters nferredEnt  es)
+    Vers onedKeyValS ce[Long, S mClusters nferredEnt  es](path)
   }
 
-  def knownForAdhocSource(path: String): VersionedKeyValSource[Long, ClustersUserIsKnownFor] = {
-    implicit val keyInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
-    implicit val valInject: Injection[ClustersUserIsKnownFor, Array[Byte]] =
-      CompactScalaCodec(ClustersUserIsKnownFor)
-    VersionedKeyValSource[Long, ClustersUserIsKnownFor](path)
+  def knownForAdhocS ce(path: Str ng): Vers onedKeyValS ce[Long, ClustersUser sKnownFor] = {
+     mpl c  val key nject:  nject on[Long, Array[Byte]] =  nject on.long2B gEnd an
+     mpl c  val val nject:  nject on[ClustersUser sKnownFor, Array[Byte]] =
+      CompactScalaCodec(ClustersUser sKnownFor)
+    Vers onedKeyValS ce[Long, ClustersUser sKnownFor](path)
   }
 
-  def knownForSBFResultsDevelSource(
-    path: String
-  ): VersionedKeyValSource[Long, Array[(Int, Float)]] = {
-    implicit val keyInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
-    implicit val valInject: Injection[Array[(Int, Float)], Array[Byte]] =
-      Bufferable.injectionOf[Array[(Int, Float)]]
-    VersionedKeyValSource[Long, Array[(Int, Float)]](path)
+  def knownForSBFResultsDevelS ce(
+    path: Str ng
+  ): Vers onedKeyValS ce[Long, Array[( nt, Float)]] = {
+     mpl c  val key nject:  nject on[Long, Array[Byte]] =  nject on.long2B gEnd an
+     mpl c  val val nject:  nject on[Array[( nt, Float)], Array[Byte]] =
+      Bufferable. nject onOf[Array[( nt, Float)]]
+    Vers onedKeyValS ce[Long, Array[( nt, Float)]](path)
   }
 
-  // injection to store adjlist in the mapped indices space for users
-  def intermediateSBFResultsDevelSource(
-    path: String
-  ): VersionedKeyValSource[Int, List[(Int, Float)]] = {
-    implicit val keyInject: Injection[Int, Array[Byte]] = Injection.int2BigEndian
-    implicit val valInject: Injection[List[(Int, Float)], Array[Byte]] =
-      Bufferable.injectionOf[List[(Int, Float)]]
-    VersionedKeyValSource[Int, List[(Int, Float)]](path)
+  //  nject on to store adjl st  n t  mapped  nd ces space for users
+  def  nter d ateSBFResultsDevelS ce(
+    path: Str ng
+  ): Vers onedKeyValS ce[ nt, L st[( nt, Float)]] = {
+     mpl c  val key nject:  nject on[ nt, Array[Byte]] =  nject on. nt2B gEnd an
+     mpl c  val val nject:  nject on[L st[( nt, Float)], Array[Byte]] =
+      Bufferable. nject onOf[L st[( nt, Float)]]
+    Vers onedKeyValS ce[ nt, L st[( nt, Float)]](path)
   }
 
-  def mappedIndicesDevelSource(path: String): VersionedKeyValSource[Int, Long] = {
-    implicit val keyInject: Injection[Int, Array[Byte]] = Injection.int2BigEndian
-    implicit val valInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
-    VersionedKeyValSource[Int, Long](path)
+  def mapped nd cesDevelS ce(path: Str ng): Vers onedKeyValS ce[ nt, Long] = {
+     mpl c  val key nject:  nject on[ nt, Array[Byte]] =  nject on. nt2B gEnd an
+     mpl c  val val nject:  nject on[Long, Array[Byte]] =  nject on.long2B gEnd an
+    Vers onedKeyValS ce[ nt, Long](path)
   }
 }

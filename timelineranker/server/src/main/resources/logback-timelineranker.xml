@@ -1,124 +1,124 @@
-<configuration>
-  <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
-  <property name="async_queue_size" value="${queue.size:-50000}"/>
-  <property name="async_max_flush_time" value="${max.flush.time:-0}"/>
-  <property name="SERVICE_OUTPUT" value="${log.service.output:-server.log}"/>
-  <property name="DEBUG_TRANSCRIPTS_OUTPUT"
-            value="${log.debug_transcripts.output:-debug_transcripts.log}"/>
-  <property name="DEFAULT_SERVICE_PATTERN"
+<conf gurat on>
+  <shutdownHook class="ch.qos.logback.core.hook.Delay ngShutdownHook"/>
+  <property na ="async_queue_s ze" value="${queue.s ze:-50000}"/>
+  <property na ="async_max_flush_t  " value="${max.flush.t  :-0}"/>
+  <property na ="SERV CE_OUTPUT" value="${log.serv ce.output:-server.log}"/>
+  <property na ="DEBUG_TRANSCR PTS_OUTPUT"
+            value="${log.debug_transcr pts.output:-debug_transcr pts.log}"/>
+  <property na ="DEFAULT_SERV CE_PATTERN"
             value="%5p [%d{yyyyMMdd-HH:mm:ss.SSS}] %logger{0}: %m%n"/>
-  <!-- JUL/JDK14 to Logback bridge -->
-  <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+  <!-- JUL/JDK14 to Logback br dge -->
+  <contextL stener class="ch.qos.logback.class c.jul.LevelChangePropagator">
     <resetJUL>true</resetJUL>
-  </contextListener>
+  </contextL stener>
 
-  <!-- Service Log -->
-  <appender name="SERVICE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>${SERVICE_OUTPUT}</file>
-    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-      <!-- daily rollover -->
-      <fileNamePattern>${SERVICE_OUTPUT}.%d.%i.gz</fileNamePattern>
-      <maxFileSize>500MB</maxFileSize>
-      <!-- keep 21 days' worth of history -->
-      <maxHistory>21</maxHistory>
-      <cleanHistoryOnStart>true</cleanHistoryOnStart>
-    </rollingPolicy>
+  <!-- Serv ce Log -->
+  <appender na ="SERV CE" class="ch.qos.logback.core.roll ng.Roll ngF leAppender">
+    <f le>${SERV CE_OUTPUT}</f le>
+    <roll ngPol cy class="ch.qos.logback.core.roll ng.S zeAndT  BasedRoll ngPol cy">
+      <!-- da ly rollover -->
+      <f leNa Pattern>${SERV CE_OUTPUT}.%d.% .gz</f leNa Pattern>
+      <maxF leS ze>500MB</maxF leS ze>
+      <!-- keep 21 days' worth of  tory -->
+      <max tory>21</max tory>
+      <clean toryOnStart>true</clean toryOnStart>
+    </roll ngPol cy>
     <encoder>
-      <pattern>${DEFAULT_SERVICE_PATTERN}</pattern>
+      <pattern>${DEFAULT_SERV CE_PATTERN}</pattern>
     </encoder>
   </appender>
 
-  <!-- debug transcripts -->
-  <appender name="DEBUG-TRANSCRIPTS" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>${DEBUG_TRANSCRIPTS_OUTPUT}</file>
-    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-      <!-- daily rollover -->
-      <fileNamePattern>${DEBUG_TRANSCRIPTS_OUTPUT}.%d.%i.gz</fileNamePattern>
-      <maxFileSize>500MB</maxFileSize>
-      <!-- keep 21 days' worth of history -->
-      <maxHistory>21</maxHistory>
-      <cleanHistoryOnStart>true</cleanHistoryOnStart>
-    </rollingPolicy>
+  <!-- debug transcr pts -->
+  <appender na ="DEBUG-TRANSCR PTS" class="ch.qos.logback.core.roll ng.Roll ngF leAppender">
+    <f le>${DEBUG_TRANSCR PTS_OUTPUT}</f le>
+    <roll ngPol cy class="ch.qos.logback.core.roll ng.S zeAndT  BasedRoll ngPol cy">
+      <!-- da ly rollover -->
+      <f leNa Pattern>${DEBUG_TRANSCR PTS_OUTPUT}.%d.% .gz</f leNa Pattern>
+      <maxF leS ze>500MB</maxF leS ze>
+      <!-- keep 21 days' worth of  tory -->
+      <max tory>21</max tory>
+      <clean toryOnStart>true</clean toryOnStart>
+    </roll ngPol cy>
     <encoder>
-      <pattern>${DEFAULT_SERVICE_PATTERN}</pattern>
+      <pattern>${DEFAULT_SERV CE_PATTERN}</pattern>
     </encoder>
   </appender>
 
   <!-- LogLens/splunk -->
-  <appender name="LOGLENS" class="com.twitter.loglens.logback.LoglensAppender">
-    <mdcAdditionalContext>true</mdcAdditionalContext>
+  <appender na ="LOGLENS" class="com.tw ter.loglens.logback.LoglensAppender">
+    <mdcAdd  onalContext>true</mdcAdd  onalContext>
     <category>loglens</category>
-    <index>${log.lens.index:-timelineranker}</index>
+    < ndex>${log.lens. ndex:-t  l neranker}</ ndex>
     <tag>${log.lens.tag}</tag>
     <encoder>
       <pattern>%msg%n</pattern>
     </encoder>
-    <filter class="com.twitter.strato.logging.logback.RegexFilter">
-      <forLogger>manhattan-client</forLogger>
-      <excludeRegex>.*InvalidRequest.*</excludeRegex>
-    </filter>
+    <f lter class="com.tw ter.strato.logg ng.logback.RegexF lter">
+      <forLogger>manhattan-cl ent</forLogger>
+      <excludeRegex>.* nval dRequest.*</excludeRegex>
+    </f lter>
   </appender>
 
   <!-- ===================================================== -->
-  <!-- Primary Async Appenders -->
+  <!-- Pr mary Async Appenders -->
   <!-- ===================================================== -->
 
-  <appender name="ASYNC-SERVICE" class="ch.qos.logback.classic.AsyncAppender">
-    <queueSize>${async_queue_size}</queueSize>
-    <maxFlushTime>${async_max_flush_time}</maxFlushTime>
-    <appender-ref ref="SERVICE"/>
+  <appender na ="ASYNC-SERV CE" class="ch.qos.logback.class c.AsyncAppender">
+    <queueS ze>${async_queue_s ze}</queueS ze>
+    <maxFlushT  >${async_max_flush_t  }</maxFlushT  >
+    <appender-ref ref="SERV CE"/>
   </appender>
 
-  <appender name="ASYNC-DEBUG-TRANSCRIPTS" class="ch.qos.logback.classic.AsyncAppender">
-    <queueSize>${async_queue_size}</queueSize>
-    <maxFlushTime>${async_max_flush_time}</maxFlushTime>
-    <appender-ref ref="DEBUG-TRANSCRIPTS"/>
+  <appender na ="ASYNC-DEBUG-TRANSCR PTS" class="ch.qos.logback.class c.AsyncAppender">
+    <queueS ze>${async_queue_s ze}</queueS ze>
+    <maxFlushT  >${async_max_flush_t  }</maxFlushT  >
+    <appender-ref ref="DEBUG-TRANSCR PTS"/>
   </appender>
 
-  <appender name="ASYNC-LOGLENS" class="ch.qos.logback.classic.AsyncAppender">
-    <queueSize>${async_queue_size}</queueSize>
-    <maxFlushTime>${async_max_flush_time}</maxFlushTime>
+  <appender na ="ASYNC-LOGLENS" class="ch.qos.logback.class c.AsyncAppender">
+    <queueS ze>${async_queue_s ze}</queueS ze>
+    <maxFlushT  >${async_max_flush_t  }</maxFlushT  >
     <appender-ref ref="LOGLENS"/>
   </appender>
 
   <!-- ===================================================== -->
-  <!-- Package Config -->
+  <!-- Package Conf g -->
   <!-- ===================================================== -->
 
-  <!-- Per-Package Config -->
-  <logger name="OptimisticLockingCache" level="off"/>
-  <logger name="ZkSession" level="info"/>
-  <logger name="com.twitter" level="info"/>
-  <logger name="com.twitter.decider.StoreDecider" level="warn"/>
-  <logger name="com.twitter.distributedlog.client" level="warn"/>
-  <logger name="com.twitter.finagle.liveness" level="warn"/>
-  <logger name="com.twitter.finagle.mtls.authorization.config.AccessControlListConfiguration" level="warn"/>
-  <logger name="com.twitter.finagle.mux" level="warn"/>
-  <logger name="com.twitter.finagle.serverset2" level="warn"/>
-  <logger name="com.twitter.finatra.kafka.common.kerberoshelpers" level="warn"/>
-  <logger name="com.twitter.finatra.kafka.utils.BootstrapServerUtils" level="warn"/>
-  <logger name="com.twitter.logging.ScribeHandler" level="warn"/>
-  <logger name="com.twitter.server.coordinate" level="error"/>
-  <logger name="com.twitter.wilyns" level="warn"/>
-  <logger name="com.twitter.zookeeper.client" level="info"/>
-  <logger name="com.twitter.zookeeper.client.internal" level="warn"/>
-  <logger name="manhattan-client" level="warn"/>
-  <logger name="org.apache.kafka.clients.NetworkClient" level="error"/>
-  <logger name="org.apache.kafka.clients.consumer.internals" level="error"/>
-  <logger name="org.apache.kafka.clients.producer.internals" level="error"/>
-  <logger name="org.apache.kafka.common.network" level="warn"/>
-  <logger name="org.apache.zookeeper" level="error"/>
-  <logger name="org.apache.zookeeper.ClientCnxn" level="warn"/>
+  <!-- Per-Package Conf g -->
+  <logger na ="Opt m st cLock ngCac " level="off"/>
+  <logger na ="ZkSess on" level=" nfo"/>
+  <logger na ="com.tw ter" level=" nfo"/>
+  <logger na ="com.tw ter.dec der.StoreDec der" level="warn"/>
+  <logger na ="com.tw ter.d str butedlog.cl ent" level="warn"/>
+  <logger na ="com.tw ter.f nagle.l veness" level="warn"/>
+  <logger na ="com.tw ter.f nagle.mtls.author zat on.conf g.AccessControlL stConf gurat on" level="warn"/>
+  <logger na ="com.tw ter.f nagle.mux" level="warn"/>
+  <logger na ="com.tw ter.f nagle.serverset2" level="warn"/>
+  <logger na ="com.tw ter.f natra.kafka.common.kerberos lpers" level="warn"/>
+  <logger na ="com.tw ter.f natra.kafka.ut ls.BootstrapServerUt ls" level="warn"/>
+  <logger na ="com.tw ter.logg ng.Scr beHandler" level="warn"/>
+  <logger na ="com.tw ter.server.coord nate" level="error"/>
+  <logger na ="com.tw ter.w lyns" level="warn"/>
+  <logger na ="com.tw ter.zookeeper.cl ent" level=" nfo"/>
+  <logger na ="com.tw ter.zookeeper.cl ent. nternal" level="warn"/>
+  <logger na ="manhattan-cl ent" level="warn"/>
+  <logger na ="org.apac .kafka.cl ents.NetworkCl ent" level="error"/>
+  <logger na ="org.apac .kafka.cl ents.consu r. nternals" level="error"/>
+  <logger na ="org.apac .kafka.cl ents.producer. nternals" level="error"/>
+  <logger na ="org.apac .kafka.common.network" level="warn"/>
+  <logger na ="org.apac .zookeeper" level="error"/>
+  <logger na ="org.apac .zookeeper.Cl entCnxn" level="warn"/>
 
-  <!-- Root Config -->
-  <root level="${log_level:-INFO}">
-    <appender-ref ref="ASYNC-SERVICE"/>
+  <!-- Root Conf g -->
+  <root level="${log_level:- NFO}">
+    <appender-ref ref="ASYNC-SERV CE"/>
     <appender-ref ref="ASYNC-LOGLENS"/>
   </root>
 
-  <!-- debug transcripts: logger name MUST be c.t.timelines.util.debuglog.DebugLog.DebugTranscriptsLog -->
-  <logger name="DebugTranscripts" level="info">
-    <appender-ref ref="ASYNC-DEBUG-TRANSCRIPTS"/>
+  <!-- debug transcr pts: logger na  MUST be c.t.t  l nes.ut l.debuglog.DebugLog.DebugTranscr ptsLog -->
+  <logger na ="DebugTranscr pts" level=" nfo">
+    <appender-ref ref="ASYNC-DEBUG-TRANSCR PTS"/>
     <appender-ref ref="ASYNC-LOGLENS"/>
   </logger>
-</configuration>
+</conf gurat on>

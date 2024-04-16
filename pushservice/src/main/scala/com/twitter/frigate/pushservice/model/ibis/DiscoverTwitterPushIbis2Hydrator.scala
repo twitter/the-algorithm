@@ -1,17 +1,17 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.tw ter.fr gate.pushserv ce.model. b s
 
-import com.twitter.frigate.common.base.DiscoverTwitterCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.util.PushIbisUtil.mergeFutModelValues
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.common.base.D scoverTw terCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.ut l.Push b sUt l. rgeFutModelValues
+ mport com.tw ter.ut l.Future
 
-trait DiscoverTwitterPushIbis2Hydrator extends Ibis2HydratorForCandidate {
-  self: PushCandidate with DiscoverTwitterCandidate =>
+tra  D scoverTw terPush b s2Hydrator extends  b s2HydratorForCand date {
+  self: PushCand date w h D scoverTw terCand date =>
 
-  private lazy val targetModelValues: Map[String, String] = Map(
-    "target_user" -> target.targetId.toString
+  pr vate lazy val targetModelValues: Map[Str ng, Str ng] = Map(
+    "target_user" -> target.target d.toStr ng
   )
 
-  override lazy val modelValues: Future[Map[String, String]] =
-    mergeFutModelValues(super.modelValues, Future.value(targetModelValues))
+  overr de lazy val modelValues: Future[Map[Str ng, Str ng]] =
+     rgeFutModelValues(super.modelValues, Future.value(targetModelValues))
 }

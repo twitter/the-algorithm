@@ -1,79 +1,79 @@
-package com.twitter.search.earlybird.segment;
+package com.tw ter.search.earlyb rd.seg nt;
 
-import java.io.IOException;
-import java.util.Optional;
+ mport java. o. OExcept on;
+ mport java.ut l.Opt onal;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.partition.SegmentInfo;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftVers onedEvents;
+ mport com.tw ter.search.common.ut l. o.recordreader.RecordReader;
+ mport com.tw ter.search.earlyb rd.docu nt.T etDocu nt;
+ mport com.tw ter.search.earlyb rd.part  on.Seg nt nfo;
 
 /**
- * SegmentDataReaderSet provides an interface to create and manage the various
- * RecordReaders used to index Earlybird segments.
+ * Seg ntDataReaderSet prov des an  nterface to create and manage t  var ous
+ * RecordReaders used to  ndex Earlyb rd seg nts.
  */
-public interface SegmentDataReaderSet {
+publ c  nterface Seg ntDataReaderSet {
   /**
-   * Instruct the document RecordReaders (i.e. document, geo, ... as appropriate) to read from this
-   * segment.
+   *  nstruct t  docu nt RecordReaders ( .e. docu nt, geo, ... as appropr ate) to read from t 
+   * seg nt.
    */
-  void attachDocumentReaders(SegmentInfo segmentInfo) throws IOException;
+  vo d attachDocu ntReaders(Seg nt nfo seg nt nfo) throws  OExcept on;
 
   /**
-   * Instruct the reader set to add segment to non-document RecordReaders (deletes, features, etc.)
+   *  nstruct t  reader set to add seg nt to non-docu nt RecordReaders (deletes, features, etc.)
    */
-  void attachUpdateReaders(SegmentInfo segmentInfo) throws IOException;
+  vo d attachUpdateReaders(Seg nt nfo seg nt nfo) throws  OExcept on;
 
   /**
-   * Mark a segment as "complete", denoting that we are done reading document records from it.
+   * Mark a seg nt as "complete", denot ng that   are done read ng docu nt records from  .
    *
-   * This instructs the reader set to stop reading documents from the segment (if it hasn't
-   * already), although for now geo-document  records can still be read.  Updates RecordReaders
-   * (deletes, etc.) may continue to read entries for the segment.
+   * T   nstructs t  reader set to stop read ng docu nts from t  seg nt ( f   hasn't
+   * already), although for now geo-docu nt  records can st ll be read.  Updates RecordReaders
+   * (deletes, etc.) may cont nue to read entr es for t  seg nt.
    */
-  void completeSegmentDocs(SegmentInfo segmentInfo);
+  vo d completeSeg ntDocs(Seg nt nfo seg nt nfo);
 
   /**
-   * This instructs the reader set to stop reading updates for the Segment.  It
-   * should remove the segment from all non-document RecordReaders (deletes, etc.)
+   * T   nstructs t  reader set to stop read ng updates for t  Seg nt.   
+   * should remove t  seg nt from all non-docu nt RecordReaders (deletes, etc.)
    */
-  void stopSegmentUpdates(SegmentInfo segmentInfo);
+  vo d stopSeg ntUpdates(Seg nt nfo seg nt nfo);
 
   /**
-   * Stops all RecordReaders and closes all resources.
+   * Stops all RecordReaders and closes all res ces.
    */
-  void stopAll();
+  vo d stopAll();
 
   /**
-   * Returns true if all RecordReaders are 'caught up' with the data sources they
-   * are reading from.  This might mean that the end of a file has been reached,
-   * or that we are waiting/polling for new records from an append-only database.
+   * Returns true  f all RecordReaders are 'caught up' w h t  data s ces t y
+   * are read ng from.  T  m ght  an that t  end of a f le has been reac d,
+   * or that   are wa  ng/poll ng for new records from an append-only database.
    */
   boolean allCaughtUp();
 
   /**
-   * Create a new DocumentReader for the given segment that is not managed by this set.
+   * Create a new Docu ntReader for t  g ven seg nt that  s not managed by t  set.
    */
-  RecordReader<TweetDocument> newDocumentReader(SegmentInfo segmentInfo) throws Exception;
+  RecordReader<T etDocu nt> newDocu ntReader(Seg nt nfo seg nt nfo) throws Except on;
 
   /**
-   * Returns the document reader for the current segment.
+   * Returns t  docu nt reader for t  current seg nt.
    */
-  RecordReader<TweetDocument> getDocumentReader();
+  RecordReader<T etDocu nt> getDocu ntReader();
 
   /**
-   * Returns a combined update events reader for all segments.
+   * Returns a comb ned update events reader for all seg nts.
    */
-  RecordReader<ThriftVersionedEvents> getUpdateEventsReader();
+  RecordReader<Thr ftVers onedEvents> getUpdateEventsReader();
 
   /**
-   * Returns the update events reader for the given segment.
+   * Returns t  update events reader for t  g ven seg nt.
    */
-  RecordReader<ThriftVersionedEvents> getUpdateEventsReaderForSegment(SegmentInfo segmentInfo);
+  RecordReader<Thr ftVers onedEvents> getUpdateEventsReaderForSeg nt(Seg nt nfo seg nt nfo);
 
   /**
-   * Returns the offset in the update events stream for the given segment that this earlybird should
-   * start indexing from.
+   * Returns t  offset  n t  update events stream for t  g ven seg nt that t  earlyb rd should
+   * start  ndex ng from.
    */
-  Optional<Long> getUpdateEventsStreamOffsetForSegment(SegmentInfo segmentInfo);
+  Opt onal<Long> getUpdateEventsStreamOffsetForSeg nt(Seg nt nfo seg nt nfo);
 }

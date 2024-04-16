@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.CommerceDetails
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Com rceDeta ls
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class CommerceDetailsMarshaller @Inject() () {
+@S ngleton
+class Com rceDeta lsMarshaller @ nject() () {
 
-  def apply(commerceDetails: CommerceDetails): urt.CommerceDetails = urt.CommerceDetails(
-    dropId = commerceDetails.dropId,
-    shopV2Id = commerceDetails.shopV2Id,
-    productKey = commerceDetails.productKey,
-    merchantId = commerceDetails.merchantId,
-    productIndex = commerceDetails.productIndex,
+  def apply(com rceDeta ls: Com rceDeta ls): urt.Com rceDeta ls = urt.Com rceDeta ls(
+    drop d = com rceDeta ls.drop d,
+    shopV2 d = com rceDeta ls.shopV2 d,
+    productKey = com rceDeta ls.productKey,
+     rchant d = com rceDeta ls. rchant d,
+    product ndex = com rceDeta ls.product ndex,
   )
 }

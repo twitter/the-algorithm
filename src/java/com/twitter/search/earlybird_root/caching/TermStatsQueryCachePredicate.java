@@ -1,24 +1,24 @@
-package com.twitter.search.earlybird_root.caching;
+package com.tw ter.search.earlyb rd_root.cach ng;
 
-import com.twitter.search.common.caching.filter.QueryCachePredicate;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.earlybird.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
+ mport com.tw ter.search.common.cach ng.f lter.QueryCac Pred cate;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.earlyb rd.common.Earlyb rdRequestUt l;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestType;
 
-public class TermStatsQueryCachePredicate extends QueryCachePredicate<EarlybirdRequestContext> {
-  private final SearchDecider decider;
-  private final String termstatsCacheEnabledDeciderKey;
+publ c class TermStatsQueryCac Pred cate extends QueryCac Pred cate<Earlyb rdRequestContext> {
+  pr vate f nal SearchDec der dec der;
+  pr vate f nal Str ng termstatsCac EnabledDec derKey;
 
-  public TermStatsQueryCachePredicate(SearchDecider decider, String normalizedSearchRootName) {
-    this.decider = decider;
-    this.termstatsCacheEnabledDeciderKey = "termstats_cache_enabled_" + normalizedSearchRootName;
+  publ c TermStatsQueryCac Pred cate(SearchDec der dec der, Str ng normal zedSearchRootNa ) {
+    t .dec der = dec der;
+    t .termstatsCac EnabledDec derKey = "termstats_cac _enabled_" + normal zedSearchRootNa ;
   }
 
-  @Override
-  public Boolean shouldQueryCache(EarlybirdRequestContext requestContext) {
-    return EarlybirdRequestType.TERM_STATS == requestContext.getEarlybirdRequestType()
-        && EarlybirdRequestUtil.isCachingAllowed(requestContext.getRequest())
-        && decider.isAvailable(termstatsCacheEnabledDeciderKey);
+  @Overr de
+  publ c Boolean shouldQueryCac (Earlyb rdRequestContext requestContext) {
+    return Earlyb rdRequestType.TERM_STATS == requestContext.getEarlyb rdRequestType()
+        && Earlyb rdRequestUt l. sCach ngAllo d(requestContext.getRequest())
+        && dec der. sAva lable(termstatsCac EnabledDec derKey);
   }
 }

@@ -1,39 +1,39 @@
-package com.twitter.product_mixer.core.pipeline.product
+package com.tw ter.product_m xer.core.p pel ne.product
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.mixer.MixerPipelineBuilderFactory
-import com.twitter.product_mixer.core.pipeline.recommendation.RecommendationPipelineBuilderFactory
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutor
-import com.twitter.product_mixer.core.service.pipeline_execution_logger.PipelineExecutionLogger
-import com.twitter.product_mixer.core.service.pipeline_executor.PipelineExecutor
-import com.twitter.product_mixer.core.service.pipeline_selector_executor.PipelineSelectorExecutor
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Request
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.m xer.M xerP pel neBu lderFactory
+ mport com.tw ter.product_m xer.core.p pel ne.recom ndat on.Recom ndat onP pel neBu lderFactory
+ mport com.tw ter.product_m xer.core.serv ce.gate_executor.GateExecutor
+ mport com.tw ter.product_m xer.core.serv ce.p pel ne_execut on_logger.P pel neExecut onLogger
+ mport com.tw ter.product_m xer.core.serv ce.p pel ne_executor.P pel neExecutor
+ mport com.tw ter.product_m xer.core.serv ce.p pel ne_selector_executor.P pel neSelectorExecutor
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ProductPipelineBuilderFactory @Inject() (
+@S ngleton
+class ProductP pel neBu lderFactory @ nject() (
   gateExecutor: GateExecutor,
-  pipelineSelectorExecutor: PipelineSelectorExecutor,
-  pipelineExecutor: PipelineExecutor,
-  mixerPipelineBuilderFactory: MixerPipelineBuilderFactory,
-  recommendationPipelineBuilderFactory: RecommendationPipelineBuilderFactory,
-  statsReceiver: StatsReceiver,
-  pipelineExecutionLogger: PipelineExecutionLogger) {
+  p pel neSelectorExecutor: P pel neSelectorExecutor,
+  p pel neExecutor: P pel neExecutor,
+  m xerP pel neBu lderFactory: M xerP pel neBu lderFactory,
+  recom ndat onP pel neBu lderFactory: Recom ndat onP pel neBu lderFactory,
+  statsRece ver: StatsRece ver,
+  p pel neExecut onLogger: P pel neExecut onLogger) {
   def get[
     TRequest <: Request,
-    Query <: PipelineQuery,
+    Query <: P pel neQuery,
     Response
-  ]: ProductPipelineBuilder[TRequest, Query, Response] = {
-    new ProductPipelineBuilder[TRequest, Query, Response](
+  ]: ProductP pel neBu lder[TRequest, Query, Response] = {
+    new ProductP pel neBu lder[TRequest, Query, Response](
       gateExecutor,
-      pipelineSelectorExecutor,
-      pipelineExecutor,
-      mixerPipelineBuilderFactory,
-      recommendationPipelineBuilderFactory,
-      statsReceiver,
-      pipelineExecutionLogger
+      p pel neSelectorExecutor,
+      p pel neExecutor,
+      m xerP pel neBu lderFactory,
+      recom ndat onP pel neBu lderFactory,
+      statsRece ver,
+      p pel neExecut onLogger
     )
   }
 }

@@ -1,41 +1,41 @@
-package com.twitter.product_mixer.component_library.filter
+package com.tw ter.product_m xer.component_l brary.f lter
 
-import com.twitter.product_mixer.component_library.filter.ParamGatedFilter.IdentifierPrefix
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.product_m xer.component_l brary.f lter.ParamGatedF lter. dent f erPref x
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lterResult
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Cond  onally
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .Param
 
 /**
- * A [[Filter]] with [[Conditionally]] based on a [[Param]]
+ * A [[F lter]] w h [[Cond  onally]] based on a [[Param]]
  *
- * @param enabledParam the param to turn this filter on and off
- * @param filter the underlying filter to run when `enabledParam` is true
- * @tparam Query The domain model for the query or request
- * @tparam Candidate The type of the candidates
+ * @param enabledParam t  param to turn t  f lter on and off
+ * @param f lter t  underly ng f lter to run w n `enabledParam`  s true
+ * @tparam Query T  doma n model for t  query or request
+ * @tparam Cand date T  type of t  cand dates
  */
-case class ParamGatedFilter[-Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
+case class ParamGatedF lter[-Query <: P pel neQuery, Cand date <: Un versalNoun[Any]](
   enabledParam: Param[Boolean],
-  filter: Filter[Query, Candidate])
-    extends Filter[Query, Candidate]
-    with Filter.Conditionally[Query, Candidate] {
-  override val identifier: FilterIdentifier = FilterIdentifier(
-    IdentifierPrefix + filter.identifier.name)
-  override val alerts: Seq[Alert] = filter.alerts
-  override def onlyIf(query: Query, candidates: Seq[CandidateWithFeatures[Candidate]]): Boolean =
-    Conditionally.and(Filter.Input(query, candidates), filter, query.params(enabledParam))
-  override def apply(
+  f lter: F lter[Query, Cand date])
+    extends F lter[Query, Cand date]
+    w h F lter.Cond  onally[Query, Cand date] {
+  overr de val  dent f er: F lter dent f er = F lter dent f er(
+     dent f erPref x + f lter. dent f er.na )
+  overr de val alerts: Seq[Alert] = f lter.alerts
+  overr de def only f(query: Query, cand dates: Seq[Cand dateW hFeatures[Cand date]]): Boolean =
+    Cond  onally.and(F lter. nput(query, cand dates), f lter, query.params(enabledParam))
+  overr de def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = filter.apply(query, candidates)
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): St ch[F lterResult[Cand date]] = f lter.apply(query, cand dates)
 }
 
-object ParamGatedFilter {
-  val IdentifierPrefix = "ParamGated"
+object ParamGatedF lter {
+  val  dent f erPref x = "ParamGated"
 }

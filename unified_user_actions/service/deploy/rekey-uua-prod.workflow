@@ -1,66 +1,66 @@
 {
-  "role": "discode",
-  "name": "rekey-uua-prod",
-  "config-files": [
+  "role": "d scode",
+  "na ": "rekey-uua-prod",
+  "conf g-f les": [
     "rekey-uua.aurora"
   ],
-  "build": {
+  "bu ld": {
     "play": true,
-    "trigger": {
-      "cron-schedule": "0 17 * * 2"
+    "tr gger": {
+      "cron-sc dule": "0 17 * * 2"
     },
-    "dependencies": [
+    "dependenc es": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "na ": "packer-cl ent-no-pex",
+        "vers on": "latest"
       }
     ],
     "steps": [
       {
         "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:rekey-uua"
+        "na ": "bundle",
+        "target": "un f ed_user_act ons/serv ce/src/ma n/scala:rekey-uua"
       },
       {
         "type": "packer",
-        "name": "rekey-uua",
-        "artifact": "./dist/rekey-uua.zip"
+        "na ": "rekey-uua",
+        "art fact": "./d st/rekey-uua.z p"
       }
     ]
   },
   "targets": [
     {
       "type": "group",
-      "name": "prod",
+      "na ": "prod",
       "targets": [
         {
-          "name": "rekey-uua-prod-atla",
-          "key": "atla/discode/prod/rekey-uua"
+          "na ": "rekey-uua-prod-atla",
+          "key": "atla/d scode/prod/rekey-uua"
         },
         {
-          "name": "rekey-uua-prod-pdxa",
-          "key": "pdxa/discode/prod/rekey-uua"
+          "na ": "rekey-uua-prod-pdxa",
+          "key": "pdxa/d scode/prod/rekey-uua"
         }
       ]
     }
   ],
-  "subscriptions": [
+  "subscr pt ons": [
    {
      "type": "SLACK",
-     "recipients": [
+     "rec p ents": [
        {
-         "to": "discode-oncall"
+         "to": "d scode-oncall"
        }
      ],
      "events": ["WORKFLOW_SUCCESS"]
    },
    {
      "type": "SLACK",
-     "recipients": [{
-       "to": "discode-oncall"
+     "rec p ents": [{
+       "to": "d scode-oncall"
      }],
-     "events": ["*FAILED"]
+     "events": ["*FA LED"]
    }
   ]
 }

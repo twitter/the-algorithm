@@ -1,20 +1,20 @@
-namespace java com.twitter.unified_user_actions.thriftjava
-#@namespace scala com.twitter.unified_user_actions.thriftscala
-#@namespace strato com.twitter.unified_user_actions
+na space java com.tw ter.un f ed_user_act ons.thr ftjava
+#@na space scala com.tw ter.un f ed_user_act ons.thr ftscala
+#@na space strato com.tw ter.un f ed_user_act ons
 
 /*
- * Uniquely identifies a user. A user identifier
- * for a logged in user should contain a user id
- * and a user identifier for a logged out user should
- * contain some guest id. A user may have multiple ids.
+ * Un quely  dent f es a user. A user  dent f er
+ * for a logged  n user should conta n a user  d
+ * and a user  dent f er for a logged out user should
+ * conta n so  guest  d. A user may have mult ple  ds.
  */
-struct UserIdentifier {
-  1: optional i64 userId(personalDataType='UserId')
+struct User dent f er {
+  1: opt onal  64 user d(personalDataType='User d')
   /*
-   * See http://go/guest-id-cookie-tdd. As of Dec 2021,
-   * guest id is intended only for essential use cases
-   * (e.g. logged out preferences, security). Guest id
-   * marketing is intended for recommendation use cases.
+   * See http://go/guest- d-cook e-tdd. As of Dec 2021,
+   * guest  d  s  ntended only for essent al use cases
+   * (e.g. logged out preferences, secur y). Guest  d
+   * market ng  s  ntended for recom ndat on use cases.
    */
-  2: optional i64 guestIdMarketing(personalDataType='GuestId')
-}(persisted='true', hasPersonalData='true')
+  2: opt onal  64 guest dMarket ng(personalDataType='Guest d')
+}(pers sted='true', hasPersonalData='true')

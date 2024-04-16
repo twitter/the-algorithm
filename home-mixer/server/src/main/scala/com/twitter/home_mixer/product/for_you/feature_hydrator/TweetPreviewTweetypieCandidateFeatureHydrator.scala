@@ -1,69 +1,69 @@
-package com.twitter.home_mixer.product.for_you.feature_hydrator
+package com.tw ter.ho _m xer.product.for_ .feature_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsHydratedFeature
-import com.twitter.home_mixer.model.HomeFeatures.TweetTextFeature
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.spam.rtf.{thriftscala => rtf}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.tweetypie.{TweetyPie => TweetypieStitchClient}
-import com.twitter.tweetypie.{thriftscala => TP}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.model.Ho Features.Author dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. sHydratedFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.T etTextFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.BaseT etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.Cand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.spam.rtf.{thr ftscala => rtf}
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.t etyp e.{T etyP e => T etyp eSt chCl ent}
+ mport com.tw ter.t etyp e.{thr ftscala => TP}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TweetPreviewTweetypieCandidateFeatureHydrator @Inject() (
-  tweetypieStitchClient: TweetypieStitchClient)
-    extends CandidateFeatureHydrator[PipelineQuery, BaseTweetCandidate] {
+@S ngleton
+class T etPrev ewT etyp eCand dateFeatureHydrator @ nject() (
+  t etyp eSt chCl ent: T etyp eSt chCl ent)
+    extends Cand dateFeatureHydrator[P pel neQuery, BaseT etCand date] {
 
-  private val CoreTweetFields: Set[TP.TweetInclude] = Set[TP.TweetInclude](
-    TP.TweetInclude.TweetFieldId(TP.Tweet.IdField.id),
-    TP.TweetInclude.TweetFieldId(TP.Tweet.CoreDataField.id)
+  pr vate val CoreT etF elds: Set[TP.T et nclude] = Set[TP.T et nclude](
+    TP.T et nclude.T etF eld d(TP.T et. dF eld. d),
+    TP.T et nclude.T etF eld d(TP.T et.CoreDataF eld. d)
   )
 
-  private val DefaultFeatureMap = FeatureMapBuilder()
-    .add(TweetTextFeature, None)
-    .add(IsHydratedFeature, false)
-    .add(AuthorIdFeature, None)
-    .build()
+  pr vate val DefaultFeatureMap = FeatureMapBu lder()
+    .add(T etTextFeature, None)
+    .add( sHydratedFeature, false)
+    .add(Author dFeature, None)
+    .bu ld()
 
-  override val features: Set[Feature[_, _]] =
-    Set(TweetTextFeature, IsHydratedFeature, AuthorIdFeature)
+  overr de val features: Set[Feature[_, _]] =
+    Set(T etTextFeature,  sHydratedFeature, Author dFeature)
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("TweetPreviewTweetypie")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("T etPrev ewT etyp e")
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: BaseTweetCandidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = {
-    tweetypieStitchClient
-      .getTweetFields(
-        tweetId = candidate.id,
-        options = TP.GetTweetFieldsOptions(
-          tweetIncludes = CoreTweetFields,
-          includeRetweetedTweet = false,
-          includeQuotedTweet = false,
-          visibilityPolicy = TP.TweetVisibilityPolicy.UserVisible,
-          safetyLevel = Some(rtf.SafetyLevel.TimelineHomeTweetPreview),
-          forUserId = query.getOptionalUserId
+  overr de def apply(
+    query: P pel neQuery,
+    cand date: BaseT etCand date,
+    ex st ngFeatures: FeatureMap
+  ): St ch[FeatureMap] = {
+    t etyp eSt chCl ent
+      .getT etF elds(
+        t et d = cand date. d,
+        opt ons = TP.GetT etF eldsOpt ons(
+          t et ncludes = CoreT etF elds,
+           ncludeRet etedT et = false,
+           ncludeQuotedT et = false,
+          v s b l yPol cy = TP.T etV s b l yPol cy.UserV s ble,
+          safetyLevel = So (rtf.SafetyLevel.T  l neHo T etPrev ew),
+          forUser d = query.getOpt onalUser d
         )
       ).map {
-        case TP.GetTweetFieldsResult(_, TP.TweetFieldsResultState.Found(found), quoteOpt, _) =>
-          val tweetText = found.tweet.coreData.map(_.text)
-          FeatureMapBuilder()
-            .add(TweetTextFeature, tweetText)
-            .add(IsHydratedFeature, true)
-            .add(AuthorIdFeature, found.tweet.coreData.map(_.userId))
-            .build()
-        // If no tweet result found, return default features
+        case TP.GetT etF eldsResult(_, TP.T etF eldsResultState.Found(found), quoteOpt, _) =>
+          val t etText = found.t et.coreData.map(_.text)
+          FeatureMapBu lder()
+            .add(T etTextFeature, t etText)
+            .add( sHydratedFeature, true)
+            .add(Author dFeature, found.t et.coreData.map(_.user d))
+            .bu ld()
+        //  f no t et result found, return default features
         case _ =>
           DefaultFeatureMap
       }

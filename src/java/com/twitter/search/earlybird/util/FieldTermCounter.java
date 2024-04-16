@@ -1,303 +1,303 @@
-package com.twitter.search.earlybird.util;
+package com.tw ter.search.earlyb rd.ut l;
 
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.concurrent.atomic.AtomicInteger;
+ mport java.ut l.Calendar;
+ mport java.ut l.Collect ons;
+ mport java.ut l.Map;
+ mport java.ut l.T  Zone;
+ mport java.ut l.concurrent.atom c.Atom c nteger;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.Maps;
 
-import org.apache.commons.lang.mutable.MutableInt;
-import org.apache.commons.lang.mutable.MutableLong;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons.lang.mutable.Mutable nt;
+ mport org.apac .commons.lang.mutable.MutableLong;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.metrics.SearchLongGauge;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
 
 /**
- * This class is used to count how many times a field happens in hourly and daily stats.
- * It is used by TermCountMonitor for iterating all fields in the index.
+ * T  class  s used to count how many t  s a f eld happens  n h ly and da ly stats.
+ *    s used by TermCountMon or for  erat ng all f elds  n t   ndex.
  *
- * There is one exception that this class is also used to count the number of tweets in the index.
- * Under the situation, the passed in fieldName would be empty string (as TWEET_COUNT_KEY).
+ * T re  s one except on that t  class  s also used to count t  number of t ets  n t   ndex.
+ * Under t  s uat on, t  passed  n f eldNa  would be empty str ng (as TWEET_COUNT_KEY).
  */
-public class FieldTermCounter {
-  private static final Logger LOG = LoggerFactory.getLogger(FieldTermCounter.class);
+publ c class F eldTermCounter {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(F eldTermCounter.class);
 
-  static final TimeZone TIME_ZONE = TimeZone.getTimeZone("GMT");
-  static final String TWEET_COUNT_KEY = "";
+  stat c f nal T  Zone T ME_ZONE = T  Zone.getT  Zone("GMT");
+  stat c f nal Str ng TWEET_COUNT_KEY = "";
 
-  private final String fieldName;
-  private final int instanceCounter;
+  pr vate f nal Str ng f eldNa ;
+  pr vate f nal  nt  nstanceCounter;
 
-  // The first date in format "YYYYMMDDHH" that we want to check counts for.
-  private final int startCheckHour;
-  // The last date in format "YYYYMMDDHH" that we want to check counts for.
-  private final int endCheckHour;
-  // Smallest number of docs we expect to have for each hour.
-  private final int hourlyMinCount;
-  //Smallest number of docs we expect to have for each day.
-  private final int dailyMinCount;
+  // T  f rst date  n format "YYYYMMDDHH" that   want to c ck counts for.
+  pr vate f nal  nt startC ckH ;
+  // T  last date  n format "YYYYMMDDHH" that   want to c ck counts for.
+  pr vate f nal  nt endC ckH ;
+  // Smallest number of docs   expect to have for each h .
+  pr vate f nal  nt h lyM nCount;
+  //Smallest number of docs   expect to have for each day.
+  pr vate f nal  nt da lyM nCount;
 
-  // Count of tweets for each day, keyed of by the hour in the format "YYYYMMDD".
-  private final Map<Integer, AtomicInteger> exportedHourlyCounts;
+  // Count of t ets for each day, keyed of by t  h   n t  format "YYYYMMDD".
+  pr vate f nal Map< nteger, Atom c nteger> exportedH lyCounts;
 
-  // Count of tweets for each day, keyed of by the day in the format "YYYYMMDD".
-  private final Map<Integer, MutableLong> dailyCounts;
+  // Count of t ets for each day, keyed of by t  day  n t  format "YYYYMMDD".
+  pr vate f nal Map< nteger, MutableLong> da lyCounts;
 
-  // Only export hourly stats that are below minimum threshold.
-  private final Map<String, SearchLongGauge> exportedStats;
+  // Only export h ly stats that are below m n mum threshold.
+  pr vate f nal Map<Str ng, SearchLongGauge> exportedStats;
 
-  private final SearchLongGauge hoursWithNoTweetsStat;
-  private final SearchLongGauge daysWithNoTweetsStat;
+  pr vate f nal SearchLongGauge h sW hNoT etsStat;
+  pr vate f nal SearchLongGauge daysW hNoT etsStat;
 
-  public FieldTermCounter(
-      String fieldName,
-      int instanceCounter,
-      int startCheckHour,
-      int endCheckHour,
-      int hourlyMinCount,
-      int dailyMinCount) {
-    this.fieldName = fieldName;
-    this.instanceCounter = instanceCounter;
-    this.startCheckHour = startCheckHour;
-    this.endCheckHour = endCheckHour;
-    this.hourlyMinCount = hourlyMinCount;
-    this.dailyMinCount = dailyMinCount;
-    this.exportedHourlyCounts = Maps.newHashMap();
-    this.dailyCounts = Maps.newHashMap();
-    this.exportedStats = Maps.newHashMap();
+  publ c F eldTermCounter(
+      Str ng f eldNa ,
+       nt  nstanceCounter,
+       nt startC ckH ,
+       nt endC ckH ,
+       nt h lyM nCount,
+       nt da lyM nCount) {
+    t .f eldNa  = f eldNa ;
+    t . nstanceCounter =  nstanceCounter;
+    t .startC ckH  = startC ckH ;
+    t .endC ckH  = endC ckH ;
+    t .h lyM nCount = h lyM nCount;
+    t .da lyM nCount = da lyM nCount;
+    t .exportedH lyCounts = Maps.newHashMap();
+    t .da lyCounts = Maps.newHashMap();
+    t .exportedStats = Maps.newHashMap();
 
-    this.hoursWithNoTweetsStat = SearchLongGauge.export(getAggregatedNoTweetStatName(true));
-    this.daysWithNoTweetsStat = SearchLongGauge.export(getAggregatedNoTweetStatName(false));
+    t .h sW hNoT etsStat = SearchLongGauge.export(getAggregatedNoT etStatNa (true));
+    t .daysW hNoT etsStat = SearchLongGauge.export(getAggregatedNoT etStatNa (false));
   }
 
   /**
-   * Updates the stats exported by this class based on the new counts provided in the given map.
+   * Updates t  stats exported by t  class based on t  new counts prov ded  n t  g ven map.
    */
-  public void runWithNewCounts(Map<Integer, MutableInt> newCounts) {
-    dailyCounts.clear();
+  publ c vo d runW hNewCounts(Map< nteger, Mutable nt> newCounts) {
+    da lyCounts.clear();
 
-    // See go/rb/813442/#comment2566569
-    // 1. Update all existing hours
-    updateExistingHourlyCounts(newCounts);
+    // See go/rb/813442/#com nt2566569
+    // 1. Update all ex st ng h s
+    updateEx st ngH lyCounts(newCounts);
 
-    // 2. Add and export all new hours
-    addAndExportNewHourlyCounts(newCounts);
+    // 2. Add and export all new h s
+    addAndExportNewH lyCounts(newCounts);
 
-    // 3. fill in all the missing hours between know min and max days.
-    fillMissingHourlyCounts();
+    // 3. f ll  n all t  m ss ng h s bet en know m n and max days.
+    f llM ss ngH lyCounts();
 
-    // 4. Export as a stat, how many hours don't have any tweets (i.e. <= 0)
-    exportMissingTweetStats();
+    // 4. Export as a stat, how many h s don't have any t ets ( .e. <= 0)
+    exportM ss ngT etStats();
   }
 
-  // Input:
-  // . the new hourly count map in the current iteration
-  // . the existing hourly count map before the current iteration
-  // If the hourly key matches from the new hourly map to the existing hourly count map, update
-  // the value of the existing hourly count map to the value from the new hourly count map.
-  private void updateExistingHourlyCounts(Map<Integer, MutableInt> newCounts) {
-    for (Map.Entry<Integer, AtomicInteger> exportedCount : exportedHourlyCounts.entrySet()) {
-      Integer date = exportedCount.getKey();
-      AtomicInteger exportedCountValue = exportedCount.getValue();
+  //  nput:
+  // . t  new h ly count map  n t  current  erat on
+  // . t  ex st ng h ly count map before t  current  erat on
+  //  f t  h ly key matc s from t  new h ly map to t  ex st ng h ly count map, update
+  // t  value of t  ex st ng h ly count map to t  value from t  new h ly count map.
+  pr vate vo d updateEx st ngH lyCounts(Map< nteger, Mutable nt> newCounts) {
+    for (Map.Entry< nteger, Atom c nteger> exportedCount : exportedH lyCounts.entrySet()) {
+       nteger date = exportedCount.getKey();
+      Atom c nteger exportedCountValue = exportedCount.getValue();
 
-      MutableInt newCount = newCounts.get(date);
-      if (newCount == null) {
+      Mutable nt newCount = newCounts.get(date);
+       f (newCount == null) {
         exportedCountValue.set(0);
       } else {
-        exportedCountValue.set(newCount.intValue());
-        // clean up so that we don't check this date again when we look for new hours
+        exportedCountValue.set(newCount. ntValue());
+        // clean up so that   don't c ck t  date aga n w n   look for new h s
         newCounts.remove(date);
       }
     }
   }
 
-  // Input:
-  // . the new hourly count map in the current iteration
-  // . the existing hourly count map before the current iteration
-  // This function is called after the above function of updateExistingHourlyCounts() so that all
-  // matching key value pairs have been removed from the new hourly count map.
-  // Move all remaining valid values from the new hourly count map to the existing hourly count
+  //  nput:
+  // . t  new h ly count map  n t  current  erat on
+  // . t  ex st ng h ly count map before t  current  erat on
+  // T  funct on  s called after t  above funct on of updateEx st ngH lyCounts() so that all
+  // match ng key value pa rs have been removed from t  new h ly count map.
+  // Move all rema n ng val d values from t  new h ly count map to t  ex st ng h ly count
   // map.
-  private void addAndExportNewHourlyCounts(Map<Integer, MutableInt> newCounts) {
-    for (Map.Entry<Integer, MutableInt> newCount : newCounts.entrySet()) {
-      Integer hour = newCount.getKey();
-      MutableInt newCountValue = newCount.getValue();
-      Preconditions.checkState(!exportedHourlyCounts.containsKey(hour),
-          "Should have already processed and removed existing hours: " + hour);
+  pr vate vo d addAndExportNewH lyCounts(Map< nteger, Mutable nt> newCounts) {
+    for (Map.Entry< nteger, Mutable nt> newCount : newCounts.entrySet()) {
+       nteger h  = newCount.getKey();
+      Mutable nt newCountValue = newCount.getValue();
+      Precond  ons.c ckState(!exportedH lyCounts.conta nsKey(h ),
+          "Should have already processed and removed ex st ng h s: " + h );
 
-      AtomicInteger newStat = new AtomicInteger(newCountValue.intValue());
-      exportedHourlyCounts.put(hour, newStat);
+      Atom c nteger newStat = new Atom c nteger(newCountValue. ntValue());
+      exportedH lyCounts.put(h , newStat);
     }
   }
 
-  // Find whether the existing hourly count map has hourly holes.  If such holes exist, fill 0
-  // values so that they can be exported.
-  private void fillMissingHourlyCounts() {
-    // Figure out the time range for which we should have tweets in the index. At the very least,
-    // this range should cover [startCheckHour, endCheckHour) if endCheckHour is set, or
-    // [startCheckHour, latestHourInTheIndexWithTweets] if endCheckHour is not set (latest tier or
-    // realtime cluster).
-    int startHour = startCheckHour;
-    int endHour = endCheckHour < getHourValue(Calendar.getInstance(TIME_ZONE)) ? endCheckHour : -1;
-    for (int next : exportedHourlyCounts.keySet()) {
-      if (next < startHour) {
-        startHour = next;
+  // F nd w t r t  ex st ng h ly count map has h ly holes.   f such holes ex st, f ll 0
+  // values so that t y can be exported.
+  pr vate vo d f llM ss ngH lyCounts() {
+    // F gure out t  t   range for wh ch   should have t ets  n t   ndex. At t  very least,
+    // t  range should cover [startC ckH , endC ckH )  f endC ckH   s set, or
+    // [startC ckH , latestH  nT  ndexW hT ets]  f endC ckH   s not set (latest t er or
+    // realt   cluster).
+     nt startH  = startC ckH ;
+     nt endH  = endC ckH  < getH Value(Calendar.get nstance(T ME_ZONE)) ? endC ckH  : -1;
+    for ( nt next : exportedH lyCounts.keySet()) {
+       f (next < startH ) {
+        startH  = next;
       }
-      if (next > endHour) {
-        endHour = next;
+       f (next > endH ) {
+        endH  = next;
       }
     }
 
-    Calendar endHourCal = getCalendarValue(endHour);
-    Calendar hour = getCalendarValue(startHour);
-    for (; hour.before(endHourCal); hour.add(Calendar.HOUR_OF_DAY, 1)) {
-      int hourValue = getHourValue(hour);
-      if (!exportedHourlyCounts.containsKey(hourValue)) {
-        exportedHourlyCounts.put(hourValue, new AtomicInteger(0));
+    Calendar endH Cal = getCalendarValue(endH );
+    Calendar h  = getCalendarValue(startH );
+    for (; h .before(endH Cal); h .add(Calendar.HOUR_OF_DAY, 1)) {
+       nt h Value = getH Value(h );
+       f (!exportedH lyCounts.conta nsKey(h Value)) {
+        exportedH lyCounts.put(h Value, new Atom c nteger(0));
       }
     }
   }
 
-  private void exportMissingTweetStats() {
-    int hoursWithNoTweets = 0;
-    int daysWithNoTweets = 0;
+  pr vate vo d exportM ss ngT etStats() {
+     nt h sW hNoT ets = 0;
+     nt daysW hNoT ets = 0;
 
-    for (Map.Entry<Integer, AtomicInteger> hourlyCount : exportedHourlyCounts.entrySet()) {
-      int hour = hourlyCount.getKey();
-      if ((hour < startCheckHour) || (hour >= endCheckHour)) {
-        continue;
+    for (Map.Entry< nteger, Atom c nteger> h lyCount : exportedH lyCounts.entrySet()) {
+       nt h  = h lyCount.getKey();
+       f ((h  < startC ckH ) || (h  >= endC ckH )) {
+        cont nue;
       }
 
-      // roll up the days
-      int day = hour / 100;
-      MutableLong dayCount = dailyCounts.get(day);
-      if (dayCount == null) {
-        dailyCounts.put(day, new MutableLong(hourlyCount.getValue().get()));
+      // roll up t  days
+       nt day = h  / 100;
+      MutableLong dayCount = da lyCounts.get(day);
+       f (dayCount == null) {
+        da lyCounts.put(day, new MutableLong(h lyCount.getValue().get()));
       } else {
-        dayCount.setValue(dayCount.longValue() + hourlyCount.getValue().get());
+        dayCount.setValue(dayCount.longValue() + h lyCount.getValue().get());
       }
-      AtomicInteger exportedCountValue = hourlyCount.getValue();
-      if (exportedCountValue.get() <= hourlyMinCount) {
-        // We do not export hourly too few tweets for index fields as it can 10x the existing
+      Atom c nteger exportedCountValue = h lyCount.getValue();
+       f (exportedCountValue.get() <= h lyM nCount) {
+        //   do not export h ly too few t ets for  ndex f elds as   can 10x t  ex st ng
         // exported stats.
-        // We might consider whitelisting some high frequency fields later.
-        if (isFieldForTweet()) {
-          String statsName = getStatName(hourlyCount.getKey());
-          SearchLongGauge stat = SearchLongGauge.export(statsName);
+        //   m ght cons der wh el st ng so  h gh frequency f elds later.
+         f ( sF eldForT et()) {
+          Str ng statsNa  = getStatNa (h lyCount.getKey());
+          SearchLongGauge stat = SearchLongGauge.export(statsNa );
           stat.set(exportedCountValue.longValue());
-          exportedStats.put(statsName, stat);
+          exportedStats.put(statsNa , stat);
         }
-        LOG.warn("Found an hour with too few tweets. Field: <{}> Hour: {} count: {}",
-            fieldName, hour, exportedCountValue);
-        hoursWithNoTweets++;
+        LOG.warn("Found an h  w h too few t ets. F eld: <{}> H : {} count: {}",
+            f eldNa , h , exportedCountValue);
+        h sW hNoT ets++;
       }
     }
 
-    for (Map.Entry<Integer, MutableLong> dailyCount : dailyCounts.entrySet()) {
-      if (dailyCount.getValue().longValue() <= dailyMinCount) {
-        LOG.warn("Found a day with too few tweets. Field: <{}> Day: {} count: {}",
-            fieldName, dailyCount.getKey(), dailyCount.getValue());
-        daysWithNoTweets++;
+    for (Map.Entry< nteger, MutableLong> da lyCount : da lyCounts.entrySet()) {
+       f (da lyCount.getValue().longValue() <= da lyM nCount) {
+        LOG.warn("Found a day w h too few t ets. F eld: <{}> Day: {} count: {}",
+            f eldNa , da lyCount.getKey(), da lyCount.getValue());
+        daysW hNoT ets++;
       }
     }
 
-    hoursWithNoTweetsStat.set(hoursWithNoTweets);
-    daysWithNoTweetsStat.set(daysWithNoTweets);
+    h sW hNoT etsStat.set(h sW hNoT ets);
+    daysW hNoT etsStat.set(daysW hNoT ets);
   }
 
-  // When the fieldName is empty string (as TWEET_COUNT_KEY), it means that we are counting the
-  // number of tweets for the index, not for some specific fields.
-  private boolean isFieldForTweet() {
-    return TWEET_COUNT_KEY.equals(fieldName);
+  // W n t  f eldNa   s empty str ng (as TWEET_COUNT_KEY),    ans that   are count ng t 
+  // number of t ets for t   ndex, not for so  spec f c f elds.
+  pr vate boolean  sF eldForT et() {
+    return TWEET_COUNT_KEY.equals(f eldNa );
   }
 
-  private String getAggregatedNoTweetStatName(boolean hourly) {
-    if (isFieldForTweet()) {
-      if (hourly) {
-        return "hours_with_no_indexed_tweets_v_" + instanceCounter;
+  pr vate Str ng getAggregatedNoT etStatNa (boolean h ly) {
+     f ( sF eldForT et()) {
+       f (h ly) {
+        return "h s_w h_no_ ndexed_t ets_v_" +  nstanceCounter;
       } else {
-        return "days_with_no_indexed_tweets_v_" + instanceCounter;
+        return "days_w h_no_ ndexed_t ets_v_" +  nstanceCounter;
       }
     } else {
-      if (hourly) {
-        return "hours_with_no_indexed_fields_v_" + fieldName + "_" + instanceCounter;
+       f (h ly) {
+        return "h s_w h_no_ ndexed_f elds_v_" + f eldNa  + "_" +  nstanceCounter;
       } else {
-        return "days_with_no_indexed_fields_v_" + fieldName + "_" + instanceCounter;
+        return "days_w h_no_ ndexed_f elds_v_" + f eldNa  + "_" +  nstanceCounter;
       }
     }
   }
 
-  @VisibleForTesting
-  String getStatName(Integer date) {
-    return getStatName(fieldName, instanceCounter, date);
+  @V s bleForTest ng
+  Str ng getStatNa ( nteger date) {
+    return getStatNa (f eldNa ,  nstanceCounter, date);
   }
 
-  @VisibleForTesting
-  static String getStatName(String field, int instance, Integer date) {
-    if (TWEET_COUNT_KEY.equals(field)) {
-      return "tweets_indexed_on_hour_v_" + instance + "_" + date;
+  @V s bleForTest ng
+  stat c Str ng getStatNa (Str ng f eld,  nt  nstance,  nteger date) {
+     f (TWEET_COUNT_KEY.equals(f eld)) {
+      return "t ets_ ndexed_on_h _v_" +  nstance + "_" + date;
     } else {
-      return "tweets_indexed_on_hour_v_" + instance + "_" + field + "_" + date;
+      return "t ets_ ndexed_on_h _v_" +  nstance + "_" + f eld + "_" + date;
     }
   }
 
-  @VisibleForTesting
-  Map<Integer, AtomicInteger> getExportedCounts() {
-    return Collections.unmodifiableMap(exportedHourlyCounts);
+  @V s bleForTest ng
+  Map< nteger, Atom c nteger> getExportedCounts() {
+    return Collect ons.unmod f ableMap(exportedH lyCounts);
   }
 
-  @VisibleForTesting
-  Map<Integer, MutableLong> getDailyCounts() {
-    return Collections.unmodifiableMap(dailyCounts);
+  @V s bleForTest ng
+  Map< nteger, MutableLong> getDa lyCounts() {
+    return Collect ons.unmod f ableMap(da lyCounts);
   }
 
-  @VisibleForTesting
-  long getHoursWithNoTweets() {
-    return hoursWithNoTweetsStat.get();
+  @V s bleForTest ng
+  long getH sW hNoT ets() {
+    return h sW hNoT etsStat.get();
   }
 
-  @VisibleForTesting
-  long getDaysWithNoTweets() {
-    return daysWithNoTweetsStat.get();
+  @V s bleForTest ng
+  long getDaysW hNoT ets() {
+    return daysW hNoT etsStat.get();
   }
 
-  @VisibleForTesting
-  Map<String, SearchLongGauge> getExportedHourlyCountStats() {
+  @V s bleForTest ng
+  Map<Str ng, SearchLongGauge> getExportedH lyCountStats() {
     return exportedStats;
   }
 
   /**
-   * Given a unit time in seconds since epoch UTC, will return the day in format "YYYYMMDDHH"
-   * as an int.
+   * G ven a un  t    n seconds s nce epoch UTC, w ll return t  day  n format "YYYYMMDDHH"
+   * as an  nt.
    */
-  @VisibleForTesting
-  static int getHourValue(Calendar cal, int timeSecs) {
-    cal.setTimeInMillis(timeSecs * 1000L);
-    return getHourValue(cal);
+  @V s bleForTest ng
+  stat c  nt getH Value(Calendar cal,  nt t  Secs) {
+    cal.setT   nM ll s(t  Secs * 1000L);
+    return getH Value(cal);
   }
 
-  static int getHourValue(Calendar cal) {
-    int year = cal.get(Calendar.YEAR) * 1000000;
-    int month = (cal.get(Calendar.MONTH) + 1) * 10000; // month is 0-based
-    int day = cal.get(Calendar.DAY_OF_MONTH) * 100;
-    int hour = cal.get(Calendar.HOUR_OF_DAY);
-    return year + month + day + hour;
+  stat c  nt getH Value(Calendar cal) {
+     nt year = cal.get(Calendar.YEAR) * 1000000;
+     nt month = (cal.get(Calendar.MONTH) + 1) * 10000; // month  s 0-based
+     nt day = cal.get(Calendar.DAY_OF_MONTH) * 100;
+     nt h  = cal.get(Calendar.HOUR_OF_DAY);
+    return year + month + day + h ;
   }
 
-  @VisibleForTesting
-  static Calendar getCalendarValue(int hour) {
-    Calendar cal = Calendar.getInstance(TIME_ZONE);
+  @V s bleForTest ng
+  stat c Calendar getCalendarValue( nt h ) {
+    Calendar cal = Calendar.get nstance(T ME_ZONE);
 
-    int year = hour / 1000000;
-    int month = ((hour / 10000) % 100) - 1; // 0-based
-    int day = (hour / 100) % 100;
-    int hr = hour % 100;
-    cal.setTimeInMillis(0);  // reset all time fields
+     nt year = h  / 1000000;
+     nt month = ((h  / 10000) % 100) - 1; // 0-based
+     nt day = (h  / 100) % 100;
+     nt hr = h  % 100;
+    cal.setT   nM ll s(0);  // reset all t   f elds
     cal.set(year, month, day, hr, 0);
     return cal;
   }

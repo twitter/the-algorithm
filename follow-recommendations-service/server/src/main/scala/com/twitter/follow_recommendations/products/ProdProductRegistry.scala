@@ -1,44 +1,44 @@
-package com.twitter.follow_recommendations.products
+package com.tw ter.follow_recom ndat ons.products
 
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.products.common.ProductRegistry
-import com.twitter.follow_recommendations.products.explore_tab.ExploreTabProduct
-import com.twitter.follow_recommendations.products.home_timeline.HomeTimelineProduct
-import com.twitter.follow_recommendations.products.home_timeline_tweet_recs.HomeTimelineTweetRecsProduct
-import com.twitter.follow_recommendations.products.sidebar.SidebarProduct
+ mport com.tw ter.follow_recom ndat ons.common.models.D splayLocat on
+ mport com.tw ter.follow_recom ndat ons.products.common.ProductReg stry
+ mport com.tw ter.follow_recom ndat ons.products.explore_tab.ExploreTabProduct
+ mport com.tw ter.follow_recom ndat ons.products.ho _t  l ne.Ho T  l neProduct
+ mport com.tw ter.follow_recom ndat ons.products.ho _t  l ne_t et_recs.Ho T  l neT etRecsProduct
+ mport com.tw ter.follow_recom ndat ons.products.s debar.S debarProduct
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ProdProductRegistry @Inject() (
+@S ngleton
+class ProdProductReg stry @ nject() (
   exploreTabProduct: ExploreTabProduct,
-  homeTimelineProduct: HomeTimelineProduct,
-  homeTimelineTweetRecsProduct: HomeTimelineTweetRecsProduct,
-  sidebarProduct: SidebarProduct,
-) extends ProductRegistry {
+  ho T  l neProduct: Ho T  l neProduct,
+  ho T  l neT etRecsProduct: Ho T  l neT etRecsProduct,
+  s debarProduct: S debarProduct,
+) extends ProductReg stry {
 
-  override val products: Seq[common.Product] =
+  overr de val products: Seq[common.Product] =
     Seq(
       exploreTabProduct,
-      homeTimelineProduct,
-      homeTimelineTweetRecsProduct,
-      sidebarProduct
+      ho T  l neProduct,
+      ho T  l neT etRecsProduct,
+      s debarProduct
     )
 
-  override val displayLocationProductMap: Map[DisplayLocation, common.Product] =
-    products.groupBy(_.displayLocation).flatMap {
+  overr de val d splayLocat onProductMap: Map[D splayLocat on, common.Product] =
+    products.groupBy(_.d splayLocat on).flatMap {
       case (loc, products) =>
-        assert(products.size == 1, s"Found more than 1 Product for ${loc}")
-        products.headOption.map { product => loc -> product }
+        assert(products.s ze == 1, s"Found more than 1 Product for ${loc}")
+        products. adOpt on.map { product => loc -> product }
     }
 
-  override def getProductByDisplayLocation(displayLocation: DisplayLocation): common.Product = {
-    displayLocationProductMap.getOrElse(
-      displayLocation,
-      throw new MissingProductException(displayLocation))
+  overr de def getProductByD splayLocat on(d splayLocat on: D splayLocat on): common.Product = {
+    d splayLocat onProductMap.getOrElse(
+      d splayLocat on,
+      throw new M ss ngProductExcept on(d splayLocat on))
   }
 }
 
-class MissingProductException(displayLocation: DisplayLocation)
-    extends Exception(s"No Product found for ${displayLocation}")
+class M ss ngProductExcept on(d splayLocat on: D splayLocat on)
+    extends Except on(s"No Product found for ${d splayLocat on}")

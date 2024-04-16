@@ -1,71 +1,71 @@
-package com.twitter.search.earlybird.util;
+package com.tw ter.search.earlyb rd.ut l;
 
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.stream.Collectors;
+ mport java.ut l.L st;
+ mport java.ut l.concurrent.ExecutorServ ce;
+ mport java.ut l.concurrent.Executors;
+ mport java.ut l.concurrent.ThreadFactory;
+ mport java.ut l.stream.Collectors;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+ mport com.google.common.ut l.concurrent.ThreadFactoryBu lder;
 
-import com.twitter.util.Await;
-import com.twitter.util.Future;
-import com.twitter.util.Future$;
-import com.twitter.util.FuturePool;
-import com.twitter.util.FuturePool$;
+ mport com.tw ter.ut l.Awa ;
+ mport com.tw ter.ut l.Future;
+ mport com.tw ter.ut l.Future$;
+ mport com.tw ter.ut l.FuturePool;
+ mport com.tw ter.ut l.FuturePool$;
 
-public final class ParallelUtil {
-  private ParallelUtil() {
+publ c f nal class ParallelUt l {
+  pr vate ParallelUt l() {
   }
 
-  public static <T, R> List<R> parmap(String threadName, CheckedFunction<T, R> fn, List<T> input)
-      throws Exception {
-    return parmap(threadName, input.size(), fn, input);
+  publ c stat c <T, R> L st<R> parmap(Str ng threadNa , C ckedFunct on<T, R> fn, L st<T>  nput)
+      throws Except on {
+    return parmap(threadNa ,  nput.s ze(), fn,  nput);
   }
 
   /**
-   * Runs a function in parallel across the elements of the list, and throws an exception if any
-   * of the functions throws, or returns the results.
+   * Runs a funct on  n parallel across t  ele nts of t  l st, and throws an except on  f any
+   * of t  funct ons throws, or returns t  results.
    *
-   * Uses as many threads as there are elements in the input, so only use this for tasks that
-   * require significant CPU for each element, and have less elements than the number of cores.
+   * Uses as many threads as t re are ele nts  n t   nput, so only use t  for tasks that
+   * requ re s gn f cant CPU for each ele nt, and have less ele nts than t  number of cores.
    */
-  public static <T, R> List<R> parmap(
-      String threadName, int threadPoolSize, CheckedFunction<T, R> fn, List<T> input)
-      throws Exception {
-    ExecutorService executor = Executors.newFixedThreadPool(threadPoolSize,
-        buildThreadFactory(threadName));
+  publ c stat c <T, R> L st<R> parmap(
+      Str ng threadNa ,  nt threadPoolS ze, C ckedFunct on<T, R> fn, L st<T>  nput)
+      throws Except on {
+    ExecutorServ ce executor = Executors.newF xedThreadPool(threadPoolS ze,
+        bu ldThreadFactory(threadNa ));
     FuturePool futurePool = FuturePool$.MODULE$.apply(executor);
 
-    List<Future<R>> futures = input
+    L st<Future<R>> futures =  nput
         .stream()
-        .map(in -> futurePool.apply(() -> {
+        .map( n -> futurePool.apply(() -> {
           try {
-            return fn.apply(in);
-          } catch (Exception e) {
-            throw new RuntimeException(e);
+            return fn.apply( n);
+          } catch (Except on e) {
+            throw new Runt  Except on(e);
           }
-        })).collect(Collectors.toList());
+        })).collect(Collectors.toL st());
 
     try {
-      return Await.result(Future$.MODULE$.collect(futures));
-    } finally {
+      return Awa .result(Future$.MODULE$.collect(futures));
+    } f nally {
       executor.shutdownNow();
     }
   }
 
-  private static ThreadFactory buildThreadFactory(String threadNameFormat) {
-    return new ThreadFactoryBuilder()
-        .setNameFormat(threadNameFormat)
+  pr vate stat c ThreadFactory bu ldThreadFactory(Str ng threadNa Format) {
+    return new ThreadFactoryBu lder()
+        .setNa Format(threadNa Format)
         .setDaemon(false)
-        .build();
+        .bu ld();
   }
 
-  @FunctionalInterface
-  public interface CheckedFunction<T, R> {
+  @Funct onal nterface
+  publ c  nterface C ckedFunct on<T, R> {
     /**
-     * A function from T to R that throws checked Exceptions.
+     * A funct on from T to R that throws c cked Except ons.
      */
-    R apply(T t) throws Exception;
+    R apply(T t) throws Except on;
   }
 }

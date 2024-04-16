@@ -1,174 +1,174 @@
-package com.twitter.search.earlybird.config;
+package com.tw ter.search.earlyb rd.conf g;
 
-import java.util.Date;
-import java.util.Map;
-import java.util.Set;
+ mport java.ut l.Date;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.config.ConfigFile;
-import com.twitter.search.common.config.ConfigurationException;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.util.date.DateUtil;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common.conf g.Conf g;
+ mport com.tw ter.search.common.conf g.Conf gF le;
+ mport com.tw ter.search.common.conf g.Conf gurat onExcept on;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
+ mport com.tw ter.search.common.ut l.date.DateUt l;
 
 /**
- * This class provides APIs to access the tier configurations for a cluster.
- * Each tier has tier name, number of partitions, tier start time and end time.
+ * T  class prov des AP s to access t  t er conf gurat ons for a cluster.
+ * Each t er has t er na , number of part  ons, t er start t   and end t  .
  */
-public final class TierConfig {
-  private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(TierConfig.class);
+publ c f nal class T erConf g {
+  pr vate stat c f nal org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(T erConf g.class);
 
-  private static final String DEFAULT_CONFIG_DIR = "common/config";
-  public static final String DEFAULT_TIER_FILE = "earlybird-tiers.yml";
+  pr vate stat c f nal Str ng DEFAULT_CONF G_D R = "common/conf g";
+  publ c stat c f nal Str ng DEFAULT_T ER_F LE = "earlyb rd-t ers.yml";
 
-  public static final Date DEFAULT_TIER_START_DATE = DateUtil.toDate(2006, 3, 21);
-  // It's convenient for DEFAULT_TIER_END_DATE to be before ~2100, because then the output of
-  // FieldTermCounter.getHourValue(DEFAULT_TIER_END_END_DATE) can still fit into an integer.
-  public static final Date DEFAULT_TIER_END_DATE = DateUtil.toDate(2099, 1, 1);
+  publ c stat c f nal Date DEFAULT_T ER_START_DATE = DateUt l.toDate(2006, 3, 21);
+  //  's conven ent for DEFAULT_T ER_END_DATE to be before ~2100, because t n t  output of
+  // F eldTermCounter.getH Value(DEFAULT_T ER_END_END_DATE) can st ll f   nto an  nteger.
+  publ c stat c f nal Date DEFAULT_T ER_END_DATE = DateUt l.toDate(2099, 1, 1);
 
-  public static final String DEFAULT_TIER_NAME = "all";
-  public static final boolean DEFAULT_ENABLED = true;
-  public static final TierInfo.RequestReadType DEFAULT_READ_TYPE = TierInfo.RequestReadType.LIGHT;
+  publ c stat c f nal Str ng DEFAULT_T ER_NAME = "all";
+  publ c stat c f nal boolean DEFAULT_ENABLED = true;
+  publ c stat c f nal T er nfo.RequestReadType DEFAULT_READ_TYPE = T er nfo.RequestReadType.L GHT;
 
-  private static ConfigFile tierConfigFile = null;
-  private static ConfigSource tierConfigSource = null;
+  pr vate stat c Conf gF le t erConf gF le = null;
+  pr vate stat c Conf gS ce t erConf gS ce = null;
 
-  public enum ConfigSource {
+  publ c enum Conf gS ce {
     LOCAL,
     ZOOKEEPER
   }
 
-  private TierConfig() { }
+  pr vate T erConf g() { }
 
-  private static synchronized void init() {
-    if (tierConfigFile == null) {
-      tierConfigFile = new ConfigFile(DEFAULT_CONFIG_DIR, DEFAULT_TIER_FILE);
-      tierConfigSource = ConfigSource.LOCAL;
-      SearchLongGauge.export("tier_config_source_" + tierConfigSource.name()).set(1);
-      LOG.info("Tier config file " + DEFAULT_TIER_FILE + " is successfully loaded from bundle.");
+  pr vate stat c synchron zed vo d  n () {
+     f (t erConf gF le == null) {
+      t erConf gF le = new Conf gF le(DEFAULT_CONF G_D R, DEFAULT_T ER_F LE);
+      t erConf gS ce = Conf gS ce.LOCAL;
+      SearchLongGauge.export("t er_conf g_s ce_" + t erConf gS ce.na ()).set(1);
+      LOG. nfo("T er conf g f le " + DEFAULT_T ER_F LE + "  s successfully loaded from bundle.");
     }
   }
 
-  public static ConfigFile getConfigFile() {
-    init();
-    return tierConfigFile;
+  publ c stat c Conf gF le getConf gF le() {
+     n ();
+    return t erConf gF le;
   }
 
-  public static String getConfigFileName() {
-    return getConfigFile().getConfigFileName();
-  }
-
-  /**
-   * Return all the tier names specified in the config file.
-   */
-  public static Set<String> getTierNames() {
-    return Config.getConfig().getMapCopy(getConfigFileName()).keySet();
+  publ c stat c Str ng getConf gF leNa () {
+    return getConf gF le().getConf gF leNa ();
   }
 
   /**
-   * Sets the value of the given tier config property to the given value.
+   * Return all t  t er na s spec f ed  n t  conf g f le.
    */
-  public static void setForTests(String property, Object value) {
-    Config.getConfig().setForTests(DEFAULT_TIER_FILE, property, value);
+  publ c stat c Set<Str ng> getT erNa s() {
+    return Conf g.getConf g().getMapCopy(getConf gF leNa ()).keySet();
   }
 
   /**
-   * Returns the config info for the specified tier.
+   * Sets t  value of t  g ven t er conf g property to t  g ven value.
    */
-  public static TierInfo getTierInfo(String tierName) {
-    return getTierInfo(tierName, null /* use current environment */);
+  publ c stat c vo d setForTests(Str ng property, Object value) {
+    Conf g.getConf g().setForTests(DEFAULT_T ER_F LE, property, value);
   }
 
   /**
-   * Returns the config info for the specified tier and environment.
+   * Returns t  conf g  nfo for t  spec f ed t er.
    */
-  public static TierInfo getTierInfo(String tierName, @Nullable String environment) {
-    String tierConfigFileType = getConfigFileName();
-    Map<String, Object> tierInfo;
+  publ c stat c T er nfo getT er nfo(Str ng t erNa ) {
+    return getT er nfo(t erNa , null /* use current env ron nt */);
+  }
+
+  /**
+   * Returns t  conf g  nfo for t  spec f ed t er and env ron nt.
+   */
+  publ c stat c T er nfo getT er nfo(Str ng t erNa , @Nullable Str ng env ron nt) {
+    Str ng t erConf gF leType = getConf gF leNa ();
+    Map<Str ng, Object> t er nfo;
     try {
-      tierInfo = (Map<String, Object>) Config.getConfig()
-          .getFromEnvironment(environment, tierConfigFileType, tierName);
-    } catch (ConfigurationException e) {
-      throw new RuntimeException(e);
+      t er nfo = (Map<Str ng, Object>) Conf g.getConf g()
+          .getFromEnv ron nt(env ron nt, t erConf gF leType, t erNa );
+    } catch (Conf gurat onExcept on e) {
+      throw new Runt  Except on(e);
     }
-    if (tierInfo == null) {
-      LOG.error("Cannot find tier config for "
-          + tierName + "in config file: " + tierConfigFileType);
-      throw new RuntimeException("Configuration error: " + tierConfigFileType);
-    }
-
-    Long partitions = (Long) tierInfo.get("number_of_partitions");
-    if (partitions == null) {
-      LOG.error("No number of partition is specified for tier "
-          + tierName + " in tier config file " + tierConfigFileType);
-      throw new RuntimeException("Configuration error: " + tierConfigFileType);
+     f (t er nfo == null) {
+      LOG.error("Cannot f nd t er conf g for "
+          + t erNa  + " n conf g f le: " + t erConf gF leType);
+      throw new Runt  Except on("Conf gurat on error: " + t erConf gF leType);
     }
 
-    Long numTimeslices = (Long) tierInfo.get("serving_timeslices");
-    if (numTimeslices == null) {
-      LOG.info("No max timeslices is specified for tier "
-          + tierName + " in tier config file " + tierConfigFileType
-          + ", not setting a cap on number of serving timeslices");
-      // NOTE: we use max int32 here because it will ultimately be cast to an int, but the config
-      // map expects Longs for all integral types.  Using Long.MAX_VALUE leads to max serving
-      // timeslices being set to -1 when it is truncated to an int.
-      numTimeslices = (long) Integer.MAX_VALUE;
+    Long part  ons = (Long) t er nfo.get("number_of_part  ons");
+     f (part  ons == null) {
+      LOG.error("No number of part  on  s spec f ed for t er "
+          + t erNa  + "  n t er conf g f le " + t erConf gF leType);
+      throw new Runt  Except on("Conf gurat on error: " + t erConf gF leType);
     }
 
-    Date tierStartDate = (Date) tierInfo.get("data_range_start_date_inclusive");
-    if (tierStartDate == null) {
-      tierStartDate = DEFAULT_TIER_START_DATE;
-    }
-    Date tierEndDate = (Date) tierInfo.get("data_range_end_date_exclusive");
-    if (tierEndDate == null) {
-      tierEndDate = DEFAULT_TIER_END_DATE;
-    }
-
-    Boolean tierEnabled = (Boolean) tierInfo.get("tier_enabled");
-    if (tierEnabled == null) {
-      tierEnabled = DEFAULT_ENABLED;
+    Long numT  sl ces = (Long) t er nfo.get("serv ng_t  sl ces");
+     f (numT  sl ces == null) {
+      LOG. nfo("No max t  sl ces  s spec f ed for t er "
+          + t erNa  + "  n t er conf g f le " + t erConf gF leType
+          + ", not sett ng a cap on number of serv ng t  sl ces");
+      // NOTE:   use max  nt32  re because   w ll ult mately be cast to an  nt, but t  conf g
+      // map expects Longs for all  ntegral types.  Us ng Long.MAX_VALUE leads to max serv ng
+      // t  sl ces be ng set to -1 w n    s truncated to an  nt.
+      numT  sl ces = (long)  nteger.MAX_VALUE;
     }
 
-    TierInfo.RequestReadType readType =
-      getRequestReadType((String) tierInfo.get("tier_read_type"), DEFAULT_READ_TYPE);
-    TierInfo.RequestReadType readTypeOverride =
-      getRequestReadType((String) tierInfo.get("tier_read_type_override"), readType);
+    Date t erStartDate = (Date) t er nfo.get("data_range_start_date_ nclus ve");
+     f (t erStartDate == null) {
+      t erStartDate = DEFAULT_T ER_START_DATE;
+    }
+    Date t erEndDate = (Date) t er nfo.get("data_range_end_date_exclus ve");
+     f (t erEndDate == null) {
+      t erEndDate = DEFAULT_T ER_END_DATE;
+    }
 
-    return new TierInfo(
-        tierName,
-        tierStartDate,
-        tierEndDate,
-        partitions.intValue(),
-        numTimeslices.intValue(),
-        tierEnabled,
-        (String) tierInfo.get("serving_range_since_id_exclusive"),
-        (String) tierInfo.get("serving_range_max_id_inclusive"),
-        (Date) tierInfo.get("serving_range_start_date_inclusive_override"),
-        (Date) tierInfo.get("serving_range_end_date_exclusive_override"),
+    Boolean t erEnabled = (Boolean) t er nfo.get("t er_enabled");
+     f (t erEnabled == null) {
+      t erEnabled = DEFAULT_ENABLED;
+    }
+
+    T er nfo.RequestReadType readType =
+      getRequestReadType((Str ng) t er nfo.get("t er_read_type"), DEFAULT_READ_TYPE);
+    T er nfo.RequestReadType readTypeOverr de =
+      getRequestReadType((Str ng) t er nfo.get("t er_read_type_overr de"), readType);
+
+    return new T er nfo(
+        t erNa ,
+        t erStartDate,
+        t erEndDate,
+        part  ons. ntValue(),
+        numT  sl ces. ntValue(),
+        t erEnabled,
+        (Str ng) t er nfo.get("serv ng_range_s nce_ d_exclus ve"),
+        (Str ng) t er nfo.get("serv ng_range_max_ d_ nclus ve"),
+        (Date) t er nfo.get("serv ng_range_start_date_ nclus ve_overr de"),
+        (Date) t er nfo.get("serv ng_range_end_date_exclus ve_overr de"),
         readType,
-        readTypeOverride,
+        readTypeOverr de,
         Clock.SYSTEM_CLOCK);
   }
 
-  public static synchronized void clear() {
-    tierConfigFile = null;
-    tierConfigSource = null;
+  publ c stat c synchron zed vo d clear() {
+    t erConf gF le = null;
+    t erConf gS ce = null;
   }
 
-  protected static synchronized ConfigSource getTierConfigSource() {
-    return tierConfigSource;
+  protected stat c synchron zed Conf gS ce getT erConf gS ce() {
+    return t erConf gS ce;
   }
 
-  private static TierInfo.RequestReadType getRequestReadType(
-      String readTypeEnumName, TierInfo.RequestReadType defaultReadType) {
-    TierInfo.RequestReadType readType = defaultReadType;
-    if (readTypeEnumName != null) {
-      readType = TierInfo.RequestReadType.valueOf(readTypeEnumName.trim().toUpperCase());
-      Preconditions.checkState(readType != null);
+  pr vate stat c T er nfo.RequestReadType getRequestReadType(
+      Str ng readTypeEnumNa , T er nfo.RequestReadType defaultReadType) {
+    T er nfo.RequestReadType readType = defaultReadType;
+     f (readTypeEnumNa  != null) {
+      readType = T er nfo.RequestReadType.valueOf(readTypeEnumNa .tr m().toUpperCase());
+      Precond  ons.c ckState(readType != null);
     }
     return readType;
   }

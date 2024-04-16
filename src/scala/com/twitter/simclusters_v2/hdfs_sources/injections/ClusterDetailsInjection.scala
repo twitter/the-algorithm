@@ -1,16 +1,16 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.tw ter.s mclusters_v2.hdfs_s ces. nject ons
 
-import com.twitter.bijection.Bufferable
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.{
-  ScalaCompactThrift,
-  genericInjection
+ mport com.tw ter.b ject on.Bufferable
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.{
+  ScalaCompactThr ft,
+  gener c nject on
 }
-import com.twitter.simclusters_v2.thriftscala.ClusterDetails
+ mport com.tw ter.s mclusters_v2.thr ftscala.ClusterDeta ls
 
-object ClusterDetailsInjection {
-  val injection = KeyValInjection[(String, Int), ClusterDetails](
-    genericInjection(Bufferable.injectionOf[(String, Int)]),
-    ScalaCompactThrift(ClusterDetails)
+object ClusterDeta ls nject on {
+  val  nject on = KeyVal nject on[(Str ng,  nt), ClusterDeta ls](
+    gener c nject on(Bufferable. nject onOf[(Str ng,  nt)]),
+    ScalaCompactThr ft(ClusterDeta ls)
   )
 }

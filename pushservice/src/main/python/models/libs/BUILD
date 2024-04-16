@@ -1,16 +1,16 @@
-python3_library(
-    name = "libs",
-    sources = ["*.py"],
+python3_l brary(
+    na  = "l bs",
+    s ces = ["*.py"],
     tags = [
-        "bazel-compatible",
-        "no-mypy",
+        "bazel-compat ble",
+        "no- py",
     ],
-    dependencies = [
-        "cortex/recsys/src/python/twitter/cortex/recsys/utils",
-        "magicpony/common/file_access/src/python/twitter/magicpony/common/file_access",
-        "src/python/twitter/cortex/ml/embeddings/deepbird",
-        "src/python/twitter/cortex/ml/embeddings/deepbird/grouped_metrics",
-        "src/python/twitter/deepbird/util/data",
+    dependenc es = [
+        "cortex/recsys/src/python/tw ter/cortex/recsys/ut ls",
+        "mag cpony/common/f le_access/src/python/tw ter/mag cpony/common/f le_access",
+        "src/python/tw ter/cortex/ml/embedd ngs/deepb rd",
+        "src/python/tw ter/cortex/ml/embedd ngs/deepb rd/grouped_ tr cs",
+        "src/python/tw ter/deepb rd/ut l/data",
         "twml:twml-nodeps",
     ],
 )

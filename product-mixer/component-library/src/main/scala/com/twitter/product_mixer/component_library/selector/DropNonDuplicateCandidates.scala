@@ -1,74 +1,74 @@
-package com.twitter.product_mixer.component_library.selector
+package com.tw ter.product_m xer.component_l brary.selector
 
-import com.twitter.product_mixer.component_library.model.candidate.CursorCandidate
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.CursorCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.SelectorResult
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on. emCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on.ModuleCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * Keep only the candidates in `remainingCandidates` that appear multiple times.
- * This ignores modules and cursors from being removed.
+ * Keep only t  cand dates  n `rema n ngCand dates` that appear mult ple t  s.
+ * T   gnores modules and cursors from be ng removed.
  *
- * @param duplicationKey how to generate the key used to identify duplicate candidates
+ * @param dupl cat onKey how to generate t  key used to  dent fy dupl cate cand dates
  *
- * @note [[com.twitter.product_mixer.component_library.model.candidate.CursorCandidate]] are ignored.
- * @note [[com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails]] are ignored.
+ * @note [[com.tw ter.product_m xer.component_l brary.model.cand date.CursorCand date]] are  gnored.
+ * @note [[com.tw ter.product_m xer.core.model.common.presentat on.ModuleCand dateW hDeta ls]] are  gnored.
  *
- * @example if `remainingCandidates`
- * `Seq(sourceA_Id1, sourceA_Id1, sourceA_Id2, sourceB_id1, sourceB_id2, sourceB_id3, sourceC_id4)`
- * then the output result will be `Seq(sourceA_Id1, sourceA_Id2)`
+ * @example  f `rema n ngCand dates`
+ * `Seq(s ceA_ d1, s ceA_ d1, s ceA_ d2, s ceB_ d1, s ceB_ d2, s ceB_ d3, s ceC_ d4)`
+ * t n t  output result w ll be `Seq(s ceA_ d1, s ceA_ d2)`
  */
-case class DropNonDuplicateCandidates(
-  override val pipelineScope: CandidateScope,
-  duplicationKey: DeduplicationKey[_] = IdAndClassDuplicationKey)
-    extends Selector[PipelineQuery] {
+case class DropNonDupl cateCand dates(
+  overr de val p pel neScope: Cand dateScope,
+  dupl cat onKey: Dedupl cat onKey[_] =  dAndClassDupl cat onKey)
+    extends Selector[P pel neQuery] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+  overr de def apply(
+    query: P pel neQuery,
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
-    val duplicateCandidates = dropNonDuplicates(
-      pipelineScope = pipelineScope,
-      candidates = remainingCandidates,
-      duplicationKey = duplicationKey)
+    val dupl cateCand dates = dropNonDupl cates(
+      p pel neScope = p pel neScope,
+      cand dates = rema n ngCand dates,
+      dupl cat onKey = dupl cat onKey)
 
-    SelectorResult(remainingCandidates = duplicateCandidates, result = result)
+    SelectorResult(rema n ngCand dates = dupl cateCand dates, result = result)
   }
 
   /**
-   * Identify and keep candidates using the supplied key extraction and merger functions. By default
-   * this will keep only candidates that appear multiple times as determined by comparing
-   * the contained candidate ID and class type. Candidates appearing only once will be dropped.
+   *  dent fy and keep cand dates us ng t  suppl ed key extract on and  rger funct ons. By default
+   * t  w ll keep only cand dates that appear mult ple t  s as determ ned by compar ng
+   * t  conta ned cand date  D and class type. Cand dates appear ng only once w ll be dropped.
    *
-   * @note [[com.twitter.product_mixer.component_library.model.candidate.CursorCandidate]] are ignored.
-   * @note [[com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails]] are ignored.
+   * @note [[com.tw ter.product_m xer.component_l brary.model.cand date.CursorCand date]] are  gnored.
+   * @note [[com.tw ter.product_m xer.core.model.common.presentat on.ModuleCand dateW hDeta ls]] are  gnored.
    *
-   * @param candidates which may have elements to drop
-   * @param duplicationKey how to generate a key for a candidate for identifying duplicates
+   * @param cand dates wh ch may have ele nts to drop
+   * @param dupl cat onKey how to generate a key for a cand date for  dent fy ng dupl cates
    */
-  private[this] def dropNonDuplicates[Candidate <: CandidateWithDetails, Key](
-    pipelineScope: CandidateScope,
-    candidates: Seq[Candidate],
-    duplicationKey: DeduplicationKey[Key],
-  ): Seq[Candidate] = {
-    // Here we are checking if each candidate has multiple appearances or not
-    val isCandidateADuplicate: Map[Key, Boolean] = candidates
+  pr vate[t ] def dropNonDupl cates[Cand date <: Cand dateW hDeta ls, Key](
+    p pel neScope: Cand dateScope,
+    cand dates: Seq[Cand date],
+    dupl cat onKey: Dedupl cat onKey[Key],
+  ): Seq[Cand date] = {
+    //  re   are c ck ng  f each cand date has mult ple appearances or not
+    val  sCand dateADupl cate: Map[Key, Boolean] = cand dates
       .collect {
-        case item: ItemCandidateWithDetails
-            if pipelineScope.contains(item) && !item.candidate.isInstanceOf[CursorCandidate] =>
-          item
-      }.groupBy(duplicationKey(_))
+        case  em:  emCand dateW hDeta ls
+             f p pel neScope.conta ns( em) && ! em.cand date. s nstanceOf[CursorCand date] =>
+           em
+      }.groupBy(dupl cat onKey(_))
       .mapValues(_.length > 1)
 
-    candidates.filter {
-      case item: ItemCandidateWithDetails =>
-        isCandidateADuplicate.getOrElse(duplicationKey(item), true)
-      case _: ModuleCandidateWithDetails => true
+    cand dates.f lter {
+      case  em:  emCand dateW hDeta ls =>
+         sCand dateADupl cate.getOrElse(dupl cat onKey( em), true)
+      case _: ModuleCand dateW hDeta ls => true
       case _ => false
     }
   }

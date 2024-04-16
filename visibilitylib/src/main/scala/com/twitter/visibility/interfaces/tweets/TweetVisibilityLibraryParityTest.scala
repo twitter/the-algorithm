@@ -1,57 +1,57 @@
-package com.twitter.visibility.interfaces.tweets
+package com.tw ter.v s b l y. nterfaces.t ets
 
-import com.twitter.spam.rtf.{thriftscala => t}
-import com.twitter.context.TwitterContext
-import com.twitter.context.thriftscala.Viewer
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.Fetch
-import com.twitter.strato.client.Client
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.common.tweets.TweetVisibilityResultMapper
-import com.twitter.visibility.models.SafetyLevel.toThrift
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.thriftscala.TweetVisibilityResult
+ mport com.tw ter.spam.rtf.{thr ftscala => t}
+ mport com.tw ter.context.Tw terContext
+ mport com.tw ter.context.thr ftscala.V e r
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.catalog.Fetch
+ mport com.tw ter.strato.cl ent.Cl ent
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.strato.thr ft.ScroogeConv mpl c s._
+ mport com.tw ter.v s b l y.bu lder.V s b l yResult
+ mport com.tw ter.v s b l y.common.t ets.T etV s b l yResultMapper
+ mport com.tw ter.v s b l y.models.SafetyLevel.toThr ft
+ mport com.tw ter.v s b l y.models.V e rContext
+ mport com.tw ter.v s b l y.thr ftscala.T etV s b l yResult
 
-class TweetVisibilityLibraryParityTest(statsReceiver: StatsReceiver, stratoClient: Client) {
+class T etV s b l yL braryPar yTest(statsRece ver: StatsRece ver, stratoCl ent: Cl ent) {
 
-  private val parityTestScope = statsReceiver.scope("tweet_visibility_library_parity")
-  private val requests = parityTestScope.counter("requests")
-  private val equal = parityTestScope.counter("equal")
-  private val incorrect = parityTestScope.counter("incorrect")
-  private val empty = parityTestScope.counter("empty")
-  private val failures = parityTestScope.counter("failures")
+  pr vate val par yTestScope = statsRece ver.scope("t et_v s b l y_l brary_par y")
+  pr vate val requests = par yTestScope.counter("requests")
+  pr vate val equal = par yTestScope.counter("equal")
+  pr vate val  ncorrect = par yTestScope.counter(" ncorrect")
+  pr vate val empty = par yTestScope.counter("empty")
+  pr vate val fa lures = par yTestScope.counter("fa lures")
 
-  private val fetcher: Fetcher[Long, t.SafetyLevel, TweetVisibilityResult] =
-    stratoClient.fetcher[Long, t.SafetyLevel, TweetVisibilityResult](
-      "visibility/service/TweetVisibilityResult.Tweet"
+  pr vate val fetc r: Fetc r[Long, t.SafetyLevel, T etV s b l yResult] =
+    stratoCl ent.fetc r[Long, t.SafetyLevel, T etV s b l yResult](
+      "v s b l y/serv ce/T etV s b l yResult.T et"
     )
 
-  def runParityTest(
-    req: TweetVisibilityRequest,
-    resp: VisibilityResult
-  ): Stitch[Unit] = {
-    requests.incr()
+  def runPar yTest(
+    req: T etV s b l yRequest,
+    resp: V s b l yResult
+  ): St ch[Un ] = {
+    requests. ncr()
 
-    val twitterContext = TwitterContext(TwitterContextPermit)
+    val tw terContext = Tw terContext(Tw terContextPerm )
 
-    val viewer: Option[Viewer] = {
+    val v e r: Opt on[V e r] = {
 
-      val remoteViewerContext = ViewerContext.fromContext
+      val remoteV e rContext = V e rContext.fromContext
 
-      if (remoteViewerContext != req.viewerContext) {
-        val updatedRemoteViewerContext = remoteViewerContext.copy(
-          userId = req.viewerContext.userId
+       f (remoteV e rContext != req.v e rContext) {
+        val updatedRemoteV e rContext = remoteV e rContext.copy(
+          user d = req.v e rContext.user d
         )
 
-        if (updatedRemoteViewerContext == req.viewerContext) {
-          twitterContext() match {
+         f (updatedRemoteV e rContext == req.v e rContext) {
+          tw terContext() match {
             case None =>
-              Some(Viewer(userId = req.viewerContext.userId))
-            case Some(v) =>
-              Some(v.copy(userId = req.viewerContext.userId))
+              So (V e r(user d = req.v e rContext.user d))
+            case So (v) =>
+              So (v.copy(user d = req.v e rContext.user d))
           }
         } else {
           None
@@ -61,49 +61,49 @@ class TweetVisibilityLibraryParityTest(statsReceiver: StatsReceiver, stratoClien
       }
     }
 
-    val tweetypieContext = TweetypieContext(
-      isQuotedTweet = req.isInnerQuotedTweet,
-      isRetweet = req.isRetweet,
-      hydrateConversationControl = req.hydrateConversationControl
+    val t etyp eContext = T etyp eContext(
+       sQuotedT et = req. s nnerQuotedT et,
+       sRet et = req. sRet et,
+      hydrateConversat onControl = req.hydrateConversat onControl
     )
 
-    val parityCheck: Stitch[Fetch.Result[TweetVisibilityResult]] = {
-      Stitch.callFuture {
-        TweetypieContext.let(tweetypieContext) {
-          viewer match {
-            case Some(viewer) =>
-              twitterContext.let(viewer) {
-                Stitch.run(fetcher.fetch(req.tweet.id, toThrift(req.safetyLevel)))
+    val par yC ck: St ch[Fetch.Result[T etV s b l yResult]] = {
+      St ch.callFuture {
+        T etyp eContext.let(t etyp eContext) {
+          v e r match {
+            case So (v e r) =>
+              tw terContext.let(v e r) {
+                St ch.run(fetc r.fetch(req.t et. d, toThr ft(req.safetyLevel)))
               }
             case None =>
-              Stitch.run(fetcher.fetch(req.tweet.id, toThrift(req.safetyLevel)))
+              St ch.run(fetc r.fetch(req.t et. d, toThr ft(req.safetyLevel)))
           }
         }
       }
     }
 
-    parityCheck
-      .flatMap { parityResponse =>
-        val tvr = TweetVisibilityResultMapper.fromAction(resp.verdict.toActionThrift())
+    par yC ck
+      .flatMap { par yResponse =>
+        val tvr = T etV s b l yResultMapper.fromAct on(resp.verd ct.toAct onThr ft())
 
-        parityResponse.v match {
-          case Some(ptvr) =>
-            if (tvr == ptvr) {
-              equal.incr()
+        par yResponse.v match {
+          case So (ptvr) =>
+             f (tvr == ptvr) {
+              equal. ncr()
             } else {
-              incorrect.incr()
+               ncorrect. ncr()
             }
 
           case None =>
-            empty.incr()
+            empty. ncr()
         }
 
-        Stitch.Done
+        St ch.Done
       }.rescue {
         case t: Throwable =>
-          failures.incr()
-          Stitch.Done
+          fa lures. ncr()
+          St ch.Done
 
-      }.unit
+      }.un 
   }
 }

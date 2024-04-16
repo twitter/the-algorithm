@@ -1,114 +1,114 @@
-package com.twitter.simclusters_v2.scalding.embedding.common
+package com.tw ter.s mclusters_v2.scald ng.embedd ng.common
 
-import com.twitter.simclusters_v2.thriftscala._
-import java.net.InetAddress
-import java.net.UnknownHostException
+ mport com.tw ter.s mclusters_v2.thr ftscala._
+ mport java.net. netAddress
+ mport java.net.UnknownHostExcept on
 
-object EmbeddingUtil {
+object Embedd ngUt l {
 
-  type UserId = Long
-  type ClusterId = Int
-  type ProducerId = Long
-  type EmbeddingScore = Double
-  type SemanticCoreEntityId = Long
-  type HashtagId = String
-  type Language = String
+  type User d = Long
+  type Cluster d =  nt
+  type Producer d = Long
+  type Embedd ngScore = Double
+  type Semant cCoreEnt y d = Long
+  type Hashtag d = Str ng
+  type Language = Str ng
 
-  implicit val internalIdOrdering: Ordering[InternalId] = Ordering.by {
-    case InternalId.EntityId(id) => id.toString
-    case InternalId.Hashtag(strId) => strId
-    case InternalId.ClusterId(iid) => iid.toString
-    case InternalId.LocaleEntityId(LocaleEntityId(entityId, lang)) => lang + entityId.toString
+   mpl c  val  nternal dOrder ng: Order ng[ nternal d] = Order ng.by {
+    case  nternal d.Ent y d( d) =>  d.toStr ng
+    case  nternal d.Hashtag(str d) => str d
+    case  nternal d.Cluster d(  d) =>   d.toStr ng
+    case  nternal d.LocaleEnt y d(LocaleEnt y d(ent y d, lang)) => lang + ent y d.toStr ng
   }
 
-  implicit val embeddingTypeOrdering: Ordering[EmbeddingType] = Ordering.by(_.getValue)
+   mpl c  val embedd ngTypeOrder ng: Order ng[Embedd ngType] = Order ng.by(_.getValue)
 
   /**
-   * We do not need to group by model version since we are making the
-   * This ordering holds the assumption that we would NEVER generate embeddings for two separate
-   * SimClusters KnownFor versions under the same dataset.
+   *   do not need to group by model vers on s nce   are mak ng t 
+   * T  order ng holds t  assumpt on that   would NEVER generate embedd ngs for two separate
+   * S mClusters KnownFor vers ons under t  sa  dataset.
    */
-  implicit val SimClustersEmbeddingIdOrdering: Ordering[SimClustersEmbeddingId] = Ordering.by {
-    case SimClustersEmbeddingId(embeddingType, _, internalId) => (embeddingType, internalId)
+   mpl c  val S mClustersEmbedd ng dOrder ng: Order ng[S mClustersEmbedd ng d] = Order ng.by {
+    case S mClustersEmbedd ng d(embedd ngType, _,  nternal d) => (embedd ngType,  nternal d)
   }
 
-  val ModelVersionPathMap: Map[ModelVersion, String] = Map(
-    ModelVersion.Model20m145kDec11 -> "model_20m_145k_dec11",
-    ModelVersion.Model20m145kUpdated -> "model_20m_145k_updated",
-    ModelVersion.Model20m145k2020 -> "model_20m_145k_2020"
+  val ModelVers onPathMap: Map[ModelVers on, Str ng] = Map(
+    ModelVers on.Model20m145kDec11 -> "model_20m_145k_dec11",
+    ModelVers on.Model20m145kUpdated -> "model_20m_145k_updated",
+    ModelVers on.Model20m145k2020 -> "model_20m_145k_2020"
   )
 
   /**
-   * Generates the HDFS output path in order to consolidate the offline embeddings datasets under
-   * a common directory pattern.
-   * Prepends "/gcs" if the detected data center is qus1.
+   * Generates t  HDFS output path  n order to consol date t  offl ne embedd ngs datasets under
+   * a common d rectory pattern.
+   * Prepends "/gcs"  f t  detected data center  s qus1.
    *
-   * @param isAdhoc Whether the dataset was generated from an adhoc run
-   * @param isManhattanKeyVal Whether the dataset is written as KeyVal and is intended to be imported to Manhattan
-   * @param modelVersion The model version of SimClusters KnownFor that is used to generate the embedding
-   * @param pathSuffix Any additional path structure suffixed at the end of the path
-   * @return The consolidated HDFS path, for example:
-   *         /user/cassowary/adhoc/manhattan_sequence_files/simclusters_embeddings/model_20m_145k_updated/...
+   * @param  sAdhoc W t r t  dataset was generated from an adhoc run
+   * @param  sManhattanKeyVal W t r t  dataset  s wr ten as KeyVal and  s  ntended to be  mported to Manhattan
+   * @param modelVers on T  model vers on of S mClusters KnownFor that  s used to generate t  embedd ng
+   * @param pathSuff x Any add  onal path structure suff xed at t  end of t  path
+   * @return T  consol dated HDFS path, for example:
+   *         /user/cassowary/adhoc/manhattan_sequence_f les/s mclusters_embedd ngs/model_20m_145k_updated/...
    */
   def getHdfsPath(
-    isAdhoc: Boolean,
-    isManhattanKeyVal: Boolean,
-    modelVersion: ModelVersion,
-    pathSuffix: String
-  ): String = {
-    val adhoc = if (isAdhoc) "adhoc/" else ""
+     sAdhoc: Boolean,
+     sManhattanKeyVal: Boolean,
+    modelVers on: ModelVers on,
+    pathSuff x: Str ng
+  ): Str ng = {
+    val adhoc =  f ( sAdhoc) "adhoc/" else ""
 
     val user = System.getenv("USER")
 
-    val gcs: String =
+    val gcs: Str ng =
       try {
-        InetAddress.getAllByName("metadata.google.internal") // throws Exception if not in GCP.
+         netAddress.getAllByNa (" tadata.google. nternal") // throws Except on  f not  n GCP.
         "/gcs"
       } catch {
-        case _: UnknownHostException => ""
+        case _: UnknownHostExcept on => ""
       }
 
-    val datasetType = if (isManhattanKeyVal) "manhattan_sequence_files" else "processed"
+    val datasetType =  f ( sManhattanKeyVal) "manhattan_sequence_f les" else "processed"
 
-    val path = s"/user/$user/$adhoc$datasetType/simclusters_embeddings"
+    val path = s"/user/$user/$adhoc$datasetType/s mclusters_embedd ngs"
 
-    s"$gcs${path}_${ModelVersionPathMap(modelVersion)}_$pathSuffix"
+    s"$gcs${path}_${ModelVers onPathMap(modelVers on)}_$pathSuff x"
   }
 
-  def favScoreExtractor(u: UserToInterestedInClusterScores): (Double, ScoreType.ScoreType) = {
-    (u.favScoreClusterNormalizedOnly.getOrElse(0.0), ScoreType.FavScore)
+  def favScoreExtractor(u: UserTo nterested nClusterScores): (Double, ScoreType.ScoreType) = {
+    (u.favScoreClusterNormal zedOnly.getOrElse(0.0), ScoreType.FavScore)
   }
 
-  def followScoreExtractor(u: UserToInterestedInClusterScores): (Double, ScoreType.ScoreType) = {
-    (u.followScoreClusterNormalizedOnly.getOrElse(0.0), ScoreType.FollowScore)
+  def followScoreExtractor(u: UserTo nterested nClusterScores): (Double, ScoreType.ScoreType) = {
+    (u.followScoreClusterNormal zedOnly.getOrElse(0.0), ScoreType.FollowScore)
   }
 
-  def logFavScoreExtractor(u: UserToInterestedInClusterScores): (Double, ScoreType.ScoreType) = {
-    (u.logFavScoreClusterNormalizedOnly.getOrElse(0.0), ScoreType.LogFavScore)
+  def logFavScoreExtractor(u: UserTo nterested nClusterScores): (Double, ScoreType.ScoreType) = {
+    (u.logFavScoreClusterNormal zedOnly.getOrElse(0.0), ScoreType.LogFavScore)
   }
 
-  // Define all scores to extract from the SimCluster InterestedIn source
-  val scoreExtractors: Seq[UserToInterestedInClusterScores => (Double, ScoreType.ScoreType)] =
+  // Def ne all scores to extract from t  S mCluster  nterested n s ce
+  val scoreExtractors: Seq[UserTo nterested nClusterScores => (Double, ScoreType.ScoreType)] =
     Seq(
       favScoreExtractor,
       followScoreExtractor
     )
 
-  object ScoreType extends Enumeration {
+  object ScoreType extends Enu rat on {
     type ScoreType = Value
     val FavScore: Value = Value(1)
     val FollowScore: Value = Value(2)
     val LogFavScore: Value = Value(3)
   }
 
-  @deprecated("Use 'common/ModelVersions'", "2019-09-04")
-  final val ModelVersion20M145KDec11: String = "20M_145K_dec11"
-  @deprecated("Use 'common/ModelVersions'", "2019-09-04")
-  final val ModelVersion20M145KUpdated: String = "20M_145K_updated"
+  @deprecated("Use 'common/ModelVers ons'", "2019-09-04")
+  f nal val ModelVers on20M145KDec11: Str ng = "20M_145K_dec11"
+  @deprecated("Use 'common/ModelVers ons'", "2019-09-04")
+  f nal val ModelVers on20M145KUpdated: Str ng = "20M_145K_updated"
 
-  @deprecated("Use 'common/ModelVersions'", "2019-09-04")
-  final val ModelVersionMap: Map[String, ModelVersion] = Map(
-    ModelVersion20M145KDec11 -> ModelVersion.Model20m145kDec11,
-    ModelVersion20M145KUpdated -> ModelVersion.Model20m145kUpdated
+  @deprecated("Use 'common/ModelVers ons'", "2019-09-04")
+  f nal val ModelVers onMap: Map[Str ng, ModelVers on] = Map(
+    ModelVers on20M145KDec11 -> ModelVers on.Model20m145kDec11,
+    ModelVers on20M145KUpdated -> ModelVers on.Model20m145kUpdated
   )
 }

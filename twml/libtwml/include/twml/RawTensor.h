@@ -1,92 +1,92 @@
 #pragma once
-#include <twml/Tensor.h>
-#include <type_traits>
+# nclude <twml/Tensor.h>
+# nclude <type_tra s>
 
-#ifdef __cplusplus
-namespace twml {
+# fdef __cplusplus
+na space twml {
 
-// This class contains the raw pointers to tensors coming from thrift object.
-class TWMLAPI RawTensor : public Tensor
+// T  class conta ns t  raw po nters to tensors com ng from thr ft object.
+class TWMLAP  RawTensor : publ c Tensor
 {
-private:
-  bool m_is_big_endian;
-  uint64_t m_raw_length;
-public:
+pr vate:
+  bool m_ s_b g_end an;
+  u nt64_t m_raw_length;
+publ c:
 
   RawTensor() {}
 
-  RawTensor(void *data, const std::vector<uint64_t> &dims,
-            const std::vector<uint64_t> &strides, twml_type type, bool is_big_endian, uint64_t length)
-      :  Tensor(data, dims, strides, type), m_is_big_endian(is_big_endian), m_raw_length(length) {}
+  RawTensor(vo d *data, const std::vector<u nt64_t> &d ms,
+            const std::vector<u nt64_t> &str des, twml_type type, bool  s_b g_end an, u nt64_t length)
+      :  Tensor(data, d ms, str des, type), m_ s_b g_end an( s_b g_end an), m_raw_length(length) {}
 
-  bool is_big_endian() const {
-    return m_is_big_endian;
+  bool  s_b g_end an() const {
+    return m_ s_b g_end an;
   }
 
-  uint64_t getRawLength() const {
+  u nt64_t getRawLength() const {
     return m_raw_length;
   }
 
-  // Extracts a slice from a tensor at idx0 along dimension 0
-  // Used in BatchPredictionResponse to write each slice in separate records
-  RawTensor getSlice(uint64_t idx0) const {
-    void *slice = nullptr;
-    uint64_t raw_length = 0;
+  // Extracts a sl ce from a tensor at  dx0 along d  ns on 0
+  // Used  n BatchPred ct onResponse to wr e each sl ce  n separate records
+  RawTensor getSl ce(u nt64_t  dx0) const {
+    vo d *sl ce = nullptr;
+    u nt64_t raw_length = 0;
 
-    if (getType() == TWML_TYPE_STRING) {
-      raw_length = getStride(0);
-      std::string *data = const_cast<std::string *>(static_cast<const std::string*>(getData<void>()));
-      slice = static_cast<void *>(data + raw_length * idx0);
+     f (getType() == TWML_TYPE_STR NG) {
+      raw_length = getStr de(0);
+      std::str ng *data = const_cast<std::str ng *>(stat c_cast<const std::str ng*>(getData<vo d>()));
+      sl ce = stat c_cast<vo d *>(data + raw_length *  dx0);
     } else {
-      raw_length = getStride(0) * getSizeOf(getType());
-      char *data = const_cast<char *>(static_cast<const char*>(getData<void>()));
-      slice = static_cast<void *>(data + raw_length * idx0);
+      raw_length = getStr de(0) * getS zeOf(getType());
+      char *data = const_cast<char *>(stat c_cast<const char*>(getData<vo d>()));
+      sl ce = stat c_cast<vo d *>(data + raw_length *  dx0);
     }
 
-    std::vector<uint64_t> dims, strides;
-    for (int i = 1; i < getNumDims(); i++) {
-      dims.push_back(getDim(i));
-      strides.push_back(getStride(i));
+    std::vector<u nt64_t> d ms, str des;
+    for ( nt   = 1;   < getNumD ms();  ++) {
+      d ms.push_back(getD m( ));
+      str des.push_back(getStr de( ));
     }
 
-    return RawTensor(slice, dims, strides, getType(), m_is_big_endian, raw_length);
+    return RawTensor(sl ce, d ms, str des, getType(), m_ s_b g_end an, raw_length);
   }
 };
 
 // Wrapper class around RawTensor to hold sparse tensors.
-class TWMLAPI RawSparseTensor
+class TWMLAP  RawSparseTensor
 {
-private:
-  RawTensor m_indices;
+pr vate:
+  RawTensor m_ nd ces;
   RawTensor m_values;
-  std::vector<uint64_t> m_dense_shape;
+  std::vector<u nt64_t> m_dense_shape;
 
-public:
+publ c:
 
   RawSparseTensor() {
   }
 
-  RawSparseTensor(const RawTensor &indices_, const RawTensor &values_,
-                  const std::vector<uint64_t> &dense_shape_) :
-      m_indices(indices_), m_values(values_), m_dense_shape(dense_shape_)
+  RawSparseTensor(const RawTensor & nd ces_, const RawTensor &values_,
+                  const std::vector<u nt64_t> &dense_shape_) :
+      m_ nd ces( nd ces_), m_values(values_), m_dense_shape(dense_shape_)
   {
-    if (m_indices.getType() != TWML_TYPE_INT64) {
-      throw twml::Error(TWML_ERR_TYPE, "Indices of Sparse Tensor must be of type int64");
+     f (m_ nd ces.getType() != TWML_TYPE_ NT64) {
+      throw twml::Error(TWML_ERR_TYPE, " nd ces of Sparse Tensor must be of type  nt64");
     }
   }
 
-  const RawTensor &indices() const {
-    return m_indices;
+  const RawTensor & nd ces() const {
+    return m_ nd ces;
   }
 
   const RawTensor &values() const {
     return m_values;
   }
 
-  const std::vector<uint64_t>& denseShape() const {
+  const std::vector<u nt64_t>& denseShape() const {
     return m_dense_shape;
   }
 };
 
 }
-#endif
+#end f

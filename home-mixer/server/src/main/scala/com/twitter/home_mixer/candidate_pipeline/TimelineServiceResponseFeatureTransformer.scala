@@ -1,34 +1,34 @@
-package com.twitter.home_mixer.candidate_pipeline
+package com.tw ter.ho _m xer.cand date_p pel ne
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.timelineservice.{thriftscala => t}
+ mport com.tw ter.ho _m xer.model.Ho Features.Author dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nReplyToT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. sRet etFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.S ceT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.S ceUser dFeature
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Transfor r dent f er
+ mport com.tw ter.t  l neserv ce.{thr ftscala => t}
 
-object TimelineServiceResponseFeatureTransformer extends CandidateFeatureTransformer[t.Tweet] {
+object T  l neServ ceResponseFeatureTransfor r extends Cand dateFeatureTransfor r[t.T et] {
 
-  override val identifier: TransformerIdentifier = TransformerIdentifier("TimelineServiceResponse")
+  overr de val  dent f er: Transfor r dent f er = Transfor r dent f er("T  l neServ ceResponse")
 
-  override val features: Set[Feature[_, _]] = Set(
-    AuthorIdFeature,
-    InReplyToTweetIdFeature,
-    IsRetweetFeature,
-    SourceTweetIdFeature,
-    SourceUserIdFeature,
+  overr de val features: Set[Feature[_, _]] = Set(
+    Author dFeature,
+     nReplyToT et dFeature,
+     sRet etFeature,
+    S ceT et dFeature,
+    S ceUser dFeature,
   )
 
-  override def transform(candidate: t.Tweet): FeatureMap = FeatureMapBuilder()
-    .add(AuthorIdFeature, candidate.userId)
-    .add(InReplyToTweetIdFeature, candidate.inReplyToStatusId)
-    .add(IsRetweetFeature, candidate.sourceStatusId.isDefined)
-    .add(SourceTweetIdFeature, candidate.sourceStatusId)
-    .add(SourceUserIdFeature, candidate.sourceUserId)
-    .build()
+  overr de def transform(cand date: t.T et): FeatureMap = FeatureMapBu lder()
+    .add(Author dFeature, cand date.user d)
+    .add( nReplyToT et dFeature, cand date. nReplyToStatus d)
+    .add( sRet etFeature, cand date.s ceStatus d. sDef ned)
+    .add(S ceT et dFeature, cand date.s ceStatus d)
+    .add(S ceUser dFeature, cand date.s ceUser d)
+    .bu ld()
 }

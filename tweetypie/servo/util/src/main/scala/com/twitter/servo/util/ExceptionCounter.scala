@@ -1,193 +1,193 @@
-package com.twitter.servo.util
+package com.tw ter.servo.ut l
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Future
-import scala.collection.mutable
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ut l.Future
+ mport scala.collect on.mutable
 
 /**
- * Categorizes an exception according to some criteria.
- * n.b. Implemented in terms of lift rather than apply to avoid extra allocations when
- * used when lifting the effect.
+ * Categor zes an except on accord ng to so  cr er a.
+ * n.b.  mple nted  n terms of l ft rat r than apply to avo d extra allocat ons w n
+ * used w n l ft ng t  effect.
  */
-trait ExceptionCategorizer {
-  import ExceptionCategorizer._
+tra  Except onCategor zer {
+   mport Except onCategor zer._
 
-  def lift(effect: Effect[Category]): Effect[Throwable]
+  def l ft(effect: Effect[Category]): Effect[Throwable]
 
   def apply(t: Throwable): Set[Category] = {
     val s = mutable.Set.empty[Category]
-    lift(Effect(s += _))(t)
+    l ft(Effect(s += _))(t)
     s.toSet
   }
 
   /**
-   * construct a new categorizer that prepends scope to all categories returned by this categorizer
+   * construct a new categor zer that prepends scope to all categor es returned by t  categor zer
    */
-  def scoped(scope: Seq[String]): ExceptionCategorizer =
-    if (scope.isEmpty) {
-      this
+  def scoped(scope: Seq[Str ng]): Except onCategor zer =
+     f (scope. sEmpty) {
+      t 
     } else {
-      val scopeIt: Category => Category = Memoize(scope ++ _)
-      fromLift(effect => lift(effect.contramap(scopeIt)))
+      val scope : Category => Category =  mo ze(scope ++ _)
+      fromL ft(effect => l ft(effect.contramap(scope )))
     }
 
   /**
-   * construct a new categorizer that returns the union of the categories returned by this and that
+   * construct a new categor zer that returns t  un on of t  categor es returned by t  and that
    */
-  def ++(that: ExceptionCategorizer): ExceptionCategorizer =
-    fromLift(effect => this.lift(effect).also(that.lift(effect)))
+  def ++(that: Except onCategor zer): Except onCategor zer =
+    fromL ft(effect => t .l ft(effect).also(that.l ft(effect)))
 
   /**
-   * construct a new categorizer that only returns categories for throwables matching pred
+   * construct a new categor zer that only returns categor es for throwables match ng pred
    */
-  def onlyIf(pred: Throwable => Boolean): ExceptionCategorizer =
-    fromLift(lift(_).onlyIf(pred))
+  def only f(pred: Throwable => Boolean): Except onCategor zer =
+    fromL ft(l ft(_).only f(pred))
 }
 
-object ExceptionCategorizer {
-  type Category = Seq[String]
+object Except onCategor zer {
+  type Category = Seq[Str ng]
 
-  def const(categories: Set[Category]): ExceptionCategorizer = ExceptionCategorizer(_ => categories)
-  def const(c: Category): ExceptionCategorizer = const(Set(c))
-  def const(s: String): ExceptionCategorizer = const(Seq(s))
+  def const(categor es: Set[Category]): Except onCategor zer = Except onCategor zer(_ => categor es)
+  def const(c: Category): Except onCategor zer = const(Set(c))
+  def const(s: Str ng): Except onCategor zer = const(Seq(s))
 
-  def apply(fn: Throwable => Set[Category]): ExceptionCategorizer =
-    new ExceptionCategorizer {
-      def lift(effect: Effect[Category]) = Effect[Throwable](t => fn(t).foreach(effect))
-      override def apply(t: Throwable) = fn(t)
+  def apply(fn: Throwable => Set[Category]): Except onCategor zer =
+    new Except onCategor zer {
+      def l ft(effect: Effect[Category]) = Effect[Throwable](t => fn(t).foreach(effect))
+      overr de def apply(t: Throwable) = fn(t)
     }
 
-  def fromLift(fn: Effect[Category] => Effect[Throwable]): ExceptionCategorizer =
-    new ExceptionCategorizer {
-      def lift(effect: Effect[Category]) = fn(effect)
+  def fromL ft(fn: Effect[Category] => Effect[Throwable]): Except onCategor zer =
+    new Except onCategor zer {
+      def l ft(effect: Effect[Category]) = fn(effect)
     }
 
-  def singular(fn: Throwable => Category): ExceptionCategorizer =
-    fromLift(_.contramap(fn))
+  def s ngular(fn: Throwable => Category): Except onCategor zer =
+    fromL ft(_.contramap(fn))
 
-  def simple(fn: Throwable => String): ExceptionCategorizer =
-    singular(fn.andThen(Seq(_)))
+  def s mple(fn: Throwable => Str ng): Except onCategor zer =
+    s ngular(fn.andT n(Seq(_)))
 
   def default(
-    name: Category = Seq("exceptions"),
-    sanitizeClassnameChain: Throwable => Seq[String] = ThrowableHelper.sanitizeClassnameChain
-  ): ExceptionCategorizer =
-    ExceptionCategorizer.const(name) ++
-      ExceptionCategorizer.singular(sanitizeClassnameChain).scoped(name)
+    na : Category = Seq("except ons"),
+    san  zeClassna Cha n: Throwable => Seq[Str ng] = Throwable lper.san  zeClassna Cha n
+  ): Except onCategor zer =
+    Except onCategor zer.const(na ) ++
+      Except onCategor zer.s ngular(san  zeClassna Cha n).scoped(na )
 }
 
 /**
- * Increments a counter for each category returned by the exception categorizer
+ *  ncre nts a counter for each category returned by t  except on categor zer
  *
- * @param statsReceiver
- *   the unscoped statsReceiver on which to hang the counters
- * @param categorizer
- *   A function that returns a list of category names that a throwable should be counted under.
+ * @param statsRece ver
+ *   t  unscoped statsRece ver on wh ch to hang t  counters
+ * @param categor zer
+ *   A funct on that returns a l st of category na s that a throwable should be counted under.
  */
-class ExceptionCounter(statsReceiver: StatsReceiver, categorizer: ExceptionCategorizer) {
+class Except onCounter(statsRece ver: StatsRece ver, categor zer: Except onCategor zer) {
 
   /**
-   * alternative constructor for backwards compatibility
+   * alternat ve constructor for backwards compat b l y
    *
-   * @param statsReceiver
-   *   the unscoped statsReceiver on which to hang the counters
-   * @param name
-   *   the counter name for total exceptions, and scope for individual
-   *   exception counters. default value is `exceptions`
-   * @param sanitizeClassnameChain
-   *   A function that can be used to cleanup classnames before passing them to the StatsReceiver.
+   * @param statsRece ver
+   *   t  unscoped statsRece ver on wh ch to hang t  counters
+   * @param na 
+   *   t  counter na  for total except ons, and scope for  nd v dual
+   *   except on counters. default value  s `except ons`
+   * @param san  zeClassna Cha n
+   *   A funct on that can be used to cleanup classna s before pass ng t m to t  StatsRece ver.
    */
-  def this(
-    statsReceiver: StatsReceiver,
-    name: String,
-    sanitizeClassnameChain: Throwable => Seq[String]
+  def t (
+    statsRece ver: StatsRece ver,
+    na : Str ng,
+    san  zeClassna Cha n: Throwable => Seq[Str ng]
   ) =
-    this(statsReceiver, ExceptionCategorizer.default(List(name), sanitizeClassnameChain))
+    t (statsRece ver, Except onCategor zer.default(L st(na ), san  zeClassna Cha n))
 
   /**
-   * provided for backwards compatibility
+   * prov ded for backwards compat b l y
    */
-  def this(statsReceiver: StatsReceiver) =
-    this(statsReceiver, ExceptionCategorizer.default())
+  def t (statsRece ver: StatsRece ver) =
+    t (statsRece ver, Except onCategor zer.default())
 
   /**
-   * provided for backwards compatibility
+   * prov ded for backwards compat b l y
    */
-  def this(statsReceiver: StatsReceiver, name: String) =
-    this(statsReceiver, ExceptionCategorizer.default(List(name)))
+  def t (statsRece ver: StatsRece ver, na : Str ng) =
+    t (statsRece ver, Except onCategor zer.default(L st(na )))
 
   /**
-   * provided for backwards compatibility
+   * prov ded for backwards compat b l y
    */
-  def this(statsReceiver: StatsReceiver, sanitizeClassnameChain: Throwable => Seq[String]) =
-    this(
-      statsReceiver,
-      ExceptionCategorizer.default(sanitizeClassnameChain = sanitizeClassnameChain)
+  def t (statsRece ver: StatsRece ver, san  zeClassna Cha n: Throwable => Seq[Str ng]) =
+    t (
+      statsRece ver,
+      Except onCategor zer.default(san  zeClassna Cha n = san  zeClassna Cha n)
     )
 
-  private[this] val counter = categorizer.lift(Effect(statsReceiver.counter(_: _*).incr()))
+  pr vate[t ] val counter = categor zer.l ft(Effect(statsRece ver.counter(_: _*). ncr()))
 
   /**
    * count one or more throwables
    */
-  def apply(t: Throwable, throwables: Throwable*): Unit = {
+  def apply(t: Throwable, throwables: Throwable*): Un  = {
     counter(t)
-    if (throwables.nonEmpty) apply(throwables)
+     f (throwables.nonEmpty) apply(throwables)
   }
 
   /**
    * count n throwables
    */
-  def apply(throwables: Iterable[Throwable]): Unit = {
+  def apply(throwables:  erable[Throwable]): Un  = {
     throwables.foreach(counter)
   }
 
   /**
-   * wrap around a Future to capture exceptions
+   * wrap around a Future to capture except ons
    */
   def apply[T](f: => Future[T]): Future[T] = {
-    f onFailure { case t => apply(t) }
+    f onFa lure { case t => apply(t) }
   }
 }
 
 /**
- * A memoized exception counter factory.
+ * A  mo zed except on counter factory.
  *
  * @param stats
- *   the unscoped statsReceiver on which to hang the counters
- * @param categorizer
- *   A function that returns a list of category names that a throwable should be counted under.
+ *   t  unscoped statsRece ver on wh ch to hang t  counters
+ * @param categor zer
+ *   A funct on that returns a l st of category na s that a throwable should be counted under.
  */
-class MemoizedExceptionCounterFactory(stats: StatsReceiver, categorizer: ExceptionCategorizer) {
+class  mo zedExcept onCounterFactory(stats: StatsRece ver, categor zer: Except onCategor zer) {
 
   /**
-   * A memoized exception counter factory using the default categorizer.
+   * A  mo zed except on counter factory us ng t  default categor zer.
    *
    * @param stats
-   *   the unscoped statsReceiver on which to hang the counters
+   *   t  unscoped statsRece ver on wh ch to hang t  counters
    */
-  def this(stats: StatsReceiver) =
-    this(stats, ExceptionCategorizer.default())
+  def t (stats: StatsRece ver) =
+    t (stats, Except onCategor zer.default())
 
   /**
-   * A memoized exception counter factory using a categorizer with the given suffix.
+   * A  mo zed except on counter factory us ng a categor zer w h t  g ven suff x.
    *
    * @param stats
-   *   the unscoped statsReceiver on which to hang the counters
-   * @param suffix
-   *   All created exception counters will have the
-   *   specified suffix added. This allows compatibility with
-   *   Servo's ExceptionCounter's name param (allows creating
-   *   exception counters that default to the "exceptions" namespace
-   *   as well as those with an otherwise-specified scope).
+   *   t  unscoped statsRece ver on wh ch to hang t  counters
+   * @param suff x
+   *   All created except on counters w ll have t 
+   *   spec f ed suff x added. T  allows compat b l y w h
+   *   Servo's Except onCounter's na  param (allows creat ng
+   *   except on counters that default to t  "except ons" na space
+   *   as  ll as those w h an ot rw se-spec f ed scope).
    */
-  def this(stats: StatsReceiver, suffix: Seq[String]) =
-    this(stats, ExceptionCategorizer.default(suffix))
+  def t (stats: StatsRece ver, suff x: Seq[Str ng]) =
+    t (stats, Except onCategor zer.default(suff x))
 
-  private[this] val getCounter =
-    Memoize { (path: Seq[String]) =>
-      new ExceptionCounter(stats, categorizer.scoped(path))
+  pr vate[t ] val getCounter =
+     mo ze { (path: Seq[Str ng]) =>
+      new Except onCounter(stats, categor zer.scoped(path))
     }
 
-  def apply(path: String*): ExceptionCounter = getCounter(path)
+  def apply(path: Str ng*): Except onCounter = getCounter(path)
 }

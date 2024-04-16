@@ -1,42 +1,42 @@
-package com.twitter.simclusters_v2.scalding.mbcg
+package com.tw ter.s mclusters_v2.scald ng.mbcg
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.FloatTensor
-import com.twitter.ml.api.GeneralTensor
-import com.twitter.ml.api.IRecordOneToOneAdapter
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.PersistentSimClustersEmbedding
-import scala.collection.JavaConverters._
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .embedd ng.Embedd ng
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ml.ap .FloatTensor
+ mport com.tw ter.ml.ap .GeneralTensor
+ mport com.tw ter.ml.ap . RecordOneToOneAdapter
+ mport com.tw ter.ml.ap .ut l.FDsl._
+ mport com.tw ter.s mclusters_v2.thr ftscala.ClustersUser s nterested n
+ mport com.tw ter.s mclusters_v2.thr ftscala.Pers stentS mClustersEmbedd ng
+ mport scala.collect on.JavaConverters._
 
 /*
-Adapters to convert data from MBCG input sources into DataRecords
+Adapters to convert data from MBCG  nput s ces  nto DataRecords
  */
-object TweetSimclusterRecordAdapter
-    extends IRecordOneToOneAdapter[(Long, PersistentSimClustersEmbedding, Embedding[Float])] {
-  override def getFeatureContext: FeatureContext = TweetAllFeatures.featureContext
+object T etS mclusterRecordAdapter
+    extends  RecordOneToOneAdapter[(Long, Pers stentS mClustersEmbedd ng, Embedd ng[Float])] {
+  overr de def getFeatureContext: FeatureContext = T etAllFeatures.featureContext
 
-  override def adaptToDataRecord(
-    tweetFeatures: (Long, PersistentSimClustersEmbedding, Embedding[Float])
+  overr de def adaptToDataRecord(
+    t etFeatures: (Long, Pers stentS mClustersEmbedd ng, Embedd ng[Float])
   ) = {
     val dataRecord = new DataRecord()
-    val tweetId = tweetFeatures._1
-    val tweetEmbedding = tweetFeatures._2
-    val f2vEmbedding = tweetFeatures._3
-    val simclusterWithScores = tweetEmbedding.embedding.embedding
-      .map { simclusterWithScore =>
-        // Cluster ID and score for that cluster
-        (simclusterWithScore._1.toString, simclusterWithScore._2)
+    val t et d = t etFeatures._1
+    val t etEmbedd ng = t etFeatures._2
+    val f2vEmbedd ng = t etFeatures._3
+    val s mclusterW hScores = t etEmbedd ng.embedd ng.embedd ng
+      .map { s mclusterW hScore =>
+        // Cluster  D and score for that cluster
+        (s mclusterW hScore._1.toStr ng, s mclusterW hScore._2)
       }.toMap.asJava
 
-    dataRecord.setFeatureValue(TweetAllFeatures.tweetId, tweetId)
-    dataRecord.setFeatureValue(TweetAllFeatures.tweetSimclusters, simclusterWithScores)
+    dataRecord.setFeatureValue(T etAllFeatures.t et d, t et d)
+    dataRecord.setFeatureValue(T etAllFeatures.t etS mclusters, s mclusterW hScores)
     dataRecord.setFeatureValue(
-      TweetAllFeatures.authorF2vProducerEmbedding,
+      T etAllFeatures.authorF2vProducerEmbedd ng,
       GeneralTensor.floatTensor(
-        new FloatTensor(f2vEmbedding.map(Double.box(_)).asJava)
+        new FloatTensor(f2vEmbedd ng.map(Double.box(_)).asJava)
       )
     )
 
@@ -44,33 +44,33 @@ object TweetSimclusterRecordAdapter
   }
 }
 
-object UserSimclusterRecordAdapter
-    extends IRecordOneToOneAdapter[(Long, ClustersUserIsInterestedIn, Embedding[Float])] {
-  override def getFeatureContext: FeatureContext = TweetAllFeatures.featureContext
+object UserS mclusterRecordAdapter
+    extends  RecordOneToOneAdapter[(Long, ClustersUser s nterested n, Embedd ng[Float])] {
+  overr de def getFeatureContext: FeatureContext = T etAllFeatures.featureContext
 
-  override def adaptToDataRecord(
-    userSimclusterEmbedding: (Long, ClustersUserIsInterestedIn, Embedding[Float])
+  overr de def adaptToDataRecord(
+    userS mclusterEmbedd ng: (Long, ClustersUser s nterested n, Embedd ng[Float])
   ) = {
     val dataRecord = new DataRecord()
-    val userId = userSimclusterEmbedding._1
-    val userEmbedding = userSimclusterEmbedding._2
-    val simclusterWithScores = userEmbedding.clusterIdToScores
-      .filter {
+    val user d = userS mclusterEmbedd ng._1
+    val userEmbedd ng = userS mclusterEmbedd ng._2
+    val s mclusterW hScores = userEmbedd ng.cluster dToScores
+      .f lter {
         case (_, score) =>
           score.logFavScore.map(_ >= 0.0).getOrElse(false)
       }
       .map {
-        case (clusterId, score) =>
-          (clusterId.toString, score.logFavScore.get)
+        case (cluster d, score) =>
+          (cluster d.toStr ng, score.logFavScore.get)
       }.toMap.asJava
-    val f2vEmbedding = userSimclusterEmbedding._3
+    val f2vEmbedd ng = userS mclusterEmbedd ng._3
 
-    dataRecord.setFeatureValue(UserAllFeatures.userId, userId)
-    dataRecord.setFeatureValue(UserAllFeatures.userSimclusters, simclusterWithScores)
+    dataRecord.setFeatureValue(UserAllFeatures.user d, user d)
+    dataRecord.setFeatureValue(UserAllFeatures.userS mclusters, s mclusterW hScores)
     dataRecord.setFeatureValue(
-      UserAllFeatures.userF2vConsumerEmbedding,
+      UserAllFeatures.userF2vConsu rEmbedd ng,
       GeneralTensor.floatTensor(
-        new FloatTensor(f2vEmbedding.map(Double.box(_)).asJava)
+        new FloatTensor(f2vEmbedd ng.map(Double.box(_)).asJava)
       )
     )
 

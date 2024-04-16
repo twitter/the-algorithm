@@ -2,33 +2,33 @@ syntax = "proto3";
 
 package tensorflow.eager;
 
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/types.proto";
+ mport "tensorflow/core/fra work/tensor_shape.proto";
+ mport "tensorflow/core/fra work/types.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "RemoteTensorHandleProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "RemoteTensorHandleProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.fra work";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
-message ResourceDtypeAndShape {
+ ssage Res ceDtypeAndShape {
   DataType dtype = 1;
   TensorShapeProto shape = 2;
 }
 
-message RemoteTensorHandle {
-  // The ID of the operation that produced this tensor.
-  int64 op_id = 1;
-  // The index into the outputs of the operation that produced this tensor.
-  int32 output_num = 2;
-  // Device where the tensor is located. Cannot be empty.
-  // For multi-device functions, it's the default device passed to placer.
-  string device = 3;
-  // Device of the operation producing this tensor. Can be empty if the
-  // operation producing this tensor is a multi-device function.
-  string op_device = 4;
+ ssage RemoteTensorHandle {
+  // T   D of t  operat on that produced t  tensor.
+   nt64 op_ d = 1;
+  // T   ndex  nto t  outputs of t  operat on that produced t  tensor.
+   nt32 output_num = 2;
+  // Dev ce w re t  tensor  s located. Cannot be empty.
+  // For mult -dev ce funct ons,  's t  default dev ce passed to placer.
+  str ng dev ce = 3;
+  // Dev ce of t  operat on produc ng t  tensor. Can be empty  f t 
+  // operat on produc ng t  tensor  s a mult -dev ce funct on.
+  str ng op_dev ce = 4;
   // Tensor type.
   DataType dtype = 5;
-  // Optional data types and shapes of a remote resource variable.
-  repeated ResourceDtypeAndShape resource_dtypes_and_shapes = 6;
+  // Opt onal data types and shapes of a remote res ce var able.
+  repeated Res ceDtypeAndShape res ce_dtypes_and_shapes = 6;
 }

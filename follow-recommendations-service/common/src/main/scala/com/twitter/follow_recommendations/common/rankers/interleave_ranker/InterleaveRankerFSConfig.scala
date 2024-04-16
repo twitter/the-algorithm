@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.rankers.interleave_ranker
+package com.tw ter.follow_recom ndat ons.common.rankers. nterleave_ranker
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSParam
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport com.tw ter.follow_recom ndat ons.conf gap .common.FeatureSw chConf g
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
-@Singleton
-class InterleaveRankerFSConfig @Inject() extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[FSParam[Boolean]] =
-    Seq(InterleaveRankerParams.ScribeRankingInfoInInterleaveRanker)
+@S ngleton
+class  nterleaveRankerFSConf g @ nject() extends FeatureSw chConf g {
+  overr de val booleanFSParams: Seq[FSParam[Boolean]] =
+    Seq( nterleaveRankerParams.Scr beRank ng nfo n nterleaveRanker)
 }

@@ -1,283 +1,283 @@
-from datetime import datetime
-from importlib import import_module
-import os
+from datet    mport datet  
+from  mportl b  mport  mport_module
+ mport os
 
-from toxicity_ml_pipeline.data.data_preprocessing import (
+from tox c y_ml_p pel ne.data.data_preprocess ng  mport (
   DefaultENNoPreprocessor,
   DefaultENPreprocessor,
 )
-from toxicity_ml_pipeline.data.dataframe_loader import ENLoader, ENLoaderWithSampling
-from toxicity_ml_pipeline.data.mb_generator import BalancedMiniBatchLoader
-from toxicity_ml_pipeline.load_model import load, get_last_layer
-from toxicity_ml_pipeline.optim.callbacks import (
-  AdditionalResultLogger,
-  ControlledStoppingCheckpointCallback,
-  GradientLoggingTensorBoard,
-  SyncingTensorBoard,
+from tox c y_ml_p pel ne.data.datafra _loader  mport ENLoader, ENLoaderW hSampl ng
+from tox c y_ml_p pel ne.data.mb_generator  mport BalancedM n BatchLoader
+from tox c y_ml_p pel ne.load_model  mport load, get_last_layer
+from tox c y_ml_p pel ne.opt m.callbacks  mport (
+  Add  onalResultLogger,
+  ControlledStopp ngC ckpo ntCallback,
+  Grad entLogg ngTensorBoard,
+  Sync ngTensorBoard,
 )
-from toxicity_ml_pipeline.optim.schedulers import WarmUp
-from toxicity_ml_pipeline.settings.default_settings_abs import GCS_ADDRESS as ABS_GCS
-from toxicity_ml_pipeline.settings.default_settings_tox import (
+from tox c y_ml_p pel ne.opt m.sc dulers  mport WarmUp
+from tox c y_ml_p pel ne.sett ngs.default_sett ngs_abs  mport GCS_ADDRESS as ABS_GCS
+from tox c y_ml_p pel ne.sett ngs.default_sett ngs_tox  mport (
   GCS_ADDRESS as TOX_GCS,
-  MODEL_DIR,
+  MODEL_D R,
   RANDOM_SEED,
-  REMOTE_LOGDIR,
+  REMOTE_LOGD R,
   WARM_UP_PERC,
 )
-from toxicity_ml_pipeline.utils.helpers import check_gpu, set_seeds, upload_model
+from tox c y_ml_p pel ne.ut ls. lpers  mport c ck_gpu, set_seeds, upload_model
 
-import numpy as np
-import tensorflow as tf
+ mport numpy as np
+ mport tensorflow as tf
 
 
 try:
-  from tensorflow_addons.optimizers import AdamW
+  from tensorflow_addons.opt m zers  mport AdamW
 except ModuleNotFoundError:
-  print("No TFA")
+  pr nt("No TFA")
 
 
-class Trainer(object):
-  OPTIMIZERS = ["Adam", "AdamW"]
+class Tra ner(object):
+  OPT M ZERS = ["Adam", "AdamW"]
 
-  def __init__(
+  def __ n __(
     self,
-    optimizer_name,
-    weight_decay,
-    learning_rate,
-    mb_size,
-    train_epochs,
-    content_loss_weight=1,
+    opt m zer_na ,
+      ght_decay,
+    learn ng_rate,
+    mb_s ze,
+    tra n_epochs,
+    content_loss_  ght=1,
     language="en",
     scope='TOX',
     project=...,
-    experiment_id="default",
-    gradient_clipping=None,
-    fold="time",
+    exper  nt_ d="default",
+    grad ent_cl pp ng=None,
+    fold="t  ",
     seed=RANDOM_SEED,
-    log_gradients=False,
+    log_grad ents=False,
     kw="",
-    stopping_epoch=None,
+    stopp ng_epoch=None,
     test=False,
   ):
     self.seed = seed
-    self.weight_decay = weight_decay
-    self.learning_rate = learning_rate
-    self.mb_size = mb_size
-    self.train_epochs = train_epochs
-    self.gradient_clipping = gradient_clipping
+    self.  ght_decay =   ght_decay
+    self.learn ng_rate = learn ng_rate
+    self.mb_s ze = mb_s ze
+    self.tra n_epochs = tra n_epochs
+    self.grad ent_cl pp ng = grad ent_cl pp ng
 
-    if optimizer_name not in self.OPTIMIZERS:
-      raise ValueError(
-        f"Optimizer {optimizer_name} not implemented. Accepted values {self.OPTIMIZERS}."
+     f opt m zer_na  not  n self.OPT M ZERS:
+      ra se ValueError(
+        f"Opt m zer {opt m zer_na } not  mple nted. Accepted values {self.OPT M ZERS}."
       )
-    self.optimizer_name = optimizer_name
-    self.log_gradients = log_gradients
+    self.opt m zer_na  = opt m zer_na 
+    self.log_grad ents = log_grad ents
     self.test = test
     self.fold = fold
-    self.stopping_epoch = stopping_epoch
+    self.stopp ng_epoch = stopp ng_epoch
     self.language = language
-    if scope == 'TOX':
+     f scope == 'TOX':
       GCS_ADDRESS = TOX_GCS.format(project=project)
-    elif scope == 'ABS':
+    el f scope == 'ABS':
       GCS_ADDRESS = ABS_GCS
     else:
-      raise ValueError
+      ra se ValueError
     GCS_ADDRESS = GCS_ADDRESS.format(project=project)
     try:
-      self.setting_file = import_module(f"toxicity_ml_pipeline.settings.{scope.lower()}{project}_settings")
+      self.sett ng_f le =  mport_module(f"tox c y_ml_p pel ne.sett ngs.{scope.lo r()}{project}_sett ngs")
     except ModuleNotFoundError:
-      raise ValueError(f"You need to define a setting file for your project {project}.")
-    experiment_settings = self.setting_file.experiment_settings
+      ra se ValueError(f"  need to def ne a sett ng f le for y  project {project}.")
+    exper  nt_sett ngs = self.sett ng_f le.exper  nt_sett ngs
 
     self.project = project
-    self.remote_logdir = REMOTE_LOGDIR.format(GCS_ADDRESS=GCS_ADDRESS, project=project)
-    self.model_dir = MODEL_DIR.format(GCS_ADDRESS=GCS_ADDRESS, project=project)
+    self.remote_logd r = REMOTE_LOGD R.format(GCS_ADDRESS=GCS_ADDRESS, project=project)
+    self.model_d r = MODEL_D R.format(GCS_ADDRESS=GCS_ADDRESS, project=project)
 
-    if experiment_id not in experiment_settings:
-      raise ValueError("This is not an experiment id as defined in the settings file.")
+     f exper  nt_ d not  n exper  nt_sett ngs:
+      ra se ValueError("T   s not an exper  nt  d as def ned  n t  sett ngs f le.")
 
-    for var, default_value in experiment_settings["default"].items():
-      override_val = experiment_settings[experiment_id].get(var, default_value)
-      print("Setting ", var, override_val)
-      self.__setattr__(var, override_val)
+    for var, default_value  n exper  nt_sett ngs["default"]. ems():
+      overr de_val = exper  nt_sett ngs[exper  nt_ d].get(var, default_value)
+      pr nt("Sett ng ", var, overr de_val)
+      self.__setattr__(var, overr de_val)
 
-    self.content_loss_weight = content_loss_weight if self.dual_head else None
+    self.content_loss_  ght = content_loss_  ght  f self.dual_ ad else None
 
-    self.mb_loader = BalancedMiniBatchLoader(
+    self.mb_loader = BalancedM n BatchLoader(
       fold=self.fold,
       seed=self.seed,
-      perc_training_tox=self.perc_training_tox,
-      mb_size=self.mb_size,
-      n_outer_splits="time",
+      perc_tra n ng_tox=self.perc_tra n ng_tox,
+      mb_s ze=self.mb_s ze,
+      n_outer_spl s="t  ",
       scope=scope,
       project=project,
-      dual_head=self.dual_head,
-      sample_weights=self.sample_weights,
-      huggingface=("bertweet" in self.model_type),
+      dual_ ad=self.dual_ ad,
+      sample_  ghts=self.sample_  ghts,
+      hugg ngface=("bert et"  n self.model_type),
     )
-    self._init_dirnames(kw=kw, experiment_id=experiment_id)
-    print("------- Checking there is a GPU")
-    check_gpu()
+    self._ n _d rna s(kw=kw, exper  nt_ d=exper  nt_ d)
+    pr nt("------- C ck ng t re  s a GPU")
+    c ck_gpu()
 
-  def _init_dirnames(self, kw, experiment_id):
-    kw = "test" if self.test else kw
+  def _ n _d rna s(self, kw, exper  nt_ d):
+    kw = "test"  f self.test else kw
     hyper_param_kw = ""
-    if self.optimizer_name == "AdamW":
-      hyper_param_kw += f"{self.weight_decay}_"
-    if self.gradient_clipping:
-      hyper_param_kw += f"{self.gradient_clipping}_"
-    if self.content_loss_weight:
-      hyper_param_kw += f"{self.content_loss_weight}_"
-    experiment_name = (
-      f"{self.language}{str(datetime.now()).replace(' ', '')[:-7]}{kw}_{experiment_id}{self.fold}_"
-      f"{self.optimizer_name}_"
-      f"{self.learning_rate}_"
+     f self.opt m zer_na  == "AdamW":
+      hyper_param_kw += f"{self.  ght_decay}_"
+     f self.grad ent_cl pp ng:
+      hyper_param_kw += f"{self.grad ent_cl pp ng}_"
+     f self.content_loss_  ght:
+      hyper_param_kw += f"{self.content_loss_  ght}_"
+    exper  nt_na  = (
+      f"{self.language}{str(datet  .now()).replace(' ', '')[:-7]}{kw}_{exper  nt_ d}{self.fold}_"
+      f"{self.opt m zer_na }_"
+      f"{self.learn ng_rate}_"
       f"{hyper_param_kw}"
-      f"{self.mb_size}_"
-      f"{self.perc_training_tox}_"
-      f"{self.train_epochs}_seed{self.seed}"
+      f"{self.mb_s ze}_"
+      f"{self.perc_tra n ng_tox}_"
+      f"{self.tra n_epochs}_seed{self.seed}"
     )
-    print("------- Experiment name: ", experiment_name)
-    self.logdir = (
+    pr nt("------- Exper  nt na : ", exper  nt_na )
+    self.logd r = (
       f"..."
-      if self.test
+       f self.test
       else f"..."
     )
-    self.checkpoint_path = f"{self.model_dir}/{experiment_name}"
+    self.c ckpo nt_path = f"{self.model_d r}/{exper  nt_na }"
 
-  @staticmethod
-  def _additional_writers(logdir, metric_name):
-    return tf.summary.create_file_writer(os.path.join(logdir, metric_name))
+  @stat c thod
+  def _add  onal_wr ers(logd r,  tr c_na ):
+    return tf.summary.create_f le_wr er(os.path.jo n(logd r,  tr c_na ))
 
   def get_callbacks(self, fold, val_data, test_data):
-    fold_logdir = self.logdir + f"_fold{fold}"
-    fold_checkpoint_path = self.checkpoint_path + f"_fold{fold}/{{epoch:02d}}"
+    fold_logd r = self.logd r + f"_fold{fold}"
+    fold_c ckpo nt_path = self.c ckpo nt_path + f"_fold{fold}/{{epoch:02d}}"
 
     tb_args = {
-      "log_dir": fold_logdir,
-      "histogram_freq": 0,
+      "log_d r": fold_logd r,
+      " togram_freq": 0,
       "update_freq": 500,
-      "embeddings_freq": 0,
-      "remote_logdir": f"{self.remote_logdir}_{self.language}"
-      if not self.test
-      else f"{self.remote_logdir}_test",
+      "embedd ngs_freq": 0,
+      "remote_logd r": f"{self.remote_logd r}_{self.language}"
+       f not self.test
+      else f"{self.remote_logd r}_test",
     }
     tensorboard_callback = (
-      GradientLoggingTensorBoard(loader=self.mb_loader, val_data=val_data, freq=10, **tb_args)
-      if self.log_gradients
-      else SyncingTensorBoard(**tb_args)
+      Grad entLogg ngTensorBoard(loader=self.mb_loader, val_data=val_data, freq=10, **tb_args)
+       f self.log_grad ents
+      else Sync ngTensorBoard(**tb_args)
     )
 
     callbacks = [tensorboard_callback]
-    if "bertweet" in self.model_type:
-      from_logits = True
-      dataset_transform_func = self.mb_loader.make_huggingface_tensorflow_ds
+     f "bert et"  n self.model_type:
+      from_log s = True
+      dataset_transform_func = self.mb_loader.make_hugg ngface_tensorflow_ds
     else:
-      from_logits = False
+      from_log s = False
       dataset_transform_func = None
 
-    fixed_recall = 0.85 if not self.dual_head else 0.5
-    val_callback = AdditionalResultLogger(
+    f xed_recall = 0.85  f not self.dual_ ad else 0.5
+    val_callback = Add  onalResultLogger(
       data=val_data,
-      set_="validation",
-      from_logits=from_logits,
+      set_="val dat on",
+      from_log s=from_log s,
       dataset_transform_func=dataset_transform_func,
-      dual_head=self.dual_head,
-      fixed_recall=fixed_recall
+      dual_ ad=self.dual_ ad,
+      f xed_recall=f xed_recall
     )
-    if val_callback is not None:
+     f val_callback  s not None:
       callbacks.append(val_callback)
 
-    test_callback = AdditionalResultLogger(
+    test_callback = Add  onalResultLogger(
       data=test_data,
       set_="test",
-      from_logits=from_logits,
+      from_log s=from_log s,
       dataset_transform_func=dataset_transform_func,
-      dual_head=self.dual_head,
-      fixed_recall=fixed_recall
+      dual_ ad=self.dual_ ad,
+      f xed_recall=f xed_recall
     )
     callbacks.append(test_callback)
 
-    checkpoint_args = {
-      "filepath": fold_checkpoint_path,
+    c ckpo nt_args = {
+      "f lepath": fold_c ckpo nt_path,
       "verbose": 0,
-      "monitor": "val_pr_auc",
-      "save_weights_only": True,
+      "mon or": "val_pr_auc",
+      "save_  ghts_only": True,
       "mode": "max",
       "save_freq": "epoch",
     }
-    if self.stopping_epoch:
-      checkpoint_callback = ControlledStoppingCheckpointCallback(
-        **checkpoint_args,
-        stopping_epoch=self.stopping_epoch,
+     f self.stopp ng_epoch:
+      c ckpo nt_callback = ControlledStopp ngC ckpo ntCallback(
+        **c ckpo nt_args,
+        stopp ng_epoch=self.stopp ng_epoch,
         save_best_only=False,
       )
-      callbacks.append(checkpoint_callback)
+      callbacks.append(c ckpo nt_callback)
 
     return callbacks
 
-  def get_lr_schedule(self, steps_per_epoch):
-    total_num_steps = steps_per_epoch * self.train_epochs
+  def get_lr_sc dule(self, steps_per_epoch):
+    total_num_steps = steps_per_epoch * self.tra n_epochs
 
-    warm_up_perc = WARM_UP_PERC if self.learning_rate >= 1e-3 else 0
-    warm_up_steps = int(total_num_steps * warm_up_perc)
-    if self.linear_lr_decay:
-      learning_rate_fn = tf.keras.optimizers.schedules.PolynomialDecay(
-        self.learning_rate,
+    warm_up_perc = WARM_UP_PERC  f self.learn ng_rate >= 1e-3 else 0
+    warm_up_steps =  nt(total_num_steps * warm_up_perc)
+     f self.l near_lr_decay:
+      learn ng_rate_fn = tf.keras.opt m zers.sc dules.Polynom alDecay(
+        self.learn ng_rate,
         total_num_steps - warm_up_steps,
-        end_learning_rate=0.0,
-        power=1.0,
+        end_learn ng_rate=0.0,
+        po r=1.0,
         cycle=False,
       )
     else:
-      print('Constant learning rate')
-      learning_rate_fn = self.learning_rate
+      pr nt('Constant learn ng rate')
+      learn ng_rate_fn = self.learn ng_rate
 
-    if warm_up_perc > 0:
-      print(f".... using warm-up for {warm_up_steps} steps")
-      warm_up_schedule = WarmUp(
-        initial_learning_rate=self.learning_rate,
-        decay_schedule_fn=learning_rate_fn,
+     f warm_up_perc > 0:
+      pr nt(f".... us ng warm-up for {warm_up_steps} steps")
+      warm_up_sc dule = WarmUp(
+         n  al_learn ng_rate=self.learn ng_rate,
+        decay_sc dule_fn=learn ng_rate_fn,
         warmup_steps=warm_up_steps,
       )
-      return warm_up_schedule
-    return learning_rate_fn
+      return warm_up_sc dule
+    return learn ng_rate_fn
 
-  def get_optimizer(self, schedule):
-    optim_args = {
-      "learning_rate": schedule,
+  def get_opt m zer(self, sc dule):
+    opt m_args = {
+      "learn ng_rate": sc dule,
       "beta_1": 0.9,
       "beta_2": 0.999,
-      "epsilon": 1e-6,
+      "eps lon": 1e-6,
       "amsgrad": False,
     }
-    if self.gradient_clipping:
-      optim_args["global_clipnorm"] = self.gradient_clipping
+     f self.grad ent_cl pp ng:
+      opt m_args["global_cl pnorm"] = self.grad ent_cl pp ng
 
-    print(f".... {self.optimizer_name} w global clipnorm {self.gradient_clipping}")
-    if self.optimizer_name == "Adam":
-      return tf.keras.optimizers.Adam(**optim_args)
+    pr nt(f".... {self.opt m zer_na } w global cl pnorm {self.grad ent_cl pp ng}")
+     f self.opt m zer_na  == "Adam":
+      return tf.keras.opt m zers.Adam(**opt m_args)
 
-    if self.optimizer_name == "AdamW":
-      optim_args["weight_decay"] = self.weight_decay
-      return AdamW(**optim_args)
-    raise NotImplementedError
+     f self.opt m zer_na  == "AdamW":
+      opt m_args["  ght_decay"] = self.  ght_decay
+      return AdamW(**opt m_args)
+    ra se Not mple ntedError
 
-  def get_training_actors(self, steps_per_epoch, val_data, test_data, fold):
+  def get_tra n ng_actors(self, steps_per_epoch, val_data, test_data, fold):
     callbacks = self.get_callbacks(fold=fold, val_data=val_data, test_data=test_data)
-    schedule = self.get_lr_schedule(steps_per_epoch=steps_per_epoch)
+    sc dule = self.get_lr_sc dule(steps_per_epoch=steps_per_epoch)
 
-    optimizer = self.get_optimizer(schedule)
+    opt m zer = self.get_opt m zer(sc dule)
 
-    return optimizer, callbacks
+    return opt m zer, callbacks
 
   def load_data(self):
-    if self.project == 435 or self.project == 211:
-      if self.dataset_type is None:
-        data_loader = ENLoader(project=self.project, setting_file=self.setting_file)
+     f self.project == 435 or self.project == 211:
+       f self.dataset_type  s None:
+        data_loader = ENLoader(project=self.project, sett ng_f le=self.sett ng_f le)
         dataset_type_args = {}
       else:
-        data_loader = ENLoaderWithSampling(project=self.project, setting_file=self.setting_file)
+        data_loader = ENLoaderW hSampl ng(project=self.project, sett ng_f le=self.sett ng_f le)
         dataset_type_args = self.dataset_type
 
     df = data_loader.load_data(
@@ -287,115 +287,115 @@ class Trainer(object):
     return df
 
   def preprocess(self, df):
-    if self.project == 435 or self.project == 211:
-      if self.preprocessing is None:
+     f self.project == 435 or self.project == 211:
+       f self.preprocess ng  s None:
         data_prepro = DefaultENNoPreprocessor()
-      elif self.preprocessing == "default":
+      el f self.preprocess ng == "default":
         data_prepro = DefaultENPreprocessor()
       else:
-        raise NotImplementedError
+        ra se Not mple ntedError
 
     return data_prepro(
       df=df,
       label_column=self.label_column,
-      class_weight=self.perc_training_tox if self.sample_weights == 'class_weight' else None,
-      filter_low_agreements=self.filter_low_agreements,
+      class_  ght=self.perc_tra n ng_tox  f self.sample_  ghts == 'class_  ght' else None,
+      f lter_low_agree nts=self.f lter_low_agree nts,
       num_classes=self.num_classes,
     )
 
-  def load_model(self, optimizer):
-    smart_bias_value = (
-      np.log(self.perc_training_tox / (1 - self.perc_training_tox)) if self.smart_bias_init else 0
+  def load_model(self, opt m zer):
+    smart_b as_value = (
+      np.log(self.perc_tra n ng_tox / (1 - self.perc_tra n ng_tox))  f self.smart_b as_ n  else 0
     )
     model = load(
-      optimizer,
+      opt m zer,
       seed=self.seed,
-      trainable=self.trainable,
+      tra nable=self.tra nable,
       model_type=self.model_type,
-      loss_name=self.loss_name,
+      loss_na =self.loss_na ,
       num_classes=self.num_classes,
-      additional_layer=self.additional_layer,
-      smart_bias_value=smart_bias_value,
+      add  onal_layer=self.add  onal_layer,
+      smart_b as_value=smart_b as_value,
       content_num_classes=self.content_num_classes,
-      content_loss_name=self.content_loss_name,
-      content_loss_weight=self.content_loss_weight
+      content_loss_na =self.content_loss_na ,
+      content_loss_  ght=self.content_loss_  ght
     )
 
-    if self.model_reload is not False:
-      model_folder = upload_model(full_gcs_model_path=os.path.join(self.model_dir, self.model_reload))
-      model.load_weights(model_folder)
-      if self.scratch_last_layer:
-        print('Putting the last layer back to scratch')
+     f self.model_reload  s not False:
+      model_folder = upload_model(full_gcs_model_path=os.path.jo n(self.model_d r, self.model_reload))
+      model.load_  ghts(model_folder)
+       f self.scratch_last_layer:
+        pr nt('Putt ng t  last layer back to scratch')
         model.layers[-1] = get_last_layer(seed=self.seed,
                                         num_classes=self.num_classes,
-                                        smart_bias_value=smart_bias_value)
+                                        smart_b as_value=smart_b as_value)
 
     return model
 
-  def _train_single_fold(self, mb_generator, test_data, steps_per_epoch, fold, val_data=None):
-    steps_per_epoch = 100 if self.test else steps_per_epoch
+  def _tra n_s ngle_fold(self, mb_generator, test_data, steps_per_epoch, fold, val_data=None):
+    steps_per_epoch = 100  f self.test else steps_per_epoch
 
-    optimizer, callbacks = self.get_training_actors(
+    opt m zer, callbacks = self.get_tra n ng_actors(
       steps_per_epoch=steps_per_epoch, val_data=val_data, test_data=test_data, fold=fold
     )
-    print("Loading model")
-    model = self.load_model(optimizer)
-    print(f"Nb of steps per epoch: {steps_per_epoch} ---- launching training")
-    training_args = {
-      "epochs": self.train_epochs,
+    pr nt("Load ng model")
+    model = self.load_model(opt m zer)
+    pr nt(f"Nb of steps per epoch: {steps_per_epoch} ---- launch ng tra n ng")
+    tra n ng_args = {
+      "epochs": self.tra n_epochs,
       "steps_per_epoch": steps_per_epoch,
-      "batch_size": self.mb_size,
+      "batch_s ze": self.mb_s ze,
       "callbacks": callbacks,
       "verbose": 2,
     }
 
-    model.fit(mb_generator, **training_args)
+    model.f (mb_generator, **tra n ng_args)
     return
 
-  def train_full_model(self):
-    print("Setting up random seed.")
+  def tra n_full_model(self):
+    pr nt("Sett ng up random seed.")
     set_seeds(self.seed)
 
-    print(f"Loading {self.language} data")
+    pr nt(f"Load ng {self.language} data")
     df = self.load_data()
     df = self.preprocess(df=df)
 
-    print("Going to train on everything but the test dataset")
-    mini_batches, test_data, steps_per_epoch = self.mb_loader.simple_cv_load(df)
+    pr nt("Go ng to tra n on everyth ng but t  test dataset")
+    m n _batc s, test_data, steps_per_epoch = self.mb_loader.s mple_cv_load(df)
 
-    self._train_single_fold(
-      mb_generator=mini_batches, test_data=test_data, steps_per_epoch=steps_per_epoch, fold="full"
+    self._tra n_s ngle_fold(
+      mb_generator=m n _batc s, test_data=test_data, steps_per_epoch=steps_per_epoch, fold="full"
     )
 
-  def train(self):
-    print("Setting up random seed.")
+  def tra n(self):
+    pr nt("Sett ng up random seed.")
     set_seeds(self.seed)
 
-    print(f"Loading {self.language} data")
+    pr nt(f"Load ng {self.language} data")
     df = self.load_data()
     df = self.preprocess(df=df)
 
-    print("Loading MB generator")
-    i = 0
-    if self.project == 435 or self.project == 211:
+    pr nt("Load ng MB generator")
+      = 0
+     f self.project == 435 or self.project == 211:
       mb_generator, steps_per_epoch, val_data, test_data = self.mb_loader.no_cv_load(full_df=df)
-      self._train_single_fold(
+      self._tra n_s ngle_fold(
         mb_generator=mb_generator,
         val_data=val_data,
         test_data=test_data,
         steps_per_epoch=steps_per_epoch,
-        fold=i,
+        fold= ,
       )
     else:
-      raise ValueError("Sure you want to do multiple fold training")
-      for mb_generator, steps_per_epoch, val_data, test_data in self.mb_loader(full_df=df):
-        self._train_single_fold(
+      ra se ValueError("Sure   want to do mult ple fold tra n ng")
+      for mb_generator, steps_per_epoch, val_data, test_data  n self.mb_loader(full_df=df):
+        self._tra n_s ngle_fold(
           mb_generator=mb_generator,
           val_data=val_data,
           test_data=test_data,
           steps_per_epoch=steps_per_epoch,
-          fold=i,
+          fold= ,
         )
-        i += 1
-        if i == 3:
+          += 1
+         f   == 3:
           break

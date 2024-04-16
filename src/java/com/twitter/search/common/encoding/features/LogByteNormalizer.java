@@ -1,35 +1,35 @@
-package com.twitter.search.common.encoding.features;
+package com.tw ter.search.common.encod ng.features;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
 /**
- * Normalizes values as follows:
- *   Positive numbers normalize to (1 + round(log_baseN(value))).
- *   Negative numbers throw.
- *   0 will normalize to 0.
- * The log base is 2 by default.
+ * Normal zes values as follows:
+ *   Pos  ve numbers normal ze to (1 + round(log_baseN(value))).
+ *   Negat ve numbers throw.
+ *   0 w ll normal ze to 0.
+ * T  log base  s 2 by default.
  */
-public class LogByteNormalizer extends ByteNormalizer {
+publ c class LogByteNormal zer extends ByteNormal zer {
 
-  private static final double DEFAULT_BASE = 2;
-  private final double base;
-  private final double logBase;
+  pr vate stat c f nal double DEFAULT_BASE = 2;
+  pr vate f nal double base;
+  pr vate f nal double logBase;
 
-  public LogByteNormalizer(double base) {
-    Preconditions.checkArgument(base > 0);
-    this.base = base;
+  publ c LogByteNormal zer(double base) {
+    Precond  ons.c ckArgu nt(base > 0);
+    t .base = base;
     logBase = Math.log(base);
   }
 
-  public LogByteNormalizer() {
-    this(DEFAULT_BASE);
+  publ c LogByteNormal zer() {
+    t (DEFAULT_BASE);
   }
 
-  @Override
-  public byte normalize(double val) {
-    if (val < 0) {
-      throw new IllegalArgumentException("Can't log-normalize negative value " + val);
-    } else if (val == 0) {
+  @Overr de
+  publ c byte normal ze(double val) {
+     f (val < 0) {
+      throw new  llegalArgu ntExcept on("Can't log-normal ze negat ve value " + val);
+    } else  f (val == 0) {
       return 0;
     } else {
       long logVal = 1 + (long) Math.floor(Math.log(val) / logBase);
@@ -37,17 +37,17 @@ public class LogByteNormalizer extends ByteNormalizer {
     }
   }
 
-  @Override
-  public double unnormLowerBound(byte norm) {
+  @Overr de
+  publ c double unnormLo rBound(byte norm) {
     return norm < 0
-        ? Double.NEGATIVE_INFINITY
+        ? Double.NEGAT VE_ NF N TY
         : Math.floor(Math.pow(base, norm - 1));
   }
 
-  @Override
-  public double unnormUpperBound(byte norm) {
+  @Overr de
+  publ c double unnormUpperBound(byte norm) {
     return norm == Byte.MAX_VALUE
-        ? Double.POSITIVE_INFINITY
+        ? Double.POS T VE_ NF N TY
         : Math.floor(Math.pow(base, norm));
   }
 }

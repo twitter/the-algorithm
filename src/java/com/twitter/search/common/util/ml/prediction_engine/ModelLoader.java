@@ -1,177 +1,177 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+package com.tw ter.search.common.ut l.ml.pred ct on_eng ne;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+ mport java. o. OExcept on;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+ mport com.google.common.base.Opt onal;
+ mport com.google.common.base.Suppl er;
+ mport com.google.common.base.Suppl ers;
+ mport com.google.common.collect.L sts;
+ mport com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.file.AbstractFile;
-import com.twitter.search.common.file.FileUtils;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
+ mport com.tw ter.search.common.f le.AbstractF le;
+ mport com.tw ter.search.common.f le.F leUt ls;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
+ mport com.tw ter.search.common. tr cs.SearchStatsRece ver;
 
 /**
- * Loads LightweightLinearModel objects from a directory and provides an interface for reloading
- * them periodically.
+ * Loads L ght  ghtL nearModel objects from a d rectory and prov des an  nterface for reload ng
+ * t m per od cally.
  *
- * All the models must support the same features (defined by a FeatureContext) and they are
- * identified by the name of the subdirectory. This is the required directory structure:
+ * All t  models must support t  sa  features (def ned by a FeatureContext) and t y are
+ *  dent f ed by t  na  of t  subd rectory. T   s t  requ red d rectory structure:
  *
- *  /path/to/base-directory
+ *  /path/to/base-d rectory
  *      one-model/model.tsv
- *      another-model/model.tsv
- *      experimental-model/model.tsv
+ *      anot r-model/model.tsv
+ *      exper  ntal-model/model.tsv
  *
- * Each subdirectory must contain a file named 'model.tsv' in the format required by
- * LightweightLinearModel.
+ * Each subd rectory must conta n a f le na d 'model.tsv'  n t  format requ red by
+ * L ght  ghtL nearModel.
  */
-public class ModelLoader implements Runnable {
+publ c class ModelLoader  mple nts Runnable {
 
-  private static final Logger LOG = LoggerFactory.getLogger(ModelLoader.class);
-  private static final String MODEL_FILE_NAME = "model.tsv";
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(ModelLoader.class);
+  pr vate stat c f nal Str ng MODEL_F LE_NAME = "model.tsv";
 
-  private final CompositeFeatureContext featureContext;
-  private final Supplier<AbstractFile> directorySupplier;
+  pr vate f nal Compos eFeatureContext featureContext;
+  pr vate f nal Suppl er<AbstractF le> d rectorySuppl er;
 
-  private final Map<String, LightweightLinearModel> models;
-  private final Map<String, Long> lastModifiedMsByModel;
+  pr vate f nal Map<Str ng, L ght  ghtL nearModel> models;
+  pr vate f nal Map<Str ng, Long> lastMod f edMsByModel;
 
-  private final SearchLongGauge lastModelLoadedAtMs;
-  private final SearchLongGauge numModels;
-  private final SearchCounter numLoads;
-  private final SearchCounter numErrors;
+  pr vate f nal SearchLongGauge lastModelLoadedAtMs;
+  pr vate f nal SearchLongGauge numModels;
+  pr vate f nal SearchCounter numLoads;
+  pr vate f nal SearchCounter numErrors;
 
   /**
-   * Creates a new instance for a feature context and a base directory.
+   * Creates a new  nstance for a feature context and a base d rectory.
    *
-   * It exports 4 counters:
+   *   exports 4 counters:
    *
-   *   ${counterPrefix}_last_loaded:
-   *      Timestamp (in ms) when the last model was loaded.
-   *   ${counterPrefix}_num_models:
+   *   ${counterPref x}_last_loaded:
+   *      T  stamp ( n ms) w n t  last model was loaded.
+   *   ${counterPref x}_num_models:
    *      Number of models currently loaded.
-   *   ${counterPrefix}_num_loads:
+   *   ${counterPref x}_num_loads:
    *      Number of succesful model loads.
-   *   ${counterPrefix}_num_errors:
-   *      Number of errors occurred while loading the models.
+   *   ${counterPref x}_num_errors:
+   *      Number of errors occurred wh le load ng t  models.
    */
   protected ModelLoader(
-      CompositeFeatureContext featureContext,
-      Supplier<AbstractFile> directorySupplier,
-      String counterPrefix,
-      SearchStatsReceiver statsReceiver) {
-    this.featureContext = featureContext;
+      Compos eFeatureContext featureContext,
+      Suppl er<AbstractF le> d rectorySuppl er,
+      Str ng counterPref x,
+      SearchStatsRece ver statsRece ver) {
+    t .featureContext = featureContext;
 
-    // This function returns the base directory every time we call 'run'. We use a function instead
-    // of using directly an AbstractFile instance, in case that we can't obtain an instance at
-    // initialization time (e.g. if there's an issue with HDFS).
-    this.directorySupplier = directorySupplier;
-    this.models = Maps.newConcurrentMap();
-    this.lastModifiedMsByModel = Maps.newConcurrentMap();
+    // T  funct on returns t  base d rectory every t     call 'run'.   use a funct on  nstead
+    // of us ng d rectly an AbstractF le  nstance,  n case that   can't obta n an  nstance at
+    //  n  al zat on t   (e.g.  f t re's an  ssue w h HDFS).
+    t .d rectorySuppl er = d rectorySuppl er;
+    t .models = Maps.newConcurrentMap();
+    t .lastMod f edMsByModel = Maps.newConcurrentMap();
 
-    this.lastModelLoadedAtMs = statsReceiver.getLongGauge(counterPrefix + "last_loaded");
-    this.numModels = statsReceiver.getLongGauge(counterPrefix + "num_models");
-    this.numLoads = statsReceiver.getCounter(counterPrefix + "num_loads");
-    this.numErrors = statsReceiver.getCounter(counterPrefix + "num_errors");
+    t .lastModelLoadedAtMs = statsRece ver.getLongGauge(counterPref x + "last_loaded");
+    t .numModels = statsRece ver.getLongGauge(counterPref x + "num_models");
+    t .numLoads = statsRece ver.getCounter(counterPref x + "num_loads");
+    t .numErrors = statsRece ver.getCounter(counterPref x + "num_errors");
   }
 
-  public Optional<LightweightLinearModel> getModel(String name) {
-    return Optional.fromNullable(models.get(name));
+  publ c Opt onal<L ght  ghtL nearModel> getModel(Str ng na ) {
+    return Opt onal.fromNullable(models.get(na ));
   }
 
   /**
-   * Loads the models from the base directory.
+   * Loads t  models from t  base d rectory.
    *
-   * It doesn't load a model if its file has not been modified since the last time it was loaded.
+   *   doesn't load a model  f  s f le has not been mod f ed s nce t  last t     was loaded.
    *
-   * This method doesn't delete previously loaded models if their directories are not available.
+   * T   thod doesn't delete prev ously loaded models  f t  r d rector es are not ava lable.
    */
-  @Override
-  public void run() {
+  @Overr de
+  publ c vo d run() {
     try {
-      AbstractFile baseDirectory = directorySupplier.get();
-      List<AbstractFile> modelDirectories =
-          Lists.newArrayList(baseDirectory.listFiles(IS_MODEL_DIR));
-      for (AbstractFile directory : modelDirectories) {
+      AbstractF le baseD rectory = d rectorySuppl er.get();
+      L st<AbstractF le> modelD rector es =
+          L sts.newArrayL st(baseD rectory.l stF les( S_MODEL_D R));
+      for (AbstractF le d rectory : modelD rector es) {
         try {
-          // Note that the modelName is the directory name, if it ends with ".schema_based", the
-          // model will be loaded as a schema-based model.
-          String modelName = directory.getName();
-          AbstractFile modelFile = directory.getChild(MODEL_FILE_NAME);
-          long currentLastModified = modelFile.getLastModified();
-          Long lastModified = lastModifiedMsByModel.get(modelName);
-          if (lastModified == null || lastModified < currentLastModified) {
-            LightweightLinearModel model =
-                LightweightLinearModel.load(modelName, featureContext, modelFile);
-            if (!models.containsKey(modelName)) {
-              LOG.info("Loading model {}.", modelName);
+          // Note that t  modelNa   s t  d rectory na ,  f   ends w h ".sc ma_based", t 
+          // model w ll be loaded as a sc ma-based model.
+          Str ng modelNa  = d rectory.getNa ();
+          AbstractF le modelF le = d rectory.getCh ld(MODEL_F LE_NAME);
+          long currentLastMod f ed = modelF le.getLastMod f ed();
+          Long lastMod f ed = lastMod f edMsByModel.get(modelNa );
+           f (lastMod f ed == null || lastMod f ed < currentLastMod f ed) {
+            L ght  ghtL nearModel model =
+                L ght  ghtL nearModel.load(modelNa , featureContext, modelF le);
+             f (!models.conta nsKey(modelNa )) {
+              LOG. nfo("Load ng model {}.", modelNa );
             }
-            models.put(modelName, model);
-            lastModifiedMsByModel.put(modelName, currentLastModified);
-            lastModelLoadedAtMs.set(System.currentTimeMillis());
-            numLoads.increment();
+            models.put(modelNa , model);
+            lastMod f edMsByModel.put(modelNa , currentLastMod f ed);
+            lastModelLoadedAtMs.set(System.currentT  M ll s());
+            numLoads. ncre nt();
             LOG.debug("Model: {}", model);
           } else {
-            LOG.debug("Directory for model {} has not changed.", modelName);
+            LOG.debug("D rectory for model {} has not changed.", modelNa );
           }
-        } catch (Exception e) {
-          LOG.error("Error loading model from directory: " + directory.getPath(), e);
-          this.numErrors.increment();
+        } catch (Except on e) {
+          LOG.error("Error load ng model from d rectory: " + d rectory.getPath(), e);
+          t .numErrors. ncre nt();
         }
       }
-      if (numModels.get() != models.size()) {
-        LOG.info("Finished loading models. Model names: {}", models.keySet());
+       f (numModels.get() != models.s ze()) {
+        LOG. nfo("F n s d load ng models. Model na s: {}", models.keySet());
       }
-      this.numModels.set(models.size());
-    } catch (IOException e) {
-      LOG.error("Error loading models", e);
-      this.numErrors.increment();
+      t .numModels.set(models.s ze());
+    } catch ( OExcept on e) {
+      LOG.error("Error load ng models", e);
+      t .numErrors. ncre nt();
     }
   }
 
   /**
-   * Creates an instance that loads models from a directory (local or from HDFS).
+   * Creates an  nstance that loads models from a d rectory (local or from HDFS).
    */
-  public static ModelLoader forDirectory(
-      final AbstractFile directory,
-      CompositeFeatureContext featureContext,
-      String counterPrefix,
-      SearchStatsReceiver statsReceiver) {
-    Supplier<AbstractFile> directorySupplier = Suppliers.ofInstance(directory);
-    return new ModelLoader(featureContext, directorySupplier, counterPrefix, statsReceiver);
+  publ c stat c ModelLoader forD rectory(
+      f nal AbstractF le d rectory,
+      Compos eFeatureContext featureContext,
+      Str ng counterPref x,
+      SearchStatsRece ver statsRece ver) {
+    Suppl er<AbstractF le> d rectorySuppl er = Suppl ers.of nstance(d rectory);
+    return new ModelLoader(featureContext, d rectorySuppl er, counterPref x, statsRece ver);
   }
 
   /**
-   * Creates an instance that loads models from HDFS.
+   * Creates an  nstance that loads models from HDFS.
    */
-  public static ModelLoader forHdfsDirectory(
-      final String nameNode,
-      final String directory,
-      CompositeFeatureContext featureContext,
-      String counterPrefix,
-      SearchStatsReceiver statsReceiver) {
-    Supplier<AbstractFile> directorySupplier =
-        () -> FileUtils.getHdfsFileHandle(directory, nameNode);
-    return new ModelLoader(featureContext, directorySupplier, counterPrefix, statsReceiver);
+  publ c stat c ModelLoader forHdfsD rectory(
+      f nal Str ng na Node,
+      f nal Str ng d rectory,
+      Compos eFeatureContext featureContext,
+      Str ng counterPref x,
+      SearchStatsRece ver statsRece ver) {
+    Suppl er<AbstractF le> d rectorySuppl er =
+        () -> F leUt ls.getHdfsF leHandle(d rectory, na Node);
+    return new ModelLoader(featureContext, d rectorySuppl er, counterPref x, statsRece ver);
   }
 
-  private static final AbstractFile.Filter IS_MODEL_DIR = file -> {
+  pr vate stat c f nal AbstractF le.F lter  S_MODEL_D R = f le -> {
     try {
-      if (file.isDirectory()) {
-        AbstractFile modelFile = file.getChild(MODEL_FILE_NAME);
-        return (modelFile != null) && modelFile.canRead();
+       f (f le. sD rectory()) {
+        AbstractF le modelF le = f le.getCh ld(MODEL_F LE_NAME);
+        return (modelF le != null) && modelF le.canRead();
       }
-    } catch (IOException e) {
-      LOG.error("Error reading file: " + file, e);
+    } catch ( OExcept on e) {
+      LOG.error("Error read ng f le: " + f le, e);
     }
     return false;
   };

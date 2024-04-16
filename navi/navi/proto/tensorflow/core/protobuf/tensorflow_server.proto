@@ -1,61 +1,61 @@
-/* Copyright 2016 The TensorFlow Authors. All Rights Reserved.
+/* Copyr ght 2016 T  TensorFlow Authors. All R ghts Reserved.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+L censed under t  Apac  L cense, Vers on 2.0 (t  "L cense");
+  may not use t  f le except  n compl ance w h t  L cense.
+  may obta n a copy of t  L cense at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apac .org/l censes/L CENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Unless requ red by appl cable law or agreed to  n wr  ng, software
+d str buted under t  L cense  s d str buted on an "AS  S" BAS S,
+W THOUT WARRANT ES OR COND T ONS OF ANY K ND, e  r express or  mpl ed.
+See t  L cense for t  spec f c language govern ng perm ss ons and
+l m at ons under t  L cense.
 ==============================================================================*/
 
 syntax = "proto3";
 
 package tensorflow;
 
-import "tensorflow/core/protobuf/cluster.proto";
-import "tensorflow/core/protobuf/config.proto";
-import "tensorflow/core/protobuf/device_filters.proto";
+ mport "tensorflow/core/protobuf/cluster.proto";
+ mport "tensorflow/core/protobuf/conf g.proto";
+ mport "tensorflow/core/protobuf/dev ce_f lters.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "ServerProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.distruntime";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "ServerProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.d strunt  ";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
-// Defines the configuration of a single TensorFlow server.
-message ServerDef {
-  // The cluster of which this server is a member.
+// Def nes t  conf gurat on of a s ngle TensorFlow server.
+ ssage ServerDef {
+  // T  cluster of wh ch t  server  s a  mber.
   ClusterDef cluster = 1;
 
-  // The name of the job of which this server is a member.
+  // T  na  of t  job of wh ch t  server  s a  mber.
   //
-  // NOTE(mrry): The `cluster` field must contain a `JobDef` with a `name` field
-  // that matches this name.
-  string job_name = 2;
+  // NOTE(mrry): T  `cluster` f eld must conta n a `JobDef` w h a `na ` f eld
+  // that matc s t  na .
+  str ng job_na  = 2;
 
-  // The task index of this server in its job.
+  // T  task  ndex of t  server  n  s job.
   //
-  // NOTE: The `cluster` field must contain a `JobDef` with a matching `name`
-  // and a mapping in its `tasks` field for this index.
-  int32 task_index = 3;
+  // NOTE: T  `cluster` f eld must conta n a `JobDef` w h a match ng `na `
+  // and a mapp ng  n  s `tasks` f eld for t   ndex.
+   nt32 task_ ndex = 3;
 
-  // The default configuration for sessions that run on this server.
-  ConfigProto default_session_config = 4;
+  // T  default conf gurat on for sess ons that run on t  server.
+  Conf gProto default_sess on_conf g = 4;
 
-  // The protocol to be used by this server.
+  // T  protocol to be used by t  server.
   //
-  // Acceptable values include: "grpc", "grpc+verbs".
-  string protocol = 5;
+  // Acceptable values  nclude: "grpc", "grpc+verbs".
+  str ng protocol = 5;
 
-  // The server port. If not set, then we identify the port from the job_name.
-  int32 port = 6;
+  // T  server port.  f not set, t n    dent fy t  port from t  job_na .
+   nt32 port = 6;
 
-  // Device filters for remote tasks in the cluster.
-  // NOTE: This is an experimental feature and only effective in TensorFlow 2.x.
-  ClusterDeviceFilters cluster_device_filters = 7;
+  // Dev ce f lters for remote tasks  n t  cluster.
+  // NOTE: T   s an exper  ntal feature and only effect ve  n TensorFlow 2.x.
+  ClusterDev ceF lters cluster_dev ce_f lters = 7;
 }

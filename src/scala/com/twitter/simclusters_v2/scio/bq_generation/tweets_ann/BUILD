@@ -1,110 +1,110 @@
-scala_library(
-    name = "bq_generation",
-    sources = [
+scala_l brary(
+    na  = "bq_generat on",
+    s ces = [
         "**/*.scala",
     ],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "beam-internal/src/main/scala/com/twitter/beam/io/dal",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/job",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/runner/dataflow",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:offline_tweet_recommendations_from_interested_in_20M_145K_2020-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_0_EL_15-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_2_EL_15-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_2_EL_50-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_8_EL_50-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:offline_tweet_recommendations_from_mts_consumer_embeddings-scala",
-        "src/scala/com/twitter/simclusters_v2/scio/bq_generation/common",
-        "src/scala/com/twitter/simclusters_v2/scio/bq_generation/sql",
-        "src/scala/com/twitter/wtf/beam/bq_embedding_export:bq_embedding_export_lib",
-        "tcdc/bq_blaster/src/main/scala/com/twitter/tcdc/bqblaster/beam",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "beam- nternal/src/ma n/scala/com/tw ter/beam/ o/dal",
+        "beam- nternal/src/ma n/scala/com/tw ter/sc o_ nternal/job",
+        "beam- nternal/src/ma n/scala/com/tw ter/sc o_ nternal/runner/dataflow",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces:offl ne_t et_recom ndat ons_from_ nterested_ n_20M_145K_2020-scala",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces:offl ne_t et_recom ndat ons_from_ nterested_ n_20M_145K_2020_HL_0_EL_15-scala",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces:offl ne_t et_recom ndat ons_from_ nterested_ n_20M_145K_2020_HL_2_EL_15-scala",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces:offl ne_t et_recom ndat ons_from_ nterested_ n_20M_145K_2020_HL_2_EL_50-scala",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces:offl ne_t et_recom ndat ons_from_ nterested_ n_20M_145K_2020_HL_8_EL_50-scala",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces:offl ne_t et_recom ndat ons_from_mts_consu r_embedd ngs-scala",
+        "src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/common",
+        "src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/sql",
+        "src/scala/com/tw ter/wtf/beam/bq_embedd ng_export:bq_embedd ng_export_l b",
+        "tcdc/bq_blaster/src/ma n/scala/com/tw ter/tcdc/bqblaster/beam",
     ],
 )
 
-jvm_binary(
-    name = "iikf-tweets-ann-adhoc-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.tweets_ann.IIKF2020TweetsANNBQAdhocJob",
+jvm_b nary(
+    na  = "  kf-t ets-ann-adhoc-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.t ets_ann.  KF2020T etsANNBQAdhocJob",
     platform = "java8",
-    dependencies = [
-        ":bq_generation",
+    dependenc es = [
+        ":bq_generat on",
     ],
 )
 
-jvm_binary(
-    name = "iikf-hl-8-el-50-tweets-ann-adhoc-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.tweets_ann.IIKF2020Hl8El50TweetsANNBQAdhocJob",
+jvm_b nary(
+    na  = "  kf-hl-8-el-50-t ets-ann-adhoc-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.t ets_ann.  KF2020Hl8El50T etsANNBQAdhocJob",
     platform = "java8",
-    dependencies = [
-        ":bq_generation",
+    dependenc es = [
+        ":bq_generat on",
     ],
 )
 
-jvm_binary(
-    name = "iikf-tweets-ann-batch-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.tweets_ann.IIKF2020TweetsANNBQBatchJob",
+jvm_b nary(
+    na  = "  kf-t ets-ann-batch-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.t ets_ann.  KF2020T etsANNBQBatchJob",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":bq_generation",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        ":bq_generat on",
     ],
 )
 
-jvm_binary(
-    name = "iikf-hl-0-el-15-tweets-ann-batch-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.tweets_ann.IIKF2020Hl0El15TweetsANNBQBatchJob",
+jvm_b nary(
+    na  = "  kf-hl-0-el-15-t ets-ann-batch-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.t ets_ann.  KF2020Hl0El15T etsANNBQBatchJob",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":bq_generation",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        ":bq_generat on",
     ],
 )
 
-jvm_binary(
-    name = "iikf-hl-2-el-15-tweets-ann-batch-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.tweets_ann.IIKF2020Hl2El15TweetsANNBQBatchJob",
+jvm_b nary(
+    na  = "  kf-hl-2-el-15-t ets-ann-batch-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.t ets_ann.  KF2020Hl2El15T etsANNBQBatchJob",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":bq_generation",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        ":bq_generat on",
     ],
 )
 
-jvm_binary(
-    name = "iikf-hl-2-el-50-tweets-ann-batch-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.tweets_ann.IIKF2020Hl2El50TweetsANNBQBatchJob",
+jvm_b nary(
+    na  = "  kf-hl-2-el-50-t ets-ann-batch-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.t ets_ann.  KF2020Hl2El50T etsANNBQBatchJob",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":bq_generation",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        ":bq_generat on",
     ],
 )
 
-jvm_binary(
-    name = "iikf-hl-8-el-50-tweets-ann-batch-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.tweets_ann.IIKF2020Hl8El50TweetsANNBQBatchJob",
+jvm_b nary(
+    na  = "  kf-hl-8-el-50-t ets-ann-batch-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.t ets_ann.  KF2020Hl8El50T etsANNBQBatchJob",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":bq_generation",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        ":bq_generat on",
     ],
 )
 
-jvm_binary(
-    name = "mts-consumer-embeddings-tweets-ann-adhoc-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.tweets_ann.MTSConsumerEmbeddingsTweetsANNBQAdhocJob",
+jvm_b nary(
+    na  = "mts-consu r-embedd ngs-t ets-ann-adhoc-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.t ets_ann.MTSConsu rEmbedd ngsT etsANNBQAdhocJob",
     platform = "java8",
-    dependencies = [
-        ":bq_generation",
+    dependenc es = [
+        ":bq_generat on",
     ],
 )
 
-jvm_binary(
-    name = "mts-consumer-embeddings-tweets-ann-batch-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.tweets_ann.MTSConsumerEmbeddingsTweetsANNBQBatchJob",
+jvm_b nary(
+    na  = "mts-consu r-embedd ngs-t ets-ann-batch-job",
+    ma n = "com.tw ter.s mclusters_v2.sc o.bq_generat on.t ets_ann.MTSConsu rEmbedd ngsT etsANNBQBatchJob",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":bq_generation",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        ":bq_generat on",
     ],
 )

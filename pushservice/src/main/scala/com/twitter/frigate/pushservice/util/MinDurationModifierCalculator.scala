@@ -1,179 +1,179 @@
-package com.twitter.frigate.pushservice.util
+package com.tw ter.fr gate.pushserv ce.ut l
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.TimeUtil
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushConstants
-import com.twitter.frigate.pushservice.params.{PushFeatureSwitchParams => FSParams}
-import com.twitter.util.Future
-import com.twitter.util.Time
-import java.util.Calendar
-import java.util.TimeZone
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.ut l.T  Ut l
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.params.PushConstants
+ mport com.tw ter.fr gate.pushserv ce.params.{PushFeatureSw chParams => FSParams}
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
+ mport java.ut l.Calendar
+ mport java.ut l.T  Zone
 
-case class MinDurationModifierCalculator() {
+case class M nDurat onMod f erCalculator() {
 
-  private def mapCountryCodeToTimeZone(
-    countryCode: String,
-    stats: StatsReceiver
-  ): Option[Calendar] = {
-    PushConstants.countryCodeToTimeZoneMap
-      .get(countryCode.toUpperCase).map(timezone =>
-        Calendar.getInstance(TimeZone.getTimeZone(timezone)))
+  pr vate def mapCountryCodeToT  Zone(
+    countryCode: Str ng,
+    stats: StatsRece ver
+  ): Opt on[Calendar] = {
+    PushConstants.countryCodeToT  ZoneMap
+      .get(countryCode.toUpperCase).map(t  zone =>
+        Calendar.get nstance(T  Zone.getT  Zone(t  zone)))
   }
 
-  private def transformToHour(
-    dayOfHour: Int
-  ): Int = {
-    if (dayOfHour < 0) dayOfHour + 24
-    else dayOfHour
+  pr vate def transformToH (
+    dayOfH :  nt
+  ):  nt = {
+     f (dayOfH  < 0) dayOfH  + 24
+    else dayOfH 
   }
 
-  private def getMinDurationByHourOfDay(
-    hourOfDay: Int,
-    startTimeList: Seq[Int],
-    endTimeList: Seq[Int],
-    minDurationTimeModifierConst: Seq[Int],
-    stats: StatsReceiver
-  ): Option[Int] = {
-    val scopedStats = stats.scope("getMinDurationByHourOfDay")
-    scopedStats.counter("request").incr()
-    val durationOpt = (startTimeList, endTimeList, minDurationTimeModifierConst).zipped.toList
-      .filter {
-        case (startTime, endTime, _) =>
-          if (startTime <= endTime) hourOfDay >= startTime && hourOfDay < endTime
-          else (hourOfDay >= startTime) || hourOfDay < endTime
+  pr vate def getM nDurat onByH OfDay(
+    h OfDay:  nt,
+    startT  L st: Seq[ nt],
+    endT  L st: Seq[ nt],
+    m nDurat onT  Mod f erConst: Seq[ nt],
+    stats: StatsRece ver
+  ): Opt on[ nt] = {
+    val scopedStats = stats.scope("getM nDurat onByH OfDay")
+    scopedStats.counter("request"). ncr()
+    val durat onOpt = (startT  L st, endT  L st, m nDurat onT  Mod f erConst).z pped.toL st
+      .f lter {
+        case (startT  , endT  , _) =>
+           f (startT   <= endT  ) h OfDay >= startT   && h OfDay < endT  
+          else (h OfDay >= startT  ) || h OfDay < endT  
         case _ => false
       }.map {
-        case (_, _, modifier) => modifier
-      }.headOption
-    durationOpt match {
-      case Some(duration) => scopedStats.counter(s"$duration.minutes").incr()
-      case _ => scopedStats.counter("none").incr()
+        case (_, _, mod f er) => mod f er
+      }. adOpt on
+    durat onOpt match {
+      case So (durat on) => scopedStats.counter(s"$durat on.m nutes"). ncr()
+      case _ => scopedStats.counter("none"). ncr()
     }
-    durationOpt
+    durat onOpt
   }
 
-  def getMinDurationModifier(
+  def getM nDurat onMod f er(
     target: Target,
     calendar: Calendar,
-    stats: StatsReceiver
-  ): Option[Int] = {
-    val startTimeList = target.params(FSParams.MinDurationModifierStartHourList)
-    val endTimeList = target.params(FSParams.MinDurationModifierEndHourList)
-    val minDurationTimeModifierConst = target.params(FSParams.MinDurationTimeModifierConst)
-    if (startTimeList.length != endTimeList.length || minDurationTimeModifierConst.length != startTimeList.length) {
+    stats: StatsRece ver
+  ): Opt on[ nt] = {
+    val startT  L st = target.params(FSParams.M nDurat onMod f erStartH L st)
+    val endT  L st = target.params(FSParams.M nDurat onMod f erEndH L st)
+    val m nDurat onT  Mod f erConst = target.params(FSParams.M nDurat onT  Mod f erConst)
+     f (startT  L st.length != endT  L st.length || m nDurat onT  Mod f erConst.length != startT  L st.length) {
       None
     } else {
-      val hourOfDay = calendar.get(Calendar.HOUR_OF_DAY)
-      getMinDurationByHourOfDay(
-        hourOfDay,
-        startTimeList,
-        endTimeList,
-        minDurationTimeModifierConst,
+      val h OfDay = calendar.get(Calendar.HOUR_OF_DAY)
+      getM nDurat onByH OfDay(
+        h OfDay,
+        startT  L st,
+        endT  L st,
+        m nDurat onT  Mod f erConst,
         stats)
     }
   }
 
-  def getMinDurationModifier(
+  def getM nDurat onMod f er(
     target: Target,
-    countryCodeOpt: Option[String],
-    stats: StatsReceiver
-  ): Option[Int] = {
+    countryCodeOpt: Opt on[Str ng],
+    stats: StatsRece ver
+  ): Opt on[ nt] = {
     val scopedStats = stats
-      .scope("getMinDurationModifier")
-    scopedStats.counter("total_requests").incr()
+      .scope("getM nDurat onMod f er")
+    scopedStats.counter("total_requests"). ncr()
 
     countryCodeOpt match {
-      case Some(countryCode) =>
+      case So (countryCode) =>
         scopedStats
-          .counter("country_code_exists").incr()
-        val calendarOpt = mapCountryCodeToTimeZone(countryCode, scopedStats)
-        calendarOpt.flatMap(calendar => getMinDurationModifier(target, calendar, scopedStats))
+          .counter("country_code_ex sts"). ncr()
+        val calendarOpt = mapCountryCodeToT  Zone(countryCode, scopedStats)
+        calendarOpt.flatMap(calendar => getM nDurat onMod f er(target, calendar, scopedStats))
       case _ => None
     }
   }
 
-  def getMinDurationModifier(target: Target, stats: StatsReceiver): Future[Option[Int]] = {
+  def getM nDurat onMod f er(target: Target, stats: StatsRece ver): Future[Opt on[ nt]] = {
     val scopedStats = stats
-      .scope("getMinDurationModifier")
-    scopedStats.counter("total_requests").incr()
+      .scope("getM nDurat onMod f er")
+    scopedStats.counter("total_requests"). ncr()
 
-    val startTimeList = target.params(FSParams.MinDurationModifierStartHourList)
-    val endTimeList = target.params(FSParams.MinDurationModifierEndHourList)
-    val minDurationTimeModifierConst = target.params(FSParams.MinDurationTimeModifierConst)
-    if (startTimeList.length != endTimeList.length || minDurationTimeModifierConst.length != startTimeList.length) {
+    val startT  L st = target.params(FSParams.M nDurat onMod f erStartH L st)
+    val endT  L st = target.params(FSParams.M nDurat onMod f erEndH L st)
+    val m nDurat onT  Mod f erConst = target.params(FSParams.M nDurat onT  Mod f erConst)
+     f (startT  L st.length != endT  L st.length || m nDurat onT  Mod f erConst.length != startT  L st.length) {
       Future.value(None)
     } else {
-      target.localTimeInHHMM.map {
-        case (hourOfDay, _) =>
-          getMinDurationByHourOfDay(
-            hourOfDay,
-            startTimeList,
-            endTimeList,
-            minDurationTimeModifierConst,
+      target.localT   nHHMM.map {
+        case (h OfDay, _) =>
+          getM nDurat onByH OfDay(
+            h OfDay,
+            startT  L st,
+            endT  L st,
+            m nDurat onT  Mod f erConst,
             scopedStats)
         case _ => None
       }
     }
   }
 
-  def getMinDurationModifierByUserOpenedHistory(
+  def getM nDurat onMod f erByUserOpened tory(
     target: Target,
-    openedPushByHourAggregatedOpt: Option[Map[Int, Int]],
-    stats: StatsReceiver
-  ): Option[Int] = {
+    openedPushByH AggregatedOpt: Opt on[Map[ nt,  nt]],
+    stats: StatsRece ver
+  ): Opt on[ nt] = {
     val scopedStats = stats
-      .scope("getMinDurationModifierByUserOpenedHistory")
-    scopedStats.counter("total_requests").incr()
-    openedPushByHourAggregatedOpt match {
-      case Some(openedPushByHourAggregated) =>
-        if (openedPushByHourAggregated.isEmpty) {
-          scopedStats.counter("openedPushByHourAggregated_empty").incr()
+      .scope("getM nDurat onMod f erByUserOpened tory")
+    scopedStats.counter("total_requests"). ncr()
+    openedPushByH AggregatedOpt match {
+      case So (openedPushByH Aggregated) =>
+         f (openedPushByH Aggregated. sEmpty) {
+          scopedStats.counter("openedPushByH Aggregated_empty"). ncr()
           None
         } else {
-          val currentUTCHour = TimeUtil.hourOfDay(Time.now)
-          val utcHourWithMaxOpened = if (target.params(FSParams.EnableRandomHourForQuickSend)) {
-            (target.targetId % 24).toInt
+          val currentUTCH  = T  Ut l.h OfDay(T  .now)
+          val utcH W hMaxOpened =  f (target.params(FSParams.EnableRandomH ForQu ckSend)) {
+            (target.target d % 24).to nt
           } else {
-            openedPushByHourAggregated.maxBy(_._2)._1
+            openedPushByH Aggregated.maxBy(_._2)._1
           }
-          val numOfMaxOpened = openedPushByHourAggregated.maxBy(_._2)._2
-          if (numOfMaxOpened >= target.params(FSParams.SendTimeByUserHistoryMaxOpenedThreshold)) {
-            scopedStats.counter("pass_experiment_bucket_threshold").incr()
-            if (numOfMaxOpened >= target
-                .params(FSParams.SendTimeByUserHistoryMaxOpenedThreshold)) { // only update if number of opened pushes meet threshold
-              scopedStats.counter("pass_max_threshold").incr()
-              val quickSendBeforeHours =
-                target.params(FSParams.SendTimeByUserHistoryQuickSendBeforeHours)
-              val quickSendAfterHours =
-                target.params(FSParams.SendTimeByUserHistoryQuickSendAfterHours)
+          val numOfMaxOpened = openedPushByH Aggregated.maxBy(_._2)._2
+           f (numOfMaxOpened >= target.params(FSParams.SendT  ByUser toryMaxOpenedThreshold)) {
+            scopedStats.counter("pass_exper  nt_bucket_threshold"). ncr()
+             f (numOfMaxOpened >= target
+                .params(FSParams.SendT  ByUser toryMaxOpenedThreshold)) { // only update  f number of opened pus s  et threshold
+              scopedStats.counter("pass_max_threshold"). ncr()
+              val qu ckSendBeforeH s =
+                target.params(FSParams.SendT  ByUser toryQu ckSendBeforeH s)
+              val qu ckSendAfterH s =
+                target.params(FSParams.SendT  ByUser toryQu ckSendAfterH s)
 
-              val hoursToLessSend = target.params(FSParams.SendTimeByUserHistoryNoSendsHours)
+              val h sToLessSend = target.params(FSParams.SendT  ByUser toryNoSendsH s)
 
-              val quickSendTimeMinDurationInMinute =
-                target.params(FSParams.SendTimeByUserHistoryQuickSendMinDurationInMinute)
-              val noSendTimeMinDuration =
-                target.params(FSParams.SendTimeByUserHistoryNoSendMinDuration)
+              val qu ckSendT  M nDurat on nM nute =
+                target.params(FSParams.SendT  ByUser toryQu ckSendM nDurat on nM nute)
+              val noSendT  M nDurat on =
+                target.params(FSParams.SendT  ByUser toryNoSendM nDurat on)
 
-              val startTimeForNoSend = transformToHour(
-                utcHourWithMaxOpened - quickSendBeforeHours - hoursToLessSend)
-              val startTimeForQuickSend = transformToHour(
-                utcHourWithMaxOpened - quickSendBeforeHours)
-              val endTimeForNoSend =
-                transformToHour(utcHourWithMaxOpened - quickSendBeforeHours)
-              val endTimeForQuickSend =
-                transformToHour(utcHourWithMaxOpened + quickSendAfterHours) + 1
+              val startT  ForNoSend = transformToH (
+                utcH W hMaxOpened - qu ckSendBeforeH s - h sToLessSend)
+              val startT  ForQu ckSend = transformToH (
+                utcH W hMaxOpened - qu ckSendBeforeH s)
+              val endT  ForNoSend =
+                transformToH (utcH W hMaxOpened - qu ckSendBeforeH s)
+              val endT  ForQu ckSend =
+                transformToH (utcH W hMaxOpened + qu ckSendAfterH s) + 1
 
-              val startTimeList = Seq(startTimeForNoSend, startTimeForQuickSend)
-              val endTimeList = Seq(endTimeForNoSend, endTimeForQuickSend)
-              val minDurationTimeModifierConst =
-                Seq(noSendTimeMinDuration, quickSendTimeMinDurationInMinute)
+              val startT  L st = Seq(startT  ForNoSend, startT  ForQu ckSend)
+              val endT  L st = Seq(endT  ForNoSend, endT  ForQu ckSend)
+              val m nDurat onT  Mod f erConst =
+                Seq(noSendT  M nDurat on, qu ckSendT  M nDurat on nM nute)
 
-              getMinDurationByHourOfDay(
-                currentUTCHour,
-                startTimeList,
-                endTimeList,
-                minDurationTimeModifierConst,
+              getM nDurat onByH OfDay(
+                currentUTCH ,
+                startT  L st,
+                endT  L st,
+                m nDurat onT  Mod f erConst,
                 scopedStats)
 
             } else None

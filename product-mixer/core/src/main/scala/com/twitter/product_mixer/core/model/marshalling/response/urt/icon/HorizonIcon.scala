@@ -1,43 +1,43 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.icon
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. con
 
-sealed trait HorizonIcon
+sealed tra  Hor zon con
 
-case object Bookmark extends HorizonIcon
-case object Moment extends HorizonIcon
-case object Debug extends HorizonIcon
-case object Error extends HorizonIcon
-case object Follow extends HorizonIcon
-case object Unfollow extends HorizonIcon
-case object Smile extends HorizonIcon
-case object Frown extends HorizonIcon
-case object Help extends HorizonIcon
-case object Link extends HorizonIcon
-case object Message extends HorizonIcon
-case object No extends HorizonIcon
-case object Outgoing extends HorizonIcon
-case object Pin extends HorizonIcon
-case object Retweet extends HorizonIcon
-case object Speaker extends HorizonIcon
-case object Trashcan extends HorizonIcon
-case object Feedback extends HorizonIcon
-case object FeedbackClose extends HorizonIcon
-case object EyeOff extends HorizonIcon
-case object Moderation extends HorizonIcon
-case object Topic extends HorizonIcon
-case object TopicClose extends HorizonIcon
-case object Flag extends HorizonIcon
-case object TopicFilled extends HorizonIcon
-case object NotificationsFollow extends HorizonIcon
-case object Person extends HorizonIcon
-case object BalloonStroke extends HorizonIcon
-case object Calendar extends HorizonIcon
-case object LocationStroke extends HorizonIcon
-case object PersonStroke extends HorizonIcon
-case object Safety extends HorizonIcon
-case object Logo extends HorizonIcon
-case object SparkleOn extends HorizonIcon
-case object StarRising extends HorizonIcon
-case object CameraVideo extends HorizonIcon
-case object ShoppingClock extends HorizonIcon
-case object ArrowRight extends HorizonIcon
-case object SpeakerOff extends HorizonIcon
+case object Bookmark extends Hor zon con
+case object Mo nt extends Hor zon con
+case object Debug extends Hor zon con
+case object Error extends Hor zon con
+case object Follow extends Hor zon con
+case object Unfollow extends Hor zon con
+case object Sm le extends Hor zon con
+case object Frown extends Hor zon con
+case object  lp extends Hor zon con
+case object L nk extends Hor zon con
+case object  ssage extends Hor zon con
+case object No extends Hor zon con
+case object Outgo ng extends Hor zon con
+case object P n extends Hor zon con
+case object Ret et extends Hor zon con
+case object Speaker extends Hor zon con
+case object Trashcan extends Hor zon con
+case object Feedback extends Hor zon con
+case object FeedbackClose extends Hor zon con
+case object EyeOff extends Hor zon con
+case object Moderat on extends Hor zon con
+case object Top c extends Hor zon con
+case object Top cClose extends Hor zon con
+case object Flag extends Hor zon con
+case object Top cF lled extends Hor zon con
+case object Not f cat onsFollow extends Hor zon con
+case object Person extends Hor zon con
+case object BalloonStroke extends Hor zon con
+case object Calendar extends Hor zon con
+case object Locat onStroke extends Hor zon con
+case object PersonStroke extends Hor zon con
+case object Safety extends Hor zon con
+case object Logo extends Hor zon con
+case object SparkleOn extends Hor zon con
+case object StarR s ng extends Hor zon con
+case object Ca raV deo extends Hor zon con
+case object Shopp ngClock extends Hor zon con
+case object ArrowR ght extends Hor zon con
+case object SpeakerOff extends Hor zon con

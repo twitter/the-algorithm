@@ -1,957 +1,957 @@
-namespace java com.twitter.unified_user_actions.thriftjava
-#@namespace scala com.twitter.unified_user_actions.thriftscala
-#@namespace strato com.twitter.unified_user_actions
+na space java com.tw ter.un f ed_user_act ons.thr ftjava
+#@na space scala com.tw ter.un f ed_user_act ons.thr ftscala
+#@na space strato com.tw ter.un f ed_user_act ons
 
-include "com/twitter/clientapp/gen/client_app.thrift"
-include "com/twitter/reportflow/report_flow_logs.thrift"
-include "com/twitter/socialgraph/social_graph_service_write_log.thrift"
-include "com/twitter/gizmoduck/user_service.thrift"
+ nclude "com/tw ter/cl entapp/gen/cl ent_app.thr ft"
+ nclude "com/tw ter/reportflow/report_flow_logs.thr ft"
+ nclude "com/tw ter/soc algraph/soc al_graph_serv ce_wr e_log.thr ft"
+ nclude "com/tw ter/g zmoduck/user_serv ce.thr ft"
 
 /*
- * ActionType is typically a three part enum consisting of
- * [Origin][Item Type][Action Name]
+ * Act onType  s typ cally a three part enum cons st ng of
+ * [Or g n][ em Type][Act on Na ]
  *
- * [Origin] is usually "client" or "server" to indicate how the action was derived.
+ * [Or g n]  s usually "cl ent" or "server" to  nd cate how t  act on was der ved.
  *
- * [Item Type] is singular and refers to the shorthand version of the type of
- * Item (e.g. Tweet, Profile, Notification instead of TweetInfo, ProfileInfo, NotificationInfo)
- * the action occurred on. Action types and item types should be 1:1, and when an action can be
- * performed on multiple types of items, consider granular action types.
+ * [ em Type]  s s ngular and refers to t  shorthand vers on of t  type of
+ *  em (e.g. T et, Prof le, Not f cat on  nstead of T et nfo, Prof le nfo, Not f cat on nfo)
+ * t  act on occurred on. Act on types and  em types should be 1:1, and w n an act on can be
+ * perfor d on mult ple types of  ems, cons der granular act on types.
  *
- * [Action Name] is the descriptive name of the user action (e.g. favorite, render impression);
- * action names should correspond to UI actions / ML labels (which are typically based on user
- * behavior from UI actions)
+ * [Act on Na ]  s t  descr pt ve na  of t  user act on (e.g. favor e, render  mpress on);
+ * act on na s should correspond to U  act ons / ML labels (wh ch are typ cally based on user
+ * behav or from U  act ons)
  *
- * Below are guidelines around naming of action types:
- * a) When an action is coupled to a product surface, be concise in naming such that the
- * combination of item type and action name captures the user behavior for the action in the UI. For example,
- * for an open on a Notification in the PushNotification product surface that is parsed from client events,
- * consider ClientNotificationOpen because the item Notification and the action name Open concisely represent
- * the action, and the product surface PushNotification can be identified independently.
+ * Below are gu del nes around nam ng of act on types:
+ * a) W n an act on  s coupled to a product surface, be conc se  n nam ng such that t 
+ * comb nat on of  em type and act on na  captures t  user behav or for t  act on  n t  U . For example,
+ * for an open on a Not f cat on  n t  PushNot f cat on product surface that  s parsed from cl ent events,
+ * cons der Cl entNot f cat onOpen because t   em Not f cat on and t  act on na  Open conc sely represent
+ * t  act on, and t  product surface PushNot f cat on can be  dent f ed  ndependently.
  *
- * b) It is OK to use generic names like Click if needed to distinguish from another action OR
- * it is the best way to characterize an action concisely without confusion.
- * For example, for ClientTweetClickReply, this refers to actually clicking on the Reply button but not
- * Replying, and it is OK to include Click. Another example is Click on a Tweet anywhere (other than the fav,
- * reply, etc. buttons), which leads to the TweetDetails page. Avoid generic action names like Click if
- * there is a more specific UI aspect to reference and Click is implied, e.g. ClientTweetReport is
- * preferred over ClientTweetClickReport and ClientTweetReportClick.
+ * b)    s OK to use gener c na s l ke Cl ck  f needed to d st ngu sh from anot r act on OR
+ *    s t  best way to character ze an act on conc sely w hout confus on.
+ * For example, for Cl entT etCl ckReply, t  refers to actually cl ck ng on t  Reply button but not
+ * Reply ng, and    s OK to  nclude Cl ck. Anot r example  s Cl ck on a T et anyw re (ot r than t  fav,
+ * reply, etc. buttons), wh ch leads to t  T etDeta ls page. Avo d gener c act on na s l ke Cl ck  f
+ * t re  s a more spec f c U  aspect to reference and Cl ck  s  mpl ed, e.g. Cl entT etReport  s
+ * preferred over Cl entT etCl ckReport and Cl entT etReportCl ck.
  *
- * c) Rely on versioning found in the origin when it is present for action names. For example,
- * a "V2Impression" is named as such because in behavioral client events, there is
- * a "v2Impress" field. See go/bce-v2impress for more details.
+ * c) Rely on vers on ng found  n t  or g n w n    s present for act on na s. For example,
+ * a "V2 mpress on"  s na d as such because  n behav oral cl ent events, t re  s
+ * a "v2 mpress" f eld. See go/bce-v2 mpress for more deta ls.
  *
- * d) There is a distinction between "UndoAction" and "Un{Action}" action types.
- * An "UndoAction" is fired when a user clicks on the explicit "Undo" button, after they perform an action
- * This "Undo" button is a UI element that may be temporary, e.g.,
- *  - the user waited too long to click the button, the button disappears from the UI (e.g., Undo for Mute, Block)
- *  - the button does not disappear due to timeout, but becomes unavailable after the user closes a tab
- *    (e.g, Undo for NotInterestedIn, NotAboutTopic)
+ * d) T re  s a d st nct on bet en "UndoAct on" and "Un{Act on}" act on types.
+ * An "UndoAct on"  s f red w n a user cl cks on t  expl c  "Undo" button, after t y perform an act on
+ * T  "Undo" button  s a U  ele nt that may be temporary, e.g.,
+ *  - t  user wa ed too long to cl ck t  button, t  button d sappears from t  U  (e.g., Undo for Mute, Block)
+ *  - t  button does not d sappear due to t  out, but beco s unava lable after t  user closes a tab
+ *    (e.g, Undo for Not nterested n, NotAboutTop c)
  * Examples:
-    - ClientProfileUndoMute: a user clicks the "Undo" button after muting a Profile
-    - ClientTweetUndoNotInterestedIn: a users clicks the "Undo" button
-      after clicking "Not interested in this Tweet" button in the caret menu of a Tweet
- * An "Un{Action}" is fired when a user reverses a previous action, not by explicitly clicking an "Undo" button,
- * but through some other action that allows them to revert.
+    - Cl entProf leUndoMute: a user cl cks t  "Undo" button after mut ng a Prof le
+    - Cl entT etUndoNot nterested n: a users cl cks t  "Undo" button
+      after cl ck ng "Not  nterested  n t  T et" button  n t  caret  nu of a T et
+ * An "Un{Act on}"  s f red w n a user reverses a prev ous act on, not by expl c ly cl ck ng an "Undo" button,
+ * but through so  ot r act on that allows t m to revert.
  * Examples:
- *  - ClientProfileUnmute: a user clicks the "Unmute" button from the caret menu of the Profile they previously muted
- *  - ClientTweetUnfav: a user unlikes a tweet by clicking on like button again
+ *  - Cl entProf leUnmute: a user cl cks t  "Unmute" button from t  caret  nu of t  Prof le t y prev ously muted
+ *  - Cl entT etUnfav: a user unl kes a t et by cl ck ng on l ke button aga n
  *
- * Examples: ServerTweetFav, ClientTweetRenderImpression, ClientNotificationSeeLessOften
+ * Examples: ServerT etFav, Cl entT etRender mpress on, Cl entNot f cat onSeeLessOften
  *
- * See go/uua-action-type for more details.
+ * See go/uua-act on-type for more deta ls.
  */
-enum ActionType {
-  // 0 - 999 used for actions derived from Server-side sources (e.g. Timelineservice, Tweetypie)
-  // NOTE: Please match values for corresponding server / client enum members (with offset 1000).
-  ServerTweetFav   = 0
-  ServerTweetUnfav = 1
-  // Reserve 2 and 3 for ServerTweetLingerImpression and ServerTweetRenderImpression
+enum Act onType {
+  // 0 - 999 used for act ons der ved from Server-s de s ces (e.g. T  l neserv ce, T etyp e)
+  // NOTE: Please match values for correspond ng server / cl ent enum  mbers (w h offset 1000).
+  ServerT etFav   = 0
+  ServerT etUnfav = 1
+  // Reserve 2 and 3 for ServerT etL nger mpress on and ServerT etRender mpress on
 
-  ServerTweetCreate = 4
-  ServerTweetReply = 5
-  ServerTweetQuote = 6
-  ServerTweetRetweet = 7
-  // skip 8-10 since there are no server equivalents for ClickCreate, ClickReply, ClickQuote
-  // reserve 11-16 for server video engagements
+  ServerT etCreate = 4
+  ServerT etReply = 5
+  ServerT etQuote = 6
+  ServerT etRet et = 7
+  // sk p 8-10 s nce t re are no server equ valents for Cl ckCreate, Cl ckReply, Cl ckQuote
+  // reserve 11-16 for server v deo engage nts
 
-  ServerTweetDelete = 17      // User deletes a default tweet
-  ServerTweetUnreply = 18     // User deletes a reply tweet
-  ServerTweetUnquote = 19     // User deletes a quote tweet
-  ServerTweetUnretweet = 20   // User removes an existing retweet
-  // User edits a tweet. Edit will create a new tweet with editedTweetId = id of the original tweet
-  // The original tweet or the new tweet from edit can only be a default or quote tweet.
-  // A user can edit a default tweet to become a quote tweet (by adding the link to another Tweet),
-  // or edit a quote tweet to remove the quote and make it a default tweet.
-  // Both the initial tweet and the new tweet created from the edit can be edited, and each time the
-  // new edit will create a new tweet. All subsequent edits would have the same initial tweet id
-  // as the TweetInfo.editedTweetId.
-  // e.g. create Tweet A, edit Tweet A -> Tweet B, edit Tweet B -> Tweet C
-  // initial tweet id for both Tweet B anc Tweet C would be Tweet A
-  ServerTweetEdit = 21
-  // skip 22 for delete an edit if we want to add it in the future
+  ServerT etDelete = 17      // User deletes a default t et
+  ServerT etUnreply = 18     // User deletes a reply t et
+  ServerT etUnquote = 19     // User deletes a quote t et
+  ServerT etUnret et = 20   // User removes an ex st ng ret et
+  // User ed s a t et. Ed  w ll create a new t et w h ed edT et d =  d of t  or g nal t et
+  // T  or g nal t et or t  new t et from ed  can only be a default or quote t et.
+  // A user can ed  a default t et to beco  a quote t et (by add ng t  l nk to anot r T et),
+  // or ed  a quote t et to remove t  quote and make   a default t et.
+  // Both t   n  al t et and t  new t et created from t  ed  can be ed ed, and each t   t 
+  // new ed  w ll create a new t et. All subsequent ed s would have t  sa   n  al t et  d
+  // as t  T et nfo.ed edT et d.
+  // e.g. create T et A, ed  T et A -> T et B, ed  T et B -> T et C
+  //  n  al t et  d for both T et B anc T et C would be T et A
+  ServerT etEd  = 21
+  // sk p 22 for delete an ed   f   want to add    n t  future
 
-  // reserve 30-40 for server topic actions
+  // reserve 30-40 for server top c act ons
 
-  // 41-70 reserved for all negative engagements and the related positive engagements
+  // 41-70 reserved for all negat ve engage nts and t  related pos  ve engage nts
   // For example, Follow and Unfollow, Mute and Unmute
-  // This is fired when a user click "Submit" at the end of a "Report Tweet" flow
-  // ClientTweetReport = 1041 is scribed by HealthClient team, on the client side
-  // This is scribed by spamacaw, on the server side
-  // They can be joined on reportFlowId
-  // See https://confluence.twitter.biz/pages/viewpage.action?spaceKey=HEALTH&title=Understanding+ReportDetails
-  ServerTweetReport = 41
+  // T   s f red w n a user cl ck "Subm " at t  end of a "Report T et" flow
+  // Cl entT etReport = 1041  s scr bed by  althCl ent team, on t  cl ent s de
+  // T   s scr bed by spamacaw, on t  server s de
+  // T y can be jo ned on reportFlow d
+  // See https://confluence.tw ter.b z/pages/v ewpage.act on?spaceKey=HEALTH&t le=Understand ng+ReportDeta ls
+  ServerT etReport = 41
 
-  // reserve 42 for ServerTweetNotInterestedIn
-  // reserve 43 for ServerTweetUndoNotInterestedIn
-  // reserve 44 for ServerTweetNotAboutTopic
-  // reserve 45 for ServerTweetUndoNotAboutTopic
+  // reserve 42 for ServerT etNot nterested n
+  // reserve 43 for ServerT etUndoNot nterested n
+  // reserve 44 for ServerT etNotAboutTop c
+  // reserve 45 for ServerT etUndoNotAboutTop c
 
-  ServerProfileFollow = 50       // User follows a Profile
-  ServerProfileUnfollow = 51     // User unfollows a Profile
-  ServerProfileBlock = 52        // User blocks a Profile
-  ServerProfileUnblock = 53      // User unblocks a Profile
-  ServerProfileMute = 54         // User mutes a Profile
-  ServerProfileUnmute = 55       // User unmutes a Profile
-  // User reports a Profile as Spam / Abuse
-  // This user action type includes ProfileReportAsSpam and ProfileReportAsAbuse
-  ServerProfileReport = 56
-  // reserve 57 for ServerProfileUnReport
-  // reserve 56-70 for server social graph actions
+  ServerProf leFollow = 50       // User follows a Prof le
+  ServerProf leUnfollow = 51     // User unfollows a Prof le
+  ServerProf leBlock = 52        // User blocks a Prof le
+  ServerProf leUnblock = 53      // User unblocks a Prof le
+  ServerProf leMute = 54         // User mutes a Prof le
+  ServerProf leUnmute = 55       // User unmutes a Prof le
+  // User reports a Prof le as Spam / Abuse
+  // T  user act on type  ncludes Prof leReportAsSpam and Prof leReportAsAbuse
+  ServerProf leReport = 56
+  // reserve 57 for ServerProf leUnReport
+  // reserve 56-70 for server soc al graph act ons
 
-  // 71-90 reserved for click-based events
-  // reserve 71 for ServerTweetClick
+  // 71-90 reserved for cl ck-based events
+  // reserve 71 for ServerT etCl ck
 
-  // 1000 - 1999 used for actions derived from Client-side sources (e.g. Client Events, BCE)
-  // NOTE: Please match values for corresponding server / client enum members (with offset 1000).
-  // 1000 - 1499 used for legacy client events
-  ClientTweetFav = 1000
-  ClientTweetUnfav = 1001
-  ClientTweetLingerImpression = 1002
-  // Please note that: Render impression for quoted Tweets would emit 2 events:
-  // 1 for the quoting Tweet and 1 for the original Tweet!!!
-  ClientTweetRenderImpression = 1003
-  // 1004 reserved for ClientTweetCreate
-  // This is "Send Reply" event to indicate publishing of a reply Tweet as opposed to clicking
-  // on the reply button to initiate a reply Tweet (captured in ClientTweetClickReply).
-  // The differences between this and the ServerTweetReply are:
-  // 1) ServerTweetReply already has the new Tweet Id 2) A sent reply may be lost during transfer
-  // over the wire and thus may not end up with a follow-up ServerTweetReply.
-  ClientTweetReply = 1005
-  // This is the "send quote" event to indicate publishing of a quote tweet as opposed to clicking
-  // on the quote button to initiate a quote tweet (captured in ClientTweetClickQuote).
-  // The differences between this and the ServerTweetQuote are:
-  // 1) ServerTweetQuote already has the new Tweet Id 2) A sent quote may be lost during transfer
-  // over the wire and thus may not end up with a follow-up ServerTweetQuote.
-  ClientTweetQuote = 1006
-  // This is the "retweet" event to indicate publishing of a retweet.
-  ClientTweetRetweet = 1007
-  // 1008 reserved for ClientTweetClickCreate
-  // This is user clicking on the Reply button not actually sending a reply Tweet,
-  // thus the name ClickReply
-  ClientTweetClickReply = 1009
-  // This is user clicking the Quote/RetweetWithComment button not actually sending the quote,
-  // thus the name ClickQuote
-  ClientTweetClickQuote = 1010
+  // 1000 - 1999 used for act ons der ved from Cl ent-s de s ces (e.g. Cl ent Events, BCE)
+  // NOTE: Please match values for correspond ng server / cl ent enum  mbers (w h offset 1000).
+  // 1000 - 1499 used for legacy cl ent events
+  Cl entT etFav = 1000
+  Cl entT etUnfav = 1001
+  Cl entT etL nger mpress on = 1002
+  // Please note that: Render  mpress on for quoted T ets would em  2 events:
+  // 1 for t  quot ng T et and 1 for t  or g nal T et!!!
+  Cl entT etRender mpress on = 1003
+  // 1004 reserved for Cl entT etCreate
+  // T   s "Send Reply" event to  nd cate publ sh ng of a reply T et as opposed to cl ck ng
+  // on t  reply button to  n  ate a reply T et (captured  n Cl entT etCl ckReply).
+  // T  d fferences bet en t  and t  ServerT etReply are:
+  // 1) ServerT etReply already has t  new T et  d 2) A sent reply may be lost dur ng transfer
+  // over t  w re and thus may not end up w h a follow-up ServerT etReply.
+  Cl entT etReply = 1005
+  // T   s t  "send quote" event to  nd cate publ sh ng of a quote t et as opposed to cl ck ng
+  // on t  quote button to  n  ate a quote t et (captured  n Cl entT etCl ckQuote).
+  // T  d fferences bet en t  and t  ServerT etQuote are:
+  // 1) ServerT etQuote already has t  new T et  d 2) A sent quote may be lost dur ng transfer
+  // over t  w re and thus may not end up w h a follow-up ServerT etQuote.
+  Cl entT etQuote = 1006
+  // T   s t  "ret et" event to  nd cate publ sh ng of a ret et.
+  Cl entT etRet et = 1007
+  // 1008 reserved for Cl entT etCl ckCreate
+  // T   s user cl ck ng on t  Reply button not actually send ng a reply T et,
+  // thus t  na  Cl ckReply
+  Cl entT etCl ckReply = 1009
+  // T   s user cl ck ng t  Quote/Ret etW hCom nt button not actually send ng t  quote,
+  // thus t  na  Cl ckQuote
+  Cl entT etCl ckQuote = 1010
 
-  // 1011 - 1016: Refer to go/cme-scribing and go/interaction-event-spec for details
-  // This is fired when playback reaches 25% of total track duration. Not valid for live videos.
-  // For looping playback, this is only fired once and does not reset at loop boundaries.
-  ClientTweetVideoPlayback25 = 1011
-  // This is fired when playback reaches 50% of total track duration. Not valid for live videos.
-  // For looping playback, this is only fired once and does not reset at loop boundaries.
-  ClientTweetVideoPlayback50 = 1012
-  // This is fired when playback reaches 75% of total track duration. Not valid for live videos.
-  // For looping playback, this is only fired once and does not reset at loop boundaries.
-  ClientTweetVideoPlayback75 = 1013
-  // This is fired when playback reaches 95% of total track duration. Not valid for live videos.
-  // For looping playback, this is only fired once and does not reset at loop boundaries.
-  ClientTweetVideoPlayback95 = 1014
-  // This if fired when the video has been played in non-preview
-  // (i.e. not autoplaying in the timeline) mode, and was not started via auto-advance.
-  // For looping playback, this is only fired once and does not reset at loop boundaries.
-  ClientTweetVideoPlayFromTap = 1015
-  // This is fired when 50% of the video has been on-screen and playing for 10 consecutive seconds
-  // or 95% of the video duration, whichever comes first.
-  // For looping playback, this is only fired once and does not reset at loop boundaries.
-  ClientTweetVideoQualityView = 1016
-  // Fired when either view_threshold or play_from_tap is fired.
-  // For looping playback, this is only fired once and does not reset at loop boundaries.
-  ClientTweetVideoView = 1109
-  // Fired when 50% of the video has been on-screen and playing for 2 consecutive seconds,
-  // regardless of video duration.
-  // For looping playback, this is only fired once and does not reset at loop boundaries.
-  ClientTweetVideoMrcView = 1110
-  // Fired when the video is:
-  // - Playing for 3 cumulative (not necessarily consecutive) seconds with 100% in view for looping video.
-  // - Playing for 3 cumulative (not necessarily consecutive) seconds or the video duration, whichever comes first, with 100% in view for non-looping video.
-  // For looping playback, this is only fired once and does not reset at loop boundaries.
-  ClientTweetVideoViewThreshold = 1111
-  // Fired when the user clicks a generic ‘visit url’ call to action.
-  ClientTweetVideoCtaUrlClick = 1112
-  // Fired when the user clicks a ‘watch now’ call to action.
-  ClientTweetVideoCtaWatchClick = 1113
+  // 1011 - 1016: Refer to go/c -scr b ng and go/ nteract on-event-spec for deta ls
+  // T   s f red w n playback reac s 25% of total track durat on. Not val d for l ve v deos.
+  // For loop ng playback, t   s only f red once and does not reset at loop boundar es.
+  Cl entT etV deoPlayback25 = 1011
+  // T   s f red w n playback reac s 50% of total track durat on. Not val d for l ve v deos.
+  // For loop ng playback, t   s only f red once and does not reset at loop boundar es.
+  Cl entT etV deoPlayback50 = 1012
+  // T   s f red w n playback reac s 75% of total track durat on. Not val d for l ve v deos.
+  // For loop ng playback, t   s only f red once and does not reset at loop boundar es.
+  Cl entT etV deoPlayback75 = 1013
+  // T   s f red w n playback reac s 95% of total track durat on. Not val d for l ve v deos.
+  // For loop ng playback, t   s only f red once and does not reset at loop boundar es.
+  Cl entT etV deoPlayback95 = 1014
+  // T   f f red w n t  v deo has been played  n non-prev ew
+  // ( .e. not autoplay ng  n t  t  l ne) mode, and was not started v a auto-advance.
+  // For loop ng playback, t   s only f red once and does not reset at loop boundar es.
+  Cl entT etV deoPlayFromTap = 1015
+  // T   s f red w n 50% of t  v deo has been on-screen and play ng for 10 consecut ve seconds
+  // or 95% of t  v deo durat on, wh c ver co s f rst.
+  // For loop ng playback, t   s only f red once and does not reset at loop boundar es.
+  Cl entT etV deoQual yV ew = 1016
+  // F red w n e  r v ew_threshold or play_from_tap  s f red.
+  // For loop ng playback, t   s only f red once and does not reset at loop boundar es.
+  Cl entT etV deoV ew = 1109
+  // F red w n 50% of t  v deo has been on-screen and play ng for 2 consecut ve seconds,
+  // regardless of v deo durat on.
+  // For loop ng playback, t   s only f red once and does not reset at loop boundar es.
+  Cl entT etV deoMrcV ew = 1110
+  // F red w n t  v deo  s:
+  // - Play ng for 3 cumulat ve (not necessar ly consecut ve) seconds w h 100%  n v ew for loop ng v deo.
+  // - Play ng for 3 cumulat ve (not necessar ly consecut ve) seconds or t  v deo durat on, wh c ver co s f rst, w h 100%  n v ew for non-loop ng v deo.
+  // For loop ng playback, t   s only f red once and does not reset at loop boundar es.
+  Cl entT etV deoV ewThreshold = 1111
+  // F red w n t  user cl cks a gener c ‘v s  url’ call to act on.
+  Cl entT etV deoCtaUrlCl ck = 1112
+  // F red w n t  user cl cks a ‘watch now’ call to act on.
+  Cl entT etV deoCtaWatchCl ck = 1113
 
-  // 1017 reserved for ClientTweetDelete
-  // 1018-1019 for Client delete a reply and delete a quote if we want to add them in the future
+  // 1017 reserved for Cl entT etDelete
+  // 1018-1019 for Cl ent delete a reply and delete a quote  f   want to add t m  n t  future
 
-  // This is fired when a user clicks on "Undo retweet" after re-tweeting a tweet
-  ClientTweetUnretweet = 1020
-  // 1021 reserved for ClientTweetEdit
-  // 1022 reserved for Client delete an edit if we want to add it in the future
-  // This is fired when a user clicks on a photo within a tweet and the photo expands to fit
-  // the screen.
-  ClientTweetPhotoExpand = 1023
+  // T   s f red w n a user cl cks on "Undo ret et" after re-t et ng a t et
+  Cl entT etUnret et = 1020
+  // 1021 reserved for Cl entT etEd 
+  // 1022 reserved for Cl ent delete an ed   f   want to add    n t  future
+  // T   s f red w n a user cl cks on a photo w h n a t et and t  photo expands to f 
+  // t  screen.
+  Cl entT etPhotoExpand = 1023
 
-  // This is fired when a user clicks on a profile mention inside a tweet.
-  ClientTweetClickMentionScreenName = 1024
+  // T   s f red w n a user cl cks on a prof le  nt on  ns de a t et.
+  Cl entT etCl ck nt onScreenNa  = 1024
 
-  // 1030 - 1035 for topic actions
-  // There are multiple cases:
-  // 1. Follow from the Topic page (or so-called landing page)
-  // 2. Click on Tweet's caret menu of "Follow (the topic)", it needs to be:
-  //    1) user follows the Topic already (otherwise there is no "Follow" menu by default),
-  //    2) and clicked on the "Unfollow Topic" first.
-  ClientTopicFollow = 1030
-  // There are multiple cases:
-  // 1. Unfollow from the Topic page (or so-called landing page)
-  // 2. Click on Tweet's caret menu of "Unfollow (the topic)" if the user has already followed
-  //    the topic.
-  ClientTopicUnfollow = 1031
-  // This is fired when the user clicks the "x" icon next to the topic on their timeline,
-  // and clicks "Not interested in {TOPIC}" in the pop-up prompt
-  // Alternatively, they can also click "See more" button to visit the topic page, and click "Not interested" there.
-  ClientTopicNotInterestedIn = 1032
-  // This is fired when the user clicks the "Undo" button after clicking "x" or "Not interested" on a Topic
-  // which is captured in ClientTopicNotInterestedIn
-  ClientTopicUndoNotInterestedIn = 1033
+  // 1030 - 1035 for top c act ons
+  // T re are mult ple cases:
+  // 1. Follow from t  Top c page (or so-called land ng page)
+  // 2. Cl ck on T et's caret  nu of "Follow (t  top c)",   needs to be:
+  //    1) user follows t  Top c already (ot rw se t re  s no "Follow"  nu by default),
+  //    2) and cl cked on t  "Unfollow Top c" f rst.
+  Cl entTop cFollow = 1030
+  // T re are mult ple cases:
+  // 1. Unfollow from t  Top c page (or so-called land ng page)
+  // 2. Cl ck on T et's caret  nu of "Unfollow (t  top c)"  f t  user has already follo d
+  //    t  top c.
+  Cl entTop cUnfollow = 1031
+  // T   s f red w n t  user cl cks t  "x"  con next to t  top c on t  r t  l ne,
+  // and cl cks "Not  nterested  n {TOP C}"  n t  pop-up prompt
+  // Alternat vely, t y can also cl ck "See more" button to v s  t  top c page, and cl ck "Not  nterested" t re.
+  Cl entTop cNot nterested n = 1032
+  // T   s f red w n t  user cl cks t  "Undo" button after cl ck ng "x" or "Not  nterested" on a Top c
+  // wh ch  s captured  n Cl entTop cNot nterested n
+  Cl entTop cUndoNot nterested n = 1033
 
-  // 1036-1070 reserved for all negative engagements and the related positive engagements
+  // 1036-1070 reserved for all negat ve engage nts and t  related pos  ve engage nts
   // For example, Follow and Unfollow, Mute and Unmute
 
-  // This is fired when a user clicks on  "This Tweet's not helpful" flow in the caret menu
-  // of a Tweet result on the Search Results Page
-  ClientTweetNotHelpful = 1036
-  // This is fired when a user clicks Undo after clicking on
-  // "This Tweet's not helpful" flow in the caret menu of a Tweet result on the Search Results Page
-  ClientTweetUndoNotHelpful = 1037
-  // This is fired when a user starts and/or completes the "Report Tweet" flow in the caret menu of a Tweet
-  ClientTweetReport = 1041
+  // T   s f red w n a user cl cks on  "T  T et's not  lpful" flow  n t  caret  nu
+  // of a T et result on t  Search Results Page
+  Cl entT etNot lpful = 1036
+  // T   s f red w n a user cl cks Undo after cl ck ng on
+  // "T  T et's not  lpful" flow  n t  caret  nu of a T et result on t  Search Results Page
+  Cl entT etUndoNot lpful = 1037
+  // T   s f red w n a user starts and/or completes t  "Report T et" flow  n t  caret  nu of a T et
+  Cl entT etReport = 1041
   /*
-   * 1042-1045 refers to actions that are related to the
-   * "Not Interested In" button in the caret menu of a Tweet.
+   * 1042-1045 refers to act ons that are related to t 
+   * "Not  nterested  n" button  n t  caret  nu of a T et.
    *
-   * ClientTweetNotInterestedIn is fired when a user clicks the
-   * "Not interested in this Tweet" button in the caret menu of a Tweet.
-   * A user can undo the ClientTweetNotInterestedIn action by clicking the
-   * "Undo" button that appears as a prompt in the caret menu, resulting
-   * in ClientTweetUndoNotInterestedIn being fired.
-   * If a user chooses to not undo and proceed, they are given multiple choices
-   * in a prompt to better document why they are not interested in a Tweet.
-   * For example, if a Tweet is not about a Topic, a user can click
-   * "This Tweet is not about {TOPIC}" in the provided prompt, resulting in
-   * in ClientTweetNotAboutTopic being fired.
-   * A user can undo the ClientTweetNotAboutTopic action by clicking the "Undo"
-   * button that appears as a subsequent prompt in the caret menu. Undoing this action
-   * results in the previous UI state, where the user had only marked "Not Interested In" and
-   * can still undo the original ClientTweetNotInterestedIn action.
-   * Similarly a user can select "This Tweet isn't recent" action resulting in ClientTweetNotRecent
-   * and he could undo this action immediately which results in ClientTweetUndoNotRecent
-   * Similarly a user can select "Show fewer tweets from" action resulting in ClientTweetSeeFewer
-   * and he could undo this action immediately which results in ClientTweetUndoSeeFewer
+   * Cl entT etNot nterested n  s f red w n a user cl cks t 
+   * "Not  nterested  n t  T et" button  n t  caret  nu of a T et.
+   * A user can undo t  Cl entT etNot nterested n act on by cl ck ng t 
+   * "Undo" button that appears as a prompt  n t  caret  nu, result ng
+   *  n Cl entT etUndoNot nterested n be ng f red.
+   *  f a user chooses to not undo and proceed, t y are g ven mult ple cho ces
+   *  n a prompt to better docu nt why t y are not  nterested  n a T et.
+   * For example,  f a T et  s not about a Top c, a user can cl ck
+   * "T  T et  s not about {TOP C}"  n t  prov ded prompt, result ng  n
+   *  n Cl entT etNotAboutTop c be ng f red.
+   * A user can undo t  Cl entT etNotAboutTop c act on by cl ck ng t  "Undo"
+   * button that appears as a subsequent prompt  n t  caret  nu. Undo ng t  act on
+   * results  n t  prev ous U  state, w re t  user had only marked "Not  nterested  n" and
+   * can st ll undo t  or g nal Cl entT etNot nterested n act on.
+   * S m larly a user can select "T  T et  sn't recent" act on result ng  n Cl entT etNotRecent
+   * and   could undo t  act on  m d ately wh ch results  n Cl entT etUndoNotRecent
+   * S m larly a user can select "Show fe r t ets from" act on result ng  n Cl entT etSeeFe r
+   * and   could undo t  act on  m d ately wh ch results  n Cl entT etUndoSeeFe r
    */
-  ClientTweetNotInterestedIn = 1042
-  ClientTweetUndoNotInterestedIn = 1043
-  ClientTweetNotAboutTopic = 1044
-  ClientTweetUndoNotAboutTopic = 1045
-  ClientTweetNotRecent = 1046
-  ClientTweetUndoNotRecent = 1047
-  ClientTweetSeeFewer = 1048
-  ClientTweetUndoSeeFewer = 1049
+  Cl entT etNot nterested n = 1042
+  Cl entT etUndoNot nterested n = 1043
+  Cl entT etNotAboutTop c = 1044
+  Cl entT etUndoNotAboutTop c = 1045
+  Cl entT etNotRecent = 1046
+  Cl entT etUndoNotRecent = 1047
+  Cl entT etSeeFe r = 1048
+  Cl entT etUndoSeeFe r = 1049
 
-  // This is fired when a user follows a profile from the
-  // profile page header / people module and people tab on the Search Results Page / sidebar on the Home page
-  // A Profile can also be followed when a user clicks follow in the caret menu of a Tweet
-  // or follow button on hovering on profile avatar, which is captured in ClientTweetFollowAuthor = 1060
-  ClientProfileFollow = 1050
-  // reserve 1050/1051 for client side Follow/Unfollow
-  // This is fired when a user clicks Block in a Profile page
-  // A Profile can also be blocked when a user clicks Block in the caret menu of a Tweet,
-  // which is captured in ClientTweetBlockAuthor = 1062
-  ClientProfileBlock = 1052
-  // This is fired when a user clicks unblock in a pop-up prompt right after blocking a profile
-  // in the profile page or clicks unblock in a drop-down menu in the profile page.
-  ClientProfileUnblock = 1053
-  // This is fired when a user clicks Mute in a Profile page
-  // A Profile can also be muted when a user clicks Mute in the caret menu of a Tweet, which is captured in ClientTweetMuteAuthor = 1064
-  ClientProfileMute = 1054
-  // reserve 1055 for client side Unmute
-  // This is fired when a user clicks "Report User" action from user profile page
-  ClientProfileReport = 1056
+  // T   s f red w n a user follows a prof le from t 
+  // prof le page  ader / people module and people tab on t  Search Results Page / s debar on t  Ho  page
+  // A Prof le can also be follo d w n a user cl cks follow  n t  caret  nu of a T et
+  // or follow button on hover ng on prof le avatar, wh ch  s captured  n Cl entT etFollowAuthor = 1060
+  Cl entProf leFollow = 1050
+  // reserve 1050/1051 for cl ent s de Follow/Unfollow
+  // T   s f red w n a user cl cks Block  n a Prof le page
+  // A Prof le can also be blocked w n a user cl cks Block  n t  caret  nu of a T et,
+  // wh ch  s captured  n Cl entT etBlockAuthor = 1062
+  Cl entProf leBlock = 1052
+  // T   s f red w n a user cl cks unblock  n a pop-up prompt r ght after block ng a prof le
+  //  n t  prof le page or cl cks unblock  n a drop-down  nu  n t  prof le page.
+  Cl entProf leUnblock = 1053
+  // T   s f red w n a user cl cks Mute  n a Prof le page
+  // A Prof le can also be muted w n a user cl cks Mute  n t  caret  nu of a T et, wh ch  s captured  n Cl entT etMuteAuthor = 1064
+  Cl entProf leMute = 1054
+  // reserve 1055 for cl ent s de Unmute
+  // T   s f red w n a user cl cks "Report User" act on from user prof le page
+  Cl entProf leReport = 1056
 
-  // reserve 1057 for ClientProfileUnreport
+  // reserve 1057 for Cl entProf leUnreport
 
-  // This is fired when a user clicks on a profile from all modules except tweets
-  // (eg: People Search / people module in Top tab in Search Result Page
-  // For tweets, the click is captured in ClientTweetClickProfile
-  ClientProfileClick = 1058
-  // reserve 1059-1070 for client social graph actions
+  // T   s f red w n a user cl cks on a prof le from all modules except t ets
+  // (eg: People Search / people module  n Top tab  n Search Result Page
+  // For t ets, t  cl ck  s captured  n Cl entT etCl ckProf le
+  Cl entProf leCl ck = 1058
+  // reserve 1059-1070 for cl ent soc al graph act ons
 
-  // This is fired when a user clicks Follow in the caret menu of a Tweet or hovers on the avatar of the tweet
-  // author and clicks on the Follow button. A profile can also be followed by clicking the Follow button on the
-  // Profile page and confirm, which is captured in ClientProfileFollow. The event emits two items, one of user type
-  // and another of tweet type, since the default implementation of BaseClientEvent only looks for Tweet type,
-  // the other item is dropped which is the expected behaviour
-  ClientTweetFollowAuthor = 1060
+  // T   s f red w n a user cl cks Follow  n t  caret  nu of a T et or hovers on t  avatar of t  t et
+  // author and cl cks on t  Follow button. A prof le can also be follo d by cl ck ng t  Follow button on t 
+  // Prof le page and conf rm, wh ch  s captured  n Cl entProf leFollow. T  event em s two  ems, one of user type
+  // and anot r of t et type, s nce t  default  mple ntat on of BaseCl entEvent only looks for T et type,
+  // t  ot r  em  s dropped wh ch  s t  expected behav  
+  Cl entT etFollowAuthor = 1060
 
-  // This is fired when a user clicks Unfollow in the caret menu of a Tweet or hovers on the avatar of the tweet
-  // author and clicks on the Unfollow button. A profile can also be unfollowed by clicking the Unfollow button on the
-  // Profile page and confirm, which will be captured in ClientProfileUnfollow. The event emits two items, one of user type
-  // and another of tweet type, since the default implementation of BaseClientEvent only looks for Tweet type,
-  // the other item is dropped which is the expected behaviour
-  ClientTweetUnfollowAuthor = 1061
+  // T   s f red w n a user cl cks Unfollow  n t  caret  nu of a T et or hovers on t  avatar of t  t et
+  // author and cl cks on t  Unfollow button. A prof le can also be unfollo d by cl ck ng t  Unfollow button on t 
+  // Prof le page and conf rm, wh ch w ll be captured  n Cl entProf leUnfollow. T  event em s two  ems, one of user type
+  // and anot r of t et type, s nce t  default  mple ntat on of BaseCl entEvent only looks for T et type,
+  // t  ot r  em  s dropped wh ch  s t  expected behav  
+  Cl entT etUnfollowAuthor = 1061
 
-  // This is fired when a user clicks Block in the menu of a Tweet to block the Profile that
-  // authored this Tweet. A Profile can also be blocked in the Profile page, which is captured
-  // in ClientProfileBlock = 1052
-  ClientTweetBlockAuthor = 1062
-  // This is fired when a user clicks unblock in a pop-up prompt right after blocking an author
-  // in the drop-down menu of a tweet
-  ClientTweetUnblockAuthor = 1063
+  // T   s f red w n a user cl cks Block  n t   nu of a T et to block t  Prof le that
+  // authored t  T et. A Prof le can also be blocked  n t  Prof le page, wh ch  s captured
+  //  n Cl entProf leBlock = 1052
+  Cl entT etBlockAuthor = 1062
+  // T   s f red w n a user cl cks unblock  n a pop-up prompt r ght after block ng an author
+  //  n t  drop-down  nu of a t et
+  Cl entT etUnblockAuthor = 1063
 
-  // This is fired when a user clicks Mute in the menu of a Tweet to block the Profile that
-  // authored this Tweet. A Profile can also be muted in the Profile page, which is captured in ClientProfileMute = 1054
-  ClientTweetMuteAuthor = 1064
+  // T   s f red w n a user cl cks Mute  n t   nu of a T et to block t  Prof le that
+  // authored t  T et. A Prof le can also be muted  n t  Prof le page, wh ch  s captured  n Cl entProf leMute = 1054
+  Cl entT etMuteAuthor = 1064
 
-  // reserve 1065 for ClientTweetUnmuteAuthor
+  // reserve 1065 for Cl entT etUnmuteAuthor
 
-  // 1071-1090 reserved for click-based events
-  // click-based events are defined as clicks on a UI container (e.g., tweet, profile, etc.), as opposed to clearly named
-  // button or menu (e.g., follow, block, report, etc.), which requires a specific action name than "click".
+  // 1071-1090 reserved for cl ck-based events
+  // cl ck-based events are def ned as cl cks on a U  conta ner (e.g., t et, prof le, etc.), as opposed to clearly na d
+  // button or  nu (e.g., follow, block, report, etc.), wh ch requ res a spec f c act on na  than "cl ck".
 
-  // This is fired when a user clicks on a Tweet to open the Tweet details page. Note that for
-  // Tweets in the Notification Tab product surface, a click can be registered differently
-  // depending on whether the Tweet is a rendered Tweet (a click results in ClientTweetClick)
-  // or a wrapper Notification (a click results in ClientNotificationClick).
-  ClientTweetClick = 1071
-  // This is fired when a user clicks to view the profile page of a user from a tweet
-  // Contains a TweetInfo of this tweet
-  ClientTweetClickProfile = 1072
-  // This is fired when a user clicks on the "share" icon on a Tweet to open the share menu.
-  // The user may or may not proceed and finish sharing the Tweet.
-  ClientTweetClickShare = 1073
-  // This is fired when a user clicks "Copy link to Tweet" in a menu appeared after hitting
-  // the "share" icon on a Tweet OR when a user selects share_via -> copy_link after long-click
-  // a link inside a tweet on a mobile device
-  ClientTweetShareViaCopyLink = 1074
-  // This is fired when a user clicks "Send via Direct Message" after
-  // clicking on the "share" icon on a Tweet to open the share menu.
-  // The user may or may not proceed and finish Sending the DM.
-  ClientTweetClickSendViaDirectMessage = 1075
-  // This is fired when a user clicks "Bookmark" after
-  // clicking on the "share" icon on a Tweet to open the share menu.
-  ClientTweetShareViaBookmark = 1076
-  // This is fired when a user clicks "Remove Tweet from Bookmarks" after
-  // clicking on the "share" icon on a Tweet to open the share menu.
-  ClientTweetUnbookmark = 1077
-   // This is fired when a user clicks on the hashtag in a Tweet.
-  // The click on hashtag in "What's happening" section gives you other scribe '*:*:sidebar:*:trend:search'
-  // Currenly we are only filtering for itemType=Tweet. There are other items present in the event where itemType = user
-  // but those items are in dual-events (events with multiple itemTypes) and happen when you click on a hashtag in a Tweet from someone's profile,
-  // hence we are ignoring those itemType and only keeping itemType=Tweet.
-  ClientTweetClickHashtag = 1078
-  // This is fired when a user clicks "Bookmark" after clicking on the "share" icon on a Tweet to open the share menu, or
-  // when a user clicks on the 'bookmark' icon on a Tweet (bookmark icon is available to ios only as of March 2023).
-  // TweetBookmark and TweetShareByBookmark log the same events but serve for individual use cases.
-  ClientTweetBookmark = 1079
+  // T   s f red w n a user cl cks on a T et to open t  T et deta ls page. Note that for
+  // T ets  n t  Not f cat on Tab product surface, a cl ck can be reg stered d fferently
+  // depend ng on w t r t  T et  s a rendered T et (a cl ck results  n Cl entT etCl ck)
+  // or a wrapper Not f cat on (a cl ck results  n Cl entNot f cat onCl ck).
+  Cl entT etCl ck = 1071
+  // T   s f red w n a user cl cks to v ew t  prof le page of a user from a t et
+  // Conta ns a T et nfo of t  t et
+  Cl entT etCl ckProf le = 1072
+  // T   s f red w n a user cl cks on t  "share"  con on a T et to open t  share  nu.
+  // T  user may or may not proceed and f n sh shar ng t  T et.
+  Cl entT etCl ckShare = 1073
+  // T   s f red w n a user cl cks "Copy l nk to T et"  n a  nu appeared after h t ng
+  // t  "share"  con on a T et OR w n a user selects share_v a -> copy_l nk after long-cl ck
+  // a l nk  ns de a t et on a mob le dev ce
+  Cl entT etShareV aCopyL nk = 1074
+  // T   s f red w n a user cl cks "Send v a D rect  ssage" after
+  // cl ck ng on t  "share"  con on a T et to open t  share  nu.
+  // T  user may or may not proceed and f n sh Send ng t  DM.
+  Cl entT etCl ckSendV aD rect ssage = 1075
+  // T   s f red w n a user cl cks "Bookmark" after
+  // cl ck ng on t  "share"  con on a T et to open t  share  nu.
+  Cl entT etShareV aBookmark = 1076
+  // T   s f red w n a user cl cks "Remove T et from Bookmarks" after
+  // cl ck ng on t  "share"  con on a T et to open t  share  nu.
+  Cl entT etUnbookmark = 1077
+   // T   s f red w n a user cl cks on t  hashtag  n a T et.
+  // T  cl ck on hashtag  n "What's happen ng" sect on g ves   ot r scr be '*:*:s debar:*:trend:search'
+  // Currenly   are only f lter ng for  emType=T et. T re are ot r  ems present  n t  event w re  emType = user
+  // but those  ems are  n dual-events (events w h mult ple  emTypes) and happen w n   cl ck on a hashtag  n a T et from so one's prof le,
+  //  nce   are  gnor ng those  emType and only keep ng  emType=T et.
+  Cl entT etCl ckHashtag = 1078
+  // T   s f red w n a user cl cks "Bookmark" after cl ck ng on t  "share"  con on a T et to open t  share  nu, or
+  // w n a user cl cks on t  'bookmark'  con on a T et (bookmark  con  s ava lable to  os only as of March 2023).
+  // T etBookmark and T etShareByBookmark log t  sa  events but serve for  nd v dual use cases.
+  Cl entT etBookmark = 1079
 
-  // 1078 - 1089 for all Share related actions.
+  // 1078 - 1089 for all Share related act ons.
 
-  // This is fired when a user clicks on a link in a tweet.
-  // The link could be displayed as a URL or embedded in a component such as an image or a card in a tweet.
-  ClientTweetOpenLink = 1090
-  // This is fired when a user takes screenshot.
-  // This is available for mobile clients only.
-  ClientTweetTakeScreenshot = 1091
+  // T   s f red w n a user cl cks on a l nk  n a t et.
+  // T  l nk could be d splayed as a URL or embedded  n a component such as an  mage or a card  n a t et.
+  Cl entT etOpenL nk = 1090
+  // T   s f red w n a user takes screenshot.
+  // T   s ava lable for mob le cl ents only.
+  Cl entT etTakeScreenshot = 1091
 
-  // 1100 - 1101: Refer to go/cme-scribing and go/interaction-event-spec for details
-  // Fired on the first tick of a track regardless of where in the video it is playing.
-  // For looping playback, this is only fired once and does not reset at loop boundaries.
-  ClientTweetVideoPlaybackStart = 1100
-  // Fired when playback reaches 100% of total track duration.
-  // Not valid for live videos.
-  // For looping playback, this is only fired once and does not reset at loop boundaries.
-  ClientTweetVideoPlaybackComplete = 1101
+  // 1100 - 1101: Refer to go/c -scr b ng and go/ nteract on-event-spec for deta ls
+  // F red on t  f rst t ck of a track regardless of w re  n t  v deo    s play ng.
+  // For loop ng playback, t   s only f red once and does not reset at loop boundar es.
+  Cl entT etV deoPlaybackStart = 1100
+  // F red w n playback reac s 100% of total track durat on.
+  // Not val d for l ve v deos.
+  // For loop ng playback, t   s only f red once and does not reset at loop boundar es.
+  Cl entT etV deoPlaybackComplete = 1101
 
-  // A user can select "This Tweet isn't relevant" action resulting in ClientTweetNotRelevant
-  // and they could undo this action immediately which results in ClientTweetUndoNotRelevant
-  ClientTweetNotRelevant = 1102
-  ClientTweetUndoNotRelevant = 1103
+  // A user can select "T  T et  sn't relevant" act on result ng  n Cl entT etNotRelevant
+  // and t y could undo t  act on  m d ately wh ch results  n Cl entT etUndoNotRelevant
+  Cl entT etNotRelevant = 1102
+  Cl entT etUndoNotRelevant = 1103
 
-  // A generic action type to submit feedback for different modules / items ( Tweets / Search Results )
-  ClientFeedbackPromptSubmit = 1104
+  // A gener c act on type to subm  feedback for d fferent modules /  ems ( T ets / Search Results )
+  Cl entFeedbackPromptSubm  = 1104
 
-  // This is fired when a user profile is open in a Profile page
-  ClientProfileShow = 1105
+  // T   s f red w n a user prof le  s open  n a Prof le page
+  Cl entProf leShow = 1105
 
   /*
-   * This is triggered when a user exits the Twitter platform. The amount of the time spent on the
-   * platform is recorded in ms that can be used to compute the User Active Seconds (UAS).
+   * T   s tr ggered w n a user ex s t  Tw ter platform. T  amount of t  t   spent on t 
+   * platform  s recorded  n ms that can be used to compute t  User Act ve Seconds (UAS).
    */
-  ClientAppExit = 1106
+  Cl entAppEx  = 1106
 
   /*
-   * For "card" related actions
+   * For "card" related act ons
    */
-  ClientCardClick = 1107
-  ClientCardOpenApp = 1108
-  ClientCardAppInstallAttempt = 1114
-  ClientPollCardVote = 1115
+  Cl entCardCl ck = 1107
+  Cl entCardOpenApp = 1108
+  Cl entCardApp nstallAttempt = 1114
+  Cl entPollCardVote = 1115
 
   /*
-   * The impressions 1121-1123 together with the ClientTweetRenderImpression 1003 are used by ViewCount
-   * and UnifiedEngagementCounts as EngagementType.Displayed and EngagementType.Details.
+   * T   mpress ons 1121-1123 toget r w h t  Cl entT etRender mpress on 1003 are used by V ewCount
+   * and Un f edEngage ntCounts as Engage ntType.D splayed and Engage ntType.Deta ls.
    *
-   * For definitions, please refer to https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/common-internal/analytics/client-event-util/src/main/java/com/twitter/common_internal/analytics/client_event_util/TweetImpressionUtils.java?L14&subtree=true
+   * For def n  ons, please refer to https://s cegraph.tw ter.b z/g .tw ter.b z/s ce/-/blob/common- nternal/analyt cs/cl ent-event-ut l/src/ma n/java/com/tw ter/common_ nternal/analyt cs/cl ent_event_ut l/T et mpress onUt ls.java?L14&subtree=true
    */
-  ClientTweetGalleryImpression = 1121
-  ClientTweetDetailsImpression = 1122
+  Cl entT etGallery mpress on = 1121
+  Cl entT etDeta ls mpress on = 1122
 
   /**
-   *  This is fired when a user is logged out and follows a profile from the
-   *  profile page / people module from web.
-   *  One can only try to follow from web because iOS and Android do not support logged out browsing as of Jan 2023.
+   *  T   s f red w n a user  s logged out and follows a prof le from t 
+   *  prof le page / people module from  b.
+   *  One can only try to follow from  b because  OS and Andro d do not support logged out brows ng as of Jan 2023.
    */
-  ClientProfileFollowAttempt = 1200
+  Cl entProf leFollowAttempt = 1200
 
   /**
-   * This is fired when a user is logged out and favourite a tweet from web.
-   * One can only try to favourite from web, iOS and Android do not support logged out browsing
+   * T   s f red w n a user  s logged out and fav  e a t et from  b.
+   * One can only try to fav  e from  b,  OS and Andro d do not support logged out brows ng
    */
-  ClientTweetFavoriteAttempt = 1201
+  Cl entT etFavor eAttempt = 1201
 
   /**
-   * This is fired when a user is logged out and Retweet a tweet from web.
-   * One can only try to favourite from web, iOS and Android do not support logged out browsing
+   * T   s f red w n a user  s logged out and Ret et a t et from  b.
+   * One can only try to fav  e from  b,  OS and Andro d do not support logged out brows ng
    */
-  ClientTweetRetweetAttempt = 1202
+  Cl entT etRet etAttempt = 1202
 
   /**
-   * This is fired when a user is logged out and reply on tweet from web.
-   * One can only try to favourite from web, iOS and Android do not support logged out browsing
+   * T   s f red w n a user  s logged out and reply on t et from  b.
+   * One can only try to fav  e from  b,  OS and Andro d do not support logged out brows ng
    */
-  ClientTweetReplyAttempt = 1203
+  Cl entT etReplyAttempt = 1203
 
   /**
-   * This is fired when a user is logged out and clicks on login button.
-   * Currently seem to be generated only on [m5, LiteNativeWrapper]
+   * T   s f red w n a user  s logged out and cl cks on log n button.
+   * Currently seem to be generated only on [m5, L eNat veWrapper]
   */
-  ClientCTALoginClick = 1204
+  Cl entCTALog nCl ck = 1204
   /**
-   * This is fired when a user is logged out and login window is shown.
+   * T   s f red w n a user  s logged out and log n w ndow  s shown.
    */
-  ClientCTALoginStart = 1205
+  Cl entCTALog nStart = 1205
   /**
-   * This is fired when a user is logged out and login is successful.
+   * T   s f red w n a user  s logged out and log n  s successful.
   */
-  ClientCTALoginSuccess = 1206
+  Cl entCTALog nSuccess = 1206
 
   /**
-   * This is fired when a user is logged out and clicks on signup button.
+   * T   s f red w n a user  s logged out and cl cks on s gnup button.
    */
-  ClientCTASignupClick = 1207
+  Cl entCTAS gnupCl ck = 1207
 
   /**
-   * This is fired when a user is logged out and signup is successful.
+   * T   s f red w n a user  s logged out and s gnup  s successful.
    */
-  ClientCTASignupSuccess = 1208
-  // 1400 - 1499 for product surface specific actions
-  // This is fired when a user opens a Push Notification
-  ClientNotificationOpen = 1400
-  // This is fired when a user clicks on a Notification in the Notification Tab
-  ClientNotificationClick = 1401
-  // This is fired when a user taps the "See Less Often" caret menu item of a Notification in the Notification Tab
-  ClientNotificationSeeLessOften = 1402
-  // This is fired when a user closes or swipes away a Push Notification
-  ClientNotificationDismiss = 1403
+  Cl entCTAS gnupSuccess = 1208
+  // 1400 - 1499 for product surface spec f c act ons
+  // T   s f red w n a user opens a Push Not f cat on
+  Cl entNot f cat onOpen = 1400
+  // T   s f red w n a user cl cks on a Not f cat on  n t  Not f cat on Tab
+  Cl entNot f cat onCl ck = 1401
+  // T   s f red w n a user taps t  "See Less Often" caret  nu  em of a Not f cat on  n t  Not f cat on Tab
+  Cl entNot f cat onSeeLessOften = 1402
+  // T   s f red w n a user closes or sw pes away a Push Not f cat on
+  Cl entNot f cat onD sm ss = 1403
 
-  // 1420 - 1439 is reserved for Search Results Page related actions
-  // 1440 - 1449 is reserved for Typeahead related actions
+  // 1420 - 1439  s reserved for Search Results Page related act ons
+  // 1440 - 1449  s reserved for Typea ad related act ons
 
-  // This is fired when a user clicks on a typeahead suggestion(queries, events, topics, users)
-  // in a drop-down menu of a search box or a tweet compose box.
-  ClientTypeaheadClick = 1440
+  // T   s f red w n a user cl cks on a typea ad suggest on(quer es, events, top cs, users)
+  //  n a drop-down  nu of a search box or a t et compose box.
+  Cl entTypea adCl ck = 1440
 
-  // 1500 - 1999 used for behavioral client events
-  // Tweet related impressions
-  ClientTweetV2Impression = 1500
-  /* Fullscreen impressions
+  // 1500 - 1999 used for behav oral cl ent events
+  // T et related  mpress ons
+  Cl entT etV2 mpress on = 1500
+  /* Fullscreen  mpress ons
    *
-   * Android client will always log fullscreen_video impressions, regardless of the media type
-   * i.e. video, image, MM will all be logged as fullscreen_video
+   * Andro d cl ent w ll always log fullscreen_v deo  mpress ons, regardless of t   d a type
+   *  .e. v deo,  mage, MM w ll all be logged as fullscreen_v deo
    *
-   * iOS clients will log fullscreen_video or fullscreen_image depending on the media type
-   * on display when the user exits fullscreen. i.e.
-   * - image tweet => fullscreen_image
-   * - video tweet => fullscreen_video
-   * - MM tweet => fullscreen_video  if user exits fullscreen from the video
-   *            => fullscreen_image  if user exits fullscreen from the image
+   *  OS cl ents w ll log fullscreen_v deo or fullscreen_ mage depend ng on t   d a type
+   * on d splay w n t  user ex s fullscreen.  .e.
+   * -  mage t et => fullscreen_ mage
+   * - v deo t et => fullscreen_v deo
+   * - MM t et => fullscreen_v deo   f user ex s fullscreen from t  v deo
+   *            => fullscreen_ mage   f user ex s fullscreen from t   mage
    *
-   * Web clients will always log fullscreen_image impressions, regardless of the media type
+   *  b cl ents w ll always log fullscreen_ mage  mpress ons, regardless of t   d a type
    *
    * References
-   * https://docs.google.com/document/d/1oEt9_Gtz34cmO_JWNag5YKKEq4Q7cJFL-nbHOmhnq1Y
-   * https://docs.google.com/document/d/1V_7TbfPvTQgtE_91r5SubD7n78JsVR_iToW59gOMrfQ
+   * https://docs.google.com/docu nt/d/1oEt9_Gtz34cmO_JWNag5YKKEq4Q7cJFL-nbHOmhnq1Y
+   * https://docs.google.com/docu nt/d/1V_7TbfPvTQgtE_91r5SubD7n78JsVR_ ToW59gOMrfQ
    */
-  ClientTweetVideoFullscreenV2Impression = 1501
-  ClientTweetImageFullscreenV2Impression = 1502
-  // Profile related impressions
-  ClientProfileV2Impression = 1600
+  Cl entT etV deoFullscreenV2 mpress on = 1501
+  Cl entT et mageFullscreenV2 mpress on = 1502
+  // Prof le related  mpress ons
+  Cl entProf leV2 mpress on = 1600
   /*
-   * Email Notifications: These are actions taken by the user in response to Your Highlights email
-   * ClientTweetEmailClick refers to the action NotificationType.Click
+   * Ema l Not f cat ons: T se are act ons taken by t  user  n response to Y  H ghl ghts ema l
+   * Cl entT etEma lCl ck refers to t  act on Not f cat onType.Cl ck
    */
-  ClientTweetEmailClick = 5001
+  Cl entT etEma lCl ck = 5001
 
   /*
-   * User create via Gizmoduck
+   * User create v a G zmoduck
    */
   ServerUserCreate = 6000
   ServerUserUpdate = 6001
   /*
-   * Ads callback engagements
+   * Ads callback engage nts
    */
   /*
-   * This engagement is generated when a user Favs a promoted Tweet.
+   * T  engage nt  s generated w n a user Favs a promoted T et.
    */
-  ServerPromotedTweetFav = 7000
+  ServerPromotedT etFav = 7000
   /*
-   * This engagement is generated when a user Unfavs a promoted Tweet that they previously Faved.
+   * T  engage nt  s generated w n a user Unfavs a promoted T et that t y prev ously Faved.
    */
-  ServerPromotedTweetUnfav = 7001
-  ServerPromotedTweetReply = 7002
-  ServerPromotedTweetRetweet = 7004
+  ServerPromotedT etUnfav = 7001
+  ServerPromotedT etReply = 7002
+  ServerPromotedT etRet et = 7004
   /*
-   * The block could be performed from the promoted tweet or on the promoted tweet's author's profile
-   * ads_spend_event data shows majority (~97%) of blocks have an associated promoted tweet id
-   * So for now we assume the blocks are largely performed from the tweet and following naming convention of ClientTweetBlockAuthor
+   * T  block could be perfor d from t  promoted t et or on t  promoted t et's author's prof le
+   * ads_spend_event data shows major y (~97%) of blocks have an assoc ated promoted t et  d
+   * So for now   assu  t  blocks are largely perfor d from t  t et and follow ng nam ng convent on of Cl entT etBlockAuthor
    */
-  ServerPromotedTweetBlockAuthor = 7006
-  ServerPromotedTweetUnblockAuthor = 7007
+  ServerPromotedT etBlockAuthor = 7006
+  ServerPromotedT etUnblockAuthor = 7007
   /*
-   * This is when a user clicks on the Conversational Card in the Promoted Tweet which
-   * leads to the Tweet Compose page. The user may or may not send the new Tweet.
+   * T   s w n a user cl cks on t  Conversat onal Card  n t  Promoted T et wh ch
+   * leads to t  T et Compose page. T  user may or may not send t  new T et.
    */
-  ServerPromotedTweetComposeTweet = 7008
+  ServerPromotedT etComposeT et = 7008
   /*
-   * This is when a user clicks on the Promoted Tweet to view its details/replies.
+   * T   s w n a user cl cks on t  Promoted T et to v ew  s deta ls/repl es.
    */
-  ServerPromotedTweetClick = 7009
+  ServerPromotedT etCl ck = 7009
   /*
-   * The video ads engagements are divided into two sets: VIDEO_CONTENT_* and VIDEO_AD_*. These engagements
-   * have similar definitions. VIDEO_CONTENT_* engagements are fired for videos that are part of
-   * a Tweet. VIDEO_AD_* engagements are fired for a preroll ad. A preroll ad can play on a promoted
-   * Tweet or on an organic Tweet. go/preroll-matching for more information.
+   * T  v deo ads engage nts are d v ded  nto two sets: V DEO_CONTENT_* and V DEO_AD_*. T se engage nts
+   * have s m lar def n  ons. V DEO_CONTENT_* engage nts are f red for v deos that are part of
+   * a T et. V DEO_AD_* engage nts are f red for a preroll ad. A preroll ad can play on a promoted
+   * T et or on an organ c T et. go/preroll-match ng for more  nformat on.
    *
-   * 7011-7013: A Promoted Event is fired when playback reaches 25%, 50%, 75% of total track duration.
-   * This is for the video on a promoted Tweet.
-   * Not valid for live videos. Refer go/avscribing.
-   * For a video that has a preroll ad played before it, the metadata will contain information about
-   * the preroll ad as well as the video itself. There will be no preroll metadata if there was no
+   * 7011-7013: A Promoted Event  s f red w n playback reac s 25%, 50%, 75% of total track durat on.
+   * T   s for t  v deo on a promoted T et.
+   * Not val d for l ve v deos. Refer go/avscr b ng.
+   * For a v deo that has a preroll ad played before  , t   tadata w ll conta n  nformat on about
+   * t  preroll ad as  ll as t  v deo  self. T re w ll be no preroll  tadata  f t re was no
    * preroll ad played.
    */
-  ServerPromotedTweetVideoPlayback25 = 7011
-  ServerPromotedTweetVideoPlayback50 = 7012
-  ServerPromotedTweetVideoPlayback75 = 7013
+  ServerPromotedT etV deoPlayback25 = 7011
+  ServerPromotedT etV deoPlayback50 = 7012
+  ServerPromotedT etV deoPlayback75 = 7013
   /*
-   * This is when a user successfully completes the Report flow on a Promoted Tweet.
-   * It covers reports for all policies from Client Event.
+   * T   s w n a user successfully completes t  Report flow on a Promoted T et.
+   *   covers reports for all pol c es from Cl ent Event.
    */
-  ServerPromotedTweetReport = 7041
+  ServerPromotedT etReport = 7041
   /*
-   * Follow from Ads data stream, it could be from both Tweet or other places
+   * Follow from Ads data stream,   could be from both T et or ot r places
    */
-  ServerPromotedProfileFollow = 7060
+  ServerPromotedProf leFollow = 7060
   /*
-   * Follow from Ads data stream, it could be from both Tweet or other places
+   * Follow from Ads data stream,   could be from both T et or ot r places
    */
-  ServerPromotedProfileUnfollow = 7061
+  ServerPromotedProf leUnfollow = 7061
   /*
-   * This is when a user clicks on the mute promoted tweet's author option from the menu.
+   * T   s w n a user cl cks on t  mute promoted t et's author opt on from t   nu.
    */
-  ServerPromotedTweetMuteAuthor = 7064
+  ServerPromotedT etMuteAuthor = 7064
   /*
-   * This is fired when a user clicks on the profile image, screen name, or the user name of the 
-   * author of the Promoted Tweet which leads to the author's profile page.
+   * T   s f red w n a user cl cks on t  prof le  mage, screen na , or t  user na  of t  
+   * author of t  Promoted T et wh ch leads to t  author's prof le page.
    */
-  ServerPromotedTweetClickProfile = 7072
+  ServerPromotedT etCl ckProf le = 7072
   /*
-   * This is fired when a user clicks on a hashtag in the Promoted Tweet.
+   * T   s f red w n a user cl cks on a hashtag  n t  Promoted T et.
    */
-  ServerPromotedTweetClickHashtag = 7078
+  ServerPromotedT etCl ckHashtag = 7078
   /*
-   * This is fired when a user opens link by clicking on a URL in the Promoted Tweet.
+   * T   s f red w n a user opens l nk by cl ck ng on a URL  n t  Promoted T et.
    */
-  ServerPromotedTweetOpenLink = 7079
+  ServerPromotedT etOpenL nk = 7079
   /*
-   * This is fired when a user swipes to the next element of the carousel in the Promoted Tweet.
+   * T   s f red w n a user sw pes to t  next ele nt of t  carousel  n t  Promoted T et.
    */
-  ServerPromotedTweetCarouselSwipeNext = 7091
+  ServerPromotedT etCarouselSw peNext = 7091
   /*
-   * This is fired when a user swipes to the previous element of the carousel in the Promoted Tweet.
+   * T   s f red w n a user sw pes to t  prev ous ele nt of t  carousel  n t  Promoted T et.
    */
-  ServerPromotedTweetCarouselSwipePrevious = 7092
+  ServerPromotedT etCarouselSw pePrev ous = 7092
   /*
-   * This event is only for the Promoted Tweets with a web URL.
-   * It is fired after exiting a WebView from a Promoted Tweet if the user was on the WebView for
+   * T  event  s only for t  Promoted T ets w h a  b URL.
+   *    s f red after ex  ng a  bV ew from a Promoted T et  f t  user was on t   bV ew for
    * at least 1 second.
    *
-   * See https://confluence.twitter.biz/display/REVENUE/dwell_short for more details.
+   * See https://confluence.tw ter.b z/d splay/REVENUE/d ll_short for more deta ls.
    */
-  ServerPromotedTweetLingerImpressionShort = 7093
+  ServerPromotedT etL nger mpress onShort = 7093
   /*
-   * This event is only for the Promoted Tweets with a web URL.
-   * It is fired after exiting a WebView from a Promoted Tweet if the user was on the WebView for
+   * T  event  s only for t  Promoted T ets w h a  b URL.
+   *    s f red after ex  ng a  bV ew from a Promoted T et  f t  user was on t   bV ew for
    * at least 2 seconds.
    *
-   * See https://confluence.twitter.biz/display/REVENUE/dwell_medium for more details.
+   * See https://confluence.tw ter.b z/d splay/REVENUE/d ll_ d um for more deta ls.
    */
-  ServerPromotedTweetLingerImpressionMedium = 7094
+  ServerPromotedT etL nger mpress on d um = 7094
   /*
-   * This event is only for the Promoted Tweets with a web URL.
-   * It is fired after exiting a WebView from a Promoted Tweet if the user was on the WebView for
+   * T  event  s only for t  Promoted T ets w h a  b URL.
+   *    s f red after ex  ng a  bV ew from a Promoted T et  f t  user was on t   bV ew for
    * at least 10 seconds.
    *
-   * See https://confluence.twitter.biz/display/REVENUE/dwell_long for more details.
+   * See https://confluence.tw ter.b z/d splay/REVENUE/d ll_long for more deta ls.
    */
-  ServerPromotedTweetLingerImpressionLong = 7095
+  ServerPromotedT etL nger mpress onLong = 7095
   /*
-   * This is fired when a user navigates to explorer page (taps search magnifying glass on Home page)
-   * and a Promoted Trend is present and taps ON the promoted spotlight - a video/gif/image in the
-   * "hero" position (top of the explorer page).
+   * T   s f red w n a user nav gates to explorer page (taps search magn fy ng glass on Ho  page)
+   * and a Promoted Trend  s present and taps ON t  promoted spotl ght - a v deo/g f/ mage  n t 
+   * " ro" pos  on (top of t  explorer page).
    */
-  ServerPromotedTweetClickSpotlight = 7096
+  ServerPromotedT etCl ckSpotl ght = 7096
   /*
-   * This is fired when a user navigates to explorer page (taps search magnifying glass on Home page)
-   * and a Promoted Trend is present.
+   * T   s f red w n a user nav gates to explorer page (taps search magn fy ng glass on Ho  page)
+   * and a Promoted Trend  s present.
    */
-  ServerPromotedTweetViewSpotlight = 7097
+  ServerPromotedT etV ewSpotl ght = 7097
   /*
-   * 7098-7099: Promoted Trends appear in the first or second slots of the “Trends for you” section
-   * in the Explore tab and “What’s Happening” module on Twitter.com. For more information, check go/ads-takeover.
-   * 7099: This is fired when a user views a promoted Trend. It should be considered as an impression.
+   * 7098-7099: Promoted Trends appear  n t  f rst or second slots of t  “Trends for  ” sect on
+   *  n t  Explore tab and “What’s Happen ng” module on Tw ter.com. For more  nformat on, c ck go/ads-takeover.
+   * 7099: T   s f red w n a user v ews a promoted Trend.   should be cons dered as an  mpress on.
    */
-  ServerPromotedTrendView = 7098
+  ServerPromotedTrendV ew = 7098
   /*
-   * 7099: This is fired when a user clicks a promoted Trend. It should be considered as an engagment.
+   * 7099: T   s f red w n a user cl cks a promoted Trend.   should be cons dered as an engag nt.
    */
-  ServerPromotedTrendClick = 7099
+  ServerPromotedTrendCl ck = 7099
   /*
-   * 7131-7133: A Promoted Event fired when playback reaches 25%, 50%, 75% of total track duration.
-   * This is for the preroll ad that plays before a video on a promoted Tweet.
-   * Not valid for live videos. Refer go/avscribing.
-   * This will only contain metadata for the preroll ad.
+   * 7131-7133: A Promoted Event f red w n playback reac s 25%, 50%, 75% of total track durat on.
+   * T   s for t  preroll ad that plays before a v deo on a promoted T et.
+   * Not val d for l ve v deos. Refer go/avscr b ng.
+   * T  w ll only conta n  tadata for t  preroll ad.
    */
-  ServerPromotedTweetVideoAdPlayback25 = 7131
-  ServerPromotedTweetVideoAdPlayback50 = 7132
-  ServerPromotedTweetVideoAdPlayback75 = 7133
+  ServerPromotedT etV deoAdPlayback25 = 7131
+  ServerPromotedT etV deoAdPlayback50 = 7132
+  ServerPromotedT etV deoAdPlayback75 = 7133
   /*
-   * 7151-7153: A Promoted Event fired when playback reaches 25%, 50%, 75% of total track duration.
-   * This is for the preroll ad that plays before a video on an organic Tweet.
-   * Not valid for live videos. Refer go/avscribing.
-   * This will only contain metadata for the preroll ad.
+   * 7151-7153: A Promoted Event f red w n playback reac s 25%, 50%, 75% of total track durat on.
+   * T   s for t  preroll ad that plays before a v deo on an organ c T et.
+   * Not val d for l ve v deos. Refer go/avscr b ng.
+   * T  w ll only conta n  tadata for t  preroll ad.
    */
-  ServerTweetVideoAdPlayback25 = 7151
-  ServerTweetVideoAdPlayback50 = 7152
-  ServerTweetVideoAdPlayback75 = 7153
+  ServerT etV deoAdPlayback25 = 7151
+  ServerT etV deoAdPlayback50 = 7152
+  ServerT etV deoAdPlayback75 = 7153
 
-  ServerPromotedTweetDismissWithoutReason = 7180
-  ServerPromotedTweetDismissUninteresting = 7181
-  ServerPromotedTweetDismissRepetitive = 7182
-  ServerPromotedTweetDismissSpam = 7183
+  ServerPromotedT etD sm ssW houtReason = 7180
+  ServerPromotedT etD sm ssUn nterest ng = 7181
+  ServerPromotedT etD sm ssRepet  ve = 7182
+  ServerPromotedT etD sm ssSpam = 7183
 
 
   /*
-   * For FavoriteArchival Events
+   * For Favor eArch val Events
    */
-  ServerTweetArchiveFavorite = 8000
-  ServerTweetUnarchiveFavorite = 8001
+  ServerT etArch veFavor e = 8000
+  ServerT etUnarch veFavor e = 8001
   /*
-   * For RetweetArchival Events
+   * For Ret etArch val Events
    */
-  ServerTweetArchiveRetweet = 8002
-  ServerTweetUnarchiveRetweet = 8003
-}(persisted='true', hasPersonalData='false')
+  ServerT etArch veRet et = 8002
+  ServerT etUnarch veRet et = 8003
+}(pers sted='true', hasPersonalData='false')
 
 /*
- * This union will be updated when we have a particular
- * action that has attributes unique to that particular action
- * (e.g. linger impressions have start/end times) and not common
- * to all tweet actions.
- * Naming convention for TweetActionInfo should be consistent with
- * ActionType. For example, `ClientTweetLingerImpression` ActionType enum
- * should correspond to `ClientTweetLingerImpression` TweetActionInfo union arm.
- * We typically preserve 1:1 mapping between ActionType and TweetActionInfo. However, we make
- * exceptions when optimizing for customer requirements. For example, multiple 'ClientTweetVideo*'
- * ActionType enums correspond to a single `TweetVideoWatch` TweetActionInfo union arm because
- * customers want individual action labels but common information across those labels.
+ * T  un on w ll be updated w n   have a part cular
+ * act on that has attr butes un que to that part cular act on
+ * (e.g. l nger  mpress ons have start/end t  s) and not common
+ * to all t et act ons.
+ * Nam ng convent on for T etAct on nfo should be cons stent w h
+ * Act onType. For example, `Cl entT etL nger mpress on` Act onType enum
+ * should correspond to `Cl entT etL nger mpress on` T etAct on nfo un on arm.
+ *   typ cally preserve 1:1 mapp ng bet en Act onType and T etAct on nfo. Ho ver,   make
+ * except ons w n opt m z ng for custo r requ re nts. For example, mult ple 'Cl entT etV deo*'
+ * Act onType enums correspond to a s ngle `T etV deoWatch` T etAct on nfo un on arm because
+ * custo rs want  nd v dual act on labels but common  nformat on across those labels.
  */
-union TweetActionInfo {
-  // 41 matches enum index ServerTweetReport in ActionType
-  41: ServerTweetReport serverTweetReport
-  // 1002 matches enum index ClientTweetLingerImpression in ActionType
-  1002: ClientTweetLingerImpression clientTweetLingerImpression
-  // Common metadata for
-  // 1. "ClientTweetVideo*" ActionTypes with enum indices 1011-1016 and 1100-1101
-  // 2. "ServerPromotedTweetVideo*" ActionTypes with enum indices 7011-7013 and 7131-7133
-  // 3. "ServerTweetVideo*" ActionTypes with enum indices 7151-7153
-  // This is because:
-  // 1. all the above listed ActionTypes share common metadata
-  // 2. more modular code as the same struct can be reused
-  // 3. reduces chance of error while populating and parsing the metadata
-  // 4. consumers can easily process the metadata
-  1011: TweetVideoWatch tweetVideoWatch
-  // 1012: skip
-  // 1013: skip
-  // 1014: skip
-  // 1015: skip
-  // 1016: skip
-  // 1024 matches enum index ClientTweetClickMentionScreenName in ActionType
-  1024: ClientTweetClickMentionScreenName clientTweetClickMentionScreenName
-  // 1041 matches enum index ClientTweetReport in ActionType
-  1041: ClientTweetReport clientTweetReport
-  // 1060 matches enum index ClientTweetFollowAuthor in ActionType
-  1060: ClientTweetFollowAuthor clientTweetFollowAuthor
-  // 1061 matches enum index ClientTweetUnfollowAuthor in ActionType
-  1061: ClientTweetUnfollowAuthor clientTweetUnfollowAuthor
-  // 1078 matches enum index ClientTweetClickHashtag in ActionType
-  1078: ClientTweetClickHashtag clientTweetClickHashtag
-  // 1090 matches enum index ClientTweetOpenLink in ActionType
-  1090: ClientTweetOpenLink clientTweetOpenLink
-  // 1091 matches enum index ClientTweetTakeScreenshot in ActionType
-  1091: ClientTweetTakeScreenshot clientTweetTakeScreenshot
-  // 1500 matches enum index ClientTweetV2Impression in ActionType
-  1500: ClientTweetV2Impression clientTweetV2Impression
-  // 7079 matches enum index ServerPromotedTweetOpenLink in ActionType
-  7079: ServerPromotedTweetOpenLink serverPromotedTweetOpenLink
-}(persisted='true', hasPersonalData='true')
+un on T etAct on nfo {
+  // 41 matc s enum  ndex ServerT etReport  n Act onType
+  41: ServerT etReport serverT etReport
+  // 1002 matc s enum  ndex Cl entT etL nger mpress on  n Act onType
+  1002: Cl entT etL nger mpress on cl entT etL nger mpress on
+  // Common  tadata for
+  // 1. "Cl entT etV deo*" Act onTypes w h enum  nd ces 1011-1016 and 1100-1101
+  // 2. "ServerPromotedT etV deo*" Act onTypes w h enum  nd ces 7011-7013 and 7131-7133
+  // 3. "ServerT etV deo*" Act onTypes w h enum  nd ces 7151-7153
+  // T   s because:
+  // 1. all t  above l sted Act onTypes share common  tadata
+  // 2. more modular code as t  sa  struct can be reused
+  // 3. reduces chance of error wh le populat ng and pars ng t   tadata
+  // 4. consu rs can eas ly process t   tadata
+  1011: T etV deoWatch t etV deoWatch
+  // 1012: sk p
+  // 1013: sk p
+  // 1014: sk p
+  // 1015: sk p
+  // 1016: sk p
+  // 1024 matc s enum  ndex Cl entT etCl ck nt onScreenNa   n Act onType
+  1024: Cl entT etCl ck nt onScreenNa  cl entT etCl ck nt onScreenNa 
+  // 1041 matc s enum  ndex Cl entT etReport  n Act onType
+  1041: Cl entT etReport cl entT etReport
+  // 1060 matc s enum  ndex Cl entT etFollowAuthor  n Act onType
+  1060: Cl entT etFollowAuthor cl entT etFollowAuthor
+  // 1061 matc s enum  ndex Cl entT etUnfollowAuthor  n Act onType
+  1061: Cl entT etUnfollowAuthor cl entT etUnfollowAuthor
+  // 1078 matc s enum  ndex Cl entT etCl ckHashtag  n Act onType
+  1078: Cl entT etCl ckHashtag cl entT etCl ckHashtag
+  // 1090 matc s enum  ndex Cl entT etOpenL nk  n Act onType
+  1090: Cl entT etOpenL nk cl entT etOpenL nk
+  // 1091 matc s enum  ndex Cl entT etTakeScreenshot  n Act onType
+  1091: Cl entT etTakeScreenshot cl entT etTakeScreenshot
+  // 1500 matc s enum  ndex Cl entT etV2 mpress on  n Act onType
+  1500: Cl entT etV2 mpress on cl entT etV2 mpress on
+  // 7079 matc s enum  ndex ServerPromotedT etOpenL nk  n Act onType
+  7079: ServerPromotedT etOpenL nk serverPromotedT etOpenL nk
+}(pers sted='true', hasPersonalData='true')
 
 
-struct ClientTweetOpenLink {
-  //Url which was clicked.
-  1: optional string url(personalDataType = 'RawUrlPath')
-}(persisted='true', hasPersonalData='true')
+struct Cl entT etOpenL nk {
+  //Url wh ch was cl cked.
+  1: opt onal str ng url(personalDataType = 'RawUrlPath')
+}(pers sted='true', hasPersonalData='true')
 
-struct ServerPromotedTweetOpenLink {
-  //Url which was clicked.
-  1: optional string url(personalDataType = 'RawUrlPath')
-}(persisted='true', hasPersonalData='true')
+struct ServerPromotedT etOpenL nk {
+  //Url wh ch was cl cked.
+  1: opt onal str ng url(personalDataType = 'RawUrlPath')
+}(pers sted='true', hasPersonalData='true')
 
-struct ClientTweetClickHashtag {
-  /* Hashtag string which was clicked. The PDP annotation is SearchQuery,
-   * because clicking on the hashtag triggers a search with the hashtag
+struct Cl entT etCl ckHashtag {
+  /* Hashtag str ng wh ch was cl cked. T  PDP annotat on  s SearchQuery,
+   * because cl ck ng on t  hashtag tr ggers a search w h t  hashtag
    */
-  1: optional string hashtag(personalDataType = 'SearchQuery')
-}(persisted='true', hasPersonalData='true')
+  1: opt onal str ng hashtag(personalDataType = 'SearchQuery')
+}(pers sted='true', hasPersonalData='true')
 
-struct ClientTweetTakeScreenshot {
-  //percentage visible height.
-  1: optional i32 percentVisibleHeight100k
-}(persisted='true', hasPersonalData='false')
+struct Cl entT etTakeScreenshot {
+  //percentage v s ble   ght.
+  1: opt onal  32 percentV s ble  ght100k
+}(pers sted='true', hasPersonalData='false')
 
 /*
- * See go/ioslingerimpressionbehaviors and go/lingerandroidfaq
- * for ios and android client definitions of a linger respectively.
+ * See go/ osl nger mpress onbehav ors and go/l ngerandro dfaq
+ * for  os and andro d cl ent def n  ons of a l nger respect vely.
  */
-struct ClientTweetLingerImpression {
-  /* Milliseconds since epoch when the tweet became more than 50% visible. */
-  1: required i64 lingerStartTimestampMs(personalDataType = 'ImpressionMetadata')
-  /* Milliseconds since epoch when the tweet became less than 50% visible. */
-  2: required i64 lingerEndTimestampMs(personalDataType = 'ImpressionMetadata')
-}(persisted='true', hasPersonalData='true')
+struct Cl entT etL nger mpress on {
+  /* M ll seconds s nce epoch w n t  t et beca  more than 50% v s ble. */
+  1: requ red  64 l ngerStartT  stampMs(personalDataType = ' mpress on tadata')
+  /* M ll seconds s nce epoch w n t  t et beca  less than 50% v s ble. */
+  2: requ red  64 l ngerEndT  stampMs(personalDataType = ' mpress on tadata')
+}(pers sted='true', hasPersonalData='true')
 
 /*
- * See go/behavioral-client-events for general behavioral client event (BCE) information
- * and go/bce-v2impress for detailed information about BCE impression events.
+ * See go/behav oral-cl ent-events for general behav oral cl ent event (BCE)  nformat on
+ * and go/bce-v2 mpress for deta led  nformat on about BCE  mpress on events.
  *
- * Unlike ClientTweetLingerImpression, there is no lower bound on the amount of time
- * necessary for the impress event to occur. There is also no visibility requirement for a impress
+ * Unl ke Cl entT etL nger mpress on, t re  s no lo r bound on t  amount of t  
+ * necessary for t   mpress event to occur. T re  s also no v s b l y requ re nt for a  mpress
  * event to occur.
  */
-struct ClientTweetV2Impression {
-  /* Milliseconds since epoch when the tweet became visible. */
-  1: required i64 impressStartTimestampMs(personalDataType = 'ImpressionMetadata')
-  /* Milliseconds since epoch when the tweet became visible. */
-  2: required i64 impressEndTimestampMs(personalDataType = 'ImpressionMetadata')
+struct Cl entT etV2 mpress on {
+  /* M ll seconds s nce epoch w n t  t et beca  v s ble. */
+  1: requ red  64  mpressStartT  stampMs(personalDataType = ' mpress on tadata')
+  /* M ll seconds s nce epoch w n t  t et beca  v s ble. */
+  2: requ red  64  mpressEndT  stampMs(personalDataType = ' mpress on tadata')
   /*
-   * The UI component that hosted this tweet where the impress event happened.
+   * T  U  component that hosted t  t et w re t   mpress event happened.
    *
-   * For example, sourceComponent = "tweet" if the impress event happened on a tweet displayed amongst
-   * a collection of tweets, or sourceComponent = "tweet_details" if the impress event happened on
-   * a tweet detail UI component.
+   * For example, s ceComponent = "t et"  f t   mpress event happened on a t et d splayed amongst
+   * a collect on of t ets, or s ceComponent = "t et_deta ls"  f t   mpress event happened on
+   * a t et deta l U  component.
    */
-  3: required string sourceComponent(personalDataType = 'WebsitePage')
-}(persisted='true', hasPersonalData='true')
+  3: requ red str ng s ceComponent(personalDataType = ' bs ePage')
+}(pers sted='true', hasPersonalData='true')
 
  /*
- * Refer to go/cme-scribing and go/interaction-event-spec for details
+ * Refer to go/c -scr b ng and go/ nteract on-event-spec for deta ls
  */
-struct TweetVideoWatch {
+struct T etV deoWatch {
    /*
-   * Type of video included in the Tweet
+   * Type of v deo  ncluded  n t  T et
    */
-  1: optional client_app.MediaType mediaType(personalDataType = 'MediaFile')
+  1: opt onal cl ent_app. d aType  d aType(personalDataType = ' d aF le')
   /*
-   * Whether the video content is "monetizable", i.e.,
-   * if a preroll ad may be served dynamically when the video plays
+   * W t r t  v deo content  s "monet zable",  .e.,
+   *  f a preroll ad may be served dynam cally w n t  v deo plays
    */
-  2: optional bool isMonetizable(personalDataType = 'MediaFile')
+  2: opt onal bool  sMonet zable(personalDataType = ' d aF le')
 
   /*
-   * The owner of the video, provided by playlist.
+   * T  owner of t  v deo, prov ded by playl st.
    *
-   * For ad engagements related to a preroll ad (VIDEO_AD_*),
-   * this will be the owner of the preroll ad and same as the prerollOwnerId.
+   * For ad engage nts related to a preroll ad (V DEO_AD_*),
+   * t  w ll be t  owner of t  preroll ad and sa  as t  prerollOwner d.
    *
-   * For ad engagements related to a regular video (VIDEO_CONTENT_*), this will be the owner of the
-   * video and not the preroll ad.
+   * For ad engage nts related to a regular v deo (V DEO_CONTENT_*), t  w ll be t  owner of t 
+   * v deo and not t  preroll ad.
    */
-  3: optional i64 videoOwnerId(personalDataType = 'UserId')
+  3: opt onal  64 v deoOwner d(personalDataType = 'User d')
 
   /*
-   * Identifies the video associated with a card.
+   *  dent f es t  v deo assoc ated w h a card.
    *
-   * For ad Engagements, in the case of engagements related to a preroll ad (VIDEO_AD_*),
-   * this will be the id of the preroll ad and same as the prerollUuid.
+   * For ad Engage nts,  n t  case of engage nts related to a preroll ad (V DEO_AD_*),
+   * t  w ll be t   d of t  preroll ad and sa  as t  prerollUu d.
    *
-   * For ad engagements related to a regular video (VIDEO_CONTENT_*), this will be id of the video
-   * and not the preroll ad.
+   * For ad engage nts related to a regular v deo (V DEO_CONTENT_*), t  w ll be  d of t  v deo
+   * and not t  preroll ad.
    */
-  4: optional string videoUuid(personalDataType = 'MediaId')
+  4: opt onal str ng v deoUu d(personalDataType = ' d a d')
 
   /*
-   * Id of the preroll ad shown before the video
+   *  d of t  preroll ad shown before t  v deo
    */
-  5: optional string prerollUuid(personalDataType = 'MediaId')
+  5: opt onal str ng prerollUu d(personalDataType = ' d a d')
 
   /*
-   * Advertiser id of the preroll ad
+   * Advert ser  d of t  preroll ad
    */
-  6: optional i64 prerollOwnerId(personalDataType = 'UserId')
+  6: opt onal  64 prerollOwner d(personalDataType = 'User d')
   /*
-   * for amplify_flayer events, indicates whether preroll or the main video is being played
+   * for ampl fy_flayer events,  nd cates w t r preroll or t  ma n v deo  s be ng played
    */
-  7: optional string videoType(personalDataType = 'MediaFile')
-}(persisted='true', hasPersonalData='true')
+  7: opt onal str ng v deoType(personalDataType = ' d aF le')
+}(pers sted='true', hasPersonalData='true')
 
-struct ClientTweetClickMentionScreenName {
-  /* Id for the profile (user_id) that was actioned on */
-  1: required i64 actionProfileId(personalDataType = 'UserId')
-  /* The handle/screenName of the user. This can't be changed. */
-  2: required string handle(personalDataType = 'UserName')
-}(persisted='true', hasPersonalData='true')
+struct Cl entT etCl ck nt onScreenNa  {
+  /*  d for t  prof le (user_ d) that was act oned on */
+  1: requ red  64 act onProf le d(personalDataType = 'User d')
+  /* T  handle/screenNa  of t  user. T  can't be changed. */
+  2: requ red str ng handle(personalDataType = 'UserNa ')
+}(pers sted='true', hasPersonalData='true')
 
-struct ClientTweetReport {
+struct Cl entT etReport {
   /*
-   * Whether the "Report Tweet" flow was successfully completed.
-   * `true` if the flow was completed successfully, `false` otherwise.
+   * W t r t  "Report T et" flow was successfully completed.
+   * `true`  f t  flow was completed successfully, `false` ot rw se.
    */
-  1: required bool isReportTweetDone
+  1: requ red bool  sReportT etDone
   /*
-   * report-flow-id is included in Client Event when the "Report Tweet" flow was initiated
-   * See go/report-flow-ids and
-   * https://confluence.twitter.biz/pages/viewpage.action?spaceKey=HEALTH&title=Understanding+ReportDetails
+   * report-flow- d  s  ncluded  n Cl ent Event w n t  "Report T et" flow was  n  ated
+   * See go/report-flow- ds and
+   * https://confluence.tw ter.b z/pages/v ewpage.act on?spaceKey=HEALTH&t le=Understand ng+ReportDeta ls
    */
-  2: optional string reportFlowId
-}(persisted='true', hasPersonalData='true')
+  2: opt onal str ng reportFlow d
+}(pers sted='true', hasPersonalData='true')
 
-enum TweetAuthorFollowClickSource {
+enum T etAuthorFollowCl ckS ce {
   UNKNOWN = 1
   CARET_MENU = 2
-  PROFILE_IMAGE = 3
+  PROF LE_ MAGE = 3
 }
 
-struct ClientTweetFollowAuthor {
+struct Cl entT etFollowAuthor {
   /*
-   * Where did the user click the Follow button on the tweet - from the caret menu("CARET_MENU")
-   * or via hovering over the profile and clicking on Follow ("PROFILE_IMAGE") - only applicable for web clients
-   * "UNKNOWN" if the scribe do not match the expected namespace for the above
+   * W re d d t  user cl ck t  Follow button on t  t et - from t  caret  nu("CARET_MENU")
+   * or v a hover ng over t  prof le and cl ck ng on Follow ("PROF LE_ MAGE") - only appl cable for  b cl ents
+   * "UNKNOWN"  f t  scr be do not match t  expected na space for t  above
    */
-  1: required TweetAuthorFollowClickSource followClickSource
-}(persisted='true', hasPersonalData='false')
+  1: requ red T etAuthorFollowCl ckS ce followCl ckS ce
+}(pers sted='true', hasPersonalData='false')
 
-enum TweetAuthorUnfollowClickSource {
+enum T etAuthorUnfollowCl ckS ce {
   UNKNOWN = 1
   CARET_MENU = 2
-  PROFILE_IMAGE = 3
+  PROF LE_ MAGE = 3
 }
 
-struct ClientTweetUnfollowAuthor {
+struct Cl entT etUnfollowAuthor {
   /*
-   * Where did the user click the Unfollow button on the tweet - from the caret menu("CARET_MENU")
-   * or via hovering over the profile and clicking on Unfollow ("PROFILE_IMAGE") - only applicable for web clients
-   * "UNKNOWN" if the scribe do not match the expected namespace for the above
+   * W re d d t  user cl ck t  Unfollow button on t  t et - from t  caret  nu("CARET_MENU")
+   * or v a hover ng over t  prof le and cl ck ng on Unfollow ("PROF LE_ MAGE") - only appl cable for  b cl ents
+   * "UNKNOWN"  f t  scr be do not match t  expected na space for t  above
    */
-  1: required TweetAuthorUnfollowClickSource unfollowClickSource
-}(persisted='true', hasPersonalData='false')
+  1: requ red T etAuthorUnfollowCl ckS ce unfollowCl ckS ce
+}(pers sted='true', hasPersonalData='false')
 
-struct ServerTweetReport {
+struct ServerT etReport {
   /*
-   * ReportDetails will be populated when the tweet report was scribed by spamacaw (server side)
-   * Only for the action submit, all the fields under ReportDetails will be available.
-   * This is because only after successful submission, we will know the report_type and report_flow_name.
-   * Reference: https://confluence.twitter.biz/pages/viewpage.action?spaceKey=HEALTH&title=Understanding+ReportDetails
+   * ReportDeta ls w ll be populated w n t  t et report was scr bed by spamacaw (server s de)
+   * Only for t  act on subm , all t  f elds under ReportDeta ls w ll be ava lable.
+   * T   s because only after successful subm ss on,   w ll know t  report_type and report_flow_na .
+   * Reference: https://confluence.tw ter.b z/pages/v ewpage.act on?spaceKey=HEALTH&t le=Understand ng+ReportDeta ls
    */
-  1: optional string reportFlowId
-  2: optional report_flow_logs.ReportType reportType
-}(persisted='true', hasPersonalData='false')
+  1: opt onal str ng reportFlow d
+  2: opt onal report_flow_logs.ReportType reportType
+}(pers sted='true', hasPersonalData='false')
 
 /*
- * This union will be updated when we have a particular
- * action that has attributes unique to that particular action
- * (e.g. linger impressions have start/end times) and not common
- * to other profile actions.
+ * T  un on w ll be updated w n   have a part cular
+ * act on that has attr butes un que to that part cular act on
+ * (e.g. l nger  mpress ons have start/end t  s) and not common
+ * to ot r prof le act ons.
  *
- * Naming convention for ProfileActionInfo should be consistent with
- * ActionType. For example, `ClientProfileV2Impression` ActionType enum
- * should correspond to `ClientProfileV2Impression` ProfileActionInfo union arm.
+ * Nam ng convent on for Prof leAct on nfo should be cons stent w h
+ * Act onType. For example, `Cl entProf leV2 mpress on` Act onType enum
+ * should correspond to `Cl entProf leV2 mpress on` Prof leAct on nfo un on arm.
  */
-union ProfileActionInfo {
-  // 56 matches enum index ServerProfileReport in ActionType
-  56: ServerProfileReport serverProfileReport
-  // 1600 matches enum index ClientProfileV2Impression in ActionType
-  1600: ClientProfileV2Impression clientProfileV2Impression
-  // 6001 matches enum index ServerUserUpdate in ActionType
+un on Prof leAct on nfo {
+  // 56 matc s enum  ndex ServerProf leReport  n Act onType
+  56: ServerProf leReport serverProf leReport
+  // 1600 matc s enum  ndex Cl entProf leV2 mpress on  n Act onType
+  1600: Cl entProf leV2 mpress on cl entProf leV2 mpress on
+  // 6001 matc s enum  ndex ServerUserUpdate  n Act onType
   6001: ServerUserUpdate serverUserUpdate
-}(persisted='true', hasPersonalData='true')
+}(pers sted='true', hasPersonalData='true')
 
 /*
- * See go/behavioral-client-events for general behavioral client event (BCE) information
- * and https://docs.google.com/document/d/16CdSRpsmUUd17yoFH9min3nLBqDVawx4DaZoiqSfCHI/edit#heading=h.3tu05p92xgxc
- * for detailed information about BCE impression event.
+ * See go/behav oral-cl ent-events for general behav oral cl ent event (BCE)  nformat on
+ * and https://docs.google.com/docu nt/d/16CdSRpsmUUd17yoFH9m n3nLBqDVawx4DaZo qSfCH /ed # ad ng=h.3tu05p92xgxc
+ * for deta led  nformat on about BCE  mpress on event.
  *
- * Unlike ClientTweetLingerImpression, there is no lower bound on the amount of time
- * necessary for the impress event to occur. There is also no visibility requirement for a impress
+ * Unl ke Cl entT etL nger mpress on, t re  s no lo r bound on t  amount of t  
+ * necessary for t   mpress event to occur. T re  s also no v s b l y requ re nt for a  mpress
  * event to occur.
  */
-struct ClientProfileV2Impression {
-  /* Milliseconds since epoch when the profile page became visible. */
-  1: required i64 impressStartTimestampMs(personalDataType = 'ImpressionMetadata')
-  /* Milliseconds since epoch when the profile page became visible. */
-  2: required i64 impressEndTimestampMs(personalDataType = 'ImpressionMetadata')
+struct Cl entProf leV2 mpress on {
+  /* M ll seconds s nce epoch w n t  prof le page beca  v s ble. */
+  1: requ red  64  mpressStartT  stampMs(personalDataType = ' mpress on tadata')
+  /* M ll seconds s nce epoch w n t  prof le page beca  v s ble. */
+  2: requ red  64  mpressEndT  stampMs(personalDataType = ' mpress on tadata')
   /*
-   * The UI component that hosted this profile where the impress event happened.
+   * T  U  component that hosted t  prof le w re t   mpress event happened.
    *
-   * For example, sourceComponent = "profile" if the impress event happened on a profile page
+   * For example, s ceComponent = "prof le"  f t   mpress event happened on a prof le page
    */
-  3: required string sourceComponent(personalDataType = 'WebsitePage')
-}(persisted='true', hasPersonalData='true')
+  3: requ red str ng s ceComponent(personalDataType = ' bs ePage')
+}(pers sted='true', hasPersonalData='true')
 
-struct ServerProfileReport {
-  1: required social_graph_service_write_log.Action reportType(personalDataType = 'ReportType')
-}(persisted='true', hasPersonalData='true')
+struct ServerProf leReport {
+  1: requ red soc al_graph_serv ce_wr e_log.Act on reportType(personalDataType = 'ReportType')
+}(pers sted='true', hasPersonalData='true')
 
 struct ServerUserUpdate {
-  1: required list<user_service.UpdateDiffItem> updates
-  2: optional bool success (personalDataType = 'AuditMessage')
-}(persisted='true', hasPersonalData='true')
+  1: requ red l st<user_serv ce.UpdateD ff em> updates
+  2: opt onal bool success (personalDataType = 'Aud  ssage')
+}(pers sted='true', hasPersonalData='true')

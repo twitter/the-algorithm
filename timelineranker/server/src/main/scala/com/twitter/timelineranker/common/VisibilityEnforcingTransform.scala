@@ -1,22 +1,22 @@
-package com.twitter.timelineranker.common
+package com.tw ter.t  l neranker.common
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.core.HydratedTweets
-import com.twitter.timelines.visibility.VisibilityEnforcer
-import com.twitter.util.Future
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t  l neranker.core.Cand dateEnvelope
+ mport com.tw ter.t  l neranker.core.HydratedT ets
+ mport com.tw ter.t  l nes.v s b l y.V s b l yEnforcer
+ mport com.tw ter.ut l.Future
 
 /**
- * Transform which uses an instance of a VisiblityEnforcer to filter down HydratedTweets
+ * Transform wh ch uses an  nstance of a V s bl yEnforcer to f lter down HydratedT ets
  */
-class VisibilityEnforcingTransform(visibilityEnforcer: VisibilityEnforcer)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    visibilityEnforcer.apply(Some(envelope.query.userId), envelope.hydratedTweets.outerTweets).map {
-      visibleTweets =>
-        val innerTweets = envelope.hydratedTweets.innerTweets
+class V s b l yEnforc ngTransform(v s b l yEnforcer: V s b l yEnforcer)
+    extends FutureArrow[Cand dateEnvelope, Cand dateEnvelope] {
+  overr de def apply(envelope: Cand dateEnvelope): Future[Cand dateEnvelope] = {
+    v s b l yEnforcer.apply(So (envelope.query.user d), envelope.hydratedT ets.outerT ets).map {
+      v s bleT ets =>
+        val  nnerT ets = envelope.hydratedT ets. nnerT ets
         envelope.copy(
-          hydratedTweets = HydratedTweets(outerTweets = visibleTweets, innerTweets = innerTweets))
+          hydratedT ets = HydratedT ets(outerT ets = v s bleT ets,  nnerT ets =  nnerT ets))
     }
   }
 }

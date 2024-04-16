@@ -1,28 +1,28 @@
-package com.twitter.ann.common
+package com.tw ter.ann.common
 
-import com.twitter.search.common.file.AbstractFile
-import org.apache.beam.sdk.io.fs.ResourceId
+ mport com.tw ter.search.common.f le.AbstractF le
+ mport org.apac .beam.sdk. o.fs.Res ce d
 
 /**
- * Interface for writing an Appendable to a directory.
+ *  nterface for wr  ng an Appendable to a d rectory.
  */
-trait Serialization {
-  def toDirectory(
-    serializationDirectory: AbstractFile
-  ): Unit
+tra  Ser al zat on {
+  def toD rectory(
+    ser al zat onD rectory: AbstractF le
+  ): Un 
 
-  def toDirectory(
-    serializationDirectory: ResourceId
-  ): Unit
+  def toD rectory(
+    ser al zat onD rectory: Res ce d
+  ): Un 
 }
 
 /**
- * Interface for reading a Queryable from a directory
- * @tparam T the id of the embeddings
- * @tparam Q type of the Queryable that is deserialized.
+ *  nterface for read ng a Queryable from a d rectory
+ * @tparam T t   d of t  embedd ngs
+ * @tparam Q type of t  Queryable that  s deser al zed.
  */
-trait QueryableDeserialization[T, P <: RuntimeParams, D <: Distance[D], Q <: Queryable[T, P, D]] {
-  def fromDirectory(
-    serializationDirectory: AbstractFile
+tra  QueryableDeser al zat on[T, P <: Runt  Params, D <: D stance[D], Q <: Queryable[T, P, D]] {
+  def fromD rectory(
+    ser al zat onD rectory: AbstractF le
   ): Q
 }

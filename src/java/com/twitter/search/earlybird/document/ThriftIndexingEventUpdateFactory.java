@@ -1,91 +1,91 @@
-package com.twitter.search.earlybird.document;
+package com.tw ter.search.earlyb rd.docu nt;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.document.Document;
+ mport org.apac .lucene.docu nt.Docu nt;
 
-import com.twitter.decider.Decider;
-import com.twitter.search.common.schema.SchemaDocumentFactory;
-import com.twitter.search.common.schema.base.FieldNameToIdMapping;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.base.ThriftDocumentUtil;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.search.common.sc ma.Sc maDocu ntFactory;
+ mport com.tw ter.search.common.sc ma.base.F eldNa To dMapp ng;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.common.sc ma.base.Thr ftDocu ntUt l;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftDocu nt;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ft ndex ngEvent;
+ mport com.tw ter.search.earlyb rd.except on.Cr  calExcept onHandler;
 
 /**
- * Builds a Lucene Document from a ThriftIndexingEvent. A simplified version of
- * {@link ThriftIndexingEventDocumentFactory} that can be used for update events, which exclude
- * many fields that the tweet indexing events contain.
+ * Bu lds a Lucene Docu nt from a Thr ft ndex ngEvent. A s mpl f ed vers on of
+ * {@l nk Thr ft ndex ngEventDocu ntFactory} that can be used for update events, wh ch exclude
+ * many f elds that t  t et  ndex ng events conta n.
  */
-public class ThriftIndexingEventUpdateFactory extends DocumentFactory<ThriftIndexingEvent> {
-  private static final FieldNameToIdMapping ID_MAPPING = new EarlybirdFieldConstants();
+publ c class Thr ft ndex ngEventUpdateFactory extends Docu ntFactory<Thr ft ndex ngEvent> {
+  pr vate stat c f nal F eldNa To dMapp ng  D_MAPP NG = new Earlyb rdF eldConstants();
 
-  private final SchemaDocumentFactory schemaDocumentFactory;
-  private final EarlybirdCluster cluster;
-  private final Schema schema;
+  pr vate f nal Sc maDocu ntFactory sc maDocu ntFactory;
+  pr vate f nal Earlyb rdCluster cluster;
+  pr vate f nal Sc ma sc ma;
 
-  public ThriftIndexingEventUpdateFactory(
-      Schema schema,
-      EarlybirdCluster cluster,
-      Decider decider,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    this(
-        schema,
-        ThriftIndexingEventDocumentFactory.getSchemaDocumentFactory(schema, cluster, decider),
+  publ c Thr ft ndex ngEventUpdateFactory(
+      Sc ma sc ma,
+      Earlyb rdCluster cluster,
+      Dec der dec der,
+      Cr  calExcept onHandler cr  calExcept onHandler) {
+    t (
+        sc ma,
+        Thr ft ndex ngEventDocu ntFactory.getSc maDocu ntFactory(sc ma, cluster, dec der),
         cluster,
-        criticalExceptionHandler
+        cr  calExcept onHandler
     );
   }
 
-  @VisibleForTesting
-  protected ThriftIndexingEventUpdateFactory(
-      Schema schema,
-      SchemaDocumentFactory schemaDocumentFactory,
-      EarlybirdCluster cluster,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    super(criticalExceptionHandler);
-    this.schema = schema;
-    this.schemaDocumentFactory = schemaDocumentFactory;
-    this.cluster = cluster;
+  @V s bleForTest ng
+  protected Thr ft ndex ngEventUpdateFactory(
+      Sc ma sc ma,
+      Sc maDocu ntFactory sc maDocu ntFactory,
+      Earlyb rdCluster cluster,
+      Cr  calExcept onHandler cr  calExcept onHandler) {
+    super(cr  calExcept onHandler);
+    t .sc ma = sc ma;
+    t .sc maDocu ntFactory = sc maDocu ntFactory;
+    t .cluster = cluster;
   }
 
-  @Override
-  public long getStatusId(ThriftIndexingEvent event) {
-    Preconditions.checkNotNull(event);
-    Preconditions.checkState(
-        event.isSetDocument(), "ThriftDocument is null inside ThriftIndexingEvent.");
+  @Overr de
+  publ c long getStatus d(Thr ft ndex ngEvent event) {
+    Precond  ons.c ckNotNull(event);
+    Precond  ons.c ckState(
+        event. sSetDocu nt(), "Thr ftDocu nt  s null  ns de Thr ft ndex ngEvent.");
 
-    ThriftDocument thriftDocument;
+    Thr ftDocu nt thr ftDocu nt;
     try {
-      // Ideally, we should not call getSchemaSnapshot() here.  But, as this is called only to
-      // retrieve status id and the ID field is static, this is fine for the purpose.
-      thriftDocument = ThriftDocumentPreprocessor.preprocess(
-          event.getDocument(), cluster, schema.getSchemaSnapshot());
-    } catch (IOException e) {
-      throw new IllegalStateException("Unable to obtain tweet ID from ThriftDocument: " + event, e);
+      //  deally,   should not call getSc maSnapshot()  re.  But, as t   s called only to
+      // retr eve status  d and t   D f eld  s stat c, t   s f ne for t  purpose.
+      thr ftDocu nt = Thr ftDocu ntPreprocessor.preprocess(
+          event.getDocu nt(), cluster, sc ma.getSc maSnapshot());
+    } catch ( OExcept on e) {
+      throw new  llegalStateExcept on("Unable to obta n t et  D from Thr ftDocu nt: " + event, e);
     }
-    return ThriftDocumentUtil.getLongValue(
-        thriftDocument, EarlybirdFieldConstant.ID_FIELD.getFieldName(), ID_MAPPING);
+    return Thr ftDocu ntUt l.getLongValue(
+        thr ftDocu nt, Earlyb rdF eldConstant. D_F ELD.getF eldNa (),  D_MAPP NG);
   }
 
-  @Override
-  protected Document innerNewDocument(ThriftIndexingEvent event) throws IOException {
-    Preconditions.checkNotNull(event);
-    Preconditions.checkNotNull(event.getDocument());
+  @Overr de
+  protected Docu nt  nnerNewDocu nt(Thr ft ndex ngEvent event) throws  OExcept on {
+    Precond  ons.c ckNotNull(event);
+    Precond  ons.c ckNotNull(event.getDocu nt());
 
-    ImmutableSchemaInterface schemaSnapshot = schema.getSchemaSnapshot();
+     mmutableSc ma nterface sc maSnapshot = sc ma.getSc maSnapshot();
 
-    ThriftDocument document = ThriftDocumentPreprocessor.preprocess(
-        event.getDocument(), cluster, schemaSnapshot);
+    Thr ftDocu nt docu nt = Thr ftDocu ntPreprocessor.preprocess(
+        event.getDocu nt(), cluster, sc maSnapshot);
 
-    return schemaDocumentFactory.newDocument(document);
+    return sc maDocu ntFactory.newDocu nt(docu nt);
   }
 }

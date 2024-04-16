@@ -1,23 +1,23 @@
-package com.twitter.tweetypie
-package config
+package com.tw ter.t etyp e
+package conf g
 
-import com.twitter.io.Buf
-import com.twitter.finagle.{Service, SimpleFilter}
-import com.twitter.finagle.memcached.protocol._
+ mport com.tw ter. o.Buf
+ mport com.tw ter.f nagle.{Serv ce, S mpleF lter}
+ mport com.tw ter.f nagle. mcac d.protocol._
 
-class MemcacheExceptionLoggingFilter extends SimpleFilter[Command, Response] {
-  // Using a custom logger name so that we can target logging rules specifically
-  // for memcache excpetion logging.
+class  mcac Except onLogg ngF lter extends S mpleF lter[Command, Response] {
+  // Us ng a custom logger na  so that   can target logg ng rules spec f cally
+  // for  mcac  excpet on logg ng.
   val logger: Logger = Logger(getClass)
 
-  def apply(command: Command, service: Service[Command, Response]): Future[Response] = {
-    service(command).respond {
+  def apply(command: Command, serv ce: Serv ce[Command, Response]): Future[Response] = {
+    serv ce(command).respond {
       case Return(Error(e)) =>
         log(command, e)
-      case Return(ValuesAndErrors(_, errors)) if errors.nonEmpty =>
+      case Return(ValuesAndErrors(_, errors))  f errors.nonEmpty =>
         errors.foreach {
           case (Buf.Utf8(keyStr), e) =>
-            log(command.name, keyStr, e)
+            log(command.na , keyStr, e)
         }
       case Throw(e) =>
         log(command, e)
@@ -26,18 +26,18 @@ class MemcacheExceptionLoggingFilter extends SimpleFilter[Command, Response] {
     }
   }
 
-  private def log(command: Command, e: Throwable): Unit = {
-    log(command.name, getKey(command), e)
+  pr vate def log(command: Command, e: Throwable): Un  = {
+    log(command.na , getKey(command), e)
   }
 
-  private def log(commandName: String, keyStr: String, e: Throwable): Unit = {
+  pr vate def log(commandNa : Str ng, keyStr: Str ng, e: Throwable): Un  = {
     logger.debug(
-      s"CACHE_EXCEPTION command: ${commandName} key: ${keyStr} exception: ${e.getClass.getName}",
+      s"CACHE_EXCEPT ON command: ${commandNa } key: ${keyStr} except on: ${e.getClass.getNa }",
       e,
     )
   }
 
-  private def getKey(command: Command): String = command match {
+  pr vate def getKey(command: Command): Str ng = command match {
     case Get(keys) => toKeyStr(keys)
     case Gets(keys) => toKeyStr(keys)
 
@@ -49,14 +49,14 @@ class MemcacheExceptionLoggingFilter extends SimpleFilter[Command, Response] {
     case Append(Buf.Utf8(key), _, _, _) => key
     case Prepend(Buf.Utf8(key), _, _, _) => key
 
-    case Incr(Buf.Utf8(key), _) => key
+    case  ncr(Buf.Utf8(key), _) => key
     case Decr(Buf.Utf8(key), _) => key
     case Stats(keys) => toKeyStr(keys)
-    case Quit() => "quit"
+    case Qu () => "qu "
     case Upsert(Buf.Utf8(key), _, _, _, _) => key
     case Getv(keys) => toKeyStr(keys)
   }
 
-  private def toKeyStr(keys: Seq[Buf]): String =
-    keys.map { case Buf.Utf8(key) => key }.mkString(",")
+  pr vate def toKeyStr(keys: Seq[Buf]): Str ng =
+    keys.map { case Buf.Utf8(key) => key }.mkStr ng(",")
 }

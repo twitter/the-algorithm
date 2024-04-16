@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.cover
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverFullCoverDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.FullCoverDisplayType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover.CoverFullCoverD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover.FullCoverD splayType
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class FullCoverDisplayTypeMarshaller @Inject() () {
+@S ngleton
+class FullCoverD splayTypeMarshaller @ nject() () {
 
-  def apply(halfCoverDisplayType: FullCoverDisplayType): urt.FullCoverDisplayType =
-    halfCoverDisplayType match {
-      case CoverFullCoverDisplayType => urt.FullCoverDisplayType.Cover
+  def apply(halfCoverD splayType: FullCoverD splayType): urt.FullCoverD splayType =
+    halfCoverD splayType match {
+      case CoverFullCoverD splayType => urt.FullCoverD splayType.Cover
     }
 }

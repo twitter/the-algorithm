@@ -1,111 +1,111 @@
-package com.twitter.home_mixer.product.list_recommended_users
+package com.tw ter.ho _m xer.product.l st_recom nded_users
 
-import com.twitter.home_mixer.product.list_recommended_users.feature_hydrator.RecentListMembersQueryFeatureHydrator
-import com.twitter.home_mixer.product.list_recommended_users.gate.ViewerIsListOwnerGate
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersFeatures.IsGizmoduckValidUserFeature
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersFeatures.IsSGSValidUserFeature
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersQuery
-import com.twitter.home_mixer.product.list_recommended_users.param.ListRecommendedUsersParam.ExcludedIdsMaxLengthParam
-import com.twitter.home_mixer.product.list_recommended_users.param.ListRecommendedUsersParam.ServerMaxResultsParam
-import com.twitter.product_mixer.component_library.premarshaller.urt.UrtDomainMarshaller
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.AddEntriesWithReplaceInstructionBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.ReplaceAllEntries
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.ReplaceEntryInstructionBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.StaticTimelineScribeConfigBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UnorderedExcludeIdsBottomCursorBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtMetadataBuilder
-import com.twitter.product_mixer.component_library.selector.DropFilteredCandidates
-import com.twitter.product_mixer.component_library.selector.DropMaxCandidates
-import com.twitter.product_mixer.component_library.selector.InsertAppendResults
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.UrtTransportMarshaller
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.MixerPipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserItem
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.product_mixer.core.pipeline.mixer.MixerPipelineConfig
-import com.twitter.timelines.render.{thriftscala => urt}
+ mport com.tw ter.ho _m xer.product.l st_recom nded_users.feature_hydrator.RecentL st mbersQueryFeatureHydrator
+ mport com.tw ter.ho _m xer.product.l st_recom nded_users.gate.V e r sL stOwnerGate
+ mport com.tw ter.ho _m xer.product.l st_recom nded_users.model.L stRecom ndedUsersFeatures. sG zmoduckVal dUserFeature
+ mport com.tw ter.ho _m xer.product.l st_recom nded_users.model.L stRecom ndedUsersFeatures. sSGSVal dUserFeature
+ mport com.tw ter.ho _m xer.product.l st_recom nded_users.model.L stRecom ndedUsersQuery
+ mport com.tw ter.ho _m xer.product.l st_recom nded_users.param.L stRecom ndedUsersParam.Excluded dsMaxLengthParam
+ mport com.tw ter.ho _m xer.product.l st_recom nded_users.param.L stRecom ndedUsersParam.ServerMaxResultsParam
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.UrtDoma nMarshaller
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.AddEntr esW hReplace nstruct onBu lder
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.ReplaceAllEntr es
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.ReplaceEntry nstruct onBu lder
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.Stat cT  l neScr beConf gBu lder
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.UnorderedExclude dsBottomCursorBu lder
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.Urt tadataBu lder
+ mport com.tw ter.product_m xer.component_l brary.selector.DropF lteredCand dates
+ mport com.tw ter.product_m xer.component_l brary.selector.DropMaxCand dates
+ mport com.tw ter.product_m xer.component_l brary.selector. nsertAppendResults
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.TransportMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.UrtTransportMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.premarshaller.Doma nMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.M xerP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neScr beConf g
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.user.User em
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neConf g
+ mport com.tw ter.product_m xer.core.p pel ne.m xer.M xerP pel neConf g
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ListRecommendedUsersMixerPipelineConfig @Inject() (
-  listMemberBasedUsersCandidatePipelineConfig: ListMemberBasedUsersCandidatePipelineConfig,
-  blenderUsersCandidatePipelineConfig: BlenderUsersCandidatePipelineConfig,
-  viewerIsListOwnerGate: ViewerIsListOwnerGate,
-  recentListMembersQueryFeatureHydrator: RecentListMembersQueryFeatureHydrator,
+@S ngleton
+class L stRecom ndedUsersM xerP pel neConf g @ nject() (
+  l st mberBasedUsersCand dateP pel neConf g: L st mberBasedUsersCand dateP pel neConf g,
+  blenderUsersCand dateP pel neConf g: BlenderUsersCand dateP pel neConf g,
+  v e r sL stOwnerGate: V e r sL stOwnerGate,
+  recentL st mbersQueryFeatureHydrator: RecentL st mbersQueryFeatureHydrator,
   urtTransportMarshaller: UrtTransportMarshaller)
-    extends MixerPipelineConfig[ListRecommendedUsersQuery, Timeline, urt.TimelineResponse] {
+    extends M xerP pel neConf g[L stRecom ndedUsersQuery, T  l ne, urt.T  l neResponse] {
 
-  override val identifier: MixerPipelineIdentifier = MixerPipelineIdentifier("ListRecommendedUsers")
+  overr de val  dent f er: M xerP pel ne dent f er = M xerP pel ne dent f er("L stRecom ndedUsers")
 
-  override val gates = Seq(viewerIsListOwnerGate)
+  overr de val gates = Seq(v e r sL stOwnerGate)
 
-  override val fetchQueryFeatures: Seq[QueryFeatureHydrator[ListRecommendedUsersQuery]] =
-    Seq(recentListMembersQueryFeatureHydrator)
+  overr de val fetchQueryFeatures: Seq[QueryFeatureHydrator[L stRecom ndedUsersQuery]] =
+    Seq(recentL st mbersQueryFeatureHydrator)
 
-  override val candidatePipelines: Seq[
-    CandidatePipelineConfig[ListRecommendedUsersQuery, _, _, _]
+  overr de val cand dateP pel nes: Seq[
+    Cand dateP pel neConf g[L stRecom ndedUsersQuery, _, _, _]
   ] = Seq(
-    listMemberBasedUsersCandidatePipelineConfig,
-    blenderUsersCandidatePipelineConfig
+    l st mberBasedUsersCand dateP pel neConf g,
+    blenderUsersCand dateP pel neConf g
   )
 
-  private val candidatePipelineIdentifiers = Set(
-    listMemberBasedUsersCandidatePipelineConfig.identifier,
-    blenderUsersCandidatePipelineConfig.identifier
+  pr vate val cand dateP pel ne dent f ers = Set(
+    l st mberBasedUsersCand dateP pel neConf g. dent f er,
+    blenderUsersCand dateP pel neConf g. dent f er
   )
 
-  override val resultSelectors: Seq[Selector[ListRecommendedUsersQuery]] = Seq(
-    DropFilteredCandidates(
-      candidatePipelines = candidatePipelineIdentifiers,
-      filter = candidate =>
-        candidate.features.getOrElse(IsSGSValidUserFeature, false) &&
-          candidate.features.getOrElse(IsGizmoduckValidUserFeature, false)
+  overr de val resultSelectors: Seq[Selector[L stRecom ndedUsersQuery]] = Seq(
+    DropF lteredCand dates(
+      cand dateP pel nes = cand dateP pel ne dent f ers,
+      f lter = cand date =>
+        cand date.features.getOrElse( sSGSVal dUserFeature, false) &&
+          cand date.features.getOrElse( sG zmoduckVal dUserFeature, false)
     ),
-    DropMaxCandidates(
-      candidatePipelines = candidatePipelineIdentifiers,
-      maxSelectionsParam = ServerMaxResultsParam),
-    InsertAppendResults(candidatePipelineIdentifiers)
+    DropMaxCand dates(
+      cand dateP pel nes = cand dateP pel ne dent f ers,
+      maxSelect onsParam = ServerMaxResultsParam),
+     nsertAppendResults(cand dateP pel ne dent f ers)
   )
 
-  override val domainMarshaller: DomainMarshaller[ListRecommendedUsersQuery, Timeline] = {
-    val instructionBuilders = Seq(
-      ReplaceEntryInstructionBuilder(ReplaceAllEntries),
-      AddEntriesWithReplaceInstructionBuilder()
+  overr de val doma nMarshaller: Doma nMarshaller[L stRecom ndedUsersQuery, T  l ne] = {
+    val  nstruct onBu lders = Seq(
+      ReplaceEntry nstruct onBu lder(ReplaceAllEntr es),
+      AddEntr esW hReplace nstruct onBu lder()
     )
 
-    val metadataBuilder = UrtMetadataBuilder(
-      title = None,
-      scribeConfigBuilder = Some(
-        StaticTimelineScribeConfigBuilder(
-          TimelineScribeConfig(
-            page = Some("list_recommended_users"),
-            section = None,
-            entityToken = None)))
+    val  tadataBu lder = Urt tadataBu lder(
+      t le = None,
+      scr beConf gBu lder = So (
+        Stat cT  l neScr beConf gBu lder(
+          T  l neScr beConf g(
+            page = So ("l st_recom nded_users"),
+            sect on = None,
+            ent yToken = None)))
     )
 
-    val excludeIdsSelector: PartialFunction[UniversalNoun[_], Long] = {
-      case item: UserItem => item.id
+    val exclude dsSelector: Part alFunct on[Un versalNoun[_], Long] = {
+      case  em: User em =>  em. d
     }
 
-    val cursorBuilder = UnorderedExcludeIdsBottomCursorBuilder(
-      excludedIdsMaxLengthParam = ExcludedIdsMaxLengthParam,
-      excludeIdsSelector = excludeIdsSelector)
+    val cursorBu lder = UnorderedExclude dsBottomCursorBu lder(
+      excluded dsMaxLengthParam = Excluded dsMaxLengthParam,
+      exclude dsSelector = exclude dsSelector)
 
-    UrtDomainMarshaller(
-      instructionBuilders = instructionBuilders,
-      metadataBuilder = Some(metadataBuilder),
-      cursorBuilders = Seq(cursorBuilder)
+    UrtDoma nMarshaller(
+       nstruct onBu lders =  nstruct onBu lders,
+       tadataBu lder = So ( tadataBu lder),
+      cursorBu lders = Seq(cursorBu lder)
     )
   }
 
-  override val transportMarshaller: TransportMarshaller[Timeline, urt.TimelineResponse] =
+  overr de val transportMarshaller: TransportMarshaller[T  l ne, urt.T  l neResponse] =
     urtTransportMarshaller
 }

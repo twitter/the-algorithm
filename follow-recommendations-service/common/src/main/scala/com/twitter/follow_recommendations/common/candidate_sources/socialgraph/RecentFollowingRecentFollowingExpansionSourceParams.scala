@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.candidate_sources.socialgraph
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.soc algraph
 
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
-object RecentFollowingRecentFollowingExpansionSourceParams {
-  object CallSgsCachedColumn
+object RecentFollow ngRecentFollow ngExpans onS ceParams {
+  object CallSgsCac dColumn
       extends FSParam[Boolean](
-        "recent_following_recent_following_source_call_sgs_cached_column",
+        "recent_follow ng_recent_follow ng_s ce_call_sgs_cac d_column",
         true)
 }

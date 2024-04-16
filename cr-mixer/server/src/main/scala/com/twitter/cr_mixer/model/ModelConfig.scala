@@ -1,77 +1,77 @@
-package com.twitter.cr_mixer.model
+package com.tw ter.cr_m xer.model
 
 /**
- * A Configuration class for all Model Based Candidate Sources.
+ * A Conf gurat on class for all Model Based Cand date S ces.
  *
- * The Model Name Guideline. Please your modelId as "Algorithm_Product_Date"
- * If your model is used for multiple product surfaces, name it as all
- * Don't name your algorithm as MBCG. All the algorithms here are MBCG =.=
+ * T  Model Na  Gu del ne. Please y  model d as "Algor hm_Product_Date"
+ *  f y  model  s used for mult ple product surfaces, na    as all
+ * Don't na  y  algor hm as MBCG. All t  algor hms  re are MBCG =.=
  *
- * Don't forgot to add your new models into allHnswANNSimilarityEngineModelIds list.
+ * Don't forgot to add y  new models  nto allHnswANNS m lar yEng neModel ds l st.
  */
-object ModelConfig {
-  // Offline SimClusters CG Experiment related Model Ids
-  val OfflineInterestedInFromKnownFor2020: String = "OfflineIIKF_ALL_20220414"
-  val OfflineInterestedInFromKnownFor2020Hl0El15: String = "OfflineIIKF_ALL_20220414_Hl0_El15"
-  val OfflineInterestedInFromKnownFor2020Hl2El15: String = "OfflineIIKF_ALL_20220414_Hl2_El15"
-  val OfflineInterestedInFromKnownFor2020Hl2El50: String = "OfflineIIKF_ALL_20220414_Hl2_El50"
-  val OfflineInterestedInFromKnownFor2020Hl8El50: String = "OfflineIIKF_ALL_20220414_Hl8_El50"
-  val OfflineMTSConsumerEmbeddingsFav90P20M: String =
-    "OfflineMTSConsumerEmbeddingsFav90P20M_ALL_20220414"
+object ModelConf g {
+  // Offl ne S mClusters CG Exper  nt related Model  ds
+  val Offl ne nterested nFromKnownFor2020: Str ng = "Offl ne  KF_ALL_20220414"
+  val Offl ne nterested nFromKnownFor2020Hl0El15: Str ng = "Offl ne  KF_ALL_20220414_Hl0_El15"
+  val Offl ne nterested nFromKnownFor2020Hl2El15: Str ng = "Offl ne  KF_ALL_20220414_Hl2_El15"
+  val Offl ne nterested nFromKnownFor2020Hl2El50: Str ng = "Offl ne  KF_ALL_20220414_Hl2_El50"
+  val Offl ne nterested nFromKnownFor2020Hl8El50: Str ng = "Offl ne  KF_ALL_20220414_Hl8_El50"
+  val Offl neMTSConsu rEmbedd ngsFav90P20M: Str ng =
+    "Offl neMTSConsu rEmbedd ngsFav90P20M_ALL_20220414"
 
-  // Twhin Model Ids
-  val ConsumerBasedTwHINRegularUpdateAll20221024: String =
-    "ConsumerBasedTwHINRegularUpdate_All_20221024"
+  // Twh n Model  ds
+  val Consu rBasedTwH NRegularUpdateAll20221024: Str ng =
+    "Consu rBasedTwH NRegularUpdate_All_20221024"
 
-  // Averaged Twhin Model Ids
-  val TweetBasedTwHINRegularUpdateAll20221024: String =
-    "TweetBasedTwHINRegularUpdate_All_20221024"
+  // Averaged Twh n Model  ds
+  val T etBasedTwH NRegularUpdateAll20221024: Str ng =
+    "T etBasedTwH NRegularUpdate_All_20221024"
 
-  // Collaborative Filtering Twhin Model Ids
-  val TwhinCollabFilterForFollow: String =
-    "TwhinCollabFilterForFollow"
-  val TwhinCollabFilterForEngagement: String =
-    "TwhinCollabFilterForEngagement"
-  val TwhinMultiClusterForFollow: String =
-    "TwhinMultiClusterForFollow"
-  val TwhinMultiClusterForEngagement: String =
-    "TwhinMultiClusterForEngagement"
+  // Collaborat ve F lter ng Twh n Model  ds
+  val Twh nCollabF lterForFollow: Str ng =
+    "Twh nCollabF lterForFollow"
+  val Twh nCollabF lterForEngage nt: Str ng =
+    "Twh nCollabF lterForEngage nt"
+  val Twh nMult ClusterForFollow: Str ng =
+    "Twh nMult ClusterForFollow"
+  val Twh nMult ClusterForEngage nt: Str ng =
+    "Twh nMult ClusterForEngage nt"
 
-  // Two Tower model Ids
-  val TwoTowerFavALL20220808: String =
-    "TwoTowerFav_ALL_20220808"
+  // Two To r model  ds
+  val TwoTo rFavALL20220808: Str ng =
+    "TwoTo rFav_ALL_20220808"
 
-  // Debugger Demo-Only Model Ids
-  val DebuggerDemo: String = "DebuggerDemo"
+  // Debugger Demo-Only Model  ds
+  val DebuggerDemo: Str ng = "DebuggerDemo"
 
-  // ColdStartLookalike - this is not really a model name, it is as a placeholder to
-  // indicate ColdStartLookalike candidate source, which is currently being pluged into
-  // CustomizedRetrievalCandidateGeneration temporarily.
-  val ColdStartLookalikeModelName: String = "ConsumersBasedUtgColdStartLookalike20220707"
+  // ColdStartLookal ke - t   s not really a model na ,    s as a placeholder to
+  //  nd cate ColdStartLookal ke cand date s ce, wh ch  s currently be ng pluged  nto
+  // Custom zedRetr evalCand dateGenerat on temporar ly.
+  val ColdStartLookal keModelNa : Str ng = "Consu rsBasedUtgColdStartLookal ke20220707"
 
-  // consumersBasedUTG-RealGraphOon Model Id
-  val ConsumersBasedUtgRealGraphOon20220705: String = "ConsumersBasedUtgRealGraphOon_All_20220705"
-  // consumersBasedUAG-RealGraphOon Model Id
-  val ConsumersBasedUagRealGraphOon20221205: String = "ConsumersBasedUagRealGraphOon_All_20221205"
+  // consu rsBasedUTG-RealGraphOon Model  d
+  val Consu rsBasedUtgRealGraphOon20220705: Str ng = "Consu rsBasedUtgRealGraphOon_All_20220705"
+  // consu rsBasedUAG-RealGraphOon Model  d
+  val Consu rsBasedUagRealGraphOon20221205: Str ng = "Consu rsBasedUagRealGraphOon_All_20221205"
 
   // FTR
-  val OfflineFavDecayedSum: String = "OfflineFavDecayedSum"
-  val OfflineFtrAt5Pop1000RnkDcy11: String = "OfflineFtrAt5Pop1000RnkDcy11"
-  val OfflineFtrAt5Pop10000RnkDcy11: String = "OfflineFtrAt5Pop10000RnkDcy11"
+  val Offl neFavDecayedSum: Str ng = "Offl neFavDecayedSum"
+  val Offl neFtrAt5Pop1000RnkDcy11: Str ng = "Offl neFtrAt5Pop1000RnkDcy11"
+  val Offl neFtrAt5Pop10000RnkDcy11: Str ng = "Offl neFtrAt5Pop10000RnkDcy11"
 
-  // All Model Ids of HnswANNSimilarityEngines
-  val allHnswANNSimilarityEngineModelIds = Seq(
-    ConsumerBasedTwHINRegularUpdateAll20221024,
-    TwoTowerFavALL20220808,
+  // All Model  ds of HnswANNS m lar yEng nes
+  val allHnswANNS m lar yEng neModel ds = Seq(
+    Consu rBasedTwH NRegularUpdateAll20221024,
+    TwoTo rFavALL20220808,
     DebuggerDemo
   )
 
-  val ConsumerLogFavBasedInterestedInEmbedding: String =
-    "ConsumerLogFavBasedInterestedIn_ALL_20221228"
-  val ConsumerFollowBasedInterestedInEmbedding: String =
-    "ConsumerFollowBasedInterestedIn_ALL_20221228"
+  val Consu rLogFavBased nterested nEmbedd ng: Str ng =
+    "Consu rLogFavBased nterested n_ALL_20221228"
+  val Consu rFollowBased nterested nEmbedd ng: Str ng =
+    "Consu rFollowBased nterested n_ALL_20221228"
 
-  val RetweetBasedDiffusion: String =
-    "RetweetBasedDiffusion"
+  val Ret etBasedD ffus on: Str ng =
+    "Ret etBasedD ffus on"
 
 }

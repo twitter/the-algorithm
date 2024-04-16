@@ -1,50 +1,50 @@
-package com.twitter.search.ingester.model;
+package com.tw ter.search. ngester.model;
 
-import java.util.Map;
+ mport java.ut l.Map;
 
-import com.google.common.primitives.Longs;
+ mport com.google.common.pr m  ves.Longs;
 
-import com.twitter.search.common.debug.DebugEventAccumulator;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.partitioning.base.Partitionable;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
+ mport com.tw ter.search.common.debug.DebugEventAccumulator;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftVers onedEvents;
+ mport com.tw ter.search.common.part  on ng.base.Part  onable;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ft ndex ngEvent;
 
 /**
- * Wrap of ThriftVersionedEvents, make it partitionable for the queue writer.
+ * Wrap of Thr ftVers onedEvents, make   part  onable for t  queue wr er.
  */
-public class IngesterThriftVersionedEvents extends ThriftVersionedEvents
-    implements Comparable<ThriftVersionedEvents>, Partitionable, DebugEventAccumulator {
+publ c class  ngesterThr ftVers onedEvents extends Thr ftVers onedEvents
+     mple nts Comparable<Thr ftVers onedEvents>, Part  onable, DebugEventAccumulator {
 
-  // Make userId field easier to be accessed to calculate partition number
-  private final long userId;
+  // Make user d f eld eas er to be accessed to calculate part  on number
+  pr vate f nal long user d;
 
-  public IngesterThriftVersionedEvents(long userId) {
-    this.userId = userId;
+  publ c  ngesterThr ftVers onedEvents(long user d) {
+    t .user d = user d;
   }
 
-  public IngesterThriftVersionedEvents(long userId,
-                                       Map<Byte, ThriftIndexingEvent> versionedEvents) {
-    super(versionedEvents);
-    this.userId = userId;
+  publ c  ngesterThr ftVers onedEvents(long user d,
+                                       Map<Byte, Thr ft ndex ngEvent> vers onedEvents) {
+    super(vers onedEvents);
+    t .user d = user d;
   }
 
-  public IngesterThriftVersionedEvents(long userId, ThriftVersionedEvents original) {
-    super(original);
-    this.userId = userId;
+  publ c  ngesterThr ftVers onedEvents(long user d, Thr ftVers onedEvents or g nal) {
+    super(or g nal);
+    t .user d = user d;
   }
 
-  @Override
-  public int compareTo(ThriftVersionedEvents o) {
-    return Longs.compare(getId(), o.getId());
+  @Overr de
+  publ c  nt compareTo(Thr ftVers onedEvents o) {
+    return Longs.compare(get d(), o.get d());
   }
 
-  @Override
-  public long getTweetId() {
-    return this.getId();
+  @Overr de
+  publ c long getT et d() {
+    return t .get d();
   }
 
-  @Override
-  public long getUserId() {
-    return this.userId;
+  @Overr de
+  publ c long getUser d() {
+    return t .user d;
   }
 }

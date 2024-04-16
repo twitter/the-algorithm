@@ -1,50 +1,50 @@
 """
-This module implements custom tf.data.datasets for twml.
+T  module  mple nts custom tf.data.datasets for twml.
 """
-import numbers
+ mport numbers
 
-from absl import logging
-from kazoo.client import KazooClient
-from libtwml import OPLIB
-import tensorflow.compat.v1 as tf
-from twml.constants import DEFAULT_ZOOKEEPER_BASE_ZNODE, DEFAULT_ZOOKEEPER_HOST
+from absl  mport logg ng
+from kazoo.cl ent  mport KazooCl ent
+from l btwml  mport OPL B
+ mport tensorflow.compat.v1 as tf
+from twml.constants  mport DEFAULT_ZOOKEEPER_BASE_ZNODE, DEFAULT_ZOOKEEPER_HOST
 
 
 class BlockFormatDataset(tf.data.Dataset):
-  """A ``tf.data.Dataset`` comprising records from one or more TFRecord files."""
+  """A ``tf.data.Dataset`` compr s ng records from one or more TFRecord f les."""
 
-  def __init__(self, filenames, compression_type="auto", buffer_size=1 << 20):
+  def __ n __(self, f lena s, compress on_type="auto", buffer_s ze=1 << 20):
     """
     Creates a ``BlockFormatDataset``.
 
     Args:
-      filenames:
-        A `tf.string` tensor containing one or more filenames.
-      compression_type:
-        A string specifying the compression type.
-        Can be one of 'gz' (or 'gzip'), 'none', 'auto' (default).
-        When compression_type == 'auto', it is inferred from file extension.
-      buffer_size:
-        Buffer size to be used during decompression. default: 1<<20.
+      f lena s:
+        A `tf.str ng` tensor conta n ng one or more f lena s.
+      compress on_type:
+        A str ng spec fy ng t  compress on type.
+        Can be one of 'gz' (or 'gz p'), 'none', 'auto' (default).
+        W n compress on_type == 'auto',    s  nferred from f le extens on.
+      buffer_s ze:
+        Buffer s ze to be used dur ng decompress on. default: 1<<20.
     """
-    self._filenames = tf.convert_to_tensor(filenames, dtype=tf.string, name="filenames")
-    self._compression_type = tf.convert_to_tensor(compression_type.lower(), name="compression_type")
-    self._buffer_size = tf.convert_to_tensor(buffer_size, dtype=tf.int64, name="buffer_size")
-    # Parent class calss self._as_variant_tensor in init. So call this at the end.
-    super(BlockFormatDataset, self).__init__()
+    self._f lena s = tf.convert_to_tensor(f lena s, dtype=tf.str ng, na ="f lena s")
+    self._compress on_type = tf.convert_to_tensor(compress on_type.lo r(), na ="compress on_type")
+    self._buffer_s ze = tf.convert_to_tensor(buffer_s ze, dtype=tf. nt64, na ="buffer_s ze")
+    # Parent class calss self._as_var ant_tensor  n  n . So call t  at t  end.
+    super(BlockFormatDataset, self).__ n __()
 
-  def _as_variant_tensor(self):
+  def _as_var ant_tensor(self):
     """
-    Create the resource handle for the dataset.
+    Create t  res ce handle for t  dataset.
     """
     try:
-      block_format_dataset = __import__("libtwml_internal").OPLIB.block_format_dataset
-      return block_format_dataset(self._filenames)
-    except ImportError:
-      block_format_dataset = OPLIB.block_format_dataset_v2
-      return block_format_dataset(self._filenames, self._compression_type, self._buffer_size)
+      block_format_dataset = __ mport__("l btwml_ nternal").OPL B.block_format_dataset
+      return block_format_dataset(self._f lena s)
+    except  mportError:
+      block_format_dataset = OPL B.block_format_dataset_v2
+      return block_format_dataset(self._f lena s, self._compress on_type, self._buffer_s ze)
 
-  def _inputs(self):
+  def _ nputs(self):
     return []
 
   @property
@@ -55,7 +55,7 @@ class BlockFormatDataset(tf.data.Dataset):
   @property
   def output_types(self):
     """Return output types"""
-    return tf.string
+    return tf.str ng
 
   @property
   def output_classes(self):
@@ -63,310 +63,310 @@ class BlockFormatDataset(tf.data.Dataset):
     return tf.Tensor
 
 
-def downsample_dataset(dataset, sample_rate, rate_name):
+def downsample_dataset(dataset, sample_rate, rate_na ):
   """
   Downsample a tf.data.Dataset at sample_rate
   """
-  if sample_rate is None or sample_rate == 1.0:
+   f sample_rate  s None or sample_rate == 1.0:
     return dataset
-  elif not isinstance(sample_rate, numbers.Real):
-    raise TypeError("dataset %s must be a real number" % rate_name)
-  elif sample_rate <= 0 or sample_rate > 1:
-    raise ValueError("dataset %s must be in range (0, 1])" % rate_name)
-  return dataset.filter(lambda _: tf.squeeze(tf.random_uniform([1])) < sample_rate)
+  el f not  s nstance(sample_rate, numbers.Real):
+    ra se TypeError("dataset %s must be a real number" % rate_na )
+  el f sample_rate <= 0 or sample_rate > 1:
+    ra se ValueError("dataset %s must be  n range (0, 1])" % rate_na )
+  return dataset.f lter(lambda _: tf.squeeze(tf.random_un form([1])) < sample_rate)
 
 
-def _filenames_dataset(files, shards=None, shard_index=None):
+def _f lena s_dataset(f les, shards=None, shard_ ndex=None):
   """
-  Get a tf.data.Dataset with file names from a list of files
-  Optionally shard the file list (see stream_block_format_dataset)
+  Get a tf.data.Dataset w h f le na s from a l st of f les
+  Opt onally shard t  f le l st (see stream_block_format_dataset)
   """
-  files = tf.data.Dataset.from_tensor_slices(files)
+  f les = tf.data.Dataset.from_tensor_sl ces(f les)
 
-  if [shards, shard_index] != [None, None]:
-    logging.info("Sharding files dataset (index: %d, shards: %d)" % (shard_index, shards))
-    files = files.shard(num_shards=shards, index=shard_index)
+   f [shards, shard_ ndex] != [None, None]:
+    logg ng. nfo("Shard ng f les dataset ( ndex: %d, shards: %d)" % (shard_ ndex, shards))
+    f les = f les.shard(num_shards=shards,  ndex=shard_ ndex)
 
-  return files
+  return f les
 
 
 def stream_block_format_dataset(
-        files, parse_fn, batch_size, num_threads,
+        f les, parse_fn, batch_s ze, num_threads,
         shuffle=True, repeat=False,
-        block_length=None, part_file_parallelism=None, file_shuffle_size=None,
-        record_shuffle_size=None, dataset_fn=None,
-        keep_rate=None, parts_downsampling_rate=None, prefetch_size=2,
-        shards=None, shard_index=None, shuffle_files=True, interleave=True):
+        block_length=None, part_f le_parallel sm=None, f le_shuffle_s ze=None,
+        record_shuffle_s ze=None, dataset_fn=None,
+        keep_rate=None, parts_downsampl ng_rate=None, prefetch_s ze=2,
+        shards=None, shard_ ndex=None, shuffle_f les=True,  nterleave=True):
   """
-  Helper function to stream a list of part files.
+   lper funct on to stream a l st of part f les.
 
   Args:
-    files:
-      List of input files which will create a dataset.
+    f les:
+      L st of  nput f les wh ch w ll create a dataset.
     parse_fn:
-      A function that takes a byte tensor containing a datarecord and decodes it.
-    batch_size:
-      The batch size for each step.
+      A funct on that takes a byte tensor conta n ng a datarecord and decodes  .
+    batch_s ze:
+      T  batch s ze for each step.
     num_threads:
-      Number of threads working on the data in parallel.
+      Number of threads work ng on t  data  n parallel.
     shuffle:
-      Shuffle records within each file using ``record_shuffle_size``. Defaults to True.
+      Shuffle records w h n each f le us ng ``record_shuffle_s ze``. Defaults to True.
     repeat:
-      Repeat the dataset indefinitely. Defaults to False.
-      Useful when you want to use an ``[train,eval]_steps`` greater than the size of the dataset
-      (otherwise ``Estimator.[train,evaluate]`` stop when the end of the dataset is reached).
-    block_length (optional):
-      Number of consecutive records to pull from a single part file.
-      Defaults to batch_size.
-    part_file_parallelism (optional):
-      Number of part files to read from in parallel. Once a part file is completely read, it will
-      be replaced by the next part file in the part file list.
+      Repeat t  dataset  ndef n ely. Defaults to False.
+      Useful w n   want to use an ``[tra n,eval]_steps`` greater than t  s ze of t  dataset
+      (ot rw se ``Est mator.[tra n,evaluate]`` stop w n t  end of t  dataset  s reac d).
+    block_length (opt onal):
+      Number of consecut ve records to pull from a s ngle part f le.
+      Defaults to batch_s ze.
+    part_f le_parallel sm (opt onal):
+      Number of part f les to read from  n parallel. Once a part f le  s completely read,   w ll
+      be replaced by t  next part f le  n t  part f le l st.
 
-      ``num_threads`` specifies a reader thread pool size, while ``part_file_parallelism`` specifies
-      the number of files to read from in parallel. If ``part_file_parallelism`` is greater than or
-      equal to ``num_threads``, the reads will be distributed over ``num_threads``. On the other hand,
-      if ``part_file_parallelism`` is smaller than``num_threads``, it is very likely that the reader
-      thread pool will be underutilized, since it can never be the case that every reader thread has
-      a part file to read from.
+      ``num_threads`` spec f es a reader thread pool s ze, wh le ``part_f le_parallel sm`` spec f es
+      t  number of f les to read from  n parallel.  f ``part_f le_parallel sm``  s greater than or
+      equal to ``num_threads``, t  reads w ll be d str buted over ``num_threads``. On t  ot r hand,
+       f ``part_f le_parallel sm``  s smaller than``num_threads``,    s very l kely that t  reader
+      thread pool w ll be underut l zed, s nce   can never be t  case that every reader thread has
+      a part f le to read from.
 
-    file_shuffle_size (optional):
-      the buffer_size used for shuffling of the list of files.
-      Defaults to 1000. For example, if you have 2000 files, the first
-      1000 files are shuffled together, iterated through, then the next 1000 files are shuffled
-      and iterated through.
-    record_shuffle_size (optional):
-      the ``buffer_size`` used for shuffling records in each thread.
-      Defaults to ``batch_size * 8`` records.
-    dataset_fn (optional):
-      A function of that modifies the dataset after it reads different interleaved parts files.
+    f le_shuffle_s ze (opt onal):
+      t  buffer_s ze used for shuffl ng of t  l st of f les.
+      Defaults to 1000. For example,  f   have 2000 f les, t  f rst
+      1000 f les are shuffled toget r,  erated through, t n t  next 1000 f les are shuffled
+      and  erated through.
+    record_shuffle_s ze (opt onal):
+      t  ``buffer_s ze`` used for shuffl ng records  n each thread.
+      Defaults to ``batch_s ze * 8`` records.
+    dataset_fn (opt onal):
+      A funct on of that mod f es t  dataset after   reads d fferent  nterleaved parts f les.
       Defaults to:
 
       .. code-block:: python
 
-        def dataset_fn(dataset, parse_fn, batch_size):
-          return dataset.batch(batch_size).map(parse_fn, 1)
+        def dataset_fn(dataset, parse_fn, batch_s ze):
+          return dataset.batch(batch_s ze).map(parse_fn, 1)
 
-    keep_rate (optional):
-      A float value in (0.0, 1.0] that indicates to drop records according to the Bernoulli
-      distribution with p = 1 - keep_rate.
+    keep_rate (opt onal):
+      A float value  n (0.0, 1.0] that  nd cates to drop records accord ng to t  Bernoull 
+      d str but on w h p = 1 - keep_rate.
       Defaults to None (no records dropped).
 
-    parts_downsampling_rate (optional):
-      A float value in ``(0.0, 1.0]`` that indicates the factor by which to downsample part files.
-      For example, a value of 0.2 means only 20 percent of part files become part of the dataset.
+    parts_downsampl ng_rate (opt onal):
+      A float value  n ``(0.0, 1.0]`` that  nd cates t  factor by wh ch to downsample part f les.
+      For example, a value of 0.2  ans only 20 percent of part f les beco  part of t  dataset.
 
-      Note that this argument is only useful in conjunction with a [train,eval]_steps of -1
-      (that is, when the entire dataset is used). Furthermore, note that even in this case, each
-      epoch will see a different set of part files. This is because new part files are re-sampled
-      every epoch. In other words, this argument is only provided for backwards compatibility with
-      DeepBird v1. We recommend you use a smaller [train,eval]_steps (or specify a keep_rate)
-      instead.
+      Note that t  argu nt  s only useful  n conjunct on w h a [tra n,eval]_steps of -1
+      (that  s, w n t  ent re dataset  s used). Furt rmore, note that even  n t  case, each
+      epoch w ll see a d fferent set of part f les. T   s because new part f les are re-sampled
+      every epoch.  n ot r words, t  argu nt  s only prov ded for backwards compat b l y w h
+      DeepB rd v1.   recom nd   use a smaller [tra n,eval]_steps (or spec fy a keep_rate)
+       nstead.
 
-    shards (optional):
-      Number of partitions to shard the dataset into. This is useful for codistillation and other
-      techniques that require each worker to train on disjoint partitions of the dataset.
-      The dataset is not sharded by default.
+    shards (opt onal):
+      Number of part  ons to shard t  dataset  nto. T   s useful for cod st llat on and ot r
+      techn ques that requ re each worker to tra n on d sjo nt part  ons of t  dataset.
+      T  dataset  s not sharded by default.
 
-    shard_index (optional):
-      Which partition of the dataset to use if ``shards`` is set.
+    shard_ ndex (opt onal):
+      Wh ch part  on of t  dataset to use  f ``shards``  s set.
 
-    shuffle_files (optional):
-      Shuffle the list of files. Defaults to True.
-      When False, files are iterated in the order they are passed in.
+    shuffle_f les (opt onal):
+      Shuffle t  l st of f les. Defaults to True.
+      W n False, f les are  erated  n t  order t y are passed  n.
 
-    interleave (optional):
-      Interleave records from multiple files in parallel. Defaults to True.
+     nterleave (opt onal):
+       nterleave records from mult ple f les  n parallel. Defaults to True.
 
   Returns:
-    tf.data.DataSet of batches of HashedDataRecord resource handles decoded and streamed online.
+    tf.data.DataSet of batc s of Has dDataRecord res ce handles decoded and strea d onl ne.
   """
-  # Creating a dataset from an input directory
+  # Creat ng a dataset from an  nput d rectory
 
-  files = _filenames_dataset(files, shards=shards, shard_index=shard_index)
+  f les = _f lena s_dataset(f les, shards=shards, shard_ ndex=shard_ ndex)
 
-  file_shuffle_size = file_shuffle_size if file_shuffle_size is not None else 100000
-  record_shuffle_size = record_shuffle_size if record_shuffle_size is not None else (batch_size * 8)
-  block_length = block_length if block_length is not None else batch_size
+  f le_shuffle_s ze = f le_shuffle_s ze  f f le_shuffle_s ze  s not None else 100000
+  record_shuffle_s ze = record_shuffle_s ze  f record_shuffle_s ze  s not None else (batch_s ze * 8)
+  block_length = block_length  f block_length  s not None else batch_s ze
 
-  logging.info("NUM_THREADS: %d", num_threads)
+  logg ng. nfo("NUM_THREADS: %d", num_threads)
 
-  if repeat:
-    files = files.repeat()
+   f repeat:
+    f les = f les.repeat()
 
-  if shuffle_files:
-    # Randomly shuffle the files list.
-    files = files.shuffle(buffer_size=file_shuffle_size)
+   f shuffle_f les:
+    # Randomly shuffle t  f les l st.
+    f les = f les.shuffle(buffer_s ze=f le_shuffle_s ze)
 
-  # Downsample parts files
-  files = downsample_dataset(files, parts_downsampling_rate, "parts_downsampling_rate")
+  # Downsample parts f les
+  f les = downsample_dataset(f les, parts_downsampl ng_rate, "parts_downsampl ng_rate")
 
-  # Interleave the result from BlockFormatDataset
-  # block_length == batch_size results in batch_size records being read from a single file.
-  def map_fn(filenames):
-    '''function that maps each filename to a BlockFormatDataset'''
-    # reach each file using BlockFormatDataset
-    dataset = BlockFormatDataset(filenames)
+  #  nterleave t  result from BlockFormatDataset
+  # block_length == batch_s ze results  n batch_s ze records be ng read from a s ngle f le.
+  def map_fn(f lena s):
+    '''funct on that maps each f lena  to a BlockFormatDataset'''
+    # reach each f le us ng BlockFormatDataset
+    dataset = BlockFormatDataset(f lena s)
 
-    # early prefetching can sometimes improve performance (like on GCS)
-    dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
+    # early prefetch ng can so t  s  mprove performance (l ke on GCS)
+    dataset = dataset.prefetch(tf.data.exper  ntal.AUTOTUNE)
 
-    # Shuffling before repeating ensures strong ordering.
-    if shuffle:
-      dataset = dataset.shuffle(buffer_size=record_shuffle_size)
+    # Shuffl ng before repeat ng ensures strong order ng.
+     f shuffle:
+      dataset = dataset.shuffle(buffer_s ze=record_shuffle_s ze)
 
     return dataset
 
-  if interleave:
-    part_file_parallelism = num_threads if part_file_parallelism is None else part_file_parallelism
-    dataset = files.interleave(
-      map_fn, cycle_length=part_file_parallelism, block_length=block_length, num_parallel_calls=num_threads)
+   f  nterleave:
+    part_f le_parallel sm = num_threads  f part_f le_parallel sm  s None else part_f le_parallel sm
+    dataset = f les. nterleave(
+      map_fn, cycle_length=part_f le_parallel sm, block_length=block_length, num_parallel_calls=num_threads)
   else:
-    dataset = files.flat_map(map_fn)
+    dataset = f les.flat_map(map_fn)
 
   # Downsample DataRecords
   dataset = downsample_dataset(dataset, keep_rate, "keep_rate")
 
-  if dataset_fn is None:
-    # Create a batch of datarecords and decode them
-    return dataset.batch(batch_size).map(parse_fn, num_parallel_calls=tf.data.experimental.AUTOTUNE).prefetch(prefetch_size)
+   f dataset_fn  s None:
+    # Create a batch of datarecords and decode t m
+    return dataset.batch(batch_s ze).map(parse_fn, num_parallel_calls=tf.data.exper  ntal.AUTOTUNE).prefetch(prefetch_s ze)
 
-  return dataset_fn(dataset, parse_fn, batch_size)
+  return dataset_fn(dataset, parse_fn, batch_s ze)
 
 
 def cx_zk_path(path):
-  if path is None:
-    raise ValueError("Path for zookeeper dataset pointer is None. You must specify a path.")
-  return_path = "/".join([DEFAULT_ZOOKEEPER_BASE_ZNODE, path])
-  logging.info("Zookeeper path is: {}".format(return_path))
+   f path  s None:
+    ra se ValueError("Path for zookeeper dataset po nter  s None.   must spec fy a path.")
+  return_path = "/".jo n([DEFAULT_ZOOKEEPER_BASE_ZNODE, path])
+  logg ng. nfo("Zookeeper path  s: {}".format(return_path))
   return return_path
 
 
 def zookeeper_ordered_dataset(
-        files, parse_fn, batch_size, zk_counter_path, repeat=False,
-        num_threads=2, block_length=None, part_file_parallelism=None,
-        batch_shuffle_size=None, file_keep_rate=None, record_keep_rate=None,
-        prefetch_size=2, interleave=False, dataset_fn=None, verbose=False):
+        f les, parse_fn, batch_s ze, zk_counter_path, repeat=False,
+        num_threads=2, block_length=None, part_f le_parallel sm=None,
+        batch_shuffle_s ze=None, f le_keep_rate=None, record_keep_rate=None,
+        prefetch_s ze=2,  nterleave=False, dataset_fn=None, verbose=False):
   """
-  Make a tf.Dataset given an ordered list of filenames, using Zookeeper to keep track of
-  which file to read, and to coordinate multiple workers.
+  Make a tf.Dataset g ven an ordered l st of f lena s, us ng Zookeeper to keep track of
+  wh ch f le to read, and to coord nate mult ple workers.
 
   Args:
-    files:
-      ordered list of (typically HDFS) filenames. This must remain consistent
-      between different workers, and between worker restarts (e.g. in the case
-      of instance failure or preemption).
-      To ensure this remains consistent, consider using the --train.files_list
-      option from DataRecordTrainer.
+    f les:
+      ordered l st of (typ cally HDFS) f lena s. T  must rema n cons stent
+      bet en d fferent workers, and bet en worker restarts (e.g.  n t  case
+      of  nstance fa lure or preempt on).
+      To ensure t  rema ns cons stent, cons der us ng t  --tra n.f les_l st
+      opt on from DataRecordTra ner.
     parse_fn:
-      A function that takes a byte tensor containing a datarecord and decodes it.
-    batch_size:
-      The batch size for each step.
+      A funct on that takes a byte tensor conta n ng a datarecord and decodes  .
+    batch_s ze:
+      T  batch s ze for each step.
     zk_counter_path:
-      Path under the root node for the underlying zookeeper shared counter that
-      is used to coordinate distributed iteration over the list of files.
-      Full path will be `'/'.join([DEFAULT_ZOOKEEPER_BASE_ZNODE, zk_counter_path])`.
+      Path under t  root node for t  underly ng zookeeper shared counter that
+       s used to coord nate d str buted  erat on over t  l st of f les.
+      Full path w ll be `'/'.jo n([DEFAULT_ZOOKEEPER_BASE_ZNODE, zk_counter_path])`.
     repeat:
-      Default False. Set True to repeat over the files forever.
+      Default False. Set True to repeat over t  f les forever.
     num_threads:
-      Default 2. Number of threads working on the data in parallel.
-      Only used if interleave=True.
+      Default 2. Number of threads work ng on t  data  n parallel.
+      Only used  f  nterleave=True.
     block_length:
-      Default None. Number of consecutive records to pull from a single part file.
-      If None, then block_length=batch_size will be used.
-      Only used if interleave=True.
-    part_file_parallelism:
-      Default None. Number of part files to read from in parallel. Once a part file is completely
-      read, it will be replaced by the next part file indicated by the zookeeper counter.
-      Only used if interleave=True.
+      Default None. Number of consecut ve records to pull from a s ngle part f le.
+       f None, t n block_length=batch_s ze w ll be used.
+      Only used  f  nterleave=True.
+    part_f le_parallel sm:
+      Default None. Number of part f les to read from  n parallel. Once a part f le  s completely
+      read,   w ll be replaced by t  next part f le  nd cated by t  zookeeper counter.
+      Only used  f  nterleave=True.
 
-      ``num_threads`` specifies a reader thread pool size, while ``part_file_parallelism`` specifies
-      the number of files to read from in parallel. If ``part_file_parallelism`` is greater than or
-      equal to ``num_threads``, the reads will be distributed over ``num_threads``. On the other hand,
-      if ``part_file_parallelism`` is smaller than``num_threads``, it is very likely that the reader
-      thread pool will be underutilized, since it can never be the case that every reader thread has
-      a part file to read from.
+      ``num_threads`` spec f es a reader thread pool s ze, wh le ``part_f le_parallel sm`` spec f es
+      t  number of f les to read from  n parallel.  f ``part_f le_parallel sm``  s greater than or
+      equal to ``num_threads``, t  reads w ll be d str buted over ``num_threads``. On t  ot r hand,
+       f ``part_f le_parallel sm``  s smaller than``num_threads``,    s very l kely that t  reader
+      thread pool w ll be underut l zed, s nce   can never be t  case that every reader thread has
+      a part f le to read from.
 
-    batch_shuffle_size:
-      Default None. Size of shuffle buffer, for shuffling that will be applied after batching.
-      if None, then batches will not be shuffled. Ignored if dataset_fn is provided.
-    file_keep_rate:
-      Default None. Fraction of files to keep, or None to keep all files.
+    batch_shuffle_s ze:
+      Default None. S ze of shuffle buffer, for shuffl ng that w ll be appl ed after batch ng.
+       f None, t n batc s w ll not be shuffled.  gnored  f dataset_fn  s prov ded.
+    f le_keep_rate:
+      Default None. Fract on of f les to keep, or None to keep all f les.
     record_keep_rate:
-      Default None. Fraction of records to keep, or None to keep all records.
-    prefetch_size:
-      Default 2. Number of parsed batches to prefetch. Ignored if dataset_fn is provided.
-    interleave:
-      Default False. Set True to use tf.data.Dataset.interleave rather than flat_map.
+      Default None. Fract on of records to keep, or None to keep all records.
+    prefetch_s ze:
+      Default 2. Number of parsed batc s to prefetch.  gnored  f dataset_fn  s prov ded.
+     nterleave:
+      Default False. Set True to use tf.data.Dataset. nterleave rat r than flat_map.
     dataset_fn:
-      A function that is applied to the dataset of individual records, after
-      these have been read from the parts files.
-      If ``None`` (the default), the behavior will be as though dataset_fn were set to:
+      A funct on that  s appl ed to t  dataset of  nd v dual records, after
+      t se have been read from t  parts f les.
+       f ``None`` (t  default), t  behav or w ll be as though dataset_fn  re set to:
 
       .. code-block:: python
 
-        def dataset_fn(dataset, parse_fn, batch_size):
-          dataset = dataset.batch(batch_size)
-          dataset = dataset.map(parse_fn, tf.data.experimental.AUTOTUNE)
-          if batch_shuffle_size:
-            dataset = dataset.shuffle(batch_shuffle_size)
-          return dataset.prefetch(prefetch_size)
+        def dataset_fn(dataset, parse_fn, batch_s ze):
+          dataset = dataset.batch(batch_s ze)
+          dataset = dataset.map(parse_fn, tf.data.exper  ntal.AUTOTUNE)
+           f batch_shuffle_s ze:
+            dataset = dataset.shuffle(batch_shuffle_s ze)
+          return dataset.prefetch(prefetch_s ze)
 
     verbose:
-      Default False. Set True to log the names of files loaded by TF.
+      Default False. Set True to log t  na s of f les loaded by TF.
   """
-  block_length = batch_size if block_length is None else block_length
-  part_file_parallelism = num_threads if part_file_parallelism is None else part_file_parallelism
+  block_length = batch_s ze  f block_length  s None else block_length
+  part_f le_parallel sm = num_threads  f part_f le_parallel sm  s None else part_f le_parallel sm
 
-  def zk_index_generator(my_files=files):
-    zk = KazooClient(hosts=DEFAULT_ZOOKEEPER_HOST)
+  def zk_ ndex_generator( _f les=f les):
+    zk = KazooCl ent(hosts=DEFAULT_ZOOKEEPER_HOST)
     zk.start()
-    my_counter = zk.Counter(cx_zk_path(zk_counter_path), default=0)
-    while True:
-      my_counter += 1
-      counter_pre_value = my_counter.pre_value
-      if repeat:
-        counter_pre_value = counter_pre_value % len(my_files)
-      if counter_pre_value >= len(my_files):
+     _counter = zk.Counter(cx_zk_path(zk_counter_path), default=0)
+    wh le True:
+       _counter += 1
+      counter_pre_value =  _counter.pre_value
+       f repeat:
+        counter_pre_value = counter_pre_value % len( _f les)
+       f counter_pre_value >= len( _f les):
         break
       else:
-        chosen_file = my_files[counter_pre_value]
-        if verbose:
-          logging.info("{}. yielding {}".format(counter_pre_value, chosen_file))
-        yield chosen_file
+        chosen_f le =  _f les[counter_pre_value]
+         f verbose:
+          logg ng. nfo("{}. y eld ng {}".format(counter_pre_value, chosen_f le))
+        y eld chosen_f le
     zk.stop()
 
-  files = tf.data.Dataset.from_generator(zk_index_generator, tf.string)
+  f les = tf.data.Dataset.from_generator(zk_ ndex_generator, tf.str ng)
 
-  # Downsample parts files
-  files = downsample_dataset(files, file_keep_rate, "file_keep_rate")
+  # Downsample parts f les
+  f les = downsample_dataset(f les, f le_keep_rate, "f le_keep_rate")
 
-  def map_fn(filenames):
-    return BlockFormatDataset(filenames).prefetch(20)
+  def map_fn(f lena s):
+    return BlockFormatDataset(f lena s).prefetch(20)
 
-  # Dont interleave for sequential training
-  if interleave:
-    dataset = files.interleave(
+  # Dont  nterleave for sequent al tra n ng
+   f  nterleave:
+    dataset = f les. nterleave(
       map_fn,
-      cycle_length=part_file_parallelism,
+      cycle_length=part_f le_parallel sm,
       block_length=block_length,
       num_parallel_calls=num_threads)
   else:
-    dataset = files.flat_map(map_fn)
+    dataset = f les.flat_map(map_fn)
 
   # Downsample DataRecords
   dataset = downsample_dataset(dataset, record_keep_rate, "record_keep_rate")
 
-  if dataset_fn is None:
-    # Create a batch of datarecords and decode them
-    dataset = dataset.batch(batch_size)
-    dataset = dataset.map(parse_fn, num_parallel_calls=tf.data.experimental.AUTOTUNE)
-    # shuffle after batching and parsing for performance reasons
-    # faster b/c 1 random selection is made per batch rather than per record
-    if batch_shuffle_size:
-      dataset = dataset.shuffle(buffer_size=batch_shuffle_size)
-    dataset = dataset.prefetch(prefetch_size)
+   f dataset_fn  s None:
+    # Create a batch of datarecords and decode t m
+    dataset = dataset.batch(batch_s ze)
+    dataset = dataset.map(parse_fn, num_parallel_calls=tf.data.exper  ntal.AUTOTUNE)
+    # shuffle after batch ng and pars ng for performance reasons
+    # faster b/c 1 random select on  s made per batch rat r than per record
+     f batch_shuffle_s ze:
+      dataset = dataset.shuffle(buffer_s ze=batch_shuffle_s ze)
+    dataset = dataset.prefetch(prefetch_s ze)
 
   else:
-    dataset = dataset_fn(dataset, parse_fn, batch_size)
+    dataset = dataset_fn(dataset, parse_fn, batch_s ze)
 
   return dataset

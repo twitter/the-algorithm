@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted
 
-case class CallToAction(
-  callToActionType: Option[String],
-  url: Option[String])
+case class CallToAct on(
+  callToAct onType: Opt on[Str ng],
+  url: Opt on[Str ng])

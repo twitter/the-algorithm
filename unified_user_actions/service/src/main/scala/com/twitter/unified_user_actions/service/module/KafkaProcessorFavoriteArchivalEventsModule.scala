@@ -1,88 +1,88 @@
-package com.twitter.unified_user_actions.service.module
+package com.tw ter.un f ed_user_act ons.serv ce.module
 
-import com.google.inject.Provides
-import com.twitter.decider.Decider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.finatra.kafka.serde.UnKeyedSerde
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.kafka.client.processor.AtLeastOnceProcessor
-import com.twitter.unified_user_actions.adapter.favorite_archival_events.FavoriteArchivalEventsAdapter
-import com.twitter.unified_user_actions.kafka.CompressionTypeFlag
-import com.twitter.unified_user_actions.kafka.serde.NullableScalaSerdes
-import com.twitter.timelineservice.fanout.thriftscala.FavoriteArchivalEvent
-import com.twitter.util.Duration
-import com.twitter.util.StorageUnit
-import com.twitter.util.logging.Logging
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f natra.kafka.serde.UnKeyed
+ mport com.tw ter.f natra.kafka.serde.UnKeyedSerde
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.kafka.cl ent.processor.AtLeastOnceProcessor
+ mport com.tw ter.un f ed_user_act ons.adapter.favor e_arch val_events.Favor eArch valEventsAdapter
+ mport com.tw ter.un f ed_user_act ons.kafka.Compress onTypeFlag
+ mport com.tw ter.un f ed_user_act ons.kafka.serde.NullableScalaSerdes
+ mport com.tw ter.t  l neserv ce.fanout.thr ftscala.Favor eArch valEvent
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.StorageUn 
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport javax. nject.S ngleton
 
-object KafkaProcessorFavoriteArchivalEventsModule extends TwitterModule with Logging {
-  override def modules = Seq(FlagsModule)
+object KafkaProcessorFavor eArch valEventsModule extends Tw terModule w h Logg ng {
+  overr de def modules = Seq(FlagsModule)
 
-  private val adapter = new FavoriteArchivalEventsAdapter
-  // NOTE: This is a shared processor name in order to simplify monviz stat computation.
-  private final val processorName = "uuaProcessor"
+  pr vate val adapter = new Favor eArch valEventsAdapter
+  // NOTE: T   s a shared processor na   n order to s mpl fy monv z stat computat on.
+  pr vate f nal val processorNa  = "uuaProcessor"
 
-  @Provides
-  @Singleton
-  def providesKafkaProcessor(
-    decider: Decider,
-    @Flag(FlagsModule.cluster) cluster: String,
-    @Flag(FlagsModule.kafkaSourceCluster) kafkaSourceCluster: String,
-    @Flag(FlagsModule.kafkaDestCluster) kafkaDestCluster: String,
-    @Flag(FlagsModule.kafkaSourceTopic) kafkaSourceTopic: String,
-    @Flag(FlagsModule.kafkaSinkTopics) kafkaSinkTopics: Seq[String],
-    @Flag(FlagsModule.kafkaGroupId) kafkaGroupId: String,
-    @Flag(FlagsModule.kafkaProducerClientId) kafkaProducerClientId: String,
-    @Flag(FlagsModule.kafkaMaxPendingRequests) kafkaMaxPendingRequests: Int,
-    @Flag(FlagsModule.kafkaWorkerThreads) kafkaWorkerThreads: Int,
-    @Flag(FlagsModule.commitInterval) commitInterval: Duration,
-    @Flag(FlagsModule.maxPollRecords) maxPollRecords: Int,
-    @Flag(FlagsModule.maxPollInterval) maxPollInterval: Duration,
-    @Flag(FlagsModule.sessionTimeout) sessionTimeout: Duration,
-    @Flag(FlagsModule.fetchMax) fetchMax: StorageUnit,
-    @Flag(FlagsModule.batchSize) batchSize: StorageUnit,
-    @Flag(FlagsModule.linger) linger: Duration,
-    @Flag(FlagsModule.bufferMem) bufferMem: StorageUnit,
-    @Flag(FlagsModule.compressionType) compressionTypeFlag: CompressionTypeFlag,
-    @Flag(FlagsModule.retries) retries: Int,
-    @Flag(FlagsModule.retryBackoff) retryBackoff: Duration,
-    @Flag(FlagsModule.requestTimeout) requestTimeout: Duration,
+  @Prov des
+  @S ngleton
+  def prov desKafkaProcessor(
+    dec der: Dec der,
+    @Flag(FlagsModule.cluster) cluster: Str ng,
+    @Flag(FlagsModule.kafkaS ceCluster) kafkaS ceCluster: Str ng,
+    @Flag(FlagsModule.kafkaDestCluster) kafkaDestCluster: Str ng,
+    @Flag(FlagsModule.kafkaS ceTop c) kafkaS ceTop c: Str ng,
+    @Flag(FlagsModule.kafkaS nkTop cs) kafkaS nkTop cs: Seq[Str ng],
+    @Flag(FlagsModule.kafkaGroup d) kafkaGroup d: Str ng,
+    @Flag(FlagsModule.kafkaProducerCl ent d) kafkaProducerCl ent d: Str ng,
+    @Flag(FlagsModule.kafkaMaxPend ngRequests) kafkaMaxPend ngRequests:  nt,
+    @Flag(FlagsModule.kafkaWorkerThreads) kafkaWorkerThreads:  nt,
+    @Flag(FlagsModule.comm  nterval) comm  nterval: Durat on,
+    @Flag(FlagsModule.maxPollRecords) maxPollRecords:  nt,
+    @Flag(FlagsModule.maxPoll nterval) maxPoll nterval: Durat on,
+    @Flag(FlagsModule.sess onT  out) sess onT  out: Durat on,
+    @Flag(FlagsModule.fetchMax) fetchMax: StorageUn ,
+    @Flag(FlagsModule.batchS ze) batchS ze: StorageUn ,
+    @Flag(FlagsModule.l nger) l nger: Durat on,
+    @Flag(FlagsModule.buffer m) buffer m: StorageUn ,
+    @Flag(FlagsModule.compress onType) compress onTypeFlag: Compress onTypeFlag,
+    @Flag(FlagsModule.retr es) retr es:  nt,
+    @Flag(FlagsModule.retryBackoff) retryBackoff: Durat on,
+    @Flag(FlagsModule.requestT  out) requestT  out: Durat on,
     @Flag(FlagsModule.enableTrustStore) enableTrustStore: Boolean,
-    @Flag(FlagsModule.trustStoreLocation) trustStoreLocation: String,
-    statsReceiver: StatsReceiver,
-  ): AtLeastOnceProcessor[UnKeyed, FavoriteArchivalEvent] = {
-    KafkaProcessorProvider.provideDefaultAtLeastOnceProcessor(
-      name = processorName,
-      kafkaSourceCluster = kafkaSourceCluster,
-      kafkaGroupId = kafkaGroupId,
-      kafkaSourceTopic = kafkaSourceTopic,
-      sourceKeyDeserializer = UnKeyedSerde.deserializer,
-      sourceValueDeserializer = NullableScalaSerdes
-        .Thrift[FavoriteArchivalEvent](statsReceiver.counter("deserializerErrors")).deserializer,
-      commitInterval = commitInterval,
+    @Flag(FlagsModule.trustStoreLocat on) trustStoreLocat on: Str ng,
+    statsRece ver: StatsRece ver,
+  ): AtLeastOnceProcessor[UnKeyed, Favor eArch valEvent] = {
+    KafkaProcessorProv der.prov deDefaultAtLeastOnceProcessor(
+      na  = processorNa ,
+      kafkaS ceCluster = kafkaS ceCluster,
+      kafkaGroup d = kafkaGroup d,
+      kafkaS ceTop c = kafkaS ceTop c,
+      s ceKeyDeser al zer = UnKeyedSerde.deser al zer,
+      s ceValueDeser al zer = NullableScalaSerdes
+        .Thr ft[Favor eArch valEvent](statsRece ver.counter("deser al zerErrors")).deser al zer,
+      comm  nterval = comm  nterval,
       maxPollRecords = maxPollRecords,
-      maxPollInterval = maxPollInterval,
-      sessionTimeout = sessionTimeout,
+      maxPoll nterval = maxPoll nterval,
+      sess onT  out = sess onT  out,
       fetchMax = fetchMax,
-      processorMaxPendingRequests = kafkaMaxPendingRequests,
+      processorMaxPend ngRequests = kafkaMaxPend ngRequests,
       processorWorkerThreads = kafkaWorkerThreads,
       adapter = adapter,
-      kafkaSinkTopics = kafkaSinkTopics,
+      kafkaS nkTop cs = kafkaS nkTop cs,
       kafkaDestCluster = kafkaDestCluster,
-      kafkaProducerClientId = kafkaProducerClientId,
-      batchSize = batchSize,
-      linger = linger,
-      bufferMem = bufferMem,
-      compressionType = compressionTypeFlag.compressionType,
-      retries = retries,
+      kafkaProducerCl ent d = kafkaProducerCl ent d,
+      batchS ze = batchS ze,
+      l nger = l nger,
+      buffer m = buffer m,
+      compress onType = compress onTypeFlag.compress onType,
+      retr es = retr es,
       retryBackoff = retryBackoff,
-      requestTimeout = requestTimeout,
-      statsReceiver = statsReceiver,
-      trustStoreLocationOpt = if (enableTrustStore) Some(trustStoreLocation) else None,
-      decider = decider,
-      zone = ZoneFiltering.zoneMapping(cluster),
+      requestT  out = requestT  out,
+      statsRece ver = statsRece ver,
+      trustStoreLocat onOpt =  f (enableTrustStore) So (trustStoreLocat on) else None,
+      dec der = dec der,
+      zone = ZoneF lter ng.zoneMapp ng(cluster),
     )
   }
 }

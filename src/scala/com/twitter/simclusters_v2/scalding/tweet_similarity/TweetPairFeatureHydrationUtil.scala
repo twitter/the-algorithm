@@ -1,285 +1,285 @@
-package com.twitter.simclusters_v2.scalding.tweet_similarity
+package com.tw ter.s mclusters_v2.scald ng.t et_s m lar y
 
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.ml.api.{DataRecord, DataRecordMerger, DataSetPipe, FeatureContext}
-import com.twitter.ml.featurestore.lib.data.EntityIds.Entry
-import com.twitter.ml.featurestore.lib.data.{EntityIds, FeatureValuesById, PredictionRecord}
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.simclusters_v2.common.SimClustersEmbedding._
-import com.twitter.simclusters_v2.tweet_similarity.ModelBasedTweetSimilaritySimClustersEmbeddingAdapter.{
-  NormalizedCandidateEmbAdapter,
-  NormalizedQueryEmbAdapter
+ mport com.tw ter.ml.ap .ut l.FDsl._
+ mport com.tw ter.ml.ap .{DataRecord, DataRecord rger, DataSetP pe, FeatureContext}
+ mport com.tw ter.ml.featurestore.l b.data.Ent y ds.Entry
+ mport com.tw ter.ml.featurestore.l b.data.{Ent y ds, FeatureValuesBy d, Pred ct onRecord}
+ mport com.tw ter.scald ng.typed.TypedP pe
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng._
+ mport com.tw ter.s mclusters_v2.t et_s m lar y.ModelBasedT etS m lar yS mClustersEmbedd ngAdapter.{
+  Normal zedCand dateEmbAdapter,
+  Normal zedQueryEmbAdapter
 }
-import com.twitter.simclusters_v2.tweet_similarity.{
-  TweetSimilarityFeatures,
-  TweetSimilarityFeaturesStoreConfig
+ mport com.tw ter.s mclusters_v2.t et_s m lar y.{
+  T etS m lar yFeatures,
+  T etS m lar yFeaturesStoreConf g
 }
-import com.twitter.simclusters_v2.common.{Timestamp, TweetId, UserId}
-import com.twitter.simclusters_v2.scalding.tweet_similarity.TweetPairLabelCollectionUtil.FeaturedTweet
-import com.twitter.simclusters_v2.thriftscala.{
-  PersistentSimClustersEmbedding,
-  SimClustersEmbedding => ThriftSimClustersEmbedding
+ mport com.tw ter.s mclusters_v2.common.{T  stamp, T et d, User d}
+ mport com.tw ter.s mclusters_v2.scald ng.t et_s m lar y.T etPa rLabelCollect onUt l.FeaturedT et
+ mport com.tw ter.s mclusters_v2.thr ftscala.{
+  Pers stentS mClustersEmbedd ng,
+  S mClustersEmbedd ng => Thr ftS mClustersEmbedd ng
 }
 
-object TweetPairFeatureHydrationUtil {
-  val QueryTweetConfig = new TweetSimilarityFeaturesStoreConfig("query_tweet_user_id")
-  val CandidateTweetConfig = new TweetSimilarityFeaturesStoreConfig("candidate_tweet_user_id")
-  val DataRecordMerger = new DataRecordMerger()
+object T etPa rFeatureHydrat onUt l {
+  val QueryT etConf g = new T etS m lar yFeaturesStoreConf g("query_t et_user_ d")
+  val Cand dateT etConf g = new T etS m lar yFeaturesStoreConf g("cand date_t et_user_ d")
+  val DataRecord rger = new DataRecord rger()
 
   /**
-   * Given persistentEmbeddings TypedPipe, extract tweetId, timestamp, and the embedding
+   * G ven pers stentEmbedd ngs TypedP pe, extract t et d, t  stamp, and t  embedd ng
    *
-   * @param persistentEmbeddings TypedPipe of ((TweetId, Timestamp), PersistentSimClustersEmbedding), read from PersistentTweetEmbeddingMhExportSource
+   * @param pers stentEmbedd ngs TypedP pe of ((T et d, T  stamp), Pers stentS mClustersEmbedd ng), read from Pers stentT etEmbedd ngMhExportS ce
    *
-   * @return Extracted TypedPipe of (TweetId, (Timestamp, SimClustersEmbedding))
+   * @return Extracted TypedP pe of (T et d, (T  stamp, S mClustersEmbedd ng))
    */
-  def extractEmbeddings(
-    persistentEmbeddings: TypedPipe[((TweetId, Timestamp), PersistentSimClustersEmbedding)]
-  ): TypedPipe[(TweetId, (Timestamp, ThriftSimClustersEmbedding))] = {
-    persistentEmbeddings
+  def extractEmbedd ngs(
+    pers stentEmbedd ngs: TypedP pe[((T et d, T  stamp), Pers stentS mClustersEmbedd ng)]
+  ): TypedP pe[(T et d, (T  stamp, Thr ftS mClustersEmbedd ng))] = {
+    pers stentEmbedd ngs
       .collect {
-        case ((tweetId, _), embedding) if embedding.metadata.updatedAtMs.isDefined =>
-          (tweetId, (embedding.metadata.updatedAtMs.get, embedding.embedding))
+        case ((t et d, _), embedd ng)  f embedd ng. tadata.updatedAtMs. sDef ned =>
+          (t et d, (embedd ng. tadata.updatedAtMs.get, embedd ng.embedd ng))
       }
   }
 
   /**
-   * Hydrate the tweet pairs with the latest persistent embeddings before engagement/impression.
+   * Hydrate t  t et pa rs w h t  latest pers stent embedd ngs before engage nt/ mpress on.
    *
-   * @param tweetPairs           TypedPipe of the (userId, queryFeaturedTweet, candidateFeaturedTweet, label)
-   * @param persistentEmbeddings TypedPipe of persistentEmbeddings from PersistentTweetEmbeddingMhExportSource
+   * @param t etPa rs           TypedP pe of t  (user d, queryFeaturedT et, cand dateFeaturedT et, label)
+   * @param pers stentEmbedd ngs TypedP pe of pers stentEmbedd ngs from Pers stentT etEmbedd ngMhExportS ce
    *
-   * @return TypedPipe of the (userId, queryFeaturedTweet, candidateFeaturedTweet, label) with persistent embeddings set
+   * @return TypedP pe of t  (user d, queryFeaturedT et, cand dateFeaturedT et, label) w h pers stent embedd ngs set
    */
-  def getTweetPairsWithPersistentEmbeddings(
-    tweetPairs: TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)],
-    persistentEmbeddings: TypedPipe[((TweetId, Timestamp), PersistentSimClustersEmbedding)]
-  ): TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)] = {
-    val extractedEmbeddings = extractEmbeddings(persistentEmbeddings)
-    tweetPairs
+  def getT etPa rsW hPers stentEmbedd ngs(
+    t etPa rs: TypedP pe[(FeaturedT et, FeaturedT et, Boolean)],
+    pers stentEmbedd ngs: TypedP pe[((T et d, T  stamp), Pers stentS mClustersEmbedd ng)]
+  ): TypedP pe[(FeaturedT et, FeaturedT et, Boolean)] = {
+    val extractedEmbedd ngs = extractEmbedd ngs(pers stentEmbedd ngs)
+    t etPa rs
       .groupBy {
-        case (queryFeaturedTweet, _, _) => queryFeaturedTweet.tweet
+        case (queryFeaturedT et, _, _) => queryFeaturedT et.t et
       }
-      .join(extractedEmbeddings)
+      .jo n(extractedEmbedd ngs)
       .collect {
         case (
               _,
               (
-                (queryFeaturedTweet, candidateFeaturedTweet, label),
-                (embeddingTimestamp, embedding)))
-            if embeddingTimestamp <= queryFeaturedTweet.timestamp =>
-          ((queryFeaturedTweet, candidateFeaturedTweet), (embeddingTimestamp, embedding, label))
+                (queryFeaturedT et, cand dateFeaturedT et, label),
+                (embedd ngT  stamp, embedd ng)))
+             f embedd ngT  stamp <= queryFeaturedT et.t  stamp =>
+          ((queryFeaturedT et, cand dateFeaturedT et), (embedd ngT  stamp, embedd ng, label))
       }
       .group
       .maxBy(_._1)
       .map {
-        case ((queryFeaturedTweet, candidateFeaturedTweet), (_, embedding, label)) =>
+        case ((queryFeaturedT et, cand dateFeaturedT et), (_, embedd ng, label)) =>
           (
-            candidateFeaturedTweet.tweet,
-            (queryFeaturedTweet.copy(embedding = Some(embedding)), candidateFeaturedTweet, label)
+            cand dateFeaturedT et.t et,
+            (queryFeaturedT et.copy(embedd ng = So (embedd ng)), cand dateFeaturedT et, label)
           )
       }
-      .join(extractedEmbeddings)
+      .jo n(extractedEmbedd ngs)
       .collect {
         case (
               _,
               (
-                (queryFeaturedTweet, candidateFeaturedTweet, label),
-                (embeddingTimestamp, embedding)))
-            if embeddingTimestamp <= candidateFeaturedTweet.timestamp =>
-          ((queryFeaturedTweet, candidateFeaturedTweet), (embeddingTimestamp, embedding, label))
+                (queryFeaturedT et, cand dateFeaturedT et, label),
+                (embedd ngT  stamp, embedd ng)))
+             f embedd ngT  stamp <= cand dateFeaturedT et.t  stamp =>
+          ((queryFeaturedT et, cand dateFeaturedT et), (embedd ngT  stamp, embedd ng, label))
       }
       .group
       .maxBy(_._1)
       .map {
-        case ((queryFeaturedTweet, candidateFeaturedTweet), (_, embedding, label)) =>
-          (queryFeaturedTweet, candidateFeaturedTweet.copy(embedding = Some(embedding)), label)
+        case ((queryFeaturedT et, cand dateFeaturedT et), (_, embedd ng, label)) =>
+          (queryFeaturedT et, cand dateFeaturedT et.copy(embedd ng = So (embedd ng)), label)
       }
   }
 
   /**
-   * Get tweet pairs with the author userIds
+   * Get t et pa rs w h t  author user ds
    *
-   * @param tweetPairs       TypedPipe of (queryTweet, queryEmbedding, queryTimestamp, candidateTweet, candidateEmbedding, candidateTimestamp, label)
-   * @param tweetAuthorPairs TypedPipe of (tweetId, author userId)
+   * @param t etPa rs       TypedP pe of (queryT et, queryEmbedd ng, queryT  stamp, cand dateT et, cand dateEmbedd ng, cand dateT  stamp, label)
+   * @param t etAuthorPa rs TypedP pe of (t et d, author user d)
    *
-   * @return TypedPipe of (queryTweet, queryAuthor, queryEmbedding, queryTimestamp, candidateTweet, candidateAuthor, candidateEmbedding, candidateTimestamp, label)
+   * @return TypedP pe of (queryT et, queryAuthor, queryEmbedd ng, queryT  stamp, cand dateT et, cand dateAuthor, cand dateEmbedd ng, cand dateT  stamp, label)
    */
-  def getTweetPairsWithAuthors(
-    tweetPairs: TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)],
-    tweetAuthorPairs: TypedPipe[(TweetId, UserId)]
-  ): TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)] = {
-    tweetPairs
-    //keyed by queryTweet s.t. we get queryTweet's author after joining with tweetAuthorPairs
-      .groupBy { case (queryFeaturedTweet, _, _) => queryFeaturedTweet.tweet }
-      .join(tweetAuthorPairs)
+  def getT etPa rsW hAuthors(
+    t etPa rs: TypedP pe[(FeaturedT et, FeaturedT et, Boolean)],
+    t etAuthorPa rs: TypedP pe[(T et d, User d)]
+  ): TypedP pe[(FeaturedT et, FeaturedT et, Boolean)] = {
+    t etPa rs
+    //keyed by queryT et s.t.   get queryT et's author after jo n ng w h t etAuthorPa rs
+      .groupBy { case (queryFeaturedT et, _, _) => queryFeaturedT et.t et }
+      .jo n(t etAuthorPa rs)
       .values
-      //keyed by candidateTweet
-      .groupBy { case ((_, candidateFeaturedTweet, _), _) => candidateFeaturedTweet.tweet }
-      .join(tweetAuthorPairs)
+      //keyed by cand dateT et
+      .groupBy { case ((_, cand dateFeaturedT et, _), _) => cand dateFeaturedT et.t et }
+      .jo n(t etAuthorPa rs)
       .values
       .map {
         case (
-              ((queryFeaturedTweet, candidateFeaturedTweet, label), queryAuthor),
-              candidateAuthor) =>
+              ((queryFeaturedT et, cand dateFeaturedT et, label), queryAuthor),
+              cand dateAuthor) =>
           (
-            queryFeaturedTweet.copy(author = Some(queryAuthor)),
-            candidateFeaturedTweet.copy(author = Some(candidateAuthor)),
+            queryFeaturedT et.copy(author = So (queryAuthor)),
+            cand dateFeaturedT et.copy(author = So (cand dateAuthor)),
             label
           )
       }
   }
 
   /**
-   * Get tweet pairs with popularity counts
+   * Get t et pa rs w h popular y counts
    *
-   * @param tweetPairs TypedPipe of the (userId, queryFeaturedTweet, candidateFeaturedTweet, label)
+   * @param t etPa rs TypedP pe of t  (user d, queryFeaturedT et, cand dateFeaturedT et, label)
    *
-   * @return TypedPipe of the (userId, queryFeaturedTweet, candidateFeaturedTweet, tweetPairCount, queryTweetCount, label)
+   * @return TypedP pe of t  (user d, queryFeaturedT et, cand dateFeaturedT et, t etPa rCount, queryT etCount, label)
    */
-  def getTweetPairsWithCounts(
-    tweetPairs: TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)]
-  ): TypedPipe[(FeaturedTweet, FeaturedTweet, Long, Long, Boolean)] = {
-    val tweetPairCount = tweetPairs.groupBy {
-      case (queryFeaturedTweet, candidateFeaturedTweet, _) =>
-        (queryFeaturedTweet.tweet, candidateFeaturedTweet.tweet)
-    }.size
+  def getT etPa rsW hCounts(
+    t etPa rs: TypedP pe[(FeaturedT et, FeaturedT et, Boolean)]
+  ): TypedP pe[(FeaturedT et, FeaturedT et, Long, Long, Boolean)] = {
+    val t etPa rCount = t etPa rs.groupBy {
+      case (queryFeaturedT et, cand dateFeaturedT et, _) =>
+        (queryFeaturedT et.t et, cand dateFeaturedT et.t et)
+    }.s ze
 
-    val queryTweetCount = tweetPairs.groupBy {
-      case (queryFeaturedTweet, _, _) => queryFeaturedTweet.tweet
-    }.size
+    val queryT etCount = t etPa rs.groupBy {
+      case (queryFeaturedT et, _, _) => queryFeaturedT et.t et
+    }.s ze
 
-    tweetPairs
+    t etPa rs
       .groupBy {
-        case (queryFeaturedTweet, candidateFeaturedTweet, _) =>
-          (queryFeaturedTweet.tweet, candidateFeaturedTweet.tweet)
+        case (queryFeaturedT et, cand dateFeaturedT et, _) =>
+          (queryFeaturedT et.t et, cand dateFeaturedT et.t et)
       }
-      .join(tweetPairCount)
+      .jo n(t etPa rCount)
       .values
       .map {
-        case ((queryFeaturedTweet, candidateFeaturedTweet, label), tweetPairCount) =>
-          (queryFeaturedTweet, candidateFeaturedTweet, tweetPairCount, label)
+        case ((queryFeaturedT et, cand dateFeaturedT et, label), t etPa rCount) =>
+          (queryFeaturedT et, cand dateFeaturedT et, t etPa rCount, label)
       }
-      .groupBy { case (queryFeaturedTweet, _, _, _) => queryFeaturedTweet.tweet }
-      .join(queryTweetCount)
+      .groupBy { case (queryFeaturedT et, _, _, _) => queryFeaturedT et.t et }
+      .jo n(queryT etCount)
       .values
       .map {
         case (
-              (queryFeaturedTweet, candidateFeaturedTweet, tweetPairCount, label),
-              queryTweetCount) =>
-          (queryFeaturedTweet, candidateFeaturedTweet, tweetPairCount, queryTweetCount, label)
+              (queryFeaturedT et, cand dateFeaturedT et, t etPa rCount, label),
+              queryT etCount) =>
+          (queryFeaturedT et, cand dateFeaturedT et, t etPa rCount, queryT etCount, label)
       }
   }
 
   /**
-   * Get training data records
+   * Get tra n ng data records
    *
-   * @param tweetPairs           TypedPipe of the (userId, queryFeaturedTweet, candidateFeaturedTweet, label)
-   * @param persistentEmbeddings TypedPipe of persistentEmbeddings from PersistentTweetEmbeddingMhExportSource
-   * @param tweetAuthorPairs     TypedPipe of (tweetId, author userId)
-   * @param useAuthorFeatures    whether to use author features or not
+   * @param t etPa rs           TypedP pe of t  (user d, queryFeaturedT et, cand dateFeaturedT et, label)
+   * @param pers stentEmbedd ngs TypedP pe of pers stentEmbedd ngs from Pers stentT etEmbedd ngMhExportS ce
+   * @param t etAuthorPa rs     TypedP pe of (t et d, author user d)
+   * @param useAuthorFeatures    w t r to use author features or not
    *
-   * @return DataSetPipe with features and label
+   * @return DataSetP pe w h features and label
    */
-  def getDataSetPipeWithFeatures(
-    tweetPairs: TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)],
-    persistentEmbeddings: TypedPipe[((TweetId, Timestamp), PersistentSimClustersEmbedding)],
-    tweetAuthorPairs: TypedPipe[(TweetId, UserId)],
+  def getDataSetP peW hFeatures(
+    t etPa rs: TypedP pe[(FeaturedT et, FeaturedT et, Boolean)],
+    pers stentEmbedd ngs: TypedP pe[((T et d, T  stamp), Pers stentS mClustersEmbedd ng)],
+    t etAuthorPa rs: TypedP pe[(T et d, User d)],
     useAuthorFeatures: Boolean
-  ): DataSetPipe = {
-    val featuredTweetPairs =
-      if (useAuthorFeatures)
-        getTweetPairsWithCounts(
-          getTweetPairsWithPersistentEmbeddings(
-            getTweetPairsWithAuthors(tweetPairs, tweetAuthorPairs),
-            persistentEmbeddings))
+  ): DataSetP pe = {
+    val featuredT etPa rs =
+       f (useAuthorFeatures)
+        getT etPa rsW hCounts(
+          getT etPa rsW hPers stentEmbedd ngs(
+            getT etPa rsW hAuthors(t etPa rs, t etAuthorPa rs),
+            pers stentEmbedd ngs))
       else
-        getTweetPairsWithCounts(
-          getTweetPairsWithPersistentEmbeddings(tweetPairs, persistentEmbeddings))
+        getT etPa rsW hCounts(
+          getT etPa rsW hPers stentEmbedd ngs(t etPa rs, pers stentEmbedd ngs))
 
-    DataSetPipe(
-      featuredTweetPairs.flatMap {
-        case (queryFeaturedTweet, candidateFeaturedTweet, tweetPairCount, queryTweetCount, label) =>
-          getDataRecordWithFeatures(
-            queryFeaturedTweet,
-            candidateFeaturedTweet,
-            tweetPairCount,
-            queryTweetCount,
+    DataSetP pe(
+      featuredT etPa rs.flatMap {
+        case (queryFeaturedT et, cand dateFeaturedT et, t etPa rCount, queryT etCount, label) =>
+          getDataRecordW hFeatures(
+            queryFeaturedT et,
+            cand dateFeaturedT et,
+            t etPa rCount,
+            queryT etCount,
             label)
       },
-      FeatureContext.merge(
-        TweetSimilarityFeatures.FeatureContext,
-        QueryTweetConfig.predictionRecordAdapter.getFeatureContext,
-        CandidateTweetConfig.predictionRecordAdapter.getFeatureContext
+      FeatureContext. rge(
+        T etS m lar yFeatures.FeatureContext,
+        QueryT etConf g.pred ct onRecordAdapter.getFeatureContext,
+        Cand dateT etConf g.pred ct onRecordAdapter.getFeatureContext
       )
     )
   }
 
   /**
-   * Given raw features, return a DataRecord with all the features
+   * G ven raw features, return a DataRecord w h all t  features
    *
-   * @param queryFeaturedTweet     FeaturedTweet for query tweet
-   * @param candidateFeaturedTweet FeaturedTweet for candidate tweet
-   * @param tweetPairCount         popularity count for the (query tweet, candidate tweet) pair
-   * @param queryTweetCount        popularity count for each query tweet
-   * @param label                  true for positive and false for negative
+   * @param queryFeaturedT et     FeaturedT et for query t et
+   * @param cand dateFeaturedT et FeaturedT et for cand date t et
+   * @param t etPa rCount         popular y count for t  (query t et, cand date t et) pa r
+   * @param queryT etCount        popular y count for each query t et
+   * @param label                  true for pos  ve and false for negat ve
    *
    * @return
    */
-  def getDataRecordWithFeatures(
-    queryFeaturedTweet: FeaturedTweet,
-    candidateFeaturedTweet: FeaturedTweet,
-    tweetPairCount: Long,
-    queryTweetCount: Long,
+  def getDataRecordW hFeatures(
+    queryFeaturedT et: FeaturedT et,
+    cand dateFeaturedT et: FeaturedT et,
+    t etPa rCount: Long,
+    queryT etCount: Long,
     label: Boolean
-  ): Option[DataRecord] = {
+  ): Opt on[DataRecord] = {
 
     for {
-      queryEmbedding <- queryFeaturedTweet.embedding
-      candidateEmbedding <- candidateFeaturedTweet.embedding
-    } yield {
-      val featureDataRecord = NormalizedQueryEmbAdapter.adaptToDataRecord(queryEmbedding)
-      DataRecordMerger.merge(
+      queryEmbedd ng <- queryFeaturedT et.embedd ng
+      cand dateEmbedd ng <- cand dateFeaturedT et.embedd ng
+    } y eld {
+      val featureDataRecord = Normal zedQueryEmbAdapter.adaptToDataRecord(queryEmbedd ng)
+      DataRecord rger. rge(
         featureDataRecord,
-        NormalizedCandidateEmbAdapter.adaptToDataRecord(candidateEmbedding))
+        Normal zedCand dateEmbAdapter.adaptToDataRecord(cand dateEmbedd ng))
       featureDataRecord.setFeatureValue(
-        TweetSimilarityFeatures.QueryTweetId,
-        queryFeaturedTweet.tweet)
+        T etS m lar yFeatures.QueryT et d,
+        queryFeaturedT et.t et)
       featureDataRecord.setFeatureValue(
-        TweetSimilarityFeatures.CandidateTweetId,
-        candidateFeaturedTweet.tweet)
+        T etS m lar yFeatures.Cand dateT et d,
+        cand dateFeaturedT et.t et)
       featureDataRecord.setFeatureValue(
-        TweetSimilarityFeatures.QueryTweetTimestamp,
-        queryFeaturedTweet.timestamp)
+        T etS m lar yFeatures.QueryT etT  stamp,
+        queryFeaturedT et.t  stamp)
       featureDataRecord.setFeatureValue(
-        TweetSimilarityFeatures.CandidateTweetTimestamp,
-        candidateFeaturedTweet.timestamp)
+        T etS m lar yFeatures.Cand dateT etT  stamp,
+        cand dateFeaturedT et.t  stamp)
       featureDataRecord.setFeatureValue(
-        TweetSimilarityFeatures.CosineSimilarity,
-        queryEmbedding.cosineSimilarity(candidateEmbedding))
-      featureDataRecord.setFeatureValue(TweetSimilarityFeatures.TweetPairCount, tweetPairCount)
-      featureDataRecord.setFeatureValue(TweetSimilarityFeatures.QueryTweetCount, queryTweetCount)
-      featureDataRecord.setFeatureValue(TweetSimilarityFeatures.Label, label)
+        T etS m lar yFeatures.Cos neS m lar y,
+        queryEmbedd ng.cos neS m lar y(cand dateEmbedd ng))
+      featureDataRecord.setFeatureValue(T etS m lar yFeatures.T etPa rCount, t etPa rCount)
+      featureDataRecord.setFeatureValue(T etS m lar yFeatures.QueryT etCount, queryT etCount)
+      featureDataRecord.setFeatureValue(T etS m lar yFeatures.Label, label)
 
-      if (queryFeaturedTweet.author.isDefined && candidateFeaturedTweet.author.isDefined) {
-        DataRecordMerger.merge(
+       f (queryFeaturedT et.author. sDef ned && cand dateFeaturedT et.author. sDef ned) {
+        DataRecord rger. rge(
           featureDataRecord,
           new DataRecord(
-            QueryTweetConfig.predictionRecordAdapter.adaptToDataRecord(PredictionRecord(
-              FeatureValuesById.empty,
-              EntityIds(Entry(
-                QueryTweetConfig.bindingIdentifier,
-                Set(com.twitter.ml.featurestore.lib.UserId(queryFeaturedTweet.author.get))))
+            QueryT etConf g.pred ct onRecordAdapter.adaptToDataRecord(Pred ct onRecord(
+              FeatureValuesBy d.empty,
+              Ent y ds(Entry(
+                QueryT etConf g.b nd ng dent f er,
+                Set(com.tw ter.ml.featurestore.l b.User d(queryFeaturedT et.author.get))))
             )))
         )
-        DataRecordMerger.merge(
+        DataRecord rger. rge(
           featureDataRecord,
           new DataRecord(
-            CandidateTweetConfig.predictionRecordAdapter.adaptToDataRecord(PredictionRecord(
-              FeatureValuesById.empty,
-              EntityIds(Entry(
-                CandidateTweetConfig.bindingIdentifier,
-                Set(com.twitter.ml.featurestore.lib.UserId(candidateFeaturedTweet.author.get))))
+            Cand dateT etConf g.pred ct onRecordAdapter.adaptToDataRecord(Pred ct onRecord(
+              FeatureValuesBy d.empty,
+              Ent y ds(Entry(
+                Cand dateT etConf g.b nd ng dent f er,
+                Set(com.tw ter.ml.featurestore.l b.User d(cand dateFeaturedT et.author.get))))
             )))
         )
       }

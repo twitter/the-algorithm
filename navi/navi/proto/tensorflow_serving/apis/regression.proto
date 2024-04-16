@@ -1,37 +1,37 @@
 syntax = "proto3";
 
-option cc_enable_arenas = true;
+opt on cc_enable_arenas = true;
 
-import "tensorflow_serving/apis/input.proto";
-import "tensorflow_serving/apis/model.proto";
+ mport "tensorflow_serv ng/ap s/ nput.proto";
+ mport "tensorflow_serv ng/ap s/model.proto";
 
-package tensorflow.serving;
+package tensorflow.serv ng;
 
-// Regression result for a single item (tensorflow.Example).
-message Regression {
+// Regress on result for a s ngle  em (tensorflow.Example).
+ ssage Regress on {
   float value = 1;
 }
 
-// Contains one result per input example, in the same order as the input in
-// RegressionRequest.
-message RegressionResult {
-  repeated Regression regressions = 1;
+// Conta ns one result per  nput example,  n t  sa  order as t   nput  n
+// Regress onRequest.
+ ssage Regress onResult {
+  repeated Regress on regress ons = 1;
 }
 
-// RPC interfaces.
+// RPC  nterfaces.
 
-message RegressionRequest {
-  // Model Specification. If version is not specified, will use the latest
-  // (numerical) version.
+ ssage Regress onRequest {
+  // Model Spec f cat on.  f vers on  s not spec f ed, w ll use t  latest
+  // (nu r cal) vers on.
   ModelSpec model_spec = 1;
 
-  // Input data.
-  tensorflow.serving.Input input = 2;
+  //  nput data.
+  tensorflow.serv ng. nput  nput = 2;
 }
 
-message RegressionResponse {
-  // Effective Model Specification used for regression.
+ ssage Regress onResponse {
+  // Effect ve Model Spec f cat on used for regress on.
   ModelSpec model_spec = 2;
 
-  RegressionResult result = 1;
+  Regress onResult result = 1;
 }

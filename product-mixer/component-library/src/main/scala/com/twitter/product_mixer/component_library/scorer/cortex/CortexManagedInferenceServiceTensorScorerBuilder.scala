@@ -1,47 +1,47 @@
-package com.twitter.product_mixer.component_library.scorer.cortex
+package com.tw ter.product_m xer.component_l brary.scorer.cortex
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.component_library.scorer.common.MLModelInferenceClient
-import com.twitter.product_mixer.component_library.scorer.tensorbuilder.ModelInferRequestBuilder
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.component_l brary.scorer.common.MLModel nferenceCl ent
+ mport com.tw ter.product_m xer.component_l brary.scorer.tensorbu lder.Model nferRequestBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.scorer.Scorer
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Scorer dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class CortexManagedInferenceServiceTensorScorerBuilder @Inject() (
-  statsReceiver: StatsReceiver) {
+@S ngleton
+class CortexManaged nferenceServ ceTensorScorerBu lder @ nject() (
+  statsRece ver: StatsRece ver) {
 
   /**
-   * Builds a configurable Scorer to call into your desired Cortex Managed ML Model Service.
+   * Bu lds a conf gurable Scorer to call  nto y  des red Cortex Managed ML Model Serv ce.
    *
-   * If your service does not bind an Http.Client implementation, add
-   * [[com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule]]
-   * to your server module list
+   *  f y  serv ce does not b nd an Http.Cl ent  mple ntat on, add
+   * [[com.tw ter.product_m xer.component_l brary.module.http.F nagleHttpCl entModule]]
+   * to y  server module l st
    *
-   * @param scorerIdentifier        Unique identifier for the scorer
-   * @param resultFeatureExtractors The result features an their tensor extractors for each candidate.
-   * @tparam Query Type of pipeline query.
-   * @tparam Candidate Type of candidates to score.
-   * @tparam QueryFeatures type of the query level features consumed by the scorer.
-   * @tparam CandidateFeatures type of the candidate level features consumed by the scorer.
+   * @param scorer dent f er        Un que  dent f er for t  scorer
+   * @param resultFeatureExtractors T  result features an t  r tensor extractors for each cand date.
+   * @tparam Query Type of p pel ne query.
+   * @tparam Cand date Type of cand dates to score.
+   * @tparam QueryFeatures type of t  query level features consu d by t  scorer.
+   * @tparam Cand dateFeatures type of t  cand date level features consu d by t  scorer.
    */
-  def build[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-    scorerIdentifier: ScorerIdentifier,
-    modelInferRequestBuilder: ModelInferRequestBuilder[
+  def bu ld[Query <: P pel neQuery, Cand date <: Un versalNoun[Any]](
+    scorer dent f er: Scorer dent f er,
+    model nferRequestBu lder: Model nferRequestBu lder[
       Query,
-      Candidate
+      Cand date
     ],
-    resultFeatureExtractors: Seq[FeatureWithExtractor[Query, Candidate, _]],
-    client: MLModelInferenceClient
-  ): Scorer[Query, Candidate] =
-    new CortexManagedInferenceServiceTensorScorer(
-      scorerIdentifier,
-      modelInferRequestBuilder,
+    resultFeatureExtractors: Seq[FeatureW hExtractor[Query, Cand date, _]],
+    cl ent: MLModel nferenceCl ent
+  ): Scorer[Query, Cand date] =
+    new CortexManaged nferenceServ ceTensorScorer(
+      scorer dent f er,
+      model nferRequestBu lder,
       resultFeatureExtractors,
-      client,
-      statsReceiver.scope(scorerIdentifier.name)
+      cl ent,
+      statsRece ver.scope(scorer dent f er.na )
     )
 }

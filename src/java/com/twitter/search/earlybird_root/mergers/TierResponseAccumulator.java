@@ -1,97 +1,97 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.tw ter.search.earlyb rd_root. rgers;
 
-import java.util.ArrayList;
-import java.util.List;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.L st;
 
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.TierResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd.thr ft.T erResponse;
 
-public final class TierResponseAccumulator extends ResponseAccumulator {
-  private static final String TARGET_TYPE_TIER = "tier";
+publ c f nal class T erResponseAccumulator extends ResponseAccumulator {
+  pr vate stat c f nal Str ng TARGET_TYPE_T ER = "t er";
 
-  private final List<TierResponse> tierResponses = new ArrayList<>();
-  // Total number of partitions the request was sent to, across all tiers.
-  private int totalPartitionsQueriedInAllTiers = 0;
-  // Among the above partitions, the number of them that returned successful responses.
-  private int totalSuccessfulPartitionsInAllTiers = 0;
+  pr vate f nal L st<T erResponse> t erResponses = new ArrayL st<>();
+  // Total number of part  ons t  request was sent to, across all t ers.
+  pr vate  nt totalPart  onsQuer ed nAllT ers = 0;
+  // Among t  above part  ons, t  number of t m that returned successful responses.
+  pr vate  nt totalSuccessfulPart  ons nAllT ers = 0;
 
-  @Override
-  public String getNameForLogging(int responseIndex, int numTotalResponses) {
-    return TARGET_TYPE_TIER + (numTotalResponses - responseIndex);
+  @Overr de
+  publ c Str ng getNa ForLogg ng( nt response ndex,  nt numTotalResponses) {
+    return TARGET_TYPE_T ER + (numTotalResponses - response ndex);
   }
 
-  @Override
-  public String getNameForEarlybirdResponseCodeStats(int responseIndex, int numTotalResponses) {
-    return TARGET_TYPE_TIER + (numTotalResponses - responseIndex);
+  @Overr de
+  publ c Str ng getNa ForEarlyb rdResponseCodeStats( nt response ndex,  nt numTotalResponses) {
+    return TARGET_TYPE_T ER + (numTotalResponses - response ndex);
   }
 
-  @Override
-  protected boolean isMergingAcrossTiers() {
+  @Overr de
+  protected boolean  s rg ngAcrossT ers() {
     return true;
   }
 
-  @Override
-  public boolean shouldEarlyTerminateMerge(EarlyTerminateTierMergePredicate merger) {
-    if (foundError()) {
+  @Overr de
+  publ c boolean shouldEarlyTerm nate rge(EarlyTerm nateT er rgePred cate  rger) {
+     f (foundError()) {
       return true;
     }
 
-    int numResults = 0;
-    for (EarlybirdResponse resp : getSuccessResponses()) {
-      if (resp.isSetSearchResults()) {
-        numResults += resp.getSearchResults().getResultsSize();
+     nt numResults = 0;
+    for (Earlyb rdResponse resp : getSuccessResponses()) {
+       f (resp. sSetSearchResults()) {
+        numResults += resp.getSearchResults().getResultsS ze();
       }
     }
 
-    return merger.shouldEarlyTerminateTierMerge(numResults, foundEarlyTermination());
+    return  rger.shouldEarlyTerm nateT er rge(numResults, foundEarlyTerm nat on());
   }
 
-  @Override
-  public void handleSkippedResponse(EarlybirdResponseCode responseCode) {
-    tierResponses.add(new TierResponse()
-        .setNumPartitions(0)
-        .setNumSuccessfulPartitions(0)
-        .setTierResponseCode(responseCode));
+  @Overr de
+  publ c vo d handleSk ppedResponse(Earlyb rdResponseCode responseCode) {
+    t erResponses.add(new T erResponse()
+        .setNumPart  ons(0)
+        .setNumSuccessfulPart  ons(0)
+        .setT erResponseCode(responseCode));
   }
 
-  @Override
-  public void handleErrorResponse(EarlybirdResponse response) {
-    // TierResponse, which is only returned if merging results from different tiers.
-    TierResponse tr = new TierResponse();
-    if (response != null) {
-      if (response.isSetResponseCode()) {
-        tr.setTierResponseCode(response.getResponseCode());
+  @Overr de
+  publ c vo d handleErrorResponse(Earlyb rdResponse response) {
+    // T erResponse, wh ch  s only returned  f  rg ng results from d fferent t ers.
+    T erResponse tr = new T erResponse();
+     f (response != null) {
+       f (response. sSetResponseCode()) {
+        tr.setT erResponseCode(response.getResponseCode());
       } else {
-        tr.setTierResponseCode(EarlybirdResponseCode.TRANSIENT_ERROR);
+        tr.setT erResponseCode(Earlyb rdResponseCode.TRANS ENT_ERROR);
       }
-      tr.setNumPartitions(response.getNumPartitions());
-      tr.setNumSuccessfulPartitions(0);
-      totalPartitionsQueriedInAllTiers += response.getNumPartitions();
+      tr.setNumPart  ons(response.getNumPart  ons());
+      tr.setNumSuccessfulPart  ons(0);
+      totalPart  onsQuer ed nAllT ers += response.getNumPart  ons();
     } else {
-      tr.setTierResponseCode(EarlybirdResponseCode.TRANSIENT_ERROR)
-          .setNumPartitions(0)
-          .setNumSuccessfulPartitions(0);
+      tr.setT erResponseCode(Earlyb rdResponseCode.TRANS ENT_ERROR)
+          .setNumPart  ons(0)
+          .setNumSuccessfulPart  ons(0);
     }
 
-    tierResponses.add(tr);
+    t erResponses.add(tr);
   }
 
-  @Override
-  public AccumulatedResponses.PartitionCounts getPartitionCounts() {
-    return new AccumulatedResponses.PartitionCounts(totalPartitionsQueriedInAllTiers,
-        totalSuccessfulPartitionsInAllTiers, tierResponses);
+  @Overr de
+  publ c AccumulatedResponses.Part  onCounts getPart  onCounts() {
+    return new AccumulatedResponses.Part  onCounts(totalPart  onsQuer ed nAllT ers,
+        totalSuccessfulPart  ons nAllT ers, t erResponses);
   }
 
-  @Override
-  public void extraSuccessfulResponseHandler(EarlybirdResponse response) {
-    // Record tier stats.
-    totalPartitionsQueriedInAllTiers += response.getNumPartitions();
-    totalSuccessfulPartitionsInAllTiers += response.getNumSuccessfulPartitions();
+  @Overr de
+  publ c vo d extraSuccessfulResponseHandler(Earlyb rdResponse response) {
+    // Record t er stats.
+    totalPart  onsQuer ed nAllT ers += response.getNumPart  ons();
+    totalSuccessfulPart  ons nAllT ers += response.getNumSuccessfulPart  ons();
 
-    tierResponses.add(new TierResponse()
-        .setNumPartitions(response.getNumPartitions())
-        .setNumSuccessfulPartitions(response.getNumSuccessfulPartitions())
-        .setTierResponseCode(EarlybirdResponseCode.SUCCESS));
+    t erResponses.add(new T erResponse()
+        .setNumPart  ons(response.getNumPart  ons())
+        .setNumSuccessfulPart  ons(response.getNumSuccessfulPart  ons())
+        .setT erResponseCode(Earlyb rdResponseCode.SUCCESS));
   }
 }

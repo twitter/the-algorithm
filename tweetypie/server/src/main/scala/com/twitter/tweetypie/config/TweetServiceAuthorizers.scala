@@ -1,256 +1,256 @@
-package com.twitter.tweetypie
-package config
+package com.tw ter.t etyp e
+package conf g
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.transport.S2STransport
-import com.twitter.servo.gate.RateLimitingGate
-import com.twitter.servo.request.ClientRequestAuthorizer.UnauthorizedException
-import com.twitter.servo.request.{ClientRequestAuthorizer, ClientRequestObserver}
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.client_id.PreferForwardedServiceIdentifierForStrato
-import com.twitter.tweetypie.core.RateLimited
-import com.twitter.tweetypie.service.MethodAuthorizer
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.mtls.transport.S2STransport
+ mport com.tw ter.servo.gate.RateL m  ngGate
+ mport com.tw ter.servo.request.Cl entRequestAuthor zer.Unauthor zedExcept on
+ mport com.tw ter.servo.request.{Cl entRequestAuthor zer, Cl entRequestObserver}
+ mport com.tw ter.t etyp e.cl ent_ d.Cl ent d lper
+ mport com.tw ter.t etyp e.cl ent_ d.PreferForwardedServ ce dent f erForStrato
+ mport com.tw ter.t etyp e.core.RateL m ed
+ mport com.tw ter.t etyp e.serv ce. thodAuthor zer
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport com.tw ter.ut l.Future
 
 /**
- * Compose a ClientRequestAuthorizer for
- * ClientHandlingTweetService
+ * Compose a Cl entRequestAuthor zer for
+ * Cl entHandl ngT etServ ce
  */
-object ClientHandlingTweetServiceAuthorizer {
-  private val RateLimitExceeded =
-    RateLimited("Your ClientId has exceeded the rate limit for non-allowListed clients.")
+object Cl entHandl ngT etServ ceAuthor zer {
+  pr vate val RateL m Exceeded =
+    RateL m ed("Y  Cl ent d has exceeded t  rate l m  for non-allowL sted cl ents.")
 
   def apply(
-    settings: TweetServiceSettings,
-    dynamicConfig: DynamicConfig,
-    statsReceiver: StatsReceiver,
-    getServiceIdentifier: () => ServiceIdentifier = S2STransport.peerServiceIdentifier _
-  ): ClientRequestAuthorizer = {
-    val authorizer =
-      if (settings.allowlistingRequired) {
-        val limitingGate = RateLimitingGate.uniform(settings.nonAllowListedClientRateLimitPerSec)
-        allowListedOrRateLimitedAuthorizer(dynamicConfig, limitingGate)
-          .andThen(rejectNonAllowListedProdAuthorizer(dynamicConfig))
-          .andThen(permittedMethodsAuthorizer(dynamicConfig))
-          .andThen(allowProductionAuthorizer(settings.allowProductionClients))
+    sett ngs: T etServ ceSett ngs,
+    dynam cConf g: Dynam cConf g,
+    statsRece ver: StatsRece ver,
+    getServ ce dent f er: () => Serv ce dent f er = S2STransport.peerServ ce dent f er _
+  ): Cl entRequestAuthor zer = {
+    val author zer =
+       f (sett ngs.allowl st ngRequ red) {
+        val l m  ngGate = RateL m  ngGate.un form(sett ngs.nonAllowL stedCl entRateL m PerSec)
+        allowL stedOrRateL m edAuthor zer(dynam cConf g, l m  ngGate)
+          .andT n(rejectNonAllowL stedProdAuthor zer(dynam cConf g))
+          .andT n(perm ted thodsAuthor zer(dynam cConf g))
+          .andT n(allowProduct onAuthor zer(sett ngs.allowProduct onCl ents))
       } else {
-        ClientRequestAuthorizer.withClientId
+        Cl entRequestAuthor zer.w hCl ent d
       }
 
-    val alternativeClientIdHelper = new ClientIdHelper(PreferForwardedServiceIdentifierForStrato)
-    // pass the authorizer into an observed authorizer for stats tracking.
-    // (observed authorizers can't be composed with andThen)
-    ClientRequestAuthorizer.observed(
-      authorizer,
-      new ClientRequestObserver(statsReceiver) {
-        override def apply(
-          methodName: String,
-          clientIdScopesOpt: Option[Seq[String]]
-        ): Future[Unit] = {
-          // Monitor for the migration taking into account forwarded service identifier
-          // as effective client ID for strato.
-          val alternativeClientIdScopes = alternativeClientIdHelper.effectiveClientId.map(Seq(_))
-          if (clientIdScopesOpt != alternativeClientIdScopes) {
-            scopedReceiver.scope(methodName)
-              .scope("before_migration")
-              .scope(clientIdScopesOpt.getOrElse(Seq(ClientIdHelper.UnknownClientId)): _*)
-              .scope("after_migration")
-              .counter(alternativeClientIdScopes.getOrElse(Seq(ClientIdHelper.UnknownClientId)): _*)
-              .incr()
+    val alternat veCl ent d lper = new Cl ent d lper(PreferForwardedServ ce dent f erForStrato)
+    // pass t  author zer  nto an observed author zer for stats track ng.
+    // (observed author zers can't be composed w h andT n)
+    Cl entRequestAuthor zer.observed(
+      author zer,
+      new Cl entRequestObserver(statsRece ver) {
+        overr de def apply(
+           thodNa : Str ng,
+          cl ent dScopesOpt: Opt on[Seq[Str ng]]
+        ): Future[Un ] = {
+          // Mon or for t  m grat on tak ng  nto account forwarded serv ce  dent f er
+          // as effect ve cl ent  D for strato.
+          val alternat veCl ent dScopes = alternat veCl ent d lper.effect veCl ent d.map(Seq(_))
+           f (cl ent dScopesOpt != alternat veCl ent dScopes) {
+            scopedRece ver.scope( thodNa )
+              .scope("before_m grat on")
+              .scope(cl ent dScopesOpt.getOrElse(Seq(Cl ent d lper.UnknownCl ent d)): _*)
+              .scope("after_m grat on")
+              .counter(alternat veCl ent dScopes.getOrElse(Seq(Cl ent d lper.UnknownCl ent d)): _*)
+              . ncr()
           } else {
-             scopedReceiver.scope(methodName).counter("migration_indifferent").incr()
+             scopedRece ver.scope( thodNa ).counter("m grat on_ nd fferent"). ncr()
           }
-          super.apply(methodName, clientIdScopesOpt)
+          super.apply( thodNa , cl ent dScopesOpt)
         }
 
-        override def authorized(methodName: String, clientIdStr: String): Unit = {
-          // Monitor for the migration of using service identifier
-          // as identity instead of client ID.
-          val serviceIdentifier = getServiceIdentifier()
-          scopedReceiver.counter(
-            "authorized_request",
-            clientIdStr,
-            serviceIdentifier.role,
-            serviceIdentifier.service,
-            serviceIdentifier.environment
-          ).incr()
-          val status = dynamicConfig.byServiceIdentifier(serviceIdentifier).toSeq match {
+        overr de def author zed( thodNa : Str ng, cl ent dStr: Str ng): Un  = {
+          // Mon or for t  m grat on of us ng serv ce  dent f er
+          // as  dent y  nstead of cl ent  D.
+          val serv ce dent f er = getServ ce dent f er()
+          scopedRece ver.counter(
+            "author zed_request",
+            cl ent dStr,
+            serv ce dent f er.role,
+            serv ce dent f er.serv ce,
+            serv ce dent f er.env ron nt
+          ). ncr()
+          val status = dynam cConf g.byServ ce dent f er(serv ce dent f er).toSeq match {
             case Seq() => "none"
-            case Seq(client) if client.clientId == clientIdStr => "equal"
-            case Seq(_) => "other"
-            case _ => "ambiguous"
+            case Seq(cl ent)  f cl ent.cl ent d == cl ent dStr => "equal"
+            case Seq(_) => "ot r"
+            case _ => "amb guous"
           }
-          scopedReceiver.counter(
-            "service_id_match_client_id",
-            clientIdStr,
-            serviceIdentifier.role,
-            serviceIdentifier.service,
-            serviceIdentifier.environment,
+          scopedRece ver.counter(
+            "serv ce_ d_match_cl ent_ d",
+            cl ent dStr,
+            serv ce dent f er.role,
+            serv ce dent f er.serv ce,
+            serv ce dent f er.env ron nt,
             status
-          ).incr()
+          ). ncr()
         }
       }
     )
   }
 
   /**
-   * @return A ClientRequestAuthorizer that allows unlimited requests for allowlisted client ids and
-   * rate-limited requests for unknown clients.
+   * @return A Cl entRequestAuthor zer that allows unl m ed requests for allowl sted cl ent  ds and
+   * rate-l m ed requests for unknown cl ents.
    */
-  def allowListedOrRateLimitedAuthorizer(
-    dynamicConfig: DynamicConfig,
-    nonAllowListedLimiter: Gate[Unit]
-  ): ClientRequestAuthorizer =
-    ClientRequestAuthorizer.filtered(
-      { (_, clientId) =>
-        dynamicConfig.isAllowListedClient(clientId) || nonAllowListedLimiter()
+  def allowL stedOrRateL m edAuthor zer(
+    dynam cConf g: Dynam cConf g,
+    nonAllowL stedL m er: Gate[Un ]
+  ): Cl entRequestAuthor zer =
+    Cl entRequestAuthor zer.f ltered(
+      { (_, cl ent d) =>
+        dynam cConf g. sAllowL stedCl ent(cl ent d) || nonAllowL stedL m er()
       },
-      RateLimitExceeded)
+      RateL m Exceeded)
 
   /**
-   * @return A ClientRequestAuthorizer that rejects requests from non-allowListed prod clients.
+   * @return A Cl entRequestAuthor zer that rejects requests from non-allowL sted prod cl ents.
    */
-  def rejectNonAllowListedProdAuthorizer(dynamicConfig: DynamicConfig): ClientRequestAuthorizer = {
-    object UnallowlistedException
-        extends UnauthorizedException(
-          "Traffic is only allowed from allow-listed *.prod clients." +
-            " Please create a ticket to register your clientId to enable production traffic using http://go/tp-new-client."
+  def rejectNonAllowL stedProdAuthor zer(dynam cConf g: Dynam cConf g): Cl entRequestAuthor zer = {
+    object Unallowl stedExcept on
+        extends Unauthor zedExcept on(
+          "Traff c  s only allo d from allow-l sted *.prod cl ents." +
+            " Please create a t cket to reg ster y  cl ent d to enable product on traff c us ng http://go/tp-new-cl ent."
         )
 
-    def isProdClient(clientId: String): Boolean =
-      clientId.endsWith(".prod") || clientId.endsWith(".production")
+    def  sProdCl ent(cl ent d: Str ng): Boolean =
+      cl ent d.endsW h(".prod") || cl ent d.endsW h(".product on")
 
-    ClientRequestAuthorizer.filtered(
-      { (_, clientId) =>
-        !isProdClient(clientId) || dynamicConfig.isAllowListedClient(clientId)
+    Cl entRequestAuthor zer.f ltered(
+      { (_, cl ent d) =>
+        ! sProdCl ent(cl ent d) || dynam cConf g. sAllowL stedCl ent(cl ent d)
       },
-      UnallowlistedException)
+      Unallowl stedExcept on)
   }
 
   /**
-   * @return A ClientRequestAuthorizer that checks if a given client's
-   * permittedMethods field includes the method they are calling
+   * @return A Cl entRequestAuthor zer that c cks  f a g ven cl ent's
+   * perm ted thods f eld  ncludes t   thod t y are call ng
    */
-  def permittedMethodsAuthorizer(dynamicConfig: DynamicConfig): ClientRequestAuthorizer =
-    dynamicConfig.clientsByFullyQualifiedId match {
-      case Some(clientsById) => permittedMethodsAuthorizer(dynamicConfig, clientsById)
-      case None => ClientRequestAuthorizer.permissive
+  def perm ted thodsAuthor zer(dynam cConf g: Dynam cConf g): Cl entRequestAuthor zer =
+    dynam cConf g.cl entsByFullyQual f ed d match {
+      case So (cl entsBy d) => perm ted thodsAuthor zer(dynam cConf g, cl entsBy d)
+      case None => Cl entRequestAuthor zer.perm ss ve
     }
 
-  private def permittedMethodsAuthorizer(
-    dynamicConfig: DynamicConfig,
-    clientsByFullyQualifiedId: Map[String, Client]
-  ): ClientRequestAuthorizer = {
-    ClientRequestAuthorizer.filtered { (methodName, clientId) =>
-      dynamicConfig.unprotectedEndpoints(methodName) ||
-      (clientsByFullyQualifiedId.get(clientId) match {
-        case Some(client) =>
-          client.accessAllMethods ||
-            client.permittedMethods.contains(methodName)
+  pr vate def perm ted thodsAuthor zer(
+    dynam cConf g: Dynam cConf g,
+    cl entsByFullyQual f ed d: Map[Str ng, Cl ent]
+  ): Cl entRequestAuthor zer = {
+    Cl entRequestAuthor zer.f ltered { ( thodNa , cl ent d) =>
+      dynam cConf g.unprotectedEndpo nts( thodNa ) ||
+      (cl entsByFullyQual f ed d.get(cl ent d) match {
+        case So (cl ent) =>
+          cl ent.accessAll thods ||
+            cl ent.perm ted thods.conta ns( thodNa )
         case None =>
-          false // If client id is unknown, don't allow access
+          false //  f cl ent  d  s unknown, don't allow access
       })
     }
   }
 
   /**
-   * @return A ClientRequestAuthorizer that fails the
-   * request if it is coming from a production client
-   * and allowProductionClients is false
+   * @return A Cl entRequestAuthor zer that fa ls t 
+   * request  f    s com ng from a product on cl ent
+   * and allowProduct onCl ents  s false
    */
-  def allowProductionAuthorizer(allowProductionClients: Boolean): ClientRequestAuthorizer =
-    ClientRequestAuthorizer.filtered { (_, clientId) =>
-      allowProductionClients || !(clientId.endsWith(".prod") || clientId.endsWith(".production"))
+  def allowProduct onAuthor zer(allowProduct onCl ents: Boolean): Cl entRequestAuthor zer =
+    Cl entRequestAuthor zer.f ltered { (_, cl ent d) =>
+      allowProduct onCl ents || !(cl ent d.endsW h(".prod") || cl ent d.endsW h(".product on"))
     }
 }
 
 /**
- * Compose a MethodAuthorizer for the `getTweets` endpoint.
+ * Compose a  thodAuthor zer for t  `getT ets` endpo nt.
  */
-object GetTweetsAuthorizer {
-  import ProtectedTweetsAuthorizer.IncludeProtected
+object GetT etsAuthor zer {
+   mport ProtectedT etsAuthor zer. ncludeProtected
 
   def apply(
-    config: DynamicConfig,
-    maxRequestSize: Int,
-    instanceCount: Int,
-    enforceRateLimitedClients: Gate[Unit],
-    maxRequestWidthEnabled: Gate[Unit],
-    statsReceiver: StatsReceiver,
-  ): MethodAuthorizer[GetTweetsRequest] =
-    MethodAuthorizer.all(
+    conf g: Dynam cConf g,
+    maxRequestS ze:  nt,
+     nstanceCount:  nt,
+    enforceRateL m edCl ents: Gate[Un ],
+    maxRequestW dthEnabled: Gate[Un ],
+    statsRece ver: StatsRece ver,
+  ):  thodAuthor zer[GetT etsRequest] =
+     thodAuthor zer.all(
       Seq(
-        ProtectedTweetsAuthorizer(config.clientsByFullyQualifiedId)
-          .contramap[GetTweetsRequest] { r =>
-            IncludeProtected(r.options.exists(_.bypassVisibilityFiltering))
+        ProtectedT etsAuthor zer(conf g.cl entsByFullyQual f ed d)
+          .contramap[GetT etsRequest] { r =>
+             ncludeProtected(r.opt ons.ex sts(_.bypassV s b l yF lter ng))
           },
-        RequestSizeAuthorizer(maxRequestSize, maxRequestWidthEnabled)
-          .contramap[GetTweetsRequest](_.tweetIds.size),
-        RateLimiterAuthorizer(config, instanceCount, enforceRateLimitedClients, statsReceiver)
-          .contramap[GetTweetsRequest](_.tweetIds.size)
+        RequestS zeAuthor zer(maxRequestS ze, maxRequestW dthEnabled)
+          .contramap[GetT etsRequest](_.t et ds.s ze),
+        RateL m erAuthor zer(conf g,  nstanceCount, enforceRateL m edCl ents, statsRece ver)
+          .contramap[GetT etsRequest](_.t et ds.s ze)
       )
     )
 }
 
 /**
- * Compose a MethodAuthorizer for the `getTweetFields` endpoint.
+ * Compose a  thodAuthor zer for t  `getT etF elds` endpo nt.
  */
-object GetTweetFieldsAuthorizer {
-  import ProtectedTweetsAuthorizer.IncludeProtected
+object GetT etF eldsAuthor zer {
+   mport ProtectedT etsAuthor zer. ncludeProtected
 
   def apply(
-    config: DynamicConfig,
-    maxRequestSize: Int,
-    instanceCount: Int,
-    enforceRateLimitedClients: Gate[Unit],
-    maxRequestWidthEnabled: Gate[Unit],
-    statsReceiver: StatsReceiver
-  ): MethodAuthorizer[GetTweetFieldsRequest] =
-    MethodAuthorizer.all(
+    conf g: Dynam cConf g,
+    maxRequestS ze:  nt,
+     nstanceCount:  nt,
+    enforceRateL m edCl ents: Gate[Un ],
+    maxRequestW dthEnabled: Gate[Un ],
+    statsRece ver: StatsRece ver
+  ):  thodAuthor zer[GetT etF eldsRequest] =
+     thodAuthor zer.all(
       Seq(
-        ProtectedTweetsAuthorizer(config.clientsByFullyQualifiedId)
-          .contramap[GetTweetFieldsRequest](r =>
-            IncludeProtected(r.options.visibilityPolicy == TweetVisibilityPolicy.NoFiltering)),
-        RequestSizeAuthorizer(maxRequestSize, maxRequestWidthEnabled)
-          .contramap[GetTweetFieldsRequest](_.tweetIds.size),
-        RateLimiterAuthorizer(config, instanceCount, enforceRateLimitedClients, statsReceiver)
-          .contramap[GetTweetFieldsRequest](_.tweetIds.size)
+        ProtectedT etsAuthor zer(conf g.cl entsByFullyQual f ed d)
+          .contramap[GetT etF eldsRequest](r =>
+             ncludeProtected(r.opt ons.v s b l yPol cy == T etV s b l yPol cy.NoF lter ng)),
+        RequestS zeAuthor zer(maxRequestS ze, maxRequestW dthEnabled)
+          .contramap[GetT etF eldsRequest](_.t et ds.s ze),
+        RateL m erAuthor zer(conf g,  nstanceCount, enforceRateL m edCl ents, statsRece ver)
+          .contramap[GetT etF eldsRequest](_.t et ds.s ze)
       )
     )
 }
 
-object ProtectedTweetsAuthorizer {
-  case class IncludeProtected(include: Boolean) extends AnyVal
+object ProtectedT etsAuthor zer {
+  case class  ncludeProtected( nclude: Boolean) extends AnyVal
 
-  class BypassVisibilityFilteringNotAuthorizedException(message: String)
-      extends UnauthorizedException(message)
+  class BypassV s b l yF lter ngNotAuthor zedExcept on( ssage: Str ng)
+      extends Unauthor zedExcept on( ssage)
 
-  def apply(optClientsById: Option[Map[String, Client]]): MethodAuthorizer[IncludeProtected] = {
-    optClientsById match {
-      case Some(clientsByFullyQualifiedId) =>
-        val clientsWithBypassVisibilityFiltering = clientsByFullyQualifiedId.filter {
-          case (_, client) => client.bypassVisibilityFiltering
+  def apply(optCl entsBy d: Opt on[Map[Str ng, Cl ent]]):  thodAuthor zer[ ncludeProtected] = {
+    optCl entsBy d match {
+      case So (cl entsByFullyQual f ed d) =>
+        val cl entsW hBypassV s b l yF lter ng = cl entsByFullyQual f ed d.f lter {
+          case (_, cl ent) => cl ent.bypassV s b l yF lter ng
         }
-        apply(clientId => clientsWithBypassVisibilityFiltering.contains(clientId))
+        apply(cl ent d => cl entsW hBypassV s b l yF lter ng.conta ns(cl ent d))
 
       case None =>
-        apply((_: String) => true)
+        apply((_: Str ng) => true)
     }
   }
 
   /**
-   * A MethodAuthorizer that fails the request if a client requests to bypass visibility
-   * filtering but doesn't have BypassVisibilityFiltering
+   * A  thodAuthor zer that fa ls t  request  f a cl ent requests to bypass v s b l y
+   * f lter ng but doesn't have BypassV s b l yF lter ng
    */
-  def apply(protectedTweetsAllowlist: String => Boolean): MethodAuthorizer[IncludeProtected] =
-    MethodAuthorizer { (includeProtected, clientId) =>
-      // There is only one unauthorized case, a client requesting
-      // protected tweets when they are not in the allowlist
-      Future.when(includeProtected.include && !protectedTweetsAllowlist(clientId)) {
-        Future.exception(
-          new BypassVisibilityFilteringNotAuthorizedException(
-            s"$clientId is not authorized to bypass visibility filtering"
+  def apply(protectedT etsAllowl st: Str ng => Boolean):  thodAuthor zer[ ncludeProtected] =
+     thodAuthor zer { ( ncludeProtected, cl ent d) =>
+      // T re  s only one unauthor zed case, a cl ent request ng
+      // protected t ets w n t y are not  n t  allowl st
+      Future.w n( ncludeProtected. nclude && !protectedT etsAllowl st(cl ent d)) {
+        Future.except on(
+          new BypassV s b l yF lter ngNotAuthor zedExcept on(
+            s"$cl ent d  s not author zed to bypass v s b l y f lter ng"
           )
         )
       }
@@ -258,90 +258,90 @@ object ProtectedTweetsAuthorizer {
 }
 
 /**
- * A MethodAuthorizer[Int] that fails large requests.
+ * A  thodAuthor zer[ nt] that fa ls large requests.
  */
-object RequestSizeAuthorizer {
-  class ExceededMaxWidthException(message: String) extends UnauthorizedException(message)
+object RequestS zeAuthor zer {
+  class ExceededMaxW dthExcept on( ssage: Str ng) extends Unauthor zedExcept on( ssage)
 
   def apply(
-    maxRequestSize: Int,
-    maxWidthLimitEnabled: Gate[Unit] = Gate.False
-  ): MethodAuthorizer[Int] =
-    MethodAuthorizer { (requestSize, clientId) =>
-      Future.when(requestSize > maxRequestSize && maxWidthLimitEnabled()) {
-        Future.exception(
-          new ExceededMaxWidthException(
-            s"$requestSize exceeds bulk request size limit. $clientId can request at most $maxRequestSize items per request"
+    maxRequestS ze:  nt,
+    maxW dthL m Enabled: Gate[Un ] = Gate.False
+  ):  thodAuthor zer[ nt] =
+     thodAuthor zer { (requestS ze, cl ent d) =>
+      Future.w n(requestS ze > maxRequestS ze && maxW dthL m Enabled()) {
+        Future.except on(
+          new ExceededMaxW dthExcept on(
+            s"$requestS ze exceeds bulk request s ze l m . $cl ent d can request at most $maxRequestS ze  ems per request"
           )
         )
       }
     }
 }
 
-object RateLimiterAuthorizer {
+object RateL m erAuthor zer {
 
-  type ClientId = String
+  type Cl ent d = Str ng
 
   /**
-   * @return client ID to weighted RateLimitingGate map
+   * @return cl ent  D to   ghted RateL m  ngGate map
    *
-   * We want to rate-limit based on requests per sec for every instance.
-   * When we allowlist new clients to Tweetypie, we assign tweets per sec quota.
-   * That's why, we compute perInstanceQuota [1] and create a weighted rate-limiting gate [2]
-   * which returns true if acquiring requestSize number of permits is successful. [3]
+   *   want to rate-l m  based on requests per sec for every  nstance.
+   * W n   allowl st new cl ents to T etyp e,   ass gn t ets per sec quota.
+   * That's why,   compute per nstanceQuota [1] and create a   ghted rate-l m  ng gate [2]
+   * wh ch returns true  f acqu r ng requestS ze number of perm s  s successful. [3]
    *
-   * [1] tps quota during allowlisting is for both DCs and instanceCount is for one DC.
-   * Therefore, we are over-compensating perInstanceQuota for all low-priority clients.
-   * this will act a fudge-factor to account for cluster-wide traffic imbalances.
+   * [1] tps quota dur ng allowl st ng  s for both DCs and  nstanceCount  s for one DC.
+   * T refore,   are over-compensat ng per nstanceQuota for all low-pr or y cl ents.
+   * t  w ll act a fudge-factor to account for cluster-w de traff c  mbalances.
    *
-   * val perInstanceQuota : Double = math.max(1.0, math.ceil(tpsLimit.toFloat / instanceCount))
+   * val per nstanceQuota : Double = math.max(1.0, math.ce l(tpsL m .toFloat /  nstanceCount))
    *
-   * We have some clients like deferredRPC with 0K tps quota and rate limiter expects > 0 permits.
+   *   have so  cl ents l ke deferredRPC w h 0K tps quota and rate l m er expects > 0 perm s.
    *
-   * [2] if a client has multiple environments - staging, devel, prod. We provision the
-   * same rate-limits for all envs instead of distributing the tps quota across envs.
+   * [2]  f a cl ent has mult ple env ron nts - stag ng, devel, prod.   prov s on t 
+   * sa  rate-l m s for all envs  nstead of d str but ng t  tps quota across envs.
    *
    * Example:
    *
-   * val c = Client(..., limit = 10k, ...)
-   * Map("foo.prod" -> c, "foo.staging" -> c, "foo.devel" -> c)
+   * val c = Cl ent(..., l m  = 10k, ...)
+   * Map("foo.prod" -> c, "foo.stag ng" -> c, "foo.devel" -> c)
    *
-   * Above client config turns into 3 separate RateLimitingGate.weighted(), each with 10k
+   * Above cl ent conf g turns  nto 3 separate RateL m  ngGate.  ghted(), each w h 10k
    *
-   * [3] RateLimitingGate will always give permit to the initial request that exceeds
-   * the limit. ex: starting with rate-limit of 1 tps per instance. first request with
-   * 100 batch size is allowed.
+   * [3] RateL m  ngGate w ll always g ve perm  to t   n  al request that exceeds
+   * t  l m . ex: start ng w h rate-l m  of 1 tps per  nstance. f rst request w h
+   * 100 batch s ze  s allo d.
    *
-   * RateLimitFudgeFactor is a multiplier for per-instance quota to account for:
+   * RateL m FudgeFactor  s a mult pl er for per- nstance quota to account for:
    *
-   * a) High likelihood of concurrent batches hitting the same tweetypie shard due to
-   * non-uniform load distribution (this can be alleviated by using Deterministic Aperture)
-   * b) Clients with no retry backoffs and custom batching/concurrency.
+   * a) H gh l kel hood of concurrent batc s h t ng t  sa  t etyp e shard due to
+   * non-un form load d str but on (t  can be allev ated by us ng Determ n st c Aperture)
+   * b) Cl ents w h no retry backoffs and custom batch ng/concurrency.
    *
-   * We are adding default stitch batch size to per instance quota, to give more headroom for low-tps clients.
-   * https://cgit.twitter.biz/source/tree/stitch/stitch-tweetypie/src/main/scala/com/twitter/stitch/tweetypie/TweetyPie.scala#n47
+   *   are add ng default st ch batch s ze to per  nstance quota, to g ve more  adroom for low-tps cl ents.
+   * https://cg .tw ter.b z/s ce/tree/st ch/st ch-t etyp e/src/ma n/scala/com/tw ter/st ch/t etyp e/T etyP e.scala#n47
    *
    */
-  case class RateLimiterConfig(limitingGate: Gate[Int], enforceRateLimit: Boolean)
+  case class RateL m erConf g(l m  ngGate: Gate[ nt], enforceRateL m : Boolean)
 
-  def perClientRateLimiters(
-    dynamicConfig: DynamicConfig,
-    instanceCount: Int
-  ): Map[ClientId, RateLimiterConfig] = {
-    val RateLimitFudgeFactor: Double = 1.5
-    val DefaultStitchBatchSize: Double = 25.0
-    dynamicConfig.clientsByFullyQualifiedId match {
-      case Some(clients) =>
-        clients.collect {
-          case (clientId, client) if client.tpsLimit.isDefined =>
-            val perInstanceQuota: Double =
+  def perCl entRateL m ers(
+    dynam cConf g: Dynam cConf g,
+     nstanceCount:  nt
+  ): Map[Cl ent d, RateL m erConf g] = {
+    val RateL m FudgeFactor: Double = 1.5
+    val DefaultSt chBatchS ze: Double = 25.0
+    dynam cConf g.cl entsByFullyQual f ed d match {
+      case So (cl ents) =>
+        cl ents.collect {
+          case (cl ent d, cl ent)  f cl ent.tpsL m . sDef ned =>
+            val per nstanceQuota: Double =
               math.max(
                 1.0,
-                math.ceil(
-                  client.tpsLimit.get.toFloat / instanceCount)) * RateLimitFudgeFactor + DefaultStitchBatchSize
-            clientId -> RateLimiterConfig(
-              RateLimitingGate.weighted(perInstanceQuota),
-              client.enforceRateLimit
+                math.ce l(
+                  cl ent.tpsL m .get.toFloat /  nstanceCount)) * RateL m FudgeFactor + DefaultSt chBatchS ze
+            cl ent d -> RateL m erConf g(
+              RateL m  ngGate.  ghted(per nstanceQuota),
+              cl ent.enforceRateL m 
             )
         }
       case None => Map.empty
@@ -349,51 +349,51 @@ object RateLimiterAuthorizer {
   }
 
   /*
-    enforce rate-limiting on get_tweets and get_tweet_fields requests
-    given enable_rate_limited_clients decider is true and rate limiting gate
-    is not giving any more permits.
+    enforce rate-l m  ng on get_t ets and get_t et_f elds requests
+    g ven enable_rate_l m ed_cl ents dec der  s true and rate l m  ng gate
+     s not g v ng any more perm s.
    */
   def apply(
-    config: DynamicConfig,
-    limiters: Map[ClientId, RateLimiterConfig],
-    instanceCount: Int,
-    enforceRateLimitedClients: Gate[Unit],
-    statsReceiver: StatsReceiver
-  ): MethodAuthorizer[Int] = {
+    conf g: Dynam cConf g,
+    l m ers: Map[Cl ent d, RateL m erConf g],
+     nstanceCount:  nt,
+    enforceRateL m edCl ents: Gate[Un ],
+    statsRece ver: StatsRece ver
+  ):  thodAuthor zer[ nt] = {
 
-    val tpsExceededScope = statsReceiver.scope("tps_exceeded")
-    val tpsRejectedScope = statsReceiver.scope("tps_rejected")
-    val qpsExceededScope = statsReceiver.scope("qps_exceeded")
-    val qpsRejectedScope = statsReceiver.scope("qps_rejected")
+    val tpsExceededScope = statsRece ver.scope("tps_exceeded")
+    val tpsRejectedScope = statsRece ver.scope("tps_rejected")
+    val qpsExceededScope = statsRece ver.scope("qps_exceeded")
+    val qpsRejectedScope = statsRece ver.scope("qps_rejected")
 
-    MethodAuthorizer { (requestSize, clientId) =>
-      val positiveRequestSize = math.max(1, requestSize)
-      val shouldRateLimit: Boolean = limiters.get(clientId).exists { config =>
-        val exceededLimit = !config.limitingGate(positiveRequestSize)
-        if (exceededLimit) {
-          qpsExceededScope.counter(clientId).incr()
-          tpsExceededScope.counter(clientId).incr(positiveRequestSize)
+     thodAuthor zer { (requestS ze, cl ent d) =>
+      val pos  veRequestS ze = math.max(1, requestS ze)
+      val shouldRateL m : Boolean = l m ers.get(cl ent d).ex sts { conf g =>
+        val exceededL m  = !conf g.l m  ngGate(pos  veRequestS ze)
+         f (exceededL m ) {
+          qpsExceededScope.counter(cl ent d). ncr()
+          tpsExceededScope.counter(cl ent d). ncr(pos  veRequestS ze)
         }
-        exceededLimit && config.enforceRateLimit
+        exceededL m  && conf g.enforceRateL m 
       }
 
-      Future.when(shouldRateLimit && enforceRateLimitedClients()) {
-        qpsRejectedScope.counter(clientId).incr()
-        tpsRejectedScope.counter(clientId).incr(positiveRequestSize)
-        Future.exception(
-          RateLimited(s"Your client ID $clientId has exceeded its reserved tps quota.")
+      Future.w n(shouldRateL m  && enforceRateL m edCl ents()) {
+        qpsRejectedScope.counter(cl ent d). ncr()
+        tpsRejectedScope.counter(cl ent d). ncr(pos  veRequestS ze)
+        Future.except on(
+          RateL m ed(s"Y  cl ent  D $cl ent d has exceeded  s reserved tps quota.")
         )
       }
     }
   }
 
   def apply(
-    config: DynamicConfig,
-    instanceCount: Int,
-    enforceRateLimitedClients: Gate[Unit],
-    statsReceiver: StatsReceiver
-  ): MethodAuthorizer[Int] = {
-    val limiters = perClientRateLimiters(config, instanceCount)
-    apply(config, limiters, instanceCount, enforceRateLimitedClients, statsReceiver)
+    conf g: Dynam cConf g,
+     nstanceCount:  nt,
+    enforceRateL m edCl ents: Gate[Un ],
+    statsRece ver: StatsRece ver
+  ):  thodAuthor zer[ nt] = {
+    val l m ers = perCl entRateL m ers(conf g,  nstanceCount)
+    apply(conf g, l m ers,  nstanceCount, enforceRateL m edCl ents, statsRece ver)
   }
 }

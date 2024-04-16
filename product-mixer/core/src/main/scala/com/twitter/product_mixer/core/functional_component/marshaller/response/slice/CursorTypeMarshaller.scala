@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.slice
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.sl ce
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.product_mixer.component_library.{thriftscala => t}
-import com.twitter.product_mixer.core.model.marshalling.response.slice.NextCursor
-import com.twitter.product_mixer.core.model.marshalling.response.slice.PreviousCursor
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorType
-import com.twitter.product_mixer.core.model.marshalling.response.slice.GapCursor
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport com.tw ter.product_m xer.component_l brary.{thr ftscala => t}
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.sl ce.NextCursor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.sl ce.Prev ousCursor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.sl ce.CursorType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.sl ce.GapCursor
 
-@Singleton
-class CursorTypeMarshaller @Inject() () {
+@S ngleton
+class CursorTypeMarshaller @ nject() () {
 
   def apply(cursorType: CursorType): t.CursorType = cursorType match {
     case NextCursor => t.CursorType.Next
-    case PreviousCursor => t.CursorType.Previous
+    case Prev ousCursor => t.CursorType.Prev ous
     case GapCursor => t.CursorType.Gap
   }
 
   def unmarshall(cursorType: t.CursorType): CursorType = cursorType match {
     case t.CursorType.Next => NextCursor
-    case t.CursorType.Previous => PreviousCursor
+    case t.CursorType.Prev ous => Prev ousCursor
     case t.CursorType.Gap => GapCursor
-    case t.CursorType.EnumUnknownCursorType(id) =>
-      throw new UnsupportedOperationException(
-        s"Attempted to unmarshall unrecognized cursor type: $id")
+    case t.CursorType.EnumUnknownCursorType( d) =>
+      throw new UnsupportedOperat onExcept on(
+        s"Attempted to unmarshall unrecogn zed cursor type: $ d")
   }
 
 }

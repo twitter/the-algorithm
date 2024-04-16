@@ -1,34 +1,34 @@
-package com.twitter.timelineranker.core
+package com.tw ter.t  l neranker.core
 
-import com.twitter.timelines.model.UserId
+ mport com.tw ter.t  l nes.model.User d
 
 /**
- * Follow graph details of a given user. Includes users followed, but also followed users in various
+ * Follow graph deta ls of a g ven user.  ncludes users follo d, but also follo d users  n var ous
  * states of mute.
  *
- * @param userId ID of a given user.
- * @param followedUserIds IDs of users who the given user follows.
- * @param mutuallyFollowingUserIds A subset of followedUserIds where followed users follow back the given user.
- * @param mutedUserIds A subset of followedUserIds that the given user has muted.
- * @param retweetsMutedUserIds A subset of followedUserIds whose retweets are muted by the given user.
+ * @param user d  D of a g ven user.
+ * @param follo dUser ds  Ds of users who t  g ven user follows.
+ * @param mutuallyFollow ngUser ds A subset of follo dUser ds w re follo d users follow back t  g ven user.
+ * @param mutedUser ds A subset of follo dUser ds that t  g ven user has muted.
+ * @param ret etsMutedUser ds A subset of follo dUser ds whose ret ets are muted by t  g ven user.
  */
 case class FollowGraphData(
-  userId: UserId,
-  followedUserIds: Seq[UserId],
-  mutuallyFollowingUserIds: Set[UserId],
-  mutedUserIds: Set[UserId],
-  retweetsMutedUserIds: Set[UserId]) {
-  val filteredFollowedUserIds: Seq[UserId] = followedUserIds.filterNot(mutedUserIds)
-  val allUserIds: Seq[UserId] = filteredFollowedUserIds :+ userId
-  val inNetworkUserIds: Seq[UserId] = followedUserIds :+ userId
+  user d: User d,
+  follo dUser ds: Seq[User d],
+  mutuallyFollow ngUser ds: Set[User d],
+  mutedUser ds: Set[User d],
+  ret etsMutedUser ds: Set[User d]) {
+  val f lteredFollo dUser ds: Seq[User d] = follo dUser ds.f lterNot(mutedUser ds)
+  val allUser ds: Seq[User d] = f lteredFollo dUser ds :+ user d
+  val  nNetworkUser ds: Seq[User d] = follo dUser ds :+ user d
 }
 
 object FollowGraphData {
   val Empty: FollowGraphData = FollowGraphData(
     0L,
-    Seq.empty[UserId],
-    Set.empty[UserId],
-    Set.empty[UserId],
-    Set.empty[UserId]
+    Seq.empty[User d],
+    Set.empty[User d],
+    Set.empty[User d],
+    Set.empty[User d]
   )
 }

@@ -1,52 +1,52 @@
-package com.twitter.product_mixer.core.pipeline.step
+package com.tw ter.product_m xer.core.p pel ne.step
 
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.stitch.Arrow
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.product_m xer.core.serv ce.ExecutorResult
+ mport com.tw ter.st ch.Arrow
 
 /**
- * A Step within a Pipeline, a Step is a unitary phase within an entire chain that makes up a pipeline.
- * @tparam State The request domain model.
- * @tparam ExecutorConfig The configs that should be passed into the executor at build time.
- * @tparam ExecutorInput The input type that an executor takes at request time.
- * @tparam ExResult The result that a step's executor will return.
- * @tparam OutputState The final/updated state a step would output, this is typically taking the ExResult
- *                     and mutating/transforming the State.
+ * A Step w h n a P pel ne, a Step  s a un ary phase w h n an ent re cha n that makes up a p pel ne.
+ * @tparam State T  request doma n model.
+ * @tparam ExecutorConf g T  conf gs that should be passed  nto t  executor at bu ld t  .
+ * @tparam Executor nput T   nput type that an executor takes at request t  .
+ * @tparam ExResult T  result that a step's executor w ll return.
+ * @tparam OutputState T  f nal/updated state a step would output, t   s typ cally tak ng t  ExResult
+ *                     and mutat ng/transform ng t  State.
  */
-trait Step[State, -Config, ExecutorInput, ExResult <: ExecutorResult] {
+tra  Step[State, -Conf g, Executor nput, ExResult <: ExecutorResult] {
 
   /**
-   * Adapt the state into the expected input for the Step's Arrow.
+   * Adapt t  state  nto t  expected  nput for t  Step's Arrow.
    *
-   * @param state State object passed into the Step.
-   * @param config The config object used to build the executor arrow or input.
-   * @return ExecutorInput that is used in the arrow of the underlying executor.
+   * @param state State object passed  nto t  Step.
+   * @param conf g T  conf g object used to bu ld t  executor arrow or  nput.
+   * @return Executor nput that  s used  n t  arrow of t  underly ng executor.
    */
-  def adaptInput(state: State, config: Config): ExecutorInput
+  def adapt nput(state: State, conf g: Conf g): Executor nput
 
   /**
-   * The actual arrow to be executed for the step, taking in the adapted input from [[adaptInput]]
-   * and returning the expected result.
-   * @param config Runtime configurations to configure the arrow with.
+   * T  actual arrow to be executed for t  step, tak ng  n t  adapted  nput from [[adapt nput]]
+   * and return ng t  expected result.
+   * @param conf g Runt   conf gurat ons to conf gure t  arrow w h.
    * @param context Context of Executor.
    */
   def arrow(
-    config: Config,
+    conf g: Conf g,
     context: Executor.Context
-  ): Arrow[ExecutorInput, ExResult]
+  ): Arrow[Executor nput, ExResult]
 
   /**
-   * Whether the step is considered a noop/empty based off of input being passed in. Empty
-   * steps are skipped when being executed.
+   * W t r t  step  s cons dered a noop/empty based off of  nput be ng passed  n. Empty
+   * steps are sk pped w n be ng executed.
    */
-  def isEmpty(config: Config): Boolean
+  def  sEmpty(conf g: Conf g): Boolean
 
   /**
-   * Update the passed in state based off of the result from [[arrow]]
-   * @param state State object passed into the Step.
+   * Update t  passed  n state based off of t  result from [[arrow]]
+   * @param state State object passed  nto t  Step.
    * @param executorResult Executor result returned from [[arrow]]
-   * @param config The config object used to build the executor arrow or input.
+   * @param conf g T  conf g object used to bu ld t  executor arrow or  nput.
    * @return Updated state object passed.
    */
-  def updateState(state: State, executorResult: ExResult, config: Config): State
+  def updateState(state: State, executorResult: ExResult, conf g: Conf g): State
 }

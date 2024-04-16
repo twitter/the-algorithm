@@ -1,66 +1,66 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
-import com.twitter.takedown.util.TakedownReasons
-import com.twitter.tseng.withholding.thriftscala.TakedownReason
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.takedown.ut l.TakedownReasons
+ mport com.tw ter.tseng.w hhold ng.thr ftscala.TakedownReason
+ mport com.tw ter.t etyp e.thr ftscala._
 
-object Takedown extends TweetStore.SyncModule {
+object Takedown extends T etStore.SyncModule {
 
   case class Event(
-    tweet: Tweet, // for CachingTweetStore / ManhattanTweetStore / ReplicatedTakedown
-    timestamp: Time,
-    user: Option[User] = None,
+    t et: T et, // for Cach ngT etStore / ManhattanT etStore / Repl catedTakedown
+    t  stamp: T  ,
+    user: Opt on[User] = None,
     takedownReasons: Seq[TakedownReason] = Seq(), // for EventBus
     reasonsToAdd: Seq[TakedownReason] = Seq(), // for Guano
     reasonsToRemove: Seq[TakedownReason] = Seq(), // for Guano
-    auditNote: Option[String] = None,
-    host: Option[String] = None,
-    byUserId: Option[UserId] = None,
+    aud Note: Opt on[Str ng] = None,
+    host: Opt on[Str ng] = None,
+    byUser d: Opt on[User d] = None,
     eventbusEnqueue: Boolean = true,
-    scribeForAudit: Boolean = true,
-    // If ManhattanTweetStore should update countryCodes and reasons
+    scr beForAud : Boolean = true,
+    //  f ManhattanT etStore should update countryCodes and reasons
     updateCodesAndReasons: Boolean = false)
-      extends SyncTweetStoreEvent("takedown") {
+      extends SyncT etStoreEvent("takedown") {
     def toAsyncRequest(): AsyncTakedownRequest =
       AsyncTakedownRequest(
-        tweet = tweet,
+        t et = t et,
         user = user,
         takedownReasons = takedownReasons,
         reasonsToAdd = reasonsToAdd,
         reasonsToRemove = reasonsToRemove,
-        scribeForAudit = scribeForAudit,
+        scr beForAud  = scr beForAud ,
         eventbusEnqueue = eventbusEnqueue,
-        auditNote = auditNote,
-        byUserId = byUserId,
+        aud Note = aud Note,
+        byUser d = byUser d,
         host = host,
-        timestamp = timestamp.inMillis
+        t  stamp = t  stamp. nM ll s
       )
   }
 
-  trait Store {
+  tra  Store {
     val takedown: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val takedown: FutureEffect[Event] = wrap(underlying.takedown)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val takedown: FutureEffect[Event] = wrap(underly ng.takedown)
   }
 
   object Store {
     def apply(
       logLensStore: LogLensStore,
-      manhattanStore: ManhattanTweetStore,
-      cachingTweetStore: CachingTweetStore,
+      manhattanStore: ManhattanT etStore,
+      cach ngT etStore: Cach ngT etStore,
       asyncEnqueueStore: AsyncEnqueueStore
     ): Store =
       new Store {
-        override val takedown: FutureEffect[Event] =
-          FutureEffect.inParallel(
+        overr de val takedown: FutureEffect[Event] =
+          FutureEffect. nParallel(
             logLensStore.takedown,
-            FutureEffect.sequentially(
+            FutureEffect.sequent ally(
               manhattanStore.takedown,
-              FutureEffect.inParallel(
-                cachingTweetStore.takedown,
+              FutureEffect. nParallel(
+                cach ngT etStore.takedown,
                 asyncEnqueueStore.takedown
               )
             )
@@ -69,66 +69,66 @@ object Takedown extends TweetStore.SyncModule {
   }
 }
 
-object AsyncTakedown extends TweetStore.AsyncModule {
+object AsyncTakedown extends T etStore.AsyncModule {
 
   object Event {
-    def fromAsyncRequest(request: AsyncTakedownRequest): TweetStoreEventOrRetry[Event] =
-      TweetStoreEventOrRetry(
+    def fromAsyncRequest(request: AsyncTakedownRequest): T etStoreEventOrRetry[Event] =
+      T etStoreEventOrRetry(
         Event(
-          tweet = request.tweet,
+          t et = request.t et,
           optUser = request.user,
           takedownReasons = request.takedownReasons,
           reasonsToAdd = request.reasonsToAdd,
           reasonsToRemove = request.reasonsToRemove,
-          auditNote = request.auditNote,
+          aud Note = request.aud Note,
           host = request.host,
-          byUserId = request.byUserId,
+          byUser d = request.byUser d,
           eventbusEnqueue = request.eventbusEnqueue,
-          scribeForAudit = request.scribeForAudit,
-          timestamp = Time.fromMilliseconds(request.timestamp)
+          scr beForAud  = request.scr beForAud ,
+          t  stamp = T  .fromM ll seconds(request.t  stamp)
         ),
-        request.retryAction,
+        request.retryAct on,
         RetryEvent
       )
   }
 
   case class Event(
-    tweet: Tweet,
-    timestamp: Time,
-    optUser: Option[User],
+    t et: T et,
+    t  stamp: T  ,
+    optUser: Opt on[User],
     takedownReasons: Seq[TakedownReason], // for EventBus
     reasonsToAdd: Seq[TakedownReason], // for Guano
     reasonsToRemove: Seq[TakedownReason], // for Guano
-    auditNote: Option[String], // for Guano
-    host: Option[String], // for Guano
-    byUserId: Option[UserId], // for Guano
+    aud Note: Opt on[Str ng], // for Guano
+    host: Opt on[Str ng], // for Guano
+    byUser d: Opt on[User d], // for Guano
     eventbusEnqueue: Boolean,
-    scribeForAudit: Boolean)
-      extends AsyncTweetStoreEvent("async_takedown")
-      with TweetStoreTweetEvent {
+    scr beForAud : Boolean)
+      extends AsyncT etStoreEvent("async_takedown")
+      w h T etStoreT etEvent {
 
-    def toAsyncRequest(action: Option[AsyncWriteAction] = None): AsyncTakedownRequest =
+    def toAsyncRequest(act on: Opt on[AsyncWr eAct on] = None): AsyncTakedownRequest =
       AsyncTakedownRequest(
-        tweet = tweet,
+        t et = t et,
         user = optUser,
         takedownReasons = takedownReasons,
         reasonsToAdd = reasonsToAdd,
         reasonsToRemove = reasonsToRemove,
-        scribeForAudit = scribeForAudit,
+        scr beForAud  = scr beForAud ,
         eventbusEnqueue = eventbusEnqueue,
-        auditNote = auditNote,
-        byUserId = byUserId,
+        aud Note = aud Note,
+        byUser d = byUser d,
         host = host,
-        timestamp = timestamp.inMillis,
-        retryAction = action
+        t  stamp = t  stamp. nM ll s,
+        retryAct on = act on
       )
 
-    override def toTweetEventData: Seq[TweetEventData] =
+    overr de def toT etEventData: Seq[T etEventData] =
       optUser.map { user =>
-        TweetEventData.TweetTakedownEvent(
-          TweetTakedownEvent(
-            tweetId = tweet.id,
-            userId = user.id,
+        T etEventData.T etTakedownEvent(
+          T etTakedownEvent(
+            t et d = t et. d,
+            user d = user. d,
             takedownCountryCodes =
               takedownReasons.collect(TakedownReasons.reasonToCountryCode).sorted,
             takedownReasons = takedownReasons
@@ -136,69 +136,69 @@ object AsyncTakedown extends TweetStore.AsyncModule {
         )
       }.toSeq
 
-    override def enqueueRetry(service: ThriftTweetService, action: AsyncWriteAction): Future[Unit] =
-      service.asyncTakedown(toAsyncRequest(Some(action)))
+    overr de def enqueueRetry(serv ce: Thr ftT etServ ce, act on: AsyncWr eAct on): Future[Un ] =
+      serv ce.asyncTakedown(toAsyncRequest(So (act on)))
   }
 
-  case class RetryEvent(action: AsyncWriteAction, event: Event)
-      extends TweetStoreRetryEvent[Event] {
+  case class RetryEvent(act on: AsyncWr eAct on, event: Event)
+      extends T etStoreRetryEvent[Event] {
 
-    override val eventType: AsyncWriteEventType.Takedown.type = AsyncWriteEventType.Takedown
-    override val scribedTweetOnFailure: Option[Tweet] = Some(event.tweet)
+    overr de val eventType: AsyncWr eEventType.Takedown.type = AsyncWr eEventType.Takedown
+    overr de val scr bedT etOnFa lure: Opt on[T et] = So (event.t et)
   }
 
-  trait Store {
+  tra  Store {
     val asyncTakedown: FutureEffect[Event]
-    val retryAsyncTakedown: FutureEffect[TweetStoreRetryEvent[Event]]
+    val retryAsyncTakedown: FutureEffect[T etStoreRetryEvent[Event]]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val asyncTakedown: FutureEffect[Event] = wrap(underlying.asyncTakedown)
-    override val retryAsyncTakedown: FutureEffect[TweetStoreRetryEvent[Event]] = wrap(
-      underlying.retryAsyncTakedown)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val asyncTakedown: FutureEffect[Event] = wrap(underly ng.asyncTakedown)
+    overr de val retryAsyncTakedown: FutureEffect[T etStoreRetryEvent[Event]] = wrap(
+      underly ng.retryAsyncTakedown)
   }
 
   object Store {
     def apply(
-      replicatingStore: ReplicatingTweetStore,
-      guanoStore: GuanoServiceStore,
-      eventBusEnqueueStore: TweetEventBusStore
+      repl cat ngStore: Repl cat ngT etStore,
+      guanoStore: GuanoServ ceStore,
+      eventBusEnqueueStore: T etEventBusStore
     ): Store = {
       val stores: Seq[Store] =
         Seq(
-          replicatingStore,
+          repl cat ngStore,
           guanoStore,
           eventBusEnqueueStore
         )
 
-      def build[E <: TweetStoreEvent](extract: Store => FutureEffect[E]): FutureEffect[E] =
-        FutureEffect.inParallel[E](stores.map(extract): _*)
+      def bu ld[E <: T etStoreEvent](extract: Store => FutureEffect[E]): FutureEffect[E] =
+        FutureEffect. nParallel[E](stores.map(extract): _*)
 
       new Store {
-        override val asyncTakedown: FutureEffect[Event] = build(_.asyncTakedown)
-        override val retryAsyncTakedown: FutureEffect[TweetStoreRetryEvent[Event]] = build(
+        overr de val asyncTakedown: FutureEffect[Event] = bu ld(_.asyncTakedown)
+        overr de val retryAsyncTakedown: FutureEffect[T etStoreRetryEvent[Event]] = bu ld(
           _.retryAsyncTakedown)
       }
     }
   }
 }
 
-object ReplicatedTakedown extends TweetStore.ReplicatedModule {
+object Repl catedTakedown extends T etStore.Repl catedModule {
 
-  case class Event(tweet: Tweet) extends ReplicatedTweetStoreEvent("takedown")
+  case class Event(t et: T et) extends Repl catedT etStoreEvent("takedown")
 
-  trait Store {
-    val replicatedTakedown: FutureEffect[Event]
+  tra  Store {
+    val repl catedTakedown: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val replicatedTakedown: FutureEffect[Event] = wrap(underlying.replicatedTakedown)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val repl catedTakedown: FutureEffect[Event] = wrap(underly ng.repl catedTakedown)
   }
 
   object Store {
-    def apply(cachingTweetStore: CachingTweetStore): Store = {
+    def apply(cach ngT etStore: Cach ngT etStore): Store = {
       new Store {
-        override val replicatedTakedown: FutureEffect[Event] = cachingTweetStore.replicatedTakedown
+        overr de val repl catedTakedown: FutureEffect[Event] = cach ngT etStore.repl catedTakedown
       }
     }
   }

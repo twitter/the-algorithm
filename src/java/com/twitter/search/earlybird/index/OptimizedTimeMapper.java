@@ -1,109 +1,109 @@
-package com.twitter.search.earlybird.index;
+package com.tw ter.search.earlyb rd. ndex;
 
-import java.io.IOException;
-import java.util.Arrays;
+ mport java. o. OExcept on;
+ mport java.ut l.Arrays;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.core.earlybird.index.inverted.IntBlockPool;
+ mport com.tw ter.search.common.ut l. o.flushable.DataDeser al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.DataSer al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.common.ut l. o.flushable.Flushable;
+ mport com.tw ter.search.core.earlyb rd. ndex.Doc DToT et DMapper;
+ mport com.tw ter.search.core.earlyb rd. ndex.T  Mapper;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted. ntBlockPool;
 
 /**
- * A TimeMapper implementation that stores the timestamps associated with the doc IDs in an array.
+ * A T  Mapper  mple ntat on that stores t  t  stamps assoc ated w h t  doc  Ds  n an array.
  */
-public class OptimizedTimeMapper extends AbstractInMemoryTimeMapper implements Flushable {
-  // Doc id to timestamp map. Timestamps that are negative are out-of-order.
-  protected final int[] timeMap;
+publ c class Opt m zedT  Mapper extends Abstract n moryT  Mapper  mple nts Flushable {
+  // Doc  d to t  stamp map. T  stamps that are negat ve are out-of-order.
+  protected f nal  nt[] t  Map;
 
-  // Size must be greater than the max doc ID stored in the optimized tweet ID mapper.
-  public OptimizedTimeMapper(RealtimeTimeMapper realtimeTimeMapper,
-                             DocIDToTweetIDMapper originalTweetIdMapper,
-                             DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
+  // S ze must be greater than t  max doc  D stored  n t  opt m zed t et  D mapper.
+  publ c Opt m zedT  Mapper(Realt  T  Mapper realt  T  Mapper,
+                             Doc DToT et DMapper or g nalT et dMapper,
+                             Doc DToT et DMapper opt m zedT et dMapper) throws  OExcept on {
     super();
-    int maxDocId = optimizedTweetIdMapper.getPreviousDocID(Integer.MAX_VALUE);
-    timeMap = new int[maxDocId + 1];
-    Arrays.fill(timeMap, ILLEGAL_TIME);
+     nt maxDoc d = opt m zedT et dMapper.getPrev ousDoc D( nteger.MAX_VALUE);
+    t  Map = new  nt[maxDoc d + 1];
+    Arrays.f ll(t  Map,  LLEGAL_T ME);
 
-    int docId = maxDocId;
-    while (docId != DocIDToTweetIDMapper.ID_NOT_FOUND) {
-      int originalDocId = originalTweetIdMapper.getDocID(optimizedTweetIdMapper.getTweetID(docId));
-      Preconditions.checkState(originalDocId != DocIDToTweetIDMapper.ID_NOT_FOUND);
+     nt doc d = maxDoc d;
+    wh le (doc d != Doc DToT et DMapper. D_NOT_FOUND) {
+       nt or g nalDoc d = or g nalT et dMapper.getDoc D(opt m zedT et dMapper.getT et D(doc d));
+      Precond  ons.c ckState(or g nalDoc d != Doc DToT et DMapper. D_NOT_FOUND);
 
-      int docIdTimestamp = realtimeTimeMapper.getTime(originalDocId);
-      Preconditions.checkState(docIdTimestamp != TimeMapper.ILLEGAL_TIME);
+       nt doc dT  stamp = realt  T  Mapper.getT  (or g nalDoc d);
+      Precond  ons.c ckState(doc dT  stamp != T  Mapper. LLEGAL_T ME);
 
-      doAddMapping(docId, docIdTimestamp);
+      doAddMapp ng(doc d, doc dT  stamp);
 
-      docId = optimizedTweetIdMapper.getPreviousDocID(docId);
+      doc d = opt m zedT et dMapper.getPrev ousDoc D(doc d);
     }
   }
 
-  private OptimizedTimeMapper(int[] timeMap,
-                              int reverseMapLastIndex,
-                              IntBlockPool reverseMapTimes,
-                              IntBlockPool reverseMapIds) {
-    super(reverseMapLastIndex, reverseMapTimes, reverseMapIds);
-    this.timeMap = timeMap;
+  pr vate Opt m zedT  Mapper( nt[] t  Map,
+                               nt reverseMapLast ndex,
+                               ntBlockPool reverseMapT  s,
+                               ntBlockPool reverseMap ds) {
+    super(reverseMapLast ndex, reverseMapT  s, reverseMap ds);
+    t .t  Map = t  Map;
   }
 
-  @Override
-  public int getTime(int docID) {
-    return timeMap[docID];
+  @Overr de
+  publ c  nt getT  ( nt doc D) {
+    return t  Map[doc D];
   }
 
-  @Override
-  protected void setTime(int docID, int timeSeconds) {
-    timeMap[docID] = timeSeconds;
+  @Overr de
+  protected vo d setT  ( nt doc D,  nt t  Seconds) {
+    t  Map[doc D] = t  Seconds;
   }
 
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @Overr de
+  publ c FlushHandler getFlushHandler() {
+    return new FlushHandler(t );
   }
 
-  public static final class FlushHandler extends Flushable.Handler<OptimizedTimeMapper> {
-    private static final String REVERSE_MAP_LAST_INDEX_PROP = "reverseMapLastIndex";
-    private static final String TIMES_SUB_PROP = "times";
-    private static final String IDS_SUB_PROP = "ids";
+  publ c stat c f nal class FlushHandler extends Flushable.Handler<Opt m zedT  Mapper> {
+    pr vate stat c f nal Str ng REVERSE_MAP_LAST_ NDEX_PROP = "reverseMapLast ndex";
+    pr vate stat c f nal Str ng T MES_SUB_PROP = "t  s";
+    pr vate stat c f nal Str ng  DS_SUB_PROP = " ds";
 
-    public FlushHandler() {
+    publ c FlushHandler() {
       super();
     }
 
-    public FlushHandler(OptimizedTimeMapper objectToFlush) {
+    publ c FlushHandler(Opt m zedT  Mapper objectToFlush) {
       super(objectToFlush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      OptimizedTimeMapper mapper = getObjectToFlush();
-      out.writeIntArray(mapper.timeMap);
-      flushInfo.addIntProperty(REVERSE_MAP_LAST_INDEX_PROP, mapper.reverseMapLastIndex);
-      mapper.reverseMapTimes.getFlushHandler().flush(
-          flushInfo.newSubProperties(TIMES_SUB_PROP), out);
-      mapper.reverseMapIds.getFlushHandler().flush(
-          flushInfo.newSubProperties(IDS_SUB_PROP), out);
+    @Overr de
+    protected vo d doFlush(Flush nfo flush nfo, DataSer al zer out) throws  OExcept on {
+      Opt m zedT  Mapper mapper = getObjectToFlush();
+      out.wr e ntArray(mapper.t  Map);
+      flush nfo.add ntProperty(REVERSE_MAP_LAST_ NDEX_PROP, mapper.reverseMapLast ndex);
+      mapper.reverseMapT  s.getFlushHandler().flush(
+          flush nfo.newSubPropert es(T MES_SUB_PROP), out);
+      mapper.reverseMap ds.getFlushHandler().flush(
+          flush nfo.newSubPropert es( DS_SUB_PROP), out);
     }
 
-    @Override
-    protected OptimizedTimeMapper doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
-      return new OptimizedTimeMapper(
-          in.readIntArray(),
-          flushInfo.getIntProperty(REVERSE_MAP_LAST_INDEX_PROP),
-          new IntBlockPool.FlushHandler().load(flushInfo.getSubProperties(TIMES_SUB_PROP), in),
-          new IntBlockPool.FlushHandler().load(flushInfo.getSubProperties(IDS_SUB_PROP), in));
+    @Overr de
+    protected Opt m zedT  Mapper doLoad(Flush nfo flush nfo, DataDeser al zer  n)
+        throws  OExcept on {
+      return new Opt m zedT  Mapper(
+           n.read ntArray(),
+          flush nfo.get ntProperty(REVERSE_MAP_LAST_ NDEX_PROP),
+          new  ntBlockPool.FlushHandler().load(flush nfo.getSubPropert es(T MES_SUB_PROP),  n),
+          new  ntBlockPool.FlushHandler().load(flush nfo.getSubPropert es( DS_SUB_PROP),  n));
     }
   }
 
-  @Override
-  public TimeMapper optimize(DocIDToTweetIDMapper originalTweetIdMapper,
-                             DocIDToTweetIDMapper optimizedTweetIdMapper) {
-    throw new UnsupportedOperationException("OptimizedTimeMapper instances are already optimized.");
+  @Overr de
+  publ c T  Mapper opt m ze(Doc DToT et DMapper or g nalT et dMapper,
+                             Doc DToT et DMapper opt m zedT et dMapper) {
+    throw new UnsupportedOperat onExcept on("Opt m zedT  Mapper  nstances are already opt m zed.");
   }
 }

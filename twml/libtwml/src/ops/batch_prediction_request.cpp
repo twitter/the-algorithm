@@ -1,183 +1,183 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+# nclude "tensorflow/core/fra work/op.h"
+# nclude "tensorflow/core/fra work/shape_ nference.h"
+# nclude "tensorflow/core/fra work/op_kernel.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
-#include "resource_utils.h"
+# nclude <twml.h>
+# nclude "tensorflow_ut ls.h"
+# nclude "res ce_ut ls.h"
 
-REGISTER_OP("DecodeAndHashBatchPredictionRequest")
-.Input("input_bytes: uint8")
-.Attr("keep_features: list(int)")
-.Attr("keep_codes: list(int)")
-.Attr("decode_mode: int = 0")
-.Output("hashed_data_record_handle: resource")
-.SetShapeFn(shape_inference::ScalarShape)
+REG STER_OP("DecodeAndHashBatchPred ct onRequest")
+. nput(" nput_bytes: u nt8")
+.Attr("keep_features: l st( nt)")
+.Attr("keep_codes: l st( nt)")
+.Attr("decode_mode:  nt = 0")
+.Output("has d_data_record_handle: res ce")
+.SetShapeFn(shape_ nference::ScalarShape)
 .Doc(R"doc(
-A tensorflow OP that decodes batch prediction request and creates a handle to the batch of hashed data records.
+A tensorflow OP that decodes batch pred ct on request and creates a handle to t  batch of has d data records.
 
 Attr
-  keep_features: a list of int ids to keep.
-  keep_codes: their corresponding code.
-  decode_mode: integer, indicates which decoding method to use. Let a sparse continuous
-    have a feature_name and a dict of {name: value}. 0 indicates feature_ids are computed
-    as hash(name). 1 indicates feature_ids are computed as hash(feature_name, name)
-  shared_name: name used by the resource handle inside the resource manager.
-  container: name used by the container of the resources.
+  keep_features: a l st of  nt  ds to keep.
+  keep_codes: t  r correspond ng code.
+  decode_mode:  nteger,  nd cates wh ch decod ng  thod to use. Let a sparse cont nuous
+    have a feature_na  and a d ct of {na : value}. 0  nd cates feature_ ds are computed
+    as hash(na ). 1  nd cates feature_ ds are computed as hash(feature_na , na )
+  shared_na : na  used by t  res ce handle  ns de t  res ce manager.
+  conta ner: na  used by t  conta ner of t  res ces.
 
-shared_name and container are required when inheriting from ResourceOpKernel.
+shared_na  and conta ner are requ red w n  n r  ng from Res ceOpKernel.
 
-Input
-  input_bytes: Input tensor containing the serialized batch of BatchPredictionRequest.
+ nput
+   nput_bytes:  nput tensor conta n ng t  ser al zed batch of BatchPred ct onRequest.
 
 Outputs
-  hashed_data_record_handle: A resource handle to the HashedDataRecordResource containing batch of HashedDataRecords.
+  has d_data_record_handle: A res ce handle to t  Has dDataRecordRes ce conta n ng batch of Has dDataRecords.
 )doc");
 
-class DecodeAndHashBatchPredictionRequest : public OpKernel {
- public:
-  explicit DecodeAndHashBatchPredictionRequest(OpKernelConstruction* context)
+class DecodeAndHashBatchPred ct onRequest : publ c OpKernel {
+ publ c:
+  expl c  DecodeAndHashBatchPred ct onRequest(OpKernelConstruct on* context)
       : OpKernel(context) {
-    std::vector<int64> keep_features;
-    std::vector<int64> keep_codes;
+    std::vector< nt64> keep_features;
+    std::vector< nt64> keep_codes;
 
-    OP_REQUIRES_OK(context, context->GetAttr("keep_features", &keep_features));
-    OP_REQUIRES_OK(context, context->GetAttr("keep_codes", &keep_codes));
-    OP_REQUIRES_OK(context, context->GetAttr("decode_mode", &m_decode_mode));
+    OP_REQU RES_OK(context, context->GetAttr("keep_features", &keep_features));
+    OP_REQU RES_OK(context, context->GetAttr("keep_codes", &keep_codes));
+    OP_REQU RES_OK(context, context->GetAttr("decode_mode", &m_decode_mode));
 
-    OP_REQUIRES(context, keep_features.size() == keep_codes.size(),
-                errors::InvalidArgument("keep keys and values must have same size."));
+    OP_REQU RES(context, keep_features.s ze() == keep_codes.s ze(),
+                errors:: nval dArgu nt("keep keys and values must have sa  s ze."));
 
-#ifdef USE_DENSE_HASH
+# fdef USE_DENSE_HASH
     m_keep_map.set_empty_key(0);
-#endif  // USE_DENSE_HASH
+#end f  // USE_DENSE_HASH
 
-    for (uint64_t i = 0; i < keep_features.size(); i++) {
-      m_keep_map[keep_features[i]] = keep_codes[i];
+    for (u nt64_t   = 0;   < keep_features.s ze();  ++) {
+      m_keep_map[keep_features[ ]] = keep_codes[ ];
     }
   }
 
- private:
-  twml::Map<int64_t, int64_t> m_keep_map;
-  int64 m_decode_mode;
+ pr vate:
+  twml::Map< nt64_t,  nt64_t> m_keep_map;
+   nt64 m_decode_mode;
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      HashedDataRecordResource *resource = nullptr;
-      OP_REQUIRES_OK(context, makeResourceHandle<HashedDataRecordResource>(context, 0, &resource));
+      Has dDataRecordRes ce *res ce = nullptr;
+      OP_REQU RES_OK(context, makeRes ceHandle<Has dDataRecordRes ce>(context, 0, &res ce));
 
-      // Store the input bytes in the resource so it isnt freed before the resource.
-      // This is necessary because we are not copying the contents for tensors.
-      resource->input = context->input(0);
-      const uint8_t *input_bytes = resource->input.flat<uint8>().data();
-      twml::HashedDataRecordReader reader;
-      twml::HashedBatchPredictionRequest bpr;
+      // Store t   nput bytes  n t  res ce so    snt freed before t  res ce.
+      // T   s necessary because   are not copy ng t  contents for tensors.
+      res ce-> nput = context-> nput(0);
+      const u nt8_t * nput_bytes = res ce-> nput.flat<u nt8>().data();
+      twml::Has dDataRecordReader reader;
+      twml::Has dBatchPred ct onRequest bpr;
       reader.setKeepMap(&m_keep_map);
-      reader.setBuffer(input_bytes);
+      reader.setBuffer( nput_bytes);
       reader.setDecodeMode(m_decode_mode);
       bpr.decode(reader);
 
-      resource->common = std::move(bpr.common());
-      resource->records = std::move(bpr.requests());
+      res ce->common = std::move(bpr.common());
+      res ce->records = std::move(bpr.requests());
 
       // Each datarecord has a copy of common features.
-      // Initialize total_size by common_size * num_records
-      int64 common_size = static_cast<int64>(resource->common.totalSize());
-      int64 num_records = static_cast<int64>(resource->records.size());
-      int64 total_size = common_size * num_records;
-      for (const auto &record : resource->records) {
-        total_size += static_cast<int64>(record.totalSize());
+      //  n  al ze total_s ze by common_s ze * num_records
+       nt64 common_s ze = stat c_cast< nt64>(res ce->common.totalS ze());
+       nt64 num_records = stat c_cast< nt64>(res ce->records.s ze());
+       nt64 total_s ze = common_s ze * num_records;
+      for (const auto &record : res ce->records) {
+        total_s ze += stat c_cast< nt64>(record.totalS ze());
       }
 
-      resource->total_size = total_size;
-      resource->num_labels = 0;
-      resource->num_weights = 0;
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      res ce->total_s ze = total_s ze;
+      res ce->num_labels = 0;
+      res ce->num_  ghts = 0;
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-REGISTER_KERNEL_BUILDER(
-  Name("DecodeAndHashBatchPredictionRequest").Device(DEVICE_CPU),
-  DecodeAndHashBatchPredictionRequest);
+REG STER_KERNEL_BU LDER(
+  Na ("DecodeAndHashBatchPred ct onRequest").Dev ce(DEV CE_CPU),
+  DecodeAndHashBatchPred ct onRequest);
 
-REGISTER_OP("DecodeBatchPredictionRequest")
-.Input("input_bytes: uint8")
-.Attr("keep_features: list(int)")
-.Attr("keep_codes: list(int)")
-.Output("data_record_handle: resource")
-.SetShapeFn(shape_inference::ScalarShape)
+REG STER_OP("DecodeBatchPred ct onRequest")
+. nput(" nput_bytes: u nt8")
+.Attr("keep_features: l st( nt)")
+.Attr("keep_codes: l st( nt)")
+.Output("data_record_handle: res ce")
+.SetShapeFn(shape_ nference::ScalarShape)
 .Doc(R"doc(
-A tensorflow OP that decodes batch prediction request and creates a handle to the batch of data records.
+A tensorflow OP that decodes batch pred ct on request and creates a handle to t  batch of data records.
 
 Attr
-  keep_features: a list of int ids to keep.
-  keep_codes: their corresponding code.
-  shared_name: name used by the resource handle inside the resource manager.
-  container: name used by the container of the resources.
+  keep_features: a l st of  nt  ds to keep.
+  keep_codes: t  r correspond ng code.
+  shared_na : na  used by t  res ce handle  ns de t  res ce manager.
+  conta ner: na  used by t  conta ner of t  res ces.
 
-shared_name and container are required when inheriting from ResourceOpKernel.
+shared_na  and conta ner are requ red w n  n r  ng from Res ceOpKernel.
 
-Input
-  input_bytes: Input tensor containing the serialized batch of BatchPredictionRequest.
+ nput
+   nput_bytes:  nput tensor conta n ng t  ser al zed batch of BatchPred ct onRequest.
 
 Outputs
-  data_record_handle: A resource handle to the DataRecordResource containing batch of DataRecords.
+  data_record_handle: A res ce handle to t  DataRecordRes ce conta n ng batch of DataRecords.
 )doc");
 
-class DecodeBatchPredictionRequest : public OpKernel {
- public:
-  explicit DecodeBatchPredictionRequest(OpKernelConstruction* context)
+class DecodeBatchPred ct onRequest : publ c OpKernel {
+ publ c:
+  expl c  DecodeBatchPred ct onRequest(OpKernelConstruct on* context)
       : OpKernel(context) {
-    std::vector<int64> keep_features;
-    std::vector<int64> keep_codes;
+    std::vector< nt64> keep_features;
+    std::vector< nt64> keep_codes;
 
-    OP_REQUIRES_OK(context, context->GetAttr("keep_features", &keep_features));
-    OP_REQUIRES_OK(context, context->GetAttr("keep_codes", &keep_codes));
+    OP_REQU RES_OK(context, context->GetAttr("keep_features", &keep_features));
+    OP_REQU RES_OK(context, context->GetAttr("keep_codes", &keep_codes));
 
-    OP_REQUIRES(context, keep_features.size() == keep_codes.size(),
-                errors::InvalidArgument("keep keys and values must have same size."));
+    OP_REQU RES(context, keep_features.s ze() == keep_codes.s ze(),
+                errors:: nval dArgu nt("keep keys and values must have sa  s ze."));
 
-#ifdef USE_DENSE_HASH
+# fdef USE_DENSE_HASH
     m_keep_map.set_empty_key(0);
-#endif  // USE_DENSE_HASH
+#end f  // USE_DENSE_HASH
 
-    for (uint64_t i = 0; i < keep_features.size(); i++) {
-      m_keep_map[keep_features[i]] = keep_codes[i];
+    for (u nt64_t   = 0;   < keep_features.s ze();  ++) {
+      m_keep_map[keep_features[ ]] = keep_codes[ ];
     }
   }
 
- private:
-  twml::Map<int64_t, int64_t> m_keep_map;
+ pr vate:
+  twml::Map< nt64_t,  nt64_t> m_keep_map;
 
-  void Compute(OpKernelContext* context) override {
+  vo d Compute(OpKernelContext* context) overr de {
     try {
-      DataRecordResource *resource = nullptr;
-      OP_REQUIRES_OK(context, makeResourceHandle<DataRecordResource>(context, 0, &resource));
+      DataRecordRes ce *res ce = nullptr;
+      OP_REQU RES_OK(context, makeRes ceHandle<DataRecordRes ce>(context, 0, &res ce));
 
-      // Store the input bytes in the resource so it isnt freed before the resource.
-      // This is necessary because we are not copying the contents for tensors.
-      resource->input = context->input(0);
-      const uint8_t *input_bytes = resource->input.flat<uint8>().data();
+      // Store t   nput bytes  n t  res ce so    snt freed before t  res ce.
+      // T   s necessary because   are not copy ng t  contents for tensors.
+      res ce-> nput = context-> nput(0);
+      const u nt8_t * nput_bytes = res ce-> nput.flat<u nt8>().data();
       twml::DataRecordReader reader;
-      twml::BatchPredictionRequest bpr;
+      twml::BatchPred ct onRequest bpr;
       reader.setKeepMap(&m_keep_map);
-      reader.setBuffer(input_bytes);
+      reader.setBuffer( nput_bytes);
       bpr.decode(reader);
 
-      resource->common = std::move(bpr.common());
-      resource->records = std::move(bpr.requests());
+      res ce->common = std::move(bpr.common());
+      res ce->records = std::move(bpr.requests());
 
-      resource->num_weights = 0;
-      resource->num_labels = 0;
-      resource->keep_map = &m_keep_map;
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      res ce->num_  ghts = 0;
+      res ce->num_labels = 0;
+      res ce->keep_map = &m_keep_map;
+    } catch (const std::except on &e) {
+      context->CtxFa lureW hWarn ng(errors:: nval dArgu nt(e.what()));
     }
   }
 };
 
-REGISTER_KERNEL_BUILDER(
-  Name("DecodeBatchPredictionRequest").Device(DEVICE_CPU),
-  DecodeBatchPredictionRequest);
+REG STER_KERNEL_BU LDER(
+  Na ("DecodeBatchPred ct onRequest").Dev ce(DEV CE_CPU),
+  DecodeBatchPred ct onRequest);

@@ -1,3 +1,3 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.highlight
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.h ghl ght
 
-case class HighlightedSection(startIndex: Int, endIndex: Int)
+case class H ghl ghtedSect on(start ndex:  nt, end ndex:  nt)

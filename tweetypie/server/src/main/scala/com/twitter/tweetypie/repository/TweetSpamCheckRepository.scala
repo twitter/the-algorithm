@@ -1,14 +1,14 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.service.gen.scarecrow.{thriftscala => scarecrow}
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.backends.Scarecrow
+ mport com.tw ter.serv ce.gen.scarecrow.{thr ftscala => scarecrow}
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.backends.Scarecrow
 
-object TweetSpamCheckRepository {
+object T etSpamC ckRepos ory {
 
-  type Type = (scarecrow.TweetNew, scarecrow.TweetContext) => Stitch[scarecrow.CheckTweetResponse]
+  type Type = (scarecrow.T etNew, scarecrow.T etContext) => St ch[scarecrow.C ckT etResponse]
 
-  def apply(checkTweet: Scarecrow.CheckTweet2): Type =
-    (tweetNew, tweetContext) => Stitch.callFuture(checkTweet((tweetNew, tweetContext)))
+  def apply(c ckT et: Scarecrow.C ckT et2): Type =
+    (t etNew, t etContext) => St ch.callFuture(c ckT et((t etNew, t etContext)))
 }

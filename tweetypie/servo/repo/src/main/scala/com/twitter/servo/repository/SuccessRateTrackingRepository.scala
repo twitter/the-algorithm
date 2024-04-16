@@ -1,81 +1,81 @@
-package com.twitter.servo.repository
+package com.tw ter.servo.repos ory
 
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.{CancelledConnectionException, CancelledRequestException}
-import com.twitter.servo.util.{Gate, SuccessRateTracker}
-import com.twitter.util.Throwables.RootCause
-import java.util.concurrent.CancellationException
+ mport com.tw ter.f nagle.mux.Cl entD scardedRequestExcept on
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.{CancelledConnect onExcept on, CancelledRequestExcept on}
+ mport com.tw ter.servo.ut l.{Gate, SuccessRateTracker}
+ mport com.tw ter.ut l.Throwables.RootCause
+ mport java.ut l.concurrent.Cancellat onExcept on
 
-object SuccessRateTrackingRepository {
+object SuccessRateTrack ngRepos ory {
 
   /**
-   * (successes, failures)
+   * (successes, fa lures)
    */
-  type SuccessRateObserver = (Int, Int) => Unit
+  type SuccessRateObserver = ( nt,  nt) => Un 
 
   /**
-   * Identifies [[Throwable]]s that should not be counted as failures.
+   *  dent f es [[Throwable]]s that should not be counted as fa lures.
    *
-   * This is a total function instead of a partial function so it can reliably recurse on itself
-   * to find a root cause.
+   * T   s a total funct on  nstead of a part al funct on so   can rel ably recurse on  self
+   * to f nd a root cause.
    */
-  def isCancellation(t: Throwable): Boolean =
+  def  sCancellat on(t: Throwable): Boolean =
     t match {
-      // We don't consider CancelledRequestExceptions or CancelledConnectionExceptions to be
-      // failures in order not to tarnish our success rate on upstream request cancellations.
-      case _: CancelledRequestException => true
-      case _: CancelledConnectionException => true
-      // non-finagle backends can throw CancellationExceptions when their futures are cancelled.
-      case _: CancellationException => true
-      // Mux servers can return ClientDiscardedRequestException.
-      case _: ClientDiscardedRequestException => true
-      // Most of these exceptions can be wrapped in com.twitter.finagle.Failure
-      case RootCause(t) => isCancellation(t)
+      //   don't cons der CancelledRequestExcept ons or CancelledConnect onExcept ons to be
+      // fa lures  n order not to tarn sh   success rate on upstream request cancellat ons.
+      case _: CancelledRequestExcept on => true
+      case _: CancelledConnect onExcept on => true
+      // non-f nagle backends can throw Cancellat onExcept ons w n t  r futures are cancelled.
+      case _: Cancellat onExcept on => true
+      // Mux servers can return Cl entD scardedRequestExcept on.
+      case _: Cl entD scardedRequestExcept on => true
+      // Most of t se except ons can be wrapped  n com.tw ter.f nagle.Fa lure
+      case RootCause(t) =>  sCancellat on(t)
       case _ => false
     }
 
   /**
-   * Return a Success Rate (SR) tracking repository along with the gate controlling it.
+   * Return a Success Rate (SR) track ng repos ory along w h t  gate controll ng  .
    *
-   * @param stats Provides availability gauge
-   * @param availabilityFromSuccessRate function to calculate availability given SR
-   * @param tracker strategy for tracking (usually recent) SR
-   * @param shouldIgnore don't count certain exceptions as failures, e.g. cancellations
-   * @return tuple of (SR tracking repo, gate closing if SR drops too far)
+   * @param stats Prov des ava lab l y gauge
+   * @param ava lab l yFromSuccessRate funct on to calculate ava lab l y g ven SR
+   * @param tracker strategy for track ng (usually recent) SR
+   * @param should gnore don't count certa n except ons as fa lures, e.g. cancellat ons
+   * @return tuple of (SR track ng repo, gate clos ng  f SR drops too far)
    */
-  def withGate[Q <: Seq[K], K, V](
-    stats: StatsReceiver,
-    availabilityFromSuccessRate: Double => Double,
+  def w hGate[Q <: Seq[K], K, V](
+    stats: StatsRece ver,
+    ava lab l yFromSuccessRate: Double => Double,
     tracker: SuccessRateTracker,
-    shouldIgnore: Throwable => Boolean = isCancellation
-  ): (KeyValueRepository[Q, K, V] => KeyValueRepository[Q, K, V], Gate[Unit]) = {
-    val successRateGate = tracker.observedAvailabilityGate(availabilityFromSuccessRate, stats)
+    should gnore: Throwable => Boolean =  sCancellat on
+  ): (KeyValueRepos ory[Q, K, V] => KeyValueRepos ory[Q, K, V], Gate[Un ]) = {
+    val successRateGate = tracker.observedAva lab l yGate(ava lab l yFromSuccessRate, stats)
 
-    (new SuccessRateTrackingRepository[Q, K, V](_, tracker.record, shouldIgnore), successRateGate)
+    (new SuccessRateTrack ngRepos ory[Q, K, V](_, tracker.record, should gnore), successRateGate)
   }
 }
 
 /**
- * A KeyValueRepository that provides feedback on query success rate to
- * a SuccessRateObserver.  Both found and not found are considered successful
- * responses, while failures are not. Cancellations are ignored by default.
+ * A KeyValueRepos ory that prov des feedback on query success rate to
+ * a SuccessRateObserver.  Both found and not found are cons dered successful
+ * responses, wh le fa lures are not. Cancellat ons are  gnored by default.
  */
-class SuccessRateTrackingRepository[Q <: Seq[K], K, V](
-  underlying: KeyValueRepository[Q, K, V],
-  observer: SuccessRateTrackingRepository.SuccessRateObserver,
-  shouldIgnore: Throwable => Boolean = SuccessRateTrackingRepository.isCancellation)
-    extends KeyValueRepository[Q, K, V] {
+class SuccessRateTrack ngRepos ory[Q <: Seq[K], K, V](
+  underly ng: KeyValueRepos ory[Q, K, V],
+  observer: SuccessRateTrack ngRepos ory.SuccessRateObserver,
+  should gnore: Throwable => Boolean = SuccessRateTrack ngRepos ory. sCancellat on)
+    extends KeyValueRepos ory[Q, K, V] {
   def apply(query: Q) =
-    underlying(query) onSuccess { kvr =>
-      val nonIgnoredFailures = kvr.failed.values.foldLeft(0) {
-        case (count, t) if shouldIgnore(t) => count
+    underly ng(query) onSuccess { kvr =>
+      val non gnoredFa lures = kvr.fa led.values.foldLeft(0) {
+        case (count, t)  f should gnore(t) => count
         case (count, _) => count + 1
       }
-      observer(kvr.found.size + kvr.notFound.size, nonIgnoredFailures)
-    } onFailure { t =>
-      if (!shouldIgnore(t)) {
-        observer(0, query.size)
+      observer(kvr.found.s ze + kvr.notFound.s ze, non gnoredFa lures)
+    } onFa lure { t =>
+       f (!should gnore(t)) {
+        observer(0, query.s ze)
       }
     }
 }

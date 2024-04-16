@@ -1,46 +1,46 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.base
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.st ch.St ch
 
 /**
- * base trait for two-hop expansion based algorithms, e.g. online_stp, phonebook_prediction,
- * recent following sims, recent engagement sims, ...
+ * base tra  for two-hop expans on based algor hms, e.g. onl ne_stp, phonebook_pred ct on,
+ * recent follow ng s ms, recent engage nt s ms, ...
  *
  * @tparam Target target type
- * @tparam FirstDegree type of first degree nodes
+ * @tparam F rstDegree type of f rst degree nodes
  * @tparam SecondaryDegree type of secondary degree nodes
- * @tparam Candidate output candidate types
+ * @tparam Cand date output cand date types
  */
-trait TwoHopExpansionCandidateSource[-Target, FirstDegree, SecondaryDegree, +Candidate]
-    extends CandidateSource[Target, Candidate] {
+tra  TwoHopExpans onCand dateS ce[-Target, F rstDegree, SecondaryDegree, +Cand date]
+    extends Cand dateS ce[Target, Cand date] {
 
   /**
-   * fetch first degree nodes given request
+   * fetch f rst degree nodes g ven request
    */
-  def firstDegreeNodes(req: Target): Stitch[Seq[FirstDegree]]
+  def f rstDegreeNodes(req: Target): St ch[Seq[F rstDegree]]
 
   /**
-   * fetch secondary degree nodes given request and first degree nodes
+   * fetch secondary degree nodes g ven request and f rst degree nodes
    */
-  def secondaryDegreeNodes(req: Target, node: FirstDegree): Stitch[Seq[SecondaryDegree]]
+  def secondaryDegreeNodes(req: Target, node: F rstDegree): St ch[Seq[SecondaryDegree]]
 
   /**
-   * aggregate and score the candidates to generate final results
+   * aggregate and score t  cand dates to generate f nal results
    */
   def aggregateAndScore(
     req: Target,
-    firstDegreeToSecondDegreeNodesMap: Map[FirstDegree, Seq[SecondaryDegree]]
-  ): Stitch[Seq[Candidate]]
+    f rstDegreeToSecondDegreeNodesMap: Map[F rstDegree, Seq[SecondaryDegree]]
+  ): St ch[Seq[Cand date]]
 
   /**
-   * Generate a list of candidates for the target
+   * Generate a l st of cand dates for t  target
    */
-  def apply(target: Target): Stitch[Seq[Candidate]] = {
+  def apply(target: Target): St ch[Seq[Cand date]] = {
     for {
-      firstDegreeNodes <- firstDegreeNodes(target)
-      secondaryDegreeNodes <- Stitch.traverse(firstDegreeNodes)(secondaryDegreeNodes(target, _))
-      aggregated <- aggregateAndScore(target, firstDegreeNodes.zip(secondaryDegreeNodes).toMap)
-    } yield aggregated
+      f rstDegreeNodes <- f rstDegreeNodes(target)
+      secondaryDegreeNodes <- St ch.traverse(f rstDegreeNodes)(secondaryDegreeNodes(target, _))
+      aggregated <- aggregateAndScore(target, f rstDegreeNodes.z p(secondaryDegreeNodes).toMap)
+    } y eld aggregated
   }
 }

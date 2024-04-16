@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+package com.tw ter.product_m xer.core.funct onal_component.common.alert
 
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.ThroughputPredicate
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.pred cate.ThroughputPred cate
 
 /**
- * Similar to [[ThroughputAlert]] but intended for an external client calling Product Mixer.
+ * S m lar to [[ThroughputAlert]] but  ntended for an external cl ent call ng Product M xer.
  *
- * [[GenericClientThroughputAlert]] triggers when the requests/sec for the external client
- * is outside of the predicate set by a [[ThroughputPredicate]] for the configured amount of time
+ * [[Gener cCl entThroughputAlert]] tr ggers w n t  requests/sec for t  external cl ent
+ *  s outs de of t  pred cate set by a [[ThroughputPred cate]] for t  conf gured amount of t  
  */
-case class GenericClientThroughputAlert(
-  override val source: GenericClient,
-  override val notificationGroup: NotificationGroup,
-  override val warnPredicate: ThroughputPredicate,
-  override val criticalPredicate: ThroughputPredicate,
-  override val runbookLink: Option[String] = None)
+case class Gener cCl entThroughputAlert(
+  overr de val s ce: Gener cCl ent,
+  overr de val not f cat onGroup: Not f cat onGroup,
+  overr de val warnPred cate: ThroughputPred cate,
+  overr de val cr  calPred cate: ThroughputPred cate,
+  overr de val runbookL nk: Opt on[Str ng] = None)
     extends Alert {
-  override val alertType: AlertType = Throughput
-  require(
-    warnPredicate.threshold >= 0,
-    s"ThroughputAlert predicates must be >= 0 but got warnPredicate = ${warnPredicate.threshold}")
-  require(
-    criticalPredicate.threshold >= 0,
-    s"ThroughputAlert predicates must be >= 0 but got criticalPredicate = ${criticalPredicate.threshold}")
+  overr de val alertType: AlertType = Throughput
+  requ re(
+    warnPred cate.threshold >= 0,
+    s"ThroughputAlert pred cates must be >= 0 but got warnPred cate = ${warnPred cate.threshold}")
+  requ re(
+    cr  calPred cate.threshold >= 0,
+    s"ThroughputAlert pred cates must be >= 0 but got cr  calPred cate = ${cr  calPred cate.threshold}")
 }

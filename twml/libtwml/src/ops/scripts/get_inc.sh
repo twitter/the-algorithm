@@ -1,2 +1,2 @@
-#!/bin/sh
-PEX_INTERPRETER=1 "$PYTHON_ENV" "$LIBTWML_HOME"/src/ops/scripts/get_inc.py
+#!/b n/sh
+PEX_ NTERPRETER=1 "$PYTHON_ENV" "$L BTWML_HOME"/src/ops/scr pts/get_ nc.py

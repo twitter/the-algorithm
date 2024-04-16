@@ -1,431 +1,431 @@
-package com.twitter.search.common.converter.earlybird;
+package com.tw ter.search.common.converter.earlyb rd;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import javax.annotation.Nullable;
+ mport java. o. OExcept on;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.L st;
+ mport java.ut l.Locale;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+ mport com.google.common.base.Jo ner;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.L sts;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.http.annotation.NotThreadSafe;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons.lang.Str ngUt ls;
+ mport org.apac .http.annotat on.NotThreadSafe;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.text.token.TokenizedCharSequenceStream;
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.cuad.ner.plain.thriftjava.NamedEntity;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.constants.SearchCardType;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.indexing.thriftjava.SearchCard2;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.indexing.thriftjava.TwitterPhotoUrl;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.entities.TwitterMessageUser;
-import com.twitter.search.common.relevance.features.TweetTextFeatures;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdEncodedFeatures;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.schema.earlybird.EarlybirdThriftDocumentBuilder;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftField;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldData;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEventType;
-import com.twitter.search.common.util.lang.ThriftLanguageUtil;
-import com.twitter.search.common.util.text.LanguageIdentifierHelper;
-import com.twitter.search.common.util.text.NormalizerHelper;
-import com.twitter.search.common.util.text.TokenizerHelper;
-import com.twitter.search.common.util.text.TokenizerResult;
-import com.twitter.search.common.util.text.TweetTokenStreamSerializer;
-import com.twitter.service.spiderduck.gen.MediaTypes;
-import com.twitter.search.common.metrics.SearchCounter;
+ mport com.tw ter.common.text.token.Token zedCharSequenceStream;
+ mport com.tw ter.common.text.ut l.TokenStreamSer al zer;
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers on;
+ mport com.tw ter.cuad.ner.pla n.thr ftjava.Na dEnt y;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.search.common.constants.SearchCardType;
+ mport com.tw ter.search.common.dec der.Dec derUt l;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.SearchCard2;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftExpandedUrl;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftVers onedEvents;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Tw terPhotoUrl;
+ mport com.tw ter.search.common.relevance.ent  es.Tw ter ssage;
+ mport com.tw ter.search.common.relevance.ent  es.Tw ter ssageUser;
+ mport com.tw ter.search.common.relevance.features.T etTextFeatures;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdEncodedFeatures;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdThr ftDocu ntBu lder;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftDocu nt;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftF eld;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftF eldData;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ft ndex ngEvent;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ft ndex ngEventType;
+ mport com.tw ter.search.common.ut l.lang.Thr ftLanguageUt l;
+ mport com.tw ter.search.common.ut l.text.Language dent f er lper;
+ mport com.tw ter.search.common.ut l.text.Normal zer lper;
+ mport com.tw ter.search.common.ut l.text.Token zer lper;
+ mport com.tw ter.search.common.ut l.text.Token zerResult;
+ mport com.tw ter.search.common.ut l.text.T etTokenStreamSer al zer;
+ mport com.tw ter.serv ce.sp derduck.gen. d aTypes;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
 
 /**
- * Create and populate ThriftVersionedEvents from the URL data, card data, and named entities
- * contained in a TwitterMessage. This data is delayed because these services take a few seconds
- * to process tweets, and we want to send the basic data available in the BasicIndexingConverter as
- * soon as possible, so we send the additional data a few seconds later, as an update.
+ * Create and populate Thr ftVers onedEvents from t  URL data, card data, and na d ent  es
+ * conta ned  n a Tw ter ssage. T  data  s delayed because t se serv ces take a few seconds
+ * to process t ets, and   want to send t  bas c data ava lable  n t  Bas c ndex ngConverter as
+ * soon as poss ble, so   send t  add  onal data a few seconds later, as an update.
  *
- * Prefer to add data and processing to the BasicIndexingConverter when possible. Only add data here
- * if your data source _requires_ data from an external service AND the external service takes at
- * least a few seconds to process new tweets.
+ * Prefer to add data and process ng to t  Bas c ndex ngConverter w n poss ble. Only add data  re
+ *  f y  data s ce _requ res_ data from an external serv ce AND t  external serv ce takes at
+ * least a few seconds to process new t ets.
  */
 @NotThreadSafe
-public class DelayedIndexingConverter {
-  private static final SearchCounter NUM_TWEETS_WITH_CARD_URL =
-      SearchCounter.export("tweets_with_card_url");
-  private static final SearchCounter NUM_TWEETS_WITH_NUMERIC_CARD_URI =
-      SearchCounter.export("tweets_with_numeric_card_uri");
-  private static final SearchCounter NUM_TWEETS_WITH_INVALID_CARD_URI =
-      SearchCounter.export("tweets_with_invalid_card_uri");
-  private static final SearchCounter TOTAL_URLS =
-      SearchCounter.export("total_urls_on_tweets");
-  private static final SearchCounter MEDIA_URLS_ON_TWEETS =
-      SearchCounter.export("media_urls_on_tweets");
-  private static final SearchCounter NON_MEDIA_URLS_ON_TWEETS =
-      SearchCounter.export("non_media_urls_on_tweets");
-  public static final String INDEX_URL_DESCRIPTION_AND_TITLE_DECIDER =
-      "index_url_description_and_title";
+publ c class Delayed ndex ngConverter {
+  pr vate stat c f nal SearchCounter NUM_TWEETS_W TH_CARD_URL =
+      SearchCounter.export("t ets_w h_card_url");
+  pr vate stat c f nal SearchCounter NUM_TWEETS_W TH_NUMER C_CARD_UR  =
+      SearchCounter.export("t ets_w h_nu r c_card_ur ");
+  pr vate stat c f nal SearchCounter NUM_TWEETS_W TH_ NVAL D_CARD_UR  =
+      SearchCounter.export("t ets_w h_ nval d_card_ur ");
+  pr vate stat c f nal SearchCounter TOTAL_URLS =
+      SearchCounter.export("total_urls_on_t ets");
+  pr vate stat c f nal SearchCounter MED A_URLS_ON_TWEETS =
+      SearchCounter.export(" d a_urls_on_t ets");
+  pr vate stat c f nal SearchCounter NON_MED A_URLS_ON_TWEETS =
+      SearchCounter.export("non_ d a_urls_on_t ets");
+  publ c stat c f nal Str ng  NDEX_URL_DESCR PT ON_AND_T TLE_DEC DER =
+      " ndex_url_descr pt on_and_t le";
 
-  private static class ThriftDocumentWithEncodedTweetFeatures {
-    private final ThriftDocument document;
-    private final EarlybirdEncodedFeatures encodedFeatures;
+  pr vate stat c class Thr ftDocu ntW hEncodedT etFeatures {
+    pr vate f nal Thr ftDocu nt docu nt;
+    pr vate f nal Earlyb rdEncodedFeatures encodedFeatures;
 
-    public ThriftDocumentWithEncodedTweetFeatures(ThriftDocument document,
-                                                  EarlybirdEncodedFeatures encodedFeatures) {
-      this.document = document;
-      this.encodedFeatures = encodedFeatures;
+    publ c Thr ftDocu ntW hEncodedT etFeatures(Thr ftDocu nt docu nt,
+                                                  Earlyb rdEncodedFeatures encodedFeatures) {
+      t .docu nt = docu nt;
+      t .encodedFeatures = encodedFeatures;
     }
 
-    public ThriftDocument getDocument() {
-      return document;
+    publ c Thr ftDocu nt getDocu nt() {
+      return docu nt;
     }
 
-    public EarlybirdEncodedFeatures getEncodedFeatures() {
+    publ c Earlyb rdEncodedFeatures getEncodedFeatures() {
       return encodedFeatures;
     }
   }
 
-  // The list of all the encoded_tweet_features flags that might be updated by this converter.
-  // No extended_encoded_tweet_features are updated (otherwise they should be in this list too).
-  private static final List<EarlybirdFieldConstants.EarlybirdFieldConstant> UPDATED_FLAGS =
-      Lists.newArrayList(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.IS_OFFENSIVE_FLAG,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_LINK_FLAG,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.IS_SENSITIVE_CONTENT,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.TEXT_SCORE,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.TWEET_SIGNATURE,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.LINK_LANGUAGE,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_IMAGE_URL_FLAG,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_VIDEO_URL_FLAG,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_NEWS_URL_FLAG,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_EXPANDO_CARD_FLAG,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_MULTIPLE_MEDIA_FLAG,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_CARD_FLAG,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_VISIBLE_LINK_FLAG,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_CONSUMER_VIDEO_FLAG,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_PRO_VIDEO_FLAG,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_VINE_FLAG,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_PERISCOPE_FLAG,
-          EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_NATIVE_IMAGE_FLAG
+  // T  l st of all t  encoded_t et_features flags that m ght be updated by t  converter.
+  // No extended_encoded_t et_features are updated (ot rw se t y should be  n t  l st too).
+  pr vate stat c f nal L st<Earlyb rdF eldConstants.Earlyb rdF eldConstant> UPDATED_FLAGS =
+      L sts.newArrayL st(
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant. S_OFFENS VE_FLAG,
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_L NK_FLAG,
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant. S_SENS T VE_CONTENT,
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.TEXT_SCORE,
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.TWEET_S GNATURE,
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.L NK_LANGUAGE,
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_ MAGE_URL_FLAG,
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_V DEO_URL_FLAG,
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_NEWS_URL_FLAG,
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_EXPANDO_CARD_FLAG,
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_MULT PLE_MED A_FLAG,
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_CARD_FLAG,
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_V S BLE_L NK_FLAG,
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_CONSUMER_V DEO_FLAG,
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_PRO_V DEO_FLAG,
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_V NE_FLAG,
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_PER SCOPE_FLAG,
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_NAT VE_ MAGE_FLAG
       );
 
-  private static final Logger LOG = LoggerFactory.getLogger(DelayedIndexingConverter.class);
-  private static final String AMPLIFY_CARD_NAME = "amplify";
-  private static final String PLAYER_CARD_NAME = "player";
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Delayed ndex ngConverter.class);
+  pr vate stat c f nal Str ng AMPL FY_CARD_NAME = "ampl fy";
+  pr vate stat c f nal Str ng PLAYER_CARD_NAME = "player";
 
-  private final EncodedFeatureBuilder featureBuilder = new EncodedFeatureBuilder();
+  pr vate f nal EncodedFeatureBu lder featureBu lder = new EncodedFeatureBu lder();
 
-  private final Schema schema;
-  private final Decider decider;
+  pr vate f nal Sc ma sc ma;
+  pr vate f nal Dec der dec der;
 
-  public DelayedIndexingConverter(Schema schema, Decider decider) {
-    this.schema = schema;
-    this.decider = decider;
+  publ c Delayed ndex ngConverter(Sc ma sc ma, Dec der dec der) {
+    t .sc ma = sc ma;
+    t .dec der = dec der;
   }
 
   /**
-   * Converts the given message to two ThriftVersionedEvents instances: the first one is a feature
-   * update event for all link and card related flags, and the second one is the append event that
-   * might contain updates to all link and card related fields.
+   * Converts t  g ven  ssage to two Thr ftVers onedEvents  nstances: t  f rst one  s a feature
+   * update event for all l nk and card related flags, and t  second one  s t  append event that
+   * m ght conta n updates to all l nk and card related f elds.
    *
-   * We need to split the updates to fields and flags into two separate events because:
-   *  - When a tweet is created, earlybirds get the "main" event, which does not have resolved URLs.
-   *  - Then the earlybirds might get a feature update from the signal ingesters, marking the tweet
+   *   need to spl  t  updates to f elds and flags  nto two separate events because:
+   *  - W n a t et  s created, earlyb rds get t  "ma n" event, wh ch does not have resolved URLs.
+   *  - T n t  earlyb rds m ght get a feature update from t  s gnal  ngesters, mark ng t  t et
    *    as spam.
-   *  - Then the ingesters resolve the URLs and send an update event. At this point, the ingesters
-   *    need to send updates for link-related flags too (HAS_LINK_FLAG, etc.). And there are a few
-   *    ways to do this:
-   *    1. Encode these flags into encoded_tweet_features and extended_encoded_tweet_features and
-   *       add these fields to the update event. The problem is that earlybirds will then override
-   *       the encoded_tweet_features ane extended_encoded_tweet_features fields in the index for
-   *       this tweet, which will override the feature update the earlybirds got earlier, which
-   *       means that a spammy tweet might no longer be marked as spam in the index.
-   *    2. Send updates only for the flags that might've been updated by this converter. Since
-   *       ThriftIndexingEvent already has a map of field -> value, it seems like the natural place
-   *       to add these updates to. However, earlybirds can correctly process flag updates only if
-   *       they come in a feature update event (PARTIAL_UPDATE). So we need to send the field
-   *       updates in an OUT_OF_ORDER_UPDATE event, and the flag updates in a PARTIAL_UPDATE event.
+   *  - T n t   ngesters resolve t  URLs and send an update event. At t  po nt, t   ngesters
+   *    need to send updates for l nk-related flags too (HAS_L NK_FLAG, etc.). And t re are a few
+   *    ways to do t :
+   *    1. Encode t se flags  nto encoded_t et_features and extended_encoded_t et_features and
+   *       add t se f elds to t  update event. T  problem  s that earlyb rds w ll t n overr de
+   *       t  encoded_t et_features ane extended_encoded_t et_features f elds  n t   ndex for
+   *       t  t et, wh ch w ll overr de t  feature update t  earlyb rds got earl er, wh ch
+   *        ans that a spam  t et m ght no longer be marked as spam  n t   ndex.
+   *    2. Send updates only for t  flags that m ght've been updated by t  converter. S nce
+   *       Thr ft ndex ngEvent already has a map of f eld -> value,   seems l ke t  natural place
+   *       to add t se updates to. Ho ver, earlyb rds can correctly process flag updates only  f
+   *       t y co   n a feature update event (PART AL_UPDATE). So   need to send t  f eld
+   *       updates  n an OUT_OF_ORDER_UPDATE event, and t  flag updates  n a PART AL_UPDATE event.
    *
-   * We need to send the feature update event before the append event to avoid issues like the one
-   * in SEARCH-30919 where tweets were returned from the card name field index before the HAS_CARD
+   *   need to send t  feature update event before t  append event to avo d  ssues l ke t  one
+   *  n SEARCH-30919 w re t ets  re returned from t  card na  f eld  ndex before t  HAS_CARD
    * feature was updated to true.
    *
-   * @param message The TwitterMessage to convert.
-   * @param penguinVersions The Penguin versions for which ThriftIndexingEvents should be created.
-   * @return An out of order update event for all link- and card-related fields and a feature update
-   *         event for all link- and card-related flags.
+   * @param  ssage T  Tw ter ssage to convert.
+   * @param pengu nVers ons T  Pengu n vers ons for wh ch Thr ft ndex ngEvents should be created.
+   * @return An out of order update event for all l nk- and card-related f elds and a feature update
+   *         event for all l nk- and card-related flags.
    */
-  public List<ThriftVersionedEvents> convertMessageToOutOfOrderAppendAndFeatureUpdate(
-      TwitterMessage message, List<PenguinVersion> penguinVersions) {
-    Preconditions.checkNotNull(message);
-    Preconditions.checkNotNull(penguinVersions);
+  publ c L st<Thr ftVers onedEvents> convert ssageToOutOfOrderAppendAndFeatureUpdate(
+      Tw ter ssage  ssage, L st<Pengu nVers on> pengu nVers ons) {
+    Precond  ons.c ckNotNull( ssage);
+    Precond  ons.c ckNotNull(pengu nVers ons);
 
-    ThriftVersionedEvents featureUpdateVersionedEvents = new ThriftVersionedEvents();
-    ThriftVersionedEvents outOfOrderAppendVersionedEvents = new ThriftVersionedEvents();
-    ImmutableSchemaInterface schemaSnapshot = schema.getSchemaSnapshot();
+    Thr ftVers onedEvents featureUpdateVers onedEvents = new Thr ftVers onedEvents();
+    Thr ftVers onedEvents outOfOrderAppendVers onedEvents = new Thr ftVers onedEvents();
+     mmutableSc ma nterface sc maSnapshot = sc ma.getSc maSnapshot();
 
-    for (PenguinVersion penguinVersion : penguinVersions) {
-      ThriftDocumentWithEncodedTweetFeatures documentWithEncodedFeatures =
-          buildDocumentForPenguinVersion(schemaSnapshot, message, penguinVersion);
+    for (Pengu nVers on pengu nVers on : pengu nVers ons) {
+      Thr ftDocu ntW hEncodedT etFeatures docu ntW hEncodedFeatures =
+          bu ldDocu ntForPengu nVers on(sc maSnapshot,  ssage, pengu nVers on);
 
-      ThriftIndexingEvent featureUpdateThriftIndexingEvent = new ThriftIndexingEvent();
-      featureUpdateThriftIndexingEvent.setEventType(ThriftIndexingEventType.PARTIAL_UPDATE);
-      featureUpdateThriftIndexingEvent.setUid(message.getId());
-      featureUpdateThriftIndexingEvent.setDocument(
-          buildFeatureUpdateDocument(documentWithEncodedFeatures.getEncodedFeatures()));
-      featureUpdateVersionedEvents.putToVersionedEvents(
-          penguinVersion.getByteValue(), featureUpdateThriftIndexingEvent);
+      Thr ft ndex ngEvent featureUpdateThr ft ndex ngEvent = new Thr ft ndex ngEvent();
+      featureUpdateThr ft ndex ngEvent.setEventType(Thr ft ndex ngEventType.PART AL_UPDATE);
+      featureUpdateThr ft ndex ngEvent.setU d( ssage.get d());
+      featureUpdateThr ft ndex ngEvent.setDocu nt(
+          bu ldFeatureUpdateDocu nt(docu ntW hEncodedFeatures.getEncodedFeatures()));
+      featureUpdateVers onedEvents.putToVers onedEvents(
+          pengu nVers on.getByteValue(), featureUpdateThr ft ndex ngEvent);
 
-      ThriftIndexingEvent outOfOrderAppendThriftIndexingEvent = new ThriftIndexingEvent();
-      outOfOrderAppendThriftIndexingEvent.setDocument(documentWithEncodedFeatures.getDocument());
-      outOfOrderAppendThriftIndexingEvent.setEventType(ThriftIndexingEventType.OUT_OF_ORDER_APPEND);
-      message.getFromUserTwitterId().ifPresent(outOfOrderAppendThriftIndexingEvent::setUid);
-      outOfOrderAppendThriftIndexingEvent.setSortId(message.getId());
-      outOfOrderAppendVersionedEvents.putToVersionedEvents(
-          penguinVersion.getByteValue(), outOfOrderAppendThriftIndexingEvent);
+      Thr ft ndex ngEvent outOfOrderAppendThr ft ndex ngEvent = new Thr ft ndex ngEvent();
+      outOfOrderAppendThr ft ndex ngEvent.setDocu nt(docu ntW hEncodedFeatures.getDocu nt());
+      outOfOrderAppendThr ft ndex ngEvent.setEventType(Thr ft ndex ngEventType.OUT_OF_ORDER_APPEND);
+       ssage.getFromUserTw ter d(). fPresent(outOfOrderAppendThr ft ndex ngEvent::setU d);
+      outOfOrderAppendThr ft ndex ngEvent.setSort d( ssage.get d());
+      outOfOrderAppendVers onedEvents.putToVers onedEvents(
+          pengu nVers on.getByteValue(), outOfOrderAppendThr ft ndex ngEvent);
     }
 
-    featureUpdateVersionedEvents.setId(message.getId());
-    outOfOrderAppendVersionedEvents.setId(message.getId());
+    featureUpdateVers onedEvents.set d( ssage.get d());
+    outOfOrderAppendVers onedEvents.set d( ssage.get d());
 
-    return Lists.newArrayList(featureUpdateVersionedEvents, outOfOrderAppendVersionedEvents);
+    return L sts.newArrayL st(featureUpdateVers onedEvents, outOfOrderAppendVers onedEvents);
   }
 
-  private ThriftDocument buildFeatureUpdateDocument(EarlybirdEncodedFeatures encodedFeatures) {
-    ThriftDocument document = new ThriftDocument();
-    for (EarlybirdFieldConstants.EarlybirdFieldConstant flag : UPDATED_FLAGS) {
-      ThriftField field = new ThriftField();
-      field.setFieldConfigId(flag.getFieldId());
-      field.setFieldData(new ThriftFieldData().setIntValue(encodedFeatures.getFeatureValue(flag)));
-      document.addToFields(field);
+  pr vate Thr ftDocu nt bu ldFeatureUpdateDocu nt(Earlyb rdEncodedFeatures encodedFeatures) {
+    Thr ftDocu nt docu nt = new Thr ftDocu nt();
+    for (Earlyb rdF eldConstants.Earlyb rdF eldConstant flag : UPDATED_FLAGS) {
+      Thr ftF eld f eld = new Thr ftF eld();
+      f eld.setF eldConf g d(flag.getF eld d());
+      f eld.setF eldData(new Thr ftF eldData().set ntValue(encodedFeatures.getFeatureValue(flag)));
+      docu nt.addToF elds(f eld);
     }
-    return document;
+    return docu nt;
   }
 
-  private ThriftDocumentWithEncodedTweetFeatures buildDocumentForPenguinVersion(
-      ImmutableSchemaInterface schemaSnapshot,
-      TwitterMessage message,
-      PenguinVersion penguinVersion) {
+  pr vate Thr ftDocu ntW hEncodedT etFeatures bu ldDocu ntForPengu nVers on(
+       mmutableSc ma nterface sc maSnapshot,
+      Tw ter ssage  ssage,
+      Pengu nVers on pengu nVers on) {
 
-    EarlybirdEncodedFeatures encodedFeatures = featureBuilder.createTweetFeaturesFromTwitterMessage(
-        message, penguinVersion, schemaSnapshot).encodedFeatures;
+    Earlyb rdEncodedFeatures encodedFeatures = featureBu lder.createT etFeaturesFromTw ter ssage(
+         ssage, pengu nVers on, sc maSnapshot).encodedFeatures;
 
-    EarlybirdThriftDocumentBuilder builder = new EarlybirdThriftDocumentBuilder(
+    Earlyb rdThr ftDocu ntBu lder bu lder = new Earlyb rdThr ftDocu ntBu lder(
         encodedFeatures,
         null,
-        new EarlybirdFieldConstants(),
-        schemaSnapshot);
+        new Earlyb rdF eldConstants(),
+        sc maSnapshot);
 
-    builder.setAddLatLonCSF(false);
-    builder.withID(message.getId());
-    buildFieldsFromUrlInfo(builder, message, penguinVersion, encodedFeatures);
-    buildCardFields(builder, message, penguinVersion);
-    buildNamedEntityFields(builder, message);
-    builder.withTweetSignature(message.getTweetSignature(penguinVersion));
+    bu lder.setAddLatLonCSF(false);
+    bu lder.w h D( ssage.get d());
+    bu ldF eldsFromUrl nfo(bu lder,  ssage, pengu nVers on, encodedFeatures);
+    bu ldCardF elds(bu lder,  ssage, pengu nVers on);
+    bu ldNa dEnt yF elds(bu lder,  ssage);
+    bu lder.w hT etS gnature( ssage.getT etS gnature(pengu nVers on));
 
-    buildSpaceAdminAndTitleFields(builder, message, penguinVersion);
+    bu ldSpaceAdm nAndT leF elds(bu lder,  ssage, pengu nVers on);
 
-    builder.setAddEncodedTweetFeatures(false);
+    bu lder.setAddEncodedT etFeatures(false);
 
-    return new ThriftDocumentWithEncodedTweetFeatures(builder.build(), encodedFeatures);
+    return new Thr ftDocu ntW hEncodedT etFeatures(bu lder.bu ld(), encodedFeatures);
   }
 
-  public static void buildNamedEntityFields(
-      EarlybirdThriftDocumentBuilder builder, TwitterMessage message) {
-    for (NamedEntity namedEntity : message.getNamedEntities()) {
-      builder.withNamedEntity(namedEntity);
+  publ c stat c vo d bu ldNa dEnt yF elds(
+      Earlyb rdThr ftDocu ntBu lder bu lder, Tw ter ssage  ssage) {
+    for (Na dEnt y na dEnt y :  ssage.getNa dEnt  es()) {
+      bu lder.w hNa dEnt y(na dEnt y);
     }
   }
 
-  private void buildFieldsFromUrlInfo(
-      EarlybirdThriftDocumentBuilder builder,
-      TwitterMessage message,
-      PenguinVersion penguinVersion,
-      EarlybirdEncodedFeatures encodedFeatures) {
-    // We need to update the RESOLVED_LINKS_TEXT_FIELD, since we might have new resolved URLs.
-    // Use the same logic as in EncodedFeatureBuilder.java.
-    TweetTextFeatures textFeatures = message.getTweetTextFeatures(penguinVersion);
-    String resolvedUrlsText = Joiner.on(" ").skipNulls().join(textFeatures.getResolvedUrlTokens());
-    builder.withResolvedLinksText(resolvedUrlsText);
+  pr vate vo d bu ldF eldsFromUrl nfo(
+      Earlyb rdThr ftDocu ntBu lder bu lder,
+      Tw ter ssage  ssage,
+      Pengu nVers on pengu nVers on,
+      Earlyb rdEncodedFeatures encodedFeatures) {
+    //   need to update t  RESOLVED_L NKS_TEXT_F ELD, s nce   m ght have new resolved URLs.
+    // Use t  sa  log c as  n EncodedFeatureBu lder.java.
+    T etTextFeatures textFeatures =  ssage.getT etTextFeatures(pengu nVers on);
+    Str ng resolvedUrlsText = Jo ner.on(" ").sk pNulls().jo n(textFeatures.getResolvedUrlTokens());
+    bu lder.w hResolvedL nksText(resolvedUrlsText);
 
-    buildURLFields(builder, message, encodedFeatures);
-    buildAnalyzedURLFields(builder, message, penguinVersion);
+    bu ldURLF elds(bu lder,  ssage, encodedFeatures);
+    bu ldAnalyzedURLF elds(bu lder,  ssage, pengu nVers on);
   }
 
-  private void buildAnalyzedURLFields(
-      EarlybirdThriftDocumentBuilder builder, TwitterMessage message, PenguinVersion penguinVersion
+  pr vate vo d bu ldAnalyzedURLF elds(
+      Earlyb rdThr ftDocu ntBu lder bu lder, Tw ter ssage  ssage, Pengu nVers on pengu nVers on
   ) {
-    TOTAL_URLS.add(message.getExpandedUrls().size());
-    if (DeciderUtil.isAvailableForRandomRecipient(
-        decider,
-        INDEX_URL_DESCRIPTION_AND_TITLE_DECIDER)) {
-      for (ThriftExpandedUrl expandedUrl : message.getExpandedUrls()) {
+    TOTAL_URLS.add( ssage.getExpandedUrls().s ze());
+     f (Dec derUt l. sAva lableForRandomRec p ent(
+        dec der,
+         NDEX_URL_DESCR PT ON_AND_T TLE_DEC DER)) {
+      for (Thr ftExpandedUrl expandedUrl :  ssage.getExpandedUrls()) {
       /*
-        Consumer Media URLs are added to the expanded URLs in
-        TweetEventParserHelper.addMediaEntitiesToMessage. These Twitter.com media URLs contain
-        the tweet text as the description and the title is "<User Name> on Twitter". This is
-        redundant information at best and misleading at worst. We will ignore these URLs to avoid
-        polluting the url_description and url_title field as well as saving space.
+        Consu r  d a URLs are added to t  expanded URLs  n
+        T etEventParser lper.add d aEnt  esTo ssage. T se Tw ter.com  d a URLs conta n
+        t  t et text as t  descr pt on and t  t le  s "<User Na > on Tw ter". T   s
+        redundant  nformat on at best and m slead ng at worst.   w ll  gnore t se URLs to avo d
+        pollut ng t  url_descr pt on and url_t le f eld as  ll as sav ng space.
        */
-        if (!expandedUrl.isSetConsumerMedia() || !expandedUrl.isConsumerMedia()) {
-          NON_MEDIA_URLS_ON_TWEETS.increment();
-          if (expandedUrl.isSetDescription()) {
-            buildTweetTokenizerTokenizedField(builder,
-                EarlybirdFieldConstants.EarlybirdFieldConstant.URL_DESCRIPTION_FIELD.getFieldName(),
-                expandedUrl.getDescription(),
-                penguinVersion);
+         f (!expandedUrl. sSetConsu r d a() || !expandedUrl. sConsu r d a()) {
+          NON_MED A_URLS_ON_TWEETS. ncre nt();
+           f (expandedUrl. sSetDescr pt on()) {
+            bu ldT etToken zerToken zedF eld(bu lder,
+                Earlyb rdF eldConstants.Earlyb rdF eldConstant.URL_DESCR PT ON_F ELD.getF eldNa (),
+                expandedUrl.getDescr pt on(),
+                pengu nVers on);
           }
-          if (expandedUrl.isSetTitle()) {
-            buildTweetTokenizerTokenizedField(builder,
-                EarlybirdFieldConstants.EarlybirdFieldConstant.URL_TITLE_FIELD.getFieldName(),
-                expandedUrl.getTitle(),
-                penguinVersion);
+           f (expandedUrl. sSetT le()) {
+            bu ldT etToken zerToken zedF eld(bu lder,
+                Earlyb rdF eldConstants.Earlyb rdF eldConstant.URL_T TLE_F ELD.getF eldNa (),
+                expandedUrl.getT le(),
+                pengu nVers on);
           }
         } else {
-          MEDIA_URLS_ON_TWEETS.increment();
+          MED A_URLS_ON_TWEETS. ncre nt();
         }
       }
     }
   }
 
   /**
-   * Build the URL based fields from a tweet.
+   * Bu ld t  URL based f elds from a t et.
    */
-  public static void buildURLFields(
-      EarlybirdThriftDocumentBuilder builder,
-      TwitterMessage message,
-      EarlybirdEncodedFeatures encodedFeatures
+  publ c stat c vo d bu ldURLF elds(
+      Earlyb rdThr ftDocu ntBu lder bu lder,
+      Tw ter ssage  ssage,
+      Earlyb rdEncodedFeatures encodedFeatures
   ) {
-    Map<String, ThriftExpandedUrl> expandedUrlMap = message.getExpandedUrlMap();
+    Map<Str ng, Thr ftExpandedUrl> expandedUrlMap =  ssage.getExpandedUrlMap();
 
-    for (ThriftExpandedUrl expandedUrl : expandedUrlMap.values()) {
-      if (expandedUrl.getMediaType() == MediaTypes.NATIVE_IMAGE) {
-        EncodedFeatureBuilder.addPhotoUrl(message, expandedUrl.getCanonicalLastHopUrl());
+    for (Thr ftExpandedUrl expandedUrl : expandedUrlMap.values()) {
+       f (expandedUrl.get d aType() ==  d aTypes.NAT VE_ MAGE) {
+        EncodedFeatureBu lder.addPhotoUrl( ssage, expandedUrl.getCanon calLastHopUrl());
       }
     }
 
-    // now add all twitter photos links that came with the tweet's payload
-    Map<Long, String> photos = message.getPhotoUrls();
-    List<TwitterPhotoUrl> photoURLs = new ArrayList<>();
-    if (photos != null) {
-      for (Map.Entry<Long, String> entry : photos.entrySet()) {
-        TwitterPhotoUrl photo = new TwitterPhotoUrl(entry.getKey());
-        String mediaUrl = entry.getValue();
-        if (mediaUrl != null) {
-          photo.setMediaUrl(mediaUrl);
+    // now add all tw ter photos l nks that ca  w h t  t et's payload
+    Map<Long, Str ng> photos =  ssage.getPhotoUrls();
+    L st<Tw terPhotoUrl> photoURLs = new ArrayL st<>();
+     f (photos != null) {
+      for (Map.Entry<Long, Str ng> entry : photos.entrySet()) {
+        Tw terPhotoUrl photo = new Tw terPhotoUrl(entry.getKey());
+        Str ng  d aUrl = entry.getValue();
+         f ( d aUrl != null) {
+          photo.set d aUrl( d aUrl);
         }
         photoURLs.add(photo);
       }
     }
 
     try {
-      builder
-          .withURLs(Lists.newArrayList(expandedUrlMap.values()))
-          .withTwimgURLs(photoURLs);
-    } catch (IOException ioe) {
-      LOG.error("URL field creation threw an IOException", ioe);
+      bu lder
+          .w hURLs(L sts.newArrayL st(expandedUrlMap.values()))
+          .w hTw mgURLs(photoURLs);
+    } catch ( OExcept on  oe) {
+      LOG.error("URL f eld creat on threw an  OExcept on",  oe);
     }
 
 
-    if (encodedFeatures.isFlagSet(
-        EarlybirdFieldConstants.EarlybirdFieldConstant.IS_OFFENSIVE_FLAG)) {
-      builder.withOffensiveFlag();
+     f (encodedFeatures. sFlagSet(
+        Earlyb rdF eldConstants.Earlyb rdF eldConstant. S_OFFENS VE_FLAG)) {
+      bu lder.w hOffens veFlag();
     }
-    if (encodedFeatures.isFlagSet(
-        EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_CONSUMER_VIDEO_FLAG)) {
-      builder.addFilterInternalFieldTerm(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.CONSUMER_VIDEO_FILTER_TERM);
+     f (encodedFeatures. sFlagSet(
+        Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_CONSUMER_V DEO_FLAG)) {
+      bu lder.addF lter nternalF eldTerm(
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.CONSUMER_V DEO_F LTER_TERM);
     }
-    if (encodedFeatures.isFlagSet(
-        EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_PRO_VIDEO_FLAG)) {
-      builder.addFilterInternalFieldTerm(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.PRO_VIDEO_FILTER_TERM);
+     f (encodedFeatures. sFlagSet(
+        Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_PRO_V DEO_FLAG)) {
+      bu lder.addF lter nternalF eldTerm(
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.PRO_V DEO_F LTER_TERM);
     }
-    if (encodedFeatures.isFlagSet(EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_VINE_FLAG)) {
-      builder.addFilterInternalFieldTerm(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.VINE_FILTER_TERM);
+     f (encodedFeatures. sFlagSet(Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_V NE_FLAG)) {
+      bu lder.addF lter nternalF eldTerm(
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.V NE_F LTER_TERM);
     }
-    if (encodedFeatures.isFlagSet(
-        EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_PERISCOPE_FLAG)) {
-      builder.addFilterInternalFieldTerm(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.PERISCOPE_FILTER_TERM);
+     f (encodedFeatures. sFlagSet(
+        Earlyb rdF eldConstants.Earlyb rdF eldConstant.HAS_PER SCOPE_FLAG)) {
+      bu lder.addF lter nternalF eldTerm(
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.PER SCOPE_F LTER_TERM);
     }
   }
 
   /**
-   * Build the card information inside ThriftIndexingEvent's fields.
+   * Bu ld t  card  nformat on  ns de Thr ft ndex ngEvent's f elds.
    */
-  static void buildCardFields(EarlybirdThriftDocumentBuilder builder,
-                              TwitterMessage message,
-                              PenguinVersion penguinVersion) {
-    if (message.hasCard()) {
-      SearchCard2 card = buildSearchCardFromTwitterMessage(
-          message,
-          TweetTokenStreamSerializer.getTweetTokenStreamSerializer(),
-          penguinVersion);
-      buildCardFeatures(message.getId(), builder, card);
+  stat c vo d bu ldCardF elds(Earlyb rdThr ftDocu ntBu lder bu lder,
+                              Tw ter ssage  ssage,
+                              Pengu nVers on pengu nVers on) {
+     f ( ssage.hasCard()) {
+      SearchCard2 card = bu ldSearchCardFromTw ter ssage(
+           ssage,
+          T etTokenStreamSer al zer.getT etTokenStreamSer al zer(),
+          pengu nVers on);
+      bu ldCardFeatures( ssage.get d(), bu lder, card);
     }
   }
 
-  private static SearchCard2 buildSearchCardFromTwitterMessage(
-      TwitterMessage message,
-      TokenStreamSerializer streamSerializer,
-      PenguinVersion penguinVersion) {
+  pr vate stat c SearchCard2 bu ldSearchCardFromTw ter ssage(
+      Tw ter ssage  ssage,
+      TokenStreamSer al zer streamSer al zer,
+      Pengu nVers on pengu nVers on) {
     SearchCard2 card = new SearchCard2();
-    card.setCardName(message.getCardName());
-    if (message.getCardDomain() != null) {
-      card.setCardDomain(message.getCardDomain());
+    card.setCardNa ( ssage.getCardNa ());
+     f ( ssage.getCardDoma n() != null) {
+      card.setCardDoma n( ssage.getCardDoma n());
     }
-    if (message.getCardLang() != null) {
-      card.setCardLang(message.getCardLang());
+     f ( ssage.getCardLang() != null) {
+      card.setCardLang( ssage.getCardLang());
     }
-    if (message.getCardUrl() != null) {
-      card.setCardUrl(message.getCardUrl());
+     f ( ssage.getCardUrl() != null) {
+      card.setCardUrl( ssage.getCardUrl());
     }
 
-    if (message.getCardTitle() != null && !message.getCardTitle().isEmpty()) {
-      String normalizedTitle = NormalizerHelper.normalize(
-          message.getCardTitle(), message.getLocale(), penguinVersion);
-      TokenizerResult result = TokenizerHelper.tokenizeTweet(
-          normalizedTitle, message.getLocale(), penguinVersion);
-      TokenizedCharSequenceStream tokenSeqStream = new TokenizedCharSequenceStream();
+     f ( ssage.getCardT le() != null && ! ssage.getCardT le(). sEmpty()) {
+      Str ng normal zedT le = Normal zer lper.normal ze(
+           ssage.getCardT le(),  ssage.getLocale(), pengu nVers on);
+      Token zerResult result = Token zer lper.token zeT et(
+          normal zedT le,  ssage.getLocale(), pengu nVers on);
+      Token zedCharSequenceStream tokenSeqStream = new Token zedCharSequenceStream();
       tokenSeqStream.reset(result.tokenSequence);
       try {
-        card.setCardTitleTokenStream(streamSerializer.serialize(tokenSeqStream));
-        card.setCardTitleTokenStreamText(result.tokenSequence.toString());
-      } catch (IOException e) {
-        LOG.error("TwitterTokenStream serialization error! Could not serialize card title: "
+        card.setCardT leTokenStream(streamSer al zer.ser al ze(tokenSeqStream));
+        card.setCardT leTokenStreamText(result.tokenSequence.toStr ng());
+      } catch ( OExcept on e) {
+        LOG.error("Tw terTokenStream ser al zat on error! Could not ser al ze card t le: "
             + result.tokenSequence);
-        card.unsetCardTitleTokenStream();
-        card.unsetCardTitleTokenStreamText();
+        card.unsetCardT leTokenStream();
+        card.unsetCardT leTokenStreamText();
       }
     }
-    if (message.getCardDescription() != null && !message.getCardDescription().isEmpty()) {
-      String normalizedDesc = NormalizerHelper.normalize(
-          message.getCardDescription(), message.getLocale(), penguinVersion);
-      TokenizerResult result = TokenizerHelper.tokenizeTweet(
-          normalizedDesc, message.getLocale(), penguinVersion);
-      TokenizedCharSequenceStream tokenSeqStream = new TokenizedCharSequenceStream();
+     f ( ssage.getCardDescr pt on() != null && ! ssage.getCardDescr pt on(). sEmpty()) {
+      Str ng normal zedDesc = Normal zer lper.normal ze(
+           ssage.getCardDescr pt on(),  ssage.getLocale(), pengu nVers on);
+      Token zerResult result = Token zer lper.token zeT et(
+          normal zedDesc,  ssage.getLocale(), pengu nVers on);
+      Token zedCharSequenceStream tokenSeqStream = new Token zedCharSequenceStream();
       tokenSeqStream.reset(result.tokenSequence);
       try {
-        card.setCardDescriptionTokenStream(streamSerializer.serialize(tokenSeqStream));
-        card.setCardDescriptionTokenStreamText(result.tokenSequence.toString());
-      } catch (IOException e) {
-        LOG.error("TwitterTokenStream serialization error! Could not serialize card description: "
+        card.setCardDescr pt onTokenStream(streamSer al zer.ser al ze(tokenSeqStream));
+        card.setCardDescr pt onTokenStreamText(result.tokenSequence.toStr ng());
+      } catch ( OExcept on e) {
+        LOG.error("Tw terTokenStream ser al zat on error! Could not ser al ze card descr pt on: "
             + result.tokenSequence);
-        card.unsetCardDescriptionTokenStream();
-        card.unsetCardDescriptionTokenStreamText();
+        card.unsetCardDescr pt onTokenStream();
+        card.unsetCardDescr pt onTokenStreamText();
       }
     }
 
@@ -433,161 +433,161 @@ public class DelayedIndexingConverter {
   }
 
   /**
-   * Builds card features.
+   * Bu lds card features.
    */
-  private static void buildCardFeatures(
-      long tweetId, EarlybirdThriftDocumentBuilder builder, SearchCard2 card) {
-    if (card == null) {
+  pr vate stat c vo d bu ldCardFeatures(
+      long t et d, Earlyb rdThr ftDocu ntBu lder bu lder, SearchCard2 card) {
+     f (card == null) {
       return;
     }
-    builder
-        .withTokenStreamField(
-            EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_TITLE_FIELD.getFieldName(),
-            card.getCardTitleTokenStreamText(),
-            card.isSetCardTitleTokenStream() ? card.getCardTitleTokenStream() : null)
-        .withTokenStreamField(
-            EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_DESCRIPTION_FIELD.getFieldName(),
-            card.getCardDescriptionTokenStreamText(),
-            card.isSetCardDescriptionTokenStream() ? card.getCardDescriptionTokenStream() : null)
-        .withStringField(
-            EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_NAME_FIELD.getFieldName(),
-            card.getCardName())
-        .withIntField(
-            EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_TYPE_CSF_FIELD.getFieldName(),
-            SearchCardType.cardTypeFromStringName(card.getCardName()).getByteValue());
+    bu lder
+        .w hTokenStreamF eld(
+            Earlyb rdF eldConstants.Earlyb rdF eldConstant.CARD_T TLE_F ELD.getF eldNa (),
+            card.getCardT leTokenStreamText(),
+            card. sSetCardT leTokenStream() ? card.getCardT leTokenStream() : null)
+        .w hTokenStreamF eld(
+            Earlyb rdF eldConstants.Earlyb rdF eldConstant.CARD_DESCR PT ON_F ELD.getF eldNa (),
+            card.getCardDescr pt onTokenStreamText(),
+            card. sSetCardDescr pt onTokenStream() ? card.getCardDescr pt onTokenStream() : null)
+        .w hStr ngF eld(
+            Earlyb rdF eldConstants.Earlyb rdF eldConstant.CARD_NAME_F ELD.getF eldNa (),
+            card.getCardNa ())
+        .w h ntF eld(
+            Earlyb rdF eldConstants.Earlyb rdF eldConstant.CARD_TYPE_CSF_F ELD.getF eldNa (),
+            SearchCardType.cardTypeFromStr ngNa (card.getCardNa ()).getByteValue());
 
-    if (card.getCardLang() != null) {
-      builder.withStringField(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_LANG.getFieldName(),
-          card.getCardLang()).withIntField(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_LANG_CSF.getFieldName(),
-          ThriftLanguageUtil.getThriftLanguageOf(card.getCardLang()).getValue());
+     f (card.getCardLang() != null) {
+      bu lder.w hStr ngF eld(
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.CARD_LANG.getF eldNa (),
+          card.getCardLang()).w h ntF eld(
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.CARD_LANG_CSF.getF eldNa (),
+          Thr ftLanguageUt l.getThr ftLanguageOf(card.getCardLang()).getValue());
     }
-    if (card.getCardDomain() != null) {
-      builder.withStringField(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_DOMAIN_FIELD.getFieldName(),
-          card.getCardDomain());
+     f (card.getCardDoma n() != null) {
+      bu lder.w hStr ngF eld(
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.CARD_DOMA N_F ELD.getF eldNa (),
+          card.getCardDoma n());
     }
-    if (card.getCardUrl() != null) {
-      NUM_TWEETS_WITH_CARD_URL.increment();
-      if (card.getCardUrl().startsWith("card://")) {
-        String suffix = card.getCardUrl().replace("card://", "");
-        if (StringUtils.isNumeric(suffix)) {
-          NUM_TWEETS_WITH_NUMERIC_CARD_URI.increment();
-          builder.withLongField(
-              EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_URI_CSF.getFieldName(),
-              Long.parseLong(suffix));
-          LOG.debug(String.format(
-              "Good card URL for tweet %s: %s",
-              tweetId,
+     f (card.getCardUrl() != null) {
+      NUM_TWEETS_W TH_CARD_URL. ncre nt();
+       f (card.getCardUrl().startsW h("card://")) {
+        Str ng suff x = card.getCardUrl().replace("card://", "");
+         f (Str ngUt ls. sNu r c(suff x)) {
+          NUM_TWEETS_W TH_NUMER C_CARD_UR . ncre nt();
+          bu lder.w hLongF eld(
+              Earlyb rdF eldConstants.Earlyb rdF eldConstant.CARD_UR _CSF.getF eldNa (),
+              Long.parseLong(suff x));
+          LOG.debug(Str ng.format(
+              "Good card URL for t et %s: %s",
+              t et d,
               card.getCardUrl()));
         } else {
-          NUM_TWEETS_WITH_INVALID_CARD_URI.increment();
-          LOG.debug(String.format(
-              "Card URL starts with \"card://\" but followed by non-numeric for tweet %s: %s",
-              tweetId,
+          NUM_TWEETS_W TH_ NVAL D_CARD_UR . ncre nt();
+          LOG.debug(Str ng.format(
+              "Card URL starts w h \"card://\" but follo d by non-nu r c for t et %s: %s",
+              t et d,
               card.getCardUrl()));
         }
       }
     }
-    if (isCardVideo(card)) {
-      // Add into "internal" field so that this tweet is returned by filter:videos.
-      builder.addFacetSkipList(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.VIDEO_LINKS_FIELD.getFieldName());
+     f ( sCardV deo(card)) {
+      // Add  nto " nternal" f eld so that t  t et  s returned by f lter:v deos.
+      bu lder.addFacetSk pL st(
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.V DEO_L NKS_F ELD.getF eldNa ());
     }
   }
 
   /**
-   * Determines if a card is a video.
+   * Determ nes  f a card  s a v deo.
    */
-  private static boolean isCardVideo(@Nullable SearchCard2 card) {
-    if (card == null) {
+  pr vate stat c boolean  sCardV deo(@Nullable SearchCard2 card) {
+     f (card == null) {
       return false;
     }
-    return AMPLIFY_CARD_NAME.equalsIgnoreCase(card.getCardName())
-        || PLAYER_CARD_NAME.equalsIgnoreCase(card.getCardName());
+    return AMPL FY_CARD_NAME.equals gnoreCase(card.getCardNa ())
+        || PLAYER_CARD_NAME.equals gnoreCase(card.getCardNa ());
   }
 
-  private void buildSpaceAdminAndTitleFields(
-      EarlybirdThriftDocumentBuilder builder,
-      TwitterMessage message,
-      PenguinVersion penguinVersion) {
+  pr vate vo d bu ldSpaceAdm nAndT leF elds(
+      Earlyb rdThr ftDocu ntBu lder bu lder,
+      Tw ter ssage  ssage,
+      Pengu nVers on pengu nVers on) {
 
-    buildSpaceAdminFields(builder, message.getSpaceAdmins(), penguinVersion);
+    bu ldSpaceAdm nF elds(bu lder,  ssage.getSpaceAdm ns(), pengu nVers on);
 
-    // build the space title field.
-    buildTweetTokenizerTokenizedField(
-        builder,
-        EarlybirdFieldConstants.EarlybirdFieldConstant.SPACE_TITLE_FIELD.getFieldName(),
-        message.getSpaceTitle(),
-        penguinVersion);
+    // bu ld t  space t le f eld.
+    bu ldT etToken zerToken zedF eld(
+        bu lder,
+        Earlyb rdF eldConstants.Earlyb rdF eldConstant.SPACE_T TLE_F ELD.getF eldNa (),
+         ssage.getSpaceT le(),
+        pengu nVers on);
   }
 
-  private void buildSpaceAdminFields(
-      EarlybirdThriftDocumentBuilder builder,
-      Set<TwitterMessageUser> spaceAdmins,
-      PenguinVersion penguinVersion) {
+  pr vate vo d bu ldSpaceAdm nF elds(
+      Earlyb rdThr ftDocu ntBu lder bu lder,
+      Set<Tw ter ssageUser> spaceAdm ns,
+      Pengu nVers on pengu nVers on) {
 
-    for (TwitterMessageUser spaceAdmin : spaceAdmins) {
-      if (spaceAdmin.getScreenName().isPresent()) {
-        // build screen name (aka handle) fields.
-        String screenName = spaceAdmin.getScreenName().get();
-        String normalizedScreenName =
-            NormalizerHelper.normalizeWithUnknownLocale(screenName, penguinVersion);
+    for (Tw ter ssageUser spaceAdm n : spaceAdm ns) {
+       f (spaceAdm n.getScreenNa (). sPresent()) {
+        // bu ld screen na  (aka handle) f elds.
+        Str ng screenNa  = spaceAdm n.getScreenNa ().get();
+        Str ng normal zedScreenNa  =
+            Normal zer lper.normal zeW hUnknownLocale(screenNa , pengu nVers on);
 
-        builder.withStringField(
-            EarlybirdFieldConstants.EarlybirdFieldConstant.SPACE_ADMIN_FIELD.getFieldName(),
-            normalizedScreenName);
-        builder.withWhiteSpaceTokenizedScreenNameField(
-            EarlybirdFieldConstants
-                .EarlybirdFieldConstant.TOKENIZED_SPACE_ADMIN_FIELD.getFieldName(),
-            normalizedScreenName);
+        bu lder.w hStr ngF eld(
+            Earlyb rdF eldConstants.Earlyb rdF eldConstant.SPACE_ADM N_F ELD.getF eldNa (),
+            normal zedScreenNa );
+        bu lder.w hWh eSpaceToken zedScreenNa F eld(
+            Earlyb rdF eldConstants
+                .Earlyb rdF eldConstant.TOKEN ZED_SPACE_ADM N_F ELD.getF eldNa (),
+            normal zedScreenNa );
 
-        if (spaceAdmin.getTokenizedScreenName().isPresent()) {
-          builder.withCamelCaseTokenizedScreenNameField(
-              EarlybirdFieldConstants
-                  .EarlybirdFieldConstant.CAMELCASE_TOKENIZED_SPACE_ADMIN_FIELD.getFieldName(),
-              screenName,
-              normalizedScreenName,
-              spaceAdmin.getTokenizedScreenName().get());
+         f (spaceAdm n.getToken zedScreenNa (). sPresent()) {
+          bu lder.w hCa lCaseToken zedScreenNa F eld(
+              Earlyb rdF eldConstants
+                  .Earlyb rdF eldConstant.CAMELCASE_TOKEN ZED_SPACE_ADM N_F ELD.getF eldNa (),
+              screenNa ,
+              normal zedScreenNa ,
+              spaceAdm n.getToken zedScreenNa ().get());
         }
       }
 
-      if (spaceAdmin.getDisplayName().isPresent()) {
-        buildTweetTokenizerTokenizedField(
-            builder,
-            EarlybirdFieldConstants
-                .EarlybirdFieldConstant.TOKENIZED_SPACE_ADMIN_DISPLAY_NAME_FIELD.getFieldName(),
-            spaceAdmin.getDisplayName().get(),
-            penguinVersion);
+       f (spaceAdm n.getD splayNa (). sPresent()) {
+        bu ldT etToken zerToken zedF eld(
+            bu lder,
+            Earlyb rdF eldConstants
+                .Earlyb rdF eldConstant.TOKEN ZED_SPACE_ADM N_D SPLAY_NAME_F ELD.getF eldNa (),
+            spaceAdm n.getD splayNa ().get(),
+            pengu nVers on);
       }
     }
   }
 
-  private void buildTweetTokenizerTokenizedField(
-      EarlybirdThriftDocumentBuilder builder,
-      String fieldName,
-      String text,
-      PenguinVersion penguinVersion) {
+  pr vate vo d bu ldT etToken zerToken zedF eld(
+      Earlyb rdThr ftDocu ntBu lder bu lder,
+      Str ng f eldNa ,
+      Str ng text,
+      Pengu nVers on pengu nVers on) {
 
-    if (StringUtils.isNotEmpty(text)) {
-      Locale locale = LanguageIdentifierHelper
-          .identifyLanguage(text);
-      String normalizedText = NormalizerHelper.normalize(
-          text, locale, penguinVersion);
-      TokenizerResult result = TokenizerHelper
-          .tokenizeTweet(normalizedText, locale, penguinVersion);
-      TokenizedCharSequenceStream tokenSeqStream = new TokenizedCharSequenceStream();
+     f (Str ngUt ls. sNotEmpty(text)) {
+      Locale locale = Language dent f er lper
+          . dent fyLanguage(text);
+      Str ng normal zedText = Normal zer lper.normal ze(
+          text, locale, pengu nVers on);
+      Token zerResult result = Token zer lper
+          .token zeT et(normal zedText, locale, pengu nVers on);
+      Token zedCharSequenceStream tokenSeqStream = new Token zedCharSequenceStream();
       tokenSeqStream.reset(result.tokenSequence);
-      TokenStreamSerializer streamSerializer =
-          TweetTokenStreamSerializer.getTweetTokenStreamSerializer();
+      TokenStreamSer al zer streamSer al zer =
+          T etTokenStreamSer al zer.getT etTokenStreamSer al zer();
       try {
-        builder.withTokenStreamField(
-            fieldName,
-            result.tokenSequence.toString(),
-            streamSerializer.serialize(tokenSeqStream));
-      } catch (IOException e) {
-        LOG.error("TwitterTokenStream serialization error! Could not serialize: " + text);
+        bu lder.w hTokenStreamF eld(
+            f eldNa ,
+            result.tokenSequence.toStr ng(),
+            streamSer al zer.ser al ze(tokenSeqStream));
+      } catch ( OExcept on e) {
+        LOG.error("Tw terTokenStream ser al zat on error! Could not ser al ze: " + text);
       }
     }
   }

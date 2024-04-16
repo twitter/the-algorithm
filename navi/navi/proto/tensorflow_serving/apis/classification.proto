@@ -1,48 +1,48 @@
 syntax = "proto3";
 
-option cc_enable_arenas = true;
+opt on cc_enable_arenas = true;
 
-import "tensorflow_serving/apis/input.proto";
-import "tensorflow_serving/apis/model.proto";
+ mport "tensorflow_serv ng/ap s/ nput.proto";
+ mport "tensorflow_serv ng/ap s/model.proto";
 
-package tensorflow.serving;
+package tensorflow.serv ng;
 
-// A single class.
-message Class {
-  // Label or name of the class.
-  string label = 1;
-  // Score for this class (e.g., the probability the item belongs to this
-  // class). As per the proto3 default-value semantics, if the score is missing,
-  // it should be treated as 0.
+// A s ngle class.
+ ssage Class {
+  // Label or na  of t  class.
+  str ng label = 1;
+  // Score for t  class (e.g., t  probab l y t   em belongs to t 
+  // class). As per t  proto3 default-value semant cs,  f t  score  s m ss ng,
+  //   should be treated as 0.
   float score = 2;
 }
 
-// List of classes for a single item (tensorflow.Example).
-message Classifications {
+// L st of classes for a s ngle  em (tensorflow.Example).
+ ssage Class f cat ons {
   repeated Class classes = 1;
 }
 
-// Contains one result per input example, in the same order as the input in
-// ClassificationRequest.
-message ClassificationResult {
-  repeated Classifications classifications = 1;
+// Conta ns one result per  nput example,  n t  sa  order as t   nput  n
+// Class f cat onRequest.
+ ssage Class f cat onResult {
+  repeated Class f cat ons class f cat ons = 1;
 }
 
-// RPC Interfaces
+// RPC  nterfaces
 
-message ClassificationRequest {
-  // Model Specification. If version is not specified, will use the latest
-  // (numerical) version.
+ ssage Class f cat onRequest {
+  // Model Spec f cat on.  f vers on  s not spec f ed, w ll use t  latest
+  // (nu r cal) vers on.
   ModelSpec model_spec = 1;
 
-  // Input data.
-  tensorflow.serving.Input input = 2;
+  //  nput data.
+  tensorflow.serv ng. nput  nput = 2;
 }
 
-message ClassificationResponse {
-  // Effective Model Specification used for classification.
+ ssage Class f cat onResponse {
+  // Effect ve Model Spec f cat on used for class f cat on.
   ModelSpec model_spec = 2;
 
-  // Result of the classification.
-  ClassificationResult result = 1;
+  // Result of t  class f cat on.
+  Class f cat onResult result = 1;
 }

@@ -1,44 +1,44 @@
-package com.twitter.servo.repository
+package com.tw ter.servo.repos ory
 
-import com.twitter.servo.cache._
-import com.twitter.util.Future
+ mport com.tw ter.servo.cac ._
+ mport com.tw ter.ut l.Future
 
-class CachingCounterKeyValueRepository[K](
-  underlying: CounterKeyValueRepository[K],
-  cache: CounterCache[K],
-  observer: CacheObserver = NullCacheObserver)
-    extends CounterKeyValueRepository[K] {
+class Cach ngCounterKeyValueRepos ory[K](
+  underly ng: CounterKeyValueRepos ory[K],
+  cac : CounterCac [K],
+  observer: Cac Observer = NullCac Observer)
+    extends CounterKeyValueRepos ory[K] {
 
   def apply(keys: Seq[K]): Future[KeyValueResult[K, Long]] = {
-    val uniqueKeys = keys.distinct
-    cache.get(uniqueKeys) flatMap { cachedResults =>
-      recordResults(cachedResults)
+    val un queKeys = keys.d st nct
+    cac .get(un queKeys) flatMap { cac dResults =>
+      recordResults(cac dResults)
 
-      val missed = cachedResults.notFound ++ cachedResults.failed.keySet
-      readThrough(missed.toSeq) map { readResults =>
-        KeyValueResult(cachedResults.found) ++ readResults
+      val m ssed = cac dResults.notFound ++ cac dResults.fa led.keySet
+      readThrough(m ssed.toSeq) map { readResults =>
+        KeyValueResult(cac dResults.found) ++ readResults
       }
     }
   }
 
-  private def readThrough(keys: Seq[K]): Future[KeyValueResult[K, Long]] =
-    if (keys.isEmpty) {
+  pr vate def readThrough(keys: Seq[K]): Future[KeyValueResult[K, Long]] =
+     f (keys. sEmpty) {
       KeyValueResult.emptyFuture
     } else {
-      underlying(keys) onSuccess { readResults =>
+      underly ng(keys) onSuccess { readResults =>
         for ((k, v) <- readResults.found) {
-          cache.add(k, v)
+          cac .add(k, v)
         }
       }
     }
 
-  private def recordResults(cachedResults: KeyValueResult[K, Long]): Unit = {
-    cachedResults.found.keys foreach { key =>
-      observer.hit(key.toString)
+  pr vate def recordResults(cac dResults: KeyValueResult[K, Long]): Un  = {
+    cac dResults.found.keys foreach { key =>
+      observer.h (key.toStr ng)
     }
-    cachedResults.notFound foreach { key =>
-      observer.miss(key.toString)
+    cac dResults.notFound foreach { key =>
+      observer.m ss(key.toStr ng)
     }
-    observer.failure(cachedResults.failed.size)
+    observer.fa lure(cac dResults.fa led.s ze)
   }
 }

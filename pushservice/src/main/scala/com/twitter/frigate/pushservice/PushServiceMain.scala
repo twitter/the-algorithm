@@ -1,192 +1,192 @@
-package com.twitter.frigate.pushservice
+package com.tw ter.fr gate.pushserv ce
 
-import com.twitter.discovery.common.environment.modules.EnvironmentModule
-import com.twitter.finagle.Filter
-import com.twitter.finatra.annotations.DarkTrafficFilterType
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.http.HttpServer
-import com.twitter.finatra.http.filters.CommonFilters
-import com.twitter.finatra.http.routing.HttpRouter
-import com.twitter.finatra.mtls.http.{Mtls => HttpMtls}
-import com.twitter.finatra.mtls.thriftmux.{Mtls => ThriftMtls}
-import com.twitter.finatra.mtls.thriftmux.filters.MtlsServerSessionTrackerFilter
-import com.twitter.finatra.thrift.ThriftServer
-import com.twitter.finatra.thrift.filters.ExceptionMappingFilter
-import com.twitter.finatra.thrift.filters.LoggingMDCFilter
-import com.twitter.finatra.thrift.filters.StatsFilter
-import com.twitter.finatra.thrift.filters.ThriftMDCFilter
-import com.twitter.finatra.thrift.filters.TraceIdMDCFilter
-import com.twitter.finatra.thrift.routing.ThriftRouter
-import com.twitter.frigate.common.logger.MRLoggerGlobalVariables
-import com.twitter.frigate.pushservice.controller.PushServiceController
-import com.twitter.frigate.pushservice.module._
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flags
-import com.twitter.inject.thrift.modules.ThriftClientIdModule
-import com.twitter.logging.BareFormatter
-import com.twitter.logging.Level
-import com.twitter.logging.LoggerFactory
-import com.twitter.logging.{Logging => JLogging}
-import com.twitter.logging.QueueingHandler
-import com.twitter.logging.ScribeHandler
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule
-import com.twitter.product_mixer.core.module.ABDeciderModule
-import com.twitter.product_mixer.core.module.FeatureSwitchesModule
-import com.twitter.product_mixer.core.module.StratoClientModule
+ mport com.tw ter.d scovery.common.env ron nt.modules.Env ron ntModule
+ mport com.tw ter.f nagle.F lter
+ mport com.tw ter.f natra.annotat ons.DarkTraff cF lterType
+ mport com.tw ter.f natra.dec der.modules.Dec derModule
+ mport com.tw ter.f natra.http.HttpServer
+ mport com.tw ter.f natra.http.f lters.CommonF lters
+ mport com.tw ter.f natra.http.rout ng.HttpRouter
+ mport com.tw ter.f natra.mtls.http.{Mtls => HttpMtls}
+ mport com.tw ter.f natra.mtls.thr ftmux.{Mtls => Thr ftMtls}
+ mport com.tw ter.f natra.mtls.thr ftmux.f lters.MtlsServerSess onTrackerF lter
+ mport com.tw ter.f natra.thr ft.Thr ftServer
+ mport com.tw ter.f natra.thr ft.f lters.Except onMapp ngF lter
+ mport com.tw ter.f natra.thr ft.f lters.Logg ngMDCF lter
+ mport com.tw ter.f natra.thr ft.f lters.StatsF lter
+ mport com.tw ter.f natra.thr ft.f lters.Thr ftMDCF lter
+ mport com.tw ter.f natra.thr ft.f lters.Trace dMDCF lter
+ mport com.tw ter.f natra.thr ft.rout ng.Thr ftRouter
+ mport com.tw ter.fr gate.common.logger.MRLoggerGlobalVar ables
+ mport com.tw ter.fr gate.pushserv ce.controller.PushServ ceController
+ mport com.tw ter.fr gate.pushserv ce.module._
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nject.annotat ons.Flags
+ mport com.tw ter. nject.thr ft.modules.Thr ftCl ent dModule
+ mport com.tw ter.logg ng.BareFormatter
+ mport com.tw ter.logg ng.Level
+ mport com.tw ter.logg ng.LoggerFactory
+ mport com.tw ter.logg ng.{Logg ng => JLogg ng}
+ mport com.tw ter.logg ng.Queue ngHandler
+ mport com.tw ter.logg ng.Scr beHandler
+ mport com.tw ter.product_m xer.core.module.product_m xer_flags.ProductM xerFlagModule
+ mport com.tw ter.product_m xer.core.module.ABDec derModule
+ mport com.tw ter.product_m xer.core.module.FeatureSw c sModule
+ mport com.tw ter.product_m xer.core.module.StratoCl entModule
 
-object PushServiceMain extends PushServiceFinatraServer
+object PushServ ceMa n extends PushServ ceF natraServer
 
-class PushServiceFinatraServer
-    extends ThriftServer
-    with ThriftMtls
-    with HttpServer
-    with HttpMtls
-    with JLogging {
+class PushServ ceF natraServer
+    extends Thr ftServer
+    w h Thr ftMtls
+    w h HttpServer
+    w h HttpMtls
+    w h JLogg ng {
 
-  override val name = "PushService"
+  overr de val na  = "PushServ ce"
 
-  override val modules: Seq[TwitterModule] = {
+  overr de val modules: Seq[Tw terModule] = {
     Seq(
-      ABDeciderModule,
-      DeciderModule,
-      FeatureSwitchesModule,
-      FilterModule,
+      ABDec derModule,
+      Dec derModule,
+      FeatureSw c sModule,
+      F lterModule,
       FlagModule,
-      EnvironmentModule,
-      ThriftClientIdModule,
-      DeployConfigModule,
-      ProductMixerFlagModule,
-      StratoClientModule,
+      Env ron ntModule,
+      Thr ftCl ent dModule,
+      DeployConf gModule,
+      ProductM xerFlagModule,
+      StratoCl entModule,
       PushHandlerModule,
-      PushTargetUserBuilderModule,
-      PushServiceDarkTrafficModule,
-      LoggedOutPushTargetUserBuilderModule,
-      new ThriftWebFormsModule(this),
+      PushTargetUserBu lderModule,
+      PushServ ceDarkTraff cModule,
+      LoggedOutPushTargetUserBu lderModule,
+      new Thr ft bFormsModule(t ),
     )
   }
 
-  override def configureThrift(router: ThriftRouter): Unit = {
+  overr de def conf gureThr ft(router: Thr ftRouter): Un  = {
     router
-      .filter[ExceptionMappingFilter]
-      .filter[LoggingMDCFilter]
-      .filter[TraceIdMDCFilter]
-      .filter[ThriftMDCFilter]
-      .filter[MtlsServerSessionTrackerFilter]
-      .filter[StatsFilter]
-      .filter[Filter.TypeAgnostic, DarkTrafficFilterType]
-      .add[PushServiceController]
+      .f lter[Except onMapp ngF lter]
+      .f lter[Logg ngMDCF lter]
+      .f lter[Trace dMDCF lter]
+      .f lter[Thr ftMDCF lter]
+      .f lter[MtlsServerSess onTrackerF lter]
+      .f lter[StatsF lter]
+      .f lter[F lter.TypeAgnost c, DarkTraff cF lterType]
+      .add[PushServ ceController]
   }
 
-  override def configureHttp(router: HttpRouter): Unit =
+  overr de def conf gureHttp(router: HttpRouter): Un  =
     router
-      .filter[CommonFilters]
+      .f lter[CommonF lters]
 
-  override protected def start(): Unit = {
-    MRLoggerGlobalVariables.setRequiredFlags(
-      traceLogFlag = injector.instance[Boolean](Flags.named(FlagModule.mrLoggerIsTraceAll.name)),
-      nthLogFlag = injector.instance[Boolean](Flags.named(FlagModule.mrLoggerNthLog.name)),
-      nthLogValFlag = injector.instance[Long](Flags.named(FlagModule.mrLoggerNthVal.name))
+  overr de protected def start(): Un  = {
+    MRLoggerGlobalVar ables.setRequ redFlags(
+      traceLogFlag =  njector. nstance[Boolean](Flags.na d(FlagModule.mrLogger sTraceAll.na )),
+      nthLogFlag =  njector. nstance[Boolean](Flags.na d(FlagModule.mrLoggerNthLog.na )),
+      nthLogValFlag =  njector. nstance[Long](Flags.na d(FlagModule.mrLoggerNthVal.na ))
     )
   }
 
-  override protected def warmup(): Unit = {
-    handle[PushMixerThriftServerWarmupHandler]()
+  overr de protected def warmup(): Un  = {
+    handle[PushM xerThr ftServerWarmupHandler]()
   }
 
-  override protected def configureLoggerFactories(): Unit = {
-    loggerFactories.foreach { _() }
+  overr de protected def conf gureLoggerFactor es(): Un  = {
+    loggerFactor es.foreach { _() }
   }
 
-  override def loggerFactories: List[LoggerFactory] = {
-    val scribeScope = statsReceiver.scope("scribe")
-    List(
+  overr de def loggerFactor es: L st[LoggerFactory] = {
+    val scr beScope = statsRece ver.scope("scr be")
+    L st(
       LoggerFactory(
-        level = Some(levelFlag()),
+        level = So (levelFlag()),
         handlers = handlers
       ),
       LoggerFactory(
-        node = "request_scribe",
-        level = Some(Level.INFO),
+        node = "request_scr be",
+        level = So (Level. NFO),
         useParents = false,
-        handlers = QueueingHandler(
-          maxQueueSize = 10000,
-          handler = ScribeHandler(
-            category = "frigate_pushservice_log",
+        handlers = Queue ngHandler(
+          maxQueueS ze = 10000,
+          handler = Scr beHandler(
+            category = "fr gate_pushserv ce_log",
             formatter = BareFormatter,
-            statsReceiver = scribeScope.scope("frigate_pushservice_log")
+            statsRece ver = scr beScope.scope("fr gate_pushserv ce_log")
           )
-        ) :: Nil
+        ) :: N l
       ),
       LoggerFactory(
-        node = "notification_scribe",
-        level = Some(Level.INFO),
+        node = "not f cat on_scr be",
+        level = So (Level. NFO),
         useParents = false,
-        handlers = QueueingHandler(
-          maxQueueSize = 10000,
-          handler = ScribeHandler(
-            category = "frigate_notifier",
+        handlers = Queue ngHandler(
+          maxQueueS ze = 10000,
+          handler = Scr beHandler(
+            category = "fr gate_not f er",
             formatter = BareFormatter,
-            statsReceiver = scribeScope.scope("frigate_notifier")
+            statsRece ver = scr beScope.scope("fr gate_not f er")
           )
-        ) :: Nil
+        ) :: N l
       ),
       LoggerFactory(
-        node = "push_scribe",
-        level = Some(Level.INFO),
+        node = "push_scr be",
+        level = So (Level. NFO),
         useParents = false,
-        handlers = QueueingHandler(
-          maxQueueSize = 10000,
-          handler = ScribeHandler(
-            category = "test_frigate_push",
+        handlers = Queue ngHandler(
+          maxQueueS ze = 10000,
+          handler = Scr beHandler(
+            category = "test_fr gate_push",
             formatter = BareFormatter,
-            statsReceiver = scribeScope.scope("test_frigate_push")
+            statsRece ver = scr beScope.scope("test_fr gate_push")
           )
-        ) :: Nil
+        ) :: N l
       ),
       LoggerFactory(
-        node = "push_subsample_scribe",
-        level = Some(Level.INFO),
+        node = "push_subsample_scr be",
+        level = So (Level. NFO),
         useParents = false,
-        handlers = QueueingHandler(
-          maxQueueSize = 2500,
-          handler = ScribeHandler(
-            category = "magicrecs_candidates_subsample_scribe",
-            maxMessagesPerTransaction = 250,
-            maxMessagesToBuffer = 2500,
+        handlers = Queue ngHandler(
+          maxQueueS ze = 2500,
+          handler = Scr beHandler(
+            category = "mag crecs_cand dates_subsample_scr be",
+            max ssagesPerTransact on = 250,
+            max ssagesToBuffer = 2500,
             formatter = BareFormatter,
-            statsReceiver = scribeScope.scope("magicrecs_candidates_subsample_scribe")
+            statsRece ver = scr beScope.scope("mag crecs_cand dates_subsample_scr be")
           )
-        ) :: Nil
+        ) :: N l
       ),
       LoggerFactory(
-        node = "mr_request_scribe",
-        level = Some(Level.INFO),
+        node = "mr_request_scr be",
+        level = So (Level. NFO),
         useParents = false,
-        handlers = QueueingHandler(
-          maxQueueSize = 2500,
-          handler = ScribeHandler(
-            category = "mr_request_scribe",
-            maxMessagesPerTransaction = 250,
-            maxMessagesToBuffer = 2500,
+        handlers = Queue ngHandler(
+          maxQueueS ze = 2500,
+          handler = Scr beHandler(
+            category = "mr_request_scr be",
+            max ssagesPerTransact on = 250,
+            max ssagesToBuffer = 2500,
             formatter = BareFormatter,
-            statsReceiver = scribeScope.scope("mr_request_scribe")
+            statsRece ver = scr beScope.scope("mr_request_scr be")
           )
-        ) :: Nil
+        ) :: N l
       ),
       LoggerFactory(
-        node = "high_quality_candidates_scribe",
-        level = Some(Level.INFO),
+        node = "h gh_qual y_cand dates_scr be",
+        level = So (Level. NFO),
         useParents = false,
-        handlers = QueueingHandler(
-          maxQueueSize = 2500,
-          handler = ScribeHandler(
-            category = "frigate_high_quality_candidates_log",
-            maxMessagesPerTransaction = 250,
-            maxMessagesToBuffer = 2500,
+        handlers = Queue ngHandler(
+          maxQueueS ze = 2500,
+          handler = Scr beHandler(
+            category = "fr gate_h gh_qual y_cand dates_log",
+            max ssagesPerTransact on = 250,
+            max ssagesToBuffer = 2500,
             formatter = BareFormatter,
-            statsReceiver = scribeScope.scope("high_quality_candidates_scribe")
+            statsRece ver = scr beScope.scope("h gh_qual y_cand dates_scr be")
           )
-        ) :: Nil
+        ) :: N l
       ),
     )
   }

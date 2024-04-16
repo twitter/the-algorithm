@@ -1,73 +1,73 @@
-package com.twitter.recos.user_tweet_entity_graph
+package com.tw ter.recos.user_t et_ent y_graph
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.graphjet.algorithms.RecommendationType
-import com.twitter.graphjet.algorithms.counting.tweet.TweetMetadataRecommendationInfo
-import com.twitter.graphjet.algorithms.counting.tweet.TweetRecommendationInfo
-import com.twitter.recos.user_tweet_entity_graph.thriftscala._
-import com.twitter.recos.util.Stats
-import com.twitter.servo.request._
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.ut l.StatsUt l
+ mport com.tw ter.graphjet.algor hms.Recom ndat onType
+ mport com.tw ter.graphjet.algor hms.count ng.t et.T et tadataRecom ndat on nfo
+ mport com.tw ter.graphjet.algor hms.count ng.t et.T etRecom ndat on nfo
+ mport com.tw ter.recos.user_t et_ent y_graph.thr ftscala._
+ mport com.tw ter.recos.ut l.Stats
+ mport com.tw ter.servo.request._
+ mport com.tw ter.ut l.Future
 
 /**
- * Implementation of the Thrift-defined service interface.
+ *  mple ntat on of t  Thr ft-def ned serv ce  nterface.
  *
-* A wrapper of magicRecsRunner.
+* A wrapper of mag cRecsRunner.
  */
-class RecommendationHandler(
-  tweetRecsRunner: TweetRecommendationsRunner,
-  statsReceiver: StatsReceiver)
-    extends RequestHandler[RecommendTweetEntityRequest, RecommendTweetEntityResponse] {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val socialProofHydrator = new SocialProofHydrator(stats)
+class Recom ndat onHandler(
+  t etRecsRunner: T etRecom ndat onsRunner,
+  statsRece ver: StatsRece ver)
+    extends RequestHandler[Recom ndT etEnt yRequest, Recom ndT etEnt yResponse] {
+  pr vate val stats = statsRece ver.scope(t .getClass.getS mpleNa )
+  pr vate val soc alProofHydrator = new Soc alProofHydrator(stats)
 
-  override def apply(request: RecommendTweetEntityRequest): Future[RecommendTweetEntityResponse] = {
-    val scopedStats: StatsReceiver = stats.scope(request.displayLocation.toString)
+  overr de def apply(request: Recom ndT etEnt yRequest): Future[Recom ndT etEnt yResponse] = {
+    val scopedStats: StatsRece ver = stats.scope(request.d splayLocat on.toStr ng)
 
-    StatsUtil.trackBlockStats(scopedStats) {
-      val candidatesFuture = tweetRecsRunner.apply(request)
+    StatsUt l.trackBlockStats(scopedStats) {
+      val cand datesFuture = t etRecsRunner.apply(request)
 
-      candidatesFuture.map { candidates =>
-        if (candidates.isEmpty) scopedStats.counter(Stats.EmptyResult).incr()
-        else scopedStats.counter(Stats.Served).incr(candidates.size)
+      cand datesFuture.map { cand dates =>
+         f (cand dates. sEmpty) scopedStats.counter(Stats.EmptyResult). ncr()
+        else scopedStats.counter(Stats.Served). ncr(cand dates.s ze)
 
-        RecommendTweetEntityResponse(candidates.flatMap {
+        Recom ndT etEnt yResponse(cand dates.flatMap {
           _ match {
-            case tweetRec: TweetRecommendationInfo =>
-              Some(
-                UserTweetEntityRecommendationUnion.TweetRec(
-                  TweetRecommendation(
-                    tweetRec.getRecommendation,
-                    tweetRec.getWeight,
-                    socialProofHydrator.addTweetSocialProofByType(tweetRec),
-                    socialProofHydrator.addTweetSocialProofs(tweetRec)
+            case t etRec: T etRecom ndat on nfo =>
+              So (
+                UserT etEnt yRecom ndat onUn on.T etRec(
+                  T etRecom ndat on(
+                    t etRec.getRecom ndat on,
+                    t etRec.get  ght,
+                    soc alProofHydrator.addT etSoc alProofByType(t etRec),
+                    soc alProofHydrator.addT etSoc alProofs(t etRec)
                   )
                 )
               )
-            case tweetMetadataRec: TweetMetadataRecommendationInfo =>
-              if (tweetMetadataRec.getRecommendationType == RecommendationType.HASHTAG) {
-                Some(
-                  UserTweetEntityRecommendationUnion.HashtagRec(
-                    HashtagRecommendation(
-                      tweetMetadataRec.getRecommendation,
-                      tweetMetadataRec.getWeight,
-                      socialProofHydrator.addMetadataSocialProofByType(tweetMetadataRec)
+            case t et tadataRec: T et tadataRecom ndat on nfo =>
+               f (t et tadataRec.getRecom ndat onType == Recom ndat onType.HASHTAG) {
+                So (
+                  UserT etEnt yRecom ndat onUn on.HashtagRec(
+                    HashtagRecom ndat on(
+                      t et tadataRec.getRecom ndat on,
+                      t et tadataRec.get  ght,
+                      soc alProofHydrator.add tadataSoc alProofByType(t et tadataRec)
                     )
                   )
                 )
-              } else if (tweetMetadataRec.getRecommendationType == RecommendationType.URL) {
-                Some(
-                  UserTweetEntityRecommendationUnion.UrlRec(
-                    UrlRecommendation(
-                      tweetMetadataRec.getRecommendation,
-                      tweetMetadataRec.getWeight,
-                      socialProofHydrator.addMetadataSocialProofByType(tweetMetadataRec)
+              } else  f (t et tadataRec.getRecom ndat onType == Recom ndat onType.URL) {
+                So (
+                  UserT etEnt yRecom ndat onUn on.UrlRec(
+                    UrlRecom ndat on(
+                      t et tadataRec.getRecom ndat on,
+                      t et tadataRec.get  ght,
+                      soc alProofHydrator.add tadataSoc alProofByType(t et tadataRec)
                     )
                   )
                 )
               } else {
-                None: Option[UserTweetEntityRecommendationUnion]
+                None: Opt on[UserT etEnt yRecom ndat onUn on]
               }
             case _ => None
           }

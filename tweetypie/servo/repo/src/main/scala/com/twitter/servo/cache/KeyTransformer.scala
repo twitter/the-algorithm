@@ -1,21 +1,21 @@
-package com.twitter.servo.cache
+package com.tw ter.servo.cac 
 
 /**
- * Converts all keys to a string via .toString
+ * Converts all keys to a str ng v a .toStr ng
  */
-class ToStringKeyTransformer[K] extends KeyTransformer[K] {
-  override def apply(key: K) = key.toString
+class ToStr ngKeyTransfor r[K] extends KeyTransfor r[K] {
+  overr de def apply(key: K) = key.toStr ng
 }
 
 /**
- * Prefixes all keys with a string
+ * Pref xes all keys w h a str ng
  */
-class PrefixKeyTransformer[K](
-  prefix: String,
-  delimiter: String = constants.Colon,
-  underlying: KeyTransformer[K] = new ToStringKeyTransformer[K]: ToStringKeyTransformer[K])
-    extends KeyTransformer[K] {
-  private[this] val fullPrefix = prefix + delimiter
+class Pref xKeyTransfor r[K](
+  pref x: Str ng,
+  del m er: Str ng = constants.Colon,
+  underly ng: KeyTransfor r[K] = new ToStr ngKeyTransfor r[K]: ToStr ngKeyTransfor r[K])
+    extends KeyTransfor r[K] {
+  pr vate[t ] val fullPref x = pref x + del m er
 
-  override def apply(key: K) = fullPrefix + underlying(key)
+  overr de def apply(key: K) = fullPref x + underly ng(key)
 }

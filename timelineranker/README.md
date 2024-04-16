@@ -1,13 +1,13 @@
-# TimelineRanker
+# T  l neRanker
 
-**TimelineRanker** (TLR) is a legacy service that provides relevance-scored tweets from the Earlybird Search Index and User Tweet Entity Graph (UTEG) service. Despite its name, it no longer performs heavy ranking or model-based ranking itself; it only uses relevance scores from the Search Index for ranked tweet endpoints.
+**T  l neRanker** (TLR)  s a legacy serv ce that prov des relevance-scored t ets from t  Earlyb rd Search  ndex and User T et Ent y Graph (UTEG) serv ce. Desp e  s na ,   no longer performs  avy rank ng or model-based rank ng  self;   only uses relevance scores from t  Search  ndex for ranked t et endpo nts.
 
-The following is a list of major services that Timeline Ranker interacts with:
+T  follow ng  s a l st of major serv ces that T  l ne Ranker  nteracts w h:
 
-- **Earlybird-root-superroot (a.k.a Search):** Timeline Ranker calls the Search Index's super root to fetch a list of Tweets.
-- **User Tweet Entity Graph (UTEG):** Timeline Ranker calls UTEG to fetch a list of tweets liked by the users you follow.
-- **Socialgraph:** Timeline Ranker calls Social Graph Service to obtain the follow graph and user states such as blocked, muted, retweets muted, etc.
-- **TweetyPie:** Timeline Ranker hydrates tweets by calling TweetyPie to post-filter tweets based on certain hydrated fields.
-- **Manhattan:** Timeline Ranker hydrates some tweet features (e.g., user languages) from Manhattan.
+- **Earlyb rd-root-superroot (a.k.a Search):** T  l ne Ranker calls t  Search  ndex's super root to fetch a l st of T ets.
+- **User T et Ent y Graph (UTEG):** T  l ne Ranker calls UTEG to fetch a l st of t ets l ked by t  users   follow.
+- **Soc algraph:** T  l ne Ranker calls Soc al Graph Serv ce to obta n t  follow graph and user states such as blocked, muted, ret ets muted, etc.
+- **T etyP e:** T  l ne Ranker hydrates t ets by call ng T etyP e to post-f lter t ets based on certa n hydrated f elds.
+- **Manhattan:** T  l ne Ranker hydrates so  t et features (e.g., user languages) from Manhattan.
 
-**Home Mixer** calls Timeline Ranker to fetch tweets from the Earlybird Search Index and User Tweet Entity Graph (UTEG) service to power both the For You and Following Home Timelines. Timeline Ranker performs light ranking based on Earlybird tweet candidate scores and truncates to the number of candidates requested by Home Mixer based on these scores.
+**Ho  M xer** calls T  l ne Ranker to fetch t ets from t  Earlyb rd Search  ndex and User T et Ent y Graph (UTEG) serv ce to po r both t  For   and Follow ng Ho  T  l nes. T  l ne Ranker performs l ght rank ng based on Earlyb rd t et cand date scores and truncates to t  number of cand dates requested by Ho  M xer based on t se scores.

@@ -1,7 +1,7 @@
-resources(
-    sources = [
+res ces(
+    s ces = [
         "!**/*.pyc",
-        "!BUILD*",
+        "!BU LD*",
         "**/*",
     ],
 )

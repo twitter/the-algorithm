@@ -1,48 +1,48 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
-import com.twitter.gizmoduck.thriftscala.{CountsUpdateField => Field}
-import com.twitter.tweetypie.backends.Gizmoduck
+ mport com.tw ter.g zmoduck.thr ftscala.{CountsUpdateF eld => F eld}
+ mport com.tw ter.t etyp e.backends.G zmoduck
 
-trait GizmoduckUserCountsUpdatingStore
-    extends TweetStoreBase[GizmoduckUserCountsUpdatingStore]
-    with InsertTweet.Store
-    with DeleteTweet.Store {
-  def wrap(w: TweetStore.Wrap): GizmoduckUserCountsUpdatingStore =
-    new TweetStoreWrapper(w, this)
-      with GizmoduckUserCountsUpdatingStore
-      with InsertTweet.StoreWrapper
-      with DeleteTweet.StoreWrapper
+tra  G zmoduckUserCountsUpdat ngStore
+    extends T etStoreBase[G zmoduckUserCountsUpdat ngStore]
+    w h  nsertT et.Store
+    w h DeleteT et.Store {
+  def wrap(w: T etStore.Wrap): G zmoduckUserCountsUpdat ngStore =
+    new T etStoreWrapper(w, t )
+      w h G zmoduckUserCountsUpdat ngStore
+      w h  nsertT et.StoreWrapper
+      w h DeleteT et.StoreWrapper
 }
 
 /**
- * A TweetStore implementation that sends user-specific count updates to Gizmoduck.
+ * A T etStore  mple ntat on that sends user-spec f c count updates to G zmoduck.
  */
-object GizmoduckUserCountsUpdatingStore {
-  def isUserTweet(tweet: Tweet): Boolean =
-    !TweetLenses.nullcast.get(tweet) && TweetLenses.narrowcast.get(tweet).isEmpty
+object G zmoduckUserCountsUpdat ngStore {
+  def  sUserT et(t et: T et): Boolean =
+    !T etLenses.nullcast.get(t et) && T etLenses.narrowcast.get(t et). sEmpty
 
   def apply(
-    incr: Gizmoduck.IncrCount,
-    hasMedia: Tweet => Boolean
-  ): GizmoduckUserCountsUpdatingStore = {
-    def incrField(field: Field, amt: Int): FutureEffect[Tweet] =
-      FutureEffect[Tweet](tweet => incr((getUserId(tweet), field, amt)))
+     ncr: G zmoduck. ncrCount,
+    has d a: T et => Boolean
+  ): G zmoduckUserCountsUpdat ngStore = {
+    def  ncrF eld(f eld: F eld, amt:  nt): FutureEffect[T et] =
+      FutureEffect[T et](t et =>  ncr((getUser d(t et), f eld, amt)))
 
-    def incrAll(amt: Int): FutureEffect[Tweet] =
-      FutureEffect.inParallel(
-        incrField(Field.Tweets, amt).onlyIf(isUserTweet),
-        incrField(Field.MediaTweets, amt).onlyIf(t => isUserTweet(t) && hasMedia(t))
+    def  ncrAll(amt:  nt): FutureEffect[T et] =
+      FutureEffect. nParallel(
+         ncrF eld(F eld.T ets, amt).only f( sUserT et),
+         ncrF eld(F eld. d aT ets, amt).only f(t =>  sUserT et(t) && has d a(t))
       )
 
-    new GizmoduckUserCountsUpdatingStore {
-      override val insertTweet: FutureEffect[InsertTweet.Event] =
-        incrAll(1).contramap[InsertTweet.Event](_.tweet)
+    new G zmoduckUserCountsUpdat ngStore {
+      overr de val  nsertT et: FutureEffect[ nsertT et.Event] =
+         ncrAll(1).contramap[ nsertT et.Event](_.t et)
 
-      override val deleteTweet: FutureEffect[DeleteTweet.Event] =
-        incrAll(-1)
-          .contramap[DeleteTweet.Event](_.tweet)
-          .onlyIf(!_.isUserErasure)
+      overr de val deleteT et: FutureEffect[DeleteT et.Event] =
+         ncrAll(-1)
+          .contramap[DeleteT et.Event](_.t et)
+          .only f(!_. sUserErasure)
     }
   }
 }

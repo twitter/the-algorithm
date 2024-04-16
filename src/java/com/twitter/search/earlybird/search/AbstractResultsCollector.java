@@ -1,630 +1,630 @@
-package com.twitter.search.earlybird.search;
+package com.tw ter.search.earlyb rd.search;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+ mport java. o. OExcept on;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Opt onal;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.Maps;
+ mport com.google.common.collect.Sets;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.ScoreMode;
+ mport org.apac .commons.collect ons.Collect onUt ls;
+ mport org.apac .lucene. ndex.LeafReader;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.search.ScoreMode;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.relevance.features.EarlybirdDocumentFeatures;
-import com.twitter.search.common.results.thriftjava.FieldHitAttribution;
-import com.twitter.search.common.results.thriftjava.FieldHitList;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.search.TwitterEarlyTerminationCollector;
-import com.twitter.search.common.util.spatial.GeoUtil;
-import com.twitter.search.core.earlybird.facets.AbstractFacetCountingArray;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.core.earlybird.index.inverted.QueryCostTracker;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
-import com.twitter.search.earlybird.index.TweetIDMapper;
-import com.twitter.search.earlybird.search.facets.FacetLabelCollector;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.ThriftFacetLabel;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultExtraMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultGeoLocation;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.queryparser.util.IdTimeRanges;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common.constants.thr ftjava.Thr ftLanguage;
+ mport com.tw ter.search.common.part  on ng.snowflakeparser.Snowflake dParser;
+ mport com.tw ter.search.common.relevance.features.Earlyb rdDocu ntFeatures;
+ mport com.tw ter.search.common.results.thr ftjava.F eldH Attr but on;
+ mport com.tw ter.search.common.results.thr ftjava.F eldH L st;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.common.search.Tw terEarlyTerm nat onCollector;
+ mport com.tw ter.search.common.ut l.spat al.GeoUt l;
+ mport com.tw ter.search.core.earlyb rd.facets.AbstractFacetCount ngArray;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntData;
+ mport com.tw ter.search.core.earlyb rd. ndex.T  Mapper;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted.QueryCostTracker;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserTable;
+ mport com.tw ter.search.earlyb rd. ndex.Earlyb rdS ngleSeg ntSearc r;
+ mport com.tw ter.search.earlyb rd. ndex.T et DMapper;
+ mport com.tw ter.search.earlyb rd.search.facets.FacetLabelCollector;
+ mport com.tw ter.search.earlyb rd.stats.Earlyb rdSearc rStats;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetLabel;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchQuery;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultExtra tadata;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultGeoLocat on;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult tadata;
+ mport com.tw ter.search.queryparser.ut l. dT  Ranges;
 
-import geo.google.datamodel.GeoCoordinate;
+ mport geo.google.datamodel.GeoCoord nate;
 
 /**
- * Abstract parent class for all results collectors in earlybird.
- * This collector should be able to handle both single-segment and
- * multi-segment collection.
+ * Abstract parent class for all results collectors  n earlyb rd.
+ * T  collector should be able to handle both s ngle-seg nt and
+ * mult -seg nt collect on.
  */
-public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
-    S extends SearchResultsInfo>
-    extends TwitterEarlyTerminationCollector {
-  enum IdAndRangeUpdateType {
-    BEGIN_SEGMENT,
+publ c abstract class AbstractResultsCollector<R extends SearchRequest nfo,
+    S extends SearchResults nfo>
+    extends Tw terEarlyTerm nat onCollector {
+  enum  dAndRangeUpdateType {
+    BEG N_SEGMENT,
     END_SEGMENT,
-    HIT
+    H T
   }
 
-  // Earlybird used to have a special early termination logic: at segment boundaries
-  // the collector estimates how much time it'll take to search the next segment.
-  // If this estimate * 1.5 will cause the request to timeout, the search early terminates.
-  // That logic is removed in favor of more fine grained checks---now we check timeout
-  // within a segment, every 2,000,000 docs processed.
-  private static final int EXPENSIVE_TERMINATION_CHECK_INTERVAL =
-      EarlybirdConfig.getInt("expensive_termination_check_interval", 2000000);
+  // Earlyb rd used to have a spec al early term nat on log c: at seg nt boundar es
+  // t  collector est mates how much t    'll take to search t  next seg nt.
+  //  f t  est mate * 1.5 w ll cause t  request to t  out, t  search early term nates.
+  // That log c  s removed  n favor of more f ne gra ned c cks---now   c ck t  out
+  // w h n a seg nt, every 2,000,000 docs processed.
+  pr vate stat c f nal  nt EXPENS VE_TERM NAT ON_CHECK_ NTERVAL =
+      Earlyb rdConf g.get nt("expens ve_term nat on_c ck_ nterval", 2000000);
 
-  private static final long NO_TIME_SLICE_ID = -1;
+  pr vate stat c f nal long NO_T ME_SL CE_ D = -1;
 
-  protected final R searchRequestInfo;
+  protected f nal R searchRequest nfo;
 
-  // Sometimes maxHitsToProcess can also come from places other than collector params.
-  // E.g. from searchQuery.getRelevanceOptions(). This provides a way to allow
-  // subclasses to override the maxHitsToProcess on collector params.
-  private final long maxHitsToProcessOverride;
+  // So t  s maxH sToProcess can also co  from places ot r than collector params.
+  // E.g. from searchQuery.getRelevanceOpt ons(). T  prov des a way to allow
+  // subclasses to overr de t  maxH sToProcess on collector params.
+  pr vate f nal long maxH sToProcessOverr de;
 
-  // min and max status id actually considered in the search (may not be a hit)
-  private long minSearchedStatusID = Long.MAX_VALUE;
-  private long maxSearchedStatusID = Long.MIN_VALUE;
+  // m n and max status  d actually cons dered  n t  search (may not be a h )
+  pr vate long m nSearc dStatus D = Long.MAX_VALUE;
+  pr vate long maxSearc dStatus D = Long.M N_VALUE;
 
-  private int minSearchedTime = Integer.MAX_VALUE;
-  private int maxSearchedTime = Integer.MIN_VALUE;
+  pr vate  nt m nSearc dT   =  nteger.MAX_VALUE;
+  pr vate  nt maxSearc dT   =  nteger.M N_VALUE;
 
-  // per-segment start time. Will be re-started in setNextReader().
-  private long segmentStartTime;
+  // per-seg nt start t  . W ll be re-started  n setNextReader().
+  pr vate long seg ntStartT  ;
 
-  // Current segment being searched.
-  protected EarlybirdIndexSegmentAtomicReader currTwitterReader;
-  protected TweetIDMapper tweetIdMapper;
-  protected TimeMapper timeMapper;
-  protected long currTimeSliceID = NO_TIME_SLICE_ID;
+  // Current seg nt be ng searc d.
+  protected Earlyb rd ndexSeg ntAtom cReader currTw terReader;
+  protected T et DMapper t et dMapper;
+  protected T  Mapper t  Mapper;
+  protected long currT  Sl ce D = NO_T ME_SL CE_ D;
 
-  private final long queryTime;
+  pr vate f nal long queryT  ;
 
-  // Time periods, in milliseconds, for which hits are counted.
-  private final List<Long> hitCountsThresholdsMsec;
+  // T   per ods,  n m ll seconds, for wh ch h s are counted.
+  pr vate f nal L st<Long> h CountsThresholdsMsec;
 
-  // hitCounts[i] is the number of hits that are more recent than hitCountsThresholdsMsec[i]
-  private final int[] hitCounts;
+  // h Counts[ ]  s t  number of h s that are more recent than h CountsThresholdsMsec[ ]
+  pr vate f nal  nt[] h Counts;
 
-  private final ImmutableSchemaInterface schema;
+  pr vate f nal  mmutableSc ma nterface sc ma;
 
-  private final EarlybirdSearcherStats searcherStats;
-  // For collectors that fill in the results' geo locations, this will be used to retrieve the
-  // documents' lat/lon coordinates.
-  private GeoCoordinate resultGeoCoordinate;
-  protected final boolean fillInLatLonForHits;
+  pr vate f nal Earlyb rdSearc rStats searc rStats;
+  // For collectors that f ll  n t  results' geo locat ons, t  w ll be used to retr eve t 
+  // docu nts' lat/lon coord nates.
+  pr vate GeoCoord nate resultGeoCoord nate;
+  protected f nal boolean f ll nLatLonForH s;
 
-  protected EarlybirdDocumentFeatures documentFeatures;
+  protected Earlyb rdDocu ntFeatures docu ntFeatures;
   protected boolean featuresRequested = false;
 
-  private final FacetLabelCollector facetCollector;
+  pr vate f nal FacetLabelCollector facetCollector;
 
-  // debugMode set in request to determine debugging level.
-  private int requestDebugMode;
+  // debugMode set  n request to determ ne debugg ng level.
+  pr vate  nt requestDebugMode;
 
-  // debug info to be returned in earlybird response
-  protected List<String> debugInfo;
+  // debug  nfo to be returned  n earlyb rd response
+  protected L st<Str ng> debug nfo;
 
-  private int numHitsCollectedPerSegment;
+  pr vate  nt numH sCollectedPerSeg nt;
 
-  public AbstractResultsCollector(
-      ImmutableSchemaInterface schema,
-      R searchRequestInfo,
+  publ c AbstractResultsCollector(
+       mmutableSc ma nterface sc ma,
+      R searchRequest nfo,
       Clock clock,
-      EarlybirdSearcherStats searcherStats,
-      int requestDebugMode) {
-    super(searchRequestInfo.getSearchQuery().getCollectorParams(),
-        searchRequestInfo.getTerminationTracker(),
+      Earlyb rdSearc rStats searc rStats,
+       nt requestDebugMode) {
+    super(searchRequest nfo.getSearchQuery().getCollectorParams(),
+        searchRequest nfo.getTerm nat onTracker(),
         QueryCostTracker.getTracker(),
-        EXPENSIVE_TERMINATION_CHECK_INTERVAL,
+        EXPENS VE_TERM NAT ON_CHECK_ NTERVAL,
         clock);
 
-    this.schema = schema;
-    this.searchRequestInfo = searchRequestInfo;
-    ThriftSearchQuery thriftSearchQuery = searchRequestInfo.getSearchQuery();
-    this.maxHitsToProcessOverride = searchRequestInfo.getMaxHitsToProcess();
-    this.facetCollector = buildFacetCollector(searchRequestInfo, schema);
+    t .sc ma = sc ma;
+    t .searchRequest nfo = searchRequest nfo;
+    Thr ftSearchQuery thr ftSearchQuery = searchRequest nfo.getSearchQuery();
+    t .maxH sToProcessOverr de = searchRequest nfo.getMaxH sToProcess();
+    t .facetCollector = bu ldFacetCollector(searchRequest nfo, sc ma);
 
-    if (searchRequestInfo.getTimestamp() > 0) {
-      queryTime = searchRequestInfo.getTimestamp();
+     f (searchRequest nfo.getT  stamp() > 0) {
+      queryT   = searchRequest nfo.getT  stamp();
     } else {
-      queryTime = System.currentTimeMillis();
+      queryT   = System.currentT  M ll s();
     }
-    hitCountsThresholdsMsec = thriftSearchQuery.getHitCountBuckets();
-    hitCounts = hitCountsThresholdsMsec == null || hitCountsThresholdsMsec.size() == 0
+    h CountsThresholdsMsec = thr ftSearchQuery.getH CountBuckets();
+    h Counts = h CountsThresholdsMsec == null || h CountsThresholdsMsec.s ze() == 0
         ? null
-        : new int[hitCountsThresholdsMsec.size()];
+        : new  nt[h CountsThresholdsMsec.s ze()];
 
-    this.searcherStats = searcherStats;
+    t .searc rStats = searc rStats;
 
-    Schema.FieldInfo latLonCSFField =
-        schema.hasField(EarlybirdFieldConstant.LAT_LON_CSF_FIELD.getFieldName())
-            ? schema.getFieldInfo(EarlybirdFieldConstant.LAT_LON_CSF_FIELD.getFieldName())
+    Sc ma.F eld nfo latLonCSFF eld =
+        sc ma.hasF eld(Earlyb rdF eldConstant.LAT_LON_CSF_F ELD.getF eldNa ())
+            ? sc ma.getF eld nfo(Earlyb rdF eldConstant.LAT_LON_CSF_F ELD.getF eldNa ())
             : null;
-    boolean loadLatLonMapperIntoRam = true;
-    if (latLonCSFField != null) {
-      // If the latlon_csf field is explicitly defined, then take the config from the schema.
-      // If it's not defined, we assume that the latlon mapper is stored in memory.
-      loadLatLonMapperIntoRam = latLonCSFField.getFieldType().isCsfLoadIntoRam();
+    boolean loadLatLonMapper ntoRam = true;
+     f (latLonCSFF eld != null) {
+      //  f t  latlon_csf f eld  s expl c ly def ned, t n take t  conf g from t  sc ma.
+      //  f  's not def ned,   assu  that t  latlon mapper  s stored  n  mory.
+      loadLatLonMapper ntoRam = latLonCSFF eld.getF eldType(). sCsfLoad ntoRam();
     }
-    // Default to not fill in lat/lon if the lat/lon CSF field is not loaded into RAM
-    this.fillInLatLonForHits = EarlybirdConfig.getBool("fill_in_lat_lon_for_hits",
-        loadLatLonMapperIntoRam);
-    this.requestDebugMode = requestDebugMode;
+    // Default to not f ll  n lat/lon  f t  lat/lon CSF f eld  s not loaded  nto RAM
+    t .f ll nLatLonForH s = Earlyb rdConf g.getBool("f ll_ n_lat_lon_for_h s",
+        loadLatLonMapper ntoRam);
+    t .requestDebugMode = requestDebugMode;
 
-    if (shouldCollectDetailedDebugInfo()) {
-      this.debugInfo = new ArrayList<>();
-      debugInfo.add("Starting Search");
+     f (shouldCollectDeta ledDebug nfo()) {
+      t .debug nfo = new ArrayL st<>();
+      debug nfo.add("Start ng Search");
     }
   }
 
-  private static FacetLabelCollector buildFacetCollector(
-      SearchRequestInfo request,
-      ImmutableSchemaInterface schema) {
-    if (CollectionUtils.isEmpty(request.getFacetFieldNames())) {
+  pr vate stat c FacetLabelCollector bu ldFacetCollector(
+      SearchRequest nfo request,
+       mmutableSc ma nterface sc ma) {
+     f (Collect onUt ls. sEmpty(request.getFacetF eldNa s())) {
       return null;
     }
 
-    // Get all facet field ids requested.
-    Set<String> requiredFields = Sets.newHashSet();
-    for (String fieldName : request.getFacetFieldNames()) {
-      Schema.FieldInfo field = schema.getFacetFieldByFacetName(fieldName);
-      if (field != null) {
-        requiredFields.add(field.getFieldType().getFacetName());
+    // Get all facet f eld  ds requested.
+    Set<Str ng> requ redF elds = Sets.newHashSet();
+    for (Str ng f eldNa  : request.getFacetF eldNa s()) {
+      Sc ma.F eld nfo f eld = sc ma.getFacetF eldByFacetNa (f eldNa );
+       f (f eld != null) {
+        requ redF elds.add(f eld.getF eldType().getFacetNa ());
       }
     }
 
-    if (requiredFields.size() > 0) {
-      return new FacetLabelCollector(requiredFields);
+     f (requ redF elds.s ze() > 0) {
+      return new FacetLabelCollector(requ redF elds);
     } else {
       return null;
     }
   }
 
   /**
-   * Subclasses should implement the following methods.
+   * Subclasses should  mple nt t  follow ng  thods.
    */
 
-  // Subclasses should process collected hits and construct a final
+  // Subclasses should process collected h s and construct a f nal
   // AbstractSearchResults object.
-  protected abstract S doGetResults() throws IOException;
+  protected abstract S doGetResults() throws  OExcept on;
 
-  // Subclasses can override this method to add more collection logic.
-  protected abstract void doCollect(long tweetID) throws IOException;
+  // Subclasses can overr de t   thod to add more collect on log c.
+  protected abstract vo d doCollect(long t et D) throws  OExcept on;
 
-  public final ImmutableSchemaInterface getSchema() {
-    return schema;
+  publ c f nal  mmutableSc ma nterface getSc ma() {
+    return sc ma;
   }
 
-  // Updates the hit count array - each result only increments the first qualifying bucket.
-  protected final void updateHitCounts(long statusId) {
-    if (hitCounts == null) {
+  // Updates t  h  count array - each result only  ncre nts t  f rst qual fy ng bucket.
+  protected f nal vo d updateH Counts(long status d) {
+     f (h Counts == null) {
       return;
     }
 
-    long delta = queryTime - SnowflakeIdParser.getTimestampFromTweetId(statusId);
-    for (int i = 0; i < hitCountsThresholdsMsec.size(); ++i) {
-      if (delta >= 0 && delta < hitCountsThresholdsMsec.get(i)) {
-        hitCounts[i]++;
-        // Increments to the rest of the count array are implied, and aggregated later, since the
-        // array is sorted.
+    long delta = queryT   - Snowflake dParser.getT  stampFromT et d(status d);
+    for ( nt   = 0;   < h CountsThresholdsMsec.s ze(); ++ ) {
+       f (delta >= 0 && delta < h CountsThresholdsMsec.get( )) {
+        h Counts[ ]++;
+        //  ncre nts to t  rest of t  count array are  mpl ed, and aggregated later, s nce t 
+        // array  s sorted.
         break;
       }
     }
   }
 
-  private boolean searchedStatusIDsAndTimesInitialized() {
-    return maxSearchedStatusID != Long.MIN_VALUE;
+  pr vate boolean searc dStatus DsAndT  s n  al zed() {
+    return maxSearc dStatus D != Long.M N_VALUE;
   }
 
-  // Updates the first searched status ID when starting to search a new segment.
-  private void updateFirstSearchedStatusID() {
-    // Only try to update the min/max searched ids, if this segment/reader actually has documents
+  // Updates t  f rst searc d status  D w n start ng to search a new seg nt.
+  pr vate vo d updateF rstSearc dStatus D() {
+    // Only try to update t  m n/max searc d  ds,  f t  seg nt/reader actually has docu nts
     // See SEARCH-4535
-    int minDocID = currTwitterReader.getSmallestDocID();
-    if (currTwitterReader.hasDocs() && minDocID >= 0 && !searchedStatusIDsAndTimesInitialized()) {
-      final long firstStatusID = tweetIdMapper.getTweetID(minDocID);
-      final int firstStatusTime = timeMapper.getTime(minDocID);
-      if (shouldCollectDetailedDebugInfo()) {
-        debugInfo.add(
-            "updateFirstSearchedStatusID. minDocId=" + minDocID + ", firstStatusID="
-                + firstStatusID + ", firstStatusTime=" + firstStatusTime);
+     nt m nDoc D = currTw terReader.getSmallestDoc D();
+     f (currTw terReader.hasDocs() && m nDoc D >= 0 && !searc dStatus DsAndT  s n  al zed()) {
+      f nal long f rstStatus D = t et dMapper.getT et D(m nDoc D);
+      f nal  nt f rstStatusT   = t  Mapper.getT  (m nDoc D);
+       f (shouldCollectDeta ledDebug nfo()) {
+        debug nfo.add(
+            "updateF rstSearc dStatus D. m nDoc d=" + m nDoc D + ", f rstStatus D="
+                + f rstStatus D + ", f rstStatusT  =" + f rstStatusT  );
       }
-      updateIDandTimeRanges(firstStatusID, firstStatusTime, IdAndRangeUpdateType.BEGIN_SEGMENT);
+      update DandT  Ranges(f rstStatus D, f rstStatusT  ,  dAndRangeUpdateType.BEG N_SEGMENT);
     }
   }
 
-  public final R getSearchRequestInfo() {
-    return searchRequestInfo;
+  publ c f nal R getSearchRequest nfo() {
+    return searchRequest nfo;
   }
 
-  public final long getMinSearchedStatusID() {
-    return minSearchedStatusID;
+  publ c f nal long getM nSearc dStatus D() {
+    return m nSearc dStatus D;
   }
 
-  public final long getMaxSearchedStatusID() {
-    return maxSearchedStatusID;
+  publ c f nal long getMaxSearc dStatus D() {
+    return maxSearc dStatus D;
   }
 
-  public final int getMinSearchedTime() {
-    return minSearchedTime;
+  publ c f nal  nt getM nSearc dT  () {
+    return m nSearc dT  ;
   }
 
-  public boolean isSetMinSearchedTime() {
-    return minSearchedTime != Integer.MAX_VALUE;
+  publ c boolean  sSetM nSearc dT  () {
+    return m nSearc dT   !=  nteger.MAX_VALUE;
   }
 
-  public final int getMaxSearchedTime() {
-    return maxSearchedTime;
+  publ c f nal  nt getMaxSearc dT  () {
+    return maxSearc dT  ;
   }
 
-  @Override
-  public final long getMaxHitsToProcess() {
-    return maxHitsToProcessOverride;
+  @Overr de
+  publ c f nal long getMaxH sToProcess() {
+    return maxH sToProcessOverr de;
   }
 
-  // Notifies classes that a new index segment is about to be searched.
-  @Override
-  public final void setNextReader(LeafReaderContext context) throws IOException {
+  // Not f es classes that a new  ndex seg nt  s about to be searc d.
+  @Overr de
+  publ c f nal vo d setNextReader(LeafReaderContext context) throws  OExcept on {
     super.setNextReader(context);
     setNextReader(context.reader());
   }
 
   /**
-   * Notifies the collector that a new segment is about to be searched.
+   * Not f es t  collector that a new seg nt  s about to be searc d.
    *
-   * It's easier to use this method from tests, because LeafReader is not a final class, so it can
-   * be mocked (unlike LeafReaderContext).
+   *  's eas er to use t   thod from tests, because LeafReader  s not a f nal class, so   can
+   * be mocked (unl ke LeafReaderContext).
    */
-  @VisibleForTesting
-  public final void setNextReader(LeafReader reader) throws IOException {
-    if (!(reader instanceof EarlybirdIndexSegmentAtomicReader)) {
-      throw new RuntimeException("IndexReader type not supported: " + reader.getClass());
+  @V s bleForTest ng
+  publ c f nal vo d setNextReader(LeafReader reader) throws  OExcept on {
+     f (!(reader  nstanceof Earlyb rd ndexSeg ntAtom cReader)) {
+      throw new Runt  Except on(" ndexReader type not supported: " + reader.getClass());
     }
 
-    currTwitterReader = (EarlybirdIndexSegmentAtomicReader) reader;
-    documentFeatures = new EarlybirdDocumentFeatures(currTwitterReader);
-    tweetIdMapper = (TweetIDMapper) currTwitterReader.getSegmentData().getDocIDToTweetIDMapper();
-    timeMapper = currTwitterReader.getSegmentData().getTimeMapper();
-    currTimeSliceID = currTwitterReader.getSegmentData().getTimeSliceID();
-    updateFirstSearchedStatusID();
-    if (shouldCollectDetailedDebugInfo()) {
-      debugInfo.add("Starting search in segment with timeslice ID: " + currTimeSliceID);
+    currTw terReader = (Earlyb rd ndexSeg ntAtom cReader) reader;
+    docu ntFeatures = new Earlyb rdDocu ntFeatures(currTw terReader);
+    t et dMapper = (T et DMapper) currTw terReader.getSeg ntData().getDoc DToT et DMapper();
+    t  Mapper = currTw terReader.getSeg ntData().getT  Mapper();
+    currT  Sl ce D = currTw terReader.getSeg ntData().getT  Sl ce D();
+    updateF rstSearc dStatus D();
+     f (shouldCollectDeta ledDebug nfo()) {
+      debug nfo.add("Start ng search  n seg nt w h t  sl ce  D: " + currT  Sl ce D);
     }
 
-    segmentStartTime = getClock().nowMillis();
-    startSegment();
+    seg ntStartT   = getClock().nowM ll s();
+    startSeg nt();
   }
 
-  protected abstract void startSegment() throws IOException;
+  protected abstract vo d startSeg nt() throws  OExcept on;
 
-  @Override
-  protected final void doCollect() throws IOException {
-    documentFeatures.advance(curDocId);
-    long tweetID = tweetIdMapper.getTweetID(curDocId);
-    updateIDandTimeRanges(tweetID, timeMapper.getTime(curDocId), IdAndRangeUpdateType.HIT);
-    doCollect(tweetID);
-    numHitsCollectedPerSegment++;
+  @Overr de
+  protected f nal vo d doCollect() throws  OExcept on {
+    docu ntFeatures.advance(curDoc d);
+    long t et D = t et dMapper.getT et D(curDoc d);
+    update DandT  Ranges(t et D, t  Mapper.getT  (curDoc d),  dAndRangeUpdateType.H T);
+    doCollect(t et D);
+    numH sCollectedPerSeg nt++;
   }
 
-  protected void collectFeatures(ThriftSearchResultMetadata metadata) throws IOException {
-    if (featuresRequested) {
-      ensureExtraMetadataIsSet(metadata);
+  protected vo d collectFeatures(Thr ftSearchResult tadata  tadata) throws  OExcept on {
+     f (featuresRequested) {
+      ensureExtra tadata sSet( tadata);
 
-      metadata.getExtraMetadata().setDirectedAtUserId(
-          documentFeatures.getFeatureValue(EarlybirdFieldConstant.DIRECTED_AT_USER_ID_CSF));
-      metadata.getExtraMetadata().setQuotedTweetId(
-          documentFeatures.getFeatureValue(EarlybirdFieldConstant.QUOTED_TWEET_ID_CSF));
-      metadata.getExtraMetadata().setQuotedUserId(
-          documentFeatures.getFeatureValue(EarlybirdFieldConstant.QUOTED_USER_ID_CSF));
+       tadata.getExtra tadata().setD rectedAtUser d(
+          docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.D RECTED_AT_USER_ D_CSF));
+       tadata.getExtra tadata().setQuotedT et d(
+          docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.QUOTED_TWEET_ D_CSF));
+       tadata.getExtra tadata().setQuotedUser d(
+          docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.QUOTED_USER_ D_CSF));
 
-      int cardLangValue =
-          (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.CARD_LANG_CSF);
-      ThriftLanguage thriftLanguage = ThriftLanguage.findByValue(cardLangValue);
-      metadata.getExtraMetadata().setCardLang(thriftLanguage);
+       nt cardLangValue =
+          ( nt) docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.CARD_LANG_CSF);
+      Thr ftLanguage thr ftLanguage = Thr ftLanguage.f ndByValue(cardLangValue);
+       tadata.getExtra tadata().setCardLang(thr ftLanguage);
 
-      long cardNumericUri =
-          (long) documentFeatures.getFeatureValue(EarlybirdFieldConstant.CARD_URI_CSF);
-      if (cardNumericUri > 0) {
-        metadata.getExtraMetadata().setCardUri(String.format("card://%s", cardNumericUri));
+      long cardNu r cUr  =
+          (long) docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.CARD_UR _CSF);
+       f (cardNu r cUr  > 0) {
+         tadata.getExtra tadata().setCardUr (Str ng.format("card://%s", cardNu r cUr ));
       }
     }
   }
 
-  protected void collectIsProtected(
-      ThriftSearchResultMetadata metadata, EarlybirdCluster cluster, UserTable userTable)
-      throws IOException {
-    // 'isUserProtected' field is only set for archive cluster because only archive cluster user
-    // table has IS_PROTECTED_BIT populated.
-    // Since this bit is checked after UserFlagsExcludeFilter checked this bit, there is a slight
-    // chance that this bit is updated in-between. When that happens, it is possible that we will
-    // see a small number of protected Tweets in the response when we meant to exclude them.
-    if (cluster == EarlybirdCluster.FULL_ARCHIVE) {
-      ensureExtraMetadataIsSet(metadata);
-      long userId = documentFeatures.getFeatureValue(EarlybirdFieldConstant.FROM_USER_ID_CSF);
-      boolean isProtected = userTable.isSet(userId, UserTable.IS_PROTECTED_BIT);
-      metadata.getExtraMetadata().setIsUserProtected(isProtected);
+  protected vo d collect sProtected(
+      Thr ftSearchResult tadata  tadata, Earlyb rdCluster cluster, UserTable userTable)
+      throws  OExcept on {
+    // ' sUserProtected' f eld  s only set for arch ve cluster because only arch ve cluster user
+    // table has  S_PROTECTED_B T populated.
+    // S nce t  b   s c cked after UserFlagsExcludeF lter c cked t  b , t re  s a sl ght
+    // chance that t  b   s updated  n-bet en. W n that happens,    s poss ble that   w ll
+    // see a small number of protected T ets  n t  response w n    ant to exclude t m.
+     f (cluster == Earlyb rdCluster.FULL_ARCH VE) {
+      ensureExtra tadata sSet( tadata);
+      long user d = docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.FROM_USER_ D_CSF);
+      boolean  sProtected = userTable. sSet(user d, UserTable. S_PROTECTED_B T);
+       tadata.getExtra tadata().set sUserProtected( sProtected);
     }
   }
 
-  protected void collectExclusiveConversationAuthorId(ThriftSearchResultMetadata metadata)
-      throws IOException {
-    if (searchRequestInfo.isCollectExclusiveConversationAuthorId()) {
-      long exclusiveConversationAuthorId = documentFeatures.getFeatureValue(
-          EarlybirdFieldConstant.EXCLUSIVE_CONVERSATION_AUTHOR_ID_CSF);
-      if (exclusiveConversationAuthorId != 0L) {
-        ensureExtraMetadataIsSet(metadata);
-        metadata.getExtraMetadata().setExclusiveConversationAuthorId(exclusiveConversationAuthorId);
+  protected vo d collectExclus veConversat onAuthor d(Thr ftSearchResult tadata  tadata)
+      throws  OExcept on {
+     f (searchRequest nfo. sCollectExclus veConversat onAuthor d()) {
+      long exclus veConversat onAuthor d = docu ntFeatures.getFeatureValue(
+          Earlyb rdF eldConstant.EXCLUS VE_CONVERSAT ON_AUTHOR_ D_CSF);
+       f (exclus veConversat onAuthor d != 0L) {
+        ensureExtra tadata sSet( tadata);
+         tadata.getExtra tadata().setExclus veConversat onAuthor d(exclus veConversat onAuthor d);
       }
     }
   }
 
-  // It only makes sense to collectFacets for search types that return individual results (recency,
-  // relevance and top_tweets), which use the AbstractRelevanceCollector and SearchResultsCollector,
-  // so this method should only be called from these classes.
-  protected void collectFacets(ThriftSearchResultMetadata metadata) {
-    if (currTwitterReader == null) {
+  //   only makes sense to collectFacets for search types that return  nd v dual results (recency,
+  // relevance and top_t ets), wh ch use t  AbstractRelevanceCollector and SearchResultsCollector,
+  // so t   thod should only be called from t se classes.
+  protected vo d collectFacets(Thr ftSearchResult tadata  tadata) {
+     f (currTw terReader == null) {
       return;
     }
 
-    AbstractFacetCountingArray facetCountingArray = currTwitterReader.getFacetCountingArray();
-    EarlybirdIndexSegmentData segmentData = currTwitterReader.getSegmentData();
+    AbstractFacetCount ngArray facetCount ngArray = currTw terReader.getFacetCount ngArray();
+    Earlyb rd ndexSeg ntData seg ntData = currTw terReader.getSeg ntData();
 
-    if (facetCountingArray == null || facetCollector == null) {
+     f (facetCount ngArray == null || facetCollector == null) {
       return;
     }
 
-    facetCollector.resetFacetLabelProviders(
-        segmentData.getFacetLabelProviders(),
-        segmentData.getFacetIDMap());
+    facetCollector.resetFacetLabelProv ders(
+        seg ntData.getFacetLabelProv ders(),
+        seg ntData.getFacet DMap());
 
-    facetCountingArray.collectForDocId(curDocId, facetCollector);
+    facetCount ngArray.collectForDoc d(curDoc d, facetCollector);
 
-    List<ThriftFacetLabel> labels = facetCollector.getLabels();
-    if (labels.size() > 0) {
-      metadata.setFacetLabels(labels);
+    L st<Thr ftFacetLabel> labels = facetCollector.getLabels();
+     f (labels.s ze() > 0) {
+       tadata.setFacetLabels(labels);
     }
   }
 
-  protected void ensureExtraMetadataIsSet(ThriftSearchResultMetadata metadata) {
-    if (!metadata.isSetExtraMetadata()) {
-      metadata.setExtraMetadata(new ThriftSearchResultExtraMetadata());
+  protected vo d ensureExtra tadata sSet(Thr ftSearchResult tadata  tadata) {
+     f (! tadata. sSetExtra tadata()) {
+       tadata.setExtra tadata(new Thr ftSearchResultExtra tadata());
     }
   }
 
-  @Override
-  protected final void doFinishSegment(int lastSearchedDocID) {
-    if (shouldCollectDetailedDebugInfo()) {
-      long timeSpentSearchingSegmentInMillis = getClock().nowMillis() - segmentStartTime;
-      debugInfo.add("Finished segment at doc id: " + lastSearchedDocID);
-      debugInfo.add("Time spent searching " + currTimeSliceID
-        + ": " + timeSpentSearchingSegmentInMillis + "ms");
-      debugInfo.add("Number of hits collected in segment " + currTimeSliceID + ": "
-          + numHitsCollectedPerSegment);
+  @Overr de
+  protected f nal vo d doF n shSeg nt( nt lastSearc dDoc D) {
+     f (shouldCollectDeta ledDebug nfo()) {
+      long t  SpentSearch ngSeg nt nM ll s = getClock().nowM ll s() - seg ntStartT  ;
+      debug nfo.add("F n s d seg nt at doc  d: " + lastSearc dDoc D);
+      debug nfo.add("T   spent search ng " + currT  Sl ce D
+        + ": " + t  SpentSearch ngSeg nt nM ll s + "ms");
+      debug nfo.add("Number of h s collected  n seg nt " + currT  Sl ce D + ": "
+          + numH sCollectedPerSeg nt);
     }
 
-    if (!currTwitterReader.hasDocs()) {
-      // Due to race between the reader and the indexing thread, a seemingly empty segment that
-      // does not have document committed in the posting lists, might already have a document
-      // inserted into the id/time mappers, which we do not want to take into account.
-      // If there are no documents in the segment, we don't update searched min/max ids to
-      // anything.
+     f (!currTw terReader.hasDocs()) {
+      // Due to race bet en t  reader and t   ndex ng thread, a seem ngly empty seg nt that
+      // does not have docu nt comm ted  n t  post ng l sts, m ght already have a docu nt
+      //  nserted  nto t   d/t   mappers, wh ch   do not want to take  nto account.
+      //  f t re are no docu nts  n t  seg nt,   don't update searc d m n/max  ds to
+      // anyth ng.
       return;
-    } else if (lastSearchedDocID == DocIdSetIterator.NO_MORE_DOCS) {
-      // Segment exhausted.
-      if (shouldCollectDetailedDebugInfo()) {
-        debugInfo.add("Segment exhausted");
+    } else  f (lastSearc dDoc D == Doc dSet erator.NO_MORE_DOCS) {
+      // Seg nt exhausted.
+       f (shouldCollectDeta ledDebug nfo()) {
+        debug nfo.add("Seg nt exhausted");
       }
-      updateIDandTimeRanges(tweetIdMapper.getMinTweetID(), timeMapper.getFirstTime(),
-          IdAndRangeUpdateType.END_SEGMENT);
-    } else if (lastSearchedDocID >= 0) {
-      long lastSearchedTweetID = tweetIdMapper.getTweetID(lastSearchedDocID);
-      int lastSearchTweetTime = timeMapper.getTime(lastSearchedDocID);
-      if (shouldCollectDetailedDebugInfo()) {
-        debugInfo.add("lastSearchedDocId=" + lastSearchedDocID);
+      update DandT  Ranges(t et dMapper.getM nT et D(), t  Mapper.getF rstT  (),
+           dAndRangeUpdateType.END_SEGMENT);
+    } else  f (lastSearc dDoc D >= 0) {
+      long lastSearc dT et D = t et dMapper.getT et D(lastSearc dDoc D);
+       nt lastSearchT etT   = t  Mapper.getT  (lastSearc dDoc D);
+       f (shouldCollectDeta ledDebug nfo()) {
+        debug nfo.add("lastSearc dDoc d=" + lastSearc dDoc D);
       }
-      updateIDandTimeRanges(lastSearchedTweetID, lastSearchTweetTime,
-          IdAndRangeUpdateType.END_SEGMENT);
+      update DandT  Ranges(lastSearc dT et D, lastSearchT etT  ,
+           dAndRangeUpdateType.END_SEGMENT);
     }
 
-    numHitsCollectedPerSegment = 0;
+    numH sCollectedPerSeg nt = 0;
   }
 
-  private void updateIDandTimeRanges(long tweetID, int time, IdAndRangeUpdateType updateType) {
-    // We need to update minSearchedStatusID/maxSearchedStatusID and
-    // minSearchedTime/maxSearchedTime independently: SEARCH-6139
-    minSearchedStatusID = Math.min(minSearchedStatusID, tweetID);
-    maxSearchedStatusID = Math.max(maxSearchedStatusID, tweetID);
-    if (time > 0) {
-      minSearchedTime = Math.min(minSearchedTime, time);
-      maxSearchedTime = Math.max(maxSearchedTime, time);
+  pr vate vo d update DandT  Ranges(long t et D,  nt t  ,  dAndRangeUpdateType updateType) {
+    //   need to update m nSearc dStatus D/maxSearc dStatus D and
+    // m nSearc dT  /maxSearc dT    ndependently: SEARCH-6139
+    m nSearc dStatus D = Math.m n(m nSearc dStatus D, t et D);
+    maxSearc dStatus D = Math.max(maxSearc dStatus D, t et D);
+     f (t   > 0) {
+      m nSearc dT   = Math.m n(m nSearc dT  , t  );
+      maxSearc dT   = Math.max(maxSearc dT  , t  );
     }
-    if (shouldCollectVerboseDebugInfo()) {
-      debugInfo.add(
-          String.format("call to updateIDandTimeRanges(%d, %d, %s)"
-                  + " set minSearchStatusID=%d, maxSearchedStatusID=%d,"
-                  + " minSearchedTime=%d, maxSearchedTime=%d)",
-              tweetID, time, updateType.toString(),
-              minSearchedStatusID, maxSearchedStatusID,
-              minSearchedTime, maxSearchedTime));
+     f (shouldCollectVerboseDebug nfo()) {
+      debug nfo.add(
+          Str ng.format("call to update DandT  Ranges(%d, %d, %s)"
+                  + " set m nSearchStatus D=%d, maxSearc dStatus D=%d,"
+                  + " m nSearc dT  =%d, maxSearc dT  =%d)",
+              t et D, t  , updateType.toStr ng(),
+              m nSearc dStatus D, maxSearc dStatus D,
+              m nSearc dT  , maxSearc dT  ));
     }
   }
 
   /**
-   * This is called when a segment is skipped but we would want to do accounting
-   * for minSearchDocId as well as numDocsProcessed.
+   * T   s called w n a seg nt  s sk pped but   would want to do account ng
+   * for m nSearchDoc d as  ll as numDocsProcessed.
    */
-  public void skipSegment(EarlybirdSingleSegmentSearcher searcher) throws IOException {
-    setNextReader(searcher.getTwitterIndexReader().getContext());
-    trackCompleteSegment(DocIdSetIterator.NO_MORE_DOCS);
-    if (shouldCollectDetailedDebugInfo()) {
-      debugInfo.add("Skipping segment: " + currTimeSliceID);
+  publ c vo d sk pSeg nt(Earlyb rdS ngleSeg ntSearc r searc r) throws  OExcept on {
+    setNextReader(searc r.getTw ter ndexReader().getContext());
+    trackCompleteSeg nt(Doc dSet erator.NO_MORE_DOCS);
+     f (shouldCollectDeta ledDebug nfo()) {
+      debug nfo.add("Sk pp ng seg nt: " + currT  Sl ce D);
     }
   }
 
   /**
-   * Returns the results collected by this collector.
+   * Returns t  results collected by t  collector.
    */
-  public final S getResults() throws IOException {
-    // In order to make pagination work, if minSearchedStatusID is greater than the asked max_id.
-    // We force the minSearchedStatusID to be max_id + 1.
-    IdTimeRanges idTimeRanges = searchRequestInfo.getIdTimeRanges();
-    if (idTimeRanges != null) {
-      Optional<Long> maxIDInclusive = idTimeRanges.getMaxIDInclusive();
-      if (maxIDInclusive.isPresent() && minSearchedStatusID > maxIDInclusive.get()) {
-        searcherStats.numCollectorAdjustedMinSearchedStatusID.increment();
-        minSearchedStatusID = maxIDInclusive.get() + 1;
+  publ c f nal S getResults() throws  OExcept on {
+    //  n order to make pag nat on work,  f m nSearc dStatus D  s greater than t  asked max_ d.
+    //   force t  m nSearc dStatus D to be max_ d + 1.
+     dT  Ranges  dT  Ranges = searchRequest nfo.get dT  Ranges();
+     f ( dT  Ranges != null) {
+      Opt onal<Long> max D nclus ve =  dT  Ranges.getMax D nclus ve();
+       f (max D nclus ve. sPresent() && m nSearc dStatus D > max D nclus ve.get()) {
+        searc rStats.numCollectorAdjustedM nSearc dStatus D. ncre nt();
+        m nSearc dStatus D = max D nclus ve.get() + 1;
       }
     }
 
     S results = doGetResults();
-    results.setNumHitsProcessed((int) getNumHitsProcessed());
-    results.setNumSearchedSegments(getNumSearchedSegments());
-    if (searchedStatusIDsAndTimesInitialized()) {
-      results.setMaxSearchedStatusID(maxSearchedStatusID);
-      results.setMinSearchedStatusID(minSearchedStatusID);
-      results.setMaxSearchedTime(maxSearchedTime);
-      results.setMinSearchedTime(minSearchedTime);
+    results.setNumH sProcessed(( nt) getNumH sProcessed());
+    results.setNumSearc dSeg nts(getNumSearc dSeg nts());
+     f (searc dStatus DsAndT  s n  al zed()) {
+      results.setMaxSearc dStatus D(maxSearc dStatus D);
+      results.setM nSearc dStatus D(m nSearc dStatus D);
+      results.setMaxSearc dT  (maxSearc dT  );
+      results.setM nSearc dT  (m nSearc dT  );
     }
-    results.setEarlyTerminated(getEarlyTerminationState().isTerminated());
-    if (getEarlyTerminationState().isTerminated()) {
-      results.setEarlyTerminationReason(getEarlyTerminationState().getTerminationReason());
+    results.setEarlyTerm nated(getEarlyTerm nat onState(). sTerm nated());
+     f (getEarlyTerm nat onState(). sTerm nated()) {
+      results.setEarlyTerm nat onReason(getEarlyTerm nat onState().getTerm nat onReason());
     }
-    Map<Long, Integer> counts = getHitCountMap();
-    if (counts != null) {
-      results.hitCounts.putAll(counts);
+    Map<Long,  nteger> counts = getH CountMap();
+     f (counts != null) {
+      results.h Counts.putAll(counts);
     }
     return results;
   }
 
   /**
-   * Returns a map of timestamps (specified in the query) to the number of hits that are more recent
-   * that the respective timestamps.
+   * Returns a map of t  stamps (spec f ed  n t  query) to t  number of h s that are more recent
+   * that t  respect ve t  stamps.
    */
-  public final Map<Long, Integer> getHitCountMap() {
-    int total = 0;
-    if (hitCounts == null) {
+  publ c f nal Map<Long,  nteger> getH CountMap() {
+     nt total = 0;
+     f (h Counts == null) {
       return null;
     }
-    Map<Long, Integer> map = Maps.newHashMap();
-    // since the array is incremental, need to aggregate here.
-    for (int i = 0; i < hitCounts.length; ++i) {
-      map.put(hitCountsThresholdsMsec.get(i), total += hitCounts[i]);
+    Map<Long,  nteger> map = Maps.newHashMap();
+    // s nce t  array  s  ncre ntal, need to aggregate  re.
+    for ( nt   = 0;   < h Counts.length; ++ ) {
+      map.put(h CountsThresholdsMsec.get( ), total += h Counts[ ]);
     }
     return map;
   }
 
   /**
-   * Common helper for collecting per-field hit attribution data (if it's available).
+   * Common  lper for collect ng per-f eld h  attr but on data ( f  's ava lable).
    *
-   * @param metadata the metadata to fill for this hit.
+   * @param  tadata t   tadata to f ll for t  h .
    */
-  protected final void fillHitAttributionMetadata(ThriftSearchResultMetadata metadata) {
-    if (searchRequestInfo.getHitAttributeHelper() == null) {
+  protected f nal vo d f llH Attr but on tadata(Thr ftSearchResult tadata  tadata) {
+     f (searchRequest nfo.getH Attr bute lper() == null) {
       return;
     }
 
-    Map<Integer, List<String>> hitAttributeMapping =
-        searchRequestInfo.getHitAttributeHelper().getHitAttribution(curDocId);
-    Preconditions.checkNotNull(hitAttributeMapping);
+    Map< nteger, L st<Str ng>> h Attr buteMapp ng =
+        searchRequest nfo.getH Attr bute lper().getH Attr but on(curDoc d);
+    Precond  ons.c ckNotNull(h Attr buteMapp ng);
 
-    FieldHitAttribution fieldHitAttribution = new FieldHitAttribution();
-    for (Map.Entry<Integer, List<String>> entry : hitAttributeMapping.entrySet()) {
-      FieldHitList fieldHitList = new FieldHitList();
-      fieldHitList.setHitFields(entry.getValue());
+    F eldH Attr but on f eldH Attr but on = new F eldH Attr but on();
+    for (Map.Entry< nteger, L st<Str ng>> entry : h Attr buteMapp ng.entrySet()) {
+      F eldH L st f eldH L st = new F eldH L st();
+      f eldH L st.setH F elds(entry.getValue());
 
-      fieldHitAttribution.putToHitMap(entry.getKey(), fieldHitList);
+      f eldH Attr but on.putToH Map(entry.getKey(), f eldH L st);
     }
-    metadata.setFieldHitAttribution(fieldHitAttribution);
+     tadata.setF eldH Attr but on(f eldH Attr but on);
   }
 
   /**
-   * Fill the geo location of the given document in metadata, if we have the lat/lon for it.
-   * For queries that specify a geolocation, this will also have the distance from
-   * the location specified in the query, and the location of this document.
+   * F ll t  geo locat on of t  g ven docu nt  n  tadata,  f   have t  lat/lon for  .
+   * For quer es that spec fy a geolocat on, t  w ll also have t  d stance from
+   * t  locat on spec f ed  n t  query, and t  locat on of t  docu nt.
    */
-  protected final void fillResultGeoLocation(ThriftSearchResultMetadata metadata)
-      throws IOException {
-    Preconditions.checkNotNull(metadata);
-    if (currTwitterReader != null && fillInLatLonForHits) {
-      // See if we can have a lat/lon for this doc.
-      if (resultGeoCoordinate == null) {
-        resultGeoCoordinate = new GeoCoordinate();
+  protected f nal vo d f llResultGeoLocat on(Thr ftSearchResult tadata  tadata)
+      throws  OExcept on {
+    Precond  ons.c ckNotNull( tadata);
+     f (currTw terReader != null && f ll nLatLonForH s) {
+      // See  f   can have a lat/lon for t  doc.
+       f (resultGeoCoord nate == null) {
+        resultGeoCoord nate = new GeoCoord nate();
       }
-      // Only fill if necessary
-      if (searchRequestInfo.isCollectResultLocation()
-          && GeoUtil.decodeLatLonFromInt64(
-              documentFeatures.getFeatureValue(EarlybirdFieldConstant.LAT_LON_CSF_FIELD),
-              resultGeoCoordinate)) {
-        ThriftSearchResultGeoLocation resultLocation = new ThriftSearchResultGeoLocation();
-        resultLocation.setLatitude(resultGeoCoordinate.getLatitude());
-        resultLocation.setLongitude(resultGeoCoordinate.getLongitude());
-        metadata.setResultLocation(resultLocation);
+      // Only f ll  f necessary
+       f (searchRequest nfo. sCollectResultLocat on()
+          && GeoUt l.decodeLatLonFrom nt64(
+              docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.LAT_LON_CSF_F ELD),
+              resultGeoCoord nate)) {
+        Thr ftSearchResultGeoLocat on resultLocat on = new Thr ftSearchResultGeoLocat on();
+        resultLocat on.setLat ude(resultGeoCoord nate.getLat ude());
+        resultLocat on.setLong ude(resultGeoCoord nate.getLong ude());
+         tadata.setResultLocat on(resultLocat on);
       }
     }
   }
 
-  @Override
-  public ScoreMode scoreMode() {
+  @Overr de
+  publ c ScoreMode scoreMode() {
     return ScoreMode.COMPLETE;
   }
 
-  private int terminationDocID = -1;
+  pr vate  nt term nat onDoc D = -1;
 
-  @Override
-  protected void collectedEnoughResults() throws IOException {
-    // We find 'terminationDocID' once we collect enough results, so that we know the point at which
-    // we can stop searching. We must do this because with the unordered doc ID mapper, tweets
-    // are not ordered within a millisecond, so we must search the entire millisecond bucket before
-    // terminating the search, otherwise we could skip over tweets and have an incorrect
-    // minSearchedStatusID.
-    if (curDocId != -1 && terminationDocID == -1) {
-      long tweetId = tweetIdMapper.getTweetID(curDocId);
-      // We want to find the highest possible doc ID for this tweetId, so pass true.
-      boolean findMaxDocID = true;
-      terminationDocID = tweetIdMapper.findDocIdBound(tweetId,
-          findMaxDocID,
-          curDocId,
-          curDocId);
+  @Overr de
+  protected vo d collectedEnoughResults() throws  OExcept on {
+    //   f nd 'term nat onDoc D' once   collect enough results, so that   know t  po nt at wh ch
+    //   can stop search ng.   must do t  because w h t  unordered doc  D mapper, t ets
+    // are not ordered w h n a m ll second, so   must search t  ent re m ll second bucket before
+    // term nat ng t  search, ot rw se   could sk p over t ets and have an  ncorrect
+    // m nSearc dStatus D.
+     f (curDoc d != -1 && term nat onDoc D == -1) {
+      long t et d = t et dMapper.getT et D(curDoc d);
+      //   want to f nd t  h g st poss ble doc  D for t  t et d, so pass true.
+      boolean f ndMaxDoc D = true;
+      term nat onDoc D = t et dMapper.f ndDoc dBound(t et d,
+          f ndMaxDoc D,
+          curDoc d,
+          curDoc d);
     }
   }
 
-  @Override
-  protected boolean shouldTerminate() {
-    return curDocId >= terminationDocID;
+  @Overr de
+  protected boolean shouldTerm nate() {
+    return curDoc d >= term nat onDoc D;
   }
 
-  @Override
-  public List<String> getDebugInfo() {
-    return debugInfo;
+  @Overr de
+  publ c L st<Str ng> getDebug nfo() {
+    return debug nfo;
   }
 
-  protected boolean shouldCollectDetailedDebugInfo() {
+  protected boolean shouldCollectDeta ledDebug nfo() {
     return requestDebugMode >= 5;
   }
 
-  // Use this for per-result debug info. Useful for queries with no results
+  // Use t  for per-result debug  nfo. Useful for quer es w h no results
   // or a very small number of results.
-  protected boolean shouldCollectVerboseDebugInfo() {
+  protected boolean shouldCollectVerboseDebug nfo() {
     return requestDebugMode >= 6;
   }
 }

@@ -1,45 +1,45 @@
-package com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap
+package com.tw ter.product_m xer.core.feature.featuremap.asyncfeaturemap
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
+ mport com.fasterxml.jackson.core.JsonGenerator
+ mport com.fasterxml.jackson.datab nd.JsonSer al zer
+ mport com.fasterxml.jackson.datab nd.Ser al zerProv der
 
 /**
- * Since an [[AsyncFeatureMap]] is typically incomplete, and by the time it's serialized, all the [[com.twitter.product_mixer.core.feature.Feature]]s
- * it will typically be completed and part of the Query or Candidate's individual [[com.twitter.product_mixer.core.feature.Feature]]s
- * we instead opt to provide a summary of the Features which would be hydrated using [[AsyncFeatureMap.features]]
+ * S nce an [[AsyncFeatureMap]]  s typ cally  ncomplete, and by t  t    's ser al zed, all t  [[com.tw ter.product_m xer.core.feature.Feature]]s
+ *   w ll typ cally be completed and part of t  Query or Cand date's  nd v dual [[com.tw ter.product_m xer.core.feature.Feature]]s
+ *    nstead opt to prov de a summary of t  Features wh ch would be hydrated us ng [[AsyncFeatureMap.features]]
  *
- * This indicates which [[com.twitter.product_mixer.core.feature.Feature]]s will be ready at which Steps
- * and which [[com.twitter.product_mixer.core.functional_component.feature_hydrator.FeatureHydrator]]
- * are responsible for those [[com.twitter.product_mixer.core.feature.Feature]]
+ * T   nd cates wh ch [[com.tw ter.product_m xer.core.feature.Feature]]s w ll be ready at wh ch Steps
+ * and wh ch [[com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.FeatureHydrator]]
+ * are respons ble for those [[com.tw ter.product_m xer.core.feature.Feature]]
  *
- * @note changes to serialization logic can have serious performance implications given how hot the
- *       serialization path is. Consider benchmarking changes with [[com.twitter.product_mixer.core.benchmark.AsyncQueryFeatureMapSerializationBenchmark]]
+ * @note changes to ser al zat on log c can have ser ous performance  mpl cat ons g ven how hot t 
+ *       ser al zat on path  s. Cons der benchmark ng changes w h [[com.tw ter.product_m xer.core.benchmark.AsyncQueryFeatureMapSer al zat onBenchmark]]
  */
-private[asyncfeaturemap] class AsyncFeatureMapSerializer() extends JsonSerializer[AsyncFeatureMap] {
-  override def serialize(
+pr vate[asyncfeaturemap] class AsyncFeatureMapSer al zer() extends JsonSer al zer[AsyncFeatureMap] {
+  overr de def ser al ze(
     asyncFeatureMap: AsyncFeatureMap,
     gen: JsonGenerator,
-    serializers: SerializerProvider
-  ): Unit = {
-    gen.writeStartObject()
+    ser al zers: Ser al zerProv der
+  ): Un  = {
+    gen.wr eStartObject()
 
     asyncFeatureMap.features.foreach {
-      case (stepIdentifier, featureHydrators) =>
-        gen.writeObjectFieldStart(stepIdentifier.toString)
+      case (step dent f er, featureHydrators) =>
+        gen.wr eObjectF eldStart(step dent f er.toStr ng)
 
         featureHydrators.foreach {
-          case (hydratorIdentifier, featuresFromHydrator) =>
-            gen.writeArrayFieldStart(hydratorIdentifier.toString)
+          case (hydrator dent f er, featuresFromHydrator) =>
+            gen.wr eArrayF eldStart(hydrator dent f er.toStr ng)
 
-            featuresFromHydrator.foreach(feature => gen.writeString(feature.toString))
+            featuresFromHydrator.foreach(feature => gen.wr eStr ng(feature.toStr ng))
 
-            gen.writeEndArray()
+            gen.wr eEndArray()
         }
 
-        gen.writeEndObject()
+        gen.wr eEndObject()
     }
 
-    gen.writeEndObject()
+    gen.wr eEndObject()
   }
 }

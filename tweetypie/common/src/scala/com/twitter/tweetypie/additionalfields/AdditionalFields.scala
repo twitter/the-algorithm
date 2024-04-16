@@ -1,118 +1,118 @@
-package com.twitter.tweetypie.additionalfields
+package com.tw ter.t etyp e.add  onalf elds
 
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.scrooge.TFieldBlob
-import com.twitter.scrooge.ThriftStructField
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.scrooge.TF eldBlob
+ mport com.tw ter.scrooge.Thr ftStructF eld
 
-object AdditionalFields {
-  type FieldId = Short
+object Add  onalF elds {
+  type F eld d = Short
 
-  /** additional fields really start at 100, be we are ignoring conversation id for now */
-  val StartAdditionalId = 101
+  /** add  onal f elds really start at 100, be   are  gnor ng conversat on  d for now */
+  val StartAdd  onal d = 101
 
-  /** all known [[Tweet]] field IDs */
-  val CompiledFieldIds: Seq[FieldId] = Tweet.metaData.fields.map(_.id)
+  /** all known [[T et]] f eld  Ds */
+  val Comp ledF eld ds: Seq[F eld d] = T et. taData.f elds.map(_. d)
 
-  /** all known [[Tweet]] fields in the "additional-field" range (excludes id) */
-  val CompiledAdditionalFieldMetaDatas: Seq[ThriftStructField[Tweet]] =
-    Tweet.metaData.fields.filter(f => isAdditionalFieldId(f.id))
+  /** all known [[T et]] f elds  n t  "add  onal-f eld" range (excludes  d) */
+  val Comp ledAdd  onalF eld taDatas: Seq[Thr ftStructF eld[T et]] =
+    T et. taData.f elds.f lter(f =>  sAdd  onalF eld d(f. d))
 
-  val CompiledAdditionalFieldsMap: Map[Short, ThriftStructField[Tweet]] =
-    CompiledAdditionalFieldMetaDatas.map(field => (field.id, field)).toMap
+  val Comp ledAdd  onalF eldsMap: Map[Short, Thr ftStructF eld[T et]] =
+    Comp ledAdd  onalF eld taDatas.map(f eld => (f eld. d, f eld)).toMap
 
-  /** all known [[Tweet]] field IDs in the "additional-field" range */
-  val CompiledAdditionalFieldIds: Seq[FieldId] =
-    CompiledAdditionalFieldsMap.keys.toSeq
+  /** all known [[T et]] f eld  Ds  n t  "add  onal-f eld" range */
+  val Comp ledAdd  onalF eld ds: Seq[F eld d] =
+    Comp ledAdd  onalF eldsMap.keys.toSeq
 
-  /** all [[Tweet]] field IDs which should be rejected when set as additional
-   * fields on via PostTweetRequest.additionalFields or RetweetRequest.additionalFields */
-  val RejectedFieldIds: Seq[FieldId] = Seq(
-    // Should be provided via PostTweetRequest.conversationControl field. go/convocontrolsbackend
-    Tweet.ConversationControlField.id,
-    // This field should only be set based on whether the client sets the right community
-    // tweet annotation.
-    Tweet.CommunitiesField.id,
-    // This field should not be set by clients and should opt for
-    // [[PostTweetRequest.ExclusiveTweetControlOptions]].
-    // The exclusiveTweetControl field requires the userId to be set
-    // and we shouldn't trust the client to provide the right one.
-    Tweet.ExclusiveTweetControlField.id,
-    // This field should not be set by clients and should opt for
-    // [[PostTweetRequest.TrustedFriendsControlOptions]].
-    // The trustedFriendsControl field requires the trustedFriendsListId to be
-    // set and we shouldn't trust the client to provide the right one.
-    Tweet.TrustedFriendsControlField.id,
-    // This field should not be set by clients and should opt for
-    // [[PostTweetRequest.CollabControlOptions]].
-    // The collabControl field requires a list of Collaborators to be
-    // set and we shouldn't trust the client to provide the right one.
-    Tweet.CollabControlField.id
+  /** all [[T et]] f eld  Ds wh ch should be rejected w n set as add  onal
+   * f elds on v a PostT etRequest.add  onalF elds or Ret etRequest.add  onalF elds */
+  val RejectedF eld ds: Seq[F eld d] = Seq(
+    // Should be prov ded v a PostT etRequest.conversat onControl f eld. go/convocontrolsbackend
+    T et.Conversat onControlF eld. d,
+    // T  f eld should only be set based on w t r t  cl ent sets t  r ght commun y
+    // t et annotat on.
+    T et.Commun  esF eld. d,
+    // T  f eld should not be set by cl ents and should opt for
+    // [[PostT etRequest.Exclus veT etControlOpt ons]].
+    // T  exclus veT etControl f eld requ res t  user d to be set
+    // and   shouldn't trust t  cl ent to prov de t  r ght one.
+    T et.Exclus veT etControlF eld. d,
+    // T  f eld should not be set by cl ents and should opt for
+    // [[PostT etRequest.TrustedFr endsControlOpt ons]].
+    // T  trustedFr endsControl f eld requ res t  trustedFr endsL st d to be
+    // set and   shouldn't trust t  cl ent to prov de t  r ght one.
+    T et.TrustedFr endsControlF eld. d,
+    // T  f eld should not be set by cl ents and should opt for
+    // [[PostT etRequest.CollabControlOpt ons]].
+    // T  collabControl f eld requ res a l st of Collaborators to be
+    // set and   shouldn't trust t  cl ent to prov de t  r ght one.
+    T et.CollabControlF eld. d
   )
 
-  def isAdditionalFieldId(fieldId: FieldId): Boolean =
-    fieldId >= StartAdditionalId
+  def  sAdd  onalF eld d(f eld d: F eld d): Boolean =
+    f eld d >= StartAdd  onal d
 
   /**
-   * Provides a list of all additional field IDs on the tweet, which include all
-   * the compiled additional fields and all the provided passthrough fields.  This includes
-   * compiled additional fields where the value is None.
+   * Prov des a l st of all add  onal f eld  Ds on t  t et, wh ch  nclude all
+   * t  comp led add  onal f elds and all t  prov ded passthrough f elds.  T   ncludes
+   * comp led add  onal f elds w re t  value  s None.
    */
-  def allAdditionalFieldIds(tweet: Tweet): Seq[FieldId] =
-    CompiledAdditionalFieldIds ++ tweet._passthroughFields.keys
+  def allAdd  onalF eld ds(t et: T et): Seq[F eld d] =
+    Comp ledAdd  onalF eld ds ++ t et._passthroughF elds.keys
 
   /**
-   * Provides a list of all field IDs that have a value on the tweet which are not known compiled
-   * additional fields (excludes [[Tweet.id]]).
+   * Prov des a l st of all f eld  Ds that have a value on t  t et wh ch are not known comp led
+   * add  onal f elds (excludes [[T et. d]]).
    */
-  def unsettableAdditionalFieldIds(tweet: Tweet): Seq[FieldId] =
-    CompiledFieldIds
-      .filter { id =>
-        !isAdditionalFieldId(id) && id != Tweet.IdField.id && tweet.getFieldBlob(id).isDefined
+  def unsettableAdd  onalF eld ds(t et: T et): Seq[F eld d] =
+    Comp ledF eld ds
+      .f lter {  d =>
+        ! sAdd  onalF eld d( d) &&  d != T et. dF eld. d && t et.getF eldBlob( d). sDef ned
       } ++
-      tweet._passthroughFields.keys
+      t et._passthroughF elds.keys
 
   /**
-   * Provides a list of all field IDs that have a value on the tweet which are explicitly disallowed
-   * from being set via PostTweetRequest.additionalFields and RetweetRequest.additionalFields
+   * Prov des a l st of all f eld  Ds that have a value on t  t et wh ch are expl c ly d sallo d
+   * from be ng set v a PostT etRequest.add  onalF elds and Ret etRequest.add  onalF elds
    */
-  def rejectedAdditionalFieldIds(tweet: Tweet): Seq[FieldId] =
-    RejectedFieldIds
-      .filter { id => tweet.getFieldBlob(id).isDefined }
+  def rejectedAdd  onalF eld ds(t et: T et): Seq[F eld d] =
+    RejectedF eld ds
+      .f lter {  d => t et.getF eldBlob( d). sDef ned }
 
-  def unsettableAdditionalFieldIdsErrorMessage(unsettableFieldIds: Seq[FieldId]): String =
-    s"request may not contain fields: [${unsettableFieldIds.sorted.mkString(", ")}]"
+  def unsettableAdd  onalF eld dsError ssage(unsettableF eld ds: Seq[F eld d]): Str ng =
+    s"request may not conta n f elds: [${unsettableF eld ds.sorted.mkStr ng(", ")}]"
 
   /**
-   * Provides a list of all additional field IDs that have a value on the tweet,
-   * compiled and passthrough (excludes Tweet.id).
+   * Prov des a l st of all add  onal f eld  Ds that have a value on t  t et,
+   * comp led and passthrough (excludes T et. d).
    */
-  def nonEmptyAdditionalFieldIds(tweet: Tweet): Seq[FieldId] =
-    CompiledAdditionalFieldMetaDatas.collect {
-      case f if f.getValue(tweet) != None => f.id
-    } ++ tweet._passthroughFields.keys
+  def nonEmptyAdd  onalF eld ds(t et: T et): Seq[F eld d] =
+    Comp ledAdd  onalF eld taDatas.collect {
+      case f  f f.getValue(t et) != None => f. d
+    } ++ t et._passthroughF elds.keys
 
-  def additionalFields(tweet: Tweet): Seq[TFieldBlob] =
-    (tweet.getFieldBlobs(CompiledAdditionalFieldIds) ++ tweet._passthroughFields).values.toSeq
+  def add  onalF elds(t et: T et): Seq[TF eldBlob] =
+    (t et.getF eldBlobs(Comp ledAdd  onalF eld ds) ++ t et._passthroughF elds).values.toSeq
 
   /**
-   * Merge base tweet with additional fields.
-   * Non-additional fields in the additional tweet are ignored.
-   * @param base: a tweet that contains basic fields
-   * @param additional: a tweet object that carries additional fields
+   *  rge base t et w h add  onal f elds.
+   * Non-add  onal f elds  n t  add  onal t et are  gnored.
+   * @param base: a t et that conta ns bas c f elds
+   * @param add  onal: a t et object that carr es add  onal f elds
    */
-  def setAdditionalFields(base: Tweet, additional: Tweet): Tweet =
-    setAdditionalFields(base, additionalFields(additional))
+  def setAdd  onalF elds(base: T et, add  onal: T et): T et =
+    setAdd  onalF elds(base, add  onalF elds(add  onal))
 
-  def setAdditionalFields(base: Tweet, additional: Option[Tweet]): Tweet =
-    additional.map(setAdditionalFields(base, _)).getOrElse(base)
+  def setAdd  onalF elds(base: T et, add  onal: Opt on[T et]): T et =
+    add  onal.map(setAdd  onalF elds(base, _)).getOrElse(base)
 
-  def setAdditionalFields(base: Tweet, additional: Traversable[TFieldBlob]): Tweet =
-    additional.foldLeft(base) { case (t, f) => t.setField(f) }
+  def setAdd  onalF elds(base: T et, add  onal: Traversable[TF eldBlob]): T et =
+    add  onal.foldLeft(base) { case (t, f) => t.setF eld(f) }
 
   /**
-   * Unsets the specified fields on the given tweet.
+   * Unsets t  spec f ed f elds on t  g ven t et.
    */
-  def unsetFields(tweet: Tweet, fieldIds: Iterable[FieldId]): Tweet = {
-    tweet.unsetFields(fieldIds.toSet)
+  def unsetF elds(t et: T et, f eld ds:  erable[F eld d]): T et = {
+    t et.unsetF elds(f eld ds.toSet)
   }
 }

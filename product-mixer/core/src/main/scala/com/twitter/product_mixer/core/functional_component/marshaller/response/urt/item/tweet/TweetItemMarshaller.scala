@@ -1,52 +1,52 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.t et
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.graphql.contextual_ref.ContextualTweetRefMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.conversation_annotation.ConversationAnnotationMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.forward_pivot.ForwardPivotMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tombstone.TombstoneInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.SocialContextMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.PrerollMetadataMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.PromotedMetadataMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.BadgeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.graphql.contextual_ref.ContextualT etRefMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.conversat on_annotat on.Conversat onAnnotat onMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.forward_p vot.ForwardP votMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.tombstone.Tombstone nfoMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.Soc alContextMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted.Preroll tadataMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted.Promoted tadataMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t et.T et em
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.BadgeMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.UrlMarshaller
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TweetItemMarshaller @Inject() (
-  tweetDisplayTypeMarshaller: TweetDisplayTypeMarshaller,
-  socialContextMarshaller: SocialContextMarshaller,
-  tweetHighlightsMarshaller: TweetHighlightsMarshaller,
-  tombstoneInfoMarshaller: TombstoneInfoMarshaller,
-  timelinesScoreInfoMarshaller: TimelinesScoreInfoMarshaller,
-  forwardPivotMarshaller: ForwardPivotMarshaller,
-  promotedMetadataMarshaller: PromotedMetadataMarshaller,
-  conversationAnnotationMarshaller: ConversationAnnotationMarshaller,
-  contextualTweetRefMarshaller: ContextualTweetRefMarshaller,
-  prerollMetadataMarshaller: PrerollMetadataMarshaller,
+@S ngleton
+class T et emMarshaller @ nject() (
+  t etD splayTypeMarshaller: T etD splayTypeMarshaller,
+  soc alContextMarshaller: Soc alContextMarshaller,
+  t etH ghl ghtsMarshaller: T etH ghl ghtsMarshaller,
+  tombstone nfoMarshaller: Tombstone nfoMarshaller,
+  t  l nesScore nfoMarshaller: T  l nesScore nfoMarshaller,
+  forwardP votMarshaller: ForwardP votMarshaller,
+  promoted tadataMarshaller: Promoted tadataMarshaller,
+  conversat onAnnotat onMarshaller: Conversat onAnnotat onMarshaller,
+  contextualT etRefMarshaller: ContextualT etRefMarshaller,
+  preroll tadataMarshaller: Preroll tadataMarshaller,
   badgeMarshaller: BadgeMarshaller,
   urlMarshaller: UrlMarshaller) {
 
-  def apply(tweetItem: TweetItem): urt.TimelineItemContent.Tweet = urt.TimelineItemContent.Tweet(
-    urt.Tweet(
-      id = tweetItem.id,
-      displayType = tweetDisplayTypeMarshaller(tweetItem.displayType),
-      socialContext = tweetItem.socialContext.map(socialContextMarshaller(_)),
-      highlights = tweetItem.highlights.map(tweetHighlightsMarshaller(_)),
-      innerTombstoneInfo = tweetItem.innerTombstoneInfo.map(tombstoneInfoMarshaller(_)),
-      timelinesScoreInfo = tweetItem.timelinesScoreInfo.map(timelinesScoreInfoMarshaller(_)),
-      hasModeratedReplies = tweetItem.hasModeratedReplies,
-      forwardPivot = tweetItem.forwardPivot.map(forwardPivotMarshaller(_)),
-      innerForwardPivot = tweetItem.innerForwardPivot.map(forwardPivotMarshaller(_)),
-      promotedMetadata = tweetItem.promotedMetadata.map(promotedMetadataMarshaller(_)),
-      conversationAnnotation =
-        tweetItem.conversationAnnotation.map(conversationAnnotationMarshaller(_)),
-      contextualTweetRef = tweetItem.contextualTweetRef.map(contextualTweetRefMarshaller(_)),
-      prerollMetadata = tweetItem.prerollMetadata.map(prerollMetadataMarshaller(_)),
-      replyBadge = tweetItem.replyBadge.map(badgeMarshaller(_)),
-      destination = tweetItem.destination.map(urlMarshaller(_))
+  def apply(t et em: T et em): urt.T  l ne emContent.T et = urt.T  l ne emContent.T et(
+    urt.T et(
+       d = t et em. d,
+      d splayType = t etD splayTypeMarshaller(t et em.d splayType),
+      soc alContext = t et em.soc alContext.map(soc alContextMarshaller(_)),
+      h ghl ghts = t et em.h ghl ghts.map(t etH ghl ghtsMarshaller(_)),
+       nnerTombstone nfo = t et em. nnerTombstone nfo.map(tombstone nfoMarshaller(_)),
+      t  l nesScore nfo = t et em.t  l nesScore nfo.map(t  l nesScore nfoMarshaller(_)),
+      hasModeratedRepl es = t et em.hasModeratedRepl es,
+      forwardP vot = t et em.forwardP vot.map(forwardP votMarshaller(_)),
+       nnerForwardP vot = t et em. nnerForwardP vot.map(forwardP votMarshaller(_)),
+      promoted tadata = t et em.promoted tadata.map(promoted tadataMarshaller(_)),
+      conversat onAnnotat on =
+        t et em.conversat onAnnotat on.map(conversat onAnnotat onMarshaller(_)),
+      contextualT etRef = t et em.contextualT etRef.map(contextualT etRefMarshaller(_)),
+      preroll tadata = t et em.preroll tadata.map(preroll tadataMarshaller(_)),
+      replyBadge = t et em.replyBadge.map(badgeMarshaller(_)),
+      dest nat on = t et em.dest nat on.map(urlMarshaller(_))
     )
   )
 }

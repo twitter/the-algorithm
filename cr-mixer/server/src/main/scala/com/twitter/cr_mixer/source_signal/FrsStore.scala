@@ -1,46 +1,46 @@
-package com.twitter.cr_mixer.source_signal
+package com.tw ter.cr_m xer.s ce_s gnal
 
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.param.decider.DeciderConstants
-import com.twitter.cr_mixer.source_signal.FrsStore.Query
-import com.twitter.cr_mixer.source_signal.FrsStore.FrsQueryResult
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.thriftscala.ClientContext
-import com.twitter.follow_recommendations.thriftscala.DisplayLocation
-import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService
-import com.twitter.follow_recommendations.thriftscala.Recommendation
-import com.twitter.follow_recommendations.thriftscala.RecommendationRequest
-import com.twitter.storehaus.ReadableStore
-import javax.inject.Singleton
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.util.Future
+ mport com.tw ter.cr_m xer.param.dec der.CrM xerDec der
+ mport com.tw ter.cr_m xer.param.dec der.Dec derConstants
+ mport com.tw ter.cr_m xer.s ce_s gnal.FrsStore.Query
+ mport com.tw ter.cr_m xer.s ce_s gnal.FrsStore.FrsQueryResult
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.thr ftscala.Cl entContext
+ mport com.tw ter.follow_recom ndat ons.thr ftscala.D splayLocat on
+ mport com.tw ter.follow_recom ndat ons.thr ftscala.FollowRecom ndat onsThr ftServ ce
+ mport com.tw ter.follow_recom ndat ons.thr ftscala.Recom ndat on
+ mport com.tw ter.follow_recom ndat ons.thr ftscala.Recom ndat onRequest
+ mport com.tw ter.storehaus.ReadableStore
+ mport javax. nject.S ngleton
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.ut l.Future
 
-@Singleton
+@S ngleton
 case class FrsStore(
-  frsClient: FollowRecommendationsThriftService.MethodPerEndpoint,
-  statsReceiver: StatsReceiver,
-  decider: CrMixerDecider)
+  frsCl ent: FollowRecom ndat onsThr ftServ ce. thodPerEndpo nt,
+  statsRece ver: StatsRece ver,
+  dec der: CrM xerDec der)
     extends ReadableStore[Query, Seq[FrsQueryResult]] {
 
-  override def get(
+  overr de def get(
     query: Query
-  ): Future[Option[Seq[FrsQueryResult]]] = {
-    if (decider.isAvailable(DeciderConstants.enableFRSTrafficDeciderKey)) {
-      val recommendationRequest =
-        buildFollowRecommendationRequest(query)
+  ): Future[Opt on[Seq[FrsQueryResult]]] = {
+     f (dec der. sAva lable(Dec derConstants.enableFRSTraff cDec derKey)) {
+      val recom ndat onRequest =
+        bu ldFollowRecom ndat onRequest(query)
 
-      frsClient
-        .getRecommendations(recommendationRequest).map { recommendationResponse =>
-          Some(recommendationResponse.recommendations.collect {
-            case recommendation: Recommendation.User =>
+      frsCl ent
+        .getRecom ndat ons(recom ndat onRequest).map { recom ndat onResponse =>
+          So (recom ndat onResponse.recom ndat ons.collect {
+            case recom ndat on: Recom ndat on.User =>
               FrsQueryResult(
-                recommendation.user.userId,
-                recommendation.user.scoringDetails
+                recom ndat on.user.user d,
+                recom ndat on.user.scor ngDeta ls
                   .flatMap(_.score).getOrElse(0.0),
-                recommendation.user.scoringDetails
-                  .flatMap(_.candidateSourceDetails.flatMap(_.primarySource)),
-                recommendation.user.scoringDetails
-                  .flatMap(_.candidateSourceDetails.flatMap(_.candidateSourceScores)).map(_.toMap)
+                recom ndat on.user.scor ngDeta ls
+                  .flatMap(_.cand dateS ceDeta ls.flatMap(_.pr maryS ce)),
+                recom ndat on.user.scor ngDeta ls
+                  .flatMap(_.cand dateS ceDeta ls.flatMap(_.cand dateS ceScores)).map(_.toMap)
               )
           })
         }
@@ -49,33 +49,33 @@ case class FrsStore(
     }
   }
 
-  private def buildFollowRecommendationRequest(
+  pr vate def bu ldFollowRecom ndat onRequest(
     query: Query
-  ): RecommendationRequest = {
-    RecommendationRequest(
-      clientContext = ClientContext(
-        userId = Some(query.userId),
+  ): Recom ndat onRequest = {
+    Recom ndat onRequest(
+      cl entContext = Cl entContext(
+        user d = So (query.user d),
         countryCode = query.countryCodeOpt,
         languageCode = query.languageCodeOpt),
-      displayLocation = query.displayLocation,
-      maxResults = Some(query.maxConsumerSeedsNum),
-      excludedIds = Some(query.excludedUserIds)
+      d splayLocat on = query.d splayLocat on,
+      maxResults = So (query.maxConsu rSeedsNum),
+      excluded ds = So (query.excludedUser ds)
     )
   }
 }
 
 object FrsStore {
   case class Query(
-    userId: UserId,
-    maxConsumerSeedsNum: Int,
-    displayLocation: DisplayLocation = DisplayLocation.ContentRecommender,
-    excludedUserIds: Seq[UserId] = Seq.empty,
-    languageCodeOpt: Option[String] = None,
-    countryCodeOpt: Option[String] = None)
+    user d: User d,
+    maxConsu rSeedsNum:  nt,
+    d splayLocat on: D splayLocat on = D splayLocat on.ContentRecom nder,
+    excludedUser ds: Seq[User d] = Seq.empty,
+    languageCodeOpt: Opt on[Str ng] = None,
+    countryCodeOpt: Opt on[Str ng] = None)
 
   case class FrsQueryResult(
-    userId: UserId,
+    user d: User d,
     score: Double,
-    primarySource: Option[Int],
-    sourceWithScores: Option[Map[String, Double]])
+    pr maryS ce: Opt on[ nt],
+    s ceW hScores: Opt on[Map[Str ng, Double]])
 }

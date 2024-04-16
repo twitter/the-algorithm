@@ -1,44 +1,44 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.tw ter.search.earlyb rd_root. rgers;
 
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
 
 
-public final class PartitionResponseAccumulator extends ResponseAccumulator {
-  private static final String TARGET_TYPE_PARTITION = "partition";
+publ c f nal class Part  onResponseAccumulator extends ResponseAccumulator {
+  pr vate stat c f nal Str ng TARGET_TYPE_PART T ON = "part  on";
 
-  @Override
-  public String getNameForLogging(int responseIndex, int numTotalResponses) {
-    return TARGET_TYPE_PARTITION + responseIndex;
+  @Overr de
+  publ c Str ng getNa ForLogg ng( nt response ndex,  nt numTotalResponses) {
+    return TARGET_TYPE_PART T ON + response ndex;
   }
 
-  @Override
-  public String getNameForEarlybirdResponseCodeStats(int responseIndex, int numTotalResponses) {
-    // We do not need to differentiate between partitions: we just want to get the number of
-    // responses returned by Earlybirds, for each EarlybirdResponseCode.
-    return TARGET_TYPE_PARTITION;
+  @Overr de
+  publ c Str ng getNa ForEarlyb rdResponseCodeStats( nt response ndex,  nt numTotalResponses) {
+    //   do not need to d fferent ate bet en part  ons:   just want to get t  number of
+    // responses returned by Earlyb rds, for each Earlyb rdResponseCode.
+    return TARGET_TYPE_PART T ON;
   }
 
-  @Override
-  boolean shouldEarlyTerminateMerge(EarlyTerminateTierMergePredicate merger) {
+  @Overr de
+  boolean shouldEarlyTerm nate rge(EarlyTerm nateT er rgePred cate  rger) {
     return false;
   }
 
-  @Override
-  public void handleSkippedResponse(EarlybirdResponseCode responseCode) { }
+  @Overr de
+  publ c vo d handleSk ppedResponse(Earlyb rdResponseCode responseCode) { }
 
-  @Override
-  public void handleErrorResponse(EarlybirdResponse response) {
+  @Overr de
+  publ c vo d handleErrorResponse(Earlyb rdResponse response) {
   }
 
-  @Override
-  public AccumulatedResponses.PartitionCounts getPartitionCounts() {
-    return new AccumulatedResponses.PartitionCounts(getNumResponses(),
-        getSuccessResponses().size() + getSuccessfulEmptyResponseCount(), null);
+  @Overr de
+  publ c AccumulatedResponses.Part  onCounts getPart  onCounts() {
+    return new AccumulatedResponses.Part  onCounts(getNumResponses(),
+        getSuccessResponses().s ze() + getSuccessfulEmptyResponseCount(), null);
   }
 
-  @Override
-  protected boolean isMergingAcrossTiers() {
+  @Overr de
+  protected boolean  s rg ngAcrossT ers() {
     return false;
   }
 }

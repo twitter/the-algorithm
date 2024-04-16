@@ -1,11 +1,11 @@
-package com.twitter.frigate.pushservice.exception
+package com.tw ter.fr gate.pushserv ce.except on
 
-import scala.util.control.NoStackTrace
+ mport scala.ut l.control.NoStackTrace
 
 /**
- * Exception for CRT not expected in the scope
- * @param message Exception message to log the UnsupportedCrt
+ * Except on for CRT not expected  n t  scope
+ * @param  ssage Except on  ssage to log t  UnsupportedCrt
  */
-class UnsupportedCrtException(private val message: String)
-    extends Exception(message)
-    with NoStackTrace
+class UnsupportedCrtExcept on(pr vate val  ssage: Str ng)
+    extends Except on( ssage)
+    w h NoStackTrace

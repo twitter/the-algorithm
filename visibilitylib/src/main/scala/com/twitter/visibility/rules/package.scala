@@ -1,5 +1,5 @@
-package com.twitter.visibility
+package com.tw ter.v s b l y
 
 package object rules {
-  type LabelTypeId = Short
+  type LabelType d = Short
 }

@@ -1,44 +1,44 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+na space java com.tw ter.cr_m xer.thr ftjava
+#@na space scala com.tw ter.cr_m xer.thr ftscala
+#@na space strato com.tw ter.cr_m xer
 
 
-// NOTE: DO NOT depend on MetricTags for important ML Features or business logic.
-// MetricTags are meant for stats tracking & debugging purposes ONLY.
-// cr-mixer may change its definitions & how each candidate is tagged without public notice.
-// NOTE: TSPS needs the caller (Home) to specify which signal it uses to make Personalized Topics
-enum MetricTag {
-  // Source Signal Tags
-  TweetFavorite         = 0
-  Retweet               = 1
-  TrafficAttribution    = 2
-  OriginalTweet         = 3
+// NOTE: DO NOT depend on  tr cTags for  mportant ML Features or bus ness log c.
+//  tr cTags are  ant for stats track ng & debugg ng purposes ONLY.
+// cr-m xer may change  s def n  ons & how each cand date  s tagged w hout publ c not ce.
+// NOTE: TSPS needs t  caller (Ho ) to spec fy wh ch s gnal   uses to make Personal zed Top cs
+enum  tr cTag {
+  // S ce S gnal Tags
+  T etFavor e         = 0
+  Ret et               = 1
+  Traff cAttr but on    = 2
+  Or g nalT et         = 3
   Reply                 = 4
-  TweetShare            = 5
+  T etShare            = 5
 
   UserFollow            = 101
-  UserRepeatedProfileVisit = 102
+  UserRepeatedProf leV s  = 102
 
-  PushOpenOrNtabClick   = 201
+  PushOpenOrNtabCl ck   = 201
 
-  HomeTweetClick        = 301
-  HomeVideoView         = 302
+  Ho T etCl ck        = 301
+  Ho V deoV ew         = 302
 
-  // sim engine types
-  SimClustersANN        = 401
-  TweetBasedUserTweetGraph    = 402
-  TweetBasedTwHINANN          = 403
-  ConsumerEmbeddingBasedTwHINANN = 404
+  // s m eng ne types
+  S mClustersANN        = 401
+  T etBasedUserT etGraph    = 402
+  T etBasedTwH NANN          = 403
+  Consu rEmbedd ngBasedTwH NANN = 404
 
 
-  // combined engine types
-  UserInterestedIn      = 501 // Will deprecate soon
-  LookalikeUTG          = 502
-  TwhinCollabFilter     = 503
+  // comb ned eng ne types
+  User nterested n      = 501 // W ll deprecate soon
+  Lookal keUTG          = 502
+  Twh nCollabF lter     = 503
 
-  // Offline Twice
-  TwiceUserId           = 601
+  // Offl ne Tw ce
+  Tw ceUser d           = 601
 
-  // Other Metric Tags
-  RequestHealthFilterPushOpenBasedTweetEmbedding = 701
-} (persisted='true', hasPersonalData='true')
+  // Ot r  tr c Tags
+  Request althF lterPushOpenBasedT etEmbedd ng = 701
+} (pers sted='true', hasPersonalData='true')

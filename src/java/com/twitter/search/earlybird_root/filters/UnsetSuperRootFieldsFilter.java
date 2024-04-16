@@ -1,30 +1,30 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestUtil;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestUt l;
+ mport com.tw ter.ut l.Future;
 
 /**
- * A filter that unsets some request fields that make sense only on the SuperRoot, before sending
- * them to the individual roots.
+ * A f lter that unsets so  request f elds that make sense only on t  SuperRoot, before send ng
+ * t m to t   nd v dual roots.
  */
-public class UnsetSuperRootFieldsFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  private final boolean unsetFollowedUserIds;
+publ c class UnsetSuperRootF eldsF lter extends S mpleF lter<Earlyb rdRequest, Earlyb rdResponse> {
+  pr vate f nal boolean unsetFollo dUser ds;
 
-  public UnsetSuperRootFieldsFilter() {
-    this(true);
+  publ c UnsetSuperRootF eldsF lter() {
+    t (true);
   }
 
-  public UnsetSuperRootFieldsFilter(boolean unsetFollowedUserIds) {
-    this.unsetFollowedUserIds = unsetFollowedUserIds;
+  publ c UnsetSuperRootF eldsF lter(boolean unsetFollo dUser ds) {
+    t .unsetFollo dUser ds = unsetFollo dUser ds;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
-    return service.apply(EarlybirdRequestUtil.unsetSuperRootFields(request, unsetFollowedUserIds));
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(Earlyb rdRequest request,
+                                         Serv ce<Earlyb rdRequest, Earlyb rdResponse> serv ce) {
+    return serv ce.apply(Earlyb rdRequestUt l.unsetSuperRootF elds(request, unsetFollo dUser ds));
   }
 }

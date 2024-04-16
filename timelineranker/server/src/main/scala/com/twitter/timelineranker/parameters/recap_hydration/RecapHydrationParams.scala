@@ -1,47 +1,47 @@
-package com.twitter.timelineranker.parameters.recap_hydration
+package com.tw ter.t  l neranker.para ters.recap_hydrat on
 
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .Param
 
-object RecapHydrationParams {
-
-  /**
-   * Enables semantic core, penguin, and tweetypie content features in recap hydration source.
-   */
-  object EnableContentFeaturesHydrationParam extends Param(false)
+object RecapHydrat onParams {
 
   /**
-   * additionally enables tokens when hydrating content features.
+   * Enables semant c core, pengu n, and t etyp e content features  n recap hydrat on s ce.
    */
-  object EnableTokensInContentFeaturesHydrationParam
+  object EnableContentFeaturesHydrat onParam extends Param(false)
+
+  /**
+   * add  onally enables tokens w n hydrat ng content features.
+   */
+  object EnableTokens nContentFeaturesHydrat onParam
       extends FSParam(
-        name = "recap_hydration_enable_tokens_in_content_features_hydration",
+        na  = "recap_hydrat on_enable_tokens_ n_content_features_hydrat on",
         default = false
       )
 
   /**
-   * additionally enables tweet text when hydrating content features.
-   * This only works if EnableContentFeaturesHydrationParam is set to true
+   * add  onally enables t et text w n hydrat ng content features.
+   * T  only works  f EnableContentFeaturesHydrat onParam  s set to true
    */
-  object EnableTweetTextInContentFeaturesHydrationParam
+  object EnableT etText nContentFeaturesHydrat onParam
       extends FSParam(
-        name = "recap_hydration_enable_tweet_text_in_content_features_hydration",
+        na  = "recap_hydrat on_enable_t et_text_ n_content_features_hydrat on",
         default = false
       )
 
   /**
-   * additionally enables conversationControl when hydrating content features.
-   * This only works if EnableContentFeaturesHydrationParam is set to true
+   * add  onally enables conversat onControl w n hydrat ng content features.
+   * T  only works  f EnableContentFeaturesHydrat onParam  s set to true
    */
-  object EnableConversationControlInContentFeaturesHydrationParam
+  object EnableConversat onControl nContentFeaturesHydrat onParam
       extends FSParam(
-        name = "conversation_control_in_content_features_hydration_recap_hydration_enable",
+        na  = "conversat on_control_ n_content_features_hydrat on_recap_hydrat on_enable",
         default = false
       )
 
-  object EnableTweetMediaHydrationParam
+  object EnableT et d aHydrat onParam
       extends FSParam(
-        name = "tweet_media_hydration_recap_hydration_enable",
+        na  = "t et_ d a_hydrat on_recap_hydrat on_enable",
         default = false
       )
 

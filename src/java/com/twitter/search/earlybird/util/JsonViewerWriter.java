@@ -1,68 +1,68 @@
-package com.twitter.search.earlybird.util;
+package com.tw ter.search.earlyb rd.ut l;
 
-import java.io.IOException;
-import java.io.Writer;
+ mport java. o. OExcept on;
+ mport java. o.Wr er;
 
-import com.google.gson.stream.JsonWriter;
+ mport com.google.gson.stream.JsonWr er;
 
 /**
- * Wrapper class for JsonWriter that implements the
- * ViewerWriter interface.
+ * Wrapper class for JsonWr er that  mple nts t 
+ * V e rWr er  nterface.
  */
-public class JsonViewerWriter implements ViewerWriter {
+publ c class JsonV e rWr er  mple nts V e rWr er {
 
-  private final JsonWriter writer;
-  private final Writer out;
+  pr vate f nal JsonWr er wr er;
+  pr vate f nal Wr er out;
 
-  public JsonViewerWriter(Writer out) {
-    this.out = out;
-    this.writer = new JsonWriter(out);
+  publ c JsonV e rWr er(Wr er out) {
+    t .out = out;
+    t .wr er = new JsonWr er(out);
   }
 
 
-  @Override
-  public ViewerWriter beginArray() throws IOException {
-    writer.beginArray();
-    return this;
+  @Overr de
+  publ c V e rWr er beg nArray() throws  OExcept on {
+    wr er.beg nArray();
+    return t ;
   }
 
-  @Override
-  public ViewerWriter beginObject() throws IOException {
-    writer.beginObject();
-    return this;
+  @Overr de
+  publ c V e rWr er beg nObject() throws  OExcept on {
+    wr er.beg nObject();
+    return t ;
   }
 
-  @Override
-  public ViewerWriter endArray() throws IOException {
-    writer.endArray();
-    return this;
+  @Overr de
+  publ c V e rWr er endArray() throws  OExcept on {
+    wr er.endArray();
+    return t ;
   }
 
-  @Override
-  public ViewerWriter endObject() throws IOException {
-    writer.endObject();
-    return this;
+  @Overr de
+  publ c V e rWr er endObject() throws  OExcept on {
+    wr er.endObject();
+    return t ;
   }
 
-  @Override
-  public ViewerWriter name(String field) throws IOException {
-    writer.name(field);
-    return this;
+  @Overr de
+  publ c V e rWr er na (Str ng f eld) throws  OExcept on {
+    wr er.na (f eld);
+    return t ;
   }
 
-  @Override
-  public ViewerWriter value(String s) throws IOException {
-    writer.value(s);
-    return this;
+  @Overr de
+  publ c V e rWr er value(Str ng s) throws  OExcept on {
+    wr er.value(s);
+    return t ;
   }
 
-  @Override
-  public ViewerWriter newline() throws IOException {
+  @Overr de
+  publ c V e rWr er newl ne() throws  OExcept on {
     out.append('\n');
-    return this;
+    return t ;
   }
 
-  public void flush() throws IOException {
+  publ c vo d flush() throws  OExcept on {
     out.flush();
   }
 }

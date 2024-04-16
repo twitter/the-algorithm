@@ -1,65 +1,65 @@
-package com.twitter.search.earlybird_root.quota;
+package com.tw ter.search.earlyb rd_root.quota;
 
-import java.util.Optional;
+ mport java.ut l.Opt onal;
 
-import javax.inject.Inject;
+ mport javax. nject. nject;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.search.common.dark.ServerSetResolver.SelfServerSetResolver;
+ mport com.tw ter.search.common.dark.ServerSetResolver.SelfServerSetResolver;
 
 /**
- * A config based implementation of the {@code ClientIdQuotaManager} interface.
- * It uses a ConfigBasedQuotaConfig object to load the contents of the config.
+ * A conf g based  mple ntat on of t  {@code Cl ent dQuotaManager}  nterface.
+ *   uses a Conf gBasedQuotaConf g object to load t  contents of t  conf g.
  */
-public class ConfigRepoBasedQuotaManager implements ClientIdQuotaManager {
+publ c class Conf gRepoBasedQuotaManager  mple nts Cl ent dQuotaManager {
 
-  public static final String COMMON_POOL_CLIENT_ID = "common_pool";
+  publ c stat c f nal Str ng COMMON_POOL_CL ENT_ D = "common_pool";
 
-  private final ConfigBasedQuotaConfig quotaConfig;
-  private final SelfServerSetResolver serverSetResolver;
+  pr vate f nal Conf gBasedQuotaConf g quotaConf g;
+  pr vate f nal SelfServerSetResolver serverSetResolver;
 
-  /** Creates a new ConfigRepoBasedQuotaManager instance. */
-  @Inject
-  public ConfigRepoBasedQuotaManager(
+  /** Creates a new Conf gRepoBasedQuotaManager  nstance. */
+  @ nject
+  publ c Conf gRepoBasedQuotaManager(
       SelfServerSetResolver serverSetResolver,
-      ConfigBasedQuotaConfig quotaConfig) {
-    Preconditions.checkNotNull(quotaConfig);
+      Conf gBasedQuotaConf g quotaConf g) {
+    Precond  ons.c ckNotNull(quotaConf g);
 
-    this.quotaConfig = quotaConfig;
-    this.serverSetResolver = serverSetResolver;
+    t .quotaConf g = quotaConf g;
+    t .serverSetResolver = serverSetResolver;
   }
 
-  @Override
-  public Optional<QuotaInfo> getQuotaForClient(String clientId) {
-    Optional<QuotaInfo> quotaForClient = quotaConfig.getQuotaForClient(clientId);
+  @Overr de
+  publ c Opt onal<Quota nfo> getQuotaForCl ent(Str ng cl ent d) {
+    Opt onal<Quota nfo> quotaForCl ent = quotaConf g.getQuotaForCl ent(cl ent d);
 
-    if (!quotaForClient.isPresent()) {
-      return Optional.empty();
+     f (!quotaForCl ent. sPresent()) {
+      return Opt onal.empty();
     }
 
-    QuotaInfo quota = quotaForClient.get();
+    Quota nfo quota = quotaForCl ent.get();
 
-    int quotaValue = quota.getQuota();
-    int rootInstanceCount = serverSetResolver.getServerSetSize();
-    if (rootInstanceCount > 0) {
-      quotaValue = (int) Math.ceil((double) quotaValue / rootInstanceCount);
+     nt quotaValue = quota.getQuota();
+     nt root nstanceCount = serverSetResolver.getServerSetS ze();
+     f (root nstanceCount > 0) {
+      quotaValue = ( nt) Math.ce l((double) quotaValue / root nstanceCount);
     }
 
-    return Optional.of(
-        new QuotaInfo(
-            quota.getQuotaClientId(),
-            quota.getQuotaEmail(),
+    return Opt onal.of(
+        new Quota nfo(
+            quota.getQuotaCl ent d(),
+            quota.getQuotaEma l(),
             quotaValue,
             quota.shouldEnforceQuota(),
-            quota.getClientTier(),
-            quota.hasArchiveAccess()));
+            quota.getCl entT er(),
+            quota.hasArch veAccess()));
   }
 
-  @Override
-  public QuotaInfo getCommonPoolQuota() {
-    Optional<QuotaInfo> commonPoolQuota = getQuotaForClient(COMMON_POOL_CLIENT_ID);
-    Preconditions.checkState(commonPoolQuota.isPresent());
+  @Overr de
+  publ c Quota nfo getCommonPoolQuota() {
+    Opt onal<Quota nfo> commonPoolQuota = getQuotaForCl ent(COMMON_POOL_CL ENT_ D);
+    Precond  ons.c ckState(commonPoolQuota. sPresent());
     return commonPoolQuota.get();
   }
 }

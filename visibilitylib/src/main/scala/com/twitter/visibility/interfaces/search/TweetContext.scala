@@ -1,10 +1,10 @@
-package com.twitter.visibility.interfaces.search
+package com.tw ter.v s b l y. nterfaces.search
 
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.models.SafetyLevel
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.v s b l y.models.SafetyLevel
 
-case class TweetContext(
-  tweet: Tweet,
-  quotedTweet: Option[Tweet],
-  retweetSourceTweet: Option[Tweet] = None,
+case class T etContext(
+  t et: T et,
+  quotedT et: Opt on[T et],
+  ret etS ceT et: Opt on[T et] = None,
   safetyLevel: SafetyLevel)

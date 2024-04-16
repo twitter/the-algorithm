@@ -1,83 +1,83 @@
-package com.twitter.cr_mixer.module
+package com.tw ter.cr_m xer.module
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.app.Flag
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.storehaus_internal.memcache.MemcacheStore
-import com.twitter.storehaus_internal.util.ClientName
-import com.twitter.storehaus_internal.util.ZkEndPoint
-import javax.inject.Named
+ mport com.google. nject.Prov des
+ mport com.google. nject.S ngleton
+ mport com.tw ter.app.Flag
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.f nagle. mcac d.Cl ent
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.storehaus_ nternal. mcac . mcac Store
+ mport com.tw ter.storehaus_ nternal.ut l.Cl entNa 
+ mport com.tw ter.storehaus_ nternal.ut l.ZkEndPo nt
+ mport javax. nject.Na d
 
-object UnifiedCacheClient extends TwitterModule {
+object Un f edCac Cl ent extends Tw terModule {
 
-  private val TIME_OUT = 20.milliseconds
+  pr vate val T ME_OUT = 20.m ll seconds
 
-  val crMixerUnifiedCacheDest: Flag[String] = flag[String](
-    name = "crMixer.unifiedCacheDest",
-    default = "/s/cache/content_recommender_unified_v2",
-    help = "Wily path to Content Recommender unified cache"
+  val crM xerUn f edCac Dest: Flag[Str ng] = flag[Str ng](
+    na  = "crM xer.un f edCac Dest",
+    default = "/s/cac /content_recom nder_un f ed_v2",
+     lp = "W ly path to Content Recom nder un f ed cac "
   )
 
-  val tweetRecommendationResultsCacheDest: Flag[String] = flag[String](
-    name = "tweetRecommendationResults.CacheDest",
-    default = "/s/cache/tweet_recommendation_results",
-    help = "Wily path to CrMixer getTweetRecommendations() results cache"
+  val t etRecom ndat onResultsCac Dest: Flag[Str ng] = flag[Str ng](
+    na  = "t etRecom ndat onResults.Cac Dest",
+    default = "/s/cac /t et_recom ndat on_results",
+     lp = "W ly path to CrM xer getT etRecom ndat ons() results cac "
   )
 
-  val earlybirdTweetsCacheDest: Flag[String] = flag[String](
-    name = "earlybirdTweets.CacheDest",
-    default = "/s/cache/crmixer_earlybird_tweets",
-    help = "Wily path to CrMixer Earlybird Recency Based Similarity Engine result cache"
+  val earlyb rdT etsCac Dest: Flag[Str ng] = flag[Str ng](
+    na  = "earlyb rdT ets.Cac Dest",
+    default = "/s/cac /crm xer_earlyb rd_t ets",
+     lp = "W ly path to CrM xer Earlyb rd Recency Based S m lar y Eng ne result cac "
   )
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.UnifiedCache)
-  def provideUnifiedCacheClient(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver,
-  ): Client =
-    MemcacheStore.memcachedClient(
-      name = ClientName("memcache-content-recommender-unified"),
-      dest = ZkEndPoint(crMixerUnifiedCacheDest()),
-      statsReceiver = statsReceiver.scope("cache_client"),
-      serviceIdentifier = serviceIdentifier,
-      timeout = TIME_OUT
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.Un f edCac )
+  def prov deUn f edCac Cl ent(
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver,
+  ): Cl ent =
+     mcac Store. mcac dCl ent(
+      na  = Cl entNa (" mcac -content-recom nder-un f ed"),
+      dest = ZkEndPo nt(crM xerUn f edCac Dest()),
+      statsRece ver = statsRece ver.scope("cac _cl ent"),
+      serv ce dent f er = serv ce dent f er,
+      t  out = T ME_OUT
     )
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.TweetRecommendationResultsCache)
-  def providesTweetRecommendationResultsCache(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver,
-  ): Client =
-    MemcacheStore.memcachedClient(
-      name = ClientName("memcache-tweet-recommendation-results"),
-      dest = ZkEndPoint(tweetRecommendationResultsCacheDest()),
-      statsReceiver = statsReceiver.scope("cache_client"),
-      serviceIdentifier = serviceIdentifier,
-      timeout = TIME_OUT
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.T etRecom ndat onResultsCac )
+  def prov desT etRecom ndat onResultsCac (
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver,
+  ): Cl ent =
+     mcac Store. mcac dCl ent(
+      na  = Cl entNa (" mcac -t et-recom ndat on-results"),
+      dest = ZkEndPo nt(t etRecom ndat onResultsCac Dest()),
+      statsRece ver = statsRece ver.scope("cac _cl ent"),
+      serv ce dent f er = serv ce dent f er,
+      t  out = T ME_OUT
     )
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.EarlybirdTweetsCache)
-  def providesEarlybirdTweetsCache(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver,
-  ): Client =
-    MemcacheStore.memcachedClient(
-      name = ClientName("memcache-crmixer-earlybird-tweets"),
-      dest = ZkEndPoint(earlybirdTweetsCacheDest()),
-      statsReceiver = statsReceiver.scope("cache_client"),
-      serviceIdentifier = serviceIdentifier,
-      timeout = TIME_OUT
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.Earlyb rdT etsCac )
+  def prov desEarlyb rdT etsCac (
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver,
+  ): Cl ent =
+     mcac Store. mcac dCl ent(
+      na  = Cl entNa (" mcac -crm xer-earlyb rd-t ets"),
+      dest = ZkEndPo nt(earlyb rdT etsCac Dest()),
+      statsRece ver = statsRece ver.scope("cac _cl ent"),
+      serv ce dent f er = serv ce dent f er,
+      t  out = T ME_OUT
     )
 }

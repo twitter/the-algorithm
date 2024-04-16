@@ -1,15 +1,15 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.flockdb.client.QuotersGraph
-import com.twitter.flockdb.client.TFlockClient
-import com.twitter.stitch.Stitch
+ mport com.tw ter.flockdb.cl ent.QuotersGraph
+ mport com.tw ter.flockdb.cl ent.TFlockCl ent
+ mport com.tw ter.st ch.St ch
 
-object QuoterHasAlreadyQuotedRepository {
-  type Type = (TweetId, UserId) => Stitch[Boolean]
+object QuoterHasAlreadyQuotedRepos ory {
+  type Type = (T et d, User d) => St ch[Boolean]
 
   def apply(
-    tflockReadClient: TFlockClient
+    tflockReadCl ent: TFlockCl ent
   ): Type =
-    (tweetId, userId) => Stitch.callFuture(tflockReadClient.contains(QuotersGraph, tweetId, userId))
+    (t et d, user d) => St ch.callFuture(tflockReadCl ent.conta ns(QuotersGraph, t et d, user d))
 }

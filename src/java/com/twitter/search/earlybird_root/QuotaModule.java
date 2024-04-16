@@ -1,110 +1,110 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import javax.annotation.Nullable;
-import javax.inject.Named;
-import javax.inject.Singleton;
+ mport java.ut l.concurrent.Executors;
+ mport java.ut l.concurrent.Sc duledExecutorServ ce;
+ mport javax.annotat on.Nullable;
+ mport javax. nject.Na d;
+ mport javax. nject.S ngleton;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.google.common.util.concurrent.TwitterRateLimiterProxyFactory;
-import com.google.inject.Provides;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.ut l.concurrent.ThreadFactoryBu lder;
+ mport com.google.common.ut l.concurrent.Tw terRateL m erProxyFactory;
+ mport com.google. nject.Prov des;
 
-import com.twitter.app.Flag;
-import com.twitter.app.Flaggable;
-import com.twitter.common.util.Clock;
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.earlybird_root.filters.ClientIdArchiveAccessFilter;
-import com.twitter.search.earlybird_root.filters.ClientIdQuotaFilter;
-import com.twitter.search.earlybird_root.filters.DisableClientByTierFilter;
-import com.twitter.search.earlybird_root.quota.ConfigBasedQuotaConfig;
-import com.twitter.search.earlybird_root.quota.ConfigRepoBasedQuotaManager;
+ mport com.tw ter.app.Flag;
+ mport com.tw ter.app.Flaggable;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter. nject.Tw terModule;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.earlyb rd_root.f lters.Cl ent dArch veAccessF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters.Cl ent dQuotaF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters.D sableCl entByT erF lter;
+ mport com.tw ter.search.earlyb rd_root.quota.Conf gBasedQuotaConf g;
+ mport com.tw ter.search.earlyb rd_root.quota.Conf gRepoBasedQuotaManager;
 
-public class QuotaModule extends TwitterModule {
-  @VisibleForTesting
-  public static final String NAMED_QUOTA_CONFIG_PATH = "quotaConfigPath";
-  public static final String NAMED_CLIENT_QUOTA_KEY = "clientQuotaKey";
-  private static final String NAMED_REQUIRE_QUOTA_CONFIG_FOR_CLIENTS
-      = "requireQuotaConfigForClients";
+publ c class QuotaModule extends Tw terModule {
+  @V s bleForTest ng
+  publ c stat c f nal Str ng NAMED_QUOTA_CONF G_PATH = "quotaConf gPath";
+  publ c stat c f nal Str ng NAMED_CL ENT_QUOTA_KEY = "cl entQuotaKey";
+  pr vate stat c f nal Str ng NAMED_REQU RE_QUOTA_CONF G_FOR_CL ENTS
+      = "requ reQuotaConf gForCl ents";
 
-  private final Flag<String> quotaConfigPathFlag = createMandatoryFlag(
-      "quota_config_path",
+  pr vate f nal Flag<Str ng> quotaConf gPathFlag = createMandatoryFlag(
+      "quota_conf g_path",
       "",
-      "Path to the quota config file",
-      Flaggable.ofString());
+      "Path to t  quota conf g f le",
+      Flaggable.ofStr ng());
 
-  private final Flag<String> clientQuotaKeyFlag = createFlag(
-      "client_quota_key",
+  pr vate f nal Flag<Str ng> cl entQuotaKeyFlag = createFlag(
+      "cl ent_quota_key",
       "quota",
-      "The key that will be used to extract client quotas",
-      Flaggable.ofString());
+      "T  key that w ll be used to extract cl ent quotas",
+      Flaggable.ofStr ng());
 
-  private final Flag<Boolean> requireQuotaConfigForClientsFlag = createFlag(
-      "require_quota_config_for_clients",
+  pr vate f nal Flag<Boolean> requ reQuotaConf gForCl entsFlag = createFlag(
+      "requ re_quota_conf g_for_cl ents",
       true,
-      "If true, require a quota value under <client_quota_key> for each client in the config",
+      " f true, requ re a quota value under <cl ent_quota_key> for each cl ent  n t  conf g",
       Flaggable.ofJavaBoolean());
 
-  @Provides
-  @Singleton
-  @Named(NAMED_QUOTA_CONFIG_PATH)
-  String provideQuotaConfigPath() {
-    return quotaConfigPathFlag.apply();
+  @Prov des
+  @S ngleton
+  @Na d(NAMED_QUOTA_CONF G_PATH)
+  Str ng prov deQuotaConf gPath() {
+    return quotaConf gPathFlag.apply();
   }
 
-  @Provides
-  @Singleton
-  @Named(NAMED_CLIENT_QUOTA_KEY)
-  String provideClientQuotaKey() {
-    return clientQuotaKeyFlag.apply();
+  @Prov des
+  @S ngleton
+  @Na d(NAMED_CL ENT_QUOTA_KEY)
+  Str ng prov deCl entQuotaKey() {
+    return cl entQuotaKeyFlag.apply();
   }
 
-  @Provides
-  @Singleton
-  @Named(NAMED_REQUIRE_QUOTA_CONFIG_FOR_CLIENTS)
-  boolean provideRequireQuotaConfigForClients() {
-    return requireQuotaConfigForClientsFlag.apply();
+  @Prov des
+  @S ngleton
+  @Na d(NAMED_REQU RE_QUOTA_CONF G_FOR_CL ENTS)
+  boolean prov deRequ reQuotaConf gForCl ents() {
+    return requ reQuotaConf gForCl entsFlag.apply();
   }
 
-  @Provides
-  @Singleton
-  ClientIdQuotaFilter provideConfigRepoBasedClientIdQuotaFilter(
-      ConfigRepoBasedQuotaManager configRepoBasedQuotaManager,
-      TwitterRateLimiterProxyFactory rateLimiterProxyFactory) throws Exception {
-    return new ClientIdQuotaFilter(configRepoBasedQuotaManager, rateLimiterProxyFactory);
+  @Prov des
+  @S ngleton
+  Cl ent dQuotaF lter prov deConf gRepoBasedCl ent dQuotaF lter(
+      Conf gRepoBasedQuotaManager conf gRepoBasedQuotaManager,
+      Tw terRateL m erProxyFactory rateL m erProxyFactory) throws Except on {
+    return new Cl ent dQuotaF lter(conf gRepoBasedQuotaManager, rateL m erProxyFactory);
   }
 
-  @Provides
-  @Singleton
-  ConfigBasedQuotaConfig providesConfigBasedQuotaConfig(
-      @Nullable @Named(NAMED_QUOTA_CONFIG_PATH) String quotaConfigPath,
-      @Nullable @Named(NAMED_CLIENT_QUOTA_KEY) String clientQuotaKey,
-      @Nullable @Named(NAMED_REQUIRE_QUOTA_CONFIG_FOR_CLIENTS) boolean requireQuotaConfigForClients,
+  @Prov des
+  @S ngleton
+  Conf gBasedQuotaConf g prov desConf gBasedQuotaConf g(
+      @Nullable @Na d(NAMED_QUOTA_CONF G_PATH) Str ng quotaConf gPath,
+      @Nullable @Na d(NAMED_CL ENT_QUOTA_KEY) Str ng cl entQuotaKey,
+      @Nullable @Na d(NAMED_REQU RE_QUOTA_CONF G_FOR_CL ENTS) boolean requ reQuotaConf gForCl ents,
       Clock clock
-  ) throws Exception {
-    ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor(
-        new ThreadFactoryBuilder()
-            .setNameFormat("quota-config-reloader")
+  ) throws Except on {
+    Sc duledExecutorServ ce executorServ ce = Executors.newS ngleThreadSc duledExecutor(
+        new ThreadFactoryBu lder()
+            .setNa Format("quota-conf g-reloader")
             .setDaemon(true)
-            .build());
-    return ConfigBasedQuotaConfig.newConfigBasedQuotaConfig(
-        quotaConfigPath, clientQuotaKey, requireQuotaConfigForClients, executorService, clock);
+            .bu ld());
+    return Conf gBasedQuotaConf g.newConf gBasedQuotaConf g(
+        quotaConf gPath, cl entQuotaKey, requ reQuotaConf gForCl ents, executorServ ce, clock);
   }
 
-  @Provides
-  @Singleton
-  DisableClientByTierFilter provideDisableClientByTierFilter(
-      ConfigRepoBasedQuotaManager configRepoBasedQuotaManager,
-      SearchDecider searchDecider) {
-    return new DisableClientByTierFilter(configRepoBasedQuotaManager, searchDecider);
+  @Prov des
+  @S ngleton
+  D sableCl entByT erF lter prov deD sableCl entByT erF lter(
+      Conf gRepoBasedQuotaManager conf gRepoBasedQuotaManager,
+      SearchDec der searchDec der) {
+    return new D sableCl entByT erF lter(conf gRepoBasedQuotaManager, searchDec der);
   }
 
-  @Provides
-  @Singleton
-  ClientIdArchiveAccessFilter clientIdArchiveAccessFilter(
-      ConfigRepoBasedQuotaManager configRepoBasedQuotaManager) {
-    return new ClientIdArchiveAccessFilter(configRepoBasedQuotaManager);
+  @Prov des
+  @S ngleton
+  Cl ent dArch veAccessF lter cl ent dArch veAccessF lter(
+      Conf gRepoBasedQuotaManager conf gRepoBasedQuotaManager) {
+    return new Cl ent dArch veAccessF lter(conf gRepoBasedQuotaManager);
   }
 }

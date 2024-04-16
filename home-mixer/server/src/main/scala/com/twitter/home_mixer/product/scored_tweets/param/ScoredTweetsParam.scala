@@ -1,361 +1,361 @@
-package com.twitter.home_mixer.product.scored_tweets.param
+package com.tw ter.ho _m xer.product.scored_t ets.param
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.param.decider.DeciderKey
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.decider.BooleanDeciderParam
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.ho _m xer.param.dec der.Dec derKey
+ mport com.tw ter.t  l nes.conf gap .Durat onConvers on
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .HasDurat onConvers on
+ mport com.tw ter.t  l nes.conf gap .dec der.BooleanDec derParam
+ mport com.tw ter.ut l.Durat on
 
-object ScoredTweetsParam {
-  val SupportedClientFSName = "scored_tweets_supported_client"
+object ScoredT etsParam {
+  val SupportedCl entFSNa  = "scored_t ets_supported_cl ent"
 
-  object CandidatePipeline {
-    object EnableInNetworkParam
-        extends BooleanDeciderParam(DeciderKey.EnableScoredTweetsInNetworkCandidatePipeline)
+  object Cand dateP pel ne {
+    object Enable nNetworkParam
+        extends BooleanDec derParam(Dec derKey.EnableScoredT ets nNetworkCand dateP pel ne)
 
-    object EnableTweetMixerParam
-        extends BooleanDeciderParam(DeciderKey.EnableScoredTweetsTweetMixerCandidatePipeline)
+    object EnableT etM xerParam
+        extends BooleanDec derParam(Dec derKey.EnableScoredT etsT etM xerCand dateP pel ne)
 
     object EnableUtegParam
-        extends BooleanDeciderParam(DeciderKey.EnableScoredTweetsUtegCandidatePipeline)
+        extends BooleanDec derParam(Dec derKey.EnableScoredT etsUtegCand dateP pel ne)
 
     object EnableFrsParam
-        extends BooleanDeciderParam(DeciderKey.EnableScoredTweetsFrsCandidatePipeline)
+        extends BooleanDec derParam(Dec derKey.EnableScoredT etsFrsCand dateP pel ne)
 
-    object EnableListsParam
-        extends BooleanDeciderParam(DeciderKey.EnableScoredTweetsListsCandidatePipeline)
+    object EnableL stsParam
+        extends BooleanDec derParam(Dec derKey.EnableScoredT etsL stsCand dateP pel ne)
 
-    object EnablePopularVideosParam
-        extends BooleanDeciderParam(DeciderKey.EnableScoredTweetsPopularVideosCandidatePipeline)
+    object EnablePopularV deosParam
+        extends BooleanDec derParam(Dec derKey.EnableScoredT etsPopularV deosCand dateP pel ne)
 
-    object EnableBackfillParam
-        extends BooleanDeciderParam(DeciderKey.EnableScoredTweetsBackfillCandidatePipeline)
+    object EnableBackf llParam
+        extends BooleanDec derParam(Dec derKey.EnableScoredT etsBackf llCand dateP pel ne)
   }
 
-  object EnableBackfillCandidatePipelineParam
+  object EnableBackf llCand dateP pel neParam
       extends FSParam[Boolean](
-        name = "scored_tweets_enable_backfill_candidate_pipeline",
+        na  = "scored_t ets_enable_backf ll_cand date_p pel ne",
         default = true
       )
 
-  object QualityFactor {
-    object InNetworkMaxTweetsToScoreParam
-        extends FSBoundedParam[Int](
-          name = "scored_tweets_quality_factor_earlybird_max_tweets_to_score",
+  object Qual yFactor {
+    object  nNetworkMaxT etsToScoreParam
+        extends FSBoundedParam[ nt](
+          na  = "scored_t ets_qual y_factor_earlyb rd_max_t ets_to_score",
           default = 500,
-          min = 0,
+          m n = 0,
           max = 10000
         )
 
-    object UtegMaxTweetsToScoreParam
-        extends FSBoundedParam[Int](
-          name = "scored_tweets_quality_factor_uteg_max_tweets_to_score",
+    object UtegMaxT etsToScoreParam
+        extends FSBoundedParam[ nt](
+          na  = "scored_t ets_qual y_factor_uteg_max_t ets_to_score",
           default = 500,
-          min = 0,
+          m n = 0,
           max = 10000
         )
 
-    object FrsMaxTweetsToScoreParam
-        extends FSBoundedParam[Int](
-          name = "scored_tweets_quality_factor_frs_max_tweets_to_score",
+    object FrsMaxT etsToScoreParam
+        extends FSBoundedParam[ nt](
+          na  = "scored_t ets_qual y_factor_frs_max_t ets_to_score",
           default = 500,
-          min = 0,
+          m n = 0,
           max = 10000
         )
 
-    object TweetMixerMaxTweetsToScoreParam
-        extends FSBoundedParam[Int](
-          name = "scored_tweets_quality_factor_tweet_mixer_max_tweets_to_score",
+    object T etM xerMaxT etsToScoreParam
+        extends FSBoundedParam[ nt](
+          na  = "scored_t ets_qual y_factor_t et_m xer_max_t ets_to_score",
           default = 500,
-          min = 0,
+          m n = 0,
           max = 10000
         )
 
-    object ListsMaxTweetsToScoreParam
-        extends FSBoundedParam[Int](
-          name = "scored_tweets_quality_factor_lists_max_tweets_to_score",
+    object L stsMaxT etsToScoreParam
+        extends FSBoundedParam[ nt](
+          na  = "scored_t ets_qual y_factor_l sts_max_t ets_to_score",
           default = 500,
-          min = 0,
+          m n = 0,
           max = 100
         )
 
-    object PopularVideosMaxTweetsToScoreParam
-        extends FSBoundedParam[Int](
-          name = "scored_tweets_quality_factor_popular_videos_max_tweets_to_score",
+    object PopularV deosMaxT etsToScoreParam
+        extends FSBoundedParam[ nt](
+          na  = "scored_t ets_qual y_factor_popular_v deos_max_t ets_to_score",
           default = 40,
-          min = 0,
+          m n = 0,
           max = 10000
         )
 
-    object BackfillMaxTweetsToScoreParam
-        extends FSBoundedParam[Int](
-          name = "scored_tweets_quality_factor_backfill_max_tweets_to_score",
+    object Backf llMaxT etsToScoreParam
+        extends FSBoundedParam[ nt](
+          na  = "scored_t ets_qual y_factor_backf ll_max_t ets_to_score",
           default = 500,
-          min = 0,
+          m n = 0,
           max = 10000
         )
   }
 
   object ServerMaxResultsParam
-      extends FSBoundedParam[Int](
-        name = "scored_tweets_server_max_results",
+      extends FSBoundedParam[ nt](
+        na  = "scored_t ets_server_max_results",
         default = 120,
-        min = 1,
+        m n = 1,
         max = 500
       )
 
-  object MaxInNetworkResultsParam
-      extends FSBoundedParam[Int](
-        name = "scored_tweets_max_in_network_results",
+  object Max nNetworkResultsParam
+      extends FSBoundedParam[ nt](
+        na  = "scored_t ets_max_ n_network_results",
         default = 60,
-        min = 1,
+        m n = 1,
         max = 500
       )
 
   object MaxOutOfNetworkResultsParam
-      extends FSBoundedParam[Int](
-        name = "scored_tweets_max_out_of_network_results",
+      extends FSBoundedParam[ nt](
+        na  = "scored_t ets_max_out_of_network_results",
         default = 60,
-        min = 1,
+        m n = 1,
         max = 500
       )
 
-  object CachedScoredTweets {
+  object Cac dScoredT ets {
     object TTLParam
-        extends FSBoundedParam[Duration](
-          name = "scored_tweets_cached_scored_tweets_ttl_minutes",
-          default = 3.minutes,
-          min = 0.minute,
-          max = 60.minutes
+        extends FSBoundedParam[Durat on](
+          na  = "scored_t ets_cac d_scored_t ets_ttl_m nutes",
+          default = 3.m nutes,
+          m n = 0.m nute,
+          max = 60.m nutes
         )
-        with HasDurationConversion {
-      override val durationConversion: DurationConversion = DurationConversion.FromMinutes
+        w h HasDurat onConvers on {
+      overr de val durat onConvers on: Durat onConvers on = Durat onConvers on.FromM nutes
     }
 
-    object MinCachedTweetsParam
-        extends FSBoundedParam[Int](
-          name = "scored_tweets_cached_scored_tweets_min_cached_tweets",
+    object M nCac dT etsParam
+        extends FSBoundedParam[ nt](
+          na  = "scored_t ets_cac d_scored_t ets_m n_cac d_t ets",
           default = 30,
-          min = 0,
+          m n = 0,
           max = 1000
         )
   }
 
-  object Scoring {
-    object HomeModelParam
-        extends FSParam[String](name = "scored_tweets_home_model", default = "Home")
+  object Scor ng {
+    object Ho ModelParam
+        extends FSParam[Str ng](na  = "scored_t ets_ho _model", default = "Ho ")
 
-    object ModelWeights {
+    object Model  ghts {
 
       object FavParam
           extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_fav",
+            na  = "scored_t ets_model_  ght_fav",
             default = 1.0,
-            min = 0.0,
+            m n = 0.0,
             max = 100.0
           )
 
-      object RetweetParam
+      object Ret etParam
           extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_retweet",
+            na  = "scored_t ets_model_  ght_ret et",
             default = 1.0,
-            min = 0.0,
+            m n = 0.0,
             max = 100.0
           )
 
       object ReplyParam
           extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_reply",
+            na  = "scored_t ets_model_  ght_reply",
             default = 1.0,
-            min = 0.0,
+            m n = 0.0,
             max = 100.0
           )
 
-      object GoodProfileClickParam
+      object GoodProf leCl ckParam
           extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_good_profile_click",
+            na  = "scored_t ets_model_  ght_good_prof le_cl ck",
             default = 1.0,
-            min = 0.0,
+            m n = 0.0,
             max = 1000000.0
           )
 
-      object VideoPlayback50Param
+      object V deoPlayback50Param
           extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_video_playback50",
+            na  = "scored_t ets_model_  ght_v deo_playback50",
             default = 1.0,
-            min = 0.0,
+            m n = 0.0,
             max = 100.0
           )
 
       object ReplyEngagedByAuthorParam
           extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_reply_engaged_by_author",
+            na  = "scored_t ets_model_  ght_reply_engaged_by_author",
             default = 1.0,
-            min = 0.0,
+            m n = 0.0,
             max = 200.0
           )
 
-      object GoodClickParam
+      object GoodCl ckParam
           extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_good_click",
+            na  = "scored_t ets_model_  ght_good_cl ck",
             default = 1.0,
-            min = 0.0,
+            m n = 0.0,
             max = 1000000.0
           )
 
-      object GoodClickV2Param
+      object GoodCl ckV2Param
           extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_good_click_v2",
+            na  = "scored_t ets_model_  ght_good_cl ck_v2",
             default = 1.0,
-            min = 0.0,
+            m n = 0.0,
             max = 1000000.0
           )
 
-      object TweetDetailDwellParam
+      object T etDeta lD llParam
           extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_tweet_detail_dwell",
+            na  = "scored_t ets_model_  ght_t et_deta l_d ll",
             default = 0.0,
-            min = 0.0,
+            m n = 0.0,
             max = 100.0
           )
 
-      object ProfileDwelledParam
+      object Prof leD lledParam
           extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_profile_dwelled",
+            na  = "scored_t ets_model_  ght_prof le_d lled",
             default = 0.0,
-            min = 0.0,
+            m n = 0.0,
             max = 100.0
           )
 
       object BookmarkParam
           extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_bookmark",
+            na  = "scored_t ets_model_  ght_bookmark",
             default = 0.0,
-            min = 0.0,
+            m n = 0.0,
             max = 100.0
           )
 
       object ShareParam
           extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_share",
+            na  = "scored_t ets_model_  ght_share",
             default = 0.0,
-            min = 0.0,
+            m n = 0.0,
             max = 100.0
           )
 
-      object ShareMenuClickParam
+      object Share nuCl ckParam
           extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_share_menu_click",
+            na  = "scored_t ets_model_  ght_share_ nu_cl ck",
             default = 0.0,
-            min = 0.0,
+            m n = 0.0,
             max = 100.0
           )
 
-      object NegativeFeedbackV2Param
+      object Negat veFeedbackV2Param
           extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_negative_feedback_v2",
+            na  = "scored_t ets_model_  ght_negat ve_feedback_v2",
             default = 1.0,
-            min = -1000.0,
+            m n = -1000.0,
             max = 0.0
           )
 
       object ReportParam
           extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_report",
+            na  = "scored_t ets_model_  ght_report",
             default = 1.0,
-            min = -20000.0,
+            m n = -20000.0,
             max = 0.0
           )
 
-      object WeakNegativeFeedbackParam
+      object  akNegat veFeedbackParam
           extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_weak_negative_feedback",
+            na  = "scored_t ets_model_  ght_ ak_negat ve_feedback",
             default = 0.0,
-            min = -1000.0,
+            m n = -1000.0,
             max = 0.0
           )
 
-      object StrongNegativeFeedbackParam
+      object StrongNegat veFeedbackParam
           extends FSBoundedParam[Double](
-            name = "scored_tweets_model_weight_strong_negative_feedback",
+            na  = "scored_t ets_model_  ght_strong_negat ve_feedback",
             default = 0.0,
-            min = -1000.0,
+            m n = -1000.0,
             max = 0.0
           )
     }
   }
 
-  object EnableSimClustersSimilarityFeatureHydrationDeciderParam
-      extends BooleanDeciderParam(decider = DeciderKey.EnableSimClustersSimilarityFeatureHydration)
+  object EnableS mClustersS m lar yFeatureHydrat onDec derParam
+      extends BooleanDec derParam(dec der = Dec derKey.EnableS mClustersS m lar yFeatureHydrat on)
 
-  object CompetitorSetParam
-      extends FSParam[Set[Long]](name = "scored_tweets_competitor_list", default = Set.empty)
+  object Compet orSetParam
+      extends FSParam[Set[Long]](na  = "scored_t ets_compet or_l st", default = Set.empty)
 
-  object CompetitorURLSeqParam
-      extends FSParam[Seq[String]](name = "scored_tweets_competitor_url_list", default = Seq.empty)
+  object Compet orURLSeqParam
+      extends FSParam[Seq[Str ng]](na  = "scored_t ets_compet or_url_l st", default = Seq.empty)
 
-  object BlueVerifiedAuthorInNetworkMultiplierParam
+  object BlueVer f edAuthor nNetworkMult pl erParam
       extends FSBoundedParam[Double](
-        name = "scored_tweets_blue_verified_author_in_network_multiplier",
+        na  = "scored_t ets_blue_ver f ed_author_ n_network_mult pl er",
         default = 4.0,
-        min = 0.0,
+        m n = 0.0,
         max = 100.0
       )
 
-  object BlueVerifiedAuthorOutOfNetworkMultiplierParam
+  object BlueVer f edAuthorOutOfNetworkMult pl erParam
       extends FSBoundedParam[Double](
-        name = "scored_tweets_blue_verified_author_out_of_network_multiplier",
+        na  = "scored_t ets_blue_ver f ed_author_out_of_network_mult pl er",
         default = 2.0,
-        min = 0.0,
+        m n = 0.0,
         max = 100.0
       )
 
-  object CreatorInNetworkMultiplierParam
+  object Creator nNetworkMult pl erParam
       extends FSBoundedParam[Double](
-        name = "scored_tweets_creator_in_network_multiplier",
+        na  = "scored_t ets_creator_ n_network_mult pl er",
         default = 1.1,
-        min = 0.0,
+        m n = 0.0,
         max = 100.0
       )
 
-  object CreatorOutOfNetworkMultiplierParam
+  object CreatorOutOfNetworkMult pl erParam
       extends FSBoundedParam[Double](
-        name = "scored_tweets_creator_out_of_network_multiplier",
+        na  = "scored_t ets_creator_out_of_network_mult pl er",
         default = 1.3,
-        min = 0.0,
+        m n = 0.0,
         max = 100.0
       )
 
   object OutOfNetworkScaleFactorParam
       extends FSBoundedParam[Double](
-        name = "scored_tweets_out_of_network_scale_factor",
+        na  = "scored_t ets_out_of_network_scale_factor",
         default = 1.0,
-        min = 0.0,
+        m n = 0.0,
         max = 100.0
       )
 
-  object EnableScribeScoredCandidatesParam
-      extends FSParam[Boolean](name = "scored_tweets_enable_scribing", default = false)
+  object EnableScr beScoredCand datesParam
+      extends FSParam[Boolean](na  = "scored_t ets_enable_scr b ng", default = false)
 
-  object EarlybirdTensorflowModel {
+  object Earlyb rdTensorflowModel {
 
-    object InNetworkParam
-        extends FSParam[String](
-          name = "scored_tweets_in_network_earlybird_tensorflow_model",
-          default = "timelines_recap_replica")
+    object  nNetworkParam
+        extends FSParam[Str ng](
+          na  = "scored_t ets_ n_network_earlyb rd_tensorflow_model",
+          default = "t  l nes_recap_repl ca")
 
     object FrsParam
-        extends FSParam[String](
-          name = "scored_tweets_frs_earlybird_tensorflow_model",
-          default = "timelines_rectweet_replica")
+        extends FSParam[Str ng](
+          na  = "scored_t ets_frs_earlyb rd_tensorflow_model",
+          default = "t  l nes_rect et_repl ca")
 
     object UtegParam
-        extends FSParam[String](
-          name = "scored_tweets_uteg_earlybird_tensorflow_model",
-          default = "timelines_rectweet_replica")
+        extends FSParam[Str ng](
+          na  = "scored_t ets_uteg_earlyb rd_tensorflow_model",
+          default = "t  l nes_rect et_repl ca")
   }
 
 }

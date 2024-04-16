@@ -1,15 +1,15 @@
-package com.twitter.follow_recommendations.common.constants
+package com.tw ter.follow_recom ndat ons.common.constants
 
-import com.twitter.conversions.StorageUnitOps._
+ mport com.tw ter.convers ons.StorageUn Ops._
 
-object ServiceConstants {
+object Serv ceConstants {
 
-  /** thrift client response size limits
-   *  these were estimated using monitoring dashboard
+  /** thr ft cl ent response s ze l m s
+   *  t se  re est mated us ng mon or ng dashboard
    *  3MB network usage per second / 25 rps ~ 120KB/req << 1MB
-   *  we give some buffer here in case some requests require more data than others
+   *    g ve so  buffer  re  n case so  requests requ re more data than ot rs
    */
-  val StringLengthLimit: Long =
-    10.megabyte.inBytes
-  val ContainerLengthLimit: Long = 1.megabyte.inBytes
+  val Str ngLengthL m : Long =
+    10. gabyte. nBytes
+  val Conta nerLengthL m : Long = 1. gabyte. nBytes
 }

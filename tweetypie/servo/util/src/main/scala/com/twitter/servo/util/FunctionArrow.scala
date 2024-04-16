@@ -1,75 +1,75 @@
-package com.twitter.servo.util
+package com.tw ter.servo.ut l
 
 /**
- * A collection of FunctionArrow factory functions.
+ * A collect on of Funct onArrow factory funct ons.
  */
-object FunctionArrow {
-  def apply[A, B](f: A => B): FunctionArrow[A, B] = fromFunction(f)
+object Funct onArrow {
+  def apply[A, B](f: A => B): Funct onArrow[A, B] = fromFunct on(f)
 
   /**
-   * Produce an FunctionArrow from a function `A => B`.
+   * Produce an Funct onArrow from a funct on `A => B`.
    */
-  def fromFunction[A, B](f: A => B): FunctionArrow[A, B] =
-    new FunctionArrow[A, B] {
+  def fromFunct on[A, B](f: A => B): Funct onArrow[A, B] =
+    new Funct onArrow[A, B] {
       def apply(a: A): B = f(a)
     }
 
   /**
-   * Produces a FunctionArrow with no side-effects that simply returns its argument.
+   * Produces a Funct onArrow w h no s de-effects that s mply returns  s argu nt.
    */
-  def identity[A]: FunctionArrow[A, A] = apply(Predef.identity[A])
+  def  dent y[A]: Funct onArrow[A, A] = apply(Predef. dent y[A])
 
   /**
-   * Appends two FunctionArrows together.
+   * Appends two Funct onArrows toget r.
    *
-   * This forms a monoid with 'identity'.
+   * T  forms a mono d w h ' dent y'.
    */
-  def append[A, B, C](a: FunctionArrow[A, B], b: FunctionArrow[B, C]): FunctionArrow[A, C] =
-    a.andThen(b)
+  def append[A, B, C](a: Funct onArrow[A, B], b: Funct onArrow[B, C]): Funct onArrow[A, C] =
+    a.andT n(b)
 
   /**
-   * Produce an FunctionArrow that applies an Effect, returning the argument
-   * value as-is.
+   * Produce an Funct onArrow that appl es an Effect, return ng t  argu nt
+   * value as- s.
    */
-  def effect[A](effect: Effect[A]): FunctionArrow[A, A] = apply { a =>
+  def effect[A](effect: Effect[A]): Funct onArrow[A, A] = apply { a =>
     effect(a); a
   }
 
   /**
-   * Produces an FunctionArrow that proxies to one of two others, depending on a
-   * predicate.
+   * Produces an Funct onArrow that prox es to one of two ot rs, depend ng on a
+   * pred cate.
    */
   def choose[A, B](
-    predicate: A => Boolean,
-    ifTrue: FunctionArrow[A, B],
-    ifFalse: FunctionArrow[A, B]
-  ): FunctionArrow[A, B] =
+    pred cate: A => Boolean,
+     fTrue: Funct onArrow[A, B],
+     fFalse: Funct onArrow[A, B]
+  ): Funct onArrow[A, B] =
     apply { a: A =>
-      if (predicate(a)) ifTrue(a) else ifFalse(a)
+       f (pred cate(a))  fTrue(a) else  fFalse(a)
     }
 
   /**
-   * Produces an FunctionArrow whose application is guarded by a predicate. `f` is
-   * applied if the predicate returns true, otherwise the argument is simply
+   * Produces an Funct onArrow whose appl cat on  s guarded by a pred cate. `f`  s
+   * appl ed  f t  pred cate returns true, ot rw se t  argu nt  s s mply
    * returned.
    */
-  def onlyIf[A](predicate: A => Boolean, f: FunctionArrow[A, A]): FunctionArrow[A, A] =
-    choose(predicate, f, identity[A])
+  def only f[A](pred cate: A => Boolean, f: Funct onArrow[A, A]): Funct onArrow[A, A] =
+    choose(pred cate, f,  dent y[A])
 }
 
 /**
- * A function encapsulating a computation.
+ * A funct on encapsulat ng a computat on.
  *
- * Background on the Arrow abstraction:
- * http://en.wikipedia.org/wiki/Arrow_(computer_science)
+ * Background on t  Arrow abstract on:
+ * http://en.w k ped a.org/w k /Arrow_(computer_sc ence)
  */
-trait FunctionArrow[-A, +B] extends (A => B) { self =>
+tra  Funct onArrow[-A, +B] extends (A => B) { self =>
 
   /**
-   * Composes two FunctionArrows. Produces a new FunctionArrow that performs both in series.
+   * Composes two Funct onArrows. Produces a new Funct onArrow that performs both  n ser es.
    */
-  def andThen[C](next: FunctionArrow[B, C]): FunctionArrow[A, C] =
-    new FunctionArrow[A, C] {
-      override def apply(a: A) = next.apply(self(a))
+  def andT n[C](next: Funct onArrow[B, C]): Funct onArrow[A, C] =
+    new Funct onArrow[A, C] {
+      overr de def apply(a: A) = next.apply(self(a))
     }
 }

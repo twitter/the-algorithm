@@ -1,57 +1,57 @@
-package com.twitter.simclusters_v2.scalding.topic_recommendations.model_based_topic_recommendations
+package com.tw ter.s mclusters_v2.scald ng.top c_recom ndat ons.model_based_top c_recom ndat ons
 
-import com.twitter.ml.api.{Feature, FeatureContext}
-import com.twitter.ml.api.constant.SharedFeatures
+ mport com.tw ter.ml.ap .{Feature, FeatureContext}
+ mport com.tw ter.ml.ap .constant.SharedFeatures
 
 object UserFeatures {
-  val UserIdFeature = SharedFeatures.USER_ID // User-id
+  val User dFeature = SharedFeatures.USER_ D // User- d
 
-  val UserSimClusterFeatures =
-    new Feature.SparseContinuous(
-      "user.simclusters.interested_in"
-    ) // User's interestedIn simcluster embeddding
+  val UserS mClusterFeatures =
+    new Feature.SparseCont nuous(
+      "user.s mclusters. nterested_ n"
+    ) // User's  nterested n s mcluster embeddd ng
 
   val UserCountryFeature = new Feature.Text("user.country") // user's country code
 
   val UserLanguageFeature = new Feature.Text("user.language") // user's language
 
-  val FollowedTopicIdFeatures =
-    new Feature.SparseBinary(
-      "followed_topics.id"
-    ) // SparseBinary features for the set of followed topics
+  val Follo dTop c dFeatures =
+    new Feature.SparseB nary(
+      "follo d_top cs. d"
+    ) // SparseB nary features for t  set of follo d top cs
 
-  val NotInterestedTopicIdFeatures =
-    new Feature.SparseBinary(
-      "not_interested_topics.id"
-    ) // SparseBinary features for the set of not-interested topics
+  val Not nterestedTop c dFeatures =
+    new Feature.SparseB nary(
+      "not_ nterested_top cs. d"
+    ) // SparseB nary features for t  set of not- nterested top cs
 
-  val FollowedTopicSimClusterAvgFeatures =
-    new Feature.SparseContinuous(
-      "followed_topics.simclusters.avg"
-    ) // Average SimCluster Embedding of the followed topics
+  val Follo dTop cS mClusterAvgFeatures =
+    new Feature.SparseCont nuous(
+      "follo d_top cs.s mclusters.avg"
+    ) // Average S mCluster Embedd ng of t  follo d top cs
 
-  val NotInterestedTopicSimClusterAvgFeatures =
-    new Feature.SparseContinuous(
-      "not_interested_topics.simclusters.avg"
-    ) // Average SimCluster Embedding of the followed topics
+  val Not nterestedTop cS mClusterAvgFeatures =
+    new Feature.SparseCont nuous(
+      "not_ nterested_top cs.s mclusters.avg"
+    ) // Average S mCluster Embedd ng of t  follo d top cs
 
-  val TargetTopicIdFeatures = new Feature.Discrete("target_topic.id") // target topic-id
+  val TargetTop c dFeatures = new Feature.D screte("target_top c. d") // target top c- d
 
-  val TargetTopicSimClustersFeature =
-    new Feature.SparseContinuous(
-      "target_topic.simclusters"
-    ) // SimCluster embedding of the target topic
+  val TargetTop cS mClustersFeature =
+    new Feature.SparseCont nuous(
+      "target_top c.s mclusters"
+    ) // S mCluster embedd ng of t  target top c
 
   val FeatureContext = new FeatureContext(
-    UserIdFeature,
-    UserSimClusterFeatures,
+    User dFeature,
+    UserS mClusterFeatures,
     UserCountryFeature,
     UserLanguageFeature,
-    FollowedTopicIdFeatures,
-    NotInterestedTopicIdFeatures,
-    FollowedTopicSimClusterAvgFeatures,
-    NotInterestedTopicSimClusterAvgFeatures,
-    TargetTopicIdFeatures,
-    TargetTopicSimClustersFeature
+    Follo dTop c dFeatures,
+    Not nterestedTop c dFeatures,
+    Follo dTop cS mClusterAvgFeatures,
+    Not nterestedTop cS mClusterAvgFeatures,
+    TargetTop c dFeatures,
+    TargetTop cS mClustersFeature
   )
 }

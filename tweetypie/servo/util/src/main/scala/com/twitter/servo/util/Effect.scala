@@ -1,83 +1,83 @@
-package com.twitter.servo.util
+package com.tw ter.servo.ut l
 
 object Effect {
   // a no-op effect
-  private[this] val _unit = Effect[Any] { _ =>
+  pr vate[t ] val _un  = Effect[Any] { _ =>
     ()
   }
 
   /**
-   * A "no-op" Effect.  For any effect E, (E also unit) == (unit also E) == E.
-   * Forms a monoid with `also`.
+   * A "no-op" Effect.  For any effect E, (E also un ) == (un  also E) == E.
+   * Forms a mono d w h `also`.
    */
-  def unit[A]: Effect[A] = _unit.asInstanceOf[Effect[A]]
+  def un [A]: Effect[A] = _un .as nstanceOf[Effect[A]]
 
   /**
-   * Package a function as an Effect.
+   * Package a funct on as an Effect.
    */
-  def apply[A](f: A => Unit): Effect[A] =
+  def apply[A](f: A => Un ): Effect[A] =
     new Effect[A] {
-      override def apply(value: A) = f(value)
+      overr de def apply(value: A) = f(value)
     }
 
   /**
-   * An effect that only applies to some values.
+   * An effect that only appl es to so  values.
    */
-  def fromPartial[A](f: PartialFunction[A, Unit]): Effect[A] =
+  def fromPart al[A](f: Part alFunct on[A, Un ]): Effect[A] =
     Effect[A] { x =>
-      if (f.isDefinedAt(x)) f(x)
+       f (f. sDef nedAt(x)) f(x)
     }
 }
 
 /**
- * Perform an effect with the given value, without altering the result.
+ * Perform an effect w h t  g ven value, w hout alter ng t  result.
  *
- * Forms a monoid with Effect.unit as unit and `also` as the combining operation.
+ * Forms a mono d w h Effect.un  as un  and `also` as t  comb n ng operat on.
  */
-trait Effect[A] extends (A => Unit) { self =>
+tra  Effect[A] extends (A => Un ) { self =>
 
   /**
-   * An identity function that executes this effect as a side-effect.
+   * An  dent y funct on that executes t  effect as a s de-effect.
    */
-  lazy val identity: A => A = { value =>
+  lazy val  dent y: A => A = { value =>
     self(value); value
   }
 
   /**
-   * Combine effects, so that both effects are performed.
-   * Forms a monoid with Effect.unit.
+   * Comb ne effects, so that both effects are perfor d.
+   * Forms a mono d w h Effect.un .
    */
   def also(next: Effect[A]): Effect[A] =
-    Effect[A](identity andThen next)
+    Effect[A]( dent y andT n next)
 
   /**
    * Convert an effect to an effect of a more general type by way
-   * of an extraction function. (contravariant map)
+   * of an extract on funct on. (contravar ant map)
    */
   def contramap[B](extract: B => A): Effect[B] =
-    Effect[B](extract andThen self)
+    Effect[B](extract andT n self)
 
   /**
-   * Perform this effect only if the provided gate returns true.
+   * Perform t  effect only  f t  prov ded gate returns true.
    */
   @deprecated("Use enabledBy(() => Boolean)", "2.5.1")
-  def enabledBy(enabled: Gate[Unit]): Effect[A] =
+  def enabledBy(enabled: Gate[Un ]): Effect[A] =
     enabledBy(() => enabled())
 
   /**
-   * Perform this effect only if the provided gate returns true.
+   * Perform t  effect only  f t  prov ded gate returns true.
    */
   def enabledBy(enabled: () => Boolean): Effect[A] =
-    onlyIf { _ =>
+    only f { _ =>
       enabled()
     }
 
   /**
-   * Perform this effect only if the provided predicate returns true
-   * for the input.
+   * Perform t  effect only  f t  prov ded pred cate returns true
+   * for t   nput.
    */
-  def onlyIf(predicate: A => Boolean) =
+  def only f(pred cate: A => Boolean) =
     Effect[A] { x =>
-      if (predicate(x)) this(x) else ()
+       f (pred cate(x)) t (x) else ()
     }
 }

@@ -1,58 +1,58 @@
-package com.twitter.servo.request
+package com.tw ter.servo.request
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ut l.Future
 
-object ClientRequestObserver {
-  private[request] val noClientIdKey = "no_client_id"
+object Cl entRequestObserver {
+  pr vate[request] val noCl ent dKey = "no_cl ent_ d"
 }
 
 /**
- * Provides per-request stats based on Finagle ClientId.
+ * Prov des per-request stats based on F nagle Cl ent d.
  *
- * @param statsReceiver the StatsReceiver used for counting
- * @param observeAuthorizationAttempts: if true (the default), observe all attempts. If false,
- *   only failures (unauthorized attempts) are observed.
+ * @param statsRece ver t  StatsRece ver used for count ng
+ * @param observeAuthor zat onAttempts:  f true (t  default), observe all attempts.  f false,
+ *   only fa lures (unauthor zed attempts) are observed.
  */
-class ClientRequestObserver(
-  statsReceiver: StatsReceiver,
-  observeAuthorizationAttempts: Boolean = true)
-    extends ((String, Option[Seq[String]]) => Future[Unit]) {
-  import ClientRequestObserver.noClientIdKey
+class Cl entRequestObserver(
+  statsRece ver: StatsRece ver,
+  observeAuthor zat onAttempts: Boolean = true)
+    extends ((Str ng, Opt on[Seq[Str ng]]) => Future[Un ]) {
+   mport Cl entRequestObserver.noCl ent dKey
 
-  protected[this] val scopedReceiver = statsReceiver.scope("client_request")
-  protected[this] val unauthorizedReceiver = scopedReceiver.scope("unauthorized")
-  protected[this] val unauthorizedCounter = scopedReceiver.counter("unauthorized")
+  protected[t ] val scopedRece ver = statsRece ver.scope("cl ent_request")
+  protected[t ] val unauthor zedRece ver = scopedRece ver.scope("unauthor zed")
+  protected[t ] val unauthor zedCounter = scopedRece ver.counter("unauthor zed")
 
   /**
-   * @param methodName the name of the Service method being called
-   * @param clientIdScopesOpt optional sequence of scope strings representing the
-   *   originating request's ClientId
+   * @param  thodNa  t  na  of t  Serv ce  thod be ng called
+   * @param cl ent dScopesOpt opt onal sequence of scope str ngs represent ng t 
+   *   or g nat ng request's Cl ent d
    */
-  override def apply(methodName: String, clientIdScopesOpt: Option[Seq[String]]): Future[Unit] = {
-    if (observeAuthorizationAttempts) {
-      scopedReceiver.counter(methodName).incr()
-      clientIdScopesOpt match {
-        case Some(clientIdScopes) =>
-          scopedReceiver.scope(methodName).counter(clientIdScopes: _*).incr()
+  overr de def apply( thodNa : Str ng, cl ent dScopesOpt: Opt on[Seq[Str ng]]): Future[Un ] = {
+     f (observeAuthor zat onAttempts) {
+      scopedRece ver.counter( thodNa ). ncr()
+      cl ent dScopesOpt match {
+        case So (cl ent dScopes) =>
+          scopedRece ver.scope( thodNa ).counter(cl ent dScopes: _*). ncr()
 
         case None =>
-          scopedReceiver.scope(methodName).counter(noClientIdKey).incr()
+          scopedRece ver.scope( thodNa ).counter(noCl ent dKey). ncr()
       }
     }
     Future.Done
   }
 
   /**
-   * Increments a counter for unauthorized requests.
+   *  ncre nts a counter for unauthor zed requests.
    */
-  def unauthorized(methodName: String, clientIdStr: String): Unit = {
-    unauthorizedCounter.incr()
-    unauthorizedReceiver.scope(methodName).counter(clientIdStr).incr()
+  def unauthor zed( thodNa : Str ng, cl ent dStr: Str ng): Un  = {
+    unauthor zedCounter. ncr()
+    unauthor zedRece ver.scope( thodNa ).counter(cl ent dStr). ncr()
   }
 
-  def authorized(methodName: String, clientIdStr: String): Unit = {}
+  def author zed( thodNa : Str ng, cl ent dStr: Str ng): Un  = {}
 }
 
-object NullClientRequestObserver extends ClientRequestObserver(NullStatsReceiver)
+object NullCl entRequestObserver extends Cl entRequestObserver(NullStatsRece ver)

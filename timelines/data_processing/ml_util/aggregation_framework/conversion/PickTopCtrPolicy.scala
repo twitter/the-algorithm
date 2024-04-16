@@ -1,62 +1,62 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.convers on
 
-import com.twitter.ml.api._
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetricCommon
-import java.lang.{Boolean => JBoolean}
-import java.lang.{Double => JDouble}
+ mport com.tw ter.ml.ap ._
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ml.ap .ut l.SR chDataRecord
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.TypedAggregateGroup
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. tr cs.Aggregat on tr cCommon
+ mport java.lang.{Boolean => JBoolean}
+ mport java.lang.{Double => JDouble}
 
-case class CtrDescriptor(
-  engagementFeature: Feature[JDouble],
-  impressionFeature: Feature[JDouble],
+case class CtrDescr ptor(
+  engage ntFeature: Feature[JDouble],
+   mpress onFeature: Feature[JDouble],
   outputFeature: Feature[JDouble])
 
-object PickTopCtrBuilderHelper {
+object P ckTopCtrBu lder lper {
 
-  def createCtrDescriptors(
-    aggregatePrefix: String,
-    engagementLabels: Set[Feature[JBoolean]],
+  def createCtrDescr ptors(
+    aggregatePref x: Str ng,
+    engage ntLabels: Set[Feature[JBoolean]],
     aggregatesToCompute: Set[TypedAggregateGroup[_]],
-    outputSuffix: String
-  ): Set[CtrDescriptor] = {
+    outputSuff x: Str ng
+  ): Set[CtrDescr ptor] = {
     val aggregateFeatures = aggregatesToCompute
-      .filter(_.aggregatePrefix == aggregatePrefix)
+      .f lter(_.aggregatePref x == aggregatePref x)
 
-    val impressionFeature = aggregateFeatures
+    val  mpress onFeature = aggregateFeatures
       .flatMap { group =>
-        group.individualAggregateDescriptors
-          .filter(_.query.feature == None)
-          .filter(_.query.label == None)
+        group. nd v dualAggregateDescr ptors
+          .f lter(_.query.feature == None)
+          .f lter(_.query.label == None)
           .flatMap(_.outputFeatures)
       }
-      .head
-      .asInstanceOf[Feature[JDouble]]
+      . ad
+      .as nstanceOf[Feature[JDouble]]
 
-    val aggregateEngagementFeatures =
+    val aggregateEngage ntFeatures =
       aggregateFeatures
         .flatMap { group =>
-          group.individualAggregateDescriptors
-            .filter(_.query.feature == None)
-            .filter { descriptor =>
-              //TODO: we should remove the need to pass around engagementLabels and just use all the labels available.
-              descriptor.query.label.exists(engagementLabels.contains(_))
+          group. nd v dualAggregateDescr ptors
+            .f lter(_.query.feature == None)
+            .f lter { descr ptor =>
+              //TODO:   should remove t  need to pass around engage ntLabels and just use all t  labels ava lable.
+              descr ptor.query.label.ex sts(engage ntLabels.conta ns(_))
             }
             .flatMap(_.outputFeatures)
         }
-        .map(_.asInstanceOf[Feature[JDouble]])
+        .map(_.as nstanceOf[Feature[JDouble]])
 
-    aggregateEngagementFeatures
-      .map { aggregateEngagementFeature =>
-        CtrDescriptor(
-          engagementFeature = aggregateEngagementFeature,
-          impressionFeature = impressionFeature,
-          outputFeature = new Feature.Continuous(
-            aggregateEngagementFeature.getDenseFeatureName + "." + outputSuffix,
-            AggregationMetricCommon.derivePersonalDataTypes(
-              Some(aggregateEngagementFeature),
-              Some(impressionFeature)
+    aggregateEngage ntFeatures
+      .map { aggregateEngage ntFeature =>
+        CtrDescr ptor(
+          engage ntFeature = aggregateEngage ntFeature,
+           mpress onFeature =  mpress onFeature,
+          outputFeature = new Feature.Cont nuous(
+            aggregateEngage ntFeature.getDenseFeatureNa  + "." + outputSuff x,
+            Aggregat on tr cCommon.der vePersonalDataTypes(
+              So (aggregateEngage ntFeature),
+              So ( mpress onFeature)
             )
           )
         )
@@ -64,44 +64,44 @@ object PickTopCtrBuilderHelper {
   }
 }
 
-object PickTopCtrPolicy {
-  def build(
-    aggregatePrefix: String,
-    engagementLabels: Set[Feature[JBoolean]],
+object P ckTopCtrPol cy {
+  def bu ld(
+    aggregatePref x: Str ng,
+    engage ntLabels: Set[Feature[JBoolean]],
     aggregatesToCompute: Set[TypedAggregateGroup[_]],
-    smoothing: Double = 1.0,
-    outputSuffix: String = "ratio"
-  ): PickTopCtrPolicy = {
-    val ctrDescriptors = PickTopCtrBuilderHelper.createCtrDescriptors(
-      aggregatePrefix = aggregatePrefix,
-      engagementLabels = engagementLabels,
+    smooth ng: Double = 1.0,
+    outputSuff x: Str ng = "rat o"
+  ): P ckTopCtrPol cy = {
+    val ctrDescr ptors = P ckTopCtrBu lder lper.createCtrDescr ptors(
+      aggregatePref x = aggregatePref x,
+      engage ntLabels = engage ntLabels,
       aggregatesToCompute = aggregatesToCompute,
-      outputSuffix = outputSuffix
+      outputSuff x = outputSuff x
     )
-    PickTopCtrPolicy(
-      ctrDescriptors = ctrDescriptors,
-      smoothing = smoothing
+    P ckTopCtrPol cy(
+      ctrDescr ptors = ctrDescr ptors,
+      smooth ng = smooth ng
     )
   }
 }
 
-object CombinedTopNCtrsByWilsonConfidenceIntervalPolicy {
-  def build(
-    aggregatePrefix: String,
-    engagementLabels: Set[Feature[JBoolean]],
+object Comb nedTopNCtrsByW lsonConf dence ntervalPol cy {
+  def bu ld(
+    aggregatePref x: Str ng,
+    engage ntLabels: Set[Feature[JBoolean]],
     aggregatesToCompute: Set[TypedAggregateGroup[_]],
-    outputSuffix: String = "ratioWithWCI",
+    outputSuff x: Str ng = "rat oW hWC ",
     z: Double = 1.96,
-    topN: Int = 1
-  ): CombinedTopNCtrsByWilsonConfidenceIntervalPolicy = {
-    val ctrDescriptors = PickTopCtrBuilderHelper.createCtrDescriptors(
-      aggregatePrefix = aggregatePrefix,
-      engagementLabels = engagementLabels,
+    topN:  nt = 1
+  ): Comb nedTopNCtrsByW lsonConf dence ntervalPol cy = {
+    val ctrDescr ptors = P ckTopCtrBu lder lper.createCtrDescr ptors(
+      aggregatePref x = aggregatePref x,
+      engage ntLabels = engage ntLabels,
       aggregatesToCompute = aggregatesToCompute,
-      outputSuffix = outputSuffix
+      outputSuff x = outputSuff x
     )
-    CombinedTopNCtrsByWilsonConfidenceIntervalPolicy(
-      ctrDescriptors = ctrDescriptors,
+    Comb nedTopNCtrsByW lsonConf dence ntervalPol cy(
+      ctrDescr ptors = ctrDescr ptors,
       z = z,
       topN = topN
     )
@@ -109,118 +109,118 @@ object CombinedTopNCtrsByWilsonConfidenceIntervalPolicy {
 }
 
 /*
- * A merge policy that picks the aggregate features corresponding to
- * the sparse key value with the highest engagement rate (defined
- * as the ratio of two specified features, representing engagements
- * and impressions). Also outputs the engagement rate to the specified
+ * A  rge pol cy that p cks t  aggregate features correspond ng to
+ * t  sparse key value w h t  h g st engage nt rate (def ned
+ * as t  rat o of two spec f ed features, represent ng engage nts
+ * and  mpress ons). Also outputs t  engage nt rate to t  spec f ed
  * outputFeature.
  *
- * This is an abstract class. We can make variants of this policy by overriding
- * the calculateCtr method.
+ * T   s an abstract class.   can make var ants of t  pol cy by overr d ng
+ * t  calculateCtr  thod.
  */
 
-abstract class PickTopCtrPolicyBase(ctrDescriptors: Set[CtrDescriptor])
-    extends SparseBinaryMergePolicy {
+abstract class P ckTopCtrPol cyBase(ctrDescr ptors: Set[CtrDescr ptor])
+    extends SparseB nary rgePol cy {
 
-  private def getContinuousFeature(
+  pr vate def getCont nuousFeature(
     aggregateRecord: DataRecord,
     feature: Feature[JDouble]
   ): Double = {
-    Option(SRichDataRecord(aggregateRecord).getFeatureValue(feature))
-      .map(_.asInstanceOf[JDouble].toDouble)
+    Opt on(SR chDataRecord(aggregateRecord).getFeatureValue(feature))
+      .map(_.as nstanceOf[JDouble].toDouble)
       .getOrElse(0.0)
   }
 
   /**
-   * For every provided descriptor, compute the corresponding CTR feature
-   * and only hydrate this result to the provided input record.
+   * For every prov ded descr ptor, compute t  correspond ng CTR feature
+   * and only hydrate t  result to t  prov ded  nput record.
    */
-  override def mergeRecord(
-    mutableInputRecord: DataRecord,
-    aggregateRecords: List[DataRecord],
+  overr de def  rgeRecord(
+    mutable nputRecord: DataRecord,
+    aggregateRecords: L st[DataRecord],
     aggregateContext: FeatureContext
-  ): Unit = {
-    ctrDescriptors
+  ): Un  = {
+    ctrDescr ptors
       .foreach {
-        case CtrDescriptor(engagementFeature, impressionFeature, outputFeature) =>
+        case CtrDescr ptor(engage ntFeature,  mpress onFeature, outputFeature) =>
           val sortedCtrs =
             aggregateRecords
               .map { aggregateRecord =>
-                val impressions = getContinuousFeature(aggregateRecord, impressionFeature)
-                val engagements = getContinuousFeature(aggregateRecord, engagementFeature)
-                calculateCtr(impressions, engagements)
+                val  mpress ons = getCont nuousFeature(aggregateRecord,  mpress onFeature)
+                val engage nts = getCont nuousFeature(aggregateRecord, engage ntFeature)
+                calculateCtr( mpress ons, engage nts)
               }
               .sortBy { ctr => -ctr }
-          combineTopNCtrsToSingleScore(sortedCtrs)
+          comb neTopNCtrsToS ngleScore(sortedCtrs)
             .foreach { score =>
-              SRichDataRecord(mutableInputRecord).setFeatureValue(outputFeature, score)
+              SR chDataRecord(mutable nputRecord).setFeatureValue(outputFeature, score)
             }
       }
   }
 
-  protected def calculateCtr(impressions: Double, engagements: Double): Double
+  protected def calculateCtr( mpress ons: Double, engage nts: Double): Double
 
-  protected def combineTopNCtrsToSingleScore(sortedCtrs: Seq[Double]): Option[Double]
+  protected def comb neTopNCtrsToS ngleScore(sortedCtrs: Seq[Double]): Opt on[Double]
 
-  override def aggregateFeaturesPostMerge(aggregateContext: FeatureContext): Set[Feature[_]] =
-    ctrDescriptors
+  overr de def aggregateFeaturesPost rge(aggregateContext: FeatureContext): Set[Feature[_]] =
+    ctrDescr ptors
       .map(_.outputFeature)
       .toSet
 }
 
-case class PickTopCtrPolicy(ctrDescriptors: Set[CtrDescriptor], smoothing: Double = 1.0)
-    extends PickTopCtrPolicyBase(ctrDescriptors) {
-  require(smoothing > 0.0)
+case class P ckTopCtrPol cy(ctrDescr ptors: Set[CtrDescr ptor], smooth ng: Double = 1.0)
+    extends P ckTopCtrPol cyBase(ctrDescr ptors) {
+  requ re(smooth ng > 0.0)
 
-  override def calculateCtr(impressions: Double, engagements: Double): Double =
-    (1.0 * engagements) / (smoothing + impressions)
+  overr de def calculateCtr( mpress ons: Double, engage nts: Double): Double =
+    (1.0 * engage nts) / (smooth ng +  mpress ons)
 
-  override def combineTopNCtrsToSingleScore(sortedCtrs: Seq[Double]): Option[Double] =
-    sortedCtrs.headOption
+  overr de def comb neTopNCtrsToS ngleScore(sortedCtrs: Seq[Double]): Opt on[Double] =
+    sortedCtrs. adOpt on
 }
 
-case class CombinedTopNCtrsByWilsonConfidenceIntervalPolicy(
-  ctrDescriptors: Set[CtrDescriptor],
+case class Comb nedTopNCtrsByW lsonConf dence ntervalPol cy(
+  ctrDescr ptors: Set[CtrDescr ptor],
   z: Double = 1.96,
-  topN: Int = 1)
-    extends PickTopCtrPolicyBase(ctrDescriptors) {
+  topN:  nt = 1)
+    extends P ckTopCtrPol cyBase(ctrDescr ptors) {
 
-  private val zSquared = z * z
-  private val zSquaredDiv2 = zSquared / 2.0
-  private val zSquaredDiv4 = zSquared / 4.0
+  pr vate val zSquared = z * z
+  pr vate val zSquaredD v2 = zSquared / 2.0
+  pr vate val zSquaredD v4 = zSquared / 4.0
 
   /**
-   * calculates the lower bound of wilson score interval. which roughly says "the actual engagement
-   * rate is at least this value" with confidence designated by the z-score:
-   * https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Wilson_score_interval
+   * calculates t  lo r bound of w lson score  nterval. wh ch roughly says "t  actual engage nt
+   * rate  s at least t  value" w h conf dence des gnated by t  z-score:
+   * https://en.w k ped a.org/w k /B nom al_proport on_conf dence_ nterval#W lson_score_ nterval
    */
-  override def calculateCtr(rawImpressions: Double, engagements: Double): Double = {
-    // just in case engagements happens to be more than impressions...
-    val impressions = Math.max(rawImpressions, engagements)
+  overr de def calculateCtr(raw mpress ons: Double, engage nts: Double): Double = {
+    // just  n case engage nts happens to be more than  mpress ons...
+    val  mpress ons = Math.max(raw mpress ons, engage nts)
 
-    if (impressions > 0.0) {
-      val p = engagements / impressions
+     f ( mpress ons > 0.0) {
+      val p = engage nts /  mpress ons
       (p
-        + zSquaredDiv2 / impressions
+        + zSquaredD v2 /  mpress ons
         - z * Math.sqrt(
-          (p * (1.0 - p) + zSquaredDiv4 / impressions) / impressions)) / (1.0 + zSquared / impressions)
+          (p * (1.0 - p) + zSquaredD v4 /  mpress ons) /  mpress ons)) / (1.0 + zSquared /  mpress ons)
 
     } else 0.0
   }
 
   /**
-   * takes the topN engagement rates, and returns the joint probability as {1.0 - Π(1.0 - p)}
+   * takes t  topN engage nt rates, and returns t  jo nt probab l y as {1.0 - Π(1.0 - p)}
    *
-   * e.g. let's say you have 0.6 chance of clicking on a tweet shared by the user A.
-   * you also have 0.3 chance of clicking on a tweet shared by the user B.
-   * seeing a tweet shared by both A and B will not lead to 0.9 chance of you clicking on it.
-   * but you could say that you have 0.4*0.7 chance of NOT clicking on that tweet.
+   * e.g. let's say   have 0.6 chance of cl ck ng on a t et shared by t  user A.
+   *   also have 0.3 chance of cl ck ng on a t et shared by t  user B.
+   * see ng a t et shared by both A and B w ll not lead to 0.9 chance of   cl ck ng on  .
+   * but   could say that   have 0.4*0.7 chance of NOT cl ck ng on that t et.
    */
-  override def combineTopNCtrsToSingleScore(sortedCtrs: Seq[Double]): Option[Double] =
-    if (sortedCtrs.nonEmpty) {
-      val inverseLogP = sortedCtrs
+  overr de def comb neTopNCtrsToS ngleScore(sortedCtrs: Seq[Double]): Opt on[Double] =
+     f (sortedCtrs.nonEmpty) {
+      val  nverseLogP = sortedCtrs
         .take(topN).map { p => Math.log(1.0 - p) }.sum
-      Some(1.0 - Math.exp(inverseLogP))
+      So (1.0 - Math.exp( nverseLogP))
     } else None
 
 }

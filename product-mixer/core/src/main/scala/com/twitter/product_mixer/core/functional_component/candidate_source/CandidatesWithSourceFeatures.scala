@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.candidate_source
+package com.tw ter.product_m xer.core.funct onal_component.cand date_s ce
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
 
 /**
- * Results from a candidate source, optionally carrying extracted query level features to add
- * to the query's feature map (e.g, extracting reusable features from the thrift response of thrift
+ * Results from a cand date s ce, opt onally carry ng extracted query level features to add
+ * to t  query's feature map (e.g, extract ng reusable features from t  thr ft response of thr ft
  * call).
- * @param candidates The candidates returned from the underlying CandidateSoure
- * @param features [[FeatureMap]] containing the features from the candidate source
- *                                    to merge back into the PipelineQuery FeatureMap.
- * @tparam Candidate The type of result
+ * @param cand dates T  cand dates returned from t  underly ng Cand dateS e
+ * @param features [[FeatureMap]] conta n ng t  features from t  cand date s ce
+ *                                    to  rge back  nto t  P pel neQuery FeatureMap.
+ * @tparam Cand date T  type of result
  */
-case class CandidatesWithSourceFeatures[+Candidate](
-  candidates: Seq[Candidate],
+case class Cand datesW hS ceFeatures[+Cand date](
+  cand dates: Seq[Cand date],
   features: FeatureMap)

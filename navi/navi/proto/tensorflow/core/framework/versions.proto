@@ -2,32 +2,32 @@ syntax = "proto3";
 
 package tensorflow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "VersionsProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/versions_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "Vers onsProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.fra work";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/fra work/vers ons_go_proto";
 
-// Version information for a piece of serialized data
+// Vers on  nformat on for a p ece of ser al zed data
 //
-// There are different types of versions for each type of data
-// (GraphDef, etc.), but they all have the same common shape
-// described here.
+// T re are d fferent types of vers ons for each type of data
+// (GraphDef, etc.), but t y all have t  sa  common shape
+// descr bed  re.
 //
-// Each consumer has "consumer" and "min_producer" versions (specified
-// elsewhere).  A consumer is allowed to consume this data if
+// Each consu r has "consu r" and "m n_producer" vers ons (spec f ed
+// elsew re).  A consu r  s allo d to consu  t  data  f
 //
-//   producer >= min_producer
-//   consumer >= min_consumer
-//   consumer not in bad_consumers
+//   producer >= m n_producer
+//   consu r >= m n_consu r
+//   consu r not  n bad_consu rs
 //
-message VersionDef {
-  // The version of the code that produced this data.
-  int32 producer = 1;
+ ssage Vers onDef {
+  // T  vers on of t  code that produced t  data.
+   nt32 producer = 1;
 
-  // Any consumer below this version is not allowed to consume this data.
-  int32 min_consumer = 2;
+  // Any consu r below t  vers on  s not allo d to consu  t  data.
+   nt32 m n_consu r = 2;
 
-  // Specific consumer versions which are disallowed (e.g. due to bugs).
-  repeated int32 bad_consumers = 3;
+  // Spec f c consu r vers ons wh ch are d sallo d (e.g. due to bugs).
+  repeated  nt32 bad_consu rs = 3;
 }

@@ -1,39 +1,39 @@
-package com.twitter.tweetypie.core
+package com.tw ter.t etyp e.core
 
-import com.twitter.servo.data.Lens
-import com.twitter.tweetypie.Mutation
-import com.twitter.tweetypie.thriftscala.Tweet
+ mport com.tw ter.servo.data.Lens
+ mport com.tw ter.t etyp e.Mutat on
+ mport com.tw ter.t etyp e.thr ftscala.T et
 
 /**
- * Helper class for building instances of `TweetResult`, which is a type alias
- * for `ValueState[TweetData]`.
+ *  lper class for bu ld ng  nstances of `T etResult`, wh ch  s a type al as
+ * for `ValueState[T etData]`.
  */
-object TweetResult {
+object T etResult {
   object Lenses {
-    val value: Lens[TweetResult, TweetData] =
-      Lens[TweetResult, TweetData](_.value, (r, value) => r.copy(value = value))
-    val state: Lens[TweetResult, HydrationState] =
-      Lens[TweetResult, HydrationState](_.state, (r, state) => r.copy(state = state))
-    val tweet: Lens[TweetResult, Tweet] = value.andThen(TweetData.Lenses.tweet)
+    val value: Lens[T etResult, T etData] =
+      Lens[T etResult, T etData](_.value, (r, value) => r.copy(value = value))
+    val state: Lens[T etResult, Hydrat onState] =
+      Lens[T etResult, Hydrat onState](_.state, (r, state) => r.copy(state = state))
+    val t et: Lens[T etResult, T et] = value.andT n(T etData.Lenses.t et)
   }
 
-  def apply(value: TweetData, state: HydrationState = HydrationState.empty): TweetResult =
+  def apply(value: T etData, state: Hydrat onState = Hydrat onState.empty): T etResult =
     ValueState(value, state)
 
-  def apply(tweet: Tweet): TweetResult =
-    apply(TweetData(tweet = tweet))
+  def apply(t et: T et): T etResult =
+    apply(T etData(t et = t et))
 
   /**
-   * Apply this mutation to the tweet contained in the result, updating the modified flag if the mutation modifies the tweet.
+   * Apply t  mutat on to t  t et conta ned  n t  result, updat ng t  mod f ed flag  f t  mutat on mod f es t  t et.
    */
-  def mutate(mutation: Mutation[Tweet]): TweetResult => TweetResult =
-    (result: TweetResult) =>
-      mutation(result.value.tweet) match {
+  def mutate(mutat on: Mutat on[T et]): T etResult => T etResult =
+    (result: T etResult) =>
+      mutat on(result.value.t et) match {
         case None => result
-        case Some(updatedTweet) =>
-          TweetResult(
-            result.value.copy(tweet = updatedTweet),
-            result.state ++ HydrationState.modified
+        case So (updatedT et) =>
+          T etResult(
+            result.value.copy(t et = updatedT et),
+            result.state ++ Hydrat onState.mod f ed
           )
       }
 }

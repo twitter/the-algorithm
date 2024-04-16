@@ -1,79 +1,79 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+package com.tw ter.product_m xer.component_l brary.p pel ne.cand date.ads
 
-import com.twitter.adserver.{thriftscala => ads}
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.component_library.pipeline.candidate.ads.AdsCandidatePipelineQueryTransformer.buildAdRequestParams
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.adserver.{thr ftscala => ads}
+ mport com.tw ter.product_m xer.component_l brary.model.query.ads.AdsQuery
+ mport com.tw ter.product_m xer.component_l brary.p pel ne.cand date.ads.AdsCand dateP pel neQueryTransfor r.bu ldAdRequestParams
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * Transform a PipelineQuery with AdsQuery into an AdsRequestParams
+ * Transform a P pel neQuery w h AdsQuery  nto an AdsRequestParams
  *
- * @param adsDisplayLocationBuilder Builder that determines the display location for the ads
- * @param estimatedNumOrganicItems  Estimate for the number of organic items that will be served
- *                                  alongside inorganic items such as ads. 
+ * @param adsD splayLocat onBu lder Bu lder that determ nes t  d splay locat on for t  ads
+ * @param est matedNumOrgan c ems  Est mate for t  number of organ c  ems that w ll be served
+ *                                  alongs de  norgan c  ems such as ads. 
  */
-case class AdsCandidatePipelineQueryTransformer[Query <: PipelineQuery with AdsQuery](
-  adsDisplayLocationBuilder: AdsDisplayLocationBuilder[Query],
-  estimatedNumOrganicItems: EstimateNumOrganicItems[Query],
-  urtRequest: Option[Boolean],
-) extends CandidatePipelineQueryTransformer[Query, ads.AdRequestParams] {
+case class AdsCand dateP pel neQueryTransfor r[Query <: P pel neQuery w h AdsQuery](
+  adsD splayLocat onBu lder: AdsD splayLocat onBu lder[Query],
+  est matedNumOrgan c ems: Est mateNumOrgan c ems[Query],
+  urtRequest: Opt on[Boolean],
+) extends Cand dateP pel neQueryTransfor r[Query, ads.AdRequestParams] {
 
-  override def transform(query: Query): ads.AdRequestParams =
-    buildAdRequestParams(
+  overr de def transform(query: Query): ads.AdRequestParams =
+    bu ldAdRequestParams(
       query = query,
-      adsDisplayLocation = adsDisplayLocationBuilder(query),
-      organicItemIds = None,
-      numOrganicItems = Some(estimatedNumOrganicItems(query)),
+      adsD splayLocat on = adsD splayLocat onBu lder(query),
+      organ c em ds = None,
+      numOrgan c ems = So (est matedNumOrgan c ems(query)),
       urtRequest = urtRequest
     )
 }
 
-object AdsCandidatePipelineQueryTransformer {
+object AdsCand dateP pel neQueryTransfor r {
 
-  def buildAdRequestParams(
-    query: PipelineQuery with AdsQuery,
-    adsDisplayLocation: ads.DisplayLocation,
-    organicItemIds: Option[Seq[Long]],
-    numOrganicItems: Option[Short],
-    urtRequest: Option[Boolean],
+  def bu ldAdRequestParams(
+    query: P pel neQuery w h AdsQuery,
+    adsD splayLocat on: ads.D splayLocat on,
+    organ c em ds: Opt on[Seq[Long]],
+    numOrgan c ems: Opt on[Short],
+    urtRequest: Opt on[Boolean],
   ): ads.AdRequestParams = {
     val searchRequestContext = query.searchRequestContext
-    val queryString = query.searchRequestContext.flatMap(_.queryString)
+    val queryStr ng = query.searchRequestContext.flatMap(_.queryStr ng)
 
     val adRequest = ads.AdRequest(
-      queryString = queryString, 
-      displayLocation = adsDisplayLocation,
+      queryStr ng = queryStr ng, 
+      d splayLocat on = adsD splayLocat on,
       searchRequestContext = searchRequestContext,
-      organicItemIds = organicItemIds,
-      numOrganicItems = numOrganicItems,
-      profileUserId = query.userProfileViewedUserId,
-      isDebug = Some(false),
-      isTest = Some(false),
-      requestTriggerType = query.requestTriggerType,
-      disableNsfwAvoidance = query.disableNsfwAvoidance,
-      timelineRequestParams = query.timelineRequestParams,
+      organ c em ds = organ c em ds,
+      numOrgan c ems = numOrgan c ems,
+      prof leUser d = query.userProf leV e dUser d,
+       sDebug = So (false),
+       sTest = So (false),
+      requestTr ggerType = query.requestTr ggerType,
+      d sableNsfwAvo dance = query.d sableNsfwAvo dance,
+      t  l neRequestParams = query.t  l neRequestParams,
     )
 
-    val context = query.clientContext
+    val context = query.cl entContext
 
-    val clientInfo = ads.ClientInfo(
-      clientId = context.appId.map(_.toInt),
-      userId64 = context.userId,
-      userIp = context.ipAddress,
-      guestId = context.guestIdAds,
+    val cl ent nfo = ads.Cl ent nfo(
+      cl ent d = context.app d.map(_.to nt),
+      user d64 = context.user d,
+      user p = context. pAddress,
+      guest d = context.guest dAds,
       userAgent = context.userAgent,
-      deviceId = context.deviceId,
+      dev ce d = context.dev ce d,
       languageCode = context.languageCode,
       countryCode = context.countryCode,
-      mobileDeviceId = context.mobileDeviceId,
-      mobileDeviceAdId = context.mobileDeviceAdId,
-      limitAdTracking = context.limitAdTracking,
+      mob leDev ce d = context.mob leDev ce d,
+      mob leDev ceAd d = context.mob leDev ceAd d,
+      l m AdTrack ng = context.l m AdTrack ng,
       autoplayEnabled = query.autoplayEnabled,
       urtRequest = urtRequest,
-      dspClientContext = query.dspClientContext
+      dspCl entContext = query.dspCl entContext
     )
 
-    ads.AdRequestParams(adRequest, clientInfo)
+    ads.AdRequestParams(adRequest, cl ent nfo)
   }
 }

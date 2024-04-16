@@ -1,12 +1,12 @@
-package com.twitter.unified_user_actions.enricher.partitioner
+package com.tw ter.un f ed_user_act ons.enr c r.part  oner
 
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentEnvelop
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentKey
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntEnvelop
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch nt nstruct on
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntKey
 
-trait Partitioner {
-  def repartition(
-    instruction: EnrichmentInstruction,
-    envelop: EnrichmentEnvelop
-  ): Option[EnrichmentKey]
+tra  Part  oner {
+  def repart  on(
+     nstruct on: Enr ch nt nstruct on,
+    envelop: Enr ch ntEnvelop
+  ): Opt on[Enr ch ntKey]
 }

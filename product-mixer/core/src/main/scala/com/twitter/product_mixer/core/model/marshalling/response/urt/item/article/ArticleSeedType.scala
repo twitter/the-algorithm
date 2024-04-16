@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.article
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.art cle
 
-sealed trait ArticleSeedType
-
-/**
- * Seed UTEG with a user's following list (1st degree network)
- */
-case object FollowingListSeed extends ArticleSeedType
+sealed tra  Art cleSeedType
 
 /**
- * Seed UTEG with a user's friends of friends (follow graph + 1) list
+ * Seed UTEG w h a user's follow ng l st (1st degree network)
  */
-case object FriendsOfFriendsSeed extends ArticleSeedType
+case object Follow ngL stSeed extends Art cleSeedType
 
 /**
- * Seed UTEG with a given lists' members
+ * Seed UTEG w h a user's fr ends of fr ends (follow graph + 1) l st
  */
-case object ListIdSeed extends ArticleSeedType
+case object Fr endsOfFr endsSeed extends Art cleSeedType
+
+/**
+ * Seed UTEG w h a g ven l sts'  mbers
+ */
+case object L st dSeed extends Art cleSeedType

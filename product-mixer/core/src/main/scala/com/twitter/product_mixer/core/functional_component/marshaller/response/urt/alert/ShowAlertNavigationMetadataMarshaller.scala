@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.alert
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertNavigationMetadata
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.alert.ShowAlertNav gat on tadata
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ShowAlertNavigationMetadataMarshaller @Inject() () {
+@S ngleton
+class ShowAlertNav gat on tadataMarshaller @ nject() () {
 
-  def apply(alertNavigationMetadata: ShowAlertNavigationMetadata): urt.ShowAlertNavigationMetadata =
-    urt.ShowAlertNavigationMetadata(navigateToEntryId =
-      Some(alertNavigationMetadata.navigateToEntryId))
+  def apply(alertNav gat on tadata: ShowAlertNav gat on tadata): urt.ShowAlertNav gat on tadata =
+    urt.ShowAlertNav gat on tadata(nav gateToEntry d =
+      So (alertNav gat on tadata.nav gateToEntry d))
 }

@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-trait HasInfoPerRankingStage {
-  def infoPerRankingStage: Option[scala.collection.Map[String, RankingInfo]]
+tra  Has nfoPerRank ngStage {
+  def  nfoPerRank ngStage: Opt on[scala.collect on.Map[Str ng, Rank ng nfo]]
 }

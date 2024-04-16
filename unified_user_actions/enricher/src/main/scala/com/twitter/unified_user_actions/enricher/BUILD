@@ -1,5 +1,5 @@
-scala_library(
-    sources = ["*.scala"],
-    tags = ["bazel-compatible"],
-    dependencies = [],
+scala_l brary(
+    s ces = ["*.scala"],
+    tags = ["bazel-compat ble"],
+    dependenc es = [],
 )

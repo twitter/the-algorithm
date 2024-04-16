@@ -1,167 +1,167 @@
-package com.twitter.search.earlybird.search.relevance.collectors;
+package com.tw ter.search.earlyb rd.search.relevance.collectors;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.common.util.Clock;
-import com.twitter.common_internal.collections.RandomAccessPriorityQueue;
-import com.twitter.search.common.relevance.features.TweetIntegerShingleSignature;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.search.EarlyTerminationState;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.search.relevance.RelevanceHit;
-import com.twitter.search.earlybird.search.relevance.RelevanceSearchRequestInfo;
-import com.twitter.search.earlybird.search.relevance.RelevanceSearchResults;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunction;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.common_ nternal.collect ons.RandomAccessPr or yQueue;
+ mport com.tw ter.search.common.relevance.features.T et ntegerSh ngleS gnature;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.common.search.EarlyTerm nat onState;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserTable;
+ mport com.tw ter.search.earlyb rd.search.relevance.RelevanceH ;
+ mport com.tw ter.search.earlyb rd.search.relevance.RelevanceSearchRequest nfo;
+ mport com.tw ter.search.earlyb rd.search.relevance.RelevanceSearchResults;
+ mport com.tw ter.search.earlyb rd.search.relevance.scor ng.Scor ngFunct on;
+ mport com.tw ter.search.earlyb rd.stats.Earlyb rdSearc rStats;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult tadata;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultsRelevanceStats;
 
 /**
- * RelevanceTopCollector is a results collector that collects the top numResults by
- * score, filtering out duplicates.
+ * RelevanceTopCollector  s a results collector that collects t  top numResults by
+ * score, f lter ng out dupl cates.
  */
-public class RelevanceTopCollector extends AbstractRelevanceCollector {
-  // Search results are collected in a min-heap.
-  protected final RandomAccessPriorityQueue<RelevanceHit, TweetIntegerShingleSignature> minQueue;
+publ c class RelevanceTopCollector extends AbstractRelevanceCollector {
+  // Search results are collected  n a m n- ap.
+  protected f nal RandomAccessPr or yQueue<RelevanceH , T et ntegerSh ngleS gnature> m nQueue;
 
-  // Number of hits actually added to the min queue after dupe filtering and skipping.
-  // Less than or equal to numHitsProcessed.
-  protected int numHitsCollected;
+  // Number of h s actually added to t  m n queue after dupe f lter ng and sk pp ng.
+  // Less than or equal to numH sProcessed.
+  protected  nt numH sCollected;
 
-  // The 'top' of the min heap, or, the lowest scored document in the heap.
-  private RelevanceHit pqTop;
-  private float lowestScore = ScoringFunction.SKIP_HIT;
+  // T  'top' of t  m n  ap, or, t  lo st scored docu nt  n t   ap.
+  pr vate RelevanceH  pqTop;
+  pr vate float lo stScore = Scor ngFunct on.SK P_H T;
 
-  private final boolean isFilterDupes;
+  pr vate f nal boolean  sF lterDupes;
 
-  public RelevanceTopCollector(
-      ImmutableSchemaInterface schema,
-      RelevanceSearchRequestInfo searchRequestInfo,
-      ScoringFunction scoringFunction,
-      EarlybirdSearcherStats searcherStats,
-      EarlybirdCluster cluster,
+  publ c RelevanceTopCollector(
+       mmutableSc ma nterface sc ma,
+      RelevanceSearchRequest nfo searchRequest nfo,
+      Scor ngFunct on scor ngFunct on,
+      Earlyb rdSearc rStats searc rStats,
+      Earlyb rdCluster cluster,
       UserTable userTable,
       Clock clock,
-      int requestDebugMode) {
-    super(schema, searchRequestInfo, scoringFunction, searcherStats, cluster, userTable, clock,
+       nt requestDebugMode) {
+    super(sc ma, searchRequest nfo, scor ngFunct on, searc rStats, cluster, userTable, clock,
         requestDebugMode);
-    this.minQueue = new RandomAccessPriorityQueue<RelevanceHit, TweetIntegerShingleSignature>(
-        searchRequestInfo.getNumResultsRequested(), RelevanceHit.PQ_COMPARATOR_BY_SCORE) {
-      @Override
-      protected RelevanceHit getSentinelObject() {
-        return new RelevanceHit(); // default relevance constructor would create a hit with the
-                                   // lowest score possible.
+    t .m nQueue = new RandomAccessPr or yQueue<RelevanceH , T et ntegerSh ngleS gnature>(
+        searchRequest nfo.getNumResultsRequested(), RelevanceH .PQ_COMPARATOR_BY_SCORE) {
+      @Overr de
+      protected RelevanceH  getSent nelObject() {
+        return new RelevanceH (); // default relevance constructor would create a h  w h t 
+                                   // lo st score poss ble.
       }
     };
-    this.pqTop = minQueue.top();
-    this.isFilterDupes = getSearchRequestInfo().getRelevanceOptions().isFilterDups();
+    t .pqTop = m nQueue.top();
+    t . sF lterDupes = getSearchRequest nfo().getRelevanceOpt ons(). sF lterDups();
   }
 
-  protected void collectWithScoreInternal(
-      long tweetID,
-      long timeSliceID,
+  protected vo d collectW hScore nternal(
+      long t et D,
+      long t  Sl ce D,
       float score,
-      ThriftSearchResultMetadata metadata) {
-    // This collector cannot handle these scores:
-    assert !Float.isNaN(score);
+      Thr ftSearchResult tadata  tadata) {
+    // T  collector cannot handle t se scores:
+    assert !Float. sNaN(score);
 
-    if (score <= lowestScore) {
-      // Since docs are returned in-order (i.e., increasing doc Id), a document
-      // with equal score to pqTop.score cannot compete since HitQueue favors
-      // documents with lower doc Ids. Therefore reject those docs too.
-      // IMPORTANT: docs skipped by the scoring function will have scores set
-      // to ScoringFunction.SKIP_HIT, meaning they will not be collected.
+     f (score <= lo stScore) {
+      // S nce docs are returned  n-order ( .e.,  ncreas ng doc  d), a docu nt
+      // w h equal score to pqTop.score cannot compete s nce H Queue favors
+      // docu nts w h lo r doc  ds. T refore reject those docs too.
+      //  MPORTANT: docs sk pped by t  scor ng funct on w ll have scores set
+      // to Scor ngFunct on.SK P_H T,  an ng t y w ll not be collected.
       return;
     }
 
     boolean dupFound = false;
-    Preconditions.checkState(metadata.isSetSignature(),
-        "The signature should be set at metadata collection time, but it is null. "
-            + "Tweet id = %s, metadata = %s",
-        tweetID,
-        metadata);
-    int signatureInt = metadata.getSignature();
-    final TweetIntegerShingleSignature signature =
-        TweetIntegerShingleSignature.deserialize(signatureInt);
+    Precond  ons.c ckState( tadata. sSetS gnature(),
+        "T  s gnature should be set at  tadata collect on t  , but    s null. "
+            + "T et  d = %s,  tadata = %s",
+        t et D,
+         tadata);
+     nt s gnature nt =  tadata.getS gnature();
+    f nal T et ntegerSh ngleS gnature s gnature =
+        T et ntegerSh ngleS gnature.deser al ze(s gnature nt);
 
-    if (isFilterDupes) {
-      // update duplicate if any
-      if (signatureInt != TweetIntegerShingleSignature.DEFAULT_NO_SIGNATURE) {
-        dupFound = minQueue.incrementElement(
-            signature,
-            element -> {
-              if (score > element.getScore()) {
-                element.update(timeSliceID, tweetID, signature, metadata);
+     f ( sF lterDupes) {
+      // update dupl cate  f any
+       f (s gnature nt != T et ntegerSh ngleS gnature.DEFAULT_NO_S GNATURE) {
+        dupFound = m nQueue. ncre ntEle nt(
+            s gnature,
+            ele nt -> {
+               f (score > ele nt.getScore()) {
+                ele nt.update(t  Sl ce D, t et D, s gnature,  tadata);
               }
             }
         );
       }
     }
 
-    if (!dupFound) {
-      numHitsCollected++;
+     f (!dupFound) {
+      numH sCollected++;
 
-      // if we didn't find a duplicate element to update then we add it now as a new element to the
+      //  f   d dn't f nd a dupl cate ele nt to update t n   add   now as a new ele nt to t 
       // pq
-      pqTop = minQueue.updateTop(top -> top.update(timeSliceID, tweetID, signature, metadata));
+      pqTop = m nQueue.updateTop(top -> top.update(t  Sl ce D, t et D, s gnature,  tadata));
 
-      lowestScore = pqTop.getScore();
+      lo stScore = pqTop.getScore();
     }
   }
 
-  @Override
-  protected void doCollectWithScore(final long tweetID, final float score) throws IOException {
-    ThriftSearchResultMetadata metadata = collectMetadata();
-    scoringFunction.populateResultMetadataBasedOnScoringData(
-        searchRequestInfo.getSearchQuery().getResultMetadataOptions(),
-        metadata,
-        scoringFunction.getScoringDataForCurrentDocument());
-    collectWithScoreInternal(tweetID, currTimeSliceID, score, metadata);
+  @Overr de
+  protected vo d doCollectW hScore(f nal long t et D, f nal float score) throws  OExcept on {
+    Thr ftSearchResult tadata  tadata = collect tadata();
+    scor ngFunct on.populateResult tadataBasedOnScor ngData(
+        searchRequest nfo.getSearchQuery().getResult tadataOpt ons(),
+         tadata,
+        scor ngFunct on.getScor ngDataForCurrentDocu nt());
+    collectW hScore nternal(t et D, currT  Sl ce D, score,  tadata);
   }
 
-  @Override
-  public EarlyTerminationState innerShouldCollectMore() {
-    // Note that numHitsCollected here might be less than num results collected in the
-    // TwitterEarlyTerminationCollector, if we hit dups or there are very low scores.
-    if (numHitsCollected >= getMaxHitsToProcess()) {
-      return setEarlyTerminationState(EarlyTerminationState.TERMINATED_MAX_HITS_EXCEEDED);
+  @Overr de
+  publ c EarlyTerm nat onState  nnerShouldCollectMore() {
+    // Note that numH sCollected  re m ght be less than num results collected  n t 
+    // Tw terEarlyTerm nat onCollector,  f   h  dups or t re are very low scores.
+     f (numH sCollected >= getMaxH sToProcess()) {
+      return setEarlyTerm nat onState(EarlyTerm nat onState.TERM NATED_MAX_H TS_EXCEEDED);
     }
-    return EarlyTerminationState.COLLECTING;
+    return EarlyTerm nat onState.COLLECT NG;
   }
 
-  @Override
-  protected RelevanceSearchResults doGetRelevanceResults() throws IOException {
-    return getRelevanceResultsInternal();
+  @Overr de
+  protected RelevanceSearchResults doGetRelevanceResults() throws  OExcept on {
+    return getRelevanceResults nternal();
   }
 
-  protected RelevanceSearchResults getRelevanceResultsInternal() {
-    return resultsFromQueue(minQueue, getSearchRequestInfo().getNumResultsRequested(),
+  protected RelevanceSearchResults getRelevanceResults nternal() {
+    return resultsFromQueue(m nQueue, getSearchRequest nfo().getNumResultsRequested(),
                             getRelevanceStats());
   }
 
-  private static RelevanceSearchResults resultsFromQueue(
-      RandomAccessPriorityQueue<RelevanceHit, TweetIntegerShingleSignature> pq,
-      int desiredNumResults,
-      ThriftSearchResultsRelevanceStats relevanceStats) {
-    // trim first in case we didn't fill up the queue to not get any sentinel values here
-    int numResults = pq.trim();
-    if (numResults > desiredNumResults) {
-      for (int i = 0; i < numResults - desiredNumResults; i++) {
+  pr vate stat c RelevanceSearchResults resultsFromQueue(
+      RandomAccessPr or yQueue<RelevanceH , T et ntegerSh ngleS gnature> pq,
+       nt des redNumResults,
+      Thr ftSearchResultsRelevanceStats relevanceStats) {
+    // tr m f rst  n case   d dn't f ll up t  queue to not get any sent nel values  re
+     nt numResults = pq.tr m();
+     f (numResults > des redNumResults) {
+      for ( nt   = 0;   < numResults - des redNumResults;  ++) {
         pq.pop();
       }
-      numResults = desiredNumResults;
+      numResults = des redNumResults;
     }
     RelevanceSearchResults results = new RelevanceSearchResults(numResults);
-    // insert hits in decreasing order by score
-    for (int i = numResults - 1; i >= 0; i--) {
-      RelevanceHit hit = pq.pop();
-      results.setHit(hit, i);
+    //  nsert h s  n decreas ng order by score
+    for ( nt   = numResults - 1;   >= 0;  --) {
+      RelevanceH  h  = pq.pop();
+      results.setH (h ,  );
     }
     results.setRelevanceStats(relevanceStats);
-    results.setNumHits(numResults);
+    results.setNumH s(numResults);
     return results;
   }
 }

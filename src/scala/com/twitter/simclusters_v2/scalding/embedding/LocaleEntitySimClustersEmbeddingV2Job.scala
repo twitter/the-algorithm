@@ -1,248 +1,248 @@
-package com.twitter.simclusters_v2.scalding.embedding
+package com.tw ter.s mclusters_v2.scald ng.embedd ng
 
-import com.twitter.bijection.{Bufferable, Injection}
-import com.twitter.recos.entities.thriftscala.{Entity, SemanticCoreEntity}
-import com.twitter.scalding.{DateRange, Days, Duration, Execution, RichDate, TypedPipe, UniqueID}
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common._
-import com.twitter.simclusters_v2.hdfs_sources.{AdhocKeyValSources, EntityEmbeddingsSources}
-import com.twitter.simclusters_v2.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.ClusterId
-import com.twitter.simclusters_v2.scalding.embedding.common.{
-  EmbeddingUtil,
-  ExternalDataSources,
-  SimClustersEmbeddingBaseJob
+ mport com.tw ter.b ject on.{Bufferable,  nject on}
+ mport com.tw ter.recos.ent  es.thr ftscala.{Ent y, Semant cCoreEnt y}
+ mport com.tw ter.scald ng.{DateRange, Days, Durat on, Execut on, R chDate, TypedP pe, Un que D}
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e._
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.common._
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.{AdhocKeyValS ces, Ent yEmbedd ngsS ces}
+ mport com.tw ter.s mclusters_v2.scald ng.common.matr x.{SparseMatr x, SparseRowMatr x}
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.Embedd ngUt l.Cluster d
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.{
+  Embedd ngUt l,
+  ExternalDataS ces,
+  S mClustersEmbedd ngBaseJob
 }
-import com.twitter.simclusters_v2.thriftscala.{
-  EmbeddingType,
-  InternalId,
-  InternalIdEmbedding,
-  InternalIdWithScore,
-  LocaleEntityId,
-  ModelVersion,
-  SimClustersEmbeddingId
+ mport com.tw ter.s mclusters_v2.thr ftscala.{
+  Embedd ngType,
+   nternal d,
+   nternal dEmbedd ng,
+   nternal dW hScore,
+  LocaleEnt y d,
+  ModelVers on,
+  S mClustersEmbedd ng d
 }
-import com.twitter.wtf.entity_real_graph.thriftscala.{Edge, FeatureName}
-import com.twitter.wtf.scalding.jobs.common.{AdhocExecutionApp, DataSources, ScheduledExecutionApp}
-import java.util.TimeZone
+ mport com.tw ter.wtf.ent y_real_graph.thr ftscala.{Edge, FeatureNa }
+ mport com.tw ter.wtf.scald ng.jobs.common.{AdhocExecut onApp, DataS ces, Sc duledExecut onApp}
+ mport java.ut l.T  Zone
 
 /**
- * Scheduled production job which generates topic embeddings per locale based on Entity Real Graph.
+ * Sc duled product on job wh ch generates top c embedd ngs per locale based on Ent y Real Graph.
  *
- * V2 Uses the log transform of the ERG favScores and the SimCluster InterestedIn scores.
+ * V2 Uses t  log transform of t  ERG favScores and t  S mCluster  nterested n scores.
  *
- * $ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:locale_entity_simclusters_embedding_v2
+ * $ ./bazel bundle src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng:locale_ent y_s mclusters_embedd ng_v2
  * $ capesospy-v2 update \
-  --build_locally \
-  --start_cron locale_entity_simclusters_embedding_v2 src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+  --bu ld_locally \
+  --start_cron locale_ent y_s mclusters_embedd ng_v2 src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc3.yaml
  */
-object LocaleEntitySimClustersEmbeddingV2ScheduledApp
-    extends LocaleEntitySimClustersEmbeddingV2Job
-    with ScheduledExecutionApp {
+object LocaleEnt yS mClustersEmbedd ngV2Sc duledApp
+    extends LocaleEnt yS mClustersEmbedd ngV2Job
+    w h Sc duledExecut onApp {
 
-  override val firstTime: RichDate = RichDate("2020-04-08")
+  overr de val f rstT  : R chDate = R chDate("2020-04-08")
 
-  override val batchIncrement: Duration = Days(1)
+  overr de val batch ncre nt: Durat on = Days(1)
 
-  override def writeNounToClustersIndex(
-    output: TypedPipe[(LocaleEntity, Seq[(ClusterId, Double)])]
+  overr de def wr eNounToClusters ndex(
+    output: TypedP pe[(LocaleEnt y, Seq[(Cluster d, Double)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
 
     output
       .map {
-        case ((entityId, lang), clustersWithScores) =>
+        case ((ent y d, lang), clustersW hScores) =>
           KeyVal(
-            SimClustersEmbeddingId(
-              EmbeddingType.LogFavBasedLocaleSemanticCoreEntity,
-              ModelVersion.Model20m145kUpdated,
-              InternalId.LocaleEntityId(LocaleEntityId(entityId, lang))
+            S mClustersEmbedd ng d(
+              Embedd ngType.LogFavBasedLocaleSemant cCoreEnt y,
+              ModelVers on.Model20m145kUpdated,
+               nternal d.LocaleEnt y d(LocaleEnt y d(ent y d, lang))
             ),
-            SimClustersEmbedding(clustersWithScores).toThrift
+            S mClustersEmbedd ng(clustersW hScores).toThr ft
           )
       }
-      .writeDALVersionedKeyValExecution(
-        EntityEmbeddingsSources.LogFavSemanticCorePerLanguageSimClustersEmbeddingsDataset,
-        D.Suffix(
-          EmbeddingUtil.getHdfsPath(
-            isAdhoc = false,
-            isManhattanKeyVal = true,
-            ModelVersion.Model20m145kUpdated,
-            pathSuffix = "log_fav_erg_based_embeddings"))
+      .wr eDALVers onedKeyValExecut on(
+        Ent yEmbedd ngsS ces.LogFavSemant cCorePerLanguageS mClustersEmbedd ngsDataset,
+        D.Suff x(
+          Embedd ngUt l.getHdfsPath(
+             sAdhoc = false,
+             sManhattanKeyVal = true,
+            ModelVers on.Model20m145kUpdated,
+            pathSuff x = "log_fav_erg_based_embedd ngs"))
       )
   }
 
-  override def writeClusterToNounsIndex(
-    output: TypedPipe[(ClusterId, Seq[(LocaleEntity, Double)])]
+  overr de def wr eClusterToNouns ndex(
+    output: TypedP pe[(Cluster d, Seq[(LocaleEnt y, Double)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
     output
       .map {
-        case (clusterId, nounsWithScore) =>
+        case (cluster d, nounsW hScore) =>
           KeyVal(
-            SimClustersEmbeddingId(
-              EmbeddingType.LogFavBasedLocaleSemanticCoreEntity,
-              ModelVersion.Model20m145kUpdated,
-              InternalId.ClusterId(clusterId)
+            S mClustersEmbedd ng d(
+              Embedd ngType.LogFavBasedLocaleSemant cCoreEnt y,
+              ModelVers on.Model20m145kUpdated,
+               nternal d.Cluster d(cluster d)
             ),
-            InternalIdEmbedding(nounsWithScore.map {
-              case ((entityId, lang), score) =>
-                InternalIdWithScore(
-                  InternalId.LocaleEntityId(LocaleEntityId(entityId, lang)),
+             nternal dEmbedd ng(nounsW hScore.map {
+              case ((ent y d, lang), score) =>
+                 nternal dW hScore(
+                   nternal d.LocaleEnt y d(LocaleEnt y d(ent y d, lang)),
                   score)
             })
           )
       }
-      .writeDALVersionedKeyValExecution(
-        EntityEmbeddingsSources.LogFavReverseIndexSemanticCorePerLanguageSimClustersEmbeddingsDataset,
-        D.Suffix(
-          EmbeddingUtil.getHdfsPath(
-            isAdhoc = false,
-            isManhattanKeyVal = true,
-            ModelVersion.Model20m145kUpdated,
-            pathSuffix = "reverse_index_log_fav_erg_based_embeddings"))
+      .wr eDALVers onedKeyValExecut on(
+        Ent yEmbedd ngsS ces.LogFavReverse ndexSemant cCorePerLanguageS mClustersEmbedd ngsDataset,
+        D.Suff x(
+          Embedd ngUt l.getHdfsPath(
+             sAdhoc = false,
+             sManhattanKeyVal = true,
+            ModelVers on.Model20m145kUpdated,
+            pathSuff x = "reverse_ ndex_log_fav_erg_based_embedd ngs"))
       )
   }
 }
 
 /**
- * $ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:locale_entity_simclusters_embedding_v2-adhoc
+ * $ ./bazel bundle src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng:locale_ent y_s mclusters_embedd ng_v2-adhoc
  *
- * $ scalding remote run \
-  --main-class com.twitter.simclusters_v2.scalding.embedding.LocaleEntitySimClustersEmbeddingV2AdhocApp \
-  --target src/scala/com/twitter/simclusters_v2/scalding/embedding:locale_entity_simclusters_embedding_v2-adhoc \
+ * $ scald ng remote run \
+  --ma n-class com.tw ter.s mclusters_v2.scald ng.embedd ng.LocaleEnt yS mClustersEmbedd ngV2AdhocApp \
+  --target src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng:locale_ent y_s mclusters_embedd ng_v2-adhoc \
   --user recos-platform --reducers 2000\
   -- --date 2020-04-06
  */
-object LocaleEntitySimClustersEmbeddingV2AdhocApp
-    extends LocaleEntitySimClustersEmbeddingV2Job
-    with AdhocExecutionApp {
+object LocaleEnt yS mClustersEmbedd ngV2AdhocApp
+    extends LocaleEnt yS mClustersEmbedd ngV2Job
+    w h AdhocExecut onApp {
 
-  override def writeNounToClustersIndex(
-    output: TypedPipe[(LocaleEntity, Seq[(ClusterId, Double)])]
+  overr de def wr eNounToClusters ndex(
+    output: TypedP pe[(LocaleEnt y, Seq[(Cluster d, Double)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
 
     output
       .map {
-        case ((entityId, lang), clustersWithScores) =>
-          SimClustersEmbeddingId(
-            EmbeddingType.LogFavBasedLocaleSemanticCoreEntity,
-            ModelVersion.Model20m145kUpdated,
-            InternalId.LocaleEntityId(LocaleEntityId(entityId, lang))
-          ) -> SimClustersEmbedding(clustersWithScores).toThrift
+        case ((ent y d, lang), clustersW hScores) =>
+          S mClustersEmbedd ng d(
+            Embedd ngType.LogFavBasedLocaleSemant cCoreEnt y,
+            ModelVers on.Model20m145kUpdated,
+             nternal d.LocaleEnt y d(LocaleEnt y d(ent y d, lang))
+          ) -> S mClustersEmbedd ng(clustersW hScores).toThr ft
 
-      }.writeExecution(
-        AdhocKeyValSources.entityToClustersSource(
-          EmbeddingUtil.getHdfsPath(
-            isAdhoc = true,
-            isManhattanKeyVal = true,
-            ModelVersion.Model20m145kUpdated,
-            pathSuffix = "log_fav_erg_based_embeddings")))
+      }.wr eExecut on(
+        AdhocKeyValS ces.ent yToClustersS ce(
+          Embedd ngUt l.getHdfsPath(
+             sAdhoc = true,
+             sManhattanKeyVal = true,
+            ModelVers on.Model20m145kUpdated,
+            pathSuff x = "log_fav_erg_based_embedd ngs")))
   }
 
-  override def writeClusterToNounsIndex(
-    output: TypedPipe[(ClusterId, Seq[(LocaleEntity, Double)])]
+  overr de def wr eClusterToNouns ndex(
+    output: TypedP pe[(Cluster d, Seq[(LocaleEnt y, Double)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
 
     output
       .map {
-        case (clusterId, nounsWithScore) =>
-          SimClustersEmbeddingId(
-            EmbeddingType.LogFavBasedLocaleSemanticCoreEntity,
-            ModelVersion.Model20m145kUpdated,
-            InternalId.ClusterId(clusterId)
+        case (cluster d, nounsW hScore) =>
+          S mClustersEmbedd ng d(
+            Embedd ngType.LogFavBasedLocaleSemant cCoreEnt y,
+            ModelVers on.Model20m145kUpdated,
+             nternal d.Cluster d(cluster d)
           ) ->
-            InternalIdEmbedding(nounsWithScore.map {
-              case ((entityId, lang), score) =>
-                InternalIdWithScore(
-                  InternalId.LocaleEntityId(LocaleEntityId(entityId, lang)),
+             nternal dEmbedd ng(nounsW hScore.map {
+              case ((ent y d, lang), score) =>
+                 nternal dW hScore(
+                   nternal d.LocaleEnt y d(LocaleEnt y d(ent y d, lang)),
                   score)
             })
       }
-      .writeExecution(
-        AdhocKeyValSources.clusterToEntitiesSource(
-          EmbeddingUtil.getHdfsPath(
-            isAdhoc = true,
-            isManhattanKeyVal = true,
-            ModelVersion.Model20m145kUpdated,
-            pathSuffix = "reverse_index_log_fav_erg_based_embeddings")))
+      .wr eExecut on(
+        AdhocKeyValS ces.clusterToEnt  esS ce(
+          Embedd ngUt l.getHdfsPath(
+             sAdhoc = true,
+             sManhattanKeyVal = true,
+            ModelVers on.Model20m145kUpdated,
+            pathSuff x = "reverse_ ndex_log_fav_erg_based_embedd ngs")))
   }
 }
 
-trait LocaleEntitySimClustersEmbeddingV2Job extends SimClustersEmbeddingBaseJob[LocaleEntity] {
+tra  LocaleEnt yS mClustersEmbedd ngV2Job extends S mClustersEmbedd ngBaseJob[LocaleEnt y] {
 
-  override val numClustersPerNoun = 100
+  overr de val numClustersPerNoun = 100
 
-  override val numNounsPerClusters = 100
+  overr de val numNounsPerClusters = 100
 
-  override val thresholdForEmbeddingScores: Double = 0.001
+  overr de val thresholdForEmbedd ngScores: Double = 0.001
 
-  override val numReducersOpt: Option[Int] = Some(8000)
+  overr de val numReducersOpt: Opt on[ nt] = So (8000)
 
-  private val DefaultERGHalfLifeInDays = 14
+  pr vate val DefaultERGHalfL fe nDays = 14
 
-  private val MinInterestedInLogFavScore = 0.0
+  pr vate val M n nterested nLogFavScore = 0.0
 
-  implicit val inj: Injection[LocaleEntity, Array[Byte]] = Bufferable.injectionOf[LocaleEntity]
+   mpl c  val  nj:  nject on[LocaleEnt y, Array[Byte]] = Bufferable. nject onOf[LocaleEnt y]
 
-  override def prepareNounToUserMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseMatrix[LocaleEntity, UserId, Double] = {
+  overr de def prepareNounToUserMatr x(
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): SparseMatr x[LocaleEnt y, User d, Double] = {
 
-    val erg: TypedPipe[(SemanticCoreEntityId, (UserId, Double))] =
-      DataSources.entityRealGraphAggregationDataSetSource(dateRange.embiggen(Days(7))).flatMap {
+    val erg: TypedP pe[(Semant cCoreEnt y d, (User d, Double))] =
+      DataS ces.ent yRealGraphAggregat onDataSetS ce(dateRange.emb ggen(Days(7))).flatMap {
         case Edge(
-              userId,
-              Entity.SemanticCore(SemanticCoreEntity(entityId, _)),
-              consumerFeatures,
+              user d,
+              Ent y.Semant cCore(Semant cCoreEnt y(ent y d, _)),
+              consu rFeatures,
               _,
-              _) if consumerFeatures.exists(_.exists(_.featureName == FeatureName.Favorites)) =>
+              _)  f consu rFeatures.ex sts(_.ex sts(_.featureNa  == FeatureNa .Favor es)) =>
           for {
-            features <- consumerFeatures
-            favFeatures <- features.find(_.featureName == FeatureName.Favorites)
+            features <- consu rFeatures
+            favFeatures <- features.f nd(_.featureNa  == FeatureNa .Favor es)
             ewmaMap <- favFeatures.featureValues.ewmaMap
-            favScore <- ewmaMap.get(DefaultERGHalfLifeInDays)
-          } yield (entityId, (userId, Math.log(favScore + 1)))
+            favScore <- ewmaMap.get(DefaultERGHalfL fe nDays)
+          } y eld (ent y d, (user d, Math.log(favScore + 1)))
 
         case _ => None
       }
 
-    SparseMatrix[LocaleEntity, UserId, Double](
+    SparseMatr x[LocaleEnt y, User d, Double](
       erg
-        .hashJoin(ExternalDataSources.uttEntitiesSource().asKeys).map {
-          case (entityId, ((userId, score), _)) => (userId, (entityId, score))
-        }.join(ExternalDataSources.userSource).map {
-          case (userId, ((entityId, score), (_, language))) =>
-            ((entityId, language), userId, score)
+        .hashJo n(ExternalDataS ces.uttEnt  esS ce().asKeys).map {
+          case (ent y d, ((user d, score), _)) => (user d, (ent y d, score))
+        }.jo n(ExternalDataS ces.userS ce).map {
+          case (user d, ((ent y d, score), (_, language))) =>
+            ((ent y d, language), user d, score)
         }
     )
   }
 
-  override def prepareUserToClusterMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseRowMatrix[UserId, ClusterId, Double] = {
-    SparseRowMatrix(
-      ExternalDataSources.simClustersInterestInLogFavSource(MinInterestedInLogFavScore),
-      isSkinnyMatrix = true
+  overr de def prepareUserToClusterMatr x(
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): SparseRowMatr x[User d, Cluster d, Double] = {
+    SparseRowMatr x(
+      ExternalDataS ces.s mClusters nterest nLogFavS ce(M n nterested nLogFavScore),
+       sSk nnyMatr x = true
     )
   }
 }

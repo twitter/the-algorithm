@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module
 
-sealed trait ModuleDisplayType
+sealed tra  ModuleD splayType
 
-case object Carousel extends ModuleDisplayType
-case object CompactCarousel extends ModuleDisplayType
-case object ConversationTree extends ModuleDisplayType
-case object GridCarousel extends ModuleDisplayType
-case object Vertical extends ModuleDisplayType
-case object VerticalConversation extends ModuleDisplayType
-case object VerticalGrid extends ModuleDisplayType
-case object VerticalWithContextLine extends ModuleDisplayType
+case object Carousel extends ModuleD splayType
+case object CompactCarousel extends ModuleD splayType
+case object Conversat onTree extends ModuleD splayType
+case object Gr dCarousel extends ModuleD splayType
+case object Vert cal extends ModuleD splayType
+case object Vert calConversat on extends ModuleD splayType
+case object Vert calGr d extends ModuleD splayType
+case object Vert calW hContextL ne extends ModuleD splayType

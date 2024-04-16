@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.service.query_feature_hydrator_executor
+package com.tw ter.product_m xer.core.serv ce.query_feature_hydrator_executor
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor.AsyncIndividualFeatureHydratorResult
+ mport com.fasterxml.jackson.core.JsonGenerator
+ mport com.fasterxml.jackson.datab nd.JsonSer al zer
+ mport com.fasterxml.jackson.datab nd.Ser al zerProv der
+ mport com.tw ter.product_m xer.core.serv ce.query_feature_hydrator_executor.QueryFeatureHydratorExecutor.Async nd v dualFeatureHydratorResult
 
-/** A [[JsonSerializer]] that skips the `Stitch` values */
-private[query_feature_hydrator_executor] class AsyncIndividualFeatureHydratorResultSerializer()
-    extends JsonSerializer[AsyncIndividualFeatureHydratorResult] {
+/** A [[JsonSer al zer]] that sk ps t  `St ch` values */
+pr vate[query_feature_hydrator_executor] class Async nd v dualFeatureHydratorResultSer al zer()
+    extends JsonSer al zer[Async nd v dualFeatureHydratorResult] {
 
-  override def serialize(
-    asyncIndividualFeatureHydratorResult: AsyncIndividualFeatureHydratorResult,
+  overr de def ser al ze(
+    async nd v dualFeatureHydratorResult: Async nd v dualFeatureHydratorResult,
     gen: JsonGenerator,
-    serializers: SerializerProvider
-  ): Unit =
-    serializers.defaultSerializeValue(
-      // implicitly calls `toString` on the identifier because they are keys in the Map
+    ser al zers: Ser al zerProv der
+  ): Un  =
+    ser al zers.defaultSer al zeValue(
+      //  mpl c ly calls `toStr ng` on t   dent f er because t y are keys  n t  Map
       Map(
-        asyncIndividualFeatureHydratorResult.hydrateBefore ->
-          asyncIndividualFeatureHydratorResult.features.map(_.toString)),
+        async nd v dualFeatureHydratorResult.hydrateBefore ->
+          async nd v dualFeatureHydratorResult.features.map(_.toStr ng)),
       gen
     )
 }

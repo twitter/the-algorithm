@@ -1,129 +1,129 @@
-package com.twitter.tweetypie.storage
+package com.tw ter.t etyp e.storage
 
-import com.twitter.tweetypie.storage_internal.thriftscala._
-import com.twitter.tbird.{thriftscala => tbird}
+ mport com.tw ter.t etyp e.storage_ nternal.thr ftscala._
+ mport com.tw ter.tb rd.{thr ftscala => tb rd}
 
-object StatusConversions {
+object StatusConvers ons {
 
   /**
-   * This is used only in Scribe.scala, when scribing to tbird_add_status
-   * Once we remove that, we can also remove this.
+   * T   s used only  n Scr be.scala, w n scr b ng to tb rd_add_status
+   * Once   remove that,   can also remove t .
    */
-  def toTBirdStatus(tweet: StoredTweet): tbird.Status =
-    tbird.Status(
-      id = tweet.id,
-      userId = tweet.userId.get,
-      text = tweet.text.get,
-      createdVia = tweet.createdVia.get,
-      createdAtSec = tweet.createdAtSec.get,
-      reply = tweet.reply.map(toTBirdReply),
-      share = tweet.share.map(toTBirdShare),
-      contributorId = tweet.contributorId,
-      geo = tweet.geo.map(toTBirdGeo),
-      hasTakedown = tweet.hasTakedown.getOrElse(false),
-      nsfwUser = tweet.nsfwUser.getOrElse(false),
-      nsfwAdmin = tweet.nsfwAdmin.getOrElse(false),
-      media = tweet.media.map(_.map(toTBirdMedia)).getOrElse(Seq()),
-      narrowcast = tweet.narrowcast.map(toTBirdNarrowcast),
-      nullcast = tweet.nullcast.getOrElse(false),
-      trackingId = tweet.trackingId
+  def toTB rdStatus(t et: StoredT et): tb rd.Status =
+    tb rd.Status(
+       d = t et. d,
+      user d = t et.user d.get,
+      text = t et.text.get,
+      createdV a = t et.createdV a.get,
+      createdAtSec = t et.createdAtSec.get,
+      reply = t et.reply.map(toTB rdReply),
+      share = t et.share.map(toTB rdShare),
+      contr butor d = t et.contr butor d,
+      geo = t et.geo.map(toTB rdGeo),
+      hasTakedown = t et.hasTakedown.getOrElse(false),
+      nsfwUser = t et.nsfwUser.getOrElse(false),
+      nsfwAdm n = t et.nsfwAdm n.getOrElse(false),
+       d a = t et. d a.map(_.map(toTB rd d a)).getOrElse(Seq()),
+      narrowcast = t et.narrowcast.map(toTB rdNarrowcast),
+      nullcast = t et.nullcast.getOrElse(false),
+      track ng d = t et.track ng d
     )
 
   /**
-   * This is only used in a test, to verify that the above method `toTBirdStatus`
-   * works, so we can't remove it as long as the above method exists.
+   * T   s only used  n a test, to ver fy that t  above  thod `toTB rdStatus`
+   * works, so   can't remove   as long as t  above  thod ex sts.
    */
-  def fromTBirdStatus(status: tbird.Status): StoredTweet = {
-    StoredTweet(
-      id = status.id,
-      userId = Some(status.userId),
-      text = Some(status.text),
-      createdVia = Some(status.createdVia),
-      createdAtSec = Some(status.createdAtSec),
-      reply = status.reply.map(fromTBirdReply),
-      share = status.share.map(fromTBirdShare),
-      contributorId = status.contributorId,
-      geo = status.geo.map(fromTBirdGeo),
-      hasTakedown = Some(status.hasTakedown),
-      nsfwUser = Some(status.nsfwUser),
-      nsfwAdmin = Some(status.nsfwAdmin),
-      media = Some(status.media.map(fromTBirdMedia)),
-      narrowcast = status.narrowcast.map(fromTBirdNarrowcast),
-      nullcast = Some(status.nullcast),
-      trackingId = status.trackingId
+  def fromTB rdStatus(status: tb rd.Status): StoredT et = {
+    StoredT et(
+       d = status. d,
+      user d = So (status.user d),
+      text = So (status.text),
+      createdV a = So (status.createdV a),
+      createdAtSec = So (status.createdAtSec),
+      reply = status.reply.map(fromTB rdReply),
+      share = status.share.map(fromTB rdShare),
+      contr butor d = status.contr butor d,
+      geo = status.geo.map(fromTB rdGeo),
+      hasTakedown = So (status.hasTakedown),
+      nsfwUser = So (status.nsfwUser),
+      nsfwAdm n = So (status.nsfwAdm n),
+       d a = So (status. d a.map(fromTB rd d a)),
+      narrowcast = status.narrowcast.map(fromTB rdNarrowcast),
+      nullcast = So (status.nullcast),
+      track ng d = status.track ng d
     )
   }
 
-  private def fromTBirdReply(reply: tbird.Reply): StoredReply =
+  pr vate def fromTB rdReply(reply: tb rd.Reply): StoredReply =
     StoredReply(
-      inReplyToStatusId = reply.inReplyToStatusId,
-      inReplyToUserId = reply.inReplyToUserId
+       nReplyToStatus d = reply. nReplyToStatus d,
+       nReplyToUser d = reply. nReplyToUser d
     )
 
-  private def fromTBirdShare(share: tbird.Share): StoredShare =
+  pr vate def fromTB rdShare(share: tb rd.Share): StoredShare =
     StoredShare(
-      sourceStatusId = share.sourceStatusId,
-      sourceUserId = share.sourceUserId,
-      parentStatusId = share.parentStatusId
+      s ceStatus d = share.s ceStatus d,
+      s ceUser d = share.s ceUser d,
+      parentStatus d = share.parentStatus d
     )
 
-  private def fromTBirdGeo(geo: tbird.Geo): StoredGeo =
+  pr vate def fromTB rdGeo(geo: tb rd.Geo): StoredGeo =
     StoredGeo(
-      latitude = geo.latitude,
-      longitude = geo.longitude,
-      geoPrecision = geo.geoPrecision,
-      entityId = geo.entityId
+      lat ude = geo.lat ude,
+      long ude = geo.long ude,
+      geoPrec s on = geo.geoPrec s on,
+      ent y d = geo.ent y d
     )
 
-  private def fromTBirdMedia(media: tbird.MediaEntity): StoredMediaEntity =
-    StoredMediaEntity(
-      id = media.id,
-      mediaType = media.mediaType,
-      width = media.width,
-      height = media.height
+  pr vate def fromTB rd d a( d a: tb rd. d aEnt y): Stored d aEnt y =
+    Stored d aEnt y(
+       d =  d a. d,
+       d aType =  d a. d aType,
+      w dth =  d a.w dth,
+        ght =  d a.  ght
     )
 
-  private def fromTBirdNarrowcast(narrowcast: tbird.Narrowcast): StoredNarrowcast =
+  pr vate def fromTB rdNarrowcast(narrowcast: tb rd.Narrowcast): StoredNarrowcast =
     StoredNarrowcast(
-      language = Some(narrowcast.language),
-      location = Some(narrowcast.location),
-      ids = Some(narrowcast.ids)
+      language = So (narrowcast.language),
+      locat on = So (narrowcast.locat on),
+       ds = So (narrowcast. ds)
     )
 
-  private def toTBirdReply(reply: StoredReply): tbird.Reply =
-    tbird.Reply(
-      inReplyToStatusId = reply.inReplyToStatusId,
-      inReplyToUserId = reply.inReplyToUserId
+  pr vate def toTB rdReply(reply: StoredReply): tb rd.Reply =
+    tb rd.Reply(
+       nReplyToStatus d = reply. nReplyToStatus d,
+       nReplyToUser d = reply. nReplyToUser d
     )
 
-  private def toTBirdShare(share: StoredShare): tbird.Share =
-    tbird.Share(
-      sourceStatusId = share.sourceStatusId,
-      sourceUserId = share.sourceUserId,
-      parentStatusId = share.parentStatusId
+  pr vate def toTB rdShare(share: StoredShare): tb rd.Share =
+    tb rd.Share(
+      s ceStatus d = share.s ceStatus d,
+      s ceUser d = share.s ceUser d,
+      parentStatus d = share.parentStatus d
     )
 
-  private def toTBirdGeo(geo: StoredGeo): tbird.Geo =
-    tbird.Geo(
-      latitude = geo.latitude,
-      longitude = geo.longitude,
-      geoPrecision = geo.geoPrecision,
-      entityId = geo.entityId,
-      name = geo.name
+  pr vate def toTB rdGeo(geo: StoredGeo): tb rd.Geo =
+    tb rd.Geo(
+      lat ude = geo.lat ude,
+      long ude = geo.long ude,
+      geoPrec s on = geo.geoPrec s on,
+      ent y d = geo.ent y d,
+      na  = geo.na 
     )
 
-  private def toTBirdMedia(media: StoredMediaEntity): tbird.MediaEntity =
-    tbird.MediaEntity(
-      id = media.id,
-      mediaType = media.mediaType,
-      width = media.width,
-      height = media.height
+  pr vate def toTB rd d a( d a: Stored d aEnt y): tb rd. d aEnt y =
+    tb rd. d aEnt y(
+       d =  d a. d,
+       d aType =  d a. d aType,
+      w dth =  d a.w dth,
+        ght =  d a.  ght
     )
 
-  private def toTBirdNarrowcast(narrowcast: StoredNarrowcast): tbird.Narrowcast =
-    tbird.Narrowcast(
-      language = narrowcast.language.getOrElse(Nil),
-      location = narrowcast.location.getOrElse(Nil),
-      ids = narrowcast.ids.getOrElse(Nil)
+  pr vate def toTB rdNarrowcast(narrowcast: StoredNarrowcast): tb rd.Narrowcast =
+    tb rd.Narrowcast(
+      language = narrowcast.language.getOrElse(N l),
+      locat on = narrowcast.locat on.getOrElse(N l),
+       ds = narrowcast. ds.getOrElse(N l)
     )
 }

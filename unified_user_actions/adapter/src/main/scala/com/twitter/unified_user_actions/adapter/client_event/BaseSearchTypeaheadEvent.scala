@@ -1,85 +1,85 @@
-package com.twitter.unified_user_actions.adapter.client_event
+package com.tw ter.un f ed_user_act ons.adapter.cl ent_event
 
-import com.twitter.clientapp.thriftscala.ItemType
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.clientapp.thriftscala.{Item => LogEventItem}
-import com.twitter.logbase.thriftscala.LogBase
-import com.twitter.unified_user_actions.adapter.client_event.ClientEventCommonUtils.getProfileIdFromUserItem
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.EventMetadata
-import com.twitter.unified_user_actions.thriftscala.Item
-import com.twitter.unified_user_actions.thriftscala.ProductSurface
-import com.twitter.unified_user_actions.thriftscala.TopicQueryResult
-import com.twitter.unified_user_actions.thriftscala.TypeaheadActionInfo
-import com.twitter.unified_user_actions.thriftscala.TypeaheadInfo
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
-import com.twitter.unified_user_actions.thriftscala.UserIdentifier
-import com.twitter.unified_user_actions.thriftscala.UserResult
+ mport com.tw ter.cl entapp.thr ftscala. emType
+ mport com.tw ter.cl entapp.thr ftscala.LogEvent
+ mport com.tw ter.cl entapp.thr ftscala.{ em => LogEvent em}
+ mport com.tw ter.logbase.thr ftscala.LogBase
+ mport com.tw ter.un f ed_user_act ons.adapter.cl ent_event.Cl entEventCommonUt ls.getProf le dFromUser em
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Act onType
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Event tadata
+ mport com.tw ter.un f ed_user_act ons.thr ftscala. em
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.ProductSurface
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Top cQueryResult
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Typea adAct on nfo
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Typea ad nfo
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Un f edUserAct on
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.User dent f er
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.UserResult
 
-abstract class BaseSearchTypeaheadEvent(actionType: ActionType)
-    extends BaseClientEvent(actionType = actionType) {
+abstract class BaseSearchTypea adEvent(act onType: Act onType)
+    extends BaseCl entEvent(act onType = act onType) {
 
-  override def toUnifiedUserAction(logEvent: LogEvent): Seq[UnifiedUserAction] = {
-    val logBase: Option[LogBase] = logEvent.logBase
+  overr de def toUn f edUserAct on(logEvent: LogEvent): Seq[Un f edUserAct on] = {
+    val logBase: Opt on[LogBase] = logEvent.logBase
 
     for {
-      ed <- logEvent.eventDetails.toSeq
+      ed <- logEvent.eventDeta ls.toSeq
       targets <- ed.targets.toSeq
       ceTarget <- targets
-      eventTimestamp <- logBase.flatMap(getSourceTimestamp)
-      uuaItem <- getUuaItem(ceTarget, logEvent)
-      if isItemTypeValid(ceTarget.itemType)
-    } yield {
-      val userIdentifier: UserIdentifier = UserIdentifier(
-        userId = logBase.flatMap(_.userId),
-        guestIdMarketing = logBase.flatMap(_.guestIdMarketing))
+      eventT  stamp <- logBase.flatMap(getS ceT  stamp)
+      uua em <- getUua em(ceTarget, logEvent)
+       f  s emTypeVal d(ceTarget. emType)
+    } y eld {
+      val user dent f er: User dent f er = User dent f er(
+        user d = logBase.flatMap(_.user d),
+        guest dMarket ng = logBase.flatMap(_.guest dMarket ng))
 
-      val productSurface: Option[ProductSurface] = ProductSurfaceUtils
-        .getProductSurface(logEvent.eventNamespace)
+      val productSurface: Opt on[ProductSurface] = ProductSurfaceUt ls
+        .getProductSurface(logEvent.eventNa space)
 
-      val eventMetaData: EventMetadata = ClientEventCommonUtils
-        .getEventMetadata(
-          eventTimestamp = eventTimestamp,
+      val event taData: Event tadata = Cl entEventCommonUt ls
+        .getEvent tadata(
+          eventT  stamp = eventT  stamp,
           logEvent = logEvent,
-          ceItem = ceTarget,
+          ce em = ceTarget,
           productSurface = productSurface
         )
 
-      UnifiedUserAction(
-        userIdentifier = userIdentifier,
-        item = uuaItem,
-        actionType = actionType,
-        eventMetadata = eventMetaData,
+      Un f edUserAct on(
+        user dent f er = user dent f er,
+         em = uua em,
+        act onType = act onType,
+        event tadata = event taData,
         productSurface = productSurface,
-        productSurfaceInfo =
-          ProductSurfaceUtils.getProductSurfaceInfo(productSurface, ceTarget, logEvent)
+        productSurface nfo =
+          ProductSurfaceUt ls.getProductSurface nfo(productSurface, ceTarget, logEvent)
       )
     }
   }
-  override def isItemTypeValid(itemTypeOpt: Option[ItemType]): Boolean =
-    ItemTypeFilterPredicates.isItemTypeTypeaheadResult(itemTypeOpt)
+  overr de def  s emTypeVal d( emTypeOpt: Opt on[ emType]): Boolean =
+     emTypeF lterPred cates. s emTypeTypea adResult( emTypeOpt)
 
-  override def getUuaItem(
-    ceTarget: LogEventItem,
+  overr de def getUua em(
+    ceTarget: LogEvent em,
     logEvent: LogEvent
-  ): Option[Item] =
-    logEvent.searchDetails.flatMap(_.query).flatMap { query =>
-      ceTarget.itemType match {
-        case Some(ItemType.User) =>
-          getProfileIdFromUserItem(ceTarget).map { profileId =>
-            Item.TypeaheadInfo(
-              TypeaheadInfo(
-                actionQuery = query,
-                typeaheadActionInfo =
-                  TypeaheadActionInfo.UserResult(UserResult(profileId = profileId))))
+  ): Opt on[ em] =
+    logEvent.searchDeta ls.flatMap(_.query).flatMap { query =>
+      ceTarget. emType match {
+        case So ( emType.User) =>
+          getProf le dFromUser em(ceTarget).map { prof le d =>
+             em.Typea ad nfo(
+              Typea ad nfo(
+                act onQuery = query,
+                typea adAct on nfo =
+                  Typea adAct on nfo.UserResult(UserResult(prof le d = prof le d))))
           }
-        case Some(ItemType.Search) =>
-          ceTarget.name.map { name =>
-            Item.TypeaheadInfo(
-              TypeaheadInfo(
-                actionQuery = query,
-                typeaheadActionInfo = TypeaheadActionInfo.TopicQueryResult(
-                  TopicQueryResult(suggestedTopicQuery = name))))
+        case So ( emType.Search) =>
+          ceTarget.na .map { na  =>
+             em.Typea ad nfo(
+              Typea ad nfo(
+                act onQuery = query,
+                typea adAct on nfo = Typea adAct on nfo.Top cQueryResult(
+                  Top cQueryResult(suggestedTop cQuery = na ))))
           }
         case _ => None
       }

@@ -1,134 +1,134 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.OptionalInt;
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.Arrays;
+ mport java.ut l.HashMap;
+ mport java.ut l.L st;
+ mport java.ut l.Opt onal nt;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.collect. mmutableL st;
+ mport com.google.common.collect.L sts;
+ mport com.google.common.collect.Maps;
 
-import org.apache.lucene.util.BytesRef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .lucene.ut l.BytesRef;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.util.LogFormatUtil;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
+ mport com.tw ter.search.common.ut l.LogFormatUt l;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
 
 /**
- * A rather simple implementation of a MultiSegmentTermDictionary that just keeps all terms in a
- * java hash map, and all the termIds for a term in a java list.
+ * A rat r s mple  mple ntat on of a Mult Seg ntTermD ct onary that just keeps all terms  n a
+ * java hash map, and all t  term ds for a term  n a java l st.
  *
- * An alternate implementation could have an MPH for the map, and a IntBlockPool for storing
- * the term ids.
+ * An alternate  mple ntat on could have an MPH for t  map, and a  ntBlockPool for stor ng
+ * t  term  ds.
  *
- * See UserIdMultiSegmentQuery class comment for more information on how this is used.
+ * See User dMult Seg ntQuery class com nt for more  nformat on on how t   s used.
  */
-public class MultiSegmentTermDictionaryWithMap implements MultiSegmentTermDictionary {
-  private static final Logger LOG = LoggerFactory.getLogger(
-      MultiSegmentTermDictionaryWithMap.class);
+publ c class Mult Seg ntTermD ct onaryW hMap  mple nts Mult Seg ntTermD ct onary {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(
+      Mult Seg ntTermD ct onaryW hMap.class);
 
-  @VisibleForTesting
-  public static final SearchTimerStats TERM_DICTIONARY_CREATION_STATS =
-      SearchTimerStats.export("multi_segment_term_dictionary_with_map_creation",
-          TimeUnit.MILLISECONDS, false);
+  @V s bleForTest ng
+  publ c stat c f nal SearchT  rStats TERM_D CT ONARY_CREAT ON_STATS =
+      SearchT  rStats.export("mult _seg nt_term_d ct onary_w h_map_creat on",
+          T  Un .M LL SECONDS, false);
 
-  private final ImmutableList<OptimizedMemoryIndex> indexes;
-  private final HashMap<BytesRef, List<IndexTerm>> termsMap;
-  private final int numTerms;
-  private final int numTermEntries;
+  pr vate f nal  mmutableL st<Opt m zed mory ndex>  ndexes;
+  pr vate f nal HashMap<BytesRef, L st< ndexTerm>> termsMap;
+  pr vate f nal  nt numTerms;
+  pr vate f nal  nt numTermEntr es;
 
-  private static class IndexTerm {
-    private int indexId;
-    private final int termId;
+  pr vate stat c class  ndexTerm {
+    pr vate  nt  ndex d;
+    pr vate f nal  nt term d;
 
-    public IndexTerm(int indexId, int termId) {
-      this.indexId = indexId;
-      this.termId = termId;
+    publ c  ndexTerm( nt  ndex d,  nt term d) {
+      t . ndex d =  ndex d;
+      t .term d = term d;
     }
   }
 
   /**
-   * Creates a new multi-segment term dictionary backed by a regular java map.
+   * Creates a new mult -seg nt term d ct onary backed by a regular java map.
    */
-  public MultiSegmentTermDictionaryWithMap(
-      String field,
-      List<OptimizedMemoryIndex> indexes) {
+  publ c Mult Seg ntTermD ct onaryW hMap(
+      Str ng f eld,
+      L st<Opt m zed mory ndex>  ndexes) {
 
-    this.indexes = ImmutableList.copyOf(indexes);
+    t . ndexes =  mmutableL st.copyOf( ndexes);
 
-    // Pre-size the map with estimate of max number of terms. It should be at least that big.
-    OptionalInt optionalMax = indexes.stream().mapToInt(OptimizedMemoryIndex::getNumTerms).max();
-    int maxNumTerms = optionalMax.orElse(0);
-    this.termsMap = Maps.newHashMapWithExpectedSize(maxNumTerms);
+    // Pre-s ze t  map w h est mate of max number of terms.   should be at least that b g.
+    Opt onal nt opt onalMax =  ndexes.stream().mapTo nt(Opt m zed mory ndex::getNumTerms).max();
+     nt maxNumTerms = opt onalMax.orElse(0);
+    t .termsMap = Maps.newHashMapW hExpectedS ze(maxNumTerms);
 
-    LOG.info("About to merge {} indexes for field {}, estimated {} terms",
-        indexes.size(), field, LogFormatUtil.formatInt(maxNumTerms));
-    long start = System.currentTimeMillis();
+    LOG. nfo("About to  rge {}  ndexes for f eld {}, est mated {} terms",
+         ndexes.s ze(), f eld, LogFormatUt l.format nt(maxNumTerms));
+    long start = System.currentT  M ll s();
 
     BytesRef termText = new BytesRef();
-    long copiedBytes = 0;
-    for (int indexId = 0; indexId < indexes.size(); indexId++) {
-      // The inverted index for this field.
-      OptimizedMemoryIndex index = indexes.get(indexId);
+    long cop edBytes = 0;
+    for ( nt  ndex d = 0;  ndex d <  ndexes.s ze();  ndex d++) {
+      // T   nverted  ndex for t  f eld.
+      Opt m zed mory ndex  ndex =  ndexes.get( ndex d);
 
-      int indexNumTerms = index.getNumTerms();
-      for (int termId = 0; termId < indexNumTerms; termId++) {
-        index.getTerm(termId, termText);
+       nt  ndexNumTerms =  ndex.getNumTerms();
+      for ( nt term d = 0; term d <  ndexNumTerms; term d++) {
+         ndex.getTerm(term d, termText);
 
-        // This copies the underlying array to a new array.
+        // T  cop es t  underly ng array to a new array.
         BytesRef term = BytesRef.deepCopyOf(termText);
-        copiedBytes += term.length;
+        cop edBytes += term.length;
 
-        List<IndexTerm> indexTerms = termsMap.computeIfAbsent(term, k -> Lists.newArrayList());
+        L st< ndexTerm>  ndexTerms = termsMap.compute fAbsent(term, k -> L sts.newArrayL st());
 
-        indexTerms.add(new IndexTerm(indexId, termId));
+         ndexTerms.add(new  ndexTerm( ndex d, term d));
       }
     }
 
-    this.numTerms = termsMap.size();
-    this.numTermEntries = indexes.stream().mapToInt(OptimizedMemoryIndex::getNumTerms).sum();
+    t .numTerms = termsMap.s ze();
+    t .numTermEntr es =  ndexes.stream().mapTo nt(Opt m zed mory ndex::getNumTerms).sum();
 
-    long elapsed = System.currentTimeMillis() - start;
-    TERM_DICTIONARY_CREATION_STATS.timerIncrement(elapsed);
-    LOG.info("Done merging {} indexes for field {} in {}ms - "
-      + "num terms: {}, num term entries: {}, copied bytes: {}",
-        indexes.size(), field, elapsed,
-        LogFormatUtil.formatInt(this.numTerms), LogFormatUtil.formatInt(this.numTermEntries),
-            LogFormatUtil.formatInt(copiedBytes));
+    long elapsed = System.currentT  M ll s() - start;
+    TERM_D CT ONARY_CREAT ON_STATS.t  r ncre nt(elapsed);
+    LOG. nfo("Done  rg ng {}  ndexes for f eld {}  n {}ms - "
+      + "num terms: {}, num term entr es: {}, cop ed bytes: {}",
+         ndexes.s ze(), f eld, elapsed,
+        LogFormatUt l.format nt(t .numTerms), LogFormatUt l.format nt(t .numTermEntr es),
+            LogFormatUt l.format nt(cop edBytes));
   }
 
-  @Override
-  public int[] lookupTermIds(BytesRef term) {
-    int[] termIds = new int[indexes.size()];
-    Arrays.fill(termIds, EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND);
+  @Overr de
+  publ c  nt[] lookupTerm ds(BytesRef term) {
+     nt[] term ds = new  nt[ ndexes.s ze()];
+    Arrays.f ll(term ds, Earlyb rd ndexSeg ntAtom cReader.TERM_NOT_FOUND);
 
-    List<IndexTerm> indexTerms = termsMap.get(term);
-    if (indexTerms != null) {
-      for (IndexTerm indexTerm : indexTerms) {
-        termIds[indexTerm.indexId] = indexTerm.termId;
+    L st< ndexTerm>  ndexTerms = termsMap.get(term);
+     f ( ndexTerms != null) {
+      for ( ndexTerm  ndexTerm :  ndexTerms) {
+        term ds[ ndexTerm. ndex d] =  ndexTerm.term d;
       }
     }
 
-    return termIds;
+    return term ds;
   }
 
-  @Override
-  public ImmutableList<? extends InvertedIndex> getSegmentIndexes() {
-    return indexes;
+  @Overr de
+  publ c  mmutableL st<? extends  nverted ndex> getSeg nt ndexes() {
+    return  ndexes;
   }
 
-  @Override
-  public int getNumTerms() {
-    return this.numTerms;
+  @Overr de
+  publ c  nt getNumTerms() {
+    return t .numTerms;
   }
 
-  @Override
-  public int getNumTermEntries() {
-    return this.numTermEntries;
+  @Overr de
+  publ c  nt getNumTermEntr es() {
+    return t .numTermEntr es;
   }
 }

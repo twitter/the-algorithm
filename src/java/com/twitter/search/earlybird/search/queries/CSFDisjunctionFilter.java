@@ -1,87 +1,87 @@
-package com.twitter.search.earlybird.search.queries;
+package com.tw ter.search.earlyb rd.search.quer es;
 
-import java.io.IOException;
-import java.util.Objects;
-import java.util.Set;
+ mport java. o. OExcept on;
+ mport java.ut l.Objects;
+ mport java.ut l.Set;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+ mport org.apac .lucene. ndex.LeafReader;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene. ndex.Nu r cDocValues;
+ mport org.apac .lucene.search.BooleanClause;
+ mport org.apac .lucene.search.BooleanQuery;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.search. ndexSearc r;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .lucene.search.ScoreMode;
+ mport org.apac .lucene.search.  ght;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
+ mport com.tw ter.search.common.query.DefaultF lter  ght;
+ mport com.tw ter.search.core.earlyb rd. ndex.ut l.RangeF lterD S ;
 
 /**
- * CSFDisjunctionFilter provides an efficient mechanism to query for documents that have a
- * long CSF equal to one of the provided values.
+ * CSFD sjunct onF lter prov des an eff c ent  chan sm to query for docu nts that have a
+ * long CSF equal to one of t  prov ded values.
  */
-public final class CSFDisjunctionFilter extends Query {
-  private final String csfField;
-  private final Set<Long> values;
+publ c f nal class CSFD sjunct onF lter extends Query {
+  pr vate f nal Str ng csfF eld;
+  pr vate f nal Set<Long> values;
 
-  public static Query getCSFDisjunctionFilter(String csfField, Set<Long> values) {
-    return new BooleanQuery.Builder()
-        .add(new CSFDisjunctionFilter(csfField, values), BooleanClause.Occur.FILTER)
-        .build();
+  publ c stat c Query getCSFD sjunct onF lter(Str ng csfF eld, Set<Long> values) {
+    return new BooleanQuery.Bu lder()
+        .add(new CSFD sjunct onF lter(csfF eld, values), BooleanClause.Occur.F LTER)
+        .bu ld();
   }
 
-  private CSFDisjunctionFilter(String csfField, Set<Long> values) {
-    this.csfField = csfField;
-    this.values = values;
+  pr vate CSFD sjunct onF lter(Str ng csfF eld, Set<Long> values) {
+    t .csfF eld = csfF eld;
+    t .values = values;
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        return new CSFDisjunctionFilterDISI(context.reader(), csfField, values);
+  @Overr de
+  publ c   ght create  ght( ndexSearc r searc r, ScoreMode scoreMode, float boost) {
+    return new DefaultF lter  ght(t ) {
+      @Overr de
+      protected Doc dSet erator getDoc dSet erator(LeafReaderContext context) throws  OExcept on {
+        return new CSFD sjunct onF lterD S (context.reader(), csfF eld, values);
       }
     };
   }
 
-  @Override
-  public int hashCode() {
-    return (csfField == null ? 0 : csfField.hashCode()) * 17
+  @Overr de
+  publ c  nt hashCode() {
+    return (csfF eld == null ? 0 : csfF eld.hashCode()) * 17
         + (values == null ? 0 : values.hashCode());
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof CSFDisjunctionFilter)) {
+  @Overr de
+  publ c boolean equals(Object obj) {
+     f (!(obj  nstanceof CSFD sjunct onF lter)) {
       return false;
     }
 
-    CSFDisjunctionFilter filter = CSFDisjunctionFilter.class.cast(obj);
-    return Objects.equals(csfField, filter.csfField) && Objects.equals(values, filter.values);
+    CSFD sjunct onF lter f lter = CSFD sjunct onF lter.class.cast(obj);
+    return Objects.equals(csfF eld, f lter.csfF eld) && Objects.equals(values, f lter.values);
   }
 
-  @Override
-  public String toString(String field) {
-    return "CSFDisjunctionFilter:" + csfField + ",count:" + values.size();
+  @Overr de
+  publ c Str ng toStr ng(Str ng f eld) {
+    return "CSFD sjunct onF lter:" + csfF eld + ",count:" + values.s ze();
   }
 
-  private static final class CSFDisjunctionFilterDISI extends RangeFilterDISI {
-    private final NumericDocValues docValues;
-    private final Set<Long> values;
+  pr vate stat c f nal class CSFD sjunct onF lterD S  extends RangeF lterD S  {
+    pr vate f nal Nu r cDocValues docValues;
+    pr vate f nal Set<Long> values;
 
-    private CSFDisjunctionFilterDISI(LeafReader reader, String csfField, Set<Long> values)
-        throws IOException {
+    pr vate CSFD sjunct onF lterD S (LeafReader reader, Str ng csfF eld, Set<Long> values)
+        throws  OExcept on {
       super(reader);
-      this.values = values;
-      this.docValues = reader.getNumericDocValues(csfField);
+      t .values = values;
+      t .docValues = reader.getNu r cDocValues(csfF eld);
     }
 
-    @Override
-    protected boolean shouldReturnDoc() throws IOException {
-      return docValues.advanceExact(docID()) && values.contains(docValues.longValue());
+    @Overr de
+    protected boolean shouldReturnDoc() throws  OExcept on {
+      return docValues.advanceExact(doc D()) && values.conta ns(docValues.longValue());
     }
   }
 }

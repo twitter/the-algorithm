@@ -1,18 +1,18 @@
-package com.twitter.simclusters_v2.common
+package com.tw ter.s mclusters_v2.common
 
-import com.twitter.algebird.Monoid
+ mport com.tw ter.algeb rd.Mono d
 
-case class SimClustersEmbeddingMonoid() extends Monoid[SimClustersEmbedding] {
+case class S mClustersEmbedd ngMono d() extends Mono d[S mClustersEmbedd ng] {
 
-  override val zero: SimClustersEmbedding = SimClustersEmbedding.EmptyEmbedding
+  overr de val zero: S mClustersEmbedd ng = S mClustersEmbedd ng.EmptyEmbedd ng
 
-  override def plus(x: SimClustersEmbedding, y: SimClustersEmbedding): SimClustersEmbedding = {
+  overr de def plus(x: S mClustersEmbedd ng, y: S mClustersEmbedd ng): S mClustersEmbedd ng = {
     x.sum(y)
   }
 }
 
-object SimClustersEmbeddingMonoid {
+object S mClustersEmbedd ngMono d {
 
-  val monoid: Monoid[SimClustersEmbedding] = SimClustersEmbeddingMonoid()
+  val mono d: Mono d[S mClustersEmbedd ng] = S mClustersEmbedd ngMono d()
 
 }

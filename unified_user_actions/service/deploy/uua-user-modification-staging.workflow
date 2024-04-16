@@ -1,39 +1,39 @@
 {
-  "role": "discode",
-  "name": "uua-user-modification-staging",
-  "config-files": [
-    "uua-user-modification.aurora"
+  "role": "d scode",
+  "na ": "uua-user-mod f cat on-stag ng",
+  "conf g-f les": [
+    "uua-user-mod f cat on.aurora"
   ],
-  "build": {
+  "bu ld": {
     "play": true,
-    "dependencies": [
+    "dependenc es": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "na ": "packer-cl ent-no-pex",
+        "vers on": "latest"
       }
     ],
     "steps": [
       {
         "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-user-modification"
+        "na ": "bundle",
+        "target": "un f ed_user_act ons/serv ce/src/ma n/scala:uua-user-mod f cat on"
       },
       {
         "type": "packer",
-        "name": "uua-user-modification-staging",
-        "artifact": "./dist/uua-user-modification.zip"
+        "na ": "uua-user-mod f cat on-stag ng",
+        "art fact": "./d st/uua-user-mod f cat on.z p"
       }
     ]
   },
   "targets": [
     {
       "type": "group",
-      "name": "staging",
+      "na ": "stag ng",
       "targets": [
         {
-          "name": "uua-user-modification-staging-pdxa",
-          "key": "pdxa/discode/staging/uua-user-modification"
+          "na ": "uua-user-mod f cat on-stag ng-pdxa",
+          "key": "pdxa/d scode/stag ng/uua-user-mod f cat on"
         }
       ]
     }

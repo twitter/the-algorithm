@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.t  l ne_module
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleShowMoreBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleShowMoreBehaviorRevealByCount
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.ModuleShowMoreBehav or
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.ModuleShowMoreBehav orRevealByCount
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ModuleShowMoreBehaviorMarshaller @Inject() (
-  moduleShowMoreBehaviorRevealByCountMarshaller: ModuleShowMoreBehaviorRevealByCountMarshaller) {
+@S ngleton
+class ModuleShowMoreBehav orMarshaller @ nject() (
+  moduleShowMoreBehav orRevealByCountMarshaller: ModuleShowMoreBehav orRevealByCountMarshaller) {
 
   def apply(
-    moduleShowMoreBehavior: ModuleShowMoreBehavior
-  ): urt.ModuleShowMoreBehavior = moduleShowMoreBehavior match {
-    case moduleShowMoreBehaviorRevealByCount: ModuleShowMoreBehaviorRevealByCount =>
-      moduleShowMoreBehaviorRevealByCountMarshaller(moduleShowMoreBehaviorRevealByCount)
+    moduleShowMoreBehav or: ModuleShowMoreBehav or
+  ): urt.ModuleShowMoreBehav or = moduleShowMoreBehav or match {
+    case moduleShowMoreBehav orRevealByCount: ModuleShowMoreBehav orRevealByCount =>
+      moduleShowMoreBehav orRevealByCountMarshaller(moduleShowMoreBehav orRevealByCount)
   }
 }

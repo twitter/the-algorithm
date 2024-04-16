@@ -1,19 +1,19 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.offl ne_aggregates
 
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates.EdgeAggregateFeatures._
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.offl ne_aggregates.EdgeAggregateFeatures._
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class Phase1EdgeAggregateFeatureHydrator @Inject() extends BaseEdgeAggregateFeatureHydrator {
+@S ngleton
+class Phase1EdgeAggregateFeatureHydrator @ nject() extends BaseEdgeAggregateFeatureHydrator {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("Phase1EdgeAggregate")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("Phase1EdgeAggregate")
 
-  override val aggregateFeatures: Set[BaseEdgeAggregateFeature] = Set(
+  overr de val aggregateFeatures: Set[BaseEdgeAggregateFeature] = Set(
     UserAuthorAggregateFeature,
-    UserOriginalAuthorAggregateFeature,
-    UserMentionAggregateFeature
+    UserOr g nalAuthorAggregateFeature,
+    User nt onAggregateFeature
   )
 }

@@ -1,179 +1,179 @@
-package com.twitter.home_mixer.product.scored_tweets.scorer
+package com.tw ter.ho _m xer.product.scored_t ets.scorer
 
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.home_mixer.model.HomeFeatures.WeightedModelScoreFeature
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.scorer.PredictedScoreFeature.PredictedScoreFeatures
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.datarecord.AllFeatures
-import com.twitter.product_mixer.core.feature.featuremap.datarecord.DataRecordConverter
-import com.twitter.product_mixer.core.feature.featuremap.datarecord.DataRecordExtractor
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.clients.predictionservice.PredictionGRPCService
-import com.twitter.timelines.clients.predictionservice.PredictionServiceGRPCClient
-import com.twitter.util.Future
-import com.twitter.util.Return
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.Stat
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ho _m xer.model.Ho Features.ScoreFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.  ghtedModelScoreFeature
+ mport com.tw ter.ho _m xer.product.scored_t ets.model.ScoredT etsQuery
+ mport com.tw ter.ho _m xer.product.scored_t ets.scorer.Pred ctedScoreFeature.Pred ctedScoreFeatures
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.FeatureW hDefaultOnFa lure
+ mport com.tw ter.product_m xer.core.feature.datarecord.DataRecord nAFeature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.datarecord.AllFeatures
+ mport com.tw ter.product_m xer.core.feature.featuremap.datarecord.DataRecordConverter
+ mport com.tw ter.product_m xer.core.feature.featuremap.datarecord.DataRecordExtractor
+ mport com.tw ter.product_m xer.core.funct onal_component.scorer.Scorer
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Scorer dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure. llegalStateFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.ut l.OffloadFuturePools
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.cl ents.pred ct onserv ce.Pred ct onGRPCServ ce
+ mport com.tw ter.t  l nes.cl ents.pred ct onserv ce.Pred ct onServ ceGRPCCl ent
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Return
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 object CommonFeaturesDataRecordFeature
-    extends DataRecordInAFeature[PipelineQuery]
-    with FeatureWithDefaultOnFailure[PipelineQuery, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+    extends DataRecord nAFeature[P pel neQuery]
+    w h FeatureW hDefaultOnFa lure[P pel neQuery, DataRecord] {
+  overr de def defaultValue: DataRecord = new DataRecord()
 }
 
-object CandidateFeaturesDataRecordFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+object Cand dateFeaturesDataRecordFeature
+    extends DataRecord nAFeature[T etCand date]
+    w h FeatureW hDefaultOnFa lure[T etCand date, DataRecord] {
+  overr de def defaultValue: DataRecord = new DataRecord()
 }
 
-@Singleton
-case class NaviModelScorer @Inject() (
-  predictionGRPCService: PredictionGRPCService,
-  statsReceiver: StatsReceiver)
-    extends Scorer[ScoredTweetsQuery, TweetCandidate] {
+@S ngleton
+case class Nav ModelScorer @ nject() (
+  pred ct onGRPCServ ce: Pred ct onGRPCServ ce,
+  statsRece ver: StatsRece ver)
+    extends Scorer[ScoredT etsQuery, T etCand date] {
 
-  override val identifier: ScorerIdentifier = ScorerIdentifier("NaviModel")
+  overr de val  dent f er: Scorer dent f er = Scorer dent f er("Nav Model")
 
-  override val features: Set[Feature[_, _]] = Set(
+  overr de val features: Set[Feature[_, _]] = Set(
     CommonFeaturesDataRecordFeature,
-    CandidateFeaturesDataRecordFeature,
-    WeightedModelScoreFeature,
+    Cand dateFeaturesDataRecordFeature,
+      ghtedModelScoreFeature,
     ScoreFeature
-  ) ++ PredictedScoreFeatures.asInstanceOf[Set[Feature[_, _]]]
+  ) ++ Pred ctedScoreFeatures.as nstanceOf[Set[Feature[_, _]]]
 
-  private val queryDataRecordAdapter = new DataRecordConverter(AllFeatures())
-  private val candidatesDataRecordAdapter = new DataRecordConverter(AllFeatures())
-  private val resultDataRecordExtractor = new DataRecordExtractor(PredictedScoreFeatures)
+  pr vate val queryDataRecordAdapter = new DataRecordConverter(AllFeatures())
+  pr vate val cand datesDataRecordAdapter = new DataRecordConverter(AllFeatures())
+  pr vate val resultDataRecordExtractor = new DataRecordExtractor(Pred ctedScoreFeatures)
 
-  private val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
-  private val failuresStat = scopedStatsReceiver.stat("failures")
-  private val responsesStat = scopedStatsReceiver.stat("responses")
-  private val invalidResponsesCounter = scopedStatsReceiver.counter("invalidResponses")
-  private val candidatesDataRecordAdapterLatencyStat =
-    scopedStatsReceiver.scope("candidatesDataRecordAdapter").stat("latency_ms")
+  pr vate val scopedStatsRece ver = statsRece ver.scope(getClass.getS mpleNa )
+  pr vate val fa luresStat = scopedStatsRece ver.stat("fa lures")
+  pr vate val responsesStat = scopedStatsRece ver.stat("responses")
+  pr vate val  nval dResponsesCounter = scopedStatsRece ver.counter(" nval dResponses")
+  pr vate val cand datesDataRecordAdapterLatencyStat =
+    scopedStatsRece ver.scope("cand datesDataRecordAdapter").stat("latency_ms")
 
-  private val StatsReadabilityMultiplier = 1000
-  private val Epsilon = 0.001
-  private val PredictedScoreStatName = f"predictedScore${StatsReadabilityMultiplier}x"
-  private val MissingScoreStatName = "missingScore"
-  private val scoreStat = scopedStatsReceiver.stat(f"score${StatsReadabilityMultiplier}x")
+  pr vate val StatsReadab l yMult pl er = 1000
+  pr vate val Eps lon = 0.001
+  pr vate val Pred ctedScoreStatNa  = f"pred ctedScore${StatsReadab l yMult pl er}x"
+  pr vate val M ss ngScoreStatNa  = "m ss ngScore"
+  pr vate val scoreStat = scopedStatsRece ver.stat(f"score${StatsReadab l yMult pl er}x")
 
-  private val RequestBatchSize = 64
-  private val DataRecordConstructionParallelism = 32
-  private val ModelId = "Home"
+  pr vate val RequestBatchS ze = 64
+  pr vate val DataRecordConstruct onParallel sm = 32
+  pr vate val Model d = "Ho "
 
-  private val modelClient = new PredictionServiceGRPCClient(
-    service = predictionGRPCService,
-    statsReceiver = statsReceiver,
-    requestBatchSize = RequestBatchSize,
+  pr vate val modelCl ent = new Pred ct onServ ceGRPCCl ent(
+    serv ce = pred ct onGRPCServ ce,
+    statsRece ver = statsRece ver,
+    requestBatchS ze = RequestBatchS ze,
     useCompact = false
   )
 
-  override def apply(
-    query: ScoredTweetsQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
+  overr de def apply(
+    query: ScoredT etsQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[Seq[FeatureMap]] = {
     val commonRecord = query.features.map(queryDataRecordAdapter.toDataRecord)
-    val candidateRecords: Future[Seq[DataRecord]] =
-      Stat.time(candidatesDataRecordAdapterLatencyStat) {
-        OffloadFuturePools.parallelize[FeatureMap, DataRecord](
-          inputSeq = candidates.map(_.features),
-          transformer = candidatesDataRecordAdapter.toDataRecord(_),
-          parallelism = DataRecordConstructionParallelism,
+    val cand dateRecords: Future[Seq[DataRecord]] =
+      Stat.t  (cand datesDataRecordAdapterLatencyStat) {
+        OffloadFuturePools.parallel ze[FeatureMap, DataRecord](
+           nputSeq = cand dates.map(_.features),
+          transfor r = cand datesDataRecordAdapter.toDataRecord(_),
+          parallel sm = DataRecordConstruct onParallel sm,
           default = new DataRecord
         )
       }
 
-    val scoreFeatureMaps = candidateRecords.flatMap { records =>
-      val predictionResponses =
-        modelClient.getPredictions(records, commonRecord, modelId = Some(ModelId))
+    val scoreFeatureMaps = cand dateRecords.flatMap { records =>
+      val pred ct onResponses =
+        modelCl ent.getPred ct ons(records, commonRecord, model d = So (Model d))
 
-      predictionResponses.map { responses =>
-        failuresStat.add(responses.count(_.isThrow))
-        responsesStat.add(responses.size)
+      pred ct onResponses.map { responses =>
+        fa luresStat.add(responses.count(_. sThrow))
+        responsesStat.add(responses.s ze)
 
-        if (responses.size == candidates.size) {
-          val predictedScoreFeatureMaps = responses.map {
+         f (responses.s ze == cand dates.s ze) {
+          val pred ctedScoreFeatureMaps = responses.map {
             case Return(dataRecord) => resultDataRecordExtractor.fromDataRecord(dataRecord)
             case _ => resultDataRecordExtractor.fromDataRecord(new DataRecord())
           }
 
-          // Add Data Record to candidate Feature Map for logging in later stages
-          predictedScoreFeatureMaps.zip(records).map {
-            case (predictedScoreFeatureMap, candidateRecord) =>
-              val weightedModelScore = computeWeightedModelScore(query, predictedScoreFeatureMap)
-              scoreStat.add((weightedModelScore * StatsReadabilityMultiplier).toFloat)
+          // Add Data Record to cand date Feature Map for logg ng  n later stages
+          pred ctedScoreFeatureMaps.z p(records).map {
+            case (pred ctedScoreFeatureMap, cand dateRecord) =>
+              val   ghtedModelScore = compute  ghtedModelScore(query, pred ctedScoreFeatureMap)
+              scoreStat.add((  ghtedModelScore * StatsReadab l yMult pl er).toFloat)
 
-              predictedScoreFeatureMap +
-                (CandidateFeaturesDataRecordFeature, candidateRecord) +
+              pred ctedScoreFeatureMap +
+                (Cand dateFeaturesDataRecordFeature, cand dateRecord) +
                 (CommonFeaturesDataRecordFeature, commonRecord.getOrElse(new DataRecord())) +
-                (ScoreFeature, Some(weightedModelScore)) +
-                (WeightedModelScoreFeature, Some(weightedModelScore))
+                (ScoreFeature, So (  ghtedModelScore)) +
+                (  ghtedModelScoreFeature, So (  ghtedModelScore))
           }
         } else {
-          invalidResponsesCounter.incr()
-          throw PipelineFailure(IllegalStateFailure, "Result size mismatched candidates size")
+           nval dResponsesCounter. ncr()
+          throw P pel neFa lure( llegalStateFa lure, "Result s ze m smatc d cand dates s ze")
         }
       }
     }
 
-    Stitch.callFuture(scoreFeatureMaps)
+    St ch.callFuture(scoreFeatureMaps)
   }
 
   /**
-   * Compute the weighted sum of predicted scores of all engagements
-   * Convert negative score to positive, if needed
+   * Compute t    ghted sum of pred cted scores of all engage nts
+   * Convert negat ve score to pos  ve,  f needed
    */
-  private def computeWeightedModelScore(
-    query: PipelineQuery,
+  pr vate def compute  ghtedModelScore(
+    query: P pel neQuery,
     features: FeatureMap
   ): Double = {
-    val weightedScoreAndModelWeightSeq = PredictedScoreFeatures.toSeq.map { predictedScoreFeature =>
-      val predictedScoreOpt = predictedScoreFeature.extractScore(features)
+    val   ghtedScoreAndModel  ghtSeq = Pred ctedScoreFeatures.toSeq.map { pred ctedScoreFeature =>
+      val pred ctedScoreOpt = pred ctedScoreFeature.extractScore(features)
 
-      predictedScoreOpt match {
-        case Some(predictedScore) =>
-          scopedStatsReceiver
-            .stat(predictedScoreFeature.statName, PredictedScoreStatName)
-            .add((predictedScore * StatsReadabilityMultiplier).toFloat)
+      pred ctedScoreOpt match {
+        case So (pred ctedScore) =>
+          scopedStatsRece ver
+            .stat(pred ctedScoreFeature.statNa , Pred ctedScoreStatNa )
+            .add((pred ctedScore * StatsReadab l yMult pl er).toFloat)
         case None =>
-          scopedStatsReceiver.counter(predictedScoreFeature.statName, MissingScoreStatName).incr()
+          scopedStatsRece ver.counter(pred ctedScoreFeature.statNa , M ss ngScoreStatNa ). ncr()
       }
 
-      val weight = query.params(predictedScoreFeature.modelWeightParam)
-      val weightedScore = predictedScoreOpt.getOrElse(0.0) * weight
-      (weightedScore, weight)
+      val   ght = query.params(pred ctedScoreFeature.model  ghtParam)
+      val   ghtedScore = pred ctedScoreOpt.getOrElse(0.0) *   ght
+      (  ghtedScore,   ght)
     }
 
-    val (weightedScores, modelWeights) = weightedScoreAndModelWeightSeq.unzip
-    val combinedScoreSum = weightedScores.sum
+    val (  ghtedScores, model  ghts) =   ghtedScoreAndModel  ghtSeq.unz p
+    val comb nedScoreSum =   ghtedScores.sum
 
-    val positiveModelWeightsSum = modelWeights.filter(_ > 0.0).sum
-    val negativeModelWeightsSum = modelWeights.filter(_ < 0).sum.abs
-    val modelWeightsSum = positiveModelWeightsSum + negativeModelWeightsSum
+    val pos  veModel  ghtsSum = model  ghts.f lter(_ > 0.0).sum
+    val negat veModel  ghtsSum = model  ghts.f lter(_ < 0).sum.abs
+    val model  ghtsSum = pos  veModel  ghtsSum + negat veModel  ghtsSum
 
-    val weightedScoresSum =
-      if (modelWeightsSum == 0) combinedScoreSum.max(0.0)
-      else if (combinedScoreSum < 0)
-        (combinedScoreSum + negativeModelWeightsSum) / modelWeightsSum * Epsilon
-      else combinedScoreSum + Epsilon
+    val   ghtedScoresSum =
+       f (model  ghtsSum == 0) comb nedScoreSum.max(0.0)
+      else  f (comb nedScoreSum < 0)
+        (comb nedScoreSum + negat veModel  ghtsSum) / model  ghtsSum * Eps lon
+      else comb nedScoreSum + Eps lon
 
-    weightedScoresSum
+      ghtedScoresSum
   }
 }

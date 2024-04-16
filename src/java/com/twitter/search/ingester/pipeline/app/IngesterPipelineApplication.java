@@ -1,195 +1,195 @@
-package com.twitter.search.ingester.pipeline.app;
+package com.tw ter.search. ngester.p pel ne.app;
 
-import java.io.File;
-import java.net.URL;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
+ mport java. o.F le;
+ mport java.net.URL;
+ mport java.ut l.concurrent.CountDownLatch;
+ mport java.ut l.concurrent.atom c.Atom cBoolean;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import org.apache.commons.pipeline.Pipeline;
-import org.apache.commons.pipeline.PipelineCreationException;
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.config.DigesterPipelineFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.twitter.app.Flag;
-import com.twitter.app.Flaggable;
-import com.twitter.search.common.metrics.BuildInfoStats;
-import com.twitter.search.ingester.pipeline.wire.ProductionWireModule;
-import com.twitter.search.ingester.pipeline.wire.WireModule;
-import com.twitter.search.ingester.util.jndi.JndiUtil;
-import com.twitter.server.AbstractTwitterServer;
-import com.twitter.server.handler.DeciderHandler$;
+ mport org.apac .commons.p pel ne.P pel ne;
+ mport org.apac .commons.p pel ne.P pel neCreat onExcept on;
+ mport org.apac .commons.p pel ne.StageExcept on;
+ mport org.apac .commons.p pel ne.conf g.D gesterP pel neFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
+ mport com.tw ter.app.Flag;
+ mport com.tw ter.app.Flaggable;
+ mport com.tw ter.search.common. tr cs.Bu ld nfoStats;
+ mport com.tw ter.search. ngester.p pel ne.w re.Product onW reModule;
+ mport com.tw ter.search. ngester.p pel ne.w re.W reModule;
+ mport com.tw ter.search. ngester.ut l.jnd .Jnd Ut l;
+ mport com.tw ter.server.AbstractTw terServer;
+ mport com.tw ter.server.handler.Dec derHandler$;
 
-/** Starts the ingester/indexer pipeline. */
-public class IngesterPipelineApplication extends AbstractTwitterServer {
-  private static final Logger LOG = LoggerFactory.getLogger(IngesterPipelineApplication.class);
-  private static final String VERSION_2 = "v2";
-  private final Flag<String> pipelineConfigFile = flag().create(
-      "config_file",
+/** Starts t   ngester/ ndexer p pel ne. */
+publ c class  ngesterP pel neAppl cat on extends AbstractTw terServer {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger( ngesterP pel neAppl cat on.class);
+  pr vate stat c f nal Str ng VERS ON_2 = "v2";
+  pr vate f nal Flag<Str ng> p pel neConf gF le = flag().create(
+      "conf g_f le",
       "",
-      "xml file to load pipeline config from. Required.",
-      Flaggable.ofString());
+      "xml f le to load p pel ne conf g from. Requ red.",
+      Flaggable.ofStr ng());
 
-  private final Flag<String> pipelineVersion = flag().create(
-      "version",
+  pr vate f nal Flag<Str ng> p pel neVers on = flag().create(
+      "vers on",
       "",
-      "Specifies if we want to run the acp pipeline or non acp pipeline.",
-      Flaggable.ofString());
+      "Spec f es  f   want to run t  acp p pel ne or non acp p pel ne.",
+      Flaggable.ofStr ng());
 
-  private final Flag<Integer> partitionArg = flag().create(
+  pr vate f nal Flag< nteger> part  onArg = flag().create(
       "shard",
       -1,
-      "The partition this indexer is responsible for.",
-      Flaggable.ofJavaInteger());
+      "T  part  on t   ndexer  s respons ble for.",
+      Flaggable.ofJava nteger());
 
-  private final Flag<String> deciderOverlay = flag().create(
-      "decider_overlay",
+  pr vate f nal Flag<Str ng> dec derOverlay = flag().create(
+      "dec der_overlay",
       "",
-      "Decider overlay",
-      Flaggable.ofString());
+      "Dec der overlay",
+      Flaggable.ofStr ng());
 
-  private final Flag<String> serviceIdentifierFlag = flag().create(
-    "service_identifier",
+  pr vate f nal Flag<Str ng> serv ce dent f erFlag = flag().create(
+    "serv ce_ dent f er",
     "",
-    "Service identifier for mutual TLS authentication",
-    Flaggable.ofString());
+    "Serv ce  dent f er for mutual TLS aut nt cat on",
+    Flaggable.ofStr ng());
 
-  private final Flag<String> environment = flag().create(
-      "environment",
+  pr vate f nal Flag<Str ng> env ron nt = flag().create(
+      "env ron nt",
       "",
-      "Specifies the environment the app is running in. Valid values : prod, staging, "
-          + "staging1. Required if pipelineVersion == 'v2'",
-      Flaggable.ofString()
+      "Spec f es t  env ron nt t  app  s runn ng  n. Val d values : prod, stag ng, "
+          + "stag ng1. Requ red  f p pel neVers on == 'v2'",
+      Flaggable.ofStr ng()
   );
 
-  private final Flag<String> cluster = flag().create(
+  pr vate f nal Flag<Str ng> cluster = flag().create(
       "cluster",
       "",
-      "Specifies the cluster the app is running in. Valid values : realtime, protected, "
-          + "realtime_cg, user_updates. Required if pipelineVersion == 'v2'",
-      Flaggable.ofString()
+      "Spec f es t  cluster t  app  s runn ng  n. Val d values : realt  , protected, "
+          + "realt  _cg, user_updates. Requ red  f p pel neVers on == 'v2'",
+      Flaggable.ofStr ng()
   );
 
-  private final Flag<Float> cores = flag().create(
+  pr vate f nal Flag<Float> cores = flag().create(
       "cores",
       1F,
-      "Specifies the number of cores this cluster is using. ",
+      "Spec f es t  number of cores t  cluster  s us ng. ",
       Flaggable.ofJavaFloat()
   );
 
-  private final CountDownLatch shutdownLatch = new CountDownLatch(1);
+  pr vate f nal CountDownLatch shutdownLatch = new CountDownLatch(1);
 
-  public void shutdown() {
+  publ c vo d shutdown() {
     shutdownLatch.countDown();
   }
 
-  private Pipeline pipeline;
+  pr vate P pel ne p pel ne;
 
-  private final AtomicBoolean started = new AtomicBoolean(false);
+  pr vate f nal Atom cBoolean started = new Atom cBoolean(false);
 
-  private final AtomicBoolean finished = new AtomicBoolean(false);
+  pr vate f nal Atom cBoolean f n s d = new Atom cBoolean(false);
 
   /**
-   * Boilerplate for the Java-friendly AbstractTwitterServer
+   * Bo lerplate for t  Java-fr endly AbstractTw terServer
    */
-  public static class Main {
-    public static void main(String[] args) {
-      new IngesterPipelineApplication().main(args);
+  publ c stat c class Ma n {
+    publ c stat c vo d ma n(Str ng[] args) {
+      new  ngesterP pel neAppl cat on().ma n(args);
     }
   }
 
   /**
-   * Code is based on DigesterPipelineFactory.main. We only require reading in one config file.
+   * Code  s based on D gesterP pel neFactory.ma n.   only requ re read ng  n one conf g f le.
    */
-  @Override
-  public void main() {
+  @Overr de
+  publ c vo d ma n() {
     try {
-      JndiUtil.loadJNDI();
+      Jnd Ut l.loadJND ();
 
-      ProductionWireModule wireModule = new ProductionWireModule(
-          deciderOverlay.get().get(),
-          partitionArg.getWithDefault().get(),
-          serviceIdentifierFlag.get());
-      WireModule.bindWireModule(wireModule);
+      Product onW reModule w reModule = new Product onW reModule(
+          dec derOverlay.get().get(),
+          part  onArg.getW hDefault().get(),
+          serv ce dent f erFlag.get());
+      W reModule.b ndW reModule(w reModule);
 
-      addAdminRoute(DeciderHandler$.MODULE$.route(
-          "ingester",
-          wireModule.getMutableDecisionMaker(),
-          wireModule.getDecider()));
+      addAdm nRoute(Dec derHandler$.MODULE$.route(
+          " ngester",
+          w reModule.getMutableDec s onMaker(),
+          w reModule.getDec der()));
 
-      BuildInfoStats.export();
-      if (pipelineVersion.get().get().equals(VERSION_2)) {
-        runPipelineV2(wireModule);
+      Bu ld nfoStats.export();
+       f (p pel neVers on.get().get().equals(VERS ON_2)) {
+        runP pel neV2(w reModule);
       } else {
-        runPipelineV1(wireModule);
+        runP pel neV1(w reModule);
       }
-      LOG.info("Pipeline terminated. Ingester is DOWN.");
-    } catch (Exception e) {
-      LOG.error("Exception in pipeline. Ingester is DOWN.", e);
-      throw new RuntimeException(e);
+      LOG. nfo("P pel ne term nated.  ngester  s DOWN.");
+    } catch (Except on e) {
+      LOG.error("Except on  n p pel ne.  ngester  s DOWN.", e);
+      throw new Runt  Except on(e);
     }
   }
 
-  @VisibleForTesting
-  boolean isFinished() {
-    return finished.get();
+  @V s bleForTest ng
+  boolean  sF n s d() {
+    return f n s d.get();
   }
 
-  @VisibleForTesting
-  Pipeline createPipeline(URL pipelineConfigFileURL) throws PipelineCreationException {
-    DigesterPipelineFactory factory = new DigesterPipelineFactory(pipelineConfigFileURL);
-    LOG.info("Pipeline created from {}, about to begin processing...", pipelineConfigFileURL);
-    return factory.createPipeline();
+  @V s bleForTest ng
+  P pel ne createP pel ne(URL p pel neConf gF leURL) throws P pel neCreat onExcept on {
+    D gesterP pel neFactory factory = new D gesterP pel neFactory(p pel neConf gF leURL);
+    LOG. nfo("P pel ne created from {}, about to beg n process ng...", p pel neConf gF leURL);
+    return factory.createP pel ne();
   }
 
-  void runPipelineV1(ProductionWireModule wireModule) throws Exception {
-    LOG.info("Running Pipeline V1");
-    final File pipelineFile = new File(pipelineConfigFile.get().get());
-    URL pipelineConfigFileUrl = pipelineFile.toURI().toURL();
-    wireModule.setPipelineExceptionHandler(new PipelineExceptionImpl(this));
-    runPipelineV1(pipelineConfigFileUrl);
-    shutdownLatch.await();
+  vo d runP pel neV1(Product onW reModule w reModule) throws Except on {
+    LOG. nfo("Runn ng P pel ne V1");
+    f nal F le p pel neF le = new F le(p pel neConf gF le.get().get());
+    URL p pel neConf gF leUrl = p pel neF le.toUR ().toURL();
+    w reModule.setP pel neExcept onHandler(new P pel neExcept on mpl(t ));
+    runP pel neV1(p pel neConf gF leUrl);
+    shutdownLatch.awa ();
   }
 
-  @VisibleForTesting
-  void runPipelineV1(URL pipelineConfigFileUrl) throws Exception {
-    pipeline = createPipeline(pipelineConfigFileUrl);
-    pipeline.start();
+  @V s bleForTest ng
+  vo d runP pel neV1(URL p pel neConf gF leUrl) throws Except on {
+    p pel ne = createP pel ne(p pel neConf gF leUrl);
+    p pel ne.start();
     started.set(true);
   }
 
-  void runPipelineV2(ProductionWireModule wireModule) throws Exception {
-    LOG.info("Running Pipeline V2");
-    int threadsToSpawn = cores.get().get().intValue() - 1;
-    RealtimeIngesterPipelineV2 realtimePipeline = new RealtimeIngesterPipelineV2(
-        environment.get().get(), cluster.get().get(), threadsToSpawn);
-    wireModule.setPipelineExceptionHandler(new PipelineExceptionImplV2(realtimePipeline));
-    realtimePipeline.run();
+  vo d runP pel neV2(Product onW reModule w reModule) throws Except on {
+    LOG. nfo("Runn ng P pel ne V2");
+     nt threadsToSpawn = cores.get().get(). ntValue() - 1;
+    Realt   ngesterP pel neV2 realt  P pel ne = new Realt   ngesterP pel neV2(
+        env ron nt.get().get(), cluster.get().get(), threadsToSpawn);
+    w reModule.setP pel neExcept onHandler(new P pel neExcept on mplV2(realt  P pel ne));
+    realt  P pel ne.run();
   }
 
-  @Override
-  public void onExit() {
+  @Overr de
+  publ c vo d onEx () {
     try {
-      LOG.info("Attempting to shutdown gracefully.");
+      LOG. nfo("Attempt ng to shutdown gracefully.");
         /*
-         * Iterates over each Stage and calls finish(). The Stage is considered finished when
-         * its queue is empty. If there is a backup, finish() waits for the queues to empty.
+         *  erates over each Stage and calls f n sh(). T  Stage  s cons dered f n s d w n
+         *  s queue  s empty.  f t re  s a backup, f n sh() wa s for t  queues to empty.
          */
 
-      // We don't call finish() unless the pipeline exists and has started because if any stage
-      // fails to initialize, no processing is started and not only is calling finish() unnecessary,
-      // but it will also deadlock any DedicatedThreadStageDriver.
-      if (pipeline != null && started.get()) {
-        pipeline.finish();
-        finished.set(true);
-        LOG.info("Pipeline exited cleanly.");
+      //   don't call f n sh() unless t  p pel ne ex sts and has started because  f any stage
+      // fa ls to  n  al ze, no process ng  s started and not only  s call ng f n sh() unnecessary,
+      // but   w ll also deadlock any Ded catedThreadStageDr ver.
+       f (p pel ne != null && started.get()) {
+        p pel ne.f n sh();
+        f n s d.set(true);
+        LOG. nfo("P pel ne ex ed cleanly.");
       } else {
-        LOG.info("Pipeline not yet started.");
+        LOG. nfo("P pel ne not yet started.");
       }
-    } catch (StageException e) {
-      LOG.error("Unable to shutdown pipeline.", e);
+    } catch (StageExcept on e) {
+      LOG.error("Unable to shutdown p pel ne.", e);
     }
   }
 }

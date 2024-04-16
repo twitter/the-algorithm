@@ -1,15 +1,15 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import scala.language.implicitConversions
+ mport scala.language. mpl c Convers ons
 
-object UnifiedSETweetCombinationMethod extends Enumeration {
+object Un f edSET etComb nat on thod extends Enu rat on {
 
-  protected case class CombinationType(s: String) extends super.Val
+  protected case class Comb nat onType(s: Str ng) extends super.Val
 
-  implicit def valueToCombinationType(x: Value): CombinationType = x.asInstanceOf[CombinationType]
+   mpl c  def valueToComb nat onType(x: Value): Comb nat onType = x.as nstanceOf[Comb nat onType]
 
-  val Default: Value = CombinationType("")
-  val Interleave: Value = CombinationType("Interleave")
-  val Frontload: Value = CombinationType("Frontload")
-  val Backfill: Value = CombinationType("Backfill")
+  val Default: Value = Comb nat onType("")
+  val  nterleave: Value = Comb nat onType(" nterleave")
+  val Frontload: Value = Comb nat onType("Frontload")
+  val Backf ll: Value = Comb nat onType("Backf ll")
 }

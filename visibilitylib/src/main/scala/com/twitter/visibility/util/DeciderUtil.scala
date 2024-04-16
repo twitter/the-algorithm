@@ -1,45 +1,45 @@
-package com.twitter.visibility.util
+package com.tw ter.v s b l y.ut l
 
-import com.twitter.abdecider.ABDeciderFactory
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.decider.Decider
-import com.twitter.decider.DeciderFactory
-import com.twitter.decider.LocalOverrides
-import com.twitter.logging._
+ mport com.tw ter.abdec der.ABDec derFactory
+ mport com.tw ter.abdec der.Logg ngABDec der
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.dec der.Dec derFactory
+ mport com.tw ter.dec der.LocalOverr des
+ mport com.tw ter.logg ng._
 
-object DeciderUtil {
-  val DefaultDeciderPath = "/config/com/twitter/visibility/decider.yml"
+object Dec derUt l {
+  val DefaultDec derPath = "/conf g/com/tw ter/v s b l y/dec der.yml"
 
-  private val zone = Option(System.getProperty("dc")).getOrElse("atla")
-  val DefaultDeciderOverlayPath: Some[String] = Some(
-    s"/usr/local/config/overlays/visibility-library/visibility-library/prod/$zone/decider_overlay.yml"
+  pr vate val zone = Opt on(System.getProperty("dc")).getOrElse("atla")
+  val DefaultDec derOverlayPath: So [Str ng] = So (
+    s"/usr/local/conf g/overlays/v s b l y-l brary/v s b l y-l brary/prod/$zone/dec der_overlay.yml"
   )
 
-  val DefaultABDeciderPath = "/usr/local/config/abdecider/abdecider.yml"
+  val DefaultABDec derPath = "/usr/local/conf g/abdec der/abdec der.yml"
 
-  def mkDecider(
-    deciderBasePath: String = DefaultDeciderPath,
-    deciderOverlayPath: Option[String] = DefaultDeciderOverlayPath,
-    useLocalDeciderOverrides: Boolean = false,
-  ): Decider = {
-    val fileBased = new DeciderFactory(Some(deciderBasePath), deciderOverlayPath)()
-    if (useLocalDeciderOverrides) {
-      LocalOverrides.decider("visibility-library").orElse(fileBased)
+  def mkDec der(
+    dec derBasePath: Str ng = DefaultDec derPath,
+    dec derOverlayPath: Opt on[Str ng] = DefaultDec derOverlayPath,
+    useLocalDec derOverr des: Boolean = false,
+  ): Dec der = {
+    val f leBased = new Dec derFactory(So (dec derBasePath), dec derOverlayPath)()
+     f (useLocalDec derOverr des) {
+      LocalOverr des.dec der("v s b l y-l brary").orElse(f leBased)
     } else {
-      fileBased
+      f leBased
     }
   }
 
-  def mkLocalDecider: Decider = mkDecider(deciderOverlayPath = None)
+  def mkLocalDec der: Dec der = mkDec der(dec derOverlayPath = None)
 
-  def mkABDecider(
-    scribeLogger: Option[Logger],
-    abDeciderPath: String = DefaultABDeciderPath
-  ): LoggingABDecider = {
-    ABDeciderFactory(
-      abDeciderPath,
-      Some("production"),
-      scribeLogger = scribeLogger
-    ).buildWithLogging()
+  def mkABDec der(
+    scr beLogger: Opt on[Logger],
+    abDec derPath: Str ng = DefaultABDec derPath
+  ): Logg ngABDec der = {
+    ABDec derFactory(
+      abDec derPath,
+      So ("product on"),
+      scr beLogger = scr beLogger
+    ).bu ldW hLogg ng()
   }
 }

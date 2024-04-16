@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.component_library.candidate_source.ads
+package com.tw ter.product_m xer.component_l brary.cand date_s ce.ads
 
-import com.twitter.adserver.thriftscala.AdImpression
-import com.twitter.adserver.thriftscala.AdRequestParams
-import com.twitter.adserver.thriftscala.AdRequestResponse
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyFetcherSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.ads.admixer.MakeAdRequestClientColumn
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.adserver.thr ftscala.Ad mpress on
+ mport com.tw ter.adserver.thr ftscala.AdRequestParams
+ mport com.tw ter.adserver.thr ftscala.AdRequestResponse
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.strato.StratoKeyFetc rS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.strato.generated.cl ent.ads.adm xer.MakeAdRequestCl entColumn
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class AdsProdStratoCandidateSource @Inject() (adsClient: MakeAdRequestClientColumn)
-    extends StratoKeyFetcherSource[
+@S ngleton
+class AdsProdStratoCand dateS ce @ nject() (adsCl ent: MakeAdRequestCl entColumn)
+    extends StratoKeyFetc rS ce[
       AdRequestParams,
       AdRequestResponse,
-      AdImpression
+      Ad mpress on
     ] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("AdsProdStrato")
+  overr de val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er("AdsProdStrato")
 
-  override val fetcher: Fetcher[AdRequestParams, Unit, AdRequestResponse] = adsClient.fetcher
+  overr de val fetc r: Fetc r[AdRequestParams, Un , AdRequestResponse] = adsCl ent.fetc r
 
-  override protected def stratoResultTransformer(
+  overr de protected def stratoResultTransfor r(
     stratoResult: AdRequestResponse
-  ): Seq[AdImpression] =
-    stratoResult.impressions
+  ): Seq[Ad mpress on] =
+    stratoResult. mpress ons
 }

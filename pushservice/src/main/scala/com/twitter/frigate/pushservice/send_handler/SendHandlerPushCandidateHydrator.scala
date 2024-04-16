@@ -1,184 +1,184 @@
-package com.twitter.frigate.pushservice.send_handler
+package com.tw ter.fr gate.pushserv ce.send_handler
 
-import com.twitter.escherbird.metadata.thriftscala.EntityMegadata
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContext
-import com.twitter.frigate.common.util.MrNtabCopyObjects
-import com.twitter.frigate.common.util.MrPushCopyObjects
-import com.twitter.frigate.magic_events.thriftscala.FanoutEvent
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.frigate.pushservice.store.EventRequest
-import com.twitter.frigate.pushservice.store.UttEntityHydrationStore
-import com.twitter.frigate.pushservice.util.CandidateHydrationUtil._
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.hermit.store.semantic_core.SemanticEntityForQuery
-import com.twitter.interests.thriftscala.UserInterests
-import com.twitter.livevideo.timeline.domain.v2.{Event => LiveEvent}
-import com.twitter.simclusters_v2.thriftscala.SimClustersInferredEntities
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.UserId
-import com.twitter.ubs.thriftscala.AudioSpace
-import com.twitter.util.Future
+ mport com.tw ter.esc rb rd. tadata.thr ftscala.Ent y gadata
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base._
+ mport com.tw ter.fr gate.common.store. nterests. nterestsLookupRequestW hContext
+ mport com.tw ter.fr gate.common.ut l.MrNtabCopyObjects
+ mport com.tw ter.fr gate.common.ut l.MrPushCopyObjects
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.FanoutEvent
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.ml.PushMLModelScorer
+ mport com.tw ter.fr gate.pushserv ce.model.cand date.Copy ds
+ mport com.tw ter.fr gate.pushserv ce.store.EventRequest
+ mport com.tw ter.fr gate.pushserv ce.store.UttEnt yHydrat onStore
+ mport com.tw ter.fr gate.pushserv ce.ut l.Cand dateHydrat onUt l._
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter. rm .store.semant c_core.Semant cEnt yForQuery
+ mport com.tw ter. nterests.thr ftscala.User nterests
+ mport com.tw ter.l vev deo.t  l ne.doma n.v2.{Event => L veEvent}
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClusters nferredEnt  es
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.strato.cl ent.User d
+ mport com.tw ter.ubs.thr ftscala.Aud oSpace
+ mport com.tw ter.ut l.Future
 
-case class SendHandlerPushCandidateHydrator(
-  lexServiceStore: ReadableStore[EventRequest, LiveEvent],
-  fanoutMetadataStore: ReadableStore[(Long, Long), FanoutEvent],
-  semanticCoreMegadataStore: ReadableStore[SemanticEntityForQuery, EntityMegadata],
+case class SendHandlerPushCand dateHydrator(
+  lexServ ceStore: ReadableStore[EventRequest, L veEvent],
+  fanout tadataStore: ReadableStore[(Long, Long), FanoutEvent],
+  semant cCore gadataStore: ReadableStore[Semant cEnt yForQuery, Ent y gadata],
   safeUserStore: ReadableStore[Long, User],
-  simClusterToEntityStore: ReadableStore[Int, SimClustersInferredEntities],
-  audioSpaceStore: ReadableStore[String, AudioSpace],
-  interestsLookupStore: ReadableStore[InterestsLookupRequestWithContext, UserInterests],
-  uttEntityHydrationStore: UttEntityHydrationStore,
-  superFollowCreatorTweetCountStore: ReadableStore[UserId, Int]
+  s mClusterToEnt yStore: ReadableStore[ nt, S mClusters nferredEnt  es],
+  aud oSpaceStore: ReadableStore[Str ng, Aud oSpace],
+   nterestsLookupStore: ReadableStore[ nterestsLookupRequestW hContext, User nterests],
+  uttEnt yHydrat onStore: UttEnt yHydrat onStore,
+  superFollowCreatorT etCountStore: ReadableStore[User d,  nt]
 )(
-  implicit statsReceiver: StatsReceiver,
-  implicit val weightedOpenOrNtabClickModelScorer: PushMLModelScorer) {
+   mpl c  statsRece ver: StatsRece ver,
+   mpl c  val   ghtedOpenOrNtabCl ckModelScorer: PushMLModelScorer) {
 
-  lazy val candidateWithCopyNumStat = statsReceiver.stat("candidate_with_copy_num")
-  lazy val hydratedCandidateStat = statsReceiver.scope("hydrated_candidates")
+  lazy val cand dateW hCopyNumStat = statsRece ver.stat("cand date_w h_copy_num")
+  lazy val hydratedCand dateStat = statsRece ver.scope("hydrated_cand dates")
 
-  def updateCandidates(
-    candidateDetails: Seq[CandidateDetails[RawCandidate]],
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
+  def updateCand dates(
+    cand dateDeta ls: Seq[Cand dateDeta ls[RawCand date]],
+  ): Future[Seq[Cand dateDeta ls[PushCand date]]] = {
 
     Future.collect {
-      candidateDetails.map { candidateDetail =>
-        val pushCandidate = candidateDetail.candidate
+      cand dateDeta ls.map { cand dateDeta l =>
+        val pushCand date = cand dateDeta l.cand date
 
-        val copyIds = getCopyIdsByCRT(pushCandidate.commonRecType)
+        val copy ds = getCopy dsByCRT(pushCand date.commonRecType)
 
-        val hydratedCandidateFut = pushCandidate match {
-          case magicFanoutNewsEventCandidate: MagicFanoutNewsEventCandidate =>
-            getHydratedCandidateForMagicFanoutNewsEvent(
-              magicFanoutNewsEventCandidate,
-              copyIds,
-              lexServiceStore,
-              fanoutMetadataStore,
-              semanticCoreMegadataStore,
-              simClusterToEntityStore,
-              interestsLookupStore,
-              uttEntityHydrationStore
+        val hydratedCand dateFut = pushCand date match {
+          case mag cFanoutNewsEventCand date: Mag cFanoutNewsEventCand date =>
+            getHydratedCand dateForMag cFanoutNewsEvent(
+              mag cFanoutNewsEventCand date,
+              copy ds,
+              lexServ ceStore,
+              fanout tadataStore,
+              semant cCore gadataStore,
+              s mClusterToEnt yStore,
+               nterestsLookupStore,
+              uttEnt yHydrat onStore
             )
 
-          case scheduledSpaceSubscriberCandidate: ScheduledSpaceSubscriberCandidate =>
-            getHydratedCandidateForScheduledSpaceSubscriber(
-              scheduledSpaceSubscriberCandidate,
+          case sc duledSpaceSubscr berCand date: Sc duledSpaceSubscr berCand date =>
+            getHydratedCand dateForSc duledSpaceSubscr ber(
+              sc duledSpaceSubscr berCand date,
               safeUserStore,
-              copyIds,
-              audioSpaceStore
+              copy ds,
+              aud oSpaceStore
             )
-          case scheduledSpaceSpeakerCandidate: ScheduledSpaceSpeakerCandidate =>
-            getHydratedCandidateForScheduledSpaceSpeaker(
-              scheduledSpaceSpeakerCandidate,
+          case sc duledSpaceSpeakerCand date: Sc duledSpaceSpeakerCand date =>
+            getHydratedCand dateForSc duledSpaceSpeaker(
+              sc duledSpaceSpeakerCand date,
               safeUserStore,
-              copyIds,
-              audioSpaceStore
+              copy ds,
+              aud oSpaceStore
             )
-          case magicFanoutSportsEventCandidate: MagicFanoutSportsEventCandidate with MagicFanoutSportsScoreInformation =>
-            getHydratedCandidateForMagicFanoutSportsEvent(
-              magicFanoutSportsEventCandidate,
-              copyIds,
-              lexServiceStore,
-              fanoutMetadataStore,
-              semanticCoreMegadataStore,
-              interestsLookupStore,
-              uttEntityHydrationStore
+          case mag cFanoutSportsEventCand date: Mag cFanoutSportsEventCand date w h Mag cFanoutSportsScore nformat on =>
+            getHydratedCand dateForMag cFanoutSportsEvent(
+              mag cFanoutSportsEventCand date,
+              copy ds,
+              lexServ ceStore,
+              fanout tadataStore,
+              semant cCore gadataStore,
+               nterestsLookupStore,
+              uttEnt yHydrat onStore
             )
-          case magicFanoutProductLaunchCandidate: MagicFanoutProductLaunchCandidate =>
-            getHydratedCandidateForMagicFanoutProductLaunch(
-              magicFanoutProductLaunchCandidate,
-              copyIds)
-          case creatorEventCandidate: MagicFanoutCreatorEventCandidate =>
-            getHydratedCandidateForMagicFanoutCreatorEvent(
-              creatorEventCandidate,
+          case mag cFanoutProductLaunchCand date: Mag cFanoutProductLaunchCand date =>
+            getHydratedCand dateForMag cFanoutProductLaunch(
+              mag cFanoutProductLaunchCand date,
+              copy ds)
+          case creatorEventCand date: Mag cFanoutCreatorEventCand date =>
+            getHydratedCand dateForMag cFanoutCreatorEvent(
+              creatorEventCand date,
               safeUserStore,
-              copyIds,
-              superFollowCreatorTweetCountStore)
+              copy ds,
+              superFollowCreatorT etCountStore)
           case _ =>
-            throw new IllegalArgumentException("Incorrect candidate type when update candidates")
+            throw new  llegalArgu ntExcept on(" ncorrect cand date type w n update cand dates")
         }
 
-        hydratedCandidateFut.map { hydratedCandidate =>
-          hydratedCandidateStat.counter(hydratedCandidate.commonRecType.name).incr()
-          CandidateDetails(
-            hydratedCandidate,
-            source = candidateDetail.source
+        hydratedCand dateFut.map { hydratedCand date =>
+          hydratedCand dateStat.counter(hydratedCand date.commonRecType.na ). ncr()
+          Cand dateDeta ls(
+            hydratedCand date,
+            s ce = cand dateDeta l.s ce
           )
         }
       }
     }
   }
 
-  private def getCopyIdsByCRT(crt: CommonRecommendationType): CopyIds = {
+  pr vate def getCopy dsByCRT(crt: CommonRecom ndat onType): Copy ds = {
     crt match {
-      case CommonRecommendationType.MagicFanoutNewsEvent =>
-        CopyIds(
-          pushCopyId = Some(MrPushCopyObjects.MagicFanoutNewsPushCopy.copyId),
-          ntabCopyId = Some(MrNtabCopyObjects.MagicFanoutNewsForYouCopy.copyId),
-          aggregationId = None
+      case CommonRecom ndat onType.Mag cFanoutNewsEvent =>
+        Copy ds(
+          pushCopy d = So (MrPushCopyObjects.Mag cFanoutNewsPushCopy.copy d),
+          ntabCopy d = So (MrNtabCopyObjects.Mag cFanoutNewsFor Copy.copy d),
+          aggregat on d = None
         )
 
-      case CommonRecommendationType.ScheduledSpaceSubscriber =>
-        CopyIds(
-          pushCopyId = Some(MrPushCopyObjects.ScheduledSpaceSubscriber.copyId),
-          ntabCopyId = Some(MrNtabCopyObjects.ScheduledSpaceSubscriber.copyId),
-          aggregationId = None
+      case CommonRecom ndat onType.Sc duledSpaceSubscr ber =>
+        Copy ds(
+          pushCopy d = So (MrPushCopyObjects.Sc duledSpaceSubscr ber.copy d),
+          ntabCopy d = So (MrNtabCopyObjects.Sc duledSpaceSubscr ber.copy d),
+          aggregat on d = None
         )
-      case CommonRecommendationType.ScheduledSpaceSpeaker =>
-        CopyIds(
-          pushCopyId = Some(MrPushCopyObjects.ScheduledSpaceSpeaker.copyId),
-          ntabCopyId = Some(MrNtabCopyObjects.ScheduledSpaceSpeakerNow.copyId),
-          aggregationId = None
+      case CommonRecom ndat onType.Sc duledSpaceSpeaker =>
+        Copy ds(
+          pushCopy d = So (MrPushCopyObjects.Sc duledSpaceSpeaker.copy d),
+          ntabCopy d = So (MrNtabCopyObjects.Sc duledSpaceSpeakerNow.copy d),
+          aggregat on d = None
         )
-      case CommonRecommendationType.SpaceSpeaker =>
-        CopyIds(
-          pushCopyId = Some(MrPushCopyObjects.SpaceSpeaker.copyId),
-          ntabCopyId = Some(MrNtabCopyObjects.SpaceSpeaker.copyId),
-          aggregationId = None
+      case CommonRecom ndat onType.SpaceSpeaker =>
+        Copy ds(
+          pushCopy d = So (MrPushCopyObjects.SpaceSpeaker.copy d),
+          ntabCopy d = So (MrNtabCopyObjects.SpaceSpeaker.copy d),
+          aggregat on d = None
         )
-      case CommonRecommendationType.SpaceHost =>
-        CopyIds(
-          pushCopyId = Some(MrPushCopyObjects.SpaceHost.copyId),
-          ntabCopyId = Some(MrNtabCopyObjects.SpaceHost.copyId),
-          aggregationId = None
+      case CommonRecom ndat onType.SpaceHost =>
+        Copy ds(
+          pushCopy d = So (MrPushCopyObjects.SpaceHost.copy d),
+          ntabCopy d = So (MrNtabCopyObjects.SpaceHost.copy d),
+          aggregat on d = None
         )
-      case CommonRecommendationType.MagicFanoutSportsEvent =>
-        CopyIds(
-          pushCopyId = Some(MrPushCopyObjects.MagicFanoutSportsPushCopy.copyId),
-          ntabCopyId = Some(MrNtabCopyObjects.MagicFanoutSportsCopy.copyId),
-          aggregationId = None
+      case CommonRecom ndat onType.Mag cFanoutSportsEvent =>
+        Copy ds(
+          pushCopy d = So (MrPushCopyObjects.Mag cFanoutSportsPushCopy.copy d),
+          ntabCopy d = So (MrNtabCopyObjects.Mag cFanoutSportsCopy.copy d),
+          aggregat on d = None
         )
-      case CommonRecommendationType.MagicFanoutProductLaunch =>
-        CopyIds(
-          pushCopyId = Some(MrPushCopyObjects.MagicFanoutProductLaunch.copyId),
-          ntabCopyId = Some(MrNtabCopyObjects.ProductLaunch.copyId),
-          aggregationId = None
+      case CommonRecom ndat onType.Mag cFanoutProductLaunch =>
+        Copy ds(
+          pushCopy d = So (MrPushCopyObjects.Mag cFanoutProductLaunch.copy d),
+          ntabCopy d = So (MrNtabCopyObjects.ProductLaunch.copy d),
+          aggregat on d = None
         )
-      case CommonRecommendationType.CreatorSubscriber =>
-        CopyIds(
-          pushCopyId = Some(MrPushCopyObjects.MagicFanoutCreatorSubscription.copyId),
-          ntabCopyId = Some(MrNtabCopyObjects.MagicFanoutCreatorSubscription.copyId),
-          aggregationId = None
+      case CommonRecom ndat onType.CreatorSubscr ber =>
+        Copy ds(
+          pushCopy d = So (MrPushCopyObjects.Mag cFanoutCreatorSubscr pt on.copy d),
+          ntabCopy d = So (MrNtabCopyObjects.Mag cFanoutCreatorSubscr pt on.copy d),
+          aggregat on d = None
         )
-      case CommonRecommendationType.NewCreator =>
-        CopyIds(
-          pushCopyId = Some(MrPushCopyObjects.MagicFanoutNewCreator.copyId),
-          ntabCopyId = Some(MrNtabCopyObjects.MagicFanoutNewCreator.copyId),
-          aggregationId = None
+      case CommonRecom ndat onType.NewCreator =>
+        Copy ds(
+          pushCopy d = So (MrPushCopyObjects.Mag cFanoutNewCreator.copy d),
+          ntabCopy d = So (MrNtabCopyObjects.Mag cFanoutNewCreator.copy d),
+          aggregat on d = None
         )
       case _ =>
-        throw new IllegalArgumentException("Incorrect candidate type when fetch copy ids")
+        throw new  llegalArgu ntExcept on(" ncorrect cand date type w n fetch copy  ds")
     }
   }
 
   def apply(
-    candidateDetails: Seq[CandidateDetails[RawCandidate]]
-  ): Future[Seq[CandidateDetails[PushCandidate]]] = {
-    updateCandidates(candidateDetails)
+    cand dateDeta ls: Seq[Cand dateDeta ls[RawCand date]]
+  ): Future[Seq[Cand dateDeta ls[PushCand date]]] = {
+    updateCand dates(cand dateDeta ls)
   }
 }

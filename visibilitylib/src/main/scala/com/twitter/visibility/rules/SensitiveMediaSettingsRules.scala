@@ -1,277 +1,277 @@
-package com.twitter.visibility.rules
+package com.tw ter.v s b l y.rules
 
-import com.twitter.visibility.rules.Condition.ViewerHasAdultMediaSettingLevel
-import com.twitter.visibility.rules.Condition.ViewerHasViolentMediaSettingLevel
-import com.twitter.visibility.rules.Condition.ViewerHasOtherSensitiveMediaSettingLevel
-import com.twitter.visibility.rules.Condition.LoggedInViewer
-import com.twitter.visibility.rules.Condition.LoggedOutViewer
-import com.twitter.visibility.rules.Condition.TweetHasNsfwUserAuthor
-import com.twitter.visibility.rules.Condition.TweetHasNsfwAdminAuthor
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.Or
-import com.twitter.visibility.rules.Condition.Not
-import com.twitter.visibility.rules.Condition.NonAuthorViewer
-import com.twitter.visibility.rules.Condition.TweetHasMedia
-import com.twitter.visibility.rules.Reason.Nsfw
-import com.twitter.visibility.models.TweetSafetyLabelType
-import com.twitter.contenthealth.sensitivemediasettings.thriftscala.SensitiveMediaSettingsLevel
+ mport com.tw ter.v s b l y.rules.Cond  on.V e rHasAdult d aSett ngLevel
+ mport com.tw ter.v s b l y.rules.Cond  on.V e rHasV olent d aSett ngLevel
+ mport com.tw ter.v s b l y.rules.Cond  on.V e rHasOt rSens  ve d aSett ngLevel
+ mport com.tw ter.v s b l y.rules.Cond  on.Logged nV e r
+ mport com.tw ter.v s b l y.rules.Cond  on.LoggedOutV e r
+ mport com.tw ter.v s b l y.rules.Cond  on.T etHasNsfwUserAuthor
+ mport com.tw ter.v s b l y.rules.Cond  on.T etHasNsfwAdm nAuthor
+ mport com.tw ter.v s b l y.rules.Cond  on.And
+ mport com.tw ter.v s b l y.rules.Cond  on.Or
+ mport com.tw ter.v s b l y.rules.Cond  on.Not
+ mport com.tw ter.v s b l y.rules.Cond  on.NonAuthorV e r
+ mport com.tw ter.v s b l y.rules.Cond  on.T etHas d a
+ mport com.tw ter.v s b l y.rules.Reason.Nsfw
+ mport com.tw ter.v s b l y.models.T etSafetyLabelType
+ mport com.tw ter.content alth.sens  ve d asett ngs.thr ftscala.Sens  ve d aSett ngsLevel
 
 
-abstract class AdultMediaTweetLabelDropRule(tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
+abstract class Adult d aT etLabelDropRule(t etSafetyLabelType: T etSafetyLabelType)
+    extends Cond  onW hT etLabelRule(
       Drop(Nsfw),
-      And(LoggedInViewer, ViewerHasAdultMediaSettingLevel(SensitiveMediaSettingsLevel.Drop)),
-      tweetSafetyLabelType
+      And(Logged nV e r, V e rHasAdult d aSett ngLevel(Sens  ve d aSett ngsLevel.Drop)),
+      t etSafetyLabelType
     )
 
-abstract class ViolentMediaTweetLabelDropRule(tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
+abstract class V olent d aT etLabelDropRule(t etSafetyLabelType: T etSafetyLabelType)
+    extends Cond  onW hT etLabelRule(
       Drop(Nsfw),
-      And(LoggedInViewer, ViewerHasViolentMediaSettingLevel(SensitiveMediaSettingsLevel.Drop)),
-      tweetSafetyLabelType
+      And(Logged nV e r, V e rHasV olent d aSett ngLevel(Sens  ve d aSett ngsLevel.Drop)),
+      t etSafetyLabelType
     )
 
-abstract class OtherSensitiveMediaTweetLabelDropRule(condition: Condition)
-    extends RuleWithConstantAction(
+abstract class Ot rSens  ve d aT etLabelDropRule(cond  on: Cond  on)
+    extends RuleW hConstantAct on(
       Drop(Nsfw),
       And(
-        condition,
+        cond  on,
         And(
-          TweetHasMedia,
-          LoggedInViewer,
-          ViewerHasOtherSensitiveMediaSettingLevel(SensitiveMediaSettingsLevel.Drop)))
+          T etHas d a,
+          Logged nV e r,
+          V e rHasOt rSens  ve d aSett ngLevel(Sens  ve d aSett ngsLevel.Drop)))
     )
 
-abstract class AdultMediaTweetLabelInterstitialRule(tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
-      Interstitial(Nsfw),
+abstract class Adult d aT etLabel nterst  alRule(t etSafetyLabelType: T etSafetyLabelType)
+    extends Cond  onW hT etLabelRule(
+       nterst  al(Nsfw),
       Or(
-        LoggedOutViewer,
-        ViewerHasAdultMediaSettingLevel(SensitiveMediaSettingsLevel.Warn),
-        Not(ViewerHasAdultMediaSettingLevel(SensitiveMediaSettingsLevel.Allow))
+        LoggedOutV e r,
+        V e rHasAdult d aSett ngLevel(Sens  ve d aSett ngsLevel.Warn),
+        Not(V e rHasAdult d aSett ngLevel(Sens  ve d aSett ngsLevel.Allow))
       ),
-      tweetSafetyLabelType
+      t etSafetyLabelType
     )
 
-abstract class ViolentMediaTweetLabelInterstitialRule(tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
-      Interstitial(Nsfw),
+abstract class V olent d aT etLabel nterst  alRule(t etSafetyLabelType: T etSafetyLabelType)
+    extends Cond  onW hT etLabelRule(
+       nterst  al(Nsfw),
       Or(
-        LoggedOutViewer,
-        ViewerHasViolentMediaSettingLevel(SensitiveMediaSettingsLevel.Warn),
-        Not(ViewerHasViolentMediaSettingLevel(SensitiveMediaSettingsLevel.Allow))
+        LoggedOutV e r,
+        V e rHasV olent d aSett ngLevel(Sens  ve d aSett ngsLevel.Warn),
+        Not(V e rHasV olent d aSett ngLevel(Sens  ve d aSett ngsLevel.Allow))
       ),
-      tweetSafetyLabelType
+      t etSafetyLabelType
     )
 
-abstract class OtherSensitiveMediaTweetLabelInterstitialRule(condition: Condition)
-    extends RuleWithConstantAction(
-      Interstitial(Nsfw),
+abstract class Ot rSens  ve d aT etLabel nterst  alRule(cond  on: Cond  on)
+    extends RuleW hConstantAct on(
+       nterst  al(Nsfw),
       And(
-        condition,
-        TweetHasMedia,
+        cond  on,
+        T etHas d a,
         Or(
-          LoggedOutViewer,
-          ViewerHasOtherSensitiveMediaSettingLevel(SensitiveMediaSettingsLevel.Warn)
+          LoggedOutV e r,
+          V e rHasOt rSens  ve d aSett ngLevel(Sens  ve d aSett ngsLevel.Warn)
         )
       )
     )
 
-abstract class AdultMediaTweetLabelDropSettingLevelTombstoneRule(
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
-      Tombstone(Epitaph.AdultMedia),
+abstract class Adult d aT etLabelDropSett ngLevelTombstoneRule(
+  t etSafetyLabelType: T etSafetyLabelType)
+    extends Cond  onW hT etLabelRule(
+      Tombstone(Ep aph.Adult d a),
       And(
-        LoggedInViewer,
-        NonAuthorViewer,
-        ViewerHasAdultMediaSettingLevel(SensitiveMediaSettingsLevel.Drop)),
-      tweetSafetyLabelType
+        Logged nV e r,
+        NonAuthorV e r,
+        V e rHasAdult d aSett ngLevel(Sens  ve d aSett ngsLevel.Drop)),
+      t etSafetyLabelType
     )
 
-abstract class ViolentMediaTweetLabelDropSettingLevelTombstoneRule(
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
-      Tombstone(Epitaph.ViolentMedia),
+abstract class V olent d aT etLabelDropSett ngLevelTombstoneRule(
+  t etSafetyLabelType: T etSafetyLabelType)
+    extends Cond  onW hT etLabelRule(
+      Tombstone(Ep aph.V olent d a),
       And(
-        LoggedInViewer,
-        NonAuthorViewer,
-        ViewerHasViolentMediaSettingLevel(SensitiveMediaSettingsLevel.Drop)),
-      tweetSafetyLabelType
+        Logged nV e r,
+        NonAuthorV e r,
+        V e rHasV olent d aSett ngLevel(Sens  ve d aSett ngsLevel.Drop)),
+      t etSafetyLabelType
     )
 
-abstract class OtherSensitiveMediaTweetLabelDropSettingLevelTombstoneRule(condition: Condition)
-    extends RuleWithConstantAction(
-      Tombstone(Epitaph.OtherSensitiveMedia),
+abstract class Ot rSens  ve d aT etLabelDropSett ngLevelTombstoneRule(cond  on: Cond  on)
+    extends RuleW hConstantAct on(
+      Tombstone(Ep aph.Ot rSens  ve d a),
       And(
-        condition,
+        cond  on,
         And(
-          TweetHasMedia,
-          LoggedInViewer,
-          NonAuthorViewer,
-          ViewerHasOtherSensitiveMediaSettingLevel(SensitiveMediaSettingsLevel.Drop))
+          T etHas d a,
+          Logged nV e r,
+          NonAuthorV e r,
+          V e rHasOt rSens  ve d aSett ngLevel(Sens  ve d aSett ngsLevel.Drop))
       )
     )
 
-case object SensitiveMediaTweetDropRules {
+case object Sens  ve d aT etDropRules {
 
 
-  object AdultMediaNsfwHighPrecisionTweetLabelDropRule
-      extends AdultMediaTweetLabelDropRule(
-        TweetSafetyLabelType.NsfwHighPrecision
+  object Adult d aNsfwH ghPrec s onT etLabelDropRule
+      extends Adult d aT etLabelDropRule(
+        T etSafetyLabelType.NsfwH ghPrec s on
       )
 
-  object AdultMediaNsfwCardImageTweetLabelDropRule
-      extends AdultMediaTweetLabelDropRule(
-        TweetSafetyLabelType.NsfwCardImage
+  object Adult d aNsfwCard mageT etLabelDropRule
+      extends Adult d aT etLabelDropRule(
+        T etSafetyLabelType.NsfwCard mage
       )
 
-  object AdultMediaNsfwReportedHeuristicsTweetLabelDropRule
-      extends AdultMediaTweetLabelDropRule(
-        TweetSafetyLabelType.NsfwReportedHeuristics
+  object Adult d aNsfwReported ur st csT etLabelDropRule
+      extends Adult d aT etLabelDropRule(
+        T etSafetyLabelType.NsfwReported ur st cs
       )
 
-  object AdultMediaNsfwVideoTweetLabelDropRule
-      extends AdultMediaTweetLabelDropRule(
-        TweetSafetyLabelType.NsfwVideo
+  object Adult d aNsfwV deoT etLabelDropRule
+      extends Adult d aT etLabelDropRule(
+        T etSafetyLabelType.NsfwV deo
       )
 
-  object AdultMediaNsfwHighRecallTweetLabelDropRule
-      extends AdultMediaTweetLabelDropRule(
-        TweetSafetyLabelType.NsfwHighRecall
+  object Adult d aNsfwH ghRecallT etLabelDropRule
+      extends Adult d aT etLabelDropRule(
+        T etSafetyLabelType.NsfwH ghRecall
       )
 
-  object AdultMediaNsfwTextTweetLabelDropRule
-      extends AdultMediaTweetLabelDropRule(
-        TweetSafetyLabelType.NsfwText
+  object Adult d aNsfwTextT etLabelDropRule
+      extends Adult d aT etLabelDropRule(
+        T etSafetyLabelType.NsfwText
       )
 
-  object ViolentMediaGoreAndViolenceHighPrecisionDropRule
-      extends ViolentMediaTweetLabelDropRule(
-        TweetSafetyLabelType.GoreAndViolenceHighPrecision
+  object V olent d aGoreAndV olenceH ghPrec s onDropRule
+      extends V olent d aT etLabelDropRule(
+        T etSafetyLabelType.GoreAndV olenceH ghPrec s on
       )
 
-  object ViolentMediaGoreAndViolenceReportedHeuristicsDropRule
-      extends ViolentMediaTweetLabelDropRule(
-        TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
+  object V olent d aGoreAndV olenceReported ur st csDropRule
+      extends V olent d aT etLabelDropRule(
+        T etSafetyLabelType.GoreAndV olenceReported ur st cs
       )
 
-  object OtherSensitiveMediaNsfwUserTweetFlagDropRule
-      extends OtherSensitiveMediaTweetLabelDropRule(
-        TweetHasNsfwUserAuthor
+  object Ot rSens  ve d aNsfwUserT etFlagDropRule
+      extends Ot rSens  ve d aT etLabelDropRule(
+        T etHasNsfwUserAuthor
       )
 
-  object OtherSensitiveMediaNsfwAdminTweetFlagDropRule
-      extends OtherSensitiveMediaTweetLabelDropRule(
-        TweetHasNsfwAdminAuthor
+  object Ot rSens  ve d aNsfwAdm nT etFlagDropRule
+      extends Ot rSens  ve d aT etLabelDropRule(
+        T etHasNsfwAdm nAuthor
       )
 }
 
-case object SensitiveMediaTweetInterstitialRules {
+case object Sens  ve d aT et nterst  alRules {
 
-  object AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule
-      extends AdultMediaTweetLabelInterstitialRule(
-        TweetSafetyLabelType.NsfwHighPrecision
+  object Adult d aNsfwH ghPrec s onT etLabel nterst  alRule
+      extends Adult d aT etLabel nterst  alRule(
+        T etSafetyLabelType.NsfwH ghPrec s on
       )
-      with DoesLogVerdict
+      w h DoesLogVerd ct
 
-  object AdultMediaNsfwCardImageTweetLabelInterstitialRule
-      extends AdultMediaTweetLabelInterstitialRule(
-        TweetSafetyLabelType.NsfwCardImage
-      )
-
-  object AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule
-      extends AdultMediaTweetLabelInterstitialRule(
-        TweetSafetyLabelType.NsfwReportedHeuristics
+  object Adult d aNsfwCard mageT etLabel nterst  alRule
+      extends Adult d aT etLabel nterst  alRule(
+        T etSafetyLabelType.NsfwCard mage
       )
 
-  object AdultMediaNsfwVideoTweetLabelInterstitialRule
-      extends AdultMediaTweetLabelInterstitialRule(
-        TweetSafetyLabelType.NsfwVideo
+  object Adult d aNsfwReported ur st csT etLabel nterst  alRule
+      extends Adult d aT etLabel nterst  alRule(
+        T etSafetyLabelType.NsfwReported ur st cs
       )
 
-  object AdultMediaNsfwHighRecallTweetLabelInterstitialRule
-      extends AdultMediaTweetLabelInterstitialRule(
-        TweetSafetyLabelType.NsfwHighRecall
+  object Adult d aNsfwV deoT etLabel nterst  alRule
+      extends Adult d aT etLabel nterst  alRule(
+        T etSafetyLabelType.NsfwV deo
       )
 
-  object AdultMediaNsfwTextTweetLabelInterstitialRule
-      extends AdultMediaTweetLabelInterstitialRule(
-        TweetSafetyLabelType.NsfwText
+  object Adult d aNsfwH ghRecallT etLabel nterst  alRule
+      extends Adult d aT etLabel nterst  alRule(
+        T etSafetyLabelType.NsfwH ghRecall
       )
 
-  object ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule
-      extends ViolentMediaTweetLabelInterstitialRule(
-        TweetSafetyLabelType.GoreAndViolenceHighPrecision
-      )
-      with DoesLogVerdict
-
-  object ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule
-      extends ViolentMediaTweetLabelInterstitialRule(
-        TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
+  object Adult d aNsfwTextT etLabel nterst  alRule
+      extends Adult d aT etLabel nterst  alRule(
+        T etSafetyLabelType.NsfwText
       )
 
-  object OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule
-      extends OtherSensitiveMediaTweetLabelInterstitialRule(
-        TweetHasNsfwUserAuthor
+  object V olent d aGoreAndV olenceH ghPrec s on nterst  alRule
+      extends V olent d aT etLabel nterst  alRule(
+        T etSafetyLabelType.GoreAndV olenceH ghPrec s on
+      )
+      w h DoesLogVerd ct
+
+  object V olent d aGoreAndV olenceReported ur st cs nterst  alRule
+      extends V olent d aT etLabel nterst  alRule(
+        T etSafetyLabelType.GoreAndV olenceReported ur st cs
       )
 
-  object OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule
-      extends OtherSensitiveMediaTweetLabelInterstitialRule(
-        TweetHasNsfwAdminAuthor
+  object Ot rSens  ve d aNsfwUserT etFlag nterst  alRule
+      extends Ot rSens  ve d aT etLabel nterst  alRule(
+        T etHasNsfwUserAuthor
+      )
+
+  object Ot rSens  ve d aNsfwAdm nT etFlag nterst  alRule
+      extends Ot rSens  ve d aT etLabel nterst  alRule(
+        T etHasNsfwAdm nAuthor
       )
 
 }
 
-case object SensitiveMediaTweetDropSettingLevelTombstoneRules {
+case object Sens  ve d aT etDropSett ngLevelTombstoneRules {
 
 
-  object AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule
-      extends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetSafetyLabelType.NsfwHighPrecision
+  object Adult d aNsfwH ghPrec s onT etLabelDropSett ngLevelTombstoneRule
+      extends Adult d aT etLabelDropSett ngLevelTombstoneRule(
+        T etSafetyLabelType.NsfwH ghPrec s on
       )
 
-  object AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule
-      extends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetSafetyLabelType.NsfwCardImage
+  object Adult d aNsfwCard mageT etLabelDropSett ngLevelTombstoneRule
+      extends Adult d aT etLabelDropSett ngLevelTombstoneRule(
+        T etSafetyLabelType.NsfwCard mage
       )
 
-  object AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule
-      extends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetSafetyLabelType.NsfwReportedHeuristics
+  object Adult d aNsfwReported ur st csT etLabelDropSett ngLevelTombstoneRule
+      extends Adult d aT etLabelDropSett ngLevelTombstoneRule(
+        T etSafetyLabelType.NsfwReported ur st cs
       )
 
-  object AdultMediaNsfwVideoTweetLabelDropSettingLevelTombstoneRule
-      extends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetSafetyLabelType.NsfwVideo
+  object Adult d aNsfwV deoT etLabelDropSett ngLevelTombstoneRule
+      extends Adult d aT etLabelDropSett ngLevelTombstoneRule(
+        T etSafetyLabelType.NsfwV deo
       )
 
-  object AdultMediaNsfwHighRecallTweetLabelDropSettingLevelTombstoneRule
-      extends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetSafetyLabelType.NsfwHighRecall
+  object Adult d aNsfwH ghRecallT etLabelDropSett ngLevelTombstoneRule
+      extends Adult d aT etLabelDropSett ngLevelTombstoneRule(
+        T etSafetyLabelType.NsfwH ghRecall
       )
 
-  object AdultMediaNsfwTextTweetLabelDropSettingLevelTombstoneRule
-      extends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetSafetyLabelType.NsfwText
+  object Adult d aNsfwTextT etLabelDropSett ngLevelTombstoneRule
+      extends Adult d aT etLabelDropSett ngLevelTombstoneRule(
+        T etSafetyLabelType.NsfwText
       )
 
-  object ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule
-      extends ViolentMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetSafetyLabelType.GoreAndViolenceHighPrecision
+  object V olent d aGoreAndV olenceH ghPrec s onDropSett ngLeveTombstoneRule
+      extends V olent d aT etLabelDropSett ngLevelTombstoneRule(
+        T etSafetyLabelType.GoreAndV olenceH ghPrec s on
       )
 
-  object ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule
-      extends ViolentMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
+  object V olent d aGoreAndV olenceReported ur st csDropSett ngLevelTombstoneRule
+      extends V olent d aT etLabelDropSett ngLevelTombstoneRule(
+        T etSafetyLabelType.GoreAndV olenceReported ur st cs
       )
 
-  object OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule
-      extends OtherSensitiveMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetHasNsfwUserAuthor
+  object Ot rSens  ve d aNsfwUserT etFlagDropSett ngLevelTombstoneRule
+      extends Ot rSens  ve d aT etLabelDropSett ngLevelTombstoneRule(
+        T etHasNsfwUserAuthor
       )
 
-  object OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule
-      extends OtherSensitiveMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetHasNsfwAdminAuthor
+  object Ot rSens  ve d aNsfwAdm nT etFlagDropSett ngLevelTombstoneRule
+      extends Ot rSens  ve d aT etLabelDropSett ngLevelTombstoneRule(
+        T etHasNsfwAdm nAuthor
       )
 }

@@ -1,20 +1,20 @@
-package com.twitter.home_mixer.marshaller.timelines
+package com.tw ter.ho _m xer.marshaller.t  l nes
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.BottomCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.timelineservice.{thriftscala => t}
+ mport com.tw ter.product_m xer.component_l brary.model.cursor.UrtOrderedCursor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.BottomCursor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.GapCursor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.TopCursor
+ mport com.tw ter.t  l neserv ce.{thr ftscala => t}
 
-object TimelineServiceCursorMarshaller {
+object T  l neServ ceCursorMarshaller {
 
-  def apply(cursor: UrtOrderedCursor): Option[t.Cursor2] = {
-    val id = cursor.id.map(_.toString)
-    val gapBoundaryId = cursor.gapBoundaryId.map(_.toString)
+  def apply(cursor: UrtOrderedCursor): Opt on[t.Cursor2] = {
+    val  d = cursor. d.map(_.toStr ng)
+    val gapBoundary d = cursor.gapBoundary d.map(_.toStr ng)
     cursor.cursorType match {
-      case Some(TopCursor) => Some(t.Cursor2(bottom = id))
-      case Some(BottomCursor) => Some(t.Cursor2(top = id))
-      case Some(GapCursor) => Some(t.Cursor2(top = id, bottom = gapBoundaryId))
+      case So (TopCursor) => So (t.Cursor2(bottom =  d))
+      case So (BottomCursor) => So (t.Cursor2(top =  d))
+      case So (GapCursor) => So (t.Cursor2(top =  d, bottom = gapBoundary d))
       case _ => None
     }
   }

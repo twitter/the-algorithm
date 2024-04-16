@@ -1,49 +1,49 @@
-package com.twitter.follow_recommendations.configapi
+package com.tw ter.follow_recom ndat ons.conf gap 
 
-import com.twitter.follow_recommendations.common.candidate_sources.crowd_search_accounts.CrowdSearchAccountsParams.AccountsFilteringAndRankingLogics
-import com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts.TopOrganicFollowsAccountsParams.{
-  AccountsFilteringAndRankingLogics => OrganicAccountsFilteringAndRankingLogics
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.crowd_search_accounts.CrowdSearchAccountsParams.AccountsF lter ngAndRank ngLog cs
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.top_organ c_follows_accounts.TopOrgan cFollowsAccountsParams.{
+  AccountsF lter ngAndRank ngLog cs => Organ cAccountsF lter ngAndRank ngLog cs
 }
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentEngagementSimilarUsersParams
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.SimsExpansionSourceParams
-import com.twitter.follow_recommendations.common.rankers.ml_ranker.ranking.MlRankerParams.CandidateScorerIdParam
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.follow_recommendations.configapi.params.GlobalParams.CandidateSourcesToFilter
-import com.twitter.follow_recommendations.configapi.params.GlobalParams.EnableCandidateParamHydrations
-import com.twitter.follow_recommendations.configapi.params.GlobalParams.EnableGFSSocialProofTransform
-import com.twitter.follow_recommendations.configapi.params.GlobalParams.EnableRecommendationFlowLogs
-import com.twitter.follow_recommendations.configapi.params.GlobalParams.EnableWhoToFollowProducts
-import com.twitter.follow_recommendations.configapi.params.GlobalParams.KeepSocialUserCandidate
-import com.twitter.follow_recommendations.configapi.params.GlobalParams.KeepUserCandidate
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.Param
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms_expans on.RecentEngage ntS m larUsersParams
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms_expans on.S msExpans onS ceParams
+ mport com.tw ter.follow_recom ndat ons.common.rankers.ml_ranker.rank ng.MlRankerParams.Cand dateScorer dParam
+ mport com.tw ter.follow_recom ndat ons.conf gap .common.FeatureSw chConf g
+ mport com.tw ter.follow_recom ndat ons.conf gap .params.GlobalParams.Cand dateS cesToF lter
+ mport com.tw ter.follow_recom ndat ons.conf gap .params.GlobalParams.EnableCand dateParamHydrat ons
+ mport com.tw ter.follow_recom ndat ons.conf gap .params.GlobalParams.EnableGFSSoc alProofTransform
+ mport com.tw ter.follow_recom ndat ons.conf gap .params.GlobalParams.EnableRecom ndat onFlowLogs
+ mport com.tw ter.follow_recom ndat ons.conf gap .params.GlobalParams.EnableWhoToFollowProducts
+ mport com.tw ter.follow_recom ndat ons.conf gap .params.GlobalParams.KeepSoc alUserCand date
+ mport com.tw ter.follow_recom ndat ons.conf gap .params.GlobalParams.KeepUserCand date
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class GlobalFeatureSwitchConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] = {
+@S ngleton
+class GlobalFeatureSw chConf g @ nject() () extends FeatureSw chConf g {
+  overr de val booleanFSParams: Seq[Param[Boolean] w h FSNa ] = {
     Seq(
-      EnableCandidateParamHydrations,
-      KeepUserCandidate,
-      KeepSocialUserCandidate,
-      EnableGFSSocialProofTransform,
+      EnableCand dateParamHydrat ons,
+      KeepUserCand date,
+      KeepSoc alUserCand date,
+      EnableGFSSoc alProofTransform,
       EnableWhoToFollowProducts,
-      EnableRecommendationFlowLogs
+      EnableRecom ndat onFlowLogs
     )
   }
 
   val enumFsParams =
     Seq(
-      CandidateScorerIdParam,
-      SimsExpansionSourceParams.Aggregator,
-      RecentEngagementSimilarUsersParams.Aggregator,
-      CandidateSourcesToFilter,
+      Cand dateScorer dParam,
+      S msExpans onS ceParams.Aggregator,
+      RecentEngage ntS m larUsersParams.Aggregator,
+      Cand dateS cesToF lter,
     )
 
   val enumSeqFsParams =
     Seq(
-      AccountsFilteringAndRankingLogics,
-      OrganicAccountsFilteringAndRankingLogics
+      AccountsF lter ngAndRank ngLog cs,
+      Organ cAccountsF lter ngAndRank ngLog cs
     )
 }

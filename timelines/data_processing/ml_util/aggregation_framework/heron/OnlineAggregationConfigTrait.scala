@@ -1,26 +1,26 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.heron
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. ron
 
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
-import com.twitter.ml.api.Feature
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.TypedAggregateGroup
+ mport com.tw ter.ml.ap .Feature
 
-trait OnlineAggregationConfigTrait {
+tra  Onl neAggregat onConf gTra  {
   def ProdAggregates: Set[TypedAggregateGroup[_]]
-  def StagingAggregates: Set[TypedAggregateGroup[_]]
+  def Stag ngAggregates: Set[TypedAggregateGroup[_]]
   def ProdCommonAggregates: Set[TypedAggregateGroup[_]]
 
   /**
-   * AggregateToCompute: This defines the complete set of aggregates to be
-   *    computed by the aggregation job and to be stored in memcache.
+   * AggregateToCompute: T  def nes t  complete set of aggregates to be
+   *    computed by t  aggregat on job and to be stored  n  mcac .
    */
   def AggregatesToCompute: Set[TypedAggregateGroup[_]]
 
   /**
-   * ProdFeatures: This defines the subset of aggregates to be extracted
-   *    and hydrated (or adapted) by callers to the aggregates features cache.
-   *    This should only contain production aggregates and aggregates on
-   *    product specific engagements.
-   * ProdCommonFeatures: Similar to ProdFeatures but containing user-level
-   *    aggregate features. This is provided to PredictionService just
+   * ProdFeatures: T  def nes t  subset of aggregates to be extracted
+   *    and hydrated (or adapted) by callers to t  aggregates features cac .
+   *    T  should only conta n product on aggregates and aggregates on
+   *    product spec f c engage nts.
+   * ProdCommonFeatures: S m lar to ProdFeatures but conta n ng user-level
+   *    aggregate features. T   s prov ded to Pred ct onServ ce just
    *    once per user.
    */
   lazy val ProdFeatures: Set[Feature[_]] = ProdAggregates.flatMap(_.allOutputFeatures)

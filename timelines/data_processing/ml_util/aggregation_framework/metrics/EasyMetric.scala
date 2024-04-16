@@ -1,34 +1,34 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. tr cs
 
-import com.twitter.ml.api._
+ mport com.tw ter.ml.ap ._
 
 /**
- * A "human-readable" metric that can be applied to features of multiple
- * different types. Wrapper around AggregationMetric used as syntactic sugar
- * for easier config.
+ * A "human-readable"  tr c that can be appl ed to features of mult ple
+ * d fferent types. Wrapper around Aggregat on tr c used as syntact c sugar
+ * for eas er conf g.
  */
-trait EasyMetric extends Serializable {
+tra  Easy tr c extends Ser al zable {
   /*
-   * Given a feature type, fetches the corrrect underlying AggregationMetric
-   * to perform this operation over the given feature type, if any. If no such
-   * metric is available, returns None. For example, MEAN cannot be applied
-   * to FeatureType.String and would return None.
+   * G ven a feature type, fetc s t  corrrect underly ng Aggregat on tr c
+   * to perform t  operat on over t  g ven feature type,  f any.  f no such
+   *  tr c  s ava lable, returns None. For example, MEAN cannot be appl ed
+   * to FeatureType.Str ng and would return None.
    *
-   * @param featureType Type of feature to fetch metric for
-   * @param useFixedDecay Param to control whether the metric should use fixed decay
-   *   logic (if appropriate)
-   * @return Strongly typed aggregation metric to use for this feature type
+   * @param featureType Type of feature to fetch  tr c for
+   * @param useF xedDecay Param to control w t r t   tr c should use f xed decay
+   *   log c ( f appropr ate)
+   * @return Strongly typed aggregat on  tr c to use for t  feature type
    *
-   * For example, if the EasyMetric is MEAN and the featureType is
-   * FeatureType.Continuous, the underlying AggregationMetric should be a
-   * scalar mean. If the EasyMetric is MEAN and the featureType is
-   * FeatureType.SparseContinuous, the AggregationMetric returned could be a
-   * "vector" mean that averages sparse maps. Using the single logical name
-   * MEAN for both is nice syntactic sugar making for an easier to read top
-   * level config, though different underlying operators are used underneath
-   * for the actual implementation.
+   * For example,  f t  Easy tr c  s MEAN and t  featureType  s
+   * FeatureType.Cont nuous, t  underly ng Aggregat on tr c should be a
+   * scalar  an.  f t  Easy tr c  s MEAN and t  featureType  s
+   * FeatureType.SparseCont nuous, t  Aggregat on tr c returned could be a
+   * "vector"  an that averages sparse maps. Us ng t  s ngle log cal na 
+   * MEAN for both  s n ce syntact c sugar mak ng for an eas er to read top
+   * level conf g, though d fferent underly ng operators are used underneath
+   * for t  actual  mple ntat on.
    */
   def forFeatureType[T](
     featureType: FeatureType,
-  ): Option[AggregationMetric[T, _]]
+  ): Opt on[Aggregat on tr c[T, _]]
 }

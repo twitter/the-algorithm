@@ -1,134 +1,134 @@
-package com.twitter.timelineranker.visibility
+package com.tw ter.t  l neranker.v s b l y
 
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.servo.util.Gate
-import com.twitter.timelineranker.core.FollowGraphData
-import com.twitter.timelineranker.core.FollowGraphDataFuture
-import com.twitter.timelines.clients.socialgraph.SocialGraphClient
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.util.Future
-import com.twitter.util.Stopwatch
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
+ mport com.tw ter.f nagle.stats.Stat
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.servo.repos ory.KeyValueRepos ory
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.t  l neranker.core.FollowGraphData
+ mport com.tw ter.t  l neranker.core.FollowGraphDataFuture
+ mport com.tw ter.t  l nes.cl ents.soc algraph.Soc alGraphCl ent
+ mport com.tw ter.t  l nes.model.User d
+ mport com.tw ter.t  l nes.ut l.Fa lOpenHandler
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Stopwatch
+ mport com.tw ter.wtf.cand date.thr ftscala.Cand dateSeq
 
-object RealGraphFollowGraphDataProvider {
-  val EmptyRealGraphResponse = CandidateSeq(Nil)
+object RealGraphFollowGraphDataProv der {
+  val EmptyRealGraphResponse = Cand dateSeq(N l)
 }
 
 /**
- * Wraps an underlying FollowGraphDataProvider (which in practice will usually be a
- * [[SgsFollowGraphDataProvider]]) and supplements the list of followings provided by the
- * underlying provider with additional followings fetched from RealGraph if it looks like the
- * underlying provider did not get the full list of the user's followings.
+ * Wraps an underly ng FollowGraphDataProv der (wh ch  n pract ce w ll usually be a
+ * [[SgsFollowGraphDataProv der]]) and supple nts t  l st of follow ngs prov ded by t 
+ * underly ng prov der w h add  onal follow ngs fetc d from RealGraph  f   looks l ke t 
+ * underly ng prov der d d not get t  full l st of t  user's follow ngs.
  *
- * First checks whether the size of the underlying following list is >= the max requested following
- * count, which implies that there were additional followings beyond the max requested count. If so,
- * fetches the full set of followings from RealGraph (go/realgraph), which will be at most 2000.
+ * F rst c cks w t r t  s ze of t  underly ng follow ng l st  s >= t  max requested follow ng
+ * count, wh ch  mpl es that t re  re add  onal follow ngs beyond t  max requested count.  f so,
+ * fetc s t  full set of follow ngs from RealGraph (go/realgraph), wh ch w ll be at most 2000.
  *
- * Because the RealGraph dataset is not realtime and thus can potentially include stale followings,
- * the provider confirms that the followings fetched from RealGraph are valid using SGS's
- * getFollowOverlap method, and then merges the valid RealGraph followings with the underlying
- * followings.
+ * Because t  RealGraph dataset  s not realt   and thus can potent ally  nclude stale follow ngs,
+ * t  prov der conf rms that t  follow ngs fetc d from RealGraph are val d us ng SGS's
+ * getFollowOverlap  thod, and t n  rges t  val d RealGraph follow ngs w h t  underly ng
+ * follow ngs.
  *
- * Note that this supplementing is expected to be very rare as most users do not have more than
- * the max followings we fetch from SGS. Also note that this class is mainly intended for use
- * in the home timeline materialization path, with the goal of preventing a case where users
- * who follow a very large number of accounts may not see Tweets from their earlier follows if we
- * used SGS-based follow fetching alone.
+ * Note that t  supple nt ng  s expected to be very rare as most users do not have more than
+ * t  max follow ngs   fetch from SGS. Also note that t  class  s ma nly  ntended for use
+ *  n t  ho  t  l ne mater al zat on path, w h t  goal of prevent ng a case w re users
+ * who follow a very large number of accounts may not see T ets from t  r earl er follows  f  
+ * used SGS-based follow fetch ng alone.
  */
-class RealGraphFollowGraphDataProvider(
-  underlying: FollowGraphDataProvider,
-  realGraphClient: KeyValueRepository[Seq[UserId], UserId, CandidateSeq],
-  socialGraphClient: SocialGraphClient,
-  supplementFollowsWithRealGraphGate: Gate[UserId],
-  statsReceiver: StatsReceiver)
-    extends FollowGraphDataProvider {
-  import RealGraphFollowGraphDataProvider._
+class RealGraphFollowGraphDataProv der(
+  underly ng: FollowGraphDataProv der,
+  realGraphCl ent: KeyValueRepos ory[Seq[User d], User d, Cand dateSeq],
+  soc alGraphCl ent: Soc alGraphCl ent,
+  supple ntFollowsW hRealGraphGate: Gate[User d],
+  statsRece ver: StatsRece ver)
+    extends FollowGraphDataProv der {
+   mport RealGraphFollowGraphDataProv der._
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("realGraphFollowGraphDataProvider")
-  private[this] val requestCounter = scopedStatsReceiver.counter("requests")
-  private[this] val atMaxCounter = scopedStatsReceiver.counter("followsAtMax")
-  private[this] val totalLatencyStat = scopedStatsReceiver.stat("totalLatencyWhenSupplementing")
-  private[this] val supplementLatencyStat = scopedStatsReceiver.stat("supplementFollowsLatency")
-  private[this] val realGraphResponseSizeStat = scopedStatsReceiver.stat("realGraphFollows")
-  private[this] val realGraphEmptyCounter = scopedStatsReceiver.counter("realGraphEmpty")
-  private[this] val nonOverlappingSizeStat = scopedStatsReceiver.stat("nonOverlappingFollows")
+  pr vate[t ] val scopedStatsRece ver = statsRece ver.scope("realGraphFollowGraphDataProv der")
+  pr vate[t ] val requestCounter = scopedStatsRece ver.counter("requests")
+  pr vate[t ] val atMaxCounter = scopedStatsRece ver.counter("followsAtMax")
+  pr vate[t ] val totalLatencyStat = scopedStatsRece ver.stat("totalLatencyW nSupple nt ng")
+  pr vate[t ] val supple ntLatencyStat = scopedStatsRece ver.stat("supple ntFollowsLatency")
+  pr vate[t ] val realGraphResponseS zeStat = scopedStatsRece ver.stat("realGraphFollows")
+  pr vate[t ] val realGraphEmptyCounter = scopedStatsRece ver.counter("realGraphEmpty")
+  pr vate[t ] val nonOverlapp ngS zeStat = scopedStatsRece ver.stat("nonOverlapp ngFollows")
 
-  private[this] val failOpenHandler = new FailOpenHandler(scopedStatsReceiver)
+  pr vate[t ] val fa lOpenHandler = new Fa lOpenHandler(scopedStatsRece ver)
 
-  override def get(userId: UserId, maxFollowingCount: Int): Future[FollowGraphData] = {
-    getAsync(userId, maxFollowingCount).get()
+  overr de def get(user d: User d, maxFollow ngCount:  nt): Future[FollowGraphData] = {
+    getAsync(user d, maxFollow ngCount).get()
   }
 
-  override def getAsync(userId: UserId, maxFollowingCount: Int): FollowGraphDataFuture = {
-    val startTime = Stopwatch.timeMillis()
-    val underlyingResult = underlying.getAsync(userId, maxFollowingCount)
-    if (supplementFollowsWithRealGraphGate(userId)) {
-      val supplementedFollows = underlyingResult.followedUserIdsFuture.flatMap { sgsFollows =>
-        supplementFollowsWithRealGraph(userId, maxFollowingCount, sgsFollows, startTime)
+  overr de def getAsync(user d: User d, maxFollow ngCount:  nt): FollowGraphDataFuture = {
+    val startT   = Stopwatch.t  M ll s()
+    val underly ngResult = underly ng.getAsync(user d, maxFollow ngCount)
+     f (supple ntFollowsW hRealGraphGate(user d)) {
+      val supple ntedFollows = underly ngResult.follo dUser dsFuture.flatMap { sgsFollows =>
+        supple ntFollowsW hRealGraph(user d, maxFollow ngCount, sgsFollows, startT  )
       }
-      underlyingResult.copy(followedUserIdsFuture = supplementedFollows)
+      underly ngResult.copy(follo dUser dsFuture = supple ntedFollows)
     } else {
-      underlyingResult
+      underly ngResult
     }
   }
 
-  override def getFollowing(userId: UserId, maxFollowingCount: Int): Future[Seq[UserId]] = {
-    val startTime = Stopwatch.timeMillis()
-    val underlyingFollows = underlying.getFollowing(userId, maxFollowingCount)
-    if (supplementFollowsWithRealGraphGate(userId)) {
-      underlying.getFollowing(userId, maxFollowingCount).flatMap { sgsFollows =>
-        supplementFollowsWithRealGraph(userId, maxFollowingCount, sgsFollows, startTime)
+  overr de def getFollow ng(user d: User d, maxFollow ngCount:  nt): Future[Seq[User d]] = {
+    val startT   = Stopwatch.t  M ll s()
+    val underly ngFollows = underly ng.getFollow ng(user d, maxFollow ngCount)
+     f (supple ntFollowsW hRealGraphGate(user d)) {
+      underly ng.getFollow ng(user d, maxFollow ngCount).flatMap { sgsFollows =>
+        supple ntFollowsW hRealGraph(user d, maxFollow ngCount, sgsFollows, startT  )
       }
     } else {
-      underlyingFollows
+      underly ngFollows
     }
   }
 
-  private[this] def supplementFollowsWithRealGraph(
-    userId: UserId,
-    maxFollowingCount: Int,
+  pr vate[t ] def supple ntFollowsW hRealGraph(
+    user d: User d,
+    maxFollow ngCount:  nt,
     sgsFollows: Seq[Long],
-    startTime: Long
-  ): Future[Seq[UserId]] = {
-    requestCounter.incr()
-    if (sgsFollows.size >= maxFollowingCount) {
-      atMaxCounter.incr()
-      val supplementedFollowsFuture = realGraphClient(Seq(userId))
-        .map(_.getOrElse(userId, EmptyRealGraphResponse))
-        .map(_.candidates.map(_.userId))
+    startT  : Long
+  ): Future[Seq[User d]] = {
+    requestCounter. ncr()
+     f (sgsFollows.s ze >= maxFollow ngCount) {
+      atMaxCounter. ncr()
+      val supple ntedFollowsFuture = realGraphCl ent(Seq(user d))
+        .map(_.getOrElse(user d, EmptyRealGraphResponse))
+        .map(_.cand dates.map(_.user d))
         .flatMap {
-          case realGraphFollows if realGraphFollows.nonEmpty =>
-            realGraphResponseSizeStat.add(realGraphFollows.size)
-            // Filter out "stale" follows from realgraph by checking them against SGS
-            val verifiedRealGraphFollows =
-              socialGraphClient.getFollowOverlap(userId, realGraphFollows)
-            verifiedRealGraphFollows.map { follows =>
-              val combinedFollows = (sgsFollows ++ follows).distinct
-              val additionalFollows = combinedFollows.size - sgsFollows.size
-              if (additionalFollows > 0) nonOverlappingSizeStat.add(additionalFollows)
-              combinedFollows
+          case realGraphFollows  f realGraphFollows.nonEmpty =>
+            realGraphResponseS zeStat.add(realGraphFollows.s ze)
+            // F lter out "stale" follows from realgraph by c ck ng t m aga nst SGS
+            val ver f edRealGraphFollows =
+              soc alGraphCl ent.getFollowOverlap(user d, realGraphFollows)
+            ver f edRealGraphFollows.map { follows =>
+              val comb nedFollows = (sgsFollows ++ follows).d st nct
+              val add  onalFollows = comb nedFollows.s ze - sgsFollows.s ze
+               f (add  onalFollows > 0) nonOverlapp ngS zeStat.add(add  onalFollows)
+              comb nedFollows
             }
           case _ =>
-            realGraphEmptyCounter.incr()
+            realGraphEmptyCounter. ncr()
             Future.value(sgsFollows)
         }
-        .onSuccess { _ => totalLatencyStat.add(Stopwatch.timeMillis() - startTime) }
+        .onSuccess { _ => totalLatencyStat.add(Stopwatch.t  M ll s() - startT  ) }
 
-      Stat.timeFuture(supplementLatencyStat) {
-        failOpenHandler(supplementedFollowsFuture) { _ => Future.value(sgsFollows) }
+      Stat.t  Future(supple ntLatencyStat) {
+        fa lOpenHandler(supple ntedFollowsFuture) { _ => Future.value(sgsFollows) }
       }
     } else {
       Future.value(sgsFollows)
     }
   }
 
-  override def getMutuallyFollowingUserIds(
-    userId: UserId,
-    followingIds: Seq[UserId]
-  ): Future[Set[UserId]] = {
-    underlying.getMutuallyFollowingUserIds(userId, followingIds)
+  overr de def getMutuallyFollow ngUser ds(
+    user d: User d,
+    follow ng ds: Seq[User d]
+  ): Future[Set[User d]] = {
+    underly ng.getMutuallyFollow ngUser ds(user d, follow ng ds)
   }
 }

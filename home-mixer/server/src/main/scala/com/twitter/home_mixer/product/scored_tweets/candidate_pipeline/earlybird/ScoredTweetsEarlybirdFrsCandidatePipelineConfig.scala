@@ -1,69 +1,69 @@
-package com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.earlybird
+package com.tw ter.ho _m xer.product.scored_t ets.cand date_p pel ne.earlyb rd
 
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.home_mixer.functional_component.candidate_source.EarlybirdCandidateSource
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.FrsSeedUsersQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.gate.MinCachedTweetsGate
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CachedScoredTweets
-import com.twitter.home_mixer.product.scored_tweets.query_transformer.earlybird.EarlybirdFrsQueryTransformer
-import com.twitter.home_mixer.product.scored_tweets.response_transformer.earlybird.ScoredTweetsEarlybirdFrsResponseFeatureTransformer
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseQueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.search.earlybird.{thriftscala => eb}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.ho _m xer.funct onal_component.cand date_s ce.Earlyb rdCand dateS ce
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.FrsSeedUsersQueryFeatureHydrator
+ mport com.tw ter.ho _m xer.product.scored_t ets.gate.M nCac dT etsGate
+ mport com.tw ter.ho _m xer.product.scored_t ets.model.ScoredT etsQuery
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParam.Cac dScoredT ets
+ mport com.tw ter.ho _m xer.product.scored_t ets.query_transfor r.earlyb rd.Earlyb rdFrsQueryTransfor r
+ mport com.tw ter.ho _m xer.product.scored_t ets.response_transfor r.earlyb rd.ScoredT etsEarlyb rdFrsResponseFeatureTransfor r
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.BaseCand dateS ce
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BaseQueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.Gate
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neResultsTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neConf g
+ mport com.tw ter.search.earlyb rd.{thr ftscala => eb}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * Candidate Pipeline Config that fetches tweets from the earlybird FRS Candidate Source
+ * Cand date P pel ne Conf g that fetc s t ets from t  earlyb rd FRS Cand date S ce
  */
-@Singleton
-class ScoredTweetsEarlybirdFrsCandidatePipelineConfig @Inject() (
-  earlybirdCandidateSource: EarlybirdCandidateSource,
+@S ngleton
+class ScoredT etsEarlyb rdFrsCand dateP pel neConf g @ nject() (
+  earlyb rdCand dateS ce: Earlyb rdCand dateS ce,
   frsSeedUsersQueryFeatureHydrator: FrsSeedUsersQueryFeatureHydrator,
-  clientId: ClientId)
-    extends CandidatePipelineConfig[
-      ScoredTweetsQuery,
-      eb.EarlybirdRequest,
-      eb.ThriftSearchResult,
-      TweetCandidate
+  cl ent d: Cl ent d)
+    extends Cand dateP pel neConf g[
+      ScoredT etsQuery,
+      eb.Earlyb rdRequest,
+      eb.Thr ftSearchResult,
+      T etCand date
     ] {
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("ScoredTweetsEarlybirdFrs")
+  overr de val  dent f er: Cand dateP pel ne dent f er =
+    Cand dateP pel ne dent f er("ScoredT etsEarlyb rdFrs")
 
-  override val gates: Seq[Gate[ScoredTweetsQuery]] = Seq(
-    MinCachedTweetsGate(identifier, CachedScoredTweets.MinCachedTweetsParam)
+  overr de val gates: Seq[Gate[ScoredT etsQuery]] = Seq(
+    M nCac dT etsGate( dent f er, Cac dScoredT ets.M nCac dT etsParam)
   )
 
-  override val queryFeatureHydration: Seq[
-    BaseQueryFeatureHydrator[ScoredTweetsQuery, _]
+  overr de val queryFeatureHydrat on: Seq[
+    BaseQueryFeatureHydrator[ScoredT etsQuery, _]
   ] = Seq(frsSeedUsersQueryFeatureHydrator)
 
-  override val candidateSource: BaseCandidateSource[eb.EarlybirdRequest, eb.ThriftSearchResult] =
-    earlybirdCandidateSource
+  overr de val cand dateS ce: BaseCand dateS ce[eb.Earlyb rdRequest, eb.Thr ftSearchResult] =
+    earlyb rdCand dateS ce
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    ScoredTweetsQuery,
-    eb.EarlybirdRequest
-  ] = EarlybirdFrsQueryTransformer(identifier, clientId = Some(clientId.name))
+  overr de val queryTransfor r: Cand dateP pel neQueryTransfor r[
+    ScoredT etsQuery,
+    eb.Earlyb rdRequest
+  ] = Earlyb rdFrsQueryTransfor r( dent f er, cl ent d = So (cl ent d.na ))
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[eb.ThriftSearchResult]
-  ] = Seq(ScoredTweetsEarlybirdFrsResponseFeatureTransformer)
+  overr de val featuresFromCand dateS ceTransfor rs: Seq[
+    Cand dateFeatureTransfor r[eb.Thr ftSearchResult]
+  ] = Seq(ScoredT etsEarlyb rdFrsResponseFeatureTransfor r)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    eb.ThriftSearchResult,
-    TweetCandidate
-  ] = { sourceResult => TweetCandidate(id = sourceResult.id) }
+  overr de val resultTransfor r: Cand dateP pel neResultsTransfor r[
+    eb.Thr ftSearchResult,
+    T etCand date
+  ] = { s ceResult => T etCand date( d = s ceResult. d) }
 
-  override def filters: Seq[Filter[ScoredTweetsQuery, TweetCandidate]] = Seq.empty
+  overr de def f lters: Seq[F lter[ScoredT etsQuery, T etCand date]] = Seq.empty
 }

@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms_expans on
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.follow_recom ndat ons.conf gap .common.FeatureSw chConf g
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class RecentEngagementSimilarUsersFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[FSParam[Boolean]] = Seq(
-    RecentEngagementSimilarUsersParams.FirstDegreeSortEnabled
+@S ngleton
+class RecentEngage ntS m larUsersFSConf g @ nject() () extends FeatureSw chConf g {
+  overr de val booleanFSParams: Seq[FSParam[Boolean]] = Seq(
+    RecentEngage ntS m larUsersParams.F rstDegreeSortEnabled
   )
 }

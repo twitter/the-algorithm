@@ -1,14 +1,14 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finatra/inject/inject-core/src/main/scala",
-        "representation-manager/server/src/main/scala/com/twitter/representation_manager/columns",
-        "representation-manager/server/src/main/scala/com/twitter/representation_manager/modules",
-        "representation-manager/server/src/main/scala/com/twitter/representation_manager/store",
-        "representation-manager/server/src/main/thrift:thrift-scala",
-        "strato/src/main/scala/com/twitter/strato/fed",
-        "strato/src/main/scala/com/twitter/strato/fed/server",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "f natra/ nject/ nject-core/src/ma n/scala",
+        "representat on-manager/server/src/ma n/scala/com/tw ter/representat on_manager/columns",
+        "representat on-manager/server/src/ma n/scala/com/tw ter/representat on_manager/modules",
+        "representat on-manager/server/src/ma n/scala/com/tw ter/representat on_manager/store",
+        "representat on-manager/server/src/ma n/thr ft:thr ft-scala",
+        "strato/src/ma n/scala/com/tw ter/strato/fed",
+        "strato/src/ma n/scala/com/tw ter/strato/fed/server",
     ],
 )

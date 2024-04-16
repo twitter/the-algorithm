@@ -1,171 +1,171 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+package com.tw ter.follow_recom ndat ons.flows.post_nux_ml
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.clients.dismiss_store.DismissStore
-import com.twitter.follow_recommendations.common.clients.geoduck.UserLocationFetcher
-import com.twitter.follow_recommendations.common.clients.impression_store.WtfImpressionStore
-import com.twitter.follow_recommendations.common.clients.interests_service.InterestServiceClient
-import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
-import com.twitter.follow_recommendations.common.clients.user_state.UserStateClient
-import com.twitter.follow_recommendations.common.predicates.dismiss.DismissedCandidatePredicateParams
-import com.twitter.follow_recommendations.common.utils.RescueWithStatsUtils._
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlRequestBuilderParams.DismissedIdScanBudget
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlRequestBuilderParams.TopicIdFetchBudget
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlRequestBuilderParams.WTFImpressionsScanBudget
-import com.twitter.follow_recommendations.products.common.ProductRequest
-import com.twitter.inject.Logging
-import com.twitter.stitch.Stitch
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.d sm ss_store.D sm ssStore
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.geoduck.UserLocat onFetc r
+ mport com.tw ter.follow_recom ndat ons.common.cl ents. mpress on_store.Wtf mpress onStore
+ mport com.tw ter.follow_recom ndat ons.common.cl ents. nterests_serv ce. nterestServ ceCl ent
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.soc algraph.Soc alGraphCl ent
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.user_state.UserStateCl ent
+ mport com.tw ter.follow_recom ndat ons.common.pred cates.d sm ss.D sm ssedCand datePred cateParams
+ mport com.tw ter.follow_recom ndat ons.common.ut ls.RescueW hStatsUt ls._
+ mport com.tw ter.follow_recom ndat ons.flows.post_nux_ml.PostNuxMlRequestBu lderParams.D sm ssed dScanBudget
+ mport com.tw ter.follow_recom ndat ons.flows.post_nux_ml.PostNuxMlRequestBu lderParams.Top c dFetchBudget
+ mport com.tw ter.follow_recom ndat ons.flows.post_nux_ml.PostNuxMlRequestBu lderParams.WTF mpress onsScanBudget
+ mport com.tw ter.follow_recom ndat ons.products.common.ProductRequest
+ mport com.tw ter. nject.Logg ng
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.ut l.T  
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class PostNuxMlRequestBuilder @Inject() (
-  socialGraph: SocialGraphClient,
-  wtfImpressionStore: WtfImpressionStore,
-  dismissStore: DismissStore,
-  userLocationFetcher: UserLocationFetcher,
-  interestServiceClient: InterestServiceClient,
-  userStateClient: UserStateClient,
-  statsReceiver: StatsReceiver)
-    extends Logging {
+@S ngleton
+class PostNuxMlRequestBu lder @ nject() (
+  soc alGraph: Soc alGraphCl ent,
+  wtf mpress onStore: Wtf mpress onStore,
+  d sm ssStore: D sm ssStore,
+  userLocat onFetc r: UserLocat onFetc r,
+   nterestServ ceCl ent:  nterestServ ceCl ent,
+  userStateCl ent: UserStateCl ent,
+  statsRece ver: StatsRece ver)
+    extends Logg ng {
 
-  val stats: StatsReceiver = statsReceiver.scope("post_nux_ml_request_builder")
-  val invalidRelationshipUsersStats: StatsReceiver = stats.scope("invalidRelationshipUserIds")
-  private val invalidRelationshipUsersMaxSizeCounter =
-    invalidRelationshipUsersStats.counter("maxSize")
-  private val invalidRelationshipUsersNotMaxSizeCounter =
-    invalidRelationshipUsersStats.counter("notMaxSize")
+  val stats: StatsRece ver = statsRece ver.scope("post_nux_ml_request_bu lder")
+  val  nval dRelat onsh pUsersStats: StatsRece ver = stats.scope(" nval dRelat onsh pUser ds")
+  pr vate val  nval dRelat onsh pUsersMaxS zeCounter =
+     nval dRelat onsh pUsersStats.counter("maxS ze")
+  pr vate val  nval dRelat onsh pUsersNotMaxS zeCounter =
+     nval dRelat onsh pUsersStats.counter("notMaxS ze")
 
-  def build(
+  def bu ld(
     req: ProductRequest,
-    previouslyRecommendedUserIds: Option[Set[Long]] = None,
-    previouslyFollowedUserIds: Option[Set[Long]] = None
-  ): Stitch[PostNuxMlRequest] = {
-    val dl = req.recommendationRequest.displayLocation
-    val resultsStitch = Stitch.collect(
-      req.recommendationRequest.clientContext.userId
-        .map { userId =>
-          val lookBackDuration = req.params(DismissedCandidatePredicateParams.LookBackDuration)
-          val negativeStartTs = -(Time.now - lookBackDuration).inMillis
-          val recentFollowedUserIdsStitch =
-            rescueWithStats(
-              socialGraph.getRecentFollowedUserIds(userId),
+    prev ouslyRecom ndedUser ds: Opt on[Set[Long]] = None,
+    prev ouslyFollo dUser ds: Opt on[Set[Long]] = None
+  ): St ch[PostNuxMlRequest] = {
+    val dl = req.recom ndat onRequest.d splayLocat on
+    val resultsSt ch = St ch.collect(
+      req.recom ndat onRequest.cl entContext.user d
+        .map { user d =>
+          val lookBackDurat on = req.params(D sm ssedCand datePred cateParams.LookBackDurat on)
+          val negat veStartTs = -(T  .now - lookBackDurat on). nM ll s
+          val recentFollo dUser dsSt ch =
+            rescueW hStats(
+              soc alGraph.getRecentFollo dUser ds(user d),
               stats,
-              "recentFollowedUserIds")
-          val invalidRelationshipUserIdsStitch =
-            if (req.params(PostNuxMlParams.EnableInvalidRelationshipPredicate)) {
-              rescueWithStats(
-                socialGraph
-                  .getInvalidRelationshipUserIds(userId)
-                  .onSuccess(ids =>
-                    if (ids.size >= SocialGraphClient.MaxNumInvalidRelationship) {
-                      invalidRelationshipUsersMaxSizeCounter.incr()
+              "recentFollo dUser ds")
+          val  nval dRelat onsh pUser dsSt ch =
+             f (req.params(PostNuxMlParams.Enable nval dRelat onsh pPred cate)) {
+              rescueW hStats(
+                soc alGraph
+                  .get nval dRelat onsh pUser ds(user d)
+                  .onSuccess( ds =>
+                     f ( ds.s ze >= Soc alGraphCl ent.MaxNum nval dRelat onsh p) {
+                       nval dRelat onsh pUsersMaxS zeCounter. ncr()
                     } else {
-                      invalidRelationshipUsersNotMaxSizeCounter.incr()
+                       nval dRelat onsh pUsersNotMaxS zeCounter. ncr()
                     }),
                 stats,
-                "invalidRelationshipUserIds"
+                " nval dRelat onsh pUser ds"
               )
             } else {
-              Stitch.value(Seq.empty)
+              St ch.value(Seq.empty)
             }
-          // recentFollowedByUserIds are only used in experiment candidate sources
-          val recentFollowedByUserIdsStitch = if (req.params(PostNuxMlParams.GetFollowersFromSgs)) {
-            rescueWithStats(
-              socialGraph.getRecentFollowedByUserIdsFromCachedColumn(userId),
+          // recentFollo dByUser ds are only used  n exper  nt cand date s ces
+          val recentFollo dByUser dsSt ch =  f (req.params(PostNuxMlParams.GetFollo rsFromSgs)) {
+            rescueW hStats(
+              soc alGraph.getRecentFollo dByUser dsFromCac dColumn(user d),
               stats,
-              "recentFollowedByUserIds")
-          } else Stitch.value(Seq.empty)
-          val wtfImpressionsStitch =
-            rescueWithStatsWithin(
-              wtfImpressionStore.get(userId, dl),
+              "recentFollo dByUser ds")
+          } else St ch.value(Seq.empty)
+          val wtf mpress onsSt ch =
+            rescueW hStatsW h n(
+              wtf mpress onStore.get(user d, dl),
               stats,
-              "wtfImpressions",
-              req.params(WTFImpressionsScanBudget))
-          val dismissedUserIdsStitch =
-            rescueWithStatsWithin(
-              dismissStore.get(userId, negativeStartTs, None),
+              "wtf mpress ons",
+              req.params(WTF mpress onsScanBudget))
+          val d sm ssedUser dsSt ch =
+            rescueW hStatsW h n(
+              d sm ssStore.get(user d, negat veStartTs, None),
               stats,
-              "dismissedUserIds",
-              req.params(DismissedIdScanBudget))
-          val locationStitch =
-            rescueOptionalWithStats(
-              userLocationFetcher.getGeohashAndCountryCode(
-                Some(userId),
-                req.recommendationRequest.clientContext.ipAddress),
+              "d sm ssedUser ds",
+              req.params(D sm ssed dScanBudget))
+          val locat onSt ch =
+            rescueOpt onalW hStats(
+              userLocat onFetc r.getGeohashAndCountryCode(
+                So (user d),
+                req.recom ndat onRequest.cl entContext. pAddress),
               stats,
-              "userLocation"
+              "userLocat on"
             )
-          val topicIdsStitch =
-            rescueWithStatsWithin(
-              interestServiceClient.fetchUttInterestIds(userId),
+          val top c dsSt ch =
+            rescueW hStatsW h n(
+               nterestServ ceCl ent.fetchUtt nterest ds(user d),
               stats,
-              "topicIds",
-              req.params(TopicIdFetchBudget))
-          val userStateStitch =
-            rescueOptionalWithStats(userStateClient.getUserState(userId), stats, "userState")
-          Stitch.join(
-            recentFollowedUserIdsStitch,
-            invalidRelationshipUserIdsStitch,
-            recentFollowedByUserIdsStitch,
-            dismissedUserIdsStitch,
-            wtfImpressionsStitch,
-            locationStitch,
-            topicIdsStitch,
-            userStateStitch
+              "top c ds",
+              req.params(Top c dFetchBudget))
+          val userStateSt ch =
+            rescueOpt onalW hStats(userStateCl ent.getUserState(user d), stats, "userState")
+          St ch.jo n(
+            recentFollo dUser dsSt ch,
+             nval dRelat onsh pUser dsSt ch,
+            recentFollo dByUser dsSt ch,
+            d sm ssedUser dsSt ch,
+            wtf mpress onsSt ch,
+            locat onSt ch,
+            top c dsSt ch,
+            userStateSt ch
           )
         })
 
-    resultsStitch.map {
-      case Some(
+    resultsSt ch.map {
+      case So (
             (
-              recentFollowedUserIds,
-              invalidRelationshipUserIds,
-              recentFollowedByUserIds,
-              dismissedUserIds,
-              wtfImpressions,
-              locationInfo,
-              topicIds,
+              recentFollo dUser ds,
+               nval dRelat onsh pUser ds,
+              recentFollo dByUser ds,
+              d sm ssedUser ds,
+              wtf mpress ons,
+              locat on nfo,
+              top c ds,
               userState)) =>
         PostNuxMlRequest(
           params = req.params,
-          clientContext = req.recommendationRequest.clientContext,
-          similarToUserIds = Nil,
-          inputExcludeUserIds = req.recommendationRequest.excludedIds.getOrElse(Nil),
-          recentFollowedUserIds = Some(recentFollowedUserIds),
-          invalidRelationshipUserIds = Some(invalidRelationshipUserIds.toSet),
-          recentFollowedByUserIds = Some(recentFollowedByUserIds),
-          dismissedUserIds = Some(dismissedUserIds),
-          displayLocation = dl,
-          maxResults = req.recommendationRequest.maxResults,
-          debugOptions = req.recommendationRequest.debugParams.flatMap(_.debugOptions),
-          wtfImpressions = Some(wtfImpressions),
-          geohashAndCountryCode = locationInfo,
-          uttInterestIds = Some(topicIds),
-          inputPreviouslyRecommendedUserIds = previouslyRecommendedUserIds,
-          inputPreviouslyFollowedUserIds = previouslyFollowedUserIds,
-          isSoftUser = req.recommendationRequest.isSoftUser,
+          cl entContext = req.recom ndat onRequest.cl entContext,
+          s m larToUser ds = N l,
+           nputExcludeUser ds = req.recom ndat onRequest.excluded ds.getOrElse(N l),
+          recentFollo dUser ds = So (recentFollo dUser ds),
+           nval dRelat onsh pUser ds = So ( nval dRelat onsh pUser ds.toSet),
+          recentFollo dByUser ds = So (recentFollo dByUser ds),
+          d sm ssedUser ds = So (d sm ssedUser ds),
+          d splayLocat on = dl,
+          maxResults = req.recom ndat onRequest.maxResults,
+          debugOpt ons = req.recom ndat onRequest.debugParams.flatMap(_.debugOpt ons),
+          wtf mpress ons = So (wtf mpress ons),
+          geohashAndCountryCode = locat on nfo,
+          utt nterest ds = So (top c ds),
+           nputPrev ouslyRecom ndedUser ds = prev ouslyRecom ndedUser ds,
+           nputPrev ouslyFollo dUser ds = prev ouslyFollo dUser ds,
+           sSoftUser = req.recom ndat onRequest. sSoftUser,
           userState = userState
         )
       case _ =>
         PostNuxMlRequest(
           params = req.params,
-          clientContext = req.recommendationRequest.clientContext,
-          similarToUserIds = Nil,
-          inputExcludeUserIds = req.recommendationRequest.excludedIds.getOrElse(Nil),
-          recentFollowedUserIds = None,
-          invalidRelationshipUserIds = None,
-          recentFollowedByUserIds = None,
-          dismissedUserIds = None,
-          displayLocation = dl,
-          maxResults = req.recommendationRequest.maxResults,
-          debugOptions = req.recommendationRequest.debugParams.flatMap(_.debugOptions),
-          wtfImpressions = None,
+          cl entContext = req.recom ndat onRequest.cl entContext,
+          s m larToUser ds = N l,
+           nputExcludeUser ds = req.recom ndat onRequest.excluded ds.getOrElse(N l),
+          recentFollo dUser ds = None,
+           nval dRelat onsh pUser ds = None,
+          recentFollo dByUser ds = None,
+          d sm ssedUser ds = None,
+          d splayLocat on = dl,
+          maxResults = req.recom ndat onRequest.maxResults,
+          debugOpt ons = req.recom ndat onRequest.debugParams.flatMap(_.debugOpt ons),
+          wtf mpress ons = None,
           geohashAndCountryCode = None,
-          inputPreviouslyRecommendedUserIds = previouslyRecommendedUserIds,
-          inputPreviouslyFollowedUserIds = previouslyFollowedUserIds,
-          isSoftUser = req.recommendationRequest.isSoftUser,
+           nputPrev ouslyRecom ndedUser ds = prev ouslyRecom ndedUser ds,
+           nputPrev ouslyFollo dUser ds = prev ouslyFollo dUser ds,
+           sSoftUser = req.recom ndat onRequest. sSoftUser,
           userState = None
         )
     }

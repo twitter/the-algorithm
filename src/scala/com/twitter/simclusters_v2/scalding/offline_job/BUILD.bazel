@@ -1,126 +1,126 @@
-scala_library(
+scala_l brary(
     platform = "java8",
     tags = [
-        "bazel-compatible",
+        "bazel-compat ble",
         "bazel-only",
     ],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/storehaus:algebra",
-        "3rdparty/jvm/com/twitter/storehaus:core",
-        "3rdparty/src/jvm/com/twitter/storehaus:algebra",
-        "3rdparty/src/jvm/com/twitter/storehaus:core",
+    dependenc es = [
+        "3rdparty/jvm/com/tw ter/storehaus:algebra",
+        "3rdparty/jvm/com/tw ter/storehaus:core",
+        "3rdparty/src/jvm/com/tw ter/storehaus:algebra",
+        "3rdparty/src/jvm/com/tw ter/storehaus:core",
         "graphstore/common:flock_follows-java",
-        "snowflake:id",
-        "src/java/com/twitter/ml/api/constant",
-        "src/java/com/twitter/sbf/graph",
-        "src/scala/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/pluck/source/core_workflows/user_model:condensed_user_state-scala",
-        "src/scala/com/twitter/scalding_internal/dalv2",
-        "src/scala/com/twitter/scalding_internal/job",
-        "src/scala/com/twitter/scalding_internal/job/analytics_batch",
-        "src/scala/com/twitter/scalding_internal/source",
-        "src/scala/com/twitter/scalding_internal/source/lzo_scrooge",
-        "src/scala/com/twitter/simclusters_v2/candidate_source",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/scalding",
-        "src/scala/com/twitter/simclusters_v2/scalding/common",
-        "src/scala/com/twitter/simclusters_v2/summingbird/common",
-        "src/scala/com/twitter/timelines/prediction/features/common",
-        "src/scala/com/twitter/timelines/prediction/features/itl",
-        "src/scala/com/twitter/timelines/prediction/features/recap",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:execution_app",
-        "src/thrift/com/twitter/hermit/candidate:hermit-candidate-scala",
-        "src/thrift/com/twitter/wtf/scalding/sims:sims-thrift-scala",
-        "twadoop_config/configuration/log_categories/group/timeline:timeline_service_favorites-scala",
-        "usersource/snapshot/src/main/scala/com/twitter/usersource/snapshot/flat:usersource_flat-scala",
-        "usersource/snapshot/src/main/thrift/com/twitter/usersource/snapshot/flat:flat-scala",
+        "snowflake: d",
+        "src/java/com/tw ter/ml/ap /constant",
+        "src/java/com/tw ter/sbf/graph",
+        "src/scala/com/tw ter/ml/ap :ap -base",
+        "src/scala/com/tw ter/pluck/s ce/core_workflows/user_model:condensed_user_state-scala",
+        "src/scala/com/tw ter/scald ng_ nternal/dalv2",
+        "src/scala/com/tw ter/scald ng_ nternal/job",
+        "src/scala/com/tw ter/scald ng_ nternal/job/analyt cs_batch",
+        "src/scala/com/tw ter/scald ng_ nternal/s ce",
+        "src/scala/com/tw ter/scald ng_ nternal/s ce/lzo_scrooge",
+        "src/scala/com/tw ter/s mclusters_v2/cand date_s ce",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces",
+        "src/scala/com/tw ter/s mclusters_v2/scald ng",
+        "src/scala/com/tw ter/s mclusters_v2/scald ng/common",
+        "src/scala/com/tw ter/s mclusters_v2/summ ngb rd/common",
+        "src/scala/com/tw ter/t  l nes/pred ct on/features/common",
+        "src/scala/com/tw ter/t  l nes/pred ct on/features/ l",
+        "src/scala/com/tw ter/t  l nes/pred ct on/features/recap",
+        "src/scala/com/tw ter/wtf/scald ng/jobs/common:execut on_app",
+        "src/thr ft/com/tw ter/ rm /cand date: rm -cand date-scala",
+        "src/thr ft/com/tw ter/wtf/scald ng/s ms:s ms-thr ft-scala",
+        "twadoop_conf g/conf gurat on/log_categor es/group/t  l ne:t  l ne_serv ce_favor es-scala",
+        "users ce/snapshot/src/ma n/scala/com/tw ter/users ce/snapshot/flat:users ce_flat-scala",
+        "users ce/snapshot/src/ma n/thr ft/com/tw ter/users ce/snapshot/flat:flat-scala",
     ],
 )
 
-hadoop_binary(
-    name = "simclusters_offline_job-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJobAdhocApp",
+hadoop_b nary(
+    na  = "s mclusters_offl ne_job-adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.offl ne_job.S mClustersOffl neJobAdhocApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":offline_job",
+    dependenc es = [
+        ":offl ne_job",
     ],
 )
 
-hadoop_binary(
-    name = "simclusters_offline_job",
-    main = "com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJobScheduledApp",
+hadoop_b nary(
+    na  = "s mclusters_offl ne_job",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.offl ne_job.S mClustersOffl neJobSc duledApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":offline_job",
+    dependenc es = [
+        ":offl ne_job",
     ],
 )
 
-hadoop_binary(
-    name = "simclusters_offline_job-repl",
-    main = "com.twitter.scalding_internal.repl.TwitterScaldingShell",
+hadoop_b nary(
+    na  = "s mclusters_offl ne_job-repl",
+    ma n = "com.tw ter.scald ng_ nternal.repl.Tw terScald ngS ll",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":offline_job",
-        "science/scalding/scripts:scalding-repl-deps",
+    dependenc es = [
+        ":offl ne_job",
+        "sc ence/scald ng/scr pts:scald ng-repl-deps",
     ],
 )
 
-hadoop_binary(
-    name = "dump_cluster_topk_job-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.offline_job.DumpClusterTopKTweetsAdhoc",
+hadoop_b nary(
+    na  = "dump_cluster_topk_job-adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.offl ne_job.DumpClusterTopKT etsAdhoc",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":offline_job",
+    dependenc es = [
+        ":offl ne_job",
     ],
 )
 
-# Generated with `capesospy-v2 create_target offline_tweet_job src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml`, config hash bb0831.
-scalding_job(
-    name = "offline_tweet_job",
-    main = "com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJobScheduledApp",
-    config = [
-        ("hadoop.combine-input", "true"),
-        ("hadoop.map.jvm.total-memory", "3072m"),
+# Generated w h `capesospy-v2 create_target offl ne_t et_job src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc3.yaml`, conf g hash bb0831.
+scald ng_job(
+    na  = "offl ne_t et_job",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.offl ne_job.S mClustersOffl neJobSc duledApp",
+    conf g = [
+        ("hadoop.comb ne- nput", "true"),
+        ("hadoop.map.jvm.total- mory", "3072m"),
         ("hadoop.queue", "cassowary.default"),
-        ("hadoop.reduce.jvm.total-memory", "3072m"),
-        ("hadoop.submitter.jvm.total-memory", "5120m"),
-        ("submitter.tier", "preemptible"),
+        ("hadoop.reduce.jvm.total- mory", "3072m"),
+        ("hadoop.subm ter.jvm.total- mory", "5120m"),
+        ("subm ter.t er", "preempt ble"),
     ],
-    contact = "no-reply@twitter.com",
+    contact = "no-reply@tw ter.com",
     cron = "14 * * * *",
     hadoop_cluster = "atla-proc3",
     platform = "java8",
     role = "cassowary",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible:migrated",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":offline_job",
+    dependenc es = [
+        ":offl ne_job",
     ],
 )

@@ -1,134 +1,134 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder
 
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtCursorBuilder.DefaultSortIndex
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtCursorBuilder.NextPageTopCursorEntryOffset
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtCursorBuilder.UrtEntryOffset
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.BottomCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.UrtPipelineCursor
-import com.twitter.product_mixer.core.util.SortIndexBuilder
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.UrtCursorBu lder.DefaultSort ndex
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.UrtCursorBu lder.NextPageTopCursorEntryOffset
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.UrtCursorBu lder.UrtEntryOffset
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.BottomCursor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.Cursor em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.CursorOperat on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.CursorType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.GapCursor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.TopCursor
+ mport com.tw ter.product_m xer.core.p pel ne.HasP pel neCursor
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.UrtP pel neCursor
+ mport com.tw ter.product_m xer.core.ut l.Sort ndexBu lder
 
-object UrtCursorBuilder {
+object UrtCursorBu lder {
   val NextPageTopCursorEntryOffset = 1L
   val UrtEntryOffset = 1L
-  val DefaultSortIndex = (query: PipelineQuery) => SortIndexBuilder.timeToId(query.queryTime)
+  val DefaultSort ndex = (query: P pel neQuery) => Sort ndexBu lder.t  To d(query.queryT  )
 }
 
-trait UrtCursorBuilder[-Query <: PipelineQuery] {
+tra  UrtCursorBu lder[-Query <: P pel neQuery] {
 
-  val includeOperation: IncludeInstruction[Query] = AlwaysInclude
+  val  ncludeOperat on:  nclude nstruct on[Query] = Always nclude
 
   def cursorType: CursorType
-  def cursorValue(query: Query, entries: Seq[TimelineEntry]): String
+  def cursorValue(query: Query, entr es: Seq[T  l neEntry]): Str ng
 
   /**
-   * Identifier of an *existing* timeline cursor that this new cursor would replace, if this cursor
-   * is returned in a `ReplaceEntry` timeline instruction.
+   *  dent f er of an *ex st ng* t  l ne cursor that t  new cursor would replace,  f t  cursor
+   *  s returned  n a `ReplaceEntry` t  l ne  nstruct on.
    *
    * Note:
-   *   - This id is used to populate the `entryIdToReplace` field on the URT TimelineEntry
-   *     generated. More details at [[CursorOperation.entryIdToReplace]].
-   *   - As a convention, we use the sortIndex of the cursor for its id/entryId fields. So the
-   *     `idToReplace` should represent the sortIndex of the existing cursor to be replaced.
+   *   - T   d  s used to populate t  `entry dToReplace` f eld on t  URT T  l neEntry
+   *     generated. More deta ls at [[CursorOperat on.entry dToReplace]].
+   *   - As a convent on,   use t  sort ndex of t  cursor for  s  d/entry d f elds. So t 
+   *     ` dToReplace` should represent t  sort ndex of t  ex st ng cursor to be replaced.
    */
-  def idToReplace(query: Query): Option[Long] = None
+  def  dToReplace(query: Query): Opt on[Long] = None
 
-  def cursorSortIndex(query: Query, entries: Seq[TimelineEntry]): Long =
+  def cursorSort ndex(query: Query, entr es: Seq[T  l neEntry]): Long =
     (query, cursorType) match {
-      case (query: PipelineQuery with HasPipelineCursor[_], TopCursor) =>
-        topCursorSortIndex(query, entries)
-      case (query: PipelineQuery with HasPipelineCursor[_], BottomCursor | GapCursor) =>
-        bottomCursorSortIndex(query, entries)
+      case (query: P pel neQuery w h HasP pel neCursor[_], TopCursor) =>
+        topCursorSort ndex(query, entr es)
+      case (query: P pel neQuery w h HasP pel neCursor[_], BottomCursor | GapCursor) =>
+        bottomCursorSort ndex(query, entr es)
       case _ =>
-        throw new UnsupportedOperationException(
-          "Automatic sort index support limited to top and bottom cursors")
+        throw new UnsupportedOperat onExcept on(
+          "Automat c sort  ndex support l m ed to top and bottom cursors")
     }
 
-  def build(query: Query, entries: Seq[TimelineEntry]): Option[CursorOperation] = {
-    if (includeOperation(query, entries)) {
-      val sortIndex = cursorSortIndex(query, entries)
+  def bu ld(query: Query, entr es: Seq[T  l neEntry]): Opt on[CursorOperat on] = {
+     f ( ncludeOperat on(query, entr es)) {
+      val sort ndex = cursorSort ndex(query, entr es)
 
-      val cursorOperation = CursorOperation(
-        id = sortIndex,
-        sortIndex = Some(sortIndex),
-        value = cursorValue(query, entries),
+      val cursorOperat on = CursorOperat on(
+         d = sort ndex,
+        sort ndex = So (sort ndex),
+        value = cursorValue(query, entr es),
         cursorType = cursorType,
-        displayTreatment = None,
-        idToReplace = idToReplace(query),
+        d splayTreat nt = None,
+         dToReplace =  dToReplace(query),
       )
 
-      Some(cursorOperation)
+      So (cursorOperat on)
     } else None
   }
 
   /**
-   * Build the top cursor sort index which handles the following cases:
-   * 1. When there is at least one non-cursor entry, use the first entry's sort index + UrtEntryOffset
-   * 2. When there are no non-cursor entries, and initialSortIndex is not set which indicates that
-   *    it is the first page, use DefaultSortIndex + UrtEntryOffset
-   * 3. When there are no non-cursor entries, and initialSortIndex is set which indicates that it is
-   *    not the first page, use the query.initialSortIndex from the passed-in cursor + UrtEntryOffset
+   * Bu ld t  top cursor sort  ndex wh ch handles t  follow ng cases:
+   * 1. W n t re  s at least one non-cursor entry, use t  f rst entry's sort  ndex + UrtEntryOffset
+   * 2. W n t re are no non-cursor entr es, and  n  alSort ndex  s not set wh ch  nd cates that
+   *       s t  f rst page, use DefaultSort ndex + UrtEntryOffset
+   * 3. W n t re are no non-cursor entr es, and  n  alSort ndex  s set wh ch  nd cates that    s
+   *    not t  f rst page, use t  query. n  alSort ndex from t  passed- n cursor + UrtEntryOffset
    */
-  protected def topCursorSortIndex(
-    query: PipelineQuery with HasPipelineCursor[_],
-    entries: Seq[TimelineEntry]
+  protected def topCursorSort ndex(
+    query: P pel neQuery w h HasP pel neCursor[_],
+    entr es: Seq[T  l neEntry]
   ): Long = {
-    val nonCursorEntries = entries.filter {
-      case _: CursorOperation => false
-      case _: CursorItem => false
+    val nonCursorEntr es = entr es.f lter {
+      case _: CursorOperat on => false
+      case _: Cursor em => false
       case _ => true
     }
 
-    lazy val initialSortIndex =
-      UrtPipelineCursor.getCursorInitialSortIndex(query).getOrElse(DefaultSortIndex(query))
+    lazy val  n  alSort ndex =
+      UrtP pel neCursor.getCursor n  alSort ndex(query).getOrElse(DefaultSort ndex(query))
 
-    nonCursorEntries.headOption.flatMap(_.sortIndex).getOrElse(initialSortIndex) + UrtEntryOffset
+    nonCursorEntr es. adOpt on.flatMap(_.sort ndex).getOrElse( n  alSort ndex) + UrtEntryOffset
   }
 
   /**
-   * Specifies the point at which the next page's entries' sort indices will start counting.
+   * Spec f es t  po nt at wh ch t  next page's entr es' sort  nd ces w ll start count ng.
    *
-   * Note that in the case of URT, the next page's entries' does not include the top cursor. As
-   * such, the value of initialSortIndex passed back in the cursor is typically the bottom cursor's
-   * sort index - 2. Subtracting 2 leaves room for the next page's top cursor, which will have a
-   * sort index of top entry + 1.
+   * Note that  n t  case of URT, t  next page's entr es' does not  nclude t  top cursor. As
+   * such, t  value of  n  alSort ndex passed back  n t  cursor  s typ cally t  bottom cursor's
+   * sort  ndex - 2. Subtract ng 2 leaves room for t  next page's top cursor, wh ch w ll have a
+   * sort  ndex of top entry + 1.
    */
-  protected def nextBottomInitialSortIndex(
-    query: PipelineQuery with HasPipelineCursor[_],
-    entries: Seq[TimelineEntry]
+  protected def nextBottom n  alSort ndex(
+    query: P pel neQuery w h HasP pel neCursor[_],
+    entr es: Seq[T  l neEntry]
   ): Long = {
-    bottomCursorSortIndex(query, entries) - NextPageTopCursorEntryOffset - UrtEntryOffset
+    bottomCursorSort ndex(query, entr es) - NextPageTopCursorEntryOffset - UrtEntryOffset
   }
 
   /**
-   * Build the bottom cursor sort index which handles the following cases:
-   * 1. When there is at least one non-cursor entry, use the last entry's sort index - UrtEntryOffset
-   * 2. When there are no non-cursor entries, and initialSortIndex is not set which indicates that
-   *    it is the first page, use DefaultSortIndex
-   * 3. When there are no non-cursor entries, and initialSortIndex is set which indicates that it is
-   *    not the first page, use the query.initialSortIndex from the passed-in cursor
+   * Bu ld t  bottom cursor sort  ndex wh ch handles t  follow ng cases:
+   * 1. W n t re  s at least one non-cursor entry, use t  last entry's sort  ndex - UrtEntryOffset
+   * 2. W n t re are no non-cursor entr es, and  n  alSort ndex  s not set wh ch  nd cates that
+   *       s t  f rst page, use DefaultSort ndex
+   * 3. W n t re are no non-cursor entr es, and  n  alSort ndex  s set wh ch  nd cates that    s
+   *    not t  f rst page, use t  query. n  alSort ndex from t  passed- n cursor
    */
-  protected def bottomCursorSortIndex(
-    query: PipelineQuery with HasPipelineCursor[_],
-    entries: Seq[TimelineEntry]
+  protected def bottomCursorSort ndex(
+    query: P pel neQuery w h HasP pel neCursor[_],
+    entr es: Seq[T  l neEntry]
   ): Long = {
-    val nonCursorEntries = entries.filter {
-      case _: CursorOperation => false
-      case _: CursorItem => false
+    val nonCursorEntr es = entr es.f lter {
+      case _: CursorOperat on => false
+      case _: Cursor em => false
       case _ => true
     }
 
-    lazy val initialSortIndex =
-      UrtPipelineCursor.getCursorInitialSortIndex(query).getOrElse(DefaultSortIndex(query))
+    lazy val  n  alSort ndex =
+      UrtP pel neCursor.getCursor n  alSort ndex(query).getOrElse(DefaultSort ndex(query))
 
-    nonCursorEntries.lastOption
-      .flatMap(_.sortIndex).map(_ - UrtEntryOffset).getOrElse(initialSortIndex)
+    nonCursorEntr es.lastOpt on
+      .flatMap(_.sort ndex).map(_ - UrtEntryOffset).getOrElse( n  alSort ndex)
   }
 }

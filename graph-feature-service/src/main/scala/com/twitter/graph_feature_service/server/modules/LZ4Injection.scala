@@ -1,17 +1,17 @@
-package com.twitter.graph_feature_service.server.modules
+package com.tw ter.graph_feature_serv ce.server.modules
 
-import com.twitter.bijection.Injection
-import scala.util.Try
-import net.jpountz.lz4.{LZ4CompressorWithLength, LZ4DecompressorWithLength, LZ4Factory}
+ mport com.tw ter.b ject on. nject on
+ mport scala.ut l.Try
+ mport net.jpountz.lz4.{LZ4CompressorW hLength, LZ4DecompressorW hLength, LZ4Factory}
 
-object LZ4Injection extends Injection[Array[Byte], Array[Byte]] {
-  private val lz4Factory = LZ4Factory.fastestInstance()
-  private val fastCompressor = new LZ4CompressorWithLength(lz4Factory.fastCompressor())
-  private val decompressor = new LZ4DecompressorWithLength(lz4Factory.fastDecompressor())
+object LZ4 nject on extends  nject on[Array[Byte], Array[Byte]] {
+  pr vate val lz4Factory = LZ4Factory.fastest nstance()
+  pr vate val fastCompressor = new LZ4CompressorW hLength(lz4Factory.fastCompressor())
+  pr vate val decompressor = new LZ4DecompressorW hLength(lz4Factory.fastDecompressor())
 
-  override def apply(a: Array[Byte]): Array[Byte] = LZ4Injection.fastCompressor.compress(a)
+  overr de def apply(a: Array[Byte]): Array[Byte] = LZ4 nject on.fastCompressor.compress(a)
 
-  override def invert(b: Array[Byte]): Try[Array[Byte]] = Try {
-    LZ4Injection.decompressor.decompress(b)
+  overr de def  nvert(b: Array[Byte]): Try[Array[Byte]] = Try {
+    LZ4 nject on.decompressor.decompress(b)
   }
 }

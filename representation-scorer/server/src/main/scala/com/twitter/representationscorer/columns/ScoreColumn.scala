@@ -1,48 +1,48 @@
-package com.twitter.representationscorer.columns
+package com.tw ter.representat onscorer.columns
 
-import com.twitter.contentrecommender.thriftscala.ScoringResponse
-import com.twitter.representationscorer.scorestore.ScoreStore
-import com.twitter.simclusters_v2.thriftscala.ScoreId
-import com.twitter.stitch
-import com.twitter.stitch.Stitch
-import com.twitter.strato.config.ContactInfo
-import com.twitter.strato.config.Policy
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Lifecycle
-import com.twitter.strato.data.Description.PlainText
-import com.twitter.strato.fed._
-import com.twitter.strato.thrift.ScroogeConv
-import javax.inject.Inject
+ mport com.tw ter.contentrecom nder.thr ftscala.Scor ngResponse
+ mport com.tw ter.representat onscorer.scorestore.ScoreStore
+ mport com.tw ter.s mclusters_v2.thr ftscala.Score d
+ mport com.tw ter.st ch
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.conf g.Contact nfo
+ mport com.tw ter.strato.conf g.Pol cy
+ mport com.tw ter.strato.catalog.Op tadata
+ mport com.tw ter.strato.data.Conv
+ mport com.tw ter.strato.data.L fecycle
+ mport com.tw ter.strato.data.Descr pt on.Pla nText
+ mport com.tw ter.strato.fed._
+ mport com.tw ter.strato.thr ft.ScroogeConv
+ mport javax. nject. nject
 
-class ScoreColumn @Inject() (scoreStore: ScoreStore)
-    extends StratoFed.Column("recommendations/representation_scorer/score")
-    with StratoFed.Fetch.Stitch {
+class ScoreColumn @ nject() (scoreStore: ScoreStore)
+    extends StratoFed.Column("recom ndat ons/representat on_scorer/score")
+    w h StratoFed.Fetch.St ch {
 
-  override val policy: Policy = Common.rsxReadPolicy
+  overr de val pol cy: Pol cy = Common.rsxReadPol cy
 
-  override type Key = ScoreId
-  override type View = Unit
-  override type Value = ScoringResponse
+  overr de type Key = Score d
+  overr de type V ew = Un 
+  overr de type Value = Scor ngResponse
 
-  override val keyConv: Conv[Key] = ScroogeConv.fromStruct[ScoreId]
-  override val viewConv: Conv[View] = Conv.ofType
-  override val valueConv: Conv[Value] = ScroogeConv.fromStruct[ScoringResponse]
+  overr de val keyConv: Conv[Key] = ScroogeConv.fromStruct[Score d]
+  overr de val v ewConv: Conv[V ew] = Conv.ofType
+  overr de val valueConv: Conv[Value] = ScroogeConv.fromStruct[Scor ngResponse]
 
-  override val contactInfo: ContactInfo = Info.contactInfo
+  overr de val contact nfo: Contact nfo =  nfo.contact nfo
 
-  override val metadata: OpMetadata = OpMetadata(
-    lifecycle = Some(Lifecycle.Production),
-    description = Some(PlainText(
-      "The Uniform Scoring Endpoint in Representation Scorer for the Content-Recommender." +
-        " TDD: http://go/representation-scorer-tdd Guideline: http://go/uniform-scoring-guideline"))
+  overr de val  tadata: Op tadata = Op tadata(
+    l fecycle = So (L fecycle.Product on),
+    descr pt on = So (Pla nText(
+      "T  Un form Scor ng Endpo nt  n Representat on Scorer for t  Content-Recom nder." +
+        " TDD: http://go/representat on-scorer-tdd Gu del ne: http://go/un form-scor ng-gu del ne"))
   )
 
-  override def fetch(key: Key, view: View): Stitch[Result[Value]] =
+  overr de def fetch(key: Key, v ew: V ew): St ch[Result[Value]] =
     scoreStore
-      .uniformScoringStoreStitch(key)
-      .map(score => found(ScoringResponse(Some(score))))
+      .un formScor ngStoreSt ch(key)
+      .map(score => found(Scor ngResponse(So (score))))
       .handle {
-        case stitch.NotFound => missing
+        case st ch.NotFound => m ss ng
       }
 }

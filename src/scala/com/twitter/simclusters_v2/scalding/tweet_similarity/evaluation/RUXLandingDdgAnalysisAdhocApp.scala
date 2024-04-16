@@ -1,82 +1,82 @@
-package com.twitter.simclusters_v2.scalding.tweet_similarity.evaluation
+package com.tw ter.s mclusters_v2.scald ng.t et_s m lar y.evaluat on
 
-import com.twitter.rux.landing_page.data_pipeline.LabeledRuxServiceScribeScalaDataset
-import com.twitter.rux.landing_page.data_pipeline.thriftscala.LandingPageLabel
-import com.twitter.rux.service.thriftscala.FocalObject
-import com.twitter.rux.service.thriftscala.UserContext
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.wtf.scalding.jobs.common.DDGUtil
-import java.util.TimeZone
+ mport com.tw ter.rux.land ng_page.data_p pel ne.LabeledRuxServ ceScr beScalaDataset
+ mport com.tw ter.rux.land ng_page.data_p pel ne.thr ftscala.Land ngPageLabel
+ mport com.tw ter.rux.serv ce.thr ftscala.FocalObject
+ mport com.tw ter.rux.serv ce.thr ftscala.UserContext
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.job.Tw terExecut onApp
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.wtf.scald ng.jobs.common.DDGUt l
+ mport java.ut l.T  Zone
 
 /** To run:
-scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/tweet_similarity/evaluation:rux_landing_ddg_analysis-adhoc \
+scald ng remote run --target src/scala/com/tw ter/s mclusters_v2/scald ng/t et_s m lar y/evaluat on:rux_land ng_ddg_analys s-adhoc \
 --user cassowary \
---submitter hadoopnest2.atla.twitter.com \
---main-class com.twitter.simclusters_v2.scalding.tweet_similarity.evaluation.RUXLandingDdgAnalysisAdhocApp -- \
+--subm ter hadoopnest2.atla.tw ter.com \
+--ma n-class com.tw ter.s mclusters_v2.scald ng.t et_s m lar y.evaluat on.RUXLand ngDdgAnalys sAdhocApp -- \
 --date 2020-04-06 2020-04-13 \
---ddg model_based_tweet_similarity_10254 \
---version 1 \
+--ddg model_based_t et_s m lar y_10254 \
+--vers on 1 \
 --output_path /user/cassowary/adhoc/ddg10254
  * */
-object RUXLandingDdgAnalysisAdhocApp extends TwitterExecutionApp {
-  override def job: Execution[Unit] =
-    Execution.withId { implicit uniqueId =>
-      Execution.withArgs { args: Args =>
-        implicit val timeZone: TimeZone = DateOps.UTC
-        implicit val dateParser: DateParser = DateParser.default
-        implicit val dateRange: DateRange = DateRange.parse(args.list("date"))
-        val ddgName: String = args("ddg")
-        val ddgVersion: String = args("version")
-        val outputPath: String = args("output_path")
-        val now = RichDate.now
+object RUXLand ngDdgAnalys sAdhocApp extends Tw terExecut onApp {
+  overr de def job: Execut on[Un ] =
+    Execut on.w h d {  mpl c  un que d =>
+      Execut on.w hArgs { args: Args =>
+         mpl c  val t  Zone: T  Zone = DateOps.UTC
+         mpl c  val dateParser: DateParser = DateParser.default
+         mpl c  val dateRange: DateRange = DateRange.parse(args.l st("date"))
+        val ddgNa : Str ng = args("ddg")
+        val ddgVers on: Str ng = args("vers on")
+        val outputPath: Str ng = args("output_path")
+        val now = R chDate.now
 
-        val ruxLabels = getLabeledRuxServiceScribe(dateRange).map {
-          case (userId, focalTweet, candidateTweet, impression, fav) =>
-            userId -> (focalTweet, candidateTweet, impression, fav)
+        val ruxLabels = getLabeledRuxServ ceScr be(dateRange).map {
+          case (user d, focalT et, cand dateT et,  mpress on, fav) =>
+            user d -> (focalT et, cand dateT et,  mpress on, fav)
         }
 
-        // getUsersInDDG reads from a snapshot dataset.
-        // Just prepend dateRange so that we can look back far enough to make sure there is data.
-        DDGUtil
-          .getUsersInDDG(ddgName, ddgVersion.toInt)(DateRange(now - Days(7), now)).map { ddgUser =>
-            ddgUser.userId -> (ddgUser.bucket, ddgUser.enterUserState.getOrElse("no_user_state"))
-          }.join(ruxLabels)
+        // getUsers nDDG reads from a snapshot dataset.
+        // Just prepend dateRange so that   can look back far enough to make sure t re  s data.
+        DDGUt l
+          .getUsers nDDG(ddgNa , ddgVers on.to nt)(DateRange(now - Days(7), now)).map { ddgUser =>
+            ddgUser.user d -> (ddgUser.bucket, ddgUser.enterUserState.getOrElse("no_user_state"))
+          }.jo n(ruxLabels)
           .map {
-            case (userId, ((bucket, state), (focalTweet, candidateTweet, impression, fav))) =>
-              (userId, bucket, state, focalTweet, candidateTweet, impression, fav)
+            case (user d, ((bucket, state), (focalT et, cand dateT et,  mpress on, fav))) =>
+              (user d, bucket, state, focalT et, cand dateT et,  mpress on, fav)
           }
-          .writeExecution(
-            TypedTsv[(UserId, String, String, TweetId, TweetId, Int, Int)](s"$outputPath"))
+          .wr eExecut on(
+            TypedTsv[(User d, Str ng, Str ng, T et d, T et d,  nt,  nt)](s"$outputPath"))
       }
     }
 
-  def getLabeledRuxServiceScribe(
+  def getLabeledRuxServ ceScr be(
     dateRange: DateRange
-  ): TypedPipe[(UserId, TweetId, TweetId, Int, Int)] = {
+  ): TypedP pe[(User d, T et d, T et d,  nt,  nt)] = {
     DAL
-      .read(LabeledRuxServiceScribeScalaDataset, dateRange)
-      .toTypedPipe.map { record =>
+      .read(LabeledRuxServ ceScr beScalaDataset, dateRange)
+      .toTypedP pe.map { record =>
         (
-          record.ruxServiceScribe.userContext,
-          record.ruxServiceScribe.focalObject,
-          record.landingPageLabel)
+          record.ruxServ ceScr be.userContext,
+          record.ruxServ ceScr be.focalObject,
+          record.land ngPageLabel)
       }.flatMap {
         case (
-              Some(UserContext(Some(userId), _, _, _, _, _, _, _)),
-              Some(FocalObject.TweetId(tweet)),
-              Some(labels)) =>
+              So (UserContext(So (user d), _, _, _, _, _, _, _)),
+              So (FocalObject.T et d(t et)),
+              So (labels)) =>
           labels.map {
-            case LandingPageLabel.LandingPageFavoriteEvent(favEvent) =>
-              //(focal tweet, impressioned tweet, impression, fav)
-              (userId, tweet, favEvent.tweetId, 0, 1)
-            case LandingPageLabel.LandingPageImpressionEvent(impressionEvent) =>
-              (userId, tweet, impressionEvent.tweetId, 1, 0)
+            case Land ngPageLabel.Land ngPageFavor eEvent(favEvent) =>
+              //(focal t et,  mpress oned t et,  mpress on, fav)
+              (user d, t et, favEvent.t et d, 0, 1)
+            case Land ngPageLabel.Land ngPage mpress onEvent( mpress onEvent) =>
+              (user d, t et,  mpress onEvent.t et d, 1, 0)
           }
-        case _ => Nil
+        case _ => N l
       }
   }
 }

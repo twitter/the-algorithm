@@ -1,97 +1,97 @@
-package com.twitter.visibility.rules
+package com.tw ter.v s b l y.rules
 
-import com.twitter.escherbird.thriftscala.TweetEntityAnnotation
-import com.twitter.gizmoduck.thriftscala.Label
-import com.twitter.spam.rtf.thriftscala.BotMakerAction
-import com.twitter.spam.rtf.thriftscala.SafetyLabelSource
-import com.twitter.spam.rtf.thriftscala.SemanticCoreAction
-import com.twitter.visibility.common.actions.EscherbirdAnnotation
-import com.twitter.visibility.common.actions.SoftInterventionReason
-import com.twitter.visibility.configapi.configs.DeciderKey
-import com.twitter.visibility.features.AuthorUserLabels
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.features.TweetSafetyLabels
-import com.twitter.visibility.logging.thriftscala.ActionSource
-import com.twitter.visibility.models.LabelSource._
-import com.twitter.visibility.models.TweetSafetyLabel
-import com.twitter.visibility.models.TweetSafetyLabelType
-import com.twitter.visibility.models.UserLabel
-import com.twitter.visibility.models.UserLabelValue
+ mport com.tw ter.esc rb rd.thr ftscala.T etEnt yAnnotat on
+ mport com.tw ter.g zmoduck.thr ftscala.Label
+ mport com.tw ter.spam.rtf.thr ftscala.BotMakerAct on
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLabelS ce
+ mport com.tw ter.spam.rtf.thr ftscala.Semant cCoreAct on
+ mport com.tw ter.v s b l y.common.act ons.Esc rb rdAnnotat on
+ mport com.tw ter.v s b l y.common.act ons.Soft ntervent onReason
+ mport com.tw ter.v s b l y.conf gap .conf gs.Dec derKey
+ mport com.tw ter.v s b l y.features.AuthorUserLabels
+ mport com.tw ter.v s b l y.features.Feature
+ mport com.tw ter.v s b l y.features.T etSafetyLabels
+ mport com.tw ter.v s b l y.logg ng.thr ftscala.Act onS ce
+ mport com.tw ter.v s b l y.models.LabelS ce._
+ mport com.tw ter.v s b l y.models.T etSafetyLabel
+ mport com.tw ter.v s b l y.models.T etSafetyLabelType
+ mport com.tw ter.v s b l y.models.UserLabel
+ mport com.tw ter.v s b l y.models.UserLabelValue
 
-sealed trait RuleActionSourceBuilder {
-  def build(resolvedFeatureMap: Map[Feature[_], Any], verdict: Action): Option[ActionSource]
+sealed tra  RuleAct onS ceBu lder {
+  def bu ld(resolvedFeatureMap: Map[Feature[_], Any], verd ct: Act on): Opt on[Act onS ce]
 
 }
 
-object RuleActionSourceBuilder {
+object RuleAct onS ceBu lder {
 
-  case class TweetSafetyLabelSourceBuilder(tweetSafetyLabelType: TweetSafetyLabelType)
-      extends RuleActionSourceBuilder {
-    override def build(
+  case class T etSafetyLabelS ceBu lder(t etSafetyLabelType: T etSafetyLabelType)
+      extends RuleAct onS ceBu lder {
+    overr de def bu ld(
       resolvedFeatureMap: Map[Feature[_], Any],
-      verdict: Action
-    ): Option[ActionSource] = {
+      verd ct: Act on
+    ): Opt on[Act onS ce] = {
       resolvedFeatureMap
-        .getOrElse(TweetSafetyLabels, Seq.empty[TweetSafetyLabel])
-        .asInstanceOf[Seq[TweetSafetyLabel]]
-        .find(_.labelType == tweetSafetyLabelType)
-        .flatMap(_.safetyLabelSource)
-        .map(ActionSource.SafetyLabelSource(_))
+        .getOrElse(T etSafetyLabels, Seq.empty[T etSafetyLabel])
+        .as nstanceOf[Seq[T etSafetyLabel]]
+        .f nd(_.labelType == t etSafetyLabelType)
+        .flatMap(_.safetyLabelS ce)
+        .map(Act onS ce.SafetyLabelS ce(_))
     }
   }
 
-  case class UserSafetyLabelSourceBuilder(userLabel: UserLabelValue)
-      extends RuleActionSourceBuilder {
-    override def build(
+  case class UserSafetyLabelS ceBu lder(userLabel: UserLabelValue)
+      extends RuleAct onS ceBu lder {
+    overr de def bu ld(
       resolvedFeatureMap: Map[Feature[_], Any],
-      verdict: Action
-    ): Option[ActionSource] = {
+      verd ct: Act on
+    ): Opt on[Act onS ce] = {
       resolvedFeatureMap
         .getOrElse(AuthorUserLabels, Seq.empty[Label])
-        .asInstanceOf[Seq[Label]]
-        .map(UserLabel.fromThrift)
-        .find(_.labelValue == userLabel)
-        .flatMap(_.source)
+        .as nstanceOf[Seq[Label]]
+        .map(UserLabel.fromThr ft)
+        .f nd(_.labelValue == userLabel)
+        .flatMap(_.s ce)
         .collect {
-          case BotMakerRule(ruleId) =>
-            ActionSource.SafetyLabelSource(SafetyLabelSource.BotMakerAction(BotMakerAction(ruleId)))
+          case BotMakerRule(rule d) =>
+            Act onS ce.SafetyLabelS ce(SafetyLabelS ce.BotMakerAct on(BotMakerAct on(rule d)))
         }
     }
   }
 
-  case class SemanticCoreActionSourceBuilder() extends RuleActionSourceBuilder {
-    override def build(
+  case class Semant cCoreAct onS ceBu lder() extends RuleAct onS ceBu lder {
+    overr de def bu ld(
       resolvedFeatureMap: Map[Feature[_], Any],
-      verdict: Action
-    ): Option[ActionSource] = {
-      verdict match {
-        case softIntervention: SoftIntervention =>
-          getSemanticCoreActionSourceOption(softIntervention)
-        case tweetInterstitial: TweetInterstitial =>
-          tweetInterstitial.softIntervention.flatMap(getSemanticCoreActionSourceOption)
+      verd ct: Act on
+    ): Opt on[Act onS ce] = {
+      verd ct match {
+        case soft ntervent on: Soft ntervent on =>
+          getSemant cCoreAct onS ceOpt on(soft ntervent on)
+        case t et nterst  al: T et nterst  al =>
+          t et nterst  al.soft ntervent on.flatMap(getSemant cCoreAct onS ceOpt on)
         case _ => None
       }
     }
 
-    def getSemanticCoreActionSourceOption(
-      softIntervention: SoftIntervention
-    ): Option[ActionSource] = {
-      val siReason = softIntervention.reason
-        .asInstanceOf[SoftInterventionReason.EscherbirdAnnotations]
-      val firstAnnotation: Option[EscherbirdAnnotation] =
-        siReason.escherbirdAnnotations.headOption
+    def getSemant cCoreAct onS ceOpt on(
+      soft ntervent on: Soft ntervent on
+    ): Opt on[Act onS ce] = {
+      val s Reason = soft ntervent on.reason
+        .as nstanceOf[Soft ntervent onReason.Esc rb rdAnnotat ons]
+      val f rstAnnotat on: Opt on[Esc rb rdAnnotat on] =
+        s Reason.esc rb rdAnnotat ons. adOpt on
 
-      firstAnnotation.map { annotation =>
-        ActionSource.SafetyLabelSource(
-          SafetyLabelSource.SemanticCoreAction(SemanticCoreAction(
-            TweetEntityAnnotation(annotation.groupId, annotation.domainId, annotation.entityId))))
+      f rstAnnotat on.map { annotat on =>
+        Act onS ce.SafetyLabelS ce(
+          SafetyLabelS ce.Semant cCoreAct on(Semant cCoreAct on(
+            T etEnt yAnnotat on(annotat on.group d, annotat on.doma n d, annotat on.ent y d))))
       }
     }
   }
 }
 
-trait DoesLogVerdict {}
+tra  DoesLogVerd ct {}
 
-trait DoesLogVerdictDecidered extends DoesLogVerdict {
-  def verdictLogDeciderKey: DeciderKey.Value
+tra  DoesLogVerd ctDec dered extends DoesLogVerd ct {
+  def verd ctLogDec derKey: Dec derKey.Value
 }

@@ -1,13 +1,13 @@
-package com.twitter.cr_mixer.model
+package com.tw ter.cr_m xer.model
 
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.simclusters_v2.common.TweetId
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.s mclusters_v2.common.T et d
 
 /***
- * Bind a tweetId with a raw score generated from one single Similarity Engine
- * @param similarityEngineType, which underlying topic source the topic tweet is from
+ * B nd a t et d w h a raw score generated from one s ngle S m lar y Eng ne
+ * @param s m lar yEng neType, wh ch underly ng top c s ce t  top c t et  s from
  */
-case class TopicTweetWithScore(
-  tweetId: TweetId,
+case class Top cT etW hScore(
+  t et d: T et d,
   score: Double,
-  similarityEngineType: SimilarityEngineType)
+  s m lar yEng neType: S m lar yEng neType)

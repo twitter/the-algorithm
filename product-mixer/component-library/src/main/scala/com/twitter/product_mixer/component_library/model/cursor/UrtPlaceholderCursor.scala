@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.component_library.model.cursor
+package com.tw ter.product_m xer.component_l brary.model.cursor
 
-import com.twitter.product_mixer.core.pipeline.UrtPipelineCursor
+ mport com.tw ter.product_m xer.core.p pel ne.UrtP pel neCursor
 
 /**
- * Cursor model that may be used when we just need a placeholder but no real cursor value. Since URT
- * requires that top and bottom cursors are always present, placeholders are often used when up
- * scrolling (PTR) is not supported on a timeline. While placeholder cursors generally should not be
- * submitted back by the client, they sometimes are like in the case of client-side background
- * auto-refresh. If submitted, the backend will treat any request with a placeholder cursor like no
- * cursor was submitted, which will behave the same way as an initial page load.
+ * Cursor model that may be used w n   just need a placeholder but no real cursor value. S nce URT
+ * requ res that top and bottom cursors are always present, placeholders are often used w n up
+ * scroll ng (PTR)  s not supported on a t  l ne. Wh le placeholder cursors generally should not be
+ * subm ted back by t  cl ent, t y so t  s are l ke  n t  case of cl ent-s de background
+ * auto-refresh.  f subm ted, t  backend w ll treat any request w h a placeholder cursor l ke no
+ * cursor was subm ted, wh ch w ll behave t  sa  way as an  n  al page load.
  */
-case class UrtPlaceholderCursor() extends UrtPipelineCursor {
-  // This value is unused, in that it is not serialized into the final cursor value
-  override def initialSortIndex: Long = throw new UnsupportedOperationException(
-    "initialSortIndex is not defined for placeholder cursors")
+case class UrtPlaceholderCursor() extends UrtP pel neCursor {
+  // T  value  s unused,  n that    s not ser al zed  nto t  f nal cursor value
+  overr de def  n  alSort ndex: Long = throw new UnsupportedOperat onExcept on(
+    " n  alSort ndex  s not def ned for placeholder cursors")
 }

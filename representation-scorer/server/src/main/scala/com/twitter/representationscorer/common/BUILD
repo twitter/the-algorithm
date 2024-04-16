@@ -1,9 +1,9 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "decider/src/main/scala",
-        "src/scala/com/twitter/simclusters_v2/common",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "dec der/src/ma n/scala",
+        "src/scala/com/tw ter/s mclusters_v2/common",
     ],
 )

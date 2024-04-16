@@ -1,3 +1,3 @@
-package com.twitter.visibility.models
+package com.tw ter.v s b l y.models
 
-case class MutedKeyword(keyword: Option[String])
+case class MutedKeyword(keyword: Opt on[Str ng])

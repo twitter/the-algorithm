@@ -1,23 +1,23 @@
-package com.twitter.unified_user_actions.adapter.client_event
+package com.tw ter.un f ed_user_act ons.adapter.cl ent_event
 
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.clientapp.thriftscala.{Item => LogEventItem}
-import com.twitter.search.common.constants.thriftscala.ThriftQuerySource
-import com.twitter.search.common.constants.thriftscala.TweetResultSource
-import com.twitter.search.common.constants.thriftscala.UserResultSource
-import com.twitter.suggests.controller_data.search_response.item_types.thriftscala.ItemTypesControllerData
-import com.twitter.suggests.controller_data.search_response.item_types.thriftscala.ItemTypesControllerData.TweetTypesControllerData
-import com.twitter.suggests.controller_data.search_response.item_types.thriftscala.ItemTypesControllerData.UserTypesControllerData
-import com.twitter.suggests.controller_data.search_response.request.thriftscala.RequestControllerData
-import com.twitter.suggests.controller_data.search_response.thriftscala.SearchResponseControllerData.V1
-import com.twitter.suggests.controller_data.search_response.thriftscala.SearchResponseControllerDataAliases.V1Alias
-import com.twitter.suggests.controller_data.thriftscala.ControllerData.V2
-import com.twitter.suggests.controller_data.v2.thriftscala.ControllerData.SearchResponse
-import com.twitter.unified_user_actions.thriftscala.SearchQueryFilterType
-import com.twitter.unified_user_actions.thriftscala.SearchQueryFilterType._
+ mport com.tw ter.cl entapp.thr ftscala.LogEvent
+ mport com.tw ter.cl entapp.thr ftscala.{ em => LogEvent em}
+ mport com.tw ter.search.common.constants.thr ftscala.Thr ftQueryS ce
+ mport com.tw ter.search.common.constants.thr ftscala.T etResultS ce
+ mport com.tw ter.search.common.constants.thr ftscala.UserResultS ce
+ mport com.tw ter.suggests.controller_data.search_response. em_types.thr ftscala. emTypesControllerData
+ mport com.tw ter.suggests.controller_data.search_response. em_types.thr ftscala. emTypesControllerData.T etTypesControllerData
+ mport com.tw ter.suggests.controller_data.search_response. em_types.thr ftscala. emTypesControllerData.UserTypesControllerData
+ mport com.tw ter.suggests.controller_data.search_response.request.thr ftscala.RequestControllerData
+ mport com.tw ter.suggests.controller_data.search_response.thr ftscala.SearchResponseControllerData.V1
+ mport com.tw ter.suggests.controller_data.search_response.thr ftscala.SearchResponseControllerDataAl ases.V1Al as
+ mport com.tw ter.suggests.controller_data.thr ftscala.ControllerData.V2
+ mport com.tw ter.suggests.controller_data.v2.thr ftscala.ControllerData.SearchResponse
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.SearchQueryF lterType
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.SearchQueryF lterType._
 
-class SearchInfoUtils(item: LogEventItem) {
-  private val searchControllerDataOpt: Option[V1Alias] = item.suggestionDetails.flatMap { sd =>
+class Search nfoUt ls( em: LogEvent em) {
+  pr vate val searchControllerDataOpt: Opt on[V1Al as] =  em.suggest onDeta ls.flatMap { sd =>
     sd.decodedControllerData.flatMap { decodedControllerData =>
       decodedControllerData match {
         case V2(v2ControllerData) =>
@@ -25,7 +25,7 @@ class SearchInfoUtils(item: LogEventItem) {
             case SearchResponse(searchResponseControllerData) =>
               searchResponseControllerData match {
                 case V1(searchResponseControllerDataV1) =>
-                  Some(searchResponseControllerDataV1)
+                  So (searchResponseControllerDataV1)
                 case _ => None
               }
             case _ =>
@@ -36,94 +36,94 @@ class SearchInfoUtils(item: LogEventItem) {
     }
   }
 
-  private val requestControllerDataOptFromItem: Option[RequestControllerData] =
+  pr vate val requestControllerDataOptFrom em: Opt on[RequestControllerData] =
     searchControllerDataOpt.flatMap { searchControllerData =>
       searchControllerData.requestControllerData
     }
-  private val itemTypesControllerDataOptFromItem: Option[ItemTypesControllerData] =
+  pr vate val  emTypesControllerDataOptFrom em: Opt on[ emTypesControllerData] =
     searchControllerDataOpt.flatMap { searchControllerData =>
-      searchControllerData.itemTypesControllerData
+      searchControllerData. emTypesControllerData
     }
 
-  def checkBit(bitmap: Long, idx: Int): Boolean = {
-    (bitmap / Math.pow(2, idx)).toInt % 2 == 1
+  def c ckB (b map: Long,  dx:  nt): Boolean = {
+    (b map / Math.pow(2,  dx)).to nt % 2 == 1
   }
 
-  def getQueryOptFromSearchDetails(logEvent: LogEvent): Option[String] = {
-    logEvent.searchDetails.flatMap { sd => sd.query }
+  def getQueryOptFromSearchDeta ls(logEvent: LogEvent): Opt on[Str ng] = {
+    logEvent.searchDeta ls.flatMap { sd => sd.query }
   }
 
-  def getQueryOptFromControllerDataFromItem: Option[String] = {
-    requestControllerDataOptFromItem.flatMap { rd => rd.rawQuery }
+  def getQueryOptFromControllerDataFrom em: Opt on[Str ng] = {
+    requestControllerDataOptFrom em.flatMap { rd => rd.rawQuery }
   }
 
-  def getQueryOptFromItem(logEvent: LogEvent): Option[String] = {
-    // First we try to get the query from controller data, and if that's not available, we fall
-    // back to query in search details. If both are None, queryOpt is None.
-    getQueryOptFromControllerDataFromItem.orElse(getQueryOptFromSearchDetails(logEvent))
+  def getQueryOptFrom em(logEvent: LogEvent): Opt on[Str ng] = {
+    // F rst   try to get t  query from controller data, and  f that's not ava lable,   fall
+    // back to query  n search deta ls.  f both are None, queryOpt  s None.
+    getQueryOptFromControllerDataFrom em.orElse(getQueryOptFromSearchDeta ls(logEvent))
   }
 
-  def getTweetTypesOptFromControllerDataFromItem: Option[TweetTypesControllerData] = {
-    itemTypesControllerDataOptFromItem.flatMap { itemTypes =>
-      itemTypes match {
-        case TweetTypesControllerData(tweetTypesControllerData) =>
-          Some(TweetTypesControllerData(tweetTypesControllerData))
+  def getT etTypesOptFromControllerDataFrom em: Opt on[T etTypesControllerData] = {
+     emTypesControllerDataOptFrom em.flatMap {  emTypes =>
+       emTypes match {
+        case T etTypesControllerData(t etTypesControllerData) =>
+          So (T etTypesControllerData(t etTypesControllerData))
         case _ => None
       }
     }
   }
 
-  def getUserTypesOptFromControllerDataFromItem: Option[UserTypesControllerData] = {
-    itemTypesControllerDataOptFromItem.flatMap { itemTypes =>
-      itemTypes match {
+  def getUserTypesOptFromControllerDataFrom em: Opt on[UserTypesControllerData] = {
+     emTypesControllerDataOptFrom em.flatMap {  emTypes =>
+       emTypes match {
         case UserTypesControllerData(userTypesControllerData) =>
-          Some(UserTypesControllerData(userTypesControllerData))
+          So (UserTypesControllerData(userTypesControllerData))
         case _ => None
       }
     }
   }
 
-  def getQuerySourceOptFromControllerDataFromItem: Option[ThriftQuerySource] = {
-    requestControllerDataOptFromItem
-      .flatMap { rd => rd.querySource }
-      .flatMap { querySourceVal => ThriftQuerySource.get(querySourceVal) }
+  def getQueryS ceOptFromControllerDataFrom em: Opt on[Thr ftQueryS ce] = {
+    requestControllerDataOptFrom em
+      .flatMap { rd => rd.queryS ce }
+      .flatMap { queryS ceVal => Thr ftQueryS ce.get(queryS ceVal) }
   }
 
-  def getTweetResultSources: Option[Set[TweetResultSource]] = {
-    getTweetTypesOptFromControllerDataFromItem
-      .flatMap { cd => cd.tweetTypesControllerData.tweetTypesBitmap }
-      .map { tweetTypesBitmap =>
-        TweetResultSource.list.filter { t => checkBit(tweetTypesBitmap, t.value) }.toSet
+  def getT etResultS ces: Opt on[Set[T etResultS ce]] = {
+    getT etTypesOptFromControllerDataFrom em
+      .flatMap { cd => cd.t etTypesControllerData.t etTypesB map }
+      .map { t etTypesB map =>
+        T etResultS ce.l st.f lter { t => c ckB (t etTypesB map, t.value) }.toSet
       }
   }
 
-  def getUserResultSources: Option[Set[UserResultSource]] = {
-    getUserTypesOptFromControllerDataFromItem
-      .flatMap { cd => cd.userTypesControllerData.userTypesBitmap }
-      .map { userTypesBitmap =>
-        UserResultSource.list.filter { t => checkBit(userTypesBitmap, t.value) }.toSet
+  def getUserResultS ces: Opt on[Set[UserResultS ce]] = {
+    getUserTypesOptFromControllerDataFrom em
+      .flatMap { cd => cd.userTypesControllerData.userTypesB map }
+      .map { userTypesB map =>
+        UserResultS ce.l st.f lter { t => c ckB (userTypesB map, t.value) }.toSet
       }
   }
 
-  def getQueryFilterType(logEvent: LogEvent): Option[SearchQueryFilterType] = {
-    val searchTab = logEvent.eventNamespace.map(_.client).flatMap {
-      case Some("m5") | Some("android") => logEvent.eventNamespace.flatMap(_.element)
-      case _ => logEvent.eventNamespace.flatMap(_.section)
+  def getQueryF lterType(logEvent: LogEvent): Opt on[SearchQueryF lterType] = {
+    val searchTab = logEvent.eventNa space.map(_.cl ent).flatMap {
+      case So ("m5") | So ("andro d") => logEvent.eventNa space.flatMap(_.ele nt)
+      case _ => logEvent.eventNa space.flatMap(_.sect on)
     }
     searchTab.flatMap {
-      case "search_filter_top" => Some(Top)
-      case "search_filter_live" => Some(Latest)
-      // android uses search_filter_tweets instead of search_filter_live
-      case "search_filter_tweets" => Some(Latest)
-      case "search_filter_user" => Some(People)
-      case "search_filter_image" => Some(Photos)
-      case "search_filter_video" => Some(Videos)
+      case "search_f lter_top" => So (Top)
+      case "search_f lter_l ve" => So (Latest)
+      // andro d uses search_f lter_t ets  nstead of search_f lter_l ve
+      case "search_f lter_t ets" => So (Latest)
+      case "search_f lter_user" => So (People)
+      case "search_f lter_ mage" => So (Photos)
+      case "search_f lter_v deo" => So (V deos)
       case _ => None
     }
   }
 
-  def getRequestJoinId: Option[Long] = requestControllerDataOptFromItem.flatMap(_.requestJoinId)
+  def getRequestJo n d: Opt on[Long] = requestControllerDataOptFrom em.flatMap(_.requestJo n d)
 
-  def getTraceId: Option[Long] = requestControllerDataOptFromItem.flatMap(_.traceId)
+  def getTrace d: Opt on[Long] = requestControllerDataOptFrom em.flatMap(_.trace d)
 
 }

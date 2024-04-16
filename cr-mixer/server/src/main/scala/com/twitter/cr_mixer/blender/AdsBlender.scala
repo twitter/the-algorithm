@@ -1,77 +1,77 @@
-package com.twitter.cr_mixer.blender
+package com.tw ter.cr_m xer.blender
 
-import com.twitter.cr_mixer.model.BlendedAdsCandidate
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.InitialAdsCandidate
-import com.twitter.cr_mixer.util.InterleaveUtil
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.mutable
+ mport com.tw ter.cr_m xer.model.BlendedAdsCand date
+ mport com.tw ter.cr_m xer.model.Cand dateGenerat on nfo
+ mport com.tw ter.cr_m xer.model. n  alAdsCand date
+ mport com.tw ter.cr_m xer.ut l. nterleaveUt l
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.ut l.Future
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport scala.collect on.mutable
 
-@Singleton
-case class AdsBlender @Inject() (globalStats: StatsReceiver) {
+@S ngleton
+case class AdsBlender @ nject() (globalStats: StatsRece ver) {
 
-  private val name: String = this.getClass.getCanonicalName
-  private val stats: StatsReceiver = globalStats.scope(name)
+  pr vate val na : Str ng = t .getClass.getCanon calNa 
+  pr vate val stats: StatsRece ver = globalStats.scope(na )
 
   /**
-   * Interleaves candidates by iteratively choosing InterestedIn candidates and TWISTLY candidates
-   * in turn. InterestedIn candidates have no source signal, whereas TWISTLY candidates do. TWISTLY
-   * candidates themselves are interleaved by source before equal blending with InterestedIn
-   * candidates.
+   *  nterleaves cand dates by  erat vely choos ng  nterested n cand dates and TW STLY cand dates
+   *  n turn.  nterested n cand dates have no s ce s gnal, w reas TW STLY cand dates do. TW STLY
+   * cand dates t mselves are  nterleaved by s ce before equal blend ng w h  nterested n
+   * cand dates.
    */
   def blend(
-    inputCandidates: Seq[Seq[InitialAdsCandidate]],
-  ): Future[Seq[BlendedAdsCandidate]] = {
+     nputCand dates: Seq[Seq[ n  alAdsCand date]],
+  ): Future[Seq[BlendedAdsCand date]] = {
 
-    // Filter out empty candidate sequence
-    val candidates = inputCandidates.filter(_.nonEmpty)
-    val (interestedInCandidates, twistlyCandidates) =
-      candidates.partition(_.head.candidateGenerationInfo.sourceInfoOpt.isEmpty)
-    // First interleave twistly candidates
-    val interleavedTwistlyCandidates = InterleaveUtil.interleave(twistlyCandidates)
+    // F lter out empty cand date sequence
+    val cand dates =  nputCand dates.f lter(_.nonEmpty)
+    val ( nterested nCand dates, tw stlyCand dates) =
+      cand dates.part  on(_. ad.cand dateGenerat on nfo.s ce nfoOpt. sEmpty)
+    // F rst  nterleave tw stly cand dates
+    val  nterleavedTw stlyCand dates =  nterleaveUt l. nterleave(tw stlyCand dates)
 
-    val twistlyAndInterestedInCandidates =
-      Seq(interestedInCandidates.flatten, interleavedTwistlyCandidates)
+    val tw stlyAnd nterested nCand dates =
+      Seq( nterested nCand dates.flatten,  nterleavedTw stlyCand dates)
 
-    // then interleave  twistly candidates with interested in to make them even
-    val interleavedCandidates = InterleaveUtil.interleave(twistlyAndInterestedInCandidates)
+    // t n  nterleave  tw stly cand dates w h  nterested  n to make t m even
+    val  nterleavedCand dates =  nterleaveUt l. nterleave(tw stlyAnd nterested nCand dates)
 
-    stats.stat("candidates").add(interleavedCandidates.size)
+    stats.stat("cand dates").add( nterleavedCand dates.s ze)
 
-    val blendedCandidates = buildBlendedAdsCandidate(inputCandidates, interleavedCandidates)
-    Future.value(blendedCandidates)
+    val blendedCand dates = bu ldBlendedAdsCand date( nputCand dates,  nterleavedCand dates)
+    Future.value(blendedCand dates)
   }
-  private def buildBlendedAdsCandidate(
-    inputCandidates: Seq[Seq[InitialAdsCandidate]],
-    interleavedCandidates: Seq[InitialAdsCandidate]
-  ): Seq[BlendedAdsCandidate] = {
-    val cgInfoLookupMap = buildCandidateToCGInfosMap(inputCandidates)
-    interleavedCandidates.map { interleavedCandidate =>
-      interleavedCandidate.toBlendedAdsCandidate(cgInfoLookupMap(interleavedCandidate.tweetId))
+  pr vate def bu ldBlendedAdsCand date(
+     nputCand dates: Seq[Seq[ n  alAdsCand date]],
+     nterleavedCand dates: Seq[ n  alAdsCand date]
+  ): Seq[BlendedAdsCand date] = {
+    val cg nfoLookupMap = bu ldCand dateToCG nfosMap( nputCand dates)
+     nterleavedCand dates.map {  nterleavedCand date =>
+       nterleavedCand date.toBlendedAdsCand date(cg nfoLookupMap( nterleavedCand date.t et d))
     }
   }
 
-  private def buildCandidateToCGInfosMap(
-    candidateSeq: Seq[Seq[InitialAdsCandidate]],
-  ): Map[TweetId, Seq[CandidateGenerationInfo]] = {
-    val tweetIdMap = mutable.HashMap[TweetId, Seq[CandidateGenerationInfo]]()
+  pr vate def bu ldCand dateToCG nfosMap(
+    cand dateSeq: Seq[Seq[ n  alAdsCand date]],
+  ): Map[T et d, Seq[Cand dateGenerat on nfo]] = {
+    val t et dMap = mutable.HashMap[T et d, Seq[Cand dateGenerat on nfo]]()
 
-    candidateSeq.foreach { candidates =>
-      candidates.foreach { candidate =>
-        val candidateGenerationInfoSeq = {
-          tweetIdMap.getOrElse(candidate.tweetId, Seq.empty)
+    cand dateSeq.foreach { cand dates =>
+      cand dates.foreach { cand date =>
+        val cand dateGenerat on nfoSeq = {
+          t et dMap.getOrElse(cand date.t et d, Seq.empty)
         }
-        val candidateGenerationInfo = candidate.candidateGenerationInfo
-        tweetIdMap.put(
-          candidate.tweetId,
-          candidateGenerationInfoSeq ++ Seq(candidateGenerationInfo))
+        val cand dateGenerat on nfo = cand date.cand dateGenerat on nfo
+        t et dMap.put(
+          cand date.t et d,
+          cand dateGenerat on nfoSeq ++ Seq(cand dateGenerat on nfo))
       }
     }
-    tweetIdMap.toMap
+    t et dMap.toMap
   }
 
 }

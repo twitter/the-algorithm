@@ -1,44 +1,44 @@
-package com.twitter.ann.hnsw;
+package com.tw ter.ann.hnsw;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+ mport org.apac .commons.lang.bu lder.EqualsBu lder;
+ mport org.apac .commons.lang.bu lder.HashCodeBu lder;
 
-public class HnswNode<T> {
-  public final int level;
-  public final T item;
+publ c class HnswNode<T> {
+  publ c f nal  nt level;
+  publ c f nal T  em;
 
-  public HnswNode(int level, T item) {
-    this.level = level;
-    this.item = item;
+  publ c HnswNode( nt level, T  em) {
+    t .level = level;
+    t . em =  em;
   }
 
   /**
    * Create a hnsw node.
    */
-  public static <T> HnswNode<T> from(int level, T item) {
-    return new HnswNode<>(level, item);
+  publ c stat c <T> HnswNode<T> from( nt level, T  em) {
+    return new HnswNode<>(level,  em);
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (o == this) {
+  @Overr de
+  publ c boolean equals(Object o) {
+     f (o == t ) {
       return true;
     }
-    if (!(o instanceof HnswNode)) {
+     f (!(o  nstanceof HnswNode)) {
       return false;
     }
 
     HnswNode<?> that = (HnswNode<?>) o;
-    return new EqualsBuilder()
-        .append(this.item, that.item)
-        .append(this.level, that.level)
-        .isEquals();
+    return new EqualsBu lder()
+        .append(t . em, that. em)
+        .append(t .level, that.level)
+        . sEquals();
   }
 
-  @Override
-  public int hashCode() {
-    return new HashCodeBuilder()
-        .append(item)
+  @Overr de
+  publ c  nt hashCode() {
+    return new HashCodeBu lder()
+        .append( em)
         .append(level)
         .toHashCode();
   }

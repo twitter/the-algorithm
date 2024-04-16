@@ -1,90 +1,90 @@
-package com.twitter.graph_feature_service.server.modules
+package com.tw ter.graph_feature_serv ce.server.modules
 
-import com.google.inject.Provides
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graph_feature_service.common.Configs._
-import com.twitter.graph_feature_service.server.stores.GetIntersectionStore
-import com.twitter.graph_feature_service.server.stores.GetIntersectionStore.GetIntersectionQuery
-import com.twitter.graph_feature_service.thriftscala.CachedIntersectionResult
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.memcache.MemcacheStore
-import com.twitter.storehaus_internal.util.{ClientName, ZkEndPoint}
-import com.twitter.util.Duration
-import javax.inject.{Named, Singleton}
+ mport com.google. nject.Prov des
+ mport com.tw ter.b ject on.scrooge.CompactScalaCodec
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.graph_feature_serv ce.common.Conf gs._
+ mport com.tw ter.graph_feature_serv ce.server.stores.Get ntersect onStore
+ mport com.tw ter.graph_feature_serv ce.server.stores.Get ntersect onStore.Get ntersect onQuery
+ mport com.tw ter.graph_feature_serv ce.thr ftscala.Cac d ntersect onResult
+ mport com.tw ter. rm .store.common.Observed mcac dReadableStore
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.storehaus_ nternal. mcac . mcac Store
+ mport com.tw ter.storehaus_ nternal.ut l.{Cl entNa , ZkEndPo nt}
+ mport com.tw ter.ut l.Durat on
+ mport javax. nject.{Na d, S ngleton}
 
 /**
- * Initialize the MemCache based GetIntersectionStore.
- * The Key of MemCache is UserId~CandidateId~FeatureTypes~IntersectionIdLimit.
+ *  n  al ze t   mCac  based Get ntersect onStore.
+ * T  Key of  mCac   s User d~Cand date d~FeatureTypes~ ntersect on dL m .
  */
-object GetIntersectionStoreModule extends TwitterModule {
+object Get ntersect onStoreModule extends Tw terModule {
 
-  private[this] val requestTimeout: Duration = 25.millis
-  private[this] val retries: Int = 0
+  pr vate[t ] val requestT  out: Durat on = 25.m ll s
+  pr vate[t ] val retr es:  nt = 0
 
-  @Provides
-  @Named("ReadThroughGetIntersectionStore")
-  @Singleton
-  def provideReadThroughGetIntersectionStore(
-    graphFeatureServiceWorkerClients: GraphFeatureServiceWorkerClients,
-    serviceIdentifier: ServiceIdentifier,
-    @Flag(ServerFlagNames.MemCacheClientName) memCacheName: String,
-    @Flag(ServerFlagNames.MemCachePath) memCachePath: String
+  @Prov des
+  @Na d("ReadThroughGet ntersect onStore")
+  @S ngleton
+  def prov deReadThroughGet ntersect onStore(
+    graphFeatureServ ceWorkerCl ents: GraphFeatureServ ceWorkerCl ents,
+    serv ce dent f er: Serv ce dent f er,
+    @Flag(ServerFlagNa s. mCac Cl entNa )  mCac Na : Str ng,
+    @Flag(ServerFlagNa s. mCac Path)  mCac Path: Str ng
   )(
-    implicit statsReceiver: StatsReceiver
-  ): ReadableStore[GetIntersectionQuery, CachedIntersectionResult] = {
-    buildMemcacheStore(
-      graphFeatureServiceWorkerClients,
-      memCacheName,
-      memCachePath,
-      serviceIdentifier)
+     mpl c  statsRece ver: StatsRece ver
+  ): ReadableStore[Get ntersect onQuery, Cac d ntersect onResult] = {
+    bu ld mcac Store(
+      graphFeatureServ ceWorkerCl ents,
+       mCac Na ,
+       mCac Path,
+      serv ce dent f er)
   }
 
-  @Provides
-  @Named("BypassCacheGetIntersectionStore")
-  @Singleton
-  def provideReadOnlyGetIntersectionStore(
-    graphFeatureServiceWorkerClients: GraphFeatureServiceWorkerClients,
+  @Prov des
+  @Na d("BypassCac Get ntersect onStore")
+  @S ngleton
+  def prov deReadOnlyGet ntersect onStore(
+    graphFeatureServ ceWorkerCl ents: GraphFeatureServ ceWorkerCl ents,
   )(
-    implicit statsReceiver: StatsReceiver
-  ): ReadableStore[GetIntersectionQuery, CachedIntersectionResult] = {
-    // Bypass the Memcache.
-    GetIntersectionStore(graphFeatureServiceWorkerClients, statsReceiver)
+     mpl c  statsRece ver: StatsRece ver
+  ): ReadableStore[Get ntersect onQuery, Cac d ntersect onResult] = {
+    // Bypass t   mcac .
+    Get ntersect onStore(graphFeatureServ ceWorkerCl ents, statsRece ver)
   }
 
-  private[this] def buildMemcacheStore(
-    graphFeatureServiceWorkerClients: GraphFeatureServiceWorkerClients,
-    memCacheName: String,
-    memCachePath: String,
-    serviceIdentifier: ServiceIdentifier,
+  pr vate[t ] def bu ld mcac Store(
+    graphFeatureServ ceWorkerCl ents: GraphFeatureServ ceWorkerCl ents,
+     mCac Na : Str ng,
+     mCac Path: Str ng,
+    serv ce dent f er: Serv ce dent f er,
   )(
-    implicit statsReceiver: StatsReceiver
-  ): ReadableStore[GetIntersectionQuery, CachedIntersectionResult] = {
-    val backingStore = GetIntersectionStore(graphFeatureServiceWorkerClients, statsReceiver)
+     mpl c  statsRece ver: StatsRece ver
+  ): ReadableStore[Get ntersect onQuery, Cac d ntersect onResult] = {
+    val back ngStore = Get ntersect onStore(graphFeatureServ ceWorkerCl ents, statsRece ver)
 
-    val cacheClient = MemcacheStore.memcachedClient(
-      name = ClientName(memCacheName),
-      dest = ZkEndPoint(memCachePath),
-      timeout = requestTimeout,
-      retries = retries,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver
+    val cac Cl ent =  mcac Store. mcac dCl ent(
+      na  = Cl entNa ( mCac Na ),
+      dest = ZkEndPo nt( mCac Path),
+      t  out = requestT  out,
+      retr es = retr es,
+      serv ce dent f er = serv ce dent f er,
+      statsRece ver = statsRece ver
     )
 
-    ObservedMemcachedReadableStore.fromCacheClient[GetIntersectionQuery, CachedIntersectionResult](
-      backingStore = backingStore,
-      cacheClient = cacheClient,
-      ttl = MemCacheTTL
+    Observed mcac dReadableStore.fromCac Cl ent[Get ntersect onQuery, Cac d ntersect onResult](
+      back ngStore = back ngStore,
+      cac Cl ent = cac Cl ent,
+      ttl =  mCac TTL
     )(
-      valueInjection = LZ4Injection.compose(CompactScalaCodec(CachedIntersectionResult)),
-      statsReceiver = statsReceiver.scope("mem_cache"),
-      keyToString = { key =>
-        s"L~${key.userId}~${key.candidateId}~${key.featureTypesString}~${key.intersectionIdLimit}"
+      value nject on = LZ4 nject on.compose(CompactScalaCodec(Cac d ntersect onResult)),
+      statsRece ver = statsRece ver.scope(" m_cac "),
+      keyToStr ng = { key =>
+        s"L~${key.user d}~${key.cand date d}~${key.featureTypesStr ng}~${key. ntersect on dL m }"
       }
     )
   }

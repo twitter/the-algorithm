@@ -1,32 +1,32 @@
-package com.twitter.home_mixer.util
+package com.tw ter.ho _m xer.ut l
 
-import com.twitter.ml.api.thriftscala.FloatTensor
-import com.twitter.ml.api.util.BufferToIterators.RichFloatBuffer
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
+ mport com.tw ter.ml.ap .thr ftscala.FloatTensor
+ mport com.tw ter.ml.ap .ut l.BufferTo erators.R chFloatBuffer
+ mport java.n o.ByteBuffer
+ mport java.n o.ByteOrder
 
 /**
- * Contains functionality to transform data records and Tensors
+ * Conta ns funct onal y to transform data records and Tensors
  */
 
-object TensorFlowUtil {
+object TensorFlowUt l {
 
-  private def skipEmbeddingBBHeader(bb: ByteBuffer): ByteBuffer = {
-    val bb_copy = bb.duplicate()
+  pr vate def sk pEmbedd ngBB ader(bb: ByteBuffer): ByteBuffer = {
+    val bb_copy = bb.dupl cate()
     bb_copy.getLong()
     bb_copy
   }
 
-  private def byteBufferToFloatIterator(
+  pr vate def byteBufferToFloat erator(
     bb: ByteBuffer
-  ): Iterator[Float] = {
-    bb.order(ByteOrder.LITTLE_ENDIAN).asFloatBuffer.iterator
+  ):  erator[Float] = {
+    bb.order(ByteOrder.L TTLE_END AN).asFloatBuffer. erator
   }
 
-  def embeddingByteBufferToFloatTensor(
+  def embedd ngByteBufferToFloatTensor(
     bb: ByteBuffer
   ): FloatTensor = {
-    val bb_content = skipEmbeddingBBHeader(bb)
-    FloatTensor(byteBufferToFloatIterator(bb_content).map(_.toDouble).toList)
+    val bb_content = sk pEmbedd ngBB ader(bb)
+    FloatTensor(byteBufferToFloat erator(bb_content).map(_.toDouble).toL st)
   }
 }

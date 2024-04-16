@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.contextual_ref
 
-case class ContextualTweetRef(
-  id: Long,
-  hydrationContext: Option[TweetHydrationContext])
+case class ContextualT etRef(
+   d: Long,
+  hydrat onContext: Opt on[T etHydrat onContext])

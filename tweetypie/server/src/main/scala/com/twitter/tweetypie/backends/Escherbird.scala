@@ -1,43 +1,43 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package backends
 
-import com.twitter.escherbird.thriftscala.TweetEntityAnnotation
-import com.twitter.escherbird.{thriftscala => escherbird}
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.servo.util.FutureArrow
-import com.twitter.tweetypie.util.RetryPolicyBuilder
+ mport com.tw ter.esc rb rd.thr ftscala.T etEnt yAnnotat on
+ mport com.tw ter.esc rb rd.{thr ftscala => esc rb rd}
+ mport com.tw ter.f nagle.serv ce.RetryPol cy
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t etyp e.ut l.RetryPol cyBu lder
 
-object Escherbird {
-  import Backend._
+object Esc rb rd {
+   mport Backend._
 
-  type Annotate = FutureArrow[Tweet, Seq[TweetEntityAnnotation]]
+  type Annotate = FutureArrow[T et, Seq[T etEnt yAnnotat on]]
 
-  def fromClient(client: escherbird.TweetEntityAnnotationService.MethodPerEndpoint): Escherbird =
-    new Escherbird {
-      val annotate = FutureArrow(client.annotate)
+  def fromCl ent(cl ent: esc rb rd.T etEnt yAnnotat onServ ce. thodPerEndpo nt): Esc rb rd =
+    new Esc rb rd {
+      val annotate = FutureArrow(cl ent.annotate)
     }
 
-  case class Config(requestTimeout: Duration, timeoutBackoffs: Stream[Duration]) {
+  case class Conf g(requestT  out: Durat on, t  outBackoffs: Stream[Durat on]) {
 
-    def apply(svc: Escherbird, ctx: Backend.Context): Escherbird =
-      new Escherbird {
-        val annotate: FutureArrow[Tweet, Seq[TweetEntityAnnotation]] =
-          policy("annotate", requestTimeout, ctx)(svc.annotate)
+    def apply(svc: Esc rb rd, ctx: Backend.Context): Esc rb rd =
+      new Esc rb rd {
+        val annotate: FutureArrow[T et, Seq[T etEnt yAnnotat on]] =
+          pol cy("annotate", requestT  out, ctx)(svc.annotate)
       }
 
-    private[this] def policy[A, B](
-      name: String,
-      requestTimeout: Duration,
+    pr vate[t ] def pol cy[A, B](
+      na : Str ng,
+      requestT  out: Durat on,
       ctx: Context
-    ): Builder[A, B] =
-      defaultPolicy(name, requestTimeout, retryPolicy, ctx)
+    ): Bu lder[A, B] =
+      defaultPol cy(na , requestT  out, retryPol cy, ctx)
 
-    private[this] def retryPolicy[B]: RetryPolicy[Try[B]] =
-      RetryPolicyBuilder.timeouts[Any](timeoutBackoffs)
+    pr vate[t ] def retryPol cy[B]: RetryPol cy[Try[B]] =
+      RetryPol cyBu lder.t  outs[Any](t  outBackoffs)
   }
 }
 
-trait Escherbird {
-  import Escherbird._
+tra  Esc rb rd {
+   mport Esc rb rd._
   val annotate: Annotate
 }

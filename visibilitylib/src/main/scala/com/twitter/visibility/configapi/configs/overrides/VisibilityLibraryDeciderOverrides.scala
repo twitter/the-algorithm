@@ -1,24 +1,24 @@
-package com.twitter.visibility.configapi.configs.overrides
+package com.tw ter.v s b l y.conf gap .conf gs.overr des
 
-import com.twitter.decider.LocalOverrides
+ mport com.tw ter.dec der.LocalOverr des
 
-object VisibilityLibraryDeciderOverrides
-    extends LocalOverrides.Namespace("visibility-library", "") {
+object V s b l yL braryDec derOverr des
+    extends LocalOverr des.Na space("v s b l y-l brary", "") {
 
-  val EnableLocalizedTombstoneOnVisibilityResults = feature(
-    "visibility_library_enable_localized_tombstones_on_visibility_results")
+  val EnableLocal zedTombstoneOnV s b l yResults = feature(
+    "v s b l y_l brary_enable_local zed_tombstones_on_v s b l y_results")
 
-  val EnableLocalizedInterstitialGenerator: LocalOverrides.Override =
-    feature("visibility_library_enable_localized_interstitial_generator")
+  val EnableLocal zed nterst  alGenerator: LocalOverr des.Overr de =
+    feature("v s b l y_l brary_enable_local zed_ nterst  al_generator")
 
-  val EnableInnerQuotedTweetViewerBlocksAuthorInterstitialRule: LocalOverrides.Override =
-    feature("visibility_library_enable_inner_quoted_tweet_viewer_blocks_author_interstitial_rule")
-  val EnableInnerQuotedTweetViewerMutesAuthorInterstitialRule: LocalOverrides.Override =
-    feature("visibility_library_enable_inner_quoted_tweet_viewer_mutes_author_interstitial_rule")
+  val Enable nnerQuotedT etV e rBlocksAuthor nterst  alRule: LocalOverr des.Overr de =
+    feature("v s b l y_l brary_enable_ nner_quoted_t et_v e r_blocks_author_ nterst  al_rule")
+  val Enable nnerQuotedT etV e rMutesAuthor nterst  alRule: LocalOverr des.Overr de =
+    feature("v s b l y_l brary_enable_ nner_quoted_t et_v e r_mutes_author_ nterst  al_rule")
 
-  val EnableBackendLimitedActions: LocalOverrides.Override =
-    feature("visibility_library_enable_backend_limited_actions")
+  val EnableBackendL m edAct ons: LocalOverr des.Overr de =
+    feature("v s b l y_l brary_enable_backend_l m ed_act ons")
 
-  val disableLegacyInterstitialFilteredReason: LocalOverrides.Override = feature(
-    "visibility_library_disable_legacy_interstitial_filtered_reason")
+  val d sableLegacy nterst  alF lteredReason: LocalOverr des.Overr de = feature(
+    "v s b l y_l brary_d sable_legacy_ nterst  al_f ltered_reason")
 }

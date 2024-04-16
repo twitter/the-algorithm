@@ -1,64 +1,64 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.tw ter.cr_m xer.s m lar y_eng ne
 
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.MemCacheConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.Future
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S m lar yEng ne. mCac Conf g
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S m lar yEng ne.S m lar yEng neConf g
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.tw ter.ut l.Future
 
 /**
- * @tparam Query ReadableStore's input type.
+ * @tparam Query ReadableStore's  nput type.
  */
-case class EngineQuery[Query](
+case class Eng neQuery[Query](
   storeQuery: Query,
   params: Params,
 )
 
 /**
- * A straight forward SimilarityEngine implementation that wraps a ReadableStore
+ * A stra ght forward S m lar yEng ne  mple ntat on that wraps a ReadableStore
  *
- * @param implementingStore   Provides the candidate retrieval's implementations
- * @param memCacheConfig      If specified, it will wrap the underlying store with a MemCache layer
- *                            You should only enable this for cacheable queries, e.x. TweetIds.
- *                            consumer based UserIds are generally not possible to cache.
- * @tparam Query              ReadableStore's input type
- * @tparam Candidate          ReadableStore's return type is Seq[[[Candidate]]]
+ * @param  mple nt ngStore   Prov des t  cand date retr eval's  mple ntat ons
+ * @param  mCac Conf g       f spec f ed,   w ll wrap t  underly ng store w h a  mCac  layer
+ *                              should only enable t  for cac able quer es, e.x. T et ds.
+ *                            consu r based User ds are generally not poss ble to cac .
+ * @tparam Query              ReadableStore's  nput type
+ * @tparam Cand date          ReadableStore's return type  s Seq[[[Cand date]]]
  */
-class StandardSimilarityEngine[Query, Candidate <: Serializable](
-  implementingStore: ReadableStore[Query, Seq[Candidate]],
-  override val identifier: SimilarityEngineType,
-  globalStats: StatsReceiver,
-  engineConfig: SimilarityEngineConfig,
-  memCacheConfig: Option[MemCacheConfig[Query]] = None)
-    extends SimilarityEngine[EngineQuery[Query], Candidate] {
+class StandardS m lar yEng ne[Query, Cand date <: Ser al zable](
+   mple nt ngStore: ReadableStore[Query, Seq[Cand date]],
+  overr de val  dent f er: S m lar yEng neType,
+  globalStats: StatsRece ver,
+  eng neConf g: S m lar yEng neConf g,
+   mCac Conf g: Opt on[ mCac Conf g[Query]] = None)
+    extends S m lar yEng ne[Eng neQuery[Query], Cand date] {
 
-  private val scopedStats = globalStats.scope("similarityEngine", identifier.toString)
+  pr vate val scopedStats = globalStats.scope("s m lar yEng ne",  dent f er.toStr ng)
 
-  def getScopedStats: StatsReceiver = scopedStats
+  def getScopedStats: StatsRece ver = scopedStats
 
-  // Add memcache wrapper, if specified
-  private val store = {
-    memCacheConfig match {
-      case Some(config) =>
-        SimilarityEngine.addMemCache(
-          underlyingStore = implementingStore,
-          memCacheConfig = config,
-          statsReceiver = scopedStats
+  // Add  mcac  wrapper,  f spec f ed
+  pr vate val store = {
+     mCac Conf g match {
+      case So (conf g) =>
+        S m lar yEng ne.add mCac (
+          underly ngStore =  mple nt ngStore,
+           mCac Conf g = conf g,
+          statsRece ver = scopedStats
         )
-      case _ => implementingStore
+      case _ =>  mple nt ngStore
     }
   }
 
-  override def getCandidates(
-    engineQuery: EngineQuery[Query]
-  ): Future[Option[Seq[Candidate]]] = {
-    SimilarityEngine.getFromFn(
+  overr de def getCand dates(
+    eng neQuery: Eng neQuery[Query]
+  ): Future[Opt on[Seq[Cand date]]] = {
+    S m lar yEng ne.getFromFn(
       store.get,
-      engineQuery.storeQuery,
-      engineConfig,
-      engineQuery.params,
+      eng neQuery.storeQuery,
+      eng neConf g,
+      eng neQuery.params,
       scopedStats
     )
   }

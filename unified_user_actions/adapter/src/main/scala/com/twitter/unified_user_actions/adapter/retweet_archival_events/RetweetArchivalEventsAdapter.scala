@@ -1,51 +1,51 @@
-package com.twitter.unified_user_actions.adapter.retweet_archival_events
+package com.tw ter.un f ed_user_act ons.adapter.ret et_arch val_events
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.tweetypie.thriftscala.RetweetArchivalEvent
-import com.twitter.unified_user_actions.adapter.AbstractAdapter
-import com.twitter.unified_user_actions.adapter.common.AdapterUtils
-import com.twitter.unified_user_actions.thriftscala._
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f natra.kafka.serde.UnKeyed
+ mport com.tw ter.t etyp e.thr ftscala.Ret etArch valEvent
+ mport com.tw ter.un f ed_user_act ons.adapter.AbstractAdapter
+ mport com.tw ter.un f ed_user_act ons.adapter.common.AdapterUt ls
+ mport com.tw ter.un f ed_user_act ons.thr ftscala._
 
-class RetweetArchivalEventsAdapter
-    extends AbstractAdapter[RetweetArchivalEvent, UnKeyed, UnifiedUserAction] {
+class Ret etArch valEventsAdapter
+    extends AbstractAdapter[Ret etArch valEvent, UnKeyed, Un f edUserAct on] {
 
-  import RetweetArchivalEventsAdapter._
-  override def adaptOneToKeyedMany(
-    input: RetweetArchivalEvent,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): Seq[(UnKeyed, UnifiedUserAction)] =
-    adaptEvent(input).map { e => (UnKeyed, e) }
+   mport Ret etArch valEventsAdapter._
+  overr de def adaptOneToKeyedMany(
+     nput: Ret etArch valEvent,
+    statsRece ver: StatsRece ver = NullStatsRece ver
+  ): Seq[(UnKeyed, Un f edUserAct on)] =
+    adaptEvent( nput).map { e => (UnKeyed, e) }
 }
 
-object RetweetArchivalEventsAdapter {
+object Ret etArch valEventsAdapter {
 
-  def adaptEvent(e: RetweetArchivalEvent): Seq[UnifiedUserAction] =
-    Option(e).map { e =>
-      UnifiedUserAction(
-        userIdentifier = UserIdentifier(userId = Some(e.retweetUserId)),
-        item = getItem(e),
-        actionType =
-          if (e.isArchivingAction.getOrElse(true)) ActionType.ServerTweetArchiveRetweet
-          else ActionType.ServerTweetUnarchiveRetweet,
-        eventMetadata = getEventMetadata(e)
+  def adaptEvent(e: Ret etArch valEvent): Seq[Un f edUserAct on] =
+    Opt on(e).map { e =>
+      Un f edUserAct on(
+        user dent f er = User dent f er(user d = So (e.ret etUser d)),
+         em = get em(e),
+        act onType =
+           f (e. sArch v ngAct on.getOrElse(true)) Act onType.ServerT etArch veRet et
+          else Act onType.ServerT etUnarch veRet et,
+        event tadata = getEvent tadata(e)
       )
     }.toSeq
 
-  def getItem(e: RetweetArchivalEvent): Item =
-    Item.TweetInfo(
-      TweetInfo(
-        actionTweetId = e.srcTweetId,
-        actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(e.srcTweetUserId))),
-        retweetingTweetId = Some(e.retweetId)
+  def get em(e: Ret etArch valEvent):  em =
+     em.T et nfo(
+      T et nfo(
+        act onT et d = e.srcT et d,
+        act onT etAuthor nfo = So (Author nfo(author d = So (e.srcT etUser d))),
+        ret et ngT et d = So (e.ret et d)
       )
     )
 
-  def getEventMetadata(e: RetweetArchivalEvent): EventMetadata =
-    EventMetadata(
-      sourceTimestampMs = e.timestampMs,
-      receivedTimestampMs = AdapterUtils.currentTimestampMs,
-      sourceLineage = SourceLineage.ServerRetweetArchivalEvents,
+  def getEvent tadata(e: Ret etArch valEvent): Event tadata =
+    Event tadata(
+      s ceT  stampMs = e.t  stampMs,
+      rece vedT  stampMs = AdapterUt ls.currentT  stampMs,
+      s ceL neage = S ceL neage.ServerRet etArch valEvents,
     )
 }

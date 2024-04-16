@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.pipeline.state
+package com.tw ter.product_m xer.core.p pel ne.state
 
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.service.ExecutorResult
-import scala.collection.immutable.ListMap
+ mport com.tw ter.product_m xer.core.model.common. dent f er.P pel neStep dent f er
+ mport com.tw ter.product_m xer.core.serv ce.ExecutorResult
+ mport scala.collect on. mmutable.L stMap
 
-trait HasExecutorResults[State] {
-  // We use a list map to maintain the insertion order
-  val executorResultsByPipelineStep: ListMap[PipelineStepIdentifier, ExecutorResult]
-  private[pipeline] def setExecutorResults(
-    newMap: ListMap[PipelineStepIdentifier, ExecutorResult]
+tra  HasExecutorResults[State] {
+  //   use a l st map to ma nta n t   nsert on order
+  val executorResultsByP pel neStep: L stMap[P pel neStep dent f er, ExecutorResult]
+  pr vate[p pel ne] def setExecutorResults(
+    newMap: L stMap[P pel neStep dent f er, ExecutorResult]
   ): State
 }

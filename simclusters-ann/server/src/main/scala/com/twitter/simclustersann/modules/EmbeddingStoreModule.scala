@@ -1,110 +1,110 @@
-package com.twitter.simclustersann.modules
+package com.tw ter.s mclustersann.modules
 
-import com.google.inject.Provides
-import com.twitter.decider.Decider
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.representation_manager.StoreBuilder
-import com.twitter.representation_manager.config.{
-  DefaultClientConfig => RepresentationManagerDefaultClientConfig
+ mport com.google. nject.Prov des
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.f nagle. mcac d.{Cl ent =>  mcac dCl ent}
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.representat on_manager.StoreBu lder
+ mport com.tw ter.representat on_manager.conf g.{
+  DefaultCl entConf g => Representat onManagerDefaultCl entConf g
 }
-import com.twitter.representation_manager.thriftscala.SimClustersEmbeddingView
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.stores.SimClustersEmbeddingStore
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType._
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.ModelVersion._
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import javax.inject.Singleton
+ mport com.tw ter.representat on_manager.thr ftscala.S mClustersEmbedd ngV ew
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.stores.S mClustersEmbedd ngStore
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType._
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on._
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport javax. nject.S ngleton
 
-object EmbeddingStoreModule extends TwitterModule {
+object Embedd ngStoreModule extends Tw terModule {
 
-  val TweetEmbeddings: Set[SimClustersEmbeddingView] = Set(
-    SimClustersEmbeddingView(LogFavLongestL2EmbeddingTweet, Model20m145kUpdated),
-    SimClustersEmbeddingView(LogFavLongestL2EmbeddingTweet, Model20m145k2020)
+  val T etEmbedd ngs: Set[S mClustersEmbedd ngV ew] = Set(
+    S mClustersEmbedd ngV ew(LogFavLongestL2Embedd ngT et, Model20m145kUpdated),
+    S mClustersEmbedd ngV ew(LogFavLongestL2Embedd ngT et, Model20m145k2020)
   )
 
-  val UserEmbeddings: Set[SimClustersEmbeddingView] = Set(
+  val UserEmbedd ngs: Set[S mClustersEmbedd ngV ew] = Set(
     // KnownFor
-    SimClustersEmbeddingView(FavBasedProducer, Model20m145kUpdated),
-    SimClustersEmbeddingView(FavBasedProducer, Model20m145k2020),
-    SimClustersEmbeddingView(FollowBasedProducer, Model20m145k2020),
-    SimClustersEmbeddingView(AggregatableLogFavBasedProducer, Model20m145k2020),
-    // InterestedIn
-    SimClustersEmbeddingView(UnfilteredUserInterestedIn, Model20m145k2020),
-    SimClustersEmbeddingView(
-      LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE,
+    S mClustersEmbedd ngV ew(FavBasedProducer, Model20m145kUpdated),
+    S mClustersEmbedd ngV ew(FavBasedProducer, Model20m145k2020),
+    S mClustersEmbedd ngV ew(FollowBasedProducer, Model20m145k2020),
+    S mClustersEmbedd ngV ew(AggregatableLogFavBasedProducer, Model20m145k2020),
+    //  nterested n
+    S mClustersEmbedd ngV ew(Unf lteredUser nterested n, Model20m145k2020),
+    S mClustersEmbedd ngV ew(
+      LogFavBasedUser nterestedMaxpool ngAddressBookFrom  APE,
       Model20m145k2020),
-    SimClustersEmbeddingView(
-      LogFavBasedUserInterestedAverageAddressBookFromIIAPE,
+    S mClustersEmbedd ngV ew(
+      LogFavBasedUser nterestedAverageAddressBookFrom  APE,
       Model20m145k2020),
-    SimClustersEmbeddingView(
-      LogFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE,
+    S mClustersEmbedd ngV ew(
+      LogFavBasedUser nterestedBooktypeMaxpool ngAddressBookFrom  APE,
       Model20m145k2020),
-    SimClustersEmbeddingView(
-      LogFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE,
+    S mClustersEmbedd ngV ew(
+      LogFavBasedUser nterestedLargestD mMaxpool ngAddressBookFrom  APE,
       Model20m145k2020),
-    SimClustersEmbeddingView(
-      LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE,
+    S mClustersEmbedd ngV ew(
+      LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE,
       Model20m145k2020),
-    SimClustersEmbeddingView(
-      LogFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE,
+    S mClustersEmbedd ngV ew(
+      LogFavBasedUser nterestedConnectedMaxpool ngAddressBookFrom  APE,
       Model20m145k2020),
-    SimClustersEmbeddingView(UserNextInterestedIn, Model20m145k2020),
-    SimClustersEmbeddingView(LogFavBasedUserInterestedInFromAPE, Model20m145k2020)
+    S mClustersEmbedd ngV ew(UserNext nterested n, Model20m145k2020),
+    S mClustersEmbedd ngV ew(LogFavBasedUser nterested nFromAPE, Model20m145k2020)
   )
 
-  @Singleton
-  @Provides
-  def providesEmbeddingStore(
-    stratoClient: StratoClient,
-    memCachedClient: MemcachedClient,
-    decider: Decider,
-    stats: StatsReceiver
-  ): ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] = {
+  @S ngleton
+  @Prov des
+  def prov desEmbedd ngStore(
+    stratoCl ent: StratoCl ent,
+     mCac dCl ent:  mcac dCl ent,
+    dec der: Dec der,
+    stats: StatsRece ver
+  ): ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng] = {
 
-    val rmsStoreBuilder = new StoreBuilder(
-      clientConfig = RepresentationManagerDefaultClientConfig,
-      stratoClient = stratoClient,
-      memCachedClient = memCachedClient,
+    val rmsStoreBu lder = new StoreBu lder(
+      cl entConf g = Representat onManagerDefaultCl entConf g,
+      stratoCl ent = stratoCl ent,
+       mCac dCl ent =  mCac dCl ent,
       globalStats = stats,
     )
 
-    val underlyingStores: Map[
-      (EmbeddingType, ModelVersion),
-      ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
+    val underly ngStores: Map[
+      (Embedd ngType, ModelVers on),
+      ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng]
     ] = {
-      val tweetEmbeddingStores: Map[
-        (EmbeddingType, ModelVersion),
-        ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-      ] = TweetEmbeddings
-        .map(embeddingView =>
+      val t etEmbedd ngStores: Map[
+        (Embedd ngType, ModelVers on),
+        ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng]
+      ] = T etEmbedd ngs
+        .map(embedd ngV ew =>
           (
-            (embeddingView.embeddingType, embeddingView.modelVersion),
-            rmsStoreBuilder
-              .buildSimclustersTweetEmbeddingStoreWithEmbeddingIdAsKey(embeddingView))).toMap
+            (embedd ngV ew.embedd ngType, embedd ngV ew.modelVers on),
+            rmsStoreBu lder
+              .bu ldS mclustersT etEmbedd ngStoreW hEmbedd ng dAsKey(embedd ngV ew))).toMap
 
-      val userEmbeddingStores: Map[
-        (EmbeddingType, ModelVersion),
-        ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-      ] = UserEmbeddings
-        .map(embeddingView =>
+      val userEmbedd ngStores: Map[
+        (Embedd ngType, ModelVers on),
+        ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng]
+      ] = UserEmbedd ngs
+        .map(embedd ngV ew =>
           (
-            (embeddingView.embeddingType, embeddingView.modelVersion),
-            rmsStoreBuilder
-              .buildSimclustersUserEmbeddingStoreWithEmbeddingIdAsKey(embeddingView))).toMap
+            (embedd ngV ew.embedd ngType, embedd ngV ew.modelVers on),
+            rmsStoreBu lder
+              .bu ldS mclustersUserEmbedd ngStoreW hEmbedd ng dAsKey(embedd ngV ew))).toMap
 
-      tweetEmbeddingStores ++ userEmbeddingStores
+      t etEmbedd ngStores ++ userEmbedd ngStores
     }
 
-    SimClustersEmbeddingStore.buildWithDecider(
-      underlyingStores = underlyingStores,
-      decider = decider,
-      statsReceiver = stats
+    S mClustersEmbedd ngStore.bu ldW hDec der(
+      underly ngStores = underly ngStores,
+      dec der = dec der,
+      statsRece ver = stats
     )
   }
 }

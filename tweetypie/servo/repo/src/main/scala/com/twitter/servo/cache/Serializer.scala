@@ -1,184 +1,184 @@
-package com.twitter.servo.cache
+package com.tw ter.servo.cac 
 
-import com.google.common.primitives.{Ints, Longs}
-import com.twitter.finagle.thrift.Protocols
-import com.twitter.io.Buf
-import com.twitter.scrooge.{ThriftStruct, ThriftStructCodec, ThriftStructSerializer}
-import com.twitter.servo.util.Transformer
-import com.twitter.util.{Time => UtilTime, Try}
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
-import java.nio.ByteBuffer
-import org.apache.thrift.TBase
-import org.apache.thrift.protocol.{TCompactProtocol, TProtocolFactory}
-import org.apache.thrift.transport.TIOStreamTransport
+ mport com.google.common.pr m  ves.{ nts, Longs}
+ mport com.tw ter.f nagle.thr ft.Protocols
+ mport com.tw ter. o.Buf
+ mport com.tw ter.scrooge.{Thr ftStruct, Thr ftStructCodec, Thr ftStructSer al zer}
+ mport com.tw ter.servo.ut l.Transfor r
+ mport com.tw ter.ut l.{T   => Ut lT  , Try}
+ mport java. o.{ByteArray nputStream, ByteArrayOutputStream}
+ mport java.n o.ByteBuffer
+ mport org.apac .thr ft.TBase
+ mport org.apac .thr ft.protocol.{TCompactProtocol, TProtocolFactory}
+ mport org.apac .thr ft.transport.T OStreamTransport
 
-object Serializers { self =>
+object Ser al zers { self =>
   val CompactProtocolFactory = new TCompactProtocol.Factory
   val EmptyByteArray = Array.empty[Byte]
 
-  val Unit = Transformer[Unit, Array[Byte]](_ => EmptyByteArray, _ => ())
+  val Un  = Transfor r[Un , Array[Byte]](_ => EmptyByteArray, _ => ())
 
   object Long {
-    val Simple = Transformer[Long, Array[Byte]](Longs.toByteArray, Longs.fromByteArray)
+    val S mple = Transfor r[Long, Array[Byte]](Longs.toByteArray, Longs.fromByteArray)
   }
 
-  object CachedLong {
-    val Compact: Serializer[Cached[Long]] =
-      new CachedSerializer(self.Long.Simple, CompactProtocolFactory)
+  object Cac dLong {
+    val Compact: Ser al zer[Cac d[Long]] =
+      new Cac dSer al zer(self.Long.S mple, CompactProtocolFactory)
   }
 
   object SeqLong {
-    val Simple: Serializer[Seq[Long]] = new SeqSerializer(self.Long.Simple, 8)
+    val S mple: Ser al zer[Seq[Long]] = new SeqSer al zer(self.Long.S mple, 8)
   }
 
-  object CachedSeqLong {
-    val Compact: Serializer[Cached[Seq[Long]]] =
-      new CachedSerializer(self.SeqLong.Simple, CompactProtocolFactory)
+  object Cac dSeqLong {
+    val Compact: Ser al zer[Cac d[Seq[Long]]] =
+      new Cac dSer al zer(self.SeqLong.S mple, CompactProtocolFactory)
   }
 
-  object Int {
-    val Simple = Transformer[Int, Array[Byte]](Ints.toByteArray, Ints.fromByteArray)
+  object  nt {
+    val S mple = Transfor r[ nt, Array[Byte]]( nts.toByteArray,  nts.fromByteArray)
   }
 
-  object CachedInt {
-    val Compact: Serializer[Cached[Int]] =
-      new CachedSerializer(self.Int.Simple, CompactProtocolFactory)
+  object Cac d nt {
+    val Compact: Ser al zer[Cac d[ nt]] =
+      new Cac dSer al zer(self. nt.S mple, CompactProtocolFactory)
   }
 
-  object SeqInt {
-    val Simple: Serializer[Seq[Int]] = new SeqSerializer(self.Int.Simple, 4)
+  object Seq nt {
+    val S mple: Ser al zer[Seq[ nt]] = new SeqSer al zer(self. nt.S mple, 4)
   }
 
-  object CachedSeqInt {
-    val Compact: Serializer[Cached[Seq[Int]]] =
-      new CachedSerializer(self.SeqInt.Simple, CompactProtocolFactory)
+  object Cac dSeq nt {
+    val Compact: Ser al zer[Cac d[Seq[ nt]]] =
+      new Cac dSer al zer(self.Seq nt.S mple, CompactProtocolFactory)
   }
 
-  object String {
-    val Utf8: Serializer[String] = Transformer.Utf8ToBytes
+  object Str ng {
+    val Utf8: Ser al zer[Str ng] = Transfor r.Utf8ToBytes
   }
 
-  object CachedString {
-    val Compact: Serializer[Cached[String]] =
-      new CachedSerializer(self.String.Utf8, CompactProtocolFactory)
+  object Cac dStr ng {
+    val Compact: Ser al zer[Cac d[Str ng]] =
+      new Cac dSer al zer(self.Str ng.Utf8, CompactProtocolFactory)
   }
 
-  object SeqString {
-    val Utf8: Serializer[Seq[String]] = new SeqSerializer(self.String.Utf8)
+  object SeqStr ng {
+    val Utf8: Ser al zer[Seq[Str ng]] = new SeqSer al zer(self.Str ng.Utf8)
   }
 
-  object CachedSeqString {
-    val Compact: Serializer[Cached[Seq[String]]] =
-      new CachedSerializer(self.SeqString.Utf8, CompactProtocolFactory)
+  object Cac dSeqStr ng {
+    val Compact: Ser al zer[Cac d[Seq[Str ng]]] =
+      new Cac dSer al zer(self.SeqStr ng.Utf8, CompactProtocolFactory)
   }
 
   /**
-   * We take care not to alter the buffer so that this conversion can
-   * safely be used multiple times with the same buffer, and that
-   * other threads cannot view other states of the buffer.
+   *   take care not to alter t  buffer so that t  convers on can
+   * safely be used mult ple t  s w h t  sa  buffer, and that
+   * ot r threads cannot v ew ot r states of t  buffer.
    */
-  private[this] def byteBufferToArray(b: ByteBuffer): Array[Byte] = {
-    val a = new Array[Byte](b.remaining)
-    b.duplicate.get(a)
+  pr vate[t ] def byteBufferToArray(b: ByteBuffer): Array[Byte] = {
+    val a = new Array[Byte](b.rema n ng)
+    b.dupl cate.get(a)
     a
   }
 
   /**
-   * Convert between a ByteBuffer and an Array of bytes. The
-   * conversion to Array[Byte] makes a copy of the data, while the
-   * reverse conversion just wraps the array.
+   * Convert bet en a ByteBuffer and an Array of bytes. T 
+   * convers on to Array[Byte] makes a copy of t  data, wh le t 
+   * reverse convers on just wraps t  array.
    */
-  val ArrayByteBuffer: Transformer[Array[Byte], ByteBuffer] =
-    Transformer(ByteBuffer.wrap(_: Array[Byte]), byteBufferToArray)
+  val ArrayByteBuffer: Transfor r[Array[Byte], ByteBuffer] =
+    Transfor r(ByteBuffer.wrap(_: Array[Byte]), byteBufferToArray)
 
-  val ArrayByteBuf: Transformer[Array[Byte], Buf] =
-    Transformer(Buf.ByteArray.Shared.apply, Buf.ByteArray.Shared.extract)
-
-  /**
-   * Isomorphism between Time and Long. The Long represents the number
-   * of nanoseconds since the epoch.
-   */
-  val TimeNanos: Transformer[UtilTime, Long] =
-    Transformer.pure[UtilTime, Long](_.inNanoseconds, UtilTime.fromNanoseconds)
+  val ArrayByteBuf: Transfor r[Array[Byte], Buf] =
+    Transfor r(Buf.ByteArray.Shared.apply, Buf.ByteArray.Shared.extract)
 
   /**
-   * Transformer from Time to Array[Byte] always succeeds. The inverse
-   * transform throws BufferUnderflowException if the buffer is less
-   * than eight bytes in length. If it is greater than eight bytes,
-   * the later bytes are discarded.
+   *  somorp m bet en T   and Long. T  Long represents t  number
+   * of nanoseconds s nce t  epoch.
    */
-  // This is lazy because if it is not, it may be initialized before
-  // Long.Simple. In that case, Long.Simple will be null at
-  // initialization time, and will be captured here. Unfortunately,
-  // this is dependent on the order of class initialization, which may
-  // vary between runs of a program.
-  lazy val Time: Serializer[UtilTime] = TimeNanos andThen Long.Simple
+  val T  Nanos: Transfor r[Ut lT  , Long] =
+    Transfor r.pure[Ut lT  , Long](_. nNanoseconds, Ut lT  .fromNanoseconds)
+
+  /**
+   * Transfor r from T   to Array[Byte] always succeeds. T   nverse
+   * transform throws BufferUnderflowExcept on  f t  buffer  s less
+   * than e ght bytes  n length.  f    s greater than e ght bytes,
+   * t  later bytes are d scarded.
+   */
+  // T   s lazy because  f    s not,   may be  n  al zed before
+  // Long.S mple.  n that case, Long.S mple w ll be null at
+  //  n  al zat on t  , and w ll be captured  re. Unfortunately,
+  // t   s dependent on t  order of class  n  al zat on, wh ch may
+  // vary bet en runs of a program.
+  lazy val T  : Ser al zer[Ut lT  ] = T  Nanos andT n Long.S mple
 }
 
 /**
- * A Serializer for Thrift structs generated by Scrooge.
+ * A Ser al zer for Thr ft structs generated by Scrooge.
  *
- * @param codec used to encode and decode structs for a given protocol
- * @param protocolFactory defines the serialization protocol to be used
+ * @param codec used to encode and decode structs for a g ven protocol
+ * @param protocolFactory def nes t  ser al zat on protocol to be used
  */
-class ThriftSerializer[T <: ThriftStruct](
-  val codec: ThriftStructCodec[T],
+class Thr ftSer al zer[T <: Thr ftStruct](
+  val codec: Thr ftStructCodec[T],
   val protocolFactory: TProtocolFactory)
-    extends Serializer[T]
-    with ThriftStructSerializer[T] {
-  override def to(obj: T): Try[Array[Byte]] = Try(toBytes(obj))
-  override def from(bytes: Array[Byte]): Try[T] = Try(fromBytes(bytes))
+    extends Ser al zer[T]
+    w h Thr ftStructSer al zer[T] {
+  overr de def to(obj: T): Try[Array[Byte]] = Try(toBytes(obj))
+  overr de def from(bytes: Array[Byte]): Try[T] = Try(fromBytes(bytes))
 }
 
 /**
- * A Serializer for Thrift structs generated by the Apache code generator.
+ * A Ser al zer for Thr ft structs generated by t  Apac  code generator.
  *
- * @param tFactory a factory for Thrift-defined objects of type T. Objects
- *        yielded by the factory are read into and returned during
- *        deserialization.
+ * @param tFactory a factory for Thr ft-def ned objects of type T. Objects
+ *        y elded by t  factory are read  nto and returned dur ng
+ *        deser al zat on.
  *
- * @param protocolFactory defines the serialization protocol to be used
+ * @param protocolFactory def nes t  ser al zat on protocol to be used
  */
-class TBaseSerializer[T <: TBase[_, _]](tFactory: () => T, protocolFactory: TProtocolFactory)
-    extends Serializer[T] {
-  override def to(obj: T): Try[Array[Byte]] = Try {
+class TBaseSer al zer[T <: TBase[_, _]](tFactory: () => T, protocolFactory: TProtocolFactory)
+    extends Ser al zer[T] {
+  overr de def to(obj: T): Try[Array[Byte]] = Try {
     val baos = new ByteArrayOutputStream
-    obj.write(protocolFactory.getProtocol(new TIOStreamTransport(baos)))
+    obj.wr e(protocolFactory.getProtocol(new T OStreamTransport(baos)))
     baos.toByteArray
   }
 
-  override def from(bytes: Array[Byte]): Try[T] = Try {
+  overr de def from(bytes: Array[Byte]): Try[T] = Try {
     val obj = tFactory()
-    val stream = new ByteArrayInputStream(bytes)
-    obj.read(protocolFactory.getProtocol(new TIOStreamTransport(stream)))
+    val stream = new ByteArray nputStream(bytes)
+    obj.read(protocolFactory.getProtocol(new T OStreamTransport(stream)))
     obj
   }
 }
 
-object CachedSerializer {
-  def binary[T](valueSerializer: Serializer[T]): CachedSerializer[T] =
-    new CachedSerializer(valueSerializer, Protocols.binaryFactory())
+object Cac dSer al zer {
+  def b nary[T](valueSer al zer: Ser al zer[T]): Cac dSer al zer[T] =
+    new Cac dSer al zer(valueSer al zer, Protocols.b naryFactory())
 
-  def compact[T](valueSerializer: Serializer[T]): CachedSerializer[T] =
-    new CachedSerializer(valueSerializer, new TCompactProtocol.Factory)
+  def compact[T](valueSer al zer: Ser al zer[T]): Cac dSer al zer[T] =
+    new Cac dSer al zer(valueSer al zer, new TCompactProtocol.Factory)
 }
 
 /**
- * A Serializer of Cached object.
+ * A Ser al zer of Cac d object.
  *
- * @param valueSerializer an underlying serializer of the values to be cached.
- * @param protocolFactory defines the serialization protocol to be used
+ * @param valueSer al zer an underly ng ser al zer of t  values to be cac d.
+ * @param protocolFactory def nes t  ser al zat on protocol to be used
  */
-class CachedSerializer[T](valueSerializer: Serializer[T], protocolFactory: TProtocolFactory)
-    extends Serializer[Cached[T]] {
-  private[this] val underlying = new ThriftSerializer(CachedValue, protocolFactory)
+class Cac dSer al zer[T](valueSer al zer: Ser al zer[T], protocolFactory: TProtocolFactory)
+    extends Ser al zer[Cac d[T]] {
+  pr vate[t ] val underly ng = new Thr ftSer al zer(Cac dValue, protocolFactory)
 
-  override def to(cached: Cached[T]): Try[Array[Byte]] =
-    underlying.to(cached.toCachedValue(valueSerializer))
+  overr de def to(cac d: Cac d[T]): Try[Array[Byte]] =
+    underly ng.to(cac d.toCac dValue(valueSer al zer))
 
-  private[this] val asCached: CachedValue => Cached[T] =
-    t => Cached(t, valueSerializer)
+  pr vate[t ] val asCac d: Cac dValue => Cac d[T] =
+    t => Cac d(t, valueSer al zer)
 
-  override def from(bytes: Array[Byte]): Try[Cached[T]] =
-    underlying.from(bytes).map(asCached)
+  overr de def from(bytes: Array[Byte]): Try[Cac d[T]] =
+    underly ng.from(bytes).map(asCac d)
 }

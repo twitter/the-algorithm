@@ -1,72 +1,72 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.users gnalserv ce.thr ftscala.S gnalType
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSEnumParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .Param
 
-object RepeatedProfileVisitsParams {
-  object ProfileMinVisitParam extends Enumeration {
-    protected case class SignalTypeValue(signalType: SignalType) extends super.Val
-    import scala.language.implicitConversions
-    implicit def valueToSignalTypeValue(x: Value): SignalTypeValue =
-      x.asInstanceOf[SignalTypeValue]
+object RepeatedProf leV s sParams {
+  object Prof leM nV s Param extends Enu rat on {
+    protected case class S gnalTypeValue(s gnalType: S gnalType) extends super.Val
+     mport scala.language. mpl c Convers ons
+     mpl c  def valueToS gnalTypeValue(x: Value): S gnalTypeValue =
+      x.as nstanceOf[S gnalTypeValue]
 
-    val TotalVisitsInPast180Days = SignalTypeValue(SignalType.RepeatedProfileVisit180dMinVisit6V1)
-    val TotalVisitsInPast90Days = SignalTypeValue(SignalType.RepeatedProfileVisit90dMinVisit6V1)
-    val TotalVisitsInPast14Days = SignalTypeValue(SignalType.RepeatedProfileVisit14dMinVisit2V1)
-    val TotalVisitsInPast180DaysNoNegative = SignalTypeValue(
-      SignalType.RepeatedProfileVisit180dMinVisit6V1NoNegative)
-    val TotalVisitsInPast90DaysNoNegative = SignalTypeValue(
-      SignalType.RepeatedProfileVisit90dMinVisit6V1NoNegative)
-    val TotalVisitsInPast14DaysNoNegative = SignalTypeValue(
-      SignalType.RepeatedProfileVisit14dMinVisit2V1NoNegative)
+    val TotalV s s nPast180Days = S gnalTypeValue(S gnalType.RepeatedProf leV s 180dM nV s 6V1)
+    val TotalV s s nPast90Days = S gnalTypeValue(S gnalType.RepeatedProf leV s 90dM nV s 6V1)
+    val TotalV s s nPast14Days = S gnalTypeValue(S gnalType.RepeatedProf leV s 14dM nV s 2V1)
+    val TotalV s s nPast180DaysNoNegat ve = S gnalTypeValue(
+      S gnalType.RepeatedProf leV s 180dM nV s 6V1NoNegat ve)
+    val TotalV s s nPast90DaysNoNegat ve = S gnalTypeValue(
+      S gnalType.RepeatedProf leV s 90dM nV s 6V1NoNegat ve)
+    val TotalV s s nPast14DaysNoNegat ve = S gnalTypeValue(
+      S gnalType.RepeatedProf leV s 14dM nV s 2V1NoNegat ve)
   }
 
-  object EnableSourceParam
+  object EnableS ceParam
       extends FSParam[Boolean](
-        name = "twistly_repeatedprofilevisits_enable_source",
+        na  = "tw stly_repeatedprof lev s s_enable_s ce",
         default = true
       )
 
-  object MinScoreParam
+  object M nScoreParam
       extends FSBoundedParam[Double](
-        name = "twistly_repeatedprofilevisits_min_score",
+        na  = "tw stly_repeatedprof lev s s_m n_score",
         default = 0.5,
-        min = 0.0,
+        m n = 0.0,
         max = 1.0
       )
 
-  object ProfileMinVisitType
-      extends FSEnumParam[ProfileMinVisitParam.type](
-        name = "twistly_repeatedprofilevisits_min_visit_type_id",
-        default = ProfileMinVisitParam.TotalVisitsInPast14Days,
-        enum = ProfileMinVisitParam
+  object Prof leM nV s Type
+      extends FSEnumParam[Prof leM nV s Param.type](
+        na  = "tw stly_repeatedprof lev s s_m n_v s _type_ d",
+        default = Prof leM nV s Param.TotalV s s nPast14Days,
+        enum = Prof leM nV s Param
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(EnableSourceParam, ProfileMinVisitType)
+  val AllParams: Seq[Param[_] w h FSNa ] = Seq(EnableS ceParam, Prof leM nV s Type)
 
-  lazy val config: BaseConfig = {
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableSourceParam
+  lazy val conf g: BaseConf g = {
+    val booleanOverr des = FeatureSw chOverr deUt l.getBooleanFSOverr des(
+      EnableS ceParam
     )
 
-    val enumOverrides = FeatureSwitchOverrideUtil.getEnumFSOverrides(
-      NullStatsReceiver,
+    val enumOverr des = FeatureSw chOverr deUt l.getEnumFSOverr des(
+      NullStatsRece ver,
       Logger(getClass),
-      ProfileMinVisitType
+      Prof leM nV s Type
     )
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(enumOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set(booleanOverr des: _*)
+      .set(enumOverr des: _*)
+      .bu ld()
   }
 }

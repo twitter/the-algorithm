@@ -1,3 +1,3 @@
-#!/bin/sh
+#!/b n/sh
 
-exit 0
+ex  0

@@ -1,16 +1,16 @@
-package com.twitter.cr_mixer.module.core
+package com.tw ter.cr_m xer.module.core
 
-import com.google.inject.Provides
-import com.twitter.discovery.common.configapi.FeatureContextBuilder
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.inject.TwitterModule
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.d scovery.common.conf gap .FeatureContextBu lder
+ mport com.tw ter.featuresw c s.v2.FeatureSw c s
+ mport com.tw ter. nject.Tw terModule
+ mport javax. nject.S ngleton
 
-object FeatureContextBuilderModule extends TwitterModule {
+object FeatureContextBu lderModule extends Tw terModule {
 
-  @Provides
-  @Singleton
-  def providesFeatureContextBuilder(featureSwitches: FeatureSwitches): FeatureContextBuilder = {
-    FeatureContextBuilder(featureSwitches)
+  @Prov des
+  @S ngleton
+  def prov desFeatureContextBu lder(featureSw c s: FeatureSw c s): FeatureContextBu lder = {
+    FeatureContextBu lder(featureSw c s)
   }
 }

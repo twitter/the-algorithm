@@ -1,9 +1,9 @@
-#!/bin/sh
-#RUST_LOG=debug LD_LIBRARY_PATH=so/onnx/lib target/release/navi_onnx --port 30 --num-worker-threads 8 --intra-op-parallelism 8 --inter-op-parallelism 8 \
-RUST_LOG=info LD_LIBRARY_PATH=so/onnx/lib cargo run --bin navi_onnx --features onnx -- \
+#!/b n/sh
+#RUST_LOG=debug LD_L BRARY_PATH=so/onnx/l b target/release/nav _onnx --port 30 --num-worker-threads 8 -- ntra-op-parallel sm 8 -- nter-op-parallel sm 8 \
+RUST_LOG= nfo LD_L BRARY_PATH=so/onnx/l b cargo run --b n nav _onnx --features onnx -- \
     --port 8030 --num-worker-threads 8 \
-    --model-check-interval-secs 30 \
-    --modelsync-cli "echo" \
-    --onnx-ep-options use_arena=true \
-    --model-dir models/prod_home --output caligrated_probabilities  --input "" --intra-op-parallelism 8 --inter-op-parallelism 8 --max-batch-size 1 --batch-time-out-millis 1 \
-    --model-dir models/prod_home1 --output caligrated_probabilities  --input "" --intra-op-parallelism 8 --inter-op-parallelism 8 --max-batch-size 1 --batch-time-out-millis 1 \
+    --model-c ck- nterval-secs 30 \
+    --modelsync-cl  "echo" \
+    --onnx-ep-opt ons use_arena=true \
+    --model-d r models/prod_ho  --output cal grated_probab l  es  -- nput "" -- ntra-op-parallel sm 8 -- nter-op-parallel sm 8 --max-batch-s ze 1 --batch-t  -out-m ll s 1 \
+    --model-d r models/prod_ho 1 --output cal grated_probab l  es  -- nput "" -- ntra-op-parallel sm 8 -- nter-op-parallel sm 8 --max-batch-s ze 1 --batch-t  -out-m ll s 1 \

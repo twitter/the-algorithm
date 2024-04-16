@@ -1,67 +1,67 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+package com.tw ter.product_m xer.component_l brary.p pel ne.cand date.who_to_follow_module
 
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.Base64String
-import com.twitter.bijection.{Injection => Serializer}
-import com.twitter.hermit.internal.thriftscala.HermitTrackingToken
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventDetailsBuilder
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
-import com.twitter.servo.cache.ThriftSerializer
-import com.twitter.suggests.controller_data.thriftscala.ControllerData
-import com.twitter.util.Try
-import org.apache.thrift.protocol.TBinaryProtocol
+ mport com.tw ter.b ject on.scrooge.B naryScalaCodec
+ mport com.tw ter.b ject on.Base64Str ng
+ mport com.tw ter.b ject on.{ nject on => Ser al zer}
+ mport com.tw ter. rm . nternal.thr ftscala. rm Track ngToken
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.UserCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseCl entEventDeta lsBu lder
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEventDeta ls
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.T  l nesDeta ls
+ mport com.tw ter.servo.cac .Thr ftSer al zer
+ mport com.tw ter.suggests.controller_data.thr ftscala.ControllerData
+ mport com.tw ter.ut l.Try
+ mport org.apac .thr ft.protocol.TB naryProtocol
 
-object WhoToFollowClientEventDetailsBuilder {
+object WhoToFollowCl entEventDeta lsBu lder {
 
-  val InjectionType = "WhoToFollow"
+  val  nject onType = "WhoToFollow"
 
-  private implicit val ByteSerializer: Serializer[ControllerData, Array[Byte]] =
-    BinaryScalaCodec(ControllerData)
+  pr vate  mpl c  val ByteSer al zer: Ser al zer[ControllerData, Array[Byte]] =
+    B naryScalaCodec(ControllerData)
 
-  private val TrackingTokenSerializer =
-    new ThriftSerializer[HermitTrackingToken](HermitTrackingToken, new TBinaryProtocol.Factory())
+  pr vate val Track ngTokenSer al zer =
+    new Thr ftSer al zer[ rm Track ngToken]( rm Track ngToken, new TB naryProtocol.Factory())
 
-  val ControllerDataSerializer: Serializer[ControllerData, String] =
-    Serializer.connect[ControllerData, Array[Byte], Base64String, String]
+  val ControllerDataSer al zer: Ser al zer[ControllerData, Str ng] =
+    Ser al zer.connect[ControllerData, Array[Byte], Base64Str ng, Str ng]
 
-  def deserializeTrackingToken(token: Option[String]): Option[HermitTrackingToken] =
-    token.flatMap(t => Try(TrackingTokenSerializer.fromString(t)).toOption)
+  def deser al zeTrack ngToken(token: Opt on[Str ng]): Opt on[ rm Track ngToken] =
+    token.flatMap(t => Try(Track ngTokenSer al zer.fromStr ng(t)).toOpt on)
 
-  def serializeControllerData(cd: ControllerData): String = ControllerDataSerializer(cd)
+  def ser al zeControllerData(cd: ControllerData): Str ng = ControllerDataSer al zer(cd)
 }
 
-case class WhoToFollowClientEventDetailsBuilder[-Query <: PipelineQuery](
-  trackingTokenFeature: Feature[_, Option[String]],
-) extends BaseClientEventDetailsBuilder[Query, UserCandidate] {
+case class WhoToFollowCl entEventDeta lsBu lder[-Query <: P pel neQuery](
+  track ngTokenFeature: Feature[_, Opt on[Str ng]],
+) extends BaseCl entEventDeta lsBu lder[Query, UserCand date] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidate: UserCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[ClientEventDetails] = {
-    val serializedTrackingToken = candidateFeatures.getOrElse(trackingTokenFeature, None)
+    cand date: UserCand date,
+    cand dateFeatures: FeatureMap
+  ): Opt on[Cl entEventDeta ls] = {
+    val ser al zedTrack ngToken = cand dateFeatures.getOrElse(track ngTokenFeature, None)
 
-    val controllerData = WhoToFollowClientEventDetailsBuilder
-      .deserializeTrackingToken(serializedTrackingToken)
+    val controllerData = WhoToFollowCl entEventDeta lsBu lder
+      .deser al zeTrack ngToken(ser al zedTrack ngToken)
       .flatMap(_.controllerData)
-      .map(WhoToFollowClientEventDetailsBuilder.serializeControllerData)
+      .map(WhoToFollowCl entEventDeta lsBu lder.ser al zeControllerData)
 
-    Some(
-      ClientEventDetails(
-        conversationDetails = None,
-        timelinesDetails = Some(
-          TimelinesDetails(
-            injectionType = Some(WhoToFollowClientEventDetailsBuilder.InjectionType),
+    So (
+      Cl entEventDeta ls(
+        conversat onDeta ls = None,
+        t  l nesDeta ls = So (
+          T  l nesDeta ls(
+             nject onType = So (WhoToFollowCl entEventDeta lsBu lder. nject onType),
             controllerData = controllerData,
-            sourceData = serializedTrackingToken)),
-        articleDetails = None,
-        liveEventDetails = None,
-        commerceDetails = None
+            s ceData = ser al zedTrack ngToken)),
+        art cleDeta ls = None,
+        l veEventDeta ls = None,
+        com rceDeta ls = None
       ))
   }
 }

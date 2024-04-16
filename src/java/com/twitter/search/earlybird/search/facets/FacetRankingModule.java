@@ -1,26 +1,26 @@
-package com.twitter.search.earlybird.search.facets;
+package com.tw ter.search.earlyb rd.search.facets;
 
-import java.util.ArrayList;
-import java.util.List;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.L st;
 
-import com.twitter.search.core.earlybird.facets.FacetCountState;
-import com.twitter.search.earlybird.search.EarlybirdLuceneSearcher;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetCountState;
+ mport com.tw ter.search.earlyb rd.search.Earlyb rdLuceneSearc r;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetF eldResults;
 
-public abstract class FacetRankingModule {
-  public static final List<FacetRankingModule> REGISTERED_RANKING_MODULES =
-      new ArrayList<>();
+publ c abstract class FacetRank ngModule {
+  publ c stat c f nal L st<FacetRank ngModule> REG STERED_RANK NG_MODULES =
+      new ArrayL st<>();
 
-  static {
-    REGISTERED_RANKING_MODULES.add(new SimpleCountRankingModule());
+  stat c {
+    REG STERED_RANK NG_MODULES.add(new S mpleCountRank ngModule());
   }
 
   /**
-   * Prepares the {@link com.twitter.search.earlybird.thrift.ThriftFacetFieldResults}
-   * in {@link FacetCountState} before they're returned. This extension point therefore allows
-   * post-processing the facet results, e.g. for re-ranking or sorting purposes.
+   * Prepares t  {@l nk com.tw ter.search.earlyb rd.thr ft.Thr ftFacetF eldResults}
+   *  n {@l nk FacetCountState} before t y're returned. T  extens on po nt t refore allows
+   * post-process ng t  facet results, e.g. for re-rank ng or sort ng purposes.
    */
-  public abstract void prepareResults(
-      EarlybirdLuceneSearcher.FacetSearchResults hits,
-      FacetCountState<ThriftFacetFieldResults> facetCountState);
+  publ c abstract vo d prepareResults(
+      Earlyb rdLuceneSearc r.FacetSearchResults h s,
+      FacetCountState<Thr ftFacetF eldResults> facetCountState);
 }

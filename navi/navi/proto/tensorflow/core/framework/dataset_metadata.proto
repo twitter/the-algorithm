@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package tensorflow.data;
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/dataset_metadata_go_proto";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/fra work/dataset_ tadata_go_proto";
 
 // next: 2
-message Metadata {
-  bytes name = 1;
+ ssage  tadata {
+  bytes na  = 1;
 }

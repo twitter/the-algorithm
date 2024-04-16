@@ -1,42 +1,42 @@
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendations
+na space java com.tw ter.follow_recom ndat ons.thr ftjava
+#@na space scala com.tw ter.follow_recom ndat ons.thr ftscala
+#@na space strato com.tw ter.follow_recom ndat ons
 
-struct Header {
- 1: required Title title
+struct  ader {
+ 1: requ red T le t le
 }
 
-struct Title {
- 1: required string text
+struct T le {
+ 1: requ red str ng text
 }
 
 struct Footer {
- 1: optional Action action
+ 1: opt onal Act on act on
 }
 
-struct Action {
- 1: required string text
- 2: required string actionURL
+struct Act on {
+ 1: requ red str ng text
+ 2: requ red str ng act onURL
 }
 
-struct UserList {
-  1: required bool userBioEnabled
-  2: required bool userBioTruncated
-  3: optional i64 userBioMaxLines
-  4: optional FeedbackAction feedbackAction
+struct UserL st {
+  1: requ red bool userB oEnabled
+  2: requ red bool userB oTruncated
+  3: opt onal  64 userB oMaxL nes
+  4: opt onal FeedbackAct on feedbackAct on
 }
 
 struct Carousel {
-  1: optional FeedbackAction feedbackAction
+  1: opt onal FeedbackAct on feedbackAct on
 }
 
-union WTFPresentation {
-  1: UserList userBioList
+un on WTFPresentat on {
+  1: UserL st userB oL st
   2: Carousel carousel
 }
 
-struct DismissUserId {}
+struct D sm ssUser d {}
 
-union FeedbackAction {
- 1: DismissUserId dismissUserId
+un on FeedbackAct on {
+ 1: D sm ssUser d d sm ssUser d
 }

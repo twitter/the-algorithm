@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-import com.twitter.finagle.tracing.Trace
+ mport com.tw ter.f nagle.trac ng.Trace
 
-object Session {
+object Sess on {
 
   /**
-   * The sessionId in FRS is the finagle trace id which is static within the lifetime of a single
+   * T  sess on d  n FRS  s t  f nagle trace  d wh ch  s stat c w h n t  l fet   of a s ngle
    * request.
    *
-   * It is used when generating per-candidate tokens (in TrackingTokenTransform) and is also passed
-   * in to downstream Optimus ranker requests.
+   *    s used w n generat ng per-cand date tokens ( n Track ngTokenTransform) and  s also passed
+   *  n to downstream Opt mus ranker requests.
    *
    */
-  def getSessionId: Long = Trace.id.traceId.toLong
+  def getSess on d: Long = Trace. d.trace d.toLong
 }

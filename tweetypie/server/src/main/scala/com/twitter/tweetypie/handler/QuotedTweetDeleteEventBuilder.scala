@@ -1,32 +1,32 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.repository.TweetRepository
-import com.twitter.tweetypie.store.QuotedTweetDelete
-import com.twitter.tweetypie.thriftscala.QuotedTweetDeleteRequest
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.repos ory.T etQuery
+ mport com.tw ter.t etyp e.repos ory.T etRepos ory
+ mport com.tw ter.t etyp e.store.QuotedT etDelete
+ mport com.tw ter.t etyp e.thr ftscala.QuotedT etDeleteRequest
 
 /**
- * Create the appropriate QuotedTweetDelete.Event for a QuotedTweetDelete request.
+ * Create t  appropr ate QuotedT etDelete.Event for a QuotedT etDelete request.
  */
-object QuotedTweetDeleteEventBuilder {
-  type Type = QuotedTweetDeleteRequest => Future[Option[QuotedTweetDelete.Event]]
+object QuotedT etDeleteEventBu lder {
+  type Type = QuotedT etDeleteRequest => Future[Opt on[QuotedT etDelete.Event]]
 
-  val queryOptions: TweetQuery.Options =
-    TweetQuery.Options(GetTweetsHandler.BaseInclude)
+  val queryOpt ons: T etQuery.Opt ons =
+    T etQuery.Opt ons(GetT etsHandler.Base nclude)
 
-  def apply(tweetRepo: TweetRepository.Optional): Type =
+  def apply(t etRepo: T etRepos ory.Opt onal): Type =
     request =>
-      Stitch.run(
-        tweetRepo(request.quotingTweetId, queryOptions).map {
-          _.map { quotingTweet =>
-            QuotedTweetDelete.Event(
-              quotingTweetId = request.quotingTweetId,
-              quotingUserId = getUserId(quotingTweet),
-              quotedTweetId = request.quotedTweetId,
-              quotedUserId = request.quotedUserId,
-              timestamp = Time.now
+      St ch.run(
+        t etRepo(request.quot ngT et d, queryOpt ons).map {
+          _.map { quot ngT et =>
+            QuotedT etDelete.Event(
+              quot ngT et d = request.quot ngT et d,
+              quot ngUser d = getUser d(quot ngT et),
+              quotedT et d = request.quotedT et d,
+              quotedUser d = request.quotedUser d,
+              t  stamp = T  .now
             )
           }
         }

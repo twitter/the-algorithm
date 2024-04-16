@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-trait HasRecentFollowedByUserIds {
-  // user ids that have recently followed the target user; target user has been "followed by" them.
-  def recentFollowedByUserIds: Option[Seq[Long]]
+tra  HasRecentFollo dByUser ds {
+  // user  ds that have recently follo d t  target user; target user has been "follo d by" t m.
+  def recentFollo dByUser ds: Opt on[Seq[Long]]
 
-  lazy val numRecentFollowedByUserIds: Int = recentFollowedByUserIds.map(_.size).getOrElse(0)
+  lazy val numRecentFollo dByUser ds:  nt = recentFollo dByUser ds.map(_.s ze).getOrElse(0)
 }

@@ -1,45 +1,45 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.tw ter.ho _m xer.funct onal_component.feature_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.DismissInfoFeature
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.timelinemixer.clients.manhattan.InjectionHistoryClient
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinemixer.clients.manhattan.DismissInfo
-import com.twitter.timelineservice.suggests.thriftscala.SuggestType
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.model.Ho Features.D sm ss nfoFeature
+ mport com.tw ter.ho _m xer.serv ce.Ho M xerAlertConf g
+ mport com.tw ter.t  l nem xer.cl ents.manhattan. nject on toryCl ent
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nem xer.cl ents.manhattan.D sm ss nfo
+ mport com.tw ter.t  l neserv ce.suggests.thr ftscala.SuggestType
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-object DismissInfoQueryFeatureHydrator {
-  val DismissInfoSuggestTypes = Seq(SuggestType.WhoToFollow)
+object D sm ss nfoQueryFeatureHydrator {
+  val D sm ss nfoSuggestTypes = Seq(SuggestType.WhoToFollow)
 }
 
-@Singleton
-case class DismissInfoQueryFeatureHydrator @Inject() (
-  dismissInfoClient: InjectionHistoryClient)
-    extends QueryFeatureHydrator[PipelineQuery] {
+@S ngleton
+case class D sm ss nfoQueryFeatureHydrator @ nject() (
+  d sm ss nfoCl ent:  nject on toryCl ent)
+    extends QueryFeatureHydrator[P pel neQuery] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("DismissInfo")
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er("D sm ss nfo")
 
-  override val features: Set[Feature[_, _]] = Set(DismissInfoFeature)
+  overr de val features: Set[Feature[_, _]] = Set(D sm ss nfoFeature)
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] =
-    Stitch.callFuture {
-      dismissInfoClient
-        .readDismissInfoEntries(
-          query.getRequiredUserId,
-          DismissInfoQueryFeatureHydrator.DismissInfoSuggestTypes).map { response =>
-          val dismissInfoMap = response.mapValues(DismissInfo.fromThrift)
-          FeatureMapBuilder().add(DismissInfoFeature, dismissInfoMap).build()
+  overr de def hydrate(query: P pel neQuery): St ch[FeatureMap] =
+    St ch.callFuture {
+      d sm ss nfoCl ent
+        .readD sm ss nfoEntr es(
+          query.getRequ redUser d,
+          D sm ss nfoQueryFeatureHydrator.D sm ss nfoSuggestTypes).map { response =>
+          val d sm ss nfoMap = response.mapValues(D sm ss nfo.fromThr ft)
+          FeatureMapBu lder().add(D sm ss nfoFeature, d sm ss nfoMap).bu ld()
         }
     }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.8, 50, 60, 60)
+  overr de val alerts = Seq(
+    Ho M xerAlertConf g.Bus nessH s.defaultSuccessRateAlert(99.8, 50, 60, 60)
   )
 }

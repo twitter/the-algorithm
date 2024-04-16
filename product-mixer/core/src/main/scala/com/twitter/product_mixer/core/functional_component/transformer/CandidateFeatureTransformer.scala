@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.functional_component.transformer
+package com.tw ter.product_m xer.core.funct onal_component.transfor r
 
 /**
- * Populates a [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]] with Features
- * that are available in the [[CandidateSourceResult]]
+ * Populates a [[com.tw ter.product_m xer.core.feature.featuremap.FeatureMap]] w h Features
+ * that are ava lable  n t  [[Cand dateS ceResult]]
  */
-trait CandidateFeatureTransformer[-CandidateSourceResult]
-    extends FeatureTransformer[CandidateSourceResult]
+tra  Cand dateFeatureTransfor r[-Cand dateS ceResult]
+    extends FeatureTransfor r[Cand dateS ceResult]

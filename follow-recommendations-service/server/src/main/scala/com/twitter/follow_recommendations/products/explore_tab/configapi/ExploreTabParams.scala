@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.products.explore_tab.configapi
+package com.tw ter.follow_recom ndat ons.products.explore_tab.conf gap 
 
-import com.twitter.timelines.configapi.Param
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
 object ExploreTabParams {
   object EnableProduct extends Param[Boolean](false)

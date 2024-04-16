@@ -1,61 +1,61 @@
 #pragma once
-#ifdef __cplusplus
+# fdef __cplusplus
 
-#include <twml/common.h>
-#include <twml/defines.h>
-#include <twml/DataRecord.h>
-#include <twml/TensorRecordReader.h>
+# nclude <twml/common.h>
+# nclude <twml/def nes.h>
+# nclude <twml/DataRecord.h>
+# nclude <twml/TensorRecordReader.h>
 
-#include <cstdint>
+# nclude <cstd nt>
 
-#include <vector>
-#include <string>
-#include <unordered_map>
+# nclude <vector>
+# nclude <str ng>
+# nclude <unordered_map>
 
-namespace twml {
+na space twml {
 
-class TWMLAPI DataRecordReader : public TensorRecordReader {
+class TWMLAP  DataRecordReader : publ c TensorRecordReader {
 
-private:
-  typedef Map<int64_t, int64_t> KeyMap_t;
+pr vate:
+  typedef Map< nt64_t,  nt64_t> KeyMap_t;
   KeyMap_t *m_keep_map;
   KeyMap_t *m_labels_map;
-  KeyMap_t *m_weights_map;
+  KeyMap_t *m_  ghts_map;
 
-public:
-  bool keepKey              (const int64_t &key, int64_t &code);
-  bool isLabel              (const int64_t &key, int64_t &code);
-  bool isWeight             (const int64_t &key, int64_t &code);
-  void readBinary           (const int feature_type , DataRecord *record);
-  void readContinuous       (const int feature_type , DataRecord *record);
-  void readDiscrete         (const int feature_type , DataRecord *record);
-  void readString           (const int feature_type , DataRecord *record);
-  void readSparseBinary     (const int feature_type , DataRecord *record);
-  void readSparseContinuous (const int feature_type , DataRecord *record);
-  void readBlob             (const int feature_type , DataRecord *record);
+publ c:
+  bool keepKey              (const  nt64_t &key,  nt64_t &code);
+  bool  sLabel              (const  nt64_t &key,  nt64_t &code);
+  bool  s  ght             (const  nt64_t &key,  nt64_t &code);
+  vo d readB nary           (const  nt feature_type , DataRecord *record);
+  vo d readCont nuous       (const  nt feature_type , DataRecord *record);
+  vo d readD screte         (const  nt feature_type , DataRecord *record);
+  vo d readStr ng           (const  nt feature_type , DataRecord *record);
+  vo d readSparseB nary     (const  nt feature_type , DataRecord *record);
+  vo d readSparseCont nuous (const  nt feature_type , DataRecord *record);
+  vo d readBlob             (const  nt feature_type , DataRecord *record);
 
   DataRecordReader() :
       TensorRecordReader(nullptr),
       m_keep_map(nullptr),
       m_labels_map(nullptr),
-      m_weights_map(nullptr)
+      m_  ghts_map(nullptr)
       {}
 
-  // Using a template instead of int64_t because tensorflow implements int64 based on compiler.
-  void setKeepMap(KeyMap_t *keep_map) {
+  // Us ng a template  nstead of  nt64_t because tensorflow  mple nts  nt64 based on comp ler.
+  vo d setKeepMap(KeyMap_t *keep_map) {
     m_keep_map = keep_map;
   }
 
-  void setLabelsMap(KeyMap_t *labels_map) {
+  vo d setLabelsMap(KeyMap_t *labels_map) {
     m_labels_map = labels_map;
   }
 
-  void setWeightsMap(KeyMap_t *weights_map) {
-    m_weights_map = weights_map;
+  vo d set  ghtsMap(KeyMap_t *  ghts_map) {
+    m_  ghts_map =   ghts_map;
   }
 
-  void setDecodeMode(int64_t mode) {}
+  vo d setDecodeMode( nt64_t mode) {}
 };
 
 }
-#endif
+#end f

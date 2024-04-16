@@ -1,71 +1,71 @@
-package com.twitter.timelineranker.parameters.in_network_tweets
+package com.tw ter.t  l neranker.para ters. n_network_t ets
 
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.servo.decider.DeciderKeyName
-import com.twitter.timelineranker.decider.DeciderKey
-import com.twitter.timelineranker.parameters.in_network_tweets.InNetworkTweetParams._
-import com.twitter.timelineranker.parameters.util.ConfigHelper
-import com.twitter.timelines.configapi._
-import com.twitter.servo.decider.DeciderKeyEnum
+ mport com.tw ter.servo.dec der.Dec derGateBu lder
+ mport com.tw ter.servo.dec der.Dec derKeyNa 
+ mport com.tw ter.t  l neranker.dec der.Dec derKey
+ mport com.tw ter.t  l neranker.para ters. n_network_t ets. nNetworkT etParams._
+ mport com.tw ter.t  l neranker.para ters.ut l.Conf g lper
+ mport com.tw ter.t  l nes.conf gap ._
+ mport com.tw ter.servo.dec der.Dec derKeyEnum
 
-object InNetworkTweetProduction {
-  val deciderByParam: Map[Param[_], DeciderKeyEnum#Value] = Map[Param[_], DeciderKeyName](
-    EnableContentFeaturesHydrationParam -> DeciderKey.RecycledEnableContentFeaturesHydration,
-    MaxCountMultiplierParam -> DeciderKey.RecycledMaxCountMultiplier
+object  nNetworkT etProduct on {
+  val dec derByParam: Map[Param[_], Dec derKeyEnum#Value] = Map[Param[_], Dec derKeyNa ](
+    EnableContentFeaturesHydrat onParam -> Dec derKey.RecycledEnableContentFeaturesHydrat on,
+    MaxCountMult pl erParam -> Dec derKey.RecycledMaxCountMult pl er
   )
 
-  val doubleParams: Seq[MaxCountMultiplierParam.type] = Seq(
-    MaxCountMultiplierParam
+  val doubleParams: Seq[MaxCountMult pl erParam.type] = Seq(
+    MaxCountMult pl erParam
   )
 
-  val booleanDeciderParams: Seq[EnableContentFeaturesHydrationParam.type] = Seq(
-    EnableContentFeaturesHydrationParam
+  val booleanDec derParams: Seq[EnableContentFeaturesHydrat onParam.type] = Seq(
+    EnableContentFeaturesHydrat onParam
   )
 
-  val booleanFeatureSwitchParams: Seq[FSParam[Boolean]] = Seq(
-    EnableExcludeSourceTweetIdsQueryParam,
-    EnableTokensInContentFeaturesHydrationParam,
-    EnableReplyRootTweetHydrationParam,
-    EnableTweetTextInContentFeaturesHydrationParam,
-    EnableConversationControlInContentFeaturesHydrationParam,
-    EnableTweetMediaHydrationParam,
-    EnableEarlybirdReturnAllResultsParam,
-    EnableEarlybirdRealtimeCgMigrationParam,
-    RecycledMaxFollowedUsersEnableAntiDilutionParam
+  val booleanFeatureSw chParams: Seq[FSParam[Boolean]] = Seq(
+    EnableExcludeS ceT et dsQueryParam,
+    EnableTokens nContentFeaturesHydrat onParam,
+    EnableReplyRootT etHydrat onParam,
+    EnableT etText nContentFeaturesHydrat onParam,
+    EnableConversat onControl nContentFeaturesHydrat onParam,
+    EnableT et d aHydrat onParam,
+    EnableEarlyb rdReturnAllResultsParam,
+    EnableEarlyb rdRealt  CgM grat onParam,
+    RecycledMaxFollo dUsersEnableAnt D lut onParam
   )
 
-  val boundedIntFeatureSwitchParams: Seq[FSBoundedParam[Int]] = Seq(
-    MaxFollowedUsersParam,
-    RelevanceOptionsMaxHitsToProcessParam
+  val bounded ntFeatureSw chParams: Seq[FSBoundedParam[ nt]] = Seq(
+    MaxFollo dUsersParam,
+    RelevanceOpt onsMaxH sToProcessParam
   )
 }
 
-class InNetworkTweetProduction(deciderGateBuilder: DeciderGateBuilder) {
-  val configHelper: ConfigHelper =
-    new ConfigHelper(InNetworkTweetProduction.deciderByParam, deciderGateBuilder)
-  val doubleDeciderOverrides: Seq[OptionalOverride[Double]] =
-    configHelper.createDeciderBasedOverrides(InNetworkTweetProduction.doubleParams)
-  val booleanDeciderOverrides: Seq[OptionalOverride[Boolean]] =
-    configHelper.createDeciderBasedBooleanOverrides(InNetworkTweetProduction.booleanDeciderParams)
-  val boundedIntFeatureSwitchOverrides: Seq[OptionalOverride[Int]] =
-    FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-      InNetworkTweetProduction.boundedIntFeatureSwitchParams: _*)
-  val booleanFeatureSwitchOverrides: Seq[OptionalOverride[Boolean]] =
-    FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      InNetworkTweetProduction.booleanFeatureSwitchParams: _*)
+class  nNetworkT etProduct on(dec derGateBu lder: Dec derGateBu lder) {
+  val conf g lper: Conf g lper =
+    new Conf g lper( nNetworkT etProduct on.dec derByParam, dec derGateBu lder)
+  val doubleDec derOverr des: Seq[Opt onalOverr de[Double]] =
+    conf g lper.createDec derBasedOverr des( nNetworkT etProduct on.doubleParams)
+  val booleanDec derOverr des: Seq[Opt onalOverr de[Boolean]] =
+    conf g lper.createDec derBasedBooleanOverr des( nNetworkT etProduct on.booleanDec derParams)
+  val bounded ntFeatureSw chOverr des: Seq[Opt onalOverr de[ nt]] =
+    FeatureSw chOverr deUt l.getBounded ntFSOverr des(
+       nNetworkT etProduct on.bounded ntFeatureSw chParams: _*)
+  val booleanFeatureSw chOverr des: Seq[Opt onalOverr de[Boolean]] =
+    FeatureSw chOverr deUt l.getBooleanFSOverr des(
+       nNetworkT etProduct on.booleanFeatureSw chParams: _*)
 
-  val config: BaseConfig = new BaseConfigBuilder()
+  val conf g: BaseConf g = new BaseConf gBu lder()
     .set(
-      booleanDeciderOverrides: _*
+      booleanDec derOverr des: _*
     )
     .set(
-      doubleDeciderOverrides: _*
+      doubleDec derOverr des: _*
     )
     .set(
-      boundedIntFeatureSwitchOverrides: _*
+      bounded ntFeatureSw chOverr des: _*
     )
     .set(
-      booleanFeatureSwitchOverrides: _*
+      booleanFeatureSw chOverr des: _*
     )
-    .build(InNetworkTweetProduction.getClass.getSimpleName)
+    .bu ld( nNetworkT etProduct on.getClass.getS mpleNa )
 }

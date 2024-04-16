@@ -1,78 +1,78 @@
-package com.twitter.simclusters_v2.scalding.embedding.common
+package com.tw ter.s mclusters_v2.scald ng.embedd ng.common
 
-import com.twitter.recos.entities.thriftscala.Entity
-import com.twitter.scalding.Args
-import com.twitter.scalding.TypedPipe
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.UserId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.wtf.entity_real_graph.common.EntityUtil
-import com.twitter.wtf.entity_real_graph.thriftscala.Edge
-import com.twitter.wtf.entity_real_graph.thriftscala.EntityType
-import com.twitter.wtf.entity_real_graph.thriftscala.FeatureName
+ mport com.tw ter.recos.ent  es.thr ftscala.Ent y
+ mport com.tw ter.scald ng.Args
+ mport com.tw ter.scald ng.TypedP pe
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.Embedd ngUt l.User d
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.tw ter.wtf.ent y_real_graph.common.Ent yUt l
+ mport com.tw ter.wtf.ent y_real_graph.thr ftscala.Edge
+ mport com.tw ter.wtf.ent y_real_graph.thr ftscala.Ent yType
+ mport com.tw ter.wtf.ent y_real_graph.thr ftscala.FeatureNa 
 
-object EntityEmbeddingUtil {
+object Ent yEmbedd ngUt l {
 
-  def getEntityUserMatrix(
-    entityRealGraphSource: TypedPipe[Edge],
-    halfLife: HalfLifeScores.HalfLifeScoresType,
-    entityType: EntityType
-  ): TypedPipe[(Entity, (UserId, Double))] = {
-    entityRealGraphSource
+  def getEnt yUserMatr x(
+    ent yRealGraphS ce: TypedP pe[Edge],
+    halfL fe: HalfL feScores.HalfL feScoresType,
+    ent yType: Ent yType
+  ): TypedP pe[(Ent y, (User d, Double))] = {
+    ent yRealGraphS ce
       .flatMap {
-        case Edge(userId, entity, consumerFeatures, _, _)
-            if consumerFeatures.exists(_.exists(_.featureName == FeatureName.Favorites)) &&
-              EntityUtil.getEntityType(entity) == entityType =>
+        case Edge(user d, ent y, consu rFeatures, _, _)
+             f consu rFeatures.ex sts(_.ex sts(_.featureNa  == FeatureNa .Favor es)) &&
+              Ent yUt l.getEnt yType(ent y) == ent yType =>
           for {
-            features <- consumerFeatures
-            favFeatures <- features.find(_.featureName == FeatureName.Favorites)
+            features <- consu rFeatures
+            favFeatures <- features.f nd(_.featureNa  == FeatureNa .Favor es)
             ewmaMap <- favFeatures.featureValues.ewmaMap
-            favScore <- ewmaMap.get(halfLife.id)
-          } yield (entity, (userId, favScore))
+            favScore <- ewmaMap.get(halfL fe. d)
+          } y eld (ent y, (user d, favScore))
 
         case _ => None
       }
   }
 
-  object HalfLifeScores extends Enumeration {
-    type HalfLifeScoresType = Value
+  object HalfL feScores extends Enu rat on {
+    type HalfL feScoresType = Value
     val OneDay: Value = Value(1)
     val SevenDays: Value = Value(7)
-    val FourteenDays: Value = Value(14)
-    val ThirtyDays: Value = Value(30)
-    val SixtyDays: Value = Value(60)
+    val F teenDays: Value = Value(14)
+    val Th rtyDays: Value = Value(30)
+    val S xtyDays: Value = Value(60)
   }
 
-  case class EntityEmbeddingsJobConfig(
-    topK: Int,
-    halfLife: HalfLifeScores.HalfLifeScoresType,
-    modelVersion: ModelVersion,
-    entityType: EntityType,
-    isAdhoc: Boolean)
+  case class Ent yEmbedd ngsJobConf g(
+    topK:  nt,
+    halfL fe: HalfL feScores.HalfL feScoresType,
+    modelVers on: ModelVers on,
+    ent yType: Ent yType,
+     sAdhoc: Boolean)
 
-  object EntityEmbeddingsJobConfig {
+  object Ent yEmbedd ngsJobConf g {
 
-    def apply(args: Args, isAdhoc: Boolean): EntityEmbeddingsJobConfig = {
+    def apply(args: Args,  sAdhoc: Boolean): Ent yEmbedd ngsJobConf g = {
 
-      val entityTypeArg =
-        EntityType.valueOf(args.getOrElse("entity-type", default = "")) match {
-          case Some(entityType) => entityType
+      val ent yTypeArg =
+        Ent yType.valueOf(args.getOrElse("ent y-type", default = "")) match {
+          case So (ent yType) => ent yType
           case _ =>
-            throw new IllegalArgumentException(
-              s"Argument [--entity-type] must be provided. Supported options [" +
-                s"${EntityType.SemanticCore.name}, ${EntityType.Hashtag.name}]")
+            throw new  llegalArgu ntExcept on(
+              s"Argu nt [--ent y-type] must be prov ded. Supported opt ons [" +
+                s"${Ent yType.Semant cCore.na }, ${Ent yType.Hashtag.na }]")
         }
 
-      EntityEmbeddingsJobConfig(
-        topK = args.getOrElse("top-k", default = "100").toInt,
-        halfLife = HalfLifeScores(args.getOrElse("half-life", default = "14").toInt),
-        // Fail fast if there is no correct model-version argument
-        modelVersion = ModelVersions.toModelVersion(
-          args.getOrElse("model-version", ModelVersions.Model20M145K2020)
+      Ent yEmbedd ngsJobConf g(
+        topK = args.getOrElse("top-k", default = "100").to nt,
+        halfL fe = HalfL feScores(args.getOrElse("half-l fe", default = "14").to nt),
+        // Fa l fast  f t re  s no correct model-vers on argu nt
+        modelVers on = ModelVers ons.toModelVers on(
+          args.getOrElse("model-vers on", ModelVers ons.Model20M145K2020)
         ),
-        // Fail fast if there is no correct entity-type argument
-        entityType = entityTypeArg,
-        isAdhoc = isAdhoc
+        // Fa l fast  f t re  s no correct ent y-type argu nt
+        ent yType = ent yTypeArg,
+         sAdhoc =  sAdhoc
       )
     }
   }

@@ -1,88 +1,88 @@
-package com.twitter.timelineranker.util
+package com.tw ter.t  l neranker.ut l
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.UserId
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.search.earlyb rd.thr ftscala.Thr ftSearchResult
+ mport com.tw ter.t  l nes.model.T et d
+ mport com.tw ter.t  l nes.model.User d
 
-object SourceTweetsUtil {
-  def getSourceTweetIds(
-    searchResults: Seq[ThriftSearchResult],
-    searchResultsTweetIds: Set[TweetId],
-    followedUserIds: Seq[TweetId],
-    shouldIncludeReplyRootTweets: Boolean,
-    statsReceiver: StatsReceiver
-  ): Seq[TweetId] = {
-    val replyRootTweetCounter = statsReceiver.counter("replyRootTweet")
+object S ceT etsUt l {
+  def getS ceT et ds(
+    searchResults: Seq[Thr ftSearchResult],
+    searchResultsT et ds: Set[T et d],
+    follo dUser ds: Seq[T et d],
+    should ncludeReplyRootT ets: Boolean,
+    statsRece ver: StatsRece ver
+  ): Seq[T et d] = {
+    val replyRootT etCounter = statsRece ver.counter("replyRootT et")
 
-    val retweetSourceTweetIds = getRetweetSourceTweetIds(searchResults, searchResultsTweetIds)
+    val ret etS ceT et ds = getRet etS ceT et ds(searchResults, searchResultsT et ds)
 
-    val inNetworkReplyInReplyToTweetIds = getInNetworkInReplyToTweetIds(
+    val  nNetworkReply nReplyToT et ds = get nNetwork nReplyToT et ds(
       searchResults,
-      searchResultsTweetIds,
-      followedUserIds
+      searchResultsT et ds,
+      follo dUser ds
     )
 
-    val extendedRepliesSourceTweetIds = getExtendedReplySourceTweetIds(
+    val extendedRepl esS ceT et ds = getExtendedReplyS ceT et ds(
       searchResults,
-      searchResultsTweetIds,
-      followedUserIds
+      searchResultsT et ds,
+      follo dUser ds
     )
 
-    val replyRootTweetIds = if (shouldIncludeReplyRootTweets) {
-      val rootTweetIds = getReplyRootTweetIds(
+    val replyRootT et ds =  f (should ncludeReplyRootT ets) {
+      val rootT et ds = getReplyRootT et ds(
         searchResults,
-        searchResultsTweetIds
+        searchResultsT et ds
       )
-      replyRootTweetCounter.incr(rootTweetIds.size)
+      replyRootT etCounter. ncr(rootT et ds.s ze)
 
-      rootTweetIds
+      rootT et ds
     } else {
       Seq.empty
     }
 
-    (retweetSourceTweetIds ++ extendedRepliesSourceTweetIds ++
-      inNetworkReplyInReplyToTweetIds ++ replyRootTweetIds).distinct
+    (ret etS ceT et ds ++ extendedRepl esS ceT et ds ++
+       nNetworkReply nReplyToT et ds ++ replyRootT et ds).d st nct
   }
 
-  def getInNetworkInReplyToTweetIds(
-    searchResults: Seq[ThriftSearchResult],
-    searchResultsTweetIds: Set[TweetId],
-    followedUserIds: Seq[UserId]
-  ): Seq[TweetId] = {
+  def get nNetwork nReplyToT et ds(
+    searchResults: Seq[Thr ftSearchResult],
+    searchResultsT et ds: Set[T et d],
+    follo dUser ds: Seq[User d]
+  ): Seq[T et d] = {
     searchResults
-      .filter(SearchResultUtil.isInNetworkReply(followedUserIds))
-      .flatMap(SearchResultUtil.getSourceTweetId)
-      .filterNot(searchResultsTweetIds.contains)
+      .f lter(SearchResultUt l. s nNetworkReply(follo dUser ds))
+      .flatMap(SearchResultUt l.getS ceT et d)
+      .f lterNot(searchResultsT et ds.conta ns)
   }
 
-  def getReplyRootTweetIds(
-    searchResults: Seq[ThriftSearchResult],
-    searchResultsTweetIds: Set[TweetId]
-  ): Seq[TweetId] = {
+  def getReplyRootT et ds(
+    searchResults: Seq[Thr ftSearchResult],
+    searchResultsT et ds: Set[T et d]
+  ): Seq[T et d] = {
     searchResults
-      .flatMap(SearchResultUtil.getReplyRootTweetId)
-      .filterNot(searchResultsTweetIds.contains)
+      .flatMap(SearchResultUt l.getReplyRootT et d)
+      .f lterNot(searchResultsT et ds.conta ns)
   }
 
-  def getRetweetSourceTweetIds(
-    searchResults: Seq[ThriftSearchResult],
-    searchResultsTweetIds: Set[TweetId]
-  ): Seq[TweetId] = {
+  def getRet etS ceT et ds(
+    searchResults: Seq[Thr ftSearchResult],
+    searchResultsT et ds: Set[T et d]
+  ): Seq[T et d] = {
     searchResults
-      .filter(SearchResultUtil.isRetweet)
-      .flatMap(SearchResultUtil.getSourceTweetId)
-      .filterNot(searchResultsTweetIds.contains)
+      .f lter(SearchResultUt l. sRet et)
+      .flatMap(SearchResultUt l.getS ceT et d)
+      .f lterNot(searchResultsT et ds.conta ns)
   }
 
-  def getExtendedReplySourceTweetIds(
-    searchResults: Seq[ThriftSearchResult],
-    searchResultsTweetIds: Set[TweetId],
-    followedUserIds: Seq[UserId]
-  ): Seq[TweetId] = {
+  def getExtendedReplyS ceT et ds(
+    searchResults: Seq[Thr ftSearchResult],
+    searchResultsT et ds: Set[T et d],
+    follo dUser ds: Seq[User d]
+  ): Seq[T et d] = {
     searchResults
-      .filter(SearchResultUtil.isExtendedReply(followedUserIds))
-      .flatMap(SearchResultUtil.getSourceTweetId)
-      .filterNot(searchResultsTweetIds.contains)
+      .f lter(SearchResultUt l. sExtendedReply(follo dUser ds))
+      .flatMap(SearchResultUt l.getS ceT et d)
+      .f lterNot(searchResultsT et ds.conta ns)
   }
 }

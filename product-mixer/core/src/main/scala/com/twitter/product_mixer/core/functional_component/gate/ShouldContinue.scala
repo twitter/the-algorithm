@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.functional_component.gate
+package com.tw ter.product_m xer.core.funct onal_component.gate
 
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-trait ShouldContinue[Query <: PipelineQuery] {
+tra  ShouldCont nue[Query <: P pel neQuery] {
   def apply(query: Query): Boolean
 }

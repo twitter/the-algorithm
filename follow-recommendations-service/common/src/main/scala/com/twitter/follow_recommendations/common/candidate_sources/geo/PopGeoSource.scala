@@ -1,50 +1,50 @@
-package com.twitter.follow_recommendations.common.candidate_sources.geo
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.geo
 
-import com.google.inject.Singleton
-import com.google.inject.name.Named
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.base.CachedCandidateSource
-import com.twitter.follow_recommendations.common.candidate_sources.base.StratoFetcherWithUnitViewSource
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.PopularInGeoProof
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.hermit.pop_geo.thriftscala.PopUsersInPlace
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.util.Duration
-import javax.inject.Inject
+ mport com.google. nject.S ngleton
+ mport com.google. nject.na .Na d
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.base.Cac dCand dateS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.base.StratoFetc rW hUn V ewS ce
+ mport com.tw ter.follow_recom ndat ons.common.constants.Gu ceNa dConstants
+ mport com.tw ter.follow_recom ndat ons.common.models.AccountProof
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.Popular nGeoProof
+ mport com.tw ter.follow_recom ndat ons.common.models.Reason
+ mport com.tw ter. rm .pop_geo.thr ftscala.PopUsers nPlace
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.ut l.Durat on
+ mport javax. nject. nject
 
-@Singleton
-class BasePopGeoSource @Inject() (
-  @Named(GuiceNamedConstants.POP_USERS_IN_PLACE_FETCHER) fetcher: Fetcher[
-    String,
-    Unit,
-    PopUsersInPlace
-  ]) extends StratoFetcherWithUnitViewSource[String, PopUsersInPlace](
-      fetcher,
-      BasePopGeoSource.Identifier) {
+@S ngleton
+class BasePopGeoS ce @ nject() (
+  @Na d(Gu ceNa dConstants.POP_USERS_ N_PLACE_FETCHER) fetc r: Fetc r[
+    Str ng,
+    Un ,
+    PopUsers nPlace
+  ]) extends StratoFetc rW hUn V ewS ce[Str ng, PopUsers nPlace](
+      fetc r,
+      BasePopGeoS ce. dent f er) {
 
-  override def map(target: String, candidates: PopUsersInPlace): Seq[CandidateUser] =
-    BasePopGeoSource.map(target, candidates)
+  overr de def map(target: Str ng, cand dates: PopUsers nPlace): Seq[Cand dateUser] =
+    BasePopGeoS ce.map(target, cand dates)
 }
 
-object BasePopGeoSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("BasePopGeoSource")
+object BasePopGeoS ce {
+  val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er("BasePopGeoS ce")
   val MaxResults = 200
 
-  def map(target: String, candidates: PopUsersInPlace): Seq[CandidateUser] =
-    candidates.popUsers.sortBy(-_.score).take(BasePopGeoSource.MaxResults).view.map { candidate =>
-      CandidateUser(
-        id = candidate.userId,
-        score = Some(candidate.score),
-        reason = Some(
+  def map(target: Str ng, cand dates: PopUsers nPlace): Seq[Cand dateUser] =
+    cand dates.popUsers.sortBy(-_.score).take(BasePopGeoS ce.MaxResults).v ew.map { cand date =>
+      Cand dateUser(
+         d = cand date.user d,
+        score = So (cand date.score),
+        reason = So (
           Reason(
-            Some(
+            So (
               AccountProof(
-                popularInGeoProof = Some(PopularInGeoProof(location = candidates.place))
+                popular nGeoProof = So (Popular nGeoProof(locat on = cand dates.place))
               )
             )
           )
@@ -53,17 +53,17 @@ object BasePopGeoSource {
     }
 }
 
-@Singleton
-class PopGeoSource @Inject() (basePopGeoSource: BasePopGeoSource, statsReceiver: StatsReceiver)
-    extends CachedCandidateSource[String, CandidateUser](
-      basePopGeoSource,
-      PopGeoSource.MaxCacheSize,
-      PopGeoSource.CacheTTL,
-      statsReceiver,
-      PopGeoSource.Identifier)
+@S ngleton
+class PopGeoS ce @ nject() (basePopGeoS ce: BasePopGeoS ce, statsRece ver: StatsRece ver)
+    extends Cac dCand dateS ce[Str ng, Cand dateUser](
+      basePopGeoS ce,
+      PopGeoS ce.MaxCac S ze,
+      PopGeoS ce.Cac TTL,
+      statsRece ver,
+      PopGeoS ce. dent f er)
 
-object PopGeoSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("PopGeoSource")
-  val MaxCacheSize = 20000
-  val CacheTTL: Duration = 1.hours
+object PopGeoS ce {
+  val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er("PopGeoS ce")
+  val MaxCac S ze = 20000
+  val Cac TTL: Durat on = 1.h s
 }

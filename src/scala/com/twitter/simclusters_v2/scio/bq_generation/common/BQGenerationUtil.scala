@@ -1,255 +1,255 @@
-package com.twitter.simclusters_v2.scio
-package bq_generation.common
+package com.tw ter.s mclusters_v2.sc o
+package bq_generat on.common
 
-import com.twitter.wtf.beam.bq_embedding_export.BQQueryUtils
-import org.joda.time.DateTime
+ mport com.tw ter.wtf.beam.bq_embedd ng_export.BQQueryUt ls
+ mport org.joda.t  .DateT  
 
-object BQGenerationUtil {
-  // Consumer Embeddings BQ table details
-  val interestedInEmbeddings20M145K2020Table = BQTableDetails(
+object BQGenerat onUt l {
+  // Consu r Embedd ngs BQ table deta ls
+  val  nterested nEmbedd ngs20M145K2020Table = BQTableDeta ls(
     "twttr-bq-cassowary-prod",
     "user",
-    "simclusters_v2_user_to_interested_in_20M_145K_2020",
+    "s mclusters_v2_user_to_ nterested_ n_20M_145K_2020",
   )
-  val mtsConsumerEmbeddingsFav90P20MTable = BQTableDetails(
+  val mtsConsu rEmbedd ngsFav90P20MTable = BQTableDeta ls(
     "twttr-bq-cassowary-prod",
     "user",
-    "mts_consumer_embeddings_fav90p_20m",
+    "mts_consu r_embedd ngs_fav90p_20m",
   )
 
   // Common SQL path
-  val TweetFavCountSQLPath =
-    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/tweet_fav_count.sql"
+  val T etFavCountSQLPath =
+    s"/com/tw ter/s mclusters_v2/sc o/bq_generat on/sql/t et_fav_count.sql"
 
-  val NSFWTweetIdDenylistSQLPath =
-    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/nsfw_tweet_denylist.sql"
+  val NSFWT et dDenyl stSQLPath =
+    s"/com/tw ter/s mclusters_v2/sc o/bq_generat on/sql/nsfw_t et_denyl st.sql"
 
-  val ClusterTopTweetsIntersectionWithFavBasedIndexSQLPath =
-    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/cluster_top_tweets_intersection_with_fav_based_index.sql"
+  val ClusterTopT ets ntersect onW hFavBased ndexSQLPath =
+    s"/com/tw ter/s mclusters_v2/sc o/bq_generat on/sql/cluster_top_t ets_ ntersect on_w h_fav_based_ ndex.sql"
 
-  // Read InterestedIn 2020
-  def getInterestedIn2020SQL(
-    queryDate: DateTime,
-    lookBackDays: Int
-  ): String = {
+  // Read  nterested n 2020
+  def get nterested n2020SQL(
+    queryDate: DateT  ,
+    lookBackDays:  nt
+  ): Str ng = {
     s"""
-       |SELECT userId, 
-       |        clusterIdToScores.key AS clusterId,
-       |        clusterIdToScores.value.logFavScore AS userScore,
-       |        clusterIdToScores.value.logFavScoreClusterNormalizedOnly AS clusterNormalizedLogFavScore,
-       |FROM `$interestedInEmbeddings20M145K2020Table`, UNNEST(clusterIdToScores) AS clusterIdToScores
-       |WHERE DATE(_PARTITIONTIME) = 
-       |  (  -- Get latest partition time
-       |  SELECT MAX(DATE(_PARTITIONTIME)) latest_partition
-       |  FROM `$interestedInEmbeddings20M145K2020Table`
-       |  WHERE Date(_PARTITIONTIME) BETWEEN 
+       |SELECT user d, 
+       |        cluster dToScores.key AS cluster d,
+       |        cluster dToScores.value.logFavScore AS userScore,
+       |        cluster dToScores.value.logFavScoreClusterNormal zedOnly AS clusterNormal zedLogFavScore,
+       |FROM `$ nterested nEmbedd ngs20M145K2020Table`, UNNEST(cluster dToScores) AS cluster dToScores
+       |WHERE DATE(_PART T ONT ME) = 
+       |  (  -- Get latest part  on t  
+       |  SELECT MAX(DATE(_PART T ONT ME)) latest_part  on
+       |  FROM `$ nterested nEmbedd ngs20M145K2020Table`
+       |  WHERE Date(_PART T ONT ME) BETWEEN 
        |      DATE_SUB(Date("${queryDate}"), 
-       |      INTERVAL $lookBackDays DAY) AND DATE("$queryDate")
+       |       NTERVAL $lookBackDays DAY) AND DATE("$queryDate")
        |  )
-       |   AND clusterIdToScores.value.logFavScore > 0.0 # min score threshold for user embedding values
-       |""".stripMargin
+       |   AND cluster dToScores.value.logFavScore > 0.0 # m n score threshold for user embedd ng values
+       |""".str pMarg n
   }
 
-  // Read MTS Consumer Embeddings - Fav90P20M config
-  def getMTSConsumerEmbeddingsFav90P20MSQL(
-    queryDate: DateTime,
-    lookBackDays: Int
-  ): String = {
-    // We read the most recent snapshot of MTS Consumer Embeddings Fav90P20M
+  // Read MTS Consu r Embedd ngs - Fav90P20M conf g
+  def getMTSConsu rEmbedd ngsFav90P20MSQL(
+    queryDate: DateT  ,
+    lookBackDays:  nt
+  ): Str ng = {
+    //   read t  most recent snapshot of MTS Consu r Embedd ngs Fav90P20M
     s"""
-       |SELECT userId,             
-       |    clusterIdToScores.key AS clusterId,
-       |    clusterIdToScores.value.logFavUserScore AS userScore,
-       |    clusterIdToScores.value.logFavUserScoreClusterNormalized AS clusterNormalizedLogFavScore
-       |    FROM `$mtsConsumerEmbeddingsFav90P20MTable`, UNNEST(embedding.clusterIdToScores) AS clusterIdToScores
-       |WHERE DATE(ingestionTime) = (  
-       |    -- Get latest partition time
-       |    SELECT MAX(DATE(ingestionTime)) latest_partition
-       |    FROM `$mtsConsumerEmbeddingsFav90P20MTable`
-       |    WHERE Date(ingestionTime) BETWEEN 
+       |SELECT user d,             
+       |    cluster dToScores.key AS cluster d,
+       |    cluster dToScores.value.logFavUserScore AS userScore,
+       |    cluster dToScores.value.logFavUserScoreClusterNormal zed AS clusterNormal zedLogFavScore
+       |    FROM `$mtsConsu rEmbedd ngsFav90P20MTable`, UNNEST(embedd ng.cluster dToScores) AS cluster dToScores
+       |WHERE DATE( ngest onT  ) = (  
+       |    -- Get latest part  on t  
+       |    SELECT MAX(DATE( ngest onT  )) latest_part  on
+       |    FROM `$mtsConsu rEmbedd ngsFav90P20MTable`
+       |    WHERE Date( ngest onT  ) BETWEEN 
        |        DATE_SUB(Date("${queryDate}"), 
-       |        INTERVAL  $lookBackDays DAY) AND DATE("${queryDate}")
-       |) AND clusterIdToScores.value.logFavUserScore > 0.0
-       |""".stripMargin
+       |         NTERVAL  $lookBackDays DAY) AND DATE("${queryDate}")
+       |) AND cluster dToScores.value.logFavUserScore > 0.0
+       |""".str pMarg n
   }
 
   /*
-   * For a specific tweet engagement, retrieve the user id, tweet id, and timestamp
+   * For a spec f c t et engage nt, retr eve t  user  d, t et  d, and t  stamp
    *
    * Return:
-   *  String - UserId, TweetId and Timestamp table SQL string format
-   *           Table Schema
-   *              - userId: Long
-   *              - tweetId: Long
-   *              - tsMillis: Long
+   *  Str ng - User d, T et d and T  stamp table SQL str ng format
+   *           Table Sc ma
+   *              - user d: Long
+   *              - t et d: Long
+   *              - tsM ll s: Long
    */
-  def getUserTweetEngagementEventPairSQL(
-    startTime: DateTime,
-    endTime: DateTime,
-    userTweetEngagementEventPairSqlPath: String,
-    userTweetEngagementEventPairTemplateVariable: Map[String, String]
-  ): String = {
-    val templateVariables = Map(
-      "START_TIME" -> startTime.toString(),
-      "END_TIME" -> endTime.toString(),
-      "NO_OLDER_TWEETS_THAN_DATE" -> startTime.toString()
-    ) ++ userTweetEngagementEventPairTemplateVariable
-    BQQueryUtils.getBQQueryFromSqlFile(userTweetEngagementEventPairSqlPath, templateVariables)
+  def getUserT etEngage ntEventPa rSQL(
+    startT  : DateT  ,
+    endT  : DateT  ,
+    userT etEngage ntEventPa rSqlPath: Str ng,
+    userT etEngage ntEventPa rTemplateVar able: Map[Str ng, Str ng]
+  ): Str ng = {
+    val templateVar ables = Map(
+      "START_T ME" -> startT  .toStr ng(),
+      "END_T ME" -> endT  .toStr ng(),
+      "NO_OLDER_TWEETS_THAN_DATE" -> startT  .toStr ng()
+    ) ++ userT etEngage ntEventPa rTemplateVar able
+    BQQueryUt ls.getBQQueryFromSqlF le(userT etEngage ntEventPa rSqlPath, templateVar ables)
   }
 
   /*
-   * Retrieve tweets and the # of favs it got from a given time window
+   * Retr eve t ets and t  # of favs   got from a g ven t   w ndow
    *
    * Return:
-   *  String - TweetId  and fav count table SQL string format
-   *           Table Schema
-   *              - tweetId: Long
+   *  Str ng - T et d  and fav count table SQL str ng format
+   *           Table Sc ma
+   *              - t et d: Long
    *              - favCount: Long
    */
-  def getTweetIdWithFavCountSQL(
-    startTime: DateTime,
-    endTime: DateTime,
-  ): String = {
-    val templateVariables =
+  def getT et dW hFavCountSQL(
+    startT  : DateT  ,
+    endT  : DateT  ,
+  ): Str ng = {
+    val templateVar ables =
       Map(
-        "START_TIME" -> startTime.toString(),
-        "END_TIME" -> endTime.toString(),
+        "START_T ME" -> startT  .toStr ng(),
+        "END_T ME" -> endT  .toStr ng(),
       )
-    BQQueryUtils.getBQQueryFromSqlFile(TweetFavCountSQLPath, templateVariables)
+    BQQueryUt ls.getBQQueryFromSqlF le(T etFavCountSQLPath, templateVar ables)
   }
 
   /*
-   * From a given time window, retrieve tweetIds that were created by specific author or media type
+   * From a g ven t   w ndow, retr eve t et ds that  re created by spec f c author or  d a type
    *
-   * Input:
-   *  - startTime: DateTime
-   *  - endTime: DateTime
-   *  - filterMediaType: Option[Int]
-   *      MediaType
-   *        1: Image
-   *        2: GIF
-   *        3: Video
-   * - filterNSFWAuthor: Boolean
-   *      Whether we want to filter out NSFW tweet authors
+   *  nput:
+   *  - startT  : DateT  
+   *  - endT  : DateT  
+   *  - f lter d aType: Opt on[ nt]
+   *       d aType
+   *        1:  mage
+   *        2: G F
+   *        3: V deo
+   * - f lterNSFWAuthor: Boolean
+   *      W t r   want to f lter out NSFW t et authors
    *
    * Return:
-   *  String - TweetId table SQL string format
-   *           Table Schema
-   *              - tweetId: Long
+   *  Str ng - T et d table SQL str ng format
+   *           Table Sc ma
+   *              - t et d: Long
    */
-  def getTweetIdWithMediaAndNSFWAuthorFilterSQL(
-    startTime: DateTime,
-    endTime: DateTime,
-    filterMediaType: Option[Int],
-    filterNSFWAuthor: Boolean
-  ): String = {
+  def getT et dW h d aAndNSFWAuthorF lterSQL(
+    startT  : DateT  ,
+    endT  : DateT  ,
+    f lter d aType: Opt on[ nt],
+    f lterNSFWAuthor: Boolean
+  ): Str ng = {
     val sql = s"""
-                 |SELECT DISTINCT tweetId
-                 |FROM `twttr-bq-tweetsource-prod.user.unhydrated_flat` tweetsource, UNNEST(media) AS media 
-                 |WHERE (DATE(_PARTITIONTIME) >= DATE("${startTime}") AND DATE(_PARTITIONTIME) <= DATE("${endTime}")) AND
-                 |         timestamp_millis((1288834974657 + 
-                 |          ((tweetId  & 9223372036850581504) >> 22))) >= TIMESTAMP("${startTime}")
-                 |          AND timestamp_millis((1288834974657 + 
-                 |        ((tweetId  & 9223372036850581504) >> 22))) <= TIMESTAMP("${endTime}")
-                 |""".stripMargin
+                 |SELECT D ST NCT t et d
+                 |FROM `twttr-bq-t ets ce-prod.user.unhydrated_flat` t ets ce, UNNEST( d a) AS  d a 
+                 |WHERE (DATE(_PART T ONT ME) >= DATE("${startT  }") AND DATE(_PART T ONT ME) <= DATE("${endT  }")) AND
+                 |         t  stamp_m ll s((1288834974657 + 
+                 |          ((t et d  & 9223372036850581504) >> 22))) >= T MESTAMP("${startT  }")
+                 |          AND t  stamp_m ll s((1288834974657 + 
+                 |        ((t et d  & 9223372036850581504) >> 22))) <= T MESTAMP("${endT  }")
+                 |""".str pMarg n
 
-    val filterMediaStr = filterMediaType match {
-      case Some(mediaType) => s" AND media.media_type =${mediaType}"
+    val f lter d aStr = f lter d aType match {
+      case So ( d aType) => s" AND  d a. d a_type =${ d aType}"
       case _ => ""
     }
-    val filterNSFWAuthorStr = if (filterNSFWAuthor) " AND nsfwUser = false" else ""
-    sql + filterMediaStr + filterNSFWAuthorStr
+    val f lterNSFWAuthorStr =  f (f lterNSFWAuthor) " AND nsfwUser = false" else ""
+    sql + f lter d aStr + f lterNSFWAuthorStr
   }
 
   /*
-   * From a given time window, retrieve tweetIds that fall into the NSFW deny list
+   * From a g ven t   w ndow, retr eve t et ds that fall  nto t  NSFW deny l st
    *
-   * Input:
-   *  - startTime: DateTime
-   *  - endTime: DateTime
+   *  nput:
+   *  - startT  : DateT  
+   *  - endT  : DateT  
    *
   * Return:
-   *  String - TweetId table SQL string format
-   *           Table Schema
-   *              - tweetId: Long
+   *  Str ng - T et d table SQL str ng format
+   *           Table Sc ma
+   *              - t et d: Long
    */
-  def getNSFWTweetIdDenylistSQL(
-    startTime: DateTime,
-    endTime: DateTime,
-  ): String = {
-    val templateVariables =
+  def getNSFWT et dDenyl stSQL(
+    startT  : DateT  ,
+    endT  : DateT  ,
+  ): Str ng = {
+    val templateVar ables =
       Map(
-        "START_TIME" -> startTime.toString(),
-        "END_TIME" -> endTime.toString(),
+        "START_T ME" -> startT  .toStr ng(),
+        "END_T ME" -> endT  .toStr ng(),
       )
-    BQQueryUtils.getBQQueryFromSqlFile(NSFWTweetIdDenylistSQLPath, templateVariables)
+    BQQueryUt ls.getBQQueryFromSqlF le(NSFWT et dDenyl stSQLPath, templateVar ables)
   }
 
   /*
-   * From a given cluster id to top k tweets table and a time window,
-   * (1) Retrieve the latest fav-based top tweets per cluster table within the time window
-   * (2) Inner join with the given table using cluster id and tweet id
-   * (3) Create the top k tweets per cluster table for the intersection
+   * From a g ven cluster  d to top k t ets table and a t   w ndow,
+   * (1) Retr eve t  latest fav-based top t ets per cluster table w h n t  t   w ndow
+   * (2)  nner jo n w h t  g ven table us ng cluster  d and t et  d
+   * (3) Create t  top k t ets per cluster table for t   ntersect on
    *
-   * Input:
-   *  - startTime: DateTime
-   *  - endTime: DateTime
-   *  - topKTweetsForClusterKeySQL: String, a SQL query
+   *  nput:
+   *  - startT  : DateT  
+   *  - endT  : DateT  
+   *  - topKT etsForClusterKeySQL: Str ng, a SQL query
    *
    * Return:
-   *  String - TopKTweetsForClusterKey table SQL string format
-   *           Table Schema
-   *              - clusterId: Long
-   *              - topKTweetsForClusterKey: (Long, Long)
-   *                  - tweetId: Long
-   *                  - tweetScore: Long
+   *  Str ng - TopKT etsForClusterKey table SQL str ng format
+   *           Table Sc ma
+   *              - cluster d: Long
+   *              - topKT etsForClusterKey: (Long, Long)
+   *                  - t et d: Long
+   *                  - t etScore: Long
    */
-  def generateClusterTopTweetIntersectionWithFavBasedIndexSQL(
-    startTime: DateTime,
-    endTime: DateTime,
-    clusterTopKTweets: Int,
-    topKTweetsForClusterKeySQL: String
-  ): String = {
-    val templateVariables =
+  def generateClusterTopT et ntersect onW hFavBased ndexSQL(
+    startT  : DateT  ,
+    endT  : DateT  ,
+    clusterTopKT ets:  nt,
+    topKT etsForClusterKeySQL: Str ng
+  ): Str ng = {
+    val templateVar ables =
       Map(
-        "START_TIME" -> startTime.toString(),
-        "END_TIME" -> endTime.toString(),
-        "CLUSTER_TOP_K_TWEETS" -> clusterTopKTweets.toString,
-        "CLUSTER_TOP_TWEETS_SQL" -> topKTweetsForClusterKeySQL
+        "START_T ME" -> startT  .toStr ng(),
+        "END_T ME" -> endT  .toStr ng(),
+        "CLUSTER_TOP_K_TWEETS" -> clusterTopKT ets.toStr ng,
+        "CLUSTER_TOP_TWEETS_SQL" -> topKT etsForClusterKeySQL
       )
-    BQQueryUtils.getBQQueryFromSqlFile(
-      ClusterTopTweetsIntersectionWithFavBasedIndexSQLPath,
-      templateVariables)
+    BQQueryUt ls.getBQQueryFromSqlF le(
+      ClusterTopT ets ntersect onW hFavBased ndexSQLPath,
+      templateVar ables)
   }
 
   /*
-   * Given a list of action types, build a string that indicates the user
-   * engaged with the tweet
+   * G ven a l st of act on types, bu ld a str ng that  nd cates t  user
+   * engaged w h t  t et
    *
-   * Example use case: We want to build a SQL query that specifies this user engaged
-   *  with tweet with either fav or retweet actions.
+   * Example use case:   want to bu ld a SQL query that spec f es t  user engaged
+   *  w h t et w h e  r fav or ret et act ons.
    *
-   * Input:
-   *  - actionTypes: Seq("ServerTweetFav", "ServerTweetRetweet")
+   *  nput:
+   *  - act onTypes: Seq("ServerT etFav", "ServerT etRet et")
    *  - booleanOperator: "OR"
-   * Output: "ServerTweetFav.engaged = 1 OR ServerTweetRetweet.engaged = 1"
+   * Output: "ServerT etFav.engaged = 1 OR ServerT etRet et.engaged = 1"
    *
    * Example SQL:
-   *  SELECT ServerTweetFav, ServerTweetRetweet
+   *  SELECT ServerT etFav, ServerT etRet et
    *  FROM table
-   *  WHERE ServerTweetFav.engaged = 1 OR ServerTweetRetweet.engaged = 1
+   *  WHERE ServerT etFav.engaged = 1 OR ServerT etRet et.engaged = 1
    */
-  def buildActionTypesEngagementIndicatorString(
-    actionTypes: Seq[String],
-    booleanOperator: String = "OR"
-  ): String = {
-    actionTypes.map(action => f"""${action}.engaged = 1""").mkString(f""" ${booleanOperator} """)
+  def bu ldAct onTypesEngage nt nd catorStr ng(
+    act onTypes: Seq[Str ng],
+    booleanOperator: Str ng = "OR"
+  ): Str ng = {
+    act onTypes.map(act on => f"""${act on}.engaged = 1""").mkStr ng(f""" ${booleanOperator} """)
   }
 }
 
-case class BQTableDetails(
-  projectName: String,
-  tableName: String,
-  datasetName: String) {
-  override def toString: String = s"${projectName}.${tableName}.${datasetName}"
+case class BQTableDeta ls(
+  projectNa : Str ng,
+  tableNa : Str ng,
+  datasetNa : Str ng) {
+  overr de def toStr ng: Str ng = s"${projectNa }.${tableNa }.${datasetNa }"
 }

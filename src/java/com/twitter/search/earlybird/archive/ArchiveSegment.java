@@ -1,88 +1,88 @@
-package com.twitter.search.earlybird.archive;
+package com.tw ter.search.earlyb rd.arch ve;
 
-import java.io.IOException;
-import java.util.Date;
+ mport java. o. OExcept on;
+ mport java.ut l.Date;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
+ mport com.google.common.base.Pred cate;
+ mport com.google.common.base.Pred cates;
 
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.common.partitioning.base.TimeSlice;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.earlybird.archive.ArchiveTimeSlicer.ArchiveTimeSlice;
-import com.twitter.search.earlybird.document.DocumentFactory;
-import com.twitter.search.earlybird.document.TweetDocument;
+ mport com.tw ter.search.common.part  on ng.base.Seg nt;
+ mport com.tw ter.search.common.part  on ng.base.T  Sl ce;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ft ndex ngEvent;
+ mport com.tw ter.search.common.ut l. o.recordreader.RecordReader;
+ mport com.tw ter.search.earlyb rd.arch ve.Arch veT  Sl cer.Arch veT  Sl ce;
+ mport com.tw ter.search.earlyb rd.docu nt.Docu ntFactory;
+ mport com.tw ter.search.earlyb rd.docu nt.T etDocu nt;
 
-public class ArchiveSegment extends Segment {
-  private final ArchiveTimeSlice archiveTimeSlice;
+publ c class Arch veSeg nt extends Seg nt {
+  pr vate f nal Arch veT  Sl ce arch veT  Sl ce;
 
-  public static final Predicate<Date> MATCH_ALL_DATE_PREDICATE = input -> true;
+  publ c stat c f nal Pred cate<Date> MATCH_ALL_DATE_PRED CATE =  nput -> true;
 
-  // Constructor used for indexing an archive segment
-  public ArchiveSegment(ArchiveTimeSlice archiveTimeSlice,
-                        int hashPartitionID,
-                        int maxSegmentSize) {
-    super(new TimeSlice(archiveTimeSlice.getMinStatusID(hashPartitionID),
-            maxSegmentSize, hashPartitionID,
-            archiveTimeSlice.getNumHashPartitions()),
-        archiveTimeSlice.getEndDate().getTime());
-    this.archiveTimeSlice = archiveTimeSlice;
+  // Constructor used for  ndex ng an arch ve seg nt
+  publ c Arch veSeg nt(Arch veT  Sl ce arch veT  Sl ce,
+                         nt hashPart  on D,
+                         nt maxSeg ntS ze) {
+    super(new T  Sl ce(arch veT  Sl ce.getM nStatus D(hashPart  on D),
+            maxSeg ntS ze, hashPart  on D,
+            arch veT  Sl ce.getNumHashPart  ons()),
+        arch veT  Sl ce.getEndDate().getT  ());
+    t .arch veT  Sl ce = arch veT  Sl ce;
   }
 
   /**
-   * Constructor used for loading a flushed segment. Only be used by SegmentBuilder; Earlybird
-   * does not use this.
+   * Constructor used for load ng a flus d seg nt. Only be used by Seg ntBu lder; Earlyb rd
+   * does not use t .
    */
-  ArchiveSegment(long timeSliceId,
-                 int maxSegmentSize,
-                 int partitions,
-                 int hashPartitionID,
+  Arch veSeg nt(long t  Sl ce d,
+                  nt maxSeg ntS ze,
+                  nt part  ons,
+                  nt hashPart  on D,
                  Date dataEndDate) {
-    super(new TimeSlice(timeSliceId, maxSegmentSize, hashPartitionID, partitions),
-        dataEndDate.getTime());
-    // No archive timeslice is needed for loading.
-    this.archiveTimeSlice = null;
+    super(new T  Sl ce(t  Sl ce d, maxSeg ntS ze, hashPart  on D, part  ons),
+        dataEndDate.getT  ());
+    // No arch ve t  sl ce  s needed for load ng.
+    t .arch veT  Sl ce = null;
   }
 
   /**
-   * Returns the tweets reader for this segment.
+   * Returns t  t ets reader for t  seg nt.
    *
-   * @param documentFactory The factory that converts ThriftDocuments to Lucene documents.
+   * @param docu ntFactory T  factory that converts Thr ftDocu nts to Lucene docu nts.
    */
-  public RecordReader<TweetDocument> getStatusRecordReader(
-      DocumentFactory<ThriftIndexingEvent> documentFactory) throws IOException {
-    return getStatusRecordReader(documentFactory, Predicates.<Date>alwaysTrue());
+  publ c RecordReader<T etDocu nt> getStatusRecordReader(
+      Docu ntFactory<Thr ft ndex ngEvent> docu ntFactory) throws  OExcept on {
+    return getStatusRecordReader(docu ntFactory, Pred cates.<Date>alwaysTrue());
   }
 
   /**
-   * Returns the tweets reader for this segment.
+   * Returns t  t ets reader for t  seg nt.
    *
-   * @param documentFactory The factory that converts ThriftDocuments to Lucene documents.
-   * @param filter A predicate that filters tweets based on the date they were created on.
+   * @param docu ntFactory T  factory that converts Thr ftDocu nts to Lucene docu nts.
+   * @param f lter A pred cate that f lters t ets based on t  date t y  re created on.
    */
-  public RecordReader<TweetDocument> getStatusRecordReader(
-      DocumentFactory<ThriftIndexingEvent> documentFactory,
-      Predicate<Date> filter) throws IOException {
-    if (archiveTimeSlice != null) {
-      return archiveTimeSlice.getStatusReader(this, documentFactory, filter);
+  publ c RecordReader<T etDocu nt> getStatusRecordReader(
+      Docu ntFactory<Thr ft ndex ngEvent> docu ntFactory,
+      Pred cate<Date> f lter) throws  OExcept on {
+     f (arch veT  Sl ce != null) {
+      return arch veT  Sl ce.getStatusReader(t , docu ntFactory, f lter);
     } else {
-      throw new IllegalStateException("ArchiveSegment has no associated ArchiveTimeslice."
-          + "This ArchiveSegment can only be used for loading flushed segments.");
+      throw new  llegalStateExcept on("Arch veSeg nt has no assoc ated Arch veT  sl ce."
+          + "T  Arch veSeg nt can only be used for load ng flus d seg nts.");
     }
   }
 
-  public Date getDataEndDate() {
-    return archiveTimeSlice == null
-        ? new Date(getDataEndDateInclusiveMillis()) : archiveTimeSlice.getEndDate();
+  publ c Date getDataEndDate() {
+    return arch veT  Sl ce == null
+        ? new Date(getDataEndDate nclus veM ll s()) : arch veT  Sl ce.getEndDate();
   }
 
-  public ArchiveTimeSlice getArchiveTimeSlice() {
-    return archiveTimeSlice;
+  publ c Arch veT  Sl ce getArch veT  Sl ce() {
+    return arch veT  Sl ce;
   }
 
-  @Override
-  public String toString() {
-    return super.toString() + " " + archiveTimeSlice.getDescription();
+  @Overr de
+  publ c Str ng toStr ng() {
+    return super.toStr ng() + " " + arch veT  Sl ce.getDescr pt on();
   }
 }

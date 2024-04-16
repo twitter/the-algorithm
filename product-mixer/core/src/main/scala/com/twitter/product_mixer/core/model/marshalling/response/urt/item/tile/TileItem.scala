@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t le
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEvent nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FeedbackAct on nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata. mageVar ant
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Url
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.EntryNa space
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne em
 
-object TileItem {
-  val TileEntryNamespace = EntryNamespace("tile")
+object T le em {
+  val T leEntryNa space = EntryNa space("t le")
 }
 
-case class TileItem(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  title: String,
-  supportingText: String,
-  url: Option[Url],
-  image: Option[ImageVariant],
-  content: TileContent)
-    extends TimelineItem {
-  override val entryNamespace: EntryNamespace = TileItem.TileEntryNamespace
+case class T le em(
+  overr de val  d: Long,
+  overr de val sort ndex: Opt on[Long],
+  overr de val cl entEvent nfo: Opt on[Cl entEvent nfo],
+  overr de val feedbackAct on nfo: Opt on[FeedbackAct on nfo],
+  t le: Str ng,
+  support ngText: Str ng,
+  url: Opt on[Url],
+   mage: Opt on[ mageVar ant],
+  content: T leContent)
+    extends T  l ne em {
+  overr de val entryNa space: EntryNa space = T le em.T leEntryNa space
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  overr de def w hSort ndex(sort ndex: Long): T  l neEntry = copy(sort ndex = So (sort ndex))
 }

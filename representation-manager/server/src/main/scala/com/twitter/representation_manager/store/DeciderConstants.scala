@@ -1,39 +1,39 @@
-package com.twitter.representation_manager.store
+package com.tw ter.representat on_manager.store
 
-import com.twitter.servo.decider.DeciderKeyEnum
+ mport com.tw ter.servo.dec der.Dec derKeyEnum
 
-object DeciderConstants {
-  // Deciders inherited from CR and RSX and only used in LegacyRMS
-  // Their value are manipulated by CR and RSX's yml file and their decider dashboard
-  // We will remove them after migration completed
-  val enableLogFavBasedApeEntity20M145KUpdatedEmbeddingCachedStore =
-    "enableLogFavBasedApeEntity20M145KUpdatedEmbeddingCachedStore"
+object Dec derConstants {
+  // Dec ders  n r ed from CR and RSX and only used  n LegacyRMS
+  // T  r value are man pulated by CR and RSX's yml f le and t  r dec der dashboard
+  //   w ll remove t m after m grat on completed
+  val enableLogFavBasedApeEnt y20M145KUpdatedEmbedd ngCac dStore =
+    "enableLogFavBasedApeEnt y20M145KUpdatedEmbedd ngCac dStore"
 
-  val enableLogFavBasedApeEntity20M145K2020EmbeddingCachedStore =
-    "enableLogFavBasedApeEntity20M145K2020EmbeddingCachedStore"
+  val enableLogFavBasedApeEnt y20M145K2020Embedd ngCac dStore =
+    "enableLogFavBasedApeEnt y20M145K2020Embedd ngCac dStore"
 
-  val enablelogFavBased20M145K2020TweetEmbeddingStoreTimeouts =
-    "enable_log_fav_based_tweet_embedding_20m145k2020_timeouts"
-  val logFavBased20M145K2020TweetEmbeddingStoreTimeoutValueMillis =
-    "log_fav_based_tweet_embedding_20m145k2020_timeout_value_millis"
+  val enablelogFavBased20M145K2020T etEmbedd ngStoreT  outs =
+    "enable_log_fav_based_t et_embedd ng_20m145k2020_t  outs"
+  val logFavBased20M145K2020T etEmbedd ngStoreT  outValueM ll s =
+    "log_fav_based_t et_embedd ng_20m145k2020_t  out_value_m ll s"
 
-  val enablelogFavBased20M145KUpdatedTweetEmbeddingStoreTimeouts =
-    "enable_log_fav_based_tweet_embedding_20m145kUpdated_timeouts"
-  val logFavBased20M145KUpdatedTweetEmbeddingStoreTimeoutValueMillis =
-    "log_fav_based_tweet_embedding_20m145kUpdated_timeout_value_millis"
+  val enablelogFavBased20M145KUpdatedT etEmbedd ngStoreT  outs =
+    "enable_log_fav_based_t et_embedd ng_20m145kUpdated_t  outs"
+  val logFavBased20M145KUpdatedT etEmbedd ngStoreT  outValueM ll s =
+    "log_fav_based_t et_embedd ng_20m145kUpdated_t  out_value_m ll s"
 
-  val enableSimClustersEmbeddingStoreTimeouts = "enable_sim_clusters_embedding_store_timeouts"
-  val simClustersEmbeddingStoreTimeoutValueMillis =
-    "sim_clusters_embedding_store_timeout_value_millis"
+  val enableS mClustersEmbedd ngStoreT  outs = "enable_s m_clusters_embedd ng_store_t  outs"
+  val s mClustersEmbedd ngStoreT  outValueM ll s =
+    "s m_clusters_embedd ng_store_t  out_value_m ll s"
 }
 
-// Necessary for using servo Gates
-object DeciderKey extends DeciderKeyEnum {
-  val enableLogFavBasedApeEntity20M145KUpdatedEmbeddingCachedStore: Value = Value(
-    DeciderConstants.enableLogFavBasedApeEntity20M145KUpdatedEmbeddingCachedStore
+// Necessary for us ng servo Gates
+object Dec derKey extends Dec derKeyEnum {
+  val enableLogFavBasedApeEnt y20M145KUpdatedEmbedd ngCac dStore: Value = Value(
+    Dec derConstants.enableLogFavBasedApeEnt y20M145KUpdatedEmbedd ngCac dStore
   )
 
-  val enableLogFavBasedApeEntity20M145K2020EmbeddingCachedStore: Value = Value(
-    DeciderConstants.enableLogFavBasedApeEntity20M145K2020EmbeddingCachedStore
+  val enableLogFavBasedApeEnt y20M145K2020Embedd ngCac dStore: Value = Value(
+    Dec derConstants.enableLogFavBasedApeEnt y20M145K2020Embedd ngCac dStore
   )
 }

@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.twitter_text
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.r chtext.tw ter_text
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.RichTextReferenceObjectBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.twitter_text.TwitterTextEntityProcessor.DefaultReferenceObjectBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ExternalUrl
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.ReferenceObject
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextCashtag
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextHashtag
-import com.twitter.twittertext.Extractor
-import scala.collection.convert.ImplicitConversions._
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.r chtext.R chTextReferenceObjectBu lder
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.r chtext.tw ter_text.Tw terTextEnt yProcessor.DefaultReferenceObjectBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.ExternalUrl
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Url
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.ReferenceObject
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chTextCashtag
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chTextHashtag
+ mport com.tw ter.tw tertext.Extractor
+ mport scala.collect on.convert. mpl c Convers ons._
 
-object TwitterTextEntityProcessor {
-  object DefaultReferenceObjectBuilder extends RichTextReferenceObjectBuilder {
-    def apply(twitterEntity: Extractor.Entity): Option[ReferenceObject] = {
-      twitterEntity.getType match {
-        case Extractor.Entity.Type.URL =>
-          Some(Url(ExternalUrl, twitterEntity.getValue))
-        case Extractor.Entity.Type.HASHTAG =>
-          Some(RichTextHashtag(twitterEntity.getValue))
-        case Extractor.Entity.Type.CASHTAG =>
-          Some(RichTextCashtag(twitterEntity.getValue))
+object Tw terTextEnt yProcessor {
+  object DefaultReferenceObjectBu lder extends R chTextReferenceObjectBu lder {
+    def apply(tw terEnt y: Extractor.Ent y): Opt on[ReferenceObject] = {
+      tw terEnt y.getType match {
+        case Extractor.Ent y.Type.URL =>
+          So (Url(ExternalUrl, tw terEnt y.getValue))
+        case Extractor.Ent y.Type.HASHTAG =>
+          So (R chTextHashtag(tw terEnt y.getValue))
+        case Extractor.Ent y.Type.CASHTAG =>
+          So (R chTextCashtag(tw terEnt y.getValue))
         case _ => None
       }
     }
@@ -27,25 +27,25 @@ object TwitterTextEntityProcessor {
 }
 
 /**
- * Add the corresponding  [[RichTextEntity]] extraction logic into [[TwitterTextRenderer]].
- * The [[TwitterTextRenderer]] after being processed will extract the defined entities.
+ * Add t  correspond ng  [[R chTextEnt y]] extract on log c  nto [[Tw terTextRenderer]].
+ * T  [[Tw terTextRenderer]] after be ng processed w ll extract t  def ned ent  es.
  */
-case class TwitterTextEntityProcessor(
-  twitterTextReferenceObjectBuilder: RichTextReferenceObjectBuilder = DefaultReferenceObjectBuilder)
-    extends TwitterTextRendererProcessor {
+case class Tw terTextEnt yProcessor(
+  tw terTextReferenceObjectBu lder: R chTextReferenceObjectBu lder = DefaultReferenceObjectBu lder)
+    extends Tw terTextRendererProcessor {
 
-  private[this] val extractor = new Extractor()
+  pr vate[t ] val extractor = new Extractor()
 
   def process(
-    twitterTextRenderer: TwitterTextRenderer
-  ): TwitterTextRenderer = {
-    val twitterEntities = extractor.extractEntitiesWithIndices(twitterTextRenderer.text)
+    tw terTextRenderer: Tw terTextRenderer
+  ): Tw terTextRenderer = {
+    val tw terEnt  es = extractor.extractEnt  esW h nd ces(tw terTextRenderer.text)
 
-    twitterEntities.foreach { twitterEntity =>
-      twitterTextReferenceObjectBuilder(twitterEntity).foreach { refObject =>
-        twitterTextRenderer.setRefObject(twitterEntity.getStart, twitterEntity.getEnd, refObject)
+    tw terEnt  es.foreach { tw terEnt y =>
+      tw terTextReferenceObjectBu lder(tw terEnt y).foreach { refObject =>
+        tw terTextRenderer.setRefObject(tw terEnt y.getStart, tw terEnt y.getEnd, refObject)
       }
     }
-    twitterTextRenderer
+    tw terTextRenderer
   }
 }

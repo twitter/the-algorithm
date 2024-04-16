@@ -1,46 +1,46 @@
 {
-  "role": "discode",
-  "name": "uua-kill-staging-services",
-  "config-files": [],
-  "build": {
+  "role": "d scode",
+  "na ": "uua-k ll-stag ng-serv ces",
+  "conf g-f les": [],
+  "bu ld": {
     "play": true,
-    "trigger": {
-      "cron-schedule": "0 17 * * 1"
+    "tr gger": {
+      "cron-sc dule": "0 17 * * 1"
     },
-    "dependencies": [],
+    "dependenc es": [],
     "steps": []
   },
   "targets": [
     {
-      "type": "script",
-      "name": "uua-kill-staging-services",
-      "keytab": "/var/lib/tss/keys/fluffy/keytabs/client/discode.keytab",
-      "repository": "source",
-      "command": "bash unified_user_actions/scripts/kill_staging.sh",
-      "dependencies": [{
-         "version": "latest",
+      "type": "scr pt",
+      "na ": "uua-k ll-stag ng-serv ces",
+      "keytab": "/var/l b/tss/keys/fluffy/keytabs/cl ent/d scode.keytab",
+      "repos ory": "s ce",
+      "command": "bash un f ed_user_act ons/scr pts/k ll_stag ng.sh",
+      "dependenc es": [{
+         "vers on": "latest",
          "role": "aurora",
-         "name": "aurora"
+         "na ": "aurora"
       }],
-      "timeout": "10.minutes"
+      "t  out": "10.m nutes"
     }
   ],
-  "subscriptions": [
+  "subscr pt ons": [
    {
      "type": "SLACK",
-     "recipients": [
+     "rec p ents": [
        {
-         "to": "unified_user_actions_dev"
+         "to": "un f ed_user_act ons_dev"
        }
      ],
      "events": ["WORKFLOW_SUCCESS"]
    },
    {
      "type": "SLACK",
-     "recipients": [{
-       "to": "unified_user_actions_dev"
+     "rec p ents": [{
+       "to": "un f ed_user_act ons_dev"
      }],
-     "events": ["*FAILED"]
+     "events": ["*FA LED"]
    }
   ]
 }

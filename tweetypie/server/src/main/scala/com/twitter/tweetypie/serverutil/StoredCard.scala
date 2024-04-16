@@ -1,35 +1,35 @@
-package com.twitter.tweetypie.serverutil
+package com.tw ter.t etyp e.serverut l
 
-import com.twitter.tweetypie.thriftscala.CardReference
-import com.twitter.util.Try
-import java.net.URI
-import scala.util.control.NonFatal
+ mport com.tw ter.t etyp e.thr ftscala.CardReference
+ mport com.tw ter.ut l.Try
+ mport java.net.UR 
+ mport scala.ut l.control.NonFatal
 
 /**
- * Utility to extract the stored card id out of a CardReference
+ * Ut l y to extract t  stored card  d out of a CardReference
  */
 object StoredCard {
 
-  private val cardScheme = "card"
-  private val cardPrefix = s"$cardScheme://"
+  pr vate val cardSc   = "card"
+  pr vate val cardPref x = s"$cardSc  ://"
 
   /**
-   * Looks at the CardReference to determines if the cardUri points to a "stored"
-   * card id. Stored Card URIs are are expected to be in the format "card://<long>"
-   * (case sensitive). In future these URIs can potentially be:
-   * "card://<long>[/path[?queryString]]. Note that this utility cares just about the
-   * "Stored Card" types. So it just skips the other card types.
+   * Looks at t  CardReference to determ nes  f t  cardUr  po nts to a "stored"
+   * card  d. Stored Card UR s are are expected to be  n t  format "card://<long>"
+   * (case sens  ve).  n future t se UR s can potent ally be:
+   * "card://<long>[/path[?queryStr ng]]. Note that t  ut l y cares just about t 
+   * "Stored Card" types. So   just sk ps t  ot r card types.
    */
-  def unapply(cr: CardReference): Option[Long] = {
+  def unapply(cr: CardReference): Opt on[Long] = {
     try {
       for {
-        uriStr <- Option(cr.cardUri) if uriStr.startsWith(cardPrefix)
-        uri <- Try(new URI(uriStr)).toOption
-        if uri.getScheme == cardScheme && uri.getHost != null
-      } yield uri.getHost.toLong // throws NumberFormatException non numeric host (cardIds)
+        ur Str <- Opt on(cr.cardUr )  f ur Str.startsW h(cardPref x)
+        ur  <- Try(new UR (ur Str)).toOpt on
+         f ur .getSc   == cardSc   && ur .getHost != null
+      } y eld ur .getHost.toLong // throws NumberFormatExcept on non nu r c host (card ds)
     } catch {
-      // The validations are done upstream by the TweetBuilder, so exceptions
-      // due to bad URIs will be swallowed.
+      // T  val dat ons are done upstream by t  T etBu lder, so except ons
+      // due to bad UR s w ll be swallo d.
       case NonFatal(e) => None
     }
   }

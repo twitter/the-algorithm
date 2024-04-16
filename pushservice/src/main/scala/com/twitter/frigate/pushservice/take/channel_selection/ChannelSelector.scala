@@ -1,15 +1,15 @@
-package com.twitter.frigate.pushservice.take
+package com.tw ter.fr gate.pushserv ce.take
 
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.thriftscala.ChannelName
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.thr ftscala.ChannelNa 
+ mport com.tw ter.ut l.Future
 
 abstract class ChannelSelector {
 
-  // Returns a map of channel name, and the candidates that can be sent on that channel.
+  // Returns a map of channel na , and t  cand dates that can be sent on that channel.
   def selectChannel(
-    candidate: PushCandidate
-  ): Future[Seq[ChannelName]]
+    cand date: PushCand date
+  ): Future[Seq[ChannelNa ]]
 
-  def getSelectorName(): String
+  def getSelectorNa (): Str ng
 }

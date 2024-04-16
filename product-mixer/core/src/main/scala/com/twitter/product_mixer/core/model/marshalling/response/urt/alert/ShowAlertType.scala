@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.alert
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.alert
 
-sealed trait ShowAlertType
-case object NewTweets extends ShowAlertType
-case object Navigate extends ShowAlertType
+sealed tra  ShowAlertType
+case object NewT ets extends ShowAlertType
+case object Nav gate extends ShowAlertType

@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Url
 
 case class ModuleFooter(
-  text: String,
-  landingUrl: Option[Url])
+  text: Str ng,
+  land ngUrl: Opt on[Url])

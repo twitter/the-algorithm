@@ -1,75 +1,75 @@
-package com.twitter.timelineranker.util
+package com.tw ter.t  l neranker.ut l
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.timelineranker.core.HydratedTweets
-import com.twitter.timelines.clients.tweetypie.TweetyPieClient
-import com.twitter.timelines.model._
-import com.twitter.timelines.model.tweet.HydratedTweet
-import com.twitter.timelines.model.tweet.HydratedTweetUtils
-import com.twitter.timelines.util.stats.RequestStats
-import com.twitter.tweetypie.thriftscala.TweetInclude
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLevel
+ mport com.tw ter.t  l neranker.core.HydratedT ets
+ mport com.tw ter.t  l nes.cl ents.t etyp e.T etyP eCl ent
+ mport com.tw ter.t  l nes.model._
+ mport com.tw ter.t  l nes.model.t et.HydratedT et
+ mport com.tw ter.t  l nes.model.t et.HydratedT etUt ls
+ mport com.tw ter.t  l nes.ut l.stats.RequestStats
+ mport com.tw ter.t etyp e.thr ftscala.T et nclude
+ mport com.tw ter.ut l.Future
 
-object TweetHydrator {
-  val FieldsToHydrate: Set[TweetInclude] = TweetyPieClient.CoreTweetFields
-  val EmptyHydratedTweets: HydratedTweets =
-    HydratedTweets(Seq.empty[HydratedTweet], Seq.empty[HydratedTweet])
-  val EmptyHydratedTweetsFuture: Future[HydratedTweets] = Future.value(EmptyHydratedTweets)
+object T etHydrator {
+  val F eldsToHydrate: Set[T et nclude] = T etyP eCl ent.CoreT etF elds
+  val EmptyHydratedT ets: HydratedT ets =
+    HydratedT ets(Seq.empty[HydratedT et], Seq.empty[HydratedT et])
+  val EmptyHydratedT etsFuture: Future[HydratedT ets] = Future.value(EmptyHydratedT ets)
 }
 
-class TweetHydrator(tweetyPieClient: TweetyPieClient, statsReceiver: StatsReceiver)
+class T etHydrator(t etyP eCl ent: T etyP eCl ent, statsRece ver: StatsRece ver)
     extends RequestStats {
 
-  private[this] val hydrateScope = statsReceiver.scope("tweetHydrator")
-  private[this] val outerTweetsScope = hydrateScope.scope("outerTweets")
-  private[this] val innerTweetsScope = hydrateScope.scope("innerTweets")
+  pr vate[t ] val hydrateScope = statsRece ver.scope("t etHydrator")
+  pr vate[t ] val outerT etsScope = hydrateScope.scope("outerT ets")
+  pr vate[t ] val  nnerT etsScope = hydrateScope.scope(" nnerT ets")
 
-  private[this] val totalCounter = outerTweetsScope.counter(Total)
-  private[this] val totalInnerCounter = innerTweetsScope.counter(Total)
+  pr vate[t ] val totalCounter = outerT etsScope.counter(Total)
+  pr vate[t ] val total nnerCounter =  nnerT etsScope.counter(Total)
 
   /**
-   * Hydrates zero or more tweets from the given seq of tweet IDs. Returns requested tweets ordered
-   * by tweetIds and out of order inner tweet ids.
+   * Hydrates zero or more t ets from t  g ven seq of t et  Ds. Returns requested t ets ordered
+   * by t et ds and out of order  nner t et  ds.
    *
-   * Inner tweets that were also requested as outer tweets are returned as outer tweets.
+   *  nner t ets that  re also requested as outer t ets are returned as outer t ets.
    *
-   * Note that some tweet may not be hydrated due to hydration errors or because they are deleted.
-   * Consequently, the size of output is <= size of input. That is the intended usage pattern.
+   * Note that so  t et may not be hydrated due to hydrat on errors or because t y are deleted.
+   * Consequently, t  s ze of output  s <= s ze of  nput. That  s t   ntended usage pattern.
    */
   def hydrate(
-    viewerId: Option[UserId],
-    tweetIds: Seq[TweetId],
-    fieldsToHydrate: Set[TweetInclude] = TweetyPieClient.CoreTweetFields,
-    includeQuotedTweets: Boolean = false
-  ): Future[HydratedTweets] = {
-    if (tweetIds.isEmpty) {
-      TweetHydrator.EmptyHydratedTweetsFuture
+    v e r d: Opt on[User d],
+    t et ds: Seq[T et d],
+    f eldsToHydrate: Set[T et nclude] = T etyP eCl ent.CoreT etF elds,
+     ncludeQuotedT ets: Boolean = false
+  ): Future[HydratedT ets] = {
+     f (t et ds. sEmpty) {
+      T etHydrator.EmptyHydratedT etsFuture
     } else {
-      val tweetStateMapFuture = tweetyPieClient.getHydratedTweetFields(
-        tweetIds,
-        viewerId,
-        fieldsToHydrate,
-        safetyLevel = Some(SafetyLevel.FilterNone),
-        bypassVisibilityFiltering = true,
-        includeSourceTweets = false,
-        includeQuotedTweets = includeQuotedTweets,
-        ignoreTweetSuppression = true
+      val t etStateMapFuture = t etyP eCl ent.getHydratedT etF elds(
+        t et ds,
+        v e r d,
+        f eldsToHydrate,
+        safetyLevel = So (SafetyLevel.F lterNone),
+        bypassV s b l yF lter ng = true,
+         ncludeS ceT ets = false,
+         ncludeQuotedT ets =  ncludeQuotedT ets,
+         gnoreT etSuppress on = true
       )
 
-      tweetStateMapFuture.map { tweetStateMap =>
-        val innerTweetIdSet = tweetStateMap.keySet -- tweetIds.toSet
+      t etStateMapFuture.map { t etStateMap =>
+        val  nnerT et dSet = t etStateMap.keySet -- t et ds.toSet
 
-        val hydratedTweets =
-          HydratedTweetUtils.extractAndOrder(tweetIds ++ innerTweetIdSet.toSeq, tweetStateMap)
-        val (outer, inner) = hydratedTweets.partition { tweet =>
-          !innerTweetIdSet.contains(tweet.tweetId)
+        val hydratedT ets =
+          HydratedT etUt ls.extractAndOrder(t et ds ++  nnerT et dSet.toSeq, t etStateMap)
+        val (outer,  nner) = hydratedT ets.part  on { t et =>
+          ! nnerT et dSet.conta ns(t et.t et d)
         }
 
-        totalCounter.incr(outer.size)
-        totalInnerCounter.incr(inner.size)
-        HydratedTweets(outer, inner)
+        totalCounter. ncr(outer.s ze)
+        total nnerCounter. ncr( nner.s ze)
+        HydratedT ets(outer,  nner)
       }
     }
   }

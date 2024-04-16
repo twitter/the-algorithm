@@ -1,88 +1,88 @@
-package com.twitter.recosinjector.edges
+package com.tw ter.recos njector.edges
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.TweetCreationTimeMHStore
-import com.twitter.frigate.common.util.SnowflakeUtils
-import com.twitter.recos.internal.thriftscala.RecosUserTweetInfo
-import com.twitter.recos.internal.thriftscala.TweetType
-import com.twitter.recos.util.Action
-import com.twitter.recosinjector.decider.RecosInjectorDecider
-import com.twitter.recosinjector.decider.RecosInjectorDeciderConstants
-import com.twitter.recosinjector.util.TweetCreateEventDetails
-import com.twitter.util.Future
-import com.twitter.util.Time
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.store.T etCreat onT  MHStore
+ mport com.tw ter.fr gate.common.ut l.SnowflakeUt ls
+ mport com.tw ter.recos. nternal.thr ftscala.RecosUserT et nfo
+ mport com.tw ter.recos. nternal.thr ftscala.T etType
+ mport com.tw ter.recos.ut l.Act on
+ mport com.tw ter.recos njector.dec der.Recos njectorDec der
+ mport com.tw ter.recos njector.dec der.Recos njectorDec derConstants
+ mport com.tw ter.recos njector.ut l.T etCreateEventDeta ls
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
 
-class TweetEventToUserTweetGraphBuilder(
-  userTweetEntityEdgeBuilder: UserTweetEntityEdgeBuilder,
-  tweetCreationStore: TweetCreationTimeMHStore,
-  decider: RecosInjectorDecider
+class T etEventToUserT etGraphBu lder(
+  userT etEnt yEdgeBu lder: UserT etEnt yEdgeBu lder,
+  t etCreat onStore: T etCreat onT  MHStore,
+  dec der: Recos njectorDec der
 )(
-  override implicit val statsReceiver: StatsReceiver)
-    extends EventToMessageBuilder[TweetCreateEventDetails, UserTweetEntityEdge] {
+  overr de  mpl c  val statsRece ver: StatsRece ver)
+    extends EventTo ssageBu lder[T etCreateEventDeta ls, UserT etEnt yEdge] {
 
-  private val numRetweetEdgesCounter = statsReceiver.counter("num_retweet_edge")
-  private val numIsDecider = statsReceiver.counter("num_decider_enabled")
-  private val numIsNotDecider = statsReceiver.counter("num_decider_not_enabled")
+  pr vate val numRet etEdgesCounter = statsRece ver.counter("num_ret et_edge")
+  pr vate val num sDec der = statsRece ver.counter("num_dec der_enabled")
+  pr vate val num sNotDec der = statsRece ver.counter("num_dec der_not_enabled")
 
-  override def shouldProcessEvent(event: TweetCreateEventDetails): Future[Boolean] = {
-    val isDecider = decider.isAvailable(
-      RecosInjectorDeciderConstants.TweetEventTransformerUserTweetEntityEdgesDecider
+  overr de def shouldProcessEvent(event: T etCreateEventDeta ls): Future[Boolean] = {
+    val  sDec der = dec der. sAva lable(
+      Recos njectorDec derConstants.T etEventTransfor rUserT etEnt yEdgesDec der
     )
-    if (isDecider) {
-      numIsDecider.incr()
+     f ( sDec der) {
+      num sDec der. ncr()
       Future(true)
     } else {
-      numIsNotDecider.incr()
+      num sNotDec der. ncr()
       Future(false)
     }
   }
 
   /**
-   * Build a Retweet edge: author -> RT -> SourceTweetId.
+   * Bu ld a Ret et edge: author -> RT -> S ceT et d.
    */
-  private def buildRetweetEdge(event: TweetCreateEventDetails) = {
-    val userTweetEngagement = event.userTweetEngagement
-    val tweetId = userTweetEngagement.tweetId
+  pr vate def bu ldRet etEdge(event: T etCreateEventDeta ls) = {
+    val userT etEngage nt = event.userT etEngage nt
+    val t et d = userT etEngage nt.t et d
 
-    event.sourceTweetDetails
-      .map { sourceTweetDetails =>
-        val sourceTweetId = sourceTweetDetails.tweet.id // Id of the tweet being Retweeted
-        val sourceTweetEntitiesMapFut = userTweetEntityEdgeBuilder.getEntitiesMapAndUpdateCache(
-          tweetId = sourceTweetId,
-          tweetDetails = Some(sourceTweetDetails)
+    event.s ceT etDeta ls
+      .map { s ceT etDeta ls =>
+        val s ceT et d = s ceT etDeta ls.t et. d //  d of t  t et be ng Ret eted
+        val s ceT etEnt  esMapFut = userT etEnt yEdgeBu lder.getEnt  esMapAndUpdateCac (
+          t et d = s ceT et d,
+          t etDeta ls = So (s ceT etDeta ls)
         )
 
-        sourceTweetEntitiesMapFut.map { sourceTweetEntitiesMap =>
-          val edge = UserTweetEntityEdge(
-            sourceUser = userTweetEngagement.engageUserId,
-            targetTweet = sourceTweetId,
-            action = Action.Retweet,
-            metadata = Some(tweetId), // metadata is the tweetId
-            cardInfo = Some(sourceTweetDetails.cardInfo.toByte),
-            entitiesMap = sourceTweetEntitiesMap,
-            tweetDetails = Some(sourceTweetDetails)
+        s ceT etEnt  esMapFut.map { s ceT etEnt  esMap =>
+          val edge = UserT etEnt yEdge(
+            s ceUser = userT etEngage nt.engageUser d,
+            targetT et = s ceT et d,
+            act on = Act on.Ret et,
+             tadata = So (t et d), //  tadata  s t  t et d
+            card nfo = So (s ceT etDeta ls.card nfo.toByte),
+            ent  esMap = s ceT etEnt  esMap,
+            t etDeta ls = So (s ceT etDeta ls)
           )
-          numRetweetEdgesCounter.incr()
+          numRet etEdgesCounter. ncr()
           Seq(edge)
         }
-      }.getOrElse(Future.Nil)
+      }.getOrElse(Future.N l)
   }
 
-  override def buildEdges(event: TweetCreateEventDetails): Future[Seq[UserTweetEntityEdge]] = {
-    val userTweetEngagement = event.userTweetEngagement
-    userTweetEngagement.action match {
-      case Action.Retweet =>
-        buildRetweetEdge(event)
+  overr de def bu ldEdges(event: T etCreateEventDeta ls): Future[Seq[UserT etEnt yEdge]] = {
+    val userT etEngage nt = event.userT etEngage nt
+    userT etEngage nt.act on match {
+      case Act on.Ret et =>
+        bu ldRet etEdge(event)
       case _ =>
-        Future.Nil
+        Future.N l
     }
 
   }
 
-  override def filterEdges(
-    event: TweetCreateEventDetails,
-    edges: Seq[UserTweetEntityEdge]
-  ): Future[Seq[UserTweetEntityEdge]] = {
-    Future(edges) // No filtering for now. Add more if needed
+  overr de def f lterEdges(
+    event: T etCreateEventDeta ls,
+    edges: Seq[UserT etEnt yEdge]
+  ): Future[Seq[UserT etEnt yEdge]] = {
+    Future(edges) // No f lter ng for now. Add more  f needed
   }
 }

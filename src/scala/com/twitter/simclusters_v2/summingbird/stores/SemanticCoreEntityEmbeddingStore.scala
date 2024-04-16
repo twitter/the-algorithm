@@ -1,49 +1,49 @@
-package com.twitter.simclusters_v2.summingbird.stores
+package com.tw ter.s mclusters_v2.summ ngb rd.stores
 
-import com.twitter.frigate.common.store.strato.StratoStore
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.ModelVersions._
-import com.twitter.simclusters_v2.thriftscala.{
-  EmbeddingType,
-  InternalId,
-  LocaleEntityId,
-  SimClustersEmbeddingId,
-  SimClustersEmbedding => ThriftSimClustersEmbedding
+ mport com.tw ter.fr gate.common.store.strato.StratoStore
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons._
+ mport com.tw ter.s mclusters_v2.thr ftscala.{
+  Embedd ngType,
+   nternal d,
+  LocaleEnt y d,
+  S mClustersEmbedd ng d,
+  S mClustersEmbedd ng => Thr ftS mClustersEmbedd ng
 }
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.Client
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.strato.cl ent.Cl ent
+ mport com.tw ter.strato.thr ft.ScroogeConv mpl c s._
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
 
 /**
- * entity -> List< cluster >
+ * ent y -> L st< cluster >
  */
-object SemanticCoreEntityEmbeddingStore {
+object Semant cCoreEnt yEmbedd ngStore {
 
-  private val column =
-    "recommendations/simclusters_v2/embeddings/semanticCoreEntityPerLanguageEmbeddings20M145KUpdated"
+  pr vate val column =
+    "recom ndat ons/s mclusters_v2/embedd ngs/semant cCoreEnt yPerLanguageEmbedd ngs20M145KUpdated"
 
   /**
-   * Default store, wrapped in generic data types. Use this if you know the underlying key struct.
+   * Default store, wrapped  n gener c data types. Use t   f   know t  underly ng key struct.
    */
-  private def getDefaultStore(
-    stratoClient: Client
-  ): ReadableStore[SimClustersEmbeddingId, ThriftSimClustersEmbedding] = {
+  pr vate def getDefaultStore(
+    stratoCl ent: Cl ent
+  ): ReadableStore[S mClustersEmbedd ng d, Thr ftS mClustersEmbedd ng] = {
     StratoStore
-      .withUnitView[SimClustersEmbeddingId, ThriftSimClustersEmbedding](stratoClient, column)
+      .w hUn V ew[S mClustersEmbedd ng d, Thr ftS mClustersEmbedd ng](stratoCl ent, column)
   }
 
-  def getFavBasedLocaleEntityEmbeddingStore(
-    stratoClient: Client
-  ): ReadableStore[LocaleEntityId, SimClustersEmbedding] = {
-    getDefaultStore(stratoClient)
-      .composeKeyMapping[LocaleEntityId] { entityId =>
-        SimClustersEmbeddingId(
-          EmbeddingType.FavBasedSematicCoreEntity,
-          ModelVersions.Model20M145KUpdated,
-          InternalId.LocaleEntityId(entityId)
+  def getFavBasedLocaleEnt yEmbedd ngStore(
+    stratoCl ent: Cl ent
+  ): ReadableStore[LocaleEnt y d, S mClustersEmbedd ng] = {
+    getDefaultStore(stratoCl ent)
+      .composeKeyMapp ng[LocaleEnt y d] { ent y d =>
+        S mClustersEmbedd ng d(
+          Embedd ngType.FavBasedSemat cCoreEnt y,
+          ModelVers ons.Model20M145KUpdated,
+           nternal d.LocaleEnt y d(ent y d)
         )
       }
-      .mapValues(SimClustersEmbedding(_))
+      .mapValues(S mClustersEmbedd ng(_))
   }
 }

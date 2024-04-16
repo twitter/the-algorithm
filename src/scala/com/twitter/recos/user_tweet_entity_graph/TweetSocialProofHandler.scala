@@ -1,72 +1,72 @@
-package com.twitter.recos.user_tweet_entity_graph
+package com.tw ter.recos.user_t et_ent y_graph
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.graphjet.algorithms.RecommendationInfo
-import com.twitter.graphjet.algorithms.socialproof.{SocialProofResult => SocialProofJavaResult}
-import com.twitter.recos.decider.UserTweetEntityGraphDecider
-import com.twitter.recos.util.Stats
-import com.twitter.recos.util.Stats._
-import com.twitter.recos.recos_common.thriftscala.{SocialProofType => SocialProofThriftType}
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.TweetRecommendation
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.{
-  SocialProofRequest => SocialProofThriftRequest
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.ut l.StatsUt l
+ mport com.tw ter.graphjet.algor hms.Recom ndat on nfo
+ mport com.tw ter.graphjet.algor hms.soc alproof.{Soc alProofResult => Soc alProofJavaResult}
+ mport com.tw ter.recos.dec der.UserT etEnt yGraphDec der
+ mport com.tw ter.recos.ut l.Stats
+ mport com.tw ter.recos.ut l.Stats._
+ mport com.tw ter.recos.recos_common.thr ftscala.{Soc alProofType => Soc alProofThr ftType}
+ mport com.tw ter.recos.user_t et_ent y_graph.thr ftscala.T etRecom ndat on
+ mport com.tw ter.recos.user_t et_ent y_graph.thr ftscala.{
+  Soc alProofRequest => Soc alProofThr ftRequest
 }
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.{
-  SocialProofResponse => SocialProofThriftResponse
+ mport com.tw ter.recos.user_t et_ent y_graph.thr ftscala.{
+  Soc alProofResponse => Soc alProofThr ftResponse
 }
-import com.twitter.servo.request.RequestHandler
-import com.twitter.util.Future
-import scala.collection.JavaConverters._
+ mport com.tw ter.servo.request.RequestHandler
+ mport com.tw ter.ut l.Future
+ mport scala.collect on.JavaConverters._
 
-class TweetSocialProofHandler(
-  tweetSocialProofRunner: TweetSocialProofRunner,
-  decider: UserTweetEntityGraphDecider,
-  statsReceiver: StatsReceiver)
-    extends RequestHandler[SocialProofThriftRequest, SocialProofThriftResponse] {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
+class T etSoc alProofHandler(
+  t etSoc alProofRunner: T etSoc alProofRunner,
+  dec der: UserT etEnt yGraphDec der,
+  statsRece ver: StatsRece ver)
+    extends RequestHandler[Soc alProofThr ftRequest, Soc alProofThr ftResponse] {
+  pr vate val stats = statsRece ver.scope(t .getClass.getS mpleNa )
 
-  def getThriftSocialProof(
-    tweetSocialProof: SocialProofJavaResult
-  ): Map[SocialProofThriftType, Seq[Long]] = {
-    Option(tweetSocialProof.getSocialProof) match {
-      case Some(socialProof) if socialProof.isEmpty =>
-        stats.counter(Stats.EmptyResult).incr()
-        Map.empty[SocialProofThriftType, Seq[Long]]
-      case Some(socialProof) if !socialProof.isEmpty =>
-        socialProof.asScala.map {
-          case (socialProofType, connectingUsers) =>
+  def getThr ftSoc alProof(
+    t etSoc alProof: Soc alProofJavaResult
+  ): Map[Soc alProofThr ftType, Seq[Long]] = {
+    Opt on(t etSoc alProof.getSoc alProof) match {
+      case So (soc alProof)  f soc alProof. sEmpty =>
+        stats.counter(Stats.EmptyResult). ncr()
+        Map.empty[Soc alProofThr ftType, Seq[Long]]
+      case So (soc alProof)  f !soc alProof. sEmpty =>
+        soc alProof.asScala.map {
+          case (soc alProofType, connect ngUsers) =>
             (
-              SocialProofThriftType(socialProofType.toInt),
-              connectingUsers.asScala.map { Long2long }.toSeq)
+              Soc alProofThr ftType(soc alProofType.to nt),
+              connect ngUsers.asScala.map { Long2long }.toSeq)
         }.toMap
       case _ =>
-        throw new Exception("TweetSocialProofHandler gets wrong TweetSocialProof response")
+        throw new Except on("T etSoc alProofHandler gets wrong T etSoc alProof response")
     }
   }
 
-  def apply(request: SocialProofThriftRequest): Future[SocialProofThriftResponse] = {
-    StatsUtil.trackBlockStats(stats) {
-      if (decider.tweetSocialProof) {
-        val socialProofsFuture = tweetSocialProofRunner(request)
+  def apply(request: Soc alProofThr ftRequest): Future[Soc alProofThr ftResponse] = {
+    StatsUt l.trackBlockStats(stats) {
+       f (dec der.t etSoc alProof) {
+        val soc alProofsFuture = t etSoc alProofRunner(request)
 
-        socialProofsFuture map { socialProofs: Seq[RecommendationInfo] =>
-          stats.counter(Stats.Served).incr(socialProofs.size)
-          SocialProofThriftResponse(
-            socialProofs.flatMap { tweetSocialProof: RecommendationInfo =>
-              val tweetSocialProofJavaResult = tweetSocialProof.asInstanceOf[SocialProofJavaResult]
-              Some(
-                TweetRecommendation(
-                  tweetSocialProofJavaResult.getNode,
-                  tweetSocialProofJavaResult.getWeight,
-                  getThriftSocialProof(tweetSocialProofJavaResult)
+        soc alProofsFuture map { soc alProofs: Seq[Recom ndat on nfo] =>
+          stats.counter(Stats.Served). ncr(soc alProofs.s ze)
+          Soc alProofThr ftResponse(
+            soc alProofs.flatMap { t etSoc alProof: Recom ndat on nfo =>
+              val t etSoc alProofJavaResult = t etSoc alProof.as nstanceOf[Soc alProofJavaResult]
+              So (
+                T etRecom ndat on(
+                  t etSoc alProofJavaResult.getNode,
+                  t etSoc alProofJavaResult.get  ght,
+                  getThr ftSoc alProof(t etSoc alProofJavaResult)
                 )
               )
             }
           )
         }
       } else {
-        Future.value(SocialProofThriftResponse())
+        Future.value(Soc alProofThr ftResponse())
       }
     }
   }

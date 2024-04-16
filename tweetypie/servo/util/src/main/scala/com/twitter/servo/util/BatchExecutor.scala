@@ -1,93 +1,93 @@
-package com.twitter.servo.util
+package com.tw ter.servo.ut l
 
-import com.twitter.logging.Logger
-import com.twitter.util.{Timer, Duration, Promise, Future, Return, Throw}
-import java.util.concurrent.CancellationException
-import scala.collection.mutable.ArrayBuffer
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.ut l.{T  r, Durat on, Prom se, Future, Return, Throw}
+ mport java.ut l.concurrent.Cancellat onExcept on
+ mport scala.collect on.mutable.ArrayBuffer
 
-@deprecated("Use `Future.batched`", "2.6.1")
-trait BatchExecutorFactory {
-  def apply[In, Out](f: Seq[In] => Future[Seq[Out]]): BatchExecutor[In, Out]
+@deprecated("Use `Future.batc d`", "2.6.1")
+tra  BatchExecutorFactory {
+  def apply[ n, Out](f: Seq[ n] => Future[Seq[Out]]): BatchExecutor[ n, Out]
 }
 
 /**
- * A BatchExecutorFactory allows you to specify the criteria in which a batch
- * should be flushed prior to constructing a BatchExecutor. A BatchExecutor asks for a
- * function that takes a Seq[In] and returns a Future[Seq[Out]], in return it gives you
- * a `In => Future[Out]` interface so that you can incrementally submit tasks to be
- * performed when the criteria for batch flushing is met.
+ * A BatchExecutorFactory allows   to spec fy t  cr er a  n wh ch a batch
+ * should be flus d pr or to construct ng a BatchExecutor. A BatchExecutor asks for a
+ * funct on that takes a Seq[ n] and returns a Future[Seq[Out]],  n return   g ves  
+ * a ` n => Future[Out]`  nterface so that   can  ncre ntally subm  tasks to be
+ * perfor d w n t  cr er a for batch flush ng  s  t.
  *
  * Examples:
- *  val batcherFactory = BatchExecutorFactory(sizeThreshold = 10)
+ *  val batc rFactory = BatchExecutorFactory(s zeThreshold = 10)
  *  def processBatch(reqs: Seq[Request]): Future[Seq[Response]]
- *  val batcher = batcherFactory(processBatch)
+ *  val batc r = batc rFactory(processBatch)
  *
- *  val response: Future[Response] = batcher(new Request)
+ *  val response: Future[Response] = batc r(new Request)
  *
- *  the batcher will wait until 10 requests have been submitted, then delegate
- *  to the processBatch method to compute the responses.
+ *  t  batc r w ll wa  unt l 10 requests have been subm ted, t n delegate
+ *  to t  processBatch  thod to compute t  responses.
  *
- *  you can also construct a BatchExecutor that has a time-based threshold or both:
- *  val batcherFactory = BatchExecutorFactory(
- *    sizeThreshold = 10, timeThreshold = 10.milliseconds, timer = new JavaTimer(true))
+ *    can also construct a BatchExecutor that has a t  -based threshold or both:
+ *  val batc rFactory = BatchExecutorFactory(
+ *    s zeThreshold = 10, t  Threshold = 10.m ll seconds, t  r = new JavaT  r(true))
  *
- *  A batcher's size can be controlled at runtime through a bufSizeFraction function
- *  that should return a float between 0.0 and 1.0 that represents the fractional size
- *  of the sizeThreshold that should be used for the next batch to be collected.
+ *  A batc r's s ze can be controlled at runt   through a bufS zeFract on funct on
+ *  that should return a float bet en 0.0 and 1.0 that represents t  fract onal s ze
+ *  of t  s zeThreshold that should be used for t  next batch to be collected.
  *
  */
-@deprecated("Use `Future.batched`", "2.6.1")
+@deprecated("Use `Future.batc d`", "2.6.1")
 object BatchExecutorFactory {
-  final val DefaultBufSizeFraction = 1.0f
-  lazy val instant = sized(1)
+  f nal val DefaultBufS zeFract on = 1.0f
+  lazy val  nstant = s zed(1)
 
-  def sized(sizeThreshold: Int): BatchExecutorFactory = new BatchExecutorFactory {
-    override def apply[In, Out](f: Seq[In] => Future[Seq[Out]]) = {
-      new BatchExecutor(sizeThreshold, None, f, DefaultBufSizeFraction)
+  def s zed(s zeThreshold:  nt): BatchExecutorFactory = new BatchExecutorFactory {
+    overr de def apply[ n, Out](f: Seq[ n] => Future[Seq[Out]]) = {
+      new BatchExecutor(s zeThreshold, None, f, DefaultBufS zeFract on)
     }
   }
 
-  def timed(timeThreshold: Duration, timer: Timer): BatchExecutorFactory =
-    sizedAndTimed(Int.MaxValue, timeThreshold, timer)
+  def t  d(t  Threshold: Durat on, t  r: T  r): BatchExecutorFactory =
+    s zedAndT  d( nt.MaxValue, t  Threshold, t  r)
 
-  def sizedAndTimed(
-    sizeThreshold: Int,
-    timeThreshold: Duration,
-    timer: Timer
+  def s zedAndT  d(
+    s zeThreshold:  nt,
+    t  Threshold: Durat on,
+    t  r: T  r
   ): BatchExecutorFactory =
-    dynamicSizedAndTimed(sizeThreshold, timeThreshold, timer, DefaultBufSizeFraction)
+    dynam cS zedAndT  d(s zeThreshold, t  Threshold, t  r, DefaultBufS zeFract on)
 
-  def dynamicSizedAndTimed(
-    sizeThreshold: Int,
-    timeThreshold: Duration,
-    timer: Timer,
-    bufSizeFraction: => Float
+  def dynam cS zedAndT  d(
+    s zeThreshold:  nt,
+    t  Threshold: Durat on,
+    t  r: T  r,
+    bufS zeFract on: => Float
   ): BatchExecutorFactory = new BatchExecutorFactory {
-    override def apply[In, Out](f: (Seq[In]) => Future[Seq[Out]]) = {
-      new BatchExecutor(sizeThreshold, Some(timeThreshold, timer), f, bufSizeFraction)
+    overr de def apply[ n, Out](f: (Seq[ n]) => Future[Seq[Out]]) = {
+      new BatchExecutor(s zeThreshold, So (t  Threshold, t  r), f, bufS zeFract on)
     }
   }
 }
 
-@deprecated("Use `Future.batched`", "2.6.1")
-class BatchExecutor[In, Out] private[util] (
-  maxSizeThreshold: Int,
-  timeThreshold: Option[(Duration, Timer)],
-  f: Seq[In] => Future[Seq[Out]],
-  bufSizeFraction: => Float) { batcher =>
+@deprecated("Use `Future.batc d`", "2.6.1")
+class BatchExecutor[ n, Out] pr vate[ut l] (
+  maxS zeThreshold:  nt,
+  t  Threshold: Opt on[(Durat on, T  r)],
+  f: Seq[ n] => Future[Seq[Out]],
+  bufS zeFract on: => Float) { batc r =>
 
-  private[this] class ScheduledFlush(after: Duration, timer: Timer) {
-    @volatile private[this] var cancelled = false
-    private[this] val task = timer.schedule(after.fromNow) { flush() }
+  pr vate[t ] class Sc duledFlush(after: Durat on, t  r: T  r) {
+    @volat le pr vate[t ] var cancelled = false
+    pr vate[t ] val task = t  r.sc dule(after.fromNow) { flush() }
 
-    def cancel(): Unit = {
+    def cancel(): Un  = {
       cancelled = true
       task.cancel()
     }
 
-    private[this] def flush(): Unit = {
-      val doAfter = batcher.synchronized {
-        if (!cancelled) {
+    pr vate[t ] def flush(): Un  = {
+      val doAfter = batc r.synchron zed {
+         f (!cancelled) {
           flushBatch()
         } else { () =>
           ()
@@ -98,27 +98,27 @@ class BatchExecutor[In, Out] private[util] (
     }
   }
 
-  private[this] val log = Logger.get("BatchExecutor")
+  pr vate[t ] val log = Logger.get("BatchExecutor")
 
-  // operations on these are synchronized on `this`
-  private[this] val buf = new ArrayBuffer[(In, Promise[Out])](maxSizeThreshold)
-  private[this] var scheduled: Option[ScheduledFlush] = None
-  private[this] var currentBufThreshold = newBufThreshold
+  // operat ons on t se are synchron zed on `t `
+  pr vate[t ] val buf = new ArrayBuffer[( n, Prom se[Out])](maxS zeThreshold)
+  pr vate[t ] var sc duled: Opt on[Sc duledFlush] = None
+  pr vate[t ] var currentBufThreshold = newBufThreshold
 
-  private[this] def shouldSchedule = timeThreshold.isDefined && scheduled.isEmpty
+  pr vate[t ] def shouldSc dule = t  Threshold. sDef ned && sc duled. sEmpty
 
-  private[this] def currentBufFraction = {
-    val fract = bufSizeFraction
+  pr vate[t ] def currentBufFract on = {
+    val fract = bufS zeFract on
 
-    if (fract > 1.0f) {
-      log.warning(
-        "value returned for BatchExecutor.bufSizeFraction (%f) was > 1.0f, using 1.0",
+     f (fract > 1.0f) {
+      log.warn ng(
+        "value returned for BatchExecutor.bufS zeFract on (%f) was > 1.0f, us ng 1.0",
         fract
       )
       1.0f
-    } else if (fract < 0.0f) {
-      log.warning(
-        "value returned for BatchExecutor.bufSizeFraction (%f) was negative, using 0.0f",
+    } else  f (fract < 0.0f) {
+      log.warn ng(
+        "value returned for BatchExecutor.bufS zeFract on (%f) was negat ve, us ng 0.0f",
         fract
       )
       0.0f
@@ -127,92 +127,92 @@ class BatchExecutor[In, Out] private[util] (
     }
   }
 
-  private[this] def newBufThreshold = {
-    val size: Int = math.round(currentBufFraction * maxSizeThreshold)
+  pr vate[t ] def newBufThreshold = {
+    val s ze:  nt = math.round(currentBufFract on * maxS zeThreshold)
 
-    if (size < 1) {
+     f (s ze < 1) {
       1
-    } else if (size >= maxSizeThreshold) {
-      maxSizeThreshold
+    } else  f (s ze >= maxS zeThreshold) {
+      maxS zeThreshold
     } else {
-      size
+      s ze
     }
   }
 
-  def apply(t: In): Future[Out] = {
+  def apply(t:  n): Future[Out] = {
     enqueue(t)
   }
 
-  private[this] def enqueue(t: In): Future[Out] = {
-    val promise = new Promise[Out]
-    val doAfter = synchronized {
-      buf.append((t, promise))
-      if (buf.size >= currentBufThreshold) {
+  pr vate[t ] def enqueue(t:  n): Future[Out] = {
+    val prom se = new Prom se[Out]
+    val doAfter = synchron zed {
+      buf.append((t, prom se))
+       f (buf.s ze >= currentBufThreshold) {
         flushBatch()
       } else {
-        scheduleFlushIfNecessary()
+        sc duleFlush fNecessary()
         () => ()
       }
     }
 
     doAfter()
-    promise
+    prom se
   }
 
-  private[this] def scheduleFlushIfNecessary(): Unit = {
-    timeThreshold foreach {
-      case (duration, timer) =>
-        if (shouldSchedule) {
-          scheduled = Some(new ScheduledFlush(duration, timer))
+  pr vate[t ] def sc duleFlush fNecessary(): Un  = {
+    t  Threshold foreach {
+      case (durat on, t  r) =>
+         f (shouldSc dule) {
+          sc duled = So (new Sc duledFlush(durat on, t  r))
         }
     }
   }
 
-  private[this] def flushBatch(): () => Unit = {
-    // this must be executed within a synchronize block
-    val prevBatch = new ArrayBuffer[(In, Promise[Out])](buf.length)
+  pr vate[t ] def flushBatch(): () => Un  = {
+    // t  must be executed w h n a synchron ze block
+    val prevBatch = new ArrayBuffer[( n, Prom se[Out])](buf.length)
     buf.copyToBuffer(prevBatch)
     buf.clear()
 
-    scheduled foreach { _.cancel() }
-    scheduled = None
-    currentBufThreshold = newBufThreshold // set the next batch's size
+    sc duled foreach { _.cancel() }
+    sc duled = None
+    currentBufThreshold = newBufThreshold // set t  next batch's s ze
 
     () =>
       try {
         executeBatch(prevBatch)
       } catch {
         case e: Throwable =>
-          log.warning(e, "unhandled exception caught in BatchExecutor: %s", e.toString)
+          log.warn ng(e, "unhandled except on caught  n BatchExecutor: %s", e.toStr ng)
       }
   }
 
-  private[this] def executeBatch(batch: Seq[(In, Promise[Out])]): Unit = {
-    val uncancelled = batch filter {
-      case (in, p) =>
-        p.isInterrupted match {
-          case Some(_cause) =>
-            p.setException(new CancellationException)
+  pr vate[t ] def executeBatch(batch: Seq[( n, Prom se[Out])]): Un  = {
+    val uncancelled = batch f lter {
+      case ( n, p) =>
+        p. s nterrupted match {
+          case So (_cause) =>
+            p.setExcept on(new Cancellat onExcept on)
             false
           case None => true
         }
     }
 
-    val ins = uncancelled map { case (in, _) => in }
-    // N.B. intentionally not linking cancellation of these promises to the execution of the batch
-    // because it seems that in most cases you would be canceling mostly uncanceled work for an
-    // outlier.
-    val promises = uncancelled map { case (_, promise) => promise }
+    val  ns = uncancelled map { case ( n, _) =>  n }
+    // N.B.  ntent onally not l nk ng cancellat on of t se prom ses to t  execut on of t  batch
+    // because   seems that  n most cases   would be cancel ng mostly uncanceled work for an
+    // outl er.
+    val prom ses = uncancelled map { case (_, prom se) => prom se }
 
-    f(ins) respond {
+    f( ns) respond {
       case Return(outs) =>
-        (outs zip promises) foreach {
+        (outs z p prom ses) foreach {
           case (out, p) =>
             p() = Return(out)
         }
       case Throw(e) =>
         val t = Throw(e)
-        promises foreach { _() = t }
+        prom ses foreach { _() = t }
     }
   }
 }

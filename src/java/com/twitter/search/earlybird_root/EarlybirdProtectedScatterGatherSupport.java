@@ -1,25 +1,25 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import javax.inject.Inject;
+ mport javax. nject. nject;
 
-import com.twitter.search.common.partitioning.base.PartitionMappingManager;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
+ mport com.tw ter.search.common.part  on ng.base.Part  onMapp ngManager;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdFeatureSc ma rger;
 
 /**
- * The EarlybirdServiceScatterGatherSupport implementation used to fan out requests to the earlybird
- * partitions in the protected cluster.
+ * T  Earlyb rdServ ceScatterGat rSupport  mple ntat on used to fan out requests to t  earlyb rd
+ * part  ons  n t  protected cluster.
  */
-public class EarlybirdProtectedScatterGatherSupport extends EarlybirdServiceScatterGatherSupport {
+publ c class Earlyb rdProtectedScatterGat rSupport extends Earlyb rdServ ceScatterGat rSupport {
   /**
-   * Construct a EarlybirdProtectedScatterGatherSupport to do minUserFanOut,
-   * used only by protected. The main difference from the base class is that
-   * if the from user ID is not set, exception is thrown.
+   * Construct a Earlyb rdProtectedScatterGat rSupport to do m nUserFanOut,
+   * used only by protected. T  ma n d fference from t  base class  s that
+   *  f t  from user  D  s not set, except on  s thrown.
    */
-  @Inject
-  EarlybirdProtectedScatterGatherSupport(
-      PartitionMappingManager partitionMappingManager,
-      EarlybirdFeatureSchemaMerger featureSchemaMerger) {
-    super(partitionMappingManager, EarlybirdCluster.PROTECTED, featureSchemaMerger);
+  @ nject
+  Earlyb rdProtectedScatterGat rSupport(
+      Part  onMapp ngManager part  onMapp ngManager,
+      Earlyb rdFeatureSc ma rger featureSc ma rger) {
+    super(part  onMapp ngManager, Earlyb rdCluster.PROTECTED, featureSc ma rger);
   }
 }

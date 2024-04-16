@@ -1,554 +1,554 @@
-package com.twitter.visibility.models
+package com.tw ter.v s b l y.models
 
-import com.twitter.visibility.models.SafetyLevel.AccessInternalPromotedContent
-import com.twitter.visibility.models.SafetyLevel.AdsBusinessSettings
-import com.twitter.visibility.models.SafetyLevel.AdsCampaign
-import com.twitter.visibility.models.SafetyLevel.AdsManager
-import com.twitter.visibility.models.SafetyLevel.AdsReportingDashboard
-import com.twitter.visibility.models.SafetyLevel.AllSubscribedLists
-import com.twitter.visibility.models.SafetyLevel.Appeals
-import com.twitter.visibility.models.SafetyLevel.ArticleTweetTimeline
-import com.twitter.visibility.models.SafetyLevel.BaseQig
-import com.twitter.visibility.models.SafetyLevel.BirdwatchNeedsYourHelpNotifications
-import com.twitter.visibility.models.SafetyLevel.BirdwatchNoteAuthor
-import com.twitter.visibility.models.SafetyLevel.BirdwatchNoteTweetsTimeline
-import com.twitter.visibility.models.SafetyLevel.BlockMuteUsersTimeline
-import com.twitter.visibility.models.SafetyLevel.BrandSafety
-import com.twitter.visibility.models.SafetyLevel.CardPollVoting
-import com.twitter.visibility.models.SafetyLevel.CardsService
-import com.twitter.visibility.models.SafetyLevel.ContentControlToolInstall
-import com.twitter.visibility.models.SafetyLevel.ConversationFocalPrehydration
-import com.twitter.visibility.models.SafetyLevel.ConversationFocalTweet
-import com.twitter.visibility.models.SafetyLevel.ConversationInjectedTweet
-import com.twitter.visibility.models.SafetyLevel.ConversationReply
-import com.twitter.visibility.models.SafetyLevel.CuratedTrendsRepresentativeTweet
-import com.twitter.visibility.models.SafetyLevel.CurationPolicyViolations
-import com.twitter.visibility.models.SafetyLevel.DesFollowingAndFollowersUserList
-import com.twitter.visibility.models.SafetyLevel.DesHomeTimeline
-import com.twitter.visibility.models.SafetyLevel.DesQuoteTweetTimeline
-import com.twitter.visibility.models.SafetyLevel.DesRealtime
-import com.twitter.visibility.models.SafetyLevel.DesRealtimeSpamEnrichment
-import com.twitter.visibility.models.SafetyLevel.DesRealtimeTweetFilter
-import com.twitter.visibility.models.SafetyLevel.DesRetweetingUsers
-import com.twitter.visibility.models.SafetyLevel.DesTweetDetail
-import com.twitter.visibility.models.SafetyLevel.DesTweetLikingUsers
-import com.twitter.visibility.models.SafetyLevel.DesUserBookmarks
-import com.twitter.visibility.models.SafetyLevel.DesUserLikedTweets
-import com.twitter.visibility.models.SafetyLevel.DesUserMentions
-import com.twitter.visibility.models.SafetyLevel.DesUserTweets
-import com.twitter.visibility.models.SafetyLevel.DevPlatformComplianceStream
-import com.twitter.visibility.models.SafetyLevel.DevPlatformGetListTweets
-import com.twitter.visibility.models.SafetyLevel.DirectMessages
-import com.twitter.visibility.models.SafetyLevel.DirectMessagesConversationList
-import com.twitter.visibility.models.SafetyLevel.DirectMessagesConversationTimeline
-import com.twitter.visibility.models.SafetyLevel.DirectMessagesInbox
-import com.twitter.visibility.models.SafetyLevel.DirectMessagesMutedUsers
-import com.twitter.visibility.models.SafetyLevel.DirectMessagesPinned
-import com.twitter.visibility.models.SafetyLevel.DirectMessagesSearch
-import com.twitter.visibility.models.SafetyLevel.EditHistoryTimeline
-import com.twitter.visibility.models.SafetyLevel.ElevatedQuoteTweetTimeline
-import com.twitter.visibility.models.SafetyLevel.EmbedTweetMarkup
-import com.twitter.visibility.models.SafetyLevel.EmbeddedTweet
-import com.twitter.visibility.models.SafetyLevel.EmbedsPublicInterestNotice
-import com.twitter.visibility.models.SafetyLevel.ExploreRecommendations
-import com.twitter.visibility.models.SafetyLevel.FilterAll
-import com.twitter.visibility.models.SafetyLevel.FilterAllPlaceholder
-import com.twitter.visibility.models.SafetyLevel.FilterDefault
-import com.twitter.visibility.models.SafetyLevel.FilterNone
-import com.twitter.visibility.models.SafetyLevel.FollowedTopicsTimeline
-import com.twitter.visibility.models.SafetyLevel.FollowerConnections
-import com.twitter.visibility.models.SafetyLevel.FollowingAndFollowersUserList
-import com.twitter.visibility.models.SafetyLevel.ForDevelopmentOnly
-import com.twitter.visibility.models.SafetyLevel.FriendsFollowingList
-import com.twitter.visibility.models.SafetyLevel.GraphqlDefault
-import com.twitter.visibility.models.SafetyLevel.GryphonDecksAndColumns
-import com.twitter.visibility.models.SafetyLevel.HumanizationNudge
-import com.twitter.visibility.models.SafetyLevel.KitchenSinkDevelopment
-import com.twitter.visibility.models.SafetyLevel.ListHeader
-import com.twitter.visibility.models.SafetyLevel.ListMemberships
-import com.twitter.visibility.models.SafetyLevel.ListOwnerships
-import com.twitter.visibility.models.SafetyLevel.ListRecommendations
-import com.twitter.visibility.models.SafetyLevel.ListSearch
-import com.twitter.visibility.models.SafetyLevel.ListSubscriptions
-import com.twitter.visibility.models.SafetyLevel.LivePipelineEngagementCounts
-import com.twitter.visibility.models.SafetyLevel.LiveVideoTimeline
-import com.twitter.visibility.models.SafetyLevel.MagicRecs
-import com.twitter.visibility.models.SafetyLevel.MagicRecsAggressive
-import com.twitter.visibility.models.SafetyLevel.MagicRecsAggressiveV2
-import com.twitter.visibility.models.SafetyLevel.MagicRecsV2
-import com.twitter.visibility.models.SafetyLevel.Minimal
-import com.twitter.visibility.models.SafetyLevel.ModeratedTweetsTimeline
-import com.twitter.visibility.models.SafetyLevel.Moments
-import com.twitter.visibility.models.SafetyLevel.NearbyTimeline
-import com.twitter.visibility.models.SafetyLevel.NewUserExperience
-import com.twitter.visibility.models.SafetyLevel.NotificationsIbis
-import com.twitter.visibility.models.SafetyLevel.NotificationsPlatform
-import com.twitter.visibility.models.SafetyLevel.NotificationsPlatformPush
-import com.twitter.visibility.models.SafetyLevel.NotificationsQig
-import com.twitter.visibility.models.SafetyLevel.NotificationsRead
-import com.twitter.visibility.models.SafetyLevel.NotificationsTimelineDeviceFollow
-import com.twitter.visibility.models.SafetyLevel.NotificationsWrite
-import com.twitter.visibility.models.SafetyLevel.NotificationsWriterTweetHydrator
-import com.twitter.visibility.models.SafetyLevel.NotificationsWriterV2
-import com.twitter.visibility.models.SafetyLevel.ProfileMixerFavorites
-import com.twitter.visibility.models.SafetyLevel.ProfileMixerMedia
-import com.twitter.visibility.models.SafetyLevel.QuickPromoteTweetEligibility
-import com.twitter.visibility.models.SafetyLevel.QuoteTweetTimeline
-import com.twitter.visibility.models.SafetyLevel.QuotedTweetRules
-import com.twitter.visibility.models.SafetyLevel.RecosVideo
-import com.twitter.visibility.models.SafetyLevel.RecosWritePath
-import com.twitter.visibility.models.SafetyLevel.RepliesGrouping
-import com.twitter.visibility.models.SafetyLevel.ReportCenter
-import com.twitter.visibility.models.SafetyLevel.ReturningUserExperienceFocalTweet
-import com.twitter.visibility.models.SafetyLevel.Revenue
-import com.twitter.visibility.models.SafetyLevel.SafeSearchMinimal
-import com.twitter.visibility.models.SafetyLevel.SafeSearchStrict
-import com.twitter.visibility.models.SafetyLevel.SearchBlenderUserRules
-import com.twitter.visibility.models.SafetyLevel.SearchHydration
-import com.twitter.visibility.models.SafetyLevel.SearchLatest
-import com.twitter.visibility.models.SafetyLevel.SearchLatestUserRules
-import com.twitter.visibility.models.SafetyLevel.SearchMixerSrpMinimal
-import com.twitter.visibility.models.SafetyLevel.SearchMixerSrpStrict
-import com.twitter.visibility.models.SafetyLevel.SearchPeopleSrp
-import com.twitter.visibility.models.SafetyLevel.SearchPeopleTypeahead
-import com.twitter.visibility.models.SafetyLevel.SearchPhoto
-import com.twitter.visibility.models.SafetyLevel.SearchTop
-import com.twitter.visibility.models.SafetyLevel.SearchTopQig
-import com.twitter.visibility.models.SafetyLevel.SearchTrendTakeoverPromotedTweet
-import com.twitter.visibility.models.SafetyLevel.SearchVideo
-import com.twitter.visibility.models.SafetyLevel.ShoppingManagerSpyMode
-import com.twitter.visibility.models.SafetyLevel.SignalsReactions
-import com.twitter.visibility.models.SafetyLevel.SignalsTweetReactingUsers
-import com.twitter.visibility.models.SafetyLevel.SoftInterventionPivot
-import com.twitter.visibility.models.SafetyLevel.SpaceFleetline
-import com.twitter.visibility.models.SafetyLevel.SpaceHomeTimelineUpranking
-import com.twitter.visibility.models.SafetyLevel.SpaceJoinScreen
-import com.twitter.visibility.models.SafetyLevel.SpaceNotifications
-import com.twitter.visibility.models.SafetyLevel.SpaceTweetAvatarHomeTimeline
-import com.twitter.visibility.models.SafetyLevel.SpacesParticipants
-import com.twitter.visibility.models.SafetyLevel.SpacesSellerApplicationStatus
-import com.twitter.visibility.models.SafetyLevel.SpacesSharing
-import com.twitter.visibility.models.SafetyLevel.StickersTimeline
-import com.twitter.visibility.models.SafetyLevel.StratoExtLimitedEngagements
-import com.twitter.visibility.models.SafetyLevel.StreamServices
-import com.twitter.visibility.models.SafetyLevel.SuperFollowerConnections
-import com.twitter.visibility.models.SafetyLevel.SuperLike
-import com.twitter.visibility.models.SafetyLevel.Test
-import com.twitter.visibility.models.SafetyLevel.TimelineBookmark
-import com.twitter.visibility.models.SafetyLevel.TimelineContentControls
-import com.twitter.visibility.models.SafetyLevel.TimelineConversations
-import com.twitter.visibility.models.SafetyLevel.TimelineConversationsDownranking
-import com.twitter.visibility.models.SafetyLevel.TimelineConversationsDownrankingMinimal
-import com.twitter.visibility.models.SafetyLevel.TimelineFavorites
-import com.twitter.visibility.models.SafetyLevel.TimelineFavoritesSelfView
-import com.twitter.visibility.models.SafetyLevel.TimelineFocalTweet
-import com.twitter.visibility.models.SafetyLevel.TimelineFollowingActivity
-import com.twitter.visibility.models.SafetyLevel.TimelineHomeCommunities
-import com.twitter.visibility.models.SafetyLevel.TimelineHomeHydration
-import com.twitter.visibility.models.SafetyLevel.TimelineHomeLatest
-import com.twitter.visibility.models.SafetyLevel.TimelineHomePromotedHydration
-import com.twitter.visibility.models.SafetyLevel.TimelineHomeRecommendations
-import com.twitter.visibility.models.SafetyLevel.TimelineHomeTopicFollowRecommendations
-import com.twitter.visibility.models.SafetyLevel.TimelineInjection
-import com.twitter.visibility.models.SafetyLevel.TimelineLikedBy
-import com.twitter.visibility.models.SafetyLevel.TimelineLists
-import com.twitter.visibility.models.SafetyLevel.TimelineMedia
-import com.twitter.visibility.models.SafetyLevel.TimelineMentions
-import com.twitter.visibility.models.SafetyLevel.TimelineModeratedTweetsHydration
-import com.twitter.visibility.models.SafetyLevel.TimelineProfileAll
-import com.twitter.visibility.models.SafetyLevel.TimelineProfileSpaces
-import com.twitter.visibility.models.SafetyLevel.TimelineProfileSuperFollows
-import com.twitter.visibility.models.SafetyLevel.TimelineScorer
-import com.twitter.visibility.models.SafetyLevel.Tombstoning
-import com.twitter.visibility.models.SafetyLevel.TopicsLandingPageTopicRecommendations
-import com.twitter.visibility.models.SafetyLevel.TrendsRepresentativeTweet
-import com.twitter.visibility.models.SafetyLevel.TrustedFriendsUserList
-import com.twitter.visibility.models.SafetyLevel.TweetDetail
-import com.twitter.visibility.models.SafetyLevel.TweetDetailNonToo
-import com.twitter.visibility.models.SafetyLevel.TweetDetailWithInjectionsHydration
-import com.twitter.visibility.models.SafetyLevel.TweetEngagers
-import com.twitter.visibility.models.SafetyLevel.TweetReplyNudge
-import com.twitter.visibility.models.SafetyLevel.TweetWritesApi
-import com.twitter.visibility.models.SafetyLevel.TwitterArticleCompose
-import com.twitter.visibility.models.SafetyLevel.TwitterArticleProfileTab
-import com.twitter.visibility.models.SafetyLevel.TwitterArticleRead
-import com.twitter.visibility.models.SafetyLevel.UserMilestoneRecommendation
-import com.twitter.visibility.models.SafetyLevel.UserProfileHeader
-import com.twitter.visibility.models.SafetyLevel.UserSelfViewOnly
-import com.twitter.visibility.models.SafetyLevel.UserSettings
-import com.twitter.visibility.models.SafetyLevel.VideoAds
-import com.twitter.visibility.models.SafetyLevel.WritePathLimitedActionsEnforcement
-import com.twitter.visibility.models.SafetyLevel.ZipbirdConsumerArchives
+ mport com.tw ter.v s b l y.models.SafetyLevel.Access nternalPromotedContent
+ mport com.tw ter.v s b l y.models.SafetyLevel.AdsBus nessSett ngs
+ mport com.tw ter.v s b l y.models.SafetyLevel.AdsCampa gn
+ mport com.tw ter.v s b l y.models.SafetyLevel.AdsManager
+ mport com.tw ter.v s b l y.models.SafetyLevel.AdsReport ngDashboard
+ mport com.tw ter.v s b l y.models.SafetyLevel.AllSubscr bedL sts
+ mport com.tw ter.v s b l y.models.SafetyLevel.Appeals
+ mport com.tw ter.v s b l y.models.SafetyLevel.Art cleT etT  l ne
+ mport com.tw ter.v s b l y.models.SafetyLevel.BaseQ g
+ mport com.tw ter.v s b l y.models.SafetyLevel.B rdwatchNeedsY  lpNot f cat ons
+ mport com.tw ter.v s b l y.models.SafetyLevel.B rdwatchNoteAuthor
+ mport com.tw ter.v s b l y.models.SafetyLevel.B rdwatchNoteT etsT  l ne
+ mport com.tw ter.v s b l y.models.SafetyLevel.BlockMuteUsersT  l ne
+ mport com.tw ter.v s b l y.models.SafetyLevel.BrandSafety
+ mport com.tw ter.v s b l y.models.SafetyLevel.CardPollVot ng
+ mport com.tw ter.v s b l y.models.SafetyLevel.CardsServ ce
+ mport com.tw ter.v s b l y.models.SafetyLevel.ContentControlTool nstall
+ mport com.tw ter.v s b l y.models.SafetyLevel.Conversat onFocalPrehydrat on
+ mport com.tw ter.v s b l y.models.SafetyLevel.Conversat onFocalT et
+ mport com.tw ter.v s b l y.models.SafetyLevel.Conversat on njectedT et
+ mport com.tw ter.v s b l y.models.SafetyLevel.Conversat onReply
+ mport com.tw ter.v s b l y.models.SafetyLevel.CuratedTrendsRepresentat veT et
+ mport com.tw ter.v s b l y.models.SafetyLevel.Curat onPol cyV olat ons
+ mport com.tw ter.v s b l y.models.SafetyLevel.DesFollow ngAndFollo rsUserL st
+ mport com.tw ter.v s b l y.models.SafetyLevel.DesHo T  l ne
+ mport com.tw ter.v s b l y.models.SafetyLevel.DesQuoteT etT  l ne
+ mport com.tw ter.v s b l y.models.SafetyLevel.DesRealt  
+ mport com.tw ter.v s b l y.models.SafetyLevel.DesRealt  SpamEnr ch nt
+ mport com.tw ter.v s b l y.models.SafetyLevel.DesRealt  T etF lter
+ mport com.tw ter.v s b l y.models.SafetyLevel.DesRet et ngUsers
+ mport com.tw ter.v s b l y.models.SafetyLevel.DesT etDeta l
+ mport com.tw ter.v s b l y.models.SafetyLevel.DesT etL k ngUsers
+ mport com.tw ter.v s b l y.models.SafetyLevel.DesUserBookmarks
+ mport com.tw ter.v s b l y.models.SafetyLevel.DesUserL kedT ets
+ mport com.tw ter.v s b l y.models.SafetyLevel.DesUser nt ons
+ mport com.tw ter.v s b l y.models.SafetyLevel.DesUserT ets
+ mport com.tw ter.v s b l y.models.SafetyLevel.DevPlatformCompl anceStream
+ mport com.tw ter.v s b l y.models.SafetyLevel.DevPlatformGetL stT ets
+ mport com.tw ter.v s b l y.models.SafetyLevel.D rect ssages
+ mport com.tw ter.v s b l y.models.SafetyLevel.D rect ssagesConversat onL st
+ mport com.tw ter.v s b l y.models.SafetyLevel.D rect ssagesConversat onT  l ne
+ mport com.tw ter.v s b l y.models.SafetyLevel.D rect ssages nbox
+ mport com.tw ter.v s b l y.models.SafetyLevel.D rect ssagesMutedUsers
+ mport com.tw ter.v s b l y.models.SafetyLevel.D rect ssagesP nned
+ mport com.tw ter.v s b l y.models.SafetyLevel.D rect ssagesSearch
+ mport com.tw ter.v s b l y.models.SafetyLevel.Ed  toryT  l ne
+ mport com.tw ter.v s b l y.models.SafetyLevel.ElevatedQuoteT etT  l ne
+ mport com.tw ter.v s b l y.models.SafetyLevel.EmbedT etMarkup
+ mport com.tw ter.v s b l y.models.SafetyLevel.EmbeddedT et
+ mport com.tw ter.v s b l y.models.SafetyLevel.EmbedsPubl c nterestNot ce
+ mport com.tw ter.v s b l y.models.SafetyLevel.ExploreRecom ndat ons
+ mport com.tw ter.v s b l y.models.SafetyLevel.F lterAll
+ mport com.tw ter.v s b l y.models.SafetyLevel.F lterAllPlaceholder
+ mport com.tw ter.v s b l y.models.SafetyLevel.F lterDefault
+ mport com.tw ter.v s b l y.models.SafetyLevel.F lterNone
+ mport com.tw ter.v s b l y.models.SafetyLevel.Follo dTop csT  l ne
+ mport com.tw ter.v s b l y.models.SafetyLevel.Follo rConnect ons
+ mport com.tw ter.v s b l y.models.SafetyLevel.Follow ngAndFollo rsUserL st
+ mport com.tw ter.v s b l y.models.SafetyLevel.ForDevelop ntOnly
+ mport com.tw ter.v s b l y.models.SafetyLevel.Fr endsFollow ngL st
+ mport com.tw ter.v s b l y.models.SafetyLevel.GraphqlDefault
+ mport com.tw ter.v s b l y.models.SafetyLevel.GryphonDecksAndColumns
+ mport com.tw ter.v s b l y.models.SafetyLevel.Human zat onNudge
+ mport com.tw ter.v s b l y.models.SafetyLevel.K c nS nkDevelop nt
+ mport com.tw ter.v s b l y.models.SafetyLevel.L st ader
+ mport com.tw ter.v s b l y.models.SafetyLevel.L st mbersh ps
+ mport com.tw ter.v s b l y.models.SafetyLevel.L stOwnersh ps
+ mport com.tw ter.v s b l y.models.SafetyLevel.L stRecom ndat ons
+ mport com.tw ter.v s b l y.models.SafetyLevel.L stSearch
+ mport com.tw ter.v s b l y.models.SafetyLevel.L stSubscr pt ons
+ mport com.tw ter.v s b l y.models.SafetyLevel.L veP pel neEngage ntCounts
+ mport com.tw ter.v s b l y.models.SafetyLevel.L veV deoT  l ne
+ mport com.tw ter.v s b l y.models.SafetyLevel.Mag cRecs
+ mport com.tw ter.v s b l y.models.SafetyLevel.Mag cRecsAggress ve
+ mport com.tw ter.v s b l y.models.SafetyLevel.Mag cRecsAggress veV2
+ mport com.tw ter.v s b l y.models.SafetyLevel.Mag cRecsV2
+ mport com.tw ter.v s b l y.models.SafetyLevel.M n mal
+ mport com.tw ter.v s b l y.models.SafetyLevel.ModeratedT etsT  l ne
+ mport com.tw ter.v s b l y.models.SafetyLevel.Mo nts
+ mport com.tw ter.v s b l y.models.SafetyLevel.NearbyT  l ne
+ mport com.tw ter.v s b l y.models.SafetyLevel.NewUserExper ence
+ mport com.tw ter.v s b l y.models.SafetyLevel.Not f cat ons b s
+ mport com.tw ter.v s b l y.models.SafetyLevel.Not f cat onsPlatform
+ mport com.tw ter.v s b l y.models.SafetyLevel.Not f cat onsPlatformPush
+ mport com.tw ter.v s b l y.models.SafetyLevel.Not f cat onsQ g
+ mport com.tw ter.v s b l y.models.SafetyLevel.Not f cat onsRead
+ mport com.tw ter.v s b l y.models.SafetyLevel.Not f cat onsT  l neDev ceFollow
+ mport com.tw ter.v s b l y.models.SafetyLevel.Not f cat onsWr e
+ mport com.tw ter.v s b l y.models.SafetyLevel.Not f cat onsWr erT etHydrator
+ mport com.tw ter.v s b l y.models.SafetyLevel.Not f cat onsWr erV2
+ mport com.tw ter.v s b l y.models.SafetyLevel.Prof leM xerFavor es
+ mport com.tw ter.v s b l y.models.SafetyLevel.Prof leM xer d a
+ mport com.tw ter.v s b l y.models.SafetyLevel.Qu ckPromoteT etEl g b l y
+ mport com.tw ter.v s b l y.models.SafetyLevel.QuoteT etT  l ne
+ mport com.tw ter.v s b l y.models.SafetyLevel.QuotedT etRules
+ mport com.tw ter.v s b l y.models.SafetyLevel.RecosV deo
+ mport com.tw ter.v s b l y.models.SafetyLevel.RecosWr ePath
+ mport com.tw ter.v s b l y.models.SafetyLevel.Repl esGroup ng
+ mport com.tw ter.v s b l y.models.SafetyLevel.ReportCenter
+ mport com.tw ter.v s b l y.models.SafetyLevel.Return ngUserExper enceFocalT et
+ mport com.tw ter.v s b l y.models.SafetyLevel.Revenue
+ mport com.tw ter.v s b l y.models.SafetyLevel.SafeSearchM n mal
+ mport com.tw ter.v s b l y.models.SafetyLevel.SafeSearchStr ct
+ mport com.tw ter.v s b l y.models.SafetyLevel.SearchBlenderUserRules
+ mport com.tw ter.v s b l y.models.SafetyLevel.SearchHydrat on
+ mport com.tw ter.v s b l y.models.SafetyLevel.SearchLatest
+ mport com.tw ter.v s b l y.models.SafetyLevel.SearchLatestUserRules
+ mport com.tw ter.v s b l y.models.SafetyLevel.SearchM xerSrpM n mal
+ mport com.tw ter.v s b l y.models.SafetyLevel.SearchM xerSrpStr ct
+ mport com.tw ter.v s b l y.models.SafetyLevel.SearchPeopleSrp
+ mport com.tw ter.v s b l y.models.SafetyLevel.SearchPeopleTypea ad
+ mport com.tw ter.v s b l y.models.SafetyLevel.SearchPhoto
+ mport com.tw ter.v s b l y.models.SafetyLevel.SearchTop
+ mport com.tw ter.v s b l y.models.SafetyLevel.SearchTopQ g
+ mport com.tw ter.v s b l y.models.SafetyLevel.SearchTrendTakeoverPromotedT et
+ mport com.tw ter.v s b l y.models.SafetyLevel.SearchV deo
+ mport com.tw ter.v s b l y.models.SafetyLevel.Shopp ngManagerSpyMode
+ mport com.tw ter.v s b l y.models.SafetyLevel.S gnalsReact ons
+ mport com.tw ter.v s b l y.models.SafetyLevel.S gnalsT etReact ngUsers
+ mport com.tw ter.v s b l y.models.SafetyLevel.Soft ntervent onP vot
+ mport com.tw ter.v s b l y.models.SafetyLevel.SpaceFleetl ne
+ mport com.tw ter.v s b l y.models.SafetyLevel.SpaceHo T  l neUprank ng
+ mport com.tw ter.v s b l y.models.SafetyLevel.SpaceJo nScreen
+ mport com.tw ter.v s b l y.models.SafetyLevel.SpaceNot f cat ons
+ mport com.tw ter.v s b l y.models.SafetyLevel.SpaceT etAvatarHo T  l ne
+ mport com.tw ter.v s b l y.models.SafetyLevel.SpacesPart c pants
+ mport com.tw ter.v s b l y.models.SafetyLevel.SpacesSellerAppl cat onStatus
+ mport com.tw ter.v s b l y.models.SafetyLevel.SpacesShar ng
+ mport com.tw ter.v s b l y.models.SafetyLevel.St ckersT  l ne
+ mport com.tw ter.v s b l y.models.SafetyLevel.StratoExtL m edEngage nts
+ mport com.tw ter.v s b l y.models.SafetyLevel.StreamServ ces
+ mport com.tw ter.v s b l y.models.SafetyLevel.SuperFollo rConnect ons
+ mport com.tw ter.v s b l y.models.SafetyLevel.SuperL ke
+ mport com.tw ter.v s b l y.models.SafetyLevel.Test
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l neBookmark
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l neContentControls
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l neConversat ons
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l neConversat onsDownrank ng
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l neConversat onsDownrank ngM n mal
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l neFavor es
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l neFavor esSelfV ew
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l neFocalT et
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l neFollow ngAct v y
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l neHo Commun  es
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l neHo Hydrat on
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l neHo Latest
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l neHo PromotedHydrat on
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l neHo Recom ndat ons
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l neHo Top cFollowRecom ndat ons
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l ne nject on
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l neL kedBy
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l neL sts
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l ne d a
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l ne nt ons
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l neModeratedT etsHydrat on
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l neProf leAll
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l neProf leSpaces
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l neProf leSuperFollows
+ mport com.tw ter.v s b l y.models.SafetyLevel.T  l neScorer
+ mport com.tw ter.v s b l y.models.SafetyLevel.Tombston ng
+ mport com.tw ter.v s b l y.models.SafetyLevel.Top csLand ngPageTop cRecom ndat ons
+ mport com.tw ter.v s b l y.models.SafetyLevel.TrendsRepresentat veT et
+ mport com.tw ter.v s b l y.models.SafetyLevel.TrustedFr endsUserL st
+ mport com.tw ter.v s b l y.models.SafetyLevel.T etDeta l
+ mport com.tw ter.v s b l y.models.SafetyLevel.T etDeta lNonToo
+ mport com.tw ter.v s b l y.models.SafetyLevel.T etDeta lW h nject onsHydrat on
+ mport com.tw ter.v s b l y.models.SafetyLevel.T etEngagers
+ mport com.tw ter.v s b l y.models.SafetyLevel.T etReplyNudge
+ mport com.tw ter.v s b l y.models.SafetyLevel.T etWr esAp 
+ mport com.tw ter.v s b l y.models.SafetyLevel.Tw terArt cleCompose
+ mport com.tw ter.v s b l y.models.SafetyLevel.Tw terArt cleProf leTab
+ mport com.tw ter.v s b l y.models.SafetyLevel.Tw terArt cleRead
+ mport com.tw ter.v s b l y.models.SafetyLevel.UserM lestoneRecom ndat on
+ mport com.tw ter.v s b l y.models.SafetyLevel.UserProf le ader
+ mport com.tw ter.v s b l y.models.SafetyLevel.UserSelfV ewOnly
+ mport com.tw ter.v s b l y.models.SafetyLevel.UserSett ngs
+ mport com.tw ter.v s b l y.models.SafetyLevel.V deoAds
+ mport com.tw ter.v s b l y.models.SafetyLevel.Wr ePathL m edAct onsEnforce nt
+ mport com.tw ter.v s b l y.models.SafetyLevel.Z pb rdConsu rArch ves
 
-sealed trait SafetyLevelGroup { val levels: Set[SafetyLevel] }
+sealed tra  SafetyLevelGroup { val levels: Set[SafetyLevel] }
 
 object SafetyLevelGroup {
   case object Ads extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      AdsBusinessSettings,
-      AdsCampaign,
+    overr de val levels: Set[SafetyLevel] = Set(
+      AdsBus nessSett ngs,
+      AdsCampa gn,
       AdsManager,
-      AdsReportingDashboard,
+      AdsReport ngDashboard,
       BrandSafety,
-      VideoAds,
-      QuickPromoteTweetEligibility
+      V deoAds,
+      Qu ckPromoteT etEl g b l y
     )
   }
 
-  case object ArticleTimeline extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      ArticleTweetTimeline,
+  case object Art cleT  l ne extends SafetyLevelGroup {
+    overr de val levels: Set[SafetyLevel] = Set(
+      Art cleT etT  l ne,
     )
   }
 
-  case object ArticleTweets extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      TwitterArticleCompose,
-      TwitterArticleProfileTab,
-      TwitterArticleRead,
+  case object Art cleT ets extends SafetyLevelGroup {
+    overr de val levels: Set[SafetyLevel] = Set(
+      Tw terArt cleCompose,
+      Tw terArt cleProf leTab,
+      Tw terArt cleRead,
     )
   }
 
-  case object Birdwatch extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      BirdwatchNoteAuthor,
-      BirdwatchNoteTweetsTimeline,
-      BirdwatchNeedsYourHelpNotifications,
+  case object B rdwatch extends SafetyLevelGroup {
+    overr de val levels: Set[SafetyLevel] = Set(
+      B rdwatchNoteAuthor,
+      B rdwatchNoteT etsT  l ne,
+      B rdwatchNeedsY  lpNot f cat ons,
     )
   }
 
   case object Cards extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      CardPollVoting,
-      CardsService,
+    overr de val levels: Set[SafetyLevel] = Set(
+      CardPollVot ng,
+      CardsServ ce,
     )
   }
 
-  case object Communities extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      SafetyLevel.Communities
+  case object Commun  es extends SafetyLevelGroup {
+    overr de val levels: Set[SafetyLevel] = Set(
+      SafetyLevel.Commun  es
     )
   }
 
-  case object Conversation extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      ConversationFocalPrehydration,
-      ConversationFocalTweet,
-      ConversationInjectedTweet,
-      ConversationReply,
-      Tombstoning,
+  case object Conversat on extends SafetyLevelGroup {
+    overr de val levels: Set[SafetyLevel] = Set(
+      Conversat onFocalPrehydrat on,
+      Conversat onFocalT et,
+      Conversat on njectedT et,
+      Conversat onReply,
+      Tombston ng,
     )
   }
 
-  case object CreativeContainerService extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      AccessInternalPromotedContent
+  case object Creat veConta nerServ ce extends SafetyLevelGroup {
+    overr de val levels: Set[SafetyLevel] = Set(
+      Access nternalPromotedContent
     )
   }
 
   case object Des extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      DevPlatformGetListTweets,
-      DesFollowingAndFollowersUserList,
-      DesHomeTimeline,
-      DesQuoteTweetTimeline,
-      DesRetweetingUsers,
-      DesTweetDetail,
-      DesTweetLikingUsers,
+    overr de val levels: Set[SafetyLevel] = Set(
+      DevPlatformGetL stT ets,
+      DesFollow ngAndFollo rsUserL st,
+      DesHo T  l ne,
+      DesQuoteT etT  l ne,
+      DesRet et ngUsers,
+      DesT etDeta l,
+      DesT etL k ngUsers,
       DesUserBookmarks,
-      DesUserLikedTweets,
-      DesUserMentions,
-      DesUserTweets,
-      DevPlatformComplianceStream,
+      DesUserL kedT ets,
+      DesUser nt ons,
+      DesUserT ets,
+      DevPlatformCompl anceStream,
     )
   }
 
   case object DesStream extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      DesRealtime,
-      DesRealtimeSpamEnrichment,
-      DesRealtimeTweetFilter,
+    overr de val levels: Set[SafetyLevel] = Set(
+      DesRealt  ,
+      DesRealt  SpamEnr ch nt,
+      DesRealt  T etF lter,
     )
   }
 
   case object Dm extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      DirectMessages,
-      DirectMessagesConversationList,
-      DirectMessagesConversationTimeline,
-      DirectMessagesInbox,
-      DirectMessagesMutedUsers,
-      DirectMessagesPinned,
-      DirectMessagesSearch,
+    overr de val levels: Set[SafetyLevel] = Set(
+      D rect ssages,
+      D rect ssagesConversat onL st,
+      D rect ssagesConversat onT  l ne,
+      D rect ssages nbox,
+      D rect ssagesMutedUsers,
+      D rect ssagesP nned,
+      D rect ssagesSearch,
     )
   }
 
-  case object Followers extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      FollowedTopicsTimeline,
-      FollowerConnections,
-      FollowingAndFollowersUserList,
-      FriendsFollowingList,
+  case object Follo rs extends SafetyLevelGroup {
+    overr de val levels: Set[SafetyLevel] = Set(
+      Follo dTop csT  l ne,
+      Follo rConnect ons,
+      Follow ngAndFollo rsUserL st,
+      Fr endsFollow ngL st,
     )
   }
 
   case object Graphql extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      FilterDefault,
+    overr de val levels: Set[SafetyLevel] = Set(
+      F lterDefault,
       GraphqlDefault,
-      SoftInterventionPivot,
+      Soft ntervent onP vot,
     )
   }
 
-  case object Jiminy extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      HumanizationNudge,
-      TweetReplyNudge,
+  case object J m ny extends SafetyLevelGroup {
+    overr de val levels: Set[SafetyLevel] = Set(
+      Human zat onNudge,
+      T etReplyNudge,
     )
   }
 
-  case object Lists extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      AllSubscribedLists,
-      ListHeader,
-      ListMemberships,
-      ListOwnerships,
-      ListRecommendations,
-      ListSearch,
-      ListSubscriptions,
+  case object L sts extends SafetyLevelGroup {
+    overr de val levels: Set[SafetyLevel] = Set(
+      AllSubscr bedL sts,
+      L st ader,
+      L st mbersh ps,
+      L stOwnersh ps,
+      L stRecom ndat ons,
+      L stSearch,
+      L stSubscr pt ons,
     )
   }
 
-  case object Notifications extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      NotificationsIbis,
-      NotificationsPlatform,
-      NotificationsPlatformPush,
-      NotificationsQig,
-      NotificationsRead,
-      NotificationsTimelineDeviceFollow,
-      NotificationsWrite,
-      NotificationsWriterTweetHydrator,
-      NotificationsWriterV2,
+  case object Not f cat ons extends SafetyLevelGroup {
+    overr de val levels: Set[SafetyLevel] = Set(
+      Not f cat ons b s,
+      Not f cat onsPlatform,
+      Not f cat onsPlatformPush,
+      Not f cat onsQ g,
+      Not f cat onsRead,
+      Not f cat onsT  l neDev ceFollow,
+      Not f cat onsWr e,
+      Not f cat onsWr erT etHydrator,
+      Not f cat onsWr erV2,
     )
   }
 
-  case object Other extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      CuratedTrendsRepresentativeTweet,
-      CurationPolicyViolations,
-      BaseQig,
+  case object Ot r extends SafetyLevelGroup {
+    overr de val levels: Set[SafetyLevel] = Set(
+      CuratedTrendsRepresentat veT et,
+      Curat onPol cyV olat ons,
+      BaseQ g,
       Appeals,
-      ContentControlToolInstall,
-      EditHistoryTimeline,
-      ElevatedQuoteTweetTimeline,
-      EmbeddedTweet,
-      EmbedsPublicInterestNotice,
-      EmbedTweetMarkup,
-      ExploreRecommendations,
-      WritePathLimitedActionsEnforcement,
-      LiveVideoTimeline,
-      LivePipelineEngagementCounts,
-      Minimal,
-      Moments,
-      NearbyTimeline,
-      NewUserExperience,
-      QuoteTweetTimeline,
-      QuotedTweetRules,
+      ContentControlTool nstall,
+      Ed  toryT  l ne,
+      ElevatedQuoteT etT  l ne,
+      EmbeddedT et,
+      EmbedsPubl c nterestNot ce,
+      EmbedT etMarkup,
+      ExploreRecom ndat ons,
+      Wr ePathL m edAct onsEnforce nt,
+      L veV deoT  l ne,
+      L veP pel neEngage ntCounts,
+      M n mal,
+      Mo nts,
+      NearbyT  l ne,
+      NewUserExper ence,
+      QuoteT etT  l ne,
+      QuotedT etRules,
       ReportCenter,
       Revenue,
-      ShoppingManagerSpyMode,
-      StickersTimeline,
-      SuperLike,
-      TrendsRepresentativeTweet,
-      TrustedFriendsUserList,
+      Shopp ngManagerSpyMode,
+      St ckersT  l ne,
+      SuperL ke,
+      TrendsRepresentat veT et,
+      TrustedFr endsUserL st,
       GryphonDecksAndColumns,
-      TweetEngagers,
-      TweetWritesApi,
-      UserMilestoneRecommendation,
-      StreamServices,
-      ZipbirdConsumerArchives
+      T etEngagers,
+      T etWr esAp ,
+      UserM lestoneRecom ndat on,
+      StreamServ ces,
+      Z pb rdConsu rArch ves
     )
   }
 
-  case object Profile extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      UserProfileHeader,
-      UserSelfViewOnly,
-      UserSettings,
+  case object Prof le extends SafetyLevelGroup {
+    overr de val levels: Set[SafetyLevel] = Set(
+      UserProf le ader,
+      UserSelfV ewOnly,
+      UserSett ngs,
     )
   }
 
-  case object Reactions extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      SignalsReactions,
-      SignalsTweetReactingUsers,
+  case object React ons extends SafetyLevelGroup {
+    overr de val levels: Set[SafetyLevel] = Set(
+      S gnalsReact ons,
+      S gnalsT etReact ngUsers,
     )
   }
 
-  case object Recommendations extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      MagicRecs,
-      MagicRecsV2,
-      MagicRecsAggressive,
-      MagicRecsAggressiveV2,
-      SafetyLevel.Recommendations,
-      RecosVideo,
-      RecosWritePath,
+  case object Recom ndat ons extends SafetyLevelGroup {
+    overr de val levels: Set[SafetyLevel] = Set(
+      Mag cRecs,
+      Mag cRecsV2,
+      Mag cRecsAggress ve,
+      Mag cRecsAggress veV2,
+      SafetyLevel.Recom ndat ons,
+      RecosV deo,
+      RecosWr ePath,
     )
   }
 
-  case object ReturningUserExperience extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      SafetyLevel.ReturningUserExperience,
-      ReturningUserExperienceFocalTweet,
+  case object Return ngUserExper ence extends SafetyLevelGroup {
+    overr de val levels: Set[SafetyLevel] = Set(
+      SafetyLevel.Return ngUserExper ence,
+      Return ngUserExper enceFocalT et,
     )
   }
 
   case object SafeSearch extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      SafeSearchMinimal,
-      SafeSearchStrict,
+    overr de val levels: Set[SafetyLevel] = Set(
+      SafeSearchM n mal,
+      SafeSearchStr ct,
     )
   }
 
   case object Search extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      SearchHydration,
+    overr de val levels: Set[SafetyLevel] = Set(
+      SearchHydrat on,
       SearchLatest,
       SearchTop,
-      SearchTopQig,
+      SearchTopQ g,
       SearchPeopleSrp,
-      SearchPeopleTypeahead,
+      SearchPeopleTypea ad,
       SearchPhoto,
-      SearchTrendTakeoverPromotedTweet,
-      SearchVideo,
+      SearchTrendTakeoverPromotedT et,
+      SearchV deo,
       SearchBlenderUserRules,
       SearchLatestUserRules,
     )
   }
 
-  case object SearchMixer extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      SearchMixerSrpMinimal,
-      SearchMixerSrpStrict,
+  case object SearchM xer extends SafetyLevelGroup {
+    overr de val levels: Set[SafetyLevel] = Set(
+      SearchM xerSrpM n mal,
+      SearchM xerSrpStr ct,
     )
   }
 
-  case object Socialproof extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      SafetyLevel.SocialProof
+  case object Soc alproof extends SafetyLevelGroup {
+    overr de val levels: Set[SafetyLevel] = Set(
+      SafetyLevel.Soc alProof
     )
   }
 
   case object Spaces extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      SpaceFleetline,
-      SpaceHomeTimelineUpranking,
-      SpaceJoinScreen,
-      SpaceNotifications,
+    overr de val levels: Set[SafetyLevel] = Set(
+      SpaceFleetl ne,
+      SpaceHo T  l neUprank ng,
+      SpaceJo nScreen,
+      SpaceNot f cat ons,
       SafetyLevel.Spaces,
-      SpacesParticipants,
-      SpacesSellerApplicationStatus,
-      SpacesSharing,
-      SpaceTweetAvatarHomeTimeline,
+      SpacesPart c pants,
+      SpacesSellerAppl cat onStatus,
+      SpacesShar ng,
+      SpaceT etAvatarHo T  l ne,
     )
   }
 
   case object Strato extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      StratoExtLimitedEngagements
+    overr de val levels: Set[SafetyLevel] = Set(
+      StratoExtL m edEngage nts
     )
   }
 
   case object Superfollows extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      SuperFollowerConnections,
-      TimelineProfileSuperFollows,
+    overr de val levels: Set[SafetyLevel] = Set(
+      SuperFollo rConnect ons,
+      T  l neProf leSuperFollows,
     )
   }
 
-  case object Testing extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      ForDevelopmentOnly,
-      KitchenSinkDevelopment,
+  case object Test ng extends SafetyLevelGroup {
+    overr de val levels: Set[SafetyLevel] = Set(
+      ForDevelop ntOnly,
+      K c nS nkDevelop nt,
       Test,
     )
   }
 
-  case object Timeline extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      BlockMuteUsersTimeline,
-      TimelineBookmark,
-      TimelineContentControls,
-      TimelineConversationsDownranking,
-      TimelineConversationsDownrankingMinimal,
-      TimelineFavorites,
-      TimelineFavoritesSelfView,
-      TimelineFollowingActivity,
-      TimelineScorer,
-      TimelineInjection,
-      TimelineLikedBy,
-      TimelineLists,
-      TimelineMedia,
-      TimelineMentions,
-      ModeratedTweetsTimeline,
-      TimelineModeratedTweetsHydration,
+  case object T  l ne extends SafetyLevelGroup {
+    overr de val levels: Set[SafetyLevel] = Set(
+      BlockMuteUsersT  l ne,
+      T  l neBookmark,
+      T  l neContentControls,
+      T  l neConversat onsDownrank ng,
+      T  l neConversat onsDownrank ngM n mal,
+      T  l neFavor es,
+      T  l neFavor esSelfV ew,
+      T  l neFollow ngAct v y,
+      T  l neScorer,
+      T  l ne nject on,
+      T  l neL kedBy,
+      T  l neL sts,
+      T  l ne d a,
+      T  l ne nt ons,
+      ModeratedT etsT  l ne,
+      T  l neModeratedT etsHydrat on,
     )
   }
 
-  case object TopicRecommendations extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      SafetyLevel.TopicRecommendations,
-      TopicsLandingPageTopicRecommendations,
+  case object Top cRecom ndat ons extends SafetyLevelGroup {
+    overr de val levels: Set[SafetyLevel] = Set(
+      SafetyLevel.Top cRecom ndat ons,
+      Top csLand ngPageTop cRecom ndat ons,
     )
   }
 
-  case object TimelineProfile extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      SafetyLevel.TimelineProfile,
-      TimelineProfileAll,
-      TimelineProfileSpaces,
-      TimelineMedia,
-      ProfileMixerMedia,
-      TimelineFavorites,
-      ProfileMixerFavorites
+  case object T  l neProf le extends SafetyLevelGroup {
+    overr de val levels: Set[SafetyLevel] = Set(
+      SafetyLevel.T  l neProf le,
+      T  l neProf leAll,
+      T  l neProf leSpaces,
+      T  l ne d a,
+      Prof leM xer d a,
+      T  l neFavor es,
+      Prof leM xerFavor es
     )
   }
 
-  case object TimelineHome extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      SafetyLevel.TimelineHome,
-      TimelineHomeCommunities,
-      TimelineHomeHydration,
-      TimelineHomeLatest,
-      TimelineHomePromotedHydration,
-      TimelineHomeRecommendations,
-      TimelineHomeTopicFollowRecommendations,
+  case object T  l neHo  extends SafetyLevelGroup {
+    overr de val levels: Set[SafetyLevel] = Set(
+      SafetyLevel.T  l neHo ,
+      T  l neHo Commun  es,
+      T  l neHo Hydrat on,
+      T  l neHo Latest,
+      T  l neHo PromotedHydrat on,
+      T  l neHo Recom ndat ons,
+      T  l neHo Top cFollowRecom ndat ons,
     )
   }
 
-  case object TlsApi extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      TimelineConversations,
-      TimelineFocalTweet,
+  case object TlsAp  extends SafetyLevelGroup {
+    overr de val levels: Set[SafetyLevel] = Set(
+      T  l neConversat ons,
+      T  l neFocalT et,
     )
   }
 
-  case object TweetDetails extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      TweetDetail,
-      TweetDetailNonToo,
-      TweetDetailWithInjectionsHydration,
-      RepliesGrouping,
+  case object T etDeta ls extends SafetyLevelGroup {
+    overr de val levels: Set[SafetyLevel] = Set(
+      T etDeta l,
+      T etDeta lNonToo,
+      T etDeta lW h nject onsHydrat on,
+      Repl esGroup ng,
     )
   }
 
-  case object Special extends SafetyLevelGroup {
-    override val levels: Set[SafetyLevel] = Set(
-      FilterAll,
-      FilterAllPlaceholder,
-      FilterNone,
+  case object Spec al extends SafetyLevelGroup {
+    overr de val levels: Set[SafetyLevel] = Set(
+      F lterAll,
+      F lterAllPlaceholder,
+      F lterNone,
     )
   }
 }

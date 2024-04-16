@@ -1,121 +1,121 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.tw ter.ho _m xer.funct onal_component.feature_hydrator
 
-import com.twitter.finagle.tracing.Annotation.BinaryAnnotation
-import com.twitter.finagle.tracing.ForwardAnnotation
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.home_mixer.model.request.DeviceContext.RequestContext
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.joinkey.context.RequestJoinKeyContext
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.BottomCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.search.common.util.lang.ThriftLanguageUtil
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.prediction.adapters.request_context.RequestContextAdapter.dowFromTimestamp
-import com.twitter.timelines.prediction.adapters.request_context.RequestContextAdapter.hourFromTimestamp
-import java.util.UUID
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.trac ng.Annotat on.B naryAnnotat on
+ mport com.tw ter.f nagle.trac ng.ForwardAnnotat on
+ mport com.tw ter.ho _m xer.model.Ho Features._
+ mport com.tw ter.ho _m xer.model.request.Dev ceContext.RequestContext
+ mport com.tw ter.ho _m xer.model.request.HasDev ceContext
+ mport com.tw ter.jo nkey.context.RequestJo nKeyContext
+ mport com.tw ter.product_m xer.component_l brary.model.cursor.UrtOrderedCursor
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.BottomCursor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.GapCursor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.TopCursor
+ mport com.tw ter.product_m xer.core.p pel ne.HasP pel neCursor
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.BadRequest
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.search.common.ut l.lang.Thr ftLanguageUt l
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.pred ct on.adapters.request_context.RequestContextAdapter.dowFromT  stamp
+ mport com.tw ter.t  l nes.pred ct on.adapters.request_context.RequestContextAdapter.h FromT  stamp
+ mport java.ut l.UU D
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
+@S ngleton
 class RequestQueryFeatureHydrator[
-  Query <: PipelineQuery with HasPipelineCursor[UrtOrderedCursor] with HasDeviceContext] @Inject() (
+  Query <: P pel neQuery w h HasP pel neCursor[UrtOrderedCursor] w h HasDev ceContext] @ nject() (
 ) extends QueryFeatureHydrator[Query] {
 
-  override val features: Set[Feature[_, _]] = Set(
+  overr de val features: Set[Feature[_, _]] = Set(
     AccountAgeFeature,
-    ClientIdFeature,
-    DeviceLanguageFeature,
-    GetInitialFeature,
-    GetMiddleFeature,
-    GetNewerFeature,
+    Cl ent dFeature,
+    Dev ceLanguageFeature,
+    Get n  alFeature,
+    GetM ddleFeature,
+    GetNe rFeature,
     GetOlderFeature,
-    GuestIdFeature,
+    Guest dFeature,
     HasDarkRequestFeature,
-    IsForegroundRequestFeature,
-    IsLaunchRequestFeature,
-    PollingFeature,
+     sForegroundRequestFeature,
+     sLaunchRequestFeature,
+    Poll ngFeature,
     PullToRefreshFeature,
-    RequestJoinIdFeature,
-    ServedRequestIdFeature,
-    TimestampFeature,
-    TimestampGMTDowFeature,
-    TimestampGMTHourFeature,
-    ViewerIdFeature
+    RequestJo n dFeature,
+    ServedRequest dFeature,
+    T  stampFeature,
+    T  stampGMTDowFeature,
+    T  stampGMTH Feature,
+    V e r dFeature
   )
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("Request")
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er("Request")
 
-  private val DarkRequestAnnotation = "clnt/has_dark_request"
+  pr vate val DarkRequestAnnotat on = "clnt/has_dark_request"
 
-  // Convert Language code to ISO 639-3 format
-  private def getLanguageISOFormatByCode(languageCode: String): String =
-    ThriftLanguageUtil.getLanguageCodeOf(ThriftLanguageUtil.getThriftLanguageOf(languageCode))
+  // Convert Language code to  SO 639-3 format
+  pr vate def getLanguage SOFormatByCode(languageCode: Str ng): Str ng =
+    Thr ftLanguageUt l.getLanguageCodeOf(Thr ftLanguageUt l.getThr ftLanguageOf(languageCode))
 
-  private def getRequestJoinId(servedRequestId: Long): Option[Long] =
-    Some(RequestJoinKeyContext.current.flatMap(_.requestJoinId).getOrElse(servedRequestId))
+  pr vate def getRequestJo n d(servedRequest d: Long): Opt on[Long] =
+    So (RequestJo nKeyContext.current.flatMap(_.requestJo n d).getOrElse(servedRequest d))
 
-  private def hasDarkRequest: Option[Boolean] = ForwardAnnotation.current
-    .getOrElse(Seq[BinaryAnnotation]())
-    .find(_.key == DarkRequestAnnotation)
-    .map(_.value.asInstanceOf[Boolean])
+  pr vate def hasDarkRequest: Opt on[Boolean] = ForwardAnnotat on.current
+    .getOrElse(Seq[B naryAnnotat on]())
+    .f nd(_.key == DarkRequestAnnotat on)
+    .map(_.value.as nstanceOf[Boolean])
 
-  override def hydrate(query: Query): Stitch[FeatureMap] = {
-    val requestContext = query.deviceContext.flatMap(_.requestContextValue)
-    val servedRequestId = UUID.randomUUID.getMostSignificantBits
-    val timestamp = query.queryTime.inMilliseconds
+  overr de def hydrate(query: Query): St ch[FeatureMap] = {
+    val requestContext = query.dev ceContext.flatMap(_.requestContextValue)
+    val servedRequest d = UU D.randomUU D.getMostS gn f cantB s
+    val t  stamp = query.queryT  . nM ll seconds
 
-    val featureMap = FeatureMapBuilder()
-      .add(AccountAgeFeature, query.getOptionalUserId.flatMap(SnowflakeId.timeFromIdOpt))
-      .add(ClientIdFeature, query.clientContext.appId)
-      .add(DeviceLanguageFeature, query.getLanguageCode.map(getLanguageISOFormatByCode))
+    val featureMap = FeatureMapBu lder()
+      .add(AccountAgeFeature, query.getOpt onalUser d.flatMap(Snowflake d.t  From dOpt))
+      .add(Cl ent dFeature, query.cl entContext.app d)
+      .add(Dev ceLanguageFeature, query.getLanguageCode.map(getLanguage SOFormatByCode))
       .add(
-        GetInitialFeature,
-        query.pipelineCursor.forall(cursor => cursor.id.isEmpty && cursor.gapBoundaryId.isEmpty))
+        Get n  alFeature,
+        query.p pel neCursor.forall(cursor => cursor. d. sEmpty && cursor.gapBoundary d. sEmpty))
       .add(
-        GetMiddleFeature,
-        query.pipelineCursor.exists(cursor =>
-          cursor.id.isDefined && cursor.gapBoundaryId.isDefined &&
-            cursor.cursorType.contains(GapCursor)))
+        GetM ddleFeature,
+        query.p pel neCursor.ex sts(cursor =>
+          cursor. d. sDef ned && cursor.gapBoundary d. sDef ned &&
+            cursor.cursorType.conta ns(GapCursor)))
       .add(
-        GetNewerFeature,
-        query.pipelineCursor.exists(cursor =>
-          cursor.id.isDefined && cursor.gapBoundaryId.isEmpty &&
-            cursor.cursorType.contains(TopCursor)))
+        GetNe rFeature,
+        query.p pel neCursor.ex sts(cursor =>
+          cursor. d. sDef ned && cursor.gapBoundary d. sEmpty &&
+            cursor.cursorType.conta ns(TopCursor)))
       .add(
         GetOlderFeature,
-        query.pipelineCursor.exists(cursor =>
-          cursor.id.isDefined && cursor.gapBoundaryId.isEmpty &&
-            cursor.cursorType.contains(BottomCursor)))
-      .add(GuestIdFeature, query.clientContext.guestId)
-      .add(IsForegroundRequestFeature, requestContext.contains(RequestContext.Foreground))
-      .add(IsLaunchRequestFeature, requestContext.contains(RequestContext.Launch))
-      .add(PollingFeature, query.deviceContext.exists(_.isPolling.contains(true)))
-      .add(PullToRefreshFeature, requestContext.contains(RequestContext.PullToRefresh))
-      .add(ServedRequestIdFeature, Some(servedRequestId))
-      .add(RequestJoinIdFeature, getRequestJoinId(servedRequestId))
-      .add(TimestampFeature, timestamp)
-      .add(TimestampGMTDowFeature, dowFromTimestamp(timestamp))
-      .add(TimestampGMTHourFeature, hourFromTimestamp(timestamp))
+        query.p pel neCursor.ex sts(cursor =>
+          cursor. d. sDef ned && cursor.gapBoundary d. sEmpty &&
+            cursor.cursorType.conta ns(BottomCursor)))
+      .add(Guest dFeature, query.cl entContext.guest d)
+      .add( sForegroundRequestFeature, requestContext.conta ns(RequestContext.Foreground))
+      .add( sLaunchRequestFeature, requestContext.conta ns(RequestContext.Launch))
+      .add(Poll ngFeature, query.dev ceContext.ex sts(_. sPoll ng.conta ns(true)))
+      .add(PullToRefreshFeature, requestContext.conta ns(RequestContext.PullToRefresh))
+      .add(ServedRequest dFeature, So (servedRequest d))
+      .add(RequestJo n dFeature, getRequestJo n d(servedRequest d))
+      .add(T  stampFeature, t  stamp)
+      .add(T  stampGMTDowFeature, dowFromT  stamp(t  stamp))
+      .add(T  stampGMTH Feature, h FromT  stamp(t  stamp))
       .add(HasDarkRequestFeature, hasDarkRequest)
       .add(
-        ViewerIdFeature,
-        query.getOptionalUserId
-          .orElse(query.getGuestId).getOrElse(
-            throw PipelineFailure(BadRequest, "Missing viewer id")))
-      .build()
+        V e r dFeature,
+        query.getOpt onalUser d
+          .orElse(query.getGuest d).getOrElse(
+            throw P pel neFa lure(BadRequest, "M ss ng v e r  d")))
+      .bu ld()
 
-    Stitch.value(featureMap)
+    St ch.value(featureMap)
   }
 }

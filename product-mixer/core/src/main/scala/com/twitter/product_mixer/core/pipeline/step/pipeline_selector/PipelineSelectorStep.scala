@@ -1,43 +1,43 @@
-package com.twitter.product_mixer.core.pipeline.step.pipeline_selector
+package com.tw ter.product_m xer.core.p pel ne.step.p pel ne_selector
 
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.state.HasQuery
+ mport com.tw ter.product_m xer.core.p pel ne.step.Step
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.product_m xer.core.serv ce.ExecutorResult
+ mport com.tw ter.st ch.Arrow
+ mport javax. nject. nject
 
 /**
- * Pipeline Selection step to decide which pipeline to execute. This step doesn't update state, as
- * the selected pipeline identifier is added to the executor results list map for later retrieval
+ * P pel ne Select on step to dec de wh ch p pel ne to execute. T  step doesn't update state, as
+ * t  selected p pel ne  dent f er  s added to t  executor results l st map for later retr eval
  *
- * @tparam Query Pipeline query model
- * @tparam State The pipeline state domain model.
+ * @tparam Query P pel ne query model
+ * @tparam State T  p pel ne state doma n model.
  */
-case class PipelineSelectorStep[Query <: PipelineQuery, State <: HasQuery[Query, State]] @Inject() (
-) extends Step[State, Query => ComponentIdentifier, Query, PipelineSelectorResult] {
-  override def isEmpty(config: Query => ComponentIdentifier): Boolean = false
+case class P pel neSelectorStep[Query <: P pel neQuery, State <: HasQuery[Query, State]] @ nject() (
+) extends Step[State, Query => Component dent f er, Query, P pel neSelectorResult] {
+  overr de def  sEmpty(conf g: Query => Component dent f er): Boolean = false
 
-  override def adaptInput(
+  overr de def adapt nput(
     state: State,
-    config: Query => ComponentIdentifier
+    conf g: Query => Component dent f er
   ): Query = state.query
 
-  override def arrow(
-    config: Query => ComponentIdentifier,
+  overr de def arrow(
+    conf g: Query => Component dent f er,
     context: Executor.Context
-  ): Arrow[Query, PipelineSelectorResult] = Arrow.map { query: Query =>
-    PipelineSelectorResult(config(query))
+  ): Arrow[Query, P pel neSelectorResult] = Arrow.map { query: Query =>
+    P pel neSelectorResult(conf g(query))
   }
 
-  // Noop since we keep the identifier in the executor results
-  override def updateState(
+  // Noop s nce   keep t   dent f er  n t  executor results
+  overr de def updateState(
     state: State,
-    executorResult: PipelineSelectorResult,
-    config: Query => ComponentIdentifier
+    executorResult: P pel neSelectorResult,
+    conf g: Query => Component dent f er
   ): State = state
 }
 
-case class PipelineSelectorResult(pipelineIdentifier: ComponentIdentifier) extends ExecutorResult
+case class P pel neSelectorResult(p pel ne dent f er: Component dent f er) extends ExecutorResult

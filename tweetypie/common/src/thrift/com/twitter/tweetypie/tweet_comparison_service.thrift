@@ -1,28 +1,28 @@
-namespace java com.twitter.tweetypiecomparison.thriftjava
-#@namespace scala com.twitter.tweetypiecomparison.thriftscala
-#@namespace strato com.twitter.tweetypiecomparison
+na space java com.tw ter.t etyp ecompar son.thr ftjava
+#@na space scala com.tw ter.t etyp ecompar son.thr ftscala
+#@na space strato com.tw ter.t etyp ecompar son
 
-include "com/twitter/tweetypie/tweet_service.thrift"
-include "com/twitter/context/viewer.thrift"
+ nclude "com/tw ter/t etyp e/t et_serv ce.thr ft"
+ nclude "com/tw ter/context/v e r.thr ft"
 
-service TweetComparisonService {
-  void compare_retweet(
-    1: tweet_service.RetweetRequest request,
-    2: optional viewer.Viewer viewer
+serv ce T etCompar sonServ ce {
+  vo d compare_ret et(
+    1: t et_serv ce.Ret etRequest request,
+    2: opt onal v e r.V e r v e r
   )
 
-  void compare_post_tweet(
-    1: tweet_service.PostTweetRequest request,
-    2: optional viewer.Viewer viewer
+  vo d compare_post_t et(
+    1: t et_serv ce.PostT etRequest request,
+    2: opt onal v e r.V e r v e r
   )
 
-  void compare_unretweet(
-    1: tweet_service.UnretweetRequest request,
-    2: optional viewer.Viewer viewer
+  vo d compare_unret et(
+    1: t et_serv ce.Unret etRequest request,
+    2: opt onal v e r.V e r v e r
   )
 
-  void compare_delete_tweets(
-    1: tweet_service.DeleteTweetsRequest request,
-    2: optional viewer.Viewer viewer
+  vo d compare_delete_t ets(
+    1: t et_serv ce.DeleteT etsRequest request,
+    2: opt onal v e r.V e r v e r
   )
 }

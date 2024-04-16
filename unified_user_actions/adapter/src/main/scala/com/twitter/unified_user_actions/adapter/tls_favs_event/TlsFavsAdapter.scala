@@ -1,109 +1,109 @@
-package com.twitter.unified_user_actions.adapter.tls_favs_event
+package com.tw ter.un f ed_user_act ons.adapter.tls_favs_event
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.timelineservice.thriftscala._
-import com.twitter.unified_user_actions.adapter.AbstractAdapter
-import com.twitter.unified_user_actions.adapter.common.AdapterUtils
-import com.twitter.unified_user_actions.thriftscala._
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f natra.kafka.serde.UnKeyed
+ mport com.tw ter.t  l neserv ce.thr ftscala._
+ mport com.tw ter.un f ed_user_act ons.adapter.AbstractAdapter
+ mport com.tw ter.un f ed_user_act ons.adapter.common.AdapterUt ls
+ mport com.tw ter.un f ed_user_act ons.thr ftscala._
 
 class TlsFavsAdapter
-    extends AbstractAdapter[ContextualizedFavoriteEvent, UnKeyed, UnifiedUserAction] {
+    extends AbstractAdapter[Contextual zedFavor eEvent, UnKeyed, Un f edUserAct on] {
 
-  import TlsFavsAdapter._
+   mport TlsFavsAdapter._
 
-  override def adaptOneToKeyedMany(
-    input: ContextualizedFavoriteEvent,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): Seq[(UnKeyed, UnifiedUserAction)] =
-    adaptEvent(input).map { e => (UnKeyed, e) }
+  overr de def adaptOneToKeyedMany(
+     nput: Contextual zedFavor eEvent,
+    statsRece ver: StatsRece ver = NullStatsRece ver
+  ): Seq[(UnKeyed, Un f edUserAct on)] =
+    adaptEvent( nput).map { e => (UnKeyed, e) }
 }
 
 object TlsFavsAdapter {
 
-  def adaptEvent(e: ContextualizedFavoriteEvent): Seq[UnifiedUserAction] =
-    Option(e).flatMap { e =>
+  def adaptEvent(e: Contextual zedFavor eEvent): Seq[Un f edUserAct on] =
+    Opt on(e).flatMap { e =>
       e.event match {
-        case FavoriteEventUnion.Favorite(favoriteEvent) =>
-          Some(
-            UnifiedUserAction(
-              userIdentifier = getUserIdentifier(Left(favoriteEvent)),
-              item = getFavItem(favoriteEvent),
-              actionType = ActionType.ServerTweetFav,
-              eventMetadata = getEventMetadata(Left(favoriteEvent), e.context),
+        case Favor eEventUn on.Favor e(favor eEvent) =>
+          So (
+            Un f edUserAct on(
+              user dent f er = getUser dent f er(Left(favor eEvent)),
+               em = getFav em(favor eEvent),
+              act onType = Act onType.ServerT etFav,
+              event tadata = getEvent tadata(Left(favor eEvent), e.context),
               productSurface = None,
-              productSurfaceInfo = None
+              productSurface nfo = None
             ))
 
-        case FavoriteEventUnion.Unfavorite(unfavoriteEvent) =>
-          Some(
-            UnifiedUserAction(
-              userIdentifier = getUserIdentifier(Right(unfavoriteEvent)),
-              item = getUnfavItem(unfavoriteEvent),
-              actionType = ActionType.ServerTweetUnfav,
-              eventMetadata = getEventMetadata(Right(unfavoriteEvent), e.context),
+        case Favor eEventUn on.Unfavor e(unfavor eEvent) =>
+          So (
+            Un f edUserAct on(
+              user dent f er = getUser dent f er(R ght(unfavor eEvent)),
+               em = getUnfav em(unfavor eEvent),
+              act onType = Act onType.ServerT etUnfav,
+              event tadata = getEvent tadata(R ght(unfavor eEvent), e.context),
               productSurface = None,
-              productSurfaceInfo = None
+              productSurface nfo = None
             ))
 
         case _ => None
       }
     }.toSeq
 
-  def getFavItem(favoriteEvent: FavoriteEvent): Item =
-    Item.TweetInfo(
-      TweetInfo(
-        actionTweetId = favoriteEvent.tweetId,
-        actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(favoriteEvent.tweetUserId))),
-        retweetingTweetId = favoriteEvent.retweetId
+  def getFav em(favor eEvent: Favor eEvent):  em =
+     em.T et nfo(
+      T et nfo(
+        act onT et d = favor eEvent.t et d,
+        act onT etAuthor nfo = So (Author nfo(author d = So (favor eEvent.t etUser d))),
+        ret et ngT et d = favor eEvent.ret et d
       )
     )
 
-  def getUnfavItem(unfavoriteEvent: UnfavoriteEvent): Item =
-    Item.TweetInfo(
-      TweetInfo(
-        actionTweetId = unfavoriteEvent.tweetId,
-        actionTweetAuthorInfo = Some(AuthorInfo(authorId = Some(unfavoriteEvent.tweetUserId))),
-        retweetingTweetId = unfavoriteEvent.retweetId
+  def getUnfav em(unfavor eEvent: Unfavor eEvent):  em =
+     em.T et nfo(
+      T et nfo(
+        act onT et d = unfavor eEvent.t et d,
+        act onT etAuthor nfo = So (Author nfo(author d = So (unfavor eEvent.t etUser d))),
+        ret et ngT et d = unfavor eEvent.ret et d
       )
     )
 
-  def getEventMetadata(
-    event: Either[FavoriteEvent, UnfavoriteEvent],
+  def getEvent tadata(
+    event: E  r[Favor eEvent, Unfavor eEvent],
     context: LogEventContext
-  ): EventMetadata = {
-    val sourceTimestampMs = event match {
-      case Left(favoriteEvent) => favoriteEvent.eventTimeMs
-      case Right(unfavoriteEvent) => unfavoriteEvent.eventTimeMs
+  ): Event tadata = {
+    val s ceT  stampMs = event match {
+      case Left(favor eEvent) => favor eEvent.eventT  Ms
+      case R ght(unfavor eEvent) => unfavor eEvent.eventT  Ms
     }
-    // Client UI language, see more at http://go/languagepriority. The format should be ISO 639-1.
+    // Cl ent U  language, see more at http://go/languagepr or y. T  format should be  SO 639-1.
     val language = event match {
-      case Left(favoriteEvent) => favoriteEvent.viewerContext.flatMap(_.requestLanguageCode)
-      case Right(unfavoriteEvent) => unfavoriteEvent.viewerContext.flatMap(_.requestLanguageCode)
+      case Left(favor eEvent) => favor eEvent.v e rContext.flatMap(_.requestLanguageCode)
+      case R ght(unfavor eEvent) => unfavor eEvent.v e rContext.flatMap(_.requestLanguageCode)
     }
-    // From the request (user’s current location),
-    // see https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/thrift/com/twitter/context/viewer.thrift?L54
-    // The format should be ISO_3166-1_alpha-2.
+    // From t  request (user’s current locat on),
+    // see https://s cegraph.tw ter.b z/g .tw ter.b z/s ce/-/blob/src/thr ft/com/tw ter/context/v e r.thr ft?L54
+    // T  format should be  SO_3166-1_alpha-2.
     val countryCode = event match {
-      case Left(favoriteEvent) => favoriteEvent.viewerContext.flatMap(_.requestCountryCode)
-      case Right(unfavoriteEvent) => unfavoriteEvent.viewerContext.flatMap(_.requestCountryCode)
+      case Left(favor eEvent) => favor eEvent.v e rContext.flatMap(_.requestCountryCode)
+      case R ght(unfavor eEvent) => unfavor eEvent.v e rContext.flatMap(_.requestCountryCode)
     }
-    EventMetadata(
-      sourceTimestampMs = sourceTimestampMs,
-      receivedTimestampMs = AdapterUtils.currentTimestampMs,
-      sourceLineage = SourceLineage.ServerTlsFavs,
-      language = language.map(AdapterUtils.normalizeLanguageCode),
-      countryCode = countryCode.map(AdapterUtils.normalizeCountryCode),
-      traceId = Some(context.traceId),
-      clientAppId = context.clientApplicationId,
+    Event tadata(
+      s ceT  stampMs = s ceT  stampMs,
+      rece vedT  stampMs = AdapterUt ls.currentT  stampMs,
+      s ceL neage = S ceL neage.ServerTlsFavs,
+      language = language.map(AdapterUt ls.normal zeLanguageCode),
+      countryCode = countryCode.map(AdapterUt ls.normal zeCountryCode),
+      trace d = So (context.trace d),
+      cl entApp d = context.cl entAppl cat on d,
     )
   }
 
-  // Get id of the user that took the action
-  def getUserIdentifier(event: Either[FavoriteEvent, UnfavoriteEvent]): UserIdentifier =
+  // Get  d of t  user that took t  act on
+  def getUser dent f er(event: E  r[Favor eEvent, Unfavor eEvent]): User dent f er =
     event match {
-      case Left(favoriteEvent) => UserIdentifier(userId = Some(favoriteEvent.userId))
-      case Right(unfavoriteEvent) => UserIdentifier(userId = Some(unfavoriteEvent.userId))
+      case Left(favor eEvent) => User dent f er(user d = So (favor eEvent.user d))
+      case R ght(unfavor eEvent) => User dent f er(user d = So (unfavor eEvent.user d))
     }
 }

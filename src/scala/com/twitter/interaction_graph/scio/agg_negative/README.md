@@ -1,35 +1,35 @@
-## InteractionGraphNegative Dataflow Job
+##  nteract onGraphNegat ve Dataflow Job
 
-#### IntelliJ
+####  ntell J
 ```
-fastpass create --name rg_neg --intellij src/scala/com/twitter/interaction_graph/scio/agg_negative
-```
-
-#### Compile
-```
-bazel build src/scala/com/twitter/interaction_graph/scio/agg_negative:interaction_graph_negative_scio
+fastpass create --na  rg_neg -- ntell j src/scala/com/tw ter/ nteract on_graph/sc o/agg_negat ve
 ```
 
-#### Build Jar
+#### Comp le
 ```
-bazel bundle src/scala/com/twitter/interaction_graph/scio/agg_negative:interaction_graph_negative_scio
+bazel bu ld src/scala/com/tw ter/ nteract on_graph/sc o/agg_negat ve: nteract on_graph_negat ve_sc o
 ```
 
-#### Run Scheduled Job
+#### Bu ld Jar
 ```
-export PROJECTID=twttr-recos-ml-prod
-export REGION=us-central1
-export JOB_NAME=interaction-graph-negative-dataflow
+bazel bundle src/scala/com/tw ter/ nteract on_graph/sc o/agg_negat ve: nteract on_graph_negat ve_sc o
+```
 
-bin/d6w schedule \
-  ${PROJECTID}/${REGION}/${JOB_NAME} \
-  src/scala/com/twitter/interaction_graph/scio/agg_negative/config.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.project=${PROJECTID} \
-  --bind=profile.region=${REGION} \
-  --bind=profile.job_name=${JOB_NAME} \
-  --bind=profile.environment=prod \
-  --bind=profile.date=2022-10-19 \
-  --bind=profile.output_path=processed/interaction_graph_agg_negative_dataflow \
-  --bind=profile.bq_dataset="twttr-bq-cassowary-prod:user"
+#### Run Sc duled Job
+```
+export PROJECT D=twttr-recos-ml-prod
+export REG ON=us-central1
+export JOB_NAME= nteract on-graph-negat ve-dataflow
+
+b n/d6w sc dule \
+  ${PROJECT D}/${REG ON}/${JOB_NAME} \
+  src/scala/com/tw ter/ nteract on_graph/sc o/agg_negat ve/conf g.d6w \
+  --b nd=prof le.user_na =cassowary \
+  --b nd=prof le.project=${PROJECT D} \
+  --b nd=prof le.reg on=${REG ON} \
+  --b nd=prof le.job_na =${JOB_NAME} \
+  --b nd=prof le.env ron nt=prod \
+  --b nd=prof le.date=2022-10-19 \
+  --b nd=prof le.output_path=processed/ nteract on_graph_agg_negat ve_dataflow \
+  --b nd=prof le.bq_dataset="twttr-bq-cassowary-prod:user"
 ```

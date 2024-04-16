@@ -1,12 +1,12 @@
-scala_library(
+scala_l brary(
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/algebird:core",
-        "3rdparty/jvm/com/twitter/algebird:util",
-        "servo/decider",
-        "src/scala/com/twitter/storehaus_internal/manhattan",
-        "src/thrift/com/twitter/ml/api:interpretable-model-java",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/com/tw ter/algeb rd:core",
+        "3rdparty/jvm/com/tw ter/algeb rd:ut l",
+        "servo/dec der",
+        "src/scala/com/tw ter/storehaus_ nternal/manhattan",
+        "src/thr ft/com/tw ter/ml/ap : nterpretable-model-java",
+        "src/thr ft/com/tw ter/s mclusters_v2:s mclusters_v2-thr ft-scala",
     ],
 )

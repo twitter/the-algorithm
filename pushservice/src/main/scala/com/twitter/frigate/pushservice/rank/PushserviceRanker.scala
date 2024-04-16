@@ -1,31 +1,31 @@
-package com.twitter.frigate.pushservice.rank
+package com.tw ter.fr gate.pushserv ce.rank
 
-import com.twitter.frigate.common.base.CandidateDetails
-import com.twitter.frigate.common.base.Ranker
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.common.base.Cand dateDeta ls
+ mport com.tw ter.fr gate.common.base.Ranker
+ mport com.tw ter.ut l.Future
 
-trait PushserviceRanker[T, C] extends Ranker[T, C] {
+tra  Pushserv ceRanker[T, C] extends Ranker[T, C] {
 
   /**
-   * Initial Ranking of input candidates
+   *  n  al Rank ng of  nput cand dates
    */
-  def initialRank(target: T, candidates: Seq[CandidateDetails[C]]): Future[Seq[CandidateDetails[C]]]
+  def  n  alRank(target: T, cand dates: Seq[Cand dateDeta ls[C]]): Future[Seq[Cand dateDeta ls[C]]]
 
   /**
-   * Re-ranks input ranked candidates. Useful when a subset of candidates are ranked
-   * by a different logic, while preserving the initial ranking for the rest
+   * Re-ranks  nput ranked cand dates. Useful w n a subset of cand dates are ranked
+   * by a d fferent log c, wh le preserv ng t   n  al rank ng for t  rest
    */
   def reRank(
     target: T,
-    rankedCandidates: Seq[CandidateDetails[C]]
-  ): Future[Seq[CandidateDetails[C]]]
+    rankedCand dates: Seq[Cand dateDeta ls[C]]
+  ): Future[Seq[Cand dateDeta ls[C]]]
 
   /**
-   * Final ranking that does Initial + Rerank
+   * F nal rank ng that does  n  al + Rerank
    */
-  override final def rank(target: T, candidates: Seq[CandidateDetails[C]]): (
-    Future[Seq[CandidateDetails[C]]]
+  overr de f nal def rank(target: T, cand dates: Seq[Cand dateDeta ls[C]]): (
+    Future[Seq[Cand dateDeta ls[C]]]
   ) = {
-    initialRank(target, candidates).flatMap { rankedCandidates => reRank(target, rankedCandidates) }
+     n  alRank(target, cand dates).flatMap { rankedCand dates => reRank(target, rankedCand dates) }
   }
 }

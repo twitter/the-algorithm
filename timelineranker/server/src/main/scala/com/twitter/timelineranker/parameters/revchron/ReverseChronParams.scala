@@ -1,45 +1,45 @@
-package com.twitter.timelineranker.parameters.revchron
+package com.tw ter.t  l neranker.para ters.revchron
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
 object ReverseChronParams {
-  import ReverseChronTimelineQueryContext._
+   mport ReverseChronT  l neQueryContext._
 
   /**
-   * Controls limit on the number of followed users fetched from SGS when materializing home timelines.
+   * Controls l m  on t  number of follo d users fetc d from SGS w n mater al z ng ho  t  l nes.
    */
-  object MaxFollowedUsersParam
+  object MaxFollo dUsersParam
       extends FSBoundedParam(
-        "reverse_chron_max_followed_users",
-        default = MaxFollowedUsers.default,
-        min = MaxFollowedUsers.bounds.minInclusive,
-        max = MaxFollowedUsers.bounds.maxInclusive
+        "reverse_chron_max_follo d_users",
+        default = MaxFollo dUsers.default,
+        m n = MaxFollo dUsers.bounds.m n nclus ve,
+        max = MaxFollo dUsers.bounds.max nclus ve
       )
 
-  object ReturnEmptyWhenOverMaxFollowsParam
+  object ReturnEmptyW nOverMaxFollowsParam
       extends FSParam(
-        name = "reverse_chron_return_empty_when_over_max_follows",
+        na  = "reverse_chron_return_empty_w n_over_max_follows",
         default = true
       )
 
   /**
-   * When true, search requests for the reverse chron timeline will include an additional operator
-   * so that search will not return tweets that are directed at non-followed users.
+   * W n true, search requests for t  reverse chron t  l ne w ll  nclude an add  onal operator
+   * so that search w ll not return t ets that are d rected at non-follo d users.
    */
-  object DirectedAtNarrowcastingViaSearchParam
+  object D rectedAtNarrowcast ngV aSearchParam
       extends FSParam(
-        name = "reverse_chron_directed_at_narrowcasting_via_search",
+        na  = "reverse_chron_d rected_at_narrowcast ng_v a_search",
         default = false
       )
 
   /**
-   * When true, search requests for the reverse chron timeline will request additional metadata
-   * from search and use this metadata for post filtering.
+   * W n true, search requests for t  reverse chron t  l ne w ll request add  onal  tadata
+   * from search and use t   tadata for post f lter ng.
    */
-  object PostFilteringBasedOnSearchMetadataEnabledParam
+  object PostF lter ngBasedOnSearch tadataEnabledParam
       extends FSParam(
-        name = "reverse_chron_post_filtering_based_on_search_metadata_enabled",
+        na  = "reverse_chron_post_f lter ng_based_on_search_ tadata_enabled",
         default = true
       )
 }

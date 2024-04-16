@@ -1,374 +1,374 @@
-package com.twitter.search.common.schema.base;
+package com.tw ter.search.common.sc ma.base;
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.lucene.document.FieldType;
-import org.apache.lucene.index.DocValuesType;
-import org.apache.lucene.index.IndexOptions;
+ mport org.apac .commons.lang.Str ngUt ls;
+ mport org.apac .lucene.docu nt.F eldType;
+ mport org.apac .lucene. ndex.DocValuesType;
+ mport org.apac .lucene. ndex. ndexOpt ons;
 
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFViewSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftFeatureUpdateConstraint;
+ mport com.tw ter.common.text.ut l.TokenStreamSer al zer;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftCSFType;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftCSFV ewSett ngs;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftFeatureUpdateConstra nt;
 
 /**
- * An extension of Lucene's {@link FieldType} that contains additional Earlybird-specific settings.
- * Lucene IndexingChains can downcast the FieldType object to access these additional settings.
+ * An extens on of Lucene's {@l nk F eldType} that conta ns add  onal Earlyb rd-spec f c sett ngs.
+ * Lucene  ndex ngCha ns can downcast t  F eldType object to access t se add  onal sett ngs.
  */
-public class EarlybirdFieldType extends FieldType {
+publ c class Earlyb rdF eldType extends F eldType {
 
-  public static final EarlybirdFieldType LONG_CSF_FIELD_TYPE = new EarlybirdFieldType();
-  public static final EarlybirdFieldType INT_CSF_FIELD_TYPE = new EarlybirdFieldType();
-  public static final EarlybirdFieldType BYTE_CSF_FIELD_TYPE = new EarlybirdFieldType();
+  publ c stat c f nal Earlyb rdF eldType LONG_CSF_F ELD_TYPE = new Earlyb rdF eldType();
+  publ c stat c f nal Earlyb rdF eldType  NT_CSF_F ELD_TYPE = new Earlyb rdF eldType();
+  publ c stat c f nal Earlyb rdF eldType BYTE_CSF_F ELD_TYPE = new Earlyb rdF eldType();
 
-  static {
-    LONG_CSF_FIELD_TYPE.setCsfType(ThriftCSFType.LONG);
-    LONG_CSF_FIELD_TYPE.setDocValuesType(DocValuesType.NUMERIC);
-    LONG_CSF_FIELD_TYPE.setCsfLoadIntoRam(true);
-    LONG_CSF_FIELD_TYPE.freeze();
+  stat c {
+    LONG_CSF_F ELD_TYPE.setCsfType(Thr ftCSFType.LONG);
+    LONG_CSF_F ELD_TYPE.setDocValuesType(DocValuesType.NUMER C);
+    LONG_CSF_F ELD_TYPE.setCsfLoad ntoRam(true);
+    LONG_CSF_F ELD_TYPE.freeze();
 
-    INT_CSF_FIELD_TYPE.setCsfType(ThriftCSFType.INT);
-    INT_CSF_FIELD_TYPE.setDocValuesType(DocValuesType.NUMERIC);
-    INT_CSF_FIELD_TYPE.setCsfLoadIntoRam(true);
-    INT_CSF_FIELD_TYPE.freeze();
+     NT_CSF_F ELD_TYPE.setCsfType(Thr ftCSFType. NT);
+     NT_CSF_F ELD_TYPE.setDocValuesType(DocValuesType.NUMER C);
+     NT_CSF_F ELD_TYPE.setCsfLoad ntoRam(true);
+     NT_CSF_F ELD_TYPE.freeze();
 
-    BYTE_CSF_FIELD_TYPE.setCsfType(ThriftCSFType.BYTE);
-    BYTE_CSF_FIELD_TYPE.setDocValuesType(DocValuesType.NUMERIC);
-    BYTE_CSF_FIELD_TYPE.setCsfLoadIntoRam(true);
-    BYTE_CSF_FIELD_TYPE.freeze();
+    BYTE_CSF_F ELD_TYPE.setCsfType(Thr ftCSFType.BYTE);
+    BYTE_CSF_F ELD_TYPE.setDocValuesType(DocValuesType.NUMER C);
+    BYTE_CSF_F ELD_TYPE.setCsfLoad ntoRam(true);
+    BYTE_CSF_F ELD_TYPE.freeze();
   }
 
 
-  private boolean storePerPositionPayloads;
-  private int defaultPayloadLength;
-  // This is true for fields that become immutable after optimization
-  private boolean becomesImmutable = true;
-  private boolean supportOrderedTerms;
-  private boolean supportTermTextLookup;
-  private boolean indexHFTermPairs;
+  pr vate boolean storePerPos  onPayloads;
+  pr vate  nt defaultPayloadLength;
+  // T   s true for f elds that beco   mmutable after opt m zat on
+  pr vate boolean beco s mmutable = true;
+  pr vate boolean supportOrderedTerms;
+  pr vate boolean supportTermTextLookup;
+  pr vate boolean  ndexHFTermPa rs;
 
   /**
-   * This flag turns on tweet specific normalizations.
-   * This turns on the following two token processors:
-   * {@link com.twitter.search.common.util.text.splitter.HashtagMentionPunctuationSplitter}
-   * {@link com.twitter.search.common.util.text.filter.NormalizedTokenFilter}
+   * T  flag turns on t et spec f c normal zat ons.
+   * T  turns on t  follow ng two token processors:
+   * {@l nk com.tw ter.search.common.ut l.text.spl ter.Hashtag nt onPunctuat onSpl ter}
+   * {@l nk com.tw ter.search.common.ut l.text.f lter.Normal zedTokenF lter}
    *
-   * HashtagMentionPunctuationSplitter would break a mention or hashtag like @ab_cd or #ab_cd into
+   * Hashtag nt onPunctuat onSpl ter would break a  nt on or hashtag l ke @ab_cd or #ab_cd  nto
    * tokens {ab, cd}.
-   * NormalizedTokenFilter strips out the # @ $ from the tokens.
+   * Normal zedTokenF lter str ps out t  # @ $ from t  tokens.
    *
    *
-   * @deprecated we should remove this flag. It is confusing to have Earlybird apply additional
-   * tokenization on top of what ingester produced.
+   * @deprecated   should remove t  flag.    s confus ng to have Earlyb rd apply add  onal
+   * token zat on on top of what  ngester produced.
    */
   @Deprecated
-  private boolean useTweetSpecificNormalization;
+  pr vate boolean useT etSpec f cNormal zat on;
 
   @Nullable
-  private TokenStreamSerializer.Builder tokenStreamSerializerProvider = null;
+  pr vate TokenStreamSer al zer.Bu lder tokenStreamSer al zerProv der = null;
 
-  // csf type settings
-  private ThriftCSFType csfType;
-  private boolean csfVariableLength;
-  private int csfFixedLengthNumValuesPerDoc;
-  private boolean csfFixedLengthUpdateable;
-  private boolean csfLoadIntoRam;
-  private boolean csfDefaultValueSet;
-  private long csfDefaultValue;
-  // True if this is a CSF field which is a view on top of a different CSF field
-  private boolean csfViewField;
-  // If this field is a csf view, this is the ID of the CSF field backing the view
-  private int csfViewBaseFieldId;
-  private FeatureConfiguration csfViewFeatureConfiguration;
+  // csf type sett ngs
+  pr vate Thr ftCSFType csfType;
+  pr vate boolean csfVar ableLength;
+  pr vate  nt csfF xedLengthNumValuesPerDoc;
+  pr vate boolean csfF xedLengthUpdateable;
+  pr vate boolean csfLoad ntoRam;
+  pr vate boolean csfDefaultValueSet;
+  pr vate long csfDefaultValue;
+  // True  f t   s a CSF f eld wh ch  s a v ew on top of a d fferent CSF f eld
+  pr vate boolean csfV ewF eld;
+  //  f t  f eld  s a csf v ew, t   s t   D of t  CSF f eld back ng t  v ew
+  pr vate  nt csfV ewBaseF eld d;
+  pr vate FeatureConf gurat on csfV ewFeatureConf gurat on;
 
-  // facet field settings
-  private String facetName;
-  private boolean storeFacetSkiplist;
-  private boolean storeFacetOffensiveCounters;
-  private boolean useCSFForFacetCounting;
+  // facet f eld sett ngs
+  pr vate Str ng facetNa ;
+  pr vate boolean storeFacetSk pl st;
+  pr vate boolean storeFacetOffens veCounters;
+  pr vate boolean useCSFForFacetCount ng;
 
-  // Determines if this field is indexed
-  private boolean indexedField = false;
+  // Determ nes  f t  f eld  s  ndexed
+  pr vate boolean  ndexedF eld = false;
 
-  // search field settings
-  // whether a field should be searched by default
-  private boolean textSearchableByDefault = false;
-  private float textSearchableFieldWeight = 1.0f;
+  // search f eld sett ngs
+  // w t r a f eld should be searc d by default
+  pr vate boolean textSearchableByDefault = false;
+  pr vate float textSearchableF eld  ght = 1.0f;
 
-  // For indexed numerical fields
-  private IndexedNumericFieldSettings numericFieldSettings = null;
+  // For  ndexed nu r cal f elds
+  pr vate  ndexedNu r cF eldSett ngs nu r cF eldSett ngs = null;
 
-  public boolean isStorePerPositionPayloads() {
-    return storePerPositionPayloads;
+  publ c boolean  sStorePerPos  onPayloads() {
+    return storePerPos  onPayloads;
   }
 
-  public void setStorePerPositionPayloads(boolean storePerPositionPayloads) {
-    checkIfFrozen();
-    this.storePerPositionPayloads = storePerPositionPayloads;
+  publ c vo d setStorePerPos  onPayloads(boolean storePerPos  onPayloads) {
+    c ck fFrozen();
+    t .storePerPos  onPayloads = storePerPos  onPayloads;
   }
 
-  public int getDefaultPayloadLength() {
+  publ c  nt getDefaultPayloadLength() {
     return defaultPayloadLength;
   }
 
-  public void setDefaultPayloadLength(int defaultPayloadLength) {
-    checkIfFrozen();
-    this.defaultPayloadLength = defaultPayloadLength;
+  publ c vo d setDefaultPayloadLength( nt defaultPayloadLength) {
+    c ck fFrozen();
+    t .defaultPayloadLength = defaultPayloadLength;
   }
 
-  public boolean becomesImmutable() {
-    return becomesImmutable;
+  publ c boolean beco s mmutable() {
+    return beco s mmutable;
   }
 
-  public void setBecomesImmutable(boolean becomesImmutable) {
-    checkIfFrozen();
-    this.becomesImmutable = becomesImmutable;
+  publ c vo d setBeco s mmutable(boolean beco s mmutable) {
+    c ck fFrozen();
+    t .beco s mmutable = beco s mmutable;
   }
 
-  public boolean isSupportOrderedTerms() {
+  publ c boolean  sSupportOrderedTerms() {
     return supportOrderedTerms;
   }
 
-  public void setSupportOrderedTerms(boolean supportOrderedTerms) {
-    checkIfFrozen();
-    this.supportOrderedTerms = supportOrderedTerms;
+  publ c vo d setSupportOrderedTerms(boolean supportOrderedTerms) {
+    c ck fFrozen();
+    t .supportOrderedTerms = supportOrderedTerms;
   }
 
-  public boolean isSupportTermTextLookup() {
+  publ c boolean  sSupportTermTextLookup() {
     return supportTermTextLookup;
   }
 
-  public void setSupportTermTextLookup(boolean supportTermTextLookup) {
-    this.supportTermTextLookup = supportTermTextLookup;
+  publ c vo d setSupportTermTextLookup(boolean supportTermTextLookup) {
+    t .supportTermTextLookup = supportTermTextLookup;
   }
 
   @Nullable
-  public TokenStreamSerializer getTokenStreamSerializer() {
-    return tokenStreamSerializerProvider == null ? null : tokenStreamSerializerProvider.safeBuild();
+  publ c TokenStreamSer al zer getTokenStreamSer al zer() {
+    return tokenStreamSer al zerProv der == null ? null : tokenStreamSer al zerProv der.safeBu ld();
   }
 
-  public void setTokenStreamSerializerBuilder(TokenStreamSerializer.Builder provider) {
-    checkIfFrozen();
-    this.tokenStreamSerializerProvider = provider;
+  publ c vo d setTokenStreamSer al zerBu lder(TokenStreamSer al zer.Bu lder prov der) {
+    c ck fFrozen();
+    t .tokenStreamSer al zerProv der = prov der;
   }
 
-  public ThriftCSFType getCsfType() {
+  publ c Thr ftCSFType getCsfType() {
     return csfType;
   }
 
-  public void setCsfType(ThriftCSFType csfType) {
-    checkIfFrozen();
-    this.csfType = csfType;
+  publ c vo d setCsfType(Thr ftCSFType csfType) {
+    c ck fFrozen();
+    t .csfType = csfType;
   }
 
-  public boolean isCsfVariableLength() {
-    return csfVariableLength;
+  publ c boolean  sCsfVar ableLength() {
+    return csfVar ableLength;
   }
 
-  public int getCsfFixedLengthNumValuesPerDoc() {
-    return csfFixedLengthNumValuesPerDoc;
+  publ c  nt getCsfF xedLengthNumValuesPerDoc() {
+    return csfF xedLengthNumValuesPerDoc;
   }
 
-  public void setCsfVariableLength() {
-    checkIfFrozen();
-    this.csfVariableLength = true;
+  publ c vo d setCsfVar ableLength() {
+    c ck fFrozen();
+    t .csfVar ableLength = true;
   }
 
   /**
-   * Make the field a fixed length CSF, with the given length.
+   * Make t  f eld a f xed length CSF, w h t  g ven length.
    */
-  public void setCsfFixedLengthSettings(int csfFixedLengthNumValuesPerDocument,
-                                        boolean isCsfFixedLengthUpdateable) {
-    checkIfFrozen();
-    this.csfVariableLength = false;
-    this.csfFixedLengthNumValuesPerDoc = csfFixedLengthNumValuesPerDocument;
-    this.csfFixedLengthUpdateable = isCsfFixedLengthUpdateable;
+  publ c vo d setCsfF xedLengthSett ngs( nt csfF xedLengthNumValuesPerDocu nt,
+                                        boolean  sCsfF xedLengthUpdateable) {
+    c ck fFrozen();
+    t .csfVar ableLength = false;
+    t .csfF xedLengthNumValuesPerDoc = csfF xedLengthNumValuesPerDocu nt;
+    t .csfF xedLengthUpdateable =  sCsfF xedLengthUpdateable;
   }
 
-  public boolean isCsfFixedLengthUpdateable() {
-    return csfFixedLengthUpdateable;
+  publ c boolean  sCsfF xedLengthUpdateable() {
+    return csfF xedLengthUpdateable;
   }
 
-  public boolean isCsfLoadIntoRam() {
-    return csfLoadIntoRam;
+  publ c boolean  sCsfLoad ntoRam() {
+    return csfLoad ntoRam;
   }
 
-  public void setCsfLoadIntoRam(boolean csfLoadIntoRam) {
-    checkIfFrozen();
-    this.csfLoadIntoRam = csfLoadIntoRam;
+  publ c vo d setCsfLoad ntoRam(boolean csfLoad ntoRam) {
+    c ck fFrozen();
+    t .csfLoad ntoRam = csfLoad ntoRam;
   }
 
-  public void setCsfDefaultValue(long defaultValue) {
-    checkIfFrozen();
-    this.csfDefaultValue = defaultValue;
-    this.csfDefaultValueSet = true;
+  publ c vo d setCsfDefaultValue(long defaultValue) {
+    c ck fFrozen();
+    t .csfDefaultValue = defaultValue;
+    t .csfDefaultValueSet = true;
   }
 
-  public long getCsfDefaultValue() {
+  publ c long getCsfDefaultValue() {
     return csfDefaultValue;
   }
 
-  public boolean isCsfDefaultValueSet() {
+  publ c boolean  sCsfDefaultValueSet() {
     return csfDefaultValueSet;
   }
 
-  public String getFacetName() {
-    return facetName;
+  publ c Str ng getFacetNa () {
+    return facetNa ;
   }
 
-  public void setFacetName(String facetName) {
-    checkIfFrozen();
-    this.facetName = facetName;
+  publ c vo d setFacetNa (Str ng facetNa ) {
+    c ck fFrozen();
+    t .facetNa  = facetNa ;
   }
 
-  public boolean isStoreFacetSkiplist() {
-    return storeFacetSkiplist;
+  publ c boolean  sStoreFacetSk pl st() {
+    return storeFacetSk pl st;
   }
 
-  public void setStoreFacetSkiplist(boolean storeFacetSkiplist) {
-    checkIfFrozen();
-    this.storeFacetSkiplist = storeFacetSkiplist;
+  publ c vo d setStoreFacetSk pl st(boolean storeFacetSk pl st) {
+    c ck fFrozen();
+    t .storeFacetSk pl st = storeFacetSk pl st;
   }
 
-  public boolean isStoreFacetOffensiveCounters() {
-    return storeFacetOffensiveCounters;
+  publ c boolean  sStoreFacetOffens veCounters() {
+    return storeFacetOffens veCounters;
   }
 
-  public void setStoreFacetOffensiveCounters(boolean storeFacetOffensiveCounters) {
-    checkIfFrozen();
-    this.storeFacetOffensiveCounters = storeFacetOffensiveCounters;
+  publ c vo d setStoreFacetOffens veCounters(boolean storeFacetOffens veCounters) {
+    c ck fFrozen();
+    t .storeFacetOffens veCounters = storeFacetOffens veCounters;
   }
 
-  public boolean isUseCSFForFacetCounting() {
-    return useCSFForFacetCounting;
+  publ c boolean  sUseCSFForFacetCount ng() {
+    return useCSFForFacetCount ng;
   }
 
-  public void setUseCSFForFacetCounting(boolean useCSFForFacetCounting) {
-    checkIfFrozen();
-    this.useCSFForFacetCounting = useCSFForFacetCounting;
+  publ c vo d setUseCSFForFacetCount ng(boolean useCSFForFacetCount ng) {
+    c ck fFrozen();
+    t .useCSFForFacetCount ng = useCSFForFacetCount ng;
   }
 
-  public boolean isFacetField() {
-    return facetName != null && !StringUtils.isEmpty(facetName);
+  publ c boolean  sFacetF eld() {
+    return facetNa  != null && !Str ngUt ls. sEmpty(facetNa );
   }
 
-  public boolean isIndexHFTermPairs() {
-    return indexHFTermPairs;
+  publ c boolean  s ndexHFTermPa rs() {
+    return  ndexHFTermPa rs;
   }
 
-  public void setIndexHFTermPairs(boolean indexHFTermPairs) {
-    checkIfFrozen();
-    this.indexHFTermPairs = indexHFTermPairs;
+  publ c vo d set ndexHFTermPa rs(boolean  ndexHFTermPa rs) {
+    c ck fFrozen();
+    t . ndexHFTermPa rs =  ndexHFTermPa rs;
   }
 
-  public boolean acceptPretokenizedField() {
-    return tokenStreamSerializerProvider != null;
-  }
-
-  /**
-   * set this field to use additional twitter specific tokenization.
-   * @deprecated should avoid doing additional tokenizations on top of what ingester produced.
-   */
-  @Deprecated
-  public boolean useTweetSpecificNormalization() {
-    return useTweetSpecificNormalization;
+  publ c boolean acceptPretoken zedF eld() {
+    return tokenStreamSer al zerProv der != null;
   }
 
   /**
-   * test whether this field uses additional twitter specific tokenization.
-   * @deprecated should avoid doing additional tokenizations on top of what ingester produced.
+   * set t  f eld to use add  onal tw ter spec f c token zat on.
+   * @deprecated should avo d do ng add  onal token zat ons on top of what  ngester produced.
    */
   @Deprecated
-  public void setUseTweetSpecificNormalization(boolean useTweetSpecificNormalization) {
-    checkIfFrozen();
-    this.useTweetSpecificNormalization = useTweetSpecificNormalization;
+  publ c boolean useT etSpec f cNormal zat on() {
+    return useT etSpec f cNormal zat on;
   }
 
-  public boolean isIndexedField() {
-    return indexedField;
+  /**
+   * test w t r t  f eld uses add  onal tw ter spec f c token zat on.
+   * @deprecated should avo d do ng add  onal token zat ons on top of what  ngester produced.
+   */
+  @Deprecated
+  publ c vo d setUseT etSpec f cNormal zat on(boolean useT etSpec f cNormal zat on) {
+    c ck fFrozen();
+    t .useT etSpec f cNormal zat on = useT etSpec f cNormal zat on;
   }
 
-  public void setIndexedField(boolean indexedField) {
-    this.indexedField = indexedField;
+  publ c boolean  s ndexedF eld() {
+    return  ndexedF eld;
   }
 
-  public boolean isTextSearchableByDefault() {
+  publ c vo d set ndexedF eld(boolean  ndexedF eld) {
+    t . ndexedF eld =  ndexedF eld;
+  }
+
+  publ c boolean  sTextSearchableByDefault() {
     return textSearchableByDefault;
   }
 
-  public void setTextSearchableByDefault(boolean textSearchableByDefault) {
-    checkIfFrozen();
-    this.textSearchableByDefault = textSearchableByDefault;
+  publ c vo d setTextSearchableByDefault(boolean textSearchableByDefault) {
+    c ck fFrozen();
+    t .textSearchableByDefault = textSearchableByDefault;
   }
 
-  public float getTextSearchableFieldWeight() {
-    return textSearchableFieldWeight;
+  publ c float getTextSearchableF eld  ght() {
+    return textSearchableF eld  ght;
   }
 
-  public void setTextSearchableFieldWeight(float textSearchableFieldWeight) {
-    checkIfFrozen();
-    this.textSearchableFieldWeight = textSearchableFieldWeight;
-  }
-
-  /**
-   * Convenience method to find out if this field stores positions. {@link #indexOptions()} can also
-   * be used to determine the index options for this field.
-   */
-  public final boolean hasPositions() {
-    return indexOptions() == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS
-            || indexOptions() == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
-  }
-
-  public boolean isCsfViewField() {
-    return csfViewField;
-  }
-
-  public int getCsfViewBaseFieldId() {
-    return csfViewBaseFieldId;
-  }
-
-  public FeatureConfiguration getCsfViewFeatureConfiguration() {
-    return csfViewFeatureConfiguration;
+  publ c vo d setTextSearchableF eld  ght(float textSearchableF eld  ght) {
+    c ck fFrozen();
+    t .textSearchableF eld  ght = textSearchableF eld  ght;
   }
 
   /**
-   * Set the CSF view settings. A CSF view is a portion of an another CSF.
+   * Conven ence  thod to f nd out  f t  f eld stores pos  ons. {@l nk # ndexOpt ons()} can also
+   * be used to determ ne t   ndex opt ons for t  f eld.
    */
-  public void setCsfViewSettings(String fieldName,
-                                 ThriftCSFViewSettings csfViewSettings,
-                                 Schema.FieldInfo baseField) {
-    checkIfFrozen();
-    this.csfViewField = true;
-    this.csfViewBaseFieldId = csfViewSettings.getBaseFieldConfigId();
-    FeatureConfiguration.Builder builder = FeatureConfiguration.builder()
-            .withName(fieldName)
-            .withType(csfViewSettings.csfType)
-            .withBitRange(csfViewSettings.getValueIndex(),
-                csfViewSettings.getBitStartPosition(),
-                csfViewSettings.getBitLength())
-            .withBaseField(baseField.getName());
-    if (csfViewSettings.isSetOutputCSFType()) {
-      builder.withOutputType(csfViewSettings.getOutputCSFType());
+  publ c f nal boolean hasPos  ons() {
+    return  ndexOpt ons() ==  ndexOpt ons.DOCS_AND_FREQS_AND_POS T ONS
+            ||  ndexOpt ons() ==  ndexOpt ons.DOCS_AND_FREQS_AND_POS T ONS_AND_OFFSETS;
+  }
+
+  publ c boolean  sCsfV ewF eld() {
+    return csfV ewF eld;
+  }
+
+  publ c  nt getCsfV ewBaseF eld d() {
+    return csfV ewBaseF eld d;
+  }
+
+  publ c FeatureConf gurat on getCsfV ewFeatureConf gurat on() {
+    return csfV ewFeatureConf gurat on;
+  }
+
+  /**
+   * Set t  CSF v ew sett ngs. A CSF v ew  s a port on of an anot r CSF.
+   */
+  publ c vo d setCsfV ewSett ngs(Str ng f eldNa ,
+                                 Thr ftCSFV ewSett ngs csfV ewSett ngs,
+                                 Sc ma.F eld nfo baseF eld) {
+    c ck fFrozen();
+    t .csfV ewF eld = true;
+    t .csfV ewBaseF eld d = csfV ewSett ngs.getBaseF eldConf g d();
+    FeatureConf gurat on.Bu lder bu lder = FeatureConf gurat on.bu lder()
+            .w hNa (f eldNa )
+            .w hType(csfV ewSett ngs.csfType)
+            .w hB Range(csfV ewSett ngs.getValue ndex(),
+                csfV ewSett ngs.getB StartPos  on(),
+                csfV ewSett ngs.getB Length())
+            .w hBaseF eld(baseF eld.getNa ());
+     f (csfV ewSett ngs. sSetOutputCSFType()) {
+      bu lder.w hOutputType(csfV ewSett ngs.getOutputCSFType());
     }
-    if (csfViewSettings.isSetNormalizationType()) {
-      builder.withFeatureNormalizationType(csfViewSettings.getNormalizationType());
+     f (csfV ewSett ngs. sSetNormal zat onType()) {
+      bu lder.w hFeatureNormal zat onType(csfV ewSett ngs.getNormal zat onType());
     }
-    if (csfViewSettings.isSetFeatureUpdateConstraints()) {
-      for (ThriftFeatureUpdateConstraint c : csfViewSettings.getFeatureUpdateConstraints()) {
-        builder.withFeatureUpdateConstraint(c);
+     f (csfV ewSett ngs. sSetFeatureUpdateConstra nts()) {
+      for (Thr ftFeatureUpdateConstra nt c : csfV ewSett ngs.getFeatureUpdateConstra nts()) {
+        bu lder.w hFeatureUpdateConstra nt(c);
       }
     }
 
-    this.csfViewFeatureConfiguration = builder.build();
+    t .csfV ewFeatureConf gurat on = bu lder.bu ld();
   }
 
-  public IndexedNumericFieldSettings getNumericFieldSettings() {
-    return numericFieldSettings;
+  publ c  ndexedNu r cF eldSett ngs getNu r cF eldSett ngs() {
+    return nu r cF eldSett ngs;
   }
 
-  public void setNumericFieldSettings(IndexedNumericFieldSettings numericFieldSettings) {
-    checkIfFrozen();
-    this.numericFieldSettings = numericFieldSettings;
+  publ c vo d setNu r cF eldSett ngs( ndexedNu r cF eldSett ngs nu r cF eldSett ngs) {
+    c ck fFrozen();
+    t .nu r cF eldSett ngs = nu r cF eldSett ngs;
   }
 }

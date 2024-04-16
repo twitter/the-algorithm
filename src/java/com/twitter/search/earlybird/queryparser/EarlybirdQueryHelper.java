@@ -1,86 +1,86 @@
-package com.twitter.search.earlybird.queryparser;
+package com.tw ter.search.earlyb rd.queryparser;
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Opt onal;
+ mport com.google.common.base.Precond  ons;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.constants.QueryCacheConstants;
-import com.twitter.search.common.query.HitAttributeCollector;
-import com.twitter.search.common.query.HitAttributeHelper;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.search.termination.QueryTimeout;
-import com.twitter.search.common.search.termination.TerminationQuery;
-import com.twitter.search.earlybird.querycache.QueryCacheManager;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryNodeUtils;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.annotation.Annotation;
-import com.twitter.search.queryparser.query.search.SearchOperator;
-import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
+ mport com.tw ter.search.common.constants.QueryCac Constants;
+ mport com.tw ter.search.common.query.H Attr buteCollector;
+ mport com.tw ter.search.common.query.H Attr bute lper;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.common.search.term nat on.QueryT  out;
+ mport com.tw ter.search.common.search.term nat on.Term nat onQuery;
+ mport com.tw ter.search.earlyb rd.querycac .QueryCac Manager;
+ mport com.tw ter.search.queryparser.query.Query;
+ mport com.tw ter.search.queryparser.query.QueryNodeUt ls;
+ mport com.tw ter.search.queryparser.query.QueryParserExcept on;
+ mport com.tw ter.search.queryparser.query.annotat on.Annotat on;
+ mport com.tw ter.search.queryparser.query.search.SearchOperator;
+ mport com.tw ter.search.queryparser.query.search.SearchOperatorConstants;
 
-public abstract class EarlybirdQueryHelper {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdQueryHelper.class);
+publ c abstract class Earlyb rdQuery lper {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rdQuery lper.class);
 
   /**
-   * Wraps the given query and some clauses to exclude antisocial tweets into a conjunction.
+   * Wraps t  g ven query and so  clauses to exclude ant soc al t ets  nto a conjunct on.
    */
-  public static Query requireExcludeAntisocial(
-      Query basicQuery,
-      QueryCacheManager queryCacheManager) throws QueryParserException {
-    // Do not set exclude antisocial if they have any other antisocial filters set
-    Query query = basicQuery;
-    DetectAntisocialVisitor detectAntisocialVisitor = new DetectAntisocialVisitor();
-    query.accept(detectAntisocialVisitor);
-    if (detectAntisocialVisitor.hasAnyAntisocialOperator()) {
+  publ c stat c Query requ reExcludeAnt soc al(
+      Query bas cQuery,
+      QueryCac Manager queryCac Manager) throws QueryParserExcept on {
+    // Do not set exclude ant soc al  f t y have any ot r ant soc al f lters set
+    Query query = bas cQuery;
+    DetectAnt soc alV s or detectAnt soc alV s or = new DetectAnt soc alV s or();
+    query.accept(detectAnt soc alV s or);
+     f (detectAnt soc alV s or.hasAnyAnt soc alOperator()) {
       return query;
     }
 
-    // No operator found, force antisocial filter.
-    if (queryCacheManager.enabled()) {
-      SearchOperator filter =
-          new SearchOperator(SearchOperator.Type.CACHED_FILTER,
-              QueryCacheConstants.EXCLUDE_ANTISOCIAL);
+    // No operator found, force ant soc al f lter.
+     f (queryCac Manager.enabled()) {
+      SearchOperator f lter =
+          new SearchOperator(SearchOperator.Type.CACHED_F LTER,
+              QueryCac Constants.EXCLUDE_ANT SOC AL);
 
-      query = QueryNodeUtils.appendAsConjunction(query, filter);
+      query = QueryNodeUt ls.appendAsConjunct on(query, f lter);
     } else {
-      SearchOperator filter = new SearchOperator(SearchOperator.Type.EXCLUDE,
-          SearchOperatorConstants.ANTISOCIAL);
+      SearchOperator f lter = new SearchOperator(SearchOperator.Type.EXCLUDE,
+          SearchOperatorConstants.ANT SOC AL);
 
-      query = QueryNodeUtils.appendAsConjunction(query, filter);
+      query = QueryNodeUt ls.appendAsConjunct on(query, f lter);
     }
     return query;
   }
 
   /**
-   * Wraps the given query into an equivalent query that will also collect hit attribution data.
+   * Wraps t  g ven query  nto an equ valent query that w ll also collect h  attr but on data.
    *
-   * @param query The original query.
-   * @param node The query parser node storing this query.
-   * @param fieldInfo The field in which the given query will be searching.
-   * @param hitAttributeHelper The helper that will collect all hit attribution data.
-   * @return An equivalent query that will also collect hit attribution data.
+   * @param query T  or g nal query.
+   * @param node T  query parser node stor ng t  query.
+   * @param f eld nfo T  f eld  n wh ch t  g ven query w ll be search ng.
+   * @param h Attr bute lper T   lper that w ll collect all h  attr but on data.
+   * @return An equ valent query that w ll also collect h  attr but on data.
    */
-  public static final org.apache.lucene.search.Query maybeWrapWithHitAttributionCollector(
-      org.apache.lucene.search.Query query,
-      @Nullable com.twitter.search.queryparser.query.Query node,
-      Schema.FieldInfo fieldInfo,
-      @Nullable HitAttributeHelper hitAttributeHelper) {
-    // Prevents lint error for assigning to a function parameter.
-    org.apache.lucene.search.Query luceneQuery = query;
-    if (hitAttributeHelper != null && node != null) {
-      Optional<Annotation> annotation = node.getAnnotationOf(Annotation.Type.NODE_RANK);
+  publ c stat c f nal org.apac .lucene.search.Query maybeWrapW hH Attr but onCollector(
+      org.apac .lucene.search.Query query,
+      @Nullable com.tw ter.search.queryparser.query.Query node,
+      Sc ma.F eld nfo f eld nfo,
+      @Nullable H Attr bute lper h Attr bute lper) {
+    // Prevents l nt error for ass gn ng to a funct on para ter.
+    org.apac .lucene.search.Query luceneQuery = query;
+     f (h Attr bute lper != null && node != null) {
+      Opt onal<Annotat on> annotat on = node.getAnnotat onOf(Annotat on.Type.NODE_RANK);
 
-      if (annotation.isPresent()) {
-        Integer nodeRank = (Integer) annotation.get().getValue();
-        luceneQuery = wrapWithHitAttributionCollector(
+       f (annotat on. sPresent()) {
+         nteger nodeRank = ( nteger) annotat on.get().getValue();
+        luceneQuery = wrapW hH Attr but onCollector(
             luceneQuery,
-            fieldInfo,
+            f eld nfo,
             nodeRank,
-            hitAttributeHelper.getFieldRankHitAttributeCollector());
+            h Attr bute lper.getF eldRankH Attr buteCollector());
       }
     }
 
@@ -88,67 +88,67 @@ public abstract class EarlybirdQueryHelper {
   }
 
   /**
-   * Wraps the given query into an equivalent query that will also collect hit attribution data.
+   * Wraps t  g ven query  nto an equ valent query that w ll also collect h  attr but on data.
    *
-   * @param query The original query.
-   * @param nodeRank The rank of the given query in the overall request query.
-   * @param fieldInfo The field in which the given query will be searching.
-   * @param hitAttributeHelper The helper that will collect all hit attribution data.
-   * @return An equivalent query that will also collect hit attribution data.
+   * @param query T  or g nal query.
+   * @param nodeRank T  rank of t  g ven query  n t  overall request query.
+   * @param f eld nfo T  f eld  n wh ch t  g ven query w ll be search ng.
+   * @param h Attr bute lper T   lper that w ll collect all h  attr but on data.
+   * @return An equ valent query that w ll also collect h  attr but on data.
    */
-  public static final org.apache.lucene.search.Query maybeWrapWithHitAttributionCollector(
-      org.apache.lucene.search.Query query,
-      int nodeRank,
-      Schema.FieldInfo fieldInfo,
-      @Nullable HitAttributeHelper hitAttributeHelper) {
+  publ c stat c f nal org.apac .lucene.search.Query maybeWrapW hH Attr but onCollector(
+      org.apac .lucene.search.Query query,
+       nt nodeRank,
+      Sc ma.F eld nfo f eld nfo,
+      @Nullable H Attr bute lper h Attr bute lper) {
 
-    org.apache.lucene.search.Query luceneQuery = query;
-    if (hitAttributeHelper != null && nodeRank != -1) {
-      Preconditions.checkArgument(nodeRank > 0);
-      luceneQuery = wrapWithHitAttributionCollector(
-          luceneQuery, fieldInfo, nodeRank, hitAttributeHelper.getFieldRankHitAttributeCollector());
+    org.apac .lucene.search.Query luceneQuery = query;
+     f (h Attr bute lper != null && nodeRank != -1) {
+      Precond  ons.c ckArgu nt(nodeRank > 0);
+      luceneQuery = wrapW hH Attr but onCollector(
+          luceneQuery, f eld nfo, nodeRank, h Attr bute lper.getF eldRankH Attr buteCollector());
     }
     return luceneQuery;
   }
 
-  private static final org.apache.lucene.search.Query wrapWithHitAttributionCollector(
-      org.apache.lucene.search.Query luceneQuery,
-      Schema.FieldInfo fieldInfo,
-      int nodeRank,
-      HitAttributeCollector hitAttributeCollector) {
-    Preconditions.checkNotNull(fieldInfo,
-        "Tried collecting hit attribution for unknown field: " + fieldInfo.getName()
+  pr vate stat c f nal org.apac .lucene.search.Query wrapW hH Attr but onCollector(
+      org.apac .lucene.search.Query luceneQuery,
+      Sc ma.F eld nfo f eld nfo,
+       nt nodeRank,
+      H Attr buteCollector h Attr buteCollector) {
+    Precond  ons.c ckNotNull(f eld nfo,
+        "Tr ed collect ng h  attr but on for unknown f eld: " + f eld nfo.getNa ()
             + " luceneQuery: " + luceneQuery);
-    return hitAttributeCollector.newIdentifiableQuery(
-        luceneQuery, fieldInfo.getFieldId(), nodeRank);
+    return h Attr buteCollector.new dent f ableQuery(
+        luceneQuery, f eld nfo.getF eld d(), nodeRank);
   }
 
   /**
-   * Returns a query equivalent to the given query, and with the given timeout enforced.
+   * Returns a query equ valent to t  g ven query, and w h t  g ven t  out enforced.
    */
-  public static org.apache.lucene.search.Query maybeWrapWithTimeout(
-      org.apache.lucene.search.Query query,
-      QueryTimeout timeout) {
-    if (timeout != null) {
-      return new TerminationQuery(query, timeout);
+  publ c stat c org.apac .lucene.search.Query maybeWrapW hT  out(
+      org.apac .lucene.search.Query query,
+      QueryT  out t  out) {
+     f (t  out != null) {
+      return new Term nat onQuery(query, t  out);
     }
     return query;
   }
 
   /**
-   * Returns a query equivalent to the given query, and with the given timeout enforced. If the
-   * given query is negated, it is returned without any modifications.
+   * Returns a query equ valent to t  g ven query, and w h t  g ven t  out enforced.  f t 
+   * g ven query  s negated,    s returned w hout any mod f cat ons.
    */
-  public static org.apache.lucene.search.Query maybeWrapWithTimeout(
-      org.apache.lucene.search.Query query,
-      @Nullable com.twitter.search.queryparser.query.Query node,
-      QueryTimeout timeout) {
-    // If the node is looking for negation of something, we don't want to include it in node-level
-    // timeout checks. In general, nodes keep track of the last doc seen, but non-matching docs
-    // encountered by "must not occur" node do not reflect overall progress in the index.
-    if (node != null && node.mustNotOccur()) {
+  publ c stat c org.apac .lucene.search.Query maybeWrapW hT  out(
+      org.apac .lucene.search.Query query,
+      @Nullable com.tw ter.search.queryparser.query.Query node,
+      QueryT  out t  out) {
+    //  f t  node  s look ng for negat on of so th ng,   don't want to  nclude    n node-level
+    // t  out c cks.  n general, nodes keep track of t  last doc seen, but non-match ng docs
+    // encountered by "must not occur" node do not reflect overall progress  n t   ndex.
+     f (node != null && node.mustNotOccur()) {
       return query;
     }
-    return maybeWrapWithTimeout(query, timeout);
+    return maybeWrapW hT  out(query, t  out);
   }
 }

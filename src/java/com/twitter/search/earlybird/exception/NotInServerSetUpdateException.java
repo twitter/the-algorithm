@@ -1,12 +1,12 @@
-package com.twitter.search.earlybird.exception;
+package com.tw ter.search.earlyb rd.except on;
 
-import com.twitter.common.zookeeper.ServerSet;
+ mport com.tw ter.common.zookeeper.ServerSet;
 
 /**
- * Used when trying to leave a server set when this earlybird is already out of the server set.
+ * Used w n try ng to leave a server set w n t  earlyb rd  s already out of t  server set.
  */
-public class NotInServerSetUpdateException extends ServerSet.UpdateException {
-  public NotInServerSetUpdateException(String message) {
-    super(message);
+publ c class Not nServerSetUpdateExcept on extends ServerSet.UpdateExcept on {
+  publ c Not nServerSetUpdateExcept on(Str ng  ssage) {
+    super( ssage);
   }
 }

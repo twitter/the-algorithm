@@ -1,313 +1,313 @@
-package com.twitter.interaction_graph.scio.agg_all
+package com.tw ter. nteract on_graph.sc o.agg_all
 
-import com.google.cloud.bigquery.BigQueryOptions
-import com.google.cloud.bigquery.QueryJobConfiguration
-import com.spotify.scio.ScioContext
-import com.spotify.scio.ScioMetrics
-import com.spotify.scio.values.SCollection
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.dal.DAL.DiskFormat
-import com.twitter.beam.io.dal.DAL.PathLayout
-import com.twitter.beam.io.dal.DAL.WriteOptions
-import com.twitter.beam.io.exception.DataNotFoundException
-import com.twitter.beam.job.ServiceIdentifierOptions
-import com.twitter.interaction_graph.scio.agg_all.InteractionGraphAggregationTransform._
-import com.twitter.interaction_graph.scio.common.DateUtil
-import com.twitter.interaction_graph.scio.common.FeatureGeneratorUtil
-import com.twitter.interaction_graph.scio.common.UserUtil
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.statebird.v2.thriftscala.Environment
-import com.twitter.user_session_store.thriftscala.UserSession
-import com.twitter.util.Duration
-import com.twitter.wtf.candidate.thriftscala.ScoredEdge
-import java.time.Instant
-import org.apache.avro.generic.GenericRecord
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO.TypedRead
-import org.apache.beam.sdk.io.gcp.bigquery.SchemaAndRecord
-import org.apache.beam.sdk.transforms.SerializableFunction
-import org.joda.time.Interval
-import scala.collection.JavaConverters._
+ mport com.google.cloud.b gquery.B gQueryOpt ons
+ mport com.google.cloud.b gquery.QueryJobConf gurat on
+ mport com.spot fy.sc o.Sc oContext
+ mport com.spot fy.sc o.Sc o tr cs
+ mport com.spot fy.sc o.values.SCollect on
+ mport com.tw ter.beam. o.dal.DAL
+ mport com.tw ter.beam. o.dal.DAL.D skFormat
+ mport com.tw ter.beam. o.dal.DAL.PathLa t
+ mport com.tw ter.beam. o.dal.DAL.Wr eOpt ons
+ mport com.tw ter.beam. o.except on.DataNotFoundExcept on
+ mport com.tw ter.beam.job.Serv ce dent f erOpt ons
+ mport com.tw ter. nteract on_graph.sc o.agg_all. nteract onGraphAggregat onTransform._
+ mport com.tw ter. nteract on_graph.sc o.common.DateUt l
+ mport com.tw ter. nteract on_graph.sc o.common.FeatureGeneratorUt l
+ mport com.tw ter. nteract on_graph.sc o.common.UserUt l
+ mport com.tw ter. nteract on_graph.thr ftscala.Edge
+ mport com.tw ter. nteract on_graph.thr ftscala.Vertex
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.sc o_ nternal.job.Sc oBeamJob
+ mport com.tw ter.stateb rd.v2.thr ftscala.Env ron nt
+ mport com.tw ter.user_sess on_store.thr ftscala.UserSess on
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.wtf.cand date.thr ftscala.ScoredEdge
+ mport java.t  . nstant
+ mport org.apac .avro.gener c.Gener cRecord
+ mport org.apac .beam.sdk. o.gcp.b gquery.B gQuery O
+ mport org.apac .beam.sdk. o.gcp.b gquery.B gQuery O.TypedRead
+ mport org.apac .beam.sdk. o.gcp.b gquery.Sc maAndRecord
+ mport org.apac .beam.sdk.transforms.Ser al zableFunct on
+ mport org.joda.t  . nterval
+ mport scala.collect on.JavaConverters._
 
-object InteractionGraphAggregationJob extends ScioBeamJob[InteractionGraphAggregationOption] {
+object  nteract onGraphAggregat onJob extends Sc oBeamJob[ nteract onGraphAggregat onOpt on] {
 
-  // to parse latest date from the BQ table we're reading from
-  val parseDateRow = new SerializableFunction[SchemaAndRecord, String] {
-    override def apply(input: SchemaAndRecord): String = {
-      val genericRecord: GenericRecord = input.getRecord()
-      genericRecord.get("ds").toString
+  // to parse latest date from t  BQ table  're read ng from
+  val parseDateRow = new Ser al zableFunct on[Sc maAndRecord, Str ng] {
+    overr de def apply( nput: Sc maAndRecord): Str ng = {
+      val gener cRecord: Gener cRecord =  nput.getRecord()
+      gener cRecord.get("ds").toStr ng
     }
   }
 
-  // note that we're using the prob_explicit for real_graph_features (for Home)
-  val parseRow = new SerializableFunction[SchemaAndRecord, ScoredEdge] {
-    override def apply(record: SchemaAndRecord): ScoredEdge = {
-      val genericRecord: GenericRecord = record.getRecord()
+  // note that  're us ng t  prob_expl c  for real_graph_features (for Ho )
+  val parseRow = new Ser al zableFunct on[Sc maAndRecord, ScoredEdge] {
+    overr de def apply(record: Sc maAndRecord): ScoredEdge = {
+      val gener cRecord: Gener cRecord = record.getRecord()
       ScoredEdge(
-        genericRecord.get("source_id").asInstanceOf[Long],
-        genericRecord.get("destination_id").asInstanceOf[Long],
-        genericRecord.get("prob_explicit").asInstanceOf[Double],
-        genericRecord.get("followed").asInstanceOf[Boolean],
+        gener cRecord.get("s ce_ d").as nstanceOf[Long],
+        gener cRecord.get("dest nat on_ d").as nstanceOf[Long],
+        gener cRecord.get("prob_expl c ").as nstanceOf[Double],
+        gener cRecord.get("follo d").as nstanceOf[Boolean],
       )
     }
   }
 
-  override def runPipeline(
-    sc: ScioContext,
-    opts: InteractionGraphAggregationOption
-  ): Unit = {
+  overr de def runP pel ne(
+    sc: Sc oContext,
+    opts:  nteract onGraphAggregat onOpt on
+  ): Un  = {
 
-    val dateStr: String = opts.getDate().value.getStart.toString("yyyyMMdd")
-    logger.info(s"dateStr $dateStr")
-    val project: String = "twttr-recos-ml-prod"
-    val datasetName: String = "realgraph"
-    val bqTableName: String = "scores"
-    val fullBqTableName: String = s"$project:$datasetName.$bqTableName"
+    val dateStr: Str ng = opts.getDate().value.getStart.toStr ng("yyyyMMdd")
+    logger. nfo(s"dateStr $dateStr")
+    val project: Str ng = "twttr-recos-ml-prod"
+    val datasetNa : Str ng = "realgraph"
+    val bqTableNa : Str ng = "scores"
+    val fullBqTableNa : Str ng = s"$project:$datasetNa .$bqTableNa "
 
-    if (opts.getDALWriteEnvironment.toLowerCase == "prod") {
-      val bqClient =
-        BigQueryOptions.newBuilder.setProjectId(project).build.getService
+     f (opts.getDALWr eEnv ron nt.toLo rCase == "prod") {
+      val bqCl ent =
+        B gQueryOpt ons.newBu lder.setProject d(project).bu ld.getServ ce
       val query =
         s"""
            |SELECT total_rows
-           |FROM `$project.$datasetName.INFORMATION_SCHEMA.PARTITIONS`
-           |WHERE partition_id ="$dateStr" AND
-           |table_name="$bqTableName" AND total_rows > 0
-           |""".stripMargin
-      val queryConfig = QueryJobConfiguration.of(query)
-      val results = bqClient.query(queryConfig).getValues.asScala.toSeq
-      if (results.isEmpty || results.head.get(0).getLongValue == 0) {
-        throw new DataNotFoundException(s"$dateStr not present in $fullBqTableName.")
+           |FROM `$project.$datasetNa . NFORMAT ON_SCHEMA.PART T ONS`
+           |WHERE part  on_ d ="$dateStr" AND
+           |table_na ="$bqTableNa " AND total_rows > 0
+           |""".str pMarg n
+      val queryConf g = QueryJobConf gurat on.of(query)
+      val results = bqCl ent.query(queryConf g).getValues.asScala.toSeq
+       f (results. sEmpty || results. ad.get(0).getLongValue == 0) {
+        throw new DataNotFoundExcept on(s"$dateStr not present  n $fullBqTableNa .")
       }
     }
     sc.run()
   }
 
-  override protected def configurePipeline(
-    scioContext: ScioContext,
-    pipelineOptions: InteractionGraphAggregationOption
-  ): Unit = {
-    @transient
-    implicit lazy val sc: ScioContext = scioContext
-    implicit lazy val dateInterval: Interval = pipelineOptions.interval
-    val yesterday = DateUtil.subtract(dateInterval, Duration.fromDays(1))
+  overr de protected def conf gureP pel ne(
+    sc oContext: Sc oContext,
+    p pel neOpt ons:  nteract onGraphAggregat onOpt on
+  ): Un  = {
+    @trans ent
+     mpl c  lazy val sc: Sc oContext = sc oContext
+     mpl c  lazy val date nterval:  nterval = p pel neOpt ons. nterval
+    val yesterday = DateUt l.subtract(date nterval, Durat on.fromDays(1))
 
-    val dalEnvironment: String = pipelineOptions
-      .as(classOf[ServiceIdentifierOptions])
-      .getEnvironment()
-    val dalWriteEnvironment = if (pipelineOptions.getDALWriteEnvironment != null) {
-      pipelineOptions.getDALWriteEnvironment
+    val dalEnv ron nt: Str ng = p pel neOpt ons
+      .as(classOf[Serv ce dent f erOpt ons])
+      .getEnv ron nt()
+    val dalWr eEnv ron nt =  f (p pel neOpt ons.getDALWr eEnv ron nt != null) {
+      p pel neOpt ons.getDALWr eEnv ron nt
     } else {
-      dalEnvironment
+      dalEnv ron nt
     }
-    val dateStr: String = pipelineOptions.getDate().value.getStart.toString("yyyy-MM-dd")
-    logger.info(s"dateStr $dateStr")
-    val project: String = "twttr-recos-ml-prod"
-    val datasetName: String = "realgraph"
-    val bqTableName: String = "scores"
-    val fullBqTableName: String = s"$project:$datasetName.$bqTableName"
+    val dateStr: Str ng = p pel neOpt ons.getDate().value.getStart.toStr ng("yyyy-MM-dd")
+    logger. nfo(s"dateStr $dateStr")
+    val project: Str ng = "twttr-recos-ml-prod"
+    val datasetNa : Str ng = "realgraph"
+    val bqTableNa : Str ng = "scores"
+    val fullBqTableNa : Str ng = s"$project:$datasetNa .$bqTableNa "
 
-    val scoreExport: SCollection[ScoredEdge] =
-      sc.customInput(
-        s"Read from BQ table $fullBqTableName",
-        BigQueryIO
+    val scoreExport: SCollect on[ScoredEdge] =
+      sc.custom nput(
+        s"Read from BQ table $fullBqTableNa ",
+        B gQuery O
           .read(parseRow)
-          .fromQuery(s"""SELECT source_id, destination_id, prob_explicit, followed
-               |FROM `$project.$datasetName.$bqTableName`
-               |WHERE ds = '$dateStr'""".stripMargin)
-          .usingStandardSql()
-          .withMethod(TypedRead.Method.DEFAULT)
+          .fromQuery(s"""SELECT s ce_ d, dest nat on_ d, prob_expl c , follo d
+               |FROM `$project.$datasetNa .$bqTableNa `
+               |WHERE ds = '$dateStr'""".str pMarg n)
+          .us ngStandardSql()
+          .w h thod(TypedRead. thod.DEFAULT)
       )
 
-    val source = InteractionGraphAggregationSource(pipelineOptions)
+    val s ce =  nteract onGraphAggregat onS ce(p pel neOpt ons)
 
-    val (addressEdgeFeatures, addressVertexFeatures) = source.readAddressBookFeatures()
+    val (addressEdgeFeatures, addressVertexFeatures) = s ce.readAddressBookFeatures()
 
-    val (clientEventLogsEdgeFeatures, clientEventLogsVertexFeatures) =
-      source.readClientEventLogsFeatures(dateInterval)
+    val (cl entEventLogsEdgeFeatures, cl entEventLogsVertexFeatures) =
+      s ce.readCl entEventLogsFeatures(date nterval)
 
-    val (flockEdgeFeatures, flockVertexFeatures) = source.readFlockFeatures()
+    val (flockEdgeFeatures, flockVertexFeatures) = s ce.readFlockFeatures()
 
-    val (directInteractionsEdgeFeatures, directInteractionsVertexFeatures) =
-      source.readDirectInteractionsFeatures(dateInterval)
+    val (d rect nteract onsEdgeFeatures, d rect nteract onsVertexFeatures) =
+      s ce.readD rect nteract onsFeatures(date nterval)
 
-    val invalidUsers = UserUtil.getInvalidUsers(source.readFlatUsers())
+    val  nval dUsers = UserUt l.get nval dUsers(s ce.readFlatUsers())
 
-    val (prevAggEdge, prevAggVertex) = source.readAggregatedFeatures(yesterday)
+    val (prevAggEdge, prevAggVertex) = s ce.readAggregatedFeatures(yesterday)
 
-    val prevAggregatedVertex: SCollection[Vertex] =
-      UserUtil
-        .filterUsersByIdMapping[Vertex](
+    val prevAggregatedVertex: SCollect on[Vertex] =
+      UserUt l
+        .f lterUsersBy dMapp ng[Vertex](
           prevAggVertex,
-          invalidUsers,
-          v => v.userId
+           nval dUsers,
+          v => v.user d
         )
 
-    /** Remove status-based features (flock/ab) from current graph, because we only need the latest
-     *  This is to allow us to filter and roll-up a smaller dataset, to which we will still add
-     *  back the status-based features for the complete scoredAggregates (that other teams will read).
+    /** Remove status-based features (flock/ab) from current graph, because   only need t  latest
+     *  T   s to allow us to f lter and roll-up a smaller dataset, to wh ch   w ll st ll add
+     *  back t  status-based features for t  complete scoredAggregates (that ot r teams w ll read).
      */
-    val prevAggEdgeFiltered = prevAggEdge
-      .filter { e =>
-        e.sourceId != e.destinationId
+    val prevAggEdgeF ltered = prevAggEdge
+      .f lter { e =>
+        e.s ce d != e.dest nat on d
       }
-      .withName("filtering status-based edges")
-      .flatMap(FeatureGeneratorUtil.removeStatusFeatures)
-    val prevAggEdgeValid: SCollection[Edge] =
-      UserUtil
-        .filterUsersByMultipleIdMappings[Edge](
-          prevAggEdgeFiltered,
-          invalidUsers,
-          Seq(e => e.sourceId, e => e.destinationId)
+      .w hNa ("f lter ng status-based edges")
+      .flatMap(FeatureGeneratorUt l.removeStatusFeatures)
+    val prevAggEdgeVal d: SCollect on[Edge] =
+      UserUt l
+        .f lterUsersByMult ple dMapp ngs[Edge](
+          prevAggEdgeF ltered,
+           nval dUsers,
+          Seq(e => e.s ce d, e => e.dest nat on d)
         )
 
-    val aggregatedActivityVertexDaily = UserUtil
-      .filterUsersByIdMapping[Vertex](
-        FeatureGeneratorUtil
-          .combineVertexFeatures(
-            clientEventLogsVertexFeatures ++
-              directInteractionsVertexFeatures ++
+    val aggregatedAct v yVertexDa ly = UserUt l
+      .f lterUsersBy dMapp ng[Vertex](
+        FeatureGeneratorUt l
+          .comb neVertexFeatures(
+            cl entEventLogsVertexFeatures ++
+              d rect nteract onsVertexFeatures ++
               addressVertexFeatures ++
               flockVertexFeatures
           ),
-        invalidUsers,
-        v => v.userId
+         nval dUsers,
+        v => v.user d
       )
 
-    // we split up the roll-up of decayed counts between status vs activity/count-based features
-    val aggregatedActivityEdgeDaily = FeatureGeneratorUtil
-      .combineEdgeFeatures(clientEventLogsEdgeFeatures ++ directInteractionsEdgeFeatures)
+    //   spl  up t  roll-up of decayed counts bet en status vs act v y/count-based features
+    val aggregatedAct v yEdgeDa ly = FeatureGeneratorUt l
+      .comb neEdgeFeatures(cl entEventLogsEdgeFeatures ++ d rect nteract onsEdgeFeatures)
 
-    // Vertex level, Add the decay sum for history and daily
-    val aggregatedActivityVertex = FeatureGeneratorUtil
-      .combineVertexFeaturesWithDecay(
+    // Vertex level, Add t  decay sum for  tory and da ly
+    val aggregatedAct v yVertex = FeatureGeneratorUt l
+      .comb neVertexFeaturesW hDecay(
         prevAggregatedVertex,
-        aggregatedActivityVertexDaily,
-        InteractionGraphScoringConfig.ONE_MINUS_ALPHA,
-        InteractionGraphScoringConfig.ALPHA
+        aggregatedAct v yVertexDa ly,
+         nteract onGraphScor ngConf g.ONE_M NUS_ALPHA,
+         nteract onGraphScor ngConf g.ALPHA
       )
 
-    // Edge level, Add the decay sum for history and daily
-    val aggregatedActivityEdge = FeatureGeneratorUtil
-      .combineEdgeFeaturesWithDecay(
-        prevAggEdgeValid,
-        aggregatedActivityEdgeDaily,
-        InteractionGraphScoringConfig.ONE_MINUS_ALPHA,
-        InteractionGraphScoringConfig.ALPHA
+    // Edge level, Add t  decay sum for  tory and da ly
+    val aggregatedAct v yEdge = FeatureGeneratorUt l
+      .comb neEdgeFeaturesW hDecay(
+        prevAggEdgeVal d,
+        aggregatedAct v yEdgeDa ly,
+         nteract onGraphScor ngConf g.ONE_M NUS_ALPHA,
+         nteract onGraphScor ngConf g.ALPHA
       )
-      .filter(FeatureGeneratorUtil.edgeWithFeatureOtherThanDwellTime)
-      .withName("removing edges that only have dwell time features")
+      .f lter(FeatureGeneratorUt l.edgeW hFeatureOt rThanD llT  )
+      .w hNa ("remov ng edges that only have d ll t   features")
 
-    val edgeKeyedScores = scoreExport.keyBy { e => (e.sourceId, e.destinationId) }
+    val edgeKeyedScores = scoreExport.keyBy { e => (e.s ce d, e.dest nat on d) }
 
-    val scoredAggregatedActivityEdge = aggregatedActivityEdge
-      .keyBy { e => (e.sourceId, e.destinationId) }
-      .withName("join with scores")
-      .leftOuterJoin(edgeKeyedScores)
+    val scoredAggregatedAct v yEdge = aggregatedAct v yEdge
+      .keyBy { e => (e.s ce d, e.dest nat on d) }
+      .w hNa ("jo n w h scores")
+      .leftOuterJo n(edgeKeyedScores)
       .map {
         case (_, (e, scoredEdgeOpt)) =>
           val scoreOpt = scoredEdgeOpt.map(_.score)
-          e.copy(weight = if (scoreOpt.nonEmpty) {
-            ScioMetrics.counter("after joining edge with scores", "has score").inc()
+          e.copy(  ght =  f (scoreOpt.nonEmpty) {
+            Sc o tr cs.counter("after jo n ng edge w h scores", "has score"). nc()
             scoreOpt
           } else {
-            ScioMetrics.counter("after joining edge with scores", "no score").inc()
+            Sc o tr cs.counter("after jo n ng edge w h scores", "no score"). nc()
             None
           })
       }
 
-    val combinedFeatures = FeatureGeneratorUtil
-      .combineEdgeFeatures(aggregatedActivityEdge ++ addressEdgeFeatures ++ flockEdgeFeatures)
-      .keyBy { e => (e.sourceId, e.destinationId) }
+    val comb nedFeatures = FeatureGeneratorUt l
+      .comb neEdgeFeatures(aggregatedAct v yEdge ++ addressEdgeFeatures ++ flockEdgeFeatures)
+      .keyBy { e => (e.s ce d, e.dest nat on d) }
 
-    val aggregatedActivityScoredEdge =
+    val aggregatedAct v yScoredEdge =
       edgeKeyedScores
-        .withName("join with combined edge features")
-        .leftOuterJoin(combinedFeatures)
+        .w hNa ("jo n w h comb ned edge features")
+        .leftOuterJo n(comb nedFeatures)
         .map {
-          case (_, (scoredEdge, combinedFeaturesOpt)) =>
-            if (combinedFeaturesOpt.exists(_.features.nonEmpty)) {
-              ScioMetrics.counter("after joining scored edge with features", "has features").inc()
+          case (_, (scoredEdge, comb nedFeaturesOpt)) =>
+             f (comb nedFeaturesOpt.ex sts(_.features.nonEmpty)) {
+              Sc o tr cs.counter("after jo n ng scored edge w h features", "has features"). nc()
               Edge(
-                sourceId = scoredEdge.sourceId,
-                destinationId = scoredEdge.destinationId,
-                weight = Some(scoredEdge.score),
-                features = combinedFeaturesOpt.map(_.features).getOrElse(Nil)
+                s ce d = scoredEdge.s ce d,
+                dest nat on d = scoredEdge.dest nat on d,
+                  ght = So (scoredEdge.score),
+                features = comb nedFeaturesOpt.map(_.features).getOrElse(N l)
               )
             } else {
-              ScioMetrics.counter("after joining scored edge with features", "no features").inc()
+              Sc o tr cs.counter("after jo n ng scored edge w h features", "no features"). nc()
               Edge(
-                sourceId = scoredEdge.sourceId,
-                destinationId = scoredEdge.destinationId,
-                weight = Some(scoredEdge.score),
-                features = Nil
+                s ce d = scoredEdge.s ce d,
+                dest nat on d = scoredEdge.dest nat on d,
+                  ght = So (scoredEdge.score),
+                features = N l
               )
             }
         }
 
     val realGraphFeatures =
-      getTopKTimelineFeatures(aggregatedActivityScoredEdge, pipelineOptions.getMaxDestinationIds)
+      getTopKT  l neFeatures(aggregatedAct v yScoredEdge, p pel neOpt ons.getMaxDest nat on ds)
 
-    aggregatedActivityVertex.saveAsCustomOutput(
-      "Write History Aggregated Vertex Records",
-      DAL.writeSnapshot[Vertex](
-        dataset = InteractionGraphHistoryAggregatedVertexSnapshotScalaDataset,
-        pathLayout = PathLayout.DailyPath(pipelineOptions.getOutputPath + "/aggregated_vertex"),
-        endDate = Instant.ofEpochMilli(dateInterval.getEndMillis),
-        diskFormat = DiskFormat.Parquet,
-        environmentOverride = Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards / 10))
+    aggregatedAct v yVertex.saveAsCustomOutput(
+      "Wr e  tory Aggregated Vertex Records",
+      DAL.wr eSnapshot[Vertex](
+        dataset =  nteract onGraph toryAggregatedVertexSnapshotScalaDataset,
+        pathLa t = PathLa t.Da lyPath(p pel neOpt ons.getOutputPath + "/aggregated_vertex"),
+        endDate =  nstant.ofEpochM ll (date nterval.getEndM ll s),
+        d skFormat = D skFormat.Parquet,
+        env ron ntOverr de = Env ron nt.valueOf(dalWr eEnv ron nt),
+        wr eOpt on = Wr eOpt ons(numOfShards = So (p pel neOpt ons.getNumberOfShards / 10))
       )
     )
 
-    scoredAggregatedActivityEdge.saveAsCustomOutput(
-      "Write History Aggregated Edge Records",
-      DAL.writeSnapshot[Edge](
-        dataset = InteractionGraphHistoryAggregatedEdgeSnapshotScalaDataset,
-        pathLayout = PathLayout.DailyPath(pipelineOptions.getOutputPath + "/aggregated_raw_edge"),
-        endDate = Instant.ofEpochMilli(dateInterval.getEndMillis),
-        diskFormat = DiskFormat.Parquet,
-        environmentOverride = Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards))
+    scoredAggregatedAct v yEdge.saveAsCustomOutput(
+      "Wr e  tory Aggregated Edge Records",
+      DAL.wr eSnapshot[Edge](
+        dataset =  nteract onGraph toryAggregatedEdgeSnapshotScalaDataset,
+        pathLa t = PathLa t.Da lyPath(p pel neOpt ons.getOutputPath + "/aggregated_raw_edge"),
+        endDate =  nstant.ofEpochM ll (date nterval.getEndM ll s),
+        d skFormat = D skFormat.Parquet,
+        env ron ntOverr de = Env ron nt.valueOf(dalWr eEnv ron nt),
+        wr eOpt on = Wr eOpt ons(numOfShards = So (p pel neOpt ons.getNumberOfShards))
       )
     )
 
-    aggregatedActivityVertexDaily.saveAsCustomOutput(
-      "Write Daily Aggregated Vertex Records",
-      DAL.write[Vertex](
-        dataset = InteractionGraphAggregatedVertexDailyScalaDataset,
-        pathLayout =
-          PathLayout.DailyPath(pipelineOptions.getOutputPath + "/aggregated_vertex_daily"),
-        interval = dateInterval,
-        diskFormat = DiskFormat.Parquet,
-        environmentOverride = Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards / 10))
+    aggregatedAct v yVertexDa ly.saveAsCustomOutput(
+      "Wr e Da ly Aggregated Vertex Records",
+      DAL.wr e[Vertex](
+        dataset =  nteract onGraphAggregatedVertexDa lyScalaDataset,
+        pathLa t =
+          PathLa t.Da lyPath(p pel neOpt ons.getOutputPath + "/aggregated_vertex_da ly"),
+         nterval = date nterval,
+        d skFormat = D skFormat.Parquet,
+        env ron ntOverr de = Env ron nt.valueOf(dalWr eEnv ron nt),
+        wr eOpt on = Wr eOpt ons(numOfShards = So (p pel neOpt ons.getNumberOfShards / 10))
       )
     )
 
-    aggregatedActivityEdgeDaily.saveAsCustomOutput(
-      "Write Daily Aggregated Edge Records",
-      DAL.write[Edge](
-        dataset = InteractionGraphAggregatedEdgeDailyScalaDataset,
-        pathLayout = PathLayout.DailyPath(pipelineOptions.getOutputPath + "/aggregated_edge_daily"),
-        interval = dateInterval,
-        diskFormat = DiskFormat.Parquet,
-        environmentOverride = Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards))
+    aggregatedAct v yEdgeDa ly.saveAsCustomOutput(
+      "Wr e Da ly Aggregated Edge Records",
+      DAL.wr e[Edge](
+        dataset =  nteract onGraphAggregatedEdgeDa lyScalaDataset,
+        pathLa t = PathLa t.Da lyPath(p pel neOpt ons.getOutputPath + "/aggregated_edge_da ly"),
+         nterval = date nterval,
+        d skFormat = D skFormat.Parquet,
+        env ron ntOverr de = Env ron nt.valueOf(dalWr eEnv ron nt),
+        wr eOpt on = Wr eOpt ons(numOfShards = So (p pel neOpt ons.getNumberOfShards))
       )
     )
 
     realGraphFeatures.saveAsCustomOutput(
-      "Write Timeline Real Graph Features",
-      DAL.writeVersionedKeyVal[KeyVal[Long, UserSession]](
+      "Wr e T  l ne Real Graph Features",
+      DAL.wr eVers onedKeyVal[KeyVal[Long, UserSess on]](
         dataset = RealGraphFeaturesScalaDataset,
-        pathLayout =
-          PathLayout.VersionedPath(pipelineOptions.getOutputPath + "/real_graph_features"),
-        environmentOverride = Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards))
+        pathLa t =
+          PathLa t.Vers onedPath(p pel neOpt ons.getOutputPath + "/real_graph_features"),
+        env ron ntOverr de = Env ron nt.valueOf(dalWr eEnv ron nt),
+        wr eOpt on = Wr eOpt ons(numOfShards = So (p pel neOpt ons.getNumberOfShards))
       )
     )
   }

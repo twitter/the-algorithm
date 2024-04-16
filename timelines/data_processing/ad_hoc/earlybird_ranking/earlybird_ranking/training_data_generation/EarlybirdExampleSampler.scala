@@ -1,65 +1,65 @@
-package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.training_data_generation
+package com.tw ter.t  l nes.data_process ng.ad_hoc.earlyb rd_rank ng.tra n ng_data_generat on
 
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.DataSetPipe
-import com.twitter.ml.api.Feature
-import com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common.LabelInfo
-import com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common.LabelInfoWithFeature
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
-import java.lang.{Double => JDouble}
-import scala.util.Random
+ mport com.tw ter.ml.ap .constant.SharedFeatures
+ mport com.tw ter.ml.ap .DataSetP pe
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.t  l nes.data_process ng.ad_hoc.earlyb rd_rank ng.common.Label nfo
+ mport com.tw ter.t  l nes.data_process ng.ad_hoc.earlyb rd_rank ng.common.Label nfoW hFeature
+ mport com.tw ter.t  l nes.pred ct on.features.recap.RecapFeatures
+ mport java.lang.{Double => JDouble}
+ mport scala.ut l.Random
 
 /**
- * Adds an IsGlobalEngagement label to records containing any recap label, and adjusts
- * weights accordingly. See [[weightAndSample]] for details on operation.
+ * Adds an  sGlobalEngage nt label to records conta n ng any recap label, and adjusts
+ *   ghts accord ngly. See [[  ghtAndSample]] for deta ls on operat on.
  */
-class EarlybirdExampleSampler(
+class Earlyb rdExampleSampler(
   random: Random,
-  labelInfos: List[LabelInfoWithFeature],
-  negativeInfo: LabelInfo) {
+  label nfos: L st[Label nfoW hFeature],
+  negat ve nfo: Label nfo) {
 
-  import com.twitter.ml.api.util.FDsl._
+   mport com.tw ter.ml.ap .ut l.FDsl._
 
-  private[this] val ImportanceFeature: Feature[JDouble] =
-    SharedFeatures.RECORD_WEIGHT_FEATURE_BUILDER
-      .extensionBuilder()
-      .addExtension("type", "earlybird")
-      .build()
+  pr vate[t ] val  mportanceFeature: Feature[JDouble] =
+    SharedFeatures.RECORD_WE GHT_FEATURE_BU LDER
+      .extens onBu lder()
+      .addExtens on("type", "earlyb rd")
+      .bu ld()
 
-  private[this] def uniformSample(labelInfo: LabelInfo) =
-    random.nextDouble() < labelInfo.downsampleFraction
+  pr vate[t ] def un formSample(label nfo: Label nfo) =
+    random.nextDouble() < label nfo.downsampleFract on
 
-  private[this] def weightedImportance(labelInfo: LabelInfo) =
-    labelInfo.importance / labelInfo.downsampleFraction
+  pr vate[t ] def   ghted mportance(label nfo: Label nfo) =
+    label nfo. mportance / label nfo.downsampleFract on
 
   /**
-   * Generates a IsGlobalEngagement label for records that contain any
-   * recap label. Adds an "importance" value per recap label found
-   * in the record. Simultaneously, downsamples positive and negative examples based on provided
+   * Generates a  sGlobalEngage nt label for records that conta n any
+   * recap label. Adds an " mportance" value per recap label found
+   *  n t  record. S multaneously, downsamples pos  ve and negat ve examples based on prov ded
    * downsample rates.
    */
-  def weightAndSample(data: DataSetPipe): DataSetPipe = {
+  def   ghtAndSample(data: DataSetP pe): DataSetP pe = {
     val updatedRecords = data.records.flatMap { record =>
-      val featuresOn = labelInfos.filter(labelInfo => record.hasFeature(labelInfo.feature))
-      if (featuresOn.nonEmpty) {
-        val sampled = featuresOn.map(_.info).filter(uniformSample)
-        if (sampled.nonEmpty) {
-          record.setFeatureValue(RecapFeatures.IS_EARLYBIRD_UNIFIED_ENGAGEMENT, true)
-          Some(record.setFeatureValue(ImportanceFeature, sampled.map(weightedImportance).sum))
+      val featuresOn = label nfos.f lter(label nfo => record.hasFeature(label nfo.feature))
+       f (featuresOn.nonEmpty) {
+        val sampled = featuresOn.map(_. nfo).f lter(un formSample)
+         f (sampled.nonEmpty) {
+          record.setFeatureValue(RecapFeatures. S_EARLYB RD_UN F ED_ENGAGEMENT, true)
+          So (record.setFeatureValue( mportanceFeature, sampled.map(  ghted mportance).sum))
         } else {
           None
         }
-      } else if (uniformSample(negativeInfo)) {
-        Some(record.setFeatureValue(ImportanceFeature, weightedImportance(negativeInfo)))
+      } else  f (un formSample(negat ve nfo)) {
+        So (record.setFeatureValue( mportanceFeature,   ghted mportance(negat ve nfo)))
       } else {
         None
       }
     }
 
-    DataSetPipe(
+    DataSetP pe(
       updatedRecords,
       data.featureContext
-        .addFeatures(ImportanceFeature, RecapFeatures.IS_EARLYBIRD_UNIFIED_ENGAGEMENT)
+        .addFeatures( mportanceFeature, RecapFeatures. S_EARLYB RD_UN F ED_ENGAGEMENT)
     )
   }
 }

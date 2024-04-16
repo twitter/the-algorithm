@@ -1,213 +1,213 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+package com.tw ter.search.earlyb rd.search.relevance.scor ng;
 
-import java.io.IOException;
-import java.util.List;
+ mport java. o. OExcept on;
+ mport java.ut l.L st;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.Explanation;
+ mport org.apac .lucene. ndex. ndexReader;
+ mport org.apac .lucene.search.Explanat on;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.features.thrift.ThriftSearchResultFeatures;
-import com.twitter.search.common.query.HitAttributeHelper;
-import com.twitter.search.common.relevance.features.EarlybirdDocumentFeatures;
-import com.twitter.search.common.results.thriftjava.FieldHitAttribution;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.search.relevance.LinearScoringData;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadataOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
-import com.twitter.search.queryparser.query.Query;
+ mport com.tw ter.common.collect ons.Pa r;
+ mport com.tw ter.search.common.constants.thr ftjava.Thr ftLanguage;
+ mport com.tw ter.search.common.features.thr ft.Thr ftSearchResultFeatures;
+ mport com.tw ter.search.common.query.H Attr bute lper;
+ mport com.tw ter.search.common.relevance.features.Earlyb rdDocu ntFeatures;
+ mport com.tw ter.search.common.results.thr ftjava.F eldH Attr but on;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.core.earlyb rd. ndex.Doc DToT et DMapper;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
+ mport com.tw ter.search.core.earlyb rd. ndex.T  Mapper;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.search.relevance.L nearScor ngData;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult tadata;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult tadataOpt ons;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultType;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultsRelevanceStats;
+ mport com.tw ter.search.queryparser.query.Query;
 
 /**
- * Defines a ranking function which computes the score of a document that matches a query.
+ * Def nes a rank ng funct on wh ch computes t  score of a docu nt that matc s a query.
  */
-public abstract class ScoringFunction {
+publ c abstract class Scor ngFunct on {
   /**
-   * Returned by a {@link #score(int, float)} to indicate that a hit should be scored below all.
+   * Returned by a {@l nk #score( nt, float)} to  nd cate that a h  should be scored below all.
    *
-   * We have some equality tests like:
-   *   "if (score == ScoringFunction.SKIP_HIT) {...}" (DefaultScoringFunction#updateRelevanceStats)
-   * We might also have double to float casts.
+   *   have so  equal y tests l ke:
+   *   " f (score == Scor ngFunct on.SK P_H T) {...}" (DefaultScor ngFunct on#updateRelevanceStats)
+   *   m ght also have double to float casts.
    *
-   * Such castings seem to work with the equality test, but there might corner cases when casting
-   * this float value to a double (and back) might not work properly.
+   * Such cast ngs seem to work w h t  equal y test, but t re m ght corner cases w n cast ng
+   * t  float value to a double (and back) m ght not work properly.
    *
-   * If possible, we should choose a constant that is not in the valid score range. Then we can
-   * turn the float equality tests into Math.abs(...) < EPSILON tests.
+   *  f poss ble,   should choose a constant that  s not  n t  val d score range. T n   can
+   * turn t  float equal y tests  nto Math.abs(...) < EPS LON tests.
    */
-  public static final float SKIP_HIT = -Float.MAX_VALUE;
+  publ c stat c f nal float SK P_H T = -Float.MAX_VALUE;
 
-  private final ImmutableSchemaInterface schema;
+  pr vate f nal  mmutableSc ma nterface sc ma;
 
-  // The current doc ID and the reader for the current segment should be private, because we don't
-  // want sub-classes to incorrectly update them. The doc ID should only be updated by the score()
-  // and explain() methods, and the reader should only be updated by the setNextReader() method.
-  private int currentDocID = -1;
+  // T  current doc  D and t  reader for t  current seg nt should be pr vate, because   don't
+  // want sub-classes to  ncorrectly update t m. T  doc  D should only be updated by t  score()
+  // and expla n()  thods, and t  reader should only be updated by t  setNextReader()  thod.
+  pr vate  nt currentDoc D = -1;
 
-  protected DocIDToTweetIDMapper tweetIDMapper = null;
-  protected TimeMapper timeMapper = null;
-  protected EarlybirdDocumentFeatures documentFeatures;
+  protected Doc DToT et DMapper t et DMapper = null;
+  protected T  Mapper t  Mapper = null;
+  protected Earlyb rdDocu ntFeatures docu ntFeatures;
 
-  protected int debugMode = 0;
-  protected HitAttributeHelper hitAttributeHelper;
+  protected  nt debugMode = 0;
+  protected H Attr bute lper h Attr bute lper;
   protected Query query;
 
-  protected FieldHitAttribution fieldHitAttribution;
+  protected F eldH Attr but on f eldH Attr but on;
 
-  public ScoringFunction(ImmutableSchemaInterface schema) {
-    this.schema = Preconditions.checkNotNull(schema);
+  publ c Scor ngFunct on( mmutableSc ma nterface sc ma) {
+    t .sc ma = Precond  ons.c ckNotNull(sc ma);
   }
 
-  protected ImmutableSchemaInterface getSchema() {
-    return schema;
+  protected  mmutableSc ma nterface getSc ma() {
+    return sc ma;
   }
 
   /**
-   * Updates the reader that will be used to retrieve the tweet IDs and creation times associated
-   * with scored doc IDs, as well as the values for various CSFs. Should be called every time the
-   * searcher starts searching in a new segment.
+   * Updates t  reader that w ll be used to retr eve t  t et  Ds and creat on t  s assoc ated
+   * w h scored doc  Ds, as  ll as t  values for var ous CSFs. Should be called every t   t 
+   * searc r starts search ng  n a new seg nt.
    */
-  public void setNextReader(EarlybirdIndexSegmentAtomicReader reader) throws IOException {
-    tweetIDMapper = reader.getSegmentData().getDocIDToTweetIDMapper();
-    timeMapper = reader.getSegmentData().getTimeMapper();
-    documentFeatures = new EarlybirdDocumentFeatures(reader);
-    initializeNextSegment(reader);
+  publ c vo d setNextReader(Earlyb rd ndexSeg ntAtom cReader reader) throws  OExcept on {
+    t et DMapper = reader.getSeg ntData().getDoc DToT et DMapper();
+    t  Mapper = reader.getSeg ntData().getT  Mapper();
+    docu ntFeatures = new Earlyb rdDocu ntFeatures(reader);
+     n  al zeNextSeg nt(reader);
   }
 
-  public void setHitAttributeHelperAndQuery(HitAttributeHelper newHitAttributeHelper,
+  publ c vo d setH Attr bute lperAndQuery(H Attr bute lper newH Attr bute lper,
                                             Query parsedQuery) {
-    this.hitAttributeHelper = newHitAttributeHelper;
-    this.query = parsedQuery;
+    t .h Attr bute lper = newH Attr bute lper;
+    t .query = parsedQuery;
   }
 
-  public void setFieldHitAttribution(FieldHitAttribution fieldHitAttribution) {
-    this.fieldHitAttribution = fieldHitAttribution;
+  publ c vo d setF eldH Attr but on(F eldH Attr but on f eldH Attr but on) {
+    t .f eldH Attr but on = f eldH Attr but on;
   }
 
-  public void setDebugMode(int debugMode) {
-    this.debugMode = debugMode;
+  publ c vo d setDebugMode( nt debugMode) {
+    t .debugMode = debugMode;
   }
 
   /**
-   * Allow scoring functions to perform more per-segment-specific setup.
+   * Allow scor ng funct ons to perform more per-seg nt-spec f c setup.
    */
-  protected void initializeNextSegment(EarlybirdIndexSegmentAtomicReader reader)
-      throws IOException {
+  protected vo d  n  al zeNextSeg nt(Earlyb rd ndexSeg ntAtom cReader reader)
+      throws  OExcept on {
     // Noop by default
   }
 
-  // Updates the current document ID and advances all NumericDocValues to this doc ID.
-  private void setCurrentDocID(int currentDocID) throws IOException {
-    this.currentDocID = currentDocID;
-    documentFeatures.advance(currentDocID);
+  // Updates t  current docu nt  D and advances all Nu r cDocValues to t  doc  D.
+  pr vate vo d setCurrentDoc D( nt currentDoc D) throws  OExcept on {
+    t .currentDoc D = currentDoc D;
+    docu ntFeatures.advance(currentDoc D);
   }
 
   /**
-   * Returns the current doc ID stored in this scoring function.
+   * Returns t  current doc  D stored  n t  scor ng funct on.
    */
-  public int getCurrentDocID() {
-    return currentDocID;
+  publ c  nt getCurrentDoc D() {
+    return currentDoc D;
   }
 
   /**
-   * Compute the score for the current hit.  This is not expected to be thread safe.
+   * Compute t  score for t  current h .  T   s not expected to be thread safe.
    *
-   * @param internalDocID    internal id of the matching hit
-   * @param luceneQueryScore the score that lucene's text query computed for this hit
+   * @param  nternalDoc D     nternal  d of t  match ng h 
+   * @param luceneQueryScore t  score that lucene's text query computed for t  h 
    */
-  public float score(int internalDocID, float luceneQueryScore) throws IOException {
-    setCurrentDocID(internalDocID);
+  publ c float score( nt  nternalDoc D, float luceneQueryScore) throws  OExcept on {
+    setCurrentDoc D( nternalDoc D);
     return score(luceneQueryScore);
   }
 
   /**
-   * Compute the score for the current hit.  This is not expected to be thread safe.
+   * Compute t  score for t  current h .  T   s not expected to be thread safe.
    *
-   * @param luceneQueryScore the score that lucene's text query computed for this hit
+   * @param luceneQueryScore t  score that lucene's text query computed for t  h 
    */
-  protected abstract float score(float luceneQueryScore) throws IOException;
+  protected abstract float score(float luceneQueryScore) throws  OExcept on;
 
-  /** Returns an explanation for the given hit. */
-  public final Explanation explain(IndexReader reader, int internalDocID, float luceneScore)
-      throws IOException {
-    setNextReader((EarlybirdIndexSegmentAtomicReader) reader);
-    setCurrentDocID(internalDocID);
-    return doExplain(luceneScore);
+  /** Returns an explanat on for t  g ven h . */
+  publ c f nal Explanat on expla n( ndexReader reader,  nt  nternalDoc D, float luceneScore)
+      throws  OExcept on {
+    setNextReader((Earlyb rd ndexSeg ntAtom cReader) reader);
+    setCurrentDoc D( nternalDoc D);
+    return doExpla n(luceneScore);
   }
 
-  /** Returns an explanation for the current document. */
-  protected abstract Explanation doExplain(float luceneScore) throws IOException;
+  /** Returns an explanat on for t  current docu nt. */
+  protected abstract Explanat on doExpla n(float luceneScore) throws  OExcept on;
 
   /**
-   * Returns the scoring metadata for the current doc ID.
+   * Returns t  scor ng  tadata for t  current doc  D.
    */
-  public ThriftSearchResultMetadata getResultMetadata(ThriftSearchResultMetadataOptions options)
-      throws IOException {
-    ThriftSearchResultMetadata metadata = new ThriftSearchResultMetadata();
-    metadata.setResultType(ThriftSearchResultType.RELEVANCE);
-    metadata.setPenguinVersion(EarlybirdConfig.getPenguinVersionByte());
-    metadata.setLanguage(ThriftLanguage.findByValue(
-        (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.LANGUAGE)));
-    metadata.setSignature(
-        (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.TWEET_SIGNATURE));
-    metadata.setIsNullcast(documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_NULLCAST_FLAG));
-    return metadata;
-  }
-
-  /**
-   * Updates the given ThriftSearchResultsRelevanceStats instance based on the scoring metadata for
-   * the current doc ID.
-   */
-  public abstract void updateRelevanceStats(ThriftSearchResultsRelevanceStats relevanceStats);
-
-  /**
-   * Score a list of hits. Not thread safe.
-   */
-  public float[] batchScore(List<BatchHit> hits) throws IOException {
-    throw new UnsupportedOperationException("This operation (batchScore) is not implemented!");
+  publ c Thr ftSearchResult tadata getResult tadata(Thr ftSearchResult tadataOpt ons opt ons)
+      throws  OExcept on {
+    Thr ftSearchResult tadata  tadata = new Thr ftSearchResult tadata();
+     tadata.setResultType(Thr ftSearchResultType.RELEVANCE);
+     tadata.setPengu nVers on(Earlyb rdConf g.getPengu nVers onByte());
+     tadata.setLanguage(Thr ftLanguage.f ndByValue(
+        ( nt) docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.LANGUAGE)));
+     tadata.setS gnature(
+        ( nt) docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.TWEET_S GNATURE));
+     tadata.set sNullcast(docu ntFeatures. sFlagSet(Earlyb rdF eldConstant. S_NULLCAST_FLAG));
+    return  tadata;
   }
 
   /**
-   * Collect the features and CSFs for the current document. Used for scoring and generating the
-   * returned metadata.
+   * Updates t  g ven Thr ftSearchResultsRelevanceStats  nstance based on t  scor ng  tadata for
+   * t  current doc  D.
    */
-  public Pair<LinearScoringData, ThriftSearchResultFeatures> collectFeatures(
-      float luceneQueryScore) throws IOException {
-    throw new UnsupportedOperationException("This operation (collectFeatures) is not implemented!");
+  publ c abstract vo d updateRelevanceStats(Thr ftSearchResultsRelevanceStats relevanceStats);
+
+  /**
+   * Score a l st of h s. Not thread safe.
+   */
+  publ c float[] batchScore(L st<BatchH > h s) throws  OExcept on {
+    throw new UnsupportedOperat onExcept on("T  operat on (batchScore)  s not  mple nted!");
   }
 
   /**
-   * Implement this function to populate the result metadata based on the given scoring data.
-   * Otherwise, this is a no-op.
+   * Collect t  features and CSFs for t  current docu nt. Used for scor ng and generat ng t 
+   * returned  tadata.
+   */
+  publ c Pa r<L nearScor ngData, Thr ftSearchResultFeatures> collectFeatures(
+      float luceneQueryScore) throws  OExcept on {
+    throw new UnsupportedOperat onExcept on("T  operat on (collectFeatures)  s not  mple nted!");
+  }
+
+  /**
+   *  mple nt t  funct on to populate t  result  tadata based on t  g ven scor ng data.
+   * Ot rw se, t   s a no-op.
    *
-   * Scoring functions that implement this should also implement getScoringData().
+   * Scor ng funct ons that  mple nt t  should also  mple nt getScor ngData().
    */
-  public void populateResultMetadataBasedOnScoringData(
-      ThriftSearchResultMetadataOptions options,
-      ThriftSearchResultMetadata metadata,
-      LinearScoringData data) throws IOException {
-    // Make sure that the scoring data passed in is null because getScoringDataForCurrentDocument()
-    // returns null by default and if a subclass overrides one of these two methods, it should
-    // override both.
-    Preconditions.checkState(data == null, "LinearScoringData should be null");
+  publ c vo d populateResult tadataBasedOnScor ngData(
+      Thr ftSearchResult tadataOpt ons opt ons,
+      Thr ftSearchResult tadata  tadata,
+      L nearScor ngData data) throws  OExcept on {
+    // Make sure that t  scor ng data passed  n  s null because getScor ngDataForCurrentDocu nt()
+    // returns null by default and  f a subclass overr des one of t se two  thods,   should
+    // overr de both.
+    Precond  ons.c ckState(data == null, "L nearScor ngData should be null");
   }
 
   /**
-   * This should only be called at hit collection time because it relies on the internal doc id.
+   * T  should only be called at h  collect on t   because   rel es on t   nternal doc  d.
    *
-   * Scoring functions that implement this should also implement the function
-   * populateResultMetadataBasedOnScoringData().
+   * Scor ng funct ons that  mple nt t  should also  mple nt t  funct on
+   * populateResult tadataBasedOnScor ngData().
    */
-  public LinearScoringData getScoringDataForCurrentDocument() {
+  publ c L nearScor ngData getScor ngDataForCurrentDocu nt() {
     return null;
   }
 }

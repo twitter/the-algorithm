@@ -1,155 +1,155 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import java.util.NoSuchElementException;
+ mport java.ut l.NoSuchEle ntExcept on;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
 /**
- * A posting buffer used by {@link HighDFPackedIntsPostingLists} while copying over posting list.
+ * A post ng buffer used by {@l nk H ghDFPacked ntsPost ngL sts} wh le copy ng over post ng l st.
  */
-final class PostingsBufferQueue {
+f nal class Post ngsBufferQueue {
   /**
-   * Mask used to convert an int to a long. We cannot just cast because doing so  will fill in the
-   * higher 32 bits with the sign bit, but we need the higher 32 bits to be 0 instead.
+   * Mask used to convert an  nt to a long.   cannot just cast because do ng so  w ll f ll  n t 
+   * h g r 32 b s w h t  s gn b , but   need t  h g r 32 b s to be 0  nstead.
    */
-  static final long LONG_MASK = (1L << 32) - 1;
+  stat c f nal long LONG_MASK = (1L << 32) - 1;
 
   /**
-   * A circular FIFO long queue used internally to store posting.
-   * @see #postingsQueue
+   * A c rcular F FO long queue used  nternally to store post ng.
+   * @see #post ngsQueue
    */
-  @VisibleForTesting
-  static final class Queue {
-    private final long[] queue;
-    private int head = 0;
-    private int tail = 0;
-    private int size;
+  @V s bleForTest ng
+  stat c f nal class Queue {
+    pr vate f nal long[] queue;
+    pr vate  nt  ad = 0;
+    pr vate  nt ta l = 0;
+    pr vate  nt s ze;
 
-    Queue(int maxSize) {
-      this.queue = new long[maxSize < 2 ? 2 : maxSize];
+    Queue( nt maxS ze) {
+      t .queue = new long[maxS ze < 2 ? 2 : maxS ze];
     }
 
-    boolean isEmpty() {
-      return size() == 0;
+    boolean  sEmpty() {
+      return s ze() == 0;
     }
 
-    boolean isFull() {
-      return size() == queue.length;
+    boolean  sFull() {
+      return s ze() == queue.length;
     }
 
-    void offer(long value) {
-      if (size() == queue.length) {
-        throw new IllegalStateException("Queue is full");
+    vo d offer(long value) {
+       f (s ze() == queue.length) {
+        throw new  llegalStateExcept on("Queue  s full");
       }
-      queue[tail] = value;
-      tail = (tail + 1) % queue.length;
-      size++;
+      queue[ta l] = value;
+      ta l = (ta l + 1) % queue.length;
+      s ze++;
     }
 
     long poll() {
-      if (isEmpty()) {
-        throw new NoSuchElementException("Queue is empty.");
+       f ( sEmpty()) {
+        throw new NoSuchEle ntExcept on("Queue  s empty.");
       }
-      long value = queue[head];
-      head = (head + 1) % queue.length;
-      size--;
+      long value = queue[ ad];
+       ad = ( ad + 1) % queue.length;
+      s ze--;
       return value;
     }
 
-    int size() {
-      return size;
+     nt s ze() {
+      return s ze;
     }
   }
 
   /**
-   * Internal posting queue.
+   *  nternal post ng queue.
    */
-  private final Queue postingsQueue;
+  pr vate f nal Queue post ngsQueue;
 
   /**
-   * Constructor with max size.
+   * Constructor w h max s ze.
    *
-   * @param maxSize max size of this buffer.
+   * @param maxS ze max s ze of t  buffer.
    */
-  PostingsBufferQueue(int maxSize) {
-    this.postingsQueue = new Queue(maxSize);
+  Post ngsBufferQueue( nt maxS ze) {
+    t .post ngsQueue = new Queue(maxS ze);
   }
 
   /**
-   * Check if the buffer is empty.
+   * C ck  f t  buffer  s empty.
    *
-   * @return If this buffer is empty
+   * @return  f t  buffer  s empty
    */
-  boolean isEmpty() {
-    return postingsQueue.isEmpty();
+  boolean  sEmpty() {
+    return post ngsQueue. sEmpty();
   }
 
   /**
-   * Check if the buffer is full.
+   * C ck  f t  buffer  s full.
    *
-   * @return If this buffer is full
+   * @return  f t  buffer  s full
    */
-  boolean isFull() {
-    return postingsQueue.isFull();
+  boolean  sFull() {
+    return post ngsQueue. sFull();
   }
 
   /**
-   * Get the current size of this buffer.
+   * Get t  current s ze of t  buffer.
    *
-   * @return Current size of this buffer
+   * @return Current s ze of t  buffer
    */
-  int size() {
-    return postingsQueue.size();
+   nt s ze() {
+    return post ngsQueue.s ze();
   }
 
   /**
-   * Store a posting with docID and a second value that could be freq, position, or any additional
-   * info. This method will encode the offered doc ID and second value with
-   * {@link #encodePosting(int, int)}.
+   * Store a post ng w h doc D and a second value that could be freq, pos  on, or any add  onal
+   *  nfo. T   thod w ll encode t  offered doc  D and second value w h
+   * {@l nk #encodePost ng( nt,  nt)}.
    *
-   * @param docID doc ID of the posting
-   * @param secondValue an additional value of the posting
+   * @param doc D doc  D of t  post ng
+   * @param secondValue an add  onal value of t  post ng
    */
-  void offer(int docID, int secondValue) {
-    postingsQueue.offer(encodePosting(docID, secondValue));
+  vo d offer( nt doc D,  nt secondValue) {
+    post ngsQueue.offer(encodePost ng(doc D, secondValue));
   }
 
   /**
-   * Remove and return the earliest inserted posting, this is a FIFO queue.
+   * Remove and return t  earl est  nserted post ng, t   s a F FO queue.
    *
-   * @return the earliest inserted posting.
+   * @return t  earl est  nserted post ng.
    */
   long poll() {
-    return postingsQueue.poll();
+    return post ngsQueue.poll();
   }
 
   /**
-   * Encode a doc ID and a second value, both are ints, into a long. The higher 32 bits store the
-   * doc ID and lower 32 bits store the second value.
+   * Encode a doc  D and a second value, both are  nts,  nto a long. T  h g r 32 b s store t 
+   * doc  D and lo r 32 b s store t  second value.
    *
-   * @param docID an int specifying doc ID of the posting
-   * @param secondValue an int specifying the second value of the posting
-   * @return an encoded long represent the posting
+   * @param doc D an  nt spec fy ng doc  D of t  post ng
+   * @param secondValue an  nt spec fy ng t  second value of t  post ng
+   * @return an encoded long represent t  post ng
    */
-  private static long encodePosting(int docID, int secondValue) {
-    return ((LONG_MASK & docID) << 32) | (LONG_MASK & secondValue);
+  pr vate stat c long encodePost ng( nt doc D,  nt secondValue) {
+    return ((LONG_MASK & doc D) << 32) | (LONG_MASK & secondValue);
   }
 
   /**
-   * Decode doc ID from the given posting.
-   * @param posting a given posting encoded with {@link #encodePosting(int, int)}
-   * @return the doc ID of the given posting.
+   * Decode doc  D from t  g ven post ng.
+   * @param post ng a g ven post ng encoded w h {@l nk #encodePost ng( nt,  nt)}
+   * @return t  doc  D of t  g ven post ng.
    */
-  static int getDocID(long posting) {
-    return (int) (posting >> 32);
+  stat c  nt getDoc D(long post ng) {
+    return ( nt) (post ng >> 32);
   }
 
   /**
-   * Decode the second value from the given posting.
-   * @param posting a given posting encoded with {@link #encodePosting(int, int)}
-   * @return the second value of the given posting.
+   * Decode t  second value from t  g ven post ng.
+   * @param post ng a g ven post ng encoded w h {@l nk #encodePost ng( nt,  nt)}
+   * @return t  second value of t  g ven post ng.
    */
-  static int getSecondValue(long posting) {
-    return (int) posting;
+  stat c  nt getSecondValue(long post ng) {
+    return ( nt) post ng;
   }
 }

@@ -1,13 +1,13 @@
-package com.twitter.timelineranker
+package com.tw ter.t  l neranker
 
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelines.configapi
+ mport com.tw ter.t  l neranker.model.RecapQuery
+ mport com.tw ter.t  l nes.conf gap 
 
 package object core {
-  type FutureDependencyTransformer[-U, +V] = configapi.FutureDependencyTransformer[RecapQuery, U, V]
-  object FutureDependencyTransformer
-      extends configapi.FutureDependencyTransformerFunctions[RecapQuery]
+  type FutureDependencyTransfor r[-U, +V] = conf gap .FutureDependencyTransfor r[RecapQuery, U, V]
+  object FutureDependencyTransfor r
+      extends conf gap .FutureDependencyTransfor rFunct ons[RecapQuery]
 
-  type DependencyTransformer[-U, +V] = configapi.DependencyTransformer[RecapQuery, U, V]
-  object DependencyTransformer extends configapi.DependencyTransformerFunctions[RecapQuery]
+  type DependencyTransfor r[-U, +V] = conf gap .DependencyTransfor r[RecapQuery, U, V]
+  object DependencyTransfor r extends conf gap .DependencyTransfor rFunct ons[RecapQuery]
 }

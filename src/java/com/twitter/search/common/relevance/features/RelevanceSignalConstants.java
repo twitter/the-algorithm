@@ -1,30 +1,30 @@
-package com.twitter.search.common.relevance.features;
+package com.tw ter.search.common.relevance.features;
 
 /**
- * Defines relevance related constants that are used at both ingestion time and
- * earlybird scoring time.
+ * Def nes relevance related constants that are used at both  ngest on t   and
+ * earlyb rd scor ng t  .
  */
-public final class RelevanceSignalConstants {
-  // user reputation
-  public static final byte UNSET_REPUTATION_SENTINEL = Byte.MIN_VALUE;
-  public static final byte MAX_REPUTATION = 100;
-  public static final byte MIN_REPUTATION = 0;
+publ c f nal class RelevanceS gnalConstants {
+  // user reputat on
+  publ c stat c f nal byte UNSET_REPUTAT ON_SENT NEL = Byte.M N_VALUE;
+  publ c stat c f nal byte MAX_REPUTAT ON = 100;
+  publ c stat c f nal byte M N_REPUTAT ON = 0;
   // below overall CDF of ~10%, default value for new users,
-  // given as a goodwill value in case it is unset
-  public static final byte GOODWILL_REPUTATION = 17;
+  // g ven as a goodw ll value  n case    s unset
+  publ c stat c f nal byte GOODW LL_REPUTAT ON = 17;
 
   // text score
-  public static final byte UNSET_TEXT_SCORE_SENTINEL = Byte.MIN_VALUE;
-  // roughly at overall CDF of ~10%, given as a goodwill value in case it is unset
-  public static final byte GOODWILL_TEXT_SCORE = 19;
+  publ c stat c f nal byte UNSET_TEXT_SCORE_SENT NEL = Byte.M N_VALUE;
+  // roughly at overall CDF of ~10%, g ven as a goodw ll value  n case    s unset
+  publ c stat c f nal byte GOODW LL_TEXT_SCORE = 19;
 
-  private RelevanceSignalConstants() {
+  pr vate RelevanceS gnalConstants() {
   }
 
-  // check whether the specified user rep value is valid
-  public static boolean isValidUserReputation(int userRep) {
-    return userRep != UNSET_REPUTATION_SENTINEL
-           && userRep >= MIN_REPUTATION
-           && userRep < MAX_REPUTATION;
+  // c ck w t r t  spec f ed user rep value  s val d
+  publ c stat c boolean  sVal dUserReputat on( nt userRep) {
+    return userRep != UNSET_REPUTAT ON_SENT NEL
+           && userRep >= M N_REPUTAT ON
+           && userRep < MAX_REPUTAT ON;
   }
 }

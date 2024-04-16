@@ -1,152 +1,152 @@
-package com.twitter.unified_user_actions.enricher.hcache
+package com.tw ter.un f ed_user_act ons.enr c r.hcac 
 
-import com.google.common.cache.Cache
-import com.google.common.cache.CacheBuilder
-import com.twitter.finagle.stats.InMemoryStatsReceiver
-import com.twitter.inject.Test
-import com.twitter.util.Await
-import com.twitter.util.Future
-import com.twitter.util.Time
-import java.util.concurrent.TimeUnit
-import java.lang.{Integer => JInt}
+ mport com.google.common.cac .Cac 
+ mport com.google.common.cac .Cac Bu lder
+ mport com.tw ter.f nagle.stats. n moryStatsRece ver
+ mport com.tw ter. nject.Test
+ mport com.tw ter.ut l.Awa 
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
+ mport java.ut l.concurrent.T  Un 
+ mport java.lang.{ nteger => J nt}
 
-class LocalCacheTest extends Test {
+class LocalCac Test extends Test {
 
-  trait Fixture {
-    val time = Time.fromMilliseconds(123456L)
+  tra  F xture {
+    val t   = T  .fromM ll seconds(123456L)
     val ttl = 5
-    val maxSize = 10
+    val maxS ze = 10
 
-    val underlying: Cache[JInt, Future[JInt]] = CacheBuilder
-      .newBuilder()
-      .expireAfterWrite(ttl, TimeUnit.SECONDS)
-      .maximumSize(maxSize)
-      .build[JInt, Future[JInt]]()
+    val underly ng: Cac [J nt, Future[J nt]] = Cac Bu lder
+      .newBu lder()
+      .exp reAfterWr e(ttl, T  Un .SECONDS)
+      .max mumS ze(maxS ze)
+      .bu ld[J nt, Future[J nt]]()
 
-    val stats = new InMemoryStatsReceiver
+    val stats = new  n moryStatsRece ver
 
-    val cache = new LocalCache[JInt, JInt](
-      underlying = underlying,
-      statsReceiver = stats
+    val cac  = new LocalCac [J nt, J nt](
+      underly ng = underly ng,
+      statsRece ver = stats
     )
 
-    def getCounts(counterName: String*): Long = stats.counter(counterName: _*)()
+    def getCounts(counterNa : Str ng*): Long = stats.counter(counterNa : _*)()
   }
 
-  test("simple local cache works") {
-    new Fixture {
-      Time.withTimeAt(time) { _ =>
-        assert(cache.size === 0)
+  test("s mple local cac  works") {
+    new F xture {
+      T  .w hT  At(t  ) { _ =>
+        assert(cac .s ze === 0)
 
-        (1 to maxSize + 1).foreach { id =>
-          cache.getOrElseUpdate(id)(Future.value(id))
+        (1 to maxS ze + 1).foreach {  d =>
+          cac .getOrElseUpdate( d)(Future.value( d))
 
-          val actual = Await.result(cache.get(id).get)
-          assert(actual === id)
+          val actual = Awa .result(cac .get( d).get)
+          assert(actual ===  d)
         }
-        assert(cache.size === maxSize)
+        assert(cac .s ze === maxS ze)
 
-        assert(getCounts("gets") === 2 * (maxSize + 1))
-        assert(getCounts("hits") === maxSize + 1)
-        assert(getCounts("misses") === maxSize + 1)
-        assert(getCounts("sets", "evictions", "failed_futures") === 0)
+        assert(getCounts("gets") === 2 * (maxS ze + 1))
+        assert(getCounts("h s") === maxS ze + 1)
+        assert(getCounts("m sses") === maxS ze + 1)
+        assert(getCounts("sets", "ev ct ons", "fa led_futures") === 0)
 
-        cache.reset()
-        assert(cache.size === 0)
+        cac .reset()
+        assert(cac .s ze === 0)
       }
     }
   }
 
   test("getOrElseUpdate successful futures") {
-    new Fixture {
-      Time.withTimeAt(time) { _ =>
-        assert(cache.size === 0)
+    new F xture {
+      T  .w hT  At(t  ) { _ =>
+        assert(cac .s ze === 0)
 
-        (1 to maxSize + 1).foreach { _ =>
-          cache.getOrElseUpdate(1) {
+        (1 to maxS ze + 1).foreach { _ =>
+          cac .getOrElseUpdate(1) {
             Future.value(1)
           }
         }
-        assert(cache.size === 1)
+        assert(cac .s ze === 1)
 
-        assert(getCounts("gets") === maxSize + 1)
-        assert(getCounts("hits") === maxSize)
-        assert(getCounts("misses") === 1)
-        assert(getCounts("sets", "evictions", "failed_futures") === 0)
+        assert(getCounts("gets") === maxS ze + 1)
+        assert(getCounts("h s") === maxS ze)
+        assert(getCounts("m sses") === 1)
+        assert(getCounts("sets", "ev ct ons", "fa led_futures") === 0)
 
-        cache.reset()
-        assert(cache.size === 0)
+        cac .reset()
+        assert(cac .s ze === 0)
       }
     }
   }
 
-  test("getOrElseUpdate Failed Futures") {
-    new Fixture {
-      Time.withTimeAt(time) { _ =>
-        assert(cache.size === 0)
+  test("getOrElseUpdate Fa led Futures") {
+    new F xture {
+      T  .w hT  At(t  ) { _ =>
+        assert(cac .s ze === 0)
 
-        (1 to maxSize + 1).foreach { id =>
-          cache.getOrElseUpdate(id)(Future.exception(new IllegalArgumentException("")))
-          assert(cache.get(id).map {
-            Await.result(_)
+        (1 to maxS ze + 1).foreach {  d =>
+          cac .getOrElseUpdate( d)(Future.except on(new  llegalArgu ntExcept on("")))
+          assert(cac .get( d).map {
+            Awa .result(_)
           } === None)
         }
-        assert(cache.size === 0)
+        assert(cac .s ze === 0)
 
-        assert(getCounts("gets") === 2 * (maxSize + 1))
-        assert(getCounts("hits", "misses", "sets") === 0)
-        assert(getCounts("evictions") === maxSize + 1)
-        assert(getCounts("failed_futures") === maxSize + 1)
+        assert(getCounts("gets") === 2 * (maxS ze + 1))
+        assert(getCounts("h s", "m sses", "sets") === 0)
+        assert(getCounts("ev ct ons") === maxS ze + 1)
+        assert(getCounts("fa led_futures") === maxS ze + 1)
       }
     }
   }
 
   test("Set successful Future") {
-    new Fixture {
-      Time.withTimeAt(time) { _ =>
-        assert(cache.size === 0)
+    new F xture {
+      T  .w hT  At(t  ) { _ =>
+        assert(cac .s ze === 0)
 
-        cache.set(1, Future.value(2))
-        assert(Await.result(cache.get(1).get) === 2)
+        cac .set(1, Future.value(2))
+        assert(Awa .result(cac .get(1).get) === 2)
         assert(getCounts("gets") === 1)
-        assert(getCounts("hits") === 1)
-        assert(getCounts("misses") === 0)
+        assert(getCounts("h s") === 1)
+        assert(getCounts("m sses") === 0)
         assert(getCounts("sets") === 1)
-        assert(getCounts("evictions", "failed_futures") === 0)
+        assert(getCounts("ev ct ons", "fa led_futures") === 0)
       }
     }
   }
 
-  test("Evict") {
-    new Fixture {
-      Time.withTimeAt(time) { _ =>
-        assert(cache.size === 0)
+  test("Ev ct") {
+    new F xture {
+      T  .w hT  At(t  ) { _ =>
+        assert(cac .s ze === 0)
 
-        // need to use reference here!!!
-        val f1 = Future.value(int2Integer(1))
-        val f2 = Future.value(int2Integer(2))
-        cache.set(1, f2)
-        cache.evict(1, f1)
-        cache.evict(1, f2)
-        assert(getCounts("gets", "hits", "misses") === 0)
+        // need to use reference  re!!!
+        val f1 = Future.value( nt2 nteger(1))
+        val f2 = Future.value( nt2 nteger(2))
+        cac .set(1, f2)
+        cac .ev ct(1, f1)
+        cac .ev ct(1, f2)
+        assert(getCounts("gets", "h s", "m sses") === 0)
         assert(getCounts("sets") === 1)
-        assert(getCounts("evictions") === 1) // not 2
-        assert(getCounts("failed_futures") === 0)
+        assert(getCounts("ev ct ons") === 1) // not 2
+        assert(getCounts("fa led_futures") === 0)
       }
     }
   }
 
-  test("Set Failed Futures") {
-    new Fixture {
-      Time.withTimeAt(time) { _ =>
-        assert(cache.size === 0)
+  test("Set Fa led Futures") {
+    new F xture {
+      T  .w hT  At(t  ) { _ =>
+        assert(cac .s ze === 0)
 
-        cache.set(1, Future.exception(new IllegalArgumentException("")))
-        assert(cache.size === 0)
+        cac .set(1, Future.except on(new  llegalArgu ntExcept on("")))
+        assert(cac .s ze === 0)
 
-        assert(getCounts("gets", "hits", "misses", "sets") === 0)
-        assert(getCounts("evictions") === 1)
-        assert(getCounts("failed_futures") === 1)
+        assert(getCounts("gets", "h s", "m sses", "sets") === 0)
+        assert(getCounts("ev ct ons") === 1)
+        assert(getCounts("fa led_futures") === 1)
       }
     }
   }

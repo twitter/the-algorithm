@@ -1,45 +1,45 @@
-package com.twitter.search.core.earlybird.facets;
+package com.tw ter.search.core.earlyb rd.facets;
 
-import java.io.IOException;
-import java.util.List;
+ mport java. o. OExcept on;
+ mport java.ut l.L st;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.facet.Facets;
-import org.apache.lucene.facet.FacetsCollector;
-import org.apache.lucene.facet.sortedset.SortedSetDocValuesFacetCounts;
-import org.apache.lucene.facet.sortedset.SortedSetDocValuesReaderState;
+ mport org.apac .lucene.facet.Facets;
+ mport org.apac .lucene.facet.FacetsCollector;
+ mport org.apac .lucene.facet.sortedset.SortedSetDocValuesFacetCounts;
+ mport org.apac .lucene.facet.sortedset.SortedSetDocValuesReaderState;
 
-import com.twitter.search.common.facets.CountFacetSearchParam;
-import com.twitter.search.common.facets.FacetSearchParam;
-import com.twitter.search.common.facets.FacetsFactory;
+ mport com.tw ter.search.common.facets.CountFacetSearchParam;
+ mport com.tw ter.search.common.facets.FacetSearchParam;
+ mport com.tw ter.search.common.facets.FacetsFactory;
 
 /**
  * Factory for SortedSetDocValuesFacetCounts
  */
-public class SortedSetDocValuesFacetsFactory implements FacetsFactory {
-  private final SortedSetDocValuesReaderState state;
+publ c class SortedSetDocValuesFacetsFactory  mple nts FacetsFactory {
+  pr vate f nal SortedSetDocValuesReaderState state;
 
-  public SortedSetDocValuesFacetsFactory(SortedSetDocValuesReaderState state) {
-    this.state = state;
+  publ c SortedSetDocValuesFacetsFactory(SortedSetDocValuesReaderState state) {
+    t .state = state;
   }
 
-  @Override
-  public Facets create(
-      List<FacetSearchParam> facetSearchParams,
-      FacetsCollector facetsCollector) throws IOException {
+  @Overr de
+  publ c Facets create(
+      L st<FacetSearchParam> facetSearchParams,
+      FacetsCollector facetsCollector) throws  OExcept on {
 
-    Preconditions.checkNotNull(facetsCollector);
+    Precond  ons.c ckNotNull(facetsCollector);
 
     return new SortedSetDocValuesFacetCounts(state, facetsCollector);
   }
 
-  @Override
-  public boolean accept(FacetSearchParam facetSearchParam) {
-    return facetSearchParam instanceof CountFacetSearchParam
-        && (facetSearchParam.getFacetFieldRequest().getPath() == null
-            || facetSearchParam.getFacetFieldRequest().getPath().isEmpty())
-        && SortedSetDocValuesReaderStateHelper.isDimSupported(
-            state, facetSearchParam.getFacetFieldRequest().getField());
+  @Overr de
+  publ c boolean accept(FacetSearchParam facetSearchParam) {
+    return facetSearchParam  nstanceof CountFacetSearchParam
+        && (facetSearchParam.getFacetF eldRequest().getPath() == null
+            || facetSearchParam.getFacetF eldRequest().getPath(). sEmpty())
+        && SortedSetDocValuesReaderState lper. sD mSupported(
+            state, facetSearchParam.getFacetF eldRequest().getF eld());
   }
 }

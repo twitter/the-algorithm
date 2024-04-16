@@ -1,77 +1,77 @@
-package com.twitter.follow_recommendations.common.candidate_sources.addressbook
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.addressbook
 
-import com.twitter.cds.contact_consent_state.thriftscala.PurposeOfProcessing
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.clients.addressbook.AddressbookClient
-import com.twitter.follow_recommendations.common.clients.addressbook.models.EdgeType
-import com.twitter.follow_recommendations.common.clients.addressbook.models.RecordIdentifier
-import com.twitter.follow_recommendations.common.clients.phone_storage_service.PhoneStorageServiceClient
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.utils.RescueWithStatsUtils.rescueWithStats
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.ReversePhoneContactsClientColumn
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.cds.contact_consent_state.thr ftscala.PurposeOfProcess ng
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.addressbook.AddressbookCl ent
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.addressbook.models.EdgeType
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.addressbook.models.Record dent f er
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.phone_storage_serv ce.PhoneStorageServ ceCl ent
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.ut ls.RescueW hStatsUt ls.rescueW hStats
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.generated.cl ent.onboard ng.userrecs.ReversePhoneContactsCl entColumn
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ReversePhoneBookSource @Inject() (
-  reversePhoneContactsClientColumn: ReversePhoneContactsClientColumn,
-  pssClient: PhoneStorageServiceClient,
-  addressBookClient: AddressbookClient,
-  statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends CandidateSource[HasParams with HasClientContext, CandidateUser] {
+@S ngleton
+class ReversePhoneBookS ce @ nject() (
+  reversePhoneContactsCl entColumn: ReversePhoneContactsCl entColumn,
+  pssCl ent: PhoneStorageServ ceCl ent,
+  addressBookCl ent: AddressbookCl ent,
+  statsRece ver: StatsRece ver = NullStatsRece ver)
+    extends Cand dateS ce[HasParams w h HasCl entContext, Cand dateUser] {
 
-  override val identifier: CandidateSourceIdentifier = ReversePhoneBookSource.Identifier
-  private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getSimpleName)
+  overr de val  dent f er: Cand dateS ce dent f er = ReversePhoneBookS ce. dent f er
+  pr vate val stats: StatsRece ver = statsRece ver.scope(t .getClass.getS mpleNa )
 
   /**
-   * Generate a list of candidates for the target
+   * Generate a l st of cand dates for t  target
    */
-  override def apply(target: HasParams with HasClientContext): Stitch[Seq[CandidateUser]] = {
-    val reverseCandidatesFromPhones: Stitch[Seq[Long]] = target.getOptionalUserId
-      .map { userId =>
-        pssClient
-          .getPhoneNumbers(userId, PurposeOfProcessing.ContentRecommendations)
+  overr de def apply(target: HasParams w h HasCl entContext): St ch[Seq[Cand dateUser]] = {
+    val reverseCand datesFromPhones: St ch[Seq[Long]] = target.getOpt onalUser d
+      .map { user d =>
+        pssCl ent
+          .getPhoneNumbers(user d, PurposeOfProcess ng.ContentRecom ndat ons)
           .flatMap { phoneNumbers =>
-            rescueWithStats(
-              addressBookClient.getUsers(
-                userId = userId,
-                identifiers = phoneNumbers.map(phoneNumber =>
-                  RecordIdentifier(userId = None, email = None, phoneNumber = Some(phoneNumber))),
-                batchSize = ReversePhoneBookSource.NumPhoneBookEntries,
-                edgeType = ReversePhoneBookSource.DefaultEdgeType,
-                fetcherOption =
-                  if (target.params(AddressBookParams.ReadFromABV2Only)) None
-                  else Some(reversePhoneContactsClientColumn.fetcher),
-                queryOption = AddressbookClient.createQueryOption(
-                  edgeType = ReversePhoneBookSource.DefaultEdgeType,
-                  isPhone = ReversePhoneBookSource.IsPhone)
+            rescueW hStats(
+              addressBookCl ent.getUsers(
+                user d = user d,
+                 dent f ers = phoneNumbers.map(phoneNumber =>
+                  Record dent f er(user d = None, ema l = None, phoneNumber = So (phoneNumber))),
+                batchS ze = ReversePhoneBookS ce.NumPhoneBookEntr es,
+                edgeType = ReversePhoneBookS ce.DefaultEdgeType,
+                fetc rOpt on =
+                   f (target.params(AddressBookParams.ReadFromABV2Only)) None
+                  else So (reversePhoneContactsCl entColumn.fetc r),
+                queryOpt on = AddressbookCl ent.createQueryOpt on(
+                  edgeType = ReversePhoneBookS ce.DefaultEdgeType,
+                   sPhone = ReversePhoneBookS ce. sPhone)
               ),
               stats,
-              "AddressBookClient"
+              "AddressBookCl ent"
             )
           }
-      }.getOrElse(Stitch.Nil)
+      }.getOrElse(St ch.N l)
 
-    reverseCandidatesFromPhones.map(
-      _.take(ReversePhoneBookSource.NumPhoneBookEntries)
+    reverseCand datesFromPhones.map(
+      _.take(ReversePhoneBookS ce.NumPhoneBookEntr es)
         .map(
-          CandidateUser(_, score = Some(CandidateUser.DefaultCandidateScore))
-            .withCandidateSource(identifier))
+          Cand dateUser(_, score = So (Cand dateUser.DefaultCand dateScore))
+            .w hCand dateS ce( dent f er))
     )
   }
 }
 
-object ReversePhoneBookSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.ReversePhoneBook.toString)
-  val NumPhoneBookEntries: Int = 500
-  val IsPhone = true
+object ReversePhoneBookS ce {
+  val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er(
+    Algor hm.ReversePhoneBook.toStr ng)
+  val NumPhoneBookEntr es:  nt = 500
+  val  sPhone = true
   val DefaultEdgeType: EdgeType = EdgeType.Reverse
 }

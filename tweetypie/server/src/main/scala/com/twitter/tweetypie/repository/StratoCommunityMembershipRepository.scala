@@ -1,19 +1,19 @@
-package com.twitter.tweetypie.repository
+package com.tw ter.t etyp e.repos ory
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.CommunityId
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.client.{Client => StratoClient}
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.Commun y d
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
 
-object StratoCommunityMembershipRepository {
-  type Type = CommunityId => Stitch[Boolean]
+object StratoCommun y mbersh pRepos ory {
+  type Type = Commun y d => St ch[Boolean]
 
-  val column = "communities/isMember.Community"
+  val column = "commun  es/ s mber.Commun y"
 
-  def apply(client: StratoClient): Type = {
-    val fetcher: Fetcher[CommunityId, Unit, Boolean] =
-      client.fetcher[CommunityId, Boolean](column)
+  def apply(cl ent: StratoCl ent): Type = {
+    val fetc r: Fetc r[Commun y d, Un , Boolean] =
+      cl ent.fetc r[Commun y d, Boolean](column)
 
-    communityId => fetcher.fetch(communityId).map(_.v.getOrElse(false))
+    commun y d => fetc r.fetch(commun y d).map(_.v.getOrElse(false))
   }
 }

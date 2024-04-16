@@ -1,62 +1,62 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-import com.twitter.follow_recommendations.thriftscala.{EngagementType => TEngagementType}
-import com.twitter.follow_recommendations.logging.thriftscala.{
-  EngagementType => OfflineEngagementType
+ mport com.tw ter.follow_recom ndat ons.thr ftscala.{Engage ntType => TEngage ntType}
+ mport com.tw ter.follow_recom ndat ons.logg ng.thr ftscala.{
+  Engage ntType => Offl neEngage ntType
 }
-sealed trait EngagementType {
-  def toThrift: TEngagementType
-  def toOfflineThrift: OfflineEngagementType
+sealed tra  Engage ntType {
+  def toThr ft: TEngage ntType
+  def toOffl neThr ft: Offl neEngage ntType
 }
 
-object EngagementType {
-  object Click extends EngagementType {
-    override val toThrift: TEngagementType = TEngagementType.Click
+object Engage ntType {
+  object Cl ck extends Engage ntType {
+    overr de val toThr ft: TEngage ntType = TEngage ntType.Cl ck
 
-    override val toOfflineThrift: OfflineEngagementType = OfflineEngagementType.Click
+    overr de val toOffl neThr ft: Offl neEngage ntType = Offl neEngage ntType.Cl ck
   }
-  object Like extends EngagementType {
-    override val toThrift: TEngagementType = TEngagementType.Like
+  object L ke extends Engage ntType {
+    overr de val toThr ft: TEngage ntType = TEngage ntType.L ke
 
-    override val toOfflineThrift: OfflineEngagementType = OfflineEngagementType.Like
+    overr de val toOffl neThr ft: Offl neEngage ntType = Offl neEngage ntType.L ke
   }
-  object Mention extends EngagementType {
-    override val toThrift: TEngagementType = TEngagementType.Mention
+  object  nt on extends Engage ntType {
+    overr de val toThr ft: TEngage ntType = TEngage ntType. nt on
 
-    override val toOfflineThrift: OfflineEngagementType = OfflineEngagementType.Mention
+    overr de val toOffl neThr ft: Offl neEngage ntType = Offl neEngage ntType. nt on
   }
-  object Retweet extends EngagementType {
-    override val toThrift: TEngagementType = TEngagementType.Retweet
+  object Ret et extends Engage ntType {
+    overr de val toThr ft: TEngage ntType = TEngage ntType.Ret et
 
-    override val toOfflineThrift: OfflineEngagementType = OfflineEngagementType.Retweet
+    overr de val toOffl neThr ft: Offl neEngage ntType = Offl neEngage ntType.Ret et
   }
-  object ProfileView extends EngagementType {
-    override val toThrift: TEngagementType = TEngagementType.ProfileView
+  object Prof leV ew extends Engage ntType {
+    overr de val toThr ft: TEngage ntType = TEngage ntType.Prof leV ew
 
-    override val toOfflineThrift: OfflineEngagementType = OfflineEngagementType.ProfileView
-  }
-
-  def fromThrift(engagementType: TEngagementType): EngagementType = engagementType match {
-    case TEngagementType.Click => Click
-    case TEngagementType.Like => Like
-    case TEngagementType.Mention => Mention
-    case TEngagementType.Retweet => Retweet
-    case TEngagementType.ProfileView => ProfileView
-    case TEngagementType.EnumUnknownEngagementType(i) =>
-      throw new UnknownEngagementTypeException(
-        s"Unknown engagement type thrift enum with value: ${i}")
+    overr de val toOffl neThr ft: Offl neEngage ntType = Offl neEngage ntType.Prof leV ew
   }
 
-  def fromOfflineThrift(engagementType: OfflineEngagementType): EngagementType =
-    engagementType match {
-      case OfflineEngagementType.Click => Click
-      case OfflineEngagementType.Like => Like
-      case OfflineEngagementType.Mention => Mention
-      case OfflineEngagementType.Retweet => Retweet
-      case OfflineEngagementType.ProfileView => ProfileView
-      case OfflineEngagementType.EnumUnknownEngagementType(i) =>
-        throw new UnknownEngagementTypeException(
-          s"Unknown engagement type offline thrift enum with value: ${i}")
+  def fromThr ft(engage ntType: TEngage ntType): Engage ntType = engage ntType match {
+    case TEngage ntType.Cl ck => Cl ck
+    case TEngage ntType.L ke => L ke
+    case TEngage ntType. nt on =>  nt on
+    case TEngage ntType.Ret et => Ret et
+    case TEngage ntType.Prof leV ew => Prof leV ew
+    case TEngage ntType.EnumUnknownEngage ntType( ) =>
+      throw new UnknownEngage ntTypeExcept on(
+        s"Unknown engage nt type thr ft enum w h value: ${ }")
+  }
+
+  def fromOffl neThr ft(engage ntType: Offl neEngage ntType): Engage ntType =
+    engage ntType match {
+      case Offl neEngage ntType.Cl ck => Cl ck
+      case Offl neEngage ntType.L ke => L ke
+      case Offl neEngage ntType. nt on =>  nt on
+      case Offl neEngage ntType.Ret et => Ret et
+      case Offl neEngage ntType.Prof leV ew => Prof leV ew
+      case Offl neEngage ntType.EnumUnknownEngage ntType( ) =>
+        throw new UnknownEngage ntTypeExcept on(
+          s"Unknown engage nt type offl ne thr ft enum w h value: ${ }")
     }
 }
-class UnknownEngagementTypeException(message: String) extends Exception(message)
+class UnknownEngage ntTypeExcept on( ssage: Str ng) extends Except on( ssage)

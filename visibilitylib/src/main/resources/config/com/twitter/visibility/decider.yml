@@ -1,909 +1,909 @@
 
-visibility_library_enable_all_subscribed_lists_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_all_subscr bed_l sts_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_ads_business_settings_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_ads_bus ness_sett ngs_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_ads_campaign_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_ads_campa gn_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_ads_manager_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_ads_manager_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_appeals_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_appeals_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_article_tweet_timeline_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_art cle_t et_t  l ne_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_birdwatch_note_author_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_b rdwatch_note_author_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_birdwatch_note_tweets_timeline_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_b rdwatch_note_t ets_t  l ne_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_birdwatch_needs_your_help_notifications_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_b rdwatch_needs_y _ lp_not f cat ons_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_block_mute_users_timeline_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_block_mute_users_t  l ne_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_brand_safety_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_brand_safety_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_card_poll_voting_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_card_poll_vot ng_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_cards_service_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_cards_serv ce_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_communities_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_commun  es_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_conversation_focal_prehydration_safety_level:
-    default_availability: 10000
+v s b l y_l brary_enable_conversat on_focal_prehydrat on_safety_level:
+    default_ava lab l y: 10000
 
-visibility_library_enable_conversation_focal_tweet_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_conversat on_focal_t et_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_conversation_injected_tweet_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_conversat on_ njected_t et_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_conversation_reply_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_conversat on_reply_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_curated_trends_representative_tweet:
-  default_availability: 10000
+v s b l y_l brary_curated_trends_representat ve_t et:
+  default_ava lab l y: 10000
 
-visibility_library_curation_policy_violations:
-  default_availability: 10000
+v s b l y_l brary_curat on_pol cy_v olat ons:
+  default_ava lab l y: 10000
 
-visibility_library_enable_deprecated_safety_level_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_deprecated_safety_level_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_dev_platform_get_list_tweets_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_dev_platform_get_l st_t ets_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_des_following_and_followers_user_list_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_des_follow ng_and_follo rs_user_l st_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_des_home_timeline_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_des_ho _t  l ne_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_des_quote_tweet_timeline_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_des_quote_t et_t  l ne_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_des_realtime_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_des_realt  _safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_des_realtime_spam_enrichment_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_des_realt  _spam_enr ch nt_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_des_realtime_tweet_filter_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_des_realt  _t et_f lter_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_des_retweeting_users_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_des_ret et ng_users_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_des_tweet_detail_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_des_t et_deta l_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_des_tweet_liking_users_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_des_t et_l k ng_users_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_des_user_bookmarks_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_des_user_bookmarks_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_des_user_liked_tweets_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_des_user_l ked_t ets_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_des_user_mentions_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_des_user_ nt ons_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_des_user_tweets_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_des_user_t ets_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_dev_platform_compliance_stream_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_dev_platform_compl ance_stream_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_direct_messages_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_d rect_ ssages_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_direct_messages_conversation_list_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_d rect_ ssages_conversat on_l st_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_direct_messages_conversation_timeline_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_d rect_ ssages_conversat on_t  l ne_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_direct_messages_inbox_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_d rect_ ssages_ nbox_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_direct_messages_muted_users_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_d rect_ ssages_muted_users_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_direct_messages_pinned_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_d rect_ ssages_p nned_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_elevated_quote_tweet_timeline_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_elevated_quote_t et_t  l ne_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_direct_messages_search_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_d rect_ ssages_search_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_embedded_tweet_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_embedded_t et_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_embeds_public_interest_notice_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_embeds_publ c_ nterest_not ce_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_embed_tweet_markup_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_embed_t et_markup_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_write_path_limited_actions_enforcement_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_wr e_path_l m ed_act ons_enforce nt_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_filter_all_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_f lter_all_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_filter_all_placeholder_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_f lter_all_placeholder_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_filter_default_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_f lter_default_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_filter_none_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_f lter_none_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_followed_topics_timeline_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_follo d_top cs_t  l ne_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_follower_connections_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_follo r_connect ons_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_following_and_followers_user_list_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_follow ng_and_follo rs_user_l st_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_for_development_only_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_for_develop nt_only_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_friends_following_list_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_fr ends_follow ng_l st_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_graphql_default_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_graphql_default_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_gryphon_decks_and_columns_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_gryphon_decks_and_columns_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_humanization_nudge_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_human zat on_nudge_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_kitchen_sink_development_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_k c n_s nk_develop nt_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_list_header_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_l st_ ader_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_list_memberships_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_l st_ mbersh ps_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_list_ownerships_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_l st_ownersh ps_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_list_recommendations_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_l st_recom ndat ons_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_list_search_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_l st_search_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_list_subscriptions_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_l st_subscr pt ons_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_live_pipeline_engagement_counts_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_l ve_p pel ne_engage nt_counts_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_live_video_timeline_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_l ve_v deo_t  l ne_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_magic_recs_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_mag c_recs_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_magic_recs_aggressive_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_mag c_recs_aggress ve_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_magic_recs_aggressive_v2_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_mag c_recs_aggress ve_v2_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_magic_recs_v2_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_mag c_recs_v2_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_minimal_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_m n mal_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_moderated_tweets_timeline_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_moderated_t ets_t  l ne_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_moments_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_mo nts_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_nearby_timeline_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_nearby_t  l ne_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_new_user_experience_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_new_user_exper ence_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_notifications_ibis_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_not f cat ons_ b s_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_notifications_platform_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_not f cat ons_platform_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_notifications_platform_push_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_not f cat ons_platform_push_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_notifications_read_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_not f cat ons_read_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_notifications_timeline_device_follow_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_not f cat ons_t  l ne_dev ce_follow_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_notifications_write_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_not f cat ons_wr e_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_notification_writer_v2_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_not f cat on_wr er_v2_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_notifications_writer_tweet_hydrator_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_not f cat ons_wr er_t et_hydrator_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_quick_promote_tweet_eligibility_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_qu ck_promote_t et_el g b l y_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_quote_tweet_timeline_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_quote_t et_t  l ne_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_quoted_tweet_rules_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_quoted_t et_rules_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_recommendations_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_recom ndat ons_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_recos_video_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_recos_v deo_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_recos_write_path_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_recos_wr e_path_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_replies_grouping_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_repl es_group ng_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_report_center_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_report_center_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_returning_user_experience_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_return ng_user_exper ence_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_returning_user_experience_focal_tweet_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_return ng_user_exper ence_focal_t et_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_revenue_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_revenue_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_rito_actioned_tweet_timeline_safety_level:
-    default_availability: 10000
+v s b l y_l brary_enable_r o_act oned_t et_t  l ne_safety_level:
+    default_ava lab l y: 10000
 
-visibility_library_enable_safe_search_minimal_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_safe_search_m n mal_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_safe_search_strict_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_safe_search_str ct_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_search_hydration_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_search_hydrat on_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_search_latest_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_search_latest_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_search_mixer_srp_minimal_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_search_m xer_srp_m n mal_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_search_mixer_srp_strict_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_search_m xer_srp_str ct_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_user_search_srp_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_user_search_srp_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_user_search_typeahead_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_user_search_typea ad_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_search_people_srp_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_search_people_srp_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_search_people_typeahead_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_search_people_typea ad_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_search_photo_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_search_photo_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_search_top_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_search_top_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_search_trend_takeover_promoted_tweet_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_search_trend_takeover_promoted_t et_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_search_video_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_search_v deo_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_search_latest_user_rules_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_search_latest_user_rules_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_shopping_manager_spy_mode_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_shopp ng_manager_spy_mode_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_signals_reactions_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_s gnals_react ons_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_signals_tweet_reacting_users_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_s gnals_t et_react ng_users_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_social_proof_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_soc al_proof_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_soft_intervention_pivot_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_soft_ ntervent on_p vot_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_space_fleetline_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_space_fleetl ne_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_space_home_timeline_upranking_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_space_ho _t  l ne_uprank ng_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_space_join_screen_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_space_jo n_screen_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_space_notifications_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_space_not f cat ons_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_spaces_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_spaces_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_spaces_participants_safety_level:
-  default_availability: 0
+v s b l y_l brary_enable_spaces_part c pants_safety_level:
+  default_ava lab l y: 0
 
-visibility_library_enable_spaces_seller_application_status_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_spaces_seller_appl cat on_status_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_spaces_sharing_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_spaces_shar ng_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_space_tweet_avatar_home_timeline_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_space_t et_avatar_ho _t  l ne_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_stickers_timeline_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_st ckers_t  l ne_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_strato_ext_limited_engagements_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_strato_ext_l m ed_engage nts_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_stream_services_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_stream_serv ces_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_test_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_test_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_bookmark_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_bookmark_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_content_controls_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_content_controls_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_conversations_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_conversat ons_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_conversations_downranking_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_conversat ons_downrank ng_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_conversations_downranking_minimal_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_conversat ons_downrank ng_m n mal_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_favorites_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_favor es_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_self_view_timeline_favorites_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_self_v ew_t  l ne_favor es_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_focal_tweet_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_focal_t et_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_following_activity_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_follow ng_act v y_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_home_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_ho _safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_home_communities_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_ho _commun  es_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_home_hydration_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_ho _hydrat on_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_home_latest_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_ho _latest_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_home_recommendations_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_ho _recom ndat ons_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_home_topic_follow_recommendations_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_ho _top c_follow_recom ndat ons_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_scorer_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_scorer_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_topics_landing_page_topic_recommendations_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_top cs_land ng_page_top c_recom ndat ons_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_explore_recommendations_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_explore_recom ndat ons_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_moderated_tweets_hydration_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_moderated_t ets_hydrat on_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_injection_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_ nject on_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_liked_by_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_l ked_by_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_lists_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_l sts_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_media_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_ d a_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_mentions_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_ nt ons_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_profile_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_prof le_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_profile_all_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_prof le_all_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_profile_spaces_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_prof le_spaces_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_profile_super_follows_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_prof le_super_follows_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_reactive_blending_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_react ve_blend ng_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_retweeted_by_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_ret eted_by_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_super_liked_by_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_super_l ked_by_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_tombstoning_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_tombston ng_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_trends_representative_tweet_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_trends_representat ve_t et_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_trusted_friends_user_list_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_trusted_fr ends_user_l st_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_twitter_delegate_user_list_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_tw ter_delegate_user_l st_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_tweet_detail_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t et_deta l_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_tweet_detail_non_too_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t et_deta l_non_too_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_tweet_detail_with_injections_hydration_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t et_deta l_w h_ nject ons_hydrat on_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_tweet_engagers_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t et_engagers_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_tweet_reply_nudge_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t et_reply_nudge_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_tweet_scoped_timeline_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t et_scoped_t  l ne_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_tweet_writes_api_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t et_wr es_ap _safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_twitter_article_compose_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_tw ter_art cle_compose_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_twitter_article_profile_tab_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_tw ter_art cle_prof le_tab_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_twitter_article_read_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_tw ter_art cle_read_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_user_profile_header_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_user_prof le_ ader_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_user_milestone_recommendation_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_user_m lestone_recom ndat on_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_user_scoped_timeline_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_user_scoped_t  l ne_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_user_settings_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_user_sett ngs_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_video_ads_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_v deo_ads_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_home_promoted_hydration_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_ho _promoted_hydrat on_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_super_follower_connnections_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_super_follo r_connnect ons_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_super_like_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_super_l ke_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_topic_recommendations_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_top c_recom ndat ons_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_ads_reporting_dashboard_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_ads_report ng_dashboard_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_search_top_qig_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_search_top_q g_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_content_control_tool_install_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_content_control_tool_ nstall_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_conversation_control_rules:
-  default_availability: 10000
+v s b l y_l brary_enable_conversat on_control_rules:
+  default_ava lab l y: 10000
 
-visibility_library_enable_community_tweets_rules:
-  default_availability: 10000
+v s b l y_l brary_enable_commun y_t ets_rules:
+  default_ava lab l y: 10000
 
-visibility_library_enable_drop_community_tweet_with_undefined_community_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_drop_commun y_t et_w h_undef ned_commun y_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_p_spammy_tweet_downrank_convos_low_quality:
-  default_availability: 10000
+v s b l y_l brary_enable_p_spam _t et_downrank_convos_low_qual y:
+  default_ava lab l y: 10000
 
-visibility_library_enable_high_p_spammy_tweet_score_search_tweet_label_drop_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_h gh_p_spam _t et_score_search_t et_label_drop_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_rito_actioned_tweet_downrank_convos_low_quality:
-  default_availability: 10000
+v s b l y_l brary_enable_r o_act oned_t et_downrank_convos_low_qual y:
+  default_ava lab l y: 10000
 
-visibility_library_enable_toxic_reply_filter_conversation:
-  default_availability: 10000
+v s b l y_l brary_enable_tox c_reply_f lter_conversat on:
+  default_ava lab l y: 10000
 
-visibility_library_enable_toxic_reply_filter_notifications:
-  default_availability: 10000
+v s b l y_l brary_enable_tox c_reply_f lter_not f cat ons:
+  default_ava lab l y: 10000
 
-visibility_library_enable_new_sensitive_media_settings_interstitial_rules_home_timeline:
-  default_availability: 10000
+v s b l y_l brary_enable_new_sens  ve_ d a_sett ngs_ nterst  al_rules_ho _t  l ne:
+  default_ava lab l y: 10000
 
-visibility_library_enable_legacy_sensitive_media_rules_home_timeline:
-  default_availability: 10000
+v s b l y_l brary_enable_legacy_sens  ve_ d a_rules_ho _t  l ne:
+  default_ava lab l y: 10000
 
-visibility_library_enable_new_sensitive_media_settings_interstitial_rules_conversation:
-  default_availability: 10000
+v s b l y_l brary_enable_new_sens  ve_ d a_sett ngs_ nterst  al_rules_conversat on:
+  default_ava lab l y: 10000
 
-visibility_library_enable_legacy_sensitive_media_rules_conversation:
-  default_availability: 10000
+v s b l y_l brary_enable_legacy_sens  ve_ d a_rules_conversat on:
+  default_ava lab l y: 10000
 
-visibility_library_enable_new_sensitive_media_settings_interstitials_rules_profile_timeline:
-  default_availability: 10000
+v s b l y_l brary_enable_new_sens  ve_ d a_sett ngs_ nterst  als_rules_prof le_t  l ne:
+  default_ava lab l y: 10000
 
-visibility_library_enable_legacy_sensitive_media_rules_profile_timeline:
-  default_availability: 10000
+v s b l y_l brary_enable_legacy_sens  ve_ d a_rules_prof le_t  l ne:
+  default_ava lab l y: 10000
 
-visibility_library_enable_new_sensitive_media_settings_interstitials_rules_tweet_detail:
-  default_availability: 10000
+v s b l y_l brary_enable_new_sens  ve_ d a_sett ngs_ nterst  als_rules_t et_deta l:
+  default_ava lab l y: 10000
 
-visibility_library_enable_legacy_sensitive_media_rules_tweet_detail:
-  default_availability: 10000
+v s b l y_l brary_enable_legacy_sens  ve_ d a_rules_t et_deta l:
+  default_ava lab l y: 10000
 
-visibility_library_enable_legacy_sensitive_media_rules_direct_messages:
-  default_availability: 10000
+v s b l y_l brary_enable_legacy_sens  ve_ d a_rules_d rect_ ssages:
+  default_ava lab l y: 10000
 
-visibility_library_enable_smyte_spam_tweet_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_s te_spam_t et_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_high_spammy_tweet_content_score_search_latest_tweet_label_drop_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_h gh_spam _t et_content_score_search_latest_t et_label_drop_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_high_spammy_tweet_content_score_search_top_tweet_label_drop_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_h gh_spam _t et_content_score_search_top_t et_label_drop_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_high_spammy_tweet_content_score_convo_downrank_abusive_quality_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_h gh_spam _t et_content_score_convo_downrank_abus ve_qual y_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_high_cryptospam_score_convo_downrank_abusive_quality_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_h gh_cryptospam_score_convo_downrank_abus ve_qual y_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_high_spammy_tweet_content_score_trends_top_tweet_label_drop_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_h gh_spam _t et_content_score_trends_top_t et_label_drop_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_high_spammy_tweet_content_score_trends_latest_tweet_label_drop_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_h gh_spam _t et_content_score_trends_latest_t et_label_drop_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_gore_and_violence_topic_high_recall_tweet_label_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_gore_and_v olence_top c_h gh_recall_t et_label_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_limit_replies_followers_conversation_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_l m _repl es_follo rs_conversat on_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_blink_bad_downranking_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_bl nk_bad_downrank ng_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_blink_worst_downranking_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_bl nk_worst_downrank ng_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_copypasta_spam_downrank_convos_abusive_quality_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_copypasta_spam_downrank_convos_abus ve_qual y_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_copypasta_spam_search_drop_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_copypasta_spam_search_drop_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_spammy_user_model_high_precision_drop_tweet_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_spam _user_model_h gh_prec s on_drop_t et_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_avoid_nsfw_rules:
-  default_availability: 10000
+v s b l y_l brary_enable_avo d_nsfw_rules:
+  default_ava lab l y: 10000
 
-visibility_library_enable_reported_tweet_interstitial_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_reported_t et_ nterst  al_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_reported_tweet_interstitial_search_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_reported_t et_ nterst  al_search_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_drop_exclusive_tweet_content_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_drop_exclus ve_t et_content_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_drop_exclusive_tweet_content_rule_fail_closed:
-  default_availability: 10000
+v s b l y_l brary_enable_drop_exclus ve_t et_content_rule_fa l_closed:
+  default_ava lab l y: 10000
 
-visibility_library_enable_drop_all_exclusive_tweets_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_drop_all_exclus ve_t ets_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_drop_all_exclusive_tweets_rule_fail_closed:
-  default_availability: 10000
+v s b l y_l brary_enable_drop_all_exclus ve_t ets_rule_fa l_closed:
+  default_ava lab l y: 10000
 
-visibility_library_enable_tombstone_exclusive_quoted_tweet_content_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_tombstone_exclus ve_quoted_t et_content_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_downrank_spam_reply_sectioning_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_downrank_spam_reply_sect on ng_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_nsfw_text_sectioning_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_nsfw_text_sect on ng_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_search_ipi_safe_search_without_user_in_query_drop_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_search_ p _safe_search_w hout_user_ n_query_drop_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_timeline_home_promoted_tweet_health_enforcement_rules:
-  default_availability: 10000
+v s b l y_l brary_enable_t  l ne_ho _promoted_t et_ alth_enforce nt_rules:
+  default_ava lab l y: 10000
 
-visibility_library_enable_muted_keyword_filtering_space_title_notifications_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_muted_keyword_f lter ng_space_t le_not f cat ons_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_drop_tweets_with_georestricted_media_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_drop_t ets_w h_georestr cted_ d a_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_drop_all_trusted_friends_tweets_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_drop_all_trusted_fr ends_t ets_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_drop_all_trusted_friends_tweet_content_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_drop_all_trusted_fr ends_t et_content_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_drop_all_collab_invitation_tweets_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_drop_all_collab_ nv at on_t ets_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_fetch_tweet_reported_perspective:
-  default_availability: 10000
+v s b l y_l brary_enable_fetch_t et_reported_perspect ve:
+  default_ava lab l y: 10000
 
-visibility_library_enable_fetch_tweet_media_metadata:
-  default_availability: 10000
+v s b l y_l brary_enable_fetch_t et_ d a_ tadata:
+  default_ava lab l y: 10000
 
-visibility_library_enable_follow_check_in_mutedkeyword:
-  default_availability: 10000
+v s b l y_l brary_enable_follow_c ck_ n_mutedkeyword:
+  default_ava lab l y: 10000
 
-visibility_library_enable_media_interstitial_composition:
-  default_availability: 10000
+v s b l y_l brary_enable_ d a_ nterst  al_compos  on:
+  default_ava lab l y: 10000
 
-visibility_library_enable_verdict_scribing_from_tweet_visibility_library:
-  default_availability: 0
+v s b l y_l brary_enable_verd ct_scr b ng_from_t et_v s b l y_l brary:
+  default_ava lab l y: 0
 
-visibility_library_enable_verdict_logger_event_publisher_instantiation_from_tweet_visibility_library:
-  default_availability: 10000
+v s b l y_l brary_enable_verd ct_logger_event_publ s r_ nstant at on_from_t et_v s b l y_l brary:
+  default_ava lab l y: 10000
 
-visibility_library_enable_verdict_scribing_from_timeline_conversations_visibility_library:
-  default_availability: 0
+v s b l y_l brary_enable_verd ct_scr b ng_from_t  l ne_conversat ons_v s b l y_l brary:
+  default_ava lab l y: 0
 
-visibility_library_enable_verdict_logger_event_publisher_instantiation_from_timeline_conversations_visibility_library:
-  default_availability: 10000
+v s b l y_l brary_enable_verd ct_logger_event_publ s r_ nstant at on_from_t  l ne_conversat ons_v s b l y_l brary:
+  default_ava lab l y: 10000
 
-visibility_library_enable_verdict_scribing_from_blender_visibility_library:
-  default_availability: 0
+v s b l y_l brary_enable_verd ct_scr b ng_from_blender_v s b l y_l brary:
+  default_ava lab l y: 0
 
-visibility_library_enable_verdict_logger_event_publisher_instantiation_from_blender_visibility_library:
-  default_availability: 10000
+v s b l y_l brary_enable_verd ct_logger_event_publ s r_ nstant at on_from_blender_v s b l y_l brary:
+  default_ava lab l y: 10000
 
-visibility_library_enable_verdict_scribing_from_search_visibility_library:
-  default_availability: 0
+v s b l y_l brary_enable_verd ct_scr b ng_from_search_v s b l y_l brary:
+  default_ava lab l y: 0
 
-visibility_library_enable_verdict_logger_event_publisher_instantiation_from_search_visibility_library:
-  default_availability: 0
+v s b l y_l brary_enable_verd ct_logger_event_publ s r_ nstant at on_from_search_v s b l y_l brary:
+  default_ava lab l y: 0
 
-visibility_library_enable_localized_tombstones_on_visibility_results:
-  default_availability: 10000
+v s b l y_l brary_enable_local zed_tombstones_on_v s b l y_results:
+  default_ava lab l y: 10000
 
-visibility_library_enable_short_circuiting_from_tweet_visibility_library:
-  default_availability: 10000
+v s b l y_l brary_enable_short_c rcu  ng_from_t et_v s b l y_l brary:
+  default_ava lab l y: 10000
 
-visibility_library_enable_card_visibility_library_card_uri_parsing:
-  default_availability: 10000
+v s b l y_l brary_enable_card_v s b l y_l brary_card_ur _pars ng:
+  default_ava lab l y: 10000
 
-visibility_library_enable_short_circuiting_from_timeline_conversations_visibility_library:
-  default_availability: 10000
+v s b l y_l brary_enable_short_c rcu  ng_from_t  l ne_conversat ons_v s b l y_l brary:
+  default_ava lab l y: 10000
 
-visibility_library_enable_short_circuiting_from_blender_visibility_library:
-  default_availability: 10000
+v s b l y_l brary_enable_short_c rcu  ng_from_blender_v s b l y_l brary:
+  default_ava lab l y: 10000
 
-visibility_library_enable_short_circuiting_from_search_visibility_library:
-  default_availability: 0
+v s b l y_l brary_enable_short_c rcu  ng_from_search_v s b l y_l brary:
+  default_ava lab l y: 0
 
-visibility_library_enable_nsfw_text_high_precision_drop_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_nsfw_text_h gh_prec s on_drop_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_spammy_tweet_rule_verdict_logging:
-  default_availability: 0
+v s b l y_l brary_enable_spam _t et_rule_verd ct_logg ng:
+  default_ava lab l y: 0
 
-visibility_library_enable_downlevel_rule_verdict_logging:
-  default_availability: 0
+v s b l y_l brary_enable_downlevel_rule_verd ct_logg ng:
+  default_ava lab l y: 0
 
-visibility_library_enable_likely_likely_ivs_user_label_drop_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_l kely_l kely_ vs_user_label_drop_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_card_uri_root_domain_deny_list_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_card_ur _root_doma n_deny_l st_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_community_non_member_poll_card_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_commun y_non_ mber_poll_card_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_community_non_member_poll_card_rule_fail_closed:
-  default_availability: 10000
+v s b l y_l brary_enable_commun y_non_ mber_poll_card_rule_fa l_closed:
+  default_ava lab l y: 10000
 
-visibility_library_enable_experimental_nudge_label_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_exper  ntal_nudge_label_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_user_self_view_only_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_user_self_v ew_only_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_nsfw_high_precision_user_label_avoid_tweet_rule_enabled:
-  default_availability: 10000
+v s b l y_l brary_nsfw_h gh_prec s on_user_label_avo d_t et_rule_enabled:
+  default_ava lab l y: 10000
 
-visibility_library_enable_new_ad_avoidance_rules:
-  default_availability: 10000
+v s b l y_l brary_enable_new_ad_avo dance_rules:
+  default_ava lab l y: 10000
 
-visibility_library_enable_nsfa_high_recall_ad_avoidance_rules:
-  default_availability: 0
+v s b l y_l brary_enable_nsfa_h gh_recall_ad_avo dance_rules:
+  default_ava lab l y: 0
 
-visibility_library_enable_nsfa_keywords_high_precision_ad_avoidance_rules:
-  default_availability: 0
+v s b l y_l brary_enable_nsfa_keywords_h gh_prec s on_ad_avo dance_rules:
+  default_ava lab l y: 0
 
-visibility_library_enable_stale_tweet_drop_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_stale_t et_drop_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_stale_tweet_drop_rule_fail_closed:
-  default_availability: 10000
+v s b l y_l brary_enable_stale_t et_drop_rule_fa l_closed:
+  default_ava lab l y: 10000
 
-visibility_library_enable_edit_history_timeline_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_ed _ tory_t  l ne_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_delete_state_tweet_rules:
-  default_availability: 10000
+v s b l y_l brary_enable_delete_state_t et_rules:
+  default_ava lab l y: 10000
 
-visibility_library_enable_spaces_sharing_nsfw_drop_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_spaces_shar ng_nsfw_drop_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_viewer_is_soft_user_drop_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_v e r_ s_soft_user_drop_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_backend_limited_actions:
-  default_availability: 10000
+v s b l y_l brary_enable_backend_l m ed_act ons:
+  default_ava lab l y: 10000
 
-visibility_library_enable_base_qig_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_base_q g_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_notifications_qig_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_not f cat ons_q g_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_access_internal_promoted_content_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_access_ nternal_promoted_content_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_pdna_quoted_tweet_tombstone_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_pdna_quoted_t et_tombstone_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_spam_quoted_tweet_tombstone_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_spam_quoted_t et_tombstone_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_nsfw_hp_quoted_tweet_drop_experiment_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_nsfw_hp_quoted_t et_drop_exper  nt_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_nsfw_hp_quoted_tweet_tombstone_experiment_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_nsfw_hp_quoted_t et_tombstone_exper  nt_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_inner_quoted_tweet_viewer_blocks_author_interstitial_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_ nner_quoted_t et_v e r_blocks_author_ nterst  al_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_inner_quoted_tweet_viewer_mutes_author_interstitial_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_ nner_quoted_t et_v e r_mutes_author_ nterst  al_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_experimental_rule_engine:
-  default_availability: 10000
+v s b l y_l brary_enable_exper  ntal_rule_eng ne:
+  default_ava lab l y: 10000
 
-visibility_library_enable_fosnr_rules:
-  default_availability: 0
+v s b l y_l brary_enable_fosnr_rules:
+  default_ava lab l y: 0
 
-visibility_library_enable_localized_interstitial_generator:
-  default_availability: 10000
+v s b l y_l brary_enable_local zed_ nterst  al_generator:
+  default_ava lab l y: 10000
 
-visibility_library_convos_enable_legacy_interstitial:
-  default_availability: 10000
+v s b l y_l brary_convos_enable_legacy_ nterst  al:
+  default_ava lab l y: 10000
 
-visibility_library_convos_enable_localized_interstitial:
-  default_availability: 10000
+v s b l y_l brary_convos_enable_local zed_ nterst  al:
+  default_ava lab l y: 10000
 
-visibility_library_enable_profile_mixer_media_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_prof le_m xer_ d a_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_profile_mixer_favorites_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_prof le_m xer_favor es_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_zipbird_consumer_archives_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_z pb rd_consu r_arch ves_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_enable_tweet_award_safety_level:
-  default_availability: 10000
+v s b l y_l brary_enable_t et_award_safety_level:
+  default_ava lab l y: 10000
 
-visibility_library_disable_legacy_interstitial_filtered_reason:
-  default_availability: 10000
+v s b l y_l brary_d sable_legacy_ nterst  al_f ltered_reason:
+  default_ava lab l y: 10000
 
-visibility_library_enable_search_basic_block_mute_rules:
-  default_availability: 10000
+v s b l y_l brary_enable_search_bas c_block_mute_rules:
+  default_ava lab l y: 10000
 
-visibility_library_enable_localized_interstitial_user_state_lib:
-  default_availability: 10000
+v s b l y_l brary_enable_local zed_ nterst  al_user_state_l b:
+  default_ava lab l y: 10000
 
-visibility_library_enable_abusive_behavior_drop_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_abus ve_behav or_drop_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_abusive_behavior_interstitial_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_abus ve_behav or_ nterst  al_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_abusive_behavior_limited_engagements_rule:
-  default_availability: 10000
+v s b l y_l brary_enable_abus ve_behav or_l m ed_engage nts_rule:
+  default_ava lab l y: 10000
 
-visibility_library_enable_not_graduated_downrank_convos_abusive_quality_rule:
-  default_availability: 0
+v s b l y_l brary_enable_not_graduated_downrank_convos_abus ve_qual y_rule:
+  default_ava lab l y: 0
 
-visibility_library_enable_not_graduated_search_drop_rule:
-  default_availability: 0
+v s b l y_l brary_enable_not_graduated_search_drop_rule:
+  default_ava lab l y: 0
 
-visibility_library_enable_not_graduated_drop_rule:
-  default_availability: 0
+v s b l y_l brary_enable_not_graduated_drop_rule:
+  default_ava lab l y: 0
 
-visibility_library_enable_memoize_safety_level_params:
-  default_availability: 0
+v s b l y_l brary_enable_ mo ze_safety_level_params:
+  default_ava lab l y: 0
 
-visibility_library_enable_author_blocks_viewer_drop_rule:
-  default_availability: 0
+v s b l y_l brary_enable_author_blocks_v e r_drop_rule:
+  default_ava lab l y: 0

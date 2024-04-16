@@ -1,85 +1,85 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.base
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.transforms.modify_social_proof.ModifySocialProof
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Duration
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.transforms.mod fy_soc al_proof.Mod fySoc alProof
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport com.tw ter.ut l.Durat on
 
-abstract class SocialProofEnforcedCandidateSource(
-  candidateSource: CandidateSource[HasClientContext with HasParams, CandidateUser],
-  modifySocialProof: ModifySocialProof,
-  minNumSocialProofsRequired: Int,
-  override val identifier: CandidateSourceIdentifier,
-  baseStatsReceiver: StatsReceiver)
-    extends CandidateSource[HasClientContext with HasParams, CandidateUser] {
+abstract class Soc alProofEnforcedCand dateS ce(
+  cand dateS ce: Cand dateS ce[HasCl entContext w h HasParams, Cand dateUser],
+  mod fySoc alProof: Mod fySoc alProof,
+  m nNumSoc alProofsRequ red:  nt,
+  overr de val  dent f er: Cand dateS ce dent f er,
+  baseStatsRece ver: StatsRece ver)
+    extends Cand dateS ce[HasCl entContext w h HasParams, Cand dateUser] {
 
-  val statsReceiver = baseStatsReceiver.scope(identifier.name)
+  val statsRece ver = baseStatsRece ver.scope( dent f er.na )
 
-  override def apply(target: HasClientContext with HasParams): Stitch[Seq[CandidateUser]] = {
-    val mustCallSgs: Boolean = target.params(SocialProofEnforcedCandidateSourceParams.MustCallSgs)
-    val callSgsCachedColumn: Boolean =
-      target.params(SocialProofEnforcedCandidateSourceParams.CallSgsCachedColumn)
-    val QueryIntersectionIdsNum: Int =
-      target.params(SocialProofEnforcedCandidateSourceParams.QueryIntersectionIdsNum)
-    val MaxNumCandidatesToAnnotate: Int =
-      target.params(SocialProofEnforcedCandidateSourceParams.MaxNumCandidatesToAnnotate)
-    val gfsIntersectionIdsNum: Int =
-      target.params(SocialProofEnforcedCandidateSourceParams.GfsIntersectionIdsNum)
-    val sgsIntersectionIdsNum: Int =
-      target.params(SocialProofEnforcedCandidateSourceParams.SgsIntersectionIdsNum)
-    val gfsLagDuration: Duration =
-      target.params(SocialProofEnforcedCandidateSourceParams.GfsLagDurationInDays)
+  overr de def apply(target: HasCl entContext w h HasParams): St ch[Seq[Cand dateUser]] = {
+    val mustCallSgs: Boolean = target.params(Soc alProofEnforcedCand dateS ceParams.MustCallSgs)
+    val callSgsCac dColumn: Boolean =
+      target.params(Soc alProofEnforcedCand dateS ceParams.CallSgsCac dColumn)
+    val Query ntersect on dsNum:  nt =
+      target.params(Soc alProofEnforcedCand dateS ceParams.Query ntersect on dsNum)
+    val MaxNumCand datesToAnnotate:  nt =
+      target.params(Soc alProofEnforcedCand dateS ceParams.MaxNumCand datesToAnnotate)
+    val gfs ntersect on dsNum:  nt =
+      target.params(Soc alProofEnforcedCand dateS ceParams.Gfs ntersect on dsNum)
+    val sgs ntersect on dsNum:  nt =
+      target.params(Soc alProofEnforcedCand dateS ceParams.Sgs ntersect on dsNum)
+    val gfsLagDurat on: Durat on =
+      target.params(Soc alProofEnforcedCand dateS ceParams.GfsLagDurat on nDays)
 
-    candidateSource(target)
-      .flatMap { candidates =>
-        val candidatesWithoutEnoughSocialProof = candidates
+    cand dateS ce(target)
+      .flatMap { cand dates =>
+        val cand datesW houtEnoughSoc alProof = cand dates
           .collect {
-            case candidate if !candidate.followedBy.exists(_.size >= minNumSocialProofsRequired) =>
-              candidate
+            case cand date  f !cand date.follo dBy.ex sts(_.s ze >= m nNumSoc alProofsRequ red) =>
+              cand date
           }
-        statsReceiver
-          .stat("candidates_with_no_social_proofs").add(candidatesWithoutEnoughSocialProof.size)
-        val candidatesToAnnotate =
-          candidatesWithoutEnoughSocialProof.take(MaxNumCandidatesToAnnotate)
-        statsReceiver.stat("candidates_to_annotate").add(candidatesToAnnotate.size)
+        statsRece ver
+          .stat("cand dates_w h_no_soc al_proofs").add(cand datesW houtEnoughSoc alProof.s ze)
+        val cand datesToAnnotate =
+          cand datesW houtEnoughSoc alProof.take(MaxNumCand datesToAnnotate)
+        statsRece ver.stat("cand dates_to_annotate").add(cand datesToAnnotate.s ze)
 
-        val annotatedCandidatesMapStitch = target.getOptionalUserId
-          .map { userId =>
-            modifySocialProof
-              .hydrateSocialProof(
-                userId,
-                candidatesToAnnotate,
-                Some(QueryIntersectionIdsNum),
+        val annotatedCand datesMapSt ch = target.getOpt onalUser d
+          .map { user d =>
+            mod fySoc alProof
+              .hydrateSoc alProof(
+                user d,
+                cand datesToAnnotate,
+                So (Query ntersect on dsNum),
                 mustCallSgs,
-                callSgsCachedColumn,
-                gfsLagDuration = gfsLagDuration,
-                gfsIntersectionIds = gfsIntersectionIdsNum,
-                sgsIntersectionIds = sgsIntersectionIdsNum
-              ).map { annotatedCandidates =>
-                annotatedCandidates
-                  .map(annotatedCandidate => (annotatedCandidate.id, annotatedCandidate)).toMap
+                callSgsCac dColumn,
+                gfsLagDurat on = gfsLagDurat on,
+                gfs ntersect on ds = gfs ntersect on dsNum,
+                sgs ntersect on ds = sgs ntersect on dsNum
+              ).map { annotatedCand dates =>
+                annotatedCand dates
+                  .map(annotatedCand date => (annotatedCand date. d, annotatedCand date)).toMap
               }
-          }.getOrElse(Stitch.value(Map.empty[Long, CandidateUser]))
+          }.getOrElse(St ch.value(Map.empty[Long, Cand dateUser]))
 
-        annotatedCandidatesMapStitch.map { annotatedCandidatesMap =>
-          candidates
-            .flatMap { candidate =>
-              if (candidate.followedBy.exists(_.size >= minNumSocialProofsRequired)) {
-                Some(candidate)
+        annotatedCand datesMapSt ch.map { annotatedCand datesMap =>
+          cand dates
+            .flatMap { cand date =>
+               f (cand date.follo dBy.ex sts(_.s ze >= m nNumSoc alProofsRequ red)) {
+                So (cand date)
               } else {
-                annotatedCandidatesMap.get(candidate.id).collect {
-                  case annotatedCandidate
-                      if annotatedCandidate.followedBy.exists(
-                        _.size >= minNumSocialProofsRequired) =>
-                    annotatedCandidate
+                annotatedCand datesMap.get(cand date. d).collect {
+                  case annotatedCand date
+                       f annotatedCand date.follo dBy.ex sts(
+                        _.s ze >= m nNumSoc alProofsRequ red) =>
+                    annotatedCand date
                 }
               }
-            }.map(_.withCandidateSource(identifier))
+            }.map(_.w hCand dateS ce( dent f er))
         }
       }
   }

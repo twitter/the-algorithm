@@ -1,125 +1,125 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+# nclude "tensorflow/core/fra work/op.h"
+# nclude "tensorflow/core/fra work/shape_ nference.h"
+# nclude "tensorflow/core/fra work/op_kernel.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
+# nclude <twml.h>
+# nclude "tensorflow_ut ls.h"
 
-using namespace tensorflow;
+us ng na space tensorflow;
 
-REGISTER_OP("PartitionSparseTensorMod")
+REG STER_OP("Part  onSparseTensorMod")
 .Attr("T: {float, double}")
-.Input("indices: int64")
-.Input("values: T")
+. nput(" nd ces:  nt64")
+. nput("values: T")
 .Output("result: output_types")
-.Attr("num_partitions: int")
-.Attr("output_types: list({int64, float, double})")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.Attr("num_part  ons:  nt")
+.Attr("output_types: l st({ nt64, float, double})")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
   return Status::OK();
 }).Doc(R"doc(
 
-A tensorflow OP that partitions an input batch represented as a sparse tensor
-(indices are [ids, keys]) into separate sparse tensors to more optimally place
-sparse computations in distributed training.
+A tensorflow OP that part  ons an  nput batch represented as a sparse tensor
+( nd ces are [ ds, keys])  nto separate sparse tensors to more opt mally place
+sparse computat ons  n d str buted tra n ng.
 
-Inputs
-  indices: Indices from sparse tensor ([ids, keys] from the batch).
-  values: Batch values from the original features dict.
+ nputs
+   nd ces:  nd ces from sparse tensor ([ ds, keys] from t  batch).
+  values: Batch values from t  or g nal features d ct.
 
 Attr
-  num_partitions: Number of partitions to generate.
-  output_types: A list of types for the output tensors like
-                [tf.int64, tf.float32, tf.int64, tf.float32, ...]
-                The length must be 2 * num_partitions (see Outputs below)
+  num_part  ons: Number of part  ons to generate.
+  output_types: A l st of types for t  output tensors l ke
+                [tf. nt64, tf.float32, tf. nt64, tf.float32, ...]
+                T  length must be 2 * num_part  ons (see Outputs below)
 
 Outputs
-  List of dense tensors containing for each partition:
-    - partitioned indices tensor ([ids, keys] from partitioned batch)
-    - partitioned values tensor
-  The list lenth is 2 * num_partitions. Example:
-  [ [ids_1, keys_1], values_1, [ids_2, keys_2], values_2, ... ]
+  L st of dense tensors conta n ng for each part  on:
+    - part  oned  nd ces tensor ([ ds, keys] from part  oned batch)
+    - part  oned values tensor
+  T  l st lenth  s 2 * num_part  ons. Example:
+  [ [ ds_1, keys_1], values_1, [ ds_2, keys_2], values_2, ... ]
 )doc");
 
-template<typename T>
-class PartitionSparseTensorMod : public OpKernel {
- private:
-  int64 num_partitions;
+template<typena  T>
+class Part  onSparseTensorMod : publ c OpKernel {
+ pr vate:
+   nt64 num_part  ons;
 
- public:
-  explicit PartitionSparseTensorMod(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("num_partitions", &num_partitions));
-    OP_REQUIRES(context, num_partitions > 0,
-                errors::InvalidArgument("Number of partitions must be positive"));
+ publ c:
+  expl c  Part  onSparseTensorMod(OpKernelConstruct on* context) : OpKernel(context) {
+    OP_REQU RES_OK(context, context->GetAttr("num_part  ons", &num_part  ons));
+    OP_REQU RES(context, num_part  ons > 0,
+                errors:: nval dArgu nt("Number of part  ons must be pos  ve"));
   }
 
-  void Compute(OpKernelContext* context) override {
-    // grab input tensors
-    const Tensor& indices_tensor = context->input(0);  // (ids, keys)
-    const Tensor& values_tensor = context->input(1);
+  vo d Compute(OpKernelContext* context) overr de {
+    // grab  nput tensors
+    const Tensor&  nd ces_tensor = context-> nput(0);  // ( ds, keys)
+    const Tensor& values_tensor = context-> nput(1);
 
-    // check sizes
-    int64 num_keys = indices_tensor.shape().dim_size(0);
-    OP_REQUIRES(context, indices_tensor.dims() == 2,
-                errors::InvalidArgument("Indices tensor must be 2D [ids, keys]"));
-    OP_REQUIRES(context, indices_tensor.shape().dim_size(1) == 2,
-                errors::InvalidArgument("Indices tensor must have 2 cols [ids, keys]"));
-    OP_REQUIRES(context, values_tensor.shape().dim_size(0) == num_keys,
-                errors::InvalidArgument("Number of values must match number of keys"));
+    // c ck s zes
+     nt64 num_keys =  nd ces_tensor.shape().d m_s ze(0);
+    OP_REQU RES(context,  nd ces_tensor.d ms() == 2,
+                errors:: nval dArgu nt(" nd ces tensor must be 2D [ ds, keys]"));
+    OP_REQU RES(context,  nd ces_tensor.shape().d m_s ze(1) == 2,
+                errors:: nval dArgu nt(" nd ces tensor must have 2 cols [ ds, keys]"));
+    OP_REQU RES(context, values_tensor.shape().d m_s ze(0) == num_keys,
+                errors:: nval dArgu nt("Number of values must match number of keys"));
 
-    // grab input vectors
-    auto indices = indices_tensor.flat<int64>();
+    // grab  nput vectors
+    auto  nd ces =  nd ces_tensor.flat< nt64>();
     auto values = values_tensor.flat<T>();
 
-    // count the number of features that fall in each partition
-    std::vector<int64> partition_counts(num_partitions);
+    // count t  number of features that fall  n each part  on
+    std::vector< nt64> part  on_counts(num_part  ons);
 
-    for (int i = 0; i < num_keys; i++) {
-      int64 key = indices(2 * i + 1);
-      int64 partition_id = key % num_partitions;
-      partition_counts[partition_id]++;
+    for ( nt   = 0;   < num_keys;  ++) {
+       nt64 key =  nd ces(2 *   + 1);
+       nt64 part  on_ d = key % num_part  ons;
+      part  on_counts[part  on_ d]++;
     }
 
-    // allocate outputs for each partition and keep references
-    std::vector<int64*> output_indices_partitions;
-    std::vector<T*> output_values_partitions;
-    output_indices_partitions.reserve(num_partitions);
-    output_values_partitions.reserve(num_partitions);
+    // allocate outputs for each part  on and keep references
+    std::vector< nt64*> output_ nd ces_part  ons;
+    std::vector<T*> output_values_part  ons;
+    output_ nd ces_part  ons.reserve(num_part  ons);
+    output_values_part  ons.reserve(num_part  ons);
 
-    for (int i = 0; i < num_partitions; i++) {
-      Tensor *output_indices = nullptr, *output_values = nullptr;
-      TensorShape shape_indices = TensorShape({partition_counts[i], 2});
-      TensorShape shape_values = TensorShape({partition_counts[i]});
+    for ( nt   = 0;   < num_part  ons;  ++) {
+      Tensor *output_ nd ces = nullptr, *output_values = nullptr;
+      TensorShape shape_ nd ces = TensorShape({part  on_counts[ ], 2});
+      TensorShape shape_values = TensorShape({part  on_counts[ ]});
 
-      OP_REQUIRES_OK(context, context->allocate_output(2 * i, shape_indices, &output_indices));
-      OP_REQUIRES_OK(context, context->allocate_output(2 * i + 1, shape_values, &output_values));
+      OP_REQU RES_OK(context, context->allocate_output(2 *  , shape_ nd ces, &output_ nd ces));
+      OP_REQU RES_OK(context, context->allocate_output(2 *   + 1, shape_values, &output_values));
 
-      output_indices_partitions.push_back(output_indices->flat<int64>().data());
-      output_values_partitions.push_back(output_values->flat<T>().data());
+      output_ nd ces_part  ons.push_back(output_ nd ces->flat< nt64>().data());
+      output_values_part  ons.push_back(output_values->flat<T>().data());
     }
 
-    // assign a partition id to each feature
-    // populate tensors for each partition
-    std::vector<int64> partition_indices(num_partitions);
+    // ass gn a part  on  d to each feature
+    // populate tensors for each part  on
+    std::vector< nt64> part  on_ nd ces(num_part  ons);
 
-    for (int i = 0; i < num_keys; i++) {
-      int64 key = indices(2 * i + 1);
-      int64 pid = key % num_partitions;  // partition id
-      int64 idx = partition_indices[pid]++;
+    for ( nt   = 0;   < num_keys;  ++) {
+       nt64 key =  nd ces(2 *   + 1);
+       nt64 p d = key % num_part  ons;  // part  on  d
+       nt64  dx = part  on_ nd ces[p d]++;
 
-      output_indices_partitions[pid][2 * idx] = indices(2 * i);
-      output_indices_partitions[pid][2 * idx + 1] = key / num_partitions;
-      output_values_partitions[pid][idx] = values(i);
+      output_ nd ces_part  ons[p d][2 *  dx] =  nd ces(2 *  );
+      output_ nd ces_part  ons[p d][2 *  dx + 1] = key / num_part  ons;
+      output_values_part  ons[p d][ dx] = values( );
     }
   }
 };
 
-#define REGISTER(Type)                \
+#def ne REG STER(Type)                \
                                       \
-  REGISTER_KERNEL_BUILDER(            \
-    Name("PartitionSparseTensorMod")  \
-    .Device(DEVICE_CPU)               \
-    .TypeConstraint<Type>("T"),       \
-    PartitionSparseTensorMod<Type>);  \
+  REG STER_KERNEL_BU LDER(            \
+    Na ("Part  onSparseTensorMod")  \
+    .Dev ce(DEV CE_CPU)               \
+    .TypeConstra nt<Type>("T"),       \
+    Part  onSparseTensorMod<Type>);  \
 
-REGISTER(float);
-REGISTER(double);
+REG STER(float);
+REG STER(double);

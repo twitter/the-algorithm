@@ -2,43 +2,43 @@ syntax = "proto3";
 
 package tensorflow;
 
-import "tensorflow/core/protobuf/master.proto";
+ mport "tensorflow/core/protobuf/master.proto";
 
-option cc_enable_arenas = true;
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on cc_enable_arenas = true;
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
-// Records the creation of a new replay session.  We record the device listing
-// here to capture the state of the cluster.
-message NewReplaySession {
-  ListDevicesResponse devices = 1;
-  string session_handle = 2;
+// Records t  creat on of a new replay sess on.    record t  dev ce l st ng
+//  re to capture t  state of t  cluster.
+ ssage NewReplaySess on {
+  L stDev cesResponse dev ces = 1;
+  str ng sess on_handle = 2;
 }
 
-message ReplayOp {
-  double start_time_us = 31;
-  double end_time_us = 32;
+ ssage ReplayOp {
+  double start_t  _us = 31;
+  double end_t  _us = 32;
 
   oneof op {
-    CreateSessionRequest create_session = 1;
-    ExtendSessionRequest extend_session = 2;
-    PartialRunSetupRequest partial_run_setup = 3;
+    CreateSess onRequest create_sess on = 1;
+    ExtendSess onRequest extend_sess on = 2;
+    Part alRunSetupRequest part al_run_setup = 3;
     RunStepRequest run_step = 4;
-    CloseSessionRequest close_session = 5;
-    ListDevicesRequest list_devices = 6;
+    CloseSess onRequest close_sess on = 5;
+    L stDev cesRequest l st_dev ces = 6;
     ResetRequest reset_request = 7;
     MakeCallableRequest make_callable = 8;
     RunCallableRequest run_callable = 9;
     ReleaseCallableRequest release_callable = 10;
-    NewReplaySession new_replay_session = 11;
+    NewReplaySess on new_replay_sess on = 11;
   }
 
   oneof response {
-    CreateSessionResponse create_session_response = 21;
-    ExtendSessionResponse extend_session_response = 22;
-    PartialRunSetupResponse partial_run_setup_response = 23;
+    CreateSess onResponse create_sess on_response = 21;
+    ExtendSess onResponse extend_sess on_response = 22;
+    Part alRunSetupResponse part al_run_setup_response = 23;
     RunStepResponse run_step_response = 24;
-    CloseSessionResponse close_session_response = 25;
-    ListDevicesResponse list_devices_response = 26;
+    CloseSess onResponse close_sess on_response = 25;
+    L stDev cesResponse l st_dev ces_response = 26;
     ResetResponse reset_request_response = 27;
     MakeCallableResponse make_callable_response = 28;
     RunCallableResponse run_callable_response = 29;

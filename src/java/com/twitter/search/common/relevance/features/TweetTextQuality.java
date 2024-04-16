@@ -1,69 +1,69 @@
-package com.twitter.search.common.relevance.features;
+package com.tw ter.search.common.relevance.features;
 
-import java.util.Set;
+ mport java.ut l.Set;
 
-import com.google.common.collect.Sets;
+ mport com.google.common.collect.Sets;
 
-public class TweetTextQuality {
+publ c class T etTextQual y {
 
-  public static enum BooleanQualityType {
-    OFFENSIVE,          // tweet text is offensive
-    OFFENSIVE_USER,     // user name is offensive
-    HASHTAG_NAME_MATCH,  // hashtag matches username
-    SENSITIVE,           // tweet is marked as sensitive when it comes in
+  publ c stat c enum BooleanQual yType {
+    OFFENS VE,          // t et text  s offens ve
+    OFFENS VE_USER,     // user na   s offens ve
+    HASHTAG_NAME_MATCH,  // hashtag matc s userna 
+    SENS T VE,           // t et  s marked as sens  ve w n   co s  n
   }
 
-  public static final double ENTROPY_NOT_SET = Double.MIN_VALUE;
+  publ c stat c f nal double ENTROPY_NOT_SET = Double.M N_VALUE;
 
-  public static final byte UNSET_TEXT_SCORE = -128;
+  publ c stat c f nal byte UNSET_TEXT_SCORE = -128;
 
-  private double readability;
-  private double shout;
-  private double entropy = ENTROPY_NOT_SET;
-  private final Set<BooleanQualityType> boolQualities = Sets.newHashSet();
-  private byte textScore = UNSET_TEXT_SCORE;
+  pr vate double readab l y;
+  pr vate double shout;
+  pr vate double entropy = ENTROPY_NOT_SET;
+  pr vate f nal Set<BooleanQual yType> boolQual  es = Sets.newHashSet();
+  pr vate byte textScore = UNSET_TEXT_SCORE;
 
-  public double getReadability() {
-    return readability;
+  publ c double getReadab l y() {
+    return readab l y;
   }
 
-  public void setReadability(double readability) {
-    this.readability = readability;
+  publ c vo d setReadab l y(double readab l y) {
+    t .readab l y = readab l y;
   }
 
-  public double getShout() {
+  publ c double getShout() {
     return shout;
   }
 
-  public void setShout(double shout) {
-    this.shout = shout;
+  publ c vo d setShout(double shout) {
+    t .shout = shout;
   }
 
-  public double getEntropy() {
+  publ c double getEntropy() {
     return entropy;
   }
 
-  public void setEntropy(double entropy) {
-    this.entropy = entropy;
+  publ c vo d setEntropy(double entropy) {
+    t .entropy = entropy;
   }
 
-  public void addBoolQuality(BooleanQualityType type) {
-    boolQualities.add(type);
+  publ c vo d addBoolQual y(BooleanQual yType type) {
+    boolQual  es.add(type);
   }
 
-  public boolean hasBoolQuality(BooleanQualityType type) {
-    return boolQualities.contains(type);
+  publ c boolean hasBoolQual y(BooleanQual yType type) {
+    return boolQual  es.conta ns(type);
   }
 
-  public Set<BooleanQualityType> getBoolQualities() {
-    return boolQualities;
+  publ c Set<BooleanQual yType> getBoolQual  es() {
+    return boolQual  es;
   }
 
-  public byte getTextScore() {
+  publ c byte getTextScore() {
     return textScore;
   }
 
-  public void setTextScore(byte textScore) {
-    this.textScore = textScore;
+  publ c vo d setTextScore(byte textScore) {
+    t .textScore = textScore;
   }
 }

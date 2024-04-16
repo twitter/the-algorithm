@@ -1,53 +1,53 @@
-package com.twitter.representation_manager.config
+package com.tw ter.representat on_manager.conf g
 
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.util.Duration
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.tw ter.ut l.Durat on
 
 /*
  * --------------------------------------------
  * PLEASE NOTE:
- * Having in-memory cache is not necessarily a free performance win, anyone considering it should
- * investigate rather than blindly enabling it
+ * Hav ng  n- mory cac   s not necessar ly a free performance w n, anyone cons der ng   should
+ *  nvest gate rat r than bl ndly enabl ng  
  * --------------------------------------------
  * */
 
-sealed trait InMemoryCacheParams
+sealed tra   n moryCac Params
 
 /*
- * This holds params that is required to set up a in-mem cache for a single embedding store
+ * T  holds params that  s requ red to set up a  n- m cac  for a s ngle embedd ng store
  */
-case class EnabledInMemoryCacheParams(
-  ttl: Duration,
-  maxKeys: Int,
-  cacheName: String)
-  extends InMemoryCacheParams
-object DisabledInMemoryCacheParams extends InMemoryCacheParams
+case class Enabled n moryCac Params(
+  ttl: Durat on,
+  maxKeys:  nt,
+  cac Na : Str ng)
+  extends  n moryCac Params
+object D sabled n moryCac Params extends  n moryCac Params
 
 /*
- * This is the class for the in-memory cache config. Client could pass in their own cacheParamsMap to
- * create a new InMemoryCacheConfig instead of using the DefaultInMemoryCacheConfig object below
+ * T   s t  class for t   n- mory cac  conf g. Cl ent could pass  n t  r own cac ParamsMap to
+ * create a new  n moryCac Conf g  nstead of us ng t  Default n moryCac Conf g object below
  * */
-class InMemoryCacheConfig(
-  cacheParamsMap: Map[
-    (EmbeddingType, ModelVersion),
-    InMemoryCacheParams
+class  n moryCac Conf g(
+  cac ParamsMap: Map[
+    (Embedd ngType, ModelVers on),
+     n moryCac Params
   ] = Map.empty) {
 
-  def getCacheSetup(
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion
-  ): InMemoryCacheParams = {
-    // When requested embedding type doesn't exist, we return DisabledInMemoryCacheParams
-    cacheParamsMap.getOrElse((embeddingType, modelVersion), DisabledInMemoryCacheParams)
+  def getCac Setup(
+    embedd ngType: Embedd ngType,
+    modelVers on: ModelVers on
+  ):  n moryCac Params = {
+    // W n requested embedd ng type doesn't ex st,   return D sabled n moryCac Params
+    cac ParamsMap.getOrElse((embedd ngType, modelVers on), D sabled n moryCac Params)
   }
 }
 
 /*
- * Default config for the in-memory cache
- * Clients can directly import and use this one if they don't want to set up a customised config
+ * Default conf g for t   n- mory cac 
+ * Cl ents can d rectly  mport and use t  one  f t y don't want to set up a custom sed conf g
  * */
-object DefaultInMemoryCacheConfig extends InMemoryCacheConfig {
-  // set default to no in-memory caching
-  val cacheParamsMap = Map.empty
+object Default n moryCac Conf g extends  n moryCac Conf g {
+  // set default to no  n- mory cach ng
+  val cac ParamsMap = Map.empty
 }

@@ -1,106 +1,106 @@
-package com.twitter.follow_recommendations.common.transforms.weighted_sampling
-import com.twitter.follow_recommendations.common.base.GatedTransform
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDebugOptions
-import com.twitter.follow_recommendations.common.models.Score
-import com.twitter.follow_recommendations.common.models.Scores
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.follow_recommendations.common.rankers.utils.Utils
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import javax.inject.Inject
-import javax.inject.Singleton
+package com.tw ter.follow_recom ndat ons.common.transforms.  ghted_sampl ng
+ mport com.tw ter.follow_recom ndat ons.common.base.GatedTransform
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.HasDebugOpt ons
+ mport com.tw ter.follow_recom ndat ons.common.models.Score
+ mport com.tw ter.follow_recom ndat ons.common.models.Scores
+ mport com.tw ter.follow_recom ndat ons.common.rankers.common.Ranker d
+ mport com.tw ter.follow_recom ndat ons.common.rankers.ut ls.Ut ls
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class SamplingTransform @Inject() ()
-    extends GatedTransform[HasClientContext with HasParams with HasDebugOptions, CandidateUser] {
+@S ngleton
+class Sampl ngTransform @ nject() ()
+    extends GatedTransform[HasCl entContext w h HasParams w h HasDebugOpt ons, Cand dateUser] {
 
-  val name: String = this.getClass.getSimpleName
+  val na : Str ng = t .getClass.getS mpleNa 
 
   /*
-  Description: This function takes in a set of candidate users and ranks them for a who-to-follow
-  request by sampling from the Placket-Luce distribution
-  (https://cran.rstudio.com/web/packages/PlackettLuce/vignettes/Overview.html) with a three
-  variations. The first variation is that the scores of the candidates are multiplied by
-  multiplicativeFactor before sampling. The second variation is that the scores are
-  exponentiated before sampling. The third variation is that depending on how many who-to-follow
-  positions are being requested, the first k positions are reserved for the candidates with the
-  highest scores (and they are sorted in decreasing order of score) and the remaining positions
-  are sampled from a Placket-Luce. We use the efficient algorithm proposed in this blog
-  https://medium.com/swlh/going-old-school-designing-algorithms-for-fast-weighted-sampling-in-production-c48fc1f40051
-  to sample from a Plackett-Luce. Because of numerical stability reasons, before sampling from this
-  distribution, (1) we subtract off the maximum score from all the scores and (2) if after
-  this subtraction and multiplication by the multiplicative factor the resulting score is <= -10,
-  we force the candidate's transformed score under the above algorithm to be 0 (so r^(1/w) = 0)
-  where r is a random number and w is the transformed score.
+  Descr pt on: T  funct on takes  n a set of cand date users and ranks t m for a who-to-follow
+  request by sampl ng from t  Placket-Luce d str but on
+  (https://cran.rstud o.com/ b/packages/PlackettLuce/v gnettes/Overv ew.html) w h a three
+  var at ons. T  f rst var at on  s that t  scores of t  cand dates are mult pl ed by
+  mult pl cat veFactor before sampl ng. T  second var at on  s that t  scores are
+  exponent ated before sampl ng. T  th rd var at on  s that depend ng on how many who-to-follow
+  pos  ons are be ng requested, t  f rst k pos  ons are reserved for t  cand dates w h t 
+  h g st scores (and t y are sorted  n decreas ng order of score) and t  rema n ng pos  ons
+  are sampled from a Placket-Luce.   use t  eff c ent algor hm proposed  n t  blog
+  https:// d um.com/swlh/go ng-old-school-des gn ng-algor hms-for-fast-  ghted-sampl ng- n-product on-c48fc1f40051
+  to sample from a Plackett-Luce. Because of nu r cal stab l y reasons, before sampl ng from t 
+  d str but on, (1)   subtract off t  max mum score from all t  scores and (2)  f after
+  t  subtract on and mult pl cat on by t  mult pl cat ve factor t  result ng score  s <= -10,
+    force t  cand date's transfor d score under t  above algor hm to be 0 (so r^(1/w) = 0)
+  w re r  s a random number and w  s t  transfor d score.
 
-  inputs:
-  - target: HasClientContext (WTF request)
-  - candidates: sequence of CandidateUsers (users that need to be ranked from a who-to-follow
-                request) each of which has a score
+   nputs:
+  - target: HasCl entContext (WTF request)
+  - cand dates: sequence of Cand dateUsers (users that need to be ranked from a who-to-follow
+                request) each of wh ch has a score
 
-  inputs accessed through feature switches, i.e. through target.params (see the following file:
-  "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/
-  transforms/weighted_sampling/SamplingTransformParams.scala"):
-  - topKFixed: the first k positions of the who-to-follow ranking correspond to the users with the k
-               highest scores and are not sampled from the Placket-Luce distribution
-  - multiplicativeFactor: multiplicativeFactor is used to transform the scores of each candidate by
-                          multiplying that user's score by multiplicativeFactor
+   nputs accessed through feature sw c s,  .e. through target.params (see t  follow ng f le:
+  "follow-recom ndat ons-serv ce/common/src/ma n/scala/com/tw ter/follow_recom ndat ons/common/
+  transforms/  ghted_sampl ng/Sampl ngTransformParams.scala"):
+  - topKF xed: t  f rst k pos  ons of t  who-to-follow rank ng correspond to t  users w h t  k
+               h g st scores and are not sampled from t  Placket-Luce d str but on
+  - mult pl cat veFactor: mult pl cat veFactor  s used to transform t  scores of each cand date by
+                          mult ply ng that user's score by mult pl cat veFactor
 
   output:
-  - Sequence of CandidateUser whose order represents the ranking of users in a who-to-follow request
-    This ranking is sampled from a Placket-Luce distribution.
+  - Sequence of Cand dateUser whose order represents t  rank ng of users  n a who-to-follow request
+    T  rank ng  s sampled from a Placket-Luce d str but on.
    */
-  override def transform(
-    target: HasClientContext with HasParams with HasDebugOptions,
-    candidates: Seq[CandidateUser]
-  ): Stitch[Seq[CandidateUser]] = {
+  overr de def transform(
+    target: HasCl entContext w h HasParams w h HasDebugOpt ons,
+    cand dates: Seq[Cand dateUser]
+  ): St ch[Seq[Cand dateUser]] = {
 
-    // the first k positions of the who-to-follow ranking correspond to the users with the k
-    // highest scores and are not sampled from the Placket-Luce distribution
-    val topKFixed = target.params(SamplingTransformParams.TopKFixed)
+    // t  f rst k pos  ons of t  who-to-follow rank ng correspond to t  users w h t  k
+    // h g st scores and are not sampled from t  Placket-Luce d str but on
+    val topKF xed = target.params(Sampl ngTransformParams.TopKF xed)
 
-    // multiplicativeFactor is used to transform the scores of each candidate by
-    // multiplying that user's score by multiplicativeFactor
-    val multiplicativeFactor = target.params(SamplingTransformParams.MultiplicativeFactor)
+    // mult pl cat veFactor  s used to transform t  scores of each cand date by
+    // mult ply ng that user's score by mult pl cat veFactor
+    val mult pl cat veFactor = target.params(Sampl ngTransformParams.Mult pl cat veFactor)
 
-    // sort candidates by their score
-    val candidatesSorted = candidates.sortBy(-1 * _.score.getOrElse(0.0))
+    // sort cand dates by t  r score
+    val cand datesSorted = cand dates.sortBy(-1 * _.score.getOrElse(0.0))
 
-    // pick the top K candidates by score and the remaining candidates
-    val (topKFixedCandidates, candidatesOutsideOfTopK) =
-      candidatesSorted.zipWithIndex.partition { case (value, index) => index < topKFixed }
+    // p ck t  top K cand dates by score and t  rema n ng cand dates
+    val (topKF xedCand dates, cand datesOuts deOfTopK) =
+      cand datesSorted.z pW h ndex.part  on { case (value,  ndex) =>  ndex < topKF xed }
 
     val randomNumGenerator =
-      new scala.util.Random(target.getRandomizationSeed.getOrElse(System.currentTimeMillis))
+      new scala.ut l.Random(target.getRandom zat onSeed.getOrElse(System.currentT  M ll s))
 
-    // we need to subtract the maximum score off the scores for numerical stability reasons
-    // subtracting the max score off does not effect the underlying distribution we are sampling
-    // the candidates from
-    // we need the if statement since you cannot take the max of an empty sequence
-    val maximum_score = if (candidatesOutsideOfTopK.nonEmpty) {
-      candidatesOutsideOfTopK.map(x => x._1.score.getOrElse(0.0)).max
+    //   need to subtract t  max mum score off t  scores for nu r cal stab l y reasons
+    // subtract ng t  max score off does not effect t  underly ng d str but on   are sampl ng
+    // t  cand dates from
+    //   need t   f state nt s nce   cannot take t  max of an empty sequence
+    val max mum_score =  f (cand datesOuts deOfTopK.nonEmpty) {
+      cand datesOuts deOfTopK.map(x => x._1.score.getOrElse(0.0)).max
     } else {
       0.0
     }
 
-    // for candidates in candidatesOutsideOfTopK, we transform their score by subtracting off
-    // maximum_score and then multiply by multiplicativeFactor
-    val candidatesOutsideOfTopKTransformedScore = candidatesOutsideOfTopK.map(x =>
-      (x._1, multiplicativeFactor * (x._1.score.getOrElse(0.0) - maximum_score)))
+    // for cand dates  n cand datesOuts deOfTopK,   transform t  r score by subtract ng off
+    // max mum_score and t n mult ply by mult pl cat veFactor
+    val cand datesOuts deOfTopKTransfor dScore = cand datesOuts deOfTopK.map(x =>
+      (x._1, mult pl cat veFactor * (x._1.score.getOrElse(0.0) - max mum_score)))
 
-    // for each candidate with score transformed and clip score w, sample a random number r,
-    // create a new score r^(1/w) and sort the candidates to get the final ranking.
-    // for numerical stability reasons if the score is <=-10, we force r^(1/w) = 0.
-    // this samples the candidates from the modified Plackett-Luce distribution. See
-    // https://medium.com/swlh/going-old-school-designing-algorithms-for-fast-weighted-sampling-in-production-c48fc1f40051
+    // for each cand date w h score transfor d and cl p score w, sample a random number r,
+    // create a new score r^(1/w) and sort t  cand dates to get t  f nal rank ng.
+    // for nu r cal stab l y reasons  f t  score  s <=-10,   force r^(1/w) = 0.
+    // t  samples t  cand dates from t  mod f ed Plackett-Luce d str but on. See
+    // https:// d um.com/swlh/go ng-old-school-des gn ng-algor hms-for-fast-  ghted-sampl ng- n-product on-c48fc1f40051
 
-    val candidatesOutsideOfTopKSampled = candidatesOutsideOfTopKTransformedScore
+    val cand datesOuts deOfTopKSampled = cand datesOuts deOfTopKTransfor dScore
       .map(x =>
         (
           x._1,
-          if (x._2 <= -10.0)
+           f (x._2 <= -10.0)
             0.0
           else
             scala.math.pow(
@@ -108,31 +108,31 @@ class SamplingTransform @Inject() ()
               1 / (scala.math
                 .exp(x._2))))).sortBy(-1 * _._2)
 
-    val topKCandidates: Seq[CandidateUser] = topKFixedCandidates.map(_._1)
+    val topKCand dates: Seq[Cand dateUser] = topKF xedCand dates.map(_._1)
 
-    val scribeRankingInfo: Boolean =
-      target.params(SamplingTransformParams.ScribeRankingInfoInSamplingTransform)
+    val scr beRank ng nfo: Boolean =
+      target.params(Sampl ngTransformParams.Scr beRank ng nfo nSampl ngTransform)
 
-    val transformedCandidates: Seq[CandidateUser] = if (scribeRankingInfo) {
-      val topKCandidatesWithRankingInfo: Seq[CandidateUser] =
-        Utils.addRankingInfo(topKCandidates, name)
-      val candidatesOutsideOfTopKSampledWithRankingInfo: Seq[CandidateUser] =
-        candidatesOutsideOfTopKSampled.zipWithIndex.map {
-          case ((candidate, score), rank) =>
-            val newScore = Seq(Score(score, Some(RankerId.PlacketLuceSamplingTransformer)))
-            val newScores: Option[Scores] = candidate.scores
+    val transfor dCand dates: Seq[Cand dateUser] =  f (scr beRank ng nfo) {
+      val topKCand datesW hRank ng nfo: Seq[Cand dateUser] =
+        Ut ls.addRank ng nfo(topKCand dates, na )
+      val cand datesOuts deOfTopKSampledW hRank ng nfo: Seq[Cand dateUser] =
+        cand datesOuts deOfTopKSampled.z pW h ndex.map {
+          case ((cand date, score), rank) =>
+            val newScore = Seq(Score(score, So (Ranker d.PlacketLuceSampl ngTransfor r)))
+            val newScores: Opt on[Scores] = cand date.scores
               .map { scores =>
                 scores.copy(scores = scores.scores ++ newScore)
-              }.orElse(Some(Scores(newScore, Some(RankerId.PlacketLuceSamplingTransformer))))
-            val globalRank = rank + topKFixed + 1
-            candidate.addInfoPerRankingStage(name, newScores, globalRank)
+              }.orElse(So (Scores(newScore, So (Ranker d.PlacketLuceSampl ngTransfor r))))
+            val globalRank = rank + topKF xed + 1
+            cand date.add nfoPerRank ngStage(na , newScores, globalRank)
         }
 
-      topKCandidatesWithRankingInfo ++ candidatesOutsideOfTopKSampledWithRankingInfo
+      topKCand datesW hRank ng nfo ++ cand datesOuts deOfTopKSampledW hRank ng nfo
     } else {
-      topKCandidates ++ candidatesOutsideOfTopKSampled.map(_._1)
+      topKCand dates ++ cand datesOuts deOfTopKSampled.map(_._1)
     }
 
-    Stitch.value(transformedCandidates)
+    St ch.value(transfor dCand dates)
   }
 }

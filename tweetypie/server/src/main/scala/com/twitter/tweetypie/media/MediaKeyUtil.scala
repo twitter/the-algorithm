@@ -1,24 +1,24 @@
-package com.twitter.tweetypie.media
+package com.tw ter.t etyp e. d a
 
-import com.twitter.mediaservices.commons.thriftscala._
-import com.twitter.mediaservices.commons.tweetmedia.thriftscala._
-import com.twitter.tweetypie.thriftscala.MediaEntity
+ mport com.tw ter. d aserv ces.commons.thr ftscala._
+ mport com.tw ter. d aserv ces.commons.t et d a.thr ftscala._
+ mport com.tw ter.t etyp e.thr ftscala. d aEnt y
 
-object MediaKeyUtil {
+object  d aKeyUt l {
 
-  def get(mediaEntity: MediaEntity): MediaKey =
-    mediaEntity.mediaKey.getOrElse {
-      throw new IllegalStateException("""Media key undefined. This state is unexpected, the media
-          |key should be set by the tweet creation for new tweets
-          |and by `MediaKeyHydrator` for legacy tweets.""".stripMargin)
+  def get( d aEnt y:  d aEnt y):  d aKey =
+     d aEnt y. d aKey.getOrElse {
+      throw new  llegalStateExcept on(""" d a key undef ned. T  state  s unexpected, t   d a
+          |key should be set by t  t et creat on for new t ets
+          |and by ` d aKeyHydrator` for legacy t ets.""".str pMarg n)
     }
 
-  def contentType(mediaKey: MediaKey): MediaContentType =
-    mediaKey.mediaCategory match {
-      case MediaCategory.TweetImage => MediaContentType.ImageJpeg
-      case MediaCategory.TweetGif => MediaContentType.VideoMp4
-      case MediaCategory.TweetVideo => MediaContentType.VideoGeneric
-      case MediaCategory.AmplifyVideo => MediaContentType.VideoGeneric
-      case mediaCats => throw new NotImplementedError(mediaCats.toString)
+  def contentType( d aKey:  d aKey):  d aContentType =
+     d aKey. d aCategory match {
+      case  d aCategory.T et mage =>  d aContentType. mageJpeg
+      case  d aCategory.T etG f =>  d aContentType.V deoMp4
+      case  d aCategory.T etV deo =>  d aContentType.V deoGener c
+      case  d aCategory.Ampl fyV deo =>  d aContentType.V deoGener c
+      case  d aCats => throw new Not mple ntedError( d aCats.toStr ng)
     }
 }

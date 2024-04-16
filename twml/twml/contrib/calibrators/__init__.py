@@ -1,18 +1,18 @@
-# pylint: disable=wildcard-import
+# pyl nt: d sable=w ldcard- mport
 """
-This module contains classes used for calibration.
-Typically, each calibrator defines a ``twml.calibrator.Calibrator`` subclass
-and a ``twml.calibrator.CalibrationFeature``.
-The latter manages weights and values of individual features.
-The former manages a set of ``CalibratorFeatures``
-(although some ``Calibrators`` don't use ``CalibrationFeature``).
-Ultimately, the ``Calibrator`` should produce an initialized layer via its ``to_layer()`` method.
+T  module conta ns classes used for cal brat on.
+Typ cally, each cal brator def nes a ``twml.cal brator.Cal brator`` subclass
+and a ``twml.cal brator.Cal brat onFeature``.
+T  latter manages   ghts and values of  nd v dual features.
+T  for r manages a set of ``Cal bratorFeatures``
+(although so  ``Cal brators`` don't use ``Cal brat onFeature``).
+Ult mately, t  ``Cal brator`` should produce an  n  al zed layer v a  s ``to_layer()``  thod.
 """
 
-from .common_calibrators import calibrate_discretizer_and_export, add_discretizer_arguments  # noqa: F401
-from .calibrator import Calibrator  # noqa: F401
-from .mdl import MDLCalibrator  # noqa: F401
-from .isotonic import IsotonicCalibrator  # noqa: F401
-from .percentile_discretizer import PercentileDiscretizerCalibrator  # noqa: F401
-from .hashed_percentile_discretizer import HashedPercentileDiscretizerCalibrator  # noqa: F401
-from .hashing_discretizer import HashingDiscretizerCalibrator  # noqa: F401
+from .common_cal brators  mport cal brate_d scret zer_and_export, add_d scret zer_argu nts  # noqa: F401
+from .cal brator  mport Cal brator  # noqa: F401
+from .mdl  mport MDLCal brator  # noqa: F401
+from . soton c  mport  soton cCal brator  # noqa: F401
+from .percent le_d scret zer  mport Percent leD scret zerCal brator  # noqa: F401
+from .has d_percent le_d scret zer  mport Has dPercent leD scret zerCal brator  # noqa: F401
+from .hash ng_d scret zer  mport Hash ngD scret zerCal brator  # noqa: F401

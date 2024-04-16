@@ -1,132 +1,132 @@
 ********
-Overview
+Overv ew
 ********
-This job reads embedding data from HDFS in the embedding formats supported by the cortex MLX team. It converts that data into the ANN format and adds it to an ANN index. The ANN index is serialized and save to disk.
+T  job reads embedd ng data from HDFS  n t  embedd ng formats supported by t  cortex MLX team.   converts that data  nto t  ANN format and adds   to an ANN  ndex. T  ANN  ndex  s ser al zed and save to d sk.
 
 *****************
-Running In Aurora
+Runn ng  n Aurora
 *****************
 
 Set up example
 ==============
-This job builds an ANN index based on hnsw algorithm using user embeddings available in hdfs.
+T  job bu lds an ANN  ndex based on hnsw algor hm us ng user embedd ngs ava lable  n hdfs.
 
 .. code-block:: bash
 
-  $ export JOB_NAME=ann_index_builder
+  $ export JOB_NAME=ann_ ndex_bu lder
   $ export OUTPUT_PATH=hdfs:///user/$USER/${JOB_NAME}_test
 
-  $ CPU=32 RAM_GB=150 DISK_GB=60 aurora job create smf1/$USER/devel/$JOB_NAME ann/src/main/aurora/index_builder/aurora_builder.aurora \
-    --bind=profile.name=$JOB_NAME \
-    --bind=profile.role=$USER \
-    --bind=profile.output_dir=$OUTPUT_PATH \
-    --bind=profile.entity_kind=user \
-    --bind=profile.embedding_args='--input.embedding_format tab --input.embedding_path /user/cortex-mlx/official_examples/ann/non_pii_random_user_embeddings_tab_format' \
-    --bind=profile.num_dimensions=300 \
-    --bind=profile.algo=hnsw \
-    --bind=profile.ef_construction=200 \
-    --bind=profile.max_m=16 \
-    --bind=profile.expected_elements=10000000 \
-    --bind=profile.metric=InnerProduct \
-    --bind=profile.concurrency_level=32 \
-    --bind=profile.hadoop_cluster=dw2-smf1
+  $ CPU=32 RAM_GB=150 D SK_GB=60 aurora job create smf1/$USER/devel/$JOB_NAME ann/src/ma n/aurora/ ndex_bu lder/aurora_bu lder.aurora \
+    --b nd=prof le.na =$JOB_NAME \
+    --b nd=prof le.role=$USER \
+    --b nd=prof le.output_d r=$OUTPUT_PATH \
+    --b nd=prof le.ent y_k nd=user \
+    --b nd=prof le.embedd ng_args='-- nput.embedd ng_format tab -- nput.embedd ng_path /user/cortex-mlx/off c al_examples/ann/non_p  _random_user_embedd ngs_tab_format' \
+    --b nd=prof le.num_d  ns ons=300 \
+    --b nd=prof le.algo=hnsw \
+    --b nd=prof le.ef_construct on=200 \
+    --b nd=prof le.max_m=16 \
+    --b nd=prof le.expected_ele nts=10000000 \
+    --b nd=prof le. tr c= nnerProduct \
+    --b nd=prof le.concurrency_level=32 \
+    --b nd=prof le.hadoop_cluster=dw2-smf1
 
-This job builds an ANN index based on hnsw algorithm using producer embeddings (Major version 1546473691) available in feature store.
+T  job bu lds an ANN  ndex based on hnsw algor hm us ng producer embedd ngs (Major vers on 1546473691) ava lable  n feature store.
 
 .. code-block:: bash
 
-  $ export JOB_NAME=ann_index_builder
+  $ export JOB_NAME=ann_ ndex_bu lder
   $ export OUTPUT_PATH=hdfs:///user/$USER/${JOB_NAME}_test
 
-  $ CPU=32 RAM_GB=150 DISK_GB=60 aurora job create smf1/$USER/devel/$JOB_NAME ann/src/main/aurora/index_builder/aurora_builder.aurora \
-    --bind=profile.name=$JOB_NAME \
-    --bind=profile.role=$USER \
-    --bind=profile.output_dir=$OUTPUT_PATH \
-    --bind=profile.entity_kind=user \
-    --bind=profile.embedding_args='--input.feature_store_embedding ProducerFollowEmbedding300Dataset --input.feature_store_major_version 1546473691 --input.date_range 2019-01-02' \
-    --bind=profile.num_dimensions=300 \
-    --bind=profile.algo=hnsw \
-    --bind=profile.ef_construction=200 \
-    --bind=profile.max_m=16 \
-    --bind=profile.expected_elements=10000000 \
-    --bind=profile.metric=InnerProduct \
-    --bind=profile.concurrency_level=32 \
-    --bind=profile.hadoop_cluster=dw2-smf1
+  $ CPU=32 RAM_GB=150 D SK_GB=60 aurora job create smf1/$USER/devel/$JOB_NAME ann/src/ma n/aurora/ ndex_bu lder/aurora_bu lder.aurora \
+    --b nd=prof le.na =$JOB_NAME \
+    --b nd=prof le.role=$USER \
+    --b nd=prof le.output_d r=$OUTPUT_PATH \
+    --b nd=prof le.ent y_k nd=user \
+    --b nd=prof le.embedd ng_args='-- nput.feature_store_embedd ng ProducerFollowEmbedd ng300Dataset -- nput.feature_store_major_vers on 1546473691 -- nput.date_range 2019-01-02' \
+    --b nd=prof le.num_d  ns ons=300 \
+    --b nd=prof le.algo=hnsw \
+    --b nd=prof le.ef_construct on=200 \
+    --b nd=prof le.max_m=16 \
+    --b nd=prof le.expected_ele nts=10000000 \
+    --b nd=prof le. tr c= nnerProduct \
+    --b nd=prof le.concurrency_level=32 \
+    --b nd=prof le.hadoop_cluster=dw2-smf1
 
 
 *************
-Job arguments
+Job argu nts
 *************
 
-Enviroment variables (resources):
+Env ro nt var ables (res ces):
 ==============
 - **CPU** Number of cpu cores (default: 32)
-- **RAM_GB** RAM in gigabytes (default: 150)
-- **DISK_GB** Disk in gigabytes (default: 60)
+- **RAM_GB** RAM  n g gabytes (default: 150)
+- **D SK_GB** D sk  n g gabytes (default: 60)
 
-General arguments (specified as **--profile.{options}**):
+General argu nts (spec f ed as **--prof le.{opt ons}**):
 ==============
-- **name** Aurora job name
+- **na ** Aurora job na 
 - **role** Aurora role
 - **hadoop_cluster** Hadoop cluster for data. dw2-smf1/proc-atla.
-- **input_dir** Path of saved embeddings in hdfs without prefixing `hdfs://`
-- **entity_kind** The type of entity id that is use with the embeddings. Possible options:
+- ** nput_d r** Path of saved embedd ngs  n hdfs w hout pref x ng `hdfs://`
+- **ent y_k nd** T  type of ent y  d that  s use w h t  embedd ngs. Poss ble opt ons:
 
   - word
   - url
   - user
-  - tweet
-  - tfwId
+  - t et
+  - tfw d
 
-- **embedding_args** Embedding format args. See the documentation in `com.twitter.cortex.ml.embeddings.common.EmbeddingFormatArgsParser` for a full explanation of the input options. Possible options:
+- **embedd ng_args** Embedd ng format args. See t  docu ntat on  n `com.tw ter.cortex.ml.embedd ngs.common.Embedd ngFormatArgsParser` for a full explanat on of t   nput opt ons. Poss ble opt ons:
 
-  1. **input.embedding_format** Format of the serialized embedding.
+  1. ** nput.embedd ng_format** Format of t  ser al zed embedd ng.
 
      - usertensor
-     - usercontinuous
+     - usercont nuous
      - comma
      - tab
 
-  2. **input.embedding_path** Path of saved embeddings in hdfs without prefixing `hdfs://`
+  2. ** nput.embedd ng_path** Path of saved embedd ngs  n hdfs w hout pref x ng `hdfs://`
 
-  3. **input.{feature_store_args}** For feature store related args like `feature_store_embedding`, `feature_store_major_version`, `date_range`:
+  3. ** nput.{feature_store_args}** For feature store related args l ke `feature_store_embedd ng`, `feature_store_major_vers on`, `date_range`:
 
-- **output_dir** Where to save the produced serialized ann index. Save to HDFS by specifying the full URI. e.g `hdfs://hadoop-dw2-nn.smf1.twitter.com/user/<user>/index_file` or using the default cluster `hdfs:///user/<user>/index_file`.
-- **num_dimensions** Dimension of embedding in the input data. An exception will be thrown if any entry does not have a number of dimensions equal to this number.
-- **metric** Distance metric (InnerProduct/Cosine/L2)
-- **concurrency_level** Specifies how many parallel inserts happen to the index. This should probably be set to the number of cores on the machine.
-- **algo** The kind of index you want to ouput. The supported options right now are:
+- **output_d r** W re to save t  produced ser al zed ann  ndex. Save to HDFS by spec fy ng t  full UR . e.g `hdfs://hadoop-dw2-nn.smf1.tw ter.com/user/<user>/ ndex_f le` or us ng t  default cluster `hdfs:///user/<user>/ ndex_f le`.
+- **num_d  ns ons** D  ns on of embedd ng  n t   nput data. An except on w ll be thrown  f any entry does not have a number of d  ns ons equal to t  number.
+- ** tr c** D stance  tr c ( nnerProduct/Cos ne/L2)
+- **concurrency_level** Spec f es how many parallel  nserts happen to t   ndex. T  should probably be set to t  number of cores on t  mach ne.
+- **algo** T  k nd of  ndex   want to ouput. T  supported opt ons r ght now are:
 
-  1. **hnsw** (Metric supported: Cosine, L2, InnerProduct)
+  1. **hnsw** ( tr c supported: Cos ne, L2,  nnerProduct)
 
-     .. _hnsw: https://arxiv.org/abs/1603.09320
+     .. _hnsw: https://arx v.org/abs/1603.09320
 
-     - **ef\_construction** : Larger value increases build time but will give better recall. Good start value : 200
-     - **max\_m** : Larger value increases will increase the index size but will give better recall. Optimal Range : 6-48. Good starting value 16.
-     - **expected\_elements** : Approximate number of elements that will be indexed.
+     - **ef\_construct on** : Larger value  ncreases bu ld t   but w ll g ve better recall. Good start value : 200
+     - **max\_m** : Larger value  ncreases w ll  ncrease t   ndex s ze but w ll g ve better recall. Opt mal Range : 6-48. Good start ng value 16.
+     - **expected\_ele nts** : Approx mate number of ele nts that w ll be  ndexed.
 
-  2. **annoy** (Metric supported: Cosine, L2)
+  2. **annoy** ( tr c supported: Cos ne, L2)
 
-     .. _annoy: https://github.com/spotify/annoy
+     .. _annoy: https://g hub.com/spot fy/annoy
 
-     - **annoy\_num\_trees** This parameter is required for annoy. From the annoy documentation: num_trees is provided during build time and affects the build time and the index size. A larger value will give more accurate results, but larger indexes.
+     - **annoy\_num\_trees** T  para ter  s requ red for annoy. From t  annoy docu ntat on: num_trees  s prov ded dur ng bu ld t   and affects t  bu ld t   and t   ndex s ze. A larger value w ll g ve more accurate results, but larger  ndexes.
 
-  3. **brute_force** (Metric supported: Cosine, L2, InnerProduct)
+  3. **brute_force** ( tr c supported: Cos ne, L2,  nnerProduct)
 
 
-Developing locally
+Develop ng locally
 ===================
 
-For building and testing custom ann index builder job,
-You can create job bundle locally, upload to packer and then it can be used with the job using `profile.packer_package` for name,  `profile.packer_role` for role and `profile.packer_version` for bundle version.
+For bu ld ng and test ng custom ann  ndex bu lder job,
+  can create job bundle locally, upload to packer and t n   can be used w h t  job us ng `prof le.packer_package` for na ,  `prof le.packer_role` for role and `prof le.packer_vers on` for bundle vers on.
 
 .. code-block:: bash
 
-  ./bazel bundle ann/src/main/scala/com/twitter/ann/scalding/offline/indexbuilder:indexbuilder-deploy \
-  --bundle-jvm-archive=zip
+  ./bazel bundle ann/src/ma n/scala/com/tw ter/ann/scald ng/offl ne/ ndexbu lder: ndexbu lder-deploy \
+  --bundle-jvm-arch ve=z p
 
 .. code-block:: bash
 
-  packer add_version --cluster=atla <role> <package_name> dist/indexbuilder-deploy.zip
+  packer add_vers on --cluster=atla <role> <package_na > d st/ ndexbu lder-deploy.z p
 
 

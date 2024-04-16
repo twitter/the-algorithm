@@ -1,64 +1,64 @@
 /**
- * This file contains definitions for transient, passthrough structured data.
+ * T  f le conta ns def n  ons for trans ent, passthrough structured data.
  *
- * If you need to add structured data that Tweetypie accepts in a request
- * and passes the data through to one or more backends (eg. EventBus), this
- * is the place to put it. Tweetypie may or may not inspect the data and
- * alter the behavior based on it, but it won't change it.
+ *  f   need to add structured data that T etyp e accepts  n a request
+ * and passes t  data through to one or more backends (eg. EventBus), t 
+ *  s t  place to put  . T etyp e may or may not  nspect t  data and
+ * alter t  behav or based on  , but   won't change  .
  */
 
-namespace java com.twitter.tweetypie.thriftjava
-#@namespace scala com.twitter.tweetypie.thriftscala
-#@namespace strato com.twitter.tweetypie
-namespace py gen.twitter.tweetypie.transient_context
-namespace rb TweetyPie
-namespace go tweetypie
+na space java com.tw ter.t etyp e.thr ftjava
+#@na space scala com.tw ter.t etyp e.thr ftscala
+#@na space strato com.tw ter.t etyp e
+na space py gen.tw ter.t etyp e.trans ent_context
+na space rb T etyP e
+na space go t etyp e
 
-include "com/twitter/tweetypie/tweet.thrift"
+ nclude "com/tw ter/t etyp e/t et.thr ft"
 
 enum BatchComposeMode {
   /**
-   * This is the first Tweet in a batch.
+   * T   s t  f rst T et  n a batch.
    */
-  BATCH_FIRST = 1
+  BATCH_F RST = 1
 
   /**
-   * This is any of the subsequent Tweets in a batch.
+   * T   s any of t  subsequent T ets  n a batch.
    */
   BATCH_SUBSEQUENT = 2
 }
 
 /**
- * Data supplied at Tweet creation time that is not served by Tweetypie, but
- * is passed through to consumers of the tweet_events eventbus stream as part
- * of TweetCreateEvent.
- * This is different from additional_context in that Tweetypie
- * inspects this data as well, and we prefer structs over strings.
- * If adding a new field that will be passed through to eventbus, prefer this
- * over additional_context.
+ * Data suppl ed at T et creat on t   that  s not served by T etyp e, but
+ *  s passed through to consu rs of t  t et_events eventbus stream as part
+ * of T etCreateEvent.
+ * T   s d fferent from add  onal_context  n that T etyp e
+ *  nspects t  data as  ll, and   prefer structs over str ngs.
+ *  f add ng a new f eld that w ll be passed through to eventbus, prefer t 
+ * over add  onal_context.
  */
-struct TransientCreateContext {
+struct Trans entCreateContext {
   /**
-   * Indicates whether a Tweet was created using a batch composer, and if so
-   * position of a Tweet within the batch.
+   *  nd cates w t r a T et was created us ng a batch composer, and  f so
+   * pos  on of a T et w h n t  batch.
    *
-   * A value of 'None' indicates that the tweet was not created in a batch.
+   * A value of 'None'  nd cates that t  t et was not created  n a batch.
    *
-   * More info: https://docs.google.com/document/d/1dJ9K0KzXPzhk0V-Nsekt0CAdOvyVI8sH9ESEiA2eDW4/edit
+   * More  nfo: https://docs.google.com/docu nt/d/1dJ9K0KzXPzhk0V-Nsekt0CAdOvyV 8sH9ESE A2eDW4/ed 
    */
-  1: optional BatchComposeMode batch_compose
+  1: opt onal BatchComposeMode batch_compose
 
   /**
-   * Indicates if the tweet contains a live Periscope streaming video.
+   *  nd cates  f t  t et conta ns a l ve Per scope stream ng v deo.
    *
-   * This enables Periscope LiveFollow.
+   * T  enables Per scope L veFollow.
    */
-  2: optional bool periscope_is_live
+  2: opt onal bool per scope_ s_l ve
 
   /**
-   * Indicates the userId of the live Periscope streaming video.
+   *  nd cates t  user d of t  l ve Per scope stream ng v deo.
    *
-   * This enables Periscope LiveFollow.
+   * T  enables Per scope L veFollow.
    */
-  3: optional i64 periscope_creator_id (personalDataType='UserId')
-}(persisted='true', hasPersonalData='true')
+  3: opt onal  64 per scope_creator_ d (personalDataType='User d')
+}(pers sted='true', hasPersonalData='true')

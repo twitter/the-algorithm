@@ -1,23 +1,23 @@
-package com.twitter.cr_mixer.ranker
+package com.tw ter.cr_m xer.ranker
 
-import com.twitter.cr_mixer.model.BlendedCandidate
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.util.Future
-import javax.inject.Singleton
+ mport com.tw ter.cr_m xer.model.BlendedCand date
+ mport com.tw ter.cr_m xer.model.RankedCand date
+ mport com.tw ter.ut l.Future
+ mport javax. nject.S ngleton
 
 /**
- * Keep the same order as the input.
+ * Keep t  sa  order as t   nput.
  */
-@Singleton
+@S ngleton
 class DefaultRanker() {
   def rank(
-    candidates: Seq[BlendedCandidate],
-  ): Future[Seq[RankedCandidate]] = {
-    val candidateSize = candidates.size
-    val rankedCandidates = candidates.zipWithIndex.map {
-      case (candidate, index) =>
-        candidate.toRankedCandidate((candidateSize - index).toDouble)
+    cand dates: Seq[BlendedCand date],
+  ): Future[Seq[RankedCand date]] = {
+    val cand dateS ze = cand dates.s ze
+    val rankedCand dates = cand dates.z pW h ndex.map {
+      case (cand date,  ndex) =>
+        cand date.toRankedCand date((cand dateS ze -  ndex).toDouble)
     }
-    Future.value(rankedCandidates)
+    Future.value(rankedCand dates)
   }
 }

@@ -1,17 +1,17 @@
 target(
-    dependencies = [
-        "timelineranker/config",
-        "timelineranker/server/src/main/scala",
+    dependenc es = [
+        "t  l neranker/conf g",
+        "t  l neranker/server/src/ma n/scala",
     ],
 )
 
 jvm_app(
-    name = "bundle",
-    basename = "timelineranker-server-package-dist",
-    binary = "timelineranker/server/src/main/scala:bin",
+    na  = "bundle",
+    basena  = "t  l neranker-server-package-d st",
+    b nary = "t  l neranker/server/src/ma n/scala:b n",
     bundles = [bundle(
-        fileset = ["config/**/*"],
-        owning_target = "timelineranker/server/config:files",
+        f leset = ["conf g/**/*"],
+        own ng_target = "t  l neranker/server/conf g:f les",
     )],
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
 )

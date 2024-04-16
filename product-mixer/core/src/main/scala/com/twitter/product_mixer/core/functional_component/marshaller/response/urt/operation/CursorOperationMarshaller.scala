@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.operation
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.operat on
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.CursorOperat on
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class CursorOperationMarshaller @Inject() (
+@S ngleton
+class CursorOperat onMarshaller @ nject() (
   cursorTypeMarshaller: CursorTypeMarshaller,
-  cursorDisplayTreatmentMarshaller: CursorDisplayTreatmentMarshaller) {
+  cursorD splayTreat ntMarshaller: CursorD splayTreat ntMarshaller) {
 
-  def apply(cursorOperation: CursorOperation): urt.TimelineOperation.Cursor =
-    urt.TimelineOperation.Cursor(
-      urt.TimelineCursor(
-        value = cursorOperation.value,
-        cursorType = cursorTypeMarshaller(cursorOperation.cursorType),
-        displayTreatment = cursorOperation.displayTreatment.map(cursorDisplayTreatmentMarshaller(_))
+  def apply(cursorOperat on: CursorOperat on): urt.T  l neOperat on.Cursor =
+    urt.T  l neOperat on.Cursor(
+      urt.T  l neCursor(
+        value = cursorOperat on.value,
+        cursorType = cursorTypeMarshaller(cursorOperat on.cursorType),
+        d splayTreat nt = cursorOperat on.d splayTreat nt.map(cursorD splayTreat ntMarshaller(_))
       )
     )
 }

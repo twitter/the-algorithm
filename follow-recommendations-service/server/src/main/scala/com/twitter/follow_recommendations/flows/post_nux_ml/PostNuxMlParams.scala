@@ -1,133 +1,133 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+package com.tw ter.follow_recom ndat ons.flows.post_nux_ml
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker.CandidateShuffler
-import com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker.ExponentialShuffler
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.rankers.  ghted_cand date_s ce_ranker.Cand dateShuffler
+ mport com.tw ter.follow_recom ndat ons.common.rankers.  ghted_cand date_s ce_ranker.Exponent alShuffler
+ mport com.tw ter.t  l nes.conf gap .Durat onConvers on
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .HasDurat onConvers on
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.ut l.Durat on
 
 abstract class PostNuxMlParams[A](default: A) extends Param[A](default) {
-  override val statName: String = "post_nux_ml/" + this.getClass.getSimpleName
+  overr de val statNa : Str ng = "post_nux_ml/" + t .getClass.getS mpleNa 
 }
 
 object PostNuxMlParams {
 
-  // infra params:
-  case object FetchCandidateSourceBudget extends PostNuxMlParams[Duration](90.millisecond)
+  //  nfra params:
+  case object FetchCand dateS ceBudget extends PostNuxMlParams[Durat on](90.m ll second)
 
-  // WTF Impression Store has very high tail latency (p9990 or p9999), but p99 latency is pretty good (~100ms)
-  // set the time budget for this step to be 200ms to make the performance of service more predictable
-  case object FatigueRankerBudget extends PostNuxMlParams[Duration](200.millisecond)
+  // WTF  mpress on Store has very h gh ta l latency (p9990 or p9999), but p99 latency  s pretty good (~100ms)
+  // set t  t   budget for t  step to be 200ms to make t  performance of serv ce more pred ctable
+  case object Fat gueRankerBudget extends PostNuxMlParams[Durat on](200.m ll second)
 
   case object MlRankerBudget
-      extends FSBoundedParam[Duration](
-        name = PostNuxMlFlowFeatureSwitchKeys.MLRankerBudget,
-        default = 400.millisecond,
-        min = 100.millisecond,
-        max = 800.millisecond)
-      with HasDurationConversion {
-    override val durationConversion: DurationConversion = DurationConversion.FromMillis
+      extends FSBoundedParam[Durat on](
+        na  = PostNuxMlFlowFeatureSw chKeys.MLRankerBudget,
+        default = 400.m ll second,
+        m n = 100.m ll second,
+        max = 800.m ll second)
+      w h HasDurat onConvers on {
+    overr de val durat onConvers on: Durat onConvers on = Durat onConvers on.FromM ll s
   }
 
   // product params:
-  case object TargetEligibility extends PostNuxMlParams[Boolean](true)
+  case object TargetEl g b l y extends PostNuxMlParams[Boolean](true)
 
-  case object ResultSizeParam extends PostNuxMlParams[Int](3)
-  case object BatchSizeParam extends PostNuxMlParams[Int](12)
+  case object ResultS zeParam extends PostNuxMlParams[ nt](3)
+  case object BatchS zeParam extends PostNuxMlParams[ nt](12)
 
-  case object CandidateShuffler
-      extends PostNuxMlParams[CandidateShuffler[CandidateUser]](
-        new ExponentialShuffler[CandidateUser])
-  case object LogRandomRankerId extends PostNuxMlParams[Boolean](false)
+  case object Cand dateShuffler
+      extends PostNuxMlParams[Cand dateShuffler[Cand dateUser]](
+        new Exponent alShuffler[Cand dateUser])
+  case object LogRandomRanker d extends PostNuxMlParams[Boolean](false)
 
-  // whether or not to use the ml ranker at all (feature hydration + ranker)
+  // w t r or not to use t  ml ranker at all (feature hydrat on + ranker)
   case object UseMlRanker
-      extends FSParam[Boolean](PostNuxMlFlowFeatureSwitchKeys.UseMlRanker, false)
+      extends FSParam[Boolean](PostNuxMlFlowFeatureSw chKeys.UseMlRanker, false)
 
-  // whether or not to enable candidate param hydration in postnux_ml_flow
-  case object EnableCandidateParamHydration
-      extends FSParam[Boolean](PostNuxMlFlowFeatureSwitchKeys.EnableCandidateParamHydration, false)
+  // w t r or not to enable cand date param hydrat on  n postnux_ml_flow
+  case object EnableCand dateParamHydrat on
+      extends FSParam[Boolean](PostNuxMlFlowFeatureSw chKeys.EnableCand dateParamHydrat on, false)
 
-  // Whether or not OnlineSTP candidates are considered in the final pool of candidates.
-  // If set to `false`, the candidate source will be removed *after* all other considerations.
-  case object OnlineSTPEnabled
-      extends FSParam[Boolean](PostNuxMlFlowFeatureSwitchKeys.OnlineSTPEnabled, false)
+  // W t r or not Onl neSTP cand dates are cons dered  n t  f nal pool of cand dates.
+  //  f set to `false`, t  cand date s ce w ll be removed *after* all ot r cons derat ons.
+  case object Onl neSTPEnabled
+      extends FSParam[Boolean](PostNuxMlFlowFeatureSw chKeys.Onl neSTPEnabled, false)
 
-  // Whether or not the candidates are sampled from a Plackett-Luce model
-  case object SamplingTransformEnabled
-      extends FSParam[Boolean](PostNuxMlFlowFeatureSwitchKeys.SamplingTransformEnabled, false)
+  // W t r or not t  cand dates are sampled from a Plackett-Luce model
+  case object Sampl ngTransformEnabled
+      extends FSParam[Boolean](PostNuxMlFlowFeatureSw chKeys.Sampl ngTransformEnabled, false)
 
-  // Whether or not Follow2Vec candidates are considered in the final pool of candidates.
-  // If set to `false`, the candidate source will be removed *after* all other considerations.
-  case object Follow2VecLinearRegressionEnabled
+  // W t r or not Follow2Vec cand dates are cons dered  n t  f nal pool of cand dates.
+  //  f set to `false`, t  cand date s ce w ll be removed *after* all ot r cons derat ons.
+  case object Follow2VecL nearRegress onEnabled
       extends FSParam[Boolean](
-        PostNuxMlFlowFeatureSwitchKeys.Follow2VecLinearRegressionEnabled,
+        PostNuxMlFlowFeatureSw chKeys.Follow2VecL nearRegress onEnabled,
         false)
 
-  // Whether or not to enable AdhocRanker to allow adhoc, non-ML, score modifications.
+  // W t r or not to enable AdhocRanker to allow adhoc, non-ML, score mod f cat ons.
   case object EnableAdhocRanker
-      extends FSParam[Boolean](PostNuxMlFlowFeatureSwitchKeys.EnableAdhocRanker, false)
+      extends FSParam[Boolean](PostNuxMlFlowFeatureSw chKeys.EnableAdhocRanker, false)
 
-  // Whether the impression-based fatigue ranker is enabled or not.
-  case object EnableFatigueRanker
-      extends FSParam[Boolean](PostNuxMlFlowFeatureSwitchKeys.EnableFatigueRanker, true)
+  // W t r t   mpress on-based fat gue ranker  s enabled or not.
+  case object EnableFat gueRanker
+      extends FSParam[Boolean](PostNuxMlFlowFeatureSw chKeys.EnableFat gueRanker, true)
 
-  // whether or not to enable InterleaveRanker for producer-side experiments.
-  case object EnableInterleaveRanker
-      extends FSParam[Boolean](PostNuxMlFlowFeatureSwitchKeys.EnableInterleaveRanker, false)
+  // w t r or not to enable  nterleaveRanker for producer-s de exper  nts.
+  case object Enable nterleaveRanker
+      extends FSParam[Boolean](PostNuxMlFlowFeatureSw chKeys.Enable nterleaveRanker, false)
 
-  // whether to exclude users in near zero user state
-  case object ExcludeNearZeroCandidates
-      extends FSParam[Boolean](PostNuxMlFlowFeatureSwitchKeys.ExcludeNearZeroCandidates, false)
+  // w t r to exclude users  n near zero user state
+  case object ExcludeNearZeroCand dates
+      extends FSParam[Boolean](PostNuxMlFlowFeatureSw chKeys.ExcludeNearZeroCand dates, false)
 
-  case object EnablePPMILocaleFollowSourceInPostNux
+  case object EnablePPM LocaleFollowS ce nPostNux
       extends FSParam[Boolean](
-        PostNuxMlFlowFeatureSwitchKeys.EnablePPMILocaleFollowSourceInPostNux,
+        PostNuxMlFlowFeatureSw chKeys.EnablePPM LocaleFollowS ce nPostNux,
         false)
 
-  case object EnableInterestsOptOutPredicate
-      extends FSParam[Boolean](PostNuxMlFlowFeatureSwitchKeys.EnableInterestsOptOutPredicate, false)
+  case object Enable nterestsOptOutPred cate
+      extends FSParam[Boolean](PostNuxMlFlowFeatureSw chKeys.Enable nterestsOptOutPred cate, false)
 
-  case object EnableInvalidRelationshipPredicate
+  case object Enable nval dRelat onsh pPred cate
       extends FSParam[Boolean](
-        PostNuxMlFlowFeatureSwitchKeys.EnableInvalidRelationshipPredicate,
+        PostNuxMlFlowFeatureSw chKeys.Enable nval dRelat onsh pPred cate,
         false)
 
-  // Totally disabling SGS predicate need to disable EnableInvalidRelationshipPredicate as well
-  case object EnableSGSPredicate
-      extends FSParam[Boolean](PostNuxMlFlowFeatureSwitchKeys.EnableSGSPredicate, true)
+  // Totally d sabl ng SGS pred cate need to d sable Enable nval dRelat onsh pPred cate as  ll
+  case object EnableSGSPred cate
+      extends FSParam[Boolean](PostNuxMlFlowFeatureSw chKeys.EnableSGSPred cate, true)
 
-  case object EnableHssPredicate
-      extends FSParam[Boolean](PostNuxMlFlowFeatureSwitchKeys.EnableHssPredicate, true)
+  case object EnableHssPred cate
+      extends FSParam[Boolean](PostNuxMlFlowFeatureSw chKeys.EnableHssPred cate, true)
 
-  // Whether or not to include RepeatedProfileVisits as one of the candidate sources in the PostNuxMlFlow. If false,
-  // RepeatedProfileVisitsSource would not be run for the users in candidate_generation.
-  case object IncludeRepeatedProfileVisitsCandidateSource
+  // W t r or not to  nclude RepeatedProf leV s s as one of t  cand date s ces  n t  PostNuxMlFlow.  f false,
+  // RepeatedProf leV s sS ce would not be run for t  users  n cand date_generat on.
+  case object  ncludeRepeatedProf leV s sCand dateS ce
       extends FSParam[Boolean](
-        PostNuxMlFlowFeatureSwitchKeys.IncludeRepeatedProfileVisitsCandidateSource,
+        PostNuxMlFlowFeatureSw chKeys. ncludeRepeatedProf leV s sCand dateS ce,
         false)
 
   case object EnableRealGraphOonV2
-      extends FSParam[Boolean](PostNuxMlFlowFeatureSwitchKeys.EnableRealGraphOonV2, false)
+      extends FSParam[Boolean](PostNuxMlFlowFeatureSw chKeys.EnableRealGraphOonV2, false)
 
-  case object GetFollowersFromSgs
-      extends FSParam[Boolean](PostNuxMlFlowFeatureSwitchKeys.GetFollowersFromSgs, false)
+  case object GetFollo rsFromSgs
+      extends FSParam[Boolean](PostNuxMlFlowFeatureSw chKeys.GetFollo rsFromSgs, false)
 
   case object EnableRemoveAccountProofTransform
       extends FSParam[Boolean](
-        PostNuxMlFlowFeatureSwitchKeys.EnableRemoveAccountProofTransform,
+        PostNuxMlFlowFeatureSw chKeys.EnableRemoveAccountProofTransform,
         false)
 
-  // quality factor threshold to turn off ML ranker completely
+  // qual y factor threshold to turn off ML ranker completely
   object TurnoffMLScorerQFThreshold
       extends FSBoundedParam[Double](
-        name = PostNuxMlFlowFeatureSwitchKeys.TurnOffMLScorerQFThreshold,
+        na  = PostNuxMlFlowFeatureSw chKeys.TurnOffMLScorerQFThreshold,
         default = 0.3,
-        min = 0.1,
+        m n = 0.1,
         max = 1.0)
 }

@@ -1,74 +1,74 @@
-package com.twitter.follow_recommendations.common.candidate_sources.geo
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.geo
 
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasGeohashAndCountryCode
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
+ mport com.google. nject.S ngleton
+ mport com.tw ter.f nagle.stats.Counter
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.HasGeohashAndCountryCode
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport javax. nject. nject
 
-@Singleton
-class BasePopGeohashSource @Inject() (
-  popGeoSource: CandidateSource[String, CandidateUser],
-  statsReceiver: StatsReceiver)
-    extends CandidateSource[
-      HasParams with HasClientContext with HasGeohashAndCountryCode,
-      CandidateUser
+@S ngleton
+class BasePopGeohashS ce @ nject() (
+  popGeoS ce: Cand dateS ce[Str ng, Cand dateUser],
+  statsRece ver: StatsRece ver)
+    extends Cand dateS ce[
+      HasParams w h HasCl entContext w h HasGeohashAndCountryCode,
+      Cand dateUser
     ]
-    with BasePopGeohashSourceConfig {
+    w h BasePopGeohashS ceConf g {
 
-  val stats: StatsReceiver = statsReceiver
+  val stats: StatsRece ver = statsRece ver
 
-  // counter to check if we found a geohash value in the request
+  // counter to c ck  f   found a geohash value  n t  request
   val foundGeohashCounter: Counter = stats.counter("found_geohash_value")
-  // counter to check if we are missing a geohash value in the request
-  val missingGeohashCounter: Counter = stats.counter("missing_geohash_value")
+  // counter to c ck  f   are m ss ng a geohash value  n t  request
+  val m ss ngGeohashCounter: Counter = stats.counter("m ss ng_geohash_value")
 
-  /** @see [[CandidateSourceIdentifier]] */
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    "BasePopGeohashSource")
+  /** @see [[Cand dateS ce dent f er]] */
+  overr de val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er(
+    "BasePopGeohashS ce")
 
-  override def apply(
-    target: HasParams with HasClientContext with HasGeohashAndCountryCode
-  ): Stitch[Seq[CandidateUser]] = {
-    if (!candidateSourceEnabled(target)) {
-      return Stitch.Nil
+  overr de def apply(
+    target: HasParams w h HasCl entContext w h HasGeohashAndCountryCode
+  ): St ch[Seq[Cand dateUser]] = {
+     f (!cand dateS ceEnabled(target)) {
+      return St ch.N l
     }
     target.geohashAndCountryCode
       .flatMap(_.geohash).map { geohash =>
-        foundGeohashCounter.incr()
-        val keys = (minGeohashLength(target) to math.min(maxGeohashLength(target), geohash.length))
+        foundGeohashCounter. ncr()
+        val keys = (m nGeohashLength(target) to math.m n(maxGeohashLength(target), geohash.length))
           .map("geohash_" + geohash.take(_)).reverse
-        if (returnResultFromAllPrecision(target)) {
-          Stitch
-            .collect(keys.map(popGeoSource.apply)).map(
-              _.flatten.map(_.withCandidateSource(identifier))
+         f (returnResultFromAllPrec s on(target)) {
+          St ch
+            .collect(keys.map(popGeoS ce.apply)).map(
+              _.flatten.map(_.w hCand dateS ce( dent f er))
             )
         } else {
-          Stitch
-            .collect(keys.map(popGeoSource.apply)).map(
-              _.find(_.nonEmpty)
-                .getOrElse(Nil)
-                .take(maxResults(target)).map(_.withCandidateSource(identifier))
+          St ch
+            .collect(keys.map(popGeoS ce.apply)).map(
+              _.f nd(_.nonEmpty)
+                .getOrElse(N l)
+                .take(maxResults(target)).map(_.w hCand dateS ce( dent f er))
             )
         }
       }.getOrElse {
-        missingGeohashCounter.incr()
-        Stitch.Nil
+        m ss ngGeohashCounter. ncr()
+        St ch.N l
       }
   }
 }
 
-trait BasePopGeohashSourceConfig {
-  type Target = HasParams with HasClientContext
-  def maxResults(target: Target): Int = 200
-  def minGeohashLength(target: Target): Int = 2
-  def maxGeohashLength(target: Target): Int = 4
-  def returnResultFromAllPrecision(target: Target): Boolean = false
-  def candidateSourceEnabled(target: Target): Boolean = false
+tra  BasePopGeohashS ceConf g {
+  type Target = HasParams w h HasCl entContext
+  def maxResults(target: Target):  nt = 200
+  def m nGeohashLength(target: Target):  nt = 2
+  def maxGeohashLength(target: Target):  nt = 4
+  def returnResultFromAllPrec s on(target: Target): Boolean = false
+  def cand dateS ceEnabled(target: Target): Boolean = false
 }

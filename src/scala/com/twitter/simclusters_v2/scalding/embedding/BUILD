@@ -1,311 +1,311 @@
-scala_library(
-    sources = [
+scala_l brary(
+    s ces = [
         "*.scala",
         "common/*.scala",
     ],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "escherbird/src/scala/com/twitter/escherbird/scalding/source",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "esc rb rd/src/scala/com/tw ter/esc rb rd/scald ng/s ce",
         "flockdb-tools/datasets/flock:flock-blocks-edges-scala",
         "flockdb-tools/datasets/flock:flock-follows-edges-scala",
         "flockdb-tools/datasets/flock:flock-report-as-abuse-edges-scala",
         "flockdb-tools/datasets/flock:flock-report-as-spam-edges-scala",
-        "iesource/processing/events/src/main/scala/com/twitter/iesource/processing/events/batch:server_engagements-scala",
-        "interests-ds/src/main/scala/com/twitter/interests_ds/jobs/interests_service",
-        "interests-ds/src/main/scala/com/twitter/interests_ds/jobs/interests_service:user_topic_relation_snapshot-scala",
-        "src/java/com/twitter/common/text/language:locale-util",
-        "src/scala/com/twitter/frigate/data_pipeline/scalding/magicrecs/magicrecs_notification_lite:magicrecs_notification_lite_1day_lag-scala",
-        "src/scala/com/twitter/onboarding/relevance/source:utt_account_recommendations-scala",
-        "src/scala/com/twitter/penguin/scalding/datasets:penguin_user_languages-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:simclusters_v2_embeddings_lite-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/presto_hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/scalding/common",
-        "src/scala/com/twitter/simclusters_v2/scalding/common/matrix",
-        "src/scala/com/twitter/wtf/entity_real_graph/common",
-        "src/scala/com/twitter/wtf/entity_real_graph/scalding/common",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:execution_app",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:sources",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:stats_util",
-        "src/thrift/com/twitter/hermit/candidate:hermit-candidate-scala",
-        "src/thrift/com/twitter/onboarding/relevance/candidates:candidates-scala",
-        "src/thrift/com/twitter/recos/entities:entities-thrift-scala",
-        "src/thrift/com/twitter/search/adaptive/scribing:adaptive-scribing-scala",
-        "src/thrift/com/twitter/wtf/entity_real_graph:entity_real_graph-thrift-scala",
-        "twadoop_config/configuration/log_categories/group/search:adaptive_search-scala",
-        "usersource/snapshot/src/main/scala/com/twitter/usersource/snapshot/flat:usersource_flat-scala",
-        "usersource/snapshot/src/main/thrift/com/twitter/usersource/snapshot/flat:flat-scala",
+        " es ce/process ng/events/src/ma n/scala/com/tw ter/ es ce/process ng/events/batch:server_engage nts-scala",
+        " nterests-ds/src/ma n/scala/com/tw ter/ nterests_ds/jobs/ nterests_serv ce",
+        " nterests-ds/src/ma n/scala/com/tw ter/ nterests_ds/jobs/ nterests_serv ce:user_top c_relat on_snapshot-scala",
+        "src/java/com/tw ter/common/text/language:locale-ut l",
+        "src/scala/com/tw ter/fr gate/data_p pel ne/scald ng/mag crecs/mag crecs_not f cat on_l e:mag crecs_not f cat on_l e_1day_lag-scala",
+        "src/scala/com/tw ter/onboard ng/relevance/s ce:utt_account_recom ndat ons-scala",
+        "src/scala/com/tw ter/pengu n/scald ng/datasets:pengu n_user_languages-scala",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces:s mclusters_v2_embedd ngs_l e-scala",
+        "src/scala/com/tw ter/s mclusters_v2/hdfs_s ces/presto_hdfs_s ces",
+        "src/scala/com/tw ter/s mclusters_v2/scald ng/common",
+        "src/scala/com/tw ter/s mclusters_v2/scald ng/common/matr x",
+        "src/scala/com/tw ter/wtf/ent y_real_graph/common",
+        "src/scala/com/tw ter/wtf/ent y_real_graph/scald ng/common",
+        "src/scala/com/tw ter/wtf/scald ng/jobs/common:execut on_app",
+        "src/scala/com/tw ter/wtf/scald ng/jobs/common:s ces",
+        "src/scala/com/tw ter/wtf/scald ng/jobs/common:stats_ut l",
+        "src/thr ft/com/tw ter/ rm /cand date: rm -cand date-scala",
+        "src/thr ft/com/tw ter/onboard ng/relevance/cand dates:cand dates-scala",
+        "src/thr ft/com/tw ter/recos/ent  es:ent  es-thr ft-scala",
+        "src/thr ft/com/tw ter/search/adapt ve/scr b ng:adapt ve-scr b ng-scala",
+        "src/thr ft/com/tw ter/wtf/ent y_real_graph:ent y_real_graph-thr ft-scala",
+        "twadoop_conf g/conf gurat on/log_categor es/group/search:adapt ve_search-scala",
+        "users ce/snapshot/src/ma n/scala/com/tw ter/users ce/snapshot/flat:users ce_flat-scala",
+        "users ce/snapshot/src/ma n/thr ft/com/tw ter/users ce/snapshot/flat:flat-scala",
     ],
 )
 
-hadoop_binary(
-    name = "entity_embeddings_job-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.embedding.EntityToSimClustersEmbeddingAdhocApp",
+hadoop_b nary(
+    na  = "ent y_embedd ngs_job-adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.embedd ng.Ent yToS mClustersEmbedd ngAdhocApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [":embedding"],
+    dependenc es = [":embedd ng"],
 )
 
-hadoop_binary(
-    name = "entity_per_language_embeddings_job-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.embedding.LocaleEntitySimClustersEmbeddingAdhocApp",
+hadoop_b nary(
+    na  = "ent y_per_language_embedd ngs_job-adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.embedd ng.LocaleEnt yS mClustersEmbedd ngAdhocApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [":embedding"],
+    dependenc es = [":embedd ng"],
 )
 
-hadoop_binary(
-    name = "semantic_core_entity_embeddings_dec11_model_job",
-    main = "com.twitter.simclusters_v2.scalding.embedding.SemanticCoreEntityEmbeddingsDec11ModelApp",
+hadoop_b nary(
+    na  = "semant c_core_ent y_embedd ngs_dec11_model_job",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.embedd ng.Semant cCoreEnt yEmbedd ngsDec11ModelApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [":embedding"],
+    dependenc es = [":embedd ng"],
 )
 
-hadoop_binary(
-    name = "semantic_core_entity_embeddings_2020_job",
-    main = "com.twitter.simclusters_v2.scalding.embedding.SemanticCoreEntityEmbeddings2020App",
+hadoop_b nary(
+    na  = "semant c_core_ent y_embedd ngs_2020_job",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.embedd ng.Semant cCoreEnt yEmbedd ngs2020App",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [":embedding"],
+    dependenc es = [":embedd ng"],
 )
 
-hadoop_binary(
-    name = "semantic_core_entity_embeddings_per_language_job",
-    main = "com.twitter.simclusters_v2.scalding.embedding.LocaleEntitySimClustersEmbeddingScheduledApp",
+hadoop_b nary(
+    na  = "semant c_core_ent y_embedd ngs_per_language_job",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.embedd ng.LocaleEnt yS mClustersEmbedd ngSc duledApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [":embedding"],
+    dependenc es = [":embedd ng"],
 )
 
-hadoop_binary(
-    name = "locale_entity_simclusters_embedding_v2",
-    main = "com.twitter.simclusters_v2.scalding.embedding.LocaleEntitySimClustersEmbeddingV2ScheduledApp",
+hadoop_b nary(
+    na  = "locale_ent y_s mclusters_embedd ng_v2",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.embedd ng.LocaleEnt yS mClustersEmbedd ngV2Sc duledApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [":embedding"],
+    dependenc es = [":embedd ng"],
 )
 
-hadoop_binary(
-    name = "locale_entity_simclusters_embedding_v2-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.embedding.LocaleEntitySimClustersEmbeddingV2AdhocApp",
+hadoop_b nary(
+    na  = "locale_ent y_s mclusters_embedd ng_v2-adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.embedd ng.LocaleEnt yS mClustersEmbedd ngV2AdhocApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [":embedding"],
+    dependenc es = [":embedd ng"],
 )
 
-hadoop_binary(
-    name = "producer_embeddings_from_interested_in-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.embedding.ProducerEmbeddingsFromInterestedInAdhocApp",
+hadoop_b nary(
+    na  = "producer_embedd ngs_from_ nterested_ n-adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.embedd ng.ProducerEmbedd ngsFrom nterested nAdhocApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [":embedding"],
+    dependenc es = [":embedd ng"],
 )
 
-hadoop_binary(
-    name = "producer_embeddings_from_interested_in_by_fav_score",
-    main = "com.twitter.simclusters_v2.scalding.embedding.ProducerEmbeddingsFromInterestedInByFavScoreBatchApp",
+hadoop_b nary(
+    na  = "producer_embedd ngs_from_ nterested_ n_by_fav_score",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.embedd ng.ProducerEmbedd ngsFrom nterested nByFavScoreBatchApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [":embedding"],
+    dependenc es = [":embedd ng"],
 )
 
-hadoop_binary(
-    name = "producer_embeddings_from_interested_in_by_fav_score_2020",
-    main = "com.twitter.simclusters_v2.scalding.embedding.ProducerEmbeddingsFromInterestedInByFavScore2020BatchApp",
+hadoop_b nary(
+    na  = "producer_embedd ngs_from_ nterested_ n_by_fav_score_2020",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.embedd ng.ProducerEmbedd ngsFrom nterested nByFavScore2020BatchApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [":embedding"],
+    dependenc es = [":embedd ng"],
 )
 
-hadoop_binary(
-    name = "producer_embeddings_from_interested_in_by_fav_score_dec11",
-    main = "com.twitter.simclusters_v2.scalding.embedding.ProducerEmbeddingsFromInterestedInByFavScoreDec11BatchApp",
+hadoop_b nary(
+    na  = "producer_embedd ngs_from_ nterested_ n_by_fav_score_dec11",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.embedd ng.ProducerEmbedd ngsFrom nterested nByFavScoreDec11BatchApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [":embedding"],
+    dependenc es = [":embedd ng"],
 )
 
-hadoop_binary(
-    name = "producer_embeddings_from_interested_in_by_follow_score",
-    main = "com.twitter.simclusters_v2.scalding.embedding.ProducerEmbeddingsFromInterestedInByFollowScoreBatchApp",
+hadoop_b nary(
+    na  = "producer_embedd ngs_from_ nterested_ n_by_follow_score",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.embedd ng.ProducerEmbedd ngsFrom nterested nByFollowScoreBatchApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [":embedding"],
+    dependenc es = [":embedd ng"],
 )
 
-hadoop_binary(
-    name = "producer_embeddings_from_interested_in_by_follow_score_2020",
-    main = "com.twitter.simclusters_v2.scalding.embedding.ProducerEmbeddingsFromInterestedInByFollowScore2020BatchApp",
+hadoop_b nary(
+    na  = "producer_embedd ngs_from_ nterested_ n_by_follow_score_2020",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.embedd ng.ProducerEmbedd ngsFrom nterested nByFollowScore2020BatchApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [":embedding"],
+    dependenc es = [":embedd ng"],
 )
 
-hadoop_binary(
-    name = "producer_embeddings_from_interested_in_by_follow_score_dec11",
-    main = "com.twitter.simclusters_v2.scalding.embedding.ProducerEmbeddingsFromInterestedInByFollowScoreDec11BatchApp",
+hadoop_b nary(
+    na  = "producer_embedd ngs_from_ nterested_ n_by_follow_score_dec11",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.embedd ng.ProducerEmbedd ngsFrom nterested nByFollowScoreDec11BatchApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [":embedding"],
+    dependenc es = [":embedd ng"],
 )
 
-hadoop_binary(
-    name = "similar_users_by_simclusters_embeddings-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.embedding.SimilarUsersBySimClustersEmbeddingAdhocApp",
+hadoop_b nary(
+    na  = "s m lar_users_by_s mclusters_embedd ngs-adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.embedd ng.S m larUsersByS mClustersEmbedd ngAdhocApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [":embedding"],
+    dependenc es = [":embedd ng"],
 )
 
-hadoop_binary(
-    name = "similar_users_by_simclusters_embeddings",
-    main = "com.twitter.simclusters_v2.scalding.embedding.SimilarUsersBySimClustersEmbeddingBatchApp",
+hadoop_b nary(
+    na  = "s m lar_users_by_s mclusters_embedd ngs",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.embedd ng.S m larUsersByS mClustersEmbedd ngBatchApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [":embedding"],
+    dependenc es = [":embedd ng"],
 )
 
-hadoop_binary(
-    name = "entity_embedding_from_producer_embedding-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.embedding.EntityEmbeddingFromProducerEmbeddingAdhocJob",
+hadoop_b nary(
+    na  = "ent y_embedd ng_from_producer_embedd ng-adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.embedd ng.Ent yEmbedd ngFromProducerEmbedd ngAdhocJob",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [":embedding"],
+    dependenc es = [":embedd ng"],
 )
 
-hadoop_binary(
-    name = "entity_embedding_from_producer_embedding_job",
-    main = "com.twitter.simclusters_v2.scalding.embedding.EntityEmbeddingFromProducerEmbeddingScheduledJob",
+hadoop_b nary(
+    na  = "ent y_embedd ng_from_producer_embedd ng_job",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.embedd ng.Ent yEmbedd ngFromProducerEmbedd ngSc duledJob",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [":embedding"],
+    dependenc es = [":embedd ng"],
 )
 
-# Generated with `capesospy-v2 create_target similar_users_by_simclusters_embeddings_job src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml`, config hash b8cf4d.
-scalding_job(
-    name = "similar_users_by_simclusters_embeddings_job",
-    main = "com.twitter.simclusters_v2.scalding.embedding.SimiliarUsersBySimClustersEmbeddingBatchApp",
-    config = [
-        ("hadoop.combine-input", "true"),
-        ("hadoop.map.jvm.total-memory", "3072m"),
+# Generated w h `capesospy-v2 create_target s m lar_users_by_s mclusters_embedd ngs_job src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc3.yaml`, conf g hash b8cf4d.
+scald ng_job(
+    na  = "s m lar_users_by_s mclusters_embedd ngs_job",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.embedd ng.S m l arUsersByS mClustersEmbedd ngBatchApp",
+    conf g = [
+        ("hadoop.comb ne- nput", "true"),
+        ("hadoop.map.jvm.total- mory", "3072m"),
         ("hadoop.queue", "cassowary.default"),
-        ("hadoop.reduce.jvm.total-memory", "3072m"),
-        ("hadoop.submitter.jvm.total-memory", "5120m"),
-        ("submitter.tier", "preemptible"),
+        ("hadoop.reduce.jvm.total- mory", "3072m"),
+        ("hadoop.subm ter.jvm.total- mory", "5120m"),
+        ("subm ter.t er", "preempt ble"),
     ],
     cron = "15 * * * *",
     hadoop_cluster = "atla-proc3",
     platform = "java8",
     role = "cassowary",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible:migrated",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [":embedding"],
+    dependenc es = [":embedd ng"],
 )
 
-hadoop_binary(
-    name = "global_simclusters_language_embedding_job",
-    main = "com.twitter.simclusters_v2.scalding.embedding.GlobalSimClustersLanguageEmbeddingBatchApp",
+hadoop_b nary(
+    na  = "global_s mclusters_language_embedd ng_job",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.embedd ng.GlobalS mClustersLanguageEmbedd ngBatchApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [":embedding"],
+    dependenc es = [":embedd ng"],
 )

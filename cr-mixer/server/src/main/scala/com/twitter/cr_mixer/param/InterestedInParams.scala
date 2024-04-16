@@ -1,213 +1,213 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.simclusters_v2.thriftscala.{EmbeddingType => SimClustersEmbeddingType}
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.s mclusters_v2.thr ftscala.{Embedd ngType => S mClustersEmbedd ngType}
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSEnumParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .Param
 
-object InterestedInParams {
+object  nterested nParams {
 
-  object SourceEmbedding extends Enumeration {
-    protected case class EmbeddingType(embeddingType: SimClustersEmbeddingType) extends super.Val
-    import scala.language.implicitConversions
-    implicit def valueToEmbeddingtype(x: Value): EmbeddingType = x.asInstanceOf[EmbeddingType]
+  object S ceEmbedd ng extends Enu rat on {
+    protected case class Embedd ngType(embedd ngType: S mClustersEmbedd ngType) extends super.Val
+     mport scala.language. mpl c Convers ons
+     mpl c  def valueToEmbedd ngtype(x: Value): Embedd ngType = x.as nstanceOf[Embedd ngType]
 
-    val UserInterestedIn: Value = EmbeddingType(SimClustersEmbeddingType.FilteredUserInterestedIn)
-    val UnfilteredUserInterestedIn: Value = EmbeddingType(
-      SimClustersEmbeddingType.UnfilteredUserInterestedIn)
-    val FromProducerEmbedding: Value = EmbeddingType(
-      SimClustersEmbeddingType.FilteredUserInterestedInFromPE)
-    val LogFavBasedUserInterestedInFromAPE: Value = EmbeddingType(
-      SimClustersEmbeddingType.LogFavBasedUserInterestedInFromAPE)
-    val FollowBasedUserInterestedInFromAPE: Value = EmbeddingType(
-      SimClustersEmbeddingType.FollowBasedUserInterestedInFromAPE)
-    val UserNextInterestedIn: Value = EmbeddingType(SimClustersEmbeddingType.UserNextInterestedIn)
-    // AddressBook based InterestedIn
-    val LogFavBasedUserInterestedAverageAddressBookFromIIAPE: Value = EmbeddingType(
-      SimClustersEmbeddingType.LogFavBasedUserInterestedAverageAddressBookFromIIAPE)
-    val LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE: Value = EmbeddingType(
-      SimClustersEmbeddingType.LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE)
-    val LogFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE: Value = EmbeddingType(
-      SimClustersEmbeddingType.LogFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE)
-    val LogFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE: Value = EmbeddingType(
-      SimClustersEmbeddingType.LogFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE)
-    val LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE: Value = EmbeddingType(
-      SimClustersEmbeddingType.LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE)
-    val LogFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE: Value = EmbeddingType(
-      SimClustersEmbeddingType.LogFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE)
+    val User nterested n: Value = Embedd ngType(S mClustersEmbedd ngType.F lteredUser nterested n)
+    val Unf lteredUser nterested n: Value = Embedd ngType(
+      S mClustersEmbedd ngType.Unf lteredUser nterested n)
+    val FromProducerEmbedd ng: Value = Embedd ngType(
+      S mClustersEmbedd ngType.F lteredUser nterested nFromPE)
+    val LogFavBasedUser nterested nFromAPE: Value = Embedd ngType(
+      S mClustersEmbedd ngType.LogFavBasedUser nterested nFromAPE)
+    val FollowBasedUser nterested nFromAPE: Value = Embedd ngType(
+      S mClustersEmbedd ngType.FollowBasedUser nterested nFromAPE)
+    val UserNext nterested n: Value = Embedd ngType(S mClustersEmbedd ngType.UserNext nterested n)
+    // AddressBook based  nterested n
+    val LogFavBasedUser nterestedAverageAddressBookFrom  APE: Value = Embedd ngType(
+      S mClustersEmbedd ngType.LogFavBasedUser nterestedAverageAddressBookFrom  APE)
+    val LogFavBasedUser nterestedMaxpool ngAddressBookFrom  APE: Value = Embedd ngType(
+      S mClustersEmbedd ngType.LogFavBasedUser nterestedMaxpool ngAddressBookFrom  APE)
+    val LogFavBasedUser nterestedBooktypeMaxpool ngAddressBookFrom  APE: Value = Embedd ngType(
+      S mClustersEmbedd ngType.LogFavBasedUser nterestedBooktypeMaxpool ngAddressBookFrom  APE)
+    val LogFavBasedUser nterestedLargestD mMaxpool ngAddressBookFrom  APE: Value = Embedd ngType(
+      S mClustersEmbedd ngType.LogFavBasedUser nterestedLargestD mMaxpool ngAddressBookFrom  APE)
+    val LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE: Value = Embedd ngType(
+      S mClustersEmbedd ngType.LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE)
+    val LogFavBasedUser nterestedConnectedMaxpool ngAddressBookFrom  APE: Value = Embedd ngType(
+      S mClustersEmbedd ngType.LogFavBasedUser nterestedConnectedMaxpool ngAddressBookFrom  APE)
   }
 
-  object EnableSourceParam
+  object EnableS ceParam
       extends FSParam[Boolean](
-        name = "twistly_interestedin_enable_source",
+        na  = "tw stly_ nterested n_enable_s ce",
         default = true
       )
 
-  object InterestedInEmbeddingIdParam
-      extends FSEnumParam[SourceEmbedding.type](
-        name = "twistly_interestedin_embedding_id",
-        default = SourceEmbedding.UnfilteredUserInterestedIn,
-        enum = SourceEmbedding
+  object  nterested nEmbedd ng dParam
+      extends FSEnumParam[S ceEmbedd ng.type](
+        na  = "tw stly_ nterested n_embedd ng_ d",
+        default = S ceEmbedd ng.Unf lteredUser nterested n,
+        enum = S ceEmbedd ng
       )
 
-  object MinScoreParam
+  object M nScoreParam
       extends FSBoundedParam[Double](
-        name = "twistly_interestedin_min_score",
+        na  = "tw stly_ nterested n_m n_score",
         default = 0.072,
-        min = 0.0,
+        m n = 0.0,
         max = 1.0
       )
 
-  object EnableSourceSequentialModelParam
+  object EnableS ceSequent alModelParam
       extends FSParam[Boolean](
-        name = "twistly_interestedin_sequential_model_enable_source",
+        na  = "tw stly_ nterested n_sequent al_model_enable_s ce",
         default = false
       )
 
-  object NextInterestedInEmbeddingIdParam
-      extends FSEnumParam[SourceEmbedding.type](
-        name = "twistly_interestedin_sequential_model_embedding_id",
-        default = SourceEmbedding.UserNextInterestedIn,
-        enum = SourceEmbedding
+  object Next nterested nEmbedd ng dParam
+      extends FSEnumParam[S ceEmbedd ng.type](
+        na  = "tw stly_ nterested n_sequent al_model_embedd ng_ d",
+        default = S ceEmbedd ng.UserNext nterested n,
+        enum = S ceEmbedd ng
       )
 
-  object MinScoreSequentialModelParam
+  object M nScoreSequent alModelParam
       extends FSBoundedParam[Double](
-        name = "twistly_interestedin_sequential_model_min_score",
+        na  = "tw stly_ nterested n_sequent al_model_m n_score",
         default = 0.0,
-        min = 0.0,
+        m n = 0.0,
         max = 1.0
       )
 
-  object EnableSourceAddressBookParam
+  object EnableS ceAddressBookParam
       extends FSParam[Boolean](
-        name = "twistly_interestedin_addressbook_enable_source",
+        na  = "tw stly_ nterested n_addressbook_enable_s ce",
         default = false
       )
 
-  object AddressBookInterestedInEmbeddingIdParam
-      extends FSEnumParam[SourceEmbedding.type](
-        name = "twistly_interestedin_addressbook_embedding_id",
-        default = SourceEmbedding.LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE,
-        enum = SourceEmbedding
+  object AddressBook nterested nEmbedd ng dParam
+      extends FSEnumParam[S ceEmbedd ng.type](
+        na  = "tw stly_ nterested n_addressbook_embedd ng_ d",
+        default = S ceEmbedd ng.LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE,
+        enum = S ceEmbedd ng
       )
 
-  object MinScoreAddressBookParam
+  object M nScoreAddressBookParam
       extends FSBoundedParam[Double](
-        name = "twistly_interestedin_addressbook_min_score",
+        na  = "tw stly_ nterested n_addressbook_m n_score",
         default = 0.0,
-        min = 0.0,
+        m n = 0.0,
         max = 1.0
       )
 
-  // Prod SimClusters ANN param
-  // This is used to enable/disable querying of production SANN service. Useful when experimenting
-  // with replacements to it.
-  object EnableProdSimClustersANNParam
+  // Prod S mClusters ANN param
+  // T   s used to enable/d sable query ng of product on SANN serv ce. Useful w n exper  nt ng
+  // w h replace nts to  .
+  object EnableProdS mClustersANNParam
       extends FSParam[Boolean](
-        name = "twistly_interestedin_enable_prod_simclusters_ann",
+        na  = "tw stly_ nterested n_enable_prod_s mclusters_ann",
         default = true
       )
 
-  // Experimental SimClusters ANN params
-  object EnableExperimentalSimClustersANNParam
+  // Exper  ntal S mClusters ANN params
+  object EnableExper  ntalS mClustersANNParam
       extends FSParam[Boolean](
-        name = "twistly_interestedin_enable_experimental_simclusters_ann",
+        na  = "tw stly_ nterested n_enable_exper  ntal_s mclusters_ann",
         default = false
       )
 
-  // SimClusters ANN 1 cluster params
-  object EnableSimClustersANN1Param
+  // S mClusters ANN 1 cluster params
+  object EnableS mClustersANN1Param
       extends FSParam[Boolean](
-        name = "twistly_interestedin_enable_simclusters_ann_1",
+        na  = "tw stly_ nterested n_enable_s mclusters_ann_1",
         default = false
       )
 
-  // SimClusters ANN 2 cluster params
-  object EnableSimClustersANN2Param
+  // S mClusters ANN 2 cluster params
+  object EnableS mClustersANN2Param
       extends FSParam[Boolean](
-        name = "twistly_interestedin_enable_simclusters_ann_2",
+        na  = "tw stly_ nterested n_enable_s mclusters_ann_2",
         default = false
       )
 
-  // SimClusters ANN 3 cluster params
-  object EnableSimClustersANN3Param
+  // S mClusters ANN 3 cluster params
+  object EnableS mClustersANN3Param
       extends FSParam[Boolean](
-        name = "twistly_interestedin_enable_simclusters_ann_3",
+        na  = "tw stly_ nterested n_enable_s mclusters_ann_3",
         default = false
       )
 
-  // SimClusters ANN 5 cluster params
-  object EnableSimClustersANN5Param
+  // S mClusters ANN 5 cluster params
+  object EnableS mClustersANN5Param
       extends FSParam[Boolean](
-        name = "twistly_interestedin_enable_simclusters_ann_5",
+        na  = "tw stly_ nterested n_enable_s mclusters_ann_5",
         default = false
       )
 
-  // SimClusters ANN 4 cluster params
-  object EnableSimClustersANN4Param
+  // S mClusters ANN 4 cluster params
+  object EnableS mClustersANN4Param
       extends FSParam[Boolean](
-        name = "twistly_interestedin_enable_simclusters_ann_4",
+        na  = "tw stly_ nterested n_enable_s mclusters_ann_4",
         default = false
       )
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableSourceParam,
-    EnableSourceSequentialModelParam,
-    EnableSourceAddressBookParam,
-    EnableProdSimClustersANNParam,
-    EnableExperimentalSimClustersANNParam,
-    EnableSimClustersANN1Param,
-    EnableSimClustersANN2Param,
-    EnableSimClustersANN3Param,
-    EnableSimClustersANN5Param,
-    EnableSimClustersANN4Param,
-    MinScoreParam,
-    MinScoreSequentialModelParam,
-    MinScoreAddressBookParam,
-    InterestedInEmbeddingIdParam,
-    NextInterestedInEmbeddingIdParam,
-    AddressBookInterestedInEmbeddingIdParam,
+  val AllParams: Seq[Param[_] w h FSNa ] = Seq(
+    EnableS ceParam,
+    EnableS ceSequent alModelParam,
+    EnableS ceAddressBookParam,
+    EnableProdS mClustersANNParam,
+    EnableExper  ntalS mClustersANNParam,
+    EnableS mClustersANN1Param,
+    EnableS mClustersANN2Param,
+    EnableS mClustersANN3Param,
+    EnableS mClustersANN5Param,
+    EnableS mClustersANN4Param,
+    M nScoreParam,
+    M nScoreSequent alModelParam,
+    M nScoreAddressBookParam,
+     nterested nEmbedd ng dParam,
+    Next nterested nEmbedd ng dParam,
+    AddressBook nterested nEmbedd ng dParam,
   )
 
-  lazy val config: BaseConfig = {
+  lazy val conf g: BaseConf g = {
 
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableSourceParam,
-      EnableSourceSequentialModelParam,
-      EnableSourceAddressBookParam,
-      EnableProdSimClustersANNParam,
-      EnableExperimentalSimClustersANNParam,
-      EnableSimClustersANN1Param,
-      EnableSimClustersANN2Param,
-      EnableSimClustersANN3Param,
-      EnableSimClustersANN5Param,
-      EnableSimClustersANN4Param
+    val booleanOverr des = FeatureSw chOverr deUt l.getBooleanFSOverr des(
+      EnableS ceParam,
+      EnableS ceSequent alModelParam,
+      EnableS ceAddressBookParam,
+      EnableProdS mClustersANNParam,
+      EnableExper  ntalS mClustersANNParam,
+      EnableS mClustersANN1Param,
+      EnableS mClustersANN2Param,
+      EnableS mClustersANN3Param,
+      EnableS mClustersANN5Param,
+      EnableS mClustersANN4Param
     )
 
-    val doubleOverrides = FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(
-      MinScoreParam,
-      MinScoreSequentialModelParam,
-      MinScoreAddressBookParam)
+    val doubleOverr des = FeatureSw chOverr deUt l.getBoundedDoubleFSOverr des(
+      M nScoreParam,
+      M nScoreSequent alModelParam,
+      M nScoreAddressBookParam)
 
-    val enumOverrides = FeatureSwitchOverrideUtil.getEnumFSOverrides(
-      NullStatsReceiver,
+    val enumOverr des = FeatureSw chOverr deUt l.getEnumFSOverr des(
+      NullStatsRece ver,
       Logger(getClass),
-      InterestedInEmbeddingIdParam,
-      NextInterestedInEmbeddingIdParam,
-      AddressBookInterestedInEmbeddingIdParam
+       nterested nEmbedd ng dParam,
+      Next nterested nEmbedd ng dParam,
+      AddressBook nterested nEmbedd ng dParam
     )
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(doubleOverrides: _*)
-      .set(enumOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set(booleanOverr des: _*)
+      .set(doubleOverr des: _*)
+      .set(enumOverr des: _*)
+      .bu ld()
   }
 }

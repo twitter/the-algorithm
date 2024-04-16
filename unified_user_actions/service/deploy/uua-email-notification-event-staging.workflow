@@ -1,39 +1,39 @@
 {
-  "role": "discode",
-  "name": "uua-email-notification-event-staging",
-  "config-files": [
-    "uua-email-notification-event.aurora"
+  "role": "d scode",
+  "na ": "uua-ema l-not f cat on-event-stag ng",
+  "conf g-f les": [
+    "uua-ema l-not f cat on-event.aurora"
   ],
-  "build": {
+  "bu ld": {
     "play": true,
-    "dependencies": [
+    "dependenc es": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "na ": "packer-cl ent-no-pex",
+        "vers on": "latest"
       }
     ],
     "steps": [
       {
         "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-email-notification-event"
+        "na ": "bundle",
+        "target": "un f ed_user_act ons/serv ce/src/ma n/scala:uua-ema l-not f cat on-event"
       },
       {
         "type": "packer",
-        "name": "uua-email-notification-event-staging",
-        "artifact": "./dist/uua-email-notification-event.zip"
+        "na ": "uua-ema l-not f cat on-event-stag ng",
+        "art fact": "./d st/uua-ema l-not f cat on-event.z p"
       }
     ]
   },
   "targets": [
     {
       "type": "group",
-      "name": "staging",
+      "na ": "stag ng",
       "targets": [
         {
-          "name": "uua-email-notification-event-staging-pdxa",
-          "key": "pdxa/discode/staging/uua-email-notification-event"
+          "na ": "uua-ema l-not f cat on-event-stag ng-pdxa",
+          "key": "pdxa/d scode/stag ng/uua-ema l-not f cat on-event"
         }
       ]
     }

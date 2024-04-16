@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.HorizonIcon
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. con.Hor zon con
 
-case class FeedbackAction(
+case class FeedbackAct on(
   feedbackType: FeedbackType,
-  prompt: Option[String],
-  confirmation: Option[String],
-  childFeedbackActions: Option[Seq[ChildFeedbackAction]],
-  feedbackUrl: Option[String],
-  hasUndoAction: Option[Boolean],
-  confirmationDisplayType: Option[ConfirmationDisplayType],
-  clientEventInfo: Option[ClientEventInfo],
-  icon: Option[HorizonIcon],
-  richBehavior: Option[RichFeedbackBehavior],
-  subprompt: Option[String],
-  encodedFeedbackRequest: Option[String])
+  prompt: Opt on[Str ng],
+  conf rmat on: Opt on[Str ng],
+  ch ldFeedbackAct ons: Opt on[Seq[Ch ldFeedbackAct on]],
+  feedbackUrl: Opt on[Str ng],
+  hasUndoAct on: Opt on[Boolean],
+  conf rmat onD splayType: Opt on[Conf rmat onD splayType],
+  cl entEvent nfo: Opt on[Cl entEvent nfo],
+   con: Opt on[Hor zon con],
+  r chBehav or: Opt on[R chFeedbackBehav or],
+  subprompt: Opt on[Str ng],
+  encodedFeedbackRequest: Opt on[Str ng])
 
-case class ChildFeedbackAction(
+case class Ch ldFeedbackAct on(
   feedbackType: FeedbackType,
-  prompt: Option[String],
-  confirmation: Option[String],
-  feedbackUrl: Option[String],
-  hasUndoAction: Option[Boolean],
-  confirmationDisplayType: Option[ConfirmationDisplayType],
-  clientEventInfo: Option[ClientEventInfo],
-  icon: Option[HorizonIcon],
-  richBehavior: Option[RichFeedbackBehavior],
-  subprompt: Option[String])
+  prompt: Opt on[Str ng],
+  conf rmat on: Opt on[Str ng],
+  feedbackUrl: Opt on[Str ng],
+  hasUndoAct on: Opt on[Boolean],
+  conf rmat onD splayType: Opt on[Conf rmat onD splayType],
+  cl entEvent nfo: Opt on[Cl entEvent nfo],
+   con: Opt on[Hor zon con],
+  r chBehav or: Opt on[R chFeedbackBehav or],
+  subprompt: Opt on[Str ng])

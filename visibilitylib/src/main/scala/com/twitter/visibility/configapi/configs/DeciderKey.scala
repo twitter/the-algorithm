@@ -1,1067 +1,1067 @@
-package com.twitter.visibility.configapi.configs
+package com.tw ter.v s b l y.conf gap .conf gs
 
-import com.twitter.servo.decider.DeciderKeyEnum
+ mport com.tw ter.servo.dec der.Dec derKeyEnum
 
-private[visibility] object DeciderKey extends DeciderKeyEnum {
+pr vate[v s b l y] object Dec derKey extends Dec derKeyEnum {
 
-  val EnableAllSubscribedListsSafetyLevel: Value = Value(
-    "visibility_library_enable_all_subscribed_lists_safety_level"
+  val EnableAllSubscr bedL stsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_all_subscr bed_l sts_safety_level"
   )
-  val EnableAdsBusinessSettingsSafetyLevel: Value = Value(
-    "visibility_library_enable_ads_business_settings_safety_level"
+  val EnableAdsBus nessSett ngsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_ads_bus ness_sett ngs_safety_level"
   )
-  val EnableAdsCampaignSafetyLevel: Value = Value(
-    "visibility_library_enable_ads_campaign_safety_level"
+  val EnableAdsCampa gnSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_ads_campa gn_safety_level"
   )
   val EnableAdsManagerSafetyLevel: Value = Value(
-    "visibility_library_enable_ads_manager_safety_level"
+    "v s b l y_l brary_enable_ads_manager_safety_level"
   )
-  val EnableAdsReportingDashboardSafetyLevel: Value = Value(
-    "visibility_library_enable_ads_reporting_dashboard_safety_level"
+  val EnableAdsReport ngDashboardSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_ads_report ng_dashboard_safety_level"
   )
   val EnableAppealsSafetyLevel: Value = Value(
-    "visibility_library_enable_appeals_safety_level"
+    "v s b l y_l brary_enable_appeals_safety_level"
   )
-  val EnableArticleTweetTimelineSafetyLevel: Value = Value(
-    "visibility_library_enable_article_tweet_timeline_safety_level"
+  val EnableArt cleT etT  l neSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_art cle_t et_t  l ne_safety_level"
   )
-  val EnableBaseQig: Value = Value(
-    "visibility_library_enable_base_qig_safety_level"
+  val EnableBaseQ g: Value = Value(
+    "v s b l y_l brary_enable_base_q g_safety_level"
   )
-  val EnableBirdwatchNoteAuthorSafetyLevel: Value = Value(
-    "visibility_library_enable_birdwatch_note_author_safety_level"
+  val EnableB rdwatchNoteAuthorSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_b rdwatch_note_author_safety_level"
   )
-  val EnableBirdwatchNoteTweetsTimelineSafetyLevel: Value = Value(
-    "visibility_library_enable_birdwatch_note_tweets_timeline_safety_level"
+  val EnableB rdwatchNoteT etsT  l neSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_b rdwatch_note_t ets_t  l ne_safety_level"
   )
-  val EnableBirdwatchNeedsYourHelpNotificationsSafetyLevel: Value = Value(
-    "visibility_library_enable_birdwatch_needs_your_help_notifications_safety_level"
+  val EnableB rdwatchNeedsY  lpNot f cat onsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_b rdwatch_needs_y _ lp_not f cat ons_safety_level"
   )
-  val EnableBlockMuteUsersTimelineSafetyLevel: Value = Value(
-    "visibility_library_enable_block_mute_users_timeline_safety_level"
+  val EnableBlockMuteUsersT  l neSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_block_mute_users_t  l ne_safety_level"
   )
   val EnableBrandSafetySafetyLevel: Value = Value(
-    "visibility_library_enable_brand_safety_safety_level"
+    "v s b l y_l brary_enable_brand_safety_safety_level"
   )
-  val EnableCardPollVotingSafetyLevel: Value = Value(
-    "visibility_library_enable_card_poll_voting_safety_level"
+  val EnableCardPollVot ngSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_card_poll_vot ng_safety_level"
   )
-  val EnableCardsServiceSafetyLevel: Value = Value(
-    "visibility_library_enable_cards_service_safety_level"
+  val EnableCardsServ ceSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_cards_serv ce_safety_level"
   )
-  val EnableCommunitiesSafetyLevel: Value = Value(
-    "visibility_library_enable_communities_safety_level"
+  val EnableCommun  esSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_commun  es_safety_level"
   )
-  val EnableContentControlToolInstallSafetyLevel: Value = Value(
-    "visibility_library_enable_content_control_tool_install_safety_level"
+  val EnableContentControlTool nstallSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_content_control_tool_ nstall_safety_level"
   )
-  val EnableConversationFocalPrehydrationSafetyLevel: Value = Value(
-    "visibility_library_enable_conversation_focal_prehydration_safety_level"
+  val EnableConversat onFocalPrehydrat onSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_conversat on_focal_prehydrat on_safety_level"
   )
-  val EnableConversationFocalTweetSafetyLevel: Value = Value(
-    "visibility_library_enable_conversation_focal_tweet_safety_level"
+  val EnableConversat onFocalT etSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_conversat on_focal_t et_safety_level"
   )
-  val EnableConversationInjectedTweetSafetyLevel: Value = Value(
-    "visibility_library_enable_conversation_injected_tweet_safety_level"
+  val EnableConversat on njectedT etSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_conversat on_ njected_t et_safety_level"
   )
-  val EnableConversationReplySafetyLevel: Value = Value(
-    "visibility_library_enable_conversation_reply_safety_level"
+  val EnableConversat onReplySafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_conversat on_reply_safety_level"
   )
-  val EnableCuratedTrendsRepresentativeTweet: Value = Value(
-    "visibility_library_curated_trends_representative_tweet"
+  val EnableCuratedTrendsRepresentat veT et: Value = Value(
+    "v s b l y_l brary_curated_trends_representat ve_t et"
   )
-  val EnableCurationPolicyViolations: Value = Value(
-    "visibility_library_curation_policy_violations"
+  val EnableCurat onPol cyV olat ons: Value = Value(
+    "v s b l y_l brary_curat on_pol cy_v olat ons"
   )
   val EnableDeprecatedSafetyLevelSafetyLevel: Value = Value(
-    "visibility_library_enable_deprecated_safety_level_safety_level"
+    "v s b l y_l brary_enable_deprecated_safety_level_safety_level"
   )
-  val EnableDevPlatformGetListTweetsSafetyLevel: Value = Value(
-    "visibility_library_enable_dev_platform_get_list_tweets_safety_level"
+  val EnableDevPlatformGetL stT etsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_dev_platform_get_l st_t ets_safety_level"
   )
-  val EnableDesFollowingAndFollowersUserListSafetyLevel: Value = Value(
-    "visibility_library_enable_des_following_and_followers_user_list_safety_level"
+  val EnableDesFollow ngAndFollo rsUserL stSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_des_follow ng_and_follo rs_user_l st_safety_level"
   )
-  val EnableDesHomeTimelineSafetyLevel: Value = Value(
-    "visibility_library_enable_des_home_timeline_safety_level"
+  val EnableDesHo T  l neSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_des_ho _t  l ne_safety_level"
   )
-  val EnableDesQuoteTweetTimelineSafetyLevel: Value = Value(
-    "visibility_library_enable_des_quote_tweet_timeline_safety_level"
+  val EnableDesQuoteT etT  l neSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_des_quote_t et_t  l ne_safety_level"
   )
-  val EnableDesRealtimeSafetyLevel: Value = Value(
-    "visibility_library_enable_des_realtime_safety_level"
+  val EnableDesRealt  SafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_des_realt  _safety_level"
   )
-  val EnableDesRealtimeSpamEnrichmentSafetyLevel: Value = Value(
-    "visibility_library_enable_des_realtime_spam_enrichment_safety_level"
+  val EnableDesRealt  SpamEnr ch ntSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_des_realt  _spam_enr ch nt_safety_level"
   )
-  val EnableDesRealtimeTweetFilterSafetyLevel: Value = Value(
-    "visibility_library_enable_des_realtime_tweet_filter_safety_level"
+  val EnableDesRealt  T etF lterSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_des_realt  _t et_f lter_safety_level"
   )
-  val EnableDesRetweetingUsersSafetyLevel: Value = Value(
-    "visibility_library_enable_des_retweeting_users_safety_level"
+  val EnableDesRet et ngUsersSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_des_ret et ng_users_safety_level"
   )
-  val EnableDesTweetDetailSafetyLevel: Value = Value(
-    "visibility_library_enable_des_tweet_detail_safety_level"
+  val EnableDesT etDeta lSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_des_t et_deta l_safety_level"
   )
-  val EnableDesTweetLikingUsersSafetyLevel: Value = Value(
-    "visibility_library_enable_des_tweet_liking_users_safety_level"
+  val EnableDesT etL k ngUsersSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_des_t et_l k ng_users_safety_level"
   )
   val EnableDesUserBookmarksSafetyLevel: Value = Value(
-    "visibility_library_enable_des_user_bookmarks_safety_level"
+    "v s b l y_l brary_enable_des_user_bookmarks_safety_level"
   )
-  val EnableDesUserLikedTweetsSafetyLevel: Value = Value(
-    "visibility_library_enable_des_user_liked_tweets_safety_level"
+  val EnableDesUserL kedT etsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_des_user_l ked_t ets_safety_level"
   )
-  val EnableDesUserMentionsSafetyLevel: Value = Value(
-    "visibility_library_enable_des_user_mentions_safety_level"
+  val EnableDesUser nt onsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_des_user_ nt ons_safety_level"
   )
-  val EnableDesUserTweetsSafetyLevel: Value = Value(
-    "visibility_library_enable_des_user_tweets_safety_level"
+  val EnableDesUserT etsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_des_user_t ets_safety_level"
   )
-  val EnableDevPlatformComplianceStreamSafetyLevel: Value = Value(
-    "visibility_library_enable_dev_platform_compliance_stream_safety_level"
+  val EnableDevPlatformCompl anceStreamSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_dev_platform_compl ance_stream_safety_level"
   )
-  val EnableDirectMessagesSafetyLevel: Value = Value(
-    "visibility_library_enable_direct_messages_safety_level"
+  val EnableD rect ssagesSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_d rect_ ssages_safety_level"
   )
-  val EnableDirectMessagesConversationListSafetyLevel: Value = Value(
-    "visibility_library_enable_direct_messages_conversation_list_safety_level"
+  val EnableD rect ssagesConversat onL stSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_d rect_ ssages_conversat on_l st_safety_level"
   )
-  val EnableDirectMessagesConversationTimelineSafetyLevel: Value = Value(
-    "visibility_library_enable_direct_messages_conversation_timeline_safety_level"
+  val EnableD rect ssagesConversat onT  l neSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_d rect_ ssages_conversat on_t  l ne_safety_level"
   )
-  val EnableDirectMessagesInboxSafetyLevel: Value = Value(
-    "visibility_library_enable_direct_messages_inbox_safety_level"
+  val EnableD rect ssages nboxSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_d rect_ ssages_ nbox_safety_level"
   )
-  val EnableDirectMessagesMutedUsersSafetyLevel: Value = Value(
-    "visibility_library_enable_direct_messages_muted_users_safety_level"
+  val EnableD rect ssagesMutedUsersSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_d rect_ ssages_muted_users_safety_level"
   )
-  val EnableDirectMessagesPinnedSafetyLevel: Value = Value(
-    "visibility_library_enable_direct_messages_pinned_safety_level"
+  val EnableD rect ssagesP nnedSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_d rect_ ssages_p nned_safety_level"
   )
-  val EnableDirectMessagesSearchSafetyLevel: Value = Value(
-    "visibility_library_enable_direct_messages_search_safety_level"
+  val EnableD rect ssagesSearchSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_d rect_ ssages_search_safety_level"
   )
-  val EnableElevatedQuoteTweetTimelineSafetyLevel: Value = Value(
-    "visibility_library_enable_elevated_quote_tweet_timeline_safety_level"
+  val EnableElevatedQuoteT etT  l neSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_elevated_quote_t et_t  l ne_safety_level"
   )
-  val EnableEmbeddedTweetSafetyLevel: Value = Value(
-    "visibility_library_enable_embedded_tweet_safety_level"
+  val EnableEmbeddedT etSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_embedded_t et_safety_level"
   )
-  val EnableEmbedsPublicInterestNoticeSafetyLevel: Value = Value(
-    "visibility_library_enable_embeds_public_interest_notice_safety_level"
+  val EnableEmbedsPubl c nterestNot ceSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_embeds_publ c_ nterest_not ce_safety_level"
   )
-  val EnableEmbedTweetMarkupSafetyLevel: Value = Value(
-    "visibility_library_enable_embed_tweet_markup_safety_level"
+  val EnableEmbedT etMarkupSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_embed_t et_markup_safety_level"
   )
-  val EnableWritePathLimitedActionsEnforcementSafetyLevel: Value = Value(
-    "visibility_library_enable_write_path_limited_actions_enforcement_safety_level"
+  val EnableWr ePathL m edAct onsEnforce ntSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_wr e_path_l m ed_act ons_enforce nt_safety_level"
   )
-  val EnableFilterDefaultSafetyLevel: Value = Value(
-    "visibility_library_enable_filter_default_safety_level"
+  val EnableF lterDefaultSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_f lter_default_safety_level"
   )
-  val EnableFilterNoneSafetyLevel: Value = Value(
-    "visibility_library_enable_filter_none_safety_level"
-  )
-
-  val EnableFilterAllSafetyLevel: Value = Value(
-    "visibility_library_enable_filter_all_safety_level"
-  )
-  val EnableFilterAllPlaceholderSafetyLevel: Value = Value(
-    "visibility_library_enable_filter_all_placeholder_safety_level"
+  val EnableF lterNoneSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_f lter_none_safety_level"
   )
 
-  val EnableFollowedTopicsTimelineSafetyLevel: Value = Value(
-    "visibility_library_enable_followed_topics_timeline_safety_level"
+  val EnableF lterAllSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_f lter_all_safety_level"
+  )
+  val EnableF lterAllPlaceholderSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_f lter_all_placeholder_safety_level"
   )
 
-  val EnableFollowerConnectionsSafetyLevel: Value = Value(
-    "visibility_library_enable_follower_connections_safety_level"
-  )
-  val EnableFollowingAndFollowersUserListSafetyLevel: Value = Value(
-    "visibility_library_enable_following_and_followers_user_list_safety_level"
+  val EnableFollo dTop csT  l neSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_follo d_top cs_t  l ne_safety_level"
   )
 
-  val EnableForDevelopmentOnlySafetyLevel: Value = Value(
-    "visibility_library_enable_for_development_only_safety_level"
+  val EnableFollo rConnect onsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_follo r_connect ons_safety_level"
+  )
+  val EnableFollow ngAndFollo rsUserL stSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_follow ng_and_follo rs_user_l st_safety_level"
   )
 
-  val EnableFriendsFollowingListSafetyLevel: Value = Value(
-    "visibility_library_enable_friends_following_list_safety_level"
+  val EnableForDevelop ntOnlySafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_for_develop nt_only_safety_level"
+  )
+
+  val EnableFr endsFollow ngL stSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_fr ends_follow ng_l st_safety_level"
   )
 
   val EnableGraphqlDefaultSafetyLevel: Value = Value(
-    "visibility_library_enable_graphql_default_safety_level"
+    "v s b l y_l brary_enable_graphql_default_safety_level"
   )
 
   val EnableGryphonDecksAndColumnsSafetyLevel: Value = Value(
-    "visibility_library_enable_gryphon_decks_and_columns_safety_level"
+    "v s b l y_l brary_enable_gryphon_decks_and_columns_safety_level"
   )
 
-  val EnableHumanizationNudgeSafetyLevel: Value = Value(
-    "visibility_library_enable_humanization_nudge_safety_level"
+  val EnableHuman zat onNudgeSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_human zat on_nudge_safety_level"
   )
 
-  val EnableKitchenSinkDevelopmentSafetyLevel: Value = Value(
-    "visibility_library_enable_kitchen_sink_development_safety_level"
+  val EnableK c nS nkDevelop ntSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_k c n_s nk_develop nt_safety_level"
   )
 
-  val EnableListHeaderSafetyLevel: Value = Value(
-    "visibility_library_enable_list_header_safety_level"
+  val EnableL st aderSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_l st_ ader_safety_level"
   )
 
-  val EnableListMembershipsSafetyLevel: Value = Value(
-    "visibility_library_enable_list_memberships_safety_level"
+  val EnableL st mbersh psSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_l st_ mbersh ps_safety_level"
   )
 
-  val EnableListOwnershipsSafetyLevel: Value = Value(
-    "visibility_library_enable_list_ownerships_safety_level"
+  val EnableL stOwnersh psSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_l st_ownersh ps_safety_level"
   )
 
-  val EnableListRecommendationsSafetyLevel: Value = Value(
-    "visibility_library_enable_list_recommendations_safety_level"
+  val EnableL stRecom ndat onsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_l st_recom ndat ons_safety_level"
   )
 
-  val EnableListSearchSafetyLevel: Value = Value(
-    "visibility_library_enable_list_search_safety_level"
+  val EnableL stSearchSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_l st_search_safety_level"
   )
 
-  val EnableListSubscriptionsSafetyLevel: Value = Value(
-    "visibility_library_enable_list_subscriptions_safety_level"
+  val EnableL stSubscr pt onsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_l st_subscr pt ons_safety_level"
   )
 
-  val EnableLivePipelineEngagementCountsSafetyLevel: Value = Value(
-    "visibility_library_enable_live_pipeline_engagement_counts_safety_level"
+  val EnableL veP pel neEngage ntCountsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_l ve_p pel ne_engage nt_counts_safety_level"
   )
-  val EnableLiveVideoTimelineSafetyLevel: Value = Value(
-    "visibility_library_enable_live_video_timeline_safety_level"
+  val EnableL veV deoT  l neSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_l ve_v deo_t  l ne_safety_level"
   )
-  val EnableMagicRecsAggressiveSafetyLevel: Value = Value(
-    "visibility_library_enable_magic_recs_aggressive_safety_level"
+  val EnableMag cRecsAggress veSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_mag c_recs_aggress ve_safety_level"
   )
-  val EnableMagicRecsAggressiveV2SafetyLevel: Value = Value(
-    "visibility_library_enable_magic_recs_aggressive_v2_safety_level"
+  val EnableMag cRecsAggress veV2SafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_mag c_recs_aggress ve_v2_safety_level"
   )
-  val EnableMagicRecsSafetyLevel: Value = Value(
-    "visibility_library_enable_magic_recs_safety_level"
+  val EnableMag cRecsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_mag c_recs_safety_level"
   )
-  val EnableMagicRecsV2SafetyLevel: Value = Value(
-    "visibility_library_enable_magic_recs_v2_safety_level"
+  val EnableMag cRecsV2SafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_mag c_recs_v2_safety_level"
   )
-  val EnableMinimalSafetyLevel: Value = Value(
-    "visibility_library_enable_minimal_safety_level"
+  val EnableM n malSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_m n mal_safety_level"
   )
-  val EnableModeratedTweetsTimelineSafetyLevel: Value = Value(
-    "visibility_library_enable_moderated_tweets_timeline_safety_level"
+  val EnableModeratedT etsT  l neSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_moderated_t ets_t  l ne_safety_level"
   )
-  val EnableMomentsSafetyLevel: Value = Value(
-    "visibility_library_enable_moments_safety_level"
+  val EnableMo ntsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_mo nts_safety_level"
   )
-  val EnableNearbyTimelineSafetyLevel: Value = Value(
-    "visibility_library_enable_nearby_timeline_safety_level"
+  val EnableNearbyT  l neSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_nearby_t  l ne_safety_level"
   )
-  val EnableNewUserExperienceSafetyLevel: Value = Value(
-    "visibility_library_enable_new_user_experience_safety_level"
+  val EnableNewUserExper enceSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_new_user_exper ence_safety_level"
   )
-  val EnableNotificationsIbisSafetyLevel: Value = Value(
-    "visibility_library_enable_notifications_ibis_safety_level"
+  val EnableNot f cat ons b sSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_not f cat ons_ b s_safety_level"
   )
-  val EnableNotificationsPlatformSafetyLevel: Value = Value(
-    "visibility_library_enable_notifications_platform_safety_level"
+  val EnableNot f cat onsPlatformSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_not f cat ons_platform_safety_level"
   )
-  val EnableNotificationsPlatformPushSafetyLevel: Value = Value(
-    "visibility_library_enable_notifications_platform_push_safety_level"
+  val EnableNot f cat onsPlatformPushSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_not f cat ons_platform_push_safety_level"
   )
-  val EnableNotificationsReadSafetyLevel: Value = Value(
-    "visibility_library_enable_notifications_read_safety_level"
+  val EnableNot f cat onsReadSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_not f cat ons_read_safety_level"
   )
-  val EnableNotificationsTimelineDeviceFollowSafetyLevel: Value = Value(
-    "visibility_library_enable_notifications_timeline_device_follow_safety_level"
+  val EnableNot f cat onsT  l neDev ceFollowSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_not f cat ons_t  l ne_dev ce_follow_safety_level"
   )
-  val EnableNotificationsWriteSafetyLevel: Value = Value(
-    "visibility_library_enable_notifications_write_safety_level"
+  val EnableNot f cat onsWr eSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_not f cat ons_wr e_safety_level"
   )
-  val EnableNotificationsWriterV2SafetyLevel: Value = Value(
-    "visibility_library_enable_notification_writer_v2_safety_level"
+  val EnableNot f cat onsWr erV2SafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_not f cat on_wr er_v2_safety_level"
   )
-  val EnableNotificationsWriterTweetHydratorSafetyLevel: Value = Value(
-    "visibility_library_enable_notifications_writer_tweet_hydrator_safety_level"
+  val EnableNot f cat onsWr erT etHydratorSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_not f cat ons_wr er_t et_hydrator_safety_level"
   )
-  val EnableQuickPromoteTweetEligibilitySafetyLevel: Value = Value(
-    "visibility_library_enable_quick_promote_tweet_eligibility_safety_level"
+  val EnableQu ckPromoteT etEl g b l ySafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_qu ck_promote_t et_el g b l y_safety_level"
   )
-  val EnableQuoteTweetTimelineSafetyLevel: Value = Value(
-    "visibility_library_enable_quote_tweet_timeline_safety_level"
+  val EnableQuoteT etT  l neSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_quote_t et_t  l ne_safety_level"
   )
-  val EnableQuotedTweetRulesSafetyLevel: Value = Value(
-    "visibility_library_enable_quoted_tweet_rules_safety_level"
+  val EnableQuotedT etRulesSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_quoted_t et_rules_safety_level"
   )
-  val EnableRecommendationsSafetyLevel: Value = Value(
-    "visibility_library_enable_recommendations_safety_level"
+  val EnableRecom ndat onsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_recom ndat ons_safety_level"
   )
-  val EnableRecosVideoSafetyLevel: Value = Value(
-    "visibility_library_enable_recos_video_safety_level"
+  val EnableRecosV deoSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_recos_v deo_safety_level"
   )
-  val EnableRecosWritePathSafetyLevel: Value = Value(
-    "visibility_library_enable_recos_write_path_safety_level"
+  val EnableRecosWr ePathSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_recos_wr e_path_safety_level"
   )
-  val EnableRepliesGroupingSafetyLevel: Value = Value(
-    "visibility_library_enable_replies_grouping_safety_level"
+  val EnableRepl esGroup ngSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_repl es_group ng_safety_level"
   )
   val EnableReportCenterSafetyLevel: Value = Value(
-    "visibility_library_enable_report_center_safety_level"
+    "v s b l y_l brary_enable_report_center_safety_level"
   )
-  val EnableReturningUserExperienceSafetyLevel: Value = Value(
-    "visibility_library_enable_returning_user_experience_safety_level"
+  val EnableReturn ngUserExper enceSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_return ng_user_exper ence_safety_level"
   )
-  val EnableReturningUserExperienceFocalTweetSafetyLevel: Value = Value(
-    "visibility_library_enable_returning_user_experience_focal_tweet_safety_level"
+  val EnableReturn ngUserExper enceFocalT etSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_return ng_user_exper ence_focal_t et_safety_level"
   )
   val EnableRevenueSafetyLevel: Value = Value(
-    "visibility_library_enable_revenue_safety_level"
+    "v s b l y_l brary_enable_revenue_safety_level"
   )
-  val EnableRitoActionedTweetTimelineSafetyLevel: Value = Value(
-    "visibility_library_enable_rito_actioned_tweet_timeline_safety_level"
+  val EnableR oAct onedT etT  l neSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_r o_act oned_t et_t  l ne_safety_level"
   )
-  val EnableSafeSearchMinimalSafetyLevel: Value = Value(
-    "visibility_library_enable_safe_search_minimal_safety_level"
+  val EnableSafeSearchM n malSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_safe_search_m n mal_safety_level"
   )
-  val EnableSafeSearchStrictSafetyLevel: Value = Value(
-    "visibility_library_enable_safe_search_strict_safety_level"
+  val EnableSafeSearchStr ctSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_safe_search_str ct_safety_level"
   )
-  val EnableAccessInternalPromotedContentSafetyLevel: Value = Value(
-    "visibility_library_enable_access_internal_promoted_content_safety_level"
+  val EnableAccess nternalPromotedContentSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_access_ nternal_promoted_content_safety_level"
   )
-  val EnableSearchHydration: Value = Value(
-    "visibility_library_enable_search_hydration_safety_level"
+  val EnableSearchHydrat on: Value = Value(
+    "v s b l y_l brary_enable_search_hydrat on_safety_level"
   )
   val EnableSearchLatest: Value = Value(
-    "visibility_library_enable_search_latest_safety_level"
+    "v s b l y_l brary_enable_search_latest_safety_level"
   )
-  val EnableSearchMixerSrpMinimalSafetyLevel: Value = Value(
-    "visibility_library_enable_search_mixer_srp_minimal_safety_level"
+  val EnableSearchM xerSrpM n malSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_search_m xer_srp_m n mal_safety_level"
   )
-  val EnableSearchMixerSrpStrictSafetyLevel: Value = Value(
-    "visibility_library_enable_search_mixer_srp_strict_safety_level"
+  val EnableSearchM xerSrpStr ctSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_search_m xer_srp_str ct_safety_level"
   )
   val EnableUserSearchSrpSafetyLevel: Value = Value(
-    "visibility_library_enable_user_search_srp_safety_level"
+    "v s b l y_l brary_enable_user_search_srp_safety_level"
   )
-  val EnableUserSearchTypeaheadSafetyLevel: Value = Value(
-    "visibility_library_enable_user_search_typeahead_safety_level"
+  val EnableUserSearchTypea adSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_user_search_typea ad_safety_level"
   )
   val EnableSearchPeopleSrp: Value = Value(
-    "visibility_library_enable_search_people_srp_safety_level"
+    "v s b l y_l brary_enable_search_people_srp_safety_level"
   )
-  val EnableSearchPeopleTypeahead: Value = Value(
-    "visibility_library_enable_search_people_typeahead_safety_level"
+  val EnableSearchPeopleTypea ad: Value = Value(
+    "v s b l y_l brary_enable_search_people_typea ad_safety_level"
   )
   val EnableSearchPhoto: Value = Value(
-    "visibility_library_enable_search_photo_safety_level"
+    "v s b l y_l brary_enable_search_photo_safety_level"
   )
   val EnableSearchTop: Value = Value(
-    "visibility_library_enable_search_top_safety_level"
+    "v s b l y_l brary_enable_search_top_safety_level"
   )
-  val EnableSearchTopQig: Value = Value(
-    "visibility_library_enable_search_top_qig_safety_level"
+  val EnableSearchTopQ g: Value = Value(
+    "v s b l y_l brary_enable_search_top_q g_safety_level"
   )
-  val EnableSearchTrendTakeoverPromotedTweet: Value = Value(
-    "visibility_library_enable_search_trend_takeover_promoted_tweet_safety_level"
+  val EnableSearchTrendTakeoverPromotedT et: Value = Value(
+    "v s b l y_l brary_enable_search_trend_takeover_promoted_t et_safety_level"
   )
-  val EnableSearchVideo: Value = Value(
-    "visibility_library_enable_search_video_safety_level"
+  val EnableSearchV deo: Value = Value(
+    "v s b l y_l brary_enable_search_v deo_safety_level"
   )
   val EnableSearchLatestUserRules: Value = Value(
-    "visibility_library_enable_search_latest_user_rules_safety_level"
+    "v s b l y_l brary_enable_search_latest_user_rules_safety_level"
   )
-  val EnableShoppingManagerSpyModeSafetyLevel: Value = Value(
-    "visibility_library_enable_shopping_manager_spy_mode_safety_level"
+  val EnableShopp ngManagerSpyModeSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_shopp ng_manager_spy_mode_safety_level"
   )
-  val EnableSignalsReactions: Value = Value(
-    "visibility_library_enable_signals_reactions_safety_level"
+  val EnableS gnalsReact ons: Value = Value(
+    "v s b l y_l brary_enable_s gnals_react ons_safety_level"
   )
-  val EnableSignalsTweetReactingUsers: Value = Value(
-    "visibility_library_enable_signals_tweet_reacting_users_safety_level"
+  val EnableS gnalsT etReact ngUsers: Value = Value(
+    "v s b l y_l brary_enable_s gnals_t et_react ng_users_safety_level"
   )
-  val EnableSocialProof: Value = Value(
-    "visibility_library_enable_social_proof_safety_level"
+  val EnableSoc alProof: Value = Value(
+    "v s b l y_l brary_enable_soc al_proof_safety_level"
   )
-  val EnableSoftInterventionPivot: Value = Value(
-    "visibility_library_enable_soft_intervention_pivot_safety_level"
+  val EnableSoft ntervent onP vot: Value = Value(
+    "v s b l y_l brary_enable_soft_ ntervent on_p vot_safety_level"
   )
-  val EnableSpaceFleetlineSafetyLevel: Value = Value(
-    "visibility_library_enable_space_fleetline_safety_level"
+  val EnableSpaceFleetl neSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_space_fleetl ne_safety_level"
   )
-  val EnableSpaceHomeTimelineUprankingSafetyLevel: Value = Value(
-    "visibility_library_enable_space_home_timeline_upranking_safety_level"
+  val EnableSpaceHo T  l neUprank ngSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_space_ho _t  l ne_uprank ng_safety_level"
   )
-  val EnableSpaceJoinScreenSafetyLevel: Value = Value(
-    "visibility_library_enable_space_join_screen_safety_level"
+  val EnableSpaceJo nScreenSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_space_jo n_screen_safety_level"
   )
-  val EnableSpaceNotificationsSafetyLevel: Value = Value(
-    "visibility_library_enable_space_notifications_safety_level"
+  val EnableSpaceNot f cat onsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_space_not f cat ons_safety_level"
   )
   val EnableSpacesSafetyLevel: Value = Value(
-    "visibility_library_enable_spaces_safety_level"
+    "v s b l y_l brary_enable_spaces_safety_level"
   )
-  val EnableSpacesParticipantsSafetyLevel: Value = Value(
-    "visibility_library_enable_spaces_participants_safety_level"
+  val EnableSpacesPart c pantsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_spaces_part c pants_safety_level"
   )
-  val EnableSpacesSellerApplicationStatus: Value = Value(
-    "visibility_library_enable_spaces_seller_application_status_safety_level"
+  val EnableSpacesSellerAppl cat onStatus: Value = Value(
+    "v s b l y_l brary_enable_spaces_seller_appl cat on_status_safety_level"
   )
-  val EnableSpacesSharingSafetyLevel: Value = Value(
-    "visibility_library_enable_spaces_sharing_safety_level"
+  val EnableSpacesShar ngSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_spaces_shar ng_safety_level"
   )
-  val EnableSpaceTweetAvatarHomeTimelineSafetyLevel: Value = Value(
-    "visibility_library_enable_space_tweet_avatar_home_timeline_safety_level"
+  val EnableSpaceT etAvatarHo T  l neSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_space_t et_avatar_ho _t  l ne_safety_level"
   )
-  val EnableStickersTimelineSafetyLevel: Value = Value(
-    "visibility_library_enable_stickers_timeline_safety_level"
+  val EnableSt ckersT  l neSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_st ckers_t  l ne_safety_level"
   )
-  val EnableStratoExtLimitedEngagementsSafetyLevel: Value = Value(
-    "visibility_library_enable_strato_ext_limited_engagements_safety_level"
+  val EnableStratoExtL m edEngage ntsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_strato_ext_l m ed_engage nts_safety_level"
   )
-  val EnableStreamServicesSafetyLevel: Value = Value(
-    "visibility_library_enable_stream_services_safety_level"
+  val EnableStreamServ cesSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_stream_serv ces_safety_level"
   )
   val EnableTestSafetyLevel: Value = Value(
-    "visibility_library_enable_test_safety_level"
+    "v s b l y_l brary_enable_test_safety_level"
   )
-  val EnableTimelineBookmarkSafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_bookmark_safety_level"
+  val EnableT  l neBookmarkSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_bookmark_safety_level"
   )
-  val EnableTimelineContentControlsSafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_content_controls_safety_level"
+  val EnableT  l neContentControlsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_content_controls_safety_level"
   )
-  val EnableTimelineConversationsSafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_conversations_safety_level"
+  val EnableT  l neConversat onsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_conversat ons_safety_level"
   )
-  val EnableTimelineConversationsDownrankingSafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_conversations_downranking_safety_level"
+  val EnableT  l neConversat onsDownrank ngSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_conversat ons_downrank ng_safety_level"
   )
-  val EnableTimelineConversationsDownrankingMinimalSafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_conversations_downranking_minimal_safety_level"
+  val EnableT  l neConversat onsDownrank ngM n malSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_conversat ons_downrank ng_m n mal_safety_level"
   )
-  val EnableTimelineFavoritesSafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_favorites_safety_level"
+  val EnableT  l neFavor esSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_favor es_safety_level"
   )
-  val EnableSelfViewTimelineFavoritesSafetyLevel: Value = Value(
-    "visibility_library_enable_self_view_timeline_favorites_safety_level"
+  val EnableSelfV ewT  l neFavor esSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_self_v ew_t  l ne_favor es_safety_level"
   )
-  val EnableTweetTimelineFocalTweetSafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_focal_tweet_safety_level"
+  val EnableT etT  l neFocalT etSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_focal_t et_safety_level"
   )
-  val EnableTweetScopedTimelineSafetyLevel: Value = Value(
-    "visibility_library_enable_tweet_scoped_timeline_safety_level"
+  val EnableT etScopedT  l neSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t et_scoped_t  l ne_safety_level"
   )
-  val EnableTimelineFollowingActivitySafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_following_activity_safety_level"
+  val EnableT  l neFollow ngAct v ySafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_follow ng_act v y_safety_level"
   )
-  val EnableTimelineHomeSafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_home_safety_level"
+  val EnableT  l neHo SafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_ho _safety_level"
   )
-  val EnableTimelineHomeCommunitiesSafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_home_communities_safety_level"
+  val EnableT  l neHo Commun  esSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_ho _commun  es_safety_level"
   )
-  val EnableTimelineHomeHydrationSafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_home_hydration_safety_level"
+  val EnableT  l neHo Hydrat onSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_ho _hydrat on_safety_level"
   )
-  val EnableTimelineHomeLatestSafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_home_latest_safety_level"
+  val EnableT  l neHo LatestSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_ho _latest_safety_level"
   )
-  val EnableTimelineHomeRecommendationsSafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_home_recommendations_safety_level"
+  val EnableT  l neHo Recom ndat onsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_ho _recom ndat ons_safety_level"
   )
-  val EnableTimelineHomeTopicFollowRecommendationsSafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_home_topic_follow_recommendations_safety_level"
+  val EnableT  l neHo Top cFollowRecom ndat onsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_ho _top c_follow_recom ndat ons_safety_level"
   )
-  val EnableTimelineScorerSafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_scorer_safety_level"
+  val EnableT  l neScorerSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_scorer_safety_level"
   )
-  val EnableTopicsLandingPageTopicRecommendationsSafetyLevel: Value = Value(
-    "visibility_library_enable_topics_landing_page_topic_recommendations_safety_level"
+  val EnableTop csLand ngPageTop cRecom ndat onsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_top cs_land ng_page_top c_recom ndat ons_safety_level"
   )
-  val EnableExploreRecommendationsSafetyLevel: Value = Value(
-    "visibility_library_enable_explore_recommendations_safety_level"
+  val EnableExploreRecom ndat onsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_explore_recom ndat ons_safety_level"
   )
-  val EnableTimelineInjectionSafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_injection_safety_level"
+  val EnableT  l ne nject onSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_ nject on_safety_level"
   )
-  val EnableTimelineLikedBySafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_liked_by_safety_level"
+  val EnableT  l neL kedBySafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_l ked_by_safety_level"
   )
-  val EnableTimelineListsSafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_lists_safety_level"
+  val EnableT  l neL stsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_l sts_safety_level"
   )
-  val EnableTimelineMediaSafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_media_safety_level"
+  val EnableT  l ne d aSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_ d a_safety_level"
   )
-  val EnableTimelineMentionsSafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_mentions_safety_level"
+  val EnableT  l ne nt onsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_ nt ons_safety_level"
   )
-  val EnableTimelineModeratedTweetsHydrationSafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_moderated_tweets_hydration_safety_level"
+  val EnableT  l neModeratedT etsHydrat onSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_moderated_t ets_hydrat on_safety_level"
   )
-  val EnableTimelineProfileSafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_profile_safety_level"
+  val EnableT  l neProf leSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_prof le_safety_level"
   )
-  val EnableTimelineProfileAllSafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_profile_all_safety_level"
+  val EnableT  l neProf leAllSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_prof le_all_safety_level"
   )
-  val EnableTimelineProfileSpacesSafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_profile_spaces_safety_level")
-  val EnableTimelineProfileSuperFollowsSafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_profile_super_follows_safety_level"
+  val EnableT  l neProf leSpacesSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_prof le_spaces_safety_level")
+  val EnableT  l neProf leSuperFollowsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_prof le_super_follows_safety_level"
   )
-  val EnableTimelineReactiveBlendingSafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_reactive_blending_safety_level"
+  val EnableT  l neReact veBlend ngSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_react ve_blend ng_safety_level"
   )
-  val EnableTimelineRetweetedBySafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_retweeted_by_safety_level"
+  val EnableT  l neRet etedBySafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_ret eted_by_safety_level"
   )
-  val EnableTimelineSuperLikedBySafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_super_liked_by_safety_level"
+  val EnableT  l neSuperL kedBySafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_super_l ked_by_safety_level"
   )
-  val EnableTombstoningSafetyLevel: Value = Value(
-    "visibility_library_enable_tombstoning_safety_level"
+  val EnableTombston ngSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_tombston ng_safety_level"
   )
-  val EnableTopicRecommendationsSafetyLevel: Value = Value(
-    "visibility_library_enable_topic_recommendations_safety_level"
+  val EnableTop cRecom ndat onsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_top c_recom ndat ons_safety_level"
   )
-  val EnableTrendsRepresentativeTweetSafetyLevel: Value = Value(
-    "visibility_library_enable_trends_representative_tweet_safety_level"
+  val EnableTrendsRepresentat veT etSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_trends_representat ve_t et_safety_level"
   )
-  val EnableTrustedFriendsUserListSafetyLevel: Value = Value(
-    "visibility_library_enable_trusted_friends_user_list_safety_level"
+  val EnableTrustedFr endsUserL stSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_trusted_fr ends_user_l st_safety_level"
   )
-  val EnableTwitterDelegateUserListSafetyLevel: Value = Value(
-    "visibility_library_enable_twitter_delegate_user_list_safety_level"
+  val EnableTw terDelegateUserL stSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_tw ter_delegate_user_l st_safety_level"
   )
-  val EnableTweetDetailSafetyLevel: Value = Value(
-    "visibility_library_enable_tweet_detail_safety_level"
+  val EnableT etDeta lSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t et_deta l_safety_level"
   )
-  val EnableTweetDetailNonTooSafetyLevel: Value = Value(
-    "visibility_library_enable_tweet_detail_non_too_safety_level"
+  val EnableT etDeta lNonTooSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t et_deta l_non_too_safety_level"
   )
-  val EnableTweetDetailWithInjectionsHydrationSafetyLevel: Value = Value(
-    "visibility_library_enable_tweet_detail_with_injections_hydration_safety_level"
+  val EnableT etDeta lW h nject onsHydrat onSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t et_deta l_w h_ nject ons_hydrat on_safety_level"
   )
-  val EnableTweetEngagersSafetyLevel: Value = Value(
-    "visibility_library_enable_tweet_engagers_safety_level"
+  val EnableT etEngagersSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t et_engagers_safety_level"
   )
-  val EnableTweetReplyNudgeSafetyLevel: Value = Value(
-    "visibility_library_enable_tweet_reply_nudge_safety_level"
+  val EnableT etReplyNudgeSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t et_reply_nudge_safety_level"
   )
-  val EnableTweetWritesApiSafetyLevel: Value = Value(
-    "visibility_library_enable_tweet_writes_api_safety_level"
+  val EnableT etWr esAp SafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t et_wr es_ap _safety_level"
   )
-  val EnableTwitterArticleComposeSafetyLevel: Value = Value(
-    "visibility_library_enable_twitter_article_compose_safety_level"
+  val EnableTw terArt cleComposeSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_tw ter_art cle_compose_safety_level"
   )
-  val EnableTwitterArticleProfileTabSafetyLevel: Value = Value(
-    "visibility_library_enable_twitter_article_profile_tab_safety_level"
+  val EnableTw terArt cleProf leTabSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_tw ter_art cle_prof le_tab_safety_level"
   )
-  val EnableTwitterArticleReadSafetyLevel: Value = Value(
-    "visibility_library_enable_twitter_article_read_safety_level"
+  val EnableTw terArt cleReadSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_tw ter_art cle_read_safety_level"
   )
-  val EnableUserProfileHeaderSafetyLevel: Value = Value(
-    "visibility_library_enable_user_profile_header_safety_level"
+  val EnableUserProf le aderSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_user_prof le_ ader_safety_level"
   )
-  val EnableUserMilestoneRecommendationSafetyLevel: Value = Value(
-    "visibility_library_enable_user_milestone_recommendation_safety_level"
+  val EnableUserM lestoneRecom ndat onSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_user_m lestone_recom ndat on_safety_level"
   )
-  val EnableUserScopedTimelineSafetyLevel: Value = Value(
-    "visibility_library_enable_user_scoped_timeline_safety_level"
+  val EnableUserScopedT  l neSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_user_scoped_t  l ne_safety_level"
   )
-  val EnableUserSettingsSafetyLevel: Value = Value(
-    "visibility_library_enable_user_settings_safety_level"
+  val EnableUserSett ngsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_user_sett ngs_safety_level"
   )
-  val EnableVideoAdsSafetyLevel: Value = Value(
-    "visibility_library_enable_video_ads_safety_level"
+  val EnableV deoAdsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_v deo_ads_safety_level"
   )
-  val EnableTimelineHomePromotedHydrationSafetyLevel: Value = Value(
-    "visibility_library_enable_timeline_home_promoted_hydration_safety_level"
-  )
-
-  val EnableSuperFollowerConnectionsSafetyLevel: Value = Value(
-    "visibility_library_enable_super_follower_connnections_safety_level"
+  val EnableT  l neHo PromotedHydrat onSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_ho _promoted_hydrat on_safety_level"
   )
 
-  val EnableSuperLikeSafetyLevel: Value = Value(
-    "visibility_library_enable_super_like_safety_level"
+  val EnableSuperFollo rConnect onsSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_super_follo r_connnect ons_safety_level"
   )
 
-  val EnableZipbirdConsumerArchivesSafetyLevel: Value = Value(
-    "visibility_library_enable_zipbird_consumer_archives_safety_level"
+  val EnableSuperL keSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_super_l ke_safety_level"
   )
 
-  val EnableTweetAwardSafetyLevel: Value = Value(
-    "visibility_library_enable_tweet_award_safety_level"
+  val EnableZ pb rdConsu rArch vesSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_z pb rd_consu r_arch ves_safety_level"
   )
 
-  val EnableTweetConversationControlRules: Value = Value(
-    "visibility_library_enable_conversation_control_rules"
-  )
-  val EnableCommunityTweetsControlRules: Value = Value(
-    "visibility_library_enable_community_tweets_rules"
-  )
-  val EnableDropCommunityTweetWithUndefinedCommunityRule: Value = Value(
-    "visibility_library_enable_drop_community_tweet_with_undefined_community_rule"
-  )
-  val EnablePSpammyTweetDownrankConvosLowQuality: Value = Value(
-    "visibility_library_enable_p_spammy_tweet_downrank_convos_low_quality"
-  )
-  val EnableHighPSpammyTweetScoreSearchTweetLabelDropRule: Value = Value(
-    "visibility_library_enable_high_p_spammy_tweet_score_search_tweet_label_drop_rule"
+  val EnableT etAwardSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_t et_award_safety_level"
   )
 
-  val EnableRitoActionedTweetDownrankConvosLowQuality: Value = Value(
-    "visibility_library_enable_rito_actioned_tweet_downrank_convos_low_quality"
+  val EnableT etConversat onControlRules: Value = Value(
+    "v s b l y_l brary_enable_conversat on_control_rules"
+  )
+  val EnableCommun yT etsControlRules: Value = Value(
+    "v s b l y_l brary_enable_commun y_t ets_rules"
+  )
+  val EnableDropCommun yT etW hUndef nedCommun yRule: Value = Value(
+    "v s b l y_l brary_enable_drop_commun y_t et_w h_undef ned_commun y_rule"
+  )
+  val EnablePSpam T etDownrankConvosLowQual y: Value = Value(
+    "v s b l y_l brary_enable_p_spam _t et_downrank_convos_low_qual y"
+  )
+  val EnableH ghPSpam T etScoreSearchT etLabelDropRule: Value = Value(
+    "v s b l y_l brary_enable_h gh_p_spam _t et_score_search_t et_label_drop_rule"
   )
 
-  val EnableNewSensitiveMediaSettingsInterstitialRulesHomeTimeline: Value = Value(
-    "visibility_library_enable_new_sensitive_media_settings_interstitial_rules_home_timeline")
-
-  val EnableLegacySensitiveMediaRulesHomeTimeline: Value = Value(
-    "visibility_library_enable_legacy_sensitive_media_rules_home_timeline"
+  val EnableR oAct onedT etDownrankConvosLowQual y: Value = Value(
+    "v s b l y_l brary_enable_r o_act oned_t et_downrank_convos_low_qual y"
   )
 
-  val EnableNewSensitiveMediaSettingsInterstitialRulesConversation: Value = Value(
-    "visibility_library_enable_new_sensitive_media_settings_interstitial_rules_conversation"
+  val EnableNewSens  ve d aSett ngs nterst  alRulesHo T  l ne: Value = Value(
+    "v s b l y_l brary_enable_new_sens  ve_ d a_sett ngs_ nterst  al_rules_ho _t  l ne")
+
+  val EnableLegacySens  ve d aRulesHo T  l ne: Value = Value(
+    "v s b l y_l brary_enable_legacy_sens  ve_ d a_rules_ho _t  l ne"
   )
 
-  val EnableLegacySensitiveMediaRulesConversation: Value = Value(
-    "visibility_library_enable_legacy_sensitive_media_rules_conversation"
+  val EnableNewSens  ve d aSett ngs nterst  alRulesConversat on: Value = Value(
+    "v s b l y_l brary_enable_new_sens  ve_ d a_sett ngs_ nterst  al_rules_conversat on"
   )
 
-  val EnableNewSensitiveMediaSettingsInterstitialRulesProfileTimeline: Value = Value(
-    "visibility_library_enable_new_sensitive_media_settings_interstitials_rules_profile_timeline"
+  val EnableLegacySens  ve d aRulesConversat on: Value = Value(
+    "v s b l y_l brary_enable_legacy_sens  ve_ d a_rules_conversat on"
   )
 
-  val EnableLegacySensitiveMediaRulesProfileTimeline: Value = Value(
-    "visibility_library_enable_legacy_sensitive_media_rules_profile_timeline"
+  val EnableNewSens  ve d aSett ngs nterst  alRulesProf leT  l ne: Value = Value(
+    "v s b l y_l brary_enable_new_sens  ve_ d a_sett ngs_ nterst  als_rules_prof le_t  l ne"
   )
 
-  val EnableNewSensitiveMediaSettingsInterstitialRulesTweetDetail: Value = Value(
-    "visibility_library_enable_new_sensitive_media_settings_interstitials_rules_tweet_detail"
+  val EnableLegacySens  ve d aRulesProf leT  l ne: Value = Value(
+    "v s b l y_l brary_enable_legacy_sens  ve_ d a_rules_prof le_t  l ne"
   )
 
-  val EnableLegacySensitiveMediaRulesTweetDetail: Value = Value(
-    "visibility_library_enable_legacy_sensitive_media_rules_tweet_detail"
+  val EnableNewSens  ve d aSett ngs nterst  alRulesT etDeta l: Value = Value(
+    "v s b l y_l brary_enable_new_sens  ve_ d a_sett ngs_ nterst  als_rules_t et_deta l"
   )
 
-  val EnableLegacySensitiveMediaRulesDirectMessages: Value = Value(
-    "visibility_library_enable_legacy_sensitive_media_rules_direct_messages"
+  val EnableLegacySens  ve d aRulesT etDeta l: Value = Value(
+    "v s b l y_l brary_enable_legacy_sens  ve_ d a_rules_t et_deta l"
   )
 
-  val VisibilityLibraryEnableToxicReplyFilterConversation: Value = Value(
-    "visibility_library_enable_toxic_reply_filter_conversation"
+  val EnableLegacySens  ve d aRulesD rect ssages: Value = Value(
+    "v s b l y_l brary_enable_legacy_sens  ve_ d a_rules_d rect_ ssages"
   )
 
-  val VisibilityLibraryEnableToxicReplyFilterNotifications: Value = Value(
-    "visibility_library_enable_toxic_reply_filter_notifications"
+  val V s b l yL braryEnableTox cReplyF lterConversat on: Value = Value(
+    "v s b l y_l brary_enable_tox c_reply_f lter_conversat on"
   )
 
-  val EnableSmyteSpamTweetRule: Value = Value(
-    "visibility_library_enable_smyte_spam_tweet_rule"
+  val V s b l yL braryEnableTox cReplyF lterNot f cat ons: Value = Value(
+    "v s b l y_l brary_enable_tox c_reply_f lter_not f cat ons"
   )
 
-  val EnableHighSpammyTweetContentScoreSearchLatestTweetLabelDropRule: Value = Value(
-    "visibility_library_enable_high_spammy_tweet_content_score_search_latest_tweet_label_drop_rule"
-  )
-  val EnableHighSpammyTweetContentScoreSearchTopTweetLabelDropRule: Value = Value(
-    "visibility_library_enable_high_spammy_tweet_content_score_search_top_tweet_label_drop_rule"
-  )
-  val EnableHighSpammyTweetContentScoreConvoDownrankAbusiveQualityRule: Value = Value(
-    "visibility_library_enable_high_spammy_tweet_content_score_convo_downrank_abusive_quality_rule"
+  val EnableS teSpamT etRule: Value = Value(
+    "v s b l y_l brary_enable_s te_spam_t et_rule"
   )
 
-  val EnableHighCryptospamScoreConvoDownrankAbusiveQualityRule: Value = Value(
-    "visibility_library_enable_high_cryptospam_score_convo_downrank_abusive_quality_rule"
+  val EnableH ghSpam T etContentScoreSearchLatestT etLabelDropRule: Value = Value(
+    "v s b l y_l brary_enable_h gh_spam _t et_content_score_search_latest_t et_label_drop_rule"
   )
-  val EnableHighSpammyTweetContentScoreTrendsTopTweetLabelDropRule: Value = Value(
-    "visibility_library_enable_high_spammy_tweet_content_score_trends_top_tweet_label_drop_rule"
+  val EnableH ghSpam T etContentScoreSearchTopT etLabelDropRule: Value = Value(
+    "v s b l y_l brary_enable_h gh_spam _t et_content_score_search_top_t et_label_drop_rule"
   )
-
-  val EnableHighSpammyTweetContentScoreTrendsLatestTweetLabelDropRule: Value = Value(
-    "visibility_library_enable_high_spammy_tweet_content_score_trends_latest_tweet_label_drop_rule"
-  )
-
-  val EnableGoreAndViolenceTopicHighRecallTweetLabelRule: Value = Value(
-    "visibility_library_enable_gore_and_violence_topic_high_recall_tweet_label_rule"
+  val EnableH ghSpam T etContentScoreConvoDownrankAbus veQual yRule: Value = Value(
+    "v s b l y_l brary_enable_h gh_spam _t et_content_score_convo_downrank_abus ve_qual y_rule"
   )
 
-  val EnableLimitRepliesFollowersConversationRule: Value = Value(
-    "visibility_library_enable_limit_replies_followers_conversation_rule"
+  val EnableH ghCryptospamScoreConvoDownrankAbus veQual yRule: Value = Value(
+    "v s b l y_l brary_enable_h gh_cryptospam_score_convo_downrank_abus ve_qual y_rule"
+  )
+  val EnableH ghSpam T etContentScoreTrendsTopT etLabelDropRule: Value = Value(
+    "v s b l y_l brary_enable_h gh_spam _t et_content_score_trends_top_t et_label_drop_rule"
   )
 
-  val EnableBlinkBadDownrankingRule: Value = Value(
-    "visibility_library_enable_blink_bad_downranking_rule"
+  val EnableH ghSpam T etContentScoreTrendsLatestT etLabelDropRule: Value = Value(
+    "v s b l y_l brary_enable_h gh_spam _t et_content_score_trends_latest_t et_label_drop_rule"
   )
 
-  val EnableBlinkWorstDownrankingRule: Value = Value(
-    "visibility_library_enable_blink_worst_downranking_rule"
+  val EnableGoreAndV olenceTop cH ghRecallT etLabelRule: Value = Value(
+    "v s b l y_l brary_enable_gore_and_v olence_top c_h gh_recall_t et_label_rule"
   )
 
-  val EnableCopypastaSpamDownrankConvosAbusiveQualityRule: Value = Value(
-    "visibility_library_enable_copypasta_spam_downrank_convos_abusive_quality_rule"
+  val EnableL m Repl esFollo rsConversat onRule: Value = Value(
+    "v s b l y_l brary_enable_l m _repl es_follo rs_conversat on_rule"
+  )
+
+  val EnableBl nkBadDownrank ngRule: Value = Value(
+    "v s b l y_l brary_enable_bl nk_bad_downrank ng_rule"
+  )
+
+  val EnableBl nkWorstDownrank ngRule: Value = Value(
+    "v s b l y_l brary_enable_bl nk_worst_downrank ng_rule"
+  )
+
+  val EnableCopypastaSpamDownrankConvosAbus veQual yRule: Value = Value(
+    "v s b l y_l brary_enable_copypasta_spam_downrank_convos_abus ve_qual y_rule"
   )
 
   val EnableCopypastaSpamSearchDropRule: Value = Value(
-    "visibility_library_enable_copypasta_spam_search_drop_rule"
+    "v s b l y_l brary_enable_copypasta_spam_search_drop_rule"
   )
 
-  val EnableSpammyUserModelHighPrecisionDropTweetRule: Value = Value(
-    "visibility_library_enable_spammy_user_model_high_precision_drop_tweet_rule"
+  val EnableSpam UserModelH ghPrec s onDropT etRule: Value = Value(
+    "v s b l y_l brary_enable_spam _user_model_h gh_prec s on_drop_t et_rule"
   )
 
-  val EnableAvoidNsfwRules: Value = Value(
-    "visibility_library_enable_avoid_nsfw_rules"
+  val EnableAvo dNsfwRules: Value = Value(
+    "v s b l y_l brary_enable_avo d_nsfw_rules"
   )
 
-  val EnableReportedTweetInterstitialRule: Value = Value(
-    "visibility_library_enable_reported_tweet_interstitial_rule"
+  val EnableReportedT et nterst  alRule: Value = Value(
+    "v s b l y_l brary_enable_reported_t et_ nterst  al_rule"
   )
 
-  val EnableReportedTweetInterstitialSearchRule: Value = Value(
-    "visibility_library_enable_reported_tweet_interstitial_search_rule"
+  val EnableReportedT et nterst  alSearchRule: Value = Value(
+    "v s b l y_l brary_enable_reported_t et_ nterst  al_search_rule"
   )
 
-  val EnableDropExclusiveTweetContentRule: Value = Value(
-    "visibility_library_enable_drop_exclusive_tweet_content_rule"
+  val EnableDropExclus veT etContentRule: Value = Value(
+    "v s b l y_l brary_enable_drop_exclus ve_t et_content_rule"
   )
 
-  val EnableDropExclusiveTweetContentRuleFailClosed: Value = Value(
-    "visibility_library_enable_drop_exclusive_tweet_content_rule_fail_closed"
+  val EnableDropExclus veT etContentRuleFa lClosed: Value = Value(
+    "v s b l y_l brary_enable_drop_exclus ve_t et_content_rule_fa l_closed"
   )
 
-  val EnableTombstoneExclusiveQtProfileTimelineParam: Value = Value(
-    "visibility_library_enable_tombstone_exclusive_quoted_tweet_content_rule"
+  val EnableTombstoneExclus veQtProf leT  l neParam: Value = Value(
+    "v s b l y_l brary_enable_tombstone_exclus ve_quoted_t et_content_rule"
   )
 
-  val EnableDropAllExclusiveTweetsRule: Value = Value(
-    "visibility_library_enable_drop_all_exclusive_tweets_rule"
+  val EnableDropAllExclus veT etsRule: Value = Value(
+    "v s b l y_l brary_enable_drop_all_exclus ve_t ets_rule"
   )
 
-  val EnableDropAllExclusiveTweetsRuleFailClosed: Value = Value(
-    "visibility_library_enable_drop_all_exclusive_tweets_rule_fail_closed"
+  val EnableDropAllExclus veT etsRuleFa lClosed: Value = Value(
+    "v s b l y_l brary_enable_drop_all_exclus ve_t ets_rule_fa l_closed"
   )
 
-  val EnableDownrankSpamReplySectioningRule: Value = Value(
-    "visibility_library_enable_downrank_spam_reply_sectioning_rule"
+  val EnableDownrankSpamReplySect on ngRule: Value = Value(
+    "v s b l y_l brary_enable_downrank_spam_reply_sect on ng_rule"
   )
 
-  val EnableNsfwTextSectioningRule: Value = Value(
-    "visibility_library_enable_nsfw_text_sectioning_rule"
+  val EnableNsfwTextSect on ngRule: Value = Value(
+    "v s b l y_l brary_enable_nsfw_text_sect on ng_rule"
   )
 
-  val EnableNsfwAgeBasedMediaDropRules: Value = Value(
-    "visibility_library_enable_nsfw_age_based_media_drop_rules"
+  val EnableNsfwAgeBased d aDropRules: Value = Value(
+    "v s b l y_l brary_enable_nsfw_age_based_ d a_drop_rules"
   )
 
   val EnableNsfwUnderageRules: Value = Value(
-    "visibility_library_enable_nsfw_underage_rules"
+    "v s b l y_l brary_enable_nsfw_underage_rules"
   )
 
-  val EnableNsfwUnderageMediaRules: Value = Value(
-    "visibility_library_enable_nsfw_underage_media_rules"
+  val EnableNsfwUnderage d aRules: Value = Value(
+    "v s b l y_l brary_enable_nsfw_underage_ d a_rules"
   )
 
-  val EnableNsfwMissingAgeRules: Value = Value(
-    "visibility_library_enable_nsfw_missing_age_rules"
+  val EnableNsfwM ss ngAgeRules: Value = Value(
+    "v s b l y_l brary_enable_nsfw_m ss ng_age_rules"
   )
 
-  val EnableNsfwMissingAgeMediaRules: Value = Value(
-    "visibility_library_enable_nsfw_missing_age_media_rules"
+  val EnableNsfwM ss ngAge d aRules: Value = Value(
+    "v s b l y_l brary_enable_nsfw_m ss ng_age_ d a_rules"
   )
 
-  val EnableSearchIpiSafeSearchWithoutUserInQueryDropRule: Value = Value(
-    "visibility_library_enable_search_ipi_safe_search_without_user_in_query_drop_rule"
+  val EnableSearch p SafeSearchW houtUser nQueryDropRule: Value = Value(
+    "v s b l y_l brary_enable_search_ p _safe_search_w hout_user_ n_query_drop_rule"
   )
 
-  val EnableTimelineHomePromotedTweetHealthEnforcementRules: Value = Value(
-    "visibility_library_enable_timeline_home_promoted_tweet_health_enforcement_rules"
+  val EnableT  l neHo PromotedT et althEnforce ntRules: Value = Value(
+    "v s b l y_l brary_enable_t  l ne_ho _promoted_t et_ alth_enforce nt_rules"
   )
 
-  val EnableMutedKeywordFilteringSpaceTitleNotificationsRule: Value = Value(
-    "visibility_library_enable_muted_keyword_filtering_space_title_notifications_rule"
+  val EnableMutedKeywordF lter ngSpaceT leNot f cat onsRule: Value = Value(
+    "v s b l y_l brary_enable_muted_keyword_f lter ng_space_t le_not f cat ons_rule"
   )
 
-  val EnableDropTweetsWithGeoRestrictedMediaRule: Value = Value(
-    "visibility_library_enable_drop_tweets_with_georestricted_media_rule"
+  val EnableDropT etsW hGeoRestr cted d aRule: Value = Value(
+    "v s b l y_l brary_enable_drop_t ets_w h_georestr cted_ d a_rule"
   )
-  val EnableDropAllTrustedFriendsTweetsRule: Value = Value(
-    "visibility_library_enable_drop_all_trusted_friends_tweets_rule"
-  )
-
-  val EnableDropTrustedFriendsTweetContentRule: Value = Value(
-    "visibility_library_enable_drop_all_trusted_friends_tweet_content_rule"
+  val EnableDropAllTrustedFr endsT etsRule: Value = Value(
+    "v s b l y_l brary_enable_drop_all_trusted_fr ends_t ets_rule"
   )
 
-  val EnableDropCollabInvitationTweetsRule: Value = Value(
-    "visibility_library_enable_drop_all_collab_invitation_tweets_rule"
+  val EnableDropTrustedFr endsT etContentRule: Value = Value(
+    "v s b l y_l brary_enable_drop_all_trusted_fr ends_t et_content_rule"
   )
 
-  val EnableFetchTweetReportedPerspective: Value = Value(
-    "visibility_library_enable_fetch_tweet_reported_perspective"
+  val EnableDropCollab nv at onT etsRule: Value = Value(
+    "v s b l y_l brary_enable_drop_all_collab_ nv at on_t ets_rule"
   )
 
-  val EnableFetchTweetMediaMetadata: Value = Value(
-    "visibility_library_enable_fetch_tweet_media_metadata"
+  val EnableFetchT etReportedPerspect ve: Value = Value(
+    "v s b l y_l brary_enable_fetch_t et_reported_perspect ve"
   )
 
-  val VisibilityLibraryEnableFollowCheckInMutedKeyword: Value = Value(
-    "visibility_library_enable_follow_check_in_mutedkeyword"
+  val EnableFetchT et d a tadata: Value = Value(
+    "v s b l y_l brary_enable_fetch_t et_ d a_ tadata"
   )
 
-  val VisibilityLibraryEnableMediaInterstitialComposition: Value = Value(
-    "visibility_library_enable_media_interstitial_composition"
+  val V s b l yL braryEnableFollowC ck nMutedKeyword: Value = Value(
+    "v s b l y_l brary_enable_follow_c ck_ n_mutedkeyword"
   )
 
-  val EnableVerdictScribingFromTweetVisibilityLibrary: Value = Value(
-    "visibility_library_enable_verdict_scribing_from_tweet_visibility_library"
+  val V s b l yL braryEnable d a nterst  alCompos  on: Value = Value(
+    "v s b l y_l brary_enable_ d a_ nterst  al_compos  on"
   )
 
-  val EnableVerdictLoggerEventPublisherInstantiationFromTweetVisibilityLibrary: Value = Value(
-    "visibility_library_enable_verdict_logger_event_publisher_instantiation_from_tweet_visibility_library"
+  val EnableVerd ctScr b ngFromT etV s b l yL brary: Value = Value(
+    "v s b l y_l brary_enable_verd ct_scr b ng_from_t et_v s b l y_l brary"
   )
 
-  val EnableVerdictScribingFromTimelineConversationsVisibilityLibrary: Value = Value(
-    "visibility_library_enable_verdict_scribing_from_timeline_conversations_visibility_library"
+  val EnableVerd ctLoggerEventPubl s r nstant at onFromT etV s b l yL brary: Value = Value(
+    "v s b l y_l brary_enable_verd ct_logger_event_publ s r_ nstant at on_from_t et_v s b l y_l brary"
   )
 
-  val EnableVerdictLoggerEventPublisherInstantiationFromTimelineConversationsVisibilityLibrary: Value =
+  val EnableVerd ctScr b ngFromT  l neConversat onsV s b l yL brary: Value = Value(
+    "v s b l y_l brary_enable_verd ct_scr b ng_from_t  l ne_conversat ons_v s b l y_l brary"
+  )
+
+  val EnableVerd ctLoggerEventPubl s r nstant at onFromT  l neConversat onsV s b l yL brary: Value =
     Value(
-      "visibility_library_enable_verdict_logger_event_publisher_instantiation_from_timeline_conversations_visibility_library"
+      "v s b l y_l brary_enable_verd ct_logger_event_publ s r_ nstant at on_from_t  l ne_conversat ons_v s b l y_l brary"
     )
 
-  val EnableVerdictScribingFromBlenderVisibilityLibrary: Value = Value(
-    "visibility_library_enable_verdict_scribing_from_blender_visibility_library"
+  val EnableVerd ctScr b ngFromBlenderV s b l yL brary: Value = Value(
+    "v s b l y_l brary_enable_verd ct_scr b ng_from_blender_v s b l y_l brary"
   )
 
-  val EnableVerdictScribingFromSearchVisibilityLibrary: Value = Value(
-    "visibility_library_enable_verdict_scribing_from_search_visibility_library"
+  val EnableVerd ctScr b ngFromSearchV s b l yL brary: Value = Value(
+    "v s b l y_l brary_enable_verd ct_scr b ng_from_search_v s b l y_l brary"
   )
 
-  val EnableVerdictLoggerEventPublisherInstantiationFromBlenderVisibilityLibrary: Value = Value(
-    "visibility_library_enable_verdict_logger_event_publisher_instantiation_from_blender_visibility_library"
+  val EnableVerd ctLoggerEventPubl s r nstant at onFromBlenderV s b l yL brary: Value = Value(
+    "v s b l y_l brary_enable_verd ct_logger_event_publ s r_ nstant at on_from_blender_v s b l y_l brary"
   )
 
-  val EnableVerdictLoggerEventPublisherInstantiationFromSearchVisibilityLibrary: Value = Value(
-    "visibility_library_enable_verdict_logger_event_publisher_instantiation_from_search_visibility_library"
+  val EnableVerd ctLoggerEventPubl s r nstant at onFromSearchV s b l yL brary: Value = Value(
+    "v s b l y_l brary_enable_verd ct_logger_event_publ s r_ nstant at on_from_search_v s b l y_l brary"
   )
 
-  val EnableLocalizedTombstoneOnVisibilityResults: Value = Value(
-    "visibility_library_enable_localized_tombstones_on_visibility_results"
+  val EnableLocal zedTombstoneOnV s b l yResults: Value = Value(
+    "v s b l y_l brary_enable_local zed_tombstones_on_v s b l y_results"
   )
 
-  val EnableShortCircuitingFromTweetVisibilityLibrary: Value = Value(
-    "visibility_library_enable_short_circuiting_from_tweet_visibility_library"
+  val EnableShortC rcu  ngFromT etV s b l yL brary: Value = Value(
+    "v s b l y_l brary_enable_short_c rcu  ng_from_t et_v s b l y_l brary"
   )
 
-  val EnableShortCircuitingFromTimelineConversationsVisibilityLibrary: Value = Value(
-    "visibility_library_enable_short_circuiting_from_timeline_conversations_visibility_library"
+  val EnableShortC rcu  ngFromT  l neConversat onsV s b l yL brary: Value = Value(
+    "v s b l y_l brary_enable_short_c rcu  ng_from_t  l ne_conversat ons_v s b l y_l brary"
   )
 
-  val EnableShortCircuitingFromBlenderVisibilityLibrary: Value = Value(
-    "visibility_library_enable_short_circuiting_from_blender_visibility_library"
+  val EnableShortC rcu  ngFromBlenderV s b l yL brary: Value = Value(
+    "v s b l y_l brary_enable_short_c rcu  ng_from_blender_v s b l y_l brary"
   )
 
-  val EnableShortCircuitingFromSearchVisibilityLibrary: Value = Value(
-    "visibility_library_enable_short_circuiting_from_search_visibility_library"
+  val EnableShortC rcu  ngFromSearchV s b l yL brary: Value = Value(
+    "v s b l y_l brary_enable_short_c rcu  ng_from_search_v s b l y_l brary"
   )
 
-  val EnableNsfwTextHighPrecisionDropRule: Value = Value(
-    "visibility_library_enable_nsfw_text_high_precision_drop_rule"
+  val EnableNsfwTextH ghPrec s onDropRule: Value = Value(
+    "v s b l y_l brary_enable_nsfw_text_h gh_prec s on_drop_rule"
   )
 
-  val EnableSpammyTweetRuleVerdictLogging: Value = Value(
-    "visibility_library_enable_spammy_tweet_rule_verdict_logging"
+  val EnableSpam T etRuleVerd ctLogg ng: Value = Value(
+    "v s b l y_l brary_enable_spam _t et_rule_verd ct_logg ng"
   )
 
-  val EnableDownlevelRuleVerdictLogging: Value = Value(
-    "visibility_library_enable_downlevel_rule_verdict_logging"
+  val EnableDownlevelRuleVerd ctLogg ng: Value = Value(
+    "v s b l y_l brary_enable_downlevel_rule_verd ct_logg ng"
   )
 
-  val EnableLikelyIvsUserLabelDropRule: Value = Value(
-    "visibility_library_enable_likely_likely_ivs_user_label_drop_rule"
+  val EnableL kely vsUserLabelDropRule: Value = Value(
+    "v s b l y_l brary_enable_l kely_l kely_ vs_user_label_drop_rule"
   )
 
-  val EnableCardVisibilityLibraryCardUriParsing: Value = Value(
-    "visibility_library_enable_card_visibility_library_card_uri_parsing"
+  val EnableCardV s b l yL braryCardUr Pars ng: Value = Value(
+    "v s b l y_l brary_enable_card_v s b l y_l brary_card_ur _pars ng"
   )
 
-  val EnableCardUriRootDomainDenylistRule: Value = Value(
-    "visibility_library_enable_card_uri_root_domain_deny_list_rule"
+  val EnableCardUr RootDoma nDenyl stRule: Value = Value(
+    "v s b l y_l brary_enable_card_ur _root_doma n_deny_l st_rule"
   )
 
-  val EnableCommunityNonMemberPollCardRule: Value = Value(
-    "visibility_library_enable_community_non_member_poll_card_rule"
+  val EnableCommun yNon mberPollCardRule: Value = Value(
+    "v s b l y_l brary_enable_commun y_non_ mber_poll_card_rule"
   )
 
-  val EnableCommunityNonMemberPollCardRuleFailClosed: Value = Value(
-    "visibility_library_enable_community_non_member_poll_card_rule_fail_closed"
+  val EnableCommun yNon mberPollCardRuleFa lClosed: Value = Value(
+    "v s b l y_l brary_enable_commun y_non_ mber_poll_card_rule_fa l_closed"
   )
 
-  val EnableExperimentalNudgeLabelRule: Value = Value(
-    "visibility_library_enable_experimental_nudge_label_rule"
+  val EnableExper  ntalNudgeLabelRule: Value = Value(
+    "v s b l y_l brary_enable_exper  ntal_nudge_label_rule"
   )
 
-  val NsfwHighPrecisionUserLabelAvoidTweetRuleEnabledParam: Value = Value(
-    "visibility_library_nsfw_high_precision_user_label_avoid_tweet_rule_enabled"
+  val NsfwH ghPrec s onUserLabelAvo dT etRuleEnabledParam: Value = Value(
+    "v s b l y_l brary_nsfw_h gh_prec s on_user_label_avo d_t et_rule_enabled"
   )
 
-  val EnableUserSelfViewOnlySafetyLevel: Value = Value(
-    "visibility_library_enable_user_self_view_only_safety_level"
+  val EnableUserSelfV ewOnlySafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_user_self_v ew_only_safety_level"
   )
 
-  val EnableNewAdAvoidanceRules: Value = Value(
-    "visibility_library_enable_new_ad_avoidance_rules"
+  val EnableNewAdAvo danceRules: Value = Value(
+    "v s b l y_l brary_enable_new_ad_avo dance_rules"
   )
 
-  val EnableNsfaHighRecallAdAvoidanceParam: Value = Value(
-    "visibility_library_enable_nsfa_high_recall_ad_avoidance_rules"
+  val EnableNsfaH ghRecallAdAvo danceParam: Value = Value(
+    "v s b l y_l brary_enable_nsfa_h gh_recall_ad_avo dance_rules"
   )
 
-  val EnableNsfaKeywordsHighPrecisionAdAvoidanceParam: Value = Value(
-    "visibility_library_enable_nsfa_keywords_high_precision_ad_avoidance_rules"
+  val EnableNsfaKeywordsH ghPrec s onAdAvo danceParam: Value = Value(
+    "v s b l y_l brary_enable_nsfa_keywords_h gh_prec s on_ad_avo dance_rules"
   )
 
-  val EnableStaleTweetDropRuleParam: Value = Value(
-    "visibility_library_enable_stale_tweet_drop_rule"
+  val EnableStaleT etDropRuleParam: Value = Value(
+    "v s b l y_l brary_enable_stale_t et_drop_rule"
   )
 
-  val EnableStaleTweetDropRuleFailClosedParam: Value = Value(
-    "visibility_library_enable_stale_tweet_drop_rule_fail_closed"
+  val EnableStaleT etDropRuleFa lClosedParam: Value = Value(
+    "v s b l y_l brary_enable_stale_t et_drop_rule_fa l_closed"
   )
 
-  val EnableEditHistoryTimelineSafetyLevel: Value = Value(
-    "visibility_library_enable_edit_history_timeline_safety_level"
+  val EnableEd  toryT  l neSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_ed _ tory_t  l ne_safety_level"
   )
 
-  val EnableDeleteStateTweetRules: Value = Value(
-    "visibility_library_enable_delete_state_tweet_rules"
+  val EnableDeleteStateT etRules: Value = Value(
+    "v s b l y_l brary_enable_delete_state_t et_rules"
   )
 
-  val EnableSpacesSharingNsfwDropRulesParam: Value = Value(
-    "visibility_library_enable_spaces_sharing_nsfw_drop_rule"
+  val EnableSpacesShar ngNsfwDropRulesParam: Value = Value(
+    "v s b l y_l brary_enable_spaces_shar ng_nsfw_drop_rule"
   )
 
-  val EnableDropMediaLegalRulesParam: Value = Value(
-    "visibility_library_enable_drop_media_legal_rules"
+  val EnableDrop d aLegalRulesParam: Value = Value(
+    "v s b l y_l brary_enable_drop_ d a_legal_rules"
   )
 
-  val EnableTombstoneMediaLegalRulesParam: Value = Value(
-    "visibility_library_enable_tombstone_media_legal_rules"
+  val EnableTombstone d aLegalRulesParam: Value = Value(
+    "v s b l y_l brary_enable_tombstone_ d a_legal_rules"
   )
 
-  val EnableInterstitialMediaLegalRulesParam: Value = Value(
-    "visibility_library_enable_interstitial_media_legal_rules"
+  val Enable nterst  al d aLegalRulesParam: Value = Value(
+    "v s b l y_l brary_enable_ nterst  al_ d a_legal_rules"
   )
 
-  val EnableViewerIsSoftUserDropRuleParam: Value = Value(
-    "visibility_library_enable_viewer_is_soft_user_drop_rule"
+  val EnableV e r sSoftUserDropRuleParam: Value = Value(
+    "v s b l y_l brary_enable_v e r_ s_soft_user_drop_rule"
   )
 
-  val EnableBackendLimitedActions: Value = Value(
-    "visibility_library_enable_backend_limited_actions"
+  val EnableBackendL m edAct ons: Value = Value(
+    "v s b l y_l brary_enable_backend_l m ed_act ons"
   )
 
-  val EnableNotificationsQig: Value = Value(
-    "visibility_library_enable_notifications_qig_safety_level"
+  val EnableNot f cat onsQ g: Value = Value(
+    "v s b l y_l brary_enable_not f cat ons_q g_safety_level"
   )
 
-  val EnablePdnaQuotedTweetTombstoneRule: Value = Value(
-    "visibility_library_enable_pdna_quoted_tweet_tombstone_rule"
+  val EnablePdnaQuotedT etTombstoneRule: Value = Value(
+    "v s b l y_l brary_enable_pdna_quoted_t et_tombstone_rule"
   )
 
-  val EnableSpamQuotedTweetTombstoneRule: Value = Value(
-    "visibility_library_enable_spam_quoted_tweet_tombstone_rule"
+  val EnableSpamQuotedT etTombstoneRule: Value = Value(
+    "v s b l y_l brary_enable_spam_quoted_t et_tombstone_rule"
   )
 
-  val EnableNsfwHpQuotedTweetDropRule: Value = Value(
-    "visibility_library_enable_nsfw_hp_quoted_tweet_drop_experiment_rule"
+  val EnableNsfwHpQuotedT etDropRule: Value = Value(
+    "v s b l y_l brary_enable_nsfw_hp_quoted_t et_drop_exper  nt_rule"
   )
-  val EnableNsfwHpQuotedTweetTombstoneRule: Value = Value(
-    "visibility_library_enable_nsfw_hp_quoted_tweet_tombstone_experiment_rule"
+  val EnableNsfwHpQuotedT etTombstoneRule: Value = Value(
+    "v s b l y_l brary_enable_nsfw_hp_quoted_t et_tombstone_exper  nt_rule"
   )
 
-  val EnableExperimentalRuleEngine: Value = Value(
-    "visibility_library_enable_experimental_rule_engine"
+  val EnableExper  ntalRuleEng ne: Value = Value(
+    "v s b l y_l brary_enable_exper  ntal_rule_eng ne"
   )
 
   val EnableFosnrRules: Value = Value(
-    "visibility_library_enable_fosnr_rules"
+    "v s b l y_l brary_enable_fosnr_rules"
   )
 
-  val EnableInnerQuotedTweetViewerBlocksAuthorInterstitialRule: Value = Value(
-    "visibility_library_enable_inner_quoted_tweet_viewer_blocks_author_interstitial_rule"
+  val Enable nnerQuotedT etV e rBlocksAuthor nterst  alRule: Value = Value(
+    "v s b l y_l brary_enable_ nner_quoted_t et_v e r_blocks_author_ nterst  al_rule"
   )
 
-  val EnableInnerQuotedTweetViewerMutesAuthorInterstitialRule: Value = Value(
-    "visibility_library_enable_inner_quoted_tweet_viewer_mutes_author_interstitial_rule"
+  val Enable nnerQuotedT etV e rMutesAuthor nterst  alRule: Value = Value(
+    "v s b l y_l brary_enable_ nner_quoted_t et_v e r_mutes_author_ nterst  al_rule"
   )
 
-  val EnableLocalizedInterstitialGenerator: Value = Value(
-    "visibility_library_enable_localized_interstitial_generator"
+  val EnableLocal zed nterst  alGenerator: Value = Value(
+    "v s b l y_l brary_enable_local zed_ nterst  al_generator"
   )
 
-  val EnableProfileMixeMediaSafetyLevel: Value = Value(
-    "visibility_library_enable_profile_mixer_media_safety_level")
+  val EnableProf leM xe d aSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_prof le_m xer_ d a_safety_level")
 
-  val EnableConvosLocalizedInterstitial: Value = Value(
-    "visibility_library_convos_enable_localized_interstitial"
+  val EnableConvosLocal zed nterst  al: Value = Value(
+    "v s b l y_l brary_convos_enable_local zed_ nterst  al"
   )
 
-  val EnableConvosLegacyInterstitial: Value = Value(
-    "visibility_library_convos_enable_legacy_interstitial"
+  val EnableConvosLegacy nterst  al: Value = Value(
+    "v s b l y_l brary_convos_enable_legacy_ nterst  al"
   )
 
-  val DisableLegacyInterstitialFilteredReason: Value = Value(
-    "visibility_library_disable_legacy_interstitial_filtered_reason"
+  val D sableLegacy nterst  alF lteredReason: Value = Value(
+    "v s b l y_l brary_d sable_legacy_ nterst  al_f ltered_reason"
   )
 
-  val EnableSearchBasicBlockMuteRules: Value = Value(
-    "visibility_library_enable_search_basic_block_mute_rules"
+  val EnableSearchBas cBlockMuteRules: Value = Value(
+    "v s b l y_l brary_enable_search_bas c_block_mute_rules"
   )
 
-  val EnableLocalizedInterstitialInUserStateLib: Value = Value(
-    "visibility_library_enable_localized_interstitial_user_state_lib"
+  val EnableLocal zed nterst  al nUserStateL b: Value = Value(
+    "v s b l y_l brary_enable_local zed_ nterst  al_user_state_l b"
   )
 
-  val EnableProfileMixerFavoritesSafetyLevel: Value = Value(
-    "visibility_library_enable_profile_mixer_favorites_safety_level")
+  val EnableProf leM xerFavor esSafetyLevel: Value = Value(
+    "v s b l y_l brary_enable_prof le_m xer_favor es_safety_level")
 
-  val EnableAbusiveBehaviorDropRule: Value = Value(
-    "visibility_library_enable_abusive_behavior_drop_rule"
+  val EnableAbus veBehav orDropRule: Value = Value(
+    "v s b l y_l brary_enable_abus ve_behav or_drop_rule"
   )
 
-  val EnableAbusiveBehaviorInterstitialRule: Value = Value(
-    "visibility_library_enable_abusive_behavior_interstitial_rule"
+  val EnableAbus veBehav or nterst  alRule: Value = Value(
+    "v s b l y_l brary_enable_abus ve_behav or_ nterst  al_rule"
   )
 
-  val EnableAbusiveBehaviorLimitedEngagementsRule: Value = Value(
-    "visibility_library_enable_abusive_behavior_limited_engagements_rule"
+  val EnableAbus veBehav orL m edEngage ntsRule: Value = Value(
+    "v s b l y_l brary_enable_abus ve_behav or_l m ed_engage nts_rule"
   )
 
-  val EnableNotGraduatedDownrankConvosAbusiveQualityRule: Value = Value(
-    "visibility_library_enable_not_graduated_downrank_convos_abusive_quality_rule"
+  val EnableNotGraduatedDownrankConvosAbus veQual yRule: Value = Value(
+    "v s b l y_l brary_enable_not_graduated_downrank_convos_abus ve_qual y_rule"
   )
 
   val EnableNotGraduatedSearchDropRule: Value = Value(
-    "visibility_library_enable_not_graduated_search_drop_rule"
+    "v s b l y_l brary_enable_not_graduated_search_drop_rule"
   )
 
   val EnableNotGraduatedDropRule: Value = Value(
-    "visibility_library_enable_not_graduated_drop_rule"
+    "v s b l y_l brary_enable_not_graduated_drop_rule"
   )
 
-  val EnableMemoizeSafetyLevelParams: Value = Value(
-    "visibility_library_enable_memoize_safety_level_params"
+  val Enable mo zeSafetyLevelParams: Value = Value(
+    "v s b l y_l brary_enable_ mo ze_safety_level_params"
   )
 
-  val EnableAuthorBlocksViewerDropRule: Value = Value(
-    "visibility_library_enable_author_blocks_viewer_drop_rule"
+  val EnableAuthorBlocksV e rDropRule: Value = Value(
+    "v s b l y_l brary_enable_author_blocks_v e r_drop_rule"
   )
 }

@@ -1,55 +1,55 @@
-package com.twitter.frigate.pushservice.util
+package com.tw ter.fr gate.pushserv ce.ut l
 
-import com.twitter.frigate.common.store.deviceinfo.DeviceInfo
-import com.twitter.frigate.common.store.deviceinfo.MobileClientType
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.util.Future
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
+ mport com.tw ter.fr gate.common.store.dev ce nfo.Dev ce nfo
+ mport com.tw ter.fr gate.common.store.dev ce nfo.Mob leCl entType
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
 
-object PushDeviceUtil {
+object PushDev ceUt l {
 
-  def isPrimaryDeviceAndroid(deviceInfoOpt: Option[DeviceInfo]): Boolean = {
-    deviceInfoOpt.exists {
-      _.guessedPrimaryClient.exists { clientType =>
-        (clientType == MobileClientType.Android) || (clientType == MobileClientType.AndroidLite)
+  def  sPr maryDev ceAndro d(dev ce nfoOpt: Opt on[Dev ce nfo]): Boolean = {
+    dev ce nfoOpt.ex sts {
+      _.guessedPr maryCl ent.ex sts { cl entType =>
+        (cl entType == Mob leCl entType.Andro d) || (cl entType == Mob leCl entType.Andro dL e)
       }
     }
   }
 
-  def isPrimaryDeviceIOS(deviceInfoOpt: Option[DeviceInfo]): Boolean = {
-    deviceInfoOpt.exists {
-      _.guessedPrimaryClient.exists { clientType =>
-        (clientType == MobileClientType.Iphone) || (clientType == MobileClientType.Ipad)
+  def  sPr maryDev ce OS(dev ce nfoOpt: Opt on[Dev ce nfo]): Boolean = {
+    dev ce nfoOpt.ex sts {
+      _.guessedPr maryCl ent.ex sts { cl entType =>
+        (cl entType == Mob leCl entType. phone) || (cl entType == Mob leCl entType. pad)
       }
     }
   }
 
-  def isPushRecommendationsEligible(target: Target): Future[Boolean] =
-    target.deviceInfo.map(_.exists(_.isRecommendationsEligible))
+  def  sPushRecom ndat onsEl g ble(target: Target): Future[Boolean] =
+    target.dev ce nfo.map(_.ex sts(_. sRecom ndat onsEl g ble))
 
-  def isTopicsEligible(
+  def  sTop csEl g ble(
     target: Target,
-    statsReceiver: StatsReceiver = NullStatsReceiver
+    statsRece ver: StatsRece ver = NullStatsRece ver
   ): Future[Boolean] = {
-    val isTopicsSkipFatigue = Future.True
+    val  sTop csSk pFat gue = Future.True
 
-    Future.join(isTopicsSkipFatigue, target.deviceInfo.map(_.exists(_.isTopicsEligible))).map {
-      case (isTopicsNotFatigue, isTopicsEligibleSetting) =>
-        isTopicsNotFatigue && isTopicsEligibleSetting
+    Future.jo n( sTop csSk pFat gue, target.dev ce nfo.map(_.ex sts(_. sTop csEl g ble))).map {
+      case ( sTop csNotFat gue,  sTop csEl g bleSett ng) =>
+         sTop csNotFat gue &&  sTop csEl g bleSett ng
     }
   }
 
-  def isSpacesEligible(target: Target): Future[Boolean] =
-    target.deviceInfo.map(_.exists(_.isSpacesEligible))
+  def  sSpacesEl g ble(target: Target): Future[Boolean] =
+    target.dev ce nfo.map(_.ex sts(_. sSpacesEl g ble))
 
-  def isNtabOnlyEligible: Future[Boolean] = {
+  def  sNtabOnlyEl g ble: Future[Boolean] = {
     Future.False
   }
 
-  def isRecommendationsEligible(target: Target): Future[Boolean] = {
-    Future.join(isPushRecommendationsEligible(target), isNtabOnlyEligible).map {
-      case (isPushRecommendation, isNtabOnly) => isPushRecommendation || isNtabOnly
+  def  sRecom ndat onsEl g ble(target: Target): Future[Boolean] = {
+    Future.jo n( sPushRecom ndat onsEl g ble(target),  sNtabOnlyEl g ble).map {
+      case ( sPushRecom ndat on,  sNtabOnly) =>  sPushRecom ndat on ||  sNtabOnly
       case _ => false
     }
   }

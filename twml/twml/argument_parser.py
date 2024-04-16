@@ -1,561 +1,561 @@
-# pylint: disable=protected-access, arguments-differ
+# pyl nt: d sable=protected-access, argu nts-d ffer
 """
-Command-line argument parsing for the Trainer.
+Command-l ne argu nt pars ng for t  Tra ner.
 """
-import argparse
-from argparse import ArgumentError
-from operator import attrgetter
-import tempfile
+ mport argparse
+from argparse  mport Argu ntError
+from operator  mport attrgetter
+ mport tempf le
 
-import twml
-import tensorflow.compat.v1 as tf
+ mport twml
+ mport tensorflow.compat.v1 as tf
 
 
-SERIAL = "serial"
+SER AL = "ser al"
 TREE = "tree"
 LOG_LEVELS = {
-  "debug": tf.logging.DEBUG,
-  "info": tf.logging.INFO,
-  "warn": tf.logging.WARN,
-  "error": tf.logging.ERROR}
+  "debug": tf.logg ng.DEBUG,
+  " nfo": tf.logg ng. NFO,
+  "warn": tf.logg ng.WARN,
+  "error": tf.logg ng.ERROR}
 
 
-class SortingHelpFormatter(argparse.HelpFormatter):
+class Sort ng lpFormatter(argparse. lpFormatter):
   """
-  Used to sort args alphabetically in the help message.
+  Used to sort args alphabet cally  n t   lp  ssage.
   """
 
-  def add_arguments(self, actions):
-    actions = sorted(actions, key=attrgetter('option_strings'))
-    super(SortingHelpFormatter, self).add_arguments(actions)
+  def add_argu nts(self, act ons):
+    act ons = sorted(act ons, key=attrgetter('opt on_str ngs'))
+    super(Sort ng lpFormatter, self).add_argu nts(act ons)
 
 
 def _set_log_level(level=None):
-  """Sets the tensorflow log level to the input level."""
-  if level is None:
+  """Sets t  tensorflow log level to t   nput level."""
+   f level  s None:
     return None
-  level = level.lower()
-  if level not in LOG_LEVELS.keys():
-    raise ValueError(f"Unexpected log level {level} was given but expected one of {LOG_LEVELS.keys()}.")
-  tf.logging.set_verbosity(LOG_LEVELS[level])
-  tf.logging.info(f"Setting tensorflow logging level to {level} or {LOG_LEVELS[level]}")
+  level = level.lo r()
+   f level not  n LOG_LEVELS.keys():
+    ra se ValueError(f"Unexpected log level {level} was g ven but expected one of {LOG_LEVELS.keys()}.")
+  tf.logg ng.set_verbos y(LOG_LEVELS[level])
+  tf.logg ng. nfo(f"Sett ng tensorflow logg ng level to {level} or {LOG_LEVELS[level]}")
   return level
 
 
-def get_trainer_parser():
+def get_tra ner_parser():
   """
-  Add common commandline args to parse for the Trainer class.
-  Typically, the user calls this function and then parses cmd-line arguments
-  into an argparse.Namespace object which is then passed to the Trainer constructor
-  via the params argument.
+  Add common commandl ne args to parse for t  Tra ner class.
+  Typ cally, t  user calls t  funct on and t n parses cmd-l ne argu nts
+   nto an argparse.Na space object wh ch  s t n passed to t  Tra ner constructor
+  v a t  params argu nt.
 
-  See the `code <_modules/twml/argument_parser.html#get_trainer_parser>`_
-  for a list and description of all cmd-line arguments.
+  See t  `code <_modules/twml/argu nt_parser.html#get_tra ner_parser>`_
+  for a l st and descr pt on of all cmd-l ne argu nts.
 
   Args:
-    learning_rate_decay:
-      Defaults to False. When True, parses learning rate decay arguments.
+    learn ng_rate_decay:
+      Defaults to False. W n True, parses learn ng rate decay argu nts.
 
   Returns:
-    argparse.ArgumentParser instance with some useful args already added.
+    argparse.Argu ntParser  nstance w h so  useful args already added.
   """
-  parser = twml.DefaultSubcommandArgParse(formatter_class=SortingHelpFormatter)
+  parser = twml.DefaultSubcommandArgParse(formatter_class=Sort ng lpFormatter)
 
-  parser.add_argument(
-    "--save_dir", type=str, default=tempfile.mkdtemp(),
-    help="Path to the training result directory."
-         "supports local filesystem path and hdfs://default/<path> which requires "
-         "setting HDFS configuration via env variable HADOOP_CONF_DIR ")
-  parser.add_argument(
-    "--export_dir", type=str, default=None,
-    help="Path to the directory to export a SavedModel for prediction servers.")
-  parser.add_argument(
-    "--log_aggregation_app_id", type=str, default=None,
-    help="specify app_id for log aggregation. disabled by default.")
-  parser.add_argument(
-    "--train.batch_size", "--train_batch_size", type=int, default=32,
-    dest='train_batch_size',
-    help="number of samples per training batch")
-  parser.add_argument(
-    "--eval.batch_size", "--eval_batch_size", type=int, default=32,
-    dest='eval_batch_size',
-    help="number of samples per cross-validation batch. Defaults to train_batch_size")
-  parser.add_argument(
-    "--train.learning_rate", "--learning_rate", type=float, default=0.002,
-    dest='learning_rate',
-    help="learning rate. Scales the gradient update.")
-  parser.add_argument(
-    "--train.steps", "--train_steps", type=int, default=-1,
-    dest='train_steps',
-    help="number of training batches before running evaluation."
-         "Defaults to -1 (runs through entire dataset). "
-         "Only used for Trainer.[train,learn]. "
-         "For Trainer.train_and_evaluate, use train.max_steps instead. ")
-  parser.add_argument(
-    "--eval.steps", "--eval_steps", type=int, default=-1,
+  parser.add_argu nt(
+    "--save_d r", type=str, default=tempf le.mkdtemp(),
+     lp="Path to t  tra n ng result d rectory."
+         "supports local f lesystem path and hdfs://default/<path> wh ch requ res "
+         "sett ng HDFS conf gurat on v a env var able HADOOP_CONF_D R ")
+  parser.add_argu nt(
+    "--export_d r", type=str, default=None,
+     lp="Path to t  d rectory to export a SavedModel for pred ct on servers.")
+  parser.add_argu nt(
+    "--log_aggregat on_app_ d", type=str, default=None,
+     lp="spec fy app_ d for log aggregat on. d sabled by default.")
+  parser.add_argu nt(
+    "--tra n.batch_s ze", "--tra n_batch_s ze", type= nt, default=32,
+    dest='tra n_batch_s ze',
+     lp="number of samples per tra n ng batch")
+  parser.add_argu nt(
+    "--eval.batch_s ze", "--eval_batch_s ze", type= nt, default=32,
+    dest='eval_batch_s ze',
+     lp="number of samples per cross-val dat on batch. Defaults to tra n_batch_s ze")
+  parser.add_argu nt(
+    "--tra n.learn ng_rate", "--learn ng_rate", type=float, default=0.002,
+    dest='learn ng_rate',
+     lp="learn ng rate. Scales t  grad ent update.")
+  parser.add_argu nt(
+    "--tra n.steps", "--tra n_steps", type= nt, default=-1,
+    dest='tra n_steps',
+     lp="number of tra n ng batc s before runn ng evaluat on."
+         "Defaults to -1 (runs through ent re dataset). "
+         "Only used for Tra ner.[tra n,learn]. "
+         "For Tra ner.tra n_and_evaluate, use tra n.max_steps  nstead. ")
+  parser.add_argu nt(
+    "--eval.steps", "--eval_steps", type= nt, default=-1,
     dest="eval_steps",
-    help="number of steps per evaluation. Each batch is a step."
-         "Defaults to -1 (runs through entire dataset). ")
-  parser.add_argument(
-    "--eval.period", "--eval_period", type=int, default=600,
-    dest="eval_period",
-    help="Trainer.train_and_evaluate waits for this long after each evaluation. "
-         "Defaults to 600 seconds (evaluate every ten minutes). "
-         "Note that anything lower than 10*60seconds is probably a bad idea because TF saves "
-         "checkpoints every 10mins by default. eval.delay is time to wait before doing first eval. "
-         "eval.period is time between successive evals.")
-  parser.add_argument(
-    "--eval.delay", "--eval_delay", type=int, default=120,
+     lp="number of steps per evaluat on. Each batch  s a step."
+         "Defaults to -1 (runs through ent re dataset). ")
+  parser.add_argu nt(
+    "--eval.per od", "--eval_per od", type= nt, default=600,
+    dest="eval_per od",
+     lp="Tra ner.tra n_and_evaluate wa s for t  long after each evaluat on. "
+         "Defaults to 600 seconds (evaluate every ten m nutes). "
+         "Note that anyth ng lo r than 10*60seconds  s probably a bad  dea because TF saves "
+         "c ckpo nts every 10m ns by default. eval.delay  s t   to wa  before do ng f rst eval. "
+         "eval.per od  s t   bet en success ve evals.")
+  parser.add_argu nt(
+    "--eval.delay", "--eval_delay", type= nt, default=120,
     dest="eval_delay",
-    help="Trainer.train_and_evaluate waits for this long before performing the first evaluation"
-         "Defaults to 120 seconds (evaluate after first 2 minutes of training). "
-         "eval.delay is time to wait before doing first eval. "
-         "eval.period is time between successive evals.")
-  parser.add_argument(
-    "--train.max_steps", "--train_max_steps", type=int, default=None,
-    dest="train_max_steps",
-    help="Stop training after this many global steps. Each training batch is its own step."
-         "If set to None, step after one train()/evaluate() call. Useful when train.steps=-1."
-         "If set to a non-positive value, loop forever. Usually useful with early stopping.")
-  parser.add_argument(
-    "--train.log_metrics", dest="train_log_metrics", action="store_true", default=False,
-    help="Set this to true to see metrics during training. "
-         "WARNING: metrics during training does not represent model performance. "
-         "WARNING: use for debugging only as this slows down training.")
-  parser.add_argument(
-    "--train.early_stop_patience", "--early_stop_patience", type=int, default=-1,
-    dest="early_stop_patience",
-    help="max number of evaluations (epochs) to wait for an improvement in the early_stop_metric."
-         "Defaults to -1 (no early-stopping)."
-         "NOTE: This can not be enabled when --distributed is also set.")
-  parser.add_argument(
-    "--train.early_stop_tolerance", "--early_stop_tolerance", type=float, default=0,
+     lp="Tra ner.tra n_and_evaluate wa s for t  long before perform ng t  f rst evaluat on"
+         "Defaults to 120 seconds (evaluate after f rst 2 m nutes of tra n ng). "
+         "eval.delay  s t   to wa  before do ng f rst eval. "
+         "eval.per od  s t   bet en success ve evals.")
+  parser.add_argu nt(
+    "--tra n.max_steps", "--tra n_max_steps", type= nt, default=None,
+    dest="tra n_max_steps",
+     lp="Stop tra n ng after t  many global steps. Each tra n ng batch  s  s own step."
+         " f set to None, step after one tra n()/evaluate() call. Useful w n tra n.steps=-1."
+         " f set to a non-pos  ve value, loop forever. Usually useful w h early stopp ng.")
+  parser.add_argu nt(
+    "--tra n.log_ tr cs", dest="tra n_log_ tr cs", act on="store_true", default=False,
+     lp="Set t  to true to see  tr cs dur ng tra n ng. "
+         "WARN NG:  tr cs dur ng tra n ng does not represent model performance. "
+         "WARN NG: use for debugg ng only as t  slows down tra n ng.")
+  parser.add_argu nt(
+    "--tra n.early_stop_pat ence", "--early_stop_pat ence", type= nt, default=-1,
+    dest="early_stop_pat ence",
+     lp="max number of evaluat ons (epochs) to wa  for an  mprove nt  n t  early_stop_ tr c."
+         "Defaults to -1 (no early-stopp ng)."
+         "NOTE: T  can not be enabled w n --d str buted  s also set.")
+  parser.add_argu nt(
+    "--tra n.early_stop_tolerance", "--early_stop_tolerance", type=float, default=0,
     dest="early_stop_tolerance",
-    help="a non-negative tolerance for comparing early_stop_metric."
-         "e.g. when maximizing the condition is current_metric > best_metric + tolerance."
+     lp="a non-negat ve tolerance for compar ng early_stop_ tr c."
+         "e.g. w n max m z ng t  cond  on  s current_ tr c > best_ tr c + tolerance."
          "Defaults to 0.")
-  parser.add_argument(
-    "--train.dataset_shards", "--train_dataset_shards",
-    dest="train_dataset_shards",
-    type=int, default=None,
-    help="An int value that indicates the number of partitions (shards) for the dataset. This is"
-    " useful for codistillation and other techniques that require each worker to train on disjoint"
-    " partitions of the dataset.")
-  parser.add_argument(
-    "--train.dataset_shard_index", "--train_dataset_shard_index",
-    dest="train_dataset_shard_index",
-    type=int, default=None,
-    help="An int value (starting at zero) that indicates which partition (shard) of the dataset"
-    " to use if --train.dataset_shards is set.")
-  parser.add_argument(
-    "--continue_from_checkpoint", dest="continue_from_checkpoint", action="store_true",
-    help="DEPRECATED. This option is currently a no-op."
-    " Continuing from the provided checkpoint is now the default."
-    " Use --overwrite_save_dir if you would like to override it instead"
-    " and restart training from scratch.")
-  parser.add_argument(
-    "--overwrite_save_dir", dest="overwrite_save_dir", action="store_true",
-    help="Delete the contents of the current save_dir if it exists")
-  parser.add_argument(
-    "--data_threads", "--num_threads", type=int, default=2,
+  parser.add_argu nt(
+    "--tra n.dataset_shards", "--tra n_dataset_shards",
+    dest="tra n_dataset_shards",
+    type= nt, default=None,
+     lp="An  nt value that  nd cates t  number of part  ons (shards) for t  dataset. T   s"
+    " useful for cod st llat on and ot r techn ques that requ re each worker to tra n on d sjo nt"
+    " part  ons of t  dataset.")
+  parser.add_argu nt(
+    "--tra n.dataset_shard_ ndex", "--tra n_dataset_shard_ ndex",
+    dest="tra n_dataset_shard_ ndex",
+    type= nt, default=None,
+     lp="An  nt value (start ng at zero) that  nd cates wh ch part  on (shard) of t  dataset"
+    " to use  f --tra n.dataset_shards  s set.")
+  parser.add_argu nt(
+    "--cont nue_from_c ckpo nt", dest="cont nue_from_c ckpo nt", act on="store_true",
+     lp="DEPRECATED. T  opt on  s currently a no-op."
+    " Cont nu ng from t  prov ded c ckpo nt  s now t  default."
+    " Use --overwr e_save_d r  f   would l ke to overr de    nstead"
+    " and restart tra n ng from scratch.")
+  parser.add_argu nt(
+    "--overwr e_save_d r", dest="overwr e_save_d r", act on="store_true",
+     lp="Delete t  contents of t  current save_d r  f   ex sts")
+  parser.add_argu nt(
+    "--data_threads", "--num_threads", type= nt, default=2,
     dest="num_threads",
-    help="Number of threads to use for loading the dataset. "
-         "num_threads is deprecated and to be removed in future versions. Use data_threads.")
-  parser.add_argument(
-    "--max_duration", "--max_duration", type=float, default=None,
-    dest="max_duration",
-    help="Maximum duration (in secs) that training/validation will be allowed to run for before being automatically terminated.")
-  parser.add_argument(
-    "--num_workers", type=int, default=None,
-    help="Number of workers to use when training in hogwild manner on a single node.")
-  parser.add_argument(
-    "--distributed", dest="distributed", action="store_true",
-    help="Pass this flag to use train_and_evaluate to train in a distributed fashion"
-         "NOTE: You can not use early stopping when --distributed is enabled"
+     lp="Number of threads to use for load ng t  dataset. "
+         "num_threads  s deprecated and to be removed  n future vers ons. Use data_threads.")
+  parser.add_argu nt(
+    "--max_durat on", "--max_durat on", type=float, default=None,
+    dest="max_durat on",
+     lp="Max mum durat on ( n secs) that tra n ng/val dat on w ll be allo d to run for before be ng automat cally term nated.")
+  parser.add_argu nt(
+    "--num_workers", type= nt, default=None,
+     lp="Number of workers to use w n tra n ng  n hogw ld manner on a s ngle node.")
+  parser.add_argu nt(
+    "--d str buted", dest="d str buted", act on="store_true",
+     lp="Pass t  flag to use tra n_and_evaluate to tra n  n a d str buted fash on"
+         "NOTE:   can not use early stopp ng w n --d str buted  s enabled"
   )
-  parser.add_argument(
-    "--distributed_training_cleanup",
-    dest="distributed_training_cleanup",
-    action="store_true",
-    help="Set if using distributed training on GKE to stop TwitterSetDeployment"
-         "from continuing training upon restarts (will be deprecated once we migrate off"
-         "TwitterSetDeployment for distributed training on GKE)."
+  parser.add_argu nt(
+    "--d str buted_tra n ng_cleanup",
+    dest="d str buted_tra n ng_cleanup",
+    act on="store_true",
+     lp="Set  f us ng d str buted tra n ng on GKE to stop Tw terSetDeploy nt"
+         "from cont nu ng tra n ng upon restarts (w ll be deprecated once   m grate off"
+         "Tw terSetDeploy nt for d str buted tra n ng on GKE)."
   )
-  parser.add_argument(
-    "--disable_auto_ps_shutdown", default=False, action="store_true",
-    help="Disable the functionality of automatically shutting down parameter server after "
-         "distributed training complete (either succeed or failed)."
+  parser.add_argu nt(
+    "--d sable_auto_ps_shutdown", default=False, act on="store_true",
+     lp="D sable t  funct onal y of automat cally shutt ng down para ter server after "
+         "d str buted tra n ng complete (e  r succeed or fa led)."
   )
-  parser.add_argument(
-    "--disable_tensorboard", default=False, action="store_true",
-    help="Do not start the TensorBoard server."
+  parser.add_argu nt(
+    "--d sable_tensorboard", default=False, act on="store_true",
+     lp="Do not start t  TensorBoard server."
   )
-  parser.add_argument(
-    "--tensorboard_port", type=int, default=None,
-    help="Port for tensorboard to run on. Ignored if --disable_tensorboard is set.")
-  parser.add_argument(
-    "--health_port", type=int, default=None,
-    help="Port to listen on for health-related endpoints (e.g. graceful shutdown)."
-         "Not user-facing as it is set automatically by the twml_cli."
+  parser.add_argu nt(
+    "--tensorboard_port", type= nt, default=None,
+     lp="Port for tensorboard to run on.  gnored  f --d sable_tensorboard  s set.")
+  parser.add_argu nt(
+    "-- alth_port", type= nt, default=None,
+     lp="Port to l sten on for  alth-related endpo nts (e.g. graceful shutdown)."
+         "Not user-fac ng as    s set automat cally by t  twml_cl ."
   )
-  parser.add_argument(
-    "--stats_port", type=int, default=None,
-    help="Port to listen on for stats endpoints"
+  parser.add_argu nt(
+    "--stats_port", type= nt, default=None,
+     lp="Port to l sten on for stats endpo nts"
   )
-  parser.add_argument(
-    "--experiment_tracking_path",
-    dest="experiment_tracking_path",
+  parser.add_argu nt(
+    "--exper  nt_track ng_path",
+    dest="exper  nt_track ng_path",
     type=str, default=None,
-    help="The tracking path of this experiment. Format: \
-        user_name:project_name:experiment_name:run_name. The path is used to track and display \
-        a record of this experiment on ML Dashboard. Note: this embedded experiment tracking is \
-        disabled when the deprecated Model Repo TrackRun is used in your model config. ")
-  parser.add_argument(
-    "--disable_experiment_tracking",
-    dest="disable_experiment_tracking",
-    action="store_true",
-    help="Whether experiment tracking should be disabled.")
-  parser.add_argument(
-    "--config.save_checkpoints_secs", "--save_checkpoints_secs", type=int, default=600,
-    dest='save_checkpoints_secs',
-    help="Configures the tf.estimator.RunConfig.save_checkpoints_secs attribute. "
-    "Specifies how often checkpoints are saved in seconds. Defaults to 10*60 seconds.")
-  parser.add_argument(
-    "--config.keep_checkpoint_max", "--keep_checkpoint_max", type=int, default=20,
-    dest='keep_checkpoint_max',
-    help="Configures the tf.estimator.RunConfig.keep_checkpoint_max attribute. "
-    "Specifies how many checkpoints to keep. Defaults to 20.")
-  parser.add_argument(
-    "--config.tf_random_seed", "--tf_random_seed", type=int, default=None,
+     lp="T  track ng path of t  exper  nt. Format: \
+        user_na :project_na :exper  nt_na :run_na . T  path  s used to track and d splay \
+        a record of t  exper  nt on ML Dashboard. Note: t  embedded exper  nt track ng  s \
+        d sabled w n t  deprecated Model Repo TrackRun  s used  n y  model conf g. ")
+  parser.add_argu nt(
+    "--d sable_exper  nt_track ng",
+    dest="d sable_exper  nt_track ng",
+    act on="store_true",
+     lp="W t r exper  nt track ng should be d sabled.")
+  parser.add_argu nt(
+    "--conf g.save_c ckpo nts_secs", "--save_c ckpo nts_secs", type= nt, default=600,
+    dest='save_c ckpo nts_secs',
+     lp="Conf gures t  tf.est mator.RunConf g.save_c ckpo nts_secs attr bute. "
+    "Spec f es how often c ckpo nts are saved  n seconds. Defaults to 10*60 seconds.")
+  parser.add_argu nt(
+    "--conf g.keep_c ckpo nt_max", "--keep_c ckpo nt_max", type= nt, default=20,
+    dest='keep_c ckpo nt_max',
+     lp="Conf gures t  tf.est mator.RunConf g.keep_c ckpo nt_max attr bute. "
+    "Spec f es how many c ckpo nts to keep. Defaults to 20.")
+  parser.add_argu nt(
+    "--conf g.tf_random_seed", "--tf_random_seed", type= nt, default=None,
     dest='tf_random_seed',
-    help="Configures the tf.estimator.RunConfig.tf_random_seed attribute. "
-         "Specifies the seed to use. Defaults to None.")
-  parser.add_argument(
-    "--optimizer", type=str, default='SGD',
-    help="Optimizer to use: SGD (Default), Adagrad, Adam, Ftrl, Momentum, RMSProp, LazyAdam, DGC.")
-  parser.add_argument(
-    "--gradient_noise_scale", type=float, default=None,
-    help="adds 0-mean normal noise scaled by this value. Defaults to None.")
-  parser.add_argument(
-    "--clip_gradients", type=float, default=None,
-    help="If specified, a global clipping is applied to prevent "
-         "the norm of the gradient to exceed this value. Defaults to None.")
-  parser.add_argument(
-    "--dgc.density", "--dgc_density", type=float, default=0.1,
-    dest="dgc_density",
-    help="Specifies gradient density level when using deep gradient compression optimizer."
-         "E.g., default value being 0.1 means that only top 10%% most significant rows "
+     lp="Conf gures t  tf.est mator.RunConf g.tf_random_seed attr bute. "
+         "Spec f es t  seed to use. Defaults to None.")
+  parser.add_argu nt(
+    "--opt m zer", type=str, default='SGD',
+     lp="Opt m zer to use: SGD (Default), Adagrad, Adam, Ftrl, Mo ntum, RMSProp, LazyAdam, DGC.")
+  parser.add_argu nt(
+    "--grad ent_no se_scale", type=float, default=None,
+     lp="adds 0- an normal no se scaled by t  value. Defaults to None.")
+  parser.add_argu nt(
+    "--cl p_grad ents", type=float, default=None,
+     lp=" f spec f ed, a global cl pp ng  s appl ed to prevent "
+         "t  norm of t  grad ent to exceed t  value. Defaults to None.")
+  parser.add_argu nt(
+    "--dgc.dens y", "--dgc_dens y", type=float, default=0.1,
+    dest="dgc_dens y",
+     lp="Spec f es grad ent dens y level w n us ng deep grad ent compress on opt m zer."
+         "E.g., default value be ng 0.1  ans that only top 10%% most s gn f cant rows "
          "(based on absolute value sums) are kept."
   )
-  parser.add_argument(
-    "--dgc.density_decay", "--dgc_density_decay", type=bool, default=True,
-    dest="dgc_density_decay",
-    help="Specifies whether to (exponentially) decay the gradient density level when"
-         " doing gradient compression. If set 'False', the 'density_decay_steps', "
-         "'density_decay_rate' and 'min_density' arguments will be ignored."
+  parser.add_argu nt(
+    "--dgc.dens y_decay", "--dgc_dens y_decay", type=bool, default=True,
+    dest="dgc_dens y_decay",
+     lp="Spec f es w t r to (exponent ally) decay t  grad ent dens y level w n"
+         " do ng grad ent compress on.  f set 'False', t  'dens y_decay_steps', "
+         "'dens y_decay_rate' and 'm n_dens y' argu nts w ll be  gnored."
   )
-  parser.add_argument(
-    "--dgc.density_decay_steps", "--dgc_density_decay_steps", type=int, default=10000,
-    dest="dgc_density_decay_steps",
-    help="Specifies the step interval to perform density decay."
+  parser.add_argu nt(
+    "--dgc.dens y_decay_steps", "--dgc_dens y_decay_steps", type= nt, default=10000,
+    dest="dgc_dens y_decay_steps",
+     lp="Spec f es t  step  nterval to perform dens y decay."
   )
-  parser.add_argument(
-    "--dgc.density_decay_rate", "--dgc_density_decay_rate", type=float, default=0.5,
-    dest="dgc_density_decay_rate",
-    help="Specifies the decay rate when perfoming density decay."
+  parser.add_argu nt(
+    "--dgc.dens y_decay_rate", "--dgc_dens y_decay_rate", type=float, default=0.5,
+    dest="dgc_dens y_decay_rate",
+     lp="Spec f es t  decay rate w n perfom ng dens y decay."
   )
-  parser.add_argument(
-    "--dgc.min_density", "--dgc_min_density", type=float, default=0.1,
-    dest="dgc_min_density",
-    help="Specifies the minimum density level when perfoming density decay."
+  parser.add_argu nt(
+    "--dgc.m n_dens y", "--dgc_m n_dens y", type=float, default=0.1,
+    dest="dgc_m n_dens y",
+     lp="Spec f es t  m n mum dens y level w n perfom ng dens y decay."
   )
-  parser.add_argument(
-    "--dgc.accumulation", "--dgc_accumulation", type=bool, default=False,
-    dest="dgc_accumulation",
-    help="Specifies whether to accumulate small gradients when using deep gradient compression "
-         "optimizer."
+  parser.add_argu nt(
+    "--dgc.accumulat on", "--dgc_accumulat on", type=bool, default=False,
+    dest="dgc_accumulat on",
+     lp="Spec f es w t r to accumulate small grad ents w n us ng deep grad ent compress on "
+         "opt m zer."
   )
-  parser.add_argument(
-    "--show_optimizer_summaries", dest="show_optimizer_summaries", action="store_true",
-    help="When specified, displays gradients and learning rate in tensorboard."
-    "Turning it on has 10-20%% performance hit. Enable for debugging only")
+  parser.add_argu nt(
+    "--show_opt m zer_summar es", dest="show_opt m zer_summar es", act on="store_true",
+     lp="W n spec f ed, d splays grad ents and learn ng rate  n tensorboard."
+    "Turn ng   on has 10-20%% performance h . Enable for debugg ng only")
 
-  parser.add_argument(
-    "--num_mkl_threads", dest="num_mkl_threads", default=1, type=int,
-    help="Specifies how many threads to use for MKL"
-    "inter_op_ parallelism_threds is set to TWML_NUM_CPUS / num_mkl_threads."
-    "intra_op_parallelism_threads is set to num_mkl_threads.")
+  parser.add_argu nt(
+    "--num_mkl_threads", dest="num_mkl_threads", default=1, type= nt,
+     lp="Spec f es how many threads to use for MKL"
+    " nter_op_ parallel sm_threds  s set to TWML_NUM_CPUS / num_mkl_threads."
+    " ntra_op_parallel sm_threads  s set to num_mkl_threads.")
 
-  parser.add_argument("--verbosity", type=_set_log_level, choices=LOG_LEVELS.keys(), default=None,
-    help="Sets log level to a given verbosity.")
+  parser.add_argu nt("--verbos y", type=_set_log_level, cho ces=LOG_LEVELS.keys(), default=None,
+     lp="Sets log level to a g ven verbos y.")
 
-  parser.add_argument(
-    "--feature_importance.algorithm", dest="feature_importance_algorithm",
-    type=str, default=TREE, choices=[SERIAL, TREE],
-    help="""
-    There are two algorithms that the module supports, `serial` and `tree`.
-      The `serial` algorithm computes feature importances for each feature, and
-      the `tree` algorithm groups features by feature name prefix, computes feature
-      importances for groups of features, and then only 'zooms-in' on a group when the
-      importance is greater than the `--feature_importance.sensitivity` value. The `tree` algorithm
-      will usually run faster, but for relatively unimportant features it will only compute an
-      upper bound rather than an exact importance value. We suggest that users generally stick
-      to the `tree` algorithm, unless if they have a very small number of features or
+  parser.add_argu nt(
+    "--feature_ mportance.algor hm", dest="feature_ mportance_algor hm",
+    type=str, default=TREE, cho ces=[SER AL, TREE],
+     lp="""
+    T re are two algor hms that t  module supports, `ser al` and `tree`.
+      T  `ser al` algor hm computes feature  mportances for each feature, and
+      t  `tree` algor hm groups features by feature na  pref x, computes feature
+       mportances for groups of features, and t n only 'zooms- n' on a group w n t 
+       mportance  s greater than t  `--feature_ mportance.sens  v y` value. T  `tree` algor hm
+      w ll usually run faster, but for relat vely un mportant features   w ll only compute an
+      upper bound rat r than an exact  mportance value.   suggest that users generally st ck
+      to t  `tree` algor hm, unless  f t y have a very small number of features or
       near-random model performance.
       """)
 
-  parser.add_argument(
-    "--feature_importance.sensitivity", dest="feature_importance_sensitivity", type=float, default=0.03,
-    help="""
-    The maximum amount that permuting a feature group can cause the model performance (determined
-      by `feature_importance.metric`) to drop before the algorithm decides to not expand the feature
-      group. This is only used for the `tree` algorithm.
+  parser.add_argu nt(
+    "--feature_ mportance.sens  v y", dest="feature_ mportance_sens  v y", type=float, default=0.03,
+     lp="""
+    T  max mum amount that permut ng a feature group can cause t  model performance (determ ned
+      by `feature_ mportance. tr c`) to drop before t  algor hm dec des to not expand t  feature
+      group. T   s only used for t  `tree` algor hm.
     """)
 
-  parser.add_argument(
-    "--feature_importance.dont_build_tree", dest="dont_build_tree", action="store_true", default=False,
-    help="""
-    If True, don't build the feature trie for the tree algorithm and only use the extra_groups
+  parser.add_argu nt(
+    "--feature_ mportance.dont_bu ld_tree", dest="dont_bu ld_tree", act on="store_true", default=False,
+     lp="""
+     f True, don't bu ld t  feature tr e for t  tree algor hm and only use t  extra_groups
     """)
 
-  parser.add_argument(
-    "--feature_importance.split_feature_group_on_period", dest="split_feature_group_on_period", action="store_true", default=False,
-    help="If true, split feature groups by the period rather than the optimal prefix. Only used for the TREE algorithm")
+  parser.add_argu nt(
+    "--feature_ mportance.spl _feature_group_on_per od", dest="spl _feature_group_on_per od", act on="store_true", default=False,
+     lp=" f true, spl  feature groups by t  per od rat r than t  opt mal pref x. Only used for t  TREE algor hm")
 
-  parser.add_argument(
-    "--feature_importance.example_count", dest="feature_importance_example_count", type=int, default=10000,
-    help="""
-    The number of examples used to compute feature importance.
-    Larger values yield more reliable results, but also take longer to compute.
-    These records are loaded into memory. This number is agnostic to batch size.
+  parser.add_argu nt(
+    "--feature_ mportance.example_count", dest="feature_ mportance_example_count", type= nt, default=10000,
+     lp="""
+    T  number of examples used to compute feature  mportance.
+    Larger values y eld more rel able results, but also take longer to compute.
+    T se records are loaded  nto  mory. T  number  s agnost c to batch s ze.
     """)
 
-  parser.add_argument(
-    "--feature_importance.data_dir", dest="feature_importance_data_dir", type=str, default=None,
-    help="Path to the dataset used to compute feature importance."
-         "supports local filesystem path and hdfs://default/<path> which requires "
-         "setting HDFS configuration via env variable HADOOP_CONF_DIR "
-         "Defaults to eval_data_dir")
+  parser.add_argu nt(
+    "--feature_ mportance.data_d r", dest="feature_ mportance_data_d r", type=str, default=None,
+     lp="Path to t  dataset used to compute feature  mportance."
+         "supports local f lesystem path and hdfs://default/<path> wh ch requ res "
+         "sett ng HDFS conf gurat on v a env var able HADOOP_CONF_D R "
+         "Defaults to eval_data_d r")
 
-  parser.add_argument(
-    "--feature_importance.metric", dest="feature_importance_metric", type=str, default="roc_auc",
-    help="The metric used to determine when to stop expanding the feature importance tree. This is only used for the `tree` algorithm.")
+  parser.add_argu nt(
+    "--feature_ mportance. tr c", dest="feature_ mportance_ tr c", type=str, default="roc_auc",
+     lp="T   tr c used to determ ne w n to stop expand ng t  feature  mportance tree. T   s only used for t  `tree` algor hm.")
 
-  parser.add_argument(
-    "--feature_importance.is_metric_larger_the_better", dest="feature_importance_is_metric_larger_the_better", action="store_true", default=False,
-    help="If true, interpret `--feature_importance.metric` to be a metric where larger values are better (e.g. ROC_AUC)")
+  parser.add_argu nt(
+    "--feature_ mportance. s_ tr c_larger_t _better", dest="feature_ mportance_ s_ tr c_larger_t _better", act on="store_true", default=False,
+     lp=" f true,  nterpret `--feature_ mportance. tr c` to be a  tr c w re larger values are better (e.g. ROC_AUC)")
 
-  parser.add_argument(
-    "--feature_importance.is_metric_smaller_the_better", dest="feature_importance_is_metric_smaller_the_better", action="store_true", default=False,
-    help="If true, interpret `--feature_importance.metric` to be a metric where smaller values are better (e.g. LOSS)")
+  parser.add_argu nt(
+    "--feature_ mportance. s_ tr c_smaller_t _better", dest="feature_ mportance_ s_ tr c_smaller_t _better", act on="store_true", default=False,
+     lp=" f true,  nterpret `--feature_ mportance. tr c` to be a  tr c w re smaller values are better (e.g. LOSS)")
 
-  subparsers = parser.add_subparsers(help='Learning Rate Decay Functions. Can only pass 1.'
-                                          'Should be specified after all the optional arguments'
-                                          'and followed by its specific args'
-                                          'e.g. --learning_rate 0.01 inverse_learning_rate_decay_fn'
-                                          ' --decay_rate 0.0004 --min_learning_rate 0.001',
-                                     dest='learning_rate_decay')
+  subparsers = parser.add_subparsers( lp='Learn ng Rate Decay Funct ons. Can only pass 1.'
+                                          'Should be spec f ed after all t  opt onal argu nts'
+                                          'and follo d by  s spec f c args'
+                                          'e.g. --learn ng_rate 0.01  nverse_learn ng_rate_decay_fn'
+                                          ' --decay_rate 0.0004 --m n_learn ng_rate 0.001',
+                                     dest='learn ng_rate_decay')
 
-  # Create the parser for the "exponential_learning_rate_decay_fn"
-  parser_exponential = subparsers.add_parser('exponential_learning_rate_decay',
-                                             help='Exponential learning rate decay. '
-                                             'Exponential decay implements:'
-                                             'decayed_learning_rate = learning_rate * '
-                                             'exponential_decay_rate ^ '
+  # Create t  parser for t  "exponent al_learn ng_rate_decay_fn"
+  parser_exponent al = subparsers.add_parser('exponent al_learn ng_rate_decay',
+                                              lp='Exponent al learn ng rate decay. '
+                                             'Exponent al decay  mple nts:'
+                                             'decayed_learn ng_rate = learn ng_rate * '
+                                             'exponent al_decay_rate ^ '
                                              '(global_step / decay_steps')
-  parser_exponential.add_argument(
+  parser_exponent al.add_argu nt(
     "--decay_steps", type=float, default=None,
-    help="Required for 'exponential' learning_rate_decay.")
-  parser_exponential.add_argument(
-    "--exponential_decay_rate", type=float, default=None,
-    help="Required for 'exponential' learning_rate_decay. Must be positive. ")
+     lp="Requ red for 'exponent al' learn ng_rate_decay.")
+  parser_exponent al.add_argu nt(
+    "--exponent al_decay_rate", type=float, default=None,
+     lp="Requ red for 'exponent al' learn ng_rate_decay. Must be pos  ve. ")
 
-  # Create the parser for the "polynomial_learning_rate_decay_fn"
-  parser_polynomial = subparsers.add_parser('polynomial_learning_rate_decay',
-                                            help='Polynomial learning rate decay. '
-                                            'Polynomial decay implements: '
-                                            'global_step = min(global_step, decay_steps)'
-                                            'decayed_learning_rate = '
-                                            '(learning_rate - end_learning_rate) * '
+  # Create t  parser for t  "polynom al_learn ng_rate_decay_fn"
+  parser_polynom al = subparsers.add_parser('polynom al_learn ng_rate_decay',
+                                             lp='Polynom al learn ng rate decay. '
+                                            'Polynom al decay  mple nts: '
+                                            'global_step = m n(global_step, decay_steps)'
+                                            'decayed_learn ng_rate = '
+                                            '(learn ng_rate - end_learn ng_rate) * '
                                             '(1 - global_step / decay_steps) ^ '
-                                            '(polynomial_power) + end_learning_rate'
-                                            'So for linear decay you can use a '
-                                            'polynomial_power=1 (the default)')
-  parser_polynomial.add_argument(
-    "--end_learning_rate", type=float, default=0.0001,
-    help="Required for 'polynomial' learning_rate_decay (ignored otherwise).")
-  parser_polynomial.add_argument(
-    "--polynomial_power", type=float, default=0.0001,
-    help="Required for 'polynomial' learning_rate_decay."
-         "The power of the polynomial. Defaults to linear, 1.0.")
-  parser_polynomial.add_argument(
+                                            '(polynom al_po r) + end_learn ng_rate'
+                                            'So for l near decay   can use a '
+                                            'polynom al_po r=1 (t  default)')
+  parser_polynom al.add_argu nt(
+    "--end_learn ng_rate", type=float, default=0.0001,
+     lp="Requ red for 'polynom al' learn ng_rate_decay ( gnored ot rw se).")
+  parser_polynom al.add_argu nt(
+    "--polynom al_po r", type=float, default=0.0001,
+     lp="Requ red for 'polynom al' learn ng_rate_decay."
+         "T  po r of t  polynom al. Defaults to l near, 1.0.")
+  parser_polynom al.add_argu nt(
     "--decay_steps", type=float, default=None,
-    help="Required for 'polynomial' learning_rate_decay. ")
+     lp="Requ red for 'polynom al' learn ng_rate_decay. ")
 
-  # Create the parser for the "piecewise_constant_learning_rate_decay_fn"
-  parser_piecewise_constant = subparsers.add_parser('piecewise_constant_learning_rate_decay',
-                                                    help='Piecewise Constant '
-                                                    'learning rate decay. '
-                                                    'For piecewise_constant, '
-                                                    'consider this example: '
-                                                    'We want to use a learning rate '
-                                                    'that is 1.0 for'
-                                                    'the first 100000 steps,'
+  # Create t  parser for t  "p ecew se_constant_learn ng_rate_decay_fn"
+  parser_p ecew se_constant = subparsers.add_parser('p ecew se_constant_learn ng_rate_decay',
+                                                     lp='P ecew se Constant '
+                                                    'learn ng rate decay. '
+                                                    'For p ecew se_constant, '
+                                                    'cons der t  example: '
+                                                    '  want to use a learn ng rate '
+                                                    'that  s 1.0 for'
+                                                    't  f rst 100000 steps,'
                                                     '0.5 for steps 100001 to 110000, '
-                                                    'and 0.1 for any additional steps. '
-                                                    'To do so, specify '
-                                                    '--piecewise_constant_boundaries=100000,110000'
-                                                    '--piecewise_constant_values=1.0,0.5,0.1')
-  parser_piecewise_constant.add_argument(
-    "--piecewise_constant_values",
-    action=parse_comma_separated_list(element_type=float),
+                                                    'and 0.1 for any add  onal steps. '
+                                                    'To do so, spec fy '
+                                                    '--p ecew se_constant_boundar es=100000,110000'
+                                                    '--p ecew se_constant_values=1.0,0.5,0.1')
+  parser_p ecew se_constant.add_argu nt(
+    "--p ecew se_constant_values",
+    act on=parse_comma_separated_l st(ele nt_type=float),
     default=None,
-    help="Required for 'piecewise_constant_values' learning_rate_decay. "
-         "A list of comma seperated floats or ints that specifies the values "
-         "for the intervals defined by boundaries. It should have one more "
-         "element than boundaries.")
-  parser_piecewise_constant.add_argument(
-    "--piecewise_constant_boundaries",
-    action=parse_comma_separated_list(element_type=int),
+     lp="Requ red for 'p ecew se_constant_values' learn ng_rate_decay. "
+         "A l st of comma seperated floats or  nts that spec f es t  values "
+         "for t   ntervals def ned by boundar es.   should have one more "
+         "ele nt than boundar es.")
+  parser_p ecew se_constant.add_argu nt(
+    "--p ecew se_constant_boundar es",
+    act on=parse_comma_separated_l st(ele nt_type= nt),
     default=None,
-    help="Required for 'piecewise_constant_values' learning_rate_decay. "
-         "A list of comma seperated integers, with strictly increasing entries.")
+     lp="Requ red for 'p ecew se_constant_values' learn ng_rate_decay. "
+         "A l st of comma seperated  ntegers, w h str ctly  ncreas ng entr es.")
 
-  # Create the parser for the "inverse_learning_rate_decay_fn"
-  parser_inverse = subparsers.add_parser('inverse_learning_rate_decay',
-                                         help='Inverse Leaning rate decay. '
-                                         'Inverse implements:'
+  # Create t  parser for t  " nverse_learn ng_rate_decay_fn"
+  parser_ nverse = subparsers.add_parser(' nverse_learn ng_rate_decay',
+                                          lp=' nverse Lean ng rate decay. '
+                                         ' nverse  mple nts:'
                                          'decayed_lr = max(lr /(1 + decay_rate * '
                                          'floor(global_step /decay_step)),'
-                                         ' min_learning_rate)'
-                                         'When decay_step=1 this mimics the behaviour'
-                                         'of the default learning rate decay'
-                                         'of DeepBird v1.')
+                                         ' m n_learn ng_rate)'
+                                         'W n decay_step=1 t  m m cs t  behav  '
+                                         'of t  default learn ng rate decay'
+                                         'of DeepB rd v1.')
 
-  parser_inverse.add_argument(
+  parser_ nverse.add_argu nt(
     "--decay_rate", type=float, default=None,
-    help="Required for 'inverse' learning_rate_decay. Rate in which we decay the learning rate.")
-  parser_inverse.add_argument(
-    "--min_learning_rate", type=float, default=None,
-    help="Required for 'inverse' learning_rate_decay.Minimum possible learning_rate.")
-  parser_inverse.add_argument(
+     lp="Requ red for ' nverse' learn ng_rate_decay. Rate  n wh ch   decay t  learn ng rate.")
+  parser_ nverse.add_argu nt(
+    "--m n_learn ng_rate", type=float, default=None,
+     lp="Requ red for ' nverse' learn ng_rate_decay.M n mum poss ble learn ng_rate.")
+  parser_ nverse.add_argu nt(
     "--decay_steps", type=float, default=1,
-    help="Required for 'inverse' learning_rate_decay.")
+     lp="Requ red for ' nverse' learn ng_rate_decay.")
 
-  # Create the parser for the "cosine_learning_rate_decay_fn"
-  parser_cosine = subparsers.add_parser('cosine_learning_rate_decay',
-                                        help='Cosine Leaning rate decay. '
-                                        'Cosine implements:'
-                                        'decayed_lr = 0.5 * (1 + cos(pi *\
+  # Create t  parser for t  "cos ne_learn ng_rate_decay_fn"
+  parser_cos ne = subparsers.add_parser('cos ne_learn ng_rate_decay',
+                                         lp='Cos ne Lean ng rate decay. '
+                                        'Cos ne  mple nts:'
+                                        'decayed_lr = 0.5 * (1 + cos(p  *\
                                          global_step / decay_steps)) * lr'
                                        )
 
-  parser_cosine.add_argument(
+  parser_cos ne.add_argu nt(
     "--alpha", type=float, default=0,
-    help="A scalar float32 or float64 Tensor or a Python number.\
-    Minimum learning rate value as a fraction of learning_rate.")
-  parser_cosine.add_argument(
+     lp="A scalar float32 or float64 Tensor or a Python number.\
+    M n mum learn ng rate value as a fract on of learn ng_rate.")
+  parser_cos ne.add_argu nt(
     "--decay_steps", type=float,
-    help="Required for 'inverse' learning_rate_decay.")
+     lp="Requ red for ' nverse' learn ng_rate_decay.")
 
-  # Create the parser for the "cosine_restart_learning_rate_decay_fn"
-  parser_cosine_restart = subparsers.add_parser('cosine_restarts_learning_rate_decay',
-                                                help='Applies cosine decay with restarts \
-                                                  to the learning rate'
-                                                'See [Loshchilov & Hutter, ICLR2016],\
-                                                   SGDR: Stochastic'
-                                                'Gradient Descent with Warm Restarts.'
-                                                'https://arxiv.org/abs/1608.03983'
+  # Create t  parser for t  "cos ne_restart_learn ng_rate_decay_fn"
+  parser_cos ne_restart = subparsers.add_parser('cos ne_restarts_learn ng_rate_decay',
+                                                 lp='Appl es cos ne decay w h restarts \
+                                                  to t  learn ng rate'
+                                                'See [Loshch lov & Hutter,  CLR2016],\
+                                                   SGDR: Stochast c'
+                                                'Grad ent Descent w h Warm Restarts.'
+                                                'https://arx v.org/abs/1608.03983'
                                                )
-  parser_cosine_restart.add_argument(
-    "--first_decay_steps", type=float,
-    help="Required for 'cosine_restart' learning_rate_decay.")
-  parser_cosine_restart.add_argument(
+  parser_cos ne_restart.add_argu nt(
+    "--f rst_decay_steps", type=float,
+     lp="Requ red for 'cos ne_restart' learn ng_rate_decay.")
+  parser_cos ne_restart.add_argu nt(
     "--alpha", type=float, default=0,
-    help="A scalar float32 or float64 Tensor or a Python number. \
-           Minimum learning rate value as a fraction of learning_rate.")
-  parser_cosine_restart.add_argument(
+     lp="A scalar float32 or float64 Tensor or a Python number. \
+           M n mum learn ng rate value as a fract on of learn ng_rate.")
+  parser_cos ne_restart.add_argu nt(
     "--t_mul", type=float, default=2,
-    help="A scalar float32 or float64 Tensor or a Python number. \
-           Used to derive the number of iterations in the i-th period")
-  parser_cosine_restart.add_argument(
+     lp="A scalar float32 or float64 Tensor or a Python number. \
+           Used to der ve t  number of  erat ons  n t   -th per od")
+  parser_cos ne_restart.add_argu nt(
     "--m_mul", type=float, default=1,
-    help="A scalar float32 or float64 Tensor or a Python number. \
-      Used to derive the initial learning rate of the i-th period.")
+     lp="A scalar float32 or float64 Tensor or a Python number. \
+      Used to der ve t   n  al learn ng rate of t   -th per od.")
 
-  # Create dummy parser for None, which is the default.
+  # Create dum  parser for None, wh ch  s t  default.
   parser_default = subparsers.add_parser(
-    'no_learning_rate_decay',
-    help='No learning rate decay')  # noqa: F841
+    'no_learn ng_rate_decay',
+     lp='No learn ng rate decay')  # noqa: F841
 
-  parser.set_default_subparser('no_learning_rate_decay')
+  parser.set_default_subparser('no_learn ng_rate_decay')
 
   return parser
 
 
-class DefaultSubcommandArgParse(argparse.ArgumentParser):
+class DefaultSubcommandArgParse(argparse.Argu ntParser):
   """
-  Subclass of argparse.ArgumentParser that sets default parser
+  Subclass of argparse.Argu ntParser that sets default parser
   """
   _DEFAULT_SUBPARSER = None
 
-  def set_default_subparser(self, name):
+  def set_default_subparser(self, na ):
     """
-    sets the default subparser
+    sets t  default subparser
     """
-    self._DEFAULT_SUBPARSER = name
+    self._DEFAULT_SUBPARSER = na 
 
-  def _parse_known_args(self, arg_strings, *args, **kwargs):
+  def _parse_known_args(self, arg_str ngs, *args, **kwargs):
     """
-    Overwrites _parse_known_args
+    Overwr es _parse_known_args
     """
-    in_args = set(arg_strings)
+     n_args = set(arg_str ngs)
     d_sp = self._DEFAULT_SUBPARSER
-    if d_sp is not None and not {'-h', '--help'}.intersection(in_args):
-      for x_val in self._subparsers._actions:
+     f d_sp  s not None and not {'-h', '-- lp'}. ntersect on( n_args):
+      for x_val  n self._subparsers._act ons:
         subparser_found = (
-          isinstance(x_val, argparse._SubParsersAction) and
-          in_args.intersection(x_val._name_parser_map.keys())
+           s nstance(x_val, argparse._SubParsersAct on) and
+           n_args. ntersect on(x_val._na _parser_map.keys())
         )
-        if subparser_found:
+         f subparser_found:
           break
       else:
-        # insert default in first position, this implies no
-        # global options without a sub_parsers specified
-        arg_strings = arg_strings + [d_sp]
+        #  nsert default  n f rst pos  on, t   mpl es no
+        # global opt ons w hout a sub_parsers spec f ed
+        arg_str ngs = arg_str ngs + [d_sp]
     return super(DefaultSubcommandArgParse, self)._parse_known_args(
-      arg_strings, *args, **kwargs
+      arg_str ngs, *args, **kwargs
     )
 
-  def _check_value(self, action, value):
+  def _c ck_value(self, act on, value):
     try:
-      super(DefaultSubcommandArgParse, self)._check_value(
-        action, value
+      super(DefaultSubcommandArgParse, self)._c ck_value(
+        act on, value
       )
-    except ArgumentError as error:
-      error.message += ("\nERROR: Deepbird is trying to interpret \"{}\" as a value of {}. If this is not what you expected, "
-        "then most likely one of the following two things are happening: Either one of your cli arguments are not recognized, "
-        "probably {} or whichever argument you are passing {} as a value to OR you are passing in an argument after "
-        "the `learning_rate_decay` argument.\n").format(value, action.dest, value, value)
-      raise error
+    except Argu ntError as error:
+      error. ssage += ("\nERROR: Deepb rd  s try ng to  nterpret \"{}\" as a value of {}.  f t   s not what   expected, "
+        "t n most l kely one of t  follow ng two th ngs are happen ng: E  r one of y  cl  argu nts are not recogn zed, "
+        "probably {} or wh c ver argu nt   are pass ng {} as a value to OR   are pass ng  n an argu nt after "
+        "t  `learn ng_rate_decay` argu nt.\n").format(value, act on.dest, value, value)
+      ra se error
 
 
-def parse_comma_separated_list(element_type=str):
+def parse_comma_separated_l st(ele nt_type=str):
   """
-  Generates an argparse.Action that converts a string representing a comma separated list to a
-  list and converts each element to a specified type.
+  Generates an argparse.Act on that converts a str ng represent ng a comma separated l st to a
+  l st and converts each ele nt to a spec f ed type.
   """
 
-  # pylint: disable-msg=too-few-public-methods
-  class _ParseCommaSeparatedList(argparse.Action):
+  # pyl nt: d sable-msg=too-few-publ c- thods
+  class _ParseCommaSeparatedL st(argparse.Act on):
     """
-    Converts a string representing a comma separated list to a list and converts each element to a
-    specified type.
+    Converts a str ng represent ng a comma separated l st to a l st and converts each ele nt to a
+    spec f ed type.
     """
 
-    def __call__(self, parser, namespace, values, option_string=None):
-      if values is not None:
-        values = [element_type(v) for v in values.split(',')]
-      setattr(namespace, self.dest, values)
+    def __call__(self, parser, na space, values, opt on_str ng=None):
+       f values  s not None:
+        values = [ele nt_type(v) for v  n values.spl (',')]
+      setattr(na space, self.dest, values)
 
-  return _ParseCommaSeparatedList
+  return _ParseCommaSeparatedL st

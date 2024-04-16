@@ -1,40 +1,40 @@
-package com.twitter.product_mixer.component_library.filter
+package com.tw ter.product_m xer.component_l brary.f lter
 
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.search.common.util.bloomfilter.AdaptiveLongIntBloomFilter
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lterResult
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.search.common.ut l.bloomf lter.Adapt veLong ntBloomF lter
 
-trait GetAdaptiveLongIntBloomFilter[Query <: PipelineQuery] {
-  def apply(query: Query): Option[AdaptiveLongIntBloomFilter]
+tra  GetAdapt veLong ntBloomF lter[Query <: P pel neQuery] {
+  def apply(query: Query): Opt on[Adapt veLong ntBloomF lter]
 }
 
-case class AdaptiveLongIntBloomFilterDedupFilter[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Long]
+case class Adapt veLong ntBloomF lterDedupF lter[
+  Query <: P pel neQuery,
+  Cand date <: Un versalNoun[Long]
 ](
-  getBloomFilter: GetAdaptiveLongIntBloomFilter[Query])
-    extends Filter[Query, Candidate] {
+  getBloomF lter: GetAdapt veLong ntBloomF lter[Query])
+    extends F lter[Query, Cand date] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier(
-    "AdaptiveLongIntBloomFilterDedupFilter")
+  overr de val  dent f er: F lter dent f er = F lter dent f er(
+    "Adapt veLong ntBloomF lterDedupF lter")
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): St ch[F lterResult[Cand date]] = {
 
-    val filterResult = getBloomFilter(query)
-      .map { bloomFilter =>
+    val f lterResult = getBloomF lter(query)
+      .map { bloomF lter =>
         val (kept, removed) =
-          candidates.map(_.candidate).partition(candidate => !bloomFilter.contains(candidate.id))
-        FilterResult(kept, removed)
-      }.getOrElse(FilterResult(candidates.map(_.candidate), Seq.empty))
+          cand dates.map(_.cand date).part  on(cand date => !bloomF lter.conta ns(cand date. d))
+        F lterResult(kept, removed)
+      }.getOrElse(F lterResult(cand dates.map(_.cand date), Seq.empty))
 
-    Stitch.value(filterResult)
+    St ch.value(f lterResult)
   }
 }

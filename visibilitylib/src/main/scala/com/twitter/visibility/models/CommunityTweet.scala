@@ -1,23 +1,23 @@
-package com.twitter.visibility.models
+package com.tw ter.v s b l y.models
 
-import com.twitter.tweetypie.thriftscala.Communities
-import com.twitter.tweetypie.thriftscala.Tweet
+ mport com.tw ter.t etyp e.thr ftscala.Commun  es
+ mport com.tw ter.t etyp e.thr ftscala.T et
 
-object CommunityTweet {
-  def getCommunityId(communities: Communities): Option[CommunityId] =
-    communities.communityIds.headOption
+object Commun yT et {
+  def getCommun y d(commun  es: Commun  es): Opt on[Commun y d] =
+    commun  es.commun y ds. adOpt on
 
-  def getCommunityId(tweet: Tweet): Option[CommunityId] =
-    tweet.communities.flatMap(getCommunityId)
+  def getCommun y d(t et: T et): Opt on[Commun y d] =
+    t et.commun  es.flatMap(getCommun y d)
 
-  def apply(tweet: Tweet): Option[CommunityTweet] =
-    getCommunityId(tweet).map { communityId =>
-      val authorId = tweet.coreData.get.userId
-      CommunityTweet(tweet, communityId, authorId)
+  def apply(t et: T et): Opt on[Commun yT et] =
+    getCommun y d(t et).map { commun y d =>
+      val author d = t et.coreData.get.user d
+      Commun yT et(t et, commun y d, author d)
     }
 }
 
-case class CommunityTweet(
-  tweet: Tweet,
-  communityId: CommunityId,
-  authorId: Long)
+case class Commun yT et(
+  t et: T et,
+  commun y d: Commun y d,
+  author d: Long)

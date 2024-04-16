@@ -1,194 +1,194 @@
-package com.twitter.simclusters_v2.scalding.embedding.tfg
+package com.tw ter.s mclusters_v2.scald ng.embedd ng.tfg
 
-import com.twitter.bijection.{Bufferable, Injection}
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite.{D, _}
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.{Country, Language, SimClustersEmbedding, TopicId}
-import com.twitter.simclusters_v2.hdfs_sources.InterestedInSources
-import com.twitter.simclusters_v2.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.{UserId, _}
-import com.twitter.simclusters_v2.scalding.embedding.common.{
-  EmbeddingUtil,
-  ExternalDataSources,
-  SimClustersEmbeddingBaseJob
+ mport com.tw ter.b ject on.{Bufferable,  nject on}
+ mport com.tw ter.dal.cl ent.dataset.KeyValDALDataset
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e.{D, _}
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.common.{Country, Language, S mClustersEmbedd ng, Top c d}
+ mport com.tw ter.s mclusters_v2.hdfs_s ces. nterested nS ces
+ mport com.tw ter.s mclusters_v2.scald ng.common.matr x.{SparseMatr x, SparseRowMatr x}
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.Embedd ngUt l.{User d, _}
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.{
+  Embedd ngUt l,
+  ExternalDataS ces,
+  S mClustersEmbedd ngBaseJob
 }
-import com.twitter.simclusters_v2.thriftscala.{
-  EmbeddingType,
-  InternalId,
-  ModelVersion,
-  SimClustersEmbeddingId,
-  UserToInterestedInClusterScores,
-  SimClustersEmbedding => ThriftSimClustersEmbedding,
-  TopicId => ThriftTopicId
+ mport com.tw ter.s mclusters_v2.thr ftscala.{
+  Embedd ngType,
+   nternal d,
+  ModelVers on,
+  S mClustersEmbedd ng d,
+  UserTo nterested nClusterScores,
+  S mClustersEmbedd ng => Thr ftS mClustersEmbedd ng,
+  Top c d => Thr ftTop c d
 }
-import com.twitter.wtf.scalding.jobs.common.DateRangeExecutionApp
-import java.util.TimeZone
+ mport com.tw ter.wtf.scald ng.jobs.common.DateRangeExecut onApp
+ mport java.ut l.T  Zone
 
 /**
- * Base app to generate Topic-Follow-Graph (TFG) topic embeddings from inferred languages.
- * In this app, topic embeddings are keyed by (topic, language, country).
- * Given a (topic t, country c, language l) tuple, the embedding is the sum of the
- * InterestedIn of the topic followers whose inferred language has l and account country is c
- * The language and the country fields in the keys are optional.
- * The app will generate 1) country-language-based 2) language-based 3) global embeddings in one dataset.
- * It's up to the clients to decide which embeddings to use
+ * Base app to generate Top c-Follow-Graph (TFG) top c embedd ngs from  nferred languages.
+ *  n t  app, top c embedd ngs are keyed by (top c, language, country).
+ * G ven a (top c t, country c, language l) tuple, t  embedd ng  s t  sum of t 
+ *  nterested n of t  top c follo rs whose  nferred language has l and account country  s c
+ * T  language and t  country f elds  n t  keys are opt onal.
+ * T  app w ll generate 1) country-language-based 2) language-based 3) global embedd ngs  n one dataset.
+ *  's up to t  cl ents to dec de wh ch embedd ngs to use
  */
-trait InferredLanguageTfgBasedTopicEmbeddingsBaseApp
-    extends SimClustersEmbeddingBaseJob[(TopicId, Option[Language], Option[Country])]
-    with DateRangeExecutionApp {
+tra   nferredLanguageTfgBasedTop cEmbedd ngsBaseApp
+    extends S mClustersEmbedd ngBaseJob[(Top c d, Opt on[Language], Opt on[Country])]
+    w h DateRangeExecut onApp {
 
-  val isAdhoc: Boolean
-  val embeddingType: EmbeddingType
-  val embeddingSource: KeyValDALDataset[KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]]
-  val pathSuffix: String
-  val modelVersion: ModelVersion
-  def scoreExtractor: UserToInterestedInClusterScores => Double
+  val  sAdhoc: Boolean
+  val embedd ngType: Embedd ngType
+  val embedd ngS ce: KeyValDALDataset[KeyVal[S mClustersEmbedd ng d, Thr ftS mClustersEmbedd ng]]
+  val pathSuff x: Str ng
+  val modelVers on: ModelVers on
+  def scoreExtractor: UserTo nterested nClusterScores => Double
 
-  override def numClustersPerNoun: Int = 50
-  override def numNounsPerClusters: Int = 1 // not used for now. Set to an arbitrary number
-  override def thresholdForEmbeddingScores: Double = 0.001
+  overr de def numClustersPerNoun:  nt = 50
+  overr de def numNounsPerClusters:  nt = 1 // not used for now. Set to an arb rary number
+  overr de def thresholdForEmbedd ngScores: Double = 0.001
 
-  implicit val inj: Injection[(TopicId, Option[Language], Option[Country]), Array[Byte]] =
-    Bufferable.injectionOf[(TopicId, Option[Language], Option[Country])]
+   mpl c  val  nj:  nject on[(Top c d, Opt on[Language], Opt on[Country]), Array[Byte]] =
+    Bufferable. nject onOf[(Top c d, Opt on[Language], Opt on[Country])]
 
-  // Default to 10K, top 1% for (topic, country, language) follows
-  // Child classes may want to tune this number for their own use cases.
-  val minPerCountryFollowers = 10000
-  val minFollowers = 100
+  // Default to 10K, top 1% for (top c, country, language) follows
+  // Ch ld classes may want to tune t  number for t  r own use cases.
+  val m nPerCountryFollo rs = 10000
+  val m nFollo rs = 100
 
-  def getTopicUsers(
-    topicFollowGraph: TypedPipe[(TopicId, UserId)],
-    userSource: TypedPipe[(UserId, (Country, Language))],
-    userLanguages: TypedPipe[(UserId, Seq[(Language, Double)])]
-  ): TypedPipe[((TopicId, Option[Language], Option[Country]), UserId, Double)] = {
-    topicFollowGraph
-      .map { case (topic, user) => (user, topic) }
-      .join(userSource)
-      .join(userLanguages)
+  def getTop cUsers(
+    top cFollowGraph: TypedP pe[(Top c d, User d)],
+    userS ce: TypedP pe[(User d, (Country, Language))],
+    userLanguages: TypedP pe[(User d, Seq[(Language, Double)])]
+  ): TypedP pe[((Top c d, Opt on[Language], Opt on[Country]), User d, Double)] = {
+    top cFollowGraph
+      .map { case (top c, user) => (user, top c) }
+      .jo n(userS ce)
+      .jo n(userLanguages)
       .flatMap {
-        case (user, ((topic, (country, _)), scoredLangs)) =>
+        case (user, ((top c, (country, _)), scoredLangs)) =>
           scoredLangs.flatMap {
             case (lang, score) =>
               Seq(
-                ((topic, Some(lang), Some(country)), user, score), // with language and country
-                ((topic, Some(lang), None), user, score) // with language
+                ((top c, So (lang), So (country)), user, score), // w h language and country
+                ((top c, So (lang), None), user, score) // w h language
               )
-          } ++ Seq(((topic, None, None), user, 1.0)) // non-language
-      }.forceToDisk
+          } ++ Seq(((top c, None, None), user, 1.0)) // non-language
+      }.forceToD sk
   }
 
-  def getValidTopics(
-    topicUsers: TypedPipe[((TopicId, Option[Language], Option[Country]), UserId, Double)]
+  def getVal dTop cs(
+    top cUsers: TypedP pe[((Top c d, Opt on[Language], Opt on[Country]), User d, Double)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(TopicId, Option[Language], Option[Country])] = {
-    val countryBasedTopics = Stat("country_based_topics")
-    val nonCountryBasedTopics = Stat("non_country_based_topics")
+     mpl c  un que D: Un que D
+  ): TypedP pe[(Top c d, Opt on[Language], Opt on[Country])] = {
+    val countryBasedTop cs = Stat("country_based_top cs")
+    val nonCountryBasedTop cs = Stat("non_country_based_top cs")
 
-    val (countryBased, nonCountryBased) = topicUsers.partition {
-      case ((_, lang, country), _, _) => lang.isDefined && country.isDefined
+    val (countryBased, nonCountryBased) = top cUsers.part  on {
+      case ((_, lang, country), _, _) => lang. sDef ned && country. sDef ned
     }
 
-    SparseMatrix(countryBased).rowL1Norms.collect {
-      case (key, l1Norm) if l1Norm >= minPerCountryFollowers =>
-        countryBasedTopics.inc()
+    SparseMatr x(countryBased).rowL1Norms.collect {
+      case (key, l1Norm)  f l1Norm >= m nPerCountryFollo rs =>
+        countryBasedTop cs. nc()
         key
     } ++
-      SparseMatrix(nonCountryBased).rowL1Norms.collect {
-        case (key, l1Norm) if l1Norm >= minFollowers =>
-          nonCountryBasedTopics.inc()
+      SparseMatr x(nonCountryBased).rowL1Norms.collect {
+        case (key, l1Norm)  f l1Norm >= m nFollo rs =>
+          nonCountryBasedTop cs. nc()
           key
       }
   }
 
-  override def prepareNounToUserMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseMatrix[(TopicId, Option[Language], Option[Country]), UserId, Double] = {
-    val topicUsers = getTopicUsers(
-      ExternalDataSources.topicFollowGraphSource,
-      ExternalDataSources.userSource,
-      ExternalDataSources.inferredUserConsumedLanguageSource)
+  overr de def prepareNounToUserMatr x(
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): SparseMatr x[(Top c d, Opt on[Language], Opt on[Country]), User d, Double] = {
+    val top cUsers = getTop cUsers(
+      ExternalDataS ces.top cFollowGraphS ce,
+      ExternalDataS ces.userS ce,
+      ExternalDataS ces. nferredUserConsu dLanguageS ce)
 
-    SparseMatrix[(TopicId, Option[Language], Option[Country]), UserId, Double](topicUsers)
-      .filterRows(getValidTopics(topicUsers))
+    SparseMatr x[(Top c d, Opt on[Language], Opt on[Country]), User d, Double](top cUsers)
+      .f lterRows(getVal dTop cs(top cUsers))
   }
 
-  override def prepareUserToClusterMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseRowMatrix[UserId, ClusterId, Double] =
-    SparseRowMatrix(
-      InterestedInSources
-        .simClustersInterestedInSource(modelVersion, dateRange, timeZone)
+  overr de def prepareUserToClusterMatr x(
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): SparseRowMatr x[User d, Cluster d, Double] =
+    SparseRowMatr x(
+       nterested nS ces
+        .s mClusters nterested nS ce(modelVers on, dateRange, t  Zone)
         .map {
-          case (userId, clustersUserIsInterestedIn) =>
-            userId -> clustersUserIsInterestedIn.clusterIdToScores
+          case (user d, clustersUser s nterested n) =>
+            user d -> clustersUser s nterested n.cluster dToScores
               .map {
-                case (clusterId, scores) =>
-                  clusterId -> scoreExtractor(scores)
+                case (cluster d, scores) =>
+                  cluster d -> scoreExtractor(scores)
               }
-              .filter(_._2 > 0.0)
+              .f lter(_._2 > 0.0)
               .toMap
         },
-      isSkinnyMatrix = true
+       sSk nnyMatr x = true
     )
 
-  override def writeNounToClustersIndex(
-    output: TypedPipe[((TopicId, Option[Language], Option[Country]), Seq[(ClusterId, Double)])]
+  overr de def wr eNounToClusters ndex(
+    output: TypedP pe[((Top c d, Opt on[Language], Opt on[Country]), Seq[(Cluster d, Double)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val topicEmbeddingCount = Stat(s"topic_embedding_count")
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
+    val top cEmbedd ngCount = Stat(s"top c_embedd ng_count")
 
     val tsvExec =
       output
         .map {
-          case ((entityId, language, country), clustersWithScores) =>
-            (entityId, language, country, clustersWithScores.take(5).mkString(","))
+          case ((ent y d, language, country), clustersW hScores) =>
+            (ent y d, language, country, clustersW hScores.take(5).mkStr ng(","))
         }
         .shard(5)
-        .writeExecution(TypedTsv[(TopicId, Option[Language], Option[Country], String)](
-          s"/user/recos-platform/adhoc/topic_embedding/$pathSuffix/$ModelVersionPathMap($modelVersion)"))
+        .wr eExecut on(TypedTsv[(Top c d, Opt on[Language], Opt on[Country], Str ng)](
+          s"/user/recos-platform/adhoc/top c_embedd ng/$pathSuff x/$ModelVers onPathMap($modelVers on)"))
 
     val keyValExec = output
       .map {
-        case ((entityId, lang, country), clustersWithScores) =>
-          topicEmbeddingCount.inc()
+        case ((ent y d, lang, country), clustersW hScores) =>
+          top cEmbedd ngCount. nc()
           KeyVal(
-            SimClustersEmbeddingId(
-              embeddingType,
-              modelVersion,
-              InternalId.TopicId(ThriftTopicId(entityId, lang, country))
+            S mClustersEmbedd ng d(
+              embedd ngType,
+              modelVers on,
+               nternal d.Top c d(Thr ftTop c d(ent y d, lang, country))
             ),
-            SimClustersEmbedding(clustersWithScores).toThrift
+            S mClustersEmbedd ng(clustersW hScores).toThr ft
           )
       }
-      .writeDALVersionedKeyValExecution(
-        embeddingSource,
-        D.Suffix(
-          EmbeddingUtil
-            .getHdfsPath(isAdhoc = isAdhoc, isManhattanKeyVal = true, modelVersion, pathSuffix))
+      .wr eDALVers onedKeyValExecut on(
+        embedd ngS ce,
+        D.Suff x(
+          Embedd ngUt l
+            .getHdfsPath( sAdhoc =  sAdhoc,  sManhattanKeyVal = true, modelVers on, pathSuff x))
       )
-    if (isAdhoc)
-      Execution.zip(tsvExec, keyValExec).unit
+     f ( sAdhoc)
+      Execut on.z p(tsvExec, keyValExec).un 
     else
       keyValExec
   }
 
-  override def writeClusterToNounsIndex(
-    output: TypedPipe[(ClusterId, Seq[((TopicId, Option[Language], Option[Country]), Double)])]
+  overr de def wr eClusterToNouns ndex(
+    output: TypedP pe[(Cluster d, Seq[((Top c d, Opt on[Language], Opt on[Country]), Double)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    Execution.unit // do not need this
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
+    Execut on.un  // do not need t 
   }
 }

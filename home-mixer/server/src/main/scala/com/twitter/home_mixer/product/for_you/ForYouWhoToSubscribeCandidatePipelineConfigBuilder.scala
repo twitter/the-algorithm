@@ -1,52 +1,52 @@
-package com.twitter.home_mixer.product.for_you
+package com.tw ter.ho _m xer.product.for_ 
 
-import com.twitter.home_mixer.functional_component.decorator.urt.builder.HomeWhoToSubscribeFeedbackActionInfoBuilder
-import com.twitter.home_mixer.functional_component.gate.DismissFatigueGate
-import com.twitter.home_mixer.functional_component.gate.TimelinesPersistenceStoreLastInjectionGate
-import com.twitter.home_mixer.model.HomeFeatures.DismissInfoFeature
-import com.twitter.home_mixer.model.HomeFeatures.PersistenceEntriesFeature
-import com.twitter.home_mixer.product.for_you.model.ForYouQuery
-import com.twitter.home_mixer.product.for_you.param.ForYouParam.EnableWhoToSubscribeCandidatePipelineParam
-import com.twitter.home_mixer.product.for_you.param.ForYouParam.WhoToSubscribeDisplayTypeIdParam
-import com.twitter.home_mixer.product.for_you.param.ForYouParam.WhoToSubscribeMinInjectionIntervalParam
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.ParamWhoToFollowModuleDisplayTypeBuilder
-import com.twitter.product_mixer.component_library.pipeline.candidate.who_to_subscribe_module.WhoToSubscribeCandidatePipelineConfig
-import com.twitter.product_mixer.component_library.pipeline.candidate.who_to_subscribe_module.WhoToSubscribeCandidatePipelineConfigBuilder
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.timelineservice.model.rich.EntityIdType
-import com.twitter.timelineservice.suggests.thriftscala.SuggestType
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.funct onal_component.decorator.urt.bu lder.Ho WhoToSubscr beFeedbackAct on nfoBu lder
+ mport com.tw ter.ho _m xer.funct onal_component.gate.D sm ssFat gueGate
+ mport com.tw ter.ho _m xer.funct onal_component.gate.T  l nesPers stenceStoreLast nject onGate
+ mport com.tw ter.ho _m xer.model.Ho Features.D sm ss nfoFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Pers stenceEntr esFeature
+ mport com.tw ter.ho _m xer.product.for_ .model.For Query
+ mport com.tw ter.ho _m xer.product.for_ .param.For Param.EnableWhoToSubscr beCand dateP pel neParam
+ mport com.tw ter.ho _m xer.product.for_ .param.For Param.WhoToSubscr beD splayType dParam
+ mport com.tw ter.ho _m xer.product.for_ .param.For Param.WhoToSubscr beM n nject on ntervalParam
+ mport com.tw ter.ho _m xer.serv ce.Ho M xerAlertConf g
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.t  l ne_module.ParamWhoToFollowModuleD splayTypeBu lder
+ mport com.tw ter.product_m xer.component_l brary.p pel ne.cand date.who_to_subscr be_module.WhoToSubscr beCand dateP pel neConf g
+ mport com.tw ter.product_m xer.component_l brary.p pel ne.cand date.who_to_subscr be_module.WhoToSubscr beCand dateP pel neConf gBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.Gate
+ mport com.tw ter.t  l neserv ce.model.r ch.Ent y dType
+ mport com.tw ter.t  l neserv ce.suggests.thr ftscala.SuggestType
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ForYouWhoToSubscribeCandidatePipelineConfigBuilder @Inject() (
-  whoToSubscribeCandidatePipelineConfigBuilder: WhoToSubscribeCandidatePipelineConfigBuilder,
-  homeWhoToSubscribeFeedbackActionInfoBuilder: HomeWhoToSubscribeFeedbackActionInfoBuilder) {
+@S ngleton
+class For WhoToSubscr beCand dateP pel neConf gBu lder @ nject() (
+  whoToSubscr beCand dateP pel neConf gBu lder: WhoToSubscr beCand dateP pel neConf gBu lder,
+  ho WhoToSubscr beFeedbackAct on nfoBu lder: Ho WhoToSubscr beFeedbackAct on nfoBu lder) {
 
-  def build(): WhoToSubscribeCandidatePipelineConfig[ForYouQuery] = {
-    val gates: Seq[Gate[ForYouQuery]] = Seq(
-      TimelinesPersistenceStoreLastInjectionGate(
-        WhoToSubscribeMinInjectionIntervalParam,
-        PersistenceEntriesFeature,
-        EntityIdType.WhoToSubscribe
+  def bu ld(): WhoToSubscr beCand dateP pel neConf g[For Query] = {
+    val gates: Seq[Gate[For Query]] = Seq(
+      T  l nesPers stenceStoreLast nject onGate(
+        WhoToSubscr beM n nject on ntervalParam,
+        Pers stenceEntr esFeature,
+        Ent y dType.WhoToSubscr be
       ),
-      DismissFatigueGate(SuggestType.WhoToSubscribe, DismissInfoFeature)
+      D sm ssFat gueGate(SuggestType.WhoToSubscr be, D sm ss nfoFeature)
     )
 
-    whoToSubscribeCandidatePipelineConfigBuilder.build[ForYouQuery](
-      identifier = WhoToSubscribeCandidatePipelineConfig.identifier,
-      supportedClientParam = Some(EnableWhoToSubscribeCandidatePipelineParam),
+    whoToSubscr beCand dateP pel neConf gBu lder.bu ld[For Query](
+       dent f er = WhoToSubscr beCand dateP pel neConf g. dent f er,
+      supportedCl entParam = So (EnableWhoToSubscr beCand dateP pel neParam),
       alerts = alerts,
       gates = gates,
-      moduleDisplayTypeBuilder =
-        ParamWhoToFollowModuleDisplayTypeBuilder(WhoToSubscribeDisplayTypeIdParam),
-      feedbackActionInfoBuilder = Some(homeWhoToSubscribeFeedbackActionInfoBuilder)
+      moduleD splayTypeBu lder =
+        ParamWhoToFollowModuleD splayTypeBu lder(WhoToSubscr beD splayType dParam),
+      feedbackAct on nfoBu lder = So (ho WhoToSubscr beFeedbackAct on nfoBu lder)
     )
   }
 
-  private val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(70),
-    HomeMixerAlertConfig.BusinessHours.defaultEmptyResponseRateAlert()
+  pr vate val alerts = Seq(
+    Ho M xerAlertConf g.Bus nessH s.defaultSuccessRateAlert(70),
+    Ho M xerAlertConf g.Bus nessH s.defaultEmptyResponseRateAlert()
   )
 }

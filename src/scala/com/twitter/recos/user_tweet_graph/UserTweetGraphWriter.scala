@@ -1,88 +1,88 @@
-package com.twitter.recos.user_tweet_graph
+package com.tw ter.recos.user_t et_graph
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.kafka.consumers.FinagleKafkaConsumerBuilder
-import com.twitter.graphjet.algorithms.TweetIDMask
-import com.twitter.recos.util.Action
-import com.twitter.graphjet.bipartite.MultiSegmentPowerLawBipartiteGraph
-import com.twitter.graphjet.bipartite.segment.BipartiteGraphSegment
-import com.twitter.recos.hose.common.UnifiedGraphWriter
-import com.twitter.recos.internal.thriftscala.RecosHoseMessage
-import com.twitter.recos.serviceapi.Tweetypie._
-import com.twitter.recos.user_tweet_graph.util.UserTweetEdgeTypeMask
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f natra.kafka.consu rs.F nagleKafkaConsu rBu lder
+ mport com.tw ter.graphjet.algor hms.T et DMask
+ mport com.tw ter.recos.ut l.Act on
+ mport com.tw ter.graphjet.b part e.Mult Seg ntPo rLawB part eGraph
+ mport com.tw ter.graphjet.b part e.seg nt.B part eGraphSeg nt
+ mport com.tw ter.recos.hose.common.Un f edGraphWr er
+ mport com.tw ter.recos. nternal.thr ftscala.RecosHose ssage
+ mport com.tw ter.recos.serv ceap .T etyp e._
+ mport com.tw ter.recos.user_t et_graph.ut l.UserT etEdgeTypeMask
 
 /**
- * The class submits a number of $numBootstrapWriters graph writer threads, BufferedEdgeWriter,
- * during service startup. One of them is live writer thread, and the other $(numBootstrapWriters - 1)
- * are catchup writer threads. All of them consume kafka events from an internal concurrent queue,
- * which is populated by kafka reader threads. At bootstrap time, the kafka reader threads look
- * back kafka offset from several hours ago and populate the internal concurrent queue.
- * Each graph writer thread writes to an individual graph segment separately.
- * The $(numBootstrapWriters - 1) catchup writer threads will stop once all events
- * between current system time at startup and the time in memcache are processed.
- * The live writer thread will continue to write all incoming kafka events.
- * It lives through the entire life cycle of recos graph service.
+ * T  class subm s a number of $numBootstrapWr ers graph wr er threads, BufferedEdgeWr er,
+ * dur ng serv ce startup. One of t m  s l ve wr er thread, and t  ot r $(numBootstrapWr ers - 1)
+ * are catchup wr er threads. All of t m consu  kafka events from an  nternal concurrent queue,
+ * wh ch  s populated by kafka reader threads. At bootstrap t  , t  kafka reader threads look
+ * back kafka offset from several h s ago and populate t   nternal concurrent queue.
+ * Each graph wr er thread wr es to an  nd v dual graph seg nt separately.
+ * T  $(numBootstrapWr ers - 1) catchup wr er threads w ll stop once all events
+ * bet en current system t   at startup and t  t    n  mcac  are processed.
+ * T  l ve wr er thread w ll cont nue to wr e all  ncom ng kafka events.
+ *   l ves through t  ent re l fe cycle of recos graph serv ce.
  */
-case class UserTweetGraphWriter(
-  shardId: String,
-  env: String,
-  hosename: String,
-  bufferSize: Int,
-  kafkaConsumerBuilder: FinagleKafkaConsumerBuilder[String, RecosHoseMessage],
-  clientId: String,
-  statsReceiver: StatsReceiver)
-    extends UnifiedGraphWriter[BipartiteGraphSegment, MultiSegmentPowerLawBipartiteGraph] {
-  writer =>
-  // The max throughput for each kafka consumer is around 25MB/s
+case class UserT etGraphWr er(
+  shard d: Str ng,
+  env: Str ng,
+  hosena : Str ng,
+  bufferS ze:  nt,
+  kafkaConsu rBu lder: F nagleKafkaConsu rBu lder[Str ng, RecosHose ssage],
+  cl ent d: Str ng,
+  statsRece ver: StatsRece ver)
+    extends Un f edGraphWr er[B part eGraphSeg nt, Mult Seg ntPo rLawB part eGraph] {
+  wr er =>
+  // T  max throughput for each kafka consu r  s around 25MB/s
   // Use 4 processors for 100MB/s catch-up speed.
-  val consumerNum: Int = 4
-  // Leave 1 Segments to LiveWriter
-  val catchupWriterNum: Int = RecosConfig.maxNumSegments - 1
+  val consu rNum:  nt = 4
+  // Leave 1 Seg nts to L veWr er
+  val catchupWr erNum:  nt = RecosConf g.maxNumSeg nts - 1
 
   /**
-   * Adds a RecosHoseMessage to the graph. used by live writer to insert edges to the
-   * current segment
+   * Adds a RecosHose ssage to t  graph. used by l ve wr er to  nsert edges to t 
+   * current seg nt
    */
-  override def addEdgeToGraph(
-    graph: MultiSegmentPowerLawBipartiteGraph,
-    recosHoseMessage: RecosHoseMessage
-  ): Unit = {
-    if (Action(recosHoseMessage.action) == Action.Favorite || Action(
-        recosHoseMessage.action) == Action.Retweet)
+  overr de def addEdgeToGraph(
+    graph: Mult Seg ntPo rLawB part eGraph,
+    recosHose ssage: RecosHose ssage
+  ): Un  = {
+     f (Act on(recosHose ssage.act on) == Act on.Favor e || Act on(
+        recosHose ssage.act on) == Act on.Ret et)
       graph.addEdge(
-        recosHoseMessage.leftId,
-        getMetaEdge(recosHoseMessage.rightId, recosHoseMessage.card),
-        UserTweetEdgeTypeMask.actionTypeToEdgeType(recosHoseMessage.action),
+        recosHose ssage.left d,
+        get taEdge(recosHose ssage.r ght d, recosHose ssage.card),
+        UserT etEdgeTypeMask.act onTypeToEdgeType(recosHose ssage.act on),
       )
   }
 
   /**
-   * Adds a RecosHoseMessage to the given segment in the graph. Used by catch up writers to
-   * insert edges to non-current (old) segments
+   * Adds a RecosHose ssage to t  g ven seg nt  n t  graph. Used by catch up wr ers to
+   *  nsert edges to non-current (old) seg nts
    */
-  override def addEdgeToSegment(
-    segment: BipartiteGraphSegment,
-    recosHoseMessage: RecosHoseMessage
-  ): Unit = {
-    if (Action(recosHoseMessage.action) == Action.Favorite || Action(
-        recosHoseMessage.action) == Action.Retweet)
-      segment.addEdge(
-        recosHoseMessage.leftId,
-        getMetaEdge(recosHoseMessage.rightId, recosHoseMessage.card),
-        UserTweetEdgeTypeMask.actionTypeToEdgeType(recosHoseMessage.action)
+  overr de def addEdgeToSeg nt(
+    seg nt: B part eGraphSeg nt,
+    recosHose ssage: RecosHose ssage
+  ): Un  = {
+     f (Act on(recosHose ssage.act on) == Act on.Favor e || Act on(
+        recosHose ssage.act on) == Act on.Ret et)
+      seg nt.addEdge(
+        recosHose ssage.left d,
+        get taEdge(recosHose ssage.r ght d, recosHose ssage.card),
+        UserT etEdgeTypeMask.act onTypeToEdgeType(recosHose ssage.act on)
       )
   }
 
-  private def getMetaEdge(rightId: Long, cardOption: Option[Byte]): Long = {
-    cardOption
+  pr vate def get taEdge(r ght d: Long, cardOpt on: Opt on[Byte]): Long = {
+    cardOpt on
       .map { card =>
-        if (isPhotoCard(card)) TweetIDMask.photo(rightId)
-        else if (isPlayerCard(card)) TweetIDMask.player(rightId)
-        else if (isSummaryCard(card)) TweetIDMask.summary(rightId)
-        else if (isPromotionCard(card)) TweetIDMask.promotion(rightId)
-        else rightId
+         f ( sPhotoCard(card)) T et DMask.photo(r ght d)
+        else  f ( sPlayerCard(card)) T et DMask.player(r ght d)
+        else  f ( sSummaryCard(card)) T et DMask.summary(r ght d)
+        else  f ( sPromot onCard(card)) T et DMask.promot on(r ght d)
+        else r ght d
       }
-      .getOrElse(rightId)
+      .getOrElse(r ght d)
   }
 
 }

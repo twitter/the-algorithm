@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.component_library.module.http
+package com.tw ter.product_m xer.component_l brary.module.http
 
-import com.google.inject.Provides
-import com.twitter.finagle.http.ProxyCredentials
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.util.security.{Credentials => CredentialsUtil}
-import java.io.File
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.f nagle.http.ProxyCredent als
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.ut l.secur y.{Credent als => Credent alsUt l}
+ mport java. o.F le
+ mport javax. nject.S ngleton
 
-object ProxyCredentialsModule extends TwitterModule {
-  final val HttpClientWithProxyCredentialsPath = "http_client.proxy.proxy_credentials_path"
+object ProxyCredent alsModule extends Tw terModule {
+  f nal val HttpCl entW hProxyCredent alsPath = "http_cl ent.proxy.proxy_credent als_path"
 
-  flag[String](HttpClientWithProxyCredentialsPath, "", "Path the load the proxy credentials")
+  flag[Str ng](HttpCl entW hProxyCredent alsPath, "", "Path t  load t  proxy credent als")
 
-  @Provides
-  @Singleton
-  def providesProxyCredentials(
-    @Flag(HttpClientWithProxyCredentialsPath) proxyCredentialsPath: String,
-  ): ProxyCredentials = {
-    val credentialsFile = new File(proxyCredentialsPath)
-    ProxyCredentials(CredentialsUtil(credentialsFile))
-      .getOrElse(throw MissingProxyCredentialsException)
+  @Prov des
+  @S ngleton
+  def prov desProxyCredent als(
+    @Flag(HttpCl entW hProxyCredent alsPath) proxyCredent alsPath: Str ng,
+  ): ProxyCredent als = {
+    val credent alsF le = new F le(proxyCredent alsPath)
+    ProxyCredent als(Credent alsUt l(credent alsF le))
+      .getOrElse(throw M ss ngProxyCredent alsExcept on)
   }
 
-  object MissingProxyCredentialsException extends Exception("Proxy Credentials not found")
+  object M ss ngProxyCredent alsExcept on extends Except on("Proxy Credent als not found")
 }

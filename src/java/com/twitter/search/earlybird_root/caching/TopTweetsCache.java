@@ -1,15 +1,15 @@
-package com.twitter.search.earlybird_root.caching;
+package com.tw ter.search.earlyb rd_root.cach ng;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+ mport java.lang.annotat on.Ele ntType;
+ mport java.lang.annotat on.Retent on;
+ mport java.lang.annotat on.Target;
 
-import com.google.inject.BindingAnnotation;
+ mport com.google. nject.B nd ngAnnotat on;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+ mport stat c java.lang.annotat on.Retent onPol cy.RUNT ME;
 
-@Retention(RUNTIME)
-@Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
-@BindingAnnotation
-public @interface TopTweetsCache {
+@Retent on(RUNT ME)
+@Target({ Ele ntType.F ELD, Ele ntType.PARAMETER, Ele ntType.METHOD })
+@B nd ngAnnotat on
+publ c @ nterface TopT etsCac  {
 }

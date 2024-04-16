@@ -1,39 +1,39 @@
-package com.twitter.home_mixer.product.scored_tweets.selector
+package com.tw ter.ho _m xer.product.scored_t ets.selector
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.ho _m xer.model.Ho Features.Author dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nNetworkFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.ScoreFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.SuggestTypeFeature
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.SelectorResult
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-case class KeepBestOutOfNetworkCandidatePerAuthorPerSuggestType(
-  override val pipelineScope: CandidateScope)
-    extends Selector[PipelineQuery] {
+case class KeepBestOutOfNetworkCand datePerAuthorPerSuggestType(
+  overr de val p pel neScope: Cand dateScope)
+    extends Selector[P pel neQuery] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+  overr de def apply(
+    query: P pel neQuery,
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
-    val (selectedCandidates, otherCandidates) =
-      remainingCandidates.partition(candidate =>
-        pipelineScope.contains(candidate) && !candidate.features.getOrElse(InNetworkFeature, true))
+    val (selectedCand dates, ot rCand dates) =
+      rema n ngCand dates.part  on(cand date =>
+        p pel neScope.conta ns(cand date) && !cand date.features.getOrElse( nNetworkFeature, true))
 
-    val filteredCandidates = selectedCandidates
-      .groupBy { candidate =>
+    val f lteredCand dates = selectedCand dates
+      .groupBy { cand date =>
         (
-          candidate.features.getOrElse(AuthorIdFeature, None),
-          candidate.features.getOrElse(SuggestTypeFeature, None)
+          cand date.features.getOrElse(Author dFeature, None),
+          cand date.features.getOrElse(SuggestTypeFeature, None)
         )
       }
       .values.map(_.maxBy(_.features.getOrElse(ScoreFeature, None)))
       .toSeq
 
-    val updatedCandidates = otherCandidates ++ filteredCandidates
-    SelectorResult(remainingCandidates = updatedCandidates, result = result)
+    val updatedCand dates = ot rCand dates ++ f lteredCand dates
+    SelectorResult(rema n ngCand dates = updatedCand dates, result = result)
   }
 }

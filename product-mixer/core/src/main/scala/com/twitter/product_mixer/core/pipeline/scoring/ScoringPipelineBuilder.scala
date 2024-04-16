@@ -1,367 +1,367 @@
-package com.twitter.product_mixer.core.pipeline.scoring
+package com.tw ter.product_m xer.core.p pel ne.scor ng
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.scorer.ScoredCandidateResult
-import com.twitter.product_mixer.core.gate.ParamGate
-import com.twitter.product_mixer.core.gate.ParamGate.EnabledGateSuffix
-import com.twitter.product_mixer.core.gate.ParamGate.SupportedClientGateSuffix
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.model.common.identifier.ScoringPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.InvalidStepStateException
-import com.twitter.product_mixer.core.pipeline.PipelineBuilder
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ClosedGate
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureClassifier
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipeline.Inputs
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutor
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutorResult
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutor
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutorResult
-import com.twitter.product_mixer.core.service.gate_executor.StoppedGateException
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutor
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.funct onal_component.scorer.ScoredCand dateResult
+ mport com.tw ter.product_m xer.core.gate.ParamGate
+ mport com.tw ter.product_m xer.core.gate.ParamGate.EnabledGateSuff x
+ mport com.tw ter.product_m xer.core.gate.ParamGate.SupportedCl entGateSuff x
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Component
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f erStack
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Scor ngP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.P pel neStep dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on. emCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne. nval dStepStateExcept on
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neBu lder
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.ClosedGate
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lureClass f er
+ mport com.tw ter.product_m xer.core.p pel ne.scor ng.Scor ngP pel ne. nputs
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.product_m xer.core.serv ce.cand date_feature_hydrator_executor.Cand dateFeatureHydratorExecutor
+ mport com.tw ter.product_m xer.core.serv ce.cand date_feature_hydrator_executor.Cand dateFeatureHydratorExecutorResult
+ mport com.tw ter.product_m xer.core.serv ce.gate_executor.GateExecutor
+ mport com.tw ter.product_m xer.core.serv ce.gate_executor.GateExecutorResult
+ mport com.tw ter.product_m xer.core.serv ce.gate_executor.StoppedGateExcept on
+ mport com.tw ter.product_m xer.core.serv ce.selector_executor.SelectorExecutor
+ mport com.tw ter.product_m xer.core.serv ce.selector_executor.SelectorExecutorResult
+ mport com.tw ter.st ch.Arrow
+ mport javax. nject. nject
 
 /**
- * ScoringPipelineBuilder builds [[ScoringPipeline]]s from [[ScoringPipelineConfig]]s.
+ * Scor ngP pel neBu lder bu lds [[Scor ngP pel ne]]s from [[Scor ngP pel neConf g]]s.
  *
- * You should inject a [[ScoringPipelineBuilderFactory]] and call `.get` to build these.
+ *   should  nject a [[Scor ngP pel neBu lderFactory]] and call `.get` to bu ld t se.
  *
- * @see [[ScoringPipelineConfig]] for the description of the type parameters
- * @tparam Query the type of query these accept.
- * @tparam Candidate the domain model for the candidate being scored
+ * @see [[Scor ngP pel neConf g]] for t  descr pt on of t  type para ters
+ * @tparam Query t  type of query t se accept.
+ * @tparam Cand date t  doma n model for t  cand date be ng scored
  */
-class ScoringPipelineBuilder[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]] @Inject() (
+class Scor ngP pel neBu lder[Query <: P pel neQuery, Cand date <: Un versalNoun[Any]] @ nject() (
   gateExecutor: GateExecutor,
   selectorExecutor: SelectorExecutor,
-  candidateFeatureHydratorExecutor: CandidateFeatureHydratorExecutor,
-  override val statsReceiver: StatsReceiver)
-    extends PipelineBuilder[Inputs[Query]] {
+  cand dateFeatureHydratorExecutor: Cand dateFeatureHydratorExecutor,
+  overr de val statsRece ver: StatsRece ver)
+    extends P pel neBu lder[ nputs[Query]] {
 
-  override type UnderlyingResultType = Seq[ScoredCandidateResult[Candidate]]
-  override type PipelineResultType = ScoringPipelineResult[Candidate]
+  overr de type Underly ngResultType = Seq[ScoredCand dateResult[Cand date]]
+  overr de type P pel neResultType = Scor ngP pel neResult[Cand date]
 
-  def build(
-    parentComponentIdentifierStack: ComponentIdentifierStack,
-    config: ScoringPipelineConfig[Query, Candidate]
-  ): ScoringPipeline[Query, Candidate] = {
+  def bu ld(
+    parentComponent dent f erStack: Component dent f erStack,
+    conf g: Scor ngP pel neConf g[Query, Cand date]
+  ): Scor ngP pel ne[Query, Cand date] = {
 
-    val pipelineIdentifier = config.identifier
+    val p pel ne dent f er = conf g. dent f er
 
     val context = Executor.Context(
-      PipelineFailureClassifier(
-        config.failureClassifier.orElse(StoppedGateException.classifier(ClosedGate))),
-      parentComponentIdentifierStack.push(pipelineIdentifier)
+      P pel neFa lureClass f er(
+        conf g.fa lureClass f er.orElse(StoppedGateExcept on.class f er(ClosedGate))),
+      parentComponent dent f erStack.push(p pel ne dent f er)
     )
 
-    val enabledGateOpt = config.enabledDeciderParam.map { deciderParam =>
-      ParamGate(pipelineIdentifier + EnabledGateSuffix, deciderParam)
+    val enabledGateOpt = conf g.enabledDec derParam.map { dec derParam =>
+      ParamGate(p pel ne dent f er + EnabledGateSuff x, dec derParam)
     }
-    val supportedClientGateOpt = config.supportedClientParam.map { param =>
-      ParamGate(pipelineIdentifier + SupportedClientGateSuffix, param)
+    val supportedCl entGateOpt = conf g.supportedCl entParam.map { param =>
+      ParamGate(p pel ne dent f er + SupportedCl entGateSuff x, param)
     }
 
     /**
-     * Evaluate enabled decider gate first since if it's off, there is no reason to proceed
-     * Next evaluate supported client feature switch gate, followed by customer configured gates
+     * Evaluate enabled dec der gate f rst s nce  f  's off, t re  s no reason to proceed
+     * Next evaluate supported cl ent feature sw ch gate, follo d by custo r conf gured gates
      */
-    val allGates = enabledGateOpt.toSeq ++ supportedClientGateOpt.toSeq ++ config.gates
+    val allGates = enabledGateOpt.toSeq ++ supportedCl entGateOpt.toSeq ++ conf g.gates
 
     val GatesStep = new Step[Query, GateExecutorResult] {
-      override def identifier: PipelineStepIdentifier = ScoringPipelineConfig.gatesStep
+      overr de def  dent f er: P pel neStep dent f er = Scor ngP pel neConf g.gatesStep
 
-      override lazy val executorArrow: Arrow[Query, GateExecutorResult] =
+      overr de lazy val executorArrow: Arrow[Query, GateExecutorResult] =
         gateExecutor.arrow(allGates, context)
 
-      override def inputAdaptor(
-        query: ScoringPipeline.Inputs[Query],
-        previousResult: ScoringPipelineResult[Candidate]
+      overr de def  nputAdaptor(
+        query: Scor ngP pel ne. nputs[Query],
+        prev ousResult: Scor ngP pel neResult[Cand date]
       ): Query = {
         query.query
       }
 
-      override def resultUpdater(
-        previousPipelineResult: ScoringPipelineResult[Candidate],
+      overr de def resultUpdater(
+        prev ousP pel neResult: Scor ngP pel neResult[Cand date],
         executorResult: GateExecutorResult
-      ): ScoringPipelineResult[Candidate] =
-        previousPipelineResult.copy(gateResults = Some(executorResult))
+      ): Scor ngP pel neResult[Cand date] =
+        prev ousP pel neResult.copy(gateResults = So (executorResult))
     }
 
-    val SelectorsStep = new Step[SelectorExecutor.Inputs[Query], SelectorExecutorResult] {
-      override def identifier: PipelineStepIdentifier = ScoringPipelineConfig.selectorsStep
+    val SelectorsStep = new Step[SelectorExecutor. nputs[Query], SelectorExecutorResult] {
+      overr de def  dent f er: P pel neStep dent f er = Scor ngP pel neConf g.selectorsStep
 
-      override def executorArrow: Arrow[SelectorExecutor.Inputs[Query], SelectorExecutorResult] =
-        selectorExecutor.arrow(config.selectors, context)
+      overr de def executorArrow: Arrow[SelectorExecutor. nputs[Query], SelectorExecutorResult] =
+        selectorExecutor.arrow(conf g.selectors, context)
 
-      override def inputAdaptor(
-        query: ScoringPipeline.Inputs[Query],
-        previousResult: ScoringPipelineResult[Candidate]
-      ): SelectorExecutor.Inputs[Query] = SelectorExecutor.Inputs(query.query, query.candidates)
+      overr de def  nputAdaptor(
+        query: Scor ngP pel ne. nputs[Query],
+        prev ousResult: Scor ngP pel neResult[Cand date]
+      ): SelectorExecutor. nputs[Query] = SelectorExecutor. nputs(query.query, query.cand dates)
 
-      override def resultUpdater(
-        previousPipelineResult: ScoringPipelineResult[Candidate],
+      overr de def resultUpdater(
+        prev ousP pel neResult: Scor ngP pel neResult[Cand date],
         executorResult: SelectorExecutorResult
-      ): ScoringPipelineResult[Candidate] =
-        previousPipelineResult.copy(selectorResults = Some(executorResult))
+      ): Scor ngP pel neResult[Cand date] =
+        prev ousP pel neResult.copy(selectorResults = So (executorResult))
     }
 
-    val PreScoringFeatureHydrationPhase1Step =
+    val PreScor ngFeatureHydrat onPhase1Step =
       new Step[
-        CandidateFeatureHydratorExecutor.Inputs[Query, Candidate],
-        CandidateFeatureHydratorExecutorResult[Candidate]
+        Cand dateFeatureHydratorExecutor. nputs[Query, Cand date],
+        Cand dateFeatureHydratorExecutorResult[Cand date]
       ] {
-        override def identifier: PipelineStepIdentifier =
-          ScoringPipelineConfig.preScoringFeatureHydrationPhase1Step
+        overr de def  dent f er: P pel neStep dent f er =
+          Scor ngP pel neConf g.preScor ngFeatureHydrat onPhase1Step
 
-        override def executorArrow: Arrow[
-          CandidateFeatureHydratorExecutor.Inputs[Query, Candidate],
-          CandidateFeatureHydratorExecutorResult[Candidate]
+        overr de def executorArrow: Arrow[
+          Cand dateFeatureHydratorExecutor. nputs[Query, Cand date],
+          Cand dateFeatureHydratorExecutorResult[Cand date]
         ] =
-          candidateFeatureHydratorExecutor.arrow(config.preScoringFeatureHydrationPhase1, context)
+          cand dateFeatureHydratorExecutor.arrow(conf g.preScor ngFeatureHydrat onPhase1, context)
 
-        override def inputAdaptor(
-          query: ScoringPipeline.Inputs[Query],
-          previousResult: ScoringPipelineResult[Candidate]
-        ): CandidateFeatureHydratorExecutor.Inputs[Query, Candidate] = {
-          val selectedCandidatesResult = previousResult.selectorResults.getOrElse {
-            throw InvalidStepStateException(identifier, "SelectorResults")
-          }.selectedCandidates
+        overr de def  nputAdaptor(
+          query: Scor ngP pel ne. nputs[Query],
+          prev ousResult: Scor ngP pel neResult[Cand date]
+        ): Cand dateFeatureHydratorExecutor. nputs[Query, Cand date] = {
+          val selectedCand datesResult = prev ousResult.selectorResults.getOrElse {
+            throw  nval dStepStateExcept on( dent f er, "SelectorResults")
+          }.selectedCand dates
 
-          CandidateFeatureHydratorExecutor.Inputs(
+          Cand dateFeatureHydratorExecutor. nputs(
             query.query,
-            selectedCandidatesResult.asInstanceOf[Seq[CandidateWithFeatures[Candidate]]])
+            selectedCand datesResult.as nstanceOf[Seq[Cand dateW hFeatures[Cand date]]])
         }
 
-        override def resultUpdater(
-          previousPipelineResult: ScoringPipelineResult[Candidate],
-          executorResult: CandidateFeatureHydratorExecutorResult[Candidate]
-        ): ScoringPipelineResult[Candidate] = previousPipelineResult.copy(
-          preScoringHydrationPhase1Result = Some(executorResult)
+        overr de def resultUpdater(
+          prev ousP pel neResult: Scor ngP pel neResult[Cand date],
+          executorResult: Cand dateFeatureHydratorExecutorResult[Cand date]
+        ): Scor ngP pel neResult[Cand date] = prev ousP pel neResult.copy(
+          preScor ngHydrat onPhase1Result = So (executorResult)
         )
       }
 
-    val PreScoringFeatureHydrationPhase2Step =
+    val PreScor ngFeatureHydrat onPhase2Step =
       new Step[
-        CandidateFeatureHydratorExecutor.Inputs[Query, Candidate],
-        CandidateFeatureHydratorExecutorResult[Candidate]
+        Cand dateFeatureHydratorExecutor. nputs[Query, Cand date],
+        Cand dateFeatureHydratorExecutorResult[Cand date]
       ] {
-        override def identifier: PipelineStepIdentifier =
-          ScoringPipelineConfig.preScoringFeatureHydrationPhase2Step
+        overr de def  dent f er: P pel neStep dent f er =
+          Scor ngP pel neConf g.preScor ngFeatureHydrat onPhase2Step
 
-        override def executorArrow: Arrow[
-          CandidateFeatureHydratorExecutor.Inputs[Query, Candidate],
-          CandidateFeatureHydratorExecutorResult[Candidate]
+        overr de def executorArrow: Arrow[
+          Cand dateFeatureHydratorExecutor. nputs[Query, Cand date],
+          Cand dateFeatureHydratorExecutorResult[Cand date]
         ] =
-          candidateFeatureHydratorExecutor.arrow(config.preScoringFeatureHydrationPhase2, context)
+          cand dateFeatureHydratorExecutor.arrow(conf g.preScor ngFeatureHydrat onPhase2, context)
 
-        override def inputAdaptor(
-          query: ScoringPipeline.Inputs[Query],
-          previousResult: ScoringPipelineResult[Candidate]
-        ): CandidateFeatureHydratorExecutor.Inputs[Query, Candidate] = {
-          val preScoringHydrationPhase1FeatureMaps: Seq[FeatureMap] =
-            previousResult.preScoringHydrationPhase1Result
+        overr de def  nputAdaptor(
+          query: Scor ngP pel ne. nputs[Query],
+          prev ousResult: Scor ngP pel neResult[Cand date]
+        ): Cand dateFeatureHydratorExecutor. nputs[Query, Cand date] = {
+          val preScor ngHydrat onPhase1FeatureMaps: Seq[FeatureMap] =
+            prev ousResult.preScor ngHydrat onPhase1Result
               .getOrElse(
-                throw InvalidStepStateException(identifier, "PreScoringHydrationPhase1Result"))
+                throw  nval dStepStateExcept on( dent f er, "PreScor ngHydrat onPhase1Result"))
               .results.map(_.features)
 
-          val itemCandidates = previousResult.selectorResults
-            .getOrElse(throw InvalidStepStateException(identifier, "SelectionResults"))
-            .selectedCandidates.collect {
-              case itemCandidate: ItemCandidateWithDetails => itemCandidate
+          val  emCand dates = prev ousResult.selectorResults
+            .getOrElse(throw  nval dStepStateExcept on( dent f er, "Select onResults"))
+            .selectedCand dates.collect {
+              case  emCand date:  emCand dateW hDeta ls =>  emCand date
             }
-          // If there is no feature hydration (empty results), no need to attempt merging.
-          val candidates = if (preScoringHydrationPhase1FeatureMaps.isEmpty) {
-            itemCandidates
+          //  f t re  s no feature hydrat on (empty results), no need to attempt  rg ng.
+          val cand dates =  f (preScor ngHydrat onPhase1FeatureMaps. sEmpty) {
+             emCand dates
           } else {
-            itemCandidates.zip(preScoringHydrationPhase1FeatureMaps).map {
-              case (itemCandidate, featureMap) =>
-                itemCandidate.copy(features = itemCandidate.features ++ featureMap)
+             emCand dates.z p(preScor ngHydrat onPhase1FeatureMaps).map {
+              case ( emCand date, featureMap) =>
+                 emCand date.copy(features =  emCand date.features ++ featureMap)
             }
           }
 
-          CandidateFeatureHydratorExecutor.Inputs(
+          Cand dateFeatureHydratorExecutor. nputs(
             query.query,
-            candidates.asInstanceOf[Seq[CandidateWithFeatures[Candidate]]])
+            cand dates.as nstanceOf[Seq[Cand dateW hFeatures[Cand date]]])
         }
 
-        override def resultUpdater(
-          previousPipelineResult: ScoringPipelineResult[Candidate],
-          executorResult: CandidateFeatureHydratorExecutorResult[Candidate]
-        ): ScoringPipelineResult[Candidate] = previousPipelineResult.copy(
-          preScoringHydrationPhase2Result = Some(executorResult)
+        overr de def resultUpdater(
+          prev ousP pel neResult: Scor ngP pel neResult[Cand date],
+          executorResult: Cand dateFeatureHydratorExecutorResult[Cand date]
+        ): Scor ngP pel neResult[Cand date] = prev ousP pel neResult.copy(
+          preScor ngHydrat onPhase2Result = So (executorResult)
         )
       }
 
-    def getMergedPreScoringFeatureMap(
-      stepIdentifier: PipelineStepIdentifier,
-      previousResult: ScoringPipelineResult[Candidate]
+    def get rgedPreScor ngFeatureMap(
+      step dent f er: P pel neStep dent f er,
+      prev ousResult: Scor ngP pel neResult[Cand date]
     ): Seq[FeatureMap] = {
-      val preScoringHydrationPhase1FeatureMaps: Seq[FeatureMap] =
-        previousResult.preScoringHydrationPhase1Result
+      val preScor ngHydrat onPhase1FeatureMaps: Seq[FeatureMap] =
+        prev ousResult.preScor ngHydrat onPhase1Result
           .getOrElse(
-            throw InvalidStepStateException(
-              stepIdentifier,
-              "PreScoringHydrationPhase1Result")).results.map(_.features)
+            throw  nval dStepStateExcept on(
+              step dent f er,
+              "PreScor ngHydrat onPhase1Result")).results.map(_.features)
 
-      val preScoringHydrationPhase2FeatureMaps: Seq[FeatureMap] =
-        previousResult.preScoringHydrationPhase2Result
+      val preScor ngHydrat onPhase2FeatureMaps: Seq[FeatureMap] =
+        prev ousResult.preScor ngHydrat onPhase2Result
           .getOrElse(
-            throw InvalidStepStateException(
-              stepIdentifier,
-              "PreScoringHydrationPhase2Result")).results.map(_.features)
+            throw  nval dStepStateExcept on(
+              step dent f er,
+              "PreScor ngHydrat onPhase2Result")).results.map(_.features)
       /*
-       * If either pre-scoring hydration phase feature map is empty, no need to merge them,
-       * we can just take all non-empty ones.
+       *  f e  r pre-scor ng hydrat on phase feature map  s empty, no need to  rge t m,
+       *   can just take all non-empty ones.
        */
-      if (preScoringHydrationPhase1FeatureMaps.isEmpty) {
-        preScoringHydrationPhase2FeatureMaps
-      } else if (preScoringHydrationPhase2FeatureMaps.isEmpty) {
-        preScoringHydrationPhase1FeatureMaps
+       f (preScor ngHydrat onPhase1FeatureMaps. sEmpty) {
+        preScor ngHydrat onPhase2FeatureMaps
+      } else  f (preScor ngHydrat onPhase2FeatureMaps. sEmpty) {
+        preScor ngHydrat onPhase1FeatureMaps
       } else {
-        // No need to check the size in both, since the inputs to both hydration phases are the
-        // same and each phase ensures the number of candidates and ordering matches the input.
-        preScoringHydrationPhase1FeatureMaps.zip(preScoringHydrationPhase2FeatureMaps).map {
-          case (preScoringHydrationPhase1FeatureMap, preScoringHydrationPhasesFeatureMap) =>
-            preScoringHydrationPhase1FeatureMap ++ preScoringHydrationPhasesFeatureMap
+        // No need to c ck t  s ze  n both, s nce t   nputs to both hydrat on phases are t 
+        // sa  and each phase ensures t  number of cand dates and order ng matc s t   nput.
+        preScor ngHydrat onPhase1FeatureMaps.z p(preScor ngHydrat onPhase2FeatureMaps).map {
+          case (preScor ngHydrat onPhase1FeatureMap, preScor ngHydrat onPhasesFeatureMap) =>
+            preScor ngHydrat onPhase1FeatureMap ++ preScor ngHydrat onPhasesFeatureMap
         }
       }
     }
 
     val ScorersStep =
       new Step[
-        CandidateFeatureHydratorExecutor.Inputs[Query, Candidate],
-        CandidateFeatureHydratorExecutorResult[Candidate]
+        Cand dateFeatureHydratorExecutor. nputs[Query, Cand date],
+        Cand dateFeatureHydratorExecutorResult[Cand date]
       ] {
-        override def identifier: PipelineStepIdentifier = ScoringPipelineConfig.scorersStep
+        overr de def  dent f er: P pel neStep dent f er = Scor ngP pel neConf g.scorersStep
 
-        override def inputAdaptor(
-          query: ScoringPipeline.Inputs[Query],
-          previousResult: ScoringPipelineResult[Candidate]
-        ): CandidateFeatureHydratorExecutor.Inputs[Query, Candidate] = {
+        overr de def  nputAdaptor(
+          query: Scor ngP pel ne. nputs[Query],
+          prev ousResult: Scor ngP pel neResult[Cand date]
+        ): Cand dateFeatureHydratorExecutor. nputs[Query, Cand date] = {
 
-          val mergedPreScoringFeatureHydrationFeatures: Seq[FeatureMap] =
-            getMergedPreScoringFeatureMap(ScoringPipelineConfig.scorersStep, previousResult)
+          val  rgedPreScor ngFeatureHydrat onFeatures: Seq[FeatureMap] =
+            get rgedPreScor ngFeatureMap(Scor ngP pel neConf g.scorersStep, prev ousResult)
 
-          val itemCandidates = previousResult.selectorResults
-            .getOrElse(throw InvalidStepStateException(identifier, "SelectionResults"))
-            .selectedCandidates.collect {
-              case itemCandidate: ItemCandidateWithDetails => itemCandidate
+          val  emCand dates = prev ousResult.selectorResults
+            .getOrElse(throw  nval dStepStateExcept on( dent f er, "Select onResults"))
+            .selectedCand dates.collect {
+              case  emCand date:  emCand dateW hDeta ls =>  emCand date
             }
 
-          // If there was no pre-scoring features hydration, no need to re-merge feature maps
-          // and construct a new item candidate
-          val updatedCandidates = if (mergedPreScoringFeatureHydrationFeatures.isEmpty) {
-            itemCandidates
+          //  f t re was no pre-scor ng features hydrat on, no need to re- rge feature maps
+          // and construct a new  em cand date
+          val updatedCand dates =  f ( rgedPreScor ngFeatureHydrat onFeatures. sEmpty) {
+             emCand dates
           } else {
-            itemCandidates.zip(mergedPreScoringFeatureHydrationFeatures).map {
-              case (itemCandidate, preScoringFeatureMap) =>
-                itemCandidate.copy(features = itemCandidate.features ++ preScoringFeatureMap)
+             emCand dates.z p( rgedPreScor ngFeatureHydrat onFeatures).map {
+              case ( emCand date, preScor ngFeatureMap) =>
+                 emCand date.copy(features =  emCand date.features ++ preScor ngFeatureMap)
             }
           }
-          CandidateFeatureHydratorExecutor.Inputs(
+          Cand dateFeatureHydratorExecutor. nputs(
             query.query,
-            updatedCandidates.asInstanceOf[Seq[CandidateWithFeatures[Candidate]]])
+            updatedCand dates.as nstanceOf[Seq[Cand dateW hFeatures[Cand date]]])
         }
 
-        override lazy val executorArrow: Arrow[
-          CandidateFeatureHydratorExecutor.Inputs[Query, Candidate],
-          CandidateFeatureHydratorExecutorResult[
-            Candidate
+        overr de lazy val executorArrow: Arrow[
+          Cand dateFeatureHydratorExecutor. nputs[Query, Cand date],
+          Cand dateFeatureHydratorExecutorResult[
+            Cand date
           ]
-        ] = candidateFeatureHydratorExecutor.arrow(config.scorers.toSeq, context)
+        ] = cand dateFeatureHydratorExecutor.arrow(conf g.scorers.toSeq, context)
 
-        override def resultUpdater(
-          previousPipelineResult: ScoringPipelineResult[Candidate],
-          executorResult: CandidateFeatureHydratorExecutorResult[Candidate]
-        ): ScoringPipelineResult[Candidate] =
-          previousPipelineResult.copy(scorerResults = Some(executorResult))
+        overr de def resultUpdater(
+          prev ousP pel neResult: Scor ngP pel neResult[Cand date],
+          executorResult: Cand dateFeatureHydratorExecutorResult[Cand date]
+        ): Scor ngP pel neResult[Cand date] =
+          prev ousP pel neResult.copy(scorerResults = So (executorResult))
       }
 
     val ResultStep =
-      new Step[Seq[CandidateWithFeatures[UniversalNoun[Any]]], Seq[
-        CandidateWithFeatures[UniversalNoun[Any]]
+      new Step[Seq[Cand dateW hFeatures[Un versalNoun[Any]]], Seq[
+        Cand dateW hFeatures[Un versalNoun[Any]]
       ]] {
-        override def identifier: PipelineStepIdentifier = ScoringPipelineConfig.resultStep
+        overr de def  dent f er: P pel neStep dent f er = Scor ngP pel neConf g.resultStep
 
-        override def executorArrow: Arrow[Seq[CandidateWithFeatures[UniversalNoun[Any]]], Seq[
-          CandidateWithFeatures[UniversalNoun[Any]]
-        ]] = Arrow.identity
+        overr de def executorArrow: Arrow[Seq[Cand dateW hFeatures[Un versalNoun[Any]]], Seq[
+          Cand dateW hFeatures[Un versalNoun[Any]]
+        ]] = Arrow. dent y
 
-        override def inputAdaptor(
-          query: Inputs[Query],
-          previousResult: ScoringPipelineResult[Candidate]
-        ): Seq[CandidateWithFeatures[UniversalNoun[Any]]] = previousResult.selectorResults
-          .getOrElse(throw InvalidStepStateException(identifier, "SelectionResults"))
-          .selectedCandidates.collect {
-            case itemCandidate: ItemCandidateWithDetails => itemCandidate
+        overr de def  nputAdaptor(
+          query:  nputs[Query],
+          prev ousResult: Scor ngP pel neResult[Cand date]
+        ): Seq[Cand dateW hFeatures[Un versalNoun[Any]]] = prev ousResult.selectorResults
+          .getOrElse(throw  nval dStepStateExcept on( dent f er, "Select onResults"))
+          .selectedCand dates.collect {
+            case  emCand date:  emCand dateW hDeta ls =>  emCand date
           }
 
-        override def resultUpdater(
-          previousPipelineResult: ScoringPipelineResult[Candidate],
-          executorResult: Seq[CandidateWithFeatures[UniversalNoun[Any]]]
-        ): ScoringPipelineResult[Candidate] = {
-          val scorerResults: Seq[FeatureMap] = previousPipelineResult.scorerResults
-            .getOrElse(throw InvalidStepStateException(identifier, "ScorerResult")).results.map(
+        overr de def resultUpdater(
+          prev ousP pel neResult: Scor ngP pel neResult[Cand date],
+          executorResult: Seq[Cand dateW hFeatures[Un versalNoun[Any]]]
+        ): Scor ngP pel neResult[Cand date] = {
+          val scorerResults: Seq[FeatureMap] = prev ousP pel neResult.scorerResults
+            .getOrElse(throw  nval dStepStateExcept on( dent f er, "ScorerResult")).results.map(
               _.features)
 
-          val mergedPreScoringFeatureHydrationFeatureMaps: Seq[FeatureMap] =
-            getMergedPreScoringFeatureMap(ScoringPipelineConfig.resultStep, previousPipelineResult)
+          val  rgedPreScor ngFeatureHydrat onFeatureMaps: Seq[FeatureMap] =
+            get rgedPreScor ngFeatureMap(Scor ngP pel neConf g.resultStep, prev ousP pel neResult)
 
-          val itemCandidates = executorResult.asInstanceOf[Seq[ItemCandidateWithDetails]]
-          val finalFeatureMap = if (mergedPreScoringFeatureHydrationFeatureMaps.isEmpty) {
+          val  emCand dates = executorResult.as nstanceOf[Seq[ emCand dateW hDeta ls]]
+          val f nalFeatureMap =  f ( rgedPreScor ngFeatureHydrat onFeatureMaps. sEmpty) {
             scorerResults
           } else {
             scorerResults
-              .zip(mergedPreScoringFeatureHydrationFeatureMaps).map {
-                case (preScoringFeatureMap, scoringFeatureMap) =>
-                  preScoringFeatureMap ++ scoringFeatureMap
+              .z p( rgedPreScor ngFeatureHydrat onFeatureMaps).map {
+                case (preScor ngFeatureMap, scor ngFeatureMap) =>
+                  preScor ngFeatureMap ++ scor ngFeatureMap
               }
           }
 
-          val finalResults = itemCandidates.zip(finalFeatureMap).map {
-            case (itemCandidate, featureMap) =>
-              ScoredCandidateResult(itemCandidate.candidate.asInstanceOf[Candidate], featureMap)
+          val f nalResults =  emCand dates.z p(f nalFeatureMap).map {
+            case ( emCand date, featureMap) =>
+              ScoredCand dateResult( emCand date.cand date.as nstanceOf[Cand date], featureMap)
           }
-          previousPipelineResult.withResult(finalResults)
+          prev ousP pel neResult.w hResult(f nalResults)
         }
       }
 
-    val builtSteps = Seq(
+    val bu ltSteps = Seq(
       GatesStep,
       SelectorsStep,
-      PreScoringFeatureHydrationPhase1Step,
-      PreScoringFeatureHydrationPhase2Step,
+      PreScor ngFeatureHydrat onPhase1Step,
+      PreScor ngFeatureHydrat onPhase2Step,
       ScorersStep,
       ResultStep
     )
 
-    /** The main execution logic for this Candidate Pipeline. */
-    val finalArrow: Arrow[ScoringPipeline.Inputs[Query], ScoringPipelineResult[Candidate]] =
-      buildCombinedArrowFromSteps(
-        steps = builtSteps,
+    /** T  ma n execut on log c for t  Cand date P pel ne. */
+    val f nalArrow: Arrow[Scor ngP pel ne. nputs[Query], Scor ngP pel neResult[Cand date]] =
+      bu ldComb nedArrowFromSteps(
+        steps = bu ltSteps,
         context = context,
-        initialEmptyResult = ScoringPipelineResult.empty,
-        stepsInOrderFromConfig = ScoringPipelineConfig.stepsInOrder
+         n  alEmptyResult = Scor ngP pel neResult.empty,
+        steps nOrderFromConf g = Scor ngP pel neConf g.steps nOrder
       )
 
-    val configFromBuilder = config
-    new ScoringPipeline[Query, Candidate] {
-      override private[core] val config: ScoringPipelineConfig[Query, Candidate] = configFromBuilder
-      override val arrow: Arrow[ScoringPipeline.Inputs[Query], ScoringPipelineResult[Candidate]] =
-        finalArrow
-      override val identifier: ScoringPipelineIdentifier = pipelineIdentifier
-      override val alerts: Seq[Alert] = config.alerts
-      override val children: Seq[Component] =
-        allGates ++ config.preScoringFeatureHydrationPhase1 ++ config.preScoringFeatureHydrationPhase2 ++ config.scorers
+    val conf gFromBu lder = conf g
+    new Scor ngP pel ne[Query, Cand date] {
+      overr de pr vate[core] val conf g: Scor ngP pel neConf g[Query, Cand date] = conf gFromBu lder
+      overr de val arrow: Arrow[Scor ngP pel ne. nputs[Query], Scor ngP pel neResult[Cand date]] =
+        f nalArrow
+      overr de val  dent f er: Scor ngP pel ne dent f er = p pel ne dent f er
+      overr de val alerts: Seq[Alert] = conf g.alerts
+      overr de val ch ldren: Seq[Component] =
+        allGates ++ conf g.preScor ngFeatureHydrat onPhase1 ++ conf g.preScor ngFeatureHydrat onPhase2 ++ conf g.scorers
     }
   }
 }

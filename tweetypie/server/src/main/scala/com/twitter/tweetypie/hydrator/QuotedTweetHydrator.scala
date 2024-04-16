@@ -1,51 +1,51 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.repos ory._
 
 /**
- * Loads the tweet referenced by `Tweet.quotedTweet`.
+ * Loads t  t et referenced by `T et.quotedT et`.
  */
-object QuotedTweetHydrator {
-  type Type = ValueHydrator[Option[QuotedTweetResult], Ctx]
+object QuotedT etHydrator {
+  type Type = ValueHydrator[Opt on[QuotedT etResult], Ctx]
 
   case class Ctx(
-    quotedTweetFilteredState: Option[FilteredState.Unavailable],
-    underlyingTweetCtx: TweetCtx)
-      extends TweetCtx.Proxy
+    quotedT etF lteredState: Opt on[F lteredState.Unava lable],
+    underly ngT etCtx: T etCtx)
+      extends T etCtx.Proxy
 
-  def apply(repo: TweetResultRepository.Type): Type = {
-    ValueHydrator[Option[QuotedTweetResult], Ctx] { (_, ctx) =>
-      (ctx.quotedTweetFilteredState, ctx.quotedTweet) match {
+  def apply(repo: T etResultRepos ory.Type): Type = {
+    ValueHydrator[Opt on[QuotedT etResult], Ctx] { (_, ctx) =>
+      (ctx.quotedT etF lteredState, ctx.quotedT et) match {
 
         case (_, None) =>
-          // If there is no quoted tweet ref, leave the value as None,
-          // indicating undefined
-          ValueState.StitchUnmodifiedNone
+          //  f t re  s no quoted t et ref, leave t  value as None,
+          //  nd cat ng undef ned
+          ValueState.St chUnmod f edNone
 
-        case (Some(fs), _) =>
-          Stitch.value(ValueState.modified(Some(QuotedTweetResult.Filtered(fs))))
+        case (So (fs), _) =>
+          St ch.value(ValueState.mod f ed(So (QuotedT etResult.F ltered(fs))))
 
-        case (None, Some(qtRef)) =>
-          val qtQueryOptions =
+        case (None, So (qtRef)) =>
+          val qtQueryOpt ons =
             ctx.opts.copy(
-              // we don't want to recursively load quoted tweets
-              include = ctx.opts.include.copy(quotedTweet = false),
-              // be sure to get a clean version of the tweet
-              scrubUnrequestedFields = true,
-              // TweetVisibilityLibrary filters quoted tweets slightly differently from other tweets.
-              // Specifically, most Interstitial verdicts are converted to Drops.
-              isInnerQuotedTweet = true
+              //   don't want to recurs vely load quoted t ets
+               nclude = ctx.opts. nclude.copy(quotedT et = false),
+              // be sure to get a clean vers on of t  t et
+              scrubUnrequestedF elds = true,
+              // T etV s b l yL brary f lters quoted t ets sl ghtly d fferently from ot r t ets.
+              // Spec f cally, most  nterst  al verd cts are converted to Drops.
+               s nnerQuotedT et = true
             )
 
-          repo(qtRef.tweetId, qtQueryOptions).transform { t =>
-            Stitch.const {
-              QuotedTweetResult.fromTry(t).map(r => ValueState.modified(Some(r)))
+          repo(qtRef.t et d, qtQueryOpt ons).transform { t =>
+            St ch.const {
+              QuotedT etResult.fromTry(t).map(r => ValueState.mod f ed(So (r)))
             }
           }
       }
-    }.onlyIf((curr, ctx) => curr.isEmpty && ctx.opts.include.quotedTweet)
+    }.only f((curr, ctx) => curr. sEmpty && ctx.opts. nclude.quotedT et)
   }
 }

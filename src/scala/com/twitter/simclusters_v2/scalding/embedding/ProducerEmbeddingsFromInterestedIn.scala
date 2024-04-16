@@ -1,701 +1,701 @@
-package com.twitter.simclusters_v2.scalding.embedding
+package com.tw ter.s mclusters_v2.scald ng.embedd ng
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil._
-import com.twitter.simclusters_v2.scalding.embedding.common.SimClustersEmbeddingJob
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.wtf.scalding.jobs.common.{AdhocExecutionApp, ScheduledExecutionApp}
-import java.util.TimeZone
+ mport com.tw ter.dal.cl ent.dataset.KeyValDALDataset
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e._
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons
+ mport com.tw ter.s mclusters_v2.hdfs_s ces._
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.Embedd ngUt l._
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.S mClustersEmbedd ngJob
+ mport com.tw ter.s mclusters_v2.thr ftscala._
+ mport com.tw ter.wtf.scald ng.jobs.common.{AdhocExecut onApp, Sc duledExecut onApp}
+ mport java.ut l.T  Zone
 
-object ProducerEmbeddingsFromInterestedInBatchAppUtil {
-  import ProducerEmbeddingsFromInterestedIn._
+object ProducerEmbedd ngsFrom nterested nBatchAppUt l {
+   mport ProducerEmbedd ngsFrom nterested n._
 
   val user = System.getenv("USER")
 
-  val rootPath: String = s"/user/$user/manhattan_sequence_files"
+  val rootPath: Str ng = s"/user/$user/manhattan_sequence_f les"
 
-  // Helps speed up the multiplication step which can get very big
-  val numReducersForMatrixMultiplication: Int = 12000
+  //  lps speed up t  mult pl cat on step wh ch can get very b g
+  val numReducersForMatr xMult pl cat on:  nt = 12000
 
   /**
-   * Given the producer x cluster matrix, key by producer / cluster individually, and write output
-   * to individual DAL datasets
+   * G ven t  producer x cluster matr x, key by producer / cluster  nd v dually, and wr e output
+   * to  nd v dual DAL datasets
    */
-  def writeOutput(
-    producerClusterEmbedding: TypedPipe[((ClusterId, UserId), Double)],
-    producerTopKEmbeddingsDataset: KeyValDALDataset[KeyVal[Long, TopSimClustersWithScore]],
+  def wr eOutput(
+    producerClusterEmbedd ng: TypedP pe[((Cluster d, User d), Double)],
+    producerTopKEmbedd ngsDataset: KeyValDALDataset[KeyVal[Long, TopS mClustersW hScore]],
     clusterTopKProducersDataset: KeyValDALDataset[
-      KeyVal[PersistedFullClusterId, TopProducersWithScore]
+      KeyVal[Pers stedFullCluster d, TopProducersW hScore]
     ],
-    producerTopKEmbeddingsPath: String,
-    clusterTopKProducersPath: String,
-    modelVersion: ModelVersion
-  ): Execution[Unit] = {
+    producerTopKEmbedd ngsPath: Str ng,
+    clusterTopKProducersPath: Str ng,
+    modelVers on: ModelVers on
+  ): Execut on[Un ] = {
     val keyedByProducer =
-      toSimClusterEmbedding(producerClusterEmbedding, topKClustersToKeep, modelVersion)
-        .map { case (userId, clusters) => KeyVal(userId, clusters) }
-        .writeDALVersionedKeyValExecution(
-          producerTopKEmbeddingsDataset,
-          D.Suffix(producerTopKEmbeddingsPath)
+      toS mClusterEmbedd ng(producerClusterEmbedd ng, topKClustersToKeep, modelVers on)
+        .map { case (user d, clusters) => KeyVal(user d, clusters) }
+        .wr eDALVers onedKeyValExecut on(
+          producerTopKEmbedd ngsDataset,
+          D.Suff x(producerTopKEmbedd ngsPath)
         )
 
-    val keyedBySimCluster = fromSimClusterEmbedding(
-      producerClusterEmbedding,
+    val keyedByS mCluster = fromS mClusterEmbedd ng(
+      producerClusterEmbedd ng,
       topKUsersToKeep,
-      modelVersion
+      modelVers on
     ).map {
-        case (clusterId, topProducers) => KeyVal(clusterId, topProducersToThrift(topProducers))
+        case (cluster d, topProducers) => KeyVal(cluster d, topProducersToThr ft(topProducers))
       }
-      .writeDALVersionedKeyValExecution(
+      .wr eDALVers onedKeyValExecut on(
         clusterTopKProducersDataset,
-        D.Suffix(clusterTopKProducersPath)
+        D.Suff x(clusterTopKProducersPath)
       )
 
-    Execution.zip(keyedByProducer, keyedBySimCluster).unit
+    Execut on.z p(keyedByProducer, keyedByS mCluster).un 
   }
 }
 
 /**
- * Base class for Fav based producer embeddings. Helps reuse the code for different model versions
+ * Base class for Fav based producer embedd ngs.  lps reuse t  code for d fferent model vers ons
  */
-trait ProducerEmbeddingsFromInterestedInByFavScoreBase extends ScheduledExecutionApp {
-  import ProducerEmbeddingsFromInterestedIn._
-  import ProducerEmbeddingsFromInterestedInBatchAppUtil._
+tra  ProducerEmbedd ngsFrom nterested nByFavScoreBase extends Sc duledExecut onApp {
+   mport ProducerEmbedd ngsFrom nterested n._
+   mport ProducerEmbedd ngsFrom nterested nBatchAppUt l._
 
-  def modelVersion: ModelVersion
+  def modelVers on: ModelVers on
 
-  val producerTopKEmbeddingsByFavScorePathPrefix: String =
-    "/producer_top_k_simcluster_embeddings_by_fav_score_"
+  val producerTopKEmbedd ngsByFavScorePathPref x: Str ng =
+    "/producer_top_k_s mcluster_embedd ngs_by_fav_score_"
 
-  val clusterTopKProducersByFavScorePathPrefix: String =
-    "/simcluster_embedding_top_k_producers_by_fav_score_"
+  val clusterTopKProducersByFavScorePathPref x: Str ng =
+    "/s mcluster_embedd ng_top_k_producers_by_fav_score_"
 
-  val minNumFavers: Int = minNumFaversForProducer
+  val m nNumFavers:  nt = m nNumFaversForProducer
 
-  def producerTopKSimclusterEmbeddingsByFavScoreDataset: KeyValDALDataset[
-    KeyVal[Long, TopSimClustersWithScore]
+  def producerTopKS mclusterEmbedd ngsByFavScoreDataset: KeyValDALDataset[
+    KeyVal[Long, TopS mClustersW hScore]
   ]
 
-  def simclusterEmbeddingTopKProducersByFavScoreDataset: KeyValDALDataset[
-    KeyVal[PersistedFullClusterId, TopProducersWithScore]
+  def s mclusterEmbedd ngTopKProducersByFavScoreDataset: KeyValDALDataset[
+    KeyVal[Pers stedFullCluster d, TopProducersW hScore]
   ]
 
-  def getInterestedInFn: (DateRange, TimeZone) => TypedPipe[(Long, ClustersUserIsInterestedIn)]
+  def get nterested nFn: (DateRange, T  Zone) => TypedP pe[(Long, ClustersUser s nterested n)]
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
 
-    val producerTopKEmbeddingsByFavScorePathUpdated: String =
-      rootPath + producerTopKEmbeddingsByFavScorePathPrefix + ModelVersions
-        .toKnownForModelVersion(modelVersion)
+    val producerTopKEmbedd ngsByFavScorePathUpdated: Str ng =
+      rootPath + producerTopKEmbedd ngsByFavScorePathPref x + ModelVers ons
+        .toKnownForModelVers on(modelVers on)
 
-    val clusterTopKProducersByFavScorePathUpdated: String =
-      rootPath + clusterTopKProducersByFavScorePathPrefix + ModelVersions
-        .toKnownForModelVersion(modelVersion)
+    val clusterTopKProducersByFavScorePathUpdated: Str ng =
+      rootPath + clusterTopKProducersByFavScorePathPref x + ModelVers ons
+        .toKnownForModelVers on(modelVers on)
 
-    val producerClusterEmbeddingByFavScore = getProducerClusterEmbedding(
-      getInterestedInFn(dateRange.embiggen(Days(5)), timeZone),
-      DataSources.userUserNormalizedGraphSource,
-      DataSources.userNormsAndCounts,
+    val producerClusterEmbedd ngByFavScore = getProducerClusterEmbedd ng(
+      get nterested nFn(dateRange.emb ggen(Days(5)), t  Zone),
+      DataS ces.userUserNormal zedGraphS ce,
+      DataS ces.userNormsAndCounts,
       userToProducerFavScore,
       userToClusterFavScore, // Fav score
-      _.faverCount.exists(_ > minNumFavers),
-      numReducersForMatrixMultiplication,
-      modelVersion,
-      cosineSimilarityThreshold
-    ).forceToDisk
+      _.faverCount.ex sts(_ > m nNumFavers),
+      numReducersForMatr xMult pl cat on,
+      modelVers on,
+      cos neS m lar yThreshold
+    ).forceToD sk
 
-    writeOutput(
-      producerClusterEmbeddingByFavScore,
-      producerTopKSimclusterEmbeddingsByFavScoreDataset,
-      simclusterEmbeddingTopKProducersByFavScoreDataset,
-      producerTopKEmbeddingsByFavScorePathUpdated,
+    wr eOutput(
+      producerClusterEmbedd ngByFavScore,
+      producerTopKS mclusterEmbedd ngsByFavScoreDataset,
+      s mclusterEmbedd ngTopKProducersByFavScoreDataset,
+      producerTopKEmbedd ngsByFavScorePathUpdated,
       clusterTopKProducersByFavScorePathUpdated,
-      modelVersion
+      modelVers on
     )
   }
 }
 
 /**
- * Base class for Follow based producer embeddings. Helps reuse the code for different model versions
+ * Base class for Follow based producer embedd ngs.  lps reuse t  code for d fferent model vers ons
  */
-trait ProducerEmbeddingsFromInterestedInByFollowScoreBase extends ScheduledExecutionApp {
-  import ProducerEmbeddingsFromInterestedIn._
-  import ProducerEmbeddingsFromInterestedInBatchAppUtil._
+tra  ProducerEmbedd ngsFrom nterested nByFollowScoreBase extends Sc duledExecut onApp {
+   mport ProducerEmbedd ngsFrom nterested n._
+   mport ProducerEmbedd ngsFrom nterested nBatchAppUt l._
 
-  def modelVersion: ModelVersion
+  def modelVers on: ModelVers on
 
-  val producerTopKEmbeddingsByFollowScorePathPrefix: String =
-    "/producer_top_k_simcluster_embeddings_by_follow_score_"
+  val producerTopKEmbedd ngsByFollowScorePathPref x: Str ng =
+    "/producer_top_k_s mcluster_embedd ngs_by_follow_score_"
 
-  val clusterTopKProducersByFollowScorePathPrefix: String =
-    "/simcluster_embedding_top_k_producers_by_follow_score_"
+  val clusterTopKProducersByFollowScorePathPref x: Str ng =
+    "/s mcluster_embedd ng_top_k_producers_by_follow_score_"
 
-  def producerTopKSimclusterEmbeddingsByFollowScoreDataset: KeyValDALDataset[
-    KeyVal[Long, TopSimClustersWithScore]
+  def producerTopKS mclusterEmbedd ngsByFollowScoreDataset: KeyValDALDataset[
+    KeyVal[Long, TopS mClustersW hScore]
   ]
 
-  def simclusterEmbeddingTopKProducersByFollowScoreDataset: KeyValDALDataset[
-    KeyVal[PersistedFullClusterId, TopProducersWithScore]
+  def s mclusterEmbedd ngTopKProducersByFollowScoreDataset: KeyValDALDataset[
+    KeyVal[Pers stedFullCluster d, TopProducersW hScore]
   ]
 
-  def getInterestedInFn: (DateRange, TimeZone) => TypedPipe[(Long, ClustersUserIsInterestedIn)]
+  def get nterested nFn: (DateRange, T  Zone) => TypedP pe[(Long, ClustersUser s nterested n)]
 
-  val minNumFollowers: Int = minNumFollowersForProducer
+  val m nNumFollo rs:  nt = m nNumFollo rsForProducer
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
 
-    val producerTopKEmbeddingsByFollowScorePath: String =
-      rootPath + producerTopKEmbeddingsByFollowScorePathPrefix + ModelVersions
-        .toKnownForModelVersion(modelVersion)
+    val producerTopKEmbedd ngsByFollowScorePath: Str ng =
+      rootPath + producerTopKEmbedd ngsByFollowScorePathPref x + ModelVers ons
+        .toKnownForModelVers on(modelVers on)
 
-    val clusterTopKProducersByFollowScorePath: String =
-      rootPath + clusterTopKProducersByFollowScorePathPrefix + ModelVersions
-        .toKnownForModelVersion(modelVersion)
+    val clusterTopKProducersByFollowScorePath: Str ng =
+      rootPath + clusterTopKProducersByFollowScorePathPref x + ModelVers ons
+        .toKnownForModelVers on(modelVers on)
 
-    val producerClusterEmbeddingByFollowScore = getProducerClusterEmbedding(
-      getInterestedInFn(dateRange.embiggen(Days(5)), timeZone),
-      DataSources.userUserNormalizedGraphSource,
-      DataSources.userNormsAndCounts,
+    val producerClusterEmbedd ngByFollowScore = getProducerClusterEmbedd ng(
+      get nterested nFn(dateRange.emb ggen(Days(5)), t  Zone),
+      DataS ces.userUserNormal zedGraphS ce,
+      DataS ces.userNormsAndCounts,
       userToProducerFollowScore,
       userToClusterFollowScore, // Follow score
-      _.followerCount.exists(_ > minNumFollowers),
-      numReducersForMatrixMultiplication,
-      modelVersion,
-      cosineSimilarityThreshold
-    ).forceToDisk
+      _.follo rCount.ex sts(_ > m nNumFollo rs),
+      numReducersForMatr xMult pl cat on,
+      modelVers on,
+      cos neS m lar yThreshold
+    ).forceToD sk
 
-    writeOutput(
-      producerClusterEmbeddingByFollowScore,
-      producerTopKSimclusterEmbeddingsByFollowScoreDataset,
-      simclusterEmbeddingTopKProducersByFollowScoreDataset,
-      producerTopKEmbeddingsByFollowScorePath,
+    wr eOutput(
+      producerClusterEmbedd ngByFollowScore,
+      producerTopKS mclusterEmbedd ngsByFollowScoreDataset,
+      s mclusterEmbedd ngTopKProducersByFollowScoreDataset,
+      producerTopKEmbedd ngsByFollowScorePath,
       clusterTopKProducersByFollowScorePath,
-      modelVersion
+      modelVers on
     )
   }
 }
 
 /**
- capesospy-v2 update --build_locally --start_cron \
- --start_cron producer_embeddings_from_interested_in_by_fav_score \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+ capesospy-v2 update --bu ld_locally --start_cron \
+ --start_cron producer_embedd ngs_from_ nterested_ n_by_fav_score \
+ src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc3.yaml
  */
-object ProducerEmbeddingsFromInterestedInByFavScoreBatchApp
-    extends ProducerEmbeddingsFromInterestedInByFavScoreBase {
-  override def modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated
+object ProducerEmbedd ngsFrom nterested nByFavScoreBatchApp
+    extends ProducerEmbedd ngsFrom nterested nByFavScoreBase {
+  overr de def modelVers on: ModelVers on = ModelVers on.Model20m145kUpdated
 
-  override def getInterestedInFn: (
+  overr de def get nterested nFn: (
     DateRange,
-    TimeZone
-  ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
-    InterestedInSources.simClustersInterestedInUpdatedSource
+    T  Zone
+  ) => TypedP pe[(User d, ClustersUser s nterested n)] =
+     nterested nS ces.s mClusters nterested nUpdatedS ce
 
-  override val firstTime: RichDate = RichDate("2019-09-10")
+  overr de val f rstT  : R chDate = R chDate("2019-09-10")
 
-  override val batchIncrement: Duration = Days(7)
+  overr de val batch ncre nt: Durat on = Days(7)
 
-  override def producerTopKSimclusterEmbeddingsByFavScoreDataset: KeyValDALDataset[
-    KeyVal[Long, TopSimClustersWithScore]
+  overr de def producerTopKS mclusterEmbedd ngsByFavScoreDataset: KeyValDALDataset[
+    KeyVal[Long, TopS mClustersW hScore]
   ] =
-    ProducerTopKSimclusterEmbeddingsByFavScoreUpdatedScalaDataset
+    ProducerTopKS mclusterEmbedd ngsByFavScoreUpdatedScalaDataset
 
-  override def simclusterEmbeddingTopKProducersByFavScoreDataset: KeyValDALDataset[
-    KeyVal[PersistedFullClusterId, TopProducersWithScore]
+  overr de def s mclusterEmbedd ngTopKProducersByFavScoreDataset: KeyValDALDataset[
+    KeyVal[Pers stedFullCluster d, TopProducersW hScore]
   ] =
-    SimclusterEmbeddingTopKProducersByFavScoreUpdatedScalaDataset
+    S mclusterEmbedd ngTopKProducersByFavScoreUpdatedScalaDataset
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
- --start_cron producer_embeddings_from_interested_in_by_fav_score_2020 \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capesospy-v2 update --bu ld_locally --start_cron \
+ --start_cron producer_embedd ngs_from_ nterested_ n_by_fav_score_2020 \
+ src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc3.yaml
  */
-object ProducerEmbeddingsFromInterestedInByFavScore2020BatchApp
-    extends ProducerEmbeddingsFromInterestedInByFavScoreBase {
-  override def modelVersion: ModelVersion = ModelVersion.Model20m145k2020
+object ProducerEmbedd ngsFrom nterested nByFavScore2020BatchApp
+    extends ProducerEmbedd ngsFrom nterested nByFavScoreBase {
+  overr de def modelVers on: ModelVers on = ModelVers on.Model20m145k2020
 
-  override def getInterestedInFn: (
+  overr de def get nterested nFn: (
     DateRange,
-    TimeZone
-  ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
-    InterestedInSources.simClustersInterestedIn2020Source
+    T  Zone
+  ) => TypedP pe[(User d, ClustersUser s nterested n)] =
+     nterested nS ces.s mClusters nterested n2020S ce
 
-  override val firstTime: RichDate = RichDate("2021-03-01")
+  overr de val f rstT  : R chDate = R chDate("2021-03-01")
 
-  override val batchIncrement: Duration = Days(7)
+  overr de val batch ncre nt: Durat on = Days(7)
 
-  override def producerTopKSimclusterEmbeddingsByFavScoreDataset: KeyValDALDataset[
-    KeyVal[Long, TopSimClustersWithScore]
+  overr de def producerTopKS mclusterEmbedd ngsByFavScoreDataset: KeyValDALDataset[
+    KeyVal[Long, TopS mClustersW hScore]
   ] =
-    ProducerTopKSimclusterEmbeddingsByFavScore2020ScalaDataset
+    ProducerTopKS mclusterEmbedd ngsByFavScore2020ScalaDataset
 
-  override def simclusterEmbeddingTopKProducersByFavScoreDataset: KeyValDALDataset[
-    KeyVal[PersistedFullClusterId, TopProducersWithScore]
+  overr de def s mclusterEmbedd ngTopKProducersByFavScoreDataset: KeyValDALDataset[
+    KeyVal[Pers stedFullCluster d, TopProducersW hScore]
   ] =
-    SimclusterEmbeddingTopKProducersByFavScore2020ScalaDataset
+    S mclusterEmbedd ngTopKProducersByFavScore2020ScalaDataset
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
- --start_cron producer_embeddings_from_interested_in_by_fav_score_dec11 \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capesospy-v2 update --bu ld_locally --start_cron \
+ --start_cron producer_embedd ngs_from_ nterested_ n_by_fav_score_dec11 \
+ src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc3.yaml
  */
-object ProducerEmbeddingsFromInterestedInByFavScoreDec11BatchApp
-    extends ProducerEmbeddingsFromInterestedInByFavScoreBase {
-  override def modelVersion: ModelVersion = ModelVersion.Model20m145kDec11
+object ProducerEmbedd ngsFrom nterested nByFavScoreDec11BatchApp
+    extends ProducerEmbedd ngsFrom nterested nByFavScoreBase {
+  overr de def modelVers on: ModelVers on = ModelVers on.Model20m145kDec11
 
-  override def getInterestedInFn: (
+  overr de def get nterested nFn: (
     DateRange,
-    TimeZone
-  ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
-    InterestedInSources.simClustersInterestedInDec11Source
+    T  Zone
+  ) => TypedP pe[(User d, ClustersUser s nterested n)] =
+     nterested nS ces.s mClusters nterested nDec11S ce
 
-  override val firstTime: RichDate = RichDate("2019-11-18")
+  overr de val f rstT  : R chDate = R chDate("2019-11-18")
 
-  override val batchIncrement: Duration = Days(7)
+  overr de val batch ncre nt: Durat on = Days(7)
 
-  override def producerTopKSimclusterEmbeddingsByFavScoreDataset: KeyValDALDataset[
-    KeyVal[Long, TopSimClustersWithScore]
+  overr de def producerTopKS mclusterEmbedd ngsByFavScoreDataset: KeyValDALDataset[
+    KeyVal[Long, TopS mClustersW hScore]
   ] =
-    ProducerTopKSimclusterEmbeddingsByFavScoreScalaDataset
+    ProducerTopKS mclusterEmbedd ngsByFavScoreScalaDataset
 
-  override def simclusterEmbeddingTopKProducersByFavScoreDataset: KeyValDALDataset[
-    KeyVal[PersistedFullClusterId, TopProducersWithScore]
+  overr de def s mclusterEmbedd ngTopKProducersByFavScoreDataset: KeyValDALDataset[
+    KeyVal[Pers stedFullCluster d, TopProducersW hScore]
   ] =
-    SimclusterEmbeddingTopKProducersByFavScoreScalaDataset
+    S mclusterEmbedd ngTopKProducersByFavScoreScalaDataset
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
- --start_cron producer_embeddings_from_interested_in_by_follow_score \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capesospy-v2 update --bu ld_locally --start_cron \
+ --start_cron producer_embedd ngs_from_ nterested_ n_by_follow_score \
+ src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc3.yaml
  */
-object ProducerEmbeddingsFromInterestedInByFollowScoreBatchApp
-    extends ProducerEmbeddingsFromInterestedInByFollowScoreBase {
-  override def modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated
+object ProducerEmbedd ngsFrom nterested nByFollowScoreBatchApp
+    extends ProducerEmbedd ngsFrom nterested nByFollowScoreBase {
+  overr de def modelVers on: ModelVers on = ModelVers on.Model20m145kUpdated
 
-  override def getInterestedInFn: (
+  overr de def get nterested nFn: (
     DateRange,
-    TimeZone
-  ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
-    InterestedInSources.simClustersInterestedInUpdatedSource
+    T  Zone
+  ) => TypedP pe[(User d, ClustersUser s nterested n)] =
+     nterested nS ces.s mClusters nterested nUpdatedS ce
 
-  override val firstTime: RichDate = RichDate("2019-09-10")
+  overr de val f rstT  : R chDate = R chDate("2019-09-10")
 
-  override val batchIncrement: Duration = Days(7)
+  overr de val batch ncre nt: Durat on = Days(7)
 
-  override def producerTopKSimclusterEmbeddingsByFollowScoreDataset: KeyValDALDataset[
-    KeyVal[Long, TopSimClustersWithScore]
+  overr de def producerTopKS mclusterEmbedd ngsByFollowScoreDataset: KeyValDALDataset[
+    KeyVal[Long, TopS mClustersW hScore]
   ] =
-    ProducerTopKSimclusterEmbeddingsByFollowScoreUpdatedScalaDataset
+    ProducerTopKS mclusterEmbedd ngsByFollowScoreUpdatedScalaDataset
 
-  override def simclusterEmbeddingTopKProducersByFollowScoreDataset: KeyValDALDataset[
-    KeyVal[PersistedFullClusterId, TopProducersWithScore]
+  overr de def s mclusterEmbedd ngTopKProducersByFollowScoreDataset: KeyValDALDataset[
+    KeyVal[Pers stedFullCluster d, TopProducersW hScore]
   ] =
-    SimclusterEmbeddingTopKProducersByFollowScoreUpdatedScalaDataset
+    S mclusterEmbedd ngTopKProducersByFollowScoreUpdatedScalaDataset
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
- --start_cron producer_embeddings_from_interested_in_by_follow_score_2020 \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capesospy-v2 update --bu ld_locally --start_cron \
+ --start_cron producer_embedd ngs_from_ nterested_ n_by_follow_score_2020 \
+ src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc3.yaml
  */
-object ProducerEmbeddingsFromInterestedInByFollowScore2020BatchApp
-    extends ProducerEmbeddingsFromInterestedInByFollowScoreBase {
-  override def modelVersion: ModelVersion = ModelVersion.Model20m145k2020
+object ProducerEmbedd ngsFrom nterested nByFollowScore2020BatchApp
+    extends ProducerEmbedd ngsFrom nterested nByFollowScoreBase {
+  overr de def modelVers on: ModelVers on = ModelVers on.Model20m145k2020
 
-  override def getInterestedInFn: (
+  overr de def get nterested nFn: (
     DateRange,
-    TimeZone
-  ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
-    InterestedInSources.simClustersInterestedIn2020Source
+    T  Zone
+  ) => TypedP pe[(User d, ClustersUser s nterested n)] =
+     nterested nS ces.s mClusters nterested n2020S ce
 
-  override val firstTime: RichDate = RichDate("2021-03-01")
+  overr de val f rstT  : R chDate = R chDate("2021-03-01")
 
-  override val batchIncrement: Duration = Days(7)
+  overr de val batch ncre nt: Durat on = Days(7)
 
-  override def producerTopKSimclusterEmbeddingsByFollowScoreDataset: KeyValDALDataset[
-    KeyVal[Long, TopSimClustersWithScore]
+  overr de def producerTopKS mclusterEmbedd ngsByFollowScoreDataset: KeyValDALDataset[
+    KeyVal[Long, TopS mClustersW hScore]
   ] =
-    ProducerTopKSimclusterEmbeddingsByFollowScore2020ScalaDataset
+    ProducerTopKS mclusterEmbedd ngsByFollowScore2020ScalaDataset
 
-  override def simclusterEmbeddingTopKProducersByFollowScoreDataset: KeyValDALDataset[
-    KeyVal[PersistedFullClusterId, TopProducersWithScore]
+  overr de def s mclusterEmbedd ngTopKProducersByFollowScoreDataset: KeyValDALDataset[
+    KeyVal[Pers stedFullCluster d, TopProducersW hScore]
   ] =
-    SimclusterEmbeddingTopKProducersByFollowScore2020ScalaDataset
+    S mclusterEmbedd ngTopKProducersByFollowScore2020ScalaDataset
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
- --start_cron producer_embeddings_from_interested_in_by_follow_score_dec11 \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capesospy-v2 update --bu ld_locally --start_cron \
+ --start_cron producer_embedd ngs_from_ nterested_ n_by_follow_score_dec11 \
+ src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc3.yaml
  */
-object ProducerEmbeddingsFromInterestedInByFollowScoreDec11BatchApp
-    extends ProducerEmbeddingsFromInterestedInByFollowScoreBase {
-  override def modelVersion: ModelVersion = ModelVersion.Model20m145kDec11
+object ProducerEmbedd ngsFrom nterested nByFollowScoreDec11BatchApp
+    extends ProducerEmbedd ngsFrom nterested nByFollowScoreBase {
+  overr de def modelVers on: ModelVers on = ModelVers on.Model20m145kDec11
 
-  override def getInterestedInFn: (
+  overr de def get nterested nFn: (
     DateRange,
-    TimeZone
-  ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
-    InterestedInSources.simClustersInterestedInDec11Source
+    T  Zone
+  ) => TypedP pe[(User d, ClustersUser s nterested n)] =
+     nterested nS ces.s mClusters nterested nDec11S ce
 
-  override val firstTime: RichDate = RichDate("2019-11-18")
+  overr de val f rstT  : R chDate = R chDate("2019-11-18")
 
-  override val batchIncrement: Duration = Days(7)
+  overr de val batch ncre nt: Durat on = Days(7)
 
-  override def producerTopKSimclusterEmbeddingsByFollowScoreDataset: KeyValDALDataset[
-    KeyVal[Long, TopSimClustersWithScore]
+  overr de def producerTopKS mclusterEmbedd ngsByFollowScoreDataset: KeyValDALDataset[
+    KeyVal[Long, TopS mClustersW hScore]
   ] =
-    ProducerTopKSimclusterEmbeddingsByFollowScoreScalaDataset
+    ProducerTopKS mclusterEmbedd ngsByFollowScoreScalaDataset
 
-  override def simclusterEmbeddingTopKProducersByFollowScoreDataset: KeyValDALDataset[
-    KeyVal[PersistedFullClusterId, TopProducersWithScore]
+  overr de def s mclusterEmbedd ngTopKProducersByFollowScoreDataset: KeyValDALDataset[
+    KeyVal[Pers stedFullCluster d, TopProducersW hScore]
   ] =
-    SimclusterEmbeddingTopKProducersByFollowScoreScalaDataset
+    S mclusterEmbedd ngTopKProducersByFollowScoreScalaDataset
 }
 
 /**
- * Adhoc job to calculate producer's simcluster embeddings, which essentially assigns interestedIn
- * SimClusters to each producer, regardless of whether the producer has a knownFor assignment.
+ * Adhoc job to calculate producer's s mcluster embedd ngs, wh ch essent ally ass gns  nterested n
+ * S mClusters to each producer, regardless of w t r t  producer has a knownFor ass gn nt.
  *
-$ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:producer_embeddings_from_interested_in-adhoc
+$ ./bazel bundle src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng:producer_embedd ngs_from_ nterested_ n-adhoc
 
- $ scalding remote run \
- --main-class com.twitter.simclusters_v2.scalding.embedding.ProducerEmbeddingsFromInterestedInAdhocApp \
- --target src/scala/com/twitter/simclusters_v2/scalding/embedding:producer_embeddings_from_interested_in-adhoc \
- --user cassowary --cluster bluebird-qus1 \
- --keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
- --principal service_acoount@TWITTER.BIZ \
- -- --date 2020-08-25 --model_version 20M_145K_updated \
- --outputDir /gcs/user/cassowary/adhoc/producerEmbeddings/
+ $ scald ng remote run \
+ --ma n-class com.tw ter.s mclusters_v2.scald ng.embedd ng.ProducerEmbedd ngsFrom nterested nAdhocApp \
+ --target src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng:producer_embedd ngs_from_ nterested_ n-adhoc \
+ --user cassowary --cluster blueb rd-qus1 \
+ --keytab /var/l b/tss/keys/fluffy/keytabs/cl ent/cassowary.keytab \
+ --pr nc pal serv ce_acoount@TW TTER.B Z \
+ -- --date 2020-08-25 --model_vers on 20M_145K_updated \
+ --outputD r /gcs/user/cassowary/adhoc/producerEmbedd ngs/
 
  */
-object ProducerEmbeddingsFromInterestedInAdhocApp extends AdhocExecutionApp {
+object ProducerEmbedd ngsFrom nterested nAdhocApp extends AdhocExecut onApp {
 
-  import ProducerEmbeddingsFromInterestedIn._
+   mport ProducerEmbedd ngsFrom nterested n._
 
-  private val numReducersForMatrixMultiplication = 12000
+  pr vate val numReducersForMatr xMult pl cat on = 12000
 
   /**
-   * Calculate the embedding and writes the results keyed by producers and clusters separately into
-   * individual locations
+   * Calculate t  embedd ng and wr es t  results keyed by producers and clusters separately  nto
+   *  nd v dual locat ons
    */
-  private def runAdhocByScore(
-    interestedInClusters: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    userUserNormalGraph: TypedPipe[UserAndNeighbors],
-    userNormsAndCounts: TypedPipe[NormsAndCounts],
-    keyedByProducerSinkPath: String,
-    keyedByClusterSinkPath: String,
-    userToProducerScoringFn: NeighborWithWeights => Double,
-    userToClusterScoringFn: UserToInterestedInClusterScores => Double,
-    userFilter: NormsAndCounts => Boolean,
-    modelVersion: ModelVersion
+  pr vate def runAdhocByScore(
+     nterested nClusters: TypedP pe[(Long, ClustersUser s nterested n)],
+    userUserNormalGraph: TypedP pe[UserAndNe ghbors],
+    userNormsAndCounts: TypedP pe[NormsAndCounts],
+    keyedByProducerS nkPath: Str ng,
+    keyedByClusterS nkPath: Str ng,
+    userToProducerScor ngFn: Ne ghborW h  ghts => Double,
+    userToClusterScor ngFn: UserTo nterested nClusterScores => Double,
+    userF lter: NormsAndCounts => Boolean,
+    modelVers on: ModelVers on
   )(
-    implicit uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  un que D: Un que D
+  ): Execut on[Un ] = {
 
-    val producerClusterEmbedding = getProducerClusterEmbedding(
-      interestedInClusters,
+    val producerClusterEmbedd ng = getProducerClusterEmbedd ng(
+       nterested nClusters,
       userUserNormalGraph,
       userNormsAndCounts,
-      userToProducerScoringFn,
-      userToClusterScoringFn,
-      userFilter,
-      numReducersForMatrixMultiplication,
-      modelVersion,
-      cosineSimilarityThreshold
-    ).forceToDisk
+      userToProducerScor ngFn,
+      userToClusterScor ngFn,
+      userF lter,
+      numReducersForMatr xMult pl cat on,
+      modelVers on,
+      cos neS m lar yThreshold
+    ).forceToD sk
 
     val keyByProducerExec =
-      toSimClusterEmbedding(producerClusterEmbedding, topKClustersToKeep, modelVersion)
-        .writeExecution(
-          AdhocKeyValSources.topProducerToClusterEmbeddingsSource(keyedByProducerSinkPath))
+      toS mClusterEmbedd ng(producerClusterEmbedd ng, topKClustersToKeep, modelVers on)
+        .wr eExecut on(
+          AdhocKeyValS ces.topProducerToClusterEmbedd ngsS ce(keyedByProducerS nkPath))
 
     val keyByClusterExec =
-      fromSimClusterEmbedding(producerClusterEmbedding, topKUsersToKeep, modelVersion)
-        .map { case (clusterId, topProducers) => (clusterId, topProducersToThrift(topProducers)) }
-        .writeExecution(
-          AdhocKeyValSources.topClusterEmbeddingsToProducerSource(keyedByClusterSinkPath))
+      fromS mClusterEmbedd ng(producerClusterEmbedd ng, topKUsersToKeep, modelVers on)
+        .map { case (cluster d, topProducers) => (cluster d, topProducersToThr ft(topProducers)) }
+        .wr eExecut on(
+          AdhocKeyValS ces.topClusterEmbedd ngsToProducerS ce(keyedByClusterS nkPath))
 
-    Execution.zip(keyByProducerExec, keyByClusterExec).unit
+    Execut on.z p(keyByProducerExec, keyByClusterExec).un 
   }
 
-  // Calculate the embeddings using follow scores
-  private def runFollowScore(
-    interestedInClusters: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    userUserNormalGraph: TypedPipe[UserAndNeighbors],
-    userNormsAndCounts: TypedPipe[NormsAndCounts],
-    modelVersion: ModelVersion,
-    outputDir: String
+  // Calculate t  embedd ngs us ng follow scores
+  pr vate def runFollowScore(
+     nterested nClusters: TypedP pe[(Long, ClustersUser s nterested n)],
+    userUserNormalGraph: TypedP pe[UserAndNe ghbors],
+    userNormsAndCounts: TypedP pe[NormsAndCounts],
+    modelVers on: ModelVers on,
+    outputD r: Str ng
   )(
-    implicit uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val keyByClusterSinkPath = outputDir + "keyedByCluster/byFollowScore_" + modelVersion
-    val keyByProducerSinkPath = outputDir + "keyedByProducer/byFollowScore_" + modelVersion
+     mpl c  un que D: Un que D
+  ): Execut on[Un ] = {
+    val keyByClusterS nkPath = outputD r + "keyedByCluster/byFollowScore_" + modelVers on
+    val keyByProducerS nkPath = outputD r + "keyedByProducer/byFollowScore_" + modelVers on
 
     runAdhocByScore(
-      interestedInClusters,
+       nterested nClusters,
       userUserNormalGraph,
       userNormsAndCounts,
-      keyedByProducerSinkPath = keyByProducerSinkPath,
-      keyedByClusterSinkPath = keyByClusterSinkPath,
-      userToProducerScoringFn = userToProducerFollowScore,
-      userToClusterScoringFn = userToClusterFollowScore,
-      _.followerCount.exists(_ > minNumFollowersForProducer),
-      modelVersion
+      keyedByProducerS nkPath = keyByProducerS nkPath,
+      keyedByClusterS nkPath = keyByClusterS nkPath,
+      userToProducerScor ngFn = userToProducerFollowScore,
+      userToClusterScor ngFn = userToClusterFollowScore,
+      _.follo rCount.ex sts(_ > m nNumFollo rsForProducer),
+      modelVers on
     )
   }
 
-  // Calculate the embeddings using fav scores
-  private def runFavScore(
-    interestedInClusters: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    userUserNormalGraph: TypedPipe[UserAndNeighbors],
-    userNormsAndCounts: TypedPipe[NormsAndCounts],
-    modelVersion: ModelVersion,
-    outputDir: String
+  // Calculate t  embedd ngs us ng fav scores
+  pr vate def runFavScore(
+     nterested nClusters: TypedP pe[(Long, ClustersUser s nterested n)],
+    userUserNormalGraph: TypedP pe[UserAndNe ghbors],
+    userNormsAndCounts: TypedP pe[NormsAndCounts],
+    modelVers on: ModelVers on,
+    outputD r: Str ng
   )(
-    implicit uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val keyByClusterSinkPath = outputDir + "keyedByCluster/byFavScore_" + modelVersion
-    val keyByProducerSinkPath = outputDir + "keyedByProducer/byFavScore_" + modelVersion
+     mpl c  un que D: Un que D
+  ): Execut on[Un ] = {
+    val keyByClusterS nkPath = outputD r + "keyedByCluster/byFavScore_" + modelVers on
+    val keyByProducerS nkPath = outputD r + "keyedByProducer/byFavScore_" + modelVers on
 
     runAdhocByScore(
-      interestedInClusters,
+       nterested nClusters,
       userUserNormalGraph,
       userNormsAndCounts,
-      keyedByProducerSinkPath = keyByProducerSinkPath,
-      keyedByClusterSinkPath = keyByClusterSinkPath,
-      userToProducerScoringFn = userToProducerFavScore,
-      userToClusterScoringFn = userToClusterFavScore,
-      _.faverCount.exists(_ > minNumFaversForProducer),
-      modelVersion
+      keyedByProducerS nkPath = keyByProducerS nkPath,
+      keyedByClusterS nkPath = keyByClusterS nkPath,
+      userToProducerScor ngFn = userToProducerFavScore,
+      userToClusterScor ngFn = userToClusterFavScore,
+      _.faverCount.ex sts(_ > m nNumFaversForProducer),
+      modelVers on
     )
   }
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val outputDir = args("outputDir")
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
+    val outputD r = args("outputD r")
 
-    val modelVersion =
-      ModelVersions.toModelVersion(args.required("model_version"))
+    val modelVers on =
+      ModelVers ons.toModelVers on(args.requ red("model_vers on"))
 
-    val interestedInClusters = modelVersion match {
-      case ModelVersion.Model20m145k2020 =>
-        InterestedInSources.simClustersInterestedIn2020Source(dateRange, timeZone).forceToDisk
-      case ModelVersion.Model20m145kUpdated =>
-        InterestedInSources.simClustersInterestedInUpdatedSource(dateRange, timeZone).forceToDisk
+    val  nterested nClusters = modelVers on match {
+      case ModelVers on.Model20m145k2020 =>
+         nterested nS ces.s mClusters nterested n2020S ce(dateRange, t  Zone).forceToD sk
+      case ModelVers on.Model20m145kUpdated =>
+         nterested nS ces.s mClusters nterested nUpdatedS ce(dateRange, t  Zone).forceToD sk
       case _ =>
-        InterestedInSources.simClustersInterestedInDec11Source(dateRange, timeZone).forceToDisk
+         nterested nS ces.s mClusters nterested nDec11S ce(dateRange, t  Zone).forceToD sk
     }
 
-    Execution
-      .zip(
+    Execut on
+      .z p(
         runFavScore(
-          interestedInClusters,
-          DataSources.userUserNormalizedGraphSource,
-          DataSources.userNormsAndCounts,
-          modelVersion,
-          outputDir
+           nterested nClusters,
+          DataS ces.userUserNormal zedGraphS ce,
+          DataS ces.userNormsAndCounts,
+          modelVers on,
+          outputD r
         ),
         runFollowScore(
-          interestedInClusters,
-          DataSources.userUserNormalizedGraphSource,
-          DataSources.userNormsAndCounts,
-          modelVersion,
-          outputDir
+           nterested nClusters,
+          DataS ces.userUserNormal zedGraphS ce,
+          DataS ces.userNormsAndCounts,
+          modelVers on,
+          outputD r
         )
-      ).unit
+      ).un 
   }
 }
 
 /**
- * Computes the producer's interestedIn cluster embedding. i.e. If a tweet author (producer) is not
- * associated with a KnownFor cluster, do a cross-product between
- * [user, interestedIn] and [user, producer] to find the similarity matrix [interestedIn, producer].
+ * Computes t  producer's  nterested n cluster embedd ng.  .e.  f a t et author (producer)  s not
+ * assoc ated w h a KnownFor cluster, do a cross-product bet en
+ * [user,  nterested n] and [user, producer] to f nd t  s m lar y matr x [ nterested n, producer].
  */
-object ProducerEmbeddingsFromInterestedIn {
-  val minNumFollowersForProducer: Int = 100
-  val minNumFaversForProducer: Int = 100
-  val topKUsersToKeep: Int = 300
-  val topKClustersToKeep: Int = 60
-  val cosineSimilarityThreshold: Double = 0.01
+object ProducerEmbedd ngsFrom nterested n {
+  val m nNumFollo rsForProducer:  nt = 100
+  val m nNumFaversForProducer:  nt = 100
+  val topKUsersToKeep:  nt = 300
+  val topKClustersToKeep:  nt = 60
+  val cos neS m lar yThreshold: Double = 0.01
 
-  type ClusterId = Int
+  type Cluster d =  nt
 
-  def topProducersToThrift(producersWithScore: Seq[(UserId, Double)]): TopProducersWithScore = {
-    val thrift = producersWithScore.map { producer =>
-      TopProducerWithScore(producer._1, producer._2)
+  def topProducersToThr ft(producersW hScore: Seq[(User d, Double)]): TopProducersW hScore = {
+    val thr ft = producersW hScore.map { producer =>
+      TopProducerW hScore(producer._1, producer._2)
     }
-    TopProducersWithScore(thrift)
+    TopProducersW hScore(thr ft)
   }
 
-  def userToProducerFavScore(neighbor: NeighborWithWeights): Double = {
-    neighbor.favScoreHalfLife100DaysNormalizedByNeighborFaversL2.getOrElse(0.0)
+  def userToProducerFavScore(ne ghbor: Ne ghborW h  ghts): Double = {
+    ne ghbor.favScoreHalfL fe100DaysNormal zedByNe ghborFaversL2.getOrElse(0.0)
   }
 
-  def userToProducerFollowScore(neighbor: NeighborWithWeights): Double = {
-    neighbor.followScoreNormalizedByNeighborFollowersL2.getOrElse(0.0)
+  def userToProducerFollowScore(ne ghbor: Ne ghborW h  ghts): Double = {
+    ne ghbor.followScoreNormal zedByNe ghborFollo rsL2.getOrElse(0.0)
   }
 
-  def userToClusterFavScore(clusterScore: UserToInterestedInClusterScores): Double = {
-    clusterScore.favScoreClusterNormalizedOnly.getOrElse(0.0)
+  def userToClusterFavScore(clusterScore: UserTo nterested nClusterScores): Double = {
+    clusterScore.favScoreClusterNormal zedOnly.getOrElse(0.0)
   }
 
-  def userToClusterFollowScore(clusterScore: UserToInterestedInClusterScores): Double = {
-    clusterScore.followScoreClusterNormalizedOnly.getOrElse(0.0)
+  def userToClusterFollowScore(clusterScore: UserTo nterested nClusterScores): Double = {
+    clusterScore.followScoreClusterNormal zedOnly.getOrElse(0.0)
   }
 
-  def getUserSimClustersMatrix(
-    simClustersSource: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    extractScore: UserToInterestedInClusterScores => Double,
-    modelVersion: ModelVersion
-  ): TypedPipe[(UserId, Seq[(Int, Double)])] = {
-    simClustersSource.collect {
-      case (userId, clusters)
-          if ModelVersions.toModelVersion(clusters.knownForModelVersion).equals(modelVersion) =>
-        userId -> clusters.clusterIdToScores
+  def getUserS mClustersMatr x(
+    s mClustersS ce: TypedP pe[(User d, ClustersUser s nterested n)],
+    extractScore: UserTo nterested nClusterScores => Double,
+    modelVers on: ModelVers on
+  ): TypedP pe[(User d, Seq[( nt, Double)])] = {
+    s mClustersS ce.collect {
+      case (user d, clusters)
+           f ModelVers ons.toModelVers on(clusters.knownForModelVers on).equals(modelVers on) =>
+        user d -> clusters.cluster dToScores
           .map {
-            case (clusterId, clusterScores) =>
-              (clusterId, extractScore(clusterScores))
-          }.toSeq.filter(_._2 > 0)
+            case (cluster d, clusterScores) =>
+              (cluster d, extractScore(clusterScores))
+          }.toSeq.f lter(_._2 > 0)
     }
   }
 
   /**
-   * Given a weighted user-producer engagement history matrix, as well as a
-   * weighted user-interestedInCluster matrix, do the matrix multiplication to yield a weighted
-   * producer-cluster embedding matrix
+   * G ven a   ghted user-producer engage nt  tory matr x, as  ll as a
+   *   ghted user- nterested nCluster matr x, do t  matr x mult pl cat on to y eld a   ghted
+   * producer-cluster embedd ng matr x
    */
-  def getProducerClusterEmbedding(
-    interestedInClusters: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    userProducerEngagementGraph: TypedPipe[UserAndNeighbors],
-    userNormsAndCounts: TypedPipe[NormsAndCounts],
-    userToProducerScoringFn: NeighborWithWeights => Double,
-    userToClusterScoringFn: UserToInterestedInClusterScores => Double,
-    userFilter: NormsAndCounts => Boolean, // function to decide whether to compute embeddings for the user or not
-    numReducersForMatrixMultiplication: Int,
-    modelVersion: ModelVersion,
+  def getProducerClusterEmbedd ng(
+     nterested nClusters: TypedP pe[(User d, ClustersUser s nterested n)],
+    userProducerEngage ntGraph: TypedP pe[UserAndNe ghbors],
+    userNormsAndCounts: TypedP pe[NormsAndCounts],
+    userToProducerScor ngFn: Ne ghborW h  ghts => Double,
+    userToClusterScor ngFn: UserTo nterested nClusterScores => Double,
+    userF lter: NormsAndCounts => Boolean, // funct on to dec de w t r to compute embedd ngs for t  user or not
+    numReducersForMatr xMult pl cat on:  nt,
+    modelVers on: ModelVers on,
     threshold: Double
   )(
-    implicit uid: UniqueID
-  ): TypedPipe[((ClusterId, UserId), Double)] = {
-    val userSimClustersMatrix = getUserSimClustersMatrix(
-      interestedInClusters,
-      userToClusterScoringFn,
-      modelVersion
+     mpl c  u d: Un que D
+  ): TypedP pe[((Cluster d, User d), Double)] = {
+    val userS mClustersMatr x = getUserS mClustersMatr x(
+       nterested nClusters,
+      userToClusterScor ngFn,
+      modelVers on
     )
 
-    val userUserNormalizedGraph = getFilteredUserUserNormalizedGraph(
-      userProducerEngagementGraph,
+    val userUserNormal zedGraph = getF lteredUserUserNormal zedGraph(
+      userProducerEngage ntGraph,
       userNormsAndCounts,
-      userToProducerScoringFn,
-      userFilter
+      userToProducerScor ngFn,
+      userF lter
     )
 
-    SimClustersEmbeddingJob
-      .legacyMultiplyMatrices(
-        userUserNormalizedGraph,
-        userSimClustersMatrix,
-        numReducersForMatrixMultiplication
+    S mClustersEmbedd ngJob
+      .legacyMult plyMatr ces(
+        userUserNormal zedGraph,
+        userS mClustersMatr x,
+        numReducersForMatr xMult pl cat on
       )
-      .filter(_._2 >= threshold)
+      .f lter(_._2 >= threshold)
   }
 
-  def getFilteredUserUserNormalizedGraph(
-    userProducerEngagementGraph: TypedPipe[UserAndNeighbors],
-    userNormsAndCounts: TypedPipe[NormsAndCounts],
-    userToProducerScoringFn: NeighborWithWeights => Double,
-    userFilter: NormsAndCounts => Boolean
+  def getF lteredUserUserNormal zedGraph(
+    userProducerEngage ntGraph: TypedP pe[UserAndNe ghbors],
+    userNormsAndCounts: TypedP pe[NormsAndCounts],
+    userToProducerScor ngFn: Ne ghborW h  ghts => Double,
+    userF lter: NormsAndCounts => Boolean
   )(
-    implicit uid: UniqueID
-  ): TypedPipe[(UserId, (UserId, Double))] = {
-    val numUsersCount = Stat("num_users_with_engagements")
-    val userUserFilteredEdgeCount = Stat("num_filtered_user_user_engagements")
-    val validUsersCount = Stat("num_valid_users")
+     mpl c  u d: Un que D
+  ): TypedP pe[(User d, (User d, Double))] = {
+    val numUsersCount = Stat("num_users_w h_engage nts")
+    val userUserF lteredEdgeCount = Stat("num_f ltered_user_user_engage nts")
+    val val dUsersCount = Stat("num_val d_users")
 
-    val validUsers = userNormsAndCounts.collect {
-      case user if userFilter(user) =>
-        validUsersCount.inc()
-        user.userId
+    val val dUsers = userNormsAndCounts.collect {
+      case user  f userF lter(user) =>
+        val dUsersCount. nc()
+        user.user d
     }
 
-    userProducerEngagementGraph
-      .flatMap { userAndNeighbors =>
-        numUsersCount.inc()
-        userAndNeighbors.neighbors
-          .map { neighbor =>
-            userUserFilteredEdgeCount.inc()
-            (neighbor.neighborId, (userAndNeighbors.userId, userToProducerScoringFn(neighbor)))
+    userProducerEngage ntGraph
+      .flatMap { userAndNe ghbors =>
+        numUsersCount. nc()
+        userAndNe ghbors.ne ghbors
+          .map { ne ghbor =>
+            userUserF lteredEdgeCount. nc()
+            (ne ghbor.ne ghbor d, (userAndNe ghbors.user d, userToProducerScor ngFn(ne ghbor)))
           }
-          .filter(_._2._2 > 0.0)
+          .f lter(_._2._2 > 0.0)
       }
-      .join(validUsers.asKeys)
+      .jo n(val dUsers.asKeys)
       .map {
-        case (neighborId, ((userId, score), _)) =>
-          (userId, (neighborId, score))
+        case (ne ghbor d, ((user d, score), _)) =>
+          (user d, (ne ghbor d, score))
       }
   }
 
-  def fromSimClusterEmbedding[T, E](
-    resultMatrix: TypedPipe[((ClusterId, T), Double)],
-    topK: Int,
-    modelVersion: ModelVersion
-  ): TypedPipe[(PersistedFullClusterId, Seq[(T, Double)])] = {
-    resultMatrix
+  def fromS mClusterEmbedd ng[T, E](
+    resultMatr x: TypedP pe[((Cluster d, T), Double)],
+    topK:  nt,
+    modelVers on: ModelVers on
+  ): TypedP pe[(Pers stedFullCluster d, Seq[(T, Double)])] = {
+    resultMatr x
       .map {
-        case ((clusterId, inputId), score) => (clusterId, (inputId, score))
+        case ((cluster d,  nput d), score) => (cluster d, ( nput d, score))
       }
       .group
-      .sortedReverseTake(topK)(Ordering.by(_._2))
+      .sortedReverseTake(topK)(Order ng.by(_._2))
       .map {
-        case (clusterId, topEntitiesWithScore) =>
-          PersistedFullClusterId(modelVersion, clusterId) -> topEntitiesWithScore
+        case (cluster d, topEnt  esW hScore) =>
+          Pers stedFullCluster d(modelVers on, cluster d) -> topEnt  esW hScore
       }
   }
 
-  def toSimClusterEmbedding[T](
-    resultMatrix: TypedPipe[((ClusterId, T), Double)],
-    topK: Int,
-    modelVersion: ModelVersion
+  def toS mClusterEmbedd ng[T](
+    resultMatr x: TypedP pe[((Cluster d, T), Double)],
+    topK:  nt,
+    modelVers on: ModelVers on
   )(
-    implicit ordering: Ordering[T]
-  ): TypedPipe[(T, TopSimClustersWithScore)] = {
-    resultMatrix
+     mpl c  order ng: Order ng[T]
+  ): TypedP pe[(T, TopS mClustersW hScore)] = {
+    resultMatr x
       .map {
-        case ((clusterId, inputId), score) => (inputId, (clusterId, score))
+        case ((cluster d,  nput d), score) => ( nput d, (cluster d, score))
       }
       .group
-      //.withReducers(3000) // uncomment for producer-simclusters job
-      .sortedReverseTake(topK)(Ordering.by(_._2))
+      //.w hReducers(3000) // uncom nt for producer-s mclusters job
+      .sortedReverseTake(topK)(Order ng.by(_._2))
       .map {
-        case (inputId, topSimClustersWithScore) =>
-          val topSimClusters = topSimClustersWithScore.map {
-            case (clusterId, score) => SimClusterWithScore(clusterId, score)
+        case ( nput d, topS mClustersW hScore) =>
+          val topS mClusters = topS mClustersW hScore.map {
+            case (cluster d, score) => S mClusterW hScore(cluster d, score)
           }
-          inputId -> TopSimClustersWithScore(topSimClusters, modelVersion)
+           nput d -> TopS mClustersW hScore(topS mClusters, modelVers on)
       }
   }
 }

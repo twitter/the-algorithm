@@ -1,14 +1,14 @@
-package com.twitter.interaction_graph.injection
+package com.tw ter. nteract on_graph. nject on
 
-import com.twitter.user_session_store.thriftscala.UserSession
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaCompactThrift
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
+ mport com.tw ter.user_sess on_store.thr ftscala.UserSess on
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.ScalaCompactThr ft
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.Long2B gEnd an
 
-object UserSessionInjection {
-  final val injection: KeyValInjection[Long, UserSession] =
-    KeyValInjection(
-      Long2BigEndian,
-      ScalaCompactThrift(UserSession)
+object UserSess on nject on {
+  f nal val  nject on: KeyVal nject on[Long, UserSess on] =
+    KeyVal nject on(
+      Long2B gEnd an,
+      ScalaCompactThr ft(UserSess on)
     )
 }

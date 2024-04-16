@@ -1,66 +1,66 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. tr cs
 
-import com.twitter.ml.api._
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import java.lang.{Double => JDouble}
-import java.lang.{Long => JLong}
-import java.util.{Map => JMap}
+ mport com.tw ter.ml.ap ._
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.T  
+ mport java.lang.{Double => JDouble}
+ mport java.lang.{Long => JLong}
+ mport java.ut l.{Map => JMap}
 
 /*
- * TypedSumLikeMetric aggregates a sum over any feature transform.
- * TypedCountMetric, TypedSumMetric, TypedSumSqMetric are examples
- * of metrics that are inherited from this trait. To implement a new
- * "sum like" metric, override the getIncrementValue() and operatorName
- * members of this trait.
+ * TypedSumL ke tr c aggregates a sum over any feature transform.
+ * TypedCount tr c, TypedSum tr c, TypedSumSq tr c are examples
+ * of  tr cs that are  n r ed from t  tra . To  mple nt a new
+ * "sum l ke"  tr c, overr de t  get ncre ntValue() and operatorNa 
+ *  mbers of t  tra .
  *
- * getIncrementValue() is inherited from the
- * parent trait AggregationMetric, but not overriden in this trait, so
- * it needs to be overloaded by any metric that extends TypedSumLikeMetric.
+ * get ncre ntValue()  s  n r ed from t 
+ * parent tra  Aggregat on tr c, but not overr den  n t  tra , so
+ *   needs to be overloaded by any  tr c that extends TypedSumL ke tr c.
  *
- * operatorName is a string used for naming the resultant aggregate feature
- * (e.g. "count" if its a count feature, or "sum" if a sum feature).
+ * operatorNa   s a str ng used for nam ng t  resultant aggregate feature
+ * (e.g. "count"  f  s a count feature, or "sum"  f a sum feature).
  */
-trait TypedSumLikeMetric[T] extends TimedValueAggregationMetric[T] {
-  import AggregationMetricCommon._
+tra  TypedSumL ke tr c[T] extends T  dValueAggregat on tr c[T] {
+   mport Aggregat on tr cCommon._
 
-  def useFixedDecay = true
+  def useF xedDecay = true
 
-  override def plus(
-    left: TimedValue[Double],
-    right: TimedValue[Double],
-    halfLife: Duration
-  ): TimedValue[Double] = {
-    val resultValue = if (halfLife == Duration.Top) {
-      /* We could use decayedValueMonoid here, but
-       * a simple addition is slightly more accurate */
-      left.value + right.value
+  overr de def plus(
+    left: T  dValue[Double],
+    r ght: T  dValue[Double],
+    halfL fe: Durat on
+  ): T  dValue[Double] = {
+    val resultValue =  f (halfL fe == Durat on.Top) {
+      /*   could use decayedValueMono d  re, but
+       * a s mple add  on  s sl ghtly more accurate */
+      left.value + r ght.value
     } else {
-      val decayedLeft = toDecayedValue(left, halfLife)
-      val decayedRight = toDecayedValue(right, halfLife)
-      decayedValueMonoid.plus(decayedLeft, decayedRight).value
+      val decayedLeft = toDecayedValue(left, halfL fe)
+      val decayedR ght = toDecayedValue(r ght, halfL fe)
+      decayedValueMono d.plus(decayedLeft, decayedR ght).value
     }
 
-    TimedValue[Double](
+    T  dValue[Double](
       resultValue,
-      left.timestamp.max(right.timestamp)
+      left.t  stamp.max(r ght.t  stamp)
     )
   }
 
-  override def zero(timeOpt: Option[Long]): TimedValue[Double] = {
-    val timestamp =
+  overr de def zero(t  Opt: Opt on[Long]): T  dValue[Double] = {
+    val t  stamp =
       /*
-       * Please see TQ-11279 for documentation for this fix to the decay logic.
+       * Please see TQ-11279 for docu ntat on for t  f x to t  decay log c.
        */
-      if (useFixedDecay) {
-        Time.fromMilliseconds(timeOpt.getOrElse(0L))
+       f (useF xedDecay) {
+        T  .fromM ll seconds(t  Opt.getOrElse(0L))
       } else {
-        Time.fromMilliseconds(0L)
+        T  .fromM ll seconds(0L)
       }
 
-    TimedValue[Double](
+    T  dValue[Double](
       value = 0.0,
-      timestamp = timestamp
+      t  stamp = t  stamp
     )
   }
 }

@@ -1,69 +1,69 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
 
 /**
- * Keeps track of an up-to-date PartitionConfig. The PartitionConfig may be periodically reloaded
- * from ZooKeeper. If you need a consistent view of the current partition configuration, make sure
- * to grab a reference to a single PartitionConfig using getCurrentPartitionConfig() and reuse that
+ * Keeps track of an up-to-date Part  onConf g. T  Part  onConf g may be per od cally reloaded
+ * from ZooKeeper.  f   need a cons stent v ew of t  current part  on conf gurat on, make sure
+ * to grab a reference to a s ngle Part  onConf g us ng getCurrentPart  onConf g() and reuse that
  * object.
  */
-public class DynamicPartitionConfig {
-  private static final Logger LOG = LoggerFactory.getLogger(DynamicPartitionConfig.class);
-  private static final SearchCounter FAILED_UPDATE_COUNTER_NAME =
-      SearchCounter.export("dynamic_partition_config_failed_update");
-  private static final SearchCounter SUCCESSFUL_UPDATE_COUNTER =
-      SearchCounter.export("dynamic_partition_config_successful_update");
-  // We assume that DynamicPartitionConfig is practically a singleton in Earlybird app.
-  private static final SearchLongGauge NUM_REPLICAS_IN_HASH_PARTITION =
-      SearchLongGauge.export("dynamic_partition_config_num_replicas_in_hash_partition");
+publ c class Dynam cPart  onConf g {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Dynam cPart  onConf g.class);
+  pr vate stat c f nal SearchCounter FA LED_UPDATE_COUNTER_NAME =
+      SearchCounter.export("dynam c_part  on_conf g_fa led_update");
+  pr vate stat c f nal SearchCounter SUCCESSFUL_UPDATE_COUNTER =
+      SearchCounter.export("dynam c_part  on_conf g_successful_update");
+  //   assu  that Dynam cPart  onConf g  s pract cally a s ngleton  n Earlyb rd app.
+  pr vate stat c f nal SearchLongGauge NUM_REPL CAS_ N_HASH_PART T ON =
+      SearchLongGauge.export("dynam c_part  on_conf g_num_repl cas_ n_hash_part  on");
 
-  private final PartitionConfig curPartitionConfig;
+  pr vate f nal Part  onConf g curPart  onConf g;
 
-  public DynamicPartitionConfig(PartitionConfig initialConfig) {
-    this.curPartitionConfig = initialConfig;
-    NUM_REPLICAS_IN_HASH_PARTITION.set(initialConfig.getNumReplicasInHashPartition());
+  publ c Dynam cPart  onConf g(Part  onConf g  n  alConf g) {
+    t .curPart  onConf g =  n  alConf g;
+    NUM_REPL CAS_ N_HASH_PART T ON.set( n  alConf g.getNumRepl cas nHashPart  on());
   }
 
-  public PartitionConfig getCurrentPartitionConfig() {
-    return curPartitionConfig;
+  publ c Part  onConf g getCurrentPart  onConf g() {
+    return curPart  onConf g;
   }
 
   /**
-   * Verifies that the new partition config is compatible with the old one, and if it is, updates
-   * the number of replicas per partition based on the new partition config.
+   * Ver f es that t  new part  on conf g  s compat ble w h t  old one, and  f    s, updates
+   * t  number of repl cas per part  on based on t  new part  on conf g.
    */
-  public void setCurrentPartitionConfig(PartitionConfig partitionConfig) {
-    Preconditions.checkNotNull(partitionConfig);
-    // For now, we only allow the number of replicas in this partition to be dynamically updated.
-    // Ensure that the only things that have changed between the previous
-    if (curPartitionConfig.getClusterName().equals(partitionConfig.getClusterName())
-        && (curPartitionConfig.getMaxEnabledLocalSegments()
-            == partitionConfig.getMaxEnabledLocalSegments())
-        && (curPartitionConfig.getNumPartitions() == partitionConfig.getNumPartitions())
-        && (curPartitionConfig.getTierStartDate().equals(partitionConfig.getTierStartDate()))
-        && (curPartitionConfig.getTierEndDate().equals(partitionConfig.getTierEndDate()))
-        && (curPartitionConfig.getTierName().equals(partitionConfig.getTierName()))) {
+  publ c vo d setCurrentPart  onConf g(Part  onConf g part  onConf g) {
+    Precond  ons.c ckNotNull(part  onConf g);
+    // For now,   only allow t  number of repl cas  n t  part  on to be dynam cally updated.
+    // Ensure that t  only th ngs that have changed bet en t  prev ous
+     f (curPart  onConf g.getClusterNa ().equals(part  onConf g.getClusterNa ())
+        && (curPart  onConf g.getMaxEnabledLocalSeg nts()
+            == part  onConf g.getMaxEnabledLocalSeg nts())
+        && (curPart  onConf g.getNumPart  ons() == part  onConf g.getNumPart  ons())
+        && (curPart  onConf g.getT erStartDate().equals(part  onConf g.getT erStartDate()))
+        && (curPart  onConf g.getT erEndDate().equals(part  onConf g.getT erEndDate()))
+        && (curPart  onConf g.getT erNa ().equals(part  onConf g.getT erNa ()))) {
 
-      if (curPartitionConfig.getNumReplicasInHashPartition()
-          != partitionConfig.getNumReplicasInHashPartition()) {
-        SUCCESSFUL_UPDATE_COUNTER.increment();
-        curPartitionConfig.setNumReplicasInHashPartition(
-            partitionConfig.getNumReplicasInHashPartition());
-        NUM_REPLICAS_IN_HASH_PARTITION.set(partitionConfig.getNumReplicasInHashPartition());
+       f (curPart  onConf g.getNumRepl cas nHashPart  on()
+          != part  onConf g.getNumRepl cas nHashPart  on()) {
+        SUCCESSFUL_UPDATE_COUNTER. ncre nt();
+        curPart  onConf g.setNumRepl cas nHashPart  on(
+            part  onConf g.getNumRepl cas nHashPart  on());
+        NUM_REPL CAS_ N_HASH_PART T ON.set(part  onConf g.getNumRepl cas nHashPart  on());
       }
     } else {
-      FAILED_UPDATE_COUNTER_NAME.increment();
+      FA LED_UPDATE_COUNTER_NAME. ncre nt();
       LOG.warn(
-          "Attempted to update partition config with inconsistent layout.\n"
-          + "Current: " + curPartitionConfig.getPartitionConfigDescription() + "\n"
-          + "New: " + partitionConfig.getPartitionConfigDescription());
+          "Attempted to update part  on conf g w h  ncons stent la t.\n"
+          + "Current: " + curPart  onConf g.getPart  onConf gDescr pt on() + "\n"
+          + "New: " + part  onConf g.getPart  onConf gDescr pt on());
     }
   }
 }

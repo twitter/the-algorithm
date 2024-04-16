@@ -1,57 +1,57 @@
-package com.twitter.search.earlybird.factory;
+package com.tw ter.search.earlyb rd.factory;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.concurrent.Callable;
+ mport java.ut l.concurrent.Sc duledExecutorServ ce;
+ mport java.ut l.concurrent.Sc duledFuture;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import com.twitter.common.util.concurrent.ForwardingExecutorService;
+ mport com.tw ter.common.ut l.concurrent.Forward ngExecutorServ ce;
 
 /**
- * This delegate type is intended for QueryCacheUpdater because it uses multiple threads to
- * create query cache during startup and then switch later to use single thread to update the
- * cache.
+ * T  delegate type  s  ntended for QueryCac Updater because   uses mult ple threads to
+ * create query cac  dur ng startup and t n sw ch later to use s ngle thread to update t 
+ * cac .
  */
-public abstract class QueryCacheUpdaterScheduledExecutorService<T extends ScheduledExecutorService>
-  extends ForwardingExecutorService<T> implements ScheduledExecutorService {
-  public QueryCacheUpdaterScheduledExecutorService(T executor) {
+publ c abstract class QueryCac UpdaterSc duledExecutorServ ce<T extends Sc duledExecutorServ ce>
+  extends Forward ngExecutorServ ce<T>  mple nts Sc duledExecutorServ ce {
+  publ c QueryCac UpdaterSc duledExecutorServ ce(T executor) {
     super(executor);
   }
 
   /**
-   * Sets the number of worker threads in this executor service to an appropriate value after the
-   * earlybird startup has finished. While earlybird is starting up, we might want this executor
-   * service to have more threads, in order to parallelize more some start up tasks. But once
-   * earlybird is up, it might make sense to lower the number of worker threads.
+   * Sets t  number of worker threads  n t  executor serv ce to an appropr ate value after t 
+   * earlyb rd startup has f n s d. Wh le earlyb rd  s start ng up,   m ght want t  executor
+   * serv ce to have more threads,  n order to parallel ze more so  start up tasks. But once
+   * earlyb rd  s up,   m ght make sense to lo r t  number of worker threads.
    */
-  public abstract void setWorkerPoolSizeAfterStartup();
+  publ c abstract vo d setWorkerPoolS zeAfterStartup();
 
-  @Override
-  public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
-    return delegate.schedule(command, delay, unit);
+  @Overr de
+  publ c Sc duledFuture<?> sc dule(Runnable command, long delay, T  Un  un ) {
+    return delegate.sc dule(command, delay, un );
   }
 
-  @Override
-  public ScheduledFuture<?> scheduleAtFixedRate(
-      Runnable command, long initialDelay, long period, TimeUnit unit) {
-    return delegate.scheduleAtFixedRate(command, initialDelay, period, unit);
+  @Overr de
+  publ c Sc duledFuture<?> sc duleAtF xedRate(
+      Runnable command, long  n  alDelay, long per od, T  Un  un ) {
+    return delegate.sc duleAtF xedRate(command,  n  alDelay, per od, un );
   }
 
-  @Override
-  public ScheduledFuture<?> scheduleWithFixedDelay(
-      Runnable command, long initialDelay, long delay, TimeUnit unit) {
-    return delegate.scheduleWithFixedDelay(command, initialDelay, delay, unit);
+  @Overr de
+  publ c Sc duledFuture<?> sc duleW hF xedDelay(
+      Runnable command, long  n  alDelay, long delay, T  Un  un ) {
+    return delegate.sc duleW hF xedDelay(command,  n  alDelay, delay, un );
   }
 
-  @Override
-  public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
-    return delegate.schedule(callable, delay, unit);
+  @Overr de
+  publ c <V> Sc duledFuture<V> sc dule(Callable<V> callable, long delay, T  Un  un ) {
+    return delegate.sc dule(callable, delay, un );
   }
 
-  @VisibleForTesting
-  public T getDelegate() {
+  @V s bleForTest ng
+  publ c T getDelegate() {
     return delegate;
   }
 }

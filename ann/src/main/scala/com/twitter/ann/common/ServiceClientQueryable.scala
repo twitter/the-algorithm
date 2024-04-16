@@ -1,64 +1,64 @@
-package com.twitter.ann.common
+package com.tw ter.ann.common
 
-import com.twitter.ann.common.EmbeddingType._
-import com.twitter.ann.common.thriftscala.{
-  NearestNeighborQuery,
-  NearestNeighborResult,
-  Distance => ServiceDistance,
-  RuntimeParams => ServiceRuntimeParams
+ mport com.tw ter.ann.common.Embedd ngType._
+ mport com.tw ter.ann.common.thr ftscala.{
+  NearestNe ghborQuery,
+  NearestNe ghborResult,
+  D stance => Serv ceD stance,
+  Runt  Params => Serv ceRunt  Params
 }
-import com.twitter.bijection.Injection
-import com.twitter.finagle.Service
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec
-import com.twitter.util.Future
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.f nagle.Serv ce
+ mport com.tw ter. d aserv ces.commons.codec.ArrayByteBufferCodec
+ mport com.tw ter.ut l.Future
 
-class ServiceClientQueryable[T, P <: RuntimeParams, D <: Distance[D]](
-  service: Service[NearestNeighborQuery, NearestNeighborResult],
-  runtimeParamInjection: Injection[P, ServiceRuntimeParams],
-  distanceInjection: Injection[D, ServiceDistance],
-  idInjection: Injection[T, Array[Byte]])
+class Serv ceCl entQueryable[T, P <: Runt  Params, D <: D stance[D]](
+  serv ce: Serv ce[NearestNe ghborQuery, NearestNe ghborResult],
+  runt  Param nject on:  nject on[P, Serv ceRunt  Params],
+  d stance nject on:  nject on[D, Serv ceD stance],
+   d nject on:  nject on[T, Array[Byte]])
     extends Queryable[T, P, D] {
-  override def query(
-    embedding: EmbeddingVector,
-    numOfNeighbors: Int,
-    runtimeParams: P
-  ): Future[List[T]] = {
-    service
+  overr de def query(
+    embedd ng: Embedd ngVector,
+    numOfNe ghbors:  nt,
+    runt  Params: P
+  ): Future[L st[T]] = {
+    serv ce
       .apply(
-        NearestNeighborQuery(
-          embeddingSerDe.toThrift(embedding),
-          withDistance = false,
-          runtimeParamInjection(runtimeParams),
-          numOfNeighbors
+        NearestNe ghborQuery(
+          embedd ngSerDe.toThr ft(embedd ng),
+          w hD stance = false,
+          runt  Param nject on(runt  Params),
+          numOfNe ghbors
         )
       )
       .map { result =>
-        result.nearestNeighbors.map { nearestNeighbor =>
-          idInjection.invert(ArrayByteBufferCodec.decode(nearestNeighbor.id)).get
-        }.toList
+        result.nearestNe ghbors.map { nearestNe ghbor =>
+           d nject on. nvert(ArrayByteBufferCodec.decode(nearestNe ghbor. d)).get
+        }.toL st
       }
   }
 
-  override def queryWithDistance(
-    embedding: EmbeddingVector,
-    numOfNeighbors: Int,
-    runtimeParams: P
-  ): Future[List[NeighborWithDistance[T, D]]] =
-    service
+  overr de def queryW hD stance(
+    embedd ng: Embedd ngVector,
+    numOfNe ghbors:  nt,
+    runt  Params: P
+  ): Future[L st[Ne ghborW hD stance[T, D]]] =
+    serv ce
       .apply(
-        NearestNeighborQuery(
-          embeddingSerDe.toThrift(embedding),
-          withDistance = true,
-          runtimeParamInjection(runtimeParams),
-          numOfNeighbors
+        NearestNe ghborQuery(
+          embedd ngSerDe.toThr ft(embedd ng),
+          w hD stance = true,
+          runt  Param nject on(runt  Params),
+          numOfNe ghbors
         )
       )
       .map { result =>
-        result.nearestNeighbors.map { nearestNeighbor =>
-          NeighborWithDistance(
-            idInjection.invert(ArrayByteBufferCodec.decode(nearestNeighbor.id)).get,
-            distanceInjection.invert(nearestNeighbor.distance.get).get
+        result.nearestNe ghbors.map { nearestNe ghbor =>
+          Ne ghborW hD stance(
+             d nject on. nvert(ArrayByteBufferCodec.decode(nearestNe ghbor. d)).get,
+            d stance nject on. nvert(nearestNe ghbor.d stance.get).get
           )
-        }.toList
+        }.toL st
       }
 }

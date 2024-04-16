@@ -1,82 +1,82 @@
-package com.twitter.product_mixer.core.service.debug_query
+package com.tw ter.product_m xer.core.serv ce.debug_query
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicyEvaluator
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ServiceLocal
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.Authentication
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.turntable.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.product_m xer.core.funct onal_component.common.access_pol cy.AccessPol cy
+ mport com.tw ter.product_m xer.core.funct onal_component.common.access_pol cy.AccessPol cyEvaluator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f erStack
+ mport com.tw ter.product_m xer.core.module.product_m xer_flags.ProductM xerFlagModule.Serv ceLocal
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.Aut nt cat on
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.BadRequest
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.turntable.{thr ftscala => t}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * Basic class that provides a verification method for checking if a call to our debugging
- * features is allowed/authorized to make said call.
- * @param isServiceLocal Whether the service is being run locally.
+ * Bas c class that prov des a ver f cat on  thod for c ck ng  f a call to   debugg ng
+ * features  s allo d/author zed to make sa d call.
+ * @param  sServ ceLocal W t r t  serv ce  s be ng run locally.
  */
-@Singleton
-class AuthorizationService @Inject() (@Flag(ServiceLocal) isServiceLocal: Boolean) {
-  import AuthorizationService._
+@S ngleton
+class Author zat onServ ce @ nject() (@Flag(Serv ceLocal)  sServ ceLocal: Boolean) {
+   mport Author zat onServ ce._
 
   /**
-   * Check whether a call to a given product is authorized. Throws an [[UnauthorizedServiceCallException]]
-   * if not.
-   * @param requestingServiceIdentifier The Service Identifier of the calling service
-   * @param productAccessPolicies The access policies of the product being called.
-   * @param requestContext The request context of the caller.
+   * C ck w t r a call to a g ven product  s author zed. Throws an [[Unauthor zedServ ceCallExcept on]]
+   *  f not.
+   * @param request ngServ ce dent f er T  Serv ce  dent f er of t  call ng serv ce
+   * @param productAccessPol c es T  access pol c es of t  product be ng called.
+   * @param requestContext T  request context of t  caller.
    */
-  def verifyRequestAuthorization(
-    componentIdentifierStack: ComponentIdentifierStack,
-    requestingServiceIdentifier: ServiceIdentifier,
-    productAccessPolicies: Set[AccessPolicy],
+  def ver fyRequestAuthor zat on(
+    component dent f erStack: Component dent f erStack,
+    request ngServ ce dent f er: Serv ce dent f er,
+    productAccessPol c es: Set[AccessPol cy],
     requestContext: t.TurntableRequestContext
-  ): Unit = {
-    val isServiceCallAuthorized =
-      requestingServiceIdentifier.role == AllowedServiceIdentifierRole && requestingServiceIdentifier.service == AllowedServiceIdentifierName
+  ): Un  = {
+    val  sServ ceCallAuthor zed =
+      request ngServ ce dent f er.role == Allo dServ ce dent f erRole && request ngServ ce dent f er.serv ce == Allo dServ ce dent f erNa 
     val userLdapGroups = requestContext.ldapGroups.map(_.toSet)
 
-    val accessPolicyAllowed = AccessPolicyEvaluator.evaluate(
-      productAccessPolicies = productAccessPolicies,
+    val accessPol cyAllo d = AccessPol cyEvaluator.evaluate(
+      productAccessPol c es = productAccessPol c es,
       userLdapGroups = userLdapGroups.getOrElse(Set.empty)
     )
 
-    if (!isServiceLocal && !isServiceCallAuthorized) {
-      throw new UnauthorizedServiceCallException(
-        requestingServiceIdentifier,
-        componentIdentifierStack)
+     f (! sServ ceLocal && ! sServ ceCallAuthor zed) {
+      throw new Unauthor zedServ ceCallExcept on(
+        request ngServ ce dent f er,
+        component dent f erStack)
     }
 
-    if (!isServiceLocal && !accessPolicyAllowed) {
-      throw new InsufficientAccessException(
+     f (! sServ ceLocal && !accessPol cyAllo d) {
+      throw new  nsuff c entAccessExcept on(
         userLdapGroups,
-        productAccessPolicies,
-        componentIdentifierStack)
+        productAccessPol c es,
+        component dent f erStack)
     }
   }
 }
 
-object AuthorizationService {
-  final val AllowedServiceIdentifierRole = "turntable"
-  final val AllowedServiceIdentifierName = "turntable"
+object Author zat onServ ce {
+  f nal val Allo dServ ce dent f erRole = "turntable"
+  f nal val Allo dServ ce dent f erNa  = "turntable"
 }
 
-class UnauthorizedServiceCallException(
-  serviceIdentifier: ServiceIdentifier,
-  componentIdentifierStack: ComponentIdentifierStack)
-    extends PipelineFailure(
+class Unauthor zedServ ceCallExcept on(
+  serv ce dent f er: Serv ce dent f er,
+  component dent f erStack: Component dent f erStack)
+    extends P pel neFa lure(
       BadRequest,
-      s"Unexpected Service tried to call Turntable Debug endpoint: ${ServiceIdentifier.asString(serviceIdentifier)}",
-      componentStack = Some(componentIdentifierStack))
+      s"Unexpected Serv ce tr ed to call Turntable Debug endpo nt: ${Serv ce dent f er.asStr ng(serv ce dent f er)}",
+      componentStack = So (component dent f erStack))
 
-class InsufficientAccessException(
-  ldapGroups: Option[Set[String]],
-  desiredAccessPolicies: Set[AccessPolicy],
-  componentIdentifierStack: ComponentIdentifierStack)
-    extends PipelineFailure(
-      Authentication,
-      s"Request did not satisfy access policies: $desiredAccessPolicies with ldapGroups = $ldapGroups",
-      componentStack = Some(componentIdentifierStack))
+class  nsuff c entAccessExcept on(
+  ldapGroups: Opt on[Set[Str ng]],
+  des redAccessPol c es: Set[AccessPol cy],
+  component dent f erStack: Component dent f erStack)
+    extends P pel neFa lure(
+      Aut nt cat on,
+      s"Request d d not sat sfy access pol c es: $des redAccessPol c es w h ldapGroups = $ldapGroups",
+      componentStack = So (component dent f erStack))

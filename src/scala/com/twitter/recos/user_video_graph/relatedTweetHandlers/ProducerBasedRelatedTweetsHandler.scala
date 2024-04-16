@@ -1,86 +1,86 @@
-package com.twitter.recos.user_video_graph.relatedTweetHandlers
+package com.tw ter.recos.user_v deo_graph.relatedT etHandlers
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphjet.bipartite.api.BipartiteGraph
-import com.twitter.recos.user_video_graph.thriftscala._
-import com.twitter.recos.util.Stats._
-import com.twitter.servo.request._
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import scala.concurrent.duration.HOURS
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.recos.user_video_graph.store.UserRecentFollowersStore
-import com.twitter.recos.user_video_graph.util.FetchRHSTweetsUtil
-import com.twitter.recos.user_video_graph.util.FilterUtil
-import com.twitter.recos.user_video_graph.util.GetRelatedTweetCandidatesUtil
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.graphjet.b part e.ap .B part eGraph
+ mport com.tw ter.recos.user_v deo_graph.thr ftscala._
+ mport com.tw ter.recos.ut l.Stats._
+ mport com.tw ter.servo.request._
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport scala.concurrent.durat on.HOURS
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.recos.user_v deo_graph.store.UserRecentFollo rsStore
+ mport com.tw ter.recos.user_v deo_graph.ut l.FetchRHST etsUt l
+ mport com.tw ter.recos.user_v deo_graph.ut l.F lterUt l
+ mport com.tw ter.recos.user_v deo_graph.ut l.GetRelatedT etCand datesUt l
 
 /**
- * Implementation of the Thrift-defined service interface for producerBasedRelatedTweets.
+ *  mple ntat on of t  Thr ft-def ned serv ce  nterface for producerBasedRelatedT ets.
  *
  */
-class ProducerBasedRelatedTweetsHandler(
-  bipartiteGraph: BipartiteGraph,
-  userRecentFollowersStore: ReadableStore[UserRecentFollowersStore.Query, Seq[UserId]],
-  statsReceiver: StatsReceiver)
-    extends RequestHandler[ProducerBasedRelatedTweetRequest, RelatedTweetResponse] {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
+class ProducerBasedRelatedT etsHandler(
+  b part eGraph: B part eGraph,
+  userRecentFollo rsStore: ReadableStore[UserRecentFollo rsStore.Query, Seq[User d]],
+  statsRece ver: StatsRece ver)
+    extends RequestHandler[ProducerBasedRelatedT etRequest, RelatedT etResponse] {
+  pr vate val stats = statsRece ver.scope(t .getClass.getS mpleNa )
 
-  override def apply(request: ProducerBasedRelatedTweetRequest): Future[RelatedTweetResponse] = {
+  overr de def apply(request: ProducerBasedRelatedT etRequest): Future[RelatedT etResponse] = {
     trackFutureBlockStats(stats) {
       val maxResults = request.maxResults.getOrElse(200)
-      val maxNumFollowers = request.maxNumFollowers.getOrElse(500)
-      val minScore = request.minScore.getOrElse(0.0)
-      val maxTweetAge = request.maxTweetAgeInHours.getOrElse(48)
-      val minResultDegree = request.minResultDegree.getOrElse(50)
-      val minCooccurrence = request.minCooccurrence.getOrElse(4)
-      val excludeTweetIds = request.excludeTweetIds.getOrElse(Seq.empty).toSet
+      val maxNumFollo rs = request.maxNumFollo rs.getOrElse(500)
+      val m nScore = request.m nScore.getOrElse(0.0)
+      val maxT etAge = request.maxT etAge nH s.getOrElse(48)
+      val m nResultDegree = request.m nResultDegree.getOrElse(50)
+      val m nCooccurrence = request.m nCooccurrence.getOrElse(4)
+      val excludeT et ds = request.excludeT et ds.getOrElse(Seq.empty).toSet
 
-      val followersFut = fetchFollowers(request.producerId, Some(maxNumFollowers))
-      followersFut.map { followers =>
-        val rhsTweetIds = FetchRHSTweetsUtil.fetchRHSTweets(
-          followers,
-          bipartiteGraph
+      val follo rsFut = fetchFollo rs(request.producer d, So (maxNumFollo rs))
+      follo rsFut.map { follo rs =>
+        val rhsT et ds = FetchRHST etsUt l.fetchRHST ets(
+          follo rs,
+          b part eGraph
         )
 
-        val scorePreFactor = 1000.0 / followers.size
-        val relatedTweetCandidates = GetRelatedTweetCandidatesUtil.getRelatedTweetCandidates(
-          rhsTweetIds,
-          minCooccurrence,
-          minResultDegree,
+        val scorePreFactor = 1000.0 / follo rs.s ze
+        val relatedT etCand dates = GetRelatedT etCand datesUt l.getRelatedT etCand dates(
+          rhsT et ds,
+          m nCooccurrence,
+          m nResultDegree,
           scorePreFactor,
-          bipartiteGraph)
+          b part eGraph)
 
-        val relatedTweets = relatedTweetCandidates
-          .filter { relatedTweet =>
-            FilterUtil.tweetAgeFilter(
-              relatedTweet.tweetId,
-              Duration(maxTweetAge, HOURS)) && (relatedTweet.score > minScore) && (!excludeTweetIds
-              .contains(relatedTweet.tweetId))
+        val relatedT ets = relatedT etCand dates
+          .f lter { relatedT et =>
+            F lterUt l.t etAgeF lter(
+              relatedT et.t et d,
+              Durat on(maxT etAge, HOURS)) && (relatedT et.score > m nScore) && (!excludeT et ds
+              .conta ns(relatedT et.t et d))
           }.take(maxResults)
-        stats.stat("response_size").add(relatedTweets.size)
-        RelatedTweetResponse(tweets = relatedTweets)
+        stats.stat("response_s ze").add(relatedT ets.s ze)
+        RelatedT etResponse(t ets = relatedT ets)
       }
     }
   }
 
-  private def fetchFollowers(
-    producerId: Long,
-    maxNumFollower: Option[Int],
+  pr vate def fetchFollo rs(
+    producer d: Long,
+    maxNumFollo r: Opt on[ nt],
   ): Future[Seq[Long]] = {
     val query =
-      UserRecentFollowersStore.Query(producerId, maxNumFollower, None)
+      UserRecentFollo rsStore.Query(producer d, maxNumFollo r, None)
 
-    val followersFut = userRecentFollowersStore.get(query)
-    followersFut.map { followersOpt =>
-      val followers = followersOpt.getOrElse(Seq.empty)
-      val followerIds = followers.distinct.filter { userId =>
-        val userDegree = bipartiteGraph.getLeftNodeDegree(userId)
-        // constrain to more active users that have >1 engagement to optimize latency, and <100 engagements to avoid spammy behavior
+    val follo rsFut = userRecentFollo rsStore.get(query)
+    follo rsFut.map { follo rsOpt =>
+      val follo rs = follo rsOpt.getOrElse(Seq.empty)
+      val follo r ds = follo rs.d st nct.f lter { user d =>
+        val userDegree = b part eGraph.getLeftNodeDegree(user d)
+        // constra n to more act ve users that have >1 engage nt to opt m ze latency, and <100 engage nts to avo d spam  behav or
         userDegree > 1 && userDegree < 500
       }
-      stats.stat("follower_size_after_filter").add(followerIds.size)
-      followerIds
+      stats.stat("follo r_s ze_after_f lter").add(follo r ds.s ze)
+      follo r ds
     }
   }
 }

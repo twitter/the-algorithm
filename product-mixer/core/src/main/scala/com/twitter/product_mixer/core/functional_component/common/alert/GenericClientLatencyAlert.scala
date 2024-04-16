@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+package com.tw ter.product_m xer.core.funct onal_component.common.alert
 
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfLatencyAbove
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.pred cate.Tr gger fLatencyAbove
 
 /**
- * Similar to [[LatencyAlert]] but intended for use with an external client calling Product Mixer.
+ * S m lar to [[LatencyAlert]] but  ntended for use w h an external cl ent call ng Product M xer.
  *
- * [[GenericClientLatencyAlert]] triggers when the Latency for the specified client
- * rises above the [[TriggerIfLatencyAbove]] threshold for the configured amount of time.
+ * [[Gener cCl entLatencyAlert]] tr ggers w n t  Latency for t  spec f ed cl ent
+ * r ses above t  [[Tr gger fLatencyAbove]] threshold for t  conf gured amount of t  .
  */
-case class GenericClientLatencyAlert(
-  override val source: GenericClient,
-  override val notificationGroup: NotificationGroup,
-  override val warnPredicate: TriggerIfLatencyAbove,
-  override val criticalPredicate: TriggerIfLatencyAbove,
-  override val runbookLink: Option[String] = None)
+case class Gener cCl entLatencyAlert(
+  overr de val s ce: Gener cCl ent,
+  overr de val not f cat onGroup: Not f cat onGroup,
+  overr de val warnPred cate: Tr gger fLatencyAbove,
+  overr de val cr  calPred cate: Tr gger fLatencyAbove,
+  overr de val runbookL nk: Opt on[Str ng] = None)
     extends Alert {
-  override val alertType: AlertType = Latency
+  overr de val alertType: AlertType = Latency
 }

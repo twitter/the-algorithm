@@ -1,46 +1,46 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work
 
-import com.twitter.dal.personal_data.thriftscala.PersonalDataType
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Batched
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.JavaCompactThrift
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.genericInjection
-import com.twitter.summingbird.batch.BatchID
-import scala.collection.JavaConverters._
+ mport com.tw ter.dal.personal_data.thr ftscala.PersonalDataType
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.Batc d
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.JavaCompactThr ft
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.gener c nject on
+ mport com.tw ter.summ ngb rd.batch.Batch D
+ mport scala.collect on.JavaConverters._
 
-object OfflineAggregateInjections {
-  val offlineDataRecordAggregateInjection: KeyValInjection[AggregationKey, (BatchID, DataRecord)] =
-    KeyValInjection(
-      genericInjection(AggregationKeyInjection),
-      Batched(JavaCompactThrift[DataRecord])
+object Offl neAggregate nject ons {
+  val offl neDataRecordAggregate nject on: KeyVal nject on[Aggregat onKey, (Batch D, DataRecord)] =
+    KeyVal nject on(
+      gener c nject on(Aggregat onKey nject on),
+      Batc d(JavaCompactThr ft[DataRecord])
     )
 
-  private[aggregation_framework] def getPdts[T](
-    aggregateGroups: Iterable[T],
-    featureExtractor: T => Iterable[Feature[_]]
-  ): Option[Set[PersonalDataType]] = {
+  pr vate[aggregat on_fra work] def getPdts[T](
+    aggregateGroups:  erable[T],
+    featureExtractor: T =>  erable[Feature[_]]
+  ): Opt on[Set[PersonalDataType]] = {
     val pdts: Set[PersonalDataType] = for {
       group <- aggregateGroups.toSet[T]
       feature <- featureExtractor(group)
       pdtSet <- feature.getPersonalDataTypes.asSet().asScala
       javaPdt <- pdtSet.asScala
       scalaPdt <- PersonalDataType.get(javaPdt.getValue)
-    } yield {
+    } y eld {
       scalaPdt
     }
-    if (pdts.nonEmpty) Some(pdts) else None
+     f (pdts.nonEmpty) So (pdts) else None
   }
 
-  def getInjection(
+  def get nject on(
     aggregateGroups: Set[TypedAggregateGroup[_]]
-  ): KeyValInjection[AggregationKey, (BatchID, DataRecord)] = {
+  ): KeyVal nject on[Aggregat onKey, (Batch D, DataRecord)] = {
     val keyPdts = getPdts[TypedAggregateGroup[_]](aggregateGroups, _.allOutputKeys)
     val valuePdts = getPdts[TypedAggregateGroup[_]](aggregateGroups, _.allOutputFeatures)
-    KeyValInjection(
-      genericInjection(AggregationKeyInjection, keyPdts),
-      genericInjection(Batched(JavaCompactThrift[DataRecord]), valuePdts)
+    KeyVal nject on(
+      gener c nject on(Aggregat onKey nject on, keyPdts),
+      gener c nject on(Batc d(JavaCompactThr ft[DataRecord]), valuePdts)
     )
   }
 }

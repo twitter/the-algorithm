@@ -1,110 +1,110 @@
-package com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.top_organ c_follows_accounts
 
-import com.twitter.escherbird.util.stitchcache.StitchCache
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts.TopOrganicFollowsAccountsParams.AccountsFilteringAndRankingLogics
-import com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts.TopOrganicFollowsAccountsParams.CandidateSourceEnabled
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasGeohashAndCountryCode
-import com.twitter.hermit.model.Algorithm
-import com.twitter.onboarding.relevance.organic_follows_accounts.thriftscala.OrganicFollowsAccounts
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.OrganicFollowsAccountsClientColumn
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Duration
-import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.esc rb rd.ut l.st chcac .St chCac 
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.top_organ c_follows_accounts.TopOrgan cFollowsAccountsParams.AccountsF lter ngAndRank ngLog cs
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.top_organ c_follows_accounts.TopOrgan cFollowsAccountsParams.Cand dateS ceEnabled
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.HasGeohashAndCountryCode
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter.onboard ng.relevance.organ c_follows_accounts.thr ftscala.Organ cFollowsAccounts
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.generated.cl ent.onboard ng.userrecs.Organ cFollowsAccountsCl entColumn
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-object AccountsFilteringAndRankingLogicId extends Enumeration {
-  type AccountsFilteringAndRankingLogicId = Value
+object AccountsF lter ngAndRank ngLog c d extends Enu rat on {
+  type AccountsF lter ngAndRank ngLog c d = Value
 
-  val NewOrganicFollows: AccountsFilteringAndRankingLogicId = Value("new_organic_follows")
-  val NonNewOrganicFollows: AccountsFilteringAndRankingLogicId = Value("non_new_organic_follows")
-  val OrganicFollows: AccountsFilteringAndRankingLogicId = Value("organic_follows")
+  val NewOrgan cFollows: AccountsF lter ngAndRank ngLog c d = Value("new_organ c_follows")
+  val NonNewOrgan cFollows: AccountsF lter ngAndRank ngLog c d = Value("non_new_organ c_follows")
+  val Organ cFollows: AccountsF lter ngAndRank ngLog c d = Value("organ c_follows")
 }
 
-object TopOrganicFollowsAccountsSource {
-  val MaxCacheSize = 500
-  val CacheTTL: Duration = Duration.fromHours(24)
+object TopOrgan cFollowsAccountsS ce {
+  val MaxCac S ze = 500
+  val Cac TTL: Durat on = Durat on.fromH s(24)
 
-  type Target = HasParams with HasClientContext with HasGeohashAndCountryCode
+  type Target = HasParams w h HasCl entContext w h HasGeohashAndCountryCode
 
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.OrganicFollowAccounts.toString)
+  val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er(
+    Algor hm.Organ cFollowAccounts.toStr ng)
 }
 
-@Singleton
-class TopOrganicFollowsAccountsSource @Inject() (
-  organicFollowsAccountsClientColumn: OrganicFollowsAccountsClientColumn,
-  statsReceiver: StatsReceiver,
-) extends CandidateSource[TopOrganicFollowsAccountsSource.Target, CandidateUser]
-    with Logging {
+@S ngleton
+class TopOrgan cFollowsAccountsS ce @ nject() (
+  organ cFollowsAccountsCl entColumn: Organ cFollowsAccountsCl entColumn,
+  statsRece ver: StatsRece ver,
+) extends Cand dateS ce[TopOrgan cFollowsAccountsS ce.Target, Cand dateUser]
+    w h Logg ng {
 
-  /** @see [[CandidateSourceIdentifier]] */
-  override val identifier: CandidateSourceIdentifier =
-    TopOrganicFollowsAccountsSource.Identifier
+  /** @see [[Cand dateS ce dent f er]] */
+  overr de val  dent f er: Cand dateS ce dent f er =
+    TopOrgan cFollowsAccountsS ce. dent f er
 
-  private val stats = statsReceiver.scope(identifier.name)
-  private val requestsStats = stats.counter("requests")
-  private val noCountryCodeStats = stats.counter("no_country_code")
-  private val successStats = stats.counter("success")
-  private val errorStats = stats.counter("error")
+  pr vate val stats = statsRece ver.scope( dent f er.na )
+  pr vate val requestsStats = stats.counter("requests")
+  pr vate val noCountryCodeStats = stats.counter("no_country_code")
+  pr vate val successStats = stats.counter("success")
+  pr vate val errorStats = stats.counter("error")
 
-  private val cache = StitchCache[String, Option[OrganicFollowsAccounts]](
-    maxCacheSize = TopOrganicFollowsAccountsSource.MaxCacheSize,
-    ttl = TopOrganicFollowsAccountsSource.CacheTTL,
-    statsReceiver = statsReceiver.scope(identifier.name, "cache"),
-    underlyingCall = (k: String) => {
-      organicFollowsAccountsClientColumn.fetcher
+  pr vate val cac  = St chCac [Str ng, Opt on[Organ cFollowsAccounts]](
+    maxCac S ze = TopOrgan cFollowsAccountsS ce.MaxCac S ze,
+    ttl = TopOrgan cFollowsAccountsS ce.Cac TTL,
+    statsRece ver = statsRece ver.scope( dent f er.na , "cac "),
+    underly ngCall = (k: Str ng) => {
+      organ cFollowsAccountsCl entColumn.fetc r
         .fetch(k)
         .map { result => result.v }
     }
   )
 
-  /** returns a Seq of ''potential'' content */
-  override def apply(
-    target: TopOrganicFollowsAccountsSource.Target
-  ): Stitch[Seq[CandidateUser]] = {
-    if (!target.params(CandidateSourceEnabled)) {
-      return Stitch.value(Seq[CandidateUser]())
+  /** returns a Seq of ''potent al'' content */
+  overr de def apply(
+    target: TopOrgan cFollowsAccountsS ce.Target
+  ): St ch[Seq[Cand dateUser]] = {
+     f (!target.params(Cand dateS ceEnabled)) {
+      return St ch.value(Seq[Cand dateUser]())
     }
-    requestsStats.incr()
+    requestsStats. ncr()
     target.getCountryCode
       .orElse(target.geohashAndCountryCode.flatMap(_.countryCode)).map { countryCode =>
-        Stitch
+        St ch
           .collect(target
-            .params(AccountsFilteringAndRankingLogics).map(logic =>
-              cache.readThrough(countryCode.toUpperCase() + "-" + logic)))
+            .params(AccountsF lter ngAndRank ngLog cs).map(log c =>
+              cac .readThrough(countryCode.toUpperCase() + "-" + log c)))
           .onSuccess(_ => {
-            successStats.incr()
+            successStats. ncr()
           })
-          .onFailure(t => {
-            debug("candidate source failed identifier = %s".format(identifier), t)
-            errorStats.incr()
+          .onFa lure(t => {
+            debug("cand date s ce fa led  dent f er = %s".format( dent f er), t)
+            errorStats. ncr()
           })
-          .map(transformOrganicFollowAccountssToCandidateSource)
+          .map(transformOrgan cFollowAccountssToCand dateS ce)
       }.getOrElse {
-        noCountryCodeStats.incr()
-        Stitch.value(Seq[CandidateUser]())
+        noCountryCodeStats. ncr()
+        St ch.value(Seq[Cand dateUser]())
       }
   }
 
-  private def transformOrganicFollowAccountssToCandidateSource(
-    organicFollowsAccounts: Seq[Option[OrganicFollowsAccounts]]
-  ): Seq[CandidateUser] = {
-    organicFollowsAccounts
+  pr vate def transformOrgan cFollowAccountssToCand dateS ce(
+    organ cFollowsAccounts: Seq[Opt on[Organ cFollowsAccounts]]
+  ): Seq[Cand dateUser] = {
+    organ cFollowsAccounts
       .flatMap(opt =>
         opt
           .map(accounts =>
             accounts.accounts.map(account =>
-              CandidateUser(
-                id = account.accountId,
-                score = Some(account.followedCountScore),
-              ).withCandidateSource(identifier)))
-          .getOrElse(Seq[CandidateUser]()))
+              Cand dateUser(
+                 d = account.account d,
+                score = So (account.follo dCountScore),
+              ).w hCand dateS ce( dent f er)))
+          .getOrElse(Seq[Cand dateUser]()))
   }
 }

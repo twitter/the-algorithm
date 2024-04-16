@@ -1,31 +1,31 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+package com.tw ter.search.common.ut l.ml.pred ct on_eng ne;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
 /**
- * The discretized value range for a continous feature. After discretization a continuous feature
- * may become multiple discretized binary features, each occupying a range. This class stores this
- * range and a weight for it.
+ * T  d scret zed value range for a cont nous feature. After d scret zat on a cont nuous feature
+ * may beco  mult ple d scret zed b nary features, each occupy ng a range. T  class stores t 
+ * range and a   ght for  .
  */
-public class DiscretizedFeatureRange {
-  protected final double minValue;
-  protected final double maxValue;
-  protected final double weight;
+publ c class D scret zedFeatureRange {
+  protected f nal double m nValue;
+  protected f nal double maxValue;
+  protected f nal double   ght;
 
-  DiscretizedFeatureRange(double weight, String range) {
-    String[] limits = range.split("_");
-    Preconditions.checkArgument(limits.length == 2);
+  D scret zedFeatureRange(double   ght, Str ng range) {
+    Str ng[] l m s = range.spl ("_");
+    Precond  ons.c ckArgu nt(l m s.length == 2);
 
-    this.minValue = parseRangeValue(limits[0]);
-    this.maxValue = parseRangeValue(limits[1]);
-    this.weight = weight;
+    t .m nValue = parseRangeValue(l m s[0]);
+    t .maxValue = parseRangeValue(l m s[1]);
+    t .  ght =   ght;
   }
 
-  private static double parseRangeValue(String value) {
-    if ("inf".equals(value)) {
-      return Double.POSITIVE_INFINITY;
-    } else if ("-inf".equals(value)) {
-      return Double.NEGATIVE_INFINITY;
+  pr vate stat c double parseRangeValue(Str ng value) {
+     f (" nf".equals(value)) {
+      return Double.POS T VE_ NF N TY;
+    } else  f ("- nf".equals(value)) {
+      return Double.NEGAT VE_ NF N TY;
     } else {
       return Double.parseDouble(value);
     }

@@ -1,59 +1,59 @@
-package com.twitter.home_mixer.module
+package com.tw ter.ho _m xer.module
 
-import com.twitter.conversions.DurationOps.RichDuration
-import com.twitter.home_mixer.param.HomeMixerFlagName
-import com.twitter.inject.TwitterModule
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps.R chDurat on
+ mport com.tw ter.ho _m xer.param.Ho M xerFlagNa 
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.ut l.Durat on
 
-object HomeMixerFlagsModule extends TwitterModule {
+object Ho M xerFlagsModule extends Tw terModule {
 
-  import HomeMixerFlagName._
+   mport Ho M xerFlagNa ._
 
   flag[Boolean](
-    name = ScribeClientEventsFlag,
+    na  = Scr beCl entEventsFlag,
     default = false,
-    help = "Toggles logging client events to Scribe"
+     lp = "Toggles logg ng cl ent events to Scr be"
   )
 
   flag[Boolean](
-    name = ScribeServedCandidatesFlag,
+    na  = Scr beServedCand datesFlag,
     default = false,
-    help = "Toggles logging served candidates to Scribe"
+     lp = "Toggles logg ng served cand dates to Scr be"
   )
 
   flag[Boolean](
-    name = ScribeScoredCandidatesFlag,
+    na  = Scr beScoredCand datesFlag,
     default = false,
-    help = "Toggles logging scored candidates to Scribe"
+     lp = "Toggles logg ng scored cand dates to Scr be"
   )
 
   flag[Boolean](
-    name = ScribeServedCommonFeaturesAndCandidateFeaturesFlag,
+    na  = Scr beServedCommonFeaturesAndCand dateFeaturesFlag,
     default = false,
-    help = "Toggles logging served common features and candidates features to Scribe"
+     lp = "Toggles logg ng served common features and cand dates features to Scr be"
   )
 
-  flag[String](
-    name = DataRecordMetadataStoreConfigsYmlFlag,
+  flag[Str ng](
+    na  = DataRecord tadataStoreConf gsYmlFlag,
     default = "",
-    help = "The YML file that contains the necessary info for creating metadata store MySQL client."
+     lp = "T  YML f le that conta ns t  necessary  nfo for creat ng  tadata store  SQL cl ent."
   )
 
-  flag[String](
-    name = DarkTrafficFilterDeciderKey,
-    default = "dark_traffic_filter",
-    help = "Dark traffic filter decider key"
+  flag[Str ng](
+    na  = DarkTraff cF lterDec derKey,
+    default = "dark_traff c_f lter",
+     lp = "Dark traff c f lter dec der key"
   )
 
-  flag[Duration](
+  flag[Durat on](
     TargetFetchLatency,
-    300.millis,
-    "Target fetch latency from candidate sources for Quality Factor"
+    300.m ll s,
+    "Target fetch latency from cand date s ces for Qual y Factor"
   )
 
-  flag[Duration](
-    TargetScoringLatency,
-    700.millis,
-    "Target scoring latency for Quality Factor"
+  flag[Durat on](
+    TargetScor ngLatency,
+    700.m ll s,
+    "Target scor ng latency for Qual y Factor"
   )
 }

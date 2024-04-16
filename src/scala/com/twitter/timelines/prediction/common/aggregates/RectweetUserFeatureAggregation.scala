@@ -1,52 +1,52 @@
-package com.twitter.timelines.prediction.common.aggregates
+package com.tw ter.t  l nes.pred ct on.common.aggregates
 
-import com.twitter.ml.api.Feature
-import com.twitter.timelines.prediction.features.engagement_features.EngagementDataRecordFeatures
-import com.twitter.timelines.prediction.features.itl.ITLFeatures
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.t  l nes.pred ct on.features.engage nt_features.Engage ntDataRecordFeatures
+ mport com.tw ter.t  l nes.pred ct on.features. l. TLFeatures
 
-object RectweetUserFeatureAggregation {
-  val RectweetLabelsForAggregation: Set[Feature.Binary] =
+object Rect etUserFeatureAggregat on {
+  val Rect etLabelsForAggregat on: Set[Feature.B nary] =
     Set(
-      ITLFeatures.IS_FAVORITED,
-      ITLFeatures.IS_RETWEETED,
-      ITLFeatures.IS_REPLIED,
-      ITLFeatures.IS_CLICKED,
-      ITLFeatures.IS_PROFILE_CLICKED,
-      ITLFeatures.IS_OPEN_LINKED,
-      ITLFeatures.IS_PHOTO_EXPANDED,
-      ITLFeatures.IS_VIDEO_PLAYBACK_50
+       TLFeatures. S_FAVOR TED,
+       TLFeatures. S_RETWEETED,
+       TLFeatures. S_REPL ED,
+       TLFeatures. S_CL CKED,
+       TLFeatures. S_PROF LE_CL CKED,
+       TLFeatures. S_OPEN_L NKED,
+       TLFeatures. S_PHOTO_EXPANDED,
+       TLFeatures. S_V DEO_PLAYBACK_50
     )
 
-  val TweetFeatures: Set[Feature[_]] = Set(
-    ITLFeatures.HAS_IMAGE,
-    ITLFeatures.HAS_CARD,
-    ITLFeatures.HAS_NEWS,
-    ITLFeatures.REPLY_COUNT,
-    ITLFeatures.FAV_COUNT,
-    ITLFeatures.REPLY_COUNT,
-    ITLFeatures.RETWEET_COUNT,
-    ITLFeatures.MATCHES_UI_LANG,
-    ITLFeatures.MATCHES_SEARCHER_MAIN_LANG,
-    ITLFeatures.MATCHES_SEARCHER_LANGS,
-    ITLFeatures.TEXT_SCORE,
-    ITLFeatures.LINK_LANGUAGE,
-    ITLFeatures.NUM_HASHTAGS,
-    ITLFeatures.NUM_MENTIONS,
-    ITLFeatures.IS_SENSITIVE,
-    ITLFeatures.HAS_VIDEO,
-    ITLFeatures.HAS_LINK,
-    ITLFeatures.HAS_VISIBLE_LINK,
-    EngagementDataRecordFeatures.InNetworkFavoritesCount
-    // nice to have, but currently not hydrated in the RecommendedTweet payload
-    //EngagementDataRecordFeatures.InNetworkRetweetsCount,
-    //EngagementDataRecordFeatures.InNetworkRepliesCount
+  val T etFeatures: Set[Feature[_]] = Set(
+     TLFeatures.HAS_ MAGE,
+     TLFeatures.HAS_CARD,
+     TLFeatures.HAS_NEWS,
+     TLFeatures.REPLY_COUNT,
+     TLFeatures.FAV_COUNT,
+     TLFeatures.REPLY_COUNT,
+     TLFeatures.RETWEET_COUNT,
+     TLFeatures.MATCHES_U _LANG,
+     TLFeatures.MATCHES_SEARCHER_MA N_LANG,
+     TLFeatures.MATCHES_SEARCHER_LANGS,
+     TLFeatures.TEXT_SCORE,
+     TLFeatures.L NK_LANGUAGE,
+     TLFeatures.NUM_HASHTAGS,
+     TLFeatures.NUM_MENT ONS,
+     TLFeatures. S_SENS T VE,
+     TLFeatures.HAS_V DEO,
+     TLFeatures.HAS_L NK,
+     TLFeatures.HAS_V S BLE_L NK,
+    Engage ntDataRecordFeatures. nNetworkFavor esCount
+    // n ce to have, but currently not hydrated  n t  Recom ndedT et payload
+    //Engage ntDataRecordFeatures. nNetworkRet etsCount,
+    //Engage ntDataRecordFeatures. nNetworkRepl esCount
   )
 
-  val ReciprocalLabels: Set[Feature.Binary] = Set(
-    ITLFeatures.IS_REPLIED_REPLY_IMPRESSED_BY_AUTHOR,
-    ITLFeatures.IS_REPLIED_REPLY_REPLIED_BY_AUTHOR,
-    ITLFeatures.IS_REPLIED_REPLY_FAVORITED_BY_AUTHOR,
-    ITLFeatures.IS_REPLIED_REPLY_RETWEETED_BY_AUTHOR,
-    ITLFeatures.IS_REPLIED_REPLY_QUOTED_BY_AUTHOR
+  val Rec procalLabels: Set[Feature.B nary] = Set(
+     TLFeatures. S_REPL ED_REPLY_ MPRESSED_BY_AUTHOR,
+     TLFeatures. S_REPL ED_REPLY_REPL ED_BY_AUTHOR,
+     TLFeatures. S_REPL ED_REPLY_FAVOR TED_BY_AUTHOR,
+     TLFeatures. S_REPL ED_REPLY_RETWEETED_BY_AUTHOR,
+     TLFeatures. S_REPL ED_REPLY_QUOTED_BY_AUTHOR
   )
 }

@@ -1,107 +1,107 @@
-package com.twitter.cr_mixer.module.thrift_client
+package com.tw ter.cr_m xer.module.thr ft_cl ent
 
-import com.google.inject.Provides
-import com.twitter.ann.common.thriftscala.AnnQueryService
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.inject.TwitterModule
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.ann.common.thr ftscala.AnnQueryServ ce
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.convers ons.PercentOps._
+ mport com.tw ter.cr_m xer.conf g.T  outConf g
+ mport com.tw ter.f nagle.Thr ftMux
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.mtls.cl ent.MtlsStackCl ent._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter. nject.Tw terModule
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-object AnnQueryServiceClientModule extends TwitterModule {
-  final val DebuggerDemoAnnServiceClientName = "DebuggerDemoAnnServiceClient"
+object AnnQueryServ ceCl entModule extends Tw terModule {
+  f nal val DebuggerDemoAnnServ ceCl entNa  = "DebuggerDemoAnnServ ceCl ent"
 
-  @Provides
-  @Singleton
-  @Named(DebuggerDemoAnnServiceClientName)
-  def debuggerDemoAnnServiceClient(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    statsReceiver: StatsReceiver,
-    timeoutConfig: TimeoutConfig,
-  ): AnnQueryService.MethodPerEndpoint = {
-    // This ANN is built from the embeddings in src/scala/com/twitter/wtf/beam/bq_embedding_export/sql/MlfExperimentalTweetEmbeddingScalaDataset.sql
-    // Change the above sql if you want to build the index from a diff embedding
-    val dest = "/s/cassowary/mlf-experimental-ann-service"
-    val label = "experimental-ann"
-    buildClient(serviceIdentifier, clientId, timeoutConfig, statsReceiver, dest, label)
+  @Prov des
+  @S ngleton
+  @Na d(DebuggerDemoAnnServ ceCl entNa )
+  def debuggerDemoAnnServ ceCl ent(
+    serv ce dent f er: Serv ce dent f er,
+    cl ent d: Cl ent d,
+    statsRece ver: StatsRece ver,
+    t  outConf g: T  outConf g,
+  ): AnnQueryServ ce. thodPerEndpo nt = {
+    // T  ANN  s bu lt from t  embedd ngs  n src/scala/com/tw ter/wtf/beam/bq_embedd ng_export/sql/MlfExper  ntalT etEmbedd ngScalaDataset.sql
+    // Change t  above sql  f   want to bu ld t   ndex from a d ff embedd ng
+    val dest = "/s/cassowary/mlf-exper  ntal-ann-serv ce"
+    val label = "exper  ntal-ann"
+    bu ldCl ent(serv ce dent f er, cl ent d, t  outConf g, statsRece ver, dest, label)
   }
 
-  final val TwHINUuaAnnServiceClientName = "TwHINUuaAnnServiceClient"
-  @Provides
-  @Singleton
-  @Named(TwHINUuaAnnServiceClientName)
-  def twhinUuaAnnServiceClient(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    statsReceiver: StatsReceiver,
-    timeoutConfig: TimeoutConfig,
-  ): AnnQueryService.MethodPerEndpoint = {
-    val dest = "/s/cassowary/twhin-uua-ann-service"
-    val label = "twhin_uua_ann"
+  f nal val TwH NUuaAnnServ ceCl entNa  = "TwH NUuaAnnServ ceCl ent"
+  @Prov des
+  @S ngleton
+  @Na d(TwH NUuaAnnServ ceCl entNa )
+  def twh nUuaAnnServ ceCl ent(
+    serv ce dent f er: Serv ce dent f er,
+    cl ent d: Cl ent d,
+    statsRece ver: StatsRece ver,
+    t  outConf g: T  outConf g,
+  ): AnnQueryServ ce. thodPerEndpo nt = {
+    val dest = "/s/cassowary/twh n-uua-ann-serv ce"
+    val label = "twh n_uua_ann"
 
-    buildClient(serviceIdentifier, clientId, timeoutConfig, statsReceiver, dest, label)
+    bu ldCl ent(serv ce dent f er, cl ent d, t  outConf g, statsRece ver, dest, label)
   }
 
-  final val TwHINRegularUpdateAnnServiceClientName = "TwHINRegularUpdateAnnServiceClient"
-  @Provides
-  @Singleton
-  @Named(TwHINRegularUpdateAnnServiceClientName)
-  def twHINRegularUpdateAnnServiceClient(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    statsReceiver: StatsReceiver,
-    timeoutConfig: TimeoutConfig,
-  ): AnnQueryService.MethodPerEndpoint = {
-    val dest = "/s/cassowary/twhin-regular-update-ann-service"
-    val label = "twhin_regular_update"
+  f nal val TwH NRegularUpdateAnnServ ceCl entNa  = "TwH NRegularUpdateAnnServ ceCl ent"
+  @Prov des
+  @S ngleton
+  @Na d(TwH NRegularUpdateAnnServ ceCl entNa )
+  def twH NRegularUpdateAnnServ ceCl ent(
+    serv ce dent f er: Serv ce dent f er,
+    cl ent d: Cl ent d,
+    statsRece ver: StatsRece ver,
+    t  outConf g: T  outConf g,
+  ): AnnQueryServ ce. thodPerEndpo nt = {
+    val dest = "/s/cassowary/twh n-regular-update-ann-serv ce"
+    val label = "twh n_regular_update"
 
-    buildClient(serviceIdentifier, clientId, timeoutConfig, statsReceiver, dest, label)
+    bu ldCl ent(serv ce dent f er, cl ent d, t  outConf g, statsRece ver, dest, label)
   }
 
-  final val TwoTowerFavAnnServiceClientName = "TwoTowerFavAnnServiceClient"
-  @Provides
-  @Singleton
-  @Named(TwoTowerFavAnnServiceClientName)
-  def twoTowerFavAnnServiceClient(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    statsReceiver: StatsReceiver,
-    timeoutConfig: TimeoutConfig,
-  ): AnnQueryService.MethodPerEndpoint = {
-    val dest = "/s/cassowary/tweet-rec-two-tower-fav-ann"
-    val label = "tweet_rec_two_tower_fav_ann"
+  f nal val TwoTo rFavAnnServ ceCl entNa  = "TwoTo rFavAnnServ ceCl ent"
+  @Prov des
+  @S ngleton
+  @Na d(TwoTo rFavAnnServ ceCl entNa )
+  def twoTo rFavAnnServ ceCl ent(
+    serv ce dent f er: Serv ce dent f er,
+    cl ent d: Cl ent d,
+    statsRece ver: StatsRece ver,
+    t  outConf g: T  outConf g,
+  ): AnnQueryServ ce. thodPerEndpo nt = {
+    val dest = "/s/cassowary/t et-rec-two-to r-fav-ann"
+    val label = "t et_rec_two_to r_fav_ann"
 
-    buildClient(serviceIdentifier, clientId, timeoutConfig, statsReceiver, dest, label)
+    bu ldCl ent(serv ce dent f er, cl ent d, t  outConf g, statsRece ver, dest, label)
   }
 
-  private def buildClient(
-    serviceIdentifier: ServiceIdentifier,
-    clientId: ClientId,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-    dest: String,
-    label: String
-  ): AnnQueryService.MethodPerEndpoint = {
-    val thriftClient = ThriftMux.client
-      .withMutualTls(serviceIdentifier)
-      .withClientId(clientId)
-      .withLabel(label)
-      .withStatsReceiver(statsReceiver)
-      .withTransport.connectTimeout(500.milliseconds)
-      .withSession.acquisitionTimeout(500.milliseconds)
-      .methodBuilder(dest)
-      .withTimeoutPerRequest(timeoutConfig.annServiceClientTimeout)
-      .withRetryDisabled
-      .idempotent(5.percent)
-      .servicePerEndpoint[AnnQueryService.ServicePerEndpoint]
+  pr vate def bu ldCl ent(
+    serv ce dent f er: Serv ce dent f er,
+    cl ent d: Cl ent d,
+    t  outConf g: T  outConf g,
+    statsRece ver: StatsRece ver,
+    dest: Str ng,
+    label: Str ng
+  ): AnnQueryServ ce. thodPerEndpo nt = {
+    val thr ftCl ent = Thr ftMux.cl ent
+      .w hMutualTls(serv ce dent f er)
+      .w hCl ent d(cl ent d)
+      .w hLabel(label)
+      .w hStatsRece ver(statsRece ver)
+      .w hTransport.connectT  out(500.m ll seconds)
+      .w hSess on.acqu s  onT  out(500.m ll seconds)
+      . thodBu lder(dest)
+      .w hT  outPerRequest(t  outConf g.annServ ceCl entT  out)
+      .w hRetryD sabled
+      . dempotent(5.percent)
+      .serv cePerEndpo nt[AnnQueryServ ce.Serv cePerEndpo nt]
 
-    ThriftMux.Client.methodPerEndpoint(thriftClient)
+    Thr ftMux.Cl ent. thodPerEndpo nt(thr ftCl ent)
   }
 }

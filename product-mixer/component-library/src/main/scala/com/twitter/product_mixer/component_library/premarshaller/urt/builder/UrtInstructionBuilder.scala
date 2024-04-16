@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineInstruction
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne nstruct on
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-trait UrtInstructionBuilder[-Query <: PipelineQuery, +Instruction <: TimelineInstruction] {
+tra  Urt nstruct onBu lder[-Query <: P pel neQuery, + nstruct on <: T  l ne nstruct on] {
 
-  def includeInstruction: IncludeInstruction[Query] = AlwaysInclude
+  def  nclude nstruct on:  nclude nstruct on[Query] = Always nclude
 
-  def build(
+  def bu ld(
     query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[Instruction]
+    entr es: Seq[T  l neEntry]
+  ): Seq[ nstruct on]
 }

@@ -1,59 +1,59 @@
-package com.twitter.home_mixer.module
+package com.tw ter.ho _m xer.module
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.storage.client.manhattan.kv.Guarantee
-import com.twitter.storehaus_internal.manhattan.ManhattanClusters
-import com.twitter.timelines.clients.manhattan.store._
-import com.twitter.timelines.impressionbloomfilter.{thriftscala => blm}
-import com.twitter.timelines.impressionstore.impressionbloomfilter.ImpressionBloomFilterManhattanKeyValueDescriptor
-import com.twitter.util.Duration
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.storage.cl ent.manhattan.kv.Guarantee
+ mport com.tw ter.storehaus_ nternal.manhattan.ManhattanClusters
+ mport com.tw ter.t  l nes.cl ents.manhattan.store._
+ mport com.tw ter.t  l nes. mpress onbloomf lter.{thr ftscala => blm}
+ mport com.tw ter.t  l nes. mpress onstore. mpress onbloomf lter. mpress onBloomF lterManhattanKeyValueDescr ptor
+ mport com.tw ter.ut l.Durat on
+ mport javax. nject.S ngleton
 
-object ImpressionBloomFilterModule extends TwitterModule {
+object  mpress onBloomF lterModule extends Tw terModule {
 
-  private val ProdAppId = "impression_bloom_filter_store"
-  private val ProdDataset = "impression_bloom_filter"
-  private val StagingAppId = "impression_bloom_filter_store_staging"
-  private val StagingDataset = "impression_bloom_filter_staging"
-  private val ClientStatsScope = "tweetBloomFilterImpressionManhattanClient"
-  private val DefaultTTL = 7.days
-  private final val Timeout = "mh_impression_store_bloom_filter.timeout"
+  pr vate val ProdApp d = " mpress on_bloom_f lter_store"
+  pr vate val ProdDataset = " mpress on_bloom_f lter"
+  pr vate val Stag ngApp d = " mpress on_bloom_f lter_store_stag ng"
+  pr vate val Stag ngDataset = " mpress on_bloom_f lter_stag ng"
+  pr vate val Cl entStatsScope = "t etBloomF lter mpress onManhattanCl ent"
+  pr vate val DefaultTTL = 7.days
+  pr vate f nal val T  out = "mh_ mpress on_store_bloom_f lter.t  out"
 
-  flag[Duration](Timeout, 150.millis, "Timeout per request")
+  flag[Durat on](T  out, 150.m ll s, "T  out per request")
 
-  @Provides
-  @Singleton
-  def providesImpressionBloomFilter(
-    @Flag(Timeout) timeout: Duration,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): ManhattanStoreClient[blm.ImpressionBloomFilterKey, blm.ImpressionBloomFilterSeq] = {
-    val (appId, dataset) = serviceIdentifier.environment.toLowerCase match {
-      case "prod" => (ProdAppId, ProdDataset)
-      case _ => (StagingAppId, StagingDataset)
+  @Prov des
+  @S ngleton
+  def prov des mpress onBloomF lter(
+    @Flag(T  out) t  out: Durat on,
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver
+  ): ManhattanStoreCl ent[blm. mpress onBloomF lterKey, blm. mpress onBloomF lterSeq] = {
+    val (app d, dataset) = serv ce dent f er.env ron nt.toLo rCase match {
+      case "prod" => (ProdApp d, ProdDataset)
+      case _ => (Stag ngApp d, Stag ngDataset)
     }
 
-    implicit val manhattanKeyValueDescriptor: ImpressionBloomFilterManhattanKeyValueDescriptor =
-      ImpressionBloomFilterManhattanKeyValueDescriptor(
+     mpl c  val manhattanKeyValueDescr ptor:  mpress onBloomF lterManhattanKeyValueDescr ptor =
+       mpress onBloomF lterManhattanKeyValueDescr ptor(
         dataset = dataset,
         ttl = DefaultTTL
       )
 
-    ManhattanStoreClientBuilder.buildManhattanClient(
-      serviceIdentifier = serviceIdentifier,
+    ManhattanStoreCl entBu lder.bu ldManhattanCl ent(
+      serv ce dent f er = serv ce dent f er,
       cluster = ManhattanClusters.nash,
-      appId = appId,
-      defaultMaxTimeout = timeout,
+      app d = app d,
+      defaultMaxT  out = t  out,
       maxRetryCount = 2,
-      defaultGuarantee = Some(Guarantee.SoftDcReadMyWrites),
-      isReadOnly = false,
-      statsScope = ClientStatsScope,
-      statsReceiver = statsReceiver
+      defaultGuarantee = So (Guarantee.SoftDcRead Wr es),
+       sReadOnly = false,
+      statsScope = Cl entStatsScope,
+      statsRece ver = statsRece ver
     )
   }
 }

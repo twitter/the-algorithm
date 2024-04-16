@@ -1,41 +1,41 @@
-package com.twitter.tweetypie.util.logging
+package com.tw ter.t etyp e.ut l.logg ng
 
-import ch.qos.logback.classic.spi.ILoggingEvent
-import ch.qos.logback.classic.spi.ThrowableProxy
-import ch.qos.logback.core.filter.Filter
-import ch.qos.logback.core.spi.FilterReply
-import com.twitter.tweetypie.serverutil.ExceptionCounter.isAlertable
+ mport ch.qos.logback.class c.sp . Logg ngEvent
+ mport ch.qos.logback.class c.sp .ThrowableProxy
+ mport ch.qos.logback.core.f lter.F lter
+ mport ch.qos.logback.core.sp .F lterReply
+ mport com.tw ter.t etyp e.serverut l.Except onCounter. sAlertable
 
 /**
- * This class is currently being used by logback to log alertable exceptions to a seperate file.
+ * T  class  s currently be ng used by logback to log alertable except ons to a seperate f le.
  *
- * Filters do not change the log levels of individual loggers. Filters filter out specific messages
- * for specific appenders. This allows us to have a log file with lots of information you will
- * mostly not need and a log file with only important information. This type of filtering cannot be
- * accomplished by changing the log levels of loggers, because the logger levels are global. We want
- * to change the semantics for specific destinations (appenders).
+ * F lters do not change t  log levels of  nd v dual loggers. F lters f lter out spec f c  ssages
+ * for spec f c appenders. T  allows us to have a log f le w h lots of  nformat on   w ll
+ * mostly not need and a log f le w h only  mportant  nformat on. T  type of f lter ng cannot be
+ * accompl s d by chang ng t  log levels of loggers, because t  logger levels are global.   want
+ * to change t  semant cs for spec f c dest nat ons (appenders).
  */
-class AlertableExceptionLoggingFilter extends Filter[ILoggingEvent] {
-  private[this] val IgnorableLoggers: Set[String] =
+class AlertableExcept onLogg ngF lter extends F lter[ Logg ngEvent] {
+  pr vate[t ] val  gnorableLoggers: Set[Str ng] =
     Set(
-      "com.github.benmanes.caffeine.cache.BoundedLocalCache",
-      "abdecider",
-      "org.apache.kafka.common.network.SaslChannelBuilder",
-      "com.twitter.finagle.netty4.channel.ChannelStatsHandler$"
+      "com.g hub.benmanes.caffe ne.cac .BoundedLocalCac ",
+      "abdec der",
+      "org.apac .kafka.common.network.SaslChannelBu lder",
+      "com.tw ter.f nagle.netty4.channel.ChannelStatsHandler$"
     )
 
-  def include(proxy: ThrowableProxy, event: ILoggingEvent): Boolean =
-    isAlertable(proxy.getThrowable()) && !IgnorableLoggers(event.getLoggerName)
+  def  nclude(proxy: ThrowableProxy, event:  Logg ngEvent): Boolean =
+     sAlertable(proxy.getThrowable()) && ! gnorableLoggers(event.getLoggerNa )
 
-  override def decide(event: ILoggingEvent): FilterReply =
-    if (!isStarted) {
-      FilterReply.NEUTRAL
+  overr de def dec de(event:  Logg ngEvent): F lterReply =
+     f (! sStarted) {
+      F lterReply.NEUTRAL
     } else {
       event.getThrowableProxy() match {
-        case proxy: ThrowableProxy if include(proxy, event) =>
-          FilterReply.NEUTRAL
+        case proxy: ThrowableProxy  f  nclude(proxy, event) =>
+          F lterReply.NEUTRAL
         case _ =>
-          FilterReply.DENY
+          F lterReply.DENY
       }
     }
 }

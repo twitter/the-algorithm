@@ -1,96 +1,96 @@
-package com.twitter.search.ingester.pipeline.twitter;
-import com.google.common.annotations.VisibleForTesting;
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducedTypes;
-import org.apache.thrift.TDeserializer;
-import org.apache.thrift.TException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.twitter.search.common.debug.DebugEventUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.ingester.model.IngesterTweetEvent;
-import com.twitter.search.ingester.model.KafkaRawRecord;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
+package com.tw ter.search. ngester.p pel ne.tw ter;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport org.apac .commons.p pel ne.StageExcept on;
+ mport org.apac .commons.p pel ne.val dat on.Consu dTypes;
+ mport org.apac .commons.p pel ne.val dat on.ProducedTypes;
+ mport org.apac .thr ft.TDeser al zer;
+ mport org.apac .thr ft.TExcept on;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
+ mport com.tw ter.search.common.debug.DebugEventUt l;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search. ngester.model. ngesterT etEvent;
+ mport com.tw ter.search. ngester.model.KafkaRawRecord;
+ mport com.tw ter.search. ngester.p pel ne.ut l.P pel neStageRunt  Except on;
 
 /**
- * Deserializes {@link KafkaRawRecord} into IngesterTweetEvent and emits those.
+ * Deser al zes {@l nk KafkaRawRecord}  nto  ngesterT etEvent and em s those.
  */
-@ConsumedTypes(KafkaRawRecord.class)
-@ProducedTypes(IngesterTweetEvent.class)
-public class TweetEventDeserializerStage extends TwitterBaseStage
-    <KafkaRawRecord, IngesterTweetEvent> {
-  private static final Logger LOG = LoggerFactory.getLogger(TweetEventDeserializerStage.class);
+@Consu dTypes(KafkaRawRecord.class)
+@ProducedTypes( ngesterT etEvent.class)
+publ c class T etEventDeser al zerStage extends Tw terBaseStage
+    <KafkaRawRecord,  ngesterT etEvent> {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(T etEventDeser al zerStage.class);
 
-  // Limit how much the logs get polluted
-  private static final int MAX_OOM_SERIALIZED_BYTES_LOGGED = 5000;
-  private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+  // L m  how much t  logs get polluted
+  pr vate stat c f nal  nt MAX_OOM_SER AL ZED_BYTES_LOGGED = 5000;
+  pr vate stat c f nal char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
-  private final TDeserializer deserializer = new TDeserializer();
+  pr vate f nal TDeser al zer deser al zer = new TDeser al zer();
 
-  private SearchCounter outOfMemoryErrors;
-  private SearchCounter outOfMemoryErrors2;
-  private SearchCounter totalEventsCount;
-  private SearchCounter validEventsCount;
-  private SearchCounter deserializationErrorsCount;
+  pr vate SearchCounter outOf moryErrors;
+  pr vate SearchCounter outOf moryErrors2;
+  pr vate SearchCounter totalEventsCount;
+  pr vate SearchCounter val dEventsCount;
+  pr vate SearchCounter deser al zat onErrorsCount;
 
-  @Override
-  public void initStats() {
-    super.initStats();
-    innerSetupStats();
+  @Overr de
+  publ c vo d  n Stats() {
+    super. n Stats();
+     nnerSetupStats();
   }
 
-  @Override
-  protected void innerSetupStats() {
-    outOfMemoryErrors = SearchCounter.export(getStageNamePrefix() + "_out_of_memory_errors");
-    outOfMemoryErrors2 = SearchCounter.export(getStageNamePrefix() + "_out_of_memory_errors_2");
-    totalEventsCount = SearchCounter.export(getStageNamePrefix() + "_total_events_count");
-    validEventsCount = SearchCounter.export(getStageNamePrefix() + "_valid_events_count");
-    deserializationErrorsCount =
-        SearchCounter.export(getStageNamePrefix() + "_deserialization_errors_count");
+  @Overr de
+  protected vo d  nnerSetupStats() {
+    outOf moryErrors = SearchCounter.export(getStageNa Pref x() + "_out_of_ mory_errors");
+    outOf moryErrors2 = SearchCounter.export(getStageNa Pref x() + "_out_of_ mory_errors_2");
+    totalEventsCount = SearchCounter.export(getStageNa Pref x() + "_total_events_count");
+    val dEventsCount = SearchCounter.export(getStageNa Pref x() + "_val d_events_count");
+    deser al zat onErrorsCount =
+        SearchCounter.export(getStageNa Pref x() + "_deser al zat on_errors_count");
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof KafkaRawRecord)) {
-      throw new StageException(this, "Object is not a KafkaRawRecord: " + obj);
+  @Overr de
+  publ c vo d  nnerProcess(Object obj) throws StageExcept on {
+     f (!(obj  nstanceof KafkaRawRecord)) {
+      throw new StageExcept on(t , "Object  s not a KafkaRawRecord: " + obj);
     }
 
     KafkaRawRecord kafkaRecord = (KafkaRawRecord) obj;
-    IngesterTweetEvent tweetEvent = tryDeserializeRecord(kafkaRecord);
+     ngesterT etEvent t etEvent = tryDeser al zeRecord(kafkaRecord);
 
-    if (tweetEvent != null) {
-      emitAndCount(tweetEvent);
+     f (t etEvent != null) {
+      em AndCount(t etEvent);
     }
   }
 
-  @Override
-  protected IngesterTweetEvent innerRunStageV2(KafkaRawRecord kafkaRawRecord) {
-    IngesterTweetEvent ingesterTweetEvent = tryDeserializeRecord(kafkaRawRecord);
-    if (ingesterTweetEvent == null) {
-      throw new PipelineStageRuntimeException("failed to deserialize KafkaRawRecord : "
+  @Overr de
+  protected  ngesterT etEvent  nnerRunStageV2(KafkaRawRecord kafkaRawRecord) {
+     ngesterT etEvent  ngesterT etEvent = tryDeser al zeRecord(kafkaRawRecord);
+     f ( ngesterT etEvent == null) {
+      throw new P pel neStageRunt  Except on("fa led to deser al ze KafkaRawRecord : "
           + kafkaRawRecord);
     }
-    return ingesterTweetEvent;
+    return  ngesterT etEvent;
   }
 
-  private IngesterTweetEvent tryDeserializeRecord(KafkaRawRecord kafkaRecord) {
+  pr vate  ngesterT etEvent tryDeser al zeRecord(KafkaRawRecord kafkaRecord) {
     try {
-      totalEventsCount.increment();
-      IngesterTweetEvent tweetEvent = deserialize(kafkaRecord);
-      validEventsCount.increment();
-      return tweetEvent;
-    } catch (OutOfMemoryError e) {
+      totalEventsCount. ncre nt();
+       ngesterT etEvent t etEvent = deser al ze(kafkaRecord);
+      val dEventsCount. ncre nt();
+      return t etEvent;
+    } catch (OutOf moryError e) {
       try {
-        outOfMemoryErrors.increment();
+        outOf moryErrors. ncre nt();
         byte[] bytes = kafkaRecord.getData();
-        int limit = Math.min(bytes.length, MAX_OOM_SERIALIZED_BYTES_LOGGED);
-        StringBuilder sb = new StringBuilder(2 * limit + 100)
-            .append("OutOfMemoryError deserializing ").append(bytes.length).append(" bytes: ");
-        appendBytesAsHex(sb, bytes, MAX_OOM_SERIALIZED_BYTES_LOGGED);
-        LOG.error(sb.toString(), e);
-      } catch (OutOfMemoryError e2) {
-        outOfMemoryErrors2.increment();
+         nt l m  = Math.m n(bytes.length, MAX_OOM_SER AL ZED_BYTES_LOGGED);
+        Str ngBu lder sb = new Str ngBu lder(2 * l m  + 100)
+            .append("OutOf moryError deser al z ng ").append(bytes.length).append(" bytes: ");
+        appendBytesAs x(sb, bytes, MAX_OOM_SER AL ZED_BYTES_LOGGED);
+        LOG.error(sb.toStr ng(), e);
+      } catch (OutOf moryError e2) {
+        outOf moryErrors2. ncre nt();
       }
     }
 
@@ -98,38 +98,38 @@ public class TweetEventDeserializerStage extends TwitterBaseStage
 
   }
 
-  private IngesterTweetEvent deserialize(KafkaRawRecord kafkaRecord) {
+  pr vate  ngesterT etEvent deser al ze(KafkaRawRecord kafkaRecord) {
     try {
-      IngesterTweetEvent ingesterTweetEvent = new IngesterTweetEvent();
-      synchronized (this) {
-        deserializer.deserialize(ingesterTweetEvent, kafkaRecord.getData());
+       ngesterT etEvent  ngesterT etEvent = new  ngesterT etEvent();
+      synchron zed (t ) {
+        deser al zer.deser al ze( ngesterT etEvent, kafkaRecord.getData());
       }
-      // Record the created_at time and then we first saw this tweet in the ingester for tracking
-      // down the ingestion pipeline.
-      addDebugEventsToIncomingTweet(ingesterTweetEvent, kafkaRecord.getReadAtTimestampMs());
-      return ingesterTweetEvent;
-    } catch (TException e) {
-      LOG.error("Unable to deserialize TweetEventData", e);
-      deserializationErrorsCount.increment();
+      // Record t  created_at t   and t n   f rst saw t  t et  n t   ngester for track ng
+      // down t   ngest on p pel ne.
+      addDebugEventsTo ncom ngT et( ngesterT etEvent, kafkaRecord.getReadAtT  stampMs());
+      return  ngesterT etEvent;
+    } catch (TExcept on e) {
+      LOG.error("Unable to deser al ze T etEventData", e);
+      deser al zat onErrorsCount. ncre nt();
     }
     return null;
   }
 
-  private void addDebugEventsToIncomingTweet(
-      IngesterTweetEvent ingesterTweetEvent, long readAtTimestampMs) {
-    DebugEventUtil.setCreatedAtDebugEvent(
-        ingesterTweetEvent, ingesterTweetEvent.getFlags().getTimestamp_ms());
-    DebugEventUtil.setProcessingStartedAtDebugEvent(ingesterTweetEvent, readAtTimestampMs);
+  pr vate vo d addDebugEventsTo ncom ngT et(
+       ngesterT etEvent  ngesterT etEvent, long readAtT  stampMs) {
+    DebugEventUt l.setCreatedAtDebugEvent(
+         ngesterT etEvent,  ngesterT etEvent.getFlags().getT  stamp_ms());
+    DebugEventUt l.setProcess ngStartedAtDebugEvent( ngesterT etEvent, readAtT  stampMs);
 
-    // The TweetEventDeserializerStage takes in a byte[] representation of a tweet, so debug events
-    // are not automatically appended by TwitterBaseStage. We do that explicitly here.
-    DebugEventUtil.addDebugEvent(ingesterTweetEvent, getFullStageName(), clock.nowMillis());
+    // T  T etEventDeser al zerStage takes  n a byte[] representat on of a t et, so debug events
+    // are not automat cally appended by Tw terBaseStage.   do that expl c ly  re.
+    DebugEventUt l.addDebugEvent( ngesterT etEvent, getFullStageNa (), clock.nowM ll s());
   }
 
-  @VisibleForTesting
-  static void appendBytesAsHex(StringBuilder sb, byte[] bytes, int maxLength) {
-    int limit = Math.min(bytes.length, maxLength);
-    for (int j = 0; j < limit; j++) {
+  @V s bleForTest ng
+  stat c vo d appendBytesAs x(Str ngBu lder sb, byte[] bytes,  nt maxLength) {
+     nt l m  = Math.m n(bytes.length, maxLength);
+    for ( nt j = 0; j < l m ; j++) {
       sb.append(HEX_ARRAY[(bytes[j] >>> 4) & 0x0F]);
       sb.append(HEX_ARRAY[bytes[j] & 0x0F]);
     }

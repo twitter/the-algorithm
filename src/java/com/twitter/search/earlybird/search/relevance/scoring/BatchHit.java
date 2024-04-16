@@ -1,47 +1,47 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+package com.tw ter.search.earlyb rd.search.relevance.scor ng;
 
-import com.twitter.search.common.features.thrift.ThriftSearchResultFeatures;
-import com.twitter.search.earlybird.search.relevance.LinearScoringData;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
+ mport com.tw ter.search.common.features.thr ft.Thr ftSearchResultFeatures;
+ mport com.tw ter.search.earlyb rd.search.relevance.L nearScor ngData;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult tadata;
 
-public class BatchHit {
-  private final LinearScoringData scoringData;
-  private final ThriftSearchResultFeatures features;
-  private final ThriftSearchResultMetadata metadata;
-  private final long tweetID;
-  private final long timeSliceID;
+publ c class BatchH  {
+  pr vate f nal L nearScor ngData scor ngData;
+  pr vate f nal Thr ftSearchResultFeatures features;
+  pr vate f nal Thr ftSearchResult tadata  tadata;
+  pr vate f nal long t et D;
+  pr vate f nal long t  Sl ce D;
 
-  public BatchHit(
-      LinearScoringData scoringData,
-      ThriftSearchResultFeatures features,
-      ThriftSearchResultMetadata metadata,
-      long tweetID,
-      long timeSliceID
+  publ c BatchH (
+      L nearScor ngData scor ngData,
+      Thr ftSearchResultFeatures features,
+      Thr ftSearchResult tadata  tadata,
+      long t et D,
+      long t  Sl ce D
   ) {
-    this.scoringData = scoringData;
-    this.features = features;
-    this.metadata = metadata;
-    this.tweetID = tweetID;
-    this.timeSliceID = timeSliceID;
+    t .scor ngData = scor ngData;
+    t .features = features;
+    t . tadata =  tadata;
+    t .t et D = t et D;
+    t .t  Sl ce D = t  Sl ce D;
   }
 
-  public LinearScoringData getScoringData() {
-    return scoringData;
+  publ c L nearScor ngData getScor ngData() {
+    return scor ngData;
   }
 
-  public ThriftSearchResultFeatures getFeatures() {
+  publ c Thr ftSearchResultFeatures getFeatures() {
     return features;
   }
 
-  public ThriftSearchResultMetadata getMetadata() {
-    return metadata;
+  publ c Thr ftSearchResult tadata get tadata() {
+    return  tadata;
   }
 
-  public long getTweetID() {
-    return tweetID;
+  publ c long getT et D() {
+    return t et D;
   }
 
-  public long getTimeSliceID() {
-    return timeSliceID;
+  publ c long getT  Sl ce D() {
+    return t  Sl ce D;
   }
 }

@@ -1,224 +1,224 @@
-package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common
+package com.tw ter.t  l nes.data_process ng.ad_hoc.earlyb rd_rank ng.common
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.ITransform
-import com.twitter.ml.api.transform.CascadeTransform
-import com.twitter.ml.api.transform.TransformFactory
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.search.common.features.SearchResultFeature
-import com.twitter.search.common.features.ExternalTweetFeature
-import com.twitter.search.common.features.TweetFeature
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
-import com.twitter.timelines.prediction.features.request_context.RequestContextFeatures
-import com.twitter.timelines.prediction.features.time_features.TimeDataRecordFeatures
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import com.twitter.timelines.prediction.features.real_graph.RealGraphDataRecordFeatures
-import scala.collection.JavaConverters._
-import java.lang.{Boolean => JBoolean}
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ml.ap . Transform
+ mport com.tw ter.ml.ap .transform.CascadeTransform
+ mport com.tw ter.ml.ap .transform.TransformFactory
+ mport com.tw ter.ml.ap .ut l.SR chDataRecord
+ mport com.tw ter.ml.ap .constant.SharedFeatures
+ mport com.tw ter.search.common.features.SearchResultFeature
+ mport com.tw ter.search.common.features.ExternalT etFeature
+ mport com.tw ter.search.common.features.T etFeature
+ mport com.tw ter.t  l nes.pred ct on.features.recap.RecapFeatures
+ mport com.tw ter.t  l nes.pred ct on.features.request_context.RequestContextFeatures
+ mport com.tw ter.t  l nes.pred ct on.features.t  _features.T  DataRecordFeatures
+ mport com.tw ter.t  l nes.pred ct on.features.common.T  l nesSharedFeatures
+ mport com.tw ter.t  l nes.pred ct on.features.real_graph.RealGraphDataRecordFeatures
+ mport scala.collect on.JavaConverters._
+ mport java.lang.{Boolean => JBoolean}
 
-case class LabelInfo(name: String, downsampleFraction: Double, importance: Double)
+case class Label nfo(na : Str ng, downsampleFract on: Double,  mportance: Double)
 
-case class LabelInfoWithFeature(info: LabelInfo, feature: Feature[JBoolean])
+case class Label nfoW hFeature( nfo: Label nfo, feature: Feature[JBoolean])
 
-trait EarlybirdTrainingConfiguration {
+tra  Earlyb rdTra n ngConf gurat on {
 
-  protected def labels: Map[String, Feature.Binary]
+  protected def labels: Map[Str ng, Feature.B nary]
 
-  protected def weights: Map[String, Double] = Map(
-    "detail_expanded" -> 0.3,
-    "favorited" -> 1.0,
-    "open_linked" -> 0.1,
+  protected def   ghts: Map[Str ng, Double] = Map(
+    "deta l_expanded" -> 0.3,
+    "favor ed" -> 1.0,
+    "open_l nked" -> 0.1,
     "photo_expanded" -> 0.03,
-    "profile_clicked" -> 1.0,
-    "replied" -> 9.0,
-    "retweeted" -> 1.0,
-    "video_playback50" -> 0.01
+    "prof le_cl cked" -> 1.0,
+    "repl ed" -> 9.0,
+    "ret eted" -> 1.0,
+    "v deo_playback50" -> 0.01
   )
 
-  // we basically should not downsample any of the precious positive data.
-  // importance are currently set to match the full model's weights.
-  protected def PositiveSamplingRate: Double = 1.0
-  private def NegativeSamplingRate: Double = PositiveSamplingRate * 0.08
+  //   bas cally should not downsample any of t  prec ous pos  ve data.
+  //  mportance are currently set to match t  full model's   ghts.
+  protected def Pos  veSampl ngRate: Double = 1.0
+  pr vate def Negat veSampl ngRate: Double = Pos  veSampl ngRate * 0.08
 
-  // we basically should not downsample any of the precious positive data.
-  // importance are currently set to match the full model's weights.
-  final lazy val LabelInfos: List[LabelInfoWithFeature] = {
-    assert(labels.keySet == weights.keySet)
-    labels.keySet.map(makeLabelInfoWithFeature).toList
+  //   bas cally should not downsample any of t  prec ous pos  ve data.
+  //  mportance are currently set to match t  full model's   ghts.
+  f nal lazy val Label nfos: L st[Label nfoW hFeature] = {
+    assert(labels.keySet ==   ghts.keySet)
+    labels.keySet.map(makeLabel nfoW hFeature).toL st
   }
 
-  def makeLabelInfoWithFeature(labelName: String): LabelInfoWithFeature = {
-    LabelInfoWithFeature(
-      LabelInfo(labelName, PositiveSamplingRate, weights(labelName)),
-      labels(labelName))
+  def makeLabel nfoW hFeature(labelNa : Str ng): Label nfoW hFeature = {
+    Label nfoW hFeature(
+      Label nfo(labelNa , Pos  veSampl ngRate,   ghts(labelNa )),
+      labels(labelNa ))
   }
 
-  final lazy val NegativeInfo: LabelInfo = LabelInfo("negative", NegativeSamplingRate, 1.0)
+  f nal lazy val Negat ve nfo: Label nfo = Label nfo("negat ve", Negat veSampl ngRate, 1.0)
 
-  // example of features available in schema based namespace:
+  // example of features ava lable  n sc ma based na space:
   protected def featureToSearchResultFeatureMap: Map[Feature[_], SearchResultFeature] = Map(
-    RecapFeatures.TEXT_SCORE -> TweetFeature.TEXT_SCORE,
-    RecapFeatures.REPLY_COUNT -> TweetFeature.REPLY_COUNT,
-    RecapFeatures.RETWEET_COUNT -> TweetFeature.RETWEET_COUNT,
-    RecapFeatures.FAV_COUNT -> TweetFeature.FAVORITE_COUNT,
-    RecapFeatures.HAS_CARD -> TweetFeature.HAS_CARD_FLAG,
-    RecapFeatures.HAS_CONSUMER_VIDEO -> TweetFeature.HAS_CONSUMER_VIDEO_FLAG,
-    RecapFeatures.HAS_PRO_VIDEO -> TweetFeature.HAS_PRO_VIDEO_FLAG,
-    // no corresponding HAS_NATIVE_VIDEO feature in TweetFeature
-    RecapFeatures.HAS_VINE -> TweetFeature.HAS_VINE_FLAG,
-    RecapFeatures.HAS_PERISCOPE -> TweetFeature.HAS_PERISCOPE_FLAG,
-    RecapFeatures.HAS_NATIVE_IMAGE -> TweetFeature.HAS_NATIVE_IMAGE_FLAG,
-    RecapFeatures.HAS_IMAGE -> TweetFeature.HAS_IMAGE_URL_FLAG,
-    RecapFeatures.HAS_NEWS -> TweetFeature.HAS_NEWS_URL_FLAG,
-    RecapFeatures.HAS_VIDEO -> TweetFeature.HAS_VIDEO_URL_FLAG,
-    RecapFeatures.HAS_TREND -> TweetFeature.HAS_TREND_FLAG,
-    RecapFeatures.HAS_MULTIPLE_HASHTAGS_OR_TRENDS -> TweetFeature.HAS_MULTIPLE_HASHTAGS_OR_TRENDS_FLAG,
-    RecapFeatures.IS_OFFENSIVE -> TweetFeature.IS_OFFENSIVE_FLAG,
-    RecapFeatures.IS_REPLY -> TweetFeature.IS_REPLY_FLAG,
-    RecapFeatures.IS_RETWEET -> TweetFeature.IS_RETWEET_FLAG,
-    RecapFeatures.IS_AUTHOR_BOT -> TweetFeature.IS_USER_BOT_FLAG,
-    RecapFeatures.FROM_VERIFIED_ACCOUNT -> TweetFeature.FROM_VERIFIED_ACCOUNT_FLAG,
-    RecapFeatures.USER_REP -> TweetFeature.USER_REPUTATION,
-    RecapFeatures.EMBEDS_IMPRESSION_COUNT -> TweetFeature.EMBEDS_IMPRESSION_COUNT,
-    RecapFeatures.EMBEDS_URL_COUNT -> TweetFeature.EMBEDS_URL_COUNT,
-    // RecapFeatures.VIDEO_VIEW_COUNT deprecated
-    RecapFeatures.FAV_COUNT_V2 -> TweetFeature.FAVORITE_COUNT_V2,
-    RecapFeatures.RETWEET_COUNT_V2 -> TweetFeature.RETWEET_COUNT_V2,
-    RecapFeatures.REPLY_COUNT_V2 -> TweetFeature.REPLY_COUNT_V2,
-    RecapFeatures.IS_SENSITIVE -> TweetFeature.IS_SENSITIVE_CONTENT,
-    RecapFeatures.HAS_MULTIPLE_MEDIA -> TweetFeature.HAS_MULTIPLE_MEDIA_FLAG,
-    RecapFeatures.IS_AUTHOR_PROFILE_EGG -> TweetFeature.PROFILE_IS_EGG_FLAG,
-    RecapFeatures.IS_AUTHOR_NEW -> TweetFeature.IS_USER_NEW_FLAG,
-    RecapFeatures.NUM_MENTIONS -> TweetFeature.NUM_MENTIONS,
-    RecapFeatures.NUM_HASHTAGS -> TweetFeature.NUM_HASHTAGS,
-    RecapFeatures.HAS_VISIBLE_LINK -> TweetFeature.HAS_VISIBLE_LINK_FLAG,
-    RecapFeatures.HAS_LINK -> TweetFeature.HAS_LINK_FLAG,
-    //note: DISCRETE features are not supported by the modelInterpreter tool.
-    // for the following features, we will create separate CONTINUOUS features instead of renaming
-    //RecapFeatures.LINK_LANGUAGE
+    RecapFeatures.TEXT_SCORE -> T etFeature.TEXT_SCORE,
+    RecapFeatures.REPLY_COUNT -> T etFeature.REPLY_COUNT,
+    RecapFeatures.RETWEET_COUNT -> T etFeature.RETWEET_COUNT,
+    RecapFeatures.FAV_COUNT -> T etFeature.FAVOR TE_COUNT,
+    RecapFeatures.HAS_CARD -> T etFeature.HAS_CARD_FLAG,
+    RecapFeatures.HAS_CONSUMER_V DEO -> T etFeature.HAS_CONSUMER_V DEO_FLAG,
+    RecapFeatures.HAS_PRO_V DEO -> T etFeature.HAS_PRO_V DEO_FLAG,
+    // no correspond ng HAS_NAT VE_V DEO feature  n T etFeature
+    RecapFeatures.HAS_V NE -> T etFeature.HAS_V NE_FLAG,
+    RecapFeatures.HAS_PER SCOPE -> T etFeature.HAS_PER SCOPE_FLAG,
+    RecapFeatures.HAS_NAT VE_ MAGE -> T etFeature.HAS_NAT VE_ MAGE_FLAG,
+    RecapFeatures.HAS_ MAGE -> T etFeature.HAS_ MAGE_URL_FLAG,
+    RecapFeatures.HAS_NEWS -> T etFeature.HAS_NEWS_URL_FLAG,
+    RecapFeatures.HAS_V DEO -> T etFeature.HAS_V DEO_URL_FLAG,
+    RecapFeatures.HAS_TREND -> T etFeature.HAS_TREND_FLAG,
+    RecapFeatures.HAS_MULT PLE_HASHTAGS_OR_TRENDS -> T etFeature.HAS_MULT PLE_HASHTAGS_OR_TRENDS_FLAG,
+    RecapFeatures. S_OFFENS VE -> T etFeature. S_OFFENS VE_FLAG,
+    RecapFeatures. S_REPLY -> T etFeature. S_REPLY_FLAG,
+    RecapFeatures. S_RETWEET -> T etFeature. S_RETWEET_FLAG,
+    RecapFeatures. S_AUTHOR_BOT -> T etFeature. S_USER_BOT_FLAG,
+    RecapFeatures.FROM_VER F ED_ACCOUNT -> T etFeature.FROM_VER F ED_ACCOUNT_FLAG,
+    RecapFeatures.USER_REP -> T etFeature.USER_REPUTAT ON,
+    RecapFeatures.EMBEDS_ MPRESS ON_COUNT -> T etFeature.EMBEDS_ MPRESS ON_COUNT,
+    RecapFeatures.EMBEDS_URL_COUNT -> T etFeature.EMBEDS_URL_COUNT,
+    // RecapFeatures.V DEO_V EW_COUNT deprecated
+    RecapFeatures.FAV_COUNT_V2 -> T etFeature.FAVOR TE_COUNT_V2,
+    RecapFeatures.RETWEET_COUNT_V2 -> T etFeature.RETWEET_COUNT_V2,
+    RecapFeatures.REPLY_COUNT_V2 -> T etFeature.REPLY_COUNT_V2,
+    RecapFeatures. S_SENS T VE -> T etFeature. S_SENS T VE_CONTENT,
+    RecapFeatures.HAS_MULT PLE_MED A -> T etFeature.HAS_MULT PLE_MED A_FLAG,
+    RecapFeatures. S_AUTHOR_PROF LE_EGG -> T etFeature.PROF LE_ S_EGG_FLAG,
+    RecapFeatures. S_AUTHOR_NEW -> T etFeature. S_USER_NEW_FLAG,
+    RecapFeatures.NUM_MENT ONS -> T etFeature.NUM_MENT ONS,
+    RecapFeatures.NUM_HASHTAGS -> T etFeature.NUM_HASHTAGS,
+    RecapFeatures.HAS_V S BLE_L NK -> T etFeature.HAS_V S BLE_L NK_FLAG,
+    RecapFeatures.HAS_L NK -> T etFeature.HAS_L NK_FLAG,
+    //note: D SCRETE features are not supported by t  model nterpreter tool.
+    // for t  follow ng features,   w ll create separate CONT NUOUS features  nstead of renam ng
+    //RecapFeatures.L NK_LANGUAGE
     //RecapFeatures.LANGUAGE
-    TimelinesSharedFeatures.HAS_QUOTE -> TweetFeature.HAS_QUOTE_FLAG,
-    TimelinesSharedFeatures.QUOTE_COUNT -> TweetFeature.QUOTE_COUNT,
-    TimelinesSharedFeatures.WEIGHTED_FAV_COUNT -> TweetFeature.WEIGHTED_FAVORITE_COUNT,
-    TimelinesSharedFeatures.WEIGHTED_QUOTE_COUNT -> TweetFeature.WEIGHTED_QUOTE_COUNT,
-    TimelinesSharedFeatures.WEIGHTED_REPLY_COUNT -> TweetFeature.WEIGHTED_REPLY_COUNT,
-    TimelinesSharedFeatures.WEIGHTED_RETWEET_COUNT -> TweetFeature.WEIGHTED_RETWEET_COUNT,
-    TimelinesSharedFeatures.DECAYED_FAVORITE_COUNT -> TweetFeature.DECAYED_FAVORITE_COUNT,
-    TimelinesSharedFeatures.DECAYED_RETWEET_COUNT -> TweetFeature.DECAYED_RETWEET_COUNT,
-    TimelinesSharedFeatures.DECAYED_REPLY_COUNT -> TweetFeature.DECAYED_RETWEET_COUNT,
-    TimelinesSharedFeatures.DECAYED_QUOTE_COUNT -> TweetFeature.DECAYED_QUOTE_COUNT,
-    TimelinesSharedFeatures.FAKE_FAVORITE_COUNT -> TweetFeature.FAKE_FAVORITE_COUNT,
-    TimelinesSharedFeatures.FAKE_RETWEET_COUNT -> TweetFeature.FAKE_RETWEET_COUNT,
-    TimelinesSharedFeatures.FAKE_REPLY_COUNT -> TweetFeature.FAKE_REPLY_COUNT,
-    TimelinesSharedFeatures.FAKE_QUOTE_COUNT -> TweetFeature.FAKE_QUOTE_COUNT,
-    TimelinesSharedFeatures.EMBEDS_IMPRESSION_COUNT_V2 -> TweetFeature.EMBEDS_IMPRESSION_COUNT_V2,
-    TimelinesSharedFeatures.EMBEDS_URL_COUNT_V2 -> TweetFeature.EMBEDS_URL_COUNT_V2,
-    TimelinesSharedFeatures.LABEL_ABUSIVE_FLAG -> TweetFeature.LABEL_ABUSIVE_FLAG,
-    TimelinesSharedFeatures.LABEL_ABUSIVE_HI_RCL_FLAG -> TweetFeature.LABEL_ABUSIVE_HI_RCL_FLAG,
-    TimelinesSharedFeatures.LABEL_DUP_CONTENT_FLAG -> TweetFeature.LABEL_DUP_CONTENT_FLAG,
-    TimelinesSharedFeatures.LABEL_NSFW_HI_PRC_FLAG -> TweetFeature.LABEL_NSFW_HI_PRC_FLAG,
-    TimelinesSharedFeatures.LABEL_NSFW_HI_RCL_FLAG -> TweetFeature.LABEL_NSFW_HI_RCL_FLAG,
-    TimelinesSharedFeatures.LABEL_SPAM_FLAG -> TweetFeature.LABEL_SPAM_FLAG,
-    TimelinesSharedFeatures.LABEL_SPAM_HI_RCL_FLAG -> TweetFeature.LABEL_SPAM_HI_RCL_FLAG
+    T  l nesSharedFeatures.HAS_QUOTE -> T etFeature.HAS_QUOTE_FLAG,
+    T  l nesSharedFeatures.QUOTE_COUNT -> T etFeature.QUOTE_COUNT,
+    T  l nesSharedFeatures.WE GHTED_FAV_COUNT -> T etFeature.WE GHTED_FAVOR TE_COUNT,
+    T  l nesSharedFeatures.WE GHTED_QUOTE_COUNT -> T etFeature.WE GHTED_QUOTE_COUNT,
+    T  l nesSharedFeatures.WE GHTED_REPLY_COUNT -> T etFeature.WE GHTED_REPLY_COUNT,
+    T  l nesSharedFeatures.WE GHTED_RETWEET_COUNT -> T etFeature.WE GHTED_RETWEET_COUNT,
+    T  l nesSharedFeatures.DECAYED_FAVOR TE_COUNT -> T etFeature.DECAYED_FAVOR TE_COUNT,
+    T  l nesSharedFeatures.DECAYED_RETWEET_COUNT -> T etFeature.DECAYED_RETWEET_COUNT,
+    T  l nesSharedFeatures.DECAYED_REPLY_COUNT -> T etFeature.DECAYED_RETWEET_COUNT,
+    T  l nesSharedFeatures.DECAYED_QUOTE_COUNT -> T etFeature.DECAYED_QUOTE_COUNT,
+    T  l nesSharedFeatures.FAKE_FAVOR TE_COUNT -> T etFeature.FAKE_FAVOR TE_COUNT,
+    T  l nesSharedFeatures.FAKE_RETWEET_COUNT -> T etFeature.FAKE_RETWEET_COUNT,
+    T  l nesSharedFeatures.FAKE_REPLY_COUNT -> T etFeature.FAKE_REPLY_COUNT,
+    T  l nesSharedFeatures.FAKE_QUOTE_COUNT -> T etFeature.FAKE_QUOTE_COUNT,
+    T  l nesSharedFeatures.EMBEDS_ MPRESS ON_COUNT_V2 -> T etFeature.EMBEDS_ MPRESS ON_COUNT_V2,
+    T  l nesSharedFeatures.EMBEDS_URL_COUNT_V2 -> T etFeature.EMBEDS_URL_COUNT_V2,
+    T  l nesSharedFeatures.LABEL_ABUS VE_FLAG -> T etFeature.LABEL_ABUS VE_FLAG,
+    T  l nesSharedFeatures.LABEL_ABUS VE_H _RCL_FLAG -> T etFeature.LABEL_ABUS VE_H _RCL_FLAG,
+    T  l nesSharedFeatures.LABEL_DUP_CONTENT_FLAG -> T etFeature.LABEL_DUP_CONTENT_FLAG,
+    T  l nesSharedFeatures.LABEL_NSFW_H _PRC_FLAG -> T etFeature.LABEL_NSFW_H _PRC_FLAG,
+    T  l nesSharedFeatures.LABEL_NSFW_H _RCL_FLAG -> T etFeature.LABEL_NSFW_H _RCL_FLAG,
+    T  l nesSharedFeatures.LABEL_SPAM_FLAG -> T etFeature.LABEL_SPAM_FLAG,
+    T  l nesSharedFeatures.LABEL_SPAM_H _RCL_FLAG -> T etFeature.LABEL_SPAM_H _RCL_FLAG
   )
 
-  protected def derivedFeaturesAdder: ITransform =
-    new ITransform {
-      private val hasEnglishTweetDiffUiLangFeature =
-        featureInstanceFromSearchResultFeature(ExternalTweetFeature.HAS_ENGLISH_TWEET_DIFF_UI_LANG)
-          .asInstanceOf[Feature.Binary]
-      private val hasEnglishUiDiffTweetLangFeature =
-        featureInstanceFromSearchResultFeature(ExternalTweetFeature.HAS_ENGLISH_UI_DIFF_TWEET_LANG)
-          .asInstanceOf[Feature.Binary]
-      private val hasDiffLangFeature =
-        featureInstanceFromSearchResultFeature(ExternalTweetFeature.HAS_DIFF_LANG)
-          .asInstanceOf[Feature.Binary]
-      private val isSelfTweetFeature =
-        featureInstanceFromSearchResultFeature(ExternalTweetFeature.IS_SELF_TWEET)
-          .asInstanceOf[Feature.Binary]
-      private val tweetAgeInSecsFeature =
-        featureInstanceFromSearchResultFeature(ExternalTweetFeature.TWEET_AGE_IN_SECS)
-          .asInstanceOf[Feature.Continuous]
-      private val authorSpecificScoreFeature =
-        featureInstanceFromSearchResultFeature(ExternalTweetFeature.AUTHOR_SPECIFIC_SCORE)
-          .asInstanceOf[Feature.Continuous]
+  protected def der vedFeaturesAdder:  Transform =
+    new  Transform {
+      pr vate val hasEngl shT etD ffU LangFeature =
+        feature nstanceFromSearchResultFeature(ExternalT etFeature.HAS_ENGL SH_TWEET_D FF_U _LANG)
+          .as nstanceOf[Feature.B nary]
+      pr vate val hasEngl shU D ffT etLangFeature =
+        feature nstanceFromSearchResultFeature(ExternalT etFeature.HAS_ENGL SH_U _D FF_TWEET_LANG)
+          .as nstanceOf[Feature.B nary]
+      pr vate val hasD ffLangFeature =
+        feature nstanceFromSearchResultFeature(ExternalT etFeature.HAS_D FF_LANG)
+          .as nstanceOf[Feature.B nary]
+      pr vate val  sSelfT etFeature =
+        feature nstanceFromSearchResultFeature(ExternalT etFeature. S_SELF_TWEET)
+          .as nstanceOf[Feature.B nary]
+      pr vate val t etAge nSecsFeature =
+        feature nstanceFromSearchResultFeature(ExternalT etFeature.TWEET_AGE_ N_SECS)
+          .as nstanceOf[Feature.Cont nuous]
+      pr vate val authorSpec f cScoreFeature =
+        feature nstanceFromSearchResultFeature(ExternalT etFeature.AUTHOR_SPEC F C_SCORE)
+          .as nstanceOf[Feature.Cont nuous]
 
-      // see comments above
-      private val linkLanguageFeature = new Feature.Continuous(TweetFeature.LINK_LANGUAGE.getName)
-      private val languageFeature = new Feature.Continuous(TweetFeature.LANGUAGE.getName)
+      // see com nts above
+      pr vate val l nkLanguageFeature = new Feature.Cont nuous(T etFeature.L NK_LANGUAGE.getNa )
+      pr vate val languageFeature = new Feature.Cont nuous(T etFeature.LANGUAGE.getNa )
 
-      override def transformContext(featureContext: FeatureContext): FeatureContext =
+      overr de def transformContext(featureContext: FeatureContext): FeatureContext =
         featureContext.addFeatures(
-          authorSpecificScoreFeature,
-          // used when training against the full scoreEarlybirdModelEvaluationJob.scala
-          // TimelinesSharedFeatures.PREDICTED_SCORE_LOG,
-          hasEnglishTweetDiffUiLangFeature,
-          hasEnglishUiDiffTweetLangFeature,
-          hasDiffLangFeature,
-          isSelfTweetFeature,
-          tweetAgeInSecsFeature,
-          linkLanguageFeature,
+          authorSpec f cScoreFeature,
+          // used w n tra n ng aga nst t  full scoreEarlyb rdModelEvaluat onJob.scala
+          // T  l nesSharedFeatures.PRED CTED_SCORE_LOG,
+          hasEngl shT etD ffU LangFeature,
+          hasEngl shU D ffT etLangFeature,
+          hasD ffLangFeature,
+           sSelfT etFeature,
+          t etAge nSecsFeature,
+          l nkLanguageFeature,
           languageFeature
         )
 
-      override def transform(record: DataRecord): Unit = {
-        val srecord = SRichDataRecord(record)
+      overr de def transform(record: DataRecord): Un  = {
+        val srecord = SR chDataRecord(record)
 
-        srecord.getFeatureValueOpt(RealGraphDataRecordFeatures.WEIGHT).map { realgraphWeight =>
-          srecord.setFeatureValue(authorSpecificScoreFeature, realgraphWeight)
+        srecord.getFeatureValueOpt(RealGraphDataRecordFeatures.WE GHT).map { realgraph  ght =>
+          srecord.setFeatureValue(authorSpec f cScoreFeature, realgraph  ght)
         }
 
-        // use this when training against the log of the full score
-        // srecord.getFeatureValueOpt(TimelinesSharedFeatures.PREDICTED_SCORE).map { score =>
-        //   if (score > 0.0) {
-        //     srecord.setFeatureValue(TimelinesSharedFeatures.PREDICTED_SCORE_LOG, Math.log(score))
+        // use t  w n tra n ng aga nst t  log of t  full score
+        // srecord.getFeatureValueOpt(T  l nesSharedFeatures.PRED CTED_SCORE).map { score =>
+        //    f (score > 0.0) {
+        //     srecord.setFeatureValue(T  l nesSharedFeatures.PRED CTED_SCORE_LOG, Math.log(score))
         //   }
         // }
 
-        if (srecord.hasFeature(RequestContextFeatures.LANGUAGE_CODE) && srecord.hasFeature(
+         f (srecord.hasFeature(RequestContextFeatures.LANGUAGE_CODE) && srecord.hasFeature(
             RecapFeatures.LANGUAGE)) {
-          val uilangIsEnglish = srecord
-            .getFeatureValue(RequestContextFeatures.LANGUAGE_CODE).toString == "en"
-          val tweetIsEnglish = srecord.getFeatureValue(RecapFeatures.LANGUAGE) == 5
+          val u lang sEngl sh = srecord
+            .getFeatureValue(RequestContextFeatures.LANGUAGE_CODE).toStr ng == "en"
+          val t et sEngl sh = srecord.getFeatureValue(RecapFeatures.LANGUAGE) == 5
           srecord.setFeatureValue(
-            hasEnglishTweetDiffUiLangFeature,
-            tweetIsEnglish && !uilangIsEnglish
+            hasEngl shT etD ffU LangFeature,
+            t et sEngl sh && !u lang sEngl sh
           )
           srecord.setFeatureValue(
-            hasEnglishUiDiffTweetLangFeature,
-            uilangIsEnglish && !tweetIsEnglish
+            hasEngl shU D ffT etLangFeature,
+            u lang sEngl sh && !t et sEngl sh
           )
         }
-        srecord.getFeatureValueOpt(RecapFeatures.MATCH_UI_LANG).map { match_ui_lang =>
+        srecord.getFeatureValueOpt(RecapFeatures.MATCH_U _LANG).map { match_u _lang =>
           srecord.setFeatureValue(
-            hasDiffLangFeature,
-            !match_ui_lang
+            hasD ffLangFeature,
+            !match_u _lang
           )
         }
 
         for {
-          author_id <- srecord.getFeatureValueOpt(SharedFeatures.AUTHOR_ID)
-          user_id <- srecord.getFeatureValueOpt(SharedFeatures.USER_ID)
+          author_ d <- srecord.getFeatureValueOpt(SharedFeatures.AUTHOR_ D)
+          user_ d <- srecord.getFeatureValueOpt(SharedFeatures.USER_ D)
         } srecord.setFeatureValue(
-          isSelfTweetFeature,
-          author_id == user_id
+           sSelfT etFeature,
+          author_ d == user_ d
         )
 
-        srecord.getFeatureValueOpt(TimeDataRecordFeatures.TIME_SINCE_TWEET_CREATION).map {
-          time_since_tweet_creation =>
+        srecord.getFeatureValueOpt(T  DataRecordFeatures.T ME_S NCE_TWEET_CREAT ON).map {
+          t  _s nce_t et_creat on =>
             srecord.setFeatureValue(
-              tweetAgeInSecsFeature,
-              time_since_tweet_creation / 1000.0
+              t etAge nSecsFeature,
+              t  _s nce_t et_creat on / 1000.0
             )
         }
 
-        srecord.getFeatureValueOpt(RecapFeatures.LINK_LANGUAGE).map { link_language =>
+        srecord.getFeatureValueOpt(RecapFeatures.L NK_LANGUAGE).map { l nk_language =>
           srecord.setFeatureValue(
-            linkLanguageFeature,
-            link_language.toDouble
+            l nkLanguageFeature,
+            l nk_language.toDouble
           )
         }
         srecord.getFeatureValueOpt(RecapFeatures.LANGUAGE).map { language =>
@@ -230,39 +230,39 @@ trait EarlybirdTrainingConfiguration {
       }
     }
 
-  protected def featureInstanceFromSearchResultFeature(
-    tweetFeature: SearchResultFeature
+  protected def feature nstanceFromSearchResultFeature(
+    t etFeature: SearchResultFeature
   ): Feature[_] = {
-    val featureType = tweetFeature.getType
-    val featureName = tweetFeature.getName
+    val featureType = t etFeature.getType
+    val featureNa  = t etFeature.getNa 
 
-    require(
-      !tweetFeature.isDiscrete && (
-        featureType == com.twitter.search.common.features.thrift.ThriftSearchFeatureType.BOOLEAN_VALUE ||
-          featureType == com.twitter.search.common.features.thrift.ThriftSearchFeatureType.DOUBLE_VALUE ||
-          featureType == com.twitter.search.common.features.thrift.ThriftSearchFeatureType.INT32_VALUE
+    requ re(
+      !t etFeature. sD screte && (
+        featureType == com.tw ter.search.common.features.thr ft.Thr ftSearchFeatureType.BOOLEAN_VALUE ||
+          featureType == com.tw ter.search.common.features.thr ft.Thr ftSearchFeatureType.DOUBLE_VALUE ||
+          featureType == com.tw ter.search.common.features.thr ft.Thr ftSearchFeatureType. NT32_VALUE
       )
     )
 
-    if (featureType == com.twitter.search.common.features.thrift.ThriftSearchFeatureType.BOOLEAN_VALUE)
-      new Feature.Binary(featureName)
+     f (featureType == com.tw ter.search.common.features.thr ft.Thr ftSearchFeatureType.BOOLEAN_VALUE)
+      new Feature.B nary(featureNa )
     else
-      new Feature.Continuous(featureName)
+      new Feature.Cont nuous(featureNa )
   }
 
-  lazy val EarlybirdFeatureRenamer: ITransform = {
-    val earlybirdFeatureRenameMap: Map[Feature[_], Feature[_]] =
+  lazy val Earlyb rdFeatureRena r:  Transform = {
+    val earlyb rdFeatureRena Map: Map[Feature[_], Feature[_]] =
       featureToSearchResultFeatureMap.map {
-        case (originalFeature, tweetFeature) =>
-          originalFeature -> featureInstanceFromSearchResultFeature(tweetFeature)
+        case (or g nalFeature, t etFeature) =>
+          or g nalFeature -> feature nstanceFromSearchResultFeature(t etFeature)
       }.toMap
 
     new CascadeTransform(
-      List(
-        derivedFeaturesAdder,
+      L st(
+        der vedFeaturesAdder,
         TransformFactory.produceTransform(
-          TransformFactory.produceFeatureRenameTransformSpec(
-            earlybirdFeatureRenameMap.asJava
+          TransformFactory.produceFeatureRena TransformSpec(
+            earlyb rdFeatureRena Map.asJava
           )
         )
       ).asJava

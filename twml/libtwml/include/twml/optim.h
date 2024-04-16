@@ -1,51 +1,51 @@
 #pragma once
-#include <twml/defines.h>
-#include <twml/Tensor.h>
+# nclude <twml/def nes.h>
+# nclude <twml/Tensor.h>
 
-#ifdef __cplusplus
-namespace twml {
-    TWMLAPI void linearInterpolation(
+# fdef __cplusplus
+na space twml {
+    TWMLAP  vo d l near nterpolat on(
         Tensor output,
-        const Tensor input,
+        const Tensor  nput,
         const Tensor xs,
         const Tensor ys);
 
-    TWMLAPI void nearestInterpolation(
+    TWMLAP  vo d nearest nterpolat on(
         Tensor output,
-        const Tensor input,
+        const Tensor  nput,
         const Tensor xs,
         const Tensor ys);
 
-    TWMLAPI void mdlInfer(
+    TWMLAP  vo d mdl nfer(
         Tensor &output_keys,
         Tensor &output_vals,
-        const Tensor &input_keys,
-        const Tensor &input_vals,
-        const Tensor &bin_ids,
-        const Tensor &bin_vals,
+        const Tensor & nput_keys,
+        const Tensor & nput_vals,
+        const Tensor &b n_ ds,
+        const Tensor &b n_vals,
         const Tensor &feature_offsets,
-        bool return_bin_indices = false);
+        bool return_b n_ nd ces = false);
 }
-#endif
+#end f
 
-#ifdef __cplusplus
+# fdef __cplusplus
 extern "C" {
-#endif
-    TWMLAPI twml_err twml_optim_nearest_interpolation(
+#end f
+    TWMLAP  twml_err twml_opt m_nearest_ nterpolat on(
         twml_tensor output,
-        const twml_tensor input,
+        const twml_tensor  nput,
         const twml_tensor xs,
         const twml_tensor ys);
 
-    TWMLAPI twml_err twml_optim_mdl_infer(
+    TWMLAP  twml_err twml_opt m_mdl_ nfer(
         twml_tensor output_keys,
         twml_tensor output_vals,
-        const twml_tensor input_keys,
-        const twml_tensor input_vals,
-        const twml_tensor bin_ids,
-        const twml_tensor bin_vals,
+        const twml_tensor  nput_keys,
+        const twml_tensor  nput_vals,
+        const twml_tensor b n_ ds,
+        const twml_tensor b n_vals,
         const twml_tensor feature_offsets,
-        const bool return_bin_indices = false);
-#ifdef __cplusplus
+        const bool return_b n_ nd ces = false);
+# fdef __cplusplus
 }
-#endif
+#end f

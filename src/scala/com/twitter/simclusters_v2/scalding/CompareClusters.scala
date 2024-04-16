@@ -1,131 +1,131 @@
-package com.twitter.simclusters_v2.scalding
+package com.tw ter.s mclusters_v2.scald ng
 
-import com.twitter.scalding.{DateOps, DateParser, Execution, Stat, TypedPipe, TypedTsv, UniqueID}
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.simclusters_v2.common.{ClusterId, UserId}
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.common.Util.Distribution
+ mport com.tw ter.scald ng.{DateOps, DateParser, Execut on, Stat, TypedP pe, TypedTsv, Un que D}
+ mport com.tw ter.scald ng_ nternal.job.Tw terExecut onApp
+ mport com.tw ter.s mclusters_v2.common.{Cluster d, User d}
+ mport com.tw ter.s mclusters_v2.scald ng.common.Ut l
+ mport com.tw ter.s mclusters_v2.scald ng.common.Ut l.D str but on
 
 object CompareClusters {
-  def norm(a: Iterable[Float]): Float = {
+  def norm(a:  erable[Float]): Float = {
     math
       .sqrt(a.map { x => x * x }.sum).toFloat
   }
 
-  def cosine(a: Map[Long, Float], b: Map[Long, Float]): Float = {
-    val intersect = a.toList.collect {
-      case (id, score) if b.contains(id) =>
-        score * b(id)
+  def cos ne(a: Map[Long, Float], b: Map[Long, Float]): Float = {
+    val  ntersect = a.toL st.collect {
+      case ( d, score)  f b.conta ns( d) =>
+        score * b( d)
     }
-    val dot = if (intersect.nonEmpty) intersect.sum else 0
+    val dot =  f ( ntersect.nonEmpty)  ntersect.sum else 0
     val aNorm = norm(a.values)
     val bNorm = norm(b.values)
-    if (aNorm > 0 && bNorm > 0) {
+     f (aNorm > 0 && bNorm > 0) {
       dot / aNorm / bNorm
     } else 0
   }
 
   /**
-   * Compare two known-for data set, and generate change in cluster assignment stats
+   * Compare two known-for data set, and generate change  n cluster ass gn nt stats
    */
-  def compareClusterAssignments(
-    newKnownFor: TypedPipe[(UserId, List[(ClusterId, Float)])],
-    oldKnownFor: TypedPipe[(UserId, List[(ClusterId, Float)])]
+  def compareClusterAss gn nts(
+    newKnownFor: TypedP pe[(User d, L st[(Cluster d, Float)])],
+    oldKnownFor: TypedP pe[(User d, L st[(Cluster d, Float)])]
   )(
-    implicit uniqueID: UniqueID
-  ): Execution[String] = {
+     mpl c  un que D: Un que D
+  ): Execut on[Str ng] = {
 
-    val emptyToSomething = Stat("no_assignment_to_some")
-    val somethingToEmpty = Stat("some_assignment_to_none")
+    val emptyToSo th ng = Stat("no_ass gn nt_to_so ")
+    val so th ngToEmpty = Stat("so _ass gn nt_to_none")
     val emptyToEmpty = Stat("empty_to_empty")
-    val sameCluster = Stat("same_cluster")
-    val diffCluster = Stat("diff_cluster")
+    val sa Cluster = Stat("sa _cluster")
+    val d ffCluster = Stat("d ff_cluster")
 
     val calculateStatExec = newKnownFor
-      .outerJoin(oldKnownFor)
+      .outerJo n(oldKnownFor)
       .map {
-        case (userId, (newKnownForListOpt, oldKnownForListOpt)) =>
-          val newKnownFor = newKnownForListOpt.getOrElse(Nil)
-          val oldKnownFor = oldKnownForListOpt.getOrElse(Nil)
+        case (user d, (newKnownForL stOpt, oldKnownForL stOpt)) =>
+          val newKnownFor = newKnownForL stOpt.getOrElse(N l)
+          val oldKnownFor = oldKnownForL stOpt.getOrElse(N l)
 
-          if (newKnownFor.nonEmpty && oldKnownFor.isEmpty) {
-            emptyToSomething.inc()
+           f (newKnownFor.nonEmpty && oldKnownFor. sEmpty) {
+            emptyToSo th ng. nc()
           }
-          if (newKnownFor.isEmpty && oldKnownFor.nonEmpty) {
-            somethingToEmpty.inc()
+           f (newKnownFor. sEmpty && oldKnownFor.nonEmpty) {
+            so th ngToEmpty. nc()
           }
-          if (newKnownFor.isEmpty && oldKnownFor.isEmpty) {
-            emptyToEmpty.inc()
+           f (newKnownFor. sEmpty && oldKnownFor. sEmpty) {
+            emptyToEmpty. nc()
           }
 
-          if (newKnownFor.nonEmpty && oldKnownFor.nonEmpty) {
-            val newClusterId = newKnownFor.head._1
-            val oldClusterId = oldKnownFor.head._1
+           f (newKnownFor.nonEmpty && oldKnownFor.nonEmpty) {
+            val newCluster d = newKnownFor. ad._1
+            val oldCluster d = oldKnownFor. ad._1
 
-            if (newClusterId == oldClusterId) {
-              sameCluster.inc()
+             f (newCluster d == oldCluster d) {
+              sa Cluster. nc()
             } else {
-              diffCluster.inc()
+              d ffCluster. nc()
             }
           }
-          userId
+          user d
       }
-      .toIterableExecution
+      .to erableExecut on
 
-    Util.getCustomCountersString(calculateStatExec)
+    Ut l.getCustomCountersStr ng(calculateStatExec)
   }
 
   /**
-   * Compare two cluster assignments in terms of cosine similarity of corresponding clusters.
-   * Excludes clusters which are too small
+   * Compare two cluster ass gn nts  n terms of cos ne s m lar y of correspond ng clusters.
+   * Excludes clusters wh ch are too small
    * @param knownForA
    * @param knownForB
-   * @param minSizeOfBiggerCluster Set to 10 or some such.
+   * @param m nS zeOfB ggerCluster Set to 10 or so  such.
    * @return
    */
   def compare(
-    knownForA: TypedPipe[(Int, List[(Long, Float)])],
-    knownForB: TypedPipe[(Int, List[(Long, Float)])],
-    minSizeOfBiggerCluster: Int
-  ): TypedPipe[(Int, Float)] = {
+    knownForA: TypedP pe[( nt, L st[(Long, Float)])],
+    knownForB: TypedP pe[( nt, L st[(Long, Float)])],
+    m nS zeOfB ggerCluster:  nt
+  ): TypedP pe[( nt, Float)] = {
     knownForA
-      .outerJoin(knownForB)
+      .outerJo n(knownForB)
       .collect {
-        case (clusterId, (membersInAOpt, membersInBOpt))
-            if membersInAOpt.exists(_.size >= minSizeOfBiggerCluster) || membersInBOpt
-              .exists(_.size >= minSizeOfBiggerCluster) =>
-          val membersInA =
-            membersInAOpt.map(_.toMap).getOrElse(Map.empty[Long, Float])
-          val membersInB =
-            membersInBOpt.map(_.toMap).getOrElse(Map.empty[Long, Float])
-          (clusterId, cosine(membersInA, membersInB))
+        case (cluster d, ( mbers nAOpt,  mbers nBOpt))
+             f  mbers nAOpt.ex sts(_.s ze >= m nS zeOfB ggerCluster) ||  mbers nBOpt
+              .ex sts(_.s ze >= m nS zeOfB ggerCluster) =>
+          val  mbers nA =
+             mbers nAOpt.map(_.toMap).getOrElse(Map.empty[Long, Float])
+          val  mbers nB =
+             mbers nBOpt.map(_.toMap).getOrElse(Map.empty[Long, Float])
+          (cluster d, cos ne( mbers nA,  mbers nB))
       }
   }
 
-  def summarize(clusterToCosines: TypedPipe[(Int, Float)]): Execution[Option[Distribution]] = {
-    clusterToCosines.values.map(x => List(x)).sum.toOptionExecution.map { listOpt =>
-      listOpt.map { list => Util.distributionFromArray(list.map(_.toDouble).toArray) }
+  def summar ze(clusterToCos nes: TypedP pe[( nt, Float)]): Execut on[Opt on[D str but on]] = {
+    clusterToCos nes.values.map(x => L st(x)).sum.toOpt onExecut on.map { l stOpt =>
+      l stOpt.map { l st => Ut l.d str but onFromArray(l st.map(_.toDouble).toArray) }
     }
   }
 }
 
-object CompareClustersAdhoc extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  implicit val dp = DateParser.default
+object CompareClustersAdhoc extends Tw terExecut onApp {
+   mpl c  val tz: java.ut l.T  Zone = DateOps.UTC
+   mpl c  val dp = DateParser.default
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
+  def job: Execut on[Un ] =
+    Execut on.getConf gMode.flatMap {
+      case (conf g, mode) =>
+        Execut on.w h d {  mpl c  un que d =>
+          val args = conf g.getArgs
 
-          val knownForA = KnownForSources.transpose(KnownForSources.readKnownFor(args("knownForA")))
-          val knownForB = KnownForSources.transpose(KnownForSources.readKnownFor(args("knownForB")))
+          val knownForA = KnownForS ces.transpose(KnownForS ces.readKnownFor(args("knownForA")))
+          val knownForB = KnownForS ces.transpose(KnownForS ces.readKnownFor(args("knownForB")))
 
           CompareClusters
-            .compare(knownForA, knownForB, minSizeOfBiggerCluster = 10)
-            .map { case (cId, cos) => "%d\t%.2f".format(cId, cos) }
-            .writeExecution(TypedTsv(args("outputDir")))
+            .compare(knownForA, knownForB, m nS zeOfB ggerCluster = 10)
+            .map { case (c d, cos) => "%d\t%.2f".format(c d, cos) }
+            .wr eExecut on(TypedTsv(args("outputD r")))
         }
     }
 }

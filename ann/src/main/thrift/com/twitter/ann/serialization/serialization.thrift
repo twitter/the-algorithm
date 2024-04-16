@@ -1,10 +1,10 @@
-#@namespace scala com.twitter.ann.serialization.thriftscala
+#@na space scala com.tw ter.ann.ser al zat on.thr ftscala
 
-include "com/twitter/ml/api/embedding.thrift"
+ nclude "com/tw ter/ml/ap /embedd ng.thr ft"
 /**
-* Thrift schema for storing embeddings in a file
+* Thr ft sc ma for stor ng embedd ngs  n a f le
 */
-struct PersistedEmbedding {
-  1: required binary id
-  2: required embedding.Embedding embedding
-}(persisted = 'true')
+struct Pers stedEmbedd ng {
+  1: requ red b nary  d
+  2: requ red embedd ng.Embedd ng embedd ng
+}(pers sted = 'true')

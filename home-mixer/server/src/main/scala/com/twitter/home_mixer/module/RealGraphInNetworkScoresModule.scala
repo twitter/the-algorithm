@@ -1,26 +1,26 @@
-package com.twitter.home_mixer.module
+package com.tw ter.ho _m xer.module
 
-import com.google.inject.Provides
-import com.google.inject.name.Named
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealGraphInNetworkScores
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealGraphManhattanEndpoint
-import com.twitter.home_mixer.store.RealGraphInNetworkScoresStore
-import com.twitter.inject.TwitterModule
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpoint
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.util.CommonTypes.ViewerId
-import com.twitter.wtf.candidate.thriftscala.Candidate
+ mport com.google. nject.Prov des
+ mport com.google. nject.na .Na d
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.RealGraph nNetworkScores
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.RealGraphManhattanEndpo nt
+ mport com.tw ter.ho _m xer.store.RealGraph nNetworkScoresStore
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVEndpo nt
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.ut l.CommonTypes.V e r d
+ mport com.tw ter.wtf.cand date.thr ftscala.Cand date
 
-import javax.inject.Singleton
+ mport javax. nject.S ngleton
 
-object RealGraphInNetworkScoresModule extends TwitterModule {
+object RealGraph nNetworkScoresModule extends Tw terModule {
 
-  @Provides
-  @Singleton
-  @Named(RealGraphInNetworkScores)
-  def providesRealGraphInNetworkScoresFeaturesStore(
-    @Named(RealGraphManhattanEndpoint) realGraphInNetworkScoresManhattanKVEndpoint: ManhattanKVEndpoint
-  ): ReadableStore[ViewerId, Seq[Candidate]] = {
-    new RealGraphInNetworkScoresStore(realGraphInNetworkScoresManhattanKVEndpoint)
+  @Prov des
+  @S ngleton
+  @Na d(RealGraph nNetworkScores)
+  def prov desRealGraph nNetworkScoresFeaturesStore(
+    @Na d(RealGraphManhattanEndpo nt) realGraph nNetworkScoresManhattanKVEndpo nt: ManhattanKVEndpo nt
+  ): ReadableStore[V e r d, Seq[Cand date]] = {
+    new RealGraph nNetworkScoresStore(realGraph nNetworkScoresManhattanKVEndpo nt)
   }
 }

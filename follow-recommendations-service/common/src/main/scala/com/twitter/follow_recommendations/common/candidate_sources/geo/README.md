@@ -1,4 +1,4 @@
-# Pop Geo Candidate Source
-Provides the most followed / quality followed accounts in a specific country and a geolocation within past 2 weeks.
-* A "quality follow" refers to any follow that leads to visible engagement, such as favorites, mentions, retweets, direct messages, replies, and quote tweets. The engagement must be allowed in either direction, and must occur on the day of the follow or within one subsequent day. Additionally, there must be no unfollowing, blocking, muting, or reporting of the account in the same time period.
-* The minimum geolocation precision used is ±20 km (12 mi), and precise user geolocation is not utilized.
+# Pop Geo Cand date S ce
+Prov des t  most follo d / qual y follo d accounts  n a spec f c country and a geolocat on w h n past 2  eks.
+* A "qual y follow" refers to any follow that leads to v s ble engage nt, such as favor es,  nt ons, ret ets, d rect  ssages, repl es, and quote t ets. T  engage nt must be allo d  n e  r d rect on, and must occur on t  day of t  follow or w h n one subsequent day. Add  onally, t re must be no unfollow ng, block ng, mut ng, or report ng of t  account  n t  sa  t   per od.
+* T  m n mum geolocat on prec s on used  s ±20 km (12 m ), and prec se user geolocat on  s not ut l zed.

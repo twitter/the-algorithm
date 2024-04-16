@@ -1,27 +1,27 @@
-package com.twitter.frigate.pushservice.predicate
+package com.tw ter.fr gate.pushserv ce.pred cate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.TweetCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.tweetypie.EngagementsPredicate
-import com.twitter.hermit.predicate.tweetypie.Perspective
-import com.twitter.hermit.predicate.tweetypie.UserTweet
-import com.twitter.storehaus.ReadableStore
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.T etCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .pred cate.t etyp e.Engage ntsPred cate
+ mport com.tw ter. rm .pred cate.t etyp e.Perspect ve
+ mport com.tw ter. rm .pred cate.t etyp e.UserT et
+ mport com.tw ter.storehaus.ReadableStore
 
-object TargetEngagementPredicate {
-  val name = "target_engagement"
+object TargetEngage ntPred cate {
+  val na  = "target_engage nt"
   def apply(
-    perspectiveStore: ReadableStore[UserTweet, Perspective],
-    defaultForMissing: Boolean
+    perspect veStore: ReadableStore[UserT et, Perspect ve],
+    defaultForM ss ng: Boolean
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetCandidate] = {
-    EngagementsPredicate(perspectiveStore, defaultForMissing)
-      .on { candidate: PushCandidate with TweetCandidate =>
-        UserTweet(candidate.target.targetId, candidate.tweetId)
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etCand date] = {
+    Engage ntsPred cate(perspect veStore, defaultForM ss ng)
+      .on { cand date: PushCand date w h T etCand date =>
+        UserT et(cand date.target.target d, cand date.t et d)
       }
-      .withStats(statsReceiver.scope(s"predicate_$name"))
-      .withName(name)
+      .w hStats(statsRece ver.scope(s"pred cate_$na "))
+      .w hNa (na )
   }
 }

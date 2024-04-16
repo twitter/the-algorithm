@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.request
+package com.tw ter.product_m xer.core.model.marshall ng.request
 
 /**
- * Allow clients to pass in a set of IDs that would be excluded from the results.
+ * Allow cl ents to pass  n a set of  Ds that would be excluded from t  results.
  */
-trait HasExcludedIds {
-  val excludedIds: Set[Long] = Set.empty
+tra  HasExcluded ds {
+  val excluded ds: Set[Long] = Set.empty
 }

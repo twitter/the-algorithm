@@ -1,90 +1,90 @@
-package com.twitter.search.common.schema.earlybird;
+package com.tw ter.search.common.sc ma.earlyb rd;
 
-import java.util.Set;
+ mport java.ut l.Set;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableSet;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.collect. mmutableSet;
 
 /**
- * A list of existing Earlybird clusters.
+ * A l st of ex st ng Earlyb rd clusters.
  */
-public enum EarlybirdCluster {
+publ c enum Earlyb rdCluster {
   /**
-   * Realtime earlybird cluster. Has 100% of tweet for about 7 days.
+   * Realt   earlyb rd cluster. Has 100% of t et for about 7 days.
    */
-  REALTIME,
+  REALT ME,
   /**
-   * Protected earlybird cluster. Has only tweets from protected accounts.
+   * Protected earlyb rd cluster. Has only t ets from protected accounts.
    */
   PROTECTED,
   /**
-   * Full archive cluster. Has all tweets until about 2 days ago.
+   * Full arch ve cluster. Has all t ets unt l about 2 days ago.
    */
-  FULL_ARCHIVE,
+  FULL_ARCH VE,
   /**
-   * SuperRoot cluster. Talks to the other clusters instead of talking directly to earlybirds.
+   * SuperRoot cluster. Talks to t  ot r clusters  nstead of talk ng d rectly to earlyb rds.
    */
   SUPERROOT,
 
   /**
-   * A dedicated cluster for Candidate Generation use cases based on Earlybird in Home/PushService
+   * A ded cated cluster for Cand date Generat on use cases based on Earlyb rd  n Ho /PushServ ce
    */
-  REALTIME_CG;
+  REALT ME_CG;
 
-  public String getNameForStats() {
-    return name().toLowerCase();
+  publ c Str ng getNa ForStats() {
+    return na ().toLo rCase();
   }
 
-  public static boolean isArchive(EarlybirdCluster cluster) {
-    return isClusterInSet(cluster, ARCHIVE_CLUSTERS);
+  publ c stat c boolean  sArch ve(Earlyb rdCluster cluster) {
+    return  sCluster nSet(cluster, ARCH VE_CLUSTERS);
   }
 
-  public static boolean isTwitterMemoryFormatCluster(EarlybirdCluster cluster) {
-    return isClusterInSet(cluster, TWITTER_IN_MEMORY_INDEX_FORMAT_GENERAL_PURPOSE_CLUSTERS);
+  publ c stat c boolean  sTw ter moryFormatCluster(Earlyb rdCluster cluster) {
+    return  sCluster nSet(cluster, TW TTER_ N_MEMORY_ NDEX_FORMAT_GENERAL_PURPOSE_CLUSTERS);
   }
 
-  public static boolean hasEarlybirds(EarlybirdCluster cluster) {
+  publ c stat c boolean hasEarlyb rds(Earlyb rdCluster cluster) {
     return cluster != SUPERROOT;
   }
 
-  private static boolean isClusterInSet(EarlybirdCluster cluster, Set<EarlybirdCluster> set) {
-    return set.contains(cluster);
+  pr vate stat c boolean  sCluster nSet(Earlyb rdCluster cluster, Set<Earlyb rdCluster> set) {
+    return set.conta ns(cluster);
   }
 
-  protected static final ImmutableSet<EarlybirdCluster> ARCHIVE_CLUSTERS =
-      ImmutableSet.of(FULL_ARCHIVE);
+  protected stat c f nal  mmutableSet<Earlyb rdCluster> ARCH VE_CLUSTERS =
+       mmutableSet.of(FULL_ARCH VE);
 
-  @VisibleForTesting
-  public static final ImmutableSet<EarlybirdCluster>
-          TWITTER_IN_MEMORY_INDEX_FORMAT_GENERAL_PURPOSE_CLUSTERS =
-      ImmutableSet.of(
-          REALTIME,
+  @V s bleForTest ng
+  publ c stat c f nal  mmutableSet<Earlyb rdCluster>
+          TW TTER_ N_MEMORY_ NDEX_FORMAT_GENERAL_PURPOSE_CLUSTERS =
+       mmutableSet.of(
+          REALT ME,
           PROTECTED);
 
-  @VisibleForTesting
-  public static final ImmutableSet<EarlybirdCluster> TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS =
-      ImmutableSet.of(
-          REALTIME,
+  @V s bleForTest ng
+  publ c stat c f nal  mmutableSet<Earlyb rdCluster> TW TTER_ N_MEMORY_ NDEX_FORMAT_ALL_CLUSTERS =
+       mmutableSet.of(
+          REALT ME,
           PROTECTED,
-          REALTIME_CG);
+          REALT ME_CG);
 
   /**
-   * Constant for field used in general purpose clusters,
-   * Note that GENERAL_PURPOSE_CLUSTERS does not include REALTIME_CG. If you wish to include REALTIME_CG,
+   * Constant for f eld used  n general purpose clusters,
+   * Note that GENERAL_PURPOSE_CLUSTERS does not  nclude REALT ME_CG.  f   w sh to  nclude REALT ME_CG,
    * please use ALL_CLUSTERS
    */
-  protected static final ImmutableSet<EarlybirdCluster> GENERAL_PURPOSE_CLUSTERS =
-      ImmutableSet.of(
-          REALTIME,
+  protected stat c f nal  mmutableSet<Earlyb rdCluster> GENERAL_PURPOSE_CLUSTERS =
+       mmutableSet.of(
+          REALT ME,
           PROTECTED,
-          FULL_ARCHIVE,
+          FULL_ARCH VE,
           SUPERROOT);
 
-  protected static final ImmutableSet<EarlybirdCluster> ALL_CLUSTERS =
-      ImmutableSet.of(
-          REALTIME,
+  protected stat c f nal  mmutableSet<Earlyb rdCluster> ALL_CLUSTERS =
+       mmutableSet.of(
+          REALT ME,
           PROTECTED,
-          FULL_ARCHIVE,
+          FULL_ARCH VE,
           SUPERROOT,
-          REALTIME_CG);
+          REALT ME_CG);
 }

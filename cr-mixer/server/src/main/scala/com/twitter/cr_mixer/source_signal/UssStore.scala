@@ -1,209 +1,209 @@
-package com.twitter.cr_mixer.source_signal
+package com.tw ter.cr_m xer.s ce_s gnal
 
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.cr_mixer.param.GoodProfileClickParams
-import com.twitter.cr_mixer.param.GoodTweetClickParams
-import com.twitter.cr_mixer.param.RealGraphOonParams
-import com.twitter.cr_mixer.param.RecentFollowsParams
-import com.twitter.cr_mixer.param.RecentNegativeSignalParams
-import com.twitter.cr_mixer.param.RecentNotificationsParams
-import com.twitter.cr_mixer.param.RecentOriginalTweetsParams
-import com.twitter.cr_mixer.param.RecentReplyTweetsParams
-import com.twitter.cr_mixer.param.RecentRetweetsParams
-import com.twitter.cr_mixer.param.RecentTweetFavoritesParams
-import com.twitter.cr_mixer.param.RepeatedProfileVisitsParams
-import com.twitter.cr_mixer.param.TweetSharesParams
-import com.twitter.cr_mixer.param.UnifiedUSSSignalParams
-import com.twitter.cr_mixer.param.VideoViewTweetsParams
-import com.twitter.cr_mixer.source_signal.UssStore.Query
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.usersignalservice.thriftscala.{Signal => UssSignal}
-import com.twitter.usersignalservice.thriftscala.SignalType
-import javax.inject.Singleton
-import com.twitter.timelines.configapi
-import com.twitter.timelines.configapi.Params
-import com.twitter.usersignalservice.thriftscala.BatchSignalRequest
-import com.twitter.usersignalservice.thriftscala.BatchSignalResponse
-import com.twitter.usersignalservice.thriftscala.SignalRequest
-import com.twitter.util.Future
-import com.twitter.cr_mixer.thriftscala.Product
-import com.twitter.usersignalservice.thriftscala.ClientIdentifier
+ mport com.tw ter.cr_m xer.param.GlobalParams
+ mport com.tw ter.cr_m xer.param.GoodProf leCl ckParams
+ mport com.tw ter.cr_m xer.param.GoodT etCl ckParams
+ mport com.tw ter.cr_m xer.param.RealGraphOonParams
+ mport com.tw ter.cr_m xer.param.RecentFollowsParams
+ mport com.tw ter.cr_m xer.param.RecentNegat veS gnalParams
+ mport com.tw ter.cr_m xer.param.RecentNot f cat onsParams
+ mport com.tw ter.cr_m xer.param.RecentOr g nalT etsParams
+ mport com.tw ter.cr_m xer.param.RecentReplyT etsParams
+ mport com.tw ter.cr_m xer.param.RecentRet etsParams
+ mport com.tw ter.cr_m xer.param.RecentT etFavor esParams
+ mport com.tw ter.cr_m xer.param.RepeatedProf leV s sParams
+ mport com.tw ter.cr_m xer.param.T etSharesParams
+ mport com.tw ter.cr_m xer.param.Un f edUSSS gnalParams
+ mport com.tw ter.cr_m xer.param.V deoV ewT etsParams
+ mport com.tw ter.cr_m xer.s ce_s gnal.UssStore.Query
+ mport com.tw ter.cr_m xer.thr ftscala.S ceType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.users gnalserv ce.thr ftscala.{S gnal => UssS gnal}
+ mport com.tw ter.users gnalserv ce.thr ftscala.S gnalType
+ mport javax. nject.S ngleton
+ mport com.tw ter.t  l nes.conf gap 
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.tw ter.users gnalserv ce.thr ftscala.BatchS gnalRequest
+ mport com.tw ter.users gnalserv ce.thr ftscala.BatchS gnalResponse
+ mport com.tw ter.users gnalserv ce.thr ftscala.S gnalRequest
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.cr_m xer.thr ftscala.Product
+ mport com.tw ter.users gnalserv ce.thr ftscala.Cl ent dent f er
 
-@Singleton
+@S ngleton
 case class UssStore(
-  stratoStore: ReadableStore[BatchSignalRequest, BatchSignalResponse],
-  statsReceiver: StatsReceiver)
-    extends ReadableStore[Query, Seq[(SignalType, Seq[UssSignal])]] {
+  stratoStore: ReadableStore[BatchS gnalRequest, BatchS gnalResponse],
+  statsRece ver: StatsRece ver)
+    extends ReadableStore[Query, Seq[(S gnalType, Seq[UssS gnal])]] {
 
-  import com.twitter.cr_mixer.source_signal.UssStore._
+   mport com.tw ter.cr_m xer.s ce_s gnal.UssStore._
 
-  override def get(query: Query): Future[Option[Seq[(SignalType, Seq[UssSignal])]]] = {
-    val ussClientIdentifier = query.product match {
-      case Product.Home =>
-        ClientIdentifier.CrMixerHome
-      case Product.Notifications =>
-        ClientIdentifier.CrMixerNotifications
-      case Product.Email =>
-        ClientIdentifier.CrMixerEmail
+  overr de def get(query: Query): Future[Opt on[Seq[(S gnalType, Seq[UssS gnal])]]] = {
+    val ussCl ent dent f er = query.product match {
+      case Product.Ho  =>
+        Cl ent dent f er.CrM xerHo 
+      case Product.Not f cat ons =>
+        Cl ent dent f er.CrM xerNot f cat ons
+      case Product.Ema l =>
+        Cl ent dent f er.CrM xerEma l
       case _ =>
-        ClientIdentifier.Unknown
+        Cl ent dent f er.Unknown
     }
-    val batchSignalRequest =
-      BatchSignalRequest(
-        query.userId,
-        buildUserSignalServiceRequests(query.params),
-        Some(ussClientIdentifier))
+    val batchS gnalRequest =
+      BatchS gnalRequest(
+        query.user d,
+        bu ldUserS gnalServ ceRequests(query.params),
+        So (ussCl ent dent f er))
 
     stratoStore
-      .get(batchSignalRequest)
+      .get(batchS gnalRequest)
       .map {
-        _.map { batchSignalResponse =>
-          batchSignalResponse.signalResponse.toSeq.map {
-            case (signalType, ussSignals) =>
-              (signalType, ussSignals)
+        _.map { batchS gnalResponse =>
+          batchS gnalResponse.s gnalResponse.toSeq.map {
+            case (s gnalType, ussS gnals) =>
+              (s gnalType, ussS gnals)
           }
         }
       }
   }
 
-  private def buildUserSignalServiceRequests(
+  pr vate def bu ldUserS gnalServ ceRequests(
     param: Params,
-  ): Seq[SignalRequest] = {
-    val unifiedMaxSourceKeyNum = param(GlobalParams.UnifiedMaxSourceKeyNum)
-    val goodTweetClickMaxSignalNum = param(GoodTweetClickParams.MaxSignalNumParam)
-    val aggrTweetMaxSourceKeyNum = param(UnifiedUSSSignalParams.UnifiedTweetSourceNumberParam)
-    val aggrProducerMaxSourceKeyNum = param(UnifiedUSSSignalParams.UnifiedProducerSourceNumberParam)
+  ): Seq[S gnalRequest] = {
+    val un f edMaxS ceKeyNum = param(GlobalParams.Un f edMaxS ceKeyNum)
+    val goodT etCl ckMaxS gnalNum = param(GoodT etCl ckParams.MaxS gnalNumParam)
+    val aggrT etMaxS ceKeyNum = param(Un f edUSSS gnalParams.Un f edT etS ceNumberParam)
+    val aggrProducerMaxS ceKeyNum = param(Un f edUSSS gnalParams.Un f edProducerS ceNumberParam)
 
-    val maybeRecentTweetFavorite =
-      if (param(RecentTweetFavoritesParams.EnableSourceParam))
-        Some(SignalRequest(Some(unifiedMaxSourceKeyNum), SignalType.TweetFavorite))
+    val maybeRecentT etFavor e =
+       f (param(RecentT etFavor esParams.EnableS ceParam))
+        So (S gnalRequest(So (un f edMaxS ceKeyNum), S gnalType.T etFavor e))
       else None
-    val maybeRecentRetweet =
-      if (param(RecentRetweetsParams.EnableSourceParam))
-        Some(SignalRequest(Some(unifiedMaxSourceKeyNum), SignalType.Retweet))
+    val maybeRecentRet et =
+       f (param(RecentRet etsParams.EnableS ceParam))
+        So (S gnalRequest(So (un f edMaxS ceKeyNum), S gnalType.Ret et))
       else None
     val maybeRecentReply =
-      if (param(RecentReplyTweetsParams.EnableSourceParam))
-        Some(SignalRequest(Some(unifiedMaxSourceKeyNum), SignalType.Reply))
+       f (param(RecentReplyT etsParams.EnableS ceParam))
+        So (S gnalRequest(So (un f edMaxS ceKeyNum), S gnalType.Reply))
       else None
-    val maybeRecentOriginalTweet =
-      if (param(RecentOriginalTweetsParams.EnableSourceParam))
-        Some(SignalRequest(Some(unifiedMaxSourceKeyNum), SignalType.OriginalTweet))
+    val maybeRecentOr g nalT et =
+       f (param(RecentOr g nalT etsParams.EnableS ceParam))
+        So (S gnalRequest(So (un f edMaxS ceKeyNum), S gnalType.Or g nalT et))
       else None
     val maybeRecentFollow =
-      if (param(RecentFollowsParams.EnableSourceParam))
-        Some(SignalRequest(Some(unifiedMaxSourceKeyNum), SignalType.AccountFollow))
+       f (param(RecentFollowsParams.EnableS ceParam))
+        So (S gnalRequest(So (un f edMaxS ceKeyNum), S gnalType.AccountFollow))
       else None
-    val maybeRepeatedProfileVisits =
-      if (param(RepeatedProfileVisitsParams.EnableSourceParam))
-        Some(
-          SignalRequest(
-            Some(unifiedMaxSourceKeyNum),
-            param(RepeatedProfileVisitsParams.ProfileMinVisitType).signalType))
+    val maybeRepeatedProf leV s s =
+       f (param(RepeatedProf leV s sParams.EnableS ceParam))
+        So (
+          S gnalRequest(
+            So (un f edMaxS ceKeyNum),
+            param(RepeatedProf leV s sParams.Prof leM nV s Type).s gnalType))
       else None
-    val maybeRecentNotifications =
-      if (param(RecentNotificationsParams.EnableSourceParam))
-        Some(SignalRequest(Some(unifiedMaxSourceKeyNum), SignalType.NotificationOpenAndClickV1))
+    val maybeRecentNot f cat ons =
+       f (param(RecentNot f cat onsParams.EnableS ceParam))
+        So (S gnalRequest(So (un f edMaxS ceKeyNum), S gnalType.Not f cat onOpenAndCl ckV1))
       else None
-    val maybeTweetShares =
-      if (param(TweetSharesParams.EnableSourceParam)) {
-        Some(SignalRequest(Some(unifiedMaxSourceKeyNum), SignalType.TweetShareV1))
+    val maybeT etShares =
+       f (param(T etSharesParams.EnableS ceParam)) {
+        So (S gnalRequest(So (un f edMaxS ceKeyNum), S gnalType.T etShareV1))
       } else None
     val maybeRealGraphOon =
-      if (param(RealGraphOonParams.EnableSourceParam)) {
-        Some(SignalRequest(Some(unifiedMaxSourceKeyNum), SignalType.RealGraphOon))
+       f (param(RealGraphOonParams.EnableS ceParam)) {
+        So (S gnalRequest(So (un f edMaxS ceKeyNum), S gnalType.RealGraphOon))
       } else None
 
-    val maybeGoodTweetClick =
-      if (param(GoodTweetClickParams.EnableSourceParam))
-        Some(
-          SignalRequest(
-            Some(goodTweetClickMaxSignalNum),
-            param(GoodTweetClickParams.ClickMinDwellTimeType).signalType))
+    val maybeGoodT etCl ck =
+       f (param(GoodT etCl ckParams.EnableS ceParam))
+        So (
+          S gnalRequest(
+            So (goodT etCl ckMaxS gnalNum),
+            param(GoodT etCl ckParams.Cl ckM nD llT  Type).s gnalType))
       else None
-    val maybeVideoViewTweets =
-      if (param(VideoViewTweetsParams.EnableSourceParam)) {
-        Some(
-          SignalRequest(
-            Some(unifiedMaxSourceKeyNum),
-            param(VideoViewTweetsParams.VideoViewTweetTypeParam).signalType))
+    val maybeV deoV ewT ets =
+       f (param(V deoV ewT etsParams.EnableS ceParam)) {
+        So (
+          S gnalRequest(
+            So (un f edMaxS ceKeyNum),
+            param(V deoV ewT etsParams.V deoV ewT etTypeParam).s gnalType))
       } else None
-    val maybeGoodProfileClick =
-      if (param(GoodProfileClickParams.EnableSourceParam))
-        Some(
-          SignalRequest(
-            Some(unifiedMaxSourceKeyNum),
-            param(GoodProfileClickParams.ClickMinDwellTimeType).signalType))
+    val maybeGoodProf leCl ck =
+       f (param(GoodProf leCl ckParams.EnableS ceParam))
+        So (
+          S gnalRequest(
+            So (un f edMaxS ceKeyNum),
+            param(GoodProf leCl ckParams.Cl ckM nD llT  Type).s gnalType))
       else None
-    val maybeAggTweetSignal =
-      if (param(UnifiedUSSSignalParams.EnableTweetAggSourceParam))
-        Some(
-          SignalRequest(
-            Some(aggrTweetMaxSourceKeyNum),
-            param(UnifiedUSSSignalParams.TweetAggTypeParam).signalType
+    val maybeAggT etS gnal =
+       f (param(Un f edUSSS gnalParams.EnableT etAggS ceParam))
+        So (
+          S gnalRequest(
+            So (aggrT etMaxS ceKeyNum),
+            param(Un f edUSSS gnalParams.T etAggTypeParam).s gnalType
           )
         )
       else None
-    val maybeAggProducerSignal =
-      if (param(UnifiedUSSSignalParams.EnableProducerAggSourceParam))
-        Some(
-          SignalRequest(
-            Some(aggrProducerMaxSourceKeyNum),
-            param(UnifiedUSSSignalParams.ProducerAggTypeParam).signalType
+    val maybeAggProducerS gnal =
+       f (param(Un f edUSSS gnalParams.EnableProducerAggS ceParam))
+        So (
+          S gnalRequest(
+            So (aggrProducerMaxS ceKeyNum),
+            param(Un f edUSSS gnalParams.ProducerAggTypeParam).s gnalType
           )
         )
       else None
 
-    // negative signals
-    val maybeNegativeSignals = if (param(RecentNegativeSignalParams.EnableSourceParam)) {
-      EnabledNegativeSignalTypes
-        .map(negativeSignal => SignalRequest(Some(unifiedMaxSourceKeyNum), negativeSignal)).toSeq
+    // negat ve s gnals
+    val maybeNegat veS gnals =  f (param(RecentNegat veS gnalParams.EnableS ceParam)) {
+      EnabledNegat veS gnalTypes
+        .map(negat veS gnal => S gnalRequest(So (un f edMaxS ceKeyNum), negat veS gnal)).toSeq
     } else Seq.empty
 
-    val allPositiveSignals =
-      if (param(UnifiedUSSSignalParams.ReplaceIndividualUSSSourcesParam))
+    val allPos  veS gnals =
+       f (param(Un f edUSSS gnalParams.Replace nd v dualUSSS cesParam))
         Seq(
-          maybeRecentOriginalTweet,
-          maybeRecentNotifications,
+          maybeRecentOr g nalT et,
+          maybeRecentNot f cat ons,
           maybeRealGraphOon,
-          maybeGoodTweetClick,
-          maybeGoodProfileClick,
-          maybeAggProducerSignal,
-          maybeAggTweetSignal,
+          maybeGoodT etCl ck,
+          maybeGoodProf leCl ck,
+          maybeAggProducerS gnal,
+          maybeAggT etS gnal,
         )
       else
         Seq(
-          maybeRecentTweetFavorite,
-          maybeRecentRetweet,
+          maybeRecentT etFavor e,
+          maybeRecentRet et,
           maybeRecentReply,
-          maybeRecentOriginalTweet,
+          maybeRecentOr g nalT et,
           maybeRecentFollow,
-          maybeRepeatedProfileVisits,
-          maybeRecentNotifications,
-          maybeTweetShares,
+          maybeRepeatedProf leV s s,
+          maybeRecentNot f cat ons,
+          maybeT etShares,
           maybeRealGraphOon,
-          maybeGoodTweetClick,
-          maybeVideoViewTweets,
-          maybeGoodProfileClick,
-          maybeAggProducerSignal,
-          maybeAggTweetSignal,
+          maybeGoodT etCl ck,
+          maybeV deoV ewT ets,
+          maybeGoodProf leCl ck,
+          maybeAggProducerS gnal,
+          maybeAggT etS gnal,
         )
-    allPositiveSignals.flatten ++ maybeNegativeSignals
+    allPos  veS gnals.flatten ++ maybeNegat veS gnals
   }
 
 }
 
 object UssStore {
   case class Query(
-    userId: UserId,
-    params: configapi.Params,
+    user d: User d,
+    params: conf gap .Params,
     product: Product)
 
-  val EnabledNegativeSourceTypes: Set[SourceType] =
-    Set(SourceType.AccountBlock, SourceType.AccountMute)
-  private val EnabledNegativeSignalTypes: Set[SignalType] =
-    Set(SignalType.AccountBlock, SignalType.AccountMute)
+  val EnabledNegat veS ceTypes: Set[S ceType] =
+    Set(S ceType.AccountBlock, S ceType.AccountMute)
+  pr vate val EnabledNegat veS gnalTypes: Set[S gnalType] =
+    Set(S gnalType.AccountBlock, S gnalType.AccountMute)
 }

@@ -1,8 +1,8 @@
-java_library(
-    sources = ["*.java"],
+java_l brary(
+    s ces = ["*.java"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/inject:guice",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/com/google/ nject:gu ce",
     ],
 )

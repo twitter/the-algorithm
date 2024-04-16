@@ -1,54 +1,54 @@
-package com.twitter.recosinjector.publishers
+package com.tw ter.recos njector.publ s rs
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finatra.kafka.producers.FinagleKafkaProducerBuilder
-import com.twitter.finatra.kafka.serde.ScalaSerdes
-import com.twitter.recos.internal.thriftscala.RecosHoseMessage
-import org.apache.kafka.clients.CommonClientConfigs
-import org.apache.kafka.clients.producer.ProducerRecord
-import org.apache.kafka.common.config.SaslConfigs
-import org.apache.kafka.common.config.SslConfigs
-import org.apache.kafka.common.security.auth.SecurityProtocol
-import org.apache.kafka.common.serialization.StringSerializer
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.f natra.kafka.producers.F nagleKafkaProducerBu lder
+ mport com.tw ter.f natra.kafka.serde.ScalaSerdes
+ mport com.tw ter.recos. nternal.thr ftscala.RecosHose ssage
+ mport org.apac .kafka.cl ents.CommonCl entConf gs
+ mport org.apac .kafka.cl ents.producer.ProducerRecord
+ mport org.apac .kafka.common.conf g.SaslConf gs
+ mport org.apac .kafka.common.conf g.SslConf gs
+ mport org.apac .kafka.common.secur y.auth.Secur yProtocol
+ mport org.apac .kafka.common.ser al zat on.Str ngSer al zer
 
-case class KafkaEventPublisher(
-  kafkaDest: String,
-  outputKafkaTopicPrefix: String,
-  clientId: ClientId,
-  truststoreLocation: String) {
+case class KafkaEventPubl s r(
+  kafkaDest: Str ng,
+  outputKafkaTop cPref x: Str ng,
+  cl ent d: Cl ent d,
+  truststoreLocat on: Str ng) {
 
-  private val producer = FinagleKafkaProducerBuilder[String, RecosHoseMessage]()
+  pr vate val producer = F nagleKafkaProducerBu lder[Str ng, RecosHose ssage]()
     .dest(kafkaDest)
-    .clientId(clientId.name)
-    .keySerializer(new StringSerializer)
-    .valueSerializer(ScalaSerdes.Thrift[RecosHoseMessage].serializer)
-    .withConfig(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SASL_SSL.toString)
-    .withConfig(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, truststoreLocation)
-    .withConfig(SaslConfigs.SASL_MECHANISM, SaslConfigs.GSSAPI_MECHANISM)
-    .withConfig(SaslConfigs.SASL_KERBEROS_SERVICE_NAME, "kafka")
-    .withConfig(SaslConfigs.SASL_KERBEROS_SERVER_NAME, "kafka")
-    // Use Native Kafka Client
-    .buildClient()
+    .cl ent d(cl ent d.na )
+    .keySer al zer(new Str ngSer al zer)
+    .valueSer al zer(ScalaSerdes.Thr ft[RecosHose ssage].ser al zer)
+    .w hConf g(CommonCl entConf gs.SECUR TY_PROTOCOL_CONF G, Secur yProtocol.SASL_SSL.toStr ng)
+    .w hConf g(SslConf gs.SSL_TRUSTSTORE_LOCAT ON_CONF G, truststoreLocat on)
+    .w hConf g(SaslConf gs.SASL_MECHAN SM, SaslConf gs.GSSAP _MECHAN SM)
+    .w hConf g(SaslConf gs.SASL_KERBEROS_SERV CE_NAME, "kafka")
+    .w hConf g(SaslConf gs.SASL_KERBEROS_SERVER_NAME, "kafka")
+    // Use Nat ve Kafka Cl ent
+    .bu ldCl ent()
 
-  def publish(
-    message: RecosHoseMessage,
-    topic: String
+  def publ sh(
+     ssage: RecosHose ssage,
+    top c: Str ng
   )(
-    implicit statsReceiver: StatsReceiver
-  ): Unit = {
-    val topicName = s"${outputKafkaTopicPrefix}_$topic"
-    // Kafka Producer is thread-safe. No extra Future-pool protect.
-    producer.send(new ProducerRecord(topicName, message))
-    statsReceiver.counter(topicName + "_written_msg_success").incr()
+     mpl c  statsRece ver: StatsRece ver
+  ): Un  = {
+    val top cNa  = s"${outputKafkaTop cPref x}_$top c"
+    // Kafka Producer  s thread-safe. No extra Future-pool protect.
+    producer.send(new ProducerRecord(top cNa ,  ssage))
+    statsRece ver.counter(top cNa  + "_wr ten_msg_success"). ncr()
   }
 }
 
-object KafkaEventPublisher {
-  // Kafka topics available for publishing
-  val UserVideoTopic = "user_video"
-  val UserTweetEntityTopic = "user_tweet_entity"
-  val UserUserTopic = "user_user"
-  val UserAdTopic = "user_tweet"
-  val UserTweetPlusTopic = "user_tweet_plus"
+object KafkaEventPubl s r {
+  // Kafka top cs ava lable for publ sh ng
+  val UserV deoTop c = "user_v deo"
+  val UserT etEnt yTop c = "user_t et_ent y"
+  val UserUserTop c = "user_user"
+  val UserAdTop c = "user_t et"
+  val UserT etPlusTop c = "user_t et_plus"
 }

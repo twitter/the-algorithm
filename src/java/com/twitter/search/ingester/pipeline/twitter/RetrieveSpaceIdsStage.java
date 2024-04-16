@@ -1,99 +1,99 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.tw ter.search. ngester.p pel ne.tw ter;
 
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+ mport java.ut l.Set;
+ mport java.ut l.regex.Matc r;
+ mport java.ut l.regex.Pattern;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Sets;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.collect.Sets;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
+ mport org.apac .commons.lang.Str ngUt ls;
+ mport org.apac .commons.p pel ne.StageExcept on;
+ mport org.apac .commons.p pel ne.val dat on.Consu dTypes;
+ mport org.apac .commons.p pel ne.val dat on.ProducesConsu d;
 
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
+ mport com.tw ter.search.common.dec der.Dec derUt l;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftExpandedUrl;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common.relevance.ent  es.Tw ter ssage;
 
-@ConsumedTypes(TwitterMessage.class)
-@ProducesConsumed
-public class RetrieveSpaceIdsStage extends TwitterBaseStage
-    <TwitterMessage, TwitterMessage> {
+@Consu dTypes(Tw ter ssage.class)
+@ProducesConsu d
+publ c class Retr eveSpace dsStage extends Tw terBaseStage
+    <Tw ter ssage, Tw ter ssage> {
 
-  @VisibleForTesting
-  protected static final Pattern SPACES_URL_REGEX =
-      Pattern.compile("^https://twitter\\.com/i/spaces/([a-zA-Z0-9]+)\\S*$");
+  @V s bleForTest ng
+  protected stat c f nal Pattern SPACES_URL_REGEX =
+      Pattern.comp le("^https://tw ter\\.com/ /spaces/([a-zA-Z0-9]+)\\S*$");
 
-  @VisibleForTesting
-  protected static final String PARSE_SPACE_ID_DECIDER_KEY = "ingester_all_parse_space_id_from_url";
+  @V s bleForTest ng
+  protected stat c f nal Str ng PARSE_SPACE_ D_DEC DER_KEY = " ngester_all_parse_space_ d_from_url";
 
-  private static SearchRateCounter numTweetsWithSpaceIds;
-  private static SearchRateCounter numTweetsWithMultipleSpaceIds;
+  pr vate stat c SearchRateCounter numT etsW hSpace ds;
+  pr vate stat c SearchRateCounter numT etsW hMult pleSpace ds;
 
-  @Override
-  protected void initStats() {
-    super.initStats();
-    innerSetupStats();
+  @Overr de
+  protected vo d  n Stats() {
+    super. n Stats();
+     nnerSetupStats();
   }
 
-  @Override
-  protected void innerSetupStats() {
-    numTweetsWithSpaceIds = SearchRateCounter.export(
-        getStageNamePrefix() + "_tweets_with_space_ids");
-    numTweetsWithMultipleSpaceIds = SearchRateCounter.export(
-        getStageNamePrefix() + "_tweets_with_multiple_space_ids");
+  @Overr de
+  protected vo d  nnerSetupStats() {
+    numT etsW hSpace ds = SearchRateCounter.export(
+        getStageNa Pref x() + "_t ets_w h_space_ ds");
+    numT etsW hMult pleSpace ds = SearchRateCounter.export(
+        getStageNa Pref x() + "_t ets_w h_mult ple_space_ ds");
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    TwitterMessage message = (TwitterMessage) obj;
-    tryToRetrieveSpaceId(message);
-    emitAndCount(message);
+  @Overr de
+  publ c vo d  nnerProcess(Object obj) throws StageExcept on {
+    Tw ter ssage  ssage = (Tw ter ssage) obj;
+    tryToRetr eveSpace d( ssage);
+    em AndCount( ssage);
   }
 
-  private void tryToRetrieveSpaceId(TwitterMessage message) {
-    if (DeciderUtil.isAvailableForRandomRecipient(decider, PARSE_SPACE_ID_DECIDER_KEY)) {
-      Set<String> spaceIds = parseSpaceIdsFromMessage(message);
-      int spaceIdCount = spaceIds.size();
-      if (spaceIdCount > 0) {
-        numTweetsWithSpaceIds.increment();
-        if (spaceIdCount > 1) {
-          numTweetsWithMultipleSpaceIds.increment();
+  pr vate vo d tryToRetr eveSpace d(Tw ter ssage  ssage) {
+     f (Dec derUt l. sAva lableForRandomRec p ent(dec der, PARSE_SPACE_ D_DEC DER_KEY)) {
+      Set<Str ng> space ds = parseSpace dsFrom ssage( ssage);
+       nt space dCount = space ds.s ze();
+       f (space dCount > 0) {
+        numT etsW hSpace ds. ncre nt();
+         f (space dCount > 1) {
+          numT etsW hMult pleSpace ds. ncre nt();
         }
-        message.setSpaceIds(spaceIds);
+         ssage.setSpace ds(space ds);
       }
     }
   }
 
-  @Override
-  protected TwitterMessage innerRunStageV2(TwitterMessage message) {
-    tryToRetrieveSpaceId(message);
-    return message;
+  @Overr de
+  protected Tw ter ssage  nnerRunStageV2(Tw ter ssage  ssage) {
+    tryToRetr eveSpace d( ssage);
+    return  ssage;
   }
 
-  private String parseSpaceIdsFromUrl(String url) {
-    String spaceId = null;
+  pr vate Str ng parseSpace dsFromUrl(Str ng url) {
+    Str ng space d = null;
 
-    if (StringUtils.isNotEmpty(url)) {
-      Matcher matcher = SPACES_URL_REGEX.matcher(url);
-      if (matcher.matches()) {
-        spaceId = matcher.group(1);
+     f (Str ngUt ls. sNotEmpty(url)) {
+      Matc r matc r = SPACES_URL_REGEX.matc r(url);
+       f (matc r.matc s()) {
+        space d = matc r.group(1);
       }
     }
-    return spaceId;
+    return space d;
   }
 
-  private Set<String> parseSpaceIdsFromMessage(TwitterMessage message) {
-    Set<String> spaceIds = Sets.newHashSet();
+  pr vate Set<Str ng> parseSpace dsFrom ssage(Tw ter ssage  ssage) {
+    Set<Str ng> space ds = Sets.newHashSet();
 
-    for (ThriftExpandedUrl expandedUrl : message.getExpandedUrls()) {
-      String spaceId = parseSpaceIdsFromUrl(expandedUrl.getExpandedUrl());
-      if (StringUtils.isNotEmpty(spaceId)) {
-        spaceIds.add(spaceId);
+    for (Thr ftExpandedUrl expandedUrl :  ssage.getExpandedUrls()) {
+      Str ng space d = parseSpace dsFromUrl(expandedUrl.getExpandedUrl());
+       f (Str ngUt ls. sNotEmpty(space d)) {
+        space ds.add(space d);
       }
     }
-    return spaceIds;
+    return space ds;
   }
 }

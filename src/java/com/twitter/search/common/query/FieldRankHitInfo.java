@@ -1,48 +1,48 @@
-package com.twitter.search.common.query;
+package com.tw ter.search.common.query;
 
 /**
- * When a hit (on a part of the query tree) occurs, this class is passed to HitAttributeCollector
- * for collection.
+ * W n a h  (on a part of t  query tree) occurs, t  class  s passed to H Attr buteCollector
+ * for collect on.
  *
- * This implementation carries the following info:
+ * T   mple ntat on carr es t  follow ng  nfo:
  * <ul>
- *   <li>The field that matched (the field ID is recorded)</li>
- *   <li>The query node that matched (the query node rank is recorded)</li>
- *   <li>The ID of the last doc that matched this query</li>
+ *   <l >T  f eld that matc d (t  f eld  D  s recorded)</l >
+ *   <l >T  query node that matc d (t  query node rank  s recorded)</l >
+ *   <l >T   D of t  last doc that matc d t  query</l >
  * </ul>
  *
- * Each IdentifiableQuery should be associated with one FieldRankHitInfo, which is passed to a
- * HitAttributeCollector when a hit occurs.
+ * Each  dent f ableQuery should be assoc ated w h one F eldRankH  nfo, wh ch  s passed to a
+ * H Attr buteCollector w n a h  occurs.
  */
-public class FieldRankHitInfo {
-  protected static final int UNSET_DOC_ID = -1;
+publ c class F eldRankH  nfo {
+  protected stat c f nal  nt UNSET_DOC_ D = -1;
 
-  private final int fieldId;
-  private final int rank;
-  private int docId = UNSET_DOC_ID;
+  pr vate f nal  nt f eld d;
+  pr vate f nal  nt rank;
+  pr vate  nt doc d = UNSET_DOC_ D;
 
-  public FieldRankHitInfo(int fieldId, int rank) {
-    this.fieldId = fieldId;
-    this.rank = rank;
+  publ c F eldRankH  nfo( nt f eld d,  nt rank) {
+    t .f eld d = f eld d;
+    t .rank = rank;
   }
 
-  public int getFieldId() {
-    return fieldId;
+  publ c  nt getF eld d() {
+    return f eld d;
   }
 
-  public int getRank() {
+  publ c  nt getRank() {
     return rank;
   }
 
-  public int getDocId() {
-    return docId;
+  publ c  nt getDoc d() {
+    return doc d;
   }
 
-  public void setDocId(int docId) {
-    this.docId = docId;
+  publ c vo d setDoc d( nt doc d) {
+    t .doc d = doc d;
   }
 
-  public void resetDocId() {
-    this.docId = UNSET_DOC_ID;
+  publ c vo d resetDoc d() {
+    t .doc d = UNSET_DOC_ D;
   }
 }

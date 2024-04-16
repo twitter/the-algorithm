@@ -1,7 +1,7 @@
-package com.twitter.servo.util
+package com.tw ter.servo.ut l
 
-class ThreadLocalStringBuilder(initialSize: Int) extends ThreadLocal[StringBuilder] {
-  override def initialValue = new StringBuilder(initialSize)
+class ThreadLocalStr ngBu lder( n  alS ze:  nt) extends ThreadLocal[Str ngBu lder] {
+  overr de def  n  alValue = new Str ngBu lder( n  alS ze)
 
   def apply() = {
     val buf = get

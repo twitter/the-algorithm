@@ -1,63 +1,63 @@
-package com.twitter.recos.graph_common
+package com.tw ter.recos.graph_common
 
-import com.twitter.graphjet.bipartite.api.EdgeTypeMask
-import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph
-import com.twitter.graphjet.stats.StatsReceiver
+ mport com.tw ter.graphjet.b part e.ap .EdgeTypeMask
+ mport com.tw ter.graphjet.b part e.Node tadataLeft ndexedPo rLawMult Seg ntB part eGraph
+ mport com.tw ter.graphjet.stats.StatsRece ver
 
 /**
- * The GraphBuilder builds a NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraphBuilder given a set of
- * parameters.
+ * T  GraphBu lder bu lds a Node tadataLeft ndexedPo rLawMult Seg ntB part eGraphBu lder g ven a set of
+ * para ters.
  */
-object NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraphBuilder {
+object Node tadataLeft ndexedPo rLawMult Seg ntB part eGraphBu lder {
 
   /**
-   * This encapsulates all the state needed to initialize the in-memory graph.
+   * T  encapsulates all t  state needed to  n  al ze t   n- mory graph.
    *
-   * @param maxNumSegments           is the maximum number of segments we'll add to the graph.
-   *                                 At that point, the oldest segments will start getting dropped
-   * @param maxNumEdgesPerSegment    determines when the implementation decides to fork off a
-   *                                 new segment
-   * @param expectedNumLeftNodes     is the expected number of left nodes that would be inserted in
-   *                                 the segment
-   * @param expectedMaxLeftDegree    is the maximum degree expected for any left node
-   * @param leftPowerLawExponent     is the exponent of the LHS power-law graph. see
-   *                                 [[com.twitter.graphjet.bipartite.edgepool.PowerLawDegreeEdgePool]]
-   *                                 for details
-   * @param expectedNumRightNodes    is the expected number of right nodes that would be inserted in
-   *                                 the segment
-   * @param numRightNodeMetadataTypes is the max number of node metadata types associated with the
-   *                                  right nodes
+   * @param maxNumSeg nts            s t  max mum number of seg nts  'll add to t  graph.
+   *                                 At that po nt, t  oldest seg nts w ll start gett ng dropped
+   * @param maxNumEdgesPerSeg nt    determ nes w n t   mple ntat on dec des to fork off a
+   *                                 new seg nt
+   * @param expectedNumLeftNodes      s t  expected number of left nodes that would be  nserted  n
+   *                                 t  seg nt
+   * @param expectedMaxLeftDegree     s t  max mum degree expected for any left node
+   * @param leftPo rLawExponent      s t  exponent of t  LHS po r-law graph. see
+   *                                 [[com.tw ter.graphjet.b part e.edgepool.Po rLawDegreeEdgePool]]
+   *                                 for deta ls
+   * @param expectedNumR ghtNodes     s t  expected number of r ght nodes that would be  nserted  n
+   *                                 t  seg nt
+   * @param numR ghtNode tadataTypes  s t  max number of node  tadata types assoc ated w h t 
+   *                                  r ght nodes
    */
-  case class GraphBuilderConfig(
-    maxNumSegments: Int,
-    maxNumEdgesPerSegment: Int,
-    expectedNumLeftNodes: Int,
-    expectedMaxLeftDegree: Int,
-    leftPowerLawExponent: Double,
-    expectedNumRightNodes: Int,
-    numRightNodeMetadataTypes: Int,
+  case class GraphBu lderConf g(
+    maxNumSeg nts:  nt,
+    maxNumEdgesPerSeg nt:  nt,
+    expectedNumLeftNodes:  nt,
+    expectedMaxLeftDegree:  nt,
+    leftPo rLawExponent: Double,
+    expectedNumR ghtNodes:  nt,
+    numR ghtNode tadataTypes:  nt,
     edgeTypeMask: EdgeTypeMask)
 
   /**
-   * This apply function returns a mutuable bipartiteGraph
+   * T  apply funct on returns a mutuable b part eGraph
    *
-   * @param graphBuilderConfig is the graph builder config
+   * @param graphBu lderConf g  s t  graph bu lder conf g
    *
    */
   def apply(
-    graphBuilderConfig: GraphBuilderConfig,
-    statsReceiverWrapper: StatsReceiver
-  ): NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph = {
-    new NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph(
-      graphBuilderConfig.maxNumSegments,
-      graphBuilderConfig.maxNumEdgesPerSegment,
-      graphBuilderConfig.expectedNumLeftNodes,
-      graphBuilderConfig.expectedMaxLeftDegree,
-      graphBuilderConfig.leftPowerLawExponent,
-      graphBuilderConfig.expectedNumRightNodes,
-      graphBuilderConfig.numRightNodeMetadataTypes,
-      graphBuilderConfig.edgeTypeMask,
-      statsReceiverWrapper
+    graphBu lderConf g: GraphBu lderConf g,
+    statsRece verWrapper: StatsRece ver
+  ): Node tadataLeft ndexedPo rLawMult Seg ntB part eGraph = {
+    new Node tadataLeft ndexedPo rLawMult Seg ntB part eGraph(
+      graphBu lderConf g.maxNumSeg nts,
+      graphBu lderConf g.maxNumEdgesPerSeg nt,
+      graphBu lderConf g.expectedNumLeftNodes,
+      graphBu lderConf g.expectedMaxLeftDegree,
+      graphBu lderConf g.leftPo rLawExponent,
+      graphBu lderConf g.expectedNumR ghtNodes,
+      graphBu lderConf g.numR ghtNode tadataTypes,
+      graphBu lderConf g.edgeTypeMask,
+      statsRece verWrapper
     )
   }
 }

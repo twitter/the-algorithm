@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+package com.tw ter.product_m xer.component_l brary.p pel ne.cand date.ads
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
 
 /**
- * Get organic item candidates from the set of previous candidates
+ * Get organ c  em cand dates from t  set of prev ous cand dates
  */
-trait GetOrganicItemIds {
+tra  GetOrgan c em ds {
 
-  def apply(previousCandidates: Seq[CandidateWithDetails]): Option[Seq[Long]]
+  def apply(prev ousCand dates: Seq[Cand dateW hDeta ls]): Opt on[Seq[Long]]
 }
 
 /**
- * Get organic items from specified pipelines
+ * Get organ c  ems from spec f ed p pel nes
  */
-case class PipelineScopedOrganicItemIds(pipelines: CandidateScope) extends GetOrganicItemIds {
+case class P pel neScopedOrgan c em ds(p pel nes: Cand dateScope) extends GetOrgan c em ds {
 
-  def apply(previousCandidates: Seq[CandidateWithDetails]): Option[Seq[Long]] =
-    Some(previousCandidates.filter(pipelines.contains).map(_.candidateIdLong))
+  def apply(prev ousCand dates: Seq[Cand dateW hDeta ls]): Opt on[Seq[Long]] =
+    So (prev ousCand dates.f lter(p pel nes.conta ns).map(_.cand date dLong))
 }
 
 /**
- * Get an empty list of organic item candidates
+ * Get an empty l st of organ c  em cand dates
  */
-case object EmptyOrganicItemIds extends GetOrganicItemIds {
+case object EmptyOrgan c em ds extends GetOrgan c em ds {
 
-  def apply(previousCandidates: Seq[CandidateWithDetails]): Option[Seq[Long]] = None
+  def apply(prev ousCand dates: Seq[Cand dateW hDeta ls]): Opt on[Seq[Long]] = None
 }

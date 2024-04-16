@@ -1,81 +1,81 @@
-use std::collections::BTreeSet;
-use std::collections::BTreeMap;
+use std::collect ons::BTreeSet;
+use std::collect ons::BTreeMap;
 
-use bpr_thrift::data::DataRecord;
-use bpr_thrift::prediction_service::BatchPredictionRequest;
-use thrift::OrderedFloat;
+use bpr_thr ft::data::DataRecord;
+use bpr_thr ft::pred ct on_serv ce::BatchPred ct onRequest;
+use thr ft::OrderedFloat;
 
-use thrift::protocol::TBinaryInputProtocol;
-use thrift::protocol::TSerializable;
-use thrift::transport::TBufferChannel;
-use thrift::Result;
+use thr ft::protocol::TB nary nputProtocol;
+use thr ft::protocol::TSer al zable;
+use thr ft::transport::TBufferChannel;
+use thr ft::Result;
 
-fn main() {
-  let data_path = "/tmp/current/timelines/output-1";
-  let bin_data: Vec<u8> = std::fs::read(data_path).expect("Could not read file!"); 
+fn ma n() {
+  let data_path = "/tmp/current/t  l nes/output-1";
+  let b n_data: Vec<u8> = std::fs::read(data_path).expect("Could not read f le!"); 
 
-  println!("Length : {}", bin_data.len());
+  pr ntln!("Length : {}", b n_data.len());
 
-  let mut bc = TBufferChannel::with_capacity(bin_data.len(), 0);
+  let mut bc = TBufferChannel::w h_capac y(b n_data.len(), 0);
 
-  bc.set_readable_bytes(&bin_data);
+  bc.set_readable_bytes(&b n_data);
 
-  let mut protocol = TBinaryInputProtocol::new(bc, true); 
+  let mut protocol = TB nary nputProtocol::new(bc, true); 
 
-  let result: Result<BatchPredictionRequest> =
-    BatchPredictionRequest::read_from_in_protocol(&mut protocol);
+  let result: Result<BatchPred ct onRequest> =
+    BatchPred ct onRequest::read_from_ n_protocol(&mut protocol);
 
   match result {
     Ok(bpr) => logBP(bpr),
-    Err(err) => println!("Error {}", err),
+    Err(err) => pr ntln!("Error {}", err),
   }
 }
 
-fn logBP(bpr: BatchPredictionRequest) {
-  println!("-------[OUTPUT]---------------");
-  println!("data {:?}", bpr);
-  println!("------------------------------");
+fn logBP(bpr: BatchPred ct onRequest) {
+  pr ntln!("-------[OUTPUT]---------------");
+  pr ntln!("data {:?}", bpr);
+  pr ntln!("------------------------------");
 
   /* 
   let common = bpr.common_features;
-  let recs = bpr.individual_features_list;
+  let recs = bpr. nd v dual_features_l st;
 
-  println!("--------[Len : {}]------------------", recs.len());
+  pr ntln!("--------[Len : {}]------------------", recs.len());
 
-  println!("-------[COMMON]---------------");
+  pr ntln!("-------[COMMON]---------------");
   match common {
-    Some(dr) => logDR(dr),
-    None => println!("None"),
+    So (dr) => logDR(dr),
+    None => pr ntln!("None"),
   }
-  println!("------------------------------");
-  for rec in recs {
+  pr ntln!("------------------------------");
+  for rec  n recs {
     logDR(rec);
   }
-  println!("------------------------------");
+  pr ntln!("------------------------------");
   */
 }
 
 fn logDR(dr: DataRecord) {
-  println!("--------[DR]------------------");
+  pr ntln!("--------[DR]------------------");
 
-  match dr.binary_features {
-    Some(bf) => logBin(bf),
+  match dr.b nary_features {
+    So (bf) => logB n(bf),
     _ => (),
   }
 
-  match dr.continuous_features {
-    Some(cf) => logCF(cf),
+  match dr.cont nuous_features {
+    So (cf) => logCF(cf),
     _ => (),
   }
-  println!("------------------------------");
+  pr ntln!("------------------------------");
 }
 
-fn logBin(bin: BTreeSet<i64>) {
-  println!("B: {:?}", bin)
+fn logB n(b n: BTreeSet< 64>) {
+  pr ntln!("B: {:?}", b n)
 }
 
-fn logCF(cf: BTreeMap<i64, OrderedFloat<f64>>) {
-  for (id, fs) in cf {
-    println!("C: {} -> [{}]", id, fs);
+fn logCF(cf: BTreeMap< 64, OrderedFloat<f64>>) {
+  for ( d, fs)  n cf {
+    pr ntln!("C: {} -> [{}]",  d, fs);
   }
 }

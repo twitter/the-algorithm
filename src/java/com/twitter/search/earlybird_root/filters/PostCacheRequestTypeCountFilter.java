@@ -1,10 +1,10 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import javax.inject.Inject;
+ mport javax. nject. nject;
 
-public class PostCacheRequestTypeCountFilter extends RequestTypeCountFilter {
-  @Inject
-  public PostCacheRequestTypeCountFilter() {
-    super("post_cache");
+publ c class PostCac RequestTypeCountF lter extends RequestTypeCountF lter {
+  @ nject
+  publ c PostCac RequestTypeCountF lter() {
+    super("post_cac ");
   }
 }

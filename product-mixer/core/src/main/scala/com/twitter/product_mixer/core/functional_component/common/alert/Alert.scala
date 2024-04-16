@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+package com.tw ter.product_m xer.core.funct onal_component.common.alert
 
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.Predicate
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.pred cate.Pred cate
 
 /**
- * [[Alert]]s will trigger notifications to their [[NotificationGroup]]
- * when the [[Predicate]]s are triggered.
+ * [[Alert]]s w ll tr gger not f cat ons to t  r [[Not f cat onGroup]]
+ * w n t  [[Pred cate]]s are tr ggered.
  */
-trait Alert {
+tra  Alert {
 
-  /** A group of alert levels and where the alerts for those levels should be sent */
-  val notificationGroup: NotificationGroup
+  /** A group of alert levels and w re t  alerts for those levels should be sent */
+  val not f cat onGroup: Not f cat onGroup
 
-  /** Predicate indicating that the component is in a degraded state */
-  val warnPredicate: Predicate
+  /** Pred cate  nd cat ng that t  component  s  n a degraded state */
+  val warnPred cate: Pred cate
 
-  /** Predicate indicating that the component is not functioning correctly */
-  val criticalPredicate: Predicate
+  /** Pred cate  nd cat ng that t  component  s not funct on ng correctly */
+  val cr  calPred cate: Pred cate
 
-  /** An optional link to the runbook detailing how to respond to this alert */
-  val runbookLink: Option[String]
+  /** An opt onal l nk to t  runbook deta l ng how to respond to t  alert */
+  val runbookL nk: Opt on[Str ng]
 
-  /** Indicates which metrics this [[Alert]] is for */
+  /**  nd cates wh ch  tr cs t  [[Alert]]  s for */
   val alertType: AlertType
 
-  /** Where the metrics are from, @see [[Source]] */
-  val source: Source = Server()
+  /** W re t   tr cs are from, @see [[S ce]] */
+  val s ce: S ce = Server()
 
-  /** A suffix to add to the end of the metric, this is often a [[Percentile]] */
-  val metricSuffix: Option[String] = None
+  /** A suff x to add to t  end of t   tr c, t   s often a [[Percent le]] */
+  val  tr cSuff x: Opt on[Str ng] = None
 }

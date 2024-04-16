@@ -1,727 +1,727 @@
-package com.twitter.search.ingester.pipeline.twitter.thriftparse;
+package com.tw ter.search. ngester.p pel ne.tw ter.thr ftparse;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+ mport java.ut l.Date;
+ mport java.ut l.L st;
+ mport java.ut l.Opt onal;
+ mport javax.annotat on.Nonnull;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.L sts;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons.lang.Str ngEscapeUt ls;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.dataproducts.enrichments.thriftjava.GeoEntity;
-import com.twitter.dataproducts.enrichments.thriftjava.PotentialLocation;
-import com.twitter.dataproducts.enrichments.thriftjava.ProfileGeoEnrichment;
-import com.twitter.escherbird.thriftjava.TweetEntityAnnotation;
-import com.twitter.expandodo.thriftjava.Card2;
-import com.twitter.gizmoduck.thriftjava.User;
-import com.twitter.mediaservices.commons.tweetmedia.thrift_java.MediaInfo;
-import com.twitter.search.common.debug.thriftjava.DebugEvents;
-import com.twitter.search.common.metrics.Percentile;
-import com.twitter.search.common.metrics.PercentileUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.relevance.entities.GeoObject;
-import com.twitter.search.common.relevance.entities.PotentialLocationObject;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.entities.TwitterMessage.EscherbirdAnnotation;
-import com.twitter.search.common.relevance.entities.TwitterMessageUser;
-import com.twitter.search.common.relevance.entities.TwitterMessageUtil;
-import com.twitter.search.common.relevance.entities.TwitterQuotedMessage;
-import com.twitter.search.common.relevance.entities.TwitterRetweetMessage;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.util.CardFieldUtil;
-import com.twitter.service.spiderduck.gen.MediaTypes;
-import com.twitter.tweetypie.thriftjava.DeviceSource;
-import com.twitter.tweetypie.thriftjava.DirectedAtUser;
-import com.twitter.tweetypie.thriftjava.EscherbirdEntityAnnotations;
-import com.twitter.tweetypie.thriftjava.ExclusiveTweetControl;
-import com.twitter.tweetypie.thriftjava.GeoCoordinates;
-import com.twitter.tweetypie.thriftjava.HashtagEntity;
-import com.twitter.tweetypie.thriftjava.MediaEntity;
-import com.twitter.tweetypie.thriftjava.MentionEntity;
-import com.twitter.tweetypie.thriftjava.Place;
-import com.twitter.tweetypie.thriftjava.QuotedTweet;
-import com.twitter.tweetypie.thriftjava.Reply;
-import com.twitter.tweetypie.thriftjava.Tweet;
-import com.twitter.tweetypie.thriftjava.TweetCoreData;
-import com.twitter.tweetypie.thriftjava.TweetCreateEvent;
-import com.twitter.tweetypie.thriftjava.TweetDeleteEvent;
-import com.twitter.tweetypie.thriftjava.UrlEntity;
-import com.twitter.tweetypie.tweettext.PartialHtmlEncoding;
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers on;
+ mport com.tw ter.dataproducts.enr ch nts.thr ftjava.GeoEnt y;
+ mport com.tw ter.dataproducts.enr ch nts.thr ftjava.Potent alLocat on;
+ mport com.tw ter.dataproducts.enr ch nts.thr ftjava.Prof leGeoEnr ch nt;
+ mport com.tw ter.esc rb rd.thr ftjava.T etEnt yAnnotat on;
+ mport com.tw ter.expandodo.thr ftjava.Card2;
+ mport com.tw ter.g zmoduck.thr ftjava.User;
+ mport com.tw ter. d aserv ces.commons.t et d a.thr ft_java. d a nfo;
+ mport com.tw ter.search.common.debug.thr ftjava.DebugEvents;
+ mport com.tw ter.search.common. tr cs.Percent le;
+ mport com.tw ter.search.common. tr cs.Percent leUt l;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.part  on ng.snowflakeparser.Snowflake dParser;
+ mport com.tw ter.search.common.relevance.ent  es.GeoObject;
+ mport com.tw ter.search.common.relevance.ent  es.Potent alLocat onObject;
+ mport com.tw ter.search.common.relevance.ent  es.Tw ter ssage;
+ mport com.tw ter.search.common.relevance.ent  es.Tw ter ssage.Esc rb rdAnnotat on;
+ mport com.tw ter.search.common.relevance.ent  es.Tw ter ssageUser;
+ mport com.tw ter.search.common.relevance.ent  es.Tw ter ssageUt l;
+ mport com.tw ter.search.common.relevance.ent  es.Tw terQuoted ssage;
+ mport com.tw ter.search.common.relevance.ent  es.Tw terRet et ssage;
+ mport com.tw ter.search. ngester.model. ngesterTw ter ssage;
+ mport com.tw ter.search. ngester.p pel ne.ut l.CardF eldUt l;
+ mport com.tw ter.serv ce.sp derduck.gen. d aTypes;
+ mport com.tw ter.t etyp e.thr ftjava.Dev ceS ce;
+ mport com.tw ter.t etyp e.thr ftjava.D rectedAtUser;
+ mport com.tw ter.t etyp e.thr ftjava.Esc rb rdEnt yAnnotat ons;
+ mport com.tw ter.t etyp e.thr ftjava.Exclus veT etControl;
+ mport com.tw ter.t etyp e.thr ftjava.GeoCoord nates;
+ mport com.tw ter.t etyp e.thr ftjava.HashtagEnt y;
+ mport com.tw ter.t etyp e.thr ftjava. d aEnt y;
+ mport com.tw ter.t etyp e.thr ftjava. nt onEnt y;
+ mport com.tw ter.t etyp e.thr ftjava.Place;
+ mport com.tw ter.t etyp e.thr ftjava.QuotedT et;
+ mport com.tw ter.t etyp e.thr ftjava.Reply;
+ mport com.tw ter.t etyp e.thr ftjava.T et;
+ mport com.tw ter.t etyp e.thr ftjava.T etCoreData;
+ mport com.tw ter.t etyp e.thr ftjava.T etCreateEvent;
+ mport com.tw ter.t etyp e.thr ftjava.T etDeleteEvent;
+ mport com.tw ter.t etyp e.thr ftjava.UrlEnt y;
+ mport com.tw ter.t etyp e.t ettext.Part alHtmlEncod ng;
 
 /**
- * This is an utility class for converting Thrift TweetEvent messages sent by TweetyPie
- * into ingester internal representation, IngesterTwitterMessage.
+ * T   s an ut l y class for convert ng Thr ft T etEvent  ssages sent by T etyP e
+ *  nto  ngester  nternal representat on,  ngesterTw ter ssage.
  */
-public final class TweetEventParseHelper {
-  private static final Logger LOG = LoggerFactory.getLogger(TweetEventParseHelper.class);
+publ c f nal class T etEventParse lper {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(T etEventParse lper.class);
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_NULL_TEXT =
-      SearchCounter.export("tweets_with_null_text_from_thrift_cnt");
+  @V s bleForTest ng
+  stat c f nal SearchCounter NUM_TWEETS_W TH_NULL_TEXT =
+      SearchCounter.export("t ets_w h_null_text_from_thr ft_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter TWEET_SIZE = SearchCounter.export("tweet_size_from_thrift");
+  @V s bleForTest ng
+  stat c f nal SearchCounter TWEET_S ZE = SearchCounter.export("t et_s ze_from_thr ft");
 
-  @VisibleForTesting
-  static final Percentile<Long> TWEET_SIZE_PERCENTILES =
-      PercentileUtil.createPercentile("tweet_size_from_thrift");
+  @V s bleForTest ng
+  stat c f nal Percent le<Long> TWEET_S ZE_PERCENT LES =
+      Percent leUt l.createPercent le("t et_s ze_from_thr ft");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_CONVERSATION_ID =
-      SearchCounter.export("tweets_with_conversation_id_from_thrift_cnt");
+  @V s bleForTest ng
+  stat c f nal SearchCounter NUM_TWEETS_W TH_CONVERSAT ON_ D =
+      SearchCounter.export("t ets_w h_conversat on_ d_from_thr ft_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_QUOTE =
-      SearchCounter.export("tweets_with_quote_from_thrift_cnt");
+  @V s bleForTest ng
+  stat c f nal SearchCounter NUM_TWEETS_W TH_QUOTE =
+      SearchCounter.export("t ets_w h_quote_from_thr ft_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_ANNOTATIONS =
-      SearchCounter.export("tweets_with_annotation_from_thrift_cnt");
+  @V s bleForTest ng
+  stat c f nal SearchCounter NUM_TWEETS_W TH_ANNOTAT ONS =
+      SearchCounter.export("t ets_w h_annotat on_from_thr ft_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_ANNOTATIONS_ADDED =
-      SearchCounter.export("num_annotations_from_thrift_cnt");
+  @V s bleForTest ng
+  stat c f nal SearchCounter NUM_ANNOTAT ONS_ADDED =
+      SearchCounter.export("num_annotat ons_from_thr ft_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_COORDINATE_FIELD =
-      SearchCounter.export("tweets_with_coordinate_field_from_thrift_cnt");
+  @V s bleForTest ng
+  stat c f nal SearchCounter NUM_TWEETS_W TH_COORD NATE_F ELD =
+      SearchCounter.export("t ets_w h_coord nate_f eld_from_thr ft_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_PLACE_ADDED =
-      SearchCounter.export("num_places_from_thrift_cnt");
+  @V s bleForTest ng
+  stat c f nal SearchCounter NUM_PLACE_ADDED =
+      SearchCounter.export("num_places_from_thr ft_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_PLACE_FIELD =
-      SearchCounter.export("tweets_with_place_field_from_thrift_cnt");
+  @V s bleForTest ng
+  stat c f nal SearchCounter NUM_TWEETS_W TH_PLACE_F ELD =
+      SearchCounter.export("t ets_w h_place_f eld_from_thr ft_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_PLACE_COUNTRY_CODE =
-      SearchCounter.export("tweets_with_place_country_code_from_thrift_cnt");
+  @V s bleForTest ng
+  stat c f nal SearchCounter NUM_TWEETS_W TH_PLACE_COUNTRY_CODE =
+      SearchCounter.export("t ets_w h_place_country_code_from_thr ft_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_USE_PLACE_FIELD =
-      SearchCounter.export("tweets_use_place_field_from_thrift_cnt");
+  @V s bleForTest ng
+  stat c f nal SearchCounter NUM_TWEETS_USE_PLACE_F ELD =
+      SearchCounter.export("t ets_use_place_f eld_from_thr ft_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_CANNOT_PARSE_PLACE_FIELD =
-      SearchCounter.export("tweets_cannot_parse_place_field_from_thrift_cnt");
+  @V s bleForTest ng
+  stat c f nal SearchCounter NUM_TWEETS_CANNOT_PARSE_PLACE_F ELD =
+      SearchCounter.export("t ets_cannot_parse_place_f eld_from_thr ft_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_PROFILE_GEO_ENRICHMENT =
-      SearchCounter.export("tweets_with_profile_geo_enrichment_from_thrift_cnt");
+  @V s bleForTest ng
+  stat c f nal SearchCounter NUM_TWEETS_W TH_PROF LE_GEO_ENR CHMENT =
+      SearchCounter.export("t ets_w h_prof le_geo_enr ch nt_from_thr ft_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_MENTIONS =
-      SearchCounter.export("tweets_with_mentions_from_thrift_cnt");
+  @V s bleForTest ng
+  stat c f nal SearchCounter NUM_TWEETS_W TH_MENT ONS =
+      SearchCounter.export("t ets_w h_ nt ons_from_thr ft_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_MENTIONS_ADDED =
-      SearchCounter.export("num_mentions_from_thrift_cnt");
+  @V s bleForTest ng
+  stat c f nal SearchCounter NUM_MENT ONS_ADDED =
+      SearchCounter.export("num_ nt ons_from_thr ft_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_HASHTAGS =
-      SearchCounter.export("tweets_with_hashtags_from_thrift_cnt");
+  @V s bleForTest ng
+  stat c f nal SearchCounter NUM_TWEETS_W TH_HASHTAGS =
+      SearchCounter.export("t ets_w h_hashtags_from_thr ft_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_HASHTAGS_ADDED =
-      SearchCounter.export("num_hashtags_from_thrift_cnt");
+  @V s bleForTest ng
+  stat c f nal SearchCounter NUM_HASHTAGS_ADDED =
+      SearchCounter.export("num_hashtags_from_thr ft_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_MEDIA_URL =
-      SearchCounter.export("tweets_with_media_url_from_thrift_cnt");
+  @V s bleForTest ng
+  stat c f nal SearchCounter NUM_TWEETS_W TH_MED A_URL =
+      SearchCounter.export("t ets_w h_ d a_url_from_thr ft_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_MEDIA_URLS_ADDED =
-      SearchCounter.export("num_media_urls_from_thrift_cnt");
+  @V s bleForTest ng
+  stat c f nal SearchCounter NUM_MED A_URLS_ADDED =
+      SearchCounter.export("num_ d a_urls_from_thr ft_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_PHOTO_MEDIA_URL =
-      SearchCounter.export("tweets_with_photo_media_url_from_thrift_cnt");
+  @V s bleForTest ng
+  stat c f nal SearchCounter NUM_TWEETS_W TH_PHOTO_MED A_URL =
+      SearchCounter.export("t ets_w h_photo_ d a_url_from_thr ft_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_VIDEO_MEDIA_URL =
-      SearchCounter.export("tweets_with_video_media_url_from_thrift_cnt");
+  @V s bleForTest ng
+  stat c f nal SearchCounter NUM_TWEETS_W TH_V DEO_MED A_URL =
+      SearchCounter.export("t ets_w h_v deo_ d a_url_from_thr ft_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_NON_MEDIA_URL =
-      SearchCounter.export("tweets_with_non_media_url_from_thrift_cnt");
+  @V s bleForTest ng
+  stat c f nal SearchCounter NUM_TWEETS_W TH_NON_MED A_URL =
+      SearchCounter.export("t ets_w h_non_ d a_url_from_thr ft_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_NON_MEDIA_URLS_ADDED =
-      SearchCounter.export("num_non_media_urls_from_thrift_cnt");
+  @V s bleForTest ng
+  stat c f nal SearchCounter NUM_NON_MED A_URLS_ADDED =
+      SearchCounter.export("num_non_ d a_urls_from_thr ft_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_MISSING_QUOTE_URLS =
-      SearchCounter.export("num_tweets_missing_quote_urls_cnt");
+  @V s bleForTest ng
+  stat c f nal SearchCounter NUM_TWEETS_M SS NG_QUOTE_URLS =
+      SearchCounter.export("num_t ets_m ss ng_quote_urls_cnt");
 
-  // Utility class, disallow instantiation.
-  private TweetEventParseHelper() {
+  // Ut l y class, d sallow  nstant at on.
+  pr vate T etEventParse lper() {
   }
 
-  /** Builds an IngesterTwitterMessage instance from a TweetCreateEvent. */
+  /** Bu lds an  ngesterTw ter ssage  nstance from a T etCreateEvent. */
   @Nonnull
-  public static IngesterTwitterMessage getTwitterMessageFromCreationEvent(
-      @Nonnull TweetCreateEvent createEvent,
-      @Nonnull List<PenguinVersion> supportedPenguinVersions,
-      @Nullable DebugEvents debugEvents) throws ThriftTweetParsingException {
+  publ c stat c  ngesterTw ter ssage getTw ter ssageFromCreat onEvent(
+      @Nonnull T etCreateEvent createEvent,
+      @Nonnull L st<Pengu nVers on> supportedPengu nVers ons,
+      @Nullable DebugEvents debugEvents) throws Thr ftT etPars ngExcept on {
 
-    Tweet tweet = createEvent.getTweet();
-    if (tweet == null) {
-      throw new ThriftTweetParsingException("No tweet field in TweetCreateEvent");
+    T et t et = createEvent.getT et();
+     f (t et == null) {
+      throw new Thr ftT etPars ngExcept on("No t et f eld  n T etCreateEvent");
     }
 
-    TweetCoreData coreData = tweet.getCore_data();
-    if (coreData == null) {
-      throw new ThriftTweetParsingException("No core_data field in Tweet in TweetCreateEvent");
+    T etCoreData coreData = t et.getCore_data();
+     f (coreData == null) {
+      throw new Thr ftT etPars ngExcept on("No core_data f eld  n T et  n T etCreateEvent");
     }
 
     User user = createEvent.getUser();
-    if (user == null) {
-      throw new ThriftTweetParsingException("No user field in TweetCreateEvent");
+     f (user == null) {
+      throw new Thr ftT etPars ngExcept on("No user f eld  n T etCreateEvent");
     }
-    if (!user.isSetProfile()) {
-      throw new ThriftTweetParsingException("No profile field in User in TweetCreateEvent");
+     f (!user. sSetProf le()) {
+      throw new Thr ftT etPars ngExcept on("No prof le f eld  n User  n T etCreateEvent");
     }
-    if (!user.isSetSafety()) {
-      throw new ThriftTweetParsingException("No safety field in User in TweetCreateEvent");
+     f (!user. sSetSafety()) {
+      throw new Thr ftT etPars ngExcept on("No safety f eld  n User  n T etCreateEvent");
     }
 
-    long twitterId = tweet.getId();
-    IngesterTwitterMessage message = new IngesterTwitterMessage(
-        twitterId,
-        supportedPenguinVersions,
+    long tw ter d = t et.get d();
+     ngesterTw ter ssage  ssage = new  ngesterTw ter ssage(
+        tw ter d,
+        supportedPengu nVers ons,
         debugEvents);
 
-    // Set the creation time based on the tweet ID, because it has millisecond granularity,
-    // and coreData.created_at_secs has only second granularity.
-    message.setDate(new Date(SnowflakeIdParser.getTimestampFromTweetId(twitterId)));
+    // Set t  creat on t   based on t  t et  D, because   has m ll second granular y,
+    // and coreData.created_at_secs has only second granular y.
+     ssage.setDate(new Date(Snowflake dParser.getT  stampFromT et d(tw ter d)));
 
-    boolean isNsfw = coreData.isNsfw_admin() || coreData.isNsfw_user();
-    boolean hasMediaOrUrlsOrCards =
-        tweet.getMediaSize() > 0
-            || tweet.getUrlsSize() > 0
-            || tweet.getCardsSize() > 0
-            || tweet.isSetCard2();
+    boolean  sNsfw = coreData. sNsfw_adm n() || coreData. sNsfw_user();
+    boolean has d aOrUrlsOrCards =
+        t et.get d aS ze() > 0
+            || t et.getUrlsS ze() > 0
+            || t et.getCardsS ze() > 0
+            || t et. sSetCard2();
 
-    message.setIsSensitiveContent(isNsfw && hasMediaOrUrlsOrCards);
+     ssage.set sSens  veContent( sNsfw && has d aOrUrlsOrCards);
 
-    message.setFromUser(getFromUser(user));
-    if (user.isSetCounts()) {
-      message.setFollowersCount((int) user.getCounts().getFollowers());
+     ssage.setFromUser(getFromUser(user));
+     f (user. sSetCounts()) {
+       ssage.setFollo rsCount(( nt) user.getCounts().getFollo rs());
     }
-    message.setUserProtected(user.getSafety().isIs_protected());
-    message.setUserVerified(user.getSafety().isVerified());
-    message.setUserBlueVerified(user.getSafety().isIs_blue_verified());
+     ssage.setUserProtected(user.getSafety(). s s_protected());
+     ssage.setUserVer f ed(user.getSafety(). sVer f ed());
+     ssage.setUserBlueVer f ed(user.getSafety(). s s_blue_ver f ed());
 
-    if (tweet.isSetLanguage()) {
-      message.setLanguage(tweet.getLanguage().getLanguage()); // language ID like "en"
-    }
-
-    if (tweet.isSetSelf_thread_metadata()) {
-      message.setSelfThread(true);
+     f (t et. sSetLanguage()) {
+       ssage.setLanguage(t et.getLanguage().getLanguage()); // language  D l ke "en"
     }
 
-    ExclusiveTweetControl exclusiveTweetControl = tweet.getExclusive_tweet_control();
-    if (exclusiveTweetControl != null) {
-      if (exclusiveTweetControl.isSetConversation_author_id()) {
-        message.setExclusiveConversationAuthorId(
-            exclusiveTweetControl.getConversation_author_id());
+     f (t et. sSetSelf_thread_ tadata()) {
+       ssage.setSelfThread(true);
+    }
+
+    Exclus veT etControl exclus veT etControl = t et.getExclus ve_t et_control();
+     f (exclus veT etControl != null) {
+       f (exclus veT etControl. sSetConversat on_author_ d()) {
+         ssage.setExclus veConversat onAuthor d(
+            exclus veT etControl.getConversat on_author_ d());
       }
     }
 
-    setDirectedAtUser(message, coreData);
-    addMentionsToMessage(message, tweet);
-    addHashtagsToMessage(message, tweet);
-    addMediaEntitiesToMessage(message, tweet.getId(), tweet.getMedia());
-    addUrlsToMessage(message, tweet.getUrls());
-    addEscherbirdAnnotationsToMessage(message, tweet);
-    message.setNullcast(coreData.isNullcast());
+    setD rectedAtUser( ssage, coreData);
+    add nt onsTo ssage( ssage, t et);
+    addHashtagsTo ssage( ssage, t et);
+    add d aEnt  esTo ssage( ssage, t et.get d(), t et.get d a());
+    addUrlsTo ssage( ssage, t et.getUrls());
+    addEsc rb rdAnnotat onsTo ssage( ssage, t et);
+     ssage.setNullcast(coreData. sNullcast());
 
-    if (coreData.isSetConversation_id()) {
-      message.setConversationId(coreData.getConversation_id());
-      NUM_TWEETS_WITH_CONVERSATION_ID.increment();
+     f (coreData. sSetConversat on_ d()) {
+       ssage.setConversat on d(coreData.getConversat on_ d());
+      NUM_TWEETS_W TH_CONVERSAT ON_ D. ncre nt();
     }
 
     // quotes
-    if (tweet.isSetQuoted_tweet()) {
-      QuotedTweet quotedTweet = tweet.getQuoted_tweet();
-      if (quotedTweet.getTweet_id() > 0 &&  quotedTweet.getUser_id() > 0) {
-        if (quotedTweet.isSetPermalink()) {
-          String quotedURL = quotedTweet.getPermalink().getLong_url();
-          UrlEntity quotedURLEntity = new UrlEntity();
-          quotedURLEntity.setExpanded(quotedURL);
-          quotedURLEntity.setUrl(quotedTweet.getPermalink().getShort_url());
-          quotedURLEntity.setDisplay(quotedTweet.getPermalink().getDisplay_text());
-          addUrlsToMessage(message, Lists.newArrayList(quotedURLEntity));
+     f (t et. sSetQuoted_t et()) {
+      QuotedT et quotedT et = t et.getQuoted_t et();
+       f (quotedT et.getT et_ d() > 0 &&  quotedT et.getUser_ d() > 0) {
+         f (quotedT et. sSetPermal nk()) {
+          Str ng quotedURL = quotedT et.getPermal nk().getLong_url();
+          UrlEnt y quotedURLEnt y = new UrlEnt y();
+          quotedURLEnt y.setExpanded(quotedURL);
+          quotedURLEnt y.setUrl(quotedT et.getPermal nk().getShort_url());
+          quotedURLEnt y.setD splay(quotedT et.getPermal nk().getD splay_text());
+          addUrlsTo ssage( ssage, L sts.newArrayL st(quotedURLEnt y));
         } else {
-          LOG.warn("Tweet {} has quoted tweet, but is missing quoted tweet URL: {}",
-                   tweet.getId(), quotedTweet);
-          NUM_TWEETS_MISSING_QUOTE_URLS.increment();
+          LOG.warn("T et {} has quoted t et, but  s m ss ng quoted t et URL: {}",
+                   t et.get d(), quotedT et);
+          NUM_TWEETS_M SS NG_QUOTE_URLS. ncre nt();
         }
-        TwitterQuotedMessage quotedMessage =
-            new TwitterQuotedMessage(
-                quotedTweet.getTweet_id(),
-                quotedTweet.getUser_id());
-        message.setQuotedMessage(quotedMessage);
-        NUM_TWEETS_WITH_QUOTE.increment();
+        Tw terQuoted ssage quoted ssage =
+            new Tw terQuoted ssage(
+                quotedT et.getT et_ d(),
+                quotedT et.getUser_ d());
+         ssage.setQuoted ssage(quoted ssage);
+        NUM_TWEETS_W TH_QUOTE. ncre nt();
       }
     }
 
-    // card fields
-    if (createEvent.getTweet().isSetCard2()) {
-      Card2 card = createEvent.getTweet().getCard2();
-      message.setCardName(card.getName());
-      message.setCardTitle(
-          CardFieldUtil.extractBindingValue(CardFieldUtil.TITLE_BINDING_KEY, card));
-      message.setCardDescription(
-          CardFieldUtil.extractBindingValue(CardFieldUtil.DESCRIPTION_BINDING_KEY, card));
-      CardFieldUtil.deriveCardLang(message);
-      message.setCardUrl(card.getUrl());
+    // card f elds
+     f (createEvent.getT et(). sSetCard2()) {
+      Card2 card = createEvent.getT et().getCard2();
+       ssage.setCardNa (card.getNa ());
+       ssage.setCardT le(
+          CardF eldUt l.extractB nd ngValue(CardF eldUt l.T TLE_B ND NG_KEY, card));
+       ssage.setCardDescr pt on(
+          CardF eldUt l.extractB nd ngValue(CardF eldUt l.DESCR PT ON_B ND NG_KEY, card));
+      CardF eldUt l.der veCardLang( ssage);
+       ssage.setCardUrl(card.getUrl());
     }
 
-    // Some fields should be set based on the "original" tweet. So if this tweet is a retweet,
-    // we want to extract those fields from the retweeted tweet.
-    Tweet retweetOrTweet = tweet;
-    TweetCoreData retweetOrTweetCoreData = coreData;
-    User retweetOrTweetUser = user;
+    // So  f elds should be set based on t  "or g nal" t et. So  f t  t et  s a ret et,
+    //   want to extract those f elds from t  ret eted t et.
+    T et ret etOrT et = t et;
+    T etCoreData ret etOrT etCoreData = coreData;
+    User ret etOrT etUser = user;
 
-    // retweets
-    boolean isRetweet = coreData.isSetShare();
-    if (isRetweet) {
-      retweetOrTweet = createEvent.getSource_tweet();
-      retweetOrTweetCoreData = retweetOrTweet.getCore_data();
-      retweetOrTweetUser = createEvent.getSource_user();
+    // ret ets
+    boolean  sRet et = coreData. sSetShare();
+     f ( sRet et) {
+      ret etOrT et = createEvent.getS ce_t et();
+      ret etOrT etCoreData = ret etOrT et.getCore_data();
+      ret etOrT etUser = createEvent.getS ce_user();
 
-      TwitterRetweetMessage retweetMessage = new TwitterRetweetMessage();
-      retweetMessage.setRetweetId(twitterId);
+      Tw terRet et ssage ret et ssage = new Tw terRet et ssage();
+      ret et ssage.setRet et d(tw ter d);
 
-      if (retweetOrTweetUser != null) {
-        if (retweetOrTweetUser.isSetProfile()) {
-          retweetMessage.setSharedUserDisplayName(retweetOrTweetUser.getProfile().getName());
+       f (ret etOrT etUser != null) {
+         f (ret etOrT etUser. sSetProf le()) {
+          ret et ssage.setSharedUserD splayNa (ret etOrT etUser.getProf le().getNa ());
         }
-        retweetMessage.setSharedUserTwitterId(retweetOrTweetUser.getId());
+        ret et ssage.setSharedUserTw ter d(ret etOrT etUser.get d());
       }
 
-      retweetMessage.setSharedDate(new Date(retweetOrTweetCoreData.getCreated_at_secs() * 1000));
-      retweetMessage.setSharedId(retweetOrTweet.getId());
+      ret et ssage.setSharedDate(new Date(ret etOrT etCoreData.getCreated_at_secs() * 1000));
+      ret et ssage.setShared d(ret etOrT et.get d());
 
-      addMediaEntitiesToMessage(message, retweetOrTweet.getId(), retweetOrTweet.getMedia());
-      addUrlsToMessage(message, retweetOrTweet.getUrls());
+      add d aEnt  esTo ssage( ssage, ret etOrT et.get d(), ret etOrT et.get d a());
+      addUrlsTo ssage( ssage, ret etOrT et.getUrls());
 
-      // If a tweet's text is longer than 140 characters, the text for any retweet of that tweet
-      // will be truncated. And if the original tweet has hashtags or mentions after character 140,
-      // the Tweetypie event for the retweet will not include those hashtags/mentions, which will
-      // make the retweet unsearchable by those hashtags/mentions. So in order to avoid this
-      // problem, we add to the retweet all hashtags/mentions set on the original tweet.
-      addMentionsToMessage(message, retweetOrTweet);
-      addHashtagsToMessage(message, retweetOrTweet);
+      //  f a t et's text  s longer than 140 characters, t  text for any ret et of that t et
+      // w ll be truncated. And  f t  or g nal t et has hashtags or  nt ons after character 140,
+      // t  T etyp e event for t  ret et w ll not  nclude those hashtags/ nt ons, wh ch w ll
+      // make t  ret et unsearchable by those hashtags/ nt ons. So  n order to avo d t 
+      // problem,   add to t  ret et all hashtags/ nt ons set on t  or g nal t et.
+      add nt onsTo ssage( ssage, ret etOrT et);
+      addHashtagsTo ssage( ssage, ret etOrT et);
 
-      message.setRetweetMessage(retweetMessage);
+       ssage.setRet et ssage(ret et ssage);
     }
 
-    // Some fields should be set based on the "original" tweet.
-    // Only set geo fields if this is not a retweet
-    if (!isRetweet) {
-      setGeoFields(message, retweetOrTweetCoreData, retweetOrTweetUser);
-      setPlacesFields(message, retweetOrTweet);
+    // So  f elds should be set based on t  "or g nal" t et.
+    // Only set geo f elds  f t   s not a ret et
+     f (! sRet et) {
+      setGeoF elds( ssage, ret etOrT etCoreData, ret etOrT etUser);
+      setPlacesF elds( ssage, ret etOrT et);
     }
-    setText(message, retweetOrTweetCoreData);
-    setInReplyTo(message, retweetOrTweetCoreData, isRetweet);
-    setDeviceSourceField(message, retweetOrTweet);
+    setText( ssage, ret etOrT etCoreData);
+    set nReplyTo( ssage, ret etOrT etCoreData,  sRet et);
+    setDev ceS ceF eld( ssage, ret etOrT et);
 
-    // Profile geo enrichment fields should be set based on this tweet, even if it's a retweet.
-    setProfileGeoEnrichmentFields(message, tweet);
+    // Prof le geo enr ch nt f elds should be set based on t  t et, even  f  's a ret et.
+    setProf leGeoEnr ch ntF elds( ssage, t et);
 
-    // The composer used to create this tweet: standard tweet creator or the camera flow.
-    setComposerSource(message, tweet);
+    // T  composer used to create t  t et: standard t et creator or t  ca ra flow.
+    setComposerS ce( ssage, t et);
 
-    return message;
+    return  ssage;
   }
 
-  private static void setGeoFields(
-      TwitterMessage message, TweetCoreData coreData, User user) {
+  pr vate stat c vo d setGeoF elds(
+      Tw ter ssage  ssage, T etCoreData coreData, User user) {
 
-    if (coreData.isSetCoordinates()) {
-      NUM_TWEETS_WITH_COORDINATE_FIELD.increment();
-      GeoCoordinates coords = coreData.getCoordinates();
-      message.setGeoTaggedLocation(
-          GeoObject.createForIngester(coords.getLatitude(), coords.getLongitude()));
+     f (coreData. sSetCoord nates()) {
+      NUM_TWEETS_W TH_COORD NATE_F ELD. ncre nt();
+      GeoCoord nates coords = coreData.getCoord nates();
+       ssage.setGeoTaggedLocat on(
+          GeoObject.createFor ngester(coords.getLat ude(), coords.getLong ude()));
 
-      String location =
-          String.format("GeoAPI:%.4f,%.4f", coords.getLatitude(), coords.getLongitude());
-      TwitterMessageUtil.setAndTruncateLocationOnMessage(message, location);
+      Str ng locat on =
+          Str ng.format("GeoAP :%.4f,%.4f", coords.getLat ude(), coords.getLong ude());
+      Tw ter ssageUt l.setAndTruncateLocat onOn ssage( ssage, locat on);
     }
 
-    // If the location was not set from the coordinates.
-    if ((message.getOrigLocation() == null) && (user != null) && user.isSetProfile()) {
-      TwitterMessageUtil.setAndTruncateLocationOnMessage(message, user.getProfile().getLocation());
+    //  f t  locat on was not set from t  coord nates.
+     f (( ssage.getOr gLocat on() == null) && (user != null) && user. sSetProf le()) {
+      Tw ter ssageUt l.setAndTruncateLocat onOn ssage( ssage, user.getProf le().getLocat on());
     }
   }
 
-  private static void setPlacesFields(TwitterMessage message, Tweet tweet) {
-    if (!tweet.isSetPlace()) {
+  pr vate stat c vo d setPlacesF elds(Tw ter ssage  ssage, T et t et) {
+     f (!t et. sSetPlace()) {
       return;
     }
 
-    Place place = tweet.getPlace();
+    Place place = t et.getPlace();
 
-    if (place.isSetContainers() && place.getContainersSize() > 0) {
-      NUM_TWEETS_WITH_PLACE_FIELD.increment();
-      NUM_PLACE_ADDED.add(place.getContainersSize());
+     f (place. sSetConta ners() && place.getConta nersS ze() > 0) {
+      NUM_TWEETS_W TH_PLACE_F ELD. ncre nt();
+      NUM_PLACE_ADDED.add(place.getConta nersS ze());
 
-      for (String placeId : place.getContainers()) {
-        message.addPlace(placeId);
+      for (Str ng place d : place.getConta ners()) {
+         ssage.addPlace(place d);
       }
     }
 
-    Preconditions.checkArgument(place.isSetId(), "Tweet.Place without id.");
-    message.setPlaceId(place.getId());
-    Preconditions.checkArgument(place.isSetFull_name(), "Tweet.Place without full_name.");
-    message.setPlaceFullName(place.getFull_name());
-    if (place.isSetCountry_code()) {
-      message.setPlaceCountryCode(place.getCountry_code());
-      NUM_TWEETS_WITH_PLACE_COUNTRY_CODE.increment();
+    Precond  ons.c ckArgu nt(place. sSet d(), "T et.Place w hout  d.");
+     ssage.setPlace d(place.get d());
+    Precond  ons.c ckArgu nt(place. sSetFull_na (), "T et.Place w hout full_na .");
+     ssage.setPlaceFullNa (place.getFull_na ());
+     f (place. sSetCountry_code()) {
+       ssage.setPlaceCountryCode(place.getCountry_code());
+      NUM_TWEETS_W TH_PLACE_COUNTRY_CODE. ncre nt();
     }
 
-    if (message.getGeoTaggedLocation() == null) {
-      Optional<GeoObject> location = GeoObject.fromPlace(place);
+     f ( ssage.getGeoTaggedLocat on() == null) {
+      Opt onal<GeoObject> locat on = GeoObject.fromPlace(place);
 
-      if (location.isPresent()) {
-        NUM_TWEETS_USE_PLACE_FIELD.increment();
-        message.setGeoTaggedLocation(location.get());
+       f (locat on. sPresent()) {
+        NUM_TWEETS_USE_PLACE_F ELD. ncre nt();
+         ssage.setGeoTaggedLocat on(locat on.get());
       } else {
-        NUM_TWEETS_CANNOT_PARSE_PLACE_FIELD.increment();
+        NUM_TWEETS_CANNOT_PARSE_PLACE_F ELD. ncre nt();
       }
     }
   }
 
-  private static void setText(TwitterMessage message, TweetCoreData coreData) {
+  pr vate stat c vo d setText(Tw ter ssage  ssage, T etCoreData coreData) {
     /**
-     * TweetyPie doesn't do a full HTML escaping of the text, only a partial escaping
-     * so we use their code to unescape it first, then we do
-     * a second unescaping because when the tweet text itself has HTML escape
-     * sequences, we want to index the unescaped version, not the escape sequence itself.
+     * T etyP e doesn't do a full HTML escap ng of t  text, only a part al escap ng
+     * so   use t  r code to unescape   f rst, t n   do
+     * a second unescap ng because w n t  t et text  self has HTML escape
+     * sequences,   want to  ndex t  unescaped vers on, not t  escape sequence  self.
      * --
-     * Yes, we *double* unescape html. About 1-2 tweets per second are double escaped,
-     * and we probably want to index the real text and not things like '&#9733;'.
-     * Unescaping already unescaped text seems safe in practice.
+     * Yes,   *double* unescape html. About 1-2 t ets per second are double escaped,
+     * and   probably want to  ndex t  real text and not th ngs l ke '&#9733;'.
+     * Unescap ng already unescaped text seems safe  n pract ce.
      * --
      *
-     * This may seem wrong, because one thinks we should index whatever the user posts,
-     * but given punctuation stripping this creates odd behavior:
+     * T  may seem wrong, because one th nks   should  ndex whatever t  user posts,
+     * but g ven punctuat on str pp ng t  creates odd behav or:
      *
-     * If someone tweets &amp; they won't be able to find it by searching for '&amp;' because
-     * the tweet will be indexed as 'amp'
+     *  f so one t ets &amp; t y won't be able to f nd   by search ng for '&amp;' because
+     * t  t et w ll be  ndexed as 'amp'
      *
-     * It would also prevent some tweets from surfacing for certain searches, for example:
+     *   would also prevent so  t ets from surfac ng for certa n searc s, for example:
      *
-     * User Tweets: John Mayer &amp; Dave Chappelle
-     * We Unescape To: John Mayer & Dave Chappelle
-     * We Strip/Normalize To: john mayer dave chappelle
+     * User T ets: John Mayer &amp; Dave Chappelle
+     *   Unescape To: John Mayer & Dave Chappelle
+     *   Str p/Normal ze To: john mayer dave chappelle
      *
-     * A user searching for 'John Mayer Dave Chappelle' would get the above tweet.
+     * A user search ng for 'John Mayer Dave Chappelle' would get t  above t et.
      *
-     * If we didn't double unescape
+     *  f   d dn't double unescape
      *
-     * User Tweets: John Mayer &amp; Dave Chappelle
-     * We Strip/Normalize To: john mayer amp dave chappelle
+     * User T ets: John Mayer &amp; Dave Chappelle
+     *   Str p/Normal ze To: john mayer amp dave chappelle
      *
-     * A user searching for 'John Mayer Dave Chappelle' would miss the above tweet.
+     * A user search ng for 'John Mayer Dave Chappelle' would m ss t  above t et.
      *
      * Second example
      *
-     * User Tweets: L'Humanit&eacute;
-     * We Unescape To: L'Humanité
-     * We Strip/Normalize To: l humanite
+     * User T ets: L'Human &eacute;
+     *   Unescape To: L'Human é
+     *   Str p/Normal ze To: l human e
      *
-     * If we didn't double escape
+     *  f   d dn't double escape
      *
-     * User Tweets: L'Humanit&eacute;
-     * We Strip/Normalize To: l humanit eacute
+     * User T ets: L'Human &eacute;
+     *   Str p/Normal ze To: l human  eacute
      *
      */
 
-    String text = coreData.isSetText()
-        ? StringEscapeUtils.unescapeHtml(PartialHtmlEncoding.decode(coreData.getText()))
+    Str ng text = coreData. sSetText()
+        ? Str ngEscapeUt ls.unescapeHtml(Part alHtmlEncod ng.decode(coreData.getText()))
         : coreData.getText();
-    message.setText(text);
-    if (text != null) {
-      long tweetLength = text.length();
-      TWEET_SIZE.add(tweetLength);
-      TWEET_SIZE_PERCENTILES.record(tweetLength);
+     ssage.setText(text);
+     f (text != null) {
+      long t etLength = text.length();
+      TWEET_S ZE.add(t etLength);
+      TWEET_S ZE_PERCENT LES.record(t etLength);
     } else {
-      NUM_TWEETS_WITH_NULL_TEXT.increment();
+      NUM_TWEETS_W TH_NULL_TEXT. ncre nt();
     }
   }
 
-  private static void setInReplyTo(
-      TwitterMessage message, TweetCoreData coreData, boolean isRetweet) {
+  pr vate stat c vo d set nReplyTo(
+      Tw ter ssage  ssage, T etCoreData coreData, boolean  sRet et) {
     Reply reply = coreData.getReply();
-    if (!isRetweet && reply != null) {
-      String inReplyToScreenName = reply.getIn_reply_to_screen_name();
-      long inReplyToUserId = reply.getIn_reply_to_user_id();
-      message.replaceToUserWithInReplyToUserIfNeeded(inReplyToScreenName, inReplyToUserId);
+     f (! sRet et && reply != null) {
+      Str ng  nReplyToScreenNa  = reply.get n_reply_to_screen_na ();
+      long  nReplyToUser d = reply.get n_reply_to_user_ d();
+       ssage.replaceToUserW h nReplyToUser fNeeded( nReplyToScreenNa ,  nReplyToUser d);
     }
 
-    if ((reply != null) && reply.isSetIn_reply_to_status_id()) {
-      message.setInReplyToStatusId(reply.getIn_reply_to_status_id());
+     f ((reply != null) && reply. sSet n_reply_to_status_ d()) {
+       ssage.set nReplyToStatus d(reply.get n_reply_to_status_ d());
     }
   }
 
-  private static void setProfileGeoEnrichmentFields(TwitterMessage message, Tweet tweet) {
-    if (!tweet.isSetProfile_geo_enrichment()) {
+  pr vate stat c vo d setProf leGeoEnr ch ntF elds(Tw ter ssage  ssage, T et t et) {
+     f (!t et. sSetProf le_geo_enr ch nt()) {
       return;
     }
 
-    ProfileGeoEnrichment profileGeoEnrichment = tweet.getProfile_geo_enrichment();
-    List<PotentialLocation> thriftPotentialLocations =
-        profileGeoEnrichment.getPotential_locations();
-    if (!thriftPotentialLocations.isEmpty()) {
-      NUM_TWEETS_WITH_PROFILE_GEO_ENRICHMENT.increment();
-      List<PotentialLocationObject> potentialLocations = Lists.newArrayList();
-      for (PotentialLocation potentialLocation : thriftPotentialLocations) {
-        GeoEntity geoEntity = potentialLocation.getGeo_entity();
-        potentialLocations.add(new PotentialLocationObject(geoEntity.getCountry_code(),
-                                                           geoEntity.getRegion(),
-                                                           geoEntity.getLocality()));
+    Prof leGeoEnr ch nt prof leGeoEnr ch nt = t et.getProf le_geo_enr ch nt();
+    L st<Potent alLocat on> thr ftPotent alLocat ons =
+        prof leGeoEnr ch nt.getPotent al_locat ons();
+     f (!thr ftPotent alLocat ons. sEmpty()) {
+      NUM_TWEETS_W TH_PROF LE_GEO_ENR CHMENT. ncre nt();
+      L st<Potent alLocat onObject> potent alLocat ons = L sts.newArrayL st();
+      for (Potent alLocat on potent alLocat on : thr ftPotent alLocat ons) {
+        GeoEnt y geoEnt y = potent alLocat on.getGeo_ent y();
+        potent alLocat ons.add(new Potent alLocat onObject(geoEnt y.getCountry_code(),
+                                                           geoEnt y.getReg on(),
+                                                           geoEnt y.getLocal y()));
       }
 
-      message.setPotentialLocations(potentialLocations);
+       ssage.setPotent alLocat ons(potent alLocat ons);
     }
   }
 
-  private static void setDeviceSourceField(TwitterMessage message, Tweet tweet) {
-    DeviceSource deviceSource = tweet.getDevice_source();
-    TwitterMessageUtil.setSourceOnMessage(message, modifyDeviceSourceWithNofollow(deviceSource));
+  pr vate stat c vo d setDev ceS ceF eld(Tw ter ssage  ssage, T et t et) {
+    Dev ceS ce dev ceS ce = t et.getDev ce_s ce();
+    Tw ter ssageUt l.setS ceOn ssage( ssage, mod fyDev ceS ceW hNofollow(dev ceS ce));
   }
 
-  /** Builds an IngesterTwitterMessage instance from a TweetDeleteEvent. */
+  /** Bu lds an  ngesterTw ter ssage  nstance from a T etDeleteEvent. */
   @Nonnull
-  public static IngesterTwitterMessage getTwitterMessageFromDeletionEvent(
-      @Nonnull TweetDeleteEvent deleteEvent,
-      @Nonnull List<PenguinVersion> supportedPenguinVersions,
-      @Nullable DebugEvents debugEvents) throws ThriftTweetParsingException {
+  publ c stat c  ngesterTw ter ssage getTw ter ssageFromDelet onEvent(
+      @Nonnull T etDeleteEvent deleteEvent,
+      @Nonnull L st<Pengu nVers on> supportedPengu nVers ons,
+      @Nullable DebugEvents debugEvents) throws Thr ftT etPars ngExcept on {
 
-    Tweet tweet = deleteEvent.getTweet();
-    if (tweet == null) {
-      throw new ThriftTweetParsingException("No tweet field in TweetDeleteEvent");
+    T et t et = deleteEvent.getT et();
+     f (t et == null) {
+      throw new Thr ftT etPars ngExcept on("No t et f eld  n T etDeleteEvent");
     }
-    long tweetId = tweet.getId();
+    long t et d = t et.get d();
 
-    TweetCoreData coreData = tweet.getCore_data();
-    if (coreData == null) {
-      throw new ThriftTweetParsingException("No TweetCoreData in TweetDeleteEvent");
+    T etCoreData coreData = t et.getCore_data();
+     f (coreData == null) {
+      throw new Thr ftT etPars ngExcept on("No T etCoreData  n T etDeleteEvent");
     }
-    long userId = coreData.getUser_id();
+    long user d = coreData.getUser_ d();
 
-    IngesterTwitterMessage message = new IngesterTwitterMessage(
-        tweetId,
-        supportedPenguinVersions,
+     ngesterTw ter ssage  ssage = new  ngesterTw ter ssage(
+        t et d,
+        supportedPengu nVers ons,
         debugEvents);
-    message.setDeleted(true);
-    message.setText("delete");
-    message.setFromUser(TwitterMessageUser.createWithNamesAndId("delete", "delete", userId));
+     ssage.setDeleted(true);
+     ssage.setText("delete");
+     ssage.setFromUser(Tw ter ssageUser.createW hNa sAnd d("delete", "delete", user d));
 
-    return message;
+    return  ssage;
   }
 
-  private static TwitterMessageUser getFromUser(User user) {
-    String screenName = user.getProfile().getScreen_name();
-    long id = user.getId();
-    String displayName = user.getProfile().getName();
-    return TwitterMessageUser.createWithNamesAndId(screenName, displayName, id);
+  pr vate stat c Tw ter ssageUser getFromUser(User user) {
+    Str ng screenNa  = user.getProf le().getScreen_na ();
+    long  d = user.get d();
+    Str ng d splayNa  = user.getProf le().getNa ();
+    return Tw ter ssageUser.createW hNa sAnd d(screenNa , d splayNa ,  d);
   }
 
-  private static void addMentionsToMessage(IngesterTwitterMessage message, Tweet tweet) {
-    List<MentionEntity> mentions = tweet.getMentions();
-    if (mentions != null) {
-      NUM_TWEETS_WITH_MENTIONS.increment();
-      NUM_MENTIONS_ADDED.add(mentions.size());
-      for (MentionEntity mention : mentions) {
-        addMention(message, mention);
+  pr vate stat c vo d add nt onsTo ssage( ngesterTw ter ssage  ssage, T et t et) {
+    L st< nt onEnt y>  nt ons = t et.get nt ons();
+     f ( nt ons != null) {
+      NUM_TWEETS_W TH_MENT ONS. ncre nt();
+      NUM_MENT ONS_ADDED.add( nt ons.s ze());
+      for ( nt onEnt y  nt on :  nt ons) {
+        add nt on( ssage,  nt on);
       }
     }
   }
 
-  private static void addMention(IngesterTwitterMessage message, MentionEntity mention) {
-    // Default values. They are weird, but are consistent with JSON parsing behavior.
-    Optional<Long> id = Optional.of(-1L);
-    Optional<String> screenName = Optional.of("");
-    Optional<String> displayName = Optional.of("");
+  pr vate stat c vo d add nt on( ngesterTw ter ssage  ssage,  nt onEnt y  nt on) {
+    // Default values. T y are   rd, but are cons stent w h JSON pars ng behav or.
+    Opt onal<Long>  d = Opt onal.of(-1L);
+    Opt onal<Str ng> screenNa  = Opt onal.of("");
+    Opt onal<Str ng> d splayNa  = Opt onal.of("");
 
-    if (mention.isSetUser_id()) {
-      id = Optional.of(mention.getUser_id());
+     f ( nt on. sSetUser_ d()) {
+       d = Opt onal.of( nt on.getUser_ d());
     }
 
-    if (mention.isSetScreen_name()) {
-      screenName = Optional.of(mention.getScreen_name());
+     f ( nt on. sSetScreen_na ()) {
+      screenNa  = Opt onal.of( nt on.getScreen_na ());
     }
 
-    if (mention.isSetName()) {
-      displayName = Optional.of(mention.getName());
+     f ( nt on. sSetNa ()) {
+      d splayNa  = Opt onal.of( nt on.getNa ());
     }
 
-    TwitterMessageUser mentionedUser = TwitterMessageUser
-        .createWithOptionalNamesAndId(screenName, displayName, id);
+    Tw ter ssageUser  nt onedUser = Tw ter ssageUser
+        .createW hOpt onalNa sAnd d(screenNa , d splayNa ,  d);
 
-    if (isToUser(mention, message.getToUserObject())) {
-      message.setToUserObject(mentionedUser);
+     f ( sToUser( nt on,  ssage.getToUserObject())) {
+       ssage.setToUserObject( nt onedUser);
     }
-    message.addUserToMentions(mentionedUser);
+     ssage.addUserTo nt ons( nt onedUser);
   }
 
-  private static boolean isToUser(
-      MentionEntity mention, Optional<TwitterMessageUser> optionalToUser) {
-    if (mention.getFrom_index() == 0) {
+  pr vate stat c boolean  sToUser(
+       nt onEnt y  nt on, Opt onal<Tw ter ssageUser> opt onalToUser) {
+     f ( nt on.getFrom_ ndex() == 0) {
       return true;
     }
-    if (optionalToUser.isPresent()) {
-      TwitterMessageUser toUser = optionalToUser.get();
-      if (toUser.getId().isPresent()) {
-        long toUserId = toUser.getId().get();
-        return mention.getUser_id() == toUserId;
+     f (opt onalToUser. sPresent()) {
+      Tw ter ssageUser toUser = opt onalToUser.get();
+       f (toUser.get d(). sPresent()) {
+        long toUser d = toUser.get d().get();
+        return  nt on.getUser_ d() == toUser d;
       }
     }
     return false;
   }
 
-  private static void addHashtagsToMessage(IngesterTwitterMessage message, Tweet tweet) {
-    List<HashtagEntity> hashtags = tweet.getHashtags();
-    if (hashtags != null) {
-      NUM_TWEETS_WITH_HASHTAGS.increment();
-      NUM_HASHTAGS_ADDED.add(hashtags.size());
-      for (HashtagEntity hashtag : hashtags) {
-        addHashtag(message, hashtag);
+  pr vate stat c vo d addHashtagsTo ssage( ngesterTw ter ssage  ssage, T et t et) {
+    L st<HashtagEnt y> hashtags = t et.getHashtags();
+     f (hashtags != null) {
+      NUM_TWEETS_W TH_HASHTAGS. ncre nt();
+      NUM_HASHTAGS_ADDED.add(hashtags.s ze());
+      for (HashtagEnt y hashtag : hashtags) {
+        addHashtag( ssage, hashtag);
       }
     }
   }
 
-  private static void addHashtag(IngesterTwitterMessage message, HashtagEntity hashtag) {
-    String hashtagString = hashtag.getText();
-    message.addHashtag(hashtagString);
+  pr vate stat c vo d addHashtag( ngesterTw ter ssage  ssage, HashtagEnt y hashtag) {
+    Str ng hashtagStr ng = hashtag.getText();
+     ssage.addHashtag(hashtagStr ng);
   }
 
-  /** Add the given media entities to the given message. */
-  public static void addMediaEntitiesToMessage(
-      IngesterTwitterMessage message,
-      long photoStatusId,
-      @Nullable List<MediaEntity> medias) {
+  /** Add t  g ven  d a ent  es to t  g ven  ssage. */
+  publ c stat c vo d add d aEnt  esTo ssage(
+       ngesterTw ter ssage  ssage,
+      long photoStatus d,
+      @Nullable L st< d aEnt y>  d as) {
 
-    if (medias != null) {
-      NUM_TWEETS_WITH_MEDIA_URL.increment();
-      NUM_MEDIA_URLS_ADDED.add(medias.size());
+     f ( d as != null) {
+      NUM_TWEETS_W TH_MED A_URL. ncre nt();
+      NUM_MED A_URLS_ADDED.add( d as.s ze());
 
-      boolean hasPhotoMediaUrl = false;
-      boolean hasVideoMediaUrl = false;
-      for (MediaEntity media : medias) {
-        MediaTypes mediaType = null;
-        if (media.isSetMedia_info()) {
-          MediaInfo mediaInfo = media.getMedia_info();
-          if (mediaInfo != null) {
-            if (mediaInfo.isSet(MediaInfo._Fields.IMAGE_INFO)) {
-              mediaType = MediaTypes.NATIVE_IMAGE;
-              String mediaUrl = media.getMedia_url_https();
-              if (mediaUrl != null) {
-                hasPhotoMediaUrl = true;
-                message.addPhotoUrl(photoStatusId, mediaUrl);
-                // Add this link to the expanded URLs too, so that the HAS_NATIVE_IMAGE_FLAG is set
-                // correctly too. See EncodedFeatureBuilder.updateLinkEncodedFeatures().
+      boolean hasPhoto d aUrl = false;
+      boolean hasV deo d aUrl = false;
+      for ( d aEnt y  d a :  d as) {
+         d aTypes  d aType = null;
+         f ( d a. sSet d a_ nfo()) {
+           d a nfo  d a nfo =  d a.get d a_ nfo();
+           f ( d a nfo != null) {
+             f ( d a nfo. sSet( d a nfo._F elds. MAGE_ NFO)) {
+               d aType =  d aTypes.NAT VE_ MAGE;
+              Str ng  d aUrl =  d a.get d a_url_https();
+               f ( d aUrl != null) {
+                hasPhoto d aUrl = true;
+                 ssage.addPhotoUrl(photoStatus d,  d aUrl);
+                // Add t  l nk to t  expanded URLs too, so that t  HAS_NAT VE_ MAGE_FLAG  s set
+                // correctly too. See EncodedFeatureBu lder.updateL nkEncodedFeatures().
               }
-            } else if (mediaInfo.isSet(MediaInfo._Fields.VIDEO_INFO)) {
-              mediaType = MediaTypes.VIDEO;
-              hasVideoMediaUrl = true;
+            } else  f ( d a nfo. sSet( d a nfo._F elds.V DEO_ NFO)) {
+               d aType =  d aTypes.V DEO;
+              hasV deo d aUrl = true;
             }
           }
         }
-        String originalUrl = media.getUrl();
-        String expandedUrl = media.getExpanded_url();
-        message.addExpandedMediaUrl(originalUrl, expandedUrl, mediaType);
+        Str ng or g nalUrl =  d a.getUrl();
+        Str ng expandedUrl =  d a.getExpanded_url();
+         ssage.addExpanded d aUrl(or g nalUrl, expandedUrl,  d aType);
       }
 
-      if (hasPhotoMediaUrl) {
-        NUM_TWEETS_WITH_PHOTO_MEDIA_URL.increment();
+       f (hasPhoto d aUrl) {
+        NUM_TWEETS_W TH_PHOTO_MED A_URL. ncre nt();
       }
-      if (hasVideoMediaUrl) {
-        NUM_TWEETS_WITH_VIDEO_MEDIA_URL.increment();
-      }
-    }
-  }
-
-  /** Adds the given urls to the given message. */
-  public static void addUrlsToMessage(
-      IngesterTwitterMessage message,
-      @Nullable List<UrlEntity> urls) {
-
-    if (urls != null) {
-      NUM_TWEETS_WITH_NON_MEDIA_URL.increment();
-      NUM_NON_MEDIA_URLS_ADDED.add(urls.size());
-      for (UrlEntity url : urls) {
-        String originalUrl = url.getUrl();
-        String expandedUrl = url.getExpanded();
-        message.addExpandedNonMediaUrl(originalUrl, expandedUrl);
+       f (hasV deo d aUrl) {
+        NUM_TWEETS_W TH_V DEO_MED A_URL. ncre nt();
       }
     }
   }
 
-  private static void addEscherbirdAnnotationsToMessage(
-      IngesterTwitterMessage message, Tweet tweet) {
-    if (tweet.isSetEscherbird_entity_annotations()) {
-      EscherbirdEntityAnnotations entityAnnotations = tweet.getEscherbird_entity_annotations();
-      if (entityAnnotations.isSetEntity_annotations()) {
-        NUM_TWEETS_WITH_ANNOTATIONS.increment();
-        NUM_ANNOTATIONS_ADDED.add(entityAnnotations.getEntity_annotationsSize());
-        for (TweetEntityAnnotation entityAnnotation : entityAnnotations.getEntity_annotations()) {
-          EscherbirdAnnotation escherbirdAnnotation =
-              new EscherbirdAnnotation(entityAnnotation.getGroupId(),
-                  entityAnnotation.getDomainId(),
-                  entityAnnotation.getEntityId());
-          message.addEscherbirdAnnotation(escherbirdAnnotation);
+  /** Adds t  g ven urls to t  g ven  ssage. */
+  publ c stat c vo d addUrlsTo ssage(
+       ngesterTw ter ssage  ssage,
+      @Nullable L st<UrlEnt y> urls) {
+
+     f (urls != null) {
+      NUM_TWEETS_W TH_NON_MED A_URL. ncre nt();
+      NUM_NON_MED A_URLS_ADDED.add(urls.s ze());
+      for (UrlEnt y url : urls) {
+        Str ng or g nalUrl = url.getUrl();
+        Str ng expandedUrl = url.getExpanded();
+         ssage.addExpandedNon d aUrl(or g nalUrl, expandedUrl);
+      }
+    }
+  }
+
+  pr vate stat c vo d addEsc rb rdAnnotat onsTo ssage(
+       ngesterTw ter ssage  ssage, T et t et) {
+     f (t et. sSetEsc rb rd_ent y_annotat ons()) {
+      Esc rb rdEnt yAnnotat ons ent yAnnotat ons = t et.getEsc rb rd_ent y_annotat ons();
+       f (ent yAnnotat ons. sSetEnt y_annotat ons()) {
+        NUM_TWEETS_W TH_ANNOTAT ONS. ncre nt();
+        NUM_ANNOTAT ONS_ADDED.add(ent yAnnotat ons.getEnt y_annotat onsS ze());
+        for (T etEnt yAnnotat on ent yAnnotat on : ent yAnnotat ons.getEnt y_annotat ons()) {
+          Esc rb rdAnnotat on esc rb rdAnnotat on =
+              new Esc rb rdAnnotat on(ent yAnnotat on.getGroup d(),
+                  ent yAnnotat on.getDoma n d(),
+                  ent yAnnotat on.getEnt y d());
+           ssage.addEsc rb rdAnnotat on(esc rb rdAnnotat on);
         }
       }
     }
   }
 
-  private static void setComposerSource(IngesterTwitterMessage message, Tweet tweet) {
-    if (tweet.isSetComposer_source()) {
-      message.setComposerSource(tweet.getComposer_source());
+  pr vate stat c vo d setComposerS ce( ngesterTw ter ssage  ssage, T et t et) {
+     f (t et. sSetComposer_s ce()) {
+       ssage.setComposerS ce(t et.getComposer_s ce());
     }
   }
 
-  private static String modifyDeviceSourceWithNofollow(@Nullable DeviceSource deviceSource) {
-    if (deviceSource != null) {
-      String source = deviceSource.getDisplay();
-      int i = source.indexOf("\">");
-      if (i == -1) {
-        return source;
+  pr vate stat c Str ng mod fyDev ceS ceW hNofollow(@Nullable Dev ceS ce dev ceS ce) {
+     f (dev ceS ce != null) {
+      Str ng s ce = dev ceS ce.getD splay();
+       nt   = s ce. ndexOf("\">");
+       f (  == -1) {
+        return s ce;
       } else {
-        return source.substring(0, i) + "\" rel=\"nofollow\">" + source.substring(i + 2);
+        return s ce.substr ng(0,  ) + "\" rel=\"nofollow\">" + s ce.substr ng(  + 2);
       }
     } else {
-      return "<a href=\"http://twitter.com\" rel=\"nofollow\">Twitter</a>";
+      return "<a href=\"http://tw ter.com\" rel=\"nofollow\">Tw ter</a>";
     }
   }
 
-  private static void setDirectedAtUser(
-      IngesterTwitterMessage message,
-      TweetCoreData tweetCoreData) {
-    if (!tweetCoreData.isSetDirected_at_user()) {
+  pr vate stat c vo d setD rectedAtUser(
+       ngesterTw ter ssage  ssage,
+      T etCoreData t etCoreData) {
+     f (!t etCoreData. sSetD rected_at_user()) {
       return;
     }
 
-    DirectedAtUser directedAtUser = tweetCoreData.getDirected_at_user();
+    D rectedAtUser d rectedAtUser = t etCoreData.getD rected_at_user();
 
-    if (!directedAtUser.isSetUser_id()) {
+     f (!d rectedAtUser. sSetUser_ d()) {
       return;
     }
 
-    message.setDirectedAtUserId(Optional.of(directedAtUser.getUser_id()));
+     ssage.setD rectedAtUser d(Opt onal.of(d rectedAtUser.getUser_ d()));
   }
 }

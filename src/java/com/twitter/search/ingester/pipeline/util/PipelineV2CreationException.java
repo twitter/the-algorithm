@@ -1,7 +1,7 @@
-package com.twitter.search.ingester.pipeline.util;
+package com.tw ter.search. ngester.p pel ne.ut l;
 
-public class PipelineV2CreationException extends Exception {
-  public PipelineV2CreationException(String message) {
-    super(message);
+publ c class P pel neV2Creat onExcept on extends Except on {
+  publ c P pel neV2Creat onExcept on(Str ng  ssage) {
+    super( ssage);
   }
 }

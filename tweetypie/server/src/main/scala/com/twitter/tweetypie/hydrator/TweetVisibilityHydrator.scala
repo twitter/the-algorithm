@@ -1,65 +1,65 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.util.CommunityUtil
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.repos ory._
+ mport com.tw ter.t etyp e.ut l.Commun yUt l
 
-object TweetVisibilityHydrator {
-  type Type = ValueHydrator[Option[FilteredState.Suppress], Ctx]
+object T etV s b l yHydrator {
+  type Type = ValueHydrator[Opt on[F lteredState.Suppress], Ctx]
 
-  case class Ctx(tweet: Tweet, underlyingTweetCtx: TweetCtx) extends TweetCtx.Proxy
+  case class Ctx(t et: T et, underly ngT etCtx: T etCtx) extends T etCtx.Proxy
 
   def apply(
-    repo: TweetVisibilityRepository.Type,
-    failClosedInVF: Gate[Unit],
-    stats: StatsReceiver
+    repo: T etV s b l yRepos ory.Type,
+    fa lClosed nVF: Gate[Un ],
+    stats: StatsRece ver
   ): Type = {
-    val outcomeScope = stats.scope("outcome")
-    val unavailable = outcomeScope.counter("unavailable")
-    val suppress = outcomeScope.counter("suppress")
-    val allow = outcomeScope.counter("allow")
-    val failClosed = outcomeScope.counter("fail_closed")
-    val communityFailClosed = outcomeScope.counter("community_fail_closed")
-    val failOpen = outcomeScope.counter("fail_open")
+    val outco Scope = stats.scope("outco ")
+    val unava lable = outco Scope.counter("unava lable")
+    val suppress = outco Scope.counter("suppress")
+    val allow = outco Scope.counter("allow")
+    val fa lClosed = outco Scope.counter("fa l_closed")
+    val commun yFa lClosed = outco Scope.counter("commun y_fa l_closed")
+    val fa lOpen = outco Scope.counter("fa l_open")
 
-    ValueHydrator[Option[FilteredState.Suppress], Ctx] { (curr, ctx) =>
-      val request = TweetVisibilityRepository.Request(
-        tweet = ctx.tweet,
-        viewerId = ctx.opts.forUserId,
+    ValueHydrator[Opt on[F lteredState.Suppress], Ctx] { (curr, ctx) =>
+      val request = T etV s b l yRepos ory.Request(
+        t et = ctx.t et,
+        v e r d = ctx.opts.forUser d,
         safetyLevel = ctx.opts.safetyLevel,
-        isInnerQuotedTweet = ctx.opts.isInnerQuotedTweet,
-        isRetweet = ctx.isRetweet,
-        hydrateConversationControl = ctx.tweetFieldRequested(Tweet.ConversationControlField),
-        isSourceTweet = ctx.opts.isSourceTweet
+         s nnerQuotedT et = ctx.opts. s nnerQuotedT et,
+         sRet et = ctx. sRet et,
+        hydrateConversat onControl = ctx.t etF eldRequested(T et.Conversat onControlF eld),
+         sS ceT et = ctx.opts. sS ceT et
       )
 
-      repo(request).liftToTry.flatMap {
-        // If FilteredState.Unavailable is returned from repo then throw it
-        case Return(Some(fs: FilteredState.Unavailable)) =>
-          unavailable.incr()
-          Stitch.exception(fs)
-        // If FilteredState.Suppress is returned from repo then return it
-        case Return(Some(fs: FilteredState.Suppress)) =>
-          suppress.incr()
-          Stitch.value(ValueState.modified(Some(fs)))
-        // If None is returned from repo then return unmodified
+      repo(request).l ftToTry.flatMap {
+        //  f F lteredState.Unava lable  s returned from repo t n throw  
+        case Return(So (fs: F lteredState.Unava lable)) =>
+          unava lable. ncr()
+          St ch.except on(fs)
+        //  f F lteredState.Suppress  s returned from repo t n return  
+        case Return(So (fs: F lteredState.Suppress)) =>
+          suppress. ncr()
+          St ch.value(ValueState.mod f ed(So (fs)))
+        //  f None  s returned from repo t n return unmod f ed
         case Return(None) =>
-          allow.incr()
-          ValueState.StitchUnmodifiedNone
-        // Propagate thrown exceptions if fail closed
-        case Throw(e) if failClosedInVF() =>
-          failClosed.incr()
-          Stitch.exception(e)
-        // Community tweets are special cased to fail closed to avoid
-        // leaking tweets expected to be private to a community.
-        case Throw(e) if CommunityUtil.hasCommunity(request.tweet.communities) =>
-          communityFailClosed.incr()
-          Stitch.exception(e)
+          allow. ncr()
+          ValueState.St chUnmod f edNone
+        // Propagate thrown except ons  f fa l closed
+        case Throw(e)  f fa lClosed nVF() =>
+          fa lClosed. ncr()
+          St ch.except on(e)
+        // Commun y t ets are spec al cased to fa l closed to avo d
+        // leak ng t ets expected to be pr vate to a commun y.
+        case Throw(e)  f Commun yUt l.hasCommun y(request.t et.commun  es) =>
+          commun yFa lClosed. ncr()
+          St ch.except on(e)
         case Throw(_) =>
-          failOpen.incr()
-          Stitch.value(ValueState.unmodified(curr))
+          fa lOpen. ncr()
+          St ch.value(ValueState.unmod f ed(curr))
       }
     }
   }

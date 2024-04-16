@@ -1,34 +1,34 @@
 #pragma once
-#ifdef __cplusplus
+# fdef __cplusplus
 
-#include <twml/defines.h>
-#include <twml/TensorRecord.h>
-#include <twml/ThriftReader.h>
+# nclude <twml/def nes.h>
+# nclude <twml/TensorRecord.h>
+# nclude <twml/Thr ftReader.h>
 
-#include <cstdint>
+# nclude <cstd nt>
 
-#include <vector>
-#include <string>
-#include <unordered_map>
+# nclude <vector>
+# nclude <str ng>
+# nclude <unordered_map>
 
-namespace twml {
+na space twml {
 
-// Class that parses the thrift objects as defined in tensor.thrift
-class TWMLAPI TensorRecordReader : public ThriftReader {
+// Class that parses t  thr ft objects as def ned  n tensor.thr ft
+class TWMLAP  TensorRecordReader : publ c Thr ftReader {
 
-  std::vector<uint64_t> readShape();
-  template<typename T> RawTensor readTypedTensor();
+  std::vector<u nt64_t> readShape();
+  template<typena  T> RawTensor readTypedTensor();
   RawTensor readRawTypedTensor();
-  RawTensor readStringTensor();
+  RawTensor readStr ngTensor();
   RawTensor readGeneralTensor();
   RawSparseTensor readCOOSparseTensor();
 
-public:
-  void readTensor(const int feature_type, TensorRecord *record);
-  void readSparseTensor(const int feature_type, TensorRecord *record);
+publ c:
+  vo d readTensor(const  nt feature_type, TensorRecord *record);
+  vo d readSparseTensor(const  nt feature_type, TensorRecord *record);
 
-  TensorRecordReader(const uint8_t *buffer) : ThriftReader(buffer) {}
+  TensorRecordReader(const u nt8_t *buffer) : Thr ftReader(buffer) {}
 };
 
 }
-#endif
+#end f

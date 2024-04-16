@@ -1,22 +1,22 @@
-package com.twitter.cr_mixer
-package logging
+package com.tw ter.cr_m xer
+package logg ng
 
-import com.twitter.cr_mixer.thriftscala.CrMixerTweetRequest
-import com.twitter.cr_mixer.thriftscala.Product
+ mport com.tw ter.cr_m xer.thr ftscala.CrM xerT etRequest
+ mport com.tw ter.cr_m xer.thr ftscala.Product
 
-case class TopLevelDdgMetricsMetadata(
-  userId: Option[Long],
+case class TopLevelDdg tr cs tadata(
+  user d: Opt on[Long],
   product: Product,
-  clientApplicationId: Option[Long],
-  countryCode: Option[String])
+  cl entAppl cat on d: Opt on[Long],
+  countryCode: Opt on[Str ng])
 
-object TopLevelDdgMetricsMetadata {
-  def from(request: CrMixerTweetRequest): TopLevelDdgMetricsMetadata = {
-    TopLevelDdgMetricsMetadata(
-      userId = request.clientContext.userId,
+object TopLevelDdg tr cs tadata {
+  def from(request: CrM xerT etRequest): TopLevelDdg tr cs tadata = {
+    TopLevelDdg tr cs tadata(
+      user d = request.cl entContext.user d,
       product = request.product,
-      clientApplicationId = request.clientContext.appId,
-      countryCode = request.clientContext.countryCode
+      cl entAppl cat on d = request.cl entContext.app d,
+      countryCode = request.cl entContext.countryCode
     )
   }
 }

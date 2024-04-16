@@ -2,51 +2,51 @@ syntax = "proto3";
 
 package tensorflow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "GraphDebugInfoProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "GraphDebug nfoProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.fra work";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
-message GraphDebugInfo {
-  // This represents a file/line location in the source code.
-  message FileLineCol {
-    // File name index, which can be used to retrieve the file name string from
-    // `files`. The value should be between 0 and (len(files)-1)
-    int32 file_index = 1;
+ ssage GraphDebug nfo {
+  // T  represents a f le/l ne locat on  n t  s ce code.
+   ssage F leL neCol {
+    // F le na   ndex, wh ch can be used to retr eve t  f le na  str ng from
+    // `f les`. T  value should be bet en 0 and (len(f les)-1)
+     nt32 f le_ ndex = 1;
 
-    // Line number in the file.
-    int32 line = 2;
+    // L ne number  n t  f le.
+     nt32 l ne = 2;
 
-    // Col number in the file line.
-    int32 col = 3;
+    // Col number  n t  f le l ne.
+     nt32 col = 3;
 
-    // Name of function contains the file line.
-    string func = 4;
+    // Na  of funct on conta ns t  f le l ne.
+    str ng func = 4;
 
-    // Source code contained in this file line.
-    string code = 5;
+    // S ce code conta ned  n t  f le l ne.
+    str ng code = 5;
   }
 
-  // This represents a stack trace which is a ordered list of `FileLineCol`.
-  message StackTrace {
-    // Each line in the stack trace.
-    repeated FileLineCol file_line_cols = 1;
+  // T  represents a stack trace wh ch  s a ordered l st of `F leL neCol`.
+   ssage StackTrace {
+    // Each l ne  n t  stack trace.
+    repeated F leL neCol f le_l ne_cols = 1;
   }
 
-  // This stores all the source code file names and can be indexed by the
-  // `file_index`.
-  repeated string files = 1;
+  // T  stores all t  s ce code f le na s and can be  ndexed by t 
+  // `f le_ ndex`.
+  repeated str ng f les = 1;
 
-  // This maps a node name to a stack trace in the source code.
-  // The map key is a mangling of the containing function and op name with
+  // T  maps a node na  to a stack trace  n t  s ce code.
+  // T  map key  s a mangl ng of t  conta n ng funct on and op na  w h
   // syntax:
-  //   op.name '@' func_name
-  // For ops in the top-level graph, the func_name is the empty string.
-  // Note that op names are restricted to a small number of characters which
-  // exclude '@', making it impossible to collide keys of this form. Function
-  // names accept a much wider set of characters.
-  // It would be preferable to avoid mangling and use a tuple key of (op.name,
-  // func_name), but this is not supported with protocol buffers.
-  map<string, StackTrace> traces = 2;
+  //   op.na  '@' func_na 
+  // For ops  n t  top-level graph, t  func_na   s t  empty str ng.
+  // Note that op na s are restr cted to a small number of characters wh ch
+  // exclude '@', mak ng    mposs ble to coll de keys of t  form. Funct on
+  // na s accept a much w der set of characters.
+  //   would be preferable to avo d mangl ng and use a tuple key of (op.na ,
+  // func_na ), but t   s not supported w h protocol buffers.
+  map<str ng, StackTrace> traces = 2;
 }

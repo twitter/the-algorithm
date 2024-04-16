@@ -1,21 +1,21 @@
-package com.twitter.timelineranker.common
+package com.tw ter.t  l neranker.common
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.visibility.FollowGraphDataProvider
-import com.twitter.util.Future
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t  l neranker.core.Cand dateEnvelope
+ mport com.tw ter.t  l neranker.model.RecapQuery.DependencyProv der
+ mport com.tw ter.t  l neranker.v s b l y.FollowGraphDataProv der
+ mport com.tw ter.ut l.Future
 
 class FollowGraphDataTransform(
-  followGraphDataProvider: FollowGraphDataProvider,
-  maxFollowedUsersProvider: DependencyProvider[Int])
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+  followGraphDataProv der: FollowGraphDataProv der,
+  maxFollo dUsersProv der: DependencyProv der[ nt])
+    extends FutureArrow[Cand dateEnvelope, Cand dateEnvelope] {
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
+  overr de def apply(envelope: Cand dateEnvelope): Future[Cand dateEnvelope] = {
 
-    val followGraphData = followGraphDataProvider.getAsync(
-      envelope.query.userId,
-      maxFollowedUsersProvider(envelope.query)
+    val followGraphData = followGraphDataProv der.getAsync(
+      envelope.query.user d,
+      maxFollo dUsersProv der(envelope.query)
     )
 
     Future.value(envelope.copy(followGraphData = followGraphData))

@@ -1,90 +1,90 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+ mport java.ut l.Map;
+ mport java.ut l.concurrent.ConcurrentHashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.finagle.client.BackupRequestFilter;
-import com.twitter.finagle.service.ResponseClassifier;
-import com.twitter.finagle.service.RetryBudgets;
-import com.twitter.finagle.stats.StatsReceiver;
-import com.twitter.finagle.util.DefaultTimer;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
-import com.twitter.util.tunable.Tunable;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.f nagle.cl ent.BackupRequestF lter;
+ mport com.tw ter.f nagle.serv ce.ResponseClass f er;
+ mport com.tw ter.f nagle.serv ce.RetryBudgets;
+ mport com.tw ter.f nagle.stats.StatsRece ver;
+ mport com.tw ter.f nagle.ut l.DefaultT  r;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.common. tr cs.SearchCustomGauge;
+ mport com.tw ter.search.earlyb rd.common.Cl ent dUt l;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.ut l.Future;
+ mport com.tw ter.ut l.tunable.Tunable;
 
-public class ClientBackupFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  private static final Logger LOG = LoggerFactory.getLogger(ClientBackupFilter.class);
+publ c class Cl entBackupF lter extends S mpleF lter<Earlyb rdRequest, Earlyb rdResponse> {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Cl entBackupF lter.class);
 
-  private final Map<String, BackupRequestFilter<EarlybirdRequest, EarlybirdResponse>>
-      clientBackupFilters = new ConcurrentHashMap<>();
-  private final boolean sendInterupts = false;
-  private final String statPrefix;
-  private final Tunable.Mutable<Object> maxExtraLoad;
-  private final StatsReceiver statsReceiver;
-  private final SearchDecider decider;
-  private final String backupRequestPrecentExtraLoadDecider;
-  private final int minSendBackupAfterMs = 1;
+  pr vate f nal Map<Str ng, BackupRequestF lter<Earlyb rdRequest, Earlyb rdResponse>>
+      cl entBackupF lters = new ConcurrentHashMap<>();
+  pr vate f nal boolean send nterupts = false;
+  pr vate f nal Str ng statPref x;
+  pr vate f nal Tunable.Mutable<Object> maxExtraLoad;
+  pr vate f nal StatsRece ver statsRece ver;
+  pr vate f nal SearchDec der dec der;
+  pr vate f nal Str ng backupRequestPrecentExtraLoadDec der;
+  pr vate f nal  nt m nSendBackupAfterMs = 1;
 
-  public ClientBackupFilter(String serviceName,
-                            String statPrefix,
-                            StatsReceiver statsReceiver,
-                            SearchDecider decider) {
-    this.statPrefix = statPrefix;
-    this.backupRequestPrecentExtraLoadDecider = serviceName + "_backup_request_percent_extra_load";
-    this.decider = decider;
-    this.maxExtraLoad = Tunable.mutable("backup_tunable", getMaxExtraLoadFromDecider());
-    this.statsReceiver = statsReceiver;
-    SearchCustomGauge.export(serviceName + "_backup_request_factor",
-        () -> (maxExtraLoad.apply().isDefined()) ? (double) maxExtraLoad.apply().get() : -1);
+  publ c Cl entBackupF lter(Str ng serv ceNa ,
+                            Str ng statPref x,
+                            StatsRece ver statsRece ver,
+                            SearchDec der dec der) {
+    t .statPref x = statPref x;
+    t .backupRequestPrecentExtraLoadDec der = serv ceNa  + "_backup_request_percent_extra_load";
+    t .dec der = dec der;
+    t .maxExtraLoad = Tunable.mutable("backup_tunable", getMaxExtraLoadFromDec der());
+    t .statsRece ver = statsRece ver;
+    SearchCustomGauge.export(serv ceNa  + "_backup_request_factor",
+        () -> (maxExtraLoad.apply(). sDef ned()) ? (double) maxExtraLoad.apply().get() : -1);
   }
 
-  private double getMaxExtraLoadFromDecider() {
-    return ((double) decider.getAvailability(backupRequestPrecentExtraLoadDecider)) / 100 / 100;
+  pr vate double getMaxExtraLoadFromDec der() {
+    return ((double) dec der.getAva lab l y(backupRequestPrecentExtraLoadDec der)) / 100 / 100;
   }
 
-  private BackupRequestFilter<EarlybirdRequest, EarlybirdResponse> backupFilter(String client) {
-    return new BackupRequestFilter<EarlybirdRequest, EarlybirdResponse>(
+  pr vate BackupRequestF lter<Earlyb rdRequest, Earlyb rdResponse> backupF lter(Str ng cl ent) {
+    return new BackupRequestF lter<Earlyb rdRequest, Earlyb rdResponse>(
         maxExtraLoad,
-        sendInterupts,
-        minSendBackupAfterMs,
-        ResponseClassifier.Default(),
+        send nterupts,
+        m nSendBackupAfterMs,
+        ResponseClass f er.Default(),
         RetryBudgets.newRetryBudget(),
-        statsReceiver.scope(statPrefix, client, "backup_filter"),
-        DefaultTimer.getInstance(),
-        client);
+        statsRece ver.scope(statPref x, cl ent, "backup_f lter"),
+        DefaultT  r.get nstance(),
+        cl ent);
   }
 
-  private void updateMaxExtraLoadIfNecessary() {
-    double maxExtraLoadDeciderValue = getMaxExtraLoadFromDecider();
-    if (maxExtraLoad.apply().isDefined()
-        && !maxExtraLoad.apply().get().equals(maxExtraLoadDeciderValue)) {
-      LOG.info("Updating maxExtraLoad from {} to {}",
+  pr vate vo d updateMaxExtraLoad fNecessary() {
+    double maxExtraLoadDec derValue = getMaxExtraLoadFromDec der();
+     f (maxExtraLoad.apply(). sDef ned()
+        && !maxExtraLoad.apply().get().equals(maxExtraLoadDec derValue)) {
+      LOG. nfo("Updat ng maxExtraLoad from {} to {}",
           maxExtraLoad.apply().get(),
-          maxExtraLoadDeciderValue);
-      maxExtraLoad.set(maxExtraLoadDeciderValue);
+          maxExtraLoadDec derValue);
+      maxExtraLoad.set(maxExtraLoadDec derValue);
     }
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
-    updateMaxExtraLoadIfNecessary();
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(Earlyb rdRequest request,
+                                         Serv ce<Earlyb rdRequest, Earlyb rdResponse> serv ce) {
+    updateMaxExtraLoad fNecessary();
 
-    String clientID = ClientIdUtil.getClientIdFromRequest(request);
-    BackupRequestFilter<EarlybirdRequest, EarlybirdResponse> filter =
-        clientBackupFilters.computeIfAbsent(clientID, this::backupFilter);
+    Str ng cl ent D = Cl ent dUt l.getCl ent dFromRequest(request);
+    BackupRequestF lter<Earlyb rdRequest, Earlyb rdResponse> f lter =
+        cl entBackupF lters.compute fAbsent(cl ent D, t ::backupF lter);
 
-    return filter
-        .andThen(service)
+    return f lter
+        .andT n(serv ce)
         .apply(request);
   }
 }

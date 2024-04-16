@@ -1,95 +1,95 @@
-To run iikf-tweets-ann-adhoc-job (adhoc):
-bin/d6w create \
-  ${GCP_PROJECT_NAME}/us-central1/iikf-tweets-ann-adhoc-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/iikf-tweets-ann-adhoc-job.d6w \
-  --jar dist/iikf-tweets-ann-adhoc-job.jar \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=your_ldap \
-  --bind=profile.date="2022-03-28" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="iikf-tweets-ann-adhoc-job" --ignore-existing
+To run   kf-t ets-ann-adhoc-job (adhoc):
+b n/d6w create \
+  ${GCP_PROJECT_NAME}/us-central1/  kf-t ets-ann-adhoc-job \
+  src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/t ets_ann/  kf-t ets-ann-adhoc-job.d6w \
+  --jar d st/  kf-t ets-ann-adhoc-job.jar \
+  --b nd=prof le.project=${GCP_PROJECT_NAME} \
+  --b nd=prof le.user_na =y _ldap \
+  --b nd=prof le.date="2022-03-28" \
+  --b nd=prof le.mach ne="n2-h gh m-4" \
+  --b nd=prof le.job_na ="  kf-t ets-ann-adhoc-job" -- gnore-ex st ng
 
-To run iikf-hl-8-el-50-tweets-ann-adhoc-job (adhoc):
-bin/d6w create \
-  ${GCP_PROJECT_NAME}/us-central1/iikf-hl-8-el-50-tweets-ann-adhoc-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/iikf-hl-8-el-50-tweets-ann-adhoc-job.d6w \
-  --jar dist/iikf-hl-8-el-50-tweets-ann-adhoc-job.jar \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=your_ldap \
-  --bind=profile.date="2022-03-28" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="iikf-hl-8-el-50-tweets-ann-adhoc-job" --ignore-existing
+To run   kf-hl-8-el-50-t ets-ann-adhoc-job (adhoc):
+b n/d6w create \
+  ${GCP_PROJECT_NAME}/us-central1/  kf-hl-8-el-50-t ets-ann-adhoc-job \
+  src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/t ets_ann/  kf-hl-8-el-50-t ets-ann-adhoc-job.d6w \
+  --jar d st/  kf-hl-8-el-50-t ets-ann-adhoc-job.jar \
+  --b nd=prof le.project=${GCP_PROJECT_NAME} \
+  --b nd=prof le.user_na =y _ldap \
+  --b nd=prof le.date="2022-03-28" \
+  --b nd=prof le.mach ne="n2-h gh m-4" \
+  --b nd=prof le.job_na ="  kf-hl-8-el-50-t ets-ann-adhoc-job" -- gnore-ex st ng
 
-To run mts-consumer-embeddings-tweets-ann-adhoc-job (adhoc)
-bin/d6w create \
-  ${GCP_PROJECT_NAME}/us-central1/mts-consumer-embeddings-tweets-ann-adhoc-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/mts-consumer-embeddings-tweets-ann-adhoc-job.d6w \
-  --jar dist/mts-consumer-embeddings-tweets-ann-adhoc-job.jar \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=your_ldap \
-  --bind=profile.date="2022-03-28" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="mts-consumer-embeddings-tweets-ann-adhoc-job" --ignore-existing
+To run mts-consu r-embedd ngs-t ets-ann-adhoc-job (adhoc)
+b n/d6w create \
+  ${GCP_PROJECT_NAME}/us-central1/mts-consu r-embedd ngs-t ets-ann-adhoc-job \
+  src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/t ets_ann/mts-consu r-embedd ngs-t ets-ann-adhoc-job.d6w \
+  --jar d st/mts-consu r-embedd ngs-t ets-ann-adhoc-job.jar \
+  --b nd=prof le.project=${GCP_PROJECT_NAME} \
+  --b nd=prof le.user_na =y _ldap \
+  --b nd=prof le.date="2022-03-28" \
+  --b nd=prof le.mach ne="n2-h gh m-4" \
+  --b nd=prof le.job_na ="mts-consu r-embedd ngs-t ets-ann-adhoc-job" -- gnore-ex st ng
 
 
-To schedule iikf-tweets-ann-batch-job (batch)
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/iikf-tweets-ann-batch-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/iikf-tweets-ann-batch-job.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.date="2022-03-26" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="iikf-tweets-ann-batch-job"
+To sc dule   kf-t ets-ann-batch-job (batch)
+b n/d6w sc dule \
+  ${GCP_PROJECT_NAME}/us-central1/  kf-t ets-ann-batch-job \
+  src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/t ets_ann/  kf-t ets-ann-batch-job.d6w \
+  --b nd=prof le.project=${GCP_PROJECT_NAME} \
+  --b nd=prof le.user_na =cassowary \
+  --b nd=prof le.date="2022-03-26" \
+  --b nd=prof le.mach ne="n2-h gh m-4" \
+  --b nd=prof le.job_na ="  kf-t ets-ann-batch-job"
 
-To schedule iikf-hl-0-el-15-tweets-ann-batch-job (batch)
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/iikf-hl-0-el-15-tweets-ann-batch-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/iikf-hl-0-el-15-tweets-ann-batch-job.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.date="2022-03-26" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="iikf-hl-0-el-15-tweets-ann-batch-job"
+To sc dule   kf-hl-0-el-15-t ets-ann-batch-job (batch)
+b n/d6w sc dule \
+  ${GCP_PROJECT_NAME}/us-central1/  kf-hl-0-el-15-t ets-ann-batch-job \
+  src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/t ets_ann/  kf-hl-0-el-15-t ets-ann-batch-job.d6w \
+  --b nd=prof le.project=${GCP_PROJECT_NAME} \
+  --b nd=prof le.user_na =cassowary \
+  --b nd=prof le.date="2022-03-26" \
+  --b nd=prof le.mach ne="n2-h gh m-4" \
+  --b nd=prof le.job_na ="  kf-hl-0-el-15-t ets-ann-batch-job"
 
-To schedule iikf-hl-2-el-15-tweets-ann-batch-job (batch)
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/iikf-hl-2-el-15-tweets-ann-batch-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/iikf-hl-2-el-15-tweets-ann-batch-job.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.date="2022-03-26" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="iikf-hl-2-el-15-tweets-ann-batch-job"
+To sc dule   kf-hl-2-el-15-t ets-ann-batch-job (batch)
+b n/d6w sc dule \
+  ${GCP_PROJECT_NAME}/us-central1/  kf-hl-2-el-15-t ets-ann-batch-job \
+  src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/t ets_ann/  kf-hl-2-el-15-t ets-ann-batch-job.d6w \
+  --b nd=prof le.project=${GCP_PROJECT_NAME} \
+  --b nd=prof le.user_na =cassowary \
+  --b nd=prof le.date="2022-03-26" \
+  --b nd=prof le.mach ne="n2-h gh m-4" \
+  --b nd=prof le.job_na ="  kf-hl-2-el-15-t ets-ann-batch-job"
 
-To schedule iikf-hl-2-el-50-tweets-ann-batch-job (batch)
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/iikf-hl-2-el-50-tweets-ann-batch-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/iikf-hl-2-el-50-tweets-ann-batch-job.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.date="2022-03-26" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="iikf-hl-2-el-50-tweets-ann-batch-job"
+To sc dule   kf-hl-2-el-50-t ets-ann-batch-job (batch)
+b n/d6w sc dule \
+  ${GCP_PROJECT_NAME}/us-central1/  kf-hl-2-el-50-t ets-ann-batch-job \
+  src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/t ets_ann/  kf-hl-2-el-50-t ets-ann-batch-job.d6w \
+  --b nd=prof le.project=${GCP_PROJECT_NAME} \
+  --b nd=prof le.user_na =cassowary \
+  --b nd=prof le.date="2022-03-26" \
+  --b nd=prof le.mach ne="n2-h gh m-4" \
+  --b nd=prof le.job_na ="  kf-hl-2-el-50-t ets-ann-batch-job"
 
-To schedule iikf-hl-8-el-50-tweets-ann-batch-job (batch)
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/iikf-hl-8-el-50-tweets-ann-batch-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/iikf-hl-8-el-50-tweets-ann-batch-job.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.date="2022-03-26" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="iikf-hl-8-el-50-tweets-ann-batch-job"
+To sc dule   kf-hl-8-el-50-t ets-ann-batch-job (batch)
+b n/d6w sc dule \
+  ${GCP_PROJECT_NAME}/us-central1/  kf-hl-8-el-50-t ets-ann-batch-job \
+  src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/t ets_ann/  kf-hl-8-el-50-t ets-ann-batch-job.d6w \
+  --b nd=prof le.project=${GCP_PROJECT_NAME} \
+  --b nd=prof le.user_na =cassowary \
+  --b nd=prof le.date="2022-03-26" \
+  --b nd=prof le.mach ne="n2-h gh m-4" \
+  --b nd=prof le.job_na ="  kf-hl-8-el-50-t ets-ann-batch-job"
 
-To schedule mts-consumer-embeddings-tweets-ann-batch-job(batch)
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/mts-consumer-embeddings-tweets-ann-batch-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/mts-consumer-embeddings-tweets-ann-batch-job.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.date="2022-03-26" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="mts-consumer-embeddings-tweets-ann-batch-job"
+To sc dule mts-consu r-embedd ngs-t ets-ann-batch-job(batch)
+b n/d6w sc dule \
+  ${GCP_PROJECT_NAME}/us-central1/mts-consu r-embedd ngs-t ets-ann-batch-job \
+  src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on/t ets_ann/mts-consu r-embedd ngs-t ets-ann-batch-job.d6w \
+  --b nd=prof le.project=${GCP_PROJECT_NAME} \
+  --b nd=prof le.user_na =cassowary \
+  --b nd=prof le.date="2022-03-26" \
+  --b nd=prof le.mach ne="n2-h gh m-4" \
+  --b nd=prof le.job_na ="mts-consu r-embedd ngs-t ets-ann-batch-job"
 
 

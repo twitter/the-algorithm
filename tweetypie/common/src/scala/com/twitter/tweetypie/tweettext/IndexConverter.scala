@@ -1,85 +1,85 @@
-package com.twitter.tweetypie.tweettext
+package com.tw ter.t etyp e.t ettext
 
 /**
- * An efficient converter of indices between code points and code units.
+ * An eff c ent converter of  nd ces bet en code po nts and code un s.
  */
-class IndexConverter(text: String) {
-  // Keep track of a single corresponding pair of code unit and code point
-  // offsets so that we can re-use counting work if the next requested
-  // entity is near the most recent entity.
-  private var codePointIndex = 0
-  // The code unit index should never split a surrogate pair.
-  private var charIndex = 0
+class  ndexConverter(text: Str ng) {
+  // Keep track of a s ngle correspond ng pa r of code un  and code po nt
+  // offsets so that   can re-use count ng work  f t  next requested
+  // ent y  s near t  most recent ent y.
+  pr vate var codePo nt ndex = 0
+  // T  code un   ndex should never spl  a surrogate pa r.
+  pr vate var char ndex = 0
 
   /**
-   * @param offset Index into the string measured in code units.
-   * @return The code point index that corresponds to the specified character index.
+   * @param offset  ndex  nto t  str ng  asured  n code un s.
+   * @return T  code po nt  ndex that corresponds to t  spec f ed character  ndex.
    */
-  def toCodePoints(offset: Offset.CodeUnit): Offset.CodePoint =
-    Offset.CodePoint(codeUnitsToCodePoints(offset.toInt))
+  def toCodePo nts(offset: Offset.CodeUn ): Offset.CodePo nt =
+    Offset.CodePo nt(codeUn sToCodePo nts(offset.to nt))
 
   /**
-   * @param charIndex Index into the string measured in code units.
-   * @return The code point index that corresponds to the specified character index.
+   * @param char ndex  ndex  nto t  str ng  asured  n code un s.
+   * @return T  code po nt  ndex that corresponds to t  spec f ed character  ndex.
    */
-  def codeUnitsToCodePoints(charIndex: Int): Int = {
-    if (charIndex < this.charIndex) {
-      this.codePointIndex -= text.codePointCount(charIndex, this.charIndex)
+  def codeUn sToCodePo nts(char ndex:  nt):  nt = {
+     f (char ndex < t .char ndex) {
+      t .codePo nt ndex -= text.codePo ntCount(char ndex, t .char ndex)
     } else {
-      this.codePointIndex += text.codePointCount(this.charIndex, charIndex)
+      t .codePo nt ndex += text.codePo ntCount(t .char ndex, char ndex)
     }
-    this.charIndex = charIndex
+    t .char ndex = char ndex
 
-    // Make sure that charIndex never points to the second code unit of a
-    // surrogate pair.
-    if (charIndex > 0 && Character.isSupplementaryCodePoint(text.codePointAt(charIndex - 1))) {
-      this.charIndex -= 1
-      this.codePointIndex -= 1
+    // Make sure that char ndex never po nts to t  second code un  of a
+    // surrogate pa r.
+     f (char ndex > 0 && Character. sSupple ntaryCodePo nt(text.codePo ntAt(char ndex - 1))) {
+      t .char ndex -= 1
+      t .codePo nt ndex -= 1
     }
 
-    this.codePointIndex
+    t .codePo nt ndex
   }
 
   /**
-   * @param offset Index into the string measured in code points.
-   * @return the corresponding code unit index
+   * @param offset  ndex  nto t  str ng  asured  n code po nts.
+   * @return t  correspond ng code un   ndex
    */
-  def toCodeUnits(offset: Offset.CodePoint): Offset.CodeUnit = {
-    this.charIndex = text.offsetByCodePoints(charIndex, offset.toInt - this.codePointIndex)
-    this.codePointIndex = offset.toInt
-    Offset.CodeUnit(this.charIndex)
+  def toCodeUn s(offset: Offset.CodePo nt): Offset.CodeUn  = {
+    t .char ndex = text.offsetByCodePo nts(char ndex, offset.to nt - t .codePo nt ndex)
+    t .codePo nt ndex = offset.to nt
+    Offset.CodeUn (t .char ndex)
   }
 
   /**
-   * @param codePointIndex Index into the string measured in code points.
-   * @return the corresponding code unit index
+   * @param codePo nt ndex  ndex  nto t  str ng  asured  n code po nts.
+   * @return t  correspond ng code un   ndex
    */
-  def codePointsToCodeUnits(codePointIndex: Int): Int =
-    toCodeUnits(Offset.CodePoint(codePointIndex)).toInt
+  def codePo ntsToCodeUn s(codePo nt ndex:  nt):  nt =
+    toCodeUn s(Offset.CodePo nt(codePo nt ndex)).to nt
 
   /**
-   * Returns a substring which begins at the specified code point `from` and extends to the
-   * code point `to`. Since String.substring only works with character, the method first
-   * converts code point offset to code unit offset.
+   * Returns a substr ng wh ch beg ns at t  spec f ed code po nt `from` and extends to t 
+   * code po nt `to`. S nce Str ng.substr ng only works w h character, t   thod f rst
+   * converts code po nt offset to code un  offset.
    */
-  def substring(from: Offset.CodePoint, to: Offset.CodePoint): String =
-    text.substring(toCodeUnits(from).toInt, toCodeUnits(to).toInt)
+  def substr ng(from: Offset.CodePo nt, to: Offset.CodePo nt): Str ng =
+    text.substr ng(toCodeUn s(from).to nt, toCodeUn s(to).to nt)
 
   /**
-   * Returns a substring which begins at the specified code point `from` and extends to the
-   * code point `to`. Since String.substring only works with character, the method first
-   * converts code point offset to code unit offset.
+   * Returns a substr ng wh ch beg ns at t  spec f ed code po nt `from` and extends to t 
+   * code po nt `to`. S nce Str ng.substr ng only works w h character, t   thod f rst
+   * converts code po nt offset to code un  offset.
    */
-  def substringByCodePoints(from: Int, to: Int): String =
-    substring(Offset.CodePoint(from), Offset.CodePoint(to))
+  def substr ngByCodePo nts(from:  nt, to:  nt): Str ng =
+    substr ng(Offset.CodePo nt(from), Offset.CodePo nt(to))
 
   /**
-   * Returns a substring which begins at the specified code point `from` and extends to the
-   * end of the string. Since String.substring only works with character, the method first
-   * converts code point offset to code unit offset.
+   * Returns a substr ng wh ch beg ns at t  spec f ed code po nt `from` and extends to t 
+   * end of t  str ng. S nce Str ng.substr ng only works w h character, t   thod f rst
+   * converts code po nt offset to code un  offset.
    */
-  def substringByCodePoints(from: Int): String = {
-    val charFrom = codePointsToCodeUnits(from)
-    text.substring(charFrom)
+  def substr ngByCodePo nts(from:  nt): Str ng = {
+    val charFrom = codePo ntsToCodeUn s(from)
+    text.substr ng(charFrom)
   }
 }

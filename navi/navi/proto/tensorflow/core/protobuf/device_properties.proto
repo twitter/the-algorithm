@@ -1,58 +1,58 @@
-/* Copyright 2017 The TensorFlow Authors. All Rights Reserved.
+/* Copyr ght 2017 T  TensorFlow Authors. All R ghts Reserved.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+L censed under t  Apac  L cense, Vers on 2.0 (t  "L cense");
+  may not use t  f le except  n compl ance w h t  L cense.
+  may obta n a copy of t  L cense at
 
-   http://www.apache.org/licenses/LICENSE-2.0
+   http://www.apac .org/l censes/L CENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Unless requ red by appl cable law or agreed to  n wr  ng, software
+d str buted under t  L cense  s d str buted on an "AS  S" BAS S,
+W THOUT WARRANT ES OR COND T ONS OF ANY K ND, e  r express or  mpl ed.
+See t  L cense for t  spec f c language govern ng perm ss ons and
+l m at ons under t  L cense.
 ==============================================================================*/
 
 syntax = "proto3";
 
 package tensorflow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "DevicePropertiesProtos";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "Dev cePropert esProtos";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
-message DeviceProperties {
-  // Device type (CPU, GPU, ...)
-  string type = 1;
-  // Vendor (Intel, nvidia, ...)
-  string vendor = 2;
-  // Model (Haswell, K40, ...)
-  string model = 3;
-  // Core Frequency in Mhz
-  int64 frequency = 4;
+ ssage Dev cePropert es {
+  // Dev ce type (CPU, GPU, ...)
+  str ng type = 1;
+  // Vendor ( ntel, nv d a, ...)
+  str ng vendor = 2;
+  // Model (Has ll, K40, ...)
+  str ng model = 3;
+  // Core Frequency  n Mhz
+   nt64 frequency = 4;
   // Number of cores
-  int64 num_cores = 5;
-  // Version of the tools and libraries used with this device (e.g. gcc 4.9,
+   nt64 num_cores = 5;
+  // Vers on of t  tools and l brar es used w h t  dev ce (e.g. gcc 4.9,
   // cudnn 5.1)
-  map<string, string> environment = 6;
-  // Number of registers per core.
-  int64 num_registers = 7;
-  // L1 cache size in bytes
-  int64 l1_cache_size = 8;
-  // L2 cache size in bytes
-  int64 l2_cache_size = 9;
-  // L3 cache size in bytes
-  int64 l3_cache_size = 10;
-  // Shared memory size per multiprocessor in bytes. This field is
-  // applicable to GPUs only.
-  int64 shared_memory_size_per_multiprocessor = 11;
-  // Memory size in bytes
-  int64 memory_size = 12;
-  // Memory bandwidth in KB/s
-  int64 bandwidth = 13;
+  map<str ng, str ng> env ron nt = 6;
+  // Number of reg sters per core.
+   nt64 num_reg sters = 7;
+  // L1 cac  s ze  n bytes
+   nt64 l1_cac _s ze = 8;
+  // L2 cac  s ze  n bytes
+   nt64 l2_cac _s ze = 9;
+  // L3 cac  s ze  n bytes
+   nt64 l3_cac _s ze = 10;
+  // Shared  mory s ze per mult processor  n bytes. T  f eld  s
+  // appl cable to GPUs only.
+   nt64 shared_ mory_s ze_per_mult processor = 11;
+  //  mory s ze  n bytes
+   nt64  mory_s ze = 12;
+  //  mory bandw dth  n KB/s
+   nt64 bandw dth = 13;
 }
 
-message NamedDevice {
-  string name = 1;
-  DeviceProperties properties = 2;
+ ssage Na dDev ce {
+  str ng na  = 1;
+  Dev cePropert es propert es = 2;
 }

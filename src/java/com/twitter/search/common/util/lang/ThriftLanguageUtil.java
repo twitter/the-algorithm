@@ -1,141 +1,141 @@
-package com.twitter.search.common.util.lang;
+package com.tw ter.search.common.ut l.lang;
 
-import java.lang.reflect.Field;
-import java.util.Locale;
-import java.util.Map;
+ mport java.lang.reflect.F eld;
+ mport java.ut l.Locale;
+ mport java.ut l.Map;
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect. mmutableMap;
+ mport com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.text.language.LocaleUtil;
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
+ mport com.tw ter.common.text.language.LocaleUt l;
+ mport com.tw ter.search.common.constants.thr ftjava.Thr ftLanguage;
 
 /**
- * This class can be used to convert ThriftLanguage to Locale object and vise versa.
+ * T  class can be used to convert Thr ftLanguage to Locale object and v se versa.
  */
-public final class ThriftLanguageUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(ThriftLanguageUtil.class.getName());
+publ c f nal class Thr ftLanguageUt l {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Thr ftLanguageUt l.class.getNa ());
 
-  // stores ThriftLanguage.id -> Locale mapping
-  private static final Locale[] LOCALES;
+  // stores Thr ftLanguage. d -> Locale mapp ng
+  pr vate stat c f nal Locale[] LOCALES;
 
-  // stores Locale -> ThriftLanguage mapping
-  private static final Map<Locale, ThriftLanguage> THRIFT_LANGUAGES;
+  // stores Locale -> Thr ftLanguage mapp ng
+  pr vate stat c f nal Map<Locale, Thr ftLanguage> THR FT_LANGUAGES;
 
-  static {
-    LOCALES = new Locale[ThriftLanguage.values().length];
-    Map<Locale, ThriftLanguage> thriftLanguageMap = Maps.newHashMap();
+  stat c {
+    LOCALES = new Locale[Thr ftLanguage.values().length];
+    Map<Locale, Thr ftLanguage> thr ftLanguageMap = Maps.newHashMap();
 
-    // get all languages defined in ThriftLanguage
-    Field[] fields = ThriftLanguage.class.getDeclaredFields();
-    for (Field field : fields) {
-      if (!field.isEnumConstant()) {
-        continue;
+    // get all languages def ned  n Thr ftLanguage
+    F eld[] f elds = Thr ftLanguage.class.getDeclaredF elds();
+    for (F eld f eld : f elds) {
+       f (!f eld. sEnumConstant()) {
+        cont nue;
       }
 
       try {
-        ThriftLanguage thriftLang = (ThriftLanguage) field.get(null);
-        String thriftLanguageName = field.getName();
+        Thr ftLanguage thr ftLang = (Thr ftLanguage) f eld.get(null);
+        Str ng thr ftLanguageNa  = f eld.getNa ();
 
-        // get corresponding Locale declared in LocaleUtil
+        // get correspond ng Locale declared  n LocaleUt l
         try {
-          Field localeUtilField = LocaleUtil.class.getDeclaredField(thriftLanguageName);
-          Locale localeLang = (Locale) localeUtilField.get(null);
+          F eld localeUt lF eld = LocaleUt l.class.getDeclaredF eld(thr ftLanguageNa );
+          Locale localeLang = (Locale) localeUt lF eld.get(null);
 
-          LOCALES[thriftLang.getValue()] = localeLang;
-          thriftLanguageMap.put(localeLang, thriftLang);
-        } catch (NoSuchFieldException e) {
-          LOG.warn("{} is defined in ThriftLanguage, but not in LocaleUtil.", thriftLanguageName);
+          LOCALES[thr ftLang.getValue()] = localeLang;
+          thr ftLanguageMap.put(localeLang, thr ftLang);
+        } catch (NoSuchF eldExcept on e) {
+          LOG.warn("{}  s def ned  n Thr ftLanguage, but not  n LocaleUt l.", thr ftLanguageNa );
         }
-      } catch (IllegalAccessException e) {
+      } catch ( llegalAccessExcept on e) {
         // shouldn't happen.
-        LOG.warn("Could not get a declared field.", e);
+        LOG.warn("Could not get a declared f eld.", e);
       }
     }
 
-    // Let's make sure that all Locales defined in LocaleUtil are also defined in ThriftLanguage
-    for (Locale lang : LocaleUtil.getDefinedLanguages()) {
-      if (!thriftLanguageMap.containsKey(lang)) {
-        LOG.warn("{} is defined in LocaleUtil but not in ThriftLanguage.", lang.getLanguage());
+    // Let's make sure that all Locales def ned  n LocaleUt l are also def ned  n Thr ftLanguage
+    for (Locale lang : LocaleUt l.getDef nedLanguages()) {
+       f (!thr ftLanguageMap.conta nsKey(lang)) {
+        LOG.warn("{}  s def ned  n LocaleUt l but not  n Thr ftLanguage.", lang.getLanguage());
       }
     }
 
-    THRIFT_LANGUAGES = ImmutableMap.copyOf(thriftLanguageMap);
+    THR FT_LANGUAGES =  mmutableMap.copyOf(thr ftLanguageMap);
   }
 
-  private ThriftLanguageUtil() {
+  pr vate Thr ftLanguageUt l() {
   }
 
   /**
-   * Returns a Locale object which corresponds to a given ThriftLanguage object.
-   * @param language ThriftLanguage object
-   * @return a corresponding Locale object
+   * Returns a Locale object wh ch corresponds to a g ven Thr ftLanguage object.
+   * @param language Thr ftLanguage object
+   * @return a correspond ng Locale object
    */
-  public static Locale getLocaleOf(ThriftLanguage language) {
-    // Note that ThriftLanguage.findByValue() can return null (thrift generated code).
-    // So ThriftLanguageUtil.getLocaleOf needs to handle null correctly.
-    if (language == null) {
-      return LocaleUtil.UNKNOWN;
+  publ c stat c Locale getLocaleOf(Thr ftLanguage language) {
+    // Note that Thr ftLanguage.f ndByValue() can return null (thr ft generated code).
+    // So Thr ftLanguageUt l.getLocaleOf needs to handle null correctly.
+     f (language == null) {
+      return LocaleUt l.UNKNOWN;
     }
 
-    Preconditions.checkArgument(language.getValue() < LOCALES.length);
+    Precond  ons.c ckArgu nt(language.getValue() < LOCALES.length);
     return LOCALES[language.getValue()];
   }
 
   /**
-   * Returns a ThriftLanguage object which corresponds to a given Locale object.
+   * Returns a Thr ftLanguage object wh ch corresponds to a g ven Locale object.
    *
    * @param language Locale object
-   * @return a corresponding ThriftLanguage object, or UNKNOWN if there's no corresponding one.
+   * @return a correspond ng Thr ftLanguage object, or UNKNOWN  f t re's no correspond ng one.
    */
-  public static ThriftLanguage getThriftLanguageOf(Locale language) {
-    Preconditions.checkNotNull(language);
-    ThriftLanguage thriftLang = THRIFT_LANGUAGES.get(language);
-    return thriftLang == null ? ThriftLanguage.UNKNOWN : thriftLang;
+  publ c stat c Thr ftLanguage getThr ftLanguageOf(Locale language) {
+    Precond  ons.c ckNotNull(language);
+    Thr ftLanguage thr ftLang = THR FT_LANGUAGES.get(language);
+    return thr ftLang == null ? Thr ftLanguage.UNKNOWN : thr ftLang;
   }
 
   /**
-   * Returns a ThriftLanguage object which corresponds to a given language code.
+   * Returns a Thr ftLanguage object wh ch corresponds to a g ven language code.
    *
    * @param languageCode BCP-47 language code
-   * @return a corresponding ThriftLanguage object, or UNKNOWN if there's no corresponding one.
+   * @return a correspond ng Thr ftLanguage object, or UNKNOWN  f t re's no correspond ng one.
    */
-  public static ThriftLanguage getThriftLanguageOf(String languageCode) {
-    Preconditions.checkNotNull(languageCode);
-    ThriftLanguage thriftLang = THRIFT_LANGUAGES.get(LocaleUtil.getLocaleOf(languageCode));
-    return thriftLang == null ? ThriftLanguage.UNKNOWN : thriftLang;
+  publ c stat c Thr ftLanguage getThr ftLanguageOf(Str ng languageCode) {
+    Precond  ons.c ckNotNull(languageCode);
+    Thr ftLanguage thr ftLang = THR FT_LANGUAGES.get(LocaleUt l.getLocaleOf(languageCode));
+    return thr ftLang == null ? Thr ftLanguage.UNKNOWN : thr ftLang;
   }
 
   /**
-   * Returns a ThriftLanguage object which corresponds to a given int value.
-   * If value is not valid, returns ThriftLanguage.UNKNOWN
+   * Returns a Thr ftLanguage object wh ch corresponds to a g ven  nt value.
+   *  f value  s not val d, returns Thr ftLanguage.UNKNOWN
    * @param value value of language
-   * @return a corresponding ThriftLanguage object
+   * @return a correspond ng Thr ftLanguage object
    */
-  public static ThriftLanguage safeFindByValue(int value) {
-    ThriftLanguage thriftLang = ThriftLanguage.findByValue(value);
-    return thriftLang == null ? ThriftLanguage.UNKNOWN : thriftLang;
+  publ c stat c Thr ftLanguage safeF ndByValue( nt value) {
+    Thr ftLanguage thr ftLang = Thr ftLanguage.f ndByValue(value);
+    return thr ftLang == null ? Thr ftLanguage.UNKNOWN : thr ftLang;
   }
 
   /**
-   * Returns the language code which corresponds to a given ThriftLanguage.
+   * Returns t  language code wh ch corresponds to a g ven Thr ftLanguage.
    *
-   * Note that multiple ThriftLanguage entries can return the same language code.
+   * Note that mult ple Thr ftLanguage entr es can return t  sa  language code.
    *
-   * @param thriftLang ThriftLanguage object
-   * @return Corresponding language or null if thriftLang is null.
+   * @param thr ftLang Thr ftLanguage object
+   * @return Correspond ng language or null  f thr ftLang  s null.
    */
   @Nullable
-  public static String getLanguageCodeOf(@Nullable ThriftLanguage thriftLang) {
-    if (thriftLang == null) {
+  publ c stat c Str ng getLanguageCodeOf(@Nullable Thr ftLanguage thr ftLang) {
+     f (thr ftLang == null) {
       return null;
     }
-    return ThriftLanguageUtil.getLocaleOf(thriftLang).getLanguage();
+    return Thr ftLanguageUt l.getLocaleOf(thr ftLang).getLanguage();
   }
 }

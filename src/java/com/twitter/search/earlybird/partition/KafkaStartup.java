@@ -1,328 +1,328 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.io.Closeable;
-import java.util.Optional;
+ mport java. o.Closeable;
+ mport java.ut l.Opt onal;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Stopwatch;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Stopwatch;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.earlybird.EarlybirdStatus;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.EarlybirdStartupException;
-import com.twitter.search.earlybird.partition.freshstartup.FreshStartupHandler;
-import com.twitter.search.earlybird.querycache.QueryCacheManager;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
-import com.twitter.search.queryparser.query.QueryParserException;
+ mport com.tw ter.search.common.conf g.Conf g;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
+ mport com.tw ter.search.earlyb rd.Earlyb rdStatus;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.except on.Cr  calExcept onHandler;
+ mport com.tw ter.search.earlyb rd.except on.Earlyb rdStartupExcept on;
+ mport com.tw ter.search.earlyb rd.part  on.freshstartup.FreshStartupHandler;
+ mport com.tw ter.search.earlyb rd.querycac .QueryCac Manager;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdStatusCode;
+ mport com.tw ter.search.queryparser.query.QueryParserExcept on;
 
 /**
- * Handles starting an Earlybird from Kafka topics.
+ * Handles start ng an Earlyb rd from Kafka top cs.
  *
- * Currently very unoptimized -- future versions will implement parallel indexing and loading
- * serialized data from HDFS. See http://go/removing-dl-tdd.
+ * Currently very unopt m zed -- future vers ons w ll  mple nt parallel  ndex ng and load ng
+ * ser al zed data from HDFS. See http://go/remov ng-dl-tdd.
  */
-public class KafkaStartup implements EarlybirdStartup {
-  private static final Logger LOG = LoggerFactory.getLogger(KafkaStartup.class);
+publ c class KafkaStartup  mple nts Earlyb rdStartup {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(KafkaStartup.class);
 
-  private final EarlybirdKafkaConsumer earlybirdKafkaConsumer;
-  private final StartupUserEventIndexer startupUserEventIndexer;
-  private final QueryCacheManager queryCacheManager;
-  private final SegmentManager segmentManager;
-  private final EarlybirdIndexLoader earlybirdIndexLoader;
-  private final FreshStartupHandler freshStartupHandler;
-  private final UserUpdatesStreamIndexer userUpdatesStreamIndexer;
-  private final UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  private final SearchLongGauge loadedIndex;
-  private final SearchLongGauge freshStartup;
-  private final MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager;
-  private final AudioSpaceEventsStreamIndexer audioSpaceEventsStreamIndexer;
-  private final CriticalExceptionHandler earlybirdExceptionHandler;
-  private final SearchDecider decider;
+  pr vate f nal Earlyb rdKafkaConsu r earlyb rdKafkaConsu r;
+  pr vate f nal StartupUserEvent ndexer startupUserEvent ndexer;
+  pr vate f nal QueryCac Manager queryCac Manager;
+  pr vate f nal Seg ntManager seg ntManager;
+  pr vate f nal Earlyb rd ndexLoader earlyb rd ndexLoader;
+  pr vate f nal FreshStartupHandler freshStartupHandler;
+  pr vate f nal UserUpdatesStream ndexer userUpdatesStream ndexer;
+  pr vate f nal UserScrubGeoEventStream ndexer userScrubGeoEventStream ndexer;
+  pr vate f nal Search ndex ng tr cSet search ndex ng tr cSet;
+  pr vate f nal SearchLongGauge loaded ndex;
+  pr vate f nal SearchLongGauge freshStartup;
+  pr vate f nal Mult Seg ntTermD ct onaryManager mult Seg ntTermD ct onaryManager;
+  pr vate f nal Aud oSpaceEventsStream ndexer aud oSpaceEventsStream ndexer;
+  pr vate f nal Cr  calExcept onHandler earlyb rdExcept onHandler;
+  pr vate f nal SearchDec der dec der;
 
-  private static final String FRESH_STARTUP = "fresh startup";
-  private static final String INGEST_UNTIL_CURRENT = "ingest until current";
-  private static final String LOAD_FLUSHED_INDEX = "load flushed index";
-  private static final String SETUP_QUERY_CACHE = "setting up query cache";
-  private static final String USER_UPDATES_STARTUP = "user updates startup";
-  private static final String AUDIO_SPACES_STARTUP = "audio spaces startup";
-  private static final String BUILD_MULTI_SEGMENT_TERM_DICTIONARY =
-          "build multi segment term dictionary";
+  pr vate stat c f nal Str ng FRESH_STARTUP = "fresh startup";
+  pr vate stat c f nal Str ng  NGEST_UNT L_CURRENT = " ngest unt l current";
+  pr vate stat c f nal Str ng LOAD_FLUSHED_ NDEX = "load flus d  ndex";
+  pr vate stat c f nal Str ng SETUP_QUERY_CACHE = "sett ng up query cac ";
+  pr vate stat c f nal Str ng USER_UPDATES_STARTUP = "user updates startup";
+  pr vate stat c f nal Str ng AUD O_SPACES_STARTUP = "aud o spaces startup";
+  pr vate stat c f nal Str ng BU LD_MULT _SEGMENT_TERM_D CT ONARY =
+          "bu ld mult  seg nt term d ct onary";
 
-  public KafkaStartup(
-      SegmentManager segmentManager,
-      EarlybirdKafkaConsumer earlybirdKafkaConsumer,
-      StartupUserEventIndexer startupUserEventIndexer,
-      UserUpdatesStreamIndexer userUpdatesStreamIndexer,
-      UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer,
-      AudioSpaceEventsStreamIndexer audioSpaceEventsStreamIndexer,
-      QueryCacheManager queryCacheManager,
-      EarlybirdIndexLoader earlybirdIndexLoader,
+  publ c KafkaStartup(
+      Seg ntManager seg ntManager,
+      Earlyb rdKafkaConsu r earlyb rdKafkaConsu r,
+      StartupUserEvent ndexer startupUserEvent ndexer,
+      UserUpdatesStream ndexer userUpdatesStream ndexer,
+      UserScrubGeoEventStream ndexer userScrubGeoEventStream ndexer,
+      Aud oSpaceEventsStream ndexer aud oSpaceEventsStream ndexer,
+      QueryCac Manager queryCac Manager,
+      Earlyb rd ndexLoader earlyb rd ndexLoader,
       FreshStartupHandler freshStartupHandler,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager,
-      CriticalExceptionHandler earlybirdExceptionHandler,
-      SearchDecider decider
+      Search ndex ng tr cSet search ndex ng tr cSet,
+      Mult Seg ntTermD ct onaryManager mult Seg ntTermD ct onaryManager,
+      Cr  calExcept onHandler earlyb rdExcept onHandler,
+      SearchDec der dec der
   ) {
-    this.segmentManager = segmentManager;
-    this.earlybirdKafkaConsumer = earlybirdKafkaConsumer;
-    this.startupUserEventIndexer = startupUserEventIndexer;
-    this.queryCacheManager = queryCacheManager;
-    this.earlybirdIndexLoader = earlybirdIndexLoader;
-    this.freshStartupHandler = freshStartupHandler;
-    this.userUpdatesStreamIndexer = userUpdatesStreamIndexer;
-    this.userScrubGeoEventStreamIndexer = userScrubGeoEventStreamIndexer;
-    this.audioSpaceEventsStreamIndexer = audioSpaceEventsStreamIndexer;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.loadedIndex = SearchLongGauge.export("kafka_startup_loaded_index");
-    this.freshStartup = SearchLongGauge.export("fresh_startup");
-    this.multiSegmentTermDictionaryManager = multiSegmentTermDictionaryManager;
-    this.earlybirdExceptionHandler = earlybirdExceptionHandler;
-    this.decider = decider;
+    t .seg ntManager = seg ntManager;
+    t .earlyb rdKafkaConsu r = earlyb rdKafkaConsu r;
+    t .startupUserEvent ndexer = startupUserEvent ndexer;
+    t .queryCac Manager = queryCac Manager;
+    t .earlyb rd ndexLoader = earlyb rd ndexLoader;
+    t .freshStartupHandler = freshStartupHandler;
+    t .userUpdatesStream ndexer = userUpdatesStream ndexer;
+    t .userScrubGeoEventStream ndexer = userScrubGeoEventStream ndexer;
+    t .aud oSpaceEventsStream ndexer = aud oSpaceEventsStream ndexer;
+    t .search ndex ng tr cSet = search ndex ng tr cSet;
+    t .loaded ndex = SearchLongGauge.export("kafka_startup_loaded_ ndex");
+    t .freshStartup = SearchLongGauge.export("fresh_startup");
+    t .mult Seg ntTermD ct onaryManager = mult Seg ntTermD ct onaryManager;
+    t .earlyb rdExcept onHandler = earlyb rdExcept onHandler;
+    t .dec der = dec der;
     freshStartup.set(0);
   }
 
-  private void userEventsStartup() {
-    LOG.info("Start indexing user events.");
+  pr vate vo d userEventsStartup() {
+    LOG. nfo("Start  ndex ng user events.");
 
-    startupUserEventIndexer.indexAllEvents();
+    startupUserEvent ndexer. ndexAllEvents();
 
-    LOG.info("Finished loading/indexing user events.");
+    LOG. nfo("F n s d load ng/ ndex ng user events.");
 
-    // User updates are now current, keep them current by continuing to index from the stream.
-    LOG.info("Starting to run UserUpdatesStreamIndexer");
-    new Thread(userUpdatesStreamIndexer::run, "userupdates-stream-indexer").start();
+    // User updates are now current, keep t m current by cont nu ng to  ndex from t  stream.
+    LOG. nfo("Start ng to run UserUpdatesStream ndexer");
+    new Thread(userUpdatesStream ndexer::run, "userupdates-stream- ndexer").start();
 
-    if (EarlybirdConfig.consumeUserScrubGeoEvents()) {
+     f (Earlyb rdConf g.consu UserScrubGeoEvents()) {
       // User scrub geo events are now current,
-      // keep them current by continuing to index from the stream.
-      LOG.info("Starting to run UserScrubGeoEventsStreamIndexer");
-      new Thread(userScrubGeoEventStreamIndexer::run,
-          "userScrubGeoEvents-stream-indexer").start();
+      // keep t m current by cont nu ng to  ndex from t  stream.
+      LOG. nfo("Start ng to run UserScrubGeoEventsStream ndexer");
+      new Thread(userScrubGeoEventStream ndexer::run,
+          "userScrubGeoEvents-stream- ndexer").start();
     }
   }
 
-  private void loadAudioSpaceEvents() {
-    LOG.info("Index audio space events...");
-    EarlybirdStatus.beginEvent(AUDIO_SPACES_STARTUP,
-        searchIndexingMetricSet.startupInAudioSpaceEventIndexer);
+  pr vate vo d loadAud oSpaceEvents() {
+    LOG. nfo(" ndex aud o space events...");
+    Earlyb rdStatus.beg nEvent(AUD O_SPACES_STARTUP,
+        search ndex ng tr cSet.startup nAud oSpaceEvent ndexer);
 
-    if (audioSpaceEventsStreamIndexer == null) {
-      LOG.error("Null audioSpaceEventsStreamIndexer");
+     f (aud oSpaceEventsStream ndexer == null) {
+      LOG.error("Null aud oSpaceEventsStream ndexer");
       return;
     }
 
-    if (decider.isAvailable("enable_reading_audio_space_events")) {
+     f (dec der. sAva lable("enable_read ng_aud o_space_events")) {
       Stopwatch stopwatch = Stopwatch.createStarted();
-      audioSpaceEventsStreamIndexer.seekToBeginning();
-      audioSpaceEventsStreamIndexer.readRecordsUntilCurrent();
-      LOG.info("Finished reading audio spaces in {}", stopwatch);
-      audioSpaceEventsStreamIndexer.printSummary();
+      aud oSpaceEventsStream ndexer.seekToBeg nn ng();
+      aud oSpaceEventsStream ndexer.readRecordsUnt lCurrent();
+      LOG. nfo("F n s d read ng aud o spaces  n {}", stopwatch);
+      aud oSpaceEventsStream ndexer.pr ntSummary();
 
-      new Thread(audioSpaceEventsStreamIndexer::run,
-          "audioSpaceEvents-stream-indexer").start();
+      new Thread(aud oSpaceEventsStream ndexer::run,
+          "aud oSpaceEvents-stream- ndexer").start();
     } else {
-      LOG.info("Reading audio space events not enabled");
+      LOG. nfo("Read ng aud o space events not enabled");
     }
 
-    EarlybirdStatus.endEvent(AUDIO_SPACES_STARTUP,
-        searchIndexingMetricSet.startupInAudioSpaceEventIndexer);
+    Earlyb rdStatus.endEvent(AUD O_SPACES_STARTUP,
+        search ndex ng tr cSet.startup nAud oSpaceEvent ndexer);
   }
 
-  private void tweetsAndUpdatesStartup() throws EarlybirdStartupException {
-    LOG.info("Index tweets and updates...");
-    EarlybirdStatus.beginEvent(LOAD_FLUSHED_INDEX,
-        searchIndexingMetricSet.startupInLoadFlushedIndex);
-    EarlybirdIndex index;
+  pr vate vo d t etsAndUpdatesStartup() throws Earlyb rdStartupExcept on {
+    LOG. nfo(" ndex t ets and updates...");
+    Earlyb rdStatus.beg nEvent(LOAD_FLUSHED_ NDEX,
+        search ndex ng tr cSet.startup nLoadFlus d ndex);
+    Earlyb rd ndex  ndex;
 
-    // Set when you want to get a server from starting to ready quickly for development
+    // Set w n   want to get a server from start ng to ready qu ckly for develop nt
     // purposes.
-    boolean fastDevStartup = EarlybirdConfig.getBool("fast_dev_startup");
+    boolean fastDevStartup = Earlyb rdConf g.getBool("fast_dev_startup");
 
-    Optional<EarlybirdIndex> optIndex = Optional.empty();
-    if (!fastDevStartup) {
-      optIndex = earlybirdIndexLoader.loadIndex();
+    Opt onal<Earlyb rd ndex> opt ndex = Opt onal.empty();
+     f (!fastDevStartup) {
+      opt ndex = earlyb rd ndexLoader.load ndex();
     }
 
-    if (optIndex.isPresent()) {
-      loadedIndex.set(1);
-      LOG.info("Loaded an index.");
-      index = optIndex.get();
-      EarlybirdStatus.endEvent(LOAD_FLUSHED_INDEX,
-          searchIndexingMetricSet.startupInLoadFlushedIndex);
+     f (opt ndex. sPresent()) {
+      loaded ndex.set(1);
+      LOG. nfo("Loaded an  ndex.");
+       ndex = opt ndex.get();
+      Earlyb rdStatus.endEvent(LOAD_FLUSHED_ NDEX,
+          search ndex ng tr cSet.startup nLoadFlus d ndex);
     } else {
-      LOG.info("Didn't load an index, indexing from scratch.");
+      LOG. nfo("D dn't load an  ndex,  ndex ng from scratch.");
       freshStartup.set(1);
-      boolean parallelIndexFromScratch = EarlybirdConfig.getBool(
-          "parallel_index_from_scratch");
-      LOG.info("parallel_index_from_scratch: {}", parallelIndexFromScratch);
-      EarlybirdStatus.beginEvent(FRESH_STARTUP,
-          searchIndexingMetricSet.startupInFreshStartup);
+      boolean parallel ndexFromScratch = Earlyb rdConf g.getBool(
+          "parallel_ ndex_from_scratch");
+      LOG. nfo("parallel_ ndex_from_scratch: {}", parallel ndexFromScratch);
+      Earlyb rdStatus.beg nEvent(FRESH_STARTUP,
+          search ndex ng tr cSet.startup nFreshStartup);
       try {
-        if (fastDevStartup) {
-          index = freshStartupHandler.fastIndexFromScratchForDevelopment();
-        } else if (parallelIndexFromScratch) {
-          index = freshStartupHandler.parallelIndexFromScratch();
+         f (fastDevStartup) {
+           ndex = freshStartupHandler.fast ndexFromScratchForDevelop nt();
+        } else  f (parallel ndexFromScratch) {
+           ndex = freshStartupHandler.parallel ndexFromScratch();
         } else {
-          index = freshStartupHandler.indexFromScratch();
+           ndex = freshStartupHandler. ndexFromScratch();
         }
-      } catch (Exception ex) {
-        throw new EarlybirdStartupException(ex);
-      } finally {
-        EarlybirdStatus.endEvent(FRESH_STARTUP,
-            searchIndexingMetricSet.startupInFreshStartup);
+      } catch (Except on ex) {
+        throw new Earlyb rdStartupExcept on(ex);
+      } f nally {
+        Earlyb rdStatus.endEvent(FRESH_STARTUP,
+            search ndex ng tr cSet.startup nFreshStartup);
       }
     }
 
-    LOG.info("Index has {} segments.", index.getSegmentInfoList().size());
-    if (index.getSegmentInfoList().size() > 0) {
-      LOG.info("Inserting segments into SegmentManager");
-      for (SegmentInfo segmentInfo : index.getSegmentInfoList()) {
-        segmentManager.putSegmentInfo(segmentInfo);
+    LOG. nfo(" ndex has {} seg nts.",  ndex.getSeg nt nfoL st().s ze());
+     f ( ndex.getSeg nt nfoL st().s ze() > 0) {
+      LOG. nfo(" nsert ng seg nts  nto Seg ntManager");
+      for (Seg nt nfo seg nt nfo :  ndex.getSeg nt nfoL st()) {
+        seg ntManager.putSeg nt nfo(seg nt nfo);
       }
 
-      earlybirdKafkaConsumer.prepareAfterStartingWithIndex(
-          index.getMaxIndexedTweetId()
+      earlyb rdKafkaConsu r.prepareAfterStart ngW h ndex(
+           ndex.getMax ndexedT et d()
       );
     }
 
-    // Build the Multi segment term dictionary before catching up on indexing to ensure that the
-    // segments won't roll and delete the oldest segment while a multi segment term dictionary that
-    // includes that segment is being built.
-    buildMultiSegmentTermDictionary();
+    // Bu ld t  Mult  seg nt term d ct onary before catch ng up on  ndex ng to ensure that t 
+    // seg nts won't roll and delete t  oldest seg nt wh le a mult  seg nt term d ct onary that
+    //  ncludes that seg nt  s be ng bu lt.
+    bu ldMult Seg ntTermD ct onary();
 
-    segmentManager.logState("Starting ingestUntilCurrent");
-    LOG.info("partial updates indexed: {}", segmentManager.getNumPartialUpdates());
-    EarlybirdStatus.beginEvent(INGEST_UNTIL_CURRENT,
-        searchIndexingMetricSet.startupInIngestUntilCurrent);
+    seg ntManager.logState("Start ng  ngestUnt lCurrent");
+    LOG. nfo("part al updates  ndexed: {}", seg ntManager.getNumPart alUpdates());
+    Earlyb rdStatus.beg nEvent( NGEST_UNT L_CURRENT,
+        search ndex ng tr cSet.startup n ngestUnt lCurrent);
 
-    earlybirdKafkaConsumer.ingestUntilCurrent(index.getTweetOffset(), index.getUpdateOffset());
+    earlyb rdKafkaConsu r. ngestUnt lCurrent( ndex.getT etOffset(),  ndex.getUpdateOffset());
 
-    validateSegments();
-    segmentManager.logState("ingestUntilCurrent is done");
-    LOG.info("partial updates indexed: {}", segmentManager.getNumPartialUpdates());
-    EarlybirdStatus.endEvent(INGEST_UNTIL_CURRENT,
-        searchIndexingMetricSet.startupInIngestUntilCurrent);
-    new Thread(earlybirdKafkaConsumer::run, "earlybird-kafka-consumer").start();
+    val dateSeg nts();
+    seg ntManager.logState(" ngestUnt lCurrent  s done");
+    LOG. nfo("part al updates  ndexed: {}", seg ntManager.getNumPart alUpdates());
+    Earlyb rdStatus.endEvent( NGEST_UNT L_CURRENT,
+        search ndex ng tr cSet.startup n ngestUnt lCurrent);
+    new Thread(earlyb rdKafkaConsu r::run, "earlyb rd-kafka-consu r").start();
   }
 
-  protected void validateSegments() throws EarlybirdStartupException {
-    if (!Config.environmentIsTest()) {
-      // Unfortunately, many tests start Earlybirds with 0 indexed documents, so we disable this
-      // check in tests.
-      validateSegmentsForNonTest();
+  protected vo d val dateSeg nts() throws Earlyb rdStartupExcept on {
+     f (!Conf g.env ron nt sTest()) {
+      // Unfortunately, many tests start Earlyb rds w h 0  ndexed docu nts, so   d sable t 
+      // c ck  n tests.
+      val dateSeg ntsForNonTest();
     }
   }
 
-  protected void validateSegmentsForNonTest() throws EarlybirdStartupException {
-    // SEARCH-24123: Prevent Earlybird from starting if there are no indexed documents.
-    if (segmentManager.getNumIndexedDocuments() == 0) {
-      throw new EarlybirdStartupException("Earlybird has zero indexed documents.");
+  protected vo d val dateSeg ntsForNonTest() throws Earlyb rdStartupExcept on {
+    // SEARCH-24123: Prevent Earlyb rd from start ng  f t re are no  ndexed docu nts.
+     f (seg ntManager.getNum ndexedDocu nts() == 0) {
+      throw new Earlyb rdStartupExcept on("Earlyb rd has zero  ndexed docu nts.");
     }
   }
 
-  private void queryCacheStartup() throws EarlybirdStartupException {
-    EarlybirdStatus.beginEvent(SETUP_QUERY_CACHE,
-        searchIndexingMetricSet.startupInQueryCacheUpdates);
+  pr vate vo d queryCac Startup() throws Earlyb rdStartupExcept on {
+    Earlyb rdStatus.beg nEvent(SETUP_QUERY_CACHE,
+        search ndex ng tr cSet.startup nQueryCac Updates);
     try {
-      queryCacheManager.setupTasksIfNeeded(segmentManager);
-    } catch (QueryParserException e) {
-      LOG.error("Exception when setting up query cache tasks");
-      throw new EarlybirdStartupException(e);
+      queryCac Manager.setupTasks fNeeded(seg ntManager);
+    } catch (QueryParserExcept on e) {
+      LOG.error("Except on w n sett ng up query cac  tasks");
+      throw new Earlyb rdStartupExcept on(e);
     }
 
-    queryCacheManager.waitUntilAllQueryCachesAreBuilt();
+    queryCac Manager.wa Unt lAllQueryCac sAreBu lt();
 
-    // Print the sizes of the query caches so that we can see that they're built.
-    Iterable<SegmentInfo> segmentInfos =
-        segmentManager.getSegmentInfos(SegmentManager.Filter.All, SegmentManager.Order.OLD_TO_NEW);
-    segmentManager.logState("After building query caches");
-    for (SegmentInfo segmentInfo : segmentInfos) {
-      LOG.info("Segment: {}, Total cardinality: {}", segmentInfo.getSegmentName(),
-          segmentInfo.getIndexSegment().getQueryCachesCardinality());
+    // Pr nt t  s zes of t  query cac s so that   can see that t y're bu lt.
+     erable<Seg nt nfo> seg nt nfos =
+        seg ntManager.getSeg nt nfos(Seg ntManager.F lter.All, Seg ntManager.Order.OLD_TO_NEW);
+    seg ntManager.logState("After bu ld ng query cac s");
+    for (Seg nt nfo seg nt nfo : seg nt nfos) {
+      LOG. nfo("Seg nt: {}, Total card nal y: {}", seg nt nfo.getSeg ntNa (),
+          seg nt nfo.get ndexSeg nt().getQueryCac sCard nal y());
     }
 
-    // We're done building the query caches for all segments, and the earlybird is ready to become
-    // current. Restrict all future query cache task runs to one single core, to make sure our
-    // searcher threads are not impacted.
-    queryCacheManager.setWorkerPoolSizeAfterStartup();
-    EarlybirdStatus.endEvent(SETUP_QUERY_CACHE,
-        searchIndexingMetricSet.startupInQueryCacheUpdates);
+    //  're done bu ld ng t  query cac s for all seg nts, and t  earlyb rd  s ready to beco 
+    // current. Restr ct all future query cac  task runs to one s ngle core, to make sure  
+    // searc r threads are not  mpacted.
+    queryCac Manager.setWorkerPoolS zeAfterStartup();
+    Earlyb rdStatus.endEvent(SETUP_QUERY_CACHE,
+        search ndex ng tr cSet.startup nQueryCac Updates);
   }
 
   /**
-   * Closes all currently running Indexers.
+   * Closes all currently runn ng  ndexers.
    */
-  @VisibleForTesting
-  public void shutdownIndexing() {
-    LOG.info("Shutting down KafkaStartup.");
+  @V s bleForTest ng
+  publ c vo d shutdown ndex ng() {
+    LOG. nfo("Shutt ng down KafkaStartup.");
 
-    earlybirdKafkaConsumer.close();
-    userUpdatesStreamIndexer.close();
-    userScrubGeoEventStreamIndexer.close();
-    // Note that the QueryCacheManager is shut down in EarlybirdServer::shutdown.
+    earlyb rdKafkaConsu r.close();
+    userUpdatesStream ndexer.close();
+    userScrubGeoEventStream ndexer.close();
+    // Note that t  QueryCac Manager  s shut down  n Earlyb rdServer::shutdown.
   }
 
-  private void buildMultiSegmentTermDictionary() {
-    EarlybirdStatus.beginEvent(BUILD_MULTI_SEGMENT_TERM_DICTIONARY,
-            searchIndexingMetricSet.startupInMultiSegmentTermDictionaryUpdates);
+  pr vate vo d bu ldMult Seg ntTermD ct onary() {
+    Earlyb rdStatus.beg nEvent(BU LD_MULT _SEGMENT_TERM_D CT ONARY,
+            search ndex ng tr cSet.startup nMult Seg ntTermD ct onaryUpdates);
     Stopwatch stopwatch = Stopwatch.createStarted();
-    LOG.info("Building multi segment term dictionary");
-    multiSegmentTermDictionaryManager.buildDictionary();
-    LOG.info("Done with building multi segment term dictionary in {}", stopwatch);
-    EarlybirdStatus.endEvent(BUILD_MULTI_SEGMENT_TERM_DICTIONARY,
-            searchIndexingMetricSet.startupInMultiSegmentTermDictionaryUpdates);
+    LOG. nfo("Bu ld ng mult  seg nt term d ct onary");
+    mult Seg ntTermD ct onaryManager.bu ldD ct onary();
+    LOG. nfo("Done w h bu ld ng mult  seg nt term d ct onary  n {}", stopwatch);
+    Earlyb rdStatus.endEvent(BU LD_MULT _SEGMENT_TERM_D CT ONARY,
+            search ndex ng tr cSet.startup nMult Seg ntTermD ct onaryUpdates);
   }
 
-  private void parallelIndexingStartup() throws EarlybirdStartupException {
-    Thread userEventsThread = new Thread(this::userEventsStartup, "index-user-events-startup");
-    Thread tweetsAndUpdatesThread = new Thread(() -> {
+  pr vate vo d parallel ndex ngStartup() throws Earlyb rdStartupExcept on {
+    Thread userEventsThread = new Thread(t ::userEventsStartup, " ndex-user-events-startup");
+    Thread t etsAndUpdatesThread = new Thread(() -> {
       try {
-        tweetsAndUpdatesStartup();
-      } catch (EarlybirdStartupException e) {
-        earlybirdExceptionHandler.handle(this, e);
+        t etsAndUpdatesStartup();
+      } catch (Earlyb rdStartupExcept on e) {
+        earlyb rdExcept onHandler.handle(t , e);
       }
-    }, "index-tweets-and-updates-startup");
-    Thread audioSpaceEventsThread = new Thread(this::loadAudioSpaceEvents,
-        "index-audio-space-events-startup");
+    }, " ndex-t ets-and-updates-startup");
+    Thread aud oSpaceEventsThread = new Thread(t ::loadAud oSpaceEvents,
+        " ndex-aud o-space-events-startup");
     userEventsThread.start();
-    tweetsAndUpdatesThread.start();
-    audioSpaceEventsThread.start();
+    t etsAndUpdatesThread.start();
+    aud oSpaceEventsThread.start();
 
     try {
-      userEventsThread.join();
-    } catch (InterruptedException e) {
-      throw new EarlybirdStartupException("Interrupted while indexing user events");
+      userEventsThread.jo n();
+    } catch ( nterruptedExcept on e) {
+      throw new Earlyb rdStartupExcept on(" nterrupted wh le  ndex ng user events");
     }
     try {
-      tweetsAndUpdatesThread.join();
-    } catch (InterruptedException e) {
-      throw new EarlybirdStartupException("Interrupted while indexing tweets and updates");
+      t etsAndUpdatesThread.jo n();
+    } catch ( nterruptedExcept on e) {
+      throw new Earlyb rdStartupExcept on(" nterrupted wh le  ndex ng t ets and updates");
     }
     try {
-      audioSpaceEventsThread.join();
-    } catch (InterruptedException e) {
-      throw new EarlybirdStartupException("Interrupted while indexing audio space events");
+      aud oSpaceEventsThread.jo n();
+    } catch ( nterruptedExcept on e) {
+      throw new Earlyb rdStartupExcept on(" nterrupted wh le  ndex ng aud o space events");
     }
   }
 
   /**
-   * Does startups and starts indexing. Returns when the earlybird
-   * is current.
+   * Does startups and starts  ndex ng. Returns w n t  earlyb rd
+   *  s current.
    */
-  @Override
-  public Closeable start() throws EarlybirdStartupException {
-    parallelIndexingStartup();
-    queryCacheStartup();
+  @Overr de
+  publ c Closeable start() throws Earlyb rdStartupExcept on {
+    parallel ndex ngStartup();
+    queryCac Startup();
 
-    EarlybirdStatus.setStatus(EarlybirdStatusCode.CURRENT);
+    Earlyb rdStatus.setStatus(Earlyb rdStatusCode.CURRENT);
 
-    return this::shutdownIndexing;
+    return t ::shutdown ndex ng;
   }
 }

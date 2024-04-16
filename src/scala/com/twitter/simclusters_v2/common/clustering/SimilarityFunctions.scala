@@ -1,32 +1,32 @@
-package com.twitter.simclusters_v2.common.clustering
+package com.tw ter.s mclusters_v2.common.cluster ng
 
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
 
 /**
- * SimilarityFunctions provide commonly used similarity functions that this clustering library needs.
+ * S m lar yFunct ons prov de commonly used s m lar y funct ons that t  cluster ng l brary needs.
  */
-object SimilarityFunctions {
-  def simClustersCosineSimilarity: (SimClustersEmbedding, SimClustersEmbedding) => Double =
-    (e1, e2) => e1.cosineSimilarity(e2)
+object S m lar yFunct ons {
+  def s mClustersCos neS m lar y: (S mClustersEmbedd ng, S mClustersEmbedd ng) => Double =
+    (e1, e2) => e1.cos neS m lar y(e2)
 
-  def simClustersMatchingLargestDimension: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  def s mClustersMatch ngLargestD  ns on: (
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ) => Double = (e1, e2) => {
-    val doesMatchLargestDimension: Boolean = e1
-      .topClusterIds(1)
-      .exists { id1 =>
-        e2.topClusterIds(1).contains(id1)
+    val doesMatchLargestD  ns on: Boolean = e1
+      .topCluster ds(1)
+      .ex sts {  d1 =>
+        e2.topCluster ds(1).conta ns( d1)
       }
 
-    if (doesMatchLargestDimension) 1.0
+     f (doesMatchLargestD  ns on) 1.0
     else 0.0
   }
 
-  def simClustersFuzzyJaccardSimilarity: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  def s mClustersFuzzyJaccardS m lar y: (
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ) => Double = (e1, e2) => {
-    e1.fuzzyJaccardSimilarity(e2)
+    e1.fuzzyJaccardS m lar y(e2)
   }
 }

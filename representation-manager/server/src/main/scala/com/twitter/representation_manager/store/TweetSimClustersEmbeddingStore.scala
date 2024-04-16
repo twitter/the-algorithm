@@ -1,140 +1,140 @@
-package com.twitter.representation_manager.store
+package com.tw ter.representat on_manager.store
 
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.representation_manager.common.MemCacheConfig
-import com.twitter.representation_manager.common.RepresentationManagerDecider
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.stores.SimClustersEmbeddingStore
-import com.twitter.simclusters_v2.summingbird.stores.PersistentTweetEmbeddingStore
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType._
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.ModelVersion._
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import javax.inject.Inject
+ mport com.tw ter.f nagle. mcac d.Cl ent
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. rm .store.common.ObservedReadableStore
+ mport com.tw ter.representat on_manager.common. mCac Conf g
+ mport com.tw ter.representat on_manager.common.Representat onManagerDec der
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.stores.S mClustersEmbedd ngStore
+ mport com.tw ter.s mclusters_v2.summ ngb rd.stores.Pers stentT etEmbedd ngStore
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType._
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on._
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng d
+ mport com.tw ter.s mclusters_v2.thr ftscala.{S mClustersEmbedd ng => Thr ftS mClustersEmbedd ng}
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl entMtlsParams
+ mport com.tw ter.storehaus.ReadableStore
+ mport javax. nject. nject
 
-class TweetSimClustersEmbeddingStore @Inject() (
-  cacheClient: Client,
-  globalStats: StatsReceiver,
-  mhMtlsParams: ManhattanKVClientMtlsParams,
-  rmsDecider: RepresentationManagerDecider) {
+class T etS mClustersEmbedd ngStore @ nject() (
+  cac Cl ent: Cl ent,
+  globalStats: StatsRece ver,
+  mhMtlsParams: ManhattanKVCl entMtlsParams,
+  rmsDec der: Representat onManagerDec der) {
 
-  private val stats = globalStats.scope(this.getClass.getSimpleName)
+  pr vate val stats = globalStats.scope(t .getClass.getS mpleNa )
 
-  val logFavBasedLongestL2Tweet20M145KUpdatedEmbeddingStore: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  val logFavBasedLongestL2T et20M145KUpdatedEmbedd ngStore: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
     val rawStore =
-      PersistentTweetEmbeddingStore
-        .longestL2NormTweetEmbeddingStoreManhattan(
+      Pers stentT etEmbedd ngStore
+        .longestL2NormT etEmbedd ngStoreManhattan(
           mhMtlsParams,
-          PersistentTweetEmbeddingStore.LogFavBased20m145kUpdatedDataset,
+          Pers stentT etEmbedd ngStore.LogFavBased20m145kUpdatedDataset,
           stats
-        ).mapValues(_.toThrift)
+        ).mapValues(_.toThr ft)
 
-    buildMemCacheStore(rawStore, LogFavLongestL2EmbeddingTweet, Model20m145kUpdated)
+    bu ld mCac Store(rawStore, LogFavLongestL2Embedd ngT et, Model20m145kUpdated)
   }
 
-  val logFavBasedLongestL2Tweet20M145K2020EmbeddingStore: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  val logFavBasedLongestL2T et20M145K2020Embedd ngStore: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
     val rawStore =
-      PersistentTweetEmbeddingStore
-        .longestL2NormTweetEmbeddingStoreManhattan(
+      Pers stentT etEmbedd ngStore
+        .longestL2NormT etEmbedd ngStoreManhattan(
           mhMtlsParams,
-          PersistentTweetEmbeddingStore.LogFavBased20m145k2020Dataset,
+          Pers stentT etEmbedd ngStore.LogFavBased20m145k2020Dataset,
           stats
-        ).mapValues(_.toThrift)
+        ).mapValues(_.toThr ft)
 
-    buildMemCacheStore(rawStore, LogFavLongestL2EmbeddingTweet, Model20m145k2020)
+    bu ld mCac Store(rawStore, LogFavLongestL2Embedd ngT et, Model20m145k2020)
   }
 
-  val logFavBased20M145KUpdatedTweetEmbeddingStore: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  val logFavBased20M145KUpdatedT etEmbedd ngStore: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
     val rawStore =
-      PersistentTweetEmbeddingStore
-        .mostRecentTweetEmbeddingStoreManhattan(
+      Pers stentT etEmbedd ngStore
+        .mostRecentT etEmbedd ngStoreManhattan(
           mhMtlsParams,
-          PersistentTweetEmbeddingStore.LogFavBased20m145kUpdatedDataset,
+          Pers stentT etEmbedd ngStore.LogFavBased20m145kUpdatedDataset,
           stats
-        ).mapValues(_.toThrift)
+        ).mapValues(_.toThr ft)
 
-    buildMemCacheStore(rawStore, LogFavBasedTweet, Model20m145kUpdated)
+    bu ld mCac Store(rawStore, LogFavBasedT et, Model20m145kUpdated)
   }
 
-  val logFavBased20M145K2020TweetEmbeddingStore: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  val logFavBased20M145K2020T etEmbedd ngStore: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
     val rawStore =
-      PersistentTweetEmbeddingStore
-        .mostRecentTweetEmbeddingStoreManhattan(
+      Pers stentT etEmbedd ngStore
+        .mostRecentT etEmbedd ngStoreManhattan(
           mhMtlsParams,
-          PersistentTweetEmbeddingStore.LogFavBased20m145k2020Dataset,
+          Pers stentT etEmbedd ngStore.LogFavBased20m145k2020Dataset,
           stats
-        ).mapValues(_.toThrift)
+        ).mapValues(_.toThr ft)
 
-    buildMemCacheStore(rawStore, LogFavBasedTweet, Model20m145k2020)
+    bu ld mCac Store(rawStore, LogFavBasedT et, Model20m145k2020)
   }
 
-  private def buildMemCacheStore(
-    rawStore: ReadableStore[TweetId, ThriftSimClustersEmbedding],
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion
-  ): ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] = {
-    val observedStore: ObservedReadableStore[TweetId, ThriftSimClustersEmbedding] =
+  pr vate def bu ld mCac Store(
+    rawStore: ReadableStore[T et d, Thr ftS mClustersEmbedd ng],
+    embedd ngType: Embedd ngType,
+    modelVers on: ModelVers on
+  ): ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng] = {
+    val observedStore: ObservedReadableStore[T et d, Thr ftS mClustersEmbedd ng] =
       ObservedReadableStore(
         store = rawStore
-      )(stats.scope(embeddingType.name).scope(modelVersion.name))
+      )(stats.scope(embedd ngType.na ).scope(modelVers on.na ))
 
-    val storeWithKeyMapping = observedStore.composeKeyMapping[SimClustersEmbeddingId] {
-      case SimClustersEmbeddingId(_, _, InternalId.TweetId(tweetId)) =>
-        tweetId
+    val storeW hKeyMapp ng = observedStore.composeKeyMapp ng[S mClustersEmbedd ng d] {
+      case S mClustersEmbedd ng d(_, _,  nternal d.T et d(t et d)) =>
+        t et d
     }
 
-    MemCacheConfig.buildMemCacheStoreForSimClustersEmbedding(
-      storeWithKeyMapping,
-      cacheClient,
-      embeddingType,
-      modelVersion,
+     mCac Conf g.bu ld mCac StoreForS mClustersEmbedd ng(
+      storeW hKeyMapp ng,
+      cac Cl ent,
+      embedd ngType,
+      modelVers on,
       stats
     )
   }
 
-  private val underlyingStores: Map[
-    (EmbeddingType, ModelVersion),
-    ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
+  pr vate val underly ngStores: Map[
+    (Embedd ngType, ModelVers on),
+    ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng]
   ] = Map(
-    // Tweet Embeddings
-    (LogFavBasedTweet, Model20m145kUpdated) -> logFavBased20M145KUpdatedTweetEmbeddingStore,
-    (LogFavBasedTweet, Model20m145k2020) -> logFavBased20M145K2020TweetEmbeddingStore,
+    // T et Embedd ngs
+    (LogFavBasedT et, Model20m145kUpdated) -> logFavBased20M145KUpdatedT etEmbedd ngStore,
+    (LogFavBasedT et, Model20m145k2020) -> logFavBased20M145K2020T etEmbedd ngStore,
     (
-      LogFavLongestL2EmbeddingTweet,
-      Model20m145kUpdated) -> logFavBasedLongestL2Tweet20M145KUpdatedEmbeddingStore,
+      LogFavLongestL2Embedd ngT et,
+      Model20m145kUpdated) -> logFavBasedLongestL2T et20M145KUpdatedEmbedd ngStore,
     (
-      LogFavLongestL2EmbeddingTweet,
-      Model20m145k2020) -> logFavBasedLongestL2Tweet20M145K2020EmbeddingStore,
+      LogFavLongestL2Embedd ngT et,
+      Model20m145k2020) -> logFavBasedLongestL2T et20M145K2020Embedd ngStore,
   )
 
-  val tweetSimClustersEmbeddingStore: ReadableStore[
-    SimClustersEmbeddingId,
-    SimClustersEmbedding
+  val t etS mClustersEmbedd ngStore: ReadableStore[
+    S mClustersEmbedd ng d,
+    S mClustersEmbedd ng
   ] = {
-    SimClustersEmbeddingStore.buildWithDecider(
-      underlyingStores = underlyingStores,
-      decider = rmsDecider.decider,
-      statsReceiver = stats
+    S mClustersEmbedd ngStore.bu ldW hDec der(
+      underly ngStores = underly ngStores,
+      dec der = rmsDec der.dec der,
+      statsRece ver = stats
     )
   }
 

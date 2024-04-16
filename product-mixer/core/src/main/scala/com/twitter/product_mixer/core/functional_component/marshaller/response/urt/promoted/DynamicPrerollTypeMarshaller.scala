@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Amplify
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DynamicPrerollType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.LiveTvEvent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Marketplace
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.Ampl fy
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.Dynam cPrerollType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.L veTvEvent
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.Marketplace
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class DynamicPrerollTypeMarshaller @Inject() () {
+@S ngleton
+class Dynam cPrerollTypeMarshaller @ nject() () {
 
-  def apply(dynamicPrerollType: DynamicPrerollType): urt.DynamicPrerollType =
-    dynamicPrerollType match {
-      case Amplify => urt.DynamicPrerollType.Amplify
-      case Marketplace => urt.DynamicPrerollType.Marketplace
-      case LiveTvEvent => urt.DynamicPrerollType.LiveTvEvent
+  def apply(dynam cPrerollType: Dynam cPrerollType): urt.Dynam cPrerollType =
+    dynam cPrerollType match {
+      case Ampl fy => urt.Dynam cPrerollType.Ampl fy
+      case Marketplace => urt.Dynam cPrerollType.Marketplace
+      case L veTvEvent => urt.Dynam cPrerollType.L veTvEvent
     }
 }

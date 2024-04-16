@@ -1,8 +1,8 @@
-package com.twitter.ann.dataflow.offline
+package com.tw ter.ann.dataflow.offl ne
 
-import com.twitter.beam.schemas.SchemaFieldName
+ mport com.tw ter.beam.sc mas.Sc maF eldNa 
 
-case class FlatEmbeddingData(
-  @SchemaFieldName("entityId") entityId: Option[Long],
-  @SchemaFieldName("embedding") embedding: Seq[Double])
-    extends BaseEmbeddingData
+case class FlatEmbedd ngData(
+  @Sc maF eldNa ("ent y d") ent y d: Opt on[Long],
+  @Sc maF eldNa ("embedd ng") embedd ng: Seq[Double])
+    extends BaseEmbedd ngData

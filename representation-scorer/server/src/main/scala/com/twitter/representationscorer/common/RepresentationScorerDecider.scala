@@ -1,27 +1,27 @@
-package com.twitter.representationscorer.common
+package com.tw ter.representat onscorer.common
 
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.decider.Recipient
-import com.twitter.simclusters_v2.common.DeciderGateBuilderWithIdHashing
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.dec der.RandomRec p ent
+ mport com.tw ter.dec der.Rec p ent
+ mport com.tw ter.s mclusters_v2.common.Dec derGateBu lderW h dHash ng
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-case class RepresentationScorerDecider @Inject() (decider: Decider) {
+@S ngleton
+case class Representat onScorerDec der @ nject() (dec der: Dec der) {
 
-  val deciderGateBuilder = new DeciderGateBuilderWithIdHashing(decider)
+  val dec derGateBu lder = new Dec derGateBu lderW h dHash ng(dec der)
 
-  def isAvailable(feature: String, recipient: Option[Recipient]): Boolean = {
-    decider.isAvailable(feature, recipient)
+  def  sAva lable(feature: Str ng, rec p ent: Opt on[Rec p ent]): Boolean = {
+    dec der. sAva lable(feature, rec p ent)
   }
 
   /**
-   * When useRandomRecipient is set to false, the decider is either completely on or off.
-   * When useRandomRecipient is set to true, the decider is on for the specified % of traffic.
+   * W n useRandomRec p ent  s set to false, t  dec der  s e  r completely on or off.
+   * W n useRandomRec p ent  s set to true, t  dec der  s on for t  spec f ed % of traff c.
    */
-  def isAvailable(feature: String, useRandomRecipient: Boolean = true): Boolean = {
-    if (useRandomRecipient) isAvailable(feature, Some(RandomRecipient))
-    else isAvailable(feature, None)
+  def  sAva lable(feature: Str ng, useRandomRec p ent: Boolean = true): Boolean = {
+     f (useRandomRec p ent)  sAva lable(feature, So (RandomRec p ent))
+    else  sAva lable(feature, None)
   }
 }

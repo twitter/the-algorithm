@@ -1,65 +1,65 @@
-package com.twitter.search.ingester.pipeline.twitter.kafka;
+package com.tw ter.search. ngester.p pel ne.tw ter.kafka;
 
-import javax.naming.NamingException;
+ mport javax.nam ng.Nam ngExcept on;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
+ mport org.apac .commons.p pel ne.StageExcept on;
+ mport org.apac .commons.p pel ne.val dat on.Consu dTypes;
 
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.twitter.ThriftVersionedEventsConverter;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
+ mport com.tw ter.search. ngester.model. ngesterTw ter ssage;
+ mport com.tw ter.search. ngester.p pel ne.tw ter.Thr ftVers onedEventsConverter;
+ mport com.tw ter.search. ngester.p pel ne.ut l.P pel neStageExcept on;
 
-@ConsumedTypes(IngesterTwitterMessage.class)
-public class DeleteUpdateEventsKafkaProducerStage extends KafkaProducerStage
-    <IngesterTwitterMessage> {
-  private ThriftVersionedEventsConverter converter;
+@Consu dTypes( ngesterTw ter ssage.class)
+publ c class DeleteUpdateEventsKafkaProducerStage extends KafkaProducerStage
+    < ngesterTw ter ssage> {
+  pr vate Thr ftVers onedEventsConverter converter;
 
-  public DeleteUpdateEventsKafkaProducerStage() {
+  publ c DeleteUpdateEventsKafkaProducerStage() {
     super();
   }
 
-  public DeleteUpdateEventsKafkaProducerStage(String topicName, String clientId,
-                                              String clusterPath) {
-    super(topicName, clientId, clusterPath);
+  publ c DeleteUpdateEventsKafkaProducerStage(Str ng top cNa , Str ng cl ent d,
+                                              Str ng clusterPath) {
+    super(top cNa , cl ent d, clusterPath);
   }
 
-  @Override
-  protected void innerSetup() throws PipelineStageException, NamingException {
-    super.innerSetup();
-    commonInnerSetup();
+  @Overr de
+  protected vo d  nnerSetup() throws P pel neStageExcept on, Nam ngExcept on {
+    super. nnerSetup();
+    common nnerSetup();
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    super.doInnerPreprocess();
-    commonInnerSetup();
+  @Overr de
+  protected vo d do nnerPreprocess() throws StageExcept on, Nam ngExcept on {
+    super.do nnerPreprocess();
+    common nnerSetup();
   }
 
-  private void commonInnerSetup() throws NamingException {
-    converter = new ThriftVersionedEventsConverter(wireModule.getPenguinVersions());
+  pr vate vo d common nnerSetup() throws Nam ngExcept on {
+    converter = new Thr ftVers onedEventsConverter(w reModule.getPengu nVers ons());
 
   }
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not an IngesterTwitterMessage: " + obj);
+  @Overr de
+  publ c vo d  nnerProcess(Object obj) throws StageExcept on {
+     f (!(obj  nstanceof  ngesterTw ter ssage)) {
+      throw new StageExcept on(t , "Object  s not an  ngesterTw ter ssage: " + obj);
     }
 
-    IngesterTwitterMessage message = (IngesterTwitterMessage) obj;
-    innerRunFinalStageOfBranchV2(message);
+     ngesterTw ter ssage  ssage = ( ngesterTw ter ssage) obj;
+     nnerRunF nalStageOfBranchV2( ssage);
   }
 
-  @Override
-  protected void innerRunFinalStageOfBranchV2(IngesterTwitterMessage message) {
-    converter.updatePenguinVersions(wireModule.getCurrentlyEnabledPenguinVersions());
+  @Overr de
+  protected vo d  nnerRunF nalStageOfBranchV2( ngesterTw ter ssage  ssage) {
+    converter.updatePengu nVers ons(w reModule.getCurrentlyEnabledPengu nVers ons());
 
-    Preconditions.checkArgument(message.getFromUserTwitterId().isPresent(),
-        "Missing user ID.");
+    Precond  ons.c ckArgu nt( ssage.getFromUserTw ter d(). sPresent(),
+        "M ss ng user  D.");
 
     super.tryToSendEventsToKafka(converter.toDelete(
-        message.getTweetId(), message.getUserId(), message.getDebugEvents()));
+         ssage.getT et d(),  ssage.getUser d(),  ssage.getDebugEvents()));
   }
 
 

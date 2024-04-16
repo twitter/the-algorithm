@@ -1,49 +1,49 @@
-package com.twitter.simclusters_v2.scalding.common.matrix
+package com.tw ter.s mclusters_v2.scald ng.common.matr x
 
-import com.twitter.algebird.{Aggregator, Semigroup}
-import com.twitter.bijection.Injection
-import com.twitter.scalding.{TypedPipe, ValuePipe}
+ mport com.tw ter.algeb rd.{Aggregator, Sem group}
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.scald ng.{TypedP pe, ValueP pe}
 
 /**
- * A matrix trait for representing a matrix backed by TypedPipe
+ * A matr x tra  for represent ng a matr x backed by TypedP pe
  *
  * @tparam R Type for rows
  * @tparam C Type for columns
- * @tparam V Type for elements of the matrix
+ * @tparam V Type for ele nts of t  matr x
  */
-abstract class TypedPipeMatrix[R, C, @specialized(Double, Int, Float, Long, Short) V] {
-  implicit val semigroupV: Semigroup[V]
-  implicit val numericV: Numeric[V]
-  implicit val rowOrd: Ordering[R]
-  implicit val colOrd: Ordering[C]
-  implicit val rowInj: Injection[R, Array[Byte]]
-  implicit val colInj: Injection[C, Array[Byte]]
+abstract class TypedP peMatr x[R, C, @spec al zed(Double,  nt, Float, Long, Short) V] {
+   mpl c  val sem groupV: Sem group[V]
+   mpl c  val nu r cV: Nu r c[V]
+   mpl c  val rowOrd: Order ng[R]
+   mpl c  val colOrd: Order ng[C]
+   mpl c  val row nj:  nject on[R, Array[Byte]]
+   mpl c  val col nj:  nject on[C, Array[Byte]]
 
-  // num of non-zero elements in the matrix
-  val nnz: ValuePipe[Long]
+  // num of non-zero ele nts  n t  matr x
+  val nnz: ValueP pe[Long]
 
-  // list of unique rowIds in the matrix
-  val uniqueRowIds: TypedPipe[R]
+  // l st of un que row ds  n t  matr x
+  val un queRow ds: TypedP pe[R]
 
-  // list of unique unique in the matrix
-  val uniqueColIds: TypedPipe[C]
+  // l st of un que un que  n t  matr x
+  val un queCol ds: TypedP pe[C]
 
-  // get a specific row of the matrix
-  def getRow(rowId: R): TypedPipe[(C, V)]
+  // get a spec f c row of t  matr x
+  def getRow(row d: R): TypedP pe[(C, V)]
 
-  // get a specific column of the matrix
-  def getCol(colId: C): TypedPipe[(R, V)]
+  // get a spec f c column of t  matr x
+  def getCol(col d: C): TypedP pe[(R, V)]
 
-  // get the value of an element
-  def get(rowId: R, colId: C): ValuePipe[V]
+  // get t  value of an ele nt
+  def get(row d: R, col d: C): ValueP pe[V]
 
-  // number of unique rowIds
-  lazy val numUniqueRows: ValuePipe[Long] = {
-    this.uniqueRowIds.aggregate(Aggregator.size)
+  // number of un que row ds
+  lazy val numUn queRows: ValueP pe[Long] = {
+    t .un queRow ds.aggregate(Aggregator.s ze)
   }
 
-  // number of unique unique
-  lazy val numUniqueCols: ValuePipe[Long] = {
-    this.uniqueColIds.aggregate(Aggregator.size)
+  // number of un que un que
+  lazy val numUn queCols: ValueP pe[Long] = {
+    t .un queCol ds.aggregate(Aggregator.s ze)
   }
 }

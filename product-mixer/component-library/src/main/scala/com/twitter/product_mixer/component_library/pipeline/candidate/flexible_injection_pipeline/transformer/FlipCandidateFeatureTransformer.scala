@@ -1,37 +1,37 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer
+package com.tw ter.product_m xer.component_l brary.p pel ne.cand date.flex ble_ nject on_p pel ne.transfor r
 
-import com.twitter.onboarding.injections.{thriftscala => onboardingthrift}
-import com.twitter.product_mixer.component_library.candidate_source.flexible_injection_pipeline.IntermediatePrompt
-import com.twitter.product_mixer.component_library.model.candidate.BasePromptCandidate
-import com.twitter.product_mixer.component_library.model.candidate.PromptCarouselTileCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+ mport com.tw ter.onboard ng. nject ons.{thr ftscala => onboard ngthr ft}
+ mport com.tw ter.product_m xer.component_l brary.cand date_s ce.flex ble_ nject on_p pel ne. nter d atePrompt
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.BasePromptCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.PromptCarouselT leCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Transfor r dent f er
 
-case object FlipPromptCarouselTileFeature
-    extends Feature[PromptCarouselTileCandidate, Option[onboardingthrift.Tile]]
+case object Fl pPromptCarouselT leFeature
+    extends Feature[PromptCarouselT leCand date, Opt on[onboard ngthr ft.T le]]
 
-case object FlipPromptInjectionsFeature
-    extends Feature[BasePromptCandidate[String], onboardingthrift.Injection]
+case object Fl pPrompt nject onsFeature
+    extends Feature[BasePromptCand date[Str ng], onboard ngthr ft. nject on]
 
-case object FlipPromptOffsetInModuleFeature
-    extends Feature[PromptCarouselTileCandidate, Option[Int]]
+case object Fl pPromptOffset nModuleFeature
+    extends Feature[PromptCarouselT leCand date, Opt on[ nt]]
 
-object FlipCandidateFeatureTransformer extends CandidateFeatureTransformer[IntermediatePrompt] {
+object Fl pCand dateFeatureTransfor r extends Cand dateFeatureTransfor r[ nter d atePrompt] {
 
-  override val identifier: TransformerIdentifier = TransformerIdentifier("FlipCandidateFeature")
+  overr de val  dent f er: Transfor r dent f er = Transfor r dent f er("Fl pCand dateFeature")
 
-  override val features: Set[Feature[_, _]] =
-    Set(FlipPromptInjectionsFeature, FlipPromptOffsetInModuleFeature, FlipPromptCarouselTileFeature)
+  overr de val features: Set[Feature[_, _]] =
+    Set(Fl pPrompt nject onsFeature, Fl pPromptOffset nModuleFeature, Fl pPromptCarouselT leFeature)
 
-  /** Hydrates a [[FeatureMap]] for a given [[Inputs]] */
-  override def transform(input: IntermediatePrompt): FeatureMap = {
-    FeatureMapBuilder()
-      .add(FlipPromptInjectionsFeature, input.injection)
-      .add(FlipPromptOffsetInModuleFeature, input.offsetInModule)
-      .add(FlipPromptCarouselTileFeature, input.carouselTile)
-      .build()
+  /** Hydrates a [[FeatureMap]] for a g ven [[ nputs]] */
+  overr de def transform( nput:  nter d atePrompt): FeatureMap = {
+    FeatureMapBu lder()
+      .add(Fl pPrompt nject onsFeature,  nput. nject on)
+      .add(Fl pPromptOffset nModuleFeature,  nput.offset nModule)
+      .add(Fl pPromptCarouselT leFeature,  nput.carouselT le)
+      .bu ld()
   }
 }

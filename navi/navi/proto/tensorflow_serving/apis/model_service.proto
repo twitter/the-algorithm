@@ -1,24 +1,24 @@
 syntax = "proto3";
 
-option cc_enable_arenas = true;
+opt on cc_enable_arenas = true;
 
-import "tensorflow_serving/apis/get_model_status.proto";
-import "tensorflow_serving/apis/model_management.proto";
+ mport "tensorflow_serv ng/ap s/get_model_status.proto";
+ mport "tensorflow_serv ng/ap s/model_manage nt.proto";
 
-package tensorflow.serving;
+package tensorflow.serv ng;
 
-// ModelService provides methods to query and update the state of the server,
-// e.g. which models/versions are being served.
-service ModelService {
-  // Gets status of model. If the ModelSpec in the request does not specify
-  // version, information about all versions of the model will be returned. If
-  // the ModelSpec in the request does specify a version, the status of only
-  // that version will be returned.
+// ModelServ ce prov des  thods to query and update t  state of t  server,
+// e.g. wh ch models/vers ons are be ng served.
+serv ce ModelServ ce {
+  // Gets status of model.  f t  ModelSpec  n t  request does not spec fy
+  // vers on,  nformat on about all vers ons of t  model w ll be returned.  f
+  // t  ModelSpec  n t  request does spec fy a vers on, t  status of only
+  // that vers on w ll be returned.
   rpc GetModelStatus(GetModelStatusRequest) returns (GetModelStatusResponse);
 
-  // Reloads the set of served models. The new config supersedes the old one,
-  // so if a model is omitted from the new config it will be unloaded and no
+  // Reloads t  set of served models. T  new conf g supersedes t  old one,
+  // so  f a model  s om ted from t  new conf g   w ll be unloaded and no
   // longer served.
-  rpc HandleReloadConfigRequest(ReloadConfigRequest)
-      returns (ReloadConfigResponse);
+  rpc HandleReloadConf gRequest(ReloadConf gRequest)
+      returns (ReloadConf gResponse);
 }

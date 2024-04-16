@@ -1,32 +1,32 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.tw ter.ho _m xer.funct onal_component.feature_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.FeedbackHistoryFeature
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinemixer.clients.feedback.FeedbackHistoryManhattanClient
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.model.Ho Features.Feedback toryFeature
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nem xer.cl ents.feedback.Feedback toryManhattanCl ent
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-case class FeedbackHistoryQueryFeatureHydrator @Inject() (
-  feedbackHistoryClient: FeedbackHistoryManhattanClient)
-    extends QueryFeatureHydrator[PipelineQuery] {
+@S ngleton
+case class Feedback toryQueryFeatureHydrator @ nject() (
+  feedback toryCl ent: Feedback toryManhattanCl ent)
+    extends QueryFeatureHydrator[P pel neQuery] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("FeedbackHistory")
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er("Feedback tory")
 
-  override val features: Set[Feature[_, _]] = Set(FeedbackHistoryFeature)
+  overr de val features: Set[Feature[_, _]] = Set(Feedback toryFeature)
 
-  override def hydrate(
-    query: PipelineQuery
-  ): Stitch[FeatureMap] =
-    Stitch
-      .callFuture(feedbackHistoryClient.get(query.getRequiredUserId))
-      .map { feedbackHistory =>
-        FeatureMapBuilder().add(FeedbackHistoryFeature, feedbackHistory).build()
+  overr de def hydrate(
+    query: P pel neQuery
+  ): St ch[FeatureMap] =
+    St ch
+      .callFuture(feedback toryCl ent.get(query.getRequ redUser d))
+      .map { feedback tory =>
+        FeatureMapBu lder().add(Feedback toryFeature, feedback tory).bu ld()
       }
 }

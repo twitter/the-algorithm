@@ -1,22 +1,22 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.stitch.SeqGroup
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.media.MediaMetadata
-import com.twitter.tweetypie.media.MediaMetadataRequest
+ mport com.tw ter.st ch.SeqGroup
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e. d a. d a tadata
+ mport com.tw ter.t etyp e. d a. d a tadataRequest
 
-object MediaMetadataRepository {
-  type Type = MediaMetadataRequest => Stitch[MediaMetadata]
+object  d a tadataRepos ory {
+  type Type =  d a tadataRequest => St ch[ d a tadata]
 
-  def apply(getMediaMetadata: FutureArrow[MediaMetadataRequest, MediaMetadata]): Type = {
-    // use an `SeqGroup` to group the future-calls together, even though they can be
-    // executed independently, in order to help keep hydration between different tweets
-    // in sync, to improve batching in hydrators which occur later in the pipeline.
-    val requestGroup = SeqGroup[MediaMetadataRequest, MediaMetadata] {
-      requests: Seq[MediaMetadataRequest] =>
-        Future.collect(requests.map(r => getMediaMetadata(r).liftToTry))
+  def apply(get d a tadata: FutureArrow[ d a tadataRequest,  d a tadata]): Type = {
+    // use an `SeqGroup` to group t  future-calls toget r, even though t y can be
+    // executed  ndependently,  n order to  lp keep hydrat on bet en d fferent t ets
+    //  n sync, to  mprove batch ng  n hydrators wh ch occur later  n t  p pel ne.
+    val requestGroup = SeqGroup[ d a tadataRequest,  d a tadata] {
+      requests: Seq[ d a tadataRequest] =>
+        Future.collect(requests.map(r => get d a tadata(r).l ftToTry))
     }
-    mediaReq => Stitch.call(mediaReq, requestGroup)
+     d aReq => St ch.call( d aReq, requestGroup)
   }
 }

@@ -1,54 +1,54 @@
-package com.twitter.product_mixer.component_library.selector
+package com.tw ter.product_m xer.component_l brary.selector
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Spec f cP pel nes
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.SelectorResult
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on.ModuleCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes.conf gap .Param
 
 /**
- * Limit the number of module item candidates (for 1 or more modules) from a certain candidate
- * source.
+ * L m  t  number of module  em cand dates (for 1 or more modules) from a certa n cand date
+ * s ce.
  *
- * For example, if maxModuleItemsParam is 3, and a candidatePipeline returned 1 module containing 10
- * items in the candidate pool, then these module items will be reduced to the first 3 module items.
- * Note that to update the ordering of the candidates, an UpdateModuleItemsCandidateOrderingSelector
- * may be used prior to using this selector.
+ * For example,  f maxModule emsParam  s 3, and a cand dateP pel ne returned 1 module conta n ng 10
+ *  ems  n t  cand date pool, t n t se module  ems w ll be reduced to t  f rst 3 module  ems.
+ * Note that to update t  order ng of t  cand dates, an UpdateModule emsCand dateOrder ngSelector
+ * may be used pr or to us ng t  selector.
  *
- * Another example, if maxModuleItemsParam is 3, and a candidatePipeline returned 5 modules each
- * containing 10 items in the candidate pool, then the module items in each of the 5 modules will be
- * reduced to the first 3 module items.
+ * Anot r example,  f maxModule emsParam  s 3, and a cand dateP pel ne returned 5 modules each
+ * conta n ng 10  ems  n t  cand date pool, t n t  module  ems  n each of t  5 modules w ll be
+ * reduced to t  f rst 3 module  ems.
  *
- * @note this updates the module in the `remainingCandidates`
+ * @note t  updates t  module  n t  `rema n ngCand dates`
  */
-case class DropMaxModuleItemCandidates(
-  candidatePipeline: CandidatePipelineIdentifier,
-  maxModuleItemsParam: Param[Int])
-    extends Selector[PipelineQuery] {
+case class DropMaxModule emCand dates(
+  cand dateP pel ne: Cand dateP pel ne dent f er,
+  maxModule emsParam: Param[ nt])
+    extends Selector[P pel neQuery] {
 
-  override val pipelineScope: CandidateScope = SpecificPipelines(candidatePipeline)
+  overr de val p pel neScope: Cand dateScope = Spec f cP pel nes(cand dateP pel ne)
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+  overr de def apply(
+    query: P pel neQuery,
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
 
-    val maxModuleItemSelections = query.params(maxModuleItemsParam)
-    assert(maxModuleItemSelections > 0, "Max module item selections must be greater than zero")
+    val maxModule emSelect ons = query.params(maxModule emsParam)
+    assert(maxModule emSelect ons > 0, "Max module  em select ons must be greater than zero")
 
-    val remainingCandidatesLimited = remainingCandidates.map {
-      case module: ModuleCandidateWithDetails if pipelineScope.contains(module) =>
-        // this applies to all candidates in a module, even if they are from a different
-        // candidate source which can happen if items are added to a module during selection
-        module.copy(candidates = DropSelector.takeUntil(maxModuleItemSelections, module.candidates))
-      case candidate => candidate
+    val rema n ngCand datesL m ed = rema n ngCand dates.map {
+      case module: ModuleCand dateW hDeta ls  f p pel neScope.conta ns(module) =>
+        // t  appl es to all cand dates  n a module, even  f t y are from a d fferent
+        // cand date s ce wh ch can happen  f  ems are added to a module dur ng select on
+        module.copy(cand dates = DropSelector.takeUnt l(maxModule emSelect ons, module.cand dates))
+      case cand date => cand date
     }
 
-    SelectorResult(remainingCandidates = remainingCandidatesLimited, result = result)
+    SelectorResult(rema n ngCand dates = rema n ngCand datesL m ed, result = result)
   }
 }

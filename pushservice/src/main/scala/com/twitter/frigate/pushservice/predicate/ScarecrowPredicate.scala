@@ -1,138 +1,138 @@
-package com.twitter.frigate.pushservice.predicate
+package com.tw ter.fr gate.pushserv ce.pred cate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.thriftscala._
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.scarecrow.{ScarecrowPredicate => HermitScarecrowPredicate}
-import com.twitter.relevance.feature_store.thriftscala.FeatureData
-import com.twitter.relevance.feature_store.thriftscala.FeatureValue
-import com.twitter.service.gen.scarecrow.thriftscala.Event
-import com.twitter.service.gen.scarecrow.thriftscala.TieredActionResult
-import com.twitter.storehaus.ReadableStore
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base._
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.thr ftscala._
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .pred cate.scarecrow.{ScarecrowPred cate =>  rm ScarecrowPred cate}
+ mport com.tw ter.relevance.feature_store.thr ftscala.FeatureData
+ mport com.tw ter.relevance.feature_store.thr ftscala.FeatureValue
+ mport com.tw ter.serv ce.gen.scarecrow.thr ftscala.Event
+ mport com.tw ter.serv ce.gen.scarecrow.thr ftscala.T eredAct onResult
+ mport com.tw ter.storehaus.ReadableStore
 
-object ScarecrowPredicate {
-  val name = ""
+object ScarecrowPred cate {
+  val na  = ""
 
-  def candidateToEvent(candidate: PushCandidate): Event = {
-    val recommendedUserIdOpt = candidate match {
-      case tweetCandidate: TweetCandidate with TweetAuthor =>
-        tweetCandidate.authorId
-      case userCandidate: UserCandidate =>
-        Some(userCandidate.userId)
+  def cand dateToEvent(cand date: PushCand date): Event = {
+    val recom ndedUser dOpt = cand date match {
+      case t etCand date: T etCand date w h T etAuthor =>
+        t etCand date.author d
+      case userCand date: UserCand date =>
+        So (userCand date.user d)
       case _ => None
     }
-    val hashtagsInTweet = candidate match {
-      case tweetCandidate: TweetCandidate with TweetDetails =>
-        tweetCandidate.tweetyPieResult
-          .flatMap { tweetPieResult =>
-            tweetPieResult.tweet.hashtags.map(_.map(_.text))
-          }.getOrElse(Nil)
+    val hashtags nT et = cand date match {
+      case t etCand date: T etCand date w h T etDeta ls =>
+        t etCand date.t etyP eResult
+          .flatMap { t etP eResult =>
+            t etP eResult.t et.hashtags.map(_.map(_.text))
+          }.getOrElse(N l)
       case _ =>
-        Nil
+        N l
     }
-    val urlsInTweet = candidate match {
-      case tweetCandidate: TweetCandidate with TweetDetails =>
-        tweetCandidate.tweetyPieResult
-          .flatMap { tweetPieResult =>
-            tweetPieResult.tweet.urls.map(_.flatMap(_.expanded))
+    val urls nT et = cand date match {
+      case t etCand date: T etCand date w h T etDeta ls =>
+        t etCand date.t etyP eResult
+          .flatMap { t etP eResult =>
+            t etP eResult.t et.urls.map(_.flatMap(_.expanded))
           }
       case _ => None
     }
-    val tweetIdOpt = candidate match {
-      case tweetCandidate: TweetCandidate =>
-        Some(tweetCandidate.tweetId)
+    val t et dOpt = cand date match {
+      case t etCand date: T etCand date =>
+        So (t etCand date.t et d)
       case _ =>
         None
     }
-    val urlOpt = candidate match {
-      case candidate: UrlCandidate =>
-        Some(candidate.url)
+    val urlOpt = cand date match {
+      case cand date: UrlCand date =>
+        So (cand date.url)
       case _ =>
         None
     }
-    val scUserIds = candidate match {
-      case hasSocialContext: SocialContextActions => Some(hasSocialContext.socialContextUserIds)
+    val scUser ds = cand date match {
+      case hasSoc alContext: Soc alContextAct ons => So (hasSoc alContext.soc alContextUser ds)
       case _ => None
     }
 
-    val eventTitleOpt = candidate match {
-      case eventCandidate: EventCandidate with EventDetails =>
-        Some(eventCandidate.eventTitle)
+    val eventT leOpt = cand date match {
+      case eventCand date: EventCand date w h EventDeta ls =>
+        So (eventCand date.eventT le)
       case _ =>
         None
     }
 
-    val urlTitleOpt = candidate match {
-      case candidate: UrlCandidate =>
-        candidate.title
+    val urlT leOpt = cand date match {
+      case cand date: UrlCand date =>
+        cand date.t le
       case _ =>
         None
     }
 
-    val urlDescriptionOpt = candidate match {
-      case candidate: UrlCandidate with UrlCandidateWithDetails =>
-        candidate.description
+    val urlDescr pt onOpt = cand date match {
+      case cand date: UrlCand date w h UrlCand dateW hDeta ls =>
+        cand date.descr pt on
       case _ =>
         None
     }
 
     Event(
-      "magicrecs_recommendation_write",
+      "mag crecs_recom ndat on_wr e",
       Map(
-        "targetUserId" -> FeatureData(Some(FeatureValue.LongValue(candidate.target.targetId))),
+        "targetUser d" -> FeatureData(So (FeatureValue.LongValue(cand date.target.target d))),
         "type" -> FeatureData(
-          Some(
-            FeatureValue.StrValue(candidate.commonRecType.name)
+          So (
+            FeatureValue.StrValue(cand date.commonRecType.na )
           )
         ),
-        "recommendedUserId" -> FeatureData(recommendedUserIdOpt map { id =>
-          FeatureValue.LongValue(id)
+        "recom ndedUser d" -> FeatureData(recom ndedUser dOpt map {  d =>
+          FeatureValue.LongValue( d)
         }),
-        "tweetId" -> FeatureData(tweetIdOpt map { id =>
-          FeatureValue.LongValue(id)
+        "t et d" -> FeatureData(t et dOpt map {  d =>
+          FeatureValue.LongValue( d)
         }),
         "url" -> FeatureData(urlOpt map { url =>
           FeatureValue.StrValue(url)
         }),
-        "hashtagsInTweet" -> FeatureData(Some(FeatureValue.StrListValue(hashtagsInTweet))),
-        "urlsInTweet" -> FeatureData(urlsInTweet.map(FeatureValue.StrListValue)),
-        "socialContexts" -> FeatureData(scUserIds.map { sc =>
-          FeatureValue.LongListValue(sc)
+        "hashtags nT et" -> FeatureData(So (FeatureValue.StrL stValue(hashtags nT et))),
+        "urls nT et" -> FeatureData(urls nT et.map(FeatureValue.StrL stValue)),
+        "soc alContexts" -> FeatureData(scUser ds.map { sc =>
+          FeatureValue.LongL stValue(sc)
         }),
-        "eventTitle" -> FeatureData(eventTitleOpt.map { eventTitle =>
-          FeatureValue.StrValue(eventTitle)
+        "eventT le" -> FeatureData(eventT leOpt.map { eventT le =>
+          FeatureValue.StrValue(eventT le)
         }),
-        "urlTitle" -> FeatureData(urlTitleOpt map { title =>
-          FeatureValue.StrValue(title)
+        "urlT le" -> FeatureData(urlT leOpt map { t le =>
+          FeatureValue.StrValue(t le)
         }),
-        "urlDescription" -> FeatureData(urlDescriptionOpt map { des =>
+        "urlDescr pt on" -> FeatureData(urlDescr pt onOpt map { des =>
           FeatureValue.StrValue(des)
         })
       )
     )
   }
 
-  def candidateToPossibleEvent(c: PushCandidate): Option[Event] = {
-    if (c.frigateNotification.notificationDisplayLocation == NotificationDisplayLocation.PushToMobileDevice) {
-      Some(candidateToEvent(c))
+  def cand dateToPoss bleEvent(c: PushCand date): Opt on[Event] = {
+     f (c.fr gateNot f cat on.not f cat onD splayLocat on == Not f cat onD splayLocat on.PushToMob leDev ce) {
+      So (cand dateToEvent(c))
     } else {
       None
     }
   }
 
   def apply(
-    scarecrowCheckEventStore: ReadableStore[Event, TieredActionResult]
+    scarecrowC ckEventStore: ReadableStore[Event, T eredAct onResult]
   )(
-    implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate] = {
-    HermitScarecrowPredicate(scarecrowCheckEventStore)
-      .optionalOn(
-        candidateToPossibleEvent,
-        missingResult = true
+     mpl c  statsRece ver: StatsRece ver
+  ): Na dPred cate[PushCand date] = {
+     rm ScarecrowPred cate(scarecrowC ckEventStore)
+      .opt onalOn(
+        cand dateToPoss bleEvent,
+        m ss ngResult = true
       )
-      .withStats(statsReceiver.scope(s"predicate_$name"))
-      .withName(name)
+      .w hStats(statsRece ver.scope(s"pred cate_$na "))
+      .w hNa (na )
   }
 }

@@ -1,8 +1,8 @@
-namespace java com.twitter.follow_recommendations.logging.thriftjava
-#@namespace scala com.twitter.follow_recommendations.logging.thriftscala
-#@namespace strato com.twitter.follow_recommendation.logging
+na space java com.tw ter.follow_recom ndat ons.logg ng.thr ftjava
+#@na space scala com.tw ter.follow_recom ndat ons.logg ng.thr ftscala
+#@na space strato com.tw ter.follow_recom ndat on.logg ng
 
 // subset of DebugParams
-struct OfflineDebugParams {
-    1: optional i64 randomizationSeed // track if the request was randomly ranked or not
-}(persisted='true', hasPersonalData='false')
+struct Offl neDebugParams {
+    1: opt onal  64 random zat onSeed // track  f t  request was randomly ranked or not
+}(pers sted='true', hasPersonalData='false')

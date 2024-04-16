@@ -1,28 +1,28 @@
-package com.twitter.unified_user_actions.adapter.ads_callback_engagements
+package com.tw ter.un f ed_user_act ons.adapter.ads_callback_engage nts
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.kafka.serde.UnKeyed
-import com.twitter.unified_user_actions.adapter.AbstractAdapter
-import com.twitter.ads.spendserver.thriftscala.SpendServerEvent
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f natra.kafka.serde.UnKeyed
+ mport com.tw ter.un f ed_user_act ons.adapter.AbstractAdapter
+ mport com.tw ter.ads.spendserver.thr ftscala.SpendServerEvent
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Un f edUserAct on
 
-class AdsCallbackEngagementsAdapter
-    extends AbstractAdapter[SpendServerEvent, UnKeyed, UnifiedUserAction] {
+class AdsCallbackEngage ntsAdapter
+    extends AbstractAdapter[SpendServerEvent, UnKeyed, Un f edUserAct on] {
 
-  import AdsCallbackEngagementsAdapter._
+   mport AdsCallbackEngage ntsAdapter._
 
-  override def adaptOneToKeyedMany(
-    input: SpendServerEvent,
-    statsReceiver: StatsReceiver = NullStatsReceiver
-  ): Seq[(UnKeyed, UnifiedUserAction)] =
-    adaptEvent(input).map { e => (UnKeyed, e) }
+  overr de def adaptOneToKeyedMany(
+     nput: SpendServerEvent,
+    statsRece ver: StatsRece ver = NullStatsRece ver
+  ): Seq[(UnKeyed, Un f edUserAct on)] =
+    adaptEvent( nput).map { e => (UnKeyed, e) }
 }
 
-object AdsCallbackEngagementsAdapter {
-  def adaptEvent(input: SpendServerEvent): Seq[UnifiedUserAction] = {
-    val baseEngagements: Seq[BaseAdsCallbackEngagement] =
-      EngagementTypeMappings.getEngagementMappings(Option(input).flatMap(_.engagementEvent))
-    baseEngagements.flatMap(_.getUUA(input))
+object AdsCallbackEngage ntsAdapter {
+  def adaptEvent( nput: SpendServerEvent): Seq[Un f edUserAct on] = {
+    val baseEngage nts: Seq[BaseAdsCallbackEngage nt] =
+      Engage ntTypeMapp ngs.getEngage ntMapp ngs(Opt on( nput).flatMap(_.engage ntEvent))
+    baseEngage nts.flatMap(_.getUUA( nput))
   }
 }

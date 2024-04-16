@@ -1,40 +1,40 @@
-# Recos-Injector
+# Recos- njector
 
-Recos-Injector is a streaming event processor used to build input streams for GraphJet-based services. It is a general-purpose tool that consumes arbitrary incoming event streams (e.g., Fav, RT, Follow, client_events, etc.), applies filtering, and combines and publishes cleaned up events to corresponding GraphJet services. Each GraphJet-based service subscribes to a dedicated Kafka topic, and Recos-Injector enables GraphJet-based services to consume any event they want.
+Recos- njector  s a stream ng event processor used to bu ld  nput streams for GraphJet-based serv ces.    s a general-purpose tool that consu s arb rary  ncom ng event streams (e.g., Fav, RT, Follow, cl ent_events, etc.), appl es f lter ng, and comb nes and publ s s cleaned up events to correspond ng GraphJet serv ces. Each GraphJet-based serv ce subscr bes to a ded cated Kafka top c, and Recos- njector enables GraphJet-based serv ces to consu  any event t y want.
 
-## How to run Recos-Injector server tests
+## How to run Recos- njector server tests
 
-You can run tests by using the following command from your project's root directory:
+  can run tests by us ng t  follow ng command from y  project's root d rectory:
 
-    $ bazel build recos-injector/...
-    $ bazel test recos-injector/...
+    $ bazel bu ld recos- njector/...
+    $ bazel test recos- njector/...
 
-## How to run recos-injector-server in development on a local machine
+## How to run recos- njector-server  n develop nt on a local mach ne
 
-The simplest way to stand up a service is to run it locally. To run
-recos-injector-server in development mode, compile the project and then
-execute it with `bazel run`:
+T  s mplest way to stand up a serv ce  s to run   locally. To run
+recos- njector-server  n develop nt mode, comp le t  project and t n
+execute   w h `bazel run`:
 
-    $ bazel build recos-injector/server:bin
-    $ bazel run recos-injector/server:bin
+    $ bazel bu ld recos- njector/server:b n
+    $ bazel run recos- njector/server:b n
 
-A tunnel can be set up in order for downstream queries to work properly.
-Upon successful server startup, try to `curl` its admin endpoint in another
-terminal:
+A tunnel can be set up  n order for downstream quer es to work properly.
+Upon successful server startup, try to `curl`  s adm n endpo nt  n anot r
+term nal:
 
-    $ curl -s localhost:9990/admin/ping
+    $ curl -s localhost:9990/adm n/p ng
     pong
 
-Run `curl -s localhost:9990/admin` to see a list of all available admin endpoints.
+Run `curl -s localhost:9990/adm n` to see a l st of all ava lable adm n endpo nts.
 
-## Querying Recos-Injector server from a Scala console
+## Query ng Recos- njector server from a Scala console
 
-Recos-Injector does not have a Thrift endpoint. Instead, it reads Event Bus and Kafka queues and writes to the Recos-Injector Kafka.
+Recos- njector does not have a Thr ft endpo nt.  nstead,   reads Event Bus and Kafka queues and wr es to t  Recos- njector Kafka.
 
-## Generating a package for deployment
+## Generat ng a package for deploy nt
 
-To package your service into a zip file for deployment, run:
+To package y  serv ce  nto a z p f le for deploy nt, run:
 
-    $ bazel bundle recos-injector/server:bin --bundle-jvm-archive=zip
+    $ bazel bundle recos- njector/server:b n --bundle-jvm-arch ve=z p
 
-If the command is successful, a file named `dist/recos-injector-server.zip` will be created.
+ f t  command  s successful, a f le na d `d st/recos- njector-server.z p` w ll be created.

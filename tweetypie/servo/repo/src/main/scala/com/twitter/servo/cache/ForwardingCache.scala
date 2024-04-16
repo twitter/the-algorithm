@@ -1,59 +1,59 @@
-package com.twitter.servo.cache
+package com.tw ter.servo.cac 
 
-import com.twitter.util.{Future, Return}
-import scala.collection.mutable
+ mport com.tw ter.ut l.{Future, Return}
+ mport scala.collect on.mutable
 
 /**
- * uses a forwarding cache to lookup a value by a secondary index.
- * filters out values for which the requested secondary index does not
- * match the actual secondary index (these are treated as a miss)
+ * uses a forward ng cac  to lookup a value by a secondary  ndex.
+ * f lters out values for wh ch t  requested secondary  ndex does not
+ * match t  actual secondary  ndex (t se are treated as a m ss)
  */
-class ForwardingCache[K, F, V](
-  forwardingCache: Cache[K, Cached[F]],
-  underlyingCache: SecondaryIndexingCache[F, _, V],
-  primaryKey: V => F,
-  secondaryKey: SecondaryIndexingCache.IndexMapping[K, V],
-  lockingCacheFactory: LockingCacheFactory)
-    extends LockingCache[K, Cached[V]] {
-  protected[this] case class ForwardingChecksum(
-    forwardingChecksum: Checksum,
-    underlyingChecksum: Option[Checksum])
-      extends Checksum
+class Forward ngCac [K, F, V](
+  forward ngCac : Cac [K, Cac d[F]],
+  underly ngCac : Secondary ndex ngCac [F, _, V],
+  pr maryKey: V => F,
+  secondaryKey: Secondary ndex ngCac . ndexMapp ng[K, V],
+  lock ngCac Factory: Lock ngCac Factory)
+    extends Lock ngCac [K, Cac d[V]] {
+  protected[t ] case class Forward ngC cksum(
+    forward ngC cksum: C cksum,
+    underly ngC cksum: Opt on[C cksum])
+      extends C cksum
 
-  protected[this] val lockingUnderlying = lockingCacheFactory(underlyingCache)
-  protected[this] val lockingForwarding = lockingCacheFactory(forwardingCache)
+  protected[t ] val lock ngUnderly ng = lock ngCac Factory(underly ngCac )
+  protected[t ] val lock ngForward ng = lock ngCac Factory(forward ngCac )
 
-  override def get(keys: Seq[K]): Future[KeyValueResult[K, Cached[V]]] = {
-    forwardingCache.get(keys) flatMap { flr =>
+  overr de def get(keys: Seq[K]): Future[KeyValueResult[K, Cac d[V]]] = {
+    forward ngCac .get(keys) flatMap { flr =>
       val (tombstones, notTombstones) = {
-        val tombstones = mutable.Map.empty[K, Cached[F]]
+        val tombstones = mutable.Map.empty[K, Cac d[F]]
         val notTombstones = mutable.Map.empty[F, K]
-        // split results into tombstoned keys and non-tombstoned key/pKeys
-        // while we're at it, produce a reverse-keymap of non-tombstones
+        // spl  results  nto tombstoned keys and non-tombstoned key/pKeys
+        // wh le  're at  , produce a reverse-keymap of non-tombstones
         flr.found foreach {
-          case (key, cachedPKey) =>
-            cachedPKey.value match {
-              case Some(pKey) => notTombstones += pKey -> key
-              case None => tombstones += key -> cachedPKey
+          case (key, cac dPKey) =>
+            cac dPKey.value match {
+              case So (pKey) => notTombstones += pKey -> key
+              case None => tombstones += key -> cac dPKey
             }
         }
         (tombstones.toMap, notTombstones.toMap)
       }
 
-      // only make call to underlyingCache if there are keys to lookup
-      val fromUnderlying = if (notTombstones.isEmpty) {
+      // only make call to underly ngCac   f t re are keys to lookup
+      val fromUnderly ng =  f (notTombstones. sEmpty) {
         KeyValueResult.emptyFuture
       } else {
-        // get non-tombstoned values from underlying cache
-        underlyingCache.get(notTombstones.keys.toSeq) map { lr =>
-          val (goodValues, badValues) = lr.found partition {
-            case (pKey, cachedValue) =>
-              // filter out values that somehow don't match the primary key and secondary key
-              cachedValue.value match {
-                case Some(value) =>
+        // get non-tombstoned values from underly ng cac 
+        underly ngCac .get(notTombstones.keys.toSeq) map { lr =>
+          val (goodValues, badValues) = lr.found part  on {
+            case (pKey, cac dValue) =>
+              // f lter out values that so how don't match t  pr mary key and secondary key
+              cac dValue.value match {
+                case So (value) =>
                   secondaryKey(value) match {
-                    case Return(Some(sKey)) =>
-                      pKey == primaryKey(value) && sKey == notTombstones(pKey)
+                    case Return(So (sKey)) =>
+                      pKey == pr maryKey(value) && sKey == notTombstones(pKey)
                     case _ => false
                   }
                 case None => true
@@ -61,126 +61,126 @@ class ForwardingCache[K, F, V](
           }
           val found = goodValues map { case (k, v) => notTombstones(k) -> v }
           val notFound = (lr.notFound ++ badValues.keySet) map { notTombstones(_) }
-          val failed = lr.failed map { case (k, t) => notTombstones(k) -> t }
-          KeyValueResult(found, notFound, failed)
+          val fa led = lr.fa led map { case (k, t) => notTombstones(k) -> t }
+          KeyValueResult(found, notFound, fa led)
         } handle {
           case t =>
-            KeyValueResult(failed = notTombstones.values map { _ -> t } toMap)
+            KeyValueResult(fa led = notTombstones.values map { _ -> t } toMap)
         }
       }
 
-      fromUnderlying map { lr =>
-        // fill in tombstone values, copying the metadata from the Cached[F]
-        val withTombstones = tombstones map {
-          case (key, cachedPKey) =>
-            key -> cachedPKey.copy[V](value = None)
+      fromUnderly ng map { lr =>
+        // f ll  n tombstone values, copy ng t   tadata from t  Cac d[F]
+        val w hTombstones = tombstones map {
+          case (key, cac dPKey) =>
+            key -> cac dPKey.copy[V](value = None)
         }
-        val found = lr.found ++ withTombstones
+        val found = lr.found ++ w hTombstones
         val notFound = flr.notFound ++ lr.notFound
-        val failed = flr.failed ++ lr.failed
-        KeyValueResult(found, notFound, failed)
+        val fa led = flr.fa led ++ lr.fa led
+        KeyValueResult(found, notFound, fa led)
       }
     }
   }
 
-  // since we implement lockAndSet directly, we don't support getWithChecksum and checkAndSet.
-  // we should consider changing the class hierarchy of Cache/LockingCache so that this can
-  // be checked at compile time.
+  // s nce    mple nt lockAndSet d rectly,   don't support getW hC cksum and c ckAndSet.
+  //   should cons der chang ng t  class h erarchy of Cac /Lock ngCac  so that t  can
+  // be c cked at comp le t  .
 
-  override def getWithChecksum(keys: Seq[K]): Future[CsKeyValueResult[K, Cached[V]]] =
-    Future.exception(new UnsupportedOperationException("Use lockAndSet directly"))
+  overr de def getW hC cksum(keys: Seq[K]): Future[CsKeyValueResult[K, Cac d[V]]] =
+    Future.except on(new UnsupportedOperat onExcept on("Use lockAndSet d rectly"))
 
-  override def checkAndSet(key: K, cachedValue: Cached[V], checksum: Checksum): Future[Boolean] =
-    Future.exception(new UnsupportedOperationException("Use lockAndSet directly"))
+  overr de def c ckAndSet(key: K, cac dValue: Cac d[V], c cksum: C cksum): Future[Boolean] =
+    Future.except on(new UnsupportedOperat onExcept on("Use lockAndSet d rectly"))
 
-  protected[this] def maybeAddForwardingIndex(
+  protected[t ] def maybeAddForward ng ndex(
     key: K,
-    cachedPrimaryKey: Cached[F],
+    cac dPr maryKey: Cac d[F],
     wasAdded: Boolean
   ): Future[Boolean] = {
-    if (wasAdded)
-      forwardingCache.set(key, cachedPrimaryKey) map { _ =>
+     f (wasAdded)
+      forward ngCac .set(key, cac dPr maryKey) map { _ =>
         true
       }
     else
       Future.value(false)
   }
 
-  override def add(key: K, cachedValue: Cached[V]): Future[Boolean] = {
-    // copy the cache metadata to the primaryKey
-    val cachedPrimaryKey = cachedValue map { primaryKey(_) }
-    cachedPrimaryKey.value match {
-      case Some(pKey) =>
-        // if a value can be derived from the key, use the underlying cache to add it
-        // the underlying cache will create the secondary index as a side-effect
-        underlyingCache.add(pKey, cachedValue)
+  overr de def add(key: K, cac dValue: Cac d[V]): Future[Boolean] = {
+    // copy t  cac   tadata to t  pr maryKey
+    val cac dPr maryKey = cac dValue map { pr maryKey(_) }
+    cac dPr maryKey.value match {
+      case So (pKey) =>
+        //  f a value can be der ved from t  key, use t  underly ng cac  to add  
+        // t  underly ng cac  w ll create t  secondary  ndex as a s de-effect
+        underly ngCac .add(pKey, cac dValue)
       case None =>
-        // otherwise, we're just writing a tombstone, so we need to check if it exists
-        forwardingCache.add(key, cachedPrimaryKey)
+        // ot rw se,  're just wr  ng a tombstone, so   need to c ck  f   ex sts
+        forward ngCac .add(key, cac dPr maryKey)
     }
   }
 
-  override def lockAndSet(
+  overr de def lockAndSet(
     key: K,
-    handler: LockingCache.Handler[Cached[V]]
-  ): Future[Option[Cached[V]]] = {
+    handler: Lock ngCac .Handler[Cac d[V]]
+  ): Future[Opt on[Cac d[V]]] = {
     handler(None) match {
-      case Some(cachedValue) =>
-        cachedValue.value match {
-          case Some(value) =>
-            // set on the underlying cache, and let it take care of adding
-            // the secondary index
-            val pKey = primaryKey(value)
-            lockingUnderlying.lockAndSet(pKey, handler)
+      case So (cac dValue) =>
+        cac dValue.value match {
+          case So (value) =>
+            // set on t  underly ng cac , and let   take care of add ng
+            // t  secondary  ndex
+            val pKey = pr maryKey(value)
+            lock ngUnderly ng.lockAndSet(pKey, handler)
           case None =>
-            // no underlying value to set, so just write the forwarding entry.
-            // secondaryIndexingCache doesn't lock for this set, so there's
-            // no point in our doing it. There's a slight risk of writing an
-            // errant tombstone in a race, but the only way to get around this
-            // would be to lock around *all* primary and secondary indexes,
-            // which could produce deadlocks, which is probably worse.
-            val cachedEmptyPKey = cachedValue.copy[F](value = None)
-            forwardingCache.set(key, cachedEmptyPKey) map { _ =>
-              Some(cachedValue)
+            // no underly ng value to set, so just wr e t  forward ng entry.
+            // secondary ndex ngCac  doesn't lock for t  set, so t re's
+            // no po nt  n   do ng  . T re's a sl ght r sk of wr  ng an
+            // errant tombstone  n a race, but t  only way to get around t 
+            // would be to lock around *all* pr mary and secondary  ndexes,
+            // wh ch could produce deadlocks, wh ch  s probably worse.
+            val cac dEmptyPKey = cac dValue.copy[F](value = None)
+            forward ngCac .set(key, cac dEmptyPKey) map { _ =>
+              So (cac dValue)
             }
         }
       case None =>
-        // nothing to do here
+        // noth ng to do  re
         Future.value(None)
     }
   }
 
-  override def set(key: K, cachedValue: Cached[V]): Future[Unit] = {
-    cachedValue.value match {
-      case Some(value) =>
-        // set on the underlying cache, and let it take care of adding
-        // the secondary index
-        val pKey = primaryKey(value)
-        underlyingCache.set(pKey, cachedValue)
+  overr de def set(key: K, cac dValue: Cac d[V]): Future[Un ] = {
+    cac dValue.value match {
+      case So (value) =>
+        // set on t  underly ng cac , and let   take care of add ng
+        // t  secondary  ndex
+        val pKey = pr maryKey(value)
+        underly ngCac .set(pKey, cac dValue)
       case None =>
-        // no underlying value to set, so just write the forwarding entry
-        forwardingCache.set(key, cachedValue.copy[F](value = None))
+        // no underly ng value to set, so just wr e t  forward ng entry
+        forward ngCac .set(key, cac dValue.copy[F](value = None))
     }
   }
 
-  override def replace(key: K, cachedValue: Cached[V]): Future[Boolean] = {
-    cachedValue.value match {
-      case Some(value) =>
-        // replace in the underlying cache, and let it take care of adding the secondary index
-        val pKey = primaryKey(value)
-        underlyingCache.replace(pKey, cachedValue)
+  overr de def replace(key: K, cac dValue: Cac d[V]): Future[Boolean] = {
+    cac dValue.value match {
+      case So (value) =>
+        // replace  n t  underly ng cac , and let   take care of add ng t  secondary  ndex
+        val pKey = pr maryKey(value)
+        underly ngCac .replace(pKey, cac dValue)
       case None =>
-        // no underlying value to set, so just write the forwarding entry
-        forwardingCache.replace(key, cachedValue.copy[F](value = None))
+        // no underly ng value to set, so just wr e t  forward ng entry
+        forward ngCac .replace(key, cac dValue.copy[F](value = None))
     }
   }
 
-  override def delete(key: K): Future[Boolean] = {
-    forwardingCache.delete(key)
+  overr de def delete(key: K): Future[Boolean] = {
+    forward ngCac .delete(key)
   }
 
-  override def release(): Unit = {
-    forwardingCache.release()
-    underlyingCache.release()
+  overr de def release(): Un  = {
+    forward ngCac .release()
+    underly ngCac .release()
   }
 }

@@ -1,93 +1,93 @@
-package com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue
+package com.tw ter.fr gate.pushserv ce.pred cate.ntab_caret_fat gue
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.predicate.ntab_caret_fatigue.NtabCaretClickFatiguePredicateHelper
-import com.twitter.notificationservice.thriftscala.CaretFeedbackDetails
-import com.twitter.util.Duration
-import com.twitter.conversions.DurationOps._
-import scala.math.min
-import com.twitter.util.Time
-import com.twitter.frigate.thriftscala.{CommonRecommendationType => CRT}
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.pred cate.ntab_caret_fat gue.NtabCaretCl ckFat guePred cate lper
+ mport com.tw ter.not f cat onserv ce.thr ftscala.CaretFeedbackDeta ls
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.convers ons.Durat onOps._
+ mport scala.math.m n
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.fr gate.thr ftscala.{CommonRecom ndat onType => CRT}
 
-object NtabCaretClickFatigueUtils {
+object NtabCaretCl ckFat gueUt ls {
 
-  private def pushCapForFeedback(
-    feedbackDetails: Seq[CaretFeedbackDetails],
+  pr vate def pushCapForFeedback(
+    feedbackDeta ls: Seq[CaretFeedbackDeta ls],
     feedbacks: Seq[FeedbackModel],
-    param: ContinuousFunctionParam,
-    statsReceiver: StatsReceiver
+    param: Cont nuousFunct onParam,
+    statsRece ver: StatsRece ver
   ): Double = {
-    val stats = statsReceiver.scope("mr_seelessoften_contfn_pushcap")
+    val stats = statsRece ver.scope("mr_seelessoften_contfn_pushcap")
     val pushCapTotal = stats.counter("pushcap_total")
-    val pushCapInvalid =
-      stats.counter("pushcap_invalid")
+    val pushCap nval d =
+      stats.counter("pushcap_ nval d")
 
-    pushCapTotal.incr()
-    val timeSinceMostRecentDislikeMs =
-      NtabCaretClickFatiguePredicateHelper.getDurationSinceMostRecentDislike(feedbackDetails)
-    val mostRecentFeedbackTimestamp: Option[Long] =
+    pushCapTotal. ncr()
+    val t  S nceMostRecentD sl keMs =
+      NtabCaretCl ckFat guePred cate lper.getDurat onS nceMostRecentD sl ke(feedbackDeta ls)
+    val mostRecentFeedbackT  stamp: Opt on[Long] =
       feedbacks
         .map { feedback =>
-          feedback.timestampMs
-        }.reduceOption(_ max _)
-    val timeSinceMostRecentFeedback: Option[Duration] =
-      mostRecentFeedbackTimestamp.map(Time.now - Time.fromMilliseconds(_))
+          feedback.t  stampMs
+        }.reduceOpt on(_ max _)
+    val t  S nceMostRecentFeedback: Opt on[Durat on] =
+      mostRecentFeedbackT  stamp.map(T  .now - T  .fromM ll seconds(_))
 
-    val nTabDislikePushCap = timeSinceMostRecentDislikeMs match {
-      case Some(lastDislikeTimeMs) => {
-        ContinuousFunction.safeEvaluateFn(lastDislikeTimeMs.inDays.toDouble, param, stats)
+    val nTabD sl kePushCap = t  S nceMostRecentD sl keMs match {
+      case So (lastD sl keT  Ms) => {
+        Cont nuousFunct on.safeEvaluateFn(lastD sl keT  Ms. nDays.toDouble, param, stats)
       }
       case _ => {
-        pushCapInvalid.incr()
+        pushCap nval d. ncr()
         param.defaultValue
       }
     }
-    val feedbackPushCap = timeSinceMostRecentFeedback match {
-      case Some(lastDislikeTimeVal) => {
-        ContinuousFunction.safeEvaluateFn(lastDislikeTimeVal.inDays.toDouble, param, stats)
+    val feedbackPushCap = t  S nceMostRecentFeedback match {
+      case So (lastD sl keT  Val) => {
+        Cont nuousFunct on.safeEvaluateFn(lastD sl keT  Val. nDays.toDouble, param, stats)
       }
       case _ => {
-        pushCapInvalid.incr()
+        pushCap nval d. ncr()
         param.defaultValue
       }
     }
 
-    min(nTabDislikePushCap, feedbackPushCap)
+    m n(nTabD sl kePushCap, feedbackPushCap)
   }
 
-  def durationToFilterForFeedback(
-    feedbackDetails: Seq[CaretFeedbackDetails],
+  def durat onToF lterForFeedback(
+    feedbackDeta ls: Seq[CaretFeedbackDeta ls],
     feedbacks: Seq[FeedbackModel],
-    param: ContinuousFunctionParam,
+    param: Cont nuousFunct onParam,
     defaultPushCap: Double,
-    statsReceiver: StatsReceiver
-  ): Duration = {
-    val pushCap = min(
-      pushCapForFeedback(feedbackDetails, feedbacks, param, statsReceiver),
+    statsRece ver: StatsRece ver
+  ): Durat on = {
+    val pushCap = m n(
+      pushCapForFeedback(feedbackDeta ls, feedbacks, param, statsRece ver),
       defaultPushCap
     )
-    if (pushCap <= 0) {
-      Duration.Top
+     f (pushCap <= 0) {
+      Durat on.Top
     } else {
-      24.hours / pushCap
+      24.h s / pushCap
     }
   }
 
-  def hasUserDislikeInLast90Days(feedbackDetails: Seq[CaretFeedbackDetails]): Boolean = {
-    val timeSinceMostRecentDislike =
-      NtabCaretClickFatiguePredicateHelper.getDurationSinceMostRecentDislike(feedbackDetails)
+  def hasUserD sl ke nLast90Days(feedbackDeta ls: Seq[CaretFeedbackDeta ls]): Boolean = {
+    val t  S nceMostRecentD sl ke =
+      NtabCaretCl ckFat guePred cate lper.getDurat onS nceMostRecentD sl ke(feedbackDeta ls)
 
-    timeSinceMostRecentDislike.exists(_ < 90.days)
+    t  S nceMostRecentD sl ke.ex sts(_ < 90.days)
   }
 
-  def feedbackModelFilterByCRT(
+  def feedbackModelF lterByCRT(
     crts: Set[CRT]
   ): Seq[FeedbackModel] => Seq[
     FeedbackModel
   ] = { feedbacks =>
-    feedbacks.filter { feedback =>
-      feedback.notification match {
-        case Some(notification) => crts.contains(notification.commonRecommendationType)
+    feedbacks.f lter { feedback =>
+      feedback.not f cat on match {
+        case So (not f cat on) => crts.conta ns(not f cat on.commonRecom ndat onType)
         case None => false
       }
     }
@@ -98,9 +98,9 @@ object NtabCaretClickFatigueUtils {
   ): Seq[FeedbackModel] => Seq[
     FeedbackModel
   ] = { feedbacks =>
-    feedbacks.filter { feedback =>
-      feedback.notification match {
-        case Some(notification) => !crts.contains(notification.commonRecommendationType)
+    feedbacks.f lter { feedback =>
+      feedback.not f cat on match {
+        case So (not f cat on) => !crts.conta ns(not f cat on.commonRecom ndat onType)
         case None => true
       }
     }

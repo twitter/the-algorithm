@@ -1,23 +1,23 @@
-package com.twitter.timelineranker.common
+package com.tw ter.t  l neranker.common
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelines.model.TweetId
-import com.twitter.util.Future
-import scala.collection.mutable
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t  l neranker.core.Cand dateEnvelope
+ mport com.tw ter.t  l nes.model.T et d
+ mport com.tw ter.ut l.Future
+ mport scala.collect on.mutable
 
 /**
- * Remove duplicate search results and order them reverse-chron.
+ * Remove dupl cate search results and order t m reverse-chron.
  */
-object SearchResultDedupAndSortingTransform
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val seenTweetIds = mutable.Set.empty[TweetId]
+object SearchResultDedupAndSort ngTransform
+    extends FutureArrow[Cand dateEnvelope, Cand dateEnvelope] {
+  def apply(envelope: Cand dateEnvelope): Future[Cand dateEnvelope] = {
+    val seenT et ds = mutable.Set.empty[T et d]
     val dedupedResults = envelope.searchResults
-      .filter(result => seenTweetIds.add(result.id))
-      .sortBy(_.id)(Ordering[TweetId].reverse)
+      .f lter(result => seenT et ds.add(result. d))
+      .sortBy(_. d)(Order ng[T et d].reverse)
 
-    val transformedEnvelope = envelope.copy(searchResults = dedupedResults)
-    Future.value(transformedEnvelope)
+    val transfor dEnvelope = envelope.copy(searchResults = dedupedResults)
+    Future.value(transfor dEnvelope)
   }
 }

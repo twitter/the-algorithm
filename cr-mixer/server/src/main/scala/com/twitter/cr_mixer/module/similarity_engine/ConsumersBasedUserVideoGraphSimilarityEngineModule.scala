@@ -1,62 +1,62 @@
-package com.twitter.cr_mixer.module.similarity_engine
+package com.tw ter.cr_m xer.module.s m lar y_eng ne
 
-import com.google.inject.Provides
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.param.decider.DeciderConstants
-import com.twitter.cr_mixer.similarity_engine.ConsumersBasedUserVideoGraphSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.DeciderConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.recos.user_video_graph.thriftscala.ConsumersBasedRelatedTweetRequest
-import com.twitter.recos.user_video_graph.thriftscala.RelatedTweetResponse
-import com.twitter.storehaus.ReadableStore
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.cr_m xer.conf g.T  outConf g
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.cr_m xer.model.T etW hScore
+ mport com.tw ter.cr_m xer.param.dec der.CrM xerDec der
+ mport com.tw ter.cr_m xer.param.dec der.Dec derConstants
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.Consu rsBasedUserV deoGraphS m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S m lar yEng ne.Dec derConf g
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S m lar yEng ne.Gat ngConf g
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S m lar yEng ne.S m lar yEng neConf g
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.StandardS m lar yEng ne
+ mport com.tw ter.cr_m xer.thr ftscala.S m lar yEng neType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.recos.user_v deo_graph.thr ftscala.Consu rsBasedRelatedT etRequest
+ mport com.tw ter.recos.user_v deo_graph.thr ftscala.RelatedT etResponse
+ mport com.tw ter.storehaus.ReadableStore
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-object ConsumersBasedUserVideoGraphSimilarityEngineModule extends TwitterModule {
+object Consu rsBasedUserV deoGraphS m lar yEng neModule extends Tw terModule {
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.ConsumersBasedUserVideoGraphSimilarityEngine)
-  def providesConsumersBasedUserVideoGraphSimilarityEngine(
-    @Named(ModuleNames.ConsumerBasedUserVideoGraphStore)
-    consumersBasedUserVideoGraphStore: ReadableStore[
-      ConsumersBasedRelatedTweetRequest,
-      RelatedTweetResponse
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.Consu rsBasedUserV deoGraphS m lar yEng ne)
+  def prov desConsu rsBasedUserV deoGraphS m lar yEng ne(
+    @Na d(ModuleNa s.Consu rBasedUserV deoGraphStore)
+    consu rsBasedUserV deoGraphStore: ReadableStore[
+      Consu rsBasedRelatedT etRequest,
+      RelatedT etResponse
     ],
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-    decider: CrMixerDecider
-  ): StandardSimilarityEngine[
-    ConsumersBasedUserVideoGraphSimilarityEngine.Query,
-    TweetWithScore
+    t  outConf g: T  outConf g,
+    statsRece ver: StatsRece ver,
+    dec der: CrM xerDec der
+  ): StandardS m lar yEng ne[
+    Consu rsBasedUserV deoGraphS m lar yEng ne.Query,
+    T etW hScore
   ] = {
 
-    new StandardSimilarityEngine[
-      ConsumersBasedUserVideoGraphSimilarityEngine.Query,
-      TweetWithScore
+    new StandardS m lar yEng ne[
+      Consu rsBasedUserV deoGraphS m lar yEng ne.Query,
+      T etW hScore
     ](
-      implementingStore = ConsumersBasedUserVideoGraphSimilarityEngine(
-        consumersBasedUserVideoGraphStore,
-        statsReceiver),
-      identifier = SimilarityEngineType.ConsumersBasedUserVideoGraph,
-      globalStats = statsReceiver,
-      engineConfig = SimilarityEngineConfig(
-        timeout = timeoutConfig.similarityEngineTimeout,
-        gatingConfig = GatingConfig(
-          deciderConfig =
-            Some(DeciderConfig(decider, DeciderConstants.enableUserVideoGraphTrafficDeciderKey)),
-          enableFeatureSwitch = None
+       mple nt ngStore = Consu rsBasedUserV deoGraphS m lar yEng ne(
+        consu rsBasedUserV deoGraphStore,
+        statsRece ver),
+       dent f er = S m lar yEng neType.Consu rsBasedUserV deoGraph,
+      globalStats = statsRece ver,
+      eng neConf g = S m lar yEng neConf g(
+        t  out = t  outConf g.s m lar yEng neT  out,
+        gat ngConf g = Gat ngConf g(
+          dec derConf g =
+            So (Dec derConf g(dec der, Dec derConstants.enableUserV deoGraphTraff cDec derKey)),
+          enableFeatureSw ch = None
         )
       ),
-      memCacheConfig = None
+       mCac Conf g = None
     )
   }
 }

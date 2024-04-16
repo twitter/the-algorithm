@@ -1,11 +1,11 @@
-package com.twitter.home_mixer.product
+package com.tw ter.ho _m xer.product
 
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistryConfig
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.product_m xer.core.product.reg stry.ProductP pel neReg stryConf g
 
-object HomeMixerProductModule extends TwitterModule {
+object Ho M xerProductModule extends Tw terModule {
 
-  override def configure(): Unit = {
-    bind[ProductPipelineRegistryConfig].to[HomeProductPipelineRegistryConfig]
+  overr de def conf gure(): Un  = {
+    b nd[ProductP pel neReg stryConf g].to[Ho ProductP pel neReg stryConf g]
   }
 }

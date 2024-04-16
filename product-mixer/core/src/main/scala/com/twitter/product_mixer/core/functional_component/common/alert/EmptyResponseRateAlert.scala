@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+package com.tw ter.product_m xer.core.funct onal_component.common.alert
 
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfAbove
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.pred cate.Tr gger fAbove
 
 /**
- * [[EmptyResponseRateAlert]] triggers when the percentage of requests with empty responses (defined
- * as the number of items returned excluding cursors) rises above the [[TriggerIfAbove]] threshold
- * for a configured amount of time.
+ * [[EmptyResponseRateAlert]] tr ggers w n t  percentage of requests w h empty responses (def ned
+ * as t  number of  ems returned exclud ng cursors) r ses above t  [[Tr gger fAbove]] threshold
+ * for a conf gured amount of t  .
  *
- * @note EmptyResponseRate thresholds must be between 0 and 100%
+ * @note EmptyResponseRate thresholds must be bet en 0 and 100%
  */
 case class EmptyResponseRateAlert(
-  override val notificationGroup: NotificationGroup,
-  override val warnPredicate: TriggerIfAbove,
-  override val criticalPredicate: TriggerIfAbove,
-  override val runbookLink: Option[String] = None)
+  overr de val not f cat onGroup: Not f cat onGroup,
+  overr de val warnPred cate: Tr gger fAbove,
+  overr de val cr  calPred cate: Tr gger fAbove,
+  overr de val runbookL nk: Opt on[Str ng] = None)
     extends Alert {
-  override val alertType: AlertType = EmptyResponseRate
-  require(
-    warnPredicate.threshold > 0 && warnPredicate.threshold <= 100,
-    s"EmptyResponseRateAlert predicates must be between 0 and 100 but got warnPredicate = ${warnPredicate.threshold}"
+  overr de val alertType: AlertType = EmptyResponseRate
+  requ re(
+    warnPred cate.threshold > 0 && warnPred cate.threshold <= 100,
+    s"EmptyResponseRateAlert pred cates must be bet en 0 and 100 but got warnPred cate = ${warnPred cate.threshold}"
   )
-  require(
-    criticalPredicate.threshold > 0 && criticalPredicate.threshold <= 100,
-    s"EmptyResponseRateAlert predicates must be between 0 and 100 but got criticalPredicate = ${criticalPredicate.threshold}"
+  requ re(
+    cr  calPred cate.threshold > 0 && cr  calPred cate.threshold <= 100,
+    s"EmptyResponseRateAlert pred cates must be bet en 0 and 100 but got cr  calPred cate = ${cr  calPred cate.threshold}"
   )
 }

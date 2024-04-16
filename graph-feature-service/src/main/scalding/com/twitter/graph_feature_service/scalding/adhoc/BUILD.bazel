@@ -1,27 +1,27 @@
-scala_library(
+scala_l brary(
     platform = "java8",
     tags = ["bazel-only"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/bijection:core",
-        "3rdparty/jvm/com/twitter/bijection:scrooge",
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/constdb_util",
-        "src/java/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/scalding_internal/job",
-        "src/scala/com/twitter/scalding_internal/job/analytics_batch",
-        "src/thrift/com/twitter/ml/api:data-java",
+    dependenc es = [
+        "3rdparty/jvm/com/tw ter/b ject on:core",
+        "3rdparty/jvm/com/tw ter/b ject on:scrooge",
+        "fr gate/fr gate-common/src/ma n/scala/com/tw ter/fr gate/common/constdb_ut l",
+        "src/java/com/tw ter/ml/ap :ap -base",
+        "src/scala/com/tw ter/ml/ap :ap -base",
+        "src/scala/com/tw ter/scald ng_ nternal/job",
+        "src/scala/com/tw ter/scald ng_ nternal/job/analyt cs_batch",
+        "src/thr ft/com/tw ter/ml/ap :data-java",
     ],
 )
 
-hadoop_binary(
-    name = "gfs_random_request-adhoc",
-    main = "com.twitter.graph_feature_service.scalding.adhoc.RandomRequestGenerationApp",
+hadoop_b nary(
+    na  = "gfs_random_request-adhoc",
+    ma n = "com.tw ter.graph_feature_serv ce.scald ng.adhoc.RandomRequestGenerat onApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [":adhoc"],
+    dependenc es = [":adhoc"],
 )

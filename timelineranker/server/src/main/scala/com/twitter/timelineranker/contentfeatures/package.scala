@@ -1,10 +1,10 @@
-package com.twitter.timelineranker
+package com.tw ter.t  l neranker
 
-import com.twitter.timelineranker.core.FutureDependencyTransformer
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelines.model.TweetId
+ mport com.tw ter.t  l neranker.core.FutureDependencyTransfor r
+ mport com.tw ter.t  l neranker.recap.model.ContentFeatures
+ mport com.tw ter.t  l nes.model.T et d
 
 package object contentfeatures {
-  type ContentFeaturesProvider =
-    FutureDependencyTransformer[Seq[TweetId], Map[TweetId, ContentFeatures]]
+  type ContentFeaturesProv der =
+    FutureDependencyTransfor r[Seq[T et d], Map[T et d, ContentFeatures]]
 }

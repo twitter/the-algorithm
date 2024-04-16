@@ -1,51 +1,51 @@
-package com.twitter.product_mixer.component_library.premarshaller.urp
+package com.tw ter.product_m xer.component_l brary.premarshaller.urp
 
-import com.twitter.product_mixer.component_library.premarshaller.urp.builder.PageBodyBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urp.builder.PageHeaderBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urp.builder.PageNavBarBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urp.builder.TimelineScribeConfigBuilder
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.model.common.identifier.DomainMarshallerIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urp._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urp.bu lder.PageBodyBu lder
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urp.bu lder.Page aderBu lder
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urp.bu lder.PageNavBarBu lder
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urp.bu lder.T  l neScr beConf gBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.premarshaller.Doma nMarshaller
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Doma nMarshaller dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urp._
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object UrpDomainMarshaller {
-  val PageIdSuffix = "-Page"
+object UrpDoma nMarshaller {
+  val Page dSuff x = "-Page"
 }
 
 /**
- * Domain marshaller that given the builders for the body, header and navbar will generate a URP Page
+ * Doma n marshaller that g ven t  bu lders for t  body,  ader and navbar w ll generate a URP Page
  *
- * @param pageBodyBuilder     PageBody builder that generates a PageBody with the query and selections
- * @param scribeConfigBuilder Scribe Config builder that generates the configuration for scribing of the page
- * @param pageHeaderBuilder   PageHeader builder that generates a PageHeader with the query and selections
- * @param pageNavBarBuilder   PageNavBar builder that generates a PageNavBar with the query and selections
- * @tparam Query The type of Query that this Marshaller operates with
+ * @param pageBodyBu lder     PageBody bu lder that generates a PageBody w h t  query and select ons
+ * @param scr beConf gBu lder Scr be Conf g bu lder that generates t  conf gurat on for scr b ng of t  page
+ * @param page aderBu lder   Page ader bu lder that generates a Page ader w h t  query and select ons
+ * @param pageNavBarBu lder   PageNavBar bu lder that generates a PageNavBar w h t  query and select ons
+ * @tparam Query T  type of Query that t  Marshaller operates w h
  */
-case class UrpDomainMarshaller[-Query <: PipelineQuery](
-  pageBodyBuilder: PageBodyBuilder[Query],
-  pageHeaderBuilder: Option[PageHeaderBuilder[Query]] = None,
-  pageNavBarBuilder: Option[PageNavBarBuilder[Query]] = None,
-  scribeConfigBuilder: Option[TimelineScribeConfigBuilder[Query]] = None,
-  override val identifier: DomainMarshallerIdentifier =
-    DomainMarshallerIdentifier("UnifiedRichPage"))
-    extends DomainMarshaller[Query, Page] {
+case class UrpDoma nMarshaller[-Query <: P pel neQuery](
+  pageBodyBu lder: PageBodyBu lder[Query],
+  page aderBu lder: Opt on[Page aderBu lder[Query]] = None,
+  pageNavBarBu lder: Opt on[PageNavBarBu lder[Query]] = None,
+  scr beConf gBu lder: Opt on[T  l neScr beConf gBu lder[Query]] = None,
+  overr de val  dent f er: Doma nMarshaller dent f er =
+    Doma nMarshaller dent f er("Un f edR chPage"))
+    extends Doma nMarshaller[Query, Page] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    selections: Seq[CandidateWithDetails]
+    select ons: Seq[Cand dateW hDeta ls]
   ): Page = {
-    val pageBody = pageBodyBuilder.build(query, selections)
-    val pageHeader = pageHeaderBuilder.flatMap(_.build(query, selections))
-    val pageNavBar = pageNavBarBuilder.flatMap(_.build(query, selections))
-    val scribeConfig = scribeConfigBuilder.flatMap(_.build(query, pageBody, pageHeader, pageNavBar))
+    val pageBody = pageBodyBu lder.bu ld(query, select ons)
+    val page ader = page aderBu lder.flatMap(_.bu ld(query, select ons))
+    val pageNavBar = pageNavBarBu lder.flatMap(_.bu ld(query, select ons))
+    val scr beConf g = scr beConf gBu lder.flatMap(_.bu ld(query, pageBody, page ader, pageNavBar))
 
     Page(
-      id = query.product.identifier.toString + UrpDomainMarshaller.PageIdSuffix,
+       d = query.product. dent f er.toStr ng + UrpDoma nMarshaller.Page dSuff x,
       pageBody = pageBody,
-      scribeConfig = scribeConfig,
-      pageHeader = pageHeader,
+      scr beConf g = scr beConf g,
+      page ader = page ader,
       pageNavBar = pageNavBar
     )
   }

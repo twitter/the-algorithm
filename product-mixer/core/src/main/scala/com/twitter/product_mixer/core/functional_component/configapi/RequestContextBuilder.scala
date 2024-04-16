@@ -1,72 +1,72 @@
-package com.twitter.product_mixer.core.functional_component.configapi
+package com.tw ter.product_m xer.core.funct onal_component.conf gap 
 
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.featureswitches.UserAgent
-import com.twitter.featureswitches.{Recipient => FeatureSwitchRecipient}
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import com.twitter.timelines.configapi.featureswitches.v2.FeatureSwitchResultsFeatureContext
-import com.twitter.timelines.configapi.FeatureContext
-import com.twitter.timelines.configapi.FeatureValue
-import com.twitter.timelines.configapi.ForcedFeatureContext
-import com.twitter.timelines.configapi.OrElseFeatureContext
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.featuresw c s.v2.FeatureSw c s
+ mport com.tw ter.featuresw c s.UserAgent
+ mport com.tw ter.featuresw c s.{Rec p ent => FeatureSw chRec p ent}
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Cl entContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Product
+ mport com.tw ter.t  l nes.conf gap .featuresw c s.v2.FeatureSw chResultsFeatureContext
+ mport com.tw ter.t  l nes.conf gap .FeatureContext
+ mport com.tw ter.t  l nes.conf gap .FeatureValue
+ mport com.tw ter.t  l nes.conf gap .ForcedFeatureContext
+ mport com.tw ter.t  l nes.conf gap .OrElseFeatureContext
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * Request Context Factory is used to build RequestContext objects which are used
- * by the config api to determine the param overrides to apply to the request.
- * The param overrides are determined per request by configs which specify which
- * FS/Deciders/AB translate to what param overrides.
+ * Request Context Factory  s used to bu ld RequestContext objects wh ch are used
+ * by t  conf g ap  to determ ne t  param overr des to apply to t  request.
+ * T  param overr des are determ ned per request by conf gs wh ch spec fy wh ch
+ * FS/Dec ders/AB translate to what param overr des.
  */
-@Singleton
-class RequestContextBuilder @Inject() (featureSwitches: FeatureSwitches) {
+@S ngleton
+class RequestContextBu lder @ nject() (featureSw c s: FeatureSw c s) {
 
   /**
-   * @param `fsCustomMapInput` allows you to set custom fields on your feature switches.
-   * This feature isn't directly supported by product mixer yet, so using this argument
-   * will likely result in future cleanup work.
+   * @param `fsCustomMap nput` allows   to set custom f elds on y  feature sw c s.
+   * T  feature  sn't d rectly supported by product m xer yet, so us ng t  argu nt
+   * w ll l kely result  n future cleanup work.
    *
    */
-  def build(
-    clientContext: ClientContext,
+  def bu ld(
+    cl entContext: Cl entContext,
     product: Product,
-    featureOverrides: Map[String, FeatureValue],
-    fsCustomMapInput: Map[String, Any]
+    featureOverr des: Map[Str ng, FeatureValue],
+    fsCustomMap nput: Map[Str ng, Any]
   ): RequestContext = {
     val featureContext =
-      getFeatureContext(clientContext, product, featureOverrides, fsCustomMapInput)
+      getFeatureContext(cl entContext, product, featureOverr des, fsCustomMap nput)
 
-    RequestContext(clientContext.userId, clientContext.guestId, featureContext)
+    RequestContext(cl entContext.user d, cl entContext.guest d, featureContext)
   }
 
-  private[configapi] def getFeatureContext(
-    clientContext: ClientContext,
+  pr vate[conf gap ] def getFeatureContext(
+    cl entContext: Cl entContext,
     product: Product,
-    featureOverrides: Map[String, FeatureValue],
-    fsCustomMapInput: Map[String, Any]
+    featureOverr des: Map[Str ng, FeatureValue],
+    fsCustomMap nput: Map[Str ng, Any]
   ): FeatureContext = {
-    val recipient = getFeatureSwitchRecipient(clientContext)
-      .withCustomFields("product" -> product.identifier.toString, fsCustomMapInput.toSeq: _*)
+    val rec p ent = getFeatureSw chRec p ent(cl entContext)
+      .w hCustomF elds("product" -> product. dent f er.toStr ng, fsCustomMap nput.toSeq: _*)
 
-    val results = featureSwitches.matchRecipient(recipient)
+    val results = featureSw c s.matchRec p ent(rec p ent)
     OrElseFeatureContext(
-      ForcedFeatureContext(featureOverrides),
-      new FeatureSwitchResultsFeatureContext(results))
+      ForcedFeatureContext(featureOverr des),
+      new FeatureSw chResultsFeatureContext(results))
   }
 
-  private[configapi] def getFeatureSwitchRecipient(
-    clientContext: ClientContext
-  ): FeatureSwitchRecipient = FeatureSwitchRecipient(
-    userId = clientContext.userId,
-    userRoles = clientContext.userRoles,
-    deviceId = clientContext.deviceId,
-    guestId = clientContext.guestId,
-    languageCode = clientContext.languageCode,
-    countryCode = clientContext.countryCode,
-    userAgent = clientContext.userAgent.flatMap(UserAgent.apply),
-    isVerified = None,
-    clientApplicationId = clientContext.appId,
-    isTwoffice = clientContext.isTwoffice
+  pr vate[conf gap ] def getFeatureSw chRec p ent(
+    cl entContext: Cl entContext
+  ): FeatureSw chRec p ent = FeatureSw chRec p ent(
+    user d = cl entContext.user d,
+    userRoles = cl entContext.userRoles,
+    dev ce d = cl entContext.dev ce d,
+    guest d = cl entContext.guest d,
+    languageCode = cl entContext.languageCode,
+    countryCode = cl entContext.countryCode,
+    userAgent = cl entContext.userAgent.flatMap(UserAgent.apply),
+     sVer f ed = None,
+    cl entAppl cat on d = cl entContext.app d,
+     sTwoff ce = cl entContext. sTwoff ce
   )
 }

@@ -1,106 +1,106 @@
-package com.twitter.representationscorer.scorestore
+package com.tw ter.representat onscorer.scorestore
 
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.ScoreInternalId.GenericPairScoreId
-import com.twitter.simclusters_v2.thriftscala.ScoringAlgorithm.CertoNormalizedDotProductScore
-import com.twitter.simclusters_v2.thriftscala.ScoringAlgorithm.CertoNormalizedCosineScore
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.TopicId
-import com.twitter.simclusters_v2.thriftscala.{Score => ThriftScore}
-import com.twitter.simclusters_v2.thriftscala.{ScoreId => ThriftScoreId}
-import com.twitter.storehaus.FutureOps
-import com.twitter.storehaus.ReadableStore
-import com.twitter.topic_recos.thriftscala.Scores
-import com.twitter.topic_recos.thriftscala.TopicToScores
-import com.twitter.util.Future
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.thr ftscala.Score nternal d.Gener cPa rScore d
+ mport com.tw ter.s mclusters_v2.thr ftscala.Scor ngAlgor hm.CertoNormal zedDotProductScore
+ mport com.tw ter.s mclusters_v2.thr ftscala.Scor ngAlgor hm.CertoNormal zedCos neScore
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.s mclusters_v2.thr ftscala.Top c d
+ mport com.tw ter.s mclusters_v2.thr ftscala.{Score => Thr ftScore}
+ mport com.tw ter.s mclusters_v2.thr ftscala.{Score d => Thr ftScore d}
+ mport com.tw ter.storehaus.FutureOps
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.top c_recos.thr ftscala.Scores
+ mport com.tw ter.top c_recos.thr ftscala.Top cToScores
+ mport com.tw ter.ut l.Future
 
 /**
- * Score store to get Certo <topic, tweet> scores.
- * Currently, the store supports two Scoring Algorithms (i.e., two types of Certo scores):
- * 1. NormalizedDotProduct
- * 2. NormalizedCosine
- * Querying with corresponding scoring algorithms results in different Certo scores.
+ * Score store to get Certo <top c, t et> scores.
+ * Currently, t  store supports two Scor ng Algor hms ( .e., two types of Certo scores):
+ * 1. Normal zedDotProduct
+ * 2. Normal zedCos ne
+ * Query ng w h correspond ng scor ng algor hms results  n d fferent Certo scores.
  */
-case class TopicTweetCertoScoreStore(certoStratoStore: ReadableStore[TweetId, TopicToScores])
-    extends ReadableStore[ThriftScoreId, ThriftScore] {
+case class Top cT etCertoScoreStore(certoStratoStore: ReadableStore[T et d, Top cToScores])
+    extends ReadableStore[Thr ftScore d, Thr ftScore] {
 
-  override def multiGet[K1 <: ThriftScoreId](ks: Set[K1]): Map[K1, Future[Option[ThriftScore]]] = {
-    val tweetIds =
-      ks.map(_.internalId).collect {
-        case GenericPairScoreId(scoreId) =>
-          ((scoreId.id1, scoreId.id2): @annotation.nowarn(
-            "msg=may not be exhaustive|max recursion depth")) match {
-            case (InternalId.TweetId(tweetId), _) => tweetId
-            case (_, InternalId.TweetId(tweetId)) => tweetId
+  overr de def mult Get[K1 <: Thr ftScore d](ks: Set[K1]): Map[K1, Future[Opt on[Thr ftScore]]] = {
+    val t et ds =
+      ks.map(_. nternal d).collect {
+        case Gener cPa rScore d(score d) =>
+          ((score d. d1, score d. d2): @annotat on.nowarn(
+            "msg=may not be exhaust ve|max recurs on depth")) match {
+            case ( nternal d.T et d(t et d), _) => t et d
+            case (_,  nternal d.T et d(t et d)) => t et d
           }
       }
 
     val result = for {
-      certoScores <- Future.collect(certoStratoStore.multiGet(tweetIds))
-    } yield {
+      certoScores <- Future.collect(certoStratoStore.mult Get(t et ds))
+    } y eld {
       ks.map { k =>
-        (k.algorithm, k.internalId) match {
-          case (CertoNormalizedDotProductScore, GenericPairScoreId(scoreId)) =>
-            (scoreId.id1, scoreId.id2) match {
-              case (InternalId.TweetId(tweetId), InternalId.TopicId(topicId)) =>
+        (k.algor hm, k. nternal d) match {
+          case (CertoNormal zedDotProductScore, Gener cPa rScore d(score d)) =>
+            (score d. d1, score d. d2) match {
+              case ( nternal d.T et d(t et d),  nternal d.Top c d(top c d)) =>
                 (
                   k,
                   extractScore(
-                    tweetId,
-                    topicId,
+                    t et d,
+                    top c d,
                     certoScores,
-                    _.followerL2NormalizedDotProduct8HrHalfLife))
-              case (InternalId.TopicId(topicId), InternalId.TweetId(tweetId)) =>
+                    _.follo rL2Normal zedDotProduct8HrHalfL fe))
+              case ( nternal d.Top c d(top c d),  nternal d.T et d(t et d)) =>
                 (
                   k,
                   extractScore(
-                    tweetId,
-                    topicId,
+                    t et d,
+                    top c d,
                     certoScores,
-                    _.followerL2NormalizedDotProduct8HrHalfLife))
+                    _.follo rL2Normal zedDotProduct8HrHalfL fe))
               case _ => (k, None)
             }
-          case (CertoNormalizedCosineScore, GenericPairScoreId(scoreId)) =>
-            (scoreId.id1, scoreId.id2) match {
-              case (InternalId.TweetId(tweetId), InternalId.TopicId(topicId)) =>
+          case (CertoNormal zedCos neScore, Gener cPa rScore d(score d)) =>
+            (score d. d1, score d. d2) match {
+              case ( nternal d.T et d(t et d),  nternal d.Top c d(top c d)) =>
                 (
                   k,
                   extractScore(
-                    tweetId,
-                    topicId,
+                    t et d,
+                    top c d,
                     certoScores,
-                    _.followerL2NormalizedCosineSimilarity8HrHalfLife))
-              case (InternalId.TopicId(topicId), InternalId.TweetId(tweetId)) =>
+                    _.follo rL2Normal zedCos neS m lar y8HrHalfL fe))
+              case ( nternal d.Top c d(top c d),  nternal d.T et d(t et d)) =>
                 (
                   k,
                   extractScore(
-                    tweetId,
-                    topicId,
+                    t et d,
+                    top c d,
                     certoScores,
-                    _.followerL2NormalizedCosineSimilarity8HrHalfLife))
+                    _.follo rL2Normal zedCos neS m lar y8HrHalfL fe))
               case _ => (k, None)
             }
           case _ => (k, None)
         }
       }.toMap
     }
-    FutureOps.liftValues(ks, result)
+    FutureOps.l ftValues(ks, result)
   }
 
   /**
-   * Given tweetToCertoScores, extract certain Certo score between the given tweetId and topicId.
-   * The Certo score of interest is specified using scoreExtractor.
+   * G ven t etToCertoScores, extract certa n Certo score bet en t  g ven t et d and top c d.
+   * T  Certo score of  nterest  s spec f ed us ng scoreExtractor.
    */
   def extractScore(
-    tweetId: TweetId,
-    topicId: TopicId,
-    tweetToCertoScores: Map[TweetId, Option[TopicToScores]],
+    t et d: T et d,
+    top c d: Top c d,
+    t etToCertoScores: Map[T et d, Opt on[Top cToScores]],
     scoreExtractor: Scores => Double
-  ): Option[ThriftScore] = {
-    tweetToCertoScores.get(tweetId).flatMap {
-      case Some(topicToScores) =>
-        topicToScores.topicToScores.flatMap(_.get(topicId).map(scoreExtractor).map(ThriftScore(_)))
-      case _ => Some(ThriftScore(0.0))
+  ): Opt on[Thr ftScore] = {
+    t etToCertoScores.get(t et d).flatMap {
+      case So (top cToScores) =>
+        top cToScores.top cToScores.flatMap(_.get(top c d).map(scoreExtractor).map(Thr ftScore(_)))
+      case _ => So (Thr ftScore(0.0))
     }
   }
 }

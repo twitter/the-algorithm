@@ -1,177 +1,177 @@
-package com.twitter.simclusters_v2.scio.bq_generation
-package simclusters_index_generation
+package com.tw ter.s mclusters_v2.sc o.bq_generat on
+package s mclusters_ ndex_generat on
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getNSFWTweetIdDenylistSQL
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getTweetIdWithFavCountSQL
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getTweetIdWithMediaAndNSFWAuthorFilterSQL
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getUserTweetEngagementEventPairSQL
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.generateClusterTopTweetIntersectionWithFavBasedIndexSQL
-import com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.Config.simclustersEngagementBasedIndexGenerationSQLPath
-import com.twitter.simclusters_v2.scio.bq_generation.common.IndexGenerationUtil.TopKTweetsForClusterKey
-import com.twitter.simclusters_v2.scio.bq_generation.common.IndexGenerationUtil.parseClusterTopKTweetsFn
-import com.twitter.wtf.beam.bq_embedding_export.BQQueryUtils
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
-import org.joda.time.DateTime
+ mport com.spot fy.sc o.Sc oContext
+ mport com.spot fy.sc o.values.SCollect on
+ mport com.tw ter.s mclusters_v2.sc o.bq_generat on.common.BQGenerat onUt l.getNSFWT et dDenyl stSQL
+ mport com.tw ter.s mclusters_v2.sc o.bq_generat on.common.BQGenerat onUt l.getT et dW hFavCountSQL
+ mport com.tw ter.s mclusters_v2.sc o.bq_generat on.common.BQGenerat onUt l.getT et dW h d aAndNSFWAuthorF lterSQL
+ mport com.tw ter.s mclusters_v2.sc o.bq_generat on.common.BQGenerat onUt l.getUserT etEngage ntEventPa rSQL
+ mport com.tw ter.s mclusters_v2.sc o.bq_generat on.common.BQGenerat onUt l.generateClusterTopT et ntersect onW hFavBased ndexSQL
+ mport com.tw ter.s mclusters_v2.sc o.bq_generat on.s mclusters_ ndex_generat on.Conf g.s mclustersEngage ntBased ndexGenerat onSQLPath
+ mport com.tw ter.s mclusters_v2.sc o.bq_generat on.common. ndexGenerat onUt l.TopKT etsForClusterKey
+ mport com.tw ter.s mclusters_v2.sc o.bq_generat on.common. ndexGenerat onUt l.parseClusterTopKT etsFn
+ mport com.tw ter.wtf.beam.bq_embedd ng_export.BQQueryUt ls
+ mport org.apac .beam.sdk. o.gcp.b gquery.B gQuery O
+ mport org.joda.t  .DateT  
 
-object EngagementEventBasedClusterToTweetIndexFromBQ {
+object Engage ntEventBasedClusterToT et ndexFromBQ {
 
   /*
-   * Reads the user-tweet-interaction table and apply tweet fav count filter
-   * Returns the post processed table results in SQL string format
+   * Reads t  user-t et- nteract on table and apply t et fav count f lter
+   * Returns t  post processed table results  n SQL str ng format
    *
-* Input:
-   *   - startTime: DateTime
-   *       The earliest timestamp from the user-tweet-interaction table
-   *   - endTime: DateTime
-   *       The latest timestamp from the user-tweet-interaction table
-   *   - minFavCount: Int
-   *       Whether we want to enable tweet fav count filters
+*  nput:
+   *   - startT  : DateT  
+   *       T  earl est t  stamp from t  user-t et- nteract on table
+   *   - endT  : DateT  
+   *       T  latest t  stamp from t  user-t et- nteract on table
+   *   - m nFavCount:  nt
+   *       W t r   want to enable t et fav count f lters
    *
 * Return:
-   *   String - Post processed table results in SQL string format
+   *   Str ng - Post processed table results  n SQL str ng format
    */
-  def getTweetInteractionTableWithFavCountFilter(
-    startTime: DateTime,
-    endTime: DateTime,
-    minFavCount: Int
-  ): String = {
-    if (minFavCount > 0) {
-      val tweetFavCountSQL = getTweetIdWithFavCountSQL(startTime, endTime)
+  def getT et nteract onTableW hFavCountF lter(
+    startT  : DateT  ,
+    endT  : DateT  ,
+    m nFavCount:  nt
+  ): Str ng = {
+     f (m nFavCount > 0) {
+      val t etFavCountSQL = getT et dW hFavCountSQL(startT  , endT  )
       s"""
-         |  WITH tweet_fav_count AS (${tweetFavCountSQL})
-         |  SELECT userId, tweetId, tsMillis
-         |  FROM user_tweet_interaction_with_min_interaction_count_filter
-         |  JOIN tweet_fav_count
-         |  USING(tweetId)
-         |  WHERE tweet_fav_count.favCount >= ${minFavCount}
-         |""".stripMargin
+         |  W TH t et_fav_count AS (${t etFavCountSQL})
+         |  SELECT user d, t et d, tsM ll s
+         |  FROM user_t et_ nteract on_w h_m n_ nteract on_count_f lter
+         |  JO N t et_fav_count
+         |  US NG(t et d)
+         |  WHERE t et_fav_count.favCount >= ${m nFavCount}
+         |""".str pMarg n
     } else {
-      // Directly read from the table without applying any filters
-      s"SELECT userId, tweetId, tsMillis FROM user_tweet_interaction_with_min_interaction_count_filter"
+      // D rectly read from t  table w hout apply ng any f lters
+      s"SELECT user d, t et d, tsM ll s FROM user_t et_ nteract on_w h_m n_ nteract on_count_f lter"
     }
   }
 
   /*
-   * Reads the user-tweet-interaction table and apply health and video filters if specified.
-   * Returns the post processed table results in SQL string format
+   * Reads t  user-t et- nteract on table and apply  alth and v deo f lters  f spec f ed.
+   * Returns t  post processed table results  n SQL str ng format
    *
-  * Input:
-   *   - tableName: String
-   *       Schema of the table
-   *         userId: Long
-   *         tweetId: Long
-   *         tsMillis: Long
-   *   - startTime: DateTime
-   *       The earliest timestamp from the user-tweet-interaction table
-   *   - endTime: DateTime
-   *       The latest timestamp from the user-tweet-interaction table
-   *   - enableHealthAndVideoFilters: Boolean
-   *       Whether we want to enable health filters and video only filters
+  *  nput:
+   *   - tableNa : Str ng
+   *       Sc ma of t  table
+   *         user d: Long
+   *         t et d: Long
+   *         tsM ll s: Long
+   *   - startT  : DateT  
+   *       T  earl est t  stamp from t  user-t et- nteract on table
+   *   - endT  : DateT  
+   *       T  latest t  stamp from t  user-t et- nteract on table
+   *   - enable althAndV deoF lters: Boolean
+   *       W t r   want to enable  alth f lters and v deo only f lters
    *
   * Return:
-   *   String - Post processed table results in SQL string format
+   *   Str ng - Post processed table results  n SQL str ng format
    */
-  def getTweetInteractionTableWithHealthFilter(
-    startTime: DateTime,
-    endTime: DateTime,
-    enableHealthAndVideoFilters: Boolean,
-  ): String = {
-    if (enableHealthAndVideoFilters) {
-      // Get SQL for tweets with media and NSFW filter
-      val tweetWithMediaAndNSFWAuthorFilterSQL = getTweetIdWithMediaAndNSFWAuthorFilterSQL(
-        startTime,
-        endTime,
-        filterMediaType = Some(3), // VideoTweets MediaType = 3
-        filterNSFWAuthor = true
+  def getT et nteract onTableW h althF lter(
+    startT  : DateT  ,
+    endT  : DateT  ,
+    enable althAndV deoF lters: Boolean,
+  ): Str ng = {
+     f (enable althAndV deoF lters) {
+      // Get SQL for t ets w h  d a and NSFW f lter
+      val t etW h d aAndNSFWAuthorF lterSQL = getT et dW h d aAndNSFWAuthorF lterSQL(
+        startT  ,
+        endT  ,
+        f lter d aType = So (3), // V deoT ets  d aType = 3
+        f lterNSFWAuthor = true
       )
-      // Get SQL for NSFW tweet id deny list
-      val nsfwTweetDenylistSQL = getNSFWTweetIdDenylistSQL(startTime, endTime)
-      // Combine the health filter SQLs
+      // Get SQL for NSFW t et  d deny l st
+      val nsfwT etDenyl stSQL = getNSFWT et dDenyl stSQL(startT  , endT  )
+      // Comb ne t   alth f lter SQLs
       s"""
-         |SELECT userId, tweetId, tsMillis FROM user_tweet_interaction_with_fav_count_filter JOIN (
-         |  ${tweetWithMediaAndNSFWAuthorFilterSQL}
-         |    AND tweetId NOT IN (${nsfwTweetDenylistSQL})
-         |) USING(tweetId)
-         |""".stripMargin
+         |SELECT user d, t et d, tsM ll s FROM user_t et_ nteract on_w h_fav_count_f lter JO N (
+         |  ${t etW h d aAndNSFWAuthorF lterSQL}
+         |    AND t et d NOT  N (${nsfwT etDenyl stSQL})
+         |) US NG(t et d)
+         |""".str pMarg n
     } else {
-      // Directly read from the table without applying any filters
-      s"SELECT userId, tweetId, tsMillis FROM user_tweet_interaction_with_fav_count_filter"
+      // D rectly read from t  table w hout apply ng any f lters
+      s"SELECT user d, t et d, tsM ll s FROM user_t et_ nteract on_w h_fav_count_f lter"
     }
   }
 
-  def getTopKTweetsForClusterKeyBQ(
-    sc: ScioContext,
-    queryTimestamp: DateTime,
-    maxTweetAgeHours: Int,
-    consumerEmbeddingsSQL: String,
-    userTweetEngagementEventPairSqlPath: String,
-    userTweetEngagementEventPairTemplateVariable: Map[String, String],
-    enableHealthAndVideoFilters: Boolean,
-    enableFavClusterTopKTweetsIntersection: Boolean,
-    minInteractionCount: Int,
-    minFavCount: Int,
-    tweetEmbeddingsLength: Int,
-    tweetEmbeddingsHalfLife: Int,
-    minEngagementPerCluster: Int,
-    clusterTopKTweets: Int
-  ): SCollection[TopKTweetsForClusterKey] = {
-    // Define template variables which we would like to be replaced in the corresponding sql file
-    val startTime = queryTimestamp.minusHours(maxTweetAgeHours)
-    val endTime = queryTimestamp
+  def getTopKT etsForClusterKeyBQ(
+    sc: Sc oContext,
+    queryT  stamp: DateT  ,
+    maxT etAgeH s:  nt,
+    consu rEmbedd ngsSQL: Str ng,
+    userT etEngage ntEventPa rSqlPath: Str ng,
+    userT etEngage ntEventPa rTemplateVar able: Map[Str ng, Str ng],
+    enable althAndV deoF lters: Boolean,
+    enableFavClusterTopKT ets ntersect on: Boolean,
+    m n nteract onCount:  nt,
+    m nFavCount:  nt,
+    t etEmbedd ngsLength:  nt,
+    t etEmbedd ngsHalfL fe:  nt,
+    m nEngage ntPerCluster:  nt,
+    clusterTopKT ets:  nt
+  ): SCollect on[TopKT etsForClusterKey] = {
+    // Def ne template var ables wh ch   would l ke to be replaced  n t  correspond ng sql f le
+    val startT   = queryT  stamp.m nusH s(maxT etAgeH s)
+    val endT   = queryT  stamp
 
-    val indexGenerationTemplateVariables =
+    val  ndexGenerat onTemplateVar ables =
       Map(
-        "HALF_LIFE" -> tweetEmbeddingsHalfLife.toString,
-        "CURRENT_TS" -> queryTimestamp.toString(),
-        "START_TIME" -> startTime.toString(),
-        "END_TIME" -> endTime.toString(),
+        "HALF_L FE" -> t etEmbedd ngsHalfL fe.toStr ng,
+        "CURRENT_TS" -> queryT  stamp.toStr ng(),
+        "START_T ME" -> startT  .toStr ng(),
+        "END_T ME" -> endT  .toStr ng(),
         "USER_TWEET_ENGAGEMENT_TABLE_SQL" ->
-          getUserTweetEngagementEventPairSQL(
-            startTime,
-            endTime,
-            userTweetEngagementEventPairSqlPath,
-            userTweetEngagementEventPairTemplateVariable
+          getUserT etEngage ntEventPa rSQL(
+            startT  ,
+            endT  ,
+            userT etEngage ntEventPa rSqlPath,
+            userT etEngage ntEventPa rTemplateVar able
           ),
-        // Min interaction count filter
-        "MIN_INTERACTION_COUNT" -> minInteractionCount.toString,
-        // Min fav count filter
-        "TWEET_INTERACTION_WITH_FAV_COUNT_FILTER_SQL" -> getTweetInteractionTableWithFavCountFilter(
-          startTime,
-          endTime,
-          minFavCount
+        // M n  nteract on count f lter
+        "M N_ NTERACT ON_COUNT" -> m n nteract onCount.toStr ng,
+        // M n fav count f lter
+        "TWEET_ NTERACT ON_W TH_FAV_COUNT_F LTER_SQL" -> getT et nteract onTableW hFavCountF lter(
+          startT  ,
+          endT  ,
+          m nFavCount
         ),
-        // Health filter
-        "TWEET_INTERACTION_WITH_HEALTH_FILTER_SQL" -> getTweetInteractionTableWithHealthFilter(
-          startTime,
-          endTime,
-          enableHealthAndVideoFilters),
-        "CONSUMER_EMBEDDINGS_SQL" -> consumerEmbeddingsSQL,
-        "TWEET_EMBEDDING_LENGTH" -> tweetEmbeddingsLength.toString,
-        "MIN_ENGAGEMENT_PER_CLUSTER" -> minEngagementPerCluster.toString,
-        "CLUSTER_TOP_K_TWEETS" -> clusterTopKTweets.toString
+        //  alth f lter
+        "TWEET_ NTERACT ON_W TH_HEALTH_F LTER_SQL" -> getT et nteract onTableW h althF lter(
+          startT  ,
+          endT  ,
+          enable althAndV deoF lters),
+        "CONSUMER_EMBEDD NGS_SQL" -> consu rEmbedd ngsSQL,
+        "TWEET_EMBEDD NG_LENGTH" -> t etEmbedd ngsLength.toStr ng,
+        "M N_ENGAGEMENT_PER_CLUSTER" -> m nEngage ntPerCluster.toStr ng,
+        "CLUSTER_TOP_K_TWEETS" -> clusterTopKT ets.toStr ng
       )
-    val query = BQQueryUtils.getBQQueryFromSqlFile(
-      simclustersEngagementBasedIndexGenerationSQLPath,
-      indexGenerationTemplateVariables)
+    val query = BQQueryUt ls.getBQQueryFromSqlF le(
+      s mclustersEngage ntBased ndexGenerat onSQLPath,
+       ndexGenerat onTemplateVar ables)
 
-    val postFilterQuery = if (enableFavClusterTopKTweetsIntersection) {
-      generateClusterTopTweetIntersectionWithFavBasedIndexSQL(
-        startTime,
-        endTime,
-        clusterTopKTweets,
+    val postF lterQuery =  f (enableFavClusterTopKT ets ntersect on) {
+      generateClusterTopT et ntersect onW hFavBased ndexSQL(
+        startT  ,
+        endT  ,
+        clusterTopKT ets,
         query)
     } else {
       query
     }
-    // Generate SimClusters cluster-to-tweet index
-    sc.customInput(
-      s"SimClusters cluster-to-tweet index generation BQ job",
-      BigQueryIO
-        .read(parseClusterTopKTweetsFn(tweetEmbeddingsHalfLife))
-        .fromQuery(postFilterQuery)
-        .usingStandardSql()
+    // Generate S mClusters cluster-to-t et  ndex
+    sc.custom nput(
+      s"S mClusters cluster-to-t et  ndex generat on BQ job",
+      B gQuery O
+        .read(parseClusterTopKT etsFn(t etEmbedd ngsHalfL fe))
+        .fromQuery(postF lterQuery)
+        .us ngStandardSql()
     )
   }
 }

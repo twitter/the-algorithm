@@ -1,165 +1,165 @@
-package com.twitter.search.earlybird.archive;
+package com.tw ter.search.earlyb rd.arch ve;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.Map;
+ mport java. o. OExcept on;
+ mport java.ut l.Date;
+ mport java.ut l.Map;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Maps;
-import com.google.gson.Gson;
-import com.google.gson.JsonParseException;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.collect.Maps;
+ mport com.google.gson.Gson;
+ mport com.google.gson.JsonParseExcept on;
 
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .hadoop.fs.F leSystem;
+ mport org.apac .hadoop.fs.Path;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
 /**
- * Represents a day's worth of statuses (tweets) for multiple hash partitions.
+ * Represents a day's worth of statuses (t ets) for mult ple hash part  ons.
  *
- * Note that what this class contains is not the data, but metadata.
+ * Note that what t  class conta ns  s not t  data, but  tadata.
  *
- * A day of tweets will come from:
- * - A scrubgen, if it has happened before the scrubgen date.
- * - Our daily jobs pipeline, if it has happened after that.
+ * A day of t ets w ll co  from:
+ * - A scrubgen,  f   has happened before t  scrubgen date.
+ * -   da ly jobs p pel ne,  f   has happened after that.
  *
- * This class checks the _SUCCESS file exists in the "statuses" subdirectory and extracts the status
- * count, min status id and max status id.
+ * T  class c cks t  _SUCCESS f le ex sts  n t  "statuses" subd rectory and extracts t  status
+ * count, m n status  d and max status  d.
  */
-public class DailyStatusBatch implements Comparable<DailyStatusBatch> {
-  private static final Logger LOG = LoggerFactory.getLogger(DailyStatusBatch.class);
+publ c class Da lyStatusBatch  mple nts Comparable<Da lyStatusBatch> {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Da lyStatusBatch.class);
 
-  public static final long EMPTY_BATCH_STATUS_ID = -1;
-  private static final String PARTITION_FORMAT = "p_%d_of_%d";
-  private static final String SUCCESS_FILE_NAME = "_SUCCESS";
+  publ c stat c f nal long EMPTY_BATCH_STATUS_ D = -1;
+  pr vate stat c f nal Str ng PART T ON_FORMAT = "p_%d_of_%d";
+  pr vate stat c f nal Str ng SUCCESS_F LE_NAME = "_SUCCESS";
 
-  private final Map<Integer, PartitionedBatch> hashPartitionToStatuses = Maps.newHashMap();
+  pr vate f nal Map< nteger, Part  onedBatch> hashPart  onToStatuses = Maps.newHashMap();
 
-  private final Date date;
-  private final int numHashPartitions;
-  private final boolean hasSuccessFiles;
+  pr vate f nal Date date;
+  pr vate f nal  nt numHashPart  ons;
+  pr vate f nal boolean hasSuccessF les;
 
-  public DailyStatusBatch(Date date, int numHashPartitions, Path statusPath, FileSystem hdfs) {
-    this.date = date;
-    this.numHashPartitions = numHashPartitions;
-    this.hasSuccessFiles = checkForSuccessFile(hdfs, date, statusPath);
+  publ c Da lyStatusBatch(Date date,  nt numHashPart  ons, Path statusPath, F leSystem hdfs) {
+    t .date = date;
+    t .numHashPart  ons = numHashPart  ons;
+    t .hasSuccessF les = c ckForSuccessF le(hdfs, date, statusPath);
   }
 
-  public Date getDate() {
+  publ c Date getDate() {
     return date;
   }
 
   /**
-   * Check for the presence of the _SUCCESS file for the given day's path on HDFS for the statuses
-   * field group.
+   * C ck for t  presence of t  _SUCCESS f le for t  g ven day's path on HDFS for t  statuses
+   * f eld group.
    */
-  private boolean checkForSuccessFile(FileSystem hdfs, Date inputDate, Path statusPath) {
-    Path dayPath = new Path(statusPath, ArchiveHDFSUtils.dateToPath(inputDate, "/"));
-    Path successFilePath = new Path(dayPath, SUCCESS_FILE_NAME);
+  pr vate boolean c ckForSuccessF le(F leSystem hdfs, Date  nputDate, Path statusPath) {
+    Path dayPath = new Path(statusPath, Arch veHDFSUt ls.dateToPath( nputDate, "/"));
+    Path successF lePath = new Path(dayPath, SUCCESS_F LE_NAME);
     try {
-      return hdfs.getFileStatus(successFilePath).isFile();
-    } catch (IOException e) {
-      LOG.error("Could not verify existence of the _SUCCESS file. Assuming it doesn't exist.", e);
+      return hdfs.getF leStatus(successF lePath). sF le();
+    } catch ( OExcept on e) {
+      LOG.error("Could not ver fy ex stence of t  _SUCCESS f le. Assum ng   doesn't ex st.", e);
     }
     return false;
   }
 
   /**
-   * Loads the data for this day for the given partition.
+   * Loads t  data for t  day for t  g ven part  on.
    */
-  public PartitionedBatch addPartition(FileSystem hdfs, Path dayPath, int hashPartitionID)
-      throws IOException {
-    String partitionDir = String.format(PARTITION_FORMAT, hashPartitionID, numHashPartitions);
-    Path path = new Path(dayPath, partitionDir);
-    PartitionedBatch batch =
-        new PartitionedBatch(path, hashPartitionID, numHashPartitions, date);
+  publ c Part  onedBatch addPart  on(F leSystem hdfs, Path dayPath,  nt hashPart  on D)
+      throws  OExcept on {
+    Str ng part  onD r = Str ng.format(PART T ON_FORMAT, hashPart  on D, numHashPart  ons);
+    Path path = new Path(dayPath, part  onD r);
+    Part  onedBatch batch =
+        new Part  onedBatch(path, hashPart  on D, numHashPart  ons, date);
     batch.load(hdfs);
-    hashPartitionToStatuses.put(hashPartitionID, batch);
+    hashPart  onToStatuses.put(hashPart  on D, batch);
     return batch;
   }
 
-  public PartitionedBatch getPartition(int hashPartitionID) {
-    return hashPartitionToStatuses.get(hashPartitionID);
+  publ c Part  onedBatch getPart  on( nt hashPart  on D) {
+    return hashPart  onToStatuses.get(hashPart  on D);
   }
 
   /**
-   * Returns the greatest status count in all partitions belonging to this batch.
+   * Returns t  greatest status count  n all part  ons belong ng to t  batch.
    */
-  public int getMaxPerPartitionStatusCount() {
-    int maxPerPartitionStatusCount = 0;
-    for (PartitionedBatch batch : hashPartitionToStatuses.values()) {
-      maxPerPartitionStatusCount = Math.max(batch.getStatusCount(), maxPerPartitionStatusCount);
+  publ c  nt getMaxPerPart  onStatusCount() {
+     nt maxPerPart  onStatusCount = 0;
+    for (Part  onedBatch batch : hashPart  onToStatuses.values()) {
+      maxPerPart  onStatusCount = Math.max(batch.getStatusCount(), maxPerPart  onStatusCount);
     }
-    return maxPerPartitionStatusCount;
+    return maxPerPart  onStatusCount;
   }
 
-  public int getNumHashPartitions() {
-    return numHashPartitions;
+  publ c  nt getNumHashPart  ons() {
+    return numHashPart  ons;
   }
 
-  @VisibleForTesting
-  boolean hasSuccessFiles() {
-    return hasSuccessFiles;
+  @V s bleForTest ng
+  boolean hasSuccessF les() {
+    return hasSuccessF les;
   }
 
   /**
-   * Returns true if the _status_counts files could be found in each
-   * hash partition subfolder that belongs to this timeslice
-   * AND the _SUCCESS file can be found at the root folder for day
+   * Returns true  f t  _status_counts f les could be found  n each
+   * hash part  on subfolder that belongs to t  t  sl ce
+   * AND t  _SUCCESS f le can be found at t  root folder for day
    */
-  public boolean isValid() {
-    // make sure we have data for all hash partitions
-    for (int i = 0; i < numHashPartitions; i++) {
-      PartitionedBatch day = hashPartitionToStatuses.get(i);
-      if (day == null || !day.hasStatusCount() || day.isDisallowedEmptyPartition()) {
+  publ c boolean  sVal d() {
+    // make sure   have data for all hash part  ons
+    for ( nt   = 0;   < numHashPart  ons;  ++) {
+      Part  onedBatch day = hashPart  onToStatuses.get( );
+       f (day == null || !day.hasStatusCount() || day. sD sallo dEmptyPart  on()) {
         return false;
       }
     }
-    return hasSuccessFiles;
+    return hasSuccessF les;
   }
 
-  @Override
-  public String toString() {
-    StringBuilder builder = new StringBuilder();
-    builder.append("DailyStatusBatch[date=").append(date)
-           .append(",valid=").append(isValid())
-           .append(",hasSuccessFiles=").append(hasSuccessFiles)
-           .append(",numHashPartitions=").append(numHashPartitions)
+  @Overr de
+  publ c Str ng toStr ng() {
+    Str ngBu lder bu lder = new Str ngBu lder();
+    bu lder.append("Da lyStatusBatch[date=").append(date)
+           .append(",val d=").append( sVal d())
+           .append(",hasSuccessF les=").append(hasSuccessF les)
+           .append(",numHashPart  ons=").append(numHashPart  ons)
            .append("]:\n");
-    for (int i = 0; i < numHashPartitions; i++) {
-      builder.append('\t').append(hashPartitionToStatuses.get(i).toString()).append('\n');
+    for ( nt   = 0;   < numHashPart  ons;  ++) {
+      bu lder.append('\t').append(hashPart  onToStatuses.get( ).toStr ng()).append('\n');
     }
-    return builder.toString();
+    return bu lder.toStr ng();
   }
 
-  @Override
-  public int compareTo(DailyStatusBatch o) {
+  @Overr de
+  publ c  nt compareTo(Da lyStatusBatch o) {
     return date.compareTo(o.date);
   }
 
   /**
-   * Serialize DailyStatusBatch to a json string.
+   * Ser al ze Da lyStatusBatch to a json str ng.
    */
-  public String serializeToJson() {
-    return serializeToJson(new Gson());
+  publ c Str ng ser al zeToJson() {
+    return ser al zeToJson(new Gson());
   }
 
-  @VisibleForTesting
-  String serializeToJson(Gson gson) {
-    return gson.toJson(this);
+  @V s bleForTest ng
+  Str ng ser al zeToJson(Gson gson) {
+    return gson.toJson(t );
   }
 
   /**
-   * Given a json string, parse its fields and construct a daily status batch.
-   * @param batchStr the json string representation of a daily status batch.
-   * @return the daily status batch constructed; if the string is of invalid format, null will be
+   * G ven a json str ng, parse  s f elds and construct a da ly status batch.
+   * @param batchStr t  json str ng representat on of a da ly status batch.
+   * @return t  da ly status batch constructed;  f t  str ng  s of  nval d format, null w ll be
    *         returned.
    */
-  static DailyStatusBatch deserializeFromJson(String batchStr) {
+  stat c Da lyStatusBatch deser al zeFromJson(Str ng batchStr) {
     try {
-      return new Gson().fromJson(batchStr, DailyStatusBatch.class);
-    } catch (JsonParseException e) {
-      LOG.error("Error parsing json string: " + batchStr, e);
+      return new Gson().fromJson(batchStr, Da lyStatusBatch.class);
+    } catch (JsonParseExcept on e) {
+      LOG.error("Error pars ng json str ng: " + batchStr, e);
       return null;
     }
   }

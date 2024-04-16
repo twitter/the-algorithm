@@ -1,56 +1,56 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.expandodo.thriftscala._
-import com.twitter.stitch.SeqGroup
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.compat.LegacySeqGroup
-import com.twitter.tweetypie.backends.Expandodo
+ mport com.tw ter.expandodo.thr ftscala._
+ mport com.tw ter.st ch.SeqGroup
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.compat.LegacySeqGroup
+ mport com.tw ter.t etyp e.backends.Expandodo
 
-sealed trait Card2Key {
+sealed tra  Card2Key {
   def toCard2Request: Card2Request
 }
 
-final case class UrlCard2Key(url: String) extends Card2Key {
-  override def toCard2Request: Card2Request =
-    Card2Request(`type` = Card2RequestType.ByUrl, url = Some(url))
+f nal case class UrlCard2Key(url: Str ng) extends Card2Key {
+  overr de def toCard2Request: Card2Request =
+    Card2Request(`type` = Card2RequestType.ByUrl, url = So (url))
 }
 
-final case class ImmediateValuesCard2Key(values: Seq[Card2ImmediateValue], tweetId: TweetId)
+f nal case class  m d ateValuesCard2Key(values: Seq[Card2 m d ateValue], t et d: T et d)
     extends Card2Key {
-  override def toCard2Request: Card2Request =
+  overr de def toCard2Request: Card2Request =
     Card2Request(
-      `type` = Card2RequestType.ByImmediateValues,
-      immediateValues = Some(values),
-      statusId = Some(tweetId)
+      `type` = Card2RequestType.By m d ateValues,
+       m d ateValues = So (values),
+      status d = So (t et d)
     )
 }
 
-object Card2Repository {
-  type Type = (Card2Key, Card2RequestOptions) => Stitch[Card2]
+object Card2Repos ory {
+  type Type = (Card2Key, Card2RequestOpt ons) => St ch[Card2]
 
-  def apply(getCards2: Expandodo.GetCards2, maxRequestSize: Int): Type = {
-    case class RequestGroup(opts: Card2RequestOptions) extends SeqGroup[Card2Key, Option[Card2]] {
-      override def run(keys: Seq[Card2Key]): Future[Seq[Try[Option[Card2]]]] =
-        LegacySeqGroup.liftToSeqTry(
+  def apply(getCards2: Expandodo.GetCards2, maxRequestS ze:  nt): Type = {
+    case class RequestGroup(opts: Card2RequestOpt ons) extends SeqGroup[Card2Key, Opt on[Card2]] {
+      overr de def run(keys: Seq[Card2Key]): Future[Seq[Try[Opt on[Card2]]]] =
+        LegacySeqGroup.l ftToSeqTry(
           getCards2((keys.map(_.toCard2Request), opts)).map { res =>
             res.responsesCode match {
               case Card2ResponsesCode.Ok =>
                 res.responses.map(_.card)
 
               case _ =>
-                // treat all other failure cases as card-not-found
-                Seq.fill(keys.size)(None)
+                // treat all ot r fa lure cases as card-not-found
+                Seq.f ll(keys.s ze)(None)
             }
           }
         )
 
-      override def maxSize: Int = maxRequestSize
+      overr de def maxS ze:  nt = maxRequestS ze
     }
 
     (card2Key, opts) =>
-      Stitch
+      St ch
         .call(card2Key, RequestGroup(opts))
-        .lowerFromOption()
+        .lo rFromOpt on()
   }
 }

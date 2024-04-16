@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.pipeline
+package com.tw ter.product_m xer.core.p pel ne
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
 
-private[core] object CandidatePipelineResults
-    extends Feature[PipelineQuery, Seq[CandidateWithDetails]]
+pr vate[core] object Cand dateP pel neResults
+    extends Feature[P pel neQuery, Seq[Cand dateW hDeta ls]]

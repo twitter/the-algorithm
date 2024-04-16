@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tombstone
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.tombstone
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.TombstoneInfo
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.r chtext.R chTextMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.tombstone.Tombstone nfo
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TombstoneInfoMarshaller @Inject() (
-  richTextMarshaller: RichTextMarshaller) {
+@S ngleton
+class Tombstone nfoMarshaller @ nject() (
+  r chTextMarshaller: R chTextMarshaller) {
 
-  def apply(tombstoneInfo: TombstoneInfo): urt.TombstoneInfo = urt.TombstoneInfo(
-    text = tombstoneInfo.text,
-    richText = tombstoneInfo.richText.map(richTextMarshaller(_)),
-    richRevealText = tombstoneInfo.richRevealText.map(richTextMarshaller(_))
+  def apply(tombstone nfo: Tombstone nfo): urt.Tombstone nfo = urt.Tombstone nfo(
+    text = tombstone nfo.text,
+    r chText = tombstone nfo.r chText.map(r chTextMarshaller(_)),
+    r chRevealText = tombstone nfo.r chRevealText.map(r chTextMarshaller(_))
   )
 }

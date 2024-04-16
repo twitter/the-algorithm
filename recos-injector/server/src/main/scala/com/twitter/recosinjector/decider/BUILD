@@ -1,7 +1,7 @@
-scala_library(
+scala_l brary(
     platform = "java11",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "decider/src/main/scala",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "dec der/src/ma n/scala",
     ],
 )

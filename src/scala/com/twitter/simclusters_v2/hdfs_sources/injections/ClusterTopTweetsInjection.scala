@@ -1,14 +1,14 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.tw ter.s mclusters_v2.hdfs_s ces. nject ons
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaCompactThrift
-import com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores
-import com.twitter.simclusters_v2.thriftscala.FullClusterId
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.ScalaCompactThr ft
+ mport com.tw ter.s mclusters_v2.thr ftscala.TopKT etsW hScores
+ mport com.tw ter.s mclusters_v2.thr ftscala.FullCluster d
 
-object ClusterTopTweetsInjection {
+object ClusterTopT ets nject on {
 
-  val clusterIdToTopKTweetsInjection = KeyValInjection[FullClusterId, TopKTweetsWithScores](
-    ScalaCompactThrift(FullClusterId),
-    ScalaCompactThrift(TopKTweetsWithScores)
+  val cluster dToTopKT ets nject on = KeyVal nject on[FullCluster d, TopKT etsW hScores](
+    ScalaCompactThr ft(FullCluster d),
+    ScalaCompactThr ft(TopKT etsW hScores)
   )
 }

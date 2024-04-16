@@ -1,264 +1,264 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.conversions.DurationOps.RichDuration
-import com.twitter.servo.exception.thriftscala.ClientError
-import com.twitter.servo.exception.thriftscala.ClientErrorCause
-import com.twitter.servo.util.FutureArrow
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.NotFound
-import com.twitter.timelineservice.thriftscala.PerspectiveResult
-import com.twitter.timelineservice.{thriftscala => tls}
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.store._
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.util.Time
-import com.twitter.util.Try
-import Try._
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType
-import com.twitter.tweetypie.backends.TimelineService.GetPerspectives
-import com.twitter.tweetypie.util.EditControlUtil
-import scala.util.control.NoStackTrace
+ mport com.tw ter.convers ons.Durat onOps.R chDurat on
+ mport com.tw ter.servo.except on.thr ftscala.Cl entError
+ mport com.tw ter.servo.except on.thr ftscala.Cl entErrorCause
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.NotFound
+ mport com.tw ter.t  l neserv ce.thr ftscala.Perspect veResult
+ mport com.tw ter.t  l neserv ce.{thr ftscala => tls}
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.repos ory._
+ mport com.tw ter.t etyp e.store._
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.ut l.Try
+ mport Try._
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLabelType
+ mport com.tw ter.t etyp e.backends.T  l neServ ce.GetPerspect ves
+ mport com.tw ter.t etyp e.ut l.Ed ControlUt l
+ mport scala.ut l.control.NoStackTrace
 
-case class CascadedDeleteNotAvailable(retweetId: TweetId) extends Exception with NoStackTrace {
-  override def getMessage: String =
-    s"""|Cascaded delete tweet failed because tweet $retweetId
-        |is not present in cache or manhattan.""".stripMargin
+case class CascadedDeleteNotAva lable(ret et d: T et d) extends Except on w h NoStackTrace {
+  overr de def get ssage: Str ng =
+    s"""|Cascaded delete t et fa led because t et $ret et d
+        | s not present  n cac  or manhattan.""".str pMarg n
 }
 
-object TweetDeletePathHandler {
+object T etDeletePathHandler {
 
-  type DeleteTweets =
-    (DeleteTweetsRequest, Boolean) => Future[Seq[DeleteTweetResult]]
+  type DeleteT ets =
+    (DeleteT etsRequest, Boolean) => Future[Seq[DeleteT etResult]]
 
-  type UnretweetEdits = (Option[EditControl], TweetId, UserId) => Future[Unit]
+  type Unret etEd s = (Opt on[Ed Control], T et d, User d) => Future[Un ]
 
-  /** The information from a deleteTweet request that can be inspected by a deleteTweets validator */
-  case class DeleteTweetsContext(
-    byUserId: Option[UserId],
-    authenticatedUserId: Option[UserId],
-    tweetAuthorId: UserId,
-    users: Map[UserId, User],
-    isUserErasure: Boolean,
-    expectedErasureUserId: Option[UserId],
-    tweetIsBounced: Boolean,
-    isBounceDelete: Boolean)
+  /** T   nformat on from a deleteT et request that can be  nspected by a deleteT ets val dator */
+  case class DeleteT etsContext(
+    byUser d: Opt on[User d],
+    aut nt catedUser d: Opt on[User d],
+    t etAuthor d: User d,
+    users: Map[User d, User],
+     sUserErasure: Boolean,
+    expectedErasureUser d: Opt on[User d],
+    t et sBounced: Boolean,
+     sBounceDelete: Boolean)
 
-  /** Provides reason a tweet deletion was allowed */
-  sealed trait DeleteAuthorization { def byUserId: Option[UserId] }
+  /** Prov des reason a t et delet on was allo d */
+  sealed tra  DeleteAuthor zat on { def byUser d: Opt on[User d] }
 
-  case class AuthorizedByTweetOwner(userId: UserId) extends DeleteAuthorization {
-    def byUserId: Option[UserId] = Some(userId)
+  case class Author zedByT etOwner(user d: User d) extends DeleteAuthor zat on {
+    def byUser d: Opt on[User d] = So (user d)
   }
-  case class AuthorizedByTweetContributor(contributorUserId: UserId) extends DeleteAuthorization {
-    def byUserId: Option[UserId] = Some(contributorUserId)
+  case class Author zedByT etContr butor(contr butorUser d: User d) extends DeleteAuthor zat on {
+    def byUser d: Opt on[User d] = So (contr butorUser d)
   }
-  case class AuthorizedByAdmin(adminUserId: UserId) extends DeleteAuthorization {
-    def byUserId: Option[UserId] = Some(adminUserId)
+  case class Author zedByAdm n(adm nUser d: User d) extends DeleteAuthor zat on {
+    def byUser d: Opt on[User d] = So (adm nUser d)
   }
-  case object AuthorizedByErasure extends DeleteAuthorization {
-    def byUserId: None.type = None
+  case object Author zedByErasure extends DeleteAuthor zat on {
+    def byUser d: None.type = None
   }
 
-  // Type for a method that receives all the relevant information about a proposed internal tweet
-  // deletion and can return Future.exception to cancel the delete due to a validation error or
-  // return a [[DeleteAuthorization]] specifying the reason the deletion is allowed.
-  type ValidateDeleteTweets = FutureArrow[DeleteTweetsContext, DeleteAuthorization]
+  // Type for a  thod that rece ves all t  relevant  nformat on about a proposed  nternal t et
+  // delet on and can return Future.except on to cancel t  delete due to a val dat on error or
+  // return a [[DeleteAuthor zat on]] spec fy ng t  reason t  delet on  s allo d.
+  type Val dateDeleteT ets = FutureArrow[DeleteT etsContext, DeleteAuthor zat on]
 
-  val userFieldsForDelete: Set[UserField] =
-    Set(UserField.Account, UserField.Profile, UserField.Roles, UserField.Safety)
+  val userF eldsForDelete: Set[UserF eld] =
+    Set(UserF eld.Account, UserF eld.Prof le, UserF eld.Roles, UserF eld.Safety)
 
-  val userQueryOptions: UserQueryOptions =
-    UserQueryOptions(
-      userFieldsForDelete,
-      UserVisibility.All
+  val userQueryOpt ons: UserQueryOpt ons =
+    UserQueryOpt ons(
+      userF eldsForDelete,
+      UserV s b l y.All
     )
 
-  // user_agent property originates from the client so truncate to a reasonable length
+  // user_agent property or g nates from t  cl ent so truncate to a reasonable length
   val MaxUserAgentLength = 1000
 
-  // Age under which we treat not found tweets in
-  // cascaded_delete_tweet as a temporary condition (the most likely
-  // explanation being that the tweet has not yet been
-  // replicated). Tweets older than this we assume are due to
-  // *permanently* inconsistent data, either spurious edges in tflock or
-  // tweets that are not loadable from Manhattan.
-  val MaxCascadedDeleteTweetTemporaryInconsistencyAge: Duration =
-    10.minutes
+  // Age under wh ch   treat not found t ets  n
+  // cascaded_delete_t et as a temporary cond  on (t  most l kely
+  // explanat on be ng that t  t et has not yet been
+  // repl cated). T ets older than t    assu  are due to
+  // *permanently*  ncons stent data, e  r spur ous edges  n tflock or
+  // t ets that are not loadable from Manhattan.
+  val MaxCascadedDeleteT etTemporary ncons stencyAge: Durat on =
+    10.m nutes
 }
 
-trait TweetDeletePathHandler {
-  import TweetDeletePathHandler.ValidateDeleteTweets
+tra  T etDeletePathHandler {
+   mport T etDeletePathHandler.Val dateDeleteT ets
 
-  def cascadedDeleteTweet(request: CascadedDeleteTweetRequest): Future[Unit]
+  def cascadedDeleteT et(request: CascadedDeleteT etRequest): Future[Un ]
 
-  def deleteTweets(
-    request: DeleteTweetsRequest,
-    isUnretweetEdits: Boolean = false,
-  ): Future[Seq[DeleteTweetResult]]
+  def deleteT ets(
+    request: DeleteT etsRequest,
+     sUnret etEd s: Boolean = false,
+  ): Future[Seq[DeleteT etResult]]
 
-  def internalDeleteTweets(
-    request: DeleteTweetsRequest,
-    byUserId: Option[UserId],
-    authenticatedUserId: Option[UserId],
-    validate: ValidateDeleteTweets,
-    isUnretweetEdits: Boolean = false
-  ): Future[Seq[DeleteTweetResult]]
+  def  nternalDeleteT ets(
+    request: DeleteT etsRequest,
+    byUser d: Opt on[User d],
+    aut nt catedUser d: Opt on[User d],
+    val date: Val dateDeleteT ets,
+     sUnret etEd s: Boolean = false
+  ): Future[Seq[DeleteT etResult]]
 
-  def unretweetEdits(
-    optEditControl: Option[EditControl],
-    excludedTweetId: TweetId,
-    byUserId: UserId
-  ): Future[Unit]
+  def unret etEd s(
+    optEd Control: Opt on[Ed Control],
+    excludedT et d: T et d,
+    byUser d: User d
+  ): Future[Un ]
 }
 
 /**
- * Implementation of TweetDeletePathHandler
+ *  mple ntat on of T etDeletePathHandler
  */
-class DefaultTweetDeletePathHandler(
-  stats: StatsReceiver,
-  tweetResultRepo: TweetResultRepository.Type,
-  userRepo: UserRepository.Optional,
-  stratoSafetyLabelsRepo: StratoSafetyLabelsRepository.Type,
-  lastQuoteOfQuoterRepo: LastQuoteOfQuoterRepository.Type,
-  tweetStore: TotalTweetStore,
-  getPerspectives: GetPerspectives)
-    extends TweetDeletePathHandler {
-  import TweetDeletePathHandler._
+class DefaultT etDeletePathHandler(
+  stats: StatsRece ver,
+  t etResultRepo: T etResultRepos ory.Type,
+  userRepo: UserRepos ory.Opt onal,
+  stratoSafetyLabelsRepo: StratoSafetyLabelsRepos ory.Type,
+  lastQuoteOfQuoterRepo: LastQuoteOfQuoterRepos ory.Type,
+  t etStore: TotalT etStore,
+  getPerspect ves: GetPerspect ves)
+    extends T etDeletePathHandler {
+   mport T etDeletePathHandler._
 
-  val tweetRepo: TweetRepository.Type = TweetRepository.fromTweetResult(tweetResultRepo)
+  val t etRepo: T etRepos ory.Type = T etRepos ory.fromT etResult(t etResultRepo)
 
-  // attempt to delete tweets was made by someone other than the tweet owner or an admin user
-  object DeleteTweetsPermissionException extends Exception with NoStackTrace
-  object ExpectedUserIdMismatchException extends Exception with NoStackTrace
+  // attempt to delete t ets was made by so one ot r than t  t et owner or an adm n user
+  object DeleteT etsPerm ss onExcept on extends Except on w h NoStackTrace
+  object ExpectedUser dM smatchExcept on extends Except on w h NoStackTrace
 
-  private[this] val log = Logger("com.twitter.tweetypie.store.TweetDeletions")
+  pr vate[t ] val log = Logger("com.tw ter.t etyp e.store.T etDelet ons")
 
-  private[this] val cascadeEditDelete = stats.scope("cascade_edit_delete")
-  private[this] val cascadeEditDeletesEnqueued = cascadeEditDelete.counter("enqueued")
-  private[this] val cascadeEditDeleteTweets = cascadeEditDelete.counter("tweets")
-  private[this] val cascadeEditDeleteFailures = cascadeEditDelete.counter("failures")
+  pr vate[t ] val cascadeEd Delete = stats.scope("cascade_ed _delete")
+  pr vate[t ] val cascadeEd DeletesEnqueued = cascadeEd Delete.counter("enqueued")
+  pr vate[t ] val cascadeEd DeleteT ets = cascadeEd Delete.counter("t ets")
+  pr vate[t ] val cascadeEd DeleteFa lures = cascadeEd Delete.counter("fa lures")
 
-  private[this] val cascadedDeleteTweet = stats.scope("cascaded_delete_tweet")
-  private[this] val cascadedDeleteTweetFailures = cascadedDeleteTweet.counter("failures")
-  private[this] val cascadedDeleteTweetSourceMatch = cascadedDeleteTweet.counter("source_match")
-  private[this] val cascadedDeleteTweetSourceMismatch =
-    cascadedDeleteTweet.counter("source_mismatch")
-  private[this] val cascadedDeleteTweetTweetNotFound =
-    cascadedDeleteTweet.counter("tweet_not_found")
-  private[this] val cascadedDeleteTweetTweetNotFoundAge =
-    cascadedDeleteTweet.stat("tweet_not_found_age")
-  private[this] val cascadedDeleteTweetUserNotFound = cascadedDeleteTweet.counter("user_not_found")
+  pr vate[t ] val cascadedDeleteT et = stats.scope("cascaded_delete_t et")
+  pr vate[t ] val cascadedDeleteT etFa lures = cascadedDeleteT et.counter("fa lures")
+  pr vate[t ] val cascadedDeleteT etS ceMatch = cascadedDeleteT et.counter("s ce_match")
+  pr vate[t ] val cascadedDeleteT etS ceM smatch =
+    cascadedDeleteT et.counter("s ce_m smatch")
+  pr vate[t ] val cascadedDeleteT etT etNotFound =
+    cascadedDeleteT et.counter("t et_not_found")
+  pr vate[t ] val cascadedDeleteT etT etNotFoundAge =
+    cascadedDeleteT et.stat("t et_not_found_age")
+  pr vate[t ] val cascadedDeleteT etUserNotFound = cascadedDeleteT et.counter("user_not_found")
 
-  private[this] val deleteTweets = stats.scope("delete_tweets")
-  private[this] val deleteTweetsAuth = deleteTweets.scope("per_tweet_auth")
-  private[this] val deleteTweetsAuthAttempts = deleteTweetsAuth.counter("attempts")
-  private[this] val deleteTweetsAuthFailures = deleteTweetsAuth.counter("failures")
-  private[this] val deleteTweetsAuthSuccessAdmin = deleteTweetsAuth.counter("success_admin")
-  private[this] val deleteTweetsAuthSuccessByUser = deleteTweetsAuth.counter("success_by_user")
-  private[this] val deleteTweetsTweets = deleteTweets.counter("tweets")
-  private[this] val deleteTweetsFailures = deleteTweets.counter("failures")
-  private[this] val deleteTweetsTweetNotFound = deleteTweets.counter("tweet_not_found")
-  private[this] val deleteTweetsUserNotFound = deleteTweets.counter("user_not_found")
-  private[this] val userIdMismatchInTweetDelete =
-    deleteTweets.counter("expected_actual_user_id_mismatch")
-  private[this] val bounceDeleteFlagNotSet =
-    deleteTweets.counter("bounce_delete_flag_not_set")
+  pr vate[t ] val deleteT ets = stats.scope("delete_t ets")
+  pr vate[t ] val deleteT etsAuth = deleteT ets.scope("per_t et_auth")
+  pr vate[t ] val deleteT etsAuthAttempts = deleteT etsAuth.counter("attempts")
+  pr vate[t ] val deleteT etsAuthFa lures = deleteT etsAuth.counter("fa lures")
+  pr vate[t ] val deleteT etsAuthSuccessAdm n = deleteT etsAuth.counter("success_adm n")
+  pr vate[t ] val deleteT etsAuthSuccessByUser = deleteT etsAuth.counter("success_by_user")
+  pr vate[t ] val deleteT etsT ets = deleteT ets.counter("t ets")
+  pr vate[t ] val deleteT etsFa lures = deleteT ets.counter("fa lures")
+  pr vate[t ] val deleteT etsT etNotFound = deleteT ets.counter("t et_not_found")
+  pr vate[t ] val deleteT etsUserNotFound = deleteT ets.counter("user_not_found")
+  pr vate[t ] val user dM smatch nT etDelete =
+    deleteT ets.counter("expected_actual_user_ d_m smatch")
+  pr vate[t ] val bounceDeleteFlagNotSet =
+    deleteT ets.counter("bounce_delete_flag_not_set")
 
-  private[this] def getUser(userId: UserId): Future[Option[User]] =
-    Stitch.run(userRepo(UserKey(userId), userQueryOptions))
+  pr vate[t ] def getUser(user d: User d): Future[Opt on[User]] =
+    St ch.run(userRepo(UserKey(user d), userQueryOpt ons))
 
-  private[this] def getUsersForDeleteTweets(userIds: Seq[UserId]): Future[Map[UserId, User]] =
-    Stitch.run(
-      Stitch
-        .traverse(userIds) { userId =>
-          userRepo(UserKey(userId), userQueryOptions).map {
-            case Some(u) => Some(userId -> u)
-            case None => deleteTweetsUserNotFound.incr(); None
+  pr vate[t ] def getUsersForDeleteT ets(user ds: Seq[User d]): Future[Map[User d, User]] =
+    St ch.run(
+      St ch
+        .traverse(user ds) { user d =>
+          userRepo(UserKey(user d), userQueryOpt ons).map {
+            case So (u) => So (user d -> u)
+            case None => deleteT etsUserNotFound. ncr(); None
           }
         }
         .map(_.flatten.toMap)
     )
 
-  private[this] def getTweet(tweetId: TweetId): Future[Tweet] =
-    Stitch.run(tweetRepo(tweetId, WritePathQueryOptions.deleteTweetsWithoutEditControl))
+  pr vate[t ] def getT et(t et d: T et d): Future[T et] =
+    St ch.run(t etRepo(t et d, Wr ePathQueryOpt ons.deleteT etsW houtEd Control))
 
-  private[this] def getSingleDeletedTweet(
-    id: TweetId,
-    isCascadedEditTweetDeletion: Boolean = false
-  ): Stitch[Option[TweetData]] = {
-    val opts = if (isCascadedEditTweetDeletion) {
-      // Disable edit control hydration if this is cascade delete of edits.
-      // When edit control is hydrated, the tweet will actually be considered already deleted.
-      WritePathQueryOptions.deleteTweetsWithoutEditControl
+  pr vate[t ] def getS ngleDeletedT et(
+     d: T et d,
+     sCascadedEd T etDelet on: Boolean = false
+  ): St ch[Opt on[T etData]] = {
+    val opts =  f ( sCascadedEd T etDelet on) {
+      // D sable ed  control hydrat on  f t   s cascade delete of ed s.
+      // W n ed  control  s hydrated, t  t et w ll actually be cons dered already deleted.
+      Wr ePathQueryOpt ons.deleteT etsW houtEd Control
     } else {
-      WritePathQueryOptions.deleteTweets
+      Wr ePathQueryOpt ons.deleteT ets
     }
-    tweetResultRepo(id, opts)
+    t etResultRepo( d, opts)
       .map(_.value)
-      .liftToOption {
-        // We treat the request the same whether the tweet never
-        // existed or is in one of the already-deleted states by
-        // just filtering out those tweets. Any tweets that we
-        // return should be deleted. If the tweet has been
-        // bounce-deleted, we never want to soft-delete it, and
-        // vice versa.
-        case NotFound | FilteredState.Unavailable.TweetDeleted |
-            FilteredState.Unavailable.BounceDeleted =>
+      .l ftToOpt on {
+        //   treat t  request t  sa  w t r t  t et never
+        // ex sted or  s  n one of t  already-deleted states by
+        // just f lter ng out those t ets. Any t ets that  
+        // return should be deleted.  f t  t et has been
+        // bounce-deleted,   never want to soft-delete  , and
+        // v ce versa.
+        case NotFound | F lteredState.Unava lable.T etDeleted |
+            F lteredState.Unava lable.BounceDeleted =>
           true
       }
   }
 
-  private[this] def getTweetsForDeleteTweets(
-    ids: Seq[TweetId],
-    isCascadedEditTweetDeletion: Boolean
-  ): Future[Map[TweetId, TweetData]] =
-    Stitch
+  pr vate[t ] def getT etsForDeleteT ets(
+     ds: Seq[T et d],
+     sCascadedEd T etDelet on: Boolean
+  ): Future[Map[T et d, T etData]] =
+    St ch
       .run {
-        Stitch.traverse(ids) { id =>
-          getSingleDeletedTweet(id, isCascadedEditTweetDeletion)
+        St ch.traverse( ds) {  d =>
+          getS ngleDeletedT et( d,  sCascadedEd T etDelet on)
             .map {
-              // When deleting a tweet that has been edited, we want to instead delete the initial version.
-              // Because the initial tweet will be hydrated in every request, if it is deleted, later
-              // revisions will be hidden, and cleaned up asynchronously by TP Daemons
+              // W n delet ng a t et that has been ed ed,   want to  nstead delete t   n  al vers on.
+              // Because t   n  al t et w ll be hydrated  n every request,  f    s deleted, later
+              // rev s ons w ll be h dden, and cleaned up asynchronously by TP Daemons
 
-              // However, we don't need to do a second lookup if it's already the original tweet
-              // or if we're doing a cascading edit tweet delete (deleting the entire tweet history)
-              case Some(tweetData)
-                  if EditControlUtil.isInitialTweet(tweetData.tweet) ||
-                    isCascadedEditTweetDeletion =>
-                Stitch.value(Some(tweetData))
-              case Some(tweetData) =>
-                getSingleDeletedTweet(EditControlUtil.getInitialTweetId(tweetData.tweet))
+              // Ho ver,   don't need to do a second lookup  f  's already t  or g nal t et
+              // or  f  're do ng a cascad ng ed  t et delete (delet ng t  ent re t et  tory)
+              case So (t etData)
+                   f Ed ControlUt l. s n  alT et(t etData.t et) ||
+                     sCascadedEd T etDelet on =>
+                St ch.value(So (t etData))
+              case So (t etData) =>
+                getS ngleDeletedT et(Ed ControlUt l.get n  alT et d(t etData.t et))
               case None =>
-                Stitch.value(None)
-              // We need to preserve the input tweetId, and the initial TweetData
-            }.flatten.map(tweetData => (id, tweetData))
+                St ch.value(None)
+              //   need to preserve t   nput t et d, and t   n  al T etData
+            }.flatten.map(t etData => ( d, t etData))
         }
       }
-      .map(_.collect { case (tweetId, Some(tweetData)) => (tweetId, tweetData) }.toMap)
+      .map(_.collect { case (t et d, So (t etData)) => (t et d, t etData) }.toMap)
 
-  private[this] def getStratoBounceStatuses(
-    ids: Seq[Long],
-    isUserErasure: Boolean,
-    isCascadedEditedTweetDeletion: Boolean
-  ): Future[Map[TweetId, Boolean]] = {
-    // Don't load bounce label for user erasure tweet deletion.
-    // User Erasure deletions cause unnecessary spikes of traffic
-    // to Strato when we read the bounce label that we don't use.
+  pr vate[t ] def getStratoBounceStatuses(
+     ds: Seq[Long],
+     sUserErasure: Boolean,
+     sCascadedEd edT etDelet on: Boolean
+  ): Future[Map[T et d, Boolean]] = {
+    // Don't load bounce label for user erasure t et delet on.
+    // User Erasure delet ons cause unnecessary sp kes of traff c
+    // to Strato w n   read t  bounce label that   don't use.
 
-    // We also want to always delete a bounced tweet if the rest of the
-    // edit chain is being deleted in a cascaded edit tweet delete
-    if (isUserErasure || isCascadedEditedTweetDeletion) {
-      Future.value(ids.map(id => id -> false).toMap)
+    //   also want to always delete a bounced t et  f t  rest of t 
+    // ed  cha n  s be ng deleted  n a cascaded ed  t et delete
+     f ( sUserErasure ||  sCascadedEd edT etDelet on) {
+      Future.value( ds.map( d =>  d -> false).toMap)
     } else {
-      Stitch.run(
-        Stitch
-          .traverse(ids) { id =>
-            stratoSafetyLabelsRepo(id, SafetyLabelType.Bounce).map { label =>
-              id -> label.isDefined
+      St ch.run(
+        St ch
+          .traverse( ds) {  d =>
+            stratoSafetyLabelsRepo( d, SafetyLabelType.Bounce).map { label =>
+               d -> label. sDef ned
             }
           }
           .map(_.toMap)
@@ -266,314 +266,314 @@ class DefaultTweetDeletePathHandler(
     }
   }
 
-  /** A suspended/deactivated user can't delete tweets */
-  private[this] def userNotSuspendedOrDeactivated(user: User): Try[User] =
+  /** A suspended/deact vated user can't delete t ets */
+  pr vate[t ] def userNotSuspendedOrDeact vated(user: User): Try[User] =
     user.safety match {
-      case None => Throw(UpstreamFailure.UserSafetyEmptyException)
-      case Some(safety) if safety.deactivated =>
+      case None => Throw(UpstreamFa lure.UserSafetyEmptyExcept on)
+      case So (safety)  f safety.deact vated =>
         Throw(
-          AccessDenied(
-            s"User deactivated userId: ${user.id}",
-            errorCause = Some(AccessDeniedCause.UserDeactivated)
+          AccessDen ed(
+            s"User deact vated user d: ${user. d}",
+            errorCause = So (AccessDen edCause.UserDeact vated)
           )
         )
-      case Some(safety) if safety.suspended =>
+      case So (safety)  f safety.suspended =>
         Throw(
-          AccessDenied(
-            s"User suspended userId: ${user.id}",
-            errorCause = Some(AccessDeniedCause.UserSuspended)
+          AccessDen ed(
+            s"User suspended user d: ${user. d}",
+            errorCause = So (AccessDen edCause.UserSuspended)
           )
         )
       case _ => Return(user)
     }
 
   /**
-   * Ensure that byUser has permission to delete tweet either by virtue of owning the tweet or being
-   * an admin user.  Returns the reason as a DeleteAuthorization or else throws an Exception if not
-   * authorized.
+   * Ensure that byUser has perm ss on to delete t et e  r by v rtue of own ng t  t et or be ng
+   * an adm n user.  Returns t  reason as a DeleteAuthor zat on or else throws an Except on  f not
+   * author zed.
    */
-  private[this] def userAuthorizedToDeleteTweet(
+  pr vate[t ] def userAuthor zedToDeleteT et(
     byUser: User,
-    optAuthenticatedUserId: Option[UserId],
-    tweetAuthorId: UserId
-  ): Try[DeleteAuthorization] = {
+    optAut nt catedUser d: Opt on[User d],
+    t etAuthor d: User d
+  ): Try[DeleteAuthor zat on] = {
 
-    def hasAdminPrivilege =
-      byUser.roles.exists(_.rights.contains("delete_user_tweets"))
+    def hasAdm nPr v lege =
+      byUser.roles.ex sts(_.r ghts.conta ns("delete_user_t ets"))
 
-    deleteTweetsAuthAttempts.incr()
-    if (byUser.id == tweetAuthorId) {
-      deleteTweetsAuthSuccessByUser.incr()
-      optAuthenticatedUserId match {
-        case Some(uid) =>
-          Return(AuthorizedByTweetContributor(uid))
+    deleteT etsAuthAttempts. ncr()
+     f (byUser. d == t etAuthor d) {
+      deleteT etsAuthSuccessByUser. ncr()
+      optAut nt catedUser d match {
+        case So (u d) =>
+          Return(Author zedByT etContr butor(u d))
         case None =>
-          Return(AuthorizedByTweetOwner(byUser.id))
+          Return(Author zedByT etOwner(byUser. d))
       }
-    } else if (optAuthenticatedUserId.isEmpty && hasAdminPrivilege) { // contributor may not assume admin role
-      deleteTweetsAuthSuccessAdmin.incr()
-      Return(AuthorizedByAdmin(byUser.id))
+    } else  f (optAut nt catedUser d. sEmpty && hasAdm nPr v lege) { // contr butor may not assu  adm n role
+      deleteT etsAuthSuccessAdm n. ncr()
+      Return(Author zedByAdm n(byUser. d))
     } else {
-      deleteTweetsAuthFailures.incr()
-      Throw(DeleteTweetsPermissionException)
+      deleteT etsAuthFa lures. ncr()
+      Throw(DeleteT etsPerm ss onExcept on)
     }
   }
 
   /**
-   * expected user id is the id provided on the DeleteTweetsRequest that the indicates which user
-   * owns the tweets they want to delete. The actualUserId is the actual userId on the tweet we are about to delete.
-   * we check to ensure they are the same as a safety check against accidental deletion of tweets either from user mistakes
+   * expected user  d  s t   d prov ded on t  DeleteT etsRequest that t   nd cates wh ch user
+   * owns t  t ets t y want to delete. T  actualUser d  s t  actual user d on t  t et   are about to delete.
+   *   c ck to ensure t y are t  sa  as a safety c ck aga nst acc dental delet on of t ets e  r from user m stakes
    * or from corrupted data (e.g bad tflock edges)
    */
-  private[this] def expectedUserIdMatchesActualUserId(
-    expectedUserId: UserId,
-    actualUserId: UserId
-  ): Try[Unit] =
-    if (expectedUserId == actualUserId) {
-      Return.Unit
+  pr vate[t ] def expectedUser dMatc sActualUser d(
+    expectedUser d: User d,
+    actualUser d: User d
+  ): Try[Un ] =
+     f (expectedUser d == actualUser d) {
+      Return.Un 
     } else {
-      userIdMismatchInTweetDelete.incr()
-      Throw(ExpectedUserIdMismatchException)
+      user dM smatch nT etDelete. ncr()
+      Throw(ExpectedUser dM smatchExcept on)
     }
 
   /**
-   * Validation for the normal public tweet delete case, the user must be found and must
-   * not be suspended or deactivated.
+   * Val dat on for t  normal publ c t et delete case, t  user must be found and must
+   * not be suspended or deact vated.
    */
-  val validateTweetsForPublicDelete: ValidateDeleteTweets = FutureArrow {
-    ctx: DeleteTweetsContext =>
+  val val dateT etsForPubl cDelete: Val dateDeleteT ets = FutureArrow {
+    ctx: DeleteT etsContext =>
       Future.const(
         for {
 
-          // byUserId must be present
-          byUserId <- ctx.byUserId.orThrow(
-            ClientError(ClientErrorCause.BadRequest, "Missing byUserId")
+          // byUser d must be present
+          byUser d <- ctx.byUser d.orThrow(
+            Cl entError(Cl entErrorCause.BadRequest, "M ss ng byUser d")
           )
 
-          // the byUser must be found
-          byUserOpt = ctx.users.get(byUserId)
+          // t  byUser must be found
+          byUserOpt = ctx.users.get(byUser d)
           byUser <- byUserOpt.orThrow(
-            ClientError(ClientErrorCause.BadRequest, s"User $byUserId not found")
+            Cl entError(Cl entErrorCause.BadRequest, s"User $byUser d not found")
           )
 
-          _ <- userNotSuspendedOrDeactivated(byUser)
+          _ <- userNotSuspendedOrDeact vated(byUser)
 
-          _ <- validateBounceConditions(
-            ctx.tweetIsBounced,
-            ctx.isBounceDelete
+          _ <- val dateBounceCond  ons(
+            ctx.t et sBounced,
+            ctx. sBounceDelete
           )
 
-          // if there's a contributor, make sure the user is found and not suspended or deactivated
+          //  f t re's a contr butor, make sure t  user  s found and not suspended or deact vated
           _ <-
-            ctx.authenticatedUserId
-              .map { uid =>
-                ctx.users.get(uid) match {
+            ctx.aut nt catedUser d
+              .map { u d =>
+                ctx.users.get(u d) match {
                   case None =>
-                    Throw(ClientError(ClientErrorCause.BadRequest, s"Contributor $uid not found"))
-                  case Some(authUser) =>
-                    userNotSuspendedOrDeactivated(authUser)
+                    Throw(Cl entError(Cl entErrorCause.BadRequest, s"Contr butor $u d not found"))
+                  case So (authUser) =>
+                    userNotSuspendedOrDeact vated(authUser)
                 }
               }
-              .getOrElse(Return.Unit)
+              .getOrElse(Return.Un )
 
-          // if the expected user id is present, make sure it matches the user id on the tweet
+          //  f t  expected user  d  s present, make sure   matc s t  user  d on t  t et
           _ <-
-            ctx.expectedErasureUserId
-              .map { expectedUserId =>
-                expectedUserIdMatchesActualUserId(expectedUserId, ctx.tweetAuthorId)
+            ctx.expectedErasureUser d
+              .map { expectedUser d =>
+                expectedUser dMatc sActualUser d(expectedUser d, ctx.t etAuthor d)
               }
-              .getOrElse(Return.Unit)
+              .getOrElse(Return.Un )
 
-          // User must own the tweet or be an admin
-          deleteAuth <- userAuthorizedToDeleteTweet(
+          // User must own t  t et or be an adm n
+          deleteAuth <- userAuthor zedToDeleteT et(
             byUser,
-            ctx.authenticatedUserId,
-            ctx.tweetAuthorId
+            ctx.aut nt catedUser d,
+            ctx.t etAuthor d
           )
-        } yield deleteAuth
+        } y eld deleteAuth
       )
   }
 
-  private def validateBounceConditions(
-    tweetIsBounced: Boolean,
-    isBounceDelete: Boolean
-  ): Try[Unit] = {
-    if (tweetIsBounced && !isBounceDelete) {
-      bounceDeleteFlagNotSet.incr()
-      Throw(ClientError(ClientErrorCause.BadRequest, "Cannot normal delete a Bounced Tweet"))
+  pr vate def val dateBounceCond  ons(
+    t et sBounced: Boolean,
+     sBounceDelete: Boolean
+  ): Try[Un ] = {
+     f (t et sBounced && ! sBounceDelete) {
+      bounceDeleteFlagNotSet. ncr()
+      Throw(Cl entError(Cl entErrorCause.BadRequest, "Cannot normal delete a Bounced T et"))
     } else {
-      Return.Unit
+      Return.Un 
     }
   }
 
   /**
-   * Validation for the user erasure case. User may be missing.
+   * Val dat on for t  user erasure case. User may be m ss ng.
    */
-  val validateTweetsForUserErasureDaemon: ValidateDeleteTweets = FutureArrow {
-    ctx: DeleteTweetsContext =>
+  val val dateT etsForUserErasureDaemon: Val dateDeleteT ets = FutureArrow {
+    ctx: DeleteT etsContext =>
       Future
         .const(
           for {
-            expectedUserId <- ctx.expectedErasureUserId.orThrow(
-              ClientError(
-                ClientErrorCause.BadRequest,
-                "expectedUserId is required for DeleteTweetRequests"
+            expectedUser d <- ctx.expectedErasureUser d.orThrow(
+              Cl entError(
+                Cl entErrorCause.BadRequest,
+                "expectedUser d  s requ red for DeleteT etRequests"
               )
             )
 
-            // It's critical to always check that the userId on the tweet we want to delete matches the
-            // userId on the erasure request. This prevents us from accidentally deleting tweets not owned by the
-            // erased user, even if tflock serves us bad data.
-            validationResult <- expectedUserIdMatchesActualUserId(expectedUserId, ctx.tweetAuthorId)
-          } yield validationResult
+            //  's cr  cal to always c ck that t  user d on t  t et   want to delete matc s t 
+            // user d on t  erasure request. T  prevents us from acc dentally delet ng t ets not owned by t 
+            // erased user, even  f tflock serves us bad data.
+            val dat onResult <- expectedUser dMatc sActualUser d(expectedUser d, ctx.t etAuthor d)
+          } y eld val dat onResult
         )
-        .map(_ => AuthorizedByErasure)
+        .map(_ => Author zedByErasure)
   }
 
   /**
-   * Fill in missing values of AuditDeleteTweet with values from TwitterContext.
+   * F ll  n m ss ng values of Aud DeleteT et w h values from Tw terContext.
    */
-  def enrichMissingFromTwitterContext(orig: AuditDeleteTweet): AuditDeleteTweet = {
-    val viewer = TwitterContext()
-    orig.copy(
-      host = orig.host.orElse(viewer.flatMap(_.auditIp)),
-      clientApplicationId = orig.clientApplicationId.orElse(viewer.flatMap(_.clientApplicationId)),
-      userAgent = orig.userAgent.orElse(viewer.flatMap(_.userAgent)).map(_.take(MaxUserAgentLength))
+  def enr chM ss ngFromTw terContext(or g: Aud DeleteT et): Aud DeleteT et = {
+    val v e r = Tw terContext()
+    or g.copy(
+      host = or g.host.orElse(v e r.flatMap(_.aud  p)),
+      cl entAppl cat on d = or g.cl entAppl cat on d.orElse(v e r.flatMap(_.cl entAppl cat on d)),
+      userAgent = or g.userAgent.orElse(v e r.flatMap(_.userAgent)).map(_.take(MaxUserAgentLength))
     )
   }
 
   /**
-   * core delete tweets implementation.
+   * core delete t ets  mple ntat on.
    *
-   * The [[deleteTweets]] method wraps this method and provides validation required
-   * for a public endpoint.
+   * T  [[deleteT ets]]  thod wraps t   thod and prov des val dat on requ red
+   * for a publ c endpo nt.
    */
-  override def internalDeleteTweets(
-    request: DeleteTweetsRequest,
-    byUserId: Option[UserId],
-    authenticatedUserId: Option[UserId],
-    validate: ValidateDeleteTweets,
-    isUnretweetEdits: Boolean = false
-  ): Future[Seq[DeleteTweetResult]] = {
+  overr de def  nternalDeleteT ets(
+    request: DeleteT etsRequest,
+    byUser d: Opt on[User d],
+    aut nt catedUser d: Opt on[User d],
+    val date: Val dateDeleteT ets,
+     sUnret etEd s: Boolean = false
+  ): Future[Seq[DeleteT etResult]] = {
 
-    val auditDeleteTweet =
-      enrichMissingFromTwitterContext(request.auditPassthrough.getOrElse(AuditDeleteTweet()))
-    deleteTweetsTweets.incr(request.tweetIds.size)
+    val aud DeleteT et =
+      enr chM ss ngFromTw terContext(request.aud Passthrough.getOrElse(Aud DeleteT et()))
+    deleteT etsT ets. ncr(request.t et ds.s ze)
     for {
-      tweetDataMap <- getTweetsForDeleteTweets(
-        request.tweetIds,
-        request.cascadedEditedTweetDeletion.getOrElse(false)
+      t etDataMap <- getT etsForDeleteT ets(
+        request.t et ds,
+        request.cascadedEd edT etDelet on.getOrElse(false)
       )
 
-      userIds: Seq[UserId] = (tweetDataMap.values.map { td =>
-          getUserId(td.tweet)
-        } ++ byUserId ++ authenticatedUserId).toSeq.distinct
+      user ds: Seq[User d] = (t etDataMap.values.map { td =>
+          getUser d(td.t et)
+        } ++ byUser d ++ aut nt catedUser d).toSeq.d st nct
 
-      users <- getUsersForDeleteTweets(userIds)
+      users <- getUsersForDeleteT ets(user ds)
 
       stratoBounceStatuses <- getStratoBounceStatuses(
-        tweetDataMap.keys.toSeq,
-        request.isUserErasure,
-        request.cascadedEditedTweetDeletion.getOrElse(false))
+        t etDataMap.keys.toSeq,
+        request. sUserErasure,
+        request.cascadedEd edT etDelet on.getOrElse(false))
 
       results <- Future.collect {
-        request.tweetIds.map { tweetId =>
-          tweetDataMap.get(tweetId) match {
-            // already deleted, so nothing to do
+        request.t et ds.map { t et d =>
+          t etDataMap.get(t et d) match {
+            // already deleted, so noth ng to do
             case None =>
-              deleteTweetsTweetNotFound.incr()
-              Future.value(DeleteTweetResult(tweetId, TweetDeleteState.Ok))
-            case Some(tweetData) =>
-              val tweet: Tweet = tweetData.tweet
-              val tweetIsBounced = stratoBounceStatuses(tweetId)
-              val optSourceTweet: Option[Tweet] = tweetData.sourceTweetResult.map(_.value.tweet)
+              deleteT etsT etNotFound. ncr()
+              Future.value(DeleteT etResult(t et d, T etDeleteState.Ok))
+            case So (t etData) =>
+              val t et: T et = t etData.t et
+              val t et sBounced = stratoBounceStatuses(t et d)
+              val optS ceT et: Opt on[T et] = t etData.s ceT etResult.map(_.value.t et)
 
-              val validation: Future[(Boolean, DeleteAuthorization)] = for {
-                isLastQuoteOfQuoter <- isFinalQuoteOfQuoter(tweet)
-                deleteAuth <- validate(
-                  DeleteTweetsContext(
-                    byUserId = byUserId,
-                    authenticatedUserId = authenticatedUserId,
-                    tweetAuthorId = getUserId(tweet),
+              val val dat on: Future[(Boolean, DeleteAuthor zat on)] = for {
+                 sLastQuoteOfQuoter <-  sF nalQuoteOfQuoter(t et)
+                deleteAuth <- val date(
+                  DeleteT etsContext(
+                    byUser d = byUser d,
+                    aut nt catedUser d = aut nt catedUser d,
+                    t etAuthor d = getUser d(t et),
                     users = users,
-                    isUserErasure = request.isUserErasure,
-                    expectedErasureUserId = request.expectedUserId,
-                    tweetIsBounced = tweetIsBounced,
-                    isBounceDelete = request.isBounceDelete
+                     sUserErasure = request. sUserErasure,
+                    expectedErasureUser d = request.expectedUser d,
+                    t et sBounced = t et sBounced,
+                     sBounceDelete = request. sBounceDelete
                   )
                 )
-                _ <- optSourceTweet match {
-                  case Some(sourceTweet) if !isUnretweetEdits =>
-                    // If this is a retweet and this deletion was not triggered by
-                    // unretweetEdits, unretweet edits of the source Tweet
-                    // before deleting the retweet.
+                _ <- optS ceT et match {
+                  case So (s ceT et)  f ! sUnret etEd s =>
+                    //  f t   s a ret et and t  delet on was not tr ggered by
+                    // unret etEd s, unret et ed s of t  s ce T et
+                    // before delet ng t  ret et.
                     //
-                    // deleteAuth will always contain a byUserId except for erasure deletion,
-                    // in which case the retweets will be deleted individually.
-                    deleteAuth.byUserId match {
-                      case Some(userId) =>
-                        unretweetEdits(sourceTweet.editControl, sourceTweet.id, userId)
-                      case None => Future.Unit
+                    // deleteAuth w ll always conta n a byUser d except for erasure delet on,
+                    //  n wh ch case t  ret ets w ll be deleted  nd v dually.
+                    deleteAuth.byUser d match {
+                      case So (user d) =>
+                        unret etEd s(s ceT et.ed Control, s ceT et. d, user d)
+                      case None => Future.Un 
                     }
-                  case _ => Future.Unit
+                  case _ => Future.Un 
                 }
-              } yield {
-                (isLastQuoteOfQuoter, deleteAuth)
+              } y eld {
+                ( sLastQuoteOfQuoter, deleteAuth)
               }
 
-              validation
+              val dat on
                 .flatMap {
-                  case (isLastQuoteOfQuoter: Boolean, deleteAuth: DeleteAuthorization) =>
-                    val isAdminDelete = deleteAuth match {
-                      case AuthorizedByAdmin(_) => true
+                  case ( sLastQuoteOfQuoter: Boolean, deleteAuth: DeleteAuthor zat on) =>
+                    val  sAdm nDelete = deleteAuth match {
+                      case Author zedByAdm n(_) => true
                       case _ => false
                     }
 
                     val event =
-                      DeleteTweet.Event(
-                        tweet = tweet,
-                        timestamp = Time.now,
-                        user = users.get(getUserId(tweet)),
-                        byUserId = deleteAuth.byUserId,
-                        auditPassthrough = Some(auditDeleteTweet),
-                        isUserErasure = request.isUserErasure,
-                        isBounceDelete = request.isBounceDelete && tweetIsBounced,
-                        isLastQuoteOfQuoter = isLastQuoteOfQuoter,
-                        isAdminDelete = isAdminDelete
+                      DeleteT et.Event(
+                        t et = t et,
+                        t  stamp = T  .now,
+                        user = users.get(getUser d(t et)),
+                        byUser d = deleteAuth.byUser d,
+                        aud Passthrough = So (aud DeleteT et),
+                         sUserErasure = request. sUserErasure,
+                         sBounceDelete = request. sBounceDelete && t et sBounced,
+                         sLastQuoteOfQuoter =  sLastQuoteOfQuoter,
+                         sAdm nDelete =  sAdm nDelete
                       )
-                    val numberOfEdits: Int = tweet.editControl
+                    val numberOfEd s:  nt = t et.ed Control
                       .collect {
-                        case EditControl.Initial(initial) =>
-                          initial.editTweetIds.count(_ != tweet.id)
+                        case Ed Control. n  al( n  al) =>
+                           n  al.ed T et ds.count(_ != t et. d)
                       }
                       .getOrElse(0)
-                    cascadeEditDeletesEnqueued.incr(numberOfEdits)
-                    tweetStore
-                      .deleteTweet(event)
-                      .map(_ => DeleteTweetResult(tweetId, TweetDeleteState.Ok))
+                    cascadeEd DeletesEnqueued. ncr(numberOfEd s)
+                    t etStore
+                      .deleteT et(event)
+                      .map(_ => DeleteT etResult(t et d, T etDeleteState.Ok))
                 }
-                .onFailure { _ =>
-                  deleteTweetsFailures.incr()
+                .onFa lure { _ =>
+                  deleteT etsFa lures. ncr()
                 }
                 .handle {
-                  case ExpectedUserIdMismatchException =>
-                    DeleteTweetResult(tweetId, TweetDeleteState.ExpectedUserIdMismatch)
-                  case DeleteTweetsPermissionException =>
-                    DeleteTweetResult(tweetId, TweetDeleteState.PermissionError)
+                  case ExpectedUser dM smatchExcept on =>
+                    DeleteT etResult(t et d, T etDeleteState.ExpectedUser dM smatch)
+                  case DeleteT etsPerm ss onExcept on =>
+                    DeleteT etResult(t et d, T etDeleteState.Perm ss onError)
                 }
           }
         }
       }
-    } yield results
+    } y eld results
   }
 
-  private def isFinalQuoteOfQuoter(tweet: Tweet): Future[Boolean] = {
-    tweet.quotedTweet match {
-      case Some(qt) =>
-        Stitch.run {
+  pr vate def  sF nalQuoteOfQuoter(t et: T et): Future[Boolean] = {
+    t et.quotedT et match {
+      case So (qt) =>
+        St ch.run {
           lastQuoteOfQuoterRepo
-            .apply(qt.tweetId, getUserId(tweet))
-            .liftToTry
+            .apply(qt.t et d, getUser d(t et))
+            .l ftToTry
             .map(_.getOrElse(false))
         }
       case None => Future(false)
@@ -581,231 +581,231 @@ class DefaultTweetDeletePathHandler(
   }
 
   /**
-   *  Validations for the public deleteTweets endpoint.
-   *   - ensures that the byUserId user can be found and is in the correct user state
-   *   - ensures that the tweet is being deleted by the tweet's owner, or by an admin
-   *  If there is a validation error, a future.exception is returned
+   *  Val dat ons for t  publ c deleteT ets endpo nt.
+   *   - ensures that t  byUser d user can be found and  s  n t  correct user state
+   *   - ensures that t  t et  s be ng deleted by t  t et's owner, or by an adm n
+   *   f t re  s a val dat on error, a future.except on  s returned
    *
-   *  If the delete request is part of a user erasure, validations are relaxed (the User is allowed to be missing).
+   *   f t  delete request  s part of a user erasure, val dat ons are relaxed (t  User  s allo d to be m ss ng).
    */
-  val deleteTweetsValidator: ValidateDeleteTweets =
+  val deleteT etsVal dator: Val dateDeleteT ets =
     FutureArrow { context =>
-      if (context.isUserErasure) {
-        validateTweetsForUserErasureDaemon(context)
+       f (context. sUserErasure) {
+        val dateT etsForUserErasureDaemon(context)
       } else {
-        validateTweetsForPublicDelete(context)
+        val dateT etsForPubl cDelete(context)
       }
     }
 
-  override def deleteTweets(
-    request: DeleteTweetsRequest,
-    isUnretweetEdits: Boolean = false,
-  ): Future[Seq[DeleteTweetResult]] = {
+  overr de def deleteT ets(
+    request: DeleteT etsRequest,
+     sUnret etEd s: Boolean = false,
+  ): Future[Seq[DeleteT etResult]] = {
 
-    // For comparison testing we only want to compare the DeleteTweetsRequests that are generated
-    // in DeleteTweets path and not the call that comes from the Unretweet path
-    val context = TwitterContext()
-    internalDeleteTweets(
+    // For compar son test ng   only want to compare t  DeleteT etsRequests that are generated
+    //  n DeleteT ets path and not t  call that co s from t  Unret et path
+    val context = Tw terContext()
+     nternalDeleteT ets(
       request,
-      byUserId = request.byUserId.orElse(context.flatMap(_.userId)),
-      context.flatMap(_.authenticatedUserId),
-      deleteTweetsValidator,
-      isUnretweetEdits
+      byUser d = request.byUser d.orElse(context.flatMap(_.user d)),
+      context.flatMap(_.aut nt catedUser d),
+      deleteT etsVal dator,
+       sUnret etEd s
     )
   }
 
-  // Cascade delete tweet is the logic for removing tweets that are detached
-  // from their dependency which has been deleted. They are already filtered
-  // out from serving, so this operation reconciles storage with the view
-  // presented by Tweetypie.
-  // This RPC call is delegated from daemons or batch jobs. Currently there
-  // are two use-cases when this call is issued:
-  // *   Deleting detached retweets after the source tweet was deleted.
-  //     This is done through RetweetsDeletion daemon and the
-  //     CleanupDetachedRetweets job.
-  // *   Deleting edits of an initial tweet that has been deleted.
-  //     This is done by CascadedEditedTweetDelete daemon.
-  //     Note that, when serving the original delete request for an edit,
-  //     the initial tweet is only deleted, which makes all edits hidden.
-  override def cascadedDeleteTweet(request: CascadedDeleteTweetRequest): Future[Unit] = {
-    val contextViewer = TwitterContext()
-    getTweet(request.tweetId)
+  // Cascade delete t et  s t  log c for remov ng t ets that are detac d
+  // from t  r dependency wh ch has been deleted. T y are already f ltered
+  // out from serv ng, so t  operat on reconc les storage w h t  v ew
+  // presented by T etyp e.
+  // T  RPC call  s delegated from daemons or batch jobs. Currently t re
+  // are two use-cases w n t  call  s  ssued:
+  // *   Delet ng detac d ret ets after t  s ce t et was deleted.
+  //     T   s done through Ret etsDelet on daemon and t 
+  //     CleanupDetac dRet ets job.
+  // *   Delet ng ed s of an  n  al t et that has been deleted.
+  //     T   s done by CascadedEd edT etDelete daemon.
+  //     Note that, w n serv ng t  or g nal delete request for an ed ,
+  //     t   n  al t et  s only deleted, wh ch makes all ed s h dden.
+  overr de def cascadedDeleteT et(request: CascadedDeleteT etRequest): Future[Un ] = {
+    val contextV e r = Tw terContext()
+    getT et(request.t et d)
       .transform {
         case Throw(
-              FilteredState.Unavailable.TweetDeleted | FilteredState.Unavailable.BounceDeleted) =>
-          // The retweet or edit was already deleted via some other mechanism
-          Future.Unit
+              F lteredState.Unava lable.T etDeleted | F lteredState.Unava lable.BounceDeleted) =>
+          // T  ret et or ed  was already deleted v a so  ot r  chan sm
+          Future.Un 
 
         case Throw(NotFound) =>
-          cascadedDeleteTweetTweetNotFound.incr()
+          cascadedDeleteT etT etNotFound. ncr()
           val recentlyCreated =
-            if (SnowflakeId.isSnowflakeId(request.tweetId)) {
-              val age = Time.now - SnowflakeId(request.tweetId).time
-              cascadedDeleteTweetTweetNotFoundAge.add(age.inMilliseconds)
-              age < MaxCascadedDeleteTweetTemporaryInconsistencyAge
+             f (Snowflake d. sSnowflake d(request.t et d)) {
+              val age = T  .now - Snowflake d(request.t et d).t  
+              cascadedDeleteT etT etNotFoundAge.add(age. nM ll seconds)
+              age < MaxCascadedDeleteT etTemporary ncons stencyAge
             } else {
               false
             }
 
-          if (recentlyCreated) {
-            // Treat the NotFound as a temporary condition, most
-            // likely due to replication lag.
-            Future.exception(CascadedDeleteNotAvailable(request.tweetId))
+           f (recentlyCreated) {
+            // Treat t  NotFound as a temporary cond  on, most
+            // l kely due to repl cat on lag.
+            Future.except on(CascadedDeleteNotAva lable(request.t et d))
           } else {
-            // Treat the NotFound as a permanent inconsistenty, either
-            // spurious edges in tflock or invalid data in Manhattan. This
-            // was happening a few times an hour during the time that we
-            // were not treating it specially. For now, we will just log that
-            // it happened, but in the longer term, it would be good
-            // to collect this data and repair the corruption.
+            // Treat t  NotFound as a permanent  ncons stenty, e  r
+            // spur ous edges  n tflock or  nval d data  n Manhattan. T 
+            // was happen ng a few t  s an h  dur ng t  t   that  
+            //  re not treat ng   spec ally. For now,   w ll just log that
+            //   happened, but  n t  longer term,   would be good
+            // to collect t  data and repa r t  corrupt on.
             log.warn(
               Seq(
-                "cascaded_delete_tweet_old_not_found",
-                request.tweetId,
-                request.cascadedFromTweetId
-              ).mkString("\t")
+                "cascaded_delete_t et_old_not_found",
+                request.t et d,
+                request.cascadedFromT et d
+              ).mkStr ng("\t")
             )
             Future.Done
           }
 
-        // Any other FilteredStates should not be thrown because of
-        // the options that we used to load the tweet, so we will just
-        // let them bubble up as an internal server error
-        case Throw(other) =>
-          Future.exception(other)
+        // Any ot r F lteredStates should not be thrown because of
+        // t  opt ons that   used to load t  t et, so   w ll just
+        // let t m bubble up as an  nternal server error
+        case Throw(ot r) =>
+          Future.except on(ot r)
 
-        case Return(tweet) =>
+        case Return(t et) =>
           Future
-            .join(
-              isFinalQuoteOfQuoter(tweet),
-              getUser(getUserId(tweet))
+            .jo n(
+               sF nalQuoteOfQuoter(t et),
+              getUser(getUser d(t et))
             )
             .flatMap {
-              case (isLastQuoteOfQuoter, user) =>
-                if (user.isEmpty) {
-                  cascadedDeleteTweetUserNotFound.incr()
+              case ( sLastQuoteOfQuoter, user) =>
+                 f (user. sEmpty) {
+                  cascadedDeleteT etUserNotFound. ncr()
                 }
-                val tweetSourceId = getShare(tweet).map(_.sourceStatusId)
-                val initialEditId = tweet.editControl.collect {
-                  case EditControl.Edit(edit) => edit.initialTweetId
+                val t etS ce d = getShare(t et).map(_.s ceStatus d)
+                val  n  alEd  d = t et.ed Control.collect {
+                  case Ed Control.Ed (ed ) => ed . n  alT et d
                 }
-                if (initialEditId.contains(request.cascadedFromTweetId)) {
-                  cascadeEditDeleteTweets.incr()
+                 f ( n  alEd  d.conta ns(request.cascadedFromT et d)) {
+                  cascadeEd DeleteT ets. ncr()
                 }
-                if (tweetSourceId.contains(request.cascadedFromTweetId)
-                  || initialEditId.contains(request.cascadedFromTweetId)) {
-                  cascadedDeleteTweetSourceMatch.incr()
+                 f (t etS ce d.conta ns(request.cascadedFromT et d)
+                  ||  n  alEd  d.conta ns(request.cascadedFromT et d)) {
+                  cascadedDeleteT etS ceMatch. ncr()
                   val deleteEvent =
-                    DeleteTweet.Event(
-                      tweet = tweet,
-                      timestamp = Time.now,
+                    DeleteT et.Event(
+                      t et = t et,
+                      t  stamp = T  .now,
                       user = user,
-                      byUserId = contextViewer.flatMap(_.userId),
-                      cascadedFromTweetId = Some(request.cascadedFromTweetId),
-                      auditPassthrough = request.auditPassthrough,
-                      isUserErasure = false,
-                      // cascaded deletes of retweets or edits have not been through a bouncer flow,
-                      // so are not considered to be "bounce deleted".
-                      isBounceDelete = false,
-                      isLastQuoteOfQuoter = isLastQuoteOfQuoter,
-                      isAdminDelete = false
+                      byUser d = contextV e r.flatMap(_.user d),
+                      cascadedFromT et d = So (request.cascadedFromT et d),
+                      aud Passthrough = request.aud Passthrough,
+                       sUserErasure = false,
+                      // cascaded deletes of ret ets or ed s have not been through a bouncer flow,
+                      // so are not cons dered to be "bounce deleted".
+                       sBounceDelete = false,
+                       sLastQuoteOfQuoter =  sLastQuoteOfQuoter,
+                       sAdm nDelete = false
                     )
-                  tweetStore
-                    .deleteTweet(deleteEvent)
-                    .onFailure { _ =>
-                      if (initialEditId.contains(request.cascadedFromTweetId)) {
-                        cascadeEditDeleteFailures.incr()
+                  t etStore
+                    .deleteT et(deleteEvent)
+                    .onFa lure { _ =>
+                       f ( n  alEd  d.conta ns(request.cascadedFromT et d)) {
+                        cascadeEd DeleteFa lures. ncr()
                       }
                     }
                 } else {
-                  cascadedDeleteTweetSourceMismatch.incr()
+                  cascadedDeleteT etS ceM smatch. ncr()
                   log.warn(
                     Seq(
-                      "cascaded_from_tweet_id_source_mismatch",
-                      request.tweetId,
-                      request.cascadedFromTweetId,
-                      tweetSourceId.orElse(initialEditId).getOrElse("-")
-                    ).mkString("\t")
+                      "cascaded_from_t et_ d_s ce_m smatch",
+                      request.t et d,
+                      request.cascadedFromT et d,
+                      t etS ce d.orElse( n  alEd  d).getOrElse("-")
+                    ).mkStr ng("\t")
                   )
                   Future.Done
                 }
             }
       }
-      .onFailure(_ => cascadedDeleteTweetFailures.incr())
+      .onFa lure(_ => cascadedDeleteT etFa lures. ncr())
   }
 
-  // Given a list of edit Tweet ids and a user id, find the retweet ids of those edit ids from the given user
-  private def editTweetIdRetweetsFromUser(
-    editTweetIds: Seq[TweetId],
-    byUserId: UserId
-  ): Future[Seq[TweetId]] = {
-    if (editTweetIds.isEmpty) {
+  // G ven a l st of ed  T et  ds and a user  d, f nd t  ret et  ds of those ed   ds from t  g ven user
+  pr vate def ed T et dRet etsFromUser(
+    ed T et ds: Seq[T et d],
+    byUser d: User d
+  ): Future[Seq[T et d]] = {
+     f (ed T et ds. sEmpty) {
       Future.value(Seq())
     } else {
-      getPerspectives(
-        Seq(tls.PerspectiveQuery(byUserId, editTweetIds))
-      ).map { res: Seq[PerspectiveResult] =>
-        res.headOption.toSeq
-          .flatMap(_.perspectives.flatMap(_.retweetId))
+      getPerspect ves(
+        Seq(tls.Perspect veQuery(byUser d, ed T et ds))
+      ).map { res: Seq[Perspect veResult] =>
+        res. adOpt on.toSeq
+          .flatMap(_.perspect ves.flatMap(_.ret et d))
       }
     }
   }
 
-  /* This function is called from three places -
-   * 1. When Tweetypie gets a request to retweet the latest version of an edit chain, all the
-   * previous revisons should be unretweeted.
-   * i.e. On Retweet of the latest tweet - unretweets all the previous revisions for this user.
+  /* T  funct on  s called from three places -
+   * 1. W n T etyp e gets a request to ret et t  latest vers on of an ed  cha n, all t 
+   * prev ous rev sons should be unret eted.
+   *  .e. On Ret et of t  latest t et - unret ets all t  prev ous rev s ons for t  user.
    * - create A
-   * - retweet A'(retweet of A)
-   * - create edit B(edit of A)
-   * - retweet B' => Deletes A'
+   * - ret et A'(ret et of A)
+   * - create ed  B(ed  of A)
+   * - ret et B' => Deletes A'
    *
-   * 2. When Tweetypie gets an unretweet request for a source tweet that is an edit tweet, all
-   * the versions of the edit chain is retweeted.
-   * i.e. On unretweet of any version in the edit chain - unretweets all the revisions for this user
+   * 2. W n T etyp e gets an unret et request for a s ce t et that  s an ed  t et, all
+   * t  vers ons of t  ed  cha n  s ret eted.
+   *  .e. On unret et of any vers on  n t  ed  cha n - unret ets all t  rev s ons for t  user
    * - create A
-   * - retweet A'
+   * - ret et A'
    * - create B
-   * - unretweet B => Deletes A' (& also any B' if it existed)
+   * - unret et B => Deletes A' (& also any B'  f   ex sted)
    *
-   * 3. When Tweetypie gets a delete request for a retweet, say A1. & if A happens to the source
-   * tweet for A1 & if A is an edit tweet, then the entire edit chain should be unretweeted & not
-   * A. i.e. On delete of a retweet - unretweet all the revisions for this user.
+   * 3. W n T etyp e gets a delete request for a ret et, say A1. &  f A happens to t  s ce
+   * t et for A1 &  f A  s an ed  t et, t n t  ent re ed  cha n should be unret eted & not
+   * A.  .e. On delete of a ret et - unret et all t  rev s ons for t  user.
    * - create A
-   * - retweet A'
+   * - ret et A'
    * - create B
-   * - delete A' => Deletes A' (& also any B' if it existed)
+   * - delete A' => Deletes A' (& also any B'  f   ex sted)
    *
-   * The following function has two failure scenarios -
-   * i. when it fails to get perspectives of any of the edit tweets.
-   * ii. the deletion of any of the retweets of these edits fail.
+   * T  follow ng funct on has two fa lure scenar os -
+   *  . w n   fa ls to get perspect ves of any of t  ed  t ets.
+   *   . t  delet on of any of t  ret ets of t se ed s fa l.
    *
-   * In either of this scenario, we fail the entire request & the error bubbles up to the top.
-   * Note: The above unretweet of edits only happens for the current user.
-   * In normal circumstances, a maximum of one Tweet in the edit chain will have been retweeted,
-   * but we don't know which one it was. Additionally, there may be circumstances where
-   * unretweet failed, and we end up with multiple versions retweeted. For these reasons,
-   * we always unretweet all the revisions (except for `excludedTweetId`).
-   * This is a no-op if none of these versions have been retweeted.
+   *  n e  r of t  scenar o,   fa l t  ent re request & t  error bubbles up to t  top.
+   * Note: T  above unret et of ed s only happens for t  current user.
+   *  n normal c rcumstances, a max mum of one T et  n t  ed  cha n w ll have been ret eted,
+   * but   don't know wh ch one   was. Add  onally, t re may be c rcumstances w re
+   * unret et fa led, and   end up w h mult ple vers ons ret eted. For t se reasons,
+   *   always unret et all t  rev s ons (except for `excludedT et d`).
+   * T   s a no-op  f none of t se vers ons have been ret eted.
    * */
-  override def unretweetEdits(
-    optEditControl: Option[EditControl],
-    excludedTweetId: TweetId,
-    byUserId: UserId
-  ): Future[Unit] = {
+  overr de def unret etEd s(
+    optEd Control: Opt on[Ed Control],
+    excludedT et d: T et d,
+    byUser d: User d
+  ): Future[Un ] = {
 
-    val editTweetIds: Seq[TweetId] =
-      EditControlUtil.getEditTweetIds(optEditControl).get().filter(_ != excludedTweetId)
+    val ed T et ds: Seq[T et d] =
+      Ed ControlUt l.getEd T et ds(optEd Control).get().f lter(_ != excludedT et d)
 
-    (editTweetIdRetweetsFromUser(editTweetIds, byUserId).flatMap { tweetIds =>
-      if (tweetIds.nonEmpty) {
-        deleteTweets(
-          DeleteTweetsRequest(tweetIds = tweetIds, byUserId = Some(byUserId)),
-          isUnretweetEdits = true
+    (ed T et dRet etsFromUser(ed T et ds, byUser d).flatMap { t et ds =>
+       f (t et ds.nonEmpty) {
+        deleteT ets(
+          DeleteT etsRequest(t et ds = t et ds, byUser d = So (byUser d)),
+           sUnret etEd s = true
         )
       } else {
-        Future.Nil
+        Future.N l
       }
-    }).unit
+    }).un 
   }
 }

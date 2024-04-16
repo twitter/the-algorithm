@@ -1,177 +1,177 @@
-package com.twitter.frigate.pushservice.predicate
+package com.tw ter.fr gate.pushserv ce.pred cate
 
-import com.twitter.abuse.detection.scoring.thriftscala.TweetScoringRequest
-import com.twitter.abuse.detection.scoring.thriftscala.TweetScoringResponse
-import com.twitter.abuse.detection.scoring.thriftscala.{Model => TweetHealthModel}
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.NsfwTextDetectionModel
-import com.twitter.frigate.pushservice.params.PushConstants
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.util.CandidateHydrationUtil
-import com.twitter.frigate.pushservice.util.CandidateUtil
-import com.twitter.frigate.pushservice.util.MediaAnnotationsUtil
-import com.twitter.frigate.thriftscala.UserMediaRepresentation
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.hss.api.thriftscala.UserHealthSignal._
-import com.twitter.hss.api.thriftscala.SignalValue
-import com.twitter.hss.api.thriftscala.UserHealthSignalResponse
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import com.twitter.util.Time
+ mport com.tw ter.abuse.detect on.scor ng.thr ftscala.T etScor ngRequest
+ mport com.tw ter.abuse.detect on.scor ng.thr ftscala.T etScor ngResponse
+ mport com.tw ter.abuse.detect on.scor ng.thr ftscala.{Model => T et althModel}
+ mport com.tw ter.f nagle.stats.Counter
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base._
+ mport com.tw ter.fr gate.common.rec_types.RecTypes
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.params.NsfwTextDetect onModel
+ mport com.tw ter.fr gate.pushserv ce.params.PushConstants
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.ut l.Cand dateHydrat onUt l
+ mport com.tw ter.fr gate.pushserv ce.ut l.Cand dateUt l
+ mport com.tw ter.fr gate.pushserv ce.ut l. d aAnnotat onsUt l
+ mport com.tw ter.fr gate.thr ftscala.User d aRepresentat on
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter.hss.ap .thr ftscala.User althS gnal._
+ mport com.tw ter.hss.ap .thr ftscala.S gnalValue
+ mport com.tw ter.hss.ap .thr ftscala.User althS gnalResponse
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
 
-object HealthPredicates {
+object  althPred cates {
 
-  private val NsfwTextDetectionModelMap: Map[NsfwTextDetectionModel.Value, TweetHealthModel] =
+  pr vate val NsfwTextDetect onModelMap: Map[NsfwTextDetect onModel.Value, T et althModel] =
     Map(
-      NsfwTextDetectionModel.ProdModel -> TweetHealthModel.PnsfwTweetText,
-      NsfwTextDetectionModel.RetrainedModel -> TweetHealthModel.ExperimentalHealthModelScore1,
+      NsfwTextDetect onModel.ProdModel -> T et althModel.PnsfwT etText,
+      NsfwTextDetect onModel.Retra nedModel -> T et althModel.Exper  ntal althModelScore1,
     )
 
-  private def tweetIsSupportedLanguage(
-    candidate: PushCandidate,
-    supportedLanguages: Set[String]
+  pr vate def t et sSupportedLanguage(
+    cand date: PushCand date,
+    supportedLanguages: Set[Str ng]
   ): Boolean = {
-    val tweetLanguage =
-      candidate.categoricalFeatures.getOrElse("RecTweet.TweetyPieResult.Language", "")
-    supportedLanguages.contains(tweetLanguage)
+    val t etLanguage =
+      cand date.categor calFeatures.getOrElse("RecT et.T etyP eResult.Language", "")
+    supportedLanguages.conta ns(t etLanguage)
   }
 
-  def tweetHealthSignalScorePredicate(
-    tweetHealthScoreStore: ReadableStore[TweetScoringRequest, TweetScoringResponse],
-    applyToQuoteTweet: Boolean = false
+  def t et althS gnalScorePred cate(
+    t et althScoreStore: ReadableStore[T etScor ngRequest, T etScor ngResponse],
+    applyToQuoteT et: Boolean = false
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetCandidate with TweetDetails] = {
-    val name = "tweet_health_signal_store_applyToQuoteTweet_" + applyToQuoteTweet.toString
-    val scopedStatsReceiver = stats.scope(name)
-    val numCandidatesStats = scopedStatsReceiver.scope("num_candidates")
-    val numCandidatesMediaNsfwScoreStats = numCandidatesStats.scope("media_nsfw_score")
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etCand date w h T etDeta ls] = {
+    val na  = "t et_ alth_s gnal_store_applyToQuoteT et_" + applyToQuoteT et.toStr ng
+    val scopedStatsRece ver = stats.scope(na )
+    val numCand datesStats = scopedStatsRece ver.scope("num_cand dates")
+    val numCand dates d aNsfwScoreStats = numCand datesStats.scope(" d a_nsfw_score")
 
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetCandidate with TweetDetails =>
-        numCandidatesStats.counter("all").incr()
-        val target = candidate.target
-        val tweetIdOpt = if (!applyToQuoteTweet) {
-          Some(candidate.tweetId)
-        } else candidate.tweetyPieResult.flatMap(_.quotedTweet.map(_.id))
+    Pred cate
+      .fromAsync { cand date: PushCand date w h T etCand date w h T etDeta ls =>
+        numCand datesStats.counter("all"). ncr()
+        val target = cand date.target
+        val t et dOpt =  f (!applyToQuoteT et) {
+          So (cand date.t et d)
+        } else cand date.t etyP eResult.flatMap(_.quotedT et.map(_. d))
 
-        tweetIdOpt match {
-          case Some(tweetId) =>
-            val pMediaNsfwRequest =
-              TweetScoringRequest(tweetId, TweetHealthModel.ExperimentalHealthModelScore4)
-            tweetHealthScoreStore.get(pMediaNsfwRequest).map {
-              case Some(tweetScoringResponse) =>
-                numCandidatesMediaNsfwScoreStats.counter("non_empty").incr()
-                val pMediaNsfwScore = tweetScoringResponse.score
+        t et dOpt match {
+          case So (t et d) =>
+            val p d aNsfwRequest =
+              T etScor ngRequest(t et d, T et althModel.Exper  ntal althModelScore4)
+            t et althScoreStore.get(p d aNsfwRequest).map {
+              case So (t etScor ngResponse) =>
+                numCand dates d aNsfwScoreStats.counter("non_empty"). ncr()
+                val p d aNsfwScore = t etScor ngResponse.score
 
-                if (!applyToQuoteTweet) {
-                  candidate
-                    .cacheExternalScore("NsfwMediaProbability", Future.value(Some(pMediaNsfwScore)))
+                 f (!applyToQuoteT et) {
+                  cand date
+                    .cac ExternalScore("Nsfw d aProbab l y", Future.value(So (p d aNsfwScore)))
                 }
 
-                val pMediaNsfwShouldBucket =
-                  pMediaNsfwScore > target.params(
-                    PushFeatureSwitchParams.PnsfwTweetMediaBucketingThreshold)
-                if (CandidateUtil.shouldApplyHealthQualityFilters(
-                    candidate) && pMediaNsfwShouldBucket) {
-                  numCandidatesMediaNsfwScoreStats.counter("bucketed").incr()
-                  if (target.params(PushFeatureSwitchParams.PnsfwTweetMediaFilterOonOnly)
-                    && !RecTypes.isOutOfNetworkTweetRecType(candidate.commonRecType)) {
+                val p d aNsfwShouldBucket =
+                  p d aNsfwScore > target.params(
+                    PushFeatureSw chParams.PnsfwT et d aBucket ngThreshold)
+                 f (Cand dateUt l.shouldApply althQual yF lters(
+                    cand date) && p d aNsfwShouldBucket) {
+                  numCand dates d aNsfwScoreStats.counter("bucketed"). ncr()
+                   f (target.params(PushFeatureSw chParams.PnsfwT et d aF lterOonOnly)
+                    && !RecTypes. sOutOfNetworkT etRecType(cand date.commonRecType)) {
                     true
                   } else {
-                    val pMediaNsfwScoreThreshold =
-                      if (applyToQuoteTweet)
-                        target.params(PushFeatureSwitchParams.PnsfwQuoteTweetThreshold)
-                      else if (candidate.hasPhoto)
-                        target.params(PushFeatureSwitchParams.PnsfwTweetImageThreshold)
-                      else target.params(PushFeatureSwitchParams.PnsfwTweetMediaThreshold)
-                    candidate.cachePredicateInfo(
-                      name + "_nsfwMedia",
-                      pMediaNsfwScore,
-                      pMediaNsfwScoreThreshold,
-                      pMediaNsfwScore > pMediaNsfwScoreThreshold)
-                    if (pMediaNsfwScore > pMediaNsfwScoreThreshold) {
-                      numCandidatesMediaNsfwScoreStats.counter("filtered").incr()
+                    val p d aNsfwScoreThreshold =
+                       f (applyToQuoteT et)
+                        target.params(PushFeatureSw chParams.PnsfwQuoteT etThreshold)
+                      else  f (cand date.hasPhoto)
+                        target.params(PushFeatureSw chParams.PnsfwT et mageThreshold)
+                      else target.params(PushFeatureSw chParams.PnsfwT et d aThreshold)
+                    cand date.cac Pred cate nfo(
+                      na  + "_nsfw d a",
+                      p d aNsfwScore,
+                      p d aNsfwScoreThreshold,
+                      p d aNsfwScore > p d aNsfwScoreThreshold)
+                     f (p d aNsfwScore > p d aNsfwScoreThreshold) {
+                      numCand dates d aNsfwScoreStats.counter("f ltered"). ncr()
                       false
                     } else true
                   }
                 } else true
               case _ =>
-                numCandidatesMediaNsfwScoreStats.counter("empty").incr()
-                if (candidate.hasPhoto || candidate.hasVideo) {
-                  numCandidatesMediaNsfwScoreStats.counter("media_tweet_with_empty_score").incr()
+                numCand dates d aNsfwScoreStats.counter("empty"). ncr()
+                 f (cand date.hasPhoto || cand date.hasV deo) {
+                  numCand dates d aNsfwScoreStats.counter(" d a_t et_w h_empty_score"). ncr()
                 }
                 true
             }
           case _ => Future.True
         }
       }
-      .withStats(stats.scope(s"predicate_$name"))
-      .withName(name)
+      .w hStats(stats.scope(s"pred cate_$na "))
+      .w hNa (na )
   }
 
-  def healthSignalScoreSpammyTweetPredicate(
-    tweetHealthScoreStore: ReadableStore[TweetScoringRequest, TweetScoringResponse]
+  def  althS gnalScoreSpam T etPred cate(
+    t et althScoreStore: ReadableStore[T etScor ngRequest, T etScor ngResponse]
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetCandidate with TweetDetails] = {
-    val name = "health_signal_store_spammy_tweet"
-    val statsScope = stats.scope(name)
-    val allCandidatesCounter = statsScope.counter("all_candidates")
-    val eligibleCandidatesCounter = statsScope.counter("eligible_candidates")
-    val oonCandidatesCounter = statsScope.counter("oon_candidates")
-    val inCandidatesCounter = statsScope.counter("in_candidates")
-    val bucketedCandidatesCounter = statsScope.counter("num_bucketed")
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etCand date w h T etDeta ls] = {
+    val na  = " alth_s gnal_store_spam _t et"
+    val statsScope = stats.scope(na )
+    val allCand datesCounter = statsScope.counter("all_cand dates")
+    val el g bleCand datesCounter = statsScope.counter("el g ble_cand dates")
+    val oonCand datesCounter = statsScope.counter("oon_cand dates")
+    val  nCand datesCounter = statsScope.counter(" n_cand dates")
+    val bucketedCand datesCounter = statsScope.counter("num_bucketed")
     val nonEmptySpamScoreCounter = statsScope.counter("non_empty_spam_score")
-    val filteredOonCandidatesCounter = statsScope.counter("num_filtered_oon")
-    val filteredInCandidatesCounter = statsScope.counter("num_filtered_in")
+    val f lteredOonCand datesCounter = statsScope.counter("num_f ltered_oon")
+    val f ltered nCand datesCounter = statsScope.counter("num_f ltered_ n")
 
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetCandidate with TweetDetails =>
-        allCandidatesCounter.incr()
-        val crt = candidate.commonRecType
-        val isOonCandidate = RecTypes.isOutOfNetworkTweetRecType(crt) ||
-          RecTypes.outOfNetworkTopicTweetTypes.contains(crt)
-        if (isOonCandidate) {
-          oonCandidatesCounter.incr()
+    Pred cate
+      .fromAsync { cand date: PushCand date w h T etCand date w h T etDeta ls =>
+        allCand datesCounter. ncr()
+        val crt = cand date.commonRecType
+        val  sOonCand date = RecTypes. sOutOfNetworkT etRecType(crt) ||
+          RecTypes.outOfNetworkTop cT etTypes.conta ns(crt)
+         f ( sOonCand date) {
+          oonCand datesCounter. ncr()
         }
-        val target = candidate.target
-        if (target.params(PushFeatureSwitchParams.EnableSpammyTweetFilter)) {
-          eligibleCandidatesCounter.incr()
-          val tweetSpamScore =
-            TweetScoringRequest(candidate.tweetId, TweetHealthModel.SpammyTweetContent)
-          tweetHealthScoreStore.get(tweetSpamScore).map {
-            case (Some(tweetScoringResponse)) =>
-              nonEmptySpamScoreCounter.incr()
-              val candidateSpamScore = tweetScoringResponse.score
+        val target = cand date.target
+         f (target.params(PushFeatureSw chParams.EnableSpam T etF lter)) {
+          el g bleCand datesCounter. ncr()
+          val t etSpamScore =
+            T etScor ngRequest(cand date.t et d, T et althModel.Spam T etContent)
+          t et althScoreStore.get(t etSpamScore).map {
+            case (So (t etScor ngResponse)) =>
+              nonEmptySpamScoreCounter. ncr()
+              val cand dateSpamScore = t etScor ngResponse.score
 
-              candidate
-                .cacheExternalScore("SpammyTweetScore", Future.value(Some(candidateSpamScore)))
+              cand date
+                .cac ExternalScore("Spam T etScore", Future.value(So (cand dateSpamScore)))
 
-              val tweetSpamShouldBucket =
-                candidateSpamScore > target.params(
-                  PushFeatureSwitchParams.SpammyTweetBucketingThreshold)
-              if (CandidateUtil.shouldApplyHealthQualityFilters(
-                  candidate) && tweetSpamShouldBucket) {
-                bucketedCandidatesCounter.incr()
-                if (isOonCandidate) {
+              val t etSpamShouldBucket =
+                cand dateSpamScore > target.params(
+                  PushFeatureSw chParams.Spam T etBucket ngThreshold)
+               f (Cand dateUt l.shouldApply althQual yF lters(
+                  cand date) && t etSpamShouldBucket) {
+                bucketedCand datesCounter. ncr()
+                 f ( sOonCand date) {
                   val spamScoreThreshold =
-                    target.params(PushFeatureSwitchParams.SpammyTweetOonThreshold)
-                  if (candidateSpamScore > spamScoreThreshold) {
-                    filteredOonCandidatesCounter.incr()
+                    target.params(PushFeatureSw chParams.Spam T etOonThreshold)
+                   f (cand dateSpamScore > spamScoreThreshold) {
+                    f lteredOonCand datesCounter. ncr()
                     false
                   } else true
                 } else {
-                  inCandidatesCounter.incr()
+                   nCand datesCounter. ncr()
                   val spamScoreThreshold =
-                    target.params(PushFeatureSwitchParams.SpammyTweetInThreshold)
-                  if (candidateSpamScore > spamScoreThreshold) {
-                    filteredInCandidatesCounter.incr()
+                    target.params(PushFeatureSw chParams.Spam T et nThreshold)
+                   f (cand dateSpamScore > spamScoreThreshold) {
+                    f ltered nCand datesCounter. ncr()
                     false
                   } else true
                 }
@@ -180,51 +180,51 @@ object HealthPredicates {
           }
         } else Future.True
       }
-      .withStats(stats.scope(s"predicate_$name"))
-      .withName(name)
+      .w hStats(stats.scope(s"pred cate_$na "))
+      .w hNa (na )
   }
 
-  def healthSignalScorePnsfwTweetTextPredicate(
-    tweetHealthScoreStore: ReadableStore[TweetScoringRequest, TweetScoringResponse]
+  def  althS gnalScorePnsfwT etTextPred cate(
+    t et althScoreStore: ReadableStore[T etScor ngRequest, T etScor ngResponse]
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetCandidate] = {
-    val name = "health_signal_store_pnsfw_tweet_text"
-    val statsScope = stats.scope(name)
-    val allCandidatesCounter = statsScope.counter("all_candidates")
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etCand date] = {
+    val na  = " alth_s gnal_store_pnsfw_t et_text"
+    val statsScope = stats.scope(na )
+    val allCand datesCounter = statsScope.counter("all_cand dates")
     val nonEmptyNsfwTextScoreNum = statsScope.counter("non_empty_nsfw_text_score")
-    val filteredCounter = statsScope.counter("num_filtered")
+    val f lteredCounter = statsScope.counter("num_f ltered")
     val lowScoreCounter = statsScope.counter("low_score_count")
 
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetCandidate =>
-        val target = candidate.target
+    Pred cate
+      .fromAsync { cand date: PushCand date w h T etCand date =>
+        val target = cand date.target
         val predEnabled =
-          target.params(PushFeatureSwitchParams.EnableHealthSignalStorePnsfwTweetTextPredicate)
-        if (CandidateUtil.shouldApplyHealthQualityFilters(
-            candidate) && predEnabled && tweetIsSupportedLanguage(candidate, Set(""))) {
-          allCandidatesCounter.incr()
+          target.params(PushFeatureSw chParams.Enable althS gnalStorePnsfwT etTextPred cate)
+         f (Cand dateUt l.shouldApply althQual yF lters(
+            cand date) && predEnabled && t et sSupportedLanguage(cand date, Set(""))) {
+          allCand datesCounter. ncr()
           val pnsfwTextRequest =
-            TweetScoringRequest(candidate.tweetId, TweetHealthModel.PnsfwTweetText)
-          tweetHealthScoreStore.get(pnsfwTextRequest).flatMap {
-            case Some(tweetScoringResponse) => {
-              nonEmptyNsfwTextScoreNum.incr()
-              if (tweetScoringResponse.score < 1e-8) {
-                lowScoreCounter.incr()
+            T etScor ngRequest(cand date.t et d, T et althModel.PnsfwT etText)
+          t et althScoreStore.get(pnsfwTextRequest).flatMap {
+            case So (t etScor ngResponse) => {
+              nonEmptyNsfwTextScoreNum. ncr()
+               f (t etScor ngResponse.score < 1e-8) {
+                lowScoreCounter. ncr()
               }
 
-              candidate
-                .cacheExternalScore(
-                  "NsfwTextProbability-en",
-                  Future.value(Some(tweetScoringResponse.score)))
-              val threshold = target.params(PushFeatureSwitchParams.PnsfwTweetTextThreshold)
-              candidate.cachePredicateInfo(
-                name,
-                tweetScoringResponse.score,
+              cand date
+                .cac ExternalScore(
+                  "NsfwTextProbab l y-en",
+                  Future.value(So (t etScor ngResponse.score)))
+              val threshold = target.params(PushFeatureSw chParams.PnsfwT etTextThreshold)
+              cand date.cac Pred cate nfo(
+                na ,
+                t etScor ngResponse.score,
                 threshold,
-                tweetScoringResponse.score > threshold)
-              if (tweetScoringResponse.score > threshold) {
-                filteredCounter.incr()
+                t etScor ngResponse.score > threshold)
+               f (t etScor ngResponse.score > threshold) {
+                f lteredCounter. ncr()
                 Future.False
               } else Future.True
             }
@@ -232,209 +232,209 @@ object HealthPredicates {
           }
         } else Future.True
       }
-      .withStats(stats.scope(s"predicate_$name"))
-      .withName(name)
+      .w hStats(stats.scope(s"pred cate_$na "))
+      .w hNa (na )
   }
 
-  def healthSignalScoreMultilingualPnsfwTweetTextPredicate(
-    tweetHealthScoreStore: ReadableStore[TweetScoringRequest, TweetScoringResponse]
+  def  althS gnalScoreMult l ngualPnsfwT etTextPred cate(
+    t et althScoreStore: ReadableStore[T etScor ngRequest, T etScor ngResponse]
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetCandidate] = {
-    val name = "health_signal_store_multilingual_pnsfw_tweet_text"
-    val statsScope = stats.scope(name)
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etCand date] = {
+    val na  = " alth_s gnal_store_mult l ngual_pnsfw_t et_text"
+    val statsScope = stats.scope(na )
 
-    val allLanguagesIdentifier = "all"
+    val allLanguages dent f er = "all"
     val languagesSelectedForStats =
-      Set("") + allLanguagesIdentifier
+      Set("") + allLanguages dent f er
 
-    val candidatesCounterMap: Map[String, Counter] = languagesSelectedForStats.map { lang =>
-      lang -> statsScope.counter(f"candidates_$lang")
+    val cand datesCounterMap: Map[Str ng, Counter] = languagesSelectedForStats.map { lang =>
+      lang -> statsScope.counter(f"cand dates_$lang")
     }.toMap
-    val nonEmptyHealthScoreMap: Map[String, Counter] = languagesSelectedForStats.map { lang =>
-      lang -> statsScope.counter(f"non_empty_health_score_$lang")
+    val nonEmpty althScoreMap: Map[Str ng, Counter] = languagesSelectedForStats.map { lang =>
+      lang -> statsScope.counter(f"non_empty_ alth_score_$lang")
     }.toMap
-    val emptyHealthScoreMap: Map[String, Counter] = languagesSelectedForStats.map { lang =>
-      lang -> statsScope.counter(f"empty_health_score_$lang")
+    val empty althScoreMap: Map[Str ng, Counter] = languagesSelectedForStats.map { lang =>
+      lang -> statsScope.counter(f"empty_ alth_score_$lang")
     }.toMap
-    val bucketedCounterMap: Map[String, Counter] = languagesSelectedForStats.map { lang =>
-      lang -> statsScope.counter(f"num_candidates_bucketed_$lang")
+    val bucketedCounterMap: Map[Str ng, Counter] = languagesSelectedForStats.map { lang =>
+      lang -> statsScope.counter(f"num_cand dates_bucketed_$lang")
     }.toMap
-    val filteredCounterMap: Map[String, Counter] = languagesSelectedForStats.map { lang =>
-      lang -> statsScope.counter(f"num_filtered_$lang")
+    val f lteredCounterMap: Map[Str ng, Counter] = languagesSelectedForStats.map { lang =>
+      lang -> statsScope.counter(f"num_f ltered_$lang")
     }.toMap
-    val lowScoreCounterMap: Map[String, Counter] = languagesSelectedForStats.map { lang =>
+    val lowScoreCounterMap: Map[Str ng, Counter] = languagesSelectedForStats.map { lang =>
       lang -> statsScope.counter(f"low_score_count_$lang")
     }.toMap
 
-    val wrongBucketingModelCounter = statsScope.counter("wrong_bucketing_model_count")
-    val wrongDetectionModelCounter = statsScope.counter("wrong_detection_model_count")
+    val wrongBucket ngModelCounter = statsScope.counter("wrong_bucket ng_model_count")
+    val wrongDetect onModelCounter = statsScope.counter("wrong_detect on_model_count")
 
-    def increaseCounterForLanguage(counterMap: Map[String, Counter], language: String): Unit = {
-      counterMap.get(allLanguagesIdentifier) match {
-        case Some(counter) => counter.incr()
+    def  ncreaseCounterForLanguage(counterMap: Map[Str ng, Counter], language: Str ng): Un  = {
+      counterMap.get(allLanguages dent f er) match {
+        case So (counter) => counter. ncr()
         case _ =>
       }
       counterMap.get(language) match {
-        case Some(counter) => counter.incr()
+        case So (counter) => counter. ncr()
         case _ =>
       }
     }
 
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetCandidate =>
-        val target = candidate.target
+    Pred cate
+      .fromAsync { cand date: PushCand date w h T etCand date =>
+        val target = cand date.target
 
-        val languageFeatureName = "RecTweet.TweetyPieResult.Language"
+        val languageFeatureNa  = "RecT et.T etyP eResult.Language"
 
-        lazy val isPredicateEnabledForTarget = target.params(
-          PushFeatureSwitchParams.EnableHealthSignalStoreMultilingualPnsfwTweetTextPredicate)
+        lazy val  sPred cateEnabledForTarget = target.params(
+          PushFeatureSw chParams.Enable althS gnalStoreMult l ngualPnsfwT etTextPred cate)
 
-        lazy val targetNsfwTextDetectionModel: NsfwTextDetectionModel.Value =
-          target.params(PushFeatureSwitchParams.MultilingualPnsfwTweetTextModel)
+        lazy val targetNsfwTextDetect onModel: NsfwTextDetect onModel.Value =
+          target.params(PushFeatureSw chParams.Mult l ngualPnsfwT etTextModel)
 
-        lazy val targetPredicateSupportedLanguageSeq: Seq[String] =
-          target.params(PushFeatureSwitchParams.MultilingualPnsfwTweetTextSupportedLanguages)
+        lazy val targetPred cateSupportedLanguageSeq: Seq[Str ng] =
+          target.params(PushFeatureSw chParams.Mult l ngualPnsfwT etTextSupportedLanguages)
 
-        lazy val bucketingModelSeq: Seq[NsfwTextDetectionModel.Value] =
-          target.params(PushFeatureSwitchParams.MultilingualPnsfwTweetTextBucketingModelList)
+        lazy val bucket ngModelSeq: Seq[NsfwTextDetect onModel.Value] =
+          target.params(PushFeatureSw chParams.Mult l ngualPnsfwT etTextBucket ngModelL st)
 
-        lazy val bucketingThresholdPerLanguageSeq: Seq[Double] =
-          target.params(PushFeatureSwitchParams.MultilingualPnsfwTweetTextBucketingThreshold)
+        lazy val bucket ngThresholdPerLanguageSeq: Seq[Double] =
+          target.params(PushFeatureSw chParams.Mult l ngualPnsfwT etTextBucket ngThreshold)
 
-        lazy val filteringThresholdPerLanguageSeq: Seq[Double] =
-          target.params(PushFeatureSwitchParams.MultilingualPnsfwTweetTextFilteringThreshold)
+        lazy val f lter ngThresholdPerLanguageSeq: Seq[Double] =
+          target.params(PushFeatureSw chParams.Mult l ngualPnsfwT etTextF lter ngThreshold)
 
-        if (CandidateUtil.shouldApplyHealthQualityFilters(
-            candidate) && isPredicateEnabledForTarget) {
-          val candidateLanguage =
-            candidate.categoricalFeatures.getOrElse(languageFeatureName, "")
+         f (Cand dateUt l.shouldApply althQual yF lters(
+            cand date) &&  sPred cateEnabledForTarget) {
+          val cand dateLanguage =
+            cand date.categor calFeatures.getOrElse(languageFeatureNa , "")
 
-          val indexOfCandidateLanguage =
-            targetPredicateSupportedLanguageSeq.indexOf(candidateLanguage)
+          val  ndexOfCand dateLanguage =
+            targetPred cateSupportedLanguageSeq. ndexOf(cand dateLanguage)
 
-          val isCandidateLanguageSupported = indexOfCandidateLanguage >= 0
+          val  sCand dateLanguageSupported =  ndexOfCand dateLanguage >= 0
 
-          if (isCandidateLanguageSupported) {
-            increaseCounterForLanguage(candidatesCounterMap, candidateLanguage)
+           f ( sCand dateLanguageSupported) {
+             ncreaseCounterForLanguage(cand datesCounterMap, cand dateLanguage)
 
-            val bucketingModelScoreMap: Map[NsfwTextDetectionModel.Value, Future[Option[Double]]] =
-              bucketingModelSeq.map { modelName =>
-                NsfwTextDetectionModelMap.get(modelName) match {
-                  case Some(targetNsfwTextDetectionModel) =>
-                    val pnsfwTweetTextRequest: TweetScoringRequest =
-                      TweetScoringRequest(candidate.tweetId, targetNsfwTextDetectionModel)
+            val bucket ngModelScoreMap: Map[NsfwTextDetect onModel.Value, Future[Opt on[Double]]] =
+              bucket ngModelSeq.map { modelNa  =>
+                NsfwTextDetect onModelMap.get(modelNa ) match {
+                  case So (targetNsfwTextDetect onModel) =>
+                    val pnsfwT etTextRequest: T etScor ngRequest =
+                      T etScor ngRequest(cand date.t et d, targetNsfwTextDetect onModel)
 
-                    val scoreOptFut: Future[Option[Double]] =
-                      tweetHealthScoreStore.get(pnsfwTweetTextRequest).map(_.map(_.score))
+                    val scoreOptFut: Future[Opt on[Double]] =
+                      t et althScoreStore.get(pnsfwT etTextRequest).map(_.map(_.score))
 
-                    candidate
-                      .cacheExternalScore("NsfwTextProbability", scoreOptFut)
+                    cand date
+                      .cac ExternalScore("NsfwTextProbab l y", scoreOptFut)
 
-                    modelName -> scoreOptFut
+                    modelNa  -> scoreOptFut
                   case _ =>
-                    wrongBucketingModelCounter.incr()
-                    modelName -> Future.None
+                    wrongBucket ngModelCounter. ncr()
+                    modelNa  -> Future.None
                 }
               }.toMap
 
-            val candidateLanguageBucketingThreshold =
-              bucketingThresholdPerLanguageSeq(indexOfCandidateLanguage)
+            val cand dateLanguageBucket ngThreshold =
+              bucket ngThresholdPerLanguageSeq( ndexOfCand dateLanguage)
 
             val userShouldBeBucketedFut: Future[Boolean] =
               Future
-                .collect(bucketingModelScoreMap.map {
+                .collect(bucket ngModelScoreMap.map {
                   case (_, modelScoreOptFut) =>
                     modelScoreOptFut.map {
-                      case Some(score) =>
-                        increaseCounterForLanguage(nonEmptyHealthScoreMap, candidateLanguage)
-                        score > candidateLanguageBucketingThreshold
+                      case So (score) =>
+                         ncreaseCounterForLanguage(nonEmpty althScoreMap, cand dateLanguage)
+                        score > cand dateLanguageBucket ngThreshold
                       case _ =>
-                        increaseCounterForLanguage(emptyHealthScoreMap, candidateLanguage)
+                         ncreaseCounterForLanguage(empty althScoreMap, cand dateLanguage)
                         false
                     }
-                }.toSeq).map(_.contains(true))
+                }.toSeq).map(_.conta ns(true))
 
-            val candidateShouldBeFilteredFut: Future[Boolean] = userShouldBeBucketedFut.flatMap {
+            val cand dateShouldBeF lteredFut: Future[Boolean] = userShouldBeBucketedFut.flatMap {
               userShouldBeBucketed =>
-                if (userShouldBeBucketed) {
-                  increaseCounterForLanguage(bucketedCounterMap, candidateLanguage)
+                 f (userShouldBeBucketed) {
+                   ncreaseCounterForLanguage(bucketedCounterMap, cand dateLanguage)
 
-                  val candidateLanguageFilteringThreshold =
-                    filteringThresholdPerLanguageSeq(indexOfCandidateLanguage)
+                  val cand dateLanguageF lter ngThreshold =
+                    f lter ngThresholdPerLanguageSeq( ndexOfCand dateLanguage)
 
-                  bucketingModelScoreMap.get(targetNsfwTextDetectionModel) match {
-                    case Some(scoreOptFut) =>
+                  bucket ngModelScoreMap.get(targetNsfwTextDetect onModel) match {
+                    case So (scoreOptFut) =>
                       scoreOptFut.map {
-                        case Some(score) =>
-                          val candidateShouldBeFiltered =
-                            score > candidateLanguageFilteringThreshold
-                          if (candidateShouldBeFiltered) {
-                            increaseCounterForLanguage(filteredCounterMap, candidateLanguage)
+                        case So (score) =>
+                          val cand dateShouldBeF ltered =
+                            score > cand dateLanguageF lter ngThreshold
+                           f (cand dateShouldBeF ltered) {
+                             ncreaseCounterForLanguage(f lteredCounterMap, cand dateLanguage)
                           }
-                          candidateShouldBeFiltered
+                          cand dateShouldBeF ltered
                         case _ => false
                       }
                     case _ =>
-                      wrongDetectionModelCounter.incr()
+                      wrongDetect onModelCounter. ncr()
                       Future.False
                   }
                 } else {
-                  increaseCounterForLanguage(lowScoreCounterMap, candidateLanguage)
+                   ncreaseCounterForLanguage(lowScoreCounterMap, cand dateLanguage)
                   Future.False
                 }
             }
-            candidateShouldBeFilteredFut.map(result => !result)
+            cand dateShouldBeF lteredFut.map(result => !result)
           } else Future.True
         } else Future.True
       }
-      .withStats(stats.scope(s"predicate_$name"))
-      .withName(name)
+      .w hStats(stats.scope(s"pred cate_$na "))
+      .w hNa (na )
   }
 
-  def authorProfileBasedPredicate(
+  def authorProf leBasedPred cate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetCandidate] = {
-    val name = "author_profile"
-    val statsScope = stats.scope(name)
-    val filterByNsfwToken = statsScope.counter("filter_by_nsfw_token")
-    val filterByAccountAge = statsScope.counter("filter_by_account_age")
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etCand date] = {
+    val na  = "author_prof le"
+    val statsScope = stats.scope(na )
+    val f lterByNsfwToken = statsScope.counter("f lter_by_nsfw_token")
+    val f lterByAccountAge = statsScope.counter("f lter_by_account_age")
 
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetCandidate =>
-        val target = candidate.target
-        candidate match {
-          case cand: PushCandidate with TweetAuthorDetails =>
-            cand.tweetAuthor.map {
-              case Some(author) =>
-                val nsfwTokens = target.params(PushFeatureSwitchParams.NsfwTokensParam)
-                val accountAgeInHours =
-                  (Time.now - Time.fromMilliseconds(author.createdAtMsec)).inHours
-                val isNsfwAccount = CandidateHydrationUtil.isNsfwAccount(author, nsfwTokens)
-                val isVerified = author.safety.map(_.verified).getOrElse(false)
+    Pred cate
+      .fromAsync { cand date: PushCand date w h T etCand date =>
+        val target = cand date.target
+        cand date match {
+          case cand: PushCand date w h T etAuthorDeta ls =>
+            cand.t etAuthor.map {
+              case So (author) =>
+                val nsfwTokens = target.params(PushFeatureSw chParams.NsfwTokensParam)
+                val accountAge nH s =
+                  (T  .now - T  .fromM ll seconds(author.createdAtMsec)). nH s
+                val  sNsfwAccount = Cand dateHydrat onUt l. sNsfwAccount(author, nsfwTokens)
+                val  sVer f ed = author.safety.map(_.ver f ed).getOrElse(false)
 
-                if (CandidateUtil.shouldApplyHealthQualityFilters(candidate) && !isVerified) {
-                  val enableNsfwTokenCheck =
-                    target.params(PushFeatureSwitchParams.EnableNsfwTokenBasedFiltering)
-                  val minimumAllowedAge =
-                    target.params(PushFeatureSwitchParams.MinimumAllowedAuthorAccountAgeInHours)
-                  cand.cachePredicateInfo(
-                    name + "_nsfwToken",
-                    if (isNsfwAccount) 1.0 else 0.0,
+                 f (Cand dateUt l.shouldApply althQual yF lters(cand date) && ! sVer f ed) {
+                  val enableNsfwTokenC ck =
+                    target.params(PushFeatureSw chParams.EnableNsfwTokenBasedF lter ng)
+                  val m n mumAllo dAge =
+                    target.params(PushFeatureSw chParams.M n mumAllo dAuthorAccountAge nH s)
+                  cand.cac Pred cate nfo(
+                    na  + "_nsfwToken",
+                     f ( sNsfwAccount) 1.0 else 0.0,
                     0.0,
-                    enableNsfwTokenCheck && isNsfwAccount)
-                  cand.cachePredicateInfo(
-                    name + "_authorAge",
-                    accountAgeInHours,
-                    minimumAllowedAge,
-                    accountAgeInHours < minimumAllowedAge)
+                    enableNsfwTokenC ck &&  sNsfwAccount)
+                  cand.cac Pred cate nfo(
+                    na  + "_authorAge",
+                    accountAge nH s,
+                    m n mumAllo dAge,
+                    accountAge nH s < m n mumAllo dAge)
 
-                  if (enableNsfwTokenCheck && isNsfwAccount) {
-                    filterByNsfwToken.incr()
+                   f (enableNsfwTokenC ck &&  sNsfwAccount) {
+                    f lterByNsfwToken. ncr()
                     false
-                  } else if (accountAgeInHours < minimumAllowedAge) {
-                    filterByAccountAge.incr()
+                  } else  f (accountAge nH s < m n mumAllo dAge) {
+                    f lterByAccountAge. ncr()
                     false
                   } else true
                 } else true
@@ -443,60 +443,60 @@ object HealthPredicates {
           case _ => Future.value(true)
         }
       }
-      .withStats(stats.scope(s"predicate_$name"))
-      .withName(name)
+      .w hStats(stats.scope(s"pred cate_$na "))
+      .w hNa (na )
   }
 
-  def authorSensitiveMediaPredicate(
-    producerMediaRepresentationStore: ReadableStore[Long, UserMediaRepresentation]
+  def authorSens  ve d aPred cate(
+    producer d aRepresentat onStore: ReadableStore[Long, User d aRepresentat on]
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetAuthor] = {
-    val name = "author_sensitive_media_mrtwistly"
-    val statsScope = stats.scope(name)
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etAuthor] = {
+    val na  = "author_sens  ve_ d a_mrtw stly"
+    val statsScope = stats.scope(na )
     val enableQueryNum = statsScope.counter("enable_query")
-    val nonEmptyMediaRepresentationNum = statsScope.counter("non_empty_media_representation")
-    val filteredOON = statsScope.counter("filtered_oon")
+    val nonEmpty d aRepresentat onNum = statsScope.counter("non_empty_ d a_representat on")
+    val f lteredOON = statsScope.counter("f ltered_oon")
 
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetAuthor =>
-        val target = candidate.target
-        val useAggressiveThresholds = CandidateUtil.useAggressiveHealthThresholds(candidate)
+    Pred cate
+      .fromAsync { cand date: PushCand date w h T etAuthor =>
+        val target = cand date.target
+        val useAggress veThresholds = Cand dateUt l.useAggress ve althThresholds(cand date)
 
-        if (CandidateUtil.shouldApplyHealthQualityFilters(candidate) &&
-          RecTypes.isOutOfNetworkTweetRecType(candidate.commonRecType) &&
-          target.params(PushFeatureSwitchParams.EnableQueryAuthorMediaRepresentationStore)) {
-          enableQueryNum.incr()
+         f (Cand dateUt l.shouldApply althQual yF lters(cand date) &&
+          RecTypes. sOutOfNetworkT etRecType(cand date.commonRecType) &&
+          target.params(PushFeatureSw chParams.EnableQueryAuthor d aRepresentat onStore)) {
+          enableQueryNum. ncr()
 
-          candidate.authorId match {
-            case Some(authorId) =>
-              producerMediaRepresentationStore.get(authorId).map {
-                case Some(mediaRepresentation) =>
-                  nonEmptyMediaRepresentationNum.incr()
-                  val sumScore: Double = mediaRepresentation.mediaRepresentation.values.sum
-                  val nudityScore: Double = mediaRepresentation.mediaRepresentation
-                    .getOrElse(MediaAnnotationsUtil.nudityCategoryId, 0.0)
-                  val nudityRate = if (sumScore > 0) nudityScore / sumScore else 0.0
+          cand date.author d match {
+            case So (author d) =>
+              producer d aRepresentat onStore.get(author d).map {
+                case So ( d aRepresentat on) =>
+                  nonEmpty d aRepresentat onNum. ncr()
+                  val sumScore: Double =  d aRepresentat on. d aRepresentat on.values.sum
+                  val nud yScore: Double =  d aRepresentat on. d aRepresentat on
+                    .getOrElse( d aAnnotat onsUt l.nud yCategory d, 0.0)
+                  val nud yRate =  f (sumScore > 0) nud yScore / sumScore else 0.0
 
-                  candidate
-                    .cacheExternalScore("AuthorNudityScore", Future.value(Some(nudityScore)))
-                  candidate.cacheExternalScore("AuthorNudityRate", Future.value(Some(nudityRate)))
+                  cand date
+                    .cac ExternalScore("AuthorNud yScore", Future.value(So (nud yScore)))
+                  cand date.cac ExternalScore("AuthorNud yRate", Future.value(So (nud yRate)))
 
-                  val threshold = if (useAggressiveThresholds) {
+                  val threshold =  f (useAggress veThresholds) {
                     target.params(
-                      PushFeatureSwitchParams.AuthorSensitiveMediaFilteringThresholdForMrTwistly)
+                      PushFeatureSw chParams.AuthorSens  ve d aF lter ngThresholdForMrTw stly)
                   } else {
-                    target.params(PushFeatureSwitchParams.AuthorSensitiveMediaFilteringThreshold)
+                    target.params(PushFeatureSw chParams.AuthorSens  ve d aF lter ngThreshold)
                   }
-                  candidate.cachePredicateInfo(
-                    name,
-                    nudityRate,
+                  cand date.cac Pred cate nfo(
+                    na ,
+                    nud yRate,
                     threshold,
-                    nudityRate > threshold,
-                    Some(Map[String, Double]("sumScore" -> sumScore, "nudityScore" -> nudityScore)))
+                    nud yRate > threshold,
+                    So (Map[Str ng, Double]("sumScore" -> sumScore, "nud yScore" -> nud yScore)))
 
-                  if (nudityRate > threshold) {
-                    filteredOON.incr()
+                   f (nud yRate > threshold) {
+                    f lteredOON. ncr()
                     false
                   } else true
                 case _ => true
@@ -507,116 +507,116 @@ object HealthPredicates {
           Future.True
         }
       }
-      .withStats(stats.scope(s"predicate_$name"))
-      .withName(name)
+      .w hStats(stats.scope(s"pred cate_$na "))
+      .w hNa (na )
   }
 
-  def sensitiveMediaCategoryPredicate(
+  def sens  ve d aCategoryPred cate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetCandidate] = {
-    val name = "sensitive_media_category"
-    val tweetMediaAnnotationFeature =
-      "tweet.mediaunderstanding.tweet_annotations.sensitive_category_probabilities"
-    val scopedStatsReceiver = stats.scope(name)
-    val allCandidatesCounter = scopedStatsReceiver.counter("all_candidates")
-    val nonZeroNudityCandidatesCounter = scopedStatsReceiver.counter("non_zero_nudity_candidates")
-    val nudityScoreStats = scopedStatsReceiver.stat("nudity_scores")
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etCand date] = {
+    val na  = "sens  ve_ d a_category"
+    val t et d aAnnotat onFeature =
+      "t et. d aunderstand ng.t et_annotat ons.sens  ve_category_probab l  es"
+    val scopedStatsRece ver = stats.scope(na )
+    val allCand datesCounter = scopedStatsRece ver.counter("all_cand dates")
+    val nonZeroNud yCand datesCounter = scopedStatsRece ver.counter("non_zero_nud y_cand dates")
+    val nud yScoreStats = scopedStatsRece ver.stat("nud y_scores")
 
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        allCandidatesCounter.incr()
-        val target = candidate.target
-        val nudityScore = candidate.sparseContinuousFeatures
-          .getOrElse(tweetMediaAnnotationFeature, Map.empty[String, Double]).getOrElse(
-            MediaAnnotationsUtil.nudityCategoryId,
+    Pred cate
+      .fromAsync { cand date: PushCand date =>
+        allCand datesCounter. ncr()
+        val target = cand date.target
+        val nud yScore = cand date.sparseCont nuousFeatures
+          .getOrElse(t et d aAnnotat onFeature, Map.empty[Str ng, Double]).getOrElse(
+             d aAnnotat onsUt l.nud yCategory d,
             0.0)
-        if (nudityScore > 0) nonZeroNudityCandidatesCounter.incr()
-        nudityScoreStats.add(nudityScore.toFloat)
+         f (nud yScore > 0) nonZeroNud yCand datesCounter. ncr()
+        nud yScoreStats.add(nud yScore.toFloat)
         val threshold =
-          target.params(PushFeatureSwitchParams.TweetMediaSensitiveCategoryThresholdParam)
-        candidate.cachePredicateInfo(name, nudityScore, threshold, nudityScore > threshold)
-        if (CandidateUtil.shouldApplyHealthQualityFilters(candidate) && nudityScore > threshold) {
+          target.params(PushFeatureSw chParams.T et d aSens  veCategoryThresholdParam)
+        cand date.cac Pred cate nfo(na , nud yScore, threshold, nud yScore > threshold)
+         f (Cand dateUt l.shouldApply althQual yF lters(cand date) && nud yScore > threshold) {
           Future.False
         } else {
           Future.True
         }
       }
-      .withStats(stats.scope(s"predicate_$name"))
-      .withName(name)
+      .w hStats(stats.scope(s"pred cate_$na "))
+      .w hNa (na )
   }
 
-  def profanityPredicate(
+  def profan yPred cate(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetCandidate] = {
-    val name = "profanity_filter"
-    val scopedStatsReceiver = stats.scope(name)
-    val allCandidatesCounter = scopedStatsReceiver.counter("all_candidates")
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etCand date] = {
+    val na  = "profan y_f lter"
+    val scopedStatsRece ver = stats.scope(na )
+    val allCand datesCounter = scopedStatsRece ver.counter("all_cand dates")
 
-    Predicate
-      .fromAsync { candidate: PushCandidate =>
-        allCandidatesCounter.incr()
-        val target = candidate.target
+    Pred cate
+      .fromAsync { cand date: PushCand date =>
+        allCand datesCounter. ncr()
+        val target = cand date.target
 
-        lazy val enableFilter =
-          target.params(PushFeatureSwitchParams.EnableProfanityFilterParam)
-        val tweetSemanticCoreIds = candidate.sparseBinaryFeatures
-          .getOrElse(PushConstants.TweetSemanticCoreIdFeature, Set.empty[String])
+        lazy val enableF lter =
+          target.params(PushFeatureSw chParams.EnableProfan yF lterParam)
+        val t etSemant cCore ds = cand date.sparseB naryFeatures
+          .getOrElse(PushConstants.T etSemant cCore dFeature, Set.empty[Str ng])
 
-        if (CandidateUtil.shouldApplyHealthQualityFilters(candidate) &&
-          tweetSemanticCoreIds.contains(PushConstants.ProfanityFilter_Id) && enableFilter) {
+         f (Cand dateUt l.shouldApply althQual yF lters(cand date) &&
+          t etSemant cCore ds.conta ns(PushConstants.Profan yF lter_ d) && enableF lter) {
           Future.False
         } else {
           Future.True
         }
       }
-      .withStats(stats.scope(s"predicate_$name"))
-      .withName(name)
+      .w hStats(stats.scope(s"pred cate_$na "))
+      .w hNa (na )
   }
 
-  def agathaAbusiveTweetAuthorPredicateMrTwistly(
+  def agathaAbus veT etAuthorPred cateMrTw stly(
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with OutOfNetworkTweetCandidate] = {
-    val name = "agatha_abusive_tweet_author_mr_twistly"
-    val scopedStatsReceiver = stats.scope(name)
-    val allCandidatesCounter = scopedStatsReceiver.counter("all_candidates")
-    val isMrBackfillCRCandidateCounter = scopedStatsReceiver.counter("isMrBackfillCR_candidates")
-    Predicate
-      .fromAsync { cand: PushCandidate with OutOfNetworkTweetCandidate =>
-        allCandidatesCounter.incr()
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date w h OutOfNetworkT etCand date] = {
+    val na  = "agatha_abus ve_t et_author_mr_tw stly"
+    val scopedStatsRece ver = stats.scope(na )
+    val allCand datesCounter = scopedStatsRece ver.counter("all_cand dates")
+    val  sMrBackf llCRCand dateCounter = scopedStatsRece ver.counter(" sMrBackf llCR_cand dates")
+    Pred cate
+      .fromAsync { cand: PushCand date w h OutOfNetworkT etCand date =>
+        allCand datesCounter. ncr()
         val target = cand.target
-        val tweetSemanticCoreIds = cand.sparseBinaryFeatures
-          .getOrElse(PushConstants.TweetSemanticCoreIdFeature, Set.empty[String])
+        val t etSemant cCore ds = cand.sparseB naryFeatures
+          .getOrElse(PushConstants.T etSemant cCore dFeature, Set.empty[Str ng])
 
-        val hasAbuseStrikeTop2Percent =
-          tweetSemanticCoreIds.contains(PushConstants.AbuseStrike_Top2Percent_Id)
-        val hasAbuseStrikeTop1Percent =
-          tweetSemanticCoreIds.contains(PushConstants.AbuseStrike_Top1Percent_Id)
-        val hasAbuseStrikeTop05Percent =
-          tweetSemanticCoreIds.contains(PushConstants.AbuseStrike_Top05Percent_Id)
+        val hasAbuseStr keTop2Percent =
+          t etSemant cCore ds.conta ns(PushConstants.AbuseStr ke_Top2Percent_ d)
+        val hasAbuseStr keTop1Percent =
+          t etSemant cCore ds.conta ns(PushConstants.AbuseStr ke_Top1Percent_ d)
+        val hasAbuseStr keTop05Percent =
+          t etSemant cCore ds.conta ns(PushConstants.AbuseStr ke_Top05Percent_ d)
 
-        if (hasAbuseStrikeTop2Percent) {
-          scopedStatsReceiver.counter("abuse_strike_top_2_percent_candidates").incr()
+         f (hasAbuseStr keTop2Percent) {
+          scopedStatsRece ver.counter("abuse_str ke_top_2_percent_cand dates"). ncr()
         }
-        if (hasAbuseStrikeTop1Percent) {
-          scopedStatsReceiver.counter("abuse_strike_top_1_percent_candidates").incr()
+         f (hasAbuseStr keTop1Percent) {
+          scopedStatsRece ver.counter("abuse_str ke_top_1_percent_cand dates"). ncr()
         }
-        if (hasAbuseStrikeTop05Percent) {
-          scopedStatsReceiver.counter("abuse_strike_top_05_percent_candidates").incr()
+         f (hasAbuseStr keTop05Percent) {
+          scopedStatsRece ver.counter("abuse_str ke_top_05_percent_cand dates"). ncr()
         }
 
-        if (CandidateUtil.shouldApplyHealthQualityFilters(cand) && cand.isMrBackfillCR.getOrElse(
+         f (Cand dateUt l.shouldApply althQual yF lters(cand) && cand. sMrBackf llCR.getOrElse(
             false)) {
-          isMrBackfillCRCandidateCounter.incr()
-          if (hasAbuseStrikeTop2Percent) {
-            if (target.params(
-                PushFeatureSwitchParams.EnableAbuseStrikeTop2PercentFilterSimCluster) && hasAbuseStrikeTop2Percent ||
+           sMrBackf llCRCand dateCounter. ncr()
+           f (hasAbuseStr keTop2Percent) {
+             f (target.params(
+                PushFeatureSw chParams.EnableAbuseStr keTop2PercentF lterS mCluster) && hasAbuseStr keTop2Percent ||
               target.params(
-                PushFeatureSwitchParams.EnableAbuseStrikeTop1PercentFilterSimCluster) && hasAbuseStrikeTop1Percent ||
+                PushFeatureSw chParams.EnableAbuseStr keTop1PercentF lterS mCluster) && hasAbuseStr keTop1Percent ||
               target.params(
-                PushFeatureSwitchParams.EnableAbuseStrikeTop05PercentFilterSimCluster) && hasAbuseStrikeTop05Percent) {
+                PushFeatureSw chParams.EnableAbuseStr keTop05PercentF lterS mCluster) && hasAbuseStr keTop05Percent) {
               Future.False
             } else {
               Future.True
@@ -626,96 +626,96 @@ object HealthPredicates {
           }
         } else Future.True
       }
-      .withStats(stats.scope(s"predicate_$name"))
-      .withName(name)
+      .w hStats(stats.scope(s"pred cate_$na "))
+      .w hNa (na )
   }
 
-  def userHealthSignalsPredicate(
-    userHealthSignalStore: ReadableStore[Long, UserHealthSignalResponse]
+  def user althS gnalsPred cate(
+    user althS gnalStore: ReadableStore[Long, User althS gnalResponse]
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetDetails] = {
-    val name = "agatha_user_health_model_score"
-    val scopedStatsReceiver = stats.scope(name)
-    val allCandidatesCounter = scopedStatsReceiver.counter("all_candidates")
-    val bucketedUserCandidatesCounter =
-      scopedStatsReceiver.counter("bucketed_user_candidates")
-    val filteredOON = scopedStatsReceiver.counter("filtered_oon")
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etDeta ls] = {
+    val na  = "agatha_user_ alth_model_score"
+    val scopedStatsRece ver = stats.scope(na )
+    val allCand datesCounter = scopedStatsRece ver.counter("all_cand dates")
+    val bucketedUserCand datesCounter =
+      scopedStatsRece ver.counter("bucketed_user_cand dates")
+    val f lteredOON = scopedStatsRece ver.counter("f ltered_oon")
 
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetDetails =>
-        allCandidatesCounter.incr()
-        val target = candidate.target
-        val useAggressiveThresholds = CandidateUtil.useAggressiveHealthThresholds(candidate)
+    Pred cate
+      .fromAsync { cand date: PushCand date w h T etDeta ls =>
+        allCand datesCounter. ncr()
+        val target = cand date.target
+        val useAggress veThresholds = Cand dateUt l.useAggress ve althThresholds(cand date)
 
-        if (CandidateUtil.shouldApplyHealthQualityFilters(candidate) && target.params(
-            PushFeatureSwitchParams.EnableAgathaUserHealthModelPredicate)) {
-          val healthSignalsResponseFutOpt: Future[Option[UserHealthSignalResponse]] =
-            candidate.authorId match {
-              case Some(authorId) => userHealthSignalStore.get(authorId)
+         f (Cand dateUt l.shouldApply althQual yF lters(cand date) && target.params(
+            PushFeatureSw chParams.EnableAgathaUser althModelPred cate)) {
+          val  althS gnalsResponseFutOpt: Future[Opt on[User althS gnalResponse]] =
+            cand date.author d match {
+              case So (author d) => user althS gnalStore.get(author d)
               case _ => Future.None
             }
-          healthSignalsResponseFutOpt.map {
-            case Some(response) =>
-              val agathaRecentAbuseStrikeScore: Double = userHealthSignalValueToDouble(
-                response.signalValues
-                  .getOrElse(AgathaRecentAbuseStrikeDouble, SignalValue.DoubleValue(0.0)))
-              val agathaCalibratedNSFWScore: Double = userHealthSignalValueToDouble(
-                response.signalValues
-                  .getOrElse(AgathaCalibratedNsfwDouble, SignalValue.DoubleValue(0.0)))
-              val agathaTextNSFWScore: Double = userHealthSignalValueToDouble(response.signalValues
-                .getOrElse(NsfwTextUserScoreDouble, SignalValue.DoubleValue(0.0)))
+           althS gnalsResponseFutOpt.map {
+            case So (response) =>
+              val agathaRecentAbuseStr keScore: Double = user althS gnalValueToDouble(
+                response.s gnalValues
+                  .getOrElse(AgathaRecentAbuseStr keDouble, S gnalValue.DoubleValue(0.0)))
+              val agathaCal bratedNSFWScore: Double = user althS gnalValueToDouble(
+                response.s gnalValues
+                  .getOrElse(AgathaCal bratedNsfwDouble, S gnalValue.DoubleValue(0.0)))
+              val agathaTextNSFWScore: Double = user althS gnalValueToDouble(response.s gnalValues
+                .getOrElse(NsfwTextUserScoreDouble, S gnalValue.DoubleValue(0.0)))
 
-              candidate
-                .cacheExternalScore(
-                  "agathaRecentAbuseStrikeScore",
-                  Future.value(Some(agathaRecentAbuseStrikeScore)))
-              candidate
-                .cacheExternalScore(
-                  "agathaCalibratedNSFWScore",
-                  Future.value(Some(agathaCalibratedNSFWScore)))
-              candidate
-                .cacheExternalScore("agathaTextNSFWScore", Future.value(Some(agathaTextNSFWScore)))
+              cand date
+                .cac ExternalScore(
+                  "agathaRecentAbuseStr keScore",
+                  Future.value(So (agathaRecentAbuseStr keScore)))
+              cand date
+                .cac ExternalScore(
+                  "agathaCal bratedNSFWScore",
+                  Future.value(So (agathaCal bratedNSFWScore)))
+              cand date
+                .cac ExternalScore("agathaTextNSFWScore", Future.value(So (agathaTextNSFWScore)))
 
-              val NSFWShouldBucket = agathaCalibratedNSFWScore > target.params(
-                PushFeatureSwitchParams.AgathaCalibratedNSFWBucketThreshold)
+              val NSFWShouldBucket = agathaCal bratedNSFWScore > target.params(
+                PushFeatureSw chParams.AgathaCal bratedNSFWBucketThreshold)
               val textNSFWShouldBucket = agathaTextNSFWScore > target.params(
-                PushFeatureSwitchParams.AgathaTextNSFWBucketThreshold)
+                PushFeatureSw chParams.AgathaTextNSFWBucketThreshold)
 
-              if (NSFWShouldBucket || textNSFWShouldBucket) {
-                bucketedUserCandidatesCounter.incr()
-                if (NSFWShouldBucket) {
-                  scopedStatsReceiver.counter("calibrated_nsfw_bucketed_user_candidates").incr()
+               f (NSFWShouldBucket || textNSFWShouldBucket) {
+                bucketedUserCand datesCounter. ncr()
+                 f (NSFWShouldBucket) {
+                  scopedStatsRece ver.counter("cal brated_nsfw_bucketed_user_cand dates"). ncr()
                 }
-                if (textNSFWShouldBucket) {
-                  scopedStatsReceiver.counter("text_nsfw_bucketed_user_candidates").incr()
+                 f (textNSFWShouldBucket) {
+                  scopedStatsRece ver.counter("text_nsfw_bucketed_user_cand dates"). ncr()
                 }
 
-                val (thresholdAgathaNsfw, thresholdTextNsfw) = if (useAggressiveThresholds) {
+                val (thresholdAgathaNsfw, thresholdTextNsfw) =  f (useAggress veThresholds) {
                   (
                     target.params(
-                      PushFeatureSwitchParams.AgathaCalibratedNSFWThresholdForMrTwistly),
+                      PushFeatureSw chParams.AgathaCal bratedNSFWThresholdForMrTw stly),
                     target
-                      .params(PushFeatureSwitchParams.AgathaTextNSFWThresholdForMrTwistly))
+                      .params(PushFeatureSw chParams.AgathaTextNSFWThresholdForMrTw stly))
                 } else {
                   (
-                    target.params(PushFeatureSwitchParams.AgathaCalibratedNSFWThreshold),
-                    target.params(PushFeatureSwitchParams.AgathaTextNSFWThreshold))
+                    target.params(PushFeatureSw chParams.AgathaCal bratedNSFWThreshold),
+                    target.params(PushFeatureSw chParams.AgathaTextNSFWThreshold))
                 }
-                candidate.cachePredicateInfo(
-                  name + "_agathaNsfw",
-                  agathaCalibratedNSFWScore,
+                cand date.cac Pred cate nfo(
+                  na  + "_agathaNsfw",
+                  agathaCal bratedNSFWScore,
                   thresholdAgathaNsfw,
-                  agathaCalibratedNSFWScore > thresholdAgathaNsfw)
-                candidate.cachePredicateInfo(
-                  name + "_authorTextNsfw",
+                  agathaCal bratedNSFWScore > thresholdAgathaNsfw)
+                cand date.cac Pred cate nfo(
+                  na  + "_authorTextNsfw",
                   agathaTextNSFWScore,
                   thresholdTextNsfw,
                   agathaTextNSFWScore > thresholdTextNsfw)
 
-                if ((agathaCalibratedNSFWScore > thresholdAgathaNsfw) ||
+                 f ((agathaCal bratedNSFWScore > thresholdAgathaNsfw) ||
                   (agathaTextNSFWScore > thresholdTextNsfw)) {
-                  filteredOON.incr()
+                  f lteredOON. ncr()
                   false
                 } else true
               } else {
@@ -727,14 +727,14 @@ object HealthPredicates {
           Future.True
         }
       }
-      .withStats(stats.scope(s"predicate_$name"))
-      .withName(name)
+      .w hStats(stats.scope(s"pred cate_$na "))
+      .w hNa (na )
   }
 
-  def userHealthSignalValueToDouble(signalValue: SignalValue): Double = {
-    signalValue match {
-      case SignalValue.DoubleValue(value) => value
-      case _ => throw new Exception(f"Could not convert signal value to double")
+  def user althS gnalValueToDouble(s gnalValue: S gnalValue): Double = {
+    s gnalValue match {
+      case S gnalValue.DoubleValue(value) => value
+      case _ => throw new Except on(f"Could not convert s gnal value to double")
     }
   }
 }

@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t et
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.highlight.HighlightedSection
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.h ghl ght.H ghl ghtedSect on
 
-case class TweetHighlights(
-  textHighlights: Option[List[HighlightedSection]],
-  cardTitleHighlights: Option[List[HighlightedSection]],
-  cardDescriptionHighlights: Option[List[HighlightedSection]])
+case class T etH ghl ghts(
+  textH ghl ghts: Opt on[L st[H ghl ghtedSect on]],
+  cardT leH ghl ghts: Opt on[L st[H ghl ghtedSect on]],
+  cardDescr pt onH ghl ghts: Opt on[L st[H ghl ghtedSect on]])

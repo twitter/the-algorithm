@@ -1,39 +1,39 @@
-package com.twitter.search.earlybird.archive;
+package com.tw ter.search.earlyb rd.arch ve;
 
-import java.io.IOException;
-import java.util.List;
+ mport java. o. OExcept on;
+ mport java.ut l.L st;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.store.Directory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .lucene. ndex.D rectoryReader;
+ mport org.apac .lucene. ndex.LeafReader;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene.store.D rectory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.earlybird.partition.SegmentInfo;
+ mport com.tw ter.search.earlyb rd.part  on.Seg nt nfo;
 
-public final class ArchiveSegmentVerifier {
-  private static final Logger LOG = LoggerFactory.getLogger(ArchiveSegmentVerifier.class);
+publ c f nal class Arch veSeg ntVer f er {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Arch veSeg ntVer f er.class);
 
-  private ArchiveSegmentVerifier() {
+  pr vate Arch veSeg ntVer f er() {
   }
 
-  @VisibleForTesting
-  static boolean shouldVerifySegment(SegmentInfo segmentInfo) {
-    if (segmentInfo.isIndexing()) {
-      LOG.warn("ArchiveSegmentVerifier got segment still indexing.");
+  @V s bleForTest ng
+  stat c boolean shouldVer fySeg nt(Seg nt nfo seg nt nfo) {
+     f (seg nt nfo. s ndex ng()) {
+      LOG.warn("Arch veSeg ntVer f er got seg nt st ll  ndex ng.");
       return false;
     }
 
-    if (!segmentInfo.isComplete()) {
-      LOG.warn("ArchiveSegmentVerifyer got incomplete segment.");
+     f (!seg nt nfo. sComplete()) {
+      LOG.warn("Arch veSeg ntVer fyer got  ncomplete seg nt.");
       return false;
     }
 
-    if (!segmentInfo.isOptimized()) {
-      LOG.warn("ArchiveSegmentVerifyer got unoptimized segment.");
+     f (!seg nt nfo. sOpt m zed()) {
+      LOG.warn("Arch veSeg ntVer fyer got unopt m zed seg nt.");
       return false;
     }
 
@@ -41,34 +41,34 @@ public final class ArchiveSegmentVerifier {
   }
 
   /**
-   * Verifies an archive segment has a sane number of leaves.
+   * Ver f es an arch ve seg nt has a sane number of leaves.
    */
-  public static boolean verifySegment(SegmentInfo segmentInfo) {
-    if (!shouldVerifySegment(segmentInfo)) {
+  publ c stat c boolean ver fySeg nt(Seg nt nfo seg nt nfo) {
+     f (!shouldVer fySeg nt(seg nt nfo)) {
       return false;
     }
-    Directory directory = segmentInfo.getIndexSegment().getLuceneDirectory();
-    return verifyLuceneIndex(directory);
+    D rectory d rectory = seg nt nfo.get ndexSeg nt().getLuceneD rectory();
+    return ver fyLucene ndex(d rectory);
   }
 
-  private static boolean verifyLuceneIndex(Directory directory) {
+  pr vate stat c boolean ver fyLucene ndex(D rectory d rectory) {
     try {
-      DirectoryReader indexerReader = DirectoryReader.open(directory);
-      List<LeafReaderContext> leaves = indexerReader.getContext().leaves();
-      if (leaves.size() != 1) {
-        LOG.warn("Lucene index does not have exactly one segment: " + leaves.size() + " != 1. "
-            + "Lucene segments should have been merged during optimization.");
+      D rectoryReader  ndexerReader = D rectoryReader.open(d rectory);
+      L st<LeafReaderContext> leaves =  ndexerReader.getContext().leaves();
+       f (leaves.s ze() != 1) {
+        LOG.warn("Lucene  ndex does not have exactly one seg nt: " + leaves.s ze() + " != 1. "
+            + "Lucene seg nts should have been  rged dur ng opt m zat on.");
         return false;
       }
 
       LeafReader reader = leaves.get(0).reader();
-      if (reader.numDocs() <= 0) {
-        LOG.warn("Lucene index has no document: " + reader);
+       f (reader.numDocs() <= 0) {
+        LOG.warn("Lucene  ndex has no docu nt: " + reader);
         return false;
       }
       return true;
-    } catch (IOException e) {
-      LOG.warn("Found bad lucene index at: " + directory);
+    } catch ( OExcept on e) {
+      LOG.warn("Found bad lucene  ndex at: " + d rectory);
       return false;
     }
   }

@@ -1,640 +1,640 @@
-package com.twitter.cr_mixer.candidate_generation
+package com.tw ter.cr_m xer.cand date_generat on
 
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.TweetWithCandidateGenerationInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.cr_mixer.param.InterestedInParams
-import com.twitter.cr_mixer.param.SimClustersANNParams
-import com.twitter.cr_mixer.similarity_engine.EngineQuery
-import com.twitter.cr_mixer.similarity_engine.SimClustersANNSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.timelines.configapi
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Singleton
-import javax.inject.Named
-import com.twitter.cr_mixer.model.ModuleNames
+ mport com.tw ter.cr_m xer.model.Cand dateGenerat on nfo
+ mport com.tw ter.cr_m xer.model.T etW hCand dateGenerat on nfo
+ mport com.tw ter.cr_m xer.model.T etW hScore
+ mport com.tw ter.cr_m xer.param.GlobalParams
+ mport com.tw ter.cr_m xer.param. nterested nParams
+ mport com.tw ter.cr_m xer.param.S mClustersANNParams
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.Eng neQuery
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.S mClustersANNS m lar yEng ne
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.StandardS m lar yEng ne
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Cand dateS ce
+ mport com.tw ter.fr gate.common.ut l.StatsUt l
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.t  l nes.conf gap 
+ mport com.tw ter.ut l.Future
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport javax. nject.Na d
+ mport com.tw ter.cr_m xer.model.ModuleNa s
 
 /**
- * This store looks for similar tweets for a given UserId that generates UserInterestedIn
- * from SimClustersANN. It will be a standalone CandidateGeneration class moving forward.
+ * T  store looks for s m lar t ets for a g ven User d that generates User nterested n
+ * from S mClustersANN.   w ll be a standalone Cand dateGenerat on class mov ng forward.
  *
- * After the abstraction improvement (apply SimilarityEngine trait)
- * these CG will be subjected to change.
+ * After t  abstract on  mprove nt (apply S m lar yEng ne tra )
+ * t se CG w ll be subjected to change.
  */
-@Singleton
-case class SimClustersInterestedInCandidateGeneration @Inject() (
-  @Named(ModuleNames.SimClustersANNSimilarityEngine)
-  simClustersANNSimilarityEngine: StandardSimilarityEngine[
-    SimClustersANNSimilarityEngine.Query,
-    TweetWithScore
+@S ngleton
+case class S mClusters nterested nCand dateGenerat on @ nject() (
+  @Na d(ModuleNa s.S mClustersANNS m lar yEng ne)
+  s mClustersANNS m lar yEng ne: StandardS m lar yEng ne[
+    S mClustersANNS m lar yEng ne.Query,
+    T etW hScore
   ],
-  statsReceiver: StatsReceiver)
-    extends CandidateSource[
-      SimClustersInterestedInCandidateGeneration.Query,
-      Seq[TweetWithCandidateGenerationInfo]
+  statsRece ver: StatsRece ver)
+    extends Cand dateS ce[
+      S mClusters nterested nCand dateGenerat on.Query,
+      Seq[T etW hCand dateGenerat on nfo]
     ] {
 
-  override def name: String = this.getClass.getSimpleName
-  private val stats = statsReceiver.scope(name)
-  private val fetchCandidatesStat = stats.scope("fetchCandidates")
+  overr de def na : Str ng = t .getClass.getS mpleNa 
+  pr vate val stats = statsRece ver.scope(na )
+  pr vate val fetchCand datesStat = stats.scope("fetchCand dates")
 
-  override def get(
-    query: SimClustersInterestedInCandidateGeneration.Query
-  ): Future[Option[Seq[Seq[TweetWithCandidateGenerationInfo]]]] = {
+  overr de def get(
+    query: S mClusters nterested nCand dateGenerat on.Query
+  ): Future[Opt on[Seq[Seq[T etW hCand dateGenerat on nfo]]]] = {
 
-    query.internalId match {
-      case _: InternalId.UserId =>
-        StatsUtil.trackOptionItemsStats(fetchCandidatesStat) {
-          // UserInterestedIn Queries
-          val userInterestedInCandidateResultFut =
-            if (query.enableUserInterestedIn && query.enableProdSimClustersANNSimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.interestedInSimClustersANNQuery,
-                query.simClustersInterestedInMinScore)
+    query. nternal d match {
+      case _:  nternal d.User d =>
+        StatsUt l.trackOpt on emsStats(fetchCand datesStat) {
+          // User nterested n Quer es
+          val user nterested nCand dateResultFut =
+             f (query.enableUser nterested n && query.enableProdS mClustersANNS m lar yEng ne)
+              get nterested nCand dateResult(
+                s mClustersANNS m lar yEng ne,
+                query. nterested nS mClustersANNQuery,
+                query.s mClusters nterested nM nScore)
             else
               Future.None
 
-          val userInterestedInExperimentalSANNCandidateResultFut =
-            if (query.enableUserInterestedIn && query.enableExperimentalSimClustersANNSimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.interestedInExperimentalSimClustersANNQuery,
-                query.simClustersInterestedInMinScore)
+          val user nterested nExper  ntalSANNCand dateResultFut =
+             f (query.enableUser nterested n && query.enableExper  ntalS mClustersANNS m lar yEng ne)
+              get nterested nCand dateResult(
+                s mClustersANNS m lar yEng ne,
+                query. nterested nExper  ntalS mClustersANNQuery,
+                query.s mClusters nterested nM nScore)
             else
               Future.None
 
-          val userInterestedInSANN1CandidateResultFut =
-            if (query.enableUserInterestedIn && query.enableSimClustersANN1SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.interestedInSimClustersANN1Query,
-                query.simClustersInterestedInMinScore)
+          val user nterested nSANN1Cand dateResultFut =
+             f (query.enableUser nterested n && query.enableS mClustersANN1S m lar yEng ne)
+              get nterested nCand dateResult(
+                s mClustersANNS m lar yEng ne,
+                query. nterested nS mClustersANN1Query,
+                query.s mClusters nterested nM nScore)
             else
               Future.None
 
-          val userInterestedInSANN2CandidateResultFut =
-            if (query.enableUserInterestedIn && query.enableSimClustersANN2SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.interestedInSimClustersANN2Query,
-                query.simClustersInterestedInMinScore)
+          val user nterested nSANN2Cand dateResultFut =
+             f (query.enableUser nterested n && query.enableS mClustersANN2S m lar yEng ne)
+              get nterested nCand dateResult(
+                s mClustersANNS m lar yEng ne,
+                query. nterested nS mClustersANN2Query,
+                query.s mClusters nterested nM nScore)
             else
               Future.None
 
-          val userInterestedInSANN3CandidateResultFut =
-            if (query.enableUserInterestedIn && query.enableSimClustersANN3SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.interestedInSimClustersANN3Query,
-                query.simClustersInterestedInMinScore)
+          val user nterested nSANN3Cand dateResultFut =
+             f (query.enableUser nterested n && query.enableS mClustersANN3S m lar yEng ne)
+              get nterested nCand dateResult(
+                s mClustersANNS m lar yEng ne,
+                query. nterested nS mClustersANN3Query,
+                query.s mClusters nterested nM nScore)
             else
               Future.None
 
-          val userInterestedInSANN5CandidateResultFut =
-            if (query.enableUserInterestedIn && query.enableSimClustersANN5SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.interestedInSimClustersANN5Query,
-                query.simClustersInterestedInMinScore)
+          val user nterested nSANN5Cand dateResultFut =
+             f (query.enableUser nterested n && query.enableS mClustersANN5S m lar yEng ne)
+              get nterested nCand dateResult(
+                s mClustersANNS m lar yEng ne,
+                query. nterested nS mClustersANN5Query,
+                query.s mClusters nterested nM nScore)
             else
               Future.None
 
-          val userInterestedInSANN4CandidateResultFut =
-            if (query.enableUserInterestedIn && query.enableSimClustersANN4SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.interestedInSimClustersANN4Query,
-                query.simClustersInterestedInMinScore)
+          val user nterested nSANN4Cand dateResultFut =
+             f (query.enableUser nterested n && query.enableS mClustersANN4S m lar yEng ne)
+              get nterested nCand dateResult(
+                s mClustersANNS m lar yEng ne,
+                query. nterested nS mClustersANN4Query,
+                query.s mClusters nterested nM nScore)
             else
               Future.None
-          // UserNextInterestedIn Queries
-          val userNextInterestedInCandidateResultFut =
-            if (query.enableUserNextInterestedIn && query.enableProdSimClustersANNSimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.nextInterestedInSimClustersANNQuery,
-                query.simClustersInterestedInMinScore)
-            else
-              Future.None
-
-          val userNextInterestedInExperimentalSANNCandidateResultFut =
-            if (query.enableUserNextInterestedIn && query.enableExperimentalSimClustersANNSimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.nextInterestedInExperimentalSimClustersANNQuery,
-                query.simClustersInterestedInMinScore)
+          // UserNext nterested n Quer es
+          val userNext nterested nCand dateResultFut =
+             f (query.enableUserNext nterested n && query.enableProdS mClustersANNS m lar yEng ne)
+              get nterested nCand dateResult(
+                s mClustersANNS m lar yEng ne,
+                query.next nterested nS mClustersANNQuery,
+                query.s mClusters nterested nM nScore)
             else
               Future.None
 
-          val userNextInterestedInSANN1CandidateResultFut =
-            if (query.enableUserNextInterestedIn && query.enableSimClustersANN1SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.nextInterestedInSimClustersANN1Query,
-                query.simClustersInterestedInMinScore)
+          val userNext nterested nExper  ntalSANNCand dateResultFut =
+             f (query.enableUserNext nterested n && query.enableExper  ntalS mClustersANNS m lar yEng ne)
+              get nterested nCand dateResult(
+                s mClustersANNS m lar yEng ne,
+                query.next nterested nExper  ntalS mClustersANNQuery,
+                query.s mClusters nterested nM nScore)
             else
               Future.None
 
-          val userNextInterestedInSANN2CandidateResultFut =
-            if (query.enableUserNextInterestedIn && query.enableSimClustersANN2SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.nextInterestedInSimClustersANN2Query,
-                query.simClustersInterestedInMinScore)
+          val userNext nterested nSANN1Cand dateResultFut =
+             f (query.enableUserNext nterested n && query.enableS mClustersANN1S m lar yEng ne)
+              get nterested nCand dateResult(
+                s mClustersANNS m lar yEng ne,
+                query.next nterested nS mClustersANN1Query,
+                query.s mClusters nterested nM nScore)
             else
               Future.None
 
-          val userNextInterestedInSANN3CandidateResultFut =
-            if (query.enableUserNextInterestedIn && query.enableSimClustersANN3SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.nextInterestedInSimClustersANN3Query,
-                query.simClustersInterestedInMinScore)
+          val userNext nterested nSANN2Cand dateResultFut =
+             f (query.enableUserNext nterested n && query.enableS mClustersANN2S m lar yEng ne)
+              get nterested nCand dateResult(
+                s mClustersANNS m lar yEng ne,
+                query.next nterested nS mClustersANN2Query,
+                query.s mClusters nterested nM nScore)
             else
               Future.None
 
-          val userNextInterestedInSANN5CandidateResultFut =
-            if (query.enableUserNextInterestedIn && query.enableSimClustersANN5SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.nextInterestedInSimClustersANN5Query,
-                query.simClustersInterestedInMinScore)
+          val userNext nterested nSANN3Cand dateResultFut =
+             f (query.enableUserNext nterested n && query.enableS mClustersANN3S m lar yEng ne)
+              get nterested nCand dateResult(
+                s mClustersANNS m lar yEng ne,
+                query.next nterested nS mClustersANN3Query,
+                query.s mClusters nterested nM nScore)
             else
               Future.None
 
-          val userNextInterestedInSANN4CandidateResultFut =
-            if (query.enableUserNextInterestedIn && query.enableSimClustersANN4SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.nextInterestedInSimClustersANN4Query,
-                query.simClustersInterestedInMinScore)
+          val userNext nterested nSANN5Cand dateResultFut =
+             f (query.enableUserNext nterested n && query.enableS mClustersANN5S m lar yEng ne)
+              get nterested nCand dateResult(
+                s mClustersANNS m lar yEng ne,
+                query.next nterested nS mClustersANN5Query,
+                query.s mClusters nterested nM nScore)
             else
               Future.None
 
-          // AddressBookInterestedIn Queries
-          val userAddressBookInterestedInCandidateResultFut =
-            if (query.enableAddressBookNextInterestedIn && query.enableProdSimClustersANNSimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.addressbookInterestedInSimClustersANNQuery,
-                query.simClustersInterestedInMinScore)
+          val userNext nterested nSANN4Cand dateResultFut =
+             f (query.enableUserNext nterested n && query.enableS mClustersANN4S m lar yEng ne)
+              get nterested nCand dateResult(
+                s mClustersANNS m lar yEng ne,
+                query.next nterested nS mClustersANN4Query,
+                query.s mClusters nterested nM nScore)
             else
               Future.None
 
-          val userAddressBookExperimentalSANNCandidateResultFut =
-            if (query.enableAddressBookNextInterestedIn && query.enableExperimentalSimClustersANNSimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.addressbookInterestedInExperimentalSimClustersANNQuery,
-                query.simClustersInterestedInMinScore)
+          // AddressBook nterested n Quer es
+          val userAddressBook nterested nCand dateResultFut =
+             f (query.enableAddressBookNext nterested n && query.enableProdS mClustersANNS m lar yEng ne)
+              get nterested nCand dateResult(
+                s mClustersANNS m lar yEng ne,
+                query.addressbook nterested nS mClustersANNQuery,
+                query.s mClusters nterested nM nScore)
             else
               Future.None
 
-          val userAddressBookSANN1CandidateResultFut =
-            if (query.enableAddressBookNextInterestedIn && query.enableSimClustersANN1SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.addressbookInterestedInSimClustersANN1Query,
-                query.simClustersInterestedInMinScore)
+          val userAddressBookExper  ntalSANNCand dateResultFut =
+             f (query.enableAddressBookNext nterested n && query.enableExper  ntalS mClustersANNS m lar yEng ne)
+              get nterested nCand dateResult(
+                s mClustersANNS m lar yEng ne,
+                query.addressbook nterested nExper  ntalS mClustersANNQuery,
+                query.s mClusters nterested nM nScore)
             else
               Future.None
 
-          val userAddressBookSANN2CandidateResultFut =
-            if (query.enableAddressBookNextInterestedIn && query.enableSimClustersANN2SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.addressbookInterestedInSimClustersANN2Query,
-                query.simClustersInterestedInMinScore)
+          val userAddressBookSANN1Cand dateResultFut =
+             f (query.enableAddressBookNext nterested n && query.enableS mClustersANN1S m lar yEng ne)
+              get nterested nCand dateResult(
+                s mClustersANNS m lar yEng ne,
+                query.addressbook nterested nS mClustersANN1Query,
+                query.s mClusters nterested nM nScore)
             else
               Future.None
 
-          val userAddressBookSANN3CandidateResultFut =
-            if (query.enableAddressBookNextInterestedIn && query.enableSimClustersANN3SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.addressbookInterestedInSimClustersANN3Query,
-                query.simClustersInterestedInMinScore)
+          val userAddressBookSANN2Cand dateResultFut =
+             f (query.enableAddressBookNext nterested n && query.enableS mClustersANN2S m lar yEng ne)
+              get nterested nCand dateResult(
+                s mClustersANNS m lar yEng ne,
+                query.addressbook nterested nS mClustersANN2Query,
+                query.s mClusters nterested nM nScore)
             else
               Future.None
 
-          val userAddressBookSANN5CandidateResultFut =
-            if (query.enableAddressBookNextInterestedIn && query.enableSimClustersANN5SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.addressbookInterestedInSimClustersANN5Query,
-                query.simClustersInterestedInMinScore)
+          val userAddressBookSANN3Cand dateResultFut =
+             f (query.enableAddressBookNext nterested n && query.enableS mClustersANN3S m lar yEng ne)
+              get nterested nCand dateResult(
+                s mClustersANNS m lar yEng ne,
+                query.addressbook nterested nS mClustersANN3Query,
+                query.s mClusters nterested nM nScore)
             else
               Future.None
 
-          val userAddressBookSANN4CandidateResultFut =
-            if (query.enableAddressBookNextInterestedIn && query.enableSimClustersANN4SimilarityEngine)
-              getInterestedInCandidateResult(
-                simClustersANNSimilarityEngine,
-                query.addressbookInterestedInSimClustersANN4Query,
-                query.simClustersInterestedInMinScore)
+          val userAddressBookSANN5Cand dateResultFut =
+             f (query.enableAddressBookNext nterested n && query.enableS mClustersANN5S m lar yEng ne)
+              get nterested nCand dateResult(
+                s mClustersANNS m lar yEng ne,
+                query.addressbook nterested nS mClustersANN5Query,
+                query.s mClusters nterested nM nScore)
+            else
+              Future.None
+
+          val userAddressBookSANN4Cand dateResultFut =
+             f (query.enableAddressBookNext nterested n && query.enableS mClustersANN4S m lar yEng ne)
+              get nterested nCand dateResult(
+                s mClustersANNS m lar yEng ne,
+                query.addressbook nterested nS mClustersANN4Query,
+                query.s mClusters nterested nM nScore)
             else
               Future.None
 
           Future
             .collect(
               Seq(
-                userInterestedInCandidateResultFut,
-                userNextInterestedInCandidateResultFut,
-                userAddressBookInterestedInCandidateResultFut,
-                userInterestedInExperimentalSANNCandidateResultFut,
-                userNextInterestedInExperimentalSANNCandidateResultFut,
-                userAddressBookExperimentalSANNCandidateResultFut,
-                userInterestedInSANN1CandidateResultFut,
-                userNextInterestedInSANN1CandidateResultFut,
-                userAddressBookSANN1CandidateResultFut,
-                userInterestedInSANN2CandidateResultFut,
-                userNextInterestedInSANN2CandidateResultFut,
-                userAddressBookSANN2CandidateResultFut,
-                userInterestedInSANN3CandidateResultFut,
-                userNextInterestedInSANN3CandidateResultFut,
-                userAddressBookSANN3CandidateResultFut,
-                userInterestedInSANN5CandidateResultFut,
-                userNextInterestedInSANN5CandidateResultFut,
-                userAddressBookSANN5CandidateResultFut,
-                userInterestedInSANN4CandidateResultFut,
-                userNextInterestedInSANN4CandidateResultFut,
-                userAddressBookSANN4CandidateResultFut
+                user nterested nCand dateResultFut,
+                userNext nterested nCand dateResultFut,
+                userAddressBook nterested nCand dateResultFut,
+                user nterested nExper  ntalSANNCand dateResultFut,
+                userNext nterested nExper  ntalSANNCand dateResultFut,
+                userAddressBookExper  ntalSANNCand dateResultFut,
+                user nterested nSANN1Cand dateResultFut,
+                userNext nterested nSANN1Cand dateResultFut,
+                userAddressBookSANN1Cand dateResultFut,
+                user nterested nSANN2Cand dateResultFut,
+                userNext nterested nSANN2Cand dateResultFut,
+                userAddressBookSANN2Cand dateResultFut,
+                user nterested nSANN3Cand dateResultFut,
+                userNext nterested nSANN3Cand dateResultFut,
+                userAddressBookSANN3Cand dateResultFut,
+                user nterested nSANN5Cand dateResultFut,
+                userNext nterested nSANN5Cand dateResultFut,
+                userAddressBookSANN5Cand dateResultFut,
+                user nterested nSANN4Cand dateResultFut,
+                userNext nterested nSANN4Cand dateResultFut,
+                userAddressBookSANN4Cand dateResultFut
               )
-            ).map { candidateResults =>
-              Some(
-                candidateResults.map(candidateResult => candidateResult.getOrElse(Seq.empty))
+            ).map { cand dateResults =>
+              So (
+                cand dateResults.map(cand dateResult => cand dateResult.getOrElse(Seq.empty))
               )
             }
         }
       case _ =>
-        stats.counter("sourceId_is_not_userId_cnt").incr()
+        stats.counter("s ce d_ s_not_user d_cnt"). ncr()
         Future.None
     }
   }
 
-  private def simClustersCandidateMinScoreFilter(
-    simClustersAnnCandidates: Seq[TweetWithScore],
-    simClustersInterestedInMinScore: Double,
-    simClustersANNConfigId: String
-  ): Seq[TweetWithScore] = {
-    val filteredCandidates = simClustersAnnCandidates
-      .filter { candidate =>
-        candidate.score > simClustersInterestedInMinScore
+  pr vate def s mClustersCand dateM nScoreF lter(
+    s mClustersAnnCand dates: Seq[T etW hScore],
+    s mClusters nterested nM nScore: Double,
+    s mClustersANNConf g d: Str ng
+  ): Seq[T etW hScore] = {
+    val f lteredCand dates = s mClustersAnnCand dates
+      .f lter { cand date =>
+        cand date.score > s mClusters nterested nM nScore
       }
 
-    stats.stat(simClustersANNConfigId, "simClustersAnnCandidates_size").add(filteredCandidates.size)
-    stats.counter(simClustersANNConfigId, "simClustersAnnRequests").incr()
-    if (filteredCandidates.isEmpty)
-      stats.counter(simClustersANNConfigId, "emptyFilteredSimClustersAnnCandidates").incr()
+    stats.stat(s mClustersANNConf g d, "s mClustersAnnCand dates_s ze").add(f lteredCand dates.s ze)
+    stats.counter(s mClustersANNConf g d, "s mClustersAnnRequests"). ncr()
+     f (f lteredCand dates. sEmpty)
+      stats.counter(s mClustersANNConf g d, "emptyF lteredS mClustersAnnCand dates"). ncr()
 
-    filteredCandidates.map { candidate =>
-      TweetWithScore(candidate.tweetId, candidate.score)
+    f lteredCand dates.map { cand date =>
+      T etW hScore(cand date.t et d, cand date.score)
     }
   }
 
-  private def getInterestedInCandidateResult(
-    simClustersANNSimilarityEngine: StandardSimilarityEngine[
-      SimClustersANNSimilarityEngine.Query,
-      TweetWithScore
+  pr vate def get nterested nCand dateResult(
+    s mClustersANNS m lar yEng ne: StandardS m lar yEng ne[
+      S mClustersANNS m lar yEng ne.Query,
+      T etW hScore
     ],
-    simClustersANNQuery: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    simClustersInterestedInMinScore: Double,
-  ): Future[Option[Seq[TweetWithCandidateGenerationInfo]]] = {
-    val interestedInCandidatesFut =
-      simClustersANNSimilarityEngine.getCandidates(simClustersANNQuery)
+    s mClustersANNQuery: Eng neQuery[S mClustersANNS m lar yEng ne.Query],
+    s mClusters nterested nM nScore: Double,
+  ): Future[Opt on[Seq[T etW hCand dateGenerat on nfo]]] = {
+    val  nterested nCand datesFut =
+      s mClustersANNS m lar yEng ne.getCand dates(s mClustersANNQuery)
 
-    val interestedInCandidateResultFut = interestedInCandidatesFut.map { interestedInCandidates =>
-      stats.stat("candidateSize").add(interestedInCandidates.size)
+    val  nterested nCand dateResultFut =  nterested nCand datesFut.map {  nterested nCand dates =>
+      stats.stat("cand dateS ze").add( nterested nCand dates.s ze)
 
-      val embeddingCandidatesStat = stats.scope(
-        simClustersANNQuery.storeQuery.simClustersANNQuery.sourceEmbeddingId.embeddingType.name)
+      val embedd ngCand datesStat = stats.scope(
+        s mClustersANNQuery.storeQuery.s mClustersANNQuery.s ceEmbedd ng d.embedd ngType.na )
 
-      embeddingCandidatesStat.stat("candidateSize").add(interestedInCandidates.size)
-      if (interestedInCandidates.isEmpty) {
-        embeddingCandidatesStat.counter("empty_results").incr()
+      embedd ngCand datesStat.stat("cand dateS ze").add( nterested nCand dates.s ze)
+       f ( nterested nCand dates. sEmpty) {
+        embedd ngCand datesStat.counter("empty_results"). ncr()
       }
-      embeddingCandidatesStat.counter("requests").incr()
+      embedd ngCand datesStat.counter("requests"). ncr()
 
-      val filteredTweets = simClustersCandidateMinScoreFilter(
-        interestedInCandidates.toSeq.flatten,
-        simClustersInterestedInMinScore,
-        simClustersANNQuery.storeQuery.simClustersANNConfigId)
+      val f lteredT ets = s mClustersCand dateM nScoreF lter(
+         nterested nCand dates.toSeq.flatten,
+        s mClusters nterested nM nScore,
+        s mClustersANNQuery.storeQuery.s mClustersANNConf g d)
 
-      val interestedInTweetsWithCGInfo = filteredTweets.map { tweetWithScore =>
-        TweetWithCandidateGenerationInfo(
-          tweetWithScore.tweetId,
-          CandidateGenerationInfo(
+      val  nterested nT etsW hCG nfo = f lteredT ets.map { t etW hScore =>
+        T etW hCand dateGenerat on nfo(
+          t etW hScore.t et d,
+          Cand dateGenerat on nfo(
             None,
-            SimClustersANNSimilarityEngine
-              .toSimilarityEngineInfo(simClustersANNQuery, tweetWithScore.score),
-            Seq.empty // SANN is an atomic SE, and hence it has no contributing SEs
+            S mClustersANNS m lar yEng ne
+              .toS m lar yEng ne nfo(s mClustersANNQuery, t etW hScore.score),
+            Seq.empty // SANN  s an atom c SE, and  nce   has no contr but ng SEs
           )
         )
       }
 
-      val interestedInResults = if (interestedInTweetsWithCGInfo.nonEmpty) {
-        Some(interestedInTweetsWithCGInfo)
+      val  nterested nResults =  f ( nterested nT etsW hCG nfo.nonEmpty) {
+        So ( nterested nT etsW hCG nfo)
       } else None
-      interestedInResults
+       nterested nResults
     }
-    interestedInCandidateResultFut
+     nterested nCand dateResultFut
   }
 }
 
-object SimClustersInterestedInCandidateGeneration {
+object S mClusters nterested nCand dateGenerat on {
 
   case class Query(
-    internalId: InternalId,
-    enableUserInterestedIn: Boolean,
-    enableUserNextInterestedIn: Boolean,
-    enableAddressBookNextInterestedIn: Boolean,
-    enableProdSimClustersANNSimilarityEngine: Boolean,
-    enableExperimentalSimClustersANNSimilarityEngine: Boolean,
-    enableSimClustersANN1SimilarityEngine: Boolean,
-    enableSimClustersANN2SimilarityEngine: Boolean,
-    enableSimClustersANN3SimilarityEngine: Boolean,
-    enableSimClustersANN5SimilarityEngine: Boolean,
-    enableSimClustersANN4SimilarityEngine: Boolean,
-    simClustersInterestedInMinScore: Double,
-    simClustersNextInterestedInMinScore: Double,
-    simClustersAddressBookInterestedInMinScore: Double,
-    interestedInSimClustersANNQuery: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    nextInterestedInSimClustersANNQuery: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    addressbookInterestedInSimClustersANNQuery: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    interestedInExperimentalSimClustersANNQuery: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    nextInterestedInExperimentalSimClustersANNQuery: EngineQuery[
-      SimClustersANNSimilarityEngine.Query
+     nternal d:  nternal d,
+    enableUser nterested n: Boolean,
+    enableUserNext nterested n: Boolean,
+    enableAddressBookNext nterested n: Boolean,
+    enableProdS mClustersANNS m lar yEng ne: Boolean,
+    enableExper  ntalS mClustersANNS m lar yEng ne: Boolean,
+    enableS mClustersANN1S m lar yEng ne: Boolean,
+    enableS mClustersANN2S m lar yEng ne: Boolean,
+    enableS mClustersANN3S m lar yEng ne: Boolean,
+    enableS mClustersANN5S m lar yEng ne: Boolean,
+    enableS mClustersANN4S m lar yEng ne: Boolean,
+    s mClusters nterested nM nScore: Double,
+    s mClustersNext nterested nM nScore: Double,
+    s mClustersAddressBook nterested nM nScore: Double,
+     nterested nS mClustersANNQuery: Eng neQuery[S mClustersANNS m lar yEng ne.Query],
+    next nterested nS mClustersANNQuery: Eng neQuery[S mClustersANNS m lar yEng ne.Query],
+    addressbook nterested nS mClustersANNQuery: Eng neQuery[S mClustersANNS m lar yEng ne.Query],
+     nterested nExper  ntalS mClustersANNQuery: Eng neQuery[S mClustersANNS m lar yEng ne.Query],
+    next nterested nExper  ntalS mClustersANNQuery: Eng neQuery[
+      S mClustersANNS m lar yEng ne.Query
     ],
-    addressbookInterestedInExperimentalSimClustersANNQuery: EngineQuery[
-      SimClustersANNSimilarityEngine.Query
+    addressbook nterested nExper  ntalS mClustersANNQuery: Eng neQuery[
+      S mClustersANNS m lar yEng ne.Query
     ],
-    interestedInSimClustersANN1Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    nextInterestedInSimClustersANN1Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    addressbookInterestedInSimClustersANN1Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    interestedInSimClustersANN2Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    nextInterestedInSimClustersANN2Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    addressbookInterestedInSimClustersANN2Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    interestedInSimClustersANN3Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    nextInterestedInSimClustersANN3Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    addressbookInterestedInSimClustersANN3Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    interestedInSimClustersANN5Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    nextInterestedInSimClustersANN5Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    addressbookInterestedInSimClustersANN5Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    interestedInSimClustersANN4Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    nextInterestedInSimClustersANN4Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    addressbookInterestedInSimClustersANN4Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
+     nterested nS mClustersANN1Query: Eng neQuery[S mClustersANNS m lar yEng ne.Query],
+    next nterested nS mClustersANN1Query: Eng neQuery[S mClustersANNS m lar yEng ne.Query],
+    addressbook nterested nS mClustersANN1Query: Eng neQuery[S mClustersANNS m lar yEng ne.Query],
+     nterested nS mClustersANN2Query: Eng neQuery[S mClustersANNS m lar yEng ne.Query],
+    next nterested nS mClustersANN2Query: Eng neQuery[S mClustersANNS m lar yEng ne.Query],
+    addressbook nterested nS mClustersANN2Query: Eng neQuery[S mClustersANNS m lar yEng ne.Query],
+     nterested nS mClustersANN3Query: Eng neQuery[S mClustersANNS m lar yEng ne.Query],
+    next nterested nS mClustersANN3Query: Eng neQuery[S mClustersANNS m lar yEng ne.Query],
+    addressbook nterested nS mClustersANN3Query: Eng neQuery[S mClustersANNS m lar yEng ne.Query],
+     nterested nS mClustersANN5Query: Eng neQuery[S mClustersANNS m lar yEng ne.Query],
+    next nterested nS mClustersANN5Query: Eng neQuery[S mClustersANNS m lar yEng ne.Query],
+    addressbook nterested nS mClustersANN5Query: Eng neQuery[S mClustersANNS m lar yEng ne.Query],
+     nterested nS mClustersANN4Query: Eng neQuery[S mClustersANNS m lar yEng ne.Query],
+    next nterested nS mClustersANN4Query: Eng neQuery[S mClustersANNS m lar yEng ne.Query],
+    addressbook nterested nS mClustersANN4Query: Eng neQuery[S mClustersANNS m lar yEng ne.Query],
   )
 
   def fromParams(
-    internalId: InternalId,
-    params: configapi.Params,
+     nternal d:  nternal d,
+    params: conf gap .Params,
   ): Query = {
-    // SimClusters common configs
-    val simClustersModelVersion =
-      ModelVersions.Enum.enumToSimClustersModelVersionMap(params(GlobalParams.ModelVersionParam))
-    val simClustersANNConfigId = params(SimClustersANNParams.SimClustersANNConfigId)
-    val experimentalSimClustersANNConfigId = params(
-      SimClustersANNParams.ExperimentalSimClustersANNConfigId)
-    val simClustersANN1ConfigId = params(SimClustersANNParams.SimClustersANN1ConfigId)
-    val simClustersANN2ConfigId = params(SimClustersANNParams.SimClustersANN2ConfigId)
-    val simClustersANN3ConfigId = params(SimClustersANNParams.SimClustersANN3ConfigId)
-    val simClustersANN5ConfigId = params(SimClustersANNParams.SimClustersANN5ConfigId)
-    val simClustersANN4ConfigId = params(SimClustersANNParams.SimClustersANN4ConfigId)
+    // S mClusters common conf gs
+    val s mClustersModelVers on =
+      ModelVers ons.Enum.enumToS mClustersModelVers onMap(params(GlobalParams.ModelVers onParam))
+    val s mClustersANNConf g d = params(S mClustersANNParams.S mClustersANNConf g d)
+    val exper  ntalS mClustersANNConf g d = params(
+      S mClustersANNParams.Exper  ntalS mClustersANNConf g d)
+    val s mClustersANN1Conf g d = params(S mClustersANNParams.S mClustersANN1Conf g d)
+    val s mClustersANN2Conf g d = params(S mClustersANNParams.S mClustersANN2Conf g d)
+    val s mClustersANN3Conf g d = params(S mClustersANNParams.S mClustersANN3Conf g d)
+    val s mClustersANN5Conf g d = params(S mClustersANNParams.S mClustersANN5Conf g d)
+    val s mClustersANN4Conf g d = params(S mClustersANNParams.S mClustersANN4Conf g d)
 
-    val simClustersInterestedInMinScore = params(InterestedInParams.MinScoreParam)
-    val simClustersNextInterestedInMinScore = params(
-      InterestedInParams.MinScoreSequentialModelParam)
-    val simClustersAddressBookInterestedInMinScore = params(
-      InterestedInParams.MinScoreAddressBookParam)
+    val s mClusters nterested nM nScore = params( nterested nParams.M nScoreParam)
+    val s mClustersNext nterested nM nScore = params(
+       nterested nParams.M nScoreSequent alModelParam)
+    val s mClustersAddressBook nterested nM nScore = params(
+       nterested nParams.M nScoreAddressBookParam)
 
-    // InterestedIn embeddings parameters
-    val interestedInEmbedding = params(InterestedInParams.InterestedInEmbeddingIdParam)
-    val nextInterestedInEmbedding = params(InterestedInParams.NextInterestedInEmbeddingIdParam)
-    val addressbookInterestedInEmbedding = params(
-      InterestedInParams.AddressBookInterestedInEmbeddingIdParam)
+    //  nterested n embedd ngs para ters
+    val  nterested nEmbedd ng = params( nterested nParams. nterested nEmbedd ng dParam)
+    val next nterested nEmbedd ng = params( nterested nParams.Next nterested nEmbedd ng dParam)
+    val addressbook nterested nEmbedd ng = params(
+       nterested nParams.AddressBook nterested nEmbedd ng dParam)
 
-    // Prod SimClustersANN Query
-    val interestedInSimClustersANNQuery =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        interestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANNConfigId,
+    // Prod S mClustersANN Query
+    val  nterested nS mClustersANNQuery =
+      S mClustersANNS m lar yEng ne.fromParams(
+         nternal d,
+         nterested nEmbedd ng.embedd ngType,
+        s mClustersModelVers on,
+        s mClustersANNConf g d,
         params)
 
-    val nextInterestedInSimClustersANNQuery =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        nextInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANNConfigId,
+    val next nterested nS mClustersANNQuery =
+      S mClustersANNS m lar yEng ne.fromParams(
+         nternal d,
+        next nterested nEmbedd ng.embedd ngType,
+        s mClustersModelVers on,
+        s mClustersANNConf g d,
         params)
 
-    val addressbookInterestedInSimClustersANNQuery =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        addressbookInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANNConfigId,
+    val addressbook nterested nS mClustersANNQuery =
+      S mClustersANNS m lar yEng ne.fromParams(
+         nternal d,
+        addressbook nterested nEmbedd ng.embedd ngType,
+        s mClustersModelVers on,
+        s mClustersANNConf g d,
         params)
 
-    // Experimental SANN cluster Query
-    val interestedInExperimentalSimClustersANNQuery =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        interestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        experimentalSimClustersANNConfigId,
+    // Exper  ntal SANN cluster Query
+    val  nterested nExper  ntalS mClustersANNQuery =
+      S mClustersANNS m lar yEng ne.fromParams(
+         nternal d,
+         nterested nEmbedd ng.embedd ngType,
+        s mClustersModelVers on,
+        exper  ntalS mClustersANNConf g d,
         params)
 
-    val nextInterestedInExperimentalSimClustersANNQuery =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        nextInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        experimentalSimClustersANNConfigId,
+    val next nterested nExper  ntalS mClustersANNQuery =
+      S mClustersANNS m lar yEng ne.fromParams(
+         nternal d,
+        next nterested nEmbedd ng.embedd ngType,
+        s mClustersModelVers on,
+        exper  ntalS mClustersANNConf g d,
         params)
 
-    val addressbookInterestedInExperimentalSimClustersANNQuery =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        addressbookInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        experimentalSimClustersANNConfigId,
+    val addressbook nterested nExper  ntalS mClustersANNQuery =
+      S mClustersANNS m lar yEng ne.fromParams(
+         nternal d,
+        addressbook nterested nEmbedd ng.embedd ngType,
+        s mClustersModelVers on,
+        exper  ntalS mClustersANNConf g d,
         params)
 
-    // SimClusters ANN cluster 1 Query
-    val interestedInSimClustersANN1Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        interestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN1ConfigId,
+    // S mClusters ANN cluster 1 Query
+    val  nterested nS mClustersANN1Query =
+      S mClustersANNS m lar yEng ne.fromParams(
+         nternal d,
+         nterested nEmbedd ng.embedd ngType,
+        s mClustersModelVers on,
+        s mClustersANN1Conf g d,
         params)
 
-    val nextInterestedInSimClustersANN1Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        nextInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN1ConfigId,
+    val next nterested nS mClustersANN1Query =
+      S mClustersANNS m lar yEng ne.fromParams(
+         nternal d,
+        next nterested nEmbedd ng.embedd ngType,
+        s mClustersModelVers on,
+        s mClustersANN1Conf g d,
         params)
 
-    val addressbookInterestedInSimClustersANN1Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        addressbookInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN1ConfigId,
+    val addressbook nterested nS mClustersANN1Query =
+      S mClustersANNS m lar yEng ne.fromParams(
+         nternal d,
+        addressbook nterested nEmbedd ng.embedd ngType,
+        s mClustersModelVers on,
+        s mClustersANN1Conf g d,
         params)
 
-    // SimClusters ANN cluster 2 Query
-    val interestedInSimClustersANN2Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        interestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN2ConfigId,
+    // S mClusters ANN cluster 2 Query
+    val  nterested nS mClustersANN2Query =
+      S mClustersANNS m lar yEng ne.fromParams(
+         nternal d,
+         nterested nEmbedd ng.embedd ngType,
+        s mClustersModelVers on,
+        s mClustersANN2Conf g d,
         params)
 
-    val nextInterestedInSimClustersANN2Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        nextInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN2ConfigId,
+    val next nterested nS mClustersANN2Query =
+      S mClustersANNS m lar yEng ne.fromParams(
+         nternal d,
+        next nterested nEmbedd ng.embedd ngType,
+        s mClustersModelVers on,
+        s mClustersANN2Conf g d,
         params)
 
-    val addressbookInterestedInSimClustersANN2Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        addressbookInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN2ConfigId,
+    val addressbook nterested nS mClustersANN2Query =
+      S mClustersANNS m lar yEng ne.fromParams(
+         nternal d,
+        addressbook nterested nEmbedd ng.embedd ngType,
+        s mClustersModelVers on,
+        s mClustersANN2Conf g d,
         params)
 
-    // SimClusters ANN cluster 3 Query
-    val interestedInSimClustersANN3Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        interestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN3ConfigId,
+    // S mClusters ANN cluster 3 Query
+    val  nterested nS mClustersANN3Query =
+      S mClustersANNS m lar yEng ne.fromParams(
+         nternal d,
+         nterested nEmbedd ng.embedd ngType,
+        s mClustersModelVers on,
+        s mClustersANN3Conf g d,
         params)
 
-    val nextInterestedInSimClustersANN3Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        nextInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN3ConfigId,
+    val next nterested nS mClustersANN3Query =
+      S mClustersANNS m lar yEng ne.fromParams(
+         nternal d,
+        next nterested nEmbedd ng.embedd ngType,
+        s mClustersModelVers on,
+        s mClustersANN3Conf g d,
         params)
 
-    val addressbookInterestedInSimClustersANN3Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        addressbookInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN3ConfigId,
+    val addressbook nterested nS mClustersANN3Query =
+      S mClustersANNS m lar yEng ne.fromParams(
+         nternal d,
+        addressbook nterested nEmbedd ng.embedd ngType,
+        s mClustersModelVers on,
+        s mClustersANN3Conf g d,
         params)
 
-    // SimClusters ANN cluster 5 Query
-    val interestedInSimClustersANN5Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        interestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN5ConfigId,
+    // S mClusters ANN cluster 5 Query
+    val  nterested nS mClustersANN5Query =
+      S mClustersANNS m lar yEng ne.fromParams(
+         nternal d,
+         nterested nEmbedd ng.embedd ngType,
+        s mClustersModelVers on,
+        s mClustersANN5Conf g d,
         params)
-    // SimClusters ANN cluster 4 Query
-    val interestedInSimClustersANN4Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        interestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN4ConfigId,
-        params)
-
-    val nextInterestedInSimClustersANN5Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        nextInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN5ConfigId,
+    // S mClusters ANN cluster 4 Query
+    val  nterested nS mClustersANN4Query =
+      S mClustersANNS m lar yEng ne.fromParams(
+         nternal d,
+         nterested nEmbedd ng.embedd ngType,
+        s mClustersModelVers on,
+        s mClustersANN4Conf g d,
         params)
 
-    val nextInterestedInSimClustersANN4Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        nextInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN4ConfigId,
+    val next nterested nS mClustersANN5Query =
+      S mClustersANNS m lar yEng ne.fromParams(
+         nternal d,
+        next nterested nEmbedd ng.embedd ngType,
+        s mClustersModelVers on,
+        s mClustersANN5Conf g d,
         params)
 
-    val addressbookInterestedInSimClustersANN5Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        addressbookInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN5ConfigId,
+    val next nterested nS mClustersANN4Query =
+      S mClustersANNS m lar yEng ne.fromParams(
+         nternal d,
+        next nterested nEmbedd ng.embedd ngType,
+        s mClustersModelVers on,
+        s mClustersANN4Conf g d,
         params)
 
-    val addressbookInterestedInSimClustersANN4Query =
-      SimClustersANNSimilarityEngine.fromParams(
-        internalId,
-        addressbookInterestedInEmbedding.embeddingType,
-        simClustersModelVersion,
-        simClustersANN4ConfigId,
+    val addressbook nterested nS mClustersANN5Query =
+      S mClustersANNS m lar yEng ne.fromParams(
+         nternal d,
+        addressbook nterested nEmbedd ng.embedd ngType,
+        s mClustersModelVers on,
+        s mClustersANN5Conf g d,
+        params)
+
+    val addressbook nterested nS mClustersANN4Query =
+      S mClustersANNS m lar yEng ne.fromParams(
+         nternal d,
+        addressbook nterested nEmbedd ng.embedd ngType,
+        s mClustersModelVers on,
+        s mClustersANN4Conf g d,
         params)
 
     Query(
-      internalId = internalId,
-      enableUserInterestedIn = params(InterestedInParams.EnableSourceParam),
-      enableUserNextInterestedIn = params(InterestedInParams.EnableSourceSequentialModelParam),
-      enableAddressBookNextInterestedIn = params(InterestedInParams.EnableSourceAddressBookParam),
-      enableProdSimClustersANNSimilarityEngine =
-        params(InterestedInParams.EnableProdSimClustersANNParam),
-      enableExperimentalSimClustersANNSimilarityEngine =
-        params(InterestedInParams.EnableExperimentalSimClustersANNParam),
-      enableSimClustersANN1SimilarityEngine = params(InterestedInParams.EnableSimClustersANN1Param),
-      enableSimClustersANN2SimilarityEngine = params(InterestedInParams.EnableSimClustersANN2Param),
-      enableSimClustersANN3SimilarityEngine = params(InterestedInParams.EnableSimClustersANN3Param),
-      enableSimClustersANN5SimilarityEngine = params(InterestedInParams.EnableSimClustersANN5Param),
-      enableSimClustersANN4SimilarityEngine = params(InterestedInParams.EnableSimClustersANN4Param),
-      simClustersInterestedInMinScore = simClustersInterestedInMinScore,
-      simClustersNextInterestedInMinScore = simClustersNextInterestedInMinScore,
-      simClustersAddressBookInterestedInMinScore = simClustersAddressBookInterestedInMinScore,
-      interestedInSimClustersANNQuery = interestedInSimClustersANNQuery,
-      nextInterestedInSimClustersANNQuery = nextInterestedInSimClustersANNQuery,
-      addressbookInterestedInSimClustersANNQuery = addressbookInterestedInSimClustersANNQuery,
-      interestedInExperimentalSimClustersANNQuery = interestedInExperimentalSimClustersANNQuery,
-      nextInterestedInExperimentalSimClustersANNQuery =
-        nextInterestedInExperimentalSimClustersANNQuery,
-      addressbookInterestedInExperimentalSimClustersANNQuery =
-        addressbookInterestedInExperimentalSimClustersANNQuery,
-      interestedInSimClustersANN1Query = interestedInSimClustersANN1Query,
-      nextInterestedInSimClustersANN1Query = nextInterestedInSimClustersANN1Query,
-      addressbookInterestedInSimClustersANN1Query = addressbookInterestedInSimClustersANN1Query,
-      interestedInSimClustersANN2Query = interestedInSimClustersANN2Query,
-      nextInterestedInSimClustersANN2Query = nextInterestedInSimClustersANN2Query,
-      addressbookInterestedInSimClustersANN2Query = addressbookInterestedInSimClustersANN2Query,
-      interestedInSimClustersANN3Query = interestedInSimClustersANN3Query,
-      nextInterestedInSimClustersANN3Query = nextInterestedInSimClustersANN3Query,
-      addressbookInterestedInSimClustersANN3Query = addressbookInterestedInSimClustersANN3Query,
-      interestedInSimClustersANN5Query = interestedInSimClustersANN5Query,
-      nextInterestedInSimClustersANN5Query = nextInterestedInSimClustersANN5Query,
-      addressbookInterestedInSimClustersANN5Query = addressbookInterestedInSimClustersANN5Query,
-      interestedInSimClustersANN4Query = interestedInSimClustersANN4Query,
-      nextInterestedInSimClustersANN4Query = nextInterestedInSimClustersANN4Query,
-      addressbookInterestedInSimClustersANN4Query = addressbookInterestedInSimClustersANN4Query,
+       nternal d =  nternal d,
+      enableUser nterested n = params( nterested nParams.EnableS ceParam),
+      enableUserNext nterested n = params( nterested nParams.EnableS ceSequent alModelParam),
+      enableAddressBookNext nterested n = params( nterested nParams.EnableS ceAddressBookParam),
+      enableProdS mClustersANNS m lar yEng ne =
+        params( nterested nParams.EnableProdS mClustersANNParam),
+      enableExper  ntalS mClustersANNS m lar yEng ne =
+        params( nterested nParams.EnableExper  ntalS mClustersANNParam),
+      enableS mClustersANN1S m lar yEng ne = params( nterested nParams.EnableS mClustersANN1Param),
+      enableS mClustersANN2S m lar yEng ne = params( nterested nParams.EnableS mClustersANN2Param),
+      enableS mClustersANN3S m lar yEng ne = params( nterested nParams.EnableS mClustersANN3Param),
+      enableS mClustersANN5S m lar yEng ne = params( nterested nParams.EnableS mClustersANN5Param),
+      enableS mClustersANN4S m lar yEng ne = params( nterested nParams.EnableS mClustersANN4Param),
+      s mClusters nterested nM nScore = s mClusters nterested nM nScore,
+      s mClustersNext nterested nM nScore = s mClustersNext nterested nM nScore,
+      s mClustersAddressBook nterested nM nScore = s mClustersAddressBook nterested nM nScore,
+       nterested nS mClustersANNQuery =  nterested nS mClustersANNQuery,
+      next nterested nS mClustersANNQuery = next nterested nS mClustersANNQuery,
+      addressbook nterested nS mClustersANNQuery = addressbook nterested nS mClustersANNQuery,
+       nterested nExper  ntalS mClustersANNQuery =  nterested nExper  ntalS mClustersANNQuery,
+      next nterested nExper  ntalS mClustersANNQuery =
+        next nterested nExper  ntalS mClustersANNQuery,
+      addressbook nterested nExper  ntalS mClustersANNQuery =
+        addressbook nterested nExper  ntalS mClustersANNQuery,
+       nterested nS mClustersANN1Query =  nterested nS mClustersANN1Query,
+      next nterested nS mClustersANN1Query = next nterested nS mClustersANN1Query,
+      addressbook nterested nS mClustersANN1Query = addressbook nterested nS mClustersANN1Query,
+       nterested nS mClustersANN2Query =  nterested nS mClustersANN2Query,
+      next nterested nS mClustersANN2Query = next nterested nS mClustersANN2Query,
+      addressbook nterested nS mClustersANN2Query = addressbook nterested nS mClustersANN2Query,
+       nterested nS mClustersANN3Query =  nterested nS mClustersANN3Query,
+      next nterested nS mClustersANN3Query = next nterested nS mClustersANN3Query,
+      addressbook nterested nS mClustersANN3Query = addressbook nterested nS mClustersANN3Query,
+       nterested nS mClustersANN5Query =  nterested nS mClustersANN5Query,
+      next nterested nS mClustersANN5Query = next nterested nS mClustersANN5Query,
+      addressbook nterested nS mClustersANN5Query = addressbook nterested nS mClustersANN5Query,
+       nterested nS mClustersANN4Query =  nterested nS mClustersANN4Query,
+      next nterested nS mClustersANN4Query = next nterested nS mClustersANN4Query,
+      addressbook nterested nS mClustersANN4Query = addressbook nterested nS mClustersANN4Query,
     )
   }
 }

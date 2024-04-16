@@ -1,119 +1,119 @@
-package com.twitter.frigate.pushservice.util
+package com.tw ter.fr gate.pushserv ce.ut l
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.thriftscala.FrigateNotification
-import com.twitter.frigate.thriftscala.NotificationDisplayLocation
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base._
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.thr ftscala.Fr gateNot f cat on
+ mport com.tw ter.fr gate.thr ftscala.Not f cat onD splayLocat on
 
-object Candidate2FrigateNotification {
+object Cand date2Fr gateNot f cat on {
 
-  def getFrigateNotification(
-    candidate: PushCandidate
+  def getFr gateNot f cat on(
+    cand date: PushCand date
   )(
-    implicit statsReceiver: StatsReceiver
-  ): FrigateNotification = {
-    candidate match {
+     mpl c  statsRece ver: StatsRece ver
+  ): Fr gateNot f cat on = {
+    cand date match {
 
-      case topicTweetCandidate: PushCandidate with BaseTopicTweetCandidate =>
-        PushAdaptorUtil.getFrigateNotificationForTweet(
-          crt = topicTweetCandidate.commonRecType,
-          tweetId = topicTweetCandidate.tweetId,
-          scActions = Nil,
-          authorIdOpt = topicTweetCandidate.authorId,
-          pushCopyId = topicTweetCandidate.pushCopyId,
-          ntabCopyId = topicTweetCandidate.ntabCopyId,
-          simclusterId = None,
-          semanticCoreEntityIds = topicTweetCandidate.semanticCoreEntityId.map(List(_)),
-          candidateContent = topicTweetCandidate.content,
-          trendId = None
+      case top cT etCand date: PushCand date w h BaseTop cT etCand date =>
+        PushAdaptorUt l.getFr gateNot f cat onForT et(
+          crt = top cT etCand date.commonRecType,
+          t et d = top cT etCand date.t et d,
+          scAct ons = N l,
+          author dOpt = top cT etCand date.author d,
+          pushCopy d = top cT etCand date.pushCopy d,
+          ntabCopy d = top cT etCand date.ntabCopy d,
+          s mcluster d = None,
+          semant cCoreEnt y ds = top cT etCand date.semant cCoreEnt y d.map(L st(_)),
+          cand dateContent = top cT etCand date.content,
+          trend d = None
         )
 
-      case trendTweetCandidate: PushCandidate with TrendTweetCandidate =>
-        PushAdaptorUtil.getFrigateNotificationForTweet(
-          trendTweetCandidate.commonRecType,
-          trendTweetCandidate.tweetId,
-          Nil,
-          trendTweetCandidate.authorId,
-          trendTweetCandidate.pushCopyId,
-          trendTweetCandidate.ntabCopyId,
+      case trendT etCand date: PushCand date w h TrendT etCand date =>
+        PushAdaptorUt l.getFr gateNot f cat onForT et(
+          trendT etCand date.commonRecType,
+          trendT etCand date.t et d,
+          N l,
+          trendT etCand date.author d,
+          trendT etCand date.pushCopy d,
+          trendT etCand date.ntabCopy d,
           None,
           None,
-          trendTweetCandidate.content,
-          Some(trendTweetCandidate.trendId)
+          trendT etCand date.content,
+          So (trendT etCand date.trend d)
         )
 
-      case tripTweetCandidate: PushCandidate with OutOfNetworkTweetCandidate with TripCandidate =>
-        PushAdaptorUtil.getFrigateNotificationForTweet(
-          crt = tripTweetCandidate.commonRecType,
-          tweetId = tripTweetCandidate.tweetId,
-          scActions = Nil,
-          authorIdOpt = tripTweetCandidate.authorId,
-          pushCopyId = tripTweetCandidate.pushCopyId,
-          ntabCopyId = tripTweetCandidate.ntabCopyId,
-          simclusterId = None,
-          semanticCoreEntityIds = None,
-          candidateContent = tripTweetCandidate.content,
-          trendId = None,
-          tweetTripDomain = tripTweetCandidate.tripDomain
+      case tr pT etCand date: PushCand date w h OutOfNetworkT etCand date w h Tr pCand date =>
+        PushAdaptorUt l.getFr gateNot f cat onForT et(
+          crt = tr pT etCand date.commonRecType,
+          t et d = tr pT etCand date.t et d,
+          scAct ons = N l,
+          author dOpt = tr pT etCand date.author d,
+          pushCopy d = tr pT etCand date.pushCopy d,
+          ntabCopy d = tr pT etCand date.ntabCopy d,
+          s mcluster d = None,
+          semant cCoreEnt y ds = None,
+          cand dateContent = tr pT etCand date.content,
+          trend d = None,
+          t etTr pDoma n = tr pT etCand date.tr pDoma n
         )
 
-      case outOfNetworkTweetCandidate: PushCandidate with OutOfNetworkTweetCandidate =>
-        PushAdaptorUtil.getFrigateNotificationForTweet(
-          crt = outOfNetworkTweetCandidate.commonRecType,
-          tweetId = outOfNetworkTweetCandidate.tweetId,
-          scActions = Nil,
-          authorIdOpt = outOfNetworkTweetCandidate.authorId,
-          pushCopyId = outOfNetworkTweetCandidate.pushCopyId,
-          ntabCopyId = outOfNetworkTweetCandidate.ntabCopyId,
-          simclusterId = None,
-          semanticCoreEntityIds = None,
-          candidateContent = outOfNetworkTweetCandidate.content,
-          trendId = None
+      case outOfNetworkT etCand date: PushCand date w h OutOfNetworkT etCand date =>
+        PushAdaptorUt l.getFr gateNot f cat onForT et(
+          crt = outOfNetworkT etCand date.commonRecType,
+          t et d = outOfNetworkT etCand date.t et d,
+          scAct ons = N l,
+          author dOpt = outOfNetworkT etCand date.author d,
+          pushCopy d = outOfNetworkT etCand date.pushCopy d,
+          ntabCopy d = outOfNetworkT etCand date.ntabCopy d,
+          s mcluster d = None,
+          semant cCoreEnt y ds = None,
+          cand dateContent = outOfNetworkT etCand date.content,
+          trend d = None
         )
 
-      case userCandidate: PushCandidate with UserCandidate with SocialContextActions =>
-        PushAdaptorUtil.getFrigateNotificationForUser(
-          userCandidate.commonRecType,
-          userCandidate.userId,
-          userCandidate.socialContextActions,
-          userCandidate.pushCopyId,
-          userCandidate.ntabCopyId
+      case userCand date: PushCand date w h UserCand date w h Soc alContextAct ons =>
+        PushAdaptorUt l.getFr gateNot f cat onForUser(
+          userCand date.commonRecType,
+          userCand date.user d,
+          userCand date.soc alContextAct ons,
+          userCand date.pushCopy d,
+          userCand date.ntabCopy d
         )
 
-      case userCandidate: PushCandidate with UserCandidate =>
-        PushAdaptorUtil.getFrigateNotificationForUser(
-          userCandidate.commonRecType,
-          userCandidate.userId,
-          Nil,
-          userCandidate.pushCopyId,
-          userCandidate.ntabCopyId
+      case userCand date: PushCand date w h UserCand date =>
+        PushAdaptorUt l.getFr gateNot f cat onForUser(
+          userCand date.commonRecType,
+          userCand date.user d,
+          N l,
+          userCand date.pushCopy d,
+          userCand date.ntabCopy d
         )
 
-      case tweetCandidate: PushCandidate with TweetCandidate with TweetDetails with SocialContextActions =>
-        PushAdaptorUtil.getFrigateNotificationForTweetWithSocialContextActions(
-          tweetCandidate.commonRecType,
-          tweetCandidate.tweetId,
-          tweetCandidate.socialContextActions,
-          tweetCandidate.authorId,
-          tweetCandidate.pushCopyId,
-          tweetCandidate.ntabCopyId,
-          candidateContent = tweetCandidate.content,
-          semanticCoreEntityIds = None,
-          trendId = None
+      case t etCand date: PushCand date w h T etCand date w h T etDeta ls w h Soc alContextAct ons =>
+        PushAdaptorUt l.getFr gateNot f cat onForT etW hSoc alContextAct ons(
+          t etCand date.commonRecType,
+          t etCand date.t et d,
+          t etCand date.soc alContextAct ons,
+          t etCand date.author d,
+          t etCand date.pushCopy d,
+          t etCand date.ntabCopy d,
+          cand dateContent = t etCand date.content,
+          semant cCoreEnt y ds = None,
+          trend d = None
         )
-      case pushCandidate: PushCandidate =>
-        FrigateNotification(
-          commonRecommendationType = pushCandidate.commonRecType,
-          notificationDisplayLocation = NotificationDisplayLocation.PushToMobileDevice,
-          pushCopyId = pushCandidate.pushCopyId,
-          ntabCopyId = pushCandidate.ntabCopyId
+      case pushCand date: PushCand date =>
+        Fr gateNot f cat on(
+          commonRecom ndat onType = pushCand date.commonRecType,
+          not f cat onD splayLocat on = Not f cat onD splayLocat on.PushToMob leDev ce,
+          pushCopy d = pushCand date.pushCopy d,
+          ntabCopy d = pushCand date.ntabCopy d
         )
 
       case _ =>
-        statsReceiver
-          .scope(s"${candidate.commonRecType}").counter("frigate_notification_error").incr()
-        throw new IllegalStateException("Incorrect candidate type when create FrigateNotification")
+        statsRece ver
+          .scope(s"${cand date.commonRecType}").counter("fr gate_not f cat on_error"). ncr()
+        throw new  llegalStateExcept on(" ncorrect cand date type w n create Fr gateNot f cat on")
     }
   }
 }

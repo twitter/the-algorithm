@@ -1,35 +1,35 @@
 #pragma once
-#ifdef __cplusplus
+# fdef __cplusplus
 
-#include <twml/defines.h>
-#include <twml/TensorRecord.h>
+# nclude <twml/def nes.h>
+# nclude <twml/TensorRecord.h>
 
-namespace twml {
+na space twml {
 
-// Encodes tensors as DataRecord/TensorRecord-compatible Thrift.
-// DataRecordWriter relies on this class to encode the tensor fields.
-class TWMLAPI TensorRecordWriter {
+// Encodes tensors as DataRecord/TensorRecord-compat ble Thr ft.
+// DataRecordWr er rel es on t  class to encode t  tensor f elds.
+class TWMLAP  TensorRecordWr er {
 
-private:
-  uint32_t m_records_written;
-  twml::ThriftWriter &m_thrift_writer;
+pr vate:
+  u nt32_t m_records_wr ten;
+  twml::Thr ftWr er &m_thr ft_wr er;
 
-  void writeTensor(const RawTensor &tensor);
-  void writeRawTensor(const RawTensor &tensor);
+  vo d wr eTensor(const RawTensor &tensor);
+  vo d wr eRawTensor(const RawTensor &tensor);
 
-public:
-  TensorRecordWriter(twml::ThriftWriter &thrift_writer):
-      m_records_written(0),
-      m_thrift_writer(thrift_writer) { }
+publ c:
+  TensorRecordWr er(twml::Thr ftWr er &thr ft_wr er):
+      m_records_wr ten(0),
+      m_thr ft_wr er(thr ft_wr er) { }
 
-  uint32_t getRecordsWritten();
+  u nt32_t getRecordsWr ten();
 
-  // Caller (usually DataRecordWriter) must precede with struct header field
-  // like thrift_writer.writeStructFieldHeader(TTYPE_MAP, DR_GENERAL_TENSOR)
+  // Caller (usually DataRecordWr er) must precede w h struct  ader f eld
+  // l ke thr ft_wr er.wr eStructF eld ader(TTYPE_MAP, DR_GENERAL_TENSOR)
   //
-  // All tensors written as RawTensors except for StringTensors
-  uint64_t write(twml::TensorRecord &record);
+  // All tensors wr ten as RawTensors except for Str ngTensors
+  u nt64_t wr e(twml::TensorRecord &record);
 };
 
 }
-#endif
+#end f

@@ -1,100 +1,100 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.media.MediaUrl
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLevel
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e. d a. d aUrl
+ mport com.tw ter.t etyp e.repos ory._
+ mport com.tw ter.t etyp e.thr ftscala._
 
-object PastedMediaHydrator {
-  type Type = ValueHydrator[PastedMedia, Ctx]
-
-  /**
-   * Ensure that the final tweet has at most 4 media entities.
-   */
-  val MaxMediaEntitiesPerTweet = 4
+object Pasted d aHydrator {
+  type Type = ValueHydrator[Pasted d a, Ctx]
 
   /**
-   * Enforce visibility rules when hydrating media for a write.
+   * Ensure that t  f nal t et has at most 4  d a ent  es.
    */
-  val writeSafetyLevel = SafetyLevel.TweetWritesApi
+  val Max d aEnt  esPerT et = 4
 
-  case class Ctx(urlEntities: Seq[UrlEntity], underlyingTweetCtx: TweetCtx) extends TweetCtx.Proxy {
-    def includePastedMedia: Boolean = opts.include.pastedMedia
-    def includeMediaEntities: Boolean = tweetFieldRequested(Tweet.MediaField)
-    def includeAdditionalMetadata: Boolean =
-      mediaFieldRequested(MediaEntity.AdditionalMetadataField.id)
-    def includeMediaTags: Boolean = tweetFieldRequested(Tweet.MediaTagsField)
+  /**
+   * Enforce v s b l y rules w n hydrat ng  d a for a wr e.
+   */
+  val wr eSafetyLevel = SafetyLevel.T etWr esAp 
+
+  case class Ctx(urlEnt  es: Seq[UrlEnt y], underly ngT etCtx: T etCtx) extends T etCtx.Proxy {
+    def  ncludePasted d a: Boolean = opts. nclude.pasted d a
+    def  nclude d aEnt  es: Boolean = t etF eldRequested(T et. d aF eld)
+    def  ncludeAdd  onal tadata: Boolean =
+       d aF eldRequested( d aEnt y.Add  onal tadataF eld. d)
+    def  nclude d aTags: Boolean = t etF eldRequested(T et. d aTagsF eld)
   }
 
-  def getPastedMedia(t: Tweet): PastedMedia = PastedMedia(getMedia(t), Map.empty)
+  def getPasted d a(t: T et): Pasted d a = Pasted d a(get d a(t), Map.empty)
 
-  def apply(repo: PastedMediaRepository.Type): Type = {
+  def apply(repo: Pasted d aRepos ory.Type): Type = {
     def hydrateOneReference(
-      tweetId: TweetId,
-      urlEntity: UrlEntity,
-      repoCtx: PastedMediaRepository.Ctx
-    ): Stitch[PastedMedia] =
-      repo(tweetId, repoCtx).liftToTry.map {
-        case Return(pastedMedia) => pastedMedia.updateEntities(urlEntity)
-        case _ => PastedMedia.empty
+      t et d: T et d,
+      urlEnt y: UrlEnt y,
+      repoCtx: Pasted d aRepos ory.Ctx
+    ): St ch[Pasted d a] =
+      repo(t et d, repoCtx).l ftToTry.map {
+        case Return(pasted d a) => pasted d a.updateEnt  es(urlEnt y)
+        case _ => Pasted d a.empty
       }
 
-    ValueHydrator[PastedMedia, Ctx] { (curr, ctx) =>
+    ValueHydrator[Pasted d a, Ctx] { (curr, ctx) =>
       val repoCtx = asRepoCtx(ctx)
-      val idsAndEntities = pastedIdsAndEntities(ctx.tweetId, ctx.urlEntities)
+      val  dsAndEnt  es = pasted dsAndEnt  es(ctx.t et d, ctx.urlEnt  es)
 
-      val res = Stitch.traverse(idsAndEntities) {
-        case (tweetId, urlEntity) =>
-          hydrateOneReference(tweetId, urlEntity, repoCtx)
+      val res = St ch.traverse( dsAndEnt  es) {
+        case (t et d, urlEnt y) =>
+          hydrateOneReference(t et d, urlEnt y, repoCtx)
       }
 
-      res.liftToTry.map {
-        case Return(pastedMedias) =>
-          val merged = pastedMedias.foldLeft(curr)(_.merge(_))
-          val limited = merged.take(MaxMediaEntitiesPerTweet)
-          ValueState.delta(curr, limited)
+      res.l ftToTry.map {
+        case Return(pasted d as) =>
+          val  rged = pasted d as.foldLeft(curr)(_. rge(_))
+          val l m ed =  rged.take(Max d aEnt  esPerT et)
+          ValueState.delta(curr, l m ed)
 
-        case Throw(_) => ValueState.unmodified(curr)
+        case Throw(_) => ValueState.unmod f ed(curr)
       }
-    }.onlyIf { (_, ctx) =>
-      // we only attempt to hydrate pasted media if media is requested
-      ctx.includePastedMedia &&
-      !ctx.isRetweet &&
-      ctx.includeMediaEntities
+    }.only f { (_, ctx) =>
+      //   only attempt to hydrate pasted  d a  f  d a  s requested
+      ctx. ncludePasted d a &&
+      !ctx. sRet et &&
+      ctx. nclude d aEnt  es
     }
   }
 
   /**
-   * Finds url entities for foreign permalinks, and returns a sequence of tuples containing
-   * the foreign tweet IDs and the associated UrlEntity containing the permalink.  If the same
-   * permalink appears multiple times, only one of the duplicate entities is returned.
+   * F nds url ent  es for fore gn permal nks, and returns a sequence of tuples conta n ng
+   * t  fore gn t et  Ds and t  assoc ated UrlEnt y conta n ng t  permal nk.   f t  sa 
+   * permal nk appears mult ple t  s, only one of t  dupl cate ent  es  s returned.
    */
-  def pastedIdsAndEntities(
-    tweetId: TweetId,
-    urlEntities: Seq[UrlEntity]
-  ): Seq[(TweetId, UrlEntity)] =
-    urlEntities
-      .foldLeft(Map.empty[TweetId, UrlEntity]) {
+  def pasted dsAndEnt  es(
+    t et d: T et d,
+    urlEnt  es: Seq[UrlEnt y]
+  ): Seq[(T et d, UrlEnt y)] =
+    urlEnt  es
+      .foldLeft(Map.empty[T et d, UrlEnt y]) {
         case (z, e) =>
-          MediaUrl.Permalink.getTweetId(e).filter(_ != tweetId) match {
-            case Some(id) if !z.contains(id) => z + (id -> e)
+           d aUrl.Permal nk.getT et d(e).f lter(_ != t et d) match {
+            case So ( d)  f !z.conta ns( d) => z + ( d -> e)
             case _ => z
           }
       }
       .toSeq
 
   def asRepoCtx(ctx: Ctx) =
-    PastedMediaRepository.Ctx(
-      ctx.includeMediaEntities,
-      ctx.includeAdditionalMetadata,
-      ctx.includeMediaTags,
-      ctx.opts.extensionsArgs,
-      if (ctx.opts.cause == TweetQuery.Cause.Insert(ctx.tweetId) ||
-        ctx.opts.cause == TweetQuery.Cause.Undelete(ctx.tweetId)) {
-        writeSafetyLevel
+    Pasted d aRepos ory.Ctx(
+      ctx. nclude d aEnt  es,
+      ctx. ncludeAdd  onal tadata,
+      ctx. nclude d aTags,
+      ctx.opts.extens onsArgs,
+       f (ctx.opts.cause == T etQuery.Cause. nsert(ctx.t et d) ||
+        ctx.opts.cause == T etQuery.Cause.Undelete(ctx.t et d)) {
+        wr eSafetyLevel
       } else {
         ctx.opts.safetyLevel
       }

@@ -1,108 +1,108 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.io.IOException;
-import java.time.Duration;
+ mport java. o. OExcept on;
+ mport java.t  .Durat on;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .kafka.cl ents.consu r.Consu rRecord;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEventType;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers on;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftVers onedEvents;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common.part  on ng.snowflakeparser.Snowflake dParser;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ft ndex ngEvent;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ft ndex ngEventType;
+ mport com.tw ter.search.earlyb rd.except on.Cr  calExcept onHandler;
 
 /**
- * PartitionWriter writes Tweet events and Tweet update events to an Earlybird index. It is
- * responsible for creating new segments, adding Tweets to the correct segment, and applying updates
- * to the correct segment.
+ * Part  onWr er wr es T et events and T et update events to an Earlyb rd  ndex.    s
+ * respons ble for creat ng new seg nts, add ng T ets to t  correct seg nt, and apply ng updates
+ * to t  correct seg nt.
  */
-public class PartitionWriter {
-  private static final Logger LOG = LoggerFactory.getLogger(PartitionWriter.class);
-  private static final String STATS_PREFIX = "partition_writer_";
+publ c class Part  onWr er {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Part  onWr er.class);
+  pr vate stat c f nal Str ng STATS_PREF X = "part  on_wr er_";
 
-  private static final SearchRateCounter MISSING_PENGUIN_VERSION =
-      SearchRateCounter.export(STATS_PREFIX + "missing_penguin_version");
-  private static final Duration CAUGHT_UP_FRESHNESS = Duration.ofSeconds(5);
-  private static final SearchRateCounter EVENTS_CONSUMED =
-      SearchRateCounter.export(STATS_PREFIX + "events_consumed");
+  pr vate stat c f nal SearchRateCounter M SS NG_PENGU N_VERS ON =
+      SearchRateCounter.export(STATS_PREF X + "m ss ng_pengu n_vers on");
+  pr vate stat c f nal Durat on CAUGHT_UP_FRESHNESS = Durat on.ofSeconds(5);
+  pr vate stat c f nal SearchRateCounter EVENTS_CONSUMED =
+      SearchRateCounter.export(STATS_PREF X + "events_consu d");
 
-  private final PenguinVersion penguinVersion;
-  private final TweetUpdateHandler updateHandler;
-  private final TweetCreateHandler createHandler;
-  private final Clock clock;
-  private final CriticalExceptionHandler criticalExceptionHandler;
+  pr vate f nal Pengu nVers on pengu nVers on;
+  pr vate f nal T etUpdateHandler updateHandler;
+  pr vate f nal T etCreateHandler createHandler;
+  pr vate f nal Clock clock;
+  pr vate f nal Cr  calExcept onHandler cr  calExcept onHandler;
 
 
 
-  public PartitionWriter(
-      TweetCreateHandler tweetCreateHandler,
-      TweetUpdateHandler tweetUpdateHandler,
-      CriticalExceptionHandler criticalExceptionHandler,
-      PenguinVersion penguinVersion,
+  publ c Part  onWr er(
+      T etCreateHandler t etCreateHandler,
+      T etUpdateHandler t etUpdateHandler,
+      Cr  calExcept onHandler cr  calExcept onHandler,
+      Pengu nVers on pengu nVers on,
       Clock clock
   ) {
-    LOG.info("Creating PartitionWriter.");
-    this.createHandler = tweetCreateHandler;
-    this.updateHandler = tweetUpdateHandler;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.penguinVersion = penguinVersion;
-    this.clock = clock;
+    LOG. nfo("Creat ng Part  onWr er.");
+    t .createHandler = t etCreateHandler;
+    t .updateHandler = t etUpdateHandler;
+    t .cr  calExcept onHandler = cr  calExcept onHandler;
+    t .pengu nVers on = pengu nVers on;
+    t .clock = clock;
   }
 
   /**
-   * Index a batch of TVE records.
+   *  ndex a batch of TVE records.
    */
-  public boolean indexBatch(Iterable<ConsumerRecord<Long, ThriftVersionedEvents>> records)
-      throws Exception {
-    long minTweetAge = Long.MAX_VALUE;
-    for (ConsumerRecord<Long, ThriftVersionedEvents> record : records) {
-      ThriftVersionedEvents tve = record.value();
-      indexTVE(tve);
-      EVENTS_CONSUMED.increment();
-      long tweetAgeInMs = SnowflakeIdParser.getTweetAgeInMs(clock.nowMillis(), tve.getId());
-      minTweetAge = Math.min(tweetAgeInMs, minTweetAge);
+  publ c boolean  ndexBatch( erable<Consu rRecord<Long, Thr ftVers onedEvents>> records)
+      throws Except on {
+    long m nT etAge = Long.MAX_VALUE;
+    for (Consu rRecord<Long, Thr ftVers onedEvents> record : records) {
+      Thr ftVers onedEvents tve = record.value();
+       ndexTVE(tve);
+      EVENTS_CONSUMED. ncre nt();
+      long t etAge nMs = Snowflake dParser.getT etAge nMs(clock.nowM ll s(), tve.get d());
+      m nT etAge = Math.m n(t etAge nMs, m nT etAge);
     }
 
-    return minTweetAge < CAUGHT_UP_FRESHNESS.toMillis();
+    return m nT etAge < CAUGHT_UP_FRESHNESS.toM ll s();
   }
 
   /**
-   * Index a ThriftVersionedEvents struct.
+   *  ndex a Thr ftVers onedEvents struct.
    */
-  @VisibleForTesting
-  public void indexTVE(ThriftVersionedEvents tve) throws IOException {
-    ThriftIndexingEvent tie = tve.getVersionedEvents().get(penguinVersion.getByteValue());
-    if (tie == null) {
-      LOG.error("Could not find a ThriftIndexingEvent for PenguinVersion {} in "
-          + "ThriftVersionedEvents: {}", penguinVersion, tve);
-      MISSING_PENGUIN_VERSION.increment();
+  @V s bleForTest ng
+  publ c vo d  ndexTVE(Thr ftVers onedEvents tve) throws  OExcept on {
+    Thr ft ndex ngEvent t e = tve.getVers onedEvents().get(pengu nVers on.getByteValue());
+     f (t e == null) {
+      LOG.error("Could not f nd a Thr ft ndex ngEvent for Pengu nVers on {}  n "
+          + "Thr ftVers onedEvents: {}", pengu nVers on, tve);
+      M SS NG_PENGU N_VERS ON. ncre nt();
       return;
     }
 
-    // An `INSERT` event is used for new Tweets. These are generated from Tweet Create Events from
-    // TweetyPie.
-    if (tie.getEventType() == ThriftIndexingEventType.INSERT) {
-      createHandler.handleTweetCreate(tve);
-      updateHandler.retryPendingUpdates(tve.getId());
+    // An ` NSERT` event  s used for new T ets. T se are generated from T et Create Events from
+    // T etyP e.
+     f (t e.getEventType() == Thr ft ndex ngEventType. NSERT) {
+      createHandler.handleT etCreate(tve);
+      updateHandler.retryPend ngUpdates(tve.get d());
     } else {
-      updateHandler.handleTweetUpdate(tve, false);
+      updateHandler.handleT etUpdate(tve, false);
     }
   }
 
-  public void prepareAfterStartingWithIndex(long maxIndexedTweetId) {
-    createHandler.prepareAfterStartingWithIndex(maxIndexedTweetId);
+  publ c vo d prepareAfterStart ngW h ndex(long max ndexedT et d) {
+    createHandler.prepareAfterStart ngW h ndex(max ndexedT et d);
   }
 
-  void logState() {
-    LOG.info("PartitionWriter state:");
-    LOG.info(String.format("  Events indexed: %,d", EVENTS_CONSUMED.getCount()));
+  vo d logState() {
+    LOG. nfo("Part  onWr er state:");
+    LOG. nfo(Str ng.format("  Events  ndexed: %,d", EVENTS_CONSUMED.getCount()));
     createHandler.logState();
     updateHandler.logState();
   }

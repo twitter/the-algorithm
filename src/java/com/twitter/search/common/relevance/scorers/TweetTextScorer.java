@@ -1,241 +1,241 @@
-package com.twitter.search.common.relevance.scorers;
+package com.tw ter.search.common.relevance.scorers;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
+ mport java.ut l.Map;
+ mport java.ut l.concurrent.ConcurrentMap;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.metrics.RelevanceStats;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.relevance.config.TweetProcessingConfig;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.features.TweetFeatures;
-import com.twitter.search.common.relevance.features.TweetTextFeatures;
-import com.twitter.search.common.relevance.features.TweetTextQuality;
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers on;
+ mport com.tw ter.search.common. tr cs.RelevanceStats;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common.relevance.conf g.T etProcess ngConf g;
+ mport com.tw ter.search.common.relevance.ent  es.Tw ter ssage;
+ mport com.tw ter.search.common.relevance.features.T etFeatures;
+ mport com.tw ter.search.common.relevance.features.T etTextFeatures;
+ mport com.tw ter.search.common.relevance.features.T etTextQual y;
 
 /**
- * Compute a text score for TwitterMessage based on its offensiveness,
- * shoutness, length, readability and hashtag properties extracted from
- * tweet text.
+ * Compute a text score for Tw ter ssage based on  s offens veness,
+ * shoutness, length, readab l y and hashtag propert es extracted from
+ * t et text.
  * <p/>
  * Formula:
- * text_score = offensive_text_damping * offensive_username_damping *
- * Sigma(feature_score_weight * feature_score)
+ * text_score = offens ve_text_damp ng * offens ve_userna _damp ng *
+ * S gma(feature_score_  ght * feature_score)
  * <p/>
- * scored features are: length, readability, shout, entropy, links
+ * scored features are: length, readab l y, shout, entropy, l nks
  */
-public class TweetTextScorer extends TweetScorer {
-  private static final Logger LOG = LoggerFactory.getLogger(TweetTextScorer.class);
+publ c class T etTextScorer extends T etScorer {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(T etTextScorer.class);
 
-  private static final double DEFAULT_OFFENSIVE_TERM_DAMPING = 0.2d;
-  private static final double DEFAULT_OFFENSIVE_NAME_DAMPING = 0.2d;
+  pr vate stat c f nal double DEFAULT_OFFENS VE_TERM_DAMP NG = 0.2d;
+  pr vate stat c f nal double DEFAULT_OFFENS VE_NAME_DAMP NG = 0.2d;
 
-  // Sigma of all weights = 1.0d
-  private static final double DEFAULT_LENGTH_WEIGHT = 0.5d;
-  private static final double DEFAULT_READABILITY_WEIGHT = 0.1d;
-  private static final double DEFAULT_SHOUT_WEIGHT = 0.1d;
-  private static final double DEFAULT_ENTROPY_WEIGHT = 0.25d;
-  private static final double DEFAULT_LINK_WEIGHT = 0.05d;
+  // S gma of all   ghts = 1.0d
+  pr vate stat c f nal double DEFAULT_LENGTH_WE GHT = 0.5d;
+  pr vate stat c f nal double DEFAULT_READAB L TY_WE GHT = 0.1d;
+  pr vate stat c f nal double DEFAULT_SHOUT_WE GHT = 0.1d;
+  pr vate stat c f nal double DEFAULT_ENTROPY_WE GHT = 0.25d;
+  pr vate stat c f nal double DEFAULT_L NK_WE GHT = 0.05d;
 
-  private static final double DEFAULT_NO_DAMPING = 1.0d;
+  pr vate stat c f nal double DEFAULT_NO_DAMP NG = 1.0d;
 
-  // Sigmoid alpha values for normalization
-  private static final double DEFAULT_READABILITY_ALPHA = 0.05d;
-  private static final double DEFAULT_ENTROPY_ALPHA = 0.5d;
-  private static final double DEFAULT_LENGTH_ALPHA = 0.03d;
+  // S gmo d alpha values for normal zat on
+  pr vate stat c f nal double DEFAULT_READAB L TY_ALPHA = 0.05d;
+  pr vate stat c f nal double DEFAULT_ENTROPY_ALPHA = 0.5d;
+  pr vate stat c f nal double DEFAULT_LENGTH_ALPHA = 0.03d;
 
-  private static final ConcurrentMap<String, SearchRateCounter> RATE_COUNTERS =
+  pr vate stat c f nal ConcurrentMap<Str ng, SearchRateCounter> RATE_COUNTERS =
       Maps.newConcurrentMap();
-  private static final ConcurrentMap<PenguinVersion, Map<Integer, SearchRateCounter>>
-      SCORE_HISTOGRAMS = Maps.newConcurrentMap();
+  pr vate stat c f nal ConcurrentMap<Pengu nVers on, Map< nteger, SearchRateCounter>>
+      SCORE_H STOGRAMS = Maps.newConcurrentMap();
 
-  private double offensiveTermDamping = DEFAULT_OFFENSIVE_TERM_DAMPING;
-  private double offensiveNameDamping = DEFAULT_OFFENSIVE_NAME_DAMPING;
+  pr vate double offens veTermDamp ng = DEFAULT_OFFENS VE_TERM_DAMP NG;
+  pr vate double offens veNa Damp ng = DEFAULT_OFFENS VE_NAME_DAMP NG;
 
-  private double lengthWeight = DEFAULT_LENGTH_WEIGHT;
-  private double readabilityWeight = DEFAULT_READABILITY_WEIGHT;
-  private double shoutWeight = DEFAULT_SHOUT_WEIGHT;
-  private double entropyWeight = DEFAULT_ENTROPY_WEIGHT;
-  private double linkWeight = DEFAULT_LINK_WEIGHT;
+  pr vate double length  ght = DEFAULT_LENGTH_WE GHT;
+  pr vate double readab l y  ght = DEFAULT_READAB L TY_WE GHT;
+  pr vate double shout  ght = DEFAULT_SHOUT_WE GHT;
+  pr vate double entropy  ght = DEFAULT_ENTROPY_WE GHT;
+  pr vate double l nk  ght = DEFAULT_L NK_WE GHT;
 
-  private double readabilityAlpha = DEFAULT_READABILITY_ALPHA;
-  private double entropyAlpha = DEFAULT_ENTROPY_ALPHA;
-  private double lengthAlpha = DEFAULT_LENGTH_ALPHA;
+  pr vate double readab l yAlpha = DEFAULT_READAB L TY_ALPHA;
+  pr vate double entropyAlpha = DEFAULT_ENTROPY_ALPHA;
+  pr vate double lengthAlpha = DEFAULT_LENGTH_ALPHA;
 
-  /** Configure from a config file, validate the configuration. */
-  public TweetTextScorer(String configFile) {
-    TweetProcessingConfig.init(configFile);
+  /** Conf gure from a conf g f le, val date t  conf gurat on. */
+  publ c T etTextScorer(Str ng conf gF le) {
+    T etProcess ngConf g. n (conf gF le);
 
-    // get dampings
-    checkWeightRange(offensiveTermDamping = TweetProcessingConfig
-        .getDouble("offensive_term_damping", DEFAULT_OFFENSIVE_TERM_DAMPING));
-    checkWeightRange(offensiveNameDamping = TweetProcessingConfig
-        .getDouble("offensive_name_damping", DEFAULT_OFFENSIVE_NAME_DAMPING));
+    // get damp ngs
+    c ck  ghtRange(offens veTermDamp ng = T etProcess ngConf g
+        .getDouble("offens ve_term_damp ng", DEFAULT_OFFENS VE_TERM_DAMP NG));
+    c ck  ghtRange(offens veNa Damp ng = T etProcess ngConf g
+        .getDouble("offens ve_na _damp ng", DEFAULT_OFFENS VE_NAME_DAMP NG));
 
-    // get weights
-    checkWeightRange(lengthWeight = TweetProcessingConfig
-        .getDouble("length_weight", DEFAULT_LENGTH_WEIGHT));
-    checkWeightRange(readabilityWeight = TweetProcessingConfig
-        .getDouble("readability_weight", DEFAULT_READABILITY_WEIGHT));
-    checkWeightRange(shoutWeight = TweetProcessingConfig
-        .getDouble("shout_weight", DEFAULT_SHOUT_WEIGHT));
-    checkWeightRange(entropyWeight = TweetProcessingConfig
-        .getDouble("entropy_weight", DEFAULT_ENTROPY_WEIGHT));
-    checkWeightRange(linkWeight = TweetProcessingConfig
-        .getDouble("link_weight", DEFAULT_LINK_WEIGHT));
+    // get   ghts
+    c ck  ghtRange(length  ght = T etProcess ngConf g
+        .getDouble("length_  ght", DEFAULT_LENGTH_WE GHT));
+    c ck  ghtRange(readab l y  ght = T etProcess ngConf g
+        .getDouble("readab l y_  ght", DEFAULT_READAB L TY_WE GHT));
+    c ck  ghtRange(shout  ght = T etProcess ngConf g
+        .getDouble("shout_  ght", DEFAULT_SHOUT_WE GHT));
+    c ck  ghtRange(entropy  ght = T etProcess ngConf g
+        .getDouble("entropy_  ght", DEFAULT_ENTROPY_WE GHT));
+    c ck  ghtRange(l nk  ght = T etProcess ngConf g
+        .getDouble("l nk_  ght", DEFAULT_L NK_WE GHT));
 
-    // check sigma of weights
-    Preconditions.checkArgument(
-        lengthWeight + readabilityWeight + shoutWeight + entropyWeight + linkWeight == 1.0d);
+    // c ck s gma of   ghts
+    Precond  ons.c ckArgu nt(
+        length  ght + readab l y  ght + shout  ght + entropy  ght + l nk  ght == 1.0d);
 
-    readabilityAlpha = TweetProcessingConfig
-        .getDouble("readability_alpha", DEFAULT_READABILITY_ALPHA);
-    entropyAlpha = TweetProcessingConfig.getDouble("entropy_alpha", DEFAULT_ENTROPY_ALPHA);
-    lengthAlpha = TweetProcessingConfig.getDouble("length_alpha", DEFAULT_LENGTH_ALPHA);
+    readab l yAlpha = T etProcess ngConf g
+        .getDouble("readab l y_alpha", DEFAULT_READAB L TY_ALPHA);
+    entropyAlpha = T etProcess ngConf g.getDouble("entropy_alpha", DEFAULT_ENTROPY_ALPHA);
+    lengthAlpha = T etProcess ngConf g.getDouble("length_alpha", DEFAULT_LENGTH_ALPHA);
   }
 
-  /** Creates a new TweetTextScorer instance. */
-  public TweetTextScorer() {
+  /** Creates a new T etTextScorer  nstance. */
+  publ c T etTextScorer() {
   }
 
-  /** Scores the given tweet. */
-  public void scoreTweet(final TwitterMessage tweet) {
-    Preconditions.checkNotNull(tweet);
+  /** Scores t  g ven t et. */
+  publ c vo d scoreT et(f nal Tw ter ssage t et) {
+    Precond  ons.c ckNotNull(t et);
 
-    for (PenguinVersion penguinVersion : tweet.getSupportedPenguinVersions()) {
-      TweetFeatures features = Preconditions.checkNotNull(tweet.getTweetFeatures(penguinVersion));
-      TweetTextFeatures textFeatures = Preconditions.checkNotNull(features.getTweetTextFeatures());
-      TweetTextQuality textQuality = Preconditions.checkNotNull(features.getTweetTextQuality());
-      boolean isOffensiveText = textQuality.hasBoolQuality(
-          TweetTextQuality.BooleanQualityType.OFFENSIVE);
-      boolean isOffensiveScreenName = textQuality.hasBoolQuality(
-          TweetTextQuality.BooleanQualityType.OFFENSIVE_USER);
-      double shoutScore = DEFAULT_NO_DAMPING - textQuality.getShout();
-      double lengthScore = normalize(textFeatures.getLength(), lengthAlpha);
-      double readabilityScore = normalize(textQuality.getReadability(), readabilityAlpha);
-      double entropyScore = normalize(textQuality.getEntropy(), entropyAlpha);
+    for (Pengu nVers on pengu nVers on : t et.getSupportedPengu nVers ons()) {
+      T etFeatures features = Precond  ons.c ckNotNull(t et.getT etFeatures(pengu nVers on));
+      T etTextFeatures textFeatures = Precond  ons.c ckNotNull(features.getT etTextFeatures());
+      T etTextQual y textQual y = Precond  ons.c ckNotNull(features.getT etTextQual y());
+      boolean  sOffens veText = textQual y.hasBoolQual y(
+          T etTextQual y.BooleanQual yType.OFFENS VE);
+      boolean  sOffens veScreenNa  = textQual y.hasBoolQual y(
+          T etTextQual y.BooleanQual yType.OFFENS VE_USER);
+      double shoutScore = DEFAULT_NO_DAMP NG - textQual y.getShout();
+      double lengthScore = normal ze(textFeatures.getLength(), lengthAlpha);
+      double readab l yScore = normal ze(textQual y.getReadab l y(), readab l yAlpha);
+      double entropyScore = normal ze(textQual y.getEntropy(), entropyAlpha);
 
-      double score = (isOffensiveText ? offensiveTermDamping : DEFAULT_NO_DAMPING)
-        * (isOffensiveScreenName ? offensiveNameDamping : DEFAULT_NO_DAMPING)
-        * (lengthWeight * lengthScore
-           + readabilityWeight * readabilityScore
-           + shoutWeight * shoutScore
-           + entropyWeight * entropyScore
-           + linkWeight * (tweet.getExpandedUrlMapSize() > 0 ? 1 : 0));
+      double score = ( sOffens veText ? offens veTermDamp ng : DEFAULT_NO_DAMP NG)
+        * ( sOffens veScreenNa  ? offens veNa Damp ng : DEFAULT_NO_DAMP NG)
+        * (length  ght * lengthScore
+           + readab l y  ght * readab l yScore
+           + shout  ght * shoutScore
+           + entropy  ght * entropyScore
+           + l nk  ght * (t et.getExpandedUrlMapS ze() > 0 ? 1 : 0));
 
       // scale to [0, 100] byte
-      textQuality.setTextScore((byte) (score * 100));
+      textQual y.setTextScore((byte) (score * 100));
 
       updateStats(
-          isOffensiveText,
-          isOffensiveScreenName,
+           sOffens veText,
+           sOffens veScreenNa ,
           textFeatures,
           score,
-          getRateCounterStat("num_offensive_text_", penguinVersion),
-          getRateCounterStat("num_offensive_user_", penguinVersion),
-          getRateCounterStat("num_no_trends_", penguinVersion),
-          getRateCounterStat("num_has_trends_", penguinVersion),
-          getRateCounterStat("num_too_many_trends_", penguinVersion),
-          getRateCounterStat("num_scored_tweets_", penguinVersion),
-          getScoreHistogram(penguinVersion));
+          getRateCounterStat("num_offens ve_text_", pengu nVers on),
+          getRateCounterStat("num_offens ve_user_", pengu nVers on),
+          getRateCounterStat("num_no_trends_", pengu nVers on),
+          getRateCounterStat("num_has_trends_", pengu nVers on),
+          getRateCounterStat("num_too_many_trends_", pengu nVers on),
+          getRateCounterStat("num_scored_t ets_", pengu nVers on),
+          getScore togram(pengu nVers on));
 
-      if (LOG.isDebugEnabled()) {
-        LOG.debug(String.format(
-            "Tweet length [%.2f] weighted length [%.2f], readability [%.2f] "
-            + "weighted readability [%.2f], shout [%.2f] weighted shout [%.2f], "
-            + "entropy [%.2f], weighted entropy [%.2f], "
-            + "score [%.2f], text [%s], penguin version [%s]",
+       f (LOG. sDebugEnabled()) {
+        LOG.debug(Str ng.format(
+            "T et length [%.2f]   ghted length [%.2f], readab l y [%.2f] "
+            + "  ghted readab l y [%.2f], shout [%.2f]   ghted shout [%.2f], "
+            + "entropy [%.2f],   ghted entropy [%.2f], "
+            + "score [%.2f], text [%s], pengu n vers on [%s]",
             lengthScore,
-            lengthWeight * lengthScore,
-            readabilityScore,
-            readabilityWeight * readabilityScore,
+            length  ght * lengthScore,
+            readab l yScore,
+            readab l y  ght * readab l yScore,
             shoutScore,
-            shoutWeight * shoutScore,
+            shout  ght * shoutScore,
             entropyScore,
-            entropyWeight * entropyScore,
+            entropy  ght * entropyScore,
             score,
-            tweet.getText(),
-            penguinVersion));
+            t et.getText(),
+            pengu nVers on));
       }
     }
   }
 
-  private void updateStats(boolean isOffensiveText,
-                           boolean isOffensiveScreenName,
-                           TweetTextFeatures textFeatures,
+  pr vate vo d updateStats(boolean  sOffens veText,
+                           boolean  sOffens veScreenNa ,
+                           T etTextFeatures textFeatures,
                            double score,
-                           SearchRateCounter offensiveTextCounter,
-                           SearchRateCounter offensiveUserNameCounter,
+                           SearchRateCounter offens veTextCounter,
+                           SearchRateCounter offens veUserNa Counter,
                            SearchRateCounter noTrendsCounter,
                            SearchRateCounter hasTrendsCounter,
                            SearchRateCounter tooManyTrendsHashtagsCounter,
-                           SearchRateCounter scoredTweets,
-                           Map<Integer, SearchRateCounter> scoreHistogram) {
+                           SearchRateCounter scoredT ets,
+                           Map< nteger, SearchRateCounter> score togram) {
     // set stats
-    if (isOffensiveText) {
-      offensiveTextCounter.increment();
+     f ( sOffens veText) {
+      offens veTextCounter. ncre nt();
     }
-    if (isOffensiveScreenName) {
-      offensiveUserNameCounter.increment();
+     f ( sOffens veScreenNa ) {
+      offens veUserNa Counter. ncre nt();
     }
-    if (textFeatures.getTrendingTermsSize() == 0) {
-      noTrendsCounter.increment();
+     f (textFeatures.getTrend ngTermsS ze() == 0) {
+      noTrendsCounter. ncre nt();
     } else {
-      hasTrendsCounter.increment();
+      hasTrendsCounter. ncre nt();
     }
-    if (TwitterMessage.hasMultipleHashtagsOrTrends(textFeatures)) {
-      tooManyTrendsHashtagsCounter.increment();
+     f (Tw ter ssage.hasMult pleHashtagsOrTrends(textFeatures)) {
+      tooManyTrendsHashtagsCounter. ncre nt();
     }
-    scoredTweets.increment();
+    scoredT ets. ncre nt();
 
-    int bucket = (int) Math.floor(score * 10) * 10;
-    scoreHistogram.get(bucket).increment();
+     nt bucket = ( nt) Math.floor(score * 10) * 10;
+    score togram.get(bucket). ncre nt();
   }
 
-  // normalize the passed in value to smoothed [0, 1.0d] range
-  private static double normalize(double value, double alpha) {
+  // normal ze t  passed  n value to smoot d [0, 1.0d] range
+  pr vate stat c double normal ze(double value, double alpha) {
     return 2 * (1.0d / (1.0d + Math.exp(-(alpha * value))) - 0.5);
   }
 
-  // Make sure weight values are within the range of [0.0, 1.0]
-  private void checkWeightRange(double value) {
-    Preconditions.checkArgument(value >= 0.0d && value <= 1.0d);
+  // Make sure   ght values are w h n t  range of [0.0, 1.0]
+  pr vate vo d c ck  ghtRange(double value) {
+    Precond  ons.c ckArgu nt(value >= 0.0d && value <= 1.0d);
   }
 
-  private Map<Integer, SearchRateCounter> getScoreHistogram(PenguinVersion penguinVersion) {
-    Map<Integer, SearchRateCounter> scoreHistogram = SCORE_HISTOGRAMS.get(penguinVersion);
-    if (scoreHistogram == null) {
-      scoreHistogram = Maps.newHashMap();
-      String statsName = "num_text_score_%d_%s";
+  pr vate Map< nteger, SearchRateCounter> getScore togram(Pengu nVers on pengu nVers on) {
+    Map< nteger, SearchRateCounter> score togram = SCORE_H STOGRAMS.get(pengu nVers on);
+     f (score togram == null) {
+      score togram = Maps.newHashMap();
+      Str ng statsNa  = "num_text_score_%d_%s";
 
-      for (int i = 0; i <= 100; i += 10) {
-        scoreHistogram.put(i, RelevanceStats.exportRate(
-                               String.format(statsName, i, penguinVersion.name().toLowerCase())));
+      for ( nt   = 0;   <= 100;   += 10) {
+        score togram.put( , RelevanceStats.exportRate(
+                               Str ng.format(statsNa ,  , pengu nVers on.na ().toLo rCase())));
       }
 
-      scoreHistogram = SCORE_HISTOGRAMS.putIfAbsent(penguinVersion, scoreHistogram);
-      if (scoreHistogram == null) {
-        scoreHistogram = SCORE_HISTOGRAMS.get(penguinVersion);
+      score togram = SCORE_H STOGRAMS.put fAbsent(pengu nVers on, score togram);
+       f (score togram == null) {
+        score togram = SCORE_H STOGRAMS.get(pengu nVers on);
       }
     }
 
-    return scoreHistogram;
+    return score togram;
   }
 
-  private SearchRateCounter getRateCounterStat(String statPrefix, PenguinVersion penguinVersion) {
-    String statName = statPrefix + penguinVersion.name().toLowerCase();
-    SearchRateCounter rateCounter = RATE_COUNTERS.get(statName);
-    if (rateCounter == null) {
-      // Only one RateCounter instance is created for each stat name. So we don't need to worry
-      // that another thread might've created this instance in the meantime: we can just create/get
-      // it, and store it in the map.
-      rateCounter = RelevanceStats.exportRate(statName);
-      RATE_COUNTERS.put(statName, rateCounter);
+  pr vate SearchRateCounter getRateCounterStat(Str ng statPref x, Pengu nVers on pengu nVers on) {
+    Str ng statNa  = statPref x + pengu nVers on.na ().toLo rCase();
+    SearchRateCounter rateCounter = RATE_COUNTERS.get(statNa );
+     f (rateCounter == null) {
+      // Only one RateCounter  nstance  s created for each stat na . So   don't need to worry
+      // that anot r thread m ght've created t   nstance  n t   ant  :   can just create/get
+      //  , and store    n t  map.
+      rateCounter = RelevanceStats.exportRate(statNa );
+      RATE_COUNTERS.put(statNa , rateCounter);
     }
     return rateCounter;
   }

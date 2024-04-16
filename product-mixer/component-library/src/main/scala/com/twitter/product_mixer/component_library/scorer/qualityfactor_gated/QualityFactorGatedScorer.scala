@@ -1,59 +1,59 @@
-package com.twitter.product_mixer.component_library.scorer.qualityfactor_gated
+package com.tw ter.product_m xer.component_l brary.scorer.qual yfactor_gated
 
-import com.twitter.product_mixer.component_library.scorer.qualityfactor_gated.QualityFactorGatedScorer.IdentifierPrefix
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.product_m xer.component_l brary.scorer.qual yfactor_gated.Qual yFactorGatedScorer. dent f erPref x
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.funct onal_component.scorer.Scorer
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Cond  onally
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Scorer dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.qual y_factor.HasQual yFactorStatus
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .Param
 
 /**
- * A [[scorer]] with [[Conditionally]] based on quality factor value and threshold
+ * A [[scorer]] w h [[Cond  onally]] based on qual y factor value and threshold
  *
- * @param qualityFactorThreshold quliaty factor threshold that turn off the scorer
- * @param pipelineIdentifier identifier of the pipeline that quality factor is based on
- * @param scorer the underlying [[scorer]] to run when `enabledParam` is true
- * @tparam Query The domain model for the query or request
- * @tparam Result The type of the candidates
+ * @param qual yFactorThreshold qul aty factor threshold that turn off t  scorer
+ * @param p pel ne dent f er  dent f er of t  p pel ne that qual y factor  s based on
+ * @param scorer t  underly ng [[scorer]] to run w n `enabledParam`  s true
+ * @tparam Query T  doma n model for t  query or request
+ * @tparam Result T  type of t  cand dates
  */
-case class QualityFactorGatedScorer[
-  -Query <: PipelineQuery with HasQualityFactorStatus,
-  Result <: UniversalNoun[Any]
+case class Qual yFactorGatedScorer[
+  -Query <: P pel neQuery w h HasQual yFactorStatus,
+  Result <: Un versalNoun[Any]
 ](
-  pipelineIdentifier: ComponentIdentifier,
-  qualityFactorThresholdParam: Param[Double],
+  p pel ne dent f er: Component dent f er,
+  qual yFactorThresholdParam: Param[Double],
   scorer: Scorer[Query, Result])
     extends Scorer[Query, Result]
-    with Conditionally[Query] {
+    w h Cond  onally[Query] {
 
-  override val identifier: ScorerIdentifier = ScorerIdentifier(
-    IdentifierPrefix + scorer.identifier.name)
+  overr de val  dent f er: Scorer dent f er = Scorer dent f er(
+     dent f erPref x + scorer. dent f er.na )
 
-  override val alerts: Seq[Alert] = scorer.alerts
+  overr de val alerts: Seq[Alert] = scorer.alerts
 
-  override val features: Set[Feature[_, _]] = scorer.features
+  overr de val features: Set[Feature[_, _]] = scorer.features
 
-  override def onlyIf(query: Query): Boolean =
-    Conditionally.and(
+  overr de def only f(query: Query): Boolean =
+    Cond  onally.and(
       query,
       scorer,
-      query.getQualityFactorCurrentValue(pipelineIdentifier) >= query.params(
-        qualityFactorThresholdParam))
+      query.getQual yFactorCurrentValue(p pel ne dent f er) >= query.params(
+        qual yFactorThresholdParam))
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Result]]
-  ): Stitch[Seq[FeatureMap]] = scorer(query, candidates)
+    cand dates: Seq[Cand dateW hFeatures[Result]]
+  ): St ch[Seq[FeatureMap]] = scorer(query, cand dates)
 }
 
-object QualityFactorGatedScorer {
-  val IdentifierPrefix = "QualityFactorGated"
+object Qual yFactorGatedScorer {
+  val  dent f erPref x = "Qual yFactorGated"
 }

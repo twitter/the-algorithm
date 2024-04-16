@@ -1,35 +1,35 @@
-package com.twitter.timelines.prediction.common.aggregates.real_time
+package com.tw ter.t  l nes.pred ct on.common.aggregates.real_t  
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.featurestore.catalog.entities.core.Tweet
-import com.twitter.ml.featurestore.catalog.features.trends.TweetTrendsScores
-import com.twitter.ml.featurestore.lib.TweetId
-import com.twitter.ml.featurestore.lib.data.PredictionRecord
-import com.twitter.ml.featurestore.lib.data.PredictionRecordAdapter
-import com.twitter.ml.featurestore.lib.feature.BoundFeature
-import com.twitter.ml.featurestore.lib.feature.BoundFeatureSet
-import com.twitter.timelines.prediction.common.adapters.TimelinesAdapterBase
-import java.util
-import scala.collection.JavaConverters._
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ml.featurestore.catalog.ent  es.core.T et
+ mport com.tw ter.ml.featurestore.catalog.features.trends.T etTrendsScores
+ mport com.tw ter.ml.featurestore.l b.T et d
+ mport com.tw ter.ml.featurestore.l b.data.Pred ct onRecord
+ mport com.tw ter.ml.featurestore.l b.data.Pred ct onRecordAdapter
+ mport com.tw ter.ml.featurestore.l b.feature.BoundFeature
+ mport com.tw ter.ml.featurestore.l b.feature.BoundFeatureSet
+ mport com.tw ter.t  l nes.pred ct on.common.adapters.T  l nesAdapterBase
+ mport java.ut l
+ mport scala.collect on.JavaConverters._
 
-object TweetFeaturesAdapter extends TimelinesAdapterBase[PredictionRecord] {
+object T etFeaturesAdapter extends T  l nesAdapterBase[Pred ct onRecord] {
 
-  private val ContinuousFeatureMap: Map[BoundFeature[TweetId, Double], Feature.Continuous] = Map()
+  pr vate val Cont nuousFeatureMap: Map[BoundFeature[T et d, Double], Feature.Cont nuous] = Map()
 
-  val TweetFeaturesSet: BoundFeatureSet = new BoundFeatureSet(ContinuousFeatureMap.keys.toSet)
+  val T etFeaturesSet: BoundFeatureSet = new BoundFeatureSet(Cont nuousFeatureMap.keys.toSet)
 
   val AllFeatures: Seq[Feature[_]] =
-    ContinuousFeatureMap.values.toSeq
+    Cont nuousFeatureMap.values.toSeq
 
-  private val adapter = PredictionRecordAdapter.oneToOne(TweetFeaturesSet)
+  pr vate val adapter = Pred ct onRecordAdapter.oneToOne(T etFeaturesSet)
 
-  override def getFeatureContext: FeatureContext = new FeatureContext(AllFeatures: _*)
+  overr de def getFeatureContext: FeatureContext = new FeatureContext(AllFeatures: _*)
 
-  override def commonFeatures: Set[Feature[_]] = Set.empty
+  overr de def commonFeatures: Set[Feature[_]] = Set.empty
 
-  override def adaptToDataRecords(record: PredictionRecord): util.List[DataRecord] = {
-    List(adapter.adaptToDataRecord(record)).asJava
+  overr de def adaptToDataRecords(record: Pred ct onRecord): ut l.L st[DataRecord] = {
+    L st(adapter.adaptToDataRecord(record)).asJava
   }
 }

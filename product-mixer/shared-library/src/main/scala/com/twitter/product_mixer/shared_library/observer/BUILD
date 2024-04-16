@@ -1,19 +1,19 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "servo/util",
-        "stitch/stitch-core",
-        "util/util-core:util-core-util",
-        "util/util-stats",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "servo/ut l",
+        "st ch/st ch-core",
+        "ut l/ut l-core:ut l-core-ut l",
+        "ut l/ut l-stats",
     ],
     exports = [
-        "servo/util",
-        "stitch/stitch-core",
-        "util/util-core:util-core-util",
-        "util/util-stats",
+        "servo/ut l",
+        "st ch/st ch-core",
+        "ut l/ut l-core:ut l-core-ut l",
+        "ut l/ut l-stats",
     ],
 )

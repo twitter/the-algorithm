@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.metadata
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. tadata
 
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.Base64String
-import com.twitter.bijection.{Injection => Serializer}
-import com.twitter.product_mixer.component_library.decorator.urt.builder.metadata.ConversationTweetClientEventDetailsBuilder.ControllerDataSerializer
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventDetailsBuilder
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.suggests.controller_data.home_tweets.thriftscala.HomeTweetsControllerData
-import com.twitter.suggests.controller_data.thriftscala.ControllerData
-import com.twitter.suggests.controller_data.home_tweets.v1.thriftscala.{
-  HomeTweetsControllerData => HomeTweetsControllerDataV1
+ mport com.tw ter.b ject on.scrooge.B naryScalaCodec
+ mport com.tw ter.b ject on.Base64Str ng
+ mport com.tw ter.b ject on.{ nject on => Ser al zer}
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. tadata.Conversat onT etCl entEventDeta lsBu lder.ControllerDataSer al zer
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseCl entEventDeta lsBu lder
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.BaseT etCand date
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEventDeta ls
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.T  l nesDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.suggests.controller_data.ho _t ets.thr ftscala.Ho T etsControllerData
+ mport com.tw ter.suggests.controller_data.thr ftscala.ControllerData
+ mport com.tw ter.suggests.controller_data.ho _t ets.v1.thr ftscala.{
+  Ho T etsControllerData => Ho T etsControllerDataV1
 }
-import com.twitter.suggests.controller_data.v2.thriftscala.{ControllerData => ControllerDataV2}
+ mport com.tw ter.suggests.controller_data.v2.thr ftscala.{ControllerData => ControllerDataV2}
 
-object ConversationTweetClientEventDetailsBuilder {
-  implicit val ByteSerializer: Serializer[ControllerData, Array[Byte]] =
-    BinaryScalaCodec(ControllerData)
+object Conversat onT etCl entEventDeta lsBu lder {
+   mpl c  val ByteSer al zer: Ser al zer[ControllerData, Array[Byte]] =
+    B naryScalaCodec(ControllerData)
 
-  val ControllerDataSerializer: Serializer[ControllerData, String] =
-    Serializer.connect[ControllerData, Array[Byte], Base64String, String]
+  val ControllerDataSer al zer: Ser al zer[ControllerData, Str ng] =
+    Ser al zer.connect[ControllerData, Array[Byte], Base64Str ng, Str ng]
 }
 
-case class ConversationTweetClientEventDetailsBuilder[-Query <: PipelineQuery](
-  injectionType: Option[String])
-    extends BaseClientEventDetailsBuilder[Query, BaseTweetCandidate] {
+case class Conversat onT etCl entEventDeta lsBu lder[-Query <: P pel neQuery](
+   nject onType: Opt on[Str ng])
+    extends BaseCl entEventDeta lsBu lder[Query, BaseT etCand date] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    tweetCandidate: BaseTweetCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[ClientEventDetails] =
-    Some(
-      ClientEventDetails(
-        conversationDetails = None,
-        timelinesDetails = Some(
-          TimelinesDetails(
-            injectionType = injectionType,
-            controllerData = Some(buildControllerData(query.getUserOrGuestId)),
-            sourceData = None)),
-        articleDetails = None,
-        liveEventDetails = None,
-        commerceDetails = None
+    t etCand date: BaseT etCand date,
+    cand dateFeatures: FeatureMap
+  ): Opt on[Cl entEventDeta ls] =
+    So (
+      Cl entEventDeta ls(
+        conversat onDeta ls = None,
+        t  l nesDeta ls = So (
+          T  l nesDeta ls(
+             nject onType =  nject onType,
+            controllerData = So (bu ldControllerData(query.getUserOrGuest d)),
+            s ceData = None)),
+        art cleDeta ls = None,
+        l veEventDeta ls = None,
+        com rceDeta ls = None
       ))
 
-  private def buildControllerData(traceId: Option[Long]): String =
-    ControllerDataSerializer(
+  pr vate def bu ldControllerData(trace d: Opt on[Long]): Str ng =
+    ControllerDataSer al zer(
       ControllerData.V2(
-        ControllerDataV2.HomeTweets(
-          HomeTweetsControllerData.V1(
-            HomeTweetsControllerDataV1(
-              tweetTypesBitmap = 0L,
-              traceId = traceId,
+        ControllerDataV2.Ho T ets(
+          Ho T etsControllerData.V1(
+            Ho T etsControllerDataV1(
+              t etTypesB map = 0L,
+              trace d = trace d,
             )
           )
         )

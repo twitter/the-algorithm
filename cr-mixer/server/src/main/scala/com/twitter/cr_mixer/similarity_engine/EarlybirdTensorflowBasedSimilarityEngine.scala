@@ -1,138 +1,138 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.tw ter.cr_m xer.s m lar y_eng ne
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.search.earlybird.thriftscala.EarlybirdRequest
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.search.earlybird.thriftscala.ThriftSearchQuery
-import com.twitter.util.Time
-import com.twitter.search.common.query.thriftjava.thriftscala.CollectorParams
-import com.twitter.search.common.ranking.thriftscala.ThriftRankingParams
-import com.twitter.search.common.ranking.thriftscala.ThriftScoringFunctionType
-import com.twitter.search.earlybird.thriftscala.ThriftSearchRelevanceOptions
-import javax.inject.Inject
-import javax.inject.Singleton
-import EarlybirdSimilarityEngineBase._
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.similarity_engine.EarlybirdTensorflowBasedSimilarityEngine.EarlybirdTensorflowBasedSearchQuery
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.EarlybirdClientId
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.FacetsToFetch
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.GetCollectorTerminationParams
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.GetEarlybirdQuery
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.MetadataOptions
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.GetNamedDisjunctions
-import com.twitter.search.earlybird.thriftscala.ThriftSearchRankingMode
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.util.Duration
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.search.earlyb rd.thr ftscala.Earlyb rdRequest
+ mport com.tw ter.search.earlyb rd.thr ftscala.Earlyb rdServ ce
+ mport com.tw ter.search.earlyb rd.thr ftscala.Thr ftSearchQuery
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.search.common.query.thr ftjava.thr ftscala.CollectorParams
+ mport com.tw ter.search.common.rank ng.thr ftscala.Thr ftRank ngParams
+ mport com.tw ter.search.common.rank ng.thr ftscala.Thr ftScor ngFunct onType
+ mport com.tw ter.search.earlyb rd.thr ftscala.Thr ftSearchRelevanceOpt ons
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport Earlyb rdS m lar yEng neBase._
+ mport com.tw ter.cr_m xer.conf g.T  outConf g
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.Earlyb rdTensorflowBasedS m lar yEng ne.Earlyb rdTensorflowBasedSearchQuery
+ mport com.tw ter.cr_m xer.ut l.Earlyb rdSearchUt l.Earlyb rdCl ent d
+ mport com.tw ter.cr_m xer.ut l.Earlyb rdSearchUt l.FacetsToFetch
+ mport com.tw ter.cr_m xer.ut l.Earlyb rdSearchUt l.GetCollectorTerm nat onParams
+ mport com.tw ter.cr_m xer.ut l.Earlyb rdSearchUt l.GetEarlyb rdQuery
+ mport com.tw ter.cr_m xer.ut l.Earlyb rdSearchUt l. tadataOpt ons
+ mport com.tw ter.cr_m xer.ut l.Earlyb rdSearchUt l.GetNa dD sjunct ons
+ mport com.tw ter.search.earlyb rd.thr ftscala.Thr ftSearchRank ngMode
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.ut l.Durat on
 
-@Singleton
-case class EarlybirdTensorflowBasedSimilarityEngine @Inject() (
-  earlybirdSearchClient: EarlybirdService.MethodPerEndpoint,
-  timeoutConfig: TimeoutConfig,
-  stats: StatsReceiver)
-    extends EarlybirdSimilarityEngineBase[EarlybirdTensorflowBasedSearchQuery] {
-  import EarlybirdTensorflowBasedSimilarityEngine._
-  override val statsReceiver: StatsReceiver = stats.scope(this.getClass.getSimpleName)
-  override def getEarlybirdRequest(
-    query: EarlybirdTensorflowBasedSearchQuery
-  ): Option[EarlybirdRequest] = {
-    if (query.seedUserIds.nonEmpty)
-      Some(
-        EarlybirdRequest(
-          searchQuery = getThriftSearchQuery(query, timeoutConfig.earlybirdServerTimeout),
-          clientHost = None,
-          clientRequestID = None,
-          clientId = Some(EarlybirdClientId),
-          clientRequestTimeMs = Some(Time.now.inMilliseconds),
-          cachingParams = None,
-          timeoutMs = timeoutConfig.earlybirdServerTimeout.inMilliseconds.intValue(),
+@S ngleton
+case class Earlyb rdTensorflowBasedS m lar yEng ne @ nject() (
+  earlyb rdSearchCl ent: Earlyb rdServ ce. thodPerEndpo nt,
+  t  outConf g: T  outConf g,
+  stats: StatsRece ver)
+    extends Earlyb rdS m lar yEng neBase[Earlyb rdTensorflowBasedSearchQuery] {
+   mport Earlyb rdTensorflowBasedS m lar yEng ne._
+  overr de val statsRece ver: StatsRece ver = stats.scope(t .getClass.getS mpleNa )
+  overr de def getEarlyb rdRequest(
+    query: Earlyb rdTensorflowBasedSearchQuery
+  ): Opt on[Earlyb rdRequest] = {
+     f (query.seedUser ds.nonEmpty)
+      So (
+        Earlyb rdRequest(
+          searchQuery = getThr ftSearchQuery(query, t  outConf g.earlyb rdServerT  out),
+          cl entHost = None,
+          cl entRequest D = None,
+          cl ent d = So (Earlyb rdCl ent d),
+          cl entRequestT  Ms = So (T  .now. nM ll seconds),
+          cach ngParams = None,
+          t  outMs = t  outConf g.earlyb rdServerT  out. nM ll seconds. ntValue(),
           facetRequest = None,
-          termStatisticsRequest = None,
+          termStat st csRequest = None,
           debugMode = 0,
-          debugOptions = None,
-          searchSegmentId = None,
+          debugOpt ons = None,
+          searchSeg nt d = None,
           returnStatusType = None,
           successfulResponseThreshold = None,
-          querySource = None,
-          getOlderResults = Some(false),
-          followedUserIds = Some(query.seedUserIds),
+          queryS ce = None,
+          getOlderResults = So (false),
+          follo dUser ds = So (query.seedUser ds),
           adjustedProtectedRequestParams = None,
-          adjustedFullArchiveRequestParams = None,
-          getProtectedTweetsOnly = Some(false),
-          retokenizeSerializedQuery = None,
-          skipVeryRecentTweets = true,
-          experimentClusterToUse = None
+          adjustedFullArch veRequestParams = None,
+          getProtectedT etsOnly = So (false),
+          retoken zeSer al zedQuery = None,
+          sk pVeryRecentT ets = true,
+          exper  ntClusterToUse = None
         ))
     else None
   }
 }
 
-object EarlybirdTensorflowBasedSimilarityEngine {
-  case class EarlybirdTensorflowBasedSearchQuery(
-    searcherUserId: Option[UserId],
-    seedUserIds: Seq[UserId],
-    maxNumTweets: Int,
-    beforeTweetIdExclusive: Option[TweetId],
-    afterTweetIdExclusive: Option[TweetId],
-    filterOutRetweetsAndReplies: Boolean,
-    useTensorflowRanking: Boolean,
-    excludedTweetIds: Set[TweetId],
-    maxNumHitsPerShard: Int)
-      extends EarlybirdSearchQuery
+object Earlyb rdTensorflowBasedS m lar yEng ne {
+  case class Earlyb rdTensorflowBasedSearchQuery(
+    searc rUser d: Opt on[User d],
+    seedUser ds: Seq[User d],
+    maxNumT ets:  nt,
+    beforeT et dExclus ve: Opt on[T et d],
+    afterT et dExclus ve: Opt on[T et d],
+    f lterOutRet etsAndRepl es: Boolean,
+    useTensorflowRank ng: Boolean,
+    excludedT et ds: Set[T et d],
+    maxNumH sPerShard:  nt)
+      extends Earlyb rdSearchQuery
 
-  private def getThriftSearchQuery(
-    query: EarlybirdTensorflowBasedSearchQuery,
-    processingTimeout: Duration
-  ): ThriftSearchQuery =
-    ThriftSearchQuery(
-      serializedQuery = GetEarlybirdQuery(
-        query.beforeTweetIdExclusive,
-        query.afterTweetIdExclusive,
-        query.excludedTweetIds,
-        query.filterOutRetweetsAndReplies).map(_.serialize),
-      fromUserIDFilter64 = Some(query.seedUserIds),
-      numResults = query.maxNumTweets,
-      // Whether to collect conversation IDs. Remove it for now.
-      // collectConversationId = Gate.True(), // true for Home
-      rankingMode = ThriftSearchRankingMode.Relevance,
-      relevanceOptions = Some(getRelevanceOptions),
-      collectorParams = Some(
+  pr vate def getThr ftSearchQuery(
+    query: Earlyb rdTensorflowBasedSearchQuery,
+    process ngT  out: Durat on
+  ): Thr ftSearchQuery =
+    Thr ftSearchQuery(
+      ser al zedQuery = GetEarlyb rdQuery(
+        query.beforeT et dExclus ve,
+        query.afterT et dExclus ve,
+        query.excludedT et ds,
+        query.f lterOutRet etsAndRepl es).map(_.ser al ze),
+      fromUser DF lter64 = So (query.seedUser ds),
+      numResults = query.maxNumT ets,
+      // W t r to collect conversat on  Ds. Remove   for now.
+      // collectConversat on d = Gate.True(), // true for Ho 
+      rank ngMode = Thr ftSearchRank ngMode.Relevance,
+      relevanceOpt ons = So (getRelevanceOpt ons),
+      collectorParams = So (
         CollectorParams(
-          // numResultsToReturn defines how many results each EB shard will return to search root
+          // numResultsToReturn def nes how many results each EB shard w ll return to search root
           numResultsToReturn = 1000,
-          // terminationParams.maxHitsToProcess is used for early terminating per shard results fetching.
-          terminationParams =
-            GetCollectorTerminationParams(query.maxNumHitsPerShard, processingTimeout)
+          // term nat onParams.maxH sToProcess  s used for early term nat ng per shard results fetch ng.
+          term nat onParams =
+            GetCollectorTerm nat onParams(query.maxNumH sPerShard, process ngT  out)
         )),
-      facetFieldNames = Some(FacetsToFetch),
-      resultMetadataOptions = Some(MetadataOptions),
-      searcherId = query.searcherUserId,
-      searchStatusIds = None,
-      namedDisjunctionMap = GetNamedDisjunctions(query.excludedTweetIds)
+      facetF eldNa s = So (FacetsToFetch),
+      result tadataOpt ons = So ( tadataOpt ons),
+      searc r d = query.searc rUser d,
+      searchStatus ds = None,
+      na dD sjunct onMap = GetNa dD sjunct ons(query.excludedT et ds)
     )
 
-  // The specific values of recap relevance/reranking options correspond to
-  // experiment: enable_recap_reranking_2988,timeline_internal_disable_recap_filter
-  // bucket    : enable_rerank,disable_filter
-  private def getRelevanceOptions: ThriftSearchRelevanceOptions = {
-    ThriftSearchRelevanceOptions(
-      proximityScoring = true,
-      maxConsecutiveSameUser = Some(2),
-      rankingParams = Some(getTensorflowBasedRankingParams),
-      maxHitsToProcess = Some(500),
-      maxUserBlendCount = Some(3),
-      proximityPhraseWeight = 9.0,
-      returnAllResults = Some(true)
+  // T  spec f c values of recap relevance/rerank ng opt ons correspond to
+  // exper  nt: enable_recap_rerank ng_2988,t  l ne_ nternal_d sable_recap_f lter
+  // bucket    : enable_rerank,d sable_f lter
+  pr vate def getRelevanceOpt ons: Thr ftSearchRelevanceOpt ons = {
+    Thr ftSearchRelevanceOpt ons(
+      prox m yScor ng = true,
+      maxConsecut veSa User = So (2),
+      rank ngParams = So (getTensorflowBasedRank ngParams),
+      maxH sToProcess = So (500),
+      maxUserBlendCount = So (3),
+      prox m yPhrase  ght = 9.0,
+      returnAllResults = So (true)
     )
   }
 
-  private def getTensorflowBasedRankingParams: ThriftRankingParams = {
-    ThriftRankingParams(
-      `type` = Some(ThriftScoringFunctionType.TensorflowBased),
-      selectedTensorflowModel = Some("timelines_rectweet_replica"),
-      minScore = -1.0e100,
+  pr vate def getTensorflowBasedRank ngParams: Thr ftRank ngParams = {
+    Thr ftRank ngParams(
+      `type` = So (Thr ftScor ngFunct onType.TensorflowBased),
+      selectedTensorflowModel = So ("t  l nes_rect et_repl ca"),
+      m nScore = -1.0e100,
       applyBoosts = false,
-      authorSpecificScoreAdjustments = None
+      authorSpec f cScoreAdjust nts = None
     )
   }
 }

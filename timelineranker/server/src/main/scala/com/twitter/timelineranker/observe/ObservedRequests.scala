@@ -1,35 +1,35 @@
-package com.twitter.timelineranker.observe
+package com.tw ter.t  l neranker.observe
 
-import com.twitter.timelines.authorization.ReadRequest
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.observe.ObservedAndValidatedRequests
-import com.twitter.timelines.observe.ServiceObserver
-import com.twitter.timelines.observe.ServiceTracer
-import com.twitter.util.Future
+ mport com.tw ter.t  l nes.author zat on.ReadRequest
+ mport com.tw ter.t  l nes.model.User d
+ mport com.tw ter.t  l nes.observe.ObservedAndVal datedRequests
+ mport com.tw ter.t  l nes.observe.Serv ceObserver
+ mport com.tw ter.t  l nes.observe.Serv ceTracer
+ mport com.tw ter.ut l.Future
 
-trait ObservedRequests extends ObservedAndValidatedRequests {
+tra  ObservedRequests extends ObservedAndVal datedRequests {
 
-  def observeAndValidate[R, Q](
+  def observeAndVal date[R, Q](
     request: Q,
-    viewerIds: Seq[UserId],
-    stats: ServiceObserver.Stats[Q],
-    exceptionHandler: PartialFunction[Throwable, Future[R]]
+    v e r ds: Seq[User d],
+    stats: Serv ceObserver.Stats[Q],
+    except onHandler: Part alFunct on[Throwable, Future[R]]
   )(
     f: Q => Future[R]
   ): Future[R] = {
-    super.observeAndValidate[Q, R](
+    super.observeAndVal date[Q, R](
       request,
-      viewerIds,
+      v e r ds,
       ReadRequest,
-      validateRequest,
-      exceptionHandler,
+      val dateRequest,
+      except onHandler,
       stats,
-      ServiceTracer.identity[Q]
+      Serv ceTracer. dent y[Q]
     )(f)
   }
 
-  def validateRequest[Q](request: Q): Unit = {
-    // TimelineQuery and its derived classes do not permit invalid instances to be constructed.
-    // Therefore no additional validation is required.
+  def val dateRequest[Q](request: Q): Un  = {
+    // T  l neQuery and  s der ved classes do not perm   nval d  nstances to be constructed.
+    // T refore no add  onal val dat on  s requ red.
   }
 }

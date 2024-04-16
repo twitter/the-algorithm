@@ -1,76 +1,76 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.flex ble_ nject on_p pel ne
 
-import com.twitter.onboarding.injections.{thriftscala => onboardingthrift}
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.Compact
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.Large
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.Normal
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
+ mport com.tw ter.onboard ng. nject ons.{thr ftscala => onboard ngthr ft}
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.prompt.Compact
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.prompt.Large
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.prompt.Normal
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.prompt.RelevancePromptContent
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.prompt.RelevancePromptD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Callback
 
 /***
- * Helper class to convert Relevance Prompt related onboarding thrift to product-mixer models
+ *  lper class to convert Relevance Prompt related onboard ng thr ft to product-m xer models
  */
-object RelevancePromptConversions {
+object RelevancePromptConvers ons {
   def convertContent(
-    candidate: onboardingthrift.RelevancePrompt
+    cand date: onboard ngthr ft.RelevancePrompt
   ): RelevancePromptContent =
     RelevancePromptContent(
-      displayType = convertDisplayType(candidate.displayType),
-      title = candidate.title.text,
-      confirmation = buildConfirmation(candidate),
-      isRelevantText = candidate.isRelevantButton.text,
-      notRelevantText = candidate.notRelevantButton.text,
-      isRelevantCallback = convertCallbacks(candidate.isRelevantButton.callbacks),
-      notRelevantCallback = convertCallbacks(candidate.notRelevantButton.callbacks),
-      isRelevantFollowUp = None, 
+      d splayType = convertD splayType(cand date.d splayType),
+      t le = cand date.t le.text,
+      conf rmat on = bu ldConf rmat on(cand date),
+       sRelevantText = cand date. sRelevantButton.text,
+      notRelevantText = cand date.notRelevantButton.text,
+       sRelevantCallback = convertCallbacks(cand date. sRelevantButton.callbacks),
+      notRelevantCallback = convertCallbacks(cand date.notRelevantButton.callbacks),
+       sRelevantFollowUp = None, 
       notRelevantFollowUp = None 
     )
 
-  // Based on com.twitter.timelinemixer.injection.model.candidate.OnboardingRelevancePromptDisplayType#fromThrift
-  def convertDisplayType(
-    displayType: onboardingthrift.RelevancePromptDisplayType
-  ): RelevancePromptDisplayType =
-    displayType match {
-      case onboardingthrift.RelevancePromptDisplayType.Normal => Normal
-      case onboardingthrift.RelevancePromptDisplayType.Compact => Compact
-      case onboardingthrift.RelevancePromptDisplayType.Large => Large
-      case onboardingthrift.RelevancePromptDisplayType
-            .EnumUnknownRelevancePromptDisplayType(value) =>
-        throw new UnsupportedOperationException(s"Unknown display type: $value")
+  // Based on com.tw ter.t  l nem xer. nject on.model.cand date.Onboard ngRelevancePromptD splayType#fromThr ft
+  def convertD splayType(
+    d splayType: onboard ngthr ft.RelevancePromptD splayType
+  ): RelevancePromptD splayType =
+    d splayType match {
+      case onboard ngthr ft.RelevancePromptD splayType.Normal => Normal
+      case onboard ngthr ft.RelevancePromptD splayType.Compact => Compact
+      case onboard ngthr ft.RelevancePromptD splayType.Large => Large
+      case onboard ngthr ft.RelevancePromptD splayType
+            .EnumUnknownRelevancePromptD splayType(value) =>
+        throw new UnsupportedOperat onExcept on(s"Unknown d splay type: $value")
     }
 
-  // Based on com.twitter.timelinemixer.injection.model.injection.OnboardingRelevancePromptInjection#buildConfirmation
-  def buildConfirmation(candidate: onboardingthrift.RelevancePrompt): String = {
-    val isRelevantTextConfirmation =
-      buttonToDismissFeedbackText(candidate.isRelevantButton).getOrElse("")
-    val notRelevantTextConfirmation =
-      buttonToDismissFeedbackText(candidate.notRelevantButton).getOrElse("")
-    if (isRelevantTextConfirmation != notRelevantTextConfirmation)
-      throw new IllegalArgumentException(
-        s"""confirmation text not consistent for two buttons, :
-          isRelevantConfirmation: ${isRelevantTextConfirmation}
-          notRelevantConfirmation: ${notRelevantTextConfirmation}
+  // Based on com.tw ter.t  l nem xer. nject on.model. nject on.Onboard ngRelevancePrompt nject on#bu ldConf rmat on
+  def bu ldConf rmat on(cand date: onboard ngthr ft.RelevancePrompt): Str ng = {
+    val  sRelevantTextConf rmat on =
+      buttonToD sm ssFeedbackText(cand date. sRelevantButton).getOrElse("")
+    val notRelevantTextConf rmat on =
+      buttonToD sm ssFeedbackText(cand date.notRelevantButton).getOrElse("")
+     f ( sRelevantTextConf rmat on != notRelevantTextConf rmat on)
+      throw new  llegalArgu ntExcept on(
+        s"""conf rmat on text not cons stent for two buttons, :
+           sRelevantConf rmat on: ${ sRelevantTextConf rmat on}
+          notRelevantConf rmat on: ${notRelevantTextConf rmat on}
         """
       )
-    isRelevantTextConfirmation
+     sRelevantTextConf rmat on
   }
 
-  // Based on com.twitter.timelinemixer.injection.model.candidate.OnboardingInjectionAction#fromThrift
-  def buttonToDismissFeedbackText(button: onboardingthrift.ButtonAction): Option[String] = {
-    button.buttonBehavior match {
-      case onboardingthrift.ButtonBehavior.Dismiss(d) => d.feedbackMessage.map(_.text)
+  // Based on com.tw ter.t  l nem xer. nject on.model.cand date.Onboard ng nject onAct on#fromThr ft
+  def buttonToD sm ssFeedbackText(button: onboard ngthr ft.ButtonAct on): Opt on[Str ng] = {
+    button.buttonBehav or match {
+      case onboard ngthr ft.ButtonBehav or.D sm ss(d) => d.feedback ssage.map(_.text)
       case _ => None
     }
   }
 
-  // Based on com.twitter.timelinemixer.injection.model.injection.OnboardingRelevancePromptInjection#buildCallback
-  def convertCallbacks(onboardingCallbacks: Option[Seq[onboardingthrift.Callback]]): Callback = {
-    OnboardingInjectionConversions.convertCallback(
-      onboardingCallbacks
-        .flatMap(_.headOption)
+  // Based on com.tw ter.t  l nem xer. nject on.model. nject on.Onboard ngRelevancePrompt nject on#bu ldCallback
+  def convertCallbacks(onboard ngCallbacks: Opt on[Seq[onboard ngthr ft.Callback]]): Callback = {
+    Onboard ng nject onConvers ons.convertCallback(
+      onboard ngCallbacks
+        .flatMap(_. adOpt on)
         .getOrElse(
-          throw new NoSuchElementException(s"Callback must be provided for the Relevance Prompt")
+          throw new NoSuchEle ntExcept on(s"Callback must be prov ded for t  Relevance Prompt")
         ))
   }
 }

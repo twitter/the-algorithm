@@ -1,62 +1,62 @@
-package com.twitter.search.earlybird.search.facets;
+package com.tw ter.search.earlyb rd.search.facets;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
 
-import com.twitter.search.core.earlybird.facets.FacetIDMap;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.facets.FacetTermCollector;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.thrift.ThriftFacetLabel;
+ mport com.tw ter.search.core.earlyb rd.facets.Facet DMap;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetLabelProv der;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetTermCollector;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetLabel;
 
 /**
- * A collector for facet labels of given fields.
+ * A collector for facet labels of g ven f elds.
  */
-public class FacetLabelCollector implements FacetTermCollector {
+publ c class FacetLabelCollector  mple nts FacetTermCollector {
 
-  private final Set<String> requiredFields;
-  private FacetIDMap facetIDMap;
-  private Map<String, FacetLabelProvider> facetLabelProviders;
+  pr vate f nal Set<Str ng> requ redF elds;
+  pr vate Facet DMap facet DMap;
+  pr vate Map<Str ng, FacetLabelProv der> facetLabelProv ders;
 
-  private final List<ThriftFacetLabel> labels = new ArrayList<>();
+  pr vate f nal L st<Thr ftFacetLabel> labels = new ArrayL st<>();
 
-  public FacetLabelCollector(Set<String> requiredFields) {
-    this.requiredFields = requiredFields;
+  publ c FacetLabelCollector(Set<Str ng> requ redF elds) {
+    t .requ redF elds = requ redF elds;
   }
 
-  public void resetFacetLabelProviders(Map<String, FacetLabelProvider> facetLabelProvidersToReset,
-                                       FacetIDMap facetIDMapToReset) {
-    this.facetLabelProviders = facetLabelProvidersToReset;
-    this.facetIDMap = facetIDMapToReset;
+  publ c vo d resetFacetLabelProv ders(Map<Str ng, FacetLabelProv der> facetLabelProv dersToReset,
+                                       Facet DMap facet DMapToReset) {
+    t .facetLabelProv ders = facetLabelProv dersToReset;
+    t .facet DMap = facet DMapToReset;
     labels.clear();
   }
 
-  @Override
-  public boolean collect(int docID, long termID, int fieldID) {
-    String facetName = facetIDMap.getFacetFieldByFacetID(fieldID).getFacetName();
-    if (facetName == null || !requiredFields.contains(facetName)) {
+  @Overr de
+  publ c boolean collect( nt doc D, long term D,  nt f eld D) {
+    Str ng facetNa  = facet DMap.getFacetF eldByFacet D(f eld D).getFacetNa ();
+     f (facetNa  == null || !requ redF elds.conta ns(facetNa )) {
       return false;
     }
-    if (termID != EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND && fieldID >= 0) {
-      final FacetLabelProvider provider = facetLabelProviders.get(facetName);
-      if (provider != null) {
-        FacetLabelProvider.FacetLabelAccessor labelAccessor = provider.getLabelAccessor();
-        String label = labelAccessor.getTermText(termID);
-        int offensiveCount = labelAccessor.getOffensiveCount(termID);
-        labels.add(new ThriftFacetLabel()
-            .setFieldName(facetName)
+     f (term D != Earlyb rd ndexSeg ntAtom cReader.TERM_NOT_FOUND && f eld D >= 0) {
+      f nal FacetLabelProv der prov der = facetLabelProv ders.get(facetNa );
+       f (prov der != null) {
+        FacetLabelProv der.FacetLabelAccessor labelAccessor = prov der.getLabelAccessor();
+        Str ng label = labelAccessor.getTermText(term D);
+         nt offens veCount = labelAccessor.getOffens veCount(term D);
+        labels.add(new Thr ftFacetLabel()
+            .setF eldNa (facetNa )
             .setLabel(label)
-            .setOffensiveCount(offensiveCount));
+            .setOffens veCount(offens veCount));
         return true;
       }
     }
     return false;
   }
 
-  public List<ThriftFacetLabel> getLabels() {
+  publ c L st<Thr ftFacetLabel> getLabels() {
     // Make a copy
-    return new ArrayList<>(labels);
+    return new ArrayL st<>(labels);
   }
 }

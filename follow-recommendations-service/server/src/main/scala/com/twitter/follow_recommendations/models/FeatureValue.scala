@@ -1,24 +1,24 @@
-package com.twitter.follow_recommendations.models
+package com.tw ter.follow_recom ndat ons.models
 
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.timelines.configapi._
+ mport com.tw ter.follow_recom ndat ons.{thr ftscala => t}
+ mport com.tw ter.t  l nes.conf gap ._
 
 object FeatureValue {
-  def fromThrift(thriftFeatureValue: t.FeatureValue): FeatureValue = thriftFeatureValue match {
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.BoolValue(bool)) =>
+  def fromThr ft(thr ftFeatureValue: t.FeatureValue): FeatureValue = thr ftFeatureValue match {
+    case t.FeatureValue.Pr m  veValue(t.Pr m  veFeatureValue.BoolValue(bool)) =>
       BooleanFeatureValue(bool)
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.StrValue(string)) =>
-      StringFeatureValue(string)
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.IntValue(int)) =>
-      NumberFeatureValue(int)
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.LongValue(long)) =>
+    case t.FeatureValue.Pr m  veValue(t.Pr m  veFeatureValue.StrValue(str ng)) =>
+      Str ngFeatureValue(str ng)
+    case t.FeatureValue.Pr m  veValue(t.Pr m  veFeatureValue. ntValue( nt)) =>
+      NumberFeatureValue( nt)
+    case t.FeatureValue.Pr m  veValue(t.Pr m  veFeatureValue.LongValue(long)) =>
       NumberFeatureValue(long)
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.UnknownUnionField(field)) =>
-      throw new UnknownFeatureValueException(s"Primitive: ${field.field.name}")
-    case t.FeatureValue.UnknownUnionField(field) =>
-      throw new UnknownFeatureValueException(field.field.name)
+    case t.FeatureValue.Pr m  veValue(t.Pr m  veFeatureValue.UnknownUn onF eld(f eld)) =>
+      throw new UnknownFeatureValueExcept on(s"Pr m  ve: ${f eld.f eld.na }")
+    case t.FeatureValue.UnknownUn onF eld(f eld) =>
+      throw new UnknownFeatureValueExcept on(f eld.f eld.na )
   }
 }
 
-class UnknownFeatureValueException(fieldName: String)
-    extends Exception(s"Unknown FeatureValue name in thrift: ${fieldName}")
+class UnknownFeatureValueExcept on(f eldNa : Str ng)
+    extends Except on(s"Unknown FeatureValue na   n thr ft: ${f eldNa }")

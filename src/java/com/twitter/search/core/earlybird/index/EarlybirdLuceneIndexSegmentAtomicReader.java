@@ -1,336 +1,336 @@
-package com.twitter.search.core.earlybird.index;
+package com.tw ter.search.core.earlyb rd. ndex;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.index.BinaryDocValues;
-import org.apache.lucene.index.FieldInfos;
-import org.apache.lucene.index.FilterLeafReader;
-import org.apache.lucene.index.LeafMetaData;
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.index.PointValues;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.SortedDocValues;
-import org.apache.lucene.index.SortedNumericDocValues;
-import org.apache.lucene.index.SortedSetDocValues;
-import org.apache.lucene.index.StoredFieldVisitor;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.util.Bits;
-import org.apache.lucene.util.BytesRef;
+ mport org.apac .lucene. ndex.B naryDocValues;
+ mport org.apac .lucene. ndex.F eld nfos;
+ mport org.apac .lucene. ndex.F lterLeafReader;
+ mport org.apac .lucene. ndex.Leaf taData;
+ mport org.apac .lucene. ndex.LeafReader;
+ mport org.apac .lucene. ndex.Nu r cDocValues;
+ mport org.apac .lucene. ndex.Po ntValues;
+ mport org.apac .lucene. ndex.Post ngsEnum;
+ mport org.apac .lucene. ndex.SortedDocValues;
+ mport org.apac .lucene. ndex.SortedNu r cDocValues;
+ mport org.apac .lucene. ndex.SortedSetDocValues;
+ mport org.apac .lucene. ndex.StoredF eldV s or;
+ mport org.apac .lucene. ndex.Term;
+ mport org.apac .lucene. ndex.Terms;
+ mport org.apac .lucene. ndex.TermsEnum;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.store.D rectory;
+ mport org.apac .lucene.ut l.B s;
+ mport org.apac .lucene.ut l.BytesRef;
 
-import com.twitter.search.common.encoding.docvalues.CSFTypeUtil;
-import com.twitter.search.common.encoding.features.IntegerEncodedFeatures;
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.Schema.FieldInfo;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideFieldDocValues;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideFieldIndex;
+ mport com.tw ter.search.common.encod ng.docvalues.CSFTypeUt l;
+ mport com.tw ter.search.common.encod ng.features. ntegerEncodedFeatures;
+ mport com.tw ter.search.common.sc ma.base.Earlyb rdF eldType;
+ mport com.tw ter.search.common.sc ma.base.FeatureConf gurat on;
+ mport com.tw ter.search.common.sc ma.base.Sc ma.F eld nfo;
+ mport com.tw ter.search.core.earlyb rd. ndex.column.ColumnStr deF eldDocValues;
+ mport com.tw ter.search.core.earlyb rd. ndex.column.ColumnStr deF eld ndex;
 
-public final class EarlybirdLuceneIndexSegmentAtomicReader
-    extends EarlybirdIndexSegmentAtomicReader {
-  private abstract static class DocIdSetIteratorWrapper extends NumericDocValues {
-    private final DocIdSetIterator delegate;
+publ c f nal class Earlyb rdLucene ndexSeg ntAtom cReader
+    extends Earlyb rd ndexSeg ntAtom cReader {
+  pr vate abstract stat c class Doc dSet eratorWrapper extends Nu r cDocValues {
+    pr vate f nal Doc dSet erator delegate;
 
-    public DocIdSetIteratorWrapper(DocIdSetIterator delegate) {
-      this.delegate = Preconditions.checkNotNull(delegate);
+    publ c Doc dSet eratorWrapper(Doc dSet erator delegate) {
+      t .delegate = Precond  ons.c ckNotNull(delegate);
     }
 
-    @Override
-    public int docID() {
-      return delegate.docID();
+    @Overr de
+    publ c  nt doc D() {
+      return delegate.doc D();
     }
 
-    @Override
-    public int nextDoc() throws IOException {
+    @Overr de
+    publ c  nt nextDoc() throws  OExcept on {
       return delegate.nextDoc();
     }
 
-    @Override
-    public int advance(int target) throws IOException {
+    @Overr de
+    publ c  nt advance( nt target) throws  OExcept on {
       return delegate.advance(target);
     }
 
-    @Override
-    public long cost() {
+    @Overr de
+    publ c long cost() {
       return delegate.cost();
     }
   }
 
-  private static class BytesRefBasedIntegerEncodedFeatures extends IntegerEncodedFeatures {
-    private final BytesRef bytesRef;
-    private final int numInts;
+  pr vate stat c class BytesRefBased ntegerEncodedFeatures extends  ntegerEncodedFeatures {
+    pr vate f nal BytesRef bytesRef;
+    pr vate f nal  nt num nts;
 
-    public BytesRefBasedIntegerEncodedFeatures(BytesRef bytesRef, int numInts) {
-      this.bytesRef = bytesRef;
-      this.numInts = numInts;
+    publ c BytesRefBased ntegerEncodedFeatures(BytesRef bytesRef,  nt num nts) {
+      t .bytesRef = bytesRef;
+      t .num nts = num nts;
     }
 
-    @Override
-    public int getInt(int pos) {
-      return CSFTypeUtil.convertFromBytes(bytesRef.bytes, bytesRef.offset, pos);
+    @Overr de
+    publ c  nt get nt( nt pos) {
+      return CSFTypeUt l.convertFromBytes(bytesRef.bytes, bytesRef.offset, pos);
     }
 
-    @Override
-    public void setInt(int pos, int value) {
-      throw new UnsupportedOperationException();
+    @Overr de
+    publ c vo d set nt( nt pos,  nt value) {
+      throw new UnsupportedOperat onExcept on();
     }
 
-    @Override
-    public int getNumInts() {
-      return numInts;
+    @Overr de
+    publ c  nt getNum nts() {
+      return num nts;
     }
   }
 
-  private static final int OLDEST_DOC_SKIP_INTERVAL = 256;
+  pr vate stat c f nal  nt OLDEST_DOC_SK P_ NTERVAL = 256;
 
-  private final LeafReader delegate;
+  pr vate f nal LeafReader delegate;
 
   /**
-   * Do not add public constructors to this class. EarlybirdLuceneIndexSegmentAtomicReader instances
-   * should be created only by calling EarlybirdLuceneIndexSegmentData.createAtomicReader(), to make
-   * sure everything is set up properly (such as CSF readers).
+   * Do not add publ c constructors to t  class. Earlyb rdLucene ndexSeg ntAtom cReader  nstances
+   * should be created only by call ng Earlyb rdLucene ndexSeg ntData.createAtom cReader(), to make
+   * sure everyth ng  s set up properly (such as CSF readers).
    */
-  EarlybirdLuceneIndexSegmentAtomicReader(
-      EarlybirdIndexSegmentData segmentData, Directory directory) throws IOException {
-    super(segmentData);
-    this.delegate = getDelegateReader(directory);
+  Earlyb rdLucene ndexSeg ntAtom cReader(
+      Earlyb rd ndexSeg ntData seg ntData, D rectory d rectory) throws  OExcept on {
+    super(seg ntData);
+    t .delegate = getDelegateReader(d rectory);
   }
 
-  private LeafReader getDelegateReader(Directory directory) throws IOException {
-    LeafReader directoryReader =
-        EarlybirdIndexSegmentData.getLeafReaderFromOptimizedDirectory(directory);
-    return new FilterLeafReader(directoryReader) {
-      @Override
-      public NumericDocValues getNumericDocValues(String field) throws IOException {
-        EarlybirdFieldType type = getSchema().getFieldInfo(field).getFieldType();
-        if ((type == null) || !type.isCsfViewField()) {
-          return in.getNumericDocValues(field);
+  pr vate LeafReader getDelegateReader(D rectory d rectory) throws  OExcept on {
+    LeafReader d rectoryReader =
+        Earlyb rd ndexSeg ntData.getLeafReaderFromOpt m zedD rectory(d rectory);
+    return new F lterLeafReader(d rectoryReader) {
+      @Overr de
+      publ c Nu r cDocValues getNu r cDocValues(Str ng f eld) throws  OExcept on {
+        Earlyb rdF eldType type = getSc ma().getF eld nfo(f eld).getF eldType();
+         f ((type == null) || !type. sCsfV ewF eld()) {
+          return  n.getNu r cDocValues(f eld);
         }
 
-        // Compute as many things as possible once, outside the NumericDocValues.get() call.
-        String baseFieldName = getSchema().getFieldInfo(type.getCsfViewBaseFieldId()).getName();
-        FieldInfo baseFieldInfo =
-            Preconditions.checkNotNull(getSchema().getFieldInfo(baseFieldName));
-        EarlybirdFieldType baseFieldType = baseFieldInfo.getFieldType();
-        Preconditions.checkState(!baseFieldType.isCsfVariableLength());
-        int numInts = baseFieldType.getCsfFixedLengthNumValuesPerDoc();
-        FeatureConfiguration featureConfiguration =
-            Preconditions.checkNotNull(type.getCsfViewFeatureConfiguration());
-        Preconditions.checkArgument(featureConfiguration.getValueIndex() < numInts);
+        // Compute as many th ngs as poss ble once, outs de t  Nu r cDocValues.get() call.
+        Str ng baseF eldNa  = getSc ma().getF eld nfo(type.getCsfV ewBaseF eld d()).getNa ();
+        F eld nfo baseF eld nfo =
+            Precond  ons.c ckNotNull(getSc ma().getF eld nfo(baseF eldNa ));
+        Earlyb rdF eldType baseF eldType = baseF eld nfo.getF eldType();
+        Precond  ons.c ckState(!baseF eldType. sCsfVar ableLength());
+         nt num nts = baseF eldType.getCsfF xedLengthNumValuesPerDoc();
+        FeatureConf gurat on featureConf gurat on =
+            Precond  ons.c ckNotNull(type.getCsfV ewFeatureConf gurat on());
+        Precond  ons.c ckArgu nt(featureConf gurat on.getValue ndex() < num nts);
 
-        if (numInts == 1) {
-          // All encoded tweet features are encoded in a single integer.
-          NumericDocValues numericDocValues = in.getNumericDocValues(baseFieldName);
-          return new DocIdSetIteratorWrapper(numericDocValues) {
-            @Override
-            public long longValue() throws IOException {
-              return (numericDocValues.longValue() & featureConfiguration.getBitMask())
-                  >> featureConfiguration.getBitStartPosition();
+         f (num nts == 1) {
+          // All encoded t et features are encoded  n a s ngle  nteger.
+          Nu r cDocValues nu r cDocValues =  n.getNu r cDocValues(baseF eldNa );
+          return new Doc dSet eratorWrapper(nu r cDocValues) {
+            @Overr de
+            publ c long longValue() throws  OExcept on {
+              return (nu r cDocValues.longValue() & featureConf gurat on.getB Mask())
+                  >> featureConf gurat on.getB StartPos  on();
             }
 
-            @Override
-            public boolean advanceExact(int target) throws IOException {
-              return numericDocValues.advanceExact(target);
+            @Overr de
+            publ c boolean advanceExact( nt target) throws  OExcept on {
+              return nu r cDocValues.advanceExact(target);
             }
           };
         }
 
-        BinaryDocValues binaryDocValues =
-            Preconditions.checkNotNull(in.getBinaryDocValues(baseFieldName));
-        return new DocIdSetIteratorWrapper(binaryDocValues) {
-          @Override
-          public long longValue() throws IOException {
-            BytesRef data = binaryDocValues.binaryValue();
-            IntegerEncodedFeatures encodedFeatures =
-                new BytesRefBasedIntegerEncodedFeatures(data, numInts);
-            return encodedFeatures.getFeatureValue(featureConfiguration);
+        B naryDocValues b naryDocValues =
+            Precond  ons.c ckNotNull( n.getB naryDocValues(baseF eldNa ));
+        return new Doc dSet eratorWrapper(b naryDocValues) {
+          @Overr de
+          publ c long longValue() throws  OExcept on {
+            BytesRef data = b naryDocValues.b naryValue();
+             ntegerEncodedFeatures encodedFeatures =
+                new BytesRefBased ntegerEncodedFeatures(data, num nts);
+            return encodedFeatures.getFeatureValue(featureConf gurat on);
           }
 
-          @Override
-          public boolean advanceExact(int target) throws IOException {
-            return binaryDocValues.advanceExact(target);
+          @Overr de
+          publ c boolean advanceExact( nt target) throws  OExcept on {
+            return b naryDocValues.advanceExact(target);
           }
         };
       }
 
-      @Override
-      public CacheHelper getCoreCacheHelper() {
-        return in.getCoreCacheHelper();
+      @Overr de
+      publ c Cac  lper getCoreCac  lper() {
+        return  n.getCoreCac  lper();
       }
 
-      @Override
-      public CacheHelper getReaderCacheHelper() {
-        return in.getReaderCacheHelper();
+      @Overr de
+      publ c Cac  lper getReaderCac  lper() {
+        return  n.getReaderCac  lper();
       }
     };
   }
 
-  private TermsEnum getTermsEnumAtTerm(Term term) throws IOException {
-    Terms terms = terms(term.field());
-    if (terms == null) {
+  pr vate TermsEnum getTermsEnumAtTerm(Term term) throws  OExcept on {
+    Terms terms = terms(term.f eld());
+     f (terms == null) {
       return null;
     }
 
-    TermsEnum termsEnum = terms.iterator();
+    TermsEnum termsEnum = terms. erator();
     return termsEnum.seekExact(term.bytes()) ? termsEnum : null;
   }
 
-  @Override
-  public int getOldestDocID(Term term) throws IOException {
+  @Overr de
+  publ c  nt getOldestDoc D(Term term) throws  OExcept on {
     TermsEnum termsEnum = getTermsEnumAtTerm(term);
-    if (termsEnum == null) {
-      return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+     f (termsEnum == null) {
+      return Earlyb rd ndexSeg ntAtom cReader.TERM_NOT_FOUND;
     }
 
-    PostingsEnum td = termsEnum.postings(null);
-    int oldestDocID = td.nextDoc();
-    if (oldestDocID == DocIdSetIterator.NO_MORE_DOCS) {
-      return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+    Post ngsEnum td = termsEnum.post ngs(null);
+     nt oldestDoc D = td.nextDoc();
+     f (oldestDoc D == Doc dSet erator.NO_MORE_DOCS) {
+      return Earlyb rd ndexSeg ntAtom cReader.TERM_NOT_FOUND;
     }
 
-    final int docFreq = termsEnum.docFreq();
-    if (docFreq > OLDEST_DOC_SKIP_INTERVAL * 16) {
-      final int skipSize = docFreq / OLDEST_DOC_SKIP_INTERVAL;
+    f nal  nt docFreq = termsEnum.docFreq();
+     f (docFreq > OLDEST_DOC_SK P_ NTERVAL * 16) {
+      f nal  nt sk pS ze = docFreq / OLDEST_DOC_SK P_ NTERVAL;
       do {
-        oldestDocID = td.docID();
-      } while (td.advance(oldestDocID + skipSize) != DocIdSetIterator.NO_MORE_DOCS);
+        oldestDoc D = td.doc D();
+      } wh le (td.advance(oldestDoc D + sk pS ze) != Doc dSet erator.NO_MORE_DOCS);
 
-      td = delegate.postings(term);
-      td.advance(oldestDocID);
+      td = delegate.post ngs(term);
+      td.advance(oldestDoc D);
     }
 
     do {
-      oldestDocID = td.docID();
-    } while (td.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+      oldestDoc D = td.doc D();
+    } wh le (td.nextDoc() != Doc dSet erator.NO_MORE_DOCS);
 
-    return oldestDocID;
+    return oldestDoc D;
   }
 
-  @Override
-  public int getTermID(Term term) throws IOException {
+  @Overr de
+  publ c  nt getTerm D(Term term) throws  OExcept on {
     TermsEnum termsEnum = getTermsEnumAtTerm(term);
     return termsEnum != null
-        ? (int) termsEnum.ord()
-        : EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+        ? ( nt) termsEnum.ord()
+        : Earlyb rd ndexSeg ntAtom cReader.TERM_NOT_FOUND;
   }
 
-  @Override
-  public Terms terms(String field) throws IOException {
-    return delegate.terms(field);
+  @Overr de
+  publ c Terms terms(Str ng f eld) throws  OExcept on {
+    return delegate.terms(f eld);
   }
 
-  @Override
-  public FieldInfos getFieldInfos() {
-    return delegate.getFieldInfos();
+  @Overr de
+  publ c F eld nfos getF eld nfos() {
+    return delegate.getF eld nfos();
   }
 
-  @Override
-  public Bits getLiveDocs() {
-    return getDeletesView().getLiveDocs();
+  @Overr de
+  publ c B s getL veDocs() {
+    return getDeletesV ew().getL veDocs();
   }
 
-  @Override
-  public int numDocs() {
+  @Overr de
+  publ c  nt numDocs() {
     return delegate.numDocs();
   }
 
-  @Override
-  public int maxDoc() {
+  @Overr de
+  publ c  nt maxDoc() {
     return delegate.maxDoc();
   }
 
-  @Override
-  public void document(int docID, StoredFieldVisitor visitor) throws IOException {
-    delegate.document(docID, visitor);
+  @Overr de
+  publ c vo d docu nt( nt doc D, StoredF eldV s or v s or) throws  OExcept on {
+    delegate.docu nt(doc D, v s or);
   }
 
-  @Override
-  public boolean hasDeletions() {
-    return getDeletesView().hasDeletions();
+  @Overr de
+  publ c boolean hasDelet ons() {
+    return getDeletesV ew().hasDelet ons();
   }
 
-  @Override
-  protected void doClose() throws IOException {
+  @Overr de
+  protected vo d doClose() throws  OExcept on {
     delegate.close();
   }
 
-  @Override
-  public NumericDocValues getNumericDocValues(String field) throws IOException {
-    FieldInfo fieldInfo = getSegmentData().getSchema().getFieldInfo(field);
-    if (fieldInfo == null) {
+  @Overr de
+  publ c Nu r cDocValues getNu r cDocValues(Str ng f eld) throws  OExcept on {
+    F eld nfo f eld nfo = getSeg ntData().getSc ma().getF eld nfo(f eld);
+     f (f eld nfo == null) {
       return null;
     }
 
-    // If this field is a CSF view field or if it's not loaded in memory, get the NumericDocValues
-    // from the delegate.
-    EarlybirdFieldType fieldType = fieldInfo.getFieldType();
-    if (fieldType.isCsfViewField() || !fieldInfo.getFieldType().isCsfLoadIntoRam()) {
-      NumericDocValues delegateVals = delegate.getNumericDocValues(field);
-      if (delegateVals != null) {
+    //  f t  f eld  s a CSF v ew f eld or  f  's not loaded  n  mory, get t  Nu r cDocValues
+    // from t  delegate.
+    Earlyb rdF eldType f eldType = f eld nfo.getF eldType();
+     f (f eldType. sCsfV ewF eld() || !f eld nfo.getF eldType(). sCsfLoad ntoRam()) {
+      Nu r cDocValues delegateVals = delegate.getNu r cDocValues(f eld);
+       f (delegateVals != null) {
         return delegateVals;
       }
     }
 
-    // The field is either loaded in memory, or the delegate doesn't have NumericDocValues for it.
-    // Return the NumericDocValues for this field stored in the DocValuesManager.
-    ColumnStrideFieldIndex csf =
-        getSegmentData().getDocValuesManager().getColumnStrideFieldIndex(field);
-    return csf != null ? new ColumnStrideFieldDocValues(csf, this) : null;
+    // T  f eld  s e  r loaded  n  mory, or t  delegate doesn't have Nu r cDocValues for  .
+    // Return t  Nu r cDocValues for t  f eld stored  n t  DocValuesManager.
+    ColumnStr deF eld ndex csf =
+        getSeg ntData().getDocValuesManager().getColumnStr deF eld ndex(f eld);
+    return csf != null ? new ColumnStr deF eldDocValues(csf, t ) : null;
   }
 
-  @Override
-  public BinaryDocValues getBinaryDocValues(String field) throws IOException {
-    return delegate.getBinaryDocValues(field);
+  @Overr de
+  publ c B naryDocValues getB naryDocValues(Str ng f eld) throws  OExcept on {
+    return delegate.getB naryDocValues(f eld);
   }
 
-  @Override
-  public SortedDocValues getSortedDocValues(String field) throws IOException {
-    return delegate.getSortedDocValues(field);
+  @Overr de
+  publ c SortedDocValues getSortedDocValues(Str ng f eld) throws  OExcept on {
+    return delegate.getSortedDocValues(f eld);
   }
 
-  @Override
-  public SortedSetDocValues getSortedSetDocValues(String field) throws IOException {
-    return delegate.getSortedSetDocValues(field);
+  @Overr de
+  publ c SortedSetDocValues getSortedSetDocValues(Str ng f eld) throws  OExcept on {
+    return delegate.getSortedSetDocValues(f eld);
   }
 
-  @Override
-  public NumericDocValues getNormValues(String field) throws IOException {
-    return delegate.getNormValues(field);
+  @Overr de
+  publ c Nu r cDocValues getNormValues(Str ng f eld) throws  OExcept on {
+    return delegate.getNormValues(f eld);
   }
 
-  @Override
-  public SortedNumericDocValues getSortedNumericDocValues(String field) throws IOException {
-    return delegate.getSortedNumericDocValues(field);
+  @Overr de
+  publ c SortedNu r cDocValues getSortedNu r cDocValues(Str ng f eld) throws  OExcept on {
+    return delegate.getSortedNu r cDocValues(f eld);
   }
 
-  @Override
-  public void checkIntegrity() throws IOException {
-    delegate.checkIntegrity();
+  @Overr de
+  publ c vo d c ck ntegr y() throws  OExcept on {
+    delegate.c ck ntegr y();
   }
 
-  @Override
-  public PointValues getPointValues(String field) throws IOException {
-    return delegate.getPointValues(field);
+  @Overr de
+  publ c Po ntValues getPo ntValues(Str ng f eld) throws  OExcept on {
+    return delegate.getPo ntValues(f eld);
   }
 
-  @Override
-  public LeafMetaData getMetaData() {
-    return delegate.getMetaData();
+  @Overr de
+  publ c Leaf taData get taData() {
+    return delegate.get taData();
   }
 
-  @Override
-  public CacheHelper getCoreCacheHelper() {
-    return delegate.getCoreCacheHelper();
+  @Overr de
+  publ c Cac  lper getCoreCac  lper() {
+    return delegate.getCoreCac  lper();
   }
 
-  @Override
-  public CacheHelper getReaderCacheHelper() {
-    return delegate.getReaderCacheHelper();
+  @Overr de
+  publ c Cac  lper getReaderCac  lper() {
+    return delegate.getReaderCac  lper();
   }
 }

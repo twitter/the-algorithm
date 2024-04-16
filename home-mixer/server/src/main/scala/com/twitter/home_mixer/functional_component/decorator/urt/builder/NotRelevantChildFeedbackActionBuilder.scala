@@ -1,52 +1,52 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.tw ter.ho _m xer.funct onal_component.decorator.urt.bu lder
 
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ChildFeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.NotRelevant
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.timelines.common.{thriftscala => tlc}
-import com.twitter.timelineservice.model.FeedbackInfo
-import com.twitter.timelineservice.model.FeedbackMetadata
-import com.twitter.timelineservice.{thriftscala => tlst}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.model.Ho Features.SuggestTypeFeature
+ mport com.tw ter.ho _m xer.product.follow ng.model.Ho M xerExternalStr ngs
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Ch ldFeedbackAct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.NotRelevant
+ mport com.tw ter.product_m xer.core.product.gu ce.scope.ProductScoped
+ mport com.tw ter.str ngcenter.cl ent.Str ngCenter
+ mport com.tw ter.t  l nes.common.{thr ftscala => tlc}
+ mport com.tw ter.t  l neserv ce.model.Feedback nfo
+ mport com.tw ter.t  l neserv ce.model.Feedback tadata
+ mport com.tw ter.t  l neserv ce.{thr ftscala => tlst}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-case class NotRelevantChildFeedbackActionBuilder @Inject() (
-  @ProductScoped stringCenter: StringCenter,
-  externalStrings: HomeMixerExternalStrings) {
+@S ngleton
+case class NotRelevantCh ldFeedbackAct onBu lder @ nject() (
+  @ProductScoped str ngCenter: Str ngCenter,
+  externalStr ngs: Ho M xerExternalStr ngs) {
 
   def apply(
-    candidate: TweetCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[ChildFeedbackAction] = {
-    val prompt = stringCenter.prepare(externalStrings.notRelevantString)
-    val confirmation = stringCenter.prepare(externalStrings.notRelevantConfirmationString)
-    val feedbackMetadata = FeedbackMetadata(
-      engagementType = None,
-      entityIds = Seq(tlc.FeedbackEntity.TweetId(candidate.id)),
-      ttl = Some(FeedbackUtil.FeedbackTtl))
-    val feedbackUrl = FeedbackInfo.feedbackUrl(
+    cand date: T etCand date,
+    cand dateFeatures: FeatureMap
+  ): Opt on[Ch ldFeedbackAct on] = {
+    val prompt = str ngCenter.prepare(externalStr ngs.notRelevantStr ng)
+    val conf rmat on = str ngCenter.prepare(externalStr ngs.notRelevantConf rmat onStr ng)
+    val feedback tadata = Feedback tadata(
+      engage ntType = None,
+      ent y ds = Seq(tlc.FeedbackEnt y.T et d(cand date. d)),
+      ttl = So (FeedbackUt l.FeedbackTtl))
+    val feedbackUrl = Feedback nfo.feedbackUrl(
       feedbackType = tlst.FeedbackType.NotRelevant,
-      feedbackMetadata = feedbackMetadata,
-      injectionType = candidateFeatures.getOrElse(SuggestTypeFeature, None)
+      feedback tadata = feedback tadata,
+       nject onType = cand dateFeatures.getOrElse(SuggestTypeFeature, None)
     )
 
-    Some(
-      ChildFeedbackAction(
+    So (
+      Ch ldFeedbackAct on(
         feedbackType = NotRelevant,
-        prompt = Some(prompt),
-        confirmation = Some(confirmation),
-        feedbackUrl = Some(feedbackUrl),
-        hasUndoAction = Some(true),
-        confirmationDisplayType = None,
-        clientEventInfo = None,
-        icon = None,
-        richBehavior = None,
+        prompt = So (prompt),
+        conf rmat on = So (conf rmat on),
+        feedbackUrl = So (feedbackUrl),
+        hasUndoAct on = So (true),
+        conf rmat onD splayType = None,
+        cl entEvent nfo = None,
+         con = None,
+        r chBehav or = None,
         subprompt = None
       )
     )

@@ -1,248 +1,248 @@
-package com.twitter.product_mixer.component_library.selector.sorter
+package com.tw ter.product_m xer.component_l brary.selector.sorter
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import scala.reflect.runtime.universe._
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport scala.reflect.runt  .un verse._
 
 object FeatureValueSorter {
 
   /**
-   * Sort by a feature value ascending. If the feature failed or is missing, use an inferred default
-   * based on the type of [[FeatureValue]]. For Numeric values this is the MinValue
-   * (e.g. Long.MinValue, Double.MinValue).
+   * Sort by a feature value ascend ng.  f t  feature fa led or  s m ss ng, use an  nferred default
+   * based on t  type of [[FeatureValue]]. For Nu r c values t   s t  M nValue
+   * (e.g. Long.M nValue, Double.M nValue).
    *
-   * @param feature feature with value to sort by
-   * @param dummyImplicit due to type erasure, implicit used to disambiguate `def ascending()`
-   *                      between def with param `feature: Feature[Candidate, FeatureValue]`
-   *                      from def with param `feature: Feature[Candidate, Option[FeatureValue]]`
-   * @param typeTag allows for inferring default value from the FeatureValue type.
+   * @param feature feature w h value to sort by
+   * @param dum  mpl c  due to type erasure,  mpl c  used to d samb guate `def ascend ng()`
+   *                      bet en def w h param `feature: Feature[Cand date, FeatureValue]`
+   *                      from def w h param `feature: Feature[Cand date, Opt on[FeatureValue]]`
+   * @param typeTag allows for  nferr ng default value from t  FeatureValue type.
    *                See [[featureValueSortDefaultValue]]
-   * @tparam Candidate candidate for the feature
-   * @tparam FeatureValue feature value with an [[Ordering]] context bound
+   * @tparam Cand date cand date for t  feature
+   * @tparam FeatureValue feature value w h an [[Order ng]] context bound
    */
-  def ascending[Candidate <: UniversalNoun[Any], FeatureValue: Ordering](
-    feature: Feature[Candidate, FeatureValue]
+  def ascend ng[Cand date <: Un versalNoun[Any], FeatureValue: Order ng](
+    feature: Feature[Cand date, FeatureValue]
   )(
-    implicit dummyImplicit: DummyImplicit,
+     mpl c  dum  mpl c : Dum  mpl c ,
     typeTag: TypeTag[FeatureValue]
-  ): SorterProvider = {
-    val defaultFeatureValue: FeatureValue = featureValueSortDefaultValue(feature, Ascending)
+  ): SorterProv der = {
+    val defaultFeatureValue: FeatureValue = featureValueSortDefaultValue(feature, Ascend ng)
 
-    ascending(feature, defaultFeatureValue)
+    ascend ng(feature, defaultFeatureValue)
   }
 
   /**
-   * Sort by a feature value ascending. If the feature failed or is missing, use the provided
+   * Sort by a feature value ascend ng.  f t  feature fa led or  s m ss ng, use t  prov ded
    * default.
    *
-   * @param feature feature with value to sort by
-   * @param dummyImplicit due to type erasure, implicit used to disambiguate `def ascending()`
-   *                      between def with param `feature: Feature[Candidate, FeatureValue]`
-   *                      from def with param `feature: Feature[Candidate, Option[FeatureValue]]`
-   * @tparam Candidate candidate for the feature
-   * @tparam FeatureValue feature value with an [[Ordering]] context bound
+   * @param feature feature w h value to sort by
+   * @param dum  mpl c  due to type erasure,  mpl c  used to d samb guate `def ascend ng()`
+   *                      bet en def w h param `feature: Feature[Cand date, FeatureValue]`
+   *                      from def w h param `feature: Feature[Cand date, Opt on[FeatureValue]]`
+   * @tparam Cand date cand date for t  feature
+   * @tparam FeatureValue feature value w h an [[Order ng]] context bound
    */
-  def ascending[Candidate <: UniversalNoun[Any], FeatureValue: Ordering](
-    feature: Feature[Candidate, FeatureValue],
+  def ascend ng[Cand date <: Un versalNoun[Any], FeatureValue: Order ng](
+    feature: Feature[Cand date, FeatureValue],
     defaultFeatureValue: FeatureValue
   )(
-    implicit dummyImplicit: DummyImplicit
-  ): SorterProvider = {
-    val ordering = Ordering.by[CandidateWithDetails, FeatureValue](
+     mpl c  dum  mpl c : Dum  mpl c 
+  ): SorterProv der = {
+    val order ng = Order ng.by[Cand dateW hDeta ls, FeatureValue](
       _.features.getOrElse(feature, defaultFeatureValue))
 
-    SorterFromOrdering(ordering, Ascending)
+    SorterFromOrder ng(order ng, Ascend ng)
   }
 
   /**
-   * Sort by an optional feature value ascending. If the feature failed or is missing, use an
-   * inferred default based on the type of [[FeatureValue]]. For Numeric values this is the MinValue
-   * (e.g. Long.MinValue, Double.MinValue).
+   * Sort by an opt onal feature value ascend ng.  f t  feature fa led or  s m ss ng, use an
+   *  nferred default based on t  type of [[FeatureValue]]. For Nu r c values t   s t  M nValue
+   * (e.g. Long.M nValue, Double.M nValue).
    *
-   * @param feature feature with value to sort by
-   * @param typeTag allows for inferring default value from the FeatureValue type.
-   *                See [[featureOptionalValueSortDefaultValue]]
-   * @tparam Candidate candidate for the feature
-   * @tparam FeatureValue feature value with an [[Ordering]] context bound
+   * @param feature feature w h value to sort by
+   * @param typeTag allows for  nferr ng default value from t  FeatureValue type.
+   *                See [[featureOpt onalValueSortDefaultValue]]
+   * @tparam Cand date cand date for t  feature
+   * @tparam FeatureValue feature value w h an [[Order ng]] context bound
    */
-  def ascending[Candidate <: UniversalNoun[Any], FeatureValue: Ordering](
-    feature: Feature[Candidate, Option[FeatureValue]]
+  def ascend ng[Cand date <: Un versalNoun[Any], FeatureValue: Order ng](
+    feature: Feature[Cand date, Opt on[FeatureValue]]
   )(
-    implicit typeTag: TypeTag[FeatureValue]
-  ): SorterProvider = {
-    val defaultFeatureValue: FeatureValue = featureOptionalValueSortDefaultValue(feature, Ascending)
+     mpl c  typeTag: TypeTag[FeatureValue]
+  ): SorterProv der = {
+    val defaultFeatureValue: FeatureValue = featureOpt onalValueSortDefaultValue(feature, Ascend ng)
 
-    ascending(feature, defaultFeatureValue)
+    ascend ng(feature, defaultFeatureValue)
   }
 
   /**
-   * Sort by an optional feature value ascending. If the feature failed or is missing, use the
-   * provided default.
+   * Sort by an opt onal feature value ascend ng.  f t  feature fa led or  s m ss ng, use t 
+   * prov ded default.
    *
-   * @param feature feature with value to sort by
-   * @tparam Candidate candidate for the feature
-   * @tparam FeatureValue feature value with an [[Ordering]] context bound
+   * @param feature feature w h value to sort by
+   * @tparam Cand date cand date for t  feature
+   * @tparam FeatureValue feature value w h an [[Order ng]] context bound
    */
-  def ascending[Candidate <: UniversalNoun[Any], FeatureValue: Ordering](
-    feature: Feature[Candidate, Option[FeatureValue]],
+  def ascend ng[Cand date <: Un versalNoun[Any], FeatureValue: Order ng](
+    feature: Feature[Cand date, Opt on[FeatureValue]],
     defaultFeatureValue: FeatureValue
-  ): SorterProvider = {
-    val ordering = Ordering.by[CandidateWithDetails, FeatureValue](
+  ): SorterProv der = {
+    val order ng = Order ng.by[Cand dateW hDeta ls, FeatureValue](
       _.features.getOrElse(feature, None).getOrElse(defaultFeatureValue))
 
-    SorterFromOrdering(ordering, Ascending)
+    SorterFromOrder ng(order ng, Ascend ng)
   }
 
   /**
-   * Sort by a feature value descending. If the feature failed or is missing, use an inferred
-   * default based on the type of [[FeatureValue]]. For Numeric values this is the MaxValue
+   * Sort by a feature value descend ng.  f t  feature fa led or  s m ss ng, use an  nferred
+   * default based on t  type of [[FeatureValue]]. For Nu r c values t   s t  MaxValue
    * (e.g. Long.MaxValue, Double.MaxValue).
    *
-   * @param feature feature with value to sort by
-   * @param dummyImplicit due to type erasure, implicit used to disambiguate `def descending()`
-   *                      between def with param `feature: Feature[Candidate, FeatureValue]`
-   *                      from def with param `feature: Feature[Candidate, Option[FeatureValue]]`
-   * @param typeTag allows for inferring default value from the FeatureValue type.
+   * @param feature feature w h value to sort by
+   * @param dum  mpl c  due to type erasure,  mpl c  used to d samb guate `def descend ng()`
+   *                      bet en def w h param `feature: Feature[Cand date, FeatureValue]`
+   *                      from def w h param `feature: Feature[Cand date, Opt on[FeatureValue]]`
+   * @param typeTag allows for  nferr ng default value from t  FeatureValue type.
    *                See [[featureValueSortDefaultValue]]
-   * @tparam Candidate candidate for the feature
-   * @tparam FeatureValue feature value with an [[Ordering]] context bound
+   * @tparam Cand date cand date for t  feature
+   * @tparam FeatureValue feature value w h an [[Order ng]] context bound
    */
-  def descending[Candidate <: UniversalNoun[Any], FeatureValue: Ordering](
-    feature: Feature[Candidate, FeatureValue]
+  def descend ng[Cand date <: Un versalNoun[Any], FeatureValue: Order ng](
+    feature: Feature[Cand date, FeatureValue]
   )(
-    implicit dummyImplicit: DummyImplicit,
+     mpl c  dum  mpl c : Dum  mpl c ,
     typeTag: TypeTag[FeatureValue]
-  ): SorterProvider = {
-    val defaultFeatureValue: FeatureValue = featureValueSortDefaultValue(feature, Descending)
+  ): SorterProv der = {
+    val defaultFeatureValue: FeatureValue = featureValueSortDefaultValue(feature, Descend ng)
 
-    descending(feature, defaultFeatureValue)
+    descend ng(feature, defaultFeatureValue)
   }
 
   /**
-   * Sort by a feature value descending. If the feature failed or is missing, use the provided
+   * Sort by a feature value descend ng.  f t  feature fa led or  s m ss ng, use t  prov ded
    * default.
    *
-   * @param feature feature with value to sort by
-   * @param dummyImplicit due to type erasure, implicit used to disambiguate `def descending()`
-   *                      between def with param `feature: Feature[Candidate, FeatureValue]`
-   *                      from def with param `feature: Feature[Candidate, Option[FeatureValue]]`
-   * @tparam Candidate candidate for the feature
-   * @tparam FeatureValue feature value with an [[Ordering]] context bound
+   * @param feature feature w h value to sort by
+   * @param dum  mpl c  due to type erasure,  mpl c  used to d samb guate `def descend ng()`
+   *                      bet en def w h param `feature: Feature[Cand date, FeatureValue]`
+   *                      from def w h param `feature: Feature[Cand date, Opt on[FeatureValue]]`
+   * @tparam Cand date cand date for t  feature
+   * @tparam FeatureValue feature value w h an [[Order ng]] context bound
    */
-  def descending[Candidate <: UniversalNoun[Any], FeatureValue: Ordering](
-    feature: Feature[Candidate, FeatureValue],
+  def descend ng[Cand date <: Un versalNoun[Any], FeatureValue: Order ng](
+    feature: Feature[Cand date, FeatureValue],
     defaultFeatureValue: FeatureValue
   )(
-    implicit dummyImplicit: DummyImplicit
-  ): SorterProvider = {
-    val ordering = Ordering.by[CandidateWithDetails, FeatureValue](
+     mpl c  dum  mpl c : Dum  mpl c 
+  ): SorterProv der = {
+    val order ng = Order ng.by[Cand dateW hDeta ls, FeatureValue](
       _.features.getOrElse(feature, defaultFeatureValue))
 
-    SorterFromOrdering(ordering, Descending)
+    SorterFromOrder ng(order ng, Descend ng)
   }
 
   /**
-   * Sort by an optional feature value descending. If the feature failed or is missing, use an
-   * inferred default based on the type of [[FeatureValue]]. For Numeric values this is the MaxValue
+   * Sort by an opt onal feature value descend ng.  f t  feature fa led or  s m ss ng, use an
+   *  nferred default based on t  type of [[FeatureValue]]. For Nu r c values t   s t  MaxValue
    * (e.g. Long.MaxValue, Double.MaxValue).
    *
-   * @param feature feature with value to sort by
-   * @param typeTag allows for inferring default value from the FeatureValue type.
-   *                See [[featureOptionalValueSortDefaultValue]]
-   * @tparam Candidate candidate for the feature
-   * @tparam FeatureValue feature value with an [[Ordering]] context bound
+   * @param feature feature w h value to sort by
+   * @param typeTag allows for  nferr ng default value from t  FeatureValue type.
+   *                See [[featureOpt onalValueSortDefaultValue]]
+   * @tparam Cand date cand date for t  feature
+   * @tparam FeatureValue feature value w h an [[Order ng]] context bound
    */
-  def descending[Candidate <: UniversalNoun[Any], FeatureValue: Ordering](
-    feature: Feature[Candidate, Option[FeatureValue]]
+  def descend ng[Cand date <: Un versalNoun[Any], FeatureValue: Order ng](
+    feature: Feature[Cand date, Opt on[FeatureValue]]
   )(
-    implicit typeTag: TypeTag[FeatureValue]
-  ): SorterProvider = {
+     mpl c  typeTag: TypeTag[FeatureValue]
+  ): SorterProv der = {
     val defaultFeatureValue: FeatureValue =
-      featureOptionalValueSortDefaultValue(feature, Descending)
+      featureOpt onalValueSortDefaultValue(feature, Descend ng)
 
-    descending(feature, defaultFeatureValue)
+    descend ng(feature, defaultFeatureValue)
   }
 
   /**
-   * Sort by an optional feature value descending. If the feature failed or is missing, use the
-   * provided default.
+   * Sort by an opt onal feature value descend ng.  f t  feature fa led or  s m ss ng, use t 
+   * prov ded default.
    *
-   * @param feature feature with value to sort by
-   * @tparam Candidate candidate for the feature
-   * @tparam FeatureValue feature value with an [[Ordering]] context bound
+   * @param feature feature w h value to sort by
+   * @tparam Cand date cand date for t  feature
+   * @tparam FeatureValue feature value w h an [[Order ng]] context bound
    */
-  def descending[Candidate <: UniversalNoun[Any], FeatureValue: Ordering](
-    feature: Feature[Candidate, Option[FeatureValue]],
+  def descend ng[Cand date <: Un versalNoun[Any], FeatureValue: Order ng](
+    feature: Feature[Cand date, Opt on[FeatureValue]],
     defaultFeatureValue: FeatureValue
-  ): SorterProvider = {
-    val ordering = Ordering.by[CandidateWithDetails, FeatureValue](
+  ): SorterProv der = {
+    val order ng = Order ng.by[Cand dateW hDeta ls, FeatureValue](
       _.features.getOrElse(feature, None).getOrElse(defaultFeatureValue))
 
-    SorterFromOrdering(ordering, Descending)
+    SorterFromOrder ng(order ng, Descend ng)
   }
 
-  private[sorter] def featureValueSortDefaultValue[FeatureValue: Ordering](
+  pr vate[sorter] def featureValueSortDefaultValue[FeatureValue: Order ng](
     feature: Feature[_, FeatureValue],
     sortOrder: SortOrder
   )(
-    implicit typeTag: TypeTag[FeatureValue]
+     mpl c  typeTag: TypeTag[FeatureValue]
   ): FeatureValue = {
     val defaultValue = sortOrder match {
-      case Descending =>
+      case Descend ng =>
         typeOf[FeatureValue] match {
-          case t if t <:< typeOf[Short] => Short.MinValue
-          case t if t <:< typeOf[Int] => Int.MinValue
-          case t if t <:< typeOf[Long] => Long.MinValue
-          case t if t <:< typeOf[Double] => Double.MinValue
-          case t if t <:< typeOf[Float] => Float.MinValue
+          case t  f t <:< typeOf[Short] => Short.M nValue
+          case t  f t <:< typeOf[ nt] =>  nt.M nValue
+          case t  f t <:< typeOf[Long] => Long.M nValue
+          case t  f t <:< typeOf[Double] => Double.M nValue
+          case t  f t <:< typeOf[Float] => Float.M nValue
           case _ =>
-            throw new UnsupportedOperationException(s"Default value not supported for $feature")
+            throw new UnsupportedOperat onExcept on(s"Default value not supported for $feature")
         }
-      case Ascending =>
+      case Ascend ng =>
         typeOf[FeatureValue] match {
-          case t if t <:< typeOf[Short] => Short.MaxValue
-          case t if t <:< typeOf[Int] => Int.MaxValue
-          case t if t <:< typeOf[Long] => Long.MaxValue
-          case t if t <:< typeOf[Double] => Double.MaxValue
-          case t if t <:< typeOf[Float] => Float.MaxValue
+          case t  f t <:< typeOf[Short] => Short.MaxValue
+          case t  f t <:< typeOf[ nt] =>  nt.MaxValue
+          case t  f t <:< typeOf[Long] => Long.MaxValue
+          case t  f t <:< typeOf[Double] => Double.MaxValue
+          case t  f t <:< typeOf[Float] => Float.MaxValue
           case _ =>
-            throw new UnsupportedOperationException(s"Default value not supported for $feature")
+            throw new UnsupportedOperat onExcept on(s"Default value not supported for $feature")
         }
     }
 
-    defaultValue.asInstanceOf[FeatureValue]
+    defaultValue.as nstanceOf[FeatureValue]
   }
 
-  private[sorter] def featureOptionalValueSortDefaultValue[FeatureValue: Ordering](
-    feature: Feature[_, Option[FeatureValue]],
+  pr vate[sorter] def featureOpt onalValueSortDefaultValue[FeatureValue: Order ng](
+    feature: Feature[_, Opt on[FeatureValue]],
     sortOrder: SortOrder
   )(
-    implicit typeTag: TypeTag[FeatureValue]
+     mpl c  typeTag: TypeTag[FeatureValue]
   ): FeatureValue = {
     val defaultValue = sortOrder match {
-      case Descending =>
-        typeOf[Option[FeatureValue]] match {
-          case t if t <:< typeOf[Option[Short]] => Short.MinValue
-          case t if t <:< typeOf[Option[Int]] => Int.MinValue
-          case t if t <:< typeOf[Option[Long]] => Long.MinValue
-          case t if t <:< typeOf[Option[Double]] => Double.MinValue
-          case t if t <:< typeOf[Option[Float]] => Float.MinValue
+      case Descend ng =>
+        typeOf[Opt on[FeatureValue]] match {
+          case t  f t <:< typeOf[Opt on[Short]] => Short.M nValue
+          case t  f t <:< typeOf[Opt on[ nt]] =>  nt.M nValue
+          case t  f t <:< typeOf[Opt on[Long]] => Long.M nValue
+          case t  f t <:< typeOf[Opt on[Double]] => Double.M nValue
+          case t  f t <:< typeOf[Opt on[Float]] => Float.M nValue
           case _ =>
-            throw new UnsupportedOperationException(s"Default value not supported for $feature")
+            throw new UnsupportedOperat onExcept on(s"Default value not supported for $feature")
         }
-      case Ascending =>
-        typeOf[Option[FeatureValue]] match {
-          case t if t <:< typeOf[Option[Short]] => Short.MaxValue
-          case t if t <:< typeOf[Option[Int]] => Int.MaxValue
-          case t if t <:< typeOf[Option[Long]] => Long.MaxValue
-          case t if t <:< typeOf[Option[Double]] => Double.MaxValue
-          case t if t <:< typeOf[Option[Float]] => Float.MaxValue
+      case Ascend ng =>
+        typeOf[Opt on[FeatureValue]] match {
+          case t  f t <:< typeOf[Opt on[Short]] => Short.MaxValue
+          case t  f t <:< typeOf[Opt on[ nt]] =>  nt.MaxValue
+          case t  f t <:< typeOf[Opt on[Long]] => Long.MaxValue
+          case t  f t <:< typeOf[Opt on[Double]] => Double.MaxValue
+          case t  f t <:< typeOf[Opt on[Float]] => Float.MaxValue
           case _ =>
-            throw new UnsupportedOperationException(s"Default value not supported for $feature")
+            throw new UnsupportedOperat onExcept on(s"Default value not supported for $feature")
         }
     }
 
-    defaultValue.asInstanceOf[FeatureValue]
+    defaultValue.as nstanceOf[FeatureValue]
   }
 }

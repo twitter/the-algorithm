@@ -1,48 +1,48 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.metadata
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. tadata
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventDetailsBuilder
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEvent nfo
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseCl entEvent nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseCl entEventDeta lsBu lder
 
 /**
- * Sets the [[ClientEventInfo]] with the `component` field set to [[component]]
- * @see  [[http://go/client-events]]
+ * Sets t  [[Cl entEvent nfo]] w h t  `component` f eld set to [[component]]
+ * @see  [[http://go/cl ent-events]]
  */
-case class ClientEventInfoBuilder[-Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-  component: String,
-  detailsBuilder: Option[BaseClientEventDetailsBuilder[Query, Candidate]] = None)
-    extends BaseClientEventInfoBuilder[Query, Candidate] {
+case class Cl entEvent nfoBu lder[-Query <: P pel neQuery, Cand date <: Un versalNoun[Any]](
+  component: Str ng,
+  deta lsBu lder: Opt on[BaseCl entEventDeta lsBu lder[Query, Cand date]] = None)
+    extends BaseCl entEvent nfoBu lder[Query, Cand date] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap,
-    element: Option[String]
-  ): Option[ClientEventInfo] =
-    Some(
-      ClientEventInfo(
-        component = Some(component),
-        element = element,
-        details = detailsBuilder.flatMap(_.apply(query, candidate, candidateFeatures)),
-        action = None,
-        entityToken = None)
+    cand date: Cand date,
+    cand dateFeatures: FeatureMap,
+    ele nt: Opt on[Str ng]
+  ): Opt on[Cl entEvent nfo] =
+    So (
+      Cl entEvent nfo(
+        component = So (component),
+        ele nt = ele nt,
+        deta ls = deta lsBu lder.flatMap(_.apply(query, cand date, cand dateFeatures)),
+        act on = None,
+        ent yToken = None)
     )
 }
 
 /**
- * In rare cases you might not want to send client event info. For
- * example, this might be set already on the client for some legacy
- * timelines.
+ *  n rare cases   m ght not want to send cl ent event  nfo. For
+ * example, t  m ght be set already on t  cl ent for so  legacy
+ * t  l nes.
  */
-object EmptyClientEventInfoBuilder
-    extends BaseClientEventInfoBuilder[PipelineQuery, UniversalNoun[Any]] {
-  override def apply(
-    query: PipelineQuery,
-    candidate: UniversalNoun[Any],
-    candidateFeatures: FeatureMap,
-    element: Option[String]
-  ): Option[ClientEventInfo] = None
+object EmptyCl entEvent nfoBu lder
+    extends BaseCl entEvent nfoBu lder[P pel neQuery, Un versalNoun[Any]] {
+  overr de def apply(
+    query: P pel neQuery,
+    cand date: Un versalNoun[Any],
+    cand dateFeatures: FeatureMap,
+    ele nt: Opt on[Str ng]
+  ): Opt on[Cl entEvent nfo] = None
 }

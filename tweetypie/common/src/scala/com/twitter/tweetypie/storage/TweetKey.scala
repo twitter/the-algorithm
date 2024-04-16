@@ -1,23 +1,23 @@
-package com.twitter.tweetypie.storage
+package com.tw ter.t etyp e.storage
 
 /**
- * Responsible for encoding/decoding Tweet records to/from Manhattan keys
+ * Respons ble for encod ng/decod ng T et records to/from Manhattan keys
  *
- * K/V Scheme:
+ * K/V Sc  :
  * -----------
- *      [TweetId]
- *           /metadata
+ *      [T et d]
+ *           / tadata
  *               /delete_state (a.k.a. hard delete)
  *               /soft_delete_state
  *               /bounce_delete_state
  *               /undelete_state
  *               /force_added_state
- *               /scrubbed_fields/
- *                    /[ScrubbedFieldId_1]
+ *               /scrubbed_f elds/
+ *                    /[ScrubbedF eld d_1]
  *                     ..
- *                   /[ScrubbedFieldId_M]
- *          /fields
- *             /internal
+ *                   /[ScrubbedF eld d_M]
+ *          /f elds
+ *             / nternal
  *                 /1
  *                 /9
  *                 ..
@@ -26,137 +26,137 @@ package com.twitter.tweetypie.storage
  *                 /100
  *                 ..
  *
- * IMPORTANT NOTE:
- * 1) Field Ids 2 to 8 in Tweet thrift struct are considered "core fields" are 'packed' together
- *    into a TFieldBlob and stored under field id 1 (i.e [DatasetName]/[TweetId]/fields/internal/1).
- *    This is why we do not see keys from [DatasetName]/[TweetId]/fields/internal/2 to [DatasetName]/
- *    [TweetId]/fields/internal/8)
+ *  MPORTANT NOTE:
+ * 1) F eld  ds 2 to 8  n T et thr ft struct are cons dered "core f elds" are 'packed' toget r
+ *     nto a TF eldBlob and stored under f eld  d 1 ( .e [DatasetNa ]/[T et d]/f elds/ nternal/1).
+ *    T   s why   do not see keys from [DatasetNa ]/[T et d]/f elds/ nternal/2 to [DatasetNa ]/
+ *    [T et d]/f elds/ nternal/8)
  *
- * 2) Also, the tweet id (which is the field id 1 in Tweet thrift structure) is not explicitly stored
- *    in Manhattan. There is no need to explicitly store it since it is a part of the Pkey
+ * 2) Also, t  t et  d (wh ch  s t  f eld  d 1  n T et thr ft structure)  s not expl c ly stored
+ *     n Manhattan. T re  s no need to expl c ly store   s nce    s a part of t  Pkey
  */
-case class TweetKey(tweetId: TweetId, lKey: TweetKey.LKey) {
-  override def toString: String =
-    s"/${ManhattanOperations.PkeyInjection(tweetId)}/${ManhattanOperations.LkeyInjection(lKey)}"
+case class T etKey(t et d: T et d, lKey: T etKey.LKey) {
+  overr de def toStr ng: Str ng =
+    s"/${ManhattanOperat ons.Pkey nject on(t et d)}/${ManhattanOperat ons.Lkey nject on(lKey)}"
 }
 
-object TweetKey {
-  // Manhattan uses lexicographical order for keys. To make sure lexicographical order matches the
-  // numerical order, we should pad both tweet id and field ids with leading zeros.
-  // Since tweet id is long and field id is a short, the max width of each can be obtained by doing
-  // Long.MaxValue.toString.length and Short.MaxValue.toString.length respectively
-  private val TweetIdFormatStr = s"%0${Long.MaxValue.toString.length}d"
-  private val FieldIdFormatStr = s"%0${Short.MaxValue.toString.length}d"
-  private[storage] def padTweetIdStr(tweetId: Long): String = TweetIdFormatStr.format(tweetId)
-  private[storage] def padFieldIdStr(fieldId: Short): String = FieldIdFormatStr.format(fieldId)
+object T etKey {
+  // Manhattan uses lex cograph cal order for keys. To make sure lex cograph cal order matc s t 
+  // nu r cal order,   should pad both t et  d and f eld  ds w h lead ng zeros.
+  // S nce t et  d  s long and f eld  d  s a short, t  max w dth of each can be obta ned by do ng
+  // Long.MaxValue.toStr ng.length and Short.MaxValue.toStr ng.length respect vely
+  pr vate val T et dFormatStr = s"%0${Long.MaxValue.toStr ng.length}d"
+  pr vate val F eld dFormatStr = s"%0${Short.MaxValue.toStr ng.length}d"
+  pr vate[storage] def padT et dStr(t et d: Long): Str ng = T et dFormatStr.format(t et d)
+  pr vate[storage] def padF eld dStr(f eld d: Short): Str ng = F eld dFormatStr.format(f eld d)
 
-  def coreFieldsKey(tweetId: TweetId): TweetKey = TweetKey(tweetId, LKey.CoreFieldsKey)
-  def hardDeletionStateKey(tweetId: TweetId): TweetKey =
-    TweetKey(tweetId, LKey.HardDeletionStateKey)
-  def softDeletionStateKey(tweetId: TweetId): TweetKey =
-    TweetKey(tweetId, LKey.SoftDeletionStateKey)
-  def bounceDeletionStateKey(tweetId: TweetId): TweetKey =
-    TweetKey(tweetId, LKey.BounceDeletionStateKey)
-  def unDeletionStateKey(tweetId: TweetId): TweetKey = TweetKey(tweetId, LKey.UnDeletionStateKey)
-  def forceAddedStateKey(tweetId: TweetId): TweetKey = TweetKey(tweetId, LKey.ForceAddedStateKey)
-  def scrubbedGeoFieldKey(tweetId: TweetId): TweetKey = TweetKey(tweetId, LKey.ScrubbedGeoFieldKey)
-  def fieldKey(tweetId: TweetId, fieldId: FieldId): TweetKey =
-    TweetKey(tweetId, LKey.FieldKey(fieldId))
-  def internalFieldsKey(tweetId: TweetId, fieldId: FieldId): TweetKey =
-    TweetKey(tweetId, LKey.InternalFieldsKey(fieldId))
-  def additionalFieldsKey(tweetId: TweetId, fieldId: FieldId): TweetKey =
-    TweetKey(tweetId, LKey.AdditionalFieldsKey(fieldId))
-  def scrubbedFieldKey(tweetId: TweetId, fieldId: FieldId): TweetKey =
-    TweetKey(tweetId, LKey.ScrubbedFieldKey(fieldId))
+  def coreF eldsKey(t et d: T et d): T etKey = T etKey(t et d, LKey.CoreF eldsKey)
+  def hardDelet onStateKey(t et d: T et d): T etKey =
+    T etKey(t et d, LKey.HardDelet onStateKey)
+  def softDelet onStateKey(t et d: T et d): T etKey =
+    T etKey(t et d, LKey.SoftDelet onStateKey)
+  def bounceDelet onStateKey(t et d: T et d): T etKey =
+    T etKey(t et d, LKey.BounceDelet onStateKey)
+  def unDelet onStateKey(t et d: T et d): T etKey = T etKey(t et d, LKey.UnDelet onStateKey)
+  def forceAddedStateKey(t et d: T et d): T etKey = T etKey(t et d, LKey.ForceAddedStateKey)
+  def scrubbedGeoF eldKey(t et d: T et d): T etKey = T etKey(t et d, LKey.ScrubbedGeoF eldKey)
+  def f eldKey(t et d: T et d, f eld d: F eld d): T etKey =
+    T etKey(t et d, LKey.F eldKey(f eld d))
+  def  nternalF eldsKey(t et d: T et d, f eld d: F eld d): T etKey =
+    T etKey(t et d, LKey. nternalF eldsKey(f eld d))
+  def add  onalF eldsKey(t et d: T et d, f eld d: F eld d): T etKey =
+    T etKey(t et d, LKey.Add  onalF eldsKey(f eld d))
+  def scrubbedF eldKey(t et d: T et d, f eld d: F eld d): T etKey =
+    T etKey(t et d, LKey.ScrubbedF eldKey(f eld d))
 
-  // AllFieldsKeyPrefix:       fields
-  // CoreFieldsKey:            fields/internal/1  (Stores subset of StoredTweet fields which are
-  //                             "packed" into a single CoreFields record)
-  // HardDeletionStateKey:     metadata/delete_state
-  // SoftDeletionStateKey:     metadata/soft_delete_state
-  // BounceDeletionStateKey:   metadata/bounce_delete_state
-  // UnDeletionStateKey:       metadata/undelete_state
-  // ForceAddedStateKey:       metadata/force_added_state
-  // FieldKey:                 fields/<group_name>/<padded_field_id> (where <group_name>
-  //                             is 'internal' for field ids < 100 and 'external' for all other
-  //                             fields ids)
-  // InternalFieldsKeyPrefix:  fields/internal
-  // PKey:                     <empty string>
-  // ScrubbedFieldKey:         metadata/scrubbed_fields/<padded_field_id>
-  // ScrubbedFieldKeyPrefix:   metadata/scrubbed_fields
-  sealed abstract class LKey(override val toString: String)
+  // AllF eldsKeyPref x:       f elds
+  // CoreF eldsKey:            f elds/ nternal/1  (Stores subset of StoredT et f elds wh ch are
+  //                             "packed"  nto a s ngle CoreF elds record)
+  // HardDelet onStateKey:      tadata/delete_state
+  // SoftDelet onStateKey:      tadata/soft_delete_state
+  // BounceDelet onStateKey:    tadata/bounce_delete_state
+  // UnDelet onStateKey:        tadata/undelete_state
+  // ForceAddedStateKey:        tadata/force_added_state
+  // F eldKey:                 f elds/<group_na >/<padded_f eld_ d> (w re <group_na >
+  //                              s ' nternal' for f eld  ds < 100 and 'external' for all ot r
+  //                             f elds  ds)
+  //  nternalF eldsKeyPref x:  f elds/ nternal
+  // PKey:                     <empty str ng>
+  // ScrubbedF eldKey:          tadata/scrubbed_f elds/<padded_f eld_ d>
+  // ScrubbedF eldKeyPref x:    tadata/scrubbed_f elds
+  sealed abstract class LKey(overr de val toStr ng: Str ng)
   object LKey {
-    private val HardDeletionRecordLiteral = "delete_state"
-    private val SoftDeletionRecordLiteral = "soft_delete_state"
-    private val BounceDeletionRecordLiteral = "bounce_delete_state"
-    private val UnDeletionRecordLiteral = "undelete_state"
-    private val ForceAddRecordLiteral = "force_added_state"
-    private val ScrubbedFieldsGroup = "scrubbed_fields"
-    private val InternalFieldsGroup = "internal"
-    private val ExternalFieldsGroup = "external"
-    private val MetadataCategory = "metadata"
-    private val FieldsCategory = "fields"
-    private val InternalFieldsKeyPrefix = s"$FieldsCategory/$InternalFieldsGroup/"
-    private val ExternalFieldsKeyPrefix = s"$FieldsCategory/$ExternalFieldsGroup/"
-    private val ScrubbedFieldsKeyPrefix = s"$MetadataCategory/$ScrubbedFieldsGroup/"
+    pr vate val HardDelet onRecordL eral = "delete_state"
+    pr vate val SoftDelet onRecordL eral = "soft_delete_state"
+    pr vate val BounceDelet onRecordL eral = "bounce_delete_state"
+    pr vate val UnDelet onRecordL eral = "undelete_state"
+    pr vate val ForceAddRecordL eral = "force_added_state"
+    pr vate val ScrubbedF eldsGroup = "scrubbed_f elds"
+    pr vate val  nternalF eldsGroup = " nternal"
+    pr vate val ExternalF eldsGroup = "external"
+    pr vate val  tadataCategory = " tadata"
+    pr vate val F eldsCategory = "f elds"
+    pr vate val  nternalF eldsKeyPref x = s"$F eldsCategory/$ nternalF eldsGroup/"
+    pr vate val ExternalF eldsKeyPref x = s"$F eldsCategory/$ExternalF eldsGroup/"
+    pr vate val ScrubbedF eldsKeyPref x = s"$ tadataCategory/$ScrubbedF eldsGroup/"
 
-    sealed abstract class MetadataKey(metadataType: String)
-        extends LKey(s"$MetadataCategory/$metadataType")
-    sealed abstract class StateKey(stateType: String) extends MetadataKey(stateType)
-    case object HardDeletionStateKey extends StateKey(s"$HardDeletionRecordLiteral")
-    case object SoftDeletionStateKey extends StateKey(s"$SoftDeletionRecordLiteral")
-    case object BounceDeletionStateKey extends StateKey(s"$BounceDeletionRecordLiteral")
-    case object UnDeletionStateKey extends StateKey(s"$UnDeletionRecordLiteral")
-    case object ForceAddedStateKey extends StateKey(s"$ForceAddRecordLiteral")
+    sealed abstract class  tadataKey( tadataType: Str ng)
+        extends LKey(s"$ tadataCategory/$ tadataType")
+    sealed abstract class StateKey(stateType: Str ng) extends  tadataKey(stateType)
+    case object HardDelet onStateKey extends StateKey(s"$HardDelet onRecordL eral")
+    case object SoftDelet onStateKey extends StateKey(s"$SoftDelet onRecordL eral")
+    case object BounceDelet onStateKey extends StateKey(s"$BounceDelet onRecordL eral")
+    case object UnDelet onStateKey extends StateKey(s"$UnDelet onRecordL eral")
+    case object ForceAddedStateKey extends StateKey(s"$ForceAddRecordL eral")
 
-    case class ScrubbedFieldKey(fieldId: FieldId)
-        extends MetadataKey(s"$ScrubbedFieldsGroup/${padFieldIdStr(fieldId)}")
-    val ScrubbedGeoFieldKey: LKey.ScrubbedFieldKey = ScrubbedFieldKey(TweetFields.geoFieldId)
+    case class ScrubbedF eldKey(f eld d: F eld d)
+        extends  tadataKey(s"$ScrubbedF eldsGroup/${padF eld dStr(f eld d)}")
+    val ScrubbedGeoF eldKey: LKey.ScrubbedF eldKey = ScrubbedF eldKey(T etF elds.geoF eld d)
 
     /**
-     * LKey that has one of many possible fields id. This generalize over
-     * internal and additional fields key.
+     * LKey that has one of many poss ble f elds  d. T  general ze over
+     *  nternal and add  onal f elds key.
      */
-    sealed abstract class FieldKey(prefix: String) extends LKey(toString) {
-      def fieldId: FieldId
-      override val toString: String = prefix + padFieldIdStr(fieldId)
+    sealed abstract class F eldKey(pref x: Str ng) extends LKey(toStr ng) {
+      def f eld d: F eld d
+      overr de val toStr ng: Str ng = pref x + padF eld dStr(f eld d)
     }
-    object FieldKey {
-      def apply(fieldId: FieldId): FieldKey =
-        fieldId match {
-          case id if id < TweetFields.firstAdditionalFieldId => InternalFieldsKey(fieldId)
-          case _ => AdditionalFieldsKey(fieldId)
+    object F eldKey {
+      def apply(f eld d: F eld d): F eldKey =
+        f eld d match {
+          case  d  f  d < T etF elds.f rstAdd  onalF eld d =>  nternalF eldsKey(f eld d)
+          case _ => Add  onalF eldsKey(f eld d)
         }
     }
 
-    case class InternalFieldsKey(fieldId: FieldId) extends FieldKey(InternalFieldsKeyPrefix) {
-      assert(fieldId < TweetFields.firstAdditionalFieldId)
+    case class  nternalF eldsKey(f eld d: F eld d) extends F eldKey( nternalF eldsKeyPref x) {
+      assert(f eld d < T etF elds.f rstAdd  onalF eld d)
     }
-    case class AdditionalFieldsKey(fieldId: FieldId) extends FieldKey(ExternalFieldsKeyPrefix) {
-      assert(fieldId >= TweetFields.firstAdditionalFieldId)
+    case class Add  onalF eldsKey(f eld d: F eld d) extends F eldKey(ExternalF eldsKeyPref x) {
+      assert(f eld d >= T etF elds.f rstAdd  onalF eld d)
     }
-    val CoreFieldsKey: LKey.InternalFieldsKey = InternalFieldsKey(TweetFields.rootCoreFieldId)
+    val CoreF eldsKey: LKey. nternalF eldsKey =  nternalF eldsKey(T etF elds.rootCoreF eld d)
 
-    case class Unknown private (str: String) extends LKey(str)
+    case class Unknown pr vate (str: Str ng) extends LKey(str)
 
-    def fromString(str: String): LKey = {
-      def extractFieldId(prefix: String): FieldId =
-        str.slice(prefix.length, str.length).toShort
+    def fromStr ng(str: Str ng): LKey = {
+      def extractF eld d(pref x: Str ng): F eld d =
+        str.sl ce(pref x.length, str.length).toShort
 
       str match {
-        case CoreFieldsKey.toString => CoreFieldsKey
-        case HardDeletionStateKey.toString => HardDeletionStateKey
-        case SoftDeletionStateKey.toString => SoftDeletionStateKey
-        case BounceDeletionStateKey.toString => BounceDeletionStateKey
-        case UnDeletionStateKey.toString => UnDeletionStateKey
-        case ForceAddedStateKey.toString => ForceAddedStateKey
-        case ScrubbedGeoFieldKey.toString => ScrubbedGeoFieldKey
-        case _ if str.startsWith(InternalFieldsKeyPrefix) =>
-          InternalFieldsKey(extractFieldId(InternalFieldsKeyPrefix))
-        case _ if str.startsWith(ExternalFieldsKeyPrefix) =>
-          AdditionalFieldsKey(extractFieldId(ExternalFieldsKeyPrefix))
-        case _ if str.startsWith(ScrubbedFieldsKeyPrefix) =>
-          ScrubbedFieldKey(extractFieldId(ScrubbedFieldsKeyPrefix))
+        case CoreF eldsKey.toStr ng => CoreF eldsKey
+        case HardDelet onStateKey.toStr ng => HardDelet onStateKey
+        case SoftDelet onStateKey.toStr ng => SoftDelet onStateKey
+        case BounceDelet onStateKey.toStr ng => BounceDelet onStateKey
+        case UnDelet onStateKey.toStr ng => UnDelet onStateKey
+        case ForceAddedStateKey.toStr ng => ForceAddedStateKey
+        case ScrubbedGeoF eldKey.toStr ng => ScrubbedGeoF eldKey
+        case _  f str.startsW h( nternalF eldsKeyPref x) =>
+           nternalF eldsKey(extractF eld d( nternalF eldsKeyPref x))
+        case _  f str.startsW h(ExternalF eldsKeyPref x) =>
+          Add  onalF eldsKey(extractF eld d(ExternalF eldsKeyPref x))
+        case _  f str.startsW h(ScrubbedF eldsKeyPref x) =>
+          ScrubbedF eldKey(extractF eld d(ScrubbedF eldsKeyPref x))
         case _ => Unknown(str)
       }
     }

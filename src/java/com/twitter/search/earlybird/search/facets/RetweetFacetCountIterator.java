@@ -1,36 +1,36 @@
-package com.twitter.search.earlybird.search.facets;
+package com.tw ter.search.earlyb rd.search.facets;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.apache.lucene.index.NumericDocValues;
+ mport org.apac .lucene. ndex.Nu r cDocValues;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.facets.CSFFacetCountIterator;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.core.earlyb rd.facets.CSFFacetCount erator;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
 
 /**
- * And iterator for counting retweets. Reads from shared_status_id CSF but doesn't count
- * replies.
+ * And  erator for count ng ret ets. Reads from shared_status_ d CSF but doesn't count
+ * repl es.
  */
-public class RetweetFacetCountIterator extends CSFFacetCountIterator {
-  private final NumericDocValues featureReaderIsRetweetFlag;
+publ c class Ret etFacetCount erator extends CSFFacetCount erator {
+  pr vate f nal Nu r cDocValues featureReader sRet etFlag;
 
-  public RetweetFacetCountIterator(
-      EarlybirdIndexSegmentAtomicReader reader,
-      Schema.FieldInfo facetFieldInfo) throws IOException {
-    super(reader, facetFieldInfo);
-    featureReaderIsRetweetFlag =
-        reader.getNumericDocValues(EarlybirdFieldConstant.IS_RETWEET_FLAG.getFieldName());
+  publ c Ret etFacetCount erator(
+      Earlyb rd ndexSeg ntAtom cReader reader,
+      Sc ma.F eld nfo facetF eld nfo) throws  OExcept on {
+    super(reader, facetF eld nfo);
+    featureReader sRet etFlag =
+        reader.getNu r cDocValues(Earlyb rdF eldConstant. S_RETWEET_FLAG.getF eldNa ());
   }
 
-  @Override
-  protected boolean shouldCollect(int internalDocID, long termID) throws IOException {
-    // termID == 0 means that we didn't set shared_status_csf, so don't collect
-    // (tweet IDs are all positive)
-    // Also only collect if this doc is a retweet, not a reply
-    return termID > 0
-        && featureReaderIsRetweetFlag.advanceExact(internalDocID)
-        && (featureReaderIsRetweetFlag.longValue() != 0);
+  @Overr de
+  protected boolean shouldCollect( nt  nternalDoc D, long term D) throws  OExcept on {
+    // term D == 0  ans that   d dn't set shared_status_csf, so don't collect
+    // (t et  Ds are all pos  ve)
+    // Also only collect  f t  doc  s a ret et, not a reply
+    return term D > 0
+        && featureReader sRet etFlag.advanceExact( nternalDoc D)
+        && (featureReader sRet etFlag.longValue() != 0);
   }
 }

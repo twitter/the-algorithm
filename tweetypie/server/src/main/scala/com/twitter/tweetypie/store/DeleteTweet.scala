@@ -1,219 +1,219 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
-import com.twitter.tweetypie.store.TweetEventDataScrubber.scrub
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.t etyp e.store.T etEventDataScrubber.scrub
+ mport com.tw ter.t etyp e.thr ftscala._
 
-object DeleteTweet extends TweetStore.SyncModule {
+object DeleteT et extends T etStore.SyncModule {
   case class Event(
-    tweet: Tweet,
-    timestamp: Time,
-    user: Option[User] = None,
-    byUserId: Option[UserId] = None,
-    auditPassthrough: Option[AuditDeleteTweet] = None,
-    cascadedFromTweetId: Option[TweetId] = None,
-    isUserErasure: Boolean = false,
-    isBounceDelete: Boolean = false,
-    isLastQuoteOfQuoter: Boolean = false,
-    isAdminDelete: Boolean)
-      extends SyncTweetStoreEvent("delete_tweet") {
+    t et: T et,
+    t  stamp: T  ,
+    user: Opt on[User] = None,
+    byUser d: Opt on[User d] = None,
+    aud Passthrough: Opt on[Aud DeleteT et] = None,
+    cascadedFromT et d: Opt on[T et d] = None,
+     sUserErasure: Boolean = false,
+     sBounceDelete: Boolean = false,
+     sLastQuoteOfQuoter: Boolean = false,
+     sAdm nDelete: Boolean)
+      extends SyncT etStoreEvent("delete_t et") {
 
     def toAsyncRequest: AsyncDeleteRequest =
       AsyncDeleteRequest(
-        tweet = tweet,
+        t et = t et,
         user = user,
-        byUserId = byUserId,
-        timestamp = timestamp.inMillis,
-        auditPassthrough = auditPassthrough,
-        cascadedFromTweetId = cascadedFromTweetId,
-        isUserErasure = isUserErasure,
-        isBounceDelete = isBounceDelete,
-        isLastQuoteOfQuoter = Some(isLastQuoteOfQuoter),
-        isAdminDelete = Some(isAdminDelete)
+        byUser d = byUser d,
+        t  stamp = t  stamp. nM ll s,
+        aud Passthrough = aud Passthrough,
+        cascadedFromT et d = cascadedFromT et d,
+         sUserErasure =  sUserErasure,
+         sBounceDelete =  sBounceDelete,
+         sLastQuoteOfQuoter = So ( sLastQuoteOfQuoter),
+         sAdm nDelete = So ( sAdm nDelete)
       )
   }
 
-  trait Store {
-    val deleteTweet: FutureEffect[Event]
+  tra  Store {
+    val deleteT et: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val deleteTweet: FutureEffect[Event] = wrap(underlying.deleteTweet)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val deleteT et: FutureEffect[Event] = wrap(underly ng.deleteT et)
   }
 
   object Store {
     def apply(
-      cachingTweetStore: CachingTweetStore,
+      cach ngT etStore: Cach ngT etStore,
       asyncEnqueueStore: AsyncEnqueueStore,
-      userCountsUpdatingStore: GizmoduckUserCountsUpdatingStore,
-      tweetCountsUpdatingStore: TweetCountsCacheUpdatingStore,
+      userCountsUpdat ngStore: G zmoduckUserCountsUpdat ngStore,
+      t etCountsUpdat ngStore: T etCountsCac Updat ngStore,
       logLensStore: LogLensStore
     ): Store =
       new Store {
-        override val deleteTweet: FutureEffect[Event] =
-          FutureEffect.inParallel(
-            cachingTweetStore.ignoreFailures.deleteTweet,
-            asyncEnqueueStore.deleteTweet,
-            userCountsUpdatingStore.deleteTweet,
-            tweetCountsUpdatingStore.deleteTweet,
-            logLensStore.deleteTweet
+        overr de val deleteT et: FutureEffect[Event] =
+          FutureEffect. nParallel(
+            cach ngT etStore. gnoreFa lures.deleteT et,
+            asyncEnqueueStore.deleteT et,
+            userCountsUpdat ngStore.deleteT et,
+            t etCountsUpdat ngStore.deleteT et,
+            logLensStore.deleteT et
           )
       }
   }
 }
 
-object AsyncDeleteTweet extends TweetStore.AsyncModule {
+object AsyncDeleteT et extends T etStore.AsyncModule {
 
   object Event {
-    def fromAsyncRequest(request: AsyncDeleteRequest): TweetStoreEventOrRetry[Event] =
-      TweetStoreEventOrRetry(
-        AsyncDeleteTweet.Event(
-          tweet = request.tweet,
-          timestamp = Time.fromMilliseconds(request.timestamp),
+    def fromAsyncRequest(request: AsyncDeleteRequest): T etStoreEventOrRetry[Event] =
+      T etStoreEventOrRetry(
+        AsyncDeleteT et.Event(
+          t et = request.t et,
+          t  stamp = T  .fromM ll seconds(request.t  stamp),
           optUser = request.user,
-          byUserId = request.byUserId,
-          auditPassthrough = request.auditPassthrough,
-          cascadedFromTweetId = request.cascadedFromTweetId,
-          isUserErasure = request.isUserErasure,
-          isBounceDelete = request.isBounceDelete,
-          isLastQuoteOfQuoter = request.isLastQuoteOfQuoter.getOrElse(false),
-          isAdminDelete = request.isAdminDelete.getOrElse(false)
+          byUser d = request.byUser d,
+          aud Passthrough = request.aud Passthrough,
+          cascadedFromT et d = request.cascadedFromT et d,
+           sUserErasure = request. sUserErasure,
+           sBounceDelete = request. sBounceDelete,
+           sLastQuoteOfQuoter = request. sLastQuoteOfQuoter.getOrElse(false),
+           sAdm nDelete = request. sAdm nDelete.getOrElse(false)
         ),
-        request.retryAction,
+        request.retryAct on,
         RetryEvent
       )
   }
 
   case class Event(
-    tweet: Tweet,
-    timestamp: Time,
-    optUser: Option[User] = None,
-    byUserId: Option[UserId] = None,
-    auditPassthrough: Option[AuditDeleteTweet] = None,
-    cascadedFromTweetId: Option[TweetId] = None,
-    isUserErasure: Boolean = false,
-    isBounceDelete: Boolean,
-    isLastQuoteOfQuoter: Boolean = false,
-    isAdminDelete: Boolean)
-      extends AsyncTweetStoreEvent("async_delete_tweet")
-      with TweetStoreTweetEvent {
-    val tweetEventTweetId: TweetId = tweet.id
+    t et: T et,
+    t  stamp: T  ,
+    optUser: Opt on[User] = None,
+    byUser d: Opt on[User d] = None,
+    aud Passthrough: Opt on[Aud DeleteT et] = None,
+    cascadedFromT et d: Opt on[T et d] = None,
+     sUserErasure: Boolean = false,
+     sBounceDelete: Boolean,
+     sLastQuoteOfQuoter: Boolean = false,
+     sAdm nDelete: Boolean)
+      extends AsyncT etStoreEvent("async_delete_t et")
+      w h T etStoreT etEvent {
+    val t etEventT et d: T et d = t et. d
 
-    def toAsyncRequest(action: Option[AsyncWriteAction] = None): AsyncDeleteRequest =
+    def toAsyncRequest(act on: Opt on[AsyncWr eAct on] = None): AsyncDeleteRequest =
       AsyncDeleteRequest(
-        tweet = tweet,
+        t et = t et,
         user = optUser,
-        byUserId = byUserId,
-        timestamp = timestamp.inMillis,
-        auditPassthrough = auditPassthrough,
-        cascadedFromTweetId = cascadedFromTweetId,
-        retryAction = action,
-        isUserErasure = isUserErasure,
-        isBounceDelete = isBounceDelete,
-        isLastQuoteOfQuoter = Some(isLastQuoteOfQuoter),
-        isAdminDelete = Some(isAdminDelete)
+        byUser d = byUser d,
+        t  stamp = t  stamp. nM ll s,
+        aud Passthrough = aud Passthrough,
+        cascadedFromT et d = cascadedFromT et d,
+        retryAct on = act on,
+         sUserErasure =  sUserErasure,
+         sBounceDelete =  sBounceDelete,
+         sLastQuoteOfQuoter = So ( sLastQuoteOfQuoter),
+         sAdm nDelete = So ( sAdm nDelete)
       )
 
-    override def toTweetEventData: Seq[TweetEventData] =
+    overr de def toT etEventData: Seq[T etEventData] =
       Seq(
-        TweetEventData.TweetDeleteEvent(
-          TweetDeleteEvent(
-            tweet = scrub(tweet),
+        T etEventData.T etDeleteEvent(
+          T etDeleteEvent(
+            t et = scrub(t et),
             user = optUser,
-            isUserErasure = Some(isUserErasure),
-            audit = auditPassthrough,
-            byUserId = byUserId,
-            isAdminDelete = Some(isAdminDelete)
+             sUserErasure = So ( sUserErasure),
+            aud  = aud Passthrough,
+            byUser d = byUser d,
+             sAdm nDelete = So ( sAdm nDelete)
           )
         )
       )
 
-    override def enqueueRetry(service: ThriftTweetService, action: AsyncWriteAction): Future[Unit] =
-      service.asyncDelete(toAsyncRequest(Some(action)))
+    overr de def enqueueRetry(serv ce: Thr ftT etServ ce, act on: AsyncWr eAct on): Future[Un ] =
+      serv ce.asyncDelete(toAsyncRequest(So (act on)))
   }
 
-  case class RetryEvent(action: AsyncWriteAction, event: Event)
-      extends TweetStoreRetryEvent[Event] {
+  case class RetryEvent(act on: AsyncWr eAct on, event: Event)
+      extends T etStoreRetryEvent[Event] {
 
-    override val eventType: AsyncWriteEventType.Delete.type = AsyncWriteEventType.Delete
-    override val scribedTweetOnFailure: Option[Tweet] = Some(event.tweet)
+    overr de val eventType: AsyncWr eEventType.Delete.type = AsyncWr eEventType.Delete
+    overr de val scr bedT etOnFa lure: Opt on[T et] = So (event.t et)
   }
 
-  trait Store {
-    val asyncDeleteTweet: FutureEffect[Event]
-    val retryAsyncDeleteTweet: FutureEffect[TweetStoreRetryEvent[Event]]
+  tra  Store {
+    val asyncDeleteT et: FutureEffect[Event]
+    val retryAsyncDeleteT et: FutureEffect[T etStoreRetryEvent[Event]]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val asyncDeleteTweet: FutureEffect[Event] = wrap(underlying.asyncDeleteTweet)
-    override val retryAsyncDeleteTweet: FutureEffect[TweetStoreRetryEvent[Event]] = wrap(
-      underlying.retryAsyncDeleteTweet)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val asyncDeleteT et: FutureEffect[Event] = wrap(underly ng.asyncDeleteT et)
+    overr de val retryAsyncDeleteT et: FutureEffect[T etStoreRetryEvent[Event]] = wrap(
+      underly ng.retryAsyncDeleteT et)
   }
 
   object Store {
     def apply(
-      manhattanStore: ManhattanTweetStore,
-      cachingTweetStore: CachingTweetStore,
-      replicatingStore: ReplicatingTweetStore,
-      indexingStore: TweetIndexingStore,
-      eventBusEnqueueStore: TweetEventBusStore,
-      timelineUpdatingStore: TlsTimelineUpdatingStore,
-      tweetCountsUpdatingStore: TweetCountsCacheUpdatingStore,
-      guanoServiceStore: GuanoServiceStore,
-      mediaServiceStore: MediaServiceStore
+      manhattanStore: ManhattanT etStore,
+      cach ngT etStore: Cach ngT etStore,
+      repl cat ngStore: Repl cat ngT etStore,
+       ndex ngStore: T et ndex ngStore,
+      eventBusEnqueueStore: T etEventBusStore,
+      t  l neUpdat ngStore: TlsT  l neUpdat ngStore,
+      t etCountsUpdat ngStore: T etCountsCac Updat ngStore,
+      guanoServ ceStore: GuanoServ ceStore,
+       d aServ ceStore:  d aServ ceStore
     ): Store = {
       val stores: Seq[Store] =
         Seq(
           manhattanStore,
-          cachingTweetStore,
-          replicatingStore,
-          indexingStore,
+          cach ngT etStore,
+          repl cat ngStore,
+           ndex ngStore,
           eventBusEnqueueStore,
-          timelineUpdatingStore,
-          tweetCountsUpdatingStore,
-          guanoServiceStore,
-          mediaServiceStore
+          t  l neUpdat ngStore,
+          t etCountsUpdat ngStore,
+          guanoServ ceStore,
+           d aServ ceStore
         )
 
-      def build[E <: TweetStoreEvent](extract: Store => FutureEffect[E]): FutureEffect[E] =
-        FutureEffect.inParallel[E](stores.map(extract): _*)
+      def bu ld[E <: T etStoreEvent](extract: Store => FutureEffect[E]): FutureEffect[E] =
+        FutureEffect. nParallel[E](stores.map(extract): _*)
 
       new Store {
-        override val asyncDeleteTweet: FutureEffect[Event] = build(_.asyncDeleteTweet)
-        override val retryAsyncDeleteTweet: FutureEffect[TweetStoreRetryEvent[Event]] = build(
-          _.retryAsyncDeleteTweet)
+        overr de val asyncDeleteT et: FutureEffect[Event] = bu ld(_.asyncDeleteT et)
+        overr de val retryAsyncDeleteT et: FutureEffect[T etStoreRetryEvent[Event]] = bu ld(
+          _.retryAsyncDeleteT et)
       }
     }
   }
 }
 
-object ReplicatedDeleteTweet extends TweetStore.ReplicatedModule {
+object Repl catedDeleteT et extends T etStore.Repl catedModule {
 
   case class Event(
-    tweet: Tweet,
-    isErasure: Boolean,
-    isBounceDelete: Boolean,
-    isLastQuoteOfQuoter: Boolean = false)
-      extends ReplicatedTweetStoreEvent("replicated_delete_tweet")
+    t et: T et,
+     sErasure: Boolean,
+     sBounceDelete: Boolean,
+     sLastQuoteOfQuoter: Boolean = false)
+      extends Repl catedT etStoreEvent("repl cated_delete_t et")
 
-  trait Store {
-    val replicatedDeleteTweet: FutureEffect[Event]
+  tra  Store {
+    val repl catedDeleteT et: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
-    override val replicatedDeleteTweet: FutureEffect[Event] = wrap(underlying.replicatedDeleteTweet)
+  tra  StoreWrapper extends Store { self: T etStoreWrapper[Store] =>
+    overr de val repl catedDeleteT et: FutureEffect[Event] = wrap(underly ng.repl catedDeleteT et)
   }
 
   object Store {
     def apply(
-      cachingTweetStore: CachingTweetStore,
-      tweetCountsUpdatingStore: TweetCountsCacheUpdatingStore
+      cach ngT etStore: Cach ngT etStore,
+      t etCountsUpdat ngStore: T etCountsCac Updat ngStore
     ): Store = {
       new Store {
-        override val replicatedDeleteTweet: FutureEffect[Event] =
-          FutureEffect.inParallel(
-            cachingTweetStore.replicatedDeleteTweet,
-            tweetCountsUpdatingStore.replicatedDeleteTweet.ignoreFailures
+        overr de val repl catedDeleteT et: FutureEffect[Event] =
+          FutureEffect. nParallel(
+            cach ngT etStore.repl catedDeleteT et,
+            t etCountsUpdat ngStore.repl catedDeleteT et. gnoreFa lures
           )
       }
     }

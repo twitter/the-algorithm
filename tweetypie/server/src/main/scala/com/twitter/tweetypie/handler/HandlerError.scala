@@ -1,45 +1,45 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.servo.exception.thriftscala.ClientError
-import com.twitter.servo.exception.thriftscala.ClientErrorCause
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.FilteredState.Unavailable._
+ mport com.tw ter.servo.except on.thr ftscala.Cl entError
+ mport com.tw ter.servo.except on.thr ftscala.Cl entErrorCause
+ mport com.tw ter.st ch.NotFound
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.core.F lteredState.Unava lable._
 
-private[tweetypie] object HandlerError {
+pr vate[t etyp e] object HandlerError {
 
-  def translateNotFoundToClientError[U](tweetId: TweetId): PartialFunction[Throwable, Stitch[U]] = {
+  def translateNotFoundToCl entError[U](t et d: T et d): Part alFunct on[Throwable, St ch[U]] = {
     case NotFound =>
-      Stitch.exception(HandlerError.tweetNotFound(tweetId))
-    case TweetDeleted | BounceDeleted =>
-      Stitch.exception(HandlerError.tweetNotFound(tweetId, true))
-    case SourceTweetNotFound(deleted) =>
-      Stitch.exception(HandlerError.tweetNotFound(tweetId, deleted))
+      St ch.except on(HandlerError.t etNotFound(t et d))
+    case T etDeleted | BounceDeleted =>
+      St ch.except on(HandlerError.t etNotFound(t et d, true))
+    case S ceT etNotFound(deleted) =>
+      St ch.except on(HandlerError.t etNotFound(t et d, deleted))
   }
 
-  def tweetNotFound(tweetId: TweetId, deleted: Boolean = false): ClientError =
-    ClientError(
-      ClientErrorCause.BadRequest,
-      s"tweet ${if (deleted) "deleted" else "not found"}: $tweetId"
+  def t etNotFound(t et d: T et d, deleted: Boolean = false): Cl entError =
+    Cl entError(
+      Cl entErrorCause.BadRequest,
+      s"t et ${ f (deleted) "deleted" else "not found"}: $t et d"
     )
 
-  def userNotFound(userId: UserId): ClientError =
-    ClientError(ClientErrorCause.BadRequest, s"user not found: $userId")
+  def userNotFound(user d: User d): Cl entError =
+    Cl entError(Cl entErrorCause.BadRequest, s"user not found: $user d")
 
-  def tweetNotFoundException(tweetId: TweetId): Future[Nothing] =
-    Future.exception(tweetNotFound(tweetId))
+  def t etNotFoundExcept on(t et d: T et d): Future[Noth ng] =
+    Future.except on(t etNotFound(t et d))
 
-  def userNotFoundException(userId: UserId): Future[Nothing] =
-    Future.exception(userNotFound(userId))
+  def userNotFoundExcept on(user d: User d): Future[Noth ng] =
+    Future.except on(userNotFound(user d))
 
-  def getRequired[A, B](
-    optionFutureArrow: FutureArrow[A, Option[B]],
+  def getRequ red[A, B](
+    opt onFutureArrow: FutureArrow[A, Opt on[B]],
     notFound: A => Future[B]
   ): FutureArrow[A, B] =
     FutureArrow(key =>
-      optionFutureArrow(key).flatMap {
-        case Some(x) => Future.value(x)
+      opt onFutureArrow(key).flatMap {
+        case So (x) => Future.value(x)
         case None => notFound(key)
       })
 }

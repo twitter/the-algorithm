@@ -1,308 +1,308 @@
-from collections import OrderedDict
-import json
-import os
-from os.path import join
+from collect ons  mport OrderedD ct
+ mport json
+ mport os
+from os.path  mport jo n
 
-from twitter.magicpony.common import file_access
-import twml
+from tw ter.mag cpony.common  mport f le_access
+ mport twml
 
-from .model_utils import read_config
+from .model_ut ls  mport read_conf g
 
-import numpy as np
-from scipy import stats
-import tensorflow.compat.v1 as tf
-
-
-# checkstyle: noqa
+ mport numpy as np
+from sc py  mport stats
+ mport tensorflow.compat.v1 as tf
 
 
-def get_model_type_to_tensors_to_change_axis():
-  model_type_to_tensors_to_change_axis = {
-    "magic_recs/model/batch_normalization/beta": ([0], "continuous"),
-    "magic_recs/model/batch_normalization/gamma": ([0], "continuous"),
-    "magic_recs/model/batch_normalization/moving_mean": ([0], "continuous"),
-    "magic_recs/model/batch_normalization/moving_stddev": ([0], "continuous"),
-    "magic_recs/model/batch_normalization/moving_variance": ([0], "continuous"),
-    "magic_recs/model/batch_normalization/renorm_mean": ([0], "continuous"),
-    "magic_recs/model/batch_normalization/renorm_stddev": ([0], "continuous"),
-    "magic_recs/model/logits/EngagementGivenOONC_logits/clem_net_1/block2_4/channel_wise_dense_4/kernel": (
+# c ckstyle: noqa
+
+
+def get_model_type_to_tensors_to_change_ax s():
+  model_type_to_tensors_to_change_ax s = {
+    "mag c_recs/model/batch_normal zat on/beta": ([0], "cont nuous"),
+    "mag c_recs/model/batch_normal zat on/gamma": ([0], "cont nuous"),
+    "mag c_recs/model/batch_normal zat on/mov ng_ an": ([0], "cont nuous"),
+    "mag c_recs/model/batch_normal zat on/mov ng_stddev": ([0], "cont nuous"),
+    "mag c_recs/model/batch_normal zat on/mov ng_var ance": ([0], "cont nuous"),
+    "mag c_recs/model/batch_normal zat on/renorm_ an": ([0], "cont nuous"),
+    "mag c_recs/model/batch_normal zat on/renorm_stddev": ([0], "cont nuous"),
+    "mag c_recs/model/log s/Engage ntG venOONC_log s/clem_net_1/block2_4/channel_w se_dense_4/kernel": (
       [1],
       "all",
     ),
-    "magic_recs/model/logits/OONC_logits/clem_net/block2/channel_wise_dense/kernel": ([1], "all"),
+    "mag c_recs/model/log s/OONC_log s/clem_net/block2/channel_w se_dense/kernel": ([1], "all"),
   }
 
-  return model_type_to_tensors_to_change_axis
+  return model_type_to_tensors_to_change_ax s
 
 
-def mkdirp(dirname):
-  if not tf.io.gfile.exists(dirname):
-    tf.io.gfile.makedirs(dirname)
+def mkd rp(d rna ):
+   f not tf. o.gf le.ex sts(d rna ):
+    tf. o.gf le.maked rs(d rna )
 
 
-def rename_dir(dirname, dst):
-  file_access.hdfs.mv(dirname, dst)
+def rena _d r(d rna , dst):
+  f le_access.hdfs.mv(d rna , dst)
 
 
-def rmdir(dirname):
-  if tf.io.gfile.exists(dirname):
-    if tf.io.gfile.isdir(dirname):
-      tf.io.gfile.rmtree(dirname)
+def rmd r(d rna ):
+   f tf. o.gf le.ex sts(d rna ):
+     f tf. o.gf le. sd r(d rna ):
+      tf. o.gf le.rmtree(d rna )
     else:
-      tf.io.gfile.remove(dirname)
+      tf. o.gf le.remove(d rna )
 
 
-def get_var_dict(checkpoint_path):
-  checkpoint = tf.train.get_checkpoint_state(checkpoint_path)
-  var_dict = OrderedDict()
-  with tf.Session() as sess:
-    all_var_list = tf.train.list_variables(checkpoint_path)
-    for var_name, _ in all_var_list:
-      # Load the variable
-      var = tf.train.load_variable(checkpoint_path, var_name)
-      var_dict[var_name] = var
-  return var_dict
+def get_var_d ct(c ckpo nt_path):
+  c ckpo nt = tf.tra n.get_c ckpo nt_state(c ckpo nt_path)
+  var_d ct = OrderedD ct()
+  w h tf.Sess on() as sess:
+    all_var_l st = tf.tra n.l st_var ables(c ckpo nt_path)
+    for var_na , _  n all_var_l st:
+      # Load t  var able
+      var = tf.tra n.load_var able(c ckpo nt_path, var_na )
+      var_d ct[var_na ] = var
+  return var_d ct
 
 
-def get_continunous_mapping_from_feat_list(old_feature_list, new_feature_list):
+def get_cont nunous_mapp ng_from_feat_l st(old_feature_l st, new_feature_l st):
   """
-  get var_ind for old_feature and corresponding var_ind for new_feature
+  get var_ nd for old_feature and correspond ng var_ nd for new_feature
   """
-  new_var_ind, old_var_ind = [], []
-  for this_new_id, this_new_name in enumerate(new_feature_list):
-    if this_new_name in old_feature_list:
-      this_old_id = old_feature_list.index(this_new_name)
-      new_var_ind.append(this_new_id)
-      old_var_ind.append(this_old_id)
-  return np.asarray(old_var_ind), np.asarray(new_var_ind)
+  new_var_ nd, old_var_ nd = [], []
+  for t _new_ d, t _new_na   n enu rate(new_feature_l st):
+     f t _new_na   n old_feature_l st:
+      t _old_ d = old_feature_l st. ndex(t _new_na )
+      new_var_ nd.append(t _new_ d)
+      old_var_ nd.append(t _old_ d)
+  return np.asarray(old_var_ nd), np.asarray(new_var_ nd)
 
 
-def get_continuous_mapping_from_feat_dict(old_feature_dict, new_feature_dict):
+def get_cont nuous_mapp ng_from_feat_d ct(old_feature_d ct, new_feature_d ct):
   """
-  get var_ind for old_feature and corresponding var_ind for new_feature
+  get var_ nd for old_feature and correspond ng var_ nd for new_feature
   """
-  old_cont = old_feature_dict["continuous"]
-  old_bin = old_feature_dict["binary"]
+  old_cont = old_feature_d ct["cont nuous"]
+  old_b n = old_feature_d ct["b nary"]
 
-  new_cont = new_feature_dict["continuous"]
-  new_bin = new_feature_dict["binary"]
+  new_cont = new_feature_d ct["cont nuous"]
+  new_b n = new_feature_d ct["b nary"]
 
-  _dummy_sparse_feat = [f"sparse_feature_{_idx}" for _idx in range(100)]
+  _dum _sparse_feat = [f"sparse_feature_{_ dx}" for _ dx  n range(100)]
 
-  cont_old_var_ind, cont_new_var_ind = get_continunous_mapping_from_feat_list(old_cont, new_cont)
+  cont_old_var_ nd, cont_new_var_ nd = get_cont nunous_mapp ng_from_feat_l st(old_cont, new_cont)
 
-  all_old_var_ind, all_new_var_ind = get_continunous_mapping_from_feat_list(
-    old_cont + old_bin + _dummy_sparse_feat, new_cont + new_bin + _dummy_sparse_feat
+  all_old_var_ nd, all_new_var_ nd = get_cont nunous_mapp ng_from_feat_l st(
+    old_cont + old_b n + _dum _sparse_feat, new_cont + new_b n + _dum _sparse_feat
   )
 
   _res = {
-    "continuous": (cont_old_var_ind, cont_new_var_ind),
-    "all": (all_old_var_ind, all_new_var_ind),
+    "cont nuous": (cont_old_var_ nd, cont_new_var_ nd),
+    "all": (all_old_var_ nd, all_new_var_ nd),
   }
 
   return _res
 
 
-def warm_start_from_var_dict(
+def warm_start_from_var_d ct(
   old_ckpt_path,
-  var_ind_dict,
-  output_dir,
+  var_ nd_d ct,
+  output_d r,
   new_len_var,
-  var_to_change_dict_fn=get_model_type_to_tensors_to_change_axis,
+  var_to_change_d ct_fn=get_model_type_to_tensors_to_change_ax s,
 ):
   """
-  Parameters:
-      old_ckpt_path (str): path to the old checkpoint path
-      new_var_ind (array of int): index to overlapping features in new var between old and new feature list.
-      old_var_ind (array of int): index to overlapping features in old var between old and new feature list.
+  Para ters:
+      old_ckpt_path (str): path to t  old c ckpo nt path
+      new_var_ nd (array of  nt):  ndex to overlapp ng features  n new var bet en old and new feature l st.
+      old_var_ nd (array of  nt):  ndex to overlapp ng features  n old var bet en old and new feature l st.
 
-      output_dir (str): dir that used to write modified checkpoint
-      new_len_var ({str:int}): number of feature in the new feature list.
-      var_to_change_dict_fn (dict): A function to get the dictionary of format {var_name: dim_to_change}
+      output_d r (str): d r that used to wr e mod f ed c ckpo nt
+      new_len_var ({str: nt}): number of feature  n t  new feature l st.
+      var_to_change_d ct_fn (d ct): A funct on to get t  d ct onary of format {var_na : d m_to_change}
   """
-  old_var_dict = get_var_dict(old_ckpt_path)
+  old_var_d ct = get_var_d ct(old_ckpt_path)
 
-  ckpt_file_name = os.path.basename(old_ckpt_path)
-  mkdirp(output_dir)
-  output_path = join(output_dir, ckpt_file_name)
+  ckpt_f le_na  = os.path.basena (old_ckpt_path)
+  mkd rp(output_d r)
+  output_path = jo n(output_d r, ckpt_f le_na )
 
-  tensors_to_change = var_to_change_dict_fn()
+  tensors_to_change = var_to_change_d ct_fn()
   tf.compat.v1.reset_default_graph()
 
-  with tf.Session() as sess:
-    var_name_shape_list = tf.train.list_variables(old_ckpt_path)
+  w h tf.Sess on() as sess:
+    var_na _shape_l st = tf.tra n.l st_var ables(old_ckpt_path)
     count = 0
 
-    for var_name, var_shape in var_name_shape_list:
-      old_var = old_var_dict[var_name]
-      if var_name in tensors_to_change.keys():
-        _info_tuple = tensors_to_change[var_name]
-        dims_to_remove_from, var_type = _info_tuple
+    for var_na , var_shape  n var_na _shape_l st:
+      old_var = old_var_d ct[var_na ]
+       f var_na   n tensors_to_change.keys():
+        _ nfo_tuple = tensors_to_change[var_na ]
+        d ms_to_remove_from, var_type = _ nfo_tuple
 
-        new_var_ind, old_var_ind = var_ind_dict[var_type]
+        new_var_ nd, old_var_ nd = var_ nd_d ct[var_type]
 
-        this_shape = list(old_var.shape)
-        for this_dim in dims_to_remove_from:
-          this_shape[this_dim] = new_len_var[var_type]
+        t _shape = l st(old_var.shape)
+        for t _d m  n d ms_to_remove_from:
+          t _shape[t _d m] = new_len_var[var_type]
 
         stddev = np.std(old_var)
         truncated_norm_generator = stats.truncnorm(-0.5, 0.5, loc=0, scale=stddev)
-        size = np.prod(this_shape)
-        new_var = truncated_norm_generator.rvs(size).reshape(this_shape)
+        s ze = np.prod(t _shape)
+        new_var = truncated_norm_generator.rvs(s ze).reshape(t _shape)
         new_var = new_var.astype(old_var.dtype)
 
-        new_var = copy_feat_based_on_mapping(
-          new_var, old_var, dims_to_remove_from, new_var_ind, old_var_ind
+        new_var = copy_feat_based_on_mapp ng(
+          new_var, old_var, d ms_to_remove_from, new_var_ nd, old_var_ nd
         )
         count = count + 1
       else:
         new_var = old_var
-      var = tf.Variable(new_var, name=var_name)
-    assert count == len(tensors_to_change.keys()), "not all variables are exchanged.\n"
-    saver = tf.train.Saver()
-    sess.run(tf.global_variables_initializer())
+      var = tf.Var able(new_var, na =var_na )
+    assert count == len(tensors_to_change.keys()), "not all var ables are exchanged.\n"
+    saver = tf.tra n.Saver()
+    sess.run(tf.global_var ables_ n  al zer())
     saver.save(sess, output_path)
   return output_path
 
 
-def copy_feat_based_on_mapping(new_array, old_array, dims_to_remove_from, new_var_ind, old_var_ind):
-  if dims_to_remove_from == [0, 1]:
-    for this_new_ind, this_old_ind in zip(new_var_ind, old_var_ind):
-      new_array[this_new_ind, new_var_ind] = old_array[this_old_ind, old_var_ind]
-  elif dims_to_remove_from == [0]:
-    new_array[new_var_ind] = old_array[old_var_ind]
-  elif dims_to_remove_from == [1]:
-    new_array[:, new_var_ind] = old_array[:, old_var_ind]
+def copy_feat_based_on_mapp ng(new_array, old_array, d ms_to_remove_from, new_var_ nd, old_var_ nd):
+   f d ms_to_remove_from == [0, 1]:
+    for t _new_ nd, t _old_ nd  n z p(new_var_ nd, old_var_ nd):
+      new_array[t _new_ nd, new_var_ nd] = old_array[t _old_ nd, old_var_ nd]
+  el f d ms_to_remove_from == [0]:
+    new_array[new_var_ nd] = old_array[old_var_ nd]
+  el f d ms_to_remove_from == [1]:
+    new_array[:, new_var_ nd] = old_array[:, old_var_ nd]
   else:
-    raise RuntimeError(f"undefined dims_to_remove_from pattern: ({dims_to_remove_from})")
+    ra se Runt  Error(f"undef ned d ms_to_remove_from pattern: ({d ms_to_remove_from})")
   return new_array
 
 
-def read_file(filename, decode=False):
+def read_f le(f lena , decode=False):
   """
-  Reads contents from a file and optionally decodes it.
+  Reads contents from a f le and opt onally decodes  .
 
-  Arguments:
-    filename:
-      path to file where the contents will be loaded from.
+  Argu nts:
+    f lena :
+      path to f le w re t  contents w ll be loaded from.
       Accepts HDFS and local paths.
     decode:
-      False or 'json'. When decode='json', contents is decoded
-      with json.loads. When False, contents is returned as is.
+      False or 'json'. W n decode='json', contents  s decoded
+      w h json.loads. W n False, contents  s returned as  s.
   """
   graph = tf.Graph()
-  with graph.as_default():
-    read = tf.read_file(filename)
+  w h graph.as_default():
+    read = tf.read_f le(f lena )
 
-  with tf.Session(graph=graph) as sess:
+  w h tf.Sess on(graph=graph) as sess:
     contents = sess.run(read)
-    if not isinstance(contents, str):
+     f not  s nstance(contents, str):
       contents = contents.decode()
 
-  if decode == "json":
+   f decode == "json":
     contents = json.loads(contents)
 
   return contents
 
 
-def read_feat_list_from_disk(file_path):
-  return read_file(file_path, decode="json")
+def read_feat_l st_from_d sk(f le_path):
+  return read_f le(f le_path, decode="json")
 
 
-def get_feature_list_for_light_ranking(feature_list_path, data_spec_path):
-  feature_list = read_config(feature_list_path).items()
-  string_feat_list = [f[0] for f in feature_list if f[1] != "S"]
+def get_feature_l st_for_l ght_rank ng(feature_l st_path, data_spec_path):
+  feature_l st = read_conf g(feature_l st_path). ems()
+  str ng_feat_l st = [f[0] for f  n feature_l st  f f[1] != "S"]
 
-  feature_config_builder = twml.contrib.feature_config.FeatureConfigBuilder(
+  feature_conf g_bu lder = twml.contr b.feature_conf g.FeatureConf gBu lder(
     data_spec_path=data_spec_path
   )
-  feature_config_builder = feature_config_builder.extract_feature_group(
-    feature_regexes=string_feat_list,
-    group_name="continuous",
+  feature_conf g_bu lder = feature_conf g_bu lder.extract_feature_group(
+    feature_regexes=str ng_feat_l st,
+    group_na ="cont nuous",
     default_value=-1,
-    type_filter=["CONTINUOUS"],
+    type_f lter=["CONT NUOUS"],
   )
-  feature_config = feature_config_builder.build()
-  feature_list = feature_config_builder._feature_group_extraction_configs[0].feature_map[
-    "CONTINUOUS"
+  feature_conf g = feature_conf g_bu lder.bu ld()
+  feature_l st = feature_conf g_bu lder._feature_group_extract on_conf gs[0].feature_map[
+    "CONT NUOUS"
   ]
-  return feature_list
+  return feature_l st
 
 
-def get_feature_list_for_heavy_ranking(feature_list_path, data_spec_path):
-  feature_list = read_config(feature_list_path).items()
-  string_feat_list = [f[0] for f in feature_list if f[1] != "S"]
+def get_feature_l st_for_ avy_rank ng(feature_l st_path, data_spec_path):
+  feature_l st = read_conf g(feature_l st_path). ems()
+  str ng_feat_l st = [f[0] for f  n feature_l st  f f[1] != "S"]
 
-  feature_config_builder = twml.contrib.feature_config.FeatureConfigBuilder(
+  feature_conf g_bu lder = twml.contr b.feature_conf g.FeatureConf gBu lder(
     data_spec_path=data_spec_path
   )
-  feature_config_builder = feature_config_builder.extract_feature_group(
-    feature_regexes=string_feat_list,
-    group_name="continuous",
+  feature_conf g_bu lder = feature_conf g_bu lder.extract_feature_group(
+    feature_regexes=str ng_feat_l st,
+    group_na ="cont nuous",
     default_value=-1,
-    type_filter=["CONTINUOUS"],
+    type_f lter=["CONT NUOUS"],
   )
 
-  feature_config_builder = feature_config_builder.extract_feature_group(
-    feature_regexes=string_feat_list,
-    group_name="binary",
+  feature_conf g_bu lder = feature_conf g_bu lder.extract_feature_group(
+    feature_regexes=str ng_feat_l st,
+    group_na ="b nary",
     default_value=False,
-    type_filter=["BINARY"],
+    type_f lter=["B NARY"],
   )
 
-  feature_config_builder = feature_config_builder.build()
+  feature_conf g_bu lder = feature_conf g_bu lder.bu ld()
 
-  continuous_feature_list = feature_config_builder._feature_group_extraction_configs[0].feature_map[
-    "CONTINUOUS"
+  cont nuous_feature_l st = feature_conf g_bu lder._feature_group_extract on_conf gs[0].feature_map[
+    "CONT NUOUS"
   ]
 
-  binary_feature_list = feature_config_builder._feature_group_extraction_configs[1].feature_map[
-    "BINARY"
+  b nary_feature_l st = feature_conf g_bu lder._feature_group_extract on_conf gs[1].feature_map[
+    "B NARY"
   ]
-  return {"continuous": continuous_feature_list, "binary": binary_feature_list}
+  return {"cont nuous": cont nuous_feature_l st, "b nary": b nary_feature_l st}
 
 
-def warm_start_checkpoint(
+def warm_start_c ckpo nt(
   old_best_ckpt_folder,
-  old_feature_list_path,
-  feature_allow_list_path,
+  old_feature_l st_path,
+  feature_allow_l st_path,
   data_spec_path,
   output_ckpt_folder,
   *args,
 ):
   """
-  Reads old checkpoint and the old feature list, and create a new ckpt warm started from old ckpt using new features .
+  Reads old c ckpo nt and t  old feature l st, and create a new ckpt warm started from old ckpt us ng new features .
 
-  Arguments:
+  Argu nts:
     old_best_ckpt_folder:
-      path to the best_checkpoint_folder for old model
-    old_feature_list_path:
-      path to the json file that stores the list of continuous features used in old models.
-    feature_allow_list_path:
-      yaml file that contain the feature allow list.
+      path to t  best_c ckpo nt_folder for old model
+    old_feature_l st_path:
+      path to t  json f le that stores t  l st of cont nuous features used  n old models.
+    feature_allow_l st_path:
+      yaml f le that conta n t  feature allow l st.
     data_spec_path:
-      path to the data_spec file
+      path to t  data_spec f le
     output_ckpt_folder:
-      folder that contains the modified ckpt.
+      folder that conta ns t  mod f ed ckpt.
 
   Returns:
-    path to the modified ckpt."""
-  old_ckpt_path = tf.train.latest_checkpoint(old_best_ckpt_folder, latest_filename=None)
+    path to t  mod f ed ckpt."""
+  old_ckpt_path = tf.tra n.latest_c ckpo nt(old_best_ckpt_folder, latest_f lena =None)
 
-  new_feature_dict = get_feature_list(feature_allow_list_path, data_spec_path)
-  old_feature_dict = read_feat_list_from_disk(old_feature_list_path)
+  new_feature_d ct = get_feature_l st(feature_allow_l st_path, data_spec_path)
+  old_feature_d ct = read_feat_l st_from_d sk(old_feature_l st_path)
 
-  var_ind_dict = get_continuous_mapping_from_feat_dict(new_feature_dict, old_feature_dict)
+  var_ nd_d ct = get_cont nuous_mapp ng_from_feat_d ct(new_feature_d ct, old_feature_d ct)
 
   new_len_var = {
-    "continuous": len(new_feature_dict["continuous"]),
-    "all": len(new_feature_dict["continuous"] + new_feature_dict["binary"]) + 100,
+    "cont nuous": len(new_feature_d ct["cont nuous"]),
+    "all": len(new_feature_d ct["cont nuous"] + new_feature_d ct["b nary"]) + 100,
   }
 
-  warm_started_ckpt_path = warm_start_from_var_dict(
+  warm_started_ckpt_path = warm_start_from_var_d ct(
     old_ckpt_path,
-    var_ind_dict,
-    output_dir=output_ckpt_folder,
+    var_ nd_d ct,
+    output_d r=output_ckpt_folder,
     new_len_var=new_len_var,
   )
 

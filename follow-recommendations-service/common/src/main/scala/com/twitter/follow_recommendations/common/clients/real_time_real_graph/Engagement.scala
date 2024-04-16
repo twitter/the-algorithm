@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.common.clients.real_time_real_graph
+package com.tw ter.follow_recom ndat ons.common.cl ents.real_t  _real_graph
 
-sealed trait EngagementType
+sealed tra  Engage ntType
 
-// We do not include SoftFollow since it's deprecated
-object EngagementType {
-  object Click extends EngagementType
-  object Like extends EngagementType
-  object Mention extends EngagementType
-  object Retweet extends EngagementType
-  object ProfileView extends EngagementType
+//   do not  nclude SoftFollow s nce  's deprecated
+object Engage ntType {
+  object Cl ck extends Engage ntType
+  object L ke extends Engage ntType
+  object  nt on extends Engage ntType
+  object Ret et extends Engage ntType
+  object Prof leV ew extends Engage ntType
 }
 
-case class Engagement(engagementType: EngagementType, timestamp: Long)
+case class Engage nt(engage ntType: Engage ntType, t  stamp: Long)

@@ -1,47 +1,47 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.stitch.NotFound
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.st ch.NotFound
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.repos ory._
+ mport com.tw ter.t etyp e.thr ftscala._
 
-object MentionEntitiesHydrator {
-  type Type = ValueHydrator[Seq[MentionEntity], TweetCtx]
+object  nt onEnt  esHydrator {
+  type Type = ValueHydrator[Seq[ nt onEnt y], T etCtx]
 
-  def once(h: MentionEntityHydrator.Type): Type =
-    TweetHydration.completeOnlyOnce(
-      queryFilter = queryFilter,
-      hydrationType = HydrationType.Mentions,
-      hydrator = h.liftSeq
+  def once(h:  nt onEnt yHydrator.Type): Type =
+    T etHydrat on.completeOnlyOnce(
+      queryF lter = queryF lter,
+      hydrat onType = Hydrat onType. nt ons,
+      hydrator = h.l ftSeq
     )
 
-  def queryFilter(opts: TweetQuery.Options): Boolean =
-    opts.include.tweetFields.contains(Tweet.MentionsField.id)
+  def queryF lter(opts: T etQuery.Opt ons): Boolean =
+    opts. nclude.t etF elds.conta ns(T et. nt onsF eld. d)
 }
 
-object MentionEntityHydrator {
-  type Type = ValueHydrator[MentionEntity, TweetCtx]
+object  nt onEnt yHydrator {
+  type Type = ValueHydrator[ nt onEnt y, T etCtx]
 
-  val hydratedField: FieldByPath = fieldByPath(Tweet.MentionsField)
+  val hydratedF eld: F eldByPath = f eldByPath(T et. nt onsF eld)
 
-  def apply(repo: UserIdentityRepository.Type): Type =
-    ValueHydrator[MentionEntity, TweetCtx] { (entity, _) =>
-      repo(UserKey(entity.screenName)).liftToTry.map {
-        case Return(user) => ValueState.delta(entity, update(entity, user))
-        case Throw(NotFound) => ValueState.unmodified(entity)
-        case Throw(_) => ValueState.partial(entity, hydratedField)
+  def apply(repo: User dent yRepos ory.Type): Type =
+    ValueHydrator[ nt onEnt y, T etCtx] { (ent y, _) =>
+      repo(UserKey(ent y.screenNa )).l ftToTry.map {
+        case Return(user) => ValueState.delta(ent y, update(ent y, user))
+        case Throw(NotFound) => ValueState.unmod f ed(ent y)
+        case Throw(_) => ValueState.part al(ent y, hydratedF eld)
       }
-    // only hydrate mention if userId or name is empty
-    }.onlyIf((entity, _) => entity.userId.isEmpty || entity.name.isEmpty)
+    // only hydrate  nt on  f user d or na   s empty
+    }.only f((ent y, _) => ent y.user d. sEmpty || ent y.na . sEmpty)
 
   /**
-   * Updates a MentionEntity using the given user data.
+   * Updates a  nt onEnt y us ng t  g ven user data.
    */
-  def update(entity: MentionEntity, userIdent: UserIdentity): MentionEntity =
-    entity.copy(
-      screenName = userIdent.screenName,
-      userId = Some(userIdent.id),
-      name = Some(userIdent.realName)
+  def update(ent y:  nt onEnt y, user dent: User dent y):  nt onEnt y =
+    ent y.copy(
+      screenNa  = user dent.screenNa ,
+      user d = So (user dent. d),
+      na  = So (user dent.realNa )
     )
 }

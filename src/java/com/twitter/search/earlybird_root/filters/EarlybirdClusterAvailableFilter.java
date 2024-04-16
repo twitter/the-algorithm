@@ -1,85 +1,85 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import java.util.Collections;
-import java.util.Map;
+ mport java.ut l.Collect ons;
+ mport java.ut l.Map;
 
-import javax.inject.Inject;
+ mport javax. nject. nject;
 
-import com.google.common.collect.Maps;
+ mport com.google.common.collect.Maps;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestType;
+ mport com.tw ter.ut l.Future;
 
 /**
- * A Finagle filter that determines if a certain cluster is available to the SuperRoot.
+ * A F nagle f lter that determ nes  f a certa n cluster  s ava lable to t  SuperRoot.
  *
- * Normally, all clusters should be available. However, if there's a problem with our systems, and
- * our search clusters are causing issues for other services (time outs, for example), then we might
- * want to be disable them, and return errors to our clients.
+ * Normally, all clusters should be ava lable. Ho ver,  f t re's a problem w h   systems, and
+ *   search clusters are caus ng  ssues for ot r serv ces (t   outs, for example), t n   m ght
+ * want to be d sable t m, and return errors to   cl ents.
  */
-public class EarlybirdClusterAvailableFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
-  private final SearchDecider decider;
-  private final EarlybirdCluster cluster;
-  private final String allRequestsDeciderKey;
-  private final Map<EarlybirdRequestType, String> requestTypeDeciderKeys;
-  private final Map<EarlybirdRequestType, SearchCounter> disabledRequests;
+publ c class Earlyb rdClusterAva lableF lter
+    extends S mpleF lter<Earlyb rdRequestContext, Earlyb rdResponse> {
+  pr vate f nal SearchDec der dec der;
+  pr vate f nal Earlyb rdCluster cluster;
+  pr vate f nal Str ng allRequestsDec derKey;
+  pr vate f nal Map<Earlyb rdRequestType, Str ng> requestTypeDec derKeys;
+  pr vate f nal Map<Earlyb rdRequestType, SearchCounter> d sabledRequests;
 
   /**
-   * Creates a new EarlybirdClusterAvailableFilter instance.
+   * Creates a new Earlyb rdClusterAva lableF lter  nstance.
    *
-   * @param decider The decider to use to determine if this cluster is available.
-   * @param cluster The cluster.
+   * @param dec der T  dec der to use to determ ne  f t  cluster  s ava lable.
+   * @param cluster T  cluster.
    */
-  @Inject
-  public EarlybirdClusterAvailableFilter(SearchDecider decider, EarlybirdCluster cluster) {
-    this.decider = decider;
-    this.cluster = cluster;
+  @ nject
+  publ c Earlyb rdClusterAva lableF lter(SearchDec der dec der, Earlyb rdCluster cluster) {
+    t .dec der = dec der;
+    t .cluster = cluster;
 
-    String clusterName = cluster.getNameForStats();
-    this.allRequestsDeciderKey = "superroot_" + clusterName + "_cluster_available_for_all_requests";
+    Str ng clusterNa  = cluster.getNa ForStats();
+    t .allRequestsDec derKey = "superroot_" + clusterNa  + "_cluster_ava lable_for_all_requests";
 
-    Map<EarlybirdRequestType, String> tempDeciderKeys = Maps.newEnumMap(EarlybirdRequestType.class);
-    Map<EarlybirdRequestType, SearchCounter> tempCounters =
-      Maps.newEnumMap(EarlybirdRequestType.class);
-    for (EarlybirdRequestType requestType : EarlybirdRequestType.values()) {
-      String requestTypeName = requestType.getNormalizedName();
-      tempDeciderKeys.put(requestType, "superroot_" + clusterName + "_cluster_available_for_"
-                          + requestTypeName + "_requests");
+    Map<Earlyb rdRequestType, Str ng> tempDec derKeys = Maps.newEnumMap(Earlyb rdRequestType.class);
+    Map<Earlyb rdRequestType, SearchCounter> tempCounters =
+      Maps.newEnumMap(Earlyb rdRequestType.class);
+    for (Earlyb rdRequestType requestType : Earlyb rdRequestType.values()) {
+      Str ng requestTypeNa  = requestType.getNormal zedNa ();
+      tempDec derKeys.put(requestType, "superroot_" + clusterNa  + "_cluster_ava lable_for_"
+                          + requestTypeNa  + "_requests");
       tempCounters.put(requestType, SearchCounter.export(
-                           "cluster_available_filter_" + clusterName + "_"
-                           + requestTypeName + "_disabled_requests"));
+                           "cluster_ava lable_f lter_" + clusterNa  + "_"
+                           + requestTypeNa  + "_d sabled_requests"));
     }
-    requestTypeDeciderKeys = Collections.unmodifiableMap(tempDeciderKeys);
-    disabledRequests = Collections.unmodifiableMap(tempCounters);
+    requestTypeDec derKeys = Collect ons.unmod f ableMap(tempDec derKeys);
+    d sabledRequests = Collect ons.unmod f ableMap(tempCounters);
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    EarlybirdRequestType requestType = requestContext.getEarlybirdRequestType();
-    if (!decider.isAvailable(allRequestsDeciderKey)
-        || !decider.isAvailable(requestTypeDeciderKeys.get(requestType))) {
-      disabledRequests.get(requestType).increment();
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(
+      Earlyb rdRequestContext requestContext,
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> serv ce) {
+    Earlyb rdRequestType requestType = requestContext.getEarlyb rdRequestType();
+     f (!dec der. sAva lable(allRequestsDec derKey)
+        || !dec der. sAva lable(requestTypeDec derKeys.get(requestType))) {
+      d sabledRequests.get(requestType). ncre nt();
       return Future.value(
-          errorResponse("The " + cluster.getNameForStats() + " cluster is not available for "
-                        + requestType.getNormalizedName() + " requests."));
+          errorResponse("T  " + cluster.getNa ForStats() + " cluster  s not ava lable for "
+                        + requestType.getNormal zedNa () + " requests."));
     }
 
-    return service.apply(requestContext);
+    return serv ce.apply(requestContext);
   }
 
-  private EarlybirdResponse errorResponse(String debugMessage) {
-    return new EarlybirdResponse(EarlybirdResponseCode.PERSISTENT_ERROR, 0)
-      .setDebugString(debugMessage);
+  pr vate Earlyb rdResponse errorResponse(Str ng debug ssage) {
+    return new Earlyb rdResponse(Earlyb rdResponseCode.PERS STENT_ERROR, 0)
+      .setDebugStr ng(debug ssage);
   }
 }

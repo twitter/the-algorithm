@@ -1,82 +1,82 @@
-# Search Index (Earlybird) main classes
+# Search  ndex (Earlyb rd) ma n classes
 
-> **TL;DR** Earlybird (Search Index) find tweets from people you follow, rank them, and serve them to Home.
+> **TL;DR** Earlyb rd (Search  ndex) f nd t ets from people   follow, rank t m, and serve t m to Ho .
 
-## What is Earlybird (Search Index)
+## What  s Earlyb rd (Search  ndex)
 
-[Earlybird](http://notes.stephenholiday.com/Earlybird.pdf) is a **real-time search system** based on [Apache Lucene](https://lucene.apache.org/) to support the high volume of queries and content updates. The major use cases are Relevance Search (specifically, Text search) and Timeline In-network Tweet retrieval (or UserID based search). It is designed to enable the efficient indexing and querying of billions of tweets, and to provide low-latency search results, even with heavy query loads.
+[Earlyb rd](http://notes.step nhol day.com/Earlyb rd.pdf)  s a **real-t   search system** based on [Apac  Lucene](https://lucene.apac .org/) to support t  h gh volu  of quer es and content updates. T  major use cases are Relevance Search (spec f cally, Text search) and T  l ne  n-network T et retr eval (or User D based search).    s des gned to enable t  eff c ent  ndex ng and query ng of b ll ons of t ets, and to prov de low-latency search results, even w h  avy query loads.
 
-## High-level architecture
-We split our entire tweet search index into three clusters: a **realtime** cluster indexing all public tweets posted in about the last 7 days, a **protected** cluster indexing all protected tweets for the same timeframe; and an **archive** cluster indexing all tweets ever posted, up to about two days ago.
+## H gh-level arch ecture
+  spl    ent re t et search  ndex  nto three clusters: a **realt  ** cluster  ndex ng all publ c t ets posted  n about t  last 7 days, a **protected** cluster  ndex ng all protected t ets for t  sa  t  fra ; and an **arch ve** cluster  ndex ng all t ets ever posted, up to about two days ago.
 
-Earlybird addresses the challenges of scaling real-time search by splitting each cluster across multiple **partitions**, each responsible for a portion of the index. The architecture uses a distributed *inverted index* that is sharded and replicated. This design allows for efficient index updates and query processing.
+Earlyb rd addresses t  challenges of scal ng real-t   search by spl t ng each cluster across mult ple **part  ons**, each respons ble for a port on of t   ndex. T  arch ecture uses a d str buted * nverted  ndex* that  s sharded and repl cated. T  des gn allows for eff c ent  ndex updates and query process ng.
 
-The system also employs an incremental indexing approach, enabling it to process and index new tweets in real-time as they arrive. With single writer, multiple reader structure, Earlybird can handle a large number of real-time updates and queries concurrently while maintaining low query latency. The system can achieve high query throughput and low query latency while maintaining a high degree of index freshness.
+T  system also employs an  ncre ntal  ndex ng approach, enabl ng   to process and  ndex new t ets  n real-t   as t y arr ve. W h s ngle wr er, mult ple reader structure, Earlyb rd can handle a large number of real-t   updates and quer es concurrently wh le ma nta n ng low query latency. T  system can ach eve h gh query throughput and low query latency wh le ma nta n ng a h gh degree of  ndex freshness.
 
-## Main Components 
+## Ma n Components 
 
-**Partition Manager**: Responsible for managing the configuration of partitions, as well as the mapping between users and partitions. It also handles index loading and flushing.
+**Part  on Manager**: Respons ble for manag ng t  conf gurat on of part  ons, as  ll as t  mapp ng bet en users and part  ons.   also handles  ndex load ng and flush ng.
 
-**Real-time Indexer**: Continuously reads from a kafka stream of incoming tweets and updates the index (tweet creation, tweet updates, user updates). It also supports tweet deletion events.
+**Real-t    ndexer**: Cont nuously reads from a kafka stream of  ncom ng t ets and updates t   ndex (t et creat on, t et updates, user updates).   also supports t et delet on events.
 
-**Query Engine**: Handles the execution of search queries against the distributed index. It employs various optimization techniques, such as term-based pruning and caching.
+**Query Eng ne**: Handles t  execut on of search quer es aga nst t  d str buted  ndex.   employs var ous opt m zat on techn ques, such as term-based prun ng and cach ng.
 
-**Document Preprocessor**: Converts raw tweets into a document representation suitable for indexing. It handles tokenization, normalization, and analysis of tweet text and metadata. See our ingestion pipeline `src/java/com/twitter/search/ingester` for more write-path processing.
+**Docu nt Preprocessor**: Converts raw t ets  nto a docu nt representat on su able for  ndex ng.   handles token zat on, normal zat on, and analys s of t et text and  tadata. See    ngest on p pel ne `src/java/com/tw ter/search/ ngester` for more wr e-path process ng.
 
-**Index Writer**: Writes tweet documents to the index and maintains the index structure, including **posting lists** and **term dictionaries**.
+** ndex Wr er**: Wr es t et docu nts to t   ndex and ma nta ns t   ndex structure,  nclud ng **post ng l sts** and **term d ct onar es**.
 
-**Segment Manager**: Manages index segments within a partition. It is responsible for merging, optimizing, and flushing index segments to disk, or flush to HDFS to snapshot live segments.
+**Seg nt Manager**: Manages  ndex seg nts w h n a part  on.    s respons ble for  rg ng, opt m z ng, and flush ng  ndex seg nts to d sk, or flush to HDFS to snapshot l ve seg nts.
 
-**Searcher**: Executes queries against the index, using techniques like caching and parallel query execution to minimize query latency. It also incorporates scoring models and ranking algorithms to provide relevant search results.
+**Searc r**: Executes quer es aga nst t   ndex, us ng techn ques l ke cach ng and parallel query execut on to m n m ze query latency.   also  ncorporates scor ng models and rank ng algor hms to prov de relevant search results.
 
-The most important two data structures for Earlybird (or Information Retrieval in general) including:
+T  most  mportant two data structures for Earlyb rd (or  nformat on Retr eval  n general)  nclud ng:
 
-* **Inverted Index** which stores a mapping between a Term to a list of Doc IDs. Essentially, we build a hash map: each key in the map is a distinct Term (e.g., `cat`, `dog`) in a tweet, and each value is the list of tweets (aka., Document) in which the word appears. We keep one inverted index per field (text, UserID, user name, links, etc.)
-* **Postings List** which optimize the storage a the list of Doc IDs mentioned above.
+* ** nverted  ndex** wh ch stores a mapp ng bet en a Term to a l st of Doc  Ds. Essent ally,   bu ld a hash map: each key  n t  map  s a d st nct Term (e.g., `cat`, `dog`)  n a t et, and each value  s t  l st of t ets (aka., Docu nt)  n wh ch t  word appears.   keep one  nverted  ndex per f eld (text, User D, user na , l nks, etc.)
+* **Post ngs L st** wh ch opt m ze t  storage a t  l st of Doc  Ds  nt oned above.
 
-See more at: https://blog.twitter.com/engineering/en_us/topics/infrastructure/2016/omnisearch-index-formats
+See more at: https://blog.tw ter.com/eng neer ng/en_us/top cs/ nfrastructure/2016/omn search- ndex-formats
 
 ## Advanced features
 
-Earlybird incorporates several advanced features such as facet search, which allows users to refine search results based on specific attributes such as user mentions, hashtags, and URLs. Furthermore, the system supports various ranking models, including machine learning-based scoring models, to provide relevant search results.
+Earlyb rd  ncorporates several advanced features such as facet search, wh ch allows users to ref ne search results based on spec f c attr butes such as user  nt ons, hashtags, and URLs. Furt rmore, t  system supports var ous rank ng models,  nclud ng mach ne learn ng-based scor ng models, to prov de relevant search results.
 
-## Directory Structure
-The project consists of several packages and files, which can be summarized as follows:
+## D rectory Structure
+T  project cons sts of several packages and f les, wh ch can be summar zed as follows:
 
-* At the root level, the primary focus is on the Earlybird server implementation and its associated classes. These include classes for search, CPU quality factors, server management, index config, main classes, server startup, etc.
-* `archive/`: Directory deals with the management and configuration of archived data, specifically for Earlybird Index Configurations. It also contains a `segmentbuilder/` subdirectory, which includes classes for building and updating archive index segments.
-* `common/`: Directory holds utility classes for logging, handling requests, and Thrift backend functionality. It also has two subdirectories: `config/` for Earlybird configuration and `userupdates/` for user-related data handling.
-* `config/`: Directory is dedicated to managing tier configurations specifically for archive cluster, which relate to server and search query distribution.
-* `document/`: Handles document creation and processing, including various factories and token stream writers.
-* `exception/`: Contains custom exceptions and exception handling classes related to the system.
-* `factory/`: Provides utilities and factories for configurations, Kafka consumers, and server instances.
-* `index/`: Contains index-related classes, including in-memory time mappers, tweet ID mappers, and facets.
-* `ml/`: Houses the `ScoringModelsManager` for managing machine learning models.
-* `partition/`: Manages partitions and index segments, including index loaders, segment writers, and startup indexers.
-* `querycache/`: Implements caching for queries and query results, including cache configuration and update tasks.
-* `queryparser/`: Provides query parsing functionality, including files that cover query rewriters and lhigh-frequency term extraction.
-* `search/`: Contains read path related classes, such as search request processing, result collectors, and facet collectors.
-* `segment/`: Provides classes for managing segment data providers and data reader sets.
-* `stats/`: Contains classes for tracking and reporting statistics related to the system.
-* `tools/`: Houses utility classes for deserializing thrift requests.
-* `util/`: Includes utility classes for various tasks, such as action logging, scheduled tasks, and JSON viewers.
+* At t  root level, t  pr mary focus  s on t  Earlyb rd server  mple ntat on and  s assoc ated classes. T se  nclude classes for search, CPU qual y factors, server manage nt,  ndex conf g, ma n classes, server startup, etc.
+* `arch ve/`: D rectory deals w h t  manage nt and conf gurat on of arch ved data, spec f cally for Earlyb rd  ndex Conf gurat ons.   also conta ns a `seg ntbu lder/` subd rectory, wh ch  ncludes classes for bu ld ng and updat ng arch ve  ndex seg nts.
+* `common/`: D rectory holds ut l y classes for logg ng, handl ng requests, and Thr ft backend funct onal y.   also has two subd rector es: `conf g/` for Earlyb rd conf gurat on and `userupdates/` for user-related data handl ng.
+* `conf g/`: D rectory  s ded cated to manag ng t er conf gurat ons spec f cally for arch ve cluster, wh ch relate to server and search query d str but on.
+* `docu nt/`: Handles docu nt creat on and process ng,  nclud ng var ous factor es and token stream wr ers.
+* `except on/`: Conta ns custom except ons and except on handl ng classes related to t  system.
+* `factory/`: Prov des ut l  es and factor es for conf gurat ons, Kafka consu rs, and server  nstances.
+* ` ndex/`: Conta ns  ndex-related classes,  nclud ng  n- mory t   mappers, t et  D mappers, and facets.
+* `ml/`: Houses t  `Scor ngModelsManager` for manag ng mach ne learn ng models.
+* `part  on/`: Manages part  ons and  ndex seg nts,  nclud ng  ndex loaders, seg nt wr ers, and startup  ndexers.
+* `querycac /`:  mple nts cach ng for quer es and query results,  nclud ng cac  conf gurat on and update tasks.
+* `queryparser/`: Prov des query pars ng funct onal y,  nclud ng f les that cover query rewr ers and lh gh-frequency term extract on.
+* `search/`: Conta ns read path related classes, such as search request process ng, result collectors, and facet collectors.
+* `seg nt/`: Prov des classes for manag ng seg nt data prov ders and data reader sets.
+* `stats/`: Conta ns classes for track ng and report ng stat st cs related to t  system.
+* `tools/`: Houses ut l y classes for deser al z ng thr ft requests.
+* `ut l/`:  ncludes ut l y classes for var ous tasks, such as act on logg ng, sc duled tasks, and JSON v e rs.
 
-## Related Services
+## Related Serv ces
 
-* The Earlybirds sit behind Earlybird Root servers that fan out queries to them. See `src/java/com/twitter/search/earlybird_root/`
-* The Earlybirds are powered by multiple ingestion pipelines. See `src/java/com/twitter/search/ingester/`
-* Earlybird segments for the Archives are built offline by segment builders
-* Also, Earlybird light ranking is defined in `timelines/data_processing/ad_hoc/earlybird_ranking`
- and `src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird`.
-* Search common library/packages
+* T  Earlyb rds s  beh nd Earlyb rd Root servers that fan out quer es to t m. See `src/java/com/tw ter/search/earlyb rd_root/`
+* T  Earlyb rds are po red by mult ple  ngest on p pel nes. See `src/java/com/tw ter/search/ ngester/`
+* Earlyb rd seg nts for t  Arch ves are bu lt offl ne by seg nt bu lders
+* Also, Earlyb rd l ght rank ng  s def ned  n `t  l nes/data_process ng/ad_hoc/earlyb rd_rank ng`
+ and `src/python/tw ter/deepb rd/projects/t  l nes/scr pts/models/earlyb rd`.
+* Search common l brary/packages
 
 ## References
 
 See more: 
 
-* "Earlybird: Real-Time Search at Twitter" (http://notes.stephenholiday.com/Earlybird.pdf)
-* "Reducing search indexing latency to one second" (https://blog.twitter.com/engineering/en_us/topics/infrastructure/2020/reducing-search-indexing-latency-to-one-second)
-* "Omnisearch index formats" (https://blog.twitter.com/engineering/en_us/topics/infrastructure/2016/omnisearch-index-formats)
+* "Earlyb rd: Real-T   Search at Tw ter" (http://notes.step nhol day.com/Earlyb rd.pdf)
+* "Reduc ng search  ndex ng latency to one second" (https://blog.tw ter.com/eng neer ng/en_us/top cs/ nfrastructure/2020/reduc ng-search- ndex ng-latency-to-one-second)
+* "Omn search  ndex formats" (https://blog.tw ter.com/eng neer ng/en_us/top cs/ nfrastructure/2016/omn search- ndex-formats)
 
 
 

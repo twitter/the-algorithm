@@ -1,56 +1,56 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.tw ter.fr gate.pushserv ce.model.ntab
 
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushConstants
-import com.twitter.frigate.thriftscala.{CommonRecommendationType => CRT}
-import com.twitter.notificationservice.thriftscala._
-import com.twitter.util.Future
-import com.twitter.util.Time
+ mport com.tw ter.fr gate.common.rec_types.RecTypes
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.params.PushConstants
+ mport com.tw ter.fr gate.thr ftscala.{CommonRecom ndat onType => CRT}
+ mport com.tw ter.not f cat onserv ce.thr ftscala._
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
 
-trait DiscoverTwitterNtabRequestHydrator extends NTabRequestHydrator {
-  self: PushCandidate =>
+tra  D scoverTw terNtabRequestHydrator extends NTabRequestHydrator {
+  self: PushCand date =>
 
-  override val senderIdFut: Future[Long] = Future.value(0L)
+  overr de val sender dFut: Future[Long] = Future.value(0L)
 
-  override val tapThroughFut: Future[String] =
+  overr de val tapThroughFut: Future[Str ng] =
     commonRecType match {
       case CRT.AddressBookUploadPush => Future.value(PushConstants.AddressBookUploadTapThrough)
-      case CRT.InterestPickerPush => Future.value(PushConstants.InterestPickerTapThrough)
-      case CRT.CompleteOnboardingPush =>
-        Future.value(PushConstants.CompleteOnboardingInterestAddressTapThrough)
+      case CRT. nterestP ckerPush => Future.value(PushConstants. nterestP ckerTapThrough)
+      case CRT.CompleteOnboard ngPush =>
+        Future.value(PushConstants.CompleteOnboard ng nterestAddressTapThrough)
       case _ =>
         Future.value(PushConstants.ConnectTabPushTapThrough)
     }
 
-  override val displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] = Future.Nil
+  overr de val d splayTextEnt  esFut: Future[Seq[D splayTextEnt y]] = Future.N l
 
-  override val facepileUsersFut: Future[Seq[Long]] = Future.Nil
+  overr de val facep leUsersFut: Future[Seq[Long]] = Future.N l
 
-  override val storyContext: Option[StoryContext] = None
+  overr de val storyContext: Opt on[StoryContext] = None
 
-  override val inlineCard: Option[InlineCard] = None
+  overr de val  nl neCard: Opt on[ nl neCard] = None
 
-  override val socialProofDisplayText: Option[DisplayText] = Some(DisplayText())
+  overr de val soc alProofD splayText: Opt on[D splayText] = So (D splayText())
 
-  override lazy val ntabRequest: Future[Option[CreateGenericNotificationRequest]] =
-    if (self.commonRecType == CRT.ConnectTabPush || RecTypes.isOnboardingFlowType(
+  overr de lazy val ntabRequest: Future[Opt on[CreateGener cNot f cat onRequest]] =
+     f (self.commonRecType == CRT.ConnectTabPush || RecTypes. sOnboard ngFlowType(
         self.commonRecType)) {
-      Future.join(senderIdFut, displayTextEntitiesFut, facepileUsersFut, tapThroughFut).map {
-        case (senderId, displayTextEntities, facepileUsers, tapThrough) =>
-          Some(
-            CreateGenericNotificationRequest(
-              userId = target.targetId,
-              senderId = senderId,
-              genericType = GenericType.RefreshableNotification,
-              displayText = DisplayText(values = displayTextEntities),
-              facepileUsers = facepileUsers,
-              timestampMillis = Time.now.inMillis,
-              tapThroughAction = Some(TapThroughAction(Some(tapThrough))),
-              impressionId = Some(impressionId),
-              socialProofText = socialProofDisplayText,
+      Future.jo n(sender dFut, d splayTextEnt  esFut, facep leUsersFut, tapThroughFut).map {
+        case (sender d, d splayTextEnt  es, facep leUsers, tapThrough) =>
+          So (
+            CreateGener cNot f cat onRequest(
+              user d = target.target d,
+              sender d = sender d,
+              gener cType = Gener cType.RefreshableNot f cat on,
+              d splayText = D splayText(values = d splayTextEnt  es),
+              facep leUsers = facep leUsers,
+              t  stampM ll s = T  .now. nM ll s,
+              tapThroughAct on = So (TapThroughAct on(So (tapThrough))),
+               mpress on d = So ( mpress on d),
+              soc alProofText = soc alProofD splayText,
               context = storyContext,
-              inlineCard = inlineCard,
+               nl neCard =  nl neCard,
               refreshableType = refreshableType
             ))
       }

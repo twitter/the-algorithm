@@ -1,11 +1,11 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-trait HasCustomInterests {
-  def customInterests: Option[Seq[String]]
+tra  HasCustom nterests {
+  def custom nterests: Opt on[Seq[Str ng]]
 }
 
-trait HasUttInterests {
-  def uttInterestIds: Option[Seq[Long]]
+tra  HasUtt nterests {
+  def utt nterest ds: Opt on[Seq[Long]]
 }
 
-trait HasInterestIds extends HasCustomInterests with HasUttInterests {}
+tra  Has nterest ds extends HasCustom nterests w h HasUtt nterests {}

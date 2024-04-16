@@ -1,47 +1,47 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+package com.tw ter.product_m xer.core.funct onal_component.common.alert
 
-import com.fasterxml.jackson.annotation.JsonSubTypes
-import com.fasterxml.jackson.annotation.JsonTypeInfo
+ mport com.fasterxml.jackson.annotat on.JsonSubTypes
+ mport com.fasterxml.jackson.annotat on.JsonType nfo
 
 /**
- * where the metric originates from, such as from the server or from a client
+ * w re t   tr c or g nates from, such as from t  server or from a cl ent
  *
- * @note implementations must be simple case classes with unique structures for serialization
+ * @note  mple ntat ons must be s mple case classes w h un que structures for ser al zat on
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
+@JsonType nfo(use = JsonType nfo. d.NAME,  nclude = JsonType nfo.As.PROPERTY)
 @JsonSubTypes(
   Array(
-    new JsonSubTypes.Type(value = classOf[Server], name = "Server"),
-    new JsonSubTypes.Type(value = classOf[Strato], name = "Strato"),
-    new JsonSubTypes.Type(value = classOf[GenericClient], name = "GenericClient")
+    new JsonSubTypes.Type(value = classOf[Server], na  = "Server"),
+    new JsonSubTypes.Type(value = classOf[Strato], na  = "Strato"),
+    new JsonSubTypes.Type(value = classOf[Gener cCl ent], na  = "Gener cCl ent")
   )
 )
-sealed trait Source
+sealed tra  S ce
 
-/** metrics for the Product Mixer server */
-case class Server() extends Source
+/**  tr cs for t  Product M xer server */
+case class Server() extends S ce
 
-/** metrics from the perspective of a Strato column */
-case class Strato(stratoColumnPath: String, stratoColumnOp: String) extends Source
+/**  tr cs from t  perspect ve of a Strato column */
+case class Strato(stratoColumnPath: Str ng, stratoColumnOp: Str ng) extends S ce
 
 /**
- * metrics from the perspective of a generic client
+ *  tr cs from t  perspect ve of a gener c cl ent
  *
- * @param displayName human readable name for the client
- * @param service service referenced in the query, of the form <role>.<env>.<job>
- * @param metricSource the source of the metric query, usually of the form sd.<role>.<env>.<job>
- * @param failureMetric the name of the metric indicating a client failure
- * @param requestMetric the name of the metric indicating a request has been made
- * @param latencyMetric the name of the metric measuring a request's latency
+ * @param d splayNa  human readable na  for t  cl ent
+ * @param serv ce serv ce referenced  n t  query, of t  form <role>.<env>.<job>
+ * @param  tr cS ce t  s ce of t   tr c query, usually of t  form sd.<role>.<env>.<job>
+ * @param fa lure tr c t  na  of t   tr c  nd cat ng a cl ent fa lure
+ * @param request tr c t  na  of t   tr c  nd cat ng a request has been made
+ * @param latency tr c t  na  of t   tr c  asur ng a request's latency
  *
- * @note We strongly recommend the use of [[Strato]] where possible. [[GenericClient]] is provided as a
- *       catch-all source for teams that have unusual legacy call paths (such as Macaw).
+ * @note   strongly recom nd t  use of [[Strato]] w re poss ble. [[Gener cCl ent]]  s prov ded as a
+ *       catch-all s ce for teams that have unusual legacy call paths (such as Macaw).
  */
-case class GenericClient(
-  displayName: String,
-  service: String,
-  metricSource: String,
-  failureMetric: String,
-  requestMetric: String,
-  latencyMetric: String)
-    extends Source
+case class Gener cCl ent(
+  d splayNa : Str ng,
+  serv ce: Str ng,
+   tr cS ce: Str ng,
+  fa lure tr c: Str ng,
+  request tr c: Str ng,
+  latency tr c: Str ng)
+    extends S ce

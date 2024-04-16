@@ -1,23 +1,23 @@
-package com.twitter.simclustersann.modules
+package com.tw ter.s mclustersann.modules
 
-import com.google.common.util.concurrent.RateLimiter
-import com.google.inject.Provides
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.simclustersann.common.FlagNames.RateLimiterQPS
-import javax.inject.Singleton
+ mport com.google.common.ut l.concurrent.RateL m er
+ mport com.google. nject.Prov des
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.s mclustersann.common.FlagNa s.RateL m erQPS
+ mport javax. nject.S ngleton
 
-object RateLimiterModule extends TwitterModule {
-  flag[Int](
-    name = RateLimiterQPS,
+object RateL m erModule extends Tw terModule {
+  flag[ nt](
+    na  = RateL m erQPS,
     default = 1000,
-    help = "The QPS allowed by the rate limiter."
+     lp = "T  QPS allo d by t  rate l m er."
   )
 
-  @Singleton
-  @Provides
-  def providesRateLimiter(
-    @Flag(RateLimiterQPS) rateLimiterQps: Int
-  ): RateLimiter =
-    RateLimiter.create(rateLimiterQps)
+  @S ngleton
+  @Prov des
+  def prov desRateL m er(
+    @Flag(RateL m erQPS) rateL m erQps:  nt
+  ): RateL m er =
+    RateL m er.create(rateL m erQps)
 }

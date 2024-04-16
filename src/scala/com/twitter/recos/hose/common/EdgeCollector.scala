@@ -1,42 +1,42 @@
-package com.twitter.recos.hose.common
+package com.tw ter.recos.hose.common
 
-import com.twitter.finagle.stats.{Stat, StatsReceiver}
-import com.twitter.recos.internal.thriftscala.RecosHoseMessage
-import java.util.concurrent.Semaphore
+ mport com.tw ter.f nagle.stats.{Stat, StatsRece ver}
+ mport com.tw ter.recos. nternal.thr ftscala.RecosHose ssage
+ mport java.ut l.concurrent.Semaphore
 
-trait EdgeCollector {
-  def addEdge(message: RecosHoseMessage): Unit
+tra  EdgeCollector {
+  def addEdge( ssage: RecosHose ssage): Un 
 }
 
 /**
- * The class consumes incoming edges and inserts them into a buffer of a specified bufferSize.
- * Once the buffer is full of edges, it is written to a concurrently linked queue where the size is bounded by queuelimit.
+ * T  class consu s  ncom ng edges and  nserts t m  nto a buffer of a spec f ed bufferS ze.
+ * Once t  buffer  s full of edges,    s wr ten to a concurrently l nked queue w re t  s ze  s bounded by queuel m .
  */
 case class BufferedEdgeCollector(
-  bufferSize: Int,
-  queue: java.util.Queue[Array[RecosHoseMessage]],
-  queuelimit: Semaphore,
-  statsReceiver: StatsReceiver)
+  bufferS ze:  nt,
+  queue: java.ut l.Queue[Array[RecosHose ssage]],
+  queuel m : Semaphore,
+  statsRece ver: StatsRece ver)
     extends EdgeCollector {
 
-  private var buffer = new Array[RecosHoseMessage](bufferSize)
-  private var index = 0
-  private val queueAddCounter = statsReceiver.counter("queueAdd")
+  pr vate var buffer = new Array[RecosHose ssage](bufferS ze)
+  pr vate var  ndex = 0
+  pr vate val queueAddCounter = statsRece ver.counter("queueAdd")
 
-  override def addEdge(message: RecosHoseMessage): Unit = {
-    buffer(index) = message
-    index = index + 1
-    if (index >= bufferSize) {
+  overr de def addEdge( ssage: RecosHose ssage): Un  = {
+    buffer( ndex) =  ssage
+     ndex =  ndex + 1
+     f ( ndex >= bufferS ze) {
       val oldBuffer = buffer
-      buffer = new Array[RecosHoseMessage](bufferSize)
-      index = 0
+      buffer = new Array[RecosHose ssage](bufferS ze)
+       ndex = 0
 
-      Stat.time(statsReceiver.stat("waitEnqueue")) {
-        queuelimit.acquireUninterruptibly()
+      Stat.t  (statsRece ver.stat("wa Enqueue")) {
+        queuel m .acqu reUn nterrupt bly()
       }
 
       queue.add(oldBuffer)
-      queueAddCounter.incr()
+      queueAddCounter. ncr()
     }
   }
 }

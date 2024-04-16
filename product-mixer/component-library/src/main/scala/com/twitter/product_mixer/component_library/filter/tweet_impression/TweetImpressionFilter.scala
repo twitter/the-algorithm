@@ -1,37 +1,37 @@
-package com.twitter.product_mixer.component_library.filter.tweet_impression
+package com.tw ter.product_m xer.component_l brary.f lter.t et_ mpress on
 
-import com.twitter.product_mixer.component_library.feature_hydrator.query.impressed_tweets.ImpressedTweets
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.component_l brary.feature_hydrator.query. mpressed_t ets. mpressedT ets
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.BaseT etCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lterResult
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
 /**
- * Filters out tweets that the user has seen
+ * F lters out t ets that t  user has seen
  */
-case class TweetImpressionFilter[Candidate <: BaseTweetCandidate](
-) extends Filter[PipelineQuery, Candidate] {
+case class T et mpress onF lter[Cand date <: BaseT etCand date](
+) extends F lter[P pel neQuery, Cand date] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("TweetImpression")
+  overr de val  dent f er: F lter dent f er = F lter dent f er("T et mpress on")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): St ch[F lterResult[Cand date]] = {
 
-    // Set of Tweets that have impressed the user
-    val impressedTweetsSet: Set[Long] = query.features match {
-      case Some(featureMap) => featureMap.getOrElse(ImpressedTweets, Seq.empty).toSet
+    // Set of T ets that have  mpressed t  user
+    val  mpressedT etsSet: Set[Long] = query.features match {
+      case So (featureMap) => featureMap.getOrElse( mpressedT ets, Seq.empty).toSet
       case None => Set.empty
     }
 
-    val (keptCandidates, removedCandidates) = candidates.partition { filteredCandidate =>
-      !impressedTweetsSet.contains(filteredCandidate.candidate.id)
+    val (keptCand dates, removedCand dates) = cand dates.part  on { f lteredCand date =>
+      ! mpressedT etsSet.conta ns(f lteredCand date.cand date. d)
     }
 
-    Stitch.value(FilterResult(keptCandidates.map(_.candidate), removedCandidates.map(_.candidate)))
+    St ch.value(F lterResult(keptCand dates.map(_.cand date), removedCand dates.map(_.cand date)))
   }
 }

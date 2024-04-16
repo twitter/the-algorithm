@@ -1,72 +1,72 @@
-package com.twitter.representation_manager.columns.user
+package com.tw ter.representat on_manager.columns.user
 
-import com.twitter.representation_manager.columns.ColumnConfigBase
-import com.twitter.representation_manager.store.UserSimClustersEmbeddingStore
-import com.twitter.representation_manager.thriftscala.SimClustersEmbeddingView
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.stitch
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.storehaus.StitchOfReadableStore
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.config.AnyOf
-import com.twitter.strato.config.ContactInfo
-import com.twitter.strato.config.FromColumns
-import com.twitter.strato.config.Policy
-import com.twitter.strato.config.Prefix
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
-import com.twitter.strato.data.Lifecycle
-import com.twitter.strato.fed._
-import com.twitter.strato.thrift.ScroogeConv
-import javax.inject.Inject
+ mport com.tw ter.representat on_manager.columns.ColumnConf gBase
+ mport com.tw ter.representat on_manager.store.UserS mClustersEmbedd ngStore
+ mport com.tw ter.representat on_manager.thr ftscala.S mClustersEmbedd ngV ew
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng d
+ mport com.tw ter.st ch
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.storehaus.St chOfReadableStore
+ mport com.tw ter.strato.catalog.Op tadata
+ mport com.tw ter.strato.conf g.AnyOf
+ mport com.tw ter.strato.conf g.Contact nfo
+ mport com.tw ter.strato.conf g.FromColumns
+ mport com.tw ter.strato.conf g.Pol cy
+ mport com.tw ter.strato.conf g.Pref x
+ mport com.tw ter.strato.data.Conv
+ mport com.tw ter.strato.data.Descr pt on.Pla nText
+ mport com.tw ter.strato.data.L fecycle
+ mport com.tw ter.strato.fed._
+ mport com.tw ter.strato.thr ft.ScroogeConv
+ mport javax. nject. nject
 
-class UserSimClustersEmbeddingCol @Inject() (embeddingStore: UserSimClustersEmbeddingStore)
-    extends StratoFed.Column("recommendations/representation_manager/simClustersEmbedding.User")
-    with StratoFed.Fetch.Stitch {
+class UserS mClustersEmbedd ngCol @ nject() (embedd ngStore: UserS mClustersEmbedd ngStore)
+    extends StratoFed.Column("recom ndat ons/representat on_manager/s mClustersEmbedd ng.User")
+    w h StratoFed.Fetch.St ch {
 
-  private val storeStitch: SimClustersEmbeddingId => Stitch[SimClustersEmbedding] =
-    StitchOfReadableStore(embeddingStore.userSimClustersEmbeddingStore.mapValues(_.toThrift))
+  pr vate val storeSt ch: S mClustersEmbedd ng d => St ch[S mClustersEmbedd ng] =
+    St chOfReadableStore(embedd ngStore.userS mClustersEmbedd ngStore.mapValues(_.toThr ft))
 
-  val colPermissions: Seq[com.twitter.strato.config.Policy] =
-    ColumnConfigBase.recosPermissions ++ ColumnConfigBase.externalPermissions :+ FromColumns(
+  val colPerm ss ons: Seq[com.tw ter.strato.conf g.Pol cy] =
+    ColumnConf gBase.recosPerm ss ons ++ ColumnConf gBase.externalPerm ss ons :+ FromColumns(
       Set(
-        Prefix("ml/featureStore/simClusters"),
+        Pref x("ml/featureStore/s mClusters"),
       ))
 
-  override val policy: Policy = AnyOf({
-    colPermissions
+  overr de val pol cy: Pol cy = AnyOf({
+    colPerm ss ons
   })
 
-  override type Key = Long // UserId
-  override type View = SimClustersEmbeddingView
-  override type Value = SimClustersEmbedding
+  overr de type Key = Long // User d
+  overr de type V ew = S mClustersEmbedd ngV ew
+  overr de type Value = S mClustersEmbedd ng
 
-  override val keyConv: Conv[Key] = Conv.long
-  override val viewConv: Conv[View] = ScroogeConv.fromStruct[SimClustersEmbeddingView]
-  override val valueConv: Conv[Value] = ScroogeConv.fromStruct[SimClustersEmbedding]
+  overr de val keyConv: Conv[Key] = Conv.long
+  overr de val v ewConv: Conv[V ew] = ScroogeConv.fromStruct[S mClustersEmbedd ngV ew]
+  overr de val valueConv: Conv[Value] = ScroogeConv.fromStruct[S mClustersEmbedd ng]
 
-  override val contactInfo: ContactInfo = ColumnConfigBase.contactInfo
+  overr de val contact nfo: Contact nfo = ColumnConf gBase.contact nfo
 
-  override val metadata: OpMetadata = OpMetadata(
-    lifecycle = Some(Lifecycle.Production),
-    description = Some(
-      PlainText("The User SimClusters Embedding Endpoint in Representation Management Service." +
+  overr de val  tadata: Op tadata = Op tadata(
+    l fecycle = So (L fecycle.Product on),
+    descr pt on = So (
+      Pla nText("T  User S mClusters Embedd ng Endpo nt  n Representat on Manage nt Serv ce." +
         " TDD: http://go/rms-tdd"))
   )
 
-  override def fetch(key: Key, view: View): Stitch[Result[Value]] = {
-    val embeddingId = SimClustersEmbeddingId(
-      view.embeddingType,
-      view.modelVersion,
-      InternalId.UserId(key)
+  overr de def fetch(key: Key, v ew: V ew): St ch[Result[Value]] = {
+    val embedd ng d = S mClustersEmbedd ng d(
+      v ew.embedd ngType,
+      v ew.modelVers on,
+       nternal d.User d(key)
     )
 
-    storeStitch(embeddingId)
-      .map(embedding => found(embedding))
+    storeSt ch(embedd ng d)
+      .map(embedd ng => found(embedd ng))
       .handle {
-        case stitch.NotFound => missing
+        case st ch.NotFound => m ss ng
       }
   }
 

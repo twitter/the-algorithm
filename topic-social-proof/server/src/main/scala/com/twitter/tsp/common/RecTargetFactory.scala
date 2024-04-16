@@ -1,65 +1,65 @@
-package com.twitter.tsp.common
+package com.tw ter.tsp.common
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.TargetUser
-import com.twitter.frigate.common.candidate.TargetABDecider
-import com.twitter.frigate.common.util.ABDeciderWithOverride
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi.Params
-import com.twitter.tsp.thriftscala.TopicSocialProofRequest
-import com.twitter.util.Future
+ mport com.tw ter.abdec der.Logg ngABDec der
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.TargetUser
+ mport com.tw ter.fr gate.common.cand date.TargetABDec der
+ mport com.tw ter.fr gate.common.ut l.ABDec derW hOverr de
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.tw ter.tsp.thr ftscala.Top cSoc alProofRequest
+ mport com.tw ter.ut l.Future
 
-case class DefaultRecTopicSocialProofTarget(
-  topicSocialProofRequest: TopicSocialProofRequest,
-  targetId: UserId,
-  user: Option[User],
-  abDecider: ABDeciderWithOverride,
+case class DefaultRecTop cSoc alProofTarget(
+  top cSoc alProofRequest: Top cSoc alProofRequest,
+  target d: User d,
+  user: Opt on[User],
+  abDec der: ABDec derW hOverr de,
   params: Params
 )(
-  implicit statsReceiver: StatsReceiver)
+   mpl c  statsRece ver: StatsRece ver)
     extends TargetUser
-    with TopicSocialProofRecRequest
-    with TargetABDecider {
-  override def globalStats: StatsReceiver = statsReceiver
-  override val targetUser: Future[Option[User]] = Future.value(user)
+    w h Top cSoc alProofRecRequest
+    w h TargetABDec der {
+  overr de def globalStats: StatsRece ver = statsRece ver
+  overr de val targetUser: Future[Opt on[User]] = Future.value(user)
 }
 
-trait TopicSocialProofRecRequest {
+tra  Top cSoc alProofRecRequest {
   tuc: TargetUser =>
 
-  val topicSocialProofRequest: TopicSocialProofRequest
+  val top cSoc alProofRequest: Top cSoc alProofRequest
 }
 
 case class RecTargetFactory(
-  abDecider: LoggingABDecider,
-  userStore: ReadableStore[UserId, User],
-  paramBuilder: ParamsBuilder,
-  statsReceiver: StatsReceiver) {
+  abDec der: Logg ngABDec der,
+  userStore: ReadableStore[User d, User],
+  paramBu lder: ParamsBu lder,
+  statsRece ver: StatsRece ver) {
 
-  type RecTopicSocialProofTarget = DefaultRecTopicSocialProofTarget
+  type RecTop cSoc alProofTarget = DefaultRecTop cSoc alProofTarget
 
-  def buildRecTopicSocialProofTarget(
-    request: TopicSocialProofRequest
-  ): Future[RecTopicSocialProofTarget] = {
-    val userId = request.userId
-    userStore.get(userId).map { userOpt =>
+  def bu ldRecTop cSoc alProofTarget(
+    request: Top cSoc alProofRequest
+  ): Future[RecTop cSoc alProofTarget] = {
+    val user d = request.user d
+    userStore.get(user d).map { userOpt =>
       val userRoles = userOpt.flatMap(_.roles.map(_.roles.toSet))
 
-      val context = request.context.copy(userId = Some(request.userId)) // override to make sure
+      val context = request.context.copy(user d = So (request.user d)) // overr de to make sure
 
-      val params = paramBuilder
-        .buildFromTopicListingViewerContext(Some(context), request.displayLocation, userRoles)
+      val params = paramBu lder
+        .bu ldFromTop cL st ngV e rContext(So (context), request.d splayLocat on, userRoles)
 
-      DefaultRecTopicSocialProofTarget(
+      DefaultRecTop cSoc alProofTarget(
         request,
-        userId,
+        user d,
         userOpt,
-        ABDeciderWithOverride(abDecider, None)(statsReceiver),
+        ABDec derW hOverr de(abDec der, None)(statsRece ver),
         params
-      )(statsReceiver)
+      )(statsRece ver)
     }
   }
 }

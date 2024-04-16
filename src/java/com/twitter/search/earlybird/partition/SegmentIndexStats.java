@@ -1,96 +1,96 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
+ mport java.ut l.Opt onal;
+ mport java.ut l.concurrent.atom c.Atom c nteger;
+ mport java.ut l.concurrent.atom c.Atom cLong;
 
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntData;
 
-public class SegmentIndexStats {
-  private EarlybirdIndexSegmentData segmentData;
+publ c class Seg nt ndexStats {
+  pr vate Earlyb rd ndexSeg ntData seg ntData;
 
-  private final AtomicLong indexSizeOnDiskInBytes = new AtomicLong(0);
-  private final AtomicInteger partialUpdateCount = new AtomicInteger(0);
-  private final AtomicInteger outOfOrderUpdateCount = new AtomicInteger(0);
+  pr vate f nal Atom cLong  ndexS zeOnD sk nBytes = new Atom cLong(0);
+  pr vate f nal Atom c nteger part alUpdateCount = new Atom c nteger(0);
+  pr vate f nal Atom c nteger outOfOrderUpdateCount = new Atom c nteger(0);
 
-  private Optional<Integer> savedStatusCount = Optional.empty();
-  private Optional<Integer> savedDeletesCount = Optional.empty();
+  pr vate Opt onal< nteger> savedStatusCount = Opt onal.empty();
+  pr vate Opt onal< nteger> savedDeletesCount = Opt onal.empty();
 
-  public void setSegmentData(EarlybirdIndexSegmentData segmentData) {
-    this.segmentData = segmentData;
+  publ c vo d setSeg ntData(Earlyb rd ndexSeg ntData seg ntData) {
+    t .seg ntData = seg ntData;
   }
 
   /**
-   * We'd like to be able to return the last counts after we unload a segment from memory.
+   *  'd l ke to be able to return t  last counts after   unload a seg nt from  mory.
    */
-  public void unsetSegmentDataAndSaveCounts() {
-    savedStatusCount = Optional.of(getStatusCount());
-    savedDeletesCount = Optional.of(getDeleteCount());
-    segmentData = null;
+  publ c vo d unsetSeg ntDataAndSaveCounts() {
+    savedStatusCount = Opt onal.of(getStatusCount());
+    savedDeletesCount = Opt onal.of(getDeleteCount());
+    seg ntData = null;
   }
 
   /**
-   * Returns the number of deletes processed by this segment.
+   * Returns t  number of deletes processed by t  seg nt.
    */
-  public int getDeleteCount() {
-    if (segmentData != null) {
-      return segmentData.getDeletedDocs().numDeletions();
+  publ c  nt getDeleteCount() {
+     f (seg ntData != null) {
+      return seg ntData.getDeletedDocs().numDelet ons();
     } else {
       return savedDeletesCount.orElse(0);
     }
   }
 
   /**
-   * Return the number of documents in this segment.
+   * Return t  number of docu nts  n t  seg nt.
    */
-  public int getStatusCount() {
-    if (segmentData != null) {
-      return segmentData.numDocs();
+  publ c  nt getStatusCount() {
+     f (seg ntData != null) {
+      return seg ntData.numDocs();
     } else {
       return savedStatusCount.orElse(0);
     }
   }
 
-  public long getIndexSizeOnDiskInBytes() {
-    return indexSizeOnDiskInBytes.get();
+  publ c long get ndexS zeOnD sk nBytes() {
+    return  ndexS zeOnD sk nBytes.get();
   }
 
-  public void setIndexSizeOnDiskInBytes(long value) {
-    indexSizeOnDiskInBytes.set(value);
+  publ c vo d set ndexS zeOnD sk nBytes(long value) {
+     ndexS zeOnD sk nBytes.set(value);
   }
 
-  public int getPartialUpdateCount() {
-    return partialUpdateCount.get();
+  publ c  nt getPart alUpdateCount() {
+    return part alUpdateCount.get();
   }
 
-  public void incrementPartialUpdateCount() {
-    partialUpdateCount.incrementAndGet();
+  publ c vo d  ncre ntPart alUpdateCount() {
+    part alUpdateCount. ncre ntAndGet();
   }
 
-  public void setPartialUpdateCount(int value) {
-    partialUpdateCount.set(value);
+  publ c vo d setPart alUpdateCount( nt value) {
+    part alUpdateCount.set(value);
   }
 
-  public int getOutOfOrderUpdateCount() {
+  publ c  nt getOutOfOrderUpdateCount() {
     return outOfOrderUpdateCount.get();
   }
 
-  public void incrementOutOfOrderUpdateCount() {
-    outOfOrderUpdateCount.incrementAndGet();
+  publ c vo d  ncre ntOutOfOrderUpdateCount() {
+    outOfOrderUpdateCount. ncre ntAndGet();
   }
 
-  public void setOutOfOrderUpdateCount(int value) {
+  publ c vo d setOutOfOrderUpdateCount( nt value) {
     outOfOrderUpdateCount.set(value);
   }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("Indexed ").append(getStatusCount()).append(" documents, ");
+  @Overr de
+  publ c Str ng toStr ng() {
+    Str ngBu lder sb = new Str ngBu lder();
+    sb.append(" ndexed ").append(getStatusCount()).append(" docu nts, ");
     sb.append(getDeleteCount()).append(" deletes, ");
-    sb.append(getPartialUpdateCount()).append(" partial updates, ");
+    sb.append(getPart alUpdateCount()).append(" part al updates, ");
     sb.append(getOutOfOrderUpdateCount()).append(" out of order udpates. ");
-    sb.append("Index size: ").append(getIndexSizeOnDiskInBytes());
-    return sb.toString();
+    sb.append(" ndex s ze: ").append(get ndexS zeOnD sk nBytes());
+    return sb.toStr ng();
   }
 }

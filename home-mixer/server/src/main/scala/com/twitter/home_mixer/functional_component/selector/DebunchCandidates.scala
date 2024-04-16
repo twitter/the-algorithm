@@ -1,83 +1,83 @@
-package com.twitter.home_mixer.functional_component.selector
+package com.tw ter.ho _m xer.funct onal_component.selector
 
-import com.twitter.home_mixer.functional_component.selector.DebunchCandidates.TrailingTweetsMinSize
-import com.twitter.home_mixer.functional_component.selector.DebunchCandidates.TrailingTweetsPortionToKeep
-import com.twitter.home_mixer.model.HomeFeatures.GetNewerFeature
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope.PartitionedCandidates
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.ho _m xer.funct onal_component.selector.DebunchCand dates.Tra l ngT etsM nS ze
+ mport com.tw ter.ho _m xer.funct onal_component.selector.DebunchCand dates.Tra l ngT etsPort onToKeep
+ mport com.tw ter.ho _m xer.model.Ho Features.GetNe rFeature
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope.Part  onedCand dates
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.SelectorResult
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-trait MustDebunch {
-  def apply(candidate: CandidateWithDetails): Boolean
+tra  MustDebunch {
+  def apply(cand date: Cand dateW hDeta ls): Boolean
 }
 
-object DebunchCandidates {
-  val TrailingTweetsMinSize = 5
-  val TrailingTweetsPortionToKeep = 0.1
+object DebunchCand dates {
+  val Tra l ngT etsM nS ze = 5
+  val Tra l ngT etsPort onToKeep = 0.1
 }
 
 /**
- * This selector rearranges the candidates to only allow bunches of size [[maxBunchSize]], where a
- * bunch is a consecutive sequence of candidates that meet [[mustDebunch]].
+ * T  selector rearranges t  cand dates to only allow bunc s of s ze [[maxBunchS ze]], w re a
+ * bunch  s a consecut ve sequence of cand dates that  et [[mustDebunch]].
  */
-case class DebunchCandidates(
-  override val pipelineScope: CandidateScope,
+case class DebunchCand dates(
+  overr de val p pel neScope: Cand dateScope,
   mustDebunch: MustDebunch,
-  maxBunchSize: Int)
-    extends Selector[PipelineQuery] {
+  maxBunchS ze:  nt)
+    extends Selector[P pel neQuery] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+  overr de def apply(
+    query: P pel neQuery,
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
-    val PartitionedCandidates(selectedCandidates, otherCandidates) =
-      pipelineScope.partition(remainingCandidates)
-    val mutableCandidates = collection.mutable.ListBuffer(selectedCandidates: _*)
+    val Part  onedCand dates(selectedCand dates, ot rCand dates) =
+      p pel neScope.part  on(rema n ngCand dates)
+    val mutableCand dates = collect on.mutable.L stBuffer(selectedCand dates: _*)
 
-    var candidatePointer = 0
-    var nonDebunchPointer = 0
-    var bunchSize = 0
-    var finalNonDebunch = -1
+    var cand datePo nter = 0
+    var nonDebunchPo nter = 0
+    var bunchS ze = 0
+    var f nalNonDebunch = -1
 
-    while (candidatePointer < mutableCandidates.size) {
-      if (mustDebunch(mutableCandidates(candidatePointer))) bunchSize += 1
+    wh le (cand datePo nter < mutableCand dates.s ze) {
+       f (mustDebunch(mutableCand dates(cand datePo nter))) bunchS ze += 1
       else {
-        bunchSize = 0
-        finalNonDebunch = candidatePointer
+        bunchS ze = 0
+        f nalNonDebunch = cand datePo nter
       }
 
-      if (bunchSize > maxBunchSize) {
-        nonDebunchPointer = Math.max(candidatePointer, nonDebunchPointer)
-        while (nonDebunchPointer < mutableCandidates.size &&
-          mustDebunch(mutableCandidates(nonDebunchPointer))) {
-          nonDebunchPointer += 1
+       f (bunchS ze > maxBunchS ze) {
+        nonDebunchPo nter = Math.max(cand datePo nter, nonDebunchPo nter)
+        wh le (nonDebunchPo nter < mutableCand dates.s ze &&
+          mustDebunch(mutableCand dates(nonDebunchPo nter))) {
+          nonDebunchPo nter += 1
         }
-        if (nonDebunchPointer == mutableCandidates.size)
-          candidatePointer = mutableCandidates.size
+         f (nonDebunchPo nter == mutableCand dates.s ze)
+          cand datePo nter = mutableCand dates.s ze
         else {
-          val nextNonDebunch = mutableCandidates(nonDebunchPointer)
-          mutableCandidates.remove(nonDebunchPointer)
-          mutableCandidates.insert(candidatePointer, nextNonDebunch)
-          bunchSize = 0
-          finalNonDebunch = candidatePointer
+          val nextNonDebunch = mutableCand dates(nonDebunchPo nter)
+          mutableCand dates.remove(nonDebunchPo nter)
+          mutableCand dates. nsert(cand datePo nter, nextNonDebunch)
+          bunchS ze = 0
+          f nalNonDebunch = cand datePo nter
         }
       }
 
-      candidatePointer += 1
+      cand datePo nter += 1
     }
 
-    val debunchedCandidates = if (query.features.exists(_.getOrElse(GetNewerFeature, false))) {
-      val trailingTweetsSize = mutableCandidates.size - finalNonDebunch - 1
-      val keepCandidates = finalNonDebunch + 1 +
-        Math.max(TrailingTweetsMinSize, TrailingTweetsPortionToKeep * trailingTweetsSize).toInt
-      mutableCandidates.toList.take(keepCandidates)
-    } else mutableCandidates.toList
+    val debunc dCand dates =  f (query.features.ex sts(_.getOrElse(GetNe rFeature, false))) {
+      val tra l ngT etsS ze = mutableCand dates.s ze - f nalNonDebunch - 1
+      val keepCand dates = f nalNonDebunch + 1 +
+        Math.max(Tra l ngT etsM nS ze, Tra l ngT etsPort onToKeep * tra l ngT etsS ze).to nt
+      mutableCand dates.toL st.take(keepCand dates)
+    } else mutableCand dates.toL st
 
-    val updatedCandidates = otherCandidates ++ debunchedCandidates
-    SelectorResult(remainingCandidates = updatedCandidates, result = result)
+    val updatedCand dates = ot rCand dates ++ debunc dCand dates
+    SelectorResult(rema n ngCand dates = updatedCand dates, result = result)
   }
 }

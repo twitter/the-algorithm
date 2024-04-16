@@ -1,53 +1,53 @@
-package com.twitter.timelineranker.core
+package com.tw ter.t  l neranker.core
 
-import com.twitter.timelines.model.UserId
-import com.twitter.util.Future
+ mport com.tw ter.t  l nes.model.User d
+ mport com.tw ter.ut l.Future
 
 /**
- * Similar to FollowGraphData but makes available its fields as separate futures.
+ * S m lar to FollowGraphData but makes ava lable  s f elds as separate futures.
  */
 case class FollowGraphDataFuture(
-  userId: UserId,
-  followedUserIdsFuture: Future[Seq[UserId]],
-  mutuallyFollowingUserIdsFuture: Future[Set[UserId]],
-  mutedUserIdsFuture: Future[Set[UserId]],
-  retweetsMutedUserIdsFuture: Future[Set[UserId]]) {
+  user d: User d,
+  follo dUser dsFuture: Future[Seq[User d]],
+  mutuallyFollow ngUser dsFuture: Future[Set[User d]],
+  mutedUser dsFuture: Future[Set[User d]],
+  ret etsMutedUser dsFuture: Future[Set[User d]]) {
 
-  def inNetworkUserIdsFuture: Future[Seq[UserId]] = followedUserIdsFuture.map(_ :+ userId)
+  def  nNetworkUser dsFuture: Future[Seq[User d]] = follo dUser dsFuture.map(_ :+ user d)
 
   def get(): Future[FollowGraphData] = {
     Future
-      .join(
-        followedUserIdsFuture,
-        mutuallyFollowingUserIdsFuture,
-        mutedUserIdsFuture,
-        retweetsMutedUserIdsFuture
+      .jo n(
+        follo dUser dsFuture,
+        mutuallyFollow ngUser dsFuture,
+        mutedUser dsFuture,
+        ret etsMutedUser dsFuture
       )
       .map {
-        case (followedUserIds, mutuallyFollowingUserIds, mutedUserIds, retweetsMutedUserIds) =>
+        case (follo dUser ds, mutuallyFollow ngUser ds, mutedUser ds, ret etsMutedUser ds) =>
           FollowGraphData(
-            userId,
-            followedUserIds,
-            mutuallyFollowingUserIds,
-            mutedUserIds,
-            retweetsMutedUserIds
+            user d,
+            follo dUser ds,
+            mutuallyFollow ngUser ds,
+            mutedUser ds,
+            ret etsMutedUser ds
           )
       }
   }
 }
 
 object FollowGraphDataFuture {
-  private def mkEmptyFuture(field: String) = {
-    Future.exception(
-      new IllegalStateException(s"FollowGraphDataFuture field $field accessed without being set")
+  pr vate def mkEmptyFuture(f eld: Str ng) = {
+    Future.except on(
+      new  llegalStateExcept on(s"FollowGraphDataFuture f eld $f eld accessed w hout be ng set")
     )
   }
 
   val EmptyFollowGraphDataFuture: FollowGraphDataFuture = FollowGraphDataFuture(
-    userId = 0L,
-    followedUserIdsFuture = mkEmptyFuture("followedUserIdsFuture"),
-    mutuallyFollowingUserIdsFuture = mkEmptyFuture("mutuallyFollowingUserIdsFuture"),
-    mutedUserIdsFuture = mkEmptyFuture("mutedUserIdsFuture"),
-    retweetsMutedUserIdsFuture = mkEmptyFuture("retweetsMutedUserIdsFuture")
+    user d = 0L,
+    follo dUser dsFuture = mkEmptyFuture("follo dUser dsFuture"),
+    mutuallyFollow ngUser dsFuture = mkEmptyFuture("mutuallyFollow ngUser dsFuture"),
+    mutedUser dsFuture = mkEmptyFuture("mutedUser dsFuture"),
+    ret etsMutedUser dsFuture = mkEmptyFuture("ret etsMutedUser dsFuture")
   )
 }

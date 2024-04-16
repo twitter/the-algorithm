@@ -1,27 +1,27 @@
-package com.twitter.interaction_graph.scio.common
+package com.tw ter. nteract on_graph.sc o.common
 
-import com.twitter.util.Duration
-import org.joda.time.Interval
+ mport com.tw ter.ut l.Durat on
+ mport org.joda.t  . nterval
 
-object DateUtil {
-  def embiggen(dateInterval: Interval, duration: Duration): Interval = {
+object DateUt l {
+  def emb ggen(date nterval:  nterval, durat on: Durat on):  nterval = {
 
-    val days = duration.inDays
-    val newStart = dateInterval.getStart.minusDays(days)
-    val newEnd = dateInterval.getEnd.plusDays(days)
-    new Interval(newStart, newEnd)
+    val days = durat on. nDays
+    val newStart = date nterval.getStart.m nusDays(days)
+    val newEnd = date nterval.getEnd.plusDays(days)
+    new  nterval(newStart, newEnd)
   }
 
-  def subtract(dateInterval: Interval, duration: Duration): Interval = {
-    val days = duration.inDays
-    val newStart = dateInterval.getStart.minusDays(days)
-    val newEnd = dateInterval.getEnd.minusDays(days)
-    new Interval(newStart, newEnd)
+  def subtract(date nterval:  nterval, durat on: Durat on):  nterval = {
+    val days = durat on. nDays
+    val newStart = date nterval.getStart.m nusDays(days)
+    val newEnd = date nterval.getEnd.m nusDays(days)
+    new  nterval(newStart, newEnd)
   }
 
-  def prependDays(dateInterval: Interval, duration: Duration): Interval = {
-    val days = duration.inDays
-    val newStart = dateInterval.getStart.minusDays(days)
-    new Interval(newStart, dateInterval.getEnd.toInstant)
+  def prependDays(date nterval:  nterval, durat on: Durat on):  nterval = {
+    val days = durat on. nDays
+    val newStart = date nterval.getStart.m nusDays(days)
+    new  nterval(newStart, date nterval.getEnd.to nstant)
   }
 }

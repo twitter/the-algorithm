@@ -1,62 +1,62 @@
-package com.twitter.tweetypie.repository
+package com.tw ter.t etyp e.repos ory
 
-import com.twitter.container.thriftscala.MaterializeAsTweetFieldsRequest
-import com.twitter.container.thriftscala.MaterializeAsTweetRequest
-import com.twitter.container.{thriftscala => ccs}
-import com.twitter.stitch.SeqGroup
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.Return
-import com.twitter.tweetypie.{thriftscala => tp}
-import com.twitter.tweetypie.backends
-import com.twitter.tweetypie.thriftscala.GetTweetFieldsResult
-import com.twitter.tweetypie.thriftscala.GetTweetResult
-import com.twitter.util.Future
-import com.twitter.util.Try
+ mport com.tw ter.conta ner.thr ftscala.Mater al zeAsT etF eldsRequest
+ mport com.tw ter.conta ner.thr ftscala.Mater al zeAsT etRequest
+ mport com.tw ter.conta ner.{thr ftscala => ccs}
+ mport com.tw ter.st ch.SeqGroup
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.Return
+ mport com.tw ter.t etyp e.{thr ftscala => tp}
+ mport com.tw ter.t etyp e.backends
+ mport com.tw ter.t etyp e.thr ftscala.GetT etF eldsResult
+ mport com.tw ter.t etyp e.thr ftscala.GetT etResult
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Try
 
 /**
- * A special kind of tweet is that, when [[tp.Tweet.underlyingCreativesContainerId]] is presented.
- * tweetypie will delegate hydration of this tweet to creatives container service.
+ * A spec al k nd of t et  s that, w n [[tp.T et.underly ngCreat vesConta ner d]]  s presented.
+ * t etyp e w ll delegate hydrat on of t  t et to creat ves conta ner serv ce.
  */
-object CreativesContainerMaterializationRepository {
+object Creat vesConta nerMater al zat onRepos ory {
 
-  type GetTweetType =
-    (ccs.MaterializeAsTweetRequest, Option[tp.GetTweetOptions]) => Stitch[tp.GetTweetResult]
+  type GetT etType =
+    (ccs.Mater al zeAsT etRequest, Opt on[tp.GetT etOpt ons]) => St ch[tp.GetT etResult]
 
-  type GetTweetFieldsType =
+  type GetT etF eldsType =
     (
-      ccs.MaterializeAsTweetFieldsRequest,
-      tp.GetTweetFieldsOptions
-    ) => Stitch[tp.GetTweetFieldsResult]
+      ccs.Mater al zeAsT etF eldsRequest,
+      tp.GetT etF eldsOpt ons
+    ) => St ch[tp.GetT etF eldsResult]
 
   def apply(
-    materializeAsTweet: backends.CreativesContainerService.MaterializeAsTweet
-  ): GetTweetType = {
-    case class RequestGroup(opts: Option[tp.GetTweetOptions])
-        extends SeqGroup[ccs.MaterializeAsTweetRequest, tp.GetTweetResult] {
-      override protected def run(
-        keys: Seq[MaterializeAsTweetRequest]
-      ): Future[Seq[Try[GetTweetResult]]] =
-        materializeAsTweet(ccs.MaterializeAsTweetRequests(keys, opts)).map {
-          res: Seq[GetTweetResult] => res.map(Return(_))
+    mater al zeAsT et: backends.Creat vesConta nerServ ce.Mater al zeAsT et
+  ): GetT etType = {
+    case class RequestGroup(opts: Opt on[tp.GetT etOpt ons])
+        extends SeqGroup[ccs.Mater al zeAsT etRequest, tp.GetT etResult] {
+      overr de protected def run(
+        keys: Seq[Mater al zeAsT etRequest]
+      ): Future[Seq[Try[GetT etResult]]] =
+        mater al zeAsT et(ccs.Mater al zeAsT etRequests(keys, opts)).map {
+          res: Seq[GetT etResult] => res.map(Return(_))
         }
     }
 
-    (request, options) => Stitch.call(request, RequestGroup(options))
+    (request, opt ons) => St ch.call(request, RequestGroup(opt ons))
   }
 
-  def materializeAsTweetFields(
-    materializeAsTweetFields: backends.CreativesContainerService.MaterializeAsTweetFields
-  ): GetTweetFieldsType = {
-    case class RequestGroup(opts: tp.GetTweetFieldsOptions)
-        extends SeqGroup[ccs.MaterializeAsTweetFieldsRequest, tp.GetTweetFieldsResult] {
-      override protected def run(
-        keys: Seq[MaterializeAsTweetFieldsRequest]
-      ): Future[Seq[Try[GetTweetFieldsResult]]] =
-        materializeAsTweetFields(ccs.MaterializeAsTweetFieldsRequests(keys, opts)).map {
-          res: Seq[GetTweetFieldsResult] => res.map(Return(_))
+  def mater al zeAsT etF elds(
+    mater al zeAsT etF elds: backends.Creat vesConta nerServ ce.Mater al zeAsT etF elds
+  ): GetT etF eldsType = {
+    case class RequestGroup(opts: tp.GetT etF eldsOpt ons)
+        extends SeqGroup[ccs.Mater al zeAsT etF eldsRequest, tp.GetT etF eldsResult] {
+      overr de protected def run(
+        keys: Seq[Mater al zeAsT etF eldsRequest]
+      ): Future[Seq[Try[GetT etF eldsResult]]] =
+        mater al zeAsT etF elds(ccs.Mater al zeAsT etF eldsRequests(keys, opts)).map {
+          res: Seq[GetT etF eldsResult] => res.map(Return(_))
         }
     }
 
-    (request, options) => Stitch.call(request, RequestGroup(options))
+    (request, opt ons) => St ch.call(request, RequestGroup(opt ons))
   }
 }

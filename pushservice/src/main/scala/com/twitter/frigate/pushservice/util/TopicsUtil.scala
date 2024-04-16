@@ -1,117 +1,117 @@
-package com.twitter.frigate.pushservice.util
+package com.tw ter.fr gate.pushserv ce.ut l
 
-import com.twitter.contentrecommender.thriftscala.DisplayLocation
-import com.twitter.finagle.stats.Stat
-import com.twitter.frigate.common.base.TargetUser
-import com.twitter.frigate.common.predicate.CommonOutNetworkTweetCandidatesSourcePredicates.authorNotBeingFollowedPredicate
-import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContext
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.model.PushTypes
-import com.twitter.frigate.pushservice.store.UttEntityHydrationQuery
-import com.twitter.frigate.pushservice.store.UttEntityHydrationStore
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.hermit.predicate.socialgraph.RelationEdge
-import com.twitter.interests.thriftscala.InterestRelationType
-import com.twitter.interests.thriftscala.InterestRelationship
-import com.twitter.interests.thriftscala.InterestedInInterestLookupContext
-import com.twitter.interests.thriftscala.InterestedInInterestModel
-import com.twitter.interests.thriftscala.ProductId
-import com.twitter.interests.thriftscala.UserInterest
-import com.twitter.interests.thriftscala.UserInterestData
-import com.twitter.interests.thriftscala.UserInterests
-import com.twitter.interests.thriftscala.{TopicListingViewerContext => TopicListingViewerContextCR}
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi.Param
-import com.twitter.topiclisting.TopicListingViewerContext
-import com.twitter.topiclisting.utt.LocalizedEntity
-import com.twitter.tsp.thriftscala.TopicListingSetting
-import com.twitter.tsp.thriftscala.TopicSocialProofRequest
-import com.twitter.tsp.thriftscala.TopicSocialProofResponse
-import com.twitter.tsp.thriftscala.TopicWithScore
-import com.twitter.util.Future
-import scala.collection.Map
+ mport com.tw ter.contentrecom nder.thr ftscala.D splayLocat on
+ mport com.tw ter.f nagle.stats.Stat
+ mport com.tw ter.fr gate.common.base.TargetUser
+ mport com.tw ter.fr gate.common.pred cate.CommonOutNetworkT etCand datesS cePred cates.authorNotBe ngFollo dPred cate
+ mport com.tw ter.fr gate.common.store. nterests. nterestsLookupRequestW hContext
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes
+ mport com.tw ter.fr gate.pushserv ce.store.UttEnt yHydrat onQuery
+ mport com.tw ter.fr gate.pushserv ce.store.UttEnt yHydrat onStore
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter. rm .pred cate.soc algraph.Relat onEdge
+ mport com.tw ter. nterests.thr ftscala. nterestRelat onType
+ mport com.tw ter. nterests.thr ftscala. nterestRelat onsh p
+ mport com.tw ter. nterests.thr ftscala. nterested n nterestLookupContext
+ mport com.tw ter. nterests.thr ftscala. nterested n nterestModel
+ mport com.tw ter. nterests.thr ftscala.Product d
+ mport com.tw ter. nterests.thr ftscala.User nterest
+ mport com.tw ter. nterests.thr ftscala.User nterestData
+ mport com.tw ter. nterests.thr ftscala.User nterests
+ mport com.tw ter. nterests.thr ftscala.{Top cL st ngV e rContext => Top cL st ngV e rContextCR}
+ mport com.tw ter.st ch.t etyp e.T etyP e.T etyP eResult
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.top cl st ng.Top cL st ngV e rContext
+ mport com.tw ter.top cl st ng.utt.Local zedEnt y
+ mport com.tw ter.tsp.thr ftscala.Top cL st ngSett ng
+ mport com.tw ter.tsp.thr ftscala.Top cSoc alProofRequest
+ mport com.tw ter.tsp.thr ftscala.Top cSoc alProofResponse
+ mport com.tw ter.tsp.thr ftscala.Top cW hScore
+ mport com.tw ter.ut l.Future
+ mport scala.collect on.Map
 
-case class TweetWithTopicProof(
-  tweetId: Long,
-  topicId: Long,
-  authorId: Option[Long],
+case class T etW hTop cProof(
+  t et d: Long,
+  top c d: Long,
+  author d: Opt on[Long],
   score: Double,
-  tweetyPieResult: TweetyPieResult,
-  topicListingSetting: String,
-  algorithmCR: Option[String],
-  isOON: Boolean)
+  t etyP eResult: T etyP eResult,
+  top cL st ngSett ng: Str ng,
+  algor hmCR: Opt on[Str ng],
+   sOON: Boolean)
 
-object TopicsUtil {
+object Top csUt l {
 
   /**
-   * Obtains the Localized Entities for the provided SC Entity IDs
-   * @param target                  The target user for which we're obtaining candidates
-   * @param semanticCoreEntityIds   The seq. of entity ids for which we would like to obtain the Localized Entities
-   * @param uttEntityHydrationStore Store to query the actual LocalizedEntities
-   * @return                        A Future Map consisting of the entity id as the key and LocalizedEntity as the value
+   * Obta ns t  Local zed Ent  es for t  prov ded SC Ent y  Ds
+   * @param target                  T  target user for wh ch  're obta n ng cand dates
+   * @param semant cCoreEnt y ds   T  seq. of ent y  ds for wh ch   would l ke to obta n t  Local zed Ent  es
+   * @param uttEnt yHydrat onStore Store to query t  actual Local zedEnt  es
+   * @return                        A Future Map cons st ng of t  ent y  d as t  key and Local zedEnt y as t  value
    */
-  def getLocalizedEntityMap(
+  def getLocal zedEnt yMap(
     target: Target,
-    semanticCoreEntityIds: Set[Long],
-    uttEntityHydrationStore: UttEntityHydrationStore
-  ): Future[Map[Long, LocalizedEntity]] = {
-    buildTopicListingViewerContext(target)
-      .flatMap { topicListingViewerContext =>
-        val query = UttEntityHydrationQuery(topicListingViewerContext, semanticCoreEntityIds.toSeq)
-        val localizedTopicEntitiesFut =
-          uttEntityHydrationStore.getLocalizedTopicEntities(query).map(_.flatten)
-        localizedTopicEntitiesFut.map { localizedTopicEntities =>
-          localizedTopicEntities.map { localizedTopicEntity =>
-            localizedTopicEntity.entityId -> localizedTopicEntity
+    semant cCoreEnt y ds: Set[Long],
+    uttEnt yHydrat onStore: UttEnt yHydrat onStore
+  ): Future[Map[Long, Local zedEnt y]] = {
+    bu ldTop cL st ngV e rContext(target)
+      .flatMap { top cL st ngV e rContext =>
+        val query = UttEnt yHydrat onQuery(top cL st ngV e rContext, semant cCoreEnt y ds.toSeq)
+        val local zedTop cEnt  esFut =
+          uttEnt yHydrat onStore.getLocal zedTop cEnt  es(query).map(_.flatten)
+        local zedTop cEnt  esFut.map { local zedTop cEnt  es =>
+          local zedTop cEnt  es.map { local zedTop cEnt y =>
+            local zedTop cEnt y.ent y d -> local zedTop cEnt y
           }.toMap
         }
       }
   }
 
   /**
-   * Fetch explict followed interests i.e Topics for targetUser
+   * Fetch expl ct follo d  nterests  .e Top cs for targetUser
    *
-   * @param targetUser: [[Target]] object representing a user eligible for MagicRecs notification
-   * @return: list of all Topics(Interests) Followed by targetUser
+   * @param targetUser: [[Target]] object represent ng a user el g ble for Mag cRecs not f cat on
+   * @return: l st of all Top cs( nterests) Follo d by targetUser
    */
-  def getTopicsFollowedByUser(
+  def getTop csFollo dByUser(
     targetUser: Target,
-    interestsWithLookupContextStore: ReadableStore[
-      InterestsLookupRequestWithContext,
-      UserInterests
+     nterestsW hLookupContextStore: ReadableStore[
+       nterestsLookupRequestW hContext,
+      User nterests
     ],
-    followedTopicsStats: Stat
-  ): Future[Option[Seq[UserInterest]]] = {
-    buildTopicListingViewerContext(targetUser).flatMap { topicListingViewerContext =>
-      // explicit interests relation query
-      val explicitInterestsLookupRequest = InterestsLookupRequestWithContext(
-        targetUser.targetId,
-        Some(
-          InterestedInInterestLookupContext(
-            explicitContext = None,
-            inferredContext = None,
-            productId = Some(ProductId.Followable),
-            topicListingViewerContext = Some(topicListingViewerContext.toThrift),
-            disableExplicit = None,
-            disableImplicit = Some(true)
+    follo dTop csStats: Stat
+  ): Future[Opt on[Seq[User nterest]]] = {
+    bu ldTop cL st ngV e rContext(targetUser).flatMap { top cL st ngV e rContext =>
+      // expl c   nterests relat on query
+      val expl c  nterestsLookupRequest =  nterestsLookupRequestW hContext(
+        targetUser.target d,
+        So (
+           nterested n nterestLookupContext(
+            expl c Context = None,
+             nferredContext = None,
+            product d = So (Product d.Followable),
+            top cL st ngV e rContext = So (top cL st ngV e rContext.toThr ft),
+            d sableExpl c  = None,
+            d sable mpl c  = So (true)
           )
         )
       )
 
-      // filter explicit follow relationships from response
-      interestsWithLookupContextStore.get(explicitInterestsLookupRequest).map {
-        _.flatMap { userInterests =>
-          val followedTopics = userInterests.interests.map {
-            _.filter {
-              case UserInterest(_, Some(interestData)) =>
-                interestData match {
-                  case UserInterestData.InterestedIn(interestedIn) =>
-                    interestedIn.exists {
-                      case InterestedInInterestModel.ExplicitModel(explicitModel) =>
-                        explicitModel match {
-                          case InterestRelationship.V1(v1) =>
-                            v1.relation == InterestRelationType.Followed
+      // f lter expl c  follow relat onsh ps from response
+       nterestsW hLookupContextStore.get(expl c  nterestsLookupRequest).map {
+        _.flatMap { user nterests =>
+          val follo dTop cs = user nterests. nterests.map {
+            _.f lter {
+              case User nterest(_, So ( nterestData)) =>
+                 nterestData match {
+                  case User nterestData. nterested n( nterested n) =>
+                     nterested n.ex sts {
+                      case  nterested n nterestModel.Expl c Model(expl c Model) =>
+                        expl c Model match {
+                          case  nterestRelat onsh p.V1(v1) =>
+                            v1.relat on ==  nterestRelat onType.Follo d
 
                           case _ => false
                         }
@@ -122,11 +122,11 @@ object TopicsUtil {
                   case _ => false
                 }
 
-              case _ => false // interestData unavailable
+              case _ => false //  nterestData unava lable
             }
           }
-          followedTopicsStats.add(followedTopics.getOrElse(Seq.empty[UserInterest]).size)
-          followedTopics
+          follo dTop csStats.add(follo dTop cs.getOrElse(Seq.empty[User nterest]).s ze)
+          follo dTop cs
         }
       }
     }
@@ -134,129 +134,129 @@ object TopicsUtil {
 
   /**
    *
-   * @param target : [[Target]] object respresenting MagicRecs user
+   * @param target : [[Target]] object respresent ng Mag cRecs user
    *
-   * @return: [[TopicListingViewerContext]] for querying topics
+   * @return: [[Top cL st ngV e rContext]] for query ng top cs
    */
-  def buildTopicListingViewerContext(target: Target): Future[TopicListingViewerContext] = {
-    Future.join(target.inferredUserDeviceLanguage, target.countryCode, target.targetUser).map {
-      case (inferredLanguage, countryCode, userInfo) =>
-        TopicListingViewerContext(
-          userId = Some(target.targetId),
-          guestId = None,
-          deviceId = None,
-          clientApplicationId = None,
+  def bu ldTop cL st ngV e rContext(target: Target): Future[Top cL st ngV e rContext] = {
+    Future.jo n(target. nferredUserDev ceLanguage, target.countryCode, target.targetUser).map {
+      case ( nferredLanguage, countryCode, user nfo) =>
+        Top cL st ngV e rContext(
+          user d = So (target.target d),
+          guest d = None,
+          dev ce d = None,
+          cl entAppl cat on d = None,
           userAgent = None,
-          languageCode = inferredLanguage,
+          languageCode =  nferredLanguage,
           countryCode = countryCode,
-          userRoles = userInfo.flatMap(_.roles.map(_.roles.toSet))
+          userRoles = user nfo.flatMap(_.roles.map(_.roles.toSet))
         )
     }
   }
 
   /**
    *
-   * @param target : [[Target]] object respresenting MagicRecs user
+   * @param target : [[Target]] object respresent ng Mag cRecs user
    *
-   * @return: [[TopicListingViewerContext]] for querying topics
+   * @return: [[Top cL st ngV e rContext]] for query ng top cs
    */
-  def buildTopicListingViewerContextForCR(target: Target): Future[TopicListingViewerContextCR] = {
-    TopicsUtil.buildTopicListingViewerContext(target).map(_.toThrift)
+  def bu ldTop cL st ngV e rContextForCR(target: Target): Future[Top cL st ngV e rContextCR] = {
+    Top csUt l.bu ldTop cL st ngV e rContext(target).map(_.toThr ft)
   }
 
   /**
    *
-   * @param target : [[Target]] object respresenting MagicRecs user
-   * @param tweets : [[Seq[TweetyPieResult]]] object representing Tweets to get TSP for
-   * @param topicSocialProofServiceStore: [[ReadableStore[TopicSocialProofRequest, TopicSocialProofResponse]]]
-   * @param edgeStore: [[ReadableStore[RelationEdge, Boolean]]]]
+   * @param target : [[Target]] object respresent ng Mag cRecs user
+   * @param t ets : [[Seq[T etyP eResult]]] object represent ng T ets to get TSP for
+   * @param top cSoc alProofServ ceStore: [[ReadableStore[Top cSoc alProofRequest, Top cSoc alProofResponse]]]
+   * @param edgeStore: [[ReadableStore[Relat onEdge, Boolean]]]]
    *
-   * @return: [[Future[Seq[TweetWithTopicProof]]]] Tweets with topic proof
+   * @return: [[Future[Seq[T etW hTop cProof]]]] T ets w h top c proof
    */
-  def getTopicSocialProofs(
-    inputTarget: Target,
-    tweets: Seq[TweetyPieResult],
-    topicSocialProofServiceStore: ReadableStore[TopicSocialProofRequest, TopicSocialProofResponse],
-    edgeStore: ReadableStore[RelationEdge, Boolean],
+  def getTop cSoc alProofs(
+     nputTarget: Target,
+    t ets: Seq[T etyP eResult],
+    top cSoc alProofServ ceStore: ReadableStore[Top cSoc alProofRequest, Top cSoc alProofResponse],
+    edgeStore: ReadableStore[Relat onEdge, Boolean],
     scoreThresholdParam: Param[Double]
-  ): Future[Seq[TweetWithTopicProof]] = {
-    buildTopicListingViewerContextForCR(inputTarget).flatMap { topicListingContext =>
-      val tweetIds: Set[Long] = tweets.map(_.tweet.id).toSet
-      val tweetIdsToTweetyPie = tweets.map(tp => tp.tweet.id -> tp).toMap
-      val topicSocialProofRequest =
-        TopicSocialProofRequest(
-          inputTarget.targetId,
-          tweetIds,
-          DisplayLocation.MagicRecsRecommendTopicTweets,
-          TopicListingSetting.Followable,
-          topicListingContext)
+  ): Future[Seq[T etW hTop cProof]] = {
+    bu ldTop cL st ngV e rContextForCR( nputTarget).flatMap { top cL st ngContext =>
+      val t et ds: Set[Long] = t ets.map(_.t et. d).toSet
+      val t et dsToT etyP e = t ets.map(tp => tp.t et. d -> tp).toMap
+      val top cSoc alProofRequest =
+        Top cSoc alProofRequest(
+           nputTarget.target d,
+          t et ds,
+          D splayLocat on.Mag cRecsRecom ndTop cT ets,
+          Top cL st ngSett ng.Followable,
+          top cL st ngContext)
 
-      topicSocialProofServiceStore
-        .get(topicSocialProofRequest).flatMap {
-          case Some(topicSocialProofResponse) =>
-            val topicProofCandidates = topicSocialProofResponse.socialProofs.collect {
-              case (tweetId, topicsWithScore)
-                  if topicsWithScore.nonEmpty && topicsWithScore
-                    .maxBy(_.score).score >= inputTarget
+      top cSoc alProofServ ceStore
+        .get(top cSoc alProofRequest).flatMap {
+          case So (top cSoc alProofResponse) =>
+            val top cProofCand dates = top cSoc alProofResponse.soc alProofs.collect {
+              case (t et d, top csW hScore)
+                   f top csW hScore.nonEmpty && top csW hScore
+                    .maxBy(_.score).score >=  nputTarget
                     .params(scoreThresholdParam) =>
-                // Get the topic with max score if there are any topics returned
-                val topicWithScore = topicsWithScore.maxBy(_.score)
-                TweetWithTopicProof(
-                  tweetId,
-                  topicWithScore.topicId,
-                  tweetIdsToTweetyPie(tweetId).tweet.coreData.map(_.userId),
-                  topicWithScore.score,
-                  tweetIdsToTweetyPie(tweetId),
-                  topicWithScore.topicFollowType.map(_.name).getOrElse(""),
-                  topicWithScore.algorithmType.map(_.name),
-                  isOON = true
+                // Get t  top c w h max score  f t re are any top cs returned
+                val top cW hScore = top csW hScore.maxBy(_.score)
+                T etW hTop cProof(
+                  t et d,
+                  top cW hScore.top c d,
+                  t et dsToT etyP e(t et d).t et.coreData.map(_.user d),
+                  top cW hScore.score,
+                  t et dsToT etyP e(t et d),
+                  top cW hScore.top cFollowType.map(_.na ).getOrElse(""),
+                  top cW hScore.algor hmType.map(_.na ),
+                   sOON = true
                 )
             }.toSeq
 
-            hydrateTopicProofCandidatesWithEdgeStore(inputTarget, topicProofCandidates, edgeStore)
-          case _ => Future.value(Seq.empty[TweetWithTopicProof])
+            hydrateTop cProofCand datesW hEdgeStore( nputTarget, top cProofCand dates, edgeStore)
+          case _ => Future.value(Seq.empty[T etW hTop cProof])
         }
     }
   }
 
   /**
-   * Obtain TopicWithScores for provided tweet candidates and target
+   * Obta n Top cW hScores for prov ded t et cand dates and target
    * @param target   target user
-   * @param Tweets   tweet candidates represented in a (tweetId, TweetyPieResult) map
-   * @param topicSocialProofServiceStore store to query topic social proof
-   * @param enableTopicAnnotation whether to enable topic annotation
-   * @param topicScoreThreshold  threshold for topic score
-   * @return a (tweetId, TopicWithScore) map where the topic with highest topic score (if exists) is chosen
+   * @param T ets   t et cand dates represented  n a (t et d, T etyP eResult) map
+   * @param top cSoc alProofServ ceStore store to query top c soc al proof
+   * @param enableTop cAnnotat on w t r to enable top c annotat on
+   * @param top cScoreThreshold  threshold for top c score
+   * @return a (t et d, Top cW hScore) map w re t  top c w h h g st top c score ( f ex sts)  s chosen
    */
-  def getTopicsWithScoreMap(
+  def getTop csW hScoreMap(
     target: PushTypes.Target,
-    Tweets: Map[Long, Option[TweetyPieResult]],
-    topicSocialProofServiceStore: ReadableStore[TopicSocialProofRequest, TopicSocialProofResponse],
-    enableTopicAnnotation: Boolean,
-    topicScoreThreshold: Double
-  ): Future[Option[Map[Long, TopicWithScore]]] = {
+    T ets: Map[Long, Opt on[T etyP eResult]],
+    top cSoc alProofServ ceStore: ReadableStore[Top cSoc alProofRequest, Top cSoc alProofResponse],
+    enableTop cAnnotat on: Boolean,
+    top cScoreThreshold: Double
+  ): Future[Opt on[Map[Long, Top cW hScore]]] = {
 
-    if (enableTopicAnnotation) {
-      TopicsUtil
-        .buildTopicListingViewerContextForCR(target).flatMap { topicListingContext =>
-          val tweetIds = Tweets.keySet
-          val topicSocialProofRequest =
-            TopicSocialProofRequest(
-              target.targetId,
-              tweetIds,
-              DisplayLocation.MagicRecsRecommendTopicTweets,
-              TopicListingSetting.Followable,
-              topicListingContext)
+     f (enableTop cAnnotat on) {
+      Top csUt l
+        .bu ldTop cL st ngV e rContextForCR(target).flatMap { top cL st ngContext =>
+          val t et ds = T ets.keySet
+          val top cSoc alProofRequest =
+            Top cSoc alProofRequest(
+              target.target d,
+              t et ds,
+              D splayLocat on.Mag cRecsRecom ndTop cT ets,
+              Top cL st ngSett ng.Followable,
+              top cL st ngContext)
 
-          topicSocialProofServiceStore
-            .get(topicSocialProofRequest).map {
-              _.map { topicSocialProofResponse =>
-                topicSocialProofResponse.socialProofs
+          top cSoc alProofServ ceStore
+            .get(top cSoc alProofRequest).map {
+              _.map { top cSoc alProofResponse =>
+                top cSoc alProofResponse.soc alProofs
                   .collect {
-                    case (tweetId, topicsWithScore)
-                        if topicsWithScore.nonEmpty && Tweets(tweetId).nonEmpty
-                          && topicsWithScore.maxBy(_.score).score >= topicScoreThreshold =>
-                      tweetId -> topicsWithScore.maxBy(_.score)
+                    case (t et d, top csW hScore)
+                         f top csW hScore.nonEmpty && T ets(t et d).nonEmpty
+                          && top csW hScore.maxBy(_.score).score >= top cScoreThreshold =>
+                      t et d -> top csW hScore.maxBy(_.score)
                   }
 
               }
@@ -269,70 +269,70 @@ object TopicsUtil {
   }
 
   /**
-   * Obtain LocalizedEntities for provided tweet candidates and target
+   * Obta n Local zedEnt  es for prov ded t et cand dates and target
    * @param target target user
-   * @param Tweets tweet candidates represented in a (tweetId, TweetyPieResult) map
-   * @param uttEntityHydrationStore store to query the actual LocalizedEntities
-   * @param topicSocialProofServiceStore store to query topic social proof
-   * @param enableTopicAnnotation whether to enable topic annotation
-   * @param topicScoreThreshold threshold for topic score
-   * @return a (tweetId, LocalizedEntity Option) Future map that stores Localized Entity (can be empty) for given tweetId
+   * @param T ets t et cand dates represented  n a (t et d, T etyP eResult) map
+   * @param uttEnt yHydrat onStore store to query t  actual Local zedEnt  es
+   * @param top cSoc alProofServ ceStore store to query top c soc al proof
+   * @param enableTop cAnnotat on w t r to enable top c annotat on
+   * @param top cScoreThreshold threshold for top c score
+   * @return a (t et d, Local zedEnt y Opt on) Future map that stores Local zed Ent y (can be empty) for g ven t et d
    */
-  def getTweetIdLocalizedEntityMap(
+  def getT et dLocal zedEnt yMap(
     target: PushTypes.Target,
-    Tweets: Map[Long, Option[TweetyPieResult]],
-    uttEntityHydrationStore: UttEntityHydrationStore,
-    topicSocialProofServiceStore: ReadableStore[TopicSocialProofRequest, TopicSocialProofResponse],
-    enableTopicAnnotation: Boolean,
-    topicScoreThreshold: Double
-  ): Future[Map[Long, Option[LocalizedEntity]]] = {
+    T ets: Map[Long, Opt on[T etyP eResult]],
+    uttEnt yHydrat onStore: UttEnt yHydrat onStore,
+    top cSoc alProofServ ceStore: ReadableStore[Top cSoc alProofRequest, Top cSoc alProofResponse],
+    enableTop cAnnotat on: Boolean,
+    top cScoreThreshold: Double
+  ): Future[Map[Long, Opt on[Local zedEnt y]]] = {
 
-    val topicWithScoreMap = getTopicsWithScoreMap(
+    val top cW hScoreMap = getTop csW hScoreMap(
       target,
-      Tweets,
-      topicSocialProofServiceStore,
-      enableTopicAnnotation,
-      topicScoreThreshold)
+      T ets,
+      top cSoc alProofServ ceStore,
+      enableTop cAnnotat on,
+      top cScoreThreshold)
 
-    topicWithScoreMap.flatMap { topicWithScores =>
-      topicWithScores match {
-        case Some(topics) =>
-          val topicIds = topics.collect { case (_, topic) => topic.topicId }.toSet
-          val LocalizedEntityMapFut =
-            getLocalizedEntityMap(target, topicIds, uttEntityHydrationStore)
+    top cW hScoreMap.flatMap { top cW hScores =>
+      top cW hScores match {
+        case So (top cs) =>
+          val top c ds = top cs.collect { case (_, top c) => top c.top c d }.toSet
+          val Local zedEnt yMapFut =
+            getLocal zedEnt yMap(target, top c ds, uttEnt yHydrat onStore)
 
-          LocalizedEntityMapFut.map { LocalizedEntityMap =>
-            topics.map {
-              case (tweetId, topic) =>
-                tweetId -> LocalizedEntityMap.get(topic.topicId)
+          Local zedEnt yMapFut.map { Local zedEnt yMap =>
+            top cs.map {
+              case (t et d, top c) =>
+                t et d -> Local zedEnt yMap.get(top c.top c d)
             }
           }
-        case _ => Future.value(Map[Long, Option[LocalizedEntity]]())
+        case _ => Future.value(Map[Long, Opt on[Local zedEnt y]]())
       }
     }
 
   }
 
   /**
-   * Hydrate TweetWithTopicProof candidates with isOON field info,
-   * based on the following relationship between target user and candidate author in edgeStore
-   * @return TweetWithTopicProof candidates with isOON field populated
+   * Hydrate T etW hTop cProof cand dates w h  sOON f eld  nfo,
+   * based on t  follow ng relat onsh p bet en target user and cand date author  n edgeStore
+   * @return T etW hTop cProof cand dates w h  sOON f eld populated
    */
-  def hydrateTopicProofCandidatesWithEdgeStore(
-    inputTarget: TargetUser,
-    topicProofCandidates: Seq[TweetWithTopicProof],
-    edgeStore: ReadableStore[RelationEdge, Boolean],
-  ): Future[Seq[TweetWithTopicProof]] = {
-    // IDs of all authors of TopicProof candidates that are OON with respect to inputTarget
-    val validOONAuthorIdsFut =
-      Predicate.filter(
-        topicProofCandidates.flatMap(_.authorId).distinct,
-        authorNotBeingFollowedPredicate(inputTarget, edgeStore))
+  def hydrateTop cProofCand datesW hEdgeStore(
+     nputTarget: TargetUser,
+    top cProofCand dates: Seq[T etW hTop cProof],
+    edgeStore: ReadableStore[Relat onEdge, Boolean],
+  ): Future[Seq[T etW hTop cProof]] = {
+    //  Ds of all authors of Top cProof cand dates that are OON w h respect to  nputTarget
+    val val dOONAuthor dsFut =
+      Pred cate.f lter(
+        top cProofCand dates.flatMap(_.author d).d st nct,
+        authorNotBe ngFollo dPred cate( nputTarget, edgeStore))
 
-    validOONAuthorIdsFut.map { validOONAuthorIds =>
-      topicProofCandidates.map(candidate => {
-        candidate.copy(isOON =
-          candidate.authorId.isDefined && validOONAuthorIds.contains(candidate.authorId.get))
+    val dOONAuthor dsFut.map { val dOONAuthor ds =>
+      top cProofCand dates.map(cand date => {
+        cand date.copy( sOON =
+          cand date.author d. sDef ned && val dOONAuthor ds.conta ns(cand date.author d.get))
       })
     }
   }

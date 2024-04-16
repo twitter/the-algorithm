@@ -1,114 +1,114 @@
-package com.twitter.search.common.relevance.config;
+package com.tw ter.search.common.relevance.conf g;
 
-import java.io.InputStream;
+ mport java. o. nputStream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.config.ConfigFile;
+ mport com.tw ter.search.common.conf g.Conf gF le;
 
 /**
- * Config file for relevance computation.
+ * Conf g f le for relevance computat on.
  */
-public final class TweetProcessingConfig {
-  private static final Logger LOG = LoggerFactory.getLogger(TweetProcessingConfig.class);
-  private static final String SCORER_CONFIG_DIR = "common/relevance/config";
-  public static final String DEFAULT_CONFIG_FILE = "relevance.yml";
-  private static ConfigFile relevanceConfig = null;
+publ c f nal class T etProcess ngConf g {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(T etProcess ngConf g.class);
+  pr vate stat c f nal Str ng SCORER_CONF G_D R = "common/relevance/conf g";
+  publ c stat c f nal Str ng DEFAULT_CONF G_F LE = "relevance.yml";
+  pr vate stat c Conf gF le relevanceConf g = null;
 
-  private TweetProcessingConfig() {
+  pr vate T etProcess ngConf g() {
   }
 
-  /** Initializes this instance from the given config file. */
-  public static void init(String configFile) {
-    if (relevanceConfig == null) {
-      synchronized (TweetProcessingConfig.class) {
-        if (relevanceConfig == null) {
-          String file = configFile == null ? DEFAULT_CONFIG_FILE : configFile;
-          relevanceConfig = new ConfigFile(SCORER_CONFIG_DIR, file);
+  /**  n  al zes t   nstance from t  g ven conf g f le. */
+  publ c stat c vo d  n (Str ng conf gF le) {
+     f (relevanceConf g == null) {
+      synchron zed (T etProcess ngConf g.class) {
+         f (relevanceConf g == null) {
+          Str ng f le = conf gF le == null ? DEFAULT_CONF G_F LE : conf gF le;
+          relevanceConf g = new Conf gF le(SCORER_CONF G_D R, f le);
         }
       }
     }
   }
 
-  /** Initializes this instance from the given input stream. */
-  public static void init(InputStream inputStream, String configType) {
-    if (relevanceConfig == null) {
-      synchronized (TweetProcessingConfig.class) {
-        if (relevanceConfig == null) {
-          relevanceConfig = new ConfigFile(inputStream, configType);
+  /**  n  al zes t   nstance from t  g ven  nput stream. */
+  publ c stat c vo d  n ( nputStream  nputStream, Str ng conf gType) {
+     f (relevanceConf g == null) {
+      synchron zed (T etProcess ngConf g.class) {
+         f (relevanceConf g == null) {
+          relevanceConf g = new Conf gF le( nputStream, conf gType);
         }
       }
     }
   }
 
-  /** Initializes this instance. */
-  public static void init() {
-    init(null);
+  /**  n  al zes t   nstance. */
+  publ c stat c vo d  n () {
+     n (null);
   }
 
   /**
-   * Returns the value of the given property as a double value.
+   * Returns t  value of t  g ven property as a double value.
    *
-   * @param property The property.
-   * @param defaultValue The default value to return if the property is not present in the config.
+   * @param property T  property.
+   * @param defaultValue T  default value to return  f t  property  s not present  n t  conf g.
    */
-  public static double getDouble(String property, double defaultValue) {
-    return relevanceConfig.getDouble(property, defaultValue);
+  publ c stat c double getDouble(Str ng property, double defaultValue) {
+    return relevanceConf g.getDouble(property, defaultValue);
   }
 
   /**
-   * Returns the value of the given property as a string value.
+   * Returns t  value of t  g ven property as a str ng value.
    *
-   * @param property The property.
-   * @param defaultValue The default value to return if the property is not present in the config.
+   * @param property T  property.
+   * @param defaultValue T  default value to return  f t  property  s not present  n t  conf g.
    */
-  public static String getString(String property, String defaultValue) {
-    return relevanceConfig.getString(property, defaultValue);
+  publ c stat c Str ng getStr ng(Str ng property, Str ng defaultValue) {
+    return relevanceConf g.getStr ng(property, defaultValue);
   }
 
   /**
-   * Returns the value of the given property as an integer value.
+   * Returns t  value of t  g ven property as an  nteger value.
    *
-   * @param property The property.
-   * @param defaultValue The default value to return if the property is not present in the config.
+   * @param property T  property.
+   * @param defaultValue T  default value to return  f t  property  s not present  n t  conf g.
    */
-  public static int getInt(String property, int defaultValue) {
-    return relevanceConfig.getInt(property, defaultValue);
+  publ c stat c  nt get nt(Str ng property,  nt defaultValue) {
+    return relevanceConf g.get nt(property, defaultValue);
   }
 
   /**
-   * Returns the value of the given property as a long value.
+   * Returns t  value of t  g ven property as a long value.
    *
-   * @param property The property.
-   * @param defaultValue The default value to return if the property is not present in the config.
+   * @param property T  property.
+   * @param defaultValue T  default value to return  f t  property  s not present  n t  conf g.
    */
-  public static long getLong(String property, long defaultValue) {
-    return relevanceConfig.getLong(property, defaultValue);
+  publ c stat c long getLong(Str ng property, long defaultValue) {
+    return relevanceConf g.getLong(property, defaultValue);
   }
 
   /**
-   * Returns the value of the given property as a boolean value.
+   * Returns t  value of t  g ven property as a boolean value.
    *
-   * @param property The property.
-   * @param defaultValue The default value to return if the property is not present in the config.
+   * @param property T  property.
+   * @param defaultValue T  default value to return  f t  property  s not present  n t  conf g.
    */
-  public static boolean getBool(String property, boolean defaultValue) {
-    return relevanceConfig.getBool(property, defaultValue);
+  publ c stat c boolean getBool(Str ng property, boolean defaultValue) {
+    return relevanceConf g.getBool(property, defaultValue);
   }
 
   /**
-   * Returns the value of the given property as a string.
+   * Returns t  value of t  g ven property as a str ng.
    *
-   * @param property The property.
-   * @throws ConfigurationException If the given property is not found in the config.
+   * @param property T  property.
+   * @throws Conf gurat onExcept on  f t  g ven property  s not found  n t  conf g.
    */
-  public static String getString(String property) {
+  publ c stat c Str ng getStr ng(Str ng property) {
     try {
-      return relevanceConfig.getString(property);
-    } catch (ConfigurationException e) {
-      LOG.error("Fatal error: could not get config string " + property, e);
-      throw new RuntimeException(e);
+      return relevanceConf g.getStr ng(property);
+    } catch (Conf gurat onExcept on e) {
+      LOG.error("Fatal error: could not get conf g str ng " + property, e);
+      throw new Runt  Except on(e);
     }
   }
 }

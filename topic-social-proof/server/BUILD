@@ -1,24 +1,24 @@
-jvm_binary(
-    name = "bin",
-    basename = "topic-social-proof",
-    main = "com.twitter.tsp.TopicSocialProofStratoFedServerMain",
-    runtime_platform = "java11",
+jvm_b nary(
+    na  = "b n",
+    basena  = "top c-soc al-proof",
+    ma n = "com.tw ter.tsp.Top cSoc alProofStratoFedServerMa n",
+    runt  _platform = "java11",
     tags = [
-        "bazel-compatible",
+        "bazel-compat ble",
     ],
-    dependencies = [
-        "strato/src/main/scala/com/twitter/strato/logging/logback",
-        "topic-social-proof/server/src/main/resources",
-        "topic-social-proof/server/src/main/scala/com/twitter/tsp",
+    dependenc es = [
+        "strato/src/ma n/scala/com/tw ter/strato/logg ng/logback",
+        "top c-soc al-proof/server/src/ma n/res ces",
+        "top c-soc al-proof/server/src/ma n/scala/com/tw ter/tsp",
     ],
 )
 
-#  Aurora Workflows build phase convention requires a jvm_app named with ${project-name}-app
+#  Aurora Workflows bu ld phase convent on requ res a jvm_app na d w h ${project-na }-app
 jvm_app(
-    name = "topic-social-proof-app",
-    archive = "zip",
-    binary = ":bin",
+    na  = "top c-soc al-proof-app",
+    arch ve = "z p",
+    b nary = ":b n",
     tags = [
-        "bazel-compatible",
+        "bazel-compat ble",
     ],
 )

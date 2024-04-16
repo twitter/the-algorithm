@@ -1,25 +1,25 @@
-package com.twitter.tweetypie.serverutil
+package com.tw ter.t etyp e.serverut l
 
-import com.twitter.finagle.Service
-import com.twitter.util.Activity
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.Serv ce
+ mport com.tw ter.ut l.Act v y
+ mport com.tw ter.ut l.Future
 
 /**
- * Transforms an `Activity` that contains a `Service` into a `Service`.
- * The implementation guarantees that the service is rebuilt only when the
- * activity changes, not on every request.
+ * Transforms an `Act v y` that conta ns a `Serv ce`  nto a `Serv ce`.
+ * T   mple ntat on guarantees that t  serv ce  s rebu lt only w n t 
+ * act v y changes, not on every request.
  */
-object ActivityService {
+object Act v yServ ce {
 
-  def apply[Req, Rep](activity: Activity[Service[Req, Rep]]): Service[Req, Rep] = {
+  def apply[Req, Rep](act v y: Act v y[Serv ce[Req, Rep]]): Serv ce[Req, Rep] = {
 
-    val serviceEvent =
-      ActivityUtil.strict(activity).values.map(_.get)
+    val serv ceEvent =
+      Act v yUt l.str ct(act v y).values.map(_.get)
 
-    new Service[Req, Rep] {
+    new Serv ce[Req, Rep] {
 
       def apply(req: Req): Future[Rep] =
-        serviceEvent.toFuture.flatMap(_.apply(req))
+        serv ceEvent.toFuture.flatMap(_.apply(req))
     }
   }
 }

@@ -1,131 +1,131 @@
-package com.twitter.search.earlybird.search.queries;
+package com.tw ter.search.earlyb rd.search.quer es;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
+ mport java. o. OExcept on;
+ mport java.ut l.Arrays;
+ mport java.ut l.Collect on;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+ mport org.apac .lucene. ndex.LeafReader;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene.search.BooleanClause;
+ mport org.apac .lucene.search.BooleanQuery;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.search. ndexSearc r;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .lucene.search.ScoreMode;
+ mport org.apac .lucene.search.  ght;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.common.search.IntArrayDocIdSetIterator;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.util.AllDocsIterator;
-import com.twitter.search.earlybird.index.TweetIDMapper;
+ mport com.tw ter.search.common.query.DefaultF lter  ght;
+ mport com.tw ter.search.common.search. ntArrayDoc dSet erator;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
+ mport com.tw ter.search.core.earlyb rd. ndex.ut l.AllDocs erator;
+ mport com.tw ter.search.earlyb rd. ndex.T et DMapper;
 
-public final class RequiredStatusIDsFilter extends Query {
-  private final Collection<Long> statusIDs;
+publ c f nal class Requ redStatus DsF lter extends Query {
+  pr vate f nal Collect on<Long> status Ds;
 
-  public static Query getRequiredStatusIDsQuery(Collection<Long> statusIDs) {
-    return new BooleanQuery.Builder()
-        .add(new RequiredStatusIDsFilter(statusIDs), BooleanClause.Occur.FILTER)
-        .build();
+  publ c stat c Query getRequ redStatus DsQuery(Collect on<Long> status Ds) {
+    return new BooleanQuery.Bu lder()
+        .add(new Requ redStatus DsF lter(status Ds), BooleanClause.Occur.F LTER)
+        .bu ld();
   }
 
-  private RequiredStatusIDsFilter(Collection<Long> statusIDs) {
-    this.statusIDs = Preconditions.checkNotNull(statusIDs);
+  pr vate Requ redStatus DsF lter(Collect on<Long> status Ds) {
+    t .status Ds = Precond  ons.c ckNotNull(status Ds);
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
+  @Overr de
+  publ c   ght create  ght( ndexSearc r searc r, ScoreMode scoreMode, float boost) {
+    return new DefaultF lter  ght(t ) {
+      @Overr de
+      protected Doc dSet erator getDoc dSet erator(LeafReaderContext context) throws  OExcept on {
         LeafReader leafReader = context.reader();
-        if (!(leafReader instanceof EarlybirdIndexSegmentAtomicReader)) {
-          return DocIdSetIterator.empty();
+         f (!(leafReader  nstanceof Earlyb rd ndexSeg ntAtom cReader)) {
+          return Doc dSet erator.empty();
         }
 
-        EarlybirdIndexSegmentAtomicReader reader = (EarlybirdIndexSegmentAtomicReader) leafReader;
-        TweetIDMapper idMapper = (TweetIDMapper) reader.getSegmentData().getDocIDToTweetIDMapper();
+        Earlyb rd ndexSeg ntAtom cReader reader = (Earlyb rd ndexSeg ntAtom cReader) leafReader;
+        T et DMapper  dMapper = (T et DMapper) reader.getSeg ntData().getDoc DToT et DMapper();
 
-        int docIdsSize = 0;
-        int[] docIds = new int[statusIDs.size()];
-        for (long statusID : statusIDs) {
-          int docId = idMapper.getDocID(statusID);
-          if (docId >= 0) {
-            docIds[docIdsSize++] = docId;
+         nt doc dsS ze = 0;
+         nt[] doc ds = new  nt[status Ds.s ze()];
+        for (long status D : status Ds) {
+           nt doc d =  dMapper.getDoc D(status D);
+           f (doc d >= 0) {
+            doc ds[doc dsS ze++] = doc d;
           }
         }
 
-        Arrays.sort(docIds, 0, docIdsSize);
-        DocIdSetIterator statusesDISI =
-            new IntArrayDocIdSetIterator(Arrays.copyOf(docIds, docIdsSize));
-        DocIdSetIterator allDocsDISI = new AllDocsIterator(reader);
+        Arrays.sort(doc ds, 0, doc dsS ze);
+        Doc dSet erator statusesD S  =
+            new  ntArrayDoc dSet erator(Arrays.copyOf(doc ds, doc dsS ze));
+        Doc dSet erator allDocsD S  = new AllDocs erator(reader);
 
-        // We only want to return IDs for fully indexed documents. So we need to make sure that
-        // every doc ID we return exists in allDocsDISI. However, allDocsDISI has all documents in
-        // this segment, so driving by allDocsDISI would be very slow. So we want to drive by
-        // statusesDISI, and use allDocsDISI as a post-filter. What this comes down to is that we do
-        // not want to call allDocsDISI.nextDoc(); we only want to call allDocsDISI.advance(), and
-        // only on the doc IDs returned by statusesDISI.
-        return new DocIdSetIterator() {
-          @Override
-          public int docID() {
-            return statusesDISI.docID();
+        //   only want to return  Ds for fully  ndexed docu nts. So   need to make sure that
+        // every doc  D   return ex sts  n allDocsD S . Ho ver, allDocsD S  has all docu nts  n
+        // t  seg nt, so dr v ng by allDocsD S  would be very slow. So   want to dr ve by
+        // statusesD S , and use allDocsD S  as a post-f lter. What t  co s down to  s that   do
+        // not want to call allDocsD S .nextDoc();   only want to call allDocsD S .advance(), and
+        // only on t  doc  Ds returned by statusesD S .
+        return new Doc dSet erator() {
+          @Overr de
+          publ c  nt doc D() {
+            return statusesD S .doc D();
           }
 
-          @Override
-          public int nextDoc() throws IOException {
-            statusesDISI.nextDoc();
-            return advanceToNextFullyIndexedDoc();
+          @Overr de
+          publ c  nt nextDoc() throws  OExcept on {
+            statusesD S .nextDoc();
+            return advanceToNextFully ndexedDoc();
           }
 
-          @Override
-          public int advance(int target) throws IOException {
-            statusesDISI.advance(target);
-            return advanceToNextFullyIndexedDoc();
+          @Overr de
+          publ c  nt advance( nt target) throws  OExcept on {
+            statusesD S .advance(target);
+            return advanceToNextFully ndexedDoc();
           }
 
-          private int advanceToNextFullyIndexedDoc() throws IOException {
-            while (docID() != DocIdSetIterator.NO_MORE_DOCS) {
-              // Check if the current doc is fully indexed.
-              // If it is, then we can return it. If it's not, then we need to keep searching.
-              int allDocsDocId = allDocsDISI.advance(docID());
-              if (allDocsDocId == docID()) {
+          pr vate  nt advanceToNextFully ndexedDoc() throws  OExcept on {
+            wh le (doc D() != Doc dSet erator.NO_MORE_DOCS) {
+              // C ck  f t  current doc  s fully  ndexed.
+              //  f    s, t n   can return  .  f  's not, t n   need to keep search ng.
+               nt allDocsDoc d = allDocsD S .advance(doc D());
+               f (allDocsDoc d == doc D()) {
                 break;
               }
 
-              statusesDISI.advance(allDocsDocId);
+              statusesD S .advance(allDocsDoc d);
             }
-            return docID();
+            return doc D();
           }
 
-          @Override
-          public long cost() {
-            return statusesDISI.cost();
+          @Overr de
+          publ c long cost() {
+            return statusesD S .cost();
           }
         };
       }
     };
   }
 
-  @Override
-  public int hashCode() {
-    return statusIDs.hashCode();
+  @Overr de
+  publ c  nt hashCode() {
+    return status Ds.hashCode();
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof RequiredStatusIDsFilter)) {
+  @Overr de
+  publ c boolean equals(Object obj) {
+     f (!(obj  nstanceof Requ redStatus DsF lter)) {
       return false;
     }
 
-    RequiredStatusIDsFilter filter = RequiredStatusIDsFilter.class.cast(obj);
-    return statusIDs.equals(filter.statusIDs);
+    Requ redStatus DsF lter f lter = Requ redStatus DsF lter.class.cast(obj);
+    return status Ds.equals(f lter.status Ds);
   }
 
-  @Override
-  public final String toString(String field) {
-    return String.format("RequiredStatusIDs[%s]", statusIDs);
+  @Overr de
+  publ c f nal Str ng toStr ng(Str ng f eld) {
+    return Str ng.format("Requ redStatus Ds[%s]", status Ds);
   }
 }

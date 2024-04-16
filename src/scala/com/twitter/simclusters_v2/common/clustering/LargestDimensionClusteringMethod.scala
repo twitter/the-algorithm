@@ -1,33 +1,33 @@
-package com.twitter.simclusters_v2.common.clustering
+package com.tw ter.s mclusters_v2.common.cluster ng
 
 /**
- * Groups entities by a single embedding dimension with the largest score.
+ * Groups ent  es by a s ngle embedd ng d  ns on w h t  largest score.
  */
-class LargestDimensionClusteringMethod extends ClusteringMethod {
+class LargestD  ns onCluster ng thod extends Cluster ng thod {
 
   /**
-   * @param embeddings   map of entity IDs and corresponding embeddings
-   * @param similarityFn function that outputs discrete value (0.0 or 1.0).
-   *                     1.0 if the dimensions of the highest score (weight) from two given embeddings match.
-   *                     0.0 otherwise.
+   * @param embedd ngs   map of ent y  Ds and correspond ng embedd ngs
+   * @param s m lar yFn funct on that outputs d screte value (0.0 or 1.0).
+   *                     1.0  f t  d  ns ons of t  h g st score (  ght) from two g ven embedd ngs match.
+   *                     0.0 ot rw se.
    *                     e.g.
-   *                        case 1: E1=[0.0, 0.1, 0.6, 0.2], E2=[0.1, 0.3, 0.8, 0.0]. similarityFn(E1, E2)=1.0
-   *                        case 2: E1=[0.0, 0.1, 0.6, 0.2], E2=[0.1, 0.4, 0.2, 0.0]. similarityFn(E1, E2)=0.0
-   * @tparam T embedding type. e.g. SimClustersEmbedding
+   *                        case 1: E1=[0.0, 0.1, 0.6, 0.2], E2=[0.1, 0.3, 0.8, 0.0]. s m lar yFn(E1, E2)=1.0
+   *                        case 2: E1=[0.0, 0.1, 0.6, 0.2], E2=[0.1, 0.4, 0.2, 0.0]. s m lar yFn(E1, E2)=0.0
+   * @tparam T embedd ng type. e.g. S mClustersEmbedd ng
    *
-   * @return A set of sets of entity IDs, each set representing a distinct cluster.
+   * @return A set of sets of ent y  Ds, each set represent ng a d st nct cluster.
    */
-  override def cluster[T](
-    embeddings: Map[Long, T],
-    similarityFn: (T, T) => Double,
-    recordStatCallback: (String, Long) => Unit
+  overr de def cluster[T](
+    embedd ngs: Map[Long, T],
+    s m lar yFn: (T, T) => Double,
+    recordStatCallback: (Str ng, Long) => Un 
   ): Set[Set[Long]] = {
 
-    // rely on clustering by connected component.
-    // similarityThreshold=0.1 because it's larger than 0.0 (similarityFn returns 0.0 if two embeddings
-    // don't share the largest dimension.
-    new ConnectedComponentsClusteringMethod(similarityThreshold = 0.1)
-      .cluster(embeddings, similarityFn, recordStatCallback)
+    // rely on cluster ng by connected component.
+    // s m lar yThreshold=0.1 because  's larger than 0.0 (s m lar yFn returns 0.0  f two embedd ngs
+    // don't share t  largest d  ns on.
+    new ConnectedComponentsCluster ng thod(s m lar yThreshold = 0.1)
+      .cluster(embedd ngs, s m lar yFn, recordStatCallback)
   }
 
 }

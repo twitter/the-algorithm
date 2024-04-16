@@ -1,96 +1,96 @@
-package com.twitter.visibility.interfaces.users
+package com.tw ter.v s b l y. nterfaces.users
 
-import com.twitter.decider.Decider
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Client
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.builder.users.ViewerAdvancedFilteringFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.builder.users.ViewerSearchSafetyFeatures
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.users.SearchFeatures
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSearchSafetySource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.context.thriftscala.UserVisibilityFilteringContext
-import com.twitter.visibility.models.ContentId.UserId
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.rules.Reason.Unspecified
-import com.twitter.visibility.rules.Allow
-import com.twitter.visibility.rules.Drop
-import com.twitter.visibility.rules.RuleBase
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter.servo.dec der.Dec derGateBu lder
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.cl ent.Cl ent
+ mport com.tw ter.v s b l y.V s b l yL brary
+ mport com.tw ter.v s b l y.bu lder.users.AuthorFeatures
+ mport com.tw ter.v s b l y.bu lder.users.Relat onsh pFeatures
+ mport com.tw ter.v s b l y.bu lder.users.V e rAdvancedF lter ngFeatures
+ mport com.tw ter.v s b l y.bu lder.users.V e rFeatures
+ mport com.tw ter.v s b l y.bu lder.users.V e rSearchSafetyFeatures
+ mport com.tw ter.v s b l y.bu lder.V s b l yResult
+ mport com.tw ter.v s b l y.bu lder.users.SearchFeatures
+ mport com.tw ter.v s b l y.common.UserRelat onsh pS ce
+ mport com.tw ter.v s b l y.common.UserSearchSafetyS ce
+ mport com.tw ter.v s b l y.common.UserS ce
+ mport com.tw ter.v s b l y.conf gap .conf gs.V s b l yDec derGates
+ mport com.tw ter.v s b l y.context.thr ftscala.UserV s b l yF lter ngContext
+ mport com.tw ter.v s b l y.models.Content d.User d
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.models.V e rContext
+ mport com.tw ter.v s b l y.rules.Reason.Unspec f ed
+ mport com.tw ter.v s b l y.rules.Allow
+ mport com.tw ter.v s b l y.rules.Drop
+ mport com.tw ter.v s b l y.rules.RuleBase
 
-object UserVisibilityLibrary {
+object UserV s b l yL brary {
   type Type =
-    (User, SafetyLevel, ViewerContext, UserVisibilityFilteringContext) => Stitch[VisibilityResult]
+    (User, SafetyLevel, V e rContext, UserV s b l yF lter ngContext) => St ch[V s b l yResult]
 
   def apply(
-    visibilityLibrary: VisibilityLibrary,
-    userSource: UserSource = UserSource.empty,
-    userRelationshipSource: UserRelationshipSource = UserRelationshipSource.empty,
-    stratoClient: Client,
-    decider: Decider
+    v s b l yL brary: V s b l yL brary,
+    userS ce: UserS ce = UserS ce.empty,
+    userRelat onsh pS ce: UserRelat onsh pS ce = UserRelat onsh pS ce.empty,
+    stratoCl ent: Cl ent,
+    dec der: Dec der
   ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver.scope("user_library")
-    val stratoClientStatsReceiver = visibilityLibrary.statsReceiver.scope("strato")
+    val l braryStatsRece ver = v s b l yL brary.statsRece ver.scope("user_l brary")
+    val stratoCl entStatsRece ver = v s b l yL brary.statsRece ver.scope("strato")
 
-    val visibilityDeciderGates = VisibilityDeciderGates(decider)
+    val v s b l yDec derGates = V s b l yDec derGates(dec der)
 
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
-    val noUserRulesCounter = libraryStatsReceiver.counter("no_user_rules_requests")
-    val viewerIsAuthorCounter = libraryStatsReceiver.counter("viewer_is_author_requests")
+    val vfEng neCounter = l braryStatsRece ver.counter("vf_eng ne_requests")
+    val noUserRulesCounter = l braryStatsRece ver.counter("no_user_rules_requests")
+    val v e r sAuthorCounter = l braryStatsRece ver.counter("v e r_ s_author_requests")
 
-    val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
-    val viewerFeatures = new ViewerFeatures(userSource, libraryStatsReceiver)
-    val relationshipFeatures =
-      new RelationshipFeatures(userRelationshipSource, libraryStatsReceiver)
-    val searchFeatures = new SearchFeatures(libraryStatsReceiver)
+    val authorFeatures = new AuthorFeatures(userS ce, l braryStatsRece ver)
+    val v e rFeatures = new V e rFeatures(userS ce, l braryStatsRece ver)
+    val relat onsh pFeatures =
+      new Relat onsh pFeatures(userRelat onsh pS ce, l braryStatsRece ver)
+    val searchFeatures = new SearchFeatures(l braryStatsRece ver)
 
-    val viewerSafeSearchFeatures = new ViewerSearchSafetyFeatures(
-      UserSearchSafetySource.fromStrato(stratoClient, stratoClientStatsReceiver),
-      libraryStatsReceiver)
+    val v e rSafeSearchFeatures = new V e rSearchSafetyFeatures(
+      UserSearchSafetyS ce.fromStrato(stratoCl ent, stratoCl entStatsRece ver),
+      l braryStatsRece ver)
 
-    val deciderGateBuilder = new DeciderGateBuilder(decider)
-    val advancedFilteringFeatures =
-      new ViewerAdvancedFilteringFeatures(userSource, libraryStatsReceiver)
+    val dec derGateBu lder = new Dec derGateBu lder(dec der)
+    val advancedF lter ngFeatures =
+      new V e rAdvancedF lter ngFeatures(userS ce, l braryStatsRece ver)
 
-    (user, safetyLevel, viewerContext, userVisibilityFilteringContext) => {
-      val contentId = UserId(user.id)
-      val viewerId = viewerContext.userId
+    (user, safetyLevel, v e rContext, userV s b l yF lter ngContext) => {
+      val content d = User d(user. d)
+      val v e r d = v e rContext.user d
 
-      if (!RuleBase.hasUserRules(safetyLevel)) {
-        noUserRulesCounter.incr()
-        Stitch.value(VisibilityResult(contentId = contentId, verdict = Allow))
+       f (!RuleBase.hasUserRules(safetyLevel)) {
+        noUserRulesCounter. ncr()
+        St ch.value(V s b l yResult(content d = content d, verd ct = Allow))
       } else {
-        if (viewerId.contains(user.id)) {
-          viewerIsAuthorCounter.incr()
+         f (v e r d.conta ns(user. d)) {
+          v e r sAuthorCounter. ncr()
 
-          Stitch.value(VisibilityResult(contentId = contentId, verdict = Allow))
+          St ch.value(V s b l yResult(content d = content d, verd ct = Allow))
         } else {
-          vfEngineCounter.incr()
+          vfEng neCounter. ncr()
 
           val featureMap =
-            visibilityLibrary.featureMapBuilder(
+            v s b l yL brary.featureMapBu lder(
               Seq(
-                viewerFeatures.forViewerContext(viewerContext),
-                viewerSafeSearchFeatures.forViewerId(viewerId),
-                relationshipFeatures.forAuthor(user, viewerId),
+                v e rFeatures.forV e rContext(v e rContext),
+                v e rSafeSearchFeatures.forV e r d(v e r d),
+                relat onsh pFeatures.forAuthor(user, v e r d),
                 authorFeatures.forAuthor(user),
-                advancedFilteringFeatures.forViewerId(viewerId),
-                searchFeatures.forSearchContext(userVisibilityFilteringContext.searchContext)
+                advancedF lter ngFeatures.forV e r d(v e r d),
+                searchFeatures.forSearchContext(userV s b l yF lter ngContext.searchContext)
               )
             )
 
-          visibilityLibrary.runRuleEngine(
-            contentId,
+          v s b l yL brary.runRuleEng ne(
+            content d,
             featureMap,
-            viewerContext,
+            v e rContext,
             safetyLevel
           )
 
@@ -101,11 +101,11 @@ object UserVisibilityLibrary {
 
   def Const(shouldDrop: Boolean): Type =
     (user, _, _, _) =>
-      Stitch.value(
-        VisibilityResult(
-          contentId = UserId(user.id),
-          verdict = if (shouldDrop) Drop(Unspecified) else Allow,
-          finished = true
+      St ch.value(
+        V s b l yResult(
+          content d = User d(user. d),
+          verd ct =  f (shouldDrop) Drop(Unspec f ed) else Allow,
+          f n s d = true
         )
       )
 }

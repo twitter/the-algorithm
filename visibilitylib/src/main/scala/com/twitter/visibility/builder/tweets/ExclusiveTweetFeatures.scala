@@ -1,65 +1,65 @@
-package com.twitter.visibility.builder.tweets
+package com.tw ter.v s b l y.bu lder.t ets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.builder.users.ViewerVerbsAuthor
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.features.TweetIsExclusiveTweet
-import com.twitter.visibility.features.ViewerIsExclusiveTweetRootAuthor
-import com.twitter.visibility.features.ViewerSuperFollowsExclusiveTweetRootAuthor
-import com.twitter.visibility.models.ViewerContext
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.bu lder.users.V e rVerbsAuthor
+ mport com.tw ter.v s b l y.common.UserRelat onsh pS ce
+ mport com.tw ter.v s b l y.features.T et sExclus veT et
+ mport com.tw ter.v s b l y.features.V e r sExclus veT etRootAuthor
+ mport com.tw ter.v s b l y.features.V e rSuperFollowsExclus veT etRootAuthor
+ mport com.tw ter.v s b l y.models.V e rContext
 
-class ExclusiveTweetFeatures(
-  userRelationshipSource: UserRelationshipSource,
-  statsReceiver: StatsReceiver) {
+class Exclus veT etFeatures(
+  userRelat onsh pS ce: UserRelat onsh pS ce,
+  statsRece ver: StatsRece ver) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("exclusive_tweet_features")
-  private[this] val viewerSuperFollowsAuthor =
-    scopedStatsReceiver.scope(ViewerSuperFollowsExclusiveTweetRootAuthor.name).counter("requests")
+  pr vate[t ] val scopedStatsRece ver = statsRece ver.scope("exclus ve_t et_features")
+  pr vate[t ] val v e rSuperFollowsAuthor =
+    scopedStatsRece ver.scope(V e rSuperFollowsExclus veT etRootAuthor.na ).counter("requests")
 
-  def rootAuthorId(tweet: Tweet): Option[Long] =
-    tweet.exclusiveTweetControl.map(_.conversationAuthorId)
+  def rootAuthor d(t et: T et): Opt on[Long] =
+    t et.exclus veT etControl.map(_.conversat onAuthor d)
 
-  def viewerIsRootAuthor(
-    tweet: Tweet,
-    viewerIdOpt: Option[Long]
+  def v e r sRootAuthor(
+    t et: T et,
+    v e r dOpt: Opt on[Long]
   ): Boolean =
-    (rootAuthorId(tweet), viewerIdOpt) match {
-      case (Some(rootAuthorId), Some(viewerId)) if rootAuthorId == viewerId => true
+    (rootAuthor d(t et), v e r dOpt) match {
+      case (So (rootAuthor d), So (v e r d))  f rootAuthor d == v e r d => true
       case _ => false
     }
 
-  def viewerSuperFollowsRootAuthor(
-    tweet: Tweet,
-    viewerId: Option[Long]
-  ): Stitch[Boolean] =
-    rootAuthorId(tweet) match {
-      case Some(authorId) =>
-        ViewerVerbsAuthor(
-          authorId,
-          viewerId,
-          userRelationshipSource.superFollows,
-          viewerSuperFollowsAuthor)
+  def v e rSuperFollowsRootAuthor(
+    t et: T et,
+    v e r d: Opt on[Long]
+  ): St ch[Boolean] =
+    rootAuthor d(t et) match {
+      case So (author d) =>
+        V e rVerbsAuthor(
+          author d,
+          v e r d,
+          userRelat onsh pS ce.superFollows,
+          v e rSuperFollowsAuthor)
       case None =>
-        Stitch.False
+        St ch.False
     }
 
-  def forTweet(
-    tweet: Tweet,
-    viewerContext: ViewerContext
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    val viewerId = viewerContext.userId
+  def forT et(
+    t et: T et,
+    v e rContext: V e rContext
+  ): FeatureMapBu lder => FeatureMapBu lder = {
+    val v e r d = v e rContext.user d
 
-    _.withConstantFeature(TweetIsExclusiveTweet, tweet.exclusiveTweetControl.isDefined)
-      .withConstantFeature(ViewerIsExclusiveTweetRootAuthor, viewerIsRootAuthor(tweet, viewerId))
-      .withFeature(
-        ViewerSuperFollowsExclusiveTweetRootAuthor,
-        viewerSuperFollowsRootAuthor(tweet, viewerId))
+    _.w hConstantFeature(T et sExclus veT et, t et.exclus veT etControl. sDef ned)
+      .w hConstantFeature(V e r sExclus veT etRootAuthor, v e r sRootAuthor(t et, v e r d))
+      .w hFeature(
+        V e rSuperFollowsExclus veT etRootAuthor,
+        v e rSuperFollowsRootAuthor(t et, v e r d))
   }
 
-  def forTweetOnly(tweet: Tweet): FeatureMapBuilder => FeatureMapBuilder = {
-    _.withConstantFeature(TweetIsExclusiveTweet, tweet.exclusiveTweetControl.isDefined)
+  def forT etOnly(t et: T et): FeatureMapBu lder => FeatureMapBu lder = {
+    _.w hConstantFeature(T et sExclus veT et, t et.exclus veT etControl. sDef ned)
   }
 }

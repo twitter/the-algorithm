@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.cover
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover
 
-sealed trait FullCoverDisplayType
+sealed tra  FullCoverD splayType
 
-case object CoverFullCoverDisplayType extends FullCoverDisplayType
+case object CoverFullCoverD splayType extends FullCoverD splayType

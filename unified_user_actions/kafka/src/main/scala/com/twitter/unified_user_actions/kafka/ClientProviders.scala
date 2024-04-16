@@ -1,141 +1,141 @@
-package com.twitter.unified_user_actions.kafka
+package com.tw ter.un f ed_user_act ons.kafka
 
-import com.twitter.conversions.StorageUnitOps._
-import com.twitter.finatra.kafka.consumers.FinagleKafkaConsumerBuilder
-import com.twitter.finatra.kafka.domain.AckMode
-import com.twitter.finatra.kafka.domain.KafkaGroupId
-import com.twitter.finatra.kafka.producers.BlockingFinagleKafkaProducer
-import com.twitter.finatra.kafka.producers.FinagleKafkaProducerBuilder
-import com.twitter.kafka.client.processor.ThreadSafeKafkaConsumerClient
-import com.twitter.util.logging.Logging
-import com.twitter.util.Duration
-import com.twitter.util.StorageUnit
-import org.apache.kafka.clients.CommonClientConfigs
-import org.apache.kafka.clients.producer.ProducerConfig
-import org.apache.kafka.common.config.SaslConfigs
-import org.apache.kafka.common.config.SslConfigs
-import org.apache.kafka.common.record.CompressionType
-import org.apache.kafka.common.security.auth.SecurityProtocol
-import org.apache.kafka.common.serialization.Deserializer
-import org.apache.kafka.common.serialization.Serializer
+ mport com.tw ter.convers ons.StorageUn Ops._
+ mport com.tw ter.f natra.kafka.consu rs.F nagleKafkaConsu rBu lder
+ mport com.tw ter.f natra.kafka.doma n.AckMode
+ mport com.tw ter.f natra.kafka.doma n.KafkaGroup d
+ mport com.tw ter.f natra.kafka.producers.Block ngF nagleKafkaProducer
+ mport com.tw ter.f natra.kafka.producers.F nagleKafkaProducerBu lder
+ mport com.tw ter.kafka.cl ent.processor.ThreadSafeKafkaConsu rCl ent
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.StorageUn 
+ mport org.apac .kafka.cl ents.CommonCl entConf gs
+ mport org.apac .kafka.cl ents.producer.ProducerConf g
+ mport org.apac .kafka.common.conf g.SaslConf gs
+ mport org.apac .kafka.common.conf g.SslConf gs
+ mport org.apac .kafka.common.record.Compress onType
+ mport org.apac .kafka.common.secur y.auth.Secur yProtocol
+ mport org.apac .kafka.common.ser al zat on.Deser al zer
+ mport org.apac .kafka.common.ser al zat on.Ser al zer
 
 /**
- * A Utility class mainly provides raw Kafka producer/consumer supports
+ * A Ut l y class ma nly prov des raw Kafka producer/consu r supports
  */
-object ClientProviders extends Logging {
+object Cl entProv ders extends Logg ng {
 
   /**
-   * Provide a Finagle-thread-safe-and-compatible Kafka consumer.
-   * For the params and their significance, please see [[ClientConfigs]]
+   * Prov de a F nagle-thread-safe-and-compat ble Kafka consu r.
+   * For t  params and t  r s gn f cance, please see [[Cl entConf gs]]
    */
-  def mkConsumer[CK, CV](
-    bootstrapServer: String,
-    keySerde: Deserializer[CK],
-    valueSerde: Deserializer[CV],
-    groupId: String,
-    autoCommit: Boolean = false,
-    maxPollRecords: Int = ClientConfigs.consumerMaxPollRecordsDefault,
-    maxPollInterval: Duration = ClientConfigs.consumerMaxPollIntervalDefault,
-    autoCommitInterval: Duration = ClientConfigs.kafkaCommitIntervalDefault,
-    sessionTimeout: Duration = ClientConfigs.consumerSessionTimeoutDefault,
-    fetchMax: StorageUnit = ClientConfigs.consumerFetchMaxDefault,
-    fetchMin: StorageUnit = ClientConfigs.consumerFetchMinDefault,
-    receiveBuffer: StorageUnit = ClientConfigs.consumerReceiveBufferSizeDefault,
-    trustStoreLocationOpt: Option[String] = Some(ClientConfigs.trustStoreLocationDefault)
-  ): ThreadSafeKafkaConsumerClient[CK, CV] = {
-    val baseBuilder =
-      FinagleKafkaConsumerBuilder[CK, CV]()
-        .keyDeserializer(keySerde)
-        .valueDeserializer(valueSerde)
+  def mkConsu r[CK, CV](
+    bootstrapServer: Str ng,
+    keySerde: Deser al zer[CK],
+    valueSerde: Deser al zer[CV],
+    group d: Str ng,
+    autoComm : Boolean = false,
+    maxPollRecords:  nt = Cl entConf gs.consu rMaxPollRecordsDefault,
+    maxPoll nterval: Durat on = Cl entConf gs.consu rMaxPoll ntervalDefault,
+    autoComm  nterval: Durat on = Cl entConf gs.kafkaComm  ntervalDefault,
+    sess onT  out: Durat on = Cl entConf gs.consu rSess onT  outDefault,
+    fetchMax: StorageUn  = Cl entConf gs.consu rFetchMaxDefault,
+    fetchM n: StorageUn  = Cl entConf gs.consu rFetchM nDefault,
+    rece veBuffer: StorageUn  = Cl entConf gs.consu rRece veBufferS zeDefault,
+    trustStoreLocat onOpt: Opt on[Str ng] = So (Cl entConf gs.trustStoreLocat onDefault)
+  ): ThreadSafeKafkaConsu rCl ent[CK, CV] = {
+    val baseBu lder =
+      F nagleKafkaConsu rBu lder[CK, CV]()
+        .keyDeser al zer(keySerde)
+        .valueDeser al zer(valueSerde)
         .dest(bootstrapServer)
-        .groupId(KafkaGroupId(groupId))
-        .enableAutoCommit(autoCommit)
+        .group d(KafkaGroup d(group d))
+        .enableAutoComm (autoComm )
         .maxPollRecords(maxPollRecords)
-        .maxPollInterval(maxPollInterval)
-        .autoCommitInterval(autoCommitInterval)
-        .receiveBuffer(receiveBuffer)
-        .sessionTimeout(sessionTimeout)
+        .maxPoll nterval(maxPoll nterval)
+        .autoComm  nterval(autoComm  nterval)
+        .rece veBuffer(rece veBuffer)
+        .sess onT  out(sess onT  out)
         .fetchMax(fetchMax)
-        .fetchMin(fetchMin)
-        .withConfig(
-          CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,
-          SecurityProtocol.PLAINTEXT.toString)
+        .fetchM n(fetchM n)
+        .w hConf g(
+          CommonCl entConf gs.SECUR TY_PROTOCOL_CONF G,
+          Secur yProtocol.PLA NTEXT.toStr ng)
 
-    trustStoreLocationOpt
-      .map { trustStoreLocation =>
-        new ThreadSafeKafkaConsumerClient[CK, CV](
-          baseBuilder
-            .withConfig(
-              CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,
-              SecurityProtocol.SASL_SSL.toString)
-            .withConfig(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, trustStoreLocation)
-            .withConfig(SaslConfigs.SASL_MECHANISM, SaslConfigs.GSSAPI_MECHANISM)
-            .withConfig(SaslConfigs.SASL_KERBEROS_SERVICE_NAME, "kafka")
-            .withConfig(SaslConfigs.SASL_KERBEROS_SERVER_NAME, "kafka")
-            .config)
+    trustStoreLocat onOpt
+      .map { trustStoreLocat on =>
+        new ThreadSafeKafkaConsu rCl ent[CK, CV](
+          baseBu lder
+            .w hConf g(
+              CommonCl entConf gs.SECUR TY_PROTOCOL_CONF G,
+              Secur yProtocol.SASL_SSL.toStr ng)
+            .w hConf g(SslConf gs.SSL_TRUSTSTORE_LOCAT ON_CONF G, trustStoreLocat on)
+            .w hConf g(SaslConf gs.SASL_MECHAN SM, SaslConf gs.GSSAP _MECHAN SM)
+            .w hConf g(SaslConf gs.SASL_KERBEROS_SERV CE_NAME, "kafka")
+            .w hConf g(SaslConf gs.SASL_KERBEROS_SERVER_NAME, "kafka")
+            .conf g)
       }.getOrElse {
-        new ThreadSafeKafkaConsumerClient[CK, CV](
-          baseBuilder
-            .withConfig(
-              CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,
-              SecurityProtocol.PLAINTEXT.toString)
-            .config)
+        new ThreadSafeKafkaConsu rCl ent[CK, CV](
+          baseBu lder
+            .w hConf g(
+              CommonCl entConf gs.SECUR TY_PROTOCOL_CONF G,
+              Secur yProtocol.PLA NTEXT.toStr ng)
+            .conf g)
       }
   }
 
   /**
-   * Provide a Finagle-compatible Kafka producer.
-   * For the params and their significance, please see [[ClientConfigs]]
+   * Prov de a F nagle-compat ble Kafka producer.
+   * For t  params and t  r s gn f cance, please see [[Cl entConf gs]]
    */
   def mkProducer[PK, PV](
-    bootstrapServer: String,
-    keySerde: Serializer[PK],
-    valueSerde: Serializer[PV],
-    clientId: String,
-    idempotence: Boolean = ClientConfigs.producerIdempotenceDefault,
-    batchSize: StorageUnit = ClientConfigs.producerBatchSizeDefault,
-    linger: Duration = ClientConfigs.producerLingerDefault,
-    bufferMem: StorageUnit = ClientConfigs.producerBufferMemDefault,
-    compressionType: CompressionType = ClientConfigs.compressionDefault.compressionType,
-    retries: Int = ClientConfigs.retriesDefault,
-    retryBackoff: Duration = ClientConfigs.retryBackoffDefault,
-    requestTimeout: Duration = ClientConfigs.producerRequestTimeoutDefault,
-    trustStoreLocationOpt: Option[String] = Some(ClientConfigs.trustStoreLocationDefault)
-  ): BlockingFinagleKafkaProducer[PK, PV] = {
-    val baseBuilder = FinagleKafkaProducerBuilder[PK, PV]()
-      .keySerializer(keySerde)
-      .valueSerializer(valueSerde)
+    bootstrapServer: Str ng,
+    keySerde: Ser al zer[PK],
+    valueSerde: Ser al zer[PV],
+    cl ent d: Str ng,
+     dempotence: Boolean = Cl entConf gs.producer dempotenceDefault,
+    batchS ze: StorageUn  = Cl entConf gs.producerBatchS zeDefault,
+    l nger: Durat on = Cl entConf gs.producerL ngerDefault,
+    buffer m: StorageUn  = Cl entConf gs.producerBuffer mDefault,
+    compress onType: Compress onType = Cl entConf gs.compress onDefault.compress onType,
+    retr es:  nt = Cl entConf gs.retr esDefault,
+    retryBackoff: Durat on = Cl entConf gs.retryBackoffDefault,
+    requestT  out: Durat on = Cl entConf gs.producerRequestT  outDefault,
+    trustStoreLocat onOpt: Opt on[Str ng] = So (Cl entConf gs.trustStoreLocat onDefault)
+  ): Block ngF nagleKafkaProducer[PK, PV] = {
+    val baseBu lder = F nagleKafkaProducerBu lder[PK, PV]()
+      .keySer al zer(keySerde)
+      .valueSer al zer(valueSerde)
       .dest(bootstrapServer)
-      .clientId(clientId)
-      .batchSize(batchSize)
-      .linger(linger)
-      .bufferMemorySize(bufferMem)
-      .maxRequestSize(4.megabytes)
-      .compressionType(compressionType)
-      .enableIdempotence(idempotence)
+      .cl ent d(cl ent d)
+      .batchS ze(batchS ze)
+      .l nger(l nger)
+      .buffer moryS ze(buffer m)
+      .maxRequestS ze(4. gabytes)
+      .compress onType(compress onType)
+      .enable dempotence( dempotence)
       .ackMode(AckMode.ALL)
-      .maxInFlightRequestsPerConnection(5)
-      .retries(retries)
+      .max nFl ghtRequestsPerConnect on(5)
+      .retr es(retr es)
       .retryBackoff(retryBackoff)
-      .requestTimeout(requestTimeout)
-      .withConfig(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, requestTimeout + linger)
-    trustStoreLocationOpt
-      .map { trustStoreLocation =>
-        baseBuilder
-          .withConfig(
-            CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,
-            SecurityProtocol.SASL_SSL.toString)
-          .withConfig(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, trustStoreLocation)
-          .withConfig(SaslConfigs.SASL_MECHANISM, SaslConfigs.GSSAPI_MECHANISM)
-          .withConfig(SaslConfigs.SASL_KERBEROS_SERVICE_NAME, "kafka")
-          .withConfig(SaslConfigs.SASL_KERBEROS_SERVER_NAME, "kafka")
-          .build()
+      .requestT  out(requestT  out)
+      .w hConf g(ProducerConf g.DEL VERY_T MEOUT_MS_CONF G, requestT  out + l nger)
+    trustStoreLocat onOpt
+      .map { trustStoreLocat on =>
+        baseBu lder
+          .w hConf g(
+            CommonCl entConf gs.SECUR TY_PROTOCOL_CONF G,
+            Secur yProtocol.SASL_SSL.toStr ng)
+          .w hConf g(SslConf gs.SSL_TRUSTSTORE_LOCAT ON_CONF G, trustStoreLocat on)
+          .w hConf g(SaslConf gs.SASL_MECHAN SM, SaslConf gs.GSSAP _MECHAN SM)
+          .w hConf g(SaslConf gs.SASL_KERBEROS_SERV CE_NAME, "kafka")
+          .w hConf g(SaslConf gs.SASL_KERBEROS_SERVER_NAME, "kafka")
+          .bu ld()
       }.getOrElse {
-        baseBuilder
-          .withConfig(
-            CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,
-            SecurityProtocol.PLAINTEXT.toString)
-          .build()
+        baseBu lder
+          .w hConf g(
+            CommonCl entConf gs.SECUR TY_PROTOCOL_CONF G,
+            Secur yProtocol.PLA NTEXT.toStr ng)
+          .bu ld()
       }
   }
 }

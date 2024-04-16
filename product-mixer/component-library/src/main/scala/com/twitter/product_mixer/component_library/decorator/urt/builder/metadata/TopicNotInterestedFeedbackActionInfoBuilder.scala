@@ -1,45 +1,45 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.metadata
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. tadata
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTopicCandidate
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorMarkNotInterestedTopic
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.BaseTop cCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseFeedbackAct on nfoBu lder
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FeedbackAct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.FeedbackAct on nfo
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.R chBehav or
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.R chFeedbackBehav orMarkNot nterestedTop c
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-case class TopicNotInterestedFeedbackActionInfoBuilder[-Query <: PipelineQuery]()
-    extends BaseFeedbackActionInfoBuilder[Query, BaseTopicCandidate] {
+case class Top cNot nterestedFeedbackAct on nfoBu lder[-Query <: P pel neQuery]()
+    extends BaseFeedbackAct on nfoBu lder[Query, BaseTop cCand date] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    topicCandidate: BaseTopicCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[FeedbackActionInfo] = {
-    Some(
-      FeedbackActionInfo(
-        feedbackActions = Seq(
-          FeedbackAction(
-            feedbackType = RichBehavior,
-            richBehavior = Some(
-              RichFeedbackBehaviorMarkNotInterestedTopic(topicCandidate.id.toString)
+    top cCand date: BaseTop cCand date,
+    cand dateFeatures: FeatureMap
+  ): Opt on[FeedbackAct on nfo] = {
+    So (
+      FeedbackAct on nfo(
+        feedbackAct ons = Seq(
+          FeedbackAct on(
+            feedbackType = R chBehav or,
+            r chBehav or = So (
+              R chFeedbackBehav orMarkNot nterestedTop c(top cCand date. d.toStr ng)
             ),
-            hasUndoAction = Some(true),
+            hasUndoAct on = So (true),
             prompt = None,
-            confirmation = None,
+            conf rmat on = None,
             feedbackUrl = None,
-            clientEventInfo = None,
-            childFeedbackActions = None,
-            confirmationDisplayType = None,
-            icon = None,
+            cl entEvent nfo = None,
+            ch ldFeedbackAct ons = None,
+            conf rmat onD splayType = None,
+             con = None,
             subprompt = None,
             encodedFeedbackRequest = None
           )
         ),
-        feedbackMetadata = None,
-        displayContext = None,
-        clientEventInfo = None
+        feedback tadata = None,
+        d splayContext = None,
+        cl entEvent nfo = None
       ))
   }
 }

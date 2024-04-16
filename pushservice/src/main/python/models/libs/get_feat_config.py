@@ -1,176 +1,176 @@
-import os
+ mport os
 
-from twitter.deepbird.projects.magic_recs.libs.metric_fn_utils import USER_AGE_FEATURE_NAME
-from twitter.deepbird.projects.magic_recs.libs.model_utils import read_config
-from twml.contrib import feature_config as contrib_feature_config
+from tw ter.deepb rd.projects.mag c_recs.l bs. tr c_fn_ut ls  mport USER_AGE_FEATURE_NAME
+from tw ter.deepb rd.projects.mag c_recs.l bs.model_ut ls  mport read_conf g
+from twml.contr b  mport feature_conf g as contr b_feature_conf g
 
 
-# checkstyle: noqa
+# c ckstyle: noqa
 
-FEAT_CONFIG_DEFAULT_VAL = -1.23456789
+FEAT_CONF G_DEFAULT_VAL = -1.23456789
 
-DEFAULT_INPUT_SIZE_BITS = 18
+DEFAULT_ NPUT_S ZE_B TS = 18
 
-DEFAULT_FEATURE_LIST_PATH = "./feature_list_default.yaml"
-FEATURE_LIST_DEFAULT_PATH = os.path.join(
-  os.path.dirname(os.path.realpath(__file__)), DEFAULT_FEATURE_LIST_PATH
+DEFAULT_FEATURE_L ST_PATH = "./feature_l st_default.yaml"
+FEATURE_L ST_DEFAULT_PATH = os.path.jo n(
+  os.path.d rna (os.path.realpath(__f le__)), DEFAULT_FEATURE_L ST_PATH
 )
 
-DEFAULT_FEATURE_LIST_LIGHT_RANKING_PATH = "./feature_list_light_ranking.yaml"
-FEATURE_LIST_DEFAULT_LIGHT_RANKING_PATH = os.path.join(
-  os.path.dirname(os.path.realpath(__file__)), DEFAULT_FEATURE_LIST_LIGHT_RANKING_PATH
+DEFAULT_FEATURE_L ST_L GHT_RANK NG_PATH = "./feature_l st_l ght_rank ng.yaml"
+FEATURE_L ST_DEFAULT_L GHT_RANK NG_PATH = os.path.jo n(
+  os.path.d rna (os.path.realpath(__f le__)), DEFAULT_FEATURE_L ST_L GHT_RANK NG_PATH
 )
 
-FEATURE_LIST_DEFAULT = read_config(FEATURE_LIST_DEFAULT_PATH).items()
-FEATURE_LIST_LIGHT_RANKING_DEFAULT = read_config(FEATURE_LIST_DEFAULT_LIGHT_RANKING_PATH).items()
+FEATURE_L ST_DEFAULT = read_conf g(FEATURE_L ST_DEFAULT_PATH). ems()
+FEATURE_L ST_L GHT_RANK NG_DEFAULT = read_conf g(FEATURE_L ST_DEFAULT_L GHT_RANK NG_PATH). ems()
 
 
 LABELS = ["label"]
-LABELS_MTL = {"OONC": ["label"], "OONC_Engagement": ["label", "label.engagement"]}
+LABELS_MTL = {"OONC": ["label"], "OONC_Engage nt": ["label", "label.engage nt"]}
 LABELS_LR = {
   "Sent": ["label.sent"],
-  "HeavyRankPosition": ["meta.ranking.is_top3"],
-  "HeavyRankProbability": ["meta.ranking.weighted_oonc_model_score"],
+  " avyRankPos  on": [" ta.rank ng. s_top3"],
+  " avyRankProbab l y": [" ta.rank ng.  ghted_oonc_model_score"],
 }
 
 
-def _get_new_feature_config_base(
+def _get_new_feature_conf g_base(
   data_spec_path,
   labels,
-  add_sparse_continous=True,
+  add_sparse_cont nous=True,
   add_gbdt=True,
-  add_user_id=False,
-  add_timestamp=False,
+  add_user_ d=False,
+  add_t  stamp=False,
   add_user_age=False,
-  feature_list_provided=[],
+  feature_l st_prov ded=[],
   opt=None,
-  run_light_ranking_group_metrics_in_bq=False,
+  run_l ght_rank ng_group_ tr cs_ n_bq=False,
 ):
   """
-  Getter of the feature config based on specification.
+  Getter of t  feature conf g based on spec f cat on.
 
   Args:
-    data_spec_path: A string indicating the path of the data_spec.json file, which could be
-      either a local path or a hdfs path.
-    labels: A list of strings indicating the name of the label in the data spec.
-    add_sparse_continous: A bool indicating if sparse_continuous feature needs to be included.
-    add_gbdt: A bool indicating if gbdt feature needs to be included.
-    add_user_id: A bool indicating if user_id feature needs to be included.
-    add_timestamp: A bool indicating if timestamp feature needs to be included. This will be useful
-      for sequential models and meta learning models.
-    add_user_age: A bool indicating if the user age feature needs to be included.
-    feature_list_provided: A list of features thats need to be included. If not specified, will use
-      FEATURE_LIST_DEFAULT by default.
-    opt: A namespace of arguments indicating the hyparameters.
-    run_light_ranking_group_metrics_in_bq: A bool indicating if heavy ranker score info needs to be included to compute group metrics in BigQuery.
+    data_spec_path: A str ng  nd cat ng t  path of t  data_spec.json f le, wh ch could be
+      e  r a local path or a hdfs path.
+    labels: A l st of str ngs  nd cat ng t  na  of t  label  n t  data spec.
+    add_sparse_cont nous: A bool  nd cat ng  f sparse_cont nuous feature needs to be  ncluded.
+    add_gbdt: A bool  nd cat ng  f gbdt feature needs to be  ncluded.
+    add_user_ d: A bool  nd cat ng  f user_ d feature needs to be  ncluded.
+    add_t  stamp: A bool  nd cat ng  f t  stamp feature needs to be  ncluded. T  w ll be useful
+      for sequent al models and  ta learn ng models.
+    add_user_age: A bool  nd cat ng  f t  user age feature needs to be  ncluded.
+    feature_l st_prov ded: A l st of features thats need to be  ncluded.  f not spec f ed, w ll use
+      FEATURE_L ST_DEFAULT by default.
+    opt: A na space of argu nts  nd cat ng t  hypara ters.
+    run_l ght_rank ng_group_ tr cs_ n_bq: A bool  nd cat ng  f  avy ranker score  nfo needs to be  ncluded to compute group  tr cs  n B gQuery.
 
   Returns:
-    A twml feature config object.
+    A twml feature conf g object.
   """
 
-  input_size_bits = DEFAULT_INPUT_SIZE_BITS if opt is None else opt.input_size_bits
+   nput_s ze_b s = DEFAULT_ NPUT_S ZE_B TS  f opt  s None else opt. nput_s ze_b s
 
-  feature_list = feature_list_provided if feature_list_provided != [] else FEATURE_LIST_DEFAULT
-  a_string_feat_list = [f[0] for f in feature_list if f[1] != "S"]
+  feature_l st = feature_l st_prov ded  f feature_l st_prov ded != [] else FEATURE_L ST_DEFAULT
+  a_str ng_feat_l st = [f[0] for f  n feature_l st  f f[1] != "S"]
 
-  builder = contrib_feature_config.FeatureConfigBuilder(data_spec_path=data_spec_path)
+  bu lder = contr b_feature_conf g.FeatureConf gBu lder(data_spec_path=data_spec_path)
 
-  builder = builder.extract_feature_group(
-    feature_regexes=a_string_feat_list,
-    group_name="continuous",
-    default_value=FEAT_CONFIG_DEFAULT_VAL,
-    type_filter=["CONTINUOUS"],
+  bu lder = bu lder.extract_feature_group(
+    feature_regexes=a_str ng_feat_l st,
+    group_na ="cont nuous",
+    default_value=FEAT_CONF G_DEFAULT_VAL,
+    type_f lter=["CONT NUOUS"],
   )
 
-  builder = builder.extract_features_as_hashed_sparse(
-    feature_regexes=a_string_feat_list,
-    output_tensor_name="sparse_no_continuous",
-    hash_space_size_bits=input_size_bits,
-    type_filter=["BINARY", "DISCRETE", "STRING", "SPARSE_BINARY"],
+  bu lder = bu lder.extract_features_as_has d_sparse(
+    feature_regexes=a_str ng_feat_l st,
+    output_tensor_na ="sparse_no_cont nuous",
+    hash_space_s ze_b s= nput_s ze_b s,
+    type_f lter=["B NARY", "D SCRETE", "STR NG", "SPARSE_B NARY"],
   )
 
-  if add_gbdt:
-    builder = builder.extract_features_as_hashed_sparse(
+   f add_gbdt:
+    bu lder = bu lder.extract_features_as_has d_sparse(
       feature_regexes=["ads\..*"],
-      output_tensor_name="gbdt_sparse",
-      hash_space_size_bits=input_size_bits,
+      output_tensor_na ="gbdt_sparse",
+      hash_space_s ze_b s= nput_s ze_b s,
     )
 
-  if add_sparse_continous:
-    s_string_feat_list = [f[0] for f in feature_list if f[1] == "S"]
+   f add_sparse_cont nous:
+    s_str ng_feat_l st = [f[0] for f  n feature_l st  f f[1] == "S"]
 
-    builder = builder.extract_features_as_hashed_sparse(
-      feature_regexes=s_string_feat_list,
-      output_tensor_name="sparse_continuous",
-      hash_space_size_bits=input_size_bits,
-      type_filter=["SPARSE_CONTINUOUS"],
+    bu lder = bu lder.extract_features_as_has d_sparse(
+      feature_regexes=s_str ng_feat_l st,
+      output_tensor_na ="sparse_cont nuous",
+      hash_space_s ze_b s= nput_s ze_b s,
+      type_f lter=["SPARSE_CONT NUOUS"],
     )
 
-  if add_user_id:
-    builder = builder.extract_feature("meta.user_id")
-  if add_timestamp:
-    builder = builder.extract_feature("meta.timestamp")
-  if add_user_age:
-    builder = builder.extract_feature(USER_AGE_FEATURE_NAME)
+   f add_user_ d:
+    bu lder = bu lder.extract_feature(" ta.user_ d")
+   f add_t  stamp:
+    bu lder = bu lder.extract_feature(" ta.t  stamp")
+   f add_user_age:
+    bu lder = bu lder.extract_feature(USER_AGE_FEATURE_NAME)
 
-  if run_light_ranking_group_metrics_in_bq:
-    builder = builder.extract_feature("meta.trace_id")
-    builder = builder.extract_feature("meta.ranking.weighted_oonc_model_score")
+   f run_l ght_rank ng_group_ tr cs_ n_bq:
+    bu lder = bu lder.extract_feature(" ta.trace_ d")
+    bu lder = bu lder.extract_feature(" ta.rank ng.  ghted_oonc_model_score")
 
-  builder = builder.add_labels(labels).define_weight("meta.weight")
+  bu lder = bu lder.add_labels(labels).def ne_  ght(" ta.  ght")
 
-  return builder.build()
+  return bu lder.bu ld()
 
 
-def get_feature_config_with_sparse_continuous(
+def get_feature_conf g_w h_sparse_cont nuous(
   data_spec_path,
-  feature_list_provided=[],
+  feature_l st_prov ded=[],
   opt=None,
-  add_user_id=False,
-  add_timestamp=False,
+  add_user_ d=False,
+  add_t  stamp=False,
   add_user_age=False,
 ):
-  task_name = opt.task_name if getattr(opt, "task_name", None) is not None else "OONC"
-  if task_name not in LABELS_MTL:
-    raise ValueError("Invalid Task Name !")
+  task_na  = opt.task_na   f getattr(opt, "task_na ", None)  s not None else "OONC"
+   f task_na  not  n LABELS_MTL:
+    ra se ValueError(" nval d Task Na  !")
 
-  return _get_new_feature_config_base(
+  return _get_new_feature_conf g_base(
     data_spec_path=data_spec_path,
-    labels=LABELS_MTL[task_name],
-    add_sparse_continous=True,
-    add_user_id=add_user_id,
-    add_timestamp=add_timestamp,
+    labels=LABELS_MTL[task_na ],
+    add_sparse_cont nous=True,
+    add_user_ d=add_user_ d,
+    add_t  stamp=add_t  stamp,
     add_user_age=add_user_age,
-    feature_list_provided=feature_list_provided,
+    feature_l st_prov ded=feature_l st_prov ded,
     opt=opt,
   )
 
 
-def get_feature_config_light_ranking(
+def get_feature_conf g_l ght_rank ng(
   data_spec_path,
-  feature_list_provided=[],
+  feature_l st_prov ded=[],
   opt=None,
-  add_user_id=True,
-  add_timestamp=False,
+  add_user_ d=True,
+  add_t  stamp=False,
   add_user_age=False,
   add_gbdt=False,
-  run_light_ranking_group_metrics_in_bq=False,
+  run_l ght_rank ng_group_ tr cs_ n_bq=False,
 ):
-  task_name = opt.task_name if getattr(opt, "task_name", None) is not None else "HeavyRankPosition"
-  if task_name not in LABELS_LR:
-    raise ValueError("Invalid Task Name !")
-  if not feature_list_provided:
-    feature_list_provided = FEATURE_LIST_LIGHT_RANKING_DEFAULT
+  task_na  = opt.task_na   f getattr(opt, "task_na ", None)  s not None else " avyRankPos  on"
+   f task_na  not  n LABELS_LR:
+    ra se ValueError(" nval d Task Na  !")
+   f not feature_l st_prov ded:
+    feature_l st_prov ded = FEATURE_L ST_L GHT_RANK NG_DEFAULT
 
-  return _get_new_feature_config_base(
+  return _get_new_feature_conf g_base(
     data_spec_path=data_spec_path,
-    labels=LABELS_LR[task_name],
-    add_sparse_continous=False,
+    labels=LABELS_LR[task_na ],
+    add_sparse_cont nous=False,
     add_gbdt=add_gbdt,
-    add_user_id=add_user_id,
-    add_timestamp=add_timestamp,
+    add_user_ d=add_user_ d,
+    add_t  stamp=add_t  stamp,
     add_user_age=add_user_age,
-    feature_list_provided=feature_list_provided,
+    feature_l st_prov ded=feature_l st_prov ded,
     opt=opt,
-    run_light_ranking_group_metrics_in_bq=run_light_ranking_group_metrics_in_bq,
+    run_l ght_rank ng_group_ tr cs_ n_bq=run_l ght_rank ng_group_ tr cs_ n_bq,
   )

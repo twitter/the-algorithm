@@ -1,57 +1,57 @@
-package com.twitter.search.common.relevance.features;
+package com.tw ter.search.common.relevance.features;
 
-import com.twitter.search.common.encoding.features.EncodedFeatures;
+ mport com.tw ter.search.common.encod ng.features.EncodedFeatures;
 
 /**
- * Holds engagement features for a particular tweet and encodes them as a single int.
- * The features are: retweet count, favorite count, itweet score, reply count.
+ * Holds engage nt features for a part cular t et and encodes t m as a s ngle  nt.
+ * T  features are: ret et count, favor e count,   et score, reply count.
  */
-public class TweetEngagementFeatures extends EncodedFeatures {
-  private static final int RETWEET_COUNT_BIT_SHIFT = 0;
-  private static final long RETWEET_COUNT_INVERSE_BIT_MASK =  0xffffff00L;
+publ c class T etEngage ntFeatures extends EncodedFeatures {
+  pr vate stat c f nal  nt RETWEET_COUNT_B T_SH FT = 0;
+  pr vate stat c f nal long RETWEET_COUNT_ NVERSE_B T_MASK =  0xffffff00L;
 
-  private static final int ITWEET_SCORE_BIT_SHIFT = 8;
-  private static final long ITWEET_SCORE_INVERSE_BIT_MASK = 0xffff00ffL;
+  pr vate stat c f nal  nt  TWEET_SCORE_B T_SH FT = 8;
+  pr vate stat c f nal long  TWEET_SCORE_ NVERSE_B T_MASK = 0xffff00ffL;
 
-  private static final int FAV_COUNT_BIT_SHIFT = 16;
-  private static final long FAV_COUNT_INVERSE_BIT_MASK =    0xff00ffffL;
+  pr vate stat c f nal  nt FAV_COUNT_B T_SH FT = 16;
+  pr vate stat c f nal long FAV_COUNT_ NVERSE_B T_MASK =    0xff00ffffL;
 
-  private static final int REPLY_COUNT_BIT_SHIFT = 24;
-  private static final long REPLY_COUNT_INVERSE_BIT_MASK =    0x00ffffffL;
+  pr vate stat c f nal  nt REPLY_COUNT_B T_SH FT = 24;
+  pr vate stat c f nal long REPLY_COUNT_ NVERSE_B T_MASK =    0x00ffffffL;
 
-  public TweetEngagementFeatures setRetweetCount(byte count) {
-    setByteIfGreater(count, RETWEET_COUNT_BIT_SHIFT, RETWEET_COUNT_INVERSE_BIT_MASK);
-    return this;
+  publ c T etEngage ntFeatures setRet etCount(byte count) {
+    setByte fGreater(count, RETWEET_COUNT_B T_SH FT, RETWEET_COUNT_ NVERSE_B T_MASK);
+    return t ;
   }
 
-  public int getRetweetCount() {
-    return getByte(RETWEET_COUNT_BIT_SHIFT);
+  publ c  nt getRet etCount() {
+    return getByte(RETWEET_COUNT_B T_SH FT);
   }
 
-  public TweetEngagementFeatures setITweetScore(byte score) {
-    setByteIfGreater(score, ITWEET_SCORE_BIT_SHIFT, ITWEET_SCORE_INVERSE_BIT_MASK);
-    return this;
+  publ c T etEngage ntFeatures set T etScore(byte score) {
+    setByte fGreater(score,  TWEET_SCORE_B T_SH FT,  TWEET_SCORE_ NVERSE_B T_MASK);
+    return t ;
   }
 
-  public int getITweetScore() {
-    return getByte(ITWEET_SCORE_BIT_SHIFT);
+  publ c  nt get T etScore() {
+    return getByte( TWEET_SCORE_B T_SH FT);
   }
 
-  public TweetEngagementFeatures setFavCount(byte count) {
-    setByteIfGreater(count, FAV_COUNT_BIT_SHIFT, FAV_COUNT_INVERSE_BIT_MASK);
-    return this;
+  publ c T etEngage ntFeatures setFavCount(byte count) {
+    setByte fGreater(count, FAV_COUNT_B T_SH FT, FAV_COUNT_ NVERSE_B T_MASK);
+    return t ;
   }
 
-  public int getFavCount() {
-    return getByte(FAV_COUNT_BIT_SHIFT);
+  publ c  nt getFavCount() {
+    return getByte(FAV_COUNT_B T_SH FT);
   }
 
-  public TweetEngagementFeatures setReplyCount(byte count) {
-    setByteIfGreater(count, REPLY_COUNT_BIT_SHIFT, REPLY_COUNT_INVERSE_BIT_MASK);
-    return this;
+  publ c T etEngage ntFeatures setReplyCount(byte count) {
+    setByte fGreater(count, REPLY_COUNT_B T_SH FT, REPLY_COUNT_ NVERSE_B T_MASK);
+    return t ;
   }
 
-  public int getReplyCount() {
-    return getByte(REPLY_COUNT_BIT_SHIFT);
+  publ c  nt getReplyCount() {
+    return getByte(REPLY_COUNT_B T_SH FT);
   }
 }

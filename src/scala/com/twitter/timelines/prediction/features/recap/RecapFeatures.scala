@@ -1,967 +1,967 @@
-package com.twitter.timelines.prediction.features.recap
+package com.tw ter.t  l nes.pred ct on.features.recap
 
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType._
-import com.twitter.ml.api.Feature.Binary
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.Feature.Discrete
-import com.twitter.ml.api.Feature.SparseBinary
-import com.twitter.ml.api.Feature.Text
-import scala.collection.JavaConverters._
+ mport com.tw ter.dal.personal_data.thr ftjava.PersonalDataType._
+ mport com.tw ter.ml.ap .Feature.B nary
+ mport com.tw ter.ml.ap .Feature.Cont nuous
+ mport com.tw ter.ml.ap .Feature.D screte
+ mport com.tw ter.ml.ap .Feature.SparseB nary
+ mport com.tw ter.ml.ap .Feature.Text
+ mport scala.collect on.JavaConverters._
 
 object RecapFeatures extends RecapFeatures("")
-object InReplyToRecapFeatures extends RecapFeatures("in_reply_to_tweet")
+object  nReplyToRecapFeatures extends RecapFeatures(" n_reply_to_t et")
 
-class RecapFeatures(prefix: String) {
-  private def name(featureName: String): String = {
-    if (prefix.nonEmpty) {
-      s"$prefix.$featureName"
+class RecapFeatures(pref x: Str ng) {
+  pr vate def na (featureNa : Str ng): Str ng = {
+     f (pref x.nonEmpty) {
+      s"$pref x.$featureNa "
     } else {
-      featureName
+      featureNa 
     }
   }
 
-  val IS_IPAD_CLIENT = new Binary(name("recap.client.is_ipad"), Set(ClientType).asJava)
-  val IS_WEB_CLIENT = new Binary(name("recap.client.is_web"), Set(ClientType).asJava)
-  val IS_IPHONE_CLIENT = new Binary(name("recap.client.is_phone"), Set(ClientType).asJava)
-  val IS_ANDROID_CLIENT = new Binary(name("recap.client.is_android"), Set(ClientType).asJava)
-  val IS_ANDROID_TABLET_CLIENT =
-    new Binary(name("recap.client.is_android_tablet"), Set(ClientType).asJava)
+  val  S_ PAD_CL ENT = new B nary(na ("recap.cl ent. s_ pad"), Set(Cl entType).asJava)
+  val  S_WEB_CL ENT = new B nary(na ("recap.cl ent. s_ b"), Set(Cl entType).asJava)
+  val  S_ PHONE_CL ENT = new B nary(na ("recap.cl ent. s_phone"), Set(Cl entType).asJava)
+  val  S_ANDRO D_CL ENT = new B nary(na ("recap.cl ent. s_andro d"), Set(Cl entType).asJava)
+  val  S_ANDRO D_TABLET_CL ENT =
+    new B nary(na ("recap.cl ent. s_andro d_tablet"), Set(Cl entType).asJava)
 
   // features from userAgent
-  val CLIENT_NAME = new Text(name("recap.user_agent.client_name"), Set(ClientType).asJava)
-  val CLIENT_SOURCE = new Discrete(name("recap.user_agent.client_source"), Set(ClientType).asJava)
-  val CLIENT_VERSION = new Text(name("recap.user_agent.client_version"), Set(ClientVersion).asJava)
-  val CLIENT_VERSION_CODE =
-    new Text(name("recap.user_agent.client_version_code"), Set(ClientVersion).asJava)
-  val DEVICE = new Text(name("recap.user_agent.device"), Set(DeviceType).asJava)
-  val FROM_DOG_FOOD = new Binary(name("recap.meta.from_dog_food"), Set(UserAgent).asJava)
-  val FROM_TWITTER_CLIENT =
-    new Binary(name("recap.user_agent.from_twitter_client"), Set(UserAgent).asJava)
-  val MANUFACTURER = new Text(name("recap.user_agent.manufacturer"), Set(UserAgent).asJava)
-  val MODEL = new Text(name("recap.user_agent.model"), Set(UserAgent).asJava)
-  val NETWORK_CONNECTION =
-    new Discrete(name("recap.user_agent.network_connection"), Set(UserAgent).asJava)
-  val SDK_VERSION = new Text(name("recap.user_agent.sdk_version"), Set(AppId, UserAgent).asJava)
+  val CL ENT_NAME = new Text(na ("recap.user_agent.cl ent_na "), Set(Cl entType).asJava)
+  val CL ENT_SOURCE = new D screte(na ("recap.user_agent.cl ent_s ce"), Set(Cl entType).asJava)
+  val CL ENT_VERS ON = new Text(na ("recap.user_agent.cl ent_vers on"), Set(Cl entVers on).asJava)
+  val CL ENT_VERS ON_CODE =
+    new Text(na ("recap.user_agent.cl ent_vers on_code"), Set(Cl entVers on).asJava)
+  val DEV CE = new Text(na ("recap.user_agent.dev ce"), Set(Dev ceType).asJava)
+  val FROM_DOG_FOOD = new B nary(na ("recap. ta.from_dog_food"), Set(UserAgent).asJava)
+  val FROM_TW TTER_CL ENT =
+    new B nary(na ("recap.user_agent.from_tw ter_cl ent"), Set(UserAgent).asJava)
+  val MANUFACTURER = new Text(na ("recap.user_agent.manufacturer"), Set(UserAgent).asJava)
+  val MODEL = new Text(na ("recap.user_agent.model"), Set(UserAgent).asJava)
+  val NETWORK_CONNECT ON =
+    new D screte(na ("recap.user_agent.network_connect on"), Set(UserAgent).asJava)
+  val SDK_VERS ON = new Text(na ("recap.user_agent.sdk_vers on"), Set(App d, UserAgent).asJava)
 
-  // engagement
-  val IS_RETWEETED = new Binary(
-    name("recap.engagement.is_retweeted"),
-    Set(PublicRetweets, PrivateRetweets, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_FAVORITED = new Binary(
-    name("recap.engagement.is_favorited"),
-    Set(PublicLikes, PrivateLikes, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_REPLIED = new Binary(
-    name("recap.engagement.is_replied"),
-    Set(PublicReplies, PrivateReplies, EngagementsPrivate, EngagementsPublic).asJava)
-  // v1: post click engagements: fav, reply
-  val IS_GOOD_CLICKED_CONVO_DESC_V1 = new Binary(
-    name("recap.engagement.is_good_clicked_convo_desc_favorited_or_replied"),
+  // engage nt
+  val  S_RETWEETED = new B nary(
+    na ("recap.engage nt. s_ret eted"),
+    Set(Publ cRet ets, Pr vateRet ets, Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_FAVOR TED = new B nary(
+    na ("recap.engage nt. s_favor ed"),
+    Set(Publ cL kes, Pr vateL kes, Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_REPL ED = new B nary(
+    na ("recap.engage nt. s_repl ed"),
+    Set(Publ cRepl es, Pr vateRepl es, Engage ntsPr vate, Engage ntsPubl c).asJava)
+  // v1: post cl ck engage nts: fav, reply
+  val  S_GOOD_CL CKED_CONVO_DESC_V1 = new B nary(
+    na ("recap.engage nt. s_good_cl cked_convo_desc_favor ed_or_repl ed"),
     Set(
-      PublicLikes,
-      PrivateLikes,
-      PublicReplies,
-      PrivateReplies,
-      EngagementsPrivate,
-      EngagementsPublic).asJava)
-  // v2: post click engagements: click
-  val IS_GOOD_CLICKED_CONVO_DESC_V2 = new Binary(
-    name("recap.engagement.is_good_clicked_convo_desc_v2"),
-    Set(TweetsClicked, EngagementsPrivate).asJava)
+      Publ cL kes,
+      Pr vateL kes,
+      Publ cRepl es,
+      Pr vateRepl es,
+      Engage ntsPr vate,
+      Engage ntsPubl c).asJava)
+  // v2: post cl ck engage nts: cl ck
+  val  S_GOOD_CL CKED_CONVO_DESC_V2 = new B nary(
+    na ("recap.engage nt. s_good_cl cked_convo_desc_v2"),
+    Set(T etsCl cked, Engage ntsPr vate).asJava)
 
-  val IS_GOOD_CLICKED_CONVO_DESC_FAVORITED = new Binary(
-    name("recap.engagement.is_good_clicked_convo_desc_favorited"),
-    Set(PublicLikes, PrivateLikes, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_REPLIED = new Binary(
-    name("recap.engagement.is_good_clicked_convo_desc_replied"),
-    Set(PublicReplies, PrivateReplies, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_RETWEETED = new Binary(
-    name("recap.engagement.is_good_clicked_convo_desc_retweeted"),
-    Set(PublicRetweets, PrivateRetweets, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_CLICKED = new Binary(
-    name("recap.engagement.is_good_clicked_convo_desc_clicked"),
-    Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_FOLLOWED = new Binary(
-    name("recap.engagement.is_good_clicked_convo_desc_followed"),
-    Set(EngagementsPrivate).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_SHARE_DM_CLICKED = new Binary(
-    name("recap.engagement.is_good_clicked_convo_desc_share_dm_clicked"),
-    Set(EngagementsPrivate).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_PROFILE_CLICKED = new Binary(
-    name("recap.engagement.is_good_clicked_convo_desc_profile_clicked"),
-    Set(EngagementsPrivate).asJava)
+  val  S_GOOD_CL CKED_CONVO_DESC_FAVOR TED = new B nary(
+    na ("recap.engage nt. s_good_cl cked_convo_desc_favor ed"),
+    Set(Publ cL kes, Pr vateL kes, Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_GOOD_CL CKED_CONVO_DESC_REPL ED = new B nary(
+    na ("recap.engage nt. s_good_cl cked_convo_desc_repl ed"),
+    Set(Publ cRepl es, Pr vateRepl es, Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_GOOD_CL CKED_CONVO_DESC_RETWEETED = new B nary(
+    na ("recap.engage nt. s_good_cl cked_convo_desc_ret eted"),
+    Set(Publ cRet ets, Pr vateRet ets, Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_GOOD_CL CKED_CONVO_DESC_CL CKED = new B nary(
+    na ("recap.engage nt. s_good_cl cked_convo_desc_cl cked"),
+    Set(T etsCl cked, Engage ntsPr vate).asJava)
+  val  S_GOOD_CL CKED_CONVO_DESC_FOLLOWED = new B nary(
+    na ("recap.engage nt. s_good_cl cked_convo_desc_follo d"),
+    Set(Engage ntsPr vate).asJava)
+  val  S_GOOD_CL CKED_CONVO_DESC_SHARE_DM_CL CKED = new B nary(
+    na ("recap.engage nt. s_good_cl cked_convo_desc_share_dm_cl cked"),
+    Set(Engage ntsPr vate).asJava)
+  val  S_GOOD_CL CKED_CONVO_DESC_PROF LE_CL CKED = new B nary(
+    na ("recap.engage nt. s_good_cl cked_convo_desc_prof le_cl cked"),
+    Set(Engage ntsPr vate).asJava)
 
-  val IS_GOOD_CLICKED_CONVO_DESC_UAM_GT_0 = new Binary(
-    name("recap.engagement.is_good_clicked_convo_desc_uam_gt_0"),
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_UAM_GT_1 = new Binary(
-    name("recap.engagement.is_good_clicked_convo_desc_uam_gt_1"),
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_UAM_GT_2 = new Binary(
-    name("recap.engagement.is_good_clicked_convo_desc_uam_gt_2"),
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_GOOD_CLICKED_CONVO_DESC_UAM_GT_3 = new Binary(
-    name("recap.engagement.is_good_clicked_convo_desc_uam_gt_3"),
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
+  val  S_GOOD_CL CKED_CONVO_DESC_UAM_GT_0 = new B nary(
+    na ("recap.engage nt. s_good_cl cked_convo_desc_uam_gt_0"),
+    Set(Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_GOOD_CL CKED_CONVO_DESC_UAM_GT_1 = new B nary(
+    na ("recap.engage nt. s_good_cl cked_convo_desc_uam_gt_1"),
+    Set(Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_GOOD_CL CKED_CONVO_DESC_UAM_GT_2 = new B nary(
+    na ("recap.engage nt. s_good_cl cked_convo_desc_uam_gt_2"),
+    Set(Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_GOOD_CL CKED_CONVO_DESC_UAM_GT_3 = new B nary(
+    na ("recap.engage nt. s_good_cl cked_convo_desc_uam_gt_3"),
+    Set(Engage ntsPr vate, Engage ntsPubl c).asJava)
 
-  val IS_TWEET_DETAIL_DWELLED = new Binary(
-    name("recap.engagement.is_tweet_detail_dwelled"),
-    Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_TWEET_DETAIL_DWELLED_8_SEC = new Binary(
-    name("recap.engagement.is_tweet_detail_dwelled_8_sec"),
-    Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_TWEET_DETAIL_DWELLED_15_SEC = new Binary(
-    name("recap.engagement.is_tweet_detail_dwelled_15_sec"),
-    Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_TWEET_DETAIL_DWELLED_25_SEC = new Binary(
-    name("recap.engagement.is_tweet_detail_dwelled_25_sec"),
-    Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_TWEET_DETAIL_DWELLED_30_SEC = new Binary(
-    name("recap.engagement.is_tweet_detail_dwelled_30_sec"),
-    Set(TweetsClicked, EngagementsPrivate).asJava)
+  val  S_TWEET_DETA L_DWELLED = new B nary(
+    na ("recap.engage nt. s_t et_deta l_d lled"),
+    Set(T etsCl cked, Engage ntsPr vate).asJava)
+  val  S_TWEET_DETA L_DWELLED_8_SEC = new B nary(
+    na ("recap.engage nt. s_t et_deta l_d lled_8_sec"),
+    Set(T etsCl cked, Engage ntsPr vate).asJava)
+  val  S_TWEET_DETA L_DWELLED_15_SEC = new B nary(
+    na ("recap.engage nt. s_t et_deta l_d lled_15_sec"),
+    Set(T etsCl cked, Engage ntsPr vate).asJava)
+  val  S_TWEET_DETA L_DWELLED_25_SEC = new B nary(
+    na ("recap.engage nt. s_t et_deta l_d lled_25_sec"),
+    Set(T etsCl cked, Engage ntsPr vate).asJava)
+  val  S_TWEET_DETA L_DWELLED_30_SEC = new B nary(
+    na ("recap.engage nt. s_t et_deta l_d lled_30_sec"),
+    Set(T etsCl cked, Engage ntsPr vate).asJava)
 
-  val IS_PROFILE_DWELLED = new Binary(
-    "recap.engagement.is_profile_dwelled",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_PROFILE_DWELLED_10_SEC = new Binary(
-    "recap.engagement.is_profile_dwelled_10_sec",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_PROFILE_DWELLED_20_SEC = new Binary(
-    "recap.engagement.is_profile_dwelled_20_sec",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_PROFILE_DWELLED_30_SEC = new Binary(
-    "recap.engagement.is_profile_dwelled_30_sec",
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
+  val  S_PROF LE_DWELLED = new B nary(
+    "recap.engage nt. s_prof le_d lled",
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
+  val  S_PROF LE_DWELLED_10_SEC = new B nary(
+    "recap.engage nt. s_prof le_d lled_10_sec",
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
+  val  S_PROF LE_DWELLED_20_SEC = new B nary(
+    "recap.engage nt. s_prof le_d lled_20_sec",
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
+  val  S_PROF LE_DWELLED_30_SEC = new B nary(
+    "recap.engage nt. s_prof le_d lled_30_sec",
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
 
-  val IS_FULLSCREEN_VIDEO_DWELLED = new Binary(
-    "recap.engagement.is_fullscreen_video_dwelled",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  val  S_FULLSCREEN_V DEO_DWELLED = new B nary(
+    "recap.engage nt. s_fullscreen_v deo_d lled",
+    Set( d aEngage ntAct v  es, Engage ntTypePr vate, Engage ntsPr vate).asJava)
 
-  val IS_FULLSCREEN_VIDEO_DWELLED_5_SEC = new Binary(
-    "recap.engagement.is_fullscreen_video_dwelled_5_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  val  S_FULLSCREEN_V DEO_DWELLED_5_SEC = new B nary(
+    "recap.engage nt. s_fullscreen_v deo_d lled_5_sec",
+    Set( d aEngage ntAct v  es, Engage ntTypePr vate, Engage ntsPr vate).asJava)
 
-  val IS_FULLSCREEN_VIDEO_DWELLED_10_SEC = new Binary(
-    "recap.engagement.is_fullscreen_video_dwelled_10_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  val  S_FULLSCREEN_V DEO_DWELLED_10_SEC = new B nary(
+    "recap.engage nt. s_fullscreen_v deo_d lled_10_sec",
+    Set( d aEngage ntAct v  es, Engage ntTypePr vate, Engage ntsPr vate).asJava)
 
-  val IS_FULLSCREEN_VIDEO_DWELLED_20_SEC = new Binary(
-    "recap.engagement.is_fullscreen_video_dwelled_20_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  val  S_FULLSCREEN_V DEO_DWELLED_20_SEC = new B nary(
+    "recap.engage nt. s_fullscreen_v deo_d lled_20_sec",
+    Set( d aEngage ntAct v  es, Engage ntTypePr vate, Engage ntsPr vate).asJava)
 
-  val IS_FULLSCREEN_VIDEO_DWELLED_30_SEC = new Binary(
-    "recap.engagement.is_fullscreen_video_dwelled_30_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  val  S_FULLSCREEN_V DEO_DWELLED_30_SEC = new B nary(
+    "recap.engage nt. s_fullscreen_v deo_d lled_30_sec",
+    Set( d aEngage ntAct v  es, Engage ntTypePr vate, Engage ntsPr vate).asJava)
 
-  val IS_LINK_DWELLED_15_SEC = new Binary(
-    "recap.engagement.is_link_dwelled_15_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  val  S_L NK_DWELLED_15_SEC = new B nary(
+    "recap.engage nt. s_l nk_d lled_15_sec",
+    Set( d aEngage ntAct v  es, Engage ntTypePr vate, Engage ntsPr vate).asJava)
 
-  val IS_LINK_DWELLED_30_SEC = new Binary(
-    "recap.engagement.is_link_dwelled_30_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  val  S_L NK_DWELLED_30_SEC = new B nary(
+    "recap.engage nt. s_l nk_d lled_30_sec",
+    Set( d aEngage ntAct v  es, Engage ntTypePr vate, Engage ntsPr vate).asJava)
 
-  val IS_LINK_DWELLED_60_SEC = new Binary(
-    "recap.engagement.is_link_dwelled_60_sec",
-    Set(MediaEngagementActivities, EngagementTypePrivate, EngagementsPrivate).asJava)
+  val  S_L NK_DWELLED_60_SEC = new B nary(
+    "recap.engage nt. s_l nk_d lled_60_sec",
+    Set( d aEngage ntAct v  es, Engage ntTypePr vate, Engage ntsPr vate).asJava)
 
-  val IS_QUOTED = new Binary(
-    name("recap.engagement.is_quoted"),
-    Set(PublicRetweets, PrivateRetweets, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_RETWEETED_WITHOUT_QUOTE = new Binary(
-    name("recap.engagement.is_retweeted_without_quote"),
-    Set(PublicRetweets, PrivateRetweets, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_CLICKED =
-    new Binary(name("recap.engagement.is_clicked"), Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_DWELLED = new Binary(name("recap.engagement.is_dwelled"), Set(EngagementsPrivate).asJava)
-  val IS_DWELLED_IN_BOUNDS_V1 =
-    new Binary(name("recap.engagement.is_dwelled_in_bounds_v1"), Set(EngagementsPrivate).asJava)
-  val DWELL_NORMALIZED_OVERALL = new Continuous(
-    name("recap.engagement.dwell_normalized_overall"),
-    Set(EngagementsPrivate).asJava)
+  val  S_QUOTED = new B nary(
+    na ("recap.engage nt. s_quoted"),
+    Set(Publ cRet ets, Pr vateRet ets, Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_RETWEETED_W THOUT_QUOTE = new B nary(
+    na ("recap.engage nt. s_ret eted_w hout_quote"),
+    Set(Publ cRet ets, Pr vateRet ets, Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_CL CKED =
+    new B nary(na ("recap.engage nt. s_cl cked"), Set(T etsCl cked, Engage ntsPr vate).asJava)
+  val  S_DWELLED = new B nary(na ("recap.engage nt. s_d lled"), Set(Engage ntsPr vate).asJava)
+  val  S_DWELLED_ N_BOUNDS_V1 =
+    new B nary(na ("recap.engage nt. s_d lled_ n_bounds_v1"), Set(Engage ntsPr vate).asJava)
+  val DWELL_NORMAL ZED_OVERALL = new Cont nuous(
+    na ("recap.engage nt.d ll_normal zed_overall"),
+    Set(Engage ntsPr vate).asJava)
   val DWELL_CDF_OVERALL =
-    new Continuous(name("recap.engagement.dwell_cdf_overall"), Set(EngagementsPrivate).asJava)
-  val DWELL_CDF = new Continuous(name("recap.engagement.dwell_cdf"), Set(EngagementsPrivate).asJava)
+    new Cont nuous(na ("recap.engage nt.d ll_cdf_overall"), Set(Engage ntsPr vate).asJava)
+  val DWELL_CDF = new Cont nuous(na ("recap.engage nt.d ll_cdf"), Set(Engage ntsPr vate).asJava)
 
-  val IS_DWELLED_1S =
-    new Binary(name("recap.engagement.is_dwelled_1s"), Set(EngagementsPrivate).asJava)
-  val IS_DWELLED_2S =
-    new Binary(name("recap.engagement.is_dwelled_2s"), Set(EngagementsPrivate).asJava)
-  val IS_DWELLED_3S =
-    new Binary(name("recap.engagement.is_dwelled_3s"), Set(EngagementsPrivate).asJava)
-  val IS_DWELLED_4S =
-    new Binary(name("recap.engagement.is_dwelled_4s"), Set(EngagementsPrivate).asJava)
-  val IS_DWELLED_5S =
-    new Binary(name("recap.engagement.is_dwelled_5s"), Set(EngagementsPrivate).asJava)
-  val IS_DWELLED_6S =
-    new Binary(name("recap.engagement.is_dwelled_6s"), Set(EngagementsPrivate).asJava)
-  val IS_DWELLED_7S =
-    new Binary(name("recap.engagement.is_dwelled_7s"), Set(EngagementsPrivate).asJava)
-  val IS_DWELLED_8S =
-    new Binary(name("recap.engagement.is_dwelled_8s"), Set(EngagementsPrivate).asJava)
-  val IS_DWELLED_9S =
-    new Binary(name("recap.engagement.is_dwelled_9s"), Set(EngagementsPrivate).asJava)
-  val IS_DWELLED_10S =
-    new Binary(name("recap.engagement.is_dwelled_10s"), Set(EngagementsPrivate).asJava)
+  val  S_DWELLED_1S =
+    new B nary(na ("recap.engage nt. s_d lled_1s"), Set(Engage ntsPr vate).asJava)
+  val  S_DWELLED_2S =
+    new B nary(na ("recap.engage nt. s_d lled_2s"), Set(Engage ntsPr vate).asJava)
+  val  S_DWELLED_3S =
+    new B nary(na ("recap.engage nt. s_d lled_3s"), Set(Engage ntsPr vate).asJava)
+  val  S_DWELLED_4S =
+    new B nary(na ("recap.engage nt. s_d lled_4s"), Set(Engage ntsPr vate).asJava)
+  val  S_DWELLED_5S =
+    new B nary(na ("recap.engage nt. s_d lled_5s"), Set(Engage ntsPr vate).asJava)
+  val  S_DWELLED_6S =
+    new B nary(na ("recap.engage nt. s_d lled_6s"), Set(Engage ntsPr vate).asJava)
+  val  S_DWELLED_7S =
+    new B nary(na ("recap.engage nt. s_d lled_7s"), Set(Engage ntsPr vate).asJava)
+  val  S_DWELLED_8S =
+    new B nary(na ("recap.engage nt. s_d lled_8s"), Set(Engage ntsPr vate).asJava)
+  val  S_DWELLED_9S =
+    new B nary(na ("recap.engage nt. s_d lled_9s"), Set(Engage ntsPr vate).asJava)
+  val  S_DWELLED_10S =
+    new B nary(na ("recap.engage nt. s_d lled_10s"), Set(Engage ntsPr vate).asJava)
 
-  val IS_SKIPPED_1S =
-    new Binary(name("recap.engagement.is_skipped_1s"), Set(EngagementsPrivate).asJava)
-  val IS_SKIPPED_2S =
-    new Binary(name("recap.engagement.is_skipped_2s"), Set(EngagementsPrivate).asJava)
-  val IS_SKIPPED_3S =
-    new Binary(name("recap.engagement.is_skipped_3s"), Set(EngagementsPrivate).asJava)
-  val IS_SKIPPED_4S =
-    new Binary(name("recap.engagement.is_skipped_4s"), Set(EngagementsPrivate).asJava)
-  val IS_SKIPPED_5S =
-    new Binary(name("recap.engagement.is_skipped_5s"), Set(EngagementsPrivate).asJava)
-  val IS_SKIPPED_6S =
-    new Binary(name("recap.engagement.is_skipped_6s"), Set(EngagementsPrivate).asJava)
-  val IS_SKIPPED_7S =
-    new Binary(name("recap.engagement.is_skipped_7s"), Set(EngagementsPrivate).asJava)
-  val IS_SKIPPED_8S =
-    new Binary(name("recap.engagement.is_skipped_8s"), Set(EngagementsPrivate).asJava)
-  val IS_SKIPPED_9S =
-    new Binary(name("recap.engagement.is_skipped_9s"), Set(EngagementsPrivate).asJava)
-  val IS_SKIPPED_10S =
-    new Binary(name("recap.engagement.is_skipped_10s"), Set(EngagementsPrivate).asJava)
+  val  S_SK PPED_1S =
+    new B nary(na ("recap.engage nt. s_sk pped_1s"), Set(Engage ntsPr vate).asJava)
+  val  S_SK PPED_2S =
+    new B nary(na ("recap.engage nt. s_sk pped_2s"), Set(Engage ntsPr vate).asJava)
+  val  S_SK PPED_3S =
+    new B nary(na ("recap.engage nt. s_sk pped_3s"), Set(Engage ntsPr vate).asJava)
+  val  S_SK PPED_4S =
+    new B nary(na ("recap.engage nt. s_sk pped_4s"), Set(Engage ntsPr vate).asJava)
+  val  S_SK PPED_5S =
+    new B nary(na ("recap.engage nt. s_sk pped_5s"), Set(Engage ntsPr vate).asJava)
+  val  S_SK PPED_6S =
+    new B nary(na ("recap.engage nt. s_sk pped_6s"), Set(Engage ntsPr vate).asJava)
+  val  S_SK PPED_7S =
+    new B nary(na ("recap.engage nt. s_sk pped_7s"), Set(Engage ntsPr vate).asJava)
+  val  S_SK PPED_8S =
+    new B nary(na ("recap.engage nt. s_sk pped_8s"), Set(Engage ntsPr vate).asJava)
+  val  S_SK PPED_9S =
+    new B nary(na ("recap.engage nt. s_sk pped_9s"), Set(Engage ntsPr vate).asJava)
+  val  S_SK PPED_10S =
+    new B nary(na ("recap.engage nt. s_sk pped_10s"), Set(Engage ntsPr vate).asJava)
 
-  val IS_IMPRESSED =
-    new Binary(name("recap.engagement.is_impressed"), Set(EngagementsPrivate).asJava)
-  val IS_FOLLOWED =
-    new Binary("recap.engagement.is_followed", Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_PROFILE_CLICKED = new Binary(
-    name("recap.engagement.is_profile_clicked"),
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_OPEN_LINKED = new Binary(
-    name("recap.engagement.is_open_linked"),
-    Set(EngagementsPrivate, LinksClickedOn).asJava)
-  val IS_PHOTO_EXPANDED =
-    new Binary(name("recap.engagement.is_photo_expanded"), Set(EngagementsPrivate).asJava)
-  val IS_VIDEO_VIEWED =
-    new Binary(name("recap.engagement.is_video_viewed"), Set(EngagementsPrivate).asJava)
-  val IS_VIDEO_PLAYBACK_START =
-    new Binary(name("recap.engagement.is_video_playback_start"), Set(EngagementsPrivate).asJava)
-  val IS_VIDEO_PLAYBACK_25 =
-    new Binary(name("recap.engagement.is_video_playback_25"), Set(EngagementsPrivate).asJava)
-  val IS_VIDEO_PLAYBACK_50 =
-    new Binary(name("recap.engagement.is_video_playback_50"), Set(EngagementsPrivate).asJava)
-  val IS_VIDEO_PLAYBACK_75 =
-    new Binary(name("recap.engagement.is_video_playback_75"), Set(EngagementsPrivate).asJava)
-  val IS_VIDEO_PLAYBACK_95 =
-    new Binary(name("recap.engagement.is_video_playback_95"), Set(EngagementsPrivate).asJava)
-  val IS_VIDEO_PLAYBACK_COMPLETE =
-    new Binary(name("recap.engagement.is_video_playback_complete"), Set(EngagementsPrivate).asJava)
-  val IS_VIDEO_VIEWED_AND_PLAYBACK_50 = new Binary(
-    name("recap.engagement.is_video_viewed_and_playback_50"),
-    Set(EngagementsPrivate).asJava)
-  val IS_VIDEO_QUALITY_VIEWED = new Binary(
-    name("recap.engagement.is_video_quality_viewed"),
-    Set(EngagementsPrivate).asJava
+  val  S_ MPRESSED =
+    new B nary(na ("recap.engage nt. s_ mpressed"), Set(Engage ntsPr vate).asJava)
+  val  S_FOLLOWED =
+    new B nary("recap.engage nt. s_follo d", Set(Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_PROF LE_CL CKED = new B nary(
+    na ("recap.engage nt. s_prof le_cl cked"),
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
+  val  S_OPEN_L NKED = new B nary(
+    na ("recap.engage nt. s_open_l nked"),
+    Set(Engage ntsPr vate, L nksCl ckedOn).asJava)
+  val  S_PHOTO_EXPANDED =
+    new B nary(na ("recap.engage nt. s_photo_expanded"), Set(Engage ntsPr vate).asJava)
+  val  S_V DEO_V EWED =
+    new B nary(na ("recap.engage nt. s_v deo_v e d"), Set(Engage ntsPr vate).asJava)
+  val  S_V DEO_PLAYBACK_START =
+    new B nary(na ("recap.engage nt. s_v deo_playback_start"), Set(Engage ntsPr vate).asJava)
+  val  S_V DEO_PLAYBACK_25 =
+    new B nary(na ("recap.engage nt. s_v deo_playback_25"), Set(Engage ntsPr vate).asJava)
+  val  S_V DEO_PLAYBACK_50 =
+    new B nary(na ("recap.engage nt. s_v deo_playback_50"), Set(Engage ntsPr vate).asJava)
+  val  S_V DEO_PLAYBACK_75 =
+    new B nary(na ("recap.engage nt. s_v deo_playback_75"), Set(Engage ntsPr vate).asJava)
+  val  S_V DEO_PLAYBACK_95 =
+    new B nary(na ("recap.engage nt. s_v deo_playback_95"), Set(Engage ntsPr vate).asJava)
+  val  S_V DEO_PLAYBACK_COMPLETE =
+    new B nary(na ("recap.engage nt. s_v deo_playback_complete"), Set(Engage ntsPr vate).asJava)
+  val  S_V DEO_V EWED_AND_PLAYBACK_50 = new B nary(
+    na ("recap.engage nt. s_v deo_v e d_and_playback_50"),
+    Set(Engage ntsPr vate).asJava)
+  val  S_V DEO_QUAL TY_V EWED = new B nary(
+    na ("recap.engage nt. s_v deo_qual y_v e d"),
+    Set(Engage ntsPr vate).asJava
   ) 
-  val IS_TWEET_SHARE_DM_CLICKED =
-    new Binary(name("recap.engagement.is_tweet_share_dm_clicked"), Set(EngagementsPrivate).asJava)
-  val IS_TWEET_SHARE_DM_SENT =
-    new Binary(name("recap.engagement.is_tweet_share_dm_sent"), Set(EngagementsPrivate).asJava)
-  val IS_BOOKMARKED =
-    new Binary(name("recap.engagement.is_bookmarked"), Set(EngagementsPrivate).asJava)
-  val IS_SHARED =
-    new Binary(name("recap.engagement.is_shared"), Set(EngagementsPrivate).asJava)
-  val IS_SHARE_MENU_CLICKED =
-    new Binary(name("recap.engagement.is_share_menu_clicked"), Set(EngagementsPrivate).asJava)
+  val  S_TWEET_SHARE_DM_CL CKED =
+    new B nary(na ("recap.engage nt. s_t et_share_dm_cl cked"), Set(Engage ntsPr vate).asJava)
+  val  S_TWEET_SHARE_DM_SENT =
+    new B nary(na ("recap.engage nt. s_t et_share_dm_sent"), Set(Engage ntsPr vate).asJava)
+  val  S_BOOKMARKED =
+    new B nary(na ("recap.engage nt. s_bookmarked"), Set(Engage ntsPr vate).asJava)
+  val  S_SHARED =
+    new B nary(na ("recap.engage nt. s_shared"), Set(Engage ntsPr vate).asJava)
+  val  S_SHARE_MENU_CL CKED =
+    new B nary(na ("recap.engage nt. s_share_ nu_cl cked"), Set(Engage ntsPr vate).asJava)
 
-  // Negative engagements
-  val IS_DONT_LIKE =
-    new Binary(name("recap.engagement.is_dont_like"), Set(EngagementsPrivate).asJava)
-  val IS_BLOCK_CLICKED = new Binary(
-    name("recap.engagement.is_block_clicked"),
-    Set(TweetsClicked, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_BLOCK_DIALOG_BLOCKED = new Binary(
-    name("recap.engagement.is_block_dialog_blocked"),
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_MUTE_CLICKED = new Binary(
-    name("recap.engagement.is_mute_clicked"),
-    Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_MUTE_DIALOG_MUTED =
-    new Binary(name("recap.engagement.is_mute_dialog_muted"), Set(EngagementsPrivate).asJava)
-  val IS_REPORT_TWEET_CLICKED = new Binary(
-    name("recap.engagement.is_report_tweet_clicked"),
-    Set(TweetsClicked, EngagementsPrivate).asJava)
-  val IS_NEGATIVE_FEEDBACK =
-    new Binary("recap.engagement.is_negative_feedback", Set(EngagementsPrivate).asJava)
-  val IS_NOT_ABOUT_TOPIC =
-    new Binary(name("recap.engagement.is_not_about_topic"), Set(EngagementsPrivate).asJava)
-  val IS_NOT_RECENT =
-    new Binary(name("recap.engagement.is_not_recent"), Set(EngagementsPrivate).asJava)
-  val IS_NOT_RELEVANT =
-    new Binary(name("recap.engagement.is_not_relevant"), Set(EngagementsPrivate).asJava)
-  val IS_SEE_FEWER =
-    new Binary(name("recap.engagement.is_see_fewer"), Set(EngagementsPrivate).asJava)
-  val IS_TOPIC_SPEC_NEG_ENGAGEMENT =
-    new Binary("recap.engagement.is_topic_spec_neg_engagement", Set(EngagementsPrivate).asJava)
-  val IS_UNFOLLOW_TOPIC =
-    new Binary("recap.engagement.is_unfollow_topic", Set(EngagementsPrivate).asJava)
-  val IS_UNFOLLOW_TOPIC_EXPLICIT_POSITIVE_LABEL =
-    new Binary(
-      "recap.engagement.is_unfollow_topic_explicit_positive_label",
-      Set(EngagementsPrivate).asJava)
-  val IS_UNFOLLOW_TOPIC_IMPLICIT_POSITIVE_LABEL =
-    new Binary(
-      "recap.engagement.is_unfollow_topic_implicit_positive_label",
-      Set(EngagementsPrivate).asJava)
-  val IS_UNFOLLOW_TOPIC_STRONG_EXPLICIT_NEGATIVE_LABEL =
-    new Binary(
-      "recap.engagement.is_unfollow_topic_strong_explicit_negative_label",
-      Set(EngagementsPrivate).asJava)
-  val IS_UNFOLLOW_TOPIC_EXPLICIT_NEGATIVE_LABEL =
-    new Binary(
-      "recap.engagement.is_unfollow_topic_explicit_negative_label",
-      Set(EngagementsPrivate).asJava)
-  val IS_NOT_INTERESTED_IN =
-    new Binary("recap.engagement.is_not_interested_in", Set(EngagementsPrivate).asJava)
-  val IS_NOT_INTERESTED_IN_EXPLICIT_POSITIVE_LABEL =
-    new Binary(
-      "recap.engagement.is_not_interested_in_explicit_positive_label",
-      Set(EngagementsPrivate).asJava)
-  val IS_NOT_INTERESTED_IN_EXPLICIT_NEGATIVE_LABEL =
-    new Binary(
-      "recap.engagement.is_not_interested_in_explicit_negative_label",
-      Set(EngagementsPrivate).asJava)
-  val IS_CARET_CLICKED =
-    new Binary(name("recap.engagement.is_caret_clicked"), Set(EngagementsPrivate).asJava)
-  val IS_FOLLOW_TOPIC =
-    new Binary("recap.engagement.is_follow_topic", Set(EngagementsPrivate).asJava)
-  val IS_NOT_INTERESTED_IN_TOPIC =
-    new Binary("recap.engagement.is_not_interested_in_topic", Set(EngagementsPrivate).asJava)
-  val IS_HOME_LATEST_VISITED =
-    new Binary(name("recap.engagement.is_home_latest_visited"), Set(EngagementsPrivate).asJava)
+  // Negat ve engage nts
+  val  S_DONT_L KE =
+    new B nary(na ("recap.engage nt. s_dont_l ke"), Set(Engage ntsPr vate).asJava)
+  val  S_BLOCK_CL CKED = new B nary(
+    na ("recap.engage nt. s_block_cl cked"),
+    Set(T etsCl cked, Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_BLOCK_D ALOG_BLOCKED = new B nary(
+    na ("recap.engage nt. s_block_d alog_blocked"),
+    Set(Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_MUTE_CL CKED = new B nary(
+    na ("recap.engage nt. s_mute_cl cked"),
+    Set(T etsCl cked, Engage ntsPr vate).asJava)
+  val  S_MUTE_D ALOG_MUTED =
+    new B nary(na ("recap.engage nt. s_mute_d alog_muted"), Set(Engage ntsPr vate).asJava)
+  val  S_REPORT_TWEET_CL CKED = new B nary(
+    na ("recap.engage nt. s_report_t et_cl cked"),
+    Set(T etsCl cked, Engage ntsPr vate).asJava)
+  val  S_NEGAT VE_FEEDBACK =
+    new B nary("recap.engage nt. s_negat ve_feedback", Set(Engage ntsPr vate).asJava)
+  val  S_NOT_ABOUT_TOP C =
+    new B nary(na ("recap.engage nt. s_not_about_top c"), Set(Engage ntsPr vate).asJava)
+  val  S_NOT_RECENT =
+    new B nary(na ("recap.engage nt. s_not_recent"), Set(Engage ntsPr vate).asJava)
+  val  S_NOT_RELEVANT =
+    new B nary(na ("recap.engage nt. s_not_relevant"), Set(Engage ntsPr vate).asJava)
+  val  S_SEE_FEWER =
+    new B nary(na ("recap.engage nt. s_see_fe r"), Set(Engage ntsPr vate).asJava)
+  val  S_TOP C_SPEC_NEG_ENGAGEMENT =
+    new B nary("recap.engage nt. s_top c_spec_neg_engage nt", Set(Engage ntsPr vate).asJava)
+  val  S_UNFOLLOW_TOP C =
+    new B nary("recap.engage nt. s_unfollow_top c", Set(Engage ntsPr vate).asJava)
+  val  S_UNFOLLOW_TOP C_EXPL C T_POS T VE_LABEL =
+    new B nary(
+      "recap.engage nt. s_unfollow_top c_expl c _pos  ve_label",
+      Set(Engage ntsPr vate).asJava)
+  val  S_UNFOLLOW_TOP C_ MPL C T_POS T VE_LABEL =
+    new B nary(
+      "recap.engage nt. s_unfollow_top c_ mpl c _pos  ve_label",
+      Set(Engage ntsPr vate).asJava)
+  val  S_UNFOLLOW_TOP C_STRONG_EXPL C T_NEGAT VE_LABEL =
+    new B nary(
+      "recap.engage nt. s_unfollow_top c_strong_expl c _negat ve_label",
+      Set(Engage ntsPr vate).asJava)
+  val  S_UNFOLLOW_TOP C_EXPL C T_NEGAT VE_LABEL =
+    new B nary(
+      "recap.engage nt. s_unfollow_top c_expl c _negat ve_label",
+      Set(Engage ntsPr vate).asJava)
+  val  S_NOT_ NTERESTED_ N =
+    new B nary("recap.engage nt. s_not_ nterested_ n", Set(Engage ntsPr vate).asJava)
+  val  S_NOT_ NTERESTED_ N_EXPL C T_POS T VE_LABEL =
+    new B nary(
+      "recap.engage nt. s_not_ nterested_ n_expl c _pos  ve_label",
+      Set(Engage ntsPr vate).asJava)
+  val  S_NOT_ NTERESTED_ N_EXPL C T_NEGAT VE_LABEL =
+    new B nary(
+      "recap.engage nt. s_not_ nterested_ n_expl c _negat ve_label",
+      Set(Engage ntsPr vate).asJava)
+  val  S_CARET_CL CKED =
+    new B nary(na ("recap.engage nt. s_caret_cl cked"), Set(Engage ntsPr vate).asJava)
+  val  S_FOLLOW_TOP C =
+    new B nary("recap.engage nt. s_follow_top c", Set(Engage ntsPr vate).asJava)
+  val  S_NOT_ NTERESTED_ N_TOP C =
+    new B nary("recap.engage nt. s_not_ nterested_ n_top c", Set(Engage ntsPr vate).asJava)
+  val  S_HOME_LATEST_V S TED =
+    new B nary(na ("recap.engage nt. s_ho _latest_v s ed"), Set(Engage ntsPr vate).asJava)
 
-  // Relevance prompt tweet engagements
-  val IS_RELEVANCE_PROMPT_YES_CLICKED = new Binary(
-    name("recap.engagement.is_relevance_prompt_yes_clicked"),
-    Set(EngagementsPrivate).asJava)
-  val IS_RELEVANCE_PROMPT_NO_CLICKED = new Binary(
-    name("recap.engagement.is_relevance_prompt_no_clicked"),
-    Set(EngagementsPrivate).asJava)
-  val IS_RELEVANCE_PROMPT_IMPRESSED = new Binary(
-    name("recap.engagement.is_relevance_prompt_impressed"),
-    Set(EngagementsPrivate).asJava)
+  // Relevance prompt t et engage nts
+  val  S_RELEVANCE_PROMPT_YES_CL CKED = new B nary(
+    na ("recap.engage nt. s_relevance_prompt_yes_cl cked"),
+    Set(Engage ntsPr vate).asJava)
+  val  S_RELEVANCE_PROMPT_NO_CL CKED = new B nary(
+    na ("recap.engage nt. s_relevance_prompt_no_cl cked"),
+    Set(Engage ntsPr vate).asJava)
+  val  S_RELEVANCE_PROMPT_ MPRESSED = new B nary(
+    na ("recap.engage nt. s_relevance_prompt_ mpressed"),
+    Set(Engage ntsPr vate).asJava)
 
-  // Reciprocal engagements for reply forward engagement
-  val IS_REPLIED_REPLY_IMPRESSED_BY_AUTHOR = new Binary(
-    name("recap.engagement.is_replied_reply_impressed_by_author"),
-    Set(EngagementsPrivate).asJava)
-  val IS_REPLIED_REPLY_FAVORITED_BY_AUTHOR = new Binary(
-    name("recap.engagement.is_replied_reply_favorited_by_author"),
-    Set(EngagementsPrivate, EngagementsPublic, PrivateLikes, PublicLikes).asJava)
-  val IS_REPLIED_REPLY_QUOTED_BY_AUTHOR = new Binary(
-    name("recap.engagement.is_replied_reply_quoted_by_author"),
-    Set(EngagementsPrivate, EngagementsPublic, PrivateRetweets, PublicRetweets).asJava)
-  val IS_REPLIED_REPLY_REPLIED_BY_AUTHOR = new Binary(
-    name("recap.engagement.is_replied_reply_replied_by_author"),
-    Set(EngagementsPrivate, EngagementsPublic, PrivateReplies, PublicReplies).asJava)
-  val IS_REPLIED_REPLY_RETWEETED_BY_AUTHOR = new Binary(
-    name("recap.engagement.is_replied_reply_retweeted_by_author"),
-    Set(EngagementsPrivate, EngagementsPublic, PrivateRetweets, PublicRetweets).asJava)
-  val IS_REPLIED_REPLY_BLOCKED_BY_AUTHOR = new Binary(
-    name("recap.engagement.is_replied_reply_blocked_by_author"),
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_REPLIED_REPLY_FOLLOWED_BY_AUTHOR = new Binary(
-    name("recap.engagement.is_replied_reply_followed_by_author"),
-    Set(EngagementsPrivate, EngagementsPublic, Follow).asJava)
-  val IS_REPLIED_REPLY_UNFOLLOWED_BY_AUTHOR = new Binary(
-    name("recap.engagement.is_replied_reply_unfollowed_by_author"),
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_REPLIED_REPLY_MUTED_BY_AUTHOR = new Binary(
-    name("recap.engagement.is_replied_reply_muted_by_author"),
-    Set(EngagementsPrivate).asJava)
-  val IS_REPLIED_REPLY_REPORTED_BY_AUTHOR = new Binary(
-    name("recap.engagement.is_replied_reply_reported_by_author"),
-    Set(EngagementsPrivate).asJava)
+  // Rec procal engage nts for reply forward engage nt
+  val  S_REPL ED_REPLY_ MPRESSED_BY_AUTHOR = new B nary(
+    na ("recap.engage nt. s_repl ed_reply_ mpressed_by_author"),
+    Set(Engage ntsPr vate).asJava)
+  val  S_REPL ED_REPLY_FAVOR TED_BY_AUTHOR = new B nary(
+    na ("recap.engage nt. s_repl ed_reply_favor ed_by_author"),
+    Set(Engage ntsPr vate, Engage ntsPubl c, Pr vateL kes, Publ cL kes).asJava)
+  val  S_REPL ED_REPLY_QUOTED_BY_AUTHOR = new B nary(
+    na ("recap.engage nt. s_repl ed_reply_quoted_by_author"),
+    Set(Engage ntsPr vate, Engage ntsPubl c, Pr vateRet ets, Publ cRet ets).asJava)
+  val  S_REPL ED_REPLY_REPL ED_BY_AUTHOR = new B nary(
+    na ("recap.engage nt. s_repl ed_reply_repl ed_by_author"),
+    Set(Engage ntsPr vate, Engage ntsPubl c, Pr vateRepl es, Publ cRepl es).asJava)
+  val  S_REPL ED_REPLY_RETWEETED_BY_AUTHOR = new B nary(
+    na ("recap.engage nt. s_repl ed_reply_ret eted_by_author"),
+    Set(Engage ntsPr vate, Engage ntsPubl c, Pr vateRet ets, Publ cRet ets).asJava)
+  val  S_REPL ED_REPLY_BLOCKED_BY_AUTHOR = new B nary(
+    na ("recap.engage nt. s_repl ed_reply_blocked_by_author"),
+    Set(Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_REPL ED_REPLY_FOLLOWED_BY_AUTHOR = new B nary(
+    na ("recap.engage nt. s_repl ed_reply_follo d_by_author"),
+    Set(Engage ntsPr vate, Engage ntsPubl c, Follow).asJava)
+  val  S_REPL ED_REPLY_UNFOLLOWED_BY_AUTHOR = new B nary(
+    na ("recap.engage nt. s_repl ed_reply_unfollo d_by_author"),
+    Set(Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_REPL ED_REPLY_MUTED_BY_AUTHOR = new B nary(
+    na ("recap.engage nt. s_repl ed_reply_muted_by_author"),
+    Set(Engage ntsPr vate).asJava)
+  val  S_REPL ED_REPLY_REPORTED_BY_AUTHOR = new B nary(
+    na ("recap.engage nt. s_repl ed_reply_reported_by_author"),
+    Set(Engage ntsPr vate).asJava)
 
-  // This derived label is the logical OR of REPLY_REPLIED, REPLY_FAVORITED, REPLY_RETWEETED
-  val IS_REPLIED_REPLY_ENGAGED_BY_AUTHOR = new Binary(
-    name("recap.engagement.is_replied_reply_engaged_by_author"),
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
+  // T  der ved label  s t  log cal OR of REPLY_REPL ED, REPLY_FAVOR TED, REPLY_RETWEETED
+  val  S_REPL ED_REPLY_ENGAGED_BY_AUTHOR = new B nary(
+    na ("recap.engage nt. s_repl ed_reply_engaged_by_author"),
+    Set(Engage ntsPr vate, Engage ntsPubl c).asJava)
 
-  // Reciprocal engagements for fav forward engagement
-  val IS_FAVORITED_FAV_FAVORITED_BY_AUTHOR = new Binary(
-    name("recap.engagement.is_favorited_fav_favorited_by_author"),
-    Set(EngagementsPrivate, EngagementsPublic, PrivateLikes, PublicLikes).asJava
+  // Rec procal engage nts for fav forward engage nt
+  val  S_FAVOR TED_FAV_FAVOR TED_BY_AUTHOR = new B nary(
+    na ("recap.engage nt. s_favor ed_fav_favor ed_by_author"),
+    Set(Engage ntsPr vate, Engage ntsPubl c, Pr vateL kes, Publ cL kes).asJava
   )
-  val IS_FAVORITED_FAV_REPLIED_BY_AUTHOR = new Binary(
-    name("recap.engagement.is_favorited_fav_replied_by_author"),
-    Set(EngagementsPrivate, EngagementsPublic, PrivateReplies, PublicReplies).asJava
+  val  S_FAVOR TED_FAV_REPL ED_BY_AUTHOR = new B nary(
+    na ("recap.engage nt. s_favor ed_fav_repl ed_by_author"),
+    Set(Engage ntsPr vate, Engage ntsPubl c, Pr vateRepl es, Publ cRepl es).asJava
   )
-  val IS_FAVORITED_FAV_RETWEETED_BY_AUTHOR = new Binary(
-    name("recap.engagement.is_favorited_fav_retweeted_by_author"),
-    Set(EngagementsPrivate, EngagementsPublic, PrivateRetweets, PublicRetweets).asJava
+  val  S_FAVOR TED_FAV_RETWEETED_BY_AUTHOR = new B nary(
+    na ("recap.engage nt. s_favor ed_fav_ret eted_by_author"),
+    Set(Engage ntsPr vate, Engage ntsPubl c, Pr vateRet ets, Publ cRet ets).asJava
   )
-  val IS_FAVORITED_FAV_FOLLOWED_BY_AUTHOR = new Binary(
-    name("recap.engagement.is_favorited_fav_followed_by_author"),
-    Set(EngagementsPrivate, EngagementsPublic, PrivateRetweets, PublicRetweets).asJava
+  val  S_FAVOR TED_FAV_FOLLOWED_BY_AUTHOR = new B nary(
+    na ("recap.engage nt. s_favor ed_fav_follo d_by_author"),
+    Set(Engage ntsPr vate, Engage ntsPubl c, Pr vateRet ets, Publ cRet ets).asJava
   )
-  // This derived label is the logical OR of FAV_REPLIED, FAV_FAVORITED, FAV_RETWEETED, FAV_FOLLOWED
-  val IS_FAVORITED_FAV_ENGAGED_BY_AUTHOR = new Binary(
-    name("recap.engagement.is_favorited_fav_engaged_by_author"),
-    Set(EngagementsPrivate, EngagementsPublic).asJava)
+  // T  der ved label  s t  log cal OR of FAV_REPL ED, FAV_FAVOR TED, FAV_RETWEETED, FAV_FOLLOWED
+  val  S_FAVOR TED_FAV_ENGAGED_BY_AUTHOR = new B nary(
+    na ("recap.engage nt. s_favor ed_fav_engaged_by_author"),
+    Set(Engage ntsPr vate, Engage ntsPubl c).asJava)
 
-  // define good profile click by considering following engagements (follow, fav, reply, retweet, etc.) at profile page
-  val IS_PROFILE_CLICKED_AND_PROFILE_FOLLOW = new Binary(
-    name("recap.engagement.is_profile_clicked_and_profile_follow"),
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate, Follow).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_FAV = new Binary(
-    name("recap.engagement.is_profile_clicked_and_profile_fav"),
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate, PrivateLikes, PublicLikes).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_REPLY = new Binary(
-    name("recap.engagement.is_profile_clicked_and_profile_reply"),
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate, PrivateReplies, PublicReplies).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_RETWEET = new Binary(
-    name("recap.engagement.is_profile_clicked_and_profile_retweet"),
+  // def ne good prof le cl ck by cons der ng follow ng engage nts (follow, fav, reply, ret et, etc.) at prof le page
+  val  S_PROF LE_CL CKED_AND_PROF LE_FOLLOW = new B nary(
+    na ("recap.engage nt. s_prof le_cl cked_and_prof le_follow"),
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate, Follow).asJava)
+  val  S_PROF LE_CL CKED_AND_PROF LE_FAV = new B nary(
+    na ("recap.engage nt. s_prof le_cl cked_and_prof le_fav"),
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate, Pr vateL kes, Publ cL kes).asJava)
+  val  S_PROF LE_CL CKED_AND_PROF LE_REPLY = new B nary(
+    na ("recap.engage nt. s_prof le_cl cked_and_prof le_reply"),
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate, Pr vateRepl es, Publ cRepl es).asJava)
+  val  S_PROF LE_CL CKED_AND_PROF LE_RETWEET = new B nary(
+    na ("recap.engage nt. s_prof le_cl cked_and_prof le_ret et"),
     Set(
-      ProfilesViewed,
-      ProfilesClicked,
-      EngagementsPrivate,
-      PrivateRetweets,
-      PublicRetweets).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_TWEET_CLICK = new Binary(
-    name("recap.engagement.is_profile_clicked_and_profile_tweet_click"),
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate, TweetsClicked).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_SHARE_DM_CLICK = new Binary(
-    name("recap.engagement.is_profile_clicked_and_profile_share_dm_click"),
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  // This derived label is the union of all binary features above
-  val IS_PROFILE_CLICKED_AND_PROFILE_ENGAGED = new Binary(
-    name("recap.engagement.is_profile_clicked_and_profile_engaged"),
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate, EngagementsPublic).asJava)
+      Prof lesV e d,
+      Prof lesCl cked,
+      Engage ntsPr vate,
+      Pr vateRet ets,
+      Publ cRet ets).asJava)
+  val  S_PROF LE_CL CKED_AND_PROF LE_TWEET_CL CK = new B nary(
+    na ("recap.engage nt. s_prof le_cl cked_and_prof le_t et_cl ck"),
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate, T etsCl cked).asJava)
+  val  S_PROF LE_CL CKED_AND_PROF LE_SHARE_DM_CL CK = new B nary(
+    na ("recap.engage nt. s_prof le_cl cked_and_prof le_share_dm_cl ck"),
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
+  // T  der ved label  s t  un on of all b nary features above
+  val  S_PROF LE_CL CKED_AND_PROF LE_ENGAGED = new B nary(
+    na ("recap.engage nt. s_prof le_cl cked_and_prof le_engaged"),
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate, Engage ntsPubl c).asJava)
 
-  // define bad profile click by considering following engagements (user report, tweet report, mute, block, etc) at profile page
-  val IS_PROFILE_CLICKED_AND_PROFILE_USER_REPORT_CLICK = new Binary(
-    name("recap.engagement.is_profile_clicked_and_profile_user_report_click"),
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_TWEET_REPORT_CLICK = new Binary(
-    name("recap.engagement.is_profile_clicked_and_profile_tweet_report_click"),
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_MUTE = new Binary(
-    name("recap.engagement.is_profile_clicked_and_profile_mute"),
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_PROFILE_CLICKED_AND_PROFILE_BLOCK = new Binary(
-    name("recap.engagement.is_profile_clicked_and_profile_block"),
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  // This derived label is the union of bad profile click engagements and existing negative feedback
-  val IS_NEGATIVE_FEEDBACK_V2 = new Binary(
-    name("recap.engagement.is_negative_feedback_v2"),
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_STRONG_NEGATIVE_FEEDBACK = new Binary(
-    name("recap.engagement.is_strong_negative_feedback"),
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  val IS_WEAK_NEGATIVE_FEEDBACK = new Binary(
-    name("recap.engagement.is_weak_negative_feedback"),
-    Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  // engagement for following user from any surface area
-  val IS_FOLLOWED_FROM_ANY_SURFACE_AREA = new Binary(
-    "recap.engagement.is_followed_from_any_surface_area",
-    Set(EngagementsPublic, EngagementsPrivate).asJava)
+  // def ne bad prof le cl ck by cons der ng follow ng engage nts (user report, t et report, mute, block, etc) at prof le page
+  val  S_PROF LE_CL CKED_AND_PROF LE_USER_REPORT_CL CK = new B nary(
+    na ("recap.engage nt. s_prof le_cl cked_and_prof le_user_report_cl ck"),
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
+  val  S_PROF LE_CL CKED_AND_PROF LE_TWEET_REPORT_CL CK = new B nary(
+    na ("recap.engage nt. s_prof le_cl cked_and_prof le_t et_report_cl ck"),
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
+  val  S_PROF LE_CL CKED_AND_PROF LE_MUTE = new B nary(
+    na ("recap.engage nt. s_prof le_cl cked_and_prof le_mute"),
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
+  val  S_PROF LE_CL CKED_AND_PROF LE_BLOCK = new B nary(
+    na ("recap.engage nt. s_prof le_cl cked_and_prof le_block"),
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
+  // T  der ved label  s t  un on of bad prof le cl ck engage nts and ex st ng negat ve feedback
+  val  S_NEGAT VE_FEEDBACK_V2 = new B nary(
+    na ("recap.engage nt. s_negat ve_feedback_v2"),
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
+  val  S_STRONG_NEGAT VE_FEEDBACK = new B nary(
+    na ("recap.engage nt. s_strong_negat ve_feedback"),
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
+  val  S_WEAK_NEGAT VE_FEEDBACK = new B nary(
+    na ("recap.engage nt. s_ ak_negat ve_feedback"),
+    Set(Prof lesV e d, Prof lesCl cked, Engage ntsPr vate).asJava)
+  // engage nt for follow ng user from any surface area
+  val  S_FOLLOWED_FROM_ANY_SURFACE_AREA = new B nary(
+    "recap.engage nt. s_follo d_from_any_surface_area",
+    Set(Engage ntsPubl c, Engage ntsPr vate).asJava)
 
-  // Reply downvote engagements
-  val IS_REPLY_DOWNVOTED =
-    new Binary(name("recap.engagement.is_reply_downvoted"), Set(EngagementsPrivate).asJava)
-  val IS_REPLY_DOWNVOTE_REMOVED =
-    new Binary(name("recap.engagement.is_reply_downvote_removed"), Set(EngagementsPrivate).asJava)
+  // Reply downvote engage nts
+  val  S_REPLY_DOWNVOTED =
+    new B nary(na ("recap.engage nt. s_reply_downvoted"), Set(Engage ntsPr vate).asJava)
+  val  S_REPLY_DOWNVOTE_REMOVED =
+    new B nary(na ("recap.engage nt. s_reply_downvote_removed"), Set(Engage ntsPr vate).asJava)
 
-  // Other engagements
-  val IS_GOOD_OPEN_LINK = new Binary(
-    name("recap.engagement.is_good_open_link"),
-    Set(EngagementsPrivate, LinksClickedOn).asJava)
-  val IS_ENGAGED = new Binary(
-    name("recap.engagement.any"),
-    Set(EngagementsPrivate, EngagementsPublic).asJava
+  // Ot r engage nts
+  val  S_GOOD_OPEN_L NK = new B nary(
+    na ("recap.engage nt. s_good_open_l nk"),
+    Set(Engage ntsPr vate, L nksCl ckedOn).asJava)
+  val  S_ENGAGED = new B nary(
+    na ("recap.engage nt.any"),
+    Set(Engage ntsPr vate, Engage ntsPubl c).asJava
   ) // Deprecated - to be removed shortly
-  val IS_EARLYBIRD_UNIFIED_ENGAGEMENT = new Binary(
-    name("recap.engagement.is_unified_engagement"),
-    Set(EngagementsPrivate, EngagementsPublic).asJava
-  ) // A subset of IS_ENGAGED specifically intended for use in earlybird models
+  val  S_EARLYB RD_UN F ED_ENGAGEMENT = new B nary(
+    na ("recap.engage nt. s_un f ed_engage nt"),
+    Set(Engage ntsPr vate, Engage ntsPubl c).asJava
+  ) // A subset of  S_ENGAGED spec f cally  ntended for use  n earlyb rd models
 
-  // features from ThriftTweetFeatures
-  val PREV_USER_TWEET_ENGAGEMENT = new Continuous(
-    name("recap.tweetfeature.prev_user_tweet_enagagement"),
-    Set(EngagementScore, EngagementsPrivate, EngagementsPublic).asJava)
-  val IS_SENSITIVE = new Binary(name("recap.tweetfeature.is_sensitive"))
-  val HAS_MULTIPLE_MEDIA = new Binary(
-    name("recap.tweetfeature.has_multiple_media"),
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val IS_AUTHOR_PROFILE_EGG = new Binary(name("recap.tweetfeature.is_author_profile_egg"))
-  val IS_AUTHOR_NEW =
-    new Binary(name("recap.tweetfeature.is_author_new"), Set(UserState, UserType).asJava)
-  val NUM_MENTIONS = new Continuous(
-    name("recap.tweetfeature.num_mentions"),
-    Set(CountOfPrivateTweetEntitiesAndMetadata, CountOfPublicTweetEntitiesAndMetadata).asJava)
-  val HAS_MENTION = new Binary(name("recap.tweetfeature.has_mention"), Set(UserVisibleFlag).asJava)
-  val NUM_HASHTAGS = new Continuous(
-    name("recap.tweetfeature.num_hashtags"),
-    Set(CountOfPrivateTweetEntitiesAndMetadata, CountOfPublicTweetEntitiesAndMetadata).asJava)
-  val HAS_HASHTAG = new Binary(
-    name("recap.tweetfeature.has_hashtag"),
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val LINK_LANGUAGE = new Continuous(
-    name("recap.tweetfeature.link_language"),
-    Set(ProvidedLanguage, InferredLanguage).asJava)
-  val IS_AUTHOR_NSFW =
-    new Binary(name("recap.tweetfeature.is_author_nsfw"), Set(UserSafetyLabels, UserType).asJava)
-  val IS_AUTHOR_SPAM =
-    new Binary(name("recap.tweetfeature.is_author_spam"), Set(UserSafetyLabels, UserType).asJava)
-  val IS_AUTHOR_BOT =
-    new Binary(name("recap.tweetfeature.is_author_bot"), Set(UserSafetyLabels, UserType).asJava)
-  val SIGNATURE =
-    new Discrete(name("recap.tweetfeature.signature"), Set(DigitalSignatureNonrepudiation).asJava)
-  val LANGUAGE = new Discrete(
-    name("recap.tweetfeature.language"),
-    Set(ProvidedLanguage, InferredLanguage).asJava)
-  val FROM_INACTIVE_USER =
-    new Binary(name("recap.tweetfeature.from_inactive_user"), Set(UserActiveFlag).asJava)
-  val PROBABLY_FROM_FOLLOWED_AUTHOR = new Binary(name("recap.v3.tweetfeature.probably_from_follow"))
-  val FROM_MUTUAL_FOLLOW = new Binary(name("recap.tweetfeature.from_mutual_follow"))
-  val USER_REP = new Continuous(name("recap.tweetfeature.user_rep"))
-  val FROM_VERIFIED_ACCOUNT =
-    new Binary(name("recap.tweetfeature.from_verified_account"), Set(UserVerifiedFlag).asJava)
-  val IS_BUSINESS_SCORE = new Continuous(name("recap.tweetfeature.is_business_score"))
-  val HAS_CONSUMER_VIDEO = new Binary(
-    name("recap.tweetfeature.has_consumer_video"),
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val HAS_PRO_VIDEO = new Binary(
-    name("recap.tweetfeature.has_pro_video"),
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val HAS_VINE = new Binary(
-    name("recap.tweetfeature.has_vine"),
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val HAS_PERISCOPE = new Binary(
-    name("recap.tweetfeature.has_periscope"),
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val HAS_NATIVE_VIDEO = new Binary(
-    name("recap.tweetfeature.has_native_video"),
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val HAS_NATIVE_IMAGE = new Binary(
-    name("recap.tweetfeature.has_native_image"),
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val HAS_CARD = new Binary(
-    name("recap.tweetfeature.has_card"),
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val HAS_IMAGE = new Binary(
-    name("recap.tweetfeature.has_image"),
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val HAS_NEWS = new Binary(
-    name("recap.tweetfeature.has_news"),
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val HAS_VIDEO = new Binary(
-    name("recap.tweetfeature.has_video"),
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val HAS_VISIBLE_LINK = new Binary(
-    name("recap.tweetfeature.has_visible_link"),
-    Set(UrlFoundFlag, PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val LINK_COUNT = new Continuous(
-    name("recap.tweetfeature.link_count"),
-    Set(CountOfPrivateTweetEntitiesAndMetadata, CountOfPublicTweetEntitiesAndMetadata).asJava)
-  val HAS_LINK = new Binary(
-    name("recap.tweetfeature.has_link"),
-    Set(UrlFoundFlag, PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val IS_OFFENSIVE = new Binary(name("recap.tweetfeature.is_offensive"))
-  val HAS_TREND = new Binary(
-    name("recap.tweetfeature.has_trend"),
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val HAS_MULTIPLE_HASHTAGS_OR_TRENDS = new Binary(
-    name("recap.tweetfeature.has_multiple_hashtag_or_trend"),
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val URL_DOMAINS = new SparseBinary(
-    name("recap.tweetfeature.url_domains"),
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val CONTAINS_MEDIA = new Binary(
-    name("recap.tweetfeature.contains_media"),
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val RETWEET_SEARCHER = new Binary(name("recap.tweetfeature.retweet_searcher"))
-  val REPLY_SEARCHER = new Binary(name("recap.tweetfeature.reply_searcher"))
-  val MENTION_SEARCHER =
-    new Binary(name("recap.tweetfeature.mention_searcher"), Set(UserVisibleFlag).asJava)
+  // features from Thr ftT etFeatures
+  val PREV_USER_TWEET_ENGAGEMENT = new Cont nuous(
+    na ("recap.t etfeature.prev_user_t et_enagage nt"),
+    Set(Engage ntScore, Engage ntsPr vate, Engage ntsPubl c).asJava)
+  val  S_SENS T VE = new B nary(na ("recap.t etfeature. s_sens  ve"))
+  val HAS_MULT PLE_MED A = new B nary(
+    na ("recap.t etfeature.has_mult ple_ d a"),
+    Set(Publ cT etEnt  esAnd tadata, Pr vateT etEnt  esAnd tadata).asJava)
+  val  S_AUTHOR_PROF LE_EGG = new B nary(na ("recap.t etfeature. s_author_prof le_egg"))
+  val  S_AUTHOR_NEW =
+    new B nary(na ("recap.t etfeature. s_author_new"), Set(UserState, UserType).asJava)
+  val NUM_MENT ONS = new Cont nuous(
+    na ("recap.t etfeature.num_ nt ons"),
+    Set(CountOfPr vateT etEnt  esAnd tadata, CountOfPubl cT etEnt  esAnd tadata).asJava)
+  val HAS_MENT ON = new B nary(na ("recap.t etfeature.has_ nt on"), Set(UserV s bleFlag).asJava)
+  val NUM_HASHTAGS = new Cont nuous(
+    na ("recap.t etfeature.num_hashtags"),
+    Set(CountOfPr vateT etEnt  esAnd tadata, CountOfPubl cT etEnt  esAnd tadata).asJava)
+  val HAS_HASHTAG = new B nary(
+    na ("recap.t etfeature.has_hashtag"),
+    Set(Publ cT etEnt  esAnd tadata, Pr vateT etEnt  esAnd tadata).asJava)
+  val L NK_LANGUAGE = new Cont nuous(
+    na ("recap.t etfeature.l nk_language"),
+    Set(Prov dedLanguage,  nferredLanguage).asJava)
+  val  S_AUTHOR_NSFW =
+    new B nary(na ("recap.t etfeature. s_author_nsfw"), Set(UserSafetyLabels, UserType).asJava)
+  val  S_AUTHOR_SPAM =
+    new B nary(na ("recap.t etfeature. s_author_spam"), Set(UserSafetyLabels, UserType).asJava)
+  val  S_AUTHOR_BOT =
+    new B nary(na ("recap.t etfeature. s_author_bot"), Set(UserSafetyLabels, UserType).asJava)
+  val S GNATURE =
+    new D screte(na ("recap.t etfeature.s gnature"), Set(D g alS gnatureNonrepud at on).asJava)
+  val LANGUAGE = new D screte(
+    na ("recap.t etfeature.language"),
+    Set(Prov dedLanguage,  nferredLanguage).asJava)
+  val FROM_ NACT VE_USER =
+    new B nary(na ("recap.t etfeature.from_ nact ve_user"), Set(UserAct veFlag).asJava)
+  val PROBABLY_FROM_FOLLOWED_AUTHOR = new B nary(na ("recap.v3.t etfeature.probably_from_follow"))
+  val FROM_MUTUAL_FOLLOW = new B nary(na ("recap.t etfeature.from_mutual_follow"))
+  val USER_REP = new Cont nuous(na ("recap.t etfeature.user_rep"))
+  val FROM_VER F ED_ACCOUNT =
+    new B nary(na ("recap.t etfeature.from_ver f ed_account"), Set(UserVer f edFlag).asJava)
+  val  S_BUS NESS_SCORE = new Cont nuous(na ("recap.t etfeature. s_bus ness_score"))
+  val HAS_CONSUMER_V DEO = new B nary(
+    na ("recap.t etfeature.has_consu r_v deo"),
+    Set(Publ cT etEnt  esAnd tadata, Pr vateT etEnt  esAnd tadata).asJava)
+  val HAS_PRO_V DEO = new B nary(
+    na ("recap.t etfeature.has_pro_v deo"),
+    Set(Publ cT etEnt  esAnd tadata, Pr vateT etEnt  esAnd tadata).asJava)
+  val HAS_V NE = new B nary(
+    na ("recap.t etfeature.has_v ne"),
+    Set(Publ cT etEnt  esAnd tadata, Pr vateT etEnt  esAnd tadata).asJava)
+  val HAS_PER SCOPE = new B nary(
+    na ("recap.t etfeature.has_per scope"),
+    Set(Publ cT etEnt  esAnd tadata, Pr vateT etEnt  esAnd tadata).asJava)
+  val HAS_NAT VE_V DEO = new B nary(
+    na ("recap.t etfeature.has_nat ve_v deo"),
+    Set(Publ cT etEnt  esAnd tadata, Pr vateT etEnt  esAnd tadata).asJava)
+  val HAS_NAT VE_ MAGE = new B nary(
+    na ("recap.t etfeature.has_nat ve_ mage"),
+    Set(Publ cT etEnt  esAnd tadata, Pr vateT etEnt  esAnd tadata).asJava)
+  val HAS_CARD = new B nary(
+    na ("recap.t etfeature.has_card"),
+    Set(Publ cT etEnt  esAnd tadata, Pr vateT etEnt  esAnd tadata).asJava)
+  val HAS_ MAGE = new B nary(
+    na ("recap.t etfeature.has_ mage"),
+    Set(Publ cT etEnt  esAnd tadata, Pr vateT etEnt  esAnd tadata).asJava)
+  val HAS_NEWS = new B nary(
+    na ("recap.t etfeature.has_news"),
+    Set(Publ cT etEnt  esAnd tadata, Pr vateT etEnt  esAnd tadata).asJava)
+  val HAS_V DEO = new B nary(
+    na ("recap.t etfeature.has_v deo"),
+    Set(Publ cT etEnt  esAnd tadata, Pr vateT etEnt  esAnd tadata).asJava)
+  val HAS_V S BLE_L NK = new B nary(
+    na ("recap.t etfeature.has_v s ble_l nk"),
+    Set(UrlFoundFlag, Publ cT etEnt  esAnd tadata, Pr vateT etEnt  esAnd tadata).asJava)
+  val L NK_COUNT = new Cont nuous(
+    na ("recap.t etfeature.l nk_count"),
+    Set(CountOfPr vateT etEnt  esAnd tadata, CountOfPubl cT etEnt  esAnd tadata).asJava)
+  val HAS_L NK = new B nary(
+    na ("recap.t etfeature.has_l nk"),
+    Set(UrlFoundFlag, Publ cT etEnt  esAnd tadata, Pr vateT etEnt  esAnd tadata).asJava)
+  val  S_OFFENS VE = new B nary(na ("recap.t etfeature. s_offens ve"))
+  val HAS_TREND = new B nary(
+    na ("recap.t etfeature.has_trend"),
+    Set(Publ cT etEnt  esAnd tadata, Pr vateT etEnt  esAnd tadata).asJava)
+  val HAS_MULT PLE_HASHTAGS_OR_TRENDS = new B nary(
+    na ("recap.t etfeature.has_mult ple_hashtag_or_trend"),
+    Set(Publ cT etEnt  esAnd tadata, Pr vateT etEnt  esAnd tadata).asJava)
+  val URL_DOMA NS = new SparseB nary(
+    na ("recap.t etfeature.url_doma ns"),
+    Set(Publ cT etEnt  esAnd tadata, Pr vateT etEnt  esAnd tadata).asJava)
+  val CONTA NS_MED A = new B nary(
+    na ("recap.t etfeature.conta ns_ d a"),
+    Set(Publ cT etEnt  esAnd tadata, Pr vateT etEnt  esAnd tadata).asJava)
+  val RETWEET_SEARCHER = new B nary(na ("recap.t etfeature.ret et_searc r"))
+  val REPLY_SEARCHER = new B nary(na ("recap.t etfeature.reply_searc r"))
+  val MENT ON_SEARCHER =
+    new B nary(na ("recap.t etfeature. nt on_searc r"), Set(UserV s bleFlag).asJava)
   val REPLY_OTHER =
-    new Binary(name("recap.tweetfeature.reply_other"), Set(PublicReplies, PrivateReplies).asJava)
-  val RETWEET_OTHER = new Binary(
-    name("recap.tweetfeature.retweet_other"),
-    Set(PublicRetweets, PrivateRetweets).asJava)
-  val IS_REPLY =
-    new Binary(name("recap.tweetfeature.is_reply"), Set(PublicReplies, PrivateReplies).asJava)
-  val IS_RETWEET =
-    new Binary(name("recap.tweetfeature.is_retweet"), Set(PublicRetweets, PrivateRetweets).asJava)
-  val IS_EXTENDED_REPLY = new Binary(
-    name("recap.tweetfeature.is_extended_reply"),
-    Set(PublicReplies, PrivateReplies).asJava)
-  val MATCH_UI_LANG = new Binary(
-    name("recap.tweetfeature.match_ui_lang"),
-    Set(ProvidedLanguage, InferredLanguage).asJava)
-  val MATCH_SEARCHER_MAIN_LANG = new Binary(
-    name("recap.tweetfeature.match_searcher_main_lang"),
-    Set(ProvidedLanguage, InferredLanguage).asJava)
-  val MATCH_SEARCHER_LANGS = new Binary(
-    name("recap.tweetfeature.match_searcher_langs"),
-    Set(ProvidedLanguage, InferredLanguage).asJava)
-  val BIDIRECTIONAL_REPLY_COUNT = new Continuous(
-    name("recap.tweetfeature.bidirectional_reply_count"),
-    Set(CountOfPrivateReplies, CountOfPublicReplies).asJava)
-  val UNIDIRECTIONAL_REPLY_COUNT = new Continuous(
-    name("recap.tweetfeature.unidirectional_reply_count"),
-    Set(CountOfPrivateReplies, CountOfPublicReplies).asJava)
-  val BIDIRECTIONAL_RETWEET_COUNT = new Continuous(
-    name("recap.tweetfeature.bidirectional_retweet_count"),
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava)
-  val UNIDIRECTIONAL_RETWEET_COUNT = new Continuous(
-    name("recap.tweetfeature.unidirectional_retweet_count"),
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava)
-  val BIDIRECTIONAL_FAV_COUNT = new Continuous(
-    name("recap.tweetfeature.bidirectional_fav_count"),
-    Set(CountOfPrivateLikes, CountOfPublicLikes).asJava)
-  val UNIDIRECTIONAL_FAV_COUNT = new Continuous(
-    name("recap.tweetfeature.unidirectiona_fav_count"),
-    Set(CountOfPrivateLikes, CountOfPublicLikes).asJava)
-  val CONVERSATIONAL_COUNT = new Continuous(
-    name("recap.tweetfeature.conversational_count"),
-    Set(CountOfPrivateTweets, CountOfPublicTweets).asJava)
-  // tweet impressions on an embedded tweet
-  val EMBEDS_IMPRESSION_COUNT = new Continuous(
-    name("recap.tweetfeature.embeds_impression_count"),
-    Set(CountOfImpression).asJava)
-  // number of URLs that embed the tweet
-  val EMBEDS_URL_COUNT = new Continuous(
-    name("recap.tweetfeature.embeds_url_count"),
-    Set(CountOfPrivateTweetEntitiesAndMetadata, CountOfPublicTweetEntitiesAndMetadata).asJava)
-  // currently only counts views on Snappy and Amplify pro videos. Counts for other videos forthcoming
-  val VIDEO_VIEW_COUNT = new Continuous(
-    name("recap.tweetfeature.video_view_count"),
+    new B nary(na ("recap.t etfeature.reply_ot r"), Set(Publ cRepl es, Pr vateRepl es).asJava)
+  val RETWEET_OTHER = new B nary(
+    na ("recap.t etfeature.ret et_ot r"),
+    Set(Publ cRet ets, Pr vateRet ets).asJava)
+  val  S_REPLY =
+    new B nary(na ("recap.t etfeature. s_reply"), Set(Publ cRepl es, Pr vateRepl es).asJava)
+  val  S_RETWEET =
+    new B nary(na ("recap.t etfeature. s_ret et"), Set(Publ cRet ets, Pr vateRet ets).asJava)
+  val  S_EXTENDED_REPLY = new B nary(
+    na ("recap.t etfeature. s_extended_reply"),
+    Set(Publ cRepl es, Pr vateRepl es).asJava)
+  val MATCH_U _LANG = new B nary(
+    na ("recap.t etfeature.match_u _lang"),
+    Set(Prov dedLanguage,  nferredLanguage).asJava)
+  val MATCH_SEARCHER_MA N_LANG = new B nary(
+    na ("recap.t etfeature.match_searc r_ma n_lang"),
+    Set(Prov dedLanguage,  nferredLanguage).asJava)
+  val MATCH_SEARCHER_LANGS = new B nary(
+    na ("recap.t etfeature.match_searc r_langs"),
+    Set(Prov dedLanguage,  nferredLanguage).asJava)
+  val B D RECT ONAL_REPLY_COUNT = new Cont nuous(
+    na ("recap.t etfeature.b d rect onal_reply_count"),
+    Set(CountOfPr vateRepl es, CountOfPubl cRepl es).asJava)
+  val UN D RECT ONAL_REPLY_COUNT = new Cont nuous(
+    na ("recap.t etfeature.un d rect onal_reply_count"),
+    Set(CountOfPr vateRepl es, CountOfPubl cRepl es).asJava)
+  val B D RECT ONAL_RETWEET_COUNT = new Cont nuous(
+    na ("recap.t etfeature.b d rect onal_ret et_count"),
+    Set(CountOfPr vateRet ets, CountOfPubl cRet ets).asJava)
+  val UN D RECT ONAL_RETWEET_COUNT = new Cont nuous(
+    na ("recap.t etfeature.un d rect onal_ret et_count"),
+    Set(CountOfPr vateRet ets, CountOfPubl cRet ets).asJava)
+  val B D RECT ONAL_FAV_COUNT = new Cont nuous(
+    na ("recap.t etfeature.b d rect onal_fav_count"),
+    Set(CountOfPr vateL kes, CountOfPubl cL kes).asJava)
+  val UN D RECT ONAL_FAV_COUNT = new Cont nuous(
+    na ("recap.t etfeature.un d rect ona_fav_count"),
+    Set(CountOfPr vateL kes, CountOfPubl cL kes).asJava)
+  val CONVERSAT ONAL_COUNT = new Cont nuous(
+    na ("recap.t etfeature.conversat onal_count"),
+    Set(CountOfPr vateT ets, CountOfPubl cT ets).asJava)
+  // t et  mpress ons on an embedded t et
+  val EMBEDS_ MPRESS ON_COUNT = new Cont nuous(
+    na ("recap.t etfeature.embeds_ mpress on_count"),
+    Set(CountOf mpress on).asJava)
+  // number of URLs that embed t  t et
+  val EMBEDS_URL_COUNT = new Cont nuous(
+    na ("recap.t etfeature.embeds_url_count"),
+    Set(CountOfPr vateT etEnt  esAnd tadata, CountOfPubl cT etEnt  esAnd tadata).asJava)
+  // currently only counts v ews on Snappy and Ampl fy pro v deos. Counts for ot r v deos forthcom ng
+  val V DEO_V EW_COUNT = new Cont nuous(
+    na ("recap.t etfeature.v deo_v ew_count"),
     Set(
-      CountOfTweetEntitiesClicked,
-      CountOfPrivateTweetEntitiesAndMetadata,
-      CountOfPublicTweetEntitiesAndMetadata,
-      EngagementsPrivate,
-      EngagementsPublic).asJava
+      CountOfT etEnt  esCl cked,
+      CountOfPr vateT etEnt  esAnd tadata,
+      CountOfPubl cT etEnt  esAnd tadata,
+      Engage ntsPr vate,
+      Engage ntsPubl c).asJava
   )
-  val TWEET_COUNT_FROM_USER_IN_SNAPSHOT = new Continuous(
-    name("recap.tweetfeature.tweet_count_from_user_in_snapshot"),
-    Set(CountOfPrivateTweets, CountOfPublicTweets).asJava)
-  val NORMALIZED_PARUS_SCORE =
-    new Continuous("recap.tweetfeature.normalized_parus_score", Set(EngagementScore).asJava)
-  val PARUS_SCORE = new Continuous("recap.tweetfeature.parus_score", Set(EngagementScore).asJava)
-  val REAL_GRAPH_WEIGHT =
-    new Continuous("recap.tweetfeature.real_graph_weight", Set(UsersRealGraphScore).asJava)
-  val SARUS_GRAPH_WEIGHT = new Continuous("recap.tweetfeature.sarus_graph_weight")
-  val TOPIC_SIM_SEARCHER_INTERSTED_IN_AUTHOR_KNOWN_FOR = new Continuous(
-    "recap.tweetfeature.topic_sim_searcher_interested_in_author_known_for")
-  val TOPIC_SIM_SEARCHER_AUTHOR_BOTH_INTERESTED_IN = new Continuous(
-    "recap.tweetfeature.topic_sim_searcher_author_both_interested_in")
-  val TOPIC_SIM_SEARCHER_AUTHOR_BOTH_KNOWN_FOR = new Continuous(
-    "recap.tweetfeature.topic_sim_searcher_author_both_known_for")
-  val TOPIC_SIM_SEARCHER_INTERESTED_IN_TWEET = new Continuous(
-    "recap.tweetfeature.topic_sim_searcher_interested_in_tweet")
-  val IS_RETWEETER_PROFILE_EGG =
-    new Binary(name("recap.v2.tweetfeature.is_retweeter_profile_egg"), Set(UserType).asJava)
-  val IS_RETWEETER_NEW =
-    new Binary(name("recap.v2.tweetfeature.is_retweeter_new"), Set(UserType, UserState).asJava)
-  val IS_RETWEETER_BOT =
-    new Binary(
-      name("recap.v2.tweetfeature.is_retweeter_bot"),
+  val TWEET_COUNT_FROM_USER_ N_SNAPSHOT = new Cont nuous(
+    na ("recap.t etfeature.t et_count_from_user_ n_snapshot"),
+    Set(CountOfPr vateT ets, CountOfPubl cT ets).asJava)
+  val NORMAL ZED_PARUS_SCORE =
+    new Cont nuous("recap.t etfeature.normal zed_parus_score", Set(Engage ntScore).asJava)
+  val PARUS_SCORE = new Cont nuous("recap.t etfeature.parus_score", Set(Engage ntScore).asJava)
+  val REAL_GRAPH_WE GHT =
+    new Cont nuous("recap.t etfeature.real_graph_  ght", Set(UsersRealGraphScore).asJava)
+  val SARUS_GRAPH_WE GHT = new Cont nuous("recap.t etfeature.sarus_graph_  ght")
+  val TOP C_S M_SEARCHER_ NTERSTED_ N_AUTHOR_KNOWN_FOR = new Cont nuous(
+    "recap.t etfeature.top c_s m_searc r_ nterested_ n_author_known_for")
+  val TOP C_S M_SEARCHER_AUTHOR_BOTH_ NTERESTED_ N = new Cont nuous(
+    "recap.t etfeature.top c_s m_searc r_author_both_ nterested_ n")
+  val TOP C_S M_SEARCHER_AUTHOR_BOTH_KNOWN_FOR = new Cont nuous(
+    "recap.t etfeature.top c_s m_searc r_author_both_known_for")
+  val TOP C_S M_SEARCHER_ NTERESTED_ N_TWEET = new Cont nuous(
+    "recap.t etfeature.top c_s m_searc r_ nterested_ n_t et")
+  val  S_RETWEETER_PROF LE_EGG =
+    new B nary(na ("recap.v2.t etfeature. s_ret eter_prof le_egg"), Set(UserType).asJava)
+  val  S_RETWEETER_NEW =
+    new B nary(na ("recap.v2.t etfeature. s_ret eter_new"), Set(UserType, UserState).asJava)
+  val  S_RETWEETER_BOT =
+    new B nary(
+      na ("recap.v2.t etfeature. s_ret eter_bot"),
       Set(UserType, UserSafetyLabels).asJava)
-  val IS_RETWEETER_NSFW =
-    new Binary(
-      name("recap.v2.tweetfeature.is_retweeter_nsfw"),
+  val  S_RETWEETER_NSFW =
+    new B nary(
+      na ("recap.v2.t etfeature. s_ret eter_nsfw"),
       Set(UserType, UserSafetyLabels).asJava)
-  val IS_RETWEETER_SPAM =
-    new Binary(
-      name("recap.v2.tweetfeature.is_retweeter_spam"),
+  val  S_RETWEETER_SPAM =
+    new B nary(
+      na ("recap.v2.t etfeature. s_ret eter_spam"),
       Set(UserType, UserSafetyLabels).asJava)
-  val RETWEET_OF_MUTUAL_FOLLOW = new Binary(
-    name("recap.v2.tweetfeature.retweet_of_mutual_follow"),
-    Set(PublicRetweets, PrivateRetweets).asJava)
-  val SOURCE_AUTHOR_REP = new Continuous(name("recap.v2.tweetfeature.source_author_rep"))
-  val IS_RETWEET_OF_REPLY = new Binary(
-    name("recap.v2.tweetfeature.is_retweet_of_reply"),
-    Set(PublicRetweets, PrivateRetweets).asJava)
-  val RETWEET_DIRECTED_AT_USER_IN_FIRST_DEGREE = new Binary(
-    name("recap.v2.tweetfeature.is_retweet_directed_at_user_in_first_degree"),
-    Set(PublicRetweets, PrivateRetweets, Follow).asJava)
-  val MENTIONED_SCREEN_NAMES = new SparseBinary(
-    "entities.users.mentioned_screen_names",
-    Set(DisplayName, UserVisibleFlag).asJava)
-  val MENTIONED_SCREEN_NAME = new Text(
-    "entities.users.mentioned_screen_names.member",
-    Set(DisplayName, UserVisibleFlag).asJava)
-  val HASHTAGS = new SparseBinary(
-    "entities.hashtags",
-    Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
-  val URL_SLUGS = new SparseBinary(name("recap.linkfeature.url_slugs"), Set(UrlFoundFlag).asJava)
+  val RETWEET_OF_MUTUAL_FOLLOW = new B nary(
+    na ("recap.v2.t etfeature.ret et_of_mutual_follow"),
+    Set(Publ cRet ets, Pr vateRet ets).asJava)
+  val SOURCE_AUTHOR_REP = new Cont nuous(na ("recap.v2.t etfeature.s ce_author_rep"))
+  val  S_RETWEET_OF_REPLY = new B nary(
+    na ("recap.v2.t etfeature. s_ret et_of_reply"),
+    Set(Publ cRet ets, Pr vateRet ets).asJava)
+  val RETWEET_D RECTED_AT_USER_ N_F RST_DEGREE = new B nary(
+    na ("recap.v2.t etfeature. s_ret et_d rected_at_user_ n_f rst_degree"),
+    Set(Publ cRet ets, Pr vateRet ets, Follow).asJava)
+  val MENT ONED_SCREEN_NAMES = new SparseB nary(
+    "ent  es.users. nt oned_screen_na s",
+    Set(D splayNa , UserV s bleFlag).asJava)
+  val MENT ONED_SCREEN_NAME = new Text(
+    "ent  es.users. nt oned_screen_na s. mber",
+    Set(D splayNa , UserV s bleFlag).asJava)
+  val HASHTAGS = new SparseB nary(
+    "ent  es.hashtags",
+    Set(Publ cT etEnt  esAnd tadata, Pr vateT etEnt  esAnd tadata).asJava)
+  val URL_SLUGS = new SparseB nary(na ("recap.l nkfeature.url_slugs"), Set(UrlFoundFlag).asJava)
 
-  // features from ThriftSearchResultMetadata
-  val REPLY_COUNT = new Continuous(
-    name("recap.searchfeature.reply_count"),
-    Set(CountOfPrivateReplies, CountOfPublicReplies).asJava)
-  val RETWEET_COUNT = new Continuous(
-    name("recap.searchfeature.retweet_count"),
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava)
-  val FAV_COUNT = new Continuous(
-    name("recap.searchfeature.fav_count"),
-    Set(CountOfPrivateLikes, CountOfPublicLikes).asJava)
-  val BLENDER_SCORE = new Continuous(name("recap.searchfeature.blender_score"))
-  val TEXT_SCORE = new Continuous(name("recap.searchfeature.text_score"))
+  // features from Thr ftSearchResult tadata
+  val REPLY_COUNT = new Cont nuous(
+    na ("recap.searchfeature.reply_count"),
+    Set(CountOfPr vateRepl es, CountOfPubl cRepl es).asJava)
+  val RETWEET_COUNT = new Cont nuous(
+    na ("recap.searchfeature.ret et_count"),
+    Set(CountOfPr vateRet ets, CountOfPubl cRet ets).asJava)
+  val FAV_COUNT = new Cont nuous(
+    na ("recap.searchfeature.fav_count"),
+    Set(CountOfPr vateL kes, CountOfPubl cL kes).asJava)
+  val BLENDER_SCORE = new Cont nuous(na ("recap.searchfeature.blender_score"))
+  val TEXT_SCORE = new Cont nuous(na ("recap.searchfeature.text_score"))
 
-  // features related to content source
-  val SOURCE_TYPE = new Discrete(name("recap.source.type"))
+  // features related to content s ce
+  val SOURCE_TYPE = new D screte(na ("recap.s ce.type"))
 
   // features from addressbook
-  // the author is in the user's email addressbook
-  val USER_TO_AUTHOR_EMAIL_REACHABLE =
-    new Binary(name("recap.addressbook.user_to_author_email_reachable"), Set(AddressBook).asJava)
-  // the author is in the user's phone addressbook
+  // t  author  s  n t  user's ema l addressbook
+  val USER_TO_AUTHOR_EMA L_REACHABLE =
+    new B nary(na ("recap.addressbook.user_to_author_ema l_reachable"), Set(AddressBook).asJava)
+  // t  author  s  n t  user's phone addressbook
   val USER_TO_AUTHOR_PHONE_REACHABLE =
-    new Binary(name("recap.addressbook.user_to_author_phone_reachable"), Set(AddressBook).asJava)
-  // the user is in the author's email addressbook
-  val AUTHOR_TO_USER_EMAIL_REACHABLE =
-    new Binary(name("recap.addressbook.author_to_user_email_reachable"), Set(AddressBook).asJava)
-  // the user is in the user's phone addressbook
+    new B nary(na ("recap.addressbook.user_to_author_phone_reachable"), Set(AddressBook).asJava)
+  // t  user  s  n t  author's ema l addressbook
+  val AUTHOR_TO_USER_EMA L_REACHABLE =
+    new B nary(na ("recap.addressbook.author_to_user_ema l_reachable"), Set(AddressBook).asJava)
+  // t  user  s  n t  user's phone addressbook
   val AUTHOR_TO_USER_PHONE_REACHABLE =
-    new Binary(name("recap.addressbook.author_to_user_phone_reachable"), Set(AddressBook).asJava)
+    new B nary(na ("recap.addressbook.author_to_user_phone_reachable"), Set(AddressBook).asJava)
 
-  // predicted engagement (these features are used by prediction service to return the predicted engagement probability)
-  // these should match the names in engagement_to_score_feature_mapping
-  val PREDICTED_IS_FAVORITED =
-    new Continuous(name("recap.engagement_predicted.is_favorited"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_RETWEETED =
-    new Continuous(name("recap.engagement_predicted.is_retweeted"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_QUOTED =
-    new Continuous(name("recap.engagement_predicted.is_quoted"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_REPLIED =
-    new Continuous(name("recap.engagement_predicted.is_replied"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_GOOD_OPEN_LINK = new Continuous(
-    name("recap.engagement_predicted.is_good_open_link"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_PROFILE_CLICKED = new Continuous(
-    name("recap.engagement_predicted.is_profile_clicked"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_PROFILE_CLICKED_AND_PROFILE_ENGAGED = new Continuous(
-    name("recap.engagement_predicted.is_profile_clicked_and_profile_engaged"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_CLICKED =
-    new Continuous(name("recap.engagement_predicted.is_clicked"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_PHOTO_EXPANDED = new Continuous(
-    name("recap.engagement_predicted.is_photo_expanded"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_DONT_LIKE =
-    new Continuous(name("recap.engagement_predicted.is_dont_like"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_VIDEO_PLAYBACK_50 = new Continuous(
-    name("recap.engagement_predicted.is_video_playback_50"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_VIDEO_QUALITY_VIEWED = new Continuous(
-    name("recap.engagement_predicted.is_video_quality_viewed"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_BOOKMARKED =
-    new Continuous(name("recap.engagement_predicted.is_bookmarked"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_SHARED =
-    new Continuous(name("recap.engagement_predicted.is_shared"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_SHARE_MENU_CLICKED =
-    new Continuous(
-      name("recap.engagement_predicted.is_share_menu_clicked"),
-      Set(EngagementScore).asJava)
-  val PREDICTED_IS_PROFILE_DWELLED_20_SEC = new Continuous(
-    name("recap.engagement_predicted.is_profile_dwelled_20_sec"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_FULLSCREEN_VIDEO_DWELLED_5_SEC = new Continuous(
-    name("recap.engagement_predicted.is_fullscreen_video_dwelled_5_sec"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_FULLSCREEN_VIDEO_DWELLED_10_SEC = new Continuous(
-    name("recap.engagement_predicted.is_fullscreen_video_dwelled_10_sec"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_FULLSCREEN_VIDEO_DWELLED_20_SEC = new Continuous(
-    name("recap.engagement_predicted.is_fullscreen_video_dwelled_20_sec"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_FULLSCREEN_VIDEO_DWELLED_30_SEC = new Continuous(
-    name("recap.engagement_predicted.is_fullscreen_video_dwelled_30_sec"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_UNIFIED_ENGAGEMENT = new Continuous(
-    name("recap.engagement_predicted.is_unified_engagement"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_COMPOSE_TRIGGERED = new Continuous(
-    name("recap.engagement_predicted.is_compose_triggered"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_REPLIED_REPLY_IMPRESSED_BY_AUTHOR = new Continuous(
-    name("recap.engagement_predicted.is_replied_reply_impressed_by_author"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_REPLIED_REPLY_ENGAGED_BY_AUTHOR = new Continuous(
-    name("recap.engagement_predicted.is_replied_reply_engaged_by_author"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_GOOD_CLICKED_V1 = new Continuous(
-    name("recap.engagement_predicted.is_good_clicked_convo_desc_favorited_or_replied"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_GOOD_CLICKED_V2 = new Continuous(
-    name("recap.engagement_predicted.is_good_clicked_convo_desc_v2"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_TWEET_DETAIL_DWELLED_8_SEC = new Continuous(
-    name("recap.engagement_predicted.is_tweet_detail_dwelled_8_sec"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_TWEET_DETAIL_DWELLED_15_SEC = new Continuous(
-    name("recap.engagement_predicted.is_tweet_detail_dwelled_15_sec"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_TWEET_DETAIL_DWELLED_25_SEC = new Continuous(
-    name("recap.engagement_predicted.is_tweet_detail_dwelled_25_sec"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_TWEET_DETAIL_DWELLED_30_SEC = new Continuous(
-    name("recap.engagement_predicted.is_tweet_detail_dwelled_30_sec"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_FAVORITED_FAV_ENGAGED_BY_AUTHOR = new Continuous(
-    name("recap.engagement_predicted.is_favorited_fav_engaged_by_author"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_GOOD_CLICKED_WITH_DWELL_SUM_GTE_60S = new Continuous(
-    name(
-      "recap.engagement_predicted.is_good_clicked_convo_desc_favorited_or_replied_or_dwell_sum_gte_60_secs"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_DWELLED_IN_BOUNDS_V1 = new Continuous(
-    name("recap.engagement_predicted.is_dwelled_in_bounds_v1"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_DWELL_NORMALIZED_OVERALL = new Continuous(
-    name("recap.engagement_predicted.dwell_normalized_overall"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_DWELL_CDF =
-    new Continuous(name("recap.engagement_predicted.dwell_cdf"), Set(EngagementScore).asJava)
-  val PREDICTED_DWELL_CDF_OVERALL = new Continuous(
-    name("recap.engagement_predicted.dwell_cdf_overall"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_DWELLED =
-    new Continuous(name("recap.engagement_predicted.is_dwelled"), Set(EngagementScore).asJava)
+  // pred cted engage nt (t se features are used by pred ct on serv ce to return t  pred cted engage nt probab l y)
+  // t se should match t  na s  n engage nt_to_score_feature_mapp ng
+  val PRED CTED_ S_FAVOR TED =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_favor ed"), Set(Engage ntScore).asJava)
+  val PRED CTED_ S_RETWEETED =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_ret eted"), Set(Engage ntScore).asJava)
+  val PRED CTED_ S_QUOTED =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_quoted"), Set(Engage ntScore).asJava)
+  val PRED CTED_ S_REPL ED =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_repl ed"), Set(Engage ntScore).asJava)
+  val PRED CTED_ S_GOOD_OPEN_L NK = new Cont nuous(
+    na ("recap.engage nt_pred cted. s_good_open_l nk"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_ S_PROF LE_CL CKED = new Cont nuous(
+    na ("recap.engage nt_pred cted. s_prof le_cl cked"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_ S_PROF LE_CL CKED_AND_PROF LE_ENGAGED = new Cont nuous(
+    na ("recap.engage nt_pred cted. s_prof le_cl cked_and_prof le_engaged"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_ S_CL CKED =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_cl cked"), Set(Engage ntScore).asJava)
+  val PRED CTED_ S_PHOTO_EXPANDED = new Cont nuous(
+    na ("recap.engage nt_pred cted. s_photo_expanded"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_ S_DONT_L KE =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_dont_l ke"), Set(Engage ntScore).asJava)
+  val PRED CTED_ S_V DEO_PLAYBACK_50 = new Cont nuous(
+    na ("recap.engage nt_pred cted. s_v deo_playback_50"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_ S_V DEO_QUAL TY_V EWED = new Cont nuous(
+    na ("recap.engage nt_pred cted. s_v deo_qual y_v e d"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_ S_BOOKMARKED =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_bookmarked"), Set(Engage ntScore).asJava)
+  val PRED CTED_ S_SHARED =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_shared"), Set(Engage ntScore).asJava)
+  val PRED CTED_ S_SHARE_MENU_CL CKED =
+    new Cont nuous(
+      na ("recap.engage nt_pred cted. s_share_ nu_cl cked"),
+      Set(Engage ntScore).asJava)
+  val PRED CTED_ S_PROF LE_DWELLED_20_SEC = new Cont nuous(
+    na ("recap.engage nt_pred cted. s_prof le_d lled_20_sec"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_ S_FULLSCREEN_V DEO_DWELLED_5_SEC = new Cont nuous(
+    na ("recap.engage nt_pred cted. s_fullscreen_v deo_d lled_5_sec"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_ S_FULLSCREEN_V DEO_DWELLED_10_SEC = new Cont nuous(
+    na ("recap.engage nt_pred cted. s_fullscreen_v deo_d lled_10_sec"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_ S_FULLSCREEN_V DEO_DWELLED_20_SEC = new Cont nuous(
+    na ("recap.engage nt_pred cted. s_fullscreen_v deo_d lled_20_sec"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_ S_FULLSCREEN_V DEO_DWELLED_30_SEC = new Cont nuous(
+    na ("recap.engage nt_pred cted. s_fullscreen_v deo_d lled_30_sec"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_ S_UN F ED_ENGAGEMENT = new Cont nuous(
+    na ("recap.engage nt_pred cted. s_un f ed_engage nt"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_ S_COMPOSE_TR GGERED = new Cont nuous(
+    na ("recap.engage nt_pred cted. s_compose_tr ggered"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_ S_REPL ED_REPLY_ MPRESSED_BY_AUTHOR = new Cont nuous(
+    na ("recap.engage nt_pred cted. s_repl ed_reply_ mpressed_by_author"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_ S_REPL ED_REPLY_ENGAGED_BY_AUTHOR = new Cont nuous(
+    na ("recap.engage nt_pred cted. s_repl ed_reply_engaged_by_author"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_ S_GOOD_CL CKED_V1 = new Cont nuous(
+    na ("recap.engage nt_pred cted. s_good_cl cked_convo_desc_favor ed_or_repl ed"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_ S_GOOD_CL CKED_V2 = new Cont nuous(
+    na ("recap.engage nt_pred cted. s_good_cl cked_convo_desc_v2"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_ S_TWEET_DETA L_DWELLED_8_SEC = new Cont nuous(
+    na ("recap.engage nt_pred cted. s_t et_deta l_d lled_8_sec"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_ S_TWEET_DETA L_DWELLED_15_SEC = new Cont nuous(
+    na ("recap.engage nt_pred cted. s_t et_deta l_d lled_15_sec"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_ S_TWEET_DETA L_DWELLED_25_SEC = new Cont nuous(
+    na ("recap.engage nt_pred cted. s_t et_deta l_d lled_25_sec"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_ S_TWEET_DETA L_DWELLED_30_SEC = new Cont nuous(
+    na ("recap.engage nt_pred cted. s_t et_deta l_d lled_30_sec"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_ S_FAVOR TED_FAV_ENGAGED_BY_AUTHOR = new Cont nuous(
+    na ("recap.engage nt_pred cted. s_favor ed_fav_engaged_by_author"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_ S_GOOD_CL CKED_W TH_DWELL_SUM_GTE_60S = new Cont nuous(
+    na (
+      "recap.engage nt_pred cted. s_good_cl cked_convo_desc_favor ed_or_repl ed_or_d ll_sum_gte_60_secs"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_ S_DWELLED_ N_BOUNDS_V1 = new Cont nuous(
+    na ("recap.engage nt_pred cted. s_d lled_ n_bounds_v1"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_DWELL_NORMAL ZED_OVERALL = new Cont nuous(
+    na ("recap.engage nt_pred cted.d ll_normal zed_overall"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_DWELL_CDF =
+    new Cont nuous(na ("recap.engage nt_pred cted.d ll_cdf"), Set(Engage ntScore).asJava)
+  val PRED CTED_DWELL_CDF_OVERALL = new Cont nuous(
+    na ("recap.engage nt_pred cted.d ll_cdf_overall"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_ S_DWELLED =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_d lled"), Set(Engage ntScore).asJava)
 
-  val PREDICTED_IS_DWELLED_1S =
-    new Continuous(name("recap.engagement_predicted.is_dwelled_1s"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_DWELLED_2S =
-    new Continuous(name("recap.engagement_predicted.is_dwelled_2s"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_DWELLED_3S =
-    new Continuous(name("recap.engagement_predicted.is_dwelled_3s"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_DWELLED_4S =
-    new Continuous(name("recap.engagement_predicted.is_dwelled_4s"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_DWELLED_5S =
-    new Continuous(name("recap.engagement_predicted.is_dwelled_5s"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_DWELLED_6S =
-    new Continuous(name("recap.engagement_predicted.is_dwelled_6s"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_DWELLED_7S =
-    new Continuous(name("recap.engagement_predicted.is_dwelled_7s"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_DWELLED_8S =
-    new Continuous(name("recap.engagement_predicted.is_dwelled_8s"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_DWELLED_9S =
-    new Continuous(name("recap.engagement_predicted.is_dwelled_9s"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_DWELLED_10S =
-    new Continuous(name("recap.engagement_predicted.is_dwelled_10s"), Set(EngagementScore).asJava)
+  val PRED CTED_ S_DWELLED_1S =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_d lled_1s"), Set(Engage ntScore).asJava)
+  val PRED CTED_ S_DWELLED_2S =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_d lled_2s"), Set(Engage ntScore).asJava)
+  val PRED CTED_ S_DWELLED_3S =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_d lled_3s"), Set(Engage ntScore).asJava)
+  val PRED CTED_ S_DWELLED_4S =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_d lled_4s"), Set(Engage ntScore).asJava)
+  val PRED CTED_ S_DWELLED_5S =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_d lled_5s"), Set(Engage ntScore).asJava)
+  val PRED CTED_ S_DWELLED_6S =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_d lled_6s"), Set(Engage ntScore).asJava)
+  val PRED CTED_ S_DWELLED_7S =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_d lled_7s"), Set(Engage ntScore).asJava)
+  val PRED CTED_ S_DWELLED_8S =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_d lled_8s"), Set(Engage ntScore).asJava)
+  val PRED CTED_ S_DWELLED_9S =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_d lled_9s"), Set(Engage ntScore).asJava)
+  val PRED CTED_ S_DWELLED_10S =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_d lled_10s"), Set(Engage ntScore).asJava)
 
-  val PREDICTED_IS_SKIPPED_1S =
-    new Continuous(name("recap.engagement_predicted.is_skipped_1s"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_SKIPPED_2S =
-    new Continuous(name("recap.engagement_predicted.is_skipped_2s"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_SKIPPED_3S =
-    new Continuous(name("recap.engagement_predicted.is_skipped_3s"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_SKIPPED_4S =
-    new Continuous(name("recap.engagement_predicted.is_skipped_4s"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_SKIPPED_5S =
-    new Continuous(name("recap.engagement_predicted.is_skipped_5s"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_SKIPPED_6S =
-    new Continuous(name("recap.engagement_predicted.is_skipped_6s"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_SKIPPED_7S =
-    new Continuous(name("recap.engagement_predicted.is_skipped_7s"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_SKIPPED_8S =
-    new Continuous(name("recap.engagement_predicted.is_skipped_8s"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_SKIPPED_9S =
-    new Continuous(name("recap.engagement_predicted.is_skipped_9s"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_SKIPPED_10S =
-    new Continuous(name("recap.engagement_predicted.is_skipped_10s"), Set(EngagementScore).asJava)
+  val PRED CTED_ S_SK PPED_1S =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_sk pped_1s"), Set(Engage ntScore).asJava)
+  val PRED CTED_ S_SK PPED_2S =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_sk pped_2s"), Set(Engage ntScore).asJava)
+  val PRED CTED_ S_SK PPED_3S =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_sk pped_3s"), Set(Engage ntScore).asJava)
+  val PRED CTED_ S_SK PPED_4S =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_sk pped_4s"), Set(Engage ntScore).asJava)
+  val PRED CTED_ S_SK PPED_5S =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_sk pped_5s"), Set(Engage ntScore).asJava)
+  val PRED CTED_ S_SK PPED_6S =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_sk pped_6s"), Set(Engage ntScore).asJava)
+  val PRED CTED_ S_SK PPED_7S =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_sk pped_7s"), Set(Engage ntScore).asJava)
+  val PRED CTED_ S_SK PPED_8S =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_sk pped_8s"), Set(Engage ntScore).asJava)
+  val PRED CTED_ S_SK PPED_9S =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_sk pped_9s"), Set(Engage ntScore).asJava)
+  val PRED CTED_ S_SK PPED_10S =
+    new Cont nuous(na ("recap.engage nt_pred cted. s_sk pped_10s"), Set(Engage ntScore).asJava)
 
-  val PREDICTED_IS_HOME_LATEST_VISITED = new Continuous(
-    name("recap.engagement_predicted.is_home_latest_visited"),
-    Set(EngagementScore).asJava)
-  val PREDICTED_IS_NEGATIVE_FEEDBACK =
-    new Continuous(
-      name("recap.engagement_predicted.is_negative_feedback"),
-      Set(EngagementScore).asJava)
-  val PREDICTED_IS_NEGATIVE_FEEDBACK_V2 =
-    new Continuous(
-      name("recap.engagement_predicted.is_negative_feedback_v2"),
-      Set(EngagementScore).asJava)
-  val PREDICTED_IS_WEAK_NEGATIVE_FEEDBACK =
-    new Continuous(
-      name("recap.engagement_predicted.is_weak_negative_feedback"),
-      Set(EngagementScore).asJava)
-  val PREDICTED_IS_STRONG_NEGATIVE_FEEDBACK =
-    new Continuous(
-      name("recap.engagement_predicted.is_strong_negative_feedback"),
-      Set(EngagementScore).asJava)
-  val PREDICTED_IS_REPORT_TWEET_CLICKED =
-    new Continuous(
-      name("recap.engagement_predicted.is_report_tweet_clicked"),
-      Set(EngagementScore).asJava)
-  val PREDICTED_IS_UNFOLLOW_TOPIC =
-    new Continuous(
-      name("recap.engagement_predicted.is_unfollow_topic"),
-      Set(EngagementScore).asJava)
-  val PREDICTED_IS_RELEVANCE_PROMPT_YES_CLICKED = new Continuous(
-    name("recap.engagement_predicted.is_relevance_prompt_yes_clicked"),
-    Set(EngagementScore).asJava)
+  val PRED CTED_ S_HOME_LATEST_V S TED = new Cont nuous(
+    na ("recap.engage nt_pred cted. s_ho _latest_v s ed"),
+    Set(Engage ntScore).asJava)
+  val PRED CTED_ S_NEGAT VE_FEEDBACK =
+    new Cont nuous(
+      na ("recap.engage nt_pred cted. s_negat ve_feedback"),
+      Set(Engage ntScore).asJava)
+  val PRED CTED_ S_NEGAT VE_FEEDBACK_V2 =
+    new Cont nuous(
+      na ("recap.engage nt_pred cted. s_negat ve_feedback_v2"),
+      Set(Engage ntScore).asJava)
+  val PRED CTED_ S_WEAK_NEGAT VE_FEEDBACK =
+    new Cont nuous(
+      na ("recap.engage nt_pred cted. s_ ak_negat ve_feedback"),
+      Set(Engage ntScore).asJava)
+  val PRED CTED_ S_STRONG_NEGAT VE_FEEDBACK =
+    new Cont nuous(
+      na ("recap.engage nt_pred cted. s_strong_negat ve_feedback"),
+      Set(Engage ntScore).asJava)
+  val PRED CTED_ S_REPORT_TWEET_CL CKED =
+    new Cont nuous(
+      na ("recap.engage nt_pred cted. s_report_t et_cl cked"),
+      Set(Engage ntScore).asJava)
+  val PRED CTED_ S_UNFOLLOW_TOP C =
+    new Cont nuous(
+      na ("recap.engage nt_pred cted. s_unfollow_top c"),
+      Set(Engage ntScore).asJava)
+  val PRED CTED_ S_RELEVANCE_PROMPT_YES_CL CKED = new Cont nuous(
+    na ("recap.engage nt_pred cted. s_relevance_prompt_yes_cl cked"),
+    Set(Engage ntScore).asJava)
 
-  // engagement for following user from any surface area
-  val PREDICTED_IS_FOLLOWED_FROM_ANY_SURFACE_AREA = new Continuous(
-    "recap.engagement_predicted.is_followed_from_any_surface_area",
-    Set(EngagementScore).asJava)
+  // engage nt for follow ng user from any surface area
+  val PRED CTED_ S_FOLLOWED_FROM_ANY_SURFACE_AREA = new Cont nuous(
+    "recap.engage nt_pred cted. s_follo d_from_any_surface_area",
+    Set(Engage ntScore).asJava)
 
   
-  // These are global engagement counts for the Tweets.
-  val FAV_COUNT_V2 = new Continuous(
-    name("recap.earlybird.fav_count_v2"),
-    Set(CountOfPrivateLikes, CountOfPublicLikes).asJava)
-  val RETWEET_COUNT_V2 = new Continuous(
-    name("recap.earlybird.retweet_count_v2"),
-    Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava)
-  val REPLY_COUNT_V2 = new Continuous(
-    name("recap.earlybird.reply_count_v2"),
-    Set(CountOfPrivateReplies, CountOfPublicReplies).asJava)
+  // T se are global engage nt counts for t  T ets.
+  val FAV_COUNT_V2 = new Cont nuous(
+    na ("recap.earlyb rd.fav_count_v2"),
+    Set(CountOfPr vateL kes, CountOfPubl cL kes).asJava)
+  val RETWEET_COUNT_V2 = new Cont nuous(
+    na ("recap.earlyb rd.ret et_count_v2"),
+    Set(CountOfPr vateRet ets, CountOfPubl cRet ets).asJava)
+  val REPLY_COUNT_V2 = new Cont nuous(
+    na ("recap.earlyb rd.reply_count_v2"),
+    Set(CountOfPr vateRepl es, CountOfPubl cRepl es).asJava)
 
-  val HAS_US_POLITICAL_ANNOTATION = new Binary(
-    name("recap.has_us_political_annotation"),
-    Set(SemanticcoreClassification).asJava
+  val HAS_US_POL T CAL_ANNOTAT ON = new B nary(
+    na ("recap.has_us_pol  cal_annotat on"),
+    Set(Semant ccoreClass f cat on).asJava
   )
 
-  val HAS_US_POLITICAL_ALL_GROUPS_ANNOTATION = new Binary(
-    name("recap.has_us_political_all_groups_annotation"),
-    Set(SemanticcoreClassification).asJava
+  val HAS_US_POL T CAL_ALL_GROUPS_ANNOTAT ON = new B nary(
+    na ("recap.has_us_pol  cal_all_groups_annotat on"),
+    Set(Semant ccoreClass f cat on).asJava
   )
 
-  val HAS_US_POLITICAL_ANNOTATION_HIGH_RECALL = new Binary(
-    name("recap.has_us_political_annotation_high_recall"),
-    Set(SemanticcoreClassification).asJava
+  val HAS_US_POL T CAL_ANNOTAT ON_H GH_RECALL = new B nary(
+    na ("recap.has_us_pol  cal_annotat on_h gh_recall"),
+    Set(Semant ccoreClass f cat on).asJava
   )
 
-  val HAS_US_POLITICAL_ANNOTATION_HIGH_RECALL_V2 = new Binary(
-    name("recap.has_us_political_annotation_high_recall_v2"),
-    Set(SemanticcoreClassification).asJava
+  val HAS_US_POL T CAL_ANNOTAT ON_H GH_RECALL_V2 = new B nary(
+    na ("recap.has_us_pol  cal_annotat on_h gh_recall_v2"),
+    Set(Semant ccoreClass f cat on).asJava
   )
 
-  val HAS_US_POLITICAL_ANNOTATION_HIGH_PRECISION_V0 = new Binary(
-    name("recap.has_us_political_annotation_high_precision_v0"),
-    Set(SemanticcoreClassification).asJava
+  val HAS_US_POL T CAL_ANNOTAT ON_H GH_PREC S ON_V0 = new B nary(
+    na ("recap.has_us_pol  cal_annotat on_h gh_prec s on_v0"),
+    Set(Semant ccoreClass f cat on).asJava
   )
 
-  val HAS_US_POLITICAL_ANNOTATION_BALANCED_PRECISION_RECALL_V0 = new Binary(
-    name("recap.has_us_political_annotation_balanced_precision_recall_v0"),
-    Set(SemanticcoreClassification).asJava
+  val HAS_US_POL T CAL_ANNOTAT ON_BALANCED_PREC S ON_RECALL_V0 = new B nary(
+    na ("recap.has_us_pol  cal_annotat on_balanced_prec s on_recall_v0"),
+    Set(Semant ccoreClass f cat on).asJava
   )
 
-  val HAS_US_POLITICAL_ANNOTATION_HIGH_RECALL_V3 = new Binary(
-    name("recap.has_us_political_annotation_high_recall_v3"),
-    Set(SemanticcoreClassification).asJava
+  val HAS_US_POL T CAL_ANNOTAT ON_H GH_RECALL_V3 = new B nary(
+    na ("recap.has_us_pol  cal_annotat on_h gh_recall_v3"),
+    Set(Semant ccoreClass f cat on).asJava
   )
 
-  val HAS_US_POLITICAL_ANNOTATION_HIGH_PRECISION_V3 = new Binary(
-    name("recap.has_us_political_annotation_high_precision_v3"),
-    Set(SemanticcoreClassification).asJava
+  val HAS_US_POL T CAL_ANNOTAT ON_H GH_PREC S ON_V3 = new B nary(
+    na ("recap.has_us_pol  cal_annotat on_h gh_prec s on_v3"),
+    Set(Semant ccoreClass f cat on).asJava
   )
 
-  val HAS_US_POLITICAL_ANNOTATION_BALANCED_V3 = new Binary(
-    name("recap.has_us_political_annotation_balanced_v3"),
-    Set(SemanticcoreClassification).asJava
+  val HAS_US_POL T CAL_ANNOTAT ON_BALANCED_V3 = new B nary(
+    na ("recap.has_us_pol  cal_annotat on_balanced_v3"),
+    Set(Semant ccoreClass f cat on).asJava
   )
 
 }

@@ -1,43 +1,43 @@
-scala_library(
-    name = "agg_negative",
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    na  = "agg_negat ve",
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":real_graph_negative_features-scala",
-        "beam-internal/src/main/scala/com/twitter/beam/io/dal",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/job",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/runner/dataflow",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        ":real_graph_negat ve_features-scala",
+        "beam- nternal/src/ma n/scala/com/tw ter/beam/ o/dal",
+        "beam- nternal/src/ma n/scala/com/tw ter/sc o_ nternal/job",
+        "beam- nternal/src/ma n/scala/com/tw ter/sc o_ nternal/runner/dataflow",
         "flockdb-tools/datasets/flock:flock-blocks-edges-scala",
         "flockdb-tools/datasets/flock:flock-mutes-edges-scala",
         "flockdb-tools/datasets/flock:flock-report-as-abuse-edges-scala",
         "flockdb-tools/datasets/flock:flock-report-as-spam-edges-scala",
-        "socialgraph/hadoop/src/main/scala/com/twitter/socialgraph/hadoop:socialgraph-unfollows-scala",
-        "src/scala/com/twitter/interaction_graph/scio/common",
-        "tcdc/bq_blaster/src/main/scala/com/twitter/tcdc/bqblaster/beam",
+        "soc algraph/hadoop/src/ma n/scala/com/tw ter/soc algraph/hadoop:soc algraph-unfollows-scala",
+        "src/scala/com/tw ter/ nteract on_graph/sc o/common",
+        "tcdc/bq_blaster/src/ma n/scala/com/tw ter/tcdc/bqblaster/beam",
     ],
 )
 
-jvm_binary(
-    name = "interaction_graph_negative_scio",
-    main = "com.twitter.interaction_graph.scio.agg_negative.InteractionGraphNegativeJob",
+jvm_b nary(
+    na  = " nteract on_graph_negat ve_sc o",
+    ma n = "com.tw ter. nteract on_graph.sc o.agg_negat ve. nteract onGraphNegat veJob",
     platform = "java8",
-    dependencies = [
-        ":agg_negative",
+    dependenc es = [
+        ":agg_negat ve",
     ],
 )
 
 create_datasets(
-    base_name = "real_graph_negative_features",
+    base_na  = "real_graph_negat ve_features",
     key_type = "Long",
     platform = "java8",
     role = "cassowary",
-    scala_schema = "com.twitter.interaction_graph.injection.UserSessionInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.user_session_store.thriftscala.UserSession",
-    scala_dependencies = [
-        "src/scala/com/twitter/interaction_graph/injection:user_session_inj",
+    scala_sc ma = "com.tw ter. nteract on_graph. nject on.UserSess on nject on. nject on",
+    seg nt_type = "snapshot",
+    tags = ["bazel-compat ble"],
+    val_type = "com.tw ter.user_sess on_store.thr ftscala.UserSess on",
+    scala_dependenc es = [
+        "src/scala/com/tw ter/ nteract on_graph/ nject on:user_sess on_ nj",
     ],
 )

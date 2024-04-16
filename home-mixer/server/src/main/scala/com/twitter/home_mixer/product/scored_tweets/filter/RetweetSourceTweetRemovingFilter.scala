@@ -1,40 +1,40 @@
-package com.twitter.home_mixer.product.scored_tweets.filter
+package com.tw ter.ho _m xer.product.scored_t ets.f lter
 
-import com.twitter.home_mixer.model.HomeFeatures.EarlybirdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.util.ReplyRetweetUtil
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.ho _m xer.model.Ho Features.Earlyb rdFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nReplyToT et dFeature
+ mport com.tw ter.ho _m xer.ut l.ReplyRet etUt l
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lterResult
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
 /**
- * This filter removes source tweets of retweets, added via second EB call in TLR
+ * T  f lter removes s ce t ets of ret ets, added v a second EB call  n TLR
  */
-object RetweetSourceTweetRemovingFilter extends Filter[PipelineQuery, TweetCandidate] {
+object Ret etS ceT etRemov ngF lter extends F lter[P pel neQuery, T etCand date] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("RetweetSourceTweetRemoving")
+  overr de val  dent f er: F lter dent f er = F lter dent f er("Ret etS ceT etRemov ng")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = {
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[F lterResult[T etCand date]] = {
     val (kept, removed) =
-      candidates.partition(
-        _.features.getOrElse(EarlybirdFeature, None).exists(_.isSourceTweet)) match {
-        case (sourceTweets, nonSourceTweets) =>
-          val inReplyToTweetIds: Set[Long] =
-            nonSourceTweets
-              .filter(ReplyRetweetUtil.isEligibleReply(_)).flatMap(
-                _.features.getOrElse(InReplyToTweetIdFeature, None)).toSet
-          val (keptSourceTweets, removedSourceTweets) = sourceTweets
-            .map(_.candidate)
-            .partition(candidate => inReplyToTweetIds.contains(candidate.id))
-          (nonSourceTweets.map(_.candidate) ++ keptSourceTweets, removedSourceTweets)
+      cand dates.part  on(
+        _.features.getOrElse(Earlyb rdFeature, None).ex sts(_. sS ceT et)) match {
+        case (s ceT ets, nonS ceT ets) =>
+          val  nReplyToT et ds: Set[Long] =
+            nonS ceT ets
+              .f lter(ReplyRet etUt l. sEl g bleReply(_)).flatMap(
+                _.features.getOrElse( nReplyToT et dFeature, None)).toSet
+          val (keptS ceT ets, removedS ceT ets) = s ceT ets
+            .map(_.cand date)
+            .part  on(cand date =>  nReplyToT et ds.conta ns(cand date. d))
+          (nonS ceT ets.map(_.cand date) ++ keptS ceT ets, removedS ceT ets)
       }
-    Stitch.value(FilterResult(kept = kept, removed = removed))
+    St ch.value(F lterResult(kept = kept, removed = removed))
   }
 }

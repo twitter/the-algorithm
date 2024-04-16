@@ -1,52 +1,52 @@
-package com.twitter.home_mixer.product.scored_tweets.response_transformer
+package com.tw ter.ho _m xer.product.scored_t ets.response_transfor r
 
-import com.twitter.tweet_mixer.{thriftscala => tmt}
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.timelineservice.suggests.logging.candidate_tweet_source_id.{thriftscala => cts}
-import com.twitter.timelineservice.suggests.{thriftscala => st}
-import com.twitter.tsp.{thriftscala => tsp}
+ mport com.tw ter.t et_m xer.{thr ftscala => tmt}
+ mport com.tw ter.ho _m xer.model.Ho Features._
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Transfor r dent f er
+ mport com.tw ter.t  l neserv ce.suggests.logg ng.cand date_t et_s ce_ d.{thr ftscala => cts}
+ mport com.tw ter.t  l neserv ce.suggests.{thr ftscala => st}
+ mport com.tw ter.tsp.{thr ftscala => tsp}
 
-object ScoredTweetsTweetMixerResponseFeatureTransformer
-    extends CandidateFeatureTransformer[tmt.TweetResult] {
+object ScoredT etsT etM xerResponseFeatureTransfor r
+    extends Cand dateFeatureTransfor r[tmt.T etResult] {
 
-  override val identifier: TransformerIdentifier =
-    TransformerIdentifier("ScoredTweetsTweetMixerResponse")
+  overr de val  dent f er: Transfor r dent f er =
+    Transfor r dent f er("ScoredT etsT etM xerResponse")
 
-  override val features: Set[Feature[_, _]] = Set(
-    CandidateSourceIdFeature,
-    FromInNetworkSourceFeature,
-    IsRandomTweetFeature,
+  overr de val features: Set[Feature[_, _]] = Set(
+    Cand dateS ce dFeature,
+    From nNetworkS ceFeature,
+     sRandomT etFeature,
     StreamToKafkaFeature,
     SuggestTypeFeature,
-    TSPMetricTagFeature
+    TSP tr cTagFeature
   )
 
-  override def transform(candidate: tmt.TweetResult): FeatureMap = {
-    val tweetMixerMetricTags = candidate.metricTags.getOrElse(Seq.empty)
-    val tspMetricTag = tweetMixerMetricTags
-      .map(TweetMixerMetricTagToTspMetricTag)
-      .filter(_.nonEmpty).map(_.get).toSet
+  overr de def transform(cand date: tmt.T etResult): FeatureMap = {
+    val t etM xer tr cTags = cand date. tr cTags.getOrElse(Seq.empty)
+    val tsp tr cTag = t etM xer tr cTags
+      .map(T etM xer tr cTagToTsp tr cTag)
+      .f lter(_.nonEmpty).map(_.get).toSet
 
-    FeatureMapBuilder()
-      .add(CandidateSourceIdFeature, Some(cts.CandidateTweetSourceId.Simcluster))
-      .add(FromInNetworkSourceFeature, false)
-      .add(IsRandomTweetFeature, false)
+    FeatureMapBu lder()
+      .add(Cand dateS ce dFeature, So (cts.Cand dateT etS ce d.S mcluster))
+      .add(From nNetworkS ceFeature, false)
+      .add( sRandomT etFeature, false)
       .add(StreamToKafkaFeature, true)
-      .add(SuggestTypeFeature, Some(st.SuggestType.ScTweet))
-      .add(TSPMetricTagFeature, tspMetricTag)
-      .build()
+      .add(SuggestTypeFeature, So (st.SuggestType.ScT et))
+      .add(TSP tr cTagFeature, tsp tr cTag)
+      .bu ld()
   }
 
-  private def TweetMixerMetricTagToTspMetricTag(
-    tweetMixerMetricTag: tmt.MetricTag
-  ): Option[tsp.MetricTag] = tweetMixerMetricTag match {
-    case tmt.MetricTag.TweetFavorite => Some(tsp.MetricTag.TweetFavorite)
-    case tmt.MetricTag.Retweet => Some(tsp.MetricTag.Retweet)
+  pr vate def T etM xer tr cTagToTsp tr cTag(
+    t etM xer tr cTag: tmt. tr cTag
+  ): Opt on[tsp. tr cTag] = t etM xer tr cTag match {
+    case tmt. tr cTag.T etFavor e => So (tsp. tr cTag.T etFavor e)
+    case tmt. tr cTag.Ret et => So (tsp. tr cTag.Ret et)
     case _ => None
   }
 }

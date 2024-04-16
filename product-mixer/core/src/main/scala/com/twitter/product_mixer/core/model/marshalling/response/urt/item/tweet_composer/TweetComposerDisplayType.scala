@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet_composer
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t et_composer
 
-sealed trait TweetComposerDisplayType
+sealed tra  T etComposerD splayType
 
-case object TweetComposerSelfThread extends TweetComposerDisplayType
-case object Reply extends TweetComposerDisplayType
+case object T etComposerSelfThread extends T etComposerD splayType
+case object Reply extends T etComposerD splayType

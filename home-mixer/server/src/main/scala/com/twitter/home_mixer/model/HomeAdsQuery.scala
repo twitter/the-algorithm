@@ -1,42 +1,42 @@
-package com.twitter.home_mixer.model
+package com.tw ter.ho _m xer.model
 
-import com.twitter.adserver.thriftscala.RequestTriggerType
-import com.twitter.home_mixer.model.HomeFeatures.GetInitialFeature
-import com.twitter.home_mixer.model.HomeFeatures.GetNewerFeature
-import com.twitter.home_mixer.model.HomeFeatures.GetOlderFeature
-import com.twitter.home_mixer.model.HomeFeatures.PollingFeature
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.adserver.thr ftscala.RequestTr ggerType
+ mport com.tw ter.ho _m xer.model.Ho Features.Get n  alFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.GetNe rFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.GetOlderFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Poll ngFeature
+ mport com.tw ter.ho _m xer.model.request.HasDev ceContext
+ mport com.tw ter.product_m xer.component_l brary.model.cursor.UrtOrderedCursor
+ mport com.tw ter.product_m xer.component_l brary.model.query.ads.AdsQuery
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.p pel ne.HasP pel neCursor
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * These are for feeds needed for ads only.
+ * T se are for feeds needed for ads only.
  */
-trait HomeAdsQuery
+tra  Ho AdsQuery
     extends AdsQuery
-    with PipelineQuery
-    with HasDeviceContext
-    with HasPipelineCursor[UrtOrderedCursor] {
+    w h P pel neQuery
+    w h HasDev ceContext
+    w h HasP pel neCursor[UrtOrderedCursor] {
 
-  private val featureToRequestTriggerType = Seq(
-    (GetInitialFeature, RequestTriggerType.Initial),
-    (GetNewerFeature, RequestTriggerType.Scroll),
-    (GetOlderFeature, RequestTriggerType.Scroll),
-    (PollingFeature, RequestTriggerType.AutoRefresh)
+  pr vate val featureToRequestTr ggerType = Seq(
+    (Get n  alFeature, RequestTr ggerType. n  al),
+    (GetNe rFeature, RequestTr ggerType.Scroll),
+    (GetOlderFeature, RequestTr ggerType.Scroll),
+    (Poll ngFeature, RequestTr ggerType.AutoRefresh)
   )
 
-  override val autoplayEnabled: Option[Boolean] = deviceContext.flatMap(_.autoplayEnabled)
+  overr de val autoplayEnabled: Opt on[Boolean] = dev ceContext.flatMap(_.autoplayEnabled)
 
-  override def requestTriggerType: Option[RequestTriggerType] = {
-    val features = this.features.getOrElse(FeatureMap.empty)
+  overr de def requestTr ggerType: Opt on[RequestTr ggerType] = {
+    val features = t .features.getOrElse(FeatureMap.empty)
 
-    featureToRequestTriggerType.collectFirst {
-      case (feature, requestType) if features.get(feature) => Some(requestType)
+    featureToRequestTr ggerType.collectF rst {
+      case (feature, requestType)  f features.get(feature) => So (requestType)
     }.flatten
   }
 
-  override val disableNsfwAvoidance: Option[Boolean] = Some(true)
+  overr de val d sableNsfwAvo dance: Opt on[Boolean] = So (true)
 }

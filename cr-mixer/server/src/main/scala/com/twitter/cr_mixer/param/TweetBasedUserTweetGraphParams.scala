@@ -1,89 +1,89 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .Param
 
-object TweetBasedUserTweetGraphParams {
+object T etBasedUserT etGraphParams {
 
-  object MinCoOccurrenceParam
-      extends FSBoundedParam[Int](
-        name = "tweet_based_user_tweet_graph_min_co_occurrence",
+  object M nCoOccurrenceParam
+      extends FSBoundedParam[ nt](
+        na  = "t et_based_user_t et_graph_m n_co_occurrence",
         default = 3,
-        min = 0,
+        m n = 0,
         max = 500
       )
 
-  object TweetBasedMinScoreParam
+  object T etBasedM nScoreParam
       extends FSBoundedParam[Double](
-        name = "tweet_based_user_tweet_graph_tweet_based_min_score",
+        na  = "t et_based_user_t et_graph_t et_based_m n_score",
         default = 0.5,
-        min = 0.0,
+        m n = 0.0,
         max = 10.0
       )
 
-  object ConsumersBasedMinScoreParam
+  object Consu rsBasedM nScoreParam
       extends FSBoundedParam[Double](
-        name = "tweet_based_user_tweet_graph_consumers_based_min_score",
+        na  = "t et_based_user_t et_graph_consu rs_based_m n_score",
         default = 4.0,
-        min = 0.0,
+        m n = 0.0,
         max = 10.0
       )
-  object MaxConsumerSeedsNumParam
-      extends FSBoundedParam[Int](
-        name = "tweet_based_user_tweet_graph_max_user_seeds_num",
+  object MaxConsu rSeedsNumParam
+      extends FSBoundedParam[ nt](
+        na  = "t et_based_user_t et_graph_max_user_seeds_num",
         default = 100,
-        min = 0,
+        m n = 0,
         max = 300
       )
 
-  object EnableCoverageExpansionOldTweetParam
+  object EnableCoverageExpans onOldT etParam
       extends FSParam[Boolean](
-        name = "tweet_based_user_tweet_graph_enable_coverage_expansion_old_tweet",
+        na  = "t et_based_user_t et_graph_enable_coverage_expans on_old_t et",
         default = false
       )
 
-  object EnableCoverageExpansionAllTweetParam
+  object EnableCoverageExpans onAllT etParam
       extends FSParam[Boolean](
-        name = "tweet_based_user_tweet_graph_enable_coverage_expansion_all_tweet",
+        na  = "t et_based_user_t et_graph_enable_coverage_expans on_all_t et",
         default = false
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableCoverageExpansionAllTweetParam,
-    EnableCoverageExpansionOldTweetParam,
-    MinCoOccurrenceParam,
-    MaxConsumerSeedsNumParam,
-    TweetBasedMinScoreParam,
-    ConsumersBasedMinScoreParam
+  val AllParams: Seq[Param[_] w h FSNa ] = Seq(
+    EnableCoverageExpans onAllT etParam,
+    EnableCoverageExpans onOldT etParam,
+    M nCoOccurrenceParam,
+    MaxConsu rSeedsNumParam,
+    T etBasedM nScoreParam,
+    Consu rsBasedM nScoreParam
   )
 
-  lazy val config: BaseConfig = {
+  lazy val conf g: BaseConf g = {
 
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableCoverageExpansionAllTweetParam,
-      EnableCoverageExpansionOldTweetParam
+    val booleanOverr des = FeatureSw chOverr deUt l.getBooleanFSOverr des(
+      EnableCoverageExpans onAllT etParam,
+      EnableCoverageExpans onOldT etParam
     )
 
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-      MinCoOccurrenceParam,
-      MaxConsumerSeedsNumParam
+    val  ntOverr des = FeatureSw chOverr deUt l.getBounded ntFSOverr des(
+      M nCoOccurrenceParam,
+      MaxConsu rSeedsNumParam
     )
 
-    val doubleOverrides =
-      FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(
-        TweetBasedMinScoreParam,
-        ConsumersBasedMinScoreParam)
+    val doubleOverr des =
+      FeatureSw chOverr deUt l.getBoundedDoubleFSOverr des(
+        T etBasedM nScoreParam,
+        Consu rsBasedM nScoreParam)
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(intOverrides: _*)
-      .set(doubleOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set(booleanOverr des: _*)
+      .set( ntOverr des: _*)
+      .set(doubleOverr des: _*)
+      .bu ld()
   }
 
 }

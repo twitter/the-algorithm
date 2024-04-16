@@ -1,89 +1,89 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.io.IOException;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+ mport java. o. OExcept on;
+ mport java.ut l.concurrent.Callable;
+ mport java.ut l.concurrent.ExecutorServ ce;
+ mport java.ut l.concurrent.Executors;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.google.common.util.concurrent.SimpleTimeLimiter;
-import com.google.common.util.concurrent.TimeLimiter;
+ mport com.google.common.ut l.concurrent.S mpleT  L m er;
+ mport com.google.common.ut l.concurrent.T  L m er;
 
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
+ mport org.apac .hadoop.fs.F leSystem;
+ mport org.apac .hadoop.fs.Path;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.metrics.SearchTimerStats;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchT  r;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
 
 /**
- * Abstracts details of making time limited calls to hadoop.
+ * Abstracts deta ls of mak ng t   l m ed calls to hadoop.
  *
- * During IM-3556 we discovered that hadoop API calls can take a long time (seconds, minutes)
- * if the Hadoop clsuter is in a bad state. Our code was generally not prepared for that and
- * this caused various issues. This class is a fix on top of the Hadoop API's exists call and
- * it introduces a timeout.
+ * Dur ng  M-3556   d scovered that hadoop AP  calls can take a long t   (seconds, m nutes)
+ *  f t  Hadoop clsuter  s  n a bad state.   code was generally not prepared for that and
+ * t  caused var ous  ssues. T  class  s a f x on top of t  Hadoop AP 's ex sts call and
+ *    ntroduces a t  out.
  *
- * The main motivation for having this as an external class is for testability.
+ * T  ma n mot vat on for hav ng t  as an external class  s for testab l y.
  */
-public class TimeLimitedHadoopExistsCall {
-  private final TimeLimiter hadoopCallsTimeLimiter;
-  private final FileSystem fileSystem;
-  private final int timeLimitInSeconds;
+publ c class T  L m edHadoopEx stsCall {
+  pr vate f nal T  L m er hadoopCallsT  L m er;
+  pr vate f nal F leSystem f leSystem;
+  pr vate f nal  nt t  L m  nSeconds;
 
-  private static final SearchTimerStats EXISTS_CALLS_TIMER =
-      SearchTimerStats.export("hadoop_exists_calls");
+  pr vate stat c f nal SearchT  rStats EX STS_CALLS_T MER =
+      SearchT  rStats.export("hadoop_ex sts_calls");
 
-  private static final SearchCounter EXISTS_CALLS_EXCEPTION =
-      SearchCounter.export("hadoop_exists_calls_exception");
+  pr vate stat c f nal SearchCounter EX STS_CALLS_EXCEPT ON =
+      SearchCounter.export("hadoop_ex sts_calls_except on");
 
-  public TimeLimitedHadoopExistsCall(FileSystem fileSystem) {
-    // This times varies. Sometimes it's very quick, sometimes it takes some amount of seconds.
-    // Do a rate on hadoop_exists_calls_latency_ms to see for yourself.
-    this(fileSystem, 30);
+  publ c T  L m edHadoopEx stsCall(F leSystem f leSystem) {
+    // T  t  s var es. So t  s  's very qu ck, so t  s   takes so  amount of seconds.
+    // Do a rate on hadoop_ex sts_calls_latency_ms to see for y self.
+    t (f leSystem, 30);
   }
 
-  public TimeLimitedHadoopExistsCall(FileSystem fileSystem, int timeLimitInSeconds) {
-    // We do hadoop calls once every "FLUSH_CHECK_PERIOD" minutes. If a call takes
-    // a long time (say 10 minutes), we'll use a new thread for the next call, to give it
+  publ c T  L m edHadoopEx stsCall(F leSystem f leSystem,  nt t  L m  nSeconds) {
+    //   do hadoop calls once every "FLUSH_CHECK_PER OD" m nutes.  f a call takes
+    // a long t   (say 10 m nutes),  'll use a new thread for t  next call, to g ve  
     // a chance to complete.
     //
-    // Let's say every call takes 2 hours. After 5 calls, the 6th call won't be able
-    // to take a thread out of the thread pool and it will time out. That's fair, we don't
-    // want to keep sending requests to Hadoop if the situation is so dire.
-    ExecutorService executorService = Executors.newFixedThreadPool(5);
-    this.hadoopCallsTimeLimiter = SimpleTimeLimiter.create(executorService);
-    this.fileSystem = fileSystem;
-    this.timeLimitInSeconds = timeLimitInSeconds;
+    // Let's say every call takes 2 h s. After 5 calls, t  6th call won't be able
+    // to take a thread out of t  thread pool and   w ll t   out. That's fa r,   don't
+    // want to keep send ng requests to Hadoop  f t  s uat on  s so d re.
+    ExecutorServ ce executorServ ce = Executors.newF xedThreadPool(5);
+    t .hadoopCallsT  L m er = S mpleT  L m er.create(executorServ ce);
+    t .f leSystem = f leSystem;
+    t .t  L m  nSeconds = t  L m  nSeconds;
   }
 
 
-  protected boolean hadoopExistsCall(Path path) throws IOException {
-    SearchTimer timer = EXISTS_CALLS_TIMER.startNewTimer();
-    boolean res =  fileSystem.exists(path);
-    EXISTS_CALLS_TIMER.stopTimerAndIncrement(timer);
+  protected boolean hadoopEx stsCall(Path path) throws  OExcept on {
+    SearchT  r t  r = EX STS_CALLS_T MER.startNewT  r();
+    boolean res =  f leSystem.ex sts(path);
+    EX STS_CALLS_T MER.stopT  rAnd ncre nt(t  r);
     return res;
   }
 
   /**
-   * Checks if a path exists on Hadoop.
+   * C cks  f a path ex sts on Hadoop.
    *
-   * @return true if the path exists.
-   * @throws Exception see exceptions thrown by callWithTimeout
+   * @return true  f t  path ex sts.
+   * @throws Except on see except ons thrown by callW hT  out
    */
-  boolean exists(Path path) throws Exception {
+  boolean ex sts(Path path) throws Except on {
     try {
-      boolean result = hadoopCallsTimeLimiter.callWithTimeout(new Callable<Boolean>() {
-        @Override
-        public Boolean call() throws Exception {
-          return hadoopExistsCall(path);
+      boolean result = hadoopCallsT  L m er.callW hT  out(new Callable<Boolean>() {
+        @Overr de
+        publ c Boolean call() throws Except on {
+          return hadoopEx stsCall(path);
         }
-      }, timeLimitInSeconds, TimeUnit.SECONDS);
+      }, t  L m  nSeconds, T  Un .SECONDS);
 
       return result;
-    } catch (Exception ex) {
-      EXISTS_CALLS_EXCEPTION.increment();
-      // No need to print and rethrow, it will be printed when caught upstream.
+    } catch (Except on ex) {
+      EX STS_CALLS_EXCEPT ON. ncre nt();
+      // No need to pr nt and rethrow,   w ll be pr nted w n caught upstream.
       throw ex;
     }
   }

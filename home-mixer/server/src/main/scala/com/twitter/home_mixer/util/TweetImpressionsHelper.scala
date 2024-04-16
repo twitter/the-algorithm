@@ -1,15 +1,15 @@
-package com.twitter.home_mixer.util
+package com.tw ter.ho _m xer.ut l
 
-import com.twitter.home_mixer.model.HomeFeatures.TweetImpressionsFeature
-import com.twitter.product_mixer.component_library.feature_hydrator.query.impressed_tweets.ImpressedTweets
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.ho _m xer.model.Ho Features.T et mpress onsFeature
+ mport com.tw ter.product_m xer.component_l brary.feature_hydrator.query. mpressed_t ets. mpressedT ets
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
 
-object TweetImpressionsHelper {
-  def tweetImpressions(features: FeatureMap): Set[Long] = {
-    val manhattanImpressions =
-      features.getOrElse(TweetImpressionsFeature, Seq.empty).flatMap(_.tweetIds)
-    val memcacheImpressions = features.getOrElse(ImpressedTweets, Seq.empty)
+object T et mpress ons lper {
+  def t et mpress ons(features: FeatureMap): Set[Long] = {
+    val manhattan mpress ons =
+      features.getOrElse(T et mpress onsFeature, Seq.empty).flatMap(_.t et ds)
+    val  mcac  mpress ons = features.getOrElse( mpressedT ets, Seq.empty)
 
-    (manhattanImpressions ++ memcacheImpressions).toSet
+    (manhattan mpress ons ++  mcac  mpress ons).toSet
   }
 }

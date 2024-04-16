@@ -1,107 +1,107 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. tr cs
 
-import java.lang.{Long => JLong}
-import com.twitter.ml.api._
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.ConversionUtils._
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import scala.math.max
+ mport java.lang.{Long => JLong}
+ mport com.tw ter.ml.ap ._
+ mport com.tw ter.ml.ap .ut l.SR chDataRecord
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. tr cs.Convers onUt ls._
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.T  
+ mport scala.math.max
 
 /**
- * This metric measures how recently an action has taken place. A value of 1.0
- * indicates the action happened just now. This value decays with time if the
- * action has not taken place and is reset to 1 when the action happens. So lower
- * value indicates a stale or older action.
+ * T   tr c  asures how recently an act on has taken place. A value of 1.0
+ *  nd cates t  act on happened just now. T  value decays w h t    f t 
+ * act on has not taken place and  s reset to 1 w n t  act on happens. So lo r
+ * value  nd cates a stale or older act on.
  *
- * For example consider an action of "user liking a video". The last reset metric
- * value changes as follows for a half life of 1 day.
+ * For example cons der an act on of "user l k ng a v deo". T  last reset  tr c
+ * value changes as follows for a half l fe of 1 day.
  *
  * ----------------------------------------------------------------------------
- *  day  |         action           |  feature value |      Description
+ *  day  |         act on           |  feature value |      Descr pt on
  * ----------------------------------------------------------------------------
- *   1   | user likes the video     |      1.0       |    Set the value to 1
- *   2   | user does not like video |      0.5       |    Decay the value
- *   3   | user does not like video |      0.25      |    Decay the value
- *   4   | user likes the video     |      1.0       |    Reset the value to 1
+ *   1   | user l kes t  v deo     |      1.0       |    Set t  value to 1
+ *   2   | user does not l ke v deo |      0.5       |    Decay t  value
+ *   3   | user does not l ke v deo |      0.25      |    Decay t  value
+ *   4   | user l kes t  v deo     |      1.0       |    Reset t  value to 1
  * -----------------------------------------------------------------------------
  *
  * @tparam T
  */
-case class TypedLastResetMetric[T]() extends TimedValueAggregationMetric[T] {
-  import AggregationMetricCommon._
+case class TypedLastReset tr c[T]() extends T  dValueAggregat on tr c[T] {
+   mport Aggregat on tr cCommon._
 
-  override val operatorName = "last_reset"
+  overr de val operatorNa  = "last_reset"
 
-  override def getIncrementValue(
+  overr de def get ncre ntValue(
     record: DataRecord,
-    feature: Option[Feature[T]],
-    timestampFeature: Feature[JLong]
-  ): TimedValue[Double] = {
-    val featureExists: Boolean = feature match {
-      case Some(f) => SRichDataRecord(record).hasFeature(f)
+    feature: Opt on[Feature[T]],
+    t  stampFeature: Feature[JLong]
+  ): T  dValue[Double] = {
+    val featureEx sts: Boolean = feature match {
+      case So (f) => SR chDataRecord(record).hasFeature(f)
       case None => true
     }
 
-    TimedValue[Double](
-      value = booleanToDouble(featureExists),
-      timestamp = Time.fromMilliseconds(getTimestamp(record, timestampFeature))
+    T  dValue[Double](
+      value = booleanToDouble(featureEx sts),
+      t  stamp = T  .fromM ll seconds(getT  stamp(record, t  stampFeature))
     )
   }
-  private def getDecayedValue(
-    olderTimedValue: TimedValue[Double],
-    newerTimestamp: Time,
-    halfLife: Duration
+  pr vate def getDecayedValue(
+    olderT  dValue: T  dValue[Double],
+    ne rT  stamp: T  ,
+    halfL fe: Durat on
   ): Double = {
-    if (halfLife.inMilliseconds == 0L) {
+     f (halfL fe. nM ll seconds == 0L) {
       0.0
     } else {
-      val timeDelta = newerTimestamp.inMilliseconds - olderTimedValue.timestamp.inMilliseconds
-      val resultValue = olderTimedValue.value / math.pow(2.0, timeDelta / halfLife.inMillis)
-      if (resultValue > AggregationMetricCommon.Epsilon) resultValue else 0.0
+      val t  Delta = ne rT  stamp. nM ll seconds - olderT  dValue.t  stamp. nM ll seconds
+      val resultValue = olderT  dValue.value / math.pow(2.0, t  Delta / halfL fe. nM ll s)
+       f (resultValue > Aggregat on tr cCommon.Eps lon) resultValue else 0.0
     }
   }
 
-  override def plus(
-    left: TimedValue[Double],
-    right: TimedValue[Double],
-    halfLife: Duration
-  ): TimedValue[Double] = {
+  overr de def plus(
+    left: T  dValue[Double],
+    r ght: T  dValue[Double],
+    halfL fe: Durat on
+  ): T  dValue[Double] = {
 
-    val (newerTimedValue, olderTimedValue) = if (left.timestamp > right.timestamp) {
-      (left, right)
+    val (ne rT  dValue, olderT  dValue) =  f (left.t  stamp > r ght.t  stamp) {
+      (left, r ght)
     } else {
-      (right, left)
+      (r ght, left)
     }
 
-    val optionallyDecayedOlderValue = if (halfLife == Duration.Top) {
-      // Since we don't want to decay, older value is not changed
-      olderTimedValue.value
+    val opt onallyDecayedOlderValue =  f (halfL fe == Durat on.Top) {
+      // S nce   don't want to decay, older value  s not changed
+      olderT  dValue.value
     } else {
       // Decay older value
-      getDecayedValue(olderTimedValue, newerTimedValue.timestamp, halfLife)
+      getDecayedValue(olderT  dValue, ne rT  dValue.t  stamp, halfL fe)
     }
 
-    TimedValue[Double](
-      value = max(newerTimedValue.value, optionallyDecayedOlderValue),
-      timestamp = newerTimedValue.timestamp
+    T  dValue[Double](
+      value = max(ne rT  dValue.value, opt onallyDecayedOlderValue),
+      t  stamp = ne rT  dValue.t  stamp
     )
   }
 
-  override def zero(timeOpt: Option[Long]): TimedValue[Double] = TimedValue[Double](
+  overr de def zero(t  Opt: Opt on[Long]): T  dValue[Double] = T  dValue[Double](
     value = 0.0,
-    timestamp = Time.fromMilliseconds(0)
+    t  stamp = T  .fromM ll seconds(0)
   )
 }
 
 /**
- * Syntactic sugar for the last reset metric that works with
- * any feature type as opposed to being tied to a specific type.
- * See EasyMetric.scala for more details on why this is useful.
+ * Syntact c sugar for t  last reset  tr c that works w h
+ * any feature type as opposed to be ng t ed to a spec f c type.
+ * See Easy tr c.scala for more deta ls on why t   s useful.
  */
-object LastResetMetric extends EasyMetric {
-  override def forFeatureType[T](
+object LastReset tr c extends Easy tr c {
+  overr de def forFeatureType[T](
     featureType: FeatureType
-  ): Option[AggregationMetric[T, _]] =
-    Some(TypedLastResetMetric[T]())
+  ): Opt on[Aggregat on tr c[T, _]] =
+    So (TypedLastReset tr c[T]())
 }

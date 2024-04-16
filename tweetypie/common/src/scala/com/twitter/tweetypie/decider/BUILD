@@ -1,15 +1,15 @@
-scala_library(
-    sources = ["DeciderGates.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["Dec derGates.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
         "3rdparty/jvm/com/google/guava",
-        "decider",
-        "finagle/finagle-toggle/src/main/scala/com/twitter/finagle/server",
-        "tweetypie/servo/decider",
-        "tweetypie/servo/util/src/main/scala",
-        "util/util-core:scala",
+        "dec der",
+        "f nagle/f nagle-toggle/src/ma n/scala/com/tw ter/f nagle/server",
+        "t etyp e/servo/dec der",
+        "t etyp e/servo/ut l/src/ma n/scala",
+        "ut l/ut l-core:scala",
     ],
 )

@@ -1,40 +1,40 @@
-package com.twitter.visibility.interfaces.blender
+package com.tw ter.v s b l y. nterfaces.blender
 
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.interfaces.common.blender.BlenderVFRequestContext
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.models.V e rContext
+ mport com.tw ter.v s b l y. nterfaces.common.blender.BlenderVFRequestContext
 
-case class BlenderVisibilityRequest(
-  tweet: Tweet,
-  quotedTweet: Option[Tweet],
-  retweetSourceTweet: Option[Tweet] = None,
-  isRetweet: Boolean,
+case class BlenderV s b l yRequest(
+  t et: T et,
+  quotedT et: Opt on[T et],
+  ret etS ceT et: Opt on[T et] = None,
+   sRet et: Boolean,
   safetyLevel: SafetyLevel,
-  viewerContext: ViewerContext,
+  v e rContext: V e rContext,
   blenderVFRequestContext: BlenderVFRequestContext) {
 
-  def getTweetID: Long = tweet.id
+  def getT et D: Long = t et. d
 
-  def hasQuotedTweet: Boolean = {
-    quotedTweet.nonEmpty
+  def hasQuotedT et: Boolean = {
+    quotedT et.nonEmpty
   }
-  def hasSourceTweet: Boolean = {
-    retweetSourceTweet.nonEmpty
+  def hasS ceT et: Boolean = {
+    ret etS ceT et.nonEmpty
   }
 
-  def getQuotedTweetId: Long = {
-    quotedTweet match {
-      case Some(qTweet) =>
-        qTweet.id
+  def getQuotedT et d: Long = {
+    quotedT et match {
+      case So (qT et) =>
+        qT et. d
       case None =>
         -1
     }
   }
-  def getSourceTweetId: Long = {
-    retweetSourceTweet match {
-      case Some(sourceTweet) =>
-        sourceTweet.id
+  def getS ceT et d: Long = {
+    ret etS ceT et match {
+      case So (s ceT et) =>
+        s ceT et. d
       case None =>
         -1
     }

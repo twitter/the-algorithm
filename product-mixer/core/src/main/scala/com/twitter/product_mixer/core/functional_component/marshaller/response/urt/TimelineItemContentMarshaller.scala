@@ -1,130 +1,130 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.commerce.CommerceProductGroupItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.commerce.CommerceProductItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.article.ArticleItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.audio_space.AudioSpaceItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.card.CardItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.event.EventSummaryItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.generic_summary_item.GenericSummaryItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.icon_label.IconLabelItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.label.LabelItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message.MessagePromptItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.moment.MomentAnnotationItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.prompt.PromptItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.suggestion.SpellingItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.thread.ThreadHeaderItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tile.TileItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tombstone.TombstoneItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic.TopicFollowPromptItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic.TopicItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.trend.TrendItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet.TweetItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet_composer.TweetComposerItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.twitter_list.TwitterListItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.user.UserItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.vertical_grid_item.VerticalGridItemMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.operation.CursorItemMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Cover
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.audio_space.AudioSpaceItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.card.CardItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.commerce.CommerceProductGroupItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.commerce.CommerceProductItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.event.EventSummaryItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary.GenericSummaryItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.icon_label.IconLabelItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.label.LabelItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessagePromptItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.moment.MomentAnnotationItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.PromptItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.suggestion.SpellingItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.thread.ThreadHeaderItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.TileItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.TombstoneItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicFollowPromptItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.trend.TrendItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet_composer.TweetComposerItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.TwitterListItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.VerticalGridItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.TransportMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.com rce.Com rceProductGroup emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.com rce.Com rceProduct emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.art cle.Art cle emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.aud o_space.Aud oSpace emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.card.Card emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.event.EventSummary emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.gener c_summary_ em.Gener cSummary emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em. con_label. conLabel emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.label.Label emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em. ssage. ssagePrompt emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.mo nt.Mo ntAnnotat on emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.prompt.Prompt emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.suggest on.Spell ng emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.thread.Thread ader emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.t le.T le emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.tombstone.Tombstone emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.top c.Top cFollowPrompt emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.top c.Top c emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.trend.Trend emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.t et.T et emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.t et_composer.T etComposer emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.tw ter_l st.Tw terL st emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.user.User emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.vert cal_gr d_ em.Vert calGr d emMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.operat on.Cursor emMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.Cover
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.art cle.Art cle em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.aud o_space.Aud oSpace em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.card.Card em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.com rce.Com rceProductGroup em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.com rce.Com rceProduct em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.event.EventSummary em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.gener c_summary.Gener cSummary em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. con_label. conLabel em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.label.Label em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage. ssagePrompt em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.mo nt.Mo ntAnnotat on em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.prompt.Prompt em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.suggest on.Spell ng em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.thread.Thread ader em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t le.T le em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.tombstone.Tombstone em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.top c.Top cFollowPrompt em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.top c.Top c em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.trend.Trend em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t et.T et em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t et_composer.T etComposer em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.tw ter_l st.Tw terL st em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.user.User em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.vert cal_gr d_ em.Vert calGr d em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.Cursor em
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TimelineItemContentMarshaller @Inject() (
-  articleItemMarshaller: ArticleItemMarshaller,
-  audioSpaceItemMarshaller: AudioSpaceItemMarshaller,
-  cardItemMarshaller: CardItemMarshaller,
-  cursorItemMarshaller: CursorItemMarshaller,
-  eventSummaryItemMarshaller: EventSummaryItemMarshaller,
-  iconLabelItemMarshaller: IconLabelItemMarshaller,
-  labelItemMarshaller: LabelItemMarshaller,
-  messagePromptItemMarshaller: MessagePromptItemMarshaller,
-  tileItemMarshaller: TileItemMarshaller,
-  tombstoneItemMarshaller: TombstoneItemMarshaller,
-  topicFollowPromptItemMarshaller: TopicFollowPromptItemMarshaller,
-  topicItemMarshaller: TopicItemMarshaller,
-  tweetComposerItemMarshaller: TweetComposerItemMarshaller,
-  tweetItemMarshaller: TweetItemMarshaller,
-  twitterListItemMarshaller: TwitterListItemMarshaller,
-  userItemMarshaller: UserItemMarshaller,
-  verticalGridItemMarshaller: VerticalGridItemMarshaller,
-  threadHeaderItemMarshaller: ThreadHeaderItemMarshaller,
-  promptItemMarshaller: PromptItemMarshaller,
-  spellingItemMarshaller: SpellingItemMarshaller,
-  momentAnnotationItemMarshaller: MomentAnnotationItemMarshaller,
-  genericSummaryItemMarshaller: GenericSummaryItemMarshaller,
-  commerceProductItemMarshaller: CommerceProductItemMarshaller,
-  commerceProductGroupItemMarshaller: CommerceProductGroupItemMarshaller,
-  trendItemMarshaller: TrendItemMarshaller) {
+@S ngleton
+class T  l ne emContentMarshaller @ nject() (
+  art cle emMarshaller: Art cle emMarshaller,
+  aud oSpace emMarshaller: Aud oSpace emMarshaller,
+  card emMarshaller: Card emMarshaller,
+  cursor emMarshaller: Cursor emMarshaller,
+  eventSummary emMarshaller: EventSummary emMarshaller,
+   conLabel emMarshaller:  conLabel emMarshaller,
+  label emMarshaller: Label emMarshaller,
+   ssagePrompt emMarshaller:  ssagePrompt emMarshaller,
+  t le emMarshaller: T le emMarshaller,
+  tombstone emMarshaller: Tombstone emMarshaller,
+  top cFollowPrompt emMarshaller: Top cFollowPrompt emMarshaller,
+  top c emMarshaller: Top c emMarshaller,
+  t etComposer emMarshaller: T etComposer emMarshaller,
+  t et emMarshaller: T et emMarshaller,
+  tw terL st emMarshaller: Tw terL st emMarshaller,
+  user emMarshaller: User emMarshaller,
+  vert calGr d emMarshaller: Vert calGr d emMarshaller,
+  thread ader emMarshaller: Thread ader emMarshaller,
+  prompt emMarshaller: Prompt emMarshaller,
+  spell ng emMarshaller: Spell ng emMarshaller,
+  mo ntAnnotat on emMarshaller: Mo ntAnnotat on emMarshaller,
+  gener cSummary emMarshaller: Gener cSummary emMarshaller,
+  com rceProduct emMarshaller: Com rceProduct emMarshaller,
+  com rceProductGroup emMarshaller: Com rceProductGroup emMarshaller,
+  trend emMarshaller: Trend emMarshaller) {
 
-  def apply(item: TimelineItem): urt.TimelineItemContent = item match {
-    case articleItem: ArticleItem => articleItemMarshaller(articleItem)
-    case audioSpaceItem: AudioSpaceItem => audioSpaceItemMarshaller(audioSpaceItem)
-    case cardItem: CardItem => cardItemMarshaller(cardItem)
-    case cursorItem: CursorItem => cursorItemMarshaller(cursorItem)
-    case eventSummaryItem: EventSummaryItem => eventSummaryItemMarshaller(eventSummaryItem)
-    case genericSummaryItem: GenericSummaryItem => genericSummaryItemMarshaller(genericSummaryItem)
-    case iconLabelItem: IconLabelItem => iconLabelItemMarshaller(iconLabelItem)
-    case labelItem: LabelItem => labelItemMarshaller(labelItem)
-    case messagePromptItem: MessagePromptItem => messagePromptItemMarshaller(messagePromptItem)
-    case tileItem: TileItem => tileItemMarshaller(tileItem)
-    case tombstoneItem: TombstoneItem => tombstoneItemMarshaller(tombstoneItem)
-    case topicFollowPromptItem: TopicFollowPromptItem =>
-      topicFollowPromptItemMarshaller(topicFollowPromptItem)
-    case topicItem: TopicItem => topicItemMarshaller(topicItem)
-    case tweetComposerItem: TweetComposerItem => tweetComposerItemMarshaller(tweetComposerItem)
-    case tweetItem: TweetItem => tweetItemMarshaller(tweetItem)
-    case twitterListItem: TwitterListItem => twitterListItemMarshaller(twitterListItem)
-    case userItem: UserItem => userItemMarshaller(userItem)
-    case verticalGridItem: VerticalGridItem => verticalGridItemMarshaller(verticalGridItem)
-    case threadHeaderItem: ThreadHeaderItem => threadHeaderItemMarshaller(threadHeaderItem)
-    case promptItem: PromptItem => promptItemMarshaller(promptItem)
-    case spellingItem: SpellingItem => spellingItemMarshaller(spellingItem)
-    case momentAnnotationItem: MomentAnnotationItem =>
-      momentAnnotationItemMarshaller(momentAnnotationItem)
-    case commerceProductItem: CommerceProductItem =>
-      commerceProductItemMarshaller(commerceProductItem)
-    case commerceProductGroupItem: CommerceProductGroupItem =>
-      commerceProductGroupItemMarshaller(commerceProductGroupItem)
-    case trendItem: TrendItem => trendItemMarshaller(trendItem)
-    case _: Cover => throw TimelineCoverNotFilteredException
-    case _ => throw new UnsupportedTimelineItemException(item)
+  def apply( em: T  l ne em): urt.T  l ne emContent =  em match {
+    case art cle em: Art cle em => art cle emMarshaller(art cle em)
+    case aud oSpace em: Aud oSpace em => aud oSpace emMarshaller(aud oSpace em)
+    case card em: Card em => card emMarshaller(card em)
+    case cursor em: Cursor em => cursor emMarshaller(cursor em)
+    case eventSummary em: EventSummary em => eventSummary emMarshaller(eventSummary em)
+    case gener cSummary em: Gener cSummary em => gener cSummary emMarshaller(gener cSummary em)
+    case  conLabel em:  conLabel em =>  conLabel emMarshaller( conLabel em)
+    case label em: Label em => label emMarshaller(label em)
+    case  ssagePrompt em:  ssagePrompt em =>  ssagePrompt emMarshaller( ssagePrompt em)
+    case t le em: T le em => t le emMarshaller(t le em)
+    case tombstone em: Tombstone em => tombstone emMarshaller(tombstone em)
+    case top cFollowPrompt em: Top cFollowPrompt em =>
+      top cFollowPrompt emMarshaller(top cFollowPrompt em)
+    case top c em: Top c em => top c emMarshaller(top c em)
+    case t etComposer em: T etComposer em => t etComposer emMarshaller(t etComposer em)
+    case t et em: T et em => t et emMarshaller(t et em)
+    case tw terL st em: Tw terL st em => tw terL st emMarshaller(tw terL st em)
+    case user em: User em => user emMarshaller(user em)
+    case vert calGr d em: Vert calGr d em => vert calGr d emMarshaller(vert calGr d em)
+    case thread ader em: Thread ader em => thread ader emMarshaller(thread ader em)
+    case prompt em: Prompt em => prompt emMarshaller(prompt em)
+    case spell ng em: Spell ng em => spell ng emMarshaller(spell ng em)
+    case mo ntAnnotat on em: Mo ntAnnotat on em =>
+      mo ntAnnotat on emMarshaller(mo ntAnnotat on em)
+    case com rceProduct em: Com rceProduct em =>
+      com rceProduct emMarshaller(com rceProduct em)
+    case com rceProductGroup em: Com rceProductGroup em =>
+      com rceProductGroup emMarshaller(com rceProductGroup em)
+    case trend em: Trend em => trend emMarshaller(trend em)
+    case _: Cover => throw T  l neCoverNotF lteredExcept on
+    case _ => throw new UnsupportedT  l ne emExcept on( em)
   }
 }
 
-class UnsupportedTimelineItemException(timelineItem: TimelineItem)
-    extends UnsupportedOperationException(
-      "Unsupported timeline item " + TransportMarshaller.getSimpleName(timelineItem.getClass))
+class UnsupportedT  l ne emExcept on(t  l ne em: T  l ne em)
+    extends UnsupportedOperat onExcept on(
+      "Unsupported t  l ne  em " + TransportMarshaller.getS mpleNa (t  l ne em.getClass))
 
-object TimelineCoverNotFilteredException
-    extends UnsupportedOperationException("AddEntriesInstructionBuilder does not support Cover. " +
-      "ShowCoverInstructionBuilder should be used with AddEntriesWithShowCoverInstructionBuilder " +
-      "in order to filter out the Cover.")
+object T  l neCoverNotF lteredExcept on
+    extends UnsupportedOperat onExcept on("AddEntr es nstruct onBu lder does not support Cover. " +
+      "ShowCover nstruct onBu lder should be used w h AddEntr esW hShowCover nstruct onBu lder " +
+      " n order to f lter out t  Cover.")

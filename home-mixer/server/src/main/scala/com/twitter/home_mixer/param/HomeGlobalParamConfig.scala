@@ -1,34 +1,34 @@
-package com.twitter.home_mixer.param
+package com.tw ter.ho _m xer.param
 
-import com.twitter.home_mixer.param.HomeGlobalParams._
-import com.twitter.product_mixer.core.functional_component.configapi.registry.GlobalParamConfig
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.param.Ho GlobalParams._
+ mport com.tw ter.product_m xer.core.funct onal_component.conf gap .reg stry.GlobalParamConf g
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * Register Params that do not relate to a specific product. See GlobalParamConfig -> ParamConfig
- * for hooks to register Params based on type.
+ * Reg ster Params that do not relate to a spec f c product. See GlobalParamConf g -> ParamConf g
+ * for hooks to reg ster Params based on type.
  */
-@Singleton
-class HomeGlobalParamConfig @Inject() () extends GlobalParamConfig {
+@S ngleton
+class Ho GlobalParamConf g @ nject() () extends GlobalParamConf g {
 
-  override val booleanFSOverrides = Seq(
-    AdsDisableInjectionBasedOnUserRoleParam,
-    EnableAdvertiserBrandSafetySettingsFeatureHydratorParam,
-    EnableImpressionBloomFilter,
-    EnableNahFeedbackInfoParam,
-    EnableNewTweetsPillAvatarsParam,
-    EnableScribeServedCandidatesParam,
-    EnableSendScoresToClient,
-    EnableSocialContextParam,
+  overr de val booleanFSOverr des = Seq(
+    AdsD sable nject onBasedOnUserRoleParam,
+    EnableAdvert serBrandSafetySett ngsFeatureHydratorParam,
+    Enable mpress onBloomF lter,
+    EnableNahFeedback nfoParam,
+    EnableNewT etsP llAvatarsParam,
+    EnableScr beServedCand datesParam,
+    EnableSendScoresToCl ent,
+    EnableSoc alContextParam,
   )
 
-  override val boundedIntFSOverrides = Seq(
-    MaxNumberReplaceInstructionsParam,
-    TimelinesPersistenceStoreMaxEntriesPerClient,
+  overr de val bounded ntFSOverr des = Seq(
+    MaxNumberReplace nstruct onsParam,
+    T  l nesPers stenceStoreMaxEntr esPerCl ent,
   )
 
-  override val boundedDoubleFSOverrides = Seq(
-    ImpressionBloomFilterFalsePositiveRateParam
+  overr de val boundedDoubleFSOverr des = Seq(
+     mpress onBloomF lterFalsePos  veRateParam
   )
 }

@@ -1,15 +1,15 @@
-<included>
-    <appender name="ALL-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>tweetypie-all.log</file>
+< ncluded>
+    <appender na ="ALL-F LE" class="ch.qos.logback.core.roll ng.Roll ngF leAppender">
+        <f le>t etyp e-all.log</f le>
         <append>true</append>
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>tweetypie-all-%i.log</fileNamePattern>
-            <minIndex>1</minIndex>
-            <maxIndex>20</maxIndex>
-        </rollingPolicy>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <maxFileSize>800MB</maxFileSize>
-        </triggeringPolicy>
+        <roll ngPol cy class="ch.qos.logback.core.roll ng.F xedW ndowRoll ngPol cy">
+            <f leNa Pattern>t etyp e-all-% .log</f leNa Pattern>
+            <m n ndex>1</m n ndex>
+            <max ndex>20</max ndex>
+        </roll ngPol cy>
+        <tr gger ngPol cy class="ch.qos.logback.core.roll ng.S zeBasedTr gger ngPol cy">
+            <maxF leS ze>800MB</maxF leS ze>
+        </tr gger ngPol cy>
         <encoder>
             <pattern>
                 %date [%thread] %-5level %logger{36} - %msg%n
@@ -17,7 +17,7 @@
         </encoder>
     </appender>
 
-    <appender name="ALL"  class="ch.qos.logback.classic.AsyncAppender">
-        <appender-ref ref="ALL-FILE" />
+    <appender na ="ALL"  class="ch.qos.logback.class c.AsyncAppender">
+        <appender-ref ref="ALL-F LE" />
     </appender>
-</included>
+</ ncluded>

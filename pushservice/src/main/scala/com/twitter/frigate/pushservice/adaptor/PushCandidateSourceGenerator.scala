@@ -1,160 +1,160 @@
-package com.twitter.frigate.pushservice.adaptor
+package com.tw ter.fr gate.pushserv ce.adaptor
 
-import com.twitter.content_mixer.thriftscala.ContentMixerRequest
-import com.twitter.content_mixer.thriftscala.ContentMixerResponse
-import com.twitter.explore_ranker.thriftscala.ExploreRankerRequest
-import com.twitter.explore_ranker.thriftscala.ExploreRankerResponse
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.candidate._
-import com.twitter.frigate.common.store.RecentTweetsQuery
-import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContext
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.store._
-import com.twitter.geoduck.common.thriftscala.Location
-import com.twitter.geoduck.service.thriftscala.LocationResponse
-import com.twitter.hermit.pop_geo.thriftscala.PopTweetsInPlace
-import com.twitter.hermit.predicate.socialgraph.RelationEdge
-import com.twitter.hermit.store.tweetypie.UserTweet
-import com.twitter.interests.thriftscala.UserInterests
-import com.twitter.interests_discovery.thriftscala.NonPersonalizedRecommendedLists
-import com.twitter.interests_discovery.thriftscala.RecommendedListsRequest
-import com.twitter.interests_discovery.thriftscala.RecommendedListsResponse
-import com.twitter.recommendation.interests.discovery.core.model.InterestDomain
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripDomain
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripTweets
-import com.twitter.tsp.thriftscala.TopicSocialProofRequest
-import com.twitter.tsp.thriftscala.TopicSocialProofResponse
+ mport com.tw ter.content_m xer.thr ftscala.ContentM xerRequest
+ mport com.tw ter.content_m xer.thr ftscala.ContentM xerResponse
+ mport com.tw ter.explore_ranker.thr ftscala.ExploreRankerRequest
+ mport com.tw ter.explore_ranker.thr ftscala.ExploreRankerResponse
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base._
+ mport com.tw ter.fr gate.common.cand date._
+ mport com.tw ter.fr gate.common.store.RecentT etsQuery
+ mport com.tw ter.fr gate.common.store. nterests. nterestsLookupRequestW hContext
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.store._
+ mport com.tw ter.geoduck.common.thr ftscala.Locat on
+ mport com.tw ter.geoduck.serv ce.thr ftscala.Locat onResponse
+ mport com.tw ter. rm .pop_geo.thr ftscala.PopT ets nPlace
+ mport com.tw ter. rm .pred cate.soc algraph.Relat onEdge
+ mport com.tw ter. rm .store.t etyp e.UserT et
+ mport com.tw ter. nterests.thr ftscala.User nterests
+ mport com.tw ter. nterests_d scovery.thr ftscala.NonPersonal zedRecom ndedL sts
+ mport com.tw ter. nterests_d scovery.thr ftscala.Recom ndedL stsRequest
+ mport com.tw ter. nterests_d scovery.thr ftscala.Recom ndedL stsResponse
+ mport com.tw ter.recom ndat on. nterests.d scovery.core.model. nterestDoma n
+ mport com.tw ter.st ch.t etyp e.T etyP e.T etyP eResult
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.trends.tr p_v1.tr p_t ets.thr ftscala.Tr pDoma n
+ mport com.tw ter.trends.tr p_v1.tr p_t ets.thr ftscala.Tr pT ets
+ mport com.tw ter.tsp.thr ftscala.Top cSoc alProofRequest
+ mport com.tw ter.tsp.thr ftscala.Top cSoc alProofResponse
 
 /**
- * PushCandidateSourceGenerator generates candidate source list for a given Target user
+ * PushCand dateS ceGenerator generates cand date s ce l st for a g ven Target user
  */
-class PushCandidateSourceGenerator(
-  earlybirdCandidates: CandidateSource[EarlybirdCandidateSource.Query, EarlybirdCandidate],
-  userTweetEntityGraphCandidates: CandidateSource[UserTweetEntityGraphCandidates.Target, Candidate],
-  cachedTweetyPieStoreV2: ReadableStore[Long, TweetyPieResult],
-  safeCachedTweetyPieStoreV2: ReadableStore[Long, TweetyPieResult],
-  userTweetTweetyPieStore: ReadableStore[UserTweet, TweetyPieResult],
-  safeUserTweetTweetyPieStore: ReadableStore[UserTweet, TweetyPieResult],
-  cachedTweetyPieStoreV2NoVF: ReadableStore[Long, TweetyPieResult],
-  edgeStore: ReadableStore[RelationEdge, Boolean],
-  interestsLookupStore: ReadableStore[InterestsLookupRequestWithContext, UserInterests],
-  uttEntityHydrationStore: UttEntityHydrationStore,
-  geoDuckV2Store: ReadableStore[Long, LocationResponse],
-  topTweetsByGeoStore: ReadableStore[InterestDomain[String], Map[String, List[(Long, Double)]]],
-  topTweetsByGeoV2VersionedStore: ReadableStore[String, PopTweetsInPlace],
-  tweetImpressionsStore: TweetImpressionsStore,
-  recommendedTrendsCandidateSource: RecommendedTrendsCandidateSource,
-  recentTweetsByAuthorStore: ReadableStore[RecentTweetsQuery, Seq[Seq[Long]]],
-  topicSocialProofServiceStore: ReadableStore[TopicSocialProofRequest, TopicSocialProofResponse],
-  crMixerStore: CrMixerTweetStore,
-  contentMixerStore: ReadableStore[ContentMixerRequest, ContentMixerResponse],
+class PushCand dateS ceGenerator(
+  earlyb rdCand dates: Cand dateS ce[Earlyb rdCand dateS ce.Query, Earlyb rdCand date],
+  userT etEnt yGraphCand dates: Cand dateS ce[UserT etEnt yGraphCand dates.Target, Cand date],
+  cac dT etyP eStoreV2: ReadableStore[Long, T etyP eResult],
+  safeCac dT etyP eStoreV2: ReadableStore[Long, T etyP eResult],
+  userT etT etyP eStore: ReadableStore[UserT et, T etyP eResult],
+  safeUserT etT etyP eStore: ReadableStore[UserT et, T etyP eResult],
+  cac dT etyP eStoreV2NoVF: ReadableStore[Long, T etyP eResult],
+  edgeStore: ReadableStore[Relat onEdge, Boolean],
+   nterestsLookupStore: ReadableStore[ nterestsLookupRequestW hContext, User nterests],
+  uttEnt yHydrat onStore: UttEnt yHydrat onStore,
+  geoDuckV2Store: ReadableStore[Long, Locat onResponse],
+  topT etsByGeoStore: ReadableStore[ nterestDoma n[Str ng], Map[Str ng, L st[(Long, Double)]]],
+  topT etsByGeoV2Vers onedStore: ReadableStore[Str ng, PopT ets nPlace],
+  t et mpress onsStore: T et mpress onsStore,
+  recom ndedTrendsCand dateS ce: Recom ndedTrendsCand dateS ce,
+  recentT etsByAuthorStore: ReadableStore[RecentT etsQuery, Seq[Seq[Long]]],
+  top cSoc alProofServ ceStore: ReadableStore[Top cSoc alProofRequest, Top cSoc alProofResponse],
+  crM xerStore: CrM xerT etStore,
+  contentM xerStore: ReadableStore[ContentM xerRequest, ContentM xerResponse],
   exploreRankerStore: ReadableStore[ExploreRankerRequest, ExploreRankerResponse],
-  softUserLocationStore: ReadableStore[Long, Location],
-  tripTweetCandidateStore: ReadableStore[TripDomain, TripTweets],
-  listRecsStore: ReadableStore[String, NonPersonalizedRecommendedLists],
-  idsStore: ReadableStore[RecommendedListsRequest, RecommendedListsResponse]
+  softUserLocat onStore: ReadableStore[Long, Locat on],
+  tr pT etCand dateStore: ReadableStore[Tr pDoma n, Tr pT ets],
+  l stRecsStore: ReadableStore[Str ng, NonPersonal zedRecom ndedL sts],
+   dsStore: ReadableStore[Recom ndedL stsRequest, Recom ndedL stsResponse]
 )(
-  implicit val globalStats: StatsReceiver) {
+   mpl c  val globalStats: StatsRece ver) {
 
-  private val earlyBirdFirstDegreeCandidateAdaptor = EarlyBirdFirstDegreeCandidateAdaptor(
-    earlybirdCandidates,
-    cachedTweetyPieStoreV2,
-    cachedTweetyPieStoreV2NoVF,
-    userTweetTweetyPieStore,
-    PushFeatureSwitchParams.NumberOfMaxEarlybirdInNetworkCandidatesParam,
+  pr vate val earlyB rdF rstDegreeCand dateAdaptor = EarlyB rdF rstDegreeCand dateAdaptor(
+    earlyb rdCand dates,
+    cac dT etyP eStoreV2,
+    cac dT etyP eStoreV2NoVF,
+    userT etT etyP eStore,
+    PushFeatureSw chParams.NumberOfMaxEarlyb rd nNetworkCand datesParam,
     globalStats
   )
 
-  private val frsTweetCandidateAdaptor = FRSTweetCandidateAdaptor(
-    crMixerStore,
-    cachedTweetyPieStoreV2,
-    cachedTweetyPieStoreV2NoVF,
-    userTweetTweetyPieStore,
-    uttEntityHydrationStore,
-    topicSocialProofServiceStore,
+  pr vate val frsT etCand dateAdaptor = FRST etCand dateAdaptor(
+    crM xerStore,
+    cac dT etyP eStoreV2,
+    cac dT etyP eStoreV2NoVF,
+    userT etT etyP eStore,
+    uttEnt yHydrat onStore,
+    top cSoc alProofServ ceStore,
     globalStats
   )
 
-  private val contentRecommenderMixerAdaptor = ContentRecommenderMixerAdaptor(
-    crMixerStore,
-    safeCachedTweetyPieStoreV2,
+  pr vate val contentRecom nderM xerAdaptor = ContentRecom nderM xerAdaptor(
+    crM xerStore,
+    safeCac dT etyP eStoreV2,
     edgeStore,
-    topicSocialProofServiceStore,
-    uttEntityHydrationStore,
+    top cSoc alProofServ ceStore,
+    uttEnt yHydrat onStore,
     globalStats
   )
 
-  private val tripGeoCandidatesAdaptor = TripGeoCandidatesAdaptor(
-    tripTweetCandidateStore,
-    contentMixerStore,
-    safeCachedTweetyPieStoreV2,
-    cachedTweetyPieStoreV2NoVF,
+  pr vate val tr pGeoCand datesAdaptor = Tr pGeoCand datesAdaptor(
+    tr pT etCand dateStore,
+    contentM xerStore,
+    safeCac dT etyP eStoreV2,
+    cac dT etyP eStoreV2NoVF,
     globalStats
   )
 
-  val sources: Seq[
-    CandidateSource[Target, RawCandidate] with CandidateSourceEligible[
+  val s ces: Seq[
+    Cand dateS ce[Target, RawCand date] w h Cand dateS ceEl g ble[
       Target,
-      RawCandidate
+      RawCand date
     ]
   ] = {
     Seq(
-      earlyBirdFirstDegreeCandidateAdaptor,
-      GenericCandidateAdaptor(
-        userTweetEntityGraphCandidates,
-        cachedTweetyPieStoreV2,
-        cachedTweetyPieStoreV2NoVF,
-        globalStats.scope("UserTweetEntityGraphCandidates")
+      earlyB rdF rstDegreeCand dateAdaptor,
+      Gener cCand dateAdaptor(
+        userT etEnt yGraphCand dates,
+        cac dT etyP eStoreV2,
+        cac dT etyP eStoreV2NoVF,
+        globalStats.scope("UserT etEnt yGraphCand dates")
       ),
-      new OnboardingPushCandidateAdaptor(globalStats),
-      TopTweetsByGeoAdaptor(
+      new Onboard ngPushCand dateAdaptor(globalStats),
+      TopT etsByGeoAdaptor(
         geoDuckV2Store,
-        softUserLocationStore,
-        topTweetsByGeoStore,
-        topTweetsByGeoV2VersionedStore,
-        cachedTweetyPieStoreV2,
-        cachedTweetyPieStoreV2NoVF,
+        softUserLocat onStore,
+        topT etsByGeoStore,
+        topT etsByGeoV2Vers onedStore,
+        cac dT etyP eStoreV2,
+        cac dT etyP eStoreV2NoVF,
         globalStats
       ),
-      frsTweetCandidateAdaptor,
-      TopTweetImpressionsCandidateAdaptor(
-        recentTweetsByAuthorStore,
-        cachedTweetyPieStoreV2,
-        cachedTweetyPieStoreV2NoVF,
-        tweetImpressionsStore,
+      frsT etCand dateAdaptor,
+      TopT et mpress onsCand dateAdaptor(
+        recentT etsByAuthorStore,
+        cac dT etyP eStoreV2,
+        cac dT etyP eStoreV2NoVF,
+        t et mpress onsStore,
         globalStats
       ),
-      TrendsCandidatesAdaptor(
-        softUserLocationStore,
-        recommendedTrendsCandidateSource,
-        safeCachedTweetyPieStoreV2,
-        cachedTweetyPieStoreV2NoVF,
-        safeUserTweetTweetyPieStore,
+      TrendsCand datesAdaptor(
+        softUserLocat onStore,
+        recom ndedTrendsCand dateS ce,
+        safeCac dT etyP eStoreV2,
+        cac dT etyP eStoreV2NoVF,
+        safeUserT etT etyP eStore,
         globalStats
       ),
-      contentRecommenderMixerAdaptor,
-      tripGeoCandidatesAdaptor,
-      HighQualityTweetsAdaptor(
-        tripTweetCandidateStore,
-        interestsLookupStore,
-        cachedTweetyPieStoreV2,
-        cachedTweetyPieStoreV2NoVF,
+      contentRecom nderM xerAdaptor,
+      tr pGeoCand datesAdaptor,
+      H ghQual yT etsAdaptor(
+        tr pT etCand dateStore,
+         nterestsLookupStore,
+        cac dT etyP eStoreV2,
+        cac dT etyP eStoreV2NoVF,
         globalStats
       ),
-      ExploreVideoTweetCandidateAdaptor(
+      ExploreV deoT etCand dateAdaptor(
         exploreRankerStore,
-        cachedTweetyPieStoreV2,
+        cac dT etyP eStoreV2,
         globalStats
       ),
-      ListsToRecommendCandidateAdaptor(
-        listRecsStore,
+      L stsToRecom ndCand dateAdaptor(
+        l stRecsStore,
         geoDuckV2Store,
-        idsStore,
+         dsStore,
         globalStats
       )
     )

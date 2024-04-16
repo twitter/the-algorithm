@@ -1,61 +1,61 @@
-package com.twitter.home_mixer.module
+package com.tw ter.ho _m xer.module
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.shared_library.memcached_client.MemcachedClientBuilder
-import com.twitter.servo.cache.FinagleMemcache
-import com.twitter.servo.cache.KeyTransformer
-import com.twitter.servo.cache.KeyValueTransformingTtlCache
-import com.twitter.servo.cache.Serializer
-import com.twitter.servo.cache.ThriftSerializer
-import com.twitter.servo.cache.TtlCache
-import com.twitter.timelines.model.UserId
-import org.apache.thrift.protocol.TCompactProtocol
+ mport com.google. nject.Prov des
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ho _m xer.{thr ftscala => t}
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.product_m xer.shared_l brary. mcac d_cl ent. mcac dCl entBu lder
+ mport com.tw ter.servo.cac .F nagle mcac 
+ mport com.tw ter.servo.cac .KeyTransfor r
+ mport com.tw ter.servo.cac .KeyValueTransform ngTtlCac 
+ mport com.tw ter.servo.cac .Ser al zer
+ mport com.tw ter.servo.cac .Thr ftSer al zer
+ mport com.tw ter.servo.cac .TtlCac 
+ mport com.tw ter.t  l nes.model.User d
+ mport org.apac .thr ft.protocol.TCompactProtocol
 
-import javax.inject.Singleton
+ mport javax. nject.S ngleton
 
-object ScoredTweetsMemcacheModule extends TwitterModule {
+object ScoredT ets mcac Module extends Tw terModule {
 
-  private val ScopeName = "ScoredTweetsCache"
-  private val ProdDestName = "/srv#/prod/local/cache/home_scored_tweets:twemcaches"
-  private val StagingDestName = "/srv#/test/local/cache/twemcache_home_scored_tweets:twemcaches"
-  private val scoredTweetsSerializer: Serializer[t.ScoredTweetsResponse] =
-    new ThriftSerializer[t.ScoredTweetsResponse](
-      t.ScoredTweetsResponse,
+  pr vate val ScopeNa  = "ScoredT etsCac "
+  pr vate val ProdDestNa  = "/srv#/prod/local/cac /ho _scored_t ets:t mcac s"
+  pr vate val Stag ngDestNa  = "/srv#/test/local/cac /t mcac _ho _scored_t ets:t mcac s"
+  pr vate val scoredT etsSer al zer: Ser al zer[t.ScoredT etsResponse] =
+    new Thr ftSer al zer[t.ScoredT etsResponse](
+      t.ScoredT etsResponse,
       new TCompactProtocol.Factory())
-  private val userIdKeyTransformer: KeyTransformer[UserId] = (userId: UserId) => userId.toString
+  pr vate val user dKeyTransfor r: KeyTransfor r[User d] = (user d: User d) => user d.toStr ng
 
-  @Singleton
-  @Provides
-  def providesScoredTweetsCache(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): TtlCache[UserId, t.ScoredTweetsResponse] = {
-    val destName = serviceIdentifier.environment.toLowerCase match {
-      case "prod" => ProdDestName
-      case _ => StagingDestName
+  @S ngleton
+  @Prov des
+  def prov desScoredT etsCac (
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver
+  ): TtlCac [User d, t.ScoredT etsResponse] = {
+    val destNa  = serv ce dent f er.env ron nt.toLo rCase match {
+      case "prod" => ProdDestNa 
+      case _ => Stag ngDestNa 
     }
-    val client = MemcachedClientBuilder.buildMemcachedClient(
-      destName = destName,
-      numTries = 2,
-      numConnections = 1,
-      requestTimeout = 200.milliseconds,
-      globalTimeout = 400.milliseconds,
-      connectTimeout = 100.milliseconds,
-      acquisitionTimeout = 100.milliseconds,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver.scope(ScopeName)
+    val cl ent =  mcac dCl entBu lder.bu ld mcac dCl ent(
+      destNa  = destNa ,
+      numTr es = 2,
+      numConnect ons = 1,
+      requestT  out = 200.m ll seconds,
+      globalT  out = 400.m ll seconds,
+      connectT  out = 100.m ll seconds,
+      acqu s  onT  out = 100.m ll seconds,
+      serv ce dent f er = serv ce dent f er,
+      statsRece ver = statsRece ver.scope(ScopeNa )
     )
-    val underlyingCache = new FinagleMemcache(client)
+    val underly ngCac  = new F nagle mcac (cl ent)
 
-    new KeyValueTransformingTtlCache(
-      underlyingCache = underlyingCache,
-      transformer = scoredTweetsSerializer,
-      underlyingKey = userIdKeyTransformer
+    new KeyValueTransform ngTtlCac (
+      underly ngCac  = underly ngCac ,
+      transfor r = scoredT etsSer al zer,
+      underly ngKey = user dKeyTransfor r
     )
   }
 }

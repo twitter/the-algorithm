@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.component_library.candidate_source.hermit
+package com.tw ter.product_m xer.component_l brary.cand date_s ce. rm 
 
-import com.twitter.hermit.thriftscala.RecommendationRequest
-import com.twitter.hermit.thriftscala.RecommendationResponse
-import com.twitter.hermit.thriftscala.RelatedUser
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyViewFetcherSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.onboarding.HermitRecommendUsersClientColumn
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter. rm .thr ftscala.Recom ndat onRequest
+ mport com.tw ter. rm .thr ftscala.Recom ndat onResponse
+ mport com.tw ter. rm .thr ftscala.RelatedUser
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.strato.StratoKeyV ewFetc rS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.strato.generated.cl ent.onboard ng. rm Recom ndUsersCl entColumn
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class UsersSimilarToMeCandidateSource @Inject() (
-  column: HermitRecommendUsersClientColumn)
-    extends StratoKeyViewFetcherSource[
+@S ngleton
+class UsersS m larTo Cand dateS ce @ nject() (
+  column:  rm Recom ndUsersCl entColumn)
+    extends StratoKeyV ewFetc rS ce[
       Long,
-      RecommendationRequest,
-      RecommendationResponse,
+      Recom ndat onRequest,
+      Recom ndat onResponse,
       RelatedUser
     ] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("UsersSimilarToMe")
+  overr de val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er("UsersS m larTo ")
 
-  override val fetcher: Fetcher[Long, RecommendationRequest, RecommendationResponse] =
-    column.fetcher
+  overr de val fetc r: Fetc r[Long, Recom ndat onRequest, Recom ndat onResponse] =
+    column.fetc r
 
-  override def stratoResultTransformer(
+  overr de def stratoResultTransfor r(
     stratoKey: Long,
-    result: RecommendationResponse
-  ): Seq[RelatedUser] = result.suggestions.getOrElse(Seq.empty).filter(_.id.isDefined)
+    result: Recom ndat onResponse
+  ): Seq[RelatedUser] = result.suggest ons.getOrElse(Seq.empty).f lter(_. d. sDef ned)
 }

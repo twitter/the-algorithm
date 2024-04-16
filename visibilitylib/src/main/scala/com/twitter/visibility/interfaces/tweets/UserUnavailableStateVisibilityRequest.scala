@@ -1,14 +1,14 @@
-package com.twitter.visibility.interfaces.tweets
+package com.tw ter.v s b l y. nterfaces.t ets
 
-import com.twitter.visibility.models.UserUnavailableStateEnum
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+ mport com.tw ter.v s b l y.models.UserUnava lableStateEnum
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.models.V e rContext
 
-case class UserUnavailableStateVisibilityRequest(
+case class UserUnava lableStateV s b l yRequest(
   safetyLevel: SafetyLevel,
-  tweetId: Long,
-  viewerContext: ViewerContext,
-  userUnavailableState: UserUnavailableStateEnum,
-  isRetweet: Boolean,
-  isInnerQuotedTweet: Boolean,
+  t et d: Long,
+  v e rContext: V e rContext,
+  userUnava lableState: UserUnava lableStateEnum,
+   sRet et: Boolean,
+   s nnerQuotedT et: Boolean,
 )

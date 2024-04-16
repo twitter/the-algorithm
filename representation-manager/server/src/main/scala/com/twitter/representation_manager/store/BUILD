@@ -1,16 +1,16 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "content-recommender/server/src/main/scala/com/twitter/contentrecommender:representation-manager-deps",
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/util",
-        "hermit/hermit-core/src/main/scala/com/twitter/hermit/store/common",
-        "representation-manager/server/src/main/scala/com/twitter/representation_manager/common",
-        "src/scala/com/twitter/simclusters_v2/stores",
-        "src/scala/com/twitter/simclusters_v2/summingbird/stores",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
-        "storage/clients/manhattan/client/src/main/scala",
-        "tweetypie/src/scala/com/twitter/tweetypie/util",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "content-recom nder/server/src/ma n/scala/com/tw ter/contentrecom nder:representat on-manager-deps",
+        "fr gate/fr gate-common/src/ma n/scala/com/tw ter/fr gate/common/ut l",
+        " rm / rm -core/src/ma n/scala/com/tw ter/ rm /store/common",
+        "representat on-manager/server/src/ma n/scala/com/tw ter/representat on_manager/common",
+        "src/scala/com/tw ter/s mclusters_v2/stores",
+        "src/scala/com/tw ter/s mclusters_v2/summ ngb rd/stores",
+        "src/thr ft/com/tw ter/s mclusters_v2:s mclusters_v2-thr ft-scala",
+        "storage/cl ents/manhattan/cl ent/src/ma n/scala",
+        "t etyp e/src/scala/com/tw ter/t etyp e/ut l",
     ],
 )

@@ -1,50 +1,50 @@
-package com.twitter.ann.service.query_server.common.throttling
+package com.tw ter.ann.serv ce.query_server.common.throttl ng
 
-import com.twitter.util.Duration
+ mport com.tw ter.ut l.Durat on
 
-trait ThrottlingInstrument {
-  def sample(): Unit
-  def percentageOfTimeSpentThrottling(): Double
-  def disabled: Boolean
+tra  Throttl ng nstru nt {
+  def sample(): Un 
+  def percentageOfT  SpentThrottl ng(): Double
+  def d sabled: Boolean
 }
 
-class WindowedThrottlingInstrument(
-  stepFrequency: Duration,
-  windowLengthInFrequencySteps: Int,
+class W ndo dThrottl ng nstru nt(
+  stepFrequency: Durat on,
+  w ndowLength nFrequencySteps:  nt,
   reader: AuroraCPUStatsReader)
-    extends ThrottlingInstrument {
-  private[this] val throttlingChangeHistory: WindowedStats = new WindowedStats(
-    windowLengthInFrequencySteps)
+    extends Throttl ng nstru nt {
+  pr vate[t ] val throttl ngChange tory: W ndo dStats = new W ndo dStats(
+    w ndowLength nFrequencySteps)
 
-  private[this] val cpuQuota: Double = reader.cpuQuota
+  pr vate[t ] val cpuQuota: Double = reader.cpuQuota
 
-  // The total number of allotted CPU time per step (in nanos).
-  private[this] val assignedCpu: Duration = stepFrequency * cpuQuota
-  private[this] val assignedCpuNs: Long = assignedCpu.inNanoseconds
+  // T  total number of allotted CPU t   per step ( n nanos).
+  pr vate[t ] val ass gnedCpu: Durat on = stepFrequency * cpuQuota
+  pr vate[t ] val ass gnedCpuNs: Long = ass gnedCpu. nNanoseconds
 
-  @volatile private[this] var previousThrottledTimeNs: Long = 0
+  @volat le pr vate[t ] var prev ousThrottledT  Ns: Long = 0
 
   /**
-   * If there isn't a limit on how much cpu the container can use, aurora
-   * throttling will never kick in.
+   *  f t re  sn't a l m  on how much cpu t  conta ner can use, aurora
+   * throttl ng w ll never k ck  n.
    */
-  final def disabled: Boolean = cpuQuota <= 0
+  f nal def d sabled: Boolean = cpuQuota <= 0
 
-  def sample(): Unit = sampleThrottling() match {
-    case Some(load) =>
-      throttlingChangeHistory.add(load)
+  def sample(): Un  = sampleThrottl ng() match {
+    case So (load) =>
+      throttl ngChange tory.add(load)
     case None => ()
   }
 
-  private[this] def sampleThrottling(): Option[Long] = reader.throttledTimeNanos().map {
-    throttledTimeNs =>
-      val throttlingChange = throttledTimeNs - previousThrottledTimeNs
-      previousThrottledTimeNs = throttledTimeNs
-      throttlingChange
+  pr vate[t ] def sampleThrottl ng(): Opt on[Long] = reader.throttledT  Nanos().map {
+    throttledT  Ns =>
+      val throttl ngChange = throttledT  Ns - prev ousThrottledT  Ns
+      prev ousThrottledT  Ns = throttledT  Ns
+      throttl ngChange
   }
 
-  // Time spent throttling over windowLength, normalized by number of CPUs
-  def percentageOfTimeSpentThrottling(): Double = {
-    math.min(1, throttlingChangeHistory.sum.toDouble / assignedCpuNs)
+  // T   spent throttl ng over w ndowLength, normal zed by number of CPUs
+  def percentageOfT  SpentThrottl ng(): Double = {
+    math.m n(1, throttl ngChange tory.sum.toDouble / ass gnedCpuNs)
   }
 }

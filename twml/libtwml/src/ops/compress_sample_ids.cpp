@@ -1,138 +1,138 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+# nclude "tensorflow/core/fra work/op.h"
+# nclude "tensorflow/core/fra work/shape_ nference.h"
+# nclude "tensorflow/core/fra work/op_kernel.h"
 
-#include <algorithm>    // std::fill_n
+# nclude <algor hm>    // std::f ll_n
 
-using namespace tensorflow;
+us ng na space tensorflow;
 
-REGISTER_OP("CompressSampleIds")
-.Attr("T: {int32}")
-.Input("input: T")
+REG STER_OP("CompressSample ds")
+.Attr("T: { nt32}")
+. nput(" nput: T")
 .Output("output: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    c->set_output(0, c->Vector(c->kUnknownDim));
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
+    c->set_output(0, c->Vector(c->kUnknownD m));
     return Status::OK();
   });
 
 
-template<typename T>
-class CompressSampleIds : public OpKernel {
- public:
-  explicit CompressSampleIds(OpKernelConstruction* context) : OpKernel(context) {}
+template<typena  T>
+class CompressSample ds : publ c OpKernel {
+ publ c:
+  expl c  CompressSample ds(OpKernelConstruct on* context) : OpKernel(context) {}
 
-  void Compute(OpKernelContext* context) override {
-    // Grab the input tensor
-    const Tensor& input_tensor = context->input(0);
-    auto input = input_tensor.flat<T>();
-    const int N = input.size();
+  vo d Compute(OpKernelContext* context) overr de {
+    // Grab t   nput tensor
+    const Tensor&  nput_tensor = context-> nput(0);
+    auto  nput =  nput_tensor.flat<T>();
+    const  nt N =  nput.s ze();
 
-    // Check for improper input
-    bool error = (N > 0 && input(0) < 0);
-    for (int i = 1; !error && i < N; i++) {
-      error = input(i - 1) > input(i);
+    // C ck for  mproper  nput
+    bool error = (N > 0 &&  nput(0) < 0);
+    for ( nt   = 1; !error &&   < N;  ++) {
+      error =  nput(  - 1) >  nput( );
     }
 
-    OP_REQUIRES(
+    OP_REQU RES(
       context, !error,
-      errors::InvalidArgument(
-        "Error in CompressSampleIds. SampleIds must be non-negative and non-decreasing"
+      errors:: nval dArgu nt(
+        "Error  n CompressSample ds. Sample ds must be non-negat ve and non-decreas ng"
       )
     );
 
-    // choose output size, either last input element + 1, or 0
-    int output_size = 0;
-    if (N > 0) {
-      output_size = input(N - 1) + 1;
+    // choose output s ze, e  r last  nput ele nt + 1, or 0
+     nt output_s ze = 0;
+     f (N > 0) {
+      output_s ze =  nput(N - 1) + 1;
     }
 
     // Create an output tensor
     Tensor* output_tensor = nullptr;
-    OP_REQUIRES_OK(
+    OP_REQU RES_OK(
       context,
-      context->allocate_output(0, TensorShape({output_size}), &output_tensor)
+      context->allocate_output(0, TensorShape({output_s ze}), &output_tensor)
     );
     auto output_flat = output_tensor->flat<T>();
 
-    // Zero-initialize output
-    for (int i = 0; i < output_size; i++) {
-      output_flat(i) = 0;
+    // Zero- n  al ze output
+    for ( nt   = 0;   < output_s ze;  ++) {
+      output_flat( ) = 0;
     }
 
-    // count how many of each input element
-    for (int i = 0; i < N; i++) {
-      output_flat(input(i)) ++;
+    // count how many of each  nput ele nt
+    for ( nt   = 0;   < N;  ++) {
+      output_flat( nput( )) ++;
     }
   }
 };
 
-REGISTER_OP("DecompressSampleIds")
-.Attr("T: {int32}")
-.Input("input: T")
+REG STER_OP("DecompressSample ds")
+.Attr("T: { nt32}")
+. nput(" nput: T")
 .Output("output: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    c->set_output(0, c->Vector(c->kUnknownDim));
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
+    c->set_output(0, c->Vector(c->kUnknownD m));
     return Status::OK();
   });
 
 
-template<typename T>
-class DecompressSampleIds : public OpKernel {
- public:
-  explicit DecompressSampleIds(OpKernelConstruction* context) : OpKernel(context) {}
+template<typena  T>
+class DecompressSample ds : publ c OpKernel {
+ publ c:
+  expl c  DecompressSample ds(OpKernelConstruct on* context) : OpKernel(context) {}
 
-  void Compute(OpKernelContext* context) override {
-    // Grab the input tensor
-    const Tensor& input_tensor = context->input(0);
-    auto input = input_tensor.flat<T>();
-    const int N = input.size();
+  vo d Compute(OpKernelContext* context) overr de {
+    // Grab t   nput tensor
+    const Tensor&  nput_tensor = context-> nput(0);
+    auto  nput =  nput_tensor.flat<T>();
+    const  nt N =  nput.s ze();
 
-    // Check for improper input
+    // C ck for  mproper  nput
     bool error = false;
-    int output_size = 0;
-    for (int i = 0; !error && i < N; i++) {
-      error = input(i) < 0;
-      output_size += input(i);
+     nt output_s ze = 0;
+    for ( nt   = 0; !error &&   < N;  ++) {
+      error =  nput( ) < 0;
+      output_s ze +=  nput( );
     }
 
-    OP_REQUIRES(
+    OP_REQU RES(
       context, !error,
-      errors::InvalidArgument(
-        "Error in DecompressSampleIds. Inputs must be non-negative."
+      errors:: nval dArgu nt(
+        "Error  n DecompressSample ds.  nputs must be non-negat ve."
       )
     );
 
     // Create an output tensor
     Tensor* output_tensor = nullptr;
-    OP_REQUIRES_OK(
+    OP_REQU RES_OK(
       context,
-      context->allocate_output(0, TensorShape({output_size}),&output_tensor)
+      context->allocate_output(0, TensorShape({output_s ze}),&output_tensor)
     );
     auto output_flat = output_tensor->flat<T>();
 
     T *output_data = output_flat.data();
-    for (int current_sample = 0; current_sample < N; current_sample++) {
-      std::fill_n(output_data, input(current_sample), current_sample);
-      output_data += input(current_sample);
+    for ( nt current_sample = 0; current_sample < N; current_sample++) {
+      std::f ll_n(output_data,  nput(current_sample), current_sample);
+      output_data +=  nput(current_sample);
     }
   }
 };
 
 
 
-#define REGISTER(Type)              \
+#def ne REG STER(Type)              \
                                     \
-  REGISTER_KERNEL_BUILDER(          \
-    Name("CompressSampleIds")       \
-    .Device(DEVICE_CPU)             \
-    .TypeConstraint<Type>("T"),     \
-    CompressSampleIds<Type>);       \
+  REG STER_KERNEL_BU LDER(          \
+    Na ("CompressSample ds")       \
+    .Dev ce(DEV CE_CPU)             \
+    .TypeConstra nt<Type>("T"),     \
+    CompressSample ds<Type>);       \
                                     \
-  REGISTER_KERNEL_BUILDER(          \
-    Name("DecompressSampleIds")     \
-    .Device(DEVICE_CPU)             \
-    .TypeConstraint<Type>("T"),     \
-    DecompressSampleIds<Type>);     \
+  REG STER_KERNEL_BU LDER(          \
+    Na ("DecompressSample ds")     \
+    .Dev ce(DEV CE_CPU)             \
+    .TypeConstra nt<Type>("T"),     \
+    DecompressSample ds<Type>);     \
                                     \
 
-REGISTER(int32);
+REG STER( nt32);

@@ -1,31 +1,31 @@
-package com.twitter.home_mixer.product.list_recommended_users.model
+package com.tw ter.ho _m xer.product.l st_recom nded_users.model
 
-import com.twitter.home_mixer.model.request.HasListId
-import com.twitter.home_mixer.model.request.ListRecommendedUsersProduct
-import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedExcludeIdsCursor
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.request._
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Params
+ mport com.tw ter.ho _m xer.model.request.HasL st d
+ mport com.tw ter.ho _m xer.model.request.L stRecom ndedUsersProduct
+ mport com.tw ter.product_m xer.component_l brary.model.cursor.UrtUnorderedExclude dsCursor
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.marshall ng.request._
+ mport com.tw ter.product_m xer.core.p pel ne.HasP pel neCursor
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes.conf gap .Params
 
-case class ListRecommendedUsersQuery(
-  override val listId: Long,
-  override val params: Params,
-  override val clientContext: ClientContext,
-  override val pipelineCursor: Option[UrtUnorderedExcludeIdsCursor],
-  override val requestedMaxResults: Option[Int],
-  override val debugOptions: Option[DebugOptions],
-  override val features: Option[FeatureMap],
-  selectedUserIds: Option[Seq[Long]],
-  excludedUserIds: Option[Seq[Long]],
-  listName: Option[String])
-    extends PipelineQuery
-    with HasPipelineCursor[UrtUnorderedExcludeIdsCursor]
-    with HasListId {
+case class L stRecom ndedUsersQuery(
+  overr de val l st d: Long,
+  overr de val params: Params,
+  overr de val cl entContext: Cl entContext,
+  overr de val p pel neCursor: Opt on[UrtUnorderedExclude dsCursor],
+  overr de val requestedMaxResults: Opt on[ nt],
+  overr de val debugOpt ons: Opt on[DebugOpt ons],
+  overr de val features: Opt on[FeatureMap],
+  selectedUser ds: Opt on[Seq[Long]],
+  excludedUser ds: Opt on[Seq[Long]],
+  l stNa : Opt on[Str ng])
+    extends P pel neQuery
+    w h HasP pel neCursor[UrtUnorderedExclude dsCursor]
+    w h HasL st d {
 
-  override val product: Product = ListRecommendedUsersProduct
+  overr de val product: Product = L stRecom ndedUsersProduct
 
-  override def withFeatureMap(features: FeatureMap): ListRecommendedUsersQuery =
-    copy(features = Some(features))
+  overr de def w hFeatureMap(features: FeatureMap): L stRecom ndedUsersQuery =
+    copy(features = So (features))
 }

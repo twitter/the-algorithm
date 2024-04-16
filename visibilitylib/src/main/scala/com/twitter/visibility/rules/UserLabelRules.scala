@@ -1,361 +1,361 @@
-package com.twitter.visibility.rules
+package com.tw ter.v s b l y.rules
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.timelines.configapi.Params
-import com.twitter.visibility.configapi.configs.DeciderKey
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams
-import com.twitter.visibility.configapi.params.RuleParams._
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.models.UserLabelValue
-import com.twitter.visibility.models.UserLabelValue._
-import com.twitter.visibility.rules.Condition._
-import com.twitter.visibility.rules.Reason._
-import com.twitter.visibility.rules.RuleActionSourceBuilder.UserSafetyLabelSourceBuilder
+ mport com.tw ter.abdec der.Logg ngABDec der
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.tw ter.v s b l y.conf gap .conf gs.Dec derKey
+ mport com.tw ter.v s b l y.conf gap .params.RuleParam
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams._
+ mport com.tw ter.v s b l y.features.Feature
+ mport com.tw ter.v s b l y.models.UserLabelValue
+ mport com.tw ter.v s b l y.models.UserLabelValue._
+ mport com.tw ter.v s b l y.rules.Cond  on._
+ mport com.tw ter.v s b l y.rules.Reason._
+ mport com.tw ter.v s b l y.rules.RuleAct onS ceBu lder.UserSafetyLabelS ceBu lder
 
-object AbusiveRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      Abusive
+object Abus veRule
+    extends W nAuthorUserLabelPresentRule(
+      Drop(Unspec f ed),
+      Abus ve
     )
 
-object DoNotAmplifyUserRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      DoNotAmplify
+object DoNotAmpl fyUserRule
+    extends W nAuthorUserLabelPresentRule(
+      Drop(Unspec f ed),
+      DoNotAmpl fy
     )
 
-object AbusiveHighRecallRule
-    extends AuthorLabelAndNonFollowerViewerRule(
-      Drop(Unspecified),
-      AbusiveHighRecall
+object Abus veH ghRecallRule
+    extends AuthorLabelAndNonFollo rV e rRule(
+      Drop(Unspec f ed),
+      Abus veH ghRecall
     )
 
-object CompromisedRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      Compromised
+object Comprom sedRule
+    extends W nAuthorUserLabelPresentRule(
+      Drop(Unspec f ed),
+      Comprom sed
     )
 
-object DuplicateContentRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      DuplicateContent
+object Dupl cateContentRule
+    extends W nAuthorUserLabelPresentRule(
+      Drop(Unspec f ed),
+      Dupl cateContent
     )
 
-object EngagementSpammerRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      EngagementSpammer
+object Engage ntSpam rRule
+    extends W nAuthorUserLabelPresentRule(
+      Drop(Unspec f ed),
+      Engage ntSpam r
     )
 
-object EngagementSpammerHighRecallRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      EngagementSpammerHighRecall
+object Engage ntSpam rH ghRecallRule
+    extends W nAuthorUserLabelPresentRule(
+      Drop(Unspec f ed),
+      Engage ntSpam rH ghRecall
     )
 
-object LiveLowQualityRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      LiveLowQuality
+object L veLowQual yRule
+    extends W nAuthorUserLabelPresentRule(
+      Drop(Unspec f ed),
+      L veLowQual y
     )
 
-object LowQualityRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      LowQuality
+object LowQual yRule
+    extends W nAuthorUserLabelPresentRule(
+      Drop(Unspec f ed),
+      LowQual y
     )
 
-object LowQualityHighRecallRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      LowQualityHighRecall
+object LowQual yH ghRecallRule
+    extends W nAuthorUserLabelPresentRule(
+      Drop(Unspec f ed),
+      LowQual yH ghRecall
     )
 
 object NotGraduatedRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
+    extends W nAuthorUserLabelPresentRule(
+      Drop(Unspec f ed),
       NotGraduated
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNotGraduatedDropRuleParam)
-  override def holdbacks: Seq[RuleParam[Boolean]] = Seq(
-    NotGraduatedUserLabelRuleHoldbackExperimentParam)
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNotGraduatedDropRuleParam)
+  overr de def holdbacks: Seq[RuleParam[Boolean]] = Seq(
+    NotGraduatedUserLabelRuleHoldbackExper  ntParam)
 
 }
 
-abstract class BaseNsfwHighPrecisionRule()
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      UserLabelValue.NsfwHighPrecision
+abstract class BaseNsfwH ghPrec s onRule()
+    extends W nAuthorUserLabelPresentRule(
+      Drop(Unspec f ed),
+      UserLabelValue.NsfwH ghPrec s on
     )
-object NsfwHighPrecisionRule
-    extends BaseNsfwHighPrecisionRule()
+object NsfwH ghPrec s onRule
+    extends BaseNsfwH ghPrec s onRule()
 
-object NsfwHighRecallRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NsfwHighRecall
+object NsfwH ghRecallRule
+    extends W nAuthorUserLabelPresentRule(
+      Drop(Unspec f ed),
+      NsfwH ghRecall
     )
 
 abstract class BaseNsfwNearPerfectAuthorRule()
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
+    extends W nAuthorUserLabelPresentRule(
+      Drop(Unspec f ed),
       NsfwNearPerfect
     )
 object NsfwNearPerfectAuthorRule extends BaseNsfwNearPerfectAuthorRule()
 
-object NsfwAvatarImageRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NsfwAvatarImage
+object NsfwAvatar mageRule
+    extends W nAuthorUserLabelPresentRule(
+      Drop(Unspec f ed),
+      NsfwAvatar mage
     )
 
-object NsfwBannerImageRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NsfwBannerImage
+object NsfwBanner mageRule
+    extends W nAuthorUserLabelPresentRule(
+      Drop(Unspec f ed),
+      NsfwBanner mage
     )
 
-object NsfwSensitiveRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NsfwSensitive
+object NsfwSens  veRule
+    extends W nAuthorUserLabelPresentRule(
+      Drop(Unspec f ed),
+      NsfwSens  ve
     )
 
 object ReadOnlyRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
+    extends W nAuthorUserLabelPresentRule(
+      Drop(Unspec f ed),
       ReadOnly
     )
 
-object RecommendationsBlacklistRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      RecommendationsBlacklist
+object Recom ndat onsBlackl stRule
+    extends W nAuthorUserLabelPresentRule(
+      Drop(Unspec f ed),
+      Recom ndat onsBlackl st
     )
 
-sealed abstract class BaseSpamHighRecallRule(val holdback: RuleParam[Boolean])
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      SpamHighRecall
+sealed abstract class BaseSpamH ghRecallRule(val holdback: RuleParam[Boolean])
+    extends W nAuthorUserLabelPresentRule(
+      Drop(Unspec f ed),
+      SpamH ghRecall
     ) {
-  override val holdbacks: Seq[RuleParam[Boolean]] = Seq(holdback)
+  overr de val holdbacks: Seq[RuleParam[Boolean]] = Seq(holdback)
 }
 
-object SpamHighRecallRule extends BaseSpamHighRecallRule(RuleParams.False)
+object SpamH ghRecallRule extends BaseSpamH ghRecallRule(RuleParams.False)
 
-object DeciderableSpamHighRecallRule extends BaseSpamHighRecallRule(RuleParams.False)
+object Dec derableSpamH ghRecallRule extends BaseSpamH ghRecallRule(RuleParams.False)
 
-object SearchBlacklistRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      SearchBlacklist
+object SearchBlackl stRule
+    extends W nAuthorUserLabelPresentRule(
+      Drop(Unspec f ed),
+      SearchBlackl st
     )
 
 object SearchNsfwTextRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
+    extends W nAuthorUserLabelPresentRule(
+      Drop(Unspec f ed),
       NsfwText
     ) {
 
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableNsfwTextSectioningRuleParam)
+  overr de def enabled: Seq[RuleParam[Boolean]] =
+    Seq(EnableNsfwTextSect on ngRuleParam)
 }
 
-object SpammyFollowerRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Unspecified),
+object Spam Follo rRule
+    extends OnlyW nNotAuthorV e rRule(
+      Drop(Unspec f ed),
       And(
         Or(
-          AuthorHasLabel(Compromised),
-          AuthorHasLabel(EngagementSpammer),
-          AuthorHasLabel(EngagementSpammerHighRecall),
-          AuthorHasLabel(LowQuality),
+          AuthorHasLabel(Comprom sed),
+          AuthorHasLabel(Engage ntSpam r),
+          AuthorHasLabel(Engage ntSpam rH ghRecall),
+          AuthorHasLabel(LowQual y),
           AuthorHasLabel(ReadOnly),
-          AuthorHasLabel(SpamHighRecall)
+          AuthorHasLabel(SpamH ghRecall)
         ),
         Or(
-          LoggedOutViewer,
+          LoggedOutV e r,
           And(
-            NonAuthorViewer,
-            ViewerHasUqfEnabled,
+            NonAuthorV e r,
+            V e rHasUqfEnabled,
             Or(
               And(
-                ProtectedViewer,
-                LoggedOutOrViewerNotFollowingAuthor,
-                Not(AuthorDoesFollowViewer)
+                ProtectedV e r,
+                LoggedOutOrV e rNotFollow ngAuthor,
+                Not(AuthorDoesFollowV e r)
               ),
-              And(Not(ProtectedViewer), LoggedOutOrViewerNotFollowingAuthor)
+              And(Not(ProtectedV e r), LoggedOutOrV e rNotFollow ngAuthor)
             )
           )
         )
       )
     )
 
-abstract class NonFollowerWithUqfUserLabelDropRule(labelValue: UserLabelValue)
-    extends ConditionWithUserLabelRule(
-      Drop(Unspecified),
+abstract class NonFollo rW hUqfUserLabelDropRule(labelValue: UserLabelValue)
+    extends Cond  onW hUserLabelRule(
+      Drop(Unspec f ed),
       And(
         Or(
-          LoggedOutViewer,
-          And(Not(ViewerDoesFollowAuthor), ViewerHasUqfEnabled)
+          LoggedOutV e r,
+          And(Not(V e rDoesFollowAuthor), V e rHasUqfEnabled)
         )
       ),
       labelValue
     )
 
-object EngagementSpammerNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(
-      EngagementSpammer
+object Engage ntSpam rNonFollo rW hUqfRule
+    extends NonFollo rW hUqfUserLabelDropRule(
+      Engage ntSpam r
     )
 
-object EngagementSpammerHighRecallNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(
-      EngagementSpammerHighRecall
+object Engage ntSpam rH ghRecallNonFollo rW hUqfRule
+    extends NonFollo rW hUqfUserLabelDropRule(
+      Engage ntSpam rH ghRecall
     )
 
-object SpamHighRecallNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(
-      SpamHighRecall
+object SpamH ghRecallNonFollo rW hUqfRule
+    extends NonFollo rW hUqfUserLabelDropRule(
+      SpamH ghRecall
     )
 
-object CompromisedNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(
-      Compromised
+object Comprom sedNonFollo rW hUqfRule
+    extends NonFollo rW hUqfUserLabelDropRule(
+      Comprom sed
     )
 
-object ReadOnlyNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(
+object ReadOnlyNonFollo rW hUqfRule
+    extends NonFollo rW hUqfUserLabelDropRule(
       ReadOnly
     )
 
-object LowQualityNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(
-      LowQuality
+object LowQual yNonFollo rW hUqfRule
+    extends NonFollo rW hUqfUserLabelDropRule(
+      LowQual y
     )
 
-object TsViolationRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      TsViolation
+object TsV olat onRule
+    extends W nAuthorUserLabelPresentRule(
+      Drop(Unspec f ed),
+      TsV olat on
     )
 
-object DownrankSpamReplyAllViewersRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
+object DownrankSpamReplyAllV e rsRule
+    extends W nAuthorUserLabelPresentRule(
+      Drop(Unspec f ed),
       DownrankSpamReply
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableDownrankSpamReplySectioningRuleParam)
+  overr de def enabled: Seq[RuleParam[Boolean]] =
+    Seq(EnableDownrankSpamReplySect on ngRuleParam)
 }
 
 object DownrankSpamReplyNonAuthorRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
+    extends W nAuthorUserLabelPresentRule(
+      Drop(Unspec f ed),
       DownrankSpamReply
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableDownrankSpamReplySectioningRuleParam)
+  overr de def enabled: Seq[RuleParam[Boolean]] =
+    Seq(EnableDownrankSpamReplySect on ngRuleParam)
 }
 
-object DownrankSpamReplyNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(DownrankSpamReply) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableDownrankSpamReplySectioningRuleParam)
+object DownrankSpamReplyNonFollo rW hUqfRule
+    extends NonFollo rW hUqfUserLabelDropRule(DownrankSpamReply) {
+  overr de def enabled: Seq[RuleParam[Boolean]] =
+    Seq(EnableDownrankSpamReplySect on ngRuleParam)
 }
 
 object NsfwTextAllUsersDropRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
+    extends W nAuthorUserLabelPresentRule(
+      Drop(Unspec f ed),
       NsfwText
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableNsfwTextSectioningRuleParam)
+  overr de def enabled: Seq[RuleParam[Boolean]] =
+    Seq(EnableNsfwTextSect on ngRuleParam)
 }
 
 object NsfwTextNonAuthorDropRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
+    extends W nAuthorUserLabelPresentRule(
+      Drop(Unspec f ed),
       DownrankSpamReply
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableNsfwTextSectioningRuleParam)
+  overr de def enabled: Seq[RuleParam[Boolean]] =
+    Seq(EnableNsfwTextSect on ngRuleParam)
 }
 
-abstract class DeciderableSpamHighRecallAuthorLabelRule(action: Action)
-    extends RuleWithConstantAction(
-      action,
+abstract class Dec derableSpamH ghRecallAuthorLabelRule(act on: Act on)
+    extends RuleW hConstantAct on(
+      act on,
       And(
-        NonAuthorViewer,
+        NonAuthorV e r,
         SelfReply,
-        AuthorHasLabel(SpamHighRecall, shortCircuitable = false)
+        AuthorHasLabel(SpamH ghRecall, shortC rcu able = false)
       )
     ) {
-  override def preFilter(
-    evaluationContext: EvaluationContext,
+  overr de def preF lter(
+    evaluat onContext: Evaluat onContext,
     featureMap: Map[Feature[_], Any],
-    abDecider: LoggingABDecider
-  ): PreFilterResult = {
-    Filtered
+    abDec der: Logg ngABDec der
+  ): PreF lterResult = {
+    F ltered
   }
 }
 
-object DeciderableSpamHighRecallAuthorLabelDropRule
-    extends DeciderableSpamHighRecallAuthorLabelRule(Drop(Unspecified))
+object Dec derableSpamH ghRecallAuthorLabelDropRule
+    extends Dec derableSpamH ghRecallAuthorLabelRule(Drop(Unspec f ed))
 
-object DeciderableSpamHighRecallAuthorLabelTombstoneRule
-    extends DeciderableSpamHighRecallAuthorLabelRule(Tombstone(Epitaph.Unavailable))
+object Dec derableSpamH ghRecallAuthorLabelTombstoneRule
+    extends Dec derableSpamH ghRecallAuthorLabelRule(Tombstone(Ep aph.Unava lable))
 
-object DoNotAmplifyNonFollowerRule
-    extends AuthorLabelAndNonFollowerViewerRule(
-      Drop(Unspecified),
-      DoNotAmplify
+object DoNotAmpl fyNonFollo rRule
+    extends AuthorLabelAndNonFollo rV e rRule(
+      Drop(Unspec f ed),
+      DoNotAmpl fy
     )
 
-object NotGraduatedNonFollowerRule
-    extends AuthorLabelAndNonFollowerViewerRule(
-      Drop(Unspecified),
+object NotGraduatedNonFollo rRule
+    extends AuthorLabelAndNonFollo rV e rRule(
+      Drop(Unspec f ed),
       NotGraduated
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNotGraduatedDropRuleParam)
-  override def holdbacks: Seq[RuleParam[Boolean]] = Seq(
-    NotGraduatedUserLabelRuleHoldbackExperimentParam)
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNotGraduatedDropRuleParam)
+  overr de def holdbacks: Seq[RuleParam[Boolean]] = Seq(
+    NotGraduatedUserLabelRuleHoldbackExper  ntParam)
 
 }
 
-object DoNotAmplifySectionUserRule
-    extends AuthorLabelWithNotInnerCircleOfFriendsRule(
-      ConversationSectionAbusiveQuality,
-      DoNotAmplify)
-    with DoesLogVerdictDecidered {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    UserSafetyLabelSourceBuilder(DoNotAmplify))
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+object DoNotAmpl fySect onUserRule
+    extends AuthorLabelW hNot nnerC rcleOfFr endsRule(
+      Conversat onSect onAbus veQual y,
+      DoNotAmpl fy)
+    w h DoesLogVerd ctDec dered {
+  overr de def act onS ceBu lder: Opt on[RuleAct onS ceBu lder] = So (
+    UserSafetyLabelS ceBu lder(DoNotAmpl fy))
+  overr de def verd ctLogDec derKey = Dec derKey.EnableDownlevelRuleVerd ctLogg ng
 }
 
 
-object SpammyUserModelHighPrecisionDropTweetRule
-    extends AuthorLabelAndNonFollowerViewerRule(
-      Drop(Unspecified),
-      SpammyUserModelHighPrecision,
+object Spam UserModelH ghPrec s onDropT etRule
+    extends AuthorLabelAndNonFollo rV e rRule(
+      Drop(Unspec f ed),
+      Spam UserModelH ghPrec s on,
     )
-    with DoesLogVerdictDecidered {
-  override def isEnabled(params: Params): Boolean =
-    params(EnableSpammyUserModelTweetDropRuleParam)
-  override def verdictLogDeciderKey: DeciderKey.Value =
-    DeciderKey.EnableSpammyTweetRuleVerdictLogging
+    w h DoesLogVerd ctDec dered {
+  overr de def  sEnabled(params: Params): Boolean =
+    params(EnableSpam UserModelT etDropRuleParam)
+  overr de def verd ctLogDec derKey: Dec derKey.Value =
+    Dec derKey.EnableSpam T etRuleVerd ctLogg ng
 }
 
-object LikelyIvsLabelNonFollowerDropUserRule extends LikelyIvsLabelNonFollowerDropRule
+object L kely vsLabelNonFollo rDropUserRule extends L kely vsLabelNonFollo rDropRule
 
-object SearchLikelyIvsLabelNonFollowerDropUserRule extends LikelyIvsLabelNonFollowerDropRule
+object SearchL kely vsLabelNonFollo rDropUserRule extends L kely vsLabelNonFollo rDropRule
 
-object NsfwHighPrecisionUserLabelAvoidTweetRule
+object NsfwH ghPrec s onUserLabelAvo dT etRule
     extends UserHasLabelRule(
-      Avoid(),
-      UserLabelValue.NsfwHighPrecision
+      Avo d(),
+      UserLabelValue.NsfwH ghPrec s on
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    NsfwHighPrecisionUserLabelAvoidTweetRuleEnabledParam)
+  overr de def enabled: Seq[RuleParam[Boolean]] = Seq(
+    NsfwH ghPrec s onUserLabelAvo dT etRuleEnabledParam)
 }

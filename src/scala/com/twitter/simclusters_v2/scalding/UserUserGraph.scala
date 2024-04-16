@@ -1,140 +1,140 @@
-package com.twitter.simclusters_v2.scalding
+package com.tw ter.s mclusters_v2.scald ng
 
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite.{D, WriteExtension}
-import com.twitter.scalding_internal.job.analytics_batch.{
-  AnalyticsBatchExecution,
-  AnalyticsBatchExecutionArgs,
-  BatchDescription,
-  BatchFirstTime,
-  BatchIncrement,
-  TwitterScheduledExecutionApp
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e.{D, Wr eExtens on}
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.{
+  Analyt csBatchExecut on,
+  Analyt csBatchExecut onArgs,
+  BatchDescr pt on,
+  BatchF rstT  ,
+  Batch ncre nt,
+  Tw terSc duledExecut onApp
 }
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.hdfs_sources.{
-  UserAndNeighborsFixedPathSource,
+ mport com.tw ter.s mclusters_v2.scald ng.common.Ut l
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.{
+  UserAndNe ghborsF xedPathS ce,
   UserUserGraphScalaDataset
 }
-import com.twitter.simclusters_v2.thriftscala.{NeighborWithWeights, UserAndNeighbors}
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import java.util.TimeZone
+ mport com.tw ter.s mclusters_v2.thr ftscala.{Ne ghborW h  ghts, UserAndNe ghbors}
+ mport com.tw ter.wtf.scald ng.jobs.common.AdhocExecut onApp
+ mport java.ut l.T  Zone
 
 /**
- * This is a scheduled version of the user_user_normalized_graph dataset generation job.
+ * T   s a sc duled vers on of t  user_user_normal zed_graph dataset generat on job.
  *
- * The key difference in this implementation is that we donot read the ProducerNormsAndCounts dataset.
- * So we no longer store the following producer normalized scores for the edges in the NeigborWithWeights thrift:
- * followScoreNormalizedByNeighborFollowersL2, favScoreHalfLife100DaysNormalizedByNeighborFaversL2 and logFavScoreL2Normalized
+ * T  key d fference  n t   mple ntat on  s that   donot read t  ProducerNormsAndCounts dataset.
+ * So   no longer store t  follow ng producer normal zed scores for t  edges  n t  Ne gborW h  ghts thr ft:
+ * followScoreNormal zedByNe ghborFollo rsL2, favScoreHalfL fe100DaysNormal zedByNe ghborFaversL2 and logFavScoreL2Normal zed
  *
  */
 object UserUserGraph {
 
-  def getNeighborWithWeights(
-    inputEdge: Edge
-  ): NeighborWithWeights = {
-    val logFavScore = UserUserNormalizedGraph.logTransformation(inputEdge.favWeight)
-    NeighborWithWeights(
-      neighborId = inputEdge.destId,
-      isFollowed = Some(inputEdge.isFollowEdge),
-      favScoreHalfLife100Days = Some(inputEdge.favWeight),
-      logFavScore = Some(logFavScore),
+  def getNe ghborW h  ghts(
+     nputEdge: Edge
+  ): Ne ghborW h  ghts = {
+    val logFavScore = UserUserNormal zedGraph.logTransformat on( nputEdge.fav  ght)
+    Ne ghborW h  ghts(
+      ne ghbor d =  nputEdge.dest d,
+       sFollo d = So ( nputEdge. sFollowEdge),
+      favScoreHalfL fe100Days = So ( nputEdge.fav  ght),
+      logFavScore = So (logFavScore),
     )
   }
 
-  def addWeightsAndAdjListify(
-    input: TypedPipe[Edge],
-    maxNeighborsPerUser: Int
+  def add  ghtsAndAdjL st fy(
+     nput: TypedP pe[Edge],
+    maxNe ghborsPerUser:  nt
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[UserAndNeighbors] = {
-    val numUsersNeedingNeighborTruncation = Stat("num_users_needing_neighbor_truncation")
-    val numEdgesAfterTruncation = Stat("num_edges_after_truncation")
-    val numEdgesBeforeTruncation = Stat("num_edges_before_truncation")
-    val numFollowEdgesBeforeTruncation = Stat("num_follow_edges_before_truncation")
-    val numFavEdgesBeforeTruncation = Stat("num_fav_edges_before_truncation")
-    val numFollowEdgesAfterTruncation = Stat("num_follow_edges_after_truncation")
-    val numFavEdgesAfterTruncation = Stat("num_fav_edges_after_truncation")
-    val numRecordsInOutputGraph = Stat("num_records_in_output_graph")
+     mpl c  un que d: Un que D
+  ): TypedP pe[UserAndNe ghbors] = {
+    val numUsersNeed ngNe ghborTruncat on = Stat("num_users_need ng_ne ghbor_truncat on")
+    val numEdgesAfterTruncat on = Stat("num_edges_after_truncat on")
+    val numEdgesBeforeTruncat on = Stat("num_edges_before_truncat on")
+    val numFollowEdgesBeforeTruncat on = Stat("num_follow_edges_before_truncat on")
+    val numFavEdgesBeforeTruncat on = Stat("num_fav_edges_before_truncat on")
+    val numFollowEdgesAfterTruncat on = Stat("num_follow_edges_after_truncat on")
+    val numFavEdgesAfterTruncat on = Stat("num_fav_edges_after_truncat on")
+    val numRecords nOutputGraph = Stat("num_records_ n_output_graph")
 
-    input
+     nput
       .map { edge =>
-        numEdgesBeforeTruncation.inc()
-        if (edge.isFollowEdge) numFollowEdgesBeforeTruncation.inc()
-        if (edge.favWeight > 0) numFavEdgesBeforeTruncation.inc()
-        (edge.srcId, getNeighborWithWeights(edge))
+        numEdgesBeforeTruncat on. nc()
+         f (edge. sFollowEdge) numFollowEdgesBeforeTruncat on. nc()
+         f (edge.fav  ght > 0) numFavEdgesBeforeTruncat on. nc()
+        (edge.src d, getNe ghborW h  ghts(edge))
       }
       .group
-      //      .withReducers(10000)
-      .sortedReverseTake(maxNeighborsPerUser)(Ordering.by { x: NeighborWithWeights =>
-        x.favScoreHalfLife100Days.getOrElse(0.0)
+      //      .w hReducers(10000)
+      .sortedReverseTake(maxNe ghborsPerUser)(Order ng.by { x: Ne ghborW h  ghts =>
+        x.favScoreHalfL fe100Days.getOrElse(0.0)
       })
       .map {
-        case (srcId, neighborList) =>
-          if (neighborList.size >= maxNeighborsPerUser) numUsersNeedingNeighborTruncation.inc()
-          neighborList.foreach { neighbor =>
-            numEdgesAfterTruncation.inc()
-            if (neighbor.favScoreHalfLife100Days.exists(_ > 0)) numFavEdgesAfterTruncation.inc()
-            if (neighbor.isFollowed.contains(true)) numFollowEdgesAfterTruncation.inc()
+        case (src d, ne ghborL st) =>
+           f (ne ghborL st.s ze >= maxNe ghborsPerUser) numUsersNeed ngNe ghborTruncat on. nc()
+          ne ghborL st.foreach { ne ghbor =>
+            numEdgesAfterTruncat on. nc()
+             f (ne ghbor.favScoreHalfL fe100Days.ex sts(_ > 0)) numFavEdgesAfterTruncat on. nc()
+             f (ne ghbor. sFollo d.conta ns(true)) numFollowEdgesAfterTruncat on. nc()
           }
-          numRecordsInOutputGraph.inc()
-          UserAndNeighbors(srcId, neighborList)
+          numRecords nOutputGraph. nc()
+          UserAndNe ghbors(src d, ne ghborL st)
       }
   }
 
   def run(
-    followEdges: TypedPipe[(Long, Long)],
-    favEdges: TypedPipe[(Long, Long, Double)],
-    maxNeighborsPerUser: Int
+    followEdges: TypedP pe[(Long, Long)],
+    favEdges: TypedP pe[(Long, Long, Double)],
+    maxNe ghborsPerUser:  nt
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[UserAndNeighbors] = {
-    val combined = UserUserNormalizedGraph.combineFollowAndFav(followEdges, favEdges)
-    addWeightsAndAdjListify(
-      combined,
-      maxNeighborsPerUser
+     mpl c  un que D: Un que D
+  ): TypedP pe[UserAndNe ghbors] = {
+    val comb ned = UserUserNormal zedGraph.comb neFollowAndFav(followEdges, favEdges)
+    add  ghtsAndAdjL st fy(
+      comb ned,
+      maxNe ghborsPerUser
     )
   }
 }
 
 /**
  *
- * capesospy-v2 update --build_locally --start_cron user_user_follow_fav_graph \
- * src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+ * capesospy-v2 update --bu ld_locally --start_cron user_user_follow_fav_graph \
+ * src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc.yaml
  */
 
-object UserUserGraphBatch extends TwitterScheduledExecutionApp {
-  private val firstTime: String = "2021-04-24"
-  implicit val tz = DateOps.UTC
-  implicit val parser = DateParser.default
-  private val batchIncrement: Duration = Days(2)
-  private val halfLifeInDaysForFavScore = 100
+object UserUserGraphBatch extends Tw terSc duledExecut onApp {
+  pr vate val f rstT  : Str ng = "2021-04-24"
+   mpl c  val tz = DateOps.UTC
+   mpl c  val parser = DateParser.default
+  pr vate val batch ncre nt: Durat on = Days(2)
+  pr vate val halfL fe nDaysForFavScore = 100
 
-  private val outputPath: String = "/user/cassowary/processed/user_user_graph"
+  pr vate val outputPath: Str ng = "/user/cassowary/processed/user_user_graph"
 
-  private val execArgs = AnalyticsBatchExecutionArgs(
-    batchDesc = BatchDescription(this.getClass.getName.replace("$", "")),
-    firstTime = BatchFirstTime(RichDate(firstTime)),
-    lastTime = None,
-    batchIncrement = BatchIncrement(batchIncrement)
+  pr vate val execArgs = Analyt csBatchExecut onArgs(
+    batchDesc = BatchDescr pt on(t .getClass.getNa .replace("$", "")),
+    f rstT   = BatchF rstT  (R chDate(f rstT  )),
+    lastT   = None,
+    batch ncre nt = Batch ncre nt(batch ncre nt)
   )
 
-  override def scheduledJob: Execution[Unit] = AnalyticsBatchExecution(execArgs) {
-    implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        Execution.withArgs { args =>
-          val maxNeighborsPerUser = args.int("maxNeighborsPerUser", 2000)
+  overr de def sc duledJob: Execut on[Un ] = Analyt csBatchExecut on(execArgs) {
+     mpl c  dateRange =>
+      Execut on.w h d {  mpl c  un que d =>
+        Execut on.w hArgs { args =>
+          val maxNe ghborsPerUser = args. nt("maxNe ghborsPerUser", 2000)
 
-          Util.printCounters(
+          Ut l.pr ntCounters(
             UserUserGraph
               .run(
-                UserUserNormalizedGraph.getFollowEdges,
-                UserUserNormalizedGraph.getFavEdges(halfLifeInDaysForFavScore),
-                maxNeighborsPerUser
+                UserUserNormal zedGraph.getFollowEdges,
+                UserUserNormal zedGraph.getFavEdges(halfL fe nDaysForFavScore),
+                maxNe ghborsPerUser
               )
-              .writeDALSnapshotExecution(
+              .wr eDALSnapshotExecut on(
                 UserUserGraphScalaDataset,
-                D.Daily,
-                D.Suffix(outputPath),
+                D.Da ly,
+                D.Suff x(outputPath),
                 D.EBLzo(),
                 dateRange.end)
           )
@@ -144,37 +144,37 @@ object UserUserGraphBatch extends TwitterScheduledExecutionApp {
 }
 
 /**
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:user_user_graph-adhoc
-scalding remote run \
+./bazel bundle src/scala/com/tw ter/s mclusters_v2/scald ng:user_user_graph-adhoc
+scald ng remote run \
 --user cassowary \
---keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
---principal service_acoount@TWITTER.BIZ \
---cluster bluebird-qus1 \
---main-class com.twitter.simclusters_v2.scalding.UserUserGraphAdhoc \
---target src/scala/com/twitter/simclusters_v2/scalding:user_user_graph-adhoc \
--- --date 2021-04-24 --outputDir "/user/cassowary/adhoc/user_user_graph_adhoc"
+--keytab /var/l b/tss/keys/fluffy/keytabs/cl ent/cassowary.keytab \
+--pr nc pal serv ce_acoount@TW TTER.B Z \
+--cluster blueb rd-qus1 \
+--ma n-class com.tw ter.s mclusters_v2.scald ng.UserUserGraphAdhoc \
+--target src/scala/com/tw ter/s mclusters_v2/scald ng:user_user_graph-adhoc \
+-- --date 2021-04-24 --outputD r "/user/cassowary/adhoc/user_user_graph_adhoc"
  */
-object UserUserGraphAdhoc extends AdhocExecutionApp {
-  override def runOnDateRange(
+object UserUserGraphAdhoc extends AdhocExecut onApp {
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val maxNeighborsPerUser = args.int("maxNeighborsPerUser", 2000)
-    val halfLifeInDaysForFavScore = 100
-    val outputDir = args("outputDir")
-    val userAndNeighbors =
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
+    val maxNe ghborsPerUser = args. nt("maxNe ghborsPerUser", 2000)
+    val halfL fe nDaysForFavScore = 100
+    val outputD r = args("outputD r")
+    val userAndNe ghbors =
       UserUserGraph
         .run(
-          UserUserNormalizedGraph.getFollowEdges,
-          UserUserNormalizedGraph.getFavEdges(halfLifeInDaysForFavScore),
-          maxNeighborsPerUser)
+          UserUserNormal zedGraph.getFollowEdges,
+          UserUserNormal zedGraph.getFavEdges(halfL fe nDaysForFavScore),
+          maxNe ghborsPerUser)
 
-    Execution
-      .zip(
-        userAndNeighbors.writeExecution(UserAndNeighborsFixedPathSource(outputDir)),
-        userAndNeighbors.writeExecution(TypedTsv(outputDir + "_tsv"))).unit
+    Execut on
+      .z p(
+        userAndNe ghbors.wr eExecut on(UserAndNe ghborsF xedPathS ce(outputD r)),
+        userAndNe ghbors.wr eExecut on(TypedTsv(outputD r + "_tsv"))).un 
   }
 }

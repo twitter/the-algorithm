@@ -1,249 +1,249 @@
-package com.twitter.follow_recommendations.common.clients.strato
+package com.tw ter.follow_recom ndat ons.common.cl ents.strato
 
-import com.google.inject.name.Named
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.conversions.DurationOps._
-import com.twitter.core_workflows.user_model.thriftscala.CondensedUserState
-import com.twitter.search.account_search.extended_network.thriftscala.ExtendedNetworkUserKey
-import com.twitter.search.account_search.extended_network.thriftscala.ExtendedNetworkUserVal
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.thrift.Protocols
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.constants.ServiceConstants._
-import com.twitter.frigate.data_pipeline.candidate_generation.thriftscala.LatestEvents
-import com.twitter.hermit.candidate.thriftscala.{Candidates => HermitCandidates}
-import com.twitter.hermit.pop_geo.thriftscala.PopUsersInPlace
-import com.twitter.onboarding.relevance.relatable_accounts.thriftscala.RelatableAccounts
-import com.twitter.inject.TwitterModule
-import com.twitter.onboarding.relevance.candidates.thriftscala.InterestBasedUserRecommendations
-import com.twitter.onboarding.relevance.candidates.thriftscala.UTTInterest
-import com.twitter.onboarding.relevance.store.thriftscala.WhoToFollowDismissEventDetails
-import com.twitter.recos.user_user_graph.thriftscala.RecommendUserRequest
-import com.twitter.recos.user_user_graph.thriftscala.RecommendUserResponse
-import com.twitter.service.metastore.gen.thriftscala.UserRecommendabilityFeatures
-import com.twitter.strato.catalog.Scan.Slice
-import com.twitter.strato.client.Strato.{Client => StratoClient}
-import com.twitter.strato.client.Client
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.client.Scanner
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
-import com.twitter.wtf.ml.thriftscala.CandidateFeatures
-import com.twitter.wtf.real_time_interaction_graph.thriftscala.Interaction
-import com.twitter.wtf.triangular_loop.thriftscala.{Candidates => TriangularLoopCandidates}
-import com.twitter.strato.opcontext.Attribution._
+ mport com.google. nject.na .Na d
+ mport com.google. nject.Prov des
+ mport com.google. nject.S ngleton
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.core_workflows.user_model.thr ftscala.CondensedUserState
+ mport com.tw ter.search.account_search.extended_network.thr ftscala.ExtendedNetworkUserKey
+ mport com.tw ter.search.account_search.extended_network.thr ftscala.ExtendedNetworkUserVal
+ mport com.tw ter.f nagle.Thr ftMux
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.thr ft.Protocols
+ mport com.tw ter.follow_recom ndat ons.common.constants.Gu ceNa dConstants
+ mport com.tw ter.follow_recom ndat ons.common.constants.Serv ceConstants._
+ mport com.tw ter.fr gate.data_p pel ne.cand date_generat on.thr ftscala.LatestEvents
+ mport com.tw ter. rm .cand date.thr ftscala.{Cand dates =>  rm Cand dates}
+ mport com.tw ter. rm .pop_geo.thr ftscala.PopUsers nPlace
+ mport com.tw ter.onboard ng.relevance.relatable_accounts.thr ftscala.RelatableAccounts
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.onboard ng.relevance.cand dates.thr ftscala. nterestBasedUserRecom ndat ons
+ mport com.tw ter.onboard ng.relevance.cand dates.thr ftscala.UTT nterest
+ mport com.tw ter.onboard ng.relevance.store.thr ftscala.WhoToFollowD sm ssEventDeta ls
+ mport com.tw ter.recos.user_user_graph.thr ftscala.Recom ndUserRequest
+ mport com.tw ter.recos.user_user_graph.thr ftscala.Recom ndUserResponse
+ mport com.tw ter.serv ce. tastore.gen.thr ftscala.UserRecom ndab l yFeatures
+ mport com.tw ter.strato.catalog.Scan.Sl ce
+ mport com.tw ter.strato.cl ent.Strato.{Cl ent => StratoCl ent}
+ mport com.tw ter.strato.cl ent.Cl ent
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.strato.cl ent.Scanner
+ mport com.tw ter.strato.thr ft.ScroogeConv mpl c s._
+ mport com.tw ter.wtf.cand date.thr ftscala.Cand dateSeq
+ mport com.tw ter.wtf.ml.thr ftscala.Cand dateFeatures
+ mport com.tw ter.wtf.real_t  _ nteract on_graph.thr ftscala. nteract on
+ mport com.tw ter.wtf.tr angular_loop.thr ftscala.{Cand dates => Tr angularLoopCand dates}
+ mport com.tw ter.strato.opcontext.Attr but on._
 
-object StratoClientModule extends TwitterModule {
+object StratoCl entModule extends Tw terModule {
 
   // column paths
-  val CosineFollowPath = "recommendations/similarity/similarUsersByFollowGraph.User"
-  val CosineListPath = "recommendations/similarity/similarUsersByListGraph.User"
-  val CuratedCandidatesPath = "onboarding/curatedAccounts"
-  val CuratedFilteredAccountsPath = "onboarding/filteredAccountsFromRecommendations"
-  val PopUsersInPlacePath = "onboarding/userrecs/popUsersInPlace"
-  val ProfileSidebarBlacklistPath = "recommendations/hermit/profile-sidebar-blacklist"
-  val RealTimeInteractionsPath = "hmli/realTimeInteractions"
-  val SimsPath = "recommendations/similarity/similarUsersBySims.User"
-  val DBV2SimsPath = "onboarding/userrecs/newSims.User"
-  val TriangularLoopsPath = "onboarding/userrecs/triangularLoops.User"
-  val TwoHopRandomWalkPath = "onboarding/userrecs/twoHopRandomWalk.User"
-  val UserRecommendabilityPath = "onboarding/userRecommendabilityWithLongKeys.User"
-  val UTTAccountRecommendationsPath = "onboarding/userrecs/utt_account_recommendations"
-  val UttSeedAccountsRecommendationPath = "onboarding/userrecs/utt_seed_accounts"
-  val UserStatePath = "onboarding/userState.User"
-  val WTFPostNuxFeaturesPath = "ml/featureStore/onboarding/wtfPostNuxFeatures.User"
-  val ElectionCandidatesPath = "onboarding/electionAccounts"
-  val UserUserGraphPath = "recommendations/userUserGraph"
-  val WtfDissmissEventsPath = "onboarding/wtfDismissEvents"
-  val RelatableAccountsPath = "onboarding/userrecs/relatableAccounts"
-  val ExtendedNetworkCandidatesPath = "search/account_search/extendedNetworkCandidatesMH"
-  val LabeledNotificationPath = "frigate/magicrecs/labeledPushRecsAggregated.User"
+  val Cos neFollowPath = "recom ndat ons/s m lar y/s m larUsersByFollowGraph.User"
+  val Cos neL stPath = "recom ndat ons/s m lar y/s m larUsersByL stGraph.User"
+  val CuratedCand datesPath = "onboard ng/curatedAccounts"
+  val CuratedF lteredAccountsPath = "onboard ng/f lteredAccountsFromRecom ndat ons"
+  val PopUsers nPlacePath = "onboard ng/userrecs/popUsers nPlace"
+  val Prof leS debarBlackl stPath = "recom ndat ons/ rm /prof le-s debar-blackl st"
+  val RealT   nteract onsPath = "hml /realT   nteract ons"
+  val S msPath = "recom ndat ons/s m lar y/s m larUsersByS ms.User"
+  val DBV2S msPath = "onboard ng/userrecs/newS ms.User"
+  val Tr angularLoopsPath = "onboard ng/userrecs/tr angularLoops.User"
+  val TwoHopRandomWalkPath = "onboard ng/userrecs/twoHopRandomWalk.User"
+  val UserRecom ndab l yPath = "onboard ng/userRecom ndab l yW hLongKeys.User"
+  val UTTAccountRecom ndat onsPath = "onboard ng/userrecs/utt_account_recom ndat ons"
+  val UttSeedAccountsRecom ndat onPath = "onboard ng/userrecs/utt_seed_accounts"
+  val UserStatePath = "onboard ng/userState.User"
+  val WTFPostNuxFeaturesPath = "ml/featureStore/onboard ng/wtfPostNuxFeatures.User"
+  val Elect onCand datesPath = "onboard ng/elect onAccounts"
+  val UserUserGraphPath = "recom ndat ons/userUserGraph"
+  val WtfD ssm ssEventsPath = "onboard ng/wtfD sm ssEvents"
+  val RelatableAccountsPath = "onboard ng/userrecs/relatableAccounts"
+  val ExtendedNetworkCand datesPath = "search/account_search/extendedNetworkCand datesMH"
+  val LabeledNot f cat onPath = "fr gate/mag crecs/labeledPushRecsAggregated.User"
 
-  @Provides
-  @Singleton
-  def stratoClient(serviceIdentifier: ServiceIdentifier): Client = {
-    val timeoutBudget = 500.milliseconds
-    StratoClient(
-      ThriftMux.client
-        .withRequestTimeout(timeoutBudget)
-        .withProtocolFactory(Protocols.binaryFactory(
-          stringLengthLimit = StringLengthLimit,
-          containerLengthLimit = ContainerLengthLimit)))
-      .withMutualTls(serviceIdentifier)
-      .build()
+  @Prov des
+  @S ngleton
+  def stratoCl ent(serv ce dent f er: Serv ce dent f er): Cl ent = {
+    val t  outBudget = 500.m ll seconds
+    StratoCl ent(
+      Thr ftMux.cl ent
+        .w hRequestT  out(t  outBudget)
+        .w hProtocolFactory(Protocols.b naryFactory(
+          str ngLengthL m  = Str ngLengthL m ,
+          conta nerLengthL m  = Conta nerLengthL m )))
+      .w hMutualTls(serv ce dent f er)
+      .bu ld()
   }
 
-  // add strato putters, fetchers, scanners below:
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.COSINE_FOLLOW_FETCHER)
-  def cosineFollowFetcher(stratoClient: Client): Fetcher[Long, Unit, HermitCandidates] =
-    stratoClient.fetcher[Long, Unit, HermitCandidates](CosineFollowPath)
+  // add strato putters, fetc rs, scanners below:
+  @Prov des
+  @S ngleton
+  @Na d(Gu ceNa dConstants.COS NE_FOLLOW_FETCHER)
+  def cos neFollowFetc r(stratoCl ent: Cl ent): Fetc r[Long, Un ,  rm Cand dates] =
+    stratoCl ent.fetc r[Long, Un ,  rm Cand dates](Cos neFollowPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.COSINE_LIST_FETCHER)
-  def cosineListFetcher(stratoClient: Client): Fetcher[Long, Unit, HermitCandidates] =
-    stratoClient.fetcher[Long, Unit, HermitCandidates](CosineListPath)
+  @Prov des
+  @S ngleton
+  @Na d(Gu ceNa dConstants.COS NE_L ST_FETCHER)
+  def cos neL stFetc r(stratoCl ent: Cl ent): Fetc r[Long, Un ,  rm Cand dates] =
+    stratoCl ent.fetc r[Long, Un ,  rm Cand dates](Cos neL stPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.CURATED_COMPETITOR_ACCOUNTS_FETCHER)
-  def curatedBlacklistedAccountsFetcher(stratoClient: Client): Fetcher[String, Unit, Seq[Long]] =
-    stratoClient.fetcher[String, Unit, Seq[Long]](CuratedFilteredAccountsPath)
+  @Prov des
+  @S ngleton
+  @Na d(Gu ceNa dConstants.CURATED_COMPET TOR_ACCOUNTS_FETCHER)
+  def curatedBlackl stedAccountsFetc r(stratoCl ent: Cl ent): Fetc r[Str ng, Un , Seq[Long]] =
+    stratoCl ent.fetc r[Str ng, Un , Seq[Long]](CuratedF lteredAccountsPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.CURATED_CANDIDATES_FETCHER)
-  def curatedCandidatesFetcher(stratoClient: Client): Fetcher[String, Unit, Seq[Long]] =
-    stratoClient.fetcher[String, Unit, Seq[Long]](CuratedCandidatesPath)
+  @Prov des
+  @S ngleton
+  @Na d(Gu ceNa dConstants.CURATED_CAND DATES_FETCHER)
+  def curatedCand datesFetc r(stratoCl ent: Cl ent): Fetc r[Str ng, Un , Seq[Long]] =
+    stratoCl ent.fetc r[Str ng, Un , Seq[Long]](CuratedCand datesPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.POP_USERS_IN_PLACE_FETCHER)
-  def popUsersInPlaceFetcher(stratoClient: Client): Fetcher[String, Unit, PopUsersInPlace] =
-    stratoClient.fetcher[String, Unit, PopUsersInPlace](PopUsersInPlacePath)
+  @Prov des
+  @S ngleton
+  @Na d(Gu ceNa dConstants.POP_USERS_ N_PLACE_FETCHER)
+  def popUsers nPlaceFetc r(stratoCl ent: Cl ent): Fetc r[Str ng, Un , PopUsers nPlace] =
+    stratoCl ent.fetc r[Str ng, Un , PopUsers nPlace](PopUsers nPlacePath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.RELATABLE_ACCOUNTS_FETCHER)
-  def relatableAccountsFetcher(stratoClient: Client): Fetcher[String, Unit, RelatableAccounts] =
-    stratoClient.fetcher[String, Unit, RelatableAccounts](RelatableAccountsPath)
+  @Prov des
+  @S ngleton
+  @Na d(Gu ceNa dConstants.RELATABLE_ACCOUNTS_FETCHER)
+  def relatableAccountsFetc r(stratoCl ent: Cl ent): Fetc r[Str ng, Un , RelatableAccounts] =
+    stratoCl ent.fetc r[Str ng, Un , RelatableAccounts](RelatableAccountsPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.PROFILE_SIDEBAR_BLACKLIST_SCANNER)
-  def profileSidebarBlacklistScanner(
-    stratoClient: Client
-  ): Scanner[(Long, Slice[Long]), Unit, (Long, Long), Unit] =
-    stratoClient.scanner[(Long, Slice[Long]), Unit, (Long, Long), Unit](ProfileSidebarBlacklistPath)
+  @Prov des
+  @S ngleton
+  @Na d(Gu ceNa dConstants.PROF LE_S DEBAR_BLACKL ST_SCANNER)
+  def prof leS debarBlackl stScanner(
+    stratoCl ent: Cl ent
+  ): Scanner[(Long, Sl ce[Long]), Un , (Long, Long), Un ] =
+    stratoCl ent.scanner[(Long, Sl ce[Long]), Un , (Long, Long), Un ](Prof leS debarBlackl stPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.REAL_TIME_INTERACTIONS_FETCHER)
-  def realTimeInteractionsFetcher(
-    stratoClient: Client
-  ): Fetcher[(Long, Long), Unit, Seq[Interaction]] =
-    stratoClient.fetcher[(Long, Long), Unit, Seq[Interaction]](RealTimeInteractionsPath)
+  @Prov des
+  @S ngleton
+  @Na d(Gu ceNa dConstants.REAL_T ME_ NTERACT ONS_FETCHER)
+  def realT   nteract onsFetc r(
+    stratoCl ent: Cl ent
+  ): Fetc r[(Long, Long), Un , Seq[ nteract on]] =
+    stratoCl ent.fetc r[(Long, Long), Un , Seq[ nteract on]](RealT   nteract onsPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.SIMS_FETCHER)
-  def simsFetcher(stratoClient: Client): Fetcher[Long, Unit, HermitCandidates] =
-    stratoClient.fetcher[Long, Unit, HermitCandidates](SimsPath)
+  @Prov des
+  @S ngleton
+  @Na d(Gu ceNa dConstants.S MS_FETCHER)
+  def s msFetc r(stratoCl ent: Cl ent): Fetc r[Long, Un ,  rm Cand dates] =
+    stratoCl ent.fetc r[Long, Un ,  rm Cand dates](S msPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.DBV2_SIMS_FETCHER)
-  def dbv2SimsFetcher(stratoClient: Client): Fetcher[Long, Unit, HermitCandidates] =
-    stratoClient.fetcher[Long, Unit, HermitCandidates](DBV2SimsPath)
+  @Prov des
+  @S ngleton
+  @Na d(Gu ceNa dConstants.DBV2_S MS_FETCHER)
+  def dbv2S msFetc r(stratoCl ent: Cl ent): Fetc r[Long, Un ,  rm Cand dates] =
+    stratoCl ent.fetc r[Long, Un ,  rm Cand dates](DBV2S msPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.TRIANGULAR_LOOPS_FETCHER)
-  def triangularLoopsFetcher(stratoClient: Client): Fetcher[Long, Unit, TriangularLoopCandidates] =
-    stratoClient.fetcher[Long, Unit, TriangularLoopCandidates](TriangularLoopsPath)
+  @Prov des
+  @S ngleton
+  @Na d(Gu ceNa dConstants.TR ANGULAR_LOOPS_FETCHER)
+  def tr angularLoopsFetc r(stratoCl ent: Cl ent): Fetc r[Long, Un , Tr angularLoopCand dates] =
+    stratoCl ent.fetc r[Long, Un , Tr angularLoopCand dates](Tr angularLoopsPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.TWO_HOP_RANDOM_WALK_FETCHER)
-  def twoHopRandomWalkFetcher(stratoClient: Client): Fetcher[Long, Unit, CandidateSeq] =
-    stratoClient.fetcher[Long, Unit, CandidateSeq](TwoHopRandomWalkPath)
+  @Prov des
+  @S ngleton
+  @Na d(Gu ceNa dConstants.TWO_HOP_RANDOM_WALK_FETCHER)
+  def twoHopRandomWalkFetc r(stratoCl ent: Cl ent): Fetc r[Long, Un , Cand dateSeq] =
+    stratoCl ent.fetc r[Long, Un , Cand dateSeq](TwoHopRandomWalkPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.USER_RECOMMENDABILITY_FETCHER)
-  def userRecommendabilityFetcher(
-    stratoClient: Client
-  ): Fetcher[Long, Unit, UserRecommendabilityFeatures] =
-    stratoClient.fetcher[Long, Unit, UserRecommendabilityFeatures](UserRecommendabilityPath)
+  @Prov des
+  @S ngleton
+  @Na d(Gu ceNa dConstants.USER_RECOMMENDAB L TY_FETCHER)
+  def userRecom ndab l yFetc r(
+    stratoCl ent: Cl ent
+  ): Fetc r[Long, Un , UserRecom ndab l yFeatures] =
+    stratoCl ent.fetc r[Long, Un , UserRecom ndab l yFeatures](UserRecom ndab l yPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.USER_STATE_FETCHER)
-  def userStateFetcher(stratoClient: Client): Fetcher[Long, Unit, CondensedUserState] =
-    stratoClient.fetcher[Long, Unit, CondensedUserState](UserStatePath)
+  @Prov des
+  @S ngleton
+  @Na d(Gu ceNa dConstants.USER_STATE_FETCHER)
+  def userStateFetc r(stratoCl ent: Cl ent): Fetc r[Long, Un , CondensedUserState] =
+    stratoCl ent.fetc r[Long, Un , CondensedUserState](UserStatePath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.UTT_ACCOUNT_RECOMMENDATIONS_FETCHER)
-  def uttAccountRecommendationsFetcher(
-    stratoClient: Client
-  ): Fetcher[UTTInterest, Unit, InterestBasedUserRecommendations] =
-    stratoClient.fetcher[UTTInterest, Unit, InterestBasedUserRecommendations](
-      UTTAccountRecommendationsPath)
+  @Prov des
+  @S ngleton
+  @Na d(Gu ceNa dConstants.UTT_ACCOUNT_RECOMMENDAT ONS_FETCHER)
+  def uttAccountRecom ndat onsFetc r(
+    stratoCl ent: Cl ent
+  ): Fetc r[UTT nterest, Un ,  nterestBasedUserRecom ndat ons] =
+    stratoCl ent.fetc r[UTT nterest, Un ,  nterestBasedUserRecom ndat ons](
+      UTTAccountRecom ndat onsPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.UTT_SEED_ACCOUNTS_FETCHER)
-  def uttSeedAccountRecommendationsFetcher(
-    stratoClient: Client
-  ): Fetcher[UTTInterest, Unit, InterestBasedUserRecommendations] =
-    stratoClient.fetcher[UTTInterest, Unit, InterestBasedUserRecommendations](
-      UttSeedAccountsRecommendationPath)
+  @Prov des
+  @S ngleton
+  @Na d(Gu ceNa dConstants.UTT_SEED_ACCOUNTS_FETCHER)
+  def uttSeedAccountRecom ndat onsFetc r(
+    stratoCl ent: Cl ent
+  ): Fetc r[UTT nterest, Un ,  nterestBasedUserRecom ndat ons] =
+    stratoCl ent.fetc r[UTT nterest, Un ,  nterestBasedUserRecom ndat ons](
+      UttSeedAccountsRecom ndat onPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.ELECTION_CANDIDATES_FETCHER)
-  def electionCandidatesFetcher(stratoClient: Client): Fetcher[String, Unit, Seq[Long]] =
-    stratoClient.fetcher[String, Unit, Seq[Long]](ElectionCandidatesPath)
+  @Prov des
+  @S ngleton
+  @Na d(Gu ceNa dConstants.ELECT ON_CAND DATES_FETCHER)
+  def elect onCand datesFetc r(stratoCl ent: Cl ent): Fetc r[Str ng, Un , Seq[Long]] =
+    stratoCl ent.fetc r[Str ng, Un , Seq[Long]](Elect onCand datesPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.USER_USER_GRAPH_FETCHER)
-  def userUserGraphFetcher(
-    stratoClient: Client
-  ): Fetcher[RecommendUserRequest, Unit, RecommendUserResponse] =
-    stratoClient.fetcher[RecommendUserRequest, Unit, RecommendUserResponse](UserUserGraphPath)
+  @Prov des
+  @S ngleton
+  @Na d(Gu ceNa dConstants.USER_USER_GRAPH_FETCHER)
+  def userUserGraphFetc r(
+    stratoCl ent: Cl ent
+  ): Fetc r[Recom ndUserRequest, Un , Recom ndUserResponse] =
+    stratoCl ent.fetc r[Recom ndUserRequest, Un , Recom ndUserResponse](UserUserGraphPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.POST_NUX_WTF_FEATURES_FETCHER)
-  def wtfPostNuxFeaturesFetcher(stratoClient: Client): Fetcher[Long, Unit, CandidateFeatures] = {
-    val attribution = ManhattanAppId("starbuck", "wtf_starbuck")
-    stratoClient
-      .fetcher[Long, Unit, CandidateFeatures](WTFPostNuxFeaturesPath)
-      .withAttribution(attribution)
+  @Prov des
+  @S ngleton
+  @Na d(Gu ceNa dConstants.POST_NUX_WTF_FEATURES_FETCHER)
+  def wtfPostNuxFeaturesFetc r(stratoCl ent: Cl ent): Fetc r[Long, Un , Cand dateFeatures] = {
+    val attr but on = ManhattanApp d("starbuck", "wtf_starbuck")
+    stratoCl ent
+      .fetc r[Long, Un , Cand dateFeatures](WTFPostNuxFeaturesPath)
+      .w hAttr but on(attr but on)
   }
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.EXTENDED_NETWORK)
-  def extendedNetworkFetcher(
-    stratoClient: Client
-  ): Fetcher[ExtendedNetworkUserKey, Unit, ExtendedNetworkUserVal] = {
-    stratoClient
-      .fetcher[ExtendedNetworkUserKey, Unit, ExtendedNetworkUserVal](ExtendedNetworkCandidatesPath)
+  @Prov des
+  @S ngleton
+  @Na d(Gu ceNa dConstants.EXTENDED_NETWORK)
+  def extendedNetworkFetc r(
+    stratoCl ent: Cl ent
+  ): Fetc r[ExtendedNetworkUserKey, Un , ExtendedNetworkUserVal] = {
+    stratoCl ent
+      .fetc r[ExtendedNetworkUserKey, Un , ExtendedNetworkUserVal](ExtendedNetworkCand datesPath)
   }
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.DISMISS_STORE_SCANNER)
-  def dismissStoreScanner(
-    stratoClient: Client
+  @Prov des
+  @S ngleton
+  @Na d(Gu ceNa dConstants.D SM SS_STORE_SCANNER)
+  def d sm ssStoreScanner(
+    stratoCl ent: Cl ent
   ): Scanner[
-    (Long, Slice[(Long, Long)]),
-    Unit,
+    (Long, Sl ce[(Long, Long)]),
+    Un ,
     (Long, (Long, Long)),
-    WhoToFollowDismissEventDetails
+    WhoToFollowD sm ssEventDeta ls
   ] =
-    stratoClient.scanner[
-      (Long, Slice[(Long, Long)]), // PKEY: userId, LKEY: (-ts, candidateId)
-      Unit,
+    stratoCl ent.scanner[
+      (Long, Sl ce[(Long, Long)]), // PKEY: user d, LKEY: (-ts, cand date d)
+      Un ,
       (Long, (Long, Long)),
-      WhoToFollowDismissEventDetails
-    ](WtfDissmissEventsPath)
+      WhoToFollowD sm ssEventDeta ls
+    ](WtfD ssm ssEventsPath)
 
-  @Provides
-  @Singleton
-  @Named(GuiceNamedConstants.LABELED_NOTIFICATION_FETCHER)
-  def labeledNotificationFetcher(
-    stratoClient: Client
-  ): Fetcher[Long, Unit, LatestEvents] = {
-    stratoClient
-      .fetcher[Long, Unit, LatestEvents](LabeledNotificationPath)
+  @Prov des
+  @S ngleton
+  @Na d(Gu ceNa dConstants.LABELED_NOT F CAT ON_FETCHER)
+  def labeledNot f cat onFetc r(
+    stratoCl ent: Cl ent
+  ): Fetc r[Long, Un , LatestEvents] = {
+    stratoCl ent
+      .fetc r[Long, Un , LatestEvents](LabeledNot f cat onPath)
   }
 
 }

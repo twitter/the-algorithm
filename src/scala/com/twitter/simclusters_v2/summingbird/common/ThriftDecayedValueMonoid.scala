@@ -1,57 +1,57 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.tw ter.s mclusters_v2.summ ngb rd.common
 
-import com.twitter.algebird.DecayedValue
-import com.twitter.algebird.DecayedValueMonoid
-import com.twitter.algebird.Monoid
-import com.twitter.algebird_internal.injection.DecayedValueImplicits
-import com.twitter.algebird_internal.thriftscala.{DecayedValue => ThriftDecayedValue}
+ mport com.tw ter.algeb rd.DecayedValue
+ mport com.tw ter.algeb rd.DecayedValueMono d
+ mport com.tw ter.algeb rd.Mono d
+ mport com.tw ter.algeb rd_ nternal. nject on.DecayedValue mpl c s
+ mport com.tw ter.algeb rd_ nternal.thr ftscala.{DecayedValue => Thr ftDecayedValue}
 
 /**
- * Monoid for ThriftDecayedValue
+ * Mono d for Thr ftDecayedValue
  */
-class ThriftDecayedValueMonoid(halfLifeInMs: Long)(implicit decayedValueMonoid: DecayedValueMonoid)
-    extends Monoid[ThriftDecayedValue] {
+class Thr ftDecayedValueMono d(halfL fe nMs: Long)( mpl c  decayedValueMono d: DecayedValueMono d)
+    extends Mono d[Thr ftDecayedValue] {
 
-  override val zero: ThriftDecayedValue = DecayedValueImplicits.toThrift(decayedValueMonoid.zero)
+  overr de val zero: Thr ftDecayedValue = DecayedValue mpl c s.toThr ft(decayedValueMono d.zero)
 
-  override def plus(x: ThriftDecayedValue, y: ThriftDecayedValue): ThriftDecayedValue = {
-    DecayedValueImplicits.toThrift(
-      decayedValueMonoid
-        .plus(DecayedValueImplicits.toThrift.invert(x), DecayedValueImplicits.toThrift.invert(y))
+  overr de def plus(x: Thr ftDecayedValue, y: Thr ftDecayedValue): Thr ftDecayedValue = {
+    DecayedValue mpl c s.toThr ft(
+      decayedValueMono d
+        .plus(DecayedValue mpl c s.toThr ft. nvert(x), DecayedValue mpl c s.toThr ft. nvert(y))
     )
   }
 
-  def build(value: Double, timeInMs: Double): ThriftDecayedValue = {
-    DecayedValueImplicits.toThrift(
-      DecayedValue.build(value, timeInMs, halfLifeInMs)
+  def bu ld(value: Double, t   nMs: Double): Thr ftDecayedValue = {
+    DecayedValue mpl c s.toThr ft(
+      DecayedValue.bu ld(value, t   nMs, halfL fe nMs)
     )
   }
 
   /**
-   * decay to a timestamp; note that timestamp should be in Ms, and do not use scaledTime!
+   * decay to a t  stamp; note that t  stamp should be  n Ms, and do not use scaledT  !
    */
-  def decayToTimestamp(
-    thriftDecayedValue: ThriftDecayedValue,
-    timestampInMs: Double
-  ): ThriftDecayedValue = {
-    this.plus(thriftDecayedValue, this.build(0.0, timestampInMs))
+  def decayToT  stamp(
+    thr ftDecayedValue: Thr ftDecayedValue,
+    t  stamp nMs: Double
+  ): Thr ftDecayedValue = {
+    t .plus(thr ftDecayedValue, t .bu ld(0.0, t  stamp nMs))
   }
 }
 
-object ThriftDecayedValueMonoid {
-  // add the implicit class so that a decayed value can direct call .plus, .decayedValueOfTime and
+object Thr ftDecayedValueMono d {
+  // add t   mpl c  class so that a decayed value can d rect call .plus, .decayedValueOfT   and
   // so on.
-  implicit class EnrichedThriftDecayedValue(
-    thriftDecayedValue: ThriftDecayedValue
+   mpl c  class Enr c dThr ftDecayedValue(
+    thr ftDecayedValue: Thr ftDecayedValue
   )(
-    implicit thriftDecayedValueMonoid: ThriftDecayedValueMonoid) {
-    def plus(other: ThriftDecayedValue): ThriftDecayedValue = {
-      thriftDecayedValueMonoid.plus(thriftDecayedValue, other)
+     mpl c  thr ftDecayedValueMono d: Thr ftDecayedValueMono d) {
+    def plus(ot r: Thr ftDecayedValue): Thr ftDecayedValue = {
+      thr ftDecayedValueMono d.plus(thr ftDecayedValue, ot r)
     }
 
-    // decay to a timestamp; note that timestamp should be in Ms
-    def decayToTimestamp(timeInMs: Double): ThriftDecayedValue = {
-      thriftDecayedValueMonoid.decayToTimestamp(thriftDecayedValue, timeInMs)
+    // decay to a t  stamp; note that t  stamp should be  n Ms
+    def decayToT  stamp(t   nMs: Double): Thr ftDecayedValue = {
+      thr ftDecayedValueMono d.decayToT  stamp(thr ftDecayedValue, t   nMs)
     }
   }
 }

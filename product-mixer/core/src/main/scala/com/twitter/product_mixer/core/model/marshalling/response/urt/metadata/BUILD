@@ -1,17 +1,17 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/urt/color",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/urt/icon",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/urt/richtext",
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/marshall ng/response/urt/color",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/marshall ng/response/urt/ con",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/marshall ng/response/urt/r chtext",
     ],
     exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/urt/color",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/urt/icon",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/urt/richtext",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/marshall ng/response/urt/color",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/marshall ng/response/urt/ con",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/marshall ng/response/urt/r chtext",
     ],
 )

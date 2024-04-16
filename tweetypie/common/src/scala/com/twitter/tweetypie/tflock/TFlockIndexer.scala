@@ -1,340 +1,340 @@
-/** Copyright 2010 Twitter, Inc. */
-package com.twitter.tweetypie
+/** Copyr ght 2010 Tw ter,  nc. */
+package com.tw ter.t etyp e
 package tflock
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.flockdb.client._
-import com.twitter.flockdb.client.thriftscala.Priority
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.tweetypie.serverutil.StoredCard
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.util.Future
-import scala.collection.mutable.ListBuffer
+ mport com.tw ter.f nagle.stats.Counter
+ mport com.tw ter.flockdb.cl ent._
+ mport com.tw ter.flockdb.cl ent.thr ftscala.Pr or y
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.t etyp e.serverut l.StoredCard
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport com.tw ter.ut l.Future
+ mport scala.collect on.mutable.L stBuffer
 
-object TFlockIndexer {
+object TFlock ndexer {
 
   /**
-   * Printable names for some edge types currently defined in [[com.twitter.flockdb.client]].
-   * Used to defined stats counters for adding edges.
+   * Pr ntable na s for so  edge types currently def ned  n [[com.tw ter.flockdb.cl ent]].
+   * Used to def ned stats counters for add ng edges.
    */
-  val graphNames: Map[Int, String] =
+  val graphNa s: Map[ nt, Str ng] =
     Map(
-      CardTweetsGraph.id -> "card_tweets",
-      ConversationGraph.id -> "conversation",
-      DirectedAtUserIdGraph.id -> "directed_at_user_id",
-      InvitedUsersGraph.id -> "invited_users",
-      MediaTimelineGraph.id -> "media_timeline",
-      MentionsGraph.id -> "mentions",
-      NarrowcastSentTweetsGraph.id -> "narrowcast_sent_tweets",
-      NullcastedTweetsGraph.id -> "nullcasted_tweets",
-      QuotersGraph.id -> "quoters",
-      QuotesGraph.id -> "quotes",
-      QuoteTweetsIndexGraph.id -> "quote_tweets_index",
-      RepliesToTweetsGraph.id -> "replies_to_tweets",
-      RetweetsByMeGraph.id -> "retweets_by_me",
-      RetweetsGraph.id -> "retweets",
-      RetweetsOfMeGraph.id -> "retweets_of_me",
-      RetweetSourceGraph.id -> "retweet_source",
-      TweetsRetweetedGraph.id -> "tweets_retweeted",
-      UserTimelineGraph.id -> "user_timeline",
-      CreatorSubscriptionTimelineGraph.id -> "creator_subscription_timeline",
-      CreatorSubscriptionMediaTimelineGraph.id -> "creator_subscription_image_timeline",
+      CardT etsGraph. d -> "card_t ets",
+      Conversat onGraph. d -> "conversat on",
+      D rectedAtUser dGraph. d -> "d rected_at_user_ d",
+       nv edUsersGraph. d -> " nv ed_users",
+       d aT  l neGraph. d -> " d a_t  l ne",
+       nt onsGraph. d -> " nt ons",
+      NarrowcastSentT etsGraph. d -> "narrowcast_sent_t ets",
+      NullcastedT etsGraph. d -> "nullcasted_t ets",
+      QuotersGraph. d -> "quoters",
+      QuotesGraph. d -> "quotes",
+      QuoteT ets ndexGraph. d -> "quote_t ets_ ndex",
+      Repl esToT etsGraph. d -> "repl es_to_t ets",
+      Ret etsBy Graph. d -> "ret ets_by_ ",
+      Ret etsGraph. d -> "ret ets",
+      Ret etsOf Graph. d -> "ret ets_of_ ",
+      Ret etS ceGraph. d -> "ret et_s ce",
+      T etsRet etedGraph. d -> "t ets_ret eted",
+      UserT  l neGraph. d -> "user_t  l ne",
+      CreatorSubscr pt onT  l neGraph. d -> "creator_subscr pt on_t  l ne",
+      CreatorSubscr pt on d aT  l neGraph. d -> "creator_subscr pt on_ mage_t  l ne",
     )
 
   /**
-   * On edge deletion, edges are either archived permanently or retained for 3 months, based on
-   * the retention policy in the above confluence page.
+   * On edge delet on, edges are e  r arch ved permanently or reta ned for 3 months, based on
+   * t  retent on pol cy  n t  above confluence page.
    *
-   * These two retention policies correspond to the two deletion techniques: archive and remove.
-   * We call removeEdges for edges with a short retention policy and archiveEdges for edges with
-   * a permanent retention policy.
+   * T se two retent on pol c es correspond to t  two delet on techn ques: arch ve and remove.
+   *   call removeEdges for edges w h a short retent on pol cy and arch veEdges for edges w h
+   * a permanent retent on pol cy.
    */
-  val graphsWithRemovedEdges: Seq[Int] =
+  val graphsW hRemovedEdges: Seq[ nt] =
     Seq(
-      CardTweetsGraph.id,
-      CuratedTimelineGraph.id,
-      CuratedTweetsGraph.id,
-      DirectedAtUserIdGraph.id,
-      MediaTimelineGraph.id,
-      MutedConversationsGraph.id,
-      QuotersGraph.id,
-      QuotesGraph.id,
-      QuoteTweetsIndexGraph.id,
-      ReportedTweetsGraph.id,
-      RetweetsOfMeGraph.id,
-      RetweetSourceGraph.id,
-      SoftLikesGraph.id,
-      TweetsRetweetedGraph.id,
-      CreatorSubscriptionTimelineGraph.id,
-      CreatorSubscriptionMediaTimelineGraph.id,
+      CardT etsGraph. d,
+      CuratedT  l neGraph. d,
+      CuratedT etsGraph. d,
+      D rectedAtUser dGraph. d,
+       d aT  l neGraph. d,
+      MutedConversat onsGraph. d,
+      QuotersGraph. d,
+      QuotesGraph. d,
+      QuoteT ets ndexGraph. d,
+      ReportedT etsGraph. d,
+      Ret etsOf Graph. d,
+      Ret etS ceGraph. d,
+      SoftL kesGraph. d,
+      T etsRet etedGraph. d,
+      CreatorSubscr pt onT  l neGraph. d,
+      CreatorSubscr pt on d aT  l neGraph. d,
     )
 
   /**
-   * These edges should be left in place when bounced tweets are deleted.
-   * These edges are removed during hard deletion.
+   * T se edges should be left  n place w n bounced t ets are deleted.
+   * T se edges are removed dur ng hard delet on.
    *
-   * This is done so external teams (timelines) can execute on these edges for
+   * T   s done so external teams (t  l nes) can execute on t se edges for
    * tombstone feature.
    */
-  val bounceDeleteGraphIds: Set[Int] =
+  val bounceDeleteGraph ds: Set[ nt] =
     Set(
-      UserTimelineGraph.id,
-      ConversationGraph.id
+      UserT  l neGraph. d,
+      Conversat onGraph. d
     )
 
-  def makeCounters(stats: StatsReceiver, operation: String): Map[Int, Counter] = {
-    TFlockIndexer.graphNames
-      .mapValues(stats.scope(_).counter(operation))
-      .withDefaultValue(stats.scope("unknown").counter(operation))
+  def makeCounters(stats: StatsRece ver, operat on: Str ng): Map[ nt, Counter] = {
+    TFlock ndexer.graphNa s
+      .mapValues(stats.scope(_).counter(operat on))
+      .w hDefaultValue(stats.scope("unknown").counter(operat on))
   }
 }
 
 /**
- * @param backgroundIndexingPriority specifies the queue to use for
- *   background indexing operations. This is useful for making the
- *   effects of background indexing operations (such as deleting edges
- *   for deleted Tweets) available sooner in testing scenarios
- *   (end-to-end tests or development instances). It is set to
- *   Priority.Low in production to reduce the load on high priority
- *   queues that we use for prominently user-visible operations.
+ * @param background ndex ngPr or y spec f es t  queue to use for
+ *   background  ndex ng operat ons. T   s useful for mak ng t 
+ *   effects of background  ndex ng operat ons (such as delet ng edges
+ *   for deleted T ets) ava lable sooner  n test ng scenar os
+ *   (end-to-end tests or develop nt  nstances).    s set to
+ *   Pr or y.Low  n product on to reduce t  load on h gh pr or y
+ *   queues that   use for prom nently user-v s ble operat ons.
  */
-class TFlockIndexer(
-  tflock: TFlockClient,
-  hasMedia: Tweet => Boolean,
-  backgroundIndexingPriority: Priority,
-  stats: StatsReceiver)
-    extends TweetIndexer {
-  private[this] val FutureNil = Future.Nil
+class TFlock ndexer(
+  tflock: TFlockCl ent,
+  has d a: T et => Boolean,
+  background ndex ngPr or y: Pr or y,
+  stats: StatsRece ver)
+    extends T et ndexer {
+  pr vate[t ] val FutureN l = Future.N l
 
-  private[this] val archiveCounters = TFlockIndexer.makeCounters(stats, "archive")
-  private[this] val removeCounters = TFlockIndexer.makeCounters(stats, "remove")
-  private[this] val insertCounters = TFlockIndexer.makeCounters(stats, "insert")
-  private[this] val negateCounters = TFlockIndexer.makeCounters(stats, "negate")
+  pr vate[t ] val arch veCounters = TFlock ndexer.makeCounters(stats, "arch ve")
+  pr vate[t ] val removeCounters = TFlock ndexer.makeCounters(stats, "remove")
+  pr vate[t ] val  nsertCounters = TFlock ndexer.makeCounters(stats, " nsert")
+  pr vate[t ] val negateCounters = TFlock ndexer.makeCounters(stats, "negate")
 
-  private[this] val foregroundIndexingPriority: Priority = Priority.High
+  pr vate[t ] val foreground ndex ngPr or y: Pr or y = Pr or y.H gh
 
-  override def createIndex(tweet: Tweet): Future[Unit] =
-    createEdges(tweet, isUndelete = false)
+  overr de def create ndex(t et: T et): Future[Un ] =
+    createEdges(t et,  sUndelete = false)
 
-  override def undeleteIndex(tweet: Tweet): Future[Unit] =
-    createEdges(tweet, isUndelete = true)
+  overr de def undelete ndex(t et: T et): Future[Un ] =
+    createEdges(t et,  sUndelete = true)
 
-  private[this] case class PartitionedEdges(
-    longRetention: Seq[ExecuteEdge[StatusGraph]] = Nil,
-    shortRetention: Seq[ExecuteEdge[StatusGraph]] = Nil,
-    negate: Seq[ExecuteEdge[StatusGraph]] = Nil,
-    ignore: Seq[ExecuteEdge[StatusGraph]] = Nil)
+  pr vate[t ] case class Part  onedEdges(
+    longRetent on: Seq[ExecuteEdge[StatusGraph]] = N l,
+    shortRetent on: Seq[ExecuteEdge[StatusGraph]] = N l,
+    negate: Seq[ExecuteEdge[StatusGraph]] = N l,
+     gnore: Seq[ExecuteEdge[StatusGraph]] = N l)
 
-  private[this] def partitionEdgesForDelete(
+  pr vate[t ] def part  onEdgesForDelete(
     edges: Seq[ExecuteEdge[StatusGraph]],
-    isBounceDelete: Boolean
+     sBounceDelete: Boolean
   ) =
-    edges.foldLeft(PartitionedEdges()) {
-      // Two dependees of UserTimelineGraph edge states to satisfy: timelines & safety tools.
-      // Timelines show bounce-deleted tweets as tombstones; regular deletes are not shown.
-      //   - i.e. timelineIds = UserTimelineGraph(Normal || Negative)
-      // Safety tools show deleted tweets to authorized internal review agents
-      //   - i.e. deletedIds = UserTimelineGraph(Removed || Negative)
-      case (partitionedEdges, edge) if isBounceDelete && edge.graphId == UserTimelineGraph.id =>
-        partitionedEdges.copy(negate = edge +: partitionedEdges.negate)
+    edges.foldLeft(Part  onedEdges()) {
+      // Two dependees of UserT  l neGraph edge states to sat sfy: t  l nes & safety tools.
+      // T  l nes show bounce-deleted t ets as tombstones; regular deletes are not shown.
+      //   -  .e. t  l ne ds = UserT  l neGraph(Normal || Negat ve)
+      // Safety tools show deleted t ets to author zed  nternal rev ew agents
+      //   -  .e. deleted ds = UserT  l neGraph(Removed || Negat ve)
+      case (part  onedEdges, edge)  f  sBounceDelete && edge.graph d == UserT  l neGraph. d =>
+        part  onedEdges.copy(negate = edge +: part  onedEdges.negate)
 
-      case (partitionedEdges, edge) if isBounceDelete && edge.graphId == ConversationGraph.id =>
-        // Bounce-deleted tweets remain rendered as tombstones in conversations, so do not modify
-        // the ConversationGraph edge state
-        partitionedEdges.copy(ignore = edge +: partitionedEdges.ignore)
+      case (part  onedEdges, edge)  f  sBounceDelete && edge.graph d == Conversat onGraph. d =>
+        // Bounce-deleted t ets rema n rendered as tombstones  n conversat ons, so do not mod fy
+        // t  Conversat onGraph edge state
+        part  onedEdges.copy( gnore = edge +: part  onedEdges. gnore)
 
-      case (partitionedEdges, edge)
-          if TFlockIndexer.graphsWithRemovedEdges.contains(edge.graphId) =>
-        partitionedEdges.copy(shortRetention = edge +: partitionedEdges.shortRetention)
+      case (part  onedEdges, edge)
+           f TFlock ndexer.graphsW hRemovedEdges.conta ns(edge.graph d) =>
+        part  onedEdges.copy(shortRetent on = edge +: part  onedEdges.shortRetent on)
 
-      case (partitionedEdges, edge) =>
-        partitionedEdges.copy(longRetention = edge +: partitionedEdges.longRetention)
+      case (part  onedEdges, edge) =>
+        part  onedEdges.copy(longRetent on = edge +: part  onedEdges.longRetent on)
     }
 
-  override def deleteIndex(tweet: Tweet, isBounceDelete: Boolean): Future[Unit] =
+  overr de def delete ndex(t et: T et,  sBounceDelete: Boolean): Future[Un ] =
     for {
-      edges <- getEdges(tweet, isCreate = false, isDelete = true, isUndelete = false)
-      partitionedEdges = partitionEdgesForDelete(edges, isBounceDelete)
+      edges <- getEdges(t et,  sCreate = false,  sDelete = true,  sUndelete = false)
+      part  onedEdges = part  onEdgesForDelete(edges,  sBounceDelete)
       () <-
         Future
-          .join(
+          .jo n(
             tflock
-              .archiveEdges(partitionedEdges.longRetention, backgroundIndexingPriority)
+              .arch veEdges(part  onedEdges.longRetent on, background ndex ngPr or y)
               .onSuccess(_ =>
-                partitionedEdges.longRetention.foreach(e => archiveCounters(e.graphId).incr())),
+                part  onedEdges.longRetent on.foreach(e => arch veCounters(e.graph d). ncr())),
             tflock
-              .removeEdges(partitionedEdges.shortRetention, backgroundIndexingPriority)
+              .removeEdges(part  onedEdges.shortRetent on, background ndex ngPr or y)
               .onSuccess(_ =>
-                partitionedEdges.shortRetention.foreach(e => removeCounters(e.graphId).incr())),
+                part  onedEdges.shortRetent on.foreach(e => removeCounters(e.graph d). ncr())),
             tflock
-              .negateEdges(partitionedEdges.negate, backgroundIndexingPriority)
+              .negateEdges(part  onedEdges.negate, background ndex ngPr or y)
               .onSuccess(_ =>
-                partitionedEdges.negate.foreach(e => negateCounters(e.graphId).incr()))
+                part  onedEdges.negate.foreach(e => negateCounters(e.graph d). ncr()))
           )
-          .unit
-    } yield ()
+          .un 
+    } y eld ()
 
   /**
-   * This operation is called when a user is put into or taken out of
-   * a state in which their retweets should no longer be visible
+   * T  operat on  s called w n a user  s put  nto or taken out of
+   * a state  n wh ch t  r ret ets should no longer be v s ble
    * (e.g. suspended or ROPO).
    */
-  override def setRetweetVisibility(retweetId: TweetId, setVisible: Boolean): Future[Unit] = {
-    val retweetEdge = Seq(ExecuteEdge(retweetId, RetweetsGraph, None, Reverse))
+  overr de def setRet etV s b l y(ret et d: T et d, setV s ble: Boolean): Future[Un ] = {
+    val ret etEdge = Seq(ExecuteEdge(ret et d, Ret etsGraph, None, Reverse))
 
-    if (setVisible) {
+     f (setV s ble) {
       tflock
-        .insertEdges(retweetEdge, backgroundIndexingPriority)
-        .onSuccess(_ => insertCounters(RetweetsGraph.id).incr())
+        . nsertEdges(ret etEdge, background ndex ngPr or y)
+        .onSuccess(_ =>  nsertCounters(Ret etsGraph. d). ncr())
     } else {
       tflock
-        .archiveEdges(retweetEdge, backgroundIndexingPriority)
-        .onSuccess(_ => archiveCounters(RetweetsGraph.id).incr())
+        .arch veEdges(ret etEdge, background ndex ngPr or y)
+        .onSuccess(_ => arch veCounters(Ret etsGraph. d). ncr())
     }
   }
 
-  private[this] def createEdges(tweet: Tweet, isUndelete: Boolean): Future[Unit] =
+  pr vate[t ] def createEdges(t et: T et,  sUndelete: Boolean): Future[Un ] =
     for {
-      edges <- getEdges(tweet = tweet, isCreate = true, isDelete = false, isUndelete = isUndelete)
-      () <- tflock.insertEdges(edges, foregroundIndexingPriority)
-    } yield {
-      // Count all the edges we've successfully added:
-      edges.foreach(e => insertCounters(e.graphId).incr())
+      edges <- getEdges(t et = t et,  sCreate = true,  sDelete = false,  sUndelete =  sUndelete)
+      () <- tflock. nsertEdges(edges, foreground ndex ngPr or y)
+    } y eld {
+      // Count all t  edges  've successfully added:
+      edges.foreach(e =>  nsertCounters(e.graph d). ncr())
     }
 
-  private[this] def addRTEdges(
-    tweet: Tweet,
+  pr vate[t ] def addRTEdges(
+    t et: T et,
     share: Share,
-    isCreate: Boolean,
-    edges: ListBuffer[ExecuteEdge[StatusGraph]],
-    futureEdges: ListBuffer[Future[Seq[ExecuteEdge[StatusGraph]]]]
-  ): Unit = {
+     sCreate: Boolean,
+    edges: L stBuffer[ExecuteEdge[StatusGraph]],
+    futureEdges: L stBuffer[Future[Seq[ExecuteEdge[StatusGraph]]]]
+  ): Un  = {
 
-    edges += RetweetsOfMeGraph.edge(share.sourceUserId, tweet.id)
-    edges += RetweetsByMeGraph.edge(getUserId(tweet), tweet.id)
-    edges += RetweetsGraph.edge(share.sourceStatusId, tweet.id)
+    edges += Ret etsOf Graph.edge(share.s ceUser d, t et. d)
+    edges += Ret etsBy Graph.edge(getUser d(t et), t et. d)
+    edges += Ret etsGraph.edge(share.s ceStatus d, t et. d)
 
-    if (isCreate) {
+     f ( sCreate) {
       edges += ExecuteEdge(
-        sourceId = getUserId(tweet),
-        graph = RetweetSourceGraph,
-        destinationIds = Some(Seq(share.sourceStatusId)),
-        direction = Forward,
-        position = Some(SnowflakeId(tweet.id).time.inMillis)
+        s ce d = getUser d(t et),
+        graph = Ret etS ceGraph,
+        dest nat on ds = So (Seq(share.s ceStatus d)),
+        d rect on = Forward,
+        pos  on = So (Snowflake d(t et. d).t  . nM ll s)
       )
-      edges.append(TweetsRetweetedGraph.edge(share.sourceUserId, share.sourceStatusId))
+      edges.append(T etsRet etedGraph.edge(share.s ceUser d, share.s ceStatus d))
     } else {
-      edges += RetweetSourceGraph.edge(getUserId(tweet), share.sourceStatusId)
+      edges += Ret etS ceGraph.edge(getUser d(t et), share.s ceStatus d)
 
-      // if this is the last retweet we need to remove it from the source user's
-      // tweets retweeted graph
+      //  f t   s t  last ret et   need to remove   from t  s ce user's
+      // t ets ret eted graph
       futureEdges.append(
-        tflock.count(RetweetsGraph.from(share.sourceStatusId)).flatMap { count =>
-          if (count <= 1) {
-            tflock.selectAll(RetweetsGraph.from(share.sourceStatusId)).map { tweets =>
-              if (tweets.size <= 1)
-                Seq(TweetsRetweetedGraph.edge(share.sourceUserId, share.sourceStatusId))
+        tflock.count(Ret etsGraph.from(share.s ceStatus d)).flatMap { count =>
+           f (count <= 1) {
+            tflock.selectAll(Ret etsGraph.from(share.s ceStatus d)).map { t ets =>
+               f (t ets.s ze <= 1)
+                Seq(T etsRet etedGraph.edge(share.s ceUser d, share.s ceStatus d))
               else
-                Nil
+                N l
             }
           } else {
-            FutureNil
+            FutureN l
           }
         }
       )
     }
   }
 
-  private[this] def addReplyEdges(
-    tweet: Tweet,
-    edges: ListBuffer[ExecuteEdge[StatusGraph]]
-  ): Unit = {
-    getReply(tweet).foreach { reply =>
-      reply.inReplyToStatusId.flatMap { inReplyToStatusId =>
-        edges += RepliesToTweetsGraph.edge(inReplyToStatusId, tweet.id)
+  pr vate[t ] def addReplyEdges(
+    t et: T et,
+    edges: L stBuffer[ExecuteEdge[StatusGraph]]
+  ): Un  = {
+    getReply(t et).foreach { reply =>
+      reply. nReplyToStatus d.flatMap {  nReplyToStatus d =>
+        edges += Repl esToT etsGraph.edge( nReplyToStatus d, t et. d)
 
-        // only index conversationId if this is a reply to another tweet
-        TweetLenses.conversationId.get(tweet).map { conversationId =>
-          edges += ConversationGraph.edge(conversationId, tweet.id)
+        // only  ndex conversat on d  f t   s a reply to anot r t et
+        T etLenses.conversat on d.get(t et).map { conversat on d =>
+          edges += Conversat onGraph.edge(conversat on d, t et. d)
         }
       }
     }
   }
 
-  private[this] def addDirectedAtEdges(
-    tweet: Tweet,
-    edges: ListBuffer[ExecuteEdge[StatusGraph]]
-  ): Unit = {
-    TweetLenses.directedAtUser.get(tweet).foreach { directedAtUser =>
-      edges += DirectedAtUserIdGraph.edge(directedAtUser.userId, tweet.id)
+  pr vate[t ] def addD rectedAtEdges(
+    t et: T et,
+    edges: L stBuffer[ExecuteEdge[StatusGraph]]
+  ): Un  = {
+    T etLenses.d rectedAtUser.get(t et).foreach { d rectedAtUser =>
+      edges += D rectedAtUser dGraph.edge(d rectedAtUser.user d, t et. d)
     }
   }
 
-  private[this] def addMentionEdges(
-    tweet: Tweet,
-    edges: ListBuffer[ExecuteEdge[StatusGraph]]
-  ): Unit = {
-    getMentions(tweet)
-      .flatMap(_.userId).foreach { mention =>
-        edges += MentionsGraph.edge(mention, tweet.id)
+  pr vate[t ] def add nt onEdges(
+    t et: T et,
+    edges: L stBuffer[ExecuteEdge[StatusGraph]]
+  ): Un  = {
+    get nt ons(t et)
+      .flatMap(_.user d).foreach {  nt on =>
+        edges +=  nt onsGraph.edge( nt on, t et. d)
       }
   }
 
-  private[this] def addQTEdges(
-    tweet: Tweet,
-    edges: ListBuffer[ExecuteEdge[StatusGraph]],
-    futureEdges: ListBuffer[Future[Seq[ExecuteEdge[StatusGraph]]]],
-    isCreate: Boolean
-  ): Unit = {
-    val userId = getUserId(tweet)
+  pr vate[t ] def addQTEdges(
+    t et: T et,
+    edges: L stBuffer[ExecuteEdge[StatusGraph]],
+    futureEdges: L stBuffer[Future[Seq[ExecuteEdge[StatusGraph]]]],
+     sCreate: Boolean
+  ): Un  = {
+    val user d = getUser d(t et)
 
-    tweet.quotedTweet.foreach { quotedTweet =>
-      // Regardless of tweet creates/deletes, we add the corresponding edges to the
-      // following two graphs. Note that we're handling the case for
-      // the QuotersGraph slightly differently in the tweet delete case.
-      edges.append(QuotesGraph.edge(quotedTweet.userId, tweet.id))
-      edges.append(QuoteTweetsIndexGraph.edge(quotedTweet.tweetId, tweet.id))
-      if (isCreate) {
-        // As mentioned above, for tweet creates we go ahead and add an edge
-        // to the QuotersGraph without any additional checks.
-        edges.append(QuotersGraph.edge(quotedTweet.tweetId, userId))
+    t et.quotedT et.foreach { quotedT et =>
+      // Regardless of t et creates/deletes,   add t  correspond ng edges to t 
+      // follow ng two graphs. Note that  're handl ng t  case for
+      // t  QuotersGraph sl ghtly d fferently  n t  t et delete case.
+      edges.append(QuotesGraph.edge(quotedT et.user d, t et. d))
+      edges.append(QuoteT ets ndexGraph.edge(quotedT et.t et d, t et. d))
+       f ( sCreate) {
+        // As  nt oned above, for t et creates   go a ad and add an edge
+        // to t  QuotersGraph w hout any add  onal c cks.
+        edges.append(QuotersGraph.edge(quotedT et.t et d, user d))
       } else {
-        // For tweet deletes, we only add an edge to be deleted from the
-        // QuotersGraph if the tweeting user isn't quoting the tweet anymore
-        // i.e. if a user has quoted a tweet multiple times, we only delete
-        // an edge from the QuotersGraph if they've deleted all the quotes,
-        // otherwise an edge should exist by definition of what the QuotersGraph
+        // For t et deletes,   only add an edge to be deleted from t 
+        // QuotersGraph  f t  t et ng user  sn't quot ng t  t et anymore
+        //  .e.  f a user has quoted a t et mult ple t  s,   only delete
+        // an edge from t  QuotersGraph  f t y've deleted all t  quotes,
+        // ot rw se an edge should ex st by def n  on of what t  QuotersGraph
         // represents.
 
-        // Note: There can be a potential edge case here due to a race condition
-        // in the following scenario.
-        // i)   A quotes a tweet T twice resulting in tweets T1 and T2.
-        // ii)  There should exist edges in the QuotersGraph from T -> A and T1 <-> T, T2 <-> T in
-        //      the QuoteTweetsIndexGraph, but one of the edges haven't been written
-        //      to the QuoteTweetsIndex graph in TFlock yet.
-        // iii) In this scenario, we shouldn't really be deleting an edge as we're doing below.
-        // The approach that we're taking below is a "best effort" approach similar to what we
+        // Note: T re can be a potent al edge case  re due to a race cond  on
+        //  n t  follow ng scenar o.
+        //  )   A quotes a t et T tw ce result ng  n t ets T1 and T2.
+        //   )  T re should ex st edges  n t  QuotersGraph from T -> A and T1 <-> T, T2 <-> T  n
+        //      t  QuoteT ets ndexGraph, but one of t  edges haven't been wr ten
+        //      to t  QuoteT ets ndex graph  n TFlock yet.
+        //    )  n t  scenar o,   shouldn't really be delet ng an edge as  're do ng below.
+        // T  approach that  're tak ng below  s a "best effort" approach s m lar to what  
         // currently do for RTs.
 
-        // Find all the quotes of the quoted tweet from the quoting user
-        val quotesFromQuotingUser = QuoteTweetsIndexGraph
-          .from(quotedTweet.tweetId)
-          .intersect(UserTimelineGraph.from(userId))
+        // F nd all t  quotes of t  quoted t et from t  quot ng user
+        val quotesFromQuot ngUser = QuoteT ets ndexGraph
+          .from(quotedT et.t et d)
+          . ntersect(UserT  l neGraph.from(user d))
         futureEdges.append(
           tflock
-            .count(quotesFromQuotingUser).flatMap { count =>
-              // If this is the last quote of the quoted tweet from the quoting user,
-              // we go ahead and delete the edge from the QuotersGraph.
-              if (count <= 1) {
-                tflock.selectAll(quotesFromQuotingUser).map { tweets =>
-                  if (tweets.size <= 1) {
-                    Seq(QuotersGraph.edge(quotedTweet.tweetId, userId))
+            .count(quotesFromQuot ngUser).flatMap { count =>
+              //  f t   s t  last quote of t  quoted t et from t  quot ng user,
+              //   go a ad and delete t  edge from t  QuotersGraph.
+               f (count <= 1) {
+                tflock.selectAll(quotesFromQuot ngUser).map { t ets =>
+                   f (t ets.s ze <= 1) {
+                    Seq(QuotersGraph.edge(quotedT et.t et d, user d))
                   } else {
-                    Nil
+                    N l
                   }
                 }
               } else {
-                FutureNil
+                FutureN l
               }
             }
         )
@@ -342,110 +342,110 @@ class TFlockIndexer(
     }
   }
 
-  private[this] def addCardEdges(
-    tweet: Tweet,
-    edges: ListBuffer[ExecuteEdge[StatusGraph]]
-  ): Unit = {
-    // Note that we are indexing only the TOO "stored" cards
-    // (cardUri=card://<cardId>). Rest of the cards are ignored here.
-    tweet.cardReference
+  pr vate[t ] def addCardEdges(
+    t et: T et,
+    edges: L stBuffer[ExecuteEdge[StatusGraph]]
+  ): Un  = {
+    // Note that   are  ndex ng only t  TOO "stored" cards
+    // (cardUr =card://<card d>). Rest of t  cards are  gnored  re.
+    t et.cardReference
       .collect {
-        case StoredCard(id) =>
-          edges.append(CardTweetsGraph.edge(id, tweet.id))
+        case StoredCard( d) =>
+          edges.append(CardT etsGraph.edge( d, t et. d))
       }.getOrElse(())
   }
 
-  // Note: on undelete, this method restores all archived edges, including those that may have
-  // been archived prior to the delete. This is incorrect behavior but in practice rarely
+  // Note: on undelete, t   thod restores all arch ved edges,  nclud ng those that may have
+  // been arch ved pr or to t  delete. T   s  ncorrect behav or but  n pract ce rarely
   // causes problems, as undeletes are so rare.
-  private[this] def addEdgesForDeleteOrUndelete(
-    tweet: Tweet,
-    edges: ListBuffer[ExecuteEdge[StatusGraph]]
-  ): Unit = {
+  pr vate[t ] def addEdgesForDeleteOrUndelete(
+    t et: T et,
+    edges: L stBuffer[ExecuteEdge[StatusGraph]]
+  ): Un  = {
     edges.appendAll(
       Seq(
-        MentionsGraph.edges(tweet.id, None, Reverse),
-        RepliesToTweetsGraph.edges(tweet.id, None)
+         nt onsGraph.edges(t et. d, None, Reverse),
+        Repl esToT etsGraph.edges(t et. d, None)
       )
     )
 
-    // When we delete or undelete a conversation control root Tweet we want to archive or restore
-    // all the edges in InvitedUsersGraph from the Tweet id.
-    if (hasConversationControl(tweet) && isConversationRoot(tweet)) {
-      edges.append(InvitedUsersGraph.edges(tweet.id, None))
+    // W n   delete or undelete a conversat on control root T et   want to arch ve or restore
+    // all t  edges  n  nv edUsersGraph from t  T et  d.
+     f (hasConversat onControl(t et) &&  sConversat onRoot(t et)) {
+      edges.append( nv edUsersGraph.edges(t et. d, None))
     }
   }
 
-  private[this] def addSimpleEdges(
-    tweet: Tweet,
-    edges: ListBuffer[ExecuteEdge[StatusGraph]]
-  ): Unit = {
-    if (TweetLenses.nullcast.get(tweet)) {
-      edges.append(NullcastedTweetsGraph.edge(getUserId(tweet), tweet.id))
-    } else if (TweetLenses.narrowcast.get(tweet).isDefined) {
-      edges.append(NarrowcastSentTweetsGraph.edge(getUserId(tweet), tweet.id))
+  pr vate[t ] def addS mpleEdges(
+    t et: T et,
+    edges: L stBuffer[ExecuteEdge[StatusGraph]]
+  ): Un  = {
+     f (T etLenses.nullcast.get(t et)) {
+      edges.append(NullcastedT etsGraph.edge(getUser d(t et), t et. d))
+    } else  f (T etLenses.narrowcast.get(t et). sDef ned) {
+      edges.append(NarrowcastSentT etsGraph.edge(getUser d(t et), t et. d))
     } else {
-      edges.append(UserTimelineGraph.edge(getUserId(tweet), tweet.id))
+      edges.append(UserT  l neGraph.edge(getUser d(t et), t et. d))
 
-      if (hasMedia(tweet))
-        edges.append(MediaTimelineGraph.edge(getUserId(tweet), tweet.id))
+       f (has d a(t et))
+        edges.append( d aT  l neGraph.edge(getUser d(t et), t et. d))
 
-      // Index root creator subscription tweets.
-      // Ignore replies because those are not necessarily visible to a user who subscribes to tweet author
-      val isRootTweet: Boolean = tweet.coreData match {
-        case Some(c) => c.reply.isEmpty && c.share.isEmpty
+      //  ndex root creator subscr pt on t ets.
+      //  gnore repl es because those are not necessar ly v s ble to a user who subscr bes to t et author
+      val  sRootT et: Boolean = t et.coreData match {
+        case So (c) => c.reply. sEmpty && c.share. sEmpty
         case None => true
       }
 
-      if (tweet.exclusiveTweetControl.isDefined && isRootTweet) {
-        edges.append(CreatorSubscriptionTimelineGraph.edge(getUserId(tweet), tweet.id))
+       f (t et.exclus veT etControl. sDef ned &&  sRootT et) {
+        edges.append(CreatorSubscr pt onT  l neGraph.edge(getUser d(t et), t et. d))
 
-        if (hasMedia(tweet))
-          edges.append(CreatorSubscriptionMediaTimelineGraph.edge(getUserId(tweet), tweet.id))
+         f (has d a(t et))
+          edges.append(CreatorSubscr pt on d aT  l neGraph.edge(getUser d(t et), t et. d))
       }
     }
   }
 
   /**
-   * Issues edges for each mention of user in a conversation-controlled tweet. This way InvitedUsers
-   * graph accumulates complete set of ids for @mention-invited users, by conversation id.
+   *  ssues edges for each  nt on of user  n a conversat on-controlled t et. T  way  nv edUsers
+   * graph accumulates complete set of  ds for @ nt on- nv ed users, by conversat on  d.
    */
-  private def invitedUsersEdgesForCreate(
-    tweet: Tweet,
-    edges: ListBuffer[ExecuteEdge[StatusGraph]]
-  ): Unit = {
-    val conversationId: Long = getConversationId(tweet).getOrElse(tweet.id)
-    val mentions: Seq[UserId] = getMentions(tweet).flatMap(_.userId)
-    edges.appendAll(mentions.map(userId => InvitedUsersGraph.edge(conversationId, userId)))
+  pr vate def  nv edUsersEdgesForCreate(
+    t et: T et,
+    edges: L stBuffer[ExecuteEdge[StatusGraph]]
+  ): Un  = {
+    val conversat on d: Long = getConversat on d(t et).getOrElse(t et. d)
+    val  nt ons: Seq[User d] = get nt ons(t et).flatMap(_.user d)
+    edges.appendAll( nt ons.map(user d =>  nv edUsersGraph.edge(conversat on d, user d)))
   }
 
   /**
-   * Issues edges of InviteUsersGraph that ought to be deleted for a conversation controlled reply.
-   * These are mentions of users in the given tweet, only if the user was not mentioned elsewhere
-   * in the conversation. This way for a conversation, InvitedUsersGraph would always hold a set
-   * of all users invited to the conversation, and an edge is removed only after the last mention of
-   * a user is deleted.
+   *  ssues edges of  nv eUsersGraph that ought to be deleted for a conversat on controlled reply.
+   * T se are  nt ons of users  n t  g ven t et, only  f t  user was not  nt oned elsew re
+   *  n t  conversat on. T  way for a conversat on,  nv edUsersGraph would always hold a set
+   * of all users  nv ed to t  conversat on, and an edge  s removed only after t  last  nt on of
+   * a user  s deleted.
    */
-  private def invitedUsersEdgesForDelete(
-    tweet: Tweet,
-    futureEdges: ListBuffer[Future[Seq[ExecuteEdge[StatusGraph]]]]
-  ): Unit = {
-    getConversationId(tweet).foreach { conversationId: Long =>
-      val mentions: Seq[UserId] = getMentions(tweet).flatMap(_.userId)
-      mentions.foreach { userId =>
-        val tweetIdsWithinConversation = ConversationGraph.from(conversationId)
-        val tweetIdsThatMentionUser = MentionsGraph.from(userId)
+  pr vate def  nv edUsersEdgesForDelete(
+    t et: T et,
+    futureEdges: L stBuffer[Future[Seq[ExecuteEdge[StatusGraph]]]]
+  ): Un  = {
+    getConversat on d(t et).foreach { conversat on d: Long =>
+      val  nt ons: Seq[User d] = get nt ons(t et).flatMap(_.user d)
+       nt ons.foreach { user d =>
+        val t et dsW h nConversat on = Conversat onGraph.from(conversat on d)
+        val t et dsThat nt onUser =  nt onsGraph.from(user d)
         futureEdges.append(
           tflock
             .selectAll(
-              query = tweetIdsThatMentionUser.intersect(tweetIdsWithinConversation),
-              limit = Some(2), // Just need to know if it is >1 or <=1, so 2 are enough.
-              pageSize = None // Provide default, otherwise Mockito complains
-            ).map { tweetIds: Seq[Long] =>
-              if (tweetIds.size <= 1) {
-                Seq(InvitedUsersGraph.edge(conversationId, userId))
+              query = t et dsThat nt onUser. ntersect(t et dsW h nConversat on),
+              l m  = So (2), // Just need to know  f    s >1 or <=1, so 2 are enough.
+              pageS ze = None // Prov de default, ot rw se Mock o compla ns
+            ).map { t et ds: Seq[Long] =>
+               f (t et ds.s ze <= 1) {
+                Seq( nv edUsersGraph.edge(conversat on d, user d))
               } else {
-                Nil
+                N l
               }
             }
         )
@@ -453,80 +453,80 @@ class TFlockIndexer(
     }
   }
 
-  private def hasInviteViaMention(tweet: Tweet): Boolean = {
-    tweet.conversationControl match {
-      case Some(ConversationControl.ByInvitation(controls)) =>
-        controls.inviteViaMention.getOrElse(false)
-      case Some(ConversationControl.Community(controls)) =>
-        controls.inviteViaMention.getOrElse(false)
-      case Some(ConversationControl.Followers(followers)) =>
-        followers.inviteViaMention.getOrElse(false)
+  pr vate def has nv eV a nt on(t et: T et): Boolean = {
+    t et.conversat onControl match {
+      case So (Conversat onControl.By nv at on(controls)) =>
+        controls. nv eV a nt on.getOrElse(false)
+      case So (Conversat onControl.Commun y(controls)) =>
+        controls. nv eV a nt on.getOrElse(false)
+      case So (Conversat onControl.Follo rs(follo rs)) =>
+        follo rs. nv eV a nt on.getOrElse(false)
       case _ =>
         false
     }
   }
 
-  private def hasConversationControl(tweet: Tweet): Boolean =
-    tweet.conversationControl.isDefined
+  pr vate def hasConversat onControl(t et: T et): Boolean =
+    t et.conversat onControl. sDef ned
 
-  // If a Tweet has a ConversationControl, it must have a ConversationId associated with it so we
-  // can compare the ConversationId with the current Tweet ID to determine if it's the root of the
-  // conversation. See ConversationIdHydrator for more details
-  private def isConversationRoot(tweet: Tweet): Boolean =
-    getConversationId(tweet).get == tweet.id
+  //  f a T et has a Conversat onControl,   must have a Conversat on d assoc ated w h   so  
+  // can compare t  Conversat on d w h t  current T et  D to determ ne  f  's t  root of t 
+  // conversat on. See Conversat on dHydrator for more deta ls
+  pr vate def  sConversat onRoot(t et: T et): Boolean =
+    getConversat on d(t et).get == t et. d
 
-  private def addInvitedUsersEdges(
-    tweet: Tweet,
-    isCreate: Boolean,
-    isUndelete: Boolean,
-    edges: ListBuffer[ExecuteEdge[StatusGraph]],
-    futureEdges: ListBuffer[Future[Seq[ExecuteEdge[StatusGraph]]]]
-  ): Unit = {
-    if (hasConversationControl(tweet)) {
-      if (isCreate) {
-        if (isConversationRoot(tweet) && !isUndelete) {
-          // For root Tweets, only add edges for original creates, not for undeletes.
+  pr vate def add nv edUsersEdges(
+    t et: T et,
+     sCreate: Boolean,
+     sUndelete: Boolean,
+    edges: L stBuffer[ExecuteEdge[StatusGraph]],
+    futureEdges: L stBuffer[Future[Seq[ExecuteEdge[StatusGraph]]]]
+  ): Un  = {
+     f (hasConversat onControl(t et)) {
+       f ( sCreate) {
+         f ( sConversat onRoot(t et) && ! sUndelete) {
+          // For root T ets, only add edges for or g nal creates, not for undeletes.
           // Undeletes are handled by addEdgesForDeleteOrUndelete.
-          invitedUsersEdgesForCreate(tweet, edges)
+           nv edUsersEdgesForCreate(t et, edges)
         }
-        if (!isConversationRoot(tweet) && hasInviteViaMention(tweet)) {
-          // For replies, only add edges when the conversation control is in inviteViaMention mode.
-          invitedUsersEdgesForCreate(tweet, edges)
+         f (! sConversat onRoot(t et) && has nv eV a nt on(t et)) {
+          // For repl es, only add edges w n t  conversat on control  s  n  nv eV a nt on mode.
+           nv edUsersEdgesForCreate(t et, edges)
         }
       } else {
-        if (!isConversationRoot(tweet)) {
-          invitedUsersEdgesForDelete(tweet, futureEdges)
+         f (! sConversat onRoot(t et)) {
+           nv edUsersEdgesForDelete(t et, futureEdges)
         }
       }
     }
   }
 
-  private[this] def getEdges(
-    tweet: Tweet,
-    isCreate: Boolean,
-    isDelete: Boolean,
-    isUndelete: Boolean
+  pr vate[t ] def getEdges(
+    t et: T et,
+     sCreate: Boolean,
+     sDelete: Boolean,
+     sUndelete: Boolean
   ): Future[Seq[ExecuteEdge[StatusGraph]]] = {
-    val edges = ListBuffer[ExecuteEdge[StatusGraph]]()
-    val futureEdges = ListBuffer[Future[Seq[ExecuteEdge[StatusGraph]]]]()
+    val edges = L stBuffer[ExecuteEdge[StatusGraph]]()
+    val futureEdges = L stBuffer[Future[Seq[ExecuteEdge[StatusGraph]]]]()
 
-    addSimpleEdges(tweet, edges)
-    getShare(tweet) match {
-      case Some(share) => addRTEdges(tweet, share, isCreate, edges, futureEdges)
+    addS mpleEdges(t et, edges)
+    getShare(t et) match {
+      case So (share) => addRTEdges(t et, share,  sCreate, edges, futureEdges)
       case _ =>
-        addInvitedUsersEdges(tweet, isCreate, isUndelete, edges, futureEdges)
-        addReplyEdges(tweet, edges)
-        addDirectedAtEdges(tweet, edges)
-        addMentionEdges(tweet, edges)
-        addQTEdges(tweet, edges, futureEdges, isCreate)
-        addCardEdges(tweet, edges)
-        if (isDelete || isUndelete) {
-          addEdgesForDeleteOrUndelete(tweet, edges)
+        add nv edUsersEdges(t et,  sCreate,  sUndelete, edges, futureEdges)
+        addReplyEdges(t et, edges)
+        addD rectedAtEdges(t et, edges)
+        add nt onEdges(t et, edges)
+        addQTEdges(t et, edges, futureEdges,  sCreate)
+        addCardEdges(t et, edges)
+         f ( sDelete ||  sUndelete) {
+          addEdgesForDeleteOrUndelete(t et, edges)
         }
     }
 
     Future
       .collect(futureEdges)
-      .map { moreEdges => (edges ++= moreEdges.flatten).toList }
+      .map { moreEdges => (edges ++= moreEdges.flatten).toL st }
   }
 }

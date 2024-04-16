@@ -1,254 +1,254 @@
-package com.twitter.simclusters_v2.scalding.tweet_similarity
+package com.tw ter.s mclusters_v2.scald ng.t et_s m lar y
 
-import com.twitter.ml.api.DailySuffixFeatureSource
-import com.twitter.ml.api.DataSetPipe
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.Execution
-import com.twitter.scalding._
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.tweet_similarity.TweetSimilarityFeatures
-import java.util.TimeZone
+ mport com.tw ter.ml.ap .Da lySuff xFeatureS ce
+ mport com.tw ter.ml.ap .DataSetP pe
+ mport com.tw ter.ml.ap .R chDataRecord
+ mport com.tw ter.scald ng.typed.TypedP pe
+ mport com.tw ter.scald ng.Execut on
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.job.Tw terExecut onApp
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.scald ng.common.Ut l
+ mport com.tw ter.s mclusters_v2.t et_s m lar y.T etS m lar yFeatures
+ mport java.ut l.T  Zone
 
-object DatasetTopKAnalysisJob {
+object DatasetTopKAnalys sJob {
 
-  case class TweetPairWithStats(
-    queryTweet: TweetId,
-    candidateTweet: TweetId,
+  case class T etPa rW hStats(
+    queryT et: T et d,
+    cand dateT et: T et d,
     cooccurrenceCount: Double,
-    coengagementCount: Double,
-    coengagementRate: Double)
+    coengage ntCount: Double,
+    coengage ntRate: Double)
 
-  def getCoocurrenceTweetPairs(dataset: DataSetPipe): TypedPipe[TweetPairWithStats] = {
+  def getCoocurrenceT etPa rs(dataset: DataSetP pe): TypedP pe[T etPa rW hStats] = {
     val featureContext = dataset.featureContext
 
     dataset.records
       .map { record =>
-        val richDataRecord = new RichDataRecord(record, featureContext)
+        val r chDataRecord = new R chDataRecord(record, featureContext)
         val coengaged =
-          if (richDataRecord
-              .getFeatureValue(TweetSimilarityFeatures.Label)
+           f (r chDataRecord
+              .getFeatureValue(T etS m lar yFeatures.Label)
               .booleanValue) 1
           else 0
         (
           (
-            richDataRecord.getFeatureValue(TweetSimilarityFeatures.QueryTweetId).toLong,
-            richDataRecord.getFeatureValue(TweetSimilarityFeatures.CandidateTweetId).toLong),
+            r chDataRecord.getFeatureValue(T etS m lar yFeatures.QueryT et d).toLong,
+            r chDataRecord.getFeatureValue(T etS m lar yFeatures.Cand dateT et d).toLong),
           (1, coengaged)
         )
       }.sumByKey
       .map {
-        case ((queryTweet, candidateTweet), (coocurrenceCount, coengagementCount)) =>
-          TweetPairWithStats(
-            queryTweet,
-            candidateTweet,
+        case ((queryT et, cand dateT et), (coocurrenceCount, coengage ntCount)) =>
+          T etPa rW hStats(
+            queryT et,
+            cand dateT et,
             coocurrenceCount.toDouble,
-            coengagementCount.toDouble,
-            coengagementCount.toDouble / coocurrenceCount.toDouble
+            coengage ntCount.toDouble,
+            coengage ntCount.toDouble / coocurrenceCount.toDouble
           )
       }
   }
 
-  def getQueryTweetToCounts(dataset: DataSetPipe): TypedPipe[(Long, (Int, Int))] = {
+  def getQueryT etToCounts(dataset: DataSetP pe): TypedP pe[(Long, ( nt,  nt))] = {
     val featureContext = dataset.featureContext
     dataset.records.map { record =>
-      val richDataRecord = new RichDataRecord(record, featureContext)
+      val r chDataRecord = new R chDataRecord(record, featureContext)
       val coengaged =
-        if (richDataRecord
-            .getFeatureValue(TweetSimilarityFeatures.Label)
+         f (r chDataRecord
+            .getFeatureValue(T etS m lar yFeatures.Label)
             .booleanValue) 1
         else 0
       (
-        richDataRecord.getFeatureValue(TweetSimilarityFeatures.QueryTweetId).toLong,
+        r chDataRecord.getFeatureValue(T etS m lar yFeatures.QueryT et d).toLong,
         (1, coengaged)
       )
     }.sumByKey
   }
 
-  def printGlobalTopKTweetPairsBy(
-    tweetPairs: TypedPipe[TweetPairWithStats],
-    k: Int,
-    orderByFnt: TweetPairWithStats => Double
-  ): Execution[Unit] = {
-    val topKTweetPairs =
-      tweetPairs.groupAll
-        .sortedReverseTake(k)(Ordering.by(orderByFnt))
+  def pr ntGlobalTopKT etPa rsBy(
+    t etPa rs: TypedP pe[T etPa rW hStats],
+    k:  nt,
+    orderByFnt: T etPa rW hStats => Double
+  ): Execut on[Un ] = {
+    val topKT etPa rs =
+      t etPa rs.groupAll
+        .sortedReverseTake(k)(Order ng.by(orderByFnt))
         .values
-    topKTweetPairs.toIterableExecution.map { s =>
-      println(s.map(Util.prettyJsonMapper.writeValueAsString).mkString("\n"))
+    topKT etPa rs.to erableExecut on.map { s =>
+      pr ntln(s.map(Ut l.prettyJsonMapper.wr eValueAsStr ng).mkStr ng("\n"))
     }
   }
 
-  def printTweetTopKTweetsBy(
-    groupedBy: Grouped[TweetId, TweetPairWithStats],
-    k: Int,
-    orderByFnt: TweetPairWithStats => Double,
-    descending: Boolean = true
-  ): Execution[Unit] = {
-    if (descending) {
-      println("TweetTopKTweets (descending order)")
+  def pr ntT etTopKT etsBy(
+    groupedBy: Grouped[T et d, T etPa rW hStats],
+    k:  nt,
+    orderByFnt: T etPa rW hStats => Double,
+    descend ng: Boolean = true
+  ): Execut on[Un ] = {
+     f (descend ng) {
+      pr ntln("T etTopKT ets (descend ng order)")
       groupedBy
-        .sortedReverseTake(k)(Ordering.by(orderByFnt))
-        .toIterableExecution
-        .map { record => println(record.toString()) }
+        .sortedReverseTake(k)(Order ng.by(orderByFnt))
+        .to erableExecut on
+        .map { record => pr ntln(record.toStr ng()) }
     } else {
-      println("TweetTopKTweets (ascending order)")
+      pr ntln("T etTopKT ets (ascend ng order)")
       groupedBy
-        .sortedTake(k)(Ordering.by(orderByFnt))
-        .toIterableExecution
-        .map { record => println(record.toString()) }
+        .sortedTake(k)(Order ng.by(orderByFnt))
+        .to erableExecut on
+        .map { record => pr ntln(record.toStr ng()) }
     }
   }
 
-  def printTweetPairStatsExec(
-    tweetPairs: TypedPipe[TweetPairWithStats],
-    k: Int
-  ): Execution[Unit] = {
-    Execution
+  def pr ntT etPa rStatsExec(
+    t etPa rs: TypedP pe[T etPa rW hStats],
+    k:  nt
+  ): Execut on[Un ] = {
+    Execut on
       .sequence(
         Seq(
-          Util.printSummaryOfNumericColumn(
-            tweetPairs.map(_.cooccurrenceCount),
-            Some("Tweet-pair Coocurrence Count")),
-          printGlobalTopKTweetPairsBy(
-            tweetPairs,
+          Ut l.pr ntSummaryOfNu r cColumn(
+            t etPa rs.map(_.cooccurrenceCount),
+            So ("T et-pa r Coocurrence Count")),
+          pr ntGlobalTopKT etPa rsBy(
+            t etPa rs,
             k,
-            { tweetPairs => tweetPairs.cooccurrenceCount }),
-          Util.printSummaryOfNumericColumn(
-            tweetPairs.map(_.coengagementCount),
-            Some("Tweet-pair Coengagement Count")),
-          printGlobalTopKTweetPairsBy(
-            tweetPairs,
+            { t etPa rs => t etPa rs.cooccurrenceCount }),
+          Ut l.pr ntSummaryOfNu r cColumn(
+            t etPa rs.map(_.coengage ntCount),
+            So ("T et-pa r Coengage nt Count")),
+          pr ntGlobalTopKT etPa rsBy(
+            t etPa rs,
             k,
-            { tweetPairs => tweetPairs.coengagementCount }),
-          Util.printSummaryOfNumericColumn(
-            tweetPairs.map(_.coengagementRate),
-            Some("Tweet-pair Coengagement Rate")),
-          printGlobalTopKTweetPairsBy(tweetPairs, k, { tweetPairs => tweetPairs.coengagementRate })
+            { t etPa rs => t etPa rs.coengage ntCount }),
+          Ut l.pr ntSummaryOfNu r cColumn(
+            t etPa rs.map(_.coengage ntRate),
+            So ("T et-pa r Coengage nt Rate")),
+          pr ntGlobalTopKT etPa rsBy(t etPa rs, k, { t etPa rs => t etPa rs.coengage ntRate })
         )
-      ).unit
+      ).un 
   }
 
-  def printPerQueryStatsExec(dataset: DataSetPipe, k: Int): Execution[Unit] = {
-    val queryToCounts = getQueryTweetToCounts(dataset)
+  def pr ntPerQueryStatsExec(dataset: DataSetP pe, k:  nt): Execut on[Un ] = {
+    val queryToCounts = getQueryT etToCounts(dataset)
 
-    val topKQueryTweetsByOccurrence =
+    val topKQueryT etsByOccurrence =
       queryToCounts.groupAll
-        .sortedReverseTake(k)(Ordering.by { case (_, (cooccurrenceCount, _)) => cooccurrenceCount })
+        .sortedReverseTake(k)(Order ng.by { case (_, (cooccurrenceCount, _)) => cooccurrenceCount })
         .values
 
-    val topKQueryTweetsByEngagement =
+    val topKQueryT etsByEngage nt =
       queryToCounts.groupAll
-        .sortedReverseTake(k)(Ordering.by { case (_, (_, coengagementCount)) => coengagementCount })
+        .sortedReverseTake(k)(Order ng.by { case (_, (_, coengage ntCount)) => coengage ntCount })
         .values
 
-    Execution
+    Execut on
       .sequence(
         Seq(
-          Util.printSummaryOfNumericColumn(
+          Ut l.pr ntSummaryOfNu r cColumn(
             queryToCounts.map(_._2._1),
-            Some("Per-query Total Cooccurrence Count")),
-          topKQueryTweetsByOccurrence.toIterableExecution.map { s =>
-            println(s.map(Util.prettyJsonMapper.writeValueAsString).mkString("\n"))
+            So ("Per-query Total Cooccurrence Count")),
+          topKQueryT etsByOccurrence.to erableExecut on.map { s =>
+            pr ntln(s.map(Ut l.prettyJsonMapper.wr eValueAsStr ng).mkStr ng("\n"))
           },
-          Util.printSummaryOfNumericColumn(
+          Ut l.pr ntSummaryOfNu r cColumn(
             queryToCounts.map(_._2._2),
-            Some("Per-query Total Coengagement Count")),
-          topKQueryTweetsByEngagement.toIterableExecution.map { s =>
-            println(s.map(Util.prettyJsonMapper.writeValueAsString).mkString("\n"))
+            So ("Per-query Total Coengage nt Count")),
+          topKQueryT etsByEngage nt.to erableExecut on.map { s =>
+            pr ntln(s.map(Ut l.prettyJsonMapper.wr eValueAsStr ng).mkStr ng("\n"))
           }
         )
-      ).unit
+      ).un 
   }
 
-  def runTweetTopKTweetsOutputExecs(
-    tweetPairs: TypedPipe[TweetPairWithStats],
-    k: Int,
-    outputPath: String
-  ): Execution[Unit] = {
-    tweetPairs
-      .groupBy(_.queryTweet)
-      .sortedReverseTake(k)(Ordering.by(_.coengagementRate))
-      .writeExecution(TypedTsv(outputPath + "/topK_by_coengagement_rate"))
+  def runT etTopKT etsOutputExecs(
+    t etPa rs: TypedP pe[T etPa rW hStats],
+    k:  nt,
+    outputPath: Str ng
+  ): Execut on[Un ] = {
+    t etPa rs
+      .groupBy(_.queryT et)
+      .sortedReverseTake(k)(Order ng.by(_.coengage ntRate))
+      .wr eExecut on(TypedTsv(outputPath + "/topK_by_coengage nt_rate"))
   }
 }
 
 /** To run:
-  scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/tweet_similarity:dataset_topk_analysis-adhoc \
+  scald ng remote run --target src/scala/com/tw ter/s mclusters_v2/scald ng/t et_s m lar y:dataset_topk_analys s-adhoc \
   --user cassowary \
-  --submitter hadoopnest2.atla.twitter.com \
-  --main-class com.twitter.simclusters_v2.scalding.tweet_similarity.DatasetTopKAnalysisAdhocApp -- \
+  --subm ter hadoopnest2.atla.tw ter.com \
+  --ma n-class com.tw ter.s mclusters_v2.scald ng.t et_s m lar y.DatasetTopKAnalys sAdhocApp -- \
   --date 2020-02-19 \
-  --dataset_path /user/cassowary/adhoc/training_data/2020-02-19_class_balanced/train \
-  --output_path /user/cassowary/adhoc/training_data/2020-02-19_class_balanced/train/analysis
+  --dataset_path /user/cassowary/adhoc/tra n ng_data/2020-02-19_class_balanced/tra n \
+  --output_path /user/cassowary/adhoc/tra n ng_data/2020-02-19_class_balanced/tra n/analys s
  * */
-object DatasetTopKAnalysisAdhocApp extends TwitterExecutionApp {
-  implicit val timeZone: TimeZone = DateOps.UTC
-  implicit val dateParser: DateParser = DateParser.default
+object DatasetTopKAnalys sAdhocApp extends Tw terExecut onApp {
+   mpl c  val t  Zone: T  Zone = DateOps.UTC
+   mpl c  val dateParser: DateParser = DateParser.default
 
-  def job: Execution[Unit] = Execution.withId { implicit uniqueId =>
-    Execution.withArgs { args: Args =>
-      implicit val dateRange: DateRange = DateRange.parse(args.list("date"))
-      val dataset: DataSetPipe = DailySuffixFeatureSource(args("dataset_path")).read
-      val outputPath: String = args("output_path")
-      val topK: Int = args.int("top_K", default = 10)
+  def job: Execut on[Un ] = Execut on.w h d {  mpl c  un que d =>
+    Execut on.w hArgs { args: Args =>
+       mpl c  val dateRange: DateRange = DateRange.parse(args.l st("date"))
+      val dataset: DataSetP pe = Da lySuff xFeatureS ce(args("dataset_path")).read
+      val outputPath: Str ng = args("output_path")
+      val topK:  nt = args. nt("top_K", default = 10)
 
-      val tweetPairs = DatasetTopKAnalysisJob.getCoocurrenceTweetPairs(dataset)
+      val t etPa rs = DatasetTopKAnalys sJob.getCoocurrenceT etPa rs(dataset)
 
-      Execution
-        .zip(
-          DatasetTopKAnalysisJob.printTweetPairStatsExec(tweetPairs, topK),
-          DatasetTopKAnalysisJob.runTweetTopKTweetsOutputExecs(tweetPairs, topK, outputPath),
-          DatasetTopKAnalysisJob.printPerQueryStatsExec(dataset, topK)
-        ).unit
+      Execut on
+        .z p(
+          DatasetTopKAnalys sJob.pr ntT etPa rStatsExec(t etPa rs, topK),
+          DatasetTopKAnalys sJob.runT etTopKT etsOutputExecs(t etPa rs, topK, outputPath),
+          DatasetTopKAnalys sJob.pr ntPerQueryStatsExec(dataset, topK)
+        ).un 
     }
   }
 }
 
 /** To run:
-  scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/tweet_similarity:dataset_topk_analysis-dump \
+  scald ng remote run --target src/scala/com/tw ter/s mclusters_v2/scald ng/t et_s m lar y:dataset_topk_analys s-dump \
   --user cassowary \
-  --submitter hadoopnest2.atla.twitter.com \
-  --main-class com.twitter.simclusters_v2.scalding.tweet_similarity.DatasetTopKAnalysisDumpApp -- \
+  --subm ter hadoopnest2.atla.tw ter.com \
+  --ma n-class com.tw ter.s mclusters_v2.scald ng.t et_s m lar y.DatasetTopKAnalys sDumpApp -- \
   --date 2020-02-01 \
-  --dataset_path /user/cassowary/adhoc/training_data/2020-02-01/train \
-  --tweets 1223105606757695490 \
+  --dataset_path /user/cassowary/adhoc/tra n ng_data/2020-02-01/tra n \
+  --t ets 1223105606757695490 \
   --top_K 100
  * */
-object DatasetTopKAnalysisDumpApp extends TwitterExecutionApp {
-  implicit val timeZone: TimeZone = DateOps.UTC
-  implicit val dateParser: DateParser = DateParser.default
+object DatasetTopKAnalys sDumpApp extends Tw terExecut onApp {
+   mpl c  val t  Zone: T  Zone = DateOps.UTC
+   mpl c  val dateParser: DateParser = DateParser.default
 
-  def job: Execution[Unit] = Execution.withId { implicit uniqueId =>
-    Execution.withArgs { args: Args =>
-      implicit val dateRange: DateRange = DateRange.parse(args.list("date"))
-      val dataset: DataSetPipe = DailySuffixFeatureSource(args("dataset_path")).read
-      val tweets = args.list("tweets").map(_.toLong).toSet
-      val topK: Int = args.int("top_K", default = 100)
+  def job: Execut on[Un ] = Execut on.w h d {  mpl c  un que d =>
+    Execut on.w hArgs { args: Args =>
+       mpl c  val dateRange: DateRange = DateRange.parse(args.l st("date"))
+      val dataset: DataSetP pe = Da lySuff xFeatureS ce(args("dataset_path")).read
+      val t ets = args.l st("t ets").map(_.toLong).toSet
+      val topK:  nt = args. nt("top_K", default = 100)
 
-      val tweetPairs = DatasetTopKAnalysisJob.getCoocurrenceTweetPairs(dataset)
+      val t etPa rs = DatasetTopKAnalys sJob.getCoocurrenceT etPa rs(dataset)
 
-      if (tweets.isEmpty) {
-        Execution.from(println("Empty query tweets"))
+       f (t ets. sEmpty) {
+        Execut on.from(pr ntln("Empty query t ets"))
       } else {
-        val filteredGroupby = tweetPairs
-          .filter { record => tweets.contains(record.queryTweet) }
-          .groupBy(_.queryTweet)
+        val f lteredGroupby = t etPa rs
+          .f lter { record => t ets.conta ns(record.queryT et) }
+          .groupBy(_.queryT et)
 
-        Execution
-          .zip(
+        Execut on
+          .z p(
             //Top K
-            DatasetTopKAnalysisJob
-              .printTweetTopKTweetsBy(filteredGroupby, topK, pair => pair.coengagementCount),
+            DatasetTopKAnalys sJob
+              .pr ntT etTopKT etsBy(f lteredGroupby, topK, pa r => pa r.coengage ntCount),
             //Bottom K
-            DatasetTopKAnalysisJob.printTweetTopKTweetsBy(
-              filteredGroupby,
+            DatasetTopKAnalys sJob.pr ntT etTopKT etsBy(
+              f lteredGroupby,
               topK,
-              pair => pair.coengagementCount,
-              descending = false)
-          ).unit
+              pa r => pa r.coengage ntCount,
+              descend ng = false)
+          ).un 
       }
     }
   }

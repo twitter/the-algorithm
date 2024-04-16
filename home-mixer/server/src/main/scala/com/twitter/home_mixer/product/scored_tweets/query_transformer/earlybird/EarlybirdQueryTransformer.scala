@@ -1,69 +1,69 @@
-package com.twitter.home_mixer.product.scored_tweets.query_transformer.earlybird
+package com.tw ter.ho _m xer.product.scored_t ets.query_transfor r.earlyb rd
 
-import com.twitter.home_mixer.model.HomeFeatures.RealGraphInNetworkScoresFeature
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.util.CachedScoredTweetsHelper
-import com.twitter.home_mixer.util.earlybird.EarlybirdRequestUtil
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.search.earlybird.{thriftscala => eb}
-import com.twitter.timelines.clients.relevance_search.SearchClient.TweetTypes
-import com.twitter.timelines.common.model.TweetKindOption
-import com.twitter.timelines.util.SnowflakeSortIndexHelper
-import com.twitter.util.Duration
-import com.twitter.util.Time
+ mport com.tw ter.ho _m xer.model.Ho Features.RealGraph nNetworkScoresFeature
+ mport com.tw ter.ho _m xer.model.request.HasDev ceContext
+ mport com.tw ter.ho _m xer.ut l.Cac dScoredT ets lper
+ mport com.tw ter.ho _m xer.ut l.earlyb rd.Earlyb rdRequestUt l
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.qual y_factor.HasQual yFactorStatus
+ mport com.tw ter.search.earlyb rd.{thr ftscala => eb}
+ mport com.tw ter.t  l nes.cl ents.relevance_search.SearchCl ent.T etTypes
+ mport com.tw ter.t  l nes.common.model.T etK ndOpt on
+ mport com.tw ter.t  l nes.ut l.SnowflakeSort ndex lper
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.T  
 
-trait EarlybirdQueryTransformer[
-  Query <: PipelineQuery with HasQualityFactorStatus with HasDeviceContext] {
+tra  Earlyb rdQueryTransfor r[
+  Query <: P pel neQuery w h HasQual yFactorStatus w h HasDev ceContext] {
 
-  def candidatePipelineIdentifier: CandidatePipelineIdentifier
-  def clientId: Option[String] = None
-  def maxTweetsToFetch: Int = 100
-  def tweetKindOptions: TweetKindOption.ValueSet
-  def tensorflowModel: Option[String] = None
+  def cand dateP pel ne dent f er: Cand dateP pel ne dent f er
+  def cl ent d: Opt on[Str ng] = None
+  def maxT etsToFetch:  nt = 100
+  def t etK ndOpt ons: T etK ndOpt on.ValueSet
+  def tensorflowModel: Opt on[Str ng] = None
 
-  private val EarlybirdMaxExcludedTweets = 1500
+  pr vate val Earlyb rdMaxExcludedT ets = 1500
 
-  def buildEarlybirdQuery(
+  def bu ldEarlyb rdQuery(
     query: Query,
-    sinceDuration: Duration,
-    followedUserIds: Set[Long] = Set.empty
-  ): eb.EarlybirdRequest = {
-    val sinceTime: Time = sinceDuration.ago
-    val untilTime: Time = Time.now
+    s nceDurat on: Durat on,
+    follo dUser ds: Set[Long] = Set.empty
+  ): eb.Earlyb rdRequest = {
+    val s nceT  : T   = s nceDurat on.ago
+    val unt lT  : T   = T  .now
 
-    val fromTweetIdExclusive = SnowflakeSortIndexHelper.timestampToFakeId(sinceTime)
-    val toTweetIdExclusive = SnowflakeSortIndexHelper.timestampToFakeId(untilTime)
+    val fromT et dExclus ve = SnowflakeSort ndex lper.t  stampToFake d(s nceT  )
+    val toT et dExclus ve = SnowflakeSort ndex lper.t  stampToFake d(unt lT  )
 
-    val excludedTweetIds = query.features.map { featureMap =>
-      CachedScoredTweetsHelper.tweetImpressionsAndCachedScoredTweetsInRange(
+    val excludedT et ds = query.features.map { featureMap =>
+      Cac dScoredT ets lper.t et mpress onsAndCac dScoredT ets nRange(
         featureMap,
-        candidatePipelineIdentifier,
-        EarlybirdMaxExcludedTweets,
-        sinceTime,
-        untilTime)
+        cand dateP pel ne dent f er,
+        Earlyb rdMaxExcludedT ets,
+        s nceT  ,
+        unt lT  )
     }
 
     val maxCount =
-      (query.getQualityFactorCurrentValue(candidatePipelineIdentifier) * maxTweetsToFetch).toInt
+      (query.getQual yFactorCurrentValue(cand dateP pel ne dent f er) * maxT etsToFetch).to nt
 
     val authorScoreMap = query.features
-      .map(_.getOrElse(RealGraphInNetworkScoresFeature, Map.empty[Long, Double]))
+      .map(_.getOrElse(RealGraph nNetworkScoresFeature, Map.empty[Long, Double]))
       .getOrElse(Map.empty)
 
-    EarlybirdRequestUtil.getTweetsRequest(
-      userId = Some(query.getRequiredUserId),
-      clientId = clientId,
-      skipVeryRecentTweets = true,
-      followedUserIds = followedUserIds,
-      retweetsMutedUserIds = Set.empty,
-      beforeTweetIdExclusive = Some(toTweetIdExclusive),
-      afterTweetIdExclusive = Some(fromTweetIdExclusive),
-      excludedTweetIds = excludedTweetIds.map(_.toSet),
+    Earlyb rdRequestUt l.getT etsRequest(
+      user d = So (query.getRequ redUser d),
+      cl ent d = cl ent d,
+      sk pVeryRecentT ets = true,
+      follo dUser ds = follo dUser ds,
+      ret etsMutedUser ds = Set.empty,
+      beforeT et dExclus ve = So (toT et dExclus ve),
+      afterT et dExclus ve = So (fromT et dExclus ve),
+      excludedT et ds = excludedT et ds.map(_.toSet),
       maxCount = maxCount,
-      tweetTypes = TweetTypes.fromTweetKindOption(tweetKindOptions),
-      authorScoreMap = Some(authorScoreMap),
+      t etTypes = T etTypes.fromT etK ndOpt on(t etK ndOpt ons),
+      authorScoreMap = So (authorScoreMap),
       tensorflowModel = tensorflowModel
     )
   }

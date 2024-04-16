@@ -1,176 +1,176 @@
 /**
- * &copy; Copyright 2008, Summize, Inc. All rights reserved.
+ * &copy; Copyr ght 2008, Summ ze,  nc. All r ghts reserved.
  */
-package com.twitter.search.ingester.pipeline.twitter;
+package com.tw ter.search. ngester.p pel ne.tw ter;
 
-import java.util.Collections;
-import java.util.NavigableSet;
-import java.util.TreeSet;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
+ mport java.ut l.Collect ons;
+ mport java.ut l.Nav gableSet;
+ mport java.ut l.TreeSet;
+ mport java.ut l.concurrent.T  Un ;
+ mport java.ut l.concurrent.atom c.Atom cLong;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducedTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons.p pel ne.StageExcept on;
+ mport org.apac .commons.p pel ne.val dat on.Consu dTypes;
+ mport org.apac .commons.p pel ne.val dat on.ProducedTypes;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.debug.DebugEventUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.metrics.SearchTimerStats;
+ mport com.tw ter.search.common.debug.DebugEventUt l;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchCustomGauge;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
 
 /**
- * Collect incoming objects into batches of the configured size and then
- * emit the <code>Collection</code> of objects. Internally uses a <code>TreeSet</code>
- * to remove duplicates. Incoming objects MUST implement the <code>Comparable</code>
- * interface.
+ * Collect  ncom ng objects  nto batc s of t  conf gured s ze and t n
+ * em  t  <code>Collect on</code> of objects.  nternally uses a <code>TreeSet</code>
+ * to remove dupl cates.  ncom ng objects MUST  mple nt t  <code>Comparable</code>
+ *  nterface.
  */
-@ConsumedTypes(Comparable.class)
-@ProducedTypes(NavigableSet.class)
-public class CollectComparableObjectsStage extends TwitterBaseStage<Void, Void> {
-  private static final Logger LOG = LoggerFactory.getLogger(CollectComparableObjectsStage.class);
+@Consu dTypes(Comparable.class)
+@ProducedTypes(Nav gableSet.class)
+publ c class CollectComparableObjectsStage extends Tw terBaseStage<Vo d, Vo d> {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(CollectComparableObjectsStage.class);
 
-  // Batch size of the collections we are emitting.
-  private int batchSize = -1;
+  // Batch s ze of t  collect ons   are em t ng.
+  pr vate  nt batchS ze = -1;
 
-  // Top tweets sorts the tweets in reverse order.
-  private Boolean reverseOrder = false;
+  // Top t ets sorts t  t ets  n reverse order.
+  pr vate Boolean reverseOrder = false;
 
-  // Batch being constructed.
-  private TreeSet<Object> currentCollection = null;
+  // Batch be ng constructed.
+  pr vate TreeSet<Object> currentCollect on = null;
 
-  // Timestamp (ms) of last batch emission.
-  private final AtomicLong lastEmitTimeMillis = new AtomicLong(-1);
-  // If set, will emit a batch (only upon arrival of a new element), if time since last emit has
-  // exceeded this threshold.
-  private long emitAfterMillis = -1;
+  // T  stamp (ms) of last batch em ss on.
+  pr vate f nal Atom cLong lastEm T  M ll s = new Atom cLong(-1);
+  //  f set, w ll em  a batch (only upon arr val of a new ele nt),  f t   s nce last em  has
+  // exceeded t  threshold.
+  pr vate long em AfterM ll s = -1;
 
-  private SearchCounter sizeBasedEmitCount;
-  private SearchCounter timeBasedEmitCount;
-  private SearchCounter sizeAndTimeBasedEmitCount;
-  private SearchTimerStats batchEmitTimeStats;
+  pr vate SearchCounter s zeBasedEm Count;
+  pr vate SearchCounter t  BasedEm Count;
+  pr vate SearchCounter s zeAndT  BasedEm Count;
+  pr vate SearchT  rStats batchEm T  Stats;
 
-  @Override
-  protected void initStats() {
-    super.initStats();
+  @Overr de
+  protected vo d  n Stats() {
+    super. n Stats();
 
-    SearchCustomGauge.export(getStageNamePrefix() + "_last_emit_time",
-        () -> lastEmitTimeMillis.get());
+    SearchCustomGauge.export(getStageNa Pref x() + "_last_em _t  ",
+        () -> lastEm T  M ll s.get());
 
-    sizeBasedEmitCount = SearchCounter.export(getStageNamePrefix() + "_size_based_emit_count");
-    timeBasedEmitCount = SearchCounter.export(getStageNamePrefix() + "_time_based_emit_count");
-    sizeAndTimeBasedEmitCount = SearchCounter.export(
-        getStageNamePrefix() + "_size_and_time_based_emit_count");
+    s zeBasedEm Count = SearchCounter.export(getStageNa Pref x() + "_s ze_based_em _count");
+    t  BasedEm Count = SearchCounter.export(getStageNa Pref x() + "_t  _based_em _count");
+    s zeAndT  BasedEm Count = SearchCounter.export(
+        getStageNa Pref x() + "_s ze_and_t  _based_em _count");
 
-    batchEmitTimeStats = SearchTimerStats.export(
-        getStageNamePrefix() + "_batch_emit_time",
-        TimeUnit.MILLISECONDS,
-        false, // no cpu timers
-        true); // with percentiles
+    batchEm T  Stats = SearchT  rStats.export(
+        getStageNa Pref x() + "_batch_em _t  ",
+        T  Un .M LL SECONDS,
+        false, // no cpu t  rs
+        true); // w h percent les
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException {
-    // We have to initialize this stat here, because initStats() is called before
-    // doInnerPreprocess(), so at that point the 'clock' is not set yet.
-    SearchCustomGauge.export(getStageNamePrefix() + "_millis_since_last_emit",
-        () -> clock.nowMillis() - lastEmitTimeMillis.get());
+  @Overr de
+  protected vo d do nnerPreprocess() throws StageExcept on {
+    //   have to  n  al ze t  stat  re, because  n Stats()  s called before
+    // do nnerPreprocess(), so at that po nt t  'clock'  s not set yet.
+    SearchCustomGauge.export(getStageNa Pref x() + "_m ll s_s nce_last_em ",
+        () -> clock.nowM ll s() - lastEm T  M ll s.get());
 
-    currentCollection = newBatchCollection();
-    if (batchSize <= 0) {
-      throw new StageException(this, "Must set the batchSize parameter to a value >0");
+    currentCollect on = newBatchCollect on();
+     f (batchS ze <= 0) {
+      throw new StageExcept on(t , "Must set t  batchS ze para ter to a value >0");
     }
   }
 
-  private TreeSet<Object> newBatchCollection() {
-    return new TreeSet<>(reverseOrder ? Collections.reverseOrder() : null);
+  pr vate TreeSet<Object> newBatchCollect on() {
+    return new TreeSet<>(reverseOrder ? Collect ons.reverseOrder() : null);
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!Comparable.class.isAssignableFrom(obj.getClass())) {
-      throw new StageException(
-          this, "Attempt to add a non-comparable object to a sorted collection");
+  @Overr de
+  publ c vo d  nnerProcess(Object obj) throws StageExcept on {
+     f (!Comparable.class. sAss gnableFrom(obj.getClass())) {
+      throw new StageExcept on(
+          t , "Attempt to add a non-comparable object to a sorted collect on");
     }
 
-    currentCollection.add(obj);
-    if (shouldEmit()) {
-      // We want to trace here when we actually emit the batch, as tweets sit in this stage until
-      // a batch is full, and we want to see how long they actually stick around.
-      DebugEventUtil.addDebugEventToCollection(
-          currentCollection, "CollectComparableObjectsStage.outgoing", clock.nowMillis());
-      emitAndCount(currentCollection);
-      updateLastEmitTime();
+    currentCollect on.add(obj);
+     f (shouldEm ()) {
+      //   want to trace  re w n   actually em  t  batch, as t ets s   n t  stage unt l
+      // a batch  s full, and   want to see how long t y actually st ck around.
+      DebugEventUt l.addDebugEventToCollect on(
+          currentCollect on, "CollectComparableObjectsStage.outgo ng", clock.nowM ll s());
+      em AndCount(currentCollect on);
+      updateLastEm T  ();
 
-      currentCollection = newBatchCollection();
+      currentCollect on = newBatchCollect on();
     }
   }
 
-  private boolean shouldEmit() {
-    if (lastEmitTimeMillis.get() < 0) {
-      // Initialize lastEmit at the first tweet seen by this stage.
-      lastEmitTimeMillis.set(clock.nowMillis());
+  pr vate boolean shouldEm () {
+     f (lastEm T  M ll s.get() < 0) {
+      //  n  al ze lastEm  at t  f rst t et seen by t  stage.
+      lastEm T  M ll s.set(clock.nowM ll s());
     }
 
-    final boolean sizeBasedEmit = currentCollection.size() >= batchSize;
-    final boolean timeBasedEmit =
-        emitAfterMillis > 0 && lastEmitTimeMillis.get() + emitAfterMillis <= clock.nowMillis();
+    f nal boolean s zeBasedEm  = currentCollect on.s ze() >= batchS ze;
+    f nal boolean t  BasedEm  =
+        em AfterM ll s > 0 && lastEm T  M ll s.get() + em AfterM ll s <= clock.nowM ll s();
 
-    if (sizeBasedEmit && timeBasedEmit) {
-      sizeAndTimeBasedEmitCount.increment();
+     f (s zeBasedEm  && t  BasedEm ) {
+      s zeAndT  BasedEm Count. ncre nt();
       return true;
-    } else if (sizeBasedEmit) {
-      sizeBasedEmitCount.increment();
+    } else  f (s zeBasedEm ) {
+      s zeBasedEm Count. ncre nt();
       return true;
-    } else if (timeBasedEmit) {
-      timeBasedEmitCount.increment();
+    } else  f (t  BasedEm ) {
+      t  BasedEm Count. ncre nt();
       return true;
     } else {
       return false;
     }
   }
 
-  @Override
-  public void innerPostprocess() throws StageException {
-    if (!currentCollection.isEmpty()) {
-      emitAndCount(currentCollection);
-      updateLastEmitTime();
-      currentCollection = newBatchCollection();
+  @Overr de
+  publ c vo d  nnerPostprocess() throws StageExcept on {
+     f (!currentCollect on. sEmpty()) {
+      em AndCount(currentCollect on);
+      updateLastEm T  ();
+      currentCollect on = newBatchCollect on();
     }
   }
 
-  private void updateLastEmitTime() {
-    long currentEmitTime = clock.nowMillis();
-    long previousEmitTime = lastEmitTimeMillis.getAndSet(currentEmitTime);
+  pr vate vo d updateLastEm T  () {
+    long currentEm T   = clock.nowM ll s();
+    long prev ousEm T   = lastEm T  M ll s.getAndSet(currentEm T  );
 
-    // Also stat how long each emit takes.
-    batchEmitTimeStats.timerIncrement(currentEmitTime - previousEmitTime);
+    // Also stat how long each em  takes.
+    batchEm T  Stats.t  r ncre nt(currentEm T   - prev ousEm T  );
   }
 
-  public void setBatchSize(Integer size) {
-    LOG.info("Updating all CollectComparableObjectsStage batchSize to {}.", size);
-    this.batchSize = size;
+  publ c vo d setBatchS ze( nteger s ze) {
+    LOG. nfo("Updat ng all CollectComparableObjectsStage batchS ze to {}.", s ze);
+    t .batchS ze = s ze;
   }
 
-  public Boolean getReverseOrder() {
+  publ c Boolean getReverseOrder() {
     return reverseOrder;
   }
 
-  public void setReverseOrder(Boolean reverseOrder) {
-    this.reverseOrder = reverseOrder;
+  publ c vo d setReverseOrder(Boolean reverseOrder) {
+    t .reverseOrder = reverseOrder;
   }
 
-  public void setEmitAfterMillis(long emitAfterMillis) {
-    LOG.info("Setting emitAfterMillis to {}.", emitAfterMillis);
-    this.emitAfterMillis = emitAfterMillis;
+  publ c vo d setEm AfterM ll s(long em AfterM ll s) {
+    LOG. nfo("Sett ng em AfterM ll s to {}.", em AfterM ll s);
+    t .em AfterM ll s = em AfterM ll s;
   }
 
-  public long getSizeBasedEmitCount() {
-    return sizeBasedEmitCount.get();
+  publ c long getS zeBasedEm Count() {
+    return s zeBasedEm Count.get();
   }
 
-  public long getTimeBasedEmitCount() {
-    return timeBasedEmitCount.get();
+  publ c long getT  BasedEm Count() {
+    return t  BasedEm Count.get();
   }
 }

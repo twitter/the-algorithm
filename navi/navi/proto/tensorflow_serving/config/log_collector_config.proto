@@ -1,12 +1,12 @@
 syntax = "proto3";
 
-package tensorflow.serving;
-option cc_enable_arenas = true;
+package tensorflow.serv ng;
+opt on cc_enable_arenas = true;
 
-message LogCollectorConfig {
-  // Identifies the type of the LogCollector we will use to collect these logs.
-  string type = 1;
+ ssage LogCollectorConf g {
+  //  dent f es t  type of t  LogCollector   w ll use to collect t se logs.
+  str ng type = 1;
 
-  // The prefix to use for the filenames of the logs.
-  string filename_prefix = 2;
+  // T  pref x to use for t  f lena s of t  logs.
+  str ng f lena _pref x = 2;
 }

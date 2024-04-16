@@ -1,105 +1,105 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+package com.tw ter.search.common.ut l.ml.pred ct on_eng ne;
 
-import java.util.Map;
-import java.util.stream.Collectors;
+ mport java.ut l.Map;
+ mport java.ut l.stream.Collectors;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
+ mport com.google.common.collect.HashMult map;
+ mport com.google.common.collect.Maps;
+ mport com.google.common.collect.Mult map;
 
-import com.twitter.ml.api.FeatureParser;
-import com.twitter.ml.api.transform.DiscretizerTransform;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchema;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchemaEntry;
+ mport com.tw ter.ml.ap .FeatureParser;
+ mport com.tw ter.ml.ap .transform.D scret zerTransform;
+ mport com.tw ter.search.common.features.thr ft.Thr ftSearchFeatureSc ma;
+ mport com.tw ter.search.common.features.thr ft.Thr ftSearchFeatureSc maEntry;
 
 /**
- * Builds a model with schema-based features, here all features are tracked by Id.
- * This class is very similar to LegacyModelBuilder, which will eventually be deprecated.
+ * Bu lds a model w h sc ma-based features,  re all features are tracked by  d.
+ * T  class  s very s m lar to LegacyModelBu lder, wh ch w ll eventually be deprecated.
  */
-public class SchemaBasedModelBuilder extends BaseModelBuilder {
-  private final Map<String, FeatureData> featuresByName;
-  private final Map<Integer, Double> binaryFeatures;
-  private final Map<Integer, Double> continuousFeatures;
-  private final Multimap<Integer, DiscretizedFeatureRange> discretizedFeatureRanges;
+publ c class Sc maBasedModelBu lder extends BaseModelBu lder {
+  pr vate f nal Map<Str ng, FeatureData> featuresByNa ;
+  pr vate f nal Map< nteger, Double> b naryFeatures;
+  pr vate f nal Map< nteger, Double> cont nuousFeatures;
+  pr vate f nal Mult map< nteger, D scret zedFeatureRange> d scret zedFeatureRanges;
 
   /**
-   * a class to hold feature information
+   * a class to hold feature  nformat on
    */
-  static class FeatureData {
-    private final ThriftSearchFeatureSchemaEntry entry;
-    private final int id;
+  stat c class FeatureData {
+    pr vate f nal Thr ftSearchFeatureSc maEntry entry;
+    pr vate f nal  nt  d;
 
-    public FeatureData(ThriftSearchFeatureSchemaEntry entry, int id) {
-      this.entry = entry;
-      this.id = id;
+    publ c FeatureData(Thr ftSearchFeatureSc maEntry entry,  nt  d) {
+      t .entry = entry;
+      t . d =  d;
     }
   }
 
-  SchemaBasedModelBuilder(String modelName, ThriftSearchFeatureSchema featureSchema) {
-    super(modelName);
-    featuresByName = getFeatureDataMap(featureSchema);
-    binaryFeatures = Maps.newHashMap();
-    continuousFeatures = Maps.newHashMap();
-    discretizedFeatureRanges = HashMultimap.create();
+  Sc maBasedModelBu lder(Str ng modelNa , Thr ftSearchFeatureSc ma featureSc ma) {
+    super(modelNa );
+    featuresByNa  = getFeatureDataMap(featureSc ma);
+    b naryFeatures = Maps.newHashMap();
+    cont nuousFeatures = Maps.newHashMap();
+    d scret zedFeatureRanges = HashMult map.create();
   }
 
   /**
-   * Creates a map from feature name to thrift entries
+   * Creates a map from feature na  to thr ft entr es
    */
-  private static Map<String, FeatureData> getFeatureDataMap(
-      ThriftSearchFeatureSchema schema) {
-    return schema.getEntries().entrySet().stream()
+  pr vate stat c Map<Str ng, FeatureData> getFeatureDataMap(
+      Thr ftSearchFeatureSc ma sc ma) {
+    return sc ma.getEntr es().entrySet().stream()
         .collect(Collectors.toMap(
-            e -> e.getValue().getFeatureName(),
+            e -> e.getValue().getFeatureNa (),
             e -> new FeatureData(e.getValue(), e.getKey())
         ));
   }
 
-  @Override
-  protected void addFeature(String baseName, double weight, FeatureParser parser) {
-    FeatureData feature = featuresByName.get(baseName);
-    if (feature != null) {
-      switch (feature.entry.getFeatureType()) {
+  @Overr de
+  protected vo d addFeature(Str ng baseNa , double   ght, FeatureParser parser) {
+    FeatureData feature = featuresByNa .get(baseNa );
+     f (feature != null) {
+      sw ch (feature.entry.getFeatureType()) {
         case BOOLEAN_VALUE:
-          binaryFeatures.put(feature.id, weight);
+          b naryFeatures.put(feature. d,   ght);
           break;
-        case INT32_VALUE:
+        case  NT32_VALUE:
         case LONG_VALUE:
         case DOUBLE_VALUE:
-          continuousFeatures.put(feature.id, weight);
+          cont nuousFeatures.put(feature. d,   ght);
           break;
         default:
-          // other values are not supported yet
-          throw new IllegalArgumentException(
-              String.format("Unsupported feature type: %s", feature));
+          // ot r values are not supported yet
+          throw new  llegalArgu ntExcept on(
+              Str ng.format("Unsupported feature type: %s", feature));
       }
-    } else if (baseName.endsWith(DISCRETIZER_NAME_SUFFIX)
-        && parser.getExtension().containsKey(DiscretizerTransform.DEFAULT_RANGE_EXT)) {
+    } else  f (baseNa .endsW h(D SCRET ZER_NAME_SUFF X)
+        && parser.getExtens on().conta nsKey(D scret zerTransform.DEFAULT_RANGE_EXT)) {
 
-      String featureName =
-          baseName.substring(0, baseName.length() - DISCRETIZER_NAME_SUFFIX.length());
+      Str ng featureNa  =
+          baseNa .substr ng(0, baseNa .length() - D SCRET ZER_NAME_SUFF X.length());
 
-      feature = featuresByName.get(featureName);
-      if (feature == null) {
+      feature = featuresByNa .get(featureNa );
+       f (feature == null) {
         return;
       }
 
-      String rangeSpec = parser.getExtension().get(DiscretizerTransform.DEFAULT_RANGE_EXT);
-      discretizedFeatureRanges.put(feature.id, new DiscretizedFeatureRange(weight, rangeSpec));
+      Str ng rangeSpec = parser.getExtens on().get(D scret zerTransform.DEFAULT_RANGE_EXT);
+      d scret zedFeatureRanges.put(feature. d, new D scret zedFeatureRange(  ght, rangeSpec));
     }
   }
 
-  @Override
-  public LightweightLinearModel build() {
-    Map<Integer, DiscretizedFeature> discretizedFeatures = Maps.newHashMap();
-    for (Integer feature : discretizedFeatureRanges.keySet()) {
-      DiscretizedFeature discretizedFeature =
-          BaseModelBuilder.buildFeature(discretizedFeatureRanges.get(feature));
-      if (!discretizedFeature.allValuesBelowThreshold(MIN_WEIGHT)) {
-        discretizedFeatures.put(feature, discretizedFeature);
+  @Overr de
+  publ c L ght  ghtL nearModel bu ld() {
+    Map< nteger, D scret zedFeature> d scret zedFeatures = Maps.newHashMap();
+    for ( nteger feature : d scret zedFeatureRanges.keySet()) {
+      D scret zedFeature d scret zedFeature =
+          BaseModelBu lder.bu ldFeature(d scret zedFeatureRanges.get(feature));
+       f (!d scret zedFeature.allValuesBelowThreshold(M N_WE GHT)) {
+        d scret zedFeatures.put(feature, d scret zedFeature);
       }
     }
-    return LightweightLinearModel.createForSchemaBased(
-        modelName, bias, binaryFeatures, continuousFeatures, discretizedFeatures);
+    return L ght  ghtL nearModel.createForSc maBased(
+        modelNa , b as, b naryFeatures, cont nuousFeatures, d scret zedFeatures);
   }
 }

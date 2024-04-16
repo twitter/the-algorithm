@@ -1,8 +1,8 @@
-package com.twitter.home_mixer.model.request
+package com.tw ter.ho _m xer.model.request
 
-import com.twitter.product_mixer.core.model.marshalling.request.DebugOptions
-import com.twitter.util.Time
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.DebugOpt ons
+ mport com.tw ter.ut l.T  
 
-case class HomeMixerDebugOptions(
-  override val requestTimeOverride: Option[Time])
-    extends DebugOptions
+case class Ho M xerDebugOpt ons(
+  overr de val requestT  Overr de: Opt on[T  ])
+    extends DebugOpt ons

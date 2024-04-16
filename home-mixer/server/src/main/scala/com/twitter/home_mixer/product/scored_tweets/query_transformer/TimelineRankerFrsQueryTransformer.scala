@@ -1,64 +1,64 @@
-package com.twitter.home_mixer.product.scored_tweets.query_transformer
+package com.tw ter.ho _m xer.product.scored_t ets.query_transfor r
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.core_workflows.user_model.{thriftscala => um}
-import com.twitter.home_mixer.model.HomeFeatures.UserStateFeature
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.FrsSeedUserIdsFeature
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam
-import com.twitter.home_mixer.product.scored_tweets.query_transformer.TimelineRankerFrsQueryTransformer._
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.timelineranker.{thriftscala => t}
-import com.twitter.timelines.common.model.TweetKindOption
-import com.twitter.timelines.model.candidate.CandidateTweetSourceId
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.core_workflows.user_model.{thr ftscala => um}
+ mport com.tw ter.ho _m xer.model.Ho Features.UserStateFeature
+ mport com.tw ter.ho _m xer.model.request.HasDev ceContext
+ mport com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.FrsSeedUser dsFeature
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParam
+ mport com.tw ter.ho _m xer.product.scored_t ets.query_transfor r.T  l neRankerFrsQueryTransfor r._
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.qual y_factor.HasQual yFactorStatus
+ mport com.tw ter.t  l neranker.{thr ftscala => t}
+ mport com.tw ter.t  l nes.common.model.T etK ndOpt on
+ mport com.tw ter.t  l nes.model.cand date.Cand dateT etS ce d
 
-object TimelineRankerFrsQueryTransformer {
-  private val DefaultSinceDuration = 24.hours
-  private val ExpandedSinceDuration = 48.hours
-  private val MaxTweetsToFetch = 100
+object T  l neRankerFrsQueryTransfor r {
+  pr vate val DefaultS nceDurat on = 24.h s
+  pr vate val ExpandedS nceDurat on = 48.h s
+  pr vate val MaxT etsToFetch = 100
 
-  private val tweetKindOptions: TweetKindOption.ValueSet =
-    TweetKindOption(includeOriginalTweetsAndQuotes = true)
+  pr vate val t etK ndOpt ons: T etK ndOpt on.ValueSet =
+    T etK ndOpt on( ncludeOr g nalT etsAndQuotes = true)
 
-  private val UserStatesForExtendedSinceDuration: Set[um.UserState] = Set(
-    um.UserState.Light,
-    um.UserState.MediumNonTweeter,
-    um.UserState.MediumTweeter,
+  pr vate val UserStatesForExtendedS nceDurat on: Set[um.UserState] = Set(
+    um.UserState.L ght,
+    um.UserState. d umNonT eter,
+    um.UserState. d umT eter,
     um.UserState.NearZero,
     um.UserState.New,
-    um.UserState.VeryLight
+    um.UserState.VeryL ght
   )
 }
 
-case class TimelineRankerFrsQueryTransformer[
-  Query <: PipelineQuery with HasQualityFactorStatus with HasDeviceContext
+case class T  l neRankerFrsQueryTransfor r[
+  Query <: P pel neQuery w h HasQual yFactorStatus w h HasDev ceContext
 ](
-  override val candidatePipelineIdentifier: CandidatePipelineIdentifier,
-  override val maxTweetsToFetch: Int = MaxTweetsToFetch)
-    extends CandidatePipelineQueryTransformer[Query, t.RecapQuery]
-    with TimelineRankerQueryTransformer[Query] {
+  overr de val cand dateP pel ne dent f er: Cand dateP pel ne dent f er,
+  overr de val maxT etsToFetch:  nt = MaxT etsToFetch)
+    extends Cand dateP pel neQueryTransfor r[Query, t.RecapQuery]
+    w h T  l neRankerQueryTransfor r[Query] {
 
-  override val candidateTweetSourceId = CandidateTweetSourceId.FrsTweet
-  override val options = tweetKindOptions
+  overr de val cand dateT etS ce d = Cand dateT etS ce d.FrsT et
+  overr de val opt ons = t etK ndOpt ons
 
-  override def getTensorflowModel(query: Query): Option[String] = {
-    Some(query.params(ScoredTweetsParam.EarlybirdTensorflowModel.FrsParam))
+  overr de def getTensorflowModel(query: Query): Opt on[Str ng] = {
+    So (query.params(ScoredT etsParam.Earlyb rdTensorflowModel.FrsParam))
   }
 
-  override def seedAuthorIds(query: Query): Option[Seq[Long]] = {
-    query.features.flatMap(_.getOrElse(FrsSeedUserIdsFeature, None))
+  overr de def seedAuthor ds(query: Query): Opt on[Seq[Long]] = {
+    query.features.flatMap(_.getOrElse(FrsSeedUser dsFeature, None))
   }
 
-  override def transform(input: Query): t.RecapQuery = {
-    val userState = input.features.get.getOrElse(UserStateFeature, None)
+  overr de def transform( nput: Query): t.RecapQuery = {
+    val userState =  nput.features.get.getOrElse(UserStateFeature, None)
 
-    val sinceDuration =
-      if (userState.exists(UserStatesForExtendedSinceDuration.contains)) ExpandedSinceDuration
-      else DefaultSinceDuration
+    val s nceDurat on =
+       f (userState.ex sts(UserStatesForExtendedS nceDurat on.conta ns)) ExpandedS nceDurat on
+      else DefaultS nceDurat on
 
-    buildTimelineRankerQuery(input, sinceDuration).toThriftRecapQuery
+    bu ldT  l neRankerQuery( nput, s nceDurat on).toThr ftRecapQuery
   }
 }

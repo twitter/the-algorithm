@@ -1,37 +1,37 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.job
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.job
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.summingbird.Counter
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.summ ngb rd.Counter
 
 /**
- * A summingbird Counter which is associated with a predicate which operates on
- * [[com.twitter.ml.api.DataRecord]] instances.
+ * A summ ngb rd Counter wh ch  s assoc ated w h a pred cate wh ch operates on
+ * [[com.tw ter.ml.ap .DataRecord]]  nstances.
  *
- * For example, for a data record which represents a Tweet, one could define a predicate
- * which checks whether the Tweet contains a binary feature representing the presence of
- * an image. The counter can then be used to represent the the count of Tweets with
- * images processed.
+ * For example, for a data record wh ch represents a T et, one could def ne a pred cate
+ * wh ch c cks w t r t  T et conta ns a b nary feature represent ng t  presence of
+ * an  mage. T  counter can t n be used to represent t  t  count of T ets w h
+ *  mages processed.
  *
- * @param predicate a predicate which gates the counter
- * @param counter a summingbird Counter instance
+ * @param pred cate a pred cate wh ch gates t  counter
+ * @param counter a summ ngb rd Counter  nstance
  */
-case class DataRecordFeatureCounter(predicate: DataRecord => Boolean, counter: Counter)
+case class DataRecordFeatureCounter(pred cate: DataRecord => Boolean, counter: Counter)
 
 object DataRecordFeatureCounter {
 
   /**
-   * Increments the counter if the record satisfies the predicate
+   *  ncre nts t  counter  f t  record sat sf es t  pred cate
    *
    * @param recordCounter a data record counter
    * @param record a data record
    */
-  def apply(recordCounter: DataRecordFeatureCounter, record: DataRecord): Unit =
-    if (recordCounter.predicate(record)) recordCounter.counter.incr()
+  def apply(recordCounter: DataRecordFeatureCounter, record: DataRecord): Un  =
+     f (recordCounter.pred cate(record)) recordCounter.counter. ncr()
 
   /**
-   * Defines a feature counter with a predicate that is always true
+   * Def nes a feature counter w h a pred cate that  s always true
    *
-   * @param counter a summingbird Counter instance
+   * @param counter a summ ngb rd Counter  nstance
    * @return a data record counter
    */
   def any(counter: Counter): DataRecordFeatureCounter =

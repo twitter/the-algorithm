@@ -1,18 +1,18 @@
-package com.twitter.visibility.interfaces.common.tweets
+package com.tw ter.v s b l y. nterfaces.common.t ets
 
-import com.twitter.spam.rtf.thriftscala.SafetyLabel
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.util.Memoize
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLabel
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLabelType
+ mport com.tw ter.strato.cl ent.Fetc r
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.strato.thr ft.ScroogeConv mpl c s._
+ mport com.tw ter.ut l. mo ze
 
-object StratoSafetyLabelFetcher {
-  def apply(client: StratoClient): SafetyLabelFetcherType = {
-    val getFetcher: SafetyLabelType => Fetcher[Long, Unit, SafetyLabel] =
-      Memoize((safetyLabelType: SafetyLabelType) =>
-        client.fetcher[Long, SafetyLabel](s"visibility/${safetyLabelType.name}.Tweet"))
+object StratoSafetyLabelFetc r {
+  def apply(cl ent: StratoCl ent): SafetyLabelFetc rType = {
+    val getFetc r: SafetyLabelType => Fetc r[Long, Un , SafetyLabel] =
+       mo ze((safetyLabelType: SafetyLabelType) =>
+        cl ent.fetc r[Long, SafetyLabel](s"v s b l y/${safetyLabelType.na }.T et"))
 
-    (tweetId, safetyLabelType) => getFetcher(safetyLabelType).fetch(tweetId).map(_.v)
+    (t et d, safetyLabelType) => getFetc r(safetyLabelType).fetch(t et d).map(_.v)
   }
 }

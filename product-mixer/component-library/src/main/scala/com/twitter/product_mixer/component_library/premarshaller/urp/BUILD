@@ -1,21 +1,21 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/premarshaller/urp/builder",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/premarshaller/urt/builder",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/premarshaller",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/selector",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/urp",
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "product-m xer/component-l brary/src/ma n/scala/com/tw ter/product_m xer/component_l brary/model/cand date",
+        "product-m xer/component-l brary/src/ma n/scala/com/tw ter/product_m xer/component_l brary/premarshaller/urp/bu lder",
+        "product-m xer/component-l brary/src/ma n/scala/com/tw ter/product_m xer/component_l brary/premarshaller/urt/bu lder",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/premarshaller",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/selector",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/marshall ng/response/urp",
     ],
     exports = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/premarshaller/urp/builder",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/premarshaller",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/selector",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/urp",
+        "product-m xer/component-l brary/src/ma n/scala/com/tw ter/product_m xer/component_l brary/model/cand date",
+        "product-m xer/component-l brary/src/ma n/scala/com/tw ter/product_m xer/component_l brary/premarshaller/urp/bu lder",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/premarshaller",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/funct onal_component/selector",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/model/marshall ng/response/urp",
     ],
 )

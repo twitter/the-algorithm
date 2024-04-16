@@ -1,86 +1,86 @@
-package com.twitter.frigate.pushservice.take
+package com.tw ter.fr gate.pushserv ce.take
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.Invalid
-import com.twitter.frigate.common.base.OK
-import com.twitter.frigate.common.base.Response
-import com.twitter.frigate.common.base.Result
-import com.twitter.frigate.common.util.NotificationScribeUtil
-import com.twitter.frigate.common.util.PushServiceUtil
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.thriftscala.PushResponse
-import com.twitter.frigate.pushservice.thriftscala.PushStatus
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base. nval d
+ mport com.tw ter.fr gate.common.base.OK
+ mport com.tw ter.fr gate.common.base.Response
+ mport com.tw ter.fr gate.common.base.Result
+ mport com.tw ter.fr gate.common.ut l.Not f cat onScr beUt l
+ mport com.tw ter.fr gate.common.ut l.PushServ ceUt l
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.thr ftscala.PushResponse
+ mport com.tw ter.fr gate.pushserv ce.thr ftscala.PushStatus
+ mport com.tw ter.ut l.Future
 
-class SendHandlerNotifier(
-  candidateNotifier: CandidateNotifier,
-  private val statsReceiver: StatsReceiver) {
+class SendHandlerNot f er(
+  cand dateNot f er: Cand dateNot f er,
+  pr vate val statsRece ver: StatsRece ver) {
 
-  val missingResponseCounter = statsReceiver.counter("missing_response")
-  val filteredResponseCounter = statsReceiver.counter("filtered")
+  val m ss ngResponseCounter = statsRece ver.counter("m ss ng_response")
+  val f lteredResponseCounter = statsRece ver.counter("f ltered")
 
   /**
    *
-   * @param isScribeInfoRequired: [[Boolean]] to indicate if scribe info is required
-   * @param candidate: [[PushCandidate]] to build the scribe data from
-   * @return: scribe response string
+   * @param  sScr be nfoRequ red: [[Boolean]] to  nd cate  f scr be  nfo  s requ red
+   * @param cand date: [[PushCand date]] to bu ld t  scr be data from
+   * @return: scr be response str ng
    */
-  private def scribeInfoForResponse(
-    isScribeInfoRequired: Boolean,
-    candidate: PushCandidate
-  ): Future[Option[String]] = {
-    if (isScribeInfoRequired) {
-      candidate.scribeData().map { scribedInfo =>
-        Some(NotificationScribeUtil.convertToJsonString(scribedInfo))
+  pr vate def scr be nfoForResponse(
+     sScr be nfoRequ red: Boolean,
+    cand date: PushCand date
+  ): Future[Opt on[Str ng]] = {
+     f ( sScr be nfoRequ red) {
+      cand date.scr beData().map { scr bed nfo =>
+        So (Not f cat onScr beUt l.convertToJsonStr ng(scr bed nfo))
       }
     } else Future.None
   }
 
   /**
    *
-   * @param response: Candidate validation response
-   * @param responseWithScribedInfo: boolean indicating if scribe data is expected in push response
-   * @return: [[PushResponse]] containing final result of send request for [[com.twitter.frigate.pushservice.thriftscala.PushRequest]]
+   * @param response: Cand date val dat on response
+   * @param responseW hScr bed nfo: boolean  nd cat ng  f scr be data  s expected  n push response
+   * @return: [[PushResponse]] conta n ng f nal result of send request for [[com.tw ter.fr gate.pushserv ce.thr ftscala.PushRequest]]
    */
-  final def checkResponseAndNotify(
-    response: Response[PushCandidate, Result],
-    responseWithScribedInfo: Boolean
+  f nal def c ckResponseAndNot fy(
+    response: Response[PushCand date, Result],
+    responseW hScr bed nfo: Boolean
   ): Future[PushResponse] = {
 
     response match {
-      case Response(OK, processedCandidates) =>
-        val (validCandidates, invalidCandidates) = processedCandidates.partition(_.result == OK)
-        validCandidates.headOption match {
-          case Some(candidateResult) =>
-            val scribeInfo =
-              scribeInfoForResponse(responseWithScribedInfo, candidateResult.candidate)
-            scribeInfo.flatMap { scribedData =>
+      case Response(OK, processedCand dates) =>
+        val (val dCand dates,  nval dCand dates) = processedCand dates.part  on(_.result == OK)
+        val dCand dates. adOpt on match {
+          case So (cand dateResult) =>
+            val scr be nfo =
+              scr be nfoForResponse(responseW hScr bed nfo, cand dateResult.cand date)
+            scr be nfo.flatMap { scr bedData =>
               val response: Future[PushResponse] =
-                candidateNotifier.notify(candidateResult.candidate)
-              response.map(_.copy(notifScribe = scribedData))
+                cand dateNot f er.not fy(cand dateResult.cand date)
+              response.map(_.copy(not fScr be = scr bedData))
             }
 
           case None =>
-            invalidCandidates.headOption match {
-              case Some(candidateResult) =>
-                filteredResponseCounter.incr()
-                val response = candidateResult.result match {
-                  case Invalid(reason) => PushResponse(PushStatus.Filtered, filteredBy = reason)
-                  case _ => PushResponse(PushStatus.Filtered, filteredBy = Some("unknown"))
+             nval dCand dates. adOpt on match {
+              case So (cand dateResult) =>
+                f lteredResponseCounter. ncr()
+                val response = cand dateResult.result match {
+                  case  nval d(reason) => PushResponse(PushStatus.F ltered, f lteredBy = reason)
+                  case _ => PushResponse(PushStatus.F ltered, f lteredBy = So ("unknown"))
                 }
 
-                val scribeInfo =
-                  scribeInfoForResponse(responseWithScribedInfo, candidateResult.candidate)
-                scribeInfo.map(scribeData => response.copy(notifScribe = scribeData))
+                val scr be nfo =
+                  scr be nfoForResponse(responseW hScr bed nfo, cand dateResult.cand date)
+                scr be nfo.map(scr beData => response.copy(not fScr be = scr beData))
 
               case None =>
-                missingResponseCounter.incr()
-                PushServiceUtil.FilteredPushResponseFut
+                m ss ngResponseCounter. ncr()
+                PushServ ceUt l.F lteredPushResponseFut
             }
         }
 
-      case Response(Invalid(reason), _) =>
-        throw new IllegalStateException(s"Unexpected target filtering in SendHandler: $reason")
+      case Response( nval d(reason), _) =>
+        throw new  llegalStateExcept on(s"Unexpected target f lter ng  n SendHandler: $reason")
     }
   }
 }

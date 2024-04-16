@@ -1,13 +1,13 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "decider/src/main/scala",
-        "finagle/finagle-memcached",
-        "hermit/hermit-core/src/main/scala/com/twitter/hermit/store/common",
-        "relevance-platform/src/main/scala/com/twitter/relevance_platform/common/injection",
-        "src/scala/com/twitter/simclusters_v2/common",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "dec der/src/ma n/scala",
+        "f nagle/f nagle- mcac d",
+        " rm / rm -core/src/ma n/scala/com/tw ter/ rm /store/common",
+        "relevance-platform/src/ma n/scala/com/tw ter/relevance_platform/common/ nject on",
+        "src/scala/com/tw ter/s mclusters_v2/common",
+        "src/thr ft/com/tw ter/s mclusters_v2:s mclusters_v2-thr ft-scala",
     ],
 )

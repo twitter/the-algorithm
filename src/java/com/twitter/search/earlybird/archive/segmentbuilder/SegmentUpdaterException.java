@@ -1,13 +1,13 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+package com.tw ter.search.earlyb rd.arch ve.seg ntbu lder;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
 /**
- * Used when when SegmentUpdater fails processing segments.
+ * Used w n w n Seg ntUpdater fa ls process ng seg nts.
  */
-@VisibleForTesting
-class SegmentUpdaterException extends Exception {
-  SegmentUpdaterException(String msg) {
+@V s bleForTest ng
+class Seg ntUpdaterExcept on extends Except on {
+  Seg ntUpdaterExcept on(Str ng msg) {
     super(msg);
   }
 }

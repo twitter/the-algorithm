@@ -1,59 +1,59 @@
-package com.twitter.search.common.search;
+package com.tw ter.search.common.search;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.search.DocIdSetIterator;
+ mport org.apac .lucene.search.Doc dSet erator;
 /**
- * Disjunction over 2 DocIdSetIterators. This should be faster than a disjunction over N since there
- * would be no need to adjust the heap.
+ * D sjunct on over 2 Doc dSet erators. T  should be faster than a d sjunct on over N s nce t re
+ * would be no need to adjust t   ap.
  */
-public class PairDocIdSetIterator extends DocIdSetIterator {
+publ c class Pa rDoc dSet erator extends Doc dSet erator {
 
-  private final DocIdSetIterator d1;
-  private final DocIdSetIterator d2;
+  pr vate f nal Doc dSet erator d1;
+  pr vate f nal Doc dSet erator d2;
 
-  private int doc = -1;
+  pr vate  nt doc = -1;
 
-  /** Creates a new PairDocIdSetIterator instance. */
-  public PairDocIdSetIterator(DocIdSetIterator d1, DocIdSetIterator d2) throws IOException {
-    Preconditions.checkNotNull(d1);
-    Preconditions.checkNotNull(d2);
-    this.d1 = d1;
-    this.d2 = d2;
-    // position the iterators
-    this.d1.nextDoc();
-    this.d2.nextDoc();
+  /** Creates a new Pa rDoc dSet erator  nstance. */
+  publ c Pa rDoc dSet erator(Doc dSet erator d1, Doc dSet erator d2) throws  OExcept on {
+    Precond  ons.c ckNotNull(d1);
+    Precond  ons.c ckNotNull(d2);
+    t .d1 = d1;
+    t .d2 = d2;
+    // pos  on t   erators
+    t .d1.nextDoc();
+    t .d2.nextDoc();
   }
 
-  @Override
-  public int docID() {
+  @Overr de
+  publ c  nt doc D() {
     return doc;
   }
 
-  @Override
-  public int nextDoc() throws IOException {
-    int doc1 = d1.docID();
-    int doc2 = d2.docID();
-    DocIdSetIterator iter = null;
-    if (doc1 < doc2) {
+  @Overr de
+  publ c  nt nextDoc() throws  OExcept on {
+     nt doc1 = d1.doc D();
+     nt doc2 = d2.doc D();
+    Doc dSet erator  er = null;
+     f (doc1 < doc2) {
       doc = doc1;
       //d1.nextDoc();
-      iter = d1;
-    } else if (doc1 > doc2) {
+       er = d1;
+    } else  f (doc1 > doc2) {
       doc = doc2;
       //d2.nextDoc();
-      iter = d2;
+       er = d2;
     } else {
       doc = doc1;
       //d1.nextDoc();
       //d2.nextDoc();
     }
 
-    if (doc != NO_MORE_DOCS) {
-      if (iter != null) {
-        iter.nextDoc();
+     f (doc != NO_MORE_DOCS) {
+       f ( er != null) {
+         er.nextDoc();
       } else {
         d1.nextDoc();
         d2.nextDoc();
@@ -62,20 +62,20 @@ public class PairDocIdSetIterator extends DocIdSetIterator {
     return doc;
   }
 
-  @Override
-  public int advance(int target) throws IOException {
-    if (d1.docID() < target) {
+  @Overr de
+  publ c  nt advance( nt target) throws  OExcept on {
+     f (d1.doc D() < target) {
       d1.advance(target);
     }
-    if (d2.docID() < target) {
+     f (d2.doc D() < target) {
       d2.advance(target);
     }
     return (doc != NO_MORE_DOCS) ? nextDoc() : doc;
   }
 
-  @Override
-  public long cost() {
-    // very coarse estimate
+  @Overr de
+  publ c long cost() {
+    // very coarse est mate
     return d1.cost() + d2.cost();
   }
 

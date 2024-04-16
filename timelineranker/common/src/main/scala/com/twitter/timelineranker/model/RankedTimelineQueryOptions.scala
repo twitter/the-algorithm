@@ -1,29 +1,29 @@
-package com.twitter.timelineranker.model
+package com.tw ter.t  l neranker.model
 
-import com.twitter.timelineranker.{thriftscala => thrift}
+ mport com.tw ter.t  l neranker.{thr ftscala => thr ft}
 
-object RankedTimelineQueryOptions {
-  def fromThrift(options: thrift.RankedTimelineQueryOptions): RankedTimelineQueryOptions = {
-    RankedTimelineQueryOptions(
-      seenEntries = options.seenEntries.map(PriorSeenEntries.fromThrift)
+object RankedT  l neQueryOpt ons {
+  def fromThr ft(opt ons: thr ft.RankedT  l neQueryOpt ons): RankedT  l neQueryOpt ons = {
+    RankedT  l neQueryOpt ons(
+      seenEntr es = opt ons.seenEntr es.map(Pr orSeenEntr es.fromThr ft)
     )
   }
 }
 
-case class RankedTimelineQueryOptions(seenEntries: Option[PriorSeenEntries])
-    extends TimelineQueryOptions {
+case class RankedT  l neQueryOpt ons(seenEntr es: Opt on[Pr orSeenEntr es])
+    extends T  l neQueryOpt ons {
 
-  throwIfInvalid()
+  throw f nval d()
 
-  def toThrift: thrift.RankedTimelineQueryOptions = {
-    thrift.RankedTimelineQueryOptions(seenEntries = seenEntries.map(_.toThrift))
+  def toThr ft: thr ft.RankedT  l neQueryOpt ons = {
+    thr ft.RankedT  l neQueryOpt ons(seenEntr es = seenEntr es.map(_.toThr ft))
   }
 
-  def toTimelineQueryOptionsThrift: thrift.TimelineQueryOptions = {
-    thrift.TimelineQueryOptions.RankedTimelineQueryOptions(toThrift)
+  def toT  l neQueryOpt onsThr ft: thr ft.T  l neQueryOpt ons = {
+    thr ft.T  l neQueryOpt ons.RankedT  l neQueryOpt ons(toThr ft)
   }
 
-  def throwIfInvalid(): Unit = {
-    seenEntries.foreach(_.throwIfInvalid)
+  def throw f nval d(): Un  = {
+    seenEntr es.foreach(_.throw f nval d)
   }
 }

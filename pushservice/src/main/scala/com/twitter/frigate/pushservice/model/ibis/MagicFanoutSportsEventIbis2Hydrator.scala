@@ -1,89 +1,89 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.tw ter.fr gate.pushserv ce.model. b s
 
-import com.twitter.frigate.common.base.BaseGameScore
-import com.twitter.frigate.common.base.MagicFanoutSportsEventCandidate
-import com.twitter.frigate.common.base.MagicFanoutSportsScoreInformation
-import com.twitter.frigate.common.base.NflGameScore
-import com.twitter.frigate.common.base.SoccerGameScore
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.MagicFanoutEventHydratedCandidate
-import com.twitter.frigate.pushservice.params.PushConstants
-import com.twitter.frigate.pushservice.predicate.magic_fanout.MagicFanoutSportsUtil
-import com.twitter.frigate.pushservice.util.PushIbisUtil._
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.common.base.BaseGa Score
+ mport com.tw ter.fr gate.common.base.Mag cFanoutSportsEventCand date
+ mport com.tw ter.fr gate.common.base.Mag cFanoutSportsScore nformat on
+ mport com.tw ter.fr gate.common.base.NflGa Score
+ mport com.tw ter.fr gate.common.base.SoccerGa Score
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.Mag cFanoutEventHydratedCand date
+ mport com.tw ter.fr gate.pushserv ce.params.PushConstants
+ mport com.tw ter.fr gate.pushserv ce.pred cate.mag c_fanout.Mag cFanoutSportsUt l
+ mport com.tw ter.fr gate.pushserv ce.ut l.Push b sUt l._
+ mport com.tw ter.ut l.Future
 
-trait MagicFanoutSportsEventIbis2Hydrator extends Ibis2HydratorForCandidate {
-  self: PushCandidate
-    with MagicFanoutEventHydratedCandidate
-    with MagicFanoutSportsEventCandidate
-    with MagicFanoutSportsScoreInformation =>
+tra  Mag cFanoutSportsEvent b s2Hydrator extends  b s2HydratorForCand date {
+  self: PushCand date
+    w h Mag cFanoutEventHydratedCand date
+    w h Mag cFanoutSportsEventCand date
+    w h Mag cFanoutSportsScore nformat on =>
 
-  lazy val stats = self.statsReceiver.scope("MagicFanoutSportsEvent")
-  lazy val defaultImageCounter = stats.counter("default_image")
-  lazy val requestImageCounter = stats.counter("request_num")
-  lazy val noneImageCounter = stats.counter("none_num")
+  lazy val stats = self.statsRece ver.scope("Mag cFanoutSportsEvent")
+  lazy val default mageCounter = stats.counter("default_ mage")
+  lazy val request mageCounter = stats.counter("request_num")
+  lazy val none mageCounter = stats.counter("none_num")
 
-  override lazy val relevanceScoreMapFut = Future.value(Map.empty[String, String])
+  overr de lazy val relevanceScoreMapFut = Future.value(Map.empty[Str ng, Str ng])
 
-  private def getModelValueMediaUrl(
-    urlOpt: Option[String],
-    mapKey: String
-  ): Option[(String, String)] = {
-    requestImageCounter.incr()
+  pr vate def getModelValue d aUrl(
+    urlOpt: Opt on[Str ng],
+    mapKey: Str ng
+  ): Opt on[(Str ng, Str ng)] = {
+    request mageCounter. ncr()
     urlOpt match {
-      case Some(PushConstants.DefaultEventMediaUrl) =>
-        defaultImageCounter.incr()
+      case So (PushConstants.DefaultEvent d aUrl) =>
+        default mageCounter. ncr()
         None
-      case Some(url) => Some(mapKey -> url)
+      case So (url) => So (mapKey -> url)
       case None =>
-        noneImageCounter.incr()
+        none mageCounter. ncr()
         None
     }
   }
 
-  private lazy val eventModelValuesFut: Future[Map[String, String]] = {
+  pr vate lazy val eventModelValuesFut: Future[Map[Str ng, Str ng]] = {
     for {
-      title <- eventTitleFut
-      squareImageUrl <- squareImageUrlFut
-      primaryImageUrl <- primaryImageUrlFut
-    } yield {
+      t le <- eventT leFut
+      square mageUrl <- square mageUrlFut
+      pr mary mageUrl <- pr mary mageUrlFut
+    } y eld {
       Map(
-        "event_id" -> s"$eventId",
-        "event_title" -> title
+        "event_ d" -> s"$event d",
+        "event_t le" -> t le
       ) ++
-        getModelValueMediaUrl(squareImageUrl, "square_media_url") ++
-        getModelValueMediaUrl(primaryImageUrl, "media_url")
+        getModelValue d aUrl(square mageUrl, "square_ d a_url") ++
+        getModelValue d aUrl(pr mary mageUrl, " d a_url")
     }
   }
 
-  private lazy val sportsScoreValues: Future[Map[String, String]] = {
+  pr vate lazy val sportsScoreValues: Future[Map[Str ng, Str ng]] = {
     for {
-      scores <- gameScores
-      homeName <- homeTeamInfo.map(_.map(_.name))
-      awayName <- awayTeamInfo.map(_.map(_.name))
-    } yield {
-      if (awayName.isDefined && homeName.isDefined && scores.isDefined) {
+      scores <- ga Scores
+      ho Na  <- ho Team nfo.map(_.map(_.na ))
+      awayNa  <- awayTeam nfo.map(_.map(_.na ))
+    } y eld {
+       f (awayNa . sDef ned && ho Na . sDef ned && scores. sDef ned) {
         scores.get match {
-          case game: SoccerGameScore =>
-            MagicFanoutSportsUtil.getSoccerIbisMap(game) ++ Map(
-              "away_team" -> awayName.get,
-              "home_team" -> homeName.get
+          case ga : SoccerGa Score =>
+            Mag cFanoutSportsUt l.getSoccer b sMap(ga ) ++ Map(
+              "away_team" -> awayNa .get,
+              "ho _team" -> ho Na .get
             )
-          case game: NflGameScore =>
-            MagicFanoutSportsUtil.getNflIbisMap(game) ++ Map(
-              "away_team" -> MagicFanoutSportsUtil.getNFLReadableName(awayName.get),
-              "home_team" -> MagicFanoutSportsUtil.getNFLReadableName(homeName.get)
+          case ga : NflGa Score =>
+            Mag cFanoutSportsUt l.getNfl b sMap(ga ) ++ Map(
+              "away_team" -> Mag cFanoutSportsUt l.getNFLReadableNa (awayNa .get),
+              "ho _team" -> Mag cFanoutSportsUt l.getNFLReadableNa (ho Na .get)
             )
-          case baseGameScore: BaseGameScore =>
-            Map.empty[String, String]
+          case baseGa Score: BaseGa Score =>
+            Map.empty[Str ng, Str ng]
         }
-      } else Map.empty[String, String]
+      } else Map.empty[Str ng, Str ng]
     }
   }
 
-  override lazy val customFieldsMapFut: Future[Map[String, String]] =
-    mergeFutModelValues(super.customFieldsMapFut, sportsScoreValues)
+  overr de lazy val customF eldsMapFut: Future[Map[Str ng, Str ng]] =
+     rgeFutModelValues(super.customF eldsMapFut, sportsScoreValues)
 
-  override lazy val modelValues: Future[Map[String, String]] =
-    mergeFutModelValues(super.modelValues, eventModelValuesFut)
+  overr de lazy val modelValues: Future[Map[Str ng, Str ng]] =
+     rgeFutModelValues(super.modelValues, eventModelValuesFut)
 }

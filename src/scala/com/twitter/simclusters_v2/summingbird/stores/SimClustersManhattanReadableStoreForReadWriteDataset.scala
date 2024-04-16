@@ -1,62 +1,62 @@
-package com.twitter.simclusters_v2.summingbird.stores
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClient
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpointBuilder
-import com.twitter.storage.client.manhattan.kv.impl.Component
-import com.twitter.storage.client.manhattan.kv.impl.DescriptorP1L0
-import com.twitter.storage.client.manhattan.kv.impl.KeyDescriptor
-import com.twitter.storage.client.manhattan.kv.impl.ValueDescriptor
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.ManhattanCluster
-import com.twitter.storehaus_internal.manhattan.Adama
-import com.twitter.storage.client.manhattan.bijections.Bijections.BinaryScalaInjection
-import com.twitter.storage.client.manhattan.kv.Guarantee
-import com.twitter.conversions.DurationOps._
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.bijections.Bijections.LongInjection
-import com.twitter.util.Future
+package com.tw ter.s mclusters_v2.summ ngb rd.stores
+ mport com.tw ter.s mclusters_v2.thr ftscala.ClustersUser s nterested n
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng d
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl ent
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl entMtlsParams
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVEndpo ntBu lder
+ mport com.tw ter.storage.cl ent.manhattan.kv. mpl.Component
+ mport com.tw ter.storage.cl ent.manhattan.kv. mpl.Descr ptorP1L0
+ mport com.tw ter.storage.cl ent.manhattan.kv. mpl.KeyDescr ptor
+ mport com.tw ter.storage.cl ent.manhattan.kv. mpl.ValueDescr ptor
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.storehaus_ nternal.manhattan.ManhattanCluster
+ mport com.tw ter.storehaus_ nternal.manhattan.Adama
+ mport com.tw ter.storage.cl ent.manhattan.b ject ons.B ject ons.B naryScala nject on
+ mport com.tw ter.storage.cl ent.manhattan.kv.Guarantee
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.storage.cl ent.manhattan.b ject ons.B ject ons.Long nject on
+ mport com.tw ter.ut l.Future
 
 /**
- * Manhattan Readable Store to fetch simcluster embedding from a read-write dataset.
- * Only read operations are allowed through this store.
- * @param appId The "application id"
- * @param datasetName The MH dataset name.
- * @param label The human readable label for the finagle thrift client
- * @param mtlsParams Client service identifier to use to authenticate with Manhattan service
+ * Manhattan Readable Store to fetch s mcluster embedd ng from a read-wr e dataset.
+ * Only read operat ons are allo d through t  store.
+ * @param app d T  "appl cat on  d"
+ * @param datasetNa  T  MH dataset na .
+ * @param label T  human readable label for t  f nagle thr ft cl ent
+ * @param mtlsParams Cl ent serv ce  dent f er to use to aut nt cate w h Manhattan serv ce
  * @param manhattanCluster Manhattan RW cluster
  **/
-class SimClustersManhattanReadableStoreForReadWriteDataset(
-  appId: String,
-  datasetName: String,
-  label: String,
-  mtlsParams: ManhattanKVClientMtlsParams,
+class S mClustersManhattanReadableStoreForReadWr eDataset(
+  app d: Str ng,
+  datasetNa : Str ng,
+  label: Str ng,
+  mtlsParams: ManhattanKVCl entMtlsParams,
   manhattanCluster: ManhattanCluster = Adama)
-    extends ReadableStore[SimClustersEmbeddingId, ClustersUserIsInterestedIn] {
+    extends ReadableStore[S mClustersEmbedd ng d, ClustersUser s nterested n] {
   /*
-  Setting up a new builder to read from Manhattan RW dataset. This is specifically required for
-  BeT project where we update the MH RW dataset (every 2 hours) using cloud shuttle service.
+  Sett ng up a new bu lder to read from Manhattan RW dataset. T   s spec f cally requ red for
+  BeT project w re   update t  MH RW dataset (every 2 h s) us ng cloud shuttle serv ce.
    */
-  val destName = manhattanCluster.wilyName
-  val endPoint = ManhattanKVEndpointBuilder(ManhattanKVClient(appId, destName, mtlsParams, label))
-    .defaultGuarantee(Guarantee.SoftDcReadMyWrites)
-    .build()
+  val destNa  = manhattanCluster.w lyNa 
+  val endPo nt = ManhattanKVEndpo ntBu lder(ManhattanKVCl ent(app d, destNa , mtlsParams, label))
+    .defaultGuarantee(Guarantee.SoftDcRead Wr es)
+    .bu ld()
 
-  val keyDesc = KeyDescriptor(Component(LongInjection), Component()).withDataset(datasetName)
-  val valueDesc = ValueDescriptor(BinaryScalaInjection(ClustersUserIsInterestedIn))
+  val keyDesc = KeyDescr ptor(Component(Long nject on), Component()).w hDataset(datasetNa )
+  val valueDesc = ValueDescr ptor(B naryScala nject on(ClustersUser s nterested n))
 
-  override def get(
-    embeddingId: SimClustersEmbeddingId
-  ): Future[Option[ClustersUserIsInterestedIn]] = {
-    embeddingId match {
-      case SimClustersEmbeddingId(theEmbeddingType, theModelVersion, InternalId.UserId(userId)) =>
-        val populatedKey: DescriptorP1L0.FullKey[Long] = keyDesc.withPkey(userId)
+  overr de def get(
+    embedd ng d: S mClustersEmbedd ng d
+  ): Future[Opt on[ClustersUser s nterested n]] = {
+    embedd ng d match {
+      case S mClustersEmbedd ng d(t Embedd ngType, t ModelVers on,  nternal d.User d(user d)) =>
+        val populatedKey: Descr ptorP1L0.FullKey[Long] = keyDesc.w hPkey(user d)
         // returns result
-        val mhValue = Stitch.run(endPoint.get(populatedKey, valueDesc))
+        val mhValue = St ch.run(endPo nt.get(populatedKey, valueDesc))
         mhValue.map {
-          case Some(x) => Option(x.contents)
+          case So (x) => Opt on(x.contents)
           case _ => None
         }
       case _ => Future.None

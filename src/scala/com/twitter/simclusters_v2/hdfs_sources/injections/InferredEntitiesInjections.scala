@@ -1,27 +1,27 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.tw ter.s mclusters_v2.hdfs_s ces. nject ons
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.{
-  Int2BigEndian,
-  Long2BigEndian,
-  ScalaCompactThrift
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal nject on.{
+   nt2B gEnd an,
+  Long2B gEnd an,
+  ScalaCompactThr ft
 }
-import com.twitter.simclusters_v2.thriftscala.SimClustersInferredEntities
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClusters nferredEnt  es
 
-object InferredEntitiesInjections {
+object  nferredEnt  es nject ons {
 
-  final val InferredEntityInjection: KeyValInjection[Long, SimClustersInferredEntities] =
-    KeyValInjection(
-      Long2BigEndian,
-      ScalaCompactThrift(SimClustersInferredEntities)
+  f nal val  nferredEnt y nject on: KeyVal nject on[Long, S mClusters nferredEnt  es] =
+    KeyVal nject on(
+      Long2B gEnd an,
+      ScalaCompactThr ft(S mClusters nferredEnt  es)
     )
 
-  final val InferredEntityKeyedByClusterInjection: KeyValInjection[
-    Int,
-    SimClustersInferredEntities
+  f nal val  nferredEnt yKeyedByCluster nject on: KeyVal nject on[
+     nt,
+    S mClusters nferredEnt  es
   ] =
-    KeyValInjection(
-      Int2BigEndian,
-      ScalaCompactThrift(SimClustersInferredEntities)
+    KeyVal nject on(
+       nt2B gEnd an,
+      ScalaCompactThr ft(S mClusters nferredEnt  es)
     )
 }

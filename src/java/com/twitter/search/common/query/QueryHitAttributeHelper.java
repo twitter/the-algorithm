@@ -1,81 +1,81 @@
-package com.twitter.search.common.query;
+package com.tw ter.search.common.query;
 
-import java.util.Collections;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
+ mport java.ut l.Collect ons;
+ mport java.ut l. dent yHashMap;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.funct on.Funct on;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.visitors.MultiTermDisjunctionRankVisitor;
-import com.twitter.search.queryparser.visitors.NodeRankAnnotator;
-import com.twitter.search.queryparser.visitors.QueryTreeIndex;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.queryparser.query.Query;
+ mport com.tw ter.search.queryparser.query.QueryParserExcept on;
+ mport com.tw ter.search.queryparser.v s ors.Mult TermD sjunct onRankV s or;
+ mport com.tw ter.search.queryparser.v s ors.NodeRankAnnotator;
+ mport com.tw ter.search.queryparser.v s ors.QueryTree ndex;
 
 /**
- * A helper class to collect field and query node hit attributions.
+ * A  lper class to collect f eld and query node h  attr but ons.
  */
-public class QueryHitAttributeHelper extends HitAttributeHelper {
-  private final Query annotatedQuery;
+publ c class QueryH Attr bute lper extends H Attr bute lper {
+  pr vate f nal Query annotatedQuery;
 
-  protected QueryHitAttributeHelper(HitAttributeCollector collector,
-                                    Function<Integer, String> fieldIdsToFieldNames,
-                                    IdentityHashMap<Query, Integer> nodeToRankMap,
+  protected QueryH Attr bute lper(H Attr buteCollector collector,
+                                    Funct on< nteger, Str ng> f eld dsToF eldNa s,
+                                     dent yHashMap<Query,  nteger> nodeToRankMap,
                                     Query annotatedQuery,
-                                    Map<Query, List<Integer>> expandedRanksMap) {
-    super(collector, fieldIdsToFieldNames, nodeToRankMap, expandedRanksMap);
-    this.annotatedQuery = annotatedQuery;
+                                    Map<Query, L st< nteger>> expandedRanksMap) {
+    super(collector, f eld dsToF eldNa s, nodeToRankMap, expandedRanksMap);
+    t .annotatedQuery = annotatedQuery;
   }
 
   /**
-   * Constructor specific for com.twitter.search.queryParser.query.Query
+   * Constructor spec f c for com.tw ter.search.queryParser.query.Query
    *
-   * This helper visits a parsed query to construct a node-to-rank mapping,
-   * and uses a schema to determine all of the possible fields to be tracked.
-   * A collector is then created.
+   * T   lper v s s a parsed query to construct a node-to-rank mapp ng,
+   * and uses a sc ma to determ ne all of t  poss ble f elds to be tracked.
+   * A collector  s t n created.
    *
-   * @param query the query for which we will collect hit attribution.
-   * @param schema the indexing schema.
+   * @param query t  query for wh ch   w ll collect h  attr but on.
+   * @param sc ma t   ndex ng sc ma.
    */
-  public static QueryHitAttributeHelper from(Query query, final Schema schema)
-      throws QueryParserException {
-    IdentityHashMap<Query, Integer> nodeToRankMap;
+  publ c stat c QueryH Attr bute lper from(Query query, f nal Sc ma sc ma)
+      throws QueryParserExcept on {
+     dent yHashMap<Query,  nteger> nodeToRankMap;
     Query annotatedQuery;
 
-    // First see if the query already has node rank annotations on it. If so, we'll just use those
-    // to identify query nodes.
-    // We enforce that all provided ranks are in the range of [0, N-1] so not to blow up the size
-    // of the collection array.
-    QueryRankVisitor rankVisitor = new QueryRankVisitor();
-    if (query.accept(rankVisitor)) {
-      nodeToRankMap = rankVisitor.getNodeToRankMap();
+    // F rst see  f t  query already has node rank annotat ons on  .  f so,  'll just use those
+    // to  dent fy query nodes.
+    //   enforce that all prov ded ranks are  n t  range of [0, N-1] so not to blow up t  s ze
+    // of t  collect on array.
+    QueryRankV s or rankV s or = new QueryRankV s or();
+     f (query.accept(rankV s or)) {
+      nodeToRankMap = rankV s or.getNodeToRankMap();
       annotatedQuery = query;
     } else {
-      // Otherwise, we will assign all nodes in-order ranks, and use those to track per-node hit
-      // attribution
-      QueryTreeIndex queryTreeIndex = QueryTreeIndex.buildFor(query);
-      NodeRankAnnotator annotator = new NodeRankAnnotator(queryTreeIndex.getNodeToIndexMap());
+      // Ot rw se,   w ll ass gn all nodes  n-order ranks, and use those to track per-node h 
+      // attr but on
+      QueryTree ndex queryTree ndex = QueryTree ndex.bu ldFor(query);
+      NodeRankAnnotator annotator = new NodeRankAnnotator(queryTree ndex.getNodeTo ndexMap());
       annotatedQuery = query.accept(annotator);
       nodeToRankMap = annotator.getUpdatedNodeToRankMap();
     }
 
-    // Extract ranks for multi_term_disjunction operators
-    MultiTermDisjunctionRankVisitor multiTermDisjunctionRankVisitor =
-        new MultiTermDisjunctionRankVisitor(Collections.max(nodeToRankMap.values()));
-    annotatedQuery.accept(multiTermDisjunctionRankVisitor);
-    Map<Query, List<Integer>> expandedRanksMap =
-        multiTermDisjunctionRankVisitor.getMultiTermDisjunctionRankExpansionsMap();
+    // Extract ranks for mult _term_d sjunct on operators
+    Mult TermD sjunct onRankV s or mult TermD sjunct onRankV s or =
+        new Mult TermD sjunct onRankV s or(Collect ons.max(nodeToRankMap.values()));
+    annotatedQuery.accept(mult TermD sjunct onRankV s or);
+    Map<Query, L st< nteger>> expandedRanksMap =
+        mult TermD sjunct onRankV s or.getMult TermD sjunct onRankExpans onsMap();
 
-    return new QueryHitAttributeHelper(
-        new HitAttributeCollector(),
-        (fieldId) -> schema.getFieldName(fieldId),
+    return new QueryH Attr bute lper(
+        new H Attr buteCollector(),
+        (f eld d) -> sc ma.getF eldNa (f eld d),
         nodeToRankMap,
         annotatedQuery,
         expandedRanksMap);
   }
 
-  public Query getAnnotatedQuery() {
+  publ c Query getAnnotatedQuery() {
     return annotatedQuery;
   }
 }

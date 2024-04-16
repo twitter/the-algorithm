@@ -1,798 +1,798 @@
-package com.twitter.search.earlybird.util;
+package com.tw ter.search.earlyb rd.ut l;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.TreeSet;
+ mport java. o. OExcept on;
+ mport java. o.Pr ntWr er;
+ mport java. o.UnsupportedEncod ngExcept on;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Collect ons;
+ mport java.ut l.Comparator;
+ mport java.ut l.L st;
+ mport java.ut l.Locale;
+ mport java.ut l.Set;
+ mport java.ut l.TreeSet;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
+ mport com.google.common.collect. mmutableSet;
+ mport com.google.common.collect.L sts;
 
-import org.apache.lucene.index.IndexOptions;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.util.BytesRef;
+ mport org.apac .lucene. ndex. ndexOpt ons;
+ mport org.apac .lucene. ndex.Nu r cDocValues;
+ mport org.apac .lucene. ndex.Post ngsEnum;
+ mport org.apac .lucene. ndex.Terms;
+ mport org.apac .lucene. ndex.TermsEnum;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.ut l.BytesRef;
 
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.util.analysis.IntTermAttributeImpl;
-import com.twitter.search.common.util.analysis.LongTermAttributeImpl;
-import com.twitter.search.common.util.analysis.SortableLongTermAttributeImpl;
-import com.twitter.search.common.util.spatial.GeoUtil;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.inverted.MPHTermDictionary;
-import com.twitter.search.core.earlybird.index.inverted.RealtimeIndexTerms;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
+ mport com.tw ter.search.common.constants.thr ftjava.Thr ftLanguage;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftCSFType;
+ mport com.tw ter.search.common.ut l.analys s. ntTermAttr bute mpl;
+ mport com.tw ter.search.common.ut l.analys s.LongTermAttr bute mpl;
+ mport com.tw ter.search.common.ut l.analys s.SortableLongTermAttr bute mpl;
+ mport com.tw ter.search.common.ut l.spat al.GeoUt l;
+ mport com.tw ter.search.core.earlyb rd. ndex.Doc DToT et DMapper;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted.MPHTermD ct onary;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted.Realt   ndexTerms;
+ mport com.tw ter.search.earlyb rd. ndex.Earlyb rdS ngleSeg ntSearc r;
 
-import geo.google.datamodel.GeoCoordinate;
+ mport geo.google.datamodel.GeoCoord nate;
 
-public class IndexViewer {
+publ c class  ndexV e r {
   /**
-   * Fields whose terms are indexed using
-   * {@link com.twitter.search.common.util.analysis.IntTermAttribute}
+   * F elds whose terms are  ndexed us ng
+   * {@l nk com.tw ter.search.common.ut l.analys s. ntTermAttr bute}
    */
-  private static final Set<String> INT_TERM_ATTRIBUTE_FIELDS = ImmutableSet.of(
-      EarlybirdFieldConstant.CREATED_AT_FIELD.getFieldName(),
-      EarlybirdFieldConstant.LINK_CATEGORY_FIELD.getFieldName(),
-      EarlybirdFieldConstant
-          .NORMALIZED_FAVORITE_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD.getFieldName(),
-      EarlybirdFieldConstant
-          .NORMALIZED_REPLY_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD.getFieldName(),
-      EarlybirdFieldConstant
-          .NORMALIZED_RETWEET_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD.getFieldName(),
-      EarlybirdFieldConstant.COMPOSER_SOURCE.getFieldName());
-
-  /**
-   * Fields whose terms are indexed using
-   * {@link com.twitter.search.common.util.analysis.LongTermAttribute}
-   */
-  private static final Set<String> LONG_TERM_ATTRIBUTE_FIELDS = ImmutableSet.of(
-      EarlybirdFieldConstant.CONVERSATION_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.LIKED_BY_USER_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.QUOTED_TWEET_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.QUOTED_USER_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.REPLIED_TO_BY_USER_ID.getFieldName(),
-      EarlybirdFieldConstant.RETWEETED_BY_USER_ID.getFieldName(),
-      EarlybirdFieldConstant.DIRECTED_AT_USER_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.IN_REPLY_TO_TWEET_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.IN_REPLY_TO_USER_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.RETWEET_SOURCE_TWEET_ID_FIELD.getFieldName(),
-      EarlybirdFieldConstant.RETWEET_SOURCE_USER_ID_FIELD.getFieldName());
+  pr vate stat c f nal Set<Str ng>  NT_TERM_ATTR BUTE_F ELDS =  mmutableSet.of(
+      Earlyb rdF eldConstant.CREATED_AT_F ELD.getF eldNa (),
+      Earlyb rdF eldConstant.L NK_CATEGORY_F ELD.getF eldNa (),
+      Earlyb rdF eldConstant
+          .NORMAL ZED_FAVOR TE_COUNT_GREATER_THAN_OR_EQUAL_TO_F ELD.getF eldNa (),
+      Earlyb rdF eldConstant
+          .NORMAL ZED_REPLY_COUNT_GREATER_THAN_OR_EQUAL_TO_F ELD.getF eldNa (),
+      Earlyb rdF eldConstant
+          .NORMAL ZED_RETWEET_COUNT_GREATER_THAN_OR_EQUAL_TO_F ELD.getF eldNa (),
+      Earlyb rdF eldConstant.COMPOSER_SOURCE.getF eldNa ());
 
   /**
-   * Fields whose terms index using SORTED
-   * {@link com.twitter.search.common.util.analysis.LongTermAttribute}
+   * F elds whose terms are  ndexed us ng
+   * {@l nk com.tw ter.search.common.ut l.analys s.LongTermAttr bute}
    */
-  private static final Set<String> SORTED_LONG_TERM_ATTRIBUTE_FIELDS =
-      ImmutableSet.of(EarlybirdFieldConstant.ID_FIELD.getFieldName());
+  pr vate stat c f nal Set<Str ng> LONG_TERM_ATTR BUTE_F ELDS =  mmutableSet.of(
+      Earlyb rdF eldConstant.CONVERSAT ON_ D_F ELD.getF eldNa (),
+      Earlyb rdF eldConstant.L KED_BY_USER_ D_F ELD.getF eldNa (),
+      Earlyb rdF eldConstant.QUOTED_TWEET_ D_F ELD.getF eldNa (),
+      Earlyb rdF eldConstant.QUOTED_USER_ D_F ELD.getF eldNa (),
+      Earlyb rdF eldConstant.REPL ED_TO_BY_USER_ D.getF eldNa (),
+      Earlyb rdF eldConstant.RETWEETED_BY_USER_ D.getF eldNa (),
+      Earlyb rdF eldConstant.D RECTED_AT_USER_ D_F ELD.getF eldNa (),
+      Earlyb rdF eldConstant.FROM_USER_ D_F ELD.getF eldNa (),
+      Earlyb rdF eldConstant. N_REPLY_TO_TWEET_ D_F ELD.getF eldNa (),
+      Earlyb rdF eldConstant. N_REPLY_TO_USER_ D_F ELD.getF eldNa (),
+      Earlyb rdF eldConstant.RETWEET_SOURCE_TWEET_ D_F ELD.getF eldNa (),
+      Earlyb rdF eldConstant.RETWEET_SOURCE_USER_ D_F ELD.getF eldNa ());
 
-  private final EarlybirdSingleSegmentSearcher searcher;
-  private final EarlybirdIndexSegmentAtomicReader twitterReader;
+  /**
+   * F elds whose terms  ndex us ng SORTED
+   * {@l nk com.tw ter.search.common.ut l.analys s.LongTermAttr bute}
+   */
+  pr vate stat c f nal Set<Str ng> SORTED_LONG_TERM_ATTR BUTE_F ELDS =
+       mmutableSet.of(Earlyb rdF eldConstant. D_F ELD.getF eldNa ());
 
-  public long getTimeSliceId() {
-    return searcher.getTimeSliceID();
+  pr vate f nal Earlyb rdS ngleSeg ntSearc r searc r;
+  pr vate f nal Earlyb rd ndexSeg ntAtom cReader tw terReader;
+
+  publ c long getT  Sl ce d() {
+    return searc r.getT  Sl ce D();
   }
 
-  public static class Options {
-    private boolean dumpHexTerms = false;
-    private String charset;
-    private double[] histogramBuckets;
-    private boolean termLengthHistogram;
+  publ c stat c class Opt ons {
+    pr vate boolean dump xTerms = false;
+    pr vate Str ng charset;
+    pr vate double[]  togramBuckets;
+    pr vate boolean termLength togram;
 
-    public Options setDumpHexTerms(boolean dumpHexTermsParam) {
-      this.dumpHexTerms = dumpHexTermsParam;
-      return this;
+    publ c Opt ons setDump xTerms(boolean dump xTermsParam) {
+      t .dump xTerms = dump xTermsParam;
+      return t ;
     }
 
-    public Options setCharset(String charsetParam) {
-      this.charset = charsetParam;
-      return this;
+    publ c Opt ons setCharset(Str ng charsetParam) {
+      t .charset = charsetParam;
+      return t ;
     }
 
-    public Options setHistogramBuckets(double[] histogramBucketsParam) {
-      this.histogramBuckets = histogramBucketsParam;
-      return this;
+    publ c Opt ons set togramBuckets(double[]  togramBucketsParam) {
+      t . togramBuckets =  togramBucketsParam;
+      return t ;
     }
 
-    public Options setTermLengthHistogram(boolean termLengthHistogramParam) {
-      this.termLengthHistogram = termLengthHistogramParam;
-      return this;
+    publ c Opt ons setTermLength togram(boolean termLength togramParam) {
+      t .termLength togram = termLength togramParam;
+      return t ;
     }
   }
 
   /**
-   * Data Transfer Object for Terms, encapsulates the "json" serialization
-   * while maintaining streaming mode
+   * Data Transfer Object for Terms, encapsulates t  "json" ser al zat on
+   * wh le ma nta n ng stream ng mode
    */
-  private static class TermDto {
+  pr vate stat c class TermDto {
 
-    private final String field;
-    private final String term;
-    private final String docFreq;
-    private final String percent;
-    private final PostingsEnum docsEnum;
-    private final TermsEnum termsEnum;
-    private final Integer maxDocs;
+    pr vate f nal Str ng f eld;
+    pr vate f nal Str ng term;
+    pr vate f nal Str ng docFreq;
+    pr vate f nal Str ng percent;
+    pr vate f nal Post ngsEnum docsEnum;
+    pr vate f nal TermsEnum termsEnum;
+    pr vate f nal  nteger maxDocs;
 
-    public TermDto(String field, String term, String docFreq, String percent,
-                   PostingsEnum docsEnum, TermsEnum termsEnum, Integer maxDocs) {
-      this.field = field;
-      this.term = term;
-      this.docFreq = docFreq;
-      this.percent = percent;
-      this.docsEnum = docsEnum;
-      this.termsEnum = termsEnum;
-      this.maxDocs = maxDocs;
+    publ c TermDto(Str ng f eld, Str ng term, Str ng docFreq, Str ng percent,
+                   Post ngsEnum docsEnum, TermsEnum termsEnum,  nteger maxDocs) {
+      t .f eld = f eld;
+      t .term = term;
+      t .docFreq = docFreq;
+      t .percent = percent;
+      t .docsEnum = docsEnum;
+      t .termsEnum = termsEnum;
+      t .maxDocs = maxDocs;
     }
 
-    public void write(ViewerWriter writer,
-                      EarlybirdIndexSegmentAtomicReader twitterReader) throws IOException {
-      writer.beginObject();
-      writer.name("field").value(field);
-      writer.name("term").value(term);
-      writer.name("docFreq").value(docFreq);
-      writer.name("percent").value(percent);
-      if (docsEnum != null) {
-        appendFrequencyAndPositions(writer, field, docsEnum, twitterReader);
+    publ c vo d wr e(V e rWr er wr er,
+                      Earlyb rd ndexSeg ntAtom cReader tw terReader) throws  OExcept on {
+      wr er.beg nObject();
+      wr er.na ("f eld").value(f eld);
+      wr er.na ("term").value(term);
+      wr er.na ("docFreq").value(docFreq);
+      wr er.na ("percent").value(percent);
+       f (docsEnum != null) {
+        appendFrequencyAndPos  ons(wr er, f eld, docsEnum, tw terReader);
       }
-      if (maxDocs != null) {
-        appendDocs(writer, termsEnum, maxDocs, twitterReader);
+       f (maxDocs != null) {
+        appendDocs(wr er, termsEnum, maxDocs, tw terReader);
       }
-      writer.endObject();
+      wr er.endObject();
     }
   }
 
   /**
-   * Data Transfer Object for Terms, encapsulates the "json" serialization
-   * while maintaining streaming mode
+   * Data Transfer Object for Terms, encapsulates t  "json" ser al zat on
+   * wh le ma nta n ng stream ng mode
    */
-  private static class StatsDto {
+  pr vate stat c class StatsDto {
 
-    private final String field;
-    private final String numTerms;
-    private final String terms;
+    pr vate f nal Str ng f eld;
+    pr vate f nal Str ng numTerms;
+    pr vate f nal Str ng terms;
 
 
-    public StatsDto(String field, String numTerms, String terms) {
-      this.field = field;
-      this.numTerms = numTerms;
-      this.terms = terms;
+    publ c StatsDto(Str ng f eld, Str ng numTerms, Str ng terms) {
+      t .f eld = f eld;
+      t .numTerms = numTerms;
+      t .terms = terms;
     }
 
-    public void write(ViewerWriter writer) throws IOException {
-      writer.beginObject();
+    publ c vo d wr e(V e rWr er wr er) throws  OExcept on {
+      wr er.beg nObject();
 
-      writer.name("field").value(field);
-      writer.name("numTerms").value(numTerms);
-      writer.name("terms").value(terms);
+      wr er.na ("f eld").value(f eld);
+      wr er.na ("numTerms").value(numTerms);
+      wr er.na ("terms").value(terms);
 
-      writer.endObject();
+      wr er.endObject();
     }
   }
 
-  public IndexViewer(EarlybirdSingleSegmentSearcher searcher) {
-    this.searcher = searcher;
-    this.twitterReader = searcher.getTwitterIndexReader();
+  publ c  ndexV e r(Earlyb rdS ngleSeg ntSearc r searc r) {
+    t .searc r = searc r;
+    t .tw terReader = searc r.getTw ter ndexReader();
   }
 
-  private boolean shouldSeekExact(Terms terms, TermsEnum termsEnum) {
-    return terms instanceof RealtimeIndexTerms
-           || termsEnum instanceof MPHTermDictionary.MPHTermsEnum;
+  pr vate boolean shouldSeekExact(Terms terms, TermsEnum termsEnum) {
+    return terms  nstanceof Realt   ndexTerms
+           || termsEnum  nstanceof MPHTermD ct onary.MPHTermsEnum;
   }
 
   /**
-   * Dumps all terms for a given tweet id.
-   * @param writer writer being used
-   * @param tweetId the tweet id to use
+   * Dumps all terms for a g ven t et  d.
+   * @param wr er wr er be ng used
+   * @param t et d t  t et  d to use
    */
-  public void dumpTweetDataByTweetId(ViewerWriter writer, long tweetId, Options options)
-      throws IOException {
-    int docId = twitterReader.getSegmentData().getDocIDToTweetIDMapper().getDocID(tweetId);
-    dumpTweetDataByDocId(writer, docId, options);
+  publ c vo d dumpT etDataByT et d(V e rWr er wr er, long t et d, Opt ons opt ons)
+      throws  OExcept on {
+     nt doc d = tw terReader.getSeg ntData().getDoc DToT et DMapper().getDoc D(t et d);
+    dumpT etDataByDoc d(wr er, doc d, opt ons);
   }
 
   /**
-   * Dumps all terms for a given doc id.
-   * @param writer writer being used
-   * @param docId the document id to use.
+   * Dumps all terms for a g ven doc  d.
+   * @param wr er wr er be ng used
+   * @param doc d t  docu nt  d to use.
    */
-  public void dumpTweetDataByDocId(ViewerWriter writer, int docId, Options options)
-      throws IOException {
-    writer.beginObject();
+  publ c vo d dumpT etDataByDoc d(V e rWr er wr er,  nt doc d, Opt ons opt ons)
+      throws  OExcept on {
+    wr er.beg nObject();
 
-    printHeader(writer);
-    long tweetID = twitterReader.getSegmentData().getDocIDToTweetIDMapper().getTweetID(docId);
-    if (docId < twitterReader.maxDoc() && tweetID >= 0) {
-      writer.name("docId").value(Integer.toString(docId));
-      writer.name("tweetId").value(Long.toString(tweetID));
-      dumpIndexedFields(writer, docId, options);
-      dumpCsfFields(writer, docId);
+    pr nt ader(wr er);
+    long t et D = tw terReader.getSeg ntData().getDoc DToT et DMapper().getT et D(doc d);
+     f (doc d < tw terReader.maxDoc() && t et D >= 0) {
+      wr er.na ("doc d").value( nteger.toStr ng(doc d));
+      wr er.na ("t et d").value(Long.toStr ng(t et D));
+      dump ndexedF elds(wr er, doc d, opt ons);
+      dumpCsfF elds(wr er, doc d);
     }
-    writer.endObject();
+    wr er.endObject();
   }
 
   /**
-   * Dumps all tweet IDs in the current segment to the given file.
+   * Dumps all t et  Ds  n t  current seg nt to t  g ven f le.
    */
-  public void dumpTweetIds(ViewerWriter writer, String logFile, PrintWriter logWriter)
-      throws IOException {
-    writeTweetIdsToLogFile(logWriter);
+  publ c vo d dumpT et ds(V e rWr er wr er, Str ng logF le, Pr ntWr er logWr er)
+      throws  OExcept on {
+    wr eT et dsToLogF le(logWr er);
 
-    writer.beginObject();
-    writer.name(Long.toString(searcher.getTimeSliceID())).value(logFile);
-    writer.endObject();
+    wr er.beg nObject();
+    wr er.na (Long.toStr ng(searc r.getT  Sl ce D())).value(logF le);
+    wr er.endObject();
   }
 
-  private void writeTweetIdsToLogFile(PrintWriter logWriter) {
-    DocIDToTweetIDMapper mapper = twitterReader.getSegmentData().getDocIDToTweetIDMapper();
-    int docId = Integer.MIN_VALUE;
-    while ((docId = mapper.getNextDocID(docId)) != DocIDToTweetIDMapper.ID_NOT_FOUND) {
-      long tweetId = mapper.getTweetID(docId);
+  pr vate vo d wr eT et dsToLogF le(Pr ntWr er logWr er) {
+    Doc DToT et DMapper mapper = tw terReader.getSeg ntData().getDoc DToT et DMapper();
+     nt doc d =  nteger.M N_VALUE;
+    wh le ((doc d = mapper.getNextDoc D(doc d)) != Doc DToT et DMapper. D_NOT_FOUND) {
+      long t et d = mapper.getT et D(doc d);
 
-      // Ensure tweet ID is valid and non-deleted
-      if ((tweetId > 0) && !twitterReader.getDeletesView().isDeleted(docId)) {
-        logWriter.println(tweetId);
+      // Ensure t et  D  s val d and non-deleted
+       f ((t et d > 0) && !tw terReader.getDeletesV ew(). sDeleted(doc d)) {
+        logWr er.pr ntln(t et d);
       }
     }
   }
 
-  private void dumpIndexedFields(ViewerWriter writer, int docId,
-                                 Options options) throws IOException {
-    writer.name("indexedFields");
-    writer.beginArray();
-    writer.newline();
-    for (String field : sortedFields()) {
-      dumpTweetData(writer, field, docId, options);
+  pr vate vo d dump ndexedF elds(V e rWr er wr er,  nt doc d,
+                                 Opt ons opt ons) throws  OExcept on {
+    wr er.na (" ndexedF elds");
+    wr er.beg nArray();
+    wr er.newl ne();
+    for (Str ng f eld : sortedF elds()) {
+      dumpT etData(wr er, f eld, doc d, opt ons);
     }
-    writer.endArray();
-    writer.newline();
+    wr er.endArray();
+    wr er.newl ne();
   }
 
-  private void dumpCsfFields(ViewerWriter writer, int docId) throws IOException {
-    writer.name("csfFields");
-    writer.beginArray();
-    writer.newline();
-    dumpCSFData(writer, docId);
+  pr vate vo d dumpCsfF elds(V e rWr er wr er,  nt doc d) throws  OExcept on {
+    wr er.na ("csfF elds");
+    wr er.beg nArray();
+    wr er.newl ne();
+    dumpCSFData(wr er, doc d);
 
-    writer.endArray();
+    wr er.endArray();
   }
 
   /**
-   * Dumps all CSF values for a given doc id.
-   * @param writer writer being used
-   * @param docId the document id to use.
+   * Dumps all CSF values for a g ven doc  d.
+   * @param wr er wr er be ng used
+   * @param doc d t  docu nt  d to use.
    */
-  private void dumpCSFData(ViewerWriter writer, int docId) throws IOException {
-    Schema tweetSchema = twitterReader.getSchema();
+  pr vate vo d dumpCSFData(V e rWr er wr er,  nt doc d) throws  OExcept on {
+    Sc ma t etSc ma = tw terReader.getSc ma();
 
-    // Sort the FieldInfo objects to generate fixed order to make testing easier
-    List<Schema.FieldInfo> sortedFieldInfos = new ArrayList<>(tweetSchema.getFieldInfos());
-    sortedFieldInfos.sort(Comparator.comparing(Schema.FieldInfo::getFieldId));
+    // Sort t  F eld nfo objects to generate f xed order to make test ng eas er
+    L st<Sc ma.F eld nfo> sortedF eld nfos = new ArrayL st<>(t etSc ma.getF eld nfos());
+    sortedF eld nfos.sort(Comparator.compar ng(Sc ma.F eld nfo::getF eld d));
 
-    for (Schema.FieldInfo fieldInfo: sortedFieldInfos) {
-      String csfFieldInfoName = fieldInfo.getName();
-      ThriftCSFType csfType = tweetSchema.getCSFFieldType(csfFieldInfoName);
-      NumericDocValues csfDocValues = twitterReader.getNumericDocValues(csfFieldInfoName);
-      // If twitterReader.getNumericDocValues(value.getName()) == null,
-      // means no NumericDocValue was indexed for the field so ignore
-      if (csfType != null && csfDocValues != null && csfDocValues.advanceExact(docId)) {
+    for (Sc ma.F eld nfo f eld nfo: sortedF eld nfos) {
+      Str ng csfF eld nfoNa  = f eld nfo.getNa ();
+      Thr ftCSFType csfType = t etSc ma.getCSFF eldType(csfF eld nfoNa );
+      Nu r cDocValues csfDocValues = tw terReader.getNu r cDocValues(csfF eld nfoNa );
+      //  f tw terReader.getNu r cDocValues(value.getNa ()) == null,
+      //  ans no Nu r cDocValue was  ndexed for t  f eld so  gnore
+       f (csfType != null && csfDocValues != null && csfDocValues.advanceExact(doc d)) {
         long csfValue = csfDocValues.longValue();
-        writer.beginObject();
-        writer.name("field").value(formatField(csfFieldInfoName));
-        writer.name("value");
-        if (csfFieldInfoName.equals(EarlybirdFieldConstant.LAT_LON_CSF_FIELD.getFieldName())) {
-          writer.value(latlongDecode(csfValue));
-        } else if (csfFieldInfoName.equals(EarlybirdFieldConstant.LANGUAGE.getFieldName())) {
-          writer.value(languageDecode(csfValue));
-        } else if (csfFieldInfoName.equals(EarlybirdFieldConstant.CARD_LANG_CSF.getFieldName())) {
-          writer.value(languageDecode(csfValue));
+        wr er.beg nObject();
+        wr er.na ("f eld").value(formatF eld(csfF eld nfoNa ));
+        wr er.na ("value");
+         f (csfF eld nfoNa .equals(Earlyb rdF eldConstant.LAT_LON_CSF_F ELD.getF eldNa ())) {
+          wr er.value(latlongDecode(csfValue));
+        } else  f (csfF eld nfoNa .equals(Earlyb rdF eldConstant.LANGUAGE.getF eldNa ())) {
+          wr er.value(languageDecode(csfValue));
+        } else  f (csfF eld nfoNa .equals(Earlyb rdF eldConstant.CARD_LANG_CSF.getF eldNa ())) {
+          wr er.value(languageDecode(csfValue));
         } else {
-          writer.value(Long.toString(csfValue));
+          wr er.value(Long.toStr ng(csfValue));
         }
-        writer.endObject();
-        writer.newline();
+        wr er.endObject();
+        wr er.newl ne();
       }
     }
   }
 
   /**
-   * Decipher long value gotten, put into format (lat, lon)
-   * Decode the stored long value by creating a geocode
+   * Dec p r long value gotten, put  nto format (lat, lon)
+   * Decode t  stored long value by creat ng a geocode
    */
-  private String latlongDecode(long csfValue) {
-    StringBuilder sb = new StringBuilder();
-    GeoCoordinate geoCoordinate = new GeoCoordinate();
-    if (GeoUtil.decodeLatLonFromInt64(csfValue, geoCoordinate)) {
-      sb.append(geoCoordinate.getLatitude()).append(", ").append(geoCoordinate.getLongitude());
+  pr vate Str ng latlongDecode(long csfValue) {
+    Str ngBu lder sb = new Str ngBu lder();
+    GeoCoord nate geoCoord nate = new GeoCoord nate();
+     f (GeoUt l.decodeLatLonFrom nt64(csfValue, geoCoord nate)) {
+      sb.append(geoCoord nate.getLat ude()).append(", ").append(geoCoord nate.getLong ude());
     } else {
-      sb.append(csfValue).append(" (Value Unset or Invalid Coordinate)");
+      sb.append(csfValue).append(" (Value Unset or  nval d Coord nate)");
     }
-    return sb.toString();
+    return sb.toStr ng();
   }
 
   /**
-   * Decipher long value gotten into string of tweet's language
+   * Dec p r long value gotten  nto str ng of t et's language
    */
-  private String languageDecode(long csfValue) {
-    StringBuilder sb = new StringBuilder();
-    ThriftLanguage languageType = ThriftLanguage.findByValue((int) csfValue);
+  pr vate Str ng languageDecode(long csfValue) {
+    Str ngBu lder sb = new Str ngBu lder();
+    Thr ftLanguage languageType = Thr ftLanguage.f ndByValue(( nt) csfValue);
     sb.append(csfValue).append(" (").append(languageType).append(")");
-    return sb.toString();
+    return sb.toStr ng();
   }
 
-  private void dumpTweetData(ViewerWriter writer,
-                             String field,
-                             int docId,
-                             Options options) throws IOException {
+  pr vate vo d dumpT etData(V e rWr er wr er,
+                             Str ng f eld,
+                              nt doc d,
+                             Opt ons opt ons) throws  OExcept on {
 
-    Terms terms = twitterReader.terms(field);
-    if (terms != null) {
-      TermsEnum termsEnum = terms.iterator();
-      if (shouldSeekExact(terms, termsEnum)) {
-        long numTerms = terms.size();
-        for (int i = 0; i < numTerms; i++) {
-          termsEnum.seekExact(i);
-          dumpTweetDataTerm(writer, field, termsEnum, docId, options);
+    Terms terms = tw terReader.terms(f eld);
+     f (terms != null) {
+      TermsEnum termsEnum = terms. erator();
+       f (shouldSeekExact(terms, termsEnum)) {
+        long numTerms = terms.s ze();
+        for ( nt   = 0;   < numTerms;  ++) {
+          termsEnum.seekExact( );
+          dumpT etDataTerm(wr er, f eld, termsEnum, doc d, opt ons);
         }
       } else {
-        while (termsEnum.next() != null) {
-          dumpTweetDataTerm(writer, field, termsEnum, docId, options);
+        wh le (termsEnum.next() != null) {
+          dumpT etDataTerm(wr er, f eld, termsEnum, doc d, opt ons);
         }
       }
     }
   }
 
-  private void dumpTweetDataTerm(ViewerWriter writer, String field, TermsEnum termsEnum,
-                                 int docId, Options options) throws IOException {
-    PostingsEnum docsAndPositionsEnum = termsEnum.postings(null, PostingsEnum.ALL);
-    if (docsAndPositionsEnum != null && docsAndPositionsEnum.advance(docId) == docId) {
-      printTerm(writer, field, termsEnum, docsAndPositionsEnum, null, options);
+  pr vate vo d dumpT etDataTerm(V e rWr er wr er, Str ng f eld, TermsEnum termsEnum,
+                                  nt doc d, Opt ons opt ons) throws  OExcept on {
+    Post ngsEnum docsAndPos  onsEnum = termsEnum.post ngs(null, Post ngsEnum.ALL);
+     f (docsAndPos  onsEnum != null && docsAndPos  onsEnum.advance(doc d) == doc d) {
+      pr ntTerm(wr er, f eld, termsEnum, docsAndPos  onsEnum, null, opt ons);
     }
   }
 
   /**
-   * Prints the histogram for the currently viewed index.
-   * @param writer current viewerWriter
-   * @param field if null, will use all fields
-   * @param options options for dumping out text
+   * Pr nts t   togram for t  currently v e d  ndex.
+   * @param wr er current v e rWr er
+   * @param f eld  f null, w ll use all f elds
+   * @param opt ons opt ons for dump ng out text
    */
-  public void dumpHistogram(ViewerWriter writer, String field, Options options) throws IOException {
-    writer.beginObject();
-    printHeader(writer);
-    writer.name("histogram");
-    writer.beginArray();
-    writer.newline();
-    if (field == null) {
-      for (String field2 : sortedFields()) {
-        dumpFieldHistogram(writer, field2, options);
+  publ c vo d dump togram(V e rWr er wr er, Str ng f eld, Opt ons opt ons) throws  OExcept on {
+    wr er.beg nObject();
+    pr nt ader(wr er);
+    wr er.na (" togram");
+    wr er.beg nArray();
+    wr er.newl ne();
+     f (f eld == null) {
+      for (Str ng f eld2 : sortedF elds()) {
+        dumpF eld togram(wr er, f eld2, opt ons);
       }
     } else {
-      dumpFieldHistogram(writer, field, options);
+      dumpF eld togram(wr er, f eld, opt ons);
     }
-    writer.endArray();
-    writer.endObject();
+    wr er.endArray();
+    wr er.endObject();
   }
 
-  private void dumpFieldHistogram(ViewerWriter writer, String field, Options options)
-      throws IOException {
-    Histogram histo = new Histogram(options.histogramBuckets);
+  pr vate vo d dumpF eld togram(V e rWr er wr er, Str ng f eld, Opt ons opt ons)
+      throws  OExcept on {
+     togram  to = new  togram(opt ons. togramBuckets);
 
-    Terms terms = twitterReader.terms(field);
-    if (terms != null) {
-      TermsEnum termsEnum = terms.iterator();
-      if (shouldSeekExact(terms, termsEnum)) {
-        long numTerms = terms.size();
-        for (int i = 0; i < numTerms; i++) {
-          termsEnum.seekExact(i);
-          countHistogram(options, histo, termsEnum);
+    Terms terms = tw terReader.terms(f eld);
+     f (terms != null) {
+      TermsEnum termsEnum = terms. erator();
+       f (shouldSeekExact(terms, termsEnum)) {
+        long numTerms = terms.s ze();
+        for ( nt   = 0;   < numTerms;  ++) {
+          termsEnum.seekExact( );
+          count togram(opt ons,  to, termsEnum);
         }
       } else {
-        while (termsEnum.next() != null) {
-          countHistogram(options, histo, termsEnum);
+        wh le (termsEnum.next() != null) {
+          count togram(opt ons,  to, termsEnum);
         }
       }
-      printHistogram(writer, field, options, histo);
+      pr nt togram(wr er, f eld, opt ons,  to);
     }
   }
 
-  private void printHistogram(ViewerWriter writer, String field, Options options,
-                              Histogram histo) throws IOException {
+  pr vate vo d pr nt togram(V e rWr er wr er, Str ng f eld, Opt ons opt ons,
+                               togram  to) throws  OExcept on {
 
-    String bucket = options.termLengthHistogram ? "termLength" : "df";
-    for (Histogram.Entry histEntry : histo.entries()) {
-      String format =
-          String.format(Locale.US,
-              "field: %s %sBucket: %11s count: %10d "
-                  + "percent: %6.2f%% cumulative: %6.2f%% totalCount: %10d"
-                  + " sum: %15d percent: %6.2f%% cumulative: %6.2f%% totalSum: %15d",
-              formatField(field),
+    Str ng bucket = opt ons.termLength togram ? "termLength" : "df";
+    for ( togram.Entry  tEntry :  to.entr es()) {
+      Str ng format =
+          Str ng.format(Locale.US,
+              "f eld: %s %sBucket: %11s count: %10d "
+                  + "percent: %6.2f%% cumulat ve: %6.2f%% totalCount: %10d"
+                  + " sum: %15d percent: %6.2f%% cumulat ve: %6.2f%% totalSum: %15d",
+              formatF eld(f eld),
               bucket,
-              histEntry.getBucketName(),
-              histEntry.getCount(),
-              histEntry.getCountPercent() * 100.0,
-              histEntry.getCountCumulative() * 100.0,
-              histo.getTotalCount(),
-              histEntry.getSum(),
-              histEntry.getSumPercent() * 100.0,
-              histEntry.getSumCumulative() * 100.0,
-              histo.getTotalSum()
+               tEntry.getBucketNa (),
+               tEntry.getCount(),
+               tEntry.getCountPercent() * 100.0,
+               tEntry.getCountCumulat ve() * 100.0,
+               to.getTotalCount(),
+               tEntry.getSum(),
+               tEntry.getSumPercent() * 100.0,
+               tEntry.getSumCumulat ve() * 100.0,
+               to.getTotalSum()
           );
-      writer.value(format);
-      writer.newline();
+      wr er.value(format);
+      wr er.newl ne();
     }
   }
 
-  private void countHistogram(Options options, Histogram histo, TermsEnum termsEnum)
-          throws IOException {
-    if (options.termLengthHistogram) {
-      final BytesRef bytesRef = termsEnum.term();
-      histo.addItem(bytesRef.length);
+  pr vate vo d count togram(Opt ons opt ons,  togram  to, TermsEnum termsEnum)
+          throws  OExcept on {
+     f (opt ons.termLength togram) {
+      f nal BytesRef bytesRef = termsEnum.term();
+       to.add em(bytesRef.length);
     } else {
-      histo.addItem(termsEnum.docFreq());
+       to.add em(termsEnum.docFreq());
     }
   }
 
 
   /**
-   * Prints terms and optionally documents for the currently viewed index.
-   * @param writer writer being used
-   * @param field if null, will use all fields
-   * @param term if null will use all terms
-   * @param maxTerms will print at most this many terms per field. If null will print 0 terms.
-   * @param maxDocs will print at most this many documents, If null, will not print docs.
-   * @param options options for dumping out text
+   * Pr nts terms and opt onally docu nts for t  currently v e d  ndex.
+   * @param wr er wr er be ng used
+   * @param f eld  f null, w ll use all f elds
+   * @param term  f null w ll use all terms
+   * @param maxTerms w ll pr nt at most t  many terms per f eld.  f null w ll pr nt 0 terms.
+   * @param maxDocs w ll pr nt at most t  many docu nts,  f null, w ll not pr nt docs.
+   * @param opt ons opt ons for dump ng out text
    */
-  public void dumpData(ViewerWriter writer, String field, String term, Integer maxTerms,
-        Integer maxDocs, Options options, boolean shouldSeekToTerm) throws IOException {
+  publ c vo d dumpData(V e rWr er wr er, Str ng f eld, Str ng term,  nteger maxTerms,
+         nteger maxDocs, Opt ons opt ons, boolean shouldSeekToTerm) throws  OExcept on {
 
-    writer.beginObject();
-    printHeader(writer);
+    wr er.beg nObject();
+    pr nt ader(wr er);
 
-    writer.name("terms");
-    writer.beginArray();
-    writer.newline();
-    dumpDataInternal(writer, field, term, maxTerms, maxDocs, options, shouldSeekToTerm);
-    writer.endArray();
-    writer.endObject();
+    wr er.na ("terms");
+    wr er.beg nArray();
+    wr er.newl ne();
+    dumpData nternal(wr er, f eld, term, maxTerms, maxDocs, opt ons, shouldSeekToTerm);
+    wr er.endArray();
+    wr er.endObject();
   }
 
-  private void dumpDataInternal(ViewerWriter writer, String field, String term, Integer maxTerms,
-      Integer maxDocs, Options options, boolean shouldSeekToTerm) throws IOException {
+  pr vate vo d dumpData nternal(V e rWr er wr er, Str ng f eld, Str ng term,  nteger maxTerms,
+       nteger maxDocs, Opt ons opt ons, boolean shouldSeekToTerm) throws  OExcept on {
 
-    if (field == null) {
-      dumpDataForAllFields(writer, term, maxTerms, maxDocs, options);
+     f (f eld == null) {
+      dumpDataForAllF elds(wr er, term, maxTerms, maxDocs, opt ons);
       return;
     }
-    if (term == null) {
-      dumpDataForAllTerms(writer, field, maxTerms, maxDocs, options);
+     f (term == null) {
+      dumpDataForAllTerms(wr er, f eld, maxTerms, maxDocs, opt ons);
       return;
     }
-    Terms terms = twitterReader.terms(field);
-    if (terms != null) {
-      TermsEnum termsEnum = terms.iterator();
-      TermsEnum.SeekStatus status = termsEnum.seekCeil(new BytesRef(term));
-      if (status == TermsEnum.SeekStatus.FOUND) {
-        printTerm(writer, field, termsEnum, null, maxDocs, options);
+    Terms terms = tw terReader.terms(f eld);
+     f (terms != null) {
+      TermsEnum termsEnum = terms. erator();
+      TermsEnum.SeekStatus status = termsEnum.seekCe l(new BytesRef(term));
+       f (status == TermsEnum.SeekStatus.FOUND) {
+        pr ntTerm(wr er, f eld, termsEnum, null, maxDocs, opt ons);
       }
-      if (shouldSeekToTerm) {
-        dumpTermsAfterSeek(writer, field, terms, maxTerms, maxDocs, options, termsEnum, status);
+       f (shouldSeekToTerm) {
+        dumpTermsAfterSeek(wr er, f eld, terms, maxTerms, maxDocs, opt ons, termsEnum, status);
       }
     }
   }
 
   /**
-   * if term (cursor) is found for an indexed segment - dump the next termsLeft words
-   * starting from the current position in the enum.  For an indexed segment,
-   * seekCeil will place the enum at the word or the next "ceiling" term.  For
-   * a realtime index, if the word is not found we do not paginate anything
-   * We also only paginate if the TermsEnum is not at the end.
+   *  f term (cursor)  s found for an  ndexed seg nt - dump t  next termsLeft words
+   * start ng from t  current pos  on  n t  enum.  For an  ndexed seg nt,
+   * seekCe l w ll place t  enum at t  word or t  next "ce l ng" term.  For
+   * a realt    ndex,  f t  word  s not found   do not pag nate anyth ng
+   *   also only pag nate  f t  TermsEnum  s not at t  end.
    */
-  private void dumpTermsAfterSeek(ViewerWriter writer, String field, Terms terms, Integer maxTerms,
-      Integer maxDocs, Options options, TermsEnum termsEnum, TermsEnum.SeekStatus status)
-      throws IOException {
-    if (status != TermsEnum.SeekStatus.END) {
-      // for realtime, to not repeat the found word
-      if (shouldSeekExact(terms, termsEnum)) {
+  pr vate vo d dumpTermsAfterSeek(V e rWr er wr er, Str ng f eld, Terms terms,  nteger maxTerms,
+       nteger maxDocs, Opt ons opt ons, TermsEnum termsEnum, TermsEnum.SeekStatus status)
+      throws  OExcept on {
+     f (status != TermsEnum.SeekStatus.END) {
+      // for realt  , to not repeat t  found word
+       f (shouldSeekExact(terms, termsEnum)) {
         termsEnum.next();
       }
-      if (status != TermsEnum.SeekStatus.FOUND) {
-        // if not found, print out curr term before calling next()
-        printTerm(writer, field, termsEnum, null, maxDocs, options);
+       f (status != TermsEnum.SeekStatus.FOUND) {
+        //  f not found, pr nt out curr term before call ng next()
+        pr ntTerm(wr er, f eld, termsEnum, null, maxDocs, opt ons);
       }
-      for (int termsLeft = maxTerms - 1; termsLeft > 0 && termsEnum.next() != null; termsLeft--) {
-        printTerm(writer, field, termsEnum, null, maxDocs, options);
+      for ( nt termsLeft = maxTerms - 1; termsLeft > 0 && termsEnum.next() != null; termsLeft--) {
+        pr ntTerm(wr er, f eld, termsEnum, null, maxDocs, opt ons);
       }
     }
   }
 
-  private void dumpDataForAllFields(ViewerWriter writer, String term, Integer maxTerms,
-                                    Integer maxDocs, Options options) throws IOException {
-    for (String field : sortedFields()) {
-      dumpDataInternal(writer, field, term, maxTerms, maxDocs, options, false);
+  pr vate vo d dumpDataForAllF elds(V e rWr er wr er, Str ng term,  nteger maxTerms,
+                                     nteger maxDocs, Opt ons opt ons) throws  OExcept on {
+    for (Str ng f eld : sortedF elds()) {
+      dumpData nternal(wr er, f eld, term, maxTerms, maxDocs, opt ons, false);
     }
   }
 
-  private List<String> sortedFields() {
-    // Tweet facets are added to a special $facets field, which is not part of the schema.
-    // We include it here, because seeing the facets for a tweet is generally useful.
-    List<String> fields = Lists.newArrayList("$facets");
-    for (Schema.FieldInfo fieldInfo : twitterReader.getSchema().getFieldInfos()) {
-      if (fieldInfo.getFieldType().indexOptions() != IndexOptions.NONE) {
-        fields.add(fieldInfo.getName());
+  pr vate L st<Str ng> sortedF elds() {
+    // T et facets are added to a spec al $facets f eld, wh ch  s not part of t  sc ma.
+    //    nclude    re, because see ng t  facets for a t et  s generally useful.
+    L st<Str ng> f elds = L sts.newArrayL st("$facets");
+    for (Sc ma.F eld nfo f eld nfo : tw terReader.getSc ma().getF eld nfos()) {
+       f (f eld nfo.getF eldType(). ndexOpt ons() !=  ndexOpt ons.NONE) {
+        f elds.add(f eld nfo.getNa ());
       }
     }
-    Collections.sort(fields);
-    return fields;
+    Collect ons.sort(f elds);
+    return f elds;
   }
 
-  private void dumpDataForAllTerms(ViewerWriter writer,
-                                   String field,
-                                   Integer maxTerms,
-                                   Integer maxDocs,
-                                   Options options) throws IOException {
-    Terms terms = twitterReader.terms(field);
-    if (terms != null) {
-      TermsEnum termsEnum = terms.iterator();
-      if (shouldSeekExact(terms, termsEnum)) {
-        long numTerms = terms.size();
-        long termToDump = maxTerms == null ? 0 : Math.min(numTerms, maxTerms);
-        for (int i = 0; i < termToDump; i++) {
-          termsEnum.seekExact(i);
-          printTerm(writer, field, termsEnum, null, maxDocs, options);
+  pr vate vo d dumpDataForAllTerms(V e rWr er wr er,
+                                   Str ng f eld,
+                                    nteger maxTerms,
+                                    nteger maxDocs,
+                                   Opt ons opt ons) throws  OExcept on {
+    Terms terms = tw terReader.terms(f eld);
+     f (terms != null) {
+      TermsEnum termsEnum = terms. erator();
+       f (shouldSeekExact(terms, termsEnum)) {
+        long numTerms = terms.s ze();
+        long termToDump = maxTerms == null ? 0 : Math.m n(numTerms, maxTerms);
+        for ( nt   = 0;   < termToDump;  ++) {
+          termsEnum.seekExact( );
+          pr ntTerm(wr er, f eld, termsEnum, null, maxDocs, opt ons);
         }
       } else {
-        int max = maxTerms == null ? 0 : maxTerms;
-        while (max > 0 && termsEnum.next() != null) {
-          printTerm(writer, field, termsEnum, null, maxDocs, options);
+         nt max = maxTerms == null ? 0 : maxTerms;
+        wh le (max > 0 && termsEnum.next() != null) {
+          pr ntTerm(wr er, f eld, termsEnum, null, maxDocs, opt ons);
           max--;
         }
       }
     }
   }
 
-  private String termToString(String field, BytesRef bytesTerm, Options options)
-      throws UnsupportedEncodingException {
-    if (INT_TERM_ATTRIBUTE_FIELDS.contains(field)) {
-      return Integer.toString(IntTermAttributeImpl.copyBytesRefToInt(bytesTerm));
-    } else if (LONG_TERM_ATTRIBUTE_FIELDS.contains(field)) {
-      return Long.toString(LongTermAttributeImpl.copyBytesRefToLong(bytesTerm));
-    } else if (SORTED_LONG_TERM_ATTRIBUTE_FIELDS.contains(field)) {
-      return Long.toString(SortableLongTermAttributeImpl.copyBytesRefToLong(bytesTerm));
+  pr vate Str ng termToStr ng(Str ng f eld, BytesRef bytesTerm, Opt ons opt ons)
+      throws UnsupportedEncod ngExcept on {
+     f ( NT_TERM_ATTR BUTE_F ELDS.conta ns(f eld)) {
+      return  nteger.toStr ng( ntTermAttr bute mpl.copyBytesRefTo nt(bytesTerm));
+    } else  f (LONG_TERM_ATTR BUTE_F ELDS.conta ns(f eld)) {
+      return Long.toStr ng(LongTermAttr bute mpl.copyBytesRefToLong(bytesTerm));
+    } else  f (SORTED_LONG_TERM_ATTR BUTE_F ELDS.conta ns(f eld)) {
+      return Long.toStr ng(SortableLongTermAttr bute mpl.copyBytesRefToLong(bytesTerm));
     } else {
-      if (options != null && options.charset != null && !options.charset.isEmpty()) {
-        return new String(bytesTerm.bytes, bytesTerm.offset, bytesTerm.length, options.charset);
+       f (opt ons != null && opt ons.charset != null && !opt ons.charset. sEmpty()) {
+        return new Str ng(bytesTerm.bytes, bytesTerm.offset, bytesTerm.length, opt ons.charset);
       } else {
-        return bytesTerm.utf8ToString();
+        return bytesTerm.utf8ToStr ng();
       }
     }
   }
 
-  private void printTerm(ViewerWriter writer, String field, TermsEnum termsEnum,
-                         PostingsEnum docsEnum, Integer maxDocs, Options options)
-      throws IOException {
-    final BytesRef bytesRef = termsEnum.term();
-    StringBuilder termToString = new StringBuilder();
-    termToString.append(termToString(field, bytesRef, options));
-    if (options != null && options.dumpHexTerms) {
-      termToString.append(" ").append(bytesRef.toString());
+  pr vate vo d pr ntTerm(V e rWr er wr er, Str ng f eld, TermsEnum termsEnum,
+                         Post ngsEnum docsEnum,  nteger maxDocs, Opt ons opt ons)
+      throws  OExcept on {
+    f nal BytesRef bytesRef = termsEnum.term();
+    Str ngBu lder termToStr ng = new Str ngBu lder();
+    termToStr ng.append(termToStr ng(f eld, bytesRef, opt ons));
+     f (opt ons != null && opt ons.dump xTerms) {
+      termToStr ng.append(" ").append(bytesRef.toStr ng());
     }
-    final int df = termsEnum.docFreq();
-    double dfPercent = ((double) df / this.twitterReader.numDocs()) * 100.0;
-    TermDto termDto = new TermDto(field, termToString.toString(), Integer.toString(df),
-                                   String.format(Locale.US, "%.2f%%", dfPercent),
+    f nal  nt df = termsEnum.docFreq();
+    double dfPercent = ((double) df / t .tw terReader.numDocs()) * 100.0;
+    TermDto termDto = new TermDto(f eld, termToStr ng.toStr ng(),  nteger.toStr ng(df),
+                                   Str ng.format(Locale.US, "%.2f%%", dfPercent),
                                    docsEnum, termsEnum, maxDocs);
-    termDto.write(writer, twitterReader);
-    writer.newline();
+    termDto.wr e(wr er, tw terReader);
+    wr er.newl ne();
   }
 
-  private static void appendFrequencyAndPositions(ViewerWriter writer, String field,
-      PostingsEnum docsEnum, EarlybirdIndexSegmentAtomicReader twitterReader) throws IOException {
-    final int frequency = docsEnum.freq();
-    writer.name("freq").value(Integer.toString(frequency));
+  pr vate stat c vo d appendFrequencyAndPos  ons(V e rWr er wr er, Str ng f eld,
+      Post ngsEnum docsEnum, Earlyb rd ndexSeg ntAtom cReader tw terReader) throws  OExcept on {
+    f nal  nt frequency = docsEnum.freq();
+    wr er.na ("freq").value( nteger.toStr ng(frequency));
 
-    Schema schema = twitterReader.getSchema();
-    Schema.FieldInfo fieldInfo = schema.getFieldInfo(field);
+    Sc ma sc ma = tw terReader.getSc ma();
+    Sc ma.F eld nfo f eld nfo = sc ma.getF eld nfo(f eld);
 
-    if (fieldInfo != null
-            && (fieldInfo.getFieldType().indexOptions() == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS
-            || fieldInfo.getFieldType().indexOptions()
-                == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)) {
-      appendPositions(writer, docsEnum);
+     f (f eld nfo != null
+            && (f eld nfo.getF eldType(). ndexOpt ons() ==  ndexOpt ons.DOCS_AND_FREQS_AND_POS T ONS
+            || f eld nfo.getF eldType(). ndexOpt ons()
+                ==  ndexOpt ons.DOCS_AND_FREQS_AND_POS T ONS_AND_OFFSETS)) {
+      appendPos  ons(wr er, docsEnum);
     }
   }
 
-  private static void appendPositions(ViewerWriter writer, PostingsEnum docsAndPositionsEnum)
-      throws IOException {
-    writer.name("positions");
+  pr vate stat c vo d appendPos  ons(V e rWr er wr er, Post ngsEnum docsAndPos  onsEnum)
+      throws  OExcept on {
+    wr er.na ("pos  ons");
 
-    writer.beginArray();
-    final int frequency = docsAndPositionsEnum.freq();
-    for (int i = 0; i < frequency; i++) {
-      int position = docsAndPositionsEnum.nextPosition();
-      writer.value(Integer.toString(position));
+    wr er.beg nArray();
+    f nal  nt frequency = docsAndPos  onsEnum.freq();
+    for ( nt   = 0;   < frequency;  ++) {
+       nt pos  on = docsAndPos  onsEnum.nextPos  on();
+      wr er.value( nteger.toStr ng(pos  on));
     }
-    writer.endArray();
+    wr er.endArray();
   }
 
-  private static void appendDocs(ViewerWriter writer, TermsEnum termsEnum, int maxDocs,
-                                 EarlybirdIndexSegmentAtomicReader twitterReader)
-      throws IOException {
-    writer.name("docIds");
+  pr vate stat c vo d appendDocs(V e rWr er wr er, TermsEnum termsEnum,  nt maxDocs,
+                                 Earlyb rd ndexSeg ntAtom cReader tw terReader)
+      throws  OExcept on {
+    wr er.na ("doc ds");
 
-    writer.beginArray();
+    wr er.beg nArray();
 
-    PostingsEnum docs = termsEnum.postings(null, 0);
-    int docsReturned = 0;
-    int docId;
+    Post ngsEnum docs = termsEnum.post ngs(null, 0);
+     nt docsReturned = 0;
+     nt doc d;
     boolean endedEarly = false;
-    DocIDToTweetIDMapper mapper = twitterReader.getSegmentData().getDocIDToTweetIDMapper();
-    while ((docId = docs.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS) {
-      if (docsReturned < maxDocs) {
+    Doc DToT et DMapper mapper = tw terReader.getSeg ntData().getDoc DToT et DMapper();
+    wh le ((doc d = docs.nextDoc()) != Doc dSet erator.NO_MORE_DOCS) {
+       f (docsReturned < maxDocs) {
         docsReturned++;
-        long tweetID = mapper.getTweetID(docId);
+        long t et D = mapper.getT et D(doc d);
 
-        writer.beginObject();
-        writer.name("docId").value(Long.toString(docId));
-        writer.name("tweetId").value(Long.toString(tweetID));
-        writer.endObject();
+        wr er.beg nObject();
+        wr er.na ("doc d").value(Long.toStr ng(doc d));
+        wr er.na ("t et d").value(Long.toStr ng(t et D));
+        wr er.endObject();
       } else {
         endedEarly = true;
         break;
       }
     }
-    if (endedEarly) {
-      writer.beginObject();
-      writer.name("status").value("ended early");
-      writer.endObject();
+     f (endedEarly) {
+      wr er.beg nObject();
+      wr er.na ("status").value("ended early");
+      wr er.endObject();
     }
-    writer.endArray();
+    wr er.endArray();
   }
 
   /**
-   * Prints generic stats for all fields in the currently viewed index.
+   * Pr nts gener c stats for all f elds  n t  currently v e d  ndex.
    */
-  public void dumpStats(ViewerWriter writer) throws IOException {
-    writer.beginObject();
+  publ c vo d dumpStats(V e rWr er wr er) throws  OExcept on {
+    wr er.beg nObject();
 
-    printHeader(writer);
-    // stats section
-    writer.name("stats");
-    writer.beginArray();
-    writer.newline();
-    for (String field : sortedFields()) {
-      Terms terms = twitterReader.terms(field);
-      if (terms != null) {
-        printStats(writer, field, terms);
+    pr nt ader(wr er);
+    // stats sect on
+    wr er.na ("stats");
+    wr er.beg nArray();
+    wr er.newl ne();
+    for (Str ng f eld : sortedF elds()) {
+      Terms terms = tw terReader.terms(f eld);
+       f (terms != null) {
+        pr ntStats(wr er, f eld, terms);
       }
     }
-    writer.endArray();
-    writer.endObject();
+    wr er.endArray();
+    wr er.endObject();
   }
 
-  private void printStats(ViewerWriter writer, String field, Terms terms) throws IOException {
+  pr vate vo d pr ntStats(V e rWr er wr er, Str ng f eld, Terms terms) throws  OExcept on {
     StatsDto statsDto = new StatsDto(
-        field, String.valueOf(terms.size()), terms.getClass().getCanonicalName());
-    statsDto.write(writer);
-    writer.newline();
+        f eld, Str ng.valueOf(terms.s ze()), terms.getClass().getCanon calNa ());
+    statsDto.wr e(wr er);
+    wr er.newl ne();
   }
 
-  private void printHeader(ViewerWriter writer) throws IOException {
-    writer.name("timeSliceId").value(Long.toString(this.searcher.getTimeSliceID()));
-    writer.name("maxDocNumber").value(Integer.toString(this.twitterReader.maxDoc()));
-    writer.newline();
+  pr vate vo d pr nt ader(V e rWr er wr er) throws  OExcept on {
+    wr er.na ("t  Sl ce d").value(Long.toStr ng(t .searc r.getT  Sl ce D()));
+    wr er.na ("maxDocNumber").value( nteger.toStr ng(t .tw terReader.maxDoc()));
+    wr er.newl ne();
   }
 
-  private static String formatField(String field) {
-    return String.format("%20s", field);
+  pr vate stat c Str ng formatF eld(Str ng f eld) {
+    return Str ng.format("%20s", f eld);
   }
 
   /**
-   * Dumps out the schema of the current segment.
-   * @param writer to be used for printing
+   * Dumps out t  sc ma of t  current seg nt.
+   * @param wr er to be used for pr nt ng
    */
-  public void dumpSchema(ViewerWriter writer) throws IOException {
-    writer.beginObject();
-    printHeader(writer);
-    writer.name("schemaFields");
-    writer.beginArray();
-    writer.newline();
-    Schema schema = this.twitterReader.getSchema();
-    // The fields in the schema are not sorted. Sort them so that the output is deterministic
-    Set<String> fieldNameSet = new TreeSet<>();
-    for (Schema.FieldInfo fieldInfo: schema.getFieldInfos()) {
-      fieldNameSet.add(fieldInfo.getName());
+  publ c vo d dumpSc ma(V e rWr er wr er) throws  OExcept on {
+    wr er.beg nObject();
+    pr nt ader(wr er);
+    wr er.na ("sc maF elds");
+    wr er.beg nArray();
+    wr er.newl ne();
+    Sc ma sc ma = t .tw terReader.getSc ma();
+    // T  f elds  n t  sc ma are not sorted. Sort t m so that t  output  s determ n st c
+    Set<Str ng> f eldNa Set = new TreeSet<>();
+    for (Sc ma.F eld nfo f eld nfo: sc ma.getF eld nfos()) {
+      f eldNa Set.add(f eld nfo.getNa ());
     }
-    for (String fieldName : fieldNameSet) {
-      writer.value(fieldName);
-      writer.newline();
+    for (Str ng f eldNa  : f eldNa Set) {
+      wr er.value(f eldNa );
+      wr er.newl ne();
     }
-    writer.endArray();
-    writer.endObject();
+    wr er.endArray();
+    wr er.endObject();
   }
 
   /**
-   * Dumps out the indexed fields inside the current segment.
-   * Mainly used to help the front end populate the fields.
-   * @param writer writer to be used for printing
+   * Dumps out t   ndexed f elds  ns de t  current seg nt.
+   * Ma nly used to  lp t  front end populate t  f elds.
+   * @param wr er wr er to be used for pr nt ng
    */
-  public void dumpFields(ViewerWriter writer) throws IOException {
-    writer.beginObject();
-    printHeader(writer);
-    writer.name("fields");
-    writer.beginArray();
-    writer.newline();
-    for (String field : sortedFields()) {
-      writer.value(field);
-      writer.newline();
+  publ c vo d dumpF elds(V e rWr er wr er) throws  OExcept on {
+    wr er.beg nObject();
+    pr nt ader(wr er);
+    wr er.na ("f elds");
+    wr er.beg nArray();
+    wr er.newl ne();
+    for (Str ng f eld : sortedF elds()) {
+      wr er.value(f eld);
+      wr er.newl ne();
     }
-    writer.endArray();
-    writer.endObject();
+    wr er.endArray();
+    wr er.endObject();
   }
 
   /**
-   * Dumps out the mapping of the tweet/tweetId to
-   * a docId as well as segment/timeslide pair.
-   * @param writer writer to be used for writing
-   * @param tweetId tweetId that is input by user
+   * Dumps out t  mapp ng of t  t et/t et d to
+   * a doc d as  ll as seg nt/t  sl de pa r.
+   * @param wr er wr er to be used for wr  ng
+   * @param t et d t et d that  s  nput by user
    */
-  public void dumpTweetIdToDocIdMapping(ViewerWriter writer, long tweetId) throws IOException {
-    writer.beginObject();
-    printHeader(writer);
-    writer.name("tweetId").value(Long.toString(tweetId));
-    int docId = twitterReader.getSegmentData().getDocIDToTweetIDMapper().getDocID(tweetId);
+  publ c vo d dumpT et dToDoc dMapp ng(V e rWr er wr er, long t et d) throws  OExcept on {
+    wr er.beg nObject();
+    pr nt ader(wr er);
+    wr er.na ("t et d").value(Long.toStr ng(t et d));
+     nt doc d = tw terReader.getSeg ntData().getDoc DToT et DMapper().getDoc D(t et d);
 
-    writer.name("docId").value(Integer.toString(docId));
-    writer.endObject();
-    writer.newline();
+    wr er.na ("doc d").value( nteger.toStr ng(doc d));
+    wr er.endObject();
+    wr er.newl ne();
   }
 
   /**
-   * Dumps out the mapping of the docId to
-   * tweetId and timeslice/segmentId pairs.
-   * @param writer writer to be used for writing
-   * @param docid docId that is input by user
+   * Dumps out t  mapp ng of t  doc d to
+   * t et d and t  sl ce/seg nt d pa rs.
+   * @param wr er wr er to be used for wr  ng
+   * @param doc d doc d that  s  nput by user
    */
-  public void dumpDocIdToTweetIdMapping(ViewerWriter writer, int docid) throws IOException {
-    writer.beginObject();
-    printHeader(writer);
-    long tweetId = twitterReader.getSegmentData().getDocIDToTweetIDMapper().getTweetID(docid);
+  publ c vo d dumpDoc dToT et dMapp ng(V e rWr er wr er,  nt doc d) throws  OExcept on {
+    wr er.beg nObject();
+    pr nt ader(wr er);
+    long t et d = tw terReader.getSeg ntData().getDoc DToT et DMapper().getT et D(doc d);
 
-    writer.name("tweetId");
-    if (tweetId >= 0) {
-      writer.value(Long.toString(tweetId));
+    wr er.na ("t et d");
+     f (t et d >= 0) {
+      wr er.value(Long.toStr ng(t et d));
     } else {
-      writer.value("Does not exist in segment");
+      wr er.value("Does not ex st  n seg nt");
     }
-    writer.name("docid").value(Integer.toString(docid));
-    writer.endObject();
+    wr er.na ("doc d").value( nteger.toStr ng(doc d));
+    wr er.endObject();
   }
 
   /**
-   * Print a response indicating that the given tweet id is not found in the index.
+   * Pr nt a response  nd cat ng that t  g ven t et  d  s not found  n t   ndex.
    *
-   * Note that this method does not actually need the underlying index, and hence is setup as
-   * a util function.
+   * Note that t   thod does not actually need t  underly ng  ndex, and  nce  s setup as
+   * a ut l funct on.
    */
-  public static void writeTweetDoesNotExistResponse(ViewerWriter writer, long tweetId)
-      throws IOException {
-    writer.beginObject();
-    writer.name("tweetId");
-    writer.value(Long.toString(tweetId));
-    writer.name("docId");
-    writer.value("does not exist on this earlybird.");
-    writer.endObject();
+  publ c stat c vo d wr eT etDoesNotEx stResponse(V e rWr er wr er, long t et d)
+      throws  OExcept on {
+    wr er.beg nObject();
+    wr er.na ("t et d");
+    wr er.value(Long.toStr ng(t et d));
+    wr er.na ("doc d");
+    wr er.value("does not ex st on t  earlyb rd.");
+    wr er.endObject();
   }
 }

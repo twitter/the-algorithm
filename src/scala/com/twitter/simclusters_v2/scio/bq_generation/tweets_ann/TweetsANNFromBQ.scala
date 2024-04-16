@@ -1,120 +1,120 @@
-package com.twitter.simclusters_v2.scio.bq_generation
-package tweets_ann
+package com.tw ter.s mclusters_v2.sc o.bq_generat on
+package t ets_ann
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.simclusters_v2.thriftscala.CandidateTweet
-import com.twitter.wtf.beam.bq_embedding_export.BQQueryUtils
-import org.apache.avro.generic.GenericData
-import org.apache.avro.generic.GenericRecord
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
-import org.apache.beam.sdk.io.gcp.bigquery.SchemaAndRecord
-import org.apache.beam.sdk.transforms.SerializableFunction
-import org.joda.time.DateTime
-import scala.collection.mutable.ListBuffer
+ mport com.spot fy.sc o.Sc oContext
+ mport com.spot fy.sc o.values.SCollect on
+ mport com.tw ter.s mclusters_v2.thr ftscala.Cand dateT et
+ mport com.tw ter.wtf.beam.bq_embedd ng_export.BQQueryUt ls
+ mport org.apac .avro.gener c.Gener cData
+ mport org.apac .avro.gener c.Gener cRecord
+ mport org.apac .beam.sdk. o.gcp.b gquery.B gQuery O
+ mport org.apac .beam.sdk. o.gcp.b gquery.Sc maAndRecord
+ mport org.apac .beam.sdk.transforms.Ser al zableFunct on
+ mport org.joda.t  .DateT  
+ mport scala.collect on.mutable.L stBuffer
 
-object TweetsANNFromBQ {
-  // Default ANN config variables
-  val topNClustersPerSourceEmbedding = Config.SimClustersANNTopNClustersPerSourceEmbedding
-  val topMTweetsPerCluster = Config.SimClustersANNTopMTweetsPerCluster
-  val topKTweetsPerUserRequest = Config.SimClustersANNTopKTweetsPerUserRequest
+object T etsANNFromBQ {
+  // Default ANN conf g var ables
+  val topNClustersPerS ceEmbedd ng = Conf g.S mClustersANNTopNClustersPerS ceEmbedd ng
+  val topMT etsPerCluster = Conf g.S mClustersANNTopMT etsPerCluster
+  val topKT etsPerUserRequest = Conf g.S mClustersANNTopKT etsPerUserRequest
 
-  // SQL file paths
-  val tweetsANNSQLPath =
-    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/tweets_ann.sql"
-  val tweetsEmbeddingGenerationSQLPath =
-    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/tweet_embeddings_generation.sql"
+  // SQL f le paths
+  val t etsANNSQLPath =
+    s"/com/tw ter/s mclusters_v2/sc o/bq_generat on/sql/t ets_ann.sql"
+  val t etsEmbedd ngGenerat onSQLPath =
+    s"/com/tw ter/s mclusters_v2/sc o/bq_generat on/sql/t et_embedd ngs_generat on.sql"
 
-  // Function that parses the GenericRecord results we read from BQ
-  val parseUserToTweetRecommendationsFunc =
-    new SerializableFunction[SchemaAndRecord, UserToTweetRecommendations] {
-      override def apply(record: SchemaAndRecord): UserToTweetRecommendations = {
-        val genericRecord: GenericRecord = record.getRecord()
-        UserToTweetRecommendations(
-          userId = genericRecord.get("userId").toString.toLong,
-          tweetCandidates = parseTweetIdColumn(genericRecord, "tweets"),
+  // Funct on that parses t  Gener cRecord results   read from BQ
+  val parseUserToT etRecom ndat onsFunc =
+    new Ser al zableFunct on[Sc maAndRecord, UserToT etRecom ndat ons] {
+      overr de def apply(record: Sc maAndRecord): UserToT etRecom ndat ons = {
+        val gener cRecord: Gener cRecord = record.getRecord()
+        UserToT etRecom ndat ons(
+          user d = gener cRecord.get("user d").toStr ng.toLong,
+          t etCand dates = parseT et dColumn(gener cRecord, "t ets"),
         )
       }
     }
 
-  // Parse tweetId candidates column
-  def parseTweetIdColumn(
-    genericRecord: GenericRecord,
-    columnName: String
-  ): List[CandidateTweet] = {
-    val tweetIds: GenericData.Array[GenericRecord] =
-      genericRecord.get(columnName).asInstanceOf[GenericData.Array[GenericRecord]]
-    val results: ListBuffer[CandidateTweet] = new ListBuffer[CandidateTweet]()
-    tweetIds.forEach((sc: GenericRecord) => {
-      results += CandidateTweet(
-        tweetId = sc.get("tweetId").toString.toLong,
-        score = Some(sc.get("logCosineSimilarityScore").toString.toDouble)
+  // Parse t et d cand dates column
+  def parseT et dColumn(
+    gener cRecord: Gener cRecord,
+    columnNa : Str ng
+  ): L st[Cand dateT et] = {
+    val t et ds: Gener cData.Array[Gener cRecord] =
+      gener cRecord.get(columnNa ).as nstanceOf[Gener cData.Array[Gener cRecord]]
+    val results: L stBuffer[Cand dateT et] = new L stBuffer[Cand dateT et]()
+    t et ds.forEach((sc: Gener cRecord) => {
+      results += Cand dateT et(
+        t et d = sc.get("t et d").toStr ng.toLong,
+        score = So (sc.get("logCos neS m lar yScore").toStr ng.toDouble)
       )
     })
-    results.toList
+    results.toL st
   }
 
-  def getTweetEmbeddingsSQL(
-    queryDate: DateTime,
-    consumerEmbeddingsSQL: String,
-    tweetEmbeddingsSQLPath: String,
-    tweetEmbeddingsHalfLife: Int,
-    tweetEmbeddingsLength: Int
-  ): String = {
-    // We read one day of fav events to construct our tweet embeddings
-    val templateVariables =
+  def getT etEmbedd ngsSQL(
+    queryDate: DateT  ,
+    consu rEmbedd ngsSQL: Str ng,
+    t etEmbedd ngsSQLPath: Str ng,
+    t etEmbedd ngsHalfL fe:  nt,
+    t etEmbedd ngsLength:  nt
+  ): Str ng = {
+    //   read one day of fav events to construct   t et embedd ngs
+    val templateVar ables =
       Map(
-        "CONSUMER_EMBEDDINGS_SQL" -> consumerEmbeddingsSQL,
-        "QUERY_DATE" -> queryDate.toString(),
-        "START_TIME" -> queryDate.minusDays(1).toString(),
-        "END_TIME" -> queryDate.toString(),
-        "MIN_SCORE_THRESHOLD" -> 0.0.toString,
-        "HALF_LIFE" -> tweetEmbeddingsHalfLife.toString,
-        "TWEET_EMBEDDING_LENGTH" -> tweetEmbeddingsLength.toString,
-        "NO_OLDER_TWEETS_THAN_DATE" -> queryDate.minusDays(1).toString(),
+        "CONSUMER_EMBEDD NGS_SQL" -> consu rEmbedd ngsSQL,
+        "QUERY_DATE" -> queryDate.toStr ng(),
+        "START_T ME" -> queryDate.m nusDays(1).toStr ng(),
+        "END_T ME" -> queryDate.toStr ng(),
+        "M N_SCORE_THRESHOLD" -> 0.0.toStr ng,
+        "HALF_L FE" -> t etEmbedd ngsHalfL fe.toStr ng,
+        "TWEET_EMBEDD NG_LENGTH" -> t etEmbedd ngsLength.toStr ng,
+        "NO_OLDER_TWEETS_THAN_DATE" -> queryDate.m nusDays(1).toStr ng(),
       )
-    BQQueryUtils.getBQQueryFromSqlFile(tweetEmbeddingsSQLPath, templateVariables)
+    BQQueryUt ls.getBQQueryFromSqlF le(t etEmbedd ngsSQLPath, templateVar ables)
   }
 
-  def getTweetRecommendationsBQ(
-    sc: ScioContext,
-    queryTimestamp: DateTime,
-    consumerEmbeddingsSQL: String,
-    tweetEmbeddingsHalfLife: Int,
-    tweetEmbeddingsLength: Int
-  ): SCollection[UserToTweetRecommendations] = {
-    // Get the tweet embeddings SQL string based on the provided consumerEmbeddingsSQL
-    val tweetEmbeddingsSQL =
-      getTweetEmbeddingsSQL(
-        queryTimestamp,
-        consumerEmbeddingsSQL,
-        tweetsEmbeddingGenerationSQLPath,
-        tweetEmbeddingsHalfLife,
-        tweetEmbeddingsLength
+  def getT etRecom ndat onsBQ(
+    sc: Sc oContext,
+    queryT  stamp: DateT  ,
+    consu rEmbedd ngsSQL: Str ng,
+    t etEmbedd ngsHalfL fe:  nt,
+    t etEmbedd ngsLength:  nt
+  ): SCollect on[UserToT etRecom ndat ons] = {
+    // Get t  t et embedd ngs SQL str ng based on t  prov ded consu rEmbedd ngsSQL
+    val t etEmbedd ngsSQL =
+      getT etEmbedd ngsSQL(
+        queryT  stamp,
+        consu rEmbedd ngsSQL,
+        t etsEmbedd ngGenerat onSQLPath,
+        t etEmbedd ngsHalfL fe,
+        t etEmbedd ngsLength
       )
 
-    // Define template variables which we would like to be replaced in the corresponding sql file
-    val templateVariables =
+    // Def ne template var ables wh ch   would l ke to be replaced  n t  correspond ng sql f le
+    val templateVar ables =
       Map(
-        "CONSUMER_EMBEDDINGS_SQL" -> consumerEmbeddingsSQL,
-        "TWEET_EMBEDDINGS_SQL" -> tweetEmbeddingsSQL,
-        "TOP_N_CLUSTER_PER_SOURCE_EMBEDDING" -> topNClustersPerSourceEmbedding.toString,
-        "TOP_M_TWEETS_PER_CLUSTER" -> topMTweetsPerCluster.toString,
-        "TOP_K_TWEETS_PER_USER_REQUEST" -> topKTweetsPerUserRequest.toString
+        "CONSUMER_EMBEDD NGS_SQL" -> consu rEmbedd ngsSQL,
+        "TWEET_EMBEDD NGS_SQL" -> t etEmbedd ngsSQL,
+        "TOP_N_CLUSTER_PER_SOURCE_EMBEDD NG" -> topNClustersPerS ceEmbedd ng.toStr ng,
+        "TOP_M_TWEETS_PER_CLUSTER" -> topMT etsPerCluster.toStr ng,
+        "TOP_K_TWEETS_PER_USER_REQUEST" -> topKT etsPerUserRequest.toStr ng
       )
-    val query = BQQueryUtils.getBQQueryFromSqlFile(tweetsANNSQLPath, templateVariables)
+    val query = BQQueryUt ls.getBQQueryFromSqlF le(t etsANNSQLPath, templateVar ables)
 
-    // Run SimClusters ANN on BQ and parse the results
-    sc.customInput(
-      s"SimClusters BQ ANN",
-      BigQueryIO
-        .read(parseUserToTweetRecommendationsFunc)
+    // Run S mClusters ANN on BQ and parse t  results
+    sc.custom nput(
+      s"S mClusters BQ ANN",
+      B gQuery O
+        .read(parseUserToT etRecom ndat onsFunc)
         .fromQuery(query)
-        .usingStandardSql()
+        .us ngStandardSql()
     )
   }
 
-  case class UserToTweetRecommendations(
-    userId: Long,
-    tweetCandidates: List[CandidateTweet])
+  case class UserToT etRecom ndat ons(
+    user d: Long,
+    t etCand dates: L st[Cand dateT et])
 }

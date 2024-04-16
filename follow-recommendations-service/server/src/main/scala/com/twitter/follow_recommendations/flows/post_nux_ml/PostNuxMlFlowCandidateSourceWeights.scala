@@ -1,68 +1,68 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+package com.tw ter.follow_recom ndat ons.flows.post_nux_ml
 
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ForwardEmailBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ForwardPhoneBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ReverseEmailBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ReversePhoneBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.crowd_search_accounts.CrowdSearchAccountsSource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopCountryBackFillSource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopCountrySource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopGeohashQualityFollowSource
-import com.twitter.follow_recommendations.common.candidate_sources.geo.PopGeohashSource
-import com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow.PPMILocaleFollowSource
-import com.twitter.follow_recommendations.common.candidate_sources.real_graph.RealGraphOonV2Source
-import com.twitter.follow_recommendations.common.candidate_sources.recent_engagement.RecentEngagementNonDirectFollowSource
-import com.twitter.follow_recommendations.common.candidate_sources.recent_engagement.RepeatedProfileVisitsSource
-import com.twitter.follow_recommendations.common.candidate_sources.salsa.RecentEngagementDirectFollowSalsaExpansionSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentEngagementSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentFollowingSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims.Follow2vecNearestNeighborsStore
-import com.twitter.follow_recommendations.common.candidate_sources.stp.BaseOnlineSTPSource
-import com.twitter.follow_recommendations.common.candidate_sources.stp.OfflineStrongTiePredictionSource
-import com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts.TopOrganicFollowsAccountsSource
-import com.twitter.follow_recommendations.common.candidate_sources.triangular_loops.TriangularLoopsSource
-import com.twitter.follow_recommendations.common.candidate_sources.two_hop_random_walk.TwoHopRandomWalkSource
-import com.twitter.follow_recommendations.common.candidate_sources.user_user_graph.UserUserGraphCandidateSource
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlCandidateSourceWeightParams._
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.timelines.configapi.Params
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.addressbook.ForwardEma lBookS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.addressbook.ForwardPhoneBookS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.addressbook.ReverseEma lBookS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.addressbook.ReversePhoneBookS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.crowd_search_accounts.CrowdSearchAccountsS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.geo.PopCountryBackF llS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.geo.PopCountryS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.geo.PopGeohashQual yFollowS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.geo.PopGeohashS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.ppm _locale_follow.PPM LocaleFollowS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.real_graph.RealGraphOonV2S ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.recent_engage nt.RecentEngage ntNonD rectFollowS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.recent_engage nt.RepeatedProf leV s sS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.salsa.RecentEngage ntD rectFollowSalsaExpans onS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms_expans on.RecentEngage ntS m larUsersS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms_expans on.RecentFollow ngS m larUsersS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.s ms.Follow2vecNearestNe ghborsStore
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.stp.BaseOnl neSTPS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.stp.Offl neStrongT ePred ct onS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.top_organ c_follows_accounts.TopOrgan cFollowsAccountsS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.tr angular_loops.Tr angularLoopsS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.two_hop_random_walk.TwoHopRandomWalkS ce
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.user_user_graph.UserUserGraphCand dateS ce
+ mport com.tw ter.follow_recom ndat ons.flows.post_nux_ml.PostNuxMlCand dateS ce  ghtParams._
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.t  l nes.conf gap .Params
 
-object PostNuxMlFlowCandidateSourceWeights {
+object PostNuxMlFlowCand dateS ce  ghts {
 
-  def getWeights(params: Params): Map[CandidateSourceIdentifier, Double] = {
-    Map[CandidateSourceIdentifier, Double](
-      // Social based
-      PPMILocaleFollowSource.Identifier -> params(CandidateWeightPPMILocaleFollow),
-      Follow2vecNearestNeighborsStore.IdentifierF2vLinearRegression -> params(
-        CandidateWeightFollow2vecNearestNeighbors),
-      RecentFollowingSimilarUsersSource.Identifier -> params(
-        CandidateWeightRecentFollowingSimilarUsers),
-      BaseOnlineSTPSource.Identifier -> params(CandidateWeightOnlineStp),
-      OfflineStrongTiePredictionSource.Identifier -> params(
-        CandidateWeightOfflineStrongTiePrediction),
-      ForwardEmailBookSource.Identifier -> params(CandidateWeightForwardEmailBook),
-      ForwardPhoneBookSource.Identifier -> params(CandidateWeightForwardPhoneBook),
-      ReverseEmailBookSource.Identifier -> params(CandidateWeightReverseEmailBook),
-      ReversePhoneBookSource.Identifier -> params(CandidateWeightReversePhoneBook),
-      TriangularLoopsSource.Identifier -> params(CandidateWeightTriangularLoops),
-      TwoHopRandomWalkSource.Identifier -> params(CandidateWeightTwoHopRandomWalk),
-      UserUserGraphCandidateSource.Identifier -> params(CandidateWeightUserUserGraph),
+  def get  ghts(params: Params): Map[Cand dateS ce dent f er, Double] = {
+    Map[Cand dateS ce dent f er, Double](
+      // Soc al based
+      PPM LocaleFollowS ce. dent f er -> params(Cand date  ghtPPM LocaleFollow),
+      Follow2vecNearestNe ghborsStore. dent f erF2vL nearRegress on -> params(
+        Cand date  ghtFollow2vecNearestNe ghbors),
+      RecentFollow ngS m larUsersS ce. dent f er -> params(
+        Cand date  ghtRecentFollow ngS m larUsers),
+      BaseOnl neSTPS ce. dent f er -> params(Cand date  ghtOnl neStp),
+      Offl neStrongT ePred ct onS ce. dent f er -> params(
+        Cand date  ghtOffl neStrongT ePred ct on),
+      ForwardEma lBookS ce. dent f er -> params(Cand date  ghtForwardEma lBook),
+      ForwardPhoneBookS ce. dent f er -> params(Cand date  ghtForwardPhoneBook),
+      ReverseEma lBookS ce. dent f er -> params(Cand date  ghtReverseEma lBook),
+      ReversePhoneBookS ce. dent f er -> params(Cand date  ghtReversePhoneBook),
+      Tr angularLoopsS ce. dent f er -> params(Cand date  ghtTr angularLoops),
+      TwoHopRandomWalkS ce. dent f er -> params(Cand date  ghtTwoHopRandomWalk),
+      UserUserGraphCand dateS ce. dent f er -> params(Cand date  ghtUserUserGraph),
       // Geo based
-      PopCountrySource.Identifier -> params(CandidateWeightPopCountry),
-      PopCountryBackFillSource.Identifier -> params(CandidateWeightPopGeoBackfill),
-      PopGeohashSource.Identifier -> params(CandidateWeightPopGeohash),
-      PopGeohashQualityFollowSource.Identifier -> params(CandidateWeightPopGeohashQualityFollow),
-      CrowdSearchAccountsSource.Identifier -> params(CandidateWeightCrowdSearch),
-      TopOrganicFollowsAccountsSource.Identifier -> params(CandidateWeightTopOrganicFollow),
-      // Engagement based
-      RealGraphOonV2Source.Identifier -> params(CandidateWeightRealGraphOonV2),
-      RecentEngagementNonDirectFollowSource.Identifier -> params(
-        CandidateWeightRecentEngagementNonDirectFollow),
-      RecentEngagementSimilarUsersSource.Identifier -> params(
-        CandidateWeightRecentEngagementSimilarUsers),
-      RepeatedProfileVisitsSource.Identifier -> params(CandidateWeightRepeatedProfileVisits),
-      RecentEngagementDirectFollowSalsaExpansionSource.Identifier -> params(
-        CandidateWeightRecentEngagementDirectFollowSalsaExpansion),
+      PopCountryS ce. dent f er -> params(Cand date  ghtPopCountry),
+      PopCountryBackF llS ce. dent f er -> params(Cand date  ghtPopGeoBackf ll),
+      PopGeohashS ce. dent f er -> params(Cand date  ghtPopGeohash),
+      PopGeohashQual yFollowS ce. dent f er -> params(Cand date  ghtPopGeohashQual yFollow),
+      CrowdSearchAccountsS ce. dent f er -> params(Cand date  ghtCrowdSearch),
+      TopOrgan cFollowsAccountsS ce. dent f er -> params(Cand date  ghtTopOrgan cFollow),
+      // Engage nt based
+      RealGraphOonV2S ce. dent f er -> params(Cand date  ghtRealGraphOonV2),
+      RecentEngage ntNonD rectFollowS ce. dent f er -> params(
+        Cand date  ghtRecentEngage ntNonD rectFollow),
+      RecentEngage ntS m larUsersS ce. dent f er -> params(
+        Cand date  ghtRecentEngage ntS m larUsers),
+      RepeatedProf leV s sS ce. dent f er -> params(Cand date  ghtRepeatedProf leV s s),
+      RecentEngage ntD rectFollowSalsaExpans onS ce. dent f er -> params(
+        Cand date  ghtRecentEngage ntD rectFollowSalsaExpans on),
     )
   }
 }

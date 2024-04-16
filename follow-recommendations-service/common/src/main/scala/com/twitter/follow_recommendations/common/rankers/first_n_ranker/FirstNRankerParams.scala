@@ -1,26 +1,26 @@
-package com.twitter.follow_recommendations.common.rankers.first_n_ranker
+package com.tw ter.follow_recom ndat ons.common.rankers.f rst_n_ranker
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .Param
 
-object FirstNRankerParams {
-  case object CandidatesToRank
-      extends FSBoundedParam[Int](
-        FirstNRankerFeatureSwitchKeys.CandidatePoolSize,
+object F rstNRankerParams {
+  case object Cand datesToRank
+      extends FSBoundedParam[ nt](
+        F rstNRankerFeatureSw chKeys.Cand datePoolS ze,
         default = 100,
-        min = 50,
+        m n = 50,
         max = 600)
 
-  case object GroupDuplicateCandidates extends Param[Boolean](true)
-  case object ScribeRankingInfoInFirstNRanker
-      extends FSParam[Boolean](FirstNRankerFeatureSwitchKeys.ScribeRankingInfo, true)
+  case object GroupDupl cateCand dates extends Param[Boolean](true)
+  case object Scr beRank ng nfo nF rstNRanker
+      extends FSParam[Boolean](F rstNRankerFeatureSw chKeys.Scr beRank ng nfo, true)
 
-  // the minimum of candidates to score in each request.
-  object MinNumCandidatesScoredScaleDownFactor
+  // t  m n mum of cand dates to score  n each request.
+  object M nNumCand datesScoredScaleDownFactor
       extends FSBoundedParam[Double](
-        name = FirstNRankerFeatureSwitchKeys.MinNumCandidatesScoredScaleDownFactor,
+        na  = F rstNRankerFeatureSw chKeys.M nNumCand datesScoredScaleDownFactor,
         default = 0.3,
-        min = 0.1,
+        m n = 0.1,
         max = 1.0)
 }

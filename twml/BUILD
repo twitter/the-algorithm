@@ -1,186 +1,186 @@
-twml_sources = [
+twml_s ces = [
     "twml/**/*.py",
 ]
 
 twml_deps = [
-    "3rdparty/python/cherrypy:default",
+    "3rdparty/python/c rrypy:default",
     "3rdparty/python/pyyaml:default",
     "3rdparty/python/absl-py:default",
-    "3rdparty/python/joblib:default",
+    "3rdparty/python/jobl b:default",
     "3rdparty/python/kazoo:default",
-    "3rdparty/python/python-dateutil:default",
+    "3rdparty/python/python-dateut l:default",
     "3rdparty/python/pytz:default",
-    "cortex/ml-metastore/src/main/python/com/twitter/mlmetastore/modelrepo/client",
-    "src/python/twitter/common/app",
-    "src/python/twitter/common/app/modules:vars",
-    "src/python/twitter/common/metrics",
-    "src/python/twitter/deepbird/compat/v1/optimizers",
-    "src/python/twitter/deepbird/compat/v1/rnn",
-    "src/python/twitter/deepbird/hparam",
-    "src/python/twitter/deepbird/io",
-    "src/python/twitter/deepbird/io/legacy",
-    "src/python/twitter/deepbird/logging",
-    "src/python/twitter/deepbird/sparse",
-    "src/python/twitter/deepbird/stats_server",
-    "src/python/twitter/deepbird/util:simple-data-record-handler",
-    "src/python/twitter/deepbird/util/hashing",
-    "src/python/twitter/ml/api/dal",
-    "src/python/twitter/ml/common:metrics",
-    "src/python/twitter/ml/common/kubernetes",
-    "src/python/twitter/ml/common:resources",
-    "src/python/twitter/ml/twml/kubernetes",
-    "src/python/twitter/ml/twml:status",
-    "src/thrift/com/twitter/dal:dal_no_constants-python",
-    "src/thrift/com/twitter/statebird:compiled-v2-python",
+    "cortex/ml- tastore/src/ma n/python/com/tw ter/ml tastore/modelrepo/cl ent",
+    "src/python/tw ter/common/app",
+    "src/python/tw ter/common/app/modules:vars",
+    "src/python/tw ter/common/ tr cs",
+    "src/python/tw ter/deepb rd/compat/v1/opt m zers",
+    "src/python/tw ter/deepb rd/compat/v1/rnn",
+    "src/python/tw ter/deepb rd/hparam",
+    "src/python/tw ter/deepb rd/ o",
+    "src/python/tw ter/deepb rd/ o/legacy",
+    "src/python/tw ter/deepb rd/logg ng",
+    "src/python/tw ter/deepb rd/sparse",
+    "src/python/tw ter/deepb rd/stats_server",
+    "src/python/tw ter/deepb rd/ut l:s mple-data-record-handler",
+    "src/python/tw ter/deepb rd/ut l/hash ng",
+    "src/python/tw ter/ml/ap /dal",
+    "src/python/tw ter/ml/common: tr cs",
+    "src/python/tw ter/ml/common/kubernetes",
+    "src/python/tw ter/ml/common:res ces",
+    "src/python/tw ter/ml/twml/kubernetes",
+    "src/python/tw ter/ml/twml:status",
+    "src/thr ft/com/tw ter/dal:dal_no_constants-python",
+    "src/thr ft/com/tw ter/stateb rd:comp led-v2-python",
 ]
 
-python3_library(
-    name = "twml-test-common-deps",
-    tags = ["no-mypy"],
-    dependencies = [
-        "src/python/twitter/deepbird/util:inference",
-        "src/python/twitter/deepbird/util/data",
-        "src/thrift/com/twitter/ml/api:data-python",
-        "twml/tests/data:resources",
+python3_l brary(
+    na  = "twml-test-common-deps",
+    tags = ["no- py"],
+    dependenc es = [
+        "src/python/tw ter/deepb rd/ut l: nference",
+        "src/python/tw ter/deepb rd/ut l/data",
+        "src/thr ft/com/tw ter/ml/ap :data-python",
+        "twml/tests/data:res ces",
     ],
 )
 
-python3_library(
-    name = "twml_packer_deps_no_tf",
+python3_l brary(
+    na  = "twml_packer_deps_no_tf",
     tags = [
-        "bazel-compatible",
-        "no-mypy",
+        "bazel-compat ble",
+        "no- py",
     ],
-    dependencies = [
+    dependenc es = [
         "3rdparty/python/numpy:default",
         "3rdparty/python/pandas:default",
         "3rdparty/python/pyyaml:default",
         "3rdparty/python/requests:default",
-        "3rdparty/python/scikit-learn:default",
-        "3rdparty/python/scipy:default",
+        "3rdparty/python/sc k -learn:default",
+        "3rdparty/python/sc py:default",
         "3rdparty/python/tensorflow-hub:default",
-        "3rdparty/python/thriftpy2:default",
+        "3rdparty/python/thr ftpy2:default",
     ],
 )
 
-python3_library(
-    name = "twml_packer_deps_no_tf_py3",
+python3_l brary(
+    na  = "twml_packer_deps_no_tf_py3",
     tags = [
-        "known-to-fail-jira:CX-20246",
-        "no-mypy",
+        "known-to-fa l-j ra:CX-20246",
+        "no- py",
     ],
-    dependencies = [
+    dependenc es = [
         ":twml_packer_deps_no_tf",
-        "3rdparty/python/tensorflow-model-analysis",
+        "3rdparty/python/tensorflow-model-analys s",
     ],
 )
 
-alias(
-    name = "twml-test-shared",
+al as(
+    na  = "twml-test-shared",
     target = ":twml_common",
 )
 
-python3_library(
-    name = "twml_common",
-    sources = ["twml_common/**/*.py"],
+python3_l brary(
+    na  = "twml_common",
+    s ces = ["twml_common/**/*.py"],
     tags = [
-        "bazel-compatible",
-        "no-mypy",
+        "bazel-compat ble",
+        "no- py",
     ],
 )
 
-# Alias twml-dev to twml to avoid breaking user targets.
-alias(
-    name = "twml-dev",
+# Al as twml-dev to twml to avo d break ng user targets.
+al as(
+    na  = "twml-dev",
     target = "twml",
 )
 
-python3_library(
-    name = "twml-test-dev-deps",
+python3_l brary(
+    na  = "twml-test-dev-deps",
     tags = [
-        "bazel-compatible",
-        "no-mypy",
+        "bazel-compat ble",
+        "no- py",
     ],
-    dependencies = [
+    dependenc es = [
         ":twml",
         ":twml-test-common-deps",
         ":twml-test-shared",
         "3rdparty/python/freezegun:default",
-        "src/python/twitter/deepbird/keras/layers",
-        "src/thrift/com/twitter/ml/api:data-python",
-        "src/thrift/com/twitter/ml/prediction_service:prediction_service-python",
+        "src/python/tw ter/deepb rd/keras/layers",
+        "src/thr ft/com/tw ter/ml/ap :data-python",
+        "src/thr ft/com/tw ter/ml/pred ct on_serv ce:pred ct on_serv ce-python",
     ],
 )
 
-python3_library(
-    name = "twml-dev-python",
-    sources = twml_sources,
+python3_l brary(
+    na  = "twml-dev-python",
+    s ces = twml_s ces,
     tags = [
-        "bazel-compatible",
-        "no-mypy",
+        "bazel-compat ble",
+        "no- py",
     ],
-    dependencies = twml_deps + [
+    dependenc es = twml_deps + [
         ":twml_packer_deps_no_tf",
         "3rdparty/python/tensorflow",
-        "3rdparty/python/twml:libtwml-universal",
-        "twml/libtwml:libtwml-python",
+        "3rdparty/python/twml:l btwml-un versal",
+        "twml/l btwml:l btwml-python",
     ],
 )
 
-# Build a smaller .pex file that models can depend on.
-# Tensorflow and other dependencies are downloaded from Packer on Aurora.
-# Note: This gets the C++ ops through 3rdparty artifacts.
-python3_library(
-    name = "twml-nodeps",
-    sources = twml_sources,
+# Bu ld a smaller .pex f le that models can depend on.
+# Tensorflow and ot r dependenc es are downloaded from Packer on Aurora.
+# Note: T  gets t  C++ ops through 3rdparty art facts.
+python3_l brary(
+    na  = "twml-nodeps",
+    s ces = twml_s ces,
     tags = [
-        "bazel-compatible",
-        "no-mypy",
+        "bazel-compat ble",
+        "no- py",
     ],
-    dependencies = twml_deps + [
-        "3rdparty/python/twml:libtwml-universal",
+    dependenc es = twml_deps + [
+        "3rdparty/python/twml:l btwml-un versal",
     ],
 )
 
-python3_library(
-    name = "twml",
+python3_l brary(
+    na  = "twml",
     tags = [
-        "bazel-compatible",
-        "no-mypy",
+        "bazel-compat ble",
+        "no- py",
     ],
-    dependencies = [
+    dependenc es = [
         ":twml-nodeps",
         ":twml_packer_deps_no_tf",
         "3rdparty/python/tensorflow",
     ],
 )
 
-python37_binary(
-    name = "tensorboard",
-    source = "twml/tensorboard/__main__.py",
-    dependencies = [
+python37_b nary(
+    na  = "tensorboard",
+    s ce = "twml/tensorboard/__ma n__.py",
+    dependenc es = [
         "3rdparty/python/_closures/twml:tensorboard",
         "3rdparty/python/tensorflow",
     ],
 )
 
-python37_binary(
-    name = "saved_model_cli",
-    source = "twml/saved_model_cli/__main__.py",
-    dependencies = [
-        "3rdparty/python/_closures/twml:saved_model_cli",
+python37_b nary(
+    na  = "saved_model_cl ",
+    s ce = "twml/saved_model_cl /__ma n__.py",
+    dependenc es = [
+        "3rdparty/python/_closures/twml:saved_model_cl ",
         "3rdparty/python/tensorflow",
     ],
 )
 
-# This target is added so twml can be used regardless of the Tensorflow version:
-# This target does not pull in TensorFlow 1.x or the related libtwml compiled using TF 1.x.
-python3_library(
-    name = "twml-py-source-only",
-    sources = twml_sources,
+# T  target  s added so twml can be used regardless of t  Tensorflow vers on:
+# T  target does not pull  n TensorFlow 1.x or t  related l btwml comp led us ng TF 1.x.
+python3_l brary(
+    na  = "twml-py-s ce-only",
+    s ces = twml_s ces,
     tags = [
-        "known-to-fail-jira:CX-23416",
-        "no-mypy",
+        "known-to-fa l-j ra:CX-23416",
+        "no- py",
     ],
-    dependencies = twml_deps,
+    dependenc es = twml_deps,
 )

@@ -1,29 +1,29 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.tw ter.fr gate.pushserv ce.model. b s
 
-import com.twitter.frigate.magic_events.thriftscala.CreatorFanoutType
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.MagicFanoutCreatorEventPushCandidate
-import com.twitter.frigate.pushservice.util.PushIbisUtil.mergeModelValues
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.mag c_events.thr ftscala.CreatorFanoutType
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.Mag cFanoutCreatorEventPushCand date
+ mport com.tw ter.fr gate.pushserv ce.ut l.Push b sUt l. rgeModelValues
+ mport com.tw ter.ut l.Future
 
-trait MagicFanoutCreatorEventIbis2Hydrator
-    extends CustomConfigurationMapForIbis
-    with Ibis2HydratorForCandidate {
-  self: PushCandidate with MagicFanoutCreatorEventPushCandidate =>
+tra  Mag cFanoutCreatorEvent b s2Hydrator
+    extends CustomConf gurat onMapFor b s
+    w h  b s2HydratorForCand date {
+  self: PushCand date w h Mag cFanoutCreatorEventPushCand date =>
 
   val userMap = Map(
-    "handle" -> userProfile.screenName,
-    "display_name" -> userProfile.name
+    "handle" -> userProf le.screenNa ,
+    "d splay_na " -> userProf le.na 
   )
 
-  override val senderId = hydratedCreator.map(_.id)
+  overr de val sender d = hydratedCreator.map(_. d)
 
-  override lazy val modelValues: Future[Map[String, String]] =
-    mergeModelValues(super.modelValues, userMap)
+  overr de lazy val modelValues: Future[Map[Str ng, Str ng]] =
+     rgeModelValues(super.modelValues, userMap)
 
-  override val ibis2Request = creatorFanoutType match {
-    case CreatorFanoutType.UserSubscription => Future.None
-    case CreatorFanoutType.NewCreator => super.ibis2Request
-    case _ => super.ibis2Request
+  overr de val  b s2Request = creatorFanoutType match {
+    case CreatorFanoutType.UserSubscr pt on => Future.None
+    case CreatorFanoutType.NewCreator => super. b s2Request
+    case _ => super. b s2Request
   }
 }

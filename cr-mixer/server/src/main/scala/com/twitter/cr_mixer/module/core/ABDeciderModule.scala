@@ -1,33 +1,33 @@
-package com.twitter.cr_mixer.module.core
+package com.tw ter.cr_m xer.module.core
 
-import com.google.inject.Provides
-import com.google.inject.name.Named
-import com.twitter.abdecider.ABDeciderFactory
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.logging.Logger
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.google. nject.na .Na d
+ mport com.tw ter.abdec der.ABDec derFactory
+ mport com.tw ter.abdec der.Logg ngABDec der
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.logg ng.Logger
+ mport javax. nject.S ngleton
 
-object ABDeciderModule extends TwitterModule {
+object ABDec derModule extends Tw terModule {
 
   flag(
-    name = "abdecider.path",
-    default = "/usr/local/config/abdecider/abdecider.yml",
-    help = "path to the abdecider Yml file location"
+    na  = "abdec der.path",
+    default = "/usr/local/conf g/abdec der/abdec der.yml",
+     lp = "path to t  abdec der Yml f le locat on"
   )
 
-  @Provides
-  @Singleton
-  def provideABDecider(
-    @Flag("abdecider.path") abDeciderYmlPath: String,
-    @Named(ModuleNames.AbDeciderLogger) scribeLogger: Logger
-  ): LoggingABDecider = {
-    ABDeciderFactory(
-      abDeciderYmlPath = abDeciderYmlPath,
-      scribeLogger = Some(scribeLogger),
-      environment = Some("production")
-    ).buildWithLogging()
+  @Prov des
+  @S ngleton
+  def prov deABDec der(
+    @Flag("abdec der.path") abDec derYmlPath: Str ng,
+    @Na d(ModuleNa s.AbDec derLogger) scr beLogger: Logger
+  ): Logg ngABDec der = {
+    ABDec derFactory(
+      abDec derYmlPath = abDec derYmlPath,
+      scr beLogger = So (scr beLogger),
+      env ron nt = So ("product on")
+    ).bu ldW hLogg ng()
   }
 }

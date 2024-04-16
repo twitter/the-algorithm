@@ -1,66 +1,66 @@
-package com.twitter.search.common.util.ml;
+package com.tw ter.search.common.ut l.ml;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.Opt onal;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.Sets;
 
 /**
- * Utilities for feature transformation and extraction.
+ * Ut l  es for feature transformat on and extract on.
  */
-public final class FeatureUtils {
+publ c f nal class FeatureUt ls {
 
-  private FeatureUtils() {
+  pr vate FeatureUt ls() {
   }
 
   /**
-   * Computes the difference between 2 values and returns the ratio of the difference over the
-   * minimum of both, according to these cases:
+   * Computes t  d fference bet en 2 values and returns t  rat o of t  d fference over t 
+   * m n mum of both, accord ng to t se cases:
    *
-   * 1. if (a > b) return  a / b
-   * 2. if (a < b) return  - b / a
-   * 3. if (a == b == 0) return 0
+   * 1.  f (a > b) return  a / b
+   * 2.  f (a < b) return  - b / a
+   * 3.  f (a == b == 0) return 0
    *
-   * The upper/lower limit is (-) maxRatio. For cases 1 and 2, if the denominator is 0,
-   * it returns maxRatio.
+   * T  upper/lo r l m   s (-) maxRat o. For cases 1 and 2,  f t  denom nator  s 0,
+   *   returns maxRat o.
    *
-   * This method is used to define a feature that tells how much larger or smaller is the
-   * first value with respect to the second one..
+   * T   thod  s used to def ne a feature that tells how much larger or smaller  s t 
+   * f rst value w h respect to t  second one..
    */
-  public static float diffRatio(float a, float b, float maxRatio) {
-    float diff = a - b;
-    if (diff == 0) {
+  publ c stat c float d ffRat o(float a, float b, float maxRat o) {
+    float d ff = a - b;
+     f (d ff == 0) {
       return 0;
     }
-    float denominator = Math.min(a, b);
-    float ratio = denominator != 0 ? Math.abs(diff / denominator) : maxRatio;
-    return Math.copySign(Math.min(ratio, maxRatio), diff);
+    float denom nator = Math.m n(a, b);
+    float rat o = denom nator != 0 ? Math.abs(d ff / denom nator) : maxRat o;
+    return Math.copyS gn(Math.m n(rat o, maxRat o), d ff);
   }
 
   /**
-   * Computes the cosine similarity between two maps that represent sparse vectors.
+   * Computes t  cos ne s m lar y bet en two maps that represent sparse vectors.
    */
-  public static <K, V extends Number> double cosineSimilarity(
+  publ c stat c <K, V extends Number> double cos neS m lar y(
       Map<K, V> vector1, Map<K, V> vector2) {
-    if (vector1 == null || vector1.isEmpty() || vector2 == null || vector2.isEmpty()) {
+     f (vector1 == null || vector1. sEmpty() || vector2 == null || vector2. sEmpty()) {
       return 0;
     }
     double squaredSum1 = 0;
     double squaredSum2 = 0;
     double squaredCrossSum = 0;
 
-    for (K key : Sets.union(vector1.keySet(), vector2.keySet())) {
+    for (K key : Sets.un on(vector1.keySet(), vector2.keySet())) {
       double value1 = 0;
       double value2 = 0;
 
       V optValue1 = vector1.get(key);
-      if (optValue1 != null) {
+       f (optValue1 != null) {
         value1 = optValue1.doubleValue();
       }
       V optValue2 = vector2.get(key);
-      if (optValue2 != null) {
+       f (optValue2 != null) {
         value2 = optValue2.doubleValue();
       }
 
@@ -69,7 +69,7 @@ public final class FeatureUtils {
       squaredCrossSum += value1 * value2;
     }
 
-    if (squaredSum1 == 0 || squaredSum2 == 0) {
+     f (squaredSum1 == 0 || squaredSum2 == 0) {
       return 0;
     } else {
       return squaredCrossSum / Math.sqrt(squaredSum1 * squaredSum2);
@@ -77,27 +77,27 @@ public final class FeatureUtils {
   }
 
   /**
-   * Computes the cosine similarity between two (dense) vectors.
+   * Computes t  cos ne s m lar y bet en two (dense) vectors.
    */
-  public static <V extends Number> double cosineSimilarity(
-      List<V> vector1, List<V> vector2) {
-    if (vector1 == null || vector1.isEmpty() || vector2 == null || vector2.isEmpty()) {
+  publ c stat c <V extends Number> double cos neS m lar y(
+      L st<V> vector1, L st<V> vector2) {
+     f (vector1 == null || vector1. sEmpty() || vector2 == null || vector2. sEmpty()) {
       return 0;
     }
 
-    Preconditions.checkArgument(vector1.size() == vector2.size());
+    Precond  ons.c ckArgu nt(vector1.s ze() == vector2.s ze());
     double squaredSum1 = 0;
     double squaredSum2 = 0;
     double squaredCrossSum = 0;
-    for (int i = 0; i < vector1.size(); i++) {
-      double value1 = vector1.get(i).doubleValue();
-      double value2 = vector2.get(i).doubleValue();
+    for ( nt   = 0;   < vector1.s ze();  ++) {
+      double value1 = vector1.get( ).doubleValue();
+      double value2 = vector2.get( ).doubleValue();
       squaredSum1 += value1 * value1;
       squaredSum2 += value2 * value2;
       squaredCrossSum += value1 * value2;
     }
 
-    if (squaredSum1 == 0 || squaredSum2 == 0) {
+     f (squaredSum1 == 0 || squaredSum2 == 0) {
       return 0;
     } else {
       return squaredCrossSum / Math.sqrt(squaredSum1 * squaredSum2);
@@ -105,15 +105,15 @@ public final class FeatureUtils {
   }
 
   /**
-   * Finds the key of the map with the highest value (compared in natural order)
+   * F nds t  key of t  map w h t  h g st value (compared  n natural order)
    */
-  @SuppressWarnings("unchecked")
-  public static <K, V extends Comparable> Optional<K> findMaxKey(Map<K, V> map) {
-    if (map == null || map.isEmpty()) {
-      return Optional.empty();
+  @SuppressWarn ngs("unc cked")
+  publ c stat c <K, V extends Comparable> Opt onal<K> f ndMaxKey(Map<K, V> map) {
+     f (map == null || map. sEmpty()) {
+      return Opt onal.empty();
     }
 
-    Optional<Map.Entry<K, V>> maxEntry = map.entrySet().stream().max(Map.Entry.comparingByValue());
+    Opt onal<Map.Entry<K, V>> maxEntry = map.entrySet().stream().max(Map.Entry.compar ngByValue());
     return maxEntry.map(Map.Entry::getKey);
   }
 

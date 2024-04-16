@@ -1,9 +1,9 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 
-package object util {
-  type TweetId = Long
-  type UserId = Long
-  type MediaId = Long
-  type ConversationId = Long
-  type PlaceId = String
+package object ut l {
+  type T et d = Long
+  type User d = Long
+  type  d a d = Long
+  type Conversat on d = Long
+  type Place d = Str ng
 }

@@ -1,85 +1,85 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+package com.tw ter.follow_recom ndat ons.common.feature_hydrat on.s ces
 
-import com.google.inject.Inject
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSource
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSourceId
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataRecordMerger
-import com.twitter.ml.api.FeatureContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+ mport com.google. nject. nject
+ mport com.google. nject.Prov des
+ mport com.google. nject.S ngleton
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.common.FeatureS ce
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.common.FeatureS ce d
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.common.HasPreFetc dFeature
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.HasD splayLocat on
+ mport com.tw ter.follow_recom ndat ons.common.models.HasS m larToContext
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .DataRecord rger
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
 
 /**
- * This source wraps around the separate sources that we hydrate features from
- * @param featureStoreSource        gets features that require a RPC call to feature store
- * @param stratoFeatureHydrationSource    gets features that require a RPC call to strato columns
- * @param clientContextSource       gets features that are already present in the request context
- * @param candidateAlgorithmSource  gets features that are already present from candidate generation
- * @param preFetchedFeatureSource   gets features that were prehydrated (shared in request lifecycle)
+ * T  s ce wraps around t  separate s ces that   hydrate features from
+ * @param featureStoreS ce        gets features that requ re a RPC call to feature store
+ * @param stratoFeatureHydrat onS ce    gets features that requ re a RPC call to strato columns
+ * @param cl entContextS ce       gets features that are already present  n t  request context
+ * @param cand dateAlgor hmS ce  gets features that are already present from cand date generat on
+ * @param preFetc dFeatureS ce   gets features that  re prehydrated (shared  n request l fecycle)
  */
-@Provides
-@Singleton
-class UserScoringFeatureSource @Inject() (
-  featureStoreSource: FeatureStoreSource,
-  featureStoreGizmoduckSource: FeatureStoreGizmoduckSource,
-  featureStorePostNuxAlgorithmSource: FeatureStorePostNuxAlgorithmSource,
-  featureStoreTimelinesAuthorSource: FeatureStoreTimelinesAuthorSource,
-  featureStoreUserMetricCountsSource: FeatureStoreUserMetricCountsSource,
-  clientContextSource: ClientContextSource,
-  candidateAlgorithmSource: CandidateAlgorithmSource,
-  preFetchedFeatureSource: PreFetchedFeatureSource)
-    extends FeatureSource {
+@Prov des
+@S ngleton
+class UserScor ngFeatureS ce @ nject() (
+  featureStoreS ce: FeatureStoreS ce,
+  featureStoreG zmoduckS ce: FeatureStoreG zmoduckS ce,
+  featureStorePostNuxAlgor hmS ce: FeatureStorePostNuxAlgor hmS ce,
+  featureStoreT  l nesAuthorS ce: FeatureStoreT  l nesAuthorS ce,
+  featureStoreUser tr cCountsS ce: FeatureStoreUser tr cCountsS ce,
+  cl entContextS ce: Cl entContextS ce,
+  cand dateAlgor hmS ce: Cand dateAlgor hmS ce,
+  preFetc dFeatureS ce: PreFetc dFeatureS ce)
+    extends FeatureS ce {
 
-  override val id: FeatureSourceId = FeatureSourceId.UserScoringFeatureSourceId
+  overr de val  d: FeatureS ce d = FeatureS ce d.UserScor ngFeatureS ce d
 
-  override val featureContext: FeatureContext = FeatureContext.merge(
-    featureStoreSource.featureContext,
-    featureStoreGizmoduckSource.featureContext,
-    featureStorePostNuxAlgorithmSource.featureContext,
-    featureStoreTimelinesAuthorSource.featureContext,
-    featureStoreUserMetricCountsSource.featureContext,
-    clientContextSource.featureContext,
-    candidateAlgorithmSource.featureContext,
-    preFetchedFeatureSource.featureContext,
+  overr de val featureContext: FeatureContext = FeatureContext. rge(
+    featureStoreS ce.featureContext,
+    featureStoreG zmoduckS ce.featureContext,
+    featureStorePostNuxAlgor hmS ce.featureContext,
+    featureStoreT  l nesAuthorS ce.featureContext,
+    featureStoreUser tr cCountsS ce.featureContext,
+    cl entContextS ce.featureContext,
+    cand dateAlgor hmS ce.featureContext,
+    preFetc dFeatureS ce.featureContext,
   )
 
-  val sources =
+  val s ces =
     Seq(
-      featureStoreSource,
-      featureStorePostNuxAlgorithmSource,
-      featureStoreTimelinesAuthorSource,
-      featureStoreUserMetricCountsSource,
-      featureStoreGizmoduckSource,
-      clientContextSource,
-      candidateAlgorithmSource,
-      preFetchedFeatureSource
+      featureStoreS ce,
+      featureStorePostNuxAlgor hmS ce,
+      featureStoreT  l nesAuthorS ce,
+      featureStoreUser tr cCountsS ce,
+      featureStoreG zmoduckS ce,
+      cl entContextS ce,
+      cand dateAlgor hmS ce,
+      preFetc dFeatureS ce
     )
 
-  val dataRecordMerger = new DataRecordMerger
+  val dataRecord rger = new DataRecord rger
 
   def hydrateFeatures(
-    target: HasClientContext
-      with HasPreFetchedFeature
-      with HasParams
-      with HasSimilarToContext
-      with HasDisplayLocation,
-    candidates: Seq[CandidateUser]
-  ): Stitch[Map[CandidateUser, DataRecord]] = {
-    Stitch.collect(sources.map(_.hydrateFeatures(target, candidates))).map { featureMaps =>
+    target: HasCl entContext
+      w h HasPreFetc dFeature
+      w h HasParams
+      w h HasS m larToContext
+      w h HasD splayLocat on,
+    cand dates: Seq[Cand dateUser]
+  ): St ch[Map[Cand dateUser, DataRecord]] = {
+    St ch.collect(s ces.map(_.hydrateFeatures(target, cand dates))).map { featureMaps =>
       (for {
-        candidate <- candidates
-      } yield {
-        val combinedDataRecord = new DataRecord
+        cand date <- cand dates
+      } y eld {
+        val comb nedDataRecord = new DataRecord
         featureMaps
-          .flatMap(_.get(candidate).toSeq).foreach(dataRecordMerger.merge(combinedDataRecord, _))
-        candidate -> combinedDataRecord
+          .flatMap(_.get(cand date).toSeq).foreach(dataRecord rger. rge(comb nedDataRecord, _))
+        cand date -> comb nedDataRecord
       }).toMap
     }
   }

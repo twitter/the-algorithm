@@ -1,101 +1,101 @@
-package com.twitter.recos.user_video_graph
+package com.tw ter.recos.user_v deo_graph
 
-import com.twitter.finagle.Service
-import com.twitter.finagle.http.Request
-import com.twitter.finagle.http.Response
-import com.twitter.finagle.http.Status
-import com.twitter.finagle.http.Version
-import com.twitter.frigate.common.util.HTMLUtil
-import com.twitter.graphjet.algorithms.TweetIDMask
-import com.twitter.graphjet.bipartite.segment.BipartiteGraphSegment
-import com.twitter.graphjet.bipartite.MultiSegmentIterator
-import com.twitter.graphjet.bipartite.MultiSegmentPowerLawBipartiteGraph
-import com.twitter.logging.Logger
-import com.twitter.util.Future
-import java.util.Random
-import scala.collection.mutable.ListBuffer
+ mport com.tw ter.f nagle.Serv ce
+ mport com.tw ter.f nagle.http.Request
+ mport com.tw ter.f nagle.http.Response
+ mport com.tw ter.f nagle.http.Status
+ mport com.tw ter.f nagle.http.Vers on
+ mport com.tw ter.fr gate.common.ut l.HTMLUt l
+ mport com.tw ter.graphjet.algor hms.T et DMask
+ mport com.tw ter.graphjet.b part e.seg nt.B part eGraphSeg nt
+ mport com.tw ter.graphjet.b part e.Mult Seg nt erator
+ mport com.tw ter.graphjet.b part e.Mult Seg ntPo rLawB part eGraph
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.ut l.Future
+ mport java.ut l.Random
+ mport scala.collect on.mutable.L stBuffer
 
-class UserTweetGraphEdgeHttpHandler(graph: MultiSegmentPowerLawBipartiteGraph)
-    extends Service[Request, Response] {
-  private val log = Logger("UserTweetGraphEdgeHttpHandler")
-  private val tweetIDMask = new TweetIDMask()
+class UserT etGraphEdgeHttpHandler(graph: Mult Seg ntPo rLawB part eGraph)
+    extends Serv ce[Request, Response] {
+  pr vate val log = Logger("UserT etGraphEdgeHttpHandler")
+  pr vate val t et DMask = new T et DMask()
 
-  def getCardInfo(rightNode: Long): String = {
-    val bits: Long = rightNode & TweetIDMask.METAMASK
-    bits match {
-      case TweetIDMask.PHOTO => "Photo"
-      case TweetIDMask.PLAYER => "Video"
-      case TweetIDMask.SUMMARY => "Url"
-      case TweetIDMask.PROMOTION => "Promotion"
+  def getCard nfo(r ghtNode: Long): Str ng = {
+    val b s: Long = r ghtNode & T et DMask.METAMASK
+    b s match {
+      case T et DMask.PHOTO => "Photo"
+      case T et DMask.PLAYER => "V deo"
+      case T et DMask.SUMMARY => "Url"
+      case T et DMask.PROMOT ON => "Promot on"
       case _ => "Regular"
     }
   }
 
-  private def getUserEdges(userId: Long): ListBuffer[Edge] = {
+  pr vate def getUserEdges(user d: Long): L stBuffer[Edge] = {
     val random = new Random()
-    val iterator =
+    val  erator =
       graph
-        .getRandomLeftNodeEdges(userId, 10, random).asInstanceOf[MultiSegmentIterator[
-          BipartiteGraphSegment
+        .getRandomLeftNodeEdges(user d, 10, random).as nstanceOf[Mult Seg nt erator[
+          B part eGraphSeg nt
         ]]
-    val tweets = new ListBuffer[Edge]()
-    if (iterator != null) {
-      while (iterator.hasNext) {
-        val rightNode = iterator.nextLong()
-        val edgeType = iterator.currentEdgeType()
-        tweets += Edge(
-          tweetIDMask.restore(rightNode),
-          UserVideoEdgeTypeMask(edgeType).toString,
-          getCardInfo(rightNode),
+    val t ets = new L stBuffer[Edge]()
+     f ( erator != null) {
+      wh le ( erator.hasNext) {
+        val r ghtNode =  erator.nextLong()
+        val edgeType =  erator.currentEdgeType()
+        t ets += Edge(
+          t et DMask.restore(r ghtNode),
+          UserV deoEdgeTypeMask(edgeType).toStr ng,
+          getCard nfo(r ghtNode),
         )
       }
     }
-    tweets
+    t ets
   }
 
   def apply(httpRequest: Request): Future[Response] = {
-    log.info("UserTweetGraphEdgeHttpHandler params: " + httpRequest.getParams())
-    val time0 = System.currentTimeMillis
+    log. nfo("UserT etGraphEdgeHttpHandler params: " + httpRequest.getParams())
+    val t  0 = System.currentT  M ll s
 
-    val tweetId = httpRequest.getLongParam("tweetId")
-    val queryTweetDegree = graph.getRightNodeDegree(tweetId)
-    val tweetEdges = getTweetEdges(tweetId)
+    val t et d = httpRequest.getLongParam("t et d")
+    val queryT etDegree = graph.getR ghtNodeDegree(t et d)
+    val t etEdges = getT etEdges(t et d)
 
-    val userId = httpRequest.getLongParam("userId")
-    val queryUserDegree = graph.getLeftNodeDegree(userId)
+    val user d = httpRequest.getLongParam("user d")
+    val queryUserDegree = graph.getLeftNodeDegree(user d)
 
-    val response = Response(Version.Http11, Status.Ok)
-    val userEdges = getUserEdges(userId)
-    val elapsed = System.currentTimeMillis - time0
-    val comment = ("Please specify \"userId\"  or \"tweetId\" param." +
-      "\n query tweet degree = " + queryTweetDegree +
+    val response = Response(Vers on.Http11, Status.Ok)
+    val userEdges = getUserEdges(user d)
+    val elapsed = System.currentT  M ll s - t  0
+    val com nt = ("Please spec fy \"user d\"  or \"t et d\" param." +
+      "\n query t et degree = " + queryT etDegree +
       "\n query user degree = " + queryUserDegree +
-      "\n done in %d ms<br>").format(elapsed)
-    val tweetContent = userEdges.toList
+      "\n done  n %d ms<br>").format(elapsed)
+    val t etContent = userEdges.toL st
       .map { edge =>
-        s"<b>TweetId</b>: ${edge.tweetId},\n<b>Action type</b>: ${edge.actionType},\n<b>Card type</b>: ${edge.cardType}"
+        s"<b>T et d</b>: ${edge.t et d},\n<b>Act on type</b>: ${edge.act onType},\n<b>Card type</b>: ${edge.cardType}"
           .replaceAll("\n", " ")
-      }.mkString("\n<br>\n")
+      }.mkStr ng("\n<br>\n")
 
-    response.setContentString(
-      HTMLUtil.html.replace("XXXXX", comment + tweetContent + "\n<hr/>\n" + tweetEdges.toString()))
+    response.setContentStr ng(
+      HTMLUt l.html.replace("XXXXX", com nt + t etContent + "\n<hr/>\n" + t etEdges.toStr ng()))
     Future.value(response)
   }
 
-  private def getTweetEdges(tweetId: Long): ListBuffer[Long] = {
+  pr vate def getT etEdges(t et d: Long): L stBuffer[Long] = {
     val random = new Random()
-    val iterator =
+    val  erator =
       graph
-        .getRandomRightNodeEdges(tweetId, 500, random).asInstanceOf[MultiSegmentIterator[
-          BipartiteGraphSegment
+        .getRandomR ghtNodeEdges(t et d, 500, random).as nstanceOf[Mult Seg nt erator[
+          B part eGraphSeg nt
         ]]
-    val terms = new ListBuffer[Long]()
-    if (iterator != null) {
-      while (iterator.hasNext) { terms += iterator.nextLong() }
+    val terms = new L stBuffer[Long]()
+     f ( erator != null) {
+      wh le ( erator.hasNext) { terms +=  erator.nextLong() }
     }
-    terms.distinct
+    terms.d st nct
   }
 
 }
 
-case class Edge(tweetId: Long, actionType: String, cardType: String)
+case class Edge(t et d: Long, act onType: Str ng, cardType: Str ng)

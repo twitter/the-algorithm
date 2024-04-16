@@ -1,38 +1,38 @@
-package com.twitter.follow_recommendations.common.candidate_sources.recent_engagement
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.recent_engage nt
 
-import com.twitter.follow_recommendations.common.clients.real_time_real_graph.RealTimeRealGraphClient
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.real_t  _real_graph.RealT  RealGraphCl ent
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.st ch.St ch
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class RecentEngagementDirectFollowSource @Inject() (
-  realTimeRealGraphClient: RealTimeRealGraphClient)
-    extends CandidateSource[Long, CandidateUser] {
+@S ngleton
+class RecentEngage ntD rectFollowS ce @ nject() (
+  realT  RealGraphCl ent: RealT  RealGraphCl ent)
+    extends Cand dateS ce[Long, Cand dateUser] {
 
-  val identifier: CandidateSourceIdentifier =
-    RecentEngagementDirectFollowSource.Identifier
+  val  dent f er: Cand dateS ce dent f er =
+    RecentEngage ntD rectFollowS ce. dent f er
 
   /**
-   * Generate a list of candidates for the target using RealtimeGraphClient
-   * and RecentEngagementStore.
+   * Generate a l st of cand dates for t  target us ng Realt  GraphCl ent
+   * and RecentEngage ntStore.
    */
-  override def apply(targetUserId: Long): Stitch[Seq[CandidateUser]] = {
-    realTimeRealGraphClient
-      .getUsersRecentlyEngagedWith(
-        userId = targetUserId,
-        engagementScoreMap = RealTimeRealGraphClient.EngagementScoreMap,
-        includeDirectFollowCandidates = true,
-        includeNonDirectFollowCandidates = false
+  overr de def apply(targetUser d: Long): St ch[Seq[Cand dateUser]] = {
+    realT  RealGraphCl ent
+      .getUsersRecentlyEngagedW h(
+        user d = targetUser d,
+        engage ntScoreMap = RealT  RealGraphCl ent.Engage ntScoreMap,
+         ncludeD rectFollowCand dates = true,
+         ncludeNonD rectFollowCand dates = false
       )
-      .map(_.map(_.withCandidateSource(identifier)).sortBy(-_.score.getOrElse(0.0)))
+      .map(_.map(_.w hCand dateS ce( dent f er)).sortBy(-_.score.getOrElse(0.0)))
   }
 }
 
-object RecentEngagementDirectFollowSource {
-  val Identifier = CandidateSourceIdentifier(Algorithm.RecentEngagementDirectFollow.toString)
+object RecentEngage ntD rectFollowS ce {
+  val  dent f er = Cand dateS ce dent f er(Algor hm.RecentEngage ntD rectFollow.toStr ng)
 }

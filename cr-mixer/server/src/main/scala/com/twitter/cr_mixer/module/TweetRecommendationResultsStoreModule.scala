@@ -1,32 +1,32 @@
-package com.twitter.cr_mixer.module
+package com.tw ter.cr_m xer.module
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.thriftscala.CrMixerTweetResponse
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.hermit.store.common.ReadableWritableStore
-import com.twitter.hermit.store.common.ObservedReadableWritableMemcacheStore
-import com.twitter.simclusters_v2.common.UserId
-import javax.inject.Named
+ mport com.google. nject.Prov des
+ mport com.google. nject.S ngleton
+ mport com.tw ter.b ject on.scrooge.B naryScalaCodec
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.cr_m xer.thr ftscala.CrM xerT etResponse
+ mport com.tw ter.f nagle. mcac d.{Cl ent =>  mcac dCl ent}
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. rm .store.common.ReadableWr ableStore
+ mport com.tw ter. rm .store.common.ObservedReadableWr able mcac Store
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport javax. nject.Na d
 
-object TweetRecommendationResultsStoreModule extends TwitterModule {
-  @Provides
-  @Singleton
-  def providesTweetRecommendationResultsStore(
-    @Named(ModuleNames.TweetRecommendationResultsCache) tweetRecommendationResultsCacheClient: MemcachedClient,
-    statsReceiver: StatsReceiver
-  ): ReadableWritableStore[UserId, CrMixerTweetResponse] = {
-    ObservedReadableWritableMemcacheStore.fromCacheClient(
-      cacheClient = tweetRecommendationResultsCacheClient,
-      ttl = 24.hours)(
-      valueInjection = BinaryScalaCodec(CrMixerTweetResponse),
-      statsReceiver = statsReceiver.scope("TweetRecommendationResultsMemcacheStore"),
-      keyToString = { k: UserId => k.toString }
+object T etRecom ndat onResultsStoreModule extends Tw terModule {
+  @Prov des
+  @S ngleton
+  def prov desT etRecom ndat onResultsStore(
+    @Na d(ModuleNa s.T etRecom ndat onResultsCac ) t etRecom ndat onResultsCac Cl ent:  mcac dCl ent,
+    statsRece ver: StatsRece ver
+  ): ReadableWr ableStore[User d, CrM xerT etResponse] = {
+    ObservedReadableWr able mcac Store.fromCac Cl ent(
+      cac Cl ent = t etRecom ndat onResultsCac Cl ent,
+      ttl = 24.h s)(
+      value nject on = B naryScalaCodec(CrM xerT etResponse),
+      statsRece ver = statsRece ver.scope("T etRecom ndat onResults mcac Store"),
+      keyToStr ng = { k: User d => k.toStr ng }
     )
   }
 }

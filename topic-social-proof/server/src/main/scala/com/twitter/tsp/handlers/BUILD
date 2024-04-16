@@ -1,14 +1,14 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     tags = [
-        "bazel-compatible",
+        "bazel-compat ble",
     ],
-    dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
-        "stitch/stitch-storehaus",
-        "topic-social-proof/server/src/main/scala/com/twitter/tsp/common",
-        "topic-social-proof/server/src/main/scala/com/twitter/tsp/stores",
-        "topic-social-proof/server/src/main/thrift:thrift-scala",
-        "topiclisting/topiclisting-core/src/main/scala/com/twitter/topiclisting",
+    dependenc es = [
+        "src/thr ft/com/tw ter/s mclusters_v2:s mclusters_v2-thr ft-scala",
+        "st ch/st ch-storehaus",
+        "top c-soc al-proof/server/src/ma n/scala/com/tw ter/tsp/common",
+        "top c-soc al-proof/server/src/ma n/scala/com/tw ter/tsp/stores",
+        "top c-soc al-proof/server/src/ma n/thr ft:thr ft-scala",
+        "top cl st ng/top cl st ng-core/src/ma n/scala/com/tw ter/top cl st ng",
     ],
 )

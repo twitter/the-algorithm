@@ -1,62 +1,62 @@
-package com.twitter.tweetypie.tweettext
+package com.tw ter.t etyp e.t ettext
 
-import java.text.Normalizer
+ mport java.text.Normal zer
 
-object TweetText {
+object T etText {
 
-  /** The original maximum tweet length, taking into account normalization */
-  private[tweetypie] val OriginalMaxDisplayLength = 140
+  /** T  or g nal max mum t et length, tak ng  nto account normal zat on */
+  pr vate[t etyp e] val Or g nalMaxD splayLength = 140
 
-  /** Maximum number of visible code points allowed in a tweet when tweet length is counted by code
-   * points, taking into account normalization. See also [[MaxVisibleWeightedEmojiLength]].
+  /** Max mum number of v s ble code po nts allo d  n a t et w n t et length  s counted by code
+   * po nts, tak ng  nto account normal zat on. See also [[MaxV s ble  ghtedEmoj Length]].
    */
-  private[tweetypie] val MaxVisibleWeightedLength = 280
+  pr vate[t etyp e] val MaxV s ble  ghtedLength = 280
 
-  /** Maximum number of visible code points allowed in a tweet when tweet length is counted by
-   * emoji, taking into account normalization. See also [[MaxVisibleWeightedLength]].
-   * 140 is the max number of Emojis, visible, fully-weighted per Twitter's cramming rules
-   * 10 is the max number of Code Points per Emoji
+  /** Max mum number of v s ble code po nts allo d  n a t et w n t et length  s counted by
+   * emoj , tak ng  nto account normal zat on. See also [[MaxV s ble  ghtedLength]].
+   * 140  s t  max number of Emoj s, v s ble, fully-  ghted per Tw ter's cramm ng rules
+   * 10  s t  max number of Code Po nts per Emoj 
    */
-  private[tweetypie] val MaxVisibleWeightedEmojiLength = 140 * 10
+  pr vate[t etyp e] val MaxV s ble  ghtedEmoj Length = 140 * 10
 
-  /** Maximum number of bytes when truncating tweet text for a retweet.  Originally was the
-   * max UTF-8 length when tweets were at most 140 characters.
-   * See also [[OriginalMaxDisplayLength]].
+  /** Max mum number of bytes w n truncat ng t et text for a ret et.  Or g nally was t 
+   * max UTF-8 length w n t ets  re at most 140 characters.
+   * See also [[Or g nalMaxD splayLength]].
    */
-  private[tweetypie] val OriginalMaxUtf8Length = 600
+  pr vate[t etyp e] val Or g nalMaxUtf8Length = 600
 
-  /** Maximum number of bytes for tweet text using utf-8 encoding.
+  /** Max mum number of bytes for t et text us ng utf-8 encod ng.
    */
-  private[tweetypie] val MaxUtf8Length = 5708
+  pr vate[t etyp e] val MaxUtf8Length = 5708
 
-  /** Maximum number of mentions allowed in tweet text.  This is enforced at tweet creation time */
-  private[tweetypie] val MaxMentions = 50
+  /** Max mum number of  nt ons allo d  n t et text.  T   s enforced at t et creat on t   */
+  pr vate[t etyp e] val Max nt ons = 50
 
-  /** Maximum number of urls allowed in tweet text.  This is enforced at tweet creation time */
-  private[tweetypie] val MaxUrls = 10
+  /** Max mum number of urls allo d  n t et text.  T   s enforced at t et creat on t   */
+  pr vate[t etyp e] val MaxUrls = 10
 
-  /** Maximum number of hashtags allowed in tweet text.  This is enforced at tweet creation time */
-  private[tweetypie] val MaxHashtags = 50
+  /** Max mum number of hashtags allo d  n t et text.  T   s enforced at t et creat on t   */
+  pr vate[t etyp e] val MaxHashtags = 50
 
-  /** Maximum number of cashtags allowed in tweet text.  This is enforced at tweet creation time */
-  private[tweetypie] val MaxCashtags = 50
+  /** Max mum number of cashtags allo d  n t et text.  T   s enforced at t et creat on t   */
+  pr vate[t etyp e] val MaxCashtags = 50
 
-  /** Maximum length of a hashtag (not including the '#') */
-  private[tweetypie] val MaxHashtagLength = 100
+  /** Max mum length of a hashtag (not  nclud ng t  '#') */
+  pr vate[t etyp e] val MaxHashtagLength = 100
 
   /**
-   * Normalizes the text according to the unicode NFC spec.
+   * Normal zes t  text accord ng to t  un code NFC spec.
    */
-  def nfcNormalize(text: String): String = Normalizer.normalize(text, Normalizer.Form.NFC)
+  def nfcNormal ze(text: Str ng): Str ng = Normal zer.normal ze(text, Normal zer.Form.NFC)
 
   /**
-   * Return the number of "characters" in this text. See
-   * [[Offset.DisplayUnit]].
+   * Return t  number of "characters"  n t  text. See
+   * [[Offset.D splayUn ]].
    */
-  def displayLength(text: String): Int = Offset.DisplayUnit.length(text).toInt
+  def d splayLength(text: Str ng):  nt = Offset.D splayUn .length(text).to nt
 
   /**
-   * Return the number of Unicode code points in this String.
+   * Return t  number of Un code code po nts  n t  Str ng.
    */
-  def codePointLength(text: String): Int = Offset.CodePoint.length(text).toInt
+  def codePo ntLength(text: Str ng):  nt = Offset.CodePo nt.length(text).to nt
 }

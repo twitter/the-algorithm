@@ -1,169 +1,169 @@
-package com.twitter.search.earlybird.partition.freshstartup;
+package com.tw ter.search.earlyb rd.part  on.freshstartup;
 
-import java.io.IOException;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+ mport java. o. OExcept on;
+ mport java.t  .Durat on;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.HashMap;
+ mport java.ut l.Map;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.ImmutableList;
+ mport com.google.common.base.Stopwatch;
+ mport com.google.common.collect. mmutableL st;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.TopicPartition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .kafka.cl ents.consu r.Consu rRecord;
+ mport org.apac .kafka.cl ents.consu r.Consu rRecords;
+ mport org.apac .kafka.cl ents.consu r.KafkaConsu r;
+ mport org.apac .kafka.common.Top cPart  on;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.earlybird.factory.EarlybirdKafkaConsumersFactory;
-import com.twitter.search.earlybird.partition.IndexingResultCounts;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftVers onedEvents;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common. tr cs.SearchT  r;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
+ mport com.tw ter.search.earlyb rd.factory.Earlyb rdKafkaConsu rsFactory;
+ mport com.tw ter.search.earlyb rd.part  on. ndex ngResultCounts;
 
 /**
- * Indexes updates for all segments after they have been optimized. Some of the updates have been
- * indexed before in the PreOptimizationSegmentIndexer, but the rest are indexed here.
+ *  ndexes updates for all seg nts after t y have been opt m zed. So  of t  updates have been
+ *  ndexed before  n t  PreOpt m zat onSeg nt ndexer, but t  rest are  ndexed  re.
  */
-class PostOptimizationUpdatesIndexer {
-  private static final Logger LOG = LoggerFactory.getLogger(PostOptimizationUpdatesIndexer.class);
+class PostOpt m zat onUpdates ndexer {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(PostOpt m zat onUpdates ndexer.class);
 
-  private static final String STAT_PREFIX = "post_optimization_";
-  private static final String READ_STAT_PREFIX = STAT_PREFIX + "read_updates_for_segment_";
-  private static final String APPLIED_STAT_PREFIX = STAT_PREFIX + "applied_updates_for_segment_";
+  pr vate stat c f nal Str ng STAT_PREF X = "post_opt m zat on_";
+  pr vate stat c f nal Str ng READ_STAT_PREF X = STAT_PREF X + "read_updates_for_seg nt_";
+  pr vate stat c f nal Str ng APPL ED_STAT_PREF X = STAT_PREF X + "appl ed_updates_for_seg nt_";
 
-  private final ArrayList<SegmentBuildInfo> segmentBuildInfos;
-  private final EarlybirdKafkaConsumersFactory earlybirdKafkaConsumersFactory;
-  private final TopicPartition updateTopic;
+  pr vate f nal ArrayL st<Seg ntBu ld nfo> seg ntBu ld nfos;
+  pr vate f nal Earlyb rdKafkaConsu rsFactory earlyb rdKafkaConsu rsFactory;
+  pr vate f nal Top cPart  on updateTop c;
 
-  PostOptimizationUpdatesIndexer(
-      ArrayList<SegmentBuildInfo> segmentBuildInfos,
-      EarlybirdKafkaConsumersFactory earlybirdKafkaConsumersFactory,
-      TopicPartition updateTopic) {
-    this.segmentBuildInfos = segmentBuildInfos;
-    this.earlybirdKafkaConsumersFactory = earlybirdKafkaConsumersFactory;
-    this.updateTopic = updateTopic;
+  PostOpt m zat onUpdates ndexer(
+      ArrayL st<Seg ntBu ld nfo> seg ntBu ld nfos,
+      Earlyb rdKafkaConsu rsFactory earlyb rdKafkaConsu rsFactory,
+      Top cPart  on updateTop c) {
+    t .seg ntBu ld nfos = seg ntBu ld nfos;
+    t .earlyb rdKafkaConsu rsFactory = earlyb rdKafkaConsu rsFactory;
+    t .updateTop c = updateTop c;
   }
 
-  void indexRestOfUpdates() throws IOException {
-    LOG.info("Indexing rest of updates.");
+  vo d  ndexRestOfUpdates() throws  OExcept on {
+    LOG. nfo(" ndex ng rest of updates.");
 
-    long updatesStartOffset = segmentBuildInfos.get(0)
-        .getUpdateKafkaOffsetPair().getBeginOffset();
-    long updatesEndOffset = segmentBuildInfos.get(segmentBuildInfos.size() - 1)
-        .getUpdateKafkaOffsetPair().getEndOffset();
+    long updatesStartOffset = seg ntBu ld nfos.get(0)
+        .getUpdateKafkaOffsetPa r().getBeg nOffset();
+    long updatesEndOffset = seg ntBu ld nfos.get(seg ntBu ld nfos.s ze() - 1)
+        .getUpdateKafkaOffsetPa r().getEndOffset();
 
-    LOG.info(String.format("Total updates to go through: %,d",
+    LOG. nfo(Str ng.format("Total updates to go through: %,d",
         updatesEndOffset - updatesStartOffset + 1));
 
-    KafkaConsumer<Long, ThriftVersionedEvents> kafkaConsumer =
-        earlybirdKafkaConsumersFactory.createKafkaConsumer("index_rest_of_updates");
-    kafkaConsumer.assign(ImmutableList.of(updateTopic));
-    kafkaConsumer.seek(updateTopic, updatesStartOffset);
+    KafkaConsu r<Long, Thr ftVers onedEvents> kafkaConsu r =
+        earlyb rdKafkaConsu rsFactory.createKafkaConsu r(" ndex_rest_of_updates");
+    kafkaConsu r.ass gn( mmutableL st.of(updateTop c));
+    kafkaConsu r.seek(updateTop c, updatesStartOffset);
 
     long readEvents = 0;
-    long foundSegment = 0;
-    long applied = 0;
+    long foundSeg nt = 0;
+    long appl ed = 0;
 
-    Map<Integer, SearchRateCounter> perSegmentReadUpdates = new HashMap<>();
-    Map<Integer, SearchRateCounter> perSegmentAppliedUpdates = new HashMap<>();
-    Map<Integer, IndexingResultCounts> perSegmentIndexingResultCounts = new HashMap<>();
+    Map< nteger, SearchRateCounter> perSeg ntReadUpdates = new HashMap<>();
+    Map< nteger, SearchRateCounter> perSeg ntAppl edUpdates = new HashMap<>();
+    Map< nteger,  ndex ngResultCounts> perSeg nt ndex ngResultCounts = new HashMap<>();
 
-    for (int i = 0; i < segmentBuildInfos.size(); i++) {
-      perSegmentReadUpdates.put(i, SearchRateCounter.export(READ_STAT_PREFIX + i));
-      perSegmentAppliedUpdates.put(i, SearchRateCounter.export(APPLIED_STAT_PREFIX + i));
-      perSegmentIndexingResultCounts.put(i, new IndexingResultCounts());
+    for ( nt   = 0;   < seg ntBu ld nfos.s ze();  ++) {
+      perSeg ntReadUpdates.put( , SearchRateCounter.export(READ_STAT_PREF X +  ));
+      perSeg ntAppl edUpdates.put( , SearchRateCounter.export(APPL ED_STAT_PREF X +  ));
+      perSeg nt ndex ngResultCounts.put( , new  ndex ngResultCounts());
     }
 
-    SearchTimerStats pollStats = SearchTimerStats.export(
-        "final_pass_polls", TimeUnit.NANOSECONDS, false);
-    SearchTimerStats indexStats = SearchTimerStats.export(
-        "final_pass_index", TimeUnit.NANOSECONDS, false);
+    SearchT  rStats pollStats = SearchT  rStats.export(
+        "f nal_pass_polls", T  Un .NANOSECONDS, false);
+    SearchT  rStats  ndexStats = SearchT  rStats.export(
+        "f nal_pass_ ndex", T  Un .NANOSECONDS, false);
 
-    Stopwatch totalTime = Stopwatch.createStarted();
+    Stopwatch totalT   = Stopwatch.createStarted();
 
     boolean done = false;
     do {
       // Poll events.
-      SearchTimer pt = pollStats.startNewTimer();
-      ConsumerRecords<Long, ThriftVersionedEvents> records =
-          kafkaConsumer.poll(Duration.ofSeconds(1));
-      pollStats.stopTimerAndIncrement(pt);
+      SearchT  r pt = pollStats.startNewT  r();
+      Consu rRecords<Long, Thr ftVers onedEvents> records =
+          kafkaConsu r.poll(Durat on.ofSeconds(1));
+      pollStats.stopT  rAnd ncre nt(pt);
 
-      // Index events.
-      SearchTimer it = indexStats.startNewTimer();
-      for (ConsumerRecord<Long, ThriftVersionedEvents> record : records) {
-        if (record.offset() >= updatesEndOffset) {
+      //  ndex events.
+      SearchT  r   =  ndexStats.startNewT  r();
+      for (Consu rRecord<Long, Thr ftVers onedEvents> record : records) {
+         f (record.offset() >= updatesEndOffset) {
           done = true;
         }
 
         readEvents++;
 
-        ThriftVersionedEvents tve = record.value();
-        long tweetId = tve.getId();
+        Thr ftVers onedEvents tve = record.value();
+        long t et d = tve.get d();
 
-        // Find segment to apply to. If we can't find a segment, this is an
-        // update for an old tweet that's not in the index.
-        int segmentIndex = -1;
-        for (int i = segmentBuildInfos.size() - 1; i >= 0; i--) {
-          if (segmentBuildInfos.get(i).getStartTweetId() <= tweetId) {
-            segmentIndex = i;
-            foundSegment++;
+        // F nd seg nt to apply to.  f   can't f nd a seg nt, t   s an
+        // update for an old t et that's not  n t   ndex.
+         nt seg nt ndex = -1;
+        for ( nt   = seg ntBu ld nfos.s ze() - 1;   >= 0;  --) {
+           f (seg ntBu ld nfos.get( ).getStartT et d() <= t et d) {
+            seg nt ndex =  ;
+            foundSeg nt++;
             break;
           }
         }
 
-        if (segmentIndex != -1) {
-          SegmentBuildInfo segmentBuildInfo = segmentBuildInfos.get(segmentIndex);
+         f (seg nt ndex != -1) {
+          Seg ntBu ld nfo seg ntBu ld nfo = seg ntBu ld nfos.get(seg nt ndex);
 
-          perSegmentReadUpdates.get(segmentIndex).increment();
+          perSeg ntReadUpdates.get(seg nt ndex). ncre nt();
 
-          // Not already applied?
-          if (!segmentBuildInfo.getUpdateKafkaOffsetPair().includes(record.offset())) {
-            applied++;
+          // Not already appl ed?
+           f (!seg ntBu ld nfo.getUpdateKafkaOffsetPa r(). ncludes(record.offset())) {
+            appl ed++;
 
-            // Index the update.
+            //  ndex t  update.
             //
-            // IMPORTANT: Note that there you'll see about 2-3% of updates that
-            // fail as "retryable". This type of failure happens when the update is
-            // for a tweet that's not found in the index. We found out that we are
-            // receiving some updates for protected tweets and these are not in the
-            // realtime index - they are the source of this error.
-            perSegmentIndexingResultCounts.get(segmentIndex).countResult(
-                segmentBuildInfo.getSegmentWriter().indexThriftVersionedEvents(tve)
+            //  MPORTANT: Note that t re  'll see about 2-3% of updates that
+            // fa l as "retryable". T  type of fa lure happens w n t  update  s
+            // for a t et that's not found  n t   ndex.   found out that   are
+            // rece v ng so  updates for protected t ets and t se are not  n t 
+            // realt    ndex - t y are t  s ce of t  error.
+            perSeg nt ndex ngResultCounts.get(seg nt ndex).countResult(
+                seg ntBu ld nfo.getSeg ntWr er(). ndexThr ftVers onedEvents(tve)
             );
 
-            perSegmentAppliedUpdates.get(segmentIndex).increment();
+            perSeg ntAppl edUpdates.get(seg nt ndex). ncre nt();
           }
         }
-        if (record.offset() >= updatesEndOffset) {
+         f (record.offset() >= updatesEndOffset) {
           break;
         }
       }
-      indexStats.stopTimerAndIncrement(it);
+       ndexStats.stopT  rAnd ncre nt( );
 
-    } while (!done);
+    } wh le (!done);
 
-    LOG.info(String.format("Done in: %s, read %,d events, found segment for %,d, applied %,d",
-        totalTime, readEvents, foundSegment, applied));
+    LOG. nfo(Str ng.format("Done  n: %s, read %,d events, found seg nt for %,d, appl ed %,d",
+        totalT  , readEvents, foundSeg nt, appl ed));
 
-    LOG.info("Indexing time: {}", indexStats.getElapsedTimeAsString());
-    LOG.info("Polling time: {}", pollStats.getElapsedTimeAsString());
+    LOG. nfo(" ndex ng t  : {}",  ndexStats.getElapsedT  AsStr ng());
+    LOG. nfo("Poll ng t  : {}", pollStats.getElapsedT  AsStr ng());
 
-    LOG.info("Per segment indexing result counts:");
-    for (int i = 0; i < segmentBuildInfos.size(); i++) {
-      LOG.info("{} : {}", i, perSegmentIndexingResultCounts.get(i));
+    LOG. nfo("Per seg nt  ndex ng result counts:");
+    for ( nt   = 0;   < seg ntBu ld nfos.s ze();  ++) {
+      LOG. nfo("{} : {}",  , perSeg nt ndex ngResultCounts.get( ));
     }
 
-    LOG.info("Found and applied per segment:");
-    for (int i = 0; i < segmentBuildInfos.size(); i++) {
-      LOG.info("{}: found: {}, applied: {}",
-          i,
-          perSegmentReadUpdates.get(i).getCount(),
-          perSegmentAppliedUpdates.get(i).getCount());
+    LOG. nfo("Found and appl ed per seg nt:");
+    for ( nt   = 0;   < seg ntBu ld nfos.s ze();  ++) {
+      LOG. nfo("{}: found: {}, appl ed: {}",
+           ,
+          perSeg ntReadUpdates.get( ).getCount(),
+          perSeg ntAppl edUpdates.get( ).getCount());
     }
   }
 }

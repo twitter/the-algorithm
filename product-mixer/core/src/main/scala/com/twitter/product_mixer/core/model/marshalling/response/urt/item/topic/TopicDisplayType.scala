@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.top c
 
-sealed trait TopicDisplayType
+sealed tra  Top cD splayType
 
-case object BasicTopicDisplayType extends TopicDisplayType
-case object PillTopicDisplayType extends TopicDisplayType
-case object NoIconTopicDisplayType extends TopicDisplayType
-case object PillWithoutActionIconDisplayType extends TopicDisplayType
+case object Bas cTop cD splayType extends Top cD splayType
+case object P llTop cD splayType extends Top cD splayType
+case object No conTop cD splayType extends Top cD splayType
+case object P llW houtAct on conD splayType extends Top cD splayType

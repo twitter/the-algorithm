@@ -1,52 +1,52 @@
-package com.twitter.timelineranker.clients
+package com.tw ter.t  l neranker.cl ents
 
-import com.twitter.cortex_core.thriftscala.ModelName
-import com.twitter.cortex_tweet_annotate.thriftscala._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.mediaservices.commons.mediainformation.thriftscala.CalibrationLevel
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.util.stats.RequestScope
-import com.twitter.timelines.util.stats.RequestStats
-import com.twitter.timelines.util.stats.ScopedFactory
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.util.Future
+ mport com.tw ter.cortex_core.thr ftscala.ModelNa 
+ mport com.tw ter.cortex_t et_annotate.thr ftscala._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter. d aserv ces.commons. d a nformat on.thr ftscala.Cal brat onLevel
+ mport com.tw ter.t  l nes.model.T et d
+ mport com.tw ter.t  l nes.ut l.stats.RequestScope
+ mport com.tw ter.t  l nes.ut l.stats.RequestStats
+ mport com.tw ter.t  l nes.ut l.stats.ScopedFactory
+ mport com.tw ter.t  l nes.ut l.Fa lOpenHandler
+ mport com.tw ter.ut l.Future
 
-object CortexTweetQueryServiceClient {
-  private[this] val logger = Logger.get(getClass.getSimpleName)
+object CortexT etQueryServ ceCl ent {
+  pr vate[t ] val logger = Logger.get(getClass.getS mpleNa )
 
   /**
-   * A tweet is considered safe if Cortex NSFA model gives it a score that is above the threshold.
-   * Both the score and the threshold are returned in a response from getTweetSignalByIds endpoint.
+   * A t et  s cons dered safe  f Cortex NSFA model g ves   a score that  s above t  threshold.
+   * Both t  score and t  threshold are returned  n a response from getT etS gnalBy ds endpo nt.
    */
-  private def getSafeTweet(
-    request: TweetSignalRequest,
+  pr vate def getSafeT et(
+    request: T etS gnalRequest,
     response: ModelResponseResult
-  ): Option[TweetId] = {
-    val tweetId = request.tweetId
+  ): Opt on[T et d] = {
+    val t et d = request.t et d
     response match {
-      case ModelResponseResult(ModelResponseState.Success, Some(tid), Some(modelResponse), _) =>
-        val prediction = modelResponse.predictions.flatMap(_.headOption)
-        val score = prediction.map(_.score.score)
-        val highRecallBucket = prediction.flatMap(_.calibrationBuckets).flatMap { buckets =>
-          buckets.find(_.description.contains(CalibrationLevel.HighRecall))
+      case ModelResponseResult(ModelResponseState.Success, So (t d), So (modelResponse), _) =>
+        val pred ct on = modelResponse.pred ct ons.flatMap(_. adOpt on)
+        val score = pred ct on.map(_.score.score)
+        val h ghRecallBucket = pred ct on.flatMap(_.cal brat onBuckets).flatMap { buckets =>
+          buckets.f nd(_.descr pt on.conta ns(Cal brat onLevel.H ghRecall))
         }
-        val threshold = highRecallBucket.map(_.threshold)
+        val threshold = h ghRecallBucket.map(_.threshold)
         (score, threshold) match {
-          case (Some(s), Some(t)) if (s > t) =>
-            Some(tid)
-          case (Some(s), Some(t)) =>
-            logger.ifDebug(
-              s"Cortex NSFA score for tweet $tweetId is $s (threshold is $t), removing as unsafe."
+          case (So (s), So (t))  f (s > t) =>
+            So (t d)
+          case (So (s), So (t)) =>
+            logger. fDebug(
+              s"Cortex NSFA score for t et $t et d  s $s (threshold  s $t), remov ng as unsafe."
             )
             None
           case _ =>
-            logger.ifDebug(s"Unexpected response, removing tweet $tweetId as unsafe.")
+            logger. fDebug(s"Unexpected response, remov ng t et $t et d as unsafe.")
             None
         }
       case _ =>
-        logger.ifWarning(
-          s"Cortex tweet NSFA call was not successful, removing tweet $tweetId as unsafe."
+        logger. fWarn ng(
+          s"Cortex t et NSFA call was not successful, remov ng t et $t et d as unsafe."
         )
         None
     }
@@ -54,60 +54,60 @@ object CortexTweetQueryServiceClient {
 }
 
 /**
- * Enables calling cortex tweet query service to get NSFA scores on the tweet.
+ * Enables call ng cortex t et query serv ce to get NSFA scores on t  t et.
  */
-class CortexTweetQueryServiceClient(
-  cortexClient: CortexTweetQueryService.MethodPerEndpoint,
+class CortexT etQueryServ ceCl ent(
+  cortexCl ent: CortexT etQueryServ ce. thodPerEndpo nt,
   requestScope: RequestScope,
-  statsReceiver: StatsReceiver)
+  statsRece ver: StatsRece ver)
     extends RequestStats {
-  import CortexTweetQueryServiceClient._
+   mport CortexT etQueryServ ceCl ent._
 
-  private[this] val logger = Logger.get(getClass.getSimpleName)
+  pr vate[t ] val logger = Logger.get(getClass.getS mpleNa )
 
-  private[this] val getTweetSignalByIdsRequestStats =
-    requestScope.stats("cortex", statsReceiver, suffix = Some("getTweetSignalByIds"))
-  private[this] val getTweetSignalByIdsRequestScopedStatsReceiver =
-    getTweetSignalByIdsRequestStats.scopedStatsReceiver
+  pr vate[t ] val getT etS gnalBy dsRequestStats =
+    requestScope.stats("cortex", statsRece ver, suff x = So ("getT etS gnalBy ds"))
+  pr vate[t ] val getT etS gnalBy dsRequestScopedStatsRece ver =
+    getT etS gnalBy dsRequestStats.scopedStatsRece ver
 
-  private[this] val failedCortexTweetQueryServiceScope =
-    getTweetSignalByIdsRequestScopedStatsReceiver.scope(Failures)
-  private[this] val failedCortexTweetQueryServiceCallCounter =
-    failedCortexTweetQueryServiceScope.counter("failOpen")
+  pr vate[t ] val fa ledCortexT etQueryServ ceScope =
+    getT etS gnalBy dsRequestScopedStatsRece ver.scope(Fa lures)
+  pr vate[t ] val fa ledCortexT etQueryServ ceCallCounter =
+    fa ledCortexT etQueryServ ceScope.counter("fa lOpen")
 
-  private[this] val cortexTweetQueryServiceFailOpenHandler = new FailOpenHandler(
-    getTweetSignalByIdsRequestScopedStatsReceiver
+  pr vate[t ] val cortexT etQueryServ ceFa lOpenHandler = new Fa lOpenHandler(
+    getT etS gnalBy dsRequestScopedStatsRece ver
   )
 
-  def getSafeTweets(tweetIds: Seq[TweetId]): Future[Seq[TweetId]] = {
-    val requests = tweetIds.map { id => TweetSignalRequest(id, ModelName.TweetToNsfa) }
-    val results = cortexClient
-      .getTweetSignalByIds(
-        GetTweetSignalByIdsRequest(requests)
+  def getSafeT ets(t et ds: Seq[T et d]): Future[Seq[T et d]] = {
+    val requests = t et ds.map {  d => T etS gnalRequest( d, ModelNa .T etToNsfa) }
+    val results = cortexCl ent
+      .getT etS gnalBy ds(
+        GetT etS gnalBy dsRequest(requests)
       )
       .map(_.results)
 
-    cortexTweetQueryServiceFailOpenHandler(
+    cortexT etQueryServ ceFa lOpenHandler(
       results.map { responses =>
-        requests.zip(responses).flatMap {
+        requests.z p(responses).flatMap {
           case (request, response) =>
-            getSafeTweet(request, response)
+            getSafeT et(request, response)
         }
       }
     ) { _ =>
-      failedCortexTweetQueryServiceCallCounter.incr()
-      logger.ifWarning(s"Cortex tweet NSFA call failed, considering tweets $tweetIds as unsafe.")
+      fa ledCortexT etQueryServ ceCallCounter. ncr()
+      logger. fWarn ng(s"Cortex t et NSFA call fa led, cons der ng t ets $t et ds as unsafe.")
       Future.value(Seq())
     }
   }
 }
 
-class ScopedCortexTweetQueryServiceClientFactory(
-  cortexClient: CortexTweetQueryService.MethodPerEndpoint,
-  statsReceiver: StatsReceiver)
-    extends ScopedFactory[CortexTweetQueryServiceClient] {
+class ScopedCortexT etQueryServ ceCl entFactory(
+  cortexCl ent: CortexT etQueryServ ce. thodPerEndpo nt,
+  statsRece ver: StatsRece ver)
+    extends ScopedFactory[CortexT etQueryServ ceCl ent] {
 
-  override def scope(scope: RequestScope): CortexTweetQueryServiceClient = {
-    new CortexTweetQueryServiceClient(cortexClient, scope, statsReceiver)
+  overr de def scope(scope: RequestScope): CortexT etQueryServ ceCl ent = {
+    new CortexT etQueryServ ceCl ent(cortexCl ent, scope, statsRece ver)
   }
 }

@@ -1,72 +1,72 @@
-package com.twitter.search.earlybird.segment;
+package com.tw ter.search.earlyb rd.seg nt;
 
-import java.util.Optional;
+ mport java.ut l.Opt onal;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.util.io.EmptyRecordReader;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.partition.SegmentInfo;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftVers onedEvents;
+ mport com.tw ter.search.common.ut l. o.EmptyRecordReader;
+ mport com.tw ter.search.common.ut l. o.recordreader.RecordReader;
+ mport com.tw ter.search.earlyb rd.docu nt.T etDocu nt;
+ mport com.tw ter.search.earlyb rd.part  on.Seg nt nfo;
 
 /**
- * A SegmentDataReaderSet that returns no data. Uses a DocumentReader that is
+ * A Seg ntDataReaderSet that returns no data. Uses a Docu ntReader that  s
  * always caught up, but never gets exhausted.
- * Can be used for bringing up an earlybird against a static set of segments,
- * and will not incorporate any new updates.
+ * Can be used for br ng ng up an earlyb rd aga nst a stat c set of seg nts,
+ * and w ll not  ncorporate any new updates.
  */
-public class EmptySegmentDataReaderSet implements SegmentDataReaderSet {
-  public static final EmptySegmentDataReaderSet INSTANCE = new EmptySegmentDataReaderSet();
+publ c class EmptySeg ntDataReaderSet  mple nts Seg ntDataReaderSet {
+  publ c stat c f nal EmptySeg ntDataReaderSet  NSTANCE = new EmptySeg ntDataReaderSet();
 
-  @Override
-  public void attachDocumentReaders(SegmentInfo segmentInfo) {
+  @Overr de
+  publ c vo d attachDocu ntReaders(Seg nt nfo seg nt nfo) {
   }
 
-  @Override
-  public void attachUpdateReaders(SegmentInfo segmentInfo) {
+  @Overr de
+  publ c vo d attachUpdateReaders(Seg nt nfo seg nt nfo) {
   }
 
-  @Override
-  public void completeSegmentDocs(SegmentInfo segmentInfo) {
+  @Overr de
+  publ c vo d completeSeg ntDocs(Seg nt nfo seg nt nfo) {
   }
 
-  @Override
-  public void stopSegmentUpdates(SegmentInfo segmentInfo) {
+  @Overr de
+  publ c vo d stopSeg ntUpdates(Seg nt nfo seg nt nfo) {
   }
 
-  @Override
-  public void stopAll() {
+  @Overr de
+  publ c vo d stopAll() {
   }
 
-  @Override
-  public boolean allCaughtUp() {
+  @Overr de
+  publ c boolean allCaughtUp() {
     // ALWAYS CAUGHT UP
     return true;
   }
 
-  @Override
-  public RecordReader<TweetDocument> newDocumentReader(SegmentInfo segmentInfo)
-      throws Exception {
+  @Overr de
+  publ c RecordReader<T etDocu nt> newDocu ntReader(Seg nt nfo seg nt nfo)
+      throws Except on {
     return null;
   }
 
-  @Override
-  public RecordReader<TweetDocument> getDocumentReader() {
+  @Overr de
+  publ c RecordReader<T etDocu nt> getDocu ntReader() {
     return new EmptyRecordReader<>();
   }
 
-  @Override
-  public RecordReader<ThriftVersionedEvents> getUpdateEventsReader() {
+  @Overr de
+  publ c RecordReader<Thr ftVers onedEvents> getUpdateEventsReader() {
     return null;
   }
 
-  @Override
-  public RecordReader<ThriftVersionedEvents> getUpdateEventsReaderForSegment(
-      SegmentInfo segmentInfo) {
+  @Overr de
+  publ c RecordReader<Thr ftVers onedEvents> getUpdateEventsReaderForSeg nt(
+      Seg nt nfo seg nt nfo) {
     return null;
   }
 
-  @Override
-  public Optional<Long> getUpdateEventsStreamOffsetForSegment(SegmentInfo segmentInfo) {
-    return Optional.of(0L);
+  @Overr de
+  publ c Opt onal<Long> getUpdateEventsStreamOffsetForSeg nt(Seg nt nfo seg nt nfo) {
+    return Opt onal.of(0L);
   }
 }

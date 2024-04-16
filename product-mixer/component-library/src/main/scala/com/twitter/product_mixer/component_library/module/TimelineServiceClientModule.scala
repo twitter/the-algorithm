@@ -1,44 +1,44 @@
-package com.twitter.product_mixer.component_library.module
+package com.tw ter.product_m xer.component_l brary.module
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.stitch.timelineservice.TimelineService
-import com.twitter.timelineservice.{thriftscala => t}
-import com.twitter.util.Duration
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.convers ons.PercentOps._
+ mport com.tw ter.f nagle.thr ftmux. thodBu lder
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport com.tw ter. nject. njector
+ mport com.tw ter. nject.thr ft.modules.Thr ft thodBu lderCl entModule
+ mport com.tw ter.st ch.t  l neserv ce.T  l neServ ce
+ mport com.tw ter.t  l neserv ce.{thr ftscala => t}
+ mport com.tw ter.ut l.Durat on
+ mport javax. nject.S ngleton
 
-object TimelineServiceClientModule
-    extends ThriftMethodBuilderClientModule[
-      t.TimelineService.ServicePerEndpoint,
-      t.TimelineService.MethodPerEndpoint
+object T  l neServ ceCl entModule
+    extends Thr ft thodBu lderCl entModule[
+      t.T  l neServ ce.Serv cePerEndpo nt,
+      t.T  l neServ ce. thodPerEndpo nt
     ]
-    with MtlsClient {
+    w h MtlsCl ent {
 
-  override val label = "timelineservice"
-  override val dest = "/s/timelineservice/timelineservice"
+  overr de val label = "t  l neserv ce"
+  overr de val dest = "/s/t  l neserv ce/t  l neserv ce"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    methodBuilder
-      .withTimeoutPerRequest(1200.millis)
-      .withTimeoutTotal(2400.millis)
-      .idempotent(1.percent)
+  overr de protected def conf gure thodBu lder(
+     njector:  njector,
+     thodBu lder:  thodBu lder
+  ):  thodBu lder = {
+     thodBu lder
+      .w hT  outPerRequest(1200.m ll s)
+      .w hT  outTotal(2400.m ll s)
+      . dempotent(1.percent)
   }
 
-  override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+  overr de protected def sess onAcqu s  onT  out: Durat on = 500.m ll seconds
 
-  @Singleton
-  @Provides
-  def providesTimelineServiceStitchClient(
-    client: t.TimelineService.MethodPerEndpoint
-  ): TimelineService = {
-    new TimelineService(client)
+  @S ngleton
+  @Prov des
+  def prov desT  l neServ ceSt chCl ent(
+    cl ent: t.T  l neServ ce. thodPerEndpo nt
+  ): T  l neServ ce = {
+    new T  l neServ ce(cl ent)
   }
 }

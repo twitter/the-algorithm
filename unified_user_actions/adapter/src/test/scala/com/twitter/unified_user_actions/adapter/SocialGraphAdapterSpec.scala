@@ -1,346 +1,346 @@
-package com.twitter.unified_user_actions.adapter
+package com.tw ter.un f ed_user_act ons.adapter
 
-import com.twitter.inject.Test
-import com.twitter.socialgraph.thriftscala.Action
-import com.twitter.socialgraph.thriftscala.BlockGraphEvent
-import com.twitter.socialgraph.thriftscala.FollowGraphEvent
-import com.twitter.socialgraph.thriftscala.FollowRequestGraphEvent
-import com.twitter.socialgraph.thriftscala.FollowRetweetsGraphEvent
-import com.twitter.socialgraph.thriftscala.LogEventContext
-import com.twitter.socialgraph.thriftscala.MuteGraphEvent
-import com.twitter.socialgraph.thriftscala.ReportAsAbuseGraphEvent
-import com.twitter.socialgraph.thriftscala.ReportAsSpamGraphEvent
-import com.twitter.socialgraph.thriftscala.SrcTargetRequest
-import com.twitter.socialgraph.thriftscala.WriteEvent
-import com.twitter.socialgraph.thriftscala.WriteRequestResult
-import com.twitter.unified_user_actions.adapter.social_graph_event.SocialGraphAdapter
-import com.twitter.unified_user_actions.thriftscala._
-import com.twitter.util.Time
-import org.scalatest.prop.TableDrivenPropertyChecks
-import org.scalatest.prop.TableFor1
-import org.scalatest.prop.TableFor3
+ mport com.tw ter. nject.Test
+ mport com.tw ter.soc algraph.thr ftscala.Act on
+ mport com.tw ter.soc algraph.thr ftscala.BlockGraphEvent
+ mport com.tw ter.soc algraph.thr ftscala.FollowGraphEvent
+ mport com.tw ter.soc algraph.thr ftscala.FollowRequestGraphEvent
+ mport com.tw ter.soc algraph.thr ftscala.FollowRet etsGraphEvent
+ mport com.tw ter.soc algraph.thr ftscala.LogEventContext
+ mport com.tw ter.soc algraph.thr ftscala.MuteGraphEvent
+ mport com.tw ter.soc algraph.thr ftscala.ReportAsAbuseGraphEvent
+ mport com.tw ter.soc algraph.thr ftscala.ReportAsSpamGraphEvent
+ mport com.tw ter.soc algraph.thr ftscala.SrcTargetRequest
+ mport com.tw ter.soc algraph.thr ftscala.Wr eEvent
+ mport com.tw ter.soc algraph.thr ftscala.Wr eRequestResult
+ mport com.tw ter.un f ed_user_act ons.adapter.soc al_graph_event.Soc alGraphAdapter
+ mport com.tw ter.un f ed_user_act ons.thr ftscala._
+ mport com.tw ter.ut l.T  
+ mport org.scalatest.prop.TableDr venPropertyC cks
+ mport org.scalatest.prop.TableFor1
+ mport org.scalatest.prop.TableFor3
 
-class SocialGraphAdapterSpec extends Test with TableDrivenPropertyChecks {
-  trait Fixture {
+class Soc alGraphAdapterSpec extends Test w h TableDr venPropertyC cks {
+  tra  F xture {
 
-    val frozenTime: Time = Time.fromMilliseconds(1658949273000L)
+    val frozenT  : T   = T  .fromM ll seconds(1658949273000L)
 
     val testLogEventContext: LogEventContext = LogEventContext(
-      timestamp = 1001L,
-      hostname = "",
-      transactionId = "",
-      socialGraphClientId = "",
-      loggedInUserId = Some(1111L),
+      t  stamp = 1001L,
+      hostna  = "",
+      transact on d = "",
+      soc alGraphCl ent d = "",
+      logged nUser d = So (1111L),
     )
 
-    val testWriteRequestResult: WriteRequestResult = WriteRequestResult(
+    val testWr eRequestResult: Wr eRequestResult = Wr eRequestResult(
       request = SrcTargetRequest(
-        source = 1111L,
+        s ce = 1111L,
         target = 2222L
       )
     )
 
-    val testWriteRequestResultWithValidationError: WriteRequestResult = WriteRequestResult(
+    val testWr eRequestResultW hVal dat onError: Wr eRequestResult = Wr eRequestResult(
       request = SrcTargetRequest(
-        source = 1111L,
+        s ce = 1111L,
         target = 2222L
       ),
-      validationError = Some("action unsuccessful")
+      val dat onError = So ("act on unsuccessful")
     )
 
-    val baseEvent: WriteEvent = WriteEvent(
+    val baseEvent: Wr eEvent = Wr eEvent(
       context = testLogEventContext,
-      action = Action.AcceptFollowRequest
+      act on = Act on.AcceptFollowRequest
     )
 
-    val sgFollowEvent: WriteEvent = baseEvent.copy(
-      action = Action.Follow,
-      follow = Some(List(FollowGraphEvent(testWriteRequestResult))))
+    val sgFollowEvent: Wr eEvent = baseEvent.copy(
+      act on = Act on.Follow,
+      follow = So (L st(FollowGraphEvent(testWr eRequestResult))))
 
-    val sgUnfollowEvent: WriteEvent = baseEvent.copy(
-      action = Action.Unfollow,
-      follow = Some(List(FollowGraphEvent(testWriteRequestResult))))
+    val sgUnfollowEvent: Wr eEvent = baseEvent.copy(
+      act on = Act on.Unfollow,
+      follow = So (L st(FollowGraphEvent(testWr eRequestResult))))
 
-    val sgFollowRedundantEvent: WriteEvent = baseEvent.copy(
-      action = Action.Follow,
-      follow = Some(
-        List(
+    val sgFollowRedundantEvent: Wr eEvent = baseEvent.copy(
+      act on = Act on.Follow,
+      follow = So (
+        L st(
           FollowGraphEvent(
-            result = testWriteRequestResult,
-            redundantOperation = Some(true)
+            result = testWr eRequestResult,
+            redundantOperat on = So (true)
           ))))
 
-    val sgFollowRedundantIsFalseEvent: WriteEvent = baseEvent.copy(
-      action = Action.Follow,
-      follow = Some(
-        List(
+    val sgFollowRedundant sFalseEvent: Wr eEvent = baseEvent.copy(
+      act on = Act on.Follow,
+      follow = So (
+        L st(
           FollowGraphEvent(
-            result = testWriteRequestResult,
-            redundantOperation = Some(false)
+            result = testWr eRequestResult,
+            redundantOperat on = So (false)
           ))))
 
-    val sgUnfollowRedundantEvent: WriteEvent = baseEvent.copy(
-      action = Action.Unfollow,
-      follow = Some(
-        List(
+    val sgUnfollowRedundantEvent: Wr eEvent = baseEvent.copy(
+      act on = Act on.Unfollow,
+      follow = So (
+        L st(
           FollowGraphEvent(
-            result = testWriteRequestResult,
-            redundantOperation = Some(true)
+            result = testWr eRequestResult,
+            redundantOperat on = So (true)
           ))))
 
-    val sgUnfollowRedundantIsFalseEvent: WriteEvent = baseEvent.copy(
-      action = Action.Unfollow,
-      follow = Some(
-        List(
+    val sgUnfollowRedundant sFalseEvent: Wr eEvent = baseEvent.copy(
+      act on = Act on.Unfollow,
+      follow = So (
+        L st(
           FollowGraphEvent(
-            result = testWriteRequestResult,
-            redundantOperation = Some(false)
+            result = testWr eRequestResult,
+            redundantOperat on = So (false)
           ))))
 
-    val sgUnsuccessfulFollowEvent: WriteEvent = baseEvent.copy(
-      action = Action.Follow,
-      follow = Some(List(FollowGraphEvent(testWriteRequestResultWithValidationError))))
+    val sgUnsuccessfulFollowEvent: Wr eEvent = baseEvent.copy(
+      act on = Act on.Follow,
+      follow = So (L st(FollowGraphEvent(testWr eRequestResultW hVal dat onError))))
 
-    val sgUnsuccessfulUnfollowEvent: WriteEvent = baseEvent.copy(
-      action = Action.Unfollow,
-      follow = Some(List(FollowGraphEvent(testWriteRequestResultWithValidationError))))
+    val sgUnsuccessfulUnfollowEvent: Wr eEvent = baseEvent.copy(
+      act on = Act on.Unfollow,
+      follow = So (L st(FollowGraphEvent(testWr eRequestResultW hVal dat onError))))
 
-    val sgBlockEvent: WriteEvent = baseEvent.copy(
-      action = Action.Block,
-      block = Some(List(BlockGraphEvent(testWriteRequestResult))))
+    val sgBlockEvent: Wr eEvent = baseEvent.copy(
+      act on = Act on.Block,
+      block = So (L st(BlockGraphEvent(testWr eRequestResult))))
 
-    val sgUnsuccessfulBlockEvent: WriteEvent = baseEvent.copy(
-      action = Action.Block,
-      block = Some(List(BlockGraphEvent(testWriteRequestResultWithValidationError))))
+    val sgUnsuccessfulBlockEvent: Wr eEvent = baseEvent.copy(
+      act on = Act on.Block,
+      block = So (L st(BlockGraphEvent(testWr eRequestResultW hVal dat onError))))
 
-    val sgUnblockEvent: WriteEvent = baseEvent.copy(
-      action = Action.Unblock,
-      block = Some(List(BlockGraphEvent(testWriteRequestResult))))
+    val sgUnblockEvent: Wr eEvent = baseEvent.copy(
+      act on = Act on.Unblock,
+      block = So (L st(BlockGraphEvent(testWr eRequestResult))))
 
-    val sgUnsuccessfulUnblockEvent: WriteEvent = baseEvent.copy(
-      action = Action.Unblock,
-      block = Some(List(BlockGraphEvent(testWriteRequestResultWithValidationError))))
+    val sgUnsuccessfulUnblockEvent: Wr eEvent = baseEvent.copy(
+      act on = Act on.Unblock,
+      block = So (L st(BlockGraphEvent(testWr eRequestResultW hVal dat onError))))
 
-    val sgMuteEvent: WriteEvent = baseEvent.copy(
-      action = Action.Mute,
-      mute = Some(List(MuteGraphEvent(testWriteRequestResult))))
+    val sgMuteEvent: Wr eEvent = baseEvent.copy(
+      act on = Act on.Mute,
+      mute = So (L st(MuteGraphEvent(testWr eRequestResult))))
 
-    val sgUnsuccessfulMuteEvent: WriteEvent = baseEvent.copy(
-      action = Action.Mute,
-      mute = Some(List(MuteGraphEvent(testWriteRequestResultWithValidationError))))
+    val sgUnsuccessfulMuteEvent: Wr eEvent = baseEvent.copy(
+      act on = Act on.Mute,
+      mute = So (L st(MuteGraphEvent(testWr eRequestResultW hVal dat onError))))
 
-    val sgUnmuteEvent: WriteEvent = baseEvent.copy(
-      action = Action.Unmute,
-      mute = Some(List(MuteGraphEvent(testWriteRequestResult))))
+    val sgUnmuteEvent: Wr eEvent = baseEvent.copy(
+      act on = Act on.Unmute,
+      mute = So (L st(MuteGraphEvent(testWr eRequestResult))))
 
-    val sgUnsuccessfulUnmuteEvent: WriteEvent = baseEvent.copy(
-      action = Action.Unmute,
-      mute = Some(List(MuteGraphEvent(testWriteRequestResultWithValidationError))))
+    val sgUnsuccessfulUnmuteEvent: Wr eEvent = baseEvent.copy(
+      act on = Act on.Unmute,
+      mute = So (L st(MuteGraphEvent(testWr eRequestResultW hVal dat onError))))
 
-    val sgCreateFollowRequestEvent: WriteEvent = baseEvent.copy(
-      action = Action.CreateFollowRequest,
-      followRequest = Some(List(FollowRequestGraphEvent(testWriteRequestResult)))
+    val sgCreateFollowRequestEvent: Wr eEvent = baseEvent.copy(
+      act on = Act on.CreateFollowRequest,
+      followRequest = So (L st(FollowRequestGraphEvent(testWr eRequestResult)))
     )
 
-    val sgCancelFollowRequestEvent: WriteEvent = baseEvent.copy(
-      action = Action.CancelFollowRequest,
-      followRequest = Some(List(FollowRequestGraphEvent(testWriteRequestResult)))
+    val sgCancelFollowRequestEvent: Wr eEvent = baseEvent.copy(
+      act on = Act on.CancelFollowRequest,
+      followRequest = So (L st(FollowRequestGraphEvent(testWr eRequestResult)))
     )
 
-    val sgAcceptFollowRequestEvent: WriteEvent = baseEvent.copy(
-      action = Action.AcceptFollowRequest,
-      followRequest = Some(List(FollowRequestGraphEvent(testWriteRequestResult)))
+    val sgAcceptFollowRequestEvent: Wr eEvent = baseEvent.copy(
+      act on = Act on.AcceptFollowRequest,
+      followRequest = So (L st(FollowRequestGraphEvent(testWr eRequestResult)))
     )
 
-    val sgAcceptFollowRetweetEvent: WriteEvent = baseEvent.copy(
-      action = Action.FollowRetweets,
-      followRetweets = Some(List(FollowRetweetsGraphEvent(testWriteRequestResult)))
+    val sgAcceptFollowRet etEvent: Wr eEvent = baseEvent.copy(
+      act on = Act on.FollowRet ets,
+      followRet ets = So (L st(FollowRet etsGraphEvent(testWr eRequestResult)))
     )
 
-    val sgAcceptUnfollowRetweetEvent: WriteEvent = baseEvent.copy(
-      action = Action.UnfollowRetweets,
-      followRetweets = Some(List(FollowRetweetsGraphEvent(testWriteRequestResult)))
+    val sgAcceptUnfollowRet etEvent: Wr eEvent = baseEvent.copy(
+      act on = Act on.UnfollowRet ets,
+      followRet ets = So (L st(FollowRet etsGraphEvent(testWr eRequestResult)))
     )
 
-    val sgReportAsSpamEvent: WriteEvent = baseEvent.copy(
-      action = Action.ReportAsSpam,
-      reportAsSpam = Some(
-        List(
+    val sgReportAsSpamEvent: Wr eEvent = baseEvent.copy(
+      act on = Act on.ReportAsSpam,
+      reportAsSpam = So (
+        L st(
           ReportAsSpamGraphEvent(
-            result = testWriteRequestResult
+            result = testWr eRequestResult
           ))))
 
-    val sgReportAsAbuseEvent: WriteEvent = baseEvent.copy(
-      action = Action.ReportAsAbuse,
-      reportAsAbuse = Some(
-        List(
+    val sgReportAsAbuseEvent: Wr eEvent = baseEvent.copy(
+      act on = Act on.ReportAsAbuse,
+      reportAsAbuse = So (
+        L st(
           ReportAsAbuseGraphEvent(
-            result = testWriteRequestResult
+            result = testWr eRequestResult
           ))))
 
     def getExpectedUUA(
-      userId: Long,
-      actionProfileId: Long,
-      sourceTimestampMs: Long,
-      actionType: ActionType,
-      socialGraphAction: Option[Action] = None
-    ): UnifiedUserAction = {
-      val actionItem = socialGraphAction match {
-        case Some(sgAction) =>
-          Item.ProfileInfo(
-            ProfileInfo(
-              actionProfileId = actionProfileId,
-              profileActionInfo = Some(
-                ProfileActionInfo.ServerProfileReport(
-                  ServerProfileReport(reportType = sgAction)
+      user d: Long,
+      act onProf le d: Long,
+      s ceT  stampMs: Long,
+      act onType: Act onType,
+      soc alGraphAct on: Opt on[Act on] = None
+    ): Un f edUserAct on = {
+      val act on em = soc alGraphAct on match {
+        case So (sgAct on) =>
+           em.Prof le nfo(
+            Prof le nfo(
+              act onProf le d = act onProf le d,
+              prof leAct on nfo = So (
+                Prof leAct on nfo.ServerProf leReport(
+                  ServerProf leReport(reportType = sgAct on)
                 ))
             )
           )
         case _ =>
-          Item.ProfileInfo(
-            ProfileInfo(
-              actionProfileId = actionProfileId
+           em.Prof le nfo(
+            Prof le nfo(
+              act onProf le d = act onProf le d
             )
           )
       }
 
-      UnifiedUserAction(
-        userIdentifier = UserIdentifier(userId = Some(userId)),
-        item = actionItem,
-        actionType = actionType,
-        eventMetadata = EventMetadata(
-          sourceTimestampMs = sourceTimestampMs,
-          receivedTimestampMs = frozenTime.inMilliseconds,
-          sourceLineage = SourceLineage.ServerSocialGraphEvents
+      Un f edUserAct on(
+        user dent f er = User dent f er(user d = So (user d)),
+         em = act on em,
+        act onType = act onType,
+        event tadata = Event tadata(
+          s ceT  stampMs = s ceT  stampMs,
+          rece vedT  stampMs = frozenT  . nM ll seconds,
+          s ceL neage = S ceL neage.ServerSoc alGraphEvents
         )
       )
     }
 
-    val expectedUuaFollow: UnifiedUserAction = getExpectedUUA(
-      userId = 1111L,
-      actionProfileId = 2222L,
-      sourceTimestampMs = 1001L,
-      actionType = ActionType.ServerProfileFollow
+    val expectedUuaFollow: Un f edUserAct on = getExpectedUUA(
+      user d = 1111L,
+      act onProf le d = 2222L,
+      s ceT  stampMs = 1001L,
+      act onType = Act onType.ServerProf leFollow
     )
 
-    val expectedUuaUnfollow: UnifiedUserAction = getExpectedUUA(
-      userId = 1111L,
-      actionProfileId = 2222L,
-      sourceTimestampMs = 1001L,
-      actionType = ActionType.ServerProfileUnfollow
+    val expectedUuaUnfollow: Un f edUserAct on = getExpectedUUA(
+      user d = 1111L,
+      act onProf le d = 2222L,
+      s ceT  stampMs = 1001L,
+      act onType = Act onType.ServerProf leUnfollow
     )
 
-    val expectedUuaMute: UnifiedUserAction = getExpectedUUA(
-      userId = 1111L,
-      actionProfileId = 2222L,
-      sourceTimestampMs = 1001L,
-      actionType = ActionType.ServerProfileMute
+    val expectedUuaMute: Un f edUserAct on = getExpectedUUA(
+      user d = 1111L,
+      act onProf le d = 2222L,
+      s ceT  stampMs = 1001L,
+      act onType = Act onType.ServerProf leMute
     )
 
-    val expectedUuaUnmute: UnifiedUserAction = getExpectedUUA(
-      userId = 1111L,
-      actionProfileId = 2222L,
-      sourceTimestampMs = 1001L,
-      actionType = ActionType.ServerProfileUnmute
+    val expectedUuaUnmute: Un f edUserAct on = getExpectedUUA(
+      user d = 1111L,
+      act onProf le d = 2222L,
+      s ceT  stampMs = 1001L,
+      act onType = Act onType.ServerProf leUnmute
     )
 
-    val expectedUuaBlock: UnifiedUserAction = getExpectedUUA(
-      userId = 1111L,
-      actionProfileId = 2222L,
-      sourceTimestampMs = 1001L,
-      actionType = ActionType.ServerProfileBlock
+    val expectedUuaBlock: Un f edUserAct on = getExpectedUUA(
+      user d = 1111L,
+      act onProf le d = 2222L,
+      s ceT  stampMs = 1001L,
+      act onType = Act onType.ServerProf leBlock
     )
 
-    val expectedUuaUnblock: UnifiedUserAction = getExpectedUUA(
-      userId = 1111L,
-      actionProfileId = 2222L,
-      sourceTimestampMs = 1001L,
-      actionType = ActionType.ServerProfileUnblock
+    val expectedUuaUnblock: Un f edUserAct on = getExpectedUUA(
+      user d = 1111L,
+      act onProf le d = 2222L,
+      s ceT  stampMs = 1001L,
+      act onType = Act onType.ServerProf leUnblock
     )
 
-    val expectedUuaReportAsSpam: UnifiedUserAction = getExpectedUUA(
-      userId = 1111L,
-      actionProfileId = 2222L,
-      sourceTimestampMs = 1001L,
-      actionType = ActionType.ServerProfileReport,
-      socialGraphAction = Some(Action.ReportAsSpam)
+    val expectedUuaReportAsSpam: Un f edUserAct on = getExpectedUUA(
+      user d = 1111L,
+      act onProf le d = 2222L,
+      s ceT  stampMs = 1001L,
+      act onType = Act onType.ServerProf leReport,
+      soc alGraphAct on = So (Act on.ReportAsSpam)
     )
 
-    val expectedUuaReportAsAbuse: UnifiedUserAction = getExpectedUUA(
-      userId = 1111L,
-      actionProfileId = 2222L,
-      sourceTimestampMs = 1001L,
-      actionType = ActionType.ServerProfileReport,
-      socialGraphAction = Some(Action.ReportAsAbuse)
+    val expectedUuaReportAsAbuse: Un f edUserAct on = getExpectedUUA(
+      user d = 1111L,
+      act onProf le d = 2222L,
+      s ceT  stampMs = 1001L,
+      act onType = Act onType.ServerProf leReport,
+      soc alGraphAct on = So (Act on.ReportAsAbuse)
     )
   }
 
-  test("SocialGraphAdapter ignore events not in the list") {
-    new Fixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val ignoredSocialGraphEvents: TableFor1[WriteEvent] = Table(
-          "ignoredSocialGraphEvents",
-          sgAcceptUnfollowRetweetEvent,
+  test("Soc alGraphAdapter  gnore events not  n t  l st") {
+    new F xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val  gnoredSoc alGraphEvents: TableFor1[Wr eEvent] = Table(
+          " gnoredSoc alGraphEvents",
+          sgAcceptUnfollowRet etEvent,
           sgAcceptFollowRequestEvent,
-          sgAcceptFollowRetweetEvent,
+          sgAcceptFollowRet etEvent,
           sgCreateFollowRequestEvent,
           sgCancelFollowRequestEvent,
         )
-        forEvery(ignoredSocialGraphEvents) { writeEvent: WriteEvent =>
-          val actual = SocialGraphAdapter.adaptEvent(writeEvent)
-          assert(actual.isEmpty)
+        forEvery( gnoredSoc alGraphEvents) { wr eEvent: Wr eEvent =>
+          val actual = Soc alGraphAdapter.adaptEvent(wr eEvent)
+          assert(actual. sEmpty)
         }
       }
     }
   }
 
-  test("Test SocialGraphAdapter consuming Write events") {
-    new Fixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val socialProfileActions: TableFor3[String, WriteEvent, UnifiedUserAction] = Table(
-          ("actionType", "event", "expectedUnifiedUserAction"),
-          ("ProfileFollow", sgFollowEvent, expectedUuaFollow),
-          ("ProfileUnfollow", sgUnfollowEvent, expectedUuaUnfollow),
-          ("ProfileBlock", sgBlockEvent, expectedUuaBlock),
-          ("ProfileUnBlock", sgUnblockEvent, expectedUuaUnblock),
-          ("ProfileMute", sgMuteEvent, expectedUuaMute),
-          ("ProfileUnmute", sgUnmuteEvent, expectedUuaUnmute),
-          ("ProfileReportAsSpam", sgReportAsSpamEvent, expectedUuaReportAsSpam),
-          ("ProfileReportAsAbuse", sgReportAsAbuseEvent, expectedUuaReportAsAbuse),
+  test("Test Soc alGraphAdapter consum ng Wr e events") {
+    new F xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val soc alProf leAct ons: TableFor3[Str ng, Wr eEvent, Un f edUserAct on] = Table(
+          ("act onType", "event", "expectedUn f edUserAct on"),
+          ("Prof leFollow", sgFollowEvent, expectedUuaFollow),
+          ("Prof leUnfollow", sgUnfollowEvent, expectedUuaUnfollow),
+          ("Prof leBlock", sgBlockEvent, expectedUuaBlock),
+          ("Prof leUnBlock", sgUnblockEvent, expectedUuaUnblock),
+          ("Prof leMute", sgMuteEvent, expectedUuaMute),
+          ("Prof leUnmute", sgUnmuteEvent, expectedUuaUnmute),
+          ("Prof leReportAsSpam", sgReportAsSpamEvent, expectedUuaReportAsSpam),
+          ("Prof leReportAsAbuse", sgReportAsAbuseEvent, expectedUuaReportAsAbuse),
         )
-        forEvery(socialProfileActions) {
-          (_: String, event: WriteEvent, expected: UnifiedUserAction) =>
-            val actual = SocialGraphAdapter.adaptEvent(event)
+        forEvery(soc alProf leAct ons) {
+          (_: Str ng, event: Wr eEvent, expected: Un f edUserAct on) =>
+            val actual = Soc alGraphAdapter.adaptEvent(event)
             assert(Seq(expected) === actual)
         }
       }
     }
   }
 
-  test("SocialGraphAdapter ignore redundant follow/unfollow events") {
-    new Fixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val socialGraphActions: TableFor3[String, WriteEvent, Seq[UnifiedUserAction]] = Table(
-          ("actionType", "ignoredRedundantFollowUnfollowEvents", "expectedUnifiedUserAction"),
-          ("ProfileFollow", sgFollowRedundantEvent, Nil),
-          ("ProfileFollow", sgFollowRedundantIsFalseEvent, Seq(expectedUuaFollow)),
-          ("ProfileUnfollow", sgUnfollowRedundantEvent, Nil),
-          ("ProfileUnfollow", sgUnfollowRedundantIsFalseEvent, Seq(expectedUuaUnfollow))
+  test("Soc alGraphAdapter  gnore redundant follow/unfollow events") {
+    new F xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val soc alGraphAct ons: TableFor3[Str ng, Wr eEvent, Seq[Un f edUserAct on]] = Table(
+          ("act onType", " gnoredRedundantFollowUnfollowEvents", "expectedUn f edUserAct on"),
+          ("Prof leFollow", sgFollowRedundantEvent, N l),
+          ("Prof leFollow", sgFollowRedundant sFalseEvent, Seq(expectedUuaFollow)),
+          ("Prof leUnfollow", sgUnfollowRedundantEvent, N l),
+          ("Prof leUnfollow", sgUnfollowRedundant sFalseEvent, Seq(expectedUuaUnfollow))
         )
-        forEvery(socialGraphActions) {
-          (_: String, event: WriteEvent, expected: Seq[UnifiedUserAction]) =>
-            val actual = SocialGraphAdapter.adaptEvent(event)
+        forEvery(soc alGraphAct ons) {
+          (_: Str ng, event: Wr eEvent, expected: Seq[Un f edUserAct on]) =>
+            val actual = Soc alGraphAdapter.adaptEvent(event)
             assert(expected === actual)
         }
       }
     }
   }
 
-  test("SocialGraphAdapter ignore Unsuccessful SocialGraph events") {
-    new Fixture {
-      Time.withTimeAt(frozenTime) { _ =>
-        val unsuccessfulSocialGraphEvents: TableFor1[WriteEvent] = Table(
-          "ignoredSocialGraphEvents",
+  test("Soc alGraphAdapter  gnore Unsuccessful Soc alGraph events") {
+    new F xture {
+      T  .w hT  At(frozenT  ) { _ =>
+        val unsuccessfulSoc alGraphEvents: TableFor1[Wr eEvent] = Table(
+          " gnoredSoc alGraphEvents",
           sgUnsuccessfulFollowEvent,
           sgUnsuccessfulUnfollowEvent,
           sgUnsuccessfulBlockEvent,
@@ -349,9 +349,9 @@ class SocialGraphAdapterSpec extends Test with TableDrivenPropertyChecks {
           sgUnsuccessfulUnmuteEvent
         )
 
-        forEvery(unsuccessfulSocialGraphEvents) { writeEvent: WriteEvent =>
-          val actual = SocialGraphAdapter.adaptEvent(writeEvent)
-          assert(actual.isEmpty)
+        forEvery(unsuccessfulSoc alGraphEvents) { wr eEvent: Wr eEvent =>
+          val actual = Soc alGraphAdapter.adaptEvent(wr eEvent)
+          assert(actual. sEmpty)
         }
       }
     }

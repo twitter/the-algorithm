@@ -1,218 +1,218 @@
-# Loadtest ANN query service with random embeddings
+# Loadtest ANN query serv ce w h random embedd ngs
 
-An ANN query service can be load-tested with random embeddings as queries, generated automatically by loadtest tool.
-Example script to load test a ANN query service with random embeddings:
+An ANN query serv ce can be load-tested w h random embedd ngs as quer es, generated automat cally by loadtest tool.
+Example scr pt to load test a ANN query serv ce w h random embedd ngs:
 
 ```bash
-$ aurora job create smf1/<role>/staging/ann-loadtest-service ann/src/main/aurora/loadtest/loadtest.aurora \
-  --bind=profile.name=ann-loadtest-service \
-  --bind=profile.role=<role> \
-  --bind=profile.duration_sec=10 \
-  --bind=profile.number_of_neighbors=10 \
-  --bind=profile.qps=200 \
-  --bind=profile.algo=hnsw \
-  --bind=profile.metric=Cosine \
-  --bind=profile.index_id_type=int \
-  --bind=profile.hnsw_ef=400,600,800 \
-  --bind=profile.embedding_dimension=3 \
-  --bind=profile.concurrency_level=8 \
-  --bind=profile.loadtest_type=remote \
-  --bind=profile.service_destination=/srv#/staging/local/apoorvs/ann-server-test \
-  --bind=profile.with_random_queries=True \
-  --bind=profile.random_queries_count=50000 \
-  --bind=profile.random_embedding_min_value=-10.0 \
-  --bind=profile.random_embedding_max_value=10.0
+$ aurora job create smf1/<role>/stag ng/ann-loadtest-serv ce ann/src/ma n/aurora/loadtest/loadtest.aurora \
+  --b nd=prof le.na =ann-loadtest-serv ce \
+  --b nd=prof le.role=<role> \
+  --b nd=prof le.durat on_sec=10 \
+  --b nd=prof le.number_of_ne ghbors=10 \
+  --b nd=prof le.qps=200 \
+  --b nd=prof le.algo=hnsw \
+  --b nd=prof le. tr c=Cos ne \
+  --b nd=prof le. ndex_ d_type= nt \
+  --b nd=prof le.hnsw_ef=400,600,800 \
+  --b nd=prof le.embedd ng_d  ns on=3 \
+  --b nd=prof le.concurrency_level=8 \
+  --b nd=prof le.loadtest_type=remote \
+  --b nd=prof le.serv ce_dest nat on=/srv#/stag ng/local/apoorvs/ann-server-test \
+  --b nd=prof le.w h_random_quer es=True \
+  --b nd=prof le.random_quer es_count=50000 \
+  --b nd=prof le.random_embedd ng_m n_value=-10.0 \
+  --b nd=prof le.random_embedd ng_max_value=10.0
 ```
 
-It will run the loadtest with `50000` random embeddings, where each embedding value will be range bounded between `random_embedding_min_value` and `random_embedding_max_value`.
-In the above the case it will be bounded between `-10.0` and `10.0`.
-If `random_embedding_min_value` and `random_embedding_max_value` are not supplied default value of `-1.0` and `1.0` will be used.
+  w ll run t  loadtest w h `50000` random embedd ngs, w re each embedd ng value w ll be range bounded bet en `random_embedd ng_m n_value` and `random_embedd ng_max_value`.
+ n t  above t  case   w ll be bounded bet en `-10.0` and `10.0`.
+ f `random_embedd ng_m n_value` and `random_embedd ng_max_value` are not suppl ed default value of `-1.0` and `1.0` w ll be used.
 
 ## Results
 
-Load test results will be printed to stdout of an aurora job.
+Load test results w ll be pr nted to stdout of an aurora job.
 
-# Loadtest ANN query service with query set
+# Loadtest ANN query serv ce w h query set
 
-An ANN query service can be load-tested with sample queries drawn from the embeddings dataset.
-For creating sample queries i.e `query_set` refer this [section](#query-set-generator).
+An ANN query serv ce can be load-tested w h sample quer es drawn from t  embedd ngs dataset.
+For creat ng sample quer es  .e `query_set` refer t  [sect on](#query-set-generator).
 
-Test is run with `live` version of loadtest binary that is already available in packer.
-Example script to load test a ANN query service:
-
-```bash
-$ aurora job create smf1/<role>/staging/ann-loadtest-service ann/src/main/aurora/loadtest/loadtest.aurora \
-  --bind=profile.name=ann-loadtest-service \
-  --bind=profile.role=<role> \
-  --bind=profile.duration_sec=10 \
-  --bind=profile.query_set_dir=hdfs:///user/cortex/ann_example/dataset/search/query_knn/query_set \
-  --bind=profile.number_of_neighbors=10 \
-  --bind=profile.qps=200 \
-  --bind=profile.algo=hnsw \
-  --bind=profile.query_id_type=string \
-  --bind=profile.index_id_type=string \
-  --bind=profile.metric=Cosine \
-  --bind=profile.hnsw_ef=400,600,800 \
-  --bind=profile.embedding_dimension=100 \
-  --bind=profile.concurrency_level=8 \
-  --bind=profile.loadtest_type=remote \
-  --bind=profile.service_destination=/srv#/staging/local/apoorvs/ann-server-test
-```
-
-# In-Memory based loadtest for measuring recall
-
-Load test can be with the above created dataset in memory.
-For running in in-memory mode, index is created in memory, and for that you need `query_set/index_set/truth_set`.
-For creating this dataset refer this [section](#knn-truth-set-generator).
-
-Test is run with `live` version loadtest binary that is already available in packer.
-Example script In-Memory index building and benchmarking:
+Test  s run w h `l ve` vers on of loadtest b nary that  s already ava lable  n packer.
+Example scr pt to load test a ANN query serv ce:
 
 ```bash
-$ aurora job create smf1/<role>/staging/ann-loadtest ann/src/main/aurora/loadtest/loadtest.aurora \
-  --bind=profile.name=ann-loadtest \
-  --bind=profile.role=<role> \
-  --bind=profile.duration_sec=10 \
-  --bind=profile.truth_set_dir=hdfs:///user/cortex/ann_example/dataset/search/query_knn/true_knn \
-  --bind=profile.query_set_dir=hdfs:///user/cortex/ann_example/dataset/search/query_knn/query_set \
-  --bind=profile.index_set_dir=hdfs:///user/cortex/ann_example/dataset/search/query_knn/index_set \
-  --bind=profile.number_of_neighbors=10 \
-  --bind=profile.qps=200 \
-  --bind=profile.algo=hnsw \
-  --bind=profile.query_id_type=string \
-  --bind=profile.index_id_type=string \
-  --bind=profile.metric=Cosine \
-  --bind=profile.hnsw_ef_construction=15 \
-  --bind=profile.hnsw_max_m=10 \
-  --bind=profile.hnsw_ef=400,600,800 \
-  --bind=profile.embedding_dimension=100 \
-  --bind=profile.concurrency_level=8 \
-  --bind=profile.loadtest_type=local
+$ aurora job create smf1/<role>/stag ng/ann-loadtest-serv ce ann/src/ma n/aurora/loadtest/loadtest.aurora \
+  --b nd=prof le.na =ann-loadtest-serv ce \
+  --b nd=prof le.role=<role> \
+  --b nd=prof le.durat on_sec=10 \
+  --b nd=prof le.query_set_d r=hdfs:///user/cortex/ann_example/dataset/search/query_knn/query_set \
+  --b nd=prof le.number_of_ne ghbors=10 \
+  --b nd=prof le.qps=200 \
+  --b nd=prof le.algo=hnsw \
+  --b nd=prof le.query_ d_type=str ng \
+  --b nd=prof le. ndex_ d_type=str ng \
+  --b nd=prof le. tr c=Cos ne \
+  --b nd=prof le.hnsw_ef=400,600,800 \
+  --b nd=prof le.embedd ng_d  ns on=100 \
+  --b nd=prof le.concurrency_level=8 \
+  --b nd=prof le.loadtest_type=remote \
+  --b nd=prof le.serv ce_dest nat on=/srv#/stag ng/local/apoorvs/ann-server-test
 ```
 
-# Loadtest faiss
+#  n- mory based loadtest for  asur ng recall
+
+Load test can be w h t  above created dataset  n  mory.
+For runn ng  n  n- mory mode,  ndex  s created  n  mory, and for that   need `query_set/ ndex_set/truth_set`.
+For creat ng t  dataset refer t  [sect on](#knn-truth-set-generator).
+
+Test  s run w h `l ve` vers on loadtest b nary that  s already ava lable  n packer.
+Example scr pt  n- mory  ndex bu ld ng and benchmark ng:
 
 ```bash
-$ aurora job create smf1/<role>/staging/ann-loadtest-service ann/src/main/aurora/loadtest/loadtest.aurora \
-  --bind=profile.name=ann-loadtest-service \
-  --bind=profile.role=<role> \
-  --bind=profile.duration_sec=10 \
-  --bind=profile.number_of_neighbors=10 \
-  --bind=profile.qps=200 \
-  --bind=profile.algo=faiss \ # Changed to faiss
-  --bind=profile.faiss_nprobe=1,3,9,27,81,128,256,512 \ # Added
-  --bind=profile.faiss_quantizerKfactorRF=1,2 \ # Pass a list to do grid search
-  --bind=profile.faiss_quantizerNprobe=128 \ # Added
-  --bind=profile.metric=Cosine \
-  --bind=profile.index_id_type=int \
-  --bind=profile.embedding_dimension=3 \
-  --bind=profile.concurrency_level=8 \
-  --bind=profile.loadtest_type=remote \
-  --bind=profile.service_destination=/srv#/staging/local/apoorvs/ann-server-test \
-  --bind=profile.with_random_queries=True \
-  --bind=profile.random_queries_count=50000 \
-  --bind=profile.random_embedding_min_value=-10.0 \
-  --bind=profile.random_embedding_max_value=10.0
+$ aurora job create smf1/<role>/stag ng/ann-loadtest ann/src/ma n/aurora/loadtest/loadtest.aurora \
+  --b nd=prof le.na =ann-loadtest \
+  --b nd=prof le.role=<role> \
+  --b nd=prof le.durat on_sec=10 \
+  --b nd=prof le.truth_set_d r=hdfs:///user/cortex/ann_example/dataset/search/query_knn/true_knn \
+  --b nd=prof le.query_set_d r=hdfs:///user/cortex/ann_example/dataset/search/query_knn/query_set \
+  --b nd=prof le. ndex_set_d r=hdfs:///user/cortex/ann_example/dataset/search/query_knn/ ndex_set \
+  --b nd=prof le.number_of_ne ghbors=10 \
+  --b nd=prof le.qps=200 \
+  --b nd=prof le.algo=hnsw \
+  --b nd=prof le.query_ d_type=str ng \
+  --b nd=prof le. ndex_ d_type=str ng \
+  --b nd=prof le. tr c=Cos ne \
+  --b nd=prof le.hnsw_ef_construct on=15 \
+  --b nd=prof le.hnsw_max_m=10 \
+  --b nd=prof le.hnsw_ef=400,600,800 \
+  --b nd=prof le.embedd ng_d  ns on=100 \
+  --b nd=prof le.concurrency_level=8 \
+  --b nd=prof le.loadtest_type=local
 ```
 
-Full list of faiss specific parameters. [Exact definition of all available parameters](https://github.com/facebookresearch/faiss/blob/36f2998a6469280cef3b0afcde2036935a29aa1f/faiss/AutoTune.cpp#L444). Please reach out if you need to use parameters which aren't shown below
+# Loadtest fa ss
+
+```bash
+$ aurora job create smf1/<role>/stag ng/ann-loadtest-serv ce ann/src/ma n/aurora/loadtest/loadtest.aurora \
+  --b nd=prof le.na =ann-loadtest-serv ce \
+  --b nd=prof le.role=<role> \
+  --b nd=prof le.durat on_sec=10 \
+  --b nd=prof le.number_of_ne ghbors=10 \
+  --b nd=prof le.qps=200 \
+  --b nd=prof le.algo=fa ss \ # Changed to fa ss
+  --b nd=prof le.fa ss_nprobe=1,3,9,27,81,128,256,512 \ # Added
+  --b nd=prof le.fa ss_quant zerKfactorRF=1,2 \ # Pass a l st to do gr d search
+  --b nd=prof le.fa ss_quant zerNprobe=128 \ # Added
+  --b nd=prof le. tr c=Cos ne \
+  --b nd=prof le. ndex_ d_type= nt \
+  --b nd=prof le.embedd ng_d  ns on=3 \
+  --b nd=prof le.concurrency_level=8 \
+  --b nd=prof le.loadtest_type=remote \
+  --b nd=prof le.serv ce_dest nat on=/srv#/stag ng/local/apoorvs/ann-server-test \
+  --b nd=prof le.w h_random_quer es=True \
+  --b nd=prof le.random_quer es_count=50000 \
+  --b nd=prof le.random_embedd ng_m n_value=-10.0 \
+  --b nd=prof le.random_embedd ng_max_value=10.0
+```
+
+Full l st of fa ss spec f c para ters. [Exact def n  on of all ava lable para ters](https://g hub.com/facebookresearch/fa ss/blob/36f2998a6469280cef3b0afcde2036935a29aa1f/fa ss/AutoTune.cpp#L444). Please reach out  f   need to use para ters wh ch aren't shown below
 
 ```
-faiss_nprobe                = Default(String, '1')
-faiss_quantizerEf           = Default(String, '0')
-faiss_quantizerKfactorRF    = Default(String, '0')
-faiss_quantizerNprobe       = Default(String, '0')
-faiss_ht                    = Default(String, '0')
+fa ss_nprobe                = Default(Str ng, '1')
+fa ss_quant zerEf           = Default(Str ng, '0')
+fa ss_quant zerKfactorRF    = Default(Str ng, '0')
+fa ss_quant zerNprobe       = Default(Str ng, '0')
+fa ss_ht                    = Default(Str ng, '0')
 ```
 
 # Query Set Generator
 
-Sample queries can be generated from the embeddings dataset and can be used directly with load test in tab format.
-To generate sample queries `EmbeddingSamplingJob` can be used as follows.
+Sample quer es can be generated from t  embedd ngs dataset and can be used d rectly w h load test  n tab format.
+To generate sample quer es `Embedd ngSampl ngJob` can be used as follows.
 
 ```bash
-$ ./bazel bundle cortex-core/entity-embeddings/src/scala/main/com/twitter/scalding/util/EmbeddingFormat:embeddingformat-deploy
+$ ./bazel bundle cortex-core/ent y-embedd ngs/src/scala/ma n/com/tw ter/scald ng/ut l/Embedd ngFormat:embedd ngformat-deploy
 
-$ export INPUT_PATH=/user/cortex/embeddings/user/tfwproducersg/embedding_datarecords_on_data/2018/05/01
-$ export ENTITY_KIND=user
-$ export EMBEDDING_INPUT_FORMAT=usertensor
-$ export OUTPUT_PATH=/user/$USER/sample_embeddings
+$ export  NPUT_PATH=/user/cortex/embedd ngs/user/tfwproducersg/embedd ng_datarecords_on_data/2018/05/01
+$ export ENT TY_K ND=user
+$ export EMBEDD NG_ NPUT_FORMAT=usertensor
+$ export OUTPUT_PATH=/user/$USER/sample_embedd ngs
 $ export SAMPLE_PERCENT=0.1
 
 $ oscar hdfs \
     --screen --tee log.txt \
-    --hadoop-client-memory 6000 \
-    --hadoop-properties "yarn.app.mapreduce.am.resource.mb=6000;yarn.app.mapreduce.am.command-opts='-Xmx7500m';mapreduce.map.memory.mb=7500;mapreduce.reduce.java.opts='-Xmx6000m';mapreduce.reduce.memory.mb=7500;mapred.task.timeout=36000000;" \
-    --min-split-size 284217728 \
-    --bundle embeddingformat-deploy \
-    --host hadoopnest1.smf1.twitter.com \
-    --tool com.twitter.scalding.entityembeddings.util.EmbeddingFormat.EmbeddingSamplingJob -- \
-    --entity_kind $ENTITY_KIND \
-    --input.embedding_path $INPUT_PATH \
-    --input.embedding_format $EMBEDDING_INPUT_FORMAT \
-    --output.embedding_path $OUTPUT_PATH \
-    --output.embedding_format tab \
+    --hadoop-cl ent- mory 6000 \
+    --hadoop-propert es "yarn.app.mapreduce.am.res ce.mb=6000;yarn.app.mapreduce.am.command-opts='-Xmx7500m';mapreduce.map. mory.mb=7500;mapreduce.reduce.java.opts='-Xmx6000m';mapreduce.reduce. mory.mb=7500;mapred.task.t  out=36000000;" \
+    --m n-spl -s ze 284217728 \
+    --bundle embedd ngformat-deploy \
+    --host hadoopnest1.smf1.tw ter.com \
+    --tool com.tw ter.scald ng.ent yembedd ngs.ut l.Embedd ngFormat.Embedd ngSampl ngJob -- \
+    --ent y_k nd $ENT TY_K ND \
+    -- nput.embedd ng_path $ NPUT_PATH \
+    -- nput.embedd ng_format $EMBEDD NG_ NPUT_FORMAT \
+    --output.embedd ng_path $OUTPUT_PATH \
+    --output.embedd ng_format tab \
     --sample_percent $SAMPLE_PERCENT
 ```
 
-It will sample 0.1% of embeddings and store them in `tab` format to hdfs that can be direcly used as `query_set` for loadtest.
+  w ll sample 0.1% of embedd ngs and store t m  n `tab` format to hdfs that can be d recly used as `query_set` for loadtest.
 
 # Knn Truth Set Generator
 
-To use load test framework to benchmark recall, you need to split your data set into index_set, query_set and knn_truth
+To use load test fra work to benchmark recall,   need to spl  y  data set  nto  ndex_set, query_set and knn_truth
 
-- index_set: data that will be indexed for ann
-- query_set: data that will be used for queries
-- truth_set: the real nearest neighbor used as truth to compute recall
+-  ndex_set: data that w ll be  ndexed for ann
+- query_set: data that w ll be used for quer es
+- truth_set: t  real nearest ne ghbor used as truth to compute recall
 
-And also you need to figure out the dimension for your embedding vectors.
+And also   need to f gure out t  d  ns on for y  embedd ng vectors.
 
-KnnTruthSetGenerator can help to prepare data sets:
+KnnTruthSetGenerator can  lp to prepare data sets:
 
 ```bash
-$ ./bazel bundle ann/src/main/scala/com/twitter/ann/scalding/offline:ann-offline-deploy
+$ ./bazel bundle ann/src/ma n/scala/com/tw ter/ann/scald ng/offl ne:ann-offl ne-deploy
 
-$ export QUERY_EMBEDDINGS_PATH=/user/cortex-mlx/official_examples/ann/non_pii_random_user_embeddings_tab_format
-$ export INDEX_EMBEDDINGS_PATH=/user/cortex-mlx/official_examples/ann/non_pii_random_user_embeddings_tab_format
+$ export QUERY_EMBEDD NGS_PATH=/user/cortex-mlx/off c al_examples/ann/non_p  _random_user_embedd ngs_tab_format
+$ export  NDEX_EMBEDD NGS_PATH=/user/cortex-mlx/off c al_examples/ann/non_p  _random_user_embedd ngs_tab_format
 $ export TRUTH_SET_PATH=/user/$USER/truth_set
-$ export INDEX_SET_PATH=/user/$USER/index_set
+$ export  NDEX_SET_PATH=/user/$USER/ ndex_set
 $ export QUERY_SET_PATH=/user/$USER/query_set
-$ export METRIC=InnerProduct
-$ export QUERY_ENTITY_KIND=user
-$ export INDEX_ENTITY_KIND=user
-$ export NEIGHBOURS=10
+$ export METR C= nnerProduct
+$ export QUERY_ENT TY_K ND=user
+$ export  NDEX_ENT TY_K ND=user
+$ export NE GHBOURS=10
 
 $ oscar hdfs \
   --screen --tee log.txt \
-  --hadoop-client-memory 6000 \
-  --hadoop-properties "yarn.app.mapreduce.am.resource.mb=6000;yarn.app.mapreduce.am.command-opts='-Xmx7500m';mapreduce.map.memory.mb=7500;mapreduce.reduce.java.opts='-Xmx6000m';mapreduce.reduce.memory.mb=7500;mapred.task.timeout=36000000;" \
-  --bundle ann-offline-deploy \
-  --min-split-size 284217728 \
-  --host hadoopnest1.smf1.twitter.com \
-  --tool com.twitter.ann.scalding.offline.KnnTruthSetGenerator -- \
-  --neighbors $NEIGHBOURS \
-  --metric $METRIC \
-  --query_entity_kind $QUERY_ENTITY_KIND \
-  --query.embedding_path $QUERY_EMBEDDINGS_PATH \
-  --query.embedding_format tab \
+  --hadoop-cl ent- mory 6000 \
+  --hadoop-propert es "yarn.app.mapreduce.am.res ce.mb=6000;yarn.app.mapreduce.am.command-opts='-Xmx7500m';mapreduce.map. mory.mb=7500;mapreduce.reduce.java.opts='-Xmx6000m';mapreduce.reduce. mory.mb=7500;mapred.task.t  out=36000000;" \
+  --bundle ann-offl ne-deploy \
+  --m n-spl -s ze 284217728 \
+  --host hadoopnest1.smf1.tw ter.com \
+  --tool com.tw ter.ann.scald ng.offl ne.KnnTruthSetGenerator -- \
+  --ne ghbors $NE GHBOURS \
+  -- tr c $METR C \
+  --query_ent y_k nd $QUERY_ENT TY_K ND \
+  --query.embedd ng_path $QUERY_EMBEDD NGS_PATH \
+  --query.embedd ng_format tab \
   --query_sample_percent 50.0 \
-  --index_entity_kind $INDEX_ENTITY_KIND \
-  --index.embedding_path $INDEX_EMBEDDINGS_PATH \
-  --index.embedding_format tab \
-  --index_sample_percent 90.0 \
-  --query_set_output.embedding_path $QUERY_SET_PATH \
-  --query_set_output.embedding_format tab \
-  --index_set_output.embedding_path $INDEX_SET_PATH \
-  --index_set_output.embedding_format tab \
+  -- ndex_ent y_k nd $ NDEX_ENT TY_K ND \
+  -- ndex.embedd ng_path $ NDEX_EMBEDD NGS_PATH \
+  -- ndex.embedd ng_format tab \
+  -- ndex_sample_percent 90.0 \
+  --query_set_output.embedd ng_path $QUERY_SET_PATH \
+  --query_set_output.embedd ng_format tab \
+  -- ndex_set_output.embedd ng_path $ NDEX_SET_PATH \
+  -- ndex_set_output.embedd ng_format tab \
   --truth_set_output_path $TRUTH_SET_PATH \
   --reducers 100
 ```
 
-It will sample 90% of index set embeddings and 50% of query embeddings from total and then it will generate 3 datasets from the same that are index set, query set and true nearest neighbours from query to index in the tab format.
-`Note`: The reason for using high sample percent is due to the fact the sample embeddings dataset is small. For real use cases query set should be really small.
-Set `--reducers` according to the embeddings dataset size.
+  w ll sample 90% of  ndex set embedd ngs and 50% of query embedd ngs from total and t n   w ll generate 3 datasets from t  sa  that are  ndex set, query set and true nearest ne ghb s from query to  ndex  n t  tab format.
+`Note`: T  reason for us ng h gh sample percent  s due to t  fact t  sample embedd ngs dataset  s small. For real use cases query set should be really small.
+Set `--reducers` accord ng to t  embedd ngs dataset s ze.
 
 # FAQ
 
-There are multiple type of `query_id_type` and `index_id_type` that can be used. Some native types like string/int/long or related to entity embeddings
-like tweet/word/user/url... for more info: [Link](https://cgit.twitter.biz/source/tree/src/scala/com/twitter/cortex/ml/embeddings/common/EntityKind.scala#n8)
+T re are mult ple type of `query_ d_type` and ` ndex_ d_type` that can be used. So  nat ve types l ke str ng/ nt/long or related to ent y embedd ngs
+l ke t et/word/user/url... for more  nfo: [L nk](https://cg .tw ter.b z/s ce/tree/src/scala/com/tw ter/cortex/ml/embedd ngs/common/Ent yK nd.scala#n8)

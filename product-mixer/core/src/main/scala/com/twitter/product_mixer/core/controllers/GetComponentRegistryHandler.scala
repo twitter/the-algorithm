@@ -1,114 +1,114 @@
-package com.twitter.product_mixer.core.controllers
+package com.tw ter.product_m xer.core.controllers
 
-import com.twitter.finagle.http.Request
-import com.twitter.inject.Injector
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
-import com.twitter.product_mixer.core.functional_component.common.access_policy.WithDebugAccessPolicies
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.pipeline.Pipeline
-import com.twitter.product_mixer.core.pipeline.mixer.MixerPipelineConfig
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineConfig
-import com.twitter.product_mixer.core.pipeline.recommendation.RecommendationPipelineConfig
-import com.twitter.product_mixer.core.quality_factor.QualityFactorConfig
-import com.twitter.product_mixer.core.service.component_registry
-import com.twitter.product_mixer.core.service.component_registry.ComponentRegistry
-import com.twitter.product_mixer.core.service.component_registry.ComponentRegistrySnapshot
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.http.Request
+ mport com.tw ter. nject. njector
+ mport com.tw ter.product_m xer.core.funct onal_component.common.access_pol cy.AccessPol cy
+ mport com.tw ter.product_m xer.core.funct onal_component.common.access_pol cy.W hDebugAccessPol c es
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel ne
+ mport com.tw ter.product_m xer.core.p pel ne.m xer.M xerP pel neConf g
+ mport com.tw ter.product_m xer.core.p pel ne.product.ProductP pel neConf g
+ mport com.tw ter.product_m xer.core.p pel ne.recom ndat on.Recom ndat onP pel neConf g
+ mport com.tw ter.product_m xer.core.qual y_factor.Qual yFactorConf g
+ mport com.tw ter.product_m xer.core.serv ce.component_reg stry
+ mport com.tw ter.product_m xer.core.serv ce.component_reg stry.ComponentReg stry
+ mport com.tw ter.product_m xer.core.serv ce.component_reg stry.ComponentReg strySnapshot
+ mport com.tw ter.ut l.Future
 
-case class GetComponentRegistryHandler(injector: Injector) {
-  lazy val componentRegistry: ComponentRegistry = injector.instance[ComponentRegistry]
+case class GetComponentReg stryHandler( njector:  njector) {
+  lazy val componentReg stry: ComponentReg stry =  njector. nstance[ComponentReg stry]
 
-  def apply(request: Request): Future[ComponentRegistryResponse] = {
-    componentRegistry.get.map { currentComponentRegistry: ComponentRegistrySnapshot =>
-      val registeredComponents = currentComponentRegistry.getAllRegisteredComponents.map {
-        registeredComponent =>
-          val componentIdentifier = registeredComponent.identifier
-          val childComponents = currentComponentRegistry
-            .getChildComponents(componentIdentifier)
-            .map { childComponent =>
-              ChildComponent(
-                componentType = childComponent.componentType,
-                name = childComponent.name,
-                relativeScopes = componentIdentifier.toScopes ++ childComponent.toScopes,
-                qualityFactorMonitoringConfig =
-                  buildQualityFactoringMonitoringConfig(registeredComponent, childComponent)
+  def apply(request: Request): Future[ComponentReg stryResponse] = {
+    componentReg stry.get.map { currentComponentReg stry: ComponentReg strySnapshot =>
+      val reg steredComponents = currentComponentReg stry.getAllReg steredComponents.map {
+        reg steredComponent =>
+          val component dent f er = reg steredComponent. dent f er
+          val ch ldComponents = currentComponentReg stry
+            .getCh ldComponents(component dent f er)
+            .map { ch ldComponent =>
+              Ch ldComponent(
+                componentType = ch ldComponent.componentType,
+                na  = ch ldComponent.na ,
+                relat veScopes = component dent f er.toScopes ++ ch ldComponent.toScopes,
+                qual yFactorMon or ngConf g =
+                  bu ldQual yFactor ngMon or ngConf g(reg steredComponent, ch ldComponent)
               )
             }
 
-          RegisteredComponent(
-            componentType = componentIdentifier.componentType,
-            name = componentIdentifier.name,
-            scopes = componentIdentifier.toScopes,
-            children = childComponents,
-            alertConfig = Some(registeredComponent.component.alerts.map(AlertConfig.apply)),
-            sourceFile = Some(registeredComponent.sourceFile),
-            debugAccessPolicies = Some(registeredComponent.component match {
-              case withDebugAccessPolicies: WithDebugAccessPolicies =>
-                withDebugAccessPolicies.debugAccessPolicies
+          Reg steredComponent(
+            componentType = component dent f er.componentType,
+            na  = component dent f er.na ,
+            scopes = component dent f er.toScopes,
+            ch ldren = ch ldComponents,
+            alertConf g = So (reg steredComponent.component.alerts.map(AlertConf g.apply)),
+            s ceF le = So (reg steredComponent.s ceF le),
+            debugAccessPol c es = So (reg steredComponent.component match {
+              case w hDebugAccessPol c es: W hDebugAccessPol c es =>
+                w hDebugAccessPol c es.debugAccessPol c es
               case _ => Set.empty
             })
           )
       }
 
-      ComponentRegistryResponse(registeredComponents)
+      ComponentReg stryResponse(reg steredComponents)
     }
   }
 
-  private def buildQualityFactoringMonitoringConfig(
-    parent: component_registry.RegisteredComponent,
-    child: ComponentIdentifier
-  ): Option[QualityFactorMonitoringConfig] = {
-    val qualityFactorConfigs: Option[Map[ComponentIdentifier, QualityFactorConfig]] =
+  pr vate def bu ldQual yFactor ngMon or ngConf g(
+    parent: component_reg stry.Reg steredComponent,
+    ch ld: Component dent f er
+  ): Opt on[Qual yFactorMon or ngConf g] = {
+    val qual yFactorConf gs: Opt on[Map[Component dent f er, Qual yFactorConf g]] =
       parent.component match {
-        case pipeline: Pipeline[_, _] =>
-          pipeline.config match {
-            case config: RecommendationPipelineConfig[_, _, _, _] =>
-              Some(config.qualityFactorConfigs)
-            case config: MixerPipelineConfig[_, _, _] =>
-              Some(
-                config.qualityFactorConfigs
-                  .asInstanceOf[Map[ComponentIdentifier, QualityFactorConfig]])
-            case config: ProductPipelineConfig[_, _, _] =>
-              Some(config.qualityFactorConfigs)
+        case p pel ne: P pel ne[_, _] =>
+          p pel ne.conf g match {
+            case conf g: Recom ndat onP pel neConf g[_, _, _, _] =>
+              So (conf g.qual yFactorConf gs)
+            case conf g: M xerP pel neConf g[_, _, _] =>
+              So (
+                conf g.qual yFactorConf gs
+                  .as nstanceOf[Map[Component dent f er, Qual yFactorConf g]])
+            case conf g: ProductP pel neConf g[_, _, _] =>
+              So (conf g.qual yFactorConf gs)
             case _ => None
           }
         case _ => None
       }
 
-    val qfConfigForChild: Option[QualityFactorConfig] = qualityFactorConfigs.flatMap(_.get(child))
+    val qfConf gForCh ld: Opt on[Qual yFactorConf g] = qual yFactorConf gs.flatMap(_.get(ch ld))
 
-    qfConfigForChild.map { qfConfig =>
-      QualityFactorMonitoringConfig(
-        boundMin = qfConfig.qualityFactorBounds.bounds.minInclusive,
-        boundMax = qfConfig.qualityFactorBounds.bounds.maxInclusive
+    qfConf gForCh ld.map { qfConf g =>
+      Qual yFactorMon or ngConf g(
+        boundM n = qfConf g.qual yFactorBounds.bounds.m n nclus ve,
+        boundMax = qfConf g.qual yFactorBounds.bounds.max nclus ve
       )
     }
   }
 }
 
-case class RegisteredComponent(
-  componentType: String,
-  name: String,
-  scopes: Seq[String],
-  children: Seq[ChildComponent],
-  alertConfig: Option[Seq[AlertConfig]],
-  sourceFile: Option[String],
-  debugAccessPolicies: Option[Set[AccessPolicy]])
+case class Reg steredComponent(
+  componentType: Str ng,
+  na : Str ng,
+  scopes: Seq[Str ng],
+  ch ldren: Seq[Ch ldComponent],
+  alertConf g: Opt on[Seq[AlertConf g]],
+  s ceF le: Opt on[Str ng],
+  debugAccessPol c es: Opt on[Set[AccessPol cy]])
 
-case class ChildComponent(
-  componentType: String,
-  name: String,
-  relativeScopes: Seq[String],
-  qualityFactorMonitoringConfig: Option[QualityFactorMonitoringConfig])
+case class Ch ldComponent(
+  componentType: Str ng,
+  na : Str ng,
+  relat veScopes: Seq[Str ng],
+  qual yFactorMon or ngConf g: Opt on[Qual yFactorMon or ngConf g])
 
 /**
- * The shape of the data returned to callers after hitting the `component-registry` endpoint
+ * T  shape of t  data returned to callers after h t ng t  `component-reg stry` endpo nt
  *
- * @note changes to [[ComponentRegistryResponse]] or contained types should be reflected
- *       in dashboard generation code in the `monitoring-configs/product_mixer` directory.
+ * @note changes to [[ComponentReg stryResponse]] or conta ned types should be reflected
+ *        n dashboard generat on code  n t  `mon or ng-conf gs/product_m xer` d rectory.
  */
-case class ComponentRegistryResponse(
-  registeredComponents: Seq[RegisteredComponent])
+case class ComponentReg stryResponse(
+  reg steredComponents: Seq[Reg steredComponent])
 
-case class ProductPipeline(identifier: String)
-case class ProductPipelinesResponse(productPipelines: Seq[ProductPipeline])
+case class ProductP pel ne( dent f er: Str ng)
+case class ProductP pel nesResponse(productP pel nes: Seq[ProductP pel ne])

@@ -1,62 +1,62 @@
-package com.twitter.tweetypie.caching
+package com.tw ter.t etyp e.cach ng
 
-import com.twitter.stitch.MapGroup
-import com.twitter.stitch.Group
-import com.twitter.stitch.Stitch
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Try
+ mport com.tw ter.st ch.MapGroup
+ mport com.tw ter.st ch.Group
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Try
 
 /**
- * Wrapper around [[CacheOperations]] providing a [[Stitch]] API.
+ * Wrapper around [[Cac Operat ons]] prov d ng a [[St ch]] AP .
  */
-case class StitchCacheOperations[K, V](operations: CacheOperations[K, V]) {
-  import StitchCacheOperations.SetCall
+case class St chCac Operat ons[K, V](operat ons: Cac Operat ons[K, V]) {
+   mport St chCac Operat ons.SetCall
 
-  private[this] val getGroup: Group[K, CacheResult[V]] =
-    MapGroup[K, CacheResult[V]] { keys: Seq[K] =>
-      operations
+  pr vate[t ] val getGroup: Group[K, Cac Result[V]] =
+    MapGroup[K, Cac Result[V]] { keys: Seq[K] =>
+      operat ons
         .get(keys)
-        .map(values => keys.zip(values).toMap.mapValues(Return(_)))
+        .map(values => keys.z p(values).toMap.mapValues(Return(_)))
     }
 
-  def get(key: K): Stitch[CacheResult[V]] =
-    Stitch.call(key, getGroup)
+  def get(key: K): St ch[Cac Result[V]] =
+    St ch.call(key, getGroup)
 
-  private[this] val setGroup: Group[SetCall[K, V], Unit] =
-    new MapGroup[SetCall[K, V], Unit] {
+  pr vate[t ] val setGroup: Group[SetCall[K, V], Un ] =
+    new MapGroup[SetCall[K, V], Un ] {
 
-      override def run(calls: Seq[SetCall[K, V]]): Future[SetCall[K, V] => Try[Unit]] =
+      overr de def run(calls: Seq[SetCall[K, V]]): Future[SetCall[K, V] => Try[Un ]] =
         Future
-          .collectToTry(calls.map(call => operations.set(call.key, call.value)))
-          .map(tries => calls.zip(tries).toMap)
+          .collectToTry(calls.map(call => operat ons.set(call.key, call.value)))
+          .map(tr es => calls.z p(tr es).toMap)
     }
 
   /**
-   * Performs a [[CacheOperations.set]].
+   * Performs a [[Cac Operat ons.set]].
    */
-  def set(key: K, value: V): Stitch[Unit] =
-    // This is implemented as a Stitch.call instead of a Stitch.future
-    // in order to handle the case where a batch has a duplicate
-    // key. Each copy of the duplicate key will trigger a write back
-    // to cache, so we dedupe the writes in order to avoid the
+  def set(key: K, value: V): St ch[Un ] =
+    // T   s  mple nted as a St ch.call  nstead of a St ch.future
+    //  n order to handle t  case w re a batch has a dupl cate
+    // key. Each copy of t  dupl cate key w ll tr gger a wr e back
+    // to cac , so   dedupe t  wr es  n order to avo d t 
     // extraneous RPC call.
-    Stitch.call(new StitchCacheOperations.SetCall(key, value), setGroup)
+    St ch.call(new St chCac Operat ons.SetCall(key, value), setGroup)
 }
 
-object StitchCacheOperations {
+object St chCac Operat ons {
 
   /**
-   * Used as the "call" for [[SetGroup]]. This is essentially a tuple
-   * where equality is defined only by the key.
+   * Used as t  "call" for [[SetGroup]]. T   s essent ally a tuple
+   * w re equal y  s def ned only by t  key.
    */
-  private class SetCall[K, V](val key: K, val value: V) {
-    override def equals(other: Any): Boolean =
-      other match {
+  pr vate class SetCall[K, V](val key: K, val value: V) {
+    overr de def equals(ot r: Any): Boolean =
+      ot r match {
         case setCall: SetCall[_, _] => key == setCall.key
         case _ => false
       }
 
-    override def hashCode: Int = key.hashCode
+    overr de def hashCode:  nt = key.hashCode
   }
 }

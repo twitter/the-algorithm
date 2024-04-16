@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.r chtext
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.r chtext.BaseR chTextBu lder
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chText
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-case class StaticRichTextBuilder(richText: RichText)
-    extends BaseRichTextBuilder[PipelineQuery, UniversalNoun[Any]] {
+case class Stat cR chTextBu lder(r chText: R chText)
+    extends BaseR chTextBu lder[P pel neQuery, Un versalNoun[Any]] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: UniversalNoun[Any],
-    candidateFeatures: FeatureMap
-  ): RichText = richText
+  overr de def apply(
+    query: P pel neQuery,
+    cand date: Un versalNoun[Any],
+    cand dateFeatures: FeatureMap
+  ): R chText = r chText
 }

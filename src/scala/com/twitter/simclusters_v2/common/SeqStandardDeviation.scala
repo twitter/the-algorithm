@@ -1,21 +1,21 @@
-package com.twitter.simclusters_v2.common
+package com.tw ter.s mclusters_v2.common
 
-object SeqStandardDeviation {
+object SeqStandardDev at on {
 
-  def apply[T](t: Seq[T])(implicit mapper: T => Double): Double = {
-    if (t.isEmpty) {
+  def apply[T](t: Seq[T])( mpl c  mapper: T => Double): Double = {
+     f (t. sEmpty) {
       0.0
     } else {
       val sum = t.foldLeft(0.0) {
         case (temp, score) =>
           temp + score
       }
-      val mean = sum / t.size
-      val variance = t.foldLeft(0.0) { (sum, score) =>
-        val v = score - mean
+      val  an = sum / t.s ze
+      val var ance = t.foldLeft(0.0) { (sum, score) =>
+        val v = score -  an
         sum + v * v
-      } / t.size
-      math.sqrt(variance)
+      } / t.s ze
+      math.sqrt(var ance)
     }
   }
 

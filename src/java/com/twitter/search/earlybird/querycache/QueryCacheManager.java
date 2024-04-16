@@ -1,365 +1,365 @@
-package com.twitter.search.earlybird.querycache;
+package com.tw ter.search.earlyb rd.querycac ;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+ mport java.ut l.Collect on;
+ mport java.ut l.Collect ons;
+ mport java.ut l.HashMap;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.Lists;
-import com.google.common.primitives.Longs;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.base.Stopwatch;
+ mport com.google.common.collect.L sts;
+ mport com.google.common.pr m  ves.Longs;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.common.util.Clock;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.EarlybirdStatus;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.userupdates.UserScrubGeoMap;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentManager;
-import com.twitter.search.earlybird.partition.SegmentManager.Filter;
-import com.twitter.search.earlybird.partition.SegmentManager.Order;
-import com.twitter.search.earlybird.partition.SegmentManager.SegmentUpdateListener;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
-import com.twitter.search.queryparser.query.QueryParserException;
+ mport com.tw ter.common.quant y.Amount;
+ mport com.tw ter.common.quant y.T  ;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.search.common.concurrent.Sc duledExecutorServ ceFactory;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
+ mport com.tw ter.search.common. tr cs.SearchStatsRece ver;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.earlyb rd.Earlyb rd ndexConf g;
+ mport com.tw ter.search.earlyb rd.Earlyb rdStatus;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserScrubGeoMap;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserTable;
+ mport com.tw ter.search.earlyb rd.except on.Cr  calExcept onHandler;
+ mport com.tw ter.search.earlyb rd.part  on.Seg nt nfo;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntManager;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntManager.F lter;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntManager.Order;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntManager.Seg ntUpdateL stener;
+ mport com.tw ter.search.earlyb rd.stats.Earlyb rdSearc rStats;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdStatusCode;
+ mport com.tw ter.search.queryparser.query.QueryParserExcept on;
 
 /**
- * Main class to manage Earlybird's QueryCache.
+ * Ma n class to manage Earlyb rd's QueryCac .
  *
- * Initialize the QueryCache and new segments are notified to the QueryCache subsystem
- * through this class.
+ *  n  al ze t  QueryCac  and new seg nts are not f ed to t  QueryCac  subsystem
+ * through t  class.
  *
- * This class is thread-safe when calling methods that modify the list of tasks that
- * we're executing or when we need to traverse all tasks and check something. The way
- * thread-safety is achieved here right now is through making methods synchronized.
+ * T  class  s thread-safe w n call ng  thods that mod fy t  l st of tasks that
+ *  're execut ng or w n   need to traverse all tasks and c ck so th ng. T  way
+ * thread-safety  s ach eved  re r ght now  s through mak ng  thods synchron zed.
  */
-public class QueryCacheManager implements SegmentUpdateListener {
-  private static final Logger LOG = LoggerFactory.getLogger(QueryCacheManager.class);
+publ c class QueryCac Manager  mple nts Seg ntUpdateL stener {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(QueryCac Manager.class);
 
-  private static final Amount<Long, Time> ZERO_SECONDS = Amount.of(0L, Time.SECONDS);
+  pr vate stat c f nal Amount<Long, T  > ZERO_SECONDS = Amount.of(0L, T  .SECONDS);
 
-  private final boolean enabled = EarlybirdConfig.getBool("querycache", false);
+  pr vate f nal boolean enabled = Earlyb rdConf g.getBool("querycac ", false);
 
-  // segments are removed from SegmentInfoMap lazily, and there may be a wait time.
-  // So, beware that there's short period of time where there's more segments than
-  // maxEnabledSegments.
-  private final int maxEnabledSegments;
+  // seg nts are removed from Seg nt nfoMap laz ly, and t re may be a wa  t  .
+  // So, beware that t re's short per od of t   w re t re's more seg nts than
+  // maxEnabledSeg nts.
+  pr vate f nal  nt maxEnabledSeg nts;
 
-  private final UserTable userTable;
-  private final UserScrubGeoMap userScrubGeoMap;
-  private final EarlybirdIndexConfig indexConfig;
-  private QueryCacheUpdater updater;
-  private final Map<String, QueryCacheFilter> filters;
-  private final ScheduledExecutorServiceFactory updaterScheduledExecutorServiceFactory;
+  pr vate f nal UserTable userTable;
+  pr vate f nal UserScrubGeoMap userScrubGeoMap;
+  pr vate f nal Earlyb rd ndexConf g  ndexConf g;
+  pr vate QueryCac Updater updater;
+  pr vate f nal Map<Str ng, QueryCac F lter> f lters;
+  pr vate f nal Sc duledExecutorServ ceFactory updaterSc duledExecutorServ ceFactory;
 
-  private final SearchStatsReceiver searchStatsReceiver;
+  pr vate f nal SearchStatsRece ver searchStatsRece ver;
 
-  private static final SearchLongGauge NUM_CACHE_ENTRY_STAT =
-      SearchLongGauge.export("querycache_num_entries");
+  pr vate stat c f nal SearchLongGauge NUM_CACHE_ENTRY_STAT =
+      SearchLongGauge.export("querycac _num_entr es");
 
-  private static final SearchCounter NUM_UPDATE_SEGMENTS_CALLS =
-      SearchCounter.export("querycache_num_update_segments_calls");
+  pr vate stat c f nal SearchCounter NUM_UPDATE_SEGMENTS_CALLS =
+      SearchCounter.export("querycac _num_update_seg nts_calls");
 
-  private volatile boolean didSetup = false;
+  pr vate volat le boolean d dSetup = false;
 
-  private final EarlybirdSearcherStats searcherStats;
-  private final Decider decider;
-  private final CriticalExceptionHandler criticalExceptionHandler;
-  private final Clock clock;
+  pr vate f nal Earlyb rdSearc rStats searc rStats;
+  pr vate f nal Dec der dec der;
+  pr vate f nal Cr  calExcept onHandler cr  calExcept onHandler;
+  pr vate f nal Clock clock;
 
-  public QueryCacheManager(
-      QueryCacheConfig config,
-      EarlybirdIndexConfig indexConfig,
-      int maxEnabledSegments,
+  publ c QueryCac Manager(
+      QueryCac Conf g conf g,
+      Earlyb rd ndexConf g  ndexConf g,
+       nt maxEnabledSeg nts,
       UserTable userTable,
       UserScrubGeoMap userScrubGeoMap,
-      ScheduledExecutorServiceFactory updaterScheduledExecutorServiceFactory,
-      SearchStatsReceiver searchStatsReceiver,
-      EarlybirdSearcherStats searcherStats,
-      Decider decider,
-      CriticalExceptionHandler criticalExceptionHandler,
+      Sc duledExecutorServ ceFactory updaterSc duledExecutorServ ceFactory,
+      SearchStatsRece ver searchStatsRece ver,
+      Earlyb rdSearc rStats searc rStats,
+      Dec der dec der,
+      Cr  calExcept onHandler cr  calExcept onHandler,
       Clock clock) {
 
-    Preconditions.checkArgument(maxEnabledSegments > 0);
+    Precond  ons.c ckArgu nt(maxEnabledSeg nts > 0);
 
-    QueryCacheConfig queryCacheConfig = config;
-    if (queryCacheConfig == null) {
-      queryCacheConfig = new QueryCacheConfig(searchStatsReceiver);
+    QueryCac Conf g queryCac Conf g = conf g;
+     f (queryCac Conf g == null) {
+      queryCac Conf g = new QueryCac Conf g(searchStatsRece ver);
     }
-    this.indexConfig = indexConfig;
-    this.maxEnabledSegments = maxEnabledSegments;
-    this.userTable = userTable;
-    this.userScrubGeoMap = userScrubGeoMap;
-    this.updaterScheduledExecutorServiceFactory = updaterScheduledExecutorServiceFactory;
-    this.searchStatsReceiver = searchStatsReceiver;
-    this.searcherStats = searcherStats;
-    this.filters = new HashMap<>();
-    this.decider = decider;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.clock = clock;
-    for (QueryCacheFilter filter : queryCacheConfig.filters()) {
-      filters.put(filter.getFilterName(), filter);
+    t . ndexConf g =  ndexConf g;
+    t .maxEnabledSeg nts = maxEnabledSeg nts;
+    t .userTable = userTable;
+    t .userScrubGeoMap = userScrubGeoMap;
+    t .updaterSc duledExecutorServ ceFactory = updaterSc duledExecutorServ ceFactory;
+    t .searchStatsRece ver = searchStatsRece ver;
+    t .searc rStats = searc rStats;
+    t .f lters = new HashMap<>();
+    t .dec der = dec der;
+    t .cr  calExcept onHandler = cr  calExcept onHandler;
+    t .clock = clock;
+    for (QueryCac F lter f lter : queryCac Conf g.f lters()) {
+      f lters.put(f lter.getF lterNa (), f lter);
     }
-    NUM_CACHE_ENTRY_STAT.set(filters.size());
+    NUM_CACHE_ENTRY_STAT.set(f lters.s ze());
   }
 
-  public EarlybirdIndexConfig getIndexConfig() {
-    return indexConfig;
+  publ c Earlyb rd ndexConf g get ndexConf g() {
+    return  ndexConf g;
   }
 
-  public UserScrubGeoMap getUserScrubGeoMap() {
+  publ c UserScrubGeoMap getUserScrubGeoMap() {
     return userScrubGeoMap;
   }
 
-  /** Setup all update tasks at once, should only be called after Earlybird has loaded/indexed all
-   * segments during start-up
+  /** Setup all update tasks at once, should only be called after Earlyb rd has loaded/ ndexed all
+   * seg nts dur ng start-up
    *
-   * Only the first call to the function has effect, subsequent calls are no-ops
+   * Only t  f rst call to t  funct on has effect, subsequent calls are no-ops
    */
-  public void setupTasksIfNeeded(SegmentManager segmentManager)
-      throws QueryParserException {
+  publ c vo d setupTasks fNeeded(Seg ntManager seg ntManager)
+      throws QueryParserExcept on {
     setupTasks(
-        segmentManager.getSegmentInfos(Filter.All, Order.OLD_TO_NEW),
-        segmentManager.getEarlybirdIndexConfig().getCluster());
+        seg ntManager.getSeg nt nfos(F lter.All, Order.OLD_TO_NEW),
+        seg ntManager.getEarlyb rd ndexConf g().getCluster());
   }
 
-  @VisibleForTesting
-  synchronized void setupTasks(
-      Iterable<SegmentInfo> newSegments,
-      EarlybirdCluster earlybirdCluster) throws QueryParserException {
-    // Setup needs to be done only once after all index caught up.
-    if (didSetup) {
+  @V s bleForTest ng
+  synchron zed vo d setupTasks(
+       erable<Seg nt nfo> newSeg nts,
+      Earlyb rdCluster earlyb rdCluster) throws QueryParserExcept on {
+    // Setup needs to be done only once after all  ndex caught up.
+     f (d dSetup) {
       return;
     }
 
-    LOG.info("Setting up {} query cache tasks", filters.values().size());
+    LOG. nfo("Sett ng up {} query cac  tasks", f lters.values().s ze());
 
-    for (QueryCacheFilter filter : filters.values()) {
-      filter.setup(this, userTable, earlybirdCluster);
+    for (QueryCac F lter f lter : f lters.values()) {
+      f lter.setup(t , userTable, earlyb rdCluster);
     }
 
-    if (!enabled()) {
-      // Note that the definition of disabling the query caches here is "don't compute the caches".
-      // We still load the queries from the .yml, we still rewrite search queries to use
-      // cached queries. The reason we are choosing this definition is that it's somewhat simpler
-      // to implement (no need to turn off rewriting) and because we might get external queries that
-      // contain cached filters (they're listed in go/searchsyntax).
+     f (!enabled()) {
+      // Note that t  def n  on of d sabl ng t  query cac s  re  s "don't compute t  cac s".
+      //   st ll load t  quer es from t  .yml,   st ll rewr e search quer es to use
+      // cac d quer es. T  reason   are choos ng t  def n  on  s that  's so what s mpler
+      // to  mple nt (no need to turn off rewr  ng) and because   m ght get external quer es that
+      // conta n cac d f lters (t y're l sted  n go/searchsyntax).
       //
-      // If we need a stricter definition of turning off query caches, we can implement it too, or
-      // just tighten this one.
+      //  f   need a str cter def n  on of turn ng off query cac s,   can  mple nt   too, or
+      // just t ghten t  one.
       return;
     }
 
-    Preconditions.checkState(updater == null);
-    updater = new QueryCacheUpdater(
-        filters.values(),
-        updaterScheduledExecutorServiceFactory,
+    Precond  ons.c ckState(updater == null);
+    updater = new QueryCac Updater(
+        f lters.values(),
+        updaterSc duledExecutorServ ceFactory,
         userTable,
-        searchStatsReceiver,
-        searcherStats,
-        decider,
-        criticalExceptionHandler,
+        searchStatsRece ver,
+        searc rStats,
+        dec der,
+        cr  calExcept onHandler,
         clock);
 
-    LOG.info("Finished setting up query cache updater.");
+    LOG. nfo("F n s d sett ng up query cac  updater.");
 
-    scheduleTasks(newSegments, false);
+    sc duleTasks(newSeg nts, false);
 
-    didSetup = true;
+    d dSetup = true;
   }
 
-  private void scheduleTasks(Iterable<SegmentInfo> segments, boolean isCurrent) {
-    List<SegmentInfo> sortedSegments = Lists.newArrayList(segments);
-    Collections.sort(sortedSegments, (o1, o2) -> {
-      // sort new to old (o2 and o1 are reversed here)
-      return Longs.compare(o2.getTimeSliceID(), o1.getTimeSliceID());
+  pr vate vo d sc duleTasks( erable<Seg nt nfo> seg nts, boolean  sCurrent) {
+    L st<Seg nt nfo> sortedSeg nts = L sts.newArrayL st(seg nts);
+    Collect ons.sort(sortedSeg nts, (o1, o2) -> {
+      // sort new to old (o2 and o1 are reversed  re)
+      return Longs.compare(o2.getT  Sl ce D(), o1.getT  Sl ce D());
     });
 
-    LOG.info("Scheduling tasks for {} segments.", sortedSegments.size());
+    LOG. nfo("Sc dul ng tasks for {} seg nts.", sortedSeg nts.s ze());
 
-    for (int segmentIndex = 0; segmentIndex < sortedSegments.size(); ++segmentIndex) {
-      SegmentInfo segmentInfo = sortedSegments.get(segmentIndex);
-      if (segmentIndex == maxEnabledSegments) {
-        LOG.warn("Tried to add more segments than MaxEnabledSegments (" + maxEnabledSegments
-            + "). Removed oldest segment " + segmentInfo.getTimeSliceID());
-        continue;
+    for ( nt seg nt ndex = 0; seg nt ndex < sortedSeg nts.s ze(); ++seg nt ndex) {
+      Seg nt nfo seg nt nfo = sortedSeg nts.get(seg nt ndex);
+       f (seg nt ndex == maxEnabledSeg nts) {
+        LOG.warn("Tr ed to add more seg nts than MaxEnabledSeg nts (" + maxEnabledSeg nts
+            + "). Removed oldest seg nt " + seg nt nfo.getT  Sl ce D());
+        cont nue;
       }
-      addQueryCacheTasksForSegment(segmentInfo, segmentIndex, !isCurrent);
+      addQueryCac TasksForSeg nt(seg nt nfo, seg nt ndex, ! sCurrent);
     }
   }
 
   /**
-   * Rebuilds the query cache for the given segment after it was optimized.
+   * Rebu lds t  query cac  for t  g ven seg nt after   was opt m zed.
    */
-  public synchronized void rebuildQueryCachesAfterSegmentOptimization(
-      SegmentInfo optimizedSegment) {
-    Preconditions.checkState(optimizedSegment.getIndexSegment().isOptimized(),
-                             "Segment " + optimizedSegment.getSegmentName() + " is not optimized.");
+  publ c synchron zed vo d rebu ldQueryCac sAfterSeg ntOpt m zat on(
+      Seg nt nfo opt m zedSeg nt) {
+    Precond  ons.c ckState(opt m zedSeg nt.get ndexSeg nt(). sOpt m zed(),
+                             "Seg nt " + opt m zedSeg nt.getSeg ntNa () + "  s not opt m zed.");
 
-    if (!didSetup) {
-      // Once our indexing is current, we'll just start tasks for all segments, optimized or not.
-      // Before that event, we don't do anything query cache related.
-      LOG.info("Haven't done initial setup, returning.");
+     f (!d dSetup) {
+      // Once    ndex ng  s current,  'll just start tasks for all seg nts, opt m zed or not.
+      // Before that event,   don't do anyth ng query cac  related.
+      LOG. nfo("Haven't done  n  al setup, return ng.");
       return;
     }
 
-    LOG.info("Rebuilding query caches for optimized segment {}",
-        optimizedSegment.getSegmentName());
+    LOG. nfo("Rebu ld ng query cac s for opt m zed seg nt {}",
+        opt m zedSeg nt.getSeg ntNa ());
 
-    // The optimized segment should always be the 1st segment (the current segment has index 0).
+    // T  opt m zed seg nt should always be t  1st seg nt (t  current seg nt has  ndex 0).
     Stopwatch stopwatch = Stopwatch.createStarted();
-    updater.removeAllTasksForSegment(optimizedSegment);
-    addQueryCacheTasksForSegment(optimizedSegment, 1, true);
+    updater.removeAllTasksForSeg nt(opt m zedSeg nt);
+    addQueryCac TasksForSeg nt(opt m zedSeg nt, 1, true);
 
-    while (!updater.allTasksRanForSegment(optimizedSegment)) {
+    wh le (!updater.allTasksRanForSeg nt(opt m zedSeg nt)) {
       try {
         Thread.sleep(1000);
-      } catch (InterruptedException e) {
-        // Ignore
+      } catch ( nterruptedExcept on e) {
+        //  gnore
       }
     }
 
-    LOG.info("Rebuilding all query caches for the optimized segment {} took {}.",
-             optimizedSegment.getSegmentName(), stopwatch);
+    LOG. nfo("Rebu ld ng all query cac s for t  opt m zed seg nt {} took {}.",
+             opt m zedSeg nt.getSeg ntNa (), stopwatch);
   }
 
   /**
-   * Block until all the tasks inside this manager have ran at least once.
+   * Block unt l all t  tasks  ns de t  manager have ran at least once.
    */
-  public void waitUntilAllQueryCachesAreBuilt() {
-    LOG.info("Waiting until all query caches are built...");
+  publ c vo d wa Unt lAllQueryCac sAreBu lt() {
+    LOG. nfo("Wa  ng unt l all query cac s are bu lt...");
 
     Stopwatch stopwatch = Stopwatch.createStarted();
-    while (!allTasksRan()) {
+    wh le (!allTasksRan()) {
       try {
         Thread.sleep(1000);
-      } catch (InterruptedException ex) {
-        Thread.currentThread().interrupt();
+      } catch ( nterruptedExcept on ex) {
+        Thread.currentThread(). nterrupt();
       }
     }
 
-    LOG.info("Ran query cache tasks in: {}", stopwatch);
+    LOG. nfo("Ran query cac  tasks  n: {}", stopwatch);
   }
 
-  private void addQueryCacheTasksForSegment(
-      SegmentInfo segmentInfo, int segmentIndex, boolean scheduleImmediately) {
-    LOG.info("Adding query cache tasks for segment {}.", segmentInfo.getTimeSliceID());
-    double updateIntervalMultiplier =
-        EarlybirdConfig.getDouble("query_cache_update_interval_multiplier", 1.0);
-    for (QueryCacheFilter filter : filters.values()) {
-      Amount<Long, Time> updateIntervalFromConfig = filter.getUpdateInterval(segmentIndex);
-      Amount<Long, Time> updateInterval = Amount.of(
-          (long) (updateIntervalFromConfig.getValue() * updateIntervalMultiplier),
-          updateIntervalFromConfig.getUnit());
+  pr vate vo d addQueryCac TasksForSeg nt(
+      Seg nt nfo seg nt nfo,  nt seg nt ndex, boolean sc dule m d ately) {
+    LOG. nfo("Add ng query cac  tasks for seg nt {}.", seg nt nfo.getT  Sl ce D());
+    double update ntervalMult pl er =
+        Earlyb rdConf g.getDouble("query_cac _update_ nterval_mult pl er", 1.0);
+    for (QueryCac F lter f lter : f lters.values()) {
+      Amount<Long, T  > update ntervalFromConf g = f lter.getUpdate nterval(seg nt ndex);
+      Amount<Long, T  > update nterval = Amount.of(
+          (long) (update ntervalFromConf g.getValue() * update ntervalMult pl er),
+          update ntervalFromConf g.getUn ());
 
-      Amount<Long, Time> initialDelay = scheduleImmediately ? ZERO_SECONDS : updateInterval;
-      updater.addTask(filter, segmentInfo, updateInterval, initialDelay);
+      Amount<Long, T  >  n  alDelay = sc dule m d ately ? ZERO_SECONDS : update nterval;
+      updater.addTask(f lter, seg nt nfo, update nterval,  n  alDelay);
     }
   }
 
   /**
-   * Notify QueryCacheManager of a new list of segments we currently have, so that cache tasks
+   * Not fy QueryCac Manager of a new l st of seg nts   currently have, so that cac  tasks
    * can be updated.
    *
-   * @param segments fresh list of all segments
+   * @param seg nts fresh l st of all seg nts
    *
-   * All existing tasks will be canceled/removed/destroyed, new tasks will be created for all
-   * segments.
+   * All ex st ng tasks w ll be canceled/removed/destroyed, new tasks w ll be created for all
+   * seg nts.
    */
-  @Override
-  public synchronized void update(Collection<SegmentInfo> segments, String message) {
-    if (!enabled()) {
+  @Overr de
+  publ c synchron zed vo d update(Collect on<Seg nt nfo> seg nts, Str ng  ssage) {
+     f (!enabled()) {
       return;
     }
 
-    // This manager is created right at the beginning of a startup. Before we set it up,
-    // we'll read tweets and create segments and therefore this method will be called.
-    // We don't want to start computing query caches during that time, so we just return.
-    if (!didSetup) {
+    // T  manager  s created r ght at t  beg nn ng of a startup. Before   set   up,
+    //  'll read t ets and create seg nts and t refore t   thod w ll be called.
+    //   don't want to start comput ng query cac s dur ng that t  , so   just return.
+     f (!d dSetup) {
       return;
     }
 
-    NUM_UPDATE_SEGMENTS_CALLS.increment();
+    NUM_UPDATE_SEGMENTS_CALLS. ncre nt();
 
-    LOG.info("Rescheduling all query cache tasks ({}). Number of segments received = {}.",
-        message, segments.size());
-    updater.clearTasks(); // cancel and remove all scheduled tasks
+    LOG. nfo("Resc dul ng all query cac  tasks ({}). Number of seg nts rece ved = {}.",
+         ssage, seg nts.s ze());
+    updater.clearTasks(); // cancel and remove all sc duled tasks
 
-    // If Earlybird is still starting up, and we get a partition roll, don't delay rebuilding
-    // the query cache.
-    boolean isCurrent = EarlybirdStatus.getStatusCode() == EarlybirdStatusCode.CURRENT;
-    scheduleTasks(segments, isCurrent);
+    //  f Earlyb rd  s st ll start ng up, and   get a part  on roll, don't delay rebu ld ng
+    // t  query cac .
+    boolean  sCurrent = Earlyb rdStatus.getStatusCode() == Earlyb rdStatusCode.CURRENT;
+    sc duleTasks(seg nts,  sCurrent);
   }
 
   /**
-   * Determines if all query cache tasks ran at least once (even if they failed).
+   * Determ nes  f all query cac  tasks ran at least once (even  f t y fa led).
    */
-  public synchronized boolean allTasksRan() {
-    return (!(enabled() && didSetup)) || updater.allTasksRan();
+  publ c synchron zed boolean allTasksRan() {
+    return (!(enabled() && d dSetup)) || updater.allTasksRan();
   }
 
   /**
-   * Determines if the query cache manager is enabled.
+   * Determ nes  f t  query cac  manager  s enabled.
    */
-  public boolean enabled() {
+  publ c boolean enabled() {
     return enabled;
   }
 
   /**
-   * Returns the query cache filter with the given name.
+   * Returns t  query cac  f lter w h t  g ven na .
    */
-  public QueryCacheFilter getFilter(String filterName) {
-    return filters.get(filterName);
+  publ c QueryCac F lter getF lter(Str ng f lterNa ) {
+    return f lters.get(f lterNa );
   }
 
   /**
-   * Shuts down the query cache manager.
+   * Shuts down t  query cac  manager.
    */
-  public synchronized void shutdown() throws InterruptedException {
-    LOG.info("Shutting down QueryCacheManager");
-    if (updater != null) {
+  publ c synchron zed vo d shutdown() throws  nterruptedExcept on {
+    LOG. nfo("Shutt ng down QueryCac Manager");
+     f (updater != null) {
       updater.shutdown();
       updater = null;
     }
-    didSetup = false; // needed for unit test
+    d dSetup = false; // needed for un  test
   }
 
   /**
-   * After startup, we want only one thread to update the query cache.
+   * After startup,   want only one thread to update t  query cac .
    */
-  public void setWorkerPoolSizeAfterStartup() {
-    if (this.updater != null) {
-      this.updater.setWorkerPoolSizeAfterStartup();
+  publ c vo d setWorkerPoolS zeAfterStartup() {
+     f (t .updater != null) {
+      t .updater.setWorkerPoolS zeAfterStartup();
     }
   }
 
-  public Decider getDecider() {
-    return this.decider;
+  publ c Dec der getDec der() {
+    return t .dec der;
   }
 
   //////////////////////////
-  // for unit tests only
+  // for un  tests only
   //////////////////////////
-  QueryCacheUpdater getUpdaterForTest() {
+  QueryCac Updater getUpdaterForTest() {
     return updater;
   }
-  Map<String, QueryCacheFilter> getCacheMapForTest() {
-    return filters;
+  Map<Str ng, QueryCac F lter> getCac MapForTest() {
+    return f lters;
   }
 }

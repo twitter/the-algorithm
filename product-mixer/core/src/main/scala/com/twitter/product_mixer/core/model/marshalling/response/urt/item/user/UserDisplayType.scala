@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.user
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.user
 
-sealed trait UserDisplayType
+sealed tra  UserD splayType
 
-case object User extends UserDisplayType
-case object UserDetailed extends UserDisplayType
-case object PendingFollowUser extends UserDisplayType
+case object User extends UserD splayType
+case object UserDeta led extends UserD splayType
+case object Pend ngFollowUser extends UserD splayType

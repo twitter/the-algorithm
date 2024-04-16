@@ -1,241 +1,241 @@
-package com.twitter.home_mixer.product.for_you
+package com.tw ter.ho _m xer.product.for_ 
 
-import com.twitter.home_mixer.functional_component.decorator.builder.HomeClientEventInfoBuilder
-import com.twitter.home_mixer.functional_component.decorator.builder.HomeConversationModuleMetadataBuilder
-import com.twitter.home_mixer.functional_component.decorator.builder.HomeTimelinesScoreInfoBuilder
-import com.twitter.home_mixer.functional_component.decorator.urt.builder.HomeFeedbackActionInfoBuilder
-import com.twitter.home_mixer.functional_component.decorator.urt.builder.HomeTweetSocialContextBuilder
-import com.twitter.home_mixer.functional_component.feature_hydrator.InNetworkFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.NamesFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.PerspectiveFilteredSocialContextFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.SGSValidSocialContextFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.TweetypieFeatureHydrator
-import com.twitter.home_mixer.functional_component.filter.FeedbackFatigueFilter
-import com.twitter.home_mixer.functional_component.filter.InvalidConversationModuleFilter
-import com.twitter.home_mixer.functional_component.filter.InvalidSubscriptionTweetFilter
-import com.twitter.home_mixer.functional_component.filter.RejectTweetFromViewerFilter
-import com.twitter.home_mixer.functional_component.filter.RetweetDeduplicationFilter
-import com.twitter.home_mixer.functional_component.scorer.FeedbackFatigueScorer
-import com.twitter.home_mixer.functional_component.scorer.OONTweetScalingScorer
-import com.twitter.home_mixer.marshaller.timelines.DeviceContextMarshaller
-import com.twitter.home_mixer.marshaller.timelines.TimelineServiceCursorMarshaller
-import com.twitter.home_mixer.model.HomeFeatures.ConversationModuleFocalTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsHydratedFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsNsfwFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedTweetDroppedFeature
-import com.twitter.home_mixer.model.HomeFeatures.TimelineServiceTweetsFeature
-import com.twitter.home_mixer.model.request.DeviceContext
-import com.twitter.home_mixer.product.for_you.feature_hydrator.FocalTweetFeatureHydrator
-import com.twitter.home_mixer.product.for_you.filter.SocialContextFilter
-import com.twitter.home_mixer.product.for_you.model.ForYouQuery
-import com.twitter.home_mixer.product.for_you.param.ForYouParam.EnableTimelineScorerCandidatePipelineParam
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.component_library.candidate_source.timeline_scorer.ScoredTweetCandidateWithFocalTweet
-import com.twitter.product_mixer.component_library.candidate_source.timeline_scorer.TimelineScorerCandidateSource
-import com.twitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.UrtMultipleModulesDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.tweet.TweetCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.ManualModuleId
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.StaticModuleDisplayTypeBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.TimelineModuleBuilder
-import com.twitter.product_mixer.component_library.filter.FeatureFilter
-import com.twitter.product_mixer.component_library.filter.PredicateFeatureFilter
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalConversation
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.model.candidate.CandidateTweetSourceId
-import com.twitter.timelines.service.{thriftscala => tst}
-import com.twitter.timelinescorer.{thriftscala => t}
-import com.twitter.timelineservice.{thriftscala => tlst}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.funct onal_component.decorator.bu lder.Ho Cl entEvent nfoBu lder
+ mport com.tw ter.ho _m xer.funct onal_component.decorator.bu lder.Ho Conversat onModule tadataBu lder
+ mport com.tw ter.ho _m xer.funct onal_component.decorator.bu lder.Ho T  l nesScore nfoBu lder
+ mport com.tw ter.ho _m xer.funct onal_component.decorator.urt.bu lder.Ho FeedbackAct on nfoBu lder
+ mport com.tw ter.ho _m xer.funct onal_component.decorator.urt.bu lder.Ho T etSoc alContextBu lder
+ mport com.tw ter.ho _m xer.funct onal_component.feature_hydrator. nNetworkFeatureHydrator
+ mport com.tw ter.ho _m xer.funct onal_component.feature_hydrator.Na sFeatureHydrator
+ mport com.tw ter.ho _m xer.funct onal_component.feature_hydrator.Perspect veF lteredSoc alContextFeatureHydrator
+ mport com.tw ter.ho _m xer.funct onal_component.feature_hydrator.SGSVal dSoc alContextFeatureHydrator
+ mport com.tw ter.ho _m xer.funct onal_component.feature_hydrator.T etyp eFeatureHydrator
+ mport com.tw ter.ho _m xer.funct onal_component.f lter.FeedbackFat gueF lter
+ mport com.tw ter.ho _m xer.funct onal_component.f lter. nval dConversat onModuleF lter
+ mport com.tw ter.ho _m xer.funct onal_component.f lter. nval dSubscr pt onT etF lter
+ mport com.tw ter.ho _m xer.funct onal_component.f lter.RejectT etFromV e rF lter
+ mport com.tw ter.ho _m xer.funct onal_component.f lter.Ret etDedupl cat onF lter
+ mport com.tw ter.ho _m xer.funct onal_component.scorer.FeedbackFat gueScorer
+ mport com.tw ter.ho _m xer.funct onal_component.scorer.OONT etScal ngScorer
+ mport com.tw ter.ho _m xer.marshaller.t  l nes.Dev ceContextMarshaller
+ mport com.tw ter.ho _m xer.marshaller.t  l nes.T  l neServ ceCursorMarshaller
+ mport com.tw ter.ho _m xer.model.Ho Features.Conversat onModuleFocalT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nNetworkFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. sHydratedFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. sNsfwFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.QuotedT etDroppedFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.T  l neServ ceT etsFeature
+ mport com.tw ter.ho _m xer.model.request.Dev ceContext
+ mport com.tw ter.ho _m xer.product.for_ .feature_hydrator.FocalT etFeatureHydrator
+ mport com.tw ter.ho _m xer.product.for_ .f lter.Soc alContextF lter
+ mport com.tw ter.ho _m xer.product.for_ .model.For Query
+ mport com.tw ter.ho _m xer.product.for_ .param.For Param.EnableT  l neScorerCand dateP pel neParam
+ mport com.tw ter.ho _m xer.serv ce.Ho M xerAlertConf g
+ mport com.tw ter.product_m xer.component_l brary.cand date_s ce.t  l ne_scorer.ScoredT etCand dateW hFocalT et
+ mport com.tw ter.product_m xer.component_l brary.cand date_s ce.t  l ne_scorer.T  l neScorerCand dateS ce
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.Urt emCand dateDecorator
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.UrtMult pleModulesDecorator
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.t et.T etCand dateUrt emBu lder
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.t  l ne_module.ManualModule d
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.t  l ne_module.Stat cModuleD splayTypeBu lder
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.t  l ne_module.T  l neModuleBu lder
+ mport com.tw ter.product_m xer.component_l brary.f lter.FeatureF lter
+ mport com.tw ter.product_m xer.component_l brary.f lter.Pred cateFeatureF lter
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.BaseCand dateS ce
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Cand dateDecorator
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BaseCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.scorer.Scorer
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neResultsTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.EntryNa space
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Vert calConversat on
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neConf g
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.model.cand date.Cand dateT etS ce d
+ mport com.tw ter.t  l nes.serv ce.{thr ftscala => tst}
+ mport com.tw ter.t  l nescorer.{thr ftscala => t}
+ mport com.tw ter.t  l neserv ce.{thr ftscala => tlst}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * Candidate Pipeline Config that fetches tweets from the Timeline Scorer Candidate Source
+ * Cand date P pel ne Conf g that fetc s t ets from t  T  l ne Scorer Cand date S ce
  */
-@Singleton
-class ForYouTimelineScorerCandidatePipelineConfig @Inject() (
-  timelineScorerCandidateSource: TimelineScorerCandidateSource,
-  deviceContextMarshaller: DeviceContextMarshaller,
-  tweetypieFeatureHydrator: TweetypieFeatureHydrator,
-  sgsValidSocialContextFeatureHydrator: SGSValidSocialContextFeatureHydrator,
-  perspectiveFilteredSocialContextFeatureHydrator: PerspectiveFilteredSocialContextFeatureHydrator,
-  namesFeatureHydrator: NamesFeatureHydrator,
-  focalTweetFeatureHydrator: FocalTweetFeatureHydrator,
-  invalidSubscriptionTweetFilter: InvalidSubscriptionTweetFilter,
-  homeFeedbackActionInfoBuilder: HomeFeedbackActionInfoBuilder,
-  homeTweetSocialContextBuilder: HomeTweetSocialContextBuilder)
-    extends CandidatePipelineConfig[
-      ForYouQuery,
-      t.ScoredTweetsRequest,
-      ScoredTweetCandidateWithFocalTweet,
-      TweetCandidate
+@S ngleton
+class For T  l neScorerCand dateP pel neConf g @ nject() (
+  t  l neScorerCand dateS ce: T  l neScorerCand dateS ce,
+  dev ceContextMarshaller: Dev ceContextMarshaller,
+  t etyp eFeatureHydrator: T etyp eFeatureHydrator,
+  sgsVal dSoc alContextFeatureHydrator: SGSVal dSoc alContextFeatureHydrator,
+  perspect veF lteredSoc alContextFeatureHydrator: Perspect veF lteredSoc alContextFeatureHydrator,
+  na sFeatureHydrator: Na sFeatureHydrator,
+  focalT etFeatureHydrator: FocalT etFeatureHydrator,
+   nval dSubscr pt onT etF lter:  nval dSubscr pt onT etF lter,
+  ho FeedbackAct on nfoBu lder: Ho FeedbackAct on nfoBu lder,
+  ho T etSoc alContextBu lder: Ho T etSoc alContextBu lder)
+    extends Cand dateP pel neConf g[
+      For Query,
+      t.ScoredT etsRequest,
+      ScoredT etCand dateW hFocalT et,
+      T etCand date
     ] {
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("ForYouTimelineScorerTweets")
+  overr de val  dent f er: Cand dateP pel ne dent f er =
+    Cand dateP pel ne dent f er("For T  l neScorerT ets")
 
-  private val TweetypieHydratedFilterId = "TweetypieHydrated"
-  private val QuotedTweetDroppedFilterId = "QuotedTweetDropped"
-  private val OutOfNetworkNSFWFilterId = "OutOfNetworkNSFW"
-  private val ConversationModuleNamespace = EntryNamespace("home-conversation")
+  pr vate val T etyp eHydratedF lter d = "T etyp eHydrated"
+  pr vate val QuotedT etDroppedF lter d = "QuotedT etDropped"
+  pr vate val OutOfNetworkNSFWF lter d = "OutOfNetworkNSFW"
+  pr vate val Conversat onModuleNa space = EntryNa space("ho -conversat on")
 
-  override val supportedClientParam: Option[FSParam[Boolean]] =
-    Some(EnableTimelineScorerCandidatePipelineParam)
+  overr de val supportedCl entParam: Opt on[FSParam[Boolean]] =
+    So (EnableT  l neScorerCand dateP pel neParam)
 
-  override val candidateSource: BaseCandidateSource[
-    t.ScoredTweetsRequest,
-    ScoredTweetCandidateWithFocalTweet
-  ] = timelineScorerCandidateSource
+  overr de val cand dateS ce: BaseCand dateS ce[
+    t.ScoredT etsRequest,
+    ScoredT etCand dateW hFocalT et
+  ] = t  l neScorerCand dateS ce
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    ForYouQuery,
-    t.ScoredTweetsRequest
+  overr de val queryTransfor r: Cand dateP pel neQueryTransfor r[
+    For Query,
+    t.ScoredT etsRequest
   ] = { query =>
-    val deviceContext = query.deviceContext.getOrElse(DeviceContext.Empty)
+    val dev ceContext = query.dev ceContext.getOrElse(Dev ceContext.Empty)
 
-    val scoredTweetsRequestContext = t.v1.ScoredTweetsRequestContext(
-      contextualUserId = query.clientContext.userId,
-      timelineId = query.clientContext.userId.map(tlst.TimelineId(tlst.TimelineType.Home, _, None)),
-      deviceContext = Some(deviceContextMarshaller(deviceContext, query.clientContext)),
-      seenTweetIds = query.seenTweetIds,
-      contextualUserContext = Some(tst.ContextualUserContext(query.clientContext.userRoles)),
-      timelineRequestCursor = query.pipelineCursor.flatMap(TimelineServiceCursorMarshaller(_))
+    val scoredT etsRequestContext = t.v1.ScoredT etsRequestContext(
+      contextualUser d = query.cl entContext.user d,
+      t  l ne d = query.cl entContext.user d.map(tlst.T  l ne d(tlst.T  l neType.Ho , _, None)),
+      dev ceContext = So (dev ceContextMarshaller(dev ceContext, query.cl entContext)),
+      seenT et ds = query.seenT et ds,
+      contextualUserContext = So (tst.ContextualUserContext(query.cl entContext.userRoles)),
+      t  l neRequestCursor = query.p pel neCursor.flatMap(T  l neServ ceCursorMarshaller(_))
     )
 
-    val candidateTweetSourceIds = Seq(
-      CandidateTweetSourceId.RecycledTweet,
-      CandidateTweetSourceId.OrganicTweet,
-      CandidateTweetSourceId.AncestorsOnlyOrganicTweet,
-      CandidateTweetSourceId.BackfillOrganicTweet,
-      CandidateTweetSourceId.CroonTweet,
-      CandidateTweetSourceId.RecommendedTweet,
-      CandidateTweetSourceId.FrsTweet,
-      CandidateTweetSourceId.ListTweet,
-      CandidateTweetSourceId.RecommendedTrendTweet,
-      CandidateTweetSourceId.PopularTopicTweet
+    val cand dateT etS ce ds = Seq(
+      Cand dateT etS ce d.RecycledT et,
+      Cand dateT etS ce d.Organ cT et,
+      Cand dateT etS ce d.AncestorsOnlyOrgan cT et,
+      Cand dateT etS ce d.Backf llOrgan cT et,
+      Cand dateT etS ce d.CroonT et,
+      Cand dateT etS ce d.Recom ndedT et,
+      Cand dateT etS ce d.FrsT et,
+      Cand dateT etS ce d.L stT et,
+      Cand dateT etS ce d.Recom ndedTrendT et,
+      Cand dateT etS ce d.PopularTop cT et
     )
 
-    val timelineServiceTweets =
-      query.features.map(_.getOrElse(TimelineServiceTweetsFeature, Seq.empty)).getOrElse(Seq.empty)
+    val t  l neServ ceT ets =
+      query.features.map(_.getOrElse(T  l neServ ceT etsFeature, Seq.empty)).getOrElse(Seq.empty)
 
-    val timelineEntries = timelineServiceTweets.map { id =>
-      tlst.TimelineEntry.Tweet(tlst.Tweet(statusId = id, sortIndex = id))
+    val t  l neEntr es = t  l neServ ceT ets.map {  d =>
+      tlst.T  l neEntry.T et(tlst.T et(status d =  d, sort ndex =  d))
     }
 
-    t.ScoredTweetsRequest.V1(
-      t.v1.ScoredTweetsRequest(
-        scoredTweetsRequestContext = Some(scoredTweetsRequestContext),
-        candidateTweetSourceIds =
-          Some(candidateTweetSourceIds.flatMap(CandidateTweetSourceId.toThrift)),
+    t.ScoredT etsRequest.V1(
+      t.v1.ScoredT etsRequest(
+        scoredT etsRequestContext = So (scoredT etsRequestContext),
+        cand dateT etS ce ds =
+          So (cand dateT etS ce ds.flatMap(Cand dateT etS ce d.toThr ft)),
         maxResultsCount = query.requestedMaxResults,
-        organicTimeline = Some(
-          tlst.Timeline(
-            timelineId = tlst.TimelineId(
-              timelineType = tlst.TimelineType.Home,
-              id = query.getRequiredUserId,
-              canonicalTimelineId = None),
-            entries = timelineEntries,
-            modules = tlst.TimelineModules()
+        organ cT  l ne = So (
+          tlst.T  l ne(
+            t  l ne d = tlst.T  l ne d(
+              t  l neType = tlst.T  l neType.Ho ,
+               d = query.getRequ redUser d,
+              canon calT  l ne d = None),
+            entr es = t  l neEntr es,
+            modules = tlst.T  l neModules()
           ))
       )
     )
   }
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[ScoredTweetCandidateWithFocalTweet]
-  ] = Seq(ForYouTimelineScorerResponseFeatureTransformer)
+  overr de val featuresFromCand dateS ceTransfor rs: Seq[
+    Cand dateFeatureTransfor r[ScoredT etCand dateW hFocalT et]
+  ] = Seq(For T  l neScorerResponseFeatureTransfor r)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    ScoredTweetCandidateWithFocalTweet,
-    TweetCandidate
-  ] = { candidateWithFocalTweetId =>
-    TweetCandidate(id = candidateWithFocalTweetId.candidate.tweetId)
+  overr de val resultTransfor r: Cand dateP pel neResultsTransfor r[
+    ScoredT etCand dateW hFocalT et,
+    T etCand date
+  ] = { cand dateW hFocalT et d =>
+    T etCand date( d = cand dateW hFocalT et d.cand date.t et d)
   }
 
-  override val preFilterFeatureHydrationPhase1: Seq[
-    BaseCandidateFeatureHydrator[ForYouQuery, TweetCandidate, _]
+  overr de val preF lterFeatureHydrat onPhase1: Seq[
+    BaseCand dateFeatureHydrator[For Query, T etCand date, _]
   ] = Seq(
-    namesFeatureHydrator,
-    tweetypieFeatureHydrator,
-    InNetworkFeatureHydrator,
-    sgsValidSocialContextFeatureHydrator,
-    perspectiveFilteredSocialContextFeatureHydrator,
+    na sFeatureHydrator,
+    t etyp eFeatureHydrator,
+     nNetworkFeatureHydrator,
+    sgsVal dSoc alContextFeatureHydrator,
+    perspect veF lteredSoc alContextFeatureHydrator,
   )
 
-  override def filters: Seq[Filter[ForYouQuery, TweetCandidate]] = Seq(
-    RetweetDeduplicationFilter,
-    FeatureFilter.fromFeature(FilterIdentifier(TweetypieHydratedFilterId), IsHydratedFeature),
-    PredicateFeatureFilter.fromPredicate(
-      FilterIdentifier(QuotedTweetDroppedFilterId),
-      shouldKeepCandidate = { features => !features.getOrElse(QuotedTweetDroppedFeature, false) }
+  overr de def f lters: Seq[F lter[For Query, T etCand date]] = Seq(
+    Ret etDedupl cat onF lter,
+    FeatureF lter.fromFeature(F lter dent f er(T etyp eHydratedF lter d),  sHydratedFeature),
+    Pred cateFeatureF lter.fromPred cate(
+      F lter dent f er(QuotedT etDroppedF lter d),
+      shouldKeepCand date = { features => !features.getOrElse(QuotedT etDroppedFeature, false) }
     ),
-    PredicateFeatureFilter.fromPredicate(
-      FilterIdentifier(OutOfNetworkNSFWFilterId),
-      shouldKeepCandidate = { features =>
-        features.getOrElse(InNetworkFeature, false) ||
-        !features.getOrElse(IsNsfwFeature, false)
+    Pred cateFeatureF lter.fromPred cate(
+      F lter dent f er(OutOfNetworkNSFWF lter d),
+      shouldKeepCand date = { features =>
+        features.getOrElse( nNetworkFeature, false) ||
+        !features.getOrElse( sNsfwFeature, false)
       }
     ),
-    FeedbackFatigueFilter,
-    RejectTweetFromViewerFilter,
-    SocialContextFilter,
-    invalidSubscriptionTweetFilter,
-    InvalidConversationModuleFilter
+    FeedbackFat gueF lter,
+    RejectT etFromV e rF lter,
+    Soc alContextF lter,
+     nval dSubscr pt onT etF lter,
+     nval dConversat onModuleF lter
   )
 
-  override val postFilterFeatureHydration: Seq[
-    BaseCandidateFeatureHydrator[ForYouQuery, TweetCandidate, _]
-  ] = Seq(focalTweetFeatureHydrator)
+  overr de val postF lterFeatureHydrat on: Seq[
+    BaseCand dateFeatureHydrator[For Query, T etCand date, _]
+  ] = Seq(focalT etFeatureHydrator)
 
-  override val scorers: Seq[Scorer[ForYouQuery, TweetCandidate]] =
-    Seq(OONTweetScalingScorer, FeedbackFatigueScorer)
+  overr de val scorers: Seq[Scorer[For Query, T etCand date]] =
+    Seq(OONT etScal ngScorer, FeedbackFat gueScorer)
 
-  override val decorator: Option[CandidateDecorator[ForYouQuery, TweetCandidate]] = {
-    val clientEventInfoBuilder = HomeClientEventInfoBuilder()
+  overr de val decorator: Opt on[Cand dateDecorator[For Query, T etCand date]] = {
+    val cl entEvent nfoBu lder = Ho Cl entEvent nfoBu lder()
 
-    val tweetItemBuilder = TweetCandidateUrtItemBuilder(
-      clientEventInfoBuilder = clientEventInfoBuilder,
-      socialContextBuilder = Some(homeTweetSocialContextBuilder),
-      timelinesScoreInfoBuilder = Some(HomeTimelinesScoreInfoBuilder),
-      feedbackActionInfoBuilder = Some(homeFeedbackActionInfoBuilder)
+    val t et emBu lder = T etCand dateUrt emBu lder(
+      cl entEvent nfoBu lder = cl entEvent nfoBu lder,
+      soc alContextBu lder = So (ho T etSoc alContextBu lder),
+      t  l nesScore nfoBu lder = So (Ho T  l nesScore nfoBu lder),
+      feedbackAct on nfoBu lder = So (ho FeedbackAct on nfoBu lder)
     )
 
-    val tweetDecorator = UrtItemCandidateDecorator(tweetItemBuilder)
+    val t etDecorator = Urt emCand dateDecorator(t et emBu lder)
 
-    val moduleBuilder = TimelineModuleBuilder(
-      entryNamespace = ConversationModuleNamespace,
-      clientEventInfoBuilder = clientEventInfoBuilder,
-      moduleIdGeneration = ManualModuleId(0L),
-      displayTypeBuilder = StaticModuleDisplayTypeBuilder(VerticalConversation),
-      metadataBuilder = Some(HomeConversationModuleMetadataBuilder())
+    val moduleBu lder = T  l neModuleBu lder(
+      entryNa space = Conversat onModuleNa space,
+      cl entEvent nfoBu lder = cl entEvent nfoBu lder,
+      module dGenerat on = ManualModule d(0L),
+      d splayTypeBu lder = Stat cModuleD splayTypeBu lder(Vert calConversat on),
+       tadataBu lder = So (Ho Conversat onModule tadataBu lder())
     )
 
-    Some(
-      UrtMultipleModulesDecorator(
-        urtItemCandidateDecorator = tweetDecorator,
-        moduleBuilder = moduleBuilder,
-        groupByKey = (_, _, candidateFeatures) =>
-          candidateFeatures.getOrElse(ConversationModuleFocalTweetIdFeature, None)
+    So (
+      UrtMult pleModulesDecorator(
+        urt emCand dateDecorator = t etDecorator,
+        moduleBu lder = moduleBu lder,
+        groupByKey = (_, _, cand dateFeatures) =>
+          cand dateFeatures.getOrElse(Conversat onModuleFocalT et dFeature, None)
       ))
   }
 
-  override val alerts: Seq[Alert] = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(),
-    HomeMixerAlertConfig.BusinessHours.defaultEmptyResponseRateAlert(10, 20)
+  overr de val alerts: Seq[Alert] = Seq(
+    Ho M xerAlertConf g.Bus nessH s.defaultSuccessRateAlert(),
+    Ho M xerAlertConf g.Bus nessH s.defaultEmptyResponseRateAlert(10, 20)
   )
 }

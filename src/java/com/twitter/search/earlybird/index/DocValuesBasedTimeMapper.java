@@ -1,146 +1,146 @@
-package com.twitter.search.earlybird.index;
+package com.tw ter.search.earlyb rd. ndex;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.search.DocIdSetIterator;
+ mport org.apac .lucene. ndex.LeafReader;
+ mport org.apac .lucene. ndex.Nu r cDocValues;
+ mport org.apac .lucene.search.Doc dSet erator;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.util.analysis.IntTermAttributeImpl;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideFieldIndex;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants;
+ mport com.tw ter.search.common.ut l.analys s. ntTermAttr bute mpl;
+ mport com.tw ter.search.common.ut l. o.flushable.DataDeser al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.DataSer al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.common.ut l. o.flushable.Flushable;
+ mport com.tw ter.search.core.earlyb rd. ndex.Doc DToT et DMapper;
+ mport com.tw ter.search.core.earlyb rd. ndex.T  Mapper;
+ mport com.tw ter.search.core.earlyb rd. ndex.column.ColumnStr deF eld ndex;
 
 /**
- * A few caveats when using this class:
- *   - This class only supports in-order createdAt!
- *   - Before actually using this class, one must call prepareToRead() with a Lucene AtomicReader
- *   - prepareToRead() will load docID to createdAt mapping into memory, if not already done.
+ * A few caveats w n us ng t  class:
+ *   - T  class only supports  n-order createdAt!
+ *   - Before actually us ng t  class, one must call prepareToRead() w h a Lucene Atom cReader
+ *   - prepareToRead() w ll load doc D to createdAt mapp ng  nto  mory,  f not already done.
  */
-public class DocValuesBasedTimeMapper implements TimeMapper {
-  private LeafReader reader;
-  private ColumnStrideFieldIndex docValues;
+publ c class DocValuesBasedT  Mapper  mple nts T  Mapper {
+  pr vate LeafReader reader;
+  pr vate ColumnStr deF eld ndex docValues;
 
-  protected int minTimestamp = ILLEGAL_TIME;
-  protected int maxTimestamp = ILLEGAL_TIME;
+  protected  nt m nT  stamp =  LLEGAL_T ME;
+  protected  nt maxT  stamp =  LLEGAL_T ME;
 
   /**
-   * When indexing finishes, this method should be called with a index reader that
-   * can see all documents.
-   * @param leafReader Lucene index reader used to access "TweetID" to "createdAt" mapping.
+   * W n  ndex ng f n s s, t   thod should be called w h a  ndex reader that
+   * can see all docu nts.
+   * @param leafReader Lucene  ndex reader used to access "T et D" to "createdAt" mapp ng.
    */
-  public void initializeWithLuceneReader(LeafReader leafReader, ColumnStrideFieldIndex csf)
-      throws IOException {
-    reader = Preconditions.checkNotNull(leafReader);
-    docValues = Preconditions.checkNotNull(csf);
+  publ c vo d  n  al zeW hLuceneReader(LeafReader leafReader, ColumnStr deF eld ndex csf)
+      throws  OExcept on {
+    reader = Precond  ons.c ckNotNull(leafReader);
+    docValues = Precond  ons.c ckNotNull(csf);
 
-    // Find the min and max timestamps.
+    // F nd t  m n and max t  stamps.
     // See SEARCH-5534
-    // In the archive, tweets are always sorted in descending order by tweet ID, but
-    // that does not mean that the documents are necessarily sorted by time. We've observed tweet ID
-    // generation be decoupled from timestamp creation (i.e. a larger tweet ID having a smaller
-    // created_at time).
-    minTimestamp = Integer.MAX_VALUE;
-    maxTimestamp = Integer.MIN_VALUE;
+    //  n t  arch ve, t ets are always sorted  n descend ng order by t et  D, but
+    // that does not  an that t  docu nts are necessar ly sorted by t  .  've observed t et  D
+    // generat on be decoupled from t  stamp creat on ( .e. a larger t et  D hav ng a smaller
+    // created_at t  ).
+    m nT  stamp =  nteger.MAX_VALUE;
+    maxT  stamp =  nteger.M N_VALUE;
 
-    NumericDocValues onDiskDocValues = reader.getNumericDocValues(
-        EarlybirdFieldConstants.EarlybirdFieldConstant.CREATED_AT_CSF_FIELD.getFieldName());
-    for (int i = 0; i < reader.maxDoc(); ++i) {
-      Preconditions.checkArgument(onDiskDocValues.advanceExact(i));
-      int timestamp = (int) onDiskDocValues.longValue();
-      docValues.setValue(i, timestamp);
+    Nu r cDocValues onD skDocValues = reader.getNu r cDocValues(
+        Earlyb rdF eldConstants.Earlyb rdF eldConstant.CREATED_AT_CSF_F ELD.getF eldNa ());
+    for ( nt   = 0;   < reader.maxDoc(); ++ ) {
+      Precond  ons.c ckArgu nt(onD skDocValues.advanceExact( ));
+       nt t  stamp = ( nt) onD skDocValues.longValue();
+      docValues.setValue( , t  stamp);
 
-      if (timestamp < minTimestamp) {
-        minTimestamp = timestamp;
+       f (t  stamp < m nT  stamp) {
+        m nT  stamp = t  stamp;
       }
-      if (timestamp > maxTimestamp) {
-        maxTimestamp = timestamp;
+       f (t  stamp > maxT  stamp) {
+        maxT  stamp = t  stamp;
       }
     }
   }
 
-  @Override
-  public int getLastTime() {
-    return maxTimestamp;
+  @Overr de
+  publ c  nt getLastT  () {
+    return maxT  stamp;
   }
 
-  @Override
-  public int getFirstTime() {
-    return minTimestamp;
+  @Overr de
+  publ c  nt getF rstT  () {
+    return m nT  stamp;
   }
 
-  @Override
-  public int getTime(int docID) {
-    if (docID < 0 || docID > reader.maxDoc()) {
-      return ILLEGAL_TIME;
+  @Overr de
+  publ c  nt getT  ( nt doc D) {
+     f (doc D < 0 || doc D > reader.maxDoc()) {
+      return  LLEGAL_T ME;
     }
-    return (int) docValues.get(docID);
+    return ( nt) docValues.get(doc D);
   }
 
-  @Override
-  public int findFirstDocId(int timeSeconds, int smallestDocID) throws IOException {
-    // In the full archive, the smallest doc id corresponds to largest timestamp.
-    if (timeSeconds > maxTimestamp) {
-      return smallestDocID;
+  @Overr de
+  publ c  nt f ndF rstDoc d( nt t  Seconds,  nt smallestDoc D) throws  OExcept on {
+    //  n t  full arch ve, t  smallest doc  d corresponds to largest t  stamp.
+     f (t  Seconds > maxT  stamp) {
+      return smallestDoc D;
     }
-    if (timeSeconds < minTimestamp) {
+     f (t  Seconds < m nT  stamp) {
       return reader.maxDoc() - 1;
     }
 
-    int docId = DocValuesHelper.getLargestDocIdWithCeilOfValue(
+     nt doc d = DocValues lper.getLargestDoc dW hCe lOfValue(
         reader,
-        EarlybirdFieldConstants.EarlybirdFieldConstant.CREATED_AT_FIELD.getFieldName(),
-        IntTermAttributeImpl.copyIntoNewBytesRef(timeSeconds));
-    if (docId == DocIdSetIterator.NO_MORE_DOCS) {
-      return ILLEGAL_TIME;
+        Earlyb rdF eldConstants.Earlyb rdF eldConstant.CREATED_AT_F ELD.getF eldNa (),
+         ntTermAttr bute mpl.copy ntoNewBytesRef(t  Seconds));
+     f (doc d == Doc dSet erator.NO_MORE_DOCS) {
+      return  LLEGAL_T ME;
     }
 
-    return docId;
+    return doc d;
   }
 
-  @Override
-  public TimeMapper optimize(DocIDToTweetIDMapper originalTweetIdMapper,
-                             DocIDToTweetIDMapper optimizedTweetIdMapper) {
-    // DocValuesBasedTimerMapper instances are not flushed or loaded,
-    // so their optimization is a no-op.
-    return this;
+  @Overr de
+  publ c T  Mapper opt m ze(Doc DToT et DMapper or g nalT et dMapper,
+                             Doc DToT et DMapper opt m zedT et dMapper) {
+    // DocValuesBasedT  rMapper  nstances are not flus d or loaded,
+    // so t  r opt m zat on  s a no-op.
+    return t ;
   }
 
-  @Override
-  public Flushable.Handler<DocValuesBasedTimeMapper> getFlushHandler() {
-    // EarlybirdIndexSegmentData will still try to flush the DocValuesBasedTimeMapper for the
-    // respective segment, so we need to pass in a DocValuesBasedTimeMapper instance to this
-    // flusher: otherwise, Flushable.Handler.flush() will throw a NullPointerException.
-    return new FlushHandler(new DocValuesBasedTimeMapper());
+  @Overr de
+  publ c Flushable.Handler<DocValuesBasedT  Mapper> getFlushHandler() {
+    // Earlyb rd ndexSeg ntData w ll st ll try to flush t  DocValuesBasedT  Mapper for t 
+    // respect ve seg nt, so   need to pass  n a DocValuesBasedT  Mapper  nstance to t 
+    // flus r: ot rw se, Flushable.Handler.flush() w ll throw a NullPo nterExcept on.
+    return new FlushHandler(new DocValuesBasedT  Mapper());
   }
 
-  // Full archive earlybirds don't actually flush or load the DocValuesBasedTimeMapper. This is
-  // why doFlush() is a no-op, and doLoad() returns a new DocValuesBasedTimeMapper instance
-  // (initializeWithLuceneReader() will be called at load time to initialize this new
-  // DocValuesBasedTimeMapper instance).
-  public static class FlushHandler extends Flushable.Handler<DocValuesBasedTimeMapper> {
-    public FlushHandler() {
+  // Full arch ve earlyb rds don't actually flush or load t  DocValuesBasedT  Mapper. T   s
+  // why doFlush()  s a no-op, and doLoad() returns a new DocValuesBasedT  Mapper  nstance
+  // ( n  al zeW hLuceneReader() w ll be called at load t   to  n  al ze t  new
+  // DocValuesBasedT  Mapper  nstance).
+  publ c stat c class FlushHandler extends Flushable.Handler<DocValuesBasedT  Mapper> {
+    publ c FlushHandler() {
       super();
     }
 
-    public FlushHandler(DocValuesBasedTimeMapper objectToFlush) {
+    publ c FlushHandler(DocValuesBasedT  Mapper objectToFlush) {
       super(objectToFlush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) {
+    @Overr de
+    protected vo d doFlush(Flush nfo flush nfo, DataSer al zer out) {
     }
 
-    @Override
-    protected DocValuesBasedTimeMapper doLoad(FlushInfo flushInfo, DataDeserializer in) {
-      return new DocValuesBasedTimeMapper();
+    @Overr de
+    protected DocValuesBasedT  Mapper doLoad(Flush nfo flush nfo, DataDeser al zer  n) {
+      return new DocValuesBasedT  Mapper();
     }
   }
 }

@@ -1,65 +1,65 @@
-package com.twitter.search.common.search;
+package com.tw ter.search.common.search;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+ mport java.ut l.L nkedHashSet;
+ mport java.ut l.Set;
 
-import org.apache.lucene.search.Query;
-import org.apache.lucene.spatial.prefix.tree.Cell;
-import org.apache.lucene.spatial.prefix.tree.CellIterator;
-import org.apache.lucene.util.BytesRef;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .lucene.spat al.pref x.tree.Cell;
+ mport org.apac .lucene.spat al.pref x.tree.Cell erator;
+ mport org.apac .lucene.ut l.BytesRef;
 
-import com.twitter.search.common.util.spatial.GeohashChunkImpl;
-import com.twitter.search.queryparser.util.GeoCode;
+ mport com.tw ter.search.common.ut l.spat al.GeohashChunk mpl;
+ mport com.tw ter.search.queryparser.ut l.GeoCode;
 
-import geo.google.datamodel.GeoAddressAccuracy;
+ mport geo.google.datamodel.GeoAddressAccuracy;
 
-public final class GeoQuadTreeQueryBuilderUtil {
-  private GeoQuadTreeQueryBuilderUtil() {
+publ c f nal class GeoQuadTreeQueryBu lderUt l {
+  pr vate GeoQuadTreeQueryBu lderUt l() {
   }
 
   /**
-   * Build a geo quad tree query based around the geo code based on the geo field.
-   * @param geocode the geo location for the quad tree query
-   * @param field the field where the geohash tokens are indexed
-   * @return the corresponding for the geo quad tree query
+   * Bu ld a geo quad tree query based around t  geo code based on t  geo f eld.
+   * @param geocode t  geo locat on for t  quad tree query
+   * @param f eld t  f eld w re t  geohash tokens are  ndexed
+   * @return t  correspond ng for t  geo quad tree query
    */
-  public static Query buildGeoQuadTreeQuery(GeoCode geocode, String field) {
-    Set<BytesRef> geoHashSet = new LinkedHashSet<>();
+  publ c stat c Query bu ldGeoQuadTreeQuery(GeoCode geocode, Str ng f eld) {
+    Set<BytesRef> geoHashSet = new L nkedHashSet<>();
 
-    // if accuracy is specified. Add a term query based on accuracy.
-    if (geocode.accuracy != GeoAddressAccuracy.UNKNOWN_LOCATION.getCode()) {
-      BytesRef termRef = new BytesRef(GeohashChunkImpl.buildGeoStringWithAccuracy(geocode.latitude,
-          geocode.longitude,
+    //  f accuracy  s spec f ed. Add a term query based on accuracy.
+     f (geocode.accuracy != GeoAddressAccuracy.UNKNOWN_LOCAT ON.getCode()) {
+      BytesRef termRef = new BytesRef(GeohashChunk mpl.bu ldGeoStr ngW hAccuracy(geocode.lat ude,
+          geocode.long ude,
           geocode.accuracy));
       geoHashSet.add(termRef);
     }
 
-    // If distance is specified. Add term queries based on distance
-    if (geocode.distanceKm != GeoCode.DOUBLE_DISTANCE_NOT_SET) {
-      // Build query based on distance
-      int treeLevel = -1;
-      // First find block containing query point with diagonal greater than 2 * radius.
-      Cell centerNode = GeohashChunkImpl.getGeoNodeByRadius(geocode.latitude, geocode.longitude,
-          geocode.distanceKm);
-      // Add center node querying term
-      if (centerNode != null) {
+    //  f d stance  s spec f ed. Add term quer es based on d stance
+     f (geocode.d stanceKm != GeoCode.DOUBLE_D STANCE_NOT_SET) {
+      // Bu ld query based on d stance
+       nt treeLevel = -1;
+      // F rst f nd block conta n ng query po nt w h d agonal greater than 2 * rad us.
+      Cell centerNode = GeohashChunk mpl.getGeoNodeByRad us(geocode.lat ude, geocode.long ude,
+          geocode.d stanceKm);
+      // Add center node query ng term
+       f (centerNode != null) {
         geoHashSet.add(centerNode.getTokenBytesNoLeaf(new BytesRef()));
         treeLevel = centerNode.getLevel();
       }
 
-      // This improves edge case recall, by adding cells also intersecting the query area.
-      CellIterator nodes = GeohashChunkImpl.getNodesIntersectingCircle(geocode.latitude,
-          geocode.longitude,
-          geocode.distanceKm,
+      // T   mproves edge case recall, by add ng cells also  ntersect ng t  query area.
+      Cell erator nodes = GeohashChunk mpl.getNodes ntersect ngC rcle(geocode.lat ude,
+          geocode.long ude,
+          geocode.d stanceKm,
           treeLevel);
-      // If there are other nodes intersecting query circle, also add them in.
-      if (nodes != null) {
-        while (nodes.hasNext()) {
+      //  f t re are ot r nodes  ntersect ng query c rcle, also add t m  n.
+       f (nodes != null) {
+        wh le (nodes.hasNext()) {
           geoHashSet.add(nodes.next().getTokenBytesNoLeaf(new BytesRef()));
         }
       }
     }
 
-    return new com.twitter.search.common.query.MultiTermDisjunctionQuery(field, geoHashSet);
+    return new com.tw ter.search.common.query.Mult TermD sjunct onQuery(f eld, geoHashSet);
   }
 }

@@ -1,129 +1,129 @@
-package com.twitter.simclusters_v2.score
+package com.tw ter.s mclusters_v2.score
 
-import com.twitter.simclusters_v2.common.SimClustersEmbeddingId._
-import com.twitter.simclusters_v2.thriftscala.{
-  InternalId,
-  ScoreInternalId,
-  ScoringAlgorithm,
-  SimClustersEmbeddingId,
-  GenericPairScoreId => ThriftGenericPairScoreId,
-  ScoreId => ThriftScoreId,
-  SimClustersEmbeddingPairScoreId => ThriftSimClustersEmbeddingPairScoreId
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng d._
+ mport com.tw ter.s mclusters_v2.thr ftscala.{
+   nternal d,
+  Score nternal d,
+  Scor ngAlgor hm,
+  S mClustersEmbedd ng d,
+  Gener cPa rScore d => Thr ftGener cPa rScore d,
+  Score d => Thr ftScore d,
+  S mClustersEmbedd ngPa rScore d => Thr ftS mClustersEmbedd ngPa rScore d
 }
 
 /**
- * A uniform Identifier type for all kinds of Calculation Score.
+ * A un form  dent f er type for all k nds of Calculat on Score.
  **/
-trait ScoreId {
+tra  Score d {
 
-  def algorithm: ScoringAlgorithm
+  def algor hm: Scor ngAlgor hm
 
   /**
-   * Convert to a Thrift object. Throw a exception if the operation is not override.
+   * Convert to a Thr ft object. Throw a except on  f t  operat on  s not overr de.
    */
-  implicit def toThrift: ThriftScoreId =
-    throw new UnsupportedOperationException(s"ScoreId $this doesn't support Thrift format")
+   mpl c  def toThr ft: Thr ftScore d =
+    throw new UnsupportedOperat onExcept on(s"Score d $t  doesn't support Thr ft format")
 }
 
-object ScoreId {
+object Score d {
 
-  implicit val fromThriftScoreId: ThriftScoreId => ScoreId = {
-    case scoreId @ ThriftScoreId(_, ScoreInternalId.GenericPairScoreId(_)) =>
-      PairScoreId.fromThriftScoreId(scoreId)
-    case scoreId @ ThriftScoreId(_, ScoreInternalId.SimClustersEmbeddingPairScoreId(_)) =>
-      SimClustersEmbeddingPairScoreId.fromThriftScoreId(scoreId)
+   mpl c  val fromThr ftScore d: Thr ftScore d => Score d = {
+    case score d @ Thr ftScore d(_, Score nternal d.Gener cPa rScore d(_)) =>
+      Pa rScore d.fromThr ftScore d(score d)
+    case score d @ Thr ftScore d(_, Score nternal d.S mClustersEmbedd ngPa rScore d(_)) =>
+      S mClustersEmbedd ngPa rScore d.fromThr ftScore d(score d)
   }
 
 }
 
 /**
- * Generic Internal pairwise id. Support all the subtypes in InternalId, which includes TweetId,
- * UserId, EntityId and more combination ids.
+ * Gener c  nternal pa rw se  d. Support all t  subtypes  n  nternal d, wh ch  ncludes T et d,
+ * User d, Ent y d and more comb nat on  ds.
  **/
-trait PairScoreId extends ScoreId {
+tra  Pa rScore d extends Score d {
 
-  def id1: InternalId
-  def id2: InternalId
+  def  d1:  nternal d
+  def  d2:  nternal d
 
-  override implicit lazy val toThrift: ThriftScoreId = {
-    ThriftScoreId(
-      algorithm,
-      ScoreInternalId.GenericPairScoreId(ThriftGenericPairScoreId(id1, id2))
+  overr de  mpl c  lazy val toThr ft: Thr ftScore d = {
+    Thr ftScore d(
+      algor hm,
+      Score nternal d.Gener cPa rScore d(Thr ftGener cPa rScore d( d1,  d2))
     )
   }
 }
 
-object PairScoreId {
+object Pa rScore d {
 
-  // The default PairScoreId assume id1 <= id2. It used to increase the cache hit rate.
-  def apply(algorithm: ScoringAlgorithm, id1: InternalId, id2: InternalId): PairScoreId = {
-    if (internalIdOrdering.lteq(id1, id2)) {
-      DefaultPairScoreId(algorithm, id1, id2)
+  // T  default Pa rScore d assu   d1 <=  d2.   used to  ncrease t  cac  h  rate.
+  def apply(algor hm: Scor ngAlgor hm,  d1:  nternal d,  d2:  nternal d): Pa rScore d = {
+     f ( nternal dOrder ng.lteq( d1,  d2)) {
+      DefaultPa rScore d(algor hm,  d1,  d2)
     } else {
-      DefaultPairScoreId(algorithm, id2, id1)
+      DefaultPa rScore d(algor hm,  d2,  d1)
     }
   }
 
-  private case class DefaultPairScoreId(
-    algorithm: ScoringAlgorithm,
-    id1: InternalId,
-    id2: InternalId)
-      extends PairScoreId
+  pr vate case class DefaultPa rScore d(
+    algor hm: Scor ngAlgor hm,
+     d1:  nternal d,
+     d2:  nternal d)
+      extends Pa rScore d
 
-  implicit val fromThriftScoreId: ThriftScoreId => PairScoreId = {
-    case ThriftScoreId(algorithm, ScoreInternalId.GenericPairScoreId(pairScoreId)) =>
-      DefaultPairScoreId(algorithm, pairScoreId.id1, pairScoreId.id2)
-    case ThriftScoreId(algorithm, ScoreInternalId.SimClustersEmbeddingPairScoreId(pairScoreId)) =>
-      SimClustersEmbeddingPairScoreId(algorithm, pairScoreId.id1, pairScoreId.id2)
+   mpl c  val fromThr ftScore d: Thr ftScore d => Pa rScore d = {
+    case Thr ftScore d(algor hm, Score nternal d.Gener cPa rScore d(pa rScore d)) =>
+      DefaultPa rScore d(algor hm, pa rScore d. d1, pa rScore d. d2)
+    case Thr ftScore d(algor hm, Score nternal d.S mClustersEmbedd ngPa rScore d(pa rScore d)) =>
+      S mClustersEmbedd ngPa rScore d(algor hm, pa rScore d. d1, pa rScore d. d2)
   }
 
 }
 
 /**
- * ScoreId for a pair of SimClustersEmbedding.
- * Used for dot product, cosine similarity and other basic embedding operations.
+ * Score d for a pa r of S mClustersEmbedd ng.
+ * Used for dot product, cos ne s m lar y and ot r bas c embedd ng operat ons.
  */
-trait SimClustersEmbeddingPairScoreId extends PairScoreId {
-  def embeddingId1: SimClustersEmbeddingId
+tra  S mClustersEmbedd ngPa rScore d extends Pa rScore d {
+  def embedd ng d1: S mClustersEmbedd ng d
 
-  def embeddingId2: SimClustersEmbeddingId
+  def embedd ng d2: S mClustersEmbedd ng d
 
-  override def id1: InternalId = embeddingId1.internalId
+  overr de def  d1:  nternal d = embedd ng d1. nternal d
 
-  override def id2: InternalId = embeddingId2.internalId
+  overr de def  d2:  nternal d = embedd ng d2. nternal d
 
-  override implicit lazy val toThrift: ThriftScoreId = {
-    ThriftScoreId(
-      algorithm,
-      ScoreInternalId.SimClustersEmbeddingPairScoreId(
-        ThriftSimClustersEmbeddingPairScoreId(embeddingId1, embeddingId2))
+  overr de  mpl c  lazy val toThr ft: Thr ftScore d = {
+    Thr ftScore d(
+      algor hm,
+      Score nternal d.S mClustersEmbedd ngPa rScore d(
+        Thr ftS mClustersEmbedd ngPa rScore d(embedd ng d1, embedd ng d2))
     )
   }
 }
 
-object SimClustersEmbeddingPairScoreId {
+object S mClustersEmbedd ngPa rScore d {
 
-  // The default PairScoreId assume id1 <= id2. It used to increase the cache hit rate.
+  // T  default Pa rScore d assu   d1 <=  d2.   used to  ncrease t  cac  h  rate.
   def apply(
-    algorithm: ScoringAlgorithm,
-    id1: SimClustersEmbeddingId,
-    id2: SimClustersEmbeddingId
-  ): SimClustersEmbeddingPairScoreId = {
-    if (simClustersEmbeddingIdOrdering.lteq(id1, id2)) {
-      DefaultSimClustersEmbeddingPairScoreId(algorithm, id1, id2)
+    algor hm: Scor ngAlgor hm,
+     d1: S mClustersEmbedd ng d,
+     d2: S mClustersEmbedd ng d
+  ): S mClustersEmbedd ngPa rScore d = {
+     f (s mClustersEmbedd ng dOrder ng.lteq( d1,  d2)) {
+      DefaultS mClustersEmbedd ngPa rScore d(algor hm,  d1,  d2)
     } else {
-      DefaultSimClustersEmbeddingPairScoreId(algorithm, id2, id1)
+      DefaultS mClustersEmbedd ngPa rScore d(algor hm,  d2,  d1)
     }
   }
 
-  private case class DefaultSimClustersEmbeddingPairScoreId(
-    algorithm: ScoringAlgorithm,
-    embeddingId1: SimClustersEmbeddingId,
-    embeddingId2: SimClustersEmbeddingId)
-      extends SimClustersEmbeddingPairScoreId
+  pr vate case class DefaultS mClustersEmbedd ngPa rScore d(
+    algor hm: Scor ngAlgor hm,
+    embedd ng d1: S mClustersEmbedd ng d,
+    embedd ng d2: S mClustersEmbedd ng d)
+      extends S mClustersEmbedd ngPa rScore d
 
-  implicit val fromThriftScoreId: ThriftScoreId => SimClustersEmbeddingPairScoreId = {
-    case ThriftScoreId(algorithm, ScoreInternalId.SimClustersEmbeddingPairScoreId(pairScoreId)) =>
-      SimClustersEmbeddingPairScoreId(algorithm, pairScoreId.id1, pairScoreId.id2)
+   mpl c  val fromThr ftScore d: Thr ftScore d => S mClustersEmbedd ngPa rScore d = {
+    case Thr ftScore d(algor hm, Score nternal d.S mClustersEmbedd ngPa rScore d(pa rScore d)) =>
+      S mClustersEmbedd ngPa rScore d(algor hm, pa rScore d. d1, pa rScore d. d2)
   }
 }

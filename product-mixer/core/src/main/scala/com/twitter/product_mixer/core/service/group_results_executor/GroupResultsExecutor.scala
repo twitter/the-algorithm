@@ -1,122 +1,122 @@
-package com.twitter.product_mixer.core.service.group_results_executor
+package com.tw ter.product_m xer.core.serv ce.group_results_executor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PlatformIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidatePipelines
-import com.twitter.product_mixer.core.model.common.presentation.CandidateSourcePosition
-import com.twitter.product_mixer.core.model.common.presentation.CandidateSources
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemPresentation
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModulePresentation
-import com.twitter.product_mixer.core.model.common.presentation.UniversalPresentation
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.immutable.ListSet
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Platform dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateP pel nes
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateS cePos  on
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateS ces
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on. emCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on. emPresentat on
+ mport com.tw ter.product_m xer.core.model.common.presentat on.ModuleCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on.ModulePresentat on
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Un versalPresentat on
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.product_m xer.core.serv ce.ExecutorResult
+ mport com.tw ter.st ch.Arrow
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport scala.collect on. mmutable.L stSet
 
-// Most executors are in the core.service package, but this one is pipeline specific
-@Singleton
-class GroupResultsExecutor @Inject() (override val statsReceiver: StatsReceiver) extends Executor {
+// Most executors are  n t  core.serv ce package, but t  one  s p pel ne spec f c
+@S ngleton
+class GroupResultsExecutor @ nject() (overr de val statsRece ver: StatsRece ver) extends Executor {
 
-  val identifier: ComponentIdentifier = PlatformIdentifier("GroupResults")
+  val  dent f er: Component dent f er = Platform dent f er("GroupResults")
 
-  def arrow[Candidate <: UniversalNoun[Any]](
-    pipelineIdentifier: CandidatePipelineIdentifier,
-    sourceIdentifier: CandidateSourceIdentifier,
+  def arrow[Cand date <: Un versalNoun[Any]](
+    p pel ne dent f er: Cand dateP pel ne dent f er,
+    s ce dent f er: Cand dateS ce dent f er,
     context: Executor.Context
-  ): Arrow[GroupResultsExecutorInput[Candidate], GroupResultsExecutorResult] = {
+  ): Arrow[GroupResultsExecutor nput[Cand date], GroupResultsExecutorResult] = {
 
-    val groupArrow = Arrow.map { input: GroupResultsExecutorInput[Candidate] =>
-      val modules: Map[Option[ModulePresentation], Seq[CandidateWithFeatures[Candidate]]] =
-        input.candidates
-          .map { candidate: CandidateWithFeatures[Candidate] =>
-            val modulePresentationOpt: Option[ModulePresentation] =
-              input.decorations.get(candidate.candidate).collect {
-                case itemPresentation: ItemPresentation
-                    if itemPresentation.modulePresentation.isDefined =>
-                  itemPresentation.modulePresentation.get
+    val groupArrow = Arrow.map {  nput: GroupResultsExecutor nput[Cand date] =>
+      val modules: Map[Opt on[ModulePresentat on], Seq[Cand dateW hFeatures[Cand date]]] =
+         nput.cand dates
+          .map { cand date: Cand dateW hFeatures[Cand date] =>
+            val modulePresentat onOpt: Opt on[ModulePresentat on] =
+               nput.decorat ons.get(cand date.cand date).collect {
+                case  emPresentat on:  emPresentat on
+                     f  emPresentat on.modulePresentat on. sDef ned =>
+                   emPresentat on.modulePresentat on.get
               }
 
-            (candidate, modulePresentationOpt)
+            (cand date, modulePresentat onOpt)
           }.groupBy {
-            case (_, modulePresentationOpt) => modulePresentationOpt
+            case (_, modulePresentat onOpt) => modulePresentat onOpt
           }.mapValues {
             resultModuleOptTuples: Seq[
-              (CandidateWithFeatures[Candidate], Option[ModulePresentation])
+              (Cand dateW hFeatures[Cand date], Opt on[ModulePresentat on])
             ] =>
               resultModuleOptTuples.map {
                 case (result, _) => result
               }
           }
 
-      // Modules should be in their original order, but the groupBy above isn't stable.
-      // Sort them by the sourcePosition, using the sourcePosition of their first contained
-      // candidate.
-      val sortedModules: Seq[(Option[ModulePresentation], Seq[CandidateWithFeatures[Candidate]])] =
+      // Modules should be  n t  r or g nal order, but t  groupBy above  sn't stable.
+      // Sort t m by t  s cePos  on, us ng t  s cePos  on of t  r f rst conta ned
+      // cand date.
+      val sortedModules: Seq[(Opt on[ModulePresentat on], Seq[Cand dateW hFeatures[Cand date]])] =
         modules.toSeq
           .sortBy {
             case (_, results) =>
-              results.headOption.map(_.features.get(CandidateSourcePosition))
+              results. adOpt on.map(_.features.get(Cand dateS cePos  on))
           }
 
-      val candidatesWithDetails: Seq[CandidateWithDetails] = sortedModules.flatMap {
-        case (modulePresentationOpt, resultsSeq) =>
-          val itemsWithDetails = resultsSeq.map { result =>
-            val presentationOpt = input.decorations.get(result.candidate) match {
-              case itemPresentation @ Some(_: ItemPresentation) => itemPresentation
+      val cand datesW hDeta ls: Seq[Cand dateW hDeta ls] = sortedModules.flatMap {
+        case (modulePresentat onOpt, resultsSeq) =>
+          val  emsW hDeta ls = resultsSeq.map { result =>
+            val presentat onOpt =  nput.decorat ons.get(result.cand date) match {
+              case  emPresentat on @ So (_:  emPresentat on) =>  emPresentat on
               case _ => None
             }
 
-            val baseFeatureMap = FeatureMapBuilder()
-              .add(CandidatePipelines, ListSet.empty + pipelineIdentifier)
-              .build()
+            val baseFeatureMap = FeatureMapBu lder()
+              .add(Cand dateP pel nes, L stSet.empty + p pel ne dent f er)
+              .bu ld()
 
-            ItemCandidateWithDetails(
-              candidate = result.candidate,
-              presentation = presentationOpt,
+             emCand dateW hDeta ls(
+              cand date = result.cand date,
+              presentat on = presentat onOpt,
               features = baseFeatureMap ++ result.features
             )
           }
 
-          modulePresentationOpt
-            .map { modulePresentation =>
-              val moduleSourcePosition =
-                resultsSeq.head.features.get(CandidateSourcePosition)
-              val baseFeatureMap = FeatureMapBuilder()
-                .add(CandidatePipelines, ListSet.empty + pipelineIdentifier)
-                .add(CandidateSourcePosition, moduleSourcePosition)
-                .add(CandidateSources, ListSet.empty + sourceIdentifier)
-                .build()
+          modulePresentat onOpt
+            .map { modulePresentat on =>
+              val moduleS cePos  on =
+                resultsSeq. ad.features.get(Cand dateS cePos  on)
+              val baseFeatureMap = FeatureMapBu lder()
+                .add(Cand dateP pel nes, L stSet.empty + p pel ne dent f er)
+                .add(Cand dateS cePos  on, moduleS cePos  on)
+                .add(Cand dateS ces, L stSet.empty + s ce dent f er)
+                .bu ld()
 
               Seq(
-                ModuleCandidateWithDetails(
-                  candidates = itemsWithDetails,
-                  presentation = Some(modulePresentation),
+                ModuleCand dateW hDeta ls(
+                  cand dates =  emsW hDeta ls,
+                  presentat on = So (modulePresentat on),
                   features = baseFeatureMap
                 ))
-            }.getOrElse(itemsWithDetails)
+            }.getOrElse( emsW hDeta ls)
       }
 
-      GroupResultsExecutorResult(candidatesWithDetails)
+      GroupResultsExecutorResult(cand datesW hDeta ls)
     }
 
-    wrapWithErrorHandling(context, identifier)(groupArrow)
+    wrapW hErrorHandl ng(context,  dent f er)(groupArrow)
   }
 }
 
-case class GroupResultsExecutorInput[Candidate <: UniversalNoun[Any]](
-  candidates: Seq[CandidateWithFeatures[Candidate]],
-  decorations: Map[UniversalNoun[Any], UniversalPresentation])
+case class GroupResultsExecutor nput[Cand date <: Un versalNoun[Any]](
+  cand dates: Seq[Cand dateW hFeatures[Cand date]],
+  decorat ons: Map[Un versalNoun[Any], Un versalPresentat on])
 
-case class GroupResultsExecutorResult(candidatesWithDetails: Seq[CandidateWithDetails])
+case class GroupResultsExecutorResult(cand datesW hDeta ls: Seq[Cand dateW hDeta ls])
     extends ExecutorResult

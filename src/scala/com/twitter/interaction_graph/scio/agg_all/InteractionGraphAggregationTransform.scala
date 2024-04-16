@@ -1,57 +1,57 @@
-package com.twitter.interaction_graph.scio.agg_all
+package com.tw ter. nteract on_graph.sc o.agg_all
 
-import collection.JavaConverters._
-import com.spotify.scio.values.SCollection
-import com.twitter.algebird.mutable.PriorityQueueMonoid
-import com.twitter.interaction_graph.scio.common.GraphUtil
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.timelines.real_graph.thriftscala.RealGraphFeatures
-import com.twitter.timelines.real_graph.thriftscala.RealGraphFeaturesTest
-import com.twitter.timelines.real_graph.v1.thriftscala.{RealGraphFeatures => RealGraphFeaturesV1}
-import com.twitter.user_session_store.thriftscala.UserSession
-import com.twitter.interaction_graph.scio.common.ConversionUtil._
+ mport collect on.JavaConverters._
+ mport com.spot fy.sc o.values.SCollect on
+ mport com.tw ter.algeb rd.mutable.Pr or yQueueMono d
+ mport com.tw ter. nteract on_graph.sc o.common.GraphUt l
+ mport com.tw ter. nteract on_graph.thr ftscala.Edge
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.t  l nes.real_graph.thr ftscala.RealGraphFeatures
+ mport com.tw ter.t  l nes.real_graph.thr ftscala.RealGraphFeaturesTest
+ mport com.tw ter.t  l nes.real_graph.v1.thr ftscala.{RealGraphFeatures => RealGraphFeaturesV1}
+ mport com.tw ter.user_sess on_store.thr ftscala.UserSess on
+ mport com.tw ter. nteract on_graph.sc o.common.Convers onUt l._
 
-object InteractionGraphAggregationTransform {
-  val ordering: Ordering[Edge] = Ordering.by(-_.weight.getOrElse(0.0))
+object  nteract onGraphAggregat onTransform {
+  val order ng: Order ng[Edge] = Order ng.by(-_.  ght.getOrElse(0.0))
 
-  // converts our Edge thrift into timelines' thrift
-  def getTopKTimelineFeatures(
-    scoredAggregatedEdge: SCollection[Edge],
-    maxDestinationIds: Int
-  ): SCollection[KeyVal[Long, UserSession]] = {
+  // converts   Edge thr ft  nto t  l nes' thr ft
+  def getTopKT  l neFeatures(
+    scoredAggregatedEdge: SCollect on[Edge],
+    maxDest nat on ds:  nt
+  ): SCollect on[KeyVal[Long, UserSess on]] = {
     scoredAggregatedEdge
-      .filter(_.weight.exists(_ > 0))
-      .keyBy(_.sourceId)
+      .f lter(_.  ght.ex sts(_ > 0))
+      .keyBy(_.s ce d)
       .groupByKey
       .map {
-        case (sourceId, edges) =>
-          val (inEdges, outEdges) = edges.partition(GraphUtil.isFollow)
-          val inTopK =
-            if (inEdges.isEmpty) Nil
+        case (s ce d, edges) =>
+          val ( nEdges, outEdges) = edges.part  on(GraphUt l. sFollow)
+          val  nTopK =
+             f ( nEdges. sEmpty) N l
             else {
-              val inTopKQueue =
-                new PriorityQueueMonoid[Edge](maxDestinationIds)(ordering)
-              inTopKQueue
-                .build(inEdges).iterator().asScala.toList.flatMap(
-                  toRealGraphEdgeFeatures(hasTimelinesRequiredFeatures))
+              val  nTopKQueue =
+                new Pr or yQueueMono d[Edge](maxDest nat on ds)(order ng)
+               nTopKQueue
+                .bu ld( nEdges). erator().asScala.toL st.flatMap(
+                  toRealGraphEdgeFeatures(hasT  l nesRequ redFeatures))
             }
           val outTopK =
-            if (outEdges.isEmpty) Nil
+             f (outEdges. sEmpty) N l
             else {
               val outTopKQueue =
-                new PriorityQueueMonoid[Edge](maxDestinationIds)(ordering)
+                new Pr or yQueueMono d[Edge](maxDest nat on ds)(order ng)
               outTopKQueue
-                .build(outEdges).iterator().asScala.toList.flatMap(
-                  toRealGraphEdgeFeatures(hasTimelinesRequiredFeatures))
+                .bu ld(outEdges). erator().asScala.toL st.flatMap(
+                  toRealGraphEdgeFeatures(hasT  l nesRequ redFeatures))
             }
           KeyVal(
-            sourceId,
-            UserSession(
-              userId = Some(sourceId),
-              realGraphFeatures = Some(RealGraphFeatures.V1(RealGraphFeaturesV1(inTopK, outTopK))),
+            s ce d,
+            UserSess on(
+              user d = So (s ce d),
+              realGraphFeatures = So (RealGraphFeatures.V1(RealGraphFeaturesV1( nTopK, outTopK))),
               realGraphFeaturesTest =
-                Some(RealGraphFeaturesTest.V1(RealGraphFeaturesV1(inTopK, outTopK)))
+                So (RealGraphFeaturesTest.V1(RealGraphFeaturesV1( nTopK, outTopK)))
             )
           )
       }

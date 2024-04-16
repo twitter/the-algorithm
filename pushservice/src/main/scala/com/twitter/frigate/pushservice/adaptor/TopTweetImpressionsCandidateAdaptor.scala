@@ -1,326 +1,326 @@
-package com.twitter.frigate.pushservice.adaptor
+package com.tw ter.fr gate.pushserv ce.adaptor
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.frigate.common.base.CandidateSourceEligible
-import com.twitter.frigate.common.base.TopTweetImpressionsCandidate
-import com.twitter.frigate.common.store.RecentTweetsQuery
-import com.twitter.frigate.common.util.SnowflakeUtils
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.params.{PushFeatureSwitchParams => FS}
-import com.twitter.frigate.pushservice.store.TweetImpressionsStore
-import com.twitter.frigate.pushservice.util.PushDeviceUtil
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.FutureOps
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Cand dateS ce
+ mport com.tw ter.fr gate.common.base.Cand dateS ceEl g ble
+ mport com.tw ter.fr gate.common.base.TopT et mpress onsCand date
+ mport com.tw ter.fr gate.common.store.RecentT etsQuery
+ mport com.tw ter.fr gate.common.ut l.SnowflakeUt ls
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.Target
+ mport com.tw ter.fr gate.pushserv ce.params.{PushFeatureSw chParams => FS}
+ mport com.tw ter.fr gate.pushserv ce.store.T et mpress onsStore
+ mport com.tw ter.fr gate.pushserv ce.ut l.PushDev ceUt l
+ mport com.tw ter.st ch.t etyp e.T etyP e.T etyP eResult
+ mport com.tw ter.storehaus.FutureOps
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
-case class TweetImpressionsCandidate(
-  tweetId: Long,
-  tweetyPieResultOpt: Option[TweetyPieResult],
-  impressionsCountOpt: Option[Long])
+case class T et mpress onsCand date(
+  t et d: Long,
+  t etyP eResultOpt: Opt on[T etyP eResult],
+   mpress onsCountOpt: Opt on[Long])
 
-case class TopTweetImpressionsCandidateAdaptor(
-  recentTweetsFromTflockStore: ReadableStore[RecentTweetsQuery, Seq[Seq[Long]]],
-  tweetyPieStore: ReadableStore[Long, TweetyPieResult],
-  tweetyPieStoreNoVF: ReadableStore[Long, TweetyPieResult],
-  tweetImpressionsStore: TweetImpressionsStore,
-  globalStats: StatsReceiver)
-    extends CandidateSource[Target, RawCandidate]
-    with CandidateSourceEligible[Target, RawCandidate] {
+case class TopT et mpress onsCand dateAdaptor(
+  recentT etsFromTflockStore: ReadableStore[RecentT etsQuery, Seq[Seq[Long]]],
+  t etyP eStore: ReadableStore[Long, T etyP eResult],
+  t etyP eStoreNoVF: ReadableStore[Long, T etyP eResult],
+  t et mpress onsStore: T et mpress onsStore,
+  globalStats: StatsRece ver)
+    extends Cand dateS ce[Target, RawCand date]
+    w h Cand dateS ceEl g ble[Target, RawCand date] {
 
-  private val stats = globalStats.scope("TopTweetImpressionsAdaptor")
-  private val tweetImpressionsCandsStat = stats.stat("top_tweet_impressions_cands_dist")
+  pr vate val stats = globalStats.scope("TopT et mpress onsAdaptor")
+  pr vate val t et mpress onsCandsStat = stats.stat("top_t et_ mpress ons_cands_d st")
 
-  private val eligibleUsersCounter = stats.counter("eligible_users")
-  private val noneligibleUsersCounter = stats.counter("noneligible_users")
-  private val meetsMinTweetsRequiredCounter = stats.counter("meets_min_tweets_required")
-  private val belowMinTweetsRequiredCounter = stats.counter("below_min_tweets_required")
-  private val aboveMaxInboundFavoritesCounter = stats.counter("above_max_inbound_favorites")
-  private val meetsImpressionsRequiredCounter = stats.counter("meets_impressions_required")
-  private val belowImpressionsRequiredCounter = stats.counter("below_impressions_required")
-  private val meetsFavoritesThresholdCounter = stats.counter("meets_favorites_threshold")
-  private val aboveFavoritesThresholdCounter = stats.counter("above_favorites_threshold")
-  private val emptyImpressionsMapCounter = stats.counter("empty_impressions_map")
+  pr vate val el g bleUsersCounter = stats.counter("el g ble_users")
+  pr vate val nonel g bleUsersCounter = stats.counter("nonel g ble_users")
+  pr vate val  etsM nT etsRequ redCounter = stats.counter(" ets_m n_t ets_requ red")
+  pr vate val belowM nT etsRequ redCounter = stats.counter("below_m n_t ets_requ red")
+  pr vate val aboveMax nboundFavor esCounter = stats.counter("above_max_ nbound_favor es")
+  pr vate val  ets mpress onsRequ redCounter = stats.counter(" ets_ mpress ons_requ red")
+  pr vate val below mpress onsRequ redCounter = stats.counter("below_ mpress ons_requ red")
+  pr vate val  etsFavor esThresholdCounter = stats.counter(" ets_favor es_threshold")
+  pr vate val aboveFavor esThresholdCounter = stats.counter("above_favor es_threshold")
+  pr vate val empty mpress onsMapCounter = stats.counter("empty_ mpress ons_map")
 
-  private val tflockResultsStat = stats.stat("tflock", "results")
-  private val emptyTflockResult = stats.counter("tflock", "empty_result")
-  private val nonEmptyTflockResult = stats.counter("tflock", "non_empty_result")
+  pr vate val tflockResultsStat = stats.stat("tflock", "results")
+  pr vate val emptyTflockResult = stats.counter("tflock", "empty_result")
+  pr vate val nonEmptyTflockResult = stats.counter("tflock", "non_empty_result")
 
-  private val originalTweetsStat = stats.stat("tweets", "original_tweets")
-  private val retweetsStat = stats.stat("tweets", "retweets")
-  private val allRetweetsOnlyCounter = stats.counter("tweets", "all_retweets_only")
-  private val allOriginalTweetsOnlyCounter = stats.counter("tweets", "all_original_tweets_only")
+  pr vate val or g nalT etsStat = stats.stat("t ets", "or g nal_t ets")
+  pr vate val ret etsStat = stats.stat("t ets", "ret ets")
+  pr vate val allRet etsOnlyCounter = stats.counter("t ets", "all_ret ets_only")
+  pr vate val allOr g nalT etsOnlyCounter = stats.counter("t ets", "all_or g nal_t ets_only")
 
-  private val emptyTweetypieMap = stats.counter("", "empty_tweetypie_map")
-  private val emptyTweetyPieResult = stats.stat("", "empty_tweetypie_result")
-  private val allEmptyTweetypieResults = stats.counter("", "all_empty_tweetypie_results")
+  pr vate val emptyT etyp eMap = stats.counter("", "empty_t etyp e_map")
+  pr vate val emptyT etyP eResult = stats.stat("", "empty_t etyp e_result")
+  pr vate val allEmptyT etyp eResults = stats.counter("", "all_empty_t etyp e_results")
 
-  private val eligibleUsersAfterImpressionsFilter =
-    stats.counter("eligible_users_after_impressions_filter")
-  private val eligibleUsersAfterFavoritesFilter =
-    stats.counter("eligible_users_after_favorites_filter")
-  private val eligibleUsersWithEligibleTweets =
-    stats.counter("eligible_users_with_eligible_tweets")
+  pr vate val el g bleUsersAfter mpress onsF lter =
+    stats.counter("el g ble_users_after_ mpress ons_f lter")
+  pr vate val el g bleUsersAfterFavor esF lter =
+    stats.counter("el g ble_users_after_favor es_f lter")
+  pr vate val el g bleUsersW hEl g bleT ets =
+    stats.counter("el g ble_users_w h_el g ble_t ets")
 
-  private val eligibleTweetCands = stats.stat("eligible_tweet_cands")
-  private val getCandsRequestCounter =
-    stats.counter("top_tweet_impressions_get_request")
+  pr vate val el g bleT etCands = stats.stat("el g ble_t et_cands")
+  pr vate val getCandsRequestCounter =
+    stats.counter("top_t et_ mpress ons_get_request")
 
-  override val name: String = this.getClass.getSimpleName
+  overr de val na : Str ng = t .getClass.getS mpleNa 
 
-  override def get(inputTarget: Target): Future[Option[Seq[RawCandidate]]] = {
-    getCandsRequestCounter.incr()
-    val eligibleCandidatesFut = getTweetImpressionsCandidates(inputTarget)
-    eligibleCandidatesFut.map { eligibleCandidates =>
-      if (eligibleCandidates.nonEmpty) {
-        eligibleUsersWithEligibleTweets.incr()
-        eligibleTweetCands.add(eligibleCandidates.size)
-        val candidate = getMostImpressionsTweet(eligibleCandidates)
-        Some(
+  overr de def get( nputTarget: Target): Future[Opt on[Seq[RawCand date]]] = {
+    getCandsRequestCounter. ncr()
+    val el g bleCand datesFut = getT et mpress onsCand dates( nputTarget)
+    el g bleCand datesFut.map { el g bleCand dates =>
+       f (el g bleCand dates.nonEmpty) {
+        el g bleUsersW hEl g bleT ets. ncr()
+        el g bleT etCands.add(el g bleCand dates.s ze)
+        val cand date = getMost mpress onsT et(el g bleCand dates)
+        So (
           Seq(
-            generateTopTweetImpressionsCandidate(
-              inputTarget,
-              candidate.tweetId,
-              candidate.tweetyPieResultOpt,
-              candidate.impressionsCountOpt.getOrElse(0L))))
+            generateTopT et mpress onsCand date(
+               nputTarget,
+              cand date.t et d,
+              cand date.t etyP eResultOpt,
+              cand date. mpress onsCountOpt.getOrElse(0L))))
       } else None
     }
   }
 
-  private def getTweetImpressionsCandidates(
-    inputTarget: Target
-  ): Future[Seq[TweetImpressionsCandidate]] = {
-    val originalTweets = getRecentOriginalTweetsForUser(inputTarget)
-    originalTweets.flatMap { tweetyPieResultsMap =>
-      val numDaysSearchForOriginalTweets =
-        inputTarget.params(FS.TopTweetImpressionsOriginalTweetsNumDaysSearch)
-      val moreRecentTweetIds =
-        getMoreRecentTweetIds(tweetyPieResultsMap.keySet.toSeq, numDaysSearchForOriginalTweets)
-      val isEligible = isEligibleUser(inputTarget, tweetyPieResultsMap, moreRecentTweetIds)
-      if (isEligible) filterByEligibility(inputTarget, tweetyPieResultsMap, moreRecentTweetIds)
-      else Future.Nil
+  pr vate def getT et mpress onsCand dates(
+     nputTarget: Target
+  ): Future[Seq[T et mpress onsCand date]] = {
+    val or g nalT ets = getRecentOr g nalT etsForUser( nputTarget)
+    or g nalT ets.flatMap { t etyP eResultsMap =>
+      val numDaysSearchForOr g nalT ets =
+         nputTarget.params(FS.TopT et mpress onsOr g nalT etsNumDaysSearch)
+      val moreRecentT et ds =
+        getMoreRecentT et ds(t etyP eResultsMap.keySet.toSeq, numDaysSearchForOr g nalT ets)
+      val  sEl g ble =  sEl g bleUser( nputTarget, t etyP eResultsMap, moreRecentT et ds)
+       f ( sEl g ble) f lterByEl g b l y( nputTarget, t etyP eResultsMap, moreRecentT et ds)
+      else Future.N l
     }
   }
 
-  private def getRecentOriginalTweetsForUser(
+  pr vate def getRecentOr g nalT etsForUser(
     targetUser: Target
-  ): Future[Map[Long, TweetyPieResult]] = {
-    val tweetyPieResultsMapFut = getTflockStoreResults(targetUser).flatMap { recentTweetIds =>
-      FutureOps.mapCollect((targetUser.params(FS.EnableVFInTweetypie) match {
-        case true => tweetyPieStore
-        case false => tweetyPieStoreNoVF
-      }).multiGet(recentTweetIds.toSet))
+  ): Future[Map[Long, T etyP eResult]] = {
+    val t etyP eResultsMapFut = getTflockStoreResults(targetUser).flatMap { recentT et ds =>
+      FutureOps.mapCollect((targetUser.params(FS.EnableVF nT etyp e) match {
+        case true => t etyP eStore
+        case false => t etyP eStoreNoVF
+      }).mult Get(recentT et ds.toSet))
     }
-    tweetyPieResultsMapFut.map { tweetyPieResultsMap =>
-      if (tweetyPieResultsMap.isEmpty) {
-        emptyTweetypieMap.incr()
+    t etyP eResultsMapFut.map { t etyP eResultsMap =>
+       f (t etyP eResultsMap. sEmpty) {
+        emptyT etyp eMap. ncr()
         Map.empty
-      } else removeRetweets(tweetyPieResultsMap)
+      } else removeRet ets(t etyP eResultsMap)
     }
   }
 
-  private def getTflockStoreResults(targetUser: Target): Future[Seq[Long]] = {
-    val maxResults = targetUser.params(FS.TopTweetImpressionsRecentTweetsByAuthorStoreMaxResults)
-    val maxAge = targetUser.params(FS.TopTweetImpressionsTotalFavoritesLimitNumDaysSearch)
-    val recentTweetsQuery =
-      RecentTweetsQuery(
-        userIds = Seq(targetUser.targetId),
+  pr vate def getTflockStoreResults(targetUser: Target): Future[Seq[Long]] = {
+    val maxResults = targetUser.params(FS.TopT et mpress onsRecentT etsByAuthorStoreMaxResults)
+    val maxAge = targetUser.params(FS.TopT et mpress onsTotalFavor esL m NumDaysSearch)
+    val recentT etsQuery =
+      RecentT etsQuery(
+        user ds = Seq(targetUser.target d),
         maxResults = maxResults,
         maxAge = maxAge.days
       )
-    recentTweetsFromTflockStore
-      .get(recentTweetsQuery).map {
-        case Some(tweetIdsAll) =>
-          val tweetIds = tweetIdsAll.headOption.getOrElse(Seq.empty)
-          val numTweets = tweetIds.size
-          if (numTweets > 0) {
-            tflockResultsStat.add(numTweets)
-            nonEmptyTflockResult.incr()
-          } else emptyTflockResult.incr()
-          tweetIds
-        case _ => Nil
+    recentT etsFromTflockStore
+      .get(recentT etsQuery).map {
+        case So (t et dsAll) =>
+          val t et ds = t et dsAll. adOpt on.getOrElse(Seq.empty)
+          val numT ets = t et ds.s ze
+           f (numT ets > 0) {
+            tflockResultsStat.add(numT ets)
+            nonEmptyTflockResult. ncr()
+          } else emptyTflockResult. ncr()
+          t et ds
+        case _ => N l
       }
   }
 
-  private def removeRetweets(
-    tweetyPieResultsMap: Map[Long, Option[TweetyPieResult]]
-  ): Map[Long, TweetyPieResult] = {
-    val nonEmptyTweetyPieResults: Map[Long, TweetyPieResult] = tweetyPieResultsMap.collect {
-      case (key, Some(value)) => (key, value)
+  pr vate def removeRet ets(
+    t etyP eResultsMap: Map[Long, Opt on[T etyP eResult]]
+  ): Map[Long, T etyP eResult] = {
+    val nonEmptyT etyP eResults: Map[Long, T etyP eResult] = t etyP eResultsMap.collect {
+      case (key, So (value)) => (key, value)
     }
-    emptyTweetyPieResult.add(tweetyPieResultsMap.size - nonEmptyTweetyPieResults.size)
+    emptyT etyP eResult.add(t etyP eResultsMap.s ze - nonEmptyT etyP eResults.s ze)
 
-    if (nonEmptyTweetyPieResults.nonEmpty) {
-      val originalTweets = nonEmptyTweetyPieResults.filter {
-        case (_, tweetyPieResult) =>
-          tweetyPieResult.sourceTweet.isEmpty
+     f (nonEmptyT etyP eResults.nonEmpty) {
+      val or g nalT ets = nonEmptyT etyP eResults.f lter {
+        case (_, t etyP eResult) =>
+          t etyP eResult.s ceT et. sEmpty
       }
-      val numOriginalTweets = originalTweets.size
-      val numRetweets = nonEmptyTweetyPieResults.size - originalTweets.size
-      originalTweetsStat.add(numOriginalTweets)
-      retweetsStat.add(numRetweets)
-      if (numRetweets == 0) allOriginalTweetsOnlyCounter.incr()
-      if (numOriginalTweets == 0) allRetweetsOnlyCounter.incr()
-      originalTweets
+      val numOr g nalT ets = or g nalT ets.s ze
+      val numRet ets = nonEmptyT etyP eResults.s ze - or g nalT ets.s ze
+      or g nalT etsStat.add(numOr g nalT ets)
+      ret etsStat.add(numRet ets)
+       f (numRet ets == 0) allOr g nalT etsOnlyCounter. ncr()
+       f (numOr g nalT ets == 0) allRet etsOnlyCounter. ncr()
+      or g nalT ets
     } else {
-      allEmptyTweetypieResults.incr()
+      allEmptyT etyp eResults. ncr()
       Map.empty
     }
   }
 
-  private def getMoreRecentTweetIds(
-    tweetIds: Seq[Long],
-    numDays: Int
+  pr vate def getMoreRecentT et ds(
+    t et ds: Seq[Long],
+    numDays:  nt
   ): Seq[Long] = {
-    tweetIds.filter { tweetId =>
-      SnowflakeUtils.isRecent(tweetId, numDays.days)
+    t et ds.f lter { t et d =>
+      SnowflakeUt ls. sRecent(t et d, numDays.days)
     }
   }
 
-  private def isEligibleUser(
-    inputTarget: Target,
-    tweetyPieResults: Map[Long, TweetyPieResult],
-    recentTweetIds: Seq[Long]
+  pr vate def  sEl g bleUser(
+     nputTarget: Target,
+    t etyP eResults: Map[Long, T etyP eResult],
+    recentT et ds: Seq[Long]
   ): Boolean = {
-    val minNumTweets = inputTarget.params(FS.TopTweetImpressionsMinNumOriginalTweets)
-    lazy val totalFavoritesLimit =
-      inputTarget.params(FS.TopTweetImpressionsTotalInboundFavoritesLimit)
-    if (recentTweetIds.size >= minNumTweets) {
-      meetsMinTweetsRequiredCounter.incr()
-      val isUnderLimit = isUnderTotalInboundFavoritesLimit(tweetyPieResults, totalFavoritesLimit)
-      if (isUnderLimit) eligibleUsersCounter.incr()
+    val m nNumT ets =  nputTarget.params(FS.TopT et mpress onsM nNumOr g nalT ets)
+    lazy val totalFavor esL m  =
+       nputTarget.params(FS.TopT et mpress onsTotal nboundFavor esL m )
+     f (recentT et ds.s ze >= m nNumT ets) {
+       etsM nT etsRequ redCounter. ncr()
+      val  sUnderL m  =  sUnderTotal nboundFavor esL m (t etyP eResults, totalFavor esL m )
+       f ( sUnderL m ) el g bleUsersCounter. ncr()
       else {
-        aboveMaxInboundFavoritesCounter.incr()
-        noneligibleUsersCounter.incr()
+        aboveMax nboundFavor esCounter. ncr()
+        nonel g bleUsersCounter. ncr()
       }
-      isUnderLimit
+       sUnderL m 
     } else {
-      belowMinTweetsRequiredCounter.incr()
-      noneligibleUsersCounter.incr()
+      belowM nT etsRequ redCounter. ncr()
+      nonel g bleUsersCounter. ncr()
       false
     }
   }
 
-  private def getFavoriteCounts(
-    tweetyPieResult: TweetyPieResult
-  ): Long = tweetyPieResult.tweet.counts.flatMap(_.favoriteCount).getOrElse(0L)
+  pr vate def getFavor eCounts(
+    t etyP eResult: T etyP eResult
+  ): Long = t etyP eResult.t et.counts.flatMap(_.favor eCount).getOrElse(0L)
 
-  private def isUnderTotalInboundFavoritesLimit(
-    tweetyPieResults: Map[Long, TweetyPieResult],
-    totalFavoritesLimit: Long
+  pr vate def  sUnderTotal nboundFavor esL m (
+    t etyP eResults: Map[Long, T etyP eResult],
+    totalFavor esL m : Long
   ): Boolean = {
-    val favoritesIterator = tweetyPieResults.valuesIterator.map(getFavoriteCounts)
-    val totalInboundFavorites = favoritesIterator.sum
-    totalInboundFavorites <= totalFavoritesLimit
+    val favor es erator = t etyP eResults.values erator.map(getFavor eCounts)
+    val total nboundFavor es = favor es erator.sum
+    total nboundFavor es <= totalFavor esL m 
   }
 
-  def filterByEligibility(
-    inputTarget: Target,
-    tweetyPieResults: Map[Long, TweetyPieResult],
-    tweetIds: Seq[Long]
-  ): Future[Seq[TweetImpressionsCandidate]] = {
-    lazy val minNumImpressions: Long = inputTarget.params(FS.TopTweetImpressionsMinRequired)
-    lazy val maxNumLikes: Long = inputTarget.params(FS.TopTweetImpressionsMaxFavoritesPerTweet)
+  def f lterByEl g b l y(
+     nputTarget: Target,
+    t etyP eResults: Map[Long, T etyP eResult],
+    t et ds: Seq[Long]
+  ): Future[Seq[T et mpress onsCand date]] = {
+    lazy val m nNum mpress ons: Long =  nputTarget.params(FS.TopT et mpress onsM nRequ red)
+    lazy val maxNumL kes: Long =  nputTarget.params(FS.TopT et mpress onsMaxFavor esPerT et)
     for {
-      filteredImpressionsMap <- getFilteredImpressionsMap(tweetIds, minNumImpressions)
-      tweetIdsFilteredByFavorites <-
-        getTweetIdsFilteredByFavorites(filteredImpressionsMap.keySet, tweetyPieResults, maxNumLikes)
-    } yield {
-      if (filteredImpressionsMap.nonEmpty) eligibleUsersAfterImpressionsFilter.incr()
-      if (tweetIdsFilteredByFavorites.nonEmpty) eligibleUsersAfterFavoritesFilter.incr()
+      f ltered mpress onsMap <- getF ltered mpress onsMap(t et ds, m nNum mpress ons)
+      t et dsF lteredByFavor es <-
+        getT et dsF lteredByFavor es(f ltered mpress onsMap.keySet, t etyP eResults, maxNumL kes)
+    } y eld {
+       f (f ltered mpress onsMap.nonEmpty) el g bleUsersAfter mpress onsF lter. ncr()
+       f (t et dsF lteredByFavor es.nonEmpty) el g bleUsersAfterFavor esF lter. ncr()
 
-      val candidates = tweetIdsFilteredByFavorites.map { tweetId =>
-        TweetImpressionsCandidate(
-          tweetId,
-          tweetyPieResults.get(tweetId),
-          filteredImpressionsMap.get(tweetId))
+      val cand dates = t et dsF lteredByFavor es.map { t et d =>
+        T et mpress onsCand date(
+          t et d,
+          t etyP eResults.get(t et d),
+          f ltered mpress onsMap.get(t et d))
       }
-      tweetImpressionsCandsStat.add(candidates.length)
-      candidates
+      t et mpress onsCandsStat.add(cand dates.length)
+      cand dates
     }
   }
 
-  private def getFilteredImpressionsMap(
-    tweetIds: Seq[Long],
-    minNumImpressions: Long
+  pr vate def getF ltered mpress onsMap(
+    t et ds: Seq[Long],
+    m nNum mpress ons: Long
   ): Future[Map[Long, Long]] = {
-    getImpressionsCounts(tweetIds).map { impressionsMap =>
-      if (impressionsMap.isEmpty) emptyImpressionsMapCounter.incr()
-      impressionsMap.filter {
-        case (_, numImpressions) =>
-          val isValid = numImpressions >= minNumImpressions
-          if (isValid) {
-            meetsImpressionsRequiredCounter.incr()
+    get mpress onsCounts(t et ds).map {  mpress onsMap =>
+       f ( mpress onsMap. sEmpty) empty mpress onsMapCounter. ncr()
+       mpress onsMap.f lter {
+        case (_, num mpress ons) =>
+          val  sVal d = num mpress ons >= m nNum mpress ons
+           f ( sVal d) {
+             ets mpress onsRequ redCounter. ncr()
           } else {
-            belowImpressionsRequiredCounter.incr()
+            below mpress onsRequ redCounter. ncr()
           }
-          isValid
+           sVal d
       }
     }
   }
 
-  private def getTweetIdsFilteredByFavorites(
-    filteredTweetIds: Set[Long],
-    tweetyPieResults: Map[Long, TweetyPieResult],
-    maxNumLikes: Long
+  pr vate def getT et dsF lteredByFavor es(
+    f lteredT et ds: Set[Long],
+    t etyP eResults: Map[Long, T etyP eResult],
+    maxNumL kes: Long
   ): Future[Seq[Long]] = {
-    val filteredByFavoritesTweetIds = filteredTweetIds.filter { tweetId =>
-      val tweetyPieResultOpt = tweetyPieResults.get(tweetId)
-      val isValid = tweetyPieResultOpt.exists { tweetyPieResult =>
-        getFavoriteCounts(tweetyPieResult) <= maxNumLikes
+    val f lteredByFavor esT et ds = f lteredT et ds.f lter { t et d =>
+      val t etyP eResultOpt = t etyP eResults.get(t et d)
+      val  sVal d = t etyP eResultOpt.ex sts { t etyP eResult =>
+        getFavor eCounts(t etyP eResult) <= maxNumL kes
       }
-      if (isValid) meetsFavoritesThresholdCounter.incr()
-      else aboveFavoritesThresholdCounter.incr()
-      isValid
+       f ( sVal d)  etsFavor esThresholdCounter. ncr()
+      else aboveFavor esThresholdCounter. ncr()
+       sVal d
     }
-    Future(filteredByFavoritesTweetIds.toSeq)
+    Future(f lteredByFavor esT et ds.toSeq)
   }
 
-  private def getMostImpressionsTweet(
-    filteredResults: Seq[TweetImpressionsCandidate]
-  ): TweetImpressionsCandidate = {
-    val maxImpressions: Long = filteredResults.map {
-      _.impressionsCountOpt.getOrElse(0L)
+  pr vate def getMost mpress onsT et(
+    f lteredResults: Seq[T et mpress onsCand date]
+  ): T et mpress onsCand date = {
+    val max mpress ons: Long = f lteredResults.map {
+      _. mpress onsCountOpt.getOrElse(0L)
     }.max
 
-    val mostImpressionsCandidates: Seq[TweetImpressionsCandidate] =
-      filteredResults.filter(_.impressionsCountOpt.getOrElse(0L) == maxImpressions)
+    val most mpress onsCand dates: Seq[T et mpress onsCand date] =
+      f lteredResults.f lter(_. mpress onsCountOpt.getOrElse(0L) == max mpress ons)
 
-    mostImpressionsCandidates.maxBy(_.tweetId)
+    most mpress onsCand dates.maxBy(_.t et d)
   }
 
-  private def getImpressionsCounts(
-    tweetIds: Seq[Long]
+  pr vate def get mpress onsCounts(
+    t et ds: Seq[Long]
   ): Future[Map[Long, Long]] = {
-    val impressionCountMap = tweetIds.map { tweetId =>
-      tweetId -> tweetImpressionsStore
-        .getCounts(tweetId).map(_.getOrElse(0L))
+    val  mpress onCountMap = t et ds.map { t et d =>
+      t et d -> t et mpress onsStore
+        .getCounts(t et d).map(_.getOrElse(0L))
     }.toMap
-    Future.collect(impressionCountMap)
+    Future.collect( mpress onCountMap)
   }
 
-  private def generateTopTweetImpressionsCandidate(
-    inputTarget: Target,
-    _tweetId: Long,
-    result: Option[TweetyPieResult],
-    _impressionsCount: Long
-  ): RawCandidate = {
-    new RawCandidate with TopTweetImpressionsCandidate {
-      override val target: Target = inputTarget
-      override val tweetId: Long = _tweetId
-      override val tweetyPieResult: Option[TweetyPieResult] = result
-      override val impressionsCount: Long = _impressionsCount
+  pr vate def generateTopT et mpress onsCand date(
+     nputTarget: Target,
+    _t et d: Long,
+    result: Opt on[T etyP eResult],
+    _ mpress onsCount: Long
+  ): RawCand date = {
+    new RawCand date w h TopT et mpress onsCand date {
+      overr de val target: Target =  nputTarget
+      overr de val t et d: Long = _t et d
+      overr de val t etyP eResult: Opt on[T etyP eResult] = result
+      overr de val  mpress onsCount: Long = _ mpress onsCount
     }
   }
 
-  override def isCandidateSourceAvailable(target: Target): Future[Boolean] = {
-    val enabledTopTweetImpressionsNotification =
-      target.params(FS.EnableTopTweetImpressionsNotification)
+  overr de def  sCand dateS ceAva lable(target: Target): Future[Boolean] = {
+    val enabledTopT et mpress onsNot f cat on =
+      target.params(FS.EnableTopT et mpress onsNot f cat on)
 
-    PushDeviceUtil
-      .isRecommendationsEligible(target).map(_ && enabledTopTweetImpressionsNotification)
+    PushDev ceUt l
+      . sRecom ndat onsEl g ble(target).map(_ && enabledTopT et mpress onsNot f cat on)
   }
 }

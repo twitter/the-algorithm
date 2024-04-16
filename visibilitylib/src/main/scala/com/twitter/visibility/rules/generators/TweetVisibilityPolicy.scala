@@ -1,74 +1,74 @@
-package com.twitter.visibility.rules.generators
+package com.tw ter.v s b l y.rules.generators
 
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.SafetyLevelGroup
-import com.twitter.visibility.rules.Action
-import com.twitter.visibility.rules.FreedomOfSpeechNotReachActions.FreedomOfSpeechNotReachActionBuilder
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.models.SafetyLevelGroup
+ mport com.tw ter.v s b l y.rules.Act on
+ mport com.tw ter.v s b l y.rules.FreedomOfSpeechNotReachAct ons.FreedomOfSpeechNotReachAct onBu lder
 
-class TweetVisibilityPolicy(
-  rules: Map[SafetyLevel, FreedomOfSpeechNotReachActionBuilder[_ <: Action]] = Map()) {
-  def getRules(): Map[SafetyLevel, FreedomOfSpeechNotReachActionBuilder[_ <: Action]] = rules
+class T etV s b l yPol cy(
+  rules: Map[SafetyLevel, FreedomOfSpeechNotReachAct onBu lder[_ <: Act on]] = Map()) {
+  def getRules(): Map[SafetyLevel, FreedomOfSpeechNotReachAct onBu lder[_ <: Act on]] = rules
 }
 
-object TweetVisibilityPolicy {
-  private[generators] val allApplicableSurfaces =
-    SafetyLevel.List.toSet --
-      SafetyLevelGroup.Special.levels --
+object T etV s b l yPol cy {
+  pr vate[generators] val allAppl cableSurfaces =
+    SafetyLevel.L st.toSet --
+      SafetyLevelGroup.Spec al.levels --
       Set(
-        SafetyLevel.SearchPeopleTypeahead,
-        SafetyLevel.UserProfileHeader,
-        SafetyLevel.UserScopedTimeline,
-        SafetyLevel.SpacesParticipants,
+        SafetyLevel.SearchPeopleTypea ad,
+        SafetyLevel.UserProf le ader,
+        SafetyLevel.UserScopedT  l ne,
+        SafetyLevel.SpacesPart c pants,
         SafetyLevel.GryphonDecksAndColumns,
-        SafetyLevel.UserSettings,
-        SafetyLevel.BlockMuteUsersTimeline,
-        SafetyLevel.AdsBusinessSettings,
-        SafetyLevel.TrustedFriendsUserList,
-        SafetyLevel.UserSelfViewOnly,
-        SafetyLevel.ShoppingManagerSpyMode,
+        SafetyLevel.UserSett ngs,
+        SafetyLevel.BlockMuteUsersT  l ne,
+        SafetyLevel.AdsBus nessSett ngs,
+        SafetyLevel.TrustedFr endsUserL st,
+        SafetyLevel.UserSelfV ewOnly,
+        SafetyLevel.Shopp ngManagerSpyMode,
       )
 
-  def builder(): TweetVisibilityPolicyBuilder = TweetVisibilityPolicyBuilder()
+  def bu lder(): T etV s b l yPol cyBu lder = T etV s b l yPol cyBu lder()
 }
 
-case class TweetVisibilityPolicyBuilder(
-  rules: Map[SafetyLevel, FreedomOfSpeechNotReachActionBuilder[_ <: Action]] = Map()) {
+case class T etV s b l yPol cyBu lder(
+  rules: Map[SafetyLevel, FreedomOfSpeechNotReachAct onBu lder[_ <: Act on]] = Map()) {
 
-  def addGlobalRule[T <: Action](
-    actionBuilder: FreedomOfSpeechNotReachActionBuilder[T]
-  ): TweetVisibilityPolicyBuilder =
+  def addGlobalRule[T <: Act on](
+    act onBu lder: FreedomOfSpeechNotReachAct onBu lder[T]
+  ): T etV s b l yPol cyBu lder =
     copy(rules =
-      rules ++ TweetVisibilityPolicy.allApplicableSurfaces.map(_ -> actionBuilder))
+      rules ++ T etV s b l yPol cy.allAppl cableSurfaces.map(_ -> act onBu lder))
 
-  def addSafetyLevelRule[T <: Action](
+  def addSafetyLevelRule[T <: Act on](
     safetyLevel: SafetyLevel,
-    actionBuilder: FreedomOfSpeechNotReachActionBuilder[T]
-  ): TweetVisibilityPolicyBuilder = {
-    if (TweetVisibilityPolicy.allApplicableSurfaces.contains(safetyLevel)) {
-      copy(rules = rules ++ Map(safetyLevel -> actionBuilder))
+    act onBu lder: FreedomOfSpeechNotReachAct onBu lder[T]
+  ): T etV s b l yPol cyBu lder = {
+     f (T etV s b l yPol cy.allAppl cableSurfaces.conta ns(safetyLevel)) {
+      copy(rules = rules ++ Map(safetyLevel -> act onBu lder))
     } else {
-      this
+      t 
     }
   }
 
-  def addSafetyLevelGroupRule[T <: Action](
+  def addSafetyLevelGroupRule[T <: Act on](
     group: SafetyLevelGroup,
-    actionBuilder: FreedomOfSpeechNotReachActionBuilder[T]
-  ): TweetVisibilityPolicyBuilder =
+    act onBu lder: FreedomOfSpeechNotReachAct onBu lder[T]
+  ): T etV s b l yPol cyBu lder =
     copy(rules =
       rules ++ group.levels.collect {
-        case safetyLevel if TweetVisibilityPolicy.allApplicableSurfaces.contains(safetyLevel) =>
-          safetyLevel -> actionBuilder
+        case safetyLevel  f T etV s b l yPol cy.allAppl cableSurfaces.conta ns(safetyLevel) =>
+          safetyLevel -> act onBu lder
       })
 
-  def addRuleForAllRemainingSafetyLevels[T <: Action](
-    actionBuilder: FreedomOfSpeechNotReachActionBuilder[T]
-  ): TweetVisibilityPolicyBuilder =
+  def addRuleForAllRema n ngSafetyLevels[T <: Act on](
+    act onBu lder: FreedomOfSpeechNotReachAct onBu lder[T]
+  ): T etV s b l yPol cyBu lder =
     copy(rules =
-      rules ++ (TweetVisibilityPolicy.allApplicableSurfaces -- rules.keySet)
-        .map(_ -> actionBuilder).toMap)
+      rules ++ (T etV s b l yPol cy.allAppl cableSurfaces -- rules.keySet)
+        .map(_ -> act onBu lder).toMap)
 
-  def build: TweetVisibilityPolicy = {
-    new TweetVisibilityPolicy(rules)
+  def bu ld: T etV s b l yPol cy = {
+    new T etV s b l yPol cy(rules)
   }
 }

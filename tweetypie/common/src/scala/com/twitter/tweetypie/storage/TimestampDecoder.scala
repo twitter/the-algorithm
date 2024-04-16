@@ -1,92 +1,92 @@
-package com.twitter.tweetypie.storage
+package com.tw ter.t etyp e.storage
 
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Time
-import com.twitter.util.Try
-import java.util.Arrays
-import scala.util.control.NoStackTrace
-import scala.util.control.NonFatal
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.ut l.Try
+ mport java.ut l.Arrays
+ mport scala.ut l.control.NoStackTrace
+ mport scala.ut l.control.NonFatal
 
-sealed abstract class TimestampType(val keyName: String)
-object TimestampType {
-  object Default extends TimestampType("timestamp")
-  object SoftDelete extends TimestampType("softdelete_timestamp")
+sealed abstract class T  stampType(val keyNa : Str ng)
+object T  stampType {
+  object Default extends T  stampType("t  stamp")
+  object SoftDelete extends T  stampType("softdelete_t  stamp")
 }
 
 /**
- * TimestampDecoder gets the timestamps associated with state records. The Manhattan timestamp is
- * used for legacy records (with value "1"), otherwise the timestamp is extracted from the
+ * T  stampDecoder gets t  t  stamps assoc ated w h state records. T  Manhattan t  stamp  s
+ * used for legacy records (w h value "1"), ot rw se t  t  stamp  s extracted from t 
  * JSON value.
  *
- * See "Metadata" in README.md for further information about state records.
+ * See " tadata"  n README.md for furt r  nformat on about state records.
  */
-object TimestampDecoder {
-  case class UnparsableJson(msg: String, t: Throwable) extends Exception(msg, t) with NoStackTrace
-  case class MissingJsonTimestamp(msg: String) extends Exception(msg) with NoStackTrace
-  case class UnexpectedJsonValue(msg: String) extends Exception(msg) with NoStackTrace
-  case class MissingManhattanTimestamp(msg: String) extends Exception(msg) with NoStackTrace
+object T  stampDecoder {
+  case class UnparsableJson(msg: Str ng, t: Throwable) extends Except on(msg, t) w h NoStackTrace
+  case class M ss ngJsonT  stamp(msg: Str ng) extends Except on(msg) w h NoStackTrace
+  case class UnexpectedJsonValue(msg: Str ng) extends Except on(msg) w h NoStackTrace
+  case class M ss ngManhattanT  stamp(msg: Str ng) extends Except on(msg) w h NoStackTrace
 
-  private[storage] val LegacyValue: Array[Byte] = Array('1')
+  pr vate[storage] val LegacyValue: Array[Byte] = Array('1')
 
   /**
-   * The first backfill of tweet data to Manhattan supplied timestamps in milliseconds where
-   * nanoseconds were expected. The result is that some values have an incorrect Manhattan
-   * timestamp. For these bad timestamps, time.inNanoseconds is actually milliseconds.
+   * T  f rst backf ll of t et data to Manhattan suppl ed t  stamps  n m ll seconds w re
+   * nanoseconds  re expected. T  result  s that so  values have an  ncorrect Manhattan
+   * t  stamp. For t se bad t  stamps, t  . nNanoseconds  s actually m ll seconds.
    *
-   * For example, the deletion record for tweet 22225781 has Manhattan timestamp 1970-01-01 00:23:24 +0000.
-   * Contrast with the deletion record for tweet 435404491999813632 with Manhattan timestamp 2014-11-09 14:24:04 +0000
+   * For example, t  delet on record for t et 22225781 has Manhattan t  stamp 1970-01-01 00:23:24 +0000.
+   * Contrast w h t  delet on record for t et 435404491999813632 w h Manhattan t  stamp 2014-11-09 14:24:04 +0000
    *
-   * This threshold value comes from the last time in milliseconds that was interpreted
-   * as nanoseconds, e.g. Time.fromNanoseconds(1438387200000L) == 1970-01-01 00:23:58 +0000
+   * T  threshold value co s from t  last t    n m ll seconds that was  nterpreted
+   * as nanoseconds, e.g. T  .fromNanoseconds(1438387200000L) == 1970-01-01 00:23:58 +0000
    */
-  private[storage] val BadTimestampThreshold = Time.at("1970-01-01 00:23:58 +0000")
+  pr vate[storage] val BadT  stampThreshold = T  .at("1970-01-01 00:23:58 +0000")
 
-  def decode(record: TweetManhattanRecord, tsType: TimestampType): Try[Long] =
+  def decode(record: T etManhattanRecord, tsType: T  stampType): Try[Long] =
     decode(record.value, tsType)
 
-  def decode(mhValue: TweetManhattanValue, tsType: TimestampType): Try[Long] = {
+  def decode(mhValue: T etManhattanValue, tsType: T  stampType): Try[Long] = {
     val value = ByteArrayCodec.fromByteBuffer(mhValue.contents)
-    if (isLegacyRecord(value)) {
-      nativeManhattanTimestamp(mhValue)
+     f ( sLegacyRecord(value)) {
+      nat veManhattanT  stamp(mhValue)
     } else {
-      jsonTimestamp(value, tsType)
+      jsonT  stamp(value, tsType)
     }
   }
 
-  private def isLegacyRecord(value: Array[Byte]) = Arrays.equals(value, LegacyValue)
+  pr vate def  sLegacyRecord(value: Array[Byte]) = Arrays.equals(value, LegacyValue)
 
-  private def nativeManhattanTimestamp(mhValue: TweetManhattanValue): Try[Long] =
-    mhValue.timestamp match {
-      case Some(ts) => Return(correctedTimestamp(ts))
+  pr vate def nat veManhattanT  stamp(mhValue: T etManhattanValue): Try[Long] =
+    mhValue.t  stamp match {
+      case So (ts) => Return(correctedT  stamp(ts))
       case None =>
-        Throw(MissingManhattanTimestamp(s"Manhattan timestamp missing in value $mhValue"))
+        Throw(M ss ngManhattanT  stamp(s"Manhattan t  stamp m ss ng  n value $mhValue"))
     }
 
-  private def jsonTimestamp(value: Array[Byte], tsType: TimestampType): Try[Long] =
+  pr vate def jsonT  stamp(value: Array[Byte], tsType: T  stampType): Try[Long] =
     Try { Json.decode(value) }
-      .rescue { case NonFatal(e) => Throw(UnparsableJson(e.getMessage, e)) }
+      .rescue { case NonFatal(e) => Throw(UnparsableJson(e.get ssage, e)) }
       .flatMap { m =>
-        m.get(tsType.keyName) match {
-          case Some(v) =>
+        m.get(tsType.keyNa ) match {
+          case So (v) =>
             v match {
               case l: Long => Return(l)
-              case i: Integer => Return(i.toLong)
+              case  :  nteger => Return( .toLong)
               case _ =>
                 Throw(
-                  UnexpectedJsonValue(s"Unexpected value for ${tsType.keyName} in record data $m")
+                  UnexpectedJsonValue(s"Unexpected value for ${tsType.keyNa }  n record data $m")
                 )
             }
           case None =>
-            Throw(MissingJsonTimestamp(s"Missing key ${tsType.keyName} in record data $m"))
+            Throw(M ss ngJsonT  stamp(s"M ss ng key ${tsType.keyNa }  n record data $m"))
         }
       }
 
-  def correctedTime(t: Time): Time =
-    if (t < BadTimestampThreshold) Time.fromMilliseconds(t.inNanoseconds) else t
+  def correctedT  (t: T  ): T   =
+     f (t < BadT  stampThreshold) T  .fromM ll seconds(t. nNanoseconds) else t
 
-  def correctedTime(t: Long): Time = correctedTime(Time.fromNanoseconds(t))
+  def correctedT  (t: Long): T   = correctedT  (T  .fromNanoseconds(t))
 
-  def correctedTimestamp(t: Time): Long =
-    if (t < BadTimestampThreshold) t.inNanoseconds else t.inMilliseconds
+  def correctedT  stamp(t: T  ): Long =
+     f (t < BadT  stampThreshold) t. nNanoseconds else t. nM ll seconds
 }

@@ -1,69 +1,69 @@
-package com.twitter.timelineranker.entity_tweets
+package com.tw ter.t  l neranker.ent y_t ets
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.TweetIdRange
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.clients.relevance_search.SearchClient.TweetTypes
-import com.twitter.timelines.model.TweetId
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t  l neranker.core.Cand dateEnvelope
+ mport com.tw ter.t  l neranker.model.T et dRange
+ mport com.tw ter.t  l nes.cl ents.relevance_search.SearchCl ent
+ mport com.tw ter.t  l nes.cl ents.relevance_search.SearchCl ent.T etTypes
+ mport com.tw ter.t  l nes.model.T et d
+ mport com.tw ter.ut l.Future
 
-object EntityTweetsSearchResultsTransform {
-  // If EntityTweetsQuery.maxCount is not specified, the following count is used.
-  val DefaultEntityTweetsMaxTweetCount = 200
+object Ent yT etsSearchResultsTransform {
+  //  f Ent yT etsQuery.maxCount  s not spec f ed, t  follow ng count  s used.
+  val DefaultEnt yT etsMaxT etCount = 200
 }
 
 /**
- * Fetch entity tweets search results using the search client
- * and populate them into the CandidateEnvelope
+ * Fetch ent y t ets search results us ng t  search cl ent
+ * and populate t m  nto t  Cand dateEnvelope
  */
-class EntityTweetsSearchResultsTransform(
-  searchClient: SearchClient,
-  statsReceiver: StatsReceiver,
-  logSearchDebugInfo: Boolean = false)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  import EntityTweetsSearchResultsTransform._
+class Ent yT etsSearchResultsTransform(
+  searchCl ent: SearchCl ent,
+  statsRece ver: StatsRece ver,
+  logSearchDebug nfo: Boolean = false)
+    extends FutureArrow[Cand dateEnvelope, Cand dateEnvelope] {
+   mport Ent yT etsSearchResultsTransform._
 
-  private[this] val maxCountStat = statsReceiver.stat("maxCount")
-  private[this] val numResultsFromSearchStat = statsReceiver.stat("numResultsFromSearch")
+  pr vate[t ] val maxCountStat = statsRece ver.stat("maxCount")
+  pr vate[t ] val numResultsFromSearchStat = statsRece ver.stat("numResultsFromSearch")
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val maxCount = envelope.query.maxCount.getOrElse(DefaultEntityTweetsMaxTweetCount)
+  overr de def apply(envelope: Cand dateEnvelope): Future[Cand dateEnvelope] = {
+    val maxCount = envelope.query.maxCount.getOrElse(DefaultEnt yT etsMaxT etCount)
     maxCountStat.add(maxCount)
 
-    val tweetIdRange = envelope.query.range
-      .map(TweetIdRange.fromTimelineRange)
-      .getOrElse(TweetIdRange.default)
+    val t et dRange = envelope.query.range
+      .map(T et dRange.fromT  l neRange)
+      .getOrElse(T et dRange.default)
 
-    val beforeTweetIdExclusive = tweetIdRange.toId
-    val afterTweetIdExclusive = tweetIdRange.fromId
+    val beforeT et dExclus ve = t et dRange.to d
+    val afterT et dExclus ve = t et dRange.from d
 
-    val excludedTweetIds = envelope.query.excludedTweetIds.getOrElse(Seq.empty[TweetId]).toSet
+    val excludedT et ds = envelope.query.excludedT et ds.getOrElse(Seq.empty[T et d]).toSet
     val languages = envelope.query.languages.map(_.map(_.language))
 
-    envelope.followGraphData.inNetworkUserIdsFuture.flatMap { inNetworkUserIds =>
-      searchClient
-        .getEntityTweets(
-          userId = Some(envelope.query.userId),
-          followedUserIds = inNetworkUserIds.toSet,
+    envelope.followGraphData. nNetworkUser dsFuture.flatMap {  nNetworkUser ds =>
+      searchCl ent
+        .getEnt yT ets(
+          user d = So (envelope.query.user d),
+          follo dUser ds =  nNetworkUser ds.toSet,
           maxCount = maxCount,
-          beforeTweetIdExclusive = beforeTweetIdExclusive,
-          afterTweetIdExclusive = afterTweetIdExclusive,
-          earlybirdOptions = envelope.query.earlybirdOptions,
-          semanticCoreIds = envelope.query.semanticCoreIds,
+          beforeT et dExclus ve = beforeT et dExclus ve,
+          afterT et dExclus ve = afterT et dExclus ve,
+          earlyb rdOpt ons = envelope.query.earlyb rdOpt ons,
+          semant cCore ds = envelope.query.semant cCore ds,
           hashtags = envelope.query.hashtags,
           languages = languages,
-          tweetTypes = TweetTypes.fromTweetKindOption(envelope.query.options),
+          t etTypes = T etTypes.fromT etK ndOpt on(envelope.query.opt ons),
           searchOperator = envelope.query.searchOperator,
-          excludedTweetIds = excludedTweetIds,
-          logSearchDebugInfo = logSearchDebugInfo,
-          includeNullcastTweets = envelope.query.includeNullcastTweets.getOrElse(false),
-          includeTweetsFromArchiveIndex =
-            envelope.query.includeTweetsFromArchiveIndex.getOrElse(false),
-          authorIds = envelope.query.authorIds.map(_.toSet)
+          excludedT et ds = excludedT et ds,
+          logSearchDebug nfo = logSearchDebug nfo,
+           ncludeNullcastT ets = envelope.query. ncludeNullcastT ets.getOrElse(false),
+           ncludeT etsFromArch ve ndex =
+            envelope.query. ncludeT etsFromArch ve ndex.getOrElse(false),
+          author ds = envelope.query.author ds.map(_.toSet)
         ).map { results =>
-          numResultsFromSearchStat.add(results.size)
+          numResultsFromSearchStat.add(results.s ze)
           envelope.copy(searchResults = results)
         }
     }

@@ -1,24 +1,24 @@
-package com.twitter.tweetypie
-package service
+package com.tw ter.t etyp e
+package serv ce
 package observer
 
-import com.twitter.servo.exception.thriftscala.ClientError
-import com.twitter.tweetypie.thriftscala.GetDeletedTweetResult
-import com.twitter.tweetypie.thriftscala.GetDeletedTweetsRequest
+ mport com.tw ter.servo.except on.thr ftscala.Cl entError
+ mport com.tw ter.t etyp e.thr ftscala.GetDeletedT etResult
+ mport com.tw ter.t etyp e.thr ftscala.GetDeletedT etsRequest
 
-private[service] object GetDeletedTweetsObserver {
-  type Type = ObserveExchange[GetDeletedTweetsRequest, Seq[GetDeletedTweetResult]]
+pr vate[serv ce] object GetDeletedT etsObserver {
+  type Type = ObserveExchange[GetDeletedT etsRequest, Seq[GetDeletedT etResult]]
 
-  def observeExchange(stats: StatsReceiver): Effect[Type] = {
+  def observeExchange(stats: StatsRece ver): Effect[Type] = {
     val resultStateStats = ResultStateStats(stats)
 
     Effect {
       case (request, response) =>
         response match {
-          case Return(_) | Throw(ClientError(_)) =>
-            resultStateStats.success(request.tweetIds.size)
+          case Return(_) | Throw(Cl entError(_)) =>
+            resultStateStats.success(request.t et ds.s ze)
           case Throw(_) =>
-            resultStateStats.failed(request.tweetIds.size)
+            resultStateStats.fa led(request.t et ds.s ze)
         }
     }
   }

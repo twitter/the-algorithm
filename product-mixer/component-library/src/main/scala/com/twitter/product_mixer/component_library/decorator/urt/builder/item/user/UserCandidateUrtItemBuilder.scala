@@ -1,62 +1,62 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.user
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.user
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.user.UserCandidateUrtItemBuilder.UserClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.BaseUserCandidate
-import com.twitter.product_mixer.component_library.model.candidate.IsMarkUnreadFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.user.BaseUserReactiveTriggersBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.promoted.BasePromotedMetadataBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.User
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.user.UserCand dateUrt emBu lder.UserCl entEvent nfoEle nt
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.BaseUserCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date. sMarkUnreadFeature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.Cand dateUrtEntryBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. em.user.BaseUserReact veTr ggersBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseCl entEvent nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseFeedbackAct on nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.promoted.BasePromoted tadataBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.soc al_context.BaseSoc alContextBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.user.User
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.user.UserD splayType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.user.User em
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object UserCandidateUrtItemBuilder {
-  val UserClientEventInfoElement: String = "user"
+object UserCand dateUrt emBu lder {
+  val UserCl entEvent nfoEle nt: Str ng = "user"
 }
 
-case class UserCandidateUrtItemBuilder[Query <: PipelineQuery, UserCandidate <: BaseUserCandidate](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, UserCandidate],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, UserCandidate]
+case class UserCand dateUrt emBu lder[Query <: P pel neQuery, UserCand date <: BaseUserCand date](
+  cl entEvent nfoBu lder: BaseCl entEvent nfoBu lder[Query, UserCand date],
+  feedbackAct on nfoBu lder: Opt on[
+    BaseFeedbackAct on nfoBu lder[Query, UserCand date]
   ] = None,
-  displayType: UserDisplayType = User,
-  promotedMetadataBuilder: Option[BasePromotedMetadataBuilder[Query, UserCandidate]] = None,
-  socialContextBuilder: Option[BaseSocialContextBuilder[Query, UserCandidate]] = None,
-  reactiveTriggersBuilder: Option[BaseUserReactiveTriggersBuilder[Query, UserCandidate]] = None,
-  enableReactiveBlending: Option[Boolean] = None)
-    extends CandidateUrtEntryBuilder[Query, UserCandidate, UserItem] {
+  d splayType: UserD splayType = User,
+  promoted tadataBu lder: Opt on[BasePromoted tadataBu lder[Query, UserCand date]] = None,
+  soc alContextBu lder: Opt on[BaseSoc alContextBu lder[Query, UserCand date]] = None,
+  react veTr ggersBu lder: Opt on[BaseUserReact veTr ggersBu lder[Query, UserCand date]] = None,
+  enableReact veBlend ng: Opt on[Boolean] = None)
+    extends Cand dateUrtEntryBu lder[Query, UserCand date, User em] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    userCandidate: UserCandidate,
-    candidateFeatures: FeatureMap
-  ): UserItem = {
-    val isMarkUnread = candidateFeatures.getTry(IsMarkUnreadFeature).toOption
+    userCand date: UserCand date,
+    cand dateFeatures: FeatureMap
+  ): User em = {
+    val  sMarkUnread = cand dateFeatures.getTry( sMarkUnreadFeature).toOpt on
 
-    UserItem(
-      id = userCandidate.id,
-      sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-      clientEventInfo = clientEventInfoBuilder(
+    User em(
+       d = userCand date. d,
+      sort ndex = None, // Sort  ndexes are automat cally set  n t  doma n marshaller phase
+      cl entEvent nfo = cl entEvent nfoBu lder(
         query,
-        userCandidate,
-        candidateFeatures,
-        Some(UserClientEventInfoElement)),
-      feedbackActionInfo =
-        feedbackActionInfoBuilder.flatMap(_.apply(query, userCandidate, candidateFeatures)),
-      isMarkUnread = isMarkUnread,
-      displayType = displayType,
-      promotedMetadata =
-        promotedMetadataBuilder.flatMap(_.apply(query, userCandidate, candidateFeatures)),
-      socialContext =
-        socialContextBuilder.flatMap(_.apply(query, userCandidate, candidateFeatures)),
-      reactiveTriggers =
-        reactiveTriggersBuilder.flatMap(_.apply(query, userCandidate, candidateFeatures)),
-      enableReactiveBlending = enableReactiveBlending
+        userCand date,
+        cand dateFeatures,
+        So (UserCl entEvent nfoEle nt)),
+      feedbackAct on nfo =
+        feedbackAct on nfoBu lder.flatMap(_.apply(query, userCand date, cand dateFeatures)),
+       sMarkUnread =  sMarkUnread,
+      d splayType = d splayType,
+      promoted tadata =
+        promoted tadataBu lder.flatMap(_.apply(query, userCand date, cand dateFeatures)),
+      soc alContext =
+        soc alContextBu lder.flatMap(_.apply(query, userCand date, cand dateFeatures)),
+      react veTr ggers =
+        react veTr ggersBu lder.flatMap(_.apply(query, userCand date, cand dateFeatures)),
+      enableReact veBlend ng = enableReact veBlend ng
     )
   }
 }

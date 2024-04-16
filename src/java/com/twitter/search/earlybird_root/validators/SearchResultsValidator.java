@@ -1,34 +1,34 @@
-package com.twitter.search.earlybird_root.validators;
+package com.tw ter.search.earlyb rd_root.val dators;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.ut l.Future;
 
-public class SearchResultsValidator
-    implements ServiceResponseValidator<EarlybirdResponse> {
+publ c class SearchResultsVal dator
+     mple nts Serv ceResponseVal dator<Earlyb rdResponse> {
 
-  private final EarlybirdCluster cluster;
+  pr vate f nal Earlyb rdCluster cluster;
 
-  public SearchResultsValidator(EarlybirdCluster cluster) {
-    this.cluster = cluster;
+  publ c SearchResultsVal dator(Earlyb rdCluster cluster) {
+    t .cluster = cluster;
   }
 
-  @Override
-  public Future<EarlybirdResponse> validate(EarlybirdResponse response) {
-    if (!response.isSetSearchResults()
-        || !response.getSearchResults().isSetResults()) {
-      return Future.exception(
-          new IllegalStateException(cluster + " didn't set search results"));
-    } else if (!response.getSearchResults().isSetMaxSearchedStatusID()) {
-      return Future.exception(
-          new IllegalStateException(cluster + " didn't set max searched status id"));
+  @Overr de
+  publ c Future<Earlyb rdResponse> val date(Earlyb rdResponse response) {
+     f (!response. sSetSearchResults()
+        || !response.getSearchResults(). sSetResults()) {
+      return Future.except on(
+          new  llegalStateExcept on(cluster + " d dn't set search results"));
+    } else  f (!response.getSearchResults(). sSetMaxSearc dStatus D()) {
+      return Future.except on(
+          new  llegalStateExcept on(cluster + " d dn't set max searc d status  d"));
     } else {
-      boolean isEarlyTerminated = response.isSetEarlyTerminationInfo()
-          && response.getEarlyTerminationInfo().isEarlyTerminated();
-      if (!isEarlyTerminated && !response.getSearchResults().isSetMinSearchedStatusID()) {
-        return Future.exception(
-            new IllegalStateException(
-                cluster + " neither early terminated nor set min searched status id"));
+      boolean  sEarlyTerm nated = response. sSetEarlyTerm nat on nfo()
+          && response.getEarlyTerm nat on nfo(). sEarlyTerm nated();
+       f (! sEarlyTerm nated && !response.getSearchResults(). sSetM nSearc dStatus D()) {
+        return Future.except on(
+            new  llegalStateExcept on(
+                cluster + " ne  r early term nated nor set m n searc d status  d"));
       } else {
         return Future.value(response);
       }

@@ -1,14 +1,14 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package core
 
-import scala.util.control.NoStackTrace
+ mport scala.ut l.control.NoStackTrace
 
-case class InternalServerError(message: String) extends Exception(message) with NoStackTrace
+case class  nternalServerError( ssage: Str ng) extends Except on( ssage) w h NoStackTrace
 
-case class OverCapacity(message: String) extends Exception(message) with NoStackTrace
+case class OverCapac y( ssage: Str ng) extends Except on( ssage) w h NoStackTrace
 
-case class RateLimited(message: String) extends Exception(message) with NoStackTrace
+case class RateL m ed( ssage: Str ng) extends Except on( ssage) w h NoStackTrace
 
-case class TweetHydrationError(message: String, cause: Option[Throwable] = None)
-    extends Exception(message, cause.getOrElse(null))
-    with NoStackTrace
+case class T etHydrat onError( ssage: Str ng, cause: Opt on[Throwable] = None)
+    extends Except on( ssage, cause.getOrElse(null))
+    w h NoStackTrace

@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.query.cr_ml_ranker
+package com.tw ter.product_m xer.component_l brary.feature_hydrator.query.cr_ml_ranker
 
-import com.twitter.cr_ml_ranker.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.cr_ml_ranker.{thr ftscala => t}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * Builds a query hydrator that hydrates Common Features for the given Query from CR ML Ranker
- * to be later used to call CR ML Ranker for scoring using the desired [[RankingConfigBuilder]]
- * for building the ranking config.
+ * Bu lds a query hydrator that hydrates Common Features for t  g ven Query from CR ML Ranker
+ * to be later used to call CR ML Ranker for scor ng us ng t  des red [[Rank ngConf gBu lder]]
+ * for bu ld ng t  rank ng conf g.
  */
-@Singleton
-class CrMlRankerCommonQueryFeatureHydratorBuilder @Inject() (
-  crMlRanker: t.CrMLRanker.MethodPerEndpoint) {
+@S ngleton
+class CrMlRankerCommonQueryFeatureHydratorBu lder @ nject() (
+  crMlRanker: t.CrMLRanker. thodPerEndpo nt) {
 
-  def build(rankingConfigSelector: RankingConfigBuilder): CrMlRankerCommonQueryFeatureHydrator =
-    new CrMlRankerCommonQueryFeatureHydrator(crMlRanker, rankingConfigSelector)
+  def bu ld(rank ngConf gSelector: Rank ngConf gBu lder): CrMlRankerCommonQueryFeatureHydrator =
+    new CrMlRankerCommonQueryFeatureHydrator(crMlRanker, rank ngConf gSelector)
 }

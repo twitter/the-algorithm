@@ -1,52 +1,52 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.OrderedTopCursorBuilder.TopCursorOffset
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineCursorSerializer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.model.cursor.UrtOrderedCursor
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.cursor.UrtCursorSer al zer
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.OrderedTopCursorBu lder.TopCursorOffset
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.CursorType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.TopCursor
+ mport com.tw ter.product_m xer.core.p pel ne.HasP pel neCursor
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neCursorSer al zer
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-case object OrderedTopCursorBuilder {
-  // Ensure that the next initial sort index is at least 10000 entries away from top cursor's
-  // current sort index. This is to ensure that the contents of the next page can be populated
-  // without being assigned sort indices which conflict with that of the current page. This assumes
-  // that each page will have fewer than 10000 entries.
+case object OrderedTopCursorBu lder {
+  // Ensure that t  next  n  al sort  ndex  s at least 10000 entr es away from top cursor's
+  // current sort  ndex. T   s to ensure that t  contents of t  next page can be populated
+  // w hout be ng ass gned sort  nd ces wh ch confl ct w h that of t  current page. T  assu s
+  // that each page w ll have fe r than 10000 entr es.
   val TopCursorOffset = 10000L
 }
 
 /**
- * Builds [[UrtOrderedCursor]] in the Top position
+ * Bu lds [[UrtOrderedCursor]]  n t  Top pos  on
  *
- * @param idSelector Specifies the entry from which to derive the `id` field
- * @param serializer Converts the cursor to an encoded string
+ * @param  dSelector Spec f es t  entry from wh ch to der ve t  ` d` f eld
+ * @param ser al zer Converts t  cursor to an encoded str ng
  */
-case class OrderedTopCursorBuilder(
-  idSelector: PartialFunction[UniversalNoun[_], Long],
-  serializer: PipelineCursorSerializer[UrtOrderedCursor] = UrtCursorSerializer)
-    extends UrtCursorBuilder[
-      PipelineQuery with HasPipelineCursor[UrtOrderedCursor]
+case class OrderedTopCursorBu lder(
+   dSelector: Part alFunct on[Un versalNoun[_], Long],
+  ser al zer: P pel neCursorSer al zer[UrtOrderedCursor] = UrtCursorSer al zer)
+    extends UrtCursorBu lder[
+      P pel neQuery w h HasP pel neCursor[UrtOrderedCursor]
     ] {
-  override val cursorType: CursorType = TopCursor
+  overr de val cursorType: CursorType = TopCursor
 
-  override def cursorValue(
-    query: PipelineQuery with HasPipelineCursor[UrtOrderedCursor],
-    timelineEntries: Seq[TimelineEntry]
-  ): String = {
-    val topId = timelineEntries.collectFirst(idSelector)
+  overr de def cursorValue(
+    query: P pel neQuery w h HasP pel neCursor[UrtOrderedCursor],
+    t  l neEntr es: Seq[T  l neEntry]
+  ): Str ng = {
+    val top d = t  l neEntr es.collectF rst( dSelector)
 
-    val id = topId.orElse(query.pipelineCursor.flatMap(_.id))
+    val  d = top d.orElse(query.p pel neCursor.flatMap(_. d))
 
     val cursor = UrtOrderedCursor(
-      initialSortIndex = cursorSortIndex(query, timelineEntries) + TopCursorOffset,
-      id = id,
-      cursorType = Some(cursorType)
+       n  alSort ndex = cursorSort ndex(query, t  l neEntr es) + TopCursorOffset,
+       d =  d,
+      cursorType = So (cursorType)
     )
 
-    serializer.serializeCursor(cursor)
+    ser al zer.ser al zeCursor(cursor)
   }
 }

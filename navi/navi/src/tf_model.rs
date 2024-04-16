@@ -1,370 +1,370 @@
 #[cfg(feature = "tf")]
 pub mod tf {
     use arrayvec::ArrayVec;
-    use itertools::Itertools;
-    use log::{debug, error, info, warn};
-    use prost::Message;
+    use  ertools:: ertools;
+    use log::{debug, error,  nfo, warn};
+    use prost:: ssage;
     use std::fmt;
-    use std::fmt::Display;
-    use std::string::String;
-    use tensorflow::io::{RecordReader, RecordReadError};
-    use tensorflow::Operation;
+    use std::fmt::D splay;
+    use std::str ng::Str ng;
+    use tensorflow:: o::{RecordReader, RecordReadError};
+    use tensorflow::Operat on;
     use tensorflow::SavedModelBundle;
-    use tensorflow::SessionOptions;
-    use tensorflow::SessionRunArgs;
+    use tensorflow::Sess onOpt ons;
+    use tensorflow::Sess onRunArgs;
     use tensorflow::Tensor;
-    use tensorflow::{DataType, FetchToken, Graph, TensorInfo, TensorType};
+    use tensorflow::{DataType, FetchToken, Graph, Tensor nfo, TensorType};
 
     use std::thread::sleep;
-    use std::time::Duration;
+    use std::t  ::Durat on;
 
-    use crate::cli_args::{Args, ARGS, INPUTS, MODEL_SPECS, OUTPUTS};
-    use crate::tf_proto::tensorflow_serving::prediction_log::LogType;
-    use crate::tf_proto::tensorflow_serving::{PredictionLog, PredictLog};
-    use crate::tf_proto::ConfigProto;
+    use crate::cl _args::{Args, ARGS,  NPUTS, MODEL_SPECS, OUTPUTS};
+    use crate::tf_proto::tensorflow_serv ng::pred ct on_log::LogType;
+    use crate::tf_proto::tensorflow_serv ng::{Pred ct onLog, Pred ctLog};
+    use crate::tf_proto::Conf gProto;
     use anyhow::{Context, Result};
     use serde_json::Value;
 
     use crate::TensorReturnEnum;
-    use crate::bootstrap::{TensorInput, TensorInputEnum};
-    use crate::metrics::{
-        INFERENCE_FAILED_REQUESTS_BY_MODEL, NUM_REQUESTS_FAILED, NUM_REQUESTS_FAILED_BY_MODEL,
+    use crate::bootstrap::{Tensor nput, Tensor nputEnum};
+    use crate:: tr cs::{
+         NFERENCE_FA LED_REQUESTS_BY_MODEL, NUM_REQUESTS_FA LED, NUM_REQUESTS_FA LED_BY_MODEL,
     };
-    use crate::predict_service::Model;
-    use crate::{MAX_NUM_INPUTS, utils};
+    use crate::pred ct_serv ce::Model;
+    use crate::{MAX_NUM_ NPUTS, ut ls};
 
-    #[derive(Debug)]
+    #[der ve(Debug)]
     pub enum TFTensorEnum {
-        String(Tensor<String>),
-        Int(Tensor<i32>),
-        Int64(Tensor<i64>),
+        Str ng(Tensor<Str ng>),
+         nt(Tensor< 32>),
+         nt64(Tensor< 64>),
         Float(Tensor<f32>),
         Double(Tensor<f64>),
         Boolean(Tensor<bool>),
     }
 
-    #[derive(Debug)]
+    #[der ve(Debug)]
     pub struct TFModel {
-        pub model_idx: usize,
+        pub model_ dx: us ze,
         pub bundle: SavedModelBundle,
-        pub input_names: ArrayVec<String, MAX_NUM_INPUTS>,
-        pub input_info: Vec<TensorInfo>,
-        pub input_ops: Vec<Operation>,
-        pub output_names: Vec<String>,
-        pub output_info: Vec<TensorInfo>,
-        pub output_ops: Vec<Operation>,
-        pub export_dir: String,
-        pub version: i64,
-        pub inter_op: i32,
-        pub intra_op: i32,
+        pub  nput_na s: ArrayVec<Str ng, MAX_NUM_ NPUTS>,
+        pub  nput_ nfo: Vec<Tensor nfo>,
+        pub  nput_ops: Vec<Operat on>,
+        pub output_na s: Vec<Str ng>,
+        pub output_ nfo: Vec<Tensor nfo>,
+        pub output_ops: Vec<Operat on>,
+        pub export_d r: Str ng,
+        pub vers on:  64,
+        pub  nter_op:  32,
+        pub  ntra_op:  32,
     }
 
-    impl Display for TFModel {
+     mpl D splay for TFModel {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-            write!(
+            wr e!(
                 f,
-                "idx: {}, tensorflow model_name:{}, export_dir:{}, version:{}, inter:{}, intra:{}",
-                self.model_idx,
-                MODEL_SPECS[self.model_idx],
-                self.export_dir,
-                self.version,
-                self.inter_op,
-                self.intra_op
+                " dx: {}, tensorflow model_na :{}, export_d r:{}, vers on:{},  nter:{},  ntra:{}",
+                self.model_ dx,
+                MODEL_SPECS[self.model_ dx],
+                self.export_d r,
+                self.vers on,
+                self. nter_op,
+                self. ntra_op
             )
         }
     }
 
-    impl TFModel {
-        pub fn new(idx: usize, version: String, model_config: &Value) -> Result<TFModel> {
-            // Create input variables for our addition
-            let config = ConfigProto {
-                intra_op_parallelism_threads: utils::get_config_or(
-                    model_config,
-                    "intra_op_parallelism",
-                    &ARGS.intra_op_parallelism[idx],
+     mpl TFModel {
+        pub fn new( dx: us ze, vers on: Str ng, model_conf g: &Value) -> Result<TFModel> {
+            // Create  nput var ables for   add  on
+            let conf g = Conf gProto {
+                 ntra_op_parallel sm_threads: ut ls::get_conf g_or(
+                    model_conf g,
+                    " ntra_op_parallel sm",
+                    &ARGS. ntra_op_parallel sm[ dx],
                 )
                 .parse()?,
-                inter_op_parallelism_threads: utils::get_config_or(
-                    model_config,
-                    "inter_op_parallelism",
-                    &ARGS.inter_op_parallelism[idx],
+                 nter_op_parallel sm_threads: ut ls::get_conf g_or(
+                    model_conf g,
+                    " nter_op_parallel sm",
+                    &ARGS. nter_op_parallel sm[ dx],
                 )
                 .parse()?,
                 ..Default::default()
             };
             let mut buf = Vec::new();
-            buf.reserve(config.encoded_len());
-            config.encode(&mut buf).unwrap();
-            let mut opts = SessionOptions::new();
-            opts.set_config(&buf)?;
-            let export_dir = format!("{}/{}", ARGS.model_dir[idx], version);
+            buf.reserve(conf g.encoded_len());
+            conf g.encode(&mut buf).unwrap();
+            let mut opts = Sess onOpt ons::new();
+            opts.set_conf g(&buf)?;
+            let export_d r = format!("{}/{}", ARGS.model_d r[ dx], vers on);
             let mut graph = Graph::new();
-            let bundle = SavedModelBundle::load(&opts, ["serve"], &mut graph, &export_dir)
+            let bundle = SavedModelBundle::load(&opts, ["serve"], &mut graph, &export_d r)
                 .context("error load model")?;
-            let signature = bundle
-                .meta_graph_def()
-                .get_signature(&ARGS.serving_sig[idx])
-                .context("error finding signature")?;
-            let input_names = INPUTS[idx]
-                .get_or_init(|| {
-                    let input_spec = signature
-                        .inputs()
-                        .iter()
+            let s gnature = bundle
+                . ta_graph_def()
+                .get_s gnature(&ARGS.serv ng_s g[ dx])
+                .context("error f nd ng s gnature")?;
+            let  nput_na s =  NPUTS[ dx]
+                .get_or_ n (|| {
+                    let  nput_spec = s gnature
+                        . nputs()
+                        . er()
                         .map(|p| p.0.clone())
-                        .collect::<ArrayVec<String, MAX_NUM_INPUTS>>();
-                    info!(
-                        "input not set from cli, now we set from model metadata:{:?}",
-                        input_spec
+                        .collect::<ArrayVec<Str ng, MAX_NUM_ NPUTS>>();
+                     nfo!(
+                        " nput not set from cl , now   set from model  tadata:{:?}",
+                         nput_spec
                     );
-                    input_spec
+                     nput_spec
                 })
                 .clone();
-            let input_info = input_names
-                .iter()
-                .map(|i| {
-                    signature
-                        .get_input(i)
-                        .context("error finding input op info")
+            let  nput_ nfo =  nput_na s
+                . er()
+                .map(| | {
+                    s gnature
+                        .get_ nput( )
+                        .context("error f nd ng  nput op  nfo")
                         .unwrap()
                         .clone()
                 })
                 .collect_vec();
 
-            let input_ops = input_info
-                .iter()
-                .map(|i| {
+            let  nput_ops =  nput_ nfo
+                . er()
+                .map(| | {
                     graph
-                        .operation_by_name_required(&i.name().name)
-                        .context("error finding input op")
+                        .operat on_by_na _requ red(& .na ().na )
+                        .context("error f nd ng  nput op")
                         .unwrap()
                 })
                 .collect_vec();
 
-            info!("Model Input size: {}", input_info.len());
+             nfo!("Model  nput s ze: {}",  nput_ nfo.len());
 
-            let output_names = OUTPUTS[idx].to_vec().clone();
+            let output_na s = OUTPUTS[ dx].to_vec().clone();
 
-            let output_info = output_names
-                .iter()
+            let output_ nfo = output_na s
+                . er()
                 .map(|o| {
-                    signature
+                    s gnature
                         .get_output(o)
-                        .context("error finding output op info")
+                        .context("error f nd ng output op  nfo")
                         .unwrap()
                         .clone()
                 })
                 .collect_vec();
 
-            let output_ops = output_info
-                .iter()
+            let output_ops = output_ nfo
+                . er()
                 .map(|o| {
                     graph
-                        .operation_by_name_required(&o.name().name)
-                        .context("error finding output op")
+                        .operat on_by_na _requ red(&o.na ().na )
+                        .context("error f nd ng output op")
                         .unwrap()
                 })
                 .collect_vec();
 
             let tf_model = TFModel {
-                model_idx: idx,
+                model_ dx:  dx,
                 bundle,
-                input_names,
-                input_info,
-                input_ops,
-                output_names,
-                output_info,
+                 nput_na s,
+                 nput_ nfo,
+                 nput_ops,
+                output_na s,
+                output_ nfo,
                 output_ops,
-                export_dir,
-                version: Args::version_str_to_epoch(&version)?,
-                inter_op: config.inter_op_parallelism_threads,
-                intra_op: config.intra_op_parallelism_threads,
+                export_d r,
+                vers on: Args::vers on_str_to_epoch(&vers on)?,
+                 nter_op: conf g. nter_op_parallel sm_threads,
+                 ntra_op: conf g. ntra_op_parallel sm_threads,
             };
             tf_model.warmup()?;
             Ok(tf_model)
         }
 
-        #[inline(always)]
-        fn get_tftensor_dimensions<T>(
+        #[ nl ne(always)]
+        fn get_tftensor_d  ns ons<T>(
             t: &[T],
-            input_size: u64,
-            batch_size: u64,
-            input_dims: Option<Vec<i64>>,
+             nput_s ze: u64,
+            batch_s ze: u64,
+             nput_d ms: Opt on<Vec< 64>>,
         ) -> Vec<u64> {
-            // if input size is 1, we just specify a single dimension to outgoing tensor matching the
-            // size of the input tensor. This is for backwards compatiblity with existing Navi clients
-            // which specify input as a single string tensor (like tfexample) and use batching support.
-            let mut dims = vec![];
-            if input_size > 1 {
-                if batch_size == 1 && input_dims.is_some() {
-                    // client side batching is enabled?
-                    input_dims
+            //  f  nput s ze  s 1,   just spec fy a s ngle d  ns on to outgo ng tensor match ng t 
+            // s ze of t   nput tensor. T   s for backwards compat bl y w h ex st ng Nav  cl ents
+            // wh ch spec fy  nput as a s ngle str ng tensor (l ke tfexample) and use batch ng support.
+            let mut d ms = vec![];
+             f  nput_s ze > 1 {
+                 f batch_s ze == 1 &&  nput_d ms. s_so () {
+                    // cl ent s de batch ng  s enabled?
+                     nput_d ms
                         .unwrap()
-                        .iter()
-                        .for_each(|axis| dims.push(*axis as u64));
+                        . er()
+                        .for_each(|ax s| d ms.push(*ax s as u64));
                 } else {
-                    dims.push(batch_size);
-                    dims.push(t.len() as u64 / batch_size);
+                    d ms.push(batch_s ze);
+                    d ms.push(t.len() as u64 / batch_s ze);
                 }
             } else {
-                dims.push(t.len() as u64);
+                d ms.push(t.len() as u64);
             }
-            dims
+            d ms
         }
 
         fn convert_to_tftensor_enum(
-            input: TensorInput,
-            input_size: u64,
-            batch_size: u64,
+             nput: Tensor nput,
+             nput_s ze: u64,
+            batch_s ze: u64,
         ) -> TFTensorEnum {
-            match input.tensor_data {
-                TensorInputEnum::String(t) => {
-                    let strings = t
-                        .into_iter()
-                        .map(|x| unsafe { String::from_utf8_unchecked(x) })
+            match  nput.tensor_data {
+                Tensor nputEnum::Str ng(t) => {
+                    let str ngs = t
+                        . nto_ er()
+                        .map(|x| unsafe { Str ng::from_utf8_unc cked(x) })
                         .collect_vec();
-                    TFTensorEnum::String(
-                        Tensor::new(&TFModel::get_tftensor_dimensions(
-                            strings.as_slice(),
-                            input_size,
-                            batch_size,
-                            input.dims,
+                    TFTensorEnum::Str ng(
+                        Tensor::new(&TFModel::get_tftensor_d  ns ons(
+                            str ngs.as_sl ce(),
+                             nput_s ze,
+                            batch_s ze,
+                             nput.d ms,
                         ))
-                        .with_values(strings.as_slice())
+                        .w h_values(str ngs.as_sl ce())
                         .unwrap(),
                     )
                 }
-                TensorInputEnum::Int(t) => TFTensorEnum::Int(
-                    Tensor::new(&TFModel::get_tftensor_dimensions(
-                        t.as_slice(),
-                        input_size,
-                        batch_size,
-                        input.dims,
+                Tensor nputEnum:: nt(t) => TFTensorEnum:: nt(
+                    Tensor::new(&TFModel::get_tftensor_d  ns ons(
+                        t.as_sl ce(),
+                         nput_s ze,
+                        batch_s ze,
+                         nput.d ms,
                     ))
-                    .with_values(t.as_slice())
+                    .w h_values(t.as_sl ce())
                     .unwrap(),
                 ),
-                TensorInputEnum::Int64(t) => TFTensorEnum::Int64(
-                    Tensor::new(&TFModel::get_tftensor_dimensions(
-                        t.as_slice(),
-                        input_size,
-                        batch_size,
-                        input.dims,
+                Tensor nputEnum:: nt64(t) => TFTensorEnum:: nt64(
+                    Tensor::new(&TFModel::get_tftensor_d  ns ons(
+                        t.as_sl ce(),
+                         nput_s ze,
+                        batch_s ze,
+                         nput.d ms,
                     ))
-                    .with_values(t.as_slice())
+                    .w h_values(t.as_sl ce())
                     .unwrap(),
                 ),
-                TensorInputEnum::Float(t) => TFTensorEnum::Float(
-                    Tensor::new(&TFModel::get_tftensor_dimensions(
-                        t.as_slice(),
-                        input_size,
-                        batch_size,
-                        input.dims,
+                Tensor nputEnum::Float(t) => TFTensorEnum::Float(
+                    Tensor::new(&TFModel::get_tftensor_d  ns ons(
+                        t.as_sl ce(),
+                         nput_s ze,
+                        batch_s ze,
+                         nput.d ms,
                     ))
-                    .with_values(t.as_slice())
+                    .w h_values(t.as_sl ce())
                     .unwrap(),
                 ),
-                TensorInputEnum::Double(t) => TFTensorEnum::Double(
-                    Tensor::new(&TFModel::get_tftensor_dimensions(
-                        t.as_slice(),
-                        input_size,
-                        batch_size,
-                        input.dims,
+                Tensor nputEnum::Double(t) => TFTensorEnum::Double(
+                    Tensor::new(&TFModel::get_tftensor_d  ns ons(
+                        t.as_sl ce(),
+                         nput_s ze,
+                        batch_s ze,
+                         nput.d ms,
                     ))
-                    .with_values(t.as_slice())
+                    .w h_values(t.as_sl ce())
                     .unwrap(),
                 ),
-                TensorInputEnum::Boolean(t) => TFTensorEnum::Boolean(
-                    Tensor::new(&TFModel::get_tftensor_dimensions(
-                        t.as_slice(),
-                        input_size,
-                        batch_size,
-                        input.dims,
+                Tensor nputEnum::Boolean(t) => TFTensorEnum::Boolean(
+                    Tensor::new(&TFModel::get_tftensor_d  ns ons(
+                        t.as_sl ce(),
+                         nput_s ze,
+                        batch_s ze,
+                         nput.d ms,
                     ))
-                    .with_values(t.as_slice())
+                    .w h_values(t.as_sl ce())
                     .unwrap(),
                 ),
             }
         }
         fn fetch_output<T: TensorType>(
-            args: &mut SessionRunArgs,
+            args: &mut Sess onRunArgs,
             token_output: &FetchToken,
-            batch_size: u64,
-            output_size: u64,
+            batch_s ze: u64,
+            output_s ze: u64,
         ) -> (Tensor<T>, u64) {
-            let tensor_output = args.fetch::<T>(*token_output).expect("fetch output failed");
-            let mut tensor_width = tensor_output.dims()[1];
-            if batch_size == 1 && output_size > 1 {
-                tensor_width = tensor_output.dims().iter().fold(1, |mut total, &val| {
+            let tensor_output = args.fetch::<T>(*token_output).expect("fetch output fa led");
+            let mut tensor_w dth = tensor_output.d ms()[1];
+             f batch_s ze == 1 && output_s ze > 1 {
+                tensor_w dth = tensor_output.d ms(). er().fold(1, |mut total, &val| {
                     total *= val;
                     total
                 });
             }
-            (tensor_output, tensor_width)
+            (tensor_output, tensor_w dth)
         }
     }
 
-    impl Model for TFModel {
+     mpl Model for TFModel {
         fn warmup(&self) -> Result<()> {
             // warm up
-            let warmup_file = format!(
-                "{}/assets.extra/tf_serving_warmup_requests",
-                self.export_dir
+            let warmup_f le = format!(
+                "{}/assets.extra/tf_serv ng_warmup_requests",
+                self.export_d r
             );
-            if std::path::Path::new(&warmup_file).exists() {
-                use std::io::Cursor;
-                info!(
-                    "found warmup assets in {}, now perform warming up",
-                    warmup_file
+             f std::path::Path::new(&warmup_f le).ex sts() {
+                use std:: o::Cursor;
+                 nfo!(
+                    "found warmup assets  n {}, now perform warm ng up",
+                    warmup_f le
                 );
-                let f = std::fs::File::open(warmup_file).context("cannot open warmup file")?;
+                let f = std::fs::F le::open(warmup_f le).context("cannot open warmup f le")?;
                 // let mut buf = Vec::new();
-                let read = std::io::BufReader::new(f);
+                let read = std:: o::BufReader::new(f);
                 let mut reader = RecordReader::new(read);
                 let mut warmup_cnt = 0;
                 loop {
                     let next = reader.read_next_owned();
                     match next {
                         Ok(res) => match res {
-                            Some(vec) => {
-                                // info!("read one tfRecord");
-                                match PredictionLog::decode(&mut Cursor::new(vec))
-                                    .context("can't parse PredictonLog")?
+                            So (vec) => {
+                                //  nfo!("read one tfRecord");
+                                match Pred ct onLog::decode(&mut Cursor::new(vec))
+                                    .context("can't parse Pred ctonLog")?
                                 {
-                                    PredictionLog {
-                                        log_metadata: _,
+                                    Pred ct onLog {
+                                        log_ tadata: _,
                                         log_type:
-                                            Some(LogType::PredictLog(PredictLog {
-                                                request: Some(mut req),
+                                            So (LogType::Pred ctLog(Pred ctLog {
+                                                request: So (mut req),
                                                 response: _,
                                             })),
                                     } => {
-                                        if warmup_cnt == ARGS.max_warmup_records {
+                                         f warmup_cnt == ARGS.max_warmup_records {
                                             //warm up to max_warmup_records  records
                                             warn!(
-                                                "reached max warmup {} records, exit warmup for {}",
+                                                "reac d max warmup {} records, ex  warmup for {}",
                                                 ARGS.max_warmup_records,
-                                                MODEL_SPECS[self.model_idx]
+                                                MODEL_SPECS[self.model_ dx]
                                             );
                                             break;
                                         }
-                                        self.do_predict(
-                                            vec![req.take_input_vals(&self.input_names)],
+                                        self.do_pred ct(
+                                            vec![req.take_ nput_vals(&self. nput_na s)],
                                             1,
                                         );
-                                        sleep(Duration::from_millis(100));
+                                        sleep(Durat on::from_m ll s(100));
                                         warmup_cnt += 1;
                                     }
-                                    _ => error!("some wrong record in warming up file"),
+                                    _ => error!("so  wrong record  n warm ng up f le"),
                                 }
                             }
                             None => {
-                                info!("end of warmup file, warmed up with records: {}", warmup_cnt);
+                                 nfo!("end of warmup f le, war d up w h records: {}", warmup_cnt);
                                 break;
                             }
                         },
-                        Err(RecordReadError::CorruptFile)
-                        | Err(RecordReadError::IoError { .. }) => {
-                            error!("read tfrecord error for warmup files, skip");
+                        Err(RecordReadError::CorruptF le)
+                        | Err(RecordReadError:: oError { .. }) => {
+                            error!("read tfrecord error for warmup f les, sk p");
                         }
                         _ => {}
                     }
@@ -373,120 +373,120 @@ pub mod tf {
             Ok(())
         }
 
-        #[inline(always)]
-        fn do_predict(
+        #[ nl ne(always)]
+        fn do_pred ct(
             &self,
-            input_tensors: Vec<Vec<TensorInput>>,
-            batch_size: u64,
-        ) -> (Vec<TensorReturnEnum>, Vec<Vec<usize>>) {
-            // let mut batch_ends = input_tensors.iter().map(|t| t.len()).collect::<Vec<usize>>();
-            let output_size = self.output_names.len() as u64;
-            let input_size = self.input_names.len() as u64;
+             nput_tensors: Vec<Vec<Tensor nput>>,
+            batch_s ze: u64,
+        ) -> (Vec<TensorReturnEnum>, Vec<Vec<us ze>>) {
+            // let mut batch_ends =  nput_tensors. er().map(|t| t.len()).collect::<Vec<us ze>>();
+            let output_s ze = self.output_na s.len() as u64;
+            let  nput_s ze = self. nput_na s.len() as u64;
             debug!(
-                "Request for Tensorflow with batch size: {} and input_size: {}",
-                batch_size, input_size
+                "Request for Tensorflow w h batch s ze: {} and  nput_s ze: {}",
+                batch_s ze,  nput_s ze
             );
-            // build a set of input TF tensors
+            // bu ld a set of  nput TF tensors
 
-            let batch_end = (1usize..=input_tensors.len() as usize)
-                .into_iter()
+            let batch_end = (1us ze..= nput_tensors.len() as us ze)
+                . nto_ er()
                 .collect_vec();
-            let mut batch_ends = vec![batch_end; output_size as usize];
+            let mut batch_ends = vec![batch_end; output_s ze as us ze];
 
-            let batched_tensors = TensorInputEnum::merge_batch(input_tensors)
-                .into_iter()
-                .enumerate()
-                .map(|(_, i)| TFModel::convert_to_tftensor_enum(i, input_size, batch_size))
+            let batc d_tensors = Tensor nputEnum:: rge_batch( nput_tensors)
+                . nto_ er()
+                .enu rate()
+                .map(|(_,  )| TFModel::convert_to_tftensor_enum( ,  nput_s ze, batch_s ze))
                 .collect_vec();
 
-            let mut args = SessionRunArgs::new();
-            for (index, tf_tensor) in batched_tensors.iter().enumerate() {
+            let mut args = Sess onRunArgs::new();
+            for ( ndex, tf_tensor)  n batc d_tensors. er().enu rate() {
                 match tf_tensor {
-                    TFTensorEnum::String(inner) => args.add_feed(&self.input_ops[index], 0, inner),
-                    TFTensorEnum::Int(inner) => args.add_feed(&self.input_ops[index], 0, inner),
-                    TFTensorEnum::Int64(inner) => args.add_feed(&self.input_ops[index], 0, inner),
-                    TFTensorEnum::Float(inner) => args.add_feed(&self.input_ops[index], 0, inner),
-                    TFTensorEnum::Double(inner) => args.add_feed(&self.input_ops[index], 0, inner),
-                    TFTensorEnum::Boolean(inner) => args.add_feed(&self.input_ops[index], 0, inner),
+                    TFTensorEnum::Str ng( nner) => args.add_feed(&self. nput_ops[ ndex], 0,  nner),
+                    TFTensorEnum:: nt( nner) => args.add_feed(&self. nput_ops[ ndex], 0,  nner),
+                    TFTensorEnum:: nt64( nner) => args.add_feed(&self. nput_ops[ ndex], 0,  nner),
+                    TFTensorEnum::Float( nner) => args.add_feed(&self. nput_ops[ ndex], 0,  nner),
+                    TFTensorEnum::Double( nner) => args.add_feed(&self. nput_ops[ ndex], 0,  nner),
+                    TFTensorEnum::Boolean( nner) => args.add_feed(&self. nput_ops[ ndex], 0,  nner),
                 }
             }
-            // For output ops, we receive the same op object by name. Actual tensor tokens are available at different offsets.
-            // Since indices are ordered, its important to specify output flag to Navi in the same order.
+            // For output ops,   rece ve t  sa  op object by na . Actual tensor tokens are ava lable at d fferent offsets.
+            // S nce  nd ces are ordered,  s  mportant to spec fy output flag to Nav   n t  sa  order.
             let token_outputs = self
                 .output_ops
-                .iter()
-                .enumerate()
-                .map(|(idx, op)| args.request_fetch(op, idx as i32))
+                . er()
+                .enu rate()
+                .map(|( dx, op)| args.request_fetch(op,  dx as  32))
                 .collect_vec();
-            match self.bundle.session.run(&mut args) {
+            match self.bundle.sess on.run(&mut args) {
                 Ok(_) => (),
                 Err(e) => {
-                    NUM_REQUESTS_FAILED.inc_by(batch_size);
-                    NUM_REQUESTS_FAILED_BY_MODEL
-                        .with_label_values(&[&MODEL_SPECS[self.model_idx]])
-                        .inc_by(batch_size);
-                    INFERENCE_FAILED_REQUESTS_BY_MODEL
-                        .with_label_values(&[&MODEL_SPECS[self.model_idx]])
-                        .inc_by(batch_size);
-                    panic!("{model}: {e:?}", model = MODEL_SPECS[self.model_idx], e = e);
+                    NUM_REQUESTS_FA LED. nc_by(batch_s ze);
+                    NUM_REQUESTS_FA LED_BY_MODEL
+                        .w h_label_values(&[&MODEL_SPECS[self.model_ dx]])
+                        . nc_by(batch_s ze);
+                     NFERENCE_FA LED_REQUESTS_BY_MODEL
+                        .w h_label_values(&[&MODEL_SPECS[self.model_ dx]])
+                        . nc_by(batch_s ze);
+                    pan c!("{model}: {e:?}", model = MODEL_SPECS[self.model_ dx], e = e);
                 }
             }
-            let mut predict_return = vec![];
-            // Check the output.
-            for (index, token_output) in token_outputs.iter().enumerate() {
-                // same ops, with type info at different offsets.
-                let (res, width) = match self.output_ops[index].output_type(index) {
+            let mut pred ct_return = vec![];
+            // C ck t  output.
+            for ( ndex, token_output)  n token_outputs. er().enu rate() {
+                // sa  ops, w h type  nfo at d fferent offsets.
+                let (res, w dth) = match self.output_ops[ ndex].output_type( ndex) {
                     DataType::Float => {
-                        let (tensor_output, tensor_width) =
-                            TFModel::fetch_output(&mut args, token_output, batch_size, output_size);
+                        let (tensor_output, tensor_w dth) =
+                            TFModel::fetch_output(&mut args, token_output, batch_s ze, output_s ze);
                         (
                             TensorReturnEnum::FloatTensorReturn(Box::new(tensor_output)),
-                            tensor_width,
+                            tensor_w dth,
                         )
                     }
-                    DataType::Int64 => {
-                        let (tensor_output, tensor_width) =
-                            TFModel::fetch_output(&mut args, token_output, batch_size, output_size);
+                    DataType:: nt64 => {
+                        let (tensor_output, tensor_w dth) =
+                            TFModel::fetch_output(&mut args, token_output, batch_s ze, output_s ze);
                         (
-                            TensorReturnEnum::Int64TensorReturn(Box::new(tensor_output)),
-                            tensor_width,
+                            TensorReturnEnum:: nt64TensorReturn(Box::new(tensor_output)),
+                            tensor_w dth,
                         )
                     }
-                    DataType::Int32 => {
-                        let (tensor_output, tensor_width) =
-                            TFModel::fetch_output(&mut args, token_output, batch_size, output_size);
+                    DataType:: nt32 => {
+                        let (tensor_output, tensor_w dth) =
+                            TFModel::fetch_output(&mut args, token_output, batch_s ze, output_s ze);
                         (
-                            TensorReturnEnum::Int32TensorReturn(Box::new(tensor_output)),
-                            tensor_width,
+                            TensorReturnEnum:: nt32TensorReturn(Box::new(tensor_output)),
+                            tensor_w dth,
                         )
                     }
-                    DataType::String => {
-                        let (tensor_output, tensor_width) =
-                            TFModel::fetch_output(&mut args, token_output, batch_size, output_size);
+                    DataType::Str ng => {
+                        let (tensor_output, tensor_w dth) =
+                            TFModel::fetch_output(&mut args, token_output, batch_s ze, output_s ze);
                         (
-                            TensorReturnEnum::StringTensorReturn(Box::new(tensor_output)),
-                            tensor_width,
+                            TensorReturnEnum::Str ngTensorReturn(Box::new(tensor_output)),
+                            tensor_w dth,
                         )
                     }
-                    _ => panic!("Unsupported return type!"),
+                    _ => pan c!("Unsupported return type!"),
                 };
-                let width = width as usize;
-                for b in batch_ends[index].iter_mut() {
-                    *b *= width;
+                let w dth = w dth as us ze;
+                for b  n batch_ends[ ndex]. er_mut() {
+                    *b *= w dth;
                 }
-                predict_return.push(res)
+                pred ct_return.push(res)
             }
-            //TODO: remove in the future
+            //TODO: remove  n t  future
             //TODO: support actual mtl model outputs
-            (predict_return, batch_ends)
+            (pred ct_return, batch_ends)
         }
-        #[inline(always)]
-        fn model_idx(&self) -> usize {
-            self.model_idx
+        #[ nl ne(always)]
+        fn model_ dx(&self) -> us ze {
+            self.model_ dx
         }
-        #[inline(always)]
-        fn version(&self) -> i64 {
-            self.version
+        #[ nl ne(always)]
+        fn vers on(&self) ->  64 {
+            self.vers on
         }
     }
 }

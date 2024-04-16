@@ -1,75 +1,75 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.UserFollowedTopicIdsRepository
-import com.twitter.home_mixer.util.ObservedKeyValueResultHandler
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.servo.keyvalue.KeyValueResult
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.stitch.Stitch
-import com.twitter.util.Future
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ho _m xer.model.Ho Features.Author dFeature
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.UserFollo dTop c dsRepos ory
+ mport com.tw ter.ho _m xer.ut l.ObservedKeyValueResultHandler
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BulkCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.ut l.OffloadFuturePools
+ mport com.tw ter.servo.keyvalue.KeyValueResult
+ mport com.tw ter.servo.repos ory.KeyValueRepos ory
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Try
+ mport javax. nject. nject
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-object UserFollowedTopicIdsFeature extends Feature[TweetCandidate, Seq[Long]]
+object UserFollo dTop c dsFeature extends Feature[T etCand date, Seq[Long]]
 
-@Singleton
-class UserFollowedTopicIdsFeatureHydrator @Inject() (
-  @Named(UserFollowedTopicIdsRepository)
-  client: KeyValueRepository[Seq[Long], Long, Seq[Long]],
-  override val statsReceiver: StatsReceiver)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate]
-    with ObservedKeyValueResultHandler {
+@S ngleton
+class UserFollo dTop c dsFeatureHydrator @ nject() (
+  @Na d(UserFollo dTop c dsRepos ory)
+  cl ent: KeyValueRepos ory[Seq[Long], Long, Seq[Long]],
+  overr de val statsRece ver: StatsRece ver)
+    extends BulkCand dateFeatureHydrator[P pel neQuery, T etCand date]
+    w h ObservedKeyValueResultHandler {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("UserFollowedTopicIds")
+  overr de val  dent f er: FeatureHydrator dent f er =
+    FeatureHydrator dent f er("UserFollo dTop c ds")
 
-  override val features: Set[Feature[_, _]] = Set(UserFollowedTopicIdsFeature)
+  overr de val features: Set[Feature[_, _]] = Set(UserFollo dTop c dsFeature)
 
-  override val statScope: String = identifier.toString
+  overr de val statScope: Str ng =  dent f er.toStr ng
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
-    val possiblyAuthorIds = extractKeys(candidates)
-    val authorIds = possiblyAuthorIds.flatten
+  overr de def apply(
+    query: P pel neQuery,
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): St ch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
+    val poss blyAuthor ds = extractKeys(cand dates)
+    val author ds = poss blyAuthor ds.flatten
 
     val response: Future[KeyValueResult[Long, Seq[Long]]] =
-      if (authorIds.isEmpty) Future.value(KeyValueResult.empty) else client(authorIds)
+       f (author ds. sEmpty) Future.value(KeyValueResult.empty) else cl ent(author ds)
 
     response.map { result =>
-      possiblyAuthorIds.map { possiblyAuthorId =>
-        val value = observedGet(key = possiblyAuthorId, keyValueResult = result)
-        val transformedValue = postTransformer(value)
+      poss blyAuthor ds.map { poss blyAuthor d =>
+        val value = observedGet(key = poss blyAuthor d, keyValueResult = result)
+        val transfor dValue = postTransfor r(value)
 
-        FeatureMapBuilder().add(UserFollowedTopicIdsFeature, transformedValue).build()
+        FeatureMapBu lder().add(UserFollo dTop c dsFeature, transfor dValue).bu ld()
       }
     }
   }
 
-  private def postTransformer(input: Try[Option[Seq[Long]]]): Try[Seq[Long]] = {
-    input.map(_.getOrElse(Seq.empty[Long]))
+  pr vate def postTransfor r( nput: Try[Opt on[Seq[Long]]]): Try[Seq[Long]] = {
+     nput.map(_.getOrElse(Seq.empty[Long]))
   }
 
-  private def extractKeys(
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Seq[Option[Long]] = {
-    candidates.map { candidate =>
-      candidate.features
-        .getTry(AuthorIdFeature)
-        .toOption
+  pr vate def extractKeys(
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): Seq[Opt on[Long]] = {
+    cand dates.map { cand date =>
+      cand date.features
+        .getTry(Author dFeature)
+        .toOpt on
         .flatten
     }
   }

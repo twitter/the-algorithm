@@ -1,39 +1,39 @@
 {
-  "role": "discode",
-  "name": "uua-social-graph-staging",
-  "config-files": [
-    "uua-social-graph.aurora"
+  "role": "d scode",
+  "na ": "uua-soc al-graph-stag ng",
+  "conf g-f les": [
+    "uua-soc al-graph.aurora"
   ],
-  "build": {
+  "bu ld": {
     "play": true,
-    "dependencies": [
+    "dependenc es": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "na ": "packer-cl ent-no-pex",
+        "vers on": "latest"
       }
     ],
     "steps": [
       {
         "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-social-graph"
+        "na ": "bundle",
+        "target": "un f ed_user_act ons/serv ce/src/ma n/scala:uua-soc al-graph"
       },
       {
         "type": "packer",
-        "name": "uua-social-graph-staging",
-        "artifact": "./dist/uua-social-graph.zip"
+        "na ": "uua-soc al-graph-stag ng",
+        "art fact": "./d st/uua-soc al-graph.z p"
       }
     ]
   },
   "targets": [
     {
       "type": "group",
-      "name": "staging",
+      "na ": "stag ng",
       "targets": [
         {
-          "name": "uua-social-graph-staging-pdxa",
-          "key": "pdxa/discode/staging/uua-social-graph"
+          "na ": "uua-soc al-graph-stag ng-pdxa",
+          "key": "pdxa/d scode/stag ng/uua-soc al-graph"
         }
       ]
     }

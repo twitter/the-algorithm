@@ -1,47 +1,47 @@
-package com.twitter.tweetypie.caching
+package com.tw ter.t etyp e.cach ng
 
-import com.twitter.io.Buf
-import com.twitter.util.Time
+ mport com.tw ter. o.Buf
+ mport com.tw ter.ut l.T  
 
 /**
- * How to store values of type V in cache. This includes whether a
- * given value is cacheable, how to serialize it, when it should
- * expire from cache, and how to interpret byte patterns from cache.
+ * How to store values of type V  n cac . T   ncludes w t r a
+ * g ven value  s cac able, how to ser al ze  , w n   should
+ * exp re from cac , and how to  nterpret byte patterns from cac .
  */
-trait ValueSerializer[V] {
+tra  ValueSer al zer[V] {
 
   /**
-   * Prepare the value for storage in cache. When a [[Some]] is
-   * returned, the [[Buf]] should be a valid input to [[deserialize]]
-   * and the [[Time]] will be used as the expiry in the memcached
-   * command.  When [[None]] is returned, it indicates that the value
-   * cannot or should not be written back to cache.
+   * Prepare t  value for storage  n cac . W n a [[So ]]  s
+   * returned, t  [[Buf]] should be a val d  nput to [[deser al ze]]
+   * and t  [[T  ]] w ll be used as t  exp ry  n t   mcac d
+   * command.  W n [[None]]  s returned,    nd cates that t  value
+   * cannot or should not be wr ten back to cac .
    *
-   * The most common use case for returning None is caching Try
-   * values, where certain exceptional values encode a cacheable state
-   * of a value. In particular, Throw(NotFound) is commonly used to
-   * encode a missing value, and we usually want to cache those
-   * negative lookups, but we don't want to cache e.g. a timeout
-   * exception.
+   * T  most common use case for return ng None  s cach ng Try
+   * values, w re certa n except onal values encode a cac able state
+   * of a value.  n part cular, Throw(NotFound)  s commonly used to
+   * encode a m ss ng value, and   usually want to cac  those
+   * negat ve lookups, but   don't want to cac  e.g. a t  out
+   * except on.
    *
-   * @return a pair of expiry time for this cache entry and the bytes
-   *   to store in cache. If you do not want this value to explicitly
-   *   expire, use Time.Top as the expiry.
+   * @return a pa r of exp ry t   for t  cac  entry and t  bytes
+   *   to store  n cac .  f   do not want t  value to expl c ly
+   *   exp re, use T  .Top as t  exp ry.
    */
-  def serialize(value: V): Option[(Time, Buf)]
+  def ser al ze(value: V): Opt on[(T  , Buf)]
 
   /**
-   * Deserialize a value found in cache. This function converts the
-   * bytes found in memcache to a [[CacheResult]]. In general, you
-   * probably want to return [[CacheResult.Fresh]] or
-   * [[CacheResult.Stale]], but you are free to return any of the
-   * range of [[CacheResult]]s, depending on the behavior that you
+   * Deser al ze a value found  n cac . T  funct on converts t 
+   * bytes found  n  mcac  to a [[Cac Result]].  n general,  
+   * probably want to return [[Cac Result.Fresh]] or
+   * [[Cac Result.Stale]], but   are free to return any of t 
+   * range of [[Cac Result]]s, depend ng on t  behav or that  
    * want.
    *
-   * This is a total function because in the common use case, the
-   * bytes stored in cache will be appropriate for the
-   * serializer. This method is free to throw any exception if the
-   * bytes are not valid.
+   * T   s a total funct on because  n t  common use case, t 
+   * bytes stored  n cac  w ll be appropr ate for t 
+   * ser al zer. T   thod  s free to throw any except on  f t 
+   * bytes are not val d.
    */
-  def deserialize(serializedValue: Buf): CacheResult[V]
+  def deser al ze(ser al zedValue: Buf): Cac Result[V]
 }

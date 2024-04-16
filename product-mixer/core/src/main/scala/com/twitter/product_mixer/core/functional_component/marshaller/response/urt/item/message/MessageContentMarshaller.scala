@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em. ssage
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.CompactPromptMessageContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.InlinePromptMessageContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.HeaderImagePromptMessageContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageContent
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage.CompactPrompt ssageContent
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage. nl nePrompt ssageContent
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage. ader magePrompt ssageContent
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage. ssageContent
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class MessageContentMarshaller @Inject() (
-  inlinePromptMessageContentMarshaller: InlinePromptMessageContentMarshaller,
-  headerImagePromptMessageContentMarshaller: HeaderImagePromptMessageContentMarshaller,
-  compactPromptMessageContentMarshaller: CompactPromptMessageContentMarshaller) {
+@S ngleton
+class  ssageContentMarshaller @ nject() (
+   nl nePrompt ssageContentMarshaller:  nl nePrompt ssageContentMarshaller,
+   ader magePrompt ssageContentMarshaller:  ader magePrompt ssageContentMarshaller,
+  compactPrompt ssageContentMarshaller: CompactPrompt ssageContentMarshaller) {
 
-  def apply(messageContent: MessageContent): urt.MessageContent = messageContent match {
-    case inlinePromptMessageContent: InlinePromptMessageContent =>
-      inlinePromptMessageContentMarshaller(inlinePromptMessageContent)
-    case headerImagePromptMessageContent: HeaderImagePromptMessageContent =>
-      headerImagePromptMessageContentMarshaller(headerImagePromptMessageContent)
-    case compactPromptMessageContent: CompactPromptMessageContent =>
-      compactPromptMessageContentMarshaller(compactPromptMessageContent)
+  def apply( ssageContent:  ssageContent): urt. ssageContent =  ssageContent match {
+    case  nl nePrompt ssageContent:  nl nePrompt ssageContent =>
+       nl nePrompt ssageContentMarshaller( nl nePrompt ssageContent)
+    case  ader magePrompt ssageContent:  ader magePrompt ssageContent =>
+       ader magePrompt ssageContentMarshaller( ader magePrompt ssageContent)
+    case compactPrompt ssageContent: CompactPrompt ssageContent =>
+      compactPrompt ssageContentMarshaller(compactPrompt ssageContent)
   }
 }

@@ -1,243 +1,243 @@
-#include "block_format_reader.h"
+# nclude "block_format_reader.h"
 
-#include "tensorflow/core/framework/dataset.h"
-#include "tensorflow/core/framework/partial_tensor_shape.h"
-#include "tensorflow/core/framework/tensor.h"
-#include "tensorflow/core/lib/io/random_inputstream.h"
+# nclude "tensorflow/core/fra work/dataset.h"
+# nclude "tensorflow/core/fra work/part al_tensor_shape.h"
+# nclude "tensorflow/core/fra work/tensor.h"
+# nclude "tensorflow/core/l b/ o/random_ nputstream.h"
 
-#if !defined(DISABLE_ZLIB)
-#include "tensorflow/core/lib/io/zlib_inputstream.h"
-#endif
+# f !def ned(D SABLE_ZL B)
+# nclude "tensorflow/core/l b/ o/zl b_ nputstream.h"
+#end f
 
-#include <twml.h>
+# nclude <twml.h>
 
-#include <cstdio>
-#include <algorithm>
-#include <iterator>
+# nclude <cstd o>
+# nclude <algor hm>
+# nclude < erator>
 
-using namespace tensorflow;
+us ng na space tensorflow;
 
 
-inline std::string stripPath(std::string const &file_name) {
-  const auto pos = file_name.find_last_of("/");
-  if (pos == std::string::npos) return file_name;
-  return file_name.substr(pos + 1);
+ nl ne std::str ng str pPath(std::str ng const &f le_na ) {
+  const auto pos = f le_na .f nd_last_of("/");
+   f (pos == std::str ng::npos) return f le_na ;
+  return f le_na .substr(pos + 1);
 }
 
-inline std::string getExtension(std::string const &file_name) {
-  const auto stripped_file_name = stripPath(file_name);
-  const auto pos = stripPath(stripped_file_name).find_last_of(".");
-  if (pos == std::string::npos) return "";
-  return stripped_file_name.substr(pos + 1);
+ nl ne std::str ng getExtens on(std::str ng const &f le_na ) {
+  const auto str pped_f le_na  = str pPath(f le_na );
+  const auto pos = str pPath(str pped_f le_na ).f nd_last_of(".");
+   f (pos == std::str ng::npos) return "";
+  return str pped_f le_na .substr(pos + 1);
 }
 
-REGISTER_OP("BlockFormatDatasetV2")
-.Input("filenames: string")
-.Input("compression_type: string")
-.Input("buffer_size: int64")
-.Output("handle: variant")
-.SetIsStateful()
-.SetShapeFn(shape_inference::ScalarShape)
+REG STER_OP("BlockFormatDatasetV2")
+. nput("f lena s: str ng")
+. nput("compress on_type: str ng")
+. nput("buffer_s ze:  nt64")
+.Output("handle: var ant")
+.Set sStateful()
+.SetShapeFn(shape_ nference::ScalarShape)
 .Doc(R"doc(
 
-Creates a dataset for streaming BlockFormat data in compressed (e.g. gzip), uncompressed formats.
-This op also has the ability stream a dataset containing files from multiple formats mentioned above.
+Creates a dataset for stream ng BlockFormat data  n compressed (e.g. gz p), uncompressed formats.
+T  op also has t  ab l y stream a dataset conta n ng f les from mult ple formats  nt oned above.
 
-filenames: A scalar or vector containing the name(s) of the file(s) to be read.
-compression_type: A scalar string denoting the compression type. Can be 'none', 'zlib', 'auto'.
-buffer_size: A scalar denoting the buffer size to use during decompression.
+f lena s: A scalar or vector conta n ng t  na (s) of t  f le(s) to be read.
+compress on_type: A scalar str ng denot ng t  compress on type. Can be 'none', 'zl b', 'auto'.
+buffer_s ze: A scalar denot ng t  buffer s ze to use dur ng decompress on.
 
 Outputs
-  handle: A handle to the dataset. This handle is later used to create an iterator to stream the data from the dataset.
+  handle: A handle to t  dataset. T  handle  s later used to create an  erator to stream t  data from t  dataset.
 
 )doc");
 
 
-class BlockFormatDatasetV2 : public DatasetOpKernel {
- public:
-  using DatasetOpKernel::DatasetOpKernel;
+class BlockFormatDatasetV2 : publ c DatasetOpKernel {
+ publ c:
+  us ng DatasetOpKernel::DatasetOpKernel;
 
-  void MakeDataset(OpKernelContext* ctx, DatasetBase **output) override {
-    const Tensor* filenames_tensor;
-    OP_REQUIRES_OK(ctx, ctx->input("filenames", &filenames_tensor));
-    OP_REQUIRES(
-        ctx, filenames_tensor->dims() <= 1,
-        errors::InvalidArgument("`filenames` must be a scalar or a vector."));
+  vo d MakeDataset(OpKernelContext* ctx, DatasetBase **output) overr de {
+    const Tensor* f lena s_tensor;
+    OP_REQU RES_OK(ctx, ctx-> nput("f lena s", &f lena s_tensor));
+    OP_REQU RES(
+        ctx, f lena s_tensor->d ms() <= 1,
+        errors:: nval dArgu nt("`f lena s` must be a scalar or a vector."));
 
-    const auto filenames_flat = filenames_tensor->flat<string>();
-    const int64 num_files = filenames_tensor->NumElements();
-    std::vector<string> filenames;
-    filenames.reserve(num_files);
-    std::copy(filenames_flat.data(),
-              filenames_flat.data() + num_files,
-              std::back_inserter(filenames));
+    const auto f lena s_flat = f lena s_tensor->flat<str ng>();
+    const  nt64 num_f les = f lena s_tensor->NumEle nts();
+    std::vector<str ng> f lena s;
+    f lena s.reserve(num_f les);
+    std::copy(f lena s_flat.data(),
+              f lena s_flat.data() + num_f les,
+              std::back_ nserter(f lena s));
 
-    string compression_type;
-    OP_REQUIRES_OK(
-        ctx, tensorflow::data::ParseScalarArgument<string>(
-            ctx, "compression_type", &compression_type));
+    str ng compress on_type;
+    OP_REQU RES_OK(
+        ctx, tensorflow::data::ParseScalarArgu nt<str ng>(
+            ctx, "compress on_type", &compress on_type));
 
-    int64 buffer_size = -1;
-    OP_REQUIRES_OK(
-        ctx, tensorflow::data::ParseScalarArgument<int64>(
-            ctx, "buffer_size", &buffer_size));
+     nt64 buffer_s ze = -1;
+    OP_REQU RES_OK(
+        ctx, tensorflow::data::ParseScalarArgu nt< nt64>(
+            ctx, "buffer_s ze", &buffer_s ze));
 
-    OP_REQUIRES(ctx, buffer_size >= 0,
-                errors::InvalidArgument(
-                    "`buffer_size` must be >= 0 (0 == no buffering)"));
+    OP_REQU RES(ctx, buffer_s ze >= 0,
+                errors:: nval dArgu nt(
+                    "`buffer_s ze` must be >= 0 (0 == no buffer ng)"));
 
-    OP_REQUIRES(ctx,
-                compression_type == "auto" ||
-                compression_type == "gz" ||
-                compression_type == "",
-                errors::InvalidArgument("Unknown extension: ", compression_type));
+    OP_REQU RES(ctx,
+                compress on_type == "auto" ||
+                compress on_type == "gz" ||
+                compress on_type == "",
+                errors:: nval dArgu nt("Unknown extens on: ", compress on_type));
 
-    *output = new Dataset(ctx, std::move(filenames), compression_type, buffer_size);
+    *output = new Dataset(ctx, std::move(f lena s), compress on_type, buffer_s ze);
   }
 
- private:
-  class Dataset : public DatasetBase {
-   public:
+ pr vate:
+  class Dataset : publ c DatasetBase {
+   publ c:
     Dataset(OpKernelContext* ctx,
-            std::vector<string> filenames,
-            std::string compression_type,
-            int64 buffer_size)
+            std::vector<str ng> f lena s,
+            std::str ng compress on_type,
+             nt64 buffer_s ze)
         : DatasetBase(DatasetContext(ctx)),
-          compression_type_(compression_type),
-          buffer_size_(buffer_size),
-          filenames_(std::move(filenames))
+          compress on_type_(compress on_type),
+          buffer_s ze_(buffer_s ze),
+          f lena s_(std::move(f lena s))
     {}
 
-    const DataTypeVector& output_dtypes() const override {
-      static DataTypeVector* dtypes = new DataTypeVector({DT_STRING});
+    const DataTypeVector& output_dtypes() const overr de {
+      stat c DataTypeVector* dtypes = new DataTypeVector({DT_STR NG});
       return *dtypes;
     }
 
-    const std::vector<PartialTensorShape>& output_shapes() const override {
-      static std::vector<PartialTensorShape>* shapes =
-          new std::vector<PartialTensorShape>({{}});
+    const std::vector<Part alTensorShape>& output_shapes() const overr de {
+      stat c std::vector<Part alTensorShape>* shapes =
+          new std::vector<Part alTensorShape>({{}});
       return *shapes;
     }
 
-    string DebugString() const override { return "BlockFormatDatasetV2::Dataset"; }
+    str ng DebugStr ng() const overr de { return "BlockFormatDatasetV2::Dataset"; }
 
    protected:
-    Status AsGraphDefInternal(SerializationContext* ctx,
-                              DatasetGraphDefBuilder* b,
-                              Node** output) const override {
-      Node* filenames = nullptr;
-      Node* compression_type = nullptr;
-      Node* buffer_size = nullptr;
-      TF_RETURN_IF_ERROR(b->AddVector(filenames_, &filenames));
-      TF_RETURN_IF_ERROR(b->AddScalar(compression_type_, &compression_type));
-      TF_RETURN_IF_ERROR(
-          b->AddScalar(buffer_size_, &buffer_size));
-      TF_RETURN_IF_ERROR(b->AddDataset(
-          this, {filenames, compression_type, buffer_size}, output));
+    Status AsGraphDef nternal(Ser al zat onContext* ctx,
+                              DatasetGraphDefBu lder* b,
+                              Node** output) const overr de {
+      Node* f lena s = nullptr;
+      Node* compress on_type = nullptr;
+      Node* buffer_s ze = nullptr;
+      TF_RETURN_ F_ERROR(b->AddVector(f lena s_, &f lena s));
+      TF_RETURN_ F_ERROR(b->AddScalar(compress on_type_, &compress on_type));
+      TF_RETURN_ F_ERROR(
+          b->AddScalar(buffer_s ze_, &buffer_s ze));
+      TF_RETURN_ F_ERROR(b->AddDataset(
+          t , {f lena s, compress on_type, buffer_s ze}, output));
       return Status::OK();
     }
 
-   private:
-    std::unique_ptr<IteratorBase> MakeIteratorInternal(
-        const string& prefix) const override {
-      return std::unique_ptr<IteratorBase>(
-          new Iterator({this, strings::StrCat(prefix, "::BlockFormat")}));
+   pr vate:
+    std::un que_ptr< eratorBase> Make erator nternal(
+        const str ng& pref x) const overr de {
+      return std::un que_ptr< eratorBase>(
+          new  erator({t , str ngs::StrCat(pref x, "::BlockFormat")}));
     }
 
-    class Iterator : public DatasetIterator<Dataset> {
-     public:
-      explicit Iterator(const Params &params)
-          : DatasetIterator<Dataset>(params) {}
+    class  erator : publ c Dataset erator<Dataset> {
+     publ c:
+      expl c   erator(const Params &params)
+          : Dataset erator<Dataset>(params) {}
 
-      Status GetNextInternal(IteratorContext* ctx,
+      Status GetNext nternal( eratorContext* ctx,
                              std::vector<Tensor>* out_tensors,
-                             bool* end_of_sequence) override {
+                             bool* end_of_sequence) overr de {
         mutex_lock l(mu_);
         do {
-          // We are currently processing a file, so try to read the next record.
-          if (reader_) {
-            Tensor result_tensor(cpu_allocator(), DT_STRING, {});
-            Status s = reader_->ReadNext(&result_tensor.scalar<string>()());
-            if (s.ok()) {
+          //   are currently process ng a f le, so try to read t  next record.
+           f (reader_) {
+            Tensor result_tensor(cpu_allocator(), DT_STR NG, {});
+            Status s = reader_->ReadNext(&result_tensor.scalar<str ng>()());
+             f (s.ok()) {
               out_tensors->emplace_back(std::move(result_tensor));
               *end_of_sequence = false;
               return Status::OK();
-            } else if (!errors::IsOutOfRange(s)) {
+            } else  f (!errors:: sOutOfRange(s)) {
               return s;
             }
 
-            // We have reached the end of the current file, so maybe
-            // move on to next file.
+            //   have reac d t  end of t  current f le, so maybe
+            // move on to next f le.
             reader_.reset();
-            ++current_file_index_;
+            ++current_f le_ ndex_;
           }
 
-          // Iteration ends when there are no more files to process.
-          if (current_file_index_ == dataset()->filenames_.size()) {
+          //  erat on ends w n t re are no more f les to process.
+           f (current_f le_ ndex_ == dataset()->f lena s_.s ze()) {
             *end_of_sequence = true;
             return Status::OK();
           }
 
-          // Actually move on to next file.
-          const string& next_filename =
-              dataset()->filenames_[current_file_index_];
+          // Actually move on to next f le.
+          const str ng& next_f lena  =
+              dataset()->f lena s_[current_f le_ ndex_];
 
-          auto compression_type = dataset()->compression_type_;
-          int64 buffer_size = dataset()->buffer_size_;
+          auto compress on_type = dataset()->compress on_type_;
+           nt64 buffer_s ze = dataset()->buffer_s ze_;
 
-          if (compression_type == "auto") {
-            compression_type = getExtension(next_filename);
+           f (compress on_type == "auto") {
+            compress on_type = getExtens on(next_f lena );
           }
 
-          if (compression_type != "gz" && compression_type != "") {
-            return errors::InvalidArgument("Unknown extension: ", compression_type);
+           f (compress on_type != "gz" && compress on_type != "") {
+            return errors:: nval dArgu nt("Unknown extens on: ", compress on_type);
           }
 
           tensorflow::Env* env = tensorflow::Env::Default();
-          TF_CHECK_OK(env->NewRandomAccessFile(next_filename, &file_));
+          TF_CHECK_OK(env->NewRandomAccessF le(next_f lena , &f le_));
 
-          // RandomAccessInputstream defaults the second param to "false".
-          // The second parameter "false" is the key issue.
-          // "false" assumes the ownership of the file is elsewhere.
-          // But making that "true" causes segfaults down the line.
-          // So keep the ownership of "file_" in this class and clean up properly.
-          file_stream_.reset(new tensorflow::io::RandomAccessInputStream(file_.get(), false));
+          // RandomAccess nputstream defaults t  second param to "false".
+          // T  second para ter "false"  s t  key  ssue.
+          // "false" assu s t  ownersh p of t  f le  s elsew re.
+          // But mak ng that "true" causes segfaults down t  l ne.
+          // So keep t  ownersh p of "f le_"  n t  class and clean up properly.
+          f le_stream_.reset(new tensorflow:: o::RandomAccess nputStream(f le_.get(), false));
 
-          if (compression_type == "gz") {
-            // unpack_stream does not take ownership of file_stream_
-#if !defined(DISABLE_ZLIB)
-            unpack_stream_.reset(new tensorflow::io::ZlibInputStream(
-                                   file_stream_.get(),
-                                   buffer_size,
-                                   buffer_size,
-                                   tensorflow::io::ZlibCompressionOptions::GZIP()));
+           f (compress on_type == "gz") {
+            // unpack_stream does not take ownersh p of f le_stream_
+# f !def ned(D SABLE_ZL B)
+            unpack_stream_.reset(new tensorflow:: o::Zl b nputStream(
+                                   f le_stream_.get(),
+                                   buffer_s ze,
+                                   buffer_s ze,
+                                   tensorflow:: o::Zl bCompress onOpt ons::GZ P()));
             reader_.reset(new BlockFormatReader(unpack_stream_.get()));
 #else
-            return errors::InvalidArgument("libtwml compiled without zlib support");
-#endif
+            return errors:: nval dArgu nt("l btwml comp led w hout zl b support");
+#end f
           } else {
             unpack_stream_.reset(nullptr);
-            reader_.reset(new BlockFormatReader(file_stream_.get()));
+            reader_.reset(new BlockFormatReader(f le_stream_.get()));
           }
-        } while (true);
+        } wh le (true);
       }
 
-     private:
+     pr vate:
       mutex mu_;
-      uint64_t current_file_index_ GUARDED_BY(mu_) = 0;
-      std::unique_ptr<tensorflow::RandomAccessFile> file_;
-      std::unique_ptr<tensorflow::io::InputStreamInterface> file_stream_;
-      std::unique_ptr<tensorflow::io::InputStreamInterface> unpack_stream_;
-      std::unique_ptr<BlockFormatReader> reader_ GUARDED_BY(mu_);
+      u nt64_t current_f le_ ndex_ GUARDED_BY(mu_) = 0;
+      std::un que_ptr<tensorflow::RandomAccessF le> f le_;
+      std::un que_ptr<tensorflow:: o:: nputStream nterface> f le_stream_;
+      std::un que_ptr<tensorflow:: o:: nputStream nterface> unpack_stream_;
+      std::un que_ptr<BlockFormatReader> reader_ GUARDED_BY(mu_);
     };
 
-    const std::string compression_type_;
-    const int64 buffer_size_;
-    const std::vector<string> filenames_;
+    const std::str ng compress on_type_;
+    const  nt64 buffer_s ze_;
+    const std::vector<str ng> f lena s_;
   };
 };
 
-REGISTER_KERNEL_BUILDER(
-  Name("BlockFormatDatasetV2")
-  .Device(DEVICE_CPU),
+REG STER_KERNEL_BU LDER(
+  Na ("BlockFormatDatasetV2")
+  .Dev ce(DEV CE_CPU),
   BlockFormatDatasetV2);

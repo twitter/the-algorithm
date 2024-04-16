@@ -1,95 +1,95 @@
-package com.twitter.simclustersann.modules
+package com.tw ter.s mclustersann.modules
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.decider.Decider
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hermit.store.common.ObservedCachedReadableStore
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.relevance_platform.common.injection.LZ4Injection
-import com.twitter.relevance_platform.common.injection.SeqObjectInjection
-import com.twitter.relevance_platform.simclustersann.multicluster.ClusterConfig
-import com.twitter.relevance_platform.simclustersann.multicluster.ClusterTweetIndexStoreConfig
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.summingbird.stores.ClusterKey
-import com.twitter.simclusters_v2.summingbird.stores.TopKTweetsForClusterKeyReadableStore
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclustersann.common.FlagNames
-import com.twitter.storehaus.ReadableStore
+ mport com.google. nject.Prov des
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.f nagle. mcac d.Cl ent
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. rm .store.common.ObservedCac dReadableStore
+ mport com.tw ter. rm .store.common.Observed mcac dReadableStore
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.relevance_platform.common. nject on.LZ4 nject on
+ mport com.tw ter.relevance_platform.common. nject on.SeqObject nject on
+ mport com.tw ter.relevance_platform.s mclustersann.mult cluster.ClusterConf g
+ mport com.tw ter.relevance_platform.s mclustersann.mult cluster.ClusterT et ndexStoreConf g
+ mport com.tw ter.s mclusters_v2.common.Cluster d
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.summ ngb rd.stores.ClusterKey
+ mport com.tw ter.s mclusters_v2.summ ngb rd.stores.TopKT etsForClusterKeyReadableStore
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclustersann.common.FlagNa s
+ mport com.tw ter.storehaus.ReadableStore
 
-import javax.inject.Singleton
+ mport javax. nject.S ngleton
 
-object ClusterTweetIndexProviderModule extends TwitterModule {
+object ClusterT et ndexProv derModule extends Tw terModule {
 
-  @Singleton
-  @Provides
-  // Provides ClusterTweetIndex Store based on different maxResults settings on the same store
-  // Create a different provider if index is in a different store
-  def providesClusterTweetIndex(
-    @Flag(FlagNames.MaxTopTweetPerCluster) maxTopTweetPerCluster: Int,
-    @Flag(FlagNames.CacheAsyncUpdate) asyncUpdate: Boolean,
-    clusterConfig: ClusterConfig,
-    serviceIdentifier: ServiceIdentifier,
-    stats: StatsReceiver,
-    decider: Decider,
-    simClustersANNCacheClient: Client
-  ): ReadableStore[ClusterId, Seq[(TweetId, Double)]] = {
-    // Build the underling cluster-to-tweet store
-    val topTweetsForClusterStore = clusterConfig.clusterTweetIndexStoreConfig match {
-      // If the config returns Manhattan tweet index config, we read from a RO MH store
-      case manhattanConfig: ClusterTweetIndexStoreConfig.Manhattan =>
-        TopKTweetsForClusterKeyReadableStore.getClusterToTopKTweetsStoreFromManhattanRO(
-          maxTopTweetPerCluster,
-          manhattanConfig,
-          serviceIdentifier)
-      case memCacheConfig: ClusterTweetIndexStoreConfig.Memcached =>
-        TopKTweetsForClusterKeyReadableStore.getClusterToTopKTweetsStoreFromMemCache(
-          maxTopTweetPerCluster,
-          memCacheConfig,
-          serviceIdentifier)
+  @S ngleton
+  @Prov des
+  // Prov des ClusterT et ndex Store based on d fferent maxResults sett ngs on t  sa  store
+  // Create a d fferent prov der  f  ndex  s  n a d fferent store
+  def prov desClusterT et ndex(
+    @Flag(FlagNa s.MaxTopT etPerCluster) maxTopT etPerCluster:  nt,
+    @Flag(FlagNa s.Cac AsyncUpdate) asyncUpdate: Boolean,
+    clusterConf g: ClusterConf g,
+    serv ce dent f er: Serv ce dent f er,
+    stats: StatsRece ver,
+    dec der: Dec der,
+    s mClustersANNCac Cl ent: Cl ent
+  ): ReadableStore[Cluster d, Seq[(T et d, Double)]] = {
+    // Bu ld t  underl ng cluster-to-t et store
+    val topT etsForClusterStore = clusterConf g.clusterT et ndexStoreConf g match {
+      //  f t  conf g returns Manhattan t et  ndex conf g,   read from a RO MH store
+      case manhattanConf g: ClusterT et ndexStoreConf g.Manhattan =>
+        TopKT etsForClusterKeyReadableStore.getClusterToTopKT etsStoreFromManhattanRO(
+          maxTopT etPerCluster,
+          manhattanConf g,
+          serv ce dent f er)
+      case  mCac Conf g: ClusterT et ndexStoreConf g. mcac d =>
+        TopKT etsForClusterKeyReadableStore.getClusterToTopKT etsStoreFrom mCac (
+          maxTopT etPerCluster,
+           mCac Conf g,
+          serv ce dent f er)
       case _ =>
-        // Bad instance
+        // Bad  nstance
         ReadableStore.empty
     }
 
-    val embeddingType: EmbeddingType = clusterConfig.candidateTweetEmbeddingType
-    val modelVersion: String = ModelVersions.toKnownForModelVersion(clusterConfig.modelVersion)
+    val embedd ngType: Embedd ngType = clusterConf g.cand dateT etEmbedd ngType
+    val modelVers on: Str ng = ModelVers ons.toKnownForModelVers on(clusterConf g.modelVers on)
 
-    val store: ReadableStore[ClusterId, Seq[(TweetId, Double)]] =
-      topTweetsForClusterStore.composeKeyMapping { id: ClusterId =>
-        ClusterKey(id, modelVersion, embeddingType)
+    val store: ReadableStore[Cluster d, Seq[(T et d, Double)]] =
+      topT etsForClusterStore.composeKeyMapp ng {  d: Cluster d =>
+        ClusterKey( d, modelVers on, embedd ngType)
       }
 
-    val memcachedTopTweetsForClusterStore =
-      ObservedMemcachedReadableStore.fromCacheClient(
-        backingStore = store,
-        cacheClient = simClustersANNCacheClient,
-        ttl = 15.minutes,
+    val  mcac dTopT etsForClusterStore =
+      Observed mcac dReadableStore.fromCac Cl ent(
+        back ngStore = store,
+        cac Cl ent = s mClustersANNCac Cl ent,
+        ttl = 15.m nutes,
         asyncUpdate = asyncUpdate
       )(
-        valueInjection = LZ4Injection.compose(SeqObjectInjection[(Long, Double)]()),
-        statsReceiver = stats.scope("cluster_tweet_index_mem_cache"),
-        keyToString = { k =>
-          // prod cache key : SimClusters_LZ4/cluster_to_tweet/clusterId_embeddingType_modelVersion
-          s"scz:c2t:${k}_${embeddingType}_${modelVersion}_$maxTopTweetPerCluster"
+        value nject on = LZ4 nject on.compose(SeqObject nject on[(Long, Double)]()),
+        statsRece ver = stats.scope("cluster_t et_ ndex_ m_cac "),
+        keyToStr ng = { k =>
+          // prod cac  key : S mClusters_LZ4/cluster_to_t et/cluster d_embedd ngType_modelVers on
+          s"scz:c2t:${k}_${embedd ngType}_${modelVers on}_$maxTopT etPerCluster"
         }
       )
 
-    val cachedStore: ReadableStore[ClusterId, Seq[(TweetId, Double)]] = {
-      ObservedCachedReadableStore.from[ClusterId, Seq[(TweetId, Double)]](
-        memcachedTopTweetsForClusterStore,
-        ttl = 10.minute,
+    val cac dStore: ReadableStore[Cluster d, Seq[(T et d, Double)]] = {
+      ObservedCac dReadableStore.from[Cluster d, Seq[(T et d, Double)]](
+         mcac dTopT etsForClusterStore,
+        ttl = 10.m nute,
         maxKeys = 150000,
-        cacheName = "cluster_tweet_index_cache",
-        windowSize = 10000L
-      )(stats.scope("cluster_tweet_index_store"))
+        cac Na  = "cluster_t et_ ndex_cac ",
+        w ndowS ze = 10000L
+      )(stats.scope("cluster_t et_ ndex_store"))
     }
-    cachedStore
+    cac dStore
   }
 }

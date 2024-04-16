@@ -1,51 +1,51 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.event_summary
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.event_summary
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.event_summary.EventCandidateUrtItemBuilder.EventClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.EventDisplayType
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.EventImage
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.EventTimeString
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.EventTitleFeature
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.EventUrl
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.UnifiedEventCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.event.EventSummaryItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.event_summary.EventCand dateUrt emBu lder.EventCl entEvent nfoEle nt
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.trends_events.EventD splayType
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.trends_events.Event mage
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.trends_events.EventT  Str ng
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.trends_events.EventT leFeature
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.trends_events.EventUrl
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.trends_events.Un f edEventCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.Cand dateUrtEntryBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseCl entEvent nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseFeedbackAct on nfoBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne em
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.event.EventSummary em
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object EventCandidateUrtItemBuilder {
-  val EventClientEventInfoElement = "event"
+object EventCand dateUrt emBu lder {
+  val EventCl entEvent nfoEle nt = "event"
 }
 
-case class EventCandidateUrtItemBuilder[Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, UnifiedEventCandidate],
-  feedbackActionInfoBuilder: Option[BaseFeedbackActionInfoBuilder[Query, UnifiedEventCandidate]] =
+case class EventCand dateUrt emBu lder[Query <: P pel neQuery](
+  cl entEvent nfoBu lder: BaseCl entEvent nfoBu lder[Query, Un f edEventCand date],
+  feedbackAct on nfoBu lder: Opt on[BaseFeedbackAct on nfoBu lder[Query, Un f edEventCand date]] =
     None)
-    extends CandidateUrtEntryBuilder[Query, UnifiedEventCandidate, TimelineItem] {
+    extends Cand dateUrtEntryBu lder[Query, Un f edEventCand date, T  l ne em] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidate: UnifiedEventCandidate,
-    candidateFeatures: FeatureMap
-  ): TimelineItem = {
-    EventSummaryItem(
-      id = candidate.id,
-      sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-      clientEventInfo = clientEventInfoBuilder(
+    cand date: Un f edEventCand date,
+    cand dateFeatures: FeatureMap
+  ): T  l ne em = {
+    EventSummary em(
+       d = cand date. d,
+      sort ndex = None, // Sort  ndexes are automat cally set  n t  doma n marshaller phase
+      cl entEvent nfo = cl entEvent nfoBu lder(
         query = query,
-        candidate = candidate,
-        candidateFeatures = candidateFeatures,
-        element = Some(EventClientEventInfoElement)
+        cand date = cand date,
+        cand dateFeatures = cand dateFeatures,
+        ele nt = So (EventCl entEvent nfoEle nt)
       ),
-      feedbackActionInfo =
-        feedbackActionInfoBuilder.flatMap(_.apply(query, candidate, candidateFeatures)),
-      title = candidateFeatures.get(EventTitleFeature),
-      displayType = candidateFeatures.get(EventDisplayType),
-      url = candidateFeatures.get(EventUrl),
-      image = candidateFeatures.getOrElse(EventImage, None),
-      timeString = candidateFeatures.getOrElse(EventTimeString, None)
+      feedbackAct on nfo =
+        feedbackAct on nfoBu lder.flatMap(_.apply(query, cand date, cand dateFeatures)),
+      t le = cand dateFeatures.get(EventT leFeature),
+      d splayType = cand dateFeatures.get(EventD splayType),
+      url = cand dateFeatures.get(EventUrl),
+       mage = cand dateFeatures.getOrElse(Event mage, None),
+      t  Str ng = cand dateFeatures.getOrElse(EventT  Str ng, None)
     )
   }
 }

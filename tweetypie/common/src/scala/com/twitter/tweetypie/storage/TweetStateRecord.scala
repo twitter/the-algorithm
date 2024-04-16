@@ -1,90 +1,90 @@
-package com.twitter.tweetypie.storage
+package com.tw ter.t etyp e.storage
 
-import com.twitter.storage.client.manhattan.kv.ManhattanValue
-import com.twitter.util.Time
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanValue
+ mport com.tw ter.ut l.T  
 
 /**
- * A [[TweetStateRecord]] represents an action taken on a tweet and can be used to determine a tweet's state.
+ * A [[T etStateRecord]] represents an act on taken on a t et and can be used to determ ne a t et's state.
  *
- * The state is determined by the record with the most recent timestamp. In the absence of any
- * record a tweet is considered found, which is to say the tweet has not been through the
- * deletion process.
+ * T  state  s determ ned by t  record w h t  most recent t  stamp.  n t  absence of any
+ * record a t et  s cons dered found, wh ch  s to say t  t et has not been through t 
+ * delet on process.
  *
- * The [[TweetStateRecord]] type is determined by the lkey of a tweet manhattan record:
- *    metadata/delete_state      -> HardDeleted
- *    metadata/soft_delete_state -> SoftDeleted
- *    metadata/undelete_state    -> Undeleted
- *    metadata/force_added_state -> ForceAdded
+ * T  [[T etStateRecord]] type  s determ ned by t  lkey of a t et manhattan record:
+ *     tadata/delete_state      -> HardDeleted
+ *     tadata/soft_delete_state -> SoftDeleted
+ *     tadata/undelete_state    -> Undeleted
+ *     tadata/force_added_state -> ForceAdded
  *
- * See the README in this directory for more details about the state of a tweet.
+ * See t  README  n t  d rectory for more deta ls about t  state of a t et.
  */
-sealed trait TweetStateRecord {
-  def tweetId: TweetId
+sealed tra  T etStateRecord {
+  def t et d: T et d
   def createdAt: Long
-  def stateKey: TweetKey.LKey.StateKey
-  def values: Map[String, Long] = Map("timestamp" -> createdAt)
-  def name: String
+  def stateKey: T etKey.LKey.StateKey
+  def values: Map[Str ng, Long] = Map("t  stamp" -> createdAt)
+  def na : Str ng
 
-  def toTweetMhRecord: TweetManhattanRecord = {
+  def toT etMhRecord: T etManhattanRecord = {
     val valByteBuffer = ByteArrayCodec.toByteBuffer(Json.encode(values))
-    val value = ManhattanValue(valByteBuffer, Some(Time.fromMilliseconds(createdAt)))
-    TweetManhattanRecord(TweetKey(tweetId, stateKey), value)
+    val value = ManhattanValue(valByteBuffer, So (T  .fromM ll seconds(createdAt)))
+    T etManhattanRecord(T etKey(t et d, stateKey), value)
   }
 }
 
-object TweetStateRecord {
+object T etStateRecord {
 
-  /** When a soft-deleted or bounce deleted tweet is ultimately hard-deleted by an offline job. */
-  case class HardDeleted(tweetId: TweetId, createdAt: Long, deletedAt: Long)
-      extends TweetStateRecord {
-    // timestamp in the mh backend is the hard deletion timestamp
-    override def values = Map("timestamp" -> createdAt, "softdelete_timestamp" -> deletedAt)
-    def stateKey = TweetKey.LKey.HardDeletionStateKey
-    def name = "hard_deleted"
+  /** W n a soft-deleted or bounce deleted t et  s ult mately hard-deleted by an offl ne job. */
+  case class HardDeleted(t et d: T et d, createdAt: Long, deletedAt: Long)
+      extends T etStateRecord {
+    // t  stamp  n t  mh backend  s t  hard delet on t  stamp
+    overr de def values = Map("t  stamp" -> createdAt, "softdelete_t  stamp" -> deletedAt)
+    def stateKey = T etKey.LKey.HardDelet onStateKey
+    def na  = "hard_deleted"
   }
 
-  /** When a tweet is deleted by the user. It can still be undeleted while in the soft deleted state. */
-  case class SoftDeleted(tweetId: TweetId, createdAt: Long) extends TweetStateRecord {
-    def stateKey = TweetKey.LKey.SoftDeletionStateKey
-    def name = "soft_deleted"
+  /** W n a t et  s deleted by t  user.   can st ll be undeleted wh le  n t  soft deleted state. */
+  case class SoftDeleted(t et d: T et d, createdAt: Long) extends T etStateRecord {
+    def stateKey = T etKey.LKey.SoftDelet onStateKey
+    def na  = "soft_deleted"
   }
 
-  /** When a tweet is deleted by go/bouncer for violating Twitter Rules. It MAY NOT be undeleted. */
-  case class BounceDeleted(tweetId: TweetId, createdAt: Long) extends TweetStateRecord {
-    def stateKey = TweetKey.LKey.BounceDeletionStateKey
-    def name = "bounce_deleted"
+  /** W n a t et  s deleted by go/bouncer for v olat ng Tw ter Rules.   MAY NOT be undeleted. */
+  case class BounceDeleted(t et d: T et d, createdAt: Long) extends T etStateRecord {
+    def stateKey = T etKey.LKey.BounceDelet onStateKey
+    def na  = "bounce_deleted"
   }
 
-  /** When a tweet is undeleted by an internal system. */
-  case class Undeleted(tweetId: TweetId, createdAt: Long) extends TweetStateRecord {
-    def stateKey = TweetKey.LKey.UnDeletionStateKey
-    def name = "undeleted"
+  /** W n a t et  s undeleted by an  nternal system. */
+  case class Undeleted(t et d: T et d, createdAt: Long) extends T etStateRecord {
+    def stateKey = T etKey.LKey.UnDelet onStateKey
+    def na  = "undeleted"
   }
 
-  /** When a tweet is created using the forceAdd endpoint. */
-  case class ForceAdded(tweetId: TweetId, createdAt: Long) extends TweetStateRecord {
-    def stateKey = TweetKey.LKey.ForceAddedStateKey
-    def name = "force_added"
+  /** W n a t et  s created us ng t  forceAdd endpo nt. */
+  case class ForceAdded(t et d: T et d, createdAt: Long) extends T etStateRecord {
+    def stateKey = T etKey.LKey.ForceAddedStateKey
+    def na  = "force_added"
   }
 
-  def fromTweetMhRecord(record: TweetManhattanRecord): Option[TweetStateRecord] = {
-    def ts = TimestampDecoder.decode(record, TimestampType.Default).getOrElse(0L)
-    def sdts = TimestampDecoder.decode(record, TimestampType.SoftDelete).getOrElse(0L)
-    def tweetId = record.pkey
+  def fromT etMhRecord(record: T etManhattanRecord): Opt on[T etStateRecord] = {
+    def ts = T  stampDecoder.decode(record, T  stampType.Default).getOrElse(0L)
+    def sdts = T  stampDecoder.decode(record, T  stampType.SoftDelete).getOrElse(0L)
+    def t et d = record.pkey
 
     record.lkey match {
-      case TweetKey.LKey.HardDeletionStateKey => Some(HardDeleted(tweetId, ts, sdts))
-      case TweetKey.LKey.SoftDeletionStateKey => Some(SoftDeleted(tweetId, ts))
-      case TweetKey.LKey.BounceDeletionStateKey => Some(BounceDeleted(tweetId, ts))
-      case TweetKey.LKey.UnDeletionStateKey => Some(Undeleted(tweetId, ts))
-      case TweetKey.LKey.ForceAddedStateKey => Some(ForceAdded(tweetId, ts))
+      case T etKey.LKey.HardDelet onStateKey => So (HardDeleted(t et d, ts, sdts))
+      case T etKey.LKey.SoftDelet onStateKey => So (SoftDeleted(t et d, ts))
+      case T etKey.LKey.BounceDelet onStateKey => So (BounceDeleted(t et d, ts))
+      case T etKey.LKey.UnDelet onStateKey => So (Undeleted(t et d, ts))
+      case T etKey.LKey.ForceAddedStateKey => So (ForceAdded(t et d, ts))
       case _ => None
     }
   }
 
-  def fromTweetMhRecords(records: Seq[TweetManhattanRecord]): Seq[TweetStateRecord] =
-    records.flatMap(fromTweetMhRecord)
+  def fromT etMhRecords(records: Seq[T etManhattanRecord]): Seq[T etStateRecord] =
+    records.flatMap(fromT etMhRecord)
 
-  def mostRecent(records: Seq[TweetManhattanRecord]): Option[TweetStateRecord] =
-    fromTweetMhRecords(records).sortBy(_.createdAt).lastOption
+  def mostRecent(records: Seq[T etManhattanRecord]): Opt on[T etStateRecord] =
+    fromT etMhRecords(records).sortBy(_.createdAt).lastOpt on
 }

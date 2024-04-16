@@ -1,101 +1,101 @@
-package com.twitter.product_mixer.core.util
+package com.tw ter.product_m xer.core.ut l
 
-import com.twitter.concurrent.NamedPoolThreadFactory
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Duration
-import com.twitter.util.FuturePool
+ mport com.tw ter.concurrent.Na dPoolThreadFactory
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.FuturePool
 
-import java.util.concurrent.ArrayBlockingQueue
-import java.util.concurrent.BlockingQueue
-import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.ThreadPoolExecutor
-import java.util.concurrent.TimeUnit
+ mport java.ut l.concurrent.ArrayBlock ngQueue
+ mport java.ut l.concurrent.Block ngQueue
+ mport java.ut l.concurrent.L nkedBlock ngQueue
+ mport java.ut l.concurrent.ThreadPoolExecutor
+ mport java.ut l.concurrent.T  Un 
 
 /**
- * Utility for making [[FuturePool]] with finite thread counts and different work queue options
- * while also monitoring the size of the work queue that's used.
+ * Ut l y for mak ng [[FuturePool]] w h f n e thread counts and d fferent work queue opt ons
+ * wh le also mon or ng t  s ze of t  work queue that's used.
  *
- * This only handles the cases where the number of threads are bounded.
- * For unbounded numbers of threads in a [[FuturePool]] use [[FuturePool.interruptibleUnboundedPool]] instead.
+ * T  only handles t  cases w re t  number of threads are bounded.
+ * For unbounded numbers of threads  n a [[FuturePool]] use [[FuturePool. nterrupt bleUnboundedPool]]  nstead.
  */
 object FuturePools {
 
   /**
-   * Makes a [[FuturePool]] with a fixed number of threads and a work queue
-   * with a maximum size of `maxWorkQueueSize`.
+   * Makes a [[FuturePool]] w h a f xed number of threads and a work queue
+   * w h a max mum s ze of `maxWorkQueueS ze`.
    *
-   * @note the [[FuturePool]] returns a failed [[com.twitter.util.Future]]s containing
-   *       [[java.util.concurrent.RejectedExecutionException]] when trying to enqueue
-   *       work when the work queue is full.
+   * @note t  [[FuturePool]] returns a fa led [[com.tw ter.ut l.Future]]s conta n ng
+   *       [[java.ut l.concurrent.RejectedExecut onExcept on]] w n try ng to enqueue
+   *       work w n t  work queue  s full.
    */
-  def boundedFixedThreadPool(
-    name: String,
-    fixedThreadCount: Int,
-    workQueueSize: Int,
-    statsReceiver: StatsReceiver
+  def boundedF xedThreadPool(
+    na : Str ng,
+    f xedThreadCount:  nt,
+    workQueueS ze:  nt,
+    statsRece ver: StatsRece ver
   ): FuturePool =
     futurePool(
-      name = name,
-      minThreads = fixedThreadCount,
-      maxThreads = fixedThreadCount,
-      keepIdleThreadsAlive = Duration.Zero,
-      workQueue = new ArrayBlockingQueue[Runnable](workQueueSize),
-      statsReceiver = statsReceiver
+      na  = na ,
+      m nThreads = f xedThreadCount,
+      maxThreads = f xedThreadCount,
+      keep dleThreadsAl ve = Durat on.Zero,
+      workQueue = new ArrayBlock ngQueue[Runnable](workQueueS ze),
+      statsRece ver = statsRece ver
     )
 
   /**
-   * Makes a [[FuturePool]] with a fix number of threads and an unbounded work queue
+   * Makes a [[FuturePool]] w h a f x number of threads and an unbounded work queue
    *
-   * @note Since the work queue is unbounded, this will fill up memory if the available worker threads can't keep up
+   * @note S nce t  work queue  s unbounded, t  w ll f ll up  mory  f t  ava lable worker threads can't keep up
    */
-  def unboundedFixedThreadPool(
-    name: String,
-    fixedThreadCount: Int,
-    statsReceiver: StatsReceiver
+  def unboundedF xedThreadPool(
+    na : Str ng,
+    f xedThreadCount:  nt,
+    statsRece ver: StatsRece ver
   ): FuturePool =
     futurePool(
-      name = name,
-      minThreads = fixedThreadCount,
-      maxThreads = fixedThreadCount,
-      keepIdleThreadsAlive = Duration.Zero,
-      workQueue = new LinkedBlockingQueue[Runnable],
-      statsReceiver = statsReceiver
+      na  = na ,
+      m nThreads = f xedThreadCount,
+      maxThreads = f xedThreadCount,
+      keep dleThreadsAl ve = Durat on.Zero,
+      workQueue = new L nkedBlock ngQueue[Runnable],
+      statsRece ver = statsRece ver
     )
 
   /**
-   * Makes a [[FuturePool]] with the provided thread configuration and
-   * who's `workQueue` is monitored by a [[com.twitter.finagle.stats.Gauge]]
+   * Makes a [[FuturePool]] w h t  prov ded thread conf gurat on and
+   * who's `workQueue`  s mon ored by a [[com.tw ter.f nagle.stats.Gauge]]
    *
-   * @note if `minThreads` == `maxThreads` then the threadpool has a fixed size
+   * @note  f `m nThreads` == `maxThreads` t n t  threadpool has a f xed s ze
    *
-   * @param name name of the threadpool
-   * @param minThreads minimum number of threads in the pool
-   * @param maxThreads maximum number of threads in the pool
-   * @param keepIdleThreadsAlive threads that are idle for this long will be removed from
-   *                             the pool if there are more than `minThreads` in the pool.
-   *                             If the pool size is fixed this is ignored.
+   * @param na  na  of t  threadpool
+   * @param m nThreads m n mum number of threads  n t  pool
+   * @param maxThreads max mum number of threads  n t  pool
+   * @param keep dleThreadsAl ve threads that are  dle for t  long w ll be removed from
+   *                             t  pool  f t re are more than `m nThreads`  n t  pool.
+   *                              f t  pool s ze  s f xed t   s  gnored.
    */
-  private def futurePool(
-    name: String,
-    minThreads: Int,
-    maxThreads: Int,
-    keepIdleThreadsAlive: Duration,
-    workQueue: BlockingQueue[Runnable],
-    statsReceiver: StatsReceiver
+  pr vate def futurePool(
+    na : Str ng,
+    m nThreads:  nt,
+    maxThreads:  nt,
+    keep dleThreadsAl ve: Durat on,
+    workQueue: Block ngQueue[Runnable],
+    statsRece ver: StatsRece ver
   ): FuturePool = {
-    val gaugeReference = statsReceiver.addGauge("workQueueSize")(workQueue.size())
+    val gaugeReference = statsRece ver.addGauge("workQueueS ze")(workQueue.s ze())
 
-    val threadFactory = new NamedPoolThreadFactory(name, makeDaemons = true)
+    val threadFactory = new Na dPoolThreadFactory(na , makeDaemons = true)
 
-    val executorService =
+    val executorServ ce =
       new ThreadPoolExecutor(
-        minThreads,
-        maxThreads, // ignored by ThreadPoolExecutor when an unbounded queue is provided
-        keepIdleThreadsAlive.inMillis,
-        TimeUnit.MILLISECONDS,
+        m nThreads,
+        maxThreads, //  gnored by ThreadPoolExecutor w n an unbounded queue  s prov ded
+        keep dleThreadsAl ve. nM ll s,
+        T  Un .M LL SECONDS,
         workQueue,
         threadFactory)
 
-    FuturePool.interruptible(executorService)
+    FuturePool. nterrupt ble(executorServ ce)
   }
 }

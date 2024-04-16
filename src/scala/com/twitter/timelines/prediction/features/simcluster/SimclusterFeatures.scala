@@ -1,61 +1,61 @@
-package com.twitter.timelines.prediction.features.simcluster
+package com.tw ter.t  l nes.pred ct on.features.s mcluster
 
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.ml.api.Feature._
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
-import scala.collection.JavaConverters._
+ mport com.tw ter.dal.personal_data.thr ftjava.PersonalDataType._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ml.ap .Feature._
+ mport com.tw ter.s mclusters_v2.thr ftscala.ClustersUser s nterested n
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.TypedAggregateGroup
+ mport scala.collect on.JavaConverters._
 
-class SimclusterFeaturesHelper(statsReceiver: StatsReceiver) {
-  import SimclusterFeatures._
+class S mclusterFeatures lper(statsRece ver: StatsRece ver) {
+   mport S mclusterFeatures._
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
-  private[this] val invalidSimclusterModelVersion = scopedStatsReceiver
-    .counter("invalidSimclusterModelVersion")
+  pr vate[t ] val scopedStatsRece ver = statsRece ver.scope(getClass.getS mpleNa )
+  pr vate[t ] val  nval dS mclusterModelVers on = scopedStatsRece ver
+    .counter(" nval dS mclusterModelVers on")
 
-  def fromUserClusterInterestsPair(
-    userInterestClustersPair: (Long, ClustersUserIsInterestedIn)
-  ): Option[SimclusterFeatures] = {
-    val (userId, userInterestClusters) = userInterestClustersPair
-    if (userInterestClusters.knownForModelVersion == SIMCLUSTER_MODEL_VERSION) {
-      val userInterestClustersFavScores = for {
-        (clusterId, scores) <- userInterestClusters.clusterIdToScores
+  def fromUserCluster nterestsPa r(
+    user nterestClustersPa r: (Long, ClustersUser s nterested n)
+  ): Opt on[S mclusterFeatures] = {
+    val (user d, user nterestClusters) = user nterestClustersPa r
+     f (user nterestClusters.knownForModelVers on == S MCLUSTER_MODEL_VERS ON) {
+      val user nterestClustersFavScores = for {
+        (cluster d, scores) <- user nterestClusters.cluster dToScores
         favScore <- scores.favScore
-      } yield (clusterId.toString, favScore)
-      Some(
-        SimclusterFeatures(
-          userId,
-          userInterestClusters.knownForModelVersion,
-          userInterestClustersFavScores.toMap
+      } y eld (cluster d.toStr ng, favScore)
+      So (
+        S mclusterFeatures(
+          user d,
+          user nterestClusters.knownForModelVers on,
+          user nterestClustersFavScores.toMap
         )
       )
     } else {
-      // We maintain this counter to make sure that the hardcoded modelVersion we are using is correct.
-      invalidSimclusterModelVersion.incr
+      //   ma nta n t  counter to make sure that t  hardcoded modelVers on   are us ng  s correct.
+       nval dS mclusterModelVers on. ncr
       None
     }
   }
 }
 
-object SimclusterFeatures {
-  // Check http://go/simclustersv2runbook for production versions
-  // Our models are trained for this specific model version only.
-  val SIMCLUSTER_MODEL_VERSION = "20M_145K_dec11"
-  val prefix = s"simcluster.v2.$SIMCLUSTER_MODEL_VERSION"
+object S mclusterFeatures {
+  // C ck http://go/s mclustersv2runbook for product on vers ons
+  //   models are tra ned for t  spec f c model vers on only.
+  val S MCLUSTER_MODEL_VERS ON = "20M_145K_dec11"
+  val pref x = s"s mcluster.v2.$S MCLUSTER_MODEL_VERS ON"
 
-  val SIMCLUSTER_USER_INTEREST_CLUSTER_SCORES = new SparseContinuous(
-    s"$prefix.user_interest_cluster_scores",
-    Set(EngagementScore, InferredInterests).asJava
+  val S MCLUSTER_USER_ NTEREST_CLUSTER_SCORES = new SparseCont nuous(
+    s"$pref x.user_ nterest_cluster_scores",
+    Set(Engage ntScore,  nferred nterests).asJava
   )
-  val SIMCLUSTER_USER_INTEREST_CLUSTER_IDS = new SparseBinary(
-    s"$prefix.user_interest_cluster_ids",
-    Set(InferredInterests).asJava
+  val S MCLUSTER_USER_ NTEREST_CLUSTER_ DS = new SparseB nary(
+    s"$pref x.user_ nterest_cluster_ ds",
+    Set( nferred nterests).asJava
   )
-  val SIMCLUSTER_MODEL_VERSION_METADATA = new Text("meta.simcluster_version")
+  val S MCLUSTER_MODEL_VERS ON_METADATA = new Text(" ta.s mcluster_vers on")
 }
 
-case class SimclusterFeatures(
-  userId: Long,
-  modelVersion: String,
-  interestClusterScoresMap: Map[String, Double])
+case class S mclusterFeatures(
+  user d: Long,
+  modelVers on: Str ng,
+   nterestClusterScoresMap: Map[Str ng, Double])

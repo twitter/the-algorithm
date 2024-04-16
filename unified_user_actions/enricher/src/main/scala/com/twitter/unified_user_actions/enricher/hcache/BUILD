@@ -1,11 +1,11 @@
-scala_library(
-    name = "hcache",
-    sources = ["*.scala"],
-    tags = ["bazel-compatible"],
-    dependencies = [
+scala_l brary(
+    na  = "hcac ",
+    s ces = ["*.scala"],
+    tags = ["bazel-compat ble"],
+    dependenc es = [
         "3rdparty/jvm/com/google/guava",
-        "util/util-cache-guava/src/main/scala",
-        "util/util-cache/src/main/scala",
-        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
+        "ut l/ut l-cac -guava/src/ma n/scala",
+        "ut l/ut l-cac /src/ma n/scala",
+        "ut l/ut l-stats/src/ma n/scala/com/tw ter/f nagle/stats",
     ],
 )

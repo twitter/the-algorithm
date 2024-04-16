@@ -1,162 +1,162 @@
-#include "internal/error.h"
-#include "internal/thrift.h"
+# nclude " nternal/error.h"
+# nclude " nternal/thr ft.h"
 
-#include <map>
-#include <twml/ThriftWriter.h>
-#include <twml/DataRecordWriter.h>
-#include <twml/io/IOError.h>
-#include <unordered_set>
+# nclude <map>
+# nclude <twml/Thr ftWr er.h>
+# nclude <twml/DataRecordWr er.h>
+# nclude <twml/ o/ OError.h>
+# nclude <unordered_set>
 
-using namespace twml::io;
+us ng na space twml:: o;
 
-namespace twml {
+na space twml {
 
-void DataRecordWriter::writeBinary(twml::DataRecord &record) {
-  const DataRecord::BinaryFeatures bin_features = record.getBinary();
+vo d DataRecordWr er::wr eB nary(twml::DataRecord &record) {
+  const DataRecord::B naryFeatures b n_features = record.getB nary();
 
-  if (bin_features.size() > 0) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_SET, DR_BINARY);
-    m_thrift_writer.writeListHeader(TTYPE_I64, bin_features.size());
+   f (b n_features.s ze() > 0) {
+    m_thr ft_wr er.wr eStructF eld ader(TTYPE_SET, DR_B NARY);
+    m_thr ft_wr er.wr eL st ader(TTYPE_ 64, b n_features.s ze());
 
-    for (const auto &it : bin_features) {
-      m_thrift_writer.writeInt64(it);
+    for (const auto &  : b n_features) {
+      m_thr ft_wr er.wr e nt64( );
     }
   }
 }
 
-void DataRecordWriter::writeContinuous(twml::DataRecord &record) {
-  const DataRecord::ContinuousFeatures cont_features = record.getContinuous();
+vo d DataRecordWr er::wr eCont nuous(twml::DataRecord &record) {
+  const DataRecord::Cont nuousFeatures cont_features = record.getCont nuous();
 
-  if (cont_features.size() > 0) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_MAP, DR_CONTINUOUS);
-    m_thrift_writer.writeMapHeader(TTYPE_I64, TTYPE_DOUBLE, cont_features.size());
+   f (cont_features.s ze() > 0) {
+    m_thr ft_wr er.wr eStructF eld ader(TTYPE_MAP, DR_CONT NUOUS);
+    m_thr ft_wr er.wr eMap ader(TTYPE_ 64, TTYPE_DOUBLE, cont_features.s ze());
 
-    for (const auto &it : cont_features) {
-      m_thrift_writer.writeInt64(it.first);
-      m_thrift_writer.writeDouble(it.second);
+    for (const auto &  : cont_features) {
+      m_thr ft_wr er.wr e nt64( .f rst);
+      m_thr ft_wr er.wr eDouble( .second);
     }
   }
 }
 
-void DataRecordWriter::writeDiscrete(twml::DataRecord &record) {
-  const DataRecord::DiscreteFeatures disc_features = record.getDiscrete();
+vo d DataRecordWr er::wr eD screte(twml::DataRecord &record) {
+  const DataRecord::D screteFeatures d sc_features = record.getD screte();
 
-  if (disc_features.size() > 0) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_MAP, DR_DISCRETE);
-    m_thrift_writer.writeMapHeader(TTYPE_I64, TTYPE_I64, disc_features.size());
+   f (d sc_features.s ze() > 0) {
+    m_thr ft_wr er.wr eStructF eld ader(TTYPE_MAP, DR_D SCRETE);
+    m_thr ft_wr er.wr eMap ader(TTYPE_ 64, TTYPE_ 64, d sc_features.s ze());
 
-     for (const auto &it : disc_features) {
-      m_thrift_writer.writeInt64(it.first);
-      m_thrift_writer.writeInt64(it.second);
+     for (const auto &  : d sc_features) {
+      m_thr ft_wr er.wr e nt64( .f rst);
+      m_thr ft_wr er.wr e nt64( .second);
     }
   }
 }
 
-void DataRecordWriter::writeString(twml::DataRecord &record) {
-  const DataRecord::StringFeatures str_features = record.getString();
+vo d DataRecordWr er::wr eStr ng(twml::DataRecord &record) {
+  const DataRecord::Str ngFeatures str_features = record.getStr ng();
 
-  if (str_features.size() > 0) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_MAP, DR_STRING);
-    m_thrift_writer.writeMapHeader(TTYPE_I64, TTYPE_STRING, str_features.size());
+   f (str_features.s ze() > 0) {
+    m_thr ft_wr er.wr eStructF eld ader(TTYPE_MAP, DR_STR NG);
+    m_thr ft_wr er.wr eMap ader(TTYPE_ 64, TTYPE_STR NG, str_features.s ze());
 
 
-    for (const auto &it : str_features) {
-      m_thrift_writer.writeInt64(it.first);
-      m_thrift_writer.writeString(it.second);
+    for (const auto &  : str_features) {
+      m_thr ft_wr er.wr e nt64( .f rst);
+      m_thr ft_wr er.wr eStr ng( .second);
     }
   }
 }
 
-// convert from internal representation list<(i64, string)>
-// to Thrift representation map<i64, set<string>>
-void DataRecordWriter::writeSparseBinaryFeatures(twml::DataRecord &record) {
-  const DataRecord::SparseBinaryFeatures sp_bin_features = record.getSparseBinary();
+// convert from  nternal representat on l st<( 64, str ng)>
+// to Thr ft representat on map< 64, set<str ng>>
+vo d DataRecordWr er::wr eSparseB naryFeatures(twml::DataRecord &record) {
+  const DataRecord::SparseB naryFeatures sp_b n_features = record.getSparseB nary();
 
-  // write map<i64, set<string>> as Thrift
-  if (sp_bin_features.size() > 0) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_MAP, DR_SPARSE_BINARY);
-    m_thrift_writer.writeMapHeader(TTYPE_I64, TTYPE_SET, sp_bin_features.size());
+  // wr e map< 64, set<str ng>> as Thr ft
+   f (sp_b n_features.s ze() > 0) {
+    m_thr ft_wr er.wr eStructF eld ader(TTYPE_MAP, DR_SPARSE_B NARY);
+    m_thr ft_wr er.wr eMap ader(TTYPE_ 64, TTYPE_SET, sp_b n_features.s ze());
 
-    for (auto key_vals : sp_bin_features) {
-      m_thrift_writer.writeInt64(key_vals.first);
-      m_thrift_writer.writeListHeader(TTYPE_STRING, key_vals.second.size());
+    for (auto key_vals : sp_b n_features) {
+      m_thr ft_wr er.wr e nt64(key_vals.f rst);
+      m_thr ft_wr er.wr eL st ader(TTYPE_STR NG, key_vals.second.s ze());
 
-      for (auto name : key_vals.second)
-        m_thrift_writer.writeString(name);
+      for (auto na  : key_vals.second)
+        m_thr ft_wr er.wr eStr ng(na );
     }
   }
 }
 
-// convert from internal representation list<(i64, string, double)>
-// to Thrift representation map<i64, map<string, double>>
-void DataRecordWriter::writeSparseContinuousFeatures(twml::DataRecord &record) {
-  const DataRecord::SparseContinuousFeatures sp_cont_features = record.getSparseContinuous();
+// convert from  nternal representat on l st<( 64, str ng, double)>
+// to Thr ft representat on map< 64, map<str ng, double>>
+vo d DataRecordWr er::wr eSparseCont nuousFeatures(twml::DataRecord &record) {
+  const DataRecord::SparseCont nuousFeatures sp_cont_features = record.getSparseCont nuous();
 
-  // write map<i64, map<string, double>> as Thrift
-  if (sp_cont_features.size() > 0) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_MAP, DR_SPARSE_CONTINUOUS);
-    m_thrift_writer.writeMapHeader(TTYPE_I64, TTYPE_MAP, sp_cont_features.size());
+  // wr e map< 64, map<str ng, double>> as Thr ft
+   f (sp_cont_features.s ze() > 0) {
+    m_thr ft_wr er.wr eStructF eld ader(TTYPE_MAP, DR_SPARSE_CONT NUOUS);
+    m_thr ft_wr er.wr eMap ader(TTYPE_ 64, TTYPE_MAP, sp_cont_features.s ze());
 
     for (auto key_vals : sp_cont_features) {
-      m_thrift_writer.writeInt64(key_vals.first);
+      m_thr ft_wr er.wr e nt64(key_vals.f rst);
 
-      if (key_vals.second.size() == 0)
-        throw IOError(IOError::MALFORMED_MEMORY_RECORD);
+       f (key_vals.second.s ze() == 0)
+        throw  OError( OError::MALFORMED_MEMORY_RECORD);
 
-      m_thrift_writer.writeMapHeader(TTYPE_STRING, TTYPE_DOUBLE, key_vals.second.size());
+      m_thr ft_wr er.wr eMap ader(TTYPE_STR NG, TTYPE_DOUBLE, key_vals.second.s ze());
 
       for (auto map_str_double : key_vals.second) {
-        m_thrift_writer.writeString(map_str_double.first);
-        m_thrift_writer.writeDouble(map_str_double.second);
+        m_thr ft_wr er.wr eStr ng(map_str_double.f rst);
+        m_thr ft_wr er.wr eDouble(map_str_double.second);
       }
     }
   }
 }
 
-void DataRecordWriter::writeBlobFeatures(twml::DataRecord &record) {
+vo d DataRecordWr er::wr eBlobFeatures(twml::DataRecord &record) {
   const DataRecord::BlobFeatures blob_features = record.getBlob();
 
-  if (blob_features.size() > 0) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_MAP, DR_BLOB);
-    m_thrift_writer.writeMapHeader(TTYPE_I64, TTYPE_STRING, blob_features.size());
+   f (blob_features.s ze() > 0) {
+    m_thr ft_wr er.wr eStructF eld ader(TTYPE_MAP, DR_BLOB);
+    m_thr ft_wr er.wr eMap ader(TTYPE_ 64, TTYPE_STR NG, blob_features.s ze());
 
-    for (const auto &it : blob_features) {
-      m_thrift_writer.writeInt64(it.first);
-      std::vector<uint8_t> value = it.second;
-      m_thrift_writer.writeBinary(value.data(), value.size());
+    for (const auto &  : blob_features) {
+      m_thr ft_wr er.wr e nt64( .f rst);
+      std::vector<u nt8_t> value =  .second;
+      m_thr ft_wr er.wr eB nary(value.data(), value.s ze());
     }
   }
 }
 
-void DataRecordWriter::writeDenseTensors(twml::DataRecord &record) {
+vo d DataRecordWr er::wr eDenseTensors(twml::DataRecord &record) {
   TensorRecord::RawTensors raw_tensors = record.getRawTensors();
-  if (raw_tensors.size() > 0) {
-    m_thrift_writer.writeStructFieldHeader(TTYPE_MAP, DR_GENERAL_TENSOR);
-    m_tensor_writer.write(record);
+   f (raw_tensors.s ze() > 0) {
+    m_thr ft_wr er.wr eStructF eld ader(TTYPE_MAP, DR_GENERAL_TENSOR);
+    m_tensor_wr er.wr e(record);
   }
 }
 
-TWMLAPI uint32_t DataRecordWriter::getRecordsWritten() {
-  return m_records_written;
+TWMLAP  u nt32_t DataRecordWr er::getRecordsWr ten() {
+  return m_records_wr ten;
 }
 
-TWMLAPI uint64_t DataRecordWriter::write(twml::DataRecord &record) {
-  uint64_t bytes_written_before = m_thrift_writer.getBytesWritten();
+TWMLAP  u nt64_t DataRecordWr er::wr e(twml::DataRecord &record) {
+  u nt64_t bytes_wr ten_before = m_thr ft_wr er.getBytesWr ten();
 
-  writeBinary(record);
-  writeContinuous(record);
-  writeDiscrete(record);
-  writeString(record);
-  writeSparseBinaryFeatures(record);
-  writeSparseContinuousFeatures(record);
-  writeBlobFeatures(record);
-  writeDenseTensors(record);
-  // TODO add sparse tensor field
+  wr eB nary(record);
+  wr eCont nuous(record);
+  wr eD screte(record);
+  wr eStr ng(record);
+  wr eSparseB naryFeatures(record);
+  wr eSparseCont nuousFeatures(record);
+  wr eBlobFeatures(record);
+  wr eDenseTensors(record);
+  // TODO add sparse tensor f eld
 
-  m_thrift_writer.writeStructStop();
-  m_records_written++;
+  m_thr ft_wr er.wr eStructStop();
+  m_records_wr ten++;
 
-  return m_thrift_writer.getBytesWritten() - bytes_written_before;
+  return m_thr ft_wr er.getBytesWr ten() - bytes_wr ten_before;
 }
 
-}  // namespace twml
+}  // na space twml

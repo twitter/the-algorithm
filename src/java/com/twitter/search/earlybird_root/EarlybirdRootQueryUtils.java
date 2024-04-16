@@ -1,51 +1,51 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import java.util.Map;
+ mport java.ut l.Map;
 
-import com.google.common.collect.Maps;
+ mport com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.partitioning.base.PartitionMappingManager;
-import com.twitter.search.earlybird_root.visitors.MultiTermDisjunctionPerPartitionVisitor;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
+ mport com.tw ter.search.common.part  on ng.base.Part  onMapp ngManager;
+ mport com.tw ter.search.earlyb rd_root.v s ors.Mult TermD sjunct onPerPart  onV s or;
+ mport com.tw ter.search.queryparser.query.Query;
+ mport com.tw ter.search.queryparser.query.QueryParserExcept on;
 
-public final class EarlybirdRootQueryUtils {
+publ c f nal class Earlyb rdRootQueryUt ls {
 
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdRootQueryUtils.class);
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rdRootQueryUt ls.class);
 
-  private EarlybirdRootQueryUtils() {
+  pr vate Earlyb rdRootQueryUt ls() {
   }
 
   /**
-   * Rewrite 'multi_term_disjunction from_user_id' or 'multi_term_disjunction id' based on partition
-   * for USER_ID/TWEET_ID partitioned cluster
-   * @return a map with partition id as key and rewritten query as value.
-   * If there is no 'multi_term_disjunction from_user_id/id' in query, the map will be empty; if all
-   * ids are truncated for a partition, it will add a NO_MATCH_CONJUNCTION here.
+   * Rewr e 'mult _term_d sjunct on from_user_ d' or 'mult _term_d sjunct on  d' based on part  on
+   * for USER_ D/TWEET_ D part  oned cluster
+   * @return a map w h part  on  d as key and rewr ten query as value.
+   *  f t re  s no 'mult _term_d sjunct on from_user_ d/ d'  n query, t  map w ll be empty;  f all
+   *  ds are truncated for a part  on,   w ll add a NO_MATCH_CONJUNCT ON  re.
    */
-  public static Map<Integer, Query> rewriteMultiTermDisjunctionPerPartitionFilter(
-      Query query, PartitionMappingManager partitionMappingManager, int numPartitions) {
-    Map<Integer, Query> m = Maps.newHashMap();
-    // If there is no parsed query, just return
-    if (query == null) {
+  publ c stat c Map< nteger, Query> rewr eMult TermD sjunct onPerPart  onF lter(
+      Query query, Part  onMapp ngManager part  onMapp ngManager,  nt numPart  ons) {
+    Map< nteger, Query> m = Maps.newHashMap();
+    //  f t re  s no parsed query, just return
+     f (query == null) {
       return m;
     }
-    for (int i = 0; i < numPartitions; ++i) {
-      MultiTermDisjunctionPerPartitionVisitor visitor =
-          new MultiTermDisjunctionPerPartitionVisitor(partitionMappingManager, i);
+    for ( nt   = 0;   < numPart  ons; ++ ) {
+      Mult TermD sjunct onPerPart  onV s or v s or =
+          new Mult TermD sjunct onPerPart  onV s or(part  onMapp ngManager,  );
       try {
-        Query q = query.accept(visitor);
-        if (q != null && q != query) {
-          m.put(i, q);
+        Query q = query.accept(v s or);
+         f (q != null && q != query) {
+          m.put( , q);
         }
-      } catch (QueryParserException e) {
-        // Should not happen, put and log error here just in case
-        m.put(i, query);
+      } catch (QueryParserExcept on e) {
+        // Should not happen, put and log error  re just  n case
+        m.put( , query);
         LOG.error(
-            "MultiTermDisjuctionPerPartitionVisitor cannot process query: " + query.serialize());
+            "Mult TermD sjuct onPerPart  onV s or cannot process query: " + query.ser al ze());
       }
     }
     return m;

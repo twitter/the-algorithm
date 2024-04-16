@@ -1,69 +1,69 @@
-package com.twitter.tweetypie.config
+package com.tw ter.t etyp e.conf g
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.ExceptionCounter
-import com.twitter.tweetypie.serverutil.ActivityUtil
-import com.twitter.util.{Activity, Return, Try}
-import com.twitter.util.logging.Logger
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.servo.ut l.Except onCounter
+ mport com.tw ter.t etyp e.serverut l.Act v yUt l
+ mport com.tw ter.ut l.{Act v y, Return, Try}
+ mport com.tw ter.ut l.logg ng.Logger
 
-trait DynamicConfigLoader {
-  def apply[T](path: String, stats: StatsReceiver, parse: String => T): Activity[Option[T]]
+tra  Dynam cConf gLoader {
+  def apply[T](path: Str ng, stats: StatsRece ver, parse: Str ng => T): Act v y[Opt on[T]]
 }
 
-object DynamicConfigLoader {
+object Dynam cConf gLoader {
 
-  def apply(read: String => Activity[String]): DynamicConfigLoader =
-    new DynamicConfigLoader {
+  def apply(read: Str ng => Act v y[Str ng]): Dynam cConf gLoader =
+    new Dynam cConf gLoader {
       val logger = Logger(getClass)
 
-      private def snoopState[T](stats: StatsReceiver)(a: Activity[T]): Activity[T] = {
-        val pending = stats.counter("pending")
-        val failure = stats.counter("failure")
+      pr vate def snoopState[T](stats: StatsRece ver)(a: Act v y[T]): Act v y[T] = {
+        val pend ng = stats.counter("pend ng")
+        val fa lure = stats.counter("fa lure")
         val success = stats.counter("success")
 
         a.mapState {
-          case s @ Activity.Ok(_) =>
-            success.incr()
+          case s @ Act v y.Ok(_) =>
+            success. ncr()
             s
-          case Activity.Pending =>
-            pending.incr()
-            Activity.Pending
-          case s @ Activity.Failed(_) =>
-            failure.incr()
+          case Act v y.Pend ng =>
+            pend ng. ncr()
+            Act v y.Pend ng
+          case s @ Act v y.Fa led(_) =>
+            fa lure. ncr()
             s
         }
       }
 
-      def apply[T](path: String, stats: StatsReceiver, parse: String => T): Activity[Option[T]] = {
-        val exceptionCounter = new ExceptionCounter(stats)
+      def apply[T](path: Str ng, stats: StatsRece ver, parse: Str ng => T): Act v y[Opt on[T]] = {
+        val except onCounter = new Except onCounter(stats)
 
-        val rawActivity: Activity[T] =
+        val rawAct v y: Act v y[T] =
           snoopState(stats.scope("raw"))(
-            ActivityUtil
-              .strict(read(path))
+            Act v yUt l
+              .str ct(read(path))
               .map(parse)
               .handle {
                 case e =>
-                  exceptionCounter(e)
-                  logger.error(s"Invalid config in $path", e)
+                  except onCounter(e)
+                  logger.error(s" nval d conf g  n $path", e)
                   throw e
               }
           )
 
-        val stableActivity =
-          snoopState(stats.scope("stabilized"))(rawActivity.stabilize).mapState[Option[T]] {
-            case Activity.Ok(t) => Activity.Ok(Some(t))
-            case _ => Activity.Ok(None)
+        val stableAct v y =
+          snoopState(stats.scope("stab l zed"))(rawAct v y.stab l ze).mapState[Opt on[T]] {
+            case Act v y.Ok(t) => Act v y.Ok(So (t))
+            case _ => Act v y.Ok(None)
           }
 
-        stats.provideGauge("config_state") {
-          Try(stableActivity.sample()) match {
-            case Return(Some(c)) => c.hashCode.abs
+        stats.prov deGauge("conf g_state") {
+          Try(stableAct v y.sample()) match {
+            case Return(So (c)) => c.hashCode.abs
             case _ => 0
           }
         }
 
-        stableActivity
+        stableAct v y
       }
     }
 }

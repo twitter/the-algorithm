@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-trait HasInvalidRelationshipUserIds {
-  // user ids that have invalid relationship with the target user
-  def invalidRelationshipUserIds: Option[Set[Long]]
+tra  Has nval dRelat onsh pUser ds {
+  // user  ds that have  nval d relat onsh p w h t  target user
+  def  nval dRelat onsh pUser ds: Opt on[Set[Long]]
 }

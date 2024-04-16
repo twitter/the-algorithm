@@ -1,355 +1,355 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+# nclude "tensorflow/core/fra work/op.h"
+# nclude "tensorflow/core/fra work/shape_ nference.h"
+# nclude "tensorflow/core/fra work/op_kernel.h"
 
-using namespace tensorflow;
+us ng na space tensorflow;
 
-REGISTER_OP("SparseMaxNorm")
-.Attr("epsilon: float")
-.Input("max_values: Ref(float)")
-.Input("indices: int64")
-.Input("values: float")
-.Input("is_training: bool")
+REG STER_OP("SparseMaxNorm")
+.Attr("eps lon: float")
+. nput("max_values: Ref(float)")
+. nput(" nd ces:  nt64")
+. nput("values: float")
+. nput(" s_tra n ng: bool")
 .Output("updated_max_values: Ref(float)")
-.Output("normalized_values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.Output("normal zed_values: float")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that normalizes a batch of sparse inputs based on the current maximum value.
+A tensorflow OP that normal zes a batch of sparse  nputs based on t  current max mum value.
 
-Input
-  max_values: float tensor variable representing the max values seen so far.
-  indices: int64 tensor representing indices representing a feature.
-  values: float tensor representing values for the current batch.
-  is_training: bool tensor specifying if the op should be run in training mode or not.
+ nput
+  max_values: float tensor var able represent ng t  max values seen so far.
+   nd ces:  nt64 tensor represent ng  nd ces represent ng a feature.
+  values: float tensor represent ng values for t  current batch.
+   s_tra n ng: bool tensor spec fy ng  f t  op should be run  n tra n ng mode or not.
 
 Outputs
-  updated_max_values: max_values updated with the current batch.
-  normalized_values: Input values normalized by the max value seen so far.
+  updated_max_values: max_values updated w h t  current batch.
+  normal zed_values:  nput values normal zed by t  max value seen so far.
 
-The pseudo code for normalization can be seen below:
+T  pseudo code for normal zat on can be seen below:
 
-  # During training / inference
-  for i, idx in enumerate(indices):
-    updated_max_values[idx] = max(max_values[idx], abs(values[i]))
-    normalized_values[i] = values[i] / updated_max_values[idx]
+  # Dur ng tra n ng /  nference
+  for  ,  dx  n enu rate( nd ces):
+    updated_max_values[ dx] = max(max_values[ dx], abs(values[ ]))
+    normal zed_values[ ] = values[ ] / updated_max_values[ dx]
 
 )doc");
 
-class SparseMaxNorm : public OpKernel {
- private:
-  float epsilon_;
+class SparseMaxNorm : publ c OpKernel {
+ pr vate:
+  float eps lon_;
 
- public:
-  explicit SparseMaxNorm(OpKernelConstruction *context) : OpKernel(context) {
-        OP_REQUIRES_OK(context, context->GetAttr("epsilon", &epsilon_));
+ publ c:
+  expl c  SparseMaxNorm(OpKernelConstruct on *context) : OpKernel(context) {
+        OP_REQU RES_OK(context, context->GetAttr("eps lon", &eps lon_));
   }
 
-  void Compute(OpKernelContext *context) override {
-        // We always return the input ref.
-    context->forward_ref_input_to_ref_output(0, 0);
-    Tensor max_values_tensor = context->mutable_input(0, false);
+  vo d Compute(OpKernelContext *context) overr de {
+        //   always return t   nput ref.
+    context->forward_ref_ nput_to_ref_output(0, 0);
+    Tensor max_values_tensor = context->mutable_ nput(0, false);
 
-    OP_REQUIRES(context, max_values_tensor.IsInitialized(),
-                errors::FailedPrecondition("Attempting to use uninitialized "
-                                           "parameters: ",
-                                           requested_input(0)));
+    OP_REQU RES(context, max_values_tensor. s n  al zed(),
+                errors::Fa ledPrecond  on("Attempt ng to use un n  al zed "
+                                           "para ters: ",
+                                           requested_ nput(0)));
 
-    const Tensor &indices_tensor = context->input(1);
-    const Tensor &values_tensor = context->input(2);
-    const Tensor &is_training_tensor = context->input(3);
+    const Tensor & nd ces_tensor = context-> nput(1);
+    const Tensor &values_tensor = context-> nput(2);
+    const Tensor & s_tra n ng_tensor = context-> nput(3);
 
-    const auto indices = indices_tensor.flat<int64>();
+    const auto  nd ces =  nd ces_tensor.flat< nt64>();
     const auto values = values_tensor.flat<float>();
-    const bool is_training = is_training_tensor.scalar<bool>()();
+    const bool  s_tra n ng =  s_tra n ng_tensor.scalar<bool>()();
 
     auto max_values = max_values_tensor.flat<float>();
-    Tensor *normalized_values_tensor = nullptr;
-    OP_REQUIRES_OK(context, context->allocate_output(1, values_tensor.shape(),
-                                                     &normalized_values_tensor));
+    Tensor *normal zed_values_tensor = nullptr;
+    OP_REQU RES_OK(context, context->allocate_output(1, values_tensor.shape(),
+                                                     &normal zed_values_tensor));
 
-    auto normalized_values = normalized_values_tensor->flat<float>();
+    auto normal zed_values = normal zed_values_tensor->flat<float>();
 
-    const int64 N = indices.size();
+    const  nt64 N =  nd ces.s ze();
 
-    for (int64 i = 0; i < N; i++) {
-      int64 idx = indices(i);
-      float value = values(i);
-      float max_value = std::max(max_values(idx), std::abs(value));
+    for ( nt64   = 0;   < N;  ++) {
+       nt64  dx =  nd ces( );
+      float value = values( );
+      float max_value = std::max(max_values( dx), std::abs(value));
 
-      // Guaranteed to be between [-1, 1].
-      normalized_values(i) = value / std::max(max_value, epsilon_);
+      // Guaranteed to be bet en [-1, 1].
+      normal zed_values( ) = value / std::max(max_value, eps lon_);
 
-      if (is_training) {
-        max_values(idx) = max_value;
+       f ( s_tra n ng) {
+        max_values( dx) = max_value;
       }
     }
   }
 };
 
-REGISTER_OP("SparseBatchNorm")
-.Attr("input_size: int")
-.Attr("epsilon: float")
-.Input("means: Ref(float)")
-.Input("variances: Ref(float)")
-.Input("indices: int64")
-.Input("values: float")
-.Input("is_training: bool")
-.Output("updated_means: Ref(float)")
+REG STER_OP("SparseBatchNorm")
+.Attr(" nput_s ze:  nt")
+.Attr("eps lon: float")
+. nput(" ans: Ref(float)")
+. nput("var ances: Ref(float)")
+. nput(" nd ces:  nt64")
+. nput("values: float")
+. nput(" s_tra n ng: bool")
+.Output("updated_ ans: Ref(float)")
 .Output("updated_vars: Ref(float)")
-.Output("normalized_values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.Output("normal zed_values: float")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that performs batch normalization.
+A tensorflow OP that performs batch normal zat on.
 
 Attr
-  input_size: Size of the inputs.
-  epsilon: The minimum value of the variance.
+   nput_s ze: S ze of t   nputs.
+  eps lon: T  m n mum value of t  var ance.
 
-Input
-  mean: float tensor variable representing the running mean seen so far.
-  variances: float tensor variable representing the running variance seen so far.
-  indices: int64 tensor representing indices representing a feature.
-  values: float tensor representing values for the current batch.
-  is_training: bool tensor specifying if the op should be run in training mode or not.
+ nput
+   an: float tensor var able represent ng t  runn ng  an seen so far.
+  var ances: float tensor var able represent ng t  runn ng var ance seen so far.
+   nd ces:  nt64 tensor represent ng  nd ces represent ng a feature.
+  values: float tensor represent ng values for t  current batch.
+   s_tra n ng: bool tensor spec fy ng  f t  op should be run  n tra n ng mode or not.
 
 Outputs
-  updated_means: mean updated with the current batch.
-  updated_vars: variances updated with the current batch.
-  normalized_values: Input values normalized by the max value seen so far.
+  updated_ ans:  an updated w h t  current batch.
+  updated_vars: var ances updated w h t  current batch.
+  normal zed_values:  nput values normal zed by t  max value seen so far.
 
-The pseudo code for normalization can be seen below:
+T  pseudo code for normal zat on can be seen below:
 
-    if is_training:
-      means, variances = update_metrics(means, variances, values)
+     f  s_tra n ng:
+       ans, var ances = update_ tr cs( ans, var ances, values)
 
-    normalized_values = (values - means) / sqrt(variances + epsilon)
-    return normalized_values * gamma + beta
+    normal zed_values = (values -  ans) / sqrt(var ances + eps lon)
+    return normal zed_values * gamma + beta
 
 )doc");
 
-class SparseBatchNorm : public OpKernel {
- private:
-  std::vector<int64> counts_;
+class SparseBatchNorm : publ c OpKernel {
+ pr vate:
+  std::vector< nt64> counts_;
   std::vector<float> m2s_;
-  float epsilon_;
+  float eps lon_;
 
- public:
-  explicit SparseBatchNorm(OpKernelConstruction *context) : OpKernel(context) {
-    int64 input_size;
-    OP_REQUIRES_OK(context, context->GetAttr("input_size", &input_size));
-    OP_REQUIRES_OK(context, context->GetAttr("epsilon", &epsilon_));
-    counts_.resize(input_size);
-    m2s_.resize(input_size);
+ publ c:
+  expl c  SparseBatchNorm(OpKernelConstruct on *context) : OpKernel(context) {
+     nt64  nput_s ze;
+    OP_REQU RES_OK(context, context->GetAttr(" nput_s ze", & nput_s ze));
+    OP_REQU RES_OK(context, context->GetAttr("eps lon", &eps lon_));
+    counts_.res ze( nput_s ze);
+    m2s_.res ze( nput_s ze);
   }
 
-  void Compute(OpKernelContext *context) override {
-    // We always return the input ref.
-    context->forward_ref_input_to_ref_output(0, 0);
-    context->forward_ref_input_to_ref_output(1, 1);
+  vo d Compute(OpKernelContext *context) overr de {
+    //   always return t   nput ref.
+    context->forward_ref_ nput_to_ref_output(0, 0);
+    context->forward_ref_ nput_to_ref_output(1, 1);
 
-    Tensor means_tensor = context->mutable_input(0, true);
-    Tensor variances_tensor = context->mutable_input(1, true);
+    Tensor  ans_tensor = context->mutable_ nput(0, true);
+    Tensor var ances_tensor = context->mutable_ nput(1, true);
 
-    OP_REQUIRES(context, means_tensor.IsInitialized(),
-                errors::FailedPrecondition("Attempting to use uninitialized "
-                                           "parameters: ",
-                                           requested_input(0)));
+    OP_REQU RES(context,  ans_tensor. s n  al zed(),
+                errors::Fa ledPrecond  on("Attempt ng to use un n  al zed "
+                                           "para ters: ",
+                                           requested_ nput(0)));
 
-    OP_REQUIRES(context, variances_tensor.IsInitialized(),
-                errors::FailedPrecondition("Attempting to use uninitialized "
-                                           "parameters: ",
-                                           requested_input(1)));
+    OP_REQU RES(context, var ances_tensor. s n  al zed(),
+                errors::Fa ledPrecond  on("Attempt ng to use un n  al zed "
+                                           "para ters: ",
+                                           requested_ nput(1)));
 
-    const Tensor &indices_tensor = context->input(2);
-    const Tensor &values_tensor = context->input(3);
-    const Tensor &is_training_tensor = context->input(4);
+    const Tensor & nd ces_tensor = context-> nput(2);
+    const Tensor &values_tensor = context-> nput(3);
+    const Tensor & s_tra n ng_tensor = context-> nput(4);
 
-    const auto indices = indices_tensor.flat<int64>();
+    const auto  nd ces =  nd ces_tensor.flat< nt64>();
     const auto values = values_tensor.flat<float>();
-    const bool is_training = is_training_tensor.scalar<bool>()();
+    const bool  s_tra n ng =  s_tra n ng_tensor.scalar<bool>()();
 
-    auto means = means_tensor.flat<float>();
-    auto variances = variances_tensor.flat<float>();
-    Tensor *normalized_values_tensor = nullptr;
-    OP_REQUIRES_OK(context, context->allocate_output(2, values_tensor.shape(),
-                                                     &normalized_values_tensor));
+    auto  ans =  ans_tensor.flat<float>();
+    auto var ances = var ances_tensor.flat<float>();
+    Tensor *normal zed_values_tensor = nullptr;
+    OP_REQU RES_OK(context, context->allocate_output(2, values_tensor.shape(),
+                                                     &normal zed_values_tensor));
 
-    auto normalized_values = normalized_values_tensor->flat<float>();
-    const int64 N = indices.size();
+    auto normal zed_values = normal zed_values_tensor->flat<float>();
+    const  nt64 N =  nd ces.s ze();
 
-    if (is_training) {
-      // Accumulate, mean, count, sum of squared differences.
-      // Reference wiki:
-      // https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Online_algorithm
+     f ( s_tra n ng) {
+      // Accumulate,  an, count, sum of squared d fferences.
+      // Reference w k :
+      // https://en.w k ped a.org/w k /Algor hms_for_calculat ng_var ance#Onl ne_algor hm
       // Reference paper:
       // https://www.jstor.org/stable/1266577?seq=1#page_scan_tab_contents
-      for (int64 i = 0; i < N; i++) {
-        int64 idx = indices(i);
-        int64 count = counts_[idx] + 1;
+      for ( nt64   = 0;   < N;  ++) {
+         nt64  dx =  nd ces( );
+         nt64 count = counts_[ dx] + 1;
 
-        float value = values(i);
-        float old_mean = means(idx);
-        float old_delta = value - old_mean;
-        float new_mean = old_mean + old_delta / count;
-        float new_delta = value - new_mean;
+        float value = values( );
+        float old_ an =  ans( dx);
+        float old_delta = value - old_ an;
+        float new_ an = old_ an + old_delta / count;
+        float new_delta = value - new_ an;
 
-        counts_[idx] = count;
-        m2s_[idx] += new_delta * old_delta;
-        means(idx) = new_mean;
-        variances(idx) = m2s_[idx] / count;
+        counts_[ dx] = count;
+        m2s_[ dx] += new_delta * old_delta;
+         ans( dx) = new_ an;
+        var ances( dx) = m2s_[ dx] / count;
       }
     }
 
-    // Normalize the values
-    for (int64 i = 0; i < N; i++) {
-      int64 idx = indices(i);
-      float stdev = std::sqrt(variances(idx) + epsilon_);
-      normalized_values(i) = (values(i) - means(idx)) / stdev;
+    // Normal ze t  values
+    for ( nt64   = 0;   < N;  ++) {
+       nt64  dx =  nd ces( );
+      float stdev = std::sqrt(var ances( dx) + eps lon_);
+      normal zed_values( ) = (values( ) -  ans( dx)) / stdev;
     }
   }
 };
 
-REGISTER_OP("SparseMaxNormInference")
-.Attr("epsilon: float")
-.Input("max_values: float")
-.Input("indices: int64")
-.Input("values: float")
-.Output("normalized_values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+REG STER_OP("SparseMaxNorm nference")
+.Attr("eps lon: float")
+. nput("max_values: float")
+. nput(" nd ces:  nt64")
+. nput("values: float")
+.Output("normal zed_values: float")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that normalizes a batch of sparse inputs based on the current maximum value.
-This is the inference OP.
+A tensorflow OP that normal zes a batch of sparse  nputs based on t  current max mum value.
+T   s t   nference OP.
 
-Input
-  max_values: float tensor representing the max values seen so far.
-  indices: int64 tensor representing indices representing a feature.
-  values: float tensor representing values for the current batch.
+ nput
+  max_values: float tensor represent ng t  max values seen so far.
+   nd ces:  nt64 tensor represent ng  nd ces represent ng a feature.
+  values: float tensor represent ng values for t  current batch.
 
 Outputs
-  normalized_values: Input values normalized by the max value seen so far.
+  normal zed_values:  nput values normal zed by t  max value seen so far.
 
-The pseudo code for normalization can be seen below:
+T  pseudo code for normal zat on can be seen below:
 
-  # During inference
-  for i, idx in enumerate(indices):
-    updated_max_values[idx] = max(max_values[idx], abs(values[i]))
-    normalized_values[i] = values[i] / updated_max_values[idx]
+  # Dur ng  nference
+  for  ,  dx  n enu rate( nd ces):
+    updated_max_values[ dx] = max(max_values[ dx], abs(values[ ]))
+    normal zed_values[ ] = values[ ] / updated_max_values[ dx]
 
 )doc");
 
-class SparseMaxNormInference : public OpKernel {
- private:
-  float epsilon_;
+class SparseMaxNorm nference : publ c OpKernel {
+ pr vate:
+  float eps lon_;
 
- public:
-  explicit SparseMaxNormInference(OpKernelConstruction *context) : OpKernel(context) {
-        OP_REQUIRES_OK(context, context->GetAttr("epsilon", &epsilon_));
+ publ c:
+  expl c  SparseMaxNorm nference(OpKernelConstruct on *context) : OpKernel(context) {
+        OP_REQU RES_OK(context, context->GetAttr("eps lon", &eps lon_));
   }
 
-  void Compute(OpKernelContext *context) override {
-    const Tensor &max_values_tensor = context->input(0);
-    const Tensor &indices_tensor = context->input(1);
-    const Tensor &values_tensor = context->input(2);
+  vo d Compute(OpKernelContext *context) overr de {
+    const Tensor &max_values_tensor = context-> nput(0);
+    const Tensor & nd ces_tensor = context-> nput(1);
+    const Tensor &values_tensor = context-> nput(2);
 
     const auto max_values = max_values_tensor.flat<float>();
-    const auto indices = indices_tensor.flat<int64>();
+    const auto  nd ces =  nd ces_tensor.flat< nt64>();
     const auto values = values_tensor.flat<float>();
 
-    Tensor *normalized_values_tensor = nullptr;
-    OP_REQUIRES_OK(context, context->allocate_output(0, values_tensor.shape(),
-                                                     &normalized_values_tensor));
+    Tensor *normal zed_values_tensor = nullptr;
+    OP_REQU RES_OK(context, context->allocate_output(0, values_tensor.shape(),
+                                                     &normal zed_values_tensor));
 
-    auto normalized_values = normalized_values_tensor->flat<float>();
+    auto normal zed_values = normal zed_values_tensor->flat<float>();
 
-    const int64 N = indices.size();
+    const  nt64 N =  nd ces.s ze();
 
-    for (int64 i = 0; i < N; i++) {
-      int64 idx = indices(i);
-      float value = values(i);
-      float max_value = std::max(max_values(idx), std::abs(value));
+    for ( nt64   = 0;   < N;  ++) {
+       nt64  dx =  nd ces( );
+      float value = values( );
+      float max_value = std::max(max_values( dx), std::abs(value));
 
-      // Guaranteed to be between [-1, 1].
-      normalized_values(i) = value / std::max(max_value, epsilon_);
+      // Guaranteed to be bet en [-1, 1].
+      normal zed_values( ) = value / std::max(max_value, eps lon_);
     }
   }
 };
 
-REGISTER_OP("SparseMaxNormTraining")
-.Attr("epsilon: float")
-.Input("max_values: float")
-.Input("indices: int64")
-.Input("values: float")
+REG STER_OP("SparseMaxNormTra n ng")
+.Attr("eps lon: float")
+. nput("max_values: float")
+. nput(" nd ces:  nt64")
+. nput("values: float")
 .Output("updated_max_values: float")
-.Output("normalized_values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.Output("normal zed_values: float")
+.SetShapeFn([](::tensorflow::shape_ nference:: nferenceContext* c) {
     return Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that normalizes a batch of sparse inputs based on the current maximum value.
-This is the training OP.
+A tensorflow OP that normal zes a batch of sparse  nputs based on t  current max mum value.
+T   s t  tra n ng OP.
 
-Input
-  max_values: float tensor variable representing the max values seen so far.
-  indices: int64 tensor representing indices representing a feature.
-  values: float tensor representing values for the current batch.
+ nput
+  max_values: float tensor var able represent ng t  max values seen so far.
+   nd ces:  nt64 tensor represent ng  nd ces represent ng a feature.
+  values: float tensor represent ng values for t  current batch.
 
 Outputs
-  updated_max_values: max_values updated with the current batch.
-  normalized_values: Input values normalized by the max value seen so far.
+  updated_max_values: max_values updated w h t  current batch.
+  normal zed_values:  nput values normal zed by t  max value seen so far.
 
-The pseudo code for normalization can be seen below:
+T  pseudo code for normal zat on can be seen below:
 
-  # During training
-  for i, idx in enumerate(indices):
-    updated_max_values[idx] = max(max_values[idx], abs(values[i]))
-    normalized_values[i] = values[i] / updated_max_values[idx]
+  # Dur ng tra n ng
+  for  ,  dx  n enu rate( nd ces):
+    updated_max_values[ dx] = max(max_values[ dx], abs(values[ ]))
+    normal zed_values[ ] = values[ ] / updated_max_values[ dx]
 
 )doc");
 
-class SparseMaxNormTraining : public OpKernel {
- private:
-  float epsilon_;
+class SparseMaxNormTra n ng : publ c OpKernel {
+ pr vate:
+  float eps lon_;
 
- public:
-  explicit SparseMaxNormTraining(OpKernelConstruction *context) : OpKernel(context) {
-        OP_REQUIRES_OK(context, context->GetAttr("epsilon", &epsilon_));
+ publ c:
+  expl c  SparseMaxNormTra n ng(OpKernelConstruct on *context) : OpKernel(context) {
+        OP_REQU RES_OK(context, context->GetAttr("eps lon", &eps lon_));
   }
 
-  void Compute(OpKernelContext *context) override {
-    const Tensor &max_values_tensor = context->input(0);
-    const Tensor &indices_tensor = context->input(1);
-    const Tensor &values_tensor = context->input(2);
+  vo d Compute(OpKernelContext *context) overr de {
+    const Tensor &max_values_tensor = context-> nput(0);
+    const Tensor & nd ces_tensor = context-> nput(1);
+    const Tensor &values_tensor = context-> nput(2);
 
     const auto max_values = max_values_tensor.flat<float>();
-    const auto indices = indices_tensor.flat<int64>();
+    const auto  nd ces =  nd ces_tensor.flat< nt64>();
     const auto values = values_tensor.flat<float>();
 
     Tensor *updated_max_values_tensor = nullptr;
-    Tensor *normalized_values_tensor = nullptr;
-    OP_REQUIRES_OK(context, context->allocate_output(0, max_values_tensor.shape(),
+    Tensor *normal zed_values_tensor = nullptr;
+    OP_REQU RES_OK(context, context->allocate_output(0, max_values_tensor.shape(),
                                                      &updated_max_values_tensor));
-    OP_REQUIRES_OK(context, context->allocate_output(1, values_tensor.shape(),
-                                                     &normalized_values_tensor));
+    OP_REQU RES_OK(context, context->allocate_output(1, values_tensor.shape(),
+                                                     &normal zed_values_tensor));
 
     auto updated_max_values = updated_max_values_tensor->flat<float>();
-    auto normalized_values = normalized_values_tensor->flat<float>();
+    auto normal zed_values = normal zed_values_tensor->flat<float>();
 
-    const int64 N = indices.size();
+    const  nt64 N =  nd ces.s ze();
 
-    // This copy is needed because the values of updated_max_values are originally garbage.
-    // Also note that N is not the same as max_values.size()
-    std::copy(max_values.data(), max_values.data() + max_values.size(), updated_max_values.data());
+    // T  copy  s needed because t  values of updated_max_values are or g nally garbage.
+    // Also note that N  s not t  sa  as max_values.s ze()
+    std::copy(max_values.data(), max_values.data() + max_values.s ze(), updated_max_values.data());
 
-    for (int64 i = 0; i < N; i++) {
-      int64 idx = indices(i);
-      float value = values(i);
-      float updated_max_value = std::max(updated_max_values(idx), std::abs(value));
-      // Guaranteed to be between [-1, 1].
-      normalized_values(i) = value / std::max(updated_max_value, epsilon_);
-      // Saving the updated_max_values
-      updated_max_values(idx) = updated_max_value;
+    for ( nt64   = 0;   < N;  ++) {
+       nt64  dx =  nd ces( );
+      float value = values( );
+      float updated_max_value = std::max(updated_max_values( dx), std::abs(value));
+      // Guaranteed to be bet en [-1, 1].
+      normal zed_values( ) = value / std::max(updated_max_value, eps lon_);
+      // Sav ng t  updated_max_values
+      updated_max_values( dx) = updated_max_value;
     }
   }
 };
@@ -357,22 +357,22 @@ class SparseMaxNormTraining : public OpKernel {
 
 
 
-REGISTER_KERNEL_BUILDER(
-  Name("SparseMaxNorm")
-  .Device(DEVICE_CPU),
+REG STER_KERNEL_BU LDER(
+  Na ("SparseMaxNorm")
+  .Dev ce(DEV CE_CPU),
   SparseMaxNorm);
 
-REGISTER_KERNEL_BUILDER(
-  Name("SparseBatchNorm")
-  .Device(DEVICE_CPU),
+REG STER_KERNEL_BU LDER(
+  Na ("SparseBatchNorm")
+  .Dev ce(DEV CE_CPU),
   SparseBatchNorm);
 
-REGISTER_KERNEL_BUILDER(
-  Name("SparseMaxNormInference")
-  .Device(DEVICE_CPU),
-  SparseMaxNormInference);
+REG STER_KERNEL_BU LDER(
+  Na ("SparseMaxNorm nference")
+  .Dev ce(DEV CE_CPU),
+  SparseMaxNorm nference);
 
-REGISTER_KERNEL_BUILDER(
-  Name("SparseMaxNormTraining")
-  .Device(DEVICE_CPU),
-  SparseMaxNormTraining);
+REG STER_KERNEL_BU LDER(
+  Na ("SparseMaxNormTra n ng")
+  .Dev ce(DEV CE_CPU),
+  SparseMaxNormTra n ng);

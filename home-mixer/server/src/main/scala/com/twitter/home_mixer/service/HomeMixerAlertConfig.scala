@@ -1,66 +1,66 @@
-package com.twitter.home_mixer.service
+package com.tw ter.ho _m xer.serv ce
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.product_mixer.core.functional_component.common.alert.Destination
-import com.twitter.product_mixer.core.functional_component.common.alert.EmptyResponseRateAlert
-import com.twitter.product_mixer.core.functional_component.common.alert.LatencyAlert
-import com.twitter.product_mixer.core.functional_component.common.alert.NotificationGroup
-import com.twitter.product_mixer.core.functional_component.common.alert.P99
-import com.twitter.product_mixer.core.functional_component.common.alert.Percentile
-import com.twitter.product_mixer.core.functional_component.common.alert.SuccessRateAlert
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfAbove
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfBelow
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfLatencyAbove
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Dest nat on
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.EmptyResponseRateAlert
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.LatencyAlert
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Not f cat onGroup
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.P99
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Percent le
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.SuccessRateAlert
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.pred cate.Tr gger fAbove
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.pred cate.Tr gger fBelow
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.pred cate.Tr gger fLatencyAbove
+ mport com.tw ter.ut l.Durat on
 
 /**
- * Notifications (email, pagerduty, etc) can be specific per-alert but it is common for multiple
- * products to share notification configuration.
+ * Not f cat ons (ema l, pagerduty, etc) can be spec f c per-alert but    s common for mult ple
+ * products to share not f cat on conf gurat on.
  */
-object HomeMixerAlertConfig {
-  val DefaultNotificationGroup: NotificationGroup = NotificationGroup(
-    warn = Destination(emails = Seq("")),
-    critical = Destination(emails = Seq(""))
+object Ho M xerAlertConf g {
+  val DefaultNot f cat onGroup: Not f cat onGroup = Not f cat onGroup(
+    warn = Dest nat on(ema ls = Seq("")),
+    cr  cal = Dest nat on(ema ls = Seq(""))
   )
 
-  object BusinessHours {
-    val DefaultNotificationGroup: NotificationGroup = NotificationGroup(
-      warn = Destination(emails = Seq("")),
-      critical = Destination(emails =
+  object Bus nessH s {
+    val DefaultNot f cat onGroup: Not f cat onGroup = Not f cat onGroup(
+      warn = Dest nat on(ema ls = Seq("")),
+      cr  cal = Dest nat on(ema ls =
         Seq(""))
     )
 
-    def defaultEmptyResponseRateAlert(warnThreshold: Double = 50, criticalThreshold: Double = 80) =
+    def defaultEmptyResponseRateAlert(warnThreshold: Double = 50, cr  calThreshold: Double = 80) =
       EmptyResponseRateAlert(
-        notificationGroup = DefaultNotificationGroup,
-        warnPredicate = TriggerIfAbove(warnThreshold),
-        criticalPredicate = TriggerIfAbove(criticalThreshold)
+        not f cat onGroup = DefaultNot f cat onGroup,
+        warnPred cate = Tr gger fAbove(warnThreshold),
+        cr  calPred cate = Tr gger fAbove(cr  calThreshold)
       )
 
     def defaultSuccessRateAlert(
       threshold: Double = 99.5,
-      warnDatapointsPastThreshold: Int = 20,
-      criticalDatapointsPastThreshold: Int = 30,
-      duration: Int = 30
+      warnDatapo ntsPastThreshold:  nt = 20,
+      cr  calDatapo ntsPastThreshold:  nt = 30,
+      durat on:  nt = 30
     ) = SuccessRateAlert(
-      notificationGroup = DefaultNotificationGroup,
-      warnPredicate = TriggerIfBelow(threshold, warnDatapointsPastThreshold, duration),
-      criticalPredicate = TriggerIfBelow(threshold, criticalDatapointsPastThreshold, duration),
+      not f cat onGroup = DefaultNot f cat onGroup,
+      warnPred cate = Tr gger fBelow(threshold, warnDatapo ntsPastThreshold, durat on),
+      cr  calPred cate = Tr gger fBelow(threshold, cr  calDatapo ntsPastThreshold, durat on),
     )
 
     def defaultLatencyAlert(
-      latencyThreshold: Duration = 200.millis,
-      warningDatapointsPastThreshold: Int = 15,
-      criticalDatapointsPastThreshold: Int = 30,
-      duration: Int = 30,
-      percentile: Percentile = P99
+      latencyThreshold: Durat on = 200.m ll s,
+      warn ngDatapo ntsPastThreshold:  nt = 15,
+      cr  calDatapo ntsPastThreshold:  nt = 30,
+      durat on:  nt = 30,
+      percent le: Percent le = P99
     ): LatencyAlert = LatencyAlert(
-      notificationGroup = DefaultNotificationGroup,
-      percentile = percentile,
-      warnPredicate =
-        TriggerIfLatencyAbove(latencyThreshold, warningDatapointsPastThreshold, duration),
-      criticalPredicate =
-        TriggerIfLatencyAbove(latencyThreshold, criticalDatapointsPastThreshold, duration)
+      not f cat onGroup = DefaultNot f cat onGroup,
+      percent le = percent le,
+      warnPred cate =
+        Tr gger fLatencyAbove(latencyThreshold, warn ngDatapo ntsPastThreshold, durat on),
+      cr  calPred cate =
+        Tr gger fLatencyAbove(latencyThreshold, cr  calDatapo ntsPastThreshold, durat on)
     )
   }
 }

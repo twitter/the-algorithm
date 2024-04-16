@@ -1,20 +1,20 @@
-package com.twitter.cr_mixer.module.core
+package com.tw ter.cr_m xer.module.core
 
-import com.twitter.inject.TwitterModule
+ mport com.tw ter. nject.Tw terModule
 
-object CrMixerFlagName {
-  val SERVICE_FLAG = "cr_mixer.flag"
-  val DarkTrafficFilterDeciderKey = "thrift.dark.traffic.filter.decider_key"
+object CrM xerFlagNa  {
+  val SERV CE_FLAG = "cr_m xer.flag"
+  val DarkTraff cF lterDec derKey = "thr ft.dark.traff c.f lter.dec der_key"
 }
 
-object CrMixerFlagModule extends TwitterModule {
-  import CrMixerFlagName._
+object CrM xerFlagModule extends Tw terModule {
+   mport CrM xerFlagNa ._
 
-  flag[Boolean](name = SERVICE_FLAG, default = false, help = "This is a CR Mixer flag")
+  flag[Boolean](na  = SERV CE_FLAG, default = false,  lp = "T   s a CR M xer flag")
 
-  flag[String](
-    name = DarkTrafficFilterDeciderKey,
-    default = "dark_traffic_filter",
-    help = "Dark traffic filter decider key"
+  flag[Str ng](
+    na  = DarkTraff cF lterDec derKey,
+    default = "dark_traff c_f lter",
+     lp = "Dark traff c f lter dec der key"
   )
 }

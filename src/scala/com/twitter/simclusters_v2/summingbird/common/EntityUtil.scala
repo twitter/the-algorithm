@@ -1,45 +1,45 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.tw ter.s mclusters_v2.summ ngb rd.common
 
-import com.twitter.cuad.ner.thriftscala.WholeEntityType
-import com.twitter.simclusters_v2.summingbird.common.Implicits.thriftDecayedValueMonoid
-import com.twitter.simclusters_v2.thriftscala.{Scores, SimClusterEntity, TweetTextEntity}
-import scala.collection.Map
+ mport com.tw ter.cuad.ner.thr ftscala.WholeEnt yType
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common. mpl c s.thr ftDecayedValueMono d
+ mport com.tw ter.s mclusters_v2.thr ftscala.{Scores, S mClusterEnt y, T etTextEnt y}
+ mport scala.collect on.Map
 
-private[summingbird] object EntityUtil {
+pr vate[summ ngb rd] object Ent yUt l {
 
-  def updateScoreWithLatestTimestamp[K](
-    scoresMapOption: Option[Map[K, Scores]],
-    timeInMs: Long
-  ): Option[Map[K, Scores]] = {
-    scoresMapOption map { scoresMap =>
-      scoresMap.mapValues(score => updateScoreWithLatestTimestamp(score, timeInMs))
+  def updateScoreW hLatestT  stamp[K](
+    scoresMapOpt on: Opt on[Map[K, Scores]],
+    t   nMs: Long
+  ): Opt on[Map[K, Scores]] = {
+    scoresMapOpt on map { scoresMap =>
+      scoresMap.mapValues(score => updateScoreW hLatestT  stamp(score, t   nMs))
     }
   }
 
-  def updateScoreWithLatestTimestamp(score: Scores, timeInMs: Long): Scores = {
+  def updateScoreW hLatestT  stamp(score: Scores, t   nMs: Long): Scores = {
     score.copy(
-      favClusterNormalized8HrHalfLifeScore = score.favClusterNormalized8HrHalfLifeScore.map {
-        decayedValue => thriftDecayedValueMonoid.decayToTimestamp(decayedValue, timeInMs)
+      favClusterNormal zed8HrHalfL feScore = score.favClusterNormal zed8HrHalfL feScore.map {
+        decayedValue => thr ftDecayedValueMono d.decayToT  stamp(decayedValue, t   nMs)
       },
-      followClusterNormalized8HrHalfLifeScore = score.followClusterNormalized8HrHalfLifeScore.map {
-        decayedValue => thriftDecayedValueMonoid.decayToTimestamp(decayedValue, timeInMs)
+      followClusterNormal zed8HrHalfL feScore = score.followClusterNormal zed8HrHalfL feScore.map {
+        decayedValue => thr ftDecayedValueMono d.decayToT  stamp(decayedValue, t   nMs)
       }
     )
   }
 
-  def entityToString(entity: SimClusterEntity): String = {
-    entity match {
-      case SimClusterEntity.TweetId(id) => s"t_id:$id"
-      case SimClusterEntity.SpaceId(id) => s"space_id:$id"
-      case SimClusterEntity.TweetEntity(textEntity) =>
-        textEntity match {
-          case TweetTextEntity.Hashtag(str) => s"$str[h_tag]"
-          case TweetTextEntity.Penguin(penguin) =>
-            s"${penguin.textEntity}[penguin]"
-          case TweetTextEntity.Ner(ner) =>
-            s"${ner.textEntity}[ner_${WholeEntityType(ner.wholeEntityType)}]"
-          case TweetTextEntity.SemanticCore(semanticCore) =>
-            s"[sc:${semanticCore.entityId}]"
+  def ent yToStr ng(ent y: S mClusterEnt y): Str ng = {
+    ent y match {
+      case S mClusterEnt y.T et d( d) => s"t_ d:$ d"
+      case S mClusterEnt y.Space d( d) => s"space_ d:$ d"
+      case S mClusterEnt y.T etEnt y(textEnt y) =>
+        textEnt y match {
+          case T etTextEnt y.Hashtag(str) => s"$str[h_tag]"
+          case T etTextEnt y.Pengu n(pengu n) =>
+            s"${pengu n.textEnt y}[pengu n]"
+          case T etTextEnt y.Ner(ner) =>
+            s"${ner.textEnt y}[ner_${WholeEnt yType(ner.wholeEnt yType)}]"
+          case T etTextEnt y.Semant cCore(semant cCore) =>
+            s"[sc:${semant cCore.ent y d}]"
         }
     }
   }

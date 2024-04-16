@@ -1,58 +1,58 @@
-package com.twitter.search.earlybird.index;
+package com.tw ter.search.earlyb rd. ndex;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.apache.lucene.store.Directory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .lucene.store.D rectory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
-import com.twitter.search.earlybird.partition.SegmentSyncInfo;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common.part  on ng.base.Seg nt;
+ mport com.tw ter.search.earlyb rd.Earlyb rd ndexConf g;
+ mport com.tw ter.search.earlyb rd.part  on.Search ndex ng tr cSet;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntSync nfo;
+ mport com.tw ter.search.earlyb rd.stats.Earlyb rdSearc rStats;
 
-public class EarlybirdSegmentFactory {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdSegmentFactory.class);
+publ c class Earlyb rdSeg ntFactory {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rdSeg ntFactory.class);
 
-  private final EarlybirdIndexConfig earlybirdIndexConfig;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  private final EarlybirdSearcherStats searcherStats;
-  private Clock clock;
+  pr vate f nal Earlyb rd ndexConf g earlyb rd ndexConf g;
+  pr vate f nal Search ndex ng tr cSet search ndex ng tr cSet;
+  pr vate f nal Earlyb rdSearc rStats searc rStats;
+  pr vate Clock clock;
 
-  public EarlybirdSegmentFactory(
-      EarlybirdIndexConfig earlybirdIndexConfig,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      EarlybirdSearcherStats searcherStats,
+  publ c Earlyb rdSeg ntFactory(
+      Earlyb rd ndexConf g earlyb rd ndexConf g,
+      Search ndex ng tr cSet search ndex ng tr cSet,
+      Earlyb rdSearc rStats searc rStats,
       Clock clock) {
-    this.earlybirdIndexConfig = earlybirdIndexConfig;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.searcherStats = searcherStats;
-    this.clock = clock;
+    t .earlyb rd ndexConf g = earlyb rd ndexConf g;
+    t .search ndex ng tr cSet = search ndex ng tr cSet;
+    t .searc rStats = searc rStats;
+    t .clock = clock;
   }
 
-  public EarlybirdIndexConfig getEarlybirdIndexConfig() {
-    return earlybirdIndexConfig;
+  publ c Earlyb rd ndexConf g getEarlyb rd ndexConf g() {
+    return earlyb rd ndexConf g;
   }
 
   /**
-   * Creates a new earlybird segment.
+   * Creates a new earlyb rd seg nt.
    */
-  public EarlybirdSegment newEarlybirdSegment(Segment segment, SegmentSyncInfo segmentSyncInfo)
-      throws IOException {
-    Directory dir = earlybirdIndexConfig.newLuceneDirectory(segmentSyncInfo);
+  publ c Earlyb rdSeg nt newEarlyb rdSeg nt(Seg nt seg nt, Seg ntSync nfo seg ntSync nfo)
+      throws  OExcept on {
+    D rectory d r = earlyb rd ndexConf g.newLuceneD rectory(seg ntSync nfo);
 
-    LOG.info("Creating EarlybirdSegment on " + dir.toString());
+    LOG. nfo("Creat ng Earlyb rdSeg nt on " + d r.toStr ng());
 
-    return new EarlybirdSegment(
-        segment.getSegmentName(),
-        segment.getTimeSliceID(),
-        segment.getMaxSegmentSize(),
-        dir,
-        earlybirdIndexConfig,
-        searchIndexingMetricSet,
-        searcherStats,
+    return new Earlyb rdSeg nt(
+        seg nt.getSeg ntNa (),
+        seg nt.getT  Sl ce D(),
+        seg nt.getMaxSeg ntS ze(),
+        d r,
+        earlyb rd ndexConf g,
+        search ndex ng tr cSet,
+        searc rStats,
         clock);
   }
 }

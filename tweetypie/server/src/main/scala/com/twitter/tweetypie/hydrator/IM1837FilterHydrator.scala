@@ -1,23 +1,23 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.coreservices.IM1837
-import com.twitter.tweetypie.core._
-import com.twitter.stitch.Stitch
+ mport com.tw ter.coreserv ces. M1837
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.st ch.St ch
 
-object IM1837FilterHydrator {
-  type Type = ValueHydrator[Unit, TweetCtx]
+object  M1837F lterHydrator {
+  type Type = ValueHydrator[Un , T etCtx]
 
-  private val Drop =
-    Stitch.exception(FilteredState.Unavailable.DropUnspecified)
-  private val Success = Stitch.value(ValueState.unmodified(()))
+  pr vate val Drop =
+    St ch.except on(F lteredState.Unava lable.DropUnspec f ed)
+  pr vate val Success = St ch.value(ValueState.unmod f ed(()))
 
   def apply(): Type =
-    ValueHydrator[Unit, TweetCtx] { (_, ctx) =>
-      val userAgent = TwitterContext().flatMap(_.userAgent)
-      val userAgentAffected = userAgent.exists(IM1837.isAffectedClient)
-      val mightCrash = userAgentAffected && IM1837.textMightCrashIOS(ctx.text)
+    ValueHydrator[Un , T etCtx] { (_, ctx) =>
+      val userAgent = Tw terContext().flatMap(_.userAgent)
+      val userAgentAffected = userAgent.ex sts( M1837. sAffectedCl ent)
+      val m ghtCrash = userAgentAffected &&  M1837.textM ghtCrash OS(ctx.text)
 
-      if (mightCrash) Drop else Success
+       f (m ghtCrash) Drop else Success
     }
 }

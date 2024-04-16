@@ -1,155 +1,155 @@
-#include "internal/error.h"
-#include "internal/murmur_hash3.h"
-#include "internal/utf_converter.h"
-#include <twml/functions.h>
-#include <cstring>
-#include <algorithm>
+# nclude " nternal/error.h"
+# nclude " nternal/murmur_hash3.h"
+# nclude " nternal/utf_converter.h"
+# nclude <twml/funct ons.h>
+# nclude <cstr ng>
+# nclude <algor hm>
 
-namespace twml {
+na space twml {
 
-  template<typename T>
-  void add1(Tensor &output, const Tensor input) {
+  template<typena  T>
+  vo d add1(Tensor &output, const Tensor  nput) {
     T *odata = output.getData<T>();
-    const T *idata = input.getData<T>();
-    const uint64_t num_elements = input.getNumElements();
+    const T * data =  nput.getData<T>();
+    const u nt64_t num_ele nts =  nput.getNumEle nts();
 
-    for (uint64_t i = 0; i < num_elements; i++) {
-      odata[i] = idata[i] + 1;
+    for (u nt64_t   = 0;   < num_ele nts;  ++) {
+      odata[ ] =  data[ ] + 1;
     }
   }
 
-  template<typename T>
-  void copy(Tensor &output, const Tensor input) {
+  template<typena  T>
+  vo d copy(Tensor &output, const Tensor  nput) {
     T *odata = output.getData<T>();
-    const T *idata = input.getData<T>();
-    const uint64_t num_elements = input.getNumElements();
+    const T * data =  nput.getData<T>();
+    const u nt64_t num_ele nts =  nput.getNumEle nts();
 
-    for (uint64_t i = 0; i < num_elements; i++) {
-      odata[i] = idata[i];
+    for (u nt64_t   = 0;   < num_ele nts;  ++) {
+      odata[ ] =  data[ ];
     }
   }
 
-  void add1(Tensor &output, const Tensor input) {
-    auto type =  input.getType();
-    if (output.getType() != type) {
-      throw twml::Error(TWML_ERR_TYPE, "Output type does not match input type");
+  vo d add1(Tensor &output, const Tensor  nput) {
+    auto type =   nput.getType();
+     f (output.getType() != type) {
+      throw twml::Error(TWML_ERR_TYPE, "Output type does not match  nput type");
     }
 
-    if (output.getNumElements() != input.getNumElements()) {
-      throw twml::Error(TWML_ERR_SIZE, "Output size does not match input size");
+     f (output.getNumEle nts() !=  nput.getNumEle nts()) {
+      throw twml::Error(TWML_ERR_S ZE, "Output s ze does not match  nput s ze");
     }
 
-    // TODO: Implement an easier dispatch function
-    switch (type) {
+    // TODO:  mple nt an eas er d spatch funct on
+    sw ch (type) {
     case TWML_TYPE_FLOAT:
-      twml::add1<float>(output, input);
+      twml::add1<float>(output,  nput);
       break;
     case TWML_TYPE_DOUBLE:
-      twml::add1<double>(output, input);
+      twml::add1<double>(output,  nput);
       break;
     default:
       throw twml::Error(TWML_ERR_TYPE, "add1 only supports float and double tensors");
     }
   }
 
-  void copy(Tensor &output, const Tensor input) {
-    auto type =  input.getType();
-    if (output.getType() != type) {
-      throw twml::Error(TWML_ERR_TYPE, "Output type does not match input type");
+  vo d copy(Tensor &output, const Tensor  nput) {
+    auto type =   nput.getType();
+     f (output.getType() != type) {
+      throw twml::Error(TWML_ERR_TYPE, "Output type does not match  nput type");
     }
 
-    if (output.getNumElements() != input.getNumElements()) {
-      throw twml::Error(TWML_ERR_SIZE, "Output size does not match input size");
+     f (output.getNumEle nts() !=  nput.getNumEle nts()) {
+      throw twml::Error(TWML_ERR_S ZE, "Output s ze does not match  nput s ze");
     }
 
-    // TODO: Implement an easier dispatch function
-    switch (type) {
+    // TODO:  mple nt an eas er d spatch funct on
+    sw ch (type) {
     case TWML_TYPE_FLOAT:
-      twml::copy<float>(output, input);
+      twml::copy<float>(output,  nput);
       break;
     case TWML_TYPE_DOUBLE:
-      twml::copy<double>(output, input);
+      twml::copy<double>(output,  nput);
       break;
     default:
       throw twml::Error(TWML_ERR_TYPE, "copy only supports float and double tensors");
     }
   }
 
-  int64_t featureId(const std::string &feature) {
+   nt64_t feature d(const std::str ng &feature) {
     const char *str = feature.c_str();
-    uint64_t len = feature.size();
-    int64_t id = 0;
-    TWML_CHECK(twml_get_feature_id(&id, len, str), "Error getting featureId");
-    return id;
+    u nt64_t len = feature.s ze();
+     nt64_t  d = 0;
+    TWML_CHECK(twml_get_feature_ d(& d, len, str), "Error gett ng feature d");
+    return  d;
   }
-}  // namespace twml
+}  // na space twml
 
-twml_err twml_add1(twml_tensor output, const twml_tensor input) {
-  HANDLE_EXCEPTIONS(
+twml_err twml_add1(twml_tensor output, const twml_tensor  nput) {
+  HANDLE_EXCEPT ONS(
     auto out = twml::getTensor(output);
-    auto in = twml::getConstTensor(input);
-    twml::add1(*out, *in););
+    auto  n = twml::getConstTensor( nput);
+    twml::add1(*out, * n););
   return TWML_ERR_NONE;
 }
 
-twml_err twml_copy(twml_tensor output, const twml_tensor input) {
-  HANDLE_EXCEPTIONS(
+twml_err twml_copy(twml_tensor output, const twml_tensor  nput) {
+  HANDLE_EXCEPT ONS(
     auto out = twml::getTensor(output);
-    auto in = twml::getConstTensor(input);
-    twml::copy(*out, *in););
+    auto  n = twml::getConstTensor( nput);
+    twml::copy(*out, * n););
   return TWML_ERR_NONE;
 }
 
-inline twml_err twml_get_feature_id_internal(int64_t *result,
-                                             uint64_t out_size, uint16_t *out,
-                                             uint64_t out2_size, uint16_t *out2,
-                                             const uint64_t len, const char *str) {
-  uint64_t k = 0;
-  for (uint64_t i = 0; i < len; i++) {
-    if (str[i] == '#') {
-      k = i;
+ nl ne twml_err twml_get_feature_ d_ nternal( nt64_t *result,
+                                             u nt64_t out_s ze, u nt16_t *out,
+                                             u nt64_t out2_s ze, u nt16_t *out2,
+                                             const u nt64_t len, const char *str) {
+  u nt64_t k = 0;
+  for (u nt64_t   = 0;   < len;  ++) {
+     f (str[ ] == '#') {
+      k =  ;
       break;
     }
   }
 
-  uint8_t hash[16];
-  if (k != 0) {
-    ssize_t n = utf8_to_utf16((const uint8_t *) str, k, out, out_size);
-    if (n < 0) throw std::invalid_argument("error while converting from utf8 to utf16");
+  u nt8_t hash[16];
+   f (k != 0) {
+    ss ze_t n = utf8_to_utf16((const u nt8_t *) str, k, out, out_s ze);
+     f (n < 0) throw std:: nval d_argu nt("error wh le convert ng from utf8 to utf16");
 
-    MurmurHash3_x64_128(out, n * sizeof(uint16_t), 0, out2);
-    n = utf8_to_utf16((const uint8_t *) (str + k + 1), len - k - 1, &out2[4], out2_size - 8);
-    if (n < 0) throw std::invalid_argument("error while converting from utf8 to utf16");
+    MurmurHash3_x64_128(out, n * s zeof(u nt16_t), 0, out2);
+    n = utf8_to_utf16((const u nt8_t *) (str + k + 1), len - k - 1, &out2[4], out2_s ze - 8);
+     f (n < 0) throw std:: nval d_argu nt("error wh le convert ng from utf8 to utf16");
 
-    MurmurHash3_x64_128(out2, (n * sizeof(uint16_t)) + 8, 0, hash);
+    MurmurHash3_x64_128(out2, (n * s zeof(u nt16_t)) + 8, 0, hash);
   } else {
-    ssize_t n = utf8_to_utf16((const uint8_t *)str, len, out, out_size);
-    if (n < 0) throw std::invalid_argument("error while converting from utf8 to utf16");
-    MurmurHash3_x64_128(out, n * sizeof(uint16_t), 0, hash);
+    ss ze_t n = utf8_to_utf16((const u nt8_t *)str, len, out, out_s ze);
+     f (n < 0) throw std:: nval d_argu nt("error wh le convert ng from utf8 to utf16");
+    MurmurHash3_x64_128(out, n * s zeof(u nt16_t), 0, hash);
   }
-  int64_t id;
-  memcpy(&id, hash, sizeof(int64_t));
-  *result = id;
+   nt64_t  d;
+   mcpy(& d, hash, s zeof( nt64_t));
+  *result =  d;
 
   return TWML_ERR_NONE;
 }
 
-static const int UTF16_STR_MAX_SIZE = 1024;
+stat c const  nt UTF16_STR_MAX_S ZE = 1024;
 
-twml_err twml_get_feature_id(int64_t *result, const uint64_t len, const char *str) {
+twml_err twml_get_feature_ d( nt64_t *result, const u nt64_t len, const char *str) {
   try {
-    uint16_t out[UTF16_STR_MAX_SIZE];
-    uint16_t out2[UTF16_STR_MAX_SIZE];
-    return twml_get_feature_id_internal(result,
-                                        UTF16_STR_MAX_SIZE, out,
-                                        UTF16_STR_MAX_SIZE, out2,
+    u nt16_t out[UTF16_STR_MAX_S ZE];
+    u nt16_t out2[UTF16_STR_MAX_S ZE];
+    return twml_get_feature_ d_ nternal(result,
+                                        UTF16_STR_MAX_S ZE, out,
+                                        UTF16_STR_MAX_S ZE, out2,
                                         len, str);
-  } catch(const std::invalid_argument &ex) {
-    // If the space on the stack is not enough, try using the heap.
-    // len + 1 is needed because a null terminating character is added at the end.
-    std::vector<uint16_t> out(len + 1);
-    std::vector<uint16_t> out2(len + 1);
-    return twml_get_feature_id_internal(result,
+  } catch(const std:: nval d_argu nt &ex) {
+    //  f t  space on t  stack  s not enough, try us ng t   ap.
+    // len + 1  s needed because a null term nat ng character  s added at t  end.
+    std::vector<u nt16_t> out(len + 1);
+    std::vector<u nt16_t> out2(len + 1);
+    return twml_get_feature_ d_ nternal(result,
                                         len + 1, out.data(),
                                         len + 1, out2.data(),
                                         len, str);

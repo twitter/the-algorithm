@@ -1,693 +1,693 @@
-package com.twitter.search.common.schema;
+package com.tw ter.search.common.sc ma;
 
-import java.util.Map;
-import java.util.Set;
-import javax.annotation.Nullable;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect. mmutableL st;
+ mport com.google.common.collect.Sets;
 
-import com.twitter.common.text.util.CharSequenceTermAttributeSerializer;
-import com.twitter.common.text.util.PositionIncrementAttributeSerializer;
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.common.text.util.TokenTypeAttributeSerializer;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.FieldNameToIdMapping;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFViewSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftFacetFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftFeatureNormalizationType;
-import com.twitter.search.common.schema.thriftjava.ThriftFeatureUpdateConstraint;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldConfiguration;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftFixedLengthCSFSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexOptions;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexedFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexedNumericFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftNumericType;
-import com.twitter.search.common.schema.thriftjava.ThriftSchema;
-import com.twitter.search.common.schema.thriftjava.ThriftSearchFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftTokenStreamSerializer;
-import com.twitter.search.common.util.analysis.CharTermAttributeSerializer;
-import com.twitter.search.common.util.analysis.IntTermAttributeSerializer;
-import com.twitter.search.common.util.analysis.LongTermAttributeSerializer;
-import com.twitter.search.common.util.analysis.PayloadAttributeSerializer;
+ mport com.tw ter.common.text.ut l.CharSequenceTermAttr buteSer al zer;
+ mport com.tw ter.common.text.ut l.Pos  on ncre ntAttr buteSer al zer;
+ mport com.tw ter.common.text.ut l.TokenStreamSer al zer;
+ mport com.tw ter.common.text.ut l.TokenTypeAttr buteSer al zer;
+ mport com.tw ter.search.common.sc ma.base.FeatureConf gurat on;
+ mport com.tw ter.search.common.sc ma.base.F eldNa To dMapp ng;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftCSFF eldSett ngs;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftCSFType;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftCSFV ewSett ngs;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftFacetF eldSett ngs;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftFeatureNormal zat onType;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftFeatureUpdateConstra nt;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftF eldConf gurat on;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftF eldSett ngs;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftF xedLengthCSFSett ngs;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ft ndexOpt ons;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ft ndexedF eldSett ngs;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ft ndexedNu r cF eldSett ngs;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftNu r cType;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftSc ma;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftSearchF eldSett ngs;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftTokenStreamSer al zer;
+ mport com.tw ter.search.common.ut l.analys s.CharTermAttr buteSer al zer;
+ mport com.tw ter.search.common.ut l.analys s. ntTermAttr buteSer al zer;
+ mport com.tw ter.search.common.ut l.analys s.LongTermAttr buteSer al zer;
+ mport com.tw ter.search.common.ut l.analys s.PayloadAttr buteSer al zer;
 
-public class SchemaBuilder {
+publ c class Sc maBu lder {
 
-  public static final String CSF_VIEW_NAME_SEPARATOR = ".";
-  protected final ThriftSchema schema = new ThriftSchema();
-  protected final FieldNameToIdMapping idMapping;
-  protected final int tokenStreamSerializerVersion;
+  publ c stat c f nal Str ng CSF_V EW_NAME_SEPARATOR = ".";
+  protected f nal Thr ftSc ma sc ma = new Thr ftSc ma();
+  protected f nal F eldNa To dMapp ng  dMapp ng;
+  protected f nal  nt tokenStreamSer al zerVers on;
 
-  // As of now, we do not allow two fields to share the same field name.
-  // This set is used to perform this check.
-  private final Set<String> fieldNameSet = Sets.newHashSet();
+  // As of now,   do not allow two f elds to share t  sa  f eld na .
+  // T  set  s used to perform t  c ck.
+  pr vate f nal Set<Str ng> f eldNa Set = Sets.newHashSet();
 
   /**
-   * Construct a schema builder with the given FieldNameToIdMapper.
-   * A SchemaBuilder is used to build a ThriftSchema incrementally.
+   * Construct a sc ma bu lder w h t  g ven F eldNa To dMapper.
+   * A Sc maBu lder  s used to bu ld a Thr ftSc ma  ncre ntally.
    */
-  public SchemaBuilder(FieldNameToIdMapping idMapping,
-                       TokenStreamSerializer.Version tokenStreamSerializerVersion) {
-    this.idMapping = idMapping;
-    Preconditions.checkArgument(
-        tokenStreamSerializerVersion == TokenStreamSerializer.Version.VERSION_2);
-    this.tokenStreamSerializerVersion = tokenStreamSerializerVersion.ordinal();
+  publ c Sc maBu lder(F eldNa To dMapp ng  dMapp ng,
+                       TokenStreamSer al zer.Vers on tokenStreamSer al zerVers on) {
+    t . dMapp ng =  dMapp ng;
+    Precond  ons.c ckArgu nt(
+        tokenStreamSer al zerVers on == TokenStreamSer al zer.Vers on.VERS ON_2);
+    t .tokenStreamSer al zerVers on = tokenStreamSer al zerVers on.ord nal();
   }
 
   /**
-   * Build ThriftSchema using settings accumulated so far.
+   * Bu ld Thr ftSc ma us ng sett ngs accumulated so far.
    */
-  public final ThriftSchema build() {
-    return schema;
+  publ c f nal Thr ftSc ma bu ld() {
+    return sc ma;
   }
 
   /**
-   * Uses fieldName also as facetName.
+   * Uses f eldNa  also as facetNa .
    */
-  public final SchemaBuilder withFacetConfigs(String fieldName,
-      boolean storeSkipList,
-      boolean storeOffensiveCounters,
-      boolean useCSFForFacetCounting) {
-    return withFacetConfigs(
-        fieldName,
-        fieldName,
-        storeSkipList,
-        storeOffensiveCounters,
-        useCSFForFacetCounting);
+  publ c f nal Sc maBu lder w hFacetConf gs(Str ng f eldNa ,
+      boolean storeSk pL st,
+      boolean storeOffens veCounters,
+      boolean useCSFForFacetCount ng) {
+    return w hFacetConf gs(
+        f eldNa ,
+        f eldNa ,
+        storeSk pL st,
+        storeOffens veCounters,
+        useCSFForFacetCount ng);
   }
 
   /**
-   * Add facet field configuration.
+   * Add facet f eld conf gurat on.
    */
-  public final SchemaBuilder withFacetConfigs(String fieldName,
-      String facetName,
-      boolean storeSkipList,
-      boolean storeOffensiveCounters,
-      boolean useCSFForFacetCounting) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  publ c f nal Sc maBu lder w hFacetConf gs(Str ng f eldNa ,
+      Str ng facetNa ,
+      boolean storeSk pL st,
+      boolean storeOffens veCounters,
+      boolean useCSFForFacetCount ng) {
+     f (!should ncludeF eld(f eldNa )) {
+      return t ;
     }
-    ThriftFacetFieldSettings facetSettings = new ThriftFacetFieldSettings();
-    // As of now, all our facet names are the same as field names
-    facetSettings.setFacetName(facetName);
-    facetSettings.setStoreSkiplist(storeSkipList);
-    facetSettings.setStoreOffensiveCounters(storeOffensiveCounters);
-    facetSettings.setUseCSFForFacetCounting(useCSFForFacetCounting);
+    Thr ftFacetF eldSett ngs facetSett ngs = new Thr ftFacetF eldSett ngs();
+    // As of now, all   facet na s are t  sa  as f eld na s
+    facetSett ngs.setFacetNa (facetNa );
+    facetSett ngs.setStoreSk pl st(storeSk pL st);
+    facetSett ngs.setStoreOffens veCounters(storeOffens veCounters);
+    facetSett ngs.setUseCSFForFacetCount ng(useCSFForFacetCount ng);
 
-    int fieldId = idMapping.getFieldID(fieldName);
-    ThriftFieldConfiguration fieldConfiguration = schema.getFieldConfigs().get(fieldId);
-    Preconditions.checkNotNull(fieldConfiguration,
-        "In Earlybird, a facet field must be indexed. "
-            + "No ThriftIndexedFieldSettings found for field " + fieldName);
-    fieldConfiguration.getSettings().setFacetFieldSettings(facetSettings);
-    return this;
+     nt f eld d =  dMapp ng.getF eld D(f eldNa );
+    Thr ftF eldConf gurat on f eldConf gurat on = sc ma.getF eldConf gs().get(f eld d);
+    Precond  ons.c ckNotNull(f eldConf gurat on,
+        " n Earlyb rd, a facet f eld must be  ndexed. "
+            + "No Thr ft ndexedF eldSett ngs found for f eld " + f eldNa );
+    f eldConf gurat on.getSett ngs().setFacetF eldSett ngs(facetSett ngs);
+    return t ;
   }
 
   /**
-   * Configure the given field ID to be used for partitioning.
+   * Conf gure t  g ven f eld  D to be used for part  on ng.
    */
-  public final SchemaBuilder withPartitionFieldId(int partitionFieldId) {
-    schema.setPartitionFieldId(partitionFieldId);
-    return this;
+  publ c f nal Sc maBu lder w hPart  onF eld d( nt part  onF eld d) {
+    sc ma.setPart  onF eld d(part  onF eld d);
+    return t ;
   }
 
   /**
-   * Add a column stride field into schema.
+   * Add a column str de f eld  nto sc ma.
    */
-  public final SchemaBuilder withColumnStrideField(String fieldName,
-      ThriftCSFType type,
-      int numValuesPerDoc,
+  publ c f nal Sc maBu lder w hColumnStr deF eld(Str ng f eldNa ,
+      Thr ftCSFType type,
+       nt numValuesPerDoc,
       boolean updatable,
-      boolean loadIntoRam) {
-    return withColumnStrideField(fieldName, type, numValuesPerDoc, updatable, loadIntoRam, null);
+      boolean load ntoRam) {
+    return w hColumnStr deF eld(f eldNa , type, numValuesPerDoc, updatable, load ntoRam, null);
   }
 
   /**
-   * Add a column stride field into schema that is variable length.
+   * Add a column str de f eld  nto sc ma that  s var able length.
    */
-  public final SchemaBuilder withBinaryColumnStrideField(String fieldName,
-                                                         boolean loadIntoRam) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  publ c f nal Sc maBu lder w hB naryColumnStr deF eld(Str ng f eldNa ,
+                                                         boolean load ntoRam) {
+     f (!should ncludeF eld(f eldNa )) {
+      return t ;
     }
-    ThriftCSFFieldSettings csfFieldSettings = new ThriftCSFFieldSettings();
-    csfFieldSettings.setCsfType(ThriftCSFType.BYTE)
-        .setVariableLength(true)
-        .setLoadIntoRAM(loadIntoRam);
+    Thr ftCSFF eldSett ngs csfF eldSett ngs = new Thr ftCSFF eldSett ngs();
+    csfF eldSett ngs.setCsfType(Thr ftCSFType.BYTE)
+        .setVar ableLength(true)
+        .setLoad ntoRAM(load ntoRam);
 
-    ThriftFieldSettings fieldSettings =
-        new ThriftFieldSettings().setCsfFieldSettings(csfFieldSettings);
-    ThriftFieldConfiguration fieldConf =
-        new ThriftFieldConfiguration(fieldName).setSettings(fieldSettings);
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName), fieldConf);
-    return this;
+    Thr ftF eldSett ngs f eldSett ngs =
+        new Thr ftF eldSett ngs().setCsfF eldSett ngs(csfF eldSett ngs);
+    Thr ftF eldConf gurat on f eldConf =
+        new Thr ftF eldConf gurat on(f eldNa ).setSett ngs(f eldSett ngs);
+    put ntoF eldConf gs( dMapp ng.getF eld D(f eldNa ), f eldConf);
+    return t ;
   }
 
   /**
-   * Add a column stride field into schema which has a default value.
+   * Add a column str de f eld  nto sc ma wh ch has a default value.
    */
-  public final SchemaBuilder withColumnStrideField(String fieldName,
-      ThriftCSFType type,
-      int numValuesPerDoc,
+  publ c f nal Sc maBu lder w hColumnStr deF eld(Str ng f eldNa ,
+      Thr ftCSFType type,
+       nt numValuesPerDoc,
       boolean updatable,
-      boolean loadIntoRam,
+      boolean load ntoRam,
       Long defaultValue) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+     f (!should ncludeF eld(f eldNa )) {
+      return t ;
     }
-    ThriftCSFFieldSettings csfFieldSettings = new ThriftCSFFieldSettings();
-    csfFieldSettings.setCsfType(type)
-        .setVariableLength(false)
-        .setFixedLengthSettings(
-            new ThriftFixedLengthCSFSettings()
+    Thr ftCSFF eldSett ngs csfF eldSett ngs = new Thr ftCSFF eldSett ngs();
+    csfF eldSett ngs.setCsfType(type)
+        .setVar ableLength(false)
+        .setF xedLengthSett ngs(
+            new Thr ftF xedLengthCSFSett ngs()
                 .setNumValuesPerDoc(numValuesPerDoc)
                 .setUpdateable(updatable))
-        .setLoadIntoRAM(loadIntoRam);
+        .setLoad ntoRAM(load ntoRam);
 
-    if (defaultValue != null) {
-      csfFieldSettings.setDefaultValue(defaultValue);
+     f (defaultValue != null) {
+      csfF eldSett ngs.setDefaultValue(defaultValue);
     }
 
-    ThriftFieldSettings fieldSettings =
-        new ThriftFieldSettings().setCsfFieldSettings(csfFieldSettings);
-    ThriftFieldConfiguration fieldConf =
-        new ThriftFieldConfiguration(fieldName).setSettings(fieldSettings);
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName), fieldConf);
-    return this;
+    Thr ftF eldSett ngs f eldSett ngs =
+        new Thr ftF eldSett ngs().setCsfF eldSett ngs(csfF eldSett ngs);
+    Thr ftF eldConf gurat on f eldConf =
+        new Thr ftF eldConf gurat on(f eldNa ).setSett ngs(f eldSett ngs);
+    put ntoF eldConf gs( dMapp ng.getF eld D(f eldNa ), f eldConf);
+    return t ;
   }
 
   /**
-   * Add a CSF view into schema. A view is a portion of another CSF.
+   * Add a CSF v ew  nto sc ma. A v ew  s a port on of anot r CSF.
    */
-  public final SchemaBuilder withColumnStrideFieldView(
-      String fieldName,
-      ThriftCSFType csfType,
-      ThriftCSFType outputCSFType,
-      String baseFieldName,
-      int valueIndex,
-      int bitStartPosition,
-      int bitLength,
-      ThriftFeatureNormalizationType featureNormalizationType,
-      @Nullable Set<ThriftFeatureUpdateConstraint> constraints) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  publ c f nal Sc maBu lder w hColumnStr deF eldV ew(
+      Str ng f eldNa ,
+      Thr ftCSFType csfType,
+      Thr ftCSFType outputCSFType,
+      Str ng baseF eldNa ,
+       nt value ndex,
+       nt b StartPos  on,
+       nt b Length,
+      Thr ftFeatureNormal zat onType featureNormal zat onType,
+      @Nullable Set<Thr ftFeatureUpdateConstra nt> constra nts) {
+     f (!should ncludeF eld(f eldNa )) {
+      return t ;
     }
 
-    int baseFieldConfigID = idMapping.getFieldID(baseFieldName);
+     nt baseF eldConf g D =  dMapp ng.getF eld D(baseF eldNa );
 
-    ThriftCSFViewSettings csfViewSettings = new ThriftCSFViewSettings()
-            .setBaseFieldConfigId(baseFieldConfigID)
+    Thr ftCSFV ewSett ngs csfV ewSett ngs = new Thr ftCSFV ewSett ngs()
+            .setBaseF eldConf g d(baseF eldConf g D)
             .setCsfType(csfType)
-            .setValueIndex(valueIndex)
-            .setBitStartPosition(bitStartPosition)
-            .setBitLength(bitLength);
-    if (outputCSFType != null) {
-      csfViewSettings.setOutputCSFType(outputCSFType);
+            .setValue ndex(value ndex)
+            .setB StartPos  on(b StartPos  on)
+            .setB Length(b Length);
+     f (outputCSFType != null) {
+      csfV ewSett ngs.setOutputCSFType(outputCSFType);
     }
-    if (featureNormalizationType != ThriftFeatureNormalizationType.NONE) {
-      csfViewSettings.setNormalizationType(featureNormalizationType);
+     f (featureNormal zat onType != Thr ftFeatureNormal zat onType.NONE) {
+      csfV ewSett ngs.setNormal zat onType(featureNormal zat onType);
     }
-    if (constraints != null) {
-      csfViewSettings.setFeatureUpdateConstraints(constraints);
+     f (constra nts != null) {
+      csfV ewSett ngs.setFeatureUpdateConstra nts(constra nts);
     }
-    ThriftFieldSettings fieldSettings = new ThriftFieldSettings()
-            .setCsfViewSettings(csfViewSettings);
-    ThriftFieldConfiguration fieldConf = new ThriftFieldConfiguration(fieldName)
-            .setSettings(fieldSettings);
+    Thr ftF eldSett ngs f eldSett ngs = new Thr ftF eldSett ngs()
+            .setCsfV ewSett ngs(csfV ewSett ngs);
+    Thr ftF eldConf gurat on f eldConf = new Thr ftF eldConf gurat on(f eldNa )
+            .setSett ngs(f eldSett ngs);
 
-    Map<Integer, ThriftFieldConfiguration> fieldConfigs = schema.getFieldConfigs();
-    verifyCSFViewSettings(fieldConfigs, fieldConf);
+    Map< nteger, Thr ftF eldConf gurat on> f eldConf gs = sc ma.getF eldConf gs();
+    ver fyCSFV ewSett ngs(f eldConf gs, f eldConf);
 
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName), fieldConf);
-    return this;
+    put ntoF eldConf gs( dMapp ng.getF eld D(f eldNa ), f eldConf);
+    return t ;
   }
 
   /**
-   * Sanity checks for CSF view settings.
+   * San y c cks for CSF v ew sett ngs.
    */
-  public static void verifyCSFViewSettings(Map<Integer, ThriftFieldConfiguration> fieldConfigs,
-      ThriftFieldConfiguration fieldConf) {
-    Preconditions.checkNotNull(fieldConf.getSettings());
-    Preconditions.checkNotNull(fieldConf.getSettings().getCsfViewSettings());
-    ThriftCSFViewSettings csfViewSettings = fieldConf.getSettings().getCsfViewSettings();
+  publ c stat c vo d ver fyCSFV ewSett ngs(Map< nteger, Thr ftF eldConf gurat on> f eldConf gs,
+      Thr ftF eldConf gurat on f eldConf) {
+    Precond  ons.c ckNotNull(f eldConf.getSett ngs());
+    Precond  ons.c ckNotNull(f eldConf.getSett ngs().getCsfV ewSett ngs());
+    Thr ftCSFV ewSett ngs csfV ewSett ngs = f eldConf.getSett ngs().getCsfV ewSett ngs();
 
-    if (fieldConfigs != null) {
-      ThriftFieldConfiguration baseFieldConfig = fieldConfigs.get(
-              csfViewSettings.getBaseFieldConfigId());
-      if (baseFieldConfig != null) {
-        String baseFieldName = baseFieldConfig.getFieldName();
-        String expectedViewNamePrefix = baseFieldName + CSF_VIEW_NAME_SEPARATOR;
-        if (fieldConf.getFieldName().startsWith(expectedViewNamePrefix)) {
-          ThriftFieldSettings baseFieldSettings = baseFieldConfig.getSettings();
-          ThriftCSFFieldSettings baseFieldCSFSettings = baseFieldSettings.getCsfFieldSettings();
+     f (f eldConf gs != null) {
+      Thr ftF eldConf gurat on baseF eldConf g = f eldConf gs.get(
+              csfV ewSett ngs.getBaseF eldConf g d());
+       f (baseF eldConf g != null) {
+        Str ng baseF eldNa  = baseF eldConf g.getF eldNa ();
+        Str ng expectedV ewNa Pref x = baseF eldNa  + CSF_V EW_NAME_SEPARATOR;
+         f (f eldConf.getF eldNa ().startsW h(expectedV ewNa Pref x)) {
+          Thr ftF eldSett ngs baseF eldSett ngs = baseF eldConf g.getSett ngs();
+          Thr ftCSFF eldSett ngs baseF eldCSFSett ngs = baseF eldSett ngs.getCsfF eldSett ngs();
 
-          if (baseFieldCSFSettings != null) {
-             if (!baseFieldCSFSettings.isVariableLength()
-                 && baseFieldCSFSettings.getFixedLengthSettings() != null) {
+           f (baseF eldCSFSett ngs != null) {
+              f (!baseF eldCSFSett ngs. sVar ableLength()
+                 && baseF eldCSFSett ngs.getF xedLengthSett ngs() != null) {
 
-               ThriftCSFType baseCSFType = baseFieldCSFSettings.getCsfType();
-               switch (baseCSFType) {
+               Thr ftCSFType baseCSFType = baseF eldCSFSett ngs.getCsfType();
+               sw ch (baseCSFType) {
                  case BYTE:
-                   checkCSFViewPositions(baseFieldCSFSettings, 8, csfViewSettings);
+                   c ckCSFV ewPos  ons(baseF eldCSFSett ngs, 8, csfV ewSett ngs);
                    break;
-                 case INT:
-                   checkCSFViewPositions(baseFieldCSFSettings, 32, csfViewSettings);
+                 case  NT:
+                   c ckCSFV ewPos  ons(baseF eldCSFSett ngs, 32, csfV ewSett ngs);
                    break;
                  default:
-                   throw new IllegalStateException("Base field: " + baseFieldName
-                           + " is of a non-supported CSFType: " + baseCSFType);
+                   throw new  llegalStateExcept on("Base f eld: " + baseF eldNa 
+                           + "  s of a non-supported CSFType: " + baseCSFType);
                }
              } else {
-               throw new IllegalStateException("Base field: " + baseFieldName
-                       + " must be a fixed-length CSF field");
+               throw new  llegalStateExcept on("Base f eld: " + baseF eldNa 
+                       + " must be a f xed-length CSF f eld");
              }
           } else {
-            throw new IllegalStateException("Base field: " + baseFieldName + " is not a CSF field");
+            throw new  llegalStateExcept on("Base f eld: " + baseF eldNa  + "  s not a CSF f eld");
           }
         } else {
-          throw new IllegalStateException("View field name for baseFieldConfigID: "
-                  + csfViewSettings.getBaseFieldConfigId() + " must start with: '"
-                  + expectedViewNamePrefix + "'");
+          throw new  llegalStateExcept on("V ew f eld na  for baseF eldConf g D: "
+                  + csfV ewSett ngs.getBaseF eldConf g d() + " must start w h: '"
+                  + expectedV ewNa Pref x + "'");
         }
       } else {
-        throw new IllegalStateException("Can't add a view, no field defined for base fieldID: "
-                + csfViewSettings.getBaseFieldConfigId());
+        throw new  llegalStateExcept on("Can't add a v ew, no f eld def ned for base f eld D: "
+                + csfV ewSett ngs.getBaseF eldConf g d());
       }
     } else {
-      throw new IllegalStateException("Can't add a view, no field configs defined.");
+      throw new  llegalStateExcept on("Can't add a v ew, no f eld conf gs def ned.");
     }
   }
 
-  private static void checkCSFViewPositions(ThriftCSFFieldSettings baseFieldCSFSettings,
-      int bitsPerValue,
-      ThriftCSFViewSettings csfViewSettings) {
-    ThriftFixedLengthCSFSettings fixedLengthCSFSettings =
-            baseFieldCSFSettings.getFixedLengthSettings();
-    Preconditions.checkNotNull(fixedLengthCSFSettings);
+  pr vate stat c vo d c ckCSFV ewPos  ons(Thr ftCSFF eldSett ngs baseF eldCSFSett ngs,
+       nt b sPerValue,
+      Thr ftCSFV ewSett ngs csfV ewSett ngs) {
+    Thr ftF xedLengthCSFSett ngs f xedLengthCSFSett ngs =
+            baseF eldCSFSett ngs.getF xedLengthSett ngs();
+    Precond  ons.c ckNotNull(f xedLengthCSFSett ngs);
 
-    int numValues = fixedLengthCSFSettings.getNumValuesPerDoc();
-    Preconditions.checkState(csfViewSettings.getValueIndex() >= 0,
-        "value index must be positive: " + csfViewSettings.getValueIndex());
-    Preconditions.checkState(csfViewSettings.getValueIndex() < numValues, "value index "
-        + csfViewSettings.getValueIndex() + " must be less than numValues: " + numValues);
+     nt numValues = f xedLengthCSFSett ngs.getNumValuesPerDoc();
+    Precond  ons.c ckState(csfV ewSett ngs.getValue ndex() >= 0,
+        "value  ndex must be pos  ve: " + csfV ewSett ngs.getValue ndex());
+    Precond  ons.c ckState(csfV ewSett ngs.getValue ndex() < numValues, "value  ndex "
+        + csfV ewSett ngs.getValue ndex() + " must be less than numValues: " + numValues);
 
-    Preconditions.checkState(csfViewSettings.getBitStartPosition() >= 0,
-        "bitStartPosition must be positive: " + csfViewSettings.getBitStartPosition());
-    Preconditions.checkState(csfViewSettings.getBitStartPosition() < bitsPerValue,
-        "bitStartPosition " + csfViewSettings.getBitStartPosition()
-            + " must be less than bitsPerValue " + bitsPerValue);
+    Precond  ons.c ckState(csfV ewSett ngs.getB StartPos  on() >= 0,
+        "b StartPos  on must be pos  ve: " + csfV ewSett ngs.getB StartPos  on());
+    Precond  ons.c ckState(csfV ewSett ngs.getB StartPos  on() < b sPerValue,
+        "b StartPos  on " + csfV ewSett ngs.getB StartPos  on()
+            + " must be less than b sPerValue " + b sPerValue);
 
-    Preconditions.checkState(csfViewSettings.getBitLength() >= 1,
-        "bitLength must be positive: " + csfViewSettings.getBitLength());
+    Precond  ons.c ckState(csfV ewSett ngs.getB Length() >= 1,
+        "b Length must be pos  ve: " + csfV ewSett ngs.getB Length());
 
-    Preconditions.checkState(
-        csfViewSettings.getBitStartPosition() + csfViewSettings.getBitLength() <= bitsPerValue,
-        String.format("bitStartPosition (%d) + bitLength (%d) must be less than bitsPerValue (%d)",
-        csfViewSettings.getBitStartPosition(), csfViewSettings.getBitLength(), bitsPerValue));
+    Precond  ons.c ckState(
+        csfV ewSett ngs.getB StartPos  on() + csfV ewSett ngs.getB Length() <= b sPerValue,
+        Str ng.format("b StartPos  on (%d) + b Length (%d) must be less than b sPerValue (%d)",
+        csfV ewSett ngs.getB StartPos  on(), csfV ewSett ngs.getB Length(), b sPerValue));
   }
 
-  // No position; no freq; not pretokenized; not tokenized.
+  // No pos  on; no freq; not pretoken zed; not token zed.
   /**
-   * Norm is disabled as default. Like Lucene string field, or int/long fields.
+   * Norm  s d sabled as default. L ke Lucene str ng f eld, or  nt/long f elds.
    */
-  public final SchemaBuilder withIndexedNotTokenizedField(String fieldName) {
-    return withIndexedNotTokenizedField(fieldName, false);
+  publ c f nal Sc maBu lder w h ndexedNotToken zedF eld(Str ng f eldNa ) {
+    return w h ndexedNotToken zedF eld(f eldNa , false);
   }
 
   /**
-   * Add an indexed but not tokenized field. This is similar to Lucene's StringField.
+   * Add an  ndexed but not token zed f eld. T   s s m lar to Lucene's Str ngF eld.
    */
-  public final SchemaBuilder withIndexedNotTokenizedField(String fieldName,
+  publ c f nal Sc maBu lder w h ndexedNotToken zedF eld(Str ng f eldNa ,
                                                           boolean supportOutOfOrderAppends) {
-    return withIndexedNotTokenizedField(fieldName, supportOutOfOrderAppends, true);
+    return w h ndexedNotToken zedF eld(f eldNa , supportOutOfOrderAppends, true);
   }
 
-  private final SchemaBuilder withIndexedNotTokenizedField(String fieldName,
+  pr vate f nal Sc maBu lder w h ndexedNotToken zedF eld(Str ng f eldNa ,
                                                           boolean supportOutOfOrderAppends,
-                                                          boolean omitNorms) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+                                                          boolean om Norms) {
+     f (!should ncludeF eld(f eldNa )) {
+      return t ;
     }
-    ThriftFieldSettings settings = getNoPositionNoFreqSettings(supportOutOfOrderAppends);
-    settings.getIndexedFieldSettings().setOmitNorms(omitNorms);
-    ThriftFieldConfiguration config = new ThriftFieldConfiguration(fieldName)
-        .setSettings(settings);
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName), config);
-    return this;
+    Thr ftF eldSett ngs sett ngs = getNoPos  onNoFreqSett ngs(supportOutOfOrderAppends);
+    sett ngs.get ndexedF eldSett ngs().setOm Norms(om Norms);
+    Thr ftF eldConf gurat on conf g = new Thr ftF eldConf gurat on(f eldNa )
+        .setSett ngs(sett ngs);
+    put ntoF eldConf gs( dMapp ng.getF eld D(f eldNa ), conf g);
+    return t ;
   }
 
 
-  /** Makes the given field searchable by default, with the given weight. */
-  public final SchemaBuilder withSearchFieldByDefault(
-      String fieldName, float textSearchableFieldWeight) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  /** Makes t  g ven f eld searchable by default, w h t  g ven   ght. */
+  publ c f nal Sc maBu lder w hSearchF eldByDefault(
+      Str ng f eldNa , float textSearchableF eld  ght) {
+     f (!should ncludeF eld(f eldNa )) {
+      return t ;
     }
 
-    ThriftFieldSettings settings =
-        schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
-    settings.setSearchFieldSettings(
-        new ThriftSearchFieldSettings()
-            .setTextSearchableFieldWeight(textSearchableFieldWeight)
+    Thr ftF eldSett ngs sett ngs =
+        sc ma.getF eldConf gs().get( dMapp ng.getF eld D(f eldNa )).getSett ngs();
+    sett ngs.setSearchF eldSett ngs(
+        new Thr ftSearchF eldSett ngs()
+            .setTextSearchableF eld  ght(textSearchableF eld  ght)
             .setTextDefaultSearchable(true));
 
-    return this;
+    return t ;
   }
 
   /**
-   * Similar to Lucene's TextField. The string is analyzed using the default/override analyzer.
-   * @param fieldName
-   * @param addHfPairIfHfFieldsArePresent Add hfPair fields if they exists in the schema.
-   *            For certain text fields, adding hfPair fields are usually preferred, but they may
-   *            not exist in the schema, in which case the hfPair fields will not be added.
+   * S m lar to Lucene's TextF eld. T  str ng  s analyzed us ng t  default/overr de analyzer.
+   * @param f eldNa 
+   * @param addHfPa r fHfF eldsArePresent Add hfPa r f elds  f t y ex sts  n t  sc ma.
+   *            For certa n text f elds, add ng hfPa r f elds are usually preferred, but t y may
+   *            not ex st  n t  sc ma,  n wh ch case t  hfPa r f elds w ll not be added.
    */
-  public final SchemaBuilder withTextField(String fieldName,
-                                           boolean addHfPairIfHfFieldsArePresent) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  publ c f nal Sc maBu lder w hTextF eld(Str ng f eldNa ,
+                                           boolean addHfPa r fHfF eldsArePresent) {
+     f (!should ncludeF eld(f eldNa )) {
+      return t ;
     }
-    ThriftFieldConfiguration config = new ThriftFieldConfiguration(fieldName).setSettings(
-        getDefaultSettings(ThriftIndexOptions.DOCS_AND_FREQS_AND_POSITIONS));
+    Thr ftF eldConf gurat on conf g = new Thr ftF eldConf gurat on(f eldNa ).setSett ngs(
+        getDefaultSett ngs(Thr ft ndexOpt ons.DOCS_AND_FREQS_AND_POS T ONS));
 
-    if (addHfPairIfHfFieldsArePresent) {
-      // Add hfPair fields only if they exist in the schema for the cluster
-      boolean hfPair = shouldIncludeField(ImmutableSchema.HF_TERM_PAIRS_FIELD)
-                       && shouldIncludeField(ImmutableSchema.HF_PHRASE_PAIRS_FIELD);
-      config.getSettings().getIndexedFieldSettings().setIndexHighFreqTermPairs(hfPair);
+     f (addHfPa r fHfF eldsArePresent) {
+      // Add hfPa r f elds only  f t y ex st  n t  sc ma for t  cluster
+      boolean hfPa r = should ncludeF eld( mmutableSc ma.HF_TERM_PA RS_F ELD)
+                       && should ncludeF eld( mmutableSc ma.HF_PHRASE_PA RS_F ELD);
+      conf g.getSett ngs().get ndexedF eldSett ngs().set ndexH ghFreqTermPa rs(hfPa r);
     }
 
-    config.getSettings().getIndexedFieldSettings().setTokenized(true);
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName), config);
-    return this;
+    conf g.getSett ngs().get ndexedF eldSett ngs().setToken zed(true);
+    put ntoF eldConf gs( dMapp ng.getF eld D(f eldNa ), conf g);
+    return t ;
   }
 
   /**
-   * Marked the given field as having per position payload.
+   * Marked t  g ven f eld as hav ng per pos  on payload.
    */
-  public final SchemaBuilder withPerPositionPayload(String fieldName, int defaultPayloadLength) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  publ c f nal Sc maBu lder w hPerPos  onPayload(Str ng f eldNa ,  nt defaultPayloadLength) {
+     f (!should ncludeF eld(f eldNa )) {
+      return t ;
     }
-    ThriftFieldSettings settings =
-            schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
+    Thr ftF eldSett ngs sett ngs =
+            sc ma.getF eldConf gs().get( dMapp ng.getF eld D(f eldNa )).getSett ngs();
 
-    settings.getIndexedFieldSettings().setStorePerPositionPayloads(true);
-    settings.getIndexedFieldSettings().setDefaultPerPositionPayloadLength(defaultPayloadLength);
-    return this;
+    sett ngs.get ndexedF eldSett ngs().setStorePerPos  onPayloads(true);
+    sett ngs.get ndexedF eldSett ngs().setDefaultPerPos  onPayloadLength(defaultPayloadLength);
+    return t ;
   }
 
   /**
-   * Add field into schema that is pre-tokenized and does not have position.
-   * E.g. hashtags / stocks / card_domain
+   * Add f eld  nto sc ma that  s pre-token zed and does not have pos  on.
+   * E.g. hashtags / stocks / card_doma n
    */
-  public final SchemaBuilder withPretokenizedNoPositionField(String fieldName) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  publ c f nal Sc maBu lder w hPretoken zedNoPos  onF eld(Str ng f eldNa ) {
+     f (!should ncludeF eld(f eldNa )) {
+      return t ;
     }
-    ThriftFieldConfiguration config = new ThriftFieldConfiguration(fieldName)
-        .setSettings(getPretokenizedNoPositionFieldSetting());
-    // Add hfPair fields only if they exist in the schema for the cluster
-    boolean hfPair = shouldIncludeField(ImmutableSchema.HF_TERM_PAIRS_FIELD)
-                         && shouldIncludeField(ImmutableSchema.HF_PHRASE_PAIRS_FIELD);
-    config.getSettings().getIndexedFieldSettings().setIndexHighFreqTermPairs(hfPair);
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName), config);
-    return this;
+    Thr ftF eldConf gurat on conf g = new Thr ftF eldConf gurat on(f eldNa )
+        .setSett ngs(getPretoken zedNoPos  onF eldSett ng());
+    // Add hfPa r f elds only  f t y ex st  n t  sc ma for t  cluster
+    boolean hfPa r = should ncludeF eld( mmutableSc ma.HF_TERM_PA RS_F ELD)
+                         && should ncludeF eld( mmutableSc ma.HF_PHRASE_PA RS_F ELD);
+    conf g.getSett ngs().get ndexedF eldSett ngs().set ndexH ghFreqTermPa rs(hfPa r);
+    put ntoF eldConf gs( dMapp ng.getF eld D(f eldNa ), conf g);
+    return t ;
   }
 
   /**
-   * Mark the field to have ordered term dictionary.
-   * In Lucene, term dictionary is sorted. In Earlybird, term dictionary order is not
-   * guaranteed unless this is turned on.
+   * Mark t  f eld to have ordered term d ct onary.
+   *  n Lucene, term d ct onary  s sorted.  n Earlyb rd, term d ct onary order  s not
+   * guaranteed unless t   s turned on.
    */
-  public final SchemaBuilder withOrderedTerms(String fieldName) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  publ c f nal Sc maBu lder w hOrderedTerms(Str ng f eldNa ) {
+     f (!should ncludeF eld(f eldNa )) {
+      return t ;
     }
-    ThriftFieldSettings settings =
-        schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
+    Thr ftF eldSett ngs sett ngs =
+        sc ma.getF eldConf gs().get( dMapp ng.getF eld D(f eldNa )).getSett ngs();
 
-    settings.getIndexedFieldSettings().setSupportOrderedTerms(true);
-    return this;
+    sett ngs.get ndexedF eldSett ngs().setSupportOrderedTerms(true);
+    return t ;
   }
 
   /**
-   * Support lookup of term text by term id in the term dictionary.
+   * Support lookup of term text by term  d  n t  term d ct onary.
    */
-  public final SchemaBuilder withTermTextLookup(String fieldName) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  publ c f nal Sc maBu lder w hTermTextLookup(Str ng f eldNa ) {
+     f (!should ncludeF eld(f eldNa )) {
+      return t ;
     }
-    ThriftFieldSettings settings =
-        schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
+    Thr ftF eldSett ngs sett ngs =
+        sc ma.getF eldConf gs().get( dMapp ng.getF eld D(f eldNa )).getSett ngs();
 
-    settings.getIndexedFieldSettings().setSupportTermTextLookup(true);
-    return this;
+    sett ngs.get ndexedF eldSett ngs().setSupportTermTextLookup(true);
+    return t ;
   }
 
   /**
-   * Add a text field that is pre-tokenized, so not analyzed again in the index (e.g. Earlybird).
+   * Add a text f eld that  s pre-token zed, so not analyzed aga n  n t   ndex (e.g. Earlyb rd).
    *
-   * Note that the token streams MUST be created using the attributes defined in
-   * {@link com.twitter.search.common.util.text.TweetTokenStreamSerializer}.
+   * Note that t  token streams MUST be created us ng t  attr butes def ned  n
+   * {@l nk com.tw ter.search.common.ut l.text.T etTokenStreamSer al zer}.
    */
-  public final SchemaBuilder withPretokenizedTextField(
-      String fieldName,
-      boolean addHfPairIfHfFieldsArePresent) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  publ c f nal Sc maBu lder w hPretoken zedTextF eld(
+      Str ng f eldNa ,
+      boolean addHfPa r fHfF eldsArePresent) {
+     f (!should ncludeF eld(f eldNa )) {
+      return t ;
     }
-    ThriftFieldConfiguration config = new ThriftFieldConfiguration(fieldName)
-        .setSettings(getDefaultPretokenizedSettings(
-            ThriftIndexOptions.DOCS_AND_FREQS_AND_POSITIONS));
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName), config);
-    // Add hfPair fields only if they exist in the schema for the cluster
-    if (addHfPairIfHfFieldsArePresent) {
-      // Add hfPair fields only if they exist in the schema for the cluster
-      boolean hfPair = shouldIncludeField(ImmutableSchema.HF_TERM_PAIRS_FIELD)
-                       && shouldIncludeField(ImmutableSchema.HF_PHRASE_PAIRS_FIELD);
-      config.getSettings().getIndexedFieldSettings().setIndexHighFreqTermPairs(hfPair);
+    Thr ftF eldConf gurat on conf g = new Thr ftF eldConf gurat on(f eldNa )
+        .setSett ngs(getDefaultPretoken zedSett ngs(
+            Thr ft ndexOpt ons.DOCS_AND_FREQS_AND_POS T ONS));
+    put ntoF eldConf gs( dMapp ng.getF eld D(f eldNa ), conf g);
+    // Add hfPa r f elds only  f t y ex st  n t  sc ma for t  cluster
+     f (addHfPa r fHfF eldsArePresent) {
+      // Add hfPa r f elds only  f t y ex st  n t  sc ma for t  cluster
+      boolean hfPa r = should ncludeF eld( mmutableSc ma.HF_TERM_PA RS_F ELD)
+                       && should ncludeF eld( mmutableSc ma.HF_PHRASE_PA RS_F ELD);
+      conf g.getSett ngs().get ndexedF eldSett ngs().set ndexH ghFreqTermPa rs(hfPa r);
     }
-    return this;
+    return t ;
   }
 
   /**
-   * Add a feature configuration
+   * Add a feature conf gurat on
    */
-  public final SchemaBuilder withFeatureConfiguration(String baseFieldName, String viewName,
-                                                      FeatureConfiguration featureConfiguration) {
-    return withColumnStrideFieldView(
-        viewName,
-        // Defaulting all encoded tweet features to int since the underlying encoded tweet features
-        // are ints.
-        ThriftCSFType.INT,
-        featureConfiguration.getOutputType(),
-        baseFieldName,
-        featureConfiguration.getValueIndex(),
-        featureConfiguration.getBitStartPosition(),
-        featureConfiguration.getBitLength(),
-        featureConfiguration.getFeatureNormalizationType(),
-        featureConfiguration.getUpdateConstraints()
+  publ c f nal Sc maBu lder w hFeatureConf gurat on(Str ng baseF eldNa , Str ng v ewNa ,
+                                                      FeatureConf gurat on featureConf gurat on) {
+    return w hColumnStr deF eldV ew(
+        v ewNa ,
+        // Default ng all encoded t et features to  nt s nce t  underly ng encoded t et features
+        // are  nts.
+        Thr ftCSFType. NT,
+        featureConf gurat on.getOutputType(),
+        baseF eldNa ,
+        featureConf gurat on.getValue ndex(),
+        featureConf gurat on.getB StartPos  on(),
+        featureConf gurat on.getB Length(),
+        featureConf gurat on.getFeatureNormal zat onType(),
+        featureConf gurat on.getUpdateConstra nts()
     );
   }
 
   /**
-   * Add a long field in schema. This field uses LongTermAttribute.
+   * Add a long f eld  n sc ma. T  f eld uses LongTermAttr bute.
    */
-  private SchemaBuilder addLongTermField(String fieldName, boolean useSortableEncoding) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  pr vate Sc maBu lder addLongTermF eld(Str ng f eldNa , boolean useSortableEncod ng) {
+     f (!should ncludeF eld(f eldNa )) {
+      return t ;
     }
-    ThriftFieldSettings longTermSettings = getEarlybirdNumericFieldSettings();
-    ThriftTokenStreamSerializer tokenStreamSerializer =
-        new ThriftTokenStreamSerializer(tokenStreamSerializerVersion);
-    tokenStreamSerializer.setAttributeSerializerClassNames(
-        ImmutableList.<String>of(LongTermAttributeSerializer.class.getName()));
-    longTermSettings.getIndexedFieldSettings().setTokenStreamSerializer(tokenStreamSerializer);
+    Thr ftF eldSett ngs longTermSett ngs = getEarlyb rdNu r cF eldSett ngs();
+    Thr ftTokenStreamSer al zer tokenStreamSer al zer =
+        new Thr ftTokenStreamSer al zer(tokenStreamSer al zerVers on);
+    tokenStreamSer al zer.setAttr buteSer al zerClassNa s(
+         mmutableL st.<Str ng>of(LongTermAttr buteSer al zer.class.getNa ()));
+    longTermSett ngs.get ndexedF eldSett ngs().setTokenStreamSer al zer(tokenStreamSer al zer);
 
-    ThriftIndexedNumericFieldSettings numericFieldSettings =
-        new ThriftIndexedNumericFieldSettings(true);
-    numericFieldSettings.setNumericType(ThriftNumericType.LONG);
-    numericFieldSettings.setUseSortableEncoding(useSortableEncoding);
-    longTermSettings.getIndexedFieldSettings().setNumericFieldSettings(numericFieldSettings);
+    Thr ft ndexedNu r cF eldSett ngs nu r cF eldSett ngs =
+        new Thr ft ndexedNu r cF eldSett ngs(true);
+    nu r cF eldSett ngs.setNu r cType(Thr ftNu r cType.LONG);
+    nu r cF eldSett ngs.setUseSortableEncod ng(useSortableEncod ng);
+    longTermSett ngs.get ndexedF eldSett ngs().setNu r cF eldSett ngs(nu r cF eldSett ngs);
 
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName),
-        new ThriftFieldConfiguration(fieldName).setSettings(longTermSettings));
-    return this;
+    put ntoF eldConf gs( dMapp ng.getF eld D(f eldNa ),
+        new Thr ftF eldConf gurat on(f eldNa ).setSett ngs(longTermSett ngs));
+    return t ;
   }
 
-  public final SchemaBuilder withSortableLongTermField(String fieldName) {
-    return addLongTermField(fieldName, true);
+  publ c f nal Sc maBu lder w hSortableLongTermF eld(Str ng f eldNa ) {
+    return addLongTermF eld(f eldNa , true);
   }
 
-  public final SchemaBuilder withLongTermField(String fieldName) {
-    return addLongTermField(fieldName, false);
+  publ c f nal Sc maBu lder w hLongTermF eld(Str ng f eldNa ) {
+    return addLongTermF eld(f eldNa , false);
   }
 
   /**
-   * Add an int field in schema. This field uses IntTermAttribute.
+   * Add an  nt f eld  n sc ma. T  f eld uses  ntTermAttr bute.
    */
-  public final SchemaBuilder withIntTermField(String fieldName) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  publ c f nal Sc maBu lder w h ntTermF eld(Str ng f eldNa ) {
+     f (!should ncludeF eld(f eldNa )) {
+      return t ;
     }
-    ThriftFieldSettings intTermSettings = getEarlybirdNumericFieldSettings();
-    ThriftTokenStreamSerializer attributeSerializer =
-        new ThriftTokenStreamSerializer(tokenStreamSerializerVersion);
-    attributeSerializer.setAttributeSerializerClassNames(
-        ImmutableList.<String>of(IntTermAttributeSerializer.class.getName()));
-    intTermSettings.getIndexedFieldSettings().setTokenStreamSerializer(attributeSerializer);
+    Thr ftF eldSett ngs  ntTermSett ngs = getEarlyb rdNu r cF eldSett ngs();
+    Thr ftTokenStreamSer al zer attr buteSer al zer =
+        new Thr ftTokenStreamSer al zer(tokenStreamSer al zerVers on);
+    attr buteSer al zer.setAttr buteSer al zerClassNa s(
+         mmutableL st.<Str ng>of( ntTermAttr buteSer al zer.class.getNa ()));
+     ntTermSett ngs.get ndexedF eldSett ngs().setTokenStreamSer al zer(attr buteSer al zer);
 
-    ThriftIndexedNumericFieldSettings numericFieldSettings =
-        new ThriftIndexedNumericFieldSettings(true);
-    numericFieldSettings.setNumericType(ThriftNumericType.INT);
-    intTermSettings.getIndexedFieldSettings().setNumericFieldSettings(numericFieldSettings);
+    Thr ft ndexedNu r cF eldSett ngs nu r cF eldSett ngs =
+        new Thr ft ndexedNu r cF eldSett ngs(true);
+    nu r cF eldSett ngs.setNu r cType(Thr ftNu r cType. NT);
+     ntTermSett ngs.get ndexedF eldSett ngs().setNu r cF eldSett ngs(nu r cF eldSett ngs);
 
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName),
-        new ThriftFieldConfiguration(fieldName).setSettings(intTermSettings));
-    return this;
+    put ntoF eldConf gs( dMapp ng.getF eld D(f eldNa ),
+        new Thr ftF eldConf gurat on(f eldNa ).setSett ngs( ntTermSett ngs));
+    return t ;
   }
 
   /**
-   * Timeline and ExpertSearch uses
-   * {@link com.twitter.search.common.util.analysis.PayloadWeightedTokenizer} to store weighted
+   * T  l ne and ExpertSearch uses
+   * {@l nk com.tw ter.search.common.ut l.analys s.Payload  ghtedToken zer} to store   ghted
    * values.
    *
-   * E.g. for the PRODUCED_LANGUAGES and CONSUMED_LANGUAGES fields, they contain not a single,
-   * value, but instead a list of values with a weight associated with each value.
+   * E.g. for t  PRODUCED_LANGUAGES and CONSUMED_LANGUAGES f elds, t y conta n not a s ngle,
+   * value, but  nstead a l st of values w h a   ght assoc ated w h each value.
    *
-   * This method adds an indexed field that uses
-   * {@link com.twitter.search.common.util.analysis.PayloadWeightedTokenizer}.
+   * T   thod adds an  ndexed f eld that uses
+   * {@l nk com.tw ter.search.common.ut l.analys s.Payload  ghtedToken zer}.
    */
-  public final SchemaBuilder withCharTermPayloadWeightedField(String fieldName) {
-    ThriftFieldConfiguration config = new ThriftFieldConfiguration(fieldName)
-        .setSettings(getPayloadWeightedSettings(ThriftIndexOptions.DOCS_AND_FREQS_AND_POSITIONS));
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName), config);
-    return this;
+  publ c f nal Sc maBu lder w hCharTermPayload  ghtedF eld(Str ng f eldNa ) {
+    Thr ftF eldConf gurat on conf g = new Thr ftF eldConf gurat on(f eldNa )
+        .setSett ngs(getPayload  ghtedSett ngs(Thr ft ndexOpt ons.DOCS_AND_FREQS_AND_POS T ONS));
+    put ntoF eldConf gs( dMapp ng.getF eld D(f eldNa ), conf g);
+    return t ;
   }
 
   /**
-   * Set the version and description of this schema.
+   * Set t  vers on and descr pt on of t  sc ma.
    */
-  public final SchemaBuilder withSchemaVersion(
-      int majorVersionNumber,
-      int minorVersionNumber,
-      String versionDesc,
-      boolean isOfficial) {
-    schema.setMajorVersionNumber(majorVersionNumber);
-    schema.setMinorVersionNumber(minorVersionNumber);
+  publ c f nal Sc maBu lder w hSc maVers on(
+       nt majorVers onNumber,
+       nt m norVers onNumber,
+      Str ng vers onDesc,
+      boolean  sOff c al) {
+    sc ma.setMajorVers onNumber(majorVers onNumber);
+    sc ma.setM norVers onNumber(m norVers onNumber);
 
-    schema.setVersion(majorVersionNumber + ":" + versionDesc);
-    schema.setVersionIsOfficial(isOfficial);
+    sc ma.setVers on(majorVers onNumber + ":" + vers onDesc);
+    sc ma.setVers on sOff c al( sOff c al);
 
-    return this;
+    return t ;
   }
 
-  public final SchemaBuilder withSchemaVersion(
-      int majorVersionNumber,
-      String versionDesc,
-      boolean isOfficial) {
-    return withSchemaVersion(majorVersionNumber, 0, versionDesc, isOfficial);
+  publ c f nal Sc maBu lder w hSc maVers on(
+       nt majorVers onNumber,
+      Str ng vers onDesc,
+      boolean  sOff c al) {
+    return w hSc maVers on(majorVers onNumber, 0, vers onDesc,  sOff c al);
   }
 
-  protected void putIntoFieldConfigs(int id, ThriftFieldConfiguration config) {
-    if (schema.getFieldConfigs() != null && schema.getFieldConfigs().containsKey(id)) {
-      throw new IllegalStateException("Already have a ThriftFieldConfiguration for field id " + id);
+  protected vo d put ntoF eldConf gs( nt  d, Thr ftF eldConf gurat on conf g) {
+     f (sc ma.getF eldConf gs() != null && sc ma.getF eldConf gs().conta nsKey( d)) {
+      throw new  llegalStateExcept on("Already have a Thr ftF eldConf gurat on for f eld  d " +  d);
     }
 
-    if (fieldNameSet.contains(config.getFieldName())) {
-      throw new IllegalStateException("Already have a ThriftFieldConfiguration for field "
-          + config.getFieldName());
+     f (f eldNa Set.conta ns(conf g.getF eldNa ())) {
+      throw new  llegalStateExcept on("Already have a Thr ftF eldConf gurat on for f eld "
+          + conf g.getF eldNa ());
     }
-    fieldNameSet.add(config.getFieldName());
-    schema.putToFieldConfigs(id, config);
+    f eldNa Set.add(conf g.getF eldNa ());
+    sc ma.putToF eldConf gs( d, conf g);
   }
 
-  // Default field settings. Most field settings are similar to this.
-  protected ThriftFieldSettings getDefaultSettings(ThriftIndexOptions indexOption) {
-    return getDefaultSettings(indexOption, false);
+  // Default f eld sett ngs. Most f eld sett ngs are s m lar to t .
+  protected Thr ftF eldSett ngs getDefaultSett ngs(Thr ft ndexOpt ons  ndexOpt on) {
+    return getDefaultSett ngs( ndexOpt on, false);
   }
 
-  protected ThriftFieldSettings getDefaultSettings(ThriftIndexOptions indexOption,
+  protected Thr ftF eldSett ngs getDefaultSett ngs(Thr ft ndexOpt ons  ndexOpt on,
                                                    boolean supportOutOfOrderAppends) {
-    ThriftFieldSettings fieldSettings = new ThriftFieldSettings();
-    ThriftIndexedFieldSettings indexedFieldSettings = new ThriftIndexedFieldSettings();
-    indexedFieldSettings
-        .setIndexed(true)
+    Thr ftF eldSett ngs f eldSett ngs = new Thr ftF eldSett ngs();
+    Thr ft ndexedF eldSett ngs  ndexedF eldSett ngs = new Thr ft ndexedF eldSett ngs();
+     ndexedF eldSett ngs
+        .set ndexed(true)
         .setStored(false)
-        .setTokenized(false)
+        .setToken zed(false)
         .setStoreTermVectors(false)
         .setStoreTermVectorOffsets(false)
         .setStoreTermVectorPayloads(false)
-        .setStoreTermVectorPositions(false)
+        .setStoreTermVectorPos  ons(false)
         .setSupportOutOfOrderAppends(supportOutOfOrderAppends)
-        .setIndexOptions(indexOption)
-        .setOmitNorms(true); // All Earlybird fields omit norms.
-    fieldSettings.setIndexedFieldSettings(indexedFieldSettings);
-    return fieldSettings;
+        .set ndexOpt ons( ndexOpt on)
+        .setOm Norms(true); // All Earlyb rd f elds om  norms.
+    f eldSett ngs.set ndexedF eldSett ngs( ndexedF eldSett ngs);
+    return f eldSett ngs;
   }
 
   /**
-   * Default field settings for fields that are pretokenized
+   * Default f eld sett ngs for f elds that are pretoken zed
    *
-   * The fields that use these settings will need to be tokenized using a serializer with the
-   * attributes defined in {@link com.twitter.search.common.util.text.TweetTokenStreamSerializer}.
+   * T  f elds that use t se sett ngs w ll need to be token zed us ng a ser al zer w h t 
+   * attr butes def ned  n {@l nk com.tw ter.search.common.ut l.text.T etTokenStreamSer al zer}.
    */
-  protected final ThriftFieldSettings getDefaultPretokenizedSettings(
-      ThriftIndexOptions indexOption) {
-    ThriftFieldSettings fieldSettings = getDefaultSettings(indexOption);
-    fieldSettings.getIndexedFieldSettings().setTokenized(true);
-    ThriftTokenStreamSerializer attributeSerializer =
-        new ThriftTokenStreamSerializer(tokenStreamSerializerVersion);
-    attributeSerializer.setAttributeSerializerClassNames(
-        ImmutableList.<String>of(
-            CharSequenceTermAttributeSerializer.class.getName(),
-            PositionIncrementAttributeSerializer.class.getName(),
-            TokenTypeAttributeSerializer.class.getName()));
+  protected f nal Thr ftF eldSett ngs getDefaultPretoken zedSett ngs(
+      Thr ft ndexOpt ons  ndexOpt on) {
+    Thr ftF eldSett ngs f eldSett ngs = getDefaultSett ngs( ndexOpt on);
+    f eldSett ngs.get ndexedF eldSett ngs().setToken zed(true);
+    Thr ftTokenStreamSer al zer attr buteSer al zer =
+        new Thr ftTokenStreamSer al zer(tokenStreamSer al zerVers on);
+    attr buteSer al zer.setAttr buteSer al zerClassNa s(
+         mmutableL st.<Str ng>of(
+            CharSequenceTermAttr buteSer al zer.class.getNa (),
+            Pos  on ncre ntAttr buteSer al zer.class.getNa (),
+            TokenTypeAttr buteSer al zer.class.getNa ()));
 
-    fieldSettings.getIndexedFieldSettings().setTokenStreamSerializer(attributeSerializer);
-    return fieldSettings;
+    f eldSett ngs.get ndexedF eldSett ngs().setTokenStreamSer al zer(attr buteSer al zer);
+    return f eldSett ngs;
   }
 
-  protected final ThriftFieldSettings getPretokenizedNoPositionFieldSetting() {
-    return getDefaultPretokenizedSettings(ThriftIndexOptions.DOCS_AND_FREQS);
+  protected f nal Thr ftF eldSett ngs getPretoken zedNoPos  onF eldSett ng() {
+    return getDefaultPretoken zedSett ngs(Thr ft ndexOpt ons.DOCS_AND_FREQS);
   }
 
-  protected final ThriftFieldSettings getNoPositionNoFreqSettings() {
-    return getNoPositionNoFreqSettings(false);
+  protected f nal Thr ftF eldSett ngs getNoPos  onNoFreqSett ngs() {
+    return getNoPos  onNoFreqSett ngs(false);
   }
 
-  protected final ThriftFieldSettings getNoPositionNoFreqSettings(
+  protected f nal Thr ftF eldSett ngs getNoPos  onNoFreqSett ngs(
       boolean supportOutOfOrderAppends) {
-    return getDefaultSettings(ThriftIndexOptions.DOCS_ONLY, supportOutOfOrderAppends);
+    return getDefaultSett ngs(Thr ft ndexOpt ons.DOCS_ONLY, supportOutOfOrderAppends);
   }
 
-  protected final ThriftFieldSettings getEarlybirdNumericFieldSettings() {
-    // Supposedly numeric fields are not tokenized.
-    // However, Earlybird uses SingleTokenTokenStream to handle int/long fields.
-    // So we need to set indexed to true for these fields.
-    ThriftFieldSettings settings = getNoPositionNoFreqSettings();
-    settings.getIndexedFieldSettings().setTokenized(true);
-    return settings;
+  protected f nal Thr ftF eldSett ngs getEarlyb rdNu r cF eldSett ngs() {
+    // Supposedly nu r c f elds are not token zed.
+    // Ho ver, Earlyb rd uses S ngleTokenTokenStream to handle  nt/long f elds.
+    // So   need to set  ndexed to true for t se f elds.
+    Thr ftF eldSett ngs sett ngs = getNoPos  onNoFreqSett ngs();
+    sett ngs.get ndexedF eldSett ngs().setToken zed(true);
+    return sett ngs;
   }
 
-  private ThriftFieldSettings getPayloadWeightedSettings(ThriftIndexOptions indexOption) {
-    ThriftFieldSettings fieldSettings = getDefaultSettings(indexOption);
-    fieldSettings.getIndexedFieldSettings().setTokenized(true);
-    ThriftTokenStreamSerializer attributeSerializer =
-        new ThriftTokenStreamSerializer(tokenStreamSerializerVersion);
-    attributeSerializer.setAttributeSerializerClassNames(
-        ImmutableList.<String>of(CharTermAttributeSerializer.class.getName(),
-            PositionIncrementAttributeSerializer.class.getName(),
-            PayloadAttributeSerializer.class.getName()));
-    fieldSettings.getIndexedFieldSettings().setTokenStreamSerializer(attributeSerializer);
-    return fieldSettings;
+  pr vate Thr ftF eldSett ngs getPayload  ghtedSett ngs(Thr ft ndexOpt ons  ndexOpt on) {
+    Thr ftF eldSett ngs f eldSett ngs = getDefaultSett ngs( ndexOpt on);
+    f eldSett ngs.get ndexedF eldSett ngs().setToken zed(true);
+    Thr ftTokenStreamSer al zer attr buteSer al zer =
+        new Thr ftTokenStreamSer al zer(tokenStreamSer al zerVers on);
+    attr buteSer al zer.setAttr buteSer al zerClassNa s(
+         mmutableL st.<Str ng>of(CharTermAttr buteSer al zer.class.getNa (),
+            Pos  on ncre ntAttr buteSer al zer.class.getNa (),
+            PayloadAttr buteSer al zer.class.getNa ()));
+    f eldSett ngs.get ndexedF eldSett ngs().setTokenStreamSer al zer(attr buteSer al zer);
+    return f eldSett ngs;
   }
 
-  protected boolean shouldIncludeField(String fieldName) {
+  protected boolean should ncludeF eld(Str ng f eldNa ) {
     return true;
   }
 }

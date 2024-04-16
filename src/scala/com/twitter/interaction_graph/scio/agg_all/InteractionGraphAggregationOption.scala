@@ -1,36 +1,36 @@
-package com.twitter.interaction_graph.scio.agg_all
+package com.tw ter. nteract on_graph.sc o.agg_all
 
-import com.twitter.beam.io.dal.DALOptions
-import com.twitter.beam.job.DateRangeOptions
-import org.apache.beam.sdk.options.Default
-import org.apache.beam.sdk.options.Description
-import org.apache.beam.sdk.options.Validation.Required
+ mport com.tw ter.beam. o.dal.DALOpt ons
+ mport com.tw ter.beam.job.DateRangeOpt ons
+ mport org.apac .beam.sdk.opt ons.Default
+ mport org.apac .beam.sdk.opt ons.Descr pt on
+ mport org.apac .beam.sdk.opt ons.Val dat on.Requ red
 
-trait InteractionGraphAggregationOption extends DALOptions with DateRangeOptions {
-  @Required
-  @Description("Output path for storing the final dataset")
-  def getOutputPath: String
-  def setOutputPath(value: String): Unit
+tra   nteract onGraphAggregat onOpt on extends DALOpt ons w h DateRangeOpt ons {
+  @Requ red
+  @Descr pt on("Output path for stor ng t  f nal dataset")
+  def getOutputPath: Str ng
+  def setOutputPath(value: Str ng): Un 
 
-  @Description("Indicates DAL write environment. Can be set to dev/stg during local validation")
-  @Default.String("PROD")
-  def getDALWriteEnvironment: String
-  def setDALWriteEnvironment(value: String): Unit
+  @Descr pt on(" nd cates DAL wr e env ron nt. Can be set to dev/stg dur ng local val dat on")
+  @Default.Str ng("PROD")
+  def getDALWr eEnv ron nt: Str ng
+  def setDALWr eEnv ron nt(value: Str ng): Un 
 
-  @Description("Number of shards/partitions for saving the final dataset.")
-  @Default.Integer(16)
-  def getNumberOfShards: Integer
-  def setNumberOfShards(value: Integer): Unit
+  @Descr pt on("Number of shards/part  ons for sav ng t  f nal dataset.")
+  @Default. nteger(16)
+  def getNumberOfShards:  nteger
+  def setNumberOfShards(value:  nteger): Un 
 
-  @Description("BQ Table name for reading scores from")
-  def getBqTableName: String
-  def setBqTableName(value: String): Unit
+  @Descr pt on("BQ Table na  for read ng scores from")
+  def getBqTableNa : Str ng
+  def setBqTableNa (value: Str ng): Un 
 
-  @Description("max destination ids that we will store for real graph features in TL")
-  def getMaxDestinationIds: Integer
-  def setMaxDestinationIds(value: Integer): Unit
+  @Descr pt on("max dest nat on  ds that   w ll store for real graph features  n TL")
+  def getMaxDest nat on ds:  nteger
+  def setMaxDest nat on ds(value:  nteger): Un 
 
-  @Description("true if getting scores from BQ instead of DAL-based dataset in GCS")
+  @Descr pt on("true  f gett ng scores from BQ  nstead of DAL-based dataset  n GCS")
   def getScoresFromBQ: Boolean
-  def setScoresFromBQ(value: Boolean): Unit
+  def setScoresFromBQ(value: Boolean): Un 
 }

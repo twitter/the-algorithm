@@ -1,21 +1,21 @@
-scala_library(
-    sources = ["*.scala"],
+scala_l brary(
+    s ces = ["*.scala"],
     platform = "java8",
-    provides = scala_artifact(
-        org = "com.twitter",
-        name = "servo-json",
-        repo = artifactory,
+    prov des = scala_art fact(
+        org = "com.tw ter",
+        na  = "servo-json",
+        repo = art factory,
     ),
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
         "//:scala-reflect",
         "3rdparty/jvm/com/fasterxml/jackson/core:jackson-core",
-        "3rdparty/jvm/com/fasterxml/jackson/core:jackson-databind",
-        "3rdparty/jvm/com/googlecode/java-diff-utils:diffutils",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
+        "3rdparty/jvm/com/fasterxml/jackson/core:jackson-datab nd",
+        "3rdparty/jvm/com/googlecode/java-d ff-ut ls:d ffut ls",
+        "3rdparty/jvm/org/apac /thr ft:l bthr ft",
         "scrooge/scrooge-core",
-        "scrooge/scrooge-serializer",
-        "util/util-codec/src/main/scala",
+        "scrooge/scrooge-ser al zer",
+        "ut l/ut l-codec/src/ma n/scala",
     ],
 )

@@ -1,58 +1,58 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.candidate.param_gated.featurestorev1
+package com.tw ter.product_m xer.component_l brary.feature_hydrator.cand date.param_gated.featurestorev1
 
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.product_mixer.component_library.feature_hydrator.candidate.param_gated.featurestorev1.ParamGatedFeatureStoreV1CandidateFeatureHydrator.IdentifierPrefix
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featurestorev1.BaseFeatureStoreV1CandidateFeature
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1.FeatureStoreV1CandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1.FeatureStoreV1DynamicClientBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.ml.featurestore.l b.Ent y d
+ mport com.tw ter.product_m xer.component_l brary.feature_hydrator.cand date.param_gated.featurestorev1.ParamGatedFeatureStoreV1Cand dateFeatureHydrator. dent f erPref x
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featurestorev1.BaseFeatureStoreV1Cand dateFeature
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.featurestorev1.FeatureStoreV1Cand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.featurestorev1.FeatureStoreV1Dynam cCl entBu lder
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Cond  onally
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .Param
 
 /**
- * A [[FeatureStoreV1CandidateFeatureHydrator]] with [[Conditionally]] based on a [[Param]]
+ * A [[FeatureStoreV1Cand dateFeatureHydrator]] w h [[Cond  onally]] based on a [[Param]]
  *
- * @param enabledParam the param to turn this [[FeatureStoreV1CandidateFeatureHydrator]] on and off
- * @param candidateFeatureHydrator the underlying [[FeatureStoreV1CandidateFeatureHydrator]] to run when `enabledParam` is true
- * @tparam Query The domain model for the query or request
- * @tparam Candidate The type of the candidates
+ * @param enabledParam t  param to turn t  [[FeatureStoreV1Cand dateFeatureHydrator]] on and off
+ * @param cand dateFeatureHydrator t  underly ng [[FeatureStoreV1Cand dateFeatureHydrator]] to run w n `enabledParam`  s true
+ * @tparam Query T  doma n model for t  query or request
+ * @tparam Cand date T  type of t  cand dates
  */
-case class ParamGatedFeatureStoreV1CandidateFeatureHydrator[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any]
+case class ParamGatedFeatureStoreV1Cand dateFeatureHydrator[
+  Query <: P pel neQuery,
+  Cand date <: Un versalNoun[Any]
 ](
   enabledParam: Param[Boolean],
-  candidateFeatureHydrator: FeatureStoreV1CandidateFeatureHydrator[Query, Candidate])
-    extends FeatureStoreV1CandidateFeatureHydrator[Query, Candidate]
-    with Conditionally[Query] {
+  cand dateFeatureHydrator: FeatureStoreV1Cand dateFeatureHydrator[Query, Cand date])
+    extends FeatureStoreV1Cand dateFeatureHydrator[Query, Cand date]
+    w h Cond  onally[Query] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    IdentifierPrefix + candidateFeatureHydrator.identifier.name)
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er(
+     dent f erPref x + cand dateFeatureHydrator. dent f er.na )
 
-  override val alerts: Seq[Alert] = candidateFeatureHydrator.alerts
+  overr de val alerts: Seq[Alert] = cand dateFeatureHydrator.alerts
 
-  override val features: Set[
-    BaseFeatureStoreV1CandidateFeature[Query, Candidate, _ <: EntityId, _]
-  ] = candidateFeatureHydrator.features
+  overr de val features: Set[
+    BaseFeatureStoreV1Cand dateFeature[Query, Cand date, _ <: Ent y d, _]
+  ] = cand dateFeatureHydrator.features
 
-  override val clientBuilder: FeatureStoreV1DynamicClientBuilder =
-    candidateFeatureHydrator.clientBuilder
+  overr de val cl entBu lder: FeatureStoreV1Dynam cCl entBu lder =
+    cand dateFeatureHydrator.cl entBu lder
 
-  override def onlyIf(query: Query): Boolean =
-    Conditionally.and(query, candidateFeatureHydrator, query.params(enabledParam))
+  overr de def only f(query: Query): Boolean =
+    Cond  onally.and(query, cand dateFeatureHydrator, query.params(enabledParam))
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[Seq[FeatureMap]] = candidateFeatureHydrator(query, candidates)
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): St ch[Seq[FeatureMap]] = cand dateFeatureHydrator(query, cand dates)
 }
 
-object ParamGatedFeatureStoreV1CandidateFeatureHydrator {
-  val IdentifierPrefix = "ParamGated"
+object ParamGatedFeatureStoreV1Cand dateFeatureHydrator {
+  val  dent f erPref x = "ParamGated"
 }

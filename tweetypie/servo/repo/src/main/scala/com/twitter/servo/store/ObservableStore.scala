@@ -1,32 +1,32 @@
-package com.twitter.servo.store
+package com.tw ter.servo.store
 
-import com.twitter.finagle.stats.{StatsReceiver, Stat}
-import com.twitter.servo.util.{ExceptionCounter, LogarithmicallyBucketedTimer}
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.{StatsRece ver, Stat}
+ mport com.tw ter.servo.ut l.{Except onCounter, Logar hm callyBucketedT  r}
+ mport com.tw ter.ut l.Future
 
-class StoreObserver(statsReceiver: StatsReceiver) {
-  protected[this] val exceptionCounter = new ExceptionCounter(statsReceiver)
+class StoreObserver(statsRece ver: StatsRece ver) {
+  protected[t ] val except onCounter = new Except onCounter(statsRece ver)
 
-  def time[T](f: => Future[T]) = {
-    Stat.timeFuture(statsReceiver.stat(LogarithmicallyBucketedTimer.LatencyStatName))(f)
+  def t  [T](f: => Future[T]) = {
+    Stat.t  Future(statsRece ver.stat(Logar hm callyBucketedT  r.LatencyStatNa ))(f)
   }
 
-  def exception(ts: Throwable*): Unit = exceptionCounter(ts)
+  def except on(ts: Throwable*): Un  = except onCounter(ts)
 }
 
-class ObservableStore[K, V](underlying: Store[K, V], statsReceiver: StatsReceiver)
+class ObservableStore[K, V](underly ng: Store[K, V], statsRece ver: StatsRece ver)
     extends Store[K, V] {
-  protected[this] val observer = new StoreObserver(statsReceiver)
+  protected[t ] val observer = new StoreObserver(statsRece ver)
 
-  override def create(value: V) = observer.time {
-    underlying.create(value) onFailure { observer.exception(_) }
+  overr de def create(value: V) = observer.t   {
+    underly ng.create(value) onFa lure { observer.except on(_) }
   }
 
-  override def update(value: V) = observer.time {
-    underlying.update(value) onFailure { observer.exception(_) }
+  overr de def update(value: V) = observer.t   {
+    underly ng.update(value) onFa lure { observer.except on(_) }
   }
 
-  override def destroy(key: K) = observer.time {
-    underlying.destroy(key) onFailure { observer.exception(_) }
+  overr de def destroy(key: K) = observer.t   {
+    underly ng.destroy(key) onFa lure { observer.except on(_) }
   }
 }

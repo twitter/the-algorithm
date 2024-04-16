@@ -1,105 +1,105 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import com.google.common.base.Preconditions;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableMap;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.cac .Cac Bu lder;
+ mport com.google.common.cac .Cac Loader;
+ mport com.google.common.cac .Load ngCac ;
+ mport com.google.common.collect. mmutableMap;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.clientstats.RequestCounters;
-import com.twitter.search.common.clientstats.RequestCountersEventListener;
-import com.twitter.search.common.util.FinagleUtil;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.util.Future;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.common.cl entstats.RequestCounters;
+ mport com.tw ter.search.common.cl entstats.RequestCountersEventL stener;
+ mport com.tw ter.search.common.ut l.F nagleUt l;
+ mport com.tw ter.search.earlyb rd.common.Cl ent dUt l;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestType;
+ mport com.tw ter.ut l.Future;
 
-public class RequestTypeCountFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
-  private final ImmutableMap<EarlybirdRequestType, RequestCounters> typeCounters;
-  private final RequestCounters allRequestTypesCounter;
-  private final ImmutableMap<EarlybirdRequestType, LoadingCache<String, RequestCounters>>
-    perTypePerClientCounters;
+publ c class RequestTypeCountF lter
+    extends S mpleF lter<Earlyb rdRequestContext, Earlyb rdResponse> {
+  pr vate f nal  mmutableMap<Earlyb rdRequestType, RequestCounters> typeCounters;
+  pr vate f nal RequestCounters allRequestTypesCounter;
+  pr vate f nal  mmutableMap<Earlyb rdRequestType, Load ngCac <Str ng, RequestCounters>>
+    perTypePerCl entCounters;
 
   /**
-   * Constructs the filter.
+   * Constructs t  f lter.
    */
-  public RequestTypeCountFilter(final String statSuffix) {
-    ImmutableMap.Builder<EarlybirdRequestType, RequestCounters> perTypeBuilder =
-      ImmutableMap.builder();
-    for (EarlybirdRequestType type : EarlybirdRequestType.values()) {
-      perTypeBuilder.put(type, new RequestCounters(
-          "request_type_count_filter_" + type.getNormalizedName() + "_" + statSuffix));
+  publ c RequestTypeCountF lter(f nal Str ng statSuff x) {
+     mmutableMap.Bu lder<Earlyb rdRequestType, RequestCounters> perTypeBu lder =
+       mmutableMap.bu lder();
+    for (Earlyb rdRequestType type : Earlyb rdRequestType.values()) {
+      perTypeBu lder.put(type, new RequestCounters(
+          "request_type_count_f lter_" + type.getNormal zedNa () + "_" + statSuff x));
     }
-    typeCounters = perTypeBuilder.build();
+    typeCounters = perTypeBu lder.bu ld();
 
     allRequestTypesCounter =
-        new RequestCounters("request_type_count_filter_all_" + statSuffix, true);
+        new RequestCounters("request_type_count_f lter_all_" + statSuff x, true);
 
-    ImmutableMap.Builder<EarlybirdRequestType, LoadingCache<String, RequestCounters>>
-      perTypePerClientBuilder = ImmutableMap.builder();
+     mmutableMap.Bu lder<Earlyb rdRequestType, Load ngCac <Str ng, RequestCounters>>
+      perTypePerCl entBu lder =  mmutableMap.bu lder();
 
-    // No point in setting any kind of expiration policy for the cache, since the stats will
-    // continue to be exported, so the objects will not be GCed anyway.
-    CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder();
-    for (final EarlybirdRequestType requestType : EarlybirdRequestType.values()) {
-      CacheLoader<String, RequestCounters> cacheLoader =
-        new CacheLoader<String, RequestCounters>() {
-          @Override
-          public RequestCounters load(String clientId) {
-            return new RequestCounters("request_type_count_filter_for_" + clientId + "_"
-                                       + requestType.getNormalizedName() + "_" + statSuffix);
+    // No po nt  n sett ng any k nd of exp rat on pol cy for t  cac , s nce t  stats w ll
+    // cont nue to be exported, so t  objects w ll not be GCed anyway.
+    Cac Bu lder<Object, Object> cac Bu lder = Cac Bu lder.newBu lder();
+    for (f nal Earlyb rdRequestType requestType : Earlyb rdRequestType.values()) {
+      Cac Loader<Str ng, RequestCounters> cac Loader =
+        new Cac Loader<Str ng, RequestCounters>() {
+          @Overr de
+          publ c RequestCounters load(Str ng cl ent d) {
+            return new RequestCounters("request_type_count_f lter_for_" + cl ent d + "_"
+                                       + requestType.getNormal zedNa () + "_" + statSuff x);
           }
         };
-      perTypePerClientBuilder.put(requestType, cacheBuilder.build(cacheLoader));
+      perTypePerCl entBu lder.put(requestType, cac Bu lder.bu ld(cac Loader));
     }
-    perTypePerClientCounters = perTypePerClientBuilder.build();
+    perTypePerCl entCounters = perTypePerCl entBu lder.bu ld();
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    EarlybirdRequestType requestType = requestContext.getEarlybirdRequestType();
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(
+      Earlyb rdRequestContext requestContext,
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> serv ce) {
+    Earlyb rdRequestType requestType = requestContext.getEarlyb rdRequestType();
     RequestCounters requestCounters = typeCounters.get(requestType);
-    Preconditions.checkNotNull(requestCounters);
+    Precond  ons.c ckNotNull(requestCounters);
 
-    // Update the per-type and "all" counters.
-    RequestCountersEventListener<EarlybirdResponse> requestCountersEventListener =
-        new RequestCountersEventListener<>(
-            requestCounters, Clock.SYSTEM_CLOCK, EarlybirdSuccessfulResponseHandler.INSTANCE);
-    RequestCountersEventListener<EarlybirdResponse> allRequestTypesEventListener =
-        new RequestCountersEventListener<>(
+    // Update t  per-type and "all" counters.
+    RequestCountersEventL stener<Earlyb rdResponse> requestCountersEventL stener =
+        new RequestCountersEventL stener<>(
+            requestCounters, Clock.SYSTEM_CLOCK, Earlyb rdSuccessfulResponseHandler. NSTANCE);
+    RequestCountersEventL stener<Earlyb rdResponse> allRequestTypesEventL stener =
+        new RequestCountersEventL stener<>(
             allRequestTypesCounter, Clock.SYSTEM_CLOCK,
-            EarlybirdSuccessfulResponseHandler.INSTANCE);
+            Earlyb rdSuccessfulResponseHandler. NSTANCE);
 
-    RequestCountersEventListener<EarlybirdResponse> perTypePerClientEventListener =
-      updatePerTypePerClientCountersListener(requestContext);
+    RequestCountersEventL stener<Earlyb rdResponse> perTypePerCl entEventL stener =
+      updatePerTypePerCl entCountersL stener(requestContext);
 
-    return service.apply(requestContext)
-      .addEventListener(requestCountersEventListener)
-      .addEventListener(allRequestTypesEventListener)
-      .addEventListener(perTypePerClientEventListener);
+    return serv ce.apply(requestContext)
+      .addEventL stener(requestCountersEventL stener)
+      .addEventL stener(allRequestTypesEventL stener)
+      .addEventL stener(perTypePerCl entEventL stener);
   }
 
-  private RequestCountersEventListener<EarlybirdResponse> updatePerTypePerClientCountersListener(
-      EarlybirdRequestContext earlybirdRequestContext) {
-    EarlybirdRequestType requestType = earlybirdRequestContext.getEarlybirdRequestType();
-    LoadingCache<String, RequestCounters> perClientCounters =
-      perTypePerClientCounters.get(requestType);
-    Preconditions.checkNotNull(perClientCounters);
+  pr vate RequestCountersEventL stener<Earlyb rdResponse> updatePerTypePerCl entCountersL stener(
+      Earlyb rdRequestContext earlyb rdRequestContext) {
+    Earlyb rdRequestType requestType = earlyb rdRequestContext.getEarlyb rdRequestType();
+    Load ngCac <Str ng, RequestCounters> perCl entCounters =
+      perTypePerCl entCounters.get(requestType);
+    Precond  ons.c ckNotNull(perCl entCounters);
 
-    String clientId = ClientIdUtil.formatFinagleClientIdAndClientId(
-        FinagleUtil.getFinagleClientName(),
-        ClientIdUtil.getClientIdFromRequest(earlybirdRequestContext.getRequest()));
-    RequestCounters clientCounters = perClientCounters.getUnchecked(clientId);
-    Preconditions.checkNotNull(clientCounters);
+    Str ng cl ent d = Cl ent dUt l.formatF nagleCl ent dAndCl ent d(
+        F nagleUt l.getF nagleCl entNa (),
+        Cl ent dUt l.getCl ent dFromRequest(earlyb rdRequestContext.getRequest()));
+    RequestCounters cl entCounters = perCl entCounters.getUnc cked(cl ent d);
+    Precond  ons.c ckNotNull(cl entCounters);
 
-    return new RequestCountersEventListener<>(
-        clientCounters, Clock.SYSTEM_CLOCK, EarlybirdSuccessfulResponseHandler.INSTANCE);
+    return new RequestCountersEventL stener<>(
+        cl entCounters, Clock.SYSTEM_CLOCK, Earlyb rdSuccessfulResponseHandler. NSTANCE);
   }
 }

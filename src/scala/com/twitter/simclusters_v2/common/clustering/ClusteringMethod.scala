@@ -1,34 +1,34 @@
-package com.twitter.simclusters_v2.common.clustering
+package com.tw ter.s mclusters_v2.common.cluster ng
 
 /**
- * Partitions a set of entities into clusters.
- * NOTE: The selection/construction of the cluster representatives (e.g. medoid, random, average) is implemented in ClusterRepresentativeSelectionMethod.scala
+ * Part  ons a set of ent  es  nto clusters.
+ * NOTE: T  select on/construct on of t  cluster representat ves (e.g.  do d, random, average)  s  mple nted  n ClusterRepresentat veSelect on thod.scala
  */
-trait ClusteringMethod {
+tra  Cluster ng thod {
 
   /**
-   * The main external-facing method. Sub-classes should implement this method.
+   * T  ma n external-fac ng  thod. Sub-classes should  mple nt t   thod.
    *
-   * @param embeddings map of entity IDs and corresponding embeddings
-   * @param similarityFn function that outputs similarity (>=0, the larger, more similar), given two embeddings
-   * @tparam T embedding type. e.g. SimClustersEmbedding
+   * @param embedd ngs map of ent y  Ds and correspond ng embedd ngs
+   * @param s m lar yFn funct on that outputs s m lar y (>=0, t  larger, more s m lar), g ven two embedd ngs
+   * @tparam T embedd ng type. e.g. S mClustersEmbedd ng
    *
-   * @return A set of sets of entity IDs, each set representing a distinct cluster.
+   * @return A set of sets of ent y  Ds, each set represent ng a d st nct cluster.
    */
   def cluster[T](
-    embeddings: Map[Long, T],
-    similarityFn: (T, T) => Double,
-    recordStatCallback: (String, Long) => Unit = (_, _) => ()
+    embedd ngs: Map[Long, T],
+    s m lar yFn: (T, T) => Double,
+    recordStatCallback: (Str ng, Long) => Un  = (_, _) => ()
   ): Set[Set[Long]]
 
 }
 
-object ClusteringStatistics {
+object Cluster ngStat st cs {
 
-  // Statistics, to be imported where recorded.
-  val StatSimilarityGraphTotalBuildTime = "similarity_graph_total_build_time_ms"
-  val StatClusteringAlgorithmRunTime = "clustering_algorithm_total_run_time_ms"
-  val StatMedoidSelectionTime = "medoid_selection_total_time_ms"
-  val StatComputedSimilarityBeforeFilter = "computed_similarity_before_filter"
+  // Stat st cs, to be  mported w re recorded.
+  val StatS m lar yGraphTotalBu ldT   = "s m lar y_graph_total_bu ld_t  _ms"
+  val StatCluster ngAlgor hmRunT   = "cluster ng_algor hm_total_run_t  _ms"
+  val Stat do dSelect onT   = " do d_select on_total_t  _ms"
+  val StatComputedS m lar yBeforeF lter = "computed_s m lar y_before_f lter"
 
 }

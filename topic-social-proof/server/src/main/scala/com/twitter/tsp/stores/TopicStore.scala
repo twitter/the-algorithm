@@ -1,133 +1,133 @@
-package com.twitter.tsp.stores
+package com.tw ter.tsp.stores
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.InterestedInInterestsFetchKey
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.interests.thriftscala.InterestId
-import com.twitter.interests.thriftscala.InterestLabel
-import com.twitter.interests.thriftscala.InterestRelationship
-import com.twitter.interests.thriftscala.InterestRelationshipV1
-import com.twitter.interests.thriftscala.InterestedInInterestLookupContext
-import com.twitter.interests.thriftscala.InterestedInInterestModel
-import com.twitter.interests.thriftscala.OptOutInterestLookupContext
-import com.twitter.interests.thriftscala.UserInterest
-import com.twitter.interests.thriftscala.UserInterestData
-import com.twitter.interests.thriftscala.UserInterestsResponse
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.Client
-import com.twitter.strato.thrift.ScroogeConvImplicits._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.store. nterested n nterestsFetchKey
+ mport com.tw ter.fr gate.common.store.strato.StratoFetchableStore
+ mport com.tw ter. rm .store.common.ObservedReadableStore
+ mport com.tw ter. nterests.thr ftscala. nterest d
+ mport com.tw ter. nterests.thr ftscala. nterestLabel
+ mport com.tw ter. nterests.thr ftscala. nterestRelat onsh p
+ mport com.tw ter. nterests.thr ftscala. nterestRelat onsh pV1
+ mport com.tw ter. nterests.thr ftscala. nterested n nterestLookupContext
+ mport com.tw ter. nterests.thr ftscala. nterested n nterestModel
+ mport com.tw ter. nterests.thr ftscala.OptOut nterestLookupContext
+ mport com.tw ter. nterests.thr ftscala.User nterest
+ mport com.tw ter. nterests.thr ftscala.User nterestData
+ mport com.tw ter. nterests.thr ftscala.User nterestsResponse
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.strato.cl ent.Cl ent
+ mport com.tw ter.strato.thr ft.ScroogeConv mpl c s._
 
-case class TopicResponse(
-  entityId: Long,
-  interestedInData: Seq[InterestedInInterestModel],
-  scoreOverride: Option[Double] = None,
-  notInterestedInTimestamp: Option[Long] = None,
-  topicFollowTimestamp: Option[Long] = None)
+case class Top cResponse(
+  ent y d: Long,
+   nterested nData: Seq[ nterested n nterestModel],
+  scoreOverr de: Opt on[Double] = None,
+  not nterested nT  stamp: Opt on[Long] = None,
+  top cFollowT  stamp: Opt on[Long] = None)
 
-case class TopicResponses(responses: Seq[TopicResponse])
+case class Top cResponses(responses: Seq[Top cResponse])
 
-object TopicStore {
+object Top cStore {
 
-  private val InterestedInInterestsColumn = "interests/interestedInInterests"
-  private lazy val ExplicitInterestsContext: InterestedInInterestLookupContext =
-    InterestedInInterestLookupContext(
-      explicitContext = None,
-      inferredContext = None,
-      disableImplicit = Some(true)
+  pr vate val  nterested n nterestsColumn = " nterests/ nterested n nterests"
+  pr vate lazy val Expl c  nterestsContext:  nterested n nterestLookupContext =
+     nterested n nterestLookupContext(
+      expl c Context = None,
+       nferredContext = None,
+      d sable mpl c  = So (true)
     )
 
-  private def userInterestsResponseToTopicResponse(
-    userInterestsResponse: UserInterestsResponse
-  ): TopicResponses = {
-    val responses = userInterestsResponse.interests.interests.toSeq.flatMap { userInterests =>
-      userInterests.collect {
-        case UserInterest(
-              InterestId.SemanticCore(semanticCoreEntity),
-              Some(UserInterestData.InterestedIn(data))) =>
-          val topicFollowingTimestampOpt = data.collect {
-            case InterestedInInterestModel.ExplicitModel(
-                  InterestRelationship.V1(interestRelationshipV1)) =>
-              interestRelationshipV1.timestampMs
-          }.lastOption
+  pr vate def user nterestsResponseToTop cResponse(
+    user nterestsResponse: User nterestsResponse
+  ): Top cResponses = {
+    val responses = user nterestsResponse. nterests. nterests.toSeq.flatMap { user nterests =>
+      user nterests.collect {
+        case User nterest(
+               nterest d.Semant cCore(semant cCoreEnt y),
+              So (User nterestData. nterested n(data))) =>
+          val top cFollow ngT  stampOpt = data.collect {
+            case  nterested n nterestModel.Expl c Model(
+                   nterestRelat onsh p.V1( nterestRelat onsh pV1)) =>
+               nterestRelat onsh pV1.t  stampMs
+          }.lastOpt on
 
-          TopicResponse(semanticCoreEntity.id, data, None, None, topicFollowingTimestampOpt)
+          Top cResponse(semant cCoreEnt y. d, data, None, None, top cFollow ngT  stampOpt)
       }
     }
-    TopicResponses(responses)
+    Top cResponses(responses)
   }
 
-  def explicitFollowingTopicStore(
-    stratoClient: Client
+  def expl c Follow ngTop cStore(
+    stratoCl ent: Cl ent
   )(
-    implicit statsReceiver: StatsReceiver
-  ): ReadableStore[UserId, TopicResponses] = {
+     mpl c  statsRece ver: StatsRece ver
+  ): ReadableStore[User d, Top cResponses] = {
     val stratoStore =
       StratoFetchableStore
-        .withUnitView[InterestedInInterestsFetchKey, UserInterestsResponse](
-          stratoClient,
-          InterestedInInterestsColumn)
-        .composeKeyMapping[UserId](uid =>
-          InterestedInInterestsFetchKey(
-            userId = uid,
+        .w hUn V ew[ nterested n nterestsFetchKey, User nterestsResponse](
+          stratoCl ent,
+           nterested n nterestsColumn)
+        .composeKeyMapp ng[User d](u d =>
+           nterested n nterestsFetchKey(
+            user d = u d,
             labels = None,
-            lookupContext = Some(ExplicitInterestsContext)
+            lookupContext = So (Expl c  nterestsContext)
           ))
-        .mapValues(userInterestsResponseToTopicResponse)
+        .mapValues(user nterestsResponseToTop cResponse)
 
     ObservedReadableStore(stratoStore)
   }
 
-  def userOptOutTopicStore(
-    stratoClient: Client,
-    optOutStratoStorePath: String
+  def userOptOutTop cStore(
+    stratoCl ent: Cl ent,
+    optOutStratoStorePath: Str ng
   )(
-    implicit statsReceiver: StatsReceiver
-  ): ReadableStore[UserId, TopicResponses] = {
+     mpl c  statsRece ver: StatsRece ver
+  ): ReadableStore[User d, Top cResponses] = {
     val stratoStore =
       StratoFetchableStore
-        .withUnitView[
-          (Long, Option[Seq[InterestLabel]], Option[OptOutInterestLookupContext]),
-          UserInterestsResponse](stratoClient, optOutStratoStorePath)
-        .composeKeyMapping[UserId](uid => (uid, None, None))
-        .mapValues { userInterestsResponse =>
-          val responses = userInterestsResponse.interests.interests.toSeq.flatMap { userInterests =>
-            userInterests.collect {
-              case UserInterest(
-                    InterestId.SemanticCore(semanticCoreEntity),
-                    Some(UserInterestData.InterestedIn(data))) =>
-                TopicResponse(semanticCoreEntity.id, data, None)
+        .w hUn V ew[
+          (Long, Opt on[Seq[ nterestLabel]], Opt on[OptOut nterestLookupContext]),
+          User nterestsResponse](stratoCl ent, optOutStratoStorePath)
+        .composeKeyMapp ng[User d](u d => (u d, None, None))
+        .mapValues { user nterestsResponse =>
+          val responses = user nterestsResponse. nterests. nterests.toSeq.flatMap { user nterests =>
+            user nterests.collect {
+              case User nterest(
+                     nterest d.Semant cCore(semant cCoreEnt y),
+                    So (User nterestData. nterested n(data))) =>
+                Top cResponse(semant cCoreEnt y. d, data, None)
             }
           }
-          TopicResponses(responses)
+          Top cResponses(responses)
         }
     ObservedReadableStore(stratoStore)
   }
 
-  def notInterestedInTopicsStore(
-    stratoClient: Client,
-    notInterestedInStorePath: String
+  def not nterested nTop csStore(
+    stratoCl ent: Cl ent,
+    not nterested nStorePath: Str ng
   )(
-    implicit statsReceiver: StatsReceiver
-  ): ReadableStore[UserId, TopicResponses] = {
+     mpl c  statsRece ver: StatsRece ver
+  ): ReadableStore[User d, Top cResponses] = {
     val stratoStore =
       StratoFetchableStore
-        .withUnitView[Long, Seq[UserInterest]](stratoClient, notInterestedInStorePath)
-        .composeKeyMapping[UserId](identity)
-        .mapValues { notInterestedInInterests =>
-          val responses = notInterestedInInterests.collect {
-            case UserInterest(
-                  InterestId.SemanticCore(semanticCoreEntity),
-                  Some(UserInterestData.NotInterested(notInterestedInData))) =>
-              val notInterestedInTimestampOpt = notInterestedInData.collect {
-                case InterestRelationship.V1(interestRelationshipV1: InterestRelationshipV1) =>
-                  interestRelationshipV1.timestampMs
-              }.lastOption
+        .w hUn V ew[Long, Seq[User nterest]](stratoCl ent, not nterested nStorePath)
+        .composeKeyMapp ng[User d]( dent y)
+        .mapValues { not nterested n nterests =>
+          val responses = not nterested n nterests.collect {
+            case User nterest(
+                   nterest d.Semant cCore(semant cCoreEnt y),
+                  So (User nterestData.Not nterested(not nterested nData))) =>
+              val not nterested nT  stampOpt = not nterested nData.collect {
+                case  nterestRelat onsh p.V1( nterestRelat onsh pV1:  nterestRelat onsh pV1) =>
+                   nterestRelat onsh pV1.t  stampMs
+              }.lastOpt on
 
-              TopicResponse(semanticCoreEntity.id, Seq.empty, None, notInterestedInTimestampOpt)
+              Top cResponse(semant cCoreEnt y. d, Seq.empty, None, not nterested nT  stampOpt)
           }
-          TopicResponses(responses)
+          Top cResponses(responses)
         }
     ObservedReadableStore(stratoStore)
   }

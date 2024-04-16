@@ -1,151 +1,151 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+package com.tw ter.search.earlyb rd.search.relevance.scor ng;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+ mport java. o. OExcept on;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+ mport com.google.common.base.Opt onal;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.L sts;
 
-import org.apache.lucene.search.Explanation;
+ mport org.apac .lucene.search.Explanat on;
 
-import com.twitter.search.common.features.thrift.ThriftSearchResultFeatures;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.ranking.thriftjava.ThriftRankingParams;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.util.ml.prediction_engine.LightweightLinearModel;
-import com.twitter.search.common.util.ml.prediction_engine.SchemaBasedScoreAccumulator;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.ClientException;
-import com.twitter.search.earlybird.ml.ScoringModelsManager;
-import com.twitter.search.earlybird.search.AntiGamingFilter;
-import com.twitter.search.earlybird.search.relevance.LinearScoringData;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
+ mport com.tw ter.search.common.features.thr ft.Thr ftSearchResultFeatures;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.rank ng.thr ftjava.Thr ftRank ngParams;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.ut l.ml.pred ct on_eng ne.L ght  ghtL nearModel;
+ mport com.tw ter.search.common.ut l.ml.pred ct on_eng ne.Sc maBasedScoreAccumulator;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserTable;
+ mport com.tw ter.search.earlyb rd.except on.Cl entExcept on;
+ mport com.tw ter.search.earlyb rd.ml.Scor ngModelsManager;
+ mport com.tw ter.search.earlyb rd.search.Ant Gam ngF lter;
+ mport com.tw ter.search.earlyb rd.search.relevance.L nearScor ngData;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchQuery;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultType;
 
 /**
- * Scoring function that uses the scoring models specified from the request.
+ * Scor ng funct on that uses t  scor ng models spec f ed from t  request.
  */
-public class ModelBasedScoringFunction extends FeatureBasedScoringFunction {
-  private final SelectedModel[] selectedModels;
-  private final boolean useLogitScore;
-  private final boolean isSchemaBased;
+publ c class ModelBasedScor ngFunct on extends FeatureBasedScor ngFunct on {
+  pr vate f nal SelectedModel[] selectedModels;
+  pr vate f nal boolean useLog Score;
+  pr vate f nal boolean  sSc maBased;
 
-  private static final SearchCounter NUM_LEGACY_MODELS =
-      SearchCounter.export("scoring_function_num_legacy_models");
-  private static final SearchCounter NUM_SCHEMA_BASED_MODELS =
-      SearchCounter.export("scoring_function_num_schema_based_models");
-  private static final SearchCounter MIXED_MODEL_TYPES =
-      SearchCounter.export("scoring_function_mixed_model_types");
+  pr vate stat c f nal SearchCounter NUM_LEGACY_MODELS =
+      SearchCounter.export("scor ng_funct on_num_legacy_models");
+  pr vate stat c f nal SearchCounter NUM_SCHEMA_BASED_MODELS =
+      SearchCounter.export("scor ng_funct on_num_sc ma_based_models");
+  pr vate stat c f nal SearchCounter M XED_MODEL_TYPES =
+      SearchCounter.export("scor ng_funct on_m xed_model_types");
 
-  public ModelBasedScoringFunction(
-      ImmutableSchemaInterface schema,
-      ThriftSearchQuery searchQuery,
-      AntiGamingFilter antiGamingFilter,
-      ThriftSearchResultType searchResultType,
+  publ c ModelBasedScor ngFunct on(
+       mmutableSc ma nterface sc ma,
+      Thr ftSearchQuery searchQuery,
+      Ant Gam ngF lter ant Gam ngF lter,
+      Thr ftSearchResultType searchResultType,
       UserTable userTable,
-      ScoringModelsManager scoringModelsManager
-  ) throws IOException, ClientException {
+      Scor ngModelsManager scor ngModelsManager
+  ) throws  OExcept on, Cl entExcept on {
 
-    super("ModelBasedScoringFunction", schema, searchQuery, antiGamingFilter, searchResultType,
+    super("ModelBasedScor ngFunct on", sc ma, searchQuery, ant Gam ngF lter, searchResultType,
         userTable);
 
-    ThriftRankingParams rankingParams = searchQuery.getRelevanceOptions().getRankingParams();
-    Preconditions.checkNotNull(rankingParams);
+    Thr ftRank ngParams rank ngParams = searchQuery.getRelevanceOpt ons().getRank ngParams();
+    Precond  ons.c ckNotNull(rank ngParams);
 
-    if (rankingParams.getSelectedModelsSize() <= 0) {
-      throw new ClientException("Scoring type is MODEL_BASED but no models were selected");
+     f (rank ngParams.getSelectedModelsS ze() <= 0) {
+      throw new Cl entExcept on("Scor ng type  s MODEL_BASED but no models  re selected");
     }
 
-    Map<String, Double> models = rankingParams.getSelectedModels();
+    Map<Str ng, Double> models = rank ngParams.getSelectedModels();
 
-    selectedModels = new SelectedModel[models.size()];
-    int numSchemaBased = 0;
-    int i = 0;
-    for (Map.Entry<String, Double> nameAndWeight : models.entrySet()) {
-      Optional<LightweightLinearModel> model =
-          scoringModelsManager.getModel(nameAndWeight.getKey());
-      if (!model.isPresent()) {
-          throw new ClientException(String.format(
-              "Scoring function is MODEL_BASED. Selected model '%s' not found",
-              nameAndWeight.getKey()));
+    selectedModels = new SelectedModel[models.s ze()];
+     nt numSc maBased = 0;
+     nt   = 0;
+    for (Map.Entry<Str ng, Double> na And  ght : models.entrySet()) {
+      Opt onal<L ght  ghtL nearModel> model =
+          scor ngModelsManager.getModel(na And  ght.getKey());
+       f (!model. sPresent()) {
+          throw new Cl entExcept on(Str ng.format(
+              "Scor ng funct on  s MODEL_BASED. Selected model '%s' not found",
+              na And  ght.getKey()));
       }
-      selectedModels[i] =
-          new SelectedModel(nameAndWeight.getKey(), nameAndWeight.getValue(), model.get());
+      selectedModels[ ] =
+          new SelectedModel(na And  ght.getKey(), na And  ght.getValue(), model.get());
 
-      if (selectedModels[i].model.isSchemaBased()) {
-        ++numSchemaBased;
-        NUM_SCHEMA_BASED_MODELS.increment();
+       f (selectedModels[ ].model. sSc maBased()) {
+        ++numSc maBased;
+        NUM_SCHEMA_BASED_MODELS. ncre nt();
       } else {
-        NUM_LEGACY_MODELS.increment();
+        NUM_LEGACY_MODELS. ncre nt();
       }
-      ++i;
+      ++ ;
     }
 
-    // We should either see all models schema-based, or none of them so, if this is not the case,
-    // we log an error message and fall back to use just the first model, whatever it is.
-    if (numSchemaBased > 0 && numSchemaBased != selectedModels.length) {
-      MIXED_MODEL_TYPES.increment();
-      throw new ClientException(
-          "You cannot mix schema-based and non-schema-based models in the same request, "
+    //   should e  r see all models sc ma-based, or none of t m so,  f t   s not t  case,
+    //   log an error  ssage and fall back to use just t  f rst model, whatever    s.
+     f (numSc maBased > 0 && numSc maBased != selectedModels.length) {
+      M XED_MODEL_TYPES. ncre nt();
+      throw new Cl entExcept on(
+          "  cannot m x sc ma-based and non-sc ma-based models  n t  sa  request, "
           + "models are: " + models.keySet());
     }
 
-    isSchemaBased = selectedModels[0].model.isSchemaBased();
-    useLogitScore = rankingParams.isUseLogitScore();
+     sSc maBased = selectedModels[0].model. sSc maBased();
+    useLog Score = rank ngParams. sUseLog Score();
   }
 
-  @Override
-  protected double computeScore(LinearScoringData data, boolean forExplanation) throws IOException {
-    ThriftSearchResultFeatures features =
-        isSchemaBased ? createFeaturesForDocument(data, false).getFeatures() : null;
+  @Overr de
+  protected double computeScore(L nearScor ngData data, boolean forExplanat on) throws  OExcept on {
+    Thr ftSearchResultFeatures features =
+         sSc maBased ? createFeaturesForDocu nt(data, false).getFeatures() : null;
 
     double score = 0;
     for (SelectedModel selectedModel : selectedModels) {
-      double modelScore = isSchemaBased
-          ? new SchemaBasedScoreAccumulator(selectedModel.model).scoreWith(features, useLogitScore)
-          : new LegacyScoreAccumulator(selectedModel.model).scoreWith(data, useLogitScore);
-      score += selectedModel.weight * modelScore;
+      double modelScore =  sSc maBased
+          ? new Sc maBasedScoreAccumulator(selectedModel.model).scoreW h(features, useLog Score)
+          : new LegacyScoreAccumulator(selectedModel.model).scoreW h(data, useLog Score);
+      score += selectedModel.  ght * modelScore;
     }
 
     return score;
   }
 
-  @Override
-  protected void generateExplanationForScoring(
-      LinearScoringData scoringData, boolean isHit, List<Explanation> details) throws IOException {
-    boolean schemaBased = selectedModels[0].model.isSchemaBased();
-    ThriftSearchResultFeatures features =
-        schemaBased ? createFeaturesForDocument(scoringData, false).getFeatures() : null;
+  @Overr de
+  protected vo d generateExplanat onForScor ng(
+      L nearScor ngData scor ngData, boolean  sH , L st<Explanat on> deta ls) throws  OExcept on {
+    boolean sc maBased = selectedModels[0].model. sSc maBased();
+    Thr ftSearchResultFeatures features =
+        sc maBased ? createFeaturesForDocu nt(scor ngData, false).getFeatures() : null;
 
     // 1. Model-based score
-    final List<Explanation> modelExplanations = Lists.newArrayList();
-    float finalScore = 0;
+    f nal L st<Explanat on> modelExplanat ons = L sts.newArrayL st();
+    float f nalScore = 0;
     for (SelectedModel selectedModel : selectedModels) {
-      double modelScore = schemaBased
-          ? new SchemaBasedScoreAccumulator(selectedModel.model).scoreWith(features, useLogitScore)
-          : new LegacyScoreAccumulator(selectedModel.model).scoreWith(scoringData, useLogitScore);
-      float weightedScore = (float) (selectedModel.weight * modelScore);
-      details.add(Explanation.match(
-          weightedScore, String.format("model=%s score=%.6f weight=%.3f useLogitScore=%s",
-          selectedModel.name, modelScore, selectedModel.weight, useLogitScore)));
-      finalScore += weightedScore;
+      double modelScore = sc maBased
+          ? new Sc maBasedScoreAccumulator(selectedModel.model).scoreW h(features, useLog Score)
+          : new LegacyScoreAccumulator(selectedModel.model).scoreW h(scor ngData, useLog Score);
+      float   ghtedScore = (float) (selectedModel.  ght * modelScore);
+      deta ls.add(Explanat on.match(
+            ghtedScore, Str ng.format("model=%s score=%.6f   ght=%.3f useLog Score=%s",
+          selectedModel.na , modelScore, selectedModel.  ght, useLog Score)));
+      f nalScore +=   ghtedScore;
     }
 
-    details.add(Explanation.match(
-        finalScore, String.format("Total model-based score (hit=%s)", isHit), modelExplanations));
+    deta ls.add(Explanat on.match(
+        f nalScore, Str ng.format("Total model-based score (h =%s)",  sH ), modelExplanat ons));
   }
 
-  private static final class SelectedModel {
-    public final String name;
-    public final double weight;
-    public final LightweightLinearModel model;
+  pr vate stat c f nal class SelectedModel {
+    publ c f nal Str ng na ;
+    publ c f nal double   ght;
+    publ c f nal L ght  ghtL nearModel model;
 
-    private SelectedModel(String name, double weight, LightweightLinearModel model) {
-      this.name = name;
-      this.weight = weight;
-      this.model = model;
+    pr vate SelectedModel(Str ng na , double   ght, L ght  ghtL nearModel model) {
+      t .na  = na ;
+      t .  ght =   ght;
+      t .model = model;
     }
   }
 }

@@ -1,186 +1,186 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.flockdb.client.Cursor
-import com.twitter.flockdb.client.PageResult
-import com.twitter.flockdb.client.Select
-import com.twitter.flockdb.client.StatusGraph
-import com.twitter.flockdb.client.UserTimelineGraph
-import com.twitter.flockdb.client.thriftscala.EdgeState
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.storage.TweetStorageClient
-import com.twitter.tweetypie.storage.TweetStorageClient.GetStoredTweet
-import com.twitter.tweetypie.thriftscala.GetStoredTweetsByUserOptions
-import com.twitter.tweetypie.thriftscala.GetStoredTweetsByUserRequest
-import com.twitter.tweetypie.thriftscala.GetStoredTweetsByUserResult
-import com.twitter.tweetypie.thriftscala.GetStoredTweetsOptions
-import com.twitter.tweetypie.thriftscala.GetStoredTweetsRequest
+ mport com.tw ter.flockdb.cl ent.Cursor
+ mport com.tw ter.flockdb.cl ent.PageResult
+ mport com.tw ter.flockdb.cl ent.Select
+ mport com.tw ter.flockdb.cl ent.StatusGraph
+ mport com.tw ter.flockdb.cl ent.UserT  l neGraph
+ mport com.tw ter.flockdb.cl ent.thr ftscala.EdgeState
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.storage.T etStorageCl ent
+ mport com.tw ter.t etyp e.storage.T etStorageCl ent.GetStoredT et
+ mport com.tw ter.t etyp e.thr ftscala.GetStoredT etsByUserOpt ons
+ mport com.tw ter.t etyp e.thr ftscala.GetStoredT etsByUserRequest
+ mport com.tw ter.t etyp e.thr ftscala.GetStoredT etsByUserResult
+ mport com.tw ter.t etyp e.thr ftscala.GetStoredT etsOpt ons
+ mport com.tw ter.t etyp e.thr ftscala.GetStoredT etsRequest
 
-object GetStoredTweetsByUserHandler {
-  type Type = FutureArrow[GetStoredTweetsByUserRequest, GetStoredTweetsByUserResult]
+object GetStoredT etsByUserHandler {
+  type Type = FutureArrow[GetStoredT etsByUserRequest, GetStoredT etsByUserResult]
 
   def apply(
-    getStoredTweetsHandler: GetStoredTweetsHandler.Type,
-    getStoredTweet: TweetStorageClient.GetStoredTweet,
+    getStoredT etsHandler: GetStoredT etsHandler.Type,
+    getStoredT et: T etStorageCl ent.GetStoredT et,
     selectPage: FutureArrow[Select[StatusGraph], PageResult[Long]],
-    maxPages: Int
+    maxPages:  nt
   ): Type = {
     FutureArrow { request =>
-      val options = request.options.getOrElse(GetStoredTweetsByUserOptions())
+      val opt ons = request.opt ons.getOrElse(GetStoredT etsByUserOpt ons())
 
-      val startTimeMsec: Long = options.startTimeMsec.getOrElse(0L)
-      val endTimeMsec: Long = options.endTimeMsec.getOrElse(Time.now.inMillis)
-      val cursor = options.cursor.map(Cursor(_)).getOrElse {
-        if (options.startFromOldest) Cursor.lowest else Cursor.highest
+      val startT  Msec: Long = opt ons.startT  Msec.getOrElse(0L)
+      val endT  Msec: Long = opt ons.endT  Msec.getOrElse(T  .now. nM ll s)
+      val cursor = opt ons.cursor.map(Cursor(_)).getOrElse {
+         f (opt ons.startFromOldest) Cursor.lo st else Cursor.h g st
       }
 
-      getNextTweetIdsInTimeRange(
-        request.userId,
-        startTimeMsec,
-        endTimeMsec,
+      getNextT et ds nT  Range(
+        request.user d,
+        startT  Msec,
+        endT  Msec,
         cursor,
         selectPage,
-        getStoredTweet,
+        getStoredT et,
         maxPages,
-        numTries = 0
+        numTr es = 0
       ).flatMap {
-        case (tweetIds, cursor) =>
-          val getStoredTweetsRequest = toGetStoredTweetsRequest(tweetIds, request.userId, options)
+        case (t et ds, cursor) =>
+          val getStoredT etsRequest = toGetStoredT etsRequest(t et ds, request.user d, opt ons)
 
-          getStoredTweetsHandler(getStoredTweetsRequest)
-            .map { getStoredTweetsResults =>
-              GetStoredTweetsByUserResult(
-                storedTweets = getStoredTweetsResults.map(_.storedTweet),
-                cursor = if (cursor.isEnd) None else Some(cursor.value)
+          getStoredT etsHandler(getStoredT etsRequest)
+            .map { getStoredT etsResults =>
+              GetStoredT etsByUserResult(
+                storedT ets = getStoredT etsResults.map(_.storedT et),
+                cursor =  f (cursor. sEnd) None else So (cursor.value)
               )
             }
       }
     }
   }
 
-  private def toGetStoredTweetsRequest(
-    tweetIds: Seq[TweetId],
-    userId: UserId,
-    getStoredTweetsByUserOptions: GetStoredTweetsByUserOptions
-  ): GetStoredTweetsRequest = {
+  pr vate def toGetStoredT etsRequest(
+    t et ds: Seq[T et d],
+    user d: User d,
+    getStoredT etsByUserOpt ons: GetStoredT etsByUserOpt ons
+  ): GetStoredT etsRequest = {
 
-    val options: GetStoredTweetsOptions = GetStoredTweetsOptions(
-      bypassVisibilityFiltering = getStoredTweetsByUserOptions.bypassVisibilityFiltering,
-      forUserId = if (getStoredTweetsByUserOptions.setForUserId) Some(userId) else None,
-      additionalFieldIds = getStoredTweetsByUserOptions.additionalFieldIds
+    val opt ons: GetStoredT etsOpt ons = GetStoredT etsOpt ons(
+      bypassV s b l yF lter ng = getStoredT etsByUserOpt ons.bypassV s b l yF lter ng,
+      forUser d =  f (getStoredT etsByUserOpt ons.setForUser d) So (user d) else None,
+      add  onalF eld ds = getStoredT etsByUserOpt ons.add  onalF eld ds
     )
 
-    GetStoredTweetsRequest(
-      tweetIds = tweetIds,
-      options = Some(options)
+    GetStoredT etsRequest(
+      t et ds = t et ds,
+      opt ons = So (opt ons)
     )
   }
 
-  private def getNextTweetIdsInTimeRange(
-    userId: UserId,
-    startTimeMsec: Long,
-    endTimeMsec: Long,
+  pr vate def getNextT et ds nT  Range(
+    user d: User d,
+    startT  Msec: Long,
+    endT  Msec: Long,
     cursor: Cursor,
     selectPage: FutureArrow[Select[StatusGraph], PageResult[Long]],
-    getStoredTweet: TweetStorageClient.GetStoredTweet,
-    maxPages: Int,
-    numTries: Int
-  ): Future[(Seq[TweetId], Cursor)] = {
+    getStoredT et: T etStorageCl ent.GetStoredT et,
+    maxPages:  nt,
+    numTr es:  nt
+  ): Future[(Seq[T et d], Cursor)] = {
     val select = Select(
-      sourceId = userId,
-      graph = UserTimelineGraph,
-      stateIds =
-        Some(Seq(EdgeState.Archived.value, EdgeState.Positive.value, EdgeState.Removed.value))
-    ).withCursor(cursor)
+      s ce d = user d,
+      graph = UserT  l neGraph,
+      state ds =
+        So (Seq(EdgeState.Arch ved.value, EdgeState.Pos  ve.value, EdgeState.Removed.value))
+    ).w hCursor(cursor)
 
-    def inTimeRange(timestamp: Long): Boolean =
-      timestamp >= startTimeMsec && timestamp <= endTimeMsec
-    def pastTimeRange(timestamps: Seq[Long]) = {
-      if (cursor.isAscending) {
-        timestamps.max > endTimeMsec
+    def  nT  Range(t  stamp: Long): Boolean =
+      t  stamp >= startT  Msec && t  stamp <= endT  Msec
+    def pastT  Range(t  stamps: Seq[Long]) = {
+       f (cursor. sAscend ng) {
+        t  stamps.max > endT  Msec
       } else {
-        timestamps.min < startTimeMsec
+        t  stamps.m n < startT  Msec
       }
     }
 
     val pageResultFuture: Future[PageResult[Long]] = selectPage(select)
 
     pageResultFuture.flatMap { pageResult =>
-      val groupedIds = pageResult.entries.groupBy(SnowflakeId.isSnowflakeId)
-      val nextCursor = if (cursor.isAscending) pageResult.previousCursor else pageResult.nextCursor
+      val grouped ds = pageResult.entr es.groupBy(Snowflake d. sSnowflake d)
+      val nextCursor =  f (cursor. sAscend ng) pageResult.prev ousCursor else pageResult.nextCursor
 
-      // Timestamps for the creation of Tweets with snowflake IDs can be calculated from the IDs
-      // themselves.
-      val snowflakeIdsTimestamps: Seq[(Long, Long)] = groupedIds.getOrElse(true, Seq()).map { id =>
-        val snowflakeTimeMillis = SnowflakeId.unixTimeMillisFromId(id)
-        (id, snowflakeTimeMillis)
+      // T  stamps for t  creat on of T ets w h snowflake  Ds can be calculated from t   Ds
+      // t mselves.
+      val snowflake dsT  stamps: Seq[(Long, Long)] = grouped ds.getOrElse(true, Seq()).map {  d =>
+        val snowflakeT  M ll s = Snowflake d.un xT  M ll sFrom d( d)
+        ( d, snowflakeT  M ll s)
       }
 
-      // For non-snowflake Tweets, we need to fetch the Tweet data from Manhattan to see when the
-      // Tweet was created.
-      val nonSnowflakeIdsTimestamps: Future[Seq[(Long, Long)]] = Stitch.run(
-        Stitch
-          .traverse(groupedIds.getOrElse(false, Seq()))(getStoredTweet)
+      // For non-snowflake T ets,   need to fetch t  T et data from Manhattan to see w n t 
+      // T et was created.
+      val nonSnowflake dsT  stamps: Future[Seq[(Long, Long)]] = St ch.run(
+        St ch
+          .traverse(grouped ds.getOrElse(false, Seq()))(getStoredT et)
           .map {
             _.flatMap {
-              case GetStoredTweet.Response.FoundAny(tweet, _, _, _, _) => {
-                if (tweet.coreData.exists(_.createdAtSecs > 0)) {
-                  Some((tweet.id, tweet.coreData.get.createdAtSecs))
+              case GetStoredT et.Response.FoundAny(t et, _, _, _, _) => {
+                 f (t et.coreData.ex sts(_.createdAtSecs > 0)) {
+                  So ((t et. d, t et.coreData.get.createdAtSecs))
                 } else None
               }
               case _ => None
             }
           })
 
-      nonSnowflakeIdsTimestamps.flatMap { nonSnowflakeList =>
-        val allTweetIdsAndTimestamps = snowflakeIdsTimestamps ++ nonSnowflakeList
-        val filteredTweetIds = allTweetIdsAndTimestamps
-          .filter {
-            case (_, ts) => inTimeRange(ts)
+      nonSnowflake dsT  stamps.flatMap { nonSnowflakeL st =>
+        val allT et dsAndT  stamps = snowflake dsT  stamps ++ nonSnowflakeL st
+        val f lteredT et ds = allT et dsAndT  stamps
+          .f lter {
+            case (_, ts) =>  nT  Range(ts)
           }
           .map(_._1)
 
-        if (nextCursor.isEnd) {
-          // We've considered the last Tweet for this User. There are no more Tweets to return.
-          Future.value((filteredTweetIds, Cursor.end))
-        } else if (allTweetIdsAndTimestamps.nonEmpty &&
-          pastTimeRange(allTweetIdsAndTimestamps.map(_._2))) {
-          // At least one Tweet returned from Tflock has a timestamp past our time range, i.e.
-          // greater than the end time (if we're fetching in an ascending order) or lower than the
-          // start time (if we're fetching in a descending order). There is no point in looking at
-          // any more Tweets from this User as they'll all be outside the time range.
-          Future.value((filteredTweetIds, Cursor.end))
-        } else if (filteredTweetIds.isEmpty) {
-          // We're here because one of two things happened:
-          // 1. allTweetIdsAndTimestamps is empty: Either Tflock has returned an empty page of Tweets
-          //    or we weren't able to fetch timestamps for any of the Tweets Tflock returned. In this
-          //    case, we fetch the next page of Tweets.
-          // 2. allTweetIdsAndTimestamps is non-empty but filteredTweetIds is empty: The current page
-          //    has no Tweets inside the requested time range. We fetch the next page of Tweets and
-          //    try again.
-          // If we hit the limit for the maximum number of pages from tflock to be requested, we
-          // return an empty list of Tweets with the cursor for the caller to try again.
+         f (nextCursor. sEnd) {
+          //  've cons dered t  last T et for t  User. T re are no more T ets to return.
+          Future.value((f lteredT et ds, Cursor.end))
+        } else  f (allT et dsAndT  stamps.nonEmpty &&
+          pastT  Range(allT et dsAndT  stamps.map(_._2))) {
+          // At least one T et returned from Tflock has a t  stamp past   t   range,  .e.
+          // greater than t  end t   ( f  're fetch ng  n an ascend ng order) or lo r than t 
+          // start t   ( f  're fetch ng  n a descend ng order). T re  s no po nt  n look ng at
+          // any more T ets from t  User as t y'll all be outs de t  t   range.
+          Future.value((f lteredT et ds, Cursor.end))
+        } else  f (f lteredT et ds. sEmpty) {
+          //  're  re because one of two th ngs happened:
+          // 1. allT et dsAndT  stamps  s empty: E  r Tflock has returned an empty page of T ets
+          //    or    ren't able to fetch t  stamps for any of t  T ets Tflock returned.  n t 
+          //    case,   fetch t  next page of T ets.
+          // 2. allT et dsAndT  stamps  s non-empty but f lteredT et ds  s empty: T  current page
+          //    has no T ets  ns de t  requested t   range.   fetch t  next page of T ets and
+          //    try aga n.
+          //  f   h  t  l m  for t  max mum number of pages from tflock to be requested,  
+          // return an empty l st of T ets w h t  cursor for t  caller to try aga n.
 
-          if (numTries == maxPages) {
-            Future.value((filteredTweetIds, nextCursor))
+           f (numTr es == maxPages) {
+            Future.value((f lteredT et ds, nextCursor))
           } else {
-            getNextTweetIdsInTimeRange(
-              userId = userId,
-              startTimeMsec = startTimeMsec,
-              endTimeMsec = endTimeMsec,
+            getNextT et ds nT  Range(
+              user d = user d,
+              startT  Msec = startT  Msec,
+              endT  Msec = endT  Msec,
               cursor = nextCursor,
               selectPage = selectPage,
-              getStoredTweet = getStoredTweet,
+              getStoredT et = getStoredT et,
               maxPages = maxPages,
-              numTries = numTries + 1
+              numTr es = numTr es + 1
             )
           }
         } else {
-          // filteredTweetIds is non-empty: There are some Tweets in this page that are within the
-          // requested time range, and we aren't out of the time range yet. We return the Tweets we
-          // have and set the cursor forward for the next request.
-          Future.value((filteredTweetIds, nextCursor))
+          // f lteredT et ds  s non-empty: T re are so  T ets  n t  page that are w h n t 
+          // requested t   range, and   aren't out of t  t   range yet.   return t  T ets  
+          // have and set t  cursor forward for t  next request.
+          Future.value((f lteredT et ds, nextCursor))
         }
       }
     }

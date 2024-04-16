@@ -1,27 +1,27 @@
-package com.twitter.tsp.modules
+package com.tw ter.tsp.modules
 
-import com.google.inject.Provides
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.topiclisting.TopicListing
-import com.twitter.topiclisting.clients.utt.UttClient
-import com.twitter.topiclisting.utt.UttLocalization
-import com.twitter.topiclisting.utt.UttLocalizationImpl
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.top cl st ng.Top cL st ng
+ mport com.tw ter.top cl st ng.cl ents.utt.UttCl ent
+ mport com.tw ter.top cl st ng.utt.UttLocal zat on
+ mport com.tw ter.top cl st ng.utt.UttLocal zat on mpl
+ mport javax. nject.S ngleton
 
-object UttLocalizationModule extends TwitterModule {
+object UttLocal zat onModule extends Tw terModule {
 
-  @Provides
-  @Singleton
-  def providesUttLocalization(
-    topicListing: TopicListing,
-    uttClient: UttClient,
-    statsReceiver: StatsReceiver
-  ): UttLocalization = {
-    new UttLocalizationImpl(
-      topicListing,
-      uttClient,
-      statsReceiver
+  @Prov des
+  @S ngleton
+  def prov desUttLocal zat on(
+    top cL st ng: Top cL st ng,
+    uttCl ent: UttCl ent,
+    statsRece ver: StatsRece ver
+  ): UttLocal zat on = {
+    new UttLocal zat on mpl(
+      top cL st ng,
+      uttCl ent,
+      statsRece ver
     )
   }
 }

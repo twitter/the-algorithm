@@ -1,91 +1,91 @@
-package com.twitter.ann.scalding.offline.indexbuilder
+package com.tw ter.ann.scald ng.offl ne. ndexbu lder
 
-import com.twitter.ann.annoy.TypedAnnoyIndex
-import com.twitter.ann.brute_force.SerializableBruteForceIndex
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.Metric
-import com.twitter.ann.common.ReadWriteFuturePool
-import com.twitter.ann.hnsw.TypedHnswIndex
-import com.twitter.ann.serialization.thriftscala.PersistedEmbedding
-import com.twitter.ann.serialization.PersistedEmbeddingInjection
-import com.twitter.ann.serialization.ThriftIteratorIO
-import com.twitter.cortex.ml.embeddings.common._
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.scalding.Args
-import com.twitter.scalding.Execution
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.search.common.file.FileUtils
-import com.twitter.util.FuturePool
-import java.util.concurrent.Executors
+ mport com.tw ter.ann.annoy.TypedAnnoy ndex
+ mport com.tw ter.ann.brute_force.Ser al zableBruteForce ndex
+ mport com.tw ter.ann.common.D stance
+ mport com.tw ter.ann.common. tr c
+ mport com.tw ter.ann.common.ReadWr eFuturePool
+ mport com.tw ter.ann.hnsw.TypedHnsw ndex
+ mport com.tw ter.ann.ser al zat on.thr ftscala.Pers stedEmbedd ng
+ mport com.tw ter.ann.ser al zat on.Pers stedEmbedd ng nject on
+ mport com.tw ter.ann.ser al zat on.Thr ft erator O
+ mport com.tw ter.cortex.ml.embedd ngs.common._
+ mport com.tw ter.ml.featurestore.l b.Ent y d
+ mport com.tw ter.scald ng.Args
+ mport com.tw ter.scald ng.Execut on
+ mport com.tw ter.scald ng_ nternal.job.Tw terExecut onApp
+ mport com.tw ter.search.common.f le.F leUt ls
+ mport com.tw ter.ut l.FuturePool
+ mport java.ut l.concurrent.Executors
 
-trait IndexBuilderExecutable {
-  // This method is used to cast the entityKind and the metric to have parameters.
-  def indexBuilderExecution[T <: EntityId, D <: Distance[D]](
+tra   ndexBu lderExecutable {
+  // T   thod  s used to cast t  ent yK nd and t   tr c to have para ters.
+  def  ndexBu lderExecut on[T <: Ent y d, D <: D stance[D]](
     args: Args
-  ): Execution[Unit] = {
-    // parse the arguments for this job
-    val uncastEntityKind = EntityKind.getEntityKind(args("entity_kind"))
-    val uncastMetric = Metric.fromString(args("metric"))
-    val entityKind = uncastEntityKind.asInstanceOf[EntityKind[T]]
-    val metric = uncastMetric.asInstanceOf[Metric[D]]
-    val embeddingFormat = entityKind.parser.getEmbeddingFormat(args, "input")
-    val injection = entityKind.byteInjection
-    val numDimensions = args.int("num_dimensions")
-    val embeddingLimit = args.optional("embedding_limit").map(_.toInt)
-    val concurrencyLevel = args.int("concurrency_level")
-    val outputDirectory = FileUtils.getFileHandle(args("output_dir"))
+  ): Execut on[Un ] = {
+    // parse t  argu nts for t  job
+    val uncastEnt yK nd = Ent yK nd.getEnt yK nd(args("ent y_k nd"))
+    val uncast tr c =  tr c.fromStr ng(args(" tr c"))
+    val ent yK nd = uncastEnt yK nd.as nstanceOf[Ent yK nd[T]]
+    val  tr c = uncast tr c.as nstanceOf[ tr c[D]]
+    val embedd ngFormat = ent yK nd.parser.getEmbedd ngFormat(args, " nput")
+    val  nject on = ent yK nd.byte nject on
+    val numD  ns ons = args. nt("num_d  ns ons")
+    val embedd ngL m  = args.opt onal("embedd ng_l m ").map(_.to nt)
+    val concurrencyLevel = args. nt("concurrency_level")
+    val outputD rectory = F leUt ls.getF leHandle(args("output_d r"))
 
-    println(s"Job args: ${args.toString}")
-    val threadPool = Executors.newFixedThreadPool(concurrencyLevel)
+    pr ntln(s"Job args: ${args.toStr ng}")
+    val threadPool = Executors.newF xedThreadPool(concurrencyLevel)
 
-    val serialization = args("algo") match {
+    val ser al zat on = args("algo") match {
       case "brute_force" =>
-        val PersistedEmbeddingIO = new ThriftIteratorIO[PersistedEmbedding](PersistedEmbedding)
-        SerializableBruteForceIndex[T, D](
-          metric,
+        val Pers stedEmbedd ng O = new Thr ft erator O[Pers stedEmbedd ng](Pers stedEmbedd ng)
+        Ser al zableBruteForce ndex[T, D](
+           tr c,
           FuturePool.apply(threadPool),
-          new PersistedEmbeddingInjection[T](injection),
-          PersistedEmbeddingIO
+          new Pers stedEmbedd ng nject on[T]( nject on),
+          Pers stedEmbedd ng O
         )
       case "annoy" =>
-        TypedAnnoyIndex.indexBuilder[T, D](
-          numDimensions,
-          args.int("annoy_num_trees"),
-          metric,
-          injection,
+        TypedAnnoy ndex. ndexBu lder[T, D](
+          numD  ns ons,
+          args. nt("annoy_num_trees"),
+           tr c,
+           nject on,
           FuturePool.apply(threadPool)
         )
       case "hnsw" =>
-        val efConstruction = args.int("ef_construction")
-        val maxM = args.int("max_m")
-        val expectedElements = args.int("expected_elements")
-        TypedHnswIndex.serializableIndex[T, D](
-          numDimensions,
-          metric,
-          efConstruction,
+        val efConstruct on = args. nt("ef_construct on")
+        val maxM = args. nt("max_m")
+        val expectedEle nts = args. nt("expected_ele nts")
+        TypedHnsw ndex.ser al zable ndex[T, D](
+          numD  ns ons,
+           tr c,
+          efConstruct on,
           maxM,
-          expectedElements,
-          injection,
-          ReadWriteFuturePool(FuturePool.apply(threadPool))
+          expectedEle nts,
+           nject on,
+          ReadWr eFuturePool(FuturePool.apply(threadPool))
         )
     }
-    IndexBuilder
+     ndexBu lder
       .run(
-        embeddingFormat,
-        embeddingLimit,
-        serialization,
+        embedd ngFormat,
+        embedd ngL m ,
+        ser al zat on,
         concurrencyLevel,
-        outputDirectory,
-        numDimensions
+        outputD rectory,
+        numD  ns ons
       ).onComplete { _ =>
         threadPool.shutdown()
-        Unit
+        Un 
       }
   }
 }
 
-object IndexBuilderApp extends TwitterExecutionApp with IndexBuilderExecutable {
-  override def job: Execution[Unit] = Execution.getArgs.flatMap { args: Args =>
-    indexBuilderExecution(args)
+object  ndexBu lderApp extends Tw terExecut onApp w h  ndexBu lderExecutable {
+  overr de def job: Execut on[Un ] = Execut on.getArgs.flatMap { args: Args =>
+     ndexBu lderExecut on(args)
   }
 }

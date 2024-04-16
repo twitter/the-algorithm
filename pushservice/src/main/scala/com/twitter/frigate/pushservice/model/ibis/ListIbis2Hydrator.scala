@@ -1,21 +1,21 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.tw ter.fr gate.pushserv ce.model. b s
 
-import com.twitter.frigate.pushservice.model.ListRecommendationPushCandidate
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.pushserv ce.model.L stRecom ndat onPushCand date
+ mport com.tw ter.ut l.Future
 
-trait ListIbis2Hydrator extends Ibis2HydratorForCandidate {
-  self: ListRecommendationPushCandidate =>
+tra  L st b s2Hydrator extends  b s2HydratorForCand date {
+  self: L stRecom ndat onPushCand date =>
 
-  override lazy val senderId: Option[Long] = Some(0L)
+  overr de lazy val sender d: Opt on[Long] = So (0L)
 
-  override lazy val modelValues: Future[Map[String, String]] =
-    Future.join(listName, listOwnerId).map {
-      case (nameOpt, authorId) =>
+  overr de lazy val modelValues: Future[Map[Str ng, Str ng]] =
+    Future.jo n(l stNa , l stOwner d).map {
+      case (na Opt, author d) =>
         Map(
-          "list" -> listId.toString,
-          "list_name" -> nameOpt
+          "l st" -> l st d.toStr ng,
+          "l st_na " -> na Opt
             .getOrElse(""),
-          "list_author" -> s"${authorId.getOrElse(0L)}"
+          "l st_author" -> s"${author d.getOrElse(0L)}"
         )
     }
 }

@@ -1,18 +1,18 @@
-package com.twitter.follow_recommendations.common.candidate_sources.crowd_search_accounts
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.crowd_search_accounts
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.Param
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.conf gap .common.FeatureSw chConf g
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class CrowdSearchAccountsFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] = Seq(
-    CrowdSearchAccountsParams.CandidateSourceEnabled,
+@S ngleton
+class CrowdSearchAccountsFSConf g @ nject() () extends FeatureSw chConf g {
+  overr de val booleanFSParams: Seq[Param[Boolean] w h FSNa ] = Seq(
+    CrowdSearchAccountsParams.Cand dateS ceEnabled,
   )
-  override val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
-    CrowdSearchAccountsParams.CandidateSourceWeight,
+  overr de val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
+    CrowdSearchAccountsParams.Cand dateS ce  ght,
   )
 }

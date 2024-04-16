@@ -1,44 +1,44 @@
-package com.twitter.simclustersann.modules
+package com.tw ter.s mclustersann.modules
 
-import com.twitter.inject.TwitterModule
-import com.twitter.simclustersann.common.FlagNames
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.s mclustersann.common.FlagNa s
 
-object FlagsModule extends TwitterModule {
+object FlagsModule extends Tw terModule {
 
-  flag[Int](
-    name = FlagNames.ServiceTimeout,
+  flag[ nt](
+    na  = FlagNa s.Serv ceT  out,
     default = 40,
-    help = "The threshold of Request Timeout"
+     lp = "T  threshold of Request T  out"
   )
 
-  flag[String](
-    name = FlagNames.DarkTrafficFilterDeciderKey,
-    default = "dark_traffic_filter",
-    help = "Dark traffic filter decider key"
+  flag[Str ng](
+    na  = FlagNa s.DarkTraff cF lterDec derKey,
+    default = "dark_traff c_f lter",
+     lp = "Dark traff c f lter dec der key"
   )
 
-  flag[String](
-    name = FlagNames.CacheDest,
-    default = "/s/cache/content_recommender_unified_v2",
-    help = "Path to memcache service. Currently using CR uniform scoring cache"
+  flag[Str ng](
+    na  = FlagNa s.Cac Dest,
+    default = "/s/cac /content_recom nder_un f ed_v2",
+     lp = "Path to  mcac  serv ce. Currently us ng CR un form scor ng cac "
   )
 
-  flag[Int](
-    name = FlagNames.CacheTimeout,
+  flag[ nt](
+    na  = FlagNa s.Cac T  out,
     default = 15,
-    help = "The threshold of MemCache Timeout"
+     lp = "T  threshold of  mCac  T  out"
   )
 
   flag[Boolean](
-    name = FlagNames.CacheAsyncUpdate,
+    na  = FlagNa s.Cac AsyncUpdate,
     default = false,
-    help = "Whether to enable the async update for the MemCache"
+     lp = "W t r to enable t  async update for t   mCac "
   )
 
-  flag[Int](
-    name = FlagNames.MaxTopTweetPerCluster,
+  flag[ nt](
+    na  = FlagNa s.MaxTopT etPerCluster,
     default = 200,
-    help = "Maximum number of tweets to take per each simclusters"
+     lp = "Max mum number of t ets to take per each s mclusters"
   )
 
 }

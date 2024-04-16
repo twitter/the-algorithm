@@ -1,86 +1,86 @@
-package com.twitter.cr_mixer.similarity_engine
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.TweetWithAuthor
-import com.twitter.cr_mixer.similarity_engine.EarlybirdRecencyBasedSimilarityEngine.EarlybirdRecencyBasedSearchQuery
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+package com.tw ter.cr_m xer.s m lar y_eng ne
+ mport com.tw ter.cr_m xer.conf g.T  outConf g
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.cr_m xer.model.T etW hAuthor
+ mport com.tw ter.cr_m xer.s m lar y_eng ne.Earlyb rdRecencyBasedS m lar yEng ne.Earlyb rdRecencyBasedSearchQuery
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.ut l.StatsUt l
+ mport com.tw ter.s mclusters_v2.common.T et d
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  
+ mport javax. nject. nject
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-@Singleton
-case class EarlybirdRecencyBasedSimilarityEngine @Inject() (
-  @Named(ModuleNames.EarlybirdRecencyBasedWithoutRetweetsRepliesTweetsCache)
-  earlybirdRecencyBasedWithoutRetweetsRepliesTweetsCacheStore: ReadableStore[
-    UserId,
-    Seq[TweetId]
+@S ngleton
+case class Earlyb rdRecencyBasedS m lar yEng ne @ nject() (
+  @Na d(ModuleNa s.Earlyb rdRecencyBasedW houtRet etsRepl esT etsCac )
+  earlyb rdRecencyBasedW houtRet etsRepl esT etsCac Store: ReadableStore[
+    User d,
+    Seq[T et d]
   ],
-  @Named(ModuleNames.EarlybirdRecencyBasedWithRetweetsRepliesTweetsCache)
-  earlybirdRecencyBasedWithRetweetsRepliesTweetsCacheStore: ReadableStore[
-    UserId,
-    Seq[TweetId]
+  @Na d(ModuleNa s.Earlyb rdRecencyBasedW hRet etsRepl esT etsCac )
+  earlyb rdRecencyBasedW hRet etsRepl esT etsCac Store: ReadableStore[
+    User d,
+    Seq[T et d]
   ],
-  timeoutConfig: TimeoutConfig,
-  stats: StatsReceiver)
-    extends ReadableStore[EarlybirdRecencyBasedSearchQuery, Seq[TweetWithAuthor]] {
-  import EarlybirdRecencyBasedSimilarityEngine._
-  val statsReceiver: StatsReceiver = stats.scope(this.getClass.getSimpleName)
+  t  outConf g: T  outConf g,
+  stats: StatsRece ver)
+    extends ReadableStore[Earlyb rdRecencyBasedSearchQuery, Seq[T etW hAuthor]] {
+   mport Earlyb rdRecencyBasedS m lar yEng ne._
+  val statsRece ver: StatsRece ver = stats.scope(t .getClass.getS mpleNa )
 
-  override def get(
-    query: EarlybirdRecencyBasedSearchQuery
-  ): Future[Option[Seq[TweetWithAuthor]]] = {
+  overr de def get(
+    query: Earlyb rdRecencyBasedSearchQuery
+  ): Future[Opt on[Seq[T etW hAuthor]]] = {
     Future
       .collect {
-        if (query.filterOutRetweetsAndReplies) {
-          query.seedUserIds.map { seedUserId =>
-            StatsUtil.trackOptionItemsStats(statsReceiver.scope("WithoutRetweetsAndReplies")) {
-              earlybirdRecencyBasedWithoutRetweetsRepliesTweetsCacheStore
-                .get(seedUserId).map(_.map(_.map(tweetId =>
-                  TweetWithAuthor(tweetId = tweetId, authorId = seedUserId))))
+         f (query.f lterOutRet etsAndRepl es) {
+          query.seedUser ds.map { seedUser d =>
+            StatsUt l.trackOpt on emsStats(statsRece ver.scope("W houtRet etsAndRepl es")) {
+              earlyb rdRecencyBasedW houtRet etsRepl esT etsCac Store
+                .get(seedUser d).map(_.map(_.map(t et d =>
+                  T etW hAuthor(t et d = t et d, author d = seedUser d))))
             }
           }
         } else {
-          query.seedUserIds.map { seedUserId =>
-            StatsUtil.trackOptionItemsStats(statsReceiver.scope("WithRetweetsAndReplies")) {
-              earlybirdRecencyBasedWithRetweetsRepliesTweetsCacheStore
-                .get(seedUserId)
-                .map(_.map(_.map(tweetId =>
-                  TweetWithAuthor(tweetId = tweetId, authorId = seedUserId))))
+          query.seedUser ds.map { seedUser d =>
+            StatsUt l.trackOpt on emsStats(statsRece ver.scope("W hRet etsAndRepl es")) {
+              earlyb rdRecencyBasedW hRet etsRepl esT etsCac Store
+                .get(seedUser d)
+                .map(_.map(_.map(t et d =>
+                  T etW hAuthor(t et d = t et d, author d = seedUser d))))
             }
           }
         }
       }
-      .map { tweetWithAuthorList =>
-        val earliestTweetId = SnowflakeId.firstIdFor(Time.now - query.maxTweetAge)
-        tweetWithAuthorList
+      .map { t etW hAuthorL st =>
+        val earl estT et d = Snowflake d.f rst dFor(T  .now - query.maxT etAge)
+        t etW hAuthorL st
           .flatMap(_.getOrElse(Seq.empty))
-          .filter(tweetWithAuthor =>
-            tweetWithAuthor.tweetId >= earliestTweetId // tweet age filter
-              && !query.excludedTweetIds
-                .contains(tweetWithAuthor.tweetId)) // excluded tweet filter
-          .sortBy(tweetWithAuthor =>
-            -SnowflakeId.unixTimeMillisFromId(tweetWithAuthor.tweetId)) // sort by recency
-          .take(query.maxNumTweets) // take most recent N tweets
+          .f lter(t etW hAuthor =>
+            t etW hAuthor.t et d >= earl estT et d // t et age f lter
+              && !query.excludedT et ds
+                .conta ns(t etW hAuthor.t et d)) // excluded t et f lter
+          .sortBy(t etW hAuthor =>
+            -Snowflake d.un xT  M ll sFrom d(t etW hAuthor.t et d)) // sort by recency
+          .take(query.maxNumT ets) // take most recent N t ets
       }
-      .map(result => Some(result))
+      .map(result => So (result))
   }
 
 }
 
-object EarlybirdRecencyBasedSimilarityEngine {
-  case class EarlybirdRecencyBasedSearchQuery(
-    seedUserIds: Seq[UserId],
-    maxNumTweets: Int,
-    excludedTweetIds: Set[TweetId],
-    maxTweetAge: Duration,
-    filterOutRetweetsAndReplies: Boolean)
+object Earlyb rdRecencyBasedS m lar yEng ne {
+  case class Earlyb rdRecencyBasedSearchQuery(
+    seedUser ds: Seq[User d],
+    maxNumT ets:  nt,
+    excludedT et ds: Set[T et d],
+    maxT etAge: Durat on,
+    f lterOutRet etsAndRepl es: Boolean)
 
 }

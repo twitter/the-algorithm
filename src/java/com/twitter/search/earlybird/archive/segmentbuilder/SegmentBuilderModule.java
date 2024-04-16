@@ -1,58 +1,58 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+package com.tw ter.search.earlyb rd.arch ve.seg ntbu lder;
 
-import java.io.File;
+ mport java. o.F le;
 
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
+ mport com.google. nject.Prov des;
+ mport com.google. nject.S ngleton;
 
-import com.twitter.app.Flaggable;
-import com.twitter.decider.Decider;
-import com.twitter.inject.TwitterModule;
-import com.twitter.inject.annotations.Flag;
-import com.twitter.search.common.config.LoggerConfiguration;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.util.EarlybirdDecider;
+ mport com.tw ter.app.Flaggable;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter. nject.Tw terModule;
+ mport com.tw ter. nject.annotat ons.Flag;
+ mport com.tw ter.search.common.conf g.LoggerConf gurat on;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.ut l.Earlyb rdDec der;
 
-public class SegmentBuilderModule extends TwitterModule {
+publ c class Seg ntBu lderModule extends Tw terModule {
 
-  private static final String CONFIG_FILE_FLAG_NAME = "config_file";
-  private static final String SEGMENT_LOG_DIR_FLAG_NAME = "segment_log_dir";
+  pr vate stat c f nal Str ng CONF G_F LE_FLAG_NAME = "conf g_f le";
+  pr vate stat c f nal Str ng SEGMENT_LOG_D R_FLAG_NAME = "seg nt_log_d r";
 
-  public SegmentBuilderModule() {
-    createFlag(CONFIG_FILE_FLAG_NAME,
-            new File("earlybird-search.yml"),
-            "specify config file",
-            Flaggable.ofFile());
+  publ c Seg ntBu lderModule() {
+    createFlag(CONF G_F LE_FLAG_NAME,
+            new F le("earlyb rd-search.yml"),
+            "spec fy conf g f le",
+            Flaggable.ofF le());
 
-    createFlag(SEGMENT_LOG_DIR_FLAG_NAME,
+    createFlag(SEGMENT_LOG_D R_FLAG_NAME,
             "",
-            "override log dir from config file",
-            Flaggable.ofString());
+            "overr de log d r from conf g f le",
+            Flaggable.ofStr ng());
   }
 
   /**
-   * Initializes the Earlybird config and the log configuration, and returns an EarlybirdDecider
-   * object, which will be injected into the SegmentBuilder instance.
+   *  n  al zes t  Earlyb rd conf g and t  log conf gurat on, and returns an Earlyb rdDec der
+   * object, wh ch w ll be  njected  nto t  Seg ntBu lder  nstance.
    *
-   * @param configFile The config file to use to initialize EarlybirdConfig
-   * @param segmentLogDir If not empty, used to override the log directory from the config file
-   * @return An initialized EarlybirdDecider
+   * @param conf gF le T  conf g f le to use to  n  al ze Earlyb rdConf g
+   * @param seg ntLogD r  f not empty, used to overr de t  log d rectory from t  conf g f le
+   * @return An  n  al zed Earlyb rdDec der
    */
-  @Provides
-  @Singleton
-  public Decider provideDecider(@Flag(CONFIG_FILE_FLAG_NAME) File configFile,
-                                @Flag(SEGMENT_LOG_DIR_FLAG_NAME) String segmentLogDir) {
-    // By default Guice will build singletons eagerly:
-    //    https://github.com/google/guice/wiki/Scopes#eager-singletons
-    // So in order to ensure that the EarlybirdConfig and LoggerConfiguration initializations occur
-    // before the EarlybirdDecider initialization, we place them here.
-    EarlybirdConfig.init(configFile.getName());
-    if (!segmentLogDir.isEmpty()) {
-      EarlybirdConfig.overrideLogDir(segmentLogDir);
+  @Prov des
+  @S ngleton
+  publ c Dec der prov deDec der(@Flag(CONF G_F LE_FLAG_NAME) F le conf gF le,
+                                @Flag(SEGMENT_LOG_D R_FLAG_NAME) Str ng seg ntLogD r) {
+    // By default Gu ce w ll bu ld s ngletons eagerly:
+    //    https://g hub.com/google/gu ce/w k /Scopes#eager-s ngletons
+    // So  n order to ensure that t  Earlyb rdConf g and LoggerConf gurat on  n  al zat ons occur
+    // before t  Earlyb rdDec der  n  al zat on,   place t m  re.
+    Earlyb rdConf g. n (conf gF le.getNa ());
+     f (!seg ntLogD r. sEmpty()) {
+      Earlyb rdConf g.overr deLogD r(seg ntLogD r);
     }
-    new LoggerConfiguration(EarlybirdConfig.getLogPropertiesFile(), EarlybirdConfig.getLogDir())
-            .configure();
+    new LoggerConf gurat on(Earlyb rdConf g.getLogPropert esF le(), Earlyb rdConf g.getLogD r())
+            .conf gure();
 
-    return EarlybirdDecider.initialize();
+    return Earlyb rdDec der. n  al ze();
   }
 }

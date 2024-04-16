@@ -1,106 +1,106 @@
-package com.twitter.timelineranker.util
+package com.tw ter.t  l neranker.ut l
 
-import com.twitter.search.common.features.thriftscala.ThriftTweetFeatures
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.HydratedCandidatesAndFeaturesEnvelope
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelines.model.TweetId
-import com.twitter.util.Future
+ mport com.tw ter.search.common.features.thr ftscala.Thr ftT etFeatures
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t  l neranker.core.HydratedCand datesAndFeaturesEnvelope
+ mport com.tw ter.t  l neranker.recap.model.ContentFeatures
+ mport com.tw ter.t  l nes.model.T et d
+ mport com.tw ter.ut l.Future
 
 /**
- * Populates features with tweetId -> thriftTweetFeatures pairs.
+ * Populates features w h t et d -> thr ftT etFeatures pa rs.
  *
- * If a tweetId from contentFeatures is from searchResults, its content features are copied to
- * thriftTweetFeatures. If the tweet is a retweet, the original tweet's content features are copied.
+ *  f a t et d from contentFeatures  s from searchResults,  s content features are cop ed to
+ * thr ftT etFeatures.  f t  t et  s a ret et, t  or g nal t et's content features are cop ed.
  *
- * If the tweetId is not found in searchResults, but is an inReplyToTweet of a searchResult, the
- * tweetId -> thriftTweetFeatures pair is added to features. This is because in TLM, reply tweets
- * have features that are their inReplyToTweets' content features. This also allows scoring
- * inReplyToTweet with content features populated when scoring replies.
+ *  f t  t et d  s not found  n searchResults, but  s an  nReplyToT et of a searchResult, t 
+ * t et d -> thr ftT etFeatures pa r  s added to features. T   s because  n TLM, reply t ets
+ * have features that are t  r  nReplyToT ets' content features. T  also allows scor ng
+ *  nReplyToT et w h content features populated w n scor ng repl es.
  */
-object CopyContentFeaturesIntoThriftTweetFeaturesTransform
+object CopyContentFeatures ntoThr ftT etFeaturesTransform
     extends FutureArrow[
-      HydratedCandidatesAndFeaturesEnvelope,
-      HydratedCandidatesAndFeaturesEnvelope
+      HydratedCand datesAndFeaturesEnvelope,
+      HydratedCand datesAndFeaturesEnvelope
     ] {
 
-  override def apply(
-    request: HydratedCandidatesAndFeaturesEnvelope
-  ): Future[HydratedCandidatesAndFeaturesEnvelope] = {
+  overr de def apply(
+    request: HydratedCand datesAndFeaturesEnvelope
+  ): Future[HydratedCand datesAndFeaturesEnvelope] = {
 
-    // Content Features Request Failures are handled in [[TweetypieContentFeaturesProvider]]
+    // Content Features Request Fa lures are handled  n [[T etyp eContentFeaturesProv der]]
     request.contentFeaturesFuture.map { contentFeaturesMap =>
       val features = request.features.map {
-        case (tweetId: TweetId, thriftTweetFeatures: ThriftTweetFeatures) =>
-          val contentFeaturesOpt = request.tweetSourceTweetMap
-            .get(tweetId)
+        case (t et d: T et d, thr ftT etFeatures: Thr ftT etFeatures) =>
+          val contentFeaturesOpt = request.t etS ceT etMap
+            .get(t et d)
             .orElse(
-              request.inReplyToTweetIds.contains(tweetId) match {
-                case true => Some(tweetId)
+              request. nReplyToT et ds.conta ns(t et d) match {
+                case true => So (t et d)
                 case false => None
               }
             )
             .flatMap(contentFeaturesMap.get)
 
-          val thriftTweetFeaturesWithContentFeatures = contentFeaturesOpt match {
-            case Some(contentFeatures: ContentFeatures) =>
-              copyContentFeaturesIntoThriftTweetFeatures(contentFeatures, thriftTweetFeatures)
-            case _ => thriftTweetFeatures
+          val thr ftT etFeaturesW hContentFeatures = contentFeaturesOpt match {
+            case So (contentFeatures: ContentFeatures) =>
+              copyContentFeatures ntoThr ftT etFeatures(contentFeatures, thr ftT etFeatures)
+            case _ => thr ftT etFeatures
           }
 
-          (tweetId, thriftTweetFeaturesWithContentFeatures)
+          (t et d, thr ftT etFeaturesW hContentFeatures)
       }
 
       request.copy(features = features)
     }
   }
 
-  def copyContentFeaturesIntoThriftTweetFeatures(
+  def copyContentFeatures ntoThr ftT etFeatures(
     contentFeatures: ContentFeatures,
-    thriftTweetFeatures: ThriftTweetFeatures
-  ): ThriftTweetFeatures = {
-    thriftTweetFeatures.copy(
-      tweetLength = Some(contentFeatures.length.toInt),
-      hasQuestion = Some(contentFeatures.hasQuestion),
-      numCaps = Some(contentFeatures.numCaps.toInt),
-      numWhitespaces = Some(contentFeatures.numWhiteSpaces.toInt),
-      numNewlines = contentFeatures.numNewlines,
-      videoDurationMs = contentFeatures.videoDurationMs,
-      bitRate = contentFeatures.bitRate,
-      aspectRatioNum = contentFeatures.aspectRatioNum,
-      aspectRatioDen = contentFeatures.aspectRatioDen,
-      widths = contentFeatures.widths.map(_.map(_.toInt)),
-      heights = contentFeatures.heights.map(_.map(_.toInt)),
-      resizeMethods = contentFeatures.resizeMethods.map(_.map(_.toInt)),
-      numMediaTags = contentFeatures.numMediaTags.map(_.toInt),
-      mediaTagScreenNames = contentFeatures.mediaTagScreenNames,
-      emojiTokens = contentFeatures.emojiTokens,
-      emoticonTokens = contentFeatures.emoticonTokens,
+    thr ftT etFeatures: Thr ftT etFeatures
+  ): Thr ftT etFeatures = {
+    thr ftT etFeatures.copy(
+      t etLength = So (contentFeatures.length.to nt),
+      hasQuest on = So (contentFeatures.hasQuest on),
+      numCaps = So (contentFeatures.numCaps.to nt),
+      numWh espaces = So (contentFeatures.numWh eSpaces.to nt),
+      numNewl nes = contentFeatures.numNewl nes,
+      v deoDurat onMs = contentFeatures.v deoDurat onMs,
+      b Rate = contentFeatures.b Rate,
+      aspectRat oNum = contentFeatures.aspectRat oNum,
+      aspectRat oDen = contentFeatures.aspectRat oDen,
+      w dths = contentFeatures.w dths.map(_.map(_.to nt)),
+        ghts = contentFeatures.  ghts.map(_.map(_.to nt)),
+      res ze thods = contentFeatures.res ze thods.map(_.map(_.to nt)),
+      num d aTags = contentFeatures.num d aTags.map(_.to nt),
+       d aTagScreenNa s = contentFeatures. d aTagScreenNa s,
+      emoj Tokens = contentFeatures.emoj Tokens,
+      emot conTokens = contentFeatures.emot conTokens,
       phrases = contentFeatures.phrases,
       textTokens = contentFeatures.tokens,
       faceAreas = contentFeatures.faceAreas,
-      dominantColorRed = contentFeatures.dominantColorRed,
-      dominantColorBlue = contentFeatures.dominantColorBlue,
-      dominantColorGreen = contentFeatures.dominantColorGreen,
-      numColors = contentFeatures.numColors.map(_.toInt),
-      stickerIds = contentFeatures.stickerIds,
-      mediaOriginProviders = contentFeatures.mediaOriginProviders,
-      isManaged = contentFeatures.isManaged,
-      is360 = contentFeatures.is360,
-      viewCount = contentFeatures.viewCount,
-      isMonetizable = contentFeatures.isMonetizable,
-      isEmbeddable = contentFeatures.isEmbeddable,
-      hasSelectedPreviewImage = contentFeatures.hasSelectedPreviewImage,
-      hasTitle = contentFeatures.hasTitle,
-      hasDescription = contentFeatures.hasDescription,
-      hasVisitSiteCallToAction = contentFeatures.hasVisitSiteCallToAction,
-      hasAppInstallCallToAction = contentFeatures.hasAppInstallCallToAction,
-      hasWatchNowCallToAction = contentFeatures.hasWatchNowCallToAction,
-      dominantColorPercentage = contentFeatures.dominantColorPercentage,
-      posUnigrams = contentFeatures.posUnigrams,
-      posBigrams = contentFeatures.posBigrams,
-      semanticCoreAnnotations = contentFeatures.semanticCoreAnnotations,
-      conversationControl = contentFeatures.conversationControl
+      dom nantColorRed = contentFeatures.dom nantColorRed,
+      dom nantColorBlue = contentFeatures.dom nantColorBlue,
+      dom nantColorGreen = contentFeatures.dom nantColorGreen,
+      numColors = contentFeatures.numColors.map(_.to nt),
+      st cker ds = contentFeatures.st cker ds,
+       d aOr g nProv ders = contentFeatures. d aOr g nProv ders,
+       sManaged = contentFeatures. sManaged,
+       s360 = contentFeatures. s360,
+      v ewCount = contentFeatures.v ewCount,
+       sMonet zable = contentFeatures. sMonet zable,
+       sEmbeddable = contentFeatures. sEmbeddable,
+      hasSelectedPrev ew mage = contentFeatures.hasSelectedPrev ew mage,
+      hasT le = contentFeatures.hasT le,
+      hasDescr pt on = contentFeatures.hasDescr pt on,
+      hasV s S eCallToAct on = contentFeatures.hasV s S eCallToAct on,
+      hasApp nstallCallToAct on = contentFeatures.hasApp nstallCallToAct on,
+      hasWatchNowCallToAct on = contentFeatures.hasWatchNowCallToAct on,
+      dom nantColorPercentage = contentFeatures.dom nantColorPercentage,
+      posUn grams = contentFeatures.posUn grams,
+      posB grams = contentFeatures.posB grams,
+      semant cCoreAnnotat ons = contentFeatures.semant cCoreAnnotat ons,
+      conversat onControl = contentFeatures.conversat onControl
     )
   }
 }

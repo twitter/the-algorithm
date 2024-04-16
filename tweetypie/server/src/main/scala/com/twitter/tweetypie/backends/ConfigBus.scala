@@ -1,49 +1,49 @@
-package com.twitter.tweetypie.backends
+package com.tw ter.t etyp e.backends
 
-import com.twitter.configbus.client.ConfigbusClientException
-import com.twitter.configbus.client.file.PollingConfigSourceBuilder
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.util.Activity
-import com.twitter.util.Activity._
-import com.twitter.conversions.DurationOps._
-import com.twitter.io.Buf
+ mport com.tw ter.conf gbus.cl ent.Conf gbusCl entExcept on
+ mport com.tw ter.conf gbus.cl ent.f le.Poll ngConf gS ceBu lder
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.ut l.Act v y
+ mport com.tw ter.ut l.Act v y._
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter. o.Buf
 
-trait ConfigBus {
-  def file(path: String): Activity[String]
+tra  Conf gBus {
+  def f le(path: Str ng): Act v y[Str ng]
 }
 
-object ConfigBus {
-  private[this] val basePath = "appservices/tweetypie"
-  private[this] val log = Logger(getClass)
+object Conf gBus {
+  pr vate[t ] val basePath = "appserv ces/t etyp e"
+  pr vate[t ] val log = Logger(getClass)
 
-  def apply(stats: StatsReceiver, instanceId: Int, instanceCount: Int): ConfigBus = {
+  def apply(stats: StatsRece ver,  nstance d:  nt,  nstanceCount:  nt): Conf gBus = {
 
-    val client = PollingConfigSourceBuilder()
-      .statsReceiver(stats)
-      .pollPeriod(30.seconds)
-      .instanceId(instanceId)
-      .numberOfInstances(instanceCount)
-      .build()
+    val cl ent = Poll ngConf gS ceBu lder()
+      .statsRece ver(stats)
+      .pollPer od(30.seconds)
+      . nstance d( nstance d)
+      .numberOf nstances( nstanceCount)
+      .bu ld()
 
-    val validBuffer = stats.counter("valid_buffer")
+    val val dBuffer = stats.counter("val d_buffer")
 
-    def subscribe(path: String) =
-      client.subscribe(s"$basePath/$path").map(_.configs).map {
-        case Buf.Utf8(string) =>
-          validBuffer.incr()
-          string
+    def subscr be(path: Str ng) =
+      cl ent.subscr be(s"$basePath/$path").map(_.conf gs).map {
+        case Buf.Utf8(str ng) =>
+          val dBuffer. ncr()
+          str ng
       }
 
-    new ConfigBus {
-      def file(path: String): Activity[String] = {
-        val changes = subscribe(path).run.changes.dedupWith {
-          case (Failed(e1: ConfigbusClientException), Failed(e2: ConfigbusClientException)) =>
-            e1.getMessage == e2.getMessage
-          case other =>
+    new Conf gBus {
+      def f le(path: Str ng): Act v y[Str ng] = {
+        val changes = subscr be(path).run.changes.dedupW h {
+          case (Fa led(e1: Conf gbusCl entExcept on), Fa led(e2: Conf gbusCl entExcept on)) =>
+            e1.get ssage == e2.get ssage
+          case ot r =>
             false
         }
-        Activity(changes)
+        Act v y(changes)
       }
     }
   }

@@ -1,277 +1,277 @@
-namespace java com.twitter.tweetypie.thriftjava
-namespace py gen.twitter.tweetypie.tweet_events
-#@namespace scala com.twitter.tweetypie.thriftscala
-#@namespace strato com.twitter.tweetypie
-namespace rb TweetyPie
-namespace go tweetypie
+na space java com.tw ter.t etyp e.thr ftjava
+na space py gen.tw ter.t etyp e.t et_events
+#@na space scala com.tw ter.t etyp e.thr ftscala
+#@na space strato com.tw ter.t etyp e
+na space rb T etyP e
+na space go t etyp e
 
-include "com/twitter/tseng/withholding/withholding.thrift"
-include "com/twitter/tweetypie/transient_context.thrift"
-include "com/twitter/tweetypie/tweet.thrift"
-include "com/twitter/tweetypie/tweet_audit.thrift"
-include "com/twitter/gizmoduck/user.thrift"
+ nclude "com/tw ter/tseng/w hhold ng/w hhold ng.thr ft"
+ nclude "com/tw ter/t etyp e/trans ent_context.thr ft"
+ nclude "com/tw ter/t etyp e/t et.thr ft"
+ nclude "com/tw ter/t etyp e/t et_aud .thr ft"
+ nclude "com/tw ter/g zmoduck/user.thr ft"
 
 /**
- * SafetyType encodes the event user's safety state in an enum so downstream
- * event processors can filter events without having to load the user.
+ * SafetyType encodes t  event user's safety state  n an enum so downstream
+ * event processors can f lter events w hout hav ng to load t  user.
  */
 enum SafetyType {
-  PRIVATE    = 0   // user.safety.isProtected
-  RESTRICTED = 1   // !PRIVATE && user.safety.suspended
-  PUBLIC     = 2   // !(PRIVATE || RESTRICTED)
+  PR VATE    = 0   // user.safety. sProtected
+  RESTR CTED = 1   // !PR VATE && user.safety.suspended
+  PUBL C     = 2   // !(PR VATE || RESTR CTED)
   RESERVED0  = 3
   RESERVED1  = 4
   RESERVED2  = 5
   RESERVED3  = 6
 }
 
-struct TweetCreateEvent {
+struct T etCreateEvent {
   /**
-   * The tweet that has been created.
+   * T  t et that has been created.
    */
-  1: tweet.Tweet tweet
+  1: t et.T et t et
 
   /**
-   * The user who owns the created tweet.
+   * T  user who owns t  created t et.
    */
   2: user.User user
 
   /**
-   * The tweet being retweeted.
+   * T  t et be ng ret eted.
    */
-  3: optional tweet.Tweet source_tweet
+  3: opt onal t et.T et s ce_t et
 
   /**
-   * The user who owns source_tweet.
+   * T  user who owns s ce_t et.
    */
-  4: optional user.User source_user
+  4: opt onal user.User s ce_user
 
   /**
-   * The user whose tweet or retweet is being retweeted.
+   * T  user whose t et or ret et  s be ng ret eted.
    *
-   * This is the id of the user who owns
-   * tweet.core_data.share.parent_status_id. In many cases this will be the
-   * same as source_user.id; it is different when the tweet is created via
-   * another retweet. See the explanation of source_user_id and parent_user_id
-   * in Share for examples.
+   * T   s t   d of t  user who owns
+   * t et.core_data.share.parent_status_ d.  n many cases t  w ll be t 
+   * sa  as s ce_user. d;    s d fferent w n t  t et  s created v a
+   * anot r ret et. See t  explanat on of s ce_user_ d and parent_user_ d
+   *  n Share for examples.
    */
-  5: optional i64 retweet_parent_user_id (personalDataType = 'UserId')
+  5: opt onal  64 ret et_parent_user_ d (personalDataType = 'User d')
 
   /**
-   * The tweet quoted in the created tweet.
+   * T  t et quoted  n t  created t et.
    */
-  6: optional tweet.Tweet quoted_tweet
+  6: opt onal t et.T et quoted_t et
 
   /**
-   * The user who owns quoted_tweet.
+   * T  user who owns quoted_t et.
    */
-  7: optional user.User quoted_user
+  7: opt onal user.User quoted_user
 
   /**
-   * Arbitrary passthrough metadata about tweet creation.
+   * Arb rary passthrough  tadata about t et creat on.
    *
-   * See TweetCreateContextKey for more details about the data that may be
-   * present here.
+   * See T etCreateContextKey for more deta ls about t  data that may be
+   * present  re.
    */
-  8: optional map<tweet.TweetCreateContextKey, string> additional_context (personalDataTypeValue='UserId')
+  8: opt onal map<t et.T etCreateContextKey, str ng> add  onal_context (personalDataTypeValue='User d')
 
   /**
-   * Additional request arguments passed through to consumers.
+   * Add  onal request argu nts passed through to consu rs.
    */
-  9: optional transient_context.TransientCreateContext transient_context
+  9: opt onal trans ent_context.Trans entCreateContext trans ent_context
 
   /**
-  * Flag exposing if a quoted tweet has been quoted by the user previously.
+  * Flag expos ng  f a quoted t et has been quoted by t  user prev ously.
   **/
-  10: optional bool quoter_has_already_quoted_tweet
-}(persisted='true', hasPersonalData = 'true')
+  10: opt onal bool quoter_has_already_quoted_t et
+}(pers sted='true', hasPersonalData = 'true')
 
-struct TweetDeleteEvent {
+struct T etDeleteEvent {
   /**
-   * The tweet being deleted.
+   * T  t et be ng deleted.
    */
-  1: tweet.Tweet tweet
+  1: t et.T et t et
 
   /**
-   * The user who owns the deleted tweet.
+   * T  user who owns t  deleted t et.
    */
-  2: optional user.User user
+  2: opt onal user.User user
 
   /**
-   * Whether this tweet was deleted as part of user erasure (the process of deleting tweets
-   * belonging to deactivated accounts).
+   * W t r t  t et was deleted as part of user erasure (t  process of delet ng t ets
+   * belong ng to deact vated accounts).
    *
-   * These deletions occur in high volume spikes and the tweets have already been made invisible
-   * externally. You may wish to process them in batches or offline.
+   * T se delet ons occur  n h gh volu  sp kes and t  t ets have already been made  nv s ble
+   * externally.   may w sh to process t m  n batc s or offl ne.
    */
-  3: optional bool is_user_erasure
+  3: opt onal bool  s_user_erasure
 
   /**
-   * Audit information from the DeleteTweetRequest that caused this deletion.
+   * Aud   nformat on from t  DeleteT etRequest that caused t  delet on.
    *
-   * This field is used to track the reason for deletion in non-user-initiated
-   * tweet deletions, like Twitter support agents deleting tweets or spam
+   * T  f eld  s used to track t  reason for delet on  n non-user- n  ated
+   * t et delet ons, l ke Tw ter support agents delet ng t ets or spam
    * cleanup.
    */
-  4: optional tweet_audit.AuditDeleteTweet audit
+  4: opt onal t et_aud .Aud DeleteT et aud 
 
   /**
-   * Id of the user initiating this request.
-   * It could be either the owner of the tweet or an admin.
-   * It is used for scrubbing.
+   *  d of t  user  n  at ng t  request.
+   *   could be e  r t  owner of t  t et or an adm n.
+   *    s used for scrubb ng.
    */
-  5: optional i64 by_user_id (personalDataType = 'UserId')
+  5: opt onal  64 by_user_ d (personalDataType = 'User d')
 
   /**
-   * Whether this tweet was deleted by an admin user or not
+   * W t r t  t et was deleted by an adm n user or not
    *
-   * It is used for scrubbing.
+   *    s used for scrubb ng.
    */
-  6: optional bool is_admin_delete
-}(persisted='true', hasPersonalData = 'true')
+  6: opt onal bool  s_adm n_delete
+}(pers sted='true', hasPersonalData = 'true')
 
-struct TweetUndeleteEvent {
-  1: tweet.Tweet tweet
-  2: optional user.User user
-  3: optional tweet.Tweet source_tweet
-  4: optional user.User source_user
-  5: optional i64 retweet_parent_user_id (personalDataType = 'UserId')
-  6: optional tweet.Tweet quoted_tweet
-  7: optional user.User quoted_user
-  // timestamp of the deletion that this undelete is reversing
-  8: optional i64 deleted_at_msec
-}(persisted='true', hasPersonalData = 'true')
+struct T etUndeleteEvent {
+  1: t et.T et t et
+  2: opt onal user.User user
+  3: opt onal t et.T et s ce_t et
+  4: opt onal user.User s ce_user
+  5: opt onal  64 ret et_parent_user_ d (personalDataType = 'User d')
+  6: opt onal t et.T et quoted_t et
+  7: opt onal user.User quoted_user
+  // t  stamp of t  delet on that t  undelete  s revers ng
+  8: opt onal  64 deleted_at_msec
+}(pers sted='true', hasPersonalData = 'true')
 
 /**
- * When a user deletes the location information for their tweets, we send one
- * TweetScrubGeoEvent for every tweet from which the location is removed.
+ * W n a user deletes t  locat on  nformat on for t  r t ets,   send one
+ * T etScrubGeoEvent for every t et from wh ch t  locat on  s removed.
  *
- * Users cause this by selecting "Delete location information" in Settings ->
- * Privacy.
+ * Users cause t  by select ng "Delete locat on  nformat on"  n Sett ngs ->
+ * Pr vacy.
  */
-struct TweetScrubGeoEvent {
-  1: i64 tweet_id (personalDataType = 'TweetId')
-  2: i64 user_id (personalDataType = 'UserId')
-}(persisted='true', hasPersonalData = 'true')
+struct T etScrubGeoEvent {
+  1:  64 t et_ d (personalDataType = 'T et d')
+  2:  64 user_ d (personalDataType = 'User d')
+}(pers sted='true', hasPersonalData = 'true')
 
 /**
- * When a user deletes the location information for their tweets, we send one
- * UserScrubGeoEvent with the max tweet ID that was scrubbed (in addition to
- * sending multiple TweetScrubGeoEvents as described above).
+ * W n a user deletes t  locat on  nformat on for t  r t ets,   send one
+ * UserScrubGeoEvent w h t  max t et  D that was scrubbed ( n add  on to
+ * send ng mult ple T etScrubGeoEvents as descr bed above).
  *
- * Users cause this by selecting "Delete location information" in Settings ->
- * Privacy. This additional event is sent to maintain backwards compatibility
- * with Hosebird.
+ * Users cause t  by select ng "Delete locat on  nformat on"  n Sett ngs ->
+ * Pr vacy. T  add  onal event  s sent to ma nta n backwards compat b l y
+ * w h Hoseb rd.
  */
 struct UserScrubGeoEvent {
-  1: i64 user_id (personalDataType = 'UserId')
-  2: i64 max_tweet_id (personalDataType = 'TweetId')
-}(persisted='true', hasPersonalData = 'true')
+  1:  64 user_ d (personalDataType = 'User d')
+  2:  64 max_t et_ d (personalDataType = 'T et d')
+}(pers sted='true', hasPersonalData = 'true')
 
-struct TweetTakedownEvent {
-  1: i64 tweet_id (personalDataType = 'TweetId')
-  2: i64 user_id (personalDataType = 'UserId')
-  // This is the complete list of takedown country codes for the tweet,
-  // including whatever modifications were made to trigger this event.
-  // @deprecated Prefer takedown_reasons once TWEETYPIE-4329 deployed
-  3: list<string> takedown_country_codes = []
-  // This is the complete list of takedown reasons for the tweet,
-  // including whatever modifications were made to trigger this event.
-  4: list<withholding.TakedownReason> takedown_reasons = []
-}(persisted='true', hasPersonalData = 'true')
+struct T etTakedownEvent {
+  1:  64 t et_ d (personalDataType = 'T et d')
+  2:  64 user_ d (personalDataType = 'User d')
+  // T   s t  complete l st of takedown country codes for t  t et,
+  //  nclud ng whatever mod f cat ons  re made to tr gger t  event.
+  // @deprecated Prefer takedown_reasons once TWEETYP E-4329 deployed
+  3: l st<str ng> takedown_country_codes = []
+  // T   s t  complete l st of takedown reasons for t  t et,
+  //  nclud ng whatever mod f cat ons  re made to tr gger t  event.
+  4: l st<w hhold ng.TakedownReason> takedown_reasons = []
+}(pers sted='true', hasPersonalData = 'true')
 
-struct AdditionalFieldUpdateEvent {
-  // Only contains the tweet id and modified or newly added fields on that tweet.
-  // Unchanged fields and tweet core data are omitted.
-  1: tweet.Tweet updated_fields
-  2: optional i64 user_id (personalDataType = 'UserId')
-}(persisted='true', hasPersonalData = 'true')
+struct Add  onalF eldUpdateEvent {
+  // Only conta ns t  t et  d and mod f ed or newly added f elds on that t et.
+  // Unchanged f elds and t et core data are om ted.
+  1: t et.T et updated_f elds
+  2: opt onal  64 user_ d (personalDataType = 'User d')
+}(pers sted='true', hasPersonalData = 'true')
 
-struct AdditionalFieldDeleteEvent {
-  // a map from tweet id to deleted field ids
-  // Each event will only contain one tweet.
-  1: map<i64, list<i16>> deleted_fields (personalDataTypeKey='TweetId')
-  2: optional i64 user_id (personalDataType = 'UserId')
-}(persisted='true', hasPersonalData = 'true')
+struct Add  onalF eldDeleteEvent {
+  // a map from t et  d to deleted f eld  ds
+  // Each event w ll only conta n one t et.
+  1: map< 64, l st< 16>> deleted_f elds (personalDataTypeKey='T et d')
+  2: opt onal  64 user_ d (personalDataType = 'User d')
+}(pers sted='true', hasPersonalData = 'true')
 
-// This event is only logged to scribe not sent to EventBus
-struct TweetMediaTagEvent {
-  1: i64 tweet_id (personalDataType = 'TweetId')
-  2: i64 user_id (personalDataType = 'UserId')
-  3: set<i64> tagged_user_ids (personalDataType = 'UserId')
-  4: optional i64 timestamp_ms
-}(persisted='true', hasPersonalData = 'true')
+// T  event  s only logged to scr be not sent to EventBus
+struct T et d aTagEvent {
+  1:  64 t et_ d (personalDataType = 'T et d')
+  2:  64 user_ d (personalDataType = 'User d')
+  3: set< 64> tagged_user_ ds (personalDataType = 'User d')
+  4: opt onal  64 t  stamp_ms
+}(pers sted='true', hasPersonalData = 'true')
 
-struct TweetPossiblySensitiveUpdateEvent {
-  1: i64 tweet_id (personalDataType = 'TweetId')
-  2: i64 user_id (personalDataType = 'UserId')
-  // The below two fields contain the results of the update.
-  3: bool nsfw_admin
+struct T etPoss blySens  veUpdateEvent {
+  1:  64 t et_ d (personalDataType = 'T et d')
+  2:  64 user_ d (personalDataType = 'User d')
+  // T  below two f elds conta n t  results of t  update.
+  3: bool nsfw_adm n
   4: bool nsfw_user
-}(persisted='true', hasPersonalData = 'true')
+}(pers sted='true', hasPersonalData = 'true')
 
-struct QuotedTweetDeleteEvent {
-  1: i64 quoting_tweet_id (personalDataType = 'TweetId')
-  2: i64 quoting_user_id (personalDataType = 'UserId')
-  3: i64 quoted_tweet_id (personalDataType = 'TweetId')
-  4: i64 quoted_user_id (personalDataType = 'UserId')
-}(persisted='true', hasPersonalData = 'true')
+struct QuotedT etDeleteEvent {
+  1:  64 quot ng_t et_ d (personalDataType = 'T et d')
+  2:  64 quot ng_user_ d (personalDataType = 'User d')
+  3:  64 quoted_t et_ d (personalDataType = 'T et d')
+  4:  64 quoted_user_ d (personalDataType = 'User d')
+}(pers sted='true', hasPersonalData = 'true')
 
-struct QuotedTweetTakedownEvent {
-  1: i64 quoting_tweet_id (personalDataType = 'TweetId')
-  2: i64 quoting_user_id (personalDataType = 'UserId')
-  3: i64 quoted_tweet_id (personalDataType = 'TweetId')
-  4: i64 quoted_user_id (personalDataType = 'UserId')
-  // This is the complete list of takedown country codes for the tweet,
-  // including whatever modifications were made to trigger this event.
+struct QuotedT etTakedownEvent {
+  1:  64 quot ng_t et_ d (personalDataType = 'T et d')
+  2:  64 quot ng_user_ d (personalDataType = 'User d')
+  3:  64 quoted_t et_ d (personalDataType = 'T et d')
+  4:  64 quoted_user_ d (personalDataType = 'User d')
+  // T   s t  complete l st of takedown country codes for t  t et,
+  //  nclud ng whatever mod f cat ons  re made to tr gger t  event.
   // @deprecated Prefer takedown_reasons
-  5: list<string> takedown_country_codes = []
-  // This is the complete list of takedown reasons for the tweet,
-  // including whatever modifications were made to trigger this event.
-  6: list<withholding.TakedownReason> takedown_reasons = []
-}(persisted='true', hasPersonalData = 'true')
+  5: l st<str ng> takedown_country_codes = []
+  // T   s t  complete l st of takedown reasons for t  t et,
+  //  nclud ng whatever mod f cat ons  re made to tr gger t  event.
+  6: l st<w hhold ng.TakedownReason> takedown_reasons = []
+}(pers sted='true', hasPersonalData = 'true')
 
-union TweetEventData {
-  1:  TweetCreateEvent tweet_create_event
-  2:  TweetDeleteEvent tweet_delete_event
-  3:  AdditionalFieldUpdateEvent additional_field_update_event
-  4:  AdditionalFieldDeleteEvent additional_field_delete_event
-  5:  TweetUndeleteEvent tweet_undelete_event
-  6:  TweetScrubGeoEvent tweet_scrub_geo_event
-  7:  TweetTakedownEvent tweet_takedown_event
+un on T etEventData {
+  1:  T etCreateEvent t et_create_event
+  2:  T etDeleteEvent t et_delete_event
+  3:  Add  onalF eldUpdateEvent add  onal_f eld_update_event
+  4:  Add  onalF eldDeleteEvent add  onal_f eld_delete_event
+  5:  T etUndeleteEvent t et_undelete_event
+  6:  T etScrubGeoEvent t et_scrub_geo_event
+  7:  T etTakedownEvent t et_takedown_event
   8:  UserScrubGeoEvent user_scrub_geo_event
-  9:  TweetPossiblySensitiveUpdateEvent tweet_possibly_sensitive_update_event
-  10: QuotedTweetDeleteEvent quoted_tweet_delete_event
-  11: QuotedTweetTakedownEvent quoted_tweet_takedown_event
-}(persisted='true', hasPersonalData = 'true')
+  9:  T etPoss blySens  veUpdateEvent t et_poss bly_sens  ve_update_event
+  10: QuotedT etDeleteEvent quoted_t et_delete_event
+  11: QuotedT etTakedownEvent quoted_t et_takedown_event
+}(pers sted='true', hasPersonalData = 'true')
 
 /**
  * @deprecated
  */
-struct Checksum {
-  1: i32 checksum
-}(persisted='true')
+struct C cksum {
+  1:  32 c cksum
+}(pers sted='true')
 
-struct TweetEventFlags {
+struct T etEventFlags {
   /**
-   * @deprecated Was dark_for_service.
+   * @deprecated Was dark_for_serv ce.
    */
-  1: list<string> unused1 = []
+  1: l st<str ng> unused1 = []
 
-  2: i64 timestamp_ms
+  2:  64 t  stamp_ms
 
-  3: optional SafetyType safety_type
+  3: opt onal SafetyType safety_type
 
   /**
-   * @deprecated Was checksum.
+   * @deprecated Was c cksum.
    */
-  4: optional Checksum unused4
-}(persisted='true')
+  4: opt onal C cksum unused4
+}(pers sted='true')
 
 /**
- * A TweetEvent is a notification published to the tweet_events stream.
+ * A T etEvent  s a not f cat on publ s d to t  t et_events stream.
  */
-struct TweetEvent {
-  1: TweetEventData data
-  2: TweetEventFlags flags
-}(persisted='true', hasPersonalData = 'true')
+struct T etEvent {
+  1: T etEventData data
+  2: T etEventFlags flags
+}(pers sted='true', hasPersonalData = 'true')

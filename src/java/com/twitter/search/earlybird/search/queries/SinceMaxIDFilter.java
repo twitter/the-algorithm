@@ -1,210 +1,210 @@
-package com.twitter.search.earlybird.search.queries;
+package com.tw ter.search.earlyb rd.search.quer es;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+ mport org.apac .lucene. ndex.LeafReader;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene.search.BooleanClause;
+ mport org.apac .lucene.search.BooleanQuery;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.search. ndexSearc r;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .lucene.search.ScoreMode;
+ mport org.apac .lucene.search.  ght;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.util.AllDocsIterator;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
-import com.twitter.search.earlybird.index.TweetIDMapper;
+ mport com.tw ter.search.common.query.DefaultF lter  ght;
+ mport com.tw ter.search.core.earlyb rd. ndex.Doc DToT et DMapper;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
+ mport com.tw ter.search.core.earlyb rd. ndex.ut l.AllDocs erator;
+ mport com.tw ter.search.core.earlyb rd. ndex.ut l.RangeF lterD S ;
+ mport com.tw ter.search.earlyb rd. ndex.T et DMapper;
 
 /**
- * Filters tweet ids according to since_id and max_id parameter.
+ * F lters t et  ds accord ng to s nce_ d and max_ d para ter.
  *
- * Note that since_id is exclusive and max_id is inclusive.
+ * Note that s nce_ d  s exclus ve and max_ d  s  nclus ve.
  */
-public final class SinceMaxIDFilter extends Query {
-  public static final long NO_FILTER = -1;
+publ c f nal class S nceMax DF lter extends Query {
+  publ c stat c f nal long NO_F LTER = -1;
 
-  private final long sinceIdExclusive;
-  private final long maxIdInclusive;
+  pr vate f nal long s nce dExclus ve;
+  pr vate f nal long max d nclus ve;
 
-  public static Query getSinceMaxIDQuery(long sinceIdExclusive, long maxIdInclusive) {
-    return new BooleanQuery.Builder()
-        .add(new SinceMaxIDFilter(sinceIdExclusive, maxIdInclusive), BooleanClause.Occur.FILTER)
-        .build();
+  publ c stat c Query getS nceMax DQuery(long s nce dExclus ve, long max d nclus ve) {
+    return new BooleanQuery.Bu lder()
+        .add(new S nceMax DF lter(s nce dExclus ve, max d nclus ve), BooleanClause.Occur.F LTER)
+        .bu ld();
   }
 
-  public static Query getSinceIDQuery(long sinceIdExclusive) {
-    return new BooleanQuery.Builder()
-        .add(new SinceMaxIDFilter(sinceIdExclusive, NO_FILTER), BooleanClause.Occur.FILTER)
-        .build();
+  publ c stat c Query getS nce DQuery(long s nce dExclus ve) {
+    return new BooleanQuery.Bu lder()
+        .add(new S nceMax DF lter(s nce dExclus ve, NO_F LTER), BooleanClause.Occur.F LTER)
+        .bu ld();
   }
 
-  public static Query getMaxIDQuery(long maxIdInclusive) {
-    return new BooleanQuery.Builder()
-        .add(new SinceMaxIDFilter(NO_FILTER, maxIdInclusive), BooleanClause.Occur.FILTER)
-        .build();
+  publ c stat c Query getMax DQuery(long max d nclus ve) {
+    return new BooleanQuery.Bu lder()
+        .add(new S nceMax DF lter(NO_F LTER, max d nclus ve), BooleanClause.Occur.F LTER)
+        .bu ld();
   }
 
-  private SinceMaxIDFilter(long sinceIdExclusive, long maxIdInclusive) {
-    this.sinceIdExclusive = sinceIdExclusive;
-    this.maxIdInclusive = maxIdInclusive;
+  pr vate S nceMax DF lter(long s nce dExclus ve, long max d nclus ve) {
+    t .s nce dExclus ve = s nce dExclus ve;
+    t .max d nclus ve = max d nclus ve;
   }
 
-  @Override
-  public int hashCode() {
-    return (int) (sinceIdExclusive * 13 + maxIdInclusive);
+  @Overr de
+  publ c  nt hashCode() {
+    return ( nt) (s nce dExclus ve * 13 + max d nclus ve);
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof SinceMaxIDFilter)) {
+  @Overr de
+  publ c boolean equals(Object obj) {
+     f (!(obj  nstanceof S nceMax DF lter)) {
       return false;
     }
 
-    SinceMaxIDFilter filter = SinceMaxIDFilter.class.cast(obj);
-    return (sinceIdExclusive == filter.sinceIdExclusive)
-        && (maxIdInclusive == filter.maxIdInclusive);
+    S nceMax DF lter f lter = S nceMax DF lter.class.cast(obj);
+    return (s nce dExclus ve == f lter.s nce dExclus ve)
+        && (max d nclus ve == f lter.max d nclus ve);
   }
 
-  @Override
-  public String toString(String field) {
-    if (sinceIdExclusive != NO_FILTER && maxIdInclusive != NO_FILTER) {
-      return "SinceIdFilter:" + sinceIdExclusive + ",MaxIdFilter:" + maxIdInclusive;
-    } else if (maxIdInclusive != NO_FILTER) {
-      return "MaxIdFilter:" + maxIdInclusive;
+  @Overr de
+  publ c Str ng toStr ng(Str ng f eld) {
+     f (s nce dExclus ve != NO_F LTER && max d nclus ve != NO_F LTER) {
+      return "S nce dF lter:" + s nce dExclus ve + ",Max dF lter:" + max d nclus ve;
+    } else  f (max d nclus ve != NO_F LTER) {
+      return "Max dF lter:" + max d nclus ve;
     } else {
-      return "SinceIdFilter:" + sinceIdExclusive;
+      return "S nce dF lter:" + s nce dExclus ve;
     }
   }
 
   /**
-   * Determines if this segment is at least partially covered by the given tweet ID range.
+   * Determ nes  f t  seg nt  s at least part ally covered by t  g ven t et  D range.
    */
-  public static boolean sinceMaxIDsInRange(
-      TweetIDMapper tweetIdMapper, long sinceIdExclusive, long maxIdInclusive) {
-    // Check for since id out of range. Note that since this ID is exclusive,
-    // equality is out of range too.
-    if (sinceIdExclusive != NO_FILTER && sinceIdExclusive >= tweetIdMapper.getMaxTweetID()) {
+  publ c stat c boolean s nceMax Ds nRange(
+      T et DMapper t et dMapper, long s nce dExclus ve, long max d nclus ve) {
+    // C ck for s nce  d out of range. Note that s nce t   D  s exclus ve,
+    // equal y  s out of range too.
+     f (s nce dExclus ve != NO_F LTER && s nce dExclus ve >= t et dMapper.getMaxT et D()) {
       return false;
     }
 
-    // Check for max id in range.
-    return maxIdInclusive == NO_FILTER || maxIdInclusive >= tweetIdMapper.getMinTweetID();
+    // C ck for max  d  n range.
+    return max d nclus ve == NO_F LTER || max d nclus ve >= t et dMapper.getM nT et D();
   }
 
-  // Returns true if this segment is completely covered by these id filters.
-  private static boolean sinceMaxIdsCoverRange(
-      TweetIDMapper tweetIdMapper, long sinceIdExclusive, long maxIdInclusive) {
-    // Check for since_id specified AND since_id newer than than first tweet.
-    if (sinceIdExclusive != NO_FILTER && sinceIdExclusive >= tweetIdMapper.getMinTweetID()) {
+  // Returns true  f t  seg nt  s completely covered by t se  d f lters.
+  pr vate stat c boolean s nceMax dsCoverRange(
+      T et DMapper t et dMapper, long s nce dExclus ve, long max d nclus ve) {
+    // C ck for s nce_ d spec f ed AND s nce_ d ne r than than f rst t et.
+     f (s nce dExclus ve != NO_F LTER && s nce dExclus ve >= t et dMapper.getM nT et D()) {
       return false;
     }
 
-    // Check for max id in range.
-    return maxIdInclusive == NO_FILTER || maxIdInclusive > tweetIdMapper.getMaxTweetID();
+    // C ck for max  d  n range.
+    return max d nclus ve == NO_F LTER || max d nclus ve > t et dMapper.getMaxT et D();
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
+  @Overr de
+  publ c   ght create  ght( ndexSearc r searc r, ScoreMode scoreMode, float boost)
+      throws  OExcept on {
+    return new DefaultF lter  ght(t ) {
+      @Overr de
+      protected Doc dSet erator getDoc dSet erator(LeafReaderContext context) throws  OExcept on {
         LeafReader reader = context.reader();
-        if (!(reader instanceof EarlybirdIndexSegmentAtomicReader)) {
-          return new AllDocsIterator(reader);
+         f (!(reader  nstanceof Earlyb rd ndexSeg ntAtom cReader)) {
+          return new AllDocs erator(reader);
         }
 
-        EarlybirdIndexSegmentAtomicReader twitterInMemoryIndexReader =
-            (EarlybirdIndexSegmentAtomicReader) reader;
-        TweetIDMapper tweetIdMapper =
-            (TweetIDMapper) twitterInMemoryIndexReader.getSegmentData().getDocIDToTweetIDMapper();
+        Earlyb rd ndexSeg ntAtom cReader tw ter n mory ndexReader =
+            (Earlyb rd ndexSeg ntAtom cReader) reader;
+        T et DMapper t et dMapper =
+            (T et DMapper) tw ter n mory ndexReader.getSeg ntData().getDoc DToT et DMapper();
 
-        // Important to return a null DocIdSetIterator here, so the Scorer will skip searching
-        // this segment completely.
-        if (!sinceMaxIDsInRange(tweetIdMapper, sinceIdExclusive, maxIdInclusive)) {
+        //  mportant to return a null Doc dSet erator  re, so t  Scorer w ll sk p search ng
+        // t  seg nt completely.
+         f (!s nceMax Ds nRange(t et dMapper, s nce dExclus ve, max d nclus ve)) {
           return null;
         }
 
-        // Optimization: just return a match-all iterator when the whole segment is in range.
-        // This avoids having to do so many status id lookups.
-        if (sinceMaxIdsCoverRange(tweetIdMapper, sinceIdExclusive, maxIdInclusive)) {
-          return new AllDocsIterator(reader);
+        // Opt m zat on: just return a match-all  erator w n t  whole seg nt  s  n range.
+        // T  avo ds hav ng to do so many status  d lookups.
+         f (s nceMax dsCoverRange(t et dMapper, s nce dExclus ve, max d nclus ve)) {
+          return new AllDocs erator(reader);
         }
 
-        return new SinceMaxIDDocIdSetIterator(
-            twitterInMemoryIndexReader, sinceIdExclusive, maxIdInclusive);
+        return new S nceMax DDoc dSet erator(
+            tw ter n mory ndexReader, s nce dExclus ve, max d nclus ve);
       }
     };
   }
 
-  @VisibleForTesting
-  static class SinceMaxIDDocIdSetIterator extends RangeFilterDISI {
-    private final DocIDToTweetIDMapper docIdToTweetIdMapper;
-    private final long sinceIdExclusive;
-    private final long maxIdInclusive;
+  @V s bleForTest ng
+  stat c class S nceMax DDoc dSet erator extends RangeF lterD S  {
+    pr vate f nal Doc DToT et DMapper doc dToT et dMapper;
+    pr vate f nal long s nce dExclus ve;
+    pr vate f nal long max d nclus ve;
 
-    public SinceMaxIDDocIdSetIterator(EarlybirdIndexSegmentAtomicReader reader,
-                                      long sinceIdExclusive,
-                                      long maxIdInclusive) throws IOException {
+    publ c S nceMax DDoc dSet erator(Earlyb rd ndexSeg ntAtom cReader reader,
+                                      long s nce dExclus ve,
+                                      long max d nclus ve) throws  OExcept on {
       super(reader,
-            findMaxIdDocID(reader, maxIdInclusive),
-            findSinceIdDocID(reader, sinceIdExclusive));
-      this.docIdToTweetIdMapper = reader.getSegmentData().getDocIDToTweetIDMapper();
-      this.sinceIdExclusive = sinceIdExclusive;  // sinceStatusId == NO_FILTER is OK, it's exclusive
-      this.maxIdInclusive = maxIdInclusive != NO_FILTER ? maxIdInclusive : Long.MAX_VALUE;
+            f ndMax dDoc D(reader, max d nclus ve),
+            f ndS nce dDoc D(reader, s nce dExclus ve));
+      t .doc dToT et dMapper = reader.getSeg ntData().getDoc DToT et DMapper();
+      t .s nce dExclus ve = s nce dExclus ve;  // s nceStatus d == NO_F LTER  s OK,  's exclus ve
+      t .max d nclus ve = max d nclus ve != NO_F LTER ? max d nclus ve : Long.MAX_VALUE;
     }
 
     /**
-     * This is a necessary check when we have out of order tweets in the archive.
-     * When tweets are out of order, this guarantees that no false positive results are returned.
-     * I.e. we can still miss some tweets in the specified range, but we never incorrectly return
-     * anything that's not in the range.
+     * T   s a necessary c ck w n   have out of order t ets  n t  arch ve.
+     * W n t ets are out of order, t  guarantees that no false pos  ve results are returned.
+     *  .e.   can st ll m ss so  t ets  n t  spec f ed range, but   never  ncorrectly return
+     * anyth ng that's not  n t  range.
      */
-    @Override
+    @Overr de
     protected boolean shouldReturnDoc() {
-      final long statusID = docIdToTweetIdMapper.getTweetID(docID());
-      return statusID > sinceIdExclusive && statusID <= maxIdInclusive;
+      f nal long status D = doc dToT et dMapper.getT et D(doc D());
+      return status D > s nce dExclus ve && status D <= max d nclus ve;
     }
 
-    private static int findSinceIdDocID(
-        EarlybirdIndexSegmentAtomicReader reader, long sinceIdExclusive) throws IOException {
-      TweetIDMapper tweetIdMapper =
-          (TweetIDMapper) reader.getSegmentData().getDocIDToTweetIDMapper();
-      if (sinceIdExclusive != SinceMaxIDFilter.NO_FILTER) {
-        // We use this as an upper bound on the search, so we want to find the highest possible
-        // doc ID for this tweet ID.
-        boolean findMaxDocID = true;
-        return tweetIdMapper.findDocIdBound(
-            sinceIdExclusive,
-            findMaxDocID,
-            reader.getSmallestDocID(),
+    pr vate stat c  nt f ndS nce dDoc D(
+        Earlyb rd ndexSeg ntAtom cReader reader, long s nce dExclus ve) throws  OExcept on {
+      T et DMapper t et dMapper =
+          (T et DMapper) reader.getSeg ntData().getDoc DToT et DMapper();
+       f (s nce dExclus ve != S nceMax DF lter.NO_F LTER) {
+        //   use t  as an upper bound on t  search, so   want to f nd t  h g st poss ble
+        // doc  D for t  t et  D.
+        boolean f ndMaxDoc D = true;
+        return t et dMapper.f ndDoc dBound(
+            s nce dExclus ve,
+            f ndMaxDoc D,
+            reader.getSmallestDoc D(),
             reader.maxDoc() - 1);
       } else {
-        return DocIDToTweetIDMapper.ID_NOT_FOUND;
+        return Doc DToT et DMapper. D_NOT_FOUND;
       }
     }
 
-    private static int findMaxIdDocID(
-        EarlybirdIndexSegmentAtomicReader reader, long maxIdInclusive) throws IOException {
-      TweetIDMapper tweetIdMapper =
-          (TweetIDMapper) reader.getSegmentData().getDocIDToTweetIDMapper();
-      if (maxIdInclusive != SinceMaxIDFilter.NO_FILTER) {
-        // We use this as a lower bound on the search, so we want to find the lowest possible
-        // doc ID for this tweet ID.
-        boolean findMaxDocID = false;
-        return tweetIdMapper.findDocIdBound(
-            maxIdInclusive,
-            findMaxDocID,
-            reader.getSmallestDocID(),
+    pr vate stat c  nt f ndMax dDoc D(
+        Earlyb rd ndexSeg ntAtom cReader reader, long max d nclus ve) throws  OExcept on {
+      T et DMapper t et dMapper =
+          (T et DMapper) reader.getSeg ntData().getDoc DToT et DMapper();
+       f (max d nclus ve != S nceMax DF lter.NO_F LTER) {
+        //   use t  as a lo r bound on t  search, so   want to f nd t  lo st poss ble
+        // doc  D for t  t et  D.
+        boolean f ndMaxDoc D = false;
+        return t et dMapper.f ndDoc dBound(
+            max d nclus ve,
+            f ndMaxDoc D,
+            reader.getSmallestDoc D(),
             reader.maxDoc() - 1);
       } else {
-        return DocIDToTweetIDMapper.ID_NOT_FOUND;
+        return Doc DToT et DMapper. D_NOT_FOUND;
       }
     }
   }

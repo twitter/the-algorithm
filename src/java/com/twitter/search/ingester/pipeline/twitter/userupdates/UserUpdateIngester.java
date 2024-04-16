@@ -1,245 +1,245 @@
-package com.twitter.search.ingester.pipeline.twitter.userupdates;
+package com.tw ter.search. ngester.p pel ne.tw ter.userupdates;
 
-import java.util.AbstractMap;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+ mport java.ut l.AbstractMap;
+ mport java.ut l.Collect on;
+ mport java.ut l.Collect ons;
+ mport java.ut l.EnumSet;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.Objects;
+ mport java.ut l.Set;
+ mport java.ut l.funct on.Funct on;
+ mport java.ut l.stream.Collectors;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
+ mport com.google.common.collect. mmutableMap;
+ mport com.google.common.collect.Sets;
 
-import org.apache.commons.text.CaseUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons.text.CaseUt ls;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.decider.Decider;
-import com.twitter.finagle.util.DefaultTimer;
-import com.twitter.gizmoduck.thriftjava.LifecycleChangeReason;
-import com.twitter.gizmoduck.thriftjava.LookupContext;
-import com.twitter.gizmoduck.thriftjava.QueryFields;
-import com.twitter.gizmoduck.thriftjava.Safety;
-import com.twitter.gizmoduck.thriftjava.UpdateDiffItem;
-import com.twitter.gizmoduck.thriftjava.User;
-import com.twitter.gizmoduck.thriftjava.UserModification;
-import com.twitter.gizmoduck.thriftjava.UserService;
-import com.twitter.gizmoduck.thriftjava.UserType;
-import com.twitter.search.common.indexing.thriftjava.AntisocialUserUpdate;
-import com.twitter.search.common.indexing.thriftjava.UserUpdateType;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.util.Duration;
-import com.twitter.util.Future;
-import com.twitter.util.TimeoutException;
+ mport com.tw ter.common.collect ons.Pa r;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.f nagle.ut l.DefaultT  r;
+ mport com.tw ter.g zmoduck.thr ftjava.L fecycleChangeReason;
+ mport com.tw ter.g zmoduck.thr ftjava.LookupContext;
+ mport com.tw ter.g zmoduck.thr ftjava.QueryF elds;
+ mport com.tw ter.g zmoduck.thr ftjava.Safety;
+ mport com.tw ter.g zmoduck.thr ftjava.UpdateD ff em;
+ mport com.tw ter.g zmoduck.thr ftjava.User;
+ mport com.tw ter.g zmoduck.thr ftjava.UserMod f cat on;
+ mport com.tw ter.g zmoduck.thr ftjava.UserServ ce;
+ mport com.tw ter.g zmoduck.thr ftjava.UserType;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Ant soc alUserUpdate;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.UserUpdateType;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
+ mport com.tw ter.ut l.Durat on;
+ mport com.tw ter.ut l.Future;
+ mport com.tw ter.ut l.T  outExcept on;
 
 /**
- * This class ingests {@link UserModification} events and transforms them into a possibly empty list
- * of {@link AntisocialUserUpdate}s to be indexed by Earlybirds.
+ * T  class  ngests {@l nk UserMod f cat on} events and transforms t m  nto a poss bly empty l st
+ * of {@l nk Ant soc alUserUpdate}s to be  ndexed by Earlyb rds.
  */
-public class UserUpdateIngester {
-  private static final Logger LOG = LoggerFactory.getLogger(UserUpdateIngester.class);
-  private static final Duration RESULT_TIMEOUT = Duration.fromSeconds(3);
+publ c class UserUpdate ngester {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(UserUpdate ngester.class);
+  pr vate stat c f nal Durat on RESULT_T MEOUT = Durat on.fromSeconds(3);
 
-  private static final List<AntisocialUserUpdate> NO_UPDATE = Collections.emptyList();
+  pr vate stat c f nal L st<Ant soc alUserUpdate> NO_UPDATE = Collect ons.emptyL st();
 
-  // Map from UserUpdateType to a set of Safety fields to examine.
-  private static final Map<UserUpdateType, Set<Safety._Fields>> SAFETY_FIELDS_MAP =
-      ImmutableMap.of(
-          UserUpdateType.ANTISOCIAL,
-          Sets.immutableEnumSet(
-              Safety._Fields.SUSPENDED, Safety._Fields.DEACTIVATED, Safety._Fields.OFFBOARDED),
+  // Map from UserUpdateType to a set of Safety f elds to exam ne.
+  pr vate stat c f nal Map<UserUpdateType, Set<Safety._F elds>> SAFETY_F ELDS_MAP =
+       mmutableMap.of(
+          UserUpdateType.ANT SOC AL,
+          Sets. mmutableEnumSet(
+              Safety._F elds.SUSPENDED, Safety._F elds.DEACT VATED, Safety._F elds.OFFBOARDED),
           UserUpdateType.NSFW,
-          Sets.immutableEnumSet(Safety._Fields.NSFW_USER, Safety._Fields.NSFW_ADMIN),
-          UserUpdateType.PROTECTED, Sets.immutableEnumSet(Safety._Fields.IS_PROTECTED));
+          Sets. mmutableEnumSet(Safety._F elds.NSFW_USER, Safety._F elds.NSFW_ADM N),
+          UserUpdateType.PROTECTED, Sets. mmutableEnumSet(Safety._F elds. S_PROTECTED));
 
-  private static final Function<Safety._Fields, String> FIELD_TO_FIELD_NAME_FUNCTION =
-      field -> "safety." + CaseUtils.toCamelCase(field.name(), false, '_');
+  pr vate stat c f nal Funct on<Safety._F elds, Str ng> F ELD_TO_F ELD_NAME_FUNCT ON =
+      f eld -> "safety." + CaseUt ls.toCa lCase(f eld.na (), false, '_');
 
-  private static final Map<String, UserUpdateType> FIELD_NAME_TO_TYPE_MAP =
-      SAFETY_FIELDS_MAP.entrySet().stream()
+  pr vate stat c f nal Map<Str ng, UserUpdateType> F ELD_NAME_TO_TYPE_MAP =
+      SAFETY_F ELDS_MAP.entrySet().stream()
           .flatMap(
               entry -> entry.getValue().stream()
-                  .map(field -> new AbstractMap.SimpleEntry<>(
-                      FIELD_TO_FIELD_NAME_FUNCTION.apply(field),
+                  .map(f eld -> new AbstractMap.S mpleEntry<>(
+                      F ELD_TO_F ELD_NAME_FUNCT ON.apply(f eld),
                       entry.getKey())))
           .collect(Collectors.toMap(
-              AbstractMap.SimpleEntry::getKey,
-              AbstractMap.SimpleEntry::getValue));
+              AbstractMap.S mpleEntry::getKey,
+              AbstractMap.S mpleEntry::getValue));
 
-  private static final Map<String, Safety._Fields> FIELD_NAME_TO_FIELD_MAP =
-      SAFETY_FIELDS_MAP.values().stream()
-          .flatMap(Collection::stream)
+  pr vate stat c f nal Map<Str ng, Safety._F elds> F ELD_NAME_TO_F ELD_MAP =
+      SAFETY_F ELDS_MAP.values().stream()
+          .flatMap(Collect on::stream)
           .collect(Collectors.toMap(
-              FIELD_TO_FIELD_NAME_FUNCTION,
-              Function.identity()));
+              F ELD_TO_F ELD_NAME_FUNCT ON,
+              Funct on. dent y()));
 
-  private static final LookupContext LOOKUP_CONTEXT = new LookupContext()
-      .setInclude_deactivated(true)
-      .setInclude_erased(true)
-      .setInclude_suspended(true)
-      .setInclude_offboarded(true)
-      .setInclude_protected(true);
+  pr vate stat c f nal LookupContext LOOKUP_CONTEXT = new LookupContext()
+      .set nclude_deact vated(true)
+      .set nclude_erased(true)
+      .set nclude_suspended(true)
+      .set nclude_offboarded(true)
+      .set nclude_protected(true);
 
-  private final UserService.ServiceToClient userService;
-  private final Decider decider;
+  pr vate f nal UserServ ce.Serv ceToCl ent userServ ce;
+  pr vate f nal Dec der dec der;
 
-  private final SearchLongGauge userModificationLatency;
-  private final SearchCounter unsuccessfulUserModificationCount;
-  private final SearchCounter byInactiveAccountDeactivationUserModificationCount;
-  private final SearchCounter irrelevantUserModificationCount;
-  private final SearchCounter notNormalUserCount;
-  private final SearchCounter missingSafetyCount;
-  private final SearchCounter userServiceRequests;
-  private final SearchCounter userServiceSuccesses;
-  private final SearchCounter userServiceNoResults;
-  private final SearchCounter userServiceFailures;
-  private final SearchCounter userServiceTimeouts;
-  private final Map<Pair<UserUpdateType, Boolean>, SearchCounter> counterMap;
+  pr vate f nal SearchLongGauge userMod f cat onLatency;
+  pr vate f nal SearchCounter unsuccessfulUserMod f cat onCount;
+  pr vate f nal SearchCounter by nact veAccountDeact vat onUserMod f cat onCount;
+  pr vate f nal SearchCounter  rrelevantUserMod f cat onCount;
+  pr vate f nal SearchCounter notNormalUserCount;
+  pr vate f nal SearchCounter m ss ngSafetyCount;
+  pr vate f nal SearchCounter userServ ceRequests;
+  pr vate f nal SearchCounter userServ ceSuccesses;
+  pr vate f nal SearchCounter userServ ceNoResults;
+  pr vate f nal SearchCounter userServ ceFa lures;
+  pr vate f nal SearchCounter userServ ceT  outs;
+  pr vate f nal Map<Pa r<UserUpdateType, Boolean>, SearchCounter> counterMap;
 
-  public UserUpdateIngester(
-      String statPrefix,
-      UserService.ServiceToClient userService,
-      Decider decider
+  publ c UserUpdate ngester(
+      Str ng statPref x,
+      UserServ ce.Serv ceToCl ent userServ ce,
+      Dec der dec der
   ) {
-    this.userService = userService;
-    this.decider = decider;
+    t .userServ ce = userServ ce;
+    t .dec der = dec der;
 
-    userModificationLatency =
-        SearchLongGauge.export(statPrefix + "_user_modification_latency_ms");
-    unsuccessfulUserModificationCount =
-        SearchCounter.export(statPrefix + "_unsuccessful_user_modification_count");
-    byInactiveAccountDeactivationUserModificationCount =
-        SearchCounter.export(statPrefix
-                + "_by_inactive_account_deactivation_user_modification_count");
-    irrelevantUserModificationCount =
-        SearchCounter.export(statPrefix + "_irrelevant_user_modification_count");
+    userMod f cat onLatency =
+        SearchLongGauge.export(statPref x + "_user_mod f cat on_latency_ms");
+    unsuccessfulUserMod f cat onCount =
+        SearchCounter.export(statPref x + "_unsuccessful_user_mod f cat on_count");
+    by nact veAccountDeact vat onUserMod f cat onCount =
+        SearchCounter.export(statPref x
+                + "_by_ nact ve_account_deact vat on_user_mod f cat on_count");
+     rrelevantUserMod f cat onCount =
+        SearchCounter.export(statPref x + "_ rrelevant_user_mod f cat on_count");
     notNormalUserCount =
-        SearchCounter.export(statPrefix + "_not_normal_user_count");
-    missingSafetyCount =
-        SearchCounter.export(statPrefix + "_missing_safety_count");
-    userServiceRequests =
-        SearchCounter.export(statPrefix + "_user_service_requests");
-    userServiceSuccesses =
-        SearchCounter.export(statPrefix + "_user_service_successes");
-    userServiceNoResults =
-        SearchCounter.export(statPrefix + "_user_service_no_results");
-    userServiceFailures =
-        SearchCounter.export(statPrefix + "_user_service_failures");
-    userServiceTimeouts =
-        SearchCounter.export(statPrefix + "_user_service_timeouts");
-    counterMap = ImmutableMap.<Pair<UserUpdateType, Boolean>, SearchCounter>builder()
-        .put(Pair.of(UserUpdateType.ANTISOCIAL, true),
-            SearchCounter.export(statPrefix + "_antisocial_set_count"))
-        .put(Pair.of(UserUpdateType.ANTISOCIAL, false),
-            SearchCounter.export(statPrefix + "_antisocial_unset_count"))
-        .put(Pair.of(UserUpdateType.NSFW, true),
-            SearchCounter.export(statPrefix + "_nsfw_set_count"))
-        .put(Pair.of(UserUpdateType.NSFW, false),
-            SearchCounter.export(statPrefix + "_nsfw_unset_count"))
-        .put(Pair.of(UserUpdateType.PROTECTED, true),
-            SearchCounter.export(statPrefix + "_protected_set_count"))
-        .put(Pair.of(UserUpdateType.PROTECTED, false),
-            SearchCounter.export(statPrefix + "_protected_unset_count"))
-        .build();
+        SearchCounter.export(statPref x + "_not_normal_user_count");
+    m ss ngSafetyCount =
+        SearchCounter.export(statPref x + "_m ss ng_safety_count");
+    userServ ceRequests =
+        SearchCounter.export(statPref x + "_user_serv ce_requests");
+    userServ ceSuccesses =
+        SearchCounter.export(statPref x + "_user_serv ce_successes");
+    userServ ceNoResults =
+        SearchCounter.export(statPref x + "_user_serv ce_no_results");
+    userServ ceFa lures =
+        SearchCounter.export(statPref x + "_user_serv ce_fa lures");
+    userServ ceT  outs =
+        SearchCounter.export(statPref x + "_user_serv ce_t  outs");
+    counterMap =  mmutableMap.<Pa r<UserUpdateType, Boolean>, SearchCounter>bu lder()
+        .put(Pa r.of(UserUpdateType.ANT SOC AL, true),
+            SearchCounter.export(statPref x + "_ant soc al_set_count"))
+        .put(Pa r.of(UserUpdateType.ANT SOC AL, false),
+            SearchCounter.export(statPref x + "_ant soc al_unset_count"))
+        .put(Pa r.of(UserUpdateType.NSFW, true),
+            SearchCounter.export(statPref x + "_nsfw_set_count"))
+        .put(Pa r.of(UserUpdateType.NSFW, false),
+            SearchCounter.export(statPref x + "_nsfw_unset_count"))
+        .put(Pa r.of(UserUpdateType.PROTECTED, true),
+            SearchCounter.export(statPref x + "_protected_set_count"))
+        .put(Pa r.of(UserUpdateType.PROTECTED, false),
+            SearchCounter.export(statPref x + "_protected_unset_count"))
+        .bu ld();
   }
 
   /**
-   * Convert a UserModification event into a (possibly empty) list of antisocial updates for
-   * Earlybird.
+   * Convert a UserMod f cat on event  nto a (poss bly empty) l st of ant soc al updates for
+   * Earlyb rd.
    */
-  public Future<List<AntisocialUserUpdate>> transform(UserModification userModification) {
-    userModificationLatency.set(System.currentTimeMillis() - userModification.getUpdated_at_msec());
+  publ c Future<L st<Ant soc alUserUpdate>> transform(UserMod f cat on userMod f cat on) {
+    userMod f cat onLatency.set(System.currentT  M ll s() - userMod f cat on.getUpdated_at_msec());
 
-    if (!userModification.isSuccess()) {
-      unsuccessfulUserModificationCount.increment();
+     f (!userMod f cat on. sSuccess()) {
+      unsuccessfulUserMod f cat onCount. ncre nt();
       return Future.value(NO_UPDATE);
     }
 
-    // To avoid UserTable gets overflowed, we exclude traffic from ByInactiveAccountDeactivation
-    if (userModification.getUser_audit_data() != null
-        && userModification.getUser_audit_data().getReason() != null
-        && userModification.getUser_audit_data().getReason()
-            == LifecycleChangeReason.BY_INACTIVE_ACCOUNT_DEACTIVATION) {
-      byInactiveAccountDeactivationUserModificationCount.increment();
+    // To avo d UserTable gets overflo d,   exclude traff c from By nact veAccountDeact vat on
+     f (userMod f cat on.getUser_aud _data() != null
+        && userMod f cat on.getUser_aud _data().getReason() != null
+        && userMod f cat on.getUser_aud _data().getReason()
+            == L fecycleChangeReason.BY_ NACT VE_ACCOUNT_DEACT VAT ON) {
+      by nact veAccountDeact vat onUserMod f cat onCount. ncre nt();
       return Future.value(NO_UPDATE);
     }
 
-    long userId = userModification.getUser_id();
-    Set<UserUpdateType> userUpdateTypes = getUserUpdateTypes(userModification);
-    if (userUpdateTypes.isEmpty()) {
-      irrelevantUserModificationCount.increment();
+    long user d = userMod f cat on.getUser_ d();
+    Set<UserUpdateType> userUpdateTypes = getUserUpdateTypes(userMod f cat on);
+     f (userUpdateTypes. sEmpty()) {
+       rrelevantUserMod f cat onCount. ncre nt();
       return Future.value(NO_UPDATE);
     }
 
-    Future<User> userFuture = userModification.isSetCreate()
-        ? Future.value(userModification.getCreate())
-        : getUser(userId);
+    Future<User> userFuture = userMod f cat on. sSetCreate()
+        ? Future.value(userMod f cat on.getCreate())
+        : getUser(user d);
 
     return userFuture
         .map(user -> {
-          if (user == null) {
+           f (user == null) {
             return NO_UPDATE;
-          } else if (user.getUser_type() != UserType.NORMAL) {
-            LOG.info("User with id={} is not a normal user.", userId);
-            notNormalUserCount.increment();
+          } else  f (user.getUser_type() != UserType.NORMAL) {
+            LOG. nfo("User w h  d={}  s not a normal user.", user d);
+            notNormalUserCount. ncre nt();
             return NO_UPDATE;
-          } else if (!user.isSetSafety()) {
-            LOG.info("Safety for User with id={} is missing.", userId);
-            missingSafetyCount.increment();
+          } else  f (!user. sSetSafety()) {
+            LOG. nfo("Safety for User w h  d={}  s m ss ng.", user d);
+            m ss ngSafetyCount. ncre nt();
             return NO_UPDATE;
           }
 
-          if (userModification.isSetUpdate()) {
-            // Apply relevant updates from UserModification as User returned from Gizmoduck may not
-            // have reflected them yet.
-            applyUpdates(user, userModification);
+           f (userMod f cat on. sSetUpdate()) {
+            // Apply relevant updates from UserMod f cat on as User returned from G zmoduck may not
+            // have reflected t m yet.
+            applyUpdates(user, userMod f cat on);
           }
 
           return userUpdateTypes.stream()
               .map(userUpdateType ->
-                  convertToAntiSocialUserUpdate(
-                      user, userUpdateType, userModification.getUpdated_at_msec()))
+                  convertToAnt Soc alUserUpdate(
+                      user, userUpdateType, userMod f cat on.getUpdated_at_msec()))
               .peek(update ->
-                  counterMap.get(Pair.of(update.getType(), update.isValue())).increment())
-              .collect(Collectors.toList());
+                  counterMap.get(Pa r.of(update.getType(), update. sValue())). ncre nt())
+              .collect(Collectors.toL st());
         })
-        .onFailure(com.twitter.util.Function.cons(exception -> {
-          if (exception instanceof UserNotFoundException) {
-            userServiceNoResults.increment();
-          } else if (exception instanceof TimeoutException) {
-            userServiceTimeouts.increment();
-            LOG.error("UserService.get timed out for user id=" + userId, exception);
+        .onFa lure(com.tw ter.ut l.Funct on.cons(except on -> {
+           f (except on  nstanceof UserNotFoundExcept on) {
+            userServ ceNoResults. ncre nt();
+          } else  f (except on  nstanceof T  outExcept on) {
+            userServ ceT  outs. ncre nt();
+            LOG.error("UserServ ce.get t  d out for user  d=" + user d, except on);
           } else {
-            userServiceFailures.increment();
-            LOG.error("UserService.get failed for user id=" + userId, exception);
+            userServ ceFa lures. ncre nt();
+            LOG.error("UserServ ce.get fa led for user  d=" + user d, except on);
           }
         }));
   }
 
-  private static Set<UserUpdateType> getUserUpdateTypes(UserModification userModification) {
+  pr vate stat c Set<UserUpdateType> getUserUpdateTypes(UserMod f cat on userMod f cat on) {
     Set<UserUpdateType> types = EnumSet.noneOf(UserUpdateType.class);
 
-    if (userModification.isSetUpdate()) {
-      userModification.getUpdate().stream()
-          .map(UpdateDiffItem::getField_name)
-          .map(FIELD_NAME_TO_TYPE_MAP::get)
-          .filter(Objects::nonNull)
-          .collect(Collectors.toCollection(() -> types));
-    } else if (userModification.isSetCreate() && userModification.getCreate().isSetSafety()) {
-      Safety safety = userModification.getCreate().getSafety();
-      if (safety.isSuspended()) {
-        types.add(UserUpdateType.ANTISOCIAL);
+     f (userMod f cat on. sSetUpdate()) {
+      userMod f cat on.getUpdate().stream()
+          .map(UpdateD ff em::getF eld_na )
+          .map(F ELD_NAME_TO_TYPE_MAP::get)
+          .f lter(Objects::nonNull)
+          .collect(Collectors.toCollect on(() -> types));
+    } else  f (userMod f cat on. sSetCreate() && userMod f cat on.getCreate(). sSetSafety()) {
+      Safety safety = userMod f cat on.getCreate().getSafety();
+       f (safety. sSuspended()) {
+        types.add(UserUpdateType.ANT SOC AL);
       }
-      if (safety.isNsfw_admin() || safety.isNsfw_user()) {
+       f (safety. sNsfw_adm n() || safety. sNsfw_user()) {
         types.add(UserUpdateType.NSFW);
       }
-      if (safety.isIs_protected()) {
+       f (safety. s s_protected()) {
         types.add(UserUpdateType.PROTECTED);
       }
     }
@@ -247,46 +247,46 @@ public class UserUpdateIngester {
     return types;
   }
 
-  private Future<User> getUser(long userId) {
-    userServiceRequests.increment();
-    return userService.get(
+  pr vate Future<User> getUser(long user d) {
+    userServ ceRequests. ncre nt();
+    return userServ ce.get(
         LOOKUP_CONTEXT,
-        Collections.singletonList(userId),
-        Collections.singleton(QueryFields.SAFETY))
-        .within(DefaultTimer.getInstance(), RESULT_TIMEOUT)
+        Collect ons.s ngletonL st(user d),
+        Collect ons.s ngleton(QueryF elds.SAFETY))
+        .w h n(DefaultT  r.get nstance(), RESULT_T MEOUT)
         .flatMap(userResults -> {
-          if (userResults.size() != 1 || !userResults.get(0).isSetUser()) {
-            return Future.exception(new UserNotFoundException(userId));
+           f (userResults.s ze() != 1 || !userResults.get(0). sSetUser()) {
+            return Future.except on(new UserNotFoundExcept on(user d));
           }
 
-          userServiceSuccesses.increment();
+          userServ ceSuccesses. ncre nt();
           return Future.value(userResults.get(0).getUser());
         });
   }
 
-  private static void applyUpdates(User user, UserModification userModification) {
-    userModification.getUpdate().stream()
-        .filter(update -> FIELD_NAME_TO_FIELD_MAP.containsKey(update.getField_name()))
-        .filter(UpdateDiffItem::isSetAfter)
+  pr vate stat c vo d applyUpdates(User user, UserMod f cat on userMod f cat on) {
+    userMod f cat on.getUpdate().stream()
+        .f lter(update -> F ELD_NAME_TO_F ELD_MAP.conta nsKey(update.getF eld_na ()))
+        .f lter(UpdateD ff em:: sSetAfter)
         .forEach(update ->
-            user.getSafety().setFieldValue(
-                FIELD_NAME_TO_FIELD_MAP.get(update.getField_name()),
+            user.getSafety().setF eldValue(
+                F ELD_NAME_TO_F ELD_MAP.get(update.getF eld_na ()),
                 Boolean.valueOf(update.getAfter()))
         );
   }
 
-  private AntisocialUserUpdate convertToAntiSocialUserUpdate(
+  pr vate Ant soc alUserUpdate convertToAnt Soc alUserUpdate(
       User user,
       UserUpdateType userUpdateType,
       long updatedAt) {
-    boolean value = SAFETY_FIELDS_MAP.get(userUpdateType).stream()
-        .anyMatch(safetyField -> (boolean) user.getSafety().getFieldValue(safetyField));
-    return new AntisocialUserUpdate(user.getId(), userUpdateType, value, updatedAt);
+    boolean value = SAFETY_F ELDS_MAP.get(userUpdateType).stream()
+        .anyMatch(safetyF eld -> (boolean) user.getSafety().getF eldValue(safetyF eld));
+    return new Ant soc alUserUpdate(user.get d(), userUpdateType, value, updatedAt);
   }
 
-  class UserNotFoundException extends Exception {
-    UserNotFoundException(long userId) {
-      super("User " + userId + " not found.");
+  class UserNotFoundExcept on extends Except on {
+    UserNotFoundExcept on(long user d) {
+      super("User " + user d + " not found.");
     }
   }
 }

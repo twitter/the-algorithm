@@ -1,40 +1,40 @@
-package com.twitter.cr_mixer.filter
+package com.tw ter.cr_m xer.f lter
 
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.util.Future
+ mport com.tw ter.cr_m xer.model.Cand dateGeneratorQuery
+ mport com.tw ter.cr_m xer.model. n  alCand date
+ mport com.tw ter.ut l.Future
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /***
- * Filters candidates that are replies
+ * F lters cand dates that are repl es
  */
-@Singleton
-case class ReplyFilter @Inject() () extends FilterBase {
-  override def name: String = this.getClass.getCanonicalName
-  override type ConfigType = Boolean
+@S ngleton
+case class ReplyF lter @ nject() () extends F lterBase {
+  overr de def na : Str ng = t .getClass.getCanon calNa 
+  overr de type Conf gType = Boolean
 
-  override def filter(
-    candidates: Seq[Seq[InitialCandidate]],
-    config: ConfigType
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    if (config) {
+  overr de def f lter(
+    cand dates: Seq[Seq[ n  alCand date]],
+    conf g: Conf gType
+  ): Future[Seq[Seq[ n  alCand date]]] = {
+     f (conf g) {
       Future.value(
-        candidates.map { candidateSeq =>
-          candidateSeq.filterNot { candidate =>
-            candidate.tweetInfo.isReply.getOrElse(false)
+        cand dates.map { cand dateSeq =>
+          cand dateSeq.f lterNot { cand date =>
+            cand date.t et nfo. sReply.getOrElse(false)
           }
         }
       )
     } else {
-      Future.value(candidates)
+      Future.value(cand dates)
     }
   }
 
-  override def requestToConfig[CGQueryType <: CandidateGeneratorQuery](
+  overr de def requestToConf g[CGQueryType <: Cand dateGeneratorQuery](
     query: CGQueryType
-  ): ConfigType = {
+  ): Conf gType = {
     true
   }
 }

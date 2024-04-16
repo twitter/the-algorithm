@@ -1,39 +1,39 @@
-package com.twitter.unified_user_actions.adapter.email_notification_event
+package com.tw ter.un f ed_user_act ons.adapter.ema l_not f cat on_event
 
-import com.twitter.ibis.thriftscala.NotificationScribe
-import com.twitter.logbase.thriftscala.LogBase
-import com.twitter.unified_user_actions.adapter.common.AdapterUtils
-import com.twitter.unified_user_actions.thriftscala.EventMetadata
-import com.twitter.unified_user_actions.thriftscala.SourceLineage
+ mport com.tw ter. b s.thr ftscala.Not f cat onScr be
+ mport com.tw ter.logbase.thr ftscala.LogBase
+ mport com.tw ter.un f ed_user_act ons.adapter.common.AdapterUt ls
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Event tadata
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.S ceL neage
 
-object EmailNotificationEventUtils {
+object Ema lNot f cat onEventUt ls {
 
   /*
-   * Extract TweetId from Logbase.page, here is a sample page below
-   * https://twitter.com/i/events/1580827044245544962?cn=ZmxleGlibGVfcmVjcw%3D%3D&refsrc=email
+   * Extract T et d from Logbase.page,  re  s a sample page below
+   * https://tw ter.com/ /events/1580827044245544962?cn=ZmxleGl bGVfcmVjcw%3D%3D&refsrc=ema l
    * */
-  def extractTweetId(path: String): Option[Long] = {
+  def extractT et d(path: Str ng): Opt on[Long] = {
     val ptn = raw".*/([0-9]+)\\??.*".r
     path match {
-      case ptn(tweetId) =>
-        Some(tweetId.toLong)
+      case ptn(t et d) =>
+        So (t et d.toLong)
       case _ =>
         None
     }
   }
 
-  def extractTweetId(logBase: LogBase): Option[Long] = logBase.page match {
-    case Some(path) => extractTweetId(path)
+  def extractT et d(logBase: LogBase): Opt on[Long] = logBase.page match {
+    case So (path) => extractT et d(path)
     case None => None
   }
 
-  def extractEventMetaData(scribe: NotificationScribe): EventMetadata =
-    EventMetadata(
-      sourceTimestampMs = scribe.timestamp,
-      receivedTimestampMs = AdapterUtils.currentTimestampMs,
-      sourceLineage = SourceLineage.EmailNotificationEvents,
-      language = scribe.logBase.flatMap(_.language),
-      countryCode = scribe.logBase.flatMap(_.country),
-      clientAppId = scribe.logBase.flatMap(_.clientAppId),
+  def extractEvent taData(scr be: Not f cat onScr be): Event tadata =
+    Event tadata(
+      s ceT  stampMs = scr be.t  stamp,
+      rece vedT  stampMs = AdapterUt ls.currentT  stampMs,
+      s ceL neage = S ceL neage.Ema lNot f cat onEvents,
+      language = scr be.logBase.flatMap(_.language),
+      countryCode = scr be.logBase.flatMap(_.country),
+      cl entApp d = scr be.logBase.flatMap(_.cl entApp d),
     )
 }

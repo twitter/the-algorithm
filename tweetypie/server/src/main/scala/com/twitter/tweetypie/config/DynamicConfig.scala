@@ -1,100 +1,100 @@
-package com.twitter.tweetypie.config
+package com.tw ter.t etyp e.conf g
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.tweetypie.Gate
-import com.twitter.tweetypie.backends.ConfigBus
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.util.Activity
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.t etyp e.Gate
+ mport com.tw ter.t etyp e.backends.Conf gBus
+ mport com.tw ter.t etyp e.cl ent_ d.Cl ent d lper
+ mport com.tw ter.ut l.Act v y
 
-case class DynamicConfig(
-  // A map of fully-qualified client ID (including the environment suffix, e.g. tweetypie.prod) to Client case class
-  clientsByFullyQualifiedId: Option[Map[String, Client]],
-  // Clients by service identifier parts.
-  clientsByRole: Option[Map[String, Seq[Client]]] = None,
-  clientsByService: Option[Map[String, Seq[Client]]] = None,
-  onlyEnvClients: Option[Seq[Client]] = None,
-  // These endpoints do not need permissions to be accessed
-  unprotectedEndpoints: Set[String] = Set("get_tweet_counts", "get_tweet_fields", "get_tweets")) {
+case class Dynam cConf g(
+  // A map of fully-qual f ed cl ent  D ( nclud ng t  env ron nt suff x, e.g. t etyp e.prod) to Cl ent case class
+  cl entsByFullyQual f ed d: Opt on[Map[Str ng, Cl ent]],
+  // Cl ents by serv ce  dent f er parts.
+  cl entsByRole: Opt on[Map[Str ng, Seq[Cl ent]]] = None,
+  cl entsByServ ce: Opt on[Map[Str ng, Seq[Cl ent]]] = None,
+  onlyEnvCl ents: Opt on[Seq[Cl ent]] = None,
+  // T se endpo nts do not need perm ss ons to be accessed
+  unprotectedEndpo nts: Set[Str ng] = Set("get_t et_counts", "get_t et_f elds", "get_t ets")) {
 
   /**
-   * Function that takes a fully qualified client id and says whether it is included in the allowList
+   * Funct on that takes a fully qual f ed cl ent  d and says w t r    s  ncluded  n t  allowL st
    */
-  val isAllowListedClient: String => Boolean =
-    clientsByFullyQualifiedId.map(clients => clients.contains _).getOrElse(_ => true)
+  val  sAllowL stedCl ent: Str ng => Boolean =
+    cl entsByFullyQual f ed d.map(cl ents => cl ents.conta ns _).getOrElse(_ => true)
 
-  def byServiceIdentifier(serviceIdentifier: ServiceIdentifier): Set[Client] =
-    Iterable.concat(
-      get(clientsByRole, serviceIdentifier.role),
-      get(clientsByService, serviceIdentifier.service),
-      onlyEnvClients.getOrElse(Seq()),
+  def byServ ce dent f er(serv ce dent f er: Serv ce dent f er): Set[Cl ent] =
+     erable.concat(
+      get(cl entsByRole, serv ce dent f er.role),
+      get(cl entsByServ ce, serv ce dent f er.serv ce),
+      onlyEnvCl ents.getOrElse(Seq()),
     )
-      .filter(_.matches(serviceIdentifier))
+      .f lter(_.matc s(serv ce dent f er))
       .toSet
 
-  private def get(clientsByKey: Option[Map[String, Seq[Client]]], key: String): Seq[Client] =
-    clientsByKey match {
-      case Some(map) => map.getOrElse(key, Seq())
+  pr vate def get(cl entsByKey: Opt on[Map[Str ng, Seq[Cl ent]]], key: Str ng): Seq[Cl ent] =
+    cl entsByKey match {
+      case So (map) => map.getOrElse(key, Seq())
       case None => Seq()
     }
 
   /**
-   * Take a fully qualified client id and says if the client has offered to shed reads if tweetypie
-   * is in an emergency
+   * Take a fully qual f ed cl ent  d and says  f t  cl ent has offered to s d reads  f t etyp e
+   *  s  n an e rgency
    */
-  val loadShedEligible: Gate[String] = Gate { (clientId: String) =>
-    val env = ClientIdHelper.getClientIdEnv(clientId)
-    clientsByFullyQualifiedId.flatMap(clients => clients.get(clientId)).exists { c =>
-      c.loadShedEnvs.contains(env)
+  val loadS dEl g ble: Gate[Str ng] = Gate { (cl ent d: Str ng) =>
+    val env = Cl ent d lper.getCl ent dEnv(cl ent d)
+    cl entsByFullyQual f ed d.flatMap(cl ents => cl ents.get(cl ent d)).ex sts { c =>
+      c.loadS dEnvs.conta ns(env)
     }
   }
 }
 
 /**
- * DynamicConfig uses ConfigBus to update Tweetypie with configuration changes
- * dynamically. Every time the config changes, the Activity[DynamicConfig] is
- * updated, and anything relying on that config will be reinitialized.
+ * Dynam cConf g uses Conf gBus to update T etyp e w h conf gurat on changes
+ * dynam cally. Every t   t  conf g changes, t  Act v y[Dynam cConf g]  s
+ * updated, and anyth ng rely ng on that conf g w ll be re n  al zed.
  */
-object DynamicConfig {
-  def fullyQualifiedClientIds(client: Client): Seq[String] = {
-    val clientId = client.clientId
-    client.environments match {
-      case Nil => Seq(clientId)
-      case envs => envs.map(env => s"$clientId.$env")
+object Dynam cConf g {
+  def fullyQual f edCl ent ds(cl ent: Cl ent): Seq[Str ng] = {
+    val cl ent d = cl ent.cl ent d
+    cl ent.env ron nts match {
+      case N l => Seq(cl ent d)
+      case envs => envs.map(env => s"$cl ent d.$env")
     }
   }
 
-  // Make a Map of fully qualified client id to Client
-  def byClientId(clients: Seq[Client]): Map[String, Client] =
-    clients.flatMap { client =>
-      fullyQualifiedClientIds(client).map { fullClientId => fullClientId -> client }
+  // Make a Map of fully qual f ed cl ent  d to Cl ent
+  def byCl ent d(cl ents: Seq[Cl ent]): Map[Str ng, Cl ent] =
+    cl ents.flatMap { cl ent =>
+      fullyQual f edCl ent ds(cl ent).map { fullCl ent d => fullCl ent d -> cl ent }
     }.toMap
 
-  def by(get: ServiceIdentifierPattern => Option[String])(clients: Seq[Client]): Map[String, Seq[Client]] =
-    clients.flatMap { c =>
-      c.serviceIdentifiers.collect {
-        case s if get(s).isDefined => (get(s).get, c)
+  def by(get: Serv ce dent f erPattern => Opt on[Str ng])(cl ents: Seq[Cl ent]): Map[Str ng, Seq[Cl ent]] =
+    cl ents.flatMap { c =>
+      c.serv ce dent f ers.collect {
+        case s  f get(s). sDef ned => (get(s).get, c)
       }
     }.groupBy(_._1).mapValues(_.map(_._2))
 
-  private[this] val clientsPath = "config/clients.yml"
+  pr vate[t ] val cl entsPath = "conf g/cl ents.yml"
 
   def apply(
-    stats: StatsReceiver,
-    configBus: ConfigBus,
-    settings: TweetServiceSettings
-  ): Activity[DynamicConfig] =
-    DynamicConfigLoader(configBus.file)
-      .apply(clientsPath, stats.scope("client_allowlist"), ClientsParser.apply)
-      .map(fromClients)
+    stats: StatsRece ver,
+    conf gBus: Conf gBus,
+    sett ngs: T etServ ceSett ngs
+  ): Act v y[Dynam cConf g] =
+    Dynam cConf gLoader(conf gBus.f le)
+      .apply(cl entsPath, stats.scope("cl ent_allowl st"), Cl entsParser.apply)
+      .map(fromCl ents)
 
-  def fromClients(clients: Option[Seq[Client]]): DynamicConfig =
-    DynamicConfig(
-      clientsByFullyQualifiedId = clients.map(byClientId),
-      clientsByRole = clients.map(by(_.role)),
-      clientsByService = clients.map(by(_.service)),
-      onlyEnvClients = clients.map(_.filter { client =>
-        client.serviceIdentifiers.exists(_.onlyEnv)
+  def fromCl ents(cl ents: Opt on[Seq[Cl ent]]): Dynam cConf g =
+    Dynam cConf g(
+      cl entsByFullyQual f ed d = cl ents.map(byCl ent d),
+      cl entsByRole = cl ents.map(by(_.role)),
+      cl entsByServ ce = cl ents.map(by(_.serv ce)),
+      onlyEnvCl ents = cl ents.map(_.f lter { cl ent =>
+        cl ent.serv ce dent f ers.ex sts(_.onlyEnv)
       }),
     )
 }

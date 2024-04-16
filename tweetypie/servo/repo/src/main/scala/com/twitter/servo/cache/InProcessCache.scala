@@ -1,63 +1,63 @@
-package com.twitter.servo.cache
+package com.tw ter.servo.cac 
 
-import com.google.common.cache.{CacheBuilder, RemovalListener}
-import com.twitter.util.Duration
-import java.util.concurrent.TimeUnit
+ mport com.google.common.cac .{Cac Bu lder, RemovalL stener}
+ mport com.tw ter.ut l.Durat on
+ mport java.ut l.concurrent.T  Un 
 
-object InProcessCache {
+object  nProcessCac  {
 
   /**
-   * Apply a read filter to exclude items in an InProcessCache
+   * Apply a read f lter to exclude  ems  n an  nProcessCac 
    */
-  def withFilter[K, V](
-    underlying: InProcessCache[K, V]
+  def w hF lter[K, V](
+    underly ng:  nProcessCac [K, V]
   )(
-    shouldFilter: (K, V) => Boolean
-  ): InProcessCache[K, V] =
-    new InProcessCache[K, V] {
-      def get(key: K): Option[V] = underlying.get(key) filterNot { shouldFilter(key, _) }
-      def set(key: K, value: V) = underlying.set(key, value)
+    shouldF lter: (K, V) => Boolean
+  ):  nProcessCac [K, V] =
+    new  nProcessCac [K, V] {
+      def get(key: K): Opt on[V] = underly ng.get(key) f lterNot { shouldF lter(key, _) }
+      def set(key: K, value: V) = underly ng.set(key, value)
     }
 }
 
 /**
- * An in-process cache interface. It is distinct from a map in that:
- * 1) All methods must be threadsafe
- * 2) A value set in cache is not guaranteed to remain in the cache.
+ * An  n-process cac   nterface.    s d st nct from a map  n that:
+ * 1) All  thods must be threadsafe
+ * 2) A value set  n cac   s not guaranteed to rema n  n t  cac .
  */
-trait InProcessCache[K, V] {
-  def get(key: K): Option[V]
-  def set(key: K, value: V): Unit
+tra   nProcessCac [K, V] {
+  def get(key: K): Opt on[V]
+  def set(key: K, value: V): Un 
 }
 
 /**
- * In-process implementation of a cache with LRU semantics and a TTL.
+ *  n-process  mple ntat on of a cac  w h LRU semant cs and a TTL.
  */
-class ExpiringLruInProcessCache[K, V](
-  ttl: Duration,
-  maximumSize: Int,
-  removalListener: Option[RemovalListener[K, V]] = None: None.type)
-    extends InProcessCache[K, V] {
+class Exp r ngLru nProcessCac [K, V](
+  ttl: Durat on,
+  max mumS ze:  nt,
+  removalL stener: Opt on[RemovalL stener[K, V]] = None: None.type)
+    extends  nProcessCac [K, V] {
 
-  private[this] val cacheBuilder =
-    CacheBuilder.newBuilder
-      .asInstanceOf[CacheBuilder[K, V]]
-      .expireAfterWrite(ttl.inMilliseconds, TimeUnit.MILLISECONDS)
-      .initialCapacity(maximumSize)
-      .maximumSize(maximumSize)
+  pr vate[t ] val cac Bu lder =
+    Cac Bu lder.newBu lder
+      .as nstanceOf[Cac Bu lder[K, V]]
+      .exp reAfterWr e(ttl. nM ll seconds, T  Un .M LL SECONDS)
+      . n  alCapac y(max mumS ze)
+      .max mumS ze(max mumS ze)
 
-  private[this] val cache =
-    removalListener match {
-      case Some(listener) =>
-        cacheBuilder
-          .removalListener(listener)
-          .build[K, V]()
+  pr vate[t ] val cac  =
+    removalL stener match {
+      case So (l stener) =>
+        cac Bu lder
+          .removalL stener(l stener)
+          .bu ld[K, V]()
       case None =>
-        cacheBuilder
-          .build[K, V]()
+        cac Bu lder
+          .bu ld[K, V]()
     }
 
-  def get(key: K): Option[V] = Option(cache.getIfPresent(key))
+  def get(key: K): Opt on[V] = Opt on(cac .get fPresent(key))
 
-  def set(key: K, value: V): Unit = cache.put(key, value)
+  def set(key: K, value: V): Un  = cac .put(key, value)
 }

@@ -1,253 +1,253 @@
-package com.twitter.usersignalservice.config
+package com.tw ter.users gnalserv ce.conf g
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.ReadableStore
-import com.twitter.usersignalservice.base.BaseSignalFetcher
-import com.twitter.usersignalservice.base.AggregatedSignalController
-import com.twitter.usersignalservice.base.FilteredSignalFetcherController
-import com.twitter.usersignalservice.base.MemcachedSignalFetcherWrapper
-import com.twitter.usersignalservice.base.Query
-import com.twitter.usersignalservice.base.SignalAggregatedInfo
-import com.twitter.usersignalservice.signals.AccountBlocksFetcher
-import com.twitter.usersignalservice.signals.AccountFollowsFetcher
-import com.twitter.usersignalservice.signals.AccountMutesFetcher
-import com.twitter.usersignalservice.signals.NotificationOpenAndClickFetcher
-import com.twitter.usersignalservice.signals.OriginalTweetsFetcher
-import com.twitter.usersignalservice.signals.ProfileVisitsFetcher
-import com.twitter.usersignalservice.signals.ProfileClickFetcher
-import com.twitter.usersignalservice.signals.RealGraphOonFetcher
-import com.twitter.usersignalservice.signals.ReplyTweetsFetcher
-import com.twitter.usersignalservice.signals.RetweetsFetcher
-import com.twitter.usersignalservice.signals.TweetClickFetcher
-import com.twitter.usersignalservice.signals.TweetFavoritesFetcher
-import com.twitter.usersignalservice.signals.TweetSharesFetcher
-import com.twitter.usersignalservice.signals.VideoTweetsPlayback50Fetcher
-import com.twitter.usersignalservice.signals.VideoTweetsQualityViewFetcher
-import com.twitter.usersignalservice.signals.NegativeEngagedUserFetcher
-import com.twitter.usersignalservice.signals.NegativeEngagedTweetFetcher
-import com.twitter.usersignalservice.thriftscala.Signal
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.util.Timer
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle. mcac d.{Cl ent =>  mcac dCl ent}
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.users gnalserv ce.base.BaseS gnalFetc r
+ mport com.tw ter.users gnalserv ce.base.AggregatedS gnalController
+ mport com.tw ter.users gnalserv ce.base.F lteredS gnalFetc rController
+ mport com.tw ter.users gnalserv ce.base. mcac dS gnalFetc rWrapper
+ mport com.tw ter.users gnalserv ce.base.Query
+ mport com.tw ter.users gnalserv ce.base.S gnalAggregated nfo
+ mport com.tw ter.users gnalserv ce.s gnals.AccountBlocksFetc r
+ mport com.tw ter.users gnalserv ce.s gnals.AccountFollowsFetc r
+ mport com.tw ter.users gnalserv ce.s gnals.AccountMutesFetc r
+ mport com.tw ter.users gnalserv ce.s gnals.Not f cat onOpenAndCl ckFetc r
+ mport com.tw ter.users gnalserv ce.s gnals.Or g nalT etsFetc r
+ mport com.tw ter.users gnalserv ce.s gnals.Prof leV s sFetc r
+ mport com.tw ter.users gnalserv ce.s gnals.Prof leCl ckFetc r
+ mport com.tw ter.users gnalserv ce.s gnals.RealGraphOonFetc r
+ mport com.tw ter.users gnalserv ce.s gnals.ReplyT etsFetc r
+ mport com.tw ter.users gnalserv ce.s gnals.Ret etsFetc r
+ mport com.tw ter.users gnalserv ce.s gnals.T etCl ckFetc r
+ mport com.tw ter.users gnalserv ce.s gnals.T etFavor esFetc r
+ mport com.tw ter.users gnalserv ce.s gnals.T etSharesFetc r
+ mport com.tw ter.users gnalserv ce.s gnals.V deoT etsPlayback50Fetc r
+ mport com.tw ter.users gnalserv ce.s gnals.V deoT etsQual yV ewFetc r
+ mport com.tw ter.users gnalserv ce.s gnals.Negat veEngagedUserFetc r
+ mport com.tw ter.users gnalserv ce.s gnals.Negat veEngagedT etFetc r
+ mport com.tw ter.users gnalserv ce.thr ftscala.S gnal
+ mport com.tw ter.users gnalserv ce.thr ftscala.S gnalType
+ mport com.tw ter.ut l.T  r
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class SignalFetcherConfig @Inject() (
-  notificationOpenAndClickFetcher: NotificationOpenAndClickFetcher,
-  accountFollowsFetcher: AccountFollowsFetcher,
-  profileVisitsFetcher: ProfileVisitsFetcher,
-  tweetFavoritesFetcher: TweetFavoritesFetcher,
-  retweetsFetcher: RetweetsFetcher,
-  replyTweetsFetcher: ReplyTweetsFetcher,
-  originalTweetsFetcher: OriginalTweetsFetcher,
-  tweetSharesFetcher: TweetSharesFetcher,
-  memcachedClient: MemcachedClient,
-  realGraphOonFetcher: RealGraphOonFetcher,
-  tweetClickFetcher: TweetClickFetcher,
-  videoTweetsPlayback50Fetcher: VideoTweetsPlayback50Fetcher,
-  videoTweetsQualityViewFetcher: VideoTweetsQualityViewFetcher,
-  accountMutesFetcher: AccountMutesFetcher,
-  accountBlocksFetcher: AccountBlocksFetcher,
-  profileClickFetcher: ProfileClickFetcher,
-  negativeEngagedTweetFetcher: NegativeEngagedTweetFetcher,
-  negativeEngagedUserFetcher: NegativeEngagedUserFetcher,
-  statsReceiver: StatsReceiver,
-  timer: Timer) {
+@S ngleton
+class S gnalFetc rConf g @ nject() (
+  not f cat onOpenAndCl ckFetc r: Not f cat onOpenAndCl ckFetc r,
+  accountFollowsFetc r: AccountFollowsFetc r,
+  prof leV s sFetc r: Prof leV s sFetc r,
+  t etFavor esFetc r: T etFavor esFetc r,
+  ret etsFetc r: Ret etsFetc r,
+  replyT etsFetc r: ReplyT etsFetc r,
+  or g nalT etsFetc r: Or g nalT etsFetc r,
+  t etSharesFetc r: T etSharesFetc r,
+   mcac dCl ent:  mcac dCl ent,
+  realGraphOonFetc r: RealGraphOonFetc r,
+  t etCl ckFetc r: T etCl ckFetc r,
+  v deoT etsPlayback50Fetc r: V deoT etsPlayback50Fetc r,
+  v deoT etsQual yV ewFetc r: V deoT etsQual yV ewFetc r,
+  accountMutesFetc r: AccountMutesFetc r,
+  accountBlocksFetc r: AccountBlocksFetc r,
+  prof leCl ckFetc r: Prof leCl ckFetc r,
+  negat veEngagedT etFetc r: Negat veEngagedT etFetc r,
+  negat veEngagedUserFetc r: Negat veEngagedUserFetc r,
+  statsRece ver: StatsRece ver,
+  t  r: T  r) {
 
-  val MemcachedProfileVisitsFetcher: BaseSignalFetcher =
-    MemcachedSignalFetcherWrapper(
-      memcachedClient,
-      profileVisitsFetcher,
-      ttl = 8.hours,
-      statsReceiver,
-      keyPrefix = "uss:pv",
-      timer)
+  val  mcac dProf leV s sFetc r: BaseS gnalFetc r =
+     mcac dS gnalFetc rWrapper(
+       mcac dCl ent,
+      prof leV s sFetc r,
+      ttl = 8.h s,
+      statsRece ver,
+      keyPref x = "uss:pv",
+      t  r)
 
-  val MemcachedAccountFollowsFetcher: BaseSignalFetcher = MemcachedSignalFetcherWrapper(
-    memcachedClient,
-    accountFollowsFetcher,
-    ttl = 5.minute,
-    statsReceiver,
-    keyPrefix = "uss:af",
-    timer)
+  val  mcac dAccountFollowsFetc r: BaseS gnalFetc r =  mcac dS gnalFetc rWrapper(
+     mcac dCl ent,
+    accountFollowsFetc r,
+    ttl = 5.m nute,
+    statsRece ver,
+    keyPref x = "uss:af",
+    t  r)
 
-  val GoodTweetClickDdgFetcher: SignalType => FilteredSignalFetcherController = signalType =>
-    FilteredSignalFetcherController(
-      tweetClickFetcher,
-      signalType,
-      statsReceiver,
-      timer,
-      Map(SignalType.NegativeEngagedTweetId -> negativeEngagedTweetFetcher)
+  val GoodT etCl ckDdgFetc r: S gnalType => F lteredS gnalFetc rController = s gnalType =>
+    F lteredS gnalFetc rController(
+      t etCl ckFetc r,
+      s gnalType,
+      statsRece ver,
+      t  r,
+      Map(S gnalType.Negat veEngagedT et d -> negat veEngagedT etFetc r)
     )
 
-  val GoodProfileClickDdgFetcher: SignalType => FilteredSignalFetcherController = signalType =>
-    FilteredSignalFetcherController(
-      profileClickFetcher,
-      signalType,
-      statsReceiver,
-      timer,
-      Map(SignalType.NegativeEngagedUserId -> negativeEngagedUserFetcher)
+  val GoodProf leCl ckDdgFetc r: S gnalType => F lteredS gnalFetc rController = s gnalType =>
+    F lteredS gnalFetc rController(
+      prof leCl ckFetc r,
+      s gnalType,
+      statsRece ver,
+      t  r,
+      Map(S gnalType.Negat veEngagedUser d -> negat veEngagedUserFetc r)
     )
 
-  val GoodProfileClickDdgFetcherWithBlocksMutes: SignalType => FilteredSignalFetcherController =
-    signalType =>
-      FilteredSignalFetcherController(
-        profileClickFetcher,
-        signalType,
-        statsReceiver,
-        timer,
+  val GoodProf leCl ckDdgFetc rW hBlocksMutes: S gnalType => F lteredS gnalFetc rController =
+    s gnalType =>
+      F lteredS gnalFetc rController(
+        prof leCl ckFetc r,
+        s gnalType,
+        statsRece ver,
+        t  r,
         Map(
-          SignalType.NegativeEngagedUserId -> negativeEngagedUserFetcher,
-          SignalType.AccountMute -> accountMutesFetcher,
-          SignalType.AccountBlock -> accountBlocksFetcher
+          S gnalType.Negat veEngagedUser d -> negat veEngagedUserFetc r,
+          S gnalType.AccountMute -> accountMutesFetc r,
+          S gnalType.AccountBlock -> accountBlocksFetc r
         )
       )
 
-  val realGraphOonFilteredFetcher: FilteredSignalFetcherController =
-    FilteredSignalFetcherController(
-      realGraphOonFetcher,
-      SignalType.RealGraphOon,
-      statsReceiver,
-      timer,
+  val realGraphOonF lteredFetc r: F lteredS gnalFetc rController =
+    F lteredS gnalFetc rController(
+      realGraphOonFetc r,
+      S gnalType.RealGraphOon,
+      statsRece ver,
+      t  r,
       Map(
-        SignalType.NegativeEngagedUserId -> negativeEngagedUserFetcher
+        S gnalType.Negat veEngagedUser d -> negat veEngagedUserFetc r
       )
     )
 
-  val videoTweetsQualityViewFilteredFetcher: FilteredSignalFetcherController =
-    FilteredSignalFetcherController(
-      videoTweetsQualityViewFetcher,
-      SignalType.VideoView90dQualityV1,
-      statsReceiver,
-      timer,
-      Map(SignalType.NegativeEngagedTweetId -> negativeEngagedTweetFetcher)
+  val v deoT etsQual yV ewF lteredFetc r: F lteredS gnalFetc rController =
+    F lteredS gnalFetc rController(
+      v deoT etsQual yV ewFetc r,
+      S gnalType.V deoV ew90dQual yV1,
+      statsRece ver,
+      t  r,
+      Map(S gnalType.Negat veEngagedT et d -> negat veEngagedT etFetc r)
     )
 
-  val videoTweetsPlayback50FilteredFetcher: FilteredSignalFetcherController =
-    FilteredSignalFetcherController(
-      videoTweetsPlayback50Fetcher,
-      SignalType.VideoView90dPlayback50V1,
-      statsReceiver,
-      timer,
-      Map(SignalType.NegativeEngagedTweetId -> negativeEngagedTweetFetcher)
+  val v deoT etsPlayback50F lteredFetc r: F lteredS gnalFetc rController =
+    F lteredS gnalFetc rController(
+      v deoT etsPlayback50Fetc r,
+      S gnalType.V deoV ew90dPlayback50V1,
+      statsRece ver,
+      t  r,
+      Map(S gnalType.Negat veEngagedT et d -> negat veEngagedT etFetc r)
     )
 
-  val uniformTweetSignalInfo: Seq[SignalAggregatedInfo] = Seq(
-    SignalAggregatedInfo(SignalType.TweetFavorite, tweetFavoritesFetcher),
-    SignalAggregatedInfo(SignalType.Retweet, retweetsFetcher),
-    SignalAggregatedInfo(SignalType.Reply, replyTweetsFetcher),
-    SignalAggregatedInfo(SignalType.OriginalTweet, originalTweetsFetcher),
-    SignalAggregatedInfo(SignalType.TweetShareV1, tweetSharesFetcher),
-    SignalAggregatedInfo(SignalType.VideoView90dQualityV1, videoTweetsQualityViewFilteredFetcher),
+  val un formT etS gnal nfo: Seq[S gnalAggregated nfo] = Seq(
+    S gnalAggregated nfo(S gnalType.T etFavor e, t etFavor esFetc r),
+    S gnalAggregated nfo(S gnalType.Ret et, ret etsFetc r),
+    S gnalAggregated nfo(S gnalType.Reply, replyT etsFetc r),
+    S gnalAggregated nfo(S gnalType.Or g nalT et, or g nalT etsFetc r),
+    S gnalAggregated nfo(S gnalType.T etShareV1, t etSharesFetc r),
+    S gnalAggregated nfo(S gnalType.V deoV ew90dQual yV1, v deoT etsQual yV ewF lteredFetc r),
   )
 
-  val uniformProducerSignalInfo: Seq[SignalAggregatedInfo] = Seq(
-    SignalAggregatedInfo(SignalType.AccountFollow, MemcachedAccountFollowsFetcher),
-    SignalAggregatedInfo(
-      SignalType.RepeatedProfileVisit90dMinVisit6V1,
-      MemcachedProfileVisitsFetcher),
+  val un formProducerS gnal nfo: Seq[S gnalAggregated nfo] = Seq(
+    S gnalAggregated nfo(S gnalType.AccountFollow,  mcac dAccountFollowsFetc r),
+    S gnalAggregated nfo(
+      S gnalType.RepeatedProf leV s 90dM nV s 6V1,
+       mcac dProf leV s sFetc r),
   )
 
-  val memcachedAccountBlocksFetcher: MemcachedSignalFetcherWrapper = MemcachedSignalFetcherWrapper(
-    memcachedClient,
-    accountBlocksFetcher,
-    ttl = 5.minutes,
-    statsReceiver,
-    keyPrefix = "uss:ab",
-    timer)
+  val  mcac dAccountBlocksFetc r:  mcac dS gnalFetc rWrapper =  mcac dS gnalFetc rWrapper(
+     mcac dCl ent,
+    accountBlocksFetc r,
+    ttl = 5.m nutes,
+    statsRece ver,
+    keyPref x = "uss:ab",
+    t  r)
 
-  val memcachedAccountMutesFetcher: MemcachedSignalFetcherWrapper = MemcachedSignalFetcherWrapper(
-    memcachedClient,
-    accountMutesFetcher,
-    ttl = 5.minutes,
-    statsReceiver,
-    keyPrefix = "uss:am",
-    timer)
+  val  mcac dAccountMutesFetc r:  mcac dS gnalFetc rWrapper =  mcac dS gnalFetc rWrapper(
+     mcac dCl ent,
+    accountMutesFetc r,
+    ttl = 5.m nutes,
+    statsRece ver,
+    keyPref x = "uss:am",
+    t  r)
 
-  val SignalFetcherMapper: Map[SignalType, ReadableStore[Query, Seq[Signal]]] = Map(
-    /* Raw Signals */
-    SignalType.AccountFollow -> accountFollowsFetcher,
-    SignalType.AccountFollowWithDelay -> MemcachedAccountFollowsFetcher,
-    SignalType.GoodProfileClick -> GoodProfileClickDdgFetcher(SignalType.GoodProfileClick),
-    SignalType.GoodProfileClick20s -> GoodProfileClickDdgFetcher(SignalType.GoodProfileClick20s),
-    SignalType.GoodProfileClick30s -> GoodProfileClickDdgFetcher(SignalType.GoodProfileClick30s),
-    SignalType.GoodProfileClickFiltered -> GoodProfileClickDdgFetcherWithBlocksMutes(
-      SignalType.GoodProfileClick),
-    SignalType.GoodProfileClick20sFiltered -> GoodProfileClickDdgFetcherWithBlocksMutes(
-      SignalType.GoodProfileClick20s),
-    SignalType.GoodProfileClick30sFiltered -> GoodProfileClickDdgFetcherWithBlocksMutes(
-      SignalType.GoodProfileClick30s),
-    SignalType.GoodTweetClick -> GoodTweetClickDdgFetcher(SignalType.GoodTweetClick),
-    SignalType.GoodTweetClick5s -> GoodTweetClickDdgFetcher(SignalType.GoodTweetClick5s),
-    SignalType.GoodTweetClick10s -> GoodTweetClickDdgFetcher(SignalType.GoodTweetClick10s),
-    SignalType.GoodTweetClick30s -> GoodTweetClickDdgFetcher(SignalType.GoodTweetClick30s),
-    SignalType.NegativeEngagedTweetId -> negativeEngagedTweetFetcher,
-    SignalType.NegativeEngagedUserId -> negativeEngagedUserFetcher,
-    SignalType.NotificationOpenAndClickV1 -> notificationOpenAndClickFetcher,
-    SignalType.OriginalTweet -> originalTweetsFetcher,
-    SignalType.OriginalTweet90dV2 -> originalTweetsFetcher,
-    SignalType.RealGraphOon -> realGraphOonFilteredFetcher,
-    SignalType.RepeatedProfileVisit14dMinVisit2V1 -> MemcachedProfileVisitsFetcher,
-    SignalType.RepeatedProfileVisit14dMinVisit2V1NoNegative -> FilteredSignalFetcherController(
-      MemcachedProfileVisitsFetcher,
-      SignalType.RepeatedProfileVisit14dMinVisit2V1NoNegative,
-      statsReceiver,
-      timer,
+  val S gnalFetc rMapper: Map[S gnalType, ReadableStore[Query, Seq[S gnal]]] = Map(
+    /* Raw S gnals */
+    S gnalType.AccountFollow -> accountFollowsFetc r,
+    S gnalType.AccountFollowW hDelay ->  mcac dAccountFollowsFetc r,
+    S gnalType.GoodProf leCl ck -> GoodProf leCl ckDdgFetc r(S gnalType.GoodProf leCl ck),
+    S gnalType.GoodProf leCl ck20s -> GoodProf leCl ckDdgFetc r(S gnalType.GoodProf leCl ck20s),
+    S gnalType.GoodProf leCl ck30s -> GoodProf leCl ckDdgFetc r(S gnalType.GoodProf leCl ck30s),
+    S gnalType.GoodProf leCl ckF ltered -> GoodProf leCl ckDdgFetc rW hBlocksMutes(
+      S gnalType.GoodProf leCl ck),
+    S gnalType.GoodProf leCl ck20sF ltered -> GoodProf leCl ckDdgFetc rW hBlocksMutes(
+      S gnalType.GoodProf leCl ck20s),
+    S gnalType.GoodProf leCl ck30sF ltered -> GoodProf leCl ckDdgFetc rW hBlocksMutes(
+      S gnalType.GoodProf leCl ck30s),
+    S gnalType.GoodT etCl ck -> GoodT etCl ckDdgFetc r(S gnalType.GoodT etCl ck),
+    S gnalType.GoodT etCl ck5s -> GoodT etCl ckDdgFetc r(S gnalType.GoodT etCl ck5s),
+    S gnalType.GoodT etCl ck10s -> GoodT etCl ckDdgFetc r(S gnalType.GoodT etCl ck10s),
+    S gnalType.GoodT etCl ck30s -> GoodT etCl ckDdgFetc r(S gnalType.GoodT etCl ck30s),
+    S gnalType.Negat veEngagedT et d -> negat veEngagedT etFetc r,
+    S gnalType.Negat veEngagedUser d -> negat veEngagedUserFetc r,
+    S gnalType.Not f cat onOpenAndCl ckV1 -> not f cat onOpenAndCl ckFetc r,
+    S gnalType.Or g nalT et -> or g nalT etsFetc r,
+    S gnalType.Or g nalT et90dV2 -> or g nalT etsFetc r,
+    S gnalType.RealGraphOon -> realGraphOonF lteredFetc r,
+    S gnalType.RepeatedProf leV s 14dM nV s 2V1 ->  mcac dProf leV s sFetc r,
+    S gnalType.RepeatedProf leV s 14dM nV s 2V1NoNegat ve -> F lteredS gnalFetc rController(
+       mcac dProf leV s sFetc r,
+      S gnalType.RepeatedProf leV s 14dM nV s 2V1NoNegat ve,
+      statsRece ver,
+      t  r,
       Map(
-        SignalType.AccountMute -> accountMutesFetcher,
-        SignalType.AccountBlock -> accountBlocksFetcher)
+        S gnalType.AccountMute -> accountMutesFetc r,
+        S gnalType.AccountBlock -> accountBlocksFetc r)
     ),
-    SignalType.RepeatedProfileVisit90dMinVisit6V1 -> MemcachedProfileVisitsFetcher,
-    SignalType.RepeatedProfileVisit90dMinVisit6V1NoNegative -> FilteredSignalFetcherController(
-      MemcachedProfileVisitsFetcher,
-      SignalType.RepeatedProfileVisit90dMinVisit6V1NoNegative,
-      statsReceiver,
-      timer,
+    S gnalType.RepeatedProf leV s 90dM nV s 6V1 ->  mcac dProf leV s sFetc r,
+    S gnalType.RepeatedProf leV s 90dM nV s 6V1NoNegat ve -> F lteredS gnalFetc rController(
+       mcac dProf leV s sFetc r,
+      S gnalType.RepeatedProf leV s 90dM nV s 6V1NoNegat ve,
+      statsRece ver,
+      t  r,
       Map(
-        SignalType.AccountMute -> accountMutesFetcher,
-        SignalType.AccountBlock -> accountBlocksFetcher),
+        S gnalType.AccountMute -> accountMutesFetc r,
+        S gnalType.AccountBlock -> accountBlocksFetc r),
     ),
-    SignalType.RepeatedProfileVisit180dMinVisit6V1 -> MemcachedProfileVisitsFetcher,
-    SignalType.RepeatedProfileVisit180dMinVisit6V1NoNegative -> FilteredSignalFetcherController(
-      MemcachedProfileVisitsFetcher,
-      SignalType.RepeatedProfileVisit180dMinVisit6V1NoNegative,
-      statsReceiver,
-      timer,
+    S gnalType.RepeatedProf leV s 180dM nV s 6V1 ->  mcac dProf leV s sFetc r,
+    S gnalType.RepeatedProf leV s 180dM nV s 6V1NoNegat ve -> F lteredS gnalFetc rController(
+       mcac dProf leV s sFetc r,
+      S gnalType.RepeatedProf leV s 180dM nV s 6V1NoNegat ve,
+      statsRece ver,
+      t  r,
       Map(
-        SignalType.AccountMute -> accountMutesFetcher,
-        SignalType.AccountBlock -> accountBlocksFetcher),
+        S gnalType.AccountMute -> accountMutesFetc r,
+        S gnalType.AccountBlock -> accountBlocksFetc r),
     ),
-    SignalType.Reply -> replyTweetsFetcher,
-    SignalType.Reply90dV2 -> replyTweetsFetcher,
-    SignalType.Retweet -> retweetsFetcher,
-    SignalType.Retweet90dV2 -> retweetsFetcher,
-    SignalType.TweetFavorite -> tweetFavoritesFetcher,
-    SignalType.TweetFavorite90dV2 -> tweetFavoritesFetcher,
-    SignalType.TweetShareV1 -> tweetSharesFetcher,
-    SignalType.VideoView90dQualityV1 -> videoTweetsQualityViewFilteredFetcher,
-    SignalType.VideoView90dPlayback50V1 -> videoTweetsPlayback50FilteredFetcher,
-    /* Aggregated Signals */
-    SignalType.ProducerBasedUnifiedEngagementWeightedSignal -> AggregatedSignalController(
-      uniformProducerSignalInfo,
-      uniformProducerSignalEngagementAggregation,
-      statsReceiver,
-      timer
+    S gnalType.Reply -> replyT etsFetc r,
+    S gnalType.Reply90dV2 -> replyT etsFetc r,
+    S gnalType.Ret et -> ret etsFetc r,
+    S gnalType.Ret et90dV2 -> ret etsFetc r,
+    S gnalType.T etFavor e -> t etFavor esFetc r,
+    S gnalType.T etFavor e90dV2 -> t etFavor esFetc r,
+    S gnalType.T etShareV1 -> t etSharesFetc r,
+    S gnalType.V deoV ew90dQual yV1 -> v deoT etsQual yV ewF lteredFetc r,
+    S gnalType.V deoV ew90dPlayback50V1 -> v deoT etsPlayback50F lteredFetc r,
+    /* Aggregated S gnals */
+    S gnalType.ProducerBasedUn f edEngage nt  ghtedS gnal -> AggregatedS gnalController(
+      un formProducerS gnal nfo,
+      un formProducerS gnalEngage ntAggregat on,
+      statsRece ver,
+      t  r
     ),
-    SignalType.TweetBasedUnifiedEngagementWeightedSignal -> AggregatedSignalController(
-      uniformTweetSignalInfo,
-      uniformTweetSignalEngagementAggregation,
-      statsReceiver,
-      timer
+    S gnalType.T etBasedUn f edEngage nt  ghtedS gnal -> AggregatedS gnalController(
+      un formT etS gnal nfo,
+      un formT etS gnalEngage ntAggregat on,
+      statsRece ver,
+      t  r
     ),
-    SignalType.AdFavorite -> tweetFavoritesFetcher,
-    /* Negative Signals */
-    SignalType.AccountBlock -> memcachedAccountBlocksFetcher,
-    SignalType.AccountMute -> memcachedAccountMutesFetcher,
-    SignalType.TweetDontLike -> negativeEngagedTweetFetcher,
-    SignalType.TweetReport -> negativeEngagedTweetFetcher,
-    SignalType.TweetSeeFewer -> negativeEngagedTweetFetcher,
+    S gnalType.AdFavor e -> t etFavor esFetc r,
+    /* Negat ve S gnals */
+    S gnalType.AccountBlock ->  mcac dAccountBlocksFetc r,
+    S gnalType.AccountMute ->  mcac dAccountMutesFetc r,
+    S gnalType.T etDontL ke -> negat veEngagedT etFetc r,
+    S gnalType.T etReport -> negat veEngagedT etFetc r,
+    S gnalType.T etSeeFe r -> negat veEngagedT etFetc r,
   )
 
 }

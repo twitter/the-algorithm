@@ -1,6 +1,6 @@
-# Sims Expansion Candidate Source
-provides similar accounts based on the Sims algorithm for a given set of accounts.
+# S ms Expans on Cand date S ce
+prov des s m lar accounts based on t  S ms algor hm for a g ven set of accounts.
 
-This is a 2nd-hop expansion, meaning that the input accounts could be a user's recently engaged, followed, or algorithm-generated (such as RealGraph) accounts.
+T   s a 2nd-hop expans on,  an ng that t   nput accounts could be a user's recently engaged, follo d, or algor hm-generated (such as RealGraph) accounts.
 
-For more information on Sims and how it is utilized in the Follow Recommendations Service, please refer to the `follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/candidate_sources/sims/README.md` file.
+For more  nformat on on S ms and how    s ut l zed  n t  Follow Recom ndat ons Serv ce, please refer to t  `follow-recom ndat ons-serv ce/common/src/ma n/scala/com/tw ter/follow_recom ndat ons/common/cand date_s ces/s ms/README.md` f le.

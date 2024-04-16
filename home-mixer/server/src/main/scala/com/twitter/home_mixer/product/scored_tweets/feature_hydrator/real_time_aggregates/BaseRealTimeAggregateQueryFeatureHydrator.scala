@@ -1,36 +1,36 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.real_time_aggregates
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.real_t  _aggregates
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.datarecord.DataRecord nAFeature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.ut l.OffloadFuturePools
+ mport com.tw ter.st ch.St ch
 
-trait BaseRealTimeAggregateQueryFeatureHydrator[K]
-    extends QueryFeatureHydrator[PipelineQuery]
-    with BaseRealtimeAggregateHydrator[K] {
+tra  BaseRealT  AggregateQueryFeatureHydrator[K]
+    extends QueryFeatureHydrator[P pel neQuery]
+    w h BaseRealt  AggregateHydrator[K] {
 
-  val outputFeature: DataRecordInAFeature[PipelineQuery]
+  val outputFeature: DataRecord nAFeature[P pel neQuery]
 
-  override def features: Set[Feature[_, _]] = Set(outputFeature)
+  overr de def features: Set[Feature[_, _]] = Set(outputFeature)
 
-  override lazy val statScope: String = identifier.toString
+  overr de lazy val statScope: Str ng =  dent f er.toStr ng
 
-  def keysFromQueryAndCandidates(
-    query: PipelineQuery
-  ): Option[K]
+  def keysFromQueryAndCand dates(
+    query: P pel neQuery
+  ): Opt on[K]
 
-  override def hydrate(
-    query: PipelineQuery
-  ): Stitch[FeatureMap] = OffloadFuturePools.offloadFuture {
-    val possiblyKeys = keysFromQueryAndCandidates(query)
-    fetchAndConstructDataRecords(Seq(possiblyKeys)).map { dataRecords =>
-      FeatureMapBuilder()
-        .add(outputFeature, dataRecords.head)
-        .build()
+  overr de def hydrate(
+    query: P pel neQuery
+  ): St ch[FeatureMap] = OffloadFuturePools.offloadFuture {
+    val poss blyKeys = keysFromQueryAndCand dates(query)
+    fetchAndConstructDataRecords(Seq(poss blyKeys)).map { dataRecords =>
+      FeatureMapBu lder()
+        .add(outputFeature, dataRecords. ad)
+        .bu ld()
     }
   }
 }

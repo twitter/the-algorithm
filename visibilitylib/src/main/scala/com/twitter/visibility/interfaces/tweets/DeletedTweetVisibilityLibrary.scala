@@ -1,56 +1,56 @@
-package com.twitter.visibility.interfaces.tweets
+package com.tw ter.v s b l y. nterfaces.t ets
 
-import com.twitter.decider.Decider
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.features.TweetDeleteReason
-import com.twitter.visibility.features.TweetIsInnerQuotedTweet
-import com.twitter.visibility.features.TweetIsRetweet
-import com.twitter.visibility.generators.TombstoneGenerator
-import com.twitter.visibility.models.ContentId.DeleteTweetId
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.TweetDeleteReason.TweetDeleteReason
-import com.twitter.visibility.models.ViewerContext
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.v s b l y.V s b l yL brary
+ mport com.tw ter.v s b l y.bu lder.V s b l yResult
+ mport com.tw ter.v s b l y.features.T etDeleteReason
+ mport com.tw ter.v s b l y.features.T et s nnerQuotedT et
+ mport com.tw ter.v s b l y.features.T et sRet et
+ mport com.tw ter.v s b l y.generators.TombstoneGenerator
+ mport com.tw ter.v s b l y.models.Content d.DeleteT et d
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.models.T etDeleteReason.T etDeleteReason
+ mport com.tw ter.v s b l y.models.V e rContext
 
-object DeletedTweetVisibilityLibrary {
-  type Type = DeletedTweetVisibilityLibrary.Request => Stitch[VisibilityResult]
+object DeletedT etV s b l yL brary {
+  type Type = DeletedT etV s b l yL brary.Request => St ch[V s b l yResult]
 
   case class Request(
-    tweetId: Long,
+    t et d: Long,
     safetyLevel: SafetyLevel,
-    viewerContext: ViewerContext,
-    tweetDeleteReason: TweetDeleteReason,
-    isRetweet: Boolean,
-    isInnerQuotedTweet: Boolean,
+    v e rContext: V e rContext,
+    t etDeleteReason: T etDeleteReason,
+     sRet et: Boolean,
+     s nnerQuotedT et: Boolean,
   )
 
   def apply(
-    visibilityLibrary: VisibilityLibrary,
-    decider: Decider,
+    v s b l yL brary: V s b l yL brary,
+    dec der: Dec der,
     tombstoneGenerator: TombstoneGenerator,
   ): Type = {
-    val vfEngineCounter = visibilityLibrary.statsReceiver.counter("vf_engine_requests")
+    val vfEng neCounter = v s b l yL brary.statsRece ver.counter("vf_eng ne_requests")
 
     (request: Request) => {
-      vfEngineCounter.incr()
-      val contentId = DeleteTweetId(request.tweetId)
-      val language = request.viewerContext.requestLanguageCode.getOrElse("en")
+      vfEng neCounter. ncr()
+      val content d = DeleteT et d(request.t et d)
+      val language = request.v e rContext.requestLanguageCode.getOrElse("en")
 
       val featureMap =
-        visibilityLibrary.featureMapBuilder(
+        v s b l yL brary.featureMapBu lder(
           Seq(
-            _.withConstantFeature(TweetIsInnerQuotedTweet, request.isInnerQuotedTweet),
-            _.withConstantFeature(TweetIsRetweet, request.isRetweet),
-            _.withConstantFeature(TweetDeleteReason, request.tweetDeleteReason)
+            _.w hConstantFeature(T et s nnerQuotedT et, request. s nnerQuotedT et),
+            _.w hConstantFeature(T et sRet et, request. sRet et),
+            _.w hConstantFeature(T etDeleteReason, request.t etDeleteReason)
           )
         )
 
-      visibilityLibrary
-        .runRuleEngine(
-          contentId,
+      v s b l yL brary
+        .runRuleEng ne(
+          content d,
           featureMap,
-          request.viewerContext,
+          request.v e rContext,
           request.safetyLevel
         )
         .map(tombstoneGenerator(_, language))

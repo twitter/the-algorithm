@@ -1,36 +1,36 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.relevance.ranking.ActionChainManager;
-import com.twitter.search.common.runtime.ActionChainDebugManager;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
-import com.twitter.util.FutureEventListener;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.common.relevance.rank ng.Act onCha nManager;
+ mport com.tw ter.search.common.runt  .Act onCha nDebugManager;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.ut l.Future;
+ mport com.tw ter.ut l.FutureEventL stener;
 
 /**
- * Initialize request-scope state and clean them at the end.
+ *  n  al ze request-scope state and clean t m at t  end.
  */
-public class InitializeFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
-    ActionChainDebugManager.update(new ActionChainManager(request.getDebugMode()), "EarlybirdRoot");
-    return service.apply(request).addEventListener(new FutureEventListener<EarlybirdResponse>() {
-      @Override
-      public void onSuccess(EarlybirdResponse response) {
+publ c class  n  al zeF lter extends S mpleF lter<Earlyb rdRequest, Earlyb rdResponse> {
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(Earlyb rdRequest request,
+                                         Serv ce<Earlyb rdRequest, Earlyb rdResponse> serv ce) {
+    Act onCha nDebugManager.update(new Act onCha nManager(request.getDebugMode()), "Earlyb rdRoot");
+    return serv ce.apply(request).addEventL stener(new FutureEventL stener<Earlyb rdResponse>() {
+      @Overr de
+      publ c vo d onSuccess(Earlyb rdResponse response) {
         cleanup();
       }
 
-      @Override
-      public void onFailure(Throwable cause) {
+      @Overr de
+      publ c vo d onFa lure(Throwable cause) {
         cleanup();
       }
     });
   }
 
-  private void cleanup() {
-    ActionChainDebugManager.clearLocals();
+  pr vate vo d cleanup() {
+    Act onCha nDebugManager.clearLocals();
   }
 }

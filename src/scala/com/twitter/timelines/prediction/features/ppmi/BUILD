@@ -1,8 +1,8 @@
-scala_library(
-    sources = ["*.scala"],
+scala_l brary(
+    s ces = ["*.scala"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/java/com/twitter/ml/api:api-base",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "src/java/com/tw ter/ml/ap :ap -base",
     ],
 )

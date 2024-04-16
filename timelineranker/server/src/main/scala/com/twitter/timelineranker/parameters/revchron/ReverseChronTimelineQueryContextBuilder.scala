@@ -1,71 +1,71 @@
-package com.twitter.timelineranker.parameters.revchron
+package com.tw ter.t  l neranker.para ters.revchron
 
-import com.twitter.timelineranker.config.RuntimeConfiguration
-import com.twitter.timelineranker.decider.DeciderKey
-import com.twitter.timelineranker.model._
-import com.twitter.timelineranker.parameters.util.RequestContextBuilder
-import com.twitter.timelines.configapi.Config
-import com.twitter.timelines.decider.FeatureValue
-import com.twitter.util.Future
+ mport com.tw ter.t  l neranker.conf g.Runt  Conf gurat on
+ mport com.tw ter.t  l neranker.dec der.Dec derKey
+ mport com.tw ter.t  l neranker.model._
+ mport com.tw ter.t  l neranker.para ters.ut l.RequestContextBu lder
+ mport com.tw ter.t  l nes.conf gap .Conf g
+ mport com.tw ter.t  l nes.dec der.FeatureValue
+ mport com.tw ter.ut l.Future
 
-object ReverseChronTimelineQueryContextBuilder {
-  val MaxCountLimitKey: Seq[String] = Seq("search_request_max_count_limit")
+object ReverseChronT  l neQueryContextBu lder {
+  val MaxCountL m Key: Seq[Str ng] = Seq("search_request_max_count_l m ")
 }
 
-class ReverseChronTimelineQueryContextBuilder(
-  config: Config,
-  runtimeConfig: RuntimeConfiguration,
-  requestContextBuilder: RequestContextBuilder) {
+class ReverseChronT  l neQueryContextBu lder(
+  conf g: Conf g,
+  runt  Conf g: Runt  Conf gurat on,
+  requestContextBu lder: RequestContextBu lder) {
 
-  import ReverseChronTimelineQueryContext._
-  import ReverseChronTimelineQueryContextBuilder._
+   mport ReverseChronT  l neQueryContext._
+   mport ReverseChronT  l neQueryContextBu lder._
 
-  private val maxCountMultiplier = FeatureValue(
-    runtimeConfig.deciderGateBuilder,
-    DeciderKey.MultiplierOfMaterializationTweetsFetched,
-    MaxCountMultiplier,
+  pr vate val maxCountMult pl er = FeatureValue(
+    runt  Conf g.dec derGateBu lder,
+    Dec derKey.Mult pl erOfMater al zat onT etsFetc d,
+    MaxCountMult pl er,
     value => (value / 100.0)
   )
 
-  private val backfillFilteredEntriesGate =
-    runtimeConfig.deciderGateBuilder.linearGate(DeciderKey.BackfillFilteredEntries)
+  pr vate val backf llF lteredEntr esGate =
+    runt  Conf g.dec derGateBu lder.l nearGate(Dec derKey.Backf llF lteredEntr es)
 
-  private val tweetsFilteringLossageThresholdPercent = FeatureValue(
-    runtimeConfig.deciderGateBuilder,
-    DeciderKey.TweetsFilteringLossageThreshold,
-    TweetsFilteringLossageThresholdPercent,
+  pr vate val t etsF lter ngLossageThresholdPercent = FeatureValue(
+    runt  Conf g.dec derGateBu lder,
+    Dec derKey.T etsF lter ngLossageThreshold,
+    T etsF lter ngLossageThresholdPercent,
     value => (value / 100)
   )
 
-  private val tweetsFilteringLossageLimitPercent = FeatureValue(
-    runtimeConfig.deciderGateBuilder,
-    DeciderKey.TweetsFilteringLossageLimit,
-    TweetsFilteringLossageLimitPercent,
+  pr vate val t etsF lter ngLossageL m Percent = FeatureValue(
+    runt  Conf g.dec derGateBu lder,
+    Dec derKey.T etsF lter ngLossageL m ,
+    T etsF lter ngLossageL m Percent,
     value => (value / 100)
   )
 
-  private def getMaxCountFromConfigStore(): Int = {
-    runtimeConfig.configStore.getAsInt(MaxCountLimitKey).getOrElse(MaxCount.default)
+  pr vate def getMaxCountFromConf gStore():  nt = {
+    runt  Conf g.conf gStore.getAs nt(MaxCountL m Key).getOrElse(MaxCount.default)
   }
 
-  def apply(query: ReverseChronTimelineQuery): Future[ReverseChronTimelineQueryContext] = {
-    requestContextBuilder(Some(query.userId), deviceContext = None).map { baseContext =>
-      val params = config(baseContext, runtimeConfig.statsReceiver)
+  def apply(query: ReverseChronT  l neQuery): Future[ReverseChronT  l neQueryContext] = {
+    requestContextBu lder(So (query.user d), dev ceContext = None).map { baseContext =>
+      val params = conf g(baseContext, runt  Conf g.statsRece ver)
 
-      new ReverseChronTimelineQueryContextImpl(
+      new ReverseChronT  l neQueryContext mpl(
         query,
-        getMaxCount = () => getMaxCountFromConfigStore(),
-        getMaxCountMultiplier = () => maxCountMultiplier(),
-        getMaxFollowedUsers = () => params(ReverseChronParams.MaxFollowedUsersParam),
-        getReturnEmptyWhenOverMaxFollows =
-          () => params(ReverseChronParams.ReturnEmptyWhenOverMaxFollowsParam),
-        getDirectedAtNarrowastingViaSearch =
-          () => params(ReverseChronParams.DirectedAtNarrowcastingViaSearchParam),
-        getPostFilteringBasedOnSearchMetadataEnabled =
-          () => params(ReverseChronParams.PostFilteringBasedOnSearchMetadataEnabledParam),
-        getBackfillFilteredEntries = () => backfillFilteredEntriesGate(),
-        getTweetsFilteringLossageThresholdPercent = () => tweetsFilteringLossageThresholdPercent(),
-        getTweetsFilteringLossageLimitPercent = () => tweetsFilteringLossageLimitPercent()
+        getMaxCount = () => getMaxCountFromConf gStore(),
+        getMaxCountMult pl er = () => maxCountMult pl er(),
+        getMaxFollo dUsers = () => params(ReverseChronParams.MaxFollo dUsersParam),
+        getReturnEmptyW nOverMaxFollows =
+          () => params(ReverseChronParams.ReturnEmptyW nOverMaxFollowsParam),
+        getD rectedAtNarrowast ngV aSearch =
+          () => params(ReverseChronParams.D rectedAtNarrowcast ngV aSearchParam),
+        getPostF lter ngBasedOnSearch tadataEnabled =
+          () => params(ReverseChronParams.PostF lter ngBasedOnSearch tadataEnabledParam),
+        getBackf llF lteredEntr es = () => backf llF lteredEntr esGate(),
+        getT etsF lter ngLossageThresholdPercent = () => t etsF lter ngLossageThresholdPercent(),
+        getT etsF lter ngLossageL m Percent = () => t etsF lter ngLossageL m Percent()
       )
     }
   }

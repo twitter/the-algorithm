@@ -1,26 +1,26 @@
-package com.twitter.visibility.configapi.configs
+package com.tw ter.v s b l y.conf gap .conf gs
 
-import com.twitter.timelines.configapi.Config
-import com.twitter.timelines.configapi.ExperimentConfigBuilder
-import com.twitter.timelines.configapi.Param
-import com.twitter.visibility.configapi.params.VisibilityExperiment
-import com.twitter.visibility.models.SafetyLevel
+ mport com.tw ter.t  l nes.conf gap .Conf g
+ mport com.tw ter.t  l nes.conf gap .Exper  ntConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.v s b l y.conf gap .params.V s b l yExper  nt
+ mport com.tw ter.v s b l y.models.SafetyLevel
 
-object ExperimentsHelper {
+object Exper  nts lper {
 
-  def mkABExperimentConfig(experiment: VisibilityExperiment, param: Param[Boolean]): Config = {
-    ExperimentConfigBuilder(experiment)
+  def mkABExper  ntConf g(exper  nt: V s b l yExper  nt, param: Param[Boolean]): Conf g = {
+    Exper  ntConf gBu lder(exper  nt)
       .addBucket(
-        experiment.ControlBucket,
+        exper  nt.ControlBucket,
         param := true
       )
       .addBucket(
-        experiment.TreatmentBucket,
+        exper  nt.Treat ntBucket,
         param := false
       )
-      .build
+      .bu ld
   }
 
-  def mkABExperimentConfig(experiment: VisibilityExperiment, safetyLevel: SafetyLevel): Config =
-    mkABExperimentConfig(experiment, safetyLevel.enabledParam)
+  def mkABExper  ntConf g(exper  nt: V s b l yExper  nt, safetyLevel: SafetyLevel): Conf g =
+    mkABExper  ntConf g(exper  nt, safetyLevel.enabledParam)
 }

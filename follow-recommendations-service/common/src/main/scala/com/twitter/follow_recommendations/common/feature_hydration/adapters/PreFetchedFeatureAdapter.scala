@@ -1,91 +1,91 @@
-package com.twitter.follow_recommendations.common.feature_hydration.adapters
+package com.tw ter.follow_recom ndat ons.common.feature_hydrat on.adapters
 
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.IRecordOneToOneAdapter
-import com.twitter.util.Time
+ mport com.tw ter.follow_recom ndat ons.common.feature_hydrat on.common.HasPreFetc dFeature
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.ml.ap .Feature.Cont nuous
+ mport com.tw ter.ml.ap .ut l.FDsl._
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ml.ap . RecordOneToOneAdapter
+ mport com.tw ter.ut l.T  
 
 /**
- * This adapter mimics UserRecentWTFImpressionsAndFollowsAdapter (for user) and
- * RecentWTFImpressionsFeatureAdapter (for candidate) for extracting recent impression
- * and follow features. This adapter extracts user, candidate, and pair-wise features.
+ * T  adapter m m cs UserRecentWTF mpress onsAndFollowsAdapter (for user) and
+ * RecentWTF mpress onsFeatureAdapter (for cand date) for extract ng recent  mpress on
+ * and follow features. T  adapter extracts user, cand date, and pa r-w se features.
  */
-object PreFetchedFeatureAdapter
-    extends IRecordOneToOneAdapter[
-      (HasPreFetchedFeature, CandidateUser)
+object PreFetc dFeatureAdapter
+    extends  RecordOneToOneAdapter[
+      (HasPreFetc dFeature, Cand dateUser)
     ] {
 
-  // impression features
-  val USER_NUM_RECENT_IMPRESSIONS: Continuous = new Continuous(
-    "user.prefetch.num_recent_impressions"
+  //  mpress on features
+  val USER_NUM_RECENT_ MPRESS ONS: Cont nuous = new Cont nuous(
+    "user.prefetch.num_recent_ mpress ons"
   )
-  val USER_LAST_IMPRESSION_DURATION: Continuous = new Continuous(
-    "user.prefetch.last_impression_duration"
+  val USER_LAST_ MPRESS ON_DURAT ON: Cont nuous = new Cont nuous(
+    "user.prefetch.last_ mpress on_durat on"
   )
-  val CANDIDATE_NUM_RECENT_IMPRESSIONS: Continuous = new Continuous(
-    "user-candidate.prefetch.num_recent_impressions"
+  val CAND DATE_NUM_RECENT_ MPRESS ONS: Cont nuous = new Cont nuous(
+    "user-cand date.prefetch.num_recent_ mpress ons"
   )
-  val CANDIDATE_LAST_IMPRESSION_DURATION: Continuous = new Continuous(
-    "user-candidate.prefetch.last_impression_duration"
+  val CAND DATE_LAST_ MPRESS ON_DURAT ON: Cont nuous = new Cont nuous(
+    "user-cand date.prefetch.last_ mpress on_durat on"
   )
   // follow features
-  val USER_NUM_RECENT_FOLLOWERS: Continuous = new Continuous(
-    "user.prefetch.num_recent_followers"
+  val USER_NUM_RECENT_FOLLOWERS: Cont nuous = new Cont nuous(
+    "user.prefetch.num_recent_follo rs"
   )
-  val USER_NUM_RECENT_FOLLOWED_BY: Continuous = new Continuous(
-    "user.prefetch.num_recent_followed_by"
+  val USER_NUM_RECENT_FOLLOWED_BY: Cont nuous = new Cont nuous(
+    "user.prefetch.num_recent_follo d_by"
   )
-  val USER_NUM_RECENT_MUTUAL_FOLLOWS: Continuous = new Continuous(
+  val USER_NUM_RECENT_MUTUAL_FOLLOWS: Cont nuous = new Cont nuous(
     "user.prefetch.num_recent_mutual_follows"
   )
-  // impression + follow features
-  val USER_NUM_RECENT_FOLLOWED_IMPRESSIONS: Continuous = new Continuous(
-    "user.prefetch.num_recent_followed_impression"
+  //  mpress on + follow features
+  val USER_NUM_RECENT_FOLLOWED_ MPRESS ONS: Cont nuous = new Cont nuous(
+    "user.prefetch.num_recent_follo d_ mpress on"
   )
-  val USER_LAST_FOLLOWED_IMPRESSION_DURATION: Continuous = new Continuous(
-    "user.prefetch.last_followed_impression_duration"
+  val USER_LAST_FOLLOWED_ MPRESS ON_DURAT ON: Cont nuous = new Cont nuous(
+    "user.prefetch.last_follo d_ mpress on_durat on"
   )
 
-  override def adaptToDataRecord(
-    record: (HasPreFetchedFeature, CandidateUser)
+  overr de def adaptToDataRecord(
+    record: (HasPreFetc dFeature, Cand dateUser)
   ): DataRecord = {
-    val (target, candidate) = record
+    val (target, cand date) = record
     val dr = new DataRecord()
-    val t = Time.now
-    // set impression features for user, optionally for candidate
-    dr.setFeatureValue(USER_NUM_RECENT_IMPRESSIONS, target.numWtfImpressions.toDouble)
+    val t = T  .now
+    // set  mpress on features for user, opt onally for cand date
+    dr.setFeatureValue(USER_NUM_RECENT_ MPRESS ONS, target.numWtf mpress ons.toDouble)
     dr.setFeatureValue(
-      USER_LAST_IMPRESSION_DURATION,
-      (t - target.latestImpressionTime).inMillis.toDouble)
-    target.getCandidateImpressionCounts(candidate.id).foreach { counts =>
-      dr.setFeatureValue(CANDIDATE_NUM_RECENT_IMPRESSIONS, counts.toDouble)
+      USER_LAST_ MPRESS ON_DURAT ON,
+      (t - target.latest mpress onT  ). nM ll s.toDouble)
+    target.getCand date mpress onCounts(cand date. d).foreach { counts =>
+      dr.setFeatureValue(CAND DATE_NUM_RECENT_ MPRESS ONS, counts.toDouble)
     }
-    target.getCandidateLatestTime(candidate.id).foreach { latestTime: Time =>
-      dr.setFeatureValue(CANDIDATE_LAST_IMPRESSION_DURATION, (t - latestTime).inMillis.toDouble)
+    target.getCand dateLatestT  (cand date. d).foreach { latestT  : T   =>
+      dr.setFeatureValue(CAND DATE_LAST_ MPRESS ON_DURAT ON, (t - latestT  ). nM ll s.toDouble)
     }
     // set recent follow features for user
-    dr.setFeatureValue(USER_NUM_RECENT_FOLLOWERS, target.numRecentFollowedUserIds.toDouble)
-    dr.setFeatureValue(USER_NUM_RECENT_FOLLOWED_BY, target.numRecentFollowedByUserIds.toDouble)
+    dr.setFeatureValue(USER_NUM_RECENT_FOLLOWERS, target.numRecentFollo dUser ds.toDouble)
+    dr.setFeatureValue(USER_NUM_RECENT_FOLLOWED_BY, target.numRecentFollo dByUser ds.toDouble)
     dr.setFeatureValue(USER_NUM_RECENT_MUTUAL_FOLLOWS, target.numRecentMutualFollows.toDouble)
-    dr.setFeatureValue(USER_NUM_RECENT_FOLLOWED_IMPRESSIONS, target.numFollowedImpressions.toDouble)
+    dr.setFeatureValue(USER_NUM_RECENT_FOLLOWED_ MPRESS ONS, target.numFollo d mpress ons.toDouble)
     dr.setFeatureValue(
-      USER_LAST_FOLLOWED_IMPRESSION_DURATION,
-      target.lastFollowedImpressionDurationMs.getOrElse(Long.MaxValue).toDouble)
+      USER_LAST_FOLLOWED_ MPRESS ON_DURAT ON,
+      target.lastFollo d mpress onDurat onMs.getOrElse(Long.MaxValue).toDouble)
     dr
   }
-  override def getFeatureContext: FeatureContext = new FeatureContext(
-    USER_NUM_RECENT_IMPRESSIONS,
-    USER_LAST_IMPRESSION_DURATION,
-    CANDIDATE_NUM_RECENT_IMPRESSIONS,
-    CANDIDATE_LAST_IMPRESSION_DURATION,
+  overr de def getFeatureContext: FeatureContext = new FeatureContext(
+    USER_NUM_RECENT_ MPRESS ONS,
+    USER_LAST_ MPRESS ON_DURAT ON,
+    CAND DATE_NUM_RECENT_ MPRESS ONS,
+    CAND DATE_LAST_ MPRESS ON_DURAT ON,
     USER_NUM_RECENT_FOLLOWERS,
     USER_NUM_RECENT_FOLLOWED_BY,
     USER_NUM_RECENT_MUTUAL_FOLLOWS,
-    USER_NUM_RECENT_FOLLOWED_IMPRESSIONS,
-    USER_LAST_FOLLOWED_IMPRESSION_DURATION,
+    USER_NUM_RECENT_FOLLOWED_ MPRESS ONS,
+    USER_LAST_FOLLOWED_ MPRESS ON_DURAT ON,
   )
 }

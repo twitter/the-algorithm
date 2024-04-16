@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.cover
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.CallbackMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.DismissInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.HalfCoverContent
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.CallbackMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.D sm ss nfoMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.r chtext.R chTextMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.cover.HalfCoverContent
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class HalfCoverContentMarshaller @Inject() (
-  halfCoverDisplayTypeMarshaller: HalfCoverDisplayTypeMarshaller,
+@S ngleton
+class HalfCoverContentMarshaller @ nject() (
+  halfCoverD splayTypeMarshaller: HalfCoverD splayTypeMarshaller,
   coverCtaMarshaller: CoverCtaMarshaller,
-  richTextMarshaller: RichTextMarshaller,
-  coverImageMarshaller: CoverImageMarshaller,
-  dismissInfoMarshaller: DismissInfoMarshaller,
+  r chTextMarshaller: R chTextMarshaller,
+  cover mageMarshaller: Cover mageMarshaller,
+  d sm ss nfoMarshaller: D sm ss nfoMarshaller,
   callbackMarshaller: CallbackMarshaller) {
 
   def apply(halfCover: HalfCoverContent): urt.Cover =
     urt.Cover.HalfCover(
       urt.HalfCover(
-        displayType = halfCoverDisplayTypeMarshaller(halfCover.displayType),
-        primaryText = richTextMarshaller(halfCover.primaryText),
-        primaryCoverCta = coverCtaMarshaller(halfCover.primaryCoverCta),
+        d splayType = halfCoverD splayTypeMarshaller(halfCover.d splayType),
+        pr maryText = r chTextMarshaller(halfCover.pr maryText),
+        pr maryCoverCta = coverCtaMarshaller(halfCover.pr maryCoverCta),
         secondaryCoverCta = halfCover.secondaryCoverCta.map(coverCtaMarshaller(_)),
-        secondaryText = halfCover.secondaryText.map(richTextMarshaller(_)),
-        impressionCallbacks = halfCover.impressionCallbacks.map(_.map(callbackMarshaller(_))),
-        dismissible = halfCover.dismissible,
-        coverImage = halfCover.coverImage.map(coverImageMarshaller(_)),
-        dismissInfo = halfCover.dismissInfo.map(dismissInfoMarshaller(_))
+        secondaryText = halfCover.secondaryText.map(r chTextMarshaller(_)),
+         mpress onCallbacks = halfCover. mpress onCallbacks.map(_.map(callbackMarshaller(_))),
+        d sm ss ble = halfCover.d sm ss ble,
+        cover mage = halfCover.cover mage.map(cover mageMarshaller(_)),
+        d sm ss nfo = halfCover.d sm ss nfo.map(d sm ss nfoMarshaller(_))
       ))
 }

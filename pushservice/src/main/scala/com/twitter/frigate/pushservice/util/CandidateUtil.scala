@@ -1,38 +1,38 @@
-package com.twitter.frigate.pushservice.util
+package com.tw ter.fr gate.pushserv ce.ut l
 
-import com.twitter.contentrecommender.thriftscala.MetricTag
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.OutOfNetworkTweetCandidate
-import com.twitter.frigate.common.base.SocialContextAction
-import com.twitter.frigate.common.base.SocialContextActions
-import com.twitter.frigate.common.base.TargetInfo
-import com.twitter.frigate.common.base.TargetUser
-import com.twitter.frigate.common.base.TopicProofTweetCandidate
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.common.candidate.TargetABDecider
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.frigate.pushservice.params.CrtGroupEnum
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.frigate.thriftscala.CommonRecommendationType.TripGeoTweet
-import com.twitter.frigate.thriftscala.CommonRecommendationType.TripHqTweet
-import com.twitter.frigate.thriftscala.{SocialContextAction => TSocialContextAction}
-import com.twitter.util.Future
+ mport com.tw ter.contentrecom nder.thr ftscala. tr cTag
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.OutOfNetworkT etCand date
+ mport com.tw ter.fr gate.common.base.Soc alContextAct on
+ mport com.tw ter.fr gate.common.base.Soc alContextAct ons
+ mport com.tw ter.fr gate.common.base.Target nfo
+ mport com.tw ter.fr gate.common.base.TargetUser
+ mport com.tw ter.fr gate.common.base.Top cProofT etCand date
+ mport com.tw ter.fr gate.common.base.T etAuthorDeta ls
+ mport com.tw ter.fr gate.common.cand date.TargetABDec der
+ mport com.tw ter.fr gate.common.rec_types.RecTypes
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter.fr gate.pushserv ce.params.CrtGroupEnum
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType.Tr pGeoT et
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType.Tr pHqT et
+ mport com.tw ter.fr gate.thr ftscala.{Soc alContextAct on => TSoc alContextAct on}
+ mport com.tw ter.ut l.Future
 
-object CandidateUtil {
-  private val mrTwistlyMetricTags =
-    Seq(MetricTag.PushOpenOrNtabClick, MetricTag.RequestHealthFilterPushOpenBasedTweetEmbedding)
+object Cand dateUt l {
+  pr vate val mrTw stly tr cTags =
+    Seq( tr cTag.PushOpenOrNtabCl ck,  tr cTag.Request althF lterPushOpenBasedT etEmbedd ng)
 
-  def getSocialContextActionsFromCandidate(candidate: RawCandidate): Seq[TSocialContextAction] = {
-    candidate match {
-      case candidateWithSocialContex: RawCandidate with SocialContextActions =>
-        candidateWithSocialContex.socialContextActions.map { scAction =>
-          TSocialContextAction(
-            scAction.userId,
-            scAction.timestampInMillis,
-            scAction.tweetId
+  def getSoc alContextAct onsFromCand date(cand date: RawCand date): Seq[TSoc alContextAct on] = {
+    cand date match {
+      case cand dateW hSoc alContex: RawCand date w h Soc alContextAct ons =>
+        cand dateW hSoc alContex.soc alContextAct ons.map { scAct on =>
+          TSoc alContextAct on(
+            scAct on.user d,
+            scAct on.t  stamp nM ll s,
+            scAct on.t et d
           )
         }
       case _ => Seq.empty
@@ -40,99 +40,99 @@ object CandidateUtil {
   }
 
   /**
-   * Ranking Social Context based on the Real Graph weight
-   * @param socialContextActions  Sequence of Social Context Actions
-   * @param seedsWithWeight       Real Graph map consisting of User ID as key and RG weight as the value
-   * @param defaultToRecency      Boolean to represent if we should use the timestamp of the SC to rank
-   * @return                      Returns the ranked sequence of SC Actions
+   * Rank ng Soc al Context based on t  Real Graph   ght
+   * @param soc alContextAct ons  Sequence of Soc al Context Act ons
+   * @param seedsW h  ght       Real Graph map cons st ng of User  D as key and RG   ght as t  value
+   * @param defaultToRecency      Boolean to represent  f   should use t  t  stamp of t  SC to rank
+   * @return                      Returns t  ranked sequence of SC Act ons
    */
-  def getRankedSocialContext(
-    socialContextActions: Seq[SocialContextAction],
-    seedsWithWeight: Future[Option[Map[Long, Double]]],
+  def getRankedSoc alContext(
+    soc alContextAct ons: Seq[Soc alContextAct on],
+    seedsW h  ght: Future[Opt on[Map[Long, Double]]],
     defaultToRecency: Boolean
-  ): Future[Seq[SocialContextAction]] = {
-    seedsWithWeight.map {
-      case Some(followingsMap) =>
-        socialContextActions.sortBy { action => -followingsMap.getOrElse(action.userId, 0.0) }
+  ): Future[Seq[Soc alContextAct on]] = {
+    seedsW h  ght.map {
+      case So (follow ngsMap) =>
+        soc alContextAct ons.sortBy { act on => -follow ngsMap.getOrElse(act on.user d, 0.0) }
       case _ =>
-        if (defaultToRecency) socialContextActions.sortBy(-_.timestampInMillis)
-        else socialContextActions
+         f (defaultToRecency) soc alContextAct ons.sortBy(-_.t  stamp nM ll s)
+        else soc alContextAct ons
     }
   }
 
-  def shouldApplyHealthQualityFiltersForPrerankingPredicates(
-    candidate: TweetAuthorDetails with TargetInfo[TargetUser with TargetABDecider]
+  def shouldApply althQual yF ltersForPrerank ngPred cates(
+    cand date: T etAuthorDeta ls w h Target nfo[TargetUser w h TargetABDec der]
   )(
-    implicit stats: StatsReceiver
+     mpl c  stats: StatsRece ver
   ): Future[Boolean] = {
-    candidate.tweetAuthor.map {
-      case Some(user) =>
-        val numFollowers: Double = user.counts.map(_.followers.toDouble).getOrElse(0.0)
-        numFollowers < candidate.target
-          .params(PushFeatureSwitchParams.NumFollowerThresholdForHealthAndQualityFiltersPreranking)
+    cand date.t etAuthor.map {
+      case So (user) =>
+        val numFollo rs: Double = user.counts.map(_.follo rs.toDouble).getOrElse(0.0)
+        numFollo rs < cand date.target
+          .params(PushFeatureSw chParams.NumFollo rThresholdFor althAndQual yF ltersPrerank ng)
       case _ => true
     }
   }
 
-  def shouldApplyHealthQualityFilters(
-    candidate: PushCandidate
+  def shouldApply althQual yF lters(
+    cand date: PushCand date
   )(
-    implicit stats: StatsReceiver
+     mpl c  stats: StatsRece ver
   ): Boolean = {
-    val numFollowers =
-      candidate.numericFeatures.getOrElse("RecTweetAuthor.User.ActiveFollowers", 0.0)
-    numFollowers < candidate.target
-      .params(PushFeatureSwitchParams.NumFollowerThresholdForHealthAndQualityFilters)
+    val numFollo rs =
+      cand date.nu r cFeatures.getOrElse("RecT etAuthor.User.Act veFollo rs", 0.0)
+    numFollo rs < cand date.target
+      .params(PushFeatureSw chParams.NumFollo rThresholdFor althAndQual yF lters)
   }
 
-  def useAggressiveHealthThresholds(cand: PushCandidate): Boolean =
-    isMrTwistlyCandidate(cand) ||
-      (cand.commonRecType == CommonRecommendationType.GeoPopTweet && cand.target.params(
-        PushFeatureSwitchParams.PopGeoTweetEnableAggressiveThresholds))
+  def useAggress ve althThresholds(cand: PushCand date): Boolean =
+     sMrTw stlyCand date(cand) ||
+      (cand.commonRecType == CommonRecom ndat onType.GeoPopT et && cand.target.params(
+        PushFeatureSw chParams.PopGeoT etEnableAggress veThresholds))
 
-  def isMrTwistlyCandidate(cand: PushCandidate): Boolean =
+  def  sMrTw stlyCand date(cand: PushCand date): Boolean =
     cand match {
-      case oonCandidate: PushCandidate with OutOfNetworkTweetCandidate =>
-        oonCandidate.tagsCR
-          .getOrElse(Seq.empty).intersect(mrTwistlyMetricTags).nonEmpty && oonCandidate.tagsCR
-          .map(_.toSet.size).getOrElse(0) == 1
-      case oonCandidate: PushCandidate with TopicProofTweetCandidate
-          if cand.target.params(PushFeatureSwitchParams.EnableHealthFiltersForTopicProofTweet) =>
-        oonCandidate.tagsCR
-          .getOrElse(Seq.empty).intersect(mrTwistlyMetricTags).nonEmpty && oonCandidate.tagsCR
-          .map(_.toSet.size).getOrElse(0) == 1
+      case oonCand date: PushCand date w h OutOfNetworkT etCand date =>
+        oonCand date.tagsCR
+          .getOrElse(Seq.empty). ntersect(mrTw stly tr cTags).nonEmpty && oonCand date.tagsCR
+          .map(_.toSet.s ze).getOrElse(0) == 1
+      case oonCand date: PushCand date w h Top cProofT etCand date
+           f cand.target.params(PushFeatureSw chParams.Enable althF ltersForTop cProofT et) =>
+        oonCand date.tagsCR
+          .getOrElse(Seq.empty). ntersect(mrTw stly tr cTags).nonEmpty && oonCand date.tagsCR
+          .map(_.toSet.s ze).getOrElse(0) == 1
       case _ => false
     }
 
-  def getTagsCRCount(cand: PushCandidate): Double =
+  def getTagsCRCount(cand: PushCand date): Double =
     cand match {
-      case oonCandidate: PushCandidate with OutOfNetworkTweetCandidate =>
-        oonCandidate.tagsCR.map(_.toSet.size).getOrElse(0).toDouble
-      case oonCandidate: PushCandidate with TopicProofTweetCandidate
-          if cand.target.params(PushFeatureSwitchParams.EnableHealthFiltersForTopicProofTweet) =>
-        oonCandidate.tagsCR.map(_.toSet.size).getOrElse(0).toDouble
+      case oonCand date: PushCand date w h OutOfNetworkT etCand date =>
+        oonCand date.tagsCR.map(_.toSet.s ze).getOrElse(0).toDouble
+      case oonCand date: PushCand date w h Top cProofT etCand date
+           f cand.target.params(PushFeatureSw chParams.Enable althF ltersForTop cProofT et) =>
+        oonCand date.tagsCR.map(_.toSet.s ze).getOrElse(0).toDouble
       case _ => 0.0
     }
 
-  def isRelatedToMrTwistlyCandidate(cand: PushCandidate): Boolean =
+  def  sRelatedToMrTw stlyCand date(cand: PushCand date): Boolean =
     cand match {
-      case oonCandidate: PushCandidate with OutOfNetworkTweetCandidate =>
-        oonCandidate.tagsCR.getOrElse(Seq.empty).intersect(mrTwistlyMetricTags).nonEmpty
-      case oonCandidate: PushCandidate with TopicProofTweetCandidate
-          if cand.target.params(PushFeatureSwitchParams.EnableHealthFiltersForTopicProofTweet) =>
-        oonCandidate.tagsCR.getOrElse(Seq.empty).intersect(mrTwistlyMetricTags).nonEmpty
+      case oonCand date: PushCand date w h OutOfNetworkT etCand date =>
+        oonCand date.tagsCR.getOrElse(Seq.empty). ntersect(mrTw stly tr cTags).nonEmpty
+      case oonCand date: PushCand date w h Top cProofT etCand date
+           f cand.target.params(PushFeatureSw chParams.Enable althF ltersForTop cProofT et) =>
+        oonCand date.tagsCR.getOrElse(Seq.empty). ntersect(mrTw stly tr cTags).nonEmpty
       case _ => false
     }
 
-  def getCrtGroup(commonRecType: CommonRecommendationType): CrtGroupEnum.Value = {
+  def getCrtGroup(commonRecType: CommonRecom ndat onType): CrtGroupEnum.Value = {
     commonRecType match {
-      case crt if RecTypes.twistlyTweets(crt) => CrtGroupEnum.Twistly
-      case crt if RecTypes.frsTypes(crt) => CrtGroupEnum.Frs
-      case crt if RecTypes.f1RecTypes(crt) => CrtGroupEnum.F1
-      case crt if crt == TripGeoTweet || crt == TripHqTweet => CrtGroupEnum.Trip
-      case crt if RecTypes.TopicTweetTypes(crt) => CrtGroupEnum.Topic
-      case crt if RecTypes.isGeoPopTweetType(crt) => CrtGroupEnum.GeoPop
-      case _ => CrtGroupEnum.Other
+      case crt  f RecTypes.tw stlyT ets(crt) => CrtGroupEnum.Tw stly
+      case crt  f RecTypes.frsTypes(crt) => CrtGroupEnum.Frs
+      case crt  f RecTypes.f1RecTypes(crt) => CrtGroupEnum.F1
+      case crt  f crt == Tr pGeoT et || crt == Tr pHqT et => CrtGroupEnum.Tr p
+      case crt  f RecTypes.Top cT etTypes(crt) => CrtGroupEnum.Top c
+      case crt  f RecTypes. sGeoPopT etType(crt) => CrtGroupEnum.GeoPop
+      case _ => CrtGroupEnum.Ot r
     }
   }
 }

@@ -1,36 +1,36 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.message
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em. ssage
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageTextAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseStr
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage. ssageAct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage. ssageTextAct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Callback
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEvent nfo
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object MessageTextActionBuilder {
-  val MessageTextActionClientEventInfoElement: String = "message-text-action"
+object  ssageTextAct onBu lder {
+  val  ssageTextAct onCl entEvent nfoEle nt: Str ng = " ssage-text-act on"
 }
 
-case class MessageTextActionBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  textBuilder: BaseStr[Query, Candidate],
-  dismissOnClick: Boolean,
-  url: Option[String] = None,
-  clientEventInfo: Option[ClientEventInfo] = None,
-  onClickCallbacks: Option[List[Callback]] = None) {
+case class  ssageTextAct onBu lder[-Query <: P pel neQuery, -Cand date <: Un versalNoun[Any]](
+  textBu lder: BaseStr[Query, Cand date],
+  d sm ssOnCl ck: Boolean,
+  url: Opt on[Str ng] = None,
+  cl entEvent nfo: Opt on[Cl entEvent nfo] = None,
+  onCl ckCallbacks: Opt on[L st[Callback]] = None) {
 
   def apply(
     query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): MessageTextAction = MessageTextAction(
-    text = textBuilder(query, candidate, candidateFeatures),
-    action = MessageAction(
-      dismissOnClick,
+    cand date: Cand date,
+    cand dateFeatures: FeatureMap
+  ):  ssageTextAct on =  ssageTextAct on(
+    text = textBu lder(query, cand date, cand dateFeatures),
+    act on =  ssageAct on(
+      d sm ssOnCl ck,
       url,
-      clientEventInfo,
-      onClickCallbacks
+      cl entEvent nfo,
+      onCl ckCallbacks
     )
   )
 }

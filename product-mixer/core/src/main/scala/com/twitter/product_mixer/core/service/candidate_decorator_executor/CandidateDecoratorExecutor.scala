@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.core.service.candidate_decorator_executor
+package com.tw ter.product_m xer.core.serv ce.cand date_decorator_executor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.decorator.Decoration
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.stitch.Arrow
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Cand dateDecorator
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Decorat on
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.st ch.Arrow
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class CandidateDecoratorExecutor @Inject() (override val statsReceiver: StatsReceiver)
+@S ngleton
+class Cand dateDecoratorExecutor @ nject() (overr de val statsRece ver: StatsRece ver)
     extends Executor {
-  def arrow[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-    decoratorOpt: Option[CandidateDecorator[Query, Candidate]],
+  def arrow[Query <: P pel neQuery, Cand date <: Un versalNoun[Any]](
+    decoratorOpt: Opt on[Cand dateDecorator[Query, Cand date]],
     context: Executor.Context
-  ): Arrow[(Query, Seq[CandidateWithFeatures[Candidate]]), CandidateDecoratorExecutorResult] = {
+  ): Arrow[(Query, Seq[Cand dateW hFeatures[Cand date]]), Cand dateDecoratorExecutorResult] = {
     val decoratorArrow =
       decoratorOpt match {
-        case Some(decorator) =>
-          val candidateDecoratorArrow =
-            Arrow.flatMap[(Query, Seq[CandidateWithFeatures[Candidate]]), Seq[Decoration]] {
-              case (query, candidatesWithFeatures) => decorator.apply(query, candidatesWithFeatures)
+        case So (decorator) =>
+          val cand dateDecoratorArrow =
+            Arrow.flatMap[(Query, Seq[Cand dateW hFeatures[Cand date]]), Seq[Decorat on]] {
+              case (query, cand datesW hFeatures) => decorator.apply(query, cand datesW hFeatures)
             }
 
-          wrapComponentWithExecutorBookkeeping(context, decorator.identifier)(
-            candidateDecoratorArrow)
+          wrapComponentW hExecutorBookkeep ng(context, decorator. dent f er)(
+            cand dateDecoratorArrow)
 
-        case _ => Arrow.value(Seq.empty[Decoration])
+        case _ => Arrow.value(Seq.empty[Decorat on])
       }
 
-    decoratorArrow.map(CandidateDecoratorExecutorResult)
+    decoratorArrow.map(Cand dateDecoratorExecutorResult)
   }
 }

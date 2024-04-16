@@ -1,147 +1,147 @@
-package com.twitter.tweetypie
-package repository
+package com.tw ter.t etyp e
+package repos ory
 
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.storage.TweetStorageClient.GetStoredTweet
-import com.twitter.tweetypie.storage.TweetStorageClient.GetTweet
-import com.twitter.tweetypie.storage._
-import scala.util.control.NoStackTrace
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.st ch.NotFound
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e
+ mport com.tw ter.t etyp e.cl ent_ d.Cl ent d lper
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.storage.T etStorageCl ent.GetStoredT et
+ mport com.tw ter.t etyp e.storage.T etStorageCl ent.GetT et
+ mport com.tw ter.t etyp e.storage._
+ mport scala.ut l.control.NoStackTrace
 
-case class StorageGetTweetFailure(tweetId: TweetId, underlying: Throwable)
-    extends Exception(s"tweetId=$tweetId", underlying)
-    with NoStackTrace
+case class StorageGetT etFa lure(t et d: T et d, underly ng: Throwable)
+    extends Except on(s"t et d=$t et d", underly ng)
+    w h NoStackTrace
 
-object ManhattanTweetRepository {
-  private[this] val logger = Logger(getClass)
+object ManhattanT etRepos ory {
+  pr vate[t ] val logger = Logger(getClass)
 
   def apply(
-    getTweet: TweetStorageClient.GetTweet,
-    getStoredTweet: TweetStorageClient.GetStoredTweet,
-    shortCircuitLikelyPartialTweetReads: Gate[Duration],
-    statsReceiver: StatsReceiver,
-    clientIdHelper: ClientIdHelper,
-  ): TweetResultRepository.Type = {
-    def likelyAvailable(tweetId: TweetId): Boolean =
-      if (SnowflakeId.isSnowflakeId(tweetId)) {
-        val tweetAge: Duration = Time.now.since(SnowflakeId(tweetId).time)
-        !shortCircuitLikelyPartialTweetReads(tweetAge)
+    getT et: T etStorageCl ent.GetT et,
+    getStoredT et: T etStorageCl ent.GetStoredT et,
+    shortC rcu L kelyPart alT etReads: Gate[Durat on],
+    statsRece ver: StatsRece ver,
+    cl ent d lper: Cl ent d lper,
+  ): T etResultRepos ory.Type = {
+    def l kelyAva lable(t et d: T et d): Boolean =
+       f (Snowflake d. sSnowflake d(t et d)) {
+        val t etAge: Durat on = T  .now.s nce(Snowflake d(t et d).t  )
+        !shortC rcu L kelyPart alT etReads(t etAge)
       } else {
-        true // Not a snowflake id, so should definitely be available
+        true // Not a snowflake  d, so should def n ely be ava lable
       }
 
-    val likelyPartialTweetReadsCounter = statsReceiver.counter("likely_partial_tweet_reads")
+    val l kelyPart alT etReadsCounter = statsRece ver.counter("l kely_part al_t et_reads")
 
-    (tweetId, options) =>
-      if (!likelyAvailable(tweetId)) {
-        likelyPartialTweetReadsCounter.incr()
-        val currentClient =
-          clientIdHelper.effectiveClientId.getOrElse(ClientIdHelper.UnknownClientId)
-        logger.debug(s"likely_partial_tweet_read $tweetId $currentClient")
-        Stitch.exception(NotFound)
-      } else if (options.fetchStoredTweets) {
-        getStoredTweet(tweetId).liftToTry.flatMap(handleGetStoredTweetResponse(tweetId, _))
+    (t et d, opt ons) =>
+       f (!l kelyAva lable(t et d)) {
+        l kelyPart alT etReadsCounter. ncr()
+        val currentCl ent =
+          cl ent d lper.effect veCl ent d.getOrElse(Cl ent d lper.UnknownCl ent d)
+        logger.debug(s"l kely_part al_t et_read $t et d $currentCl ent")
+        St ch.except on(NotFound)
+      } else  f (opt ons.fetchStoredT ets) {
+        getStoredT et(t et d).l ftToTry.flatMap(handleGetStoredT etResponse(t et d, _))
       } else {
-        getTweet(tweetId).liftToTry.flatMap(handleGetTweetResponse(tweetId, _))
+        getT et(t et d).l ftToTry.flatMap(handleGetT etResponse(t et d, _))
       }
   }
 
-  private def handleGetTweetResponse(
-    tweetId: tweetypie.TweetId,
-    response: Try[GetTweet.Response]
-  ): Stitch[TweetResult] = {
+  pr vate def handleGetT etResponse(
+    t et d: t etyp e.T et d,
+    response: Try[GetT et.Response]
+  ): St ch[T etResult] = {
     response match {
-      case Return(GetTweet.Response.Found(tweet)) =>
-        Stitch.value(TweetResult(TweetData(tweet = tweet), HydrationState.modified))
-      case Return(GetTweet.Response.NotFound) =>
-        Stitch.exception(NotFound)
-      case Return(GetTweet.Response.Deleted) =>
-        Stitch.exception(FilteredState.Unavailable.TweetDeleted)
-      case Return(_: GetTweet.Response.BounceDeleted) =>
-        Stitch.exception(FilteredState.Unavailable.BounceDeleted)
-      case Throw(_: storage.RateLimited) =>
-        Stitch.exception(OverCapacity(s"Storage overcapacity, tweetId=$tweetId"))
+      case Return(GetT et.Response.Found(t et)) =>
+        St ch.value(T etResult(T etData(t et = t et), Hydrat onState.mod f ed))
+      case Return(GetT et.Response.NotFound) =>
+        St ch.except on(NotFound)
+      case Return(GetT et.Response.Deleted) =>
+        St ch.except on(F lteredState.Unava lable.T etDeleted)
+      case Return(_: GetT et.Response.BounceDeleted) =>
+        St ch.except on(F lteredState.Unava lable.BounceDeleted)
+      case Throw(_: storage.RateL m ed) =>
+        St ch.except on(OverCapac y(s"Storage overcapac y, t et d=$t et d"))
       case Throw(e) =>
-        Stitch.exception(StorageGetTweetFailure(tweetId, e))
+        St ch.except on(StorageGetT etFa lure(t et d, e))
     }
   }
 
-  private def handleGetStoredTweetResponse(
-    tweetId: tweetypie.TweetId,
-    response: Try[GetStoredTweet.Response]
-  ): Stitch[TweetResult] = {
+  pr vate def handleGetStoredT etResponse(
+    t et d: t etyp e.T et d,
+    response: Try[GetStoredT et.Response]
+  ): St ch[T etResult] = {
     def translateErrors(
-      getStoredTweetErrs: Seq[GetStoredTweet.Error]
-    ): Seq[StoredTweetResult.Error] = {
-      getStoredTweetErrs.map {
-        case GetStoredTweet.Error.TweetIsCorrupt => StoredTweetResult.Error.Corrupt
-        case GetStoredTweet.Error.ScrubbedFieldsPresent =>
-          StoredTweetResult.Error.ScrubbedFieldsPresent
-        case GetStoredTweet.Error.TweetFieldsMissingOrInvalid =>
-          StoredTweetResult.Error.FieldsMissingOrInvalid
-        case GetStoredTweet.Error.TweetShouldBeHardDeleted =>
-          StoredTweetResult.Error.ShouldBeHardDeleted
+      getStoredT etErrs: Seq[GetStoredT et.Error]
+    ): Seq[StoredT etResult.Error] = {
+      getStoredT etErrs.map {
+        case GetStoredT et.Error.T et sCorrupt => StoredT etResult.Error.Corrupt
+        case GetStoredT et.Error.ScrubbedF eldsPresent =>
+          StoredT etResult.Error.ScrubbedF eldsPresent
+        case GetStoredT et.Error.T etF eldsM ss ngOr nval d =>
+          StoredT etResult.Error.F eldsM ss ngOr nval d
+        case GetStoredT et.Error.T etShouldBeHardDeleted =>
+          StoredT etResult.Error.ShouldBeHardDeleted
       }
     }
 
-    def toTweetResult(
-      tweet: Tweet,
-      state: Option[TweetStateRecord],
-      errors: Seq[GetStoredTweet.Error]
-    ): TweetResult = {
+    def toT etResult(
+      t et: T et,
+      state: Opt on[T etStateRecord],
+      errors: Seq[GetStoredT et.Error]
+    ): T etResult = {
       val translatedErrors = translateErrors(errors)
       val canHydrate: Boolean =
-        !translatedErrors.contains(StoredTweetResult.Error.Corrupt) &&
-          !translatedErrors.contains(StoredTweetResult.Error.FieldsMissingOrInvalid)
+        !translatedErrors.conta ns(StoredT etResult.Error.Corrupt) &&
+          !translatedErrors.conta ns(StoredT etResult.Error.F eldsM ss ngOr nval d)
 
-      val storedTweetResult = state match {
-        case None => StoredTweetResult.Present(translatedErrors, canHydrate)
-        case Some(TweetStateRecord.HardDeleted(_, softDeletedAtMsec, hardDeletedAtMsec)) =>
-          StoredTweetResult.HardDeleted(softDeletedAtMsec, hardDeletedAtMsec)
-        case Some(TweetStateRecord.SoftDeleted(_, softDeletedAtMsec)) =>
-          StoredTweetResult.SoftDeleted(softDeletedAtMsec, translatedErrors, canHydrate)
-        case Some(TweetStateRecord.BounceDeleted(_, deletedAtMsec)) =>
-          StoredTweetResult.BounceDeleted(deletedAtMsec, translatedErrors, canHydrate)
-        case Some(TweetStateRecord.Undeleted(_, undeletedAtMsec)) =>
-          StoredTweetResult.Undeleted(undeletedAtMsec, translatedErrors, canHydrate)
-        case Some(TweetStateRecord.ForceAdded(_, addedAtMsec)) =>
-          StoredTweetResult.ForceAdded(addedAtMsec, translatedErrors, canHydrate)
+      val storedT etResult = state match {
+        case None => StoredT etResult.Present(translatedErrors, canHydrate)
+        case So (T etStateRecord.HardDeleted(_, softDeletedAtMsec, hardDeletedAtMsec)) =>
+          StoredT etResult.HardDeleted(softDeletedAtMsec, hardDeletedAtMsec)
+        case So (T etStateRecord.SoftDeleted(_, softDeletedAtMsec)) =>
+          StoredT etResult.SoftDeleted(softDeletedAtMsec, translatedErrors, canHydrate)
+        case So (T etStateRecord.BounceDeleted(_, deletedAtMsec)) =>
+          StoredT etResult.BounceDeleted(deletedAtMsec, translatedErrors, canHydrate)
+        case So (T etStateRecord.Undeleted(_, undeletedAtMsec)) =>
+          StoredT etResult.Undeleted(undeletedAtMsec, translatedErrors, canHydrate)
+        case So (T etStateRecord.ForceAdded(_, addedAtMsec)) =>
+          StoredT etResult.ForceAdded(addedAtMsec, translatedErrors, canHydrate)
       }
 
-      TweetResult(
-        TweetData(tweet = tweet, storedTweetResult = Some(storedTweetResult)),
-        HydrationState.modified)
+      T etResult(
+        T etData(t et = t et, storedT etResult = So (storedT etResult)),
+        Hydrat onState.mod f ed)
     }
 
-    val tweetResult = response match {
-      case Return(GetStoredTweet.Response.FoundAny(tweet, state, _, _, errors)) =>
-        toTweetResult(tweet, state, errors)
-      case Return(GetStoredTweet.Response.Failed(tweetId, _, _, _, errors)) =>
-        val tweetData = TweetData(
-          tweet = Tweet(tweetId),
-          storedTweetResult = Some(StoredTweetResult.Failed(translateErrors(errors))))
-        TweetResult(tweetData, HydrationState.modified)
-      case Return(GetStoredTweet.Response.HardDeleted(tweetId, state, _, _)) =>
-        toTweetResult(Tweet(tweetId), state, Seq())
-      case Return(GetStoredTweet.Response.NotFound(tweetId)) => {
-        val tweetData = TweetData(
-          tweet = Tweet(tweetId),
-          storedTweetResult = Some(StoredTweetResult.NotFound)
+    val t etResult = response match {
+      case Return(GetStoredT et.Response.FoundAny(t et, state, _, _, errors)) =>
+        toT etResult(t et, state, errors)
+      case Return(GetStoredT et.Response.Fa led(t et d, _, _, _, errors)) =>
+        val t etData = T etData(
+          t et = T et(t et d),
+          storedT etResult = So (StoredT etResult.Fa led(translateErrors(errors))))
+        T etResult(t etData, Hydrat onState.mod f ed)
+      case Return(GetStoredT et.Response.HardDeleted(t et d, state, _, _)) =>
+        toT etResult(T et(t et d), state, Seq())
+      case Return(GetStoredT et.Response.NotFound(t et d)) => {
+        val t etData = T etData(
+          t et = T et(t et d),
+          storedT etResult = So (StoredT etResult.NotFound)
         )
-        TweetResult(tweetData, HydrationState.modified)
+        T etResult(t etData, Hydrat onState.mod f ed)
       }
       case _ => {
-        val tweetData = TweetData(
-          tweet = Tweet(tweetId),
-          storedTweetResult = Some(StoredTweetResult.Failed(Seq(StoredTweetResult.Error.Corrupt))))
-        TweetResult(tweetData, HydrationState.modified)
+        val t etData = T etData(
+          t et = T et(t et d),
+          storedT etResult = So (StoredT etResult.Fa led(Seq(StoredT etResult.Error.Corrupt))))
+        T etResult(t etData, Hydrat onState.mod f ed)
       }
     }
 
-    Stitch.value(tweetResult)
+    St ch.value(t etResult)
   }
 }

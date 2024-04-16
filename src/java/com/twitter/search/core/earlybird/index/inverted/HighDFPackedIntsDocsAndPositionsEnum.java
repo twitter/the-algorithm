@@ -1,156 +1,156 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
 /**
- * Docs, frequencies, and positions enumerator for {@link HighDFPackedIntsPostingLists}.
+ * Docs, frequenc es, and pos  ons enu rator for {@l nk H ghDFPacked ntsPost ngL sts}.
  */
-public class HighDFPackedIntsDocsAndPositionsEnum extends HighDFPackedIntsDocsEnum {
+publ c class H ghDFPacked ntsDocsAndPos  onsEnum extends H ghDFPacked ntsDocsEnum {
   /**
-   * Pre-computed shifts, masks, and start int indices for {@link #positionListsReader}.
-   * These pre-computed values should be read-only and shared across all reader threads.
+   * Pre-computed sh fts, masks, and start  nt  nd ces for {@l nk #pos  onL stsReader}.
+   * T se pre-computed values should be read-only and shared across all reader threads.
    *
-   * Notice:
-   * - start int indices are NEEDED since there IS jumping within a slice in
-   *   {@link #doAdditionalSkip()} and {@link #startCurrentDoc()}.
+   * Not ce:
+   * - start  nt  nd ces are NEEDED s nce t re  S jump ng w h n a sl ce  n
+   *   {@l nk #doAdd  onalSk p()} and {@l nk #startCurrentDoc()}.
    */
-  private static final PackedLongsReaderPreComputedValues PRE_COMPUTED_VALUES =
+  pr vate stat c f nal PackedLongsReaderPreComputedValues PRE_COMPUTED_VALUES =
       new PackedLongsReaderPreComputedValues(
-          HighDFPackedIntsPostingLists.MAX_POSITION_BIT,
-          HighDFPackedIntsPostingLists.POSITION_SLICE_NUM_BITS_WITHOUT_HEADER,
-          HighDFPackedIntsPostingLists.POSITION_SLICE_SIZE_WITHOUT_HEADER,
+          H ghDFPacked ntsPost ngL sts.MAX_POS T ON_B T,
+          H ghDFPacked ntsPost ngL sts.POS T ON_SL CE_NUM_B TS_W THOUT_HEADER,
+          H ghDFPacked ntsPost ngL sts.POS T ON_SL CE_S ZE_W THOUT_HEADER,
           true);
 
   /**
-   * Int block pool holding the positions for the read posting list. This is mainly used while
-   * reading slice headers in {@link #loadNextPositionSlice()}.
+   *  nt block pool hold ng t  pos  ons for t  read post ng l st. T   s ma nly used wh le
+   * read ng sl ce  aders  n {@l nk #loadNextPos  onSl ce()}.
    */
-  private final IntBlockPool positionLists;
+  pr vate f nal  ntBlockPool pos  onL sts;
 
-  /** Packed ints reader for positions. */
-  private final IntBlockPoolPackedLongsReader positionListsReader;
+  /** Packed  nts reader for pos  ons. */
+  pr vate f nal  ntBlockPoolPackedLongsReader pos  onL stsReader;
 
-  /** Total number of positions in the current position slice. */
-  private int numPositionsInSliceTotal;
+  /** Total number of pos  ons  n t  current pos  on sl ce. */
+  pr vate  nt numPos  ons nSl ceTotal;
 
   /**
-   * Number of remaining positions for {@link #currentDocID}; this value is decremented every time
-   * {@link #nextPosition()} is called.
+   * Number of rema n ng pos  ons for {@l nk #currentDoc D}; t  value  s decre nted every t  
+   * {@l nk #nextPos  on()}  s called.
    */
-  private int numPositionsRemainingForCurrentDocID;
+  pr vate  nt numPos  onsRema n ngForCurrentDoc D;
 
   /**
-   * Pointer to the first int, which contains the position slice header, of the next position slice.
-   * This value is used to track which slice will be loaded when {@link #loadNextPositionSlice()} is
+   * Po nter to t  f rst  nt, wh ch conta ns t  pos  on sl ce  ader, of t  next pos  on sl ce.
+   * T  value  s used to track wh ch sl ce w ll be loaded w n {@l nk #loadNextPos  onSl ce()}  s
    * called.
    */
-  private int nextPositionSlicePointer;
+  pr vate  nt nextPos  onSl cePo nter;
 
   /**
-   * Create a docs and positions enumerator.
+   * Create a docs and pos  ons enu rator.
    */
-  public HighDFPackedIntsDocsAndPositionsEnum(
-      IntBlockPool skipLists,
-      IntBlockPool deltaFreqLists,
-      IntBlockPool positionLists,
-      int postingListPointer,
-      int numPostings,
-      boolean omitPositions) {
-    super(skipLists, deltaFreqLists, postingListPointer, numPostings, omitPositions);
+  publ c H ghDFPacked ntsDocsAndPos  onsEnum(
+       ntBlockPool sk pL sts,
+       ntBlockPool deltaFreqL sts,
+       ntBlockPool pos  onL sts,
+       nt post ngL stPo nter,
+       nt numPost ngs,
+      boolean om Pos  ons) {
+    super(sk pL sts, deltaFreqL sts, post ngL stPo nter, numPost ngs, om Pos  ons);
 
-    this.positionLists = positionLists;
-    this.positionListsReader = new IntBlockPoolPackedLongsReader(
-        positionLists,
+    t .pos  onL sts = pos  onL sts;
+    t .pos  onL stsReader = new  ntBlockPoolPackedLongsReader(
+        pos  onL sts,
         PRE_COMPUTED_VALUES,
         queryCostTracker,
-        QueryCostTracker.CostType.LOAD_OPTIMIZED_POSTING_BLOCK);
+        QueryCostTracker.CostType.LOAD_OPT M ZED_POST NG_BLOCK);
 
-    // Load the first position slice.
-    this.nextPositionSlicePointer = skipListReader.getPositionCurrentSlicePointer();
-    loadNextPositionSlice();
+    // Load t  f rst pos  on sl ce.
+    t .nextPos  onSl cePo nter = sk pL stReader.getPos  onCurrentSl cePo nter();
+    loadNextPos  onSl ce();
   }
 
   /**
    * Prepare for current doc:
-   * - skipping over unread positions for the current doc.
-   * - reset remaining positions for current doc to {@link #currentFreq}.
+   * - sk pp ng over unread pos  ons for t  current doc.
+   * - reset rema n ng pos  ons for current doc to {@l nk #currentFreq}.
    *
    * @see #nextDocNoDel()
    */
-  @Override
-  protected void startCurrentDoc() {
-    // Locate next position for current doc by skipping over unread positions from the previous doc.
-    if (numPositionsRemainingForCurrentDocID != 0) {
-      int numPositionsRemainingInSlice =
-          numPositionsInSliceTotal - positionListsReader.getPackedValueIndex();
-      while (numPositionsRemainingInSlice <= numPositionsRemainingForCurrentDocID) {
-        numPositionsRemainingForCurrentDocID -= numPositionsRemainingInSlice;
-        nextPositionSlicePointer += HighDFPackedIntsPostingLists.SLICE_SIZE;
-        loadNextPositionSlice();
-        numPositionsRemainingInSlice = numPositionsInSliceTotal;
+  @Overr de
+  protected vo d startCurrentDoc() {
+    // Locate next pos  on for current doc by sk pp ng over unread pos  ons from t  prev ous doc.
+     f (numPos  onsRema n ngForCurrentDoc D != 0) {
+       nt numPos  onsRema n ng nSl ce =
+          numPos  ons nSl ceTotal - pos  onL stsReader.getPackedValue ndex();
+      wh le (numPos  onsRema n ng nSl ce <= numPos  onsRema n ngForCurrentDoc D) {
+        numPos  onsRema n ngForCurrentDoc D -= numPos  onsRema n ng nSl ce;
+        nextPos  onSl cePo nter += H ghDFPacked ntsPost ngL sts.SL CE_S ZE;
+        loadNextPos  onSl ce();
+        numPos  onsRema n ng nSl ce = numPos  ons nSl ceTotal;
       }
 
-      positionListsReader.setPackedValueIndex(
-          positionListsReader.getPackedValueIndex() + numPositionsRemainingForCurrentDocID);
+      pos  onL stsReader.setPackedValue ndex(
+          pos  onL stsReader.getPackedValue ndex() + numPos  onsRema n ngForCurrentDoc D);
     }
 
-    // Number of remaining positions for current doc is current freq.
-    numPositionsRemainingForCurrentDocID = getCurrentFreq();
+    // Number of rema n ng pos  ons for current doc  s current freq.
+    numPos  onsRema n ngForCurrentDoc D = getCurrentFreq();
   }
 
   /**
-   * Put positions reader to the start of next position slice and reset number of bits per packed
-   * value for next position slice.
+   * Put pos  ons reader to t  start of next pos  on sl ce and reset number of b s per packed
+   * value for next pos  on sl ce.
    */
-  private void loadNextPositionSlice() {
-    final int header = positionLists.get(nextPositionSlicePointer);
-    final int bitsForPosition = HighDFPackedIntsPostingLists.getNumBitsForPosition(header);
-    numPositionsInSliceTotal = HighDFPackedIntsPostingLists.getNumPositionsInSlice(header);
+  pr vate vo d loadNextPos  onSl ce() {
+    f nal  nt  ader = pos  onL sts.get(nextPos  onSl cePo nter);
+    f nal  nt b sForPos  on = H ghDFPacked ntsPost ngL sts.getNumB sForPos  on( ader);
+    numPos  ons nSl ceTotal = H ghDFPacked ntsPost ngL sts.getNumPos  ons nSl ce( ader);
 
-    positionListsReader.jumpToInt(
-        nextPositionSlicePointer + HighDFPackedIntsPostingLists.POSITION_SLICE_HEADER_SIZE,
-        bitsForPosition);
+    pos  onL stsReader.jumpTo nt(
+        nextPos  onSl cePo nter + H ghDFPacked ntsPost ngL sts.POS T ON_SL CE_HEADER_S ZE,
+        b sForPos  on);
   }
 
   /**
-   * Return next position for current doc.
-   * @see org.apache.lucene.index.PostingsEnum#nextPosition()
+   * Return next pos  on for current doc.
+   * @see org.apac .lucene. ndex.Post ngsEnum#nextPos  on()
    */
-  @Override
-  public int nextPosition() throws IOException {
-    // Return -1 immediately if all positions are used up for current doc.
-    if (numPositionsRemainingForCurrentDocID == 0) {
+  @Overr de
+  publ c  nt nextPos  on() throws  OExcept on {
+    // Return -1  m d ately  f all pos  ons are used up for current doc.
+     f (numPos  onsRema n ngForCurrentDoc D == 0) {
       return -1;
     }
 
-    if (positionListsReader.getPackedValueIndex() < numPositionsInSliceTotal)  {
-      // Read next position in current slice.
-      final int nextPosition = (int) positionListsReader.readPackedLong();
-      numPositionsRemainingForCurrentDocID--;
-      return nextPosition;
+     f (pos  onL stsReader.getPackedValue ndex() < numPos  ons nSl ceTotal)  {
+      // Read next pos  on  n current sl ce.
+      f nal  nt nextPos  on = ( nt) pos  onL stsReader.readPackedLong();
+      numPos  onsRema n ngForCurrentDoc D--;
+      return nextPos  on;
     } else {
-      // All positions in current slice is used up, load next slice.
-      nextPositionSlicePointer += HighDFPackedIntsPostingLists.SLICE_SIZE;
-      loadNextPositionSlice();
-      return nextPosition();
+      // All pos  ons  n current sl ce  s used up, load next sl ce.
+      nextPos  onSl cePo nter += H ghDFPacked ntsPost ngL sts.SL CE_S ZE;
+      loadNextPos  onSl ce();
+      return nextPos  on();
     }
   }
 
   /**
-   * Set {@link #positionListsReader} to the correct location and correct number of bits per packed
-   * value for the delta-freq slice on which this enum is landed after skipping.
+   * Set {@l nk #pos  onL stsReader} to t  correct locat on and correct number of b s per packed
+   * value for t  delta-freq sl ce on wh ch t  enum  s landed after sk pp ng.
    *
-   * @see #skipTo(int)
+   * @see #sk pTo( nt)
    */
-  @Override
-  protected void doAdditionalSkip() {
-    nextPositionSlicePointer = skipListReader.getPositionCurrentSlicePointer();
-    loadNextPositionSlice();
+  @Overr de
+  protected vo d doAdd  onalSk p() {
+    nextPos  onSl cePo nter = sk pL stReader.getPos  onCurrentSl cePo nter();
+    loadNextPos  onSl ce();
 
-    // Locate the exact position in slice.
-    final int skipListEntryEncodedMetadata = skipListReader.getEncodedMetadataCurrentSlice();
-    positionListsReader.setPackedValueIndex(
-        HighDFPackedIntsPostingLists.getPositionOffsetInSlice(skipListEntryEncodedMetadata));
-    numPositionsRemainingForCurrentDocID = 0;
+    // Locate t  exact pos  on  n sl ce.
+    f nal  nt sk pL stEntryEncoded tadata = sk pL stReader.getEncoded tadataCurrentSl ce();
+    pos  onL stsReader.setPackedValue ndex(
+        H ghDFPacked ntsPost ngL sts.getPos  onOffset nSl ce(sk pL stEntryEncoded tadata));
+    numPos  onsRema n ngForCurrentDoc D = 0;
   }
 }

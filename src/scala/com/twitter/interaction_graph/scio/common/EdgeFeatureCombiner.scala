@@ -1,127 +1,127 @@
-package com.twitter.interaction_graph.scio.common
+package com.tw ter. nteract on_graph.sc o.common
 
-import com.spotify.scio.ScioMetrics
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.EdgeFeature
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.TimeSeriesStatistics
+ mport com.spot fy.sc o.Sc o tr cs
+ mport com.tw ter. nteract on_graph.thr ftscala.Edge
+ mport com.tw ter. nteract on_graph.thr ftscala.EdgeFeature
+ mport com.tw ter. nteract on_graph.thr ftscala.FeatureNa 
+ mport com.tw ter. nteract on_graph.thr ftscala.T  Ser esStat st cs
 
-object EdgeFeatureCombiner {
-  def apply(srcId: Long, destId: Long): EdgeFeatureCombiner = new EdgeFeatureCombiner(
-    instanceEdge = Edge(srcId, destId),
+object EdgeFeatureComb ner {
+  def apply(src d: Long, dest d: Long): EdgeFeatureComb ner = new EdgeFeatureComb ner(
+     nstanceEdge = Edge(src d, dest d),
     featureMap = Map(
-      FeatureName.NumRetweets -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumFavorites -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumMentions -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumTweetClicks -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumLinkClicks -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumProfileViews -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumFollows -> new BooleanOrEdgeCombiner,
-      FeatureName.NumUnfollows -> new BooleanOrEdgeCombiner,
-      FeatureName.NumMutualFollows -> new BooleanOrEdgeCombiner,
-      FeatureName.NumBlocks -> new BooleanOrEdgeCombiner,
-      FeatureName.NumMutes -> new BooleanOrEdgeCombiner,
-      FeatureName.NumReportAsAbuses -> new BooleanOrEdgeCombiner,
-      FeatureName.NumReportAsSpams -> new BooleanOrEdgeCombiner,
-      FeatureName.NumTweetQuotes -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.AddressBookEmail -> new BooleanOrEdgeCombiner,
-      FeatureName.AddressBookPhone -> new BooleanOrEdgeCombiner,
-      FeatureName.AddressBookInBoth -> new BooleanOrEdgeCombiner,
-      FeatureName.AddressBookMutualEdgeEmail -> new BooleanOrEdgeCombiner,
-      FeatureName.AddressBookMutualEdgePhone -> new BooleanOrEdgeCombiner,
-      FeatureName.AddressBookMutualEdgeInBoth -> new BooleanOrEdgeCombiner,
-      FeatureName.TotalDwellTime -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumInspectedStatuses -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumPhotoTags -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumPushOpens -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumNtabClicks -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumRtMentions -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumRtReplies -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumRtRetweets -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumRtFavories -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumRtLinkClicks -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumRtTweetClicks -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumRtTweetQuotes -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumShares -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumEmailOpen -> new WeightedAdditiveEdgeCombiner,
-      FeatureName.NumEmailClick -> new WeightedAdditiveEdgeCombiner,
+      FeatureNa .NumRet ets -> new   ghtedAdd  veEdgeComb ner,
+      FeatureNa .NumFavor es -> new   ghtedAdd  veEdgeComb ner,
+      FeatureNa .Num nt ons -> new   ghtedAdd  veEdgeComb ner,
+      FeatureNa .NumT etCl cks -> new   ghtedAdd  veEdgeComb ner,
+      FeatureNa .NumL nkCl cks -> new   ghtedAdd  veEdgeComb ner,
+      FeatureNa .NumProf leV ews -> new   ghtedAdd  veEdgeComb ner,
+      FeatureNa .NumFollows -> new BooleanOrEdgeComb ner,
+      FeatureNa .NumUnfollows -> new BooleanOrEdgeComb ner,
+      FeatureNa .NumMutualFollows -> new BooleanOrEdgeComb ner,
+      FeatureNa .NumBlocks -> new BooleanOrEdgeComb ner,
+      FeatureNa .NumMutes -> new BooleanOrEdgeComb ner,
+      FeatureNa .NumReportAsAbuses -> new BooleanOrEdgeComb ner,
+      FeatureNa .NumReportAsSpams -> new BooleanOrEdgeComb ner,
+      FeatureNa .NumT etQuotes -> new   ghtedAdd  veEdgeComb ner,
+      FeatureNa .AddressBookEma l -> new BooleanOrEdgeComb ner,
+      FeatureNa .AddressBookPhone -> new BooleanOrEdgeComb ner,
+      FeatureNa .AddressBook nBoth -> new BooleanOrEdgeComb ner,
+      FeatureNa .AddressBookMutualEdgeEma l -> new BooleanOrEdgeComb ner,
+      FeatureNa .AddressBookMutualEdgePhone -> new BooleanOrEdgeComb ner,
+      FeatureNa .AddressBookMutualEdge nBoth -> new BooleanOrEdgeComb ner,
+      FeatureNa .TotalD llT   -> new   ghtedAdd  veEdgeComb ner,
+      FeatureNa .Num nspectedStatuses -> new   ghtedAdd  veEdgeComb ner,
+      FeatureNa .NumPhotoTags -> new   ghtedAdd  veEdgeComb ner,
+      FeatureNa .NumPushOpens -> new   ghtedAdd  veEdgeComb ner,
+      FeatureNa .NumNtabCl cks -> new   ghtedAdd  veEdgeComb ner,
+      FeatureNa .NumRt nt ons -> new   ghtedAdd  veEdgeComb ner,
+      FeatureNa .NumRtRepl es -> new   ghtedAdd  veEdgeComb ner,
+      FeatureNa .NumRtRet ets -> new   ghtedAdd  veEdgeComb ner,
+      FeatureNa .NumRtFavor es -> new   ghtedAdd  veEdgeComb ner,
+      FeatureNa .NumRtL nkCl cks -> new   ghtedAdd  veEdgeComb ner,
+      FeatureNa .NumRtT etCl cks -> new   ghtedAdd  veEdgeComb ner,
+      FeatureNa .NumRtT etQuotes -> new   ghtedAdd  veEdgeComb ner,
+      FeatureNa .NumShares -> new   ghtedAdd  veEdgeComb ner,
+      FeatureNa .NumEma lOpen -> new   ghtedAdd  veEdgeComb ner,
+      FeatureNa .NumEma lCl ck -> new   ghtedAdd  veEdgeComb ner,
     )
   )
 }
 
 /**
- * This class can take in a number of input Edge thrift objects, (all of which are assumed to
- * contain information about a single edge) and builds a combined Edge protobuf object, which has
- * the union of all the input.
+ * T  class can take  n a number of  nput Edge thr ft objects, (all of wh ch are assu d to
+ * conta n  nformat on about a s ngle edge) and bu lds a comb ned Edge protobuf object, wh ch has
+ * t  un on of all t   nput.
  * <p>
- * There are two modes of aggregation: one of them just adds the values in assuming that these are
- * from the same day, and the other adds them in a time-decayed manner using the passed in weights.
+ * T re are two modes of aggregat on: one of t m just adds t  values  n assum ng that t se are
+ * from t  sa  day, and t  ot r adds t m  n a t  -decayed manner us ng t  passed  n   ghts.
  * <p>
- * The input objects features must be disjoint. Also, remember that the edge is directed!
+ * T   nput objects features must be d sjo nt. Also, re mber that t  edge  s d rected!
  */
-class EdgeFeatureCombiner(instanceEdge: Edge, featureMap: Map[FeatureName, EFeatureCombiner]) {
+class EdgeFeatureComb ner( nstanceEdge: Edge, featureMap: Map[FeatureNa , EFeatureComb ner]) {
 
   /**
-   * Adds features without any decay. To be used for the same day.
+   * Adds features w hout any decay. To be used for t  sa  day.
    *
-   * @param edge edge to be added into the combiner
+   * @param edge edge to be added  nto t  comb ner
    */
-  def addFeature(edge: Edge): EdgeFeatureCombiner = {
+  def addFeature(edge: Edge): EdgeFeatureComb ner = {
 
     val newEdge =
-      if (edge.weight.isDefined) instanceEdge.copy(weight = edge.weight) else instanceEdge
+       f (edge.  ght. sDef ned)  nstanceEdge.copy(  ght = edge.  ght) else  nstanceEdge
     val newFeatures = featureMap.map {
-      case (featureName, combiner) =>
-        edge.features.find(_.name.equals(featureName)) match {
-          case Some(feature) =>
-            val updatedCombiner =
-              if (combiner.isSet) combiner.updateFeature(feature) else combiner.setFeature(feature)
-            (featureName, updatedCombiner)
-          case _ => (featureName, combiner)
+      case (featureNa , comb ner) =>
+        edge.features.f nd(_.na .equals(featureNa )) match {
+          case So (feature) =>
+            val updatedComb ner =
+               f (comb ner. sSet) comb ner.updateFeature(feature) else comb ner.setFeature(feature)
+            (featureNa , updatedComb ner)
+          case _ => (featureNa , comb ner)
         }
     }
 
-    new EdgeFeatureCombiner(newEdge, newFeatures)
+    new EdgeFeatureComb ner(newEdge, newFeatures)
 
   }
 
   /**
-   * Adds features with decays. Used for combining multiple days.
+   * Adds features w h decays. Used for comb n ng mult ple days.
    *
-   * @param edge  edge to be added into the combiner
-   * @param alpha parameters for the decay calculation
+   * @param edge  edge to be added  nto t  comb ner
+   * @param alpha para ters for t  decay calculat on
    * @param day   number of days from today
    */
-  def addFeature(edge: Edge, alpha: Double, day: Int): EdgeFeatureCombiner = {
+  def addFeature(edge: Edge, alpha: Double, day:  nt): EdgeFeatureComb ner = {
 
-    val newEdge = if (edge.weight.isDefined) edge.copy(weight = edge.weight) else edge
+    val newEdge =  f (edge.  ght. sDef ned) edge.copy(  ght = edge.  ght) else edge
     val newFeatures = featureMap.map {
-      case (featureName, combiner) =>
-        edge.features.find(_.name.equals(featureName)) match {
-          case Some(feature) =>
-            val updatedCombiner =
-              if (combiner.isSet) combiner.updateFeature(feature, alpha, day)
-              else combiner.setFeature(feature, alpha, day)
-            ScioMetrics.counter("EdgeFeatureCombiner.addFeature", feature.name.name).inc()
-            (featureName, updatedCombiner)
-          case _ => (featureName, combiner)
+      case (featureNa , comb ner) =>
+        edge.features.f nd(_.na .equals(featureNa )) match {
+          case So (feature) =>
+            val updatedComb ner =
+               f (comb ner. sSet) comb ner.updateFeature(feature, alpha, day)
+              else comb ner.setFeature(feature, alpha, day)
+            Sc o tr cs.counter("EdgeFeatureComb ner.addFeature", feature.na .na ). nc()
+            (featureNa , updatedComb ner)
+          case _ => (featureNa , comb ner)
         }
     }
-    new EdgeFeatureCombiner(newEdge, newFeatures)
+    new EdgeFeatureComb ner(newEdge, newFeatures)
   }
 
   /**
-   * Generate the final combined Edge instance
-   * We return a deterministically sorted list of edge features
+   * Generate t  f nal comb ned Edge  nstance
+   *   return a determ n st cally sorted l st of edge features
    *
-   * @param totalDays total number of days to be combined together
+   * @param totalDays total number of days to be comb ned toget r
    */
-  def getCombinedEdge(totalDays: Int): Edge = {
+  def getComb nedEdge(totalDays:  nt): Edge = {
     val moreFeatures = featureMap.values
-      .flatMap { combiner =>
-        combiner.getFinalFeature(totalDays)
-      }.toList.sortBy(_.name.value)
-    instanceEdge.copy(
+      .flatMap { comb ner =>
+        comb ner.getF nalFeature(totalDays)
+      }.toL st.sortBy(_.na .value)
+     nstanceEdge.copy(
       features = moreFeatures
     )
   }
@@ -129,222 +129,222 @@ class EdgeFeatureCombiner(instanceEdge: Edge, featureMap: Map[FeatureName, EFeat
 }
 
 /**
- * This portion contains the actual combination logic. For now, we only implement a simple
- * additive combiner, but in future we'd like to have things like time-weighted (exponential
+ * T  port on conta ns t  actual comb nat on log c. For now,   only  mple nt a s mple
+ * add  ve comb ner, but  n future  'd l ke to have th ngs l ke t  -  ghted (exponent al
  * decay, maybe) values.
  */
 
-trait EFeatureCombiner {
-  val edgeFeature: Option[EdgeFeature]
-  val startingDay: Int
-  val endingDay: Int
-  val timeSeriesStatistics: Option[TimeSeriesStatistics]
+tra  EFeatureComb ner {
+  val edgeFeature: Opt on[EdgeFeature]
+  val start ngDay:  nt
+  val end ngDay:  nt
+  val t  Ser esStat st cs: Opt on[T  Ser esStat st cs]
 
-  def updateTSS(feature: EdgeFeature, alpha: Double): Option[TimeSeriesStatistics]
+  def updateTSS(feature: EdgeFeature, alpha: Double): Opt on[T  Ser esStat st cs]
 
-  def addToTSS(feature: EdgeFeature): Option[TimeSeriesStatistics]
+  def addToTSS(feature: EdgeFeature): Opt on[T  Ser esStat st cs]
 
-  def updateFeature(feature: EdgeFeature): EFeatureCombiner
+  def updateFeature(feature: EdgeFeature): EFeatureComb ner
 
-  def updateFeature(feature: EdgeFeature, alpha: Double, day: Int): EFeatureCombiner
+  def updateFeature(feature: EdgeFeature, alpha: Double, day:  nt): EFeatureComb ner
 
-  def isSet: Boolean
+  def  sSet: Boolean
 
   def dropFeature: Boolean
 
-  def setFeature(feature: EdgeFeature, alpha: Double, day: Int): EFeatureCombiner
+  def setFeature(feature: EdgeFeature, alpha: Double, day:  nt): EFeatureComb ner
 
-  def setFeature(feature: EdgeFeature): EFeatureCombiner
+  def setFeature(feature: EdgeFeature): EFeatureComb ner
 
-  def getFinalFeature(totalDays: Int): Option[EdgeFeature]
+  def getF nalFeature(totalDays:  nt): Opt on[EdgeFeature]
 
 }
 
-case class WeightedAdditiveEdgeCombiner(
-  override val edgeFeature: Option[EdgeFeature] = None,
-  override val startingDay: Int = Integer.MAX_VALUE,
-  override val endingDay: Int = Integer.MIN_VALUE,
-  override val timeSeriesStatistics: Option[TimeSeriesStatistics] = None)
-    extends EFeatureCombiner {
+case class   ghtedAdd  veEdgeComb ner(
+  overr de val edgeFeature: Opt on[EdgeFeature] = None,
+  overr de val start ngDay:  nt =  nteger.MAX_VALUE,
+  overr de val end ngDay:  nt =  nteger.M N_VALUE,
+  overr de val t  Ser esStat st cs: Opt on[T  Ser esStat st cs] = None)
+    extends EFeatureComb ner {
 
-  override def updateTSS(
+  overr de def updateTSS(
     feature: EdgeFeature,
     alpha: Double
-  ): Option[TimeSeriesStatistics] = {
-    timeSeriesStatistics.map(tss =>
-      InteractionGraphUtils.updateTimeSeriesStatistics(tss, feature.tss.mean, alpha))
+  ): Opt on[T  Ser esStat st cs] = {
+    t  Ser esStat st cs.map(tss =>
+       nteract onGraphUt ls.updateT  Ser esStat st cs(tss, feature.tss. an, alpha))
   }
 
-  override def addToTSS(feature: EdgeFeature): Option[TimeSeriesStatistics] = {
-    timeSeriesStatistics.map(tss =>
-      InteractionGraphUtils.addToTimeSeriesStatistics(tss, feature.tss.mean))
+  overr de def addToTSS(feature: EdgeFeature): Opt on[T  Ser esStat st cs] = {
+    t  Ser esStat st cs.map(tss =>
+       nteract onGraphUt ls.addToT  Ser esStat st cs(tss, feature.tss. an))
   }
 
-  override def updateFeature(feature: EdgeFeature): WeightedAdditiveEdgeCombiner = {
-    WeightedAdditiveEdgeCombiner(
+  overr de def updateFeature(feature: EdgeFeature):   ghtedAdd  veEdgeComb ner = {
+      ghtedAdd  veEdgeComb ner(
       edgeFeature,
-      startingDay,
-      endingDay,
+      start ngDay,
+      end ngDay,
       addToTSS(feature)
     )
   }
 
-  def setFeature(feature: EdgeFeature, alpha: Double, day: Int): WeightedAdditiveEdgeCombiner = {
-    val newStartingDay = Math.min(startingDay, day)
-    val newEndingDay = Math.max(endingDay, day)
+  def setFeature(feature: EdgeFeature, alpha: Double, day:  nt):   ghtedAdd  veEdgeComb ner = {
+    val newStart ngDay = Math.m n(start ngDay, day)
+    val newEnd ngDay = Math.max(end ngDay, day)
 
-    val numDaysSinceLast =
-      if (feature.tss.numDaysSinceLast.exists(_ > 0))
-        feature.tss.numDaysSinceLast
-      else Some(feature.tss.numElapsedDays - feature.tss.numNonZeroDays + 1)
+    val numDaysS nceLast =
+       f (feature.tss.numDaysS nceLast.ex sts(_ > 0))
+        feature.tss.numDaysS nceLast
+      else So (feature.tss.numElapsedDays - feature.tss.numNonZeroDays + 1)
 
     val tss = feature.tss.copy(
-      numDaysSinceLast = numDaysSinceLast,
+      numDaysS nceLast = numDaysS nceLast,
       ewma = alpha * feature.tss.ewma
     )
 
     val newFeature = EdgeFeature(
-      name = feature.name,
+      na  = feature.na ,
       tss = tss
     )
 
-    WeightedAdditiveEdgeCombiner(
-      Some(newFeature),
-      newStartingDay,
-      newEndingDay,
-      Some(tss)
+      ghtedAdd  veEdgeComb ner(
+      So (newFeature),
+      newStart ngDay,
+      newEnd ngDay,
+      So (tss)
     )
   }
 
-  def getFinalFeature(totalDays: Int): Option[EdgeFeature] = {
-    if (edgeFeature.isEmpty || dropFeature) return None
+  def getF nalFeature(totalDays:  nt): Opt on[EdgeFeature] = {
+     f (edgeFeature. sEmpty || dropFeature) return None
 
-    val newTss = if (totalDays > 0) {
+    val newTss =  f (totalDays > 0) {
       val elapsed =
-        timeSeriesStatistics.map(tss => tss.numElapsedDays + totalDays - 1 - startingDay)
+        t  Ser esStat st cs.map(tss => tss.numElapsedDays + totalDays - 1 - start ngDay)
 
       val latest =
-        if (endingDay > 0) Some(totalDays - endingDay)
+         f (end ngDay > 0) So (totalDays - end ngDay)
         else
-          timeSeriesStatistics.flatMap(tss =>
-            tss.numDaysSinceLast.map(numDaysSinceLast => numDaysSinceLast + totalDays - 1))
+          t  Ser esStat st cs.flatMap(tss =>
+            tss.numDaysS nceLast.map(numDaysS nceLast => numDaysS nceLast + totalDays - 1))
 
-      timeSeriesStatistics.map(tss =>
+      t  Ser esStat st cs.map(tss =>
         tss.copy(
           numElapsedDays = elapsed.get,
-          numDaysSinceLast = latest
+          numDaysS nceLast = latest
         ))
-    } else timeSeriesStatistics
+    } else t  Ser esStat st cs
 
     edgeFeature.map(ef => ef.copy(tss = newTss.get))
   }
 
-  override def updateFeature(
+  overr de def updateFeature(
     feature: EdgeFeature,
     alpha: Double,
-    day: Int
-  ): WeightedAdditiveEdgeCombiner = copy(
-    endingDay = Math.max(endingDay, day),
-    timeSeriesStatistics = updateTSS(feature, alpha)
+    day:  nt
+  ):   ghtedAdd  veEdgeComb ner = copy(
+    end ngDay = Math.max(end ngDay, day),
+    t  Ser esStat st cs = updateTSS(feature, alpha)
   )
 
-  override def dropFeature: Boolean = timeSeriesStatistics.exists(tss =>
-    tss.numDaysSinceLast.exists(_ > InteractionGraphUtils.MAX_DAYS_RETENTION) ||
-      tss.ewma < InteractionGraphUtils.MIN_FEATURE_VALUE)
+  overr de def dropFeature: Boolean = t  Ser esStat st cs.ex sts(tss =>
+    tss.numDaysS nceLast.ex sts(_ >  nteract onGraphUt ls.MAX_DAYS_RETENT ON) ||
+      tss.ewma <  nteract onGraphUt ls.M N_FEATURE_VALUE)
 
-  override def isSet = edgeFeature.isDefined
+  overr de def  sSet = edgeFeature. sDef ned
 
-  override def setFeature(feature: EdgeFeature): WeightedAdditiveEdgeCombiner =
+  overr de def setFeature(feature: EdgeFeature):   ghtedAdd  veEdgeComb ner =
     setFeature(feature, 1.0, 0)
 
 }
 
 /**
- * This combiner resets the value to 0 if the latest event being combined = 0. Ignores time decays.
+ * T  comb ner resets t  value to 0  f t  latest event be ng comb ned = 0.  gnores t   decays.
  */
-case class BooleanOrEdgeCombiner(
-  override val edgeFeature: Option[EdgeFeature] = None,
-  override val startingDay: Int = Integer.MAX_VALUE,
-  override val endingDay: Int = Integer.MIN_VALUE,
-  override val timeSeriesStatistics: Option[TimeSeriesStatistics] = None)
-    extends EFeatureCombiner {
+case class BooleanOrEdgeComb ner(
+  overr de val edgeFeature: Opt on[EdgeFeature] = None,
+  overr de val start ngDay:  nt =  nteger.MAX_VALUE,
+  overr de val end ngDay:  nt =  nteger.M N_VALUE,
+  overr de val t  Ser esStat st cs: Opt on[T  Ser esStat st cs] = None)
+    extends EFeatureComb ner {
 
-  override def updateTSS(
+  overr de def updateTSS(
     feature: EdgeFeature,
     alpha: Double
-  ): Option[TimeSeriesStatistics] = {
-    val value = timeSeriesStatistics.map(tss => Math.floor(tss.ewma))
-    val newValue = if (value.exists(_ == 1.0) || feature.tss.mean > 0.0) 1.0 else 0.0
-    timeSeriesStatistics.map(tss =>
+  ): Opt on[T  Ser esStat st cs] = {
+    val value = t  Ser esStat st cs.map(tss => Math.floor(tss.ewma))
+    val newValue =  f (value.ex sts(_ == 1.0) || feature.tss. an > 0.0) 1.0 else 0.0
+    t  Ser esStat st cs.map(tss =>
       tss.copy(
-        mean = newValue,
+         an = newValue,
         ewma = newValue,
         numNonZeroDays = tss.numNonZeroDays + 1
       ))
   }
 
-  override def addToTSS(feature: EdgeFeature): Option[TimeSeriesStatistics] = {
-    val value = timeSeriesStatistics.map(tss => Math.floor(tss.ewma))
-    val newValue = if (value.exists(_ == 1.0) || feature.tss.mean > 0.0) 1.0 else 0.0
-    timeSeriesStatistics.map(tss => tss.copy(mean = newValue, ewma = newValue))
+  overr de def addToTSS(feature: EdgeFeature): Opt on[T  Ser esStat st cs] = {
+    val value = t  Ser esStat st cs.map(tss => Math.floor(tss.ewma))
+    val newValue =  f (value.ex sts(_ == 1.0) || feature.tss. an > 0.0) 1.0 else 0.0
+    t  Ser esStat st cs.map(tss => tss.copy( an = newValue, ewma = newValue))
   }
 
-  override def updateFeature(feature: EdgeFeature): BooleanOrEdgeCombiner = BooleanOrEdgeCombiner(
+  overr de def updateFeature(feature: EdgeFeature): BooleanOrEdgeComb ner = BooleanOrEdgeComb ner(
     edgeFeature,
-    startingDay,
-    endingDay,
+    start ngDay,
+    end ngDay,
     addToTSS(feature)
   )
 
-  def setFeature(feature: EdgeFeature, alpha: Double, day: Int): BooleanOrEdgeCombiner = {
-    val newStartingDay = Math.min(startingDay, day)
-    val newEndingDay = Math.max(endingDay, day)
+  def setFeature(feature: EdgeFeature, alpha: Double, day:  nt): BooleanOrEdgeComb ner = {
+    val newStart ngDay = Math.m n(start ngDay, day)
+    val newEnd ngDay = Math.max(end ngDay, day)
 
-    val numDaysSinceLast =
-      if (feature.tss.numDaysSinceLast.exists(_ > 0))
-        feature.tss.numDaysSinceLast.get
+    val numDaysS nceLast =
+       f (feature.tss.numDaysS nceLast.ex sts(_ > 0))
+        feature.tss.numDaysS nceLast.get
       else feature.tss.numElapsedDays - feature.tss.numNonZeroDays + 1
 
     val tss = feature.tss.copy(
-      numDaysSinceLast = Some(numDaysSinceLast),
+      numDaysS nceLast = So (numDaysS nceLast),
       ewma = alpha * feature.tss.ewma
     )
 
     val newFeature = EdgeFeature(
-      name = feature.name,
+      na  = feature.na ,
       tss = tss
     )
 
-    BooleanOrEdgeCombiner(
-      Some(newFeature),
-      newStartingDay,
-      newEndingDay,
-      Some(tss)
+    BooleanOrEdgeComb ner(
+      So (newFeature),
+      newStart ngDay,
+      newEnd ngDay,
+      So (tss)
     )
   }
 
-  override def getFinalFeature(totalDays: Int): Option[EdgeFeature] =
-    if (timeSeriesStatistics.exists(tss => tss.ewma < 1.0)) None
+  overr de def getF nalFeature(totalDays:  nt): Opt on[EdgeFeature] =
+     f (t  Ser esStat st cs.ex sts(tss => tss.ewma < 1.0)) None
     else {
-      if (edgeFeature.isEmpty || dropFeature) return None
+       f (edgeFeature. sEmpty || dropFeature) return None
       edgeFeature.map(ef =>
         ef.copy(
-          tss = timeSeriesStatistics.get
+          tss = t  Ser esStat st cs.get
         ))
     }
 
-  override def updateFeature(
+  overr de def updateFeature(
     feature: EdgeFeature,
     alpha: Double,
-    day: Int
-  ): BooleanOrEdgeCombiner = copy(
-    endingDay = Math.max(endingDay, day),
-    timeSeriesStatistics = updateTSS(feature, alpha)
+    day:  nt
+  ): BooleanOrEdgeComb ner = copy(
+    end ngDay = Math.max(end ngDay, day),
+    t  Ser esStat st cs = updateTSS(feature, alpha)
   )
 
-  override def dropFeature: Boolean = false // we will keep rolling up status-based features
+  overr de def dropFeature: Boolean = false //   w ll keep roll ng up status-based features
 
-  override def isSet = edgeFeature.isDefined
+  overr de def  sSet = edgeFeature. sDef ned
 
-  override def setFeature(feature: EdgeFeature): BooleanOrEdgeCombiner = setFeature(feature, 1.0, 0)
+  overr de def setFeature(feature: EdgeFeature): BooleanOrEdgeComb ner = setFeature(feature, 1.0, 0)
 }

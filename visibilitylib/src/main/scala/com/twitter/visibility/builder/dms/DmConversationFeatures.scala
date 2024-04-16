@@ -1,196 +1,196 @@
-package com.twitter.visibility.builder.dms
+package com.tw ter.v s b l y.bu lder.dms
 
-import com.twitter.convosvc.thriftscala.ConversationQuery
-import com.twitter.convosvc.thriftscala.ConversationQueryOptions
-import com.twitter.convosvc.thriftscala.ConversationType
-import com.twitter.convosvc.thriftscala.TimelineLookupState
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.common.DmConversationId
-import com.twitter.visibility.common.UserId
-import com.twitter.visibility.common.dm_sources.DmConversationSource
-import com.twitter.visibility.features._
+ mport com.tw ter.convosvc.thr ftscala.Conversat onQuery
+ mport com.tw ter.convosvc.thr ftscala.Conversat onQueryOpt ons
+ mport com.tw ter.convosvc.thr ftscala.Conversat onType
+ mport com.tw ter.convosvc.thr ftscala.T  l neLookupState
+ mport com.tw ter.st ch.NotFound
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.bu lder.users.AuthorFeatures
+ mport com.tw ter.v s b l y.common.DmConversat on d
+ mport com.tw ter.v s b l y.common.User d
+ mport com.tw ter.v s b l y.common.dm_s ces.DmConversat onS ce
+ mport com.tw ter.v s b l y.features._
 
-case class InvalidDmConversationFeatureException(message: String) extends Exception(message)
+case class  nval dDmConversat onFeatureExcept on( ssage: Str ng) extends Except on( ssage)
 
-class DmConversationFeatures(
-  dmConversationSource: DmConversationSource,
+class DmConversat onFeatures(
+  dmConversat onS ce: DmConversat onS ce,
   authorFeatures: AuthorFeatures) {
 
-  def forDmConversationId(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): FeatureMapBuilder => FeatureMapBuilder =
-    _.withFeature(
-      DmConversationIsOneToOneConversation,
-      dmConversationIsOneToOneConversation(dmConversationId, viewerIdOpt))
-      .withFeature(
-        DmConversationHasEmptyTimeline,
-        dmConversationHasEmptyTimeline(dmConversationId, viewerIdOpt))
-      .withFeature(
-        DmConversationHasValidLastReadableEventId,
-        dmConversationHasValidLastReadableEventId(dmConversationId, viewerIdOpt))
-      .withFeature(
-        DmConversationInfoExists,
-        dmConversationInfoExists(dmConversationId, viewerIdOpt))
-      .withFeature(
-        DmConversationTimelineExists,
-        dmConversationTimelineExists(dmConversationId, viewerIdOpt))
-      .withFeature(
-        AuthorIsSuspended,
-        dmConversationHasSuspendedParticipant(dmConversationId, viewerIdOpt))
-      .withFeature(
-        AuthorIsDeactivated,
-        dmConversationHasDeactivatedParticipant(dmConversationId, viewerIdOpt))
-      .withFeature(
-        AuthorIsErased,
-        dmConversationHasErasedParticipant(dmConversationId, viewerIdOpt))
-      .withFeature(
-        ViewerIsDmConversationParticipant,
-        viewerIsDmConversationParticipant(dmConversationId, viewerIdOpt))
+  def forDmConversat on d(
+    dmConversat on d: DmConversat on d,
+    v e r dOpt: Opt on[User d]
+  ): FeatureMapBu lder => FeatureMapBu lder =
+    _.w hFeature(
+      DmConversat on sOneToOneConversat on,
+      dmConversat on sOneToOneConversat on(dmConversat on d, v e r dOpt))
+      .w hFeature(
+        DmConversat onHasEmptyT  l ne,
+        dmConversat onHasEmptyT  l ne(dmConversat on d, v e r dOpt))
+      .w hFeature(
+        DmConversat onHasVal dLastReadableEvent d,
+        dmConversat onHasVal dLastReadableEvent d(dmConversat on d, v e r dOpt))
+      .w hFeature(
+        DmConversat on nfoEx sts,
+        dmConversat on nfoEx sts(dmConversat on d, v e r dOpt))
+      .w hFeature(
+        DmConversat onT  l neEx sts,
+        dmConversat onT  l neEx sts(dmConversat on d, v e r dOpt))
+      .w hFeature(
+        Author sSuspended,
+        dmConversat onHasSuspendedPart c pant(dmConversat on d, v e r dOpt))
+      .w hFeature(
+        Author sDeact vated,
+        dmConversat onHasDeact vatedPart c pant(dmConversat on d, v e r dOpt))
+      .w hFeature(
+        Author sErased,
+        dmConversat onHasErasedPart c pant(dmConversat on d, v e r dOpt))
+      .w hFeature(
+        V e r sDmConversat onPart c pant,
+        v e r sDmConversat onPart c pant(dmConversat on d, v e r dOpt))
 
-  def dmConversationIsOneToOneConversation(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    viewerIdOpt match {
-      case Some(viewerId) =>
-        dmConversationSource.getConversationType(dmConversationId, viewerId).flatMap {
-          case Some(ConversationType.OneToOneDm | ConversationType.SecretOneToOneDm) =>
-            Stitch.True
+  def dmConversat on sOneToOneConversat on(
+    dmConversat on d: DmConversat on d,
+    v e r dOpt: Opt on[User d]
+  ): St ch[Boolean] =
+    v e r dOpt match {
+      case So (v e r d) =>
+        dmConversat onS ce.getConversat onType(dmConversat on d, v e r d).flatMap {
+          case So (Conversat onType.OneToOneDm | Conversat onType.SecretOneToOneDm) =>
+            St ch.True
           case None =>
-            Stitch.exception(InvalidDmConversationFeatureException("Conversation type not found"))
-          case _ => Stitch.False
+            St ch.except on( nval dDmConversat onFeatureExcept on("Conversat on type not found"))
+          case _ => St ch.False
         }
-      case _ => Stitch.exception(InvalidDmConversationFeatureException("Viewer id missing"))
+      case _ => St ch.except on( nval dDmConversat onFeatureExcept on("V e r  d m ss ng"))
     }
 
-  private[dms] def dmConversationHasEmptyTimeline(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    dmConversationSource
-      .getConversationTimelineEntries(
-        dmConversationId,
-        ConversationQuery(
-          conversationId = Some(dmConversationId),
-          options = Some(
-            ConversationQueryOptions(
-              perspectivalUserId = viewerIdOpt,
-              hydrateEvents = Some(false),
-              supportsReactions = Some(true)
+  pr vate[dms] def dmConversat onHasEmptyT  l ne(
+    dmConversat on d: DmConversat on d,
+    v e r dOpt: Opt on[User d]
+  ): St ch[Boolean] =
+    dmConversat onS ce
+      .getConversat onT  l neEntr es(
+        dmConversat on d,
+        Conversat onQuery(
+          conversat on d = So (dmConversat on d),
+          opt ons = So (
+            Conversat onQueryOpt ons(
+              perspect valUser d = v e r dOpt,
+              hydrateEvents = So (false),
+              supportsReact ons = So (true)
             )
           ),
           maxCount = 10
         )
-      ).map(_.forall(entries => entries.isEmpty))
+      ).map(_.forall(entr es => entr es. sEmpty))
 
-  private[dms] def dmConversationHasValidLastReadableEventId(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    viewerIdOpt match {
-      case Some(viewerId) =>
-        dmConversationSource
-          .getConversationLastReadableEventId(dmConversationId, viewerId).map(_.exists(id =>
-            id > 0L))
-      case _ => Stitch.exception(InvalidDmConversationFeatureException("Viewer id missing"))
+  pr vate[dms] def dmConversat onHasVal dLastReadableEvent d(
+    dmConversat on d: DmConversat on d,
+    v e r dOpt: Opt on[User d]
+  ): St ch[Boolean] =
+    v e r dOpt match {
+      case So (v e r d) =>
+        dmConversat onS ce
+          .getConversat onLastReadableEvent d(dmConversat on d, v e r d).map(_.ex sts( d =>
+             d > 0L))
+      case _ => St ch.except on( nval dDmConversat onFeatureExcept on("V e r  d m ss ng"))
     }
 
-  private[dms] def dmConversationInfoExists(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    viewerIdOpt match {
-      case Some(viewerId) =>
-        dmConversationSource
-          .getDmConversationInfo(dmConversationId, viewerId).map(_.isDefined)
-      case _ => Stitch.exception(InvalidDmConversationFeatureException("Viewer id missing"))
+  pr vate[dms] def dmConversat on nfoEx sts(
+    dmConversat on d: DmConversat on d,
+    v e r dOpt: Opt on[User d]
+  ): St ch[Boolean] =
+    v e r dOpt match {
+      case So (v e r d) =>
+        dmConversat onS ce
+          .getDmConversat on nfo(dmConversat on d, v e r d).map(_. sDef ned)
+      case _ => St ch.except on( nval dDmConversat onFeatureExcept on("V e r  d m ss ng"))
     }
 
-  private[dms] def dmConversationTimelineExists(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    dmConversationSource
-      .getConversationTimelineState(
-        dmConversationId,
-        ConversationQuery(
-          conversationId = Some(dmConversationId),
-          options = Some(
-            ConversationQueryOptions(
-              perspectivalUserId = viewerIdOpt,
-              hydrateEvents = Some(false),
-              supportsReactions = Some(true)
+  pr vate[dms] def dmConversat onT  l neEx sts(
+    dmConversat on d: DmConversat on d,
+    v e r dOpt: Opt on[User d]
+  ): St ch[Boolean] =
+    dmConversat onS ce
+      .getConversat onT  l neState(
+        dmConversat on d,
+        Conversat onQuery(
+          conversat on d = So (dmConversat on d),
+          opt ons = So (
+            Conversat onQueryOpt ons(
+              perspect valUser d = v e r dOpt,
+              hydrateEvents = So (false),
+              supportsReact ons = So (true)
             )
           ),
           maxCount = 1
         )
       ).map {
-        case Some(TimelineLookupState.NotFound) | None => false
+        case So (T  l neLookupState.NotFound) | None => false
         case _ => true
       }
 
-  private[dms] def anyConversationParticipantMatchesCondition(
-    condition: UserId => Stitch[Boolean],
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    viewerIdOpt match {
-      case Some(viewerId) =>
-        dmConversationSource
-          .getConversationParticipantIds(dmConversationId, viewerId).flatMap {
-            case Some(participants) =>
-              Stitch
-                .collect(participants.map(condition)).map(_.contains(true)).rescue {
+  pr vate[dms] def anyConversat onPart c pantMatc sCond  on(
+    cond  on: User d => St ch[Boolean],
+    dmConversat on d: DmConversat on d,
+    v e r dOpt: Opt on[User d]
+  ): St ch[Boolean] =
+    v e r dOpt match {
+      case So (v e r d) =>
+        dmConversat onS ce
+          .getConversat onPart c pant ds(dmConversat on d, v e r d).flatMap {
+            case So (part c pants) =>
+              St ch
+                .collect(part c pants.map(cond  on)).map(_.conta ns(true)).rescue {
                   case NotFound =>
-                    Stitch.exception(InvalidDmConversationFeatureException("User not found"))
+                    St ch.except on( nval dDmConversat onFeatureExcept on("User not found"))
                 }
-            case _ => Stitch.False
+            case _ => St ch.False
           }
-      case _ => Stitch.exception(InvalidDmConversationFeatureException("Viewer id missing"))
+      case _ => St ch.except on( nval dDmConversat onFeatureExcept on("V e r  d m ss ng"))
     }
 
-  def dmConversationHasSuspendedParticipant(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    anyConversationParticipantMatchesCondition(
-      participant => authorFeatures.authorIsSuspended(participant),
-      dmConversationId,
-      viewerIdOpt)
+  def dmConversat onHasSuspendedPart c pant(
+    dmConversat on d: DmConversat on d,
+    v e r dOpt: Opt on[User d]
+  ): St ch[Boolean] =
+    anyConversat onPart c pantMatc sCond  on(
+      part c pant => authorFeatures.author sSuspended(part c pant),
+      dmConversat on d,
+      v e r dOpt)
 
-  def dmConversationHasDeactivatedParticipant(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    anyConversationParticipantMatchesCondition(
-      participant => authorFeatures.authorIsDeactivated(participant),
-      dmConversationId,
-      viewerIdOpt)
+  def dmConversat onHasDeact vatedPart c pant(
+    dmConversat on d: DmConversat on d,
+    v e r dOpt: Opt on[User d]
+  ): St ch[Boolean] =
+    anyConversat onPart c pantMatc sCond  on(
+      part c pant => authorFeatures.author sDeact vated(part c pant),
+      dmConversat on d,
+      v e r dOpt)
 
-  def dmConversationHasErasedParticipant(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    anyConversationParticipantMatchesCondition(
-      participant => authorFeatures.authorIsErased(participant),
-      dmConversationId,
-      viewerIdOpt)
+  def dmConversat onHasErasedPart c pant(
+    dmConversat on d: DmConversat on d,
+    v e r dOpt: Opt on[User d]
+  ): St ch[Boolean] =
+    anyConversat onPart c pantMatc sCond  on(
+      part c pant => authorFeatures.author sErased(part c pant),
+      dmConversat on d,
+      v e r dOpt)
 
-  def viewerIsDmConversationParticipant(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    viewerIdOpt match {
-      case Some(viewerId) =>
-        dmConversationSource
-          .getConversationParticipantIds(dmConversationId, viewerId).map {
-            case Some(participants) => participants.contains(viewerId)
+  def v e r sDmConversat onPart c pant(
+    dmConversat on d: DmConversat on d,
+    v e r dOpt: Opt on[User d]
+  ): St ch[Boolean] =
+    v e r dOpt match {
+      case So (v e r d) =>
+        dmConversat onS ce
+          .getConversat onPart c pant ds(dmConversat on d, v e r d).map {
+            case So (part c pants) => part c pants.conta ns(v e r d)
             case _ => false
           }
-      case _ => Stitch.exception(InvalidDmConversationFeatureException("Viewer id missing"))
+      case _ => St ch.except on( nval dDmConversat onFeatureExcept on("V e r  d m ss ng"))
     }
 }

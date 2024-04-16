@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.r chtext
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.ReferenceObject
-import com.twitter.twittertext.Extractor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.ReferenceObject
+ mport com.tw ter.tw tertext.Extractor
 
-trait RichTextReferenceObjectBuilder {
-  def apply(entity: Extractor.Entity): Option[ReferenceObject]
+tra  R chTextReferenceObjectBu lder {
+  def apply(ent y: Extractor.Ent y): Opt on[ReferenceObject]
 }

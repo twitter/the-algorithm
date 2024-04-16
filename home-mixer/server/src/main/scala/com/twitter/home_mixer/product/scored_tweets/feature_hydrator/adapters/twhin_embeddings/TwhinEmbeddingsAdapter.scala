@@ -1,68 +1,68 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.twhin_embeddings
+package com.tw ter.ho _m xer.product.scored_t ets.feature_hydrator.adapters.twh n_embedd ngs
 
-import com.twitter.ml.api.DataType
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.ml.api.util.ScalaToJavaDataRecordConversions
-import com.twitter.ml.api.{thriftscala => ml}
-import com.twitter.timelines.prediction.common.adapters.TimelinesMutatingAdapterBase
+ mport com.tw ter.ml.ap .DataType
+ mport com.tw ter.ml.ap .Feature
+ mport com.tw ter.ml.ap .FeatureContext
+ mport com.tw ter.ml.ap .R chDataRecord
+ mport com.tw ter.ml.ap .ut l.ScalaToJavaDataRecordConvers ons
+ mport com.tw ter.ml.ap .{thr ftscala => ml}
+ mport com.tw ter.t  l nes.pred ct on.common.adapters.T  l nesMutat ngAdapterBase
 
-sealed trait TwhinEmbeddingsAdapter extends TimelinesMutatingAdapterBase[Option[ml.FloatTensor]] {
-  def twhinEmbeddingsFeature: Feature.Tensor
+sealed tra  Twh nEmbedd ngsAdapter extends T  l nesMutat ngAdapterBase[Opt on[ml.FloatTensor]] {
+  def twh nEmbedd ngsFeature: Feature.Tensor
 
-  override def getFeatureContext: FeatureContext = new FeatureContext(
-    twhinEmbeddingsFeature
+  overr de def getFeatureContext: FeatureContext = new FeatureContext(
+    twh nEmbedd ngsFeature
   )
 
-  override def setFeatures(
-    embedding: Option[ml.FloatTensor],
-    richDataRecord: RichDataRecord
-  ): Unit = {
-    embedding.foreach { floatTensor =>
-      richDataRecord.setFeatureValue(
-        twhinEmbeddingsFeature,
-        ScalaToJavaDataRecordConversions.scalaTensor2Java(
+  overr de def setFeatures(
+    embedd ng: Opt on[ml.FloatTensor],
+    r chDataRecord: R chDataRecord
+  ): Un  = {
+    embedd ng.foreach { floatTensor =>
+      r chDataRecord.setFeatureValue(
+        twh nEmbedd ngsFeature,
+        ScalaToJavaDataRecordConvers ons.scalaTensor2Java(
           ml.GeneralTensor
             .FloatTensor(floatTensor)))
     }
   }
 }
 
-object TwhinEmbeddingsFeatures {
-  val TwhinAuthorFollowEmbeddingsFeature: Feature.Tensor = new Feature.Tensor(
-    "original_author.twhin.tw_hi_n.author_follow_as_float_tensor",
+object Twh nEmbedd ngsFeatures {
+  val Twh nAuthorFollowEmbedd ngsFeature: Feature.Tensor = new Feature.Tensor(
+    "or g nal_author.twh n.tw_h _n.author_follow_as_float_tensor",
     DataType.FLOAT
   )
 
-  val TwhinUserEngagementEmbeddingsFeature: Feature.Tensor = new Feature.Tensor(
-    "user.twhin.tw_hi_n.user_engagement_as_float_tensor",
+  val Twh nUserEngage ntEmbedd ngsFeature: Feature.Tensor = new Feature.Tensor(
+    "user.twh n.tw_h _n.user_engage nt_as_float_tensor",
     DataType.FLOAT
   )
 
-  val TwhinUserFollowEmbeddingsFeature: Feature.Tensor = new Feature.Tensor(
-    "user.twhin.tw_hi_n.user_follow_as_float_tensor",
+  val Twh nUserFollowEmbedd ngsFeature: Feature.Tensor = new Feature.Tensor(
+    "user.twh n.tw_h _n.user_follow_as_float_tensor",
     DataType.FLOAT
   )
 }
 
-object TwhinAuthorFollowEmbeddingsAdapter extends TwhinEmbeddingsAdapter {
-  override val twhinEmbeddingsFeature: Feature.Tensor =
-    TwhinEmbeddingsFeatures.TwhinAuthorFollowEmbeddingsFeature
+object Twh nAuthorFollowEmbedd ngsAdapter extends Twh nEmbedd ngsAdapter {
+  overr de val twh nEmbedd ngsFeature: Feature.Tensor =
+    Twh nEmbedd ngsFeatures.Twh nAuthorFollowEmbedd ngsFeature
 
-  override val commonFeatures: Set[Feature[_]] = Set.empty
+  overr de val commonFeatures: Set[Feature[_]] = Set.empty
 }
 
-object TwhinUserEngagementEmbeddingsAdapter extends TwhinEmbeddingsAdapter {
-  override val twhinEmbeddingsFeature: Feature.Tensor =
-    TwhinEmbeddingsFeatures.TwhinUserEngagementEmbeddingsFeature
+object Twh nUserEngage ntEmbedd ngsAdapter extends Twh nEmbedd ngsAdapter {
+  overr de val twh nEmbedd ngsFeature: Feature.Tensor =
+    Twh nEmbedd ngsFeatures.Twh nUserEngage ntEmbedd ngsFeature
 
-  override val commonFeatures: Set[Feature[_]] = Set(twhinEmbeddingsFeature)
+  overr de val commonFeatures: Set[Feature[_]] = Set(twh nEmbedd ngsFeature)
 }
 
-object TwhinUserFollowEmbeddingsAdapter extends TwhinEmbeddingsAdapter {
-  override val twhinEmbeddingsFeature: Feature.Tensor =
-    TwhinEmbeddingsFeatures.TwhinUserFollowEmbeddingsFeature
+object Twh nUserFollowEmbedd ngsAdapter extends Twh nEmbedd ngsAdapter {
+  overr de val twh nEmbedd ngsFeature: Feature.Tensor =
+    Twh nEmbedd ngsFeatures.Twh nUserFollowEmbedd ngsFeature
 
-  override val commonFeatures: Set[Feature[_]] = Set(twhinEmbeddingsFeature)
+  overr de val commonFeatures: Set[Feature[_]] = Set(twh nEmbedd ngsFeature)
 }

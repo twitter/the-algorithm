@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.component_library.gate
+package com.tw ter.product_m xer.component_l brary.gate
 
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.core.funct onal_component.gate.Gate
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Gate dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.qual y_factor.HasQual yFactorStatus
+ mport com.tw ter.st ch.St ch
 
 /**
- * A Gate that only continues if the quality factor value of the pipeline is above the given
- * threshold. This is useful for disabling an expensive function when the pipeline is under pressure
- * (quality factor is low).
+ * A Gate that only cont nues  f t  qual y factor value of t  p pel ne  s above t  g ven
+ * threshold. T   s useful for d sabl ng an expens ve funct on w n t  p pel ne  s under pressure
+ * (qual y factor  s low).
  */
-case class QualityFactorGate(pipelineIdentifier: ComponentIdentifier, threshold: Double)
-    extends Gate[PipelineQuery with HasQualityFactorStatus] {
+case class Qual yFactorGate(p pel ne dent f er: Component dent f er, threshold: Double)
+    extends Gate[P pel neQuery w h HasQual yFactorStatus] {
 
-  override val identifier: GateIdentifier = GateIdentifier(
-    s"${pipelineIdentifier.name}QualityFactor")
+  overr de val  dent f er: Gate dent f er = Gate dent f er(
+    s"${p pel ne dent f er.na }Qual yFactor")
 
-  override def shouldContinue(
-    query: PipelineQuery with HasQualityFactorStatus
-  ): Stitch[Boolean] =
-    Stitch.value(query.getQualityFactorCurrentValue(pipelineIdentifier) >= threshold)
+  overr de def shouldCont nue(
+    query: P pel neQuery w h HasQual yFactorStatus
+  ): St ch[Boolean] =
+    St ch.value(query.getQual yFactorCurrentValue(p pel ne dent f er) >= threshold)
 }

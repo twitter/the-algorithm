@@ -1,34 +1,34 @@
-package com.twitter.unified_user_actions.enricher.hcache
+package com.tw ter.un f ed_user_act ons.enr c r.hcac 
 
-import com.google.common.cache.Cache
-import com.twitter.cache.FutureCache
-import com.twitter.cache.guava.GuavaCache
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Future
+ mport com.google.common.cac .Cac 
+ mport com.tw ter.cac .FutureCac 
+ mport com.tw ter.cac .guava.GuavaCac 
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ut l.Future
 
 /**
- * A local cache implementation using GuavaCache.
- * Underneath it uses a customized version of the EvictingCache to 1) deal with Futures, 2) add more stats.
+ * A local cac   mple ntat on us ng GuavaCac .
+ * Underneath   uses a custom zed vers on of t  Ev ct ngCac  to 1) deal w h Futures, 2) add more stats.
  */
-class LocalCache[K, V](
-  underlying: Cache[K, Future[V]],
-  statsReceiver: StatsReceiver = NullStatsReceiver) {
+class LocalCac [K, V](
+  underly ng: Cac [K, Future[V]],
+  statsRece ver: StatsRece ver = NullStatsRece ver) {
 
-  private[this] val cache = new GuavaCache(underlying)
-  private[this] val evictingCache: FutureCache[K, V] =
-    ObservedEvictingCache(underlying = cache, statsReceiver = statsReceiver)
+  pr vate[t ] val cac  = new GuavaCac (underly ng)
+  pr vate[t ] val ev ct ngCac : FutureCac [K, V] =
+    ObservedEv ct ngCac (underly ng = cac , statsRece ver = statsRece ver)
 
-  def getOrElseUpdate(key: K)(fn: => Future[V]): Future[V] = evictingCache.getOrElseUpdate(key)(fn)
+  def getOrElseUpdate(key: K)(fn: => Future[V]): Future[V] = ev ct ngCac .getOrElseUpdate(key)(fn)
 
-  def get(key: K): Option[Future[V]] = evictingCache.get(key)
+  def get(key: K): Opt on[Future[V]] = ev ct ngCac .get(key)
 
-  def evict(key: K, value: Future[V]): Boolean = evictingCache.evict(key, value)
+  def ev ct(key: K, value: Future[V]): Boolean = ev ct ngCac .ev ct(key, value)
 
-  def set(key: K, value: Future[V]): Unit = evictingCache.set(key, value)
+  def set(key: K, value: Future[V]): Un  = ev ct ngCac .set(key, value)
 
-  def reset(): Unit =
-    underlying.invalidateAll()
+  def reset(): Un  =
+    underly ng. nval dateAll()
 
-  def size: Int = evictingCache.size
+  def s ze:  nt = ev ct ngCac .s ze
 }

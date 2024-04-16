@@ -1,103 +1,103 @@
-package com.twitter.simclusters_v2.scalding.topic_recommendations
-import com.twitter.bijection.{Bufferable, Injection}
-import com.twitter.scalding._
-import com.twitter.simclusters_v2.common.{Country, Language, SemanticCoreEntityId, TopicId, UserId}
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.ProducerId
-import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
+package com.tw ter.s mclusters_v2.scald ng.top c_recom ndat ons
+ mport com.tw ter.b ject on.{Bufferable,  nject on}
+ mport com.tw ter.scald ng._
+ mport com.tw ter.s mclusters_v2.common.{Country, Language, Semant cCoreEnt y d, Top c d, User d}
+ mport com.tw ter.s mclusters_v2.scald ng.common.matr x.SparseMatr x
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.Embedd ngUt l.Producer d
+ mport com.tw ter.s mclusters_v2.thr ftscala.UserAndNe ghbors
 
-object TopicsForProducersUtils {
+object Top csForProducersUt ls {
 
-  implicit val sparseMatrixInj: Injection[
-    (SemanticCoreEntityId, Option[Language], Option[Country]),
+   mpl c  val sparseMatr x nj:  nject on[
+    (Semant cCoreEnt y d, Opt on[Language], Opt on[Country]),
     Array[Byte]
   ] =
-    Bufferable.injectionOf[(SemanticCoreEntityId, Option[Language], Option[Country])]
+    Bufferable. nject onOf[(Semant cCoreEnt y d, Opt on[Language], Opt on[Country])]
 
-  // This function provides the set of 'valid' topics, i.e topics with atleast a certain number of
-  // follows. This helps remove some noisy topic associations to producers in the dataset.
-  def getValidTopics(
-    topicUsers: TypedPipe[((TopicId, Option[Language], Option[Country]), UserId, Double)],
-    minTopicFollowsThreshold: Int
+  // T  funct on prov des t  set of 'val d' top cs,  .e top cs w h atleast a certa n number of
+  // follows. T   lps remove so  no sy top c assoc at ons to producers  n t  dataset.
+  def getVal dTop cs(
+    top cUsers: TypedP pe[((Top c d, Opt on[Language], Opt on[Country]), User d, Double)],
+    m nTop cFollowsThreshold:  nt
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(TopicId, Option[Language], Option[Country])] = {
-    val numValidTopics = Stat("num_valid_topics")
-    SparseMatrix(topicUsers).rowNnz.collect {
-      case (topicsWithLocaleKey, numFollows) if numFollows >= minTopicFollowsThreshold =>
-        numValidTopics.inc()
-        topicsWithLocaleKey
+     mpl c  un que D: Un que D
+  ): TypedP pe[(Top c d, Opt on[Language], Opt on[Country])] = {
+    val numVal dTop cs = Stat("num_val d_top cs")
+    SparseMatr x(top cUsers).rowNnz.collect {
+      case (top csW hLocaleKey, numFollows)  f numFollows >= m nTop cFollowsThreshold =>
+        numVal dTop cs. nc()
+        top csW hLocaleKey
     }
   }
 
-  // Get the users with atleast minNumUserFollowers following
-  def getValidProducers(
-    userToFollowersEdges: TypedPipe[(UserId, UserId, Double)],
-    minNumUserFollowers: Int
+  // Get t  users w h atleast m nNumUserFollo rs follow ng
+  def getVal dProducers(
+    userToFollo rsEdges: TypedP pe[(User d, User d, Double)],
+    m nNumUserFollo rs:  nt
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[ProducerId] = {
-    val numProducersForTopics = Stat("num_producers_for_topics")
-    SparseMatrix(userToFollowersEdges).rowL1Norms.collect {
-      case (userId, l1Norm) if l1Norm >= minNumUserFollowers =>
-        numProducersForTopics.inc()
-        userId
+     mpl c  un que D: Un que D
+  ): TypedP pe[Producer d] = {
+    val numProducersForTop cs = Stat("num_producers_for_top cs")
+    SparseMatr x(userToFollo rsEdges).rowL1Norms.collect {
+      case (user d, l1Norm)  f l1Norm >= m nNumUserFollo rs =>
+        numProducersForTop cs. nc()
+        user d
     }
   }
 
-  // This function returns the User to Followed Topics Matrix
-  def getFollowedTopicsToUserSparseMatrix(
-    followedTopicsToUsers: TypedPipe[(TopicId, UserId)],
-    userCountryAndLanguage: TypedPipe[(UserId, (Country, Language))],
-    userLanguages: TypedPipe[(UserId, Seq[(Language, Double)])],
-    minTopicFollowsThreshold: Int
+  // T  funct on returns t  User to Follo d Top cs Matr x
+  def getFollo dTop csToUserSparseMatr x(
+    follo dTop csToUsers: TypedP pe[(Top c d, User d)],
+    userCountryAndLanguage: TypedP pe[(User d, (Country, Language))],
+    userLanguages: TypedP pe[(User d, Seq[(Language, Double)])],
+    m nTop cFollowsThreshold:  nt
   )(
-    implicit uniqueID: UniqueID
-  ): SparseMatrix[(TopicId, Option[Language], Option[Country]), UserId, Double] = {
-    val localeTopicsWithUsers: TypedPipe[
-      ((TopicId, Option[Language], Option[Country]), UserId, Double)
+     mpl c  un que D: Un que D
+  ): SparseMatr x[(Top c d, Opt on[Language], Opt on[Country]), User d, Double] = {
+    val localeTop csW hUsers: TypedP pe[
+      ((Top c d, Opt on[Language], Opt on[Country]), User d, Double)
     ] =
-      followedTopicsToUsers
-        .map { case (topic, user) => (user, topic) }
-        .join(userCountryAndLanguage)
-        .join(userLanguages)
-        .withDescription("joining user locale information")
+      follo dTop csToUsers
+        .map { case (top c, user) => (user, top c) }
+        .jo n(userCountryAndLanguage)
+        .jo n(userLanguages)
+        .w hDescr pt on("jo n ng user locale  nformat on")
         .flatMap {
-          case (user, ((topic, (country, _)), scoredLangs)) =>
+          case (user, ((top c, (country, _)), scoredLangs)) =>
             scoredLangs.flatMap {
               case (lang, score) =>
-                // To compute the top topics with/without language and country level personalization
-                // So the same dataset has 3 keys for each topicId (unless it gets filtered after):
-                // (TopicId, Language, Country), (TopicId, Language, None), (TopicId, None, None)
+                // To compute t  top top cs w h/w hout language and country level personal zat on
+                // So t  sa  dataset has 3 keys for each top c d (unless   gets f ltered after):
+                // (Top c d, Language, Country), (Top c d, Language, None), (Top c d, None, None)
                 Seq(
-                  ((topic, Some(lang), Some(country)), user, score), // with language and country
-                  ((topic, Some(lang), None), user, score) // with language
+                  ((top c, So (lang), So (country)), user, score), // w h language and country
+                  ((top c, So (lang), None), user, score) // w h language
                 )
-            } ++ Seq(((topic, None, None), user, 1.0)) // no locale
+            } ++ Seq(((top c, None, None), user, 1.0)) // no locale
         }
-    SparseMatrix(localeTopicsWithUsers).filterRowsByMinSum(minTopicFollowsThreshold)
+    SparseMatr x(localeTop csW hUsers).f lterRowsByM nSum(m nTop cFollowsThreshold)
   }
 
-  // This function returns the Producers To User Followers Matrix
-  def getProducersToFollowedByUsersSparseMatrix(
-    userUserGraph: TypedPipe[UserAndNeighbors],
-    minActiveFollowers: Int,
+  // T  funct on returns t  Producers To User Follo rs Matr x
+  def getProducersToFollo dByUsersSparseMatr x(
+    userUserGraph: TypedP pe[UserAndNe ghbors],
+    m nAct veFollo rs:  nt,
   )(
-    implicit uniqueID: UniqueID
-  ): SparseMatrix[ProducerId, UserId, Double] = {
+     mpl c  un que D: Un que D
+  ): SparseMatr x[Producer d, User d, Double] = {
 
-    val numEdgesFromUsersToFollowers = Stat("num_edges_from_users_to_followers")
+    val numEdgesFromUsersToFollo rs = Stat("num_edges_from_users_to_follo rs")
 
-    val userToFollowersEdges: TypedPipe[(UserId, UserId, Double)] =
+    val userToFollo rsEdges: TypedP pe[(User d, User d, Double)] =
       userUserGraph
-        .flatMap { userAndNeighbors =>
-          userAndNeighbors.neighbors
+        .flatMap { userAndNe ghbors =>
+          userAndNe ghbors.ne ghbors
             .collect {
-              case neighbor if neighbor.isFollowed.getOrElse(false) =>
-                numEdgesFromUsersToFollowers.inc()
-                (neighbor.neighborId, userAndNeighbors.userId, 1.0)
+              case ne ghbor  f ne ghbor. sFollo d.getOrElse(false) =>
+                numEdgesFromUsersToFollo rs. nc()
+                (ne ghbor.ne ghbor d, userAndNe ghbors.user d, 1.0)
             }
         }
-    SparseMatrix(userToFollowersEdges).filterRowsByMinSum(minActiveFollowers)
+    SparseMatr x(userToFollo rsEdges).f lterRowsByM nSum(m nAct veFollo rs)
   }
 }

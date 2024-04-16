@@ -1,42 +1,42 @@
-package com.twitter.product_mixer.component_library.module
+package com.tw ter.product_m xer.component_l brary.module
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.tweetconvosvc.thriftscala.ConversationService
-import com.twitter.util.Duration
-import org.apache.thrift.protocol.TCompactProtocol
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.convers ons.PercentOps._
+ mport com.tw ter.f nagle.Thr ftMux
+ mport com.tw ter.f nagle.thr ftmux. thodBu lder
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport com.tw ter. nject. njector
+ mport com.tw ter. nject.thr ft.modules.Thr ft thodBu lderCl entModule
+ mport com.tw ter.t etconvosvc.thr ftscala.Conversat onServ ce
+ mport com.tw ter.ut l.Durat on
+ mport org.apac .thr ft.protocol.TCompactProtocol
 
-object ConversationServiceModule
-    extends ThriftMethodBuilderClientModule[
-      ConversationService.ServicePerEndpoint,
-      ConversationService.MethodPerEndpoint
+object Conversat onServ ceModule
+    extends Thr ft thodBu lderCl entModule[
+      Conversat onServ ce.Serv cePerEndpo nt,
+      Conversat onServ ce. thodPerEndpo nt
     ]
-    with MtlsClient {
+    w h MtlsCl ent {
 
-  override val label: String = "tweetconvosvc"
-  override val dest: String = "/s/tweetconvosvc/tweetconvosvc"
+  overr de val label: Str ng = "t etconvosvc"
+  overr de val dest: Str ng = "/s/t etconvosvc/t etconvosvc"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder =
-    methodBuilder
-      .withTimeoutTotal(200.milliseconds)
-      .withTimeoutPerRequest(100.milliseconds)
-      .idempotent(1.percent)
+  overr de protected def conf gure thodBu lder(
+     njector:  njector,
+     thodBu lder:  thodBu lder
+  ):  thodBu lder =
+     thodBu lder
+      .w hT  outTotal(200.m ll seconds)
+      .w hT  outPerRequest(100.m ll seconds)
+      . dempotent(1.percent)
 
-  override def configureThriftMuxClient(
-    injector: Injector,
-    client: ThriftMux.Client
-  ): ThriftMux.Client =
+  overr de def conf gureThr ftMuxCl ent(
+     njector:  njector,
+    cl ent: Thr ftMux.Cl ent
+  ): Thr ftMux.Cl ent =
     super
-      .configureThriftMuxClient(injector, client)
-      .withProtocolFactory(new TCompactProtocol.Factory())
+      .conf gureThr ftMuxCl ent( njector, cl ent)
+      .w hProtocolFactory(new TCompactProtocol.Factory())
 
-  override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+  overr de protected def sess onAcqu s  onT  out: Durat on = 500.m ll seconds
 }

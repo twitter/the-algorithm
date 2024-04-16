@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.common.transforms.dedup
+package com.tw ter.follow_recom ndat ons.common.transforms.dedup
 
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.stitch.Stitch
-import scala.collection.mutable
+ mport com.tw ter.follow_recom ndat ons.common.base.Transform
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.st ch.St ch
+ mport scala.collect on.mutable
 
-class DedupTransform[Request, Candidate <: UniversalNoun[Long]]()
-    extends Transform[Request, Candidate] {
-  override def transform(target: Request, candidates: Seq[Candidate]): Stitch[Seq[Candidate]] = {
+class DedupTransform[Request, Cand date <: Un versalNoun[Long]]()
+    extends Transform[Request, Cand date] {
+  overr de def transform(target: Request, cand dates: Seq[Cand date]): St ch[Seq[Cand date]] = {
     val seen = mutable.HashSet[Long]()
-    Stitch.value(candidates.filter(candidate => seen.add(candidate.id)))
+    St ch.value(cand dates.f lter(cand date => seen.add(cand date. d)))
   }
 }

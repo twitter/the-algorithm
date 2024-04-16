@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.modules
+package com.tw ter.follow_recom ndat ons.modules
 
-import com.twitter.follow_recommendations.products.ProdProductRegistry
-import com.twitter.follow_recommendations.products.common.ProductRegistry
-import com.twitter.inject.TwitterModule
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.products.ProdProductReg stry
+ mport com.tw ter.follow_recom ndat ons.products.common.ProductReg stry
+ mport com.tw ter. nject.Tw terModule
+ mport javax. nject.S ngleton
 
-object ProductRegistryModule extends TwitterModule {
-  override protected def configure(): Unit = {
-    bind[ProductRegistry].to[ProdProductRegistry].in[Singleton]
+object ProductReg stryModule extends Tw terModule {
+  overr de protected def conf gure(): Un  = {
+    b nd[ProductReg stry].to[ProdProductReg stry]. n[S ngleton]
   }
 }

@@ -1,58 +1,58 @@
-package com.twitter.search.common.encoding.features;
+package com.tw ter.search.common.encod ng.features;
 
 /**
- * Encodes multiple values (bytes or bits) into an integer.
+ * Encodes mult ple values (bytes or b s)  nto an  nteger.
  */
-public class EncodedFeatures {
-  private int value;
+publ c class EncodedFeatures {
+  pr vate  nt value;
 
-  public final void setSerializedValue(int val) {
-    this.value = val;
+  publ c f nal vo d setSer al zedValue( nt val) {
+    t .value = val;
   }
 
-  public final int getSerializedValue() {
+  publ c f nal  nt getSer al zedValue() {
     return value;
   }
 
-  // setByte is agnostic to signed / unsigned bytes.
-  protected final EncodedFeatures setByte(byte count, int bitshift, long inverseMask) {
-    value = (int) ((value & inverseMask) | ((count & 0xffL) << bitshift));
-    return this;
+  // setByte  s agnost c to s gned / uns gned bytes.
+  protected f nal EncodedFeatures setByte(byte count,  nt b sh ft, long  nverseMask) {
+    value = ( nt) ((value &  nverseMask) | ((count & 0xffL) << b sh ft));
+    return t ;
   }
 
   /**
-   * Sets the value but only if greater. setByteIfGreater assumes unsigned bytes.
+   * Sets t  value but only  f greater. setByte fGreater assu s uns gned bytes.
    */
-  public final EncodedFeatures setByteIfGreater(byte newCount, int bitshift, long inversemask) {
-    if ((getByte(bitshift) & 0xff) < (newCount & 0xff)) {
-      setByte(newCount, bitshift, inversemask);
+  publ c f nal EncodedFeatures setByte fGreater(byte newCount,  nt b sh ft, long  nversemask) {
+     f ((getByte(b sh ft) & 0xff) < (newCount & 0xff)) {
+      setByte(newCount, b sh ft,  nversemask);
     }
-    return this;
+    return t ;
   }
 
-  protected final int getByte(int bitshift) {
-    return (int) (((value & 0xffffffffL) >>> bitshift) & 0xffL);
+  protected f nal  nt getByte( nt b sh ft) {
+    return ( nt) (((value & 0xffffffffL) >>> b sh ft) & 0xffL);
   }
 
-  protected final int getByteMasked(int bitshift, long mask) {
-    return (int) (((value & mask) >>> bitshift) & 0xffL);
+  protected f nal  nt getByteMasked( nt b sh ft, long mask) {
+    return ( nt) (((value & mask) >>> b sh ft) & 0xffL);
   }
 
-  protected final EncodedFeatures setBit(int bit, boolean flag) {
-    if (flag) {
-      value |= bit;
+  protected f nal EncodedFeatures setB ( nt b , boolean flag) {
+     f (flag) {
+      value |= b ;
     } else {
-      value &= ~bit;
+      value &= ~b ;
     }
-    return this;
+    return t ;
   }
 
-  protected final boolean getBit(int bit) {
-    return (value & bit) != 0;
+  protected f nal boolean getB ( nt b ) {
+    return (value & b ) != 0;
   }
 
-  @Override
-  public String toString() {
-    return String.format("%x", value);
+  @Overr de
+  publ c Str ng toStr ng() {
+    return Str ng.format("%x", value);
   }
 }

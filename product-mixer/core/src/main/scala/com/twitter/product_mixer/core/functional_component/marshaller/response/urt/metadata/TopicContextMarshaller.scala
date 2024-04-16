@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.BasicTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TopicContext
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Bas cTop cContextFunct onal yType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Top cContext
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TopicContextMarshaller @Inject() () {
+@S ngleton
+class Top cContextMarshaller @ nject() () {
 
-  def apply(topicContext: TopicContext): urt.SocialContext = {
-    urt.SocialContext.TopicContext(
-      urt.TopicContext(
-        topicId = topicContext.topicId,
-        functionalityType = TopicContextFunctionalityTypeMarshaller(
-          topicContext.functionalityType.getOrElse(BasicTopicContextFunctionalityType))
+  def apply(top cContext: Top cContext): urt.Soc alContext = {
+    urt.Soc alContext.Top cContext(
+      urt.Top cContext(
+        top c d = top cContext.top c d,
+        funct onal yType = Top cContextFunct onal yTypeMarshaller(
+          top cContext.funct onal yType.getOrElse(Bas cTop cContextFunct onal yType))
       )
     )
   }

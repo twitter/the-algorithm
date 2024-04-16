@@ -1,8 +1,8 @@
-package com.twitter.home_mixer.model.request
+package com.tw ter.ho _m xer.model.request
 
 /**
- * [[HasListId]] enables shared components to access the list id shared by all list timeline products.
+ * [[HasL st d]] enables shared components to access t  l st  d shared by all l st t  l ne products.
  */
-trait HasListId {
-  def listId: Long
+tra  HasL st d {
+  def l st d: Long
 }

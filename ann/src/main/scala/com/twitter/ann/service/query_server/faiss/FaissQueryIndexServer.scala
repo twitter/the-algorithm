@@ -1,149 +1,149 @@
-package com.twitter.ann.service.query_server.faiss
+package com.tw ter.ann.serv ce.query_server.fa ss
 
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.QueryableOperations.Map
-import com.twitter.ann.common._
-import com.twitter.ann.common.thriftscala.{RuntimeParams => ServiceRuntimeParams}
-import com.twitter.ann.faiss.FaissCommon
-import com.twitter.ann.faiss.FaissIndex
-import com.twitter.ann.faiss.FaissParams
-import com.twitter.ann.faiss.HourlyShardedIndex
-import com.twitter.ann.service.query_server.common.QueryableProvider
-import com.twitter.ann.service.query_server.common.RefreshableQueryable
-import com.twitter.ann.service.query_server.common.UnsafeQueryIndexServer
-import com.twitter.ann.service.query_server.common.FaissIndexPathProvider
-import com.twitter.ann.service.query_server.common.throttling.ThrottlingBasedQualityTask
-import com.twitter.ann.service.query_server.common.warmup.Warmup
-import com.twitter.bijection.Injection
-import com.twitter.conversions.DurationOps.richDurationFromInt
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.search.common.file.FileUtils
-import com.twitter.util.Duration
-import java.util.concurrent.TimeUnit
+ mport com.tw ter.ann.common.D stance
+ mport com.tw ter.ann.common.QueryableOperat ons.Map
+ mport com.tw ter.ann.common._
+ mport com.tw ter.ann.common.thr ftscala.{Runt  Params => Serv ceRunt  Params}
+ mport com.tw ter.ann.fa ss.Fa ssCommon
+ mport com.tw ter.ann.fa ss.Fa ss ndex
+ mport com.tw ter.ann.fa ss.Fa ssParams
+ mport com.tw ter.ann.fa ss.H lySharded ndex
+ mport com.tw ter.ann.serv ce.query_server.common.QueryableProv der
+ mport com.tw ter.ann.serv ce.query_server.common.RefreshableQueryable
+ mport com.tw ter.ann.serv ce.query_server.common.UnsafeQuery ndexServer
+ mport com.tw ter.ann.serv ce.query_server.common.Fa ss ndexPathProv der
+ mport com.tw ter.ann.serv ce.query_server.common.throttl ng.Throttl ngBasedQual yTask
+ mport com.tw ter.ann.serv ce.query_server.common.warmup.Warmup
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.convers ons.Durat onOps.r chDurat onFrom nt
+ mport com.tw ter.search.common.f le.AbstractF le
+ mport com.tw ter.search.common.f le.F leUt ls
+ mport com.tw ter.ut l.Durat on
+ mport java.ut l.concurrent.T  Un 
 
-object FaissQueryIndexServer extends FaissQueryableServer
+object Fa ssQuery ndexServer extends Fa ssQueryableServer
 
-class FaissQueryableServer extends UnsafeQueryIndexServer[FaissParams] {
-  // given a directory, how to load it as a queryable index
-  def queryableProvider[T, D <: Distance[D]]: QueryableProvider[T, FaissParams, D] =
-    new QueryableProvider[T, FaissParams, D] {
-      override def provideQueryable(
-        directory: AbstractFile
-      ): Queryable[T, FaissParams, D] = {
-        FaissIndex.loadIndex[T, D](
-          dimension(),
-          unsafeMetric.asInstanceOf[Metric[D]],
-          directory
+class Fa ssQueryableServer extends UnsafeQuery ndexServer[Fa ssParams] {
+  // g ven a d rectory, how to load   as a queryable  ndex
+  def queryableProv der[T, D <: D stance[D]]: QueryableProv der[T, Fa ssParams, D] =
+    new QueryableProv der[T, Fa ssParams, D] {
+      overr de def prov deQueryable(
+        d rectory: AbstractF le
+      ): Queryable[T, Fa ssParams, D] = {
+        Fa ss ndex.load ndex[T, D](
+          d  ns on(),
+          unsafe tr c.as nstanceOf[ tr c[D]],
+          d rectory
         )
       }
     }
 
-  private def buildSimpleQueryable[T, D <: Distance[D]](
-    dir: AbstractFile
-  ): Queryable[T, FaissParams, D] = {
-    val queryable = if (refreshable()) {
-      logger.info(s"build refreshable queryable")
+  pr vate def bu ldS mpleQueryable[T, D <: D stance[D]](
+    d r: AbstractF le
+  ): Queryable[T, Fa ssParams, D] = {
+    val queryable =  f (refreshable()) {
+      logger. nfo(s"bu ld refreshable queryable")
       val updatableQueryable = new RefreshableQueryable(
         false,
-        dir,
-        queryableProvider.asInstanceOf[QueryableProvider[T, FaissParams, D]],
-        FaissIndexPathProvider(
-          minIndexSizeBytes(),
-          maxIndexSizeBytes(),
-          statsReceiver.scope("validated_index_provider")
+        d r,
+        queryableProv der.as nstanceOf[QueryableProv der[T, Fa ssParams, D]],
+        Fa ss ndexPathProv der(
+          m n ndexS zeBytes(),
+          max ndexS zeBytes(),
+          statsRece ver.scope("val dated_ ndex_prov der")
         ),
-        statsReceiver.scope("refreshable_queryable"),
-        updateInterval = refreshableInterval().minutes
+        statsRece ver.scope("refreshable_queryable"),
+        update nterval = refreshable nterval().m nutes
       )
-      // init first load of index and also schedule the following reloads
+      //  n  f rst load of  ndex and also sc dule t  follow ng reloads
       updatableQueryable.start()
-      updatableQueryable.asInstanceOf[QueryableGrouped[T, FaissParams, D]]
+      updatableQueryable.as nstanceOf[QueryableGrouped[T, Fa ssParams, D]]
     } else {
-      logger.info(s"build non-refreshable queryable")
+      logger. nfo(s"bu ld non-refreshable queryable")
 
-      logger.info(s"Loading ${dir}")
-      queryableProvider.provideQueryable(dir).asInstanceOf[Queryable[T, FaissParams, D]]
+      logger. nfo(s"Load ng ${d r}")
+      queryableProv der.prov deQueryable(d r).as nstanceOf[Queryable[T, Fa ssParams, D]]
     }
 
-    logger.info("Faiss queryable created....")
+    logger. nfo("Fa ss queryable created....")
     queryable
   }
 
-  private def buildShardedQueryable[T, D <: Distance[D]](
-    dir: AbstractFile
-  ): Queryable[T, FaissParams, D] = {
-    logger.info(s"build sharded queryable")
+  pr vate def bu ldShardedQueryable[T, D <: D stance[D]](
+    d r: AbstractF le
+  ): Queryable[T, Fa ssParams, D] = {
+    logger. nfo(s"bu ld sharded queryable")
 
-    val queryable = HourlyShardedIndex.loadIndex[T, D](
-      dimension(),
-      unsafeMetric.asInstanceOf[Metric[D]],
-      dir,
-      shardedHours(),
-      Duration(shardedWatchIntervalMinutes(), TimeUnit.MINUTES),
-      shardedWatchLookbackIndexes(),
-      statsReceiver.scope("hourly_sharded_index")
+    val queryable = H lySharded ndex.load ndex[T, D](
+      d  ns on(),
+      unsafe tr c.as nstanceOf[ tr c[D]],
+      d r,
+      shardedH s(),
+      Durat on(shardedWatch ntervalM nutes(), T  Un .M NUTES),
+      shardedWatchLookback ndexes(),
+      statsRece ver.scope("h ly_sharded_ ndex")
     )
 
-    logger.info("Faiss sharded queryable created....")
+    logger. nfo("Fa ss sharded queryable created....")
 
-    closeOnExit(queryable)
-    queryable.startImmediately()
+    closeOnEx (queryable)
+    queryable.start m d ately()
 
-    logger.info("Directory watching is scheduled")
+    logger. nfo("D rectory watch ng  s sc duled")
 
     queryable
   }
 
-  // Readings come incorrect if reader is created too early in the lifecycle of a server
-  // hence lazy
-  private lazy val throttleSamplingTask = new ThrottlingBasedQualityTask(
-    statsReceiver.scope("throttling_task"))
+  // Read ngs co   ncorrect  f reader  s created too early  n t  l fecycle of a server
+  //  nce lazy
+  pr vate lazy val throttleSampl ngTask = new Throttl ngBasedQual yTask(
+    statsRece ver.scope("throttl ng_task"))
 
-  override def unsafeQueryableMap[T, D <: Distance[D]]: Queryable[T, FaissParams, D] = {
-    val dir = FileUtils.getFileHandle(indexDirectory())
+  overr de def unsafeQueryableMap[T, D <: D stance[D]]: Queryable[T, Fa ssParams, D] = {
+    val d r = F leUt ls.getF leHandle( ndexD rectory())
 
-    val queryable = if (sharded()) {
-      require(shardedHours() > 0, "Number of hourly shards must be specified")
-      require(shardedWatchIntervalMinutes() > 0, "Shard watch interval must be specified")
-      require(shardedWatchLookbackIndexes() > 0, "Index lookback must be specified")
-      buildShardedQueryable[T, D](dir)
+    val queryable =  f (sharded()) {
+      requ re(shardedH s() > 0, "Number of h ly shards must be spec f ed")
+      requ re(shardedWatch ntervalM nutes() > 0, "Shard watch  nterval must be spec f ed")
+      requ re(shardedWatchLookback ndexes() > 0, " ndex lookback must be spec f ed")
+      bu ldShardedQueryable[T, D](d r)
     } else {
-      buildSimpleQueryable[T, D](dir)
+      bu ldS mpleQueryable[T, D](d r)
     }
 
-    if (qualityFactorEnabled()) {
-      logger.info("Quality Factor throttling is enabled")
-      closeOnExit(throttleSamplingTask)
-      throttleSamplingTask.jitteredStart()
+     f (qual yFactorEnabled()) {
+      logger. nfo("Qual y Factor throttl ng  s enabled")
+      closeOnEx (throttleSampl ngTask)
+      throttleSampl ngTask.j teredStart()
 
-      queryable.mapRuntimeParameters(throttleSamplingTask.discountParams)
+      queryable.mapRunt  Para ters(throttleSampl ngTask.d scountParams)
     } else {
       queryable
     }
   }
 
-  override val runtimeInjection: Injection[FaissParams, ServiceRuntimeParams] =
-    FaissCommon.RuntimeParamsInjection
+  overr de val runt   nject on:  nject on[Fa ssParams, Serv ceRunt  Params] =
+    Fa ssCommon.Runt  Params nject on
 
-  protected override def warmup(): Unit =
-    if (warmup_enabled())
-      new FaissWarmup(unsafeQueryableMap, dimension()).warmup()
+  protected overr de def warmup(): Un  =
+     f (warmup_enabled())
+      new Fa ssWarmup(unsafeQueryableMap, d  ns on()).warmup()
 }
 
-class FaissWarmup(faiss: Queryable[_, FaissParams, _], dimension: Int) extends Warmup {
-  protected def minSuccessfulTries: Int = 100
-  protected def maxTries: Int = 1000
-  protected def timeout: Duration = 50.milliseconds
-  protected def randomQueryDimension: Int = dimension
+class Fa ssWarmup(fa ss: Queryable[_, Fa ssParams, _], d  ns on:  nt) extends Warmup {
+  protected def m nSuccessfulTr es:  nt = 100
+  protected def maxTr es:  nt = 1000
+  protected def t  out: Durat on = 50.m ll seconds
+  protected def randomQueryD  ns on:  nt = d  ns on
 
-  def warmup(): Unit = {
+  def warmup(): Un  = {
     run(
-      name = "queryWithDistance",
-      f = faiss
-        .queryWithDistance(
+      na  = "queryW hD stance",
+      f = fa ss
+        .queryW hD stance(
           randomQuery(),
           100,
-          FaissParams(nprobe = Some(128), None, None, None, None))
+          Fa ssParams(nprobe = So (128), None, None, None, None))
     )
   }
 }

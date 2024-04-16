@@ -1,63 +1,63 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.EditState
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.core.Ed State
 
 /**
- * An EditHydrator hydrates a value of type `A`, with a hydration context of type `C`,
- * and produces a function that takes a value and context and returns an EditState[A, C]
- * (an EditState encapsulates a function that takes a value and returns a new ValueState).
+ * An Ed Hydrator hydrates a value of type `A`, w h a hydrat on context of type `C`,
+ * and produces a funct on that takes a value and context and returns an Ed State[A, C]
+ * (an Ed State encapsulates a funct on that takes a value and returns a new ValueState).
  *
- * A series of EditHydrators of the same type may be run in parallel via
- * `EditHydrator.inParallel`.
+ * A ser es of Ed Hydrators of t  sa  type may be run  n parallel v a
+ * `Ed Hydrator. nParallel`.
  */
-class EditHydrator[A, C] private (val run: (A, C) => Stitch[EditState[A]]) {
+class Ed Hydrator[A, C] pr vate (val run: (A, C) => St ch[Ed State[A]]) {
 
   /**
-   * Apply this hydrator to a value, producing an EditState.
+   * Apply t  hydrator to a value, produc ng an Ed State.
    */
-  def apply(a: A, ctx: C): Stitch[EditState[A]] = run(a, ctx)
+  def apply(a: A, ctx: C): St ch[Ed State[A]] = run(a, ctx)
 
   /**
-   * Convert this EditHydrator to the equivalent ValueHydrator.
+   * Convert t  Ed Hydrator to t  equ valent ValueHydrator.
    */
   def toValueHydrator: ValueHydrator[A, C] =
-    ValueHydrator[A, C] { (a, ctx) => this.run(a, ctx).map(editState => editState.run(a)) }
+    ValueHydrator[A, C] { (a, ctx) => t .run(a, ctx).map(ed State => ed State.run(a)) }
 
   /**
-   * Runs two EditHydrators in parallel.
+   * Runs two Ed Hydrators  n parallel.
    */
-  def inParallelWith(next: EditHydrator[A, C]): EditHydrator[A, C] =
-    EditHydrator[A, C] { (x0, ctx) =>
-      Stitch.joinMap(run(x0, ctx), next.run(x0, ctx)) {
-        case (r1, r2) => r1.andThen(r2)
+  def  nParallelW h(next: Ed Hydrator[A, C]): Ed Hydrator[A, C] =
+    Ed Hydrator[A, C] { (x0, ctx) =>
+      St ch.jo nMap(run(x0, ctx), next.run(x0, ctx)) {
+        case (r1, r2) => r1.andT n(r2)
       }
     }
 }
 
-object EditHydrator {
+object Ed Hydrator {
 
   /**
-   * Create an EditHydrator from a function that returns Stitch[EditState[A]].
+   * Create an Ed Hydrator from a funct on that returns St ch[Ed State[A]].
    */
-  def apply[A, C](f: (A, C) => Stitch[EditState[A]]): EditHydrator[A, C] =
-    new EditHydrator[A, C](f)
+  def apply[A, C](f: (A, C) => St ch[Ed State[A]]): Ed Hydrator[A, C] =
+    new Ed Hydrator[A, C](f)
 
   /**
-   * Creates a "passthrough" Edit:
-   * Leaves A unchanged and produces empty HydrationState.
+   * Creates a "passthrough" Ed :
+   * Leaves A unchanged and produces empty Hydrat onState.
    */
-  def unit[A, C]: EditHydrator[A, C] =
-    EditHydrator { (_, _) => Stitch.value(EditState.unit[A]) }
+  def un [A, C]: Ed Hydrator[A, C] =
+    Ed Hydrator { (_, _) => St ch.value(Ed State.un [A]) }
 
   /**
-   * Runs several EditHydrators in parallel.
+   * Runs several Ed Hydrators  n parallel.
    */
-  def inParallel[A, C](bs: EditHydrator[A, C]*): EditHydrator[A, C] =
+  def  nParallel[A, C](bs: Ed Hydrator[A, C]*): Ed Hydrator[A, C] =
     bs match {
       case Seq(b) => b
-      case Seq(b1, b2) => b1.inParallelWith(b2)
-      case _ => bs.reduceLeft(_.inParallelWith(_))
+      case Seq(b1, b2) => b1. nParallelW h(b2)
+      case _ => bs.reduceLeft(_. nParallelW h(_))
     }
 }

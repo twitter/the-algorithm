@@ -1,173 +1,173 @@
-package com.twitter.visibility.interfaces.conversations
+package com.tw ter.v s b l y. nterfaces.conversat ons
 
-import com.twitter.decider.Decider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.spam.rtf.thriftscala.FilteredReason
-import com.twitter.spam.rtf.thriftscala.FilteredReason.UnspecifiedReason
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.spam.rtf.thriftscala.SafetyResult
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.render.thriftscala.RichText
-import com.twitter.timelines.render.thriftscala.TombstoneDisplayType
-import com.twitter.timelines.render.thriftscala.TombstoneInfo
-import com.twitter.tweetypie.thriftscala.GetTweetFieldsResult
-import com.twitter.tweetypie.thriftscala.TweetFieldsResultFailed
-import com.twitter.tweetypie.thriftscala.TweetFieldsResultFiltered
-import com.twitter.tweetypie.thriftscala.TweetFieldsResultFound
-import com.twitter.tweetypie.thriftscala.TweetFieldsResultNotFound
-import com.twitter.tweetypie.thriftscala.TweetFieldsResultState
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.tweets.ModerationFeatures
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.common.actions.InterstitialReason
-import com.twitter.visibility.common.actions.LimitedEngagementReason
-import com.twitter.visibility.common.actions.TombstoneReason
-import com.twitter.visibility.common.actions.converter.scala.InterstitialReasonConverter
-import com.twitter.visibility.common.actions.converter.scala.LocalizedMessageConverter
-import com.twitter.visibility.common.actions.converter.scala.TombstoneReasonConverter
-import com.twitter.visibility.common.filtered_reason.FilteredReasonHelper
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.features.FocalTweetId
-import com.twitter.visibility.features.TweetId
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.models.SafetyLevel.Tombstoning
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.results.richtext.EpitaphToRichText
-import com.twitter.visibility.results.richtext.LocalizedMessageToRichText
-import com.twitter.visibility.results.urt.ReasonToUrtParser
-import com.twitter.visibility.results.urt.SafetyResultToUrtParser
-import com.twitter.visibility.rules._
-import com.twitter.visibility.{thriftscala => t}
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter.spam.rtf.thr ftscala.F lteredReason
+ mport com.tw ter.spam.rtf.thr ftscala.F lteredReason.Unspec f edReason
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLevel
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyResult
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.render.thr ftscala.R chText
+ mport com.tw ter.t  l nes.render.thr ftscala.TombstoneD splayType
+ mport com.tw ter.t  l nes.render.thr ftscala.Tombstone nfo
+ mport com.tw ter.t etyp e.thr ftscala.GetT etF eldsResult
+ mport com.tw ter.t etyp e.thr ftscala.T etF eldsResultFa led
+ mport com.tw ter.t etyp e.thr ftscala.T etF eldsResultF ltered
+ mport com.tw ter.t etyp e.thr ftscala.T etF eldsResultFound
+ mport com.tw ter.t etyp e.thr ftscala.T etF eldsResultNotFound
+ mport com.tw ter.t etyp e.thr ftscala.T etF eldsResultState
+ mport com.tw ter.v s b l y.V s b l yL brary
+ mport com.tw ter.v s b l y.bu lder.t ets.Moderat onFeatures
+ mport com.tw ter.v s b l y.bu lder.users.AuthorFeatures
+ mport com.tw ter.v s b l y.bu lder.users.Relat onsh pFeatures
+ mport com.tw ter.v s b l y.bu lder.users.V e rFeatures
+ mport com.tw ter.v s b l y.common.UserRelat onsh pS ce
+ mport com.tw ter.v s b l y.common.UserS ce
+ mport com.tw ter.v s b l y.common.act ons. nterst  alReason
+ mport com.tw ter.v s b l y.common.act ons.L m edEngage ntReason
+ mport com.tw ter.v s b l y.common.act ons.TombstoneReason
+ mport com.tw ter.v s b l y.common.act ons.converter.scala. nterst  alReasonConverter
+ mport com.tw ter.v s b l y.common.act ons.converter.scala.Local zed ssageConverter
+ mport com.tw ter.v s b l y.common.act ons.converter.scala.TombstoneReasonConverter
+ mport com.tw ter.v s b l y.common.f ltered_reason.F lteredReason lper
+ mport com.tw ter.v s b l y.conf gap .conf gs.V s b l yDec derGates
+ mport com.tw ter.v s b l y.features.FocalT et d
+ mport com.tw ter.v s b l y.features.T et d
+ mport com.tw ter.v s b l y.models.Content d
+ mport com.tw ter.v s b l y.models.SafetyLevel.Tombston ng
+ mport com.tw ter.v s b l y.models.V e rContext
+ mport com.tw ter.v s b l y.results.r chtext.Ep aphToR chText
+ mport com.tw ter.v s b l y.results.r chtext.Local zed ssageToR chText
+ mport com.tw ter.v s b l y.results.urt.ReasonToUrtParser
+ mport com.tw ter.v s b l y.results.urt.SafetyResultToUrtParser
+ mport com.tw ter.v s b l y.rules._
+ mport com.tw ter.v s b l y.{thr ftscala => t}
 
-case class TombstoneVisibilityRequest(
-  conversationId: Long,
-  focalTweetId: Long,
-  tweets: Seq[(GetTweetFieldsResult, Option[SafetyLevel])],
+case class TombstoneV s b l yRequest(
+  conversat on d: Long,
+  focalT et d: Long,
+  t ets: Seq[(GetT etF eldsResult, Opt on[SafetyLevel])],
   authorMap: Map[
     Long,
     User
   ],
-  moderatedTweetIds: Seq[Long],
-  viewerContext: ViewerContext,
-  useRichText: Boolean = true)
+  moderatedT et ds: Seq[Long],
+  v e rContext: V e rContext,
+  useR chText: Boolean = true)
 
-case class TombstoneVisibilityResponse(tweetVerdicts: Map[Long, VfTombstone])
+case class TombstoneV s b l yResponse(t etVerd cts: Map[Long, VfTombstone])
 
-case class TombstoneVisibilityLibrary(
-  visibilityLibrary: VisibilityLibrary,
-  statsReceiver: StatsReceiver,
-  decider: Decider) {
+case class TombstoneV s b l yL brary(
+  v s b l yL brary: V s b l yL brary,
+  statsRece ver: StatsRece ver,
+  dec der: Dec der) {
 
-  private case class TombstoneType(
-    tweetId: Long,
-    tombstoneId: Long,
-    action: Action) {
+  pr vate case class TombstoneType(
+    t et d: Long,
+    tombstone d: Long,
+    act on: Act on) {
 
-    lazy val isInnerTombstone: Boolean = tweetId != tombstoneId
+    lazy val  s nnerTombstone: Boolean = t et d != tombstone d
 
-    lazy val tombstoneDisplayType: TombstoneDisplayType = action match {
-      case _: InterstitialLimitedEngagements | _: EmergencyDynamicInterstitial =>
-        TombstoneDisplayType.NonCompliant
-      case _ => TombstoneDisplayType.Inline
+    lazy val tombstoneD splayType: TombstoneD splayType = act on match {
+      case _:  nterst  alL m edEngage nts | _: E rgencyDynam c nterst  al =>
+        TombstoneD splayType.NonCompl ant
+      case _ => TombstoneD splayType. nl ne
     }
   }
 
-  val En: String = "en"
-  val View: String = "View"
-  val relationshipFeatures =
-    new RelationshipFeatures(
-      statsReceiver)
-  val visibilityDeciderGates = VisibilityDeciderGates(decider)
+  val En: Str ng = "en"
+  val V ew: Str ng = "V ew"
+  val relat onsh pFeatures =
+    new Relat onsh pFeatures(
+      statsRece ver)
+  val v s b l yDec derGates = V s b l yDec derGates(dec der)
 
 
-  def toAction(
-    filteredReason: FilteredReason,
-    actionStatsReceiver: StatsReceiver
-  ): Option[Action] = {
+  def toAct on(
+    f lteredReason: F lteredReason,
+    act onStatsRece ver: StatsRece ver
+  ): Opt on[Act on] = {
 
-    val enableLocalizedInterstitials =
-      visibilityDeciderGates.enableConvosLocalizedInterstitial()
-    val enableLegacyInterstitials =
-      visibilityDeciderGates.enableConvosLegacyInterstitial()
+    val enableLocal zed nterst  als =
+      v s b l yDec derGates.enableConvosLocal zed nterst  al()
+    val enableLegacy nterst  als =
+      v s b l yDec derGates.enableConvosLegacy nterst  al()
 
-    val tombstoneStatsReceiver = actionStatsReceiver.scope("tombstone")
-    val interstitialLocalStatsReceiver =
-      actionStatsReceiver.scope("interstitial").scope("localized")
-    val interstitialLegacyStatsReceiver =
-      actionStatsReceiver.scope("interstitial").scope("legacy")
+    val tombstoneStatsRece ver = act onStatsRece ver.scope("tombstone")
+    val  nterst  alLocalStatsRece ver =
+      act onStatsRece ver.scope(" nterst  al").scope("local zed")
+    val  nterst  alLegacyStatsRece ver =
+      act onStatsRece ver.scope(" nterst  al").scope("legacy")
 
-    filteredReason match {
-      case _ if FilteredReasonHelper.isTombstone(filteredReason) =>
-        createLocalizedTombstone(filteredReason, tombstoneStatsReceiver) match {
-          case tombstoneOpt @ Some(LocalizedTombstone(_, _)) => tombstoneOpt
+    f lteredReason match {
+      case _  f F lteredReason lper. sTombstone(f lteredReason) =>
+        createLocal zedTombstone(f lteredReason, tombstoneStatsRece ver) match {
+          case tombstoneOpt @ So (Local zedTombstone(_, _)) => tombstoneOpt
           case _ =>
-            createTombstone(Epitaph.Unavailable, tombstoneStatsReceiver, Some("emptyTombstone"))
+            createTombstone(Ep aph.Unava lable, tombstoneStatsRece ver, So ("emptyTombstone"))
         }
 
       case _
-          if enableLocalizedInterstitials &&
-            FilteredReasonHelper.isLocalizedSuppressedReasonInterstitial(filteredReason) =>
-        FilteredReasonHelper.getLocalizedSuppressedReasonInterstitial(filteredReason) match {
-          case Some(t.Interstitial(reasonOpt, Some(message))) =>
-            InterstitialReasonConverter.fromThrift(reasonOpt).map { interstitialReason =>
-              interstitialLocalStatsReceiver.counter("interstitial").incr()
-              Interstitial(
-                Reason.fromInterstitialReason(interstitialReason),
-                Some(LocalizedMessageConverter.fromThrift(message)))
+           f enableLocal zed nterst  als &&
+            F lteredReason lper. sLocal zedSuppressedReason nterst  al(f lteredReason) =>
+        F lteredReason lper.getLocal zedSuppressedReason nterst  al(f lteredReason) match {
+          case So (t. nterst  al(reasonOpt, So ( ssage))) =>
+             nterst  alReasonConverter.fromThr ft(reasonOpt).map {  nterst  alReason =>
+               nterst  alLocalStatsRece ver.counter(" nterst  al"). ncr()
+               nterst  al(
+                Reason.from nterst  alReason( nterst  alReason),
+                So (Local zed ssageConverter.fromThr ft( ssage)))
             }
 
           case _ => None
         }
 
-      case _ if FilteredReasonHelper.containNsfwMedia(filteredReason) =>
+      case _  f F lteredReason lper.conta nNsfw d a(f lteredReason) =>
         None
 
-      case _ if FilteredReasonHelper.possiblyUndesirable(filteredReason) =>
+      case _  f F lteredReason lper.poss blyUndes rable(f lteredReason) =>
         None
 
-      case _ if FilteredReasonHelper.reportedTweet(filteredReason) =>
-        filteredReason match {
-          case FilteredReason.ReportedTweet(true) =>
-            interstitialLegacyStatsReceiver.counter("fr_reported").incr()
-            Some(Interstitial(Reason.ViewerReportedAuthor))
+      case _  f F lteredReason lper.reportedT et(f lteredReason) =>
+        f lteredReason match {
+          case F lteredReason.ReportedT et(true) =>
+             nterst  alLegacyStatsRece ver.counter("fr_reported"). ncr()
+            So ( nterst  al(Reason.V e rReportedAuthor))
 
-          case FilteredReason.SafetyResult(safetyResult: SafetyResult)
-              if enableLegacyInterstitials =>
-            val safetyResultReported = InterstitialReasonConverter
-              .fromAction(safetyResult.action).collect {
-                case InterstitialReason.ViewerReportedTweet => true
-                case InterstitialReason.ViewerReportedAuthor => true
+          case F lteredReason.SafetyResult(safetyResult: SafetyResult)
+               f enableLegacy nterst  als =>
+            val safetyResultReported =  nterst  alReasonConverter
+              .fromAct on(safetyResult.act on).collect {
+                case  nterst  alReason.V e rReportedT et => true
+                case  nterst  alReason.V e rReportedAuthor => true
               }.getOrElse(false)
 
-            if (safetyResultReported) {
-              interstitialLegacyStatsReceiver.counter("reported_author").incr()
-              Some(Interstitial(Reason.ViewerReportedAuthor))
+             f (safetyResultReported) {
+               nterst  alLegacyStatsRece ver.counter("reported_author"). ncr()
+              So ( nterst  al(Reason.V e rReportedAuthor))
             } else None
 
           case _ => None
         }
 
-      case _ if FilteredReasonHelper.tweetMatchesViewerMutedKeyword(filteredReason) =>
-        filteredReason match {
-          case FilteredReason.TweetMatchesViewerMutedKeyword(_) =>
-            interstitialLegacyStatsReceiver.counter("fr_muted_keyword").incr()
-            Some(Interstitial(Reason.MutedKeyword))
+      case _  f F lteredReason lper.t etMatc sV e rMutedKeyword(f lteredReason) =>
+        f lteredReason match {
+          case F lteredReason.T etMatc sV e rMutedKeyword(_) =>
+             nterst  alLegacyStatsRece ver.counter("fr_muted_keyword"). ncr()
+            So ( nterst  al(Reason.MutedKeyword))
 
-          case FilteredReason.SafetyResult(safetyResult: SafetyResult)
-              if enableLegacyInterstitials =>
-            val safetyResultMutedKeyword = InterstitialReasonConverter
-              .fromAction(safetyResult.action).collect {
-                case _: InterstitialReason.MatchesMutedKeyword => true
+          case F lteredReason.SafetyResult(safetyResult: SafetyResult)
+               f enableLegacy nterst  als =>
+            val safetyResultMutedKeyword =  nterst  alReasonConverter
+              .fromAct on(safetyResult.act on).collect {
+                case _:  nterst  alReason.Matc sMutedKeyword => true
               }.getOrElse(false)
 
-            if (safetyResultMutedKeyword) {
-              interstitialLegacyStatsReceiver.counter("muted_keyword").incr()
-              Some(Interstitial(Reason.MutedKeyword))
+             f (safetyResultMutedKeyword) {
+               nterst  alLegacyStatsRece ver.counter("muted_keyword"). ncr()
+              So ( nterst  al(Reason.MutedKeyword))
             } else None
 
           case _ => None
@@ -178,167 +178,167 @@ case class TombstoneVisibilityLibrary(
     }
   }
 
-  def toAction(
-    tfrs: TweetFieldsResultState,
-    actionStatsReceiver: StatsReceiver
-  ): Option[Action] = {
+  def toAct on(
+    tfrs: T etF eldsResultState,
+    act onStatsRece ver: StatsRece ver
+  ): Opt on[Act on] = {
 
-    val enableLocalizedInterstitials = visibilityDeciderGates.enableConvosLocalizedInterstitial()
-    val enableLegacyInterstitials = visibilityDeciderGates.enableConvosLegacyInterstitial()
+    val enableLocal zed nterst  als = v s b l yDec derGates.enableConvosLocal zed nterst  al()
+    val enableLegacy nterst  als = v s b l yDec derGates.enableConvosLegacy nterst  al()
 
-    val tombstoneStatsReceiver = actionStatsReceiver.scope("tombstone")
-    val interstitialLocalStatsReceiver =
-      actionStatsReceiver.scope("interstitial").scope("localized")
-    val interstitialLegacyStatsReceiver =
-      actionStatsReceiver.scope("interstitial").scope("legacy")
+    val tombstoneStatsRece ver = act onStatsRece ver.scope("tombstone")
+    val  nterst  alLocalStatsRece ver =
+      act onStatsRece ver.scope(" nterst  al").scope("local zed")
+    val  nterst  alLegacyStatsRece ver =
+      act onStatsRece ver.scope(" nterst  al").scope("legacy")
 
     tfrs match {
 
-      case TweetFieldsResultState.NotFound(TweetFieldsResultNotFound(_, _, Some(filteredReason)))
-          if FilteredReasonHelper.isTombstone(filteredReason) =>
-        createLocalizedTombstone(filteredReason, tombstoneStatsReceiver)
+      case T etF eldsResultState.NotFound(T etF eldsResultNotFound(_, _, So (f lteredReason)))
+           f F lteredReason lper. sTombstone(f lteredReason) =>
+        createLocal zedTombstone(f lteredReason, tombstoneStatsRece ver)
 
-      case TweetFieldsResultState.NotFound(tfr: TweetFieldsResultNotFound) if tfr.deleted =>
-        createTombstone(Epitaph.Deleted, tombstoneStatsReceiver)
+      case T etF eldsResultState.NotFound(tfr: T etF eldsResultNotFound)  f tfr.deleted =>
+        createTombstone(Ep aph.Deleted, tombstoneStatsRece ver)
 
-      case TweetFieldsResultState.NotFound(_: TweetFieldsResultNotFound) =>
-        createTombstone(Epitaph.NotFound, tombstoneStatsReceiver)
+      case T etF eldsResultState.NotFound(_: T etF eldsResultNotFound) =>
+        createTombstone(Ep aph.NotFound, tombstoneStatsRece ver)
 
-      case TweetFieldsResultState.Failed(TweetFieldsResultFailed(_, _, _)) =>
-        createTombstone(Epitaph.Unavailable, tombstoneStatsReceiver, Some("failed"))
+      case T etF eldsResultState.Fa led(T etF eldsResultFa led(_, _, _)) =>
+        createTombstone(Ep aph.Unava lable, tombstoneStatsRece ver, So ("fa led"))
 
-      case TweetFieldsResultState.Filtered(TweetFieldsResultFiltered(UnspecifiedReason(true))) =>
-        createTombstone(Epitaph.Unavailable, tombstoneStatsReceiver, Some("filtered"))
+      case T etF eldsResultState.F ltered(T etF eldsResultF ltered(Unspec f edReason(true))) =>
+        createTombstone(Ep aph.Unava lable, tombstoneStatsRece ver, So ("f ltered"))
 
-      case TweetFieldsResultState.Filtered(TweetFieldsResultFiltered(filteredReason)) =>
-        toAction(filteredReason, actionStatsReceiver)
+      case T etF eldsResultState.F ltered(T etF eldsResultF ltered(f lteredReason)) =>
+        toAct on(f lteredReason, act onStatsRece ver)
 
-      case TweetFieldsResultState.Found(TweetFieldsResultFound(_, _, Some(filteredReason)))
-          if enableLocalizedInterstitials &&
-            FilteredReasonHelper.isSuppressedReasonPublicInterestInterstial(filteredReason) =>
-        interstitialLocalStatsReceiver.counter("ipi").incr()
-        FilteredReasonHelper
-          .getSafetyResult(filteredReason)
+      case T etF eldsResultState.Found(T etF eldsResultFound(_, _, So (f lteredReason)))
+           f enableLocal zed nterst  als &&
+            F lteredReason lper. sSuppressedReasonPubl c nterest nterst al(f lteredReason) =>
+         nterst  alLocalStatsRece ver.counter(" p "). ncr()
+        F lteredReason lper
+          .getSafetyResult(f lteredReason)
           .flatMap(_.reason)
-          .flatMap(PublicInterest.SafetyResultReasonToReason.get) match {
-          case Some(safetyResultReason) =>
-            FilteredReasonHelper
-              .getSuppressedReasonPublicInterestInterstial(filteredReason)
-              .map(edi => edi.localizedMessage)
-              .map(tlm => LocalizedMessageConverter.fromThrift(tlm))
+          .flatMap(Publ c nterest.SafetyResultReasonToReason.get) match {
+          case So (safetyResultReason) =>
+            F lteredReason lper
+              .getSuppressedReasonPubl c nterest nterst al(f lteredReason)
+              .map(ed  => ed .local zed ssage)
+              .map(tlm => Local zed ssageConverter.fromThr ft(tlm))
               .map(lm =>
-                InterstitialLimitedEngagements(
+                 nterst  alL m edEngage nts(
                   safetyResultReason,
-                  Some(LimitedEngagementReason.NonCompliant),
+                  So (L m edEngage ntReason.NonCompl ant),
                   lm))
           case _ => None
         }
 
-      case TweetFieldsResultState.Found(TweetFieldsResultFound(_, _, Some(filteredReason)))
-          if enableLegacyInterstitials &&
-            FilteredReasonHelper.isSuppressedReasonPublicInterestInterstial(filteredReason) =>
-        interstitialLegacyStatsReceiver.counter("ipi").incr()
-        FilteredReasonHelper
-          .getSafetyResult(filteredReason)
+      case T etF eldsResultState.Found(T etF eldsResultFound(_, _, So (f lteredReason)))
+           f enableLegacy nterst  als &&
+            F lteredReason lper. sSuppressedReasonPubl c nterest nterst al(f lteredReason) =>
+         nterst  alLegacyStatsRece ver.counter(" p "). ncr()
+        F lteredReason lper
+          .getSafetyResult(f lteredReason)
           .flatMap(_.reason)
-          .flatMap(PublicInterest.SafetyResultReasonToReason.get)
-          .map(InterstitialLimitedEngagements(_, Some(LimitedEngagementReason.NonCompliant)))
+          .flatMap(Publ c nterest.SafetyResultReasonToReason.get)
+          .map( nterst  alL m edEngage nts(_, So (L m edEngage ntReason.NonCompl ant)))
 
-      case TweetFieldsResultState.Found(TweetFieldsResultFound(_, _, Some(filteredReason)))
-          if enableLocalizedInterstitials &&
-            FilteredReasonHelper.isLocalizedSuppressedReasonEmergencyDynamicInterstitial(
-              filteredReason) =>
-        interstitialLocalStatsReceiver.counter("edi").incr()
-        FilteredReasonHelper
-          .getSuppressedReasonEmergencyDynamicInterstitial(filteredReason)
+      case T etF eldsResultState.Found(T etF eldsResultFound(_, _, So (f lteredReason)))
+           f enableLocal zed nterst  als &&
+            F lteredReason lper. sLocal zedSuppressedReasonE rgencyDynam c nterst  al(
+              f lteredReason) =>
+         nterst  alLocalStatsRece ver.counter("ed "). ncr()
+        F lteredReason lper
+          .getSuppressedReasonE rgencyDynam c nterst  al(f lteredReason)
           .map(e =>
-            EmergencyDynamicInterstitial(
+            E rgencyDynam c nterst  al(
               e.copy,
-              e.link,
-              LocalizedMessageConverter.fromThrift(e.localizedMessage)))
+              e.l nk,
+              Local zed ssageConverter.fromThr ft(e.local zed ssage)))
 
-      case TweetFieldsResultState.Found(TweetFieldsResultFound(_, _, Some(filteredReason)))
-          if enableLegacyInterstitials &&
-            FilteredReasonHelper.isSuppressedReasonEmergencyDynamicInterstitial(filteredReason) =>
-        interstitialLegacyStatsReceiver.counter("edi").incr()
-        FilteredReasonHelper
-          .getSuppressedReasonEmergencyDynamicInterstitial(filteredReason)
-          .map(e => EmergencyDynamicInterstitial(e.copy, e.link))
+      case T etF eldsResultState.Found(T etF eldsResultFound(_, _, So (f lteredReason)))
+           f enableLegacy nterst  als &&
+            F lteredReason lper. sSuppressedReasonE rgencyDynam c nterst  al(f lteredReason) =>
+         nterst  alLegacyStatsRece ver.counter("ed "). ncr()
+        F lteredReason lper
+          .getSuppressedReasonE rgencyDynam c nterst  al(f lteredReason)
+          .map(e => E rgencyDynam c nterst  al(e.copy, e.l nk))
 
-      case TweetFieldsResultState.Found(TweetFieldsResultFound(tweet, _, _))
-          if tweet.perspective.exists(_.reported) =>
-        interstitialLegacyStatsReceiver.counter("reported").incr()
-        Some(Interstitial(Reason.ViewerReportedAuthor))
+      case T etF eldsResultState.Found(T etF eldsResultFound(t et, _, _))
+           f t et.perspect ve.ex sts(_.reported) =>
+         nterst  alLegacyStatsRece ver.counter("reported"). ncr()
+        So ( nterst  al(Reason.V e rReportedAuthor))
 
-      case TweetFieldsResultState.Found(
-            TweetFieldsResultFound(_, _, Some(UnspecifiedReason(true)))) =>
+      case T etF eldsResultState.Found(
+            T etF eldsResultFound(_, _, So (Unspec f edReason(true)))) =>
         None
 
-      case TweetFieldsResultState.Found(TweetFieldsResultFound(_, _, Some(filteredReason))) =>
-        toAction(filteredReason, actionStatsReceiver)
+      case T etF eldsResultState.Found(T etF eldsResultFound(_, _, So (f lteredReason))) =>
+        toAct on(f lteredReason, act onStatsRece ver)
 
       case _ =>
         None
     }
   }
 
-  private[conversations] def shouldTruncateDescendantsWhenFocal(action: Action): Boolean =
-    action match {
-      case _: InterstitialLimitedEngagements | _: EmergencyDynamicInterstitial =>
+  pr vate[conversat ons] def shouldTruncateDescendantsW nFocal(act on: Act on): Boolean =
+    act on match {
+      case _:  nterst  alL m edEngage nts | _: E rgencyDynam c nterst  al =>
         true
-      case Tombstone(Epitaph.Bounced, _) | Tombstone(Epitaph.BounceDeleted, _) =>
+      case Tombstone(Ep aph.Bounced, _) | Tombstone(Ep aph.BounceDeleted, _) =>
         true
-      case LocalizedTombstone(TombstoneReason.Bounced, _) |
-          LocalizedTombstone(TombstoneReason.BounceDeleted, _) =>
+      case Local zedTombstone(TombstoneReason.Bounced, _) |
+          Local zedTombstone(TombstoneReason.BounceDeleted, _) =>
         true
-      case LimitedEngagements(LimitedEngagementReason.NonCompliant, _) =>
+      case L m edEngage nts(L m edEngage ntReason.NonCompl ant, _) =>
         true
       case _ => false
     }
 
-  def apply(request: TombstoneVisibilityRequest): Stitch[TombstoneVisibilityResponse] = {
+  def apply(request: TombstoneV s b l yRequest): St ch[TombstoneV s b l yResponse] = {
 
-    val moderationFeatures = new ModerationFeatures(
-      moderationSource = request.moderatedTweetIds.contains,
-      statsReceiver = statsReceiver
+    val moderat onFeatures = new Moderat onFeatures(
+      moderat onS ce = request.moderatedT et ds.conta ns,
+      statsRece ver = statsRece ver
     )
 
-    val userSource = UserSource.fromFunction({
-      case (userId, _) =>
+    val userS ce = UserS ce.fromFunct on({
+      case (user d, _) =>
         request.authorMap
-          .get(userId)
-          .map(Stitch.value).getOrElse(Stitch.NotFound)
+          .get(user d)
+          .map(St ch.value).getOrElse(St ch.NotFound)
     })
 
-    val authorFeatures = new AuthorFeatures(userSource, statsReceiver)
-    val viewerFeatures = new ViewerFeatures(userSource, statsReceiver)
+    val authorFeatures = new AuthorFeatures(userS ce, statsRece ver)
+    val v e rFeatures = new V e rFeatures(userS ce, statsRece ver)
 
-    val languageTag = request.viewerContext.requestCountryCode.getOrElse(En)
-    val firstRound: Seq[(GetTweetFieldsResult, Option[TombstoneType])] = request.tweets.map {
+    val languageTag = request.v e rContext.requestCountryCode.getOrElse(En)
+    val f rstRound: Seq[(GetT etF eldsResult, Opt on[TombstoneType])] = request.t ets.map {
       case (gtfr, safetyLevel) =>
-        val actionStats = statsReceiver
-          .scope("action")
-          .scope(safetyLevel.map(_.toString().toLowerCase()).getOrElse("unknown_safety_level"))
-        toAction(gtfr.tweetResult, actionStats) match {
-          case Some(action) =>
-            (gtfr, Some(TombstoneType(gtfr.tweetId, gtfr.tweetId, action)))
+        val act onStats = statsRece ver
+          .scope("act on")
+          .scope(safetyLevel.map(_.toStr ng().toLo rCase()).getOrElse("unknown_safety_level"))
+        toAct on(gtfr.t etResult, act onStats) match {
+          case So (act on) =>
+            (gtfr, So (TombstoneType(gtfr.t et d, gtfr.t et d, act on)))
 
           case None =>
-            val quotedTweetId: Option[Long] = gtfr.tweetResult match {
-              case TweetFieldsResultState.Found(TweetFieldsResultFound(tweet, _, _)) =>
-                tweet.quotedTweet.map(_.tweetId)
+            val quotedT et d: Opt on[Long] = gtfr.t etResult match {
+              case T etF eldsResultState.Found(T etF eldsResultFound(t et, _, _)) =>
+                t et.quotedT et.map(_.t et d)
               case _ => None
             }
 
-            (quotedTweetId, gtfr.quotedTweetResult) match {
-              case (Some(quotedTweetId), Some(tfrs)) =>
-                val qtActionStats = actionStats.scope("quoted")
-                toAction(tfrs, qtActionStats) match {
+            (quotedT et d, gtfr.quotedT etResult) match {
+              case (So (quotedT et d), So (tfrs)) =>
+                val qtAct onStats = act onStats.scope("quoted")
+                toAct on(tfrs, qtAct onStats) match {
                   case None =>
                     (gtfr, None)
 
-                  case Some(action) =>
-                    (gtfr, Some(TombstoneType(gtfr.tweetId, quotedTweetId, action)))
+                  case So (act on) =>
+                    (gtfr, So (TombstoneType(gtfr.t et d, quotedT et d, act on)))
                 }
 
               case _ =>
@@ -347,240 +347,240 @@ case class TombstoneVisibilityLibrary(
         }
     }
 
-    val (firstRoundActions, secondRoundInput) = firstRound.partition {
-      case (_, Some(tombstoneType)) =>
-        !tombstoneType.isInnerTombstone
+    val (f rstRoundAct ons, secondRound nput) = f rstRound.part  on {
+      case (_, So (tombstoneType)) =>
+        !tombstoneType. s nnerTombstone
       case (_, None) => false
     }
 
-    def invokeVisibilityLibrary(tweetId: Long, author: User): Stitch[Action] = {
-      visibilityLibrary
-        .runRuleEngine(
-          ContentId.TweetId(tweetId),
-          visibilityLibrary.featureMapBuilder(
+    def  nvokeV s b l yL brary(t et d: Long, author: User): St ch[Act on] = {
+      v s b l yL brary
+        .runRuleEng ne(
+          Content d.T et d(t et d),
+          v s b l yL brary.featureMapBu lder(
             Seq(
-              viewerFeatures.forViewerContext(request.viewerContext),
-              moderationFeatures.forTweetId(tweetId),
+              v e rFeatures.forV e rContext(request.v e rContext),
+              moderat onFeatures.forT et d(t et d),
               authorFeatures.forAuthor(author),
-              relationshipFeatures
-                .forAuthor(author, request.viewerContext.userId),
-              _.withConstantFeature(TweetId, tweetId),
-              _.withConstantFeature(FocalTweetId, request.focalTweetId)
+              relat onsh pFeatures
+                .forAuthor(author, request.v e rContext.user d),
+              _.w hConstantFeature(T et d, t et d),
+              _.w hConstantFeature(FocalT et d, request.focalT et d)
             )
           ),
-          request.viewerContext,
-          Tombstoning
-        ).map(_.verdict)
+          request.v e rContext,
+          Tombston ng
+        ).map(_.verd ct)
     }
 
-    val secondRoundActions: Stitch[Seq[(GetTweetFieldsResult, Option[TombstoneType])]] =
-      Stitch.traverse(secondRoundInput) {
-        case (gtfr: GetTweetFieldsResult, firstRoundTombstone: Option[TombstoneType]) =>
-          val secondRoundTombstone: Stitch[Option[TombstoneType]] = gtfr.tweetResult match {
-            case TweetFieldsResultState.Found(TweetFieldsResultFound(tweet, _, _)) =>
-              val tweetId = tweet.id
+    val secondRoundAct ons: St ch[Seq[(GetT etF eldsResult, Opt on[TombstoneType])]] =
+      St ch.traverse(secondRound nput) {
+        case (gtfr: GetT etF eldsResult, f rstRoundTombstone: Opt on[TombstoneType]) =>
+          val secondRoundTombstone: St ch[Opt on[TombstoneType]] = gtfr.t etResult match {
+            case T etF eldsResultState.Found(T etF eldsResultFound(t et, _, _)) =>
+              val t et d = t et. d
 
-              tweet.coreData
-                .flatMap { coreData => request.authorMap.get(coreData.userId) } match {
-                case Some(author) =>
-                  invokeVisibilityLibrary(tweetId, author).flatMap {
+              t et.coreData
+                .flatMap { coreData => request.authorMap.get(coreData.user d) } match {
+                case So (author) =>
+                   nvokeV s b l yL brary(t et d, author).flatMap {
                     case Allow =>
-                      val quotedTweetId = tweet.quotedTweet.map(_.tweetId)
-                      val quotedTweetAuthor = tweet.quotedTweet.flatMap { qt =>
-                        request.authorMap.get(qt.userId)
+                      val quotedT et d = t et.quotedT et.map(_.t et d)
+                      val quotedT etAuthor = t et.quotedT et.flatMap { qt =>
+                        request.authorMap.get(qt.user d)
                       }
 
-                      (quotedTweetId, quotedTweetAuthor) match {
-                        case (Some(quotedTweetId), Some(quotedTweetAuthor)) =>
-                          invokeVisibilityLibrary(quotedTweetId, quotedTweetAuthor).flatMap {
+                      (quotedT et d, quotedT etAuthor) match {
+                        case (So (quotedT et d), So (quotedT etAuthor)) =>
+                           nvokeV s b l yL brary(quotedT et d, quotedT etAuthor).flatMap {
                             case Allow =>
-                              Stitch.None
+                              St ch.None
 
                             case reason =>
-                              Stitch.value(Some(TombstoneType(tweetId, quotedTweetId, reason)))
+                              St ch.value(So (TombstoneType(t et d, quotedT et d, reason)))
                           }
 
                         case _ =>
-                          Stitch.None
+                          St ch.None
                       }
 
                     case reason =>
-                      Stitch.value(Some(TombstoneType(tweetId, tweetId, reason)))
+                      St ch.value(So (TombstoneType(t et d, t et d, reason)))
                   }
 
                 case None =>
-                  Stitch.None
+                  St ch.None
               }
 
             case _ =>
-              Stitch.None
+              St ch.None
           }
 
-          secondRoundTombstone.map { opt => opt.orElse(firstRoundTombstone) }.map { opt =>
+          secondRoundTombstone.map { opt => opt.orElse(f rstRoundTombstone) }.map { opt =>
             (gtfr, opt)
           }
       }
 
-    secondRoundActions.map { secondRound =>
-      val tombstones: Seq[(Long, VfTombstone)] = (firstRoundActions ++ secondRound).flatMap {
+    secondRoundAct ons.map { secondRound =>
+      val tombstones: Seq[(Long, VfTombstone)] = (f rstRoundAct ons ++ secondRound).flatMap {
         case (gtfr, tombstoneTypeOpt) => {
 
-          val nonCompliantLimitedEngagementsOpt = gtfr.tweetResult match {
-            case TweetFieldsResultState.Found(TweetFieldsResultFound(_, _, Some(filteredReason)))
-                if FilteredReasonHelper.isLimitedEngagementsNonCompliant(filteredReason) =>
-              Some(LimitedEngagements(LimitedEngagementReason.NonCompliant))
+          val nonCompl antL m edEngage ntsOpt = gtfr.t etResult match {
+            case T etF eldsResultState.Found(T etF eldsResultFound(_, _, So (f lteredReason)))
+                 f F lteredReason lper. sL m edEngage ntsNonCompl ant(f lteredReason) =>
+              So (L m edEngage nts(L m edEngage ntReason.NonCompl ant))
             case _ => None
           }
 
-          (tombstoneTypeOpt, nonCompliantLimitedEngagementsOpt) match {
-            case (Some(tombstoneType), nonCompliantOpt) =>
-              val tombstoneId = tombstoneType.tombstoneId
-              val action = tombstoneType.action
-              val textOpt: Option[RichText] = action match {
+          (tombstoneTypeOpt, nonCompl antL m edEngage ntsOpt) match {
+            case (So (tombstoneType), nonCompl antOpt) =>
+              val tombstone d = tombstoneType.tombstone d
+              val act on = tombstoneType.act on
+              val textOpt: Opt on[R chText] = act on match {
 
-                case InterstitialLimitedEngagements(_, _, Some(localizedMessage), _) =>
-                  Some(LocalizedMessageToRichText(localizedMessage))
-                case ipi: InterstitialLimitedEngagements =>
-                  Some(
-                    SafetyResultToUrtParser.fromSafetyResultToRichText(
+                case  nterst  alL m edEngage nts(_, _, So (local zed ssage), _) =>
+                  So (Local zed ssageToR chText(local zed ssage))
+                case  p :  nterst  alL m edEngage nts =>
+                  So (
+                    SafetyResultToUrtParser.fromSafetyResultToR chText(
                       SafetyResult(
-                        Some(PublicInterest.ReasonToSafetyResultReason(ipi.reason)),
-                        ipi.toActionThrift()
+                        So (Publ c nterest.ReasonToSafetyResultReason( p .reason)),
+                         p .toAct onThr ft()
                       ),
                       languageTag
                     )
                   )
 
-                case EmergencyDynamicInterstitial(_, _, Some(localizedMessage), _) =>
-                  Some(LocalizedMessageToRichText(localizedMessage))
-                case edi: EmergencyDynamicInterstitial =>
-                  Some(
-                    SafetyResultToUrtParser.fromSafetyResultToRichText(
+                case E rgencyDynam c nterst  al(_, _, So (local zed ssage), _) =>
+                  So (Local zed ssageToR chText(local zed ssage))
+                case ed : E rgencyDynam c nterst  al =>
+                  So (
+                    SafetyResultToUrtParser.fromSafetyResultToR chText(
                       SafetyResult(
                         None,
-                        edi.toActionThrift()
+                        ed .toAct onThr ft()
                       ),
                       languageTag
                     )
                   )
 
-                case Tombstone(epitaph, _) =>
-                  if (request.useRichText)
-                    Some(EpitaphToRichText(epitaph, languageTag))
+                case Tombstone(ep aph, _) =>
+                   f (request.useR chText)
+                    So (Ep aphToR chText(ep aph, languageTag))
                   else
-                    Some(EpitaphToRichText(Epitaph.UnavailableWithoutLink, languageTag))
+                    So (Ep aphToR chText(Ep aph.Unava lableW houtL nk, languageTag))
 
-                case LocalizedTombstone(_, message) =>
-                  if (request.useRichText)
-                    Some(LocalizedMessageToRichText(LocalizedMessageConverter.toThrift(message)))
+                case Local zedTombstone(_,  ssage) =>
+                   f (request.useR chText)
+                    So (Local zed ssageToR chText(Local zed ssageConverter.toThr ft( ssage)))
                   else
-                    Some(EpitaphToRichText(Epitaph.UnavailableWithoutLink, languageTag))
+                    So (Ep aphToR chText(Ep aph.Unava lableW houtL nk, languageTag))
 
-                case Interstitial(_, Some(localizedMessage), _) =>
-                  Some(LocalizedMessageToRichText.apply(localizedMessage))
+                case  nterst  al(_, So (local zed ssage), _) =>
+                  So (Local zed ssageToR chText.apply(local zed ssage))
 
-                case interstitial: Interstitial =>
-                  ReasonToUrtParser.fromReasonToRichText(interstitial.reason, languageTag)
+                case  nterst  al:  nterst  al =>
+                  ReasonToUrtParser.fromReasonToR chText( nterst  al.reason, languageTag)
 
                 case _ =>
                   None
               }
 
-              val isRoot: Boolean = gtfr.tweetId == request.conversationId
-              val isOuter: Boolean = tombstoneId == request.conversationId
-              val revealTextOpt: Option[RichText] = action match {
-                case _: InterstitialLimitedEngagements | _: EmergencyDynamicInterstitial
-                    if isRoot && isOuter =>
+              val  sRoot: Boolean = gtfr.t et d == request.conversat on d
+              val  sOuter: Boolean = tombstone d == request.conversat on d
+              val revealTextOpt: Opt on[R chText] = act on match {
+                case _:  nterst  alL m edEngage nts | _: E rgencyDynam c nterst  al
+                     f  sRoot &&  sOuter =>
                   None
 
-                case _: Interstitial | _: InterstitialLimitedEngagements |
-                    _: EmergencyDynamicInterstitial =>
-                  Some(ReasonToUrtParser.getRichRevealText(languageTag))
+                case _:  nterst  al | _:  nterst  alL m edEngage nts |
+                    _: E rgencyDynam c nterst  al =>
+                  So (ReasonToUrtParser.getR chRevealText(languageTag))
 
                 case _ =>
                   None
               }
 
-              val includeTweet = action match {
-                case _: Interstitial | _: InterstitialLimitedEngagements |
-                    _: EmergencyDynamicInterstitial =>
+              val  ncludeT et = act on match {
+                case _:  nterst  al | _:  nterst  alL m edEngage nts |
+                    _: E rgencyDynam c nterst  al =>
                   true
                 case _ => false
               }
 
-              val truncateForAction: Boolean =
-                shouldTruncateDescendantsWhenFocal(action)
-              val truncateForNonCompliant: Boolean =
-                nonCompliantOpt
-                  .map(shouldTruncateDescendantsWhenFocal).getOrElse(false)
+              val truncateForAct on: Boolean =
+                shouldTruncateDescendantsW nFocal(act on)
+              val truncateForNonCompl ant: Boolean =
+                nonCompl antOpt
+                  .map(shouldTruncateDescendantsW nFocal).getOrElse(false)
               val truncateDescendants: Boolean =
-                truncateForAction || truncateForNonCompliant
+                truncateForAct on || truncateForNonCompl ant
 
               val tombstone = textOpt match {
-                case Some(_) if request.useRichText =>
+                case So (_)  f request.useR chText =>
                   VfTombstone(
-                    includeTweet = includeTweet,
-                    action = action,
-                    tombstoneInfo = Some(
-                      TombstoneInfo(
+                     ncludeT et =  ncludeT et,
+                    act on = act on,
+                    tombstone nfo = So (
+                      Tombstone nfo(
                         cta = None,
                         revealText = None,
-                        richText = textOpt,
-                        richRevealText = revealTextOpt
+                        r chText = textOpt,
+                        r chRevealText = revealTextOpt
                       )
                     ),
-                    tombstoneDisplayType = tombstoneType.tombstoneDisplayType,
-                    truncateDescendantsWhenFocal = truncateDescendants
+                    tombstoneD splayType = tombstoneType.tombstoneD splayType,
+                    truncateDescendantsW nFocal = truncateDescendants
                   )
-                case Some(_) =>
+                case So (_) =>
                   VfTombstone(
-                    includeTweet = includeTweet,
-                    action = action,
-                    tombstoneInfo = Some(
-                      TombstoneInfo(
+                     ncludeT et =  ncludeT et,
+                    act on = act on,
+                    tombstone nfo = So (
+                      Tombstone nfo(
                         text = textOpt
-                          .map(richText => richText.text).getOrElse(
+                          .map(r chText => r chText.text).getOrElse(
                             ""
                         cta = None,
                         revealText = revealTextOpt.map(_.text),
-                        richText = None,
-                        richRevealText = None
+                        r chText = None,
+                        r chRevealText = None
                       )
                     ),
-                    tombstoneDisplayType = tombstoneType.tombstoneDisplayType,
-                    truncateDescendantsWhenFocal = truncateDescendants
+                    tombstoneD splayType = tombstoneType.tombstoneD splayType,
+                    truncateDescendantsW nFocal = truncateDescendants
                   )
 
                 case None =>
                   VfTombstone(
-                    includeTweet = false,
-                    action = action,
-                    tombstoneInfo = Some(
-                      TombstoneInfo(
+                     ncludeT et = false,
+                    act on = act on,
+                    tombstone nfo = So (
+                      Tombstone nfo(
                         cta = None,
                         revealText = None,
-                        richText = Some(EpitaphToRichText(Epitaph.Unavailable, languageTag)),
-                        richRevealText = None
+                        r chText = So (Ep aphToR chText(Ep aph.Unava lable, languageTag)),
+                        r chRevealText = None
                       )
                     ),
-                    tombstoneDisplayType = tombstoneType.tombstoneDisplayType,
-                    truncateDescendantsWhenFocal = truncateDescendants
+                    tombstoneD splayType = tombstoneType.tombstoneD splayType,
+                    truncateDescendantsW nFocal = truncateDescendants
                   )
               }
 
-              Some((gtfr.tweetId, tombstone))
+              So ((gtfr.t et d, tombstone))
 
-            case (None, Some(limitedEngagements))
-                if shouldTruncateDescendantsWhenFocal(limitedEngagements) =>
+            case (None, So (l m edEngage nts))
+                 f shouldTruncateDescendantsW nFocal(l m edEngage nts) =>
               val tombstone = VfTombstone(
-                tombstoneId = gtfr.tweetId,
-                includeTweet = true,
-                action = limitedEngagements,
-                tombstoneInfo = None,
-                tombstoneDisplayType = TombstoneDisplayType.NonCompliant,
-                truncateDescendantsWhenFocal = true
+                tombstone d = gtfr.t et d,
+                 ncludeT et = true,
+                act on = l m edEngage nts,
+                tombstone nfo = None,
+                tombstoneD splayType = TombstoneD splayType.NonCompl ant,
+                truncateDescendantsW nFocal = true
               )
-              Some((gtfr.tweetId, tombstone))
+              So ((gtfr.t et d, tombstone))
 
             case _ =>
               None
@@ -588,46 +588,46 @@ case class TombstoneVisibilityLibrary(
         }
       }
 
-      TombstoneVisibilityResponse(
-        tweetVerdicts = tombstones.toMap
+      TombstoneV s b l yResponse(
+        t etVerd cts = tombstones.toMap
       )
     }
   }
 
-  private def createLocalizedTombstone(
-    filteredReason: FilteredReason,
-    tombstoneStats: StatsReceiver,
-  ): Option[LocalizedTombstone] = {
+  pr vate def createLocal zedTombstone(
+    f lteredReason: F lteredReason,
+    tombstoneStats: StatsRece ver,
+  ): Opt on[Local zedTombstone] = {
 
-    val tombstoneOpt = FilteredReasonHelper.getTombstone(filteredReason)
+    val tombstoneOpt = F lteredReason lper.getTombstone(f lteredReason)
     tombstoneOpt match {
-      case Some(t.Tombstone(reasonOpt, Some(message))) =>
-        TombstoneReasonConverter.fromThrift(reasonOpt).map { localReason =>
+      case So (t.Tombstone(reasonOpt, So ( ssage))) =>
+        TombstoneReasonConverter.fromThr ft(reasonOpt).map { localReason =>
           tombstoneStats
-            .scope("localized").counter(localReason.toString().toLowerCase()).incr()
-          LocalizedTombstone(localReason, LocalizedMessageConverter.fromThrift(message))
+            .scope("local zed").counter(localReason.toStr ng().toLo rCase()). ncr()
+          Local zedTombstone(localReason, Local zed ssageConverter.fromThr ft( ssage))
         }
 
       case _ => None
     }
   }
 
-  private def createTombstone(
-    epitaph: Epitaph,
-    tombstoneStats: StatsReceiver,
-    extraCounterOpt: Option[String] = None
-  ): Option[Action] = {
+  pr vate def createTombstone(
+    ep aph: Ep aph,
+    tombstoneStats: StatsRece ver,
+    extraCounterOpt: Opt on[Str ng] = None
+  ): Opt on[Act on] = {
     tombstoneStats
       .scope("legacy")
-      .counter(epitaph.toString().toLowerCase())
-      .incr()
+      .counter(ep aph.toStr ng().toLo rCase())
+      . ncr()
     extraCounterOpt.map { extraCounter =>
       tombstoneStats
         .scope("legacy")
-        .scope(epitaph.toString().toLowerCase())
+        .scope(ep aph.toStr ng().toLo rCase())
         .counter(extraCounter)
-        .incr()
+        . ncr()
     }
-    Some(Tombstone(epitaph))
+    So (Tombstone(ep aph))
   }
 }

@@ -1,524 +1,524 @@
-/** Copyright 2012 Twitter, Inc. */
-package com.twitter.tweetypie.service
+/** Copyr ght 2012 Tw ter,  nc. */
+package com.tw ter.t etyp e.serv ce
 
-import com.twitter.coreservices.StratoPublicApiRequestAttributionCounter
-import com.twitter.finagle.CancelledRequestException
-import com.twitter.finagle.context.Contexts
-import com.twitter.finagle.context.Deadline
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.stats.DefaultStatsReceiver
-import com.twitter.finagle.stats.Stat
-import com.twitter.servo.exception.thriftscala.ClientError
-import com.twitter.servo.util.ExceptionCategorizer
-import com.twitter.servo.util.MemoizedExceptionCounterFactory
-import com.twitter.tweetypie.Future
-import com.twitter.tweetypie.Gate
-import com.twitter.tweetypie.Logger
-import com.twitter.tweetypie.StatsReceiver
-import com.twitter.tweetypie.ThriftTweetService
-import com.twitter.tweetypie.TweetId
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.context.TweetypieContext
-import com.twitter.tweetypie.core.OverCapacity
-import com.twitter.tweetypie.serverutil.ExceptionCounter
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.util.Promise
+ mport com.tw ter.coreserv ces.StratoPubl cAp RequestAttr but onCounter
+ mport com.tw ter.f nagle.CancelledRequestExcept on
+ mport com.tw ter.f nagle.context.Contexts
+ mport com.tw ter.f nagle.context.Deadl ne
+ mport com.tw ter.f nagle.mux.Cl entD scardedRequestExcept on
+ mport com.tw ter.f nagle.stats.DefaultStatsRece ver
+ mport com.tw ter.f nagle.stats.Stat
+ mport com.tw ter.servo.except on.thr ftscala.Cl entError
+ mport com.tw ter.servo.ut l.Except onCategor zer
+ mport com.tw ter.servo.ut l. mo zedExcept onCounterFactory
+ mport com.tw ter.t etyp e.Future
+ mport com.tw ter.t etyp e.Gate
+ mport com.tw ter.t etyp e.Logger
+ mport com.tw ter.t etyp e.StatsRece ver
+ mport com.tw ter.t etyp e.Thr ftT etServ ce
+ mport com.tw ter.t etyp e.T et d
+ mport com.tw ter.t etyp e.cl ent_ d.Cl ent d lper
+ mport com.tw ter.t etyp e.context.T etyp eContext
+ mport com.tw ter.t etyp e.core.OverCapac y
+ mport com.tw ter.t etyp e.serverut l.Except onCounter
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport com.tw ter.ut l.Prom se
 
 /**
- * A TweetService that takes care of the handling of requests from
- * external services. In particular, this wrapper doesn't have any
- * logic for handling requests itself. It just serves as a gateway for
- * requests and responses, making sure that the underlying tweet
- * service only sees requests it should handle and that the external
- * clients get clean responses.
+ * A T etServ ce that takes care of t  handl ng of requests from
+ * external serv ces.  n part cular, t  wrapper doesn't have any
+ * log c for handl ng requests  self.   just serves as a gateway for
+ * requests and responses, mak ng sure that t  underly ng t et
+ * serv ce only sees requests   should handle and that t  external
+ * cl ents get clean responses.
  *
- * - Ensures that exceptions are propagated cleanly
- * - Sheds traffic if necessary
- * - Authenticates clients
- * - Records stats about clients
+ * - Ensures that except ons are propagated cleanly
+ * - S ds traff c  f necessary
+ * - Aut nt cates cl ents
+ * - Records stats about cl ents
  *
- * For each endpoint, we record both client-specific and total metrics for number of requests,
- * successes, exceptions, and latency.  The stats names follow the patterns:
- * - ./<methodName>/requests
- * - ./<methodName>/success
- * - ./<methodName>/client_errors
- * - ./<methodName>/server_errors
- * - ./<methodName>/exceptions
- * - ./<methodName>/exceptions/<exceptionName>
- * - ./<methodName>/<clientId>/requests
- * - ./<methodName>/<clientId>/success
- * - ./<methodName>/<clientId>/exceptions
- * - ./<methodName>/<clientId>/exceptions/<exceptionName>
+ * For each endpo nt,   record both cl ent-spec f c and total  tr cs for number of requests,
+ * successes, except ons, and latency.  T  stats na s follow t  patterns:
+ * - ./< thodNa >/requests
+ * - ./< thodNa >/success
+ * - ./< thodNa >/cl ent_errors
+ * - ./< thodNa >/server_errors
+ * - ./< thodNa >/except ons
+ * - ./< thodNa >/except ons/<except onNa >
+ * - ./< thodNa >/<cl ent d>/requests
+ * - ./< thodNa >/<cl ent d>/success
+ * - ./< thodNa >/<cl ent d>/except ons
+ * - ./< thodNa >/<cl ent d>/except ons/<except onNa >
  */
-class ClientHandlingTweetService(
-  underlying: ThriftTweetService,
-  stats: StatsReceiver,
-  loadShedEligible: Gate[String],
-  shedReadTrafficVoluntarily: Gate[Unit],
-  requestAuthorizer: ClientRequestAuthorizer,
-  getTweetsAuthorizer: MethodAuthorizer[GetTweetsRequest],
-  getTweetFieldsAuthorizer: MethodAuthorizer[GetTweetFieldsRequest],
-  requestSizeAuthorizer: MethodAuthorizer[Int],
-  clientIdHelper: ClientIdHelper)
-    extends ThriftTweetService {
-  import RescueExceptions._
+class Cl entHandl ngT etServ ce(
+  underly ng: Thr ftT etServ ce,
+  stats: StatsRece ver,
+  loadS dEl g ble: Gate[Str ng],
+  s dReadTraff cVoluntar ly: Gate[Un ],
+  requestAuthor zer: Cl entRequestAuthor zer,
+  getT etsAuthor zer:  thodAuthor zer[GetT etsRequest],
+  getT etF eldsAuthor zer:  thodAuthor zer[GetT etF eldsRequest],
+  requestS zeAuthor zer:  thodAuthor zer[ nt],
+  cl ent d lper: Cl ent d lper)
+    extends Thr ftT etServ ce {
+   mport RescueExcept ons._
 
-  private val log = Logger("com.twitter.tweetypie.service.TweetService")
+  pr vate val log = Logger("com.tw ter.t etyp e.serv ce.T etServ ce")
 
-  private[this] val Requests = "requests"
-  private[this] val Success = "success"
-  private[this] val Latency = "latency_ms"
+  pr vate[t ] val Requests = "requests"
+  pr vate[t ] val Success = "success"
+  pr vate[t ] val Latency = "latency_ms"
 
-  private[this] val StratoStatsCounter = new StratoPublicApiRequestAttributionCounter(
-    DefaultStatsReceiver
+  pr vate[t ] val StratoStatsCounter = new StratoPubl cAp RequestAttr but onCounter(
+    DefaultStatsRece ver
   )
-  private[this] val clientServerCategorizer =
-    ExceptionCategorizer.simple {
+  pr vate[t ] val cl entServerCategor zer =
+    Except onCategor zer.s mple {
       _ match {
-        case _: ClientError | _: AccessDenied => "client_errors"
+        case _: Cl entError | _: AccessDen ed => "cl ent_errors"
         case _ => "server_errors"
       }
     }
 
-  private[this] val preServoExceptionCountersWithClientId =
-    new MemoizedExceptionCounterFactory(stats)
-  private[this] val preServoExceptionCounters =
-    new MemoizedExceptionCounterFactory(stats, categorizer = ExceptionCounter.defaultCategorizer)
-  private[this] val postServoExceptionCounters =
-    new MemoizedExceptionCounterFactory(stats, categorizer = clientServerCategorizer)
+  pr vate[t ] val preServoExcept onCountersW hCl ent d =
+    new  mo zedExcept onCounterFactory(stats)
+  pr vate[t ] val preServoExcept onCounters =
+    new  mo zedExcept onCounterFactory(stats, categor zer = Except onCounter.defaultCategor zer)
+  pr vate[t ] val postServoExcept onCounters =
+    new  mo zedExcept onCounterFactory(stats, categor zer = cl entServerCategor zer)
 
-  private def clientId: String =
-    clientIdHelper.effectiveClientId.getOrElse(ClientIdHelper.UnknownClientId)
-  private def clientIdRoot: String =
-    clientIdHelper.effectiveClientIdRoot.getOrElse(ClientIdHelper.UnknownClientId)
+  pr vate def cl ent d: Str ng =
+    cl ent d lper.effect veCl ent d.getOrElse(Cl ent d lper.UnknownCl ent d)
+  pr vate def cl ent dRoot: Str ng =
+    cl ent d lper.effect veCl ent dRoot.getOrElse(Cl ent d lper.UnknownCl ent d)
 
-  private[this] val futureOverCapacityException =
-    Future.exception(OverCapacity("Request rejected due to load shedding."))
+  pr vate[t ] val futureOverCapac yExcept on =
+    Future.except on(OverCapac y("Request rejected due to load s dd ng."))
 
-  private[this] def ifNotOverCapacityRead[T](
-    methodStats: StatsReceiver,
-    requestSize: Long
+  pr vate[t ] def  fNotOverCapac yRead[T](
+     thodStats: StatsRece ver,
+    requestS ze: Long
   )(
     f: => Future[T]
   ): Future[T] = {
-    val couldShed = loadShedEligible(clientId)
-    val doShed = couldShed && shedReadTrafficVoluntarily()
+    val couldS d = loadS dEl g ble(cl ent d)
+    val doS d = couldS d && s dReadTraff cVoluntar ly()
 
-    methodStats.stat("loadshed_incoming_requests").add(requestSize)
-    if (couldShed) {
-      methodStats.stat("loadshed_eligible_requests").add(requestSize)
+     thodStats.stat("loads d_ ncom ng_requests").add(requestS ze)
+     f (couldS d) {
+       thodStats.stat("loads d_el g ble_requests").add(requestS ze)
     } else {
-      methodStats.stat("loadshed_ineligible_requests").add(requestSize)
+       thodStats.stat("loads d_ nel g ble_requests").add(requestS ze)
     }
 
-    if (doShed) {
-      methodStats.stat("loadshed_rejected_requests").add(requestSize)
-      futureOverCapacityException
+     f (doS d) {
+       thodStats.stat("loads d_rejected_requests").add(requestS ze)
+      futureOverCapac yExcept on
     } else {
       f
     }
   }
 
-  private def maybeTimeFuture[A](maybeStat: Option[Stat])(f: => Future[A]) =
+  pr vate def maybeT  Future[A](maybeStat: Opt on[Stat])(f: => Future[A]) =
     maybeStat match {
-      case Some(stat) => Stat.timeFuture(stat)(f)
+      case So (stat) => Stat.t  Future(stat)(f)
       case None => f
     }
 
   /**
-   * Perform the action, increment the appropriate counters, and clean up the exceptions to servo exceptions
+   * Perform t  act on,  ncre nt t  appropr ate counters, and clean up t  except ons to servo except ons
    *
-   * This method also masks all interrupts to prevent request cancellation on hangup.
+   * T   thod also masks all  nterrupts to prevent request cancellat on on hangup.
    */
-  private[this] def trackS[T](
-    name: String,
-    requestInfo: Any,
-    extraStatPrefix: Option[String] = None,
-    requestSize: Option[Long] = None
+  pr vate[t ] def trackS[T](
+    na : Str ng,
+    request nfo: Any,
+    extraStatPref x: Opt on[Str ng] = None,
+    requestS ze: Opt on[Long] = None
   )(
-    action: StatsReceiver => Future[T]
+    act on: StatsRece ver => Future[T]
   ): Future[T] = {
-    val methodStats = stats.scope(name)
-    val clientStats = methodStats.scope(clientIdRoot)
-    val cancelledCounter = methodStats.counter("cancelled")
+    val  thodStats = stats.scope(na )
+    val cl entStats =  thodStats.scope(cl ent dRoot)
+    val cancelledCounter =  thodStats.counter("cancelled")
 
     /**
-     * Returns an identical future except that it ignores interrupts and increments a counter
-     * when a request is cancelled. This is [[Future]].masked but with a counter.
+     * Returns an  dent cal future except that    gnores  nterrupts and  ncre nts a counter
+     * w n a request  s cancelled. T   s [[Future]].masked but w h a counter.
      */
-    def maskedWithStats[A](f: Future[A]): Future[A] = {
-      val p = Promise[A]()
-      p.setInterruptHandler {
-        case _: ClientDiscardedRequestException | _: CancelledRequestException =>
-          cancelledCounter.incr()
+    def maskedW hStats[A](f: Future[A]): Future[A] = {
+      val p = Prom se[A]()
+      p.set nterruptHandler {
+        case _: Cl entD scardedRequestExcept on | _: CancelledRequestExcept on =>
+          cancelledCounter. ncr()
       }
       f.proxyTo(p)
       p
     }
 
-    maskedWithStats(
-      requestAuthorizer(name, clientIdHelper.effectiveClientId)
+    maskedW hStats(
+      requestAuthor zer(na , cl ent d lper.effect veCl ent d)
         .flatMap { _ =>
-          methodStats.counter(Requests).incr()
-          extraStatPrefix.foreach(p => methodStats.counter(p, Requests).incr())
-          clientStats.counter(Requests).incr()
-          StratoStatsCounter.recordStats(name, "tweets", requestSize.getOrElse(1L))
+           thodStats.counter(Requests). ncr()
+          extraStatPref x.foreach(p =>  thodStats.counter(p, Requests). ncr())
+          cl entStats.counter(Requests). ncr()
+          StratoStatsCounter.recordStats(na , "t ets", requestS ze.getOrElse(1L))
 
-          Stat.timeFuture(methodStats.stat(Latency)) {
-            Stat.timeFuture(clientStats.stat(Latency)) {
-              maybeTimeFuture(extraStatPrefix.map(p => methodStats.stat(p, Latency))) {
-                TweetypieContext.Local.trackStats(stats, methodStats, clientStats)
+          Stat.t  Future( thodStats.stat(Latency)) {
+            Stat.t  Future(cl entStats.stat(Latency)) {
+              maybeT  Future(extraStatPref x.map(p =>  thodStats.stat(p, Latency))) {
+                T etyp eContext.Local.trackStats(stats,  thodStats, cl entStats)
 
-                // Remove the deadline for backend requests when we mask client cancellations so
-                // that side-effects are applied to all backend services even after client timeouts.
-                // Wrap and then flatten an extra layer of Future to capture any thrown exceptions.
-                Future(Contexts.broadcast.letClear(Deadline)(action(methodStats))).flatten
+                // Remove t  deadl ne for backend requests w n   mask cl ent cancellat ons so
+                // that s de-effects are appl ed to all backend serv ces even after cl ent t  outs.
+                // Wrap and t n flatten an extra layer of Future to capture any thrown except ons.
+                Future(Contexts.broadcast.letClear(Deadl ne)(act on( thodStats))).flatten
               }
             }
           }
         }
     ).onSuccess { _ =>
-        methodStats.counter(Success).incr()
-        extraStatPrefix.foreach(p => methodStats.counter(p, Success).incr())
-        clientStats.counter(Success).incr()
+         thodStats.counter(Success). ncr()
+        extraStatPref x.foreach(p =>  thodStats.counter(p, Success). ncr())
+        cl entStats.counter(Success). ncr()
       }
-      .onFailure { e =>
-        preServoExceptionCounters(name)(e)
-        preServoExceptionCountersWithClientId(name, clientIdRoot)(e)
+      .onFa lure { e =>
+        preServoExcept onCounters(na )(e)
+        preServoExcept onCountersW hCl ent d(na , cl ent dRoot)(e)
       }
-      .rescue(rescueToServoFailure(name, clientId))
-      .onFailure { e =>
-        postServoExceptionCounters(name)(e)
-        logFailure(e, requestInfo)
+      .rescue(rescueToServoFa lure(na , cl ent d))
+      .onFa lure { e =>
+        postServoExcept onCounters(na )(e)
+        logFa lure(e, request nfo)
       }
   }
 
   def track[T](
-    name: String,
-    requestInfo: Any,
-    extraStatPrefix: Option[String] = None,
-    requestSize: Option[Long] = None
+    na : Str ng,
+    request nfo: Any,
+    extraStatPref x: Opt on[Str ng] = None,
+    requestS ze: Opt on[Long] = None
   )(
-    action: => Future[T]
+    act on: => Future[T]
   ): Future[T] = {
-    trackS(name, requestInfo, extraStatPrefix, requestSize) { _: StatsReceiver => action }
+    trackS(na , request nfo, extraStatPref x, requestS ze) { _: StatsRece ver => act on }
   }
 
-  private def logFailure(ex: Throwable, requestInfo: Any): Unit =
-    log.warn(s"Returning failure response: $ex\n failed request info: $requestInfo")
+  pr vate def logFa lure(ex: Throwable, request nfo: Any): Un  =
+    log.warn(s"Return ng fa lure response: $ex\n fa led request  nfo: $request nfo")
 
-  object RequestWidthPrefix {
-    private def prefix(width: Int) = {
-      val bucketMin =
-        width match {
-          case c if c < 10 => "0_9"
-          case c if c < 100 => "10_99"
+  object RequestW dthPref x {
+    pr vate def pref x(w dth:  nt) = {
+      val bucketM n =
+        w dth match {
+          case c  f c < 10 => "0_9"
+          case c  f c < 100 => "10_99"
           case _ => "100_plus"
         }
-      s"width_$bucketMin"
+      s"w dth_$bucketM n"
     }
 
-    def forGetTweetsRequest(r: GetTweetsRequest): String = prefix(r.tweetIds.size)
-    def forGetTweetFieldsRequest(r: GetTweetFieldsRequest): String = prefix(r.tweetIds.size)
+    def forGetT etsRequest(r: GetT etsRequest): Str ng = pref x(r.t et ds.s ze)
+    def forGetT etF eldsRequest(r: GetT etF eldsRequest): Str ng = pref x(r.t et ds.s ze)
   }
 
-  object WithMediaPrefix {
-    def forPostTweetRequest(r: PostTweetRequest): String =
-      if (r.mediaUploadIds.exists(_.nonEmpty))
-        "with_media"
+  object W h d aPref x {
+    def forPostT etRequest(r: PostT etRequest): Str ng =
+       f (r. d aUpload ds.ex sts(_.nonEmpty))
+        "w h_ d a"
       else
-        "without_media"
+        "w hout_ d a"
   }
 
-  override def getTweets(request: GetTweetsRequest): Future[Seq[GetTweetResult]] =
+  overr de def getT ets(request: GetT etsRequest): Future[Seq[GetT etResult]] =
     trackS(
-      "get_tweets",
+      "get_t ets",
       request,
-      Some(RequestWidthPrefix.forGetTweetsRequest(request)),
-      Some(request.tweetIds.size)
+      So (RequestW dthPref x.forGetT etsRequest(request)),
+      So (request.t et ds.s ze)
     ) { stats =>
-      getTweetsAuthorizer(request, clientId).flatMap { _ =>
-        ifNotOverCapacityRead(stats, request.tweetIds.length) {
-          underlying.getTweets(request)
+      getT etsAuthor zer(request, cl ent d).flatMap { _ =>
+         fNotOverCapac yRead(stats, request.t et ds.length) {
+          underly ng.getT ets(request)
         }
       }
     }
 
-  override def getTweetFields(request: GetTweetFieldsRequest): Future[Seq[GetTweetFieldsResult]] =
+  overr de def getT etF elds(request: GetT etF eldsRequest): Future[Seq[GetT etF eldsResult]] =
     trackS(
-      "get_tweet_fields",
+      "get_t et_f elds",
       request,
-      Some(RequestWidthPrefix.forGetTweetFieldsRequest(request)),
-      Some(request.tweetIds.size)
+      So (RequestW dthPref x.forGetT etF eldsRequest(request)),
+      So (request.t et ds.s ze)
     ) { stats =>
-      getTweetFieldsAuthorizer(request, clientId).flatMap { _ =>
-        ifNotOverCapacityRead(stats, request.tweetIds.length) {
-          underlying.getTweetFields(request)
+      getT etF eldsAuthor zer(request, cl ent d).flatMap { _ =>
+         fNotOverCapac yRead(stats, request.t et ds.length) {
+          underly ng.getT etF elds(request)
         }
       }
     }
 
-  override def replicatedGetTweets(request: GetTweetsRequest): Future[Unit] =
-    track("replicated_get_tweets", request, requestSize = Some(request.tweetIds.size)) {
-      underlying.replicatedGetTweets(request).rescue {
-        case e: Throwable => Future.Unit // do not need deferredrpc to retry on exceptions
+  overr de def repl catedGetT ets(request: GetT etsRequest): Future[Un ] =
+    track("repl cated_get_t ets", request, requestS ze = So (request.t et ds.s ze)) {
+      underly ng.repl catedGetT ets(request).rescue {
+        case e: Throwable => Future.Un  // do not need deferredrpc to retry on except ons
       }
     }
 
-  override def replicatedGetTweetFields(request: GetTweetFieldsRequest): Future[Unit] =
-    track("replicated_get_tweet_fields", request, requestSize = Some(request.tweetIds.size)) {
-      underlying.replicatedGetTweetFields(request).rescue {
-        case e: Throwable => Future.Unit // do not need deferredrpc to retry on exceptions
+  overr de def repl catedGetT etF elds(request: GetT etF eldsRequest): Future[Un ] =
+    track("repl cated_get_t et_f elds", request, requestS ze = So (request.t et ds.s ze)) {
+      underly ng.repl catedGetT etF elds(request).rescue {
+        case e: Throwable => Future.Un  // do not need deferredrpc to retry on except ons
       }
     }
 
-  override def getTweetCounts(request: GetTweetCountsRequest): Future[Seq[GetTweetCountsResult]] =
-    trackS("get_tweet_counts", request, requestSize = Some(request.tweetIds.size)) { stats =>
-      ifNotOverCapacityRead(stats, request.tweetIds.length) {
-        requestSizeAuthorizer(request.tweetIds.size, clientId).flatMap { _ =>
-          underlying.getTweetCounts(request)
+  overr de def getT etCounts(request: GetT etCountsRequest): Future[Seq[GetT etCountsResult]] =
+    trackS("get_t et_counts", request, requestS ze = So (request.t et ds.s ze)) { stats =>
+       fNotOverCapac yRead(stats, request.t et ds.length) {
+        requestS zeAuthor zer(request.t et ds.s ze, cl ent d).flatMap { _ =>
+          underly ng.getT etCounts(request)
         }
       }
     }
 
-  override def replicatedGetTweetCounts(request: GetTweetCountsRequest): Future[Unit] =
-    track("replicated_get_tweet_counts", request, requestSize = Some(request.tweetIds.size)) {
-      underlying.replicatedGetTweetCounts(request).rescue {
-        case e: Throwable => Future.Unit // do not need deferredrpc to retry on exceptions
+  overr de def repl catedGetT etCounts(request: GetT etCountsRequest): Future[Un ] =
+    track("repl cated_get_t et_counts", request, requestS ze = So (request.t et ds.s ze)) {
+      underly ng.repl catedGetT etCounts(request).rescue {
+        case e: Throwable => Future.Un  // do not need deferredrpc to retry on except ons
       }
     }
 
-  override def postTweet(request: PostTweetRequest): Future[PostTweetResult] =
-    track("post_tweet", request, Some(WithMediaPrefix.forPostTweetRequest(request))) {
-      underlying.postTweet(request)
+  overr de def postT et(request: PostT etRequest): Future[PostT etResult] =
+    track("post_t et", request, So (W h d aPref x.forPostT etRequest(request))) {
+      underly ng.postT et(request)
     }
 
-  override def postRetweet(request: RetweetRequest): Future[PostTweetResult] =
-    track("post_retweet", request) {
-      underlying.postRetweet(request)
+  overr de def postRet et(request: Ret etRequest): Future[PostT etResult] =
+    track("post_ret et", request) {
+      underly ng.postRet et(request)
     }
 
-  override def setAdditionalFields(request: SetAdditionalFieldsRequest): Future[Unit] =
-    track("set_additional_fields", request) {
-      underlying.setAdditionalFields(request)
+  overr de def setAdd  onalF elds(request: SetAdd  onalF eldsRequest): Future[Un ] =
+    track("set_add  onal_f elds", request) {
+      underly ng.setAdd  onalF elds(request)
     }
 
-  override def deleteAdditionalFields(request: DeleteAdditionalFieldsRequest): Future[Unit] =
-    track("delete_additional_fields", request, requestSize = Some(request.tweetIds.size)) {
-      requestSizeAuthorizer(request.tweetIds.size, clientId).flatMap { _ =>
-        underlying.deleteAdditionalFields(request)
+  overr de def deleteAdd  onalF elds(request: DeleteAdd  onalF eldsRequest): Future[Un ] =
+    track("delete_add  onal_f elds", request, requestS ze = So (request.t et ds.s ze)) {
+      requestS zeAuthor zer(request.t et ds.s ze, cl ent d).flatMap { _ =>
+        underly ng.deleteAdd  onalF elds(request)
       }
     }
 
-  override def asyncSetAdditionalFields(request: AsyncSetAdditionalFieldsRequest): Future[Unit] =
-    track("async_set_additional_fields", request) {
-      underlying.asyncSetAdditionalFields(request)
+  overr de def asyncSetAdd  onalF elds(request: AsyncSetAdd  onalF eldsRequest): Future[Un ] =
+    track("async_set_add  onal_f elds", request) {
+      underly ng.asyncSetAdd  onalF elds(request)
     }
 
-  override def asyncDeleteAdditionalFields(
-    request: AsyncDeleteAdditionalFieldsRequest
-  ): Future[Unit] =
-    track("async_delete_additional_fields", request) {
-      underlying.asyncDeleteAdditionalFields(request)
+  overr de def asyncDeleteAdd  onalF elds(
+    request: AsyncDeleteAdd  onalF eldsRequest
+  ): Future[Un ] =
+    track("async_delete_add  onal_f elds", request) {
+      underly ng.asyncDeleteAdd  onalF elds(request)
     }
 
-  override def replicatedUndeleteTweet2(request: ReplicatedUndeleteTweet2Request): Future[Unit] =
-    track("replicated_undelete_tweet2", request) { underlying.replicatedUndeleteTweet2(request) }
+  overr de def repl catedUndeleteT et2(request: Repl catedUndeleteT et2Request): Future[Un ] =
+    track("repl cated_undelete_t et2", request) { underly ng.repl catedUndeleteT et2(request) }
 
-  override def replicatedInsertTweet2(request: ReplicatedInsertTweet2Request): Future[Unit] =
-    track("replicated_insert_tweet2", request) { underlying.replicatedInsertTweet2(request) }
+  overr de def repl cated nsertT et2(request: Repl cated nsertT et2Request): Future[Un ] =
+    track("repl cated_ nsert_t et2", request) { underly ng.repl cated nsertT et2(request) }
 
-  override def asyncInsert(request: AsyncInsertRequest): Future[Unit] =
-    track("async_insert", request) { underlying.asyncInsert(request) }
+  overr de def async nsert(request: Async nsertRequest): Future[Un ] =
+    track("async_ nsert", request) { underly ng.async nsert(request) }
 
-  override def updatePossiblySensitiveTweet(
-    request: UpdatePossiblySensitiveTweetRequest
-  ): Future[Unit] =
-    track("update_possibly_sensitive_tweet", request) {
-      underlying.updatePossiblySensitiveTweet(request)
+  overr de def updatePoss blySens  veT et(
+    request: UpdatePoss blySens  veT etRequest
+  ): Future[Un ] =
+    track("update_poss bly_sens  ve_t et", request) {
+      underly ng.updatePoss blySens  veT et(request)
     }
 
-  override def asyncUpdatePossiblySensitiveTweet(
-    request: AsyncUpdatePossiblySensitiveTweetRequest
-  ): Future[Unit] =
-    track("async_update_possibly_sensitive_tweet", request) {
-      underlying.asyncUpdatePossiblySensitiveTweet(request)
+  overr de def asyncUpdatePoss blySens  veT et(
+    request: AsyncUpdatePoss blySens  veT etRequest
+  ): Future[Un ] =
+    track("async_update_poss bly_sens  ve_t et", request) {
+      underly ng.asyncUpdatePoss blySens  veT et(request)
     }
 
-  override def replicatedUpdatePossiblySensitiveTweet(tweet: Tweet): Future[Unit] =
-    track("replicated_update_possibly_sensitive_tweet", tweet) {
-      underlying.replicatedUpdatePossiblySensitiveTweet(tweet)
+  overr de def repl catedUpdatePoss blySens  veT et(t et: T et): Future[Un ] =
+    track("repl cated_update_poss bly_sens  ve_t et", t et) {
+      underly ng.repl catedUpdatePoss blySens  veT et(t et)
     }
 
-  override def undeleteTweet(request: UndeleteTweetRequest): Future[UndeleteTweetResponse] =
-    track("undelete_tweet", request) {
-      underlying.undeleteTweet(request)
+  overr de def undeleteT et(request: UndeleteT etRequest): Future[UndeleteT etResponse] =
+    track("undelete_t et", request) {
+      underly ng.undeleteT et(request)
     }
 
-  override def asyncUndeleteTweet(request: AsyncUndeleteTweetRequest): Future[Unit] =
-    track("async_undelete_tweet", request) {
-      underlying.asyncUndeleteTweet(request)
+  overr de def asyncUndeleteT et(request: AsyncUndeleteT etRequest): Future[Un ] =
+    track("async_undelete_t et", request) {
+      underly ng.asyncUndeleteT et(request)
     }
 
-  override def unretweet(request: UnretweetRequest): Future[UnretweetResult] =
-    track("unretweet", request) {
-      underlying.unretweet(request)
+  overr de def unret et(request: Unret etRequest): Future[Unret etResult] =
+    track("unret et", request) {
+      underly ng.unret et(request)
     }
 
-  override def eraseUserTweets(request: EraseUserTweetsRequest): Future[Unit] =
-    track("erase_user_tweets", request) {
-      underlying.eraseUserTweets(request)
+  overr de def eraseUserT ets(request: EraseUserT etsRequest): Future[Un ] =
+    track("erase_user_t ets", request) {
+      underly ng.eraseUserT ets(request)
     }
 
-  override def asyncEraseUserTweets(request: AsyncEraseUserTweetsRequest): Future[Unit] =
-    track("async_erase_user_tweets", request) {
-      underlying.asyncEraseUserTweets(request)
+  overr de def asyncEraseUserT ets(request: AsyncEraseUserT etsRequest): Future[Un ] =
+    track("async_erase_user_t ets", request) {
+      underly ng.asyncEraseUserT ets(request)
     }
 
-  override def asyncDelete(request: AsyncDeleteRequest): Future[Unit] =
-    track("async_delete", request) { underlying.asyncDelete(request) }
+  overr de def asyncDelete(request: AsyncDeleteRequest): Future[Un ] =
+    track("async_delete", request) { underly ng.asyncDelete(request) }
 
-  override def deleteTweets(request: DeleteTweetsRequest): Future[Seq[DeleteTweetResult]] =
-    track("delete_tweets", request, requestSize = Some(request.tweetIds.size)) {
-      requestSizeAuthorizer(request.tweetIds.size, clientId).flatMap { _ =>
-        underlying.deleteTweets(request)
+  overr de def deleteT ets(request: DeleteT etsRequest): Future[Seq[DeleteT etResult]] =
+    track("delete_t ets", request, requestS ze = So (request.t et ds.s ze)) {
+      requestS zeAuthor zer(request.t et ds.s ze, cl ent d).flatMap { _ =>
+        underly ng.deleteT ets(request)
       }
     }
 
-  override def cascadedDeleteTweet(request: CascadedDeleteTweetRequest): Future[Unit] =
-    track("cascaded_delete_tweet", request) { underlying.cascadedDeleteTweet(request) }
+  overr de def cascadedDeleteT et(request: CascadedDeleteT etRequest): Future[Un ] =
+    track("cascaded_delete_t et", request) { underly ng.cascadedDeleteT et(request) }
 
-  override def replicatedDeleteTweet2(request: ReplicatedDeleteTweet2Request): Future[Unit] =
-    track("replicated_delete_tweet2", request) { underlying.replicatedDeleteTweet2(request) }
+  overr de def repl catedDeleteT et2(request: Repl catedDeleteT et2Request): Future[Un ] =
+    track("repl cated_delete_t et2", request) { underly ng.repl catedDeleteT et2(request) }
 
-  override def incrTweetFavCount(request: IncrTweetFavCountRequest): Future[Unit] =
-    track("incr_tweet_fav_count", request) { underlying.incrTweetFavCount(request) }
+  overr de def  ncrT etFavCount(request:  ncrT etFavCountRequest): Future[Un ] =
+    track(" ncr_t et_fav_count", request) { underly ng. ncrT etFavCount(request) }
 
-  override def asyncIncrFavCount(request: AsyncIncrFavCountRequest): Future[Unit] =
-    track("async_incr_fav_count", request) { underlying.asyncIncrFavCount(request) }
+  overr de def async ncrFavCount(request: Async ncrFavCountRequest): Future[Un ] =
+    track("async_ ncr_fav_count", request) { underly ng.async ncrFavCount(request) }
 
-  override def replicatedIncrFavCount(tweetId: TweetId, delta: Int): Future[Unit] =
-    track("replicated_incr_fav_count", tweetId) {
-      underlying.replicatedIncrFavCount(tweetId, delta)
+  overr de def repl cated ncrFavCount(t et d: T et d, delta:  nt): Future[Un ] =
+    track("repl cated_ ncr_fav_count", t et d) {
+      underly ng.repl cated ncrFavCount(t et d, delta)
     }
 
-  override def incrTweetBookmarkCount(request: IncrTweetBookmarkCountRequest): Future[Unit] =
-    track("incr_tweet_bookmark_count", request) { underlying.incrTweetBookmarkCount(request) }
+  overr de def  ncrT etBookmarkCount(request:  ncrT etBookmarkCountRequest): Future[Un ] =
+    track(" ncr_t et_bookmark_count", request) { underly ng. ncrT etBookmarkCount(request) }
 
-  override def asyncIncrBookmarkCount(request: AsyncIncrBookmarkCountRequest): Future[Unit] =
-    track("async_incr_bookmark_count", request) { underlying.asyncIncrBookmarkCount(request) }
+  overr de def async ncrBookmarkCount(request: Async ncrBookmarkCountRequest): Future[Un ] =
+    track("async_ ncr_bookmark_count", request) { underly ng.async ncrBookmarkCount(request) }
 
-  override def replicatedIncrBookmarkCount(tweetId: TweetId, delta: Int): Future[Unit] =
-    track("replicated_incr_bookmark_count", tweetId) {
-      underlying.replicatedIncrBookmarkCount(tweetId, delta)
+  overr de def repl cated ncrBookmarkCount(t et d: T et d, delta:  nt): Future[Un ] =
+    track("repl cated_ ncr_bookmark_count", t et d) {
+      underly ng.repl cated ncrBookmarkCount(t et d, delta)
     }
 
-  override def replicatedSetAdditionalFields(request: SetAdditionalFieldsRequest): Future[Unit] =
-    track("replicated_set_additional_fields", request) {
-      underlying.replicatedSetAdditionalFields(request)
+  overr de def repl catedSetAdd  onalF elds(request: SetAdd  onalF eldsRequest): Future[Un ] =
+    track("repl cated_set_add  onal_f elds", request) {
+      underly ng.repl catedSetAdd  onalF elds(request)
     }
 
-  def setRetweetVisibility(request: SetRetweetVisibilityRequest): Future[Unit] = {
-    track("set_retweet_visibility", request) {
-      underlying.setRetweetVisibility(request)
+  def setRet etV s b l y(request: SetRet etV s b l yRequest): Future[Un ] = {
+    track("set_ret et_v s b l y", request) {
+      underly ng.setRet etV s b l y(request)
     }
   }
 
-  def asyncSetRetweetVisibility(request: AsyncSetRetweetVisibilityRequest): Future[Unit] = {
-    track("async_set_retweet_visibility", request) {
-      underlying.asyncSetRetweetVisibility(request)
+  def asyncSetRet etV s b l y(request: AsyncSetRet etV s b l yRequest): Future[Un ] = {
+    track("async_set_ret et_v s b l y", request) {
+      underly ng.asyncSetRet etV s b l y(request)
     }
   }
 
-  override def replicatedSetRetweetVisibility(
-    request: ReplicatedSetRetweetVisibilityRequest
-  ): Future[Unit] =
-    track("replicated_set_retweet_visibility", request) {
-      underlying.replicatedSetRetweetVisibility(request)
+  overr de def repl catedSetRet etV s b l y(
+    request: Repl catedSetRet etV s b l yRequest
+  ): Future[Un ] =
+    track("repl cated_set_ret et_v s b l y", request) {
+      underly ng.repl catedSetRet etV s b l y(request)
     }
 
-  override def replicatedDeleteAdditionalFields(
-    request: ReplicatedDeleteAdditionalFieldsRequest
-  ): Future[Unit] =
-    track("replicated_delete_additional_fields", request) {
-      underlying.replicatedDeleteAdditionalFields(request)
+  overr de def repl catedDeleteAdd  onalF elds(
+    request: Repl catedDeleteAdd  onalF eldsRequest
+  ): Future[Un ] =
+    track("repl cated_delete_add  onal_f elds", request) {
+      underly ng.repl catedDeleteAdd  onalF elds(request)
     }
 
-  override def replicatedTakedown(tweet: Tweet): Future[Unit] =
-    track("replicated_takedown", tweet) { underlying.replicatedTakedown(tweet) }
+  overr de def repl catedTakedown(t et: T et): Future[Un ] =
+    track("repl cated_takedown", t et) { underly ng.repl catedTakedown(t et) }
 
-  override def scrubGeoUpdateUserTimestamp(request: DeleteLocationData): Future[Unit] =
-    track("scrub_geo_update_user_timestamp", request) {
-      underlying.scrubGeoUpdateUserTimestamp(request)
+  overr de def scrubGeoUpdateUserT  stamp(request: DeleteLocat onData): Future[Un ] =
+    track("scrub_geo_update_user_t  stamp", request) {
+      underly ng.scrubGeoUpdateUserT  stamp(request)
     }
 
-  override def scrubGeo(request: GeoScrub): Future[Unit] =
-    track("scrub_geo", request, requestSize = Some(request.statusIds.size)) {
-      requestSizeAuthorizer(request.statusIds.size, clientId).flatMap { _ =>
-        underlying.scrubGeo(request)
+  overr de def scrubGeo(request: GeoScrub): Future[Un ] =
+    track("scrub_geo", request, requestS ze = So (request.status ds.s ze)) {
+      requestS zeAuthor zer(request.status ds.s ze, cl ent d).flatMap { _ =>
+        underly ng.scrubGeo(request)
       }
     }
 
-  override def replicatedScrubGeo(tweetIds: Seq[TweetId]): Future[Unit] =
-    track("replicated_scrub_geo", tweetIds) { underlying.replicatedScrubGeo(tweetIds) }
+  overr de def repl catedScrubGeo(t et ds: Seq[T et d]): Future[Un ] =
+    track("repl cated_scrub_geo", t et ds) { underly ng.repl catedScrubGeo(t et ds) }
 
-  override def deleteLocationData(request: DeleteLocationDataRequest): Future[Unit] =
-    track("delete_location_data", request) {
-      underlying.deleteLocationData(request)
+  overr de def deleteLocat onData(request: DeleteLocat onDataRequest): Future[Un ] =
+    track("delete_locat on_data", request) {
+      underly ng.deleteLocat onData(request)
     }
 
-  override def flush(request: FlushRequest): Future[Unit] =
-    track("flush", request, requestSize = Some(request.tweetIds.size)) {
-      requestSizeAuthorizer(request.tweetIds.size, clientId).flatMap { _ =>
-        underlying.flush(request)
+  overr de def flush(request: FlushRequest): Future[Un ] =
+    track("flush", request, requestS ze = So (request.t et ds.s ze)) {
+      requestS zeAuthor zer(request.t et ds.s ze, cl ent d).flatMap { _ =>
+        underly ng.flush(request)
       }
     }
 
-  override def takedown(request: TakedownRequest): Future[Unit] =
-    track("takedown", request) { underlying.takedown(request) }
+  overr de def takedown(request: TakedownRequest): Future[Un ] =
+    track("takedown", request) { underly ng.takedown(request) }
 
-  override def asyncTakedown(request: AsyncTakedownRequest): Future[Unit] =
+  overr de def asyncTakedown(request: AsyncTakedownRequest): Future[Un ] =
     track("async_takedown", request) {
-      underlying.asyncTakedown(request)
+      underly ng.asyncTakedown(request)
     }
 
-  override def setTweetUserTakedown(request: SetTweetUserTakedownRequest): Future[Unit] =
-    track("set_tweet_user_takedown", request) { underlying.setTweetUserTakedown(request) }
+  overr de def setT etUserTakedown(request: SetT etUserTakedownRequest): Future[Un ] =
+    track("set_t et_user_takedown", request) { underly ng.setT etUserTakedown(request) }
 
-  override def quotedTweetDelete(request: QuotedTweetDeleteRequest): Future[Unit] =
-    track("quoted_tweet_delete", request) {
-      underlying.quotedTweetDelete(request)
+  overr de def quotedT etDelete(request: QuotedT etDeleteRequest): Future[Un ] =
+    track("quoted_t et_delete", request) {
+      underly ng.quotedT etDelete(request)
     }
 
-  override def quotedTweetTakedown(request: QuotedTweetTakedownRequest): Future[Unit] =
-    track("quoted_tweet_takedown", request) {
-      underlying.quotedTweetTakedown(request)
+  overr de def quotedT etTakedown(request: QuotedT etTakedownRequest): Future[Un ] =
+    track("quoted_t et_takedown", request) {
+      underly ng.quotedT etTakedown(request)
     }
 
-  override def getDeletedTweets(
-    request: GetDeletedTweetsRequest
-  ): Future[Seq[GetDeletedTweetResult]] =
-    track("get_deleted_tweets", request, requestSize = Some(request.tweetIds.size)) {
-      requestSizeAuthorizer(request.tweetIds.size, clientId).flatMap { _ =>
-        underlying.getDeletedTweets(request)
+  overr de def getDeletedT ets(
+    request: GetDeletedT etsRequest
+  ): Future[Seq[GetDeletedT etResult]] =
+    track("get_deleted_t ets", request, requestS ze = So (request.t et ds.s ze)) {
+      requestS zeAuthor zer(request.t et ds.s ze, cl ent d).flatMap { _ =>
+        underly ng.getDeletedT ets(request)
       }
     }
 
-  override def getStoredTweets(
-    request: GetStoredTweetsRequest
-  ): Future[Seq[GetStoredTweetsResult]] = {
-    track("get_stored_tweets", request, requestSize = Some(request.tweetIds.size)) {
-      requestSizeAuthorizer(request.tweetIds.size, clientId).flatMap { _ =>
-        underlying.getStoredTweets(request)
+  overr de def getStoredT ets(
+    request: GetStoredT etsRequest
+  ): Future[Seq[GetStoredT etsResult]] = {
+    track("get_stored_t ets", request, requestS ze = So (request.t et ds.s ze)) {
+      requestS zeAuthor zer(request.t et ds.s ze, cl ent d).flatMap { _ =>
+        underly ng.getStoredT ets(request)
       }
     }
   }
 
-  override def getStoredTweetsByUser(
-    request: GetStoredTweetsByUserRequest
-  ): Future[GetStoredTweetsByUserResult] = {
-    track("get_stored_tweets_by_user", request) {
-      underlying.getStoredTweetsByUser(request)
+  overr de def getStoredT etsByUser(
+    request: GetStoredT etsByUserRequest
+  ): Future[GetStoredT etsByUserResult] = {
+    track("get_stored_t ets_by_user", request) {
+      underly ng.getStoredT etsByUser(request)
     }
   }
 }

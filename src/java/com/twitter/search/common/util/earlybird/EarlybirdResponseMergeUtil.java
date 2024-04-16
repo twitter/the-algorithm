@@ -1,266 +1,266 @@
-package com.twitter.search.common.util.earlybird;
+package com.tw ter.search.common.ut l.earlyb rd;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
+ mport java.ut l.HashMap;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.concurrent.Execut onExcept on;
 
-import com.google.common.base.Preconditions;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.cac .Load ngCac ;
+ mport com.google.common.collect. mmutableMap;
+ mport com.google.common.collect.L sts;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftTweetSource;
+ mport com.tw ter.common.collect ons.Pa r;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchQuery;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchRank ngMode;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftT etS ce;
 
 /**
- * Utility methods to merge EarlybirdResponses.
+ * Ut l y  thods to  rge Earlyb rdResponses.
  */
-public final class EarlybirdResponseMergeUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdResponseMergeUtil.class);
+publ c f nal class Earlyb rdResponse rgeUt l {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rdResponse rgeUt l.class);
 
-  private static final String INVALID_RESPONSE_STATS_PREFIX = "invalid_response_stats_";
+  pr vate stat c f nal Str ng  NVAL D_RESPONSE_STATS_PREF X = " nval d_response_stats_";
 
-  // Stats for invalid earlybird response
-  private static final ImmutableMap<EarlybirdResponseCode, SearchCounter> ERROR_EXCEPTIONS;
+  // Stats for  nval d earlyb rd response
+  pr vate stat c f nal  mmutableMap<Earlyb rdResponseCode, SearchCounter> ERROR_EXCEPT ONS;
 
-  public static final SearchCounter NULL_RESPONSE_COUNTER =
-      SearchCounter.export(INVALID_RESPONSE_STATS_PREFIX + "null_response");
-  public static final SearchCounter SEARCH_RESULTS_NOT_SET_COUNTER =
-      SearchCounter.export(INVALID_RESPONSE_STATS_PREFIX + "search_results_not_set");
-  public static final SearchCounter SEARCH_RESULTS_WITH_RESULTS_NOT_SET_COUNTER =
-      SearchCounter.export(INVALID_RESPONSE_STATS_PREFIX + "search_results_with_results_not_set");
-  public static final SearchCounter MAX_SEARCHED_STATUS_ID_NOT_SET_COUNTER =
-      SearchCounter.export(INVALID_RESPONSE_STATS_PREFIX + "max_searched_status_id_not_set");
-  public static final SearchCounter MIN_SEARCHED_STATUS_ID_NOT_SET_COUNTER =
-      SearchCounter.export(INVALID_RESPONSE_STATS_PREFIX + "min_searched_status_id_not_set");
+  publ c stat c f nal SearchCounter NULL_RESPONSE_COUNTER =
+      SearchCounter.export( NVAL D_RESPONSE_STATS_PREF X + "null_response");
+  publ c stat c f nal SearchCounter SEARCH_RESULTS_NOT_SET_COUNTER =
+      SearchCounter.export( NVAL D_RESPONSE_STATS_PREF X + "search_results_not_set");
+  publ c stat c f nal SearchCounter SEARCH_RESULTS_W TH_RESULTS_NOT_SET_COUNTER =
+      SearchCounter.export( NVAL D_RESPONSE_STATS_PREF X + "search_results_w h_results_not_set");
+  publ c stat c f nal SearchCounter MAX_SEARCHED_STATUS_ D_NOT_SET_COUNTER =
+      SearchCounter.export( NVAL D_RESPONSE_STATS_PREF X + "max_searc d_status_ d_not_set");
+  publ c stat c f nal SearchCounter M N_SEARCHED_STATUS_ D_NOT_SET_COUNTER =
+      SearchCounter.export( NVAL D_RESPONSE_STATS_PREF X + "m n_searc d_status_ d_not_set");
 
-  static {
-    ImmutableMap.Builder<EarlybirdResponseCode, SearchCounter> builder = ImmutableMap.builder();
+  stat c {
+     mmutableMap.Bu lder<Earlyb rdResponseCode, SearchCounter> bu lder =  mmutableMap.bu lder();
 
-    for (EarlybirdResponseCode responseCode : EarlybirdResponseCode.values()) {
-      if (responseCode != EarlybirdResponseCode.SUCCESS) {
-        builder.put(responseCode, SearchCounter.export(
-            INVALID_RESPONSE_STATS_PREFIX + responseCode.name().toLowerCase()));
+    for (Earlyb rdResponseCode responseCode : Earlyb rdResponseCode.values()) {
+       f (responseCode != Earlyb rdResponseCode.SUCCESS) {
+        bu lder.put(responseCode, SearchCounter.export(
+             NVAL D_RESPONSE_STATS_PREF X + responseCode.na ().toLo rCase()));
       }
     }
 
-    ERROR_EXCEPTIONS = builder.build();
+    ERROR_EXCEPT ONS = bu lder.bu ld();
   }
 
-  private EarlybirdResponseMergeUtil() {
+  pr vate Earlyb rdResponse rgeUt l() {
   }
 
   /**
-   * Tags the results in the given EarlybirdResponse with the given ThriftTweetSource and adds them
-   * to the given list of results.
+   * Tags t  results  n t  g ven Earlyb rdResponse w h t  g ven Thr ftT etS ce and adds t m
+   * to t  g ven l st of results.
    *
-   * @param results The list of results to which the new results will be added.
-   * @param earlybirdResponse The EarlybirdResponse whose results will be added to {@code results}.
-   * @param tweetSource The ThriftTweetSource that will be used to mark all results in
-   *                    {@code earlybirdResponse}.
-   * @return {@code false} if {@code earlybirdResponse} is {@code null} or doesn't have any results;
-   *         {@code true}, otherwise.
+   * @param results T  l st of results to wh ch t  new results w ll be added.
+   * @param earlyb rdResponse T  Earlyb rdResponse whose results w ll be added to {@code results}.
+   * @param t etS ce T  Thr ftT etS ce that w ll be used to mark all results  n
+   *                    {@code earlyb rdResponse}.
+   * @return {@code false}  f {@code earlyb rdResponse}  s {@code null} or doesn't have any results;
+   *         {@code true}, ot rw se.
    */
-  public static boolean addResultsToList(List<ThriftSearchResult> results,
-                                         EarlybirdResponse earlybirdResponse,
-                                         ThriftTweetSource tweetSource) {
-    return EarlybirdResponseUtil.hasResults(earlybirdResponse)
-      && addResultsToList(results,
-                          earlybirdResponse.getSearchResults().getResults(),
-                          tweetSource);
+  publ c stat c boolean addResultsToL st(L st<Thr ftSearchResult> results,
+                                         Earlyb rdResponse earlyb rdResponse,
+                                         Thr ftT etS ce t etS ce) {
+    return Earlyb rdResponseUt l.hasResults(earlyb rdResponse)
+      && addResultsToL st(results,
+                          earlyb rdResponse.getSearchResults().getResults(),
+                          t etS ce);
   }
 
   /**
-   * Tags the results in the given list with the given ThriftTweetSource and adds them to the given
-   * list of results.
+   * Tags t  results  n t  g ven l st w h t  g ven Thr ftT etS ce and adds t m to t  g ven
+   * l st of results.
    *
-   * @param results The list of results to which the new results will be added.
-   * @param resultsToAdd The list of results to add.
-   * @param tweetSource The ThriftTweetSource that will be used to mark all results in
+   * @param results T  l st of results to wh ch t  new results w ll be added.
+   * @param resultsToAdd T  l st of results to add.
+   * @param t etS ce T  Thr ftT etS ce that w ll be used to mark all results  n
    *                    {@code resultsToAdd}.
-   * @return {@code false} if {@code results} is {@code null} or if {@code resultsToAdd} is
-   *         {@code null} or doesn't have any results; {@code true}, otherwise.
+   * @return {@code false}  f {@code results}  s {@code null} or  f {@code resultsToAdd}  s
+   *         {@code null} or doesn't have any results; {@code true}, ot rw se.
    */
-  public static boolean addResultsToList(List<ThriftSearchResult> results,
-                                         List<ThriftSearchResult> resultsToAdd,
-                                         ThriftTweetSource tweetSource) {
-    Preconditions.checkNotNull(results);
-    if ((resultsToAdd == null) || resultsToAdd.isEmpty()) {
+  publ c stat c boolean addResultsToL st(L st<Thr ftSearchResult> results,
+                                         L st<Thr ftSearchResult> resultsToAdd,
+                                         Thr ftT etS ce t etS ce) {
+    Precond  ons.c ckNotNull(results);
+     f ((resultsToAdd == null) || resultsToAdd. sEmpty()) {
       return false;
     }
 
-    markWithTweetSource(resultsToAdd, tweetSource);
+    markW hT etS ce(resultsToAdd, t etS ce);
 
     results.addAll(resultsToAdd);
     return true;
   }
 
   /**
-   * Distinct the input ThriftSearchResult by its status id. If there are duplicates, the first
-   * instance of the duplicates is returned in the distinct result. If the distinct result is the
-   * same as the input result, the initial input result is returned; otherwise, the distinct result
-   * is returned.
+   * D st nct t   nput Thr ftSearchResult by  s status  d.  f t re are dupl cates, t  f rst
+   *  nstance of t  dupl cates  s returned  n t  d st nct result.  f t  d st nct result  s t 
+   * sa  as t   nput result, t   n  al  nput result  s returned; ot rw se, t  d st nct result
+   *  s returned.
    *
-   * @param results the input result
-   * @param dupsStats stats counter track duplicates source
-   * @return the input result if there is no duplicate; otherwise, return the distinct result
+   * @param results t   nput result
+   * @param dupsStats stats counter track dupl cates s ce
+   * @return t   nput result  f t re  s no dupl cate; ot rw se, return t  d st nct result
    */
-  public static List<ThriftSearchResult> distinctByStatusId(
-      List<ThriftSearchResult> results,
-      LoadingCache<Pair<ThriftTweetSource, ThriftTweetSource>, SearchCounter> dupsStats) {
-    Map<Long, ThriftTweetSource> seenStatusIdToSourceMap = new HashMap<>();
-    List<ThriftSearchResult> distinctResults = Lists.newArrayListWithCapacity(results.size());
-    for (ThriftSearchResult result : results)  {
-      if (seenStatusIdToSourceMap.containsKey(result.getId())) {
-        ThriftTweetSource source1 = seenStatusIdToSourceMap.get(result.getId());
-        ThriftTweetSource source2 = result.getTweetSource();
-        if (source1 != null && source2 != null) {
+  publ c stat c L st<Thr ftSearchResult> d st nctByStatus d(
+      L st<Thr ftSearchResult> results,
+      Load ngCac <Pa r<Thr ftT etS ce, Thr ftT etS ce>, SearchCounter> dupsStats) {
+    Map<Long, Thr ftT etS ce> seenStatus dToS ceMap = new HashMap<>();
+    L st<Thr ftSearchResult> d st nctResults = L sts.newArrayL stW hCapac y(results.s ze());
+    for (Thr ftSearchResult result : results)  {
+       f (seenStatus dToS ceMap.conta nsKey(result.get d())) {
+        Thr ftT etS ce s ce1 = seenStatus dToS ceMap.get(result.get d());
+        Thr ftT etS ce s ce2 = result.getT etS ce();
+         f (s ce1 != null && s ce2 != null) {
           try {
-            dupsStats.get(Pair.of(source1, source2)).increment();
-          } catch (ExecutionException e) {
-            LOG.warn("Could not increment stat for duplicate results from clusters " + source1
-                + " and " + source2, e);
+            dupsStats.get(Pa r.of(s ce1, s ce2)). ncre nt();
+          } catch (Execut onExcept on e) {
+            LOG.warn("Could not  ncre nt stat for dupl cate results from clusters " + s ce1
+                + " and " + s ce2, e);
           }
         }
       } else {
-        distinctResults.add(result);
-        seenStatusIdToSourceMap.put(result.getId(), result.getTweetSource());
+        d st nctResults.add(result);
+        seenStatus dToS ceMap.put(result.get d(), result.getT etS ce());
       }
     }
-    return results.size() == distinctResults.size() ? results : distinctResults;
+    return results.s ze() == d st nctResults.s ze() ? results : d st nctResults;
   }
 
   /**
-   * Tags the given results with the given ThriftTweetSource.
+   * Tags t  g ven results w h t  g ven Thr ftT etS ce.
    *
-   * @param results The results to be tagged.
-   * @param tweetSource The ThriftTweetSource to be used to tag the given results.
+   * @param results T  results to be tagged.
+   * @param t etS ce T  Thr ftT etS ce to be used to tag t  g ven results.
    */
-  public static void markWithTweetSource(List<ThriftSearchResult> results,
-                                         ThriftTweetSource tweetSource) {
-    if (results != null) {
-      for (ThriftSearchResult result : results) {
-        result.setTweetSource(tweetSource);
+  publ c stat c vo d markW hT etS ce(L st<Thr ftSearchResult> results,
+                                         Thr ftT etS ce t etS ce) {
+     f (results != null) {
+      for (Thr ftSearchResult result : results) {
+        result.setT etS ce(t etS ce);
       }
     }
   }
 
   /**
-   * Check if an Earlybird response is valid
+   * C ck  f an Earlyb rd response  s val d
    */
-  public static boolean isValidResponse(final EarlybirdResponse response) {
-    if (response == null) {
-      NULL_RESPONSE_COUNTER.increment();
+  publ c stat c boolean  sVal dResponse(f nal Earlyb rdResponse response) {
+     f (response == null) {
+      NULL_RESPONSE_COUNTER. ncre nt();
       return false;
     }
 
-    if (!EarlybirdResponseUtil.isSuccessfulResponse(response)) {
+     f (!Earlyb rdResponseUt l. sSuccessfulResponse(response)) {
       return false;
     }
 
-    if (!response.isSetSearchResults()) {
-      SEARCH_RESULTS_NOT_SET_COUNTER.increment();
+     f (!response. sSetSearchResults()) {
+      SEARCH_RESULTS_NOT_SET_COUNTER. ncre nt();
       return true;
     }
 
-    if (!response.getSearchResults().isSetResults()) {
-      SEARCH_RESULTS_WITH_RESULTS_NOT_SET_COUNTER.increment();
+     f (!response.getSearchResults(). sSetResults()) {
+      SEARCH_RESULTS_W TH_RESULTS_NOT_SET_COUNTER. ncre nt();
     }
 
-    // In earlybird, when earlybird terminated, e.g., time out, complex queries - we don't set the
-    // min/max  searched status id.
-    boolean isEarlyTerminated = response.isSetEarlyTerminationInfo()
-        && response.getEarlyTerminationInfo().isEarlyTerminated();
+    //  n earlyb rd, w n earlyb rd term nated, e.g., t   out, complex quer es -   don't set t 
+    // m n/max  searc d status  d.
+    boolean  sEarlyTerm nated = response. sSetEarlyTerm nat on nfo()
+        && response.getEarlyTerm nat on nfo(). sEarlyTerm nated();
 
-    if (!isEarlyTerminated && !response.getSearchResults().isSetMinSearchedStatusID()) {
-      MIN_SEARCHED_STATUS_ID_NOT_SET_COUNTER.increment();
+     f (! sEarlyTerm nated && !response.getSearchResults(). sSetM nSearc dStatus D()) {
+      M N_SEARCHED_STATUS_ D_NOT_SET_COUNTER. ncre nt();
     }
 
-    if (!isEarlyTerminated && !response.getSearchResults().isSetMaxSearchedStatusID()) {
-      MAX_SEARCHED_STATUS_ID_NOT_SET_COUNTER.increment();
+     f (! sEarlyTerm nated && !response.getSearchResults(). sSetMaxSearc dStatus D()) {
+      MAX_SEARCHED_STATUS_ D_NOT_SET_COUNTER. ncre nt();
     }
 
     return true;
   }
 
   /**
-   * For invalid successful Earlybird Response, return a failed response with debug msg.
+   * For  nval d successful Earlyb rd Response, return a fa led response w h debug msg.
    */
-  public static EarlybirdResponse transformInvalidResponse(final EarlybirdResponse response,
-                                                           final String debugMsg) {
-    if (response == null) {
-      return failedEarlybirdResponse(EarlybirdResponseCode.PERSISTENT_ERROR,
+  publ c stat c Earlyb rdResponse transform nval dResponse(f nal Earlyb rdResponse response,
+                                                           f nal Str ng debugMsg) {
+     f (response == null) {
+      return fa ledEarlyb rdResponse(Earlyb rdResponseCode.PERS STENT_ERROR,
           debugMsg + ", msg: null response from downstream");
     }
-    Preconditions.checkState(response.getResponseCode() != EarlybirdResponseCode.SUCCESS);
+    Precond  ons.c ckState(response.getResponseCode() != Earlyb rdResponseCode.SUCCESS);
 
-    EarlybirdResponseCode newResponseCode;
-    EarlybirdResponseCode responseCode = response.getResponseCode();
-    switch (responseCode) {
-      case TIER_SKIPPED:
-        ERROR_EXCEPTIONS.get(responseCode).increment();
+    Earlyb rdResponseCode newResponseCode;
+    Earlyb rdResponseCode responseCode = response.getResponseCode();
+    sw ch (responseCode) {
+      case T ER_SK PPED:
+        ERROR_EXCEPT ONS.get(responseCode). ncre nt();
         return response;
       case REQUEST_BLOCKED_ERROR:
-      case CLIENT_ERROR:
-      case SERVER_TIMEOUT_ERROR:
+      case CL ENT_ERROR:
+      case SERVER_T MEOUT_ERROR:
       case QUOTA_EXCEEDED_ERROR:
-      case CLIENT_CANCEL_ERROR:
-      case TOO_MANY_PARTITIONS_FAILED_ERROR:
-        ERROR_EXCEPTIONS.get(responseCode).increment();
+      case CL ENT_CANCEL_ERROR:
+      case TOO_MANY_PART T ONS_FA LED_ERROR:
+        ERROR_EXCEPT ONS.get(responseCode). ncre nt();
         newResponseCode = responseCode;
         break;
       default:
-        ERROR_EXCEPTIONS.get(responseCode).increment();
-        newResponseCode = EarlybirdResponseCode.PERSISTENT_ERROR;
+        ERROR_EXCEPT ONS.get(responseCode). ncre nt();
+        newResponseCode = Earlyb rdResponseCode.PERS STENT_ERROR;
     }
 
-    String newDebugMsg = debugMsg + ", downstream response code: " + responseCode
-      + (response.isSetDebugString() ? ", downstream msg: " + response.getDebugString() : "");
+    Str ng newDebugMsg = debugMsg + ", downstream response code: " + responseCode
+      + (response. sSetDebugStr ng() ? ", downstream msg: " + response.getDebugStr ng() : "");
 
 
-    return failedEarlybirdResponse(newResponseCode, newDebugMsg);
+    return fa ledEarlyb rdResponse(newResponseCode, newDebugMsg);
   }
 
   /**
-   * Create a new EarlybirdResponse with debug msg
+   * Create a new Earlyb rdResponse w h debug msg
    */
-  public static EarlybirdResponse failedEarlybirdResponse(final EarlybirdResponseCode responseCode,
-                                                          final String debugMsg) {
-    EarlybirdResponse failedResponse = new EarlybirdResponse();
-    failedResponse.setResponseCode(responseCode);
-    failedResponse.setDebugString(debugMsg);
-    return failedResponse;
+  publ c stat c Earlyb rdResponse fa ledEarlyb rdResponse(f nal Earlyb rdResponseCode responseCode,
+                                                          f nal Str ng debugMsg) {
+    Earlyb rdResponse fa ledResponse = new Earlyb rdResponse();
+    fa ledResponse.setResponseCode(responseCode);
+    fa ledResponse.setDebugStr ng(debugMsg);
+    return fa ledResponse;
   }
 
   /**
-   * Returns the number of results to keep as part of merge-collection. Recency mode should ignore
-   * relevance options. In particular, the flag returnAllResults inside relevance options.
+   * Returns t  number of results to keep as part of  rge-collect on. Recency mode should  gnore
+   * relevance opt ons.  n part cular, t  flag returnAllResults  ns de relevance opt ons.
    */
-  public static int computeNumResultsToKeep(EarlybirdRequest request) {
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
+  publ c stat c  nt computeNumResultsToKeep(Earlyb rdRequest request) {
+    Thr ftSearchQuery searchQuery = request.getSearchQuery();
 
-    if (searchQuery.getRankingMode() != ThriftSearchRankingMode.RECENCY
-        && searchQuery.isSetRelevanceOptions()
-        && searchQuery.getRelevanceOptions().isReturnAllResults()) {
-      return Integer.MAX_VALUE;
+     f (searchQuery.getRank ngMode() != Thr ftSearchRank ngMode.RECENCY
+        && searchQuery. sSetRelevanceOpt ons()
+        && searchQuery.getRelevanceOpt ons(). sReturnAllResults()) {
+      return  nteger.MAX_VALUE;
     }
 
-    if (request.isSetNumResultsToReturnAtRoot()) {
+     f (request. sSetNumResultsToReturnAtRoot()) {
       return request.getNumResultsToReturnAtRoot();
     }
 
-    if (searchQuery.isSetCollectorParams()) {
+     f (searchQuery. sSetCollectorParams()) {
       return searchQuery.getCollectorParams().getNumResultsToReturn();
     }
 

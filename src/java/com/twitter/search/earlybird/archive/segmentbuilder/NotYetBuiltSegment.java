@@ -1,100 +1,100 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+package com.tw ter.search.earlyb rd.arch ve.seg ntbu lder;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+ mport java.ut l.concurrent.atom c.Atom cBoolean;
 
-import com.google.common.base.Stopwatch;
+ mport com.google.common.base.Stopwatch;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.util.GCUtil;
-import com.twitter.search.common.util.zktrylock.TryLock;
-import com.twitter.search.earlybird.archive.ArchiveSegmentUpdater;
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common.ut l.GCUt l;
+ mport com.tw ter.search.common.ut l.zktrylock.TryLock;
+ mport com.tw ter.search.earlyb rd.arch ve.Arch veSeg ntUpdater;
+ mport com.tw ter.search.earlyb rd. ndex.Earlyb rdSeg ntFactory;
+ mport com.tw ter.search.earlyb rd.part  on.Seg nt nfo;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntSyncConf g;
 
-public class NotYetBuiltSegment extends SegmentBuilderSegment {
-  private static final Logger LOG = LoggerFactory.getLogger(NotYetBuiltSegment.class);
+publ c class NotYetBu ltSeg nt extends Seg ntBu lderSeg nt {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(NotYetBu ltSeg nt.class);
 
-  public NotYetBuiltSegment(
-      SegmentInfo segmentInfo,
-      SegmentConfig segmentConfig,
-      EarlybirdSegmentFactory earlybirdSegmentFactory,
-      int alreadyRetriedCount,
-      SegmentSyncConfig sync) {
+  publ c NotYetBu ltSeg nt(
+      Seg nt nfo seg nt nfo,
+      Seg ntConf g seg ntConf g,
+      Earlyb rdSeg ntFactory earlyb rdSeg ntFactory,
+       nt alreadyRetr edCount,
+      Seg ntSyncConf g sync) {
 
-    super(segmentInfo, segmentConfig, earlybirdSegmentFactory, alreadyRetriedCount, sync);
+    super(seg nt nfo, seg ntConf g, earlyb rdSeg ntFactory, alreadyRetr edCount, sync);
   }
 
   /**
-   * 1. Grab the ZK lock for this segment.
-   *   2a. if lock fails, another host is updating; return the SOMEONE_ELSE_IS_BUILDING state.
-   *   2b. if lock succeeds, check again if the updated segment exists on HDFS.
-   *     3a. if so, just move on.
-   *     3b. if not, update the segment.
-   *     In both cases, we need to check if the segment can now be marked as BUILT_AND_FINALIZED.
+   * 1. Grab t  ZK lock for t  seg nt.
+   *   2a.  f lock fa ls, anot r host  s updat ng; return t  SOMEONE_ELSE_ S_BU LD NG state.
+   *   2b.  f lock succeeds, c ck aga n  f t  updated seg nt ex sts on HDFS.
+   *     3a.  f so, just move on.
+   *     3b.  f not, update t  seg nt.
+   *      n both cases,   need to c ck  f t  seg nt can now be marked as BU LT_AND_F NAL ZED.
    */
-  @Override
-  public SegmentBuilderSegment handle()
-      throws SegmentUpdaterException, SegmentInfoConstructionException {
-    LOG.info("Handling a not yet built segment: {}", this.getSegmentName());
+  @Overr de
+  publ c Seg ntBu lderSeg nt handle()
+      throws Seg ntUpdaterExcept on, Seg nt nfoConstruct onExcept on {
+    LOG. nfo("Handl ng a not yet bu lt seg nt: {}", t .getSeg ntNa ());
     Stopwatch stopwatch = Stopwatch.createStarted();
     TryLock lock = getZooKeeperTryLock();
 
-    // The tryWithLock can only access variables from parent class that are final. However, we
-    // would like to pass the process() return value to the parent class. So here we use
-    // AtomicBoolean reference instead of Boolean.
-    final AtomicBoolean successRef = new AtomicBoolean(false);
-    boolean gotLock = lock.tryWithLock(() -> {
-      ArchiveSegmentUpdater updater = new ArchiveSegmentUpdater(
-          segmentConfig.getTryLockFactory(),
+    // T  tryW hLock can only access var ables from parent class that are f nal. Ho ver,  
+    // would l ke to pass t  process() return value to t  parent class. So  re   use
+    // Atom cBoolean reference  nstead of Boolean.
+    f nal Atom cBoolean successRef = new Atom cBoolean(false);
+    boolean gotLock = lock.tryW hLock(() -> {
+      Arch veSeg ntUpdater updater = new Arch veSeg ntUpdater(
+          seg ntConf g.getTryLockFactory(),
           sync,
-          segmentConfig.getEarlybirdIndexConfig(),
+          seg ntConf g.getEarlyb rd ndexConf g(),
           Clock.SYSTEM_CLOCK);
 
-      boolean success = updater.updateSegment(segmentInfo);
+      boolean success = updater.updateSeg nt(seg nt nfo);
       successRef.set(success);
     });
 
-    if (!gotLock) {
-      LOG.info("cannot acquire zookeeper lock for: " + segmentInfo);
-      return new SomeoneElseIsBuildingSegment(
-          segmentInfo,
-          segmentConfig,
-          earlybirdSegmentFactory,
-          alreadyRetriedCount,
+     f (!gotLock) {
+      LOG. nfo("cannot acqu re zookeeper lock for: " + seg nt nfo);
+      return new So oneElse sBu ld ngSeg nt(
+          seg nt nfo,
+          seg ntConf g,
+          earlyb rdSeg ntFactory,
+          alreadyRetr edCount,
           sync);
     }
 
-    // 1. we want to make sure the heap is clean right after building a segment so that it's ready
-    //   for us to start allocations for a new segment
-    // — I think we've had cases where we were seeing OOM's while building
-    // 2. the thing that I think it helps with is compaction (vs just organically running CMS)
-    // — which would clean up the heap, but may leave it in a fragmented state
-    // — and running a Full GC is supposed to compact the remaining tenured space.
-    GCUtil.runGC();
+    // 1.   want to make sure t   ap  s clean r ght after bu ld ng a seg nt so that  's ready
+    //   for us to start allocat ons for a new seg nt
+    // —   th nk  've had cases w re    re see ng OOM's wh le bu ld ng
+    // 2. t  th ng that   th nk    lps w h  s compact on (vs just organ cally runn ng CMS)
+    // — wh ch would clean up t   ap, but may leave    n a frag nted state
+    // — and runn ng a Full GC  s supposed to compact t  rema n ng tenured space.
+    GCUt l.runGC();
 
-    if (successRef.get()) {
-      LOG.info("Indexing segment {} took {}", segmentInfo, stopwatch);
-      LOG.info("Finished building {}", segmentInfo.getSegment().getSegmentName());
-      return new BuiltAndFinalizedSegment(
-          segmentInfo, segmentConfig, earlybirdSegmentFactory, 0, sync);
+     f (successRef.get()) {
+      LOG. nfo(" ndex ng seg nt {} took {}", seg nt nfo, stopwatch);
+      LOG. nfo("F n s d bu ld ng {}", seg nt nfo.getSeg nt().getSeg ntNa ());
+      return new Bu ltAndF nal zedSeg nt(
+          seg nt nfo, seg ntConf g, earlyb rdSeg ntFactory, 0, sync);
     } else {
-      int alreadyTried = alreadyRetriedCount + 1;
-      String errMsg = "failed updating segment for: " + segmentInfo
-          + " for " + alreadyTried + " times";
+       nt alreadyTr ed = alreadyRetr edCount + 1;
+      Str ng errMsg = "fa led updat ng seg nt for: " + seg nt nfo
+          + " for " + alreadyTr ed + " t  s";
       LOG.error(errMsg);
-      if (alreadyTried < segmentConfig.getMaxRetriesOnFailure()) {
-        return new NotYetBuiltSegment(
-            createNewSegmentInfo(segmentInfo),
-            segmentConfig,
-            earlybirdSegmentFactory,
-            alreadyTried,
+       f (alreadyTr ed < seg ntConf g.getMaxRetr esOnFa lure()) {
+        return new NotYetBu ltSeg nt(
+            createNewSeg nt nfo(seg nt nfo),
+            seg ntConf g,
+            earlyb rdSeg ntFactory,
+            alreadyTr ed,
             sync);
       } else {
-        throw new SegmentUpdaterException(errMsg);
+        throw new Seg ntUpdaterExcept on(errMsg);
       }
     }
   }

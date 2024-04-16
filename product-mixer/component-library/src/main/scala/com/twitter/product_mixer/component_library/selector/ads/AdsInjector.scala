@@ -1,73 +1,73 @@
-package com.twitter.product_mixer.component_library.selector.ads
+package com.tw ter.product_m xer.component_l brary.selector.ads
 
-import com.google.inject.Inject
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.goldfinch.adaptors.ads.productmixer.ProductMixerPromotedEntriesAdaptor
-import com.twitter.goldfinch.adaptors.productmixer.ProductMixerNonPromotedEntriesAdaptor
-import com.twitter.goldfinch.adaptors.productmixer.ProductMixerQueryConverter
-import com.twitter.goldfinch.api.AdsInjectionRequestContextConverter
-import com.twitter.goldfinch.api.AdsInjectionSurfaceAreas.SurfaceAreaName
-import com.twitter.goldfinch.api.{AdsInjector => GoldfinchAdsInjector}
-import com.twitter.goldfinch.api.NonPromotedEntriesAdaptor
-import com.twitter.goldfinch.api.PromotedEntriesAdaptor
-import com.twitter.goldfinch.impl.injector.AdsInjectorBuilder
-import com.twitter.goldfinch.impl.injector.product_mixer.AdsInjectionSurfaceAreaAdjustersMap
-import com.twitter.goldfinch.impl.injector.product_mixer.VerticalSizeAdjustmentConfigMap
-import com.twitter.inject.Logging
-import com.twitter.product_mixer.component_library.model.query.ads._
-import com.twitter.product_mixer.core.model.common.presentation._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import javax.inject.Singleton
-import com.twitter.goldfinch.impl.core.DefaultFeatureSwitchResultsFactory
-import com.twitter.goldfinch.impl.core.LocalDevelopmentFeatureSwitchResultsFactory
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ConfigRepoLocalPath
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ServiceLocal
+ mport com.google. nject. nject
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.goldf nch.adaptors.ads.productm xer.ProductM xerPromotedEntr esAdaptor
+ mport com.tw ter.goldf nch.adaptors.productm xer.ProductM xerNonPromotedEntr esAdaptor
+ mport com.tw ter.goldf nch.adaptors.productm xer.ProductM xerQueryConverter
+ mport com.tw ter.goldf nch.ap .Ads nject onRequestContextConverter
+ mport com.tw ter.goldf nch.ap .Ads nject onSurfaceAreas.SurfaceAreaNa 
+ mport com.tw ter.goldf nch.ap .{Ads njector => Goldf nchAds njector}
+ mport com.tw ter.goldf nch.ap .NonPromotedEntr esAdaptor
+ mport com.tw ter.goldf nch.ap .PromotedEntr esAdaptor
+ mport com.tw ter.goldf nch. mpl. njector.Ads njectorBu lder
+ mport com.tw ter.goldf nch. mpl. njector.product_m xer.Ads nject onSurfaceAreaAdjustersMap
+ mport com.tw ter.goldf nch. mpl. njector.product_m xer.Vert calS zeAdjust ntConf gMap
+ mport com.tw ter. nject.Logg ng
+ mport com.tw ter.product_m xer.component_l brary.model.query.ads._
+ mport com.tw ter.product_m xer.core.model.common.presentat on._
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport javax. nject.S ngleton
+ mport com.tw ter.goldf nch. mpl.core.DefaultFeatureSw chResultsFactory
+ mport com.tw ter.goldf nch. mpl.core.LocalDevelop ntFeatureSw chResultsFactory
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.product_m xer.core.module.product_m xer_flags.ProductM xerFlagModule.Conf gRepoLocalPath
+ mport com.tw ter.product_m xer.core.module.product_m xer_flags.ProductM xerFlagModule.Serv ceLocal
 
-@Singleton
-class AdsInjector @Inject() (
-  statsReceiver: StatsReceiver,
-  @Flag(ConfigRepoLocalPath) localConfigRepoPath: String,
-  @Flag(ServiceLocal) isServiceLocal: Boolean)
-    extends Logging {
-  private val adsQueryRequestConverter: AdsInjectionRequestContextConverter[
-    PipelineQuery with AdsQuery
-  ] = ProductMixerQueryConverter
+@S ngleton
+class Ads njector @ nject() (
+  statsRece ver: StatsRece ver,
+  @Flag(Conf gRepoLocalPath) localConf gRepoPath: Str ng,
+  @Flag(Serv ceLocal)  sServ ceLocal: Boolean)
+    extends Logg ng {
+  pr vate val adsQueryRequestConverter: Ads nject onRequestContextConverter[
+    P pel neQuery w h AdsQuery
+  ] = ProductM xerQueryConverter
 
   def forSurfaceArea(
-    surfaceAreaName: SurfaceAreaName
-  ): GoldfinchAdsInjector[
-    PipelineQuery with AdsQuery,
-    CandidateWithDetails,
-    CandidateWithDetails
+    surfaceAreaNa : SurfaceAreaNa 
+  ): Goldf nchAds njector[
+    P pel neQuery w h AdsQuery,
+    Cand dateW hDeta ls,
+    Cand dateW hDeta ls
   ] = {
 
-    val scopedStatsReceiver: StatsReceiver =
-      statsReceiver.scope("goldfinch", surfaceAreaName.toString)
+    val scopedStatsRece ver: StatsRece ver =
+      statsRece ver.scope("goldf nch", surfaceAreaNa .toStr ng)
 
-    val nonAdsAdaptor: NonPromotedEntriesAdaptor[CandidateWithDetails] =
-      ProductMixerNonPromotedEntriesAdaptor(
-        VerticalSizeAdjustmentConfigMap.configsBySurfaceArea(surfaceAreaName),
-        scopedStatsReceiver)
+    val nonAdsAdaptor: NonPromotedEntr esAdaptor[Cand dateW hDeta ls] =
+      ProductM xerNonPromotedEntr esAdaptor(
+        Vert calS zeAdjust ntConf gMap.conf gsBySurfaceArea(surfaceAreaNa ),
+        scopedStatsRece ver)
 
-    val adsAdaptor: PromotedEntriesAdaptor[CandidateWithDetails] =
-      new ProductMixerPromotedEntriesAdaptor(scopedStatsReceiver)
+    val adsAdaptor: PromotedEntr esAdaptor[Cand dateW hDeta ls] =
+      new ProductM xerPromotedEntr esAdaptor(scopedStatsRece ver)
 
-    val featureSwitchFactory = if (isServiceLocal) {
-      new LocalDevelopmentFeatureSwitchResultsFactory(
-        surfaceAreaName.toString,
-        configRepoAbsPath = localConfigRepoPath)
-    } else new DefaultFeatureSwitchResultsFactory(surfaceAreaName.toString)
+    val featureSw chFactory =  f ( sServ ceLocal) {
+      new LocalDevelop ntFeatureSw chResultsFactory(
+        surfaceAreaNa .toStr ng,
+        conf gRepoAbsPath = localConf gRepoPath)
+    } else new DefaultFeatureSw chResultsFactory(surfaceAreaNa .toStr ng)
 
-    new AdsInjectorBuilder[PipelineQuery with AdsQuery, CandidateWithDetails, CandidateWithDetails](
+    new Ads njectorBu lder[P pel neQuery w h AdsQuery, Cand dateW hDeta ls, Cand dateW hDeta ls](
       requestAdapter = adsQueryRequestConverter,
-      nonPromotedEntriesAdaptor = nonAdsAdaptor,
-      promotedEntriesAdaptor = adsAdaptor,
+      nonPromotedEntr esAdaptor = nonAdsAdaptor,
+      promotedEntr esAdaptor = adsAdaptor,
       adjusters =
-        AdsInjectionSurfaceAreaAdjustersMap.getAdjusters(surfaceAreaName, scopedStatsReceiver),
-      featureSwitchFactory = featureSwitchFactory,
-      statsReceiver = scopedStatsReceiver,
+        Ads nject onSurfaceAreaAdjustersMap.getAdjusters(surfaceAreaNa , scopedStatsRece ver),
+      featureSw chFactory = featureSw chFactory,
+      statsRece ver = scopedStatsRece ver,
       logger = logger
-    ).build()
+    ).bu ld()
   }
 }

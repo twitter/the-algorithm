@@ -1,180 +1,180 @@
-package com.twitter.home_mixer.product.scored_tweets.scorer
+package com.tw ter.ho _m xer.product.scored_t ets.scorer
 
-import com.twitter.home_mixer.functional_component.scorer.FeedbackFatigueScorer
-import com.twitter.home_mixer.model.HomeFeatures
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIsBlueVerifiedFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIsCreatorFeature
-import com.twitter.home_mixer.model.HomeFeatures.FeedbackHistoryFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.BlueVerifiedAuthorInNetworkMultiplierParam
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.BlueVerifiedAuthorOutOfNetworkMultiplierParam
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CreatorInNetworkMultiplierParam
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CreatorOutOfNetworkMultiplierParam
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.OutOfNetworkScaleFactorParam
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelineservice.{thriftscala => tls}
+ mport com.tw ter.ho _m xer.funct onal_component.scorer.FeedbackFat gueScorer
+ mport com.tw ter.ho _m xer.model.Ho Features
+ mport com.tw ter.ho _m xer.model.Ho Features.Author sBlueVer f edFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Author sCreatorFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Feedback toryFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nNetworkFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nReplyToT et dFeature
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParam.BlueVer f edAuthor nNetworkMult pl erParam
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParam.BlueVer f edAuthorOutOfNetworkMult pl erParam
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParam.Creator nNetworkMult pl erParam
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParam.CreatorOutOfNetworkMult pl erParam
+ mport com.tw ter.ho _m xer.product.scored_t ets.param.ScoredT etsParam.OutOfNetworkScaleFactorParam
+ mport com.tw ter.ho _m xer.ut l.Cand datesUt l
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l neserv ce.{thr ftscala => tls}
 
-trait RescoringFactorProvider {
+tra  Rescor ngFactorProv der {
 
-  def selector(candidate: CandidateWithFeatures[TweetCandidate]): Boolean
+  def selector(cand date: Cand dateW hFeatures[T etCand date]): Boolean
 
   def factor(
-    query: PipelineQuery,
-    candidate: CandidateWithFeatures[TweetCandidate]
+    query: P pel neQuery,
+    cand date: Cand dateW hFeatures[T etCand date]
   ): Double
 
   def apply(
-    query: PipelineQuery,
-    candidate: CandidateWithFeatures[TweetCandidate],
-  ): Double = if (selector(candidate)) factor(query, candidate) else 1.0
+    query: P pel neQuery,
+    cand date: Cand dateW hFeatures[T etCand date],
+  ): Double =  f (selector(cand date)) factor(query, cand date) else 1.0
 }
 
 /**
- * Re-scoring multiplier to apply to authors who are eligible subscription content creators
+ * Re-scor ng mult pl er to apply to authors who are el g ble subscr pt on content creators
  */
-object RescoreCreators extends RescoringFactorProvider {
+object RescoreCreators extends Rescor ngFactorProv der {
 
-  def selector(candidate: CandidateWithFeatures[TweetCandidate]): Boolean =
-    candidate.features.getOrElse(AuthorIsCreatorFeature, false) &&
-      CandidatesUtil.isOriginalTweet(candidate)
+  def selector(cand date: Cand dateW hFeatures[T etCand date]): Boolean =
+    cand date.features.getOrElse(Author sCreatorFeature, false) &&
+      Cand datesUt l. sOr g nalT et(cand date)
 
   def factor(
-    query: PipelineQuery,
-    candidate: CandidateWithFeatures[TweetCandidate]
+    query: P pel neQuery,
+    cand date: Cand dateW hFeatures[T etCand date]
   ): Double =
-    if (candidate.features.getOrElse(InNetworkFeature, false))
-      query.params(CreatorInNetworkMultiplierParam)
-    else query.params(CreatorOutOfNetworkMultiplierParam)
+     f (cand date.features.getOrElse( nNetworkFeature, false))
+      query.params(Creator nNetworkMult pl erParam)
+    else query.params(CreatorOutOfNetworkMult pl erParam)
 }
 
 /**
- * Re-scoring multiplier to apply to authors who are verified by Twitter Blue
+ * Re-scor ng mult pl er to apply to authors who are ver f ed by Tw ter Blue
  */
-object RescoreBlueVerified extends RescoringFactorProvider {
+object RescoreBlueVer f ed extends Rescor ngFactorProv der {
 
-  def selector(candidate: CandidateWithFeatures[TweetCandidate]): Boolean =
-    candidate.features.getOrElse(AuthorIsBlueVerifiedFeature, false) &&
-      CandidatesUtil.isOriginalTweet(candidate)
+  def selector(cand date: Cand dateW hFeatures[T etCand date]): Boolean =
+    cand date.features.getOrElse(Author sBlueVer f edFeature, false) &&
+      Cand datesUt l. sOr g nalT et(cand date)
 
   def factor(
-    query: PipelineQuery,
-    candidate: CandidateWithFeatures[TweetCandidate]
+    query: P pel neQuery,
+    cand date: Cand dateW hFeatures[T etCand date]
   ): Double =
-    if (candidate.features.getOrElse(InNetworkFeature, false))
-      query.params(BlueVerifiedAuthorInNetworkMultiplierParam)
-    else query.params(BlueVerifiedAuthorOutOfNetworkMultiplierParam)
+     f (cand date.features.getOrElse( nNetworkFeature, false))
+      query.params(BlueVer f edAuthor nNetworkMult pl erParam)
+    else query.params(BlueVer f edAuthorOutOfNetworkMult pl erParam)
 }
 
 /**
- * Re-scoring multiplier to apply to out-of-network tweets
+ * Re-scor ng mult pl er to apply to out-of-network t ets
  */
-object RescoreOutOfNetwork extends RescoringFactorProvider {
+object RescoreOutOfNetwork extends Rescor ngFactorProv der {
 
-  def selector(candidate: CandidateWithFeatures[TweetCandidate]): Boolean =
-    !candidate.features.getOrElse(InNetworkFeature, false)
+  def selector(cand date: Cand dateW hFeatures[T etCand date]): Boolean =
+    !cand date.features.getOrElse( nNetworkFeature, false)
 
   def factor(
-    query: PipelineQuery,
-    candidate: CandidateWithFeatures[TweetCandidate]
+    query: P pel neQuery,
+    cand date: Cand dateW hFeatures[T etCand date]
   ): Double = query.params(OutOfNetworkScaleFactorParam)
 }
 
 /**
- * Re-scoring multiplier to apply to reply candidates
+ * Re-scor ng mult pl er to apply to reply cand dates
  */
-object RescoreReplies extends RescoringFactorProvider {
+object RescoreRepl es extends Rescor ngFactorProv der {
 
-  private val ScaleFactor = 0.75
+  pr vate val ScaleFactor = 0.75
 
-  def selector(candidate: CandidateWithFeatures[TweetCandidate]): Boolean =
-    candidate.features.getOrElse(InReplyToTweetIdFeature, None).isDefined
+  def selector(cand date: Cand dateW hFeatures[T etCand date]): Boolean =
+    cand date.features.getOrElse( nReplyToT et dFeature, None). sDef ned
 
   def factor(
-    query: PipelineQuery,
-    candidate: CandidateWithFeatures[TweetCandidate]
+    query: P pel neQuery,
+    cand date: Cand dateW hFeatures[T etCand date]
   ): Double = ScaleFactor
 }
 
 /**
- * Re-scoring multiplier to calibrate multi-tasks learning model prediction
+ * Re-scor ng mult pl er to cal brate mult -tasks learn ng model pred ct on
  */
-object RescoreMTLNormalization extends RescoringFactorProvider {
+object RescoreMTLNormal zat on extends Rescor ngFactorProv der {
 
-  private val ScaleFactor = 1.0
+  pr vate val ScaleFactor = 1.0
 
-  def selector(candidate: CandidateWithFeatures[TweetCandidate]): Boolean = {
-    candidate.features.contains(HomeFeatures.FocalTweetAuthorIdFeature)
+  def selector(cand date: Cand dateW hFeatures[T etCand date]): Boolean = {
+    cand date.features.conta ns(Ho Features.FocalT etAuthor dFeature)
   }
 
   def factor(
-    query: PipelineQuery,
-    candidate: CandidateWithFeatures[TweetCandidate]
+    query: P pel neQuery,
+    cand date: Cand dateW hFeatures[T etCand date]
   ): Double = ScaleFactor
 }
 
 /**
- * Re-scoring multiplier to apply to multiple tweets from the same author
+ * Re-scor ng mult pl er to apply to mult ple t ets from t  sa  author
  */
-case class RescoreAuthorDiversity(diversityDiscounts: Map[Long, Double])
-    extends RescoringFactorProvider {
+case class RescoreAuthorD vers y(d vers yD scounts: Map[Long, Double])
+    extends Rescor ngFactorProv der {
 
-  def selector(candidate: CandidateWithFeatures[TweetCandidate]): Boolean =
-    diversityDiscounts.contains(candidate.candidate.id)
+  def selector(cand date: Cand dateW hFeatures[T etCand date]): Boolean =
+    d vers yD scounts.conta ns(cand date.cand date. d)
 
   def factor(
-    query: PipelineQuery,
-    candidate: CandidateWithFeatures[TweetCandidate]
-  ): Double = diversityDiscounts(candidate.candidate.id)
+    query: P pel neQuery,
+    cand date: Cand dateW hFeatures[T etCand date]
+  ): Double = d vers yD scounts(cand date.cand date. d)
 }
 
-case class RescoreFeedbackFatigue(query: PipelineQuery) extends RescoringFactorProvider {
+case class RescoreFeedbackFat gue(query: P pel neQuery) extends Rescor ngFactorProv der {
 
-  def selector(candidate: CandidateWithFeatures[TweetCandidate]): Boolean = true
+  def selector(cand date: Cand dateW hFeatures[T etCand date]): Boolean = true
 
-  private val feedbackEntriesByEngagementType =
+  pr vate val feedbackEntr esByEngage ntType =
     query.features
-      .getOrElse(FeatureMap.empty).getOrElse(FeedbackHistoryFeature, Seq.empty)
-      .filter { entry =>
-        val timeSinceFeedback = query.queryTime.minus(entry.timestamp)
-        timeSinceFeedback < FeedbackFatigueScorer.DurationForFiltering + FeedbackFatigueScorer.DurationForDiscounting &&
-        entry.feedbackType == tls.FeedbackType.SeeFewer
-      }.groupBy(_.engagementType)
+      .getOrElse(FeatureMap.empty).getOrElse(Feedback toryFeature, Seq.empty)
+      .f lter { entry =>
+        val t  S nceFeedback = query.queryT  .m nus(entry.t  stamp)
+        t  S nceFeedback < FeedbackFat gueScorer.Durat onForF lter ng + FeedbackFat gueScorer.Durat onForD scount ng &&
+        entry.feedbackType == tls.FeedbackType.SeeFe r
+      }.groupBy(_.engage ntType)
 
-  private val authorsToDiscount =
-    FeedbackFatigueScorer.getUserDiscounts(
-      query.queryTime,
-      feedbackEntriesByEngagementType.getOrElse(tls.FeedbackEngagementType.Tweet, Seq.empty))
+  pr vate val authorsToD scount =
+    FeedbackFat gueScorer.getUserD scounts(
+      query.queryT  ,
+      feedbackEntr esByEngage ntType.getOrElse(tls.FeedbackEngage ntType.T et, Seq.empty))
 
-  private val likersToDiscount =
-    FeedbackFatigueScorer.getUserDiscounts(
-      query.queryTime,
-      feedbackEntriesByEngagementType.getOrElse(tls.FeedbackEngagementType.Like, Seq.empty))
+  pr vate val l kersToD scount =
+    FeedbackFat gueScorer.getUserD scounts(
+      query.queryT  ,
+      feedbackEntr esByEngage ntType.getOrElse(tls.FeedbackEngage ntType.L ke, Seq.empty))
 
-  private val followersToDiscount =
-    FeedbackFatigueScorer.getUserDiscounts(
-      query.queryTime,
-      feedbackEntriesByEngagementType.getOrElse(tls.FeedbackEngagementType.Follow, Seq.empty))
+  pr vate val follo rsToD scount =
+    FeedbackFat gueScorer.getUserD scounts(
+      query.queryT  ,
+      feedbackEntr esByEngage ntType.getOrElse(tls.FeedbackEngage ntType.Follow, Seq.empty))
 
-  private val retweetersToDiscount =
-    FeedbackFatigueScorer.getUserDiscounts(
-      query.queryTime,
-      feedbackEntriesByEngagementType.getOrElse(tls.FeedbackEngagementType.Retweet, Seq.empty))
+  pr vate val ret etersToD scount =
+    FeedbackFat gueScorer.getUserD scounts(
+      query.queryT  ,
+      feedbackEntr esByEngage ntType.getOrElse(tls.FeedbackEngage ntType.Ret et, Seq.empty))
 
   def factor(
-    query: PipelineQuery,
-    candidate: CandidateWithFeatures[TweetCandidate]
+    query: P pel neQuery,
+    cand date: Cand dateW hFeatures[T etCand date]
   ): Double = {
-    FeedbackFatigueScorer.getScoreMultiplier(
-      candidate,
-      authorsToDiscount,
-      likersToDiscount,
-      followersToDiscount,
-      retweetersToDiscount
+    FeedbackFat gueScorer.getScoreMult pl er(
+      cand date,
+      authorsToD scount,
+      l kersToD scount,
+      follo rsToD scount,
+      ret etersToD scount
     )
   }
 }

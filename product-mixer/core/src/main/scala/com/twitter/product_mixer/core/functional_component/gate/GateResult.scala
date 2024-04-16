@@ -1,47 +1,47 @@
-package com.twitter.product_mixer.core.functional_component.gate
+package com.tw ter.product_m xer.core.funct onal_component.gate
 
 /**
- * A [[Gate]] controls if a pipeline or other component is executed.
+ * A [[Gate]] controls  f a p pel ne or ot r component  s executed.
  *
- * Application logic should usually use `GateResult.continue: Boolean` to interpret a GateResult. `continue` will be
- * true if we should continue with execution, and false if we should stop.
+ * Appl cat on log c should usually use `GateResult.cont nue: Boolean` to  nterpret a GateResult. `cont nue` w ll be
+ * true  f   should cont nue w h execut on, and false  f   should stop.
  *
- * You can case match against the `GateResult` to understand how exactly execution happened. See `object GateResult`
- * below, but this is useful if you want to know if we are continuing due to the skip or main predicates.
+ *   can case match aga nst t  `GateResult` to understand how exactly execut on happened. See `object GateResult`
+ * below, but t   s useful  f   want to know  f   are cont nu ng due to t  sk p or ma n pred cates.
  */
-sealed trait GateResult {
+sealed tra  GateResult {
 
-  /** Should we continue? */
-  val continue: Boolean
+  /** Should   cont nue? */
+  val cont nue: Boolean
 }
 
 object GateResult {
 
   /**
-   * Continue Execution
+   * Cont nue Execut on
    *
-   * the Skip predicate evaluated to true,
-   * so we Skipped execution of the Main predicate and should continue
+   * t  Sk p pred cate evaluated to true,
+   * so   Sk pped execut on of t  Ma n pred cate and should cont nue
    */
-  case object Skipped extends GateResult {
-    override val continue = true
+  case object Sk pped extends GateResult {
+    overr de val cont nue = true
   }
 
   /**
-   * Continue Execution
+   * Cont nue Execut on
    *
-   * the main predicate evaluated to true
+   * t  ma n pred cate evaluated to true
    */
-  case object Continue extends GateResult {
-    override val continue = true
+  case object Cont nue extends GateResult {
+    overr de val cont nue = true
   }
 
   /**
-   * Stop execution
+   * Stop execut on
    *
-   * the main predicate evaluated to false
+   * t  ma n pred cate evaluated to false
    */
   case object Stop extends GateResult {
-    override val continue = false
+    overr de val cont nue = false
   }
 }

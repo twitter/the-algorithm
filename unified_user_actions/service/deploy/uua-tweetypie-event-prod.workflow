@@ -1,66 +1,66 @@
 {
-  "role": "discode",
-  "name": "uua-tweetypie-event-prod",
-  "config-files": [
-    "uua-tweetypie-event.aurora"
+  "role": "d scode",
+  "na ": "uua-t etyp e-event-prod",
+  "conf g-f les": [
+    "uua-t etyp e-event.aurora"
   ],
-  "build": {
+  "bu ld": {
     "play": true,
-    "trigger": {
-      "cron-schedule": "0 17 * * 2"
+    "tr gger": {
+      "cron-sc dule": "0 17 * * 2"
     },
-    "dependencies": [
+    "dependenc es": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
-        "version": "latest"
+        "na ": "packer-cl ent-no-pex",
+        "vers on": "latest"
       }
     ],
     "steps": [
       {
         "type": "bazel-bundle",
-        "name": "bundle",
-        "target": "unified_user_actions/service/src/main/scala:uua-tweetypie-event"
+        "na ": "bundle",
+        "target": "un f ed_user_act ons/serv ce/src/ma n/scala:uua-t etyp e-event"
       },
       {
         "type": "packer",
-        "name": "uua-tweetypie-event",
-        "artifact": "./dist/uua-tweetypie-event.zip"
+        "na ": "uua-t etyp e-event",
+        "art fact": "./d st/uua-t etyp e-event.z p"
       }
     ]
   },
   "targets": [
     {
       "type": "group",
-      "name": "prod",
+      "na ": "prod",
       "targets": [
         {
-          "name": "uua-tweetypie-event-prod-atla",
-          "key": "atla/discode/prod/uua-tweetypie-event"
+          "na ": "uua-t etyp e-event-prod-atla",
+          "key": "atla/d scode/prod/uua-t etyp e-event"
         },
         {
-          "name": "uua-tweetypie-event-prod-pdxa",
-          "key": "pdxa/discode/prod/uua-tweetypie-event"
+          "na ": "uua-t etyp e-event-prod-pdxa",
+          "key": "pdxa/d scode/prod/uua-t etyp e-event"
         }
       ]
     }
   ],
-  "subscriptions": [
+  "subscr pt ons": [
     {
       "type": "SLACK",
-      "recipients": [
+      "rec p ents": [
         {
-          "to": "discode-oncall"
+          "to": "d scode-oncall"
         }
       ],
       "events": ["WORKFLOW_SUCCESS"]
     },
     {
       "type": "SLACK",
-      "recipients": [{
-        "to": "discode-oncall"
+      "rec p ents": [{
+        "to": "d scode-oncall"
       }],
-      "events": ["*FAILED"]
+      "events": ["*FA LED"]
     }
   ]
 }

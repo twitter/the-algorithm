@@ -1,116 +1,116 @@
-package com.twitter.home_mixer.util
+package com.tw ter.ho _m xer.ut l
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
+ mport com.tw ter.ho _m xer.model.Ho Features._
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
 
-object ReplyRetweetUtil {
+object ReplyRet etUt l {
 
-  def isEligibleReply(candidate: CandidateWithFeatures[TweetCandidate]): Boolean = {
-    candidate.features.getOrElse(InReplyToTweetIdFeature, None).nonEmpty &&
-    !candidate.features.getOrElse(IsRetweetFeature, false)
+  def  sEl g bleReply(cand date: Cand dateW hFeatures[T etCand date]): Boolean = {
+    cand date.features.getOrElse( nReplyToT et dFeature, None).nonEmpty &&
+    !cand date.features.getOrElse( sRet etFeature, false)
   }
 
   /**
-   * Builds a map from reply tweet to all ancestors that are also hydrated candidates. If a reply
-   * does not have any ancestors which are also candidates, it will not add to the returned Map.
+   * Bu lds a map from reply t et to all ancestors that are also hydrated cand dates.  f a reply
+   * does not have any ancestors wh ch are also cand dates,   w ll not add to t  returned Map.
    * Make sure ancestors are bottom-up ordered such that:
-   * (1) if parent tweet is a candidate, it should be the first item at the returned ancestors;
-   * (2) if root tweet is a candidate, it should be the last item at the returned ancestors.
-   * Retweets of replies or replies to retweets are not included.
+   * (1)  f parent t et  s a cand date,   should be t  f rst  em at t  returned ancestors;
+   * (2)  f root t et  s a cand date,   should be t  last  em at t  returned ancestors.
+   * Ret ets of repl es or repl es to ret ets are not  ncluded.
    */
-  def replyToAncestorTweetCandidatesMap(
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Map[Long, Seq[CandidateWithFeatures[TweetCandidate]]] = {
-    val replyToAncestorTweetIdsMap: Map[Long, Seq[Long]] =
-      candidates.flatMap { candidate =>
-        if (isEligibleReply(candidate)) {
-          val ancestorIds =
-            if (candidate.features.getOrElse(AncestorsFeature, Seq.empty).nonEmpty) {
-              candidate.features.getOrElse(AncestorsFeature, Seq.empty).map(_.tweetId)
+  def replyToAncestorT etCand datesMap(
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): Map[Long, Seq[Cand dateW hFeatures[T etCand date]]] = {
+    val replyToAncestorT et dsMap: Map[Long, Seq[Long]] =
+      cand dates.flatMap { cand date =>
+         f ( sEl g bleReply(cand date)) {
+          val ancestor ds =
+             f (cand date.features.getOrElse(AncestorsFeature, Seq.empty).nonEmpty) {
+              cand date.features.getOrElse(AncestorsFeature, Seq.empty).map(_.t et d)
             } else {
               Seq(
-                candidate.features.getOrElse(InReplyToTweetIdFeature, None),
-                candidate.features.getOrElse(ConversationModuleIdFeature, None)
-              ).flatten.distinct
+                cand date.features.getOrElse( nReplyToT et dFeature, None),
+                cand date.features.getOrElse(Conversat onModule dFeature, None)
+              ).flatten.d st nct
             }
-          Some(candidate.candidate.id -> ancestorIds)
+          So (cand date.cand date. d -> ancestor ds)
         } else {
           None
         }
       }.toMap
 
-    val ancestorTweetIds = replyToAncestorTweetIdsMap.values.flatten.toSet
-    val ancestorTweetsMapById: Map[Long, CandidateWithFeatures[TweetCandidate]] = candidates
-      .filter { maybeAncestor =>
-        ancestorTweetIds.contains(maybeAncestor.candidate.id)
+    val ancestorT et ds = replyToAncestorT et dsMap.values.flatten.toSet
+    val ancestorT etsMapBy d: Map[Long, Cand dateW hFeatures[T etCand date]] = cand dates
+      .f lter { maybeAncestor =>
+        ancestorT et ds.conta ns(maybeAncestor.cand date. d)
       }.map { ancestor =>
-        ancestor.candidate.id -> ancestor
+        ancestor.cand date. d -> ancestor
       }.toMap
 
-    replyToAncestorTweetIdsMap
-      .mapValues { ancestorTweetIds =>
-        ancestorTweetIds.flatMap { ancestorTweetId =>
-          ancestorTweetsMapById.get(ancestorTweetId)
+    replyToAncestorT et dsMap
+      .mapValues { ancestorT et ds =>
+        ancestorT et ds.flatMap { ancestorT et d =>
+          ancestorT etsMapBy d.get(ancestorT et d)
         }
-      }.filter {
+      }.f lter {
         case (reply, ancestors) =>
           ancestors.nonEmpty
       }
   }
 
   /**
-   * This map is the opposite of [[replyToAncestorTweetCandidatesMap]].
-   * Builds a map from ancestor tweet to all descendant replies that are also hydrated candidates.
-   * Currently, we only return two ancestors at most: one is inReplyToTweetId and the other
-   * is conversationId.
-   * Retweets of replies are not included.
+   * T  map  s t  oppos e of [[replyToAncestorT etCand datesMap]].
+   * Bu lds a map from ancestor t et to all descendant repl es that are also hydrated cand dates.
+   * Currently,   only return two ancestors at most: one  s  nReplyToT et d and t  ot r
+   *  s conversat on d.
+   * Ret ets of repl es are not  ncluded.
    */
-  def ancestorTweetIdToDescendantRepliesMap(
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Map[Long, Seq[CandidateWithFeatures[TweetCandidate]]] = {
-    val tweetToCandidateMap = candidates.map(c => c.candidate.id -> c).toMap
-    replyToAncestorTweetCandidatesMap(candidates).toSeq
+  def ancestorT et dToDescendantRepl esMap(
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): Map[Long, Seq[Cand dateW hFeatures[T etCand date]]] = {
+    val t etToCand dateMap = cand dates.map(c => c.cand date. d -> c).toMap
+    replyToAncestorT etCand datesMap(cand dates).toSeq
       .flatMap {
-        case (reply, ancestorTweets) =>
-          ancestorTweets.map { ancestor =>
-            (ancestor.candidate.id, reply)
+        case (reply, ancestorT ets) =>
+          ancestorT ets.map { ancestor =>
+            (ancestor.cand date. d, reply)
           }
       }.groupBy { case (ancestor, reply) => ancestor }
-      .mapValues { ancestorReplyPairs =>
-        ancestorReplyPairs.map(_._2).distinct
-      }.mapValues(tweetIds => tweetIds.map(tid => tweetToCandidateMap(tid)))
+      .mapValues { ancestorReplyPa rs =>
+        ancestorReplyPa rs.map(_._2).d st nct
+      }.mapValues(t et ds => t et ds.map(t d => t etToCand dateMap(t d)))
   }
 
   /**
-   * Builds a map from reply tweet to inReplyToTweet which is also a candidate.
-   * Retweets of replies or replies to retweets are not included
+   * Bu lds a map from reply t et to  nReplyToT et wh ch  s also a cand date.
+   * Ret ets of repl es or repl es to ret ets are not  ncluded
    */
-  def replyTweetIdToInReplyToTweetMap(
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Map[Long, CandidateWithFeatures[TweetCandidate]] = {
-    val eligibleReplyCandidates = candidates.filter { candidate =>
-      isEligibleReply(candidate) && candidate.features
-        .getOrElse(InReplyToTweetIdFeature, None)
+  def replyT et dTo nReplyToT etMap(
+    cand dates: Seq[Cand dateW hFeatures[T etCand date]]
+  ): Map[Long, Cand dateW hFeatures[T etCand date]] = {
+    val el g bleReplyCand dates = cand dates.f lter { cand date =>
+       sEl g bleReply(cand date) && cand date.features
+        .getOrElse( nReplyToT et dFeature, None)
         .nonEmpty
     }
 
-    val inReplyToTweetIds = eligibleReplyCandidates
-      .flatMap(_.features.getOrElse(InReplyToTweetIdFeature, None))
+    val  nReplyToT et ds = el g bleReplyCand dates
+      .flatMap(_.features.getOrElse( nReplyToT et dFeature, None))
       .toSet
 
-    val inReplyToTweetIdToTweetMap: Map[Long, CandidateWithFeatures[TweetCandidate]] = candidates
-      .filter { maybeInReplyToTweet =>
-        inReplyToTweetIds.contains(maybeInReplyToTweet.candidate.id)
-      }.map { inReplyToTweet =>
-        inReplyToTweet.candidate.id -> inReplyToTweet
+    val  nReplyToT et dToT etMap: Map[Long, Cand dateW hFeatures[T etCand date]] = cand dates
+      .f lter { maybe nReplyToT et =>
+         nReplyToT et ds.conta ns(maybe nReplyToT et.cand date. d)
+      }.map {  nReplyToT et =>
+         nReplyToT et.cand date. d ->  nReplyToT et
       }.toMap
 
-    eligibleReplyCandidates.flatMap { reply =>
-      val inReplyToTweetId = reply.features.getOrElse(InReplyToTweetIdFeature, None)
-      if (inReplyToTweetId.nonEmpty) {
-        inReplyToTweetIdToTweetMap.get(inReplyToTweetId.get).map { inReplyToTweet =>
-          reply.candidate.id -> inReplyToTweet
+    el g bleReplyCand dates.flatMap { reply =>
+      val  nReplyToT et d = reply.features.getOrElse( nReplyToT et dFeature, None)
+       f ( nReplyToT et d.nonEmpty) {
+         nReplyToT et dToT etMap.get( nReplyToT et d.get).map {  nReplyToT et =>
+          reply.cand date. d ->  nReplyToT et
         }
       } else {
         None

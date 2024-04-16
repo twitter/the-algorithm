@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.transformer
+package com.tw ter.product_m xer.core.funct onal_component.transfor r
 
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+ mport com.tw ter.product_m xer.core.model.common.Component
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Transfor r dent f er
 
 /**
- * A transformer is a synchronous transformation that takes the provided [[Input]] and returns some
- * defined [[Output]]. For example, extracting a score from from a scored candidates.
+ * A transfor r  s a synchronous transformat on that takes t  prov ded [[ nput]] and returns so 
+ * def ned [[Output]]. For example, extract ng a score from from a scored cand dates.
  */
-trait Transformer[-Inputs, +Output] extends Component {
-  override val identifier: TransformerIdentifier
+tra  Transfor r[- nputs, +Output] extends Component {
+  overr de val  dent f er: Transfor r dent f er
 
-  /** Takes [[Inputs]] and transformers them into some [[Output]] of your choosing. */
-  def transform(input: Inputs): Output
+  /** Takes [[ nputs]] and transfor rs t m  nto so  [[Output]] of y  choos ng. */
+  def transform( nput:  nputs): Output
 }

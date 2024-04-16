@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclosureType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Earned
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Issue
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.NoDisclosure
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Political
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.D sclosureType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.Earned
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted. ssue
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.NoD sclosure
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted.Pol  cal
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class DisclosureTypeMarshaller @Inject() () {
+@S ngleton
+class D sclosureTypeMarshaller @ nject() () {
 
-  def apply(disclosureType: DisclosureType): urt.DisclosureType = disclosureType match {
-    case NoDisclosure => urt.DisclosureType.NoDisclosure
-    case Political => urt.DisclosureType.Political
-    case Earned => urt.DisclosureType.Earned
-    case Issue => urt.DisclosureType.Issue
+  def apply(d sclosureType: D sclosureType): urt.D sclosureType = d sclosureType match {
+    case NoD sclosure => urt.D sclosureType.NoD sclosure
+    case Pol  cal => urt.D sclosureType.Pol  cal
+    case Earned => urt.D sclosureType.Earned
+    case  ssue => urt.D sclosureType. ssue
   }
 }

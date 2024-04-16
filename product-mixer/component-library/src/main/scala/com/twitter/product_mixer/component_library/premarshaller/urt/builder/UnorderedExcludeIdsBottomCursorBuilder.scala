@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedExcludeIdsCursor
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.PipelineCursorSerializer
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.product_m xer.component_l brary.model.cursor.UrtUnorderedExclude dsCursor
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.cursor.UrtCursorSer al zer
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neCursorSer al zer
+ mport com.tw ter.t  l nes.conf gap .Param
 
 /**
- * Builds [[UrtUnorderedExcludeIdsCursor]] in the Bottom position
+ * Bu lds [[UrtUnorderedExclude dsCursor]]  n t  Bottom pos  on
  *
- * @param excludedIdsMaxLengthParam The maximum length of the cursor
- * @param excludeIdsSelector Specifies the entry Ids to populate on the `excludedIds` field
- * @param serializer Converts the cursor to an encoded string
+ * @param excluded dsMaxLengthParam T  max mum length of t  cursor
+ * @param exclude dsSelector Spec f es t  entry  ds to populate on t  `excluded ds` f eld
+ * @param ser al zer Converts t  cursor to an encoded str ng
  */
-case class UnorderedExcludeIdsBottomCursorBuilder(
-  override val excludedIdsMaxLengthParam: Param[Int],
-  excludeIdsSelector: PartialFunction[UniversalNoun[_], Long],
-  override val serializer: PipelineCursorSerializer[UrtUnorderedExcludeIdsCursor] =
-    UrtCursorSerializer)
-    extends BaseUnorderedExcludeIdsBottomCursorBuilder {
+case class UnorderedExclude dsBottomCursorBu lder(
+  overr de val excluded dsMaxLengthParam: Param[ nt],
+  exclude dsSelector: Part alFunct on[Un versalNoun[_], Long],
+  overr de val ser al zer: P pel neCursorSer al zer[UrtUnorderedExclude dsCursor] =
+    UrtCursorSer al zer)
+    extends BaseUnorderedExclude dsBottomCursorBu lder {
 
-  override def excludeEntriesCollector(entries: Seq[TimelineEntry]): Seq[Long] =
-    entries.collect(excludeIdsSelector)
+  overr de def excludeEntr esCollector(entr es: Seq[T  l neEntry]): Seq[Long] =
+    entr es.collect(exclude dsSelector)
 }

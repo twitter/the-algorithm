@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.core.module
+package com.tw ter.product_m xer.core.module
 
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.international.modules.LanguagesModule
-import com.twitter.product_mixer.core.product.guice.ProductScopeModule
-import com.twitter.finatra.jackson.modules.ScalaObjectMapperModule
-import com.twitter.inject.thrift.modules.ThriftClientIdModule
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.product_m xer.core.module.product_m xer_flags.ProductM xerFlagModule
+ mport com.tw ter.f natra.dec der.modules.Dec derModule
+ mport com.tw ter.f natra. nternat onal.modules.LanguagesModule
+ mport com.tw ter.product_m xer.core.product.gu ce.ProductScopeModule
+ mport com.tw ter.f natra.jackson.modules.ScalaObjectMapperModule
+ mport com.tw ter. nject.thr ft.modules.Thr ftCl ent dModule
 
 /**
- * ProductMixerModule provides modules required by all Product Mixer services.
+ * ProductM xerModule prov des modules requ red by all Product M xer serv ces.
  *
- * @note if your service calls Strato you will need to add the [[StratoClientModule]] yourself.
+ * @note  f y  serv ce calls Strato   w ll need to add t  [[StratoCl entModule]] y self.
  */
-object ProductMixerModule extends TwitterModule {
+object ProductM xerModule extends Tw terModule {
 
-  override val modules = Seq(
-    ABDeciderModule,
-    ConfigApiModule,
-    DeciderModule,
-    FeatureSwitchesModule,
+  overr de val modules = Seq(
+    ABDec derModule,
+    Conf gAp Module,
+    Dec derModule,
+    FeatureSw c sModule,
     LanguagesModule,
-    PipelineExecutionLoggerModule,
-    ProductMixerFlagModule,
+    P pel neExecut onLoggerModule,
+    ProductM xerFlagModule,
     new ProductScopeModule(),
     ScalaObjectMapperModule,
-    ThriftClientIdModule,
+    Thr ftCl ent dModule,
   )
 }

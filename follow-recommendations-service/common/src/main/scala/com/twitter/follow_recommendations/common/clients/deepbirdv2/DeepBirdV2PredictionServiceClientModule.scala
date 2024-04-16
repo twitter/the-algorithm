@@ -1,67 +1,67 @@
-package com.twitter.follow_recommendations.common.clients.deepbirdv2
+package com.tw ter.follow_recom ndat ons.common.cl ents.deepb rdv2
 
-import com.google.inject.Provides
-import com.google.inject.name.Named
-import com.twitter.bijection.scrooge.TBinaryProtocol
-import com.twitter.conversions.DurationOps._
-import com.twitter.cortex.deepbird.thriftjava.DeepbirdPredictionService
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.builder.ClientBuilder
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.thrift.RichClientParam
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.inject.TwitterModule
+ mport com.google. nject.Prov des
+ mport com.google. nject.na .Na d
+ mport com.tw ter.b ject on.scrooge.TB naryProtocol
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.cortex.deepb rd.thr ftjava.Deepb rdPred ct onServ ce
+ mport com.tw ter.f nagle.Thr ftMux
+ mport com.tw ter.f nagle.bu lder.Cl entBu lder
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.mtls.cl ent.MtlsStackCl ent._
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.f nagle.thr ft.R chCl entParam
+ mport com.tw ter.follow_recom ndat ons.common.constants.Gu ceNa dConstants
+ mport com.tw ter. nject.Tw terModule
 
 /**
- * Module that provides multiple deepbirdv2 prediction service clients
- * We use the java api since data records are native java objects and we want to reduce overhead
- * while serializing/deserializing data.
+ * Module that prov des mult ple deepb rdv2 pred ct on serv ce cl ents
+ *   use t  java ap  s nce data records are nat ve java objects and   want to reduce over ad
+ * wh le ser al z ng/deser al z ng data.
  */
-object DeepBirdV2PredictionServiceClientModule extends TwitterModule {
+object DeepB rdV2Pred ct onServ ceCl entModule extends Tw terModule {
 
-  val RequestTimeout = 300.millis
+  val RequestT  out = 300.m ll s
 
-  private def getDeepbirdPredictionServiceClient(
-    clientId: ClientId,
-    label: String,
-    dest: String,
-    statsReceiver: StatsReceiver,
-    serviceIdentifier: ServiceIdentifier
-  ): DeepbirdPredictionService.ServiceToClient = {
-    val clientStatsReceiver = statsReceiver.scope("clnt")
-    val mTlsClient = ThriftMux.client.withClientId(clientId).withMutualTls(serviceIdentifier)
-    new DeepbirdPredictionService.ServiceToClient(
-      ClientBuilder()
-        .name(label)
-        .stack(mTlsClient)
+  pr vate def getDeepb rdPred ct onServ ceCl ent(
+    cl ent d: Cl ent d,
+    label: Str ng,
+    dest: Str ng,
+    statsRece ver: StatsRece ver,
+    serv ce dent f er: Serv ce dent f er
+  ): Deepb rdPred ct onServ ce.Serv ceToCl ent = {
+    val cl entStatsRece ver = statsRece ver.scope("clnt")
+    val mTlsCl ent = Thr ftMux.cl ent.w hCl ent d(cl ent d).w hMutualTls(serv ce dent f er)
+    new Deepb rdPred ct onServ ce.Serv ceToCl ent(
+      Cl entBu lder()
+        .na (label)
+        .stack(mTlsCl ent)
         .dest(dest)
-        .requestTimeout(RequestTimeout)
-        .reportHostStats(NullStatsReceiver)
-        .build(),
-      RichClientParam(
-        new TBinaryProtocol.Factory(),
-        clientStats = clientStatsReceiver
+        .requestT  out(RequestT  out)
+        .reportHostStats(NullStatsRece ver)
+        .bu ld(),
+      R chCl entParam(
+        new TB naryProtocol.Factory(),
+        cl entStats = cl entStatsRece ver
       )
     )
   }
 
-  @Provides
-  @Named(GuiceNamedConstants.WTF_PROD_DEEPBIRDV2_CLIENT)
-  def providesWtfProdDeepbirdV2PredictionService(
-    clientId: ClientId,
-    statsReceiver: StatsReceiver,
-    serviceIdentifier: ServiceIdentifier
-  ): DeepbirdPredictionService.ServiceToClient = {
-    getDeepbirdPredictionServiceClient(
-      clientId = clientId,
-      label = "WtfProdDeepbirdV2PredictionService",
-      dest = "/s/cassowary/deepbirdv2-hermit-wtf",
-      statsReceiver = statsReceiver,
-      serviceIdentifier = serviceIdentifier
+  @Prov des
+  @Na d(Gu ceNa dConstants.WTF_PROD_DEEPB RDV2_CL ENT)
+  def prov desWtfProdDeepb rdV2Pred ct onServ ce(
+    cl ent d: Cl ent d,
+    statsRece ver: StatsRece ver,
+    serv ce dent f er: Serv ce dent f er
+  ): Deepb rdPred ct onServ ce.Serv ceToCl ent = {
+    getDeepb rdPred ct onServ ceCl ent(
+      cl ent d = cl ent d,
+      label = "WtfProdDeepb rdV2Pred ct onServ ce",
+      dest = "/s/cassowary/deepb rdv2- rm -wtf",
+      statsRece ver = statsRece ver,
+      serv ce dent f er = serv ce dent f er
     )
   }
 }

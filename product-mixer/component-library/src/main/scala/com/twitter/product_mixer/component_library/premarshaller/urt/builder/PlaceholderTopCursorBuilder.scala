@@ -1,34 +1,34 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtPlaceholderCursor
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.PlaceholderTopCursorBuilder.DefaultPlaceholderCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineCursorSerializer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.UrtPipelineCursor
+ mport com.tw ter.product_m xer.component_l brary.model.cursor.UrtPlaceholderCursor
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.cursor.UrtCursorSer al zer
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.PlaceholderTopCursorBu lder.DefaultPlaceholderCursor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.CursorType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.TopCursor
+ mport com.tw ter.product_m xer.core.p pel ne.HasP pel neCursor
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neCursorSer al zer
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.UrtP pel neCursor
 
-object PlaceholderTopCursorBuilder {
+object PlaceholderTopCursorBu lder {
   val DefaultPlaceholderCursor = UrtPlaceholderCursor()
 }
 
 /**
- * Top cursor builder that can be used when the Product does not support paging up. The URT spec
- * requires that both bottom and top cursors always be present on each page. Therefore, if the
- * product does not support paging up, then we can use a cursor value that is not deserializable.
- * This way if the client submits a TopCursor, the backend will treat the the request as if no
- * cursor was submitted.
+ * Top cursor bu lder that can be used w n t  Product does not support pag ng up. T  URT spec
+ * requ res that both bottom and top cursors always be present on each page. T refore,  f t 
+ * product does not support pag ng up, t n   can use a cursor value that  s not deser al zable.
+ * T  way  f t  cl ent subm s a TopCursor, t  backend w ll treat t  t  request as  f no
+ * cursor was subm ted.
  */
-case class PlaceholderTopCursorBuilder(
-  serializer: PipelineCursorSerializer[UrtPipelineCursor] = UrtCursorSerializer)
-    extends UrtCursorBuilder[PipelineQuery with HasPipelineCursor[UrtPipelineCursor]] {
-  override val cursorType: CursorType = TopCursor
+case class PlaceholderTopCursorBu lder(
+  ser al zer: P pel neCursorSer al zer[UrtP pel neCursor] = UrtCursorSer al zer)
+    extends UrtCursorBu lder[P pel neQuery w h HasP pel neCursor[UrtP pel neCursor]] {
+  overr de val cursorType: CursorType = TopCursor
 
-  override def cursorValue(
-    query: PipelineQuery with HasPipelineCursor[UrtPipelineCursor],
-    timelineEntries: Seq[TimelineEntry]
-  ): String = serializer.serializeCursor(DefaultPlaceholderCursor)
+  overr de def cursorValue(
+    query: P pel neQuery w h HasP pel neCursor[UrtP pel neCursor],
+    t  l neEntr es: Seq[T  l neEntry]
+  ): Str ng = ser al zer.ser al zeCursor(DefaultPlaceholderCursor)
 }

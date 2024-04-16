@@ -1,55 +1,55 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.tw ter.fr gate.pushserv ce.model.ntab
 
-import com.twitter.frigate.common.base.TweetAuthorDetails
-import com.twitter.frigate.common.base.TweetCandidate
-import com.twitter.frigate.pushservice.exception.TweetNTabRequestHydratorException
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.notificationservice.thriftscala.InlineCard
-import com.twitter.notificationservice.thriftscala.StoryContext
-import com.twitter.notificationservice.thriftscala.StoryContextValue
-import com.twitter.frigate.pushservice.util.EmailLandingPageExperimentUtil
-import com.twitter.notificationservice.thriftscala._
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.common.base.T etAuthorDeta ls
+ mport com.tw ter.fr gate.common.base.T etCand date
+ mport com.tw ter.fr gate.pushserv ce.except on.T etNTabRequestHydratorExcept on
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.not f cat onserv ce.thr ftscala. nl neCard
+ mport com.tw ter.not f cat onserv ce.thr ftscala.StoryContext
+ mport com.tw ter.not f cat onserv ce.thr ftscala.StoryContextValue
+ mport com.tw ter.fr gate.pushserv ce.ut l.Ema lLand ngPageExper  ntUt l
+ mport com.tw ter.not f cat onserv ce.thr ftscala._
+ mport com.tw ter.ut l.Future
 
-trait TweetNTabRequestHydrator extends NTabRequestHydrator {
-  self: PushCandidate with TweetCandidate with TweetAuthorDetails =>
+tra  T etNTabRequestHydrator extends NTabRequestHydrator {
+  self: PushCand date w h T etCand date w h T etAuthorDeta ls =>
 
-  override def senderIdFut: Future[Long] =
-    tweetAuthor.map {
-      case Some(author) => author.id
+  overr de def sender dFut: Future[Long] =
+    t etAuthor.map {
+      case So (author) => author. d
       case _ =>
-        throw new TweetNTabRequestHydratorException(
-          s"Unable to obtain Author ID for: $commonRecType")
+        throw new T etNTabRequestHydratorExcept on(
+          s"Unable to obta n Author  D for: $commonRecType")
     }
 
-  override def storyContext: Option[StoryContext] = Some(
+  overr de def storyContext: Opt on[StoryContext] = So (
     StoryContext(
       altText = "",
-      value = Some(StoryContextValue.Tweets(Seq(tweetId))),
-      details = None
+      value = So (StoryContextValue.T ets(Seq(t et d))),
+      deta ls = None
     ))
 
-  override def inlineCard: Option[InlineCard] = Some(InlineCard.TweetCard(TweetCard(tweetId)))
+  overr de def  nl neCard: Opt on[ nl neCard] = So ( nl neCard.T etCard(T etCard(t et d)))
 
-  override lazy val tapThroughFut: Future[String] = {
-    Future.join(tweetAuthor, target.deviceInfo).map {
-      case (Some(author), Some(deviceInfo)) =>
-        val enableRuxLandingPage = deviceInfo.isRuxLandingPageEligible && target.params(
-          PushFeatureSwitchParams.EnableNTabRuxLandingPage)
-        val authorProfile = author.profile.getOrElse(
-          throw new TweetNTabRequestHydratorException(
-            s"Unable to obtain author profile for: ${author.id}"))
-        if (enableRuxLandingPage) {
-          EmailLandingPageExperimentUtil.createNTabRuxLandingURI(authorProfile.screenName, tweetId)
+  overr de lazy val tapThroughFut: Future[Str ng] = {
+    Future.jo n(t etAuthor, target.dev ce nfo).map {
+      case (So (author), So (dev ce nfo)) =>
+        val enableRuxLand ngPage = dev ce nfo. sRuxLand ngPageEl g ble && target.params(
+          PushFeatureSw chParams.EnableNTabRuxLand ngPage)
+        val authorProf le = author.prof le.getOrElse(
+          throw new T etNTabRequestHydratorExcept on(
+            s"Unable to obta n author prof le for: ${author. d}"))
+         f (enableRuxLand ngPage) {
+          Ema lLand ngPageExper  ntUt l.createNTabRuxLand ngUR (authorProf le.screenNa , t et d)
         } else {
-          s"${authorProfile.screenName}/status/${tweetId.toString}"
+          s"${authorProf le.screenNa }/status/${t et d.toStr ng}"
         }
       case _ =>
-        throw new TweetNTabRequestHydratorException(
-          s"Unable to obtain author and target details to generate tap through for Tweet: $tweetId")
+        throw new T etNTabRequestHydratorExcept on(
+          s"Unable to obta n author and target deta ls to generate tap through for T et: $t et d")
     }
   }
 
-  override def socialProofDisplayText: Option[DisplayText] = None
+  overr de def soc alProofD splayText: Opt on[D splayText] = None
 }

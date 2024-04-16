@@ -1,101 +1,101 @@
-scala_library(
-    name = "common_types",
-    sources = ["*.scala"],
+scala_l brary(
+    na  = "common_types",
+    s ces = ["*.scala"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
         "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/com/twitter/algebird:bijection",
-        "3rdparty/jvm/com/twitter/algebird:core",
-        "3rdparty/jvm/com/twitter/algebird:util",
-        "3rdparty/jvm/com/twitter/bijection:core",
-        "3rdparty/jvm/com/twitter/bijection:json",
-        "3rdparty/jvm/com/twitter/bijection:macros",
-        "3rdparty/jvm/com/twitter/bijection:netty",
-        "3rdparty/jvm/com/twitter/bijection:scrooge",
-        "3rdparty/jvm/com/twitter/bijection:thrift",
-        "3rdparty/jvm/com/twitter/bijection:util",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
-        "3rdparty/src/jvm/com/twitter/scalding:date",
-        "3rdparty/src/jvm/com/twitter/summingbird:batch",
-        "src/java/com/twitter/ml/api:api-base",
-        "src/java/com/twitter/ml/api/constant",
-        "src/scala/com/twitter/dal/client/dataset",
-        "src/scala/com/twitter/ml/api/util:datarecord",
-        "src/scala/com/twitter/scalding_internal/dalv2/vkvs",
-        "src/scala/com/twitter/scalding_internal/multiformat/format/keyval",
-        "src/scala/com/twitter/storehaus_internal/manhattan/config",
-        "src/scala/com/twitter/storehaus_internal/offline",
-        "src/scala/com/twitter/storehaus_internal/util",
-        "src/scala/com/twitter/summingbird_internal/bijection:bijection-implicits",
-        "src/scala/com/twitter/summingbird_internal/runner/store_config",
-        "src/thrift/com/twitter/dal/personal_data:personal_data-java",
-        "src/thrift/com/twitter/dal/personal_data:personal_data-scala",
-        "src/thrift/com/twitter/ml/api:data-java",
-        "timelines/data_processing/ml_util/aggregation_framework/metrics",
-        "timelines/data_processing/ml_util/transforms",
-        "util/util-core:util-core-util",
+        "3rdparty/jvm/com/tw ter/algeb rd:b ject on",
+        "3rdparty/jvm/com/tw ter/algeb rd:core",
+        "3rdparty/jvm/com/tw ter/algeb rd:ut l",
+        "3rdparty/jvm/com/tw ter/b ject on:core",
+        "3rdparty/jvm/com/tw ter/b ject on:json",
+        "3rdparty/jvm/com/tw ter/b ject on:macros",
+        "3rdparty/jvm/com/tw ter/b ject on:netty",
+        "3rdparty/jvm/com/tw ter/b ject on:scrooge",
+        "3rdparty/jvm/com/tw ter/b ject on:thr ft",
+        "3rdparty/jvm/com/tw ter/b ject on:ut l",
+        "3rdparty/jvm/org/apac /thr ft:l bthr ft",
+        "3rdparty/src/jvm/com/tw ter/scald ng:date",
+        "3rdparty/src/jvm/com/tw ter/summ ngb rd:batch",
+        "src/java/com/tw ter/ml/ap :ap -base",
+        "src/java/com/tw ter/ml/ap /constant",
+        "src/scala/com/tw ter/dal/cl ent/dataset",
+        "src/scala/com/tw ter/ml/ap /ut l:datarecord",
+        "src/scala/com/tw ter/scald ng_ nternal/dalv2/vkvs",
+        "src/scala/com/tw ter/scald ng_ nternal/mult format/format/keyval",
+        "src/scala/com/tw ter/storehaus_ nternal/manhattan/conf g",
+        "src/scala/com/tw ter/storehaus_ nternal/offl ne",
+        "src/scala/com/tw ter/storehaus_ nternal/ut l",
+        "src/scala/com/tw ter/summ ngb rd_ nternal/b ject on:b ject on- mpl c s",
+        "src/scala/com/tw ter/summ ngb rd_ nternal/runner/store_conf g",
+        "src/thr ft/com/tw ter/dal/personal_data:personal_data-java",
+        "src/thr ft/com/tw ter/dal/personal_data:personal_data-scala",
+        "src/thr ft/com/tw ter/ml/ap :data-java",
+        "t  l nes/data_process ng/ml_ut l/aggregat on_fra work/ tr cs",
+        "t  l nes/data_process ng/ml_ut l/transforms",
+        "ut l/ut l-core:ut l-core-ut l",
     ],
 )
 
 target(
-    name = "common_online_stores",
-    dependencies = [
-        "src/scala/com/twitter/storehaus_internal/memcache",
+    na  = "common_onl ne_stores",
+    dependenc es = [
+        "src/scala/com/tw ter/storehaus_ nternal/ mcac ",
     ],
 )
 
 target(
-    name = "common_offline_stores",
-    dependencies = [
-        "src/scala/com/twitter/storehaus_internal/manhattan",
+    na  = "common_offl ne_stores",
+    dependenc es = [
+        "src/scala/com/tw ter/storehaus_ nternal/manhattan",
     ],
 )
 
 target(
-    name = "user_job",
-    dependencies = [
-        "timelines/data_processing/ml_util/aggregation_framework/job",
+    na  = "user_job",
+    dependenc es = [
+        "t  l nes/data_process ng/ml_ut l/aggregat on_fra work/job",
     ],
 )
 
 target(
-    name = "scalding",
-    dependencies = [
-        "timelines/data_processing/ml_util/aggregation_framework/scalding",
+    na  = "scald ng",
+    dependenc es = [
+        "t  l nes/data_process ng/ml_ut l/aggregat on_fra work/scald ng",
     ],
 )
 
 target(
-    name = "conversion",
-    dependencies = [
-        "timelines/data_processing/ml_util/aggregation_framework/conversion",
+    na  = "convers on",
+    dependenc es = [
+        "t  l nes/data_process ng/ml_ut l/aggregat on_fra work/convers on",
     ],
 )
 
 target(
-    name = "query",
-    dependencies = [
-        "timelines/data_processing/ml_util/aggregation_framework/query",
+    na  = "query",
+    dependenc es = [
+        "t  l nes/data_process ng/ml_ut l/aggregat on_fra work/query",
     ],
 )
 
 target(
-    name = "heron",
-    dependencies = [
-        "timelines/data_processing/ml_util/aggregation_framework/heron",
+    na  = " ron",
+    dependenc es = [
+        "t  l nes/data_process ng/ml_ut l/aggregat on_fra work/ ron",
     ],
 )
 
 target(
-    dependencies = [
-        ":common_offline_stores",
-        ":common_online_stores",
+    dependenc es = [
+        ":common_offl ne_stores",
+        ":common_onl ne_stores",
         ":common_types",
-        ":conversion",
-        ":heron",
+        ":convers on",
+        ": ron",
         ":query",
-        ":scalding",
+        ":scald ng",
     ],
 )

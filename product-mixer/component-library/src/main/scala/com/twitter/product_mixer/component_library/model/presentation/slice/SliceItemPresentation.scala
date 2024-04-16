@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.component_library.model.presentation.slice
+package com.tw ter.product_m xer.component_l brary.model.presentat on.sl ce
 
-import com.twitter.product_mixer.core.model.common.presentation.slice.BaseSliceItemPresentation
-import com.twitter.product_mixer.core.model.marshalling.response.slice.SliceItem
+ mport com.tw ter.product_m xer.core.model.common.presentat on.sl ce.BaseSl ce emPresentat on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.sl ce.Sl ce em
 
-case class SliceItemPresentation(override val sliceItem: SliceItem)
-    extends BaseSliceItemPresentation
+case class Sl ce emPresentat on(overr de val sl ce em: Sl ce em)
+    extends BaseSl ce emPresentat on

@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.t  l ne_module
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleMetadata
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Module tadata
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ModuleMetadataMarshaller @Inject() (
-  adsMetadataMarshaller: AdsMetadataMarshaller,
-  moduleConversationMetadataMarshaller: ModuleConversationMetadataMarshaller,
-  gridCarouselMetadataMarshaller: GridCarouselMetadataMarshaller) {
+@S ngleton
+class Module tadataMarshaller @ nject() (
+  ads tadataMarshaller: Ads tadataMarshaller,
+  moduleConversat on tadataMarshaller: ModuleConversat on tadataMarshaller,
+  gr dCarousel tadataMarshaller: Gr dCarousel tadataMarshaller) {
 
-  def apply(moduleMetadata: ModuleMetadata): urt.ModuleMetadata = urt.ModuleMetadata(
-    adsMetadata = moduleMetadata.adsMetadata.map(adsMetadataMarshaller(_)),
-    conversationMetadata =
-      moduleMetadata.conversationMetadata.map(moduleConversationMetadataMarshaller(_)),
-    gridCarouselMetadata =
-      moduleMetadata.gridCarouselMetadata.map(gridCarouselMetadataMarshaller(_))
+  def apply(module tadata: Module tadata): urt.Module tadata = urt.Module tadata(
+    ads tadata = module tadata.ads tadata.map(ads tadataMarshaller(_)),
+    conversat on tadata =
+      module tadata.conversat on tadata.map(moduleConversat on tadataMarshaller(_)),
+    gr dCarousel tadata =
+      module tadata.gr dCarousel tadata.map(gr dCarousel tadataMarshaller(_))
   )
 }

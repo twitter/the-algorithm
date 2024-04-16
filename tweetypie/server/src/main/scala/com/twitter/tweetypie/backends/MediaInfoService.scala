@@ -1,43 +1,43 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package backends
 
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.mediainfo.server.thriftscala.GetTweetMediaInfoRequest
-import com.twitter.mediainfo.server.thriftscala.GetTweetMediaInfoResponse
-import com.twitter.mediainfo.server.{thriftscala => mis}
-import com.twitter.servo.util.FutureArrow
-import com.twitter.tweetypie.util.RetryPolicyBuilder
+ mport com.tw ter.f nagle.serv ce.RetryPol cy
+ mport com.tw ter. d a nfo.server.thr ftscala.GetT et d a nfoRequest
+ mport com.tw ter. d a nfo.server.thr ftscala.GetT et d a nfoResponse
+ mport com.tw ter. d a nfo.server.{thr ftscala => m s}
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t etyp e.ut l.RetryPol cyBu lder
 
-object MediaInfoService {
-  import Backend._
+object  d a nfoServ ce {
+   mport Backend._
 
-  type GetTweetMediaInfo = FutureArrow[mis.GetTweetMediaInfoRequest, mis.GetTweetMediaInfoResponse]
+  type GetT et d a nfo = FutureArrow[m s.GetT et d a nfoRequest, m s.GetT et d a nfoResponse]
 
-  def fromClient(client: mis.MediaInfoService.MethodPerEndpoint): MediaInfoService =
-    new MediaInfoService {
-      val getTweetMediaInfo = FutureArrow(client.getTweetMediaInfo)
+  def fromCl ent(cl ent: m s. d a nfoServ ce. thodPerEndpo nt):  d a nfoServ ce =
+    new  d a nfoServ ce {
+      val getT et d a nfo = FutureArrow(cl ent.getT et d a nfo)
     }
 
-  case class Config(
-    requestTimeout: Duration,
-    totalTimeout: Duration,
-    timeoutBackoffs: Stream[Duration]) {
+  case class Conf g(
+    requestT  out: Durat on,
+    totalT  out: Durat on,
+    t  outBackoffs: Stream[Durat on]) {
 
-    def apply(svc: MediaInfoService, ctx: Backend.Context): MediaInfoService =
-      new MediaInfoService {
-        val getTweetMediaInfo: FutureArrow[GetTweetMediaInfoRequest, GetTweetMediaInfoResponse] =
-          policy("getTweetMediaInfo", ctx)(svc.getTweetMediaInfo)
+    def apply(svc:  d a nfoServ ce, ctx: Backend.Context):  d a nfoServ ce =
+      new  d a nfoServ ce {
+        val getT et d a nfo: FutureArrow[GetT et d a nfoRequest, GetT et d a nfoResponse] =
+          pol cy("getT et d a nfo", ctx)(svc.getT et d a nfo)
       }
 
-    private[this] def policy[A, B](name: String, ctx: Context): Builder[A, B] =
-      defaultPolicy(name, requestTimeout, retryPolicy, ctx, totalTimeout = totalTimeout)
+    pr vate[t ] def pol cy[A, B](na : Str ng, ctx: Context): Bu lder[A, B] =
+      defaultPol cy(na , requestT  out, retryPol cy, ctx, totalT  out = totalT  out)
 
-    private[this] def retryPolicy[B]: RetryPolicy[Try[B]] =
-      RetryPolicyBuilder.timeouts[Any](timeoutBackoffs)
+    pr vate[t ] def retryPol cy[B]: RetryPol cy[Try[B]] =
+      RetryPol cyBu lder.t  outs[Any](t  outBackoffs)
   }
 }
 
-trait MediaInfoService {
-  import MediaInfoService._
-  val getTweetMediaInfo: GetTweetMediaInfo
+tra   d a nfoServ ce {
+   mport  d a nfoServ ce._
+  val getT et d a nfo: GetT et d a nfo
 }

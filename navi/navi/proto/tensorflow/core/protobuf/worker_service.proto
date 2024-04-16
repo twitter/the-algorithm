@@ -1,90 +1,90 @@
-/* Copyright 2016 The TensorFlow Authors. All Rights Reserved.
+/* Copyr ght 2016 T  TensorFlow Authors. All R ghts Reserved.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+L censed under t  Apac  L cense, Vers on 2.0 (t  "L cense");
+  may not use t  f le except  n compl ance w h t  L cense.
+  may obta n a copy of t  L cense at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apac .org/l censes/L CENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Unless requ red by appl cable law or agreed to  n wr  ng, software
+d str buted under t  L cense  s d str buted on an "AS  S" BAS S,
+W THOUT WARRANT ES OR COND T ONS OF ANY K ND, e  r express or  mpl ed.
+See t  L cense for t  spec f c language govern ng perm ss ons and
+l m at ons under t  L cense.
 ==============================================================================*/
 
 syntax = "proto3";
 
 package tensorflow.grpc;
 
-import "tensorflow/core/protobuf/worker.proto";
+ mport "tensorflow/core/protobuf/worker.proto";
 
-option java_outer_classname = "WorkerServiceProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.distruntime";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on java_outer_classna  = "WorkerServ ceProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.d strunt  ";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// WorkerService defines a TensorFlow service that executes dataflow
-// graphs on a set of local devices, on behalf of a MasterService.
+// WorkerServ ce def nes a TensorFlow serv ce that executes dataflow
+// graphs on a set of local dev ces, on behalf of a MasterServ ce.
 //
-// A worker service keeps track of multiple "registered graphs". Each
-// registered graph is a subgraph of a client's graph, corresponding to
-// only the nodes that should execute on this worker (and any
-// additional nodes necessary for inter-process communication using
-// the `RecvTensor` method).
+// A worker serv ce keeps track of mult ple "reg stered graphs". Each
+// reg stered graph  s a subgraph of a cl ent's graph, correspond ng to
+// only t  nodes that should execute on t  worker (and any
+// add  onal nodes necessary for  nter-process commun cat on us ng
+// t  `RecvTensor`  thod).
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-service WorkerService {
-  // See worker.proto for details.
+serv ce WorkerServ ce {
+  // See worker.proto for deta ls.
   rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);
 
-  // See worker.proto for details.
-  rpc CreateWorkerSession(CreateWorkerSessionRequest)
-      returns (CreateWorkerSessionResponse);
+  // See worker.proto for deta ls.
+  rpc CreateWorkerSess on(CreateWorkerSess onRequest)
+      returns (CreateWorkerSess onResponse);
 
-  // See worker.proto for details.
-  rpc DeleteWorkerSession(DeleteWorkerSessionRequest)
-      returns (DeleteWorkerSessionResponse);
+  // See worker.proto for deta ls.
+  rpc DeleteWorkerSess on(DeleteWorkerSess onRequest)
+      returns (DeleteWorkerSess onResponse);
 
-  // See worker.proto for details.
-  rpc RegisterGraph(RegisterGraphRequest) returns (RegisterGraphResponse);
+  // See worker.proto for deta ls.
+  rpc Reg sterGraph(Reg sterGraphRequest) returns (Reg sterGraphResponse);
 
-  // See worker.proto for details.
-  rpc DeregisterGraph(DeregisterGraphRequest) returns (DeregisterGraphResponse);
+  // See worker.proto for deta ls.
+  rpc Dereg sterGraph(Dereg sterGraphRequest) returns (Dereg sterGraphResponse);
 
-  // See worker.proto for details.
+  // See worker.proto for deta ls.
   rpc RunGraph(RunGraphRequest) returns (RunGraphResponse);
 
-  // See worker.proto for details.
+  // See worker.proto for deta ls.
   rpc CleanupGraph(CleanupGraphRequest) returns (CleanupGraphResponse);
 
-  // See worker.proto for details.
+  // See worker.proto for deta ls.
   rpc CleanupAll(CleanupAllRequest) returns (CleanupAllResponse);
 
-  // See worker.proto for details.
+  // See worker.proto for deta ls.
   rpc RecvTensor(RecvTensorRequest) returns (RecvTensorResponse) {
-    // RecvTensor Method
+    // RecvTensor  thod
   }
 
-  // See worker.proto for details.
-  rpc Logging(LoggingRequest) returns (LoggingResponse);
+  // See worker.proto for deta ls.
+  rpc Logg ng(Logg ngRequest) returns (Logg ngResponse);
 
-  // See worker.proto for details.
-  rpc Tracing(TracingRequest) returns (TracingResponse);
+  // See worker.proto for deta ls.
+  rpc Trac ng(Trac ngRequest) returns (Trac ngResponse);
 
-  // See worker.proto for details.
+  // See worker.proto for deta ls.
   rpc RecvBuf(RecvBufRequest) returns (RecvBufResponse) {}
 
-  // See worker.proto for details.
+  // See worker.proto for deta ls.
   rpc GetStepSequence(GetStepSequenceRequest) returns (GetStepSequenceResponse);
 
-  // See worker.proto for details.
+  // See worker.proto for deta ls.
   rpc CompleteGroup(CompleteGroupRequest) returns (CompleteGroupResponse);
 
-  // See worker.proto for details.
-  rpc CompleteInstance(CompleteInstanceRequest)
-      returns (CompleteInstanceResponse);
+  // See worker.proto for deta ls.
+  rpc Complete nstance(Complete nstanceRequest)
+      returns (Complete nstanceResponse);
 }

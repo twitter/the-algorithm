@@ -1,25 +1,25 @@
-package com.twitter.cr_mixer.module.thrift_client
+package com.tw ter.cr_m xer.module.thr ft_cl ent
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.hydra.root.{thriftscala => ht}
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.thr ftmux. thodBu lder
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport com.tw ter.hydra.root.{thr ftscala => ht}
+ mport com.tw ter. nject. njector
+ mport com.tw ter. nject.thr ft.modules.Thr ft thodBu lderCl entModule
 
-object HydraRootClientModule
-    extends ThriftMethodBuilderClientModule[
-      ht.HydraRoot.ServicePerEndpoint,
-      ht.HydraRoot.MethodPerEndpoint
+object HydraRootCl entModule
+    extends Thr ft thodBu lderCl entModule[
+      ht.HydraRoot.Serv cePerEndpo nt,
+      ht.HydraRoot. thodPerEndpo nt
     ]
-    with MtlsClient {
-  override def label: String = "hydra-root"
+    w h MtlsCl ent {
+  overr de def label: Str ng = "hydra-root"
 
-  override def dest: String = "/s/hydra/hydra-root"
+  overr de def dest: Str ng = "/s/hydra/hydra-root"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = methodBuilder.withTimeoutTotal(500.milliseconds)
+  overr de protected def conf gure thodBu lder(
+     njector:  njector,
+     thodBu lder:  thodBu lder
+  ):  thodBu lder =  thodBu lder.w hT  outTotal(500.m ll seconds)
 
 }

@@ -1,106 +1,106 @@
 """
-This is a temporary close gap solution that allows TensorFlow users to do exploration and
-experimentation using Keras models, and production training using twml Trainer.
+T   s a temporary close gap solut on that allows TensorFlow users to do explorat on and
+exper  ntat on us ng Keras models, and product on tra n ng us ng twml Tra ner.
 
-As of now (Q4 2019), Keras model training using `model.fit()` has various issues, making it unfit
-for production training:
-  1. `model.fit()` is slow in TF 1.14. This will be fixed with future TensorFlow updates.
-  2. `model.fit()` crashes during model saving or in eager mode when the input has SparseTensor.
-  3. Models saved using TF 2.0 API cannot be served by TensorFlow's Java API.
+As of now (Q4 2019), Keras model tra n ng us ng `model.f ()` has var ous  ssues, mak ng   unf 
+for product on tra n ng:
+  1. `model.f ()`  s slow  n TF 1.14. T  w ll be f xed w h future TensorFlow updates.
+  2. `model.f ()` cras s dur ng model sav ng or  n eager mode w n t   nput has SparseTensor.
+  3. Models saved us ng TF 2.0 AP  cannot be served by TensorFlow's Java AP .
 
-Until MLCE team resolves the above issues, MLCE team recommends the following:
-  - Please feel free to use Keras models for experimentation and exploration.
-  - Please stick to twml Trainer for production training & exporting,
-    especially if you want to serve your model using Twitter's prediction servers.
+Unt l MLCE team resolves t  above  ssues, MLCE team recom nds t  follow ng:
+  - Please feel free to use Keras models for exper  ntat on and explorat on.
+  - Please st ck to twml Tra ner for product on tra n ng & export ng,
+    espec ally  f   want to serve y  model us ng Tw ter's pred ct on servers.
 
-This module provide tooling for easily training keras models using twml Trainer.
+T  module prov de tool ng for eas ly tra n ng keras models us ng twml Tra ner.
 
-This module takes a Keras model that performs binary classification, and returns a
-`twml.trainers.Trainer` object performing the same task.
-The common way to use the returned Trainer object is to call its
-`train`, `evaluate`, `learn`, or `train_and_evaluate` method with an input function.
-This input function can be created from the tf.data.Dataset you used with your Keras model.
+T  module takes a Keras model that performs b nary class f cat on, and returns a
+`twml.tra ners.Tra ner` object perform ng t  sa  task.
+T  common way to use t  returned Tra ner object  s to call  s
+`tra n`, `evaluate`, `learn`, or `tra n_and_evaluate`  thod w h an  nput funct on.
+T   nput funct on can be created from t  tf.data.Dataset   used w h y  Keras model.
 
-.. note: this util handles the most common case. If you have cases not satisfied by this util,
-         consider writing your own build_graph to wrap your keras models.
+.. note: t  ut l handles t  most common case.  f   have cases not sat sf ed by t  ut l,
+         cons der wr  ng y  own bu ld_graph to wrap y  keras models.
 """
-from twitter.deepbird.hparam import HParams
+from tw ter.deepb rd.hparam  mport HParams
 
-import tensorflow  # noqa: F401
-import tensorflow.compat.v2 as tf
+ mport tensorflow  # noqa: F401
+ mport tensorflow.compat.v2 as tf
 
-import twml
+ mport twml
 
 
-def build_keras_trainer(
-  name,
+def bu ld_keras_tra ner(
+  na ,
   model_factory,
-  save_dir,
+  save_d r,
   loss_fn=None,
-  metrics_fn=None,
+   tr cs_fn=None,
   **kwargs):
   """
-  Compile the given model_factory into a twml Trainer.
+  Comp le t  g ven model_factory  nto a twml Tra ner.
 
   Args:
-    name: a string name for the returned twml Trainer.
+    na : a str ng na  for t  returned twml Tra ner.
 
-    model_factory: a callable that returns a keras model when called.
-      This keras model is expected to solve a binary classification problem.
-      This keras model takes a dict of tensors as input, and outputs a logit or probability.
+    model_factory: a callable that returns a keras model w n called.
+      T  keras model  s expected to solve a b nary class f cat on problem.
+      T  keras model takes a d ct of tensors as  nput, and outputs a log  or probab l y.
 
-    save_dir: a directory where the trainer saves data. Can be an HDFS path.
+    save_d r: a d rectory w re t  tra ner saves data. Can be an HDFS path.
 
-    loss_fn: the loss function to use. Defaults to tf.keras.losses.BinaryCrossentropy.
+    loss_fn: t  loss funct on to use. Defaults to tf.keras.losses.B naryCrossentropy.
 
-    metrics_fn: metrics function used by TensorFlow estimators.
-    Defaults to twml.metrics.get_binary_class_metric_fn().
+     tr cs_fn:  tr cs funct on used by TensorFlow est mators.
+    Defaults to twml. tr cs.get_b nary_class_ tr c_fn().
 
-    **kwargs: for people familiar with twml Trainer's options, they can be passed in here
-      as kwargs, and they will be forwarded to Trainer as opts.
-      See https://cgit.twitter.biz/source/tree/twml/twml/argument_parser.py#n43 for available args.
+    **kwargs: for people fam l ar w h twml Tra ner's opt ons, t y can be passed  n  re
+      as kwargs, and t y w ll be forwarded to Tra ner as opts.
+      See https://cg .tw ter.b z/s ce/tree/twml/twml/argu nt_parser.py#n43 for ava lable args.
 
   Returns:
-    a twml.trainers.Trainer object which can be used for training and exporting models.
+    a twml.tra ners.Tra ner object wh ch can be used for tra n ng and export ng models.
   """
-  build_graph = create_build_graph_fn(model_factory, loss_fn)
+  bu ld_graph = create_bu ld_graph_fn(model_factory, loss_fn)
 
-  if metrics_fn is None:
-    metrics_fn = twml.metrics.get_binary_class_metric_fn()
+   f  tr cs_fn  s None:
+     tr cs_fn = twml. tr cs.get_b nary_class_ tr c_fn()
 
   opts = HParams(**kwargs)
-  opts.add_hparam('save_dir', save_dir)
+  opts.add_hparam('save_d r', save_d r)
 
-  return twml.trainers.Trainer(
-    name,
+  return twml.tra ners.Tra ner(
+    na ,
     opts,
-    build_graph_fn=build_graph,
-    save_dir=save_dir,
-    metric_fn=metrics_fn)
+    bu ld_graph_fn=bu ld_graph,
+    save_d r=save_d r,
+     tr c_fn= tr cs_fn)
 
 
-def create_build_graph_fn(model_factory, loss_fn=None):
-  """Create a build graph function from the given keras model."""
+def create_bu ld_graph_fn(model_factory, loss_fn=None):
+  """Create a bu ld graph funct on from t  g ven keras model."""
 
-  def build_graph(features, label, mode, params, config=None):
+  def bu ld_graph(features, label, mode, params, conf g=None):
     # create model from model factory.
     model = model_factory()
 
-    # create loss function if the user didn't specify one.
-    if loss_fn is None:
-      build_graph_loss_fn = tf.keras.losses.BinaryCrossentropy(from_logits=False)
+    # create loss funct on  f t  user d dn't spec fy one.
+     f loss_fn  s None:
+      bu ld_graph_loss_fn = tf.keras.losses.B naryCrossentropy(from_log s=False)
     else:
-      build_graph_loss_fn = loss_fn
+      bu ld_graph_loss_fn = loss_fn
 
     output = model(features)
-    if mode == 'infer':
+     f mode == ' nfer':
       loss = None
     else:
-      weights = features.get('weights', None)
-      loss = build_graph_loss_fn(y_true=label, y_pred=output, sample_weight=weights)
+        ghts = features.get('  ghts', None)
+      loss = bu ld_graph_loss_fn(y_true=label, y_pred=output, sample_  ght=  ghts)
 
-    if isinstance(output, dict):
-      if loss is None:
+     f  s nstance(output, d ct):
+       f loss  s None:
         return output
       else:
         output['loss'] = loss
@@ -108,4 +108,4 @@ def create_build_graph_fn(model_factory, loss_fn=None):
     else:
       return {'output': output, 'loss': loss}
 
-  return build_graph
+  return bu ld_graph

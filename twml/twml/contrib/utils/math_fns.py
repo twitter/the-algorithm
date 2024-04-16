@@ -1,171 +1,171 @@
-import tensorflow.compat.v1 as tf
-from tensorflow.python.ops import array_ops, math_ops
+ mport tensorflow.compat.v1 as tf
+from tensorflow.python.ops  mport array_ops, math_ops
 
 
-# Copied from metrics_impl.py
-# https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/ops/metrics_impl.py#L216
-def safe_div(numerator, denominator, name=None):
+# Cop ed from  tr cs_ mpl.py
+# https://g hub.com/tensorflow/tensorflow/blob/master/tensorflow/python/ops/ tr cs_ mpl.py#L216
+def safe_d v(nu rator, denom nator, na =None):
   """
-  Example usage: calculating NDCG = DCG / IDCG to handle cases when
-  IDCG = 0 returns 0 instead of Infinity 
-  Do not use this dividing funciton unless it makes sense to your problem
-  Divides two tensors element-wise, returns 0 if the denominator is <= 0.
+  Example usage: calculat ng NDCG = DCG /  DCG to handle cases w n
+   DCG = 0 returns 0  nstead of  nf n y 
+  Do not use t  d v d ng func on unless   makes sense to y  problem
+  D v des two tensors ele nt-w se, returns 0  f t  denom nator  s <= 0.
   Args:
-    numerator: a real `Tensor`.
-    denominator: a real `Tensor`, with dtype matching `numerator`.
-    name: Name for the returned op.
+    nu rator: a real `Tensor`.
+    denom nator: a real `Tensor`, w h dtype match ng `nu rator`.
+    na : Na  for t  returned op.
   Returns:
-    0 if `denominator` <= 0, else `numerator` / `denominator`
+    0  f `denom nator` <= 0, else `nu rator` / `denom nator`
   """
-  t = math_ops.truediv(numerator, denominator)
-  zero = array_ops.zeros_like(t, dtype=denominator.dtype)
-  condition = math_ops.greater(denominator, zero)
+  t = math_ops.trued v(nu rator, denom nator)
+  zero = array_ops.zeros_l ke(t, dtype=denom nator.dtype)
+  cond  on = math_ops.greater(denom nator, zero)
   zero = math_ops.cast(zero, t.dtype)
-  return array_ops.where(condition, t, zero, name=name)
+  return array_ops.w re(cond  on, t, zero, na =na )
 
 
-def cal_ndcg(label_scores, predicted_scores, top_k_int=1):
+def cal_ndcg(label_scores, pred cted_scores, top_k_ nt=1):
   """
-  Calculate NDCG score for top_k_int ranking positions
+  Calculate NDCG score for top_k_ nt rank ng pos  ons
   Args:
     label_scores: a real `Tensor`.
-    predicted_scores: a real `Tensor`, with dtype matching label_scores
-    top_k_int: An int or an int `Tensor`.
+    pred cted_scores: a real `Tensor`, w h dtype match ng label_scores
+    top_k_ nt: An  nt or an  nt `Tensor`.
   Returns:
-    a `Tensor` that holds DCG / IDCG.
+    a `Tensor` that holds DCG /  DCG.
   """
-  sorted_labels, predicted_order = _get_ranking_orders(
-    label_scores, predicted_scores, top_k_int=top_k_int)
+  sorted_labels, pred cted_order = _get_rank ng_orders(
+    label_scores, pred cted_scores, top_k_ nt=top_k_ nt)
 
-  predicted_relevance = _get_relevance_scores(predicted_order)
+  pred cted_relevance = _get_relevance_scores(pred cted_order)
   sorted_relevance = _get_relevance_scores(sorted_labels)
 
-  cg_discount = _get_cg_discount(top_k_int)
+  cg_d scount = _get_cg_d scount(top_k_ nt)
 
-  dcg = _dcg_idcg(predicted_relevance, cg_discount)
-  idcg = _dcg_idcg(sorted_relevance, cg_discount)
-  # the ndcg score of the batch
-  # idcg is 0 if label_scores are all 0
-  ndcg = safe_div(dcg, idcg, 'one_ndcg')
+  dcg = _dcg_ dcg(pred cted_relevance, cg_d scount)
+   dcg = _dcg_ dcg(sorted_relevance, cg_d scount)
+  # t  ndcg score of t  batch
+  #  dcg  s 0  f label_scores are all 0
+  ndcg = safe_d v(dcg,  dcg, 'one_ndcg')
   return ndcg
 
 
-def cal_swapped_ndcg(label_scores, predicted_scores, top_k_int):
+def cal_swapped_ndcg(label_scores, pred cted_scores, top_k_ nt):
   """
-  Calculate swapped NDCG score in Lambda Rank for full/top k ranking positions
+  Calculate swapped NDCG score  n Lambda Rank for full/top k rank ng pos  ons
   Args:
     label_scores: a real `Tensor`.
-    predicted_scores: a real `Tensor`, with dtype matching label_scores
-    top_k_int: An int or an int `Tensor`. 
+    pred cted_scores: a real `Tensor`, w h dtype match ng label_scores
+    top_k_ nt: An  nt or an  nt `Tensor`. 
   Returns:
     a `Tensor` that holds swapped NDCG by .
   """
-  sorted_labels, predicted_order = _get_ranking_orders(
-    label_scores, predicted_scores, top_k_int=top_k_int)
+  sorted_labels, pred cted_order = _get_rank ng_orders(
+    label_scores, pred cted_scores, top_k_ nt=top_k_ nt)
 
-  predicted_relevance = _get_relevance_scores(predicted_order)
+  pred cted_relevance = _get_relevance_scores(pred cted_order)
   sorted_relevance = _get_relevance_scores(sorted_labels)
 
-  cg_discount = _get_cg_discount(top_k_int)
+  cg_d scount = _get_cg_d scount(top_k_ nt)
 
-  # cg_discount is safe as a denominator
-  dcg_k = predicted_relevance / cg_discount
+  # cg_d scount  s safe as a denom nator
+  dcg_k = pred cted_relevance / cg_d scount
   dcg = tf.reduce_sum(dcg_k)
 
-  idcg_k = sorted_relevance / cg_discount
-  idcg = tf.reduce_sum(idcg_k)
+   dcg_k = sorted_relevance / cg_d scount
+   dcg = tf.reduce_sum( dcg_k)
 
-  ndcg = safe_div(dcg, idcg, 'ndcg_in_lambdarank_training')
+  ndcg = safe_d v(dcg,  dcg, 'ndcg_ n_lambdarank_tra n ng')
 
-  # remove the gain from label i then add the gain from label j
-  tiled_ij = tf.tile(dcg_k, [1, top_k_int])
-  new_ij = (predicted_relevance / tf.transpose(cg_discount))
+  # remove t  ga n from label   t n add t  ga n from label j
+  t led_ j = tf.t le(dcg_k, [1, top_k_ nt])
+  new_ j = (pred cted_relevance / tf.transpose(cg_d scount))
 
-  tiled_ji = tf.tile(tf.transpose(dcg_k), [top_k_int, 1])
-  new_ji = tf.transpose(predicted_relevance) / cg_discount
+  t led_j  = tf.t le(tf.transpose(dcg_k), [top_k_ nt, 1])
+  new_j  = tf.transpose(pred cted_relevance) / cg_d scount
 
-  # if swap i and j, remove the stale cg for i, then add the new cg for i,
-  # remove the stale cg for j, and then add the new cg for j
-  new_dcg = dcg - tiled_ij + new_ij - tiled_ji + new_ji
+  #  f swap   and j, remove t  stale cg for  , t n add t  new cg for  ,
+  # remove t  stale cg for j, and t n add t  new cg for j
+  new_dcg = dcg - t led_ j + new_ j - t led_j  + new_j 
 
-  new_ndcg = safe_div(new_dcg, idcg, 'new_ndcg_in_lambdarank_training')
+  new_ndcg = safe_d v(new_dcg,  dcg, 'new_ndcg_ n_lambdarank_tra n ng')
   swapped_ndcg = tf.abs(ndcg - new_ndcg)
   return swapped_ndcg
 
 
-def _dcg_idcg(relevance_scores, cg_discount):
+def _dcg_ dcg(relevance_scores, cg_d scount):
   """
-  Calculate DCG scores for top_k_int ranking positions
+  Calculate DCG scores for top_k_ nt rank ng pos  ons
   Args:
     relevance_scores: a real `Tensor`.
-    cg_discount: a real `Tensor`, with dtype matching relevance_scores
+    cg_d scount: a real `Tensor`, w h dtype match ng relevance_scores
   Returns:
-    a `Tensor` that holds \\sum_{i=1}^k \frac{relevance_scores_k}{cg_discount}  
+    a `Tensor` that holds \\sum_{ =1}^k \frac{relevance_scores_k}{cg_d scount}  
   """
-  # cg_discount is safe
-  dcg_k = relevance_scores / cg_discount
+  # cg_d scount  s safe
+  dcg_k = relevance_scores / cg_d scount
   return tf.reduce_sum(dcg_k)
 
 
-def _get_ranking_orders(label_scores, predicted_scores, top_k_int=1):
+def _get_rank ng_orders(label_scores, pred cted_scores, top_k_ nt=1):
   """
-  Calculate DCG scores for top_k_int ranking positions
+  Calculate DCG scores for top_k_ nt rank ng pos  ons
   Args:
     label_scores: a real `Tensor`.
-    predicted_scores: a real `Tensor`, with dtype matching label_scores
-    top_k_int: an integer or an int `Tensor`.
+    pred cted_scores: a real `Tensor`, w h dtype match ng label_scores
+    top_k_ nt: an  nteger or an  nt `Tensor`.
   Returns:
-    two `Tensors` that hold sorted_labels: the ground truth relevance socres
-    and predicted_order: relevance socres based on sorted predicted_scores
+    two `Tensors` that hold sorted_labels: t  ground truth relevance socres
+    and pred cted_order: relevance socres based on sorted pred cted_scores
   """
-  # sort predictions_scores and label_scores
-  # size [batch_size/num of DataRecords, 1]
+  # sort pred ct ons_scores and label_scores
+  # s ze [batch_s ze/num of DataRecords, 1]
   label_scores = tf.reshape(label_scores, [-1, 1])
-  predicted_scores = tf.reshape(predicted_scores, [-1, 1])
-  # sorted_labels contians the relevance scores of the correct order
-  sorted_labels, ordered_labels_indices = tf.nn.top_k(
-    tf.transpose(label_scores), k=top_k_int)
+  pred cted_scores = tf.reshape(pred cted_scores, [-1, 1])
+  # sorted_labels cont ans t  relevance scores of t  correct order
+  sorted_labels, ordered_labels_ nd ces = tf.nn.top_k(
+    tf.transpose(label_scores), k=top_k_ nt)
   sorted_labels = tf.transpose(sorted_labels)
-  # sort predicitons and use the indices to obtain the relevance scores of the predicted order
-  sorted_predictions, ordered_predictions_indices = tf.nn.top_k(
-    tf.transpose(predicted_scores), k=top_k_int)
-  ordered_predictions_indices_for_labels = tf.transpose(ordered_predictions_indices)
-  # predicted_order contians the relevance scores of the predicted order
-  predicted_order = tf.gather_nd(label_scores, ordered_predictions_indices_for_labels)
-  return sorted_labels, predicted_order
+  # sort pred c ons and use t   nd ces to obta n t  relevance scores of t  pred cted order
+  sorted_pred ct ons, ordered_pred ct ons_ nd ces = tf.nn.top_k(
+    tf.transpose(pred cted_scores), k=top_k_ nt)
+  ordered_pred ct ons_ nd ces_for_labels = tf.transpose(ordered_pred ct ons_ nd ces)
+  # pred cted_order cont ans t  relevance scores of t  pred cted order
+  pred cted_order = tf.gat r_nd(label_scores, ordered_pred ct ons_ nd ces_for_labels)
+  return sorted_labels, pred cted_order
 
 
-def _get_cg_discount(top_k_int=1):
+def _get_cg_d scount(top_k_ nt=1):
   r"""
-  Calculate discounted gain factor for ranking position till top_k_int
+  Calculate d scounted ga n factor for rank ng pos  on t ll top_k_ nt
   Args:
-    top_k_int: An int or an int `Tensor`.
+    top_k_ nt: An  nt or an  nt `Tensor`.
   Returns:
-    a `Tensor` that holds \log_{2}(i + 1), i \in [1, k] 
+    a `Tensor` that holds \log_{2}(  + 1),   \ n [1, k] 
   """
   log_2 = tf.log(tf.constant(2.0, dtype=tf.float32))
-  # top_k_range needs to start from 1 to top_k_int
-  top_k_range = tf.range(top_k_int) + 1
+  # top_k_range needs to start from 1 to top_k_ nt
+  top_k_range = tf.range(top_k_ nt) + 1
   top_k_range = tf.reshape(top_k_range, [-1, 1])
   # cast top_k_range to float
   top_k_range = tf.cast(top_k_range, dtype=tf.float32)
-  cg_discount = tf.log(top_k_range + 1.0) / log_2
-  return cg_discount
+  cg_d scount = tf.log(top_k_range + 1.0) / log_2
+  return cg_d scount
 
 
 def _get_relevance_scores(scores):
   return 2 ** scores - 1
 
 
-def safe_log(raw_scores, name=None):
+def safe_log(raw_scores, na =None):
   """
-  Calculate log of a tensor, handling cases that
+  Calculate log of a tensor, handl ng cases that
   raw_scores are close to 0s
   Args:
     raw_scores: An float `Tensor`.
   Returns:
-    A float `Tensor` that hols the safe log base e of input
+    A float `Tensor` that hols t  safe log base e of  nput
   """
-  epsilon = 1E-8
-  clipped_raw_scores = tf.maximum(raw_scores, epsilon)
-  return tf.log(clipped_raw_scores)
+  eps lon = 1E-8
+  cl pped_raw_scores = tf.max mum(raw_scores, eps lon)
+  return tf.log(cl pped_raw_scores)

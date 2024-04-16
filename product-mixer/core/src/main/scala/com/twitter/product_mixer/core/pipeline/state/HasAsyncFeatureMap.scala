@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.pipeline.state
+package com.tw ter.product_m xer.core.p pel ne.state
 
-import com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap.AsyncFeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.asyncfeaturemap.AsyncFeatureMap
 
-trait HasAsyncFeatureMap[State] {
+tra  HasAsyncFeatureMap[State] {
   def asyncFeatureMap: AsyncFeatureMap
 
-  private[core] def addAsyncFeatureMap(newFeatureMap: AsyncFeatureMap): State
+  pr vate[core] def addAsyncFeatureMap(newFeatureMap: AsyncFeatureMap): State
 }

@@ -1,10 +1,10 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.tw ter.fr gate.pushserv ce.model.ntab
 
-import com.twitter.notificationservice.thriftscala.CreateGenericNotificationRequest
-import com.twitter.util.Future
+ mport com.tw ter.not f cat onserv ce.thr ftscala.CreateGener cNot f cat onRequest
+ mport com.tw ter.ut l.Future
 
-trait NTabRequest {
+tra  NTabRequest {
 
-  def ntabRequest: Future[Option[CreateGenericNotificationRequest]]
+  def ntabRequest: Future[Opt on[CreateGener cNot f cat onRequest]]
 
 }

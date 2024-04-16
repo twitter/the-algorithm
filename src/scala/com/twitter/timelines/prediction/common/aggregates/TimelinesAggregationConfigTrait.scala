@@ -1,50 +1,50 @@
-package com.twitter.timelines.prediction.common.aggregates
+package com.tw ter.t  l nes.pred ct on.common.aggregates
 
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationConfig
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateGroup
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.Aggregat onConf g
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.AggregateGroup
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.TypedAggregateGroup
 
-trait TimelinesAggregationConfigTrait
-    extends TimelinesAggregationConfigDetails
-    with AggregationConfig {
-  private val aggregateGroups = Set(
-    authorTopicAggregates,
-    userTopicAggregates,
-    userTopicAggregatesV2,
-    userInferredTopicAggregates,
-    userInferredTopicAggregatesV2,
+tra  T  l nesAggregat onConf gTra 
+    extends T  l nesAggregat onConf gDeta ls
+    w h Aggregat onConf g {
+  pr vate val aggregateGroups = Set(
+    authorTop cAggregates,
+    userTop cAggregates,
+    userTop cAggregatesV2,
+    user nferredTop cAggregates,
+    user nferredTop cAggregatesV2,
     userAggregatesV2,
-    userAggregatesV5Continuous,
-    userReciprocalEngagementAggregates,
+    userAggregatesV5Cont nuous,
+    userRec procalEngage ntAggregates,
     userAuthorAggregatesV5,
-    userOriginalAuthorReciprocalEngagementAggregates,
-    originalAuthorReciprocalEngagementAggregates,
-    tweetSourceUserAuthorAggregatesV1,
+    userOr g nalAuthorRec procalEngage ntAggregates,
+    or g nalAuthorRec procalEngage ntAggregates,
+    t etS ceUserAuthorAggregatesV1,
     userEngagerAggregates,
-    userMentionAggregates,
-    twitterWideUserAggregates,
-    twitterWideUserAuthorAggregates,
-    userRequestHourAggregates,
+    user nt onAggregates,
+    tw terW deUserAggregates,
+    tw terW deUserAuthorAggregates,
+    userRequestH Aggregates,
     userRequestDowAggregates,
-    userListAggregates,
-    userMediaUnderstandingAnnotationAggregates,
+    userL stAggregates,
+    user d aUnderstand ngAnnotat onAggregates,
   ) ++ userAuthorAggregatesV2
 
-  val aggregatesToComputeList: Set[List[TypedAggregateGroup[_]]] =
-    aggregateGroups.map(_.buildTypedAggregateGroups())
+  val aggregatesToComputeL st: Set[L st[TypedAggregateGroup[_]]] =
+    aggregateGroups.map(_.bu ldTypedAggregateGroups())
 
-  override val aggregatesToCompute: Set[TypedAggregateGroup[_]] = aggregatesToComputeList.flatten
+  overr de val aggregatesToCompute: Set[TypedAggregateGroup[_]] = aggregatesToComputeL st.flatten
 
   /*
-   * Feature selection config to save storage space and manhattan query bandwidth.
-   * Only the most important features found using offline RCE simulations are used
-   * when actually training and serving. This selector is used by
-   * [[com.twitter.timelines.data_processing.jobs.timeline_ranking_user_features.TimelineRankingAggregatesV2FeaturesProdJob]]
-   * but defined here to keep it in sync with the config that computes the aggregates.
+   * Feature select on conf g to save storage space and manhattan query bandw dth.
+   * Only t  most  mportant features found us ng offl ne RCE s mulat ons are used
+   * w n actually tra n ng and serv ng. T  selector  s used by
+   * [[com.tw ter.t  l nes.data_process ng.jobs.t  l ne_rank ng_user_features.T  l neRank ngAggregatesV2FeaturesProdJob]]
+   * but def ned  re to keep    n sync w h t  conf g that computes t  aggregates.
    */
-  val AggregatesV2FeatureSelector = FeatureSelectorConfig.AggregatesV2ProdFeatureSelector
+  val AggregatesV2FeatureSelector = FeatureSelectorConf g.AggregatesV2ProdFeatureSelector
 
-  def filterAggregatesGroups(storeNames: Set[String]): Set[AggregateGroup] = {
-    aggregateGroups.filter(aggregateGroup => storeNames.contains(aggregateGroup.outputStore.name))
+  def f lterAggregatesGroups(storeNa s: Set[Str ng]): Set[AggregateGroup] = {
+    aggregateGroups.f lter(aggregateGroup => storeNa s.conta ns(aggregateGroup.outputStore.na ))
   }
 }

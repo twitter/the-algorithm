@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted
 
-sealed trait SponsorshipType
+sealed tra  Sponsorsh pType
 
-case object DirectSponsorshipType extends SponsorshipType
-case object IndirectSponsorshipType extends SponsorshipType
-case object NoSponsorshipSponsorshipType extends SponsorshipType
+case object D rectSponsorsh pType extends Sponsorsh pType
+case object  nd rectSponsorsh pType extends Sponsorsh pType
+case object NoSponsorsh pSponsorsh pType extends Sponsorsh pType

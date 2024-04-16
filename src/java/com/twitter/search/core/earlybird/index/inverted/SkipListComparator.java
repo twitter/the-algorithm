@@ -1,43 +1,43 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
 /**
- * Comparator interface for {@link SkipListContainer},
- * see sample implementation {@link SkipListIntegerComparator}.
+ * Comparator  nterface for {@l nk Sk pL stConta ner},
+ * see sample  mple ntat on {@l nk Sk pL st ntegerComparator}.
  *
- * Notice: less/equal/greater here refer to the order precedence, instead of numerical value.
+ * Not ce: less/equal/greater  re refer to t  order precedence,  nstead of nu r cal value.
  */
-public interface SkipListComparator<K> {
+publ c  nterface Sk pL stComparator<K> {
 
   /**
-   * Determine the order between the given key and the key of the given targetValue.
-   * Notice, usually key of a value could be derived from the value along.
+   * Determ ne t  order bet en t  g ven key and t  key of t  g ven targetValue.
+   * Not ce, usually key of a value could be der ved from t  value along.
    *
-   * Implementation of this method should consider sentinel value, see {@link #getSentinelValue()}.
+   *  mple ntat on of t   thod should cons der sent nel value, see {@l nk #getSent nelValue()}.
    *
-   * Can include position data (primarily for text posting lists). Position should be ignored if
-   * the skip list was constructed without positions enabled.
+   * Can  nclude pos  on data (pr mar ly for text post ng l sts). Pos  on should be  gnored  f
+   * t  sk p l st was constructed w hout pos  ons enabled.
    *
-   * @return negative, zero, or positive to indicate if first value is
-   *         less than, equal to, or greater than the second value, respectively.
+   * @return negat ve, zero, or pos  ve to  nd cate  f f rst value  s
+   *         less than, equal to, or greater than t  second value, respect vely.
    */
-  int compareKeyWithValue(K key, int targetValue, int targetPosition);
+   nt compareKeyW hValue(K key,  nt targetValue,  nt targetPos  on);
 
   /**
-   * Determine the order of two given values based on their keys.
-   * Notice, usually key of a value could be derived from the value along.
+   * Determ ne t  order of two g ven values based on t  r keys.
+   * Not ce, usually key of a value could be der ved from t  value along.
    *
-   * Implementation of this method should consider sentinel value, see {@link #getSentinelValue()}.
+   *  mple ntat on of t   thod should cons der sent nel value, see {@l nk #getSent nelValue()}.
    *
-   * @return negative, zero, or positive to indicate if first value is
-   *         less than, equal to, or greater than the second value, respectively.
+   * @return negat ve, zero, or pos  ve to  nd cate  f f rst value  s
+   *         less than, equal to, or greater than t  second value, respect vely.
    */
-  int compareValues(int v1, int v2);
+   nt compareValues( nt v1,  nt v2);
 
   /**
-   * Return a sentinel value, sentinel value should be considered by this comparator
-   * as an ADVISORY GREATEST value, which should NOT be actually inserted into the skip list.
+   * Return a sent nel value, sent nel value should be cons dered by t  comparator
+   * as an ADV SORY GREATEST value, wh ch should NOT be actually  nserted  nto t  sk p l st.
    *
-   * @return the sentinel value.
+   * @return t  sent nel value.
    */
-  int getSentinelValue();
+   nt getSent nelValue();
 }

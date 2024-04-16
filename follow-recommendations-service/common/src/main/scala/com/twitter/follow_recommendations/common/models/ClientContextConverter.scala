@@ -1,53 +1,53 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => frs}
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
+ mport com.tw ter.follow_recom ndat ons.logg ng.{thr ftscala => offl ne}
+ mport com.tw ter.follow_recom ndat ons.{thr ftscala => frs}
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Cl entContext
 
-object ClientContextConverter {
-  def toFRSOfflineClientContextThrift(
-    productMixerClientContext: ClientContext
-  ): offline.OfflineClientContext =
-    offline.OfflineClientContext(
-      productMixerClientContext.userId,
-      productMixerClientContext.guestId,
-      productMixerClientContext.appId,
-      productMixerClientContext.countryCode,
-      productMixerClientContext.languageCode,
-      productMixerClientContext.guestIdAds,
-      productMixerClientContext.guestIdMarketing
+object Cl entContextConverter {
+  def toFRSOffl neCl entContextThr ft(
+    productM xerCl entContext: Cl entContext
+  ): offl ne.Offl neCl entContext =
+    offl ne.Offl neCl entContext(
+      productM xerCl entContext.user d,
+      productM xerCl entContext.guest d,
+      productM xerCl entContext.app d,
+      productM xerCl entContext.countryCode,
+      productM xerCl entContext.languageCode,
+      productM xerCl entContext.guest dAds,
+      productM xerCl entContext.guest dMarket ng
     )
 
-  def fromThrift(clientContext: frs.ClientContext): ClientContext = ClientContext(
-    userId = clientContext.userId,
-    guestId = clientContext.guestId,
-    appId = clientContext.appId,
-    ipAddress = clientContext.ipAddress,
-    userAgent = clientContext.userAgent,
-    countryCode = clientContext.countryCode,
-    languageCode = clientContext.languageCode,
-    isTwoffice = clientContext.isTwoffice,
-    userRoles = clientContext.userRoles.map(_.toSet),
-    deviceId = clientContext.deviceId,
-    guestIdAds = clientContext.guestIdAds,
-    guestIdMarketing = clientContext.guestIdMarketing,
-    mobileDeviceId = None,
-    mobileDeviceAdId = None,
-    limitAdTracking = None
+  def fromThr ft(cl entContext: frs.Cl entContext): Cl entContext = Cl entContext(
+    user d = cl entContext.user d,
+    guest d = cl entContext.guest d,
+    app d = cl entContext.app d,
+     pAddress = cl entContext. pAddress,
+    userAgent = cl entContext.userAgent,
+    countryCode = cl entContext.countryCode,
+    languageCode = cl entContext.languageCode,
+     sTwoff ce = cl entContext. sTwoff ce,
+    userRoles = cl entContext.userRoles.map(_.toSet),
+    dev ce d = cl entContext.dev ce d,
+    guest dAds = cl entContext.guest dAds,
+    guest dMarket ng = cl entContext.guest dMarket ng,
+    mob leDev ce d = None,
+    mob leDev ceAd d = None,
+    l m AdTrack ng = None
   )
 
-  def toThrift(clientContext: ClientContext): frs.ClientContext = frs.ClientContext(
-    userId = clientContext.userId,
-    guestId = clientContext.guestIdAds,
-    appId = clientContext.appId,
-    ipAddress = clientContext.ipAddress,
-    userAgent = clientContext.userAgent,
-    countryCode = clientContext.countryCode,
-    languageCode = clientContext.languageCode,
-    isTwoffice = clientContext.isTwoffice,
-    userRoles = clientContext.userRoles,
-    deviceId = clientContext.deviceId,
-    guestIdAds = clientContext.guestIdAds,
-    guestIdMarketing = clientContext.guestIdMarketing
+  def toThr ft(cl entContext: Cl entContext): frs.Cl entContext = frs.Cl entContext(
+    user d = cl entContext.user d,
+    guest d = cl entContext.guest dAds,
+    app d = cl entContext.app d,
+     pAddress = cl entContext. pAddress,
+    userAgent = cl entContext.userAgent,
+    countryCode = cl entContext.countryCode,
+    languageCode = cl entContext.languageCode,
+     sTwoff ce = cl entContext. sTwoff ce,
+    userRoles = cl entContext.userRoles,
+    dev ce d = cl entContext.dev ce d,
+    guest dAds = cl entContext.guest dAds,
+    guest dMarket ng = cl entContext.guest dMarket ng
   )
 }

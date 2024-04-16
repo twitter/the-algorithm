@@ -1,9 +1,9 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
-        "util/util-core/src/main/scala/com/twitter/conversions",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "follow-recom ndat ons-serv ce/common/src/ma n/scala/com/tw ter/follow_recom ndat ons/common/models",
+        "ut l/ut l-core/src/ma n/scala/com/tw ter/convers ons",
     ],
 )

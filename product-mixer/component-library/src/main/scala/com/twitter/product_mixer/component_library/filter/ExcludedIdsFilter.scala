@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.component_library.filter
+package com.tw ter.product_m xer.component_l brary.f lter
 
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasExcludedIds
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lterResult
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasExcluded ds
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
-case class ExcludedIdsFilter[
-  Query <: PipelineQuery with HasExcludedIds,
-  Candidate <: UniversalNoun[Long]
-]() extends Filter[Query, Candidate] {
-  override val identifier: FilterIdentifier = FilterIdentifier("ExcludedIds")
+case class Excluded dsF lter[
+  Query <: P pel neQuery w h HasExcluded ds,
+  Cand date <: Un versalNoun[Long]
+]() extends F lter[Query, Cand date] {
+  overr de val  dent f er: F lter dent f er = F lter dent f er("Excluded ds")
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): St ch[F lterResult[Cand date]] = {
     val (kept, removed) =
-      candidates.map(_.candidate).partition(candidate => !query.excludedIds.contains(candidate.id))
+      cand dates.map(_.cand date).part  on(cand date => !query.excluded ds.conta ns(cand date. d))
 
-    val filterResult = FilterResult(kept = kept, removed = removed)
-    Stitch.value(filterResult)
+    val f lterResult = F lterResult(kept = kept, removed = removed)
+    St ch.value(f lterResult)
   }
 }

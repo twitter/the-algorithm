@@ -1,158 +1,158 @@
-package com.twitter.search.earlybird.search.facets;
+package com.tw ter.search.earlyb rd.search.facets;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+ mport java. o. OExcept on;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.HashMap;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
 
-import com.google.common.collect.Maps;
+ mport com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.facets.FacetIDMap;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.search.AntiGamingFilter;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.ThriftFacetCount;
-import com.twitter.search.earlybird.thrift.ThriftFacetCountMetadata;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
-import com.twitter.search.earlybird.thrift.ThriftFacetResults;
+ mport com.tw ter.common.collect ons.Pa r;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.core.earlyb rd.facets.Facet DMap;
+ mport com.tw ter.search.core.earlyb rd.facets.FacetLabelProv der;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
+ mport com.tw ter.search.earlyb rd.search.Ant Gam ngF lter;
+ mport com.tw ter.search.earlyb rd.stats.Earlyb rdSearc rStats;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetCount;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetCount tadata;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetF eldResults;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetResults;
 
-public class ExplainFacetResultsCollector extends FacetResultsCollector {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(ExplainFacetResultsCollector.class.getName());
+publ c class Expla nFacetResultsCollector extends FacetResultsCollector {
+  pr vate stat c f nal Logger LOG =
+      LoggerFactory.getLogger(Expla nFacetResultsCollector.class.getNa ());
 
-  protected final List<Pair<Integer, Long>> proofs;
-  protected final Map<String, Map<String, List<Long>>> proofAccumulators;
+  protected f nal L st<Pa r< nteger, Long>> proofs;
+  protected f nal Map<Str ng, Map<Str ng, L st<Long>>> proofAccumulators;
 
-  protected Map<String, FacetLabelProvider> facetLabelProviders;
-  private FacetIDMap facetIDMap;
+  protected Map<Str ng, FacetLabelProv der> facetLabelProv ders;
+  pr vate Facet DMap facet DMap;
 
   /**
-   * Creates a new facet collector with the ability to provide explanations for the search results.
+   * Creates a new facet collector w h t  ab l y to prov de explanat ons for t  search results.
    */
-  public ExplainFacetResultsCollector(
-      ImmutableSchemaInterface schema,
-      FacetSearchRequestInfo searchRequestInfo,
-      AntiGamingFilter antiGamingFilter,
-      EarlybirdSearcherStats searcherStats,
+  publ c Expla nFacetResultsCollector(
+       mmutableSc ma nterface sc ma,
+      FacetSearchRequest nfo searchRequest nfo,
+      Ant Gam ngF lter ant Gam ngF lter,
+      Earlyb rdSearc rStats searc rStats,
       Clock clock,
-      int requestDebugMode) throws IOException {
-    super(schema, searchRequestInfo, antiGamingFilter, searcherStats, clock, requestDebugMode);
+       nt requestDebugMode) throws  OExcept on {
+    super(sc ma, searchRequest nfo, ant Gam ngF lter, searc rStats, clock, requestDebugMode);
 
-    proofs = new ArrayList<>(128);
+    proofs = new ArrayL st<>(128);
 
     proofAccumulators = Maps.newHashMap();
-    for (Schema.FieldInfo facetField : schema.getFacetFields()) {
-      HashMap<String, List<Long>> fieldLabelToTweetIdsMap = new HashMap<>();
-      proofAccumulators.put(facetField.getFieldType().getFacetName(), fieldLabelToTweetIdsMap);
+    for (Sc ma.F eld nfo facetF eld : sc ma.getFacetF elds()) {
+      HashMap<Str ng, L st<Long>> f eldLabelToT et dsMap = new HashMap<>();
+      proofAccumulators.put(facetF eld.getF eldType().getFacetNa (), f eldLabelToT et dsMap);
     }
   }
 
-  @Override
-  protected Accumulator newPerSegmentAccumulator(EarlybirdIndexSegmentAtomicReader indexReader) {
-    Accumulator accumulator = super.newPerSegmentAccumulator(indexReader);
+  @Overr de
+  protected Accumulator newPerSeg ntAccumulator(Earlyb rd ndexSeg ntAtom cReader  ndexReader) {
+    Accumulator accumulator = super.newPerSeg ntAccumulator( ndexReader);
     accumulator.accessor.setProofs(proofs);
-    facetLabelProviders = indexReader.getFacetLabelProviders();
-    facetIDMap = indexReader.getFacetIDMap();
+    facetLabelProv ders =  ndexReader.getFacetLabelProv ders();
+    facet DMap =  ndexReader.getFacet DMap();
 
     return accumulator;
   }
 
-  @Override
-  public void doCollect(long tweetID) throws IOException {
+  @Overr de
+  publ c vo d doCollect(long t et D) throws  OExcept on {
     proofs.clear();
 
-    // FacetResultsCollector.doCollect() calls FacetScorer.incrementCounts(),
-    // FacetResultsCollector.doCollect() creates a FacetResultsCollector.Accumulator, if
-    // necessary, which contains the accessor (a CompositeFacetIterator) and accumulators
-    // (FacetAccumulator of each field)
-    super.doCollect(tweetID);
+    // FacetResultsCollector.doCollect() calls FacetScorer. ncre ntCounts(),
+    // FacetResultsCollector.doCollect() creates a FacetResultsCollector.Accumulator,  f
+    // necessary, wh ch conta ns t  accessor (a Compos eFacet erator) and accumulators
+    // (FacetAccumulator of each f eld)
+    super.doCollect(t et D);
 
-    for (Pair<Integer, Long> fieldIdTermIdPair : proofs) {
-      int fieldID = fieldIdTermIdPair.getFirst();
-      long termID = fieldIdTermIdPair.getSecond();
+    for (Pa r< nteger, Long> f eld dTerm dPa r : proofs) {
+       nt f eld D = f eld dTerm dPa r.getF rst();
+      long term D = f eld dTerm dPa r.getSecond();
 
-      // Convert term ID to the term text, a.k.a. facet label
-      String facetName = facetIDMap.getFacetFieldByFacetID(fieldID).getFacetName();
-      if (facetName != null) {
-        String facetLabel = facetLabelProviders.get(facetName)
-                .getLabelAccessor().getTermText(termID);
+      // Convert term  D to t  term text, a.k.a. facet label
+      Str ng facetNa  = facet DMap.getFacetF eldByFacet D(f eld D).getFacetNa ();
+       f (facetNa  != null) {
+        Str ng facetLabel = facetLabelProv ders.get(facetNa )
+                .getLabelAccessor().getTermText(term D);
 
-        List<Long> tweetIDs = proofAccumulators.get(facetName).get(facetLabel);
-        if (tweetIDs == null) {
-          tweetIDs = new ArrayList<>();
-          proofAccumulators.get(facetName).put(facetLabel, tweetIDs);
+        L st<Long> t et Ds = proofAccumulators.get(facetNa ).get(facetLabel);
+         f (t et Ds == null) {
+          t et Ds = new ArrayL st<>();
+          proofAccumulators.get(facetNa ).put(facetLabel, t et Ds);
         }
 
-        tweetIDs.add(tweetID);
+        t et Ds.add(t et D);
       }
     }
 
-    // clear it again just to be sure
+    // clear   aga n just to be sure
     proofs.clear();
   }
 
   /**
-   * Sets explanations for the facet results.
+   * Sets explanat ons for t  facet results.
    */
-  public void setExplanations(ThriftFacetResults facetResults) {
-    StringBuilder explanation = new StringBuilder();
+  publ c vo d setExplanat ons(Thr ftFacetResults facetResults) {
+    Str ngBu lder explanat on = new Str ngBu lder();
 
-    for (Map.Entry<String, ThriftFacetFieldResults> facetFieldResultsEntry
-            : facetResults.getFacetFields().entrySet()) {
-      String facetName = facetFieldResultsEntry.getKey();
-      ThriftFacetFieldResults facetFieldResults = facetFieldResultsEntry.getValue();
+    for (Map.Entry<Str ng, Thr ftFacetF eldResults> facetF eldResultsEntry
+            : facetResults.getFacetF elds().entrySet()) {
+      Str ng facetNa  = facetF eldResultsEntry.getKey();
+      Thr ftFacetF eldResults facetF eldResults = facetF eldResultsEntry.getValue();
 
-      Map<String, List<Long>> proofAccumulator = proofAccumulators.get(facetName);
+      Map<Str ng, L st<Long>> proofAccumulator = proofAccumulators.get(facetNa );
 
-      if (proofAccumulator == null) {
-        // did not accumulate explanation for this facet type? a bug?
-        LOG.warn("No explanation accumulated for facet type " + facetName);
-        continue;
+       f (proofAccumulator == null) {
+        // d d not accumulate explanat on for t  facet type? a bug?
+        LOG.warn("No explanat on accumulated for facet type " + facetNa );
+        cont nue;
       }
 
-      for (ThriftFacetCount facetCount : facetFieldResults.getTopFacets()) {
-        String facetLabel = facetCount.getFacetLabel(); // a.k.a. term text
-        ThriftFacetCountMetadata metadata = facetCount.getMetadata();
+      for (Thr ftFacetCount facetCount : facetF eldResults.getTopFacets()) {
+        Str ng facetLabel = facetCount.getFacetLabel(); // a.k.a. term text
+        Thr ftFacetCount tadata  tadata = facetCount.get tadata();
 
-        List<Long> tweetIDs = proofAccumulator.get(facetLabel);
-        if (tweetIDs == null) {
-          // did not accumulate explanation for this facet label? a bug?
-          LOG.warn("No explanation accumulated for " + facetLabel + " of facet type " + facetName);
-          continue;
+        L st<Long> t et Ds = proofAccumulator.get(facetLabel);
+         f (t et Ds == null) {
+          // d d not accumulate explanat on for t  facet label? a bug?
+          LOG.warn("No explanat on accumulated for " + facetLabel + " of facet type " + facetNa );
+          cont nue;
         }
 
-        explanation.setLength(0);
-        String oldExplanation = null;
-        if (metadata.isSetExplanation()) {
-          // save the old explanation from TwitterInMemoryIndexSearcher.fillTermMetadata()
-          oldExplanation = metadata.getExplanation();
-          // as of 2012/05/29, we have 18 digits tweet IDs
-          explanation.ensureCapacity(oldExplanation.length() + (18 + 2) + 10);
+        explanat on.setLength(0);
+        Str ng oldExplanat on = null;
+         f ( tadata. sSetExplanat on()) {
+          // save t  old explanat on from Tw ter n mory ndexSearc r.f llTerm tadata()
+          oldExplanat on =  tadata.getExplanat on();
+          // as of 2012/05/29,   have 18 d g s t et  Ds
+          explanat on.ensureCapac y(oldExplanat on.length() + (18 + 2) + 10);
         } else {
-          // as of 2012/05/29, we have 18 digits tweet IDs
-          explanation.ensureCapacity(tweetIDs.size() * (18 + 2) + 10);
+          // as of 2012/05/29,   have 18 d g s t et  Ds
+          explanat on.ensureCapac y(t et Ds.s ze() * (18 + 2) + 10);
         }
 
-        explanation.append("[");
-        for (Long tweetID : tweetIDs) {
-          explanation.append(tweetID)
+        explanat on.append("[");
+        for (Long t et D : t et Ds) {
+          explanat on.append(t et D)
                   .append(", ");
         }
-        explanation.setLength(explanation.length() - 2); // remove the last ", "
-        explanation.append("]\n");
-        if (oldExplanation != null) {
-          explanation.append(oldExplanation);
+        explanat on.setLength(explanat on.length() - 2); // remove t  last ", "
+        explanat on.append("]\n");
+         f (oldExplanat on != null) {
+          explanat on.append(oldExplanat on);
         }
-        metadata.setExplanation(explanation.toString());
+         tadata.setExplanat on(explanat on.toStr ng());
       }
     }
   }

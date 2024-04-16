@@ -1,102 +1,102 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package handler
 
-import com.twitter.finagle.stats.Stat
-import com.twitter.flockdb.client._
-import com.twitter.servo.util.FutureArrow
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.f nagle.stats.Stat
+ mport com.tw ter.flockdb.cl ent._
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t etyp e.thr ftscala._
 
-trait EraseUserTweetsHandler {
+tra  EraseUserT etsHandler {
 
-  val eraseUserTweetsRequest: FutureArrow[EraseUserTweetsRequest, Unit]
+  val eraseUserT etsRequest: FutureArrow[EraseUserT etsRequest, Un ]
 
-  val asyncEraseUserTweetsRequest: FutureArrow[AsyncEraseUserTweetsRequest, Unit]
+  val asyncEraseUserT etsRequest: FutureArrow[AsyncEraseUserT etsRequest, Un ]
 }
 
 /**
- * This library allows you to erase all of a users's tweets. It's used to clean up
- * tweets after a user deletes their account.
+ * T  l brary allows   to erase all of a users's t ets.  's used to clean up
+ * t ets after a user deletes t  r account.
  */
-object EraseUserTweetsHandler {
+object EraseUserT etsHandler {
 
   /**
-   * Build a FutureEffect which, when called, deletes one page worth of tweets at the
-   * specified flock cursor. When the page of tweets has been deleted another asyncEraseUserTweets
-   * request is made with the updated cursor location so that the next page of tweets can be processed.
+   * Bu ld a FutureEffect wh ch, w n called, deletes one page worth of t ets at t 
+   * spec f ed flock cursor. W n t  page of t ets has been deleted anot r asyncEraseUserT ets
+   * request  s made w h t  updated cursor locat on so that t  next page of t ets can be processed.
    */
   def apply(
     selectPage: FutureArrow[Select[StatusGraph], PageResult[Long]],
-    deleteTweet: FutureEffect[(TweetId, UserId)],
-    asyncEraseUserTweets: FutureArrow[AsyncEraseUserTweetsRequest, Unit],
-    stats: StatsReceiver,
-    sleep: () => Future[Unit] = () => Future.Unit
-  ): EraseUserTweetsHandler =
-    new EraseUserTweetsHandler {
+    deleteT et: FutureEffect[(T et d, User d)],
+    asyncEraseUserT ets: FutureArrow[AsyncEraseUserT etsRequest, Un ],
+    stats: StatsRece ver,
+    sleep: () => Future[Un ] = () => Future.Un 
+  ): EraseUserT etsHandler =
+    new EraseUserT etsHandler {
       val latencyStat: Stat = stats.stat("latency_ms")
-      val deletedTweetsStat: Stat = stats.stat("tweets_deleted_for_erased_user")
+      val deletedT etsStat: Stat = stats.stat("t ets_deleted_for_erased_user")
 
-      val selectUserTweets: AsyncEraseUserTweetsRequest => Select[StatusGraph] =
-        (request: AsyncEraseUserTweetsRequest) =>
-          UserTimelineGraph
-            .from(request.userId)
-            .withCursor(Cursor(request.flockCursor))
+      val selectUserT ets: AsyncEraseUserT etsRequest => Select[StatusGraph] =
+        (request: AsyncEraseUserT etsRequest) =>
+          UserT  l neGraph
+            .from(request.user d)
+            .w hCursor(Cursor(request.flockCursor))
 
-      // For a provided list of tweetIds, delete each one sequentially, sleeping between each call
-      // This is a rate limiting mechanism to slow down deletions.
-      def deletePage(page: PageResult[Long], expectedUserId: UserId): Future[Unit] =
-        page.entries.foldLeft(Future.Unit) { (previousFuture, nextId) =>
+      // For a prov ded l st of t et ds, delete each one sequent ally, sleep ng bet en each call
+      // T   s a rate l m  ng  chan sm to slow down delet ons.
+      def deletePage(page: PageResult[Long], expectedUser d: User d): Future[Un ] =
+        page.entr es.foldLeft(Future.Un ) { (prev ousFuture, next d) =>
           for {
-            _ <- previousFuture
+            _ <- prev ousFuture
             _ <- sleep()
-            _ <- deleteTweet((nextId, expectedUserId))
-          } yield ()
+            _ <- deleteT et((next d, expectedUser d))
+          } y eld ()
         }
 
       /**
-       * If we aren't on the last page, make another EraseUserTweets request to delete
-       * the next page of tweets
+       *  f   aren't on t  last page, make anot r EraseUserT ets request to delete
+       * t  next page of t ets
        */
-      val nextRequestOrEnd: (AsyncEraseUserTweetsRequest, PageResult[Long]) => Future[Unit] =
-        (request: AsyncEraseUserTweetsRequest, page: PageResult[Long]) =>
-          if (page.nextCursor.isEnd) {
-            latencyStat.add(Time.fromMilliseconds(request.startTimestamp).untilNow.inMillis)
-            deletedTweetsStat.add(request.tweetCount + page.entries.size)
-            Future.Unit
+      val nextRequestOrEnd: (AsyncEraseUserT etsRequest, PageResult[Long]) => Future[Un ] =
+        (request: AsyncEraseUserT etsRequest, page: PageResult[Long]) =>
+           f (page.nextCursor. sEnd) {
+            latencyStat.add(T  .fromM ll seconds(request.startT  stamp).unt lNow. nM ll s)
+            deletedT etsStat.add(request.t etCount + page.entr es.s ze)
+            Future.Un 
           } else {
-            asyncEraseUserTweets(
+            asyncEraseUserT ets(
               request.copy(
                 flockCursor = page.nextCursor.value,
-                tweetCount = request.tweetCount + page.entries.size
+                t etCount = request.t etCount + page.entr es.s ze
               )
             )
           }
 
-      override val eraseUserTweetsRequest: FutureArrow[EraseUserTweetsRequest, Unit] =
+      overr de val eraseUserT etsRequest: FutureArrow[EraseUserT etsRequest, Un ] =
         FutureArrow { request =>
-          asyncEraseUserTweets(
-            AsyncEraseUserTweetsRequest(
-              userId = request.userId,
+          asyncEraseUserT ets(
+            AsyncEraseUserT etsRequest(
+              user d = request.user d,
               flockCursor = Cursor.start.value,
-              startTimestamp = Time.now.inMillis,
-              tweetCount = 0L
+              startT  stamp = T  .now. nM ll s,
+              t etCount = 0L
             )
           )
         }
 
-      override val asyncEraseUserTweetsRequest: FutureArrow[AsyncEraseUserTweetsRequest, Unit] =
+      overr de val asyncEraseUserT etsRequest: FutureArrow[AsyncEraseUserT etsRequest, Un ] =
         FutureArrow { request =>
           for {
             _ <- sleep()
 
-            // get one page of tweets
-            page <- selectPage(selectUserTweets(request))
+            // get one page of t ets
+            page <- selectPage(selectUserT ets(request))
 
-            // delete tweets
-            _ <- deletePage(page, request.userId)
+            // delete t ets
+            _ <- deletePage(page, request.user d)
 
-            // make call to delete the next page of tweets
+            // make call to delete t  next page of t ets
             _ <- nextRequestOrEnd(request, page)
-          } yield ()
+          } y eld ()
         }
     }
 }

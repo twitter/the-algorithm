@@ -1,196 +1,196 @@
-package com.twitter.ann.hnsw
+package com.tw ter.ann.hnsw
 
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.ann.common._
-import com.twitter.ann.common.thriftscala.HnswIndexMetadata
-import com.twitter.ann.hnsw.HnswCommon._
-import com.twitter.ann.hnsw.HnswIndex.RandomProvider
-import com.twitter.bijection.Injection
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.search.common.file.FileUtils
-import com.twitter.util.Future
-import java.io.IOException
-import java.util.concurrent.ThreadLocalRandom
-import java.util.Random
-import org.apache.beam.sdk.io.fs.ResourceId
+ mport com.google.common.annotat ons.V s bleForTest ng
+ mport com.tw ter.ann.common.Embedd ngType.Embedd ngVector
+ mport com.tw ter.ann.common._
+ mport com.tw ter.ann.common.thr ftscala.Hnsw ndex tadata
+ mport com.tw ter.ann.hnsw.HnswCommon._
+ mport com.tw ter.ann.hnsw.Hnsw ndex.RandomProv der
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.search.common.f le.AbstractF le
+ mport com.tw ter.search.common.f le.F leUt ls
+ mport com.tw ter.ut l.Future
+ mport java. o. OExcept on
+ mport java.ut l.concurrent.ThreadLocalRandom
+ mport java.ut l.Random
+ mport org.apac .beam.sdk. o.fs.Res ce d
 
-private[hnsw] object SerializableHnsw {
-  private[hnsw] def apply[T, D <: Distance[D]](
-    index: Hnsw[T, D],
-    injection: Injection[T, Array[Byte]]
-  ): SerializableHnsw[T, D] = {
-    new SerializableHnsw[T, D](
-      index,
-      injection
+pr vate[hnsw] object Ser al zableHnsw {
+  pr vate[hnsw] def apply[T, D <: D stance[D]](
+     ndex: Hnsw[T, D],
+     nject on:  nject on[T, Array[Byte]]
+  ): Ser al zableHnsw[T, D] = {
+    new Ser al zableHnsw[T, D](
+       ndex,
+       nject on
     )
   }
 
-  private[hnsw] def loadMapBasedQueryableIndex[T, D <: Distance[D]](
-    dimension: Int,
-    metric: Metric[D],
-    injection: Injection[T, Array[Byte]],
-    futurePool: ReadWriteFuturePool,
-    directory: AbstractFile
-  ): SerializableHnsw[T, D] = {
-    val metadata = HnswIOUtil.loadIndexMetadata(directory.getChild(MetaDataFileName))
-    validateMetadata(dimension, metric, metadata)
-    val idEmbeddingMap = JMapBasedIdEmbeddingMap.loadInMemory(
-      directory.getChild(EmbeddingMappingFileName),
-      injection,
-      Some(metadata.numElements)
+  pr vate[hnsw] def loadMapBasedQueryable ndex[T, D <: D stance[D]](
+    d  ns on:  nt,
+     tr c:  tr c[D],
+     nject on:  nject on[T, Array[Byte]],
+    futurePool: ReadWr eFuturePool,
+    d rectory: AbstractF le
+  ): Ser al zableHnsw[T, D] = {
+    val  tadata = Hnsw OUt l.load ndex tadata(d rectory.getCh ld( taDataF leNa ))
+    val date tadata(d  ns on,  tr c,  tadata)
+    val  dEmbedd ngMap = JMapBased dEmbedd ngMap.load n mory(
+      d rectory.getCh ld(Embedd ngMapp ngF leNa ),
+       nject on,
+      So ( tadata.numEle nts)
     )
-    loadIndex(
-      dimension,
-      metric,
-      injection,
+    load ndex(
+      d  ns on,
+       tr c,
+       nject on,
       futurePool,
-      directory,
-      idEmbeddingMap,
-      metadata
+      d rectory,
+       dEmbedd ngMap,
+       tadata
     )
   }
 
-  private[hnsw] def loadMMappedBasedQueryableIndex[T, D <: Distance[D]](
-    dimension: Int,
-    metric: Metric[D],
-    injection: Injection[T, Array[Byte]],
-    futurePool: ReadWriteFuturePool,
-    directory: AbstractFile
-  ): SerializableHnsw[T, D] = {
-    val metadata = HnswIOUtil.loadIndexMetadata(directory.getChild(MetaDataFileName))
-    validateMetadata(dimension, metric, metadata)
-    loadIndex(
-      dimension,
-      metric,
-      injection,
+  pr vate[hnsw] def loadMMappedBasedQueryable ndex[T, D <: D stance[D]](
+    d  ns on:  nt,
+     tr c:  tr c[D],
+     nject on:  nject on[T, Array[Byte]],
+    futurePool: ReadWr eFuturePool,
+    d rectory: AbstractF le
+  ): Ser al zableHnsw[T, D] = {
+    val  tadata = Hnsw OUt l.load ndex tadata(d rectory.getCh ld( taDataF leNa ))
+    val date tadata(d  ns on,  tr c,  tadata)
+    load ndex(
+      d  ns on,
+       tr c,
+       nject on,
       futurePool,
-      directory,
-      MapDbBasedIdEmbeddingMap
-        .loadAsReadonly(directory.getChild(EmbeddingMappingFileName), injection),
-      metadata
+      d rectory,
+      MapDbBased dEmbedd ngMap
+        .loadAsReadonly(d rectory.getCh ld(Embedd ngMapp ngF leNa ),  nject on),
+       tadata
     )
   }
 
-  private[hnsw] def loadIndex[T, D <: Distance[D]](
-    dimension: Int,
-    metric: Metric[D],
-    injection: Injection[T, Array[Byte]],
-    futurePool: ReadWriteFuturePool,
-    directory: AbstractFile,
-    idEmbeddingMap: IdEmbeddingMap[T],
-    metadata: HnswIndexMetadata
-  ): SerializableHnsw[T, D] = {
-    val distFn =
-      DistanceFunctionGenerator(metric, (key: T) => idEmbeddingMap.get(key))
-    val randomProvider = new RandomProvider {
-      override def get(): Random = ThreadLocalRandom.current()
+  pr vate[hnsw] def load ndex[T, D <: D stance[D]](
+    d  ns on:  nt,
+     tr c:  tr c[D],
+     nject on:  nject on[T, Array[Byte]],
+    futurePool: ReadWr eFuturePool,
+    d rectory: AbstractF le,
+     dEmbedd ngMap:  dEmbedd ngMap[T],
+     tadata: Hnsw ndex tadata
+  ): Ser al zableHnsw[T, D] = {
+    val d stFn =
+      D stanceFunct onGenerator( tr c, (key: T) =>  dEmbedd ngMap.get(key))
+    val randomProv der = new RandomProv der {
+      overr de def get(): Random = ThreadLocalRandom.current()
     }
-    val internalIndex = HnswIndex.loadHnswIndex[T, EmbeddingVector](
-      distFn.index,
-      distFn.query,
-      directory.getChild(InternalIndexDir),
-      injection,
-      randomProvider
+    val  nternal ndex = Hnsw ndex.loadHnsw ndex[T, Embedd ngVector](
+      d stFn. ndex,
+      d stFn.query,
+      d rectory.getCh ld( nternal ndexD r),
+       nject on,
+      randomProv der
     )
 
-    val index = new Hnsw[T, D](
-      dimension,
-      metric,
-      internalIndex,
+    val  ndex = new Hnsw[T, D](
+      d  ns on,
+       tr c,
+       nternal ndex,
       futurePool,
-      idEmbeddingMap,
-      distFn.shouldNormalize,
-      LockedAccess.apply(metadata.numElements)
+       dEmbedd ngMap,
+      d stFn.shouldNormal ze,
+      LockedAccess.apply( tadata.numEle nts)
     )
 
-    new SerializableHnsw(index, injection)
+    new Ser al zableHnsw( ndex,  nject on)
   }
 
-  private[this] def validateMetadata[D <: Distance[D]](
-    dimension: Int,
-    metric: Metric[D],
-    existingMetadata: HnswIndexMetadata
-  ): Unit = {
+  pr vate[t ] def val date tadata[D <: D stance[D]](
+    d  ns on:  nt,
+     tr c:  tr c[D],
+    ex st ng tadata: Hnsw ndex tadata
+  ): Un  = {
     assert(
-      existingMetadata.dimension == dimension,
-      s"Dimensions do not match. requested: $dimension existing: ${existingMetadata.dimension}"
+      ex st ng tadata.d  ns on == d  ns on,
+      s"D  ns ons do not match. requested: $d  ns on ex st ng: ${ex st ng tadata.d  ns on}"
     )
 
-    val existingMetric = Metric.fromThrift(existingMetadata.distanceMetric)
+    val ex st ng tr c =  tr c.fromThr ft(ex st ng tadata.d stance tr c)
     assert(
-      existingMetric == metric,
-      s"DistanceMetric do not match. requested: $metric existing: $existingMetric"
+      ex st ng tr c ==  tr c,
+      s"D stance tr c do not match. requested: $ tr c ex st ng: $ex st ng tr c"
     )
   }
 }
 
-@VisibleForTesting
-private[hnsw] class SerializableHnsw[T, D <: Distance[D]](
-  index: Hnsw[T, D],
-  injection: Injection[T, Array[Byte]])
+@V s bleForTest ng
+pr vate[hnsw] class Ser al zableHnsw[T, D <: D stance[D]](
+   ndex: Hnsw[T, D],
+   nject on:  nject on[T, Array[Byte]])
     extends Appendable[T, HnswParams, D]
-    with Queryable[T, HnswParams, D]
-    with Serialization
-    with Updatable[T] {
-  override def append(entity: EntityEmbedding[T]) = index.append(entity)
+    w h Queryable[T, HnswParams, D]
+    w h Ser al zat on
+    w h Updatable[T] {
+  overr de def append(ent y: Ent yEmbedd ng[T]) =  ndex.append(ent y)
 
-  override def toQueryable: Queryable[T, HnswParams, D] = index.toQueryable
+  overr de def toQueryable: Queryable[T, HnswParams, D] =  ndex.toQueryable
 
-  override def query(
-    embedding: EmbeddingVector,
-    numOfNeighbours: Int,
-    runtimeParams: HnswParams
-  ) = index.query(embedding, numOfNeighbours, runtimeParams)
+  overr de def query(
+    embedd ng: Embedd ngVector,
+    numOfNe ghb s:  nt,
+    runt  Params: HnswParams
+  ) =  ndex.query(embedd ng, numOfNe ghb s, runt  Params)
 
-  override def queryWithDistance(
-    embedding: EmbeddingVector,
-    numOfNeighbours: Int,
-    runtimeParams: HnswParams
-  ) = index.queryWithDistance(embedding, numOfNeighbours, runtimeParams)
+  overr de def queryW hD stance(
+    embedd ng: Embedd ngVector,
+    numOfNe ghb s:  nt,
+    runt  Params: HnswParams
+  ) =  ndex.queryW hD stance(embedd ng, numOfNe ghb s, runt  Params)
 
-  def toDirectory(directory: ResourceId): Unit = {
-    toDirectory(new IndexOutputFile(directory))
+  def toD rectory(d rectory: Res ce d): Un  = {
+    toD rectory(new  ndexOutputF le(d rectory))
   }
 
-  def toDirectory(directory: AbstractFile): Unit = {
-    // Create a temp dir with time prefix, and then do a rename after serialization
-    val tmpDir = FileUtils.getTmpFileHandle(directory)
-    if (!tmpDir.exists()) {
-      tmpDir.mkdirs()
+  def toD rectory(d rectory: AbstractF le): Un  = {
+    // Create a temp d r w h t   pref x, and t n do a rena  after ser al zat on
+    val tmpD r = F leUt ls.getTmpF leHandle(d rectory)
+     f (!tmpD r.ex sts()) {
+      tmpD r.mkd rs()
     }
 
-    toDirectory(new IndexOutputFile(tmpDir))
+    toD rectory(new  ndexOutputF le(tmpD r))
 
-    // Rename tmp dir to original directory supplied
-    if (!tmpDir.rename(directory)) {
-      throw new IOException(s"Failed to rename ${tmpDir.getPath} to ${directory.getPath}")
+    // Rena  tmp d r to or g nal d rectory suppl ed
+     f (!tmpD r.rena (d rectory)) {
+      throw new  OExcept on(s"Fa led to rena  ${tmpD r.getPath} to ${d rectory.getPath}")
     }
   }
 
-  private def toDirectory(indexFile: IndexOutputFile): Unit = {
-    // Save java based hnsw index
-    index.getIndex.toDirectory(indexFile.createDirectory(InternalIndexDir), injection)
+  pr vate def toD rectory( ndexF le:  ndexOutputF le): Un  = {
+    // Save java based hnsw  ndex
+     ndex.get ndex.toD rectory( ndexF le.createD rectory( nternal ndexD r),  nject on)
 
-    // Save index metadata
-    HnswIOUtil.saveIndexMetadata(
-      index.getDimen,
-      index.getMetric,
-      index.getIdEmbeddingMap.size(),
-      indexFile.createFile(MetaDataFileName).getOutputStream()
+    // Save  ndex  tadata
+    Hnsw OUt l.save ndex tadata(
+       ndex.getD  n,
+       ndex.get tr c,
+       ndex.get dEmbedd ngMap.s ze(),
+       ndexF le.createF le( taDataF leNa ).getOutputStream()
     )
 
-    // Save embedding mapping
-    index.getIdEmbeddingMap.toDirectory(
-      indexFile.createFile(EmbeddingMappingFileName).getOutputStream())
+    // Save embedd ng mapp ng
+     ndex.get dEmbedd ngMap.toD rectory(
+       ndexF le.createF le(Embedd ngMapp ngF leNa ).getOutputStream())
 
-    // Create _SUCCESS file
-    indexFile.createSuccessFile()
+    // Create _SUCCESS f le
+     ndexF le.createSuccessF le()
   }
 
-  override def update(
-    entity: EntityEmbedding[T]
-  ): Future[Unit] = {
-    index.update(entity)
+  overr de def update(
+    ent y: Ent yEmbedd ng[T]
+  ): Future[Un ] = {
+     ndex.update(ent y)
   }
 }

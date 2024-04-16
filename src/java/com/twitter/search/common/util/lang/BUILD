@@ -1,18 +1,18 @@
-java_library(
-    sources = ["*.java"],
+java_l brary(
+    s ces = ["*.java"],
     platform = "java8",
-    provides = artifact(
-        org = "com.twitter.search.common.util",
-        name = "lang",
-        repo = artifactory,
+    prov des = art fact(
+        org = "com.tw ter.search.common.ut l",
+        na  = "lang",
+        repo = art factory,
     ),
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/code/findbugs:jsr305",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/com/google/code/f ndbugs:jsr305",
         "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "src/java/com/twitter/common/text/language:locale-util",
-        "src/thrift/com/twitter/search/common:constants-java",
+        "3rdparty/jvm/org/apac /thr ft:l bthr ft",
+        "3rdparty/jvm/org/slf4j:slf4j-ap ",
+        "src/java/com/tw ter/common/text/language:locale-ut l",
+        "src/thr ft/com/tw ter/search/common:constants-java",
     ],
 )

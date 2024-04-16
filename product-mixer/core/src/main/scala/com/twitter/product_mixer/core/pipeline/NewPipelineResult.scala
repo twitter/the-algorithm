@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.pipeline
+package com.tw ter.product_m xer.core.p pel ne
 
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.service.ExecutorResult
-import scala.collection.immutable.ListMap
+ mport com.tw ter.product_m xer.core.model.common. dent f er.P pel neStep dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.serv ce.ExecutorResult
+ mport scala.collect on. mmutable.L stMap
 
-sealed trait NewPipelineResult[-Result] {
-  def executorResultsByPipelineStep: ListMap[PipelineStepIdentifier, ExecutorResult]
+sealed tra  NewP pel neResult[-Result] {
+  def executorResultsByP pel neStep: L stMap[P pel neStep dent f er, ExecutorResult]
 }
 
-object NewPipelineResult {
-  case class Failure(
-    failure: PipelineFailure,
-    override val executorResultsByPipelineStep: ListMap[PipelineStepIdentifier, ExecutorResult])
-      extends NewPipelineResult[Any]
+object NewP pel neResult {
+  case class Fa lure(
+    fa lure: P pel neFa lure,
+    overr de val executorResultsByP pel neStep: L stMap[P pel neStep dent f er, ExecutorResult])
+      extends NewP pel neResult[Any]
 
   case class Success[Result](
     result: Result,
-    override val executorResultsByPipelineStep: ListMap[PipelineStepIdentifier, ExecutorResult])
-      extends NewPipelineResult[Result]
+    overr de val executorResultsByP pel neStep: L stMap[P pel neStep dent f er, ExecutorResult])
+      extends NewP pel neResult[Result]
 }

@@ -1,18 +1,18 @@
 syntax = "proto3";
 
-package tensorflow.serving;
-option cc_enable_arenas = true;
+package tensorflow.serv ng;
+opt on cc_enable_arenas = true;
 
-import "tensorflow_serving/config/log_collector_config.proto";
+ mport "tensorflow_serv ng/conf g/log_collector_conf g.proto";
 
-message SamplingConfig {
-  // Requests will be logged uniformly at random with this probability. Valid
+ ssage Sampl ngConf g {
+  // Requests w ll be logged un formly at random w h t  probab l y. Val d
   // range: [0, 1.0].
-  double sampling_rate = 1;
+  double sampl ng_rate = 1;
 }
 
-// Configuration for logging query/responses.
-message LoggingConfig {
-  LogCollectorConfig log_collector_config = 1;
-  SamplingConfig sampling_config = 2;
+// Conf gurat on for logg ng query/responses.
+ ssage Logg ngConf g {
+  LogCollectorConf g log_collector_conf g = 1;
+  Sampl ngConf g sampl ng_conf g = 2;
 }

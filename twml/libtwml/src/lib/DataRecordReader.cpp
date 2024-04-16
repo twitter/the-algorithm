@@ -1,230 +1,230 @@
-#include "internal/thrift.h"
-#include "internal/error.h"
-#include <string>
-#include <cmath>
+# nclude " nternal/thr ft.h"
+# nclude " nternal/error.h"
+# nclude <str ng>
+# nclude <cmath>
 
-#include <twml/DataRecordReader.h>
+# nclude <twml/DataRecordReader.h>
 
-namespace twml {
+na space twml {
 
-inline std::string bufferToString(int32_t str_len, const uint8_t *str) {
-  return std::string(str, str + str_len);
+ nl ne std::str ng bufferToStr ng( nt32_t str_len, const u nt8_t *str) {
+  return std::str ng(str, str + str_len);
 }
 
 
-bool DataRecordReader::keepKey(const int64_t &key, int64_t &code) {
-  auto it = m_keep_map->find(key);
-  if (it == m_keep_map->end()) return false;
-  code = it->second;
+bool DataRecordReader::keepKey(const  nt64_t &key,  nt64_t &code) {
+  auto   = m_keep_map->f nd(key);
+   f (  == m_keep_map->end()) return false;
+  code =  ->second;
   return true;
 }
 
-bool DataRecordReader::isLabel(const int64_t &key, int64_t &code) {
-  if (m_labels_map == nullptr) return false;
-  auto it = m_labels_map->find(key);
-  if (it == m_labels_map->end()) return false;
-  code = it->second;
+bool DataRecordReader:: sLabel(const  nt64_t &key,  nt64_t &code) {
+   f (m_labels_map == nullptr) return false;
+  auto   = m_labels_map->f nd(key);
+   f (  == m_labels_map->end()) return false;
+  code =  ->second;
   return true;
 }
 
-bool DataRecordReader::isWeight(const int64_t &key, int64_t &code) {
-  if (m_weights_map == nullptr) return false;
-  auto it = m_weights_map->find(key);
-  if (it == m_weights_map->end()) return false;
-  code = it->second;
+bool DataRecordReader:: s  ght(const  nt64_t &key,  nt64_t &code) {
+   f (m_  ghts_map == nullptr) return false;
+  auto   = m_  ghts_map->f nd(key);
+   f (  == m_  ghts_map->end()) return false;
+  code =  ->second;
   return true;
 }
 
 
-void DataRecordReader::readBinary(
-  const int feature_type,
+vo d DataRecordReader::readB nary(
+  const  nt feature_type,
   DataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_SET, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  int32_t length = readInt32();
-  int64_t id, code;
-#ifdef USE_DENSE_HASH
-  record->m_binary.resize(2 * length);
+  CHECK_THR FT_TYPE(feature_type, TTYPE_SET, "type");
+  CHECK_THR FT_TYPE(readByte(), TTYPE_ 64, "key_type");
+   nt32_t length = read nt32();
+   nt64_t  d, code;
+# fdef USE_DENSE_HASH
+  record->m_b nary.res ze(2 * length);
 #else
-  record->m_binary.reserve(2 * length);
-#endif
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
-    record->m_binary.insert(id);
-    if (isLabel(id, code)) {
+  record->m_b nary.reserve(2 * length);
+#end f
+  for ( nt32_t   = 0;   < length;  ++) {
+     d = read nt64();
+    record->m_b nary. nsert( d);
+     f ( sLabel( d, code)) {
       record->addLabel(code);
     }
   }
 }
 
-void DataRecordReader::readContinuous(
-  const int feature_type,
+vo d DataRecordReader::readCont nuous(
+  const  nt feature_type,
   DataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_DOUBLE, "value_type");
+  CHECK_THR FT_TYPE(feature_type, TTYPE_MAP, "type");
+  CHECK_THR FT_TYPE(readByte(), TTYPE_ 64, "key_type");
+  CHECK_THR FT_TYPE(readByte(), TTYPE_DOUBLE, "value_type");
 
-  int32_t length = readInt32();
-  int64_t id, code;
-#ifdef USE_DENSE_HASH
-  record->m_continuous.resize(2 * length);
+   nt32_t length = read nt32();
+   nt64_t  d, code;
+# fdef USE_DENSE_HASH
+  record->m_cont nuous.res ze(2 * length);
 #else
-  record->m_continuous.reserve(2 * length);
-#endif
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
+  record->m_cont nuous.reserve(2 * length);
+#end f
+  for ( nt32_t   = 0;   < length;  ++) {
+     d = read nt64();
     double val = readDouble();
-    if (!std::isnan(val)) {
-      record->m_continuous[id] = val;
+     f (!std:: snan(val)) {
+      record->m_cont nuous[ d] = val;
     }
-    if (isLabel(id, code)) {
+     f ( sLabel( d, code)) {
       record->addLabel(code, val);
-    } else if (isWeight(id, code)) {
-      record->addWeight(code, val);
+    } else  f ( s  ght( d, code)) {
+      record->add  ght(code, val);
     }
   }
 }
 
-void DataRecordReader::readDiscrete(
-  const int feature_type,
+vo d DataRecordReader::readD screte(
+  const  nt feature_type,
   DataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "value_type");
+  CHECK_THR FT_TYPE(feature_type, TTYPE_MAP, "type");
+  CHECK_THR FT_TYPE(readByte(), TTYPE_ 64, "key_type");
+  CHECK_THR FT_TYPE(readByte(), TTYPE_ 64, "value_type");
 
-  int32_t length = readInt32();
-  int64_t id;
-#ifdef USE_DENSE_HASH
-  record->m_discrete.resize(2 * length);
+   nt32_t length = read nt32();
+   nt64_t  d;
+# fdef USE_DENSE_HASH
+  record->m_d screte.res ze(2 * length);
 #else
-  record->m_discrete.reserve(2 * length);
-#endif
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
-    record->m_discrete[id] = readInt64();
+  record->m_d screte.reserve(2 * length);
+#end f
+  for ( nt32_t   = 0;   < length;  ++) {
+     d = read nt64();
+    record->m_d screte[ d] = read nt64();
   }
 }
 
-void DataRecordReader::readString(
-  const int feature_type,
+vo d DataRecordReader::readStr ng(
+  const  nt feature_type,
   DataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_STRING, "value_type");
-  int32_t length = readInt32();
-  int64_t id;
+  CHECK_THR FT_TYPE(feature_type, TTYPE_MAP, "type");
+  CHECK_THR FT_TYPE(readByte(), TTYPE_ 64, "key_type");
+  CHECK_THR FT_TYPE(readByte(), TTYPE_STR NG, "value_type");
+   nt32_t length = read nt32();
+   nt64_t  d;
 
-#ifdef USE_DENSE_HASH
-  record->m_string.resize(2 * length);
+# fdef USE_DENSE_HASH
+  record->m_str ng.res ze(2 * length);
 #else
-  record->m_string.reserve(2 * length);
-#endif
+  record->m_str ng.reserve(2 * length);
+#end f
 
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
-    const uint8_t *begin = nullptr;
-    int32_t str_len = getRawBuffer<uint8_t>(&begin);
-    record->m_string[id] = bufferToString(str_len, begin);
+  for ( nt32_t   = 0;   < length;  ++) {
+     d = read nt64();
+    const u nt8_t *beg n = nullptr;
+     nt32_t str_len = getRawBuffer<u nt8_t>(&beg n);
+    record->m_str ng[ d] = bufferToStr ng(str_len, beg n);
   }
 }
 
-void DataRecordReader::readSparseBinary(
-  const int feature_type,
+vo d DataRecordReader::readSparseB nary(
+  const  nt feature_type,
   DataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_SET, "value_type");
+  CHECK_THR FT_TYPE(feature_type, TTYPE_MAP, "type");
+  CHECK_THR FT_TYPE(readByte(), TTYPE_ 64, "key_type");
+  CHECK_THR FT_TYPE(readByte(), TTYPE_SET, "value_type");
 
-  int32_t length = readInt32();
-  int64_t id, code;
+   nt32_t length = read nt32();
+   nt64_t  d, code;
 
-#ifdef USE_DENSE_HASH
-  record->m_sparsebinary.resize(2 * length);
+# fdef USE_DENSE_HASH
+  record->m_sparseb nary.res ze(2 * length);
 #else
-  record->m_sparsebinary.reserve(2 * length);
-#endif
+  record->m_sparseb nary.reserve(2 * length);
+#end f
 
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
-    CHECK_THRIFT_TYPE(readByte(), TTYPE_STRING, "set:key_type");
-    int32_t set_length = readInt32();
-    if (keepKey(id, code)) {
-      record->m_sparsebinary[id].reserve(set_length);
-      for (int32_t j = 0; j < set_length; j++) {
-        const uint8_t *begin = nullptr;
-        int32_t str_len = getRawBuffer<uint8_t>(&begin);
-        record->m_sparsebinary[id].push_back(bufferToString(str_len, begin));
+  for ( nt32_t   = 0;   < length;  ++) {
+     d = read nt64();
+    CHECK_THR FT_TYPE(readByte(), TTYPE_STR NG, "set:key_type");
+     nt32_t set_length = read nt32();
+     f (keepKey( d, code)) {
+      record->m_sparseb nary[ d].reserve(set_length);
+      for ( nt32_t j = 0; j < set_length; j++) {
+        const u nt8_t *beg n = nullptr;
+         nt32_t str_len = getRawBuffer<u nt8_t>(&beg n);
+        record->m_sparseb nary[ d].push_back(bufferToStr ng(str_len, beg n));
       }
     } else {
-      for (int32_t j = 0; j < set_length; j++) {
-        int32_t str_len = readInt32();
-        skipLength(str_len);
+      for ( nt32_t j = 0; j < set_length; j++) {
+         nt32_t str_len = read nt32();
+        sk pLength(str_len);
       }
     }
   }
 }
 
-void DataRecordReader::readSparseContinuous(
-  const int feature_type,
+vo d DataRecordReader::readSparseCont nuous(
+  const  nt feature_type,
   DataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_MAP, "value_type");
+  CHECK_THR FT_TYPE(feature_type, TTYPE_MAP, "type");
+  CHECK_THR FT_TYPE(readByte(), TTYPE_ 64, "key_type");
+  CHECK_THR FT_TYPE(readByte(), TTYPE_MAP, "value_type");
 
-  int32_t length = readInt32();
-  int64_t id, code;
+   nt32_t length = read nt32();
+   nt64_t  d, code;
 
-#ifdef USE_DENSE_HASH
-  record->m_sparsecontinuous.resize(2 * length);
+# fdef USE_DENSE_HASH
+  record->m_sparsecont nuous.res ze(2 * length);
 #else
-  record->m_sparsecontinuous.reserve(2 * length);
-#endif
+  record->m_sparsecont nuous.reserve(2 * length);
+#end f
 
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
-    CHECK_THRIFT_TYPE(readByte(), TTYPE_STRING, "map::key_type");
-    CHECK_THRIFT_TYPE(readByte(), TTYPE_DOUBLE, "map::value_type");
-    int32_t map_length = readInt32();
-    if (keepKey(id, code)) {
-      record->m_sparsecontinuous[id].reserve(map_length);
-      for (int32_t j = 0; j < map_length; j++) {
-        const uint8_t *begin = nullptr;
-        int32_t str_len = getRawBuffer<uint8_t>(&begin);
+  for ( nt32_t   = 0;   < length;  ++) {
+     d = read nt64();
+    CHECK_THR FT_TYPE(readByte(), TTYPE_STR NG, "map::key_type");
+    CHECK_THR FT_TYPE(readByte(), TTYPE_DOUBLE, "map::value_type");
+     nt32_t map_length = read nt32();
+     f (keepKey( d, code)) {
+      record->m_sparsecont nuous[ d].reserve(map_length);
+      for ( nt32_t j = 0; j < map_length; j++) {
+        const u nt8_t *beg n = nullptr;
+         nt32_t str_len = getRawBuffer<u nt8_t>(&beg n);
         double val = readDouble();
-        if (!std::isnan(val)) {
-          record->m_sparsecontinuous[id].push_back({bufferToString(str_len, begin), val});
+         f (!std:: snan(val)) {
+          record->m_sparsecont nuous[ d].push_back({bufferToStr ng(str_len, beg n), val});
         }
       }
     } else {
-      for (int32_t j = 0; j < map_length; j++) {
-        int32_t str_len = readInt32();
-        skipLength(str_len);
-        skip<double>();
+      for ( nt32_t j = 0; j < map_length; j++) {
+         nt32_t str_len = read nt32();
+        sk pLength(str_len);
+        sk p<double>();
       }
     }
   }
 }
 
-void DataRecordReader::readBlob(
-  const int feature_type,
+vo d DataRecordReader::readBlob(
+  const  nt feature_type,
   DataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_STRING, "value_type");
+  CHECK_THR FT_TYPE(feature_type, TTYPE_MAP, "type");
+  CHECK_THR FT_TYPE(readByte(), TTYPE_ 64, "key_type");
+  CHECK_THR FT_TYPE(readByte(), TTYPE_STR NG, "value_type");
 
-  int32_t length = readInt32();
-  int64_t id, code;
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
-    if (keepKey(id, code)) {
-      const uint8_t *begin = nullptr;
-      int32_t blob_len = getRawBuffer<uint8_t>(&begin);
-      record->m_blob[id] = std::vector<uint8_t>(begin, begin + blob_len);
+   nt32_t length = read nt32();
+   nt64_t  d, code;
+  for ( nt32_t   = 0;   < length;  ++) {
+     d = read nt64();
+     f (keepKey( d, code)) {
+      const u nt8_t *beg n = nullptr;
+       nt32_t blob_len = getRawBuffer<u nt8_t>(&beg n);
+      record->m_blob[ d] = std::vector<u nt8_t>(beg n, beg n + blob_len);
     } else {
-      int32_t str_len = readInt32();
-      skipLength(str_len);
+       nt32_t str_len = read nt32();
+      sk pLength(str_len);
     }
   }
 }
 
-}  // namespace twml
+}  // na space twml

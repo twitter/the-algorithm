@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.card
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.card
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.card.CardItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.UrlMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.card.Card em
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class CardItemMarshaller @Inject() (
-  cardDisplayTypeMarshaller: CardDisplayTypeMarshaller,
+@S ngleton
+class Card emMarshaller @ nject() (
+  cardD splayTypeMarshaller: CardD splayTypeMarshaller,
   urlMarshaller: UrlMarshaller) {
 
-  def apply(cardItem: CardItem): urt.TimelineItemContent = {
-    urt.TimelineItemContent.Card(
+  def apply(card em: Card em): urt.T  l ne emContent = {
+    urt.T  l ne emContent.Card(
       urt.Card(
-        cardUrl = cardItem.cardUrl,
-        text = cardItem.text,
-        subtext = cardItem.subtext,
-        url = cardItem.url.map(urlMarshaller(_)),
-        cardDisplayType = cardItem.displayType.map(cardDisplayTypeMarshaller(_))
+        cardUrl = card em.cardUrl,
+        text = card em.text,
+        subtext = card em.subtext,
+        url = card em.url.map(urlMarshaller(_)),
+        cardD splayType = card em.d splayType.map(cardD splayTypeMarshaller(_))
       )
     )
   }

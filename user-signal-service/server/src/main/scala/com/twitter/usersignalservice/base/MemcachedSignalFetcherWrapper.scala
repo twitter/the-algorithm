@@ -1,70 +1,70 @@
-package com.twitter.usersignalservice
+package com.tw ter.users gnalserv ce
 package base
 
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hashing.KeyHasher
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.relevance_platform.common.injection.LZ4Injection
-import com.twitter.relevance_platform.common.injection.SeqObjectInjection
-import com.twitter.storehaus.ReadableStore
-import com.twitter.twistly.common.UserId
-import com.twitter.usersignalservice.thriftscala.Signal
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Timer
+ mport com.tw ter.f nagle. mcac d.{Cl ent =>  mcac dCl ent}
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.hash ng.KeyHas r
+ mport com.tw ter. rm .store.common.Observed mcac dReadableStore
+ mport com.tw ter.relevance_platform.common. nject on.LZ4 nject on
+ mport com.tw ter.relevance_platform.common. nject on.SeqObject nject on
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.tw stly.common.User d
+ mport com.tw ter.users gnalserv ce.thr ftscala.S gnal
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  r
 
 /**
- * Use this wrapper when the latency of the signal fetcher is too high (see BaseSignalFetcher.Timeout
- * ) and the results from the signal fetcher don't change often (e.g. results are generated from a
- * scalding job scheduled each day).
- * @param memcachedClient
- * @param baseSignalFetcher
+ * Use t  wrapper w n t  latency of t  s gnal fetc r  s too h gh (see BaseS gnalFetc r.T  out
+ * ) and t  results from t  s gnal fetc r don't change often (e.g. results are generated from a
+ * scald ng job sc duled each day).
+ * @param  mcac dCl ent
+ * @param baseS gnalFetc r
  * @param ttl
  * @param stats
- * @param timer
+ * @param t  r
  */
-case class MemcachedSignalFetcherWrapper(
-  memcachedClient: MemcachedClient,
-  baseSignalFetcher: BaseSignalFetcher,
-  ttl: Duration,
-  stats: StatsReceiver,
-  keyPrefix: String,
-  timer: Timer)
-    extends BaseSignalFetcher {
-  import MemcachedSignalFetcherWrapper._
-  override type RawSignalType = baseSignalFetcher.RawSignalType
+case class  mcac dS gnalFetc rWrapper(
+   mcac dCl ent:  mcac dCl ent,
+  baseS gnalFetc r: BaseS gnalFetc r,
+  ttl: Durat on,
+  stats: StatsRece ver,
+  keyPref x: Str ng,
+  t  r: T  r)
+    extends BaseS gnalFetc r {
+   mport  mcac dS gnalFetc rWrapper._
+  overr de type RawS gnalType = baseS gnalFetc r.RawS gnalType
 
-  override val name: String = this.getClass.getCanonicalName
-  override val statsReceiver: StatsReceiver = stats.scope(name).scope(baseSignalFetcher.name)
+  overr de val na : Str ng = t .getClass.getCanon calNa 
+  overr de val statsRece ver: StatsRece ver = stats.scope(na ).scope(baseS gnalFetc r.na )
 
-  val underlyingStore: ReadableStore[UserId, Seq[RawSignalType]] = {
-    val cacheUnderlyingStore = new ReadableStore[UserId, Seq[RawSignalType]] {
-      override def get(userId: UserId): Future[Option[Seq[RawSignalType]]] =
-        baseSignalFetcher.getRawSignals(userId)
+  val underly ngStore: ReadableStore[User d, Seq[RawS gnalType]] = {
+    val cac Underly ngStore = new ReadableStore[User d, Seq[RawS gnalType]] {
+      overr de def get(user d: User d): Future[Opt on[Seq[RawS gnalType]]] =
+        baseS gnalFetc r.getRawS gnals(user d)
     }
-    ObservedMemcachedReadableStore.fromCacheClient(
-      backingStore = cacheUnderlyingStore,
-      cacheClient = memcachedClient,
+    Observed mcac dReadableStore.fromCac Cl ent(
+      back ngStore = cac Underly ngStore,
+      cac Cl ent =  mcac dCl ent,
       ttl = ttl)(
-      valueInjection = LZ4Injection.compose(SeqObjectInjection[RawSignalType]()),
-      statsReceiver = statsReceiver,
-      keyToString = { k: UserId =>
-        s"$keyPrefix:${keyHasher.hashKey(k.toString.getBytes)}"
+      value nject on = LZ4 nject on.compose(SeqObject nject on[RawS gnalType]()),
+      statsRece ver = statsRece ver,
+      keyToStr ng = { k: User d =>
+        s"$keyPref x:${keyHas r.hashKey(k.toStr ng.getBytes)}"
       }
     )
   }
 
-  override def getRawSignals(userId: UserId): Future[Option[Seq[RawSignalType]]] =
-    underlyingStore.get(userId)
+  overr de def getRawS gnals(user d: User d): Future[Opt on[Seq[RawS gnalType]]] =
+    underly ngStore.get(user d)
 
-  override def process(
+  overr de def process(
     query: Query,
-    rawSignals: Future[Option[Seq[RawSignalType]]]
-  ): Future[Option[Seq[Signal]]] = baseSignalFetcher.process(query, rawSignals)
+    rawS gnals: Future[Opt on[Seq[RawS gnalType]]]
+  ): Future[Opt on[Seq[S gnal]]] = baseS gnalFetc r.process(query, rawS gnals)
 
 }
 
-object MemcachedSignalFetcherWrapper {
-  private val keyHasher: KeyHasher = KeyHasher.FNV1A_64
+object  mcac dS gnalFetc rWrapper {
+  pr vate val keyHas r: KeyHas r = KeyHas r.FNV1A_64
 }

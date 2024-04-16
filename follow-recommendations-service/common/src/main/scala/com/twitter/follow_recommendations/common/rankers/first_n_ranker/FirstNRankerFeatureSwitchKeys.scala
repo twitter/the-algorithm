@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.rankers.first_n_ranker
+package com.tw ter.follow_recom ndat ons.common.rankers.f rst_n_ranker
 
-object FirstNRankerFeatureSwitchKeys {
-  val CandidatePoolSize = "first_n_ranker_candidate_pool_size"
-  val ScribeRankingInfo = "first_n_ranker_scribe_ranking_info"
-  val MinNumCandidatesScoredScaleDownFactor =
-    "first_n_ranker_min_scale_down_factor"
+object F rstNRankerFeatureSw chKeys {
+  val Cand datePoolS ze = "f rst_n_ranker_cand date_pool_s ze"
+  val Scr beRank ng nfo = "f rst_n_ranker_scr be_rank ng_ nfo"
+  val M nNumCand datesScoredScaleDownFactor =
+    "f rst_n_ranker_m n_scale_down_factor"
 }

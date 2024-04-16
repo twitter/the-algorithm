@@ -1,42 +1,42 @@
-package com.twitter.search.common.query;
+package com.tw ter.search.common.query;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Set;
+ mport java. o. OExcept on;
+ mport java.ut l. erator;
+ mport java.ut l.Set;
 
-import org.apache.lucene.index.FilteredTermsEnum;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.MultiTermQuery;
-import org.apache.lucene.util.AttributeSource;
-import org.apache.lucene.util.BytesRef;
+ mport org.apac .lucene. ndex.F lteredTermsEnum;
+ mport org.apac .lucene. ndex.Terms;
+ mport org.apac .lucene. ndex.TermsEnum;
+ mport org.apac .lucene.search.Mult TermQuery;
+ mport org.apac .lucene.ut l.Attr buteS ce;
+ mport org.apac .lucene.ut l.BytesRef;
 
 
-public class MultiTermDisjunctionQuery extends MultiTermQuery {
+publ c class Mult TermD sjunct onQuery extends Mult TermQuery {
 
-  private final Set<BytesRef> values;
+  pr vate f nal Set<BytesRef> values;
 
-  /** Creates a new MultiTermDisjunctionQuery instance. */
-  public MultiTermDisjunctionQuery(String field, Set<BytesRef> values) {
-    super(field);
-    this.values = values;
+  /** Creates a new Mult TermD sjunct onQuery  nstance. */
+  publ c Mult TermD sjunct onQuery(Str ng f eld, Set<BytesRef> values) {
+    super(f eld);
+    t .values = values;
   }
 
-  @Override
-  protected TermsEnum getTermsEnum(Terms terms, AttributeSource atts)
-      throws IOException {
-    final TermsEnum termsEnum = terms.iterator();
-    final Iterator<BytesRef> it = values.iterator();
+  @Overr de
+  protected TermsEnum getTermsEnum(Terms terms, Attr buteS ce atts)
+      throws  OExcept on {
+    f nal TermsEnum termsEnum = terms. erator();
+    f nal  erator<BytesRef>   = values. erator();
 
-    return new FilteredTermsEnum(termsEnum) {
-      @Override protected AcceptStatus accept(BytesRef term) throws IOException {
+    return new F lteredTermsEnum(termsEnum) {
+      @Overr de protected AcceptStatus accept(BytesRef term) throws  OExcept on {
         return AcceptStatus.YES;
       }
 
-      @Override public BytesRef next() throws IOException {
-        while (it.hasNext()) {
-          BytesRef termRef = it.next();
-          if (termsEnum.seekExact(termRef)) {
+      @Overr de publ c BytesRef next() throws  OExcept on {
+        wh le ( .hasNext()) {
+          BytesRef termRef =  .next();
+           f (termsEnum.seekExact(termRef)) {
             return termRef;
           }
         }
@@ -46,16 +46,16 @@ public class MultiTermDisjunctionQuery extends MultiTermQuery {
     };
   }
 
-  @Override
-  public String toString(String field) {
-    StringBuilder builder = new StringBuilder();
-    builder.append("MultiTermDisjunctionQuery[");
-    for (BytesRef termVal : this.values) {
-      builder.append(termVal);
-      builder.append(",");
+  @Overr de
+  publ c Str ng toStr ng(Str ng f eld) {
+    Str ngBu lder bu lder = new Str ngBu lder();
+    bu lder.append("Mult TermD sjunct onQuery[");
+    for (BytesRef termVal : t .values) {
+      bu lder.append(termVal);
+      bu lder.append(",");
     }
-    builder.setLength(builder.length() - 1);
-    builder.append("]");
-    return builder.toString();
+    bu lder.setLength(bu lder.length() - 1);
+    bu lder.append("]");
+    return bu lder.toStr ng();
   }
 }

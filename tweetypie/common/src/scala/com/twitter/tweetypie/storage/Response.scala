@@ -1,30 +1,30 @@
-package com.twitter.tweetypie.storage
+package com.tw ter.t etyp e.storage
 
 object Response {
-  case class TweetResponse(
-    tweetId: Long,
-    overallResponse: TweetResponseCode,
-    additionalFieldResponses: Option[Map[Short, FieldResponse]] = None)
+  case class T etResponse(
+    t et d: Long,
+    overallResponse: T etResponseCode,
+    add  onalF eldResponses: Opt on[Map[Short, F eldResponse]] = None)
 
-  sealed trait TweetResponseCode
+  sealed tra  T etResponseCode
 
-  object TweetResponseCode {
-    object Success extends TweetResponseCode
-    object Partial extends TweetResponseCode
-    object Failure extends TweetResponseCode
-    object OverCapacity extends TweetResponseCode
-    object Deleted extends TweetResponseCode
+  object T etResponseCode {
+    object Success extends T etResponseCode
+    object Part al extends T etResponseCode
+    object Fa lure extends T etResponseCode
+    object OverCapac y extends T etResponseCode
+    object Deleted extends T etResponseCode
   }
 
-  case class FieldResponse(code: FieldResponseCode, message: Option[String] = None)
+  case class F eldResponse(code: F eldResponseCode,  ssage: Opt on[Str ng] = None)
 
-  sealed trait FieldResponseCode
+  sealed tra  F eldResponseCode
 
-  object FieldResponseCode {
-    object Success extends FieldResponseCode
-    object InvalidRequest extends FieldResponseCode
-    object ValueNotFound extends FieldResponseCode
-    object Timeout extends FieldResponseCode
-    object Error extends FieldResponseCode
+  object F eldResponseCode {
+    object Success extends F eldResponseCode
+    object  nval dRequest extends F eldResponseCode
+    object ValueNotFound extends F eldResponseCode
+    object T  out extends F eldResponseCode
+    object Error extends F eldResponseCode
   }
 }

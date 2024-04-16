@@ -1,14 +1,14 @@
-create_thrift_libraries(
-    base_name = "thrift",
-    sources = [
-        "com/twitter/representation_manager/service.thrift",
+create_thr ft_l brar es(
+    base_na  = "thr ft",
+    s ces = [
+        "com/tw ter/representat on_manager/serv ce.thr ft",
     ],
     platform = "java8",
     tags = [
-        "bazel-compatible",
+        "bazel-compat ble",
     ],
     dependency_roots = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift",
+        "src/thr ft/com/tw ter/s mclusters_v2:s mclusters_v2-thr ft",
     ],
     generate_languages = [
         "java",

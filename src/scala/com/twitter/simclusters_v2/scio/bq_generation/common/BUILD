@@ -1,10 +1,10 @@
-scala_library(
-    sources = [
+scala_l brary(
+    s ces = [
         "*.scala",
     ],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/scala/com/twitter/wtf/beam/bq_embedding_export:bq_embedding_export_lib",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "src/scala/com/tw ter/wtf/beam/bq_embedd ng_export:bq_embedd ng_export_l b",
     ],
 )

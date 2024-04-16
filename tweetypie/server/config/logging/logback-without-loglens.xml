@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration debug="false">
-    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+<?xml vers on="1.0" encod ng="UTF-8"?>
+<conf gurat on debug="false">
+    <contextL stener class="ch.qos.logback.class c.jul.LevelChangePropagator">
       <resetJUL>true</resetJUL>
-    </contextListener>
+    </contextL stener>
 
-    <include resource="logging/logback-all-include.xml" />
+    < nclude res ce="logg ng/logback-all- nclude.xml" />
 
-    <root level="INFO">
+    <root level=" NFO">
         <appender-ref ref="ALL" />
     </root>
-</configuration>
+</conf gurat on>

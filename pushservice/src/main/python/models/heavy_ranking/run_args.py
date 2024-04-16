@@ -1,59 +1,59 @@
-from twml.trainers import DataRecordTrainer
+from twml.tra ners  mport DataRecordTra ner
 
-from .features import FEATURE_LIST_DEFAULT_PATH
+from .features  mport FEATURE_L ST_DEFAULT_PATH
 
 
-def get_training_arg_parser():
-  parser = DataRecordTrainer.add_parser_arguments()
+def get_tra n ng_arg_parser():
+  parser = DataRecordTra ner.add_parser_argu nts()
 
-  parser.add_argument(
-    "--feature_list",
-    default=FEATURE_LIST_DEFAULT_PATH,
+  parser.add_argu nt(
+    "--feature_l st",
+    default=FEATURE_L ST_DEFAULT_PATH,
     type=str,
-    help="Which features to use for training",
+     lp="Wh ch features to use for tra n ng",
   )
 
-  parser.add_argument(
-    "--param_file",
+  parser.add_argu nt(
+    "--param_f le",
     default=None,
     type=str,
-    help="Path to JSON file containing the graph parameters. If None, model will load default parameters.",
+     lp="Path to JSON f le conta n ng t  graph para ters.  f None, model w ll load default para ters.",
   )
 
-  parser.add_argument(
-    "--directly_export_best",
+  parser.add_argu nt(
+    "--d rectly_export_best",
     default=False,
-    action="store_true",
-    help="whether to directly_export best_checkpoint",
+    act on="store_true",
+     lp="w t r to d rectly_export best_c ckpo nt",
   )
 
-  parser.add_argument(
-    "--warm_start_from", default=None, type=str, help="model dir to warm start from"
+  parser.add_argu nt(
+    "--warm_start_from", default=None, type=str,  lp="model d r to warm start from"
   )
 
-  parser.add_argument(
-    "--warm_start_base_dir",
+  parser.add_argu nt(
+    "--warm_start_base_d r",
     default=None,
     type=str,
-    help="latest ckpt in this folder will be used to ",
+     lp="latest ckpt  n t  folder w ll be used to ",
   )
 
-  parser.add_argument(
+  parser.add_argu nt(
     "--model_type",
     default=None,
     type=str,
-    help="Which type of model to train.",
+     lp="Wh ch type of model to tra n.",
   )
   return parser
 
 
 def get_eval_arg_parser():
-  parser = get_training_arg_parser()
-  parser.add_argument(
-    "--eval_checkpoint",
+  parser = get_tra n ng_arg_parser()
+  parser.add_argu nt(
+    "--eval_c ckpo nt",
     default=None,
     type=str,
-    help="Which checkpoint to use for evaluation",
+     lp="Wh ch c ckpo nt to use for evaluat on",
   )
 
   return parser

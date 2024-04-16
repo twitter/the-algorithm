@@ -1,31 +1,31 @@
-package com.twitter.timelineranker.model
+package com.tw ter.t  l neranker.model
 
-import com.twitter.common.text.language.LocaleUtil
-import com.twitter.timelineranker.{thriftscala => thrift}
+ mport com.tw ter.common.text.language.LocaleUt l
+ mport com.tw ter.t  l neranker.{thr ftscala => thr ft}
 
 object Language {
 
-  def fromThrift(lang: thrift.Language): Language = {
-    require(lang.language.isDefined, "language can't be None")
-    require(lang.scope.isDefined, "scope can't be None")
-    Language(lang.language.get, LanguageScope.fromThrift(lang.scope.get))
+  def fromThr ft(lang: thr ft.Language): Language = {
+    requ re(lang.language. sDef ned, "language can't be None")
+    requ re(lang.scope. sDef ned, "scope can't be None")
+    Language(lang.language.get, LanguageScope.fromThr ft(lang.scope.get))
   }
 }
 
 /**
- * Represents a language and the scope that it relates to.
+ * Represents a language and t  scope that   relates to.
  */
-case class Language(language: String, scope: LanguageScope.Value) {
+case class Language(language: Str ng, scope: LanguageScope.Value) {
 
-  throwIfInvalid()
+  throw f nval d()
 
-  def toThrift: thrift.Language = {
-    val scopeOption = Some(LanguageScope.toThrift(scope))
-    thrift.Language(Some(language), scopeOption)
+  def toThr ft: thr ft.Language = {
+    val scopeOpt on = So (LanguageScope.toThr ft(scope))
+    thr ft.Language(So (language), scopeOpt on)
   }
 
-  def throwIfInvalid(): Unit = {
-    val result = LocaleUtil.getLocaleOf(language)
-    require(result != LocaleUtil.UNKNOWN, s"Language ${language} is unsupported")
+  def throw f nval d(): Un  = {
+    val result = LocaleUt l.getLocaleOf(language)
+    requ re(result != LocaleUt l.UNKNOWN, s"Language ${language}  s unsupported")
   }
 }

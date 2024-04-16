@@ -1,66 +1,66 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import javax.inject.Inject;
+ mport javax. nject. nject;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Filter;
-import com.twitter.finagle.Service;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.QueryParsingUtils;
-import com.twitter.search.earlybird_root.common.TwitterContextProvider;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.util.Future;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.f nagle.F lter;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.earlyb rd.common.Earlyb rdRequestUt l;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.earlyb rd_root.common.QueryPars ngUt ls;
+ mport com.tw ter.search.earlyb rd_root.common.Tw terContextProv der;
+ mport com.tw ter.search.queryparser.query.QueryParserExcept on;
+ mport com.tw ter.ut l.Future;
 
 /**
- * Creates a new RequestContext from an EarlybirdRequest, and passes the RequestContext down to
- * the rest of the filter/service chain.
+ * Creates a new RequestContext from an Earlyb rdRequest, and passes t  RequestContext down to
+ * t  rest of t  f lter/serv ce cha n.
  */
-public class InitializeRequestContextFilter extends
-    Filter<EarlybirdRequest, EarlybirdResponse, EarlybirdRequestContext, EarlybirdResponse> {
+publ c class  n  al zeRequestContextF lter extends
+    F lter<Earlyb rdRequest, Earlyb rdResponse, Earlyb rdRequestContext, Earlyb rdResponse> {
 
-  @VisibleForTesting
-  static final SearchCounter FAILED_QUERY_PARSING =
-      SearchCounter.export("initialize_request_context_filter_query_parsing_failure");
+  @V s bleForTest ng
+  stat c f nal SearchCounter FA LED_QUERY_PARS NG =
+      SearchCounter.export(" n  al ze_request_context_f lter_query_pars ng_fa lure");
 
-  private final SearchDecider decider;
-  private final TwitterContextProvider twitterContextProvider;
-  private final Clock clock;
+  pr vate f nal SearchDec der dec der;
+  pr vate f nal Tw terContextProv der tw terContextProv der;
+  pr vate f nal Clock clock;
 
   /**
-   * The constructor of the filter.
+   * T  constructor of t  f lter.
    */
-  @Inject
-  public InitializeRequestContextFilter(SearchDecider decider,
-                                        TwitterContextProvider twitterContextProvider,
+  @ nject
+  publ c  n  al zeRequestContextF lter(SearchDec der dec der,
+                                        Tw terContextProv der tw terContextProv der,
                                         Clock clock) {
-    this.decider = decider;
-    this.twitterContextProvider = twitterContextProvider;
-    this.clock = clock;
+    t .dec der = dec der;
+    t .tw terContextProv der = tw terContextProv der;
+    t .clock = clock;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequest request,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(
+      Earlyb rdRequest request,
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> serv ce) {
 
-    EarlybirdRequestUtil.recordClientClockDiff(request);
+    Earlyb rdRequestUt l.recordCl entClockD ff(request);
 
-    EarlybirdRequestContext requestContext;
+    Earlyb rdRequestContext requestContext;
     try {
-      requestContext = EarlybirdRequestContext.newContext(
-          request, decider, twitterContextProvider.get(), clock);
-    } catch (QueryParserException e) {
-      FAILED_QUERY_PARSING.increment();
-      return QueryParsingUtils.newClientErrorResponse(request, e);
+      requestContext = Earlyb rdRequestContext.newContext(
+          request, dec der, tw terContextProv der.get(), clock);
+    } catch (QueryParserExcept on e) {
+      FA LED_QUERY_PARS NG. ncre nt();
+      return QueryPars ngUt ls.newCl entErrorResponse(request, e);
     }
 
-    return service.apply(requestContext);
+    return serv ce.apply(requestContext);
   }
 }

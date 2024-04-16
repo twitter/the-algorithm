@@ -1,40 +1,40 @@
-package com.twitter.follow_recommendations.common.candidate_sources.salsa
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.salsa
 
-import com.twitter.follow_recommendations.common.clients.real_time_real_graph.RealTimeRealGraphClient
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.real_t  _real_graph.RealT  RealGraphCl ent
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.st ch.St ch
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class RecentEngagementDirectFollowSalsaExpansionSource @Inject() (
-  realTimeRealGraphClient: RealTimeRealGraphClient,
+@S ngleton
+class RecentEngage ntD rectFollowSalsaExpans onS ce @ nject() (
+  realT  RealGraphCl ent: RealT  RealGraphCl ent,
   salsaExpander: SalsaExpander)
-    extends SalsaExpansionBasedCandidateSource[Long](salsaExpander) {
+    extends SalsaExpans onBasedCand dateS ce[Long](salsaExpander) {
 
-  override val identifier: CandidateSourceIdentifier =
-    RecentEngagementDirectFollowSalsaExpansionSource.Identifier
+  overr de val  dent f er: Cand dateS ce dent f er =
+    RecentEngage ntD rectFollowSalsaExpans onS ce. dent f er
 
-  override def firstDegreeNodes(target: Long): Stitch[Seq[Long]] = realTimeRealGraphClient
-    .getUsersRecentlyEngagedWith(
+  overr de def f rstDegreeNodes(target: Long): St ch[Seq[Long]] = realT  RealGraphCl ent
+    .getUsersRecentlyEngagedW h(
       target,
-      RealTimeRealGraphClient.EngagementScoreMap,
-      includeDirectFollowCandidates = true,
-      includeNonDirectFollowCandidates = false
-    ).map { recentlyFollowed =>
-      recentlyFollowed
-        .take(RecentEngagementDirectFollowSalsaExpansionSource.NumFirstDegreeNodesToRetrieve)
-        .map(_.id)
+      RealT  RealGraphCl ent.Engage ntScoreMap,
+       ncludeD rectFollowCand dates = true,
+       ncludeNonD rectFollowCand dates = false
+    ).map { recentlyFollo d =>
+      recentlyFollo d
+        .take(RecentEngage ntD rectFollowSalsaExpans onS ce.NumF rstDegreeNodesToRetr eve)
+        .map(_. d)
     }
 
-  override def maxResults(target: Long): Int =
-    RecentEngagementDirectFollowSalsaExpansionSource.OutputSize
+  overr de def maxResults(target: Long):  nt =
+    RecentEngage ntD rectFollowSalsaExpans onS ce.OutputS ze
 }
 
-object RecentEngagementDirectFollowSalsaExpansionSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.RecentEngagementSarusOcCur.toString)
-  val NumFirstDegreeNodesToRetrieve = 10
-  val OutputSize = 200
+object RecentEngage ntD rectFollowSalsaExpans onS ce {
+  val  dent f er: Cand dateS ce dent f er = Cand dateS ce dent f er(
+    Algor hm.RecentEngage ntSarusOcCur.toStr ng)
+  val NumF rstDegreeNodesToRetr eve = 10
+  val OutputS ze = 200
 }

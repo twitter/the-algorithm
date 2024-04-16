@@ -1,19 +1,19 @@
-package com.twitter.graph_feature_service.worker.util
+package com.tw ter.graph_feature_serv ce.worker.ut l
 
-import com.twitter.graph_feature_service.thriftscala.EdgeType
-import com.twitter.util.Future
+ mport com.tw ter.graph_feature_serv ce.thr ftscala.EdgeType
+ mport com.tw ter.ut l.Future
 
-case class GraphContainer(
-  graphs: Map[GraphKey, AutoUpdatingGraph]) {
+case class GraphConta ner(
+  graphs: Map[GraphKey, AutoUpdat ngGraph]) {
 
-  final val toPartialMap: Map[EdgeType, AutoUpdatingGraph] =
+  f nal val toPart alMap: Map[EdgeType, AutoUpdat ngGraph] =
     graphs.collect {
-      case (partialValueGraph: PartialValueGraph, graph) =>
-        partialValueGraph.edgeType -> graph
+      case (part alValueGraph: Part alValueGraph, graph) =>
+        part alValueGraph.edgeType -> graph
     }
 
-  // load all the graphs from constantDB format to memory
-  def warmup: Future[Unit] = {
-    Future.collect(graphs.mapValues(_.warmup())).unit
+  // load all t  graphs from constantDB format to  mory
+  def warmup: Future[Un ] = {
+    Future.collect(graphs.mapValues(_.warmup())).un 
   }
 }

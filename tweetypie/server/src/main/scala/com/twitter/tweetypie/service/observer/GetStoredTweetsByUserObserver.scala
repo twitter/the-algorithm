@@ -1,66 +1,66 @@
-package com.twitter.tweetypie
-package service
+package com.tw ter.t etyp e
+package serv ce
 package observer
 
-import com.twitter.tweetypie.thriftscala.GetStoredTweetsByUserRequest
-import com.twitter.tweetypie.thriftscala.GetStoredTweetsByUserResult
+ mport com.tw ter.t etyp e.thr ftscala.GetStoredT etsByUserRequest
+ mport com.tw ter.t etyp e.thr ftscala.GetStoredT etsByUserResult
 
-private[service] object GetStoredTweetsByUserObserver extends StoredTweetsObserver {
+pr vate[serv ce] object GetStoredT etsByUserObserver extends StoredT etsObserver {
 
-  type Type = ObserveExchange[GetStoredTweetsByUserRequest, GetStoredTweetsByUserResult]
-  val firstTweetTimestamp: Long = 1142974200L
+  type Type = ObserveExchange[GetStoredT etsByUserRequest, GetStoredT etsByUserResult]
+  val f rstT etT  stamp: Long = 1142974200L
 
-  def observeRequest(stats: StatsReceiver): Effect[GetStoredTweetsByUserRequest] = {
-    val optionsScope = stats.scope("options")
-    val bypassVisibilityFilteringCounter = optionsScope.counter("bypass_visibility_filtering")
-    val forUserIdCounter = optionsScope.counter("set_for_user_id")
-    val timeRangeStat = optionsScope.stat("time_range_seconds")
-    val cursorCounter = optionsScope.counter("cursor")
-    val startFromOldestCounter = optionsScope.counter("start_from_oldest")
-    val additionalFieldsScope = optionsScope.scope("additional_fields")
+  def observeRequest(stats: StatsRece ver): Effect[GetStoredT etsByUserRequest] = {
+    val opt onsScope = stats.scope("opt ons")
+    val bypassV s b l yF lter ngCounter = opt onsScope.counter("bypass_v s b l y_f lter ng")
+    val forUser dCounter = opt onsScope.counter("set_for_user_ d")
+    val t  RangeStat = opt onsScope.stat("t  _range_seconds")
+    val cursorCounter = opt onsScope.counter("cursor")
+    val startFromOldestCounter = opt onsScope.counter("start_from_oldest")
+    val add  onalF eldsScope = opt onsScope.scope("add  onal_f elds")
 
     Effect { request =>
-      if (request.options.isDefined) {
-        val options = request.options.get
+       f (request.opt ons. sDef ned) {
+        val opt ons = request.opt ons.get
 
-        if (options.bypassVisibilityFiltering) bypassVisibilityFilteringCounter.incr()
-        if (options.setForUserId) forUserIdCounter.incr()
-        if (options.cursor.isDefined) {
-          cursorCounter.incr()
+         f (opt ons.bypassV s b l yF lter ng) bypassV s b l yF lter ngCounter. ncr()
+         f (opt ons.setForUser d) forUser dCounter. ncr()
+         f (opt ons.cursor. sDef ned) {
+          cursorCounter. ncr()
         } else {
-          // We only add a time range stat once, when there's no cursor in the request (i.e. this
-          // isn't a repeat request for a subsequent batch of results)
-          val startTimeSeconds: Long =
-            options.startTimeMsec.map(_ / 1000).getOrElse(firstTweetTimestamp)
-          val endTimeSeconds: Long = options.endTimeMsec.map(_ / 1000).getOrElse(Time.now.inSeconds)
-          timeRangeStat.add(endTimeSeconds - startTimeSeconds)
+          //   only add a t   range stat once, w n t re's no cursor  n t  request ( .e. t 
+          //  sn't a repeat request for a subsequent batch of results)
+          val startT  Seconds: Long =
+            opt ons.startT  Msec.map(_ / 1000).getOrElse(f rstT etT  stamp)
+          val endT  Seconds: Long = opt ons.endT  Msec.map(_ / 1000).getOrElse(T  .now. nSeconds)
+          t  RangeStat.add(endT  Seconds - startT  Seconds)
 
-          // We use the startFromOldest parameter when the cursor isn't defined
-          if (options.startFromOldest) startFromOldestCounter.incr()
+          //   use t  startFromOldest para ter w n t  cursor  sn't def ned
+           f (opt ons.startFromOldest) startFromOldestCounter. ncr()
         }
-        options.additionalFieldIds.foreach { id =>
-          additionalFieldsScope.counter(id.toString).incr()
+        opt ons.add  onalF eld ds.foreach {  d =>
+          add  onalF eldsScope.counter( d.toStr ng). ncr()
         }
       }
     }
   }
 
-  def observeResult(stats: StatsReceiver): Effect[GetStoredTweetsByUserResult] = {
+  def observeResult(stats: StatsRece ver): Effect[GetStoredT etsByUserResult] = {
     val resultScope = stats.scope("result")
 
     Effect { result =>
-      observeStoredTweets(result.storedTweets, resultScope)
+      observeStoredT ets(result.storedT ets, resultScope)
     }
   }
 
-  def observeExchange(stats: StatsReceiver): Effect[Type] = {
+  def observeExchange(stats: StatsRece ver): Effect[Type] = {
     val resultStateStats = ResultStateStats(stats)
 
     Effect {
       case (request, response) =>
         response match {
           case Return(_) => resultStateStats.success()
-          case Throw(_) => resultStateStats.failed()
+          case Throw(_) => resultStateStats.fa led()
         }
     }
   }

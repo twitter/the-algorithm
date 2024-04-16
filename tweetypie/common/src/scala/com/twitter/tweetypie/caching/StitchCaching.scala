@@ -1,36 +1,36 @@
-package com.twitter.tweetypie.caching
+package com.tw ter.t etyp e.cach ng
 
-import com.twitter.stitch.Stitch
+ mport com.tw ter.st ch.St ch
 
 /**
- * Apply caching to a [[Stitch]] function.
+ * Apply cach ng to a [[St ch]] funct on.
  *
- * @see CacheResult for more information about the semantics
- *   implemented here.
+ * @see Cac Result for more  nformat on about t  semant cs
+ *    mple nted  re.
  */
-class StitchCaching[K, V](operations: CacheOperations[K, V], repo: K => Stitch[V])
-    extends (K => Stitch[V]) {
+class St chCach ng[K, V](operat ons: Cac Operat ons[K, V], repo: K => St ch[V])
+    extends (K => St ch[V]) {
 
-  private[this] val stitchOps = new StitchCacheOperations(operations)
+  pr vate[t ] val st chOps = new St chCac Operat ons(operat ons)
 
-  override def apply(key: K): Stitch[V] =
-    stitchOps.get(key).flatMap {
-      case CacheResult.Fresh(value) =>
-        Stitch.value(value)
+  overr de def apply(key: K): St ch[V] =
+    st chOps.get(key).flatMap {
+      case Cac Result.Fresh(value) =>
+        St ch.value(value)
 
-      case CacheResult.Stale(staleValue) =>
-        StitchAsync(repo(key).flatMap(refreshed => stitchOps.set(key, refreshed)))
+      case Cac Result.Stale(staleValue) =>
+        St chAsync(repo(key).flatMap(refres d => st chOps.set(key, refres d)))
           .map(_ => staleValue)
 
-      case CacheResult.Miss =>
+      case Cac Result.M ss =>
         repo(key)
-          .applyEffect(value => StitchAsync(stitchOps.set(key, value)))
+          .applyEffect(value => St chAsync(st chOps.set(key, value)))
 
-      case CacheResult.Failure(_) =>
-        // In the case of failure, we don't attempt to write back to
-        // cache, because cache failure usually means communication
-        // failure, and sending more requests to the cache that holds
-        // the value for this key could make the situation worse.
+      case Cac Result.Fa lure(_) =>
+        //  n t  case of fa lure,   don't attempt to wr e back to
+        // cac , because cac  fa lure usually  ans commun cat on
+        // fa lure, and send ng more requests to t  cac  that holds
+        // t  value for t  key could make t  s uat on worse.
         repo(key)
     }
 }

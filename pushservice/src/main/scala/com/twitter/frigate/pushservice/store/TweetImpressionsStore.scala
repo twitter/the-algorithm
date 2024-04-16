@@ -1,19 +1,19 @@
-package com.twitter.frigate.pushservice.store
+package com.tw ter.fr gate.pushserv ce.store
 
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.common.store.strato.StratoFetchableStore
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.ut l.Future
 
 /**
- * Store to get inbound Tweet impressions count for a specific Tweet id.
+ * Store to get  nbound T et  mpress ons count for a spec f c T et  d.
  */
-class TweetImpressionsStore(stratoClient: StratoClient) extends ReadableStore[Long, String] {
+class T et mpress onsStore(stratoCl ent: StratoCl ent) extends ReadableStore[Long, Str ng] {
 
-  private val column = "rux/impression.Tweet"
-  private val store = StratoFetchableStore.withUnitView[Long, String](stratoClient, column)
+  pr vate val column = "rux/ mpress on.T et"
+  pr vate val store = StratoFetchableStore.w hUn V ew[Long, Str ng](stratoCl ent, column)
 
-  def getCounts(tweetId: Long): Future[Option[Long]] = {
-    store.get(tweetId).map(_.map(_.toLong))
+  def getCounts(t et d: Long): Future[Opt on[Long]] = {
+    store.get(t et d).map(_.map(_.toLong))
   }
 }

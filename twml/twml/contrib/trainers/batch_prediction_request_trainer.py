@@ -1,180 +1,180 @@
-# pylint: disable=arguments-differ, invalid-name
+# pyl nt: d sable=argu nts-d ffer,  nval d-na 
 """
-This file contains the DataRecordTrainer class.
+T  f le conta ns t  DataRecordTra ner class.
 """
-import warnings
+ mport warn ngs
 
-import twml
-from twml.trainers import DataRecordTrainer
+ mport twml
+from twml.tra ners  mport DataRecordTra ner
 
 
-class BatchPredictionRequestTrainer(DataRecordTrainer):  # pylint: disable=abstract-method
+class BatchPred ct onRequestTra ner(DataRecordTra ner):  # pyl nt: d sable=abstract- thod
   """
-  The ``BatchPredictionRequestTrainer`` implementation is intended to satisfy use cases
-  that input is BatchPredictionRequest at Twitter and also where only the build_graph methods
-  needs to be overridden. For this reason, ``Trainer.[train,eval]_input_fn`` methods
-  assume a DataRecord dataset partitioned into part files stored in compressed (e.g. gzip) format.
+  T  ``BatchPred ct onRequestTra ner``  mple ntat on  s  ntended to sat sfy use cases
+  that  nput  s BatchPred ct onRequest at Tw ter and also w re only t  bu ld_graph  thods
+  needs to be overr dden. For t  reason, ``Tra ner.[tra n,eval]_ nput_fn``  thods
+  assu  a DataRecord dataset part  oned  nto part f les stored  n compressed (e.g. gz p) format.
 
-  For use-cases that differ from this common Twitter use-case,
-  further Trainer methods can be overridden.
-  If that still doesn't provide enough flexibility, the user can always
-  use the tf.estimator.Esimator or tf.session.run directly.
+  For use-cases that d ffer from t  common Tw ter use-case,
+  furt r Tra ner  thods can be overr dden.
+   f that st ll doesn't prov de enough flex b l y, t  user can always
+  use t  tf.est mator.Es mator or tf.sess on.run d rectly.
   """
 
-  def __init__(
-          self, name, params,
-          build_graph_fn,
-          feature_config=None,
+  def __ n __(
+          self, na , params,
+          bu ld_graph_fn,
+          feature_conf g=None,
           **kwargs):
     """
-    The BatchPredictionRequestTrainer constructor builds a
-    ``tf.estimator.Estimator`` and stores it in self.estimator.
-    For this reason, BatchPredictionRequestTrainer accepts the same Estimator constructor arguments.
-    It also accepts additional arguments to facilitate metric evaluation and multi-phase training
-    (init_from_dir, init_map).
+    T  BatchPred ct onRequestTra ner constructor bu lds a
+    ``tf.est mator.Est mator`` and stores    n self.est mator.
+    For t  reason, BatchPred ct onRequestTra ner accepts t  sa  Est mator constructor argu nts.
+      also accepts add  onal argu nts to fac l ate  tr c evaluat on and mult -phase tra n ng
+    ( n _from_d r,  n _map).
 
     Args:
-      parent arguments:
-        See the `Trainer constructor <#twml.trainers.Trainer.__init__>`_ documentation
-        for a full list of arguments accepted by the parent class.
-      name, params, build_graph_fn (and other parent class args):
-        see documentation for twml.Trainer and twml.DataRecordTrainer doc.
-      feature_config:
-        An object of type FeatureConfig describing what features to decode.
-        Defaults to None. But it is needed in the following cases:
-          - `get_train_input_fn()` / `get_eval_input_fn()` is called without a `parse_fn`
-          - `learn()`, `train()`, `eval()`, `calibrate()` are called without providing `*input_fn`.
+      parent argu nts:
+        See t  `Tra ner constructor <#twml.tra ners.Tra ner.__ n __>`_ docu ntat on
+        for a full l st of argu nts accepted by t  parent class.
+      na , params, bu ld_graph_fn (and ot r parent class args):
+        see docu ntat on for twml.Tra ner and twml.DataRecordTra ner doc.
+      feature_conf g:
+        An object of type FeatureConf g descr b ng what features to decode.
+        Defaults to None. But    s needed  n t  follow ng cases:
+          - `get_tra n_ nput_fn()` / `get_eval_ nput_fn()`  s called w hout a `parse_fn`
+          - `learn()`, `tra n()`, `eval()`, `cal brate()` are called w hout prov d ng `* nput_fn`.
 
       **kwargs:
-        further kwargs can be specified and passed to the Estimator constructor.
+        furt r kwargs can be spec f ed and passed to t  Est mator constructor.
     """
 
-    # Check and update train_batch_size and eval_batch_size in params before initialization
-    # to print correct parameter logs and does not stop running
-    # This overwrites batch_size parameter constrains in twml.trainers.Trainer.check_params
-    updated_params = self.check_batch_size_params(params)
-    super(BatchPredictionRequestTrainer, self).__init__(
-      name=name, params=updated_params, build_graph_fn=build_graph_fn, **kwargs)
+    # C ck and update tra n_batch_s ze and eval_batch_s ze  n params before  n  al zat on
+    # to pr nt correct para ter logs and does not stop runn ng
+    # T  overwr es batch_s ze para ter constra ns  n twml.tra ners.Tra ner.c ck_params
+    updated_params = self.c ck_batch_s ze_params(params)
+    super(BatchPred ct onRequestTra ner, self).__ n __(
+      na =na , params=updated_params, bu ld_graph_fn=bu ld_graph_fn, **kwargs)
 
-  def check_batch_size_params(self, params):
-    """ Verify that params has the correct key,values """
-    # updated_params is an instance of tensorflow.contrib.training.HParams
-    updated_params = twml.util.convert_to_hparams(params)
+  def c ck_batch_s ze_params(self, params):
+    """ Ver fy that params has t  correct key,values """
+    # updated_params  s an  nstance of tensorflow.contr b.tra n ng.HParams
+    updated_params = twml.ut l.convert_to_hparams(params)
     param_values = updated_params.values()
 
-    # twml.trainers.Trainer.check_params already checks other constraints,
-    # such as being an integer
-    if 'train_batch_size' in param_values:
-      if not isinstance(updated_params.train_batch_size, int):
-        raise ValueError("Expecting params.train_batch_size to be an integer.")
-      if param_values['train_batch_size'] != 1:
-        # This can be a bit annoying to force users to pass the batch sizes,
-        # but it is good to let them know what they actually use in the models
-        # Use warning instead of ValueError in there to continue the run
-        # and print out that train_batch_size is changed
-        warnings.warn('You are processing BatchPredictionRequest data, '
-          'train_batch_size is always 1.\n'
-          'The number of DataRecords in a batch is determined by the size '
-          'of each BatchPredictionRequest.\n'
-          'If you did not pass train.batch_size or eval.batch_size, and '
-          'the default batch_size 32 was in use,\n'
-          'please pass --train.batch_size 1 --eval.batch_size 1')
-        # If the upper error warning, change/pass --train.batch_size 1
-        # so that train_batch_size = 1
-        updated_params.train_batch_size = 1
+    # twml.tra ners.Tra ner.c ck_params already c cks ot r constra nts,
+    # such as be ng an  nteger
+     f 'tra n_batch_s ze'  n param_values:
+       f not  s nstance(updated_params.tra n_batch_s ze,  nt):
+        ra se ValueError("Expect ng params.tra n_batch_s ze to be an  nteger.")
+       f param_values['tra n_batch_s ze'] != 1:
+        # T  can be a b  annoy ng to force users to pass t  batch s zes,
+        # but    s good to let t m know what t y actually use  n t  models
+        # Use warn ng  nstead of ValueError  n t re to cont nue t  run
+        # and pr nt out that tra n_batch_s ze  s changed
+        warn ngs.warn('  are process ng BatchPred ct onRequest data, '
+          'tra n_batch_s ze  s always 1.\n'
+          'T  number of DataRecords  n a batch  s determ ned by t  s ze '
+          'of each BatchPred ct onRequest.\n'
+          ' f   d d not pass tra n.batch_s ze or eval.batch_s ze, and '
+          't  default batch_s ze 32 was  n use,\n'
+          'please pass --tra n.batch_s ze 1 --eval.batch_s ze 1')
+        #  f t  upper error warn ng, change/pass --tra n.batch_s ze 1
+        # so that tra n_batch_s ze = 1
+        updated_params.tra n_batch_s ze = 1
 
-    if 'eval_batch_size' in param_values:
-      if not isinstance(updated_params.train_batch_size, int):
-        raise ValueError('Expecting params.eval_batch_size to be an integer.')
-      if param_values['eval_batch_size'] != 1:
-        # This can be a bit annoying to force users to pass the batch sizes,
-        # but it is good to let them know what they actually use in the models
-        # Use warning instead of ValueError in there to continue the run
-        # and print out that eval_batch_size is changed
-        warnings.warn('You are processing BatchPredictionRequest data, '
-          'eval_batch_size is also always 1.\n'
-          'The number of DataRecords in a batch is determined by the size '
-          'of each BatchPredictionRequest.\n'
-          'If you did not pass train.batch_size or eval.batch_size, and '
-          'the default batch_size 32 was in use,\n'
-          'please pass --train.batch_size 1 --eval.batch_size 1')
-        # If the upper warning raises, change/pass --eval.batch_size 1
-        # so that eval_batch_size = 1
-        updated_params.eval_batch_size = 1
+     f 'eval_batch_s ze'  n param_values:
+       f not  s nstance(updated_params.tra n_batch_s ze,  nt):
+        ra se ValueError('Expect ng params.eval_batch_s ze to be an  nteger.')
+       f param_values['eval_batch_s ze'] != 1:
+        # T  can be a b  annoy ng to force users to pass t  batch s zes,
+        # but    s good to let t m know what t y actually use  n t  models
+        # Use warn ng  nstead of ValueError  n t re to cont nue t  run
+        # and pr nt out that eval_batch_s ze  s changed
+        warn ngs.warn('  are process ng BatchPred ct onRequest data, '
+          'eval_batch_s ze  s also always 1.\n'
+          'T  number of DataRecords  n a batch  s determ ned by t  s ze '
+          'of each BatchPred ct onRequest.\n'
+          ' f   d d not pass tra n.batch_s ze or eval.batch_s ze, and '
+          't  default batch_s ze 32 was  n use,\n'
+          'please pass --tra n.batch_s ze 1 --eval.batch_s ze 1')
+        #  f t  upper warn ng ra ses, change/pass --eval.batch_s ze 1
+        # so that eval_batch_s ze = 1
+        updated_params.eval_batch_s ze = 1
 
-    if 'eval_batch_size' not in param_values:
-      updated_params.eval_batch_size = 1
+     f 'eval_batch_s ze' not  n param_values:
+      updated_params.eval_batch_s ze = 1
 
-    if not updated_params.eval_batch_size:
-      updated_params.eval_batch_size = 1
+     f not updated_params.eval_batch_s ze:
+      updated_params.eval_batch_s ze = 1
 
     return updated_params
 
-  @staticmethod
-  def add_batch_prediction_request_arguments():
+  @stat c thod
+  def add_batch_pred ct on_request_argu nts():
     """
-    Add commandline args to parse typically for the BatchPredictionRequestTrainer class.
-    Typically, the user calls this function and then parses cmd-line arguments
-    into an argparse.Namespace object which is then passed to the Trainer constructor
-    via the params argument.
+    Add commandl ne args to parse typ cally for t  BatchPred ct onRequestTra ner class.
+    Typ cally, t  user calls t  funct on and t n parses cmd-l ne argu nts
+     nto an argparse.Na space object wh ch  s t n passed to t  Tra ner constructor
+    v a t  params argu nt.
 
-    See the `code <_modules/twml/argument_parser.html#get_trainer_parser>`_
-    for a list and description of all cmd-line arguments.
+    See t  `code <_modules/twml/argu nt_parser.html#get_tra ner_parser>`_
+    for a l st and descr pt on of all cmd-l ne argu nts.
 
     Returns:
-      argparse.ArgumentParser instance with some useful args already added.
+      argparse.Argu ntParser  nstance w h so  useful args already added.
     """
-    parser = super(BatchPredictionRequestTrainer,
-      BatchPredictionRequestTrainer).add_parser_arguments()
+    parser = super(BatchPred ct onRequestTra ner,
+      BatchPred ct onRequestTra ner).add_parser_argu nts()
 
-    # mlp arguments
-    parser.add_argument(
-      '--model.use_existing_discretizer', action='store_true',
-      dest="model_use_existing_discretizer",
-      help='Load a pre-trained calibration or train a new one')
-    parser.add_argument(
-      '--model.use_binary_values', action='store_true',
-      dest='model_use_binary_values',
-      help='Use the use_binary_values optimization')
+    # mlp argu nts
+    parser.add_argu nt(
+      '--model.use_ex st ng_d scret zer', act on='store_true',
+      dest="model_use_ex st ng_d scret zer",
+       lp='Load a pre-tra ned cal brat on or tra n a new one')
+    parser.add_argu nt(
+      '--model.use_b nary_values', act on='store_true',
+      dest='model_use_b nary_values',
+       lp='Use t  use_b nary_values opt m zat on')
 
-    # control hom many featues we keep in sparse tensors
-    # 12 is enough for learning-to-rank for now
-    parser.add_argument(
-      '--input_size_bits', type=int, default=12,
-      help='Number of bits allocated to the input size')
+    # control hom many featues   keep  n sparse tensors
+    # 12  s enough for learn ng-to-rank for now
+    parser.add_argu nt(
+      '-- nput_s ze_b s', type= nt, default=12,
+       lp='Number of b s allocated to t   nput s ze')
 
-    parser.add_argument(
-      '--loss_function', type=str, default='ranknet',
-      dest='loss_function',
-      help='Options are pairwise: ranknet (default), lambdarank, '
-      'listnet, listmle, attrank, '
-      'pointwise')
+    parser.add_argu nt(
+      '--loss_funct on', type=str, default='ranknet',
+      dest='loss_funct on',
+       lp='Opt ons are pa rw se: ranknet (default), lambdarank, '
+      'l stnet, l stmle, attrank, '
+      'po ntw se')
 
-    # whether convert sparse tensors to dense tensor
-    # in order to use dense normalization methods
-    parser.add_argument(
-      '--use_dense_tensor', action='store_true',
+    # w t r convert sparse tensors to dense tensor
+    #  n order to use dense normal zat on  thods
+    parser.add_argu nt(
+      '--use_dense_tensor', act on='store_true',
       dest='use_dense_tensor',
       default=False,
-      help='If use_dense_tensor is False, '
-      'sparse tensor and spare normalization are in use. '
-      'If use_dense_tensor is True, '
-      'dense tensor and dense normalization are in use.')
+       lp=' f use_dense_tensor  s False, '
+      'sparse tensor and spare normal zat on are  n use. '
+      ' f use_dense_tensor  s True, '
+      'dense tensor and dense normal zat on are  n use.')
 
-    parser.add_argument(
-      '--dense_normalization', type=str, default='mean_max_normalizaiton',
-      dest='dense_normalization',
-      help='Options are mean_max_normalizaiton (default), standard_normalizaiton')
+    parser.add_argu nt(
+      '--dense_normal zat on', type=str, default=' an_max_normal za on',
+      dest='dense_normal zat on',
+       lp='Opt ons are  an_max_normal za on (default), standard_normal za on')
 
-    parser.add_argument(
-      '--sparse_normalization', type=str, default='SparseMaxNorm',
-      dest='sparse_normalization',
-      help='Options are SparseMaxNorm (default), SparseBatchNorm')
+    parser.add_argu nt(
+      '--sparse_normal zat on', type=str, default='SparseMaxNorm',
+      dest='sparse_normal zat on',
+       lp='Opt ons are SparseMaxNorm (default), SparseBatchNorm')
 
-    # so far only used in pairwise learning-to-rank
-    parser.add_argument(
+    # so far only used  n pa rw se learn ng-to-rank
+    parser.add_argu nt(
       '--mask', type=str, default='full_mask',
       dest='mask',
-      help='Options are full_mask (default), diag_mask')
+       lp='Opt ons are full_mask (default), d ag_mask')
 
     return parser

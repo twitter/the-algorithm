@@ -1,24 +1,24 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.tw ter.fr gate.pushserv ce.model. b s
 
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.ibis2.lib.util.JsonMarshal
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter. b s2.l b.ut l.JsonMarshal
+ mport com.tw ter.ut l.Future
 
-trait CustomConfigurationMapForIbis {
-  self: PushCandidate =>
+tra  CustomConf gurat onMapFor b s {
+  self: PushCand date =>
 
-  lazy val customConfigMapsJsonFut: Future[String] = {
-    customFieldsMapFut.map { customFields =>
-      JsonMarshal.toJson(customFields)
+  lazy val customConf gMapsJsonFut: Future[Str ng] = {
+    customF eldsMapFut.map { customF elds =>
+      JsonMarshal.toJson(customF elds)
     }
   }
 
-  lazy val customConfigMapsFut: Future[Map[String, String]] = {
-    if (self.target.isLoggedOutUser) {
-      Future.value(Map.empty[String, String])
+  lazy val customConf gMapsFut: Future[Map[Str ng, Str ng]] = {
+     f (self.target. sLoggedOutUser) {
+      Future.value(Map.empty[Str ng, Str ng])
     } else {
-      customConfigMapsJsonFut.map { customConfigMapsJson =>
-        Map("custom_config" -> customConfigMapsJson)
+      customConf gMapsJsonFut.map { customConf gMapsJson =>
+        Map("custom_conf g" -> customConf gMapsJson)
       }
     }
   }

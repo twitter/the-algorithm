@@ -1,277 +1,277 @@
-package com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor
+package com.tw ter.product_m xer.core.serv ce.cand date_feature_hydrator_executor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseBulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.HydratorCandidateResult
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1.FeatureStoreV1CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.MisconfiguredFeatureMapFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.Executor._
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutor.Inputs
-import com.twitter.product_mixer.core.service.feature_hydrator_observer.FeatureHydratorObserver
-import com.twitter.stitch.Arrow
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BaseBulkCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.BaseCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.Cand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.HydratorCand dateResult
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.featurestorev1.FeatureStoreV1Cand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Cond  onally
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.M sconf guredFeatureMapFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.product_m xer.core.serv ce.Executor._
+ mport com.tw ter.product_m xer.core.serv ce.cand date_feature_hydrator_executor.Cand dateFeatureHydratorExecutor. nputs
+ mport com.tw ter.product_m xer.core.serv ce.feature_hydrator_observer.FeatureHydratorObserver
+ mport com.tw ter.st ch.Arrow
+ mport com.tw ter.ut l.Try
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class CandidateFeatureHydratorExecutor @Inject() (override val statsReceiver: StatsReceiver)
+@S ngleton
+class Cand dateFeatureHydratorExecutor @ nject() (overr de val statsRece ver: StatsRece ver)
     extends Executor {
-  def arrow[Query <: PipelineQuery, Result <: UniversalNoun[Any]](
-    hydrators: Seq[BaseCandidateFeatureHydrator[Query, Result, _]],
+  def arrow[Query <: P pel neQuery, Result <: Un versalNoun[Any]](
+    hydrators: Seq[BaseCand dateFeatureHydrator[Query, Result, _]],
     context: Executor.Context
   ): Arrow[
-    Inputs[Query, Result],
-    CandidateFeatureHydratorExecutorResult[
+     nputs[Query, Result],
+    Cand dateFeatureHydratorExecutorResult[
       Result
     ]
   ] = {
 
-    val observer = new FeatureHydratorObserver(statsReceiver, hydrators, context)
+    val observer = new FeatureHydratorObserver(statsRece ver, hydrators, context)
 
-    val candidateFeatureHydratorExecutorResults: Seq[Arrow[
-      Inputs[Query, Result],
-      CandidateFeatureHydratorExecutorResult[Result]
-    ]] = hydrators.map(getCandidateHydratorArrow(_, context, observer))
+    val cand dateFeatureHydratorExecutorResults: Seq[Arrow[
+       nputs[Query, Result],
+      Cand dateFeatureHydratorExecutorResult[Result]
+    ]] = hydrators.map(getCand dateHydratorArrow(_, context, observer))
 
-    val runHydrators = Arrow.collect(candidateFeatureHydratorExecutorResults).map {
-      candidateFeatureHydratorExecutorResult: Seq[CandidateFeatureHydratorExecutorResult[Result]] =>
-        candidateFeatureHydratorExecutorResult.foldLeft(
-          CandidateFeatureHydratorExecutorResult[Result](
+    val runHydrators = Arrow.collect(cand dateFeatureHydratorExecutorResults).map {
+      cand dateFeatureHydratorExecutorResult: Seq[Cand dateFeatureHydratorExecutorResult[Result]] =>
+        cand dateFeatureHydratorExecutorResult.foldLeft(
+          Cand dateFeatureHydratorExecutorResult[Result](
             Seq.empty,
             Map.empty
           )
-        ) { (accumulator, additionalResult) =>
-          // accumulator.results and additionalResults.results are either the same length or one may be empty
-          // checks in each Hydrator's Arrow implementation ensure the ordering and length are correct
-          val mergedFeatureMaps =
-            if (accumulator.results.length == additionalResult.results.length) {
-              // merge if there are results for both and they are the same size
-              // also handles both being empty
-              accumulator.results.zip(additionalResult.results).map {
-                case (accumulatedScoredCandidate, resultScoredCandidate) =>
+        ) { (accumulator, add  onalResult) =>
+          // accumulator.results and add  onalResults.results are e  r t  sa  length or one may be empty
+          // c cks  n each Hydrator's Arrow  mple ntat on ensure t  order ng and length are correct
+          val  rgedFeatureMaps =
+             f (accumulator.results.length == add  onalResult.results.length) {
+              //  rge  f t re are results for both and t y are t  sa  s ze
+              // also handles both be ng empty
+              accumulator.results.z p(add  onalResult.results).map {
+                case (accumulatedScoredCand date, resultScoredCand date) =>
                   val updatedFeatureMap =
-                    accumulatedScoredCandidate.features ++ resultScoredCandidate.features
-                  HydratorCandidateResult(resultScoredCandidate.candidate, updatedFeatureMap)
+                    accumulatedScoredCand date.features ++ resultScoredCand date.features
+                  HydratorCand dateResult(resultScoredCand date.cand date, updatedFeatureMap)
               }
-            } else if (accumulator.results.isEmpty) {
-              // accumulator is empty (the initial case) so use additional results
-              additionalResult.results
+            } else  f (accumulator.results. sEmpty) {
+              // accumulator  s empty (t   n  al case) so use add  onal results
+              add  onalResult.results
             } else {
-              // empty results but non-empty accumulator due to Hydrator being turned off so use accumulator results
+              // empty results but non-empty accumulator due to Hydrator be ng turned off so use accumulator results
               accumulator.results
             }
 
-          CandidateFeatureHydratorExecutorResult(
-            mergedFeatureMaps,
-            accumulator.individualFeatureHydratorResults ++ additionalResult.individualFeatureHydratorResults
+          Cand dateFeatureHydratorExecutorResult(
+             rgedFeatureMaps,
+            accumulator. nd v dualFeatureHydratorResults ++ add  onalResult. nd v dualFeatureHydratorResults
           )
         }
     }
 
-    Arrow.ifelse[Inputs[Query, Result], CandidateFeatureHydratorExecutorResult[Result]](
-      _.candidates.nonEmpty,
+    Arrow. felse[ nputs[Query, Result], Cand dateFeatureHydratorExecutorResult[Result]](
+      _.cand dates.nonEmpty,
       runHydrators,
-      Arrow.value(CandidateFeatureHydratorExecutorResult(Seq.empty, Map.empty)))
+      Arrow.value(Cand dateFeatureHydratorExecutorResult(Seq.empty, Map.empty)))
   }
 
-  /** @note the returned [[Arrow]] must have a result for every candidate passed into it in the same order OR a completely empty result */
-  private def getCandidateHydratorArrow[Query <: PipelineQuery, Result <: UniversalNoun[Any]](
-    hydrator: BaseCandidateFeatureHydrator[Query, Result, _],
+  /** @note t  returned [[Arrow]] must have a result for every cand date passed  nto    n t  sa  order OR a completely empty result */
+  pr vate def getCand dateHydratorArrow[Query <: P pel neQuery, Result <: Un versalNoun[Any]](
+    hydrator: BaseCand dateFeatureHydrator[Query, Result, _],
     context: Executor.Context,
-    candidateFeatureHydratorObserver: FeatureHydratorObserver
+    cand dateFeatureHydratorObserver: FeatureHydratorObserver
   ): Arrow[
-    Inputs[Query, Result],
-    CandidateFeatureHydratorExecutorResult[Result]
+     nputs[Query, Result],
+    Cand dateFeatureHydratorExecutorResult[Result]
   ] = {
-    val componentExecutorContext = context.pushToComponentStack(hydrator.identifier)
+    val componentExecutorContext = context.pushToComponentStack(hydrator. dent f er)
 
-    val validateFeatureMapFn: FeatureMap => FeatureMap =
+    val val dateFeatureMapFn: FeatureMap => FeatureMap =
       hydrator match {
-        // Feature store candidate hydrators store the resulting PredictionRecords and
-        // not the features, so we cannot validate the same way
-        case _: FeatureStoreV1CandidateFeatureHydrator[Query, Result] =>
-          identity
+        // Feature store cand date hydrators store t  result ng Pred ct onRecords and
+        // not t  features, so   cannot val date t  sa  way
+        case _: FeatureStoreV1Cand dateFeatureHydrator[Query, Result] =>
+           dent y
         case _ =>
-          validateFeatureMap(
-            hydrator.features.asInstanceOf[Set[Feature[_, _]]],
+          val dateFeatureMap(
+            hydrator.features.as nstanceOf[Set[Feature[_, _]]],
             _,
             componentExecutorContext)
       }
 
     val hydratorBaseArrow = hydrator match {
-      case hydrator: CandidateFeatureHydrator[Query, Result] =>
-        singleCandidateHydratorArrow(
+      case hydrator: Cand dateFeatureHydrator[Query, Result] =>
+        s ngleCand dateHydratorArrow(
           hydrator,
-          validateFeatureMapFn,
+          val dateFeatureMapFn,
           componentExecutorContext,
           parentContext = context)
 
-      case hydrator: BaseBulkCandidateFeatureHydrator[Query, Result, _] =>
-        bulkCandidateHydratorArrow(
+      case hydrator: BaseBulkCand dateFeatureHydrator[Query, Result, _] =>
+        bulkCand dateHydratorArrow(
           hydrator,
-          validateFeatureMapFn,
+          val dateFeatureMapFn,
           componentExecutorContext,
           parentContext = context)
     }
 
-    val candidateFeatureHydratorArrow =
+    val cand dateFeatureHydratorArrow =
       Arrow
-        .zipWithArg(hydratorBaseArrow)
+        .z pW hArg(hydratorBaseArrow)
         .map {
           case (
-                arg: CandidateFeatureHydratorExecutor.Inputs[Query, Result],
+                arg: Cand dateFeatureHydratorExecutor. nputs[Query, Result],
                 featureMapSeq: Seq[FeatureMap]) =>
-            val candidates = arg.candidates.map(_.candidate)
+            val cand dates = arg.cand dates.map(_.cand date)
 
-            candidateFeatureHydratorObserver.observeFeatureSuccessAndFailures(
+            cand dateFeatureHydratorObserver.observeFeatureSuccessAndFa lures(
               hydrator,
               featureMapSeq)
 
-            // Build a map from candidate to FeatureMap
-            val candidateAndFeatureMaps = if (candidates.size == featureMapSeq.size) {
-              candidates.zip(featureMapSeq).map {
-                case (candidate, featureMap) => HydratorCandidateResult(candidate, featureMap)
+            // Bu ld a map from cand date to FeatureMap
+            val cand dateAndFeatureMaps =  f (cand dates.s ze == featureMapSeq.s ze) {
+              cand dates.z p(featureMapSeq).map {
+                case (cand date, featureMap) => HydratorCand dateResult(cand date, featureMap)
               }
             } else {
-              throw PipelineFailure(
-                MisconfiguredFeatureMapFailure,
-                s"Unexpected response length from ${hydrator.identifier}, ensure hydrator returns feature map for all candidates")
+              throw P pel neFa lure(
+                M sconf guredFeatureMapFa lure,
+                s"Unexpected response length from ${hydrator. dent f er}, ensure hydrator returns feature map for all cand dates")
             }
-            val individualFeatureHydratorFeatureMaps =
-              Map(hydrator.identifier -> IndividualFeatureHydratorResult(candidateAndFeatureMaps))
-            CandidateFeatureHydratorExecutorResult(
-              candidateAndFeatureMaps,
-              individualFeatureHydratorFeatureMaps)
+            val  nd v dualFeatureHydratorFeatureMaps =
+              Map(hydrator. dent f er ->  nd v dualFeatureHydratorResult(cand dateAndFeatureMaps))
+            Cand dateFeatureHydratorExecutorResult(
+              cand dateAndFeatureMaps,
+               nd v dualFeatureHydratorFeatureMaps)
         }
 
-    val conditionallyRunArrow = hydrator match {
-      case hydrator: BaseCandidateFeatureHydrator[Query, Result, _] with Conditionally[
-            Query @unchecked
+    val cond  onallyRunArrow = hydrator match {
+      case hydrator: BaseCand dateFeatureHydrator[Query, Result, _] w h Cond  onally[
+            Query @unc cked
           ] =>
-        Arrow.ifelse[Inputs[Query, Result], CandidateFeatureHydratorExecutorResult[Result]](
-          { case Inputs(query: Query @unchecked, _) => hydrator.onlyIf(query) },
-          candidateFeatureHydratorArrow,
+        Arrow. felse[ nputs[Query, Result], Cand dateFeatureHydratorExecutorResult[Result]](
+          { case  nputs(query: Query @unc cked, _) => hydrator.only f(query) },
+          cand dateFeatureHydratorArrow,
           Arrow.value(
-            CandidateFeatureHydratorExecutorResult(
+            Cand dateFeatureHydratorExecutorResult(
               Seq.empty,
-              Map(hydrator.identifier -> FeatureHydratorDisabled[Result]())
+              Map(hydrator. dent f er -> FeatureHydratorD sabled[Result]())
             ))
         )
-      case _ => candidateFeatureHydratorArrow
+      case _ => cand dateFeatureHydratorArrow
     }
 
-    wrapWithErrorHandling(context, hydrator.identifier)(conditionallyRunArrow)
+    wrapW hErrorHandl ng(context, hydrator. dent f er)(cond  onallyRunArrow)
   }
 
-  private def singleCandidateHydratorArrow[Query <: PipelineQuery, Result <: UniversalNoun[Any]](
-    hydrator: CandidateFeatureHydrator[Query, Result],
-    validateFeatureMap: FeatureMap => FeatureMap,
+  pr vate def s ngleCand dateHydratorArrow[Query <: P pel neQuery, Result <: Un versalNoun[Any]](
+    hydrator: Cand dateFeatureHydrator[Query, Result],
+    val dateFeatureMap: FeatureMap => FeatureMap,
     componentContext: Context,
     parentContext: Context
-  ): Arrow[Inputs[Query, Result], Seq[FeatureMap]] = {
-    val inputTransformer = Arrow
-      .map { inputs: Inputs[Query, Result] =>
-        inputs.candidates.map { candidate =>
-          (inputs.query, candidate.candidate, candidate.features)
+  ): Arrow[ nputs[Query, Result], Seq[FeatureMap]] = {
+    val  nputTransfor r = Arrow
+      .map {  nputs:  nputs[Query, Result] =>
+         nputs.cand dates.map { cand date =>
+          ( nputs.query, cand date.cand date, cand date.features)
         }
       }
 
     val hydratorArrow = Arrow
       .flatMap[(Query, Result, FeatureMap), FeatureMap] {
-        case (query, candidate, featureMap) =>
-          hydrator.apply(query, candidate, featureMap)
+        case (query, cand date, featureMap) =>
+          hydrator.apply(query, cand date, featureMap)
       }
 
-    // validate before observing so validation failures are caught in the metrics
-    val hydratorArrowWithValidation = hydratorArrow.map(validateFeatureMap)
+    // val date before observ ng so val dat on fa lures are caught  n t   tr cs
+    val hydratorArrowW hVal dat on = hydratorArrow.map(val dateFeatureMap)
 
-    // no tracing here since per-Component spans is overkill
+    // no trac ng  re s nce per-Component spans  s overk ll
     val observedArrow =
-      wrapPerCandidateComponentWithExecutorBookkeepingWithoutTracing(
+      wrapPerCand dateComponentW hExecutorBookkeep ngW houtTrac ng(
         parentContext,
-        hydrator.identifier
-      )(hydratorArrowWithValidation)
+        hydrator. dent f er
+      )(hydratorArrowW hVal dat on)
 
-    // only handle non-validation failures
-    val liftNonValidationFailuresToFailedFeatures = Arrow.handle[FeatureMap, FeatureMap] {
-      case NotAMisconfiguredFeatureMapFailure(e) =>
-        featureMapWithFailuresForFeatures(hydrator.features, e, componentContext)
+    // only handle non-val dat on fa lures
+    val l ftNonVal dat onFa luresToFa ledFeatures = Arrow.handle[FeatureMap, FeatureMap] {
+      case NotAM sconf guredFeatureMapFa lure(e) =>
+        featureMapW hFa luresForFeatures(hydrator.features, e, componentContext)
     }
 
-    wrapComponentsWithTracingOnly(parentContext, hydrator.identifier)(
-      inputTransformer.andThen(
-        Arrow.sequence(observedArrow.andThen(liftNonValidationFailuresToFailedFeatures))
+    wrapComponentsW hTrac ngOnly(parentContext, hydrator. dent f er)(
+       nputTransfor r.andT n(
+        Arrow.sequence(observedArrow.andT n(l ftNonVal dat onFa luresToFa ledFeatures))
       )
     )
   }
 
-  private def bulkCandidateHydratorArrow[Query <: PipelineQuery, Result <: UniversalNoun[Any]](
-    hydrator: BaseBulkCandidateFeatureHydrator[Query, Result, _],
-    validateFeatureMap: FeatureMap => FeatureMap,
+  pr vate def bulkCand dateHydratorArrow[Query <: P pel neQuery, Result <: Un versalNoun[Any]](
+    hydrator: BaseBulkCand dateFeatureHydrator[Query, Result, _],
+    val dateFeatureMap: FeatureMap => FeatureMap,
     componentContext: Context,
     parentContext: Context
-  ): Arrow[Inputs[Query, Result], Seq[FeatureMap]] = {
-    val hydratorArrow: Arrow[Inputs[Query, Result], Seq[FeatureMap]] =
-      Arrow.flatMap { inputs =>
-        hydrator.apply(inputs.query, inputs.candidates)
+  ): Arrow[ nputs[Query, Result], Seq[FeatureMap]] = {
+    val hydratorArrow: Arrow[ nputs[Query, Result], Seq[FeatureMap]] =
+      Arrow.flatMap {  nputs =>
+        hydrator.apply( nputs.query,  nputs.cand dates)
       }
 
-    val validationArrow: Arrow[(Inputs[Query, Result], Seq[FeatureMap]), Seq[FeatureMap]] = Arrow
-      .map[(Inputs[Query, Result], Seq[FeatureMap]), Seq[FeatureMap]] {
-        case (inputs, results) =>
-          // For bulk APIs, this ensures no candidates are omitted and also ensures the order is preserved.
-          if (inputs.candidates.length != results.length) {
-            throw PipelineFailure(
-              MisconfiguredFeatureMapFailure,
-              s"Unexpected response from ${hydrator.identifier}, ensure hydrator returns features for all candidates. Missing results for ${inputs.candidates.length - results.length} candidates"
+    val val dat onArrow: Arrow[( nputs[Query, Result], Seq[FeatureMap]), Seq[FeatureMap]] = Arrow
+      .map[( nputs[Query, Result], Seq[FeatureMap]), Seq[FeatureMap]] {
+        case ( nputs, results) =>
+          // For bulk AP s, t  ensures no cand dates are om ted and also ensures t  order  s preserved.
+           f ( nputs.cand dates.length != results.length) {
+            throw P pel neFa lure(
+              M sconf guredFeatureMapFa lure,
+              s"Unexpected response from ${hydrator. dent f er}, ensure hydrator returns features for all cand dates. M ss ng results for ${ nputs.cand dates.length - results.length} cand dates"
             )
           }
 
-          results.map(validateFeatureMap)
+          results.map(val dateFeatureMap)
       }
 
-    // validate before observing so validation failures are caught in the metrics
-    val hydratorArrowWithValidation: Arrow[Inputs[Query, Result], Seq[FeatureMap]] =
-      Arrow.zipWithArg(hydratorArrow).andThen(validationArrow)
+    // val date before observ ng so val dat on fa lures are caught  n t   tr cs
+    val hydratorArrowW hVal dat on: Arrow[ nputs[Query, Result], Seq[FeatureMap]] =
+      Arrow.z pW hArg(hydratorArrow).andT n(val dat onArrow)
 
     val observedArrow =
-      wrapComponentWithExecutorBookkeeping(parentContext, hydrator.identifier)(
-        hydratorArrowWithValidation)
+      wrapComponentW hExecutorBookkeep ng(parentContext, hydrator. dent f er)(
+        hydratorArrowW hVal dat on)
 
-    // only handle non-validation failures
-    val liftNonValidationFailuresToFailedFeatures =
-      Arrow.map[(Inputs[Query, Result], Try[Seq[FeatureMap]]), Try[Seq[FeatureMap]]] {
-        case (inputs, resultTry) =>
+    // only handle non-val dat on fa lures
+    val l ftNonVal dat onFa luresToFa ledFeatures =
+      Arrow.map[( nputs[Query, Result], Try[Seq[FeatureMap]]), Try[Seq[FeatureMap]]] {
+        case ( nputs, resultTry) =>
           resultTry.handle {
-            case NotAMisconfiguredFeatureMapFailure(e) =>
+            case NotAM sconf guredFeatureMapFa lure(e) =>
               val errorFeatureMap =
-                featureMapWithFailuresForFeatures(
-                  hydrator.features.asInstanceOf[Set[Feature[_, _]]],
+                featureMapW hFa luresForFeatures(
+                  hydrator.features.as nstanceOf[Set[Feature[_, _]]],
                   e,
                   componentContext)
-              inputs.candidates.map(_ => errorFeatureMap)
+               nputs.cand dates.map(_ => errorFeatureMap)
           }
       }
 
     Arrow
-      .zipWithArg(observedArrow.liftToTry)
-      .andThen(liftNonValidationFailuresToFailedFeatures)
-      .lowerFromTry
+      .z pW hArg(observedArrow.l ftToTry)
+      .andT n(l ftNonVal dat onFa luresToFa ledFeatures)
+      .lo rFromTry
   }
 }
 
-object CandidateFeatureHydratorExecutor {
-  case class Inputs[+Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
+object Cand dateFeatureHydratorExecutor {
+  case class  nputs[+Query <: P pel neQuery, Cand date <: Un versalNoun[Any]](
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]])
+    cand dates: Seq[Cand dateW hFeatures[Cand date]])
 }

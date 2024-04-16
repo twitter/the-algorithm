@@ -1,138 +1,138 @@
-package com.twitter.search.earlybird.search.relevance;
+package com.tw ter.search.earlyb rd.search.relevance;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+ mport org.apac .lucene. ndex.LeafReader;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene.search.BooleanClause;
+ mport org.apac .lucene.search.BooleanQuery;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.search. ndexSearc r;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .lucene.search.ScoreMode;
+ mport org.apac .lucene.search.  ght;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunction;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunctionProvider;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunctionProvider.NamedScoringFunctionProvider;
+ mport com.tw ter.search.common.query.DefaultF lter  ght;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
+ mport com.tw ter.search.core.earlyb rd. ndex.ut l.RangeF lterD S ;
+ mport com.tw ter.search.earlyb rd.search.relevance.scor ng.Scor ngFunct on;
+ mport com.tw ter.search.earlyb rd.search.relevance.scor ng.Scor ngFunct onProv der;
+ mport com.tw ter.search.earlyb rd.search.relevance.scor ng.Scor ngFunct onProv der.Na dScor ngFunct onProv der;
 
 /**
- * This filter only accepts documents for which the provided
- * {@link com.twitter.search.earlybird.search.relevance.scoring.ScoringFunction}
- * returns a score that's greater or equal to the passed-in minScore and smaller or equal
+ * T  f lter only accepts docu nts for wh ch t  prov ded
+ * {@l nk com.tw ter.search.earlyb rd.search.relevance.scor ng.Scor ngFunct on}
+ * returns a score that's greater or equal to t  passed- n m nScore and smaller or equal
  * to maxScore.
  */
-public final class ScoreFilterQuery extends Query {
-  private static final float DEFAULT_LUCENE_SCORE = 1.0F;
+publ c f nal class ScoreF lterQuery extends Query {
+  pr vate stat c f nal float DEFAULT_LUCENE_SCORE = 1.0F;
 
-  private final float minScore;
-  private final float maxScore;
-  private final NamedScoringFunctionProvider scoringFunctionProvider;
-  private final ImmutableSchemaInterface schema;
+  pr vate f nal float m nScore;
+  pr vate f nal float maxScore;
+  pr vate f nal Na dScor ngFunct onProv der scor ngFunct onProv der;
+  pr vate f nal  mmutableSc ma nterface sc ma;
 
   /**
-   * Returns a score filter.
+   * Returns a score f lter.
    *
-   * @param schema The schema to use to extract the feature scores.
-   * @param scoringFunctionProvider The scoring function provider.
-   * @param minScore The minimum score threshold.
-   * @param maxScore The maximum score threshold.
-   * @return A score filter with the given configuration.
+   * @param sc ma T  sc ma to use to extract t  feature scores.
+   * @param scor ngFunct onProv der T  scor ng funct on prov der.
+   * @param m nScore T  m n mum score threshold.
+   * @param maxScore T  max mum score threshold.
+   * @return A score f lter w h t  g ven conf gurat on.
    */
-  public static Query getScoreFilterQuery(
-      ImmutableSchemaInterface schema,
-      NamedScoringFunctionProvider scoringFunctionProvider,
-      float minScore,
+  publ c stat c Query getScoreF lterQuery(
+       mmutableSc ma nterface sc ma,
+      Na dScor ngFunct onProv der scor ngFunct onProv der,
+      float m nScore,
       float maxScore) {
-    return new BooleanQuery.Builder()
-        .add(new ScoreFilterQuery(schema, scoringFunctionProvider, minScore, maxScore),
-             BooleanClause.Occur.FILTER)
-        .build();
+    return new BooleanQuery.Bu lder()
+        .add(new ScoreF lterQuery(sc ma, scor ngFunct onProv der, m nScore, maxScore),
+             BooleanClause.Occur.F LTER)
+        .bu ld();
   }
 
-  private ScoreFilterQuery(ImmutableSchemaInterface schema,
-                           NamedScoringFunctionProvider scoringFunctionProvider,
-                           float minScore,
+  pr vate ScoreF lterQuery( mmutableSc ma nterface sc ma,
+                           Na dScor ngFunct onProv der scor ngFunct onProv der,
+                           float m nScore,
                            float maxScore) {
-    this.schema = schema;
-    this.scoringFunctionProvider = scoringFunctionProvider;
-    this.minScore = minScore;
-    this.maxScore = maxScore;
+    t .sc ma = sc ma;
+    t .scor ngFunct onProv der = scor ngFunct onProv der;
+    t .m nScore = m nScore;
+    t .maxScore = maxScore;
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        ScoringFunction scoringFunction = scoringFunctionProvider.getScoringFunction();
-        scoringFunction.setNextReader((EarlybirdIndexSegmentAtomicReader) context.reader());
-        return new ScoreFilterDocIdSetIterator(
-            context.reader(), scoringFunction, minScore, maxScore);
+  @Overr de
+  publ c   ght create  ght( ndexSearc r searc r, ScoreMode scoreMode, float boost)
+      throws  OExcept on {
+    return new DefaultF lter  ght(t ) {
+      @Overr de
+      protected Doc dSet erator getDoc dSet erator(LeafReaderContext context) throws  OExcept on {
+        Scor ngFunct on scor ngFunct on = scor ngFunct onProv der.getScor ngFunct on();
+        scor ngFunct on.setNextReader((Earlyb rd ndexSeg ntAtom cReader) context.reader());
+        return new ScoreF lterDoc dSet erator(
+            context.reader(), scor ngFunct on, m nScore, maxScore);
       }
     };
   }
 
-  private static final class ScoreFilterDocIdSetIterator extends RangeFilterDISI {
-    private final ScoringFunction scoringFunction;
-    private final float minScore;
-    private final float maxScore;
+  pr vate stat c f nal class ScoreF lterDoc dSet erator extends RangeF lterD S  {
+    pr vate f nal Scor ngFunct on scor ngFunct on;
+    pr vate f nal float m nScore;
+    pr vate f nal float maxScore;
 
-    public ScoreFilterDocIdSetIterator(LeafReader indexReader, ScoringFunction scoringFunction,
-                                       float minScore, float maxScore) throws IOException {
-      super(indexReader);
-      this.scoringFunction = scoringFunction;
-      this.minScore = minScore;
-      this.maxScore = maxScore;
+    publ c ScoreF lterDoc dSet erator(LeafReader  ndexReader, Scor ngFunct on scor ngFunct on,
+                                       float m nScore, float maxScore) throws  OExcept on {
+      super( ndexReader);
+      t .scor ngFunct on = scor ngFunct on;
+      t .m nScore = m nScore;
+      t .maxScore = maxScore;
     }
 
-    @Override
-    protected boolean shouldReturnDoc() throws IOException {
-      float score = scoringFunction.score(docID(), DEFAULT_LUCENE_SCORE);
-      return score >= minScore && score <= maxScore;
+    @Overr de
+    protected boolean shouldReturnDoc() throws  OExcept on {
+      float score = scor ngFunct on.score(doc D(), DEFAULT_LUCENE_SCORE);
+      return score >= m nScore && score <= maxScore;
     }
   }
 
-  public float getMinScoreForTest() {
-    return minScore;
+  publ c float getM nScoreForTest() {
+    return m nScore;
   }
 
-  public float getMaxScoreForTest() {
+  publ c float getMaxScoreForTest() {
     return maxScore;
   }
 
-  public ScoringFunctionProvider getScoringFunctionProviderForTest() {
-    return scoringFunctionProvider;
+  publ c Scor ngFunct onProv der getScor ngFunct onProv derForTest() {
+    return scor ngFunct onProv der;
   }
 
-  @Override
-  public int hashCode() {
-    return (int) (minScore * 29
+  @Overr de
+  publ c  nt hashCode() {
+    return ( nt) (m nScore * 29
                   + maxScore * 17
-                  + (scoringFunctionProvider == null ? 0 : scoringFunctionProvider.hashCode()));
+                  + (scor ngFunct onProv der == null ? 0 : scor ngFunct onProv der.hashCode()));
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof ScoreFilterQuery)) {
+  @Overr de
+  publ c boolean equals(Object obj) {
+     f (!(obj  nstanceof ScoreF lterQuery)) {
       return false;
     }
 
-    ScoreFilterQuery filter = ScoreFilterQuery.class.cast(obj);
-    return (minScore == filter.minScore)
-        && (maxScore == filter.maxScore)
-        && (scoringFunctionProvider == null
-            ? filter.scoringFunctionProvider == null
-            : scoringFunctionProvider.equals(filter.scoringFunctionProvider));
+    ScoreF lterQuery f lter = ScoreF lterQuery.class.cast(obj);
+    return (m nScore == f lter.m nScore)
+        && (maxScore == f lter.maxScore)
+        && (scor ngFunct onProv der == null
+            ? f lter.scor ngFunct onProv der == null
+            : scor ngFunct onProv der.equals(f lter.scor ngFunct onProv der));
   }
 
-  @Override
-  public String toString(String field) {
-    return "SCORE_FILTER_QUERY[minScore=" + minScore + ",maxScore=" + maxScore + "]";
+  @Overr de
+  publ c Str ng toStr ng(Str ng f eld) {
+    return "SCORE_F LTER_QUERY[m nScore=" + m nScore + ",maxScore=" + maxScore + "]";
   }
 }

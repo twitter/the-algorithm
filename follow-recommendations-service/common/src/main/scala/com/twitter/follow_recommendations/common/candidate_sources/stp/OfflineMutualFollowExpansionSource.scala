@@ -1,23 +1,23 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.stp
 
-import com.google.inject.Singleton
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.generated.client.onboarding.userrecs.MutualFollowExpansionClientColumn
-import javax.inject.Inject
+ mport com.google. nject.S ngleton
+ mport com.tw ter. rm .model.Algor hm
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.strato.generated.cl ent.onboard ng.userrecs.MutualFollowExpans onCl entColumn
+ mport javax. nject. nject
 
 /**
- * A source that finds the mutual follows of one's mutual follows that one isn't following already.
+ * A s ce that f nds t  mutual follows of one's mutual follows that one  sn't follow ng already.
  */
-@Singleton
-class OfflineMutualFollowExpansionSource @Inject() (
-  column: MutualFollowExpansionClientColumn)
-    extends OfflineStrongTiePredictionBaseSource(column.fetcher) {
-  override val identifier: CandidateSourceIdentifier =
-    OfflineMutualFollowExpansionSource.Identifier
+@S ngleton
+class Offl neMutualFollowExpans onS ce @ nject() (
+  column: MutualFollowExpans onCl entColumn)
+    extends Offl neStrongT ePred ct onBaseS ce(column.fetc r) {
+  overr de val  dent f er: Cand dateS ce dent f er =
+    Offl neMutualFollowExpans onS ce. dent f er
 }
 
-object OfflineMutualFollowExpansionSource {
-  val Identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier(Algorithm.MutualFollowExpansion.toString)
+object Offl neMutualFollowExpans onS ce {
+  val  dent f er: Cand dateS ce dent f er =
+    Cand dateS ce dent f er(Algor hm.MutualFollowExpans on.toStr ng)
 }

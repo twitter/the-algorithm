@@ -1,170 +1,170 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import javax.annotation.Nullable;
-import javax.inject.Named;
-import javax.inject.Singleton;
+ mport javax.annotat on.Nullable;
+ mport javax. nject.Na d;
+ mport javax. nject.S ngleton;
 
-import scala.PartialFunction;
+ mport scala.Part alFunct on;
 
-import com.google.inject.Provides;
+ mport com.google. nject.Prov des;
 
-import org.apache.thrift.protocol.TProtocolFactory;
+ mport org.apac .thr ft.protocol.TProtocolFactory;
 
-import com.twitter.app.Flag;
-import com.twitter.app.Flaggable;
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.mtls.authorization.server.MtlsServerSessionTrackerFilter;
-import com.twitter.finagle.service.ReqRep;
-import com.twitter.finagle.service.ResponseClass;
-import com.twitter.finagle.stats.StatsReceiver;
-import com.twitter.finagle.thrift.RichServerParam;
-import com.twitter.finagle.thrift.ThriftClientRequest;
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.dark.DarkProxy;
-import com.twitter.search.common.dark.ResolverProxy;
-import com.twitter.search.common.partitioning.zookeeper.SearchZkClient;
-import com.twitter.search.common.root.PartitionConfig;
-import com.twitter.search.common.root.RemoteClientBuilder;
-import com.twitter.search.common.root.RootClientServiceBuilder;
-import com.twitter.search.common.root.SearchRootModule;
-import com.twitter.search.common.root.ServerSetsConfig;
-import com.twitter.search.common.util.zookeeper.ZooKeeperProxy;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.filters.PreCacheRequestTypeCountFilter;
-import com.twitter.search.earlybird_root.filters.QueryLangStatFilter;
+ mport com.tw ter.app.Flag;
+ mport com.tw ter.app.Flaggable;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.mtls.author zat on.server.MtlsServerSess onTrackerF lter;
+ mport com.tw ter.f nagle.serv ce.ReqRep;
+ mport com.tw ter.f nagle.serv ce.ResponseClass;
+ mport com.tw ter.f nagle.stats.StatsRece ver;
+ mport com.tw ter.f nagle.thr ft.R chServerParam;
+ mport com.tw ter.f nagle.thr ft.Thr ftCl entRequest;
+ mport com.tw ter. nject.Tw terModule;
+ mport com.tw ter.search.common.dark.DarkProxy;
+ mport com.tw ter.search.common.dark.ResolverProxy;
+ mport com.tw ter.search.common.part  on ng.zookeeper.SearchZkCl ent;
+ mport com.tw ter.search.common.root.Part  onConf g;
+ mport com.tw ter.search.common.root.RemoteCl entBu lder;
+ mport com.tw ter.search.common.root.RootCl entServ ceBu lder;
+ mport com.tw ter.search.common.root.SearchRootModule;
+ mport com.tw ter.search.common.root.ServerSetsConf g;
+ mport com.tw ter.search.common.ut l.zookeeper.ZooKeeperProxy;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdServ ce;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdFeatureSc ma rger;
+ mport com.tw ter.search.earlyb rd_root.f lters.PreCac RequestTypeCountF lter;
+ mport com.tw ter.search.earlyb rd_root.f lters.QueryLangStatF lter;
 
 /**
- * Provides common bindings.
+ * Prov des common b nd ngs.
  */
-public class EarlybirdCommonModule extends TwitterModule {
-  static final String NAMED_ALT_CLIENT = "alt_client";
-  static final String NAMED_EXP_CLUSTER_CLIENT = "exp_cluster_client";
+publ c class Earlyb rdCommonModule extends Tw terModule {
+  stat c f nal Str ng NAMED_ALT_CL ENT = "alt_cl ent";
+  stat c f nal Str ng NAMED_EXP_CLUSTER_CL ENT = "exp_cluster_cl ent";
 
-  private final Flag<String> altZkRoleFlag = createFlag(
+  pr vate f nal Flag<Str ng> altZkRoleFlag = createFlag(
       "alt_zk_role",
       "",
-      "The alternative ZooKeeper role",
-      Flaggable.ofString());
-  private final Flag<String> altZkClientEnvFlag = createFlag(
-      "alt_zk_client_env",
+      "T  alternat ve ZooKeeper role",
+      Flaggable.ofStr ng());
+  pr vate f nal Flag<Str ng> altZkCl entEnvFlag = createFlag(
+      "alt_zk_cl ent_env",
       "",
-      "The alternative zk client environment",
-      Flaggable.ofString());
-  private final Flag<String> altPartitionZkPathFlag = createFlag(
-      "alt_partition_zk_path",
+      "T  alternat ve zk cl ent env ron nt",
+      Flaggable.ofStr ng());
+  pr vate f nal Flag<Str ng> altPart  onZkPathFlag = createFlag(
+      "alt_part  on_zk_path",
       "",
-      "The alternative client partition zk path",
-      Flaggable.ofString());
+      "T  alternat ve cl ent part  on zk path",
+      Flaggable.ofStr ng());
 
-  @Override
-  public void configure() {
-    bind(InitializeFilter.class).in(Singleton.class);
-    bind(PreCacheRequestTypeCountFilter.class).in(Singleton.class);
+  @Overr de
+  publ c vo d conf gure() {
+    b nd( n  al zeF lter.class). n(S ngleton.class);
+    b nd(PreCac RequestTypeCountF lter.class). n(S ngleton.class);
 
-    bind(Clock.class).toInstance(Clock.SYSTEM_CLOCK);
-    bind(QueryLangStatFilter.Config.class).toInstance(new QueryLangStatFilter.Config(100));
+    b nd(Clock.class).to nstance(Clock.SYSTEM_CLOCK);
+    b nd(QueryLangStatF lter.Conf g.class).to nstance(new QueryLangStatF lter.Conf g(100));
   }
 
-  // Used in SearchRootModule.
-  @Provides
-  @Singleton
-  PartialFunction<ReqRep, ResponseClass> provideResponseClassifier() {
-    return new RootResponseClassifier();
+  // Used  n SearchRootModule.
+  @Prov des
+  @S ngleton
+  Part alFunct on<ReqRep, ResponseClass> prov deResponseClass f er() {
+    return new RootResponseClass f er();
   }
 
-  @Provides
-  @Singleton
-  Service<byte[], byte[]> providesByteService(
-      EarlybirdService.ServiceIface svc,
-      DarkProxy<ThriftClientRequest, byte[]> darkProxy,
+  @Prov des
+  @S ngleton
+  Serv ce<byte[], byte[]> prov desByteServ ce(
+      Earlyb rdServ ce.Serv ce face svc,
+      DarkProxy<Thr ftCl entRequest, byte[]> darkProxy,
       TProtocolFactory protocolFactory) {
-    return darkProxy.toFilter().andThen(
-        new EarlybirdService.Service(
-            svc, new RichServerParam(protocolFactory, SearchRootModule.SCROOGE_BUFFER_SIZE)));
+    return darkProxy.toF lter().andT n(
+        new Earlyb rdServ ce.Serv ce(
+            svc, new R chServerParam(protocolFactory, SearchRootModule.SCROOGE_BUFFER_S ZE)));
   }
 
-  @Provides
-  @Singleton
-  @Named(SearchRootModule.NAMED_SERVICE_INTERFACE)
-  Class providesServiceInterface() {
-    return EarlybirdService.ServiceIface.class;
+  @Prov des
+  @S ngleton
+  @Na d(SearchRootModule.NAMED_SERV CE_ NTERFACE)
+  Class prov desServ ce nterface() {
+    return Earlyb rdServ ce.Serv ce face.class;
   }
 
-  @Provides
-  @Singleton
-  ZooKeeperProxy provideZookeeperClient() {
-    return SearchZkClient.getSZooKeeperClient();
+  @Prov des
+  @S ngleton
+  ZooKeeperProxy prov deZookeeperCl ent() {
+    return SearchZkCl ent.getSZooKeeperCl ent();
   }
 
-  @Provides
-  @Singleton
-  EarlybirdFeatureSchemaMerger provideFeatureSchemaMerger() {
-    return new EarlybirdFeatureSchemaMerger();
+  @Prov des
+  @S ngleton
+  Earlyb rdFeatureSc ma rger prov deFeatureSc ma rger() {
+    return new Earlyb rdFeatureSc ma rger();
   }
 
-  @Provides
-  @Singleton
+  @Prov des
+  @S ngleton
   @Nullable
-  @Named(NAMED_ALT_CLIENT)
-  ServerSetsConfig provideAltServerSetsConfig() {
-    if (!altZkRoleFlag.isDefined() || !altZkClientEnvFlag.isDefined()) {
+  @Na d(NAMED_ALT_CL ENT)
+  ServerSetsConf g prov deAltServerSetsConf g() {
+     f (!altZkRoleFlag. sDef ned() || !altZkCl entEnvFlag. sDef ned()) {
       return null;
     }
 
-    return new ServerSetsConfig(altZkRoleFlag.apply(), altZkClientEnvFlag.apply());
+    return new ServerSetsConf g(altZkRoleFlag.apply(), altZkCl entEnvFlag.apply());
   }
 
-  @Provides
-  @Singleton
+  @Prov des
+  @S ngleton
   @Nullable
-  @Named(NAMED_ALT_CLIENT)
-  PartitionConfig provideAltPartitionConfig(PartitionConfig defaultPartitionConfig) {
-    if (!altPartitionZkPathFlag.isDefined()) {
+  @Na d(NAMED_ALT_CL ENT)
+  Part  onConf g prov deAltPart  onConf g(Part  onConf g defaultPart  onConf g) {
+     f (!altPart  onZkPathFlag. sDef ned()) {
       return null;
     }
 
-    return new PartitionConfig(
-        defaultPartitionConfig.getNumPartitions(), altPartitionZkPathFlag.apply());
+    return new Part  onConf g(
+        defaultPart  onConf g.getNumPart  ons(), altPart  onZkPathFlag.apply());
   }
 
-  @Provides
-  @Singleton
+  @Prov des
+  @S ngleton
   @Nullable
-  @Named(NAMED_ALT_CLIENT)
-  RootClientServiceBuilder<EarlybirdService.ServiceIface> provideAltRootClientServiceBuilder(
-      @Named(NAMED_ALT_CLIENT) @Nullable ServerSetsConfig serverSetsConfig,
-      @Named(SearchRootModule.NAMED_SERVICE_INTERFACE) Class serviceIface,
+  @Na d(NAMED_ALT_CL ENT)
+  RootCl entServ ceBu lder<Earlyb rdServ ce.Serv ce face> prov deAltRootCl entServ ceBu lder(
+      @Na d(NAMED_ALT_CL ENT) @Nullable ServerSetsConf g serverSetsConf g,
+      @Na d(SearchRootModule.NAMED_SERV CE_ NTERFACE) Class serv ce face,
       ResolverProxy resolverProxy,
-      RemoteClientBuilder<EarlybirdService.ServiceIface> remoteClientBuilder) {
-    if (serverSetsConfig == null) {
+      RemoteCl entBu lder<Earlyb rdServ ce.Serv ce face> remoteCl entBu lder) {
+     f (serverSetsConf g == null) {
       return null;
     }
 
-    return new RootClientServiceBuilder<>(
-        serverSetsConfig, serviceIface, resolverProxy, remoteClientBuilder);
+    return new RootCl entServ ceBu lder<>(
+        serverSetsConf g, serv ce face, resolverProxy, remoteCl entBu lder);
   }
 
-  @Provides
-  @Singleton
-  @Named(NAMED_EXP_CLUSTER_CLIENT)
-  RootClientServiceBuilder<EarlybirdService.ServiceIface> provideExpClusterRootClientServiceBuilder(
-      @Named(SearchRootModule.NAMED_EXP_CLUSTER_SERVER_SETS_CONFIG)
-          ServerSetsConfig serverSetsConfig,
-      @Named(SearchRootModule.NAMED_SERVICE_INTERFACE) Class serviceIface,
+  @Prov des
+  @S ngleton
+  @Na d(NAMED_EXP_CLUSTER_CL ENT)
+  RootCl entServ ceBu lder<Earlyb rdServ ce.Serv ce face> prov deExpClusterRootCl entServ ceBu lder(
+      @Na d(SearchRootModule.NAMED_EXP_CLUSTER_SERVER_SETS_CONF G)
+          ServerSetsConf g serverSetsConf g,
+      @Na d(SearchRootModule.NAMED_SERV CE_ NTERFACE) Class serv ce face,
       ResolverProxy resolverProxy,
-      RemoteClientBuilder<EarlybirdService.ServiceIface> remoteClientBuilder) {
-    return new RootClientServiceBuilder<>(
-        serverSetsConfig, serviceIface, resolverProxy, remoteClientBuilder);
+      RemoteCl entBu lder<Earlyb rdServ ce.Serv ce face> remoteCl entBu lder) {
+    return new RootCl entServ ceBu lder<>(
+        serverSetsConf g, serv ce face, resolverProxy, remoteCl entBu lder);
   }
 
-  @Provides
-  @Singleton
-  MtlsServerSessionTrackerFilter<EarlybirdRequest, EarlybirdResponse>
-  provideMtlsServerSessionTrackerFilter(StatsReceiver statsReceiver) {
-    return new MtlsServerSessionTrackerFilter<>(statsReceiver);
+  @Prov des
+  @S ngleton
+  MtlsServerSess onTrackerF lter<Earlyb rdRequest, Earlyb rdResponse>
+  prov deMtlsServerSess onTrackerF lter(StatsRece ver statsRece ver) {
+    return new MtlsServerSess onTrackerF lter<>(statsRece ver);
   }
 }

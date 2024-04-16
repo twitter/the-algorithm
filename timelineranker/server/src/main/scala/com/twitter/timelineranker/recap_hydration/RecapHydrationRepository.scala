@@ -1,20 +1,20 @@
-package com.twitter.timelineranker.recap_hydration
+package com.tw ter.t  l neranker.recap_hydrat on
 
-import com.twitter.timelineranker.model.CandidateTweetsResult
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.util.Future
+ mport com.tw ter.t  l neranker.model.Cand dateT etsResult
+ mport com.tw ter.t  l neranker.model.RecapQuery
+ mport com.tw ter.ut l.Future
 
 /**
- * A repository of recap hydration results.
+ * A repos ory of recap hydrat on results.
  *
- * For now, it does not cache any results therefore forwards all calls to the underlying source.
+ * For now,   does not cac  any results t refore forwards all calls to t  underly ng s ce.
  */
-class RecapHydrationRepository(source: RecapHydrationSource) {
-  def hydrate(query: RecapQuery): Future[CandidateTweetsResult] = {
-    source.hydrate(query)
+class RecapHydrat onRepos ory(s ce: RecapHydrat onS ce) {
+  def hydrate(query: RecapQuery): Future[Cand dateT etsResult] = {
+    s ce.hydrate(query)
   }
 
-  def hydrate(queries: Seq[RecapQuery]): Future[Seq[CandidateTweetsResult]] = {
-    source.hydrate(queries)
+  def hydrate(quer es: Seq[RecapQuery]): Future[Seq[Cand dateT etsResult]] = {
+    s ce.hydrate(quer es)
   }
 }

@@ -1,14 +1,14 @@
-java_library(
-    sources = ["*.java"],
+java_l brary(
+    s ces = ["*.java"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
         "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/org/apache/hadoop:hadoop-client-default",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
+        "3rdparty/jvm/org/apac /hadoop:hadoop-cl ent-default",
+        "3rdparty/jvm/org/slf4j:slf4j-ap ",
         "3rdparty/jvm/org/yaml:snakeyaml",
-        "src/java/com/twitter/search/common/file",
-        "src/java/com/twitter/search/common/metrics",
+        "src/java/com/tw ter/search/common/f le",
+        "src/java/com/tw ter/search/common/ tr cs",
     ],
 )

@@ -1,9 +1,9 @@
-package com.twitter.visibility.interfaces.search
+package com.tw ter.v s b l y. nterfaces.search
 
-import com.twitter.visibility.interfaces.common.search.SearchVFRequestContext
-import com.twitter.visibility.models.ViewerContext
+ mport com.tw ter.v s b l y. nterfaces.common.search.SearchVFRequestContext
+ mport com.tw ter.v s b l y.models.V e rContext
 
-case class BatchSearchVisibilityRequest(
-  tweetContexts: Seq[TweetContext],
-  viewerContext: ViewerContext,
+case class BatchSearchV s b l yRequest(
+  t etContexts: Seq[T etContext],
+  v e rContext: V e rContext,
   searchVFRequestContext: SearchVFRequestContext)

@@ -1,180 +1,180 @@
 """
-A custom optimizer to implement Deep Gradient Compression. The general idea of
-gradient compression is to compress the gradients exchanged across machines,
-in order to reduce the communication overhead of distributing computing efforts.
-More details in https://arxiv.org/abs/1712.01887
+A custom opt m zer to  mple nt Deep Grad ent Compress on. T  general  dea of
+grad ent compress on  s to compress t  grad ents exchanged across mach nes,
+ n order to reduce t  commun cat on over ad of d str but ng comput ng efforts.
+More deta ls  n https://arx v.org/abs/1712.01887
 """
 
-# TODO: Test how much communication overhead this DeepGradientCompressionOptimizer can reduce under
-# multi-GPU and distributed setting.
+# TODO: Test how much commun cat on over ad t  DeepGrad entCompress onOpt m zer can reduce under
+# mult -GPU and d str buted sett ng.
 
-import tensorflow.compat.v1 as tf
+ mport tensorflow.compat.v1 as tf
 
 
-def compute_threshold(grad, density):
+def compute_threshold(grad, dens y):
   """
-  A utility function to compute the threshold for gradient sparsification, given the gradient
-  tensor and the density.
+  A ut l y funct on to compute t  threshold for grad ent spars f cat on, g ven t  grad ent
+  tensor and t  dens y.
   Args:
     grad(tf.Tensor):
-      Gradient tensor for some variable.
-    density(float):
-      Density degree when sparsifying gradients.
+      Grad ent tensor for so  var able.
+    dens y(float):
+      Dens y degree w n spars fy ng grad ents.
   Returns(float):
-    Threshold for gradient sparsification.
+    Threshold for grad ent spars f cat on.
   """
   flat_grad = tf.reshape(grad, [-1])
   abs_flat_grad = tf.abs(flat_grad)
-  size = tf.shape(abs_flat_grad)[0]
-  k = tf.maximum(tf.constant(1),
-                 tf.cast(tf.scalar_mul(density, tf.cast(size, tf.float32)), tf.int32))
+  s ze = tf.shape(abs_flat_grad)[0]
+  k = tf.max mum(tf.constant(1),
+                 tf.cast(tf.scalar_mul(dens y, tf.cast(s ze, tf.float32)), tf. nt32))
   topk, _ = tf.nn.top_k(abs_flat_grad, k, False)
   return topk[-1]
 
 
-def get_top_row_indices(values, density):
+def get_top_row_ nd ces(values, dens y):
   """
-  A utility function to get indices of most significant rows, given the density degree.
+  A ut l y funct on to get  nd ces of most s gn f cant rows, g ven t  dens y degree.
   Args:
     values(tf.Tensor):
-      Gradient or locally accumulated gradient for some variable.
-    density(float):
-      Density degree when filtering out rows.
-  Returns(list(int)):
-    Indices of most significant rows.
+      Grad ent or locally accumulated grad ent for so  var able.
+    dens y(float):
+      Dens y degree w n f lter ng out rows.
+  Returns(l st( nt)):
+     nd ces of most s gn f cant rows.
   """
   abs_values = tf.abs(values)
 
   try:
     row_num = tf.shape(abs_values)[0]
-    k = tf.maximum(tf.constant(1),
-                   tf.cast(tf.scalar_mul(density, tf.cast(row_num, tf.float32)), tf.int32))
-    row_sums = tf.squeeze(tf.reduce_sum(values, axis=1, keepdims=True))
-    _, top_row_indices = tf.nn.top_k(row_sums, k=k, sorted=False)
-    # print "abs_values", abs_values, "row_sums", row_sums
-    return top_row_indices
+    k = tf.max mum(tf.constant(1),
+                   tf.cast(tf.scalar_mul(dens y, tf.cast(row_num, tf.float32)), tf. nt32))
+    row_sums = tf.squeeze(tf.reduce_sum(values, ax s=1, keepd ms=True))
+    _, top_row_ nd ces = tf.nn.top_k(row_sums, k=k, sorted=False)
+    # pr nt "abs_values", abs_values, "row_sums", row_sums
+    return top_row_ nd ces
     # return tf.range(row_num)
 
-  except ValueError:  # if the tensor is 0-D or 1-D
+  except ValueError:  #  f t  tensor  s 0-D or 1-D
     return None
 
 
-class DeepGradientCompressionOptimizer(tf.train.GradientDescentOptimizer):
+class DeepGrad entCompress onOpt m zer(tf.tra n.Grad entDescentOpt m zer):
   """
-  A custom optimizer to implement Deep Gradient Compression (https://arxiv.org/abs/1712.01887).
+  A custom opt m zer to  mple nt Deep Grad ent Compress on (https://arx v.org/abs/1712.01887).
   """
 
-  def __init__(self, learning_rate, use_locking=False, name="Sparse",
-               density=1.0,
-               density_decay=False,
-               density_decay_steps=10000,
-               density_decay_rate=0.5,
-               min_density=0.1,
-               accumulation=False):
-    super(DeepGradientCompressionOptimizer, self).__init__(learning_rate, use_locking, name)
-    self._initial_density_t = tf.convert_to_tensor(density)
-    self._density_decay = density_decay
-    dtype = self._initial_density_t.dtype
-    self._density_decay_steps_t = tf.convert_to_tensor(density_decay_steps, dtype)
-    self._density_decay_rate_t = tf.convert_to_tensor(density_decay_rate, dtype)
-    self._min_density_t = tf.convert_to_tensor(min_density, dtype)
-    self._accumulation = accumulation
+  def __ n __(self, learn ng_rate, use_lock ng=False, na ="Sparse",
+               dens y=1.0,
+               dens y_decay=False,
+               dens y_decay_steps=10000,
+               dens y_decay_rate=0.5,
+               m n_dens y=0.1,
+               accumulat on=False):
+    super(DeepGrad entCompress onOpt m zer, self).__ n __(learn ng_rate, use_lock ng, na )
+    self._ n  al_dens y_t = tf.convert_to_tensor(dens y)
+    self._dens y_decay = dens y_decay
+    dtype = self._ n  al_dens y_t.dtype
+    self._dens y_decay_steps_t = tf.convert_to_tensor(dens y_decay_steps, dtype)
+    self._dens y_decay_rate_t = tf.convert_to_tensor(dens y_decay_rate, dtype)
+    self._m n_dens y_t = tf.convert_to_tensor(m n_dens y, dtype)
+    self._accumulat on = accumulat on
 
   def _prepare(self):
-    super(DeepGradientCompressionOptimizer, self)._prepare()
-    if not self._density_decay:
-      self._density_t = self._initial_density_t
+    super(DeepGrad entCompress onOpt m zer, self)._prepare()
+     f not self._dens y_decay:
+      self._dens y_t = self._ n  al_dens y_t
     else:
-      dtype = self._initial_density_t.dtype
-      global_step = tf.cast(tf.train.get_global_step(), dtype)
-      p = tf.floor(tf.divide(global_step, self._density_decay_steps_t))
-      decayed_density = tf.multiply(self._initial_density_t,
-                                    tf.pow(self._density_decay_rate_t, p))
-      self._density_t = tf.maximum(self._min_density_t, decayed_density)
+      dtype = self._ n  al_dens y_t.dtype
+      global_step = tf.cast(tf.tra n.get_global_step(), dtype)
+      p = tf.floor(tf.d v de(global_step, self._dens y_decay_steps_t))
+      decayed_dens y = tf.mult ply(self._ n  al_dens y_t,
+                                    tf.pow(self._dens y_decay_rate_t, p))
+      self._dens y_t = tf.max mum(self._m n_dens y_t, decayed_dens y)
 
-  def _create_slots(self, var_list):
+  def _create_slots(self, var_l st):
     """
-    Create a slot variable to accumulate gradients locally for each variable in `var_list`.
+    Create a slot var able to accumulate grad ents locally for each var able  n `var_l st`.
     Args:
-      var_list(list(tf.Variable)):
-        List of variables to accumulate gradients locally for.
+      var_l st(l st(tf.Var able)):
+        L st of var ables to accumulate grad ents locally for.
     """
-    for var in var_list:
-      self._zeros_slot(var, "g_buffer", self._name)
+    for var  n var_l st:
+      self._zeros_slot(var, "g_buffer", self._na )
 
   def _apply_dense(self, grad, var):
-    if not self._accumulation:
-      top_row_indices = get_top_row_indices(grad, self._density_t)
+     f not self._accumulat on:
+      top_row_ nd ces = get_top_row_ nd ces(grad, self._dens y_t)
 
-      if top_row_indices is None:
-        return super(DeepGradientCompressionOptimizer, self)._apply_dense(grad, var)
+       f top_row_ nd ces  s None:
+        return super(DeepGrad entCompress onOpt m zer, self)._apply_dense(grad, var)
 
-      sparsified_values = tf.gather(grad, top_row_indices)
-      sparsified_indices = top_row_indices
+      spars f ed_values = tf.gat r(grad, top_row_ nd ces)
+      spars f ed_ nd ces = top_row_ nd ces
 
-      sparsified_grad = tf.IndexedSlices(sparsified_values, sparsified_indices)
+      spars f ed_grad = tf. ndexedSl ces(spars f ed_values, spars f ed_ nd ces)
 
-      return super(DeepGradientCompressionOptimizer, self)._apply_sparse_duplicate_indices(
-        sparsified_grad, var)
+      return super(DeepGrad entCompress onOpt m zer, self)._apply_sparse_dupl cate_ nd ces(
+        spars f ed_grad, var)
 
     else:
       g_buffer = self.get_slot(var, "g_buffer")
 
-      g_buffer = tf.assign_add(g_buffer, grad)
+      g_buffer = tf.ass gn_add(g_buffer, grad)
 
-      top_row_indices = get_top_row_indices(g_buffer, self._density_t)
+      top_row_ nd ces = get_top_row_ nd ces(g_buffer, self._dens y_t)
 
-      if top_row_indices is None:
-        return super(DeepGradientCompressionOptimizer, self)._apply_dense(grad, var)
+       f top_row_ nd ces  s None:
+        return super(DeepGrad entCompress onOpt m zer, self)._apply_dense(grad, var)
 
-      sparsified_values = tf.gather(g_buffer, top_row_indices)
-      sparsified_indices = top_row_indices
+      spars f ed_values = tf.gat r(g_buffer, top_row_ nd ces)
+      spars f ed_ nd ces = top_row_ nd ces
 
-      sparsified_grad = tf.IndexedSlices(sparsified_values, sparsified_indices)
+      spars f ed_grad = tf. ndexedSl ces(spars f ed_values, spars f ed_ nd ces)
 
-      update_var = super(DeepGradientCompressionOptimizer, self)._apply_sparse_duplicate_indices(
-        sparsified_grad, var)
+      update_var = super(DeepGrad entCompress onOpt m zer, self)._apply_sparse_dupl cate_ nd ces(
+        spars f ed_grad, var)
 
-      update_g_buffer = tf.scatter_update(g_buffer, sparsified_indices, tf.zeros_like(
-        sparsified_values))
+      update_g_buffer = tf.scatter_update(g_buffer, spars f ed_ nd ces, tf.zeros_l ke(
+        spars f ed_values))
 
       return tf.group(*[update_var, update_g_buffer])
 
-  def _apply_sparse_duplicate_indices(self, grad, var):
-    if not self._accumulation:
-      top_row_indices = get_top_row_indices(grad.values, self._density_t)
+  def _apply_sparse_dupl cate_ nd ces(self, grad, var):
+     f not self._accumulat on:
+      top_row_ nd ces = get_top_row_ nd ces(grad.values, self._dens y_t)
 
-      if top_row_indices is None:
-        return super(DeepGradientCompressionOptimizer, self)._apply_sparse_duplicate_indices(grad, var)  # noqa: E501
+       f top_row_ nd ces  s None:
+        return super(DeepGrad entCompress onOpt m zer, self)._apply_sparse_dupl cate_ nd ces(grad, var)  # noqa: E501
 
-      sparsified_values = tf.gather(grad.values, top_row_indices)
-      sparsified_indices = tf.gather(grad.indices, top_row_indices)
+      spars f ed_values = tf.gat r(grad.values, top_row_ nd ces)
+      spars f ed_ nd ces = tf.gat r(grad. nd ces, top_row_ nd ces)
 
-      sparsified_grad = tf.IndexedSlices(sparsified_values, sparsified_indices)
+      spars f ed_grad = tf. ndexedSl ces(spars f ed_values, spars f ed_ nd ces)
 
-      return super(DeepGradientCompressionOptimizer, self)._apply_sparse_duplicate_indices(
-        sparsified_grad, var)
+      return super(DeepGrad entCompress onOpt m zer, self)._apply_sparse_dupl cate_ nd ces(
+        spars f ed_grad, var)
 
     else:
       g_buffer = self.get_slot(var, "g_buffer")
 
-      g_buffer = tf.scatter_update(g_buffer, grad.indices, grad.values)
+      g_buffer = tf.scatter_update(g_buffer, grad. nd ces, grad.values)
 
-      top_row_indices = get_top_row_indices(g_buffer, self._density_t)
+      top_row_ nd ces = get_top_row_ nd ces(g_buffer, self._dens y_t)
 
-      if top_row_indices is None:
-        return super(DeepGradientCompressionOptimizer,
-                     self)._apply_sparse_duplicate_indices(grad, var)
+       f top_row_ nd ces  s None:
+        return super(DeepGrad entCompress onOpt m zer,
+                     self)._apply_sparse_dupl cate_ nd ces(grad, var)
 
-      sparsified_values = tf.gather(g_buffer, top_row_indices)
-      sparsified_indices = top_row_indices
+      spars f ed_values = tf.gat r(g_buffer, top_row_ nd ces)
+      spars f ed_ nd ces = top_row_ nd ces
 
-      sparsified_grad = tf.IndexedSlices(sparsified_values, sparsified_indices)
+      spars f ed_grad = tf. ndexedSl ces(spars f ed_values, spars f ed_ nd ces)
 
-      update_var = super(DeepGradientCompressionOptimizer, self)._apply_sparse_duplicate_indices(
-        sparsified_grad, var)
+      update_var = super(DeepGrad entCompress onOpt m zer, self)._apply_sparse_dupl cate_ nd ces(
+        spars f ed_grad, var)
 
-      update_g_buffer = tf.scatter_update(g_buffer, sparsified_indices, tf.zeros_like(
-        sparsified_values))
+      update_g_buffer = tf.scatter_update(g_buffer, spars f ed_ nd ces, tf.zeros_l ke(
+        spars f ed_values))
 
       return tf.group(*[update_var, update_g_buffer])

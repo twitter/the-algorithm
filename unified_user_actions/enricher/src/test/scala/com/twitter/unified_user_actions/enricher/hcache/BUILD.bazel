@@ -1,13 +1,13 @@
-junit_tests(
-    sources = ["*.scala"],
-    tags = ["bazel-compatible"],
-    dependencies = [
+jun _tests(
+    s ces = ["*.scala"],
+    tags = ["bazel-compat ble"],
+    dependenc es = [
         "3rdparty/jvm/com/google/guava",
         "3rdparty/jvm/org/scalatest",
-        "3rdparty/jvm/org/scalatestplus:junit",
-        "finatra/inject/inject-core/src/test/scala:test-deps",
-        "unified_user_actions/enricher/src/main/scala/com/twitter/unified_user_actions/enricher/hcache",
-        "util/util-cache-guava/src/main/scala",
-        "util/util-cache/src/main/scala",
+        "3rdparty/jvm/org/scalatestplus:jun ",
+        "f natra/ nject/ nject-core/src/test/scala:test-deps",
+        "un f ed_user_act ons/enr c r/src/ma n/scala/com/tw ter/un f ed_user_act ons/enr c r/hcac ",
+        "ut l/ut l-cac -guava/src/ma n/scala",
+        "ut l/ut l-cac /src/ma n/scala",
     ],
 )

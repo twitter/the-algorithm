@@ -1,7 +1,7 @@
-resources(
-    sources = [
+res ces(
+    s ces = [
         "*.xml",
-        "config/*.yml",
+        "conf g/*.yml",
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
 )

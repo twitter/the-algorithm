@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urp
+package com.tw ter.product_m xer.core.model.marshall ng.response.urp
 
-sealed trait PageBody
+sealed tra  PageBody
 
-case class TimelineKeyPageBody(timeline: TimelineKey) extends PageBody
+case class T  l neKeyPageBody(t  l ne: T  l neKey) extends PageBody
 
-case class SegmentedTimelinesPageBody(
-  initialTimeline: SegmentedTimeline,
-  timelines: Seq[SegmentedTimeline])
+case class Seg ntedT  l nesPageBody(
+   n  alT  l ne: Seg ntedT  l ne,
+  t  l nes: Seq[Seg ntedT  l ne])
     extends PageBody

@@ -1,47 +1,47 @@
-package com.twitter.home_mixer.functional_component.filter
+package com.tw ter.ho _m xer.funct onal_component.f lter
 
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lter
+ mport com.tw ter.product_m xer.core.funct onal_component.f lter.F lterResult
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Cond  onally
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.F lter dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
-trait FilterPredicate[-Query <: PipelineQuery] {
+tra  F lterPred cate[-Query <: P pel neQuery] {
   def apply(query: Query): Boolean
 }
 
 /**
- * A [[Filter]] with [[Conditionally]] based on a [[FilterPredicate]]
+ * A [[F lter]] w h [[Cond  onally]] based on a [[F lterPred cate]]
  *
- * @param predicate the predicate to turn this filter on and off
- * @param filter the underlying filter to run when `predicate` is true
- * @tparam Query The domain model for the query or request
- * @tparam Candidate The type of the candidates
+ * @param pred cate t  pred cate to turn t  f lter on and off
+ * @param f lter t  underly ng f lter to run w n `pred cate`  s true
+ * @tparam Query T  doma n model for t  query or request
+ * @tparam Cand date T  type of t  cand dates
  */
-case class PredicateGatedFilter[-Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-  predicate: FilterPredicate[Query],
-  filter: Filter[Query, Candidate])
-    extends Filter[Query, Candidate]
-    with Filter.Conditionally[Query, Candidate] {
+case class Pred cateGatedF lter[-Query <: P pel neQuery, Cand date <: Un versalNoun[Any]](
+  pred cate: F lterPred cate[Query],
+  f lter: F lter[Query, Cand date])
+    extends F lter[Query, Cand date]
+    w h F lter.Cond  onally[Query, Cand date] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier(
-    PredicateGatedFilter.IdentifierPrefix + filter.identifier.name)
+  overr de val  dent f er: F lter dent f er = F lter dent f er(
+    Pred cateGatedF lter. dent f erPref x + f lter. dent f er.na )
 
-  override val alerts: Seq[Alert] = filter.alerts
+  overr de val alerts: Seq[Alert] = f lter.alerts
 
-  override def onlyIf(query: Query, candidates: Seq[CandidateWithFeatures[Candidate]]): Boolean =
-    Conditionally.and(Filter.Input(query, candidates), filter, predicate(query))
+  overr de def only f(query: Query, cand dates: Seq[Cand dateW hFeatures[Cand date]]): Boolean =
+    Cond  onally.and(F lter. nput(query, cand dates), f lter, pred cate(query))
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = filter.apply(query, candidates)
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): St ch[F lterResult[Cand date]] = f lter.apply(query, cand dates)
 }
 
-object PredicateGatedFilter {
-  val IdentifierPrefix = "PredicateGated"
+object Pred cateGatedF lter {
+  val  dent f erPref x = "Pred cateGated"
 }

@@ -1,15 +1,15 @@
-package com.twitter.follow_recommendations.common.candidate_sources.user_user_graph
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.user_user_graph
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.Param
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.conf gap .common.FeatureSw chConf g
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class UserUserGraphFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] = Seq(
-    UserUserGraphParams.UserUserGraphCandidateSourceEnabledInWeightMap,
-    UserUserGraphParams.UserUserGraphCandidateSourceEnabledInTransform
+@S ngleton
+class UserUserGraphFSConf g @ nject() () extends FeatureSw chConf g {
+  overr de val booleanFSParams: Seq[Param[Boolean] w h FSNa ] = Seq(
+    UserUserGraphParams.UserUserGraphCand dateS ceEnabled n  ghtMap,
+    UserUserGraphParams.UserUserGraphCand dateS ceEnabled nTransform
   )
 }

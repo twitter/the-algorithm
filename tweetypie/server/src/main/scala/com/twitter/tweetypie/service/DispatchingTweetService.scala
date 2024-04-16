@@ -1,376 +1,376 @@
-/** Copyright 2010 Twitter, Inc. */
-package com.twitter.tweetypie
-package service
+/** Copyr ght 2010 Tw ter,  nc. */
+package com.tw ter.t etyp e
+package serv ce
 
-import com.twitter.servo.exception.thriftscala.ClientError
-import com.twitter.servo.exception.thriftscala.ClientErrorCause
-import com.twitter.tweetypie.additionalfields.AdditionalFields
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.handler._
-import com.twitter.tweetypie.store._
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.util.Future
+ mport com.tw ter.servo.except on.thr ftscala.Cl entError
+ mport com.tw ter.servo.except on.thr ftscala.Cl entErrorCause
+ mport com.tw ter.t etyp e.add  onalf elds.Add  onalF elds
+ mport com.tw ter.t etyp e.cl ent_ d.Cl ent d lper
+ mport com.tw ter.t etyp e.handler._
+ mport com.tw ter.t etyp e.store._
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport com.tw ter.ut l.Future
 
 /**
- * Implementation of the TweetService which dispatches requests to underlying
+ *  mple ntat on of t  T etServ ce wh ch d spatc s requests to underly ng
  * handlers and stores.
  */
-class DispatchingTweetService(
-  asyncDeleteAdditionalFieldsBuilder: AsyncDeleteAdditionalFieldsBuilder.Type,
-  asyncSetAdditionalFieldsBuilder: AsyncSetAdditionalFieldsBuilder.Type,
-  deleteAdditionalFieldsBuilder: DeleteAdditionalFieldsBuilder.Type,
-  deleteLocationDataHandler: DeleteLocationDataHandler.Type,
-  deletePathHandler: TweetDeletePathHandler,
-  eraseUserTweetsHandler: EraseUserTweetsHandler,
-  getDeletedTweetsHandler: GetDeletedTweetsHandler.Type,
-  getStoredTweetsHandler: GetStoredTweetsHandler.Type,
-  getStoredTweetsByUserHandler: GetStoredTweetsByUserHandler.Type,
-  getTweetCountsHandler: GetTweetCountsHandler.Type,
-  getTweetsHandler: GetTweetsHandler.Type,
-  getTweetFieldsHandler: GetTweetFieldsHandler.Type,
-  postTweetHandler: PostTweet.Type[PostTweetRequest],
-  postRetweetHandler: PostTweet.Type[RetweetRequest],
-  quotedTweetDeleteBuilder: QuotedTweetDeleteEventBuilder.Type,
-  quotedTweetTakedownBuilder: QuotedTweetTakedownEventBuilder.Type,
-  scrubGeoScrubTweetsBuilder: ScrubGeoEventBuilder.ScrubTweets.Type,
-  scrubGeoUpdateUserTimestampBuilder: ScrubGeoEventBuilder.UpdateUserTimestamp.Type,
-  setAdditionalFieldsBuilder: SetAdditionalFieldsBuilder.Type,
-  setRetweetVisibilityHandler: SetRetweetVisibilityHandler.Type,
-  statsReceiver: StatsReceiver,
+class D spatch ngT etServ ce(
+  asyncDeleteAdd  onalF eldsBu lder: AsyncDeleteAdd  onalF eldsBu lder.Type,
+  asyncSetAdd  onalF eldsBu lder: AsyncSetAdd  onalF eldsBu lder.Type,
+  deleteAdd  onalF eldsBu lder: DeleteAdd  onalF eldsBu lder.Type,
+  deleteLocat onDataHandler: DeleteLocat onDataHandler.Type,
+  deletePathHandler: T etDeletePathHandler,
+  eraseUserT etsHandler: EraseUserT etsHandler,
+  getDeletedT etsHandler: GetDeletedT etsHandler.Type,
+  getStoredT etsHandler: GetStoredT etsHandler.Type,
+  getStoredT etsByUserHandler: GetStoredT etsByUserHandler.Type,
+  getT etCountsHandler: GetT etCountsHandler.Type,
+  getT etsHandler: GetT etsHandler.Type,
+  getT etF eldsHandler: GetT etF eldsHandler.Type,
+  postT etHandler: PostT et.Type[PostT etRequest],
+  postRet etHandler: PostT et.Type[Ret etRequest],
+  quotedT etDeleteBu lder: QuotedT etDeleteEventBu lder.Type,
+  quotedT etTakedownBu lder: QuotedT etTakedownEventBu lder.Type,
+  scrubGeoScrubT etsBu lder: ScrubGeoEventBu lder.ScrubT ets.Type,
+  scrubGeoUpdateUserT  stampBu lder: ScrubGeoEventBu lder.UpdateUserT  stamp.Type,
+  setAdd  onalF eldsBu lder: SetAdd  onalF eldsBu lder.Type,
+  setRet etV s b l yHandler: SetRet etV s b l yHandler.Type,
+  statsRece ver: StatsRece ver,
   takedownHandler: TakedownHandler.Type,
-  tweetStore: TotalTweetStore,
-  undeleteTweetHandler: UndeleteTweetHandler.Type,
-  unretweetHandler: UnretweetHandler.Type,
-  updatePossiblySensitiveTweetHandler: UpdatePossiblySensitiveTweetHandler.Type,
+  t etStore: TotalT etStore,
+  undeleteT etHandler: UndeleteT etHandler.Type,
+  unret etHandler: Unret etHandler.Type,
+  updatePoss blySens  veT etHandler: UpdatePoss blySens  veT etHandler.Type,
   userTakedownHandler: UserTakedownHandler.Type,
-  clientIdHelper: ClientIdHelper)
-    extends ThriftTweetService {
-  import AdditionalFields._
+  cl ent d lper: Cl ent d lper)
+    extends Thr ftT etServ ce {
+   mport Add  onalF elds._
 
-  // Incoming reads
+  //  ncom ng reads
 
-  override def getTweets(request: GetTweetsRequest): Future[Seq[GetTweetResult]] =
-    getTweetsHandler(request)
+  overr de def getT ets(request: GetT etsRequest): Future[Seq[GetT etResult]] =
+    getT etsHandler(request)
 
-  override def getTweetFields(request: GetTweetFieldsRequest): Future[Seq[GetTweetFieldsResult]] =
-    getTweetFieldsHandler(request)
+  overr de def getT etF elds(request: GetT etF eldsRequest): Future[Seq[GetT etF eldsResult]] =
+    getT etF eldsHandler(request)
 
-  override def getTweetCounts(request: GetTweetCountsRequest): Future[Seq[GetTweetCountsResult]] =
-    getTweetCountsHandler(request)
+  overr de def getT etCounts(request: GetT etCountsRequest): Future[Seq[GetT etCountsResult]] =
+    getT etCountsHandler(request)
 
-  // Incoming deletes
+  //  ncom ng deletes
 
-  override def cascadedDeleteTweet(request: CascadedDeleteTweetRequest): Future[Unit] =
-    deletePathHandler.cascadedDeleteTweet(request)
+  overr de def cascadedDeleteT et(request: CascadedDeleteT etRequest): Future[Un ] =
+    deletePathHandler.cascadedDeleteT et(request)
 
-  override def deleteTweets(request: DeleteTweetsRequest): Future[Seq[DeleteTweetResult]] =
-    deletePathHandler.deleteTweets(request)
+  overr de def deleteT ets(request: DeleteT etsRequest): Future[Seq[DeleteT etResult]] =
+    deletePathHandler.deleteT ets(request)
 
-  // Incoming writes
+  //  ncom ng wr es
 
-  override def postTweet(request: PostTweetRequest): Future[PostTweetResult] =
-    postTweetHandler(request)
+  overr de def postT et(request: PostT etRequest): Future[PostT etResult] =
+    postT etHandler(request)
 
-  override def postRetweet(request: RetweetRequest): Future[PostTweetResult] =
-    postRetweetHandler(request)
+  overr de def postRet et(request: Ret etRequest): Future[PostT etResult] =
+    postRet etHandler(request)
 
-  override def setAdditionalFields(request: SetAdditionalFieldsRequest): Future[Unit] = {
-    val setFields = AdditionalFields.nonEmptyAdditionalFieldIds(request.additionalFields)
-    if (setFields.isEmpty) {
-      Future.exception(
-        ClientError(
-          ClientErrorCause.BadRequest,
-          s"${SetAdditionalFieldsRequest.AdditionalFieldsField.name} is empty, there must be at least one field to set"
+  overr de def setAdd  onalF elds(request: SetAdd  onalF eldsRequest): Future[Un ] = {
+    val setF elds = Add  onalF elds.nonEmptyAdd  onalF eld ds(request.add  onalF elds)
+     f (setF elds. sEmpty) {
+      Future.except on(
+        Cl entError(
+          Cl entErrorCause.BadRequest,
+          s"${SetAdd  onalF eldsRequest.Add  onalF eldsF eld.na }  s empty, t re must be at least one f eld to set"
         )
       )
     } else {
 
-      unsettableAdditionalFieldIds(request.additionalFields) match {
-        case Nil =>
-          setAdditionalFieldsBuilder(request).flatMap(tweetStore.setAdditionalFields)
-        case unsettableFieldIds =>
-          Future.exception(
-            ClientError(
-              ClientErrorCause.BadRequest,
-              unsettableAdditionalFieldIdsErrorMessage(unsettableFieldIds)
+      unsettableAdd  onalF eld ds(request.add  onalF elds) match {
+        case N l =>
+          setAdd  onalF eldsBu lder(request).flatMap(t etStore.setAdd  onalF elds)
+        case unsettableF eld ds =>
+          Future.except on(
+            Cl entError(
+              Cl entErrorCause.BadRequest,
+              unsettableAdd  onalF eld dsError ssage(unsettableF eld ds)
             )
           )
       }
     }
   }
 
-  override def deleteAdditionalFields(request: DeleteAdditionalFieldsRequest): Future[Unit] =
-    if (request.tweetIds.isEmpty || request.fieldIds.isEmpty) {
-      Future.exception(
-        ClientError(ClientErrorCause.BadRequest, "request contains empty tweet ids or field ids")
+  overr de def deleteAdd  onalF elds(request: DeleteAdd  onalF eldsRequest): Future[Un ] =
+     f (request.t et ds. sEmpty || request.f eld ds. sEmpty) {
+      Future.except on(
+        Cl entError(Cl entErrorCause.BadRequest, "request conta ns empty t et  ds or f eld  ds")
       )
-    } else if (request.fieldIds.exists(!isAdditionalFieldId(_))) {
-      Future.exception(
-        ClientError(ClientErrorCause.BadRequest, "cannot delete non-additional fields")
+    } else  f (request.f eld ds.ex sts(! sAdd  onalF eld d(_))) {
+      Future.except on(
+        Cl entError(Cl entErrorCause.BadRequest, "cannot delete non-add  onal f elds")
       )
     } else {
-      deleteAdditionalFieldsBuilder(request).flatMap { events =>
-        Future.join(events.map(tweetStore.deleteAdditionalFields))
+      deleteAdd  onalF eldsBu lder(request).flatMap { events =>
+        Future.jo n(events.map(t etStore.deleteAdd  onalF elds))
       }
     }
 
-  override def asyncInsert(request: AsyncInsertRequest): Future[Unit] =
-    AsyncInsertTweet.Event.fromAsyncRequest(request) match {
-      case TweetStoreEventOrRetry.First(e) => tweetStore.asyncInsertTweet(e)
-      case TweetStoreEventOrRetry.Retry(e) => tweetStore.retryAsyncInsertTweet(e)
+  overr de def async nsert(request: Async nsertRequest): Future[Un ] =
+    Async nsertT et.Event.fromAsyncRequest(request) match {
+      case T etStoreEventOrRetry.F rst(e) => t etStore.async nsertT et(e)
+      case T etStoreEventOrRetry.Retry(e) => t etStore.retryAsync nsertT et(e)
     }
 
-  override def asyncSetAdditionalFields(request: AsyncSetAdditionalFieldsRequest): Future[Unit] =
-    asyncSetAdditionalFieldsBuilder(request).map {
-      case TweetStoreEventOrRetry.First(e) => tweetStore.asyncSetAdditionalFields(e)
-      case TweetStoreEventOrRetry.Retry(e) => tweetStore.retryAsyncSetAdditionalFields(e)
-    }
-
-  /**
-   * Set if a retweet should be included in its source tweet's retweet count.
-   *
-   * This is called by our RetweetVisibility daemon when a user enter/exit
-   * suspended or read-only state and all their retweets visibility need to
-   * be modified.
-   *
-   * @see [[SetRetweetVisibilityHandler]] for more implementation details
-   */
-  override def setRetweetVisibility(request: SetRetweetVisibilityRequest): Future[Unit] =
-    setRetweetVisibilityHandler(request)
-
-  override def asyncSetRetweetVisibility(request: AsyncSetRetweetVisibilityRequest): Future[Unit] =
-    AsyncSetRetweetVisibility.Event.fromAsyncRequest(request) match {
-      case TweetStoreEventOrRetry.First(e) => tweetStore.asyncSetRetweetVisibility(e)
-      case TweetStoreEventOrRetry.Retry(e) => tweetStore.retryAsyncSetRetweetVisibility(e)
+  overr de def asyncSetAdd  onalF elds(request: AsyncSetAdd  onalF eldsRequest): Future[Un ] =
+    asyncSetAdd  onalF eldsBu lder(request).map {
+      case T etStoreEventOrRetry.F rst(e) => t etStore.asyncSetAdd  onalF elds(e)
+      case T etStoreEventOrRetry.Retry(e) => t etStore.retryAsyncSetAdd  onalF elds(e)
     }
 
   /**
-   * When a tweet has been successfully undeleted from storage in Manhattan this endpoint will
-   * enqueue requests to three related endpoints via deferredRPC:
+   * Set  f a ret et should be  ncluded  n  s s ce t et's ret et count.
    *
-   *   1. asyncUndeleteTweet: Asynchronously handle aspects of the undelete not required for the response.
-   *   2. replicatedUndeleteTweet2: Send the undeleted tweet to other clusters for cache caching.
+   * T   s called by   Ret etV s b l y daemon w n a user enter/ex 
+   * suspended or read-only state and all t  r ret ets v s b l y need to
+   * be mod f ed.
    *
-   * @see [[UndeleteTweetHandler]] for the core undelete implementation
+   * @see [[SetRet etV s b l yHandler]] for more  mple ntat on deta ls
    */
-  override def undeleteTweet(request: UndeleteTweetRequest): Future[UndeleteTweetResponse] =
-    undeleteTweetHandler(request)
+  overr de def setRet etV s b l y(request: SetRet etV s b l yRequest): Future[Un ] =
+    setRet etV s b l yHandler(request)
 
-  /**
-   * The async method that undeleteTweet calls to handle notifiying other services of the undelete
-   * See [[TweetStores.asyncUndeleteTweetStore]] for all the stores that handle this event.
-   */
-  override def asyncUndeleteTweet(request: AsyncUndeleteTweetRequest): Future[Unit] =
-    AsyncUndeleteTweet.Event.fromAsyncRequest(request) match {
-      case TweetStoreEventOrRetry.First(e) => tweetStore.asyncUndeleteTweet(e)
-      case TweetStoreEventOrRetry.Retry(e) => tweetStore.retryAsyncUndeleteTweet(e)
+  overr de def asyncSetRet etV s b l y(request: AsyncSetRet etV s b l yRequest): Future[Un ] =
+    AsyncSetRet etV s b l y.Event.fromAsyncRequest(request) match {
+      case T etStoreEventOrRetry.F rst(e) => t etStore.asyncSetRet etV s b l y(e)
+      case T etStoreEventOrRetry.Retry(e) => t etStore.retryAsyncSetRet etV s b l y(e)
     }
 
-  override def getDeletedTweets(
-    request: GetDeletedTweetsRequest
-  ): Future[Seq[GetDeletedTweetResult]] =
-    getDeletedTweetsHandler(request)
+  /**
+   * W n a t et has been successfully undeleted from storage  n Manhattan t  endpo nt w ll
+   * enqueue requests to three related endpo nts v a deferredRPC:
+   *
+   *   1. asyncUndeleteT et: Asynchronously handle aspects of t  undelete not requ red for t  response.
+   *   2. repl catedUndeleteT et2: Send t  undeleted t et to ot r clusters for cac  cach ng.
+   *
+   * @see [[UndeleteT etHandler]] for t  core undelete  mple ntat on
+   */
+  overr de def undeleteT et(request: UndeleteT etRequest): Future[UndeleteT etResponse] =
+    undeleteT etHandler(request)
 
   /**
-   * Triggers the deletion of all of a users tweets. Used by Gizmoduck when erasing a user
-   * after they have been deactived for some number of days.
+   * T  async  thod that undeleteT et calls to handle not f y ng ot r serv ces of t  undelete
+   * See [[T etStores.asyncUndeleteT etStore]] for all t  stores that handle t  event.
    */
-  override def eraseUserTweets(request: EraseUserTweetsRequest): Future[Unit] =
-    eraseUserTweetsHandler.eraseUserTweetsRequest(request)
+  overr de def asyncUndeleteT et(request: AsyncUndeleteT etRequest): Future[Un ] =
+    AsyncUndeleteT et.Event.fromAsyncRequest(request) match {
+      case T etStoreEventOrRetry.F rst(e) => t etStore.asyncUndeleteT et(e)
+      case T etStoreEventOrRetry.Retry(e) => t etStore.retryAsyncUndeleteT et(e)
+    }
 
-  override def asyncEraseUserTweets(request: AsyncEraseUserTweetsRequest): Future[Unit] =
-    eraseUserTweetsHandler.asyncEraseUserTweetsRequest(request)
+  overr de def getDeletedT ets(
+    request: GetDeletedT etsRequest
+  ): Future[Seq[GetDeletedT etResult]] =
+    getDeletedT etsHandler(request)
 
-  override def asyncDelete(request: AsyncDeleteRequest): Future[Unit] =
-    AsyncDeleteTweet.Event.fromAsyncRequest(request) match {
-      case TweetStoreEventOrRetry.First(e) => tweetStore.asyncDeleteTweet(e)
-      case TweetStoreEventOrRetry.Retry(e) => tweetStore.retryAsyncDeleteTweet(e)
+  /**
+   * Tr ggers t  delet on of all of a users t ets. Used by G zmoduck w n eras ng a user
+   * after t y have been deact ved for so  number of days.
+   */
+  overr de def eraseUserT ets(request: EraseUserT etsRequest): Future[Un ] =
+    eraseUserT etsHandler.eraseUserT etsRequest(request)
+
+  overr de def asyncEraseUserT ets(request: AsyncEraseUserT etsRequest): Future[Un ] =
+    eraseUserT etsHandler.asyncEraseUserT etsRequest(request)
+
+  overr de def asyncDelete(request: AsyncDeleteRequest): Future[Un ] =
+    AsyncDeleteT et.Event.fromAsyncRequest(request) match {
+      case T etStoreEventOrRetry.F rst(e) => t etStore.asyncDeleteT et(e)
+      case T etStoreEventOrRetry.Retry(e) => t etStore.retryAsyncDeleteT et(e)
     }
 
   /*
-   * unretweet a tweet.
+   * unret et a t et.
    *
-   * There are two ways to unretweet:
-   *  - call deleteTweets() with the retweetId
-   *  - call unretweet() with the retweeter userId and sourceTweetId
+   * T re are two ways to unret et:
+   *  - call deleteT ets() w h t  ret et d
+   *  - call unret et() w h t  ret eter user d and s ceT et d
    *
-   * This is useful if you want to be able to undo a retweet without having to
-   * keep track of a retweetId
+   * T   s useful  f   want to be able to undo a ret et w hout hav ng to
+   * keep track of a ret et d
    *
-   * Returns DeleteTweetResult for any deleted retweets.
+   * Returns DeleteT etResult for any deleted ret ets.
    */
-  override def unretweet(request: UnretweetRequest): Future[UnretweetResult] =
-    unretweetHandler(request)
+  overr de def unret et(request: Unret etRequest): Future[Unret etResult] =
+    unret etHandler(request)
 
-  override def asyncDeleteAdditionalFields(
-    request: AsyncDeleteAdditionalFieldsRequest
-  ): Future[Unit] =
-    asyncDeleteAdditionalFieldsBuilder(request).map {
-      case TweetStoreEventOrRetry.First(e) => tweetStore.asyncDeleteAdditionalFields(e)
-      case TweetStoreEventOrRetry.Retry(e) => tweetStore.retryAsyncDeleteAdditionalFields(e)
+  overr de def asyncDeleteAdd  onalF elds(
+    request: AsyncDeleteAdd  onalF eldsRequest
+  ): Future[Un ] =
+    asyncDeleteAdd  onalF eldsBu lder(request).map {
+      case T etStoreEventOrRetry.F rst(e) => t etStore.asyncDeleteAdd  onalF elds(e)
+      case T etStoreEventOrRetry.Retry(e) => t etStore.retryAsyncDeleteAdd  onalF elds(e)
     }
 
-  override def incrTweetFavCount(request: IncrTweetFavCountRequest): Future[Unit] =
-    tweetStore.incrFavCount(IncrFavCount.Event(request.tweetId, request.delta, Time.now))
+  overr de def  ncrT etFavCount(request:  ncrT etFavCountRequest): Future[Un ] =
+    t etStore. ncrFavCount( ncrFavCount.Event(request.t et d, request.delta, T  .now))
 
-  override def asyncIncrFavCount(request: AsyncIncrFavCountRequest): Future[Unit] =
-    tweetStore.asyncIncrFavCount(AsyncIncrFavCount.Event(request.tweetId, request.delta, Time.now))
+  overr de def async ncrFavCount(request: Async ncrFavCountRequest): Future[Un ] =
+    t etStore.async ncrFavCount(Async ncrFavCount.Event(request.t et d, request.delta, T  .now))
 
-  override def incrTweetBookmarkCount(request: IncrTweetBookmarkCountRequest): Future[Unit] =
-    tweetStore.incrBookmarkCount(IncrBookmarkCount.Event(request.tweetId, request.delta, Time.now))
+  overr de def  ncrT etBookmarkCount(request:  ncrT etBookmarkCountRequest): Future[Un ] =
+    t etStore. ncrBookmarkCount( ncrBookmarkCount.Event(request.t et d, request.delta, T  .now))
 
-  override def asyncIncrBookmarkCount(request: AsyncIncrBookmarkCountRequest): Future[Unit] =
-    tweetStore.asyncIncrBookmarkCount(
-      AsyncIncrBookmarkCount.Event(request.tweetId, request.delta, Time.now))
+  overr de def async ncrBookmarkCount(request: Async ncrBookmarkCountRequest): Future[Un ] =
+    t etStore.async ncrBookmarkCount(
+      Async ncrBookmarkCount.Event(request.t et d, request.delta, T  .now))
 
-  override def scrubGeoUpdateUserTimestamp(request: DeleteLocationData): Future[Unit] =
-    scrubGeoUpdateUserTimestampBuilder(request).flatMap(tweetStore.scrubGeoUpdateUserTimestamp)
+  overr de def scrubGeoUpdateUserT  stamp(request: DeleteLocat onData): Future[Un ] =
+    scrubGeoUpdateUserT  stampBu lder(request).flatMap(t etStore.scrubGeoUpdateUserT  stamp)
 
-  override def deleteLocationData(request: DeleteLocationDataRequest): Future[Unit] =
-    deleteLocationDataHandler(request)
+  overr de def deleteLocat onData(request: DeleteLocat onDataRequest): Future[Un ] =
+    deleteLocat onDataHandler(request)
 
-  override def scrubGeo(request: GeoScrub): Future[Unit] =
-    scrubGeoScrubTweetsBuilder(request).flatMap(tweetStore.scrubGeo)
+  overr de def scrubGeo(request: GeoScrub): Future[Un ] =
+    scrubGeoScrubT etsBu lder(request).flatMap(t etStore.scrubGeo)
 
-  override def takedown(request: TakedownRequest): Future[Unit] =
+  overr de def takedown(request: TakedownRequest): Future[Un ] =
     takedownHandler(request)
 
-  override def quotedTweetDelete(request: QuotedTweetDeleteRequest): Future[Unit] =
-    quotedTweetDeleteBuilder(request).flatMap {
-      case Some(event) => tweetStore.quotedTweetDelete(event)
-      case None => Future.Unit
+  overr de def quotedT etDelete(request: QuotedT etDeleteRequest): Future[Un ] =
+    quotedT etDeleteBu lder(request).flatMap {
+      case So (event) => t etStore.quotedT etDelete(event)
+      case None => Future.Un 
     }
 
-  override def quotedTweetTakedown(request: QuotedTweetTakedownRequest): Future[Unit] =
-    quotedTweetTakedownBuilder(request).flatMap {
-      case Some(event) => tweetStore.quotedTweetTakedown(event)
-      case None => Future.Unit
+  overr de def quotedT etTakedown(request: QuotedT etTakedownRequest): Future[Un ] =
+    quotedT etTakedownBu lder(request).flatMap {
+      case So (event) => t etStore.quotedT etTakedown(event)
+      case None => Future.Un 
     }
 
-  override def asyncTakedown(request: AsyncTakedownRequest): Future[Unit] =
+  overr de def asyncTakedown(request: AsyncTakedownRequest): Future[Un ] =
     AsyncTakedown.Event.fromAsyncRequest(request) match {
-      case TweetStoreEventOrRetry.First(e) => tweetStore.asyncTakedown(e)
-      case TweetStoreEventOrRetry.Retry(e) => tweetStore.retryAsyncTakedown(e)
+      case T etStoreEventOrRetry.F rst(e) => t etStore.asyncTakedown(e)
+      case T etStoreEventOrRetry.Retry(e) => t etStore.retryAsyncTakedown(e)
     }
 
-  override def setTweetUserTakedown(request: SetTweetUserTakedownRequest): Future[Unit] =
+  overr de def setT etUserTakedown(request: SetT etUserTakedownRequest): Future[Un ] =
     userTakedownHandler(request)
 
-  override def asyncUpdatePossiblySensitiveTweet(
-    request: AsyncUpdatePossiblySensitiveTweetRequest
-  ): Future[Unit] = {
-    AsyncUpdatePossiblySensitiveTweet.Event.fromAsyncRequest(request) match {
-      case TweetStoreEventOrRetry.First(event) =>
-        tweetStore.asyncUpdatePossiblySensitiveTweet(event)
-      case TweetStoreEventOrRetry.Retry(event) =>
-        tweetStore.retryAsyncUpdatePossiblySensitiveTweet(event)
+  overr de def asyncUpdatePoss blySens  veT et(
+    request: AsyncUpdatePoss blySens  veT etRequest
+  ): Future[Un ] = {
+    AsyncUpdatePoss blySens  veT et.Event.fromAsyncRequest(request) match {
+      case T etStoreEventOrRetry.F rst(event) =>
+        t etStore.asyncUpdatePoss blySens  veT et(event)
+      case T etStoreEventOrRetry.Retry(event) =>
+        t etStore.retryAsyncUpdatePoss blySens  veT et(event)
     }
   }
 
-  override def flush(request: FlushRequest): Future[Unit] = {
-    // The logged "previous Tweet" value is intended to be used when interactively debugging an
-    // issue and an engineer flushes the tweet manually, e.g. from tweetypie.cmdline console.
-    // Don't log automated flushes originating from tweetypie-daemons to cut down noise.
-    val logExisting = !clientIdHelper.effectiveClientIdRoot.exists(_ == "tweetypie-daemons")
-    tweetStore.flush(
-      Flush.Event(request.tweetIds, request.flushTweets, request.flushCounts, logExisting)
+  overr de def flush(request: FlushRequest): Future[Un ] = {
+    // T  logged "prev ous T et" value  s  ntended to be used w n  nteract vely debugg ng an
+    //  ssue and an eng neer flus s t  t et manually, e.g. from t etyp e.cmdl ne console.
+    // Don't log automated flus s or g nat ng from t etyp e-daemons to cut down no se.
+    val logEx st ng = !cl ent d lper.effect veCl ent dRoot.ex sts(_ == "t etyp e-daemons")
+    t etStore.flush(
+      Flush.Event(request.t et ds, request.flushT ets, request.flushCounts, logEx st ng)
     )
   }
 
-  // Incoming replication events
+  //  ncom ng repl cat on events
 
-  override def replicatedGetTweetCounts(request: GetTweetCountsRequest): Future[Unit] =
-    getTweetCounts(request).unit
+  overr de def repl catedGetT etCounts(request: GetT etCountsRequest): Future[Un ] =
+    getT etCounts(request).un 
 
-  override def replicatedGetTweetFields(request: GetTweetFieldsRequest): Future[Unit] =
-    getTweetFields(request).unit
+  overr de def repl catedGetT etF elds(request: GetT etF eldsRequest): Future[Un ] =
+    getT etF elds(request).un 
 
-  override def replicatedGetTweets(request: GetTweetsRequest): Future[Unit] =
-    getTweets(request).unit
+  overr de def repl catedGetT ets(request: GetT etsRequest): Future[Un ] =
+    getT ets(request).un 
 
-  override def replicatedInsertTweet2(request: ReplicatedInsertTweet2Request): Future[Unit] =
-    tweetStore.replicatedInsertTweet(
-      ReplicatedInsertTweet
+  overr de def repl cated nsertT et2(request: Repl cated nsertT et2Request): Future[Un ] =
+    t etStore.repl cated nsertT et(
+      Repl cated nsertT et
         .Event(
-          request.cachedTweet.tweet,
-          request.cachedTweet,
-          request.quoterHasAlreadyQuotedTweet.getOrElse(false),
-          request.initialTweetUpdateRequest
+          request.cac dT et.t et,
+          request.cac dT et,
+          request.quoterHasAlreadyQuotedT et.getOrElse(false),
+          request. n  alT etUpdateRequest
         )
     )
 
-  override def replicatedDeleteTweet2(request: ReplicatedDeleteTweet2Request): Future[Unit] =
-    tweetStore.replicatedDeleteTweet(
-      ReplicatedDeleteTweet.Event(
-        tweet = request.tweet,
-        isErasure = request.isErasure,
-        isBounceDelete = request.isBounceDelete,
-        isLastQuoteOfQuoter = request.isLastQuoteOfQuoter.getOrElse(false)
+  overr de def repl catedDeleteT et2(request: Repl catedDeleteT et2Request): Future[Un ] =
+    t etStore.repl catedDeleteT et(
+      Repl catedDeleteT et.Event(
+        t et = request.t et,
+         sErasure = request. sErasure,
+         sBounceDelete = request. sBounceDelete,
+         sLastQuoteOfQuoter = request. sLastQuoteOfQuoter.getOrElse(false)
       )
     )
 
-  override def replicatedIncrFavCount(tweetId: TweetId, delta: Int): Future[Unit] =
-    tweetStore.replicatedIncrFavCount(ReplicatedIncrFavCount.Event(tweetId, delta))
+  overr de def repl cated ncrFavCount(t et d: T et d, delta:  nt): Future[Un ] =
+    t etStore.repl cated ncrFavCount(Repl cated ncrFavCount.Event(t et d, delta))
 
-  override def replicatedIncrBookmarkCount(tweetId: TweetId, delta: Int): Future[Unit] =
-    tweetStore.replicatedIncrBookmarkCount(ReplicatedIncrBookmarkCount.Event(tweetId, delta))
+  overr de def repl cated ncrBookmarkCount(t et d: T et d, delta:  nt): Future[Un ] =
+    t etStore.repl cated ncrBookmarkCount(Repl cated ncrBookmarkCount.Event(t et d, delta))
 
-  override def replicatedScrubGeo(tweetIds: Seq[TweetId]): Future[Unit] =
-    tweetStore.replicatedScrubGeo(ReplicatedScrubGeo.Event(tweetIds))
+  overr de def repl catedScrubGeo(t et ds: Seq[T et d]): Future[Un ] =
+    t etStore.repl catedScrubGeo(Repl catedScrubGeo.Event(t et ds))
 
-  override def replicatedSetAdditionalFields(request: SetAdditionalFieldsRequest): Future[Unit] =
-    tweetStore.replicatedSetAdditionalFields(
-      ReplicatedSetAdditionalFields.Event(request.additionalFields)
+  overr de def repl catedSetAdd  onalF elds(request: SetAdd  onalF eldsRequest): Future[Un ] =
+    t etStore.repl catedSetAdd  onalF elds(
+      Repl catedSetAdd  onalF elds.Event(request.add  onalF elds)
     )
 
-  override def replicatedSetRetweetVisibility(
-    request: ReplicatedSetRetweetVisibilityRequest
-  ): Future[Unit] =
-    tweetStore.replicatedSetRetweetVisibility(
-      ReplicatedSetRetweetVisibility.Event(request.srcId, request.visible)
+  overr de def repl catedSetRet etV s b l y(
+    request: Repl catedSetRet etV s b l yRequest
+  ): Future[Un ] =
+    t etStore.repl catedSetRet etV s b l y(
+      Repl catedSetRet etV s b l y.Event(request.src d, request.v s ble)
     )
 
-  override def replicatedDeleteAdditionalFields(
-    request: ReplicatedDeleteAdditionalFieldsRequest
-  ): Future[Unit] =
-    Future.join(
-      request.fieldsMap.map {
-        case (tweetId, fieldIds) =>
-          tweetStore.replicatedDeleteAdditionalFields(
-            ReplicatedDeleteAdditionalFields.Event(tweetId, fieldIds)
+  overr de def repl catedDeleteAdd  onalF elds(
+    request: Repl catedDeleteAdd  onalF eldsRequest
+  ): Future[Un ] =
+    Future.jo n(
+      request.f eldsMap.map {
+        case (t et d, f eld ds) =>
+          t etStore.repl catedDeleteAdd  onalF elds(
+            Repl catedDeleteAdd  onalF elds.Event(t et d, f eld ds)
           )
       }.toSeq
     )
 
-  override def replicatedUndeleteTweet2(request: ReplicatedUndeleteTweet2Request): Future[Unit] =
-    tweetStore.replicatedUndeleteTweet(
-      ReplicatedUndeleteTweet
+  overr de def repl catedUndeleteT et2(request: Repl catedUndeleteT et2Request): Future[Un ] =
+    t etStore.repl catedUndeleteT et(
+      Repl catedUndeleteT et
         .Event(
-          request.cachedTweet.tweet,
-          request.cachedTweet,
-          request.quoterHasAlreadyQuotedTweet.getOrElse(false)
+          request.cac dT et.t et,
+          request.cac dT et,
+          request.quoterHasAlreadyQuotedT et.getOrElse(false)
         ))
 
-  override def replicatedTakedown(tweet: Tweet): Future[Unit] =
-    tweetStore.replicatedTakedown(ReplicatedTakedown.Event(tweet))
+  overr de def repl catedTakedown(t et: T et): Future[Un ] =
+    t etStore.repl catedTakedown(Repl catedTakedown.Event(t et))
 
-  override def updatePossiblySensitiveTweet(
-    request: UpdatePossiblySensitiveTweetRequest
-  ): Future[Unit] =
-    updatePossiblySensitiveTweetHandler(request)
+  overr de def updatePoss blySens  veT et(
+    request: UpdatePoss blySens  veT etRequest
+  ): Future[Un ] =
+    updatePoss blySens  veT etHandler(request)
 
-  override def replicatedUpdatePossiblySensitiveTweet(tweet: Tweet): Future[Unit] =
-    tweetStore.replicatedUpdatePossiblySensitiveTweet(
-      ReplicatedUpdatePossiblySensitiveTweet.Event(tweet)
+  overr de def repl catedUpdatePoss blySens  veT et(t et: T et): Future[Un ] =
+    t etStore.repl catedUpdatePoss blySens  veT et(
+      Repl catedUpdatePoss blySens  veT et.Event(t et)
     )
 
-  override def getStoredTweets(
-    request: GetStoredTweetsRequest
-  ): Future[Seq[GetStoredTweetsResult]] =
-    getStoredTweetsHandler(request)
+  overr de def getStoredT ets(
+    request: GetStoredT etsRequest
+  ): Future[Seq[GetStoredT etsResult]] =
+    getStoredT etsHandler(request)
 
-  override def getStoredTweetsByUser(
-    request: GetStoredTweetsByUserRequest
-  ): Future[GetStoredTweetsByUserResult] =
-    getStoredTweetsByUserHandler(request)
+  overr de def getStoredT etsByUser(
+    request: GetStoredT etsByUserRequest
+  ): Future[GetStoredT etsByUserResult] =
+    getStoredT etsByUserHandler(request)
 }

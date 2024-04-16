@@ -1,3 +1,3 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module
 
-case class AdsMetadata(carouselId: Option[Long])
+case class Ads tadata(carousel d: Opt on[Long])

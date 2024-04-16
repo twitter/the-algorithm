@@ -1,40 +1,40 @@
-package com.twitter.search.core.earlybird.index.util;
+package com.tw ter.search.core.earlyb rd. ndex.ut l;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-public abstract class SearchSortUtils {
-  public interface Comparator<T> {
+publ c abstract class SearchSortUt ls {
+  publ c  nterface Comparator<T> {
     /**
-     *  Compares the item represented by the given index with the provided value.
+     *  Compares t   em represented by t  g ven  ndex w h t  prov ded value.
      */
-    int compare(int index, T value);
+     nt compare( nt  ndex, T value);
   }
 
   /**
-   * Performs a binary search using the given comparator, and returns the index of the item that
-   * was found. If foundLow is true, the greatest item that's lower than the provided key
-   * is returned. Otherwise, the lowest item that's greater than the provided key is returned.
+   * Performs a b nary search us ng t  g ven comparator, and returns t   ndex of t   em that
+   * was found.  f foundLow  s true, t  greatest  em that's lo r than t  prov ded key
+   *  s returned. Ot rw se, t  lo st  em that's greater than t  prov ded key  s returned.
    */
-  public static <T> int binarySearch(Comparator<T> comparator, final int begin, final int end,
-      final T key, boolean findLow) {
-    int low = begin;
-    int high = end;
-    Preconditions.checkState(comparator.compare(low, key) <= comparator.compare(high, key));
-    while (low <= high) {
-      int mid = (low + high) >>> 1;
-      int result = comparator.compare(mid, key);
-      if (result < 0) {
-        low = mid + 1;
-      } else if (result > 0) {
-        high = mid - 1;
+  publ c stat c <T>  nt b narySearch(Comparator<T> comparator, f nal  nt beg n, f nal  nt end,
+      f nal T key, boolean f ndLow) {
+     nt low = beg n;
+     nt h gh = end;
+    Precond  ons.c ckState(comparator.compare(low, key) <= comparator.compare(h gh, key));
+    wh le (low <= h gh) {
+       nt m d = (low + h gh) >>> 1;
+       nt result = comparator.compare(m d, key);
+       f (result < 0) {
+        low = m d + 1;
+      } else  f (result > 0) {
+        h gh = m d - 1;
       } else {
-        return mid;
+        return m d;
       } // key found
     }
 
-    assert low > high;
-    if (findLow) {
-      return high < begin ? begin : high;
+    assert low > h gh;
+     f (f ndLow) {
+      return h gh < beg n ? beg n : h gh;
     } else {
       return low > end ? end : low;
     }

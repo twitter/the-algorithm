@@ -1,87 +1,87 @@
-package com.twitter.recosinjector.edges
+package com.tw ter.recos njector.edges
 
-import com.twitter.recos.internal.thriftscala.RecosHoseMessage
-import com.twitter.recos.recos_injector.thriftscala.{Features, UserTweetAuthorGraphMessage}
-import com.twitter.recos.util.Action.Action
-import com.twitter.recosinjector.util.TweetDetails
-import scala.collection.Map
+ mport com.tw ter.recos. nternal.thr ftscala.RecosHose ssage
+ mport com.tw ter.recos.recos_ njector.thr ftscala.{Features, UserT etAuthorGraph ssage}
+ mport com.tw ter.recos.ut l.Act on.Act on
+ mport com.tw ter.recos njector.ut l.T etDeta ls
+ mport scala.collect on.Map
 
-trait Edge {
-  // RecosHoseMessage is the thrift struct that the graphs consume.
-  def convertToRecosHoseMessage: RecosHoseMessage
+tra  Edge {
+  // RecosHose ssage  s t  thr ft struct that t  graphs consu .
+  def convertToRecosHose ssage: RecosHose ssage
 
-  // UserTweetAuthorGraphMessage is the thrift struct that user_tweet_author_graph consumes.
-  def convertToUserTweetAuthorGraphMessage: UserTweetAuthorGraphMessage
+  // UserT etAuthorGraph ssage  s t  thr ft struct that user_t et_author_graph consu s.
+  def convertToUserT etAuthorGraph ssage: UserT etAuthorGraph ssage
 }
 
 /**
- * Edge corresponding to UserTweetEntityEdge.
- * It captures user-tweet interactions: Create, Like, Retweet, Reply etc.
+ * Edge correspond ng to UserT etEnt yEdge.
+ *   captures user-t et  nteract ons: Create, L ke, Ret et, Reply etc.
  */
-case class UserTweetEntityEdge(
-  sourceUser: Long,
-  targetTweet: Long,
-  action: Action,
-  cardInfo: Option[Byte],
-  metadata: Option[Long],
-  entitiesMap: Option[Map[Byte, Seq[Int]]],
-  tweetDetails: Option[TweetDetails])
+case class UserT etEnt yEdge(
+  s ceUser: Long,
+  targetT et: Long,
+  act on: Act on,
+  card nfo: Opt on[Byte],
+   tadata: Opt on[Long],
+  ent  esMap: Opt on[Map[Byte, Seq[ nt]]],
+  t etDeta ls: Opt on[T etDeta ls])
     extends Edge {
 
-  override def convertToRecosHoseMessage: RecosHoseMessage = {
-    RecosHoseMessage(
-      leftId = sourceUser,
-      rightId = targetTweet,
-      action = action.id.toByte,
-      card = cardInfo,
-      entities = entitiesMap,
-      edgeMetadata = metadata
+  overr de def convertToRecosHose ssage: RecosHose ssage = {
+    RecosHose ssage(
+      left d = s ceUser,
+      r ght d = targetT et,
+      act on = act on. d.toByte,
+      card = card nfo,
+      ent  es = ent  esMap,
+      edge tadata =  tadata
     )
   }
 
-  private def getFeatures(tweetDetails: TweetDetails): Features = {
+  pr vate def getFeatures(t etDeta ls: T etDeta ls): Features = {
     Features(
-      hasPhoto = Some(tweetDetails.hasPhoto),
-      hasVideo = Some(tweetDetails.hasVideo),
-      hasUrl = Some(tweetDetails.hasUrl),
-      hasHashtag = Some(tweetDetails.hasHashtag)
+      hasPhoto = So (t etDeta ls.hasPhoto),
+      hasV deo = So (t etDeta ls.hasV deo),
+      hasUrl = So (t etDeta ls.hasUrl),
+      hasHashtag = So (t etDeta ls.hasHashtag)
     )
   }
 
-  override def convertToUserTweetAuthorGraphMessage: UserTweetAuthorGraphMessage = {
-    UserTweetAuthorGraphMessage(
-      leftId = sourceUser,
-      rightId = targetTweet,
-      action = action.id.toByte,
-      card = cardInfo,
-      authorId = tweetDetails.flatMap(_.authorId),
-      features = tweetDetails.map(getFeatures)
+  overr de def convertToUserT etAuthorGraph ssage: UserT etAuthorGraph ssage = {
+    UserT etAuthorGraph ssage(
+      left d = s ceUser,
+      r ght d = targetT et,
+      act on = act on. d.toByte,
+      card = card nfo,
+      author d = t etDeta ls.flatMap(_.author d),
+      features = t etDeta ls.map(getFeatures)
     )
   }
 }
 
 /**
- * Edge corresponding to UserUserGraph.
- * It captures user-user interactions: Follow, Mention, Mediatag.
+ * Edge correspond ng to UserUserGraph.
+ *   captures user-user  nteract ons: Follow,  nt on,  d atag.
  */
 case class UserUserEdge(
-  sourceUser: Long,
+  s ceUser: Long,
   targetUser: Long,
-  action: Action,
-  metadata: Option[Long])
+  act on: Act on,
+   tadata: Opt on[Long])
     extends Edge {
-  override def convertToRecosHoseMessage: RecosHoseMessage = {
-    RecosHoseMessage(
-      leftId = sourceUser,
-      rightId = targetUser,
-      action = action.id.toByte,
-      edgeMetadata = metadata
+  overr de def convertToRecosHose ssage: RecosHose ssage = {
+    RecosHose ssage(
+      left d = s ceUser,
+      r ght d = targetUser,
+      act on = act on. d.toByte,
+      edge tadata =  tadata
     )
   }
 
-  override def convertToUserTweetAuthorGraphMessage: UserTweetAuthorGraphMessage = {
-    throw new RuntimeException(
-      "convertToUserTweetAuthorGraphMessage not implemented in UserUserEdge.")
+  overr de def convertToUserT etAuthorGraph ssage: UserT etAuthorGraph ssage = {
+    throw new Runt  Except on(
+      "convertToUserT etAuthorGraph ssage not  mple nted  n UserUserEdge.")
   }
 
 }

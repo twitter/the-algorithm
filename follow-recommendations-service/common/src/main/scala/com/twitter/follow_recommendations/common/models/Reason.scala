@@ -1,206 +1,206 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
+ mport com.tw ter.follow_recom ndat ons.{thr ftscala => t}
+ mport com.tw ter.follow_recom ndat ons.logg ng.{thr ftscala => offl ne}
 
-case class FollowProof(followedBy: Seq[Long], numIds: Int) {
-  def toThrift: t.FollowProof = {
-    t.FollowProof(followedBy, numIds)
+case class FollowProof(follo dBy: Seq[Long], num ds:  nt) {
+  def toThr ft: t.FollowProof = {
+    t.FollowProof(follo dBy, num ds)
   }
 
-  def toOfflineThrift: offline.FollowProof = offline.FollowProof(followedBy, numIds)
+  def toOffl neThr ft: offl ne.FollowProof = offl ne.FollowProof(follo dBy, num ds)
 }
 
 object FollowProof {
 
-  def fromThrift(proof: t.FollowProof): FollowProof = {
-    FollowProof(proof.userIds, proof.numIds)
+  def fromThr ft(proof: t.FollowProof): FollowProof = {
+    FollowProof(proof.user ds, proof.num ds)
   }
 }
 
-case class SimilarToProof(similarTo: Seq[Long]) {
-  def toThrift: t.SimilarToProof = {
-    t.SimilarToProof(similarTo)
+case class S m larToProof(s m larTo: Seq[Long]) {
+  def toThr ft: t.S m larToProof = {
+    t.S m larToProof(s m larTo)
   }
 
-  def toOfflineThrift: offline.SimilarToProof = offline.SimilarToProof(similarTo)
+  def toOffl neThr ft: offl ne.S m larToProof = offl ne.S m larToProof(s m larTo)
 }
 
-object SimilarToProof {
-  def fromThrift(proof: t.SimilarToProof): SimilarToProof = {
-    SimilarToProof(proof.userIds)
-  }
-}
-
-case class PopularInGeoProof(location: String) {
-  def toThrift: t.PopularInGeoProof = {
-    t.PopularInGeoProof(location)
-  }
-
-  def toOfflineThrift: offline.PopularInGeoProof = offline.PopularInGeoProof(location)
-}
-
-object PopularInGeoProof {
-
-  def fromThrift(proof: t.PopularInGeoProof): PopularInGeoProof = {
-    PopularInGeoProof(proof.location)
+object S m larToProof {
+  def fromThr ft(proof: t.S m larToProof): S m larToProof = {
+    S m larToProof(proof.user ds)
   }
 }
 
-case class TttInterestProof(interestId: Long, interestDisplayName: String) {
-  def toThrift: t.TttInterestProof = {
-    t.TttInterestProof(interestId, interestDisplayName)
+case class Popular nGeoProof(locat on: Str ng) {
+  def toThr ft: t.Popular nGeoProof = {
+    t.Popular nGeoProof(locat on)
   }
 
-  def toOfflineThrift: offline.TttInterestProof =
-    offline.TttInterestProof(interestId, interestDisplayName)
+  def toOffl neThr ft: offl ne.Popular nGeoProof = offl ne.Popular nGeoProof(locat on)
 }
 
-object TttInterestProof {
+object Popular nGeoProof {
 
-  def fromThrift(proof: t.TttInterestProof): TttInterestProof = {
-    TttInterestProof(proof.interestId, proof.interestDisplayName)
-  }
-}
-
-case class TopicProof(topicId: Long) {
-  def toThrift: t.TopicProof = {
-    t.TopicProof(topicId)
-  }
-
-  def toOfflineThrift: offline.TopicProof =
-    offline.TopicProof(topicId)
-}
-
-object TopicProof {
-  def fromThrift(proof: t.TopicProof): TopicProof = {
-    TopicProof(proof.topicId)
+  def fromThr ft(proof: t.Popular nGeoProof): Popular nGeoProof = {
+    Popular nGeoProof(proof.locat on)
   }
 }
 
-case class CustomInterest(query: String) {
-  def toThrift: t.CustomInterestProof = {
-    t.CustomInterestProof(query)
+case class Ttt nterestProof( nterest d: Long,  nterestD splayNa : Str ng) {
+  def toThr ft: t.Ttt nterestProof = {
+    t.Ttt nterestProof( nterest d,  nterestD splayNa )
   }
 
-  def toOfflineThrift: offline.CustomInterestProof =
-    offline.CustomInterestProof(query)
+  def toOffl neThr ft: offl ne.Ttt nterestProof =
+    offl ne.Ttt nterestProof( nterest d,  nterestD splayNa )
 }
 
-object CustomInterest {
-  def fromThrift(proof: t.CustomInterestProof): CustomInterest = {
-    CustomInterest(proof.query)
-  }
-}
+object Ttt nterestProof {
 
-case class TweetsAuthorProof(tweetIds: Seq[Long]) {
-  def toThrift: t.TweetsAuthorProof = {
-    t.TweetsAuthorProof(tweetIds)
-  }
-
-  def toOfflineThrift: offline.TweetsAuthorProof =
-    offline.TweetsAuthorProof(tweetIds)
-}
-
-object TweetsAuthorProof {
-  def fromThrift(proof: t.TweetsAuthorProof): TweetsAuthorProof = {
-    TweetsAuthorProof(proof.tweetIds)
+  def fromThr ft(proof: t.Ttt nterestProof): Ttt nterestProof = {
+    Ttt nterestProof(proof. nterest d, proof. nterestD splayNa )
   }
 }
 
-case class DeviceFollowProof(isDeviceFollow: Boolean) {
-  def toThrift: t.DeviceFollowProof = {
-    t.DeviceFollowProof(isDeviceFollow)
+case class Top cProof(top c d: Long) {
+  def toThr ft: t.Top cProof = {
+    t.Top cProof(top c d)
   }
-  def toOfflineThrift: offline.DeviceFollowProof =
-    offline.DeviceFollowProof(isDeviceFollow)
+
+  def toOffl neThr ft: offl ne.Top cProof =
+    offl ne.Top cProof(top c d)
 }
 
-object DeviceFollowProof {
-  def fromThrift(proof: t.DeviceFollowProof): DeviceFollowProof = {
-    DeviceFollowProof(proof.isDeviceFollow)
+object Top cProof {
+  def fromThr ft(proof: t.Top cProof): Top cProof = {
+    Top cProof(proof.top c d)
+  }
+}
+
+case class Custom nterest(query: Str ng) {
+  def toThr ft: t.Custom nterestProof = {
+    t.Custom nterestProof(query)
+  }
+
+  def toOffl neThr ft: offl ne.Custom nterestProof =
+    offl ne.Custom nterestProof(query)
+}
+
+object Custom nterest {
+  def fromThr ft(proof: t.Custom nterestProof): Custom nterest = {
+    Custom nterest(proof.query)
+  }
+}
+
+case class T etsAuthorProof(t et ds: Seq[Long]) {
+  def toThr ft: t.T etsAuthorProof = {
+    t.T etsAuthorProof(t et ds)
+  }
+
+  def toOffl neThr ft: offl ne.T etsAuthorProof =
+    offl ne.T etsAuthorProof(t et ds)
+}
+
+object T etsAuthorProof {
+  def fromThr ft(proof: t.T etsAuthorProof): T etsAuthorProof = {
+    T etsAuthorProof(proof.t et ds)
+  }
+}
+
+case class Dev ceFollowProof( sDev ceFollow: Boolean) {
+  def toThr ft: t.Dev ceFollowProof = {
+    t.Dev ceFollowProof( sDev ceFollow)
+  }
+  def toOffl neThr ft: offl ne.Dev ceFollowProof =
+    offl ne.Dev ceFollowProof( sDev ceFollow)
+}
+
+object Dev ceFollowProof {
+  def fromThr ft(proof: t.Dev ceFollowProof): Dev ceFollowProof = {
+    Dev ceFollowProof(proof. sDev ceFollow)
   }
 
 }
 
 case class AccountProof(
-  followProof: Option[FollowProof] = None,
-  similarToProof: Option[SimilarToProof] = None,
-  popularInGeoProof: Option[PopularInGeoProof] = None,
-  tttInterestProof: Option[TttInterestProof] = None,
-  topicProof: Option[TopicProof] = None,
-  customInterestProof: Option[CustomInterest] = None,
-  tweetsAuthorProof: Option[TweetsAuthorProof] = None,
-  deviceFollowProof: Option[DeviceFollowProof] = None) {
-  def toThrift: t.AccountProof = {
+  followProof: Opt on[FollowProof] = None,
+  s m larToProof: Opt on[S m larToProof] = None,
+  popular nGeoProof: Opt on[Popular nGeoProof] = None,
+  ttt nterestProof: Opt on[Ttt nterestProof] = None,
+  top cProof: Opt on[Top cProof] = None,
+  custom nterestProof: Opt on[Custom nterest] = None,
+  t etsAuthorProof: Opt on[T etsAuthorProof] = None,
+  dev ceFollowProof: Opt on[Dev ceFollowProof] = None) {
+  def toThr ft: t.AccountProof = {
     t.AccountProof(
-      followProof.map(_.toThrift),
-      similarToProof.map(_.toThrift),
-      popularInGeoProof.map(_.toThrift),
-      tttInterestProof.map(_.toThrift),
-      topicProof.map(_.toThrift),
-      customInterestProof.map(_.toThrift),
-      tweetsAuthorProof.map(_.toThrift),
-      deviceFollowProof.map(_.toThrift)
+      followProof.map(_.toThr ft),
+      s m larToProof.map(_.toThr ft),
+      popular nGeoProof.map(_.toThr ft),
+      ttt nterestProof.map(_.toThr ft),
+      top cProof.map(_.toThr ft),
+      custom nterestProof.map(_.toThr ft),
+      t etsAuthorProof.map(_.toThr ft),
+      dev ceFollowProof.map(_.toThr ft)
     )
   }
 
-  def toOfflineThrift: offline.AccountProof = {
-    offline.AccountProof(
-      followProof.map(_.toOfflineThrift),
-      similarToProof.map(_.toOfflineThrift),
-      popularInGeoProof.map(_.toOfflineThrift),
-      tttInterestProof.map(_.toOfflineThrift),
-      topicProof.map(_.toOfflineThrift),
-      customInterestProof.map(_.toOfflineThrift),
-      tweetsAuthorProof.map(_.toOfflineThrift),
-      deviceFollowProof.map(_.toOfflineThrift)
+  def toOffl neThr ft: offl ne.AccountProof = {
+    offl ne.AccountProof(
+      followProof.map(_.toOffl neThr ft),
+      s m larToProof.map(_.toOffl neThr ft),
+      popular nGeoProof.map(_.toOffl neThr ft),
+      ttt nterestProof.map(_.toOffl neThr ft),
+      top cProof.map(_.toOffl neThr ft),
+      custom nterestProof.map(_.toOffl neThr ft),
+      t etsAuthorProof.map(_.toOffl neThr ft),
+      dev ceFollowProof.map(_.toOffl neThr ft)
     )
   }
 }
 
 object AccountProof {
-  def fromThrift(proof: t.AccountProof): AccountProof = {
+  def fromThr ft(proof: t.AccountProof): AccountProof = {
     AccountProof(
-      proof.followProof.map(FollowProof.fromThrift),
-      proof.similarToProof.map(SimilarToProof.fromThrift),
-      proof.popularInGeoProof.map(PopularInGeoProof.fromThrift),
-      proof.tttInterestProof.map(TttInterestProof.fromThrift),
-      proof.topicProof.map(TopicProof.fromThrift),
-      proof.customInterestProof.map(CustomInterest.fromThrift),
-      proof.tweetsAuthorProof.map(TweetsAuthorProof.fromThrift),
-      proof.deviceFollowProof.map(DeviceFollowProof.fromThrift)
+      proof.followProof.map(FollowProof.fromThr ft),
+      proof.s m larToProof.map(S m larToProof.fromThr ft),
+      proof.popular nGeoProof.map(Popular nGeoProof.fromThr ft),
+      proof.ttt nterestProof.map(Ttt nterestProof.fromThr ft),
+      proof.top cProof.map(Top cProof.fromThr ft),
+      proof.custom nterestProof.map(Custom nterest.fromThr ft),
+      proof.t etsAuthorProof.map(T etsAuthorProof.fromThr ft),
+      proof.dev ceFollowProof.map(Dev ceFollowProof.fromThr ft)
     )
   }
 }
 
-case class Reason(accountProof: Option[AccountProof]) {
-  def toThrift: t.Reason = {
-    t.Reason(accountProof.map(_.toThrift))
+case class Reason(accountProof: Opt on[AccountProof]) {
+  def toThr ft: t.Reason = {
+    t.Reason(accountProof.map(_.toThr ft))
   }
 
-  def toOfflineThrift: offline.Reason = {
-    offline.Reason(accountProof.map(_.toOfflineThrift))
+  def toOffl neThr ft: offl ne.Reason = {
+    offl ne.Reason(accountProof.map(_.toOffl neThr ft))
   }
 }
 
 object Reason {
 
-  def fromThrift(reason: t.Reason): Reason = {
-    Reason(reason.accountProof.map(AccountProof.fromThrift))
+  def fromThr ft(reason: t.Reason): Reason = {
+    Reason(reason.accountProof.map(AccountProof.fromThr ft))
   }
 }
 
-trait HasReason {
+tra  HasReason {
 
-  def reason: Option[Reason]
-  // helper methods below
+  def reason: Opt on[Reason]
+  //  lper  thods below
 
-  def followedBy: Option[Seq[Long]] = {
+  def follo dBy: Opt on[Seq[Long]] = {
     for {
       reason <- reason
       accountProof <- reason.accountProof
       followProof <- accountProof.followProof
-    } yield { followProof.followedBy }
+    } y eld { followProof.follo dBy }
   }
 }

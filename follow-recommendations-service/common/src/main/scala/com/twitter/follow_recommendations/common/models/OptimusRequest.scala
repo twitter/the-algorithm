@@ -1,15 +1,15 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.timelines.configapi.HasParams
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.t  l nes.conf gap .HasParams
 
 /**
-Convenience trait to group together all traits needed for optimus ranking
+Conven ence tra  to group toget r all tra s needed for opt mus rank ng
  */
-trait OptimusRequest
+tra  Opt musRequest
     extends HasParams
-    with HasClientContext
-    with HasDisplayLocation
-    with HasInterestIds
-    with HasDebugOptions
-    with HasPreviousRecommendationsContext {}
+    w h HasCl entContext
+    w h HasD splayLocat on
+    w h Has nterest ds
+    w h HasDebugOpt ons
+    w h HasPrev ousRecom ndat onsContext {}

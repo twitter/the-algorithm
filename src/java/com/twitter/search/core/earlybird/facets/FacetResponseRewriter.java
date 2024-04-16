@@ -1,16 +1,16 @@
-package com.twitter.search.core.earlybird.facets;
+package com.tw ter.search.core.earlyb rd.facets;
 
-import com.twitter.search.common.facets.thriftjava.FacetResponse;
+ mport com.tw ter.search.common.facets.thr ftjava.FacetResponse;
 
 /**
- * Rewrite facet responses
+ * Rewr e facet responses
  */
-public interface FacetResponseRewriter {
+publ c  nterface FacetResponseRewr er {
   /**
-   * Do the response rewrite
+   * Do t  response rewr e
    *
-   * @param facetResponse the response before the rewriting
-   * @return the rewrited response
+   * @param facetResponse t  response before t  rewr  ng
+   * @return t  rewr ed response
    */
-  FacetResponse rewrite(FacetResponse facetResponse);
+  FacetResponse rewr e(FacetResponse facetResponse);
 }

@@ -1,13 +1,13 @@
-package com.twitter.search.common.query;
+package com.tw ter.search.common.query;
 
-import com.twitter.search.queryparser.query.annotation.Annotation;
+ mport com.tw ter.search.queryparser.query.annotat on.Annotat on;
 
 
 /**
- * A visitor that collects the nodes that have :v annotation
+ * A v s or that collects t  nodes that have :v annotat on
  */
-public class CollectVariantVisitor extends CollectAnnotationsVisitor {
-  public CollectVariantVisitor() {
-    super(Annotation.Type.VARIANT);
+publ c class CollectVar antV s or extends CollectAnnotat onsV s or {
+  publ c CollectVar antV s or() {
+    super(Annotat on.Type.VAR ANT);
   }
 }

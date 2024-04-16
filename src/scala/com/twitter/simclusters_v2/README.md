@@ -1,112 +1,112 @@
-# SimClusters: Community-based Representations for Heterogeneous Recommendations at Twitter
+# S mClusters: Commun y-based Representat ons for  terogeneous Recom ndat ons at Tw ter
 
-## Overview
-SimClusters is as a general-purpose representation layer based on overlapping communities into which users as well as heterogeneous content can be captured as sparse, interpretable vectors to support a multitude of recommendation tasks.
+## Overv ew
+S mClusters  s as a general-purpose representat on layer based on overlapp ng commun  es  nto wh ch users as  ll as  terogeneous content can be captured as sparse,  nterpretable vectors to support a mult ude of recom ndat on tasks.
 
-We build our user and tweet SimClusters embeddings based on the inferred communities, and the representations power our personalized tweet recommendation via our online serving service SimClusters ANN.
-
-
-For more details, please read our paper that was published in KDD'2020 Applied Data Science Track: https://www.kdd.org/kdd2020/accepted-papers/view/simclusters-community-based-representations-for-heterogeneous-recommendatio
-
-## Brief introduction to Simclusters Algorithm
-
-### Follow relationships as a bipartite graph
-Follow relationships on Twitter are perhaps most naturally thought of as directed graph, where each node is a user and each edge represents a Follow. Edges are directed in that User 1 can follow User 2, User 2 can follow User 1 or both User 1 and User 2 can follow each other.
-
-This directed graph can be also viewed as a bipartite graph, where nodes are grouped into two sets, Producers and Consumers. In this bipartite graph, Producers are the users who are Followed and Consumers are the Followees. Below is a toy example of a follow graph for four users:
-
-<img src="images/bipartite_graph.png" width = "400px">
-
-> Figure 1 - Left panel: A directed follow graph; Right panel: A bipartite graph representation of the directed graph
-
-### Community Detection - Known For 
-The bipartite follow graph can be used to identify groups of Producers who have similar followers, or who are "Known For" a topic. Specifically, the bipartite follow graph can also be represented as an *m x n* matrix (*A*), where consumers are presented as *u* and producers are represented as *v*.
-
-Producer-producer similarity is computed as the cosine similarity between users who follow each producer. The resulting cosine similarity values can be used to construct a producer-producer similarity graph, where the nodes are producers and edges are weighted by the corresponding cosine similarity value. Noise removal is performed, such that edges with weights below a specified threshold are deleted from the graph.
-
-After noise removal has been completed, Metropolis-Hastings sampling-based community detection is then run on the Producer-Producer similarity graph to identify a community affiliation for each producer. This algorithm takes in a parameter *k* for the number of communities to be detected.
-
-<img src="images/producer_producer_similarity.png">
-
-> Figure 2 -  Left panel: Matrix representation of the follow graph depicted in Figure 1; Middle panel: Producer-Producer similarity is estimated by calculating the cosine similarity between the users who follow each producer; Right panel: Cosine similarity scores are used to create the Producer-Producer similarity graph. A clustering algorithm is run on the graph to identify groups of Producers with similar followers.
-
-Community affiliation scores are then used to construct an *n x k* "Known For" matrix (*V*). This matrix is maximally sparse, and each Producer is affiliated with at most one community. In production, the Known For dataset covers the top 20M producers and k ~= 145000. In other words, we discover around 145k communities based on Twitter's user follow graph.
-
-<img src="images/knownfor.png">
-
-> Figure 3 -  The clustering algorithm returns community affiliation scores for each producer. These scores are represented in matrix V.
-
-In the example above, Producer 1 is "Known For" community 2, Producer 2 is "Known For" community 1, and so forth.
-
-### Consumer Embeddings - User InterestedIn
-An Interested In matrix (*U*) can be computed by multiplying the matrix representation of the follow graph (*A*) by the Known For matrix (*V*): 
-
-<img src="images/interestedin.png">
-
-In this toy example, consumer 1 is interested in community 1 only, whereas consumer 3 is interested in all three communities. There is also a noise removal step applied to the Interested In matrix.
-
-We use the InterestedIn embeddings to capture consumer's long-term interest. The InterestedIn embeddings is one of our major source for consumer-based tweet recommendations.
-
-### Producer Embeddings
-When computing the Known For matrix, each producer can only be Known For a single community. Although this maximally sparse matrix is useful from a computational perspective, we know that our users tweet about many different topics and may be "Known" in many different communities. Producer embeddings ( *Ṽ* )  are used to capture this richer structure of the graph.
-
-To calculate producer embeddings, the cosine similarity is calculated between each Producer’s follow graph and the Interested In vector for each community.
-
-<img src="images/producer_embeddings.png">
-
-Producer embeddings are used for producer-based tweet recommendations. For example, we can recommend similar tweets based on an account you just followed.
-
-### Entity Embeddings
-SimClusters can also be used to generate embeddings for different kind of contents, such as
-- Tweets (used for Tweet recommendations)
-- Topics (used for TopicFollow)
-
-#### Tweet embeddings
-When a tweet is created, its tweet embedding is initialized as an empty vector.
-Tweet embeddings are updated each time the tweet is favorited. Specifically, the InterestedIn vector of each user who Fav-ed the tweet is added to the tweet vector.
-Since tweet embeddings are updated each time a tweet is favorited, they change over time.
-
-Tweet embeddings are critical for our tweet recommendation tasks. We can calculate tweet similarity and recommend similar tweets to users based on their tweet engagement history.
-
-We have a online Heron job that updates the tweet embeddings in realtime, check out [here](summingbird/README.md) for more. 
-
-#### Topic embeddings
-Topic embeddings (**R**) are determined by taking the cosine similarity between consumers who are interested in a community and the number of aggregated favorites each consumer has taken on a tweet that has a topic annotation (with some time decay).
-
-<img src="images/topic_embeddings.png">
+  bu ld   user and t et S mClusters embedd ngs based on t   nferred commun  es, and t  representat ons po r   personal zed t et recom ndat on v a   onl ne serv ng serv ce S mClusters ANN.
 
 
-## Project Directory Overview
-The whole SimClusters project can be understood as 2 main components
-- SimClusters Offline Jobs (Scalding / GCP)
-- SimClusters Real-time Streaming Jobs 
+For more deta ls, please read   paper that was publ s d  n KDD'2020 Appl ed Data Sc ence Track: https://www.kdd.org/kdd2020/accepted-papers/v ew/s mclusters-commun y-based-representat ons-for- terogeneous-recom ndat o
 
-### SimClusters Offline Jobs
+## Br ef  ntroduct on to S mclusters Algor hm
 
-**SimClusters Scalding Jobs**
+### Follow relat onsh ps as a b part e graph
+Follow relat onsh ps on Tw ter are perhaps most naturally thought of as d rected graph, w re each node  s a user and each edge represents a Follow. Edges are d rected  n that User 1 can follow User 2, User 2 can follow User 1 or both User 1 and User 2 can follow each ot r.
 
-| Jobs   | Code  | Description  |
+T  d rected graph can be also v e d as a b part e graph, w re nodes are grouped  nto two sets, Producers and Consu rs.  n t  b part e graph, Producers are t  users who are Follo d and Consu rs are t  Follo es. Below  s a toy example of a follow graph for f  users:
+
+< mg src=" mages/b part e_graph.png" w dth = "400px">
+
+> F gure 1 - Left panel: A d rected follow graph; R ght panel: A b part e graph representat on of t  d rected graph
+
+### Commun y Detect on - Known For 
+T  b part e follow graph can be used to  dent fy groups of Producers who have s m lar follo rs, or who are "Known For" a top c. Spec f cally, t  b part e follow graph can also be represented as an *m x n* matr x (*A*), w re consu rs are presented as *u* and producers are represented as *v*.
+
+Producer-producer s m lar y  s computed as t  cos ne s m lar y bet en users who follow each producer. T  result ng cos ne s m lar y values can be used to construct a producer-producer s m lar y graph, w re t  nodes are producers and edges are   ghted by t  correspond ng cos ne s m lar y value. No se removal  s perfor d, such that edges w h   ghts below a spec f ed threshold are deleted from t  graph.
+
+After no se removal has been completed,  tropol s-Hast ngs sampl ng-based commun y detect on  s t n run on t  Producer-Producer s m lar y graph to  dent fy a commun y aff l at on for each producer. T  algor hm takes  n a para ter *k* for t  number of commun  es to be detected.
+
+< mg src=" mages/producer_producer_s m lar y.png">
+
+> F gure 2 -  Left panel: Matr x representat on of t  follow graph dep cted  n F gure 1; M ddle panel: Producer-Producer s m lar y  s est mated by calculat ng t  cos ne s m lar y bet en t  users who follow each producer; R ght panel: Cos ne s m lar y scores are used to create t  Producer-Producer s m lar y graph. A cluster ng algor hm  s run on t  graph to  dent fy groups of Producers w h s m lar follo rs.
+
+Commun y aff l at on scores are t n used to construct an *n x k* "Known For" matr x (*V*). T  matr x  s max mally sparse, and each Producer  s aff l ated w h at most one commun y.  n product on, t  Known For dataset covers t  top 20M producers and k ~= 145000.  n ot r words,   d scover around 145k commun  es based on Tw ter's user follow graph.
+
+< mg src=" mages/knownfor.png">
+
+> F gure 3 -  T  cluster ng algor hm returns commun y aff l at on scores for each producer. T se scores are represented  n matr x V.
+
+ n t  example above, Producer 1  s "Known For" commun y 2, Producer 2  s "Known For" commun y 1, and so forth.
+
+### Consu r Embedd ngs - User  nterested n
+An  nterested  n matr x (*U*) can be computed by mult ply ng t  matr x representat on of t  follow graph (*A*) by t  Known For matr x (*V*): 
+
+< mg src=" mages/ nterested n.png">
+
+ n t  toy example, consu r 1  s  nterested  n commun y 1 only, w reas consu r 3  s  nterested  n all three commun  es. T re  s also a no se removal step appl ed to t   nterested  n matr x.
+
+  use t   nterested n embedd ngs to capture consu r's long-term  nterest. T   nterested n embedd ngs  s one of   major s ce for consu r-based t et recom ndat ons.
+
+### Producer Embedd ngs
+W n comput ng t  Known For matr x, each producer can only be Known For a s ngle commun y. Although t  max mally sparse matr x  s useful from a computat onal perspect ve,   know that   users t et about many d fferent top cs and may be "Known"  n many d fferent commun  es. Producer embedd ngs ( *Ṽ* )  are used to capture t  r c r structure of t  graph.
+
+To calculate producer embedd ngs, t  cos ne s m lar y  s calculated bet en each Producer’s follow graph and t   nterested  n vector for each commun y.
+
+< mg src=" mages/producer_embedd ngs.png">
+
+Producer embedd ngs are used for producer-based t et recom ndat ons. For example,   can recom nd s m lar t ets based on an account   just follo d.
+
+### Ent y Embedd ngs
+S mClusters can also be used to generate embedd ngs for d fferent k nd of contents, such as
+- T ets (used for T et recom ndat ons)
+- Top cs (used for Top cFollow)
+
+#### T et embedd ngs
+W n a t et  s created,  s t et embedd ng  s  n  al zed as an empty vector.
+T et embedd ngs are updated each t   t  t et  s favor ed. Spec f cally, t   nterested n vector of each user who Fav-ed t  t et  s added to t  t et vector.
+S nce t et embedd ngs are updated each t   a t et  s favor ed, t y change over t  .
+
+T et embedd ngs are cr  cal for   t et recom ndat on tasks.   can calculate t et s m lar y and recom nd s m lar t ets to users based on t  r t et engage nt  tory.
+
+  have a onl ne  ron job that updates t  t et embedd ngs  n realt  , c ck out [ re](summ ngb rd/README.md) for more. 
+
+#### Top c embedd ngs
+Top c embedd ngs (**R**) are determ ned by tak ng t  cos ne s m lar y bet en consu rs who are  nterested  n a commun y and t  number of aggregated favor es each consu r has taken on a t et that has a top c annotat on (w h so  t   decay).
+
+< mg src=" mages/top c_embedd ngs.png">
+
+
+## Project D rectory Overv ew
+T  whole S mClusters project can be understood as 2 ma n components
+- S mClusters Offl ne Jobs (Scald ng / GCP)
+- S mClusters Real-t   Stream ng Jobs 
+
+### S mClusters Offl ne Jobs
+
+**S mClusters Scald ng Jobs**
+
+| Jobs   | Code  | Descr pt on  |
 |---|---|---|
-| KnownFor  |  [simclusters_v2/scalding/update_known_for/UpdateKnownFor20M145K2020.scala](scalding/update_known_for/UpdateKnownFor20M145K2020.scala) | The job outputs the KnownFor dataset which stores the relationships between  clusterId and producerUserId. </n> KnownFor dataset covers the top 20M followed producers. We use this KnownFor dataset (or so-called clusters) to build all other entity embeddings. |
-| InterestedIn Embeddings|  [simclusters_v2/scalding/InterestedInFromKnownFor.scala](scalding/InterestedInFromKnownFor.scala) |  This code implements the job for computing users' interestedIn embedding from the  KnownFor dataset. </n> We use this dataset for consumer-based tweet recommendations.|
-| Producer Embeddings  | [simclusters_v2/scalding/embedding/ProducerEmbeddingsFromInterestedIn.scala](scalding/embedding/ProducerEmbeddingsFromInterestedIn.scala)  |  The code implements the job for computer producer embeddings, which represents the content user produces. </n> We use this dataset for producer-based tweet recommendations.|
-| Semantic Core Entity Embeddings  | [simclusters_v2/scalding/embedding/EntityToSimClustersEmbeddingsJob.scala](scalding/embedding/EntityToSimClustersEmbeddingsJob.scala)   | The job computes the semantic core entity embeddings. It outputs datasets that stores the  "SemanticCore entityId -> List(clusterId)" and "clusterId -> List(SemanticCore entityId))" relationships.|
-| Topic Embeddings | [simclusters_v2/scalding/embedding/tfg/FavTfgBasedTopicEmbeddings.scala](scalding/embedding/tfg/FavTfgBasedTopicEmbeddings.scala)  | Jobs to generate Fav-based Topic-Follow-Graph (TFG) topic embeddings </n> A topic's fav-based TFG embedding is the sum of its followers' fav-based InterestedIn. We use this embedding for topic related recommendations.|
+| KnownFor  |  [s mclusters_v2/scald ng/update_known_for/UpdateKnownFor20M145K2020.scala](scald ng/update_known_for/UpdateKnownFor20M145K2020.scala) | T  job outputs t  KnownFor dataset wh ch stores t  relat onsh ps bet en  cluster d and producerUser d. </n> KnownFor dataset covers t  top 20M follo d producers.   use t  KnownFor dataset (or so-called clusters) to bu ld all ot r ent y embedd ngs. |
+|  nterested n Embedd ngs|  [s mclusters_v2/scald ng/ nterested nFromKnownFor.scala](scald ng/ nterested nFromKnownFor.scala) |  T  code  mple nts t  job for comput ng users'  nterested n embedd ng from t   KnownFor dataset. </n>   use t  dataset for consu r-based t et recom ndat ons.|
+| Producer Embedd ngs  | [s mclusters_v2/scald ng/embedd ng/ProducerEmbedd ngsFrom nterested n.scala](scald ng/embedd ng/ProducerEmbedd ngsFrom nterested n.scala)  |  T  code  mple nts t  job for computer producer embedd ngs, wh ch represents t  content user produces. </n>   use t  dataset for producer-based t et recom ndat ons.|
+| Semant c Core Ent y Embedd ngs  | [s mclusters_v2/scald ng/embedd ng/Ent yToS mClustersEmbedd ngsJob.scala](scald ng/embedd ng/Ent yToS mClustersEmbedd ngsJob.scala)   | T  job computes t  semant c core ent y embedd ngs.   outputs datasets that stores t   "Semant cCore ent y d -> L st(cluster d)" and "cluster d -> L st(Semant cCore ent y d))" relat onsh ps.|
+| Top c Embedd ngs | [s mclusters_v2/scald ng/embedd ng/tfg/FavTfgBasedTop cEmbedd ngs.scala](scald ng/embedd ng/tfg/FavTfgBasedTop cEmbedd ngs.scala)  | Jobs to generate Fav-based Top c-Follow-Graph (TFG) top c embedd ngs </n> A top c's fav-based TFG embedd ng  s t  sum of  s follo rs' fav-based  nterested n.   use t  embedd ng for top c related recom ndat ons.|
 
-**SimClusters GCP Jobs**
+**S mClusters GCP Jobs**
 
-We have a GCP pipeline where we build our SimClusters ANN index via BigQuery. This allows us to do fast iterations and build new embeddings more efficiently compared to Scalding.
+  have a GCP p pel ne w re   bu ld   S mClusters ANN  ndex v a B gQuery. T  allows us to do fast  erat ons and bu ld new embedd ngs more eff c ently compared to Scald ng.
 
-All SimClusters related GCP jobs are under [src/scala/com/twitter/simclusters_v2/scio/bq_generation](scio/bq_generation).
+All S mClusters related GCP jobs are under [src/scala/com/tw ter/s mclusters_v2/sc o/bq_generat on](sc o/bq_generat on).
 
-| Jobs   | Code  | Description  |
+| Jobs   | Code  | Descr pt on  |
 |---|---|---|
-| PushOpenBased SimClusters ANN Index  |  [EngagementEventBasedClusterToTweetIndexGenerationJob.scala](scio/bq_generation/simclusters_index_generation/EngagementEventBasedClusterToTweetIndexGenerationJob.scala) | The job builds a clusterId -> TopTweet index based on user-open engagement history. </n> This SANN source is used for candidate generation for Notifications. |
-| VideoViewBased SimClusters Index|  [EngagementEventBasedClusterToTweetIndexGenerationJob.scala](scio/bq_generation/simclusters_index_generation/EngagementEventBasedClusterToTweetIndexGenerationJob.scala) |  The job builds a clusterId -> TopTweet index based on the user's video view history. </n> This SANN source is used for video recommendation on Home.|
+| PushOpenBased S mClusters ANN  ndex  |  [Engage ntEventBasedClusterToT et ndexGenerat onJob.scala](sc o/bq_generat on/s mclusters_ ndex_generat on/Engage ntEventBasedClusterToT et ndexGenerat onJob.scala) | T  job bu lds a cluster d -> TopT et  ndex based on user-open engage nt  tory. </n> T  SANN s ce  s used for cand date generat on for Not f cat ons. |
+| V deoV ewBased S mClusters  ndex|  [Engage ntEventBasedClusterToT et ndexGenerat onJob.scala](sc o/bq_generat on/s mclusters_ ndex_generat on/Engage ntEventBasedClusterToT et ndexGenerat onJob.scala) |  T  job bu lds a cluster d -> TopT et  ndex based on t  user's v deo v ew  tory. </n> T  SANN s ce  s used for v deo recom ndat on on Ho .|
 
-### SimClusters Real-Time Streaming Tweets Jobs
+### S mClusters Real-T   Stream ng T ets Jobs
 
-| Jobs   | Code  | Description  |
+| Jobs   | Code  | Descr pt on  |
 |---|---|---|
-| Tweet Embedding Job |  [simclusters_v2/summingbird/storm/TweetJob.scala](summingbird/storm/TweetJob.scala) | Generate the Tweet embedding and index of tweets for the SimClusters |
-| Persistent Tweet Embedding Job|  [simclusters_v2/summingbird/storm/PersistentTweetJob.scala](summingbird/storm/PersistentTweetJob.scala) |  Persistent the tweet embeddings from MemCache into Manhattan.|
+| T et Embedd ng Job |  [s mclusters_v2/summ ngb rd/storm/T etJob.scala](summ ngb rd/storm/T etJob.scala) | Generate t  T et embedd ng and  ndex of t ets for t  S mClusters |
+| Pers stent T et Embedd ng Job|  [s mclusters_v2/summ ngb rd/storm/Pers stentT etJob.scala](summ ngb rd/storm/Pers stentT etJob.scala) |  Pers stent t  t et embedd ngs from  mCac   nto Manhattan.|

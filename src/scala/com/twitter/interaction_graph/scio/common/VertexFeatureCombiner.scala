@@ -1,342 +1,342 @@
-package com.twitter.interaction_graph.scio.common
+package com.tw ter. nteract on_graph.sc o.common
 
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.TimeSeriesStatistics
-import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.interaction_graph.thriftscala.VertexFeature
+ mport com.tw ter. nteract on_graph.thr ftscala.FeatureNa 
+ mport com.tw ter. nteract on_graph.thr ftscala.T  Ser esStat st cs
+ mport com.tw ter. nteract on_graph.thr ftscala.Vertex
+ mport com.tw ter. nteract on_graph.thr ftscala.VertexFeature
 
-object VertexFeatureCombiner {
-  def apply(userId: Long): VertexFeatureCombiner = new VertexFeatureCombiner(
-    instanceVertex = Vertex(userId),
+object VertexFeatureComb ner {
+  def apply(user d: Long): VertexFeatureComb ner = new VertexFeatureComb ner(
+     nstanceVertex = Vertex(user d),
     featureMap = Map(
-      (FeatureName.NumRetweets, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRetweets, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumFavorites, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumFavorites, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumMentions, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumMentions, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumTweetClicks, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumTweetClicks, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumLinkClicks, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumLinkClicks, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumProfileViews, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumProfileViews, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumFollows, true) -> new ReplacementVertexCombiner,
-      (FeatureName.NumFollows, false) -> new ReplacementVertexCombiner,
-      (FeatureName.NumUnfollows, true) -> new ReplacementVertexCombiner,
-      (FeatureName.NumUnfollows, false) -> new ReplacementVertexCombiner,
-      (FeatureName.NumMutualFollows, true) -> new ReplacementVertexCombiner,
-      (FeatureName.NumBlocks, true) -> new ReplacementVertexCombiner,
-      (FeatureName.NumBlocks, false) -> new ReplacementVertexCombiner,
-      (FeatureName.NumMutes, true) -> new ReplacementVertexCombiner,
-      (FeatureName.NumMutes, false) -> new ReplacementVertexCombiner,
-      (FeatureName.NumReportAsAbuses, true) -> new ReplacementVertexCombiner,
-      (FeatureName.NumReportAsAbuses, false) -> new ReplacementVertexCombiner,
-      (FeatureName.NumReportAsSpams, true) -> new ReplacementVertexCombiner,
-      (FeatureName.NumReportAsSpams, false) -> new ReplacementVertexCombiner,
-      (FeatureName.NumTweetQuotes, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumTweetQuotes, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumMutualFollows, false) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookEmail, true) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookEmail, false) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookPhone, true) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookPhone, false) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookInBoth, true) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookInBoth, false) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookMutualEdgeEmail, true) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookMutualEdgeEmail, false) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookMutualEdgePhone, true) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookMutualEdgePhone, false) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookMutualEdgeInBoth, true) -> new ReplacementVertexCombiner,
-      (FeatureName.AddressBookMutualEdgeInBoth, false) -> new ReplacementVertexCombiner,
-      (FeatureName.TotalDwellTime, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.TotalDwellTime, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumInspectedStatuses, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumInspectedStatuses, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumPhotoTags, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumPhotoTags, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumPushOpens, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumPushOpens, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumNtabClicks, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumNtabClicks, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtFavories, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtFavories, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtTweetQuotes, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtTweetQuotes, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtTweetClicks, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtTweetClicks, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtRetweets, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtRetweets, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtReplies, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtReplies, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtLinkClicks, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtLinkClicks, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtMentions, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumRtMentions, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumShares, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumShares, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumEmailOpen, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumEmailOpen, false) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumEmailClick, true) -> new WeightedAdditiveVertexCombiner,
-      (FeatureName.NumEmailClick, false) -> new WeightedAdditiveVertexCombiner,
+      (FeatureNa .NumRet ets, true) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumRet ets, false) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumFavor es, true) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumFavor es, false) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .Num nt ons, true) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .Num nt ons, false) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumT etCl cks, true) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumT etCl cks, false) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumL nkCl cks, true) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumL nkCl cks, false) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumProf leV ews, true) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumProf leV ews, false) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumFollows, true) -> new Replace ntVertexComb ner,
+      (FeatureNa .NumFollows, false) -> new Replace ntVertexComb ner,
+      (FeatureNa .NumUnfollows, true) -> new Replace ntVertexComb ner,
+      (FeatureNa .NumUnfollows, false) -> new Replace ntVertexComb ner,
+      (FeatureNa .NumMutualFollows, true) -> new Replace ntVertexComb ner,
+      (FeatureNa .NumBlocks, true) -> new Replace ntVertexComb ner,
+      (FeatureNa .NumBlocks, false) -> new Replace ntVertexComb ner,
+      (FeatureNa .NumMutes, true) -> new Replace ntVertexComb ner,
+      (FeatureNa .NumMutes, false) -> new Replace ntVertexComb ner,
+      (FeatureNa .NumReportAsAbuses, true) -> new Replace ntVertexComb ner,
+      (FeatureNa .NumReportAsAbuses, false) -> new Replace ntVertexComb ner,
+      (FeatureNa .NumReportAsSpams, true) -> new Replace ntVertexComb ner,
+      (FeatureNa .NumReportAsSpams, false) -> new Replace ntVertexComb ner,
+      (FeatureNa .NumT etQuotes, true) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumT etQuotes, false) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumMutualFollows, false) -> new Replace ntVertexComb ner,
+      (FeatureNa .AddressBookEma l, true) -> new Replace ntVertexComb ner,
+      (FeatureNa .AddressBookEma l, false) -> new Replace ntVertexComb ner,
+      (FeatureNa .AddressBookPhone, true) -> new Replace ntVertexComb ner,
+      (FeatureNa .AddressBookPhone, false) -> new Replace ntVertexComb ner,
+      (FeatureNa .AddressBook nBoth, true) -> new Replace ntVertexComb ner,
+      (FeatureNa .AddressBook nBoth, false) -> new Replace ntVertexComb ner,
+      (FeatureNa .AddressBookMutualEdgeEma l, true) -> new Replace ntVertexComb ner,
+      (FeatureNa .AddressBookMutualEdgeEma l, false) -> new Replace ntVertexComb ner,
+      (FeatureNa .AddressBookMutualEdgePhone, true) -> new Replace ntVertexComb ner,
+      (FeatureNa .AddressBookMutualEdgePhone, false) -> new Replace ntVertexComb ner,
+      (FeatureNa .AddressBookMutualEdge nBoth, true) -> new Replace ntVertexComb ner,
+      (FeatureNa .AddressBookMutualEdge nBoth, false) -> new Replace ntVertexComb ner,
+      (FeatureNa .TotalD llT  , true) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .TotalD llT  , false) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .Num nspectedStatuses, true) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .Num nspectedStatuses, false) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumPhotoTags, true) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumPhotoTags, false) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumPushOpens, true) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumPushOpens, false) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumNtabCl cks, true) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumNtabCl cks, false) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumRtFavor es, true) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumRtFavor es, false) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumRtT etQuotes, true) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumRtT etQuotes, false) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumRtT etCl cks, true) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumRtT etCl cks, false) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumRtRet ets, true) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumRtRet ets, false) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumRtRepl es, true) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumRtRepl es, false) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumRtL nkCl cks, true) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumRtL nkCl cks, false) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumRt nt ons, true) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumRt nt ons, false) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumShares, true) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumShares, false) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumEma lOpen, true) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumEma lOpen, false) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumEma lCl ck, true) -> new   ghtedAdd  veVertexComb ner,
+      (FeatureNa .NumEma lCl ck, false) -> new   ghtedAdd  veVertexComb ner,
     )
   )
 }
 
 /**
- * This class can take in a number of input Vertex thrift objects (all of which are assumed to
- * contain information about a single vertex) and builds a combined Vertex protobuf object, which
- * has the union of all the input. Note that we do a weighted addition for a time-decayed value.
+ * T  class can take  n a number of  nput Vertex thr ft objects (all of wh ch are assu d to
+ * conta n  nformat on about a s ngle vertex) and bu lds a comb ned Vertex protobuf object, wh ch
+ * has t  un on of all t   nput. Note that   do a   ghted add  on for a t  -decayed value.
  * <p>
- * The input objects features must be disjoint. Also, remember that the Vertex is directed!
+ * T   nput objects features must be d sjo nt. Also, re mber that t  Vertex  s d rected!
  */
-class VertexFeatureCombiner(
-  instanceVertex: Vertex,
-  featureMap: Map[(FeatureName, Boolean), VFeatureCombiner]) {
+class VertexFeatureComb ner(
+   nstanceVertex: Vertex,
+  featureMap: Map[(FeatureNa , Boolean), VFeatureComb ner]) {
 
   /**
-   * Adds features without any decay. To be used for the same day.
+   * Adds features w hout any decay. To be used for t  sa  day.
    *
-   * @param vertex vertex to be added into the combiner
+   * @param vertex vertex to be added  nto t  comb ner
    */
-  def addFeature(vertex: Vertex): VertexFeatureCombiner = {
-    val newVertex = instanceVertex.copy(weight = vertex.weight)
+  def addFeature(vertex: Vertex): VertexFeatureComb ner = {
+    val newVertex =  nstanceVertex.copy(  ght = vertex.  ght)
     val newFeatures = featureMap.map {
-      case ((featureName, outgoing), combiner) =>
-        vertex.features.find(f => f.name.equals(featureName) && f.outgoing.equals(outgoing)) match {
-          case Some(feature) =>
-            val updatedCombiner =
-              if (combiner.isSet) combiner.updateFeature(feature) else combiner.setFeature(feature)
-            ((featureName, outgoing), updatedCombiner)
-          case _ => ((featureName, outgoing), combiner)
+      case ((featureNa , outgo ng), comb ner) =>
+        vertex.features.f nd(f => f.na .equals(featureNa ) && f.outgo ng.equals(outgo ng)) match {
+          case So (feature) =>
+            val updatedComb ner =
+               f (comb ner. sSet) comb ner.updateFeature(feature) else comb ner.setFeature(feature)
+            ((featureNa , outgo ng), updatedComb ner)
+          case _ => ((featureNa , outgo ng), comb ner)
         }
     }
 
-    new VertexFeatureCombiner(newVertex, newFeatures)
+    new VertexFeatureComb ner(newVertex, newFeatures)
   }
 
   /**
-   * Adds features with decays. Used for combining multiple days.
+   * Adds features w h decays. Used for comb n ng mult ple days.
    *
-   * @param vertex vertex to be added into the combiner
-   * @param alpha  parameters for the decay calculation
+   * @param vertex vertex to be added  nto t  comb ner
+   * @param alpha  para ters for t  decay calculat on
    * @param day    number of days from today
    */
-  def addFeature(vertex: Vertex, alpha: Double, day: Int): VertexFeatureCombiner = {
+  def addFeature(vertex: Vertex, alpha: Double, day:  nt): VertexFeatureComb ner = {
 
-    val newVertex = instanceVertex.copy(weight = vertex.weight)
+    val newVertex =  nstanceVertex.copy(  ght = vertex.  ght)
     val newFeatures = featureMap.map {
-      case ((featureName, outgoing), combiner) =>
-        vertex.features.find(f => f.name.equals(featureName) && f.outgoing.equals(outgoing)) match {
-          case Some(feature) =>
-            val updatedCombiner =
-              if (combiner.isSet) combiner.updateFeature(feature, alpha, day)
-              else combiner.setFeature(feature, alpha, day)
-            ((featureName, outgoing), updatedCombiner)
-          case _ => ((featureName, outgoing), combiner)
+      case ((featureNa , outgo ng), comb ner) =>
+        vertex.features.f nd(f => f.na .equals(featureNa ) && f.outgo ng.equals(outgo ng)) match {
+          case So (feature) =>
+            val updatedComb ner =
+               f (comb ner. sSet) comb ner.updateFeature(feature, alpha, day)
+              else comb ner.setFeature(feature, alpha, day)
+            ((featureNa , outgo ng), updatedComb ner)
+          case _ => ((featureNa , outgo ng), comb ner)
         }
     }
 
-    new VertexFeatureCombiner(newVertex, newFeatures)
+    new VertexFeatureComb ner(newVertex, newFeatures)
   }
 
   /**
-   * Generate the final combined Vertex instance
+   * Generate t  f nal comb ned Vertex  nstance
    *
-   * @param totalDays total number of days to be combined together
+   * @param totalDays total number of days to be comb ned toget r
    */
-  def getCombinedVertex(totalDays: Int): Vertex = {
+  def getComb nedVertex(totalDays:  nt): Vertex = {
     val moreFeatures = featureMap.values.flatMap {
-      case combiner => combiner.getFinalFeature(totalDays)
+      case comb ner => comb ner.getF nalFeature(totalDays)
     }
-    instanceVertex.copy(features = moreFeatures.toSeq)
+     nstanceVertex.copy(features = moreFeatures.toSeq)
   }
 
 }
 
 /**
- * This portion contains the actual combination logic. For now, we only implement a simple
- * additive combiner, but in future we'd like to have things like time-weighted (exponential
+ * T  port on conta ns t  actual comb nat on log c. For now,   only  mple nt a s mple
+ * add  ve comb ner, but  n future  'd l ke to have th ngs l ke t  -  ghted (exponent al
  * decay, maybe) values.
  */
-trait VFeatureCombiner {
-  val startingDay: Int
-  val endingDay: Int
-  val timeSeriesStatistics: Option[TimeSeriesStatistics]
-  val vertexFeature: Option[VertexFeature]
+tra  VFeatureComb ner {
+  val start ngDay:  nt
+  val end ngDay:  nt
+  val t  Ser esStat st cs: Opt on[T  Ser esStat st cs]
+  val vertexFeature: Opt on[VertexFeature]
 
-  def updateTss(feature: VertexFeature, alpha: Double): VFeatureCombiner
-  def addToTss(feature: VertexFeature): VFeatureCombiner
-  def updateFeature(feature: VertexFeature, alpha: Double, day: Int): VFeatureCombiner
-  def updateFeature(feature: VertexFeature): VFeatureCombiner
-  def isSet: Boolean
+  def updateTss(feature: VertexFeature, alpha: Double): VFeatureComb ner
+  def addToTss(feature: VertexFeature): VFeatureComb ner
+  def updateFeature(feature: VertexFeature, alpha: Double, day:  nt): VFeatureComb ner
+  def updateFeature(feature: VertexFeature): VFeatureComb ner
+  def  sSet: Boolean
   def dropFeature: Boolean
-  def setFeature(feature: VertexFeature, alpha: Double, day: Int): VFeatureCombiner
-  def setFeature(feature: VertexFeature): VFeatureCombiner
-  def getFinalFeature(totalDays: Int): Option[VertexFeature]
+  def setFeature(feature: VertexFeature, alpha: Double, day:  nt): VFeatureComb ner
+  def setFeature(feature: VertexFeature): VFeatureComb ner
+  def getF nalFeature(totalDays:  nt): Opt on[VertexFeature]
 }
 
-case class WeightedAdditiveVertexCombiner(
-  override val vertexFeature: Option[VertexFeature] = None,
-  override val startingDay: Int = Integer.MAX_VALUE,
-  override val endingDay: Int = Integer.MIN_VALUE,
-  override val timeSeriesStatistics: Option[TimeSeriesStatistics] = None)
-    extends VFeatureCombiner {
-  override def updateTss(
+case class   ghtedAdd  veVertexComb ner(
+  overr de val vertexFeature: Opt on[VertexFeature] = None,
+  overr de val start ngDay:  nt =  nteger.MAX_VALUE,
+  overr de val end ngDay:  nt =  nteger.M N_VALUE,
+  overr de val t  Ser esStat st cs: Opt on[T  Ser esStat st cs] = None)
+    extends VFeatureComb ner {
+  overr de def updateTss(
     feature: VertexFeature,
     alpha: Double
-  ): WeightedAdditiveVertexCombiner = copy(timeSeriesStatistics = timeSeriesStatistics.map(tss =>
-    InteractionGraphUtils.updateTimeSeriesStatistics(tss, feature.tss.mean, alpha)))
+  ):   ghtedAdd  veVertexComb ner = copy(t  Ser esStat st cs = t  Ser esStat st cs.map(tss =>
+     nteract onGraphUt ls.updateT  Ser esStat st cs(tss, feature.tss. an, alpha)))
 
-  override def addToTss(feature: VertexFeature): WeightedAdditiveVertexCombiner =
-    copy(timeSeriesStatistics = timeSeriesStatistics.map(tss =>
-      InteractionGraphUtils.addToTimeSeriesStatistics(tss, feature.tss.mean)))
+  overr de def addToTss(feature: VertexFeature):   ghtedAdd  veVertexComb ner =
+    copy(t  Ser esStat st cs = t  Ser esStat st cs.map(tss =>
+       nteract onGraphUt ls.addToT  Ser esStat st cs(tss, feature.tss. an)))
 
-  override def updateFeature(feature: VertexFeature, alpha: Double, day: Int): VFeatureCombiner = {
+  overr de def updateFeature(feature: VertexFeature, alpha: Double, day:  nt): VFeatureComb ner = {
     updateTss(feature, alpha).copy(
       vertexFeature,
-      startingDay = startingDay,
-      endingDay = Math.max(endingDay, day)
+      start ngDay = start ngDay,
+      end ngDay = Math.max(end ngDay, day)
     )
   }
 
-  override def updateFeature(feature: VertexFeature): VFeatureCombiner =
+  overr de def updateFeature(feature: VertexFeature): VFeatureComb ner =
     addToTss(feature)
 
-  override def setFeature(feature: VertexFeature, alpha: Double, day: Int): VFeatureCombiner = {
-    val newStartingDay = Math.min(startingDay, day)
-    val newEndingDay = Math.max(endingDay, day)
+  overr de def setFeature(feature: VertexFeature, alpha: Double, day:  nt): VFeatureComb ner = {
+    val newStart ngDay = Math.m n(start ngDay, day)
+    val newEnd ngDay = Math.max(end ngDay, day)
 
-    val numDaysSinceLast =
-      if (feature.tss.numDaysSinceLast.exists(_ > 0))
-        feature.tss.numDaysSinceLast
-      else Some(feature.tss.numElapsedDays - feature.tss.numNonZeroDays + 1)
+    val numDaysS nceLast =
+       f (feature.tss.numDaysS nceLast.ex sts(_ > 0))
+        feature.tss.numDaysS nceLast
+      else So (feature.tss.numElapsedDays - feature.tss.numNonZeroDays + 1)
 
-    val tss = feature.tss.copy(numDaysSinceLast = numDaysSinceLast)
+    val tss = feature.tss.copy(numDaysS nceLast = numDaysS nceLast)
 
     val newFeature = VertexFeature(
-      name = feature.name,
-      outgoing = feature.outgoing,
+      na  = feature.na ,
+      outgo ng = feature.outgo ng,
       tss = tss
     )
 
-    WeightedAdditiveVertexCombiner(
-      Some(newFeature),
-      newStartingDay,
-      newEndingDay,
-      Some(tss)
+      ghtedAdd  veVertexComb ner(
+      So (newFeature),
+      newStart ngDay,
+      newEnd ngDay,
+      So (tss)
     )
   }
 
-  def getFinalFeature(totalDays: Int): Option[VertexFeature] = {
-    if (vertexFeature.isEmpty || dropFeature) return None
+  def getF nalFeature(totalDays:  nt): Opt on[VertexFeature] = {
+     f (vertexFeature. sEmpty || dropFeature) return None
 
-    val newTss = if (totalDays > 0) {
+    val newTss =  f (totalDays > 0) {
       val elapsed =
-        timeSeriesStatistics.map(tss => tss.numElapsedDays + totalDays - 1 - startingDay)
+        t  Ser esStat st cs.map(tss => tss.numElapsedDays + totalDays - 1 - start ngDay)
       val latest =
-        if (endingDay > 0) Some(totalDays - endingDay)
-        else timeSeriesStatistics.map(tss => tss.numDaysSinceLast.get + totalDays - 1)
+         f (end ngDay > 0) So (totalDays - end ngDay)
+        else t  Ser esStat st cs.map(tss => tss.numDaysS nceLast.get + totalDays - 1)
 
-      timeSeriesStatistics.map(tss =>
+      t  Ser esStat st cs.map(tss =>
         tss.copy(
           numElapsedDays = elapsed.get,
-          numDaysSinceLast = latest
+          numDaysS nceLast = latest
         ))
-    } else timeSeriesStatistics
+    } else t  Ser esStat st cs
 
     vertexFeature.map(vf => vf.copy(tss = newTss.get))
   }
 
-  override def setFeature(feature: VertexFeature): VFeatureCombiner = setFeature(feature, 1.0, 0)
-  override def isSet: Boolean = vertexFeature.isDefined
-  override def dropFeature: Boolean =
-    timeSeriesStatistics.exists(tss =>
-      tss.numDaysSinceLast.exists(_ > InteractionGraphUtils.MAX_DAYS_RETENTION) &&
-        tss.ewma < InteractionGraphUtils.MIN_FEATURE_VALUE)
+  overr de def setFeature(feature: VertexFeature): VFeatureComb ner = setFeature(feature, 1.0, 0)
+  overr de def  sSet: Boolean = vertexFeature. sDef ned
+  overr de def dropFeature: Boolean =
+    t  Ser esStat st cs.ex sts(tss =>
+      tss.numDaysS nceLast.ex sts(_ >  nteract onGraphUt ls.MAX_DAYS_RETENT ON) &&
+        tss.ewma <  nteract onGraphUt ls.M N_FEATURE_VALUE)
 }
 
 /**
- * This combiner always replaces the old value with the current. Ignores time-decays.
+ * T  comb ner always replaces t  old value w h t  current.  gnores t  -decays.
  */
-case class ReplacementVertexCombiner(
-  override val vertexFeature: Option[VertexFeature] = None,
-  override val startingDay: Int = Integer.MAX_VALUE,
-  override val endingDay: Int = Integer.MIN_VALUE,
-  override val timeSeriesStatistics: Option[TimeSeriesStatistics] = None)
-    extends VFeatureCombiner {
-  override def updateTss(
+case class Replace ntVertexComb ner(
+  overr de val vertexFeature: Opt on[VertexFeature] = None,
+  overr de val start ngDay:  nt =  nteger.MAX_VALUE,
+  overr de val end ngDay:  nt =  nteger.M N_VALUE,
+  overr de val t  Ser esStat st cs: Opt on[T  Ser esStat st cs] = None)
+    extends VFeatureComb ner {
+  overr de def updateTss(
     feature: VertexFeature,
     alpha: Double
-  ): ReplacementVertexCombiner = setFeature(feature, 1.0, 0)
+  ): Replace ntVertexComb ner = setFeature(feature, 1.0, 0)
 
-  override def addToTss(feature: VertexFeature): ReplacementVertexCombiner =
+  overr de def addToTss(feature: VertexFeature): Replace ntVertexComb ner =
     setFeature(feature, 1.0, 0)
 
-  override def updateFeature(
+  overr de def updateFeature(
     feature: VertexFeature,
     alpha: Double,
-    day: Int
-  ): ReplacementVertexCombiner = updateTss(feature, alpha).copy(
+    day:  nt
+  ): Replace ntVertexComb ner = updateTss(feature, alpha).copy(
     vertexFeature,
-    startingDay = startingDay,
-    endingDay = Math.max(endingDay, day)
+    start ngDay = start ngDay,
+    end ngDay = Math.max(end ngDay, day)
   )
 
-  override def updateFeature(feature: VertexFeature): ReplacementVertexCombiner =
+  overr de def updateFeature(feature: VertexFeature): Replace ntVertexComb ner =
     addToTss(feature)
 
-  override def setFeature(
+  overr de def setFeature(
     feature: VertexFeature,
     alpha: Double,
-    day: Int
-  ): ReplacementVertexCombiner = {
-    val newStartingDay = Math.min(startingDay, day)
-    val newEndingDay = Math.max(endingDay, day)
+    day:  nt
+  ): Replace ntVertexComb ner = {
+    val newStart ngDay = Math.m n(start ngDay, day)
+    val newEnd ngDay = Math.max(end ngDay, day)
 
-    val numDaysSinceLast =
-      if (feature.tss.numDaysSinceLast.exists(_ > 0))
-        feature.tss.numDaysSinceLast
-      else Some(feature.tss.numElapsedDays - feature.tss.numNonZeroDays + 1)
+    val numDaysS nceLast =
+       f (feature.tss.numDaysS nceLast.ex sts(_ > 0))
+        feature.tss.numDaysS nceLast
+      else So (feature.tss.numElapsedDays - feature.tss.numNonZeroDays + 1)
 
-    val tss = feature.tss.copy(numDaysSinceLast = numDaysSinceLast)
+    val tss = feature.tss.copy(numDaysS nceLast = numDaysS nceLast)
 
     val newFeature = VertexFeature(
-      name = feature.name,
-      outgoing = feature.outgoing,
+      na  = feature.na ,
+      outgo ng = feature.outgo ng,
       tss = tss
     )
 
-    ReplacementVertexCombiner(
-      Some(newFeature),
-      newStartingDay,
-      newEndingDay,
-      Some(tss)
+    Replace ntVertexComb ner(
+      So (newFeature),
+      newStart ngDay,
+      newEnd ngDay,
+      So (tss)
     )
   }
 
-  override def getFinalFeature(totalDays: Int): Option[VertexFeature] = {
-    if (vertexFeature.isEmpty || dropFeature) return None
-    if (timeSeriesStatistics.exists(tss => tss.ewma < 1.0)) return None
-    val newTss = if (totalDays > 0) {
+  overr de def getF nalFeature(totalDays:  nt): Opt on[VertexFeature] = {
+     f (vertexFeature. sEmpty || dropFeature) return None
+     f (t  Ser esStat st cs.ex sts(tss => tss.ewma < 1.0)) return None
+    val newTss =  f (totalDays > 0) {
       val latest =
-        if (endingDay > 0) totalDays - endingDay
-        else timeSeriesStatistics.get.numDaysSinceLast.get + totalDays - 1
+         f (end ngDay > 0) totalDays - end ngDay
+        else t  Ser esStat st cs.get.numDaysS nceLast.get + totalDays - 1
 
-      timeSeriesStatistics.map(tss =>
+      t  Ser esStat st cs.map(tss =>
         tss.copy(
           numElapsedDays = 1,
-          numDaysSinceLast = Some(latest)
+          numDaysS nceLast = So (latest)
         ))
-    } else timeSeriesStatistics
+    } else t  Ser esStat st cs
 
     vertexFeature.map(vf => vf.copy(tss = newTss.get))
   }
 
-  override def setFeature(feature: VertexFeature): VFeatureCombiner = setFeature(feature, 1.0, 0)
-  override def isSet: Boolean = vertexFeature.isDefined
-  override def dropFeature: Boolean =
-    timeSeriesStatistics.exists(tss =>
-      tss.numDaysSinceLast.exists(_ > InteractionGraphUtils.MAX_DAYS_RETENTION) &&
-        tss.ewma < InteractionGraphUtils.MIN_FEATURE_VALUE)
+  overr de def setFeature(feature: VertexFeature): VFeatureComb ner = setFeature(feature, 1.0, 0)
+  overr de def  sSet: Boolean = vertexFeature. sDef ned
+  overr de def dropFeature: Boolean =
+    t  Ser esStat st cs.ex sts(tss =>
+      tss.numDaysS nceLast.ex sts(_ >  nteract onGraphUt ls.MAX_DAYS_RETENT ON) &&
+        tss.ewma <  nteract onGraphUt ls.M N_FEATURE_VALUE)
 }

@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.configapi.deciders
+package com.tw ter.follow_recom ndat ons.conf gap .dec ders
 
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.t  l nes.conf gap .Param
 
-object DeciderParams {
-  object EnableRecommendations extends Param[Boolean](false)
-  object EnableScoreUserCandidates extends Param[Boolean](false)
+object Dec derParams {
+  object EnableRecom ndat ons extends Param[Boolean](false)
+  object EnableScoreUserCand dates extends Param[Boolean](false)
 }

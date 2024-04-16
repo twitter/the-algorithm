@@ -1,42 +1,42 @@
-package com.twitter.search.ingester.model;
+package com.tw ter.search. ngester.model;
 
-import com.twitter.common.text.token.TokenizedCharSequenceStream;
-import com.twitter.common.text.token.attribute.CharSequenceTermAttribute;
-import com.twitter.search.common.relevance.text.VisibleTokenRatioNormalizer;
+ mport com.tw ter.common.text.token.Token zedCharSequenceStream;
+ mport com.tw ter.common.text.token.attr bute.CharSequenceTermAttr bute;
+ mport com.tw ter.search.common.relevance.text.V s bleTokenRat oNormal zer;
 
-public class VisibleTokenRatioUtil {
+publ c class V s bleTokenRat oUt l {
 
-  private static final int TOKEN_DEMARCATION = 140;
+  pr vate stat c f nal  nt TOKEN_DEMARCAT ON = 140;
 
-  private static final VisibleTokenRatioNormalizer NORMALIZER =
-      VisibleTokenRatioNormalizer.createInstance();
+  pr vate stat c f nal V s bleTokenRat oNormal zer NORMAL ZER =
+      V s bleTokenRat oNormal zer.create nstance();
 
   /**
-   * Take the number of visible tokens and divide by number of total tokens to get the
-   * visible token percentage (pretending 140 chars is visible as that is old typical tweet
-   * size).  Then normalize it down to 4 bits(round it basically)
+   * Take t  number of v s ble tokens and d v de by number of total tokens to get t 
+   * v s ble token percentage (pretend ng 140 chars  s v s ble as that  s old typ cal t et
+   * s ze).  T n normal ze   down to 4 b s(round   bas cally)
    */
-  public int extractAndNormalizeTokenPercentage(TokenizedCharSequenceStream tokenSeqStream) {
+  publ c  nt extractAndNormal zeTokenPercentage(Token zedCharSequenceStream tokenSeqStream) {
 
-    CharSequenceTermAttribute attr = tokenSeqStream.addAttribute(CharSequenceTermAttribute.class);
+    CharSequenceTermAttr bute attr = tokenSeqStream.addAttr bute(CharSequenceTermAttr bute.class);
 
-    int totalTokens = 0;
-    int numTokensBelowThreshold = 0;
-    while (tokenSeqStream.incrementToken()) {
+     nt totalTokens = 0;
+     nt numTokensBelowThreshold = 0;
+    wh le (tokenSeqStream. ncre ntToken()) {
       totalTokens++;
-      int offset = attr.getOffset();
-      if (offset <= TOKEN_DEMARCATION) {
+       nt offset = attr.getOffset();
+       f (offset <= TOKEN_DEMARCAT ON) {
         numTokensBelowThreshold++;
       }
     }
 
     double percent;
-    if (totalTokens > 0) {
+     f (totalTokens > 0) {
       percent = numTokensBelowThreshold / (double) totalTokens;
     } else {
       percent = 1;
     }
 
-    return NORMALIZER.normalize(percent);
+    return NORMAL ZER.normal ze(percent);
   }
 }

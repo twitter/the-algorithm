@@ -1,21 +1,21 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work
 
-import com.twitter.dal.client.dataset.TimePartitionedDALDataset
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import java.lang.{Long => JLong}
+ mport com.tw ter.dal.cl ent.dataset.T  Part  onedDALDataset
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap .Feature
+ mport java.lang.{Long => JLong}
 
-case class OfflineAggregateSource(
-  override val name: String,
-  override val timestampFeature: Feature[JLong],
-  scaldingHdfsPath: Option[String] = None,
-  scaldingSuffixType: Option[String] = None,
-  dalDataSet: Option[TimePartitionedDALDataset[DataRecord]] = None,
-  withValidation: Boolean = true) // context: https://jira.twitter.biz/browse/TQ-10618
-    extends AggregateSource {
+case class Offl neAggregateS ce(
+  overr de val na : Str ng,
+  overr de val t  stampFeature: Feature[JLong],
+  scald ngHdfsPath: Opt on[Str ng] = None,
+  scald ngSuff xType: Opt on[Str ng] = None,
+  dalDataSet: Opt on[T  Part  onedDALDataset[DataRecord]] = None,
+  w hVal dat on: Boolean = true) // context: https://j ra.tw ter.b z/browse/TQ-10618
+    extends AggregateS ce {
   /*
-   * Th help transition callers to use DAL.read, we check that either the HDFS
-   * path is defined, or the dalDataset. Both options cannot be set at the same time.
+   * Th  lp trans  on callers to use DAL.read,   c ck that e  r t  HDFS
+   * path  s def ned, or t  dalDataset. Both opt ons cannot be set at t  sa  t  .
    */
-  assert(!(scaldingHdfsPath.isDefined && dalDataSet.isDefined))
+  assert(!(scald ngHdfsPath. sDef ned && dalDataSet. sDef ned))
 }

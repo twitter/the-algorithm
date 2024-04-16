@@ -1,3 +1,3 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata
 
-case class LiveEventDetails(eventId: Option[Long])
+case class L veEventDeta ls(event d: Opt on[Long])

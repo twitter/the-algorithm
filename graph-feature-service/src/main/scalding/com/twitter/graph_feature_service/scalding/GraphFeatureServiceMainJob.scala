@@ -1,297 +1,297 @@
-package com.twitter.graph_feature_service.scalding
+package com.tw ter.graph_feature_serv ce.scald ng
 
-import com.twitter.bijection.Injection
-import com.twitter.frigate.common.constdb_util.Injections
-import com.twitter.frigate.common.constdb_util.ScaldingUtil
-import com.twitter.graph_feature_service.common.Configs
-import com.twitter.graph_feature_service.common.Configs._
-import com.twitter.interaction_graph.scio.agg_all.InteractionGraphHistoryAggregatedEdgeSnapshotScalaDataset
-import com.twitter.interaction_graph.scio.ml.scores.RealGraphInScoresScalaDataset
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.{EdgeFeature => TEdgeFeature}
-import com.twitter.pluck.source.user_audits.UserAuditFinalScalaDataset
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.Execution
-import com.twitter.scalding.Stat
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.util.Time
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
-import java.nio.ByteBuffer
-import java.util.TimeZone
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.fr gate.common.constdb_ut l. nject ons
+ mport com.tw ter.fr gate.common.constdb_ut l.Scald ngUt l
+ mport com.tw ter.graph_feature_serv ce.common.Conf gs
+ mport com.tw ter.graph_feature_serv ce.common.Conf gs._
+ mport com.tw ter. nteract on_graph.sc o.agg_all. nteract onGraph toryAggregatedEdgeSnapshotScalaDataset
+ mport com.tw ter. nteract on_graph.sc o.ml.scores.RealGraph nScoresScalaDataset
+ mport com.tw ter. nteract on_graph.thr ftscala.FeatureNa 
+ mport com.tw ter. nteract on_graph.thr ftscala.{EdgeFeature => TEdgeFeature}
+ mport com.tw ter.pluck.s ce.user_aud s.UserAud F nalScalaDataset
+ mport com.tw ter.scald ng.DateRange
+ mport com.tw ter.scald ng.Days
+ mport com.tw ter.scald ng.Execut on
+ mport com.tw ter.scald ng.Stat
+ mport com.tw ter.scald ng.Un que D
+ mport com.tw ter.scald ng.typed.TypedP pe
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.AllowCrossClusterSa DC
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.wtf.cand date.thr ftscala.Cand dateSeq
+ mport java.n o.ByteBuffer
+ mport java.ut l.T  Zone
 
-trait GraphFeatureServiceMainJob extends GraphFeatureServiceBaseJob {
+tra  GraphFeatureServ ceMa nJob extends GraphFeatureServ ceBaseJob {
 
-  // keeping hdfsPath as a separate variable in order to override it in unit tests
-  protected val hdfsPath: String = BaseHdfsPath
+  // keep ng hdfsPath as a separate var able  n order to overr de    n un  tests
+  protected val hdfsPath: Str ng = BaseHdfsPath
 
-  protected def getShardIdForUser(userId: Long): Int = shardForUser(userId)
+  protected def getShard dForUser(user d: Long):  nt = shardForUser(user d)
 
-  protected implicit val keyInj: Injection[Long, ByteBuffer] = Injections.long2Varint
+  protected  mpl c  val key nj:  nject on[Long, ByteBuffer] =  nject ons.long2Var nt
 
-  protected implicit val valueInj: Injection[Long, ByteBuffer] = Injections.long2ByteBuffer
+  protected  mpl c  val value nj:  nject on[Long, ByteBuffer] =  nject ons.long2ByteBuffer
 
-  protected val bufferSize: Int = 1 << 26
+  protected val bufferS ze:  nt = 1 << 26
 
-  protected val maxNumKeys: Int = 1 << 24
+  protected val maxNumKeys:  nt = 1 << 24
 
-  protected val numReducers: Int = NumGraphShards
+  protected val numReducers:  nt = NumGraphShards
 
-  protected val outputStreamBufferSize: Int = 1 << 26
+  protected val outputStreamBufferS ze:  nt = 1 << 26
 
-  protected final val shardingByKey = { (k: Long, _: Long) =>
-    getShardIdForUser(k)
+  protected f nal val shard ngByKey = { (k: Long, _: Long) =>
+    getShard dForUser(k)
   }
 
-  protected final val shardingByValue = { (_: Long, v: Long) =>
-    getShardIdForUser(v)
+  protected f nal val shard ngByValue = { (_: Long, v: Long) =>
+    getShard dForUser(v)
   }
 
-  private def writeGraphToDB(
-    graph: TypedPipe[(Long, Long)],
-    shardingFunction: (Long, Long) => Int,
-    path: String
+  pr vate def wr eGraphToDB(
+    graph: TypedP pe[(Long, Long)],
+    shard ngFunct on: (Long, Long) =>  nt,
+    path: Str ng
   )(
-    implicit dateRange: DateRange
-  ): Execution[TypedPipe[(Int, Unit)]] = {
-    ScaldingUtil
-      .writeConstDB[Long, Long](
-        graph.withDescription(s"sharding $path"),
-        shardingFunction,
-        shardId =>
-          getTimedHdfsShardPath(
-            shardId,
-            getHdfsPath(path, Some(hdfsPath)),
-            Time.fromMilliseconds(dateRange.end.timestamp)
+     mpl c  dateRange: DateRange
+  ): Execut on[TypedP pe[( nt, Un )]] = {
+    Scald ngUt l
+      .wr eConstDB[Long, Long](
+        graph.w hDescr pt on(s"shard ng $path"),
+        shard ngFunct on,
+        shard d =>
+          getT  dHdfsShardPath(
+            shard d,
+            getHdfsPath(path, So (hdfsPath)),
+            T  .fromM ll seconds(dateRange.end.t  stamp)
           ),
-        Int.MaxValue,
-        bufferSize,
+         nt.MaxValue,
+        bufferS ze,
         maxNumKeys,
         numReducers,
-        outputStreamBufferSize
+        outputStreamBufferS ze
       )(
-        keyInj,
-        valueInj,
-        Ordering[(Long, Long)]
+        key nj,
+        value nj,
+        Order ng[(Long, Long)]
       )
-      .forceToDiskExecution
+      .forceToD skExecut on
   }
 
   def extractFeature(
-    featureList: Seq[TEdgeFeature],
-    featureName: FeatureName
-  ): Option[Float] = {
-    featureList
-      .find(_.name == featureName)
+    featureL st: Seq[TEdgeFeature],
+    featureNa : FeatureNa 
+  ): Opt on[Float] = {
+    featureL st
+      .f nd(_.na  == featureNa )
       .map(_.tss.ewma.toFloat)
-      .filter(_ > 0.0)
+      .f lter(_ > 0.0)
   }
 
   /**
-   * Function to extract a subgraph (e.g., follow graph) from real graph and take top K by real graph
-   * weight.
+   * Funct on to extract a subgraph (e.g., follow graph) from real graph and take top K by real graph
+   *   ght.
    *
-   * @param input input real graph
-   * @param edgeFilter filter function to only get the edges needed (e.g., only follow edges)
+   * @param  nput  nput real graph
+   * @param edgeF lter f lter funct on to only get t  edges needed (e.g., only follow edges)
    * @param counter counter
-   * @return a subgroup that contains topK, e.g., follow graph for each user.
+   * @return a subgroup that conta ns topK, e.g., follow graph for each user.
    */
-  private def getSubGraph(
-    input: TypedPipe[(Long, Long, EdgeFeature)],
-    edgeFilter: EdgeFeature => Boolean,
+  pr vate def getSubGraph(
+     nput: TypedP pe[(Long, Long, EdgeFeature)],
+    edgeF lter: EdgeFeature => Boolean,
     counter: Stat
-  ): TypedPipe[(Long, Long)] = {
-    input
-      .filter(c => edgeFilter(c._3))
+  ): TypedP pe[(Long, Long)] = {
+     nput
+      .f lter(c => edgeF lter(c._3))
       .map {
-        case (srcId, destId, features) =>
-          (srcId, (destId, features.realGraphScore))
+        case (src d, dest d, features) =>
+          (src d, (dest d, features.realGraphScore))
       }
       .group
-      // auto reducer estimation only allocates 15 reducers, so setting an explicit number here
-      .withReducers(2000)
-      .sortedReverseTake(TopKRealGraph)(Ordering.by(_._2))
+      // auto reducer est mat on only allocates 15 reducers, so sett ng an expl c  number  re
+      .w hReducers(2000)
+      .sortedReverseTake(TopKRealGraph)(Order ng.by(_._2))
       .flatMap {
-        case (srcId, topKNeighbors) =>
-          counter.inc()
-          topKNeighbors.map {
-            case (destId, _) =>
-              (srcId, destId)
+        case (src d, topKNe ghbors) =>
+          counter. nc()
+          topKNe ghbors.map {
+            case (dest d, _) =>
+              (src d, dest d)
           }
       }
   }
 
-  def getMauIds()(implicit dateRange: DateRange, uniqueID: UniqueID): TypedPipe[Long] = {
+  def getMau ds()( mpl c  dateRange: DateRange, un que D: Un que D): TypedP pe[Long] = {
     val numMAUs = Stat("NUM_MAUS")
-    val uniqueMAUs = Stat("UNIQUE_MAUS")
+    val un queMAUs = Stat("UN QUE_MAUS")
 
     DAL
-      .read(UserAuditFinalScalaDataset)
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
+      .read(UserAud F nalScalaDataset)
+      .w hRemoteReadPol cy(AllowCrossClusterSa DC)
+      .toTypedP pe
       .collect {
-        case user_audit if user_audit.isValid =>
-          numMAUs.inc()
-          user_audit.userId
+        case user_aud   f user_aud . sVal d =>
+          numMAUs. nc()
+          user_aud .user d
       }
-      .distinct
+      .d st nct
       .map { u =>
-        uniqueMAUs.inc()
+        un queMAUs. nc()
         u
       }
   }
 
-  def getRealGraphWithMAUOnly(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[(Long, Long, EdgeFeature)] = {
+  def getRealGraphW hMAUOnly(
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): TypedP pe[(Long, Long, EdgeFeature)] = {
     val numMAUs = Stat("NUM_MAUS")
-    val uniqueMAUs = Stat("UNIQUE_MAUS")
+    val un queMAUs = Stat("UN QUE_MAUS")
 
-    val monthlyActiveUsers = DAL
-      .read(UserAuditFinalScalaDataset)
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
+    val monthlyAct veUsers = DAL
+      .read(UserAud F nalScalaDataset)
+      .w hRemoteReadPol cy(AllowCrossClusterSa DC)
+      .toTypedP pe
       .collect {
-        case user_audit if user_audit.isValid =>
-          numMAUs.inc()
-          user_audit.userId
+        case user_aud   f user_aud . sVal d =>
+          numMAUs. nc()
+          user_aud .user d
       }
-      .distinct
+      .d st nct
       .map { u =>
-        uniqueMAUs.inc()
+        un queMAUs. nc()
         u
       }
       .asKeys
 
     val realGraphAggregates = DAL
       .readMostRecentSnapshot(
-        InteractionGraphHistoryAggregatedEdgeSnapshotScalaDataset,
-        dateRange.embiggen(Days(5)))
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
+         nteract onGraph toryAggregatedEdgeSnapshotScalaDataset,
+        dateRange.emb ggen(Days(5)))
+      .w hRemoteReadPol cy(AllowCrossClusterSa DC)
+      .toTypedP pe
       .map { edge =>
-        val featureList = edge.features
+        val featureL st = edge.features
         val edgeFeature = EdgeFeature(
-          edge.weight.getOrElse(0.0).toFloat,
-          extractFeature(featureList, FeatureName.NumMutualFollows),
-          extractFeature(featureList, FeatureName.NumFavorites),
-          extractFeature(featureList, FeatureName.NumRetweets),
-          extractFeature(featureList, FeatureName.NumMentions)
+          edge.  ght.getOrElse(0.0).toFloat,
+          extractFeature(featureL st, FeatureNa .NumMutualFollows),
+          extractFeature(featureL st, FeatureNa .NumFavor es),
+          extractFeature(featureL st, FeatureNa .NumRet ets),
+          extractFeature(featureL st, FeatureNa .Num nt ons)
         )
-        (edge.sourceId, (edge.destinationId, edgeFeature))
+        (edge.s ce d, (edge.dest nat on d, edgeFeature))
       }
-      .join(monthlyActiveUsers)
+      .jo n(monthlyAct veUsers)
       .map {
-        case (srcId, ((destId, feature), _)) =>
-          (destId, (srcId, feature))
+        case (src d, ((dest d, feature), _)) =>
+          (dest d, (src d, feature))
       }
-      .join(monthlyActiveUsers)
+      .jo n(monthlyAct veUsers)
       .map {
-        case (destId, ((srcId, feature), _)) =>
-          (srcId, destId, feature)
+        case (dest d, ((src d, feature), _)) =>
+          (src d, dest d, feature)
       }
     realGraphAggregates
   }
 
   def getTopKFollowGraph(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[(Long, Long)] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): TypedP pe[(Long, Long)] = {
     val followGraphMauStat = Stat("NumFollowEdges_MAU")
-    val mau: TypedPipe[Long] = getMauIds()
+    val mau: TypedP pe[Long] = getMau ds()
     DAL
-      .readMostRecentSnapshot(RealGraphInScoresScalaDataset, dateRange.embiggen(Days(7)))
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
+      .readMostRecentSnapshot(RealGraph nScoresScalaDataset, dateRange.emb ggen(Days(7)))
+      .w hRemoteReadPol cy(AllowCrossClusterSa DC)
+      .toTypedP pe
       .groupBy(_.key)
-      .join(mau.asKeys)
-      .withDescription("filtering srcId by mau")
+      .jo n(mau.asKeys)
+      .w hDescr pt on("f lter ng src d by mau")
       .flatMap {
-        case (_, (KeyVal(srcId, CandidateSeq(candidates)), _)) =>
-          followGraphMauStat.inc()
-          val topK = candidates.sortBy(-_.score).take(TopKRealGraph)
-          topK.map { c => (srcId, c.userId) }
+        case (_, (KeyVal(src d, Cand dateSeq(cand dates)), _)) =>
+          followGraphMauStat. nc()
+          val topK = cand dates.sortBy(-_.score).take(TopKRealGraph)
+          topK.map { c => (src d, c.user d) }
       }
   }
 
-  override def runOnDateRange(
-    enableValueGraphs: Option[Boolean],
-    enableKeyGraphs: Option[Boolean]
+  overr de def runOnDateRange(
+    enableValueGraphs: Opt on[Boolean],
+    enableKeyGraphs: Opt on[Boolean]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
 
-    val processValueGraphs = enableValueGraphs.getOrElse(Configs.EnableValueGraphs)
-    val processKeyGraphs = enableKeyGraphs.getOrElse(Configs.EnableKeyGraphs)
+    val processValueGraphs = enableValueGraphs.getOrElse(Conf gs.EnableValueGraphs)
+    val processKeyGraphs = enableKeyGraphs.getOrElse(Conf gs.EnableKeyGraphs)
 
-    if (!processKeyGraphs && !processValueGraphs) {
-      // Skip the batch job
-      Execution.unit
+     f (!processKeyGraphs && !processValueGraphs) {
+      // Sk p t  batch job
+      Execut on.un 
     } else {
-      // val favoriteGraphStat = Stat("NumFavoriteEdges")
-      // val retweetGraphStat = Stat("NumRetweetEdges")
-      // val mentionGraphStat = Stat("NumMentionEdges")
+      // val favor eGraphStat = Stat("NumFavor eEdges")
+      // val ret etGraphStat = Stat("NumRet etEdges")
+      // val  nt onGraphStat = Stat("Num nt onEdges")
 
-      // val realGraphAggregates = getRealGraphWithMAUOnly
+      // val realGraphAggregates = getRealGraphW hMAUOnly
 
       val followGraph = getTopKFollowGraph
-      // val mutualFollowGraph = followGraph.asKeys.join(followGraph.swap.asKeys).keys
+      // val mutualFollowGraph = followGraph.asKeys.jo n(followGraph.swap.asKeys).keys
 
-      // val favoriteGraph =
-      //   getSubGraph(realGraphAggregates, _.favoriteScore.isDefined, favoriteGraphStat)
+      // val favor eGraph =
+      //   getSubGraph(realGraphAggregates, _.favor eScore. sDef ned, favor eGraphStat)
 
-      // val retweetGraph =
-      //   getSubGraph(realGraphAggregates, _.retweetScore.isDefined, retweetGraphStat)
+      // val ret etGraph =
+      //   getSubGraph(realGraphAggregates, _.ret etScore. sDef ned, ret etGraphStat)
 
-      // val mentionGraph =
-      //   getSubGraph(realGraphAggregates, _.mentionScore.isDefined, mentionGraphStat)
+      // val  nt onGraph =
+      //   getSubGraph(realGraphAggregates, _. nt onScore. sDef ned,  nt onGraphStat)
 
-      val writeValDataSetExecutions = if (processValueGraphs) {
+      val wr eValDataSetExecut ons =  f (processValueGraphs) {
         Seq(
-          (followGraph, shardingByValue, FollowOutValPath),
-          (followGraph.swap, shardingByValue, FollowInValPath)
-          // (mutualFollowGraph, shardingByValue, MutualFollowValPath),
-          // (favoriteGraph, shardingByValue, FavoriteOutValPath),
-          // (favoriteGraph.swap, shardingByValue, FavoriteInValPath),
-          // (retweetGraph, shardingByValue, RetweetOutValPath),
-          // (retweetGraph.swap, shardingByValue, RetweetInValPath),
-          // (mentionGraph, shardingByValue, MentionOutValPath),
-          // (mentionGraph.swap, shardingByValue, MentionInValPath)
+          (followGraph, shard ngByValue, FollowOutValPath),
+          (followGraph.swap, shard ngByValue, Follow nValPath)
+          // (mutualFollowGraph, shard ngByValue, MutualFollowValPath),
+          // (favor eGraph, shard ngByValue, Favor eOutValPath),
+          // (favor eGraph.swap, shard ngByValue, Favor e nValPath),
+          // (ret etGraph, shard ngByValue, Ret etOutValPath),
+          // (ret etGraph.swap, shard ngByValue, Ret et nValPath),
+          // ( nt onGraph, shard ngByValue,  nt onOutValPath),
+          // ( nt onGraph.swap, shard ngByValue,  nt on nValPath)
         )
       } else {
         Seq.empty
       }
 
-      val writeKeyDataSetExecutions = if (processKeyGraphs) {
+      val wr eKeyDataSetExecut ons =  f (processKeyGraphs) {
         Seq(
-          (followGraph, shardingByKey, FollowOutKeyPath),
-          (followGraph.swap, shardingByKey, FollowInKeyPath)
-          // (favoriteGraph, shardingByKey, FavoriteOutKeyPath),
-          // (favoriteGraph.swap, shardingByKey, FavoriteInKeyPath),
-          // (retweetGraph, shardingByKey, RetweetOutKeyPath),
-          // (retweetGraph.swap, shardingByKey, RetweetInKeyPath),
-          // (mentionGraph, shardingByKey, MentionOutKeyPath),
-          // (mentionGraph.swap, shardingByKey, MentionInKeyPath),
-          // (mutualFollowGraph, shardingByKey, MutualFollowKeyPath)
+          (followGraph, shard ngByKey, FollowOutKeyPath),
+          (followGraph.swap, shard ngByKey, Follow nKeyPath)
+          // (favor eGraph, shard ngByKey, Favor eOutKeyPath),
+          // (favor eGraph.swap, shard ngByKey, Favor e nKeyPath),
+          // (ret etGraph, shard ngByKey, Ret etOutKeyPath),
+          // (ret etGraph.swap, shard ngByKey, Ret et nKeyPath),
+          // ( nt onGraph, shard ngByKey,  nt onOutKeyPath),
+          // ( nt onGraph.swap, shard ngByKey,  nt on nKeyPath),
+          // (mutualFollowGraph, shard ngByKey, MutualFollowKeyPath)
         )
       } else {
         Seq.empty
       }
 
-      Execution
-        .sequence((writeValDataSetExecutions ++ writeKeyDataSetExecutions).map {
-          case (graph, shardingMethod, path) =>
-            writeGraphToDB(graph, shardingMethod, path)
-        }).unit
+      Execut on
+        .sequence((wr eValDataSetExecut ons ++ wr eKeyDataSetExecut ons).map {
+          case (graph, shard ng thod, path) =>
+            wr eGraphToDB(graph, shard ng thod, path)
+        }).un 
     }
   }
 }

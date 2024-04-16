@@ -1,46 +1,46 @@
-package com.twitter.frigate.pushservice.model.ntab
+package com.tw ter.fr gate.pushserv ce.model.ntab
 
-import com.twitter.frigate.common.base.SocialContextActions
-import com.twitter.frigate.common.base.SocialContextUserDetails
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.util.CandidateUtil
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.common.base.Soc alContextAct ons
+ mport com.tw ter.fr gate.common.base.Soc alContextUserDeta ls
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.ut l.Cand dateUt l
+ mport com.tw ter.ut l.Future
 
-trait NTabSocialContext {
-  self: PushCandidate with SocialContextActions with SocialContextUserDetails =>
+tra  NTabSoc alContext {
+  self: PushCand date w h Soc alContextAct ons w h Soc alContextUserDeta ls =>
 
-  private def ntabDisplayUserIds: Seq[Long] =
-    socialContextUserIds.take(ntabDisplayUserIdsLength)
+  pr vate def ntabD splayUser ds: Seq[Long] =
+    soc alContextUser ds.take(ntabD splayUser dsLength)
 
-  def ntabDisplayUserIdsLength: Int =
-    if (socialContextUserIds.size == 2) 2 else 1
+  def ntabD splayUser dsLength:  nt =
+     f (soc alContextUser ds.s ze == 2) 2 else 1
 
-  def ntabDisplayNamesAndIds: Future[Seq[(String, Long)]] =
+  def ntabD splayNa sAnd ds: Future[Seq[(Str ng, Long)]] =
     scUserMap.map { userObjMap =>
-      ntabDisplayUserIds.flatMap { id =>
-        userObjMap(id).flatMap(_.profile.map(_.name)).map { name => (name, id) }
+      ntabD splayUser ds.flatMap {  d =>
+        userObjMap( d).flatMap(_.prof le.map(_.na )).map { na  => (na ,  d) }
       }
     }
 
-  def rankedNtabDisplayNamesAndIds(defaultToRecency: Boolean): Future[Seq[(String, Long)]] =
+  def rankedNtabD splayNa sAnd ds(defaultToRecency: Boolean): Future[Seq[(Str ng, Long)]] =
     scUserMap.flatMap { userObjMap =>
-      val rankedSocialContextActivityFut =
-        CandidateUtil.getRankedSocialContext(
-          socialContextActions,
-          target.seedsWithWeight,
+      val rankedSoc alContextAct v yFut =
+        Cand dateUt l.getRankedSoc alContext(
+          soc alContextAct ons,
+          target.seedsW h  ght,
           defaultToRecency)
-      rankedSocialContextActivityFut.map { rankedSocialContextActivity =>
-        val ntabDisplayUserIds =
-          rankedSocialContextActivity.map(_.userId).take(ntabDisplayUserIdsLength)
-        ntabDisplayUserIds.flatMap { id =>
-          userObjMap(id).flatMap(_.profile.map(_.name)).map { name => (name, id) }
+      rankedSoc alContextAct v yFut.map { rankedSoc alContextAct v y =>
+        val ntabD splayUser ds =
+          rankedSoc alContextAct v y.map(_.user d).take(ntabD splayUser dsLength)
+        ntabD splayUser ds.flatMap {  d =>
+          userObjMap( d).flatMap(_.prof le.map(_.na )).map { na  => (na ,  d) }
         }
       }
     }
 
-  def otherCount: Future[Int] =
-    ntabDisplayNamesAndIds.map {
-      case namesWithIdSeq =>
-        Math.max(0, socialContextUserIds.length - namesWithIdSeq.size)
+  def ot rCount: Future[ nt] =
+    ntabD splayNa sAnd ds.map {
+      case na sW h dSeq =>
+        Math.max(0, soc alContextUser ds.length - na sW h dSeq.s ze)
     }
 }

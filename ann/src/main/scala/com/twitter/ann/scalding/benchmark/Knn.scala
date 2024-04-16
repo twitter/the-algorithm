@@ -1,126 +1,126 @@
-package com.twitter.ann.scalding.offline.com.twitter.ann.scalding.benchmark
+package com.tw ter.ann.scald ng.offl ne.com.tw ter.ann.scald ng.benchmark
 
 /*
-This job will generate KNN ground truth based user and item embeddings.
+T  job w ll generate KNN ground truth based user and  em embedd ngs.
  */
 
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.ann.knn.thriftscala.Knn
-import com.twitter.ann.knn.thriftscala.Neighbor
-import com.twitter.ann.scalding.offline.IndexingStrategy
-import com.twitter.ann.scalding.offline.KnnHelper
-import com.twitter.ann.common.Distance
-import com.twitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
-import com.twitter.cortex.ml.embeddings.common.EmbeddingFormatArgsParser
-import com.twitter.cortex.ml.embeddings.common.EntityKind
-import java.util.TimeZone
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.ann.scalding.benchmark.UserItemKnnScalaDataset
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.UserId
+ mport com.tw ter.scald ng.typed.TypedP pe
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e.D
+ mport com.tw ter.ann.knn.thr ftscala.Knn
+ mport com.tw ter.ann.knn.thr ftscala.Ne ghbor
+ mport com.tw ter.ann.scald ng.offl ne. ndex ngStrategy
+ mport com.tw ter.ann.scald ng.offl ne.Knn lper
+ mport com.tw ter.ann.common.D stance
+ mport com.tw ter.ml.featurestore.l b.embedd ng.Embedd ngW hEnt y
+ mport com.tw ter.cortex.ml.embedd ngs.common.Embedd ngFormatArgsParser
+ mport com.tw ter.cortex.ml.embedd ngs.common.Ent yK nd
+ mport java.ut l.T  Zone
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e._
+ mport com.tw ter.ann.scald ng.benchmark.User emKnnScalaDataset
+ mport com.tw ter.scald ng_ nternal.job.Tw terExecut onApp
+ mport com.tw ter.ml.featurestore.l b.Ent y d
+ mport com.tw ter.ml.featurestore.l b.User d
 
 /**
- * This job will take consumer and item embeddings(either url or tweet) and output Knn entities (user id, (distance, item id)).
+ * T  job w ll take consu r and  em embedd ngs(e  r url or t et) and output Knn ent  es (user  d, (d stance,  em  d)).
  *
- * Example command to run this adhoc job:
+ * Example command to run t  adhoc job:
  *
- * scalding remote run \
- * --target ann/src/main/scala/com/twitter/ann/scalding/benchmark:benchmark-adhoc \
- * --hadoop-properties "mapreduce.map.memory.mb=8192 mapreduce.map.java.opts='-Xmx7618M' mapreduce.reduce.memory.mb=8192 mapreduce.reduce.java.opts='-Xmx7618M' mapred.task.timeout=0" \
- * --submitter hadoopnest3.smf1.twitter.com \
+ * scald ng remote run \
+ * --target ann/src/ma n/scala/com/tw ter/ann/scald ng/benchmark:benchmark-adhoc \
+ * --hadoop-propert es "mapreduce.map. mory.mb=8192 mapreduce.map.java.opts='-Xmx7618M' mapreduce.reduce. mory.mb=8192 mapreduce.reduce.java.opts='-Xmx7618M' mapred.task.t  out=0" \
+ * --subm ter hadoopnest3.smf1.tw ter.com \
  * --user cortex-mlx \
- * --submitter-memory 8000.megabyte \
- * --main-class com.twitter.ann.scalding.offline.com.twitter.ann.scalding.benchmark.KnnJob -- \
- * --dalEnvironment Prod \
- * --search_space_entity_type user \
- * --user.feature_store_embedding ConsumerFollowEmbedding300Dataset \
- * --user.feature_store_major_version 1569196895 \
+ * --subm ter- mory 8000. gabyte \
+ * --ma n-class com.tw ter.ann.scald ng.offl ne.com.tw ter.ann.scald ng.benchmark.KnnJob -- \
+ * --dalEnv ron nt Prod \
+ * --search_space_ent y_type user \
+ * --user.feature_store_embedd ng Consu rFollowEmbedd ng300Dataset \
+ * --user.feature_store_major_vers on 1569196895 \
  * --user.date_range 2019-10-23 \
- * --search_space.feature_store_embedding ConsumerFollowEmbedding300Dataset \
- * --search_space.feature_store_major_version 1569196895 \
+ * --search_space.feature_store_embedd ng Consu rFollowEmbedd ng300Dataset \
+ * --search_space.feature_store_major_vers on 1569196895 \
  * --search_space.date_range 2019-10-23 \
  * --date 2019-10-25 \
- * --version "consumer_follower_test" \
+ * --vers on "consu r_follo r_test" \
  * --reducers 10000 \
  * --num_of_random_groups 20 \
- * --num_replicas 1000 \
- * --indexing_strategy.metric InnerProduct \
- * --indexing_strategy.type hnsw \
- * --indexing_strategy.dimension 300 \
- * --indexing_strategy.ef_construction 30 \
- * --indexing_strategy.max_m 10 \
- * --indexing_strategy.ef_query 50 \
+ * --num_repl cas 1000 \
+ * -- ndex ng_strategy. tr c  nnerProduct \
+ * -- ndex ng_strategy.type hnsw \
+ * -- ndex ng_strategy.d  ns on 300 \
+ * -- ndex ng_strategy.ef_construct on 30 \
+ * -- ndex ng_strategy.max_m 10 \
+ * -- ndex ng_strategy.ef_query 50 \
  * --search_space_shards 3000 \
  * --query_shards 3000 \
- * --search_space.read_sample_ratio 0.038
+ * --search_space.read_sample_rat o 0.038
  */
-trait KnnJobBase {
+tra  KnnJobBase {
   val seed: Long = 123
 
-  def getKnnDataset[B <: EntityId, D <: Distance[D]](
+  def getKnnDataset[B <: Ent y d, D <: D stance[D]](
     args: Args
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[Knn] = {
+     mpl c  un que D: Un que D
+  ): TypedP pe[Knn] = {
 
-    val consumerPipe: TypedPipe[EmbeddingWithEntity[UserId]] = EmbeddingFormatArgsParser.User
-      .getEmbeddingFormat(args, "user")
-      .getEmbeddings
+    val consu rP pe: TypedP pe[Embedd ngW hEnt y[User d]] = Embedd ngFormatArgsParser.User
+      .getEmbedd ngFormat(args, "user")
+      .getEmbedd ngs
 
-    val itemPipe = EntityKind
-      .getEntityKind(args("search_space_entity_type"))
+    val  emP pe = Ent yK nd
+      .getEnt yK nd(args("search_space_ent y_type"))
       .parser
-      .getEmbeddingFormat(args, "search_space")
-      .getEmbeddings
+      .getEmbedd ngFormat(args, "search_space")
+      .getEmbedd ngs
 
-    KnnHelper
-    // Refer to the documentation of findNearestNeighboursWithIndexingStrategy for more
-    // information about how to set these settings.
-      .findNearestNeighboursWithIndexingStrategy[UserId, B, D](
-        queryEmbeddings = consumerPipe,
-        searchSpaceEmbeddings = itemPipe.asInstanceOf[TypedPipe[EmbeddingWithEntity[B]]],
-        numNeighbors = args.int("candidate_per_user", 20),
-        reducersOption = args.optional("reducers").map(_.toInt),
-        numOfSearchGroups = args.int("num_of_random_groups"),
-        numReplicas = args.int("num_replicas"),
-        indexingStrategy = IndexingStrategy.parse(args).asInstanceOf[IndexingStrategy[D]],
-        queryShards = args.optional("query_shards").map(_.toInt),
-        searchSpaceShards = args.optional("search_space_shards").map(_.toInt)
+    Knn lper
+    // Refer to t  docu ntat on of f ndNearestNe ghb sW h ndex ngStrategy for more
+    //  nformat on about how to set t se sett ngs.
+      .f ndNearestNe ghb sW h ndex ngStrategy[User d, B, D](
+        queryEmbedd ngs = consu rP pe,
+        searchSpaceEmbedd ngs =  emP pe.as nstanceOf[TypedP pe[Embedd ngW hEnt y[B]]],
+        numNe ghbors = args. nt("cand date_per_user", 20),
+        reducersOpt on = args.opt onal("reducers").map(_.to nt),
+        numOfSearchGroups = args. nt("num_of_random_groups"),
+        numRepl cas = args. nt("num_repl cas"),
+         ndex ngStrategy =  ndex ngStrategy.parse(args).as nstanceOf[ ndex ngStrategy[D]],
+        queryShards = args.opt onal("query_shards").map(_.to nt),
+        searchSpaceShards = args.opt onal("search_space_shards").map(_.to nt)
       )
       .map {
-        case (user, items) =>
-          val neighbors = items.map {
-            case (item, distance) =>
-              Neighbor(
-                distance.distance,
-                item.toThrift
+        case (user,  ems) =>
+          val ne ghbors =  ems.map {
+            case ( em, d stance) =>
+              Ne ghbor(
+                d stance.d stance,
+                 em.toThr ft
               )
           }
-          Knn(user.toThrift, neighbors)
+          Knn(user.toThr ft, ne ghbors)
       }
   }
 }
 
-object KnnJob extends TwitterExecutionApp with KnnJobBase {
+object KnnJob extends Tw terExecut onApp w h KnnJobBase {
 
-  val KnnPathSuffix: String = "/user/cortex-mlx/qualatative_analysis/knn_ground_truth/"
-  val partitionKey: String = "version"
+  val KnnPathSuff x: Str ng = "/user/cortex-mlx/qualatat ve_analys s/knn_ground_truth/"
+  val part  onKey: Str ng = "vers on"
 
-  override def job: Execution[Unit] = Execution.withId { implicit uniqueId =>
-    Execution.getArgs.flatMap { args: Args =>
-      implicit val timeZone: TimeZone = TimeZone.getDefault
-      implicit val dateParser: DateParser = DateParser.default
-      implicit val dateRange: DateRange = DateRange.parse(args.list("date"))(timeZone, dateParser)
+  overr de def job: Execut on[Un ] = Execut on.w h d {  mpl c  un que d =>
+    Execut on.getArgs.flatMap { args: Args =>
+       mpl c  val t  Zone: T  Zone = T  Zone.getDefault
+       mpl c  val dateParser: DateParser = DateParser.default
+       mpl c  val dateRange: DateRange = DateRange.parse(args.l st("date"))(t  Zone, dateParser)
 
-      getKnnDataset(args).writeDALExecution(
-        UserItemKnnScalaDataset,
-        D.Daily,
-        D.Suffix(KnnPathSuffix),
+      getKnnDataset(args).wr eDALExecut on(
+        User emKnnScalaDataset,
+        D.Da ly,
+        D.Suff x(KnnPathSuff x),
         D.Parquet,
-        Set(D.Partition(partitionKey, args("version"), D.PartitionType.String))
+        Set(D.Part  on(part  onKey, args("vers on"), D.Part  onType.Str ng))
       )
     }
   }

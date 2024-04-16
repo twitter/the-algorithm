@@ -2,46 +2,46 @@ syntax = "proto3";
 
 package tensorflow;
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
-// Some of the data from AllocatorStats
-message MemAllocatorStats {
-  int64 num_allocs = 1;
-  int64 bytes_in_use = 2;
-  int64 peak_bytes_in_use = 3;
-  int64 largest_alloc_size = 4;
-  float fragmentation_metric = 5;
+// So  of t  data from AllocatorStats
+ ssage  mAllocatorStats {
+   nt64 num_allocs = 1;
+   nt64 bytes_ n_use = 2;
+   nt64 peak_bytes_ n_use = 3;
+   nt64 largest_alloc_s ze = 4;
+  float frag ntat on_ tr c = 5;
 }
 
-message MemChunk {
-  uint64 address = 1;
-  int64 size = 2;
-  int64 requested_size = 3;
-  int32 bin = 4;
-  string op_name = 5;
-  uint64 freed_at_count = 6;
-  uint64 action_count = 7;
-  bool in_use = 8;
-  uint64 step_id = 9;
+ ssage  mChunk {
+  u nt64 address = 1;
+   nt64 s ze = 2;
+   nt64 requested_s ze = 3;
+   nt32 b n = 4;
+  str ng op_na  = 5;
+  u nt64 freed_at_count = 6;
+  u nt64 act on_count = 7;
+  bool  n_use = 8;
+  u nt64 step_ d = 9;
 }
 
-message BinSummary {
-  int32 bin = 1;
-  int64 total_bytes_in_use = 2;
-  int64 total_bytes_in_bin = 3;
-  int64 total_chunks_in_use = 4;
-  int64 total_chunks_in_bin = 5;
+ ssage B nSummary {
+   nt32 b n = 1;
+   nt64 total_bytes_ n_use = 2;
+   nt64 total_bytes_ n_b n = 3;
+   nt64 total_chunks_ n_use = 4;
+   nt64 total_chunks_ n_b n = 5;
 }
 
-message SnapShot {
-  uint64 action_count = 1;
-  int64 size = 2;
+ ssage SnapShot {
+  u nt64 act on_count = 1;
+   nt64 s ze = 2;
 }
 
-message MemoryDump {
-  string allocator_name = 1;
-  repeated BinSummary bin_summary = 2;
-  repeated MemChunk chunk = 3;
+ ssage  moryDump {
+  str ng allocator_na  = 1;
+  repeated B nSummary b n_summary = 2;
+  repeated  mChunk chunk = 3;
   repeated SnapShot snap_shot = 4;
-  MemAllocatorStats stats = 5;
+   mAllocatorStats stats = 5;
 }

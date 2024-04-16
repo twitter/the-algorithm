@@ -1,336 +1,336 @@
-package com.twitter.search.common.schema.earlybird;
+package com.tw ter.search.common.sc ma.earlyb rd;
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
-import com.twitter.search.common.config.Config;
+ mport com.tw ter.search.common.conf g.Conf g;
 
-public enum FlushVersion {
+publ c enum FlushVers on {
   /* =======================================================
-   * Versions
+   * Vers ons
    * ======================================================= */
-  VERSION_0("Initial version of partition flushing."),
-  VERSION_1("Added timestamps and corresponding mapper to SegmentData."),
-  VERSION_2("Add column stride fields."),
-  VERSION_3("Change facet field configuration."),
-  VERSION_4("Add per term offensive counters to parallel posting arrays."),
-  VERSION_5("Add native photo facet."),
-  VERSION_6("Add UserFeature column stride field"),
-  VERSION_7("Index segment optimizations; new facet data structures."),
-  VERSION_8("Store statuses in memory in Earlybird."),
-  VERSION_9("Index from_user_ids into a searchable field."),
-  VERSION_10("Change from_user_id dictionary from fst to mphf"),
-  VERSION_11("Write image and video facet in separate lucene field."),
-  VERSION_12("Add retweeted status ID to the sparse CSF."),
-  VERSION_13("Add isOffensive field for profanity filter."),
-  VERSION_14("Fix features column stride field corruption."),
-  VERSION_15("Upgrade Lucene version, which has a different FST serialization format."),
-  VERSION_16("Remove maxDoc in favor of lastDocID"),
-  VERSION_17("Added partition and timeslice identifiers to SegmentData."),
-  VERSION_18("Per-term payloads"),
-  VERSION_19("Multiple per-doc payload fields"),
-  VERSION_20("Unify and fix hash codes"),
-  VERSION_21("Super awesome new flexible realtime posting list format."),
-  VERSION_22("Added new geo implementation."),
-  VERSION_23("Upgrade to Lucene 4.0.0 Final"),
-  VERSION_24("Added tweet topic ids."),
-  VERSION_25("Turn on skip list for mention facet."),
-  VERSION_26("Added new EncodedTweetFeaturesColumnStrideField."),
-  VERSION_27("Topic ids facet field."),
-  VERSION_28("From-user discover stories skiplist field."),
-  VERSION_29("Move tokenized screen name to the new username field"),
-  VERSION_30("Enable HF term pairs index."),
-  VERSION_31("Remove reverse doc ids."),
-  VERSION_32("Switch shared status id CSF to non-sparse long CSF index."),
-  VERSION_33("New skip lists for optimized high df posting lists."),
-  VERSION_34("Store tweet signature in EarlybirdEncodedFeatures."),
-  VERSION_35("Don't store shared status id csf in archive indexes."),
-  VERSION_36("Don't store norms."),
-  VERSION_37("64 bit user ids."),
-  VERSION_38("Index links in archive."),
-  VERSION_39("Fix pic.twitter.com image link handling not setting the internal field correctly."),
-  VERSION_40("Fix all archive tweets being marked as replies."),
-  VERSION_41("Avoid flushing event_ids field; event clusters are applied as updates."),
-  VERSION_42("No position fields refactoring; made a few fields to not use position."),
-  VERSION_43("Index private geo coordinates"),
-  VERSION_44("Materialize last doc id in HighDFCompressedPostinglists", true),
-  VERSION_45("Removing from_user_id facets support", true),
-  VERSION_46("Guard against badly out of order tweets in the search archive.", true),
-  VERSION_47("Added card title and description fields.", true),
-  VERSION_48("Added card type CSF.", true),
-  VERSION_49("Lucene 4.4 upgrade", true),
-  VERSION_50("Put mem-archive back on non-lucene optimized indexes", true),
-  VERSION_51("Force index rebuild to fix blank text field. See SEARCH-2505.", true),
-  VERSION_52("Refactoring of docValues/CSF.", true),
-  VERSION_53("Remove SegmentData.Configuration", true),
-  VERSION_54("Fix bad indices caused by SEARCH-2723.", true),
-  VERSION_55("Fixed non-deterministic facetIds across restarts. SEARCH-2815.", true),
-  VERSION_56("Flush FacetIDMap.", true),
-  VERSION_57("Remove LatLonMapper and use standard DocValues instead.", true),
-  VERSION_58("Longterm Attribute Optimization.", true),
-  VERSION_59("Renamed archive segment names. Current segment is no longer mutable.", true),
-  // Flush version 60 and 59 have the same format.
-  // Flush version is increased to trigger a rebuild, because we noticed incomplete segments.
-  // More details can be found on SEARCH-3664
-  VERSION_60("Flush version change to trigger segment rebuild.", true),
-  VERSION_61("Adding back from_user_id", true),
-  VERSION_62("Add retweet facet.", true),
-  VERSION_63("Switch to new index API in com.twitter.search.core.earlybird.", true),
-  VERSION_64("Sort merge archive day and part-* data. SEARCH-4692.", true),
-  VERSION_65("Fix ID_FIELD and CREATED_AT_FIELD sort order. SEARCH-4004 SEARCH-912 ", true),
-  VERSION_66("Rebuild data for 1/5/2015. Data on HDFS fixed as part of SEARCH-5347.", true),
-  VERSION_67("Upgrade to Lucene 4.10.3.", true),
-  VERSION_68("Switching to Penguin v4", true),
-  VERSION_69("Fix 16% archive segments: SEARCH-6073", true),
-  VERSION_70("Switching to Penguin v4 for full archive cluster. SEARCH-5302", true),
-  VERSION_71("Switching to Penguin v4 for ssd archive cluster.", true),
-  VERSION_72("Added Escherbird annotations for full archive.", true),
-  VERSION_73("Lucene 5.2.1 upgrade.", true, 0),
-  VERSION_74("Hanndle geo scurbbed data and archive geo index accuracy", true, 0),
-  VERSION_75("Delete from_user_id_stories from indices", true, 0),
-  VERSION_76("Allow multiple index extensions.", true, 0),
-  VERSION_77("Removed EarlybirdCodec", true, 0),
-  // minor version 2: added embedded tweet features
-  // minor version 3: change embedded tweet features to INC_ONLY
-  VERSION_78("Added 80 bytes of extended features", true, 3),
-  // minor version 1: SEARCH-8564 - Reference Tweet Author ID, using
-  //                  EXTENDED_TEST_FEATURE_UNUSED_BITS_2 and EXTENDED_TEST_FEATURE_UNUSED_BITS_3
-  VERSION_79("Renamed UNUSED_BIT to HAS_VISIBLE_LINK", true, 1),
-  // minor version 2: SEARCH-8564 / http://go/rb/770373
-  //                  Made REFERENCE_AUTHOR_ID_LEAST_SIGNIFICANT_INT and
-  //                  REFERENCE_AUTHOR_ID_MOST_SIGNIFICANT_INT immutable field
-  VERSION_80("Facet for links: SEARCH-8331", true, 2),
-  // minor version 1: added video view count
-  VERSION_81("Adding LowDF posting list with packed ints", true, 1),
-  VERSION_82("Enabling HighDF posting list with packed ints", true, 0),
-  // minor version 1: SEARCH-9379 - Added bitset for nullcast tweets
-  // minor version 2: SEARCH-8765 - Added visible token ratio
-  VERSION_83("Add bits in encoded features for media type flags. SEARCH-9131", true, 2),
-  VERSION_84("Enable archive rebuild for __has_links field. SEARCH-9635", true, 0),
-  // minor version 1: SEARCHQUAL-8130, add engagement v2
-  VERSION_85("New archive build gen for missing geo data. SEARCH-9894", true, 1),
-  VERSION_86("Added new fields to the index", true, 0),
-  // During this rebuild both the statuses and the engagement counts were regenerated.
-  // minor version 1: added quote_count
-  VERSION_87("Periodic archive full rebuild. SEARCH-9423", true, 1),
-  // minor version 1: make new tokenized user name/handle fields textSearchable
+  VERS ON_0(" n  al vers on of part  on flush ng."),
+  VERS ON_1("Added t  stamps and correspond ng mapper to Seg ntData."),
+  VERS ON_2("Add column str de f elds."),
+  VERS ON_3("Change facet f eld conf gurat on."),
+  VERS ON_4("Add per term offens ve counters to parallel post ng arrays."),
+  VERS ON_5("Add nat ve photo facet."),
+  VERS ON_6("Add UserFeature column str de f eld"),
+  VERS ON_7(" ndex seg nt opt m zat ons; new facet data structures."),
+  VERS ON_8("Store statuses  n  mory  n Earlyb rd."),
+  VERS ON_9(" ndex from_user_ ds  nto a searchable f eld."),
+  VERS ON_10("Change from_user_ d d ct onary from fst to mphf"),
+  VERS ON_11("Wr e  mage and v deo facet  n separate lucene f eld."),
+  VERS ON_12("Add ret eted status  D to t  sparse CSF."),
+  VERS ON_13("Add  sOffens ve f eld for profan y f lter."),
+  VERS ON_14("F x features column str de f eld corrupt on."),
+  VERS ON_15("Upgrade Lucene vers on, wh ch has a d fferent FST ser al zat on format."),
+  VERS ON_16("Remove maxDoc  n favor of lastDoc D"),
+  VERS ON_17("Added part  on and t  sl ce  dent f ers to Seg ntData."),
+  VERS ON_18("Per-term payloads"),
+  VERS ON_19("Mult ple per-doc payload f elds"),
+  VERS ON_20("Un fy and f x hash codes"),
+  VERS ON_21("Super a so  new flex ble realt   post ng l st format."),
+  VERS ON_22("Added new geo  mple ntat on."),
+  VERS ON_23("Upgrade to Lucene 4.0.0 F nal"),
+  VERS ON_24("Added t et top c  ds."),
+  VERS ON_25("Turn on sk p l st for  nt on facet."),
+  VERS ON_26("Added new EncodedT etFeaturesColumnStr deF eld."),
+  VERS ON_27("Top c  ds facet f eld."),
+  VERS ON_28("From-user d scover stor es sk pl st f eld."),
+  VERS ON_29("Move token zed screen na  to t  new userna  f eld"),
+  VERS ON_30("Enable HF term pa rs  ndex."),
+  VERS ON_31("Remove reverse doc  ds."),
+  VERS ON_32("Sw ch shared status  d CSF to non-sparse long CSF  ndex."),
+  VERS ON_33("New sk p l sts for opt m zed h gh df post ng l sts."),
+  VERS ON_34("Store t et s gnature  n Earlyb rdEncodedFeatures."),
+  VERS ON_35("Don't store shared status  d csf  n arch ve  ndexes."),
+  VERS ON_36("Don't store norms."),
+  VERS ON_37("64 b  user  ds."),
+  VERS ON_38(" ndex l nks  n arch ve."),
+  VERS ON_39("F x p c.tw ter.com  mage l nk handl ng not sett ng t   nternal f eld correctly."),
+  VERS ON_40("F x all arch ve t ets be ng marked as repl es."),
+  VERS ON_41("Avo d flush ng event_ ds f eld; event clusters are appl ed as updates."),
+  VERS ON_42("No pos  on f elds refactor ng; made a few f elds to not use pos  on."),
+  VERS ON_43(" ndex pr vate geo coord nates"),
+  VERS ON_44("Mater al ze last doc  d  n H ghDFCompressedPost ngl sts", true),
+  VERS ON_45("Remov ng from_user_ d facets support", true),
+  VERS ON_46("Guard aga nst badly out of order t ets  n t  search arch ve.", true),
+  VERS ON_47("Added card t le and descr pt on f elds.", true),
+  VERS ON_48("Added card type CSF.", true),
+  VERS ON_49("Lucene 4.4 upgrade", true),
+  VERS ON_50("Put  m-arch ve back on non-lucene opt m zed  ndexes", true),
+  VERS ON_51("Force  ndex rebu ld to f x blank text f eld. See SEARCH-2505.", true),
+  VERS ON_52("Refactor ng of docValues/CSF.", true),
+  VERS ON_53("Remove Seg ntData.Conf gurat on", true),
+  VERS ON_54("F x bad  nd ces caused by SEARCH-2723.", true),
+  VERS ON_55("F xed non-determ n st c facet ds across restarts. SEARCH-2815.", true),
+  VERS ON_56("Flush Facet DMap.", true),
+  VERS ON_57("Remove LatLonMapper and use standard DocValues  nstead.", true),
+  VERS ON_58("Longterm Attr bute Opt m zat on.", true),
+  VERS ON_59("Rena d arch ve seg nt na s. Current seg nt  s no longer mutable.", true),
+  // Flush vers on 60 and 59 have t  sa  format.
+  // Flush vers on  s  ncreased to tr gger a rebu ld, because   not ced  ncomplete seg nts.
+  // More deta ls can be found on SEARCH-3664
+  VERS ON_60("Flush vers on change to tr gger seg nt rebu ld.", true),
+  VERS ON_61("Add ng back from_user_ d", true),
+  VERS ON_62("Add ret et facet.", true),
+  VERS ON_63("Sw ch to new  ndex AP   n com.tw ter.search.core.earlyb rd.", true),
+  VERS ON_64("Sort  rge arch ve day and part-* data. SEARCH-4692.", true),
+  VERS ON_65("F x  D_F ELD and CREATED_AT_F ELD sort order. SEARCH-4004 SEARCH-912 ", true),
+  VERS ON_66("Rebu ld data for 1/5/2015. Data on HDFS f xed as part of SEARCH-5347.", true),
+  VERS ON_67("Upgrade to Lucene 4.10.3.", true),
+  VERS ON_68("Sw ch ng to Pengu n v4", true),
+  VERS ON_69("F x 16% arch ve seg nts: SEARCH-6073", true),
+  VERS ON_70("Sw ch ng to Pengu n v4 for full arch ve cluster. SEARCH-5302", true),
+  VERS ON_71("Sw ch ng to Pengu n v4 for ssd arch ve cluster.", true),
+  VERS ON_72("Added Esc rb rd annotat ons for full arch ve.", true),
+  VERS ON_73("Lucene 5.2.1 upgrade.", true, 0),
+  VERS ON_74("Hanndle geo scurbbed data and arch ve geo  ndex accuracy", true, 0),
+  VERS ON_75("Delete from_user_ d_stor es from  nd ces", true, 0),
+  VERS ON_76("Allow mult ple  ndex extens ons.", true, 0),
+  VERS ON_77("Removed Earlyb rdCodec", true, 0),
+  // m nor vers on 2: added embedded t et features
+  // m nor vers on 3: change embedded t et features to  NC_ONLY
+  VERS ON_78("Added 80 bytes of extended features", true, 3),
+  // m nor vers on 1: SEARCH-8564 - Reference T et Author  D, us ng
+  //                  EXTENDED_TEST_FEATURE_UNUSED_B TS_2 and EXTENDED_TEST_FEATURE_UNUSED_B TS_3
+  VERS ON_79("Rena d UNUSED_B T to HAS_V S BLE_L NK", true, 1),
+  // m nor vers on 2: SEARCH-8564 / http://go/rb/770373
+  //                  Made REFERENCE_AUTHOR_ D_LEAST_S GN F CANT_ NT and
+  //                  REFERENCE_AUTHOR_ D_MOST_S GN F CANT_ NT  mmutable f eld
+  VERS ON_80("Facet for l nks: SEARCH-8331", true, 2),
+  // m nor vers on 1: added v deo v ew count
+  VERS ON_81("Add ng LowDF post ng l st w h packed  nts", true, 1),
+  VERS ON_82("Enabl ng H ghDF post ng l st w h packed  nts", true, 0),
+  // m nor vers on 1: SEARCH-9379 - Added b set for nullcast t ets
+  // m nor vers on 2: SEARCH-8765 - Added v s ble token rat o
+  VERS ON_83("Add b s  n encoded features for  d a type flags. SEARCH-9131", true, 2),
+  VERS ON_84("Enable arch ve rebu ld for __has_l nks f eld. SEARCH-9635", true, 0),
+  // m nor vers on 1: SEARCHQUAL-8130, add engage nt v2
+  VERS ON_85("New arch ve bu ld gen for m ss ng geo data. SEARCH-9894", true, 1),
+  VERS ON_86("Added new f elds to t   ndex", true, 0),
+  // Dur ng t  rebu ld both t  statuses and t  engage nt counts  re regenerated.
+  // m nor vers on 1: added quote_count
+  VERS ON_87("Per od c arch ve full rebu ld. SEARCH-9423", true, 1),
+  // m nor vers on 1: make new token zed user na /handle f elds textSearchable
   //                  (see go/rb/847134/)
-  // minor version 2: added has_quote
-  VERSION_88("Fixing missing day in the full archive index. SEARCH-11233", true, 2),
-  VERSION_89("Index and store conversation ids.", true, 0),
-  VERSION_90("Fixing inconsistent days in the full archive index. SEARCH-11744", true, 0),
-  VERSION_91("Making in_reply_to_user_id field use MPH. SEARCH-10836", true, 0),
-  VERSION_92("Allow searches by any field. SEARCH-11251", true, 0),
-  // During this rebuild we regenerated engagement counts and merged the annotations in the
+  // m nor vers on 2: added has_quote
+  VERS ON_88("F x ng m ss ng day  n t  full arch ve  ndex. SEARCH-11233", true, 2),
+  VERS ON_89(" ndex and store conversat on  ds.", true, 0),
+  VERS ON_90("F x ng  ncons stent days  n t  full arch ve  ndex. SEARCH-11744", true, 0),
+  VERS ON_91("Mak ng  n_reply_to_user_ d f eld use MPH. SEARCH-10836", true, 0),
+  VERS ON_92("Allow searc s by any f eld. SEARCH-11251", true, 0),
+  // Dur ng t  rebu ld   regenerated engage nt counts and  rged t  annotat ons  n t 
   // aggregate job.
-  VERSION_93("Periodic archive full rebuild. SEARCH-11076", true, 0),
-  // minor version 1: add ThriftCSFViewSettings.outputCSFType
-  VERSION_94("Indexing a bunch of geo fields. SEARCH-10283", true, 1),
-  VERSION_95("Removing topic ID fields. SEARCH-8616", true, 0),
-    // minor version 1: add ThriftCSFViewSettings.normalizationType
-  VERSION_96("Enabling conversation ID for all clusters. SEARCH-11989", true, 1),
-  // minor version 1: set several feature configuration to be correct double type
-  // minor version 2: set some more feature configuration to be correct double type
-  // minor version 3: add safety labels SEARCHQUAL-9561
-  // minor version 4: add weighted engagement counts SEARCHQUAL-9574
-  // minor version 5: add Dopamine non personalized score SEARCHQUAL-9743
-  VERSION_97("Changing CSF type to BOOLEAN for some has_* flags.", true, 5),
-  VERSION_98("Periodic archive full rebuild. PCM-56871.", true, 1),
-  VERSION_99("Removing named_entities field. SEARCH-13708", true, 0),
-  // minor version 1: add periscope features (SEARCHQUAL-10008)
-  // minor version 2: add raw_earlybird_score to TweetExternalFeatures (SEARCHQUAL-10347)
-  VERSION_100("Upgrade Penguin Version from V4 to V6. SEARCH-12991", true, 2),
-  // minor version 1: adjust for normalizer type for some engagement counters (SEARCHQUAL-9537)
-  // minor version 2: add decaying engagement counts and last engaged timestamps (SEARCHQUAL-10532)
-  VERSION_101("Add emoji to the index. SEARCH-12991", true, 2),
-  VERSION_102("Periodic full archive rebuild. PCM-67851", true, 0),
-  VERSION_103("Add liked_by_user_id field. SEARCH-15341", true, 0),
-  // minor version 1: remove last engaged timestamp with 3-hour increment (SEARCHQUAL-10903)
-  // minor version 2: add fake engagement counts (SEARCHQUAL-10795)
-  // minor version 3: add last engaged timestamp with 1-hour increment (SEARCHQUAL-10942)
-  VERSION_104("Reverting to the 20170109_pc100_par30 build gen. SEARCH-15731", true, 3),
-  VERSION_105("Add 3 new fields to archive index for engagement features. SEARCH-16102", true, 0),
-  // This is the last rebuild based on /tables/statuses. Starting 9/14 this build-gen is powered
-  // by TweetSource. During this rebuild both statuses and engagement counts were rebuilt.
-  VERSION_106("Periodic archive full rebuild. PCM-74652", true, 0),
-  VERSION_107("Removing card fields from full archive index.", true, 0),
-  VERSION_108("Removing the tms_id field from all schemas.", true, 0),
-  VERSION_109("Removing LAT_LON_FIELD from all schemas.", true, 0),
-  VERSION_110("Adding the card fields back to the full archive index.", true, 1),
-  // minor version 1: Add composer source csf field (SEARCH-22494)
-  VERSION_111("Adding composer_source to index. SEARCH-20377.", true, 1),
-  VERSION_112("Partial rebuild to fix SEARCH-22529.", true, 0),
-  VERSION_113("Full archive build gen 20180312_pc100_par30.", true, 0),
-  VERSION_114("Fix for SEARCH-23761.", true, 0),
-  VERSION_115("Add fields for quoted tweets. SEARCH-23919", true, 0),
-  // minor version 1: Add 4 bit hashtag count, mention count and stock count (SEARCH-24336)
-  VERSION_116("Bump flush version for scrubbing pipeline. SEARCH-24225", true, 1),
-  VERSION_117("Add retweeted_by_user_id and replied_to_by_user_id fields. SEARCH-24463", true, 0),
-  // minor version 1: Removed dopamine_non_personalized_score (SEARCHQUAL-10321)
-  VERSION_118("Adding the reply and retweet source tweet IDs: SEARCH-23702, SEARCH-24502", true, 1),
-  // minor version 1: add blink engagement counts (SEARCHQUAL-15176)
-  VERSION_119("Remove public inferred location: SEARCH-24235", true, 1),
-  VERSION_120("Flush extensions before fields when flushing segments.", true, 0),
-  VERSION_121("Flush the startingDocIdForSearch field. SEARCH-25464.", true, 0),
-  VERSION_122("Do not flush the startingDocIdForSearch field.", true, 0),
-  VERSION_123("Renaming the largestDocID flushed property to firstAddedDocID.", true, 0),
-  VERSION_124("Use the skip list posting list for all fields.", true, 0),
-  VERSION_125("Use hashmap for tweet ID lookup.", true, 0),
-  VERSION_126("Use the skip list posting list for all fields.", true, 0),
-  VERSION_127("Flushing the min and max doc IDs in each segment.", true, 0),
-  VERSION_128("Add card_lang to index. SEARCH-26539", true, 0),
-  VERSION_129("Move the tweet ID mapper to the segment data.", true, 0),
-  VERSION_130("Move the time mapper to the segment data.", true, 0),
-  VERSION_131("Change the facets classes to work with any doc IDs.", true, 0),
-  VERSION_132("Make the CSF classes work with any doc IDs.", true, 0),
-  VERSION_133("Removing smallestDocID property.", true, 0),
-  VERSION_134("Optimize DeletedDocs before flushing.", true, 0),
-  VERSION_135("Add payloads to skiplists.", true, 0),
-  VERSION_136("Add name to int pools.", true, 0),
-  VERSION_137("Add unsorted stream offset.", true, 0),
-  VERSION_138("Switch to the OutOfOrderRealtimeTweetIDMapper.", true, 0),
-  VERSION_139("Remove realtime posting lists.", true, 0),
-  VERSION_140("Add named_entity field. SEARCH-27547", true, 0),
-  VERSION_141("Flush the out of order updates count.", true, 0),
-  VERSION_142("Add named_entity facet support. SEARCH-28054", true, 0),
-  VERSION_143("Index updates before optimizing segment.", true, 0),
-  VERSION_144("Refactor TermsArray.", true, 0),
-  VERSION_145("Remove SmallestDocID.", true, 0),
-  VERSION_146("Add entity_id facet support. SEARCH-28071", true, 0),
-  VERSION_147("Enable updating facets", true, 0),
-  VERSION_148("Rename the counter for feature updates to partial updates", true, 0),
-  VERSION_149("Stop flushing offsets for sorted updates DL streams.", true, 0),
-  VERSION_150("Update the name of the property for the updates DL stream offset.", true, 0),
-  VERSION_151("Upgrade Lucene version to 5.5.5.", true, 0),
-  VERSION_152("Upgrade Lucene version to 6.0.0.", true, 0),
-  VERSION_153("Upgrade Lucene version to 6.6.6.", true, 0),
-  VERSION_154("Store the timeslice ID on EarlybirdIndexSegmentData.", true, 0),
-  VERSION_155("Do not flush index extensions.", true, 0),
-  VERSION_156("Deprecate ThriftIndexedFieldSettings.defaultFieldBoost.", true, 0),
-  VERSION_157("Load CREATED_AT_CSF_FIELD into RAM in archive.", true, 0),
-  VERSION_158("Added directed at user ID field and CSF.", true, 0),
-  VERSION_159("Changing deleted docs serialization format.", true, 0),
-  VERSION_160("Add fields for health model scores. SEARCH-31907, HML-2099", true, 0),
-  VERSION_161("Switch to the 'search' Kafka cluster.", true, 0),
-  VERSION_162("Update Lucene version to 7.0.0.", true, 0),
-  VERSION_163("Update Lucene version to 7.7.2.", true, 0),
-  // minor version 1: add IS_TRENDING_NOW_FLAG
-  VERSION_164("Collect per-term stats in the realtime segments.", true, 1),
-  VERSION_165("Update Lucene version to 8.5.2.", true, 0),
-  VERSION_166("Serialize maxPosition field for InvertedRealtimeIndex", true, 0),
-  VERSION_167("Add field for pSpammyTweetScore. HML-2557", true, 0),
-  VERSION_168("Add field for pReportedTweetScore. HML-2644", true, 0),
-  VERSION_169("Add field for spammyTweetContentScore. PFM-70", true, 0),
-  VERSION_170("Add reference author id CSF. SEARCH-34715", true, 0),
-  VERSION_171("Add space_id field. SEARCH-36156", true, 0),
-  VERSION_172("Add facet support for space_id. SEARCH-36388", true, 0),
-  VERSION_173("Add space admin and title fields. SEARCH-36986", true, 0),
-  VERSION_174("Switching to Penguin v7 for realtime-exp0 cluster. SEARCH-36068", true, 0),
-  VERSION_175("Adding exclusive conversation author id CSF", true, 0),
-  VERSION_176("Adding card URI CSF", true, 0),
-  // minor version 1: add FROM_BLUE_VERIFIED_ACCOUNT_FLAG
-  // minor version 2: Adding new cluster REALTIME_CG. SEARCH-45692
-  VERSION_177("Adding URL Description and Title fields. SEARCH-41641", true, 2),
+  VERS ON_93("Per od c arch ve full rebu ld. SEARCH-11076", true, 0),
+  // m nor vers on 1: add Thr ftCSFV ewSett ngs.outputCSFType
+  VERS ON_94(" ndex ng a bunch of geo f elds. SEARCH-10283", true, 1),
+  VERS ON_95("Remov ng top c  D f elds. SEARCH-8616", true, 0),
+    // m nor vers on 1: add Thr ftCSFV ewSett ngs.normal zat onType
+  VERS ON_96("Enabl ng conversat on  D for all clusters. SEARCH-11989", true, 1),
+  // m nor vers on 1: set several feature conf gurat on to be correct double type
+  // m nor vers on 2: set so  more feature conf gurat on to be correct double type
+  // m nor vers on 3: add safety labels SEARCHQUAL-9561
+  // m nor vers on 4: add   ghted engage nt counts SEARCHQUAL-9574
+  // m nor vers on 5: add Dopam ne non personal zed score SEARCHQUAL-9743
+  VERS ON_97("Chang ng CSF type to BOOLEAN for so  has_* flags.", true, 5),
+  VERS ON_98("Per od c arch ve full rebu ld. PCM-56871.", true, 1),
+  VERS ON_99("Remov ng na d_ent  es f eld. SEARCH-13708", true, 0),
+  // m nor vers on 1: add per scope features (SEARCHQUAL-10008)
+  // m nor vers on 2: add raw_earlyb rd_score to T etExternalFeatures (SEARCHQUAL-10347)
+  VERS ON_100("Upgrade Pengu n Vers on from V4 to V6. SEARCH-12991", true, 2),
+  // m nor vers on 1: adjust for normal zer type for so  engage nt counters (SEARCHQUAL-9537)
+  // m nor vers on 2: add decay ng engage nt counts and last engaged t  stamps (SEARCHQUAL-10532)
+  VERS ON_101("Add emoj  to t   ndex. SEARCH-12991", true, 2),
+  VERS ON_102("Per od c full arch ve rebu ld. PCM-67851", true, 0),
+  VERS ON_103("Add l ked_by_user_ d f eld. SEARCH-15341", true, 0),
+  // m nor vers on 1: remove last engaged t  stamp w h 3-h   ncre nt (SEARCHQUAL-10903)
+  // m nor vers on 2: add fake engage nt counts (SEARCHQUAL-10795)
+  // m nor vers on 3: add last engaged t  stamp w h 1-h   ncre nt (SEARCHQUAL-10942)
+  VERS ON_104("Revert ng to t  20170109_pc100_par30 bu ld gen. SEARCH-15731", true, 3),
+  VERS ON_105("Add 3 new f elds to arch ve  ndex for engage nt features. SEARCH-16102", true, 0),
+  // T   s t  last rebu ld based on /tables/statuses. Start ng 9/14 t  bu ld-gen  s po red
+  // by T etS ce. Dur ng t  rebu ld both statuses and engage nt counts  re rebu lt.
+  VERS ON_106("Per od c arch ve full rebu ld. PCM-74652", true, 0),
+  VERS ON_107("Remov ng card f elds from full arch ve  ndex.", true, 0),
+  VERS ON_108("Remov ng t  tms_ d f eld from all sc mas.", true, 0),
+  VERS ON_109("Remov ng LAT_LON_F ELD from all sc mas.", true, 0),
+  VERS ON_110("Add ng t  card f elds back to t  full arch ve  ndex.", true, 1),
+  // m nor vers on 1: Add composer s ce csf f eld (SEARCH-22494)
+  VERS ON_111("Add ng composer_s ce to  ndex. SEARCH-20377.", true, 1),
+  VERS ON_112("Part al rebu ld to f x SEARCH-22529.", true, 0),
+  VERS ON_113("Full arch ve bu ld gen 20180312_pc100_par30.", true, 0),
+  VERS ON_114("F x for SEARCH-23761.", true, 0),
+  VERS ON_115("Add f elds for quoted t ets. SEARCH-23919", true, 0),
+  // m nor vers on 1: Add 4 b  hashtag count,  nt on count and stock count (SEARCH-24336)
+  VERS ON_116("Bump flush vers on for scrubb ng p pel ne. SEARCH-24225", true, 1),
+  VERS ON_117("Add ret eted_by_user_ d and repl ed_to_by_user_ d f elds. SEARCH-24463", true, 0),
+  // m nor vers on 1: Removed dopam ne_non_personal zed_score (SEARCHQUAL-10321)
+  VERS ON_118("Add ng t  reply and ret et s ce t et  Ds: SEARCH-23702, SEARCH-24502", true, 1),
+  // m nor vers on 1: add bl nk engage nt counts (SEARCHQUAL-15176)
+  VERS ON_119("Remove publ c  nferred locat on: SEARCH-24235", true, 1),
+  VERS ON_120("Flush extens ons before f elds w n flush ng seg nts.", true, 0),
+  VERS ON_121("Flush t  start ngDoc dForSearch f eld. SEARCH-25464.", true, 0),
+  VERS ON_122("Do not flush t  start ngDoc dForSearch f eld.", true, 0),
+  VERS ON_123("Renam ng t  largestDoc D flus d property to f rstAddedDoc D.", true, 0),
+  VERS ON_124("Use t  sk p l st post ng l st for all f elds.", true, 0),
+  VERS ON_125("Use hashmap for t et  D lookup.", true, 0),
+  VERS ON_126("Use t  sk p l st post ng l st for all f elds.", true, 0),
+  VERS ON_127("Flush ng t  m n and max doc  Ds  n each seg nt.", true, 0),
+  VERS ON_128("Add card_lang to  ndex. SEARCH-26539", true, 0),
+  VERS ON_129("Move t  t et  D mapper to t  seg nt data.", true, 0),
+  VERS ON_130("Move t  t   mapper to t  seg nt data.", true, 0),
+  VERS ON_131("Change t  facets classes to work w h any doc  Ds.", true, 0),
+  VERS ON_132("Make t  CSF classes work w h any doc  Ds.", true, 0),
+  VERS ON_133("Remov ng smallestDoc D property.", true, 0),
+  VERS ON_134("Opt m ze DeletedDocs before flush ng.", true, 0),
+  VERS ON_135("Add payloads to sk pl sts.", true, 0),
+  VERS ON_136("Add na  to  nt pools.", true, 0),
+  VERS ON_137("Add unsorted stream offset.", true, 0),
+  VERS ON_138("Sw ch to t  OutOfOrderRealt  T et DMapper.", true, 0),
+  VERS ON_139("Remove realt   post ng l sts.", true, 0),
+  VERS ON_140("Add na d_ent y f eld. SEARCH-27547", true, 0),
+  VERS ON_141("Flush t  out of order updates count.", true, 0),
+  VERS ON_142("Add na d_ent y facet support. SEARCH-28054", true, 0),
+  VERS ON_143(" ndex updates before opt m z ng seg nt.", true, 0),
+  VERS ON_144("Refactor TermsArray.", true, 0),
+  VERS ON_145("Remove SmallestDoc D.", true, 0),
+  VERS ON_146("Add ent y_ d facet support. SEARCH-28071", true, 0),
+  VERS ON_147("Enable updat ng facets", true, 0),
+  VERS ON_148("Rena  t  counter for feature updates to part al updates", true, 0),
+  VERS ON_149("Stop flush ng offsets for sorted updates DL streams.", true, 0),
+  VERS ON_150("Update t  na  of t  property for t  updates DL stream offset.", true, 0),
+  VERS ON_151("Upgrade Lucene vers on to 5.5.5.", true, 0),
+  VERS ON_152("Upgrade Lucene vers on to 6.0.0.", true, 0),
+  VERS ON_153("Upgrade Lucene vers on to 6.6.6.", true, 0),
+  VERS ON_154("Store t  t  sl ce  D on Earlyb rd ndexSeg ntData.", true, 0),
+  VERS ON_155("Do not flush  ndex extens ons.", true, 0),
+  VERS ON_156("Deprecate Thr ft ndexedF eldSett ngs.defaultF eldBoost.", true, 0),
+  VERS ON_157("Load CREATED_AT_CSF_F ELD  nto RAM  n arch ve.", true, 0),
+  VERS ON_158("Added d rected at user  D f eld and CSF.", true, 0),
+  VERS ON_159("Chang ng deleted docs ser al zat on format.", true, 0),
+  VERS ON_160("Add f elds for  alth model scores. SEARCH-31907, HML-2099", true, 0),
+  VERS ON_161("Sw ch to t  'search' Kafka cluster.", true, 0),
+  VERS ON_162("Update Lucene vers on to 7.0.0.", true, 0),
+  VERS ON_163("Update Lucene vers on to 7.7.2.", true, 0),
+  // m nor vers on 1: add  S_TREND NG_NOW_FLAG
+  VERS ON_164("Collect per-term stats  n t  realt   seg nts.", true, 1),
+  VERS ON_165("Update Lucene vers on to 8.5.2.", true, 0),
+  VERS ON_166("Ser al ze maxPos  on f eld for  nvertedRealt   ndex", true, 0),
+  VERS ON_167("Add f eld for pSpam T etScore. HML-2557", true, 0),
+  VERS ON_168("Add f eld for pReportedT etScore. HML-2644", true, 0),
+  VERS ON_169("Add f eld for spam T etContentScore. PFM-70", true, 0),
+  VERS ON_170("Add reference author  d CSF. SEARCH-34715", true, 0),
+  VERS ON_171("Add space_ d f eld. SEARCH-36156", true, 0),
+  VERS ON_172("Add facet support for space_ d. SEARCH-36388", true, 0),
+  VERS ON_173("Add space adm n and t le f elds. SEARCH-36986", true, 0),
+  VERS ON_174("Sw ch ng to Pengu n v7 for realt  -exp0 cluster. SEARCH-36068", true, 0),
+  VERS ON_175("Add ng exclus ve conversat on author  d CSF", true, 0),
+  VERS ON_176("Add ng card UR  CSF", true, 0),
+  // m nor vers on 1: add FROM_BLUE_VER F ED_ACCOUNT_FLAG
+  // m nor vers on 2: Add ng new cluster REALT ME_CG. SEARCH-45692
+  VERS ON_177("Add ng URL Descr pt on and T le f elds. SEARCH-41641", true, 2),
 
   /**
-   * This semi colon is on a separate line to avoid polluting git blame history.
-   * Put a comma after the new enum field you're adding.
+   * T  sem  colon  s on a separate l ne to avo d pollut ng g  bla   tory.
+   * Put a comma after t  new enum f eld   add ng.
    */;
 
-  // The current version.
-  public static final FlushVersion CURRENT_FLUSH_VERSION =
-      FlushVersion.values()[FlushVersion.values().length - 1];
+  // T  current vers on.
+  publ c stat c f nal FlushVers on CURRENT_FLUSH_VERS ON =
+      FlushVers on.values()[FlushVers on.values().length - 1];
 
-  public static final String DELIMITER = "_v_";
+  publ c stat c f nal Str ng DEL M TER = "_v_";
 
   /* =======================================================
-   * Helper methods
+   *  lper  thods
    * ======================================================= */
-  private final String description;
-  private final boolean isOfficial;
-  private final int minorVersion;
+  pr vate f nal Str ng descr pt on;
+  pr vate f nal boolean  sOff c al;
+  pr vate f nal  nt m norVers on;
 
   /**
-   * A flush version is not official unless explicitly stated to be official.
-   * An unofficial flush version is never uploaded to HDFS.
+   * A flush vers on  s not off c al unless expl c ly stated to be off c al.
+   * An unoff c al flush vers on  s never uploaded to HDFS.
    */
-  private FlushVersion(String description) {
-    this(description, false, 0);
+  pr vate FlushVers on(Str ng descr pt on) {
+    t (descr pt on, false, 0);
   }
 
-  private FlushVersion(String description, boolean isOfficial) {
-    this(description, isOfficial, 0);
+  pr vate FlushVers on(Str ng descr pt on, boolean  sOff c al) {
+    t (descr pt on,  sOff c al, 0);
   }
 
-  private FlushVersion(String description, boolean isOfficial, int minorVersion) {
-    this.description = description;
-    this.isOfficial = isOfficial;
-    this.minorVersion = minorVersion;
+  pr vate FlushVers on(Str ng descr pt on, boolean  sOff c al,  nt m norVers on) {
+    t .descr pt on = descr pt on;
+    t . sOff c al =  sOff c al;
+    t .m norVers on = m norVers on;
   }
 
   /**
-   * Returns file extension with version number.
+   * Returns f le extens on w h vers on number.
    */
-  public String getVersionFileExtension() {
-    if (this == VERSION_0) {
+  publ c Str ng getVers onF leExtens on() {
+     f (t  == VERS ON_0) {
       return "";
     } else {
-      return DELIMITER + ordinal();
+      return DEL M TER + ord nal();
     }
   }
 
   /**
-   * Returns file extension given flush version number.
-   * If the flush version is unknown (e.g. higher than current flush version or lower than 0), null
-   * is returned.
+   * Returns f le extens on g ven flush vers on number.
+   *  f t  flush vers on  s unknown (e.g. h g r than current flush vers on or lo r than 0), null
+   *  s returned.
    */
   @Nullable
-  public static String getVersionFileExtension(int flushVersion) {
-    if (flushVersion > CURRENT_FLUSH_VERSION.ordinal() || flushVersion < 0) {
+  publ c stat c Str ng getVers onF leExtens on( nt flushVers on) {
+     f (flushVers on > CURRENT_FLUSH_VERS ON.ord nal() || flushVers on < 0) {
       return null;
     } else {
-      return FlushVersion.values()[flushVersion].getVersionFileExtension();
+      return FlushVers on.values()[flushVers on].getVers onF leExtens on();
     }
   }
 
   /**
-   * Returns a string describing the current schema version.
-   * @deprecated Please use {@link com.twitter.search.common.schema.base.Schema#getVersionDescription()}
+   * Returns a str ng descr b ng t  current sc ma vers on.
+   * @deprecated Please use {@l nk com.tw ter.search.common.sc ma.base.Sc ma#getVers onDescr pt on()}
    */
   @Deprecated
-  public String getDescription() {
-    return description;
+  publ c Str ng getDescr pt on() {
+    return descr pt on;
   }
 
   /**
-   * Returns the schema's major version.
-   * @deprecated Please use {@link com.twitter.search.common.schema.base.Schema#getMajorVersionNumber()}.
+   * Returns t  sc ma's major vers on.
+   * @deprecated Please use {@l nk com.tw ter.search.common.sc ma.base.Sc ma#getMajorVers onNumber()}.
    */
   @Deprecated
-  public int getVersionNumber() {
-    return this.ordinal();
+  publ c  nt getVers onNumber() {
+    return t .ord nal();
   }
 
-  public boolean onOrAfter(FlushVersion other) {
-    return compareTo(other) >= 0;
-  }
-
-  /**
-   * Returns whether the schema version is official. Only official segments are uploaded to HDFS.
-   * @deprecated Please use {@link com.twitter.search.common.schema.base.Schema#isVersionOfficial()}.
-   */
-  @Deprecated
-  public boolean isOfficial() {
-    // We want the loading/flushing tests to pass locally even if the version is not meant
-    // to be an official version.
-    return isOfficial || Config.environmentIsTest();
+  publ c boolean onOrAfter(FlushVers on ot r) {
+    return compareTo(ot r) >= 0;
   }
 
   /**
-   * As of now, this is hardcoded to 0. We will start using this soon.
-   * @deprecated Please consult schema for minor version. This should only be used to build schema.
+   * Returns w t r t  sc ma vers on  s off c al. Only off c al seg nts are uploaded to HDFS.
+   * @deprecated Please use {@l nk com.tw ter.search.common.sc ma.base.Sc ma# sVers onOff c al()}.
    */
   @Deprecated
-  public int getMinorVersion() {
-    return minorVersion;
+  publ c boolean  sOff c al() {
+    //   want t  load ng/flush ng tests to pass locally even  f t  vers on  s not  ant
+    // to be an off c al vers on.
+    return  sOff c al || Conf g.env ron nt sTest();
+  }
+
+  /**
+   * As of now, t   s hardcoded to 0.   w ll start us ng t  soon.
+   * @deprecated Please consult sc ma for m nor vers on. T  should only be used to bu ld sc ma.
+   */
+  @Deprecated
+  publ c  nt getM norVers on() {
+    return m norVers on;
   }
 }

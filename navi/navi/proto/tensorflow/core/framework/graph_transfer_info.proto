@@ -2,70 +2,70 @@ syntax = "proto3";
 
 package tensorflow;
 
-import "tensorflow/core/framework/types.proto";
+ mport "tensorflow/core/fra work/types.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "GraphTransferInfoProto";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/graph_transfer_info_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "GraphTransfer nfoProto";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.fra work";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/fra work/graph_transfer_ nfo_go_proto";
 
-message GraphTransferNodeInput {
-  int32 node_id = 1;
-  int32 output_port = 2;
+ ssage GraphTransferNode nput {
+   nt32 node_ d = 1;
+   nt32 output_port = 2;
 }
-message GraphTransferNodeInfo {
-  string name = 1;
-  int32 node_id = 2;
-  string type_name = 3;
-  int32 soc_op_id = 4;
-  int32 padding_id = 5;
-  int32 input_count = 6;
-  int32 output_count = 7;
+ ssage GraphTransferNode nfo {
+  str ng na  = 1;
+   nt32 node_ d = 2;
+  str ng type_na  = 3;
+   nt32 soc_op_ d = 4;
+   nt32 padd ng_ d = 5;
+   nt32  nput_count = 6;
+   nt32 output_count = 7;
 }
-message GraphTransferConstNodeInfo {
-  string name = 1;
-  int32 node_id = 2;
-  repeated int64 shape = 3;
+ ssage GraphTransferConstNode nfo {
+  str ng na  = 1;
+   nt32 node_ d = 2;
+  repeated  nt64 shape = 3;
   bytes data = 4;
   DataType dtype = 5;
 }
-message GraphTransferNodeInputInfo {
-  int32 node_id = 1;
-  repeated GraphTransferNodeInput node_input = 2;
+ ssage GraphTransferNode nput nfo {
+   nt32 node_ d = 1;
+  repeated GraphTransferNode nput node_ nput = 2;
 }
-message GraphTransferNodeOutputInfo {
-  int32 node_id = 1;
-  repeated int32 max_byte_size = 2;
+ ssage GraphTransferNodeOutput nfo {
+   nt32 node_ d = 1;
+  repeated  nt32 max_byte_s ze = 2;
 }
-message GraphTransferGraphInputNodeInfo {
-  string name = 1;
-  repeated int64 shape = 2;
+ ssage GraphTransferGraph nputNode nfo {
+  str ng na  = 1;
+  repeated  nt64 shape = 2;
   DataType dtype = 3;
 }
 
-message GraphTransferGraphOutputNodeInfo {
-  string name = 1;
-  repeated int64 shape = 2;
+ ssage GraphTransferGraphOutputNode nfo {
+  str ng na  = 1;
+  repeated  nt64 shape = 2;
   DataType dtype = 3;
 }
 
-// Protocol buffer representing a handle to a tensorflow resource. Handles are
-// not valid across executions, but can be serialized back and forth from within
-// a single run.
-message GraphTransferInfo {
-  enum Destination {
+// Protocol buffer represent ng a handle to a tensorflow res ce. Handles are
+// not val d across execut ons, but can be ser al zed back and forth from w h n
+// a s ngle run.
+ ssage GraphTransfer nfo {
+  enum Dest nat on {
     NOP = 0;
     HEXAGON = 1;
   }
 
-  repeated GraphTransferNodeInfo node_info = 1;
-  repeated GraphTransferConstNodeInfo const_node_info = 2;
-  repeated GraphTransferNodeInputInfo node_input_info = 3;
-  repeated GraphTransferNodeOutputInfo node_output_info = 4;
-  // Input Node parameters of transferred graph
-  repeated GraphTransferGraphInputNodeInfo graph_input_node_info = 5;
-  repeated GraphTransferGraphOutputNodeInfo graph_output_node_info = 6;
-  // Destination of graph transfer
-  Destination destination = 7;
+  repeated GraphTransferNode nfo node_ nfo = 1;
+  repeated GraphTransferConstNode nfo const_node_ nfo = 2;
+  repeated GraphTransferNode nput nfo node_ nput_ nfo = 3;
+  repeated GraphTransferNodeOutput nfo node_output_ nfo = 4;
+  //  nput Node para ters of transferred graph
+  repeated GraphTransferGraph nputNode nfo graph_ nput_node_ nfo = 5;
+  repeated GraphTransferGraphOutputNode nfo graph_output_node_ nfo = 6;
+  // Dest nat on of graph transfer
+  Dest nat on dest nat on = 7;
 }

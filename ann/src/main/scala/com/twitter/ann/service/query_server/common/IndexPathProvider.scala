@@ -1,179 +1,179 @@
-package com.twitter.ann.service.query_server.common
+package com.tw ter.ann.serv ce.query_server.common
 
-import com.twitter.ann.common.IndexOutputFile
-import com.twitter.ann.hnsw.HnswCommon._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.search.common.file.AbstractFile.Filter
-import com.twitter.search.common.file.PathUtils
-import com.twitter.util.Try
-import java.io.IOException
-import java.util.concurrent.atomic.AtomicReference
-import scala.collection.JavaConverters._
-import scala.math.Ordering.comparatorToOrdering
+ mport com.tw ter.ann.common. ndexOutputF le
+ mport com.tw ter.ann.hnsw.HnswCommon._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.search.common.f le.AbstractF le
+ mport com.tw ter.search.common.f le.AbstractF le.F lter
+ mport com.tw ter.search.common.f le.PathUt ls
+ mport com.tw ter.ut l.Try
+ mport java. o. OExcept on
+ mport java.ut l.concurrent.atom c.Atom cReference
+ mport scala.collect on.JavaConverters._
+ mport scala.math.Order ng.comparatorToOrder ng
 
-abstract class IndexPathProvider {
-  def provideIndexPath(rootPath: AbstractFile, group: Boolean = false): Try[AbstractFile]
-  def provideIndexPathWithGroups(rootPath: AbstractFile): Try[Seq[AbstractFile]]
+abstract class  ndexPathProv der {
+  def prov de ndexPath(rootPath: AbstractF le, group: Boolean = false): Try[AbstractF le]
+  def prov de ndexPathW hGroups(rootPath: AbstractF le): Try[Seq[AbstractF le]]
 }
 
-abstract class BaseIndexPathProvider extends IndexPathProvider {
-  protected val minIndexSizeBytes: Long
-  protected val maxIndexSizeBytes: Long
-  protected val statsReceiver: StatsReceiver
+abstract class Base ndexPathProv der extends  ndexPathProv der {
+  protected val m n ndexS zeBytes: Long
+  protected val max ndexS zeBytes: Long
+  protected val statsRece ver: StatsRece ver
   protected val log: Logger
-  private val invalidPathCounter = statsReceiver.counter("invalid_index")
-  private val failToLocateDirectoryCounter = statsReceiver.counter("find_latest_path_fail")
-  private val successProvidePathCounter = statsReceiver.counter("provide_path_success")
+  pr vate val  nval dPathCounter = statsRece ver.counter(" nval d_ ndex")
+  pr vate val fa lToLocateD rectoryCounter = statsRece ver.counter("f nd_latest_path_fa l")
+  pr vate val successProv dePathCounter = statsRece ver.counter("prov de_path_success")
 
-  private val latestGroupCount = new AtomicReference(0f)
-  private val latestIndexTimestamp = new AtomicReference(0f)
-  private val latestValidIndexTimestamp = new AtomicReference(0f)
+  pr vate val latestGroupCount = new Atom cReference(0f)
+  pr vate val latest ndexT  stamp = new Atom cReference(0f)
+  pr vate val latestVal d ndexT  stamp = new Atom cReference(0f)
 
-  private val INDEX_METADATA_FILE = "ANN_INDEX_METADATA"
+  pr vate val  NDEX_METADATA_F LE = "ANN_ NDEX_METADATA"
 
-  private val latestIndexGauge = statsReceiver.addGauge("latest_index_timestamp")(
-    latestIndexTimestamp.get()
+  pr vate val latest ndexGauge = statsRece ver.addGauge("latest_ ndex_t  stamp")(
+    latest ndexT  stamp.get()
   )
-  private val latestValidIndexGauge = statsReceiver.addGauge("latest_valid_index_timestamp")(
-    latestValidIndexTimestamp.get()
+  pr vate val latestVal d ndexGauge = statsRece ver.addGauge("latest_val d_ ndex_t  stamp")(
+    latestVal d ndexT  stamp.get()
   )
-  private val latestGroupCountGauge = statsReceiver.addGauge("latest_group_count")(
+  pr vate val latestGroupCountGauge = statsRece ver.addGauge("latest_group_count")(
     latestGroupCount.get()
   )
 
-  private val latestTimeStampDirectoryFilter = new AbstractFile.Filter {
+  pr vate val latestT  StampD rectoryF lter = new AbstractF le.F lter {
 
-    /** Determines which files should be accepted when listing a directory. */
-    override def accept(file: AbstractFile): Boolean = {
-      val name = file.getName
-      PathUtils.TIMESTAMP_PATTERN.matcher(name).matches()
+    /** Determ nes wh ch f les should be accepted w n l st ng a d rectory. */
+    overr de def accept(f le: AbstractF le): Boolean = {
+      val na  = f le.getNa 
+      PathUt ls.T MESTAMP_PATTERN.matc r(na ).matc s()
     }
   }
 
-  private def findLatestTimeStampValidSuccessDirectory(
-    path: AbstractFile,
+  pr vate def f ndLatestT  StampVal dSuccessD rectory(
+    path: AbstractF le,
     group: Boolean
-  ): AbstractFile = {
-    log.info(s"Calling findLatestTimeStampValidSuccessDirectory with ${path.getPath}")
-    // Get all the timestamp directories
-    val dateDirs = path.listFiles(latestTimeStampDirectoryFilter).asScala.toSeq
+  ): AbstractF le = {
+    log. nfo(s"Call ng f ndLatestT  StampVal dSuccessD rectory w h ${path.getPath}")
+    // Get all t  t  stamp d rector es
+    val dateD rs = path.l stF les(latestT  StampD rectoryF lter).asScala.toSeq
 
-    if (dateDirs.nonEmpty) {
-      // Validate the indexes
-      val latestValidPath = {
-        if (group) {
-          // For grouped, check all the individual group indexes and stop as soon as a valid index
-          // is found.
-          dateDirs
-            .sorted(comparatorToOrdering(PathUtils.NEWEST_FIRST_COMPARATOR)).find(file => {
-              val indexMetadataFile = file.getChild(INDEX_METADATA_FILE)
-              val indexes = file.listFiles().asScala.filter(_.isDirectory)
-              val isValid = if (indexMetadataFile.exists()) {
-                // Metadata file exists. Check the number of groups and verify the index is
+     f (dateD rs.nonEmpty) {
+      // Val date t   ndexes
+      val latestVal dPath = {
+         f (group) {
+          // For grouped, c ck all t   nd v dual group  ndexes and stop as soon as a val d  ndex
+          //  s found.
+          dateD rs
+            .sorted(comparatorToOrder ng(PathUt ls.NEWEST_F RST_COMPARATOR)).f nd(f le => {
+              val  ndex tadataF le = f le.getCh ld( NDEX_METADATA_F LE)
+              val  ndexes = f le.l stF les().asScala.f lter(_. sD rectory)
+              val  sVal d =  f ( ndex tadataF le.ex sts()) {
+                //  tadata f le ex sts. C ck t  number of groups and ver fy t   ndex  s
                 // complete
-                val indexMetadata = new IndexOutputFile(indexMetadataFile).loadIndexMetadata()
-                if (indexMetadata.numGroups.get != indexes.size) {
-                  log.info(
-                    s"Grouped index ${file.getPath} should have ${indexMetadata.numGroups.get} groups but had ${indexes.size}")
+                val  ndex tadata = new  ndexOutputF le( ndex tadataF le).load ndex tadata()
+                 f ( ndex tadata.numGroups.get !=  ndexes.s ze) {
+                  log. nfo(
+                    s"Grouped  ndex ${f le.getPath} should have ${ ndex tadata.numGroups.get} groups but had ${ ndexes.s ze}")
                 }
-                indexMetadata.numGroups.get == indexes.size
+                 ndex tadata.numGroups.get ==  ndexes.s ze
               } else {
-                // True if the file doesn't exist. This is to make this change backwards
-                // compatible for clients using the old version of the dataflow job
+                // True  f t  f le doesn't ex st. T   s to make t  change backwards
+                // compat ble for cl ents us ng t  old vers on of t  dataflow job
                 true
               }
 
-              isValid && indexes.forall(index => {
-                index.hasSuccessFile && isValidIndex(index) && QueryServerUtil
-                  .isValidIndexDirSize(index, minIndexSizeBytes, maxIndexSizeBytes)
+               sVal d &&  ndexes.forall( ndex => {
+                 ndex.hasSuccessF le &&  sVal d ndex( ndex) && QueryServerUt l
+                  . sVal d ndexD rS ze( ndex, m n ndexS zeBytes, max ndexS zeBytes)
               })
             })
         } else {
-          // For non-grouped, find the first valid index.
-          dateDirs
-            .sorted(comparatorToOrdering(PathUtils.NEWEST_FIRST_COMPARATOR)).find(file => {
-              file.hasSuccessFile && QueryServerUtil
-                .isValidIndexDirSize(file, minIndexSizeBytes, maxIndexSizeBytes)
+          // For non-grouped, f nd t  f rst val d  ndex.
+          dateD rs
+            .sorted(comparatorToOrder ng(PathUt ls.NEWEST_F RST_COMPARATOR)).f nd(f le => {
+              f le.hasSuccessF le && QueryServerUt l
+                . sVal d ndexD rS ze(f le, m n ndexS zeBytes, max ndexS zeBytes)
             })
         }
       }
 
-      if (latestValidPath.nonEmpty) {
-        // Log the results
-        successProvidePathCounter.incr()
-        if (group) {
-          latestGroupCount.set(latestValidPath.get.listFiles().asScala.count(_.isDirectory))
-          log.info(
-            s"findLatestTimeStampValidSuccessDirectory latestValidPath ${latestValidPath.get.getPath} and number of groups $latestGroupCount")
+       f (latestVal dPath.nonEmpty) {
+        // Log t  results
+        successProv dePathCounter. ncr()
+         f (group) {
+          latestGroupCount.set(latestVal dPath.get.l stF les().asScala.count(_. sD rectory))
+          log. nfo(
+            s"f ndLatestT  StampVal dSuccessD rectory latestVal dPath ${latestVal dPath.get.getPath} and number of groups $latestGroupCount")
         } else {
-          val latestValidPathSize =
-            latestValidPath.get.listFiles(true).asScala.map(_.getSizeInBytes).sum
-          log.info(
-            s"findLatestTimeStampValidSuccessDirectory latestValidPath ${latestValidPath.get.getPath} and size $latestValidPathSize")
+          val latestVal dPathS ze =
+            latestVal dPath.get.l stF les(true).asScala.map(_.getS ze nBytes).sum
+          log. nfo(
+            s"f ndLatestT  StampVal dSuccessD rectory latestVal dPath ${latestVal dPath.get.getPath} and s ze $latestVal dPathS ze")
         }
-        return latestValidPath.get
+        return latestVal dPath.get
       }
     }
 
-    // Fail if no index or no valid index.
-    failToLocateDirectoryCounter.incr()
-    throw new IOException(s"Cannot find any valid directory with SUCCESS file at ${path.getName}")
+    // Fa l  f no  ndex or no val d  ndex.
+    fa lToLocateD rectoryCounter. ncr()
+    throw new  OExcept on(s"Cannot f nd any val d d rectory w h SUCCESS f le at ${path.getNa }")
   }
 
-  def isValidIndex(index: AbstractFile): Boolean
+  def  sVal d ndex( ndex: AbstractF le): Boolean
 
-  override def provideIndexPath(
-    rootPath: AbstractFile,
+  overr de def prov de ndexPath(
+    rootPath: AbstractF le,
     group: Boolean = false
-  ): Try[AbstractFile] = {
+  ): Try[AbstractF le] = {
     Try {
-      val latestValidPath = findLatestTimeStampValidSuccessDirectory(rootPath, group)
-      if (!group) {
-        val latestPath = PathUtils.findLatestTimeStampSuccessDirectory(rootPath)
-        // since latestValidPath does not throw exception, latestPath must exist
-        assert(latestPath.isPresent)
-        val latestPathSize = latestPath.get.listFiles(true).asScala.map(_.getSizeInBytes).sum
-        log.info(s"provideIndexPath latestPath ${latestPath
+      val latestVal dPath = f ndLatestT  StampVal dSuccessD rectory(rootPath, group)
+       f (!group) {
+        val latestPath = PathUt ls.f ndLatestT  StampSuccessD rectory(rootPath)
+        // s nce latestVal dPath does not throw except on, latestPath must ex st
+        assert(latestPath. sPresent)
+        val latestPathS ze = latestPath.get.l stF les(true).asScala.map(_.getS ze nBytes).sum
+        log. nfo(s"prov de ndexPath latestPath ${latestPath
           .get()
-          .getPath} and size $latestPathSize")
-        latestIndexTimestamp.set(latestPath.get().getName.toFloat)
-        // latest directory is not valid, update counter for alerts
-        if (latestPath.get() != latestValidPath) {
-          invalidPathCounter.incr()
+          .getPath} and s ze $latestPathS ze")
+        latest ndexT  stamp.set(latestPath.get().getNa .toFloat)
+        // latest d rectory  s not val d, update counter for alerts
+         f (latestPath.get() != latestVal dPath) {
+           nval dPathCounter. ncr()
         }
       } else {
-        latestIndexTimestamp.set(latestValidPath.getName.toFloat)
+        latest ndexT  stamp.set(latestVal dPath.getNa .toFloat)
       }
-      latestValidIndexTimestamp.set(latestValidPath.getName.toFloat)
-      latestValidPath
+      latestVal d ndexT  stamp.set(latestVal dPath.getNa .toFloat)
+      latestVal dPath
     }
   }
 
-  override def provideIndexPathWithGroups(
-    rootPath: AbstractFile
-  ): Try[Seq[AbstractFile]] = {
-    val latestValidPath = provideIndexPath(rootPath, true)
-    latestValidPath.map { path =>
+  overr de def prov de ndexPathW hGroups(
+    rootPath: AbstractF le
+  ): Try[Seq[AbstractF le]] = {
+    val latestVal dPath = prov de ndexPath(rootPath, true)
+    latestVal dPath.map { path =>
       path
-        .listFiles(new Filter {
-          override def accept(file: AbstractFile): Boolean =
-            file.isDirectory && file.hasSuccessFile
+        .l stF les(new F lter {
+          overr de def accept(f le: AbstractF le): Boolean =
+            f le. sD rectory && f le.hasSuccessF le
         }).asScala.toSeq
     }
   }
 }
 
-case class ValidatedIndexPathProvider(
-  override val minIndexSizeBytes: Long,
-  override val maxIndexSizeBytes: Long,
-  override val statsReceiver: StatsReceiver)
-    extends BaseIndexPathProvider {
+case class Val dated ndexPathProv der(
+  overr de val m n ndexS zeBytes: Long,
+  overr de val max ndexS zeBytes: Long,
+  overr de val statsRece ver: StatsRece ver)
+    extends Base ndexPathProv der {
 
-  override val log = Logger.get("ValidatedIndexPathProvider")
+  overr de val log = Logger.get("Val dated ndexPathProv der")
 
-  override def isValidIndex(dir: AbstractFile): Boolean = {
-    isValidHnswIndex(dir)
+  overr de def  sVal d ndex(d r: AbstractF le): Boolean = {
+     sVal dHnsw ndex(d r)
   }
 }

@@ -1,25 +1,25 @@
-package com.twitter.follow_recommendations.common.transforms.weighted_sampling
+package com.tw ter.follow_recom ndat ons.common.transforms.  ghted_sampl ng
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
-object SamplingTransformParams {
+object Sampl ngTransformParams {
 
-  case object TopKFixed // indicates how many of the fisrt K who-to-follow recommendations are reserved for the candidates with largest K CandidateUser.score where these candidates are sorted in decreasing order of score
-      extends FSBoundedParam[Int](
-        name = "post_nux_ml_flow_weighted_sampling_top_k_fixed",
+  case object TopKF xed //  nd cates how many of t  f srt K who-to-follow recom ndat ons are reserved for t  cand dates w h largest K Cand dateUser.score w re t se cand dates are sorted  n decreas ng order of score
+      extends FSBoundedParam[ nt](
+        na  = "post_nux_ml_flow_  ghted_sampl ng_top_k_f xed",
         default = 0,
-        min = 0,
+        m n = 0,
         max = 100)
 
-  case object MultiplicativeFactor // CandidateUser.score gets transformed to multiplicativeFactor*CandidateUser.score before sampling from the Plackett-Luce distribution
+  case object Mult pl cat veFactor // Cand dateUser.score gets transfor d to mult pl cat veFactor*Cand dateUser.score before sampl ng from t  Plackett-Luce d str but on
       extends FSBoundedParam[Double](
-        name = "post_nux_ml_flow_weighted_sampling_multiplicative_factor",
+        na  = "post_nux_ml_flow_  ghted_sampl ng_mult pl cat ve_factor",
         default = 1.0,
-        min = -1000.0,
+        m n = -1000.0,
         max = 1000.0)
 
-  case object ScribeRankingInfoInSamplingTransform
-      extends FSParam[Boolean]("sampling_transform_scribe_ranking_info", false)
+  case object Scr beRank ng nfo nSampl ngTransform
+      extends FSParam[Boolean]("sampl ng_transform_scr be_rank ng_ nfo", false)
 
 }

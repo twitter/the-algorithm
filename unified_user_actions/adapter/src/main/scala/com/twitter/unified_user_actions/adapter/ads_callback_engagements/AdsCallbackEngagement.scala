@@ -1,125 +1,125 @@
-package com.twitter.unified_user_actions.adapter.ads_callback_engagements
+package com.tw ter.un f ed_user_act ons.adapter.ads_callback_engage nts
 
-import com.twitter.ads.spendserver.thriftscala.SpendServerEvent
-import com.twitter.unified_user_actions.thriftscala._
+ mport com.tw ter.ads.spendserver.thr ftscala.SpendServerEvent
+ mport com.tw ter.un f ed_user_act ons.thr ftscala._
 
-object AdsCallbackEngagement {
-  object PromotedTweetFav extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetFav)
+object AdsCallbackEngage nt {
+  object PromotedT etFav extends BaseAdsCallbackEngage nt(Act onType.ServerPromotedT etFav)
 
-  object PromotedTweetUnfav extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetUnfav)
+  object PromotedT etUnfav extends BaseAdsCallbackEngage nt(Act onType.ServerPromotedT etUnfav)
 
-  object PromotedTweetReply extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetReply)
+  object PromotedT etReply extends BaseAdsCallbackEngage nt(Act onType.ServerPromotedT etReply)
 
-  object PromotedTweetRetweet
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetRetweet)
+  object PromotedT etRet et
+      extends BaseAdsCallbackEngage nt(Act onType.ServerPromotedT etRet et)
 
-  object PromotedTweetBlockAuthor
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetBlockAuthor)
+  object PromotedT etBlockAuthor
+      extends BaseAdsCallbackEngage nt(Act onType.ServerPromotedT etBlockAuthor)
 
-  object PromotedTweetUnblockAuthor
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetUnblockAuthor)
+  object PromotedT etUnblockAuthor
+      extends BaseAdsCallbackEngage nt(Act onType.ServerPromotedT etUnblockAuthor)
 
-  object PromotedTweetComposeTweet
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetComposeTweet)
+  object PromotedT etComposeT et
+      extends BaseAdsCallbackEngage nt(Act onType.ServerPromotedT etComposeT et)
 
-  object PromotedTweetClick extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetClick)
+  object PromotedT etCl ck extends BaseAdsCallbackEngage nt(Act onType.ServerPromotedT etCl ck)
 
-  object PromotedTweetReport extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetReport)
+  object PromotedT etReport extends BaseAdsCallbackEngage nt(Act onType.ServerPromotedT etReport)
 
-  object PromotedProfileFollow
-      extends ProfileAdsCallbackEngagement(ActionType.ServerPromotedProfileFollow)
+  object PromotedProf leFollow
+      extends Prof leAdsCallbackEngage nt(Act onType.ServerPromotedProf leFollow)
 
-  object PromotedProfileUnfollow
-      extends ProfileAdsCallbackEngagement(ActionType.ServerPromotedProfileUnfollow)
+  object PromotedProf leUnfollow
+      extends Prof leAdsCallbackEngage nt(Act onType.ServerPromotedProf leUnfollow)
 
-  object PromotedTweetMuteAuthor
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetMuteAuthor)
+  object PromotedT etMuteAuthor
+      extends BaseAdsCallbackEngage nt(Act onType.ServerPromotedT etMuteAuthor)
 
-  object PromotedTweetClickProfile
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetClickProfile)
+  object PromotedT etCl ckProf le
+      extends BaseAdsCallbackEngage nt(Act onType.ServerPromotedT etCl ckProf le)
 
-  object PromotedTweetClickHashtag
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetClickHashtag)
+  object PromotedT etCl ckHashtag
+      extends BaseAdsCallbackEngage nt(Act onType.ServerPromotedT etCl ckHashtag)
 
-  object PromotedTweetOpenLink
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetOpenLink) {
-    override def getItem(input: SpendServerEvent): Option[Item] = {
-      input.engagementEvent.flatMap { e =>
-        e.impressionData.flatMap { i =>
-          getPromotedTweetInfo(
-            i.promotedTweetId,
-            i.advertiserId,
-            tweetActionInfoOpt = Some(
-              TweetActionInfo.ServerPromotedTweetOpenLink(
-                ServerPromotedTweetOpenLink(url = e.url))))
+  object PromotedT etOpenL nk
+      extends BaseAdsCallbackEngage nt(Act onType.ServerPromotedT etOpenL nk) {
+    overr de def get em( nput: SpendServerEvent): Opt on[ em] = {
+       nput.engage ntEvent.flatMap { e =>
+        e. mpress onData.flatMap {   =>
+          getPromotedT et nfo(
+             .promotedT et d,
+             .advert ser d,
+            t etAct on nfoOpt = So (
+              T etAct on nfo.ServerPromotedT etOpenL nk(
+                ServerPromotedT etOpenL nk(url = e.url))))
         }
       }
     }
   }
 
-  object PromotedTweetCarouselSwipeNext
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetCarouselSwipeNext)
+  object PromotedT etCarouselSw peNext
+      extends BaseAdsCallbackEngage nt(Act onType.ServerPromotedT etCarouselSw peNext)
 
-  object PromotedTweetCarouselSwipePrevious
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetCarouselSwipePrevious)
+  object PromotedT etCarouselSw pePrev ous
+      extends BaseAdsCallbackEngage nt(Act onType.ServerPromotedT etCarouselSw pePrev ous)
 
-  object PromotedTweetLingerImpressionShort
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetLingerImpressionShort)
+  object PromotedT etL nger mpress onShort
+      extends BaseAdsCallbackEngage nt(Act onType.ServerPromotedT etL nger mpress onShort)
 
-  object PromotedTweetLingerImpressionMedium
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetLingerImpressionMedium)
+  object PromotedT etL nger mpress on d um
+      extends BaseAdsCallbackEngage nt(Act onType.ServerPromotedT etL nger mpress on d um)
 
-  object PromotedTweetLingerImpressionLong
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetLingerImpressionLong)
+  object PromotedT etL nger mpress onLong
+      extends BaseAdsCallbackEngage nt(Act onType.ServerPromotedT etL nger mpress onLong)
 
-  object PromotedTweetClickSpotlight
-      extends BaseTrendAdsCallbackEngagement(ActionType.ServerPromotedTweetClickSpotlight)
+  object PromotedT etCl ckSpotl ght
+      extends BaseTrendAdsCallbackEngage nt(Act onType.ServerPromotedT etCl ckSpotl ght)
 
-  object PromotedTweetViewSpotlight
-      extends BaseTrendAdsCallbackEngagement(ActionType.ServerPromotedTweetViewSpotlight)
+  object PromotedT etV ewSpotl ght
+      extends BaseTrendAdsCallbackEngage nt(Act onType.ServerPromotedT etV ewSpotl ght)
 
-  object PromotedTrendView
-      extends BaseTrendAdsCallbackEngagement(ActionType.ServerPromotedTrendView)
+  object PromotedTrendV ew
+      extends BaseTrendAdsCallbackEngage nt(Act onType.ServerPromotedTrendV ew)
 
-  object PromotedTrendClick
-      extends BaseTrendAdsCallbackEngagement(ActionType.ServerPromotedTrendClick)
+  object PromotedTrendCl ck
+      extends BaseTrendAdsCallbackEngage nt(Act onType.ServerPromotedTrendCl ck)
 
-  object PromotedTweetVideoPlayback25
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerPromotedTweetVideoPlayback25)
+  object PromotedT etV deoPlayback25
+      extends BaseV deoAdsCallbackEngage nt(Act onType.ServerPromotedT etV deoPlayback25)
 
-  object PromotedTweetVideoPlayback50
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerPromotedTweetVideoPlayback50)
+  object PromotedT etV deoPlayback50
+      extends BaseV deoAdsCallbackEngage nt(Act onType.ServerPromotedT etV deoPlayback50)
 
-  object PromotedTweetVideoPlayback75
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerPromotedTweetVideoPlayback75)
+  object PromotedT etV deoPlayback75
+      extends BaseV deoAdsCallbackEngage nt(Act onType.ServerPromotedT etV deoPlayback75)
 
-  object PromotedTweetVideoAdPlayback25
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerPromotedTweetVideoAdPlayback25)
+  object PromotedT etV deoAdPlayback25
+      extends BaseV deoAdsCallbackEngage nt(Act onType.ServerPromotedT etV deoAdPlayback25)
 
-  object PromotedTweetVideoAdPlayback50
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerPromotedTweetVideoAdPlayback50)
+  object PromotedT etV deoAdPlayback50
+      extends BaseV deoAdsCallbackEngage nt(Act onType.ServerPromotedT etV deoAdPlayback50)
 
-  object PromotedTweetVideoAdPlayback75
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerPromotedTweetVideoAdPlayback75)
+  object PromotedT etV deoAdPlayback75
+      extends BaseV deoAdsCallbackEngage nt(Act onType.ServerPromotedT etV deoAdPlayback75)
 
-  object TweetVideoAdPlayback25
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerTweetVideoAdPlayback25)
+  object T etV deoAdPlayback25
+      extends BaseV deoAdsCallbackEngage nt(Act onType.ServerT etV deoAdPlayback25)
 
-  object TweetVideoAdPlayback50
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerTweetVideoAdPlayback50)
+  object T etV deoAdPlayback50
+      extends BaseV deoAdsCallbackEngage nt(Act onType.ServerT etV deoAdPlayback50)
 
-  object TweetVideoAdPlayback75
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerTweetVideoAdPlayback75)
+  object T etV deoAdPlayback75
+      extends BaseV deoAdsCallbackEngage nt(Act onType.ServerT etV deoAdPlayback75)
 
-  object PromotedTweetDismissWithoutReason
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetDismissWithoutReason)
+  object PromotedT etD sm ssW houtReason
+      extends BaseAdsCallbackEngage nt(Act onType.ServerPromotedT etD sm ssW houtReason)
 
-  object PromotedTweetDismissUninteresting
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetDismissUninteresting)
+  object PromotedT etD sm ssUn nterest ng
+      extends BaseAdsCallbackEngage nt(Act onType.ServerPromotedT etD sm ssUn nterest ng)
 
-  object PromotedTweetDismissRepetitive
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetDismissRepetitive)
+  object PromotedT etD sm ssRepet  ve
+      extends BaseAdsCallbackEngage nt(Act onType.ServerPromotedT etD sm ssRepet  ve)
 
-  object PromotedTweetDismissSpam
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetDismissSpam)
+  object PromotedT etD sm ssSpam
+      extends BaseAdsCallbackEngage nt(Act onType.ServerPromotedT etD sm ssSpam)
 }

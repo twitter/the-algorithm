@@ -1,60 +1,60 @@
-package com.twitter.home_mixer.product.for_you.param
+package com.tw ter.ho _m xer.product.for_ .param
 
-import com.twitter.home_mixer.param.decider.DeciderKey
-import com.twitter.home_mixer.product.for_you.param.ForYouParam._
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.servo.decider.DeciderKeyName
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.param.dec der.Dec derKey
+ mport com.tw ter.ho _m xer.product.for_ .param.For Param._
+ mport com.tw ter.product_m xer.core.product.ProductParamConf g
+ mport com.tw ter.servo.dec der.Dec derKeyNa 
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ForYouParamConfig @Inject() () extends ProductParamConfig {
-  override val enabledDeciderKey: DeciderKeyName = DeciderKey.EnableForYouProduct
-  override val supportedClientFSName: String = SupportedClientFSName
+@S ngleton
+class For ParamConf g @ nject() () extends ProductParamConf g {
+  overr de val enabledDec derKey: Dec derKeyNa  = Dec derKey.EnableFor Product
+  overr de val supportedCl entFSNa : Str ng = SupportedCl entFSNa 
 
-  override val booleanDeciderOverrides = Seq(
-    EnableScoredTweetsCandidatePipelineParam
+  overr de val booleanDec derOverr des = Seq(
+    EnableScoredT etsCand dateP pel neParam
   )
 
-  override val booleanFSOverrides = Seq(
-    ClearCacheOnPtr.EnableParam,
-    EnableFlipInjectionModuleCandidatePipelineParam,
-    EnablePushToHomeMixerPipelineParam,
-    EnableScoredTweetsMixerPipelineParam,
-    EnableServedCandidateKafkaPublishingParam,
-    EnableTimelineScorerCandidatePipelineParam,
-    EnableTopicSocialContextFilterParam,
-    EnableVerifiedAuthorSocialContextBypassParam,
-    EnableWhoToFollowCandidatePipelineParam,
-    EnableWhoToSubscribeCandidatePipelineParam,
-    EnableTweetPreviewsCandidatePipelineParam,
-    EnableClearCacheOnPushToHome
+  overr de val booleanFSOverr des = Seq(
+    ClearCac OnPtr.EnableParam,
+    EnableFl p nject onModuleCand dateP pel neParam,
+    EnablePushToHo M xerP pel neParam,
+    EnableScoredT etsM xerP pel neParam,
+    EnableServedCand dateKafkaPubl sh ngParam,
+    EnableT  l neScorerCand dateP pel neParam,
+    EnableTop cSoc alContextF lterParam,
+    EnableVer f edAuthorSoc alContextBypassParam,
+    EnableWhoToFollowCand dateP pel neParam,
+    EnableWhoToSubscr beCand dateP pel neParam,
+    EnableT etPrev ewsCand dateP pel neParam,
+    EnableClearCac OnPushToHo 
   )
 
-  override val boundedIntFSOverrides = Seq(
-    AdsNumOrganicItemsParam,
-    ClearCacheOnPtr.MinEntriesParam,
-    FlipInlineInjectionModulePosition,
+  overr de val bounded ntFSOverr des = Seq(
+    AdsNumOrgan c emsParam,
+    ClearCac OnPtr.M nEntr esParam,
+    Fl p nl ne nject onModulePos  on,
     ServerMaxResultsParam,
-    WhoToFollowPositionParam,
-    WhoToSubscribePositionParam,
-    TweetPreviewsPositionParam,
-    TweetPreviewsMaxCandidatesParam
+    WhoToFollowPos  onParam,
+    WhoToSubscr bePos  onParam,
+    T etPrev ewsPos  onParam,
+    T etPrev ewsMaxCand datesParam
   )
 
-  override val stringFSOverrides = Seq(
-    WhoToFollowDisplayLocationParam,
-    ExperimentStatsParam
+  overr de val str ngFSOverr des = Seq(
+    WhoToFollowD splayLocat onParam,
+    Exper  ntStatsParam
   )
 
-  override val boundedDurationFSOverrides = Seq(
-    WhoToFollowMinInjectionIntervalParam,
-    WhoToSubscribeMinInjectionIntervalParam,
-    TweetPreviewsMinInjectionIntervalParam
+  overr de val boundedDurat onFSOverr des = Seq(
+    WhoToFollowM n nject on ntervalParam,
+    WhoToSubscr beM n nject on ntervalParam,
+    T etPrev ewsM n nject on ntervalParam
   )
 
-  override val enumFSOverrides = Seq(
-    WhoToFollowDisplayTypeIdParam,
-    WhoToSubscribeDisplayTypeIdParam
+  overr de val enumFSOverr des = Seq(
+    WhoToFollowD splayType dParam,
+    WhoToSubscr beD splayType dParam
   )
 }

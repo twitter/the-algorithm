@@ -1,55 +1,55 @@
-package com.twitter.search.earlybird;
+package com.tw ter.search.earlyb rd;
 
-import org.apache.zookeeper.KeeperException;
+ mport org.apac .zookeeper.KeeperExcept on;
 
-import com.twitter.common.zookeeper.ServerSet;
-import com.twitter.common.zookeeper.ZooKeeperClient;
+ mport com.tw ter.common.zookeeper.ServerSet;
+ mport com.tw ter.common.zookeeper.ZooKeeperCl ent;
 
 /**
- * Represents a server that can add and remove itself from a server set.
+ * Represents a server that can add and remove  self from a server set.
  */
-public interface ServerSetMember {
+publ c  nterface ServerSet mber {
   /**
-   * Makes this server join its server set.
+   * Makes t  server jo n  s server set.
    *
-   * @throws ServerSet.UpdateException
-   * @param requestSource
+   * @throws ServerSet.UpdateExcept on
+   * @param requestS ce
    */
-  void joinServerSet(String requestSource) throws ServerSet.UpdateException;
+  vo d jo nServerSet(Str ng requestS ce) throws ServerSet.UpdateExcept on;
 
   /**
-   * Makes this server leave its server set.
+   * Makes t  server leave  s server set.
    *
-   * @throws ServerSet.UpdateException
-   * @param requestSource
+   * @throws ServerSet.UpdateExcept on
+   * @param requestS ce
    */
-  void leaveServerSet(String requestSource) throws ServerSet.UpdateException;
+  vo d leaveServerSet(Str ng requestS ce) throws ServerSet.UpdateExcept on;
 
   /**
-   * Gets and returns the current number of members in this server's server set.
+   * Gets and returns t  current number of  mbers  n t  server's server set.
    *
-   * @return number of members currently in this host's server set.
-   * @throws InterruptedException
-   * @throws ZooKeeperClient.ZooKeeperConnectionException
-   * @throws KeeperException
+   * @return number of  mbers currently  n t  host's server set.
+   * @throws  nterruptedExcept on
+   * @throws ZooKeeperCl ent.ZooKeeperConnect onExcept on
+   * @throws KeeperExcept on
    */
-  int getNumberOfServerSetMembers() throws InterruptedException,
-      ZooKeeperClient.ZooKeeperConnectionException, KeeperException;
+   nt getNumberOfServerSet mbers() throws  nterruptedExcept on,
+      ZooKeeperCl ent.ZooKeeperConnect onExcept on, KeeperExcept on;
 
   /**
-   * Checks if this earlybird is in the server set.
+   * C cks  f t  earlyb rd  s  n t  server set.
    *
-   * @return true if it is, false otherwise.
+   * @return true  f    s, false ot rw se.
    */
-  boolean isInServerSet();
+  boolean  s nServerSet();
 
   /**
-   * Should only be called for Archive Earlybirds.
+   * Should only be called for Arch ve Earlyb rds.
    *
-   * Join ServerSet for ServiceProxy with a named admin port and with a zookeeper path that Service
-   * Proxy can translate to a domain name label that is less than 64 characters (due to the size
-   * limit for domain name labels described here: https://tools.ietf.org/html/rfc1035)
-   * This will allow us to access Earlybirds that are not on mesos via ServiceProxy.
+   * Jo n ServerSet for Serv ceProxy w h a na d adm n port and w h a zookeeper path that Serv ce
+   * Proxy can translate to a doma n na  label that  s less than 64 characters (due to t  s ze
+   * l m  for doma n na  labels descr bed  re: https://tools. etf.org/html/rfc1035)
+   * T  w ll allow us to access Earlyb rds that are not on  sos v a Serv ceProxy.
    */
-  void joinServerSetForServiceProxy();
+  vo d jo nServerSetForServ ceProxy();
 }

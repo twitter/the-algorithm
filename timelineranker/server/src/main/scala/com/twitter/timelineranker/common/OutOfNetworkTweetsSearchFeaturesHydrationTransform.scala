@@ -1,31 +1,31 @@
-package com.twitter.timelineranker.common
+package com.tw ter.t  l neranker.common
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.HydratedCandidatesAndFeaturesEnvelope
-import com.twitter.timelines.earlybird.common.utils.EarlybirdFeaturesHydrator
-import com.twitter.util.Future
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t  l neranker.core.HydratedCand datesAndFeaturesEnvelope
+ mport com.tw ter.t  l nes.earlyb rd.common.ut ls.Earlyb rdFeaturesHydrator
+ mport com.tw ter.ut l.Future
 
-object OutOfNetworkTweetsSearchFeaturesHydrationTransform
+object OutOfNetworkT etsSearchFeaturesHydrat onTransform
     extends FutureArrow[
-      HydratedCandidatesAndFeaturesEnvelope,
-      HydratedCandidatesAndFeaturesEnvelope
+      HydratedCand datesAndFeaturesEnvelope,
+      HydratedCand datesAndFeaturesEnvelope
     ] {
-  override def apply(
-    request: HydratedCandidatesAndFeaturesEnvelope
-  ): Future[HydratedCandidatesAndFeaturesEnvelope] = {
-    val featuresByTweetId = EarlybirdFeaturesHydrator.hydrate(
-      searcherUserId = request.candidateEnvelope.query.userId,
-      searcherProfileInfo = request.userProfileInfo,
-      followedUserIds = Seq.empty,
-      mutuallyFollowingUserIds = Set.empty,
+  overr de def apply(
+    request: HydratedCand datesAndFeaturesEnvelope
+  ): Future[HydratedCand datesAndFeaturesEnvelope] = {
+    val featuresByT et d = Earlyb rdFeaturesHydrator.hydrate(
+      searc rUser d = request.cand dateEnvelope.query.user d,
+      searc rProf le nfo = request.userProf le nfo,
+      follo dUser ds = Seq.empty,
+      mutuallyFollow ngUser ds = Set.empty,
       userLanguages = request.userLanguages,
-      uiLanguageCode = request.candidateEnvelope.query.deviceContext.flatMap(_.languageCode),
-      searchResults = request.candidateEnvelope.searchResults,
-      sourceTweetSearchResults = Seq.empty,
-      tweets = request.candidateEnvelope.hydratedTweets.outerTweets,
-      sourceTweets = Seq.empty
+      u LanguageCode = request.cand dateEnvelope.query.dev ceContext.flatMap(_.languageCode),
+      searchResults = request.cand dateEnvelope.searchResults,
+      s ceT etSearchResults = Seq.empty,
+      t ets = request.cand dateEnvelope.hydratedT ets.outerT ets,
+      s ceT ets = Seq.empty
     )
 
-    Future.value(request.copy(features = featuresByTweetId))
+    Future.value(request.copy(features = featuresByT et d))
   }
 }

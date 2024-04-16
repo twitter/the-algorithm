@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted
 
-sealed trait DisclosureType
+sealed tra  D sclosureType
 
-case object NoDisclosure extends DisclosureType
-case object Political extends DisclosureType
-case object Earned extends DisclosureType
-case object Issue extends DisclosureType
+case object NoD sclosure extends D sclosureType
+case object Pol  cal extends D sclosureType
+case object Earned extends D sclosureType
+case object  ssue extends D sclosureType

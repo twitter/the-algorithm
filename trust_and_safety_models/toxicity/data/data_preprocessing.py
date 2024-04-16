@@ -1,118 +1,118 @@
-from abc import ABC
-import re
+from abc  mport ABC
+ mport re
 
-from toxicity_ml_pipeline.settings.hcomp_settings import TOXIC_35
+from tox c y_ml_p pel ne.sett ngs.hcomp_sett ngs  mport TOX C_35
 
-import numpy as np
+ mport numpy as np
 
 
-TOXIC_35_set = set(TOXIC_35)
+TOX C_35_set = set(TOX C_35)
 
 url_group = r"(\bhttps?:\/\/\S+)"
-mention_group = r"(\B@\S+)"
-urls_mentions_re = re.compile(url_group + r"|" + mention_group, re.IGNORECASE)
-url_re = re.compile(url_group, re.IGNORECASE)
-mention_re = re.compile(mention_group, re.IGNORECASE)
-newline_re = re.compile(r"\n+", re.IGNORECASE)
-and_re = re.compile(r"&\s?amp\s?;", re.IGNORECASE)
+ nt on_group = r"(\B@\S+)"
+urls_ nt ons_re = re.comp le(url_group + r"|" +  nt on_group, re. GNORECASE)
+url_re = re.comp le(url_group, re. GNORECASE)
+ nt on_re = re.comp le( nt on_group, re. GNORECASE)
+newl ne_re = re.comp le(r"\n+", re. GNORECASE)
+and_re = re.comp le(r"&\s?amp\s?;", re. GNORECASE)
 
 
-class DataframeCleaner(ABC):
-  def __init__(self):
+class Datafra Cleaner(ABC):
+  def __ n __(self):
     pass
 
   def _clean(self, df):
     return df
 
-  def _systematic_preprocessing(self, df):
-    df.reset_index(inplace=True, drop=True)
-    if "media_url" in df.columns:
-      print(".... removing tweets with media")
-      df.drop(df[~df.media_url.isna()].index, inplace=True, axis=0)
+  def _systemat c_preprocess ng(self, df):
+    df.reset_ ndex( nplace=True, drop=True)
+     f " d a_url"  n df.columns:
+      pr nt(".... remov ng t ets w h  d a")
+      df.drop(df[~df. d a_url. sna()]. ndex,  nplace=True, ax s=0)
     else:
-      print("WARNING you are not removing tweets with media to train a BERT model.")
+      pr nt("WARN NG   are not remov ng t ets w h  d a to tra n a BERT model.")
 
-    print(".... deleting duplicates")
-    df.drop_duplicates("text", inplace=True, keep="last")
-    print(f"Got {df.shape[0]} after cleaning")
+    pr nt(".... delet ng dupl cates")
+    df.drop_dupl cates("text",  nplace=True, keep="last")
+    pr nt(f"Got {df.shape[0]} after clean ng")
 
-    return df.reset_index(inplace=False, drop=True)
+    return df.reset_ ndex( nplace=False, drop=True)
 
   def _postprocess(self, df, *args, **kwargs):
     return df
 
   def __call__(self, df, *args, **kwargs):
-    print(f"Got {df.shape[0]} before cleaning")
+    pr nt(f"Got {df.shape[0]} before clean ng")
 
     df["raw_text"] = df.text
     df = self._clean(df)
 
-    df = self._systematic_preprocessing(df)
+    df = self._systemat c_preprocess ng(df)
 
     return self._postprocess(df, *args, **kwargs)
 
 
-def mapping_func(el):
-  if el.aggregated_content in TOXIC_35_set:
+def mapp ng_func(el):
+   f el.aggregated_content  n TOX C_35_set:
     return 2
-  if el.label == 1:
+   f el.label == 1:
     return 1
   return 0
 
 
-class DefaultENNoPreprocessor(DataframeCleaner):
+class DefaultENNoPreprocessor(Datafra Cleaner):
   def _postprocess(self, df, *args, **kwargs):
-    if "toxic_count" in df.columns and "non_toxic_count" in df.columns:
-      df["vote"] = df.toxic_count / (df.toxic_count + df.non_toxic_count)
-      df["agreement_rate"] = np.max((df.vote, 1 - df.vote), axis=0)
+     f "tox c_count"  n df.columns and "non_tox c_count"  n df.columns:
+      df["vote"] = df.tox c_count / (df.tox c_count + df.non_tox c_count)
+      df["agree nt_rate"] = np.max((df.vote, 1 - df.vote), ax s=0)
 
-    if "label_column" in kwargs and kwargs["label_column"] != "label":
-      if kwargs["label_column"] == "aggregated_content":
-        print("Replacing v3 label by v3.5 label.")
-        if "num_classes" in kwargs and kwargs["num_classes"] < 3:
-          df["label"] = np.where(df.aggregated_content.isin(TOXIC_35_set), 1, 0)
-        elif "num_classes" in kwargs and kwargs["num_classes"] == 3:
-          print("Making it a 3-class pb")
-          df["label"] = df.apply(mapping_func, axis=1)
+     f "label_column"  n kwargs and kwargs["label_column"] != "label":
+       f kwargs["label_column"] == "aggregated_content":
+        pr nt("Replac ng v3 label by v3.5 label.")
+         f "num_classes"  n kwargs and kwargs["num_classes"] < 3:
+          df["label"] = np.w re(df.aggregated_content. s n(TOX C_35_set), 1, 0)
+        el f "num_classes"  n kwargs and kwargs["num_classes"] == 3:
+          pr nt("Mak ng   a 3-class pb")
+          df["label"] = df.apply(mapp ng_func, ax s=1)
         else:
-          raise NotImplementedError
-      elif kwargs['label_column'] in df.columns:
+          ra se Not mple ntedError
+      el f kwargs['label_column']  n df.columns:
         df['label'] = df[kwargs['label_column']]
-        if kwargs['class_weight'] is not None:
-          df["class_weight"] = np.where(df['label'] == 1, 1-kwargs['class_weight'],
-                                        kwargs['class_weight'])
+         f kwargs['class_  ght']  s not None:
+          df["class_  ght"] = np.w re(df['label'] == 1, 1-kwargs['class_  ght'],
+                                        kwargs['class_  ght'])
       else:
-        raise NotImplementedError
+        ra se Not mple ntedError
 
-    if "filter_low_agreements" in kwargs and kwargs["filter_low_agreements"] == True:
-      df.drop(df[(df.agreement_rate <= 0.6)].index, axis=0, inplace=True)
-      raise NotImplementedError
+     f "f lter_low_agree nts"  n kwargs and kwargs["f lter_low_agree nts"] == True:
+      df.drop(df[(df.agree nt_rate <= 0.6)]. ndex, ax s=0,  nplace=True)
+      ra se Not mple ntedError
 
     return df
 
 
 class DefaultENPreprocessor(DefaultENNoPreprocessor):
   def _clean(self, adhoc_df):
-    print(
-      ".... removing \\n and replacing @mentions and URLs by placeholders. "
-      "Emoji filtering is not done."
+    pr nt(
+      ".... remov ng \\n and replac ng @ nt ons and URLs by placeholders. "
+      "Emoj  f lter ng  s not done."
     )
-    adhoc_df["text"] = [url_re.sub("URL", tweet) for tweet in adhoc_df.raw_text.values]
-    adhoc_df["text"] = [mention_re.sub("MENTION", tweet) for tweet in adhoc_df.text.values]
+    adhoc_df["text"] = [url_re.sub("URL", t et) for t et  n adhoc_df.raw_text.values]
+    adhoc_df["text"] = [ nt on_re.sub("MENT ON", t et) for t et  n adhoc_df.text.values]
     adhoc_df["text"] = [
-      newline_re.sub(" ", tweet).lstrip(" ").rstrip(" ") for tweet in adhoc_df.text.values
+      newl ne_re.sub(" ", t et).lstr p(" ").rstr p(" ") for t et  n adhoc_df.text.values
     ]
-    adhoc_df["text"] = [and_re.sub("&", tweet) for tweet in adhoc_df.text.values]
+    adhoc_df["text"] = [and_re.sub("&", t et) for t et  n adhoc_df.text.values]
 
     return adhoc_df
 
 
-class Defaulti18nPreprocessor(DataframeCleaner):
+class Default 18nPreprocessor(Datafra Cleaner):
   def _clean(self, adhoc_df):
-    print(".... removing @mentions, \\n and URLs. Emoji filtering is not done.")
-    adhoc_df["text"] = [urls_mentions_re.sub("", tweet) for tweet in adhoc_df.raw_text.values]
+    pr nt(".... remov ng @ nt ons, \\n and URLs. Emoj  f lter ng  s not done.")
+    adhoc_df["text"] = [urls_ nt ons_re.sub("", t et) for t et  n adhoc_df.raw_text.values]
     adhoc_df["text"] = [
-      newline_re.sub(" ", tweet).lstrip(" ").rstrip(" ") for tweet in adhoc_df.text.values
+      newl ne_re.sub(" ", t et).lstr p(" ").rstr p(" ") for t et  n adhoc_df.text.values
     ]
 
     return adhoc_df

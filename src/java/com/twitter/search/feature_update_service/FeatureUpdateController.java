@@ -1,245 +1,245 @@
-package com.twitter.search.feature_update_service;
+package com.tw ter.search.feature_update_serv ce;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import javax.inject.Inject;
-import javax.inject.Named;
+ mport java.ut l.Arrays;
+ mport java.ut l.Collect ons;
+ mport java.ut l.L st;
+ mport javax. nject. nject;
+ mport javax. nject.Na d;
 
-import scala.runtime.BoxedUnit;
+ mport scala.runt  .BoxedUn ;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
+ mport com.google.common.collect. mmutableMap;
+ mport com.google.common.collect.L sts;
 
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .kafka.cl ents.producer.ProducerRecord;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.decider.Decider;
-import com.twitter.finagle.mux.ClientDiscardedRequestException;
-import com.twitter.finagle.thrift.ClientId;
-import com.twitter.finatra.kafka.producers.BlockingFinagleKafkaProducer;
-import com.twitter.inject.annotations.Flag;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEventType;
-import com.twitter.search.feature_update_service.modules.EarlybirdUtilModule;
-import com.twitter.search.feature_update_service.modules.FinagleKafkaProducerModule;
-import com.twitter.search.feature_update_service.stats.FeatureUpdateStats;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateRequest;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateResponse;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateResponseCode;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateService;
-import com.twitter.search.feature_update_service.util.FeatureUpdateValidator;
-import com.twitter.search.ingester.model.IngesterThriftVersionedEvents;
-import com.twitter.tweetypie.thriftjava.GetTweetFieldsOptions;
-import com.twitter.tweetypie.thriftjava.GetTweetFieldsRequest;
-import com.twitter.tweetypie.thriftjava.TweetInclude;
-import com.twitter.tweetypie.thriftjava.TweetService;
-import com.twitter.tweetypie.thriftjava.TweetVisibilityPolicy;
-import com.twitter.util.ExecutorServiceFuturePool;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
-import com.twitter.util.Futures;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers on;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.f nagle.mux.Cl entD scardedRequestExcept on;
+ mport com.tw ter.f nagle.thr ft.Cl ent d;
+ mport com.tw ter.f natra.kafka.producers.Block ngF nagleKafkaProducer;
+ mport com.tw ter. nject.annotat ons.Flag;
+ mport com.tw ter.search.common.dec der.Dec derUt l;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftVers onedEvents;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ft ndex ngEvent;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ft ndex ngEventType;
+ mport com.tw ter.search.feature_update_serv ce.modules.Earlyb rdUt lModule;
+ mport com.tw ter.search.feature_update_serv ce.modules.F nagleKafkaProducerModule;
+ mport com.tw ter.search.feature_update_serv ce.stats.FeatureUpdateStats;
+ mport com.tw ter.search.feature_update_serv ce.thr ftjava.FeatureUpdateRequest;
+ mport com.tw ter.search.feature_update_serv ce.thr ftjava.FeatureUpdateResponse;
+ mport com.tw ter.search.feature_update_serv ce.thr ftjava.FeatureUpdateResponseCode;
+ mport com.tw ter.search.feature_update_serv ce.thr ftjava.FeatureUpdateServ ce;
+ mport com.tw ter.search.feature_update_serv ce.ut l.FeatureUpdateVal dator;
+ mport com.tw ter.search. ngester.model. ngesterThr ftVers onedEvents;
+ mport com.tw ter.t etyp e.thr ftjava.GetT etF eldsOpt ons;
+ mport com.tw ter.t etyp e.thr ftjava.GetT etF eldsRequest;
+ mport com.tw ter.t etyp e.thr ftjava.T et nclude;
+ mport com.tw ter.t etyp e.thr ftjava.T etServ ce;
+ mport com.tw ter.t etyp e.thr ftjava.T etV s b l yPol cy;
+ mport com.tw ter.ut l.ExecutorServ ceFuturePool;
+ mport com.tw ter.ut l.Funct on;
+ mport com.tw ter.ut l.Future;
+ mport com.tw ter.ut l.Futures;
 
-import static com.twitter.tweetypie.thriftjava.Tweet._Fields.CORE_DATA;
+ mport stat c com.tw ter.t etyp e.thr ftjava.T et._F elds.CORE_DATA;
 
-public class FeatureUpdateController implements FeatureUpdateService.ServiceIface {
-  private static final Logger LOG = LoggerFactory.getLogger(FeatureUpdateController.class);
-  private static final Logger REQUEST_LOG =
-      LoggerFactory.getLogger("feature_update_service_requests");
-  private static final String KAFKA_SEND_COUNT_FORMAT = "kafka_%s_partition_%d_send_count";
-  private static final String WRITE_TO_KAFKA_DECIDER_KEY = "write_events_to_kafka_update_events";
-  private static final String WRITE_TO_KAFKA_DECIDER_KEY_REALTIME_CG =
-          "write_events_to_kafka_update_events_realtime_cg";
+publ c class FeatureUpdateController  mple nts FeatureUpdateServ ce.Serv ce face {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(FeatureUpdateController.class);
+  pr vate stat c f nal Logger REQUEST_LOG =
+      LoggerFactory.getLogger("feature_update_serv ce_requests");
+  pr vate stat c f nal Str ng KAFKA_SEND_COUNT_FORMAT = "kafka_%s_part  on_%d_send_count";
+  pr vate stat c f nal Str ng WR TE_TO_KAFKA_DEC DER_KEY = "wr e_events_to_kafka_update_events";
+  pr vate stat c f nal Str ng WR TE_TO_KAFKA_DEC DER_KEY_REALT ME_CG =
+          "wr e_events_to_kafka_update_events_realt  _cg";
 
-  private final SearchRateCounter droppedKafkaUpdateEvents =
+  pr vate f nal SearchRateCounter droppedKafkaUpdateEvents =
       SearchRateCounter.export("dropped_kafka_update_events");
 
-  private final SearchRateCounter droppedKafkaUpdateEventsRealtimeCg =
-          SearchRateCounter.export("dropped_kafka_update_events_realtime_cg");
-  private final Clock clock;
-  private final Decider decider;
-  private final BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> kafkaProducer;
-  private final BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> kafkaProducerRealtimeCg;
+  pr vate f nal SearchRateCounter droppedKafkaUpdateEventsRealt  Cg =
+          SearchRateCounter.export("dropped_kafka_update_events_realt  _cg");
+  pr vate f nal Clock clock;
+  pr vate f nal Dec der dec der;
+  pr vate f nal Block ngF nagleKafkaProducer<Long, Thr ftVers onedEvents> kafkaProducer;
+  pr vate f nal Block ngF nagleKafkaProducer<Long, Thr ftVers onedEvents> kafkaProducerRealt  Cg;
 
-  private final List<PenguinVersion> penguinVersions;
-  private final FeatureUpdateStats stats;
-  private final String kafkaUpdateEventsTopicName;
-  private final String kafkaUpdateEventsTopicNameRealtimeCg;
-  private final ExecutorServiceFuturePool futurePool;
-  private final TweetService.ServiceIface tweetService;
+  pr vate f nal L st<Pengu nVers on> pengu nVers ons;
+  pr vate f nal FeatureUpdateStats stats;
+  pr vate f nal Str ng kafkaUpdateEventsTop cNa ;
+  pr vate f nal Str ng kafkaUpdateEventsTop cNa Realt  Cg;
+  pr vate f nal ExecutorServ ceFuturePool futurePool;
+  pr vate f nal T etServ ce.Serv ce face t etServ ce;
 
-  @Inject
-  public FeatureUpdateController(
+  @ nject
+  publ c FeatureUpdateController(
       Clock clock,
-      Decider decider,
-      @Named("KafkaProducer")
-      BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> kafkaProducer,
-      @Named("KafkaProducerRealtimeCg")
-      BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> kafkaProducerRealtimeCg,
-      @Flag(EarlybirdUtilModule.PENGUIN_VERSIONS_FLAG) String penguinVersions,
+      Dec der dec der,
+      @Na d("KafkaProducer")
+      Block ngF nagleKafkaProducer<Long, Thr ftVers onedEvents> kafkaProducer,
+      @Na d("KafkaProducerRealt  Cg")
+      Block ngF nagleKafkaProducer<Long, Thr ftVers onedEvents> kafkaProducerRealt  Cg,
+      @Flag(Earlyb rdUt lModule.PENGU N_VERS ONS_FLAG) Str ng pengu nVers ons,
       FeatureUpdateStats stats,
-      @Flag(FinagleKafkaProducerModule.KAFKA_TOPIC_NAME_UPDATE_EVENTS_FLAG)
-      String kafkaUpdateEventsTopicName,
-      @Flag(FinagleKafkaProducerModule.KAFKA_TOPIC_NAME_UPDATE_EVENTS_FLAG_REALTIME_CG)
-      String kafkaUpdateEventsTopicNameRealtimeCg,
-      ExecutorServiceFuturePool futurePool,
-      TweetService.ServiceIface tweetService
+      @Flag(F nagleKafkaProducerModule.KAFKA_TOP C_NAME_UPDATE_EVENTS_FLAG)
+      Str ng kafkaUpdateEventsTop cNa ,
+      @Flag(F nagleKafkaProducerModule.KAFKA_TOP C_NAME_UPDATE_EVENTS_FLAG_REALT ME_CG)
+      Str ng kafkaUpdateEventsTop cNa Realt  Cg,
+      ExecutorServ ceFuturePool futurePool,
+      T etServ ce.Serv ce face t etServ ce
   ) {
-    this.clock = clock;
-    this.decider = decider;
-    this.kafkaProducer = kafkaProducer;
-    this.kafkaProducerRealtimeCg = kafkaProducerRealtimeCg;
-    this.penguinVersions = getPenguinVersions(penguinVersions);
-    this.stats = stats;
-    this.kafkaUpdateEventsTopicName = kafkaUpdateEventsTopicName;
-    this.kafkaUpdateEventsTopicNameRealtimeCg = kafkaUpdateEventsTopicNameRealtimeCg;
-    this.futurePool = futurePool;
-    this.tweetService = tweetService;
+    t .clock = clock;
+    t .dec der = dec der;
+    t .kafkaProducer = kafkaProducer;
+    t .kafkaProducerRealt  Cg = kafkaProducerRealt  Cg;
+    t .pengu nVers ons = getPengu nVers ons(pengu nVers ons);
+    t .stats = stats;
+    t .kafkaUpdateEventsTop cNa  = kafkaUpdateEventsTop cNa ;
+    t .kafkaUpdateEventsTop cNa Realt  Cg = kafkaUpdateEventsTop cNa Realt  Cg;
+    t .futurePool = futurePool;
+    t .t etServ ce = t etServ ce;
   }
 
-  @Override
-  public Future<FeatureUpdateResponse> process(FeatureUpdateRequest featureUpdate) {
-    long requestStartTimeMillis = clock.nowMillis();
+  @Overr de
+  publ c Future<FeatureUpdateResponse> process(FeatureUpdateRequest featureUpdate) {
+    long requestStartT  M ll s = clock.nowM ll s();
 
-    // Export overall and per-client request rate stats
-    final String requestClientId;
-    if (featureUpdate.getRequestClientId() != null
-        && !featureUpdate.getRequestClientId().isEmpty()) {
-      requestClientId = featureUpdate.getRequestClientId();
-    } else if (ClientId.current().nonEmpty()) {
-      requestClientId =  ClientId.current().get().name();
+    // Export overall and per-cl ent request rate stats
+    f nal Str ng requestCl ent d;
+     f (featureUpdate.getRequestCl ent d() != null
+        && !featureUpdate.getRequestCl ent d(). sEmpty()) {
+      requestCl ent d = featureUpdate.getRequestCl ent d();
+    } else  f (Cl ent d.current().nonEmpty()) {
+      requestCl ent d =  Cl ent d.current().get().na ();
     } else {
-      requestClientId = "unknown";
+      requestCl ent d = "unknown";
     }
-    stats.clientRequest(requestClientId);
-    REQUEST_LOG.info("{} {}", requestClientId, featureUpdate);
+    stats.cl entRequest(requestCl ent d);
+    REQUEST_LOG. nfo("{} {}", requestCl ent d, featureUpdate);
 
-    FeatureUpdateResponse errorResponse = FeatureUpdateValidator.validate(featureUpdate);
-    if (errorResponse != null) {
-      stats.clientResponse(requestClientId, errorResponse.getResponseCode());
-      LOG.warn("client error: clientID {} - reason: {}",
-          requestClientId, errorResponse.getDetailMessage());
+    FeatureUpdateResponse errorResponse = FeatureUpdateVal dator.val date(featureUpdate);
+     f (errorResponse != null) {
+      stats.cl entResponse(requestCl ent d, errorResponse.getResponseCode());
+      LOG.warn("cl ent error: cl ent D {} - reason: {}",
+          requestCl ent d, errorResponse.getDeta l ssage());
       return Future.value(errorResponse);
     }
 
-    ThriftIndexingEvent event = featureUpdate.getEvent();
-    return writeToKafka(event, requestStartTimeMillis)
-        .map(responsesList -> {
-          stats.clientResponse(requestClientId, FeatureUpdateResponseCode.SUCCESS);
-          // only when both Realtime & RealtimeCG succeed, then it will return a success flag
+    Thr ft ndex ngEvent event = featureUpdate.getEvent();
+    return wr eToKafka(event, requestStartT  M ll s)
+        .map(responsesL st -> {
+          stats.cl entResponse(requestCl ent d, FeatureUpdateResponseCode.SUCCESS);
+          // only w n both Realt   & Realt  CG succeed, t n   w ll return a success flag
           return new FeatureUpdateResponse(FeatureUpdateResponseCode.SUCCESS);
         })
-        .handle(Function.func(throwable -> {
+        .handle(Funct on.func(throwable -> {
           FeatureUpdateResponseCode responseCode;
-          // if either Realtime or RealtimeCG throws an exception, it will return a failure
-          if (throwable instanceof ClientDiscardedRequestException) {
-            responseCode = FeatureUpdateResponseCode.CLIENT_CANCEL_ERROR;
-            LOG.info("ClientDiscardedRequestException received from client: " + requestClientId,
+          //  f e  r Realt   or Realt  CG throws an except on,   w ll return a fa lure
+           f (throwable  nstanceof Cl entD scardedRequestExcept on) {
+            responseCode = FeatureUpdateResponseCode.CL ENT_CANCEL_ERROR;
+            LOG. nfo("Cl entD scardedRequestExcept on rece ved from cl ent: " + requestCl ent d,
                 throwable);
           } else {
-            responseCode = FeatureUpdateResponseCode.TRANSIENT_ERROR;
-            LOG.error("Error occurred while writing to output stream: "
-                + kafkaUpdateEventsTopicName + ", "
-                + kafkaUpdateEventsTopicNameRealtimeCg, throwable);
+            responseCode = FeatureUpdateResponseCode.TRANS ENT_ERROR;
+            LOG.error("Error occurred wh le wr  ng to output stream: "
+                + kafkaUpdateEventsTop cNa  + ", "
+                + kafkaUpdateEventsTop cNa Realt  Cg, throwable);
           }
-          stats.clientResponse(requestClientId, responseCode);
+          stats.cl entResponse(requestCl ent d, responseCode);
           return new FeatureUpdateResponse(responseCode)
-              .setDetailMessage(throwable.getMessage());
+              .setDeta l ssage(throwable.get ssage());
         }));
   }
 
   /**
-   * In writeToKafka(), we use Futures.collect() to aggregate results for two RPC calls
-   * Futures.collect() means that if either one of the Future fails then it will return an Exception
-   * only when both Realtime & RealtimeCG succeed, then it will return a success flag
-   * The FeatureUpdateResponse is more like an ACK message, and the upstream (feature update ingester)
-   * will not be affected much even if it failed (as long as the kafka message is written)
+   *  n wr eToKafka(),   use Futures.collect() to aggregate results for two RPC calls
+   * Futures.collect()  ans that  f e  r one of t  Future fa ls t n   w ll return an Except on
+   * only w n both Realt   & Realt  CG succeed, t n   w ll return a success flag
+   * T  FeatureUpdateResponse  s more l ke an ACK  ssage, and t  upstream (feature update  ngester)
+   * w ll not be affected much even  f   fa led (as long as t  kafka  ssage  s wr ten)
    */
-  private Future<List<BoxedUnit>> writeToKafka(ThriftIndexingEvent event,
-                                               long requestStartTimeMillis) {
-    return Futures.collect(Lists.newArrayList(
-        writeToKafkaInternal(event, WRITE_TO_KAFKA_DECIDER_KEY, droppedKafkaUpdateEvents,
-            kafkaUpdateEventsTopicName, -1, kafkaProducer),
-        Futures.flatten(getUserId(event.getUid()).map(
-            userId -> writeToKafkaInternal(event, WRITE_TO_KAFKA_DECIDER_KEY_REALTIME_CG,
-            droppedKafkaUpdateEventsRealtimeCg,
-            kafkaUpdateEventsTopicNameRealtimeCg, userId, kafkaProducerRealtimeCg)))));
+  pr vate Future<L st<BoxedUn >> wr eToKafka(Thr ft ndex ngEvent event,
+                                               long requestStartT  M ll s) {
+    return Futures.collect(L sts.newArrayL st(
+        wr eToKafka nternal(event, WR TE_TO_KAFKA_DEC DER_KEY, droppedKafkaUpdateEvents,
+            kafkaUpdateEventsTop cNa , -1, kafkaProducer),
+        Futures.flatten(getUser d(event.getU d()).map(
+            user d -> wr eToKafka nternal(event, WR TE_TO_KAFKA_DEC DER_KEY_REALT ME_CG,
+            droppedKafkaUpdateEventsRealt  Cg,
+            kafkaUpdateEventsTop cNa Realt  Cg, user d, kafkaProducerRealt  Cg)))));
 
   }
 
-  private Future<BoxedUnit> writeToKafkaInternal(ThriftIndexingEvent event, String deciderKey,
-     SearchRateCounter droppedStats, String topicName, long userId,
-     BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> producer) {
-    if (!DeciderUtil.isAvailableForRandomRecipient(decider, deciderKey)) {
-      droppedStats.increment();
-      return Future.Unit();
+  pr vate Future<BoxedUn > wr eToKafka nternal(Thr ft ndex ngEvent event, Str ng dec derKey,
+     SearchRateCounter droppedStats, Str ng top cNa , long user d,
+     Block ngF nagleKafkaProducer<Long, Thr ftVers onedEvents> producer) {
+     f (!Dec derUt l. sAva lableForRandomRec p ent(dec der, dec derKey)) {
+      droppedStats. ncre nt();
+      return Future.Un ();
     }
 
-    ProducerRecord<Long, ThriftVersionedEvents> producerRecord = new ProducerRecord<>(
-            topicName,
-            convertToThriftVersionedEvents(userId, event));
+    ProducerRecord<Long, Thr ftVers onedEvents> producerRecord = new ProducerRecord<>(
+            top cNa ,
+            convertToThr ftVers onedEvents(user d, event));
 
     try {
       return Futures.flatten(futurePool.apply(() ->
               producer.send(producerRecord)
                       .map(record -> {
-                        SearchCounter.export(String.format(
-                          KAFKA_SEND_COUNT_FORMAT, record.topic(), record.partition())).increment();
-                        return BoxedUnit.UNIT;
+                        SearchCounter.export(Str ng.format(
+                          KAFKA_SEND_COUNT_FORMAT, record.top c(), record.part  on())). ncre nt();
+                        return BoxedUn .UN T;
                       })));
-    } catch (Exception e) {
-      return Future.exception(e);
+    } catch (Except on e) {
+      return Future.except on(e);
     }
   }
 
-  private List<PenguinVersion> getPenguinVersions(String penguinVersionsStr) {
-    String[] tokens = penguinVersionsStr.split("\\s*,\\s*");
-    List<PenguinVersion> listOfPenguinVersions = Lists.newArrayListWithCapacity(tokens.length);
-    for (String token : tokens) {
-      listOfPenguinVersions.add(PenguinVersion.valueOf(token.toUpperCase()));
+  pr vate L st<Pengu nVers on> getPengu nVers ons(Str ng pengu nVers onsStr) {
+    Str ng[] tokens = pengu nVers onsStr.spl ("\\s*,\\s*");
+    L st<Pengu nVers on> l stOfPengu nVers ons = L sts.newArrayL stW hCapac y(tokens.length);
+    for (Str ng token : tokens) {
+      l stOfPengu nVers ons.add(Pengu nVers on.valueOf(token.toUpperCase()));
     }
-    LOG.info(String.format("Using Penguin Versions: %s", listOfPenguinVersions));
-    return listOfPenguinVersions;
+    LOG. nfo(Str ng.format("Us ng Pengu n Vers ons: %s", l stOfPengu nVers ons));
+    return l stOfPengu nVers ons;
   }
 
-  private Future<Long> getUserId(long tweetId) {
-    TweetInclude tweetInclude = new TweetInclude();
-    tweetInclude.setTweetFieldId(CORE_DATA.getThriftFieldId());
-    GetTweetFieldsOptions getTweetFieldsOptions = new GetTweetFieldsOptions().setTweet_includes(
-        Collections.singleton(tweetInclude)).setVisibilityPolicy(
-        TweetVisibilityPolicy.NO_FILTERING);
-    GetTweetFieldsRequest getTweetFieldsRequest = new GetTweetFieldsRequest().setTweetIds(
-        Arrays.asList(tweetId)).setOptions(getTweetFieldsOptions);
+  pr vate Future<Long> getUser d(long t et d) {
+    T et nclude t et nclude = new T et nclude();
+    t et nclude.setT etF eld d(CORE_DATA.getThr ftF eld d());
+    GetT etF eldsOpt ons getT etF eldsOpt ons = new GetT etF eldsOpt ons().setT et_ ncludes(
+        Collect ons.s ngleton(t et nclude)).setV s b l yPol cy(
+        T etV s b l yPol cy.NO_F LTER NG);
+    GetT etF eldsRequest getT etF eldsRequest = new GetT etF eldsRequest().setT et ds(
+        Arrays.asL st(t et d)).setOpt ons(getT etF eldsOpt ons);
     try {
-      return tweetService.get_tweet_fields(getTweetFieldsRequest).map(
-          tweetFieldsResults -> tweetFieldsResults.get(
-              0).tweetResult.getFound().tweet.core_data.user_id);
-    } catch (Exception e) {
-      return Future.exception(e);
+      return t etServ ce.get_t et_f elds(getT etF eldsRequest).map(
+          t etF eldsResults -> t etF eldsResults.get(
+              0).t etResult.getFound().t et.core_data.user_ d);
+    } catch (Except on e) {
+      return Future.except on(e);
     }
   }
 
-  private ThriftVersionedEvents convertToThriftVersionedEvents(
-      long userId, ThriftIndexingEvent event) {
-    ThriftIndexingEvent thriftIndexingEvent = event.deepCopy()
-        .setEventType(ThriftIndexingEventType.PARTIAL_UPDATE);
+  pr vate Thr ftVers onedEvents convertToThr ftVers onedEvents(
+      long user d, Thr ft ndex ngEvent event) {
+    Thr ft ndex ngEvent thr ft ndex ngEvent = event.deepCopy()
+        .setEventType(Thr ft ndex ngEventType.PART AL_UPDATE);
 
-    ImmutableMap.Builder<Byte, ThriftIndexingEvent> versionedEventsBuilder =
-        new ImmutableMap.Builder<>();
-    for (PenguinVersion penguinVersion : penguinVersions) {
-      versionedEventsBuilder.put(penguinVersion.getByteValue(), thriftIndexingEvent);
+     mmutableMap.Bu lder<Byte, Thr ft ndex ngEvent> vers onedEventsBu lder =
+        new  mmutableMap.Bu lder<>();
+    for (Pengu nVers on pengu nVers on : pengu nVers ons) {
+      vers onedEventsBu lder.put(pengu nVers on.getByteValue(), thr ft ndex ngEvent);
     }
 
-    IngesterThriftVersionedEvents thriftVersionedEvents =
-        new IngesterThriftVersionedEvents(userId, versionedEventsBuilder.build());
-    thriftVersionedEvents.setId(thriftIndexingEvent.getUid());
-    return thriftVersionedEvents;
+     ngesterThr ftVers onedEvents thr ftVers onedEvents =
+        new  ngesterThr ftVers onedEvents(user d, vers onedEventsBu lder.bu ld());
+    thr ftVers onedEvents.set d(thr ft ndex ngEvent.getU d());
+    return thr ftVers onedEvents;
   }
 }

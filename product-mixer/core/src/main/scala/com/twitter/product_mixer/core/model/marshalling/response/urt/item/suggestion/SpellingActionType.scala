@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.suggestion
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.suggest on
 
 /**
- * Represents the different types of Spelling Suggestion items.
+ * Represents t  d fferent types of Spell ng Suggest on  ems.
  *
- * URT API Reference: https://docbird.twitter.biz/unified_rich_timelines_urt/gen/com/twitter/timelines/render/thriftscala/SpellingActionType.html
+ * URT AP  Reference: https://docb rd.tw ter.b z/un f ed_r ch_t  l nes_urt/gen/com/tw ter/t  l nes/render/thr ftscala/Spell ngAct onType.html
  */
-sealed trait SpellingActionType
+sealed tra  Spell ngAct onType
 
 /**
- * Used when the original query is replaced completed by another query in the backend.
- * Clients use the text 'Searching instead for …' to display this suggestion.
+ * Used w n t  or g nal query  s replaced completed by anot r query  n t  backend.
+ * Cl ents use t  text 'Search ng  nstead for …' to d splay t  suggest on.
  */
-case object ReplaceSpellingActionType extends SpellingActionType
+case object ReplaceSpell ngAct onType extends Spell ngAct onType
 
 /**
- * Used when the original query is expanded by a suggestion when performing the search.
- * Clients use the text 'Including results for …' to display this suggestion.
+ * Used w n t  or g nal query  s expanded by a suggest on w n perform ng t  search.
+ * Cl ents use t  text ' nclud ng results for …' to d splay t  suggest on.
  */
-case object ExpandSpellingActionType extends SpellingActionType
+case object ExpandSpell ngAct onType extends Spell ngAct onType
 
 /**
- * Used when the search query is not changed and a suggestion is displayed as an alternative query.
- * Clients use the text 'Did you mean … ?' to display the suggestion.
+ * Used w n t  search query  s not changed and a suggest on  s d splayed as an alternat ve query.
+ * Cl ents use t  text 'D d    an … ?' to d splay t  suggest on.
  */
-case object SuggestSpellingActionType extends SpellingActionType
+case object SuggestSpell ngAct onType extends Spell ngAct onType

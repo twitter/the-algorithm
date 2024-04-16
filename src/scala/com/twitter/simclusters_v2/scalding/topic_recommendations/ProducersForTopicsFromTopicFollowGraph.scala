@@ -1,206 +1,206 @@
-package com.twitter.simclusters_v2.scalding.topic_recommendations
+package com.tw ter.s mclusters_v2.scald ng.top c_recom ndat ons
 
-import com.twitter.bijection.Bufferable
-import com.twitter.bijection.Injection
-import com.twitter.recos.entities.thriftscala._
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.Country
-import com.twitter.simclusters_v2.common.Language
-import com.twitter.simclusters_v2.common.TopicId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources.DataSources
-import com.twitter.simclusters_v2.hdfs_sources.TopProducersForLocaleTopicsFromTopicFollowGraphScalaDataset
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.ProducerId
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+ mport com.tw ter.b ject on.Bufferable
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.recos.ent  es.thr ftscala._
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e._
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.common.Country
+ mport com.tw ter.s mclusters_v2.common.Language
+ mport com.tw ter.s mclusters_v2.common.Top c d
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.DataS ces
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.TopProducersForLocaleTop csFromTop cFollowGraphScalaDataset
+ mport com.tw ter.s mclusters_v2.scald ng.common.matr x.SparseMatr x
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.Embedd ngUt l.Producer d
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.ExternalDataS ces
+ mport com.tw ter.s mclusters_v2.thr ftscala.UserAndNe ghbors
+ mport com.tw ter.wtf.scald ng.jobs.common.AdhocExecut onApp
+ mport com.tw ter.wtf.scald ng.jobs.common.Sc duledExecut onApp
+ mport java.ut l.T  Zone
 
 /**
- * In this file, we compute the top producers for a topic from the Topic Follow Graph
+ *  n t  f le,   compute t  top producers for a top c from t  Top c Follow Graph
  *
- * It works as follows:
+ *   works as follows:
  *
- *  1. Producer embedding: List of users who follow the producer's profile and follow atleast one topic
+ *  1. Producer embedd ng: L st of users who follow t  producer's prof le and follow atleast one top c
  *
- *  2. Topic embedding: List of users who follow the topic
+ *  2. Top c embedd ng: L st of users who follow t  top c
  *
- *  3. Score(producer, topic) = cosine similarity of the producer and topic embedding as defined above
+ *  3. Score(producer, top c) = cos ne s m lar y of t  producer and top c embedd ng as def ned above
  *
- *  4. Please note that we compute the top producers for each topic locale.
+ *  4. Please note that   compute t  top producers for each top c locale.
  */
 
 /**
-scalding remote run --user cassowary \
- --target src/scala/com/twitter/simclusters_v2/scalding/topic_recommendations:top_producers_for_topics_from_topic_follow_graph-adhoc \
- --main-class com.twitter.simclusters_v2.scalding.topic_recommendations.ProducersForTopicsFromTopicFollowGraphAdhocApp \
- --submitter  hadoopnest1.atla.twitter.com  \
- --  --date 2021-01-06 --minActiveFollowers 400 --maxProducersPerTopic 50 \
- --output_dir_producers_per_topic /user/cassowary/adhoc/ldap/ttf_profile_pages_topics_to_producers
+scald ng remote run --user cassowary \
+ --target src/scala/com/tw ter/s mclusters_v2/scald ng/top c_recom ndat ons:top_producers_for_top cs_from_top c_follow_graph-adhoc \
+ --ma n-class com.tw ter.s mclusters_v2.scald ng.top c_recom ndat ons.ProducersForTop csFromTop cFollowGraphAdhocApp \
+ --subm ter  hadoopnest1.atla.tw ter.com  \
+ --  --date 2021-01-06 --m nAct veFollo rs 400 --maxProducersPerTop c 50 \
+ --output_d r_producers_per_top c /user/cassowary/adhoc/ldap/ttf_prof le_pages_top cs_to_producers
  */
 
-object ProducersForTopicsFromTopicFollowGraphAdhocApp extends AdhocExecutionApp {
+object ProducersForTop csFromTop cFollowGraphAdhocApp extends AdhocExecut onApp {
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    import ProducersForTopicsFromTopicFollowGraph._
-    val outputDirProducersPerTopic = args("output_dir_producers_per_topic")
-    val minActiveFollowersForProducer = args.int("minActiveFollowers", 400)
-    val maxProducersPerTopicPerLocale = args.int("maxProducersPerTopic", 50)
-    val minTopicFollows = args.int("minTopicFollows", 100)
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
+     mport ProducersForTop csFromTop cFollowGraph._
+    val outputD rProducersPerTop c = args("output_d r_producers_per_top c")
+    val m nAct veFollo rsForProducer = args. nt("m nAct veFollo rs", 400)
+    val maxProducersPerTop cPerLocale = args. nt("maxProducersPerTop c", 50)
+    val m nTop cFollows = args. nt("m nTop cFollows", 100)
 
-    val topicsFollowedByProducersFollowers = getTopicsFromProducersFollowers(
-      DataSources
-        .userUserNormalizedGraphSource(dateRange.prepend(Days(7))),
-      ExternalDataSources.topicFollowGraphSource,
-      ExternalDataSources.userSource,
-      ExternalDataSources.inferredUserConsumedLanguageSource,
-      minActiveFollowersForProducer,
-      minTopicFollows
+    val top csFollo dByProducersFollo rs = getTop csFromProducersFollo rs(
+      DataS ces
+        .userUserNormal zedGraphS ce(dateRange.prepend(Days(7))),
+      ExternalDataS ces.top cFollowGraphS ce,
+      ExternalDataS ces.userS ce,
+      ExternalDataS ces. nferredUserConsu dLanguageS ce,
+      m nAct veFollo rsForProducer,
+      m nTop cFollows
     )
 
-    sortAndGetTopProducersPerLocaleTopic(
-      topicsFollowedByProducersFollowers,
-      maxProducersPerTopicPerLocale).writeExecution(TypedTsv(outputDirProducersPerTopic))
+    sortAndGetTopProducersPerLocaleTop c(
+      top csFollo dByProducersFollo rs,
+      maxProducersPerTop cPerLocale).wr eExecut on(TypedTsv(outputD rProducersPerTop c))
 
   }
 }
 
 /**
-capesospy-v2 update --build_locally \
- --start_cron top_producers_for_topics_from_topic_follow_graph \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capesospy-v2 update --bu ld_locally \
+ --start_cron top_producers_for_top cs_from_top c_follow_graph \
+ src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc3.yaml
  */
 
-object ProducersForTopicsFromTopicFollowGraphBatchApp extends ScheduledExecutionApp {
-  override val firstTime: RichDate = RichDate("2020-10-01")
+object ProducersForTop csFromTop cFollowGraphBatchApp extends Sc duledExecut onApp {
+  overr de val f rstT  : R chDate = R chDate("2020-10-01")
 
-  override val batchIncrement: Duration = Days(1)
+  overr de val batch ncre nt: Durat on = Days(1)
 
-  private val topProducersForLocaleTopicsPath: String =
-    "/user/cassowary/manhattan_sequence_files/top_producers_for_topics_from_topic_follow_graph"
+  pr vate val topProducersForLocaleTop csPath: Str ng =
+    "/user/cassowary/manhattan_sequence_f les/top_producers_for_top cs_from_top c_follow_graph"
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    import ProducersForTopicsFromTopicFollowGraph._
-    val minActiveFollowersForProducer = args.int("minActiveFollowers", 400)
-    val maxProducersPerTopicPerLocale = args.int("maxProducersPerTopic", 50)
-    val minTopicFollows = args.int("minTopicFollows", 100)
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
+     mport ProducersForTop csFromTop cFollowGraph._
+    val m nAct veFollo rsForProducer = args. nt("m nAct veFollo rs", 400)
+    val maxProducersPerTop cPerLocale = args. nt("maxProducersPerTop c", 50)
+    val m nTop cFollows = args. nt("m nTop cFollows", 100)
 
-    val topicsFollowedByProducersFollowers = getTopicsFromProducersFollowers(
-      DataSources
-        .userUserNormalizedGraphSource(dateRange.prepend(Days(7))),
-      ExternalDataSources.topicFollowGraphSource,
-      ExternalDataSources.userSource,
-      ExternalDataSources.inferredUserConsumedLanguageSource,
-      minActiveFollowersForProducer,
-      minTopicFollows
+    val top csFollo dByProducersFollo rs = getTop csFromProducersFollo rs(
+      DataS ces
+        .userUserNormal zedGraphS ce(dateRange.prepend(Days(7))),
+      ExternalDataS ces.top cFollowGraphS ce,
+      ExternalDataS ces.userS ce,
+      ExternalDataS ces. nferredUserConsu dLanguageS ce,
+      m nAct veFollo rsForProducer,
+      m nTop cFollows
     )
 
-    sortAndGetTopProducersPerLocaleTopic(
-      topicsFollowedByProducersFollowers,
-      maxProducersPerTopicPerLocale)
+    sortAndGetTopProducersPerLocaleTop c(
+      top csFollo dByProducersFollo rs,
+      maxProducersPerTop cPerLocale)
       .map {
-        case ((topicId, languageOpt, countryOpt), producersWithScores) =>
+        case ((top c d, languageOpt, countryOpt), producersW hScores) =>
           KeyVal(
-            SemanticCoreEntityWithLocale(
-              entityId = topicId,
+            Semant cCoreEnt yW hLocale(
+              ent y d = top c d,
               context = Locale(language = languageOpt, country = countryOpt)),
-            UserScoreList(producersWithScores.map {
-              case (producerId, producerScore) =>
-                UserWithScore(userId = producerId, score = producerScore)
+            UserScoreL st(producersW hScores.map {
+              case (producer d, producerScore) =>
+                UserW hScore(user d = producer d, score = producerScore)
             })
           )
-      }.writeDALVersionedKeyValExecution(
-        TopProducersForLocaleTopicsFromTopicFollowGraphScalaDataset,
-        D.Suffix(topProducersForLocaleTopicsPath),
-        version = ExplicitEndTime(dateRange.end)
+      }.wr eDALVers onedKeyValExecut on(
+        TopProducersForLocaleTop csFromTop cFollowGraphScalaDataset,
+        D.Suff x(topProducersForLocaleTop csPath),
+        vers on = Expl c EndT  (dateRange.end)
       )
   }
 }
 
-object ProducersForTopicsFromTopicFollowGraph {
+object ProducersForTop csFromTop cFollowGraph {
 
-  implicit val sparseMatrixInj: Injection[
-    (ProducerId, Option[Language], Option[Country]),
+   mpl c  val sparseMatr x nj:  nject on[
+    (Producer d, Opt on[Language], Opt on[Country]),
     Array[Byte]
   ] =
-    Bufferable.injectionOf[(ProducerId, Option[Language], Option[Country])]
+    Bufferable. nject onOf[(Producer d, Opt on[Language], Opt on[Country])]
 
-  // This function takes the producer to topics map and generates the sorted and
-  // truncated top producers ranked list for each locale topic
-  def sortAndGetTopProducersPerLocaleTopic(
-    producerToTopics: TypedPipe[(ProducerId, (TopicId, Option[Language], Option[Country]), Double)],
-    maxProducersPerLocaleTopic: Int
+  // T  funct on takes t  producer to top cs map and generates t  sorted and
+  // truncated top producers ranked l st for each locale top c
+  def sortAndGetTopProducersPerLocaleTop c(
+    producerToTop cs: TypedP pe[(Producer d, (Top c d, Opt on[Language], Opt on[Country]), Double)],
+    maxProducersPerLocaleTop c:  nt
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[((TopicId, Option[Language], Option[Country]), List[(ProducerId, Double)])] = {
-    val numTopicsWithLocales = Stat("num_topics_with_locales")
-    producerToTopics
+     mpl c  un que D: Un que D
+  ): TypedP pe[((Top c d, Opt on[Language], Opt on[Country]), L st[(Producer d, Double)])] = {
+    val numTop csW hLocales = Stat("num_top cs_w h_locales")
+    producerToTop cs
       .map {
-        case (producerId, (topicId, languageOpt, countryOpt), score) =>
-          ((topicId, languageOpt, countryOpt), Seq((producerId, score)))
+        case (producer d, (top c d, languageOpt, countryOpt), score) =>
+          ((top c d, languageOpt, countryOpt), Seq((producer d, score)))
       }
-      .sumByKey.mapValues { producersList =>
-        numTopicsWithLocales.inc()
-        producersList.sortBy(-_._2).take(maxProducersPerLocaleTopic).toList
-      }.toTypedPipe
+      .sumByKey.mapValues { producersL st =>
+        numTop csW hLocales. nc()
+        producersL st.sortBy(-_._2).take(maxProducersPerLocaleTop c).toL st
+      }.toTypedP pe
   }
 
-  def getTopicsFromProducersFollowers(
-    userUserGraph: TypedPipe[UserAndNeighbors],
-    followedTopicsToUsers: TypedPipe[(TopicId, UserId)],
-    userSource: TypedPipe[(UserId, (Country, Language))],
-    userLanguages: TypedPipe[(UserId, Seq[(Language, Double)])],
-    minActiveFollowersForProducer: Int,
-    minTopicFollows: Int
+  def getTop csFromProducersFollo rs(
+    userUserGraph: TypedP pe[UserAndNe ghbors],
+    follo dTop csToUsers: TypedP pe[(Top c d, User d)],
+    userS ce: TypedP pe[(User d, (Country, Language))],
+    userLanguages: TypedP pe[(User d, Seq[(Language, Double)])],
+    m nAct veFollo rsForProducer:  nt,
+    m nTop cFollows:  nt
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[(ProducerId, (TopicId, Option[Language], Option[Country]), Double)] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): TypedP pe[(Producer d, (Top c d, Opt on[Language], Opt on[Country]), Double)] = {
 
-    val usersFollowingTopics: TypedPipe[UserId] = followedTopicsToUsers.map(_._2).distinct
-    val producerToUsersSparseMatrix: SparseMatrix[ProducerId, UserId, Double] =
-      TopicsForProducersUtils
-        .getProducersToFollowedByUsersSparseMatrix(
+    val usersFollow ngTop cs: TypedP pe[User d] = follo dTop csToUsers.map(_._2).d st nct
+    val producerToUsersSparseMatr x: SparseMatr x[Producer d, User d, Double] =
+      Top csForProducersUt ls
+        .getProducersToFollo dByUsersSparseMatr x(
           userUserGraph,
-          minActiveFollowersForProducer).filterCols(usersFollowingTopics).rowL2Normalize
+          m nAct veFollo rsForProducer).f lterCols(usersFollow ngTop cs).rowL2Normal ze
 
-    val userToTopicsSparseSkinnyMatrix: SparseMatrix[
-      UserId,
-      (TopicId, Option[Language], Option[Country]),
+    val userToTop csSparseSk nnyMatr x: SparseMatr x[
+      User d,
+      (Top c d, Opt on[Language], Opt on[Country]),
       Double
     ] =
-      TopicsForProducersUtils
-        .getFollowedTopicsToUserSparseMatrix(
-          followedTopicsToUsers,
-          userSource,
+      Top csForProducersUt ls
+        .getFollo dTop csToUserSparseMatr x(
+          follo dTop csToUsers,
+          userS ce,
           userLanguages,
-          minTopicFollows).rowL2Normalize.transpose
+          m nTop cFollows).rowL2Normal ze.transpose
 
-    // Obtain the Producer to Locale Topics Matrix
-    val producersToLocaleTopicsMatrix: SparseMatrix[
-      ProducerId,
-      (TopicId, Option[Language], Option[Country]),
+    // Obta n t  Producer to Locale Top cs Matr x
+    val producersToLocaleTop csMatr x: SparseMatr x[
+      Producer d,
+      (Top c d, Opt on[Language], Opt on[Country]),
       Double
     ] =
-      producerToUsersSparseMatrix.multiplySparseMatrix(userToTopicsSparseSkinnyMatrix)
+      producerToUsersSparseMatr x.mult plySparseMatr x(userToTop csSparseSk nnyMatr x)
 
-    producersToLocaleTopicsMatrix.toTypedPipe
+    producersToLocaleTop csMatr x.toTypedP pe
   }
 }

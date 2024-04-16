@@ -1,57 +1,57 @@
-package com.twitter.visibility.builder.tweets
+package com.tw ter.v s b l y.bu lder.t ets
 
-import com.twitter.contenthealth.toxicreplyfilter.thriftscala.FilterState
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.features.ToxicReplyFilterConversationAuthorIsViewer
-import com.twitter.visibility.features.ToxicReplyFilterState
+ mport com.tw ter.content alth.tox creplyf lter.thr ftscala.F lterState
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.features.Tox cReplyF lterConversat onAuthor sV e r
+ mport com.tw ter.v s b l y.features.Tox cReplyF lterState
 
-class ToxicReplyFilterFeature(
-  statsReceiver: StatsReceiver) {
+class Tox cReplyF lterFeature(
+  statsRece ver: StatsRece ver) {
 
-  def forTweet(tweet: Tweet, viewerId: Option[Long]): FeatureMapBuilder => FeatureMapBuilder = {
-    builder =>
-      requests.incr()
+  def forT et(t et: T et, v e r d: Opt on[Long]): FeatureMapBu lder => FeatureMapBu lder = {
+    bu lder =>
+      requests. ncr()
 
-      builder
-        .withConstantFeature(ToxicReplyFilterState, isTweetFilteredFromAuthor(tweet))
-        .withConstantFeature(
-          ToxicReplyFilterConversationAuthorIsViewer,
-          isRootAuthorViewer(tweet, viewerId))
+      bu lder
+        .w hConstantFeature(Tox cReplyF lterState,  sT etF lteredFromAuthor(t et))
+        .w hConstantFeature(
+          Tox cReplyF lterConversat onAuthor sV e r,
+           sRootAuthorV e r(t et, v e r d))
   }
 
-  private[this] def isRootAuthorViewer(tweet: Tweet, maybeViewerId: Option[Long]): Boolean = {
-    val maybeAuthorId = tweet.filteredReplyDetails.map(_.conversationAuthorId)
+  pr vate[t ] def  sRootAuthorV e r(t et: T et, maybeV e r d: Opt on[Long]): Boolean = {
+    val maybeAuthor d = t et.f lteredReplyDeta ls.map(_.conversat onAuthor d)
 
-    (maybeViewerId, maybeAuthorId) match {
-      case (Some(viewerId), Some(authorId)) if viewerId == authorId => {
-        rootAuthorViewerStats.incr()
+    (maybeV e r d, maybeAuthor d) match {
+      case (So (v e r d), So (author d))  f v e r d == author d => {
+        rootAuthorV e rStats. ncr()
         true
       }
       case _ => false
     }
   }
 
-  private[this] def isTweetFilteredFromAuthor(
-    tweet: Tweet,
-  ): FilterState = {
-    val result = tweet.filteredReplyDetails.map(_.filterState).getOrElse(FilterState.Unfiltered)
+  pr vate[t ] def  sT etF lteredFromAuthor(
+    t et: T et,
+  ): F lterState = {
+    val result = t et.f lteredReplyDeta ls.map(_.f lterState).getOrElse(F lterState.Unf ltered)
 
-    if (result == FilterState.FilteredFromAuthor) {
-      filteredFromAuthorStats.incr()
+     f (result == F lterState.F lteredFromAuthor) {
+      f lteredFromAuthorStats. ncr()
     }
     result
   }
 
-  private[this] val scopedStatsReceiver =
-    statsReceiver.scope("toxicreplyfilter")
+  pr vate[t ] val scopedStatsRece ver =
+    statsRece ver.scope("tox creplyf lter")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  pr vate[t ] val requests = scopedStatsRece ver.counter("requests")
 
-  private[this] val rootAuthorViewerStats =
-    scopedStatsReceiver.scope(ToxicReplyFilterConversationAuthorIsViewer.name).counter("requests")
+  pr vate[t ] val rootAuthorV e rStats =
+    scopedStatsRece ver.scope(Tox cReplyF lterConversat onAuthor sV e r.na ).counter("requests")
 
-  private[this] val filteredFromAuthorStats =
-    scopedStatsReceiver.scope(ToxicReplyFilterState.name).counter("requests")
+  pr vate[t ] val f lteredFromAuthorStats =
+    scopedStatsRece ver.scope(Tox cReplyF lterState.na ).counter("requests")
 }

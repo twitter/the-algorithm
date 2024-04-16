@@ -1,10 +1,10 @@
-package com.twitter.simclusters_v2.hdfs_sources.presto_hdfs_sources
+package com.tw ter.s mclusters_v2.hdfs_s ces.presto_hdfs_s ces
 
-object EntityEmbeddingsPrestoSources {
+object Ent yEmbedd ngsPrestoS ces {
 
-  final val SemanticCorePerLanguageSimClustersEmbeddingsDataset =
-    SemanticCorePerLanguageSimclustersEmbeddingsPrestoScalaDataset
+  f nal val Semant cCorePerLanguageS mClustersEmbedd ngsDataset =
+    Semant cCorePerLanguageS mclustersEmbedd ngsPrestoScalaDataset
 
-  final val ReverseIndexSemanticCorePerLanguageSimClustersEmbeddingsDataset =
-    ReverseIndexSemanticCorePerLanguageSimclustersEmbeddingsPrestoScalaDataset
+  f nal val Reverse ndexSemant cCorePerLanguageS mClustersEmbedd ngsDataset =
+    Reverse ndexSemant cCorePerLanguageS mclustersEmbedd ngsPrestoScalaDataset
 }

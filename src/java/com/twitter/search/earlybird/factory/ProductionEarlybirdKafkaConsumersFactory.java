@@ -1,41 +1,41 @@
-package com.twitter.search.earlybird.factory;
+package com.tw ter.search.earlyb rd.factory;
 
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+ mport org.apac .kafka.cl ents.consu r.KafkaConsu r;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.util.io.kafka.CompactThriftDeserializer;
-import com.twitter.search.common.util.io.kafka.FinagleKafkaClientUtils;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftVers onedEvents;
+ mport com.tw ter.search.common.ut l. o.kafka.CompactThr ftDeser al zer;
+ mport com.tw ter.search.common.ut l. o.kafka.F nagleKafkaCl entUt ls;
 
 /**
- * Responsible for creating kafka consumers.
+ * Respons ble for creat ng kafka consu rs.
  */
-public class ProductionEarlybirdKafkaConsumersFactory implements EarlybirdKafkaConsumersFactory {
-  private final String kafkaPath;
-  private final int defaultMaxPollRecords;
+publ c class Product onEarlyb rdKafkaConsu rsFactory  mple nts Earlyb rdKafkaConsu rsFactory {
+  pr vate f nal Str ng kafkaPath;
+  pr vate f nal  nt defaultMaxPollRecords;
 
-  ProductionEarlybirdKafkaConsumersFactory(String kafkaPath, int defaultMaxPollRecords) {
-    this.kafkaPath = kafkaPath;
-    this.defaultMaxPollRecords = defaultMaxPollRecords;
+  Product onEarlyb rdKafkaConsu rsFactory(Str ng kafkaPath,  nt defaultMaxPollRecords) {
+    t .kafkaPath = kafkaPath;
+    t .defaultMaxPollRecords = defaultMaxPollRecords;
   }
 
   /**
-   * Create a kafka consumer with set maximum of records to be polled.
+   * Create a kafka consu r w h set max mum of records to be polled.
    */
-  @Override
-  public KafkaConsumer<Long, ThriftVersionedEvents> createKafkaConsumer(
-      String clientID, int maxPollRecords) {
-    return FinagleKafkaClientUtils.newKafkaConsumerForAssigning(
+  @Overr de
+  publ c KafkaConsu r<Long, Thr ftVers onedEvents> createKafkaConsu r(
+      Str ng cl ent D,  nt maxPollRecords) {
+    return F nagleKafkaCl entUt ls.newKafkaConsu rForAss gn ng(
         kafkaPath,
-        new CompactThriftDeserializer<>(ThriftVersionedEvents.class),
-        clientID,
+        new CompactThr ftDeser al zer<>(Thr ftVers onedEvents.class),
+        cl ent D,
         maxPollRecords);
   }
 
   /**
-   * Create a kafka consumer with default records to be polled.
+   * Create a kafka consu r w h default records to be polled.
    */
-  @Override
-  public KafkaConsumer<Long, ThriftVersionedEvents> createKafkaConsumer(String clientID) {
-    return createKafkaConsumer(clientID, defaultMaxPollRecords);
+  @Overr de
+  publ c KafkaConsu r<Long, Thr ftVers onedEvents> createKafkaConsu r(Str ng cl ent D) {
+    return createKafkaConsu r(cl ent D, defaultMaxPollRecords);
   }
 }

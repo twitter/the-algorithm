@@ -1,70 +1,70 @@
-package com.twitter.frigate.pushservice.predicate
+package com.tw ter.fr gate.pushserv ce.pred cate
 
-import com.twitter.abuse.detection.scoring.thriftscala.Model
-import com.twitter.abuse.detection.scoring.thriftscala.TweetScoringRequest
-import com.twitter.abuse.detection.scoring.thriftscala.TweetScoringResponse
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.TweetCandidate
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.frigate.pushservice.util.CandidateUtil
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter.abuse.detect on.scor ng.thr ftscala.Model
+ mport com.tw ter.abuse.detect on.scor ng.thr ftscala.T etScor ngRequest
+ mport com.tw ter.abuse.detect on.scor ng.thr ftscala.T etScor ngResponse
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.T etCand date
+ mport com.tw ter.fr gate.common.rec_types.RecTypes
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.params.PushParams
+ mport com.tw ter.fr gate.pushserv ce.ut l.Cand dateUt l
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
-object PNegMultimodalPredicates {
+object PNegMult modalPred cates {
 
-  def healthSignalScorePNegMultimodalPredicate(
-    tweetHealthScoreStore: ReadableStore[TweetScoringRequest, TweetScoringResponse]
+  def  althS gnalScorePNegMult modalPred cate(
+    t et althScoreStore: ReadableStore[T etScor ngRequest, T etScor ngResponse]
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[PushCandidate with TweetCandidate] = {
-    val name = "pneg_multimodal_predicate"
-    val statsScope = stats.scope(name)
-    val oonCandidatesCounter = statsScope.counter("oon_candidates")
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[PushCand date w h T etCand date] = {
+    val na  = "pneg_mult modal_pred cate"
+    val statsScope = stats.scope(na )
+    val oonCand datesCounter = statsScope.counter("oon_cand dates")
     val nonEmptyModelScoreCounter = statsScope.counter("non_empty_model_score")
-    val bucketedCounter = statsScope.counter("bucketed_oon_candidates")
-    val filteredCounter = statsScope.counter("filtered_oon_candidates")
+    val bucketedCounter = statsScope.counter("bucketed_oon_cand dates")
+    val f lteredCounter = statsScope.counter("f ltered_oon_cand dates")
 
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetCandidate =>
-        val target = candidate.target
-        val crt = candidate.commonRecType
-        val isOonCandidate = RecTypes.isOutOfNetworkTweetRecType(crt) ||
-          RecTypes.outOfNetworkTopicTweetTypes.contains(crt)
+    Pred cate
+      .fromAsync { cand date: PushCand date w h T etCand date =>
+        val target = cand date.target
+        val crt = cand date.commonRecType
+        val  sOonCand date = RecTypes. sOutOfNetworkT etRecType(crt) ||
+          RecTypes.outOfNetworkTop cT etTypes.conta ns(crt)
 
-        lazy val enablePNegMultimodalPredicateParam =
-          target.params(PushFeatureSwitchParams.EnablePNegMultimodalPredicateParam)
-        lazy val pNegMultimodalPredicateModelThresholdParam =
-          target.params(PushFeatureSwitchParams.PNegMultimodalPredicateModelThresholdParam)
-        lazy val pNegMultimodalPredicateBucketThresholdParam =
-          target.params(PushFeatureSwitchParams.PNegMultimodalPredicateBucketThresholdParam)
-        val pNegMultimodalEnabledForF1Tweets =
-          target.params(PushParams.EnablePnegMultimodalPredictionForF1Tweets)
+        lazy val enablePNegMult modalPred cateParam =
+          target.params(PushFeatureSw chParams.EnablePNegMult modalPred cateParam)
+        lazy val pNegMult modalPred cateModelThresholdParam =
+          target.params(PushFeatureSw chParams.PNegMult modalPred cateModelThresholdParam)
+        lazy val pNegMult modalPred cateBucketThresholdParam =
+          target.params(PushFeatureSw chParams.PNegMult modalPred cateBucketThresholdParam)
+        val pNegMult modalEnabledForF1T ets =
+          target.params(PushParams.EnablePnegMult modalPred ct onForF1T ets)
 
-        if (CandidateUtil.shouldApplyHealthQualityFilters(
-            candidate) && (isOonCandidate || pNegMultimodalEnabledForF1Tweets) && enablePNegMultimodalPredicateParam) {
+         f (Cand dateUt l.shouldApply althQual yF lters(
+            cand date) && ( sOonCand date || pNegMult modalEnabledForF1T ets) && enablePNegMult modalPred cateParam) {
 
-          val pNegMultimodalRequest = TweetScoringRequest(candidate.tweetId, Model.PNegMultimodal)
-          tweetHealthScoreStore.get(pNegMultimodalRequest).map {
-            case Some(tweetScoringResponse) =>
-              nonEmptyModelScoreCounter.incr()
+          val pNegMult modalRequest = T etScor ngRequest(cand date.t et d, Model.PNegMult modal)
+          t et althScoreStore.get(pNegMult modalRequest).map {
+            case So (t etScor ngResponse) =>
+              nonEmptyModelScoreCounter. ncr()
 
-              val pNegMultimodalScore = 1.0 - tweetScoringResponse.score
+              val pNegMult modalScore = 1.0 - t etScor ngResponse.score
 
-              candidate
-                .cacheExternalScore("PNegMultimodalScore", Future.value(Some(pNegMultimodalScore)))
+              cand date
+                .cac ExternalScore("PNegMult modalScore", Future.value(So (pNegMult modalScore)))
 
-              if (isOonCandidate) {
-                oonCandidatesCounter.incr()
+               f ( sOonCand date) {
+                oonCand datesCounter. ncr()
 
-                if (pNegMultimodalScore > pNegMultimodalPredicateBucketThresholdParam) {
-                  bucketedCounter.incr()
-                  if (pNegMultimodalScore > pNegMultimodalPredicateModelThresholdParam) {
-                    filteredCounter.incr()
+                 f (pNegMult modalScore > pNegMult modalPred cateBucketThresholdParam) {
+                  bucketedCounter. ncr()
+                   f (pNegMult modalScore > pNegMult modalPred cateModelThresholdParam) {
+                    f lteredCounter. ncr()
                     false
                   } else true
                 } else true
@@ -77,7 +77,7 @@ object PNegMultimodalPredicates {
           Future.True
         }
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .w hStats(stats.scope(na ))
+      .w hNa (na )
   }
 }

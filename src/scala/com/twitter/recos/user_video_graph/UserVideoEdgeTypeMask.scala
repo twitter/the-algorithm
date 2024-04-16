@@ -1,61 +1,61 @@
-package com.twitter.recos.user_video_graph
+package com.tw ter.recos.user_v deo_graph
 
-import com.twitter.graphjet.bipartite.api.EdgeTypeMask
-import com.twitter.recos.util.Action
+ mport com.tw ter.graphjet.b part e.ap .EdgeTypeMask
+ mport com.tw ter.recos.ut l.Act on
 
 /**
- * The bit mask is used to encode edge types in the top bits of an integer,
- * e.g. favorite, retweet, reply and click. Under current segment configuration, each segment
- * stores up to 128M edges. Assuming that each node on one side is unique, each segment
- * stores up to 128M unique nodes on one side, which occupies the lower 27 bits of an integer.
- * This leaves five bits to encode the edge types, which at max can store 32 edge types.
- * The following implementation utilizes the top four bits and leaves one free bit out.
+ * T  b  mask  s used to encode edge types  n t  top b s of an  nteger,
+ * e.g. favor e, ret et, reply and cl ck. Under current seg nt conf gurat on, each seg nt
+ * stores up to 128M edges. Assum ng that each node on one s de  s un que, each seg nt
+ * stores up to 128M un que nodes on one s de, wh ch occup es t  lo r 27 b s of an  nteger.
+ * T  leaves f ve b s to encode t  edge types, wh ch at max can store 32 edge types.
+ * T  follow ng  mple ntat on ut l zes t  top f  b s and leaves one free b  out.
  */
-class UserVideoEdgeTypeMask extends EdgeTypeMask {
-  import UserVideoEdgeTypeMask._
+class UserV deoEdgeTypeMask extends EdgeTypeMask {
+   mport UserV deoEdgeTypeMask._
 
-  override def encode(node: Int, edgeType: Byte): Int = {
-    if (edgeType < 0 || edgeType > SIZE) {
-      throw new IllegalArgumentException("encode: Illegal edge type argument " + edgeType)
+  overr de def encode(node:  nt, edgeType: Byte):  nt = {
+     f (edgeType < 0 || edgeType > S ZE) {
+      throw new  llegalArgu ntExcept on("encode:  llegal edge type argu nt " + edgeType)
     } else {
       node | (edgeType << 28)
     }
   }
 
-  override def edgeType(node: Int): Byte = {
+  overr de def edgeType(node:  nt): Byte = {
     (node >>> 28).toByte
   }
 
-  override def restore(node: Int): Int = {
+  overr de def restore(node:  nt):  nt = {
     node & MASK
   }
 }
 
-object UserVideoEdgeTypeMask extends Enumeration {
+object UserV deoEdgeTypeMask extends Enu rat on {
 
-  type UserTweetEdgeTypeMask = Value
+  type UserT etEdgeTypeMask = Value
 
   /**
-   * Byte values corresponding to the action taken on a tweet, which will be encoded in the
-   * top 4 bits in a tweet Id
+   * Byte values correspond ng to t  act on taken on a t et, wh ch w ll be encoded  n t 
+   * top 4 b s  n a t et  d
    * NOTE: THERE CAN ONLY BE UP TO 16 TYPES
    */
-  val VideoPlayback50: UserTweetEdgeTypeMask = Value(1)
+  val V deoPlayback50: UserT etEdgeTypeMask = Value(1)
 
   /**
-   * Reserve the top four bits of each integer to encode the edge type information.
+   * Reserve t  top f  b s of each  nteger to encode t  edge type  nformat on.
    */
-  val MASK: Int = Integer.parseInt("00001111111111111111111111111111", 2)
-  val SIZE: Int = this.values.size
+  val MASK:  nt =  nteger.parse nt("00001111111111111111111111111111", 2)
+  val S ZE:  nt = t .values.s ze
 
   /**
-   * Converts the action byte in the RecosHoseMessage into GraphJet internal byte mapping
+   * Converts t  act on byte  n t  RecosHose ssage  nto GraphJet  nternal byte mapp ng
    */
-  def actionTypeToEdgeType(actionByte: Byte): Byte = {
-    val edgeType = Action(actionByte) match {
-      case Action.VideoPlayback50 => VideoPlayback50.id
+  def act onTypeToEdgeType(act onByte: Byte): Byte = {
+    val edgeType = Act on(act onByte) match {
+      case Act on.V deoPlayback50 => V deoPlayback50. d
       case _ =>
-        throw new IllegalArgumentException("getEdgeType: Illegal edge type argument " + actionByte)
+        throw new  llegalArgu ntExcept on("getEdgeType:  llegal edge type argu nt " + act onByte)
     }
     edgeType.toByte
   }

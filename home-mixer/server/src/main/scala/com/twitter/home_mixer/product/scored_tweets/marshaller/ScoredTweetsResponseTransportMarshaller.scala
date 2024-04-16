@@ -1,70 +1,70 @@
-package com.twitter.home_mixer.product.scored_tweets.marshaller
+package com.tw ter.ho _m xer.product.scored_t ets.marshaller
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsResponse
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.TopicContextFunctionalityTypeMarshaller
-import com.twitter.product_mixer.core.model.common.identifier.TransportMarshallerIdentifier
+ mport com.tw ter.ho _m xer.model.Ho Features._
+ mport com.tw ter.ho _m xer.product.scored_t ets.model.ScoredT etsResponse
+ mport com.tw ter.ho _m xer.{thr ftscala => t}
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.TransportMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata.Top cContextFunct onal yTypeMarshaller
+ mport com.tw ter.product_m xer.core.model.common. dent f er.TransportMarshaller dent f er
 
 /**
- * Marshall the domain model into our transport (Thrift) model.
+ * Marshall t  doma n model  nto   transport (Thr ft) model.
  */
-object ScoredTweetsResponseTransportMarshaller
-    extends TransportMarshaller[ScoredTweetsResponse, t.ScoredTweetsResponse] {
+object ScoredT etsResponseTransportMarshaller
+    extends TransportMarshaller[ScoredT etsResponse, t.ScoredT etsResponse] {
 
-  override val identifier: TransportMarshallerIdentifier =
-    TransportMarshallerIdentifier("ScoredTweetsResponse")
+  overr de val  dent f er: TransportMarshaller dent f er =
+    TransportMarshaller dent f er("ScoredT etsResponse")
 
-  override def apply(input: ScoredTweetsResponse): t.ScoredTweetsResponse = {
-    val scoredTweets = input.scoredTweets.map { tweet =>
-      mkScoredTweet(tweet.candidateIdLong, tweet.features)
+  overr de def apply( nput: ScoredT etsResponse): t.ScoredT etsResponse = {
+    val scoredT ets =  nput.scoredT ets.map { t et =>
+      mkScoredT et(t et.cand date dLong, t et.features)
     }
-    t.ScoredTweetsResponse(scoredTweets)
+    t.ScoredT etsResponse(scoredT ets)
   }
 
-  private def mkScoredTweet(tweetId: Long, features: FeatureMap): t.ScoredTweet = {
-    val topicFunctionalityType = features
-      .getOrElse(TopicContextFunctionalityTypeFeature, None)
-      .map(TopicContextFunctionalityTypeMarshaller(_))
+  pr vate def mkScoredT et(t et d: Long, features: FeatureMap): t.ScoredT et = {
+    val top cFunct onal yType = features
+      .getOrElse(Top cContextFunct onal yTypeFeature, None)
+      .map(Top cContextFunct onal yTypeMarshaller(_))
 
-    t.ScoredTweet(
-      tweetId = tweetId,
-      authorId = features.get(AuthorIdFeature).get,
+    t.ScoredT et(
+      t et d = t et d,
+      author d = features.get(Author dFeature).get,
       score = features.get(ScoreFeature),
       suggestType = features.get(SuggestTypeFeature),
-      sourceTweetId = features.getOrElse(SourceTweetIdFeature, None),
-      sourceUserId = features.getOrElse(SourceUserIdFeature, None),
-      quotedTweetId = features.getOrElse(QuotedTweetIdFeature, None),
-      quotedUserId = features.getOrElse(QuotedUserIdFeature, None),
-      inReplyToTweetId = features.getOrElse(InReplyToTweetIdFeature, None),
-      inReplyToUserId = features.getOrElse(InReplyToUserIdFeature, None),
-      directedAtUserId = features.getOrElse(DirectedAtUserIdFeature, None),
-      inNetwork = Some(features.getOrElse(InNetworkFeature, true)),
-      sgsValidLikedByUserIds = Some(features.getOrElse(SGSValidLikedByUserIdsFeature, Seq.empty)),
-      sgsValidFollowedByUserIds =
-        Some(features.getOrElse(SGSValidFollowedByUserIdsFeature, Seq.empty)),
-      topicId = features.getOrElse(TopicIdSocialContextFeature, None),
-      topicFunctionalityType = topicFunctionalityType,
-      ancestors = Some(features.getOrElse(AncestorsFeature, Seq.empty)),
-      isReadFromCache = Some(features.getOrElse(IsReadFromCacheFeature, false)),
-      streamToKafka = Some(features.getOrElse(StreamToKafkaFeature, false)),
-      exclusiveConversationAuthorId =
-        features.getOrElse(ExclusiveConversationAuthorIdFeature, None),
-      authorMetadata = Some(
-        t.AuthorMetadata(
-          blueVerified = features.getOrElse(AuthorIsBlueVerifiedFeature, false),
-          goldVerified = features.getOrElse(AuthorIsGoldVerifiedFeature, false),
-          grayVerified = features.getOrElse(AuthorIsGrayVerifiedFeature, false),
-          legacyVerified = features.getOrElse(AuthorIsLegacyVerifiedFeature, false),
-          creator = features.getOrElse(AuthorIsCreatorFeature, false)
+      s ceT et d = features.getOrElse(S ceT et dFeature, None),
+      s ceUser d = features.getOrElse(S ceUser dFeature, None),
+      quotedT et d = features.getOrElse(QuotedT et dFeature, None),
+      quotedUser d = features.getOrElse(QuotedUser dFeature, None),
+       nReplyToT et d = features.getOrElse( nReplyToT et dFeature, None),
+       nReplyToUser d = features.getOrElse( nReplyToUser dFeature, None),
+      d rectedAtUser d = features.getOrElse(D rectedAtUser dFeature, None),
+       nNetwork = So (features.getOrElse( nNetworkFeature, true)),
+      sgsVal dL kedByUser ds = So (features.getOrElse(SGSVal dL kedByUser dsFeature, Seq.empty)),
+      sgsVal dFollo dByUser ds =
+        So (features.getOrElse(SGSVal dFollo dByUser dsFeature, Seq.empty)),
+      top c d = features.getOrElse(Top c dSoc alContextFeature, None),
+      top cFunct onal yType = top cFunct onal yType,
+      ancestors = So (features.getOrElse(AncestorsFeature, Seq.empty)),
+       sReadFromCac  = So (features.getOrElse( sReadFromCac Feature, false)),
+      streamToKafka = So (features.getOrElse(StreamToKafkaFeature, false)),
+      exclus veConversat onAuthor d =
+        features.getOrElse(Exclus veConversat onAuthor dFeature, None),
+      author tadata = So (
+        t.Author tadata(
+          blueVer f ed = features.getOrElse(Author sBlueVer f edFeature, false),
+          goldVer f ed = features.getOrElse(Author sGoldVer f edFeature, false),
+          grayVer f ed = features.getOrElse(Author sGrayVer f edFeature, false),
+          legacyVer f ed = features.getOrElse(Author sLegacyVer f edFeature, false),
+          creator = features.getOrElse(Author sCreatorFeature, false)
         )),
-      lastScoredTimestampMs = None,
-      candidatePipelineIdentifier = None,
-      tweetUrls = None,
-      perspectiveFilteredLikedByUserIds =
-        Some(features.getOrElse(PerspectiveFilteredLikedByUserIdsFeature, Seq.empty)),
+      lastScoredT  stampMs = None,
+      cand dateP pel ne dent f er = None,
+      t etUrls = None,
+      perspect veF lteredL kedByUser ds =
+        So (features.getOrElse(Perspect veF lteredL kedByUser dsFeature, Seq.empty)),
     )
   }
 }

@@ -1,76 +1,76 @@
-package com.twitter.frigate.pushservice.store
+package com.tw ter.fr gate.pushserv ce.store
 
-import com.twitter.escherbird.util.uttclient.CachedUttClientV2
-import com.twitter.escherbird.util.uttclient.InvalidUttEntityException
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.stitch.Stitch
-import com.twitter.topiclisting.TopicListingViewerContext
-import com.twitter.topiclisting.utt.LocalizedEntity
-import com.twitter.topiclisting.utt.LocalizedEntityFactory
-import com.twitter.util.Future
-
-/**
- *
- * @param viewerContext: [[TopicListingViewerContext]] for filtering topic
- * @param semanticCoreEntityIds: list of semantic core entities to hydrate
- */
-case class UttEntityHydrationQuery(
-  viewerContext: TopicListingViewerContext,
-  semanticCoreEntityIds: Seq[Long])
+ mport com.tw ter.esc rb rd.ut l.uttcl ent.Cac dUttCl entV2
+ mport com.tw ter.esc rb rd.ut l.uttcl ent. nval dUttEnt yExcept on
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.top cl st ng.Top cL st ngV e rContext
+ mport com.tw ter.top cl st ng.utt.Local zedEnt y
+ mport com.tw ter.top cl st ng.utt.Local zedEnt yFactory
+ mport com.tw ter.ut l.Future
 
 /**
  *
- * @param cachedUttClientV2
- * @param statsReceiver
+ * @param v e rContext: [[Top cL st ngV e rContext]] for f lter ng top c
+ * @param semant cCoreEnt y ds: l st of semant c core ent  es to hydrate
  */
-class UttEntityHydrationStore(
-  cachedUttClientV2: CachedUttClientV2,
-  statsReceiver: StatsReceiver,
+case class UttEnt yHydrat onQuery(
+  v e rContext: Top cL st ngV e rContext,
+  semant cCoreEnt y ds: Seq[Long])
+
+/**
+ *
+ * @param cac dUttCl entV2
+ * @param statsRece ver
+ */
+class UttEnt yHydrat onStore(
+  cac dUttCl entV2: Cac dUttCl entV2,
+  statsRece ver: StatsRece ver,
   log: Logger) {
 
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val uttEntityNotFound = stats.counter("invalid_utt_entity")
-  private val deviceLanguageMismatch = stats.counter("language_mismatch")
+  pr vate val stats = statsRece ver.scope(t .getClass.getS mpleNa )
+  pr vate val uttEnt yNotFound = stats.counter(" nval d_utt_ent y")
+  pr vate val dev ceLanguageM smatch = stats.counter("language_m smatch")
 
   /**
-   * SemanticCore recommends setting language and country code to None to fetch all localized topic
-   * names and apply filtering for locales on our end
+   * Semant cCore recom nds sett ng language and country code to None to fetch all local zed top c
+   * na s and apply f lter ng for locales on   end
    *
-   * We use [[LocalizedEntityFactory]] from [[Topiclisting]] library to filter out topic name based
+   *   use [[Local zedEnt yFactory]] from [[Top cl st ng]] l brary to f lter out top c na  based
    * on user locale
    *
-   * Some(LocalizedEntity) - LocalizedUttEntity found
-   * None - LocalizedUttEntity not found
+   * So (Local zedEnt y) - Local zedUttEnt y found
+   * None - Local zedUttEnt y not found
    */
-  def getLocalizedTopicEntities(
-    query: UttEntityHydrationQuery
-  ): Future[Seq[Option[LocalizedEntity]]] = Stitch.run {
-    Stitch.collect {
-      query.semanticCoreEntityIds.map { semanticCoreEntityId =>
-        val uttEntity = cachedUttClientV2.cachedGetUttEntity(
+  def getLocal zedTop cEnt  es(
+    query: UttEnt yHydrat onQuery
+  ): Future[Seq[Opt on[Local zedEnt y]]] = St ch.run {
+    St ch.collect {
+      query.semant cCoreEnt y ds.map { semant cCoreEnt y d =>
+        val uttEnt y = cac dUttCl entV2.cac dGetUttEnt y(
           language = None,
           country = None,
-          version = None,
-          entityId = semanticCoreEntityId)
+          vers on = None,
+          ent y d = semant cCoreEnt y d)
 
-        uttEntity
-          .map { uttEntityMetadata =>
-            val localizedEntity = LocalizedEntityFactory.getLocalizedEntity(
-              uttEntityMetadata,
-              query.viewerContext,
-              enableInternationalTopics = true,
-              enableTopicDescription = true)
+        uttEnt y
+          .map { uttEnt y tadata =>
+            val local zedEnt y = Local zedEnt yFactory.getLocal zedEnt y(
+              uttEnt y tadata,
+              query.v e rContext,
+              enable nternat onalTop cs = true,
+              enableTop cDescr pt on = true)
             // update counter
-            localizedEntity.foreach { entity =>
-              if (!entity.nameMatchesDeviceLanguage) deviceLanguageMismatch.incr()
+            local zedEnt y.foreach { ent y =>
+               f (!ent y.na Matc sDev ceLanguage) dev ceLanguageM smatch. ncr()
             }
 
-            localizedEntity
+            local zedEnt y
           }.handle {
-            case e: InvalidUttEntityException =>
-              log.error(e.getMessage)
-              uttEntityNotFound.incr()
+            case e:  nval dUttEnt yExcept on =>
+              log.error(e.get ssage)
+              uttEnt yNotFound. ncr()
               None
           }
       }

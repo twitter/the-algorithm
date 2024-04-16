@@ -1,27 +1,27 @@
-package com.twitter.ann.service.loadtest
+package com.tw ter.ann.serv ce.loadtest
 
-import com.twitter.ann.common.{Appendable, Distance, EntityEmbedding, Queryable, RuntimeParams}
-import com.twitter.ann.util.IndexBuilderUtils
-import com.twitter.util.{Future, Stopwatch}
+ mport com.tw ter.ann.common.{Appendable, D stance, Ent yEmbedd ng, Queryable, Runt  Params}
+ mport com.tw ter.ann.ut l. ndexBu lderUt ls
+ mport com.tw ter.ut l.{Future, Stopwatch}
 
-class EmbeddingIndexer {
-  // Index embeddings into Appendable and return the (appendable, latency) pair
-  // we need to return appendable itself here because for Annoy, we need to build
-  // appendable and serialize it first, and then we could query with index directory
-  // once we are confident to remove Annoy, should clean up this method.
-  def indexEmbeddings[T, P <: RuntimeParams, D <: Distance[D]](
+class Embedd ng ndexer {
+  //  ndex embedd ngs  nto Appendable and return t  (appendable, latency) pa r
+  //   need to return appendable  self  re because for Annoy,   need to bu ld
+  // appendable and ser al ze   f rst, and t n   could query w h  ndex d rectory
+  // once   are conf dent to remove Annoy, should clean up t   thod.
+  def  ndexEmbedd ngs[T, P <: Runt  Params, D <: D stance[D]](
     appendable: Appendable[T, P, D],
-    recorder: LoadTestBuildRecorder,
-    indexSet: Seq[EntityEmbedding[T]],
-    concurrencyLevel: Int
+    recorder: LoadTestBu ldRecorder,
+     ndexSet: Seq[Ent yEmbedd ng[T]],
+    concurrencyLevel:  nt
   ): Future[Queryable[T, P, D]] = {
-    val indexBuildingTimeElapsed = Stopwatch.start()
-    val future = IndexBuilderUtils.addToIndex(appendable, indexSet, concurrencyLevel)
+    val  ndexBu ld ngT  Elapsed = Stopwatch.start()
+    val future =  ndexBu lderUt ls.addTo ndex(appendable,  ndexSet, concurrencyLevel)
     future.map { _ =>
-      val indexBuildingTime = indexBuildingTimeElapsed()
+      val  ndexBu ld ngT   =  ndexBu ld ngT  Elapsed()
       val toQueryableElapsed = Stopwatch.start()
       val queryable = appendable.toQueryable
-      recorder.recordIndexCreation(indexSet.size, indexBuildingTime, toQueryableElapsed())
+      recorder.record ndexCreat on( ndexSet.s ze,  ndexBu ld ngT  , toQueryableElapsed())
       queryable
     }
   }

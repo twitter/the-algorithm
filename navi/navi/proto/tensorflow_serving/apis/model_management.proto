@@ -1,16 +1,16 @@
 syntax = "proto3";
 
-package tensorflow.serving;
+package tensorflow.serv ng;
 
-import "tensorflow_serving/apis/status.proto";
-import "tensorflow_serving/config/model_server_config.proto";
+ mport "tensorflow_serv ng/ap s/status.proto";
+ mport "tensorflow_serv ng/conf g/model_server_conf g.proto";
 
-option cc_enable_arenas = true;
+opt on cc_enable_arenas = true;
 
-message ReloadConfigRequest {
-  ModelServerConfig config = 1;
+ ssage ReloadConf gRequest {
+  ModelServerConf g conf g = 1;
 }
 
-message ReloadConfigResponse {
+ ssage ReloadConf gResponse {
   StatusProto status = 1;
 }

@@ -1,88 +1,88 @@
-package com.twitter.product_mixer.component_library.selector
+package com.tw ter.product_m xer.component_l brary.selector
 
-import com.twitter.product_mixer.component_library.selector.DropSelector.dropDuplicates
-import com.twitter.product_mixer.core.functional_component.common.AllPipelines
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector._
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.selector.DropSelector.dropDupl cates
+ mport com.tw ter.product_m xer.core.funct onal_component.common.AllP pel nes
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Spec f cP pel ne
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Spec f cP pel nes
+ mport com.tw ter.product_m xer.core.funct onal_component.selector._
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on.ModuleCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-object DropDuplicateModuleItemCandidates {
+object DropDupl cateModule emCand dates {
 
   /**
-   * Limit the number of module item candidates (for 1 or more modules) from a certain candidate
-   * source. See [[DropDuplicateModuleItemCandidates]] for more details.
+   * L m  t  number of module  em cand dates (for 1 or more modules) from a certa n cand date
+   * s ce. See [[DropDupl cateModule emCand dates]] for more deta ls.
    *
-   * @param candidatePipeline pipelines on which to run the selector
+   * @param cand dateP pel ne p pel nes on wh ch to run t  selector
    *
-   * @note Scala doesn't allow overloaded methods with default arguments. Users wanting to customize
-   *       the de-dupe logic should use the default constructor. We could provide multiple
-   *       constructors but that seemed more confusing (five ways to instantiate the selector) or not
-   *       necessarily less verbose (if we picked specific use-cases rather than trying to support
-   *       everything).
+   * @note Scala doesn't allow overloaded  thods w h default argu nts. Users want ng to custom ze
+   *       t  de-dupe log c should use t  default constructor.   could prov de mult ple
+   *       constructors but that see d more confus ng (f ve ways to  nstant ate t  selector) or not
+   *       necessar ly less verbose ( f   p cked spec f c use-cases rat r than try ng to support
+   *       everyth ng).
    */
-  def apply(candidatePipeline: CandidatePipelineIdentifier) = new DropDuplicateModuleItemCandidates(
-    SpecificPipeline(candidatePipeline),
-    IdAndClassDuplicationKey,
-    PickFirstCandidateMerger)
+  def apply(cand dateP pel ne: Cand dateP pel ne dent f er) = new DropDupl cateModule emCand dates(
+    Spec f cP pel ne(cand dateP pel ne),
+     dAndClassDupl cat onKey,
+    P ckF rstCand date rger)
 
-  def apply(candidatePipelines: Set[CandidatePipelineIdentifier]) =
-    new DropDuplicateModuleItemCandidates(
-      SpecificPipelines(candidatePipelines),
-      IdAndClassDuplicationKey,
-      PickFirstCandidateMerger)
+  def apply(cand dateP pel nes: Set[Cand dateP pel ne dent f er]) =
+    new DropDupl cateModule emCand dates(
+      Spec f cP pel nes(cand dateP pel nes),
+       dAndClassDupl cat onKey,
+      P ckF rstCand date rger)
 }
 
 /**
- * Limit the number of module item candidates (for 1 or more modules) from certain candidate
- * pipelines.
+ * L m  t  number of module  em cand dates (for 1 or more modules) from certa n cand date
+ * p pel nes.
  *
- * This acts like a [[DropDuplicateCandidates]] but for modules in `remainingCandidates`
- * from any of the provided [[candidatePipelines]]. Similar to [[DropDuplicateCandidates]], it
- * keeps only the first instance of a candidate within a module as determined by comparing
- * the contained candidate ID and class type.
+ * T  acts l ke a [[DropDupl cateCand dates]] but for modules  n `rema n ngCand dates`
+ * from any of t  prov ded [[cand dateP pel nes]]. S m lar to [[DropDupl cateCand dates]],  
+ * keeps only t  f rst  nstance of a cand date w h n a module as determ ned by compar ng
+ * t  conta ned cand date  D and class type.
  *
- * @param pipelineScope pipeline scope on which to run the selector
- * @param duplicationKey how to generate the key used to identify duplicate candidates (by default use id and class name)
- * @param mergeStrategy how to merge two candidates with the same key (by default pick the first one)
+ * @param p pel neScope p pel ne scope on wh ch to run t  selector
+ * @param dupl cat onKey how to generate t  key used to  dent fy dupl cate cand dates (by default use  d and class na )
+ * @param  rgeStrategy how to  rge two cand dates w h t  sa  key (by default p ck t  f rst one)
  *
- * For example, if a candidatePipeline returned 5 modules each
- * containing duplicate items in the candidate pool, then the module items in each of the
- * 5 modules will be filtered to the unique items within each module.
+ * For example,  f a cand dateP pel ne returned 5 modules each
+ * conta n ng dupl cate  ems  n t  cand date pool, t n t  module  ems  n each of t 
+ * 5 modules w ll be f ltered to t  un que  ems w h n each module.
  *
- * Another example is if you have 2 modules each with the same items as the other,
- * it won't deduplicate across modules.
+ * Anot r example  s  f   have 2 modules each w h t  sa   ems as t  ot r,
+ *   won't dedupl cate across modules.
  *
- * @note this updates the module in the `remainingCandidates`
+ * @note t  updates t  module  n t  `rema n ngCand dates`
  */
-case class DropDuplicateModuleItemCandidates(
-  override val pipelineScope: CandidateScope,
-  duplicationKey: DeduplicationKey[_] = IdAndClassDuplicationKey,
-  mergeStrategy: CandidateMergeStrategy = PickFirstCandidateMerger)
-    extends Selector[PipelineQuery] {
+case class DropDupl cateModule emCand dates(
+  overr de val p pel neScope: Cand dateScope,
+  dupl cat onKey: Dedupl cat onKey[_] =  dAndClassDupl cat onKey,
+   rgeStrategy: Cand date rgeStrategy = P ckF rstCand date rger)
+    extends Selector[P pel neQuery] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+  overr de def apply(
+    query: P pel neQuery,
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
 
-    val remainingCandidatesLimited = remainingCandidates.map {
-      case module: ModuleCandidateWithDetails if pipelineScope.contains(module) =>
-        // this applies to all candidates in a module, even if they are from a different
-        // candidate source, which can happen if items are added to a module during selection
-        module.copy(candidates = dropDuplicates(
-          pipelineScope = AllPipelines,
-          candidates = module.candidates,
-          duplicationKey = duplicationKey,
-          mergeStrategy = mergeStrategy))
-      case candidate => candidate
+    val rema n ngCand datesL m ed = rema n ngCand dates.map {
+      case module: ModuleCand dateW hDeta ls  f p pel neScope.conta ns(module) =>
+        // t  appl es to all cand dates  n a module, even  f t y are from a d fferent
+        // cand date s ce, wh ch can happen  f  ems are added to a module dur ng select on
+        module.copy(cand dates = dropDupl cates(
+          p pel neScope = AllP pel nes,
+          cand dates = module.cand dates,
+          dupl cat onKey = dupl cat onKey,
+           rgeStrategy =  rgeStrategy))
+      case cand date => cand date
     }
 
-    SelectorResult(remainingCandidates = remainingCandidatesLimited, result = result)
+    SelectorResult(rema n ngCand dates = rema n ngCand datesL m ed, result = result)
   }
 }

@@ -1,224 +1,224 @@
-"""Utility functions to create FeatureConfig objects from feature_spec.yaml files"""
-import os
-import re
+"""Ut l y funct ons to create FeatureConf g objects from feature_spec.yaml f les"""
+ mport os
+ mport re
 
-import tensorflow.compat.v1 as tf
-import yaml
-from twml.feature_config import FeatureConfigBuilder
-from twml.contrib.feature_config import FeatureConfigBuilder as FeatureConfigBuilderV2
+ mport tensorflow.compat.v1 as tf
+ mport yaml
+from twml.feature_conf g  mport FeatureConf gBu lder
+from twml.contr b.feature_conf g  mport FeatureConf gBu lder as FeatureConf gBu lderV2
 
 
-def _get_config_version(config_dict):
-  doc = config_dict
+def _get_conf g_vers on(conf g_d ct):
+  doc = conf g_d ct
   supported_classes = {
-    "twml.FeatureConfig": "v1",
-    "twml.contrib.FeatureConfig": "v2"
+    "twml.FeatureConf g": "v1",
+    "twml.contr b.FeatureConf g": "v2"
   }
-  if "class" not in doc:
-    raise ValueError("'class' key not found")
-  if doc["class"] not in supported_classes.keys():
-    raise ValueError("Class %s not supported. Supported clases are %s"
+   f "class" not  n doc:
+    ra se ValueError("'class' key not found")
+   f doc["class"] not  n supported_classes.keys():
+    ra se ValueError("Class %s not supported. Supported clases are %s"
                      % (doc["class"], supported_classes.keys()))
   return supported_classes[doc["class"]]
 
 
-def _validate_config_dict_v1(config_dict):
+def _val date_conf g_d ct_v1(conf g_d ct):
   """
-  Validate spec exported by twml.FeatureConfig
+  Val date spec exported by twml.FeatureConf g
   """
-  doc = config_dict
+  doc = conf g_d ct
 
-  def malformed_error(msg):
-    raise ValueError("twml.FeatureConfig: Malformed feature_spec. %s" % msg)
+  def malfor d_error(msg):
+    ra se ValueError("twml.FeatureConf g: Malfor d feature_spec. %s" % msg)
 
-  if doc["class"] != "twml.FeatureConfig":
-    malformed_error("'class' is not twml.FeatureConfig")
-  if "format" not in doc:
-    malformed_error("'format' key not found")
+   f doc["class"] != "twml.FeatureConf g":
+    malfor d_error("'class'  s not twml.FeatureConf g")
+   f "format" not  n doc:
+    malfor d_error("'format' key not found")
 
-  # validate spec exported by twml.FeatureConfig
-  if doc["format"] == "exported":
-    dict_keys = ["features", "labels", "weight", "tensors", "sparse_tensors"]
-    for key in dict_keys:
-      if key not in doc:
-        malformed_error("'%s' key not found" % key)
-      if type(doc[key]) != dict:
-        malformed_error("'%s' is not a dict" % key)
-    if "filters" not in doc:
-      malformed_error("'filters' key not found")
-    elif type(doc["filters"]) != list:
-      malformed_error("'filters' is not a list")
+  # val date spec exported by twml.FeatureConf g
+   f doc["format"] == "exported":
+    d ct_keys = ["features", "labels", "  ght", "tensors", "sparse_tensors"]
+    for key  n d ct_keys:
+       f key not  n doc:
+        malfor d_error("'%s' key not found" % key)
+       f type(doc[key]) != d ct:
+        malfor d_error("'%s'  s not a d ct" % key)
+     f "f lters" not  n doc:
+      malfor d_error("'f lters' key not found")
+    el f type(doc["f lters"]) != l st:
+      malfor d_error("'f lters'  s not a l st")
 
-  # validate spec provided by modeler
-  elif doc["format"] == "manual":
-    raise NotImplementedError("Manual config support not yet implemented")
+  # val date spec prov ded by modeler
+  el f doc["format"] == "manual":
+    ra se Not mple ntedError("Manual conf g support not yet  mple nted")
   else:
-    malformed_error("'format' must be 'exported' or 'manual'")
+    malfor d_error("'format' must be 'exported' or 'manual'")
 
 
-def _validate_config_dict_v2(config_dict):
+def _val date_conf g_d ct_v2(conf g_d ct):
   """
-  Validate spec exported by twml.contrib.FeatureConfig
+  Val date spec exported by twml.contr b.FeatureConf g
   """
-  doc = config_dict
+  doc = conf g_d ct
 
-  def malformed_error(msg):
-    raise ValueError("twml.contrib.FeatureConfig: Malformed feature_spec. %s" % msg)
+  def malfor d_error(msg):
+    ra se ValueError("twml.contr b.FeatureConf g: Malfor d feature_spec. %s" % msg)
 
-  if doc["class"] != "twml.contrib.FeatureConfig":
-    malformed_error("'class' is not twml.contrib.FeatureConfig")
-  if "format" not in doc:
-    malformed_error("'format key not found'")
+   f doc["class"] != "twml.contr b.FeatureConf g":
+    malfor d_error("'class'  s not twml.contr b.FeatureConf g")
+   f "format" not  n doc:
+    malfor d_error("'format key not found'")
 
-  # validate spec exported by twml.contrib.FeatureConfig (basic validation only)
-  if doc["format"] == "exported":
-    dict_keys = ["features", "labels", "weight", "tensors", "sparseTensors", "discretizeConfig"]
-    for key in dict_keys:
-      if key not in doc:
-        malformed_error("'%s' key not found" % key)
-      if type(doc[key]) != dict:
-        malformed_error("'%s' is not a dict" % key)
-    list_keys = ["sparseFeatureGroups", "denseFeatureGroups", "denseFeatures", "images", "filters"]
-    for key in list_keys:
-      if key not in doc:
-        malformed_error("'%s' key not found" % key)
-      if type(doc[key]) != list:
-        malformed_error("'%s' is not a list" % key)
+  # val date spec exported by twml.contr b.FeatureConf g (bas c val dat on only)
+   f doc["format"] == "exported":
+    d ct_keys = ["features", "labels", "  ght", "tensors", "sparseTensors", "d scret zeConf g"]
+    for key  n d ct_keys:
+       f key not  n doc:
+        malfor d_error("'%s' key not found" % key)
+       f type(doc[key]) != d ct:
+        malfor d_error("'%s'  s not a d ct" % key)
+    l st_keys = ["sparseFeatureGroups", "denseFeatureGroups", "denseFeatures", " mages", "f lters"]
+    for key  n l st_keys:
+       f key not  n doc:
+        malfor d_error("'%s' key not found" % key)
+       f type(doc[key]) != l st:
+        malfor d_error("'%s'  s not a l st" % key)
 
-  # validate spec provided by modeler
-  elif doc["format"] == "manual":
-    raise NotImplementedError("Manual config support not yet implemented")
+  # val date spec prov ded by modeler
+  el f doc["format"] == "manual":
+    ra se Not mple ntedError("Manual conf g support not yet  mple nted")
   else:
-    malformed_error("'format' must be 'exported' or 'manual'")
+    malfor d_error("'format' must be 'exported' or 'manual'")
 
 
-def _create_feature_config_v1(config_dict, data_spec_path):
-  fc_builder = FeatureConfigBuilder(data_spec_path)
+def _create_feature_conf g_v1(conf g_d ct, data_spec_path):
+  fc_bu lder = FeatureConf gBu lder(data_spec_path)
 
-  if config_dict["format"] == "exported":
+   f conf g_d ct["format"] == "exported":
     # add features
-    for feature_info in config_dict["features"].values():
-      feature_name = re.escape(feature_info["featureName"])
-      feature_group = feature_info["featureGroup"]
-      fc_builder.add_feature(feature_name, feature_group)
+    for feature_ nfo  n conf g_d ct["features"].values():
+      feature_na  = re.escape(feature_ nfo["featureNa "])
+      feature_group = feature_ nfo["featureGroup"]
+      fc_bu lder.add_feature(feature_na , feature_group)
     # add labels
     labels = []
-    for label_info in config_dict["labels"].values():
-      labels.append(label_info["featureName"])
-    fc_builder.add_labels(labels)
-    # feature filters
-    for feature_name in config_dict["filters"]:
-      fc_builder.add_filter(feature_name)
-    # weight
-    if config_dict["weight"]:
-      weight_feature = list(config_dict["weight"].values())[0]["featureName"]
-      fc_builder.define_weight(weight_feature)
+    for label_ nfo  n conf g_d ct["labels"].values():
+      labels.append(label_ nfo["featureNa "])
+    fc_bu lder.add_labels(labels)
+    # feature f lters
+    for feature_na   n conf g_d ct["f lters"]:
+      fc_bu lder.add_f lter(feature_na )
+    #   ght
+     f conf g_d ct["  ght"]:
+        ght_feature = l st(conf g_d ct["  ght"].values())[0]["featureNa "]
+      fc_bu lder.def ne_  ght(  ght_feature)
   else:
-    raise ValueError("Format '%s' not implemented" % config_dict["format"])
+    ra se ValueError("Format '%s' not  mple nted" % conf g_d ct["format"])
 
-  return fc_builder.build()
+  return fc_bu lder.bu ld()
 
 
-def _create_feature_config_v2(config_dict, data_spec_path):
-  fc_builder = FeatureConfigBuilderV2(data_spec_path)
+def _create_feature_conf g_v2(conf g_d ct, data_spec_path):
+  fc_bu lder = FeatureConf gBu lderV2(data_spec_path)
 
-  if config_dict["format"] == "exported":
-    # add sparse group extraction configs
-    for sparse_group in config_dict["sparseFeatureGroups"]:
-      fids = sparse_group["features"].keys()
-      fnames = [sparse_group["features"][fid]["featureName"] for fid in fids]
-      fc_builder.extract_features_as_hashed_sparse(
-        feature_regexes=[re.escape(fname) for fname in fnames],
-        output_tensor_name=sparse_group["outputName"],
-        hash_space_size_bits=sparse_group["hashSpaceBits"],
-        discretize_num_bins=sparse_group["discretize"]["numBins"],
-        discretize_output_size_bits=sparse_group["discretize"]["outputSizeBits"],
-        discretize_type=sparse_group["discretize"]["type"],
-        type_filter=sparse_group["filterType"])
+   f conf g_d ct["format"] == "exported":
+    # add sparse group extract on conf gs
+    for sparse_group  n conf g_d ct["sparseFeatureGroups"]:
+      f ds = sparse_group["features"].keys()
+      fna s = [sparse_group["features"][f d]["featureNa "] for f d  n f ds]
+      fc_bu lder.extract_features_as_has d_sparse(
+        feature_regexes=[re.escape(fna ) for fna   n fna s],
+        output_tensor_na =sparse_group["outputNa "],
+        hash_space_s ze_b s=sparse_group["hashSpaceB s"],
+        d scret ze_num_b ns=sparse_group["d scret ze"]["numB ns"],
+        d scret ze_output_s ze_b s=sparse_group["d scret ze"]["outputS zeB s"],
+        d scret ze_type=sparse_group["d scret ze"]["type"],
+        type_f lter=sparse_group["f lterType"])
 
-    # add dense group extraction configs
-    for dense_group in config_dict["denseFeatureGroups"]:
-      fids = dense_group["features"].keys()
-      fnames = [dense_group["features"][fid]["featureName"] for fid in fids]
-      fc_builder.extract_feature_group(
-        feature_regexes=[re.escape(fname) for fname in fnames],
-        group_name=dense_group["outputName"],
-        type_filter=dense_group["filterType"],
+    # add dense group extract on conf gs
+    for dense_group  n conf g_d ct["denseFeatureGroups"]:
+      f ds = dense_group["features"].keys()
+      fna s = [dense_group["features"][f d]["featureNa "] for f d  n f ds]
+      fc_bu lder.extract_feature_group(
+        feature_regexes=[re.escape(fna ) for fna   n fna s],
+        group_na =dense_group["outputNa "],
+        type_f lter=dense_group["f lterType"],
         default_value=dense_group["defaultValue"])
 
-    # add dense feature configs
-    for dense_features in config_dict["denseFeatures"]:
-      fids = dense_features["features"].keys()
-      fnames = [dense_features["features"][fid]["featureName"] for fid in fids]
+    # add dense feature conf gs
+    for dense_features  n conf g_d ct["denseFeatures"]:
+      f ds = dense_features["features"].keys()
+      fna s = [dense_features["features"][f d]["featureNa "] for f d  n f ds]
       default_value = dense_features["defaultValue"]
-      if len(fnames) == 1 and type(default_value) != dict:
-        fc_builder.extract_feature(
-          feature_name=re.escape(fnames[0]),
+       f len(fna s) == 1 and type(default_value) != d ct:
+        fc_bu lder.extract_feature(
+          feature_na =re.escape(fna s[0]),
           expected_shape=dense_features["expectedShape"],
           default_value=dense_features["defaultValue"])
       else:
-        fc_builder.extract_features(
-          feature_regexes=[re.escape(fname) for fname in fnames],
+        fc_bu lder.extract_features(
+          feature_regexes=[re.escape(fna ) for fna   n fna s],
           default_value_map=dense_features["defaultValue"])
 
-    # add image feature configs
-    for image in config_dict["images"]:
-      fc_builder.extract_image(
-        feature_name=image["featureName"],
-        preprocess=image["preprocess"],
-        out_type=tf.as_dtype(image["outType"].lower()),
-        channels=image["channels"],
-        default_image=image["defaultImage"],
+    # add  mage feature conf gs
+    for  mage  n conf g_d ct[" mages"]:
+      fc_bu lder.extract_ mage(
+        feature_na = mage["featureNa "],
+        preprocess= mage["preprocess"],
+        out_type=tf.as_dtype( mage["outType"].lo r()),
+        channels= mage["channels"],
+        default_ mage= mage["default mage"],
       )
 
-    # add other tensor features (non-image)
-    tensor_fnames = []
-    image_fnames = [img["featureName"] for img in config_dict["images"]]
-    for tensor_fname in config_dict["tensors"]:
-      if tensor_fname not in image_fnames:
-        tensor_fnames.append(tensor_fname)
-    for sparse_tensor_fname in config_dict["sparseTensors"]:
-      tensor_fnames.append(sparse_tensor_fname)
-    fc_builder.extract_tensors(tensor_fnames)
+    # add ot r tensor features (non- mage)
+    tensor_fna s = []
+     mage_fna s = [ mg["featureNa "] for  mg  n conf g_d ct[" mages"]]
+    for tensor_fna   n conf g_d ct["tensors"]:
+       f tensor_fna  not  n  mage_fna s:
+        tensor_fna s.append(tensor_fna )
+    for sparse_tensor_fna   n conf g_d ct["sparseTensors"]:
+      tensor_fna s.append(sparse_tensor_fna )
+    fc_bu lder.extract_tensors(tensor_fna s)
 
     # add labels
     labels = []
-    for label_info in config_dict["labels"].values():
-      labels.append(label_info["featureName"])
-    fc_builder.add_labels(labels)
+    for label_ nfo  n conf g_d ct["labels"].values():
+      labels.append(label_ nfo["featureNa "])
+    fc_bu lder.add_labels(labels)
 
   else:
-    raise ValueError("Format '%s' not implemented" % config_dict["format"])
+    ra se ValueError("Format '%s' not  mple nted" % conf g_d ct["format"])
 
-  return fc_builder.build()
+  return fc_bu lder.bu ld()
 
 
-def create_feature_config_from_dict(config_dict, data_spec_path):
+def create_feature_conf g_from_d ct(conf g_d ct, data_spec_path):
   """
-  Create a FeatureConfig object from a feature spec dict.
+  Create a FeatureConf g object from a feature spec d ct.
   """
-  config_version = _get_config_version(config_dict)
-  if config_version == "v1":
-    _validate_config_dict_v1(config_dict)
-    feature_config = _create_feature_config_v1(config_dict, data_spec_path)
-  elif config_version == "v2":
-    _validate_config_dict_v2(config_dict)
-    feature_config = _create_feature_config_v2(config_dict, data_spec_path)
+  conf g_vers on = _get_conf g_vers on(conf g_d ct)
+   f conf g_vers on == "v1":
+    _val date_conf g_d ct_v1(conf g_d ct)
+    feature_conf g = _create_feature_conf g_v1(conf g_d ct, data_spec_path)
+  el f conf g_vers on == "v2":
+    _val date_conf g_d ct_v2(conf g_d ct)
+    feature_conf g = _create_feature_conf g_v2(conf g_d ct, data_spec_path)
   else:
-    raise ValueError("version not supported")
+    ra se ValueError("vers on not supported")
 
-  return feature_config
+  return feature_conf g
 
 
-def create_feature_config(config_path, data_spec_path):
+def create_feature_conf g(conf g_path, data_spec_path):
   """
-  Create a FeatureConfig object from a feature_spec.yaml file.
+  Create a FeatureConf g object from a feature_spec.yaml f le.
   """
-  _, ext = os.path.splitext(config_path)
-  if ext not in ['.yaml', '.yml']:
-    raise ValueError("create_feature_config_from_yaml: Only .yaml/.yml supported")
+  _, ext = os.path.spl ext(conf g_path)
+   f ext not  n ['.yaml', '.yml']:
+    ra se ValueError("create_feature_conf g_from_yaml: Only .yaml/.yml supported")
 
-  with tf.io.gfile.GFile(config_path, mode='r') as fs:
-    config_dict = yaml.safe_load(fs)
+  w h tf. o.gf le.GF le(conf g_path, mode='r') as fs:
+    conf g_d ct = yaml.safe_load(fs)
 
-  return create_feature_config_from_dict(config_dict, data_spec_path)
+  return create_feature_conf g_from_d ct(conf g_d ct, data_spec_path)

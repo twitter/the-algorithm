@@ -1,36 +1,36 @@
-package com.twitter.frigate.pushservice.refresh_handler.cross
+package com.tw ter.fr gate.pushserv ce.refresh_handler.cross
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.SocialContextActions
-import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
-import com.twitter.hermit.predicate.Predicate
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base.Soc alContextAct ons
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.RawCand date
+ mport com.tw ter. rm .pred cate.Pred cate
 
-class CopyPredicates(statsReceiver: StatsReceiver) {
-  val alwaysTruePredicate = Predicate
-    .from { _: CandidateCopyPair =>
+class CopyPred cates(statsRece ver: StatsRece ver) {
+  val alwaysTruePred cate = Pred cate
+    .from { _: Cand dateCopyPa r =>
       true
-    }.withStats(statsReceiver.scope("always_true_copy_predicate"))
+    }.w hStats(statsRece ver.scope("always_true_copy_pred cate"))
 
-  val unrecognizedCandidatePredicate = alwaysTruePredicate.flip
-    .withStats(statsReceiver.scope("unrecognized_candidate"))
+  val unrecogn zedCand datePred cate = alwaysTruePred cate.fl p
+    .w hStats(statsRece ver.scope("unrecogn zed_cand date"))
 
-  val displaySocialContextPredicate = Predicate
-    .from { candidateCopyPair: CandidateCopyPair =>
-      candidateCopyPair.candidate match {
-        case candidateWithScActions: RawCandidate with SocialContextActions =>
-          val socialContextUserIds = candidateWithScActions.socialContextActions.map(_.userId)
-          val countSocialContext = socialContextUserIds.size
-          val pushCopy = candidateCopyPair.pushCopy
+  val d splaySoc alContextPred cate = Pred cate
+    .from { cand dateCopyPa r: Cand dateCopyPa r =>
+      cand dateCopyPa r.cand date match {
+        case cand dateW hScAct ons: RawCand date w h Soc alContextAct ons =>
+          val soc alContextUser ds = cand dateW hScAct ons.soc alContextAct ons.map(_.user d)
+          val countSoc alContext = soc alContextUser ds.s ze
+          val pushCopy = cand dateCopyPa r.pushCopy
 
-          countSocialContext match {
-            case 1 => pushCopy.hasOneDisplaySocialContext && !pushCopy.hasOtherSocialContext
-            case 2 => pushCopy.hasTwoDisplayContext && !pushCopy.hasOtherSocialContext
-            case c if c > 2 =>
-              pushCopy.hasOneDisplaySocialContext && pushCopy.hasOtherSocialContext
+          countSoc alContext match {
+            case 1 => pushCopy.hasOneD splaySoc alContext && !pushCopy.hasOt rSoc alContext
+            case 2 => pushCopy.hasTwoD splayContext && !pushCopy.hasOt rSoc alContext
+            case c  f c > 2 =>
+              pushCopy.hasOneD splaySoc alContext && pushCopy.hasOt rSoc alContext
             case _ => false
           }
 
         case _ => false
       }
-    }.withStats(statsReceiver.scope("display_social_context_predicate"))
+    }.w hStats(statsRece ver.scope("d splay_soc al_context_pred cate"))
 }

@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.r chtext
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Plain
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextFormat
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Strong
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.Pla n
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chTextFormat
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.Strong
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class RichTextFormatMarshaller @Inject() () {
+@S ngleton
+class R chTextFormatMarshaller @ nject() () {
 
-  def apply(format: RichTextFormat): urt.RichTextFormat = format match {
-    case Plain => urt.RichTextFormat.Plain
-    case Strong => urt.RichTextFormat.Strong
+  def apply(format: R chTextFormat): urt.R chTextFormat = format match {
+    case Pla n => urt.R chTextFormat.Pla n
+    case Strong => urt.R chTextFormat.Strong
   }
 }

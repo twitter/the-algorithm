@@ -1,41 +1,41 @@
-package com.twitter.product_mixer.component_library.decorator.slice
+package com.tw ter.product_m xer.component_l brary.decorator.sl ce
 
-import com.twitter.product_mixer.component_library.model.candidate.CursorCandidate
-import com.twitter.product_mixer.component_library.model.presentation.slice.SliceItemPresentation
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.DecoratorIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.decorator.Decoration
-import com.twitter.product_mixer.core.functional_component.decorator.slice.builder.CandidateSliceItemBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.CursorCand date
+ mport com.tw ter.product_m xer.component_l brary.model.presentat on.sl ce.Sl ce emPresentat on
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Decorator dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.sl ce.Cursor em
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Cand dateDecorator
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Decorat on
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.sl ce.bu lder.Cand dateSl ce emBu lder
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.st ch.St ch
 
 /**
- * Adds a [[Decoration]] for all `candidates` that are [[CursorCandidate]]s
+ * Adds a [[Decorat on]] for all `cand dates` that are [[CursorCand date]]s
  *
- * @note Only [[CursorCandidate]]s get decorated in [[SliceItemCandidateDecorator]]
- *       because the [[com.twitter.product_mixer.component_library.premarshaller.slice.SliceDomainMarshaller]]
- *       handles the undecorated non-[[CursorCandidate]] `candidates` directly.
+ * @note Only [[CursorCand date]]s get decorated  n [[Sl ce emCand dateDecorator]]
+ *       because t  [[com.tw ter.product_m xer.component_l brary.premarshaller.sl ce.Sl ceDoma nMarshaller]]
+ *       handles t  undecorated non-[[CursorCand date]] `cand dates` d rectly.
  */
-case class SliceItemCandidateDecorator[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-  cursorBuilder: CandidateSliceItemBuilder[Query, CursorCandidate, CursorItem],
-  override val identifier: DecoratorIdentifier = DecoratorIdentifier("SliceItemCandidate"))
-    extends CandidateDecorator[Query, Candidate] {
+case class Sl ce emCand dateDecorator[Query <: P pel neQuery, Cand date <: Un versalNoun[Any]](
+  cursorBu lder: Cand dateSl ce emBu lder[Query, CursorCand date, Cursor em],
+  overr de val  dent f er: Decorator dent f er = Decorator dent f er("Sl ce emCand date"))
+    extends Cand dateDecorator[Query, Cand date] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[Seq[Decoration]] = {
-    val cursorPresentations = candidates.collect {
-      case CandidateWithFeatures(candidate: CursorCandidate, features) =>
-        val cursorItem = cursorBuilder(query, candidate, features)
-        val presentation = SliceItemPresentation(sliceItem = cursorItem)
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): St ch[Seq[Decorat on]] = {
+    val cursorPresentat ons = cand dates.collect {
+      case Cand dateW hFeatures(cand date: CursorCand date, features) =>
+        val cursor em = cursorBu lder(query, cand date, features)
+        val presentat on = Sl ce emPresentat on(sl ce em = cursor em)
 
-        Decoration(candidate, presentation)
+        Decorat on(cand date, presentat on)
     }
 
-    Stitch.value(cursorPresentations)
+    St ch.value(cursorPresentat ons)
   }
 }

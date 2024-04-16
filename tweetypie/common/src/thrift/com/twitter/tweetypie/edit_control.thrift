@@ -1,71 +1,71 @@
-namespace java com.twitter.tweetypie.thriftjava
-#@namespace scala com.twitter.tweetypie.thriftscala
-#@namespace strato com.twitter.tweetypie
-namespace py gen.twitter.tweetypie.edit_control
-namespace rb TweetyPie
-// Specific namespace to avoid golang circular import
-namespace go tweetypie.tweet
+na space java com.tw ter.t etyp e.thr ftjava
+#@na space scala com.tw ter.t etyp e.thr ftscala
+#@na space strato com.tw ter.t etyp e
+na space py gen.tw ter.t etyp e.ed _control
+na space rb T etyP e
+// Spec f c na space to avo d golang c rcular  mport
+na space go t etyp e.t et
 
 /**
- * EditControlInitial is present on all new Tweets. Initially, edit_tweet_ids will only contain the id of the new Tweet.
- * Subsequent edits will append the edited Tweet ids to edit_tweet_ids.
+ * Ed Control n  al  s present on all new T ets.  n  ally, ed _t et_ ds w ll only conta n t   d of t  new T et.
+ * Subsequent ed s w ll append t  ed ed T et  ds to ed _t et_ ds.
 **/
-struct EditControlInitial {
+struct Ed Control n  al {
  /**
-  * A list of all edits of this initial Tweet, including the initial Tweet id,
-  * and in ascending time order (the oldest revision first).
+  * A l st of all ed s of t   n  al T et,  nclud ng t   n  al T et  d,
+  * and  n ascend ng t   order (t  oldest rev s on f rst).
   */
-  1: required list<i64> edit_tweet_ids = [] (personalDataType = 'TweetId', strato.json.numbers.type = 'string')
+  1: requ red l st< 64> ed _t et_ ds = [] (personalDataType = 'T et d', strato.json.numbers.type = 'str ng')
  /**
-  * Epoch timestamp in milli-seconds (UTC) after which the tweet will no longer be editable.
+  * Epoch t  stamp  n m ll -seconds (UTC) after wh ch t  t et w ll no longer be ed able.
   */
-  2: optional i64 editable_until_msecs (strato.json.numbers.type = 'string')
+  2: opt onal  64 ed able_unt l_msecs (strato.json.numbers.type = 'str ng')
  /**
-  * Number of edits that are available for this Tweet. This starts at 5 and decrements with each edit.
+  * Number of ed s that are ava lable for t  T et. T  starts at 5 and decre nts w h each ed .
   */
-  3: optional i64 edits_remaining (strato.json.numbers.type = 'string')
+  3: opt onal  64 ed s_rema n ng (strato.json.numbers.type = 'str ng')
 
   /**
-   * Specifies whether the Tweet has any intrinsic properties that mean it can't be edited
-   * (for example, we have a business rule that poll Tweets can't be edited).
+   * Spec f es w t r t  T et has any  ntr ns c propert es that  an   can't be ed ed
+   * (for example,   have a bus ness rule that poll T ets can't be ed ed).
    *
-   * If a Tweet edit expires due to time frame or number of edits, this field still is set
-   * to true for Tweets that could have been edited.
+   *  f a T et ed  exp res due to t   fra  or number of ed s, t  f eld st ll  s set
+   * to true for T ets that could have been ed ed.
    */
-  4: optional bool is_edit_eligible
-}(persisted='true', hasPersonalData = 'true', strato.graphql.typename='EditControlInitial')
+  4: opt onal bool  s_ed _el g ble
+}(pers sted='true', hasPersonalData = 'true', strato.graphql.typena ='Ed Control n  al')
 
 /**
- * EditControlEdit is present for any Tweets that are an edit of another Tweet. The full list of edits can be retrieved
- * from the edit_control_initial field, which will always be hydrated.
+ * Ed ControlEd   s present for any T ets that are an ed  of anot r T et. T  full l st of ed s can be retr eved
+ * from t  ed _control_ n  al f eld, wh ch w ll always be hydrated.
 **/
-struct EditControlEdit {
+struct Ed ControlEd  {
   /**
-   * The id of the initial Tweet in an edit chain
+   * T   d of t   n  al T et  n an ed  cha n
    */
-  1: required i64 initial_tweet_id (personalDataType = 'TweetId', strato.json.numbers.type = 'string')
+  1: requ red  64  n  al_t et_ d (personalDataType = 'T et d', strato.json.numbers.type = 'str ng')
   /**
-  * This field is only used during hydration to return the EditControl of the initial Tweet for
-  * a subsequently edited version.
+  * T  f eld  s only used dur ng hydrat on to return t  Ed Control of t   n  al T et for
+  * a subsequently ed ed vers on.
   */
-  2: optional EditControlInitial edit_control_initial
-}(persisted='true', hasPersonalData = 'true', strato.graphql.typename='EditControlEdit')
+  2: opt onal Ed Control n  al ed _control_ n  al
+}(pers sted='true', hasPersonalData = 'true', strato.graphql.typena ='Ed ControlEd ')
 
 
 /**
- * Tweet metadata about edits of a Tweet. A list of edits to a Tweet are represented as a chain of
- * Tweets linked to each other using the EditControl field.
+ * T et  tadata about ed s of a T et. A l st of ed s to a T et are represented as a cha n of
+ * T ets l nked to each ot r us ng t  Ed Control f eld.
  *
- * EditControl can be either EditControlInitial which means that the Tweet is unedited or the first Tweet in
- * an edit chain, or EditControlEdit which means it is a Tweet in the edit chain after the first
- * Tweet.
+ * Ed Control can be e  r Ed Control n  al wh ch  ans that t  T et  s uned ed or t  f rst T et  n
+ * an ed  cha n, or Ed ControlEd  wh ch  ans    s a T et  n t  ed  cha n after t  f rst
+ * T et.
  */
-union EditControl {
-  1: EditControlInitial initial
-  2: EditControlEdit edit
-}(persisted='true', hasPersonalData = 'true', strato.graphql.typename='EditControl')
+un on Ed Control {
+  1: Ed Control n  al  n  al
+  2: Ed ControlEd  ed 
+}(pers sted='true', hasPersonalData = 'true', strato.graphql.typena ='Ed Control')
 
 
-service FederatedServiceBase {
-  EditControl getEditControl(1: required i64 tweetId)
+serv ce FederatedServ ceBase {
+  Ed Control getEd Control(1: requ red  64 t et d)
 }

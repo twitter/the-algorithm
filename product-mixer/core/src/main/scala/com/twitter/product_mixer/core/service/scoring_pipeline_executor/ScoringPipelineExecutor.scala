@@ -1,172 +1,172 @@
-package com.twitter.product_mixer.core.service.scoring_pipeline_executor
+package com.tw ter.product_m xer.core.serv ce.scor ng_p pel ne_executor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ScoringPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.FailOpenPolicy
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipeline
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipelineResult
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.scoring_pipeline_executor.ScoringPipelineExecutor.ScoringPipelineState
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Arrow.Iso
-import com.twitter.util.logging.Logging
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Scor ngP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on. emCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.Fa lOpenPol cy
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure. llegalStateFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.product_m xer.core.p pel ne.scor ng.Scor ngP pel ne
+ mport com.tw ter.product_m xer.core.p pel ne.scor ng.Scor ngP pel neResult
+ mport com.tw ter.product_m xer.core.qual y_factor.Qual yFactorObserver
+ mport com.tw ter.product_m xer.core.serv ce.Executor
+ mport com.tw ter.product_m xer.core.serv ce.scor ng_p pel ne_executor.Scor ngP pel neExecutor.Scor ngP pel neState
+ mport com.tw ter.st ch.Arrow
+ mport com.tw ter.st ch.Arrow. so
+ mport com.tw ter.ut l.logg ng.Logg ng
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.immutable.Queue
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport scala.collect on. mmutable.Queue
 
-@Singleton
-class ScoringPipelineExecutor @Inject() (override val statsReceiver: StatsReceiver)
+@S ngleton
+class Scor ngP pel neExecutor @ nject() (overr de val statsRece ver: StatsRece ver)
     extends Executor
-    with Logging {
-  def arrow[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-    pipelines: Seq[ScoringPipeline[Query, Candidate]],
+    w h Logg ng {
+  def arrow[Query <: P pel neQuery, Cand date <: Un versalNoun[Any]](
+    p pel nes: Seq[Scor ngP pel ne[Query, Cand date]],
     context: Executor.Context,
-    defaultFailOpenPolicy: FailOpenPolicy,
-    failOpenPolicies: Map[ScoringPipelineIdentifier, FailOpenPolicy],
-    qualityFactorObserverByPipeline: Map[ComponentIdentifier, QualityFactorObserver],
-  ): Arrow[ScoringPipelineExecutor.Inputs[Query], ScoringPipelineExecutorResult[Candidate]] = {
-    val scoringPipelineArrows = pipelines.map { pipeline =>
-      val failOpenPolicy = failOpenPolicies.getOrElse(pipeline.identifier, defaultFailOpenPolicy)
-      val qualityFactorObserver = qualityFactorObserverByPipeline.get(pipeline.identifier)
+    defaultFa lOpenPol cy: Fa lOpenPol cy,
+    fa lOpenPol c es: Map[Scor ngP pel ne dent f er, Fa lOpenPol cy],
+    qual yFactorObserverByP pel ne: Map[Component dent f er, Qual yFactorObserver],
+  ): Arrow[Scor ngP pel neExecutor. nputs[Query], Scor ngP pel neExecutorResult[Cand date]] = {
+    val scor ngP pel neArrows = p pel nes.map { p pel ne =>
+      val fa lOpenPol cy = fa lOpenPol c es.getOrElse(p pel ne. dent f er, defaultFa lOpenPol cy)
+      val qual yFactorObserver = qual yFactorObserverByP pel ne.get(p pel ne. dent f er)
 
-      getIsoArrowForScoringPipeline(
-        pipeline,
+      get soArrowForScor ngP pel ne(
+        p pel ne,
         context,
-        failOpenPolicy,
-        qualityFactorObserver
+        fa lOpenPol cy,
+        qual yFactorObserver
       )
     }
-    val combinedArrow = isoArrowsSequentially(scoringPipelineArrows)
+    val comb nedArrow =  soArrowsSequent ally(scor ngP pel neArrows)
     Arrow
-      .map[ScoringPipelineExecutor.Inputs[Query], ScoringPipelineState[Query, Candidate]] {
-        case input =>
-          ScoringPipelineState(
-            input.query,
-            input.itemCandidatesWithDetails,
-            ScoringPipelineExecutorResult(input.itemCandidatesWithDetails, Queue.empty))
-      }.flatMapArrow(combinedArrow).map { state =>
-        state.executorResult.copy(individualPipelineResults =
-          // materialize the Queue into a List for faster future iterations
-          state.executorResult.individualPipelineResults.toList)
+      .map[Scor ngP pel neExecutor. nputs[Query], Scor ngP pel neState[Query, Cand date]] {
+        case  nput =>
+          Scor ngP pel neState(
+             nput.query,
+             nput. emCand datesW hDeta ls,
+            Scor ngP pel neExecutorResult( nput. emCand datesW hDeta ls, Queue.empty))
+      }.flatMapArrow(comb nedArrow).map { state =>
+        state.executorResult.copy( nd v dualP pel neResults =
+          // mater al ze t  Queue  nto a L st for faster future  erat ons
+          state.executorResult. nd v dualP pel neResults.toL st)
       }
   }
 
-  private def getIsoArrowForScoringPipeline[
-    Query <: PipelineQuery,
-    Candidate <: UniversalNoun[Any]
+  pr vate def get soArrowForScor ngP pel ne[
+    Query <: P pel neQuery,
+    Cand date <: Un versalNoun[Any]
   ](
-    pipeline: ScoringPipeline[Query, Candidate],
+    p pel ne: Scor ngP pel ne[Query, Cand date],
     context: Executor.Context,
-    failOpenPolicy: FailOpenPolicy,
-    qualityFactorObserver: Option[QualityFactorObserver]
-  ): Iso[ScoringPipelineState[Query, Candidate]] = {
-    val pipelineArrow = Arrow
-      .map[ScoringPipelineState[Query, Candidate], ScoringPipeline.Inputs[Query]] { state =>
-        ScoringPipeline.Inputs(state.query, state.allCandidates)
-      }.flatMapArrow(pipeline.arrow)
+    fa lOpenPol cy: Fa lOpenPol cy,
+    qual yFactorObserver: Opt on[Qual yFactorObserver]
+  ):  so[Scor ngP pel neState[Query, Cand date]] = {
+    val p pel neArrow = Arrow
+      .map[Scor ngP pel neState[Query, Cand date], Scor ngP pel ne. nputs[Query]] { state =>
+        Scor ngP pel ne. nputs(state.query, state.allCand dates)
+      }.flatMapArrow(p pel ne.arrow)
 
-    val observedArrow = wrapPipelineWithExecutorBookkeeping(
+    val observedArrow = wrapP pel neW hExecutorBookkeep ng(
       context,
-      pipeline.identifier,
-      qualityFactorObserver,
-      failOpenPolicy)(pipelineArrow)
+      p pel ne. dent f er,
+      qual yFactorObserver,
+      fa lOpenPol cy)(p pel neArrow)
 
     Arrow
-      .zipWithArg(
+      .z pW hArg(
         observedArrow
       ).map {
         case (
-              scoringPipelinesState: ScoringPipelineState[Query, Candidate],
-              scoringPipelineResult: ScoringPipelineResult[Candidate]) =>
-          val updatedCandidates: Seq[ItemCandidateWithDetails] =
-            mkUpdatedCandidates(pipeline.identifier, scoringPipelinesState, scoringPipelineResult)
-          ScoringPipelineState(
-            scoringPipelinesState.query,
-            updatedCandidates,
-            scoringPipelinesState.executorResult
+              scor ngP pel nesState: Scor ngP pel neState[Query, Cand date],
+              scor ngP pel neResult: Scor ngP pel neResult[Cand date]) =>
+          val updatedCand dates: Seq[ emCand dateW hDeta ls] =
+            mkUpdatedCand dates(p pel ne. dent f er, scor ngP pel nesState, scor ngP pel neResult)
+          Scor ngP pel neState(
+            scor ngP pel nesState.query,
+            updatedCand dates,
+            scor ngP pel nesState.executorResult
               .copy(
-                updatedCandidates,
-                scoringPipelinesState.executorResult.individualPipelineResults :+ scoringPipelineResult)
+                updatedCand dates,
+                scor ngP pel nesState.executorResult. nd v dualP pel neResults :+ scor ngP pel neResult)
           )
       }
   }
 
-  private def mkUpdatedCandidates[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-    scoringPipelineIdentifier: ScoringPipelineIdentifier,
-    scoringPipelinesState: ScoringPipelineState[Query, Candidate],
-    scoringPipelineResult: ScoringPipelineResult[Candidate]
-  ): Seq[ItemCandidateWithDetails] = {
-    if (scoringPipelineResult.failure.isEmpty) {
+  pr vate def mkUpdatedCand dates[Query <: P pel neQuery, Cand date <: Un versalNoun[Any]](
+    scor ngP pel ne dent f er: Scor ngP pel ne dent f er,
+    scor ngP pel nesState: Scor ngP pel neState[Query, Cand date],
+    scor ngP pel neResult: Scor ngP pel neResult[Cand date]
+  ): Seq[ emCand dateW hDeta ls] = {
+     f (scor ngP pel neResult.fa lure. sEmpty) {
 
       /**
-       * It's important that we map back from which actual item candidate was scored by looking
-       * at the selector results. This is to defend against the same candidate being selected
-       * from two different candidate pipelines. If one is selected and the other isn't, we
-       * should only score the selected one. If both are selected and each is scored differently
-       * we should get the right score for each.
+       *  's  mportant that   map back from wh ch actual  em cand date was scored by look ng
+       * at t  selector results. T   s to defend aga nst t  sa  cand date be ng selected
+       * from two d fferent cand date p pel nes.  f one  s selected and t  ot r  sn't,  
+       * should only score t  selected one.  f both are selected and each  s scored d fferently
+       *   should get t  r ght score for each.
        */
-      val selectedItemCandidates: Seq[ItemCandidateWithDetails] =
-        scoringPipelineResult.selectorResults
-          .getOrElse(throw PipelineFailure(
-            IllegalStateFailure,
-            s"Missing Selector Results in Scoring Pipeline $scoringPipelineIdentifier")).selectedCandidates.collect {
-            case itemCandidateWithDetails: ItemCandidateWithDetails =>
-              itemCandidateWithDetails
+      val selected emCand dates: Seq[ emCand dateW hDeta ls] =
+        scor ngP pel neResult.selectorResults
+          .getOrElse(throw P pel neFa lure(
+             llegalStateFa lure,
+            s"M ss ng Selector Results  n Scor ng P pel ne $scor ngP pel ne dent f er")).selectedCand dates.collect {
+            case  emCand dateW hDeta ls:  emCand dateW hDeta ls =>
+               emCand dateW hDeta ls
           }
-      val scoredFeatureMaps: Seq[FeatureMap] = scoringPipelineResult.result
+      val scoredFeatureMaps: Seq[FeatureMap] = scor ngP pel neResult.result
         .getOrElse(Seq.empty).map(_.features)
 
-      if (scoredFeatureMaps.isEmpty) {
-        // It's possible that all Scorers are [[Conditionally]] off. In this case, we return empty
-        // and don't validate the list size since this is done in the hydrator/scorer executor.
-        scoringPipelinesState.allCandidates
-      } else if (selectedItemCandidates.length != scoredFeatureMaps.length) {
-        // The length of the inputted candidates should always match the returned feature map, unless
-        throw PipelineFailure(
-          IllegalStateFailure,
-          s"Missing configured scorer result, length of scorer results does not match the length of selected candidates")
+       f (scoredFeatureMaps. sEmpty) {
+        //  's poss ble that all Scorers are [[Cond  onally]] off.  n t  case,   return empty
+        // and don't val date t  l st s ze s nce t   s done  n t  hydrator/scorer executor.
+        scor ngP pel nesState.allCand dates
+      } else  f (selected emCand dates.length != scoredFeatureMaps.length) {
+        // T  length of t   nputted cand dates should always match t  returned feature map, unless
+        throw P pel neFa lure(
+           llegalStateFa lure,
+          s"M ss ng conf gured scorer result, length of scorer results does not match t  length of selected cand dates")
       } else {
-        /* Zip the selected item candidate seq back to the scored feature maps, this works
-         * because the scored results will always have the same number of elements returned
-         * and it should match the same order. We then loop through all candidates because the
-         * expectation is to always keep the result since a subsequent scoring pipeline can score a
-         * candidate that the current one did not. We only update the feature map of the candidate
-         *  if it was selected and scored.
+        /* Z p t  selected  em cand date seq back to t  scored feature maps, t  works
+         * because t  scored results w ll always have t  sa  number of ele nts returned
+         * and   should match t  sa  order.   t n loop through all cand dates because t 
+         * expectat on  s to always keep t  result s nce a subsequent scor ng p pel ne can score a
+         * cand date that t  current one d d not.   only update t  feature map of t  cand date
+         *   f   was selected and scored.
          */
-        val selectedItemCandidateToScorerMap: Map[ItemCandidateWithDetails, FeatureMap] =
-          selectedItemCandidates.zip(scoredFeatureMaps).toMap
-        scoringPipelinesState.allCandidates.map { itemCandidateWithDetails =>
-          selectedItemCandidateToScorerMap.get(itemCandidateWithDetails) match {
-            case Some(scorerResult) =>
-              itemCandidateWithDetails.copy(features =
-                itemCandidateWithDetails.features ++ scorerResult)
-            case None => itemCandidateWithDetails
+        val selected emCand dateToScorerMap: Map[ emCand dateW hDeta ls, FeatureMap] =
+          selected emCand dates.z p(scoredFeatureMaps).toMap
+        scor ngP pel nesState.allCand dates.map {  emCand dateW hDeta ls =>
+          selected emCand dateToScorerMap.get( emCand dateW hDeta ls) match {
+            case So (scorerResult) =>
+               emCand dateW hDeta ls.copy(features =
+                 emCand dateW hDeta ls.features ++ scorerResult)
+            case None =>  emCand dateW hDeta ls
           }
         }
       }
     } else {
-      // If the underlying scoring pipeline has failed open, just keep the existing candidates
-      scoringPipelinesState.allCandidates
+      //  f t  underly ng scor ng p pel ne has fa led open, just keep t  ex st ng cand dates
+      scor ngP pel nesState.allCand dates
     }
   }
 }
 
-object ScoringPipelineExecutor {
-  private case class ScoringPipelineState[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
+object Scor ngP pel neExecutor {
+  pr vate case class Scor ngP pel neState[Query <: P pel neQuery, Cand date <: Un versalNoun[Any]](
     query: Query,
-    allCandidates: Seq[ItemCandidateWithDetails],
-    executorResult: ScoringPipelineExecutorResult[Candidate])
+    allCand dates: Seq[ emCand dateW hDeta ls],
+    executorResult: Scor ngP pel neExecutorResult[Cand date])
 
-  case class Inputs[Query <: PipelineQuery](
+  case class  nputs[Query <: P pel neQuery](
     query: Query,
-    itemCandidatesWithDetails: Seq[ItemCandidateWithDetails])
+     emCand datesW hDeta ls: Seq[ emCand dateW hDeta ls])
 }

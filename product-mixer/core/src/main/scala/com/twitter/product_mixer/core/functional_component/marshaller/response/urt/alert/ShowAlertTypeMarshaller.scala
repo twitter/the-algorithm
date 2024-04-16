@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.alert
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.Navigate
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.NewTweets
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.alert.Nav gate
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.alert.NewT ets
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.alert.ShowAlertType
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ShowAlertTypeMarshaller @Inject() () {
+@S ngleton
+class ShowAlertTypeMarshaller @ nject() () {
 
   def apply(alertType: ShowAlertType): urt.AlertType = alertType match {
-    case NewTweets => urt.AlertType.NewTweets
-    case Navigate => urt.AlertType.Navigate
+    case NewT ets => urt.AlertType.NewT ets
+    case Nav gate => urt.AlertType.Nav gate
   }
 }

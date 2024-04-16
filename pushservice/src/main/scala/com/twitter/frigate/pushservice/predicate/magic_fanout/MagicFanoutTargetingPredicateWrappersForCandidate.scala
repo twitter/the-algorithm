@@ -1,132 +1,132 @@
-package com.twitter.frigate.pushservice.predicate.magic_fanout
+package com.tw ter.fr gate.pushserv ce.pred cate.mag c_fanout
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContext
-import com.twitter.frigate.common.util.FeatureSwitchParams
-import com.twitter.frigate.common.util.MagicFanoutTargetingPredicatesEnum
-import com.twitter.frigate.common.util.MagicFanoutTargetingPredicatesEnum.MagicFanoutTargetingPredicatesEnum
-import com.twitter.frigate.pushservice.model.MagicFanoutEventPushCandidate
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.interests.thriftscala.UserInterests
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi.FSEnumParam
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.store. nterests. nterestsLookupRequestW hContext
+ mport com.tw ter.fr gate.common.ut l.FeatureSw chParams
+ mport com.tw ter.fr gate.common.ut l.Mag cFanoutTarget ngPred catesEnum
+ mport com.tw ter.fr gate.common.ut l.Mag cFanoutTarget ngPred catesEnum.Mag cFanoutTarget ngPred catesEnum
+ mport com.tw ter.fr gate.pushserv ce.model.Mag cFanoutEventPushCand date
+ mport com.tw ter.fr gate.pushserv ce.conf g.Conf g
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter. nterests.thr ftscala.User nterests
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t  l nes.conf gap .FSEnumParam
 
-object MagicFanoutTargetingPredicateWrappersForCandidate {
+object Mag cFanoutTarget ngPred cateWrappersForCand date {
 
   /**
-   * Combine Prod and Experimental Targeting predicate logic
-   * @return: NamedPredicate[MagicFanoutNewsEventPushCandidate]
+   * Comb ne Prod and Exper  ntal Target ng pred cate log c
+   * @return: Na dPred cate[Mag cFanoutNewsEventPushCand date]
    */
-  def magicFanoutTargetingPredicate(
-    stats: StatsReceiver,
-    config: Config
-  ): NamedPredicate[MagicFanoutEventPushCandidate] = {
-    val name = "magic_fanout_targeting_predicate"
-    Predicate
-      .fromAsync { candidate: MagicFanoutEventPushCandidate =>
-        val mfTargetingPredicateParam = getTargetingPredicateParams(candidate)
-        val mfTargetingPredicate = MagicFanoutTargetingPredicateMapForCandidate
-          .apply(config)
-          .get(candidate.target.params(mfTargetingPredicateParam))
-        mfTargetingPredicate match {
-          case Some(predicate) =>
-            predicate.apply(Seq(candidate)).map(_.head)
+  def mag cFanoutTarget ngPred cate(
+    stats: StatsRece ver,
+    conf g: Conf g
+  ): Na dPred cate[Mag cFanoutEventPushCand date] = {
+    val na  = "mag c_fanout_target ng_pred cate"
+    Pred cate
+      .fromAsync { cand date: Mag cFanoutEventPushCand date =>
+        val mfTarget ngPred cateParam = getTarget ngPred cateParams(cand date)
+        val mfTarget ngPred cate = Mag cFanoutTarget ngPred cateMapForCand date
+          .apply(conf g)
+          .get(cand date.target.params(mfTarget ngPred cateParam))
+        mfTarget ngPred cate match {
+          case So (pred cate) =>
+            pred cate.apply(Seq(cand date)).map(_. ad)
           case None =>
-            throw new Exception(
-              s"MFTargetingPredicateMap doesnt contain value for TargetingParam: ${FeatureSwitchParams.MFTargetingPredicate}")
+            throw new Except on(
+              s"MFTarget ngPred cateMap doesnt conta n value for Target ngParam: ${FeatureSw chParams.MFTarget ngPred cate}")
         }
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .w hStats(stats.scope(na ))
+      .w hNa (na )
   }
 
-  private def getTargetingPredicateParams(
-    candidate: MagicFanoutEventPushCandidate
-  ): FSEnumParam[MagicFanoutTargetingPredicatesEnum.type] = {
-    if (candidate.commonRecType == CommonRecommendationType.MagicFanoutSportsEvent) {
-      FeatureSwitchParams.MFCricketTargetingPredicate
-    } else FeatureSwitchParams.MFTargetingPredicate
-  }
-
-  /**
-   * SimCluster and ERG and Topic Follows Targeting Predicate
-   */
-  def simClusterErgTopicFollowsTargetingPredicate(
-    implicit stats: StatsReceiver,
-    interestsLookupStore: ReadableStore[InterestsLookupRequestWithContext, UserInterests]
-  ): NamedPredicate[MagicFanoutEventPushCandidate] = {
-    simClusterErgTargetingPredicate
-      .or(MagicFanoutPredicatesForCandidate.magicFanoutTopicFollowsTargetingPredicate)
-      .withName("sim_cluster_erg_topic_follows_targeting")
+  pr vate def getTarget ngPred cateParams(
+    cand date: Mag cFanoutEventPushCand date
+  ): FSEnumParam[Mag cFanoutTarget ngPred catesEnum.type] = {
+     f (cand date.commonRecType == CommonRecom ndat onType.Mag cFanoutSportsEvent) {
+      FeatureSw chParams.MFCr cketTarget ngPred cate
+    } else FeatureSw chParams.MFTarget ngPred cate
   }
 
   /**
-   * SimCluster and ERG and Topic Follows Targeting Predicate
+   * S mCluster and ERG and Top c Follows Target ng Pred cate
    */
-  def simClusterErgTopicFollowsUserFollowsTargetingPredicate(
-    implicit stats: StatsReceiver,
-    interestsLookupStore: ReadableStore[InterestsLookupRequestWithContext, UserInterests]
-  ): NamedPredicate[MagicFanoutEventPushCandidate] = {
-    simClusterErgTopicFollowsTargetingPredicate
+  def s mClusterErgTop cFollowsTarget ngPred cate(
+     mpl c  stats: StatsRece ver,
+     nterestsLookupStore: ReadableStore[ nterestsLookupRequestW hContext, User nterests]
+  ): Na dPred cate[Mag cFanoutEventPushCand date] = {
+    s mClusterErgTarget ngPred cate
+      .or(Mag cFanoutPred catesForCand date.mag cFanoutTop cFollowsTarget ngPred cate)
+      .w hNa ("s m_cluster_erg_top c_follows_target ng")
+  }
+
+  /**
+   * S mCluster and ERG and Top c Follows Target ng Pred cate
+   */
+  def s mClusterErgTop cFollowsUserFollowsTarget ngPred cate(
+     mpl c  stats: StatsRece ver,
+     nterestsLookupStore: ReadableStore[ nterestsLookupRequestW hContext, User nterests]
+  ): Na dPred cate[Mag cFanoutEventPushCand date] = {
+    s mClusterErgTop cFollowsTarget ngPred cate
       .or(
-        MagicFanoutPredicatesForCandidate.followRankThreshold(
-          PushFeatureSwitchParams.MagicFanoutRealgraphRankThreshold))
-      .withName("sim_cluster_erg_topic_follows_user_follows_targeting")
+        Mag cFanoutPred catesForCand date.followRankThreshold(
+          PushFeatureSw chParams.Mag cFanoutRealgraphRankThreshold))
+      .w hNa ("s m_cluster_erg_top c_follows_user_follows_target ng")
   }
 
   /**
-   * SimCluster and ERG Targeting Predicate
+   * S mCluster and ERG Target ng Pred cate
    */
-  def simClusterErgTargetingPredicate(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[MagicFanoutEventPushCandidate] = {
-    MagicFanoutPredicatesForCandidate.magicFanoutSimClusterTargetingPredicate
-      .or(MagicFanoutPredicatesForCandidate.magicFanoutErgInterestRankThresholdPredicate)
-      .withName("sim_cluster_erg_targeting")
+  def s mClusterErgTarget ngPred cate(
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[Mag cFanoutEventPushCand date] = {
+    Mag cFanoutPred catesForCand date.mag cFanoutS mClusterTarget ngPred cate
+      .or(Mag cFanoutPred catesForCand date.mag cFanoutErg nterestRankThresholdPred cate)
+      .w hNa ("s m_cluster_erg_target ng")
   }
 }
 
 /**
- * Object to initalze and get predicate map
+ * Object to  n alze and get pred cate map
  */
-object MagicFanoutTargetingPredicateMapForCandidate {
+object Mag cFanoutTarget ngPred cateMapForCand date {
 
   /**
-   * Called from the Config.scala at the time of server initialization
-   * @param statsReceiver: implict stats receiver
-   * @return Map[MagicFanoutTargetingPredicatesEnum, NamedPredicate[MagicFanoutNewsEventPushCandidate]]
+   * Called from t  Conf g.scala at t  t   of server  n  al zat on
+   * @param statsRece ver:  mpl ct stats rece ver
+   * @return Map[Mag cFanoutTarget ngPred catesEnum, Na dPred cate[Mag cFanoutNewsEventPushCand date]]
    */
   def apply(
-    config: Config
-  ): Map[MagicFanoutTargetingPredicatesEnum, NamedPredicate[MagicFanoutEventPushCandidate]] = {
+    conf g: Conf g
+  ): Map[Mag cFanoutTarget ngPred catesEnum, Na dPred cate[Mag cFanoutEventPushCand date]] = {
     Map(
-      MagicFanoutTargetingPredicatesEnum.SimClusterAndERGAndTopicFollows -> MagicFanoutTargetingPredicateWrappersForCandidate
-        .simClusterErgTopicFollowsTargetingPredicate(
-          config.statsReceiver,
-          config.interestsWithLookupContextStore),
-      MagicFanoutTargetingPredicatesEnum.SimClusterAndERG -> MagicFanoutTargetingPredicateWrappersForCandidate
-        .simClusterErgTargetingPredicate(config.statsReceiver),
-      MagicFanoutTargetingPredicatesEnum.SimCluster -> MagicFanoutPredicatesForCandidate
-        .magicFanoutSimClusterTargetingPredicate(config.statsReceiver),
-      MagicFanoutTargetingPredicatesEnum.ERG -> MagicFanoutPredicatesForCandidate
-        .magicFanoutErgInterestRankThresholdPredicate(config.statsReceiver),
-      MagicFanoutTargetingPredicatesEnum.TopicFollows -> MagicFanoutPredicatesForCandidate
-        .magicFanoutTopicFollowsTargetingPredicate(
-          config.statsReceiver,
-          config.interestsWithLookupContextStore),
-      MagicFanoutTargetingPredicatesEnum.UserFollows -> MagicFanoutPredicatesForCandidate
+      Mag cFanoutTarget ngPred catesEnum.S mClusterAndERGAndTop cFollows -> Mag cFanoutTarget ngPred cateWrappersForCand date
+        .s mClusterErgTop cFollowsTarget ngPred cate(
+          conf g.statsRece ver,
+          conf g. nterestsW hLookupContextStore),
+      Mag cFanoutTarget ngPred catesEnum.S mClusterAndERG -> Mag cFanoutTarget ngPred cateWrappersForCand date
+        .s mClusterErgTarget ngPred cate(conf g.statsRece ver),
+      Mag cFanoutTarget ngPred catesEnum.S mCluster -> Mag cFanoutPred catesForCand date
+        .mag cFanoutS mClusterTarget ngPred cate(conf g.statsRece ver),
+      Mag cFanoutTarget ngPred catesEnum.ERG -> Mag cFanoutPred catesForCand date
+        .mag cFanoutErg nterestRankThresholdPred cate(conf g.statsRece ver),
+      Mag cFanoutTarget ngPred catesEnum.Top cFollows -> Mag cFanoutPred catesForCand date
+        .mag cFanoutTop cFollowsTarget ngPred cate(
+          conf g.statsRece ver,
+          conf g. nterestsW hLookupContextStore),
+      Mag cFanoutTarget ngPred catesEnum.UserFollows -> Mag cFanoutPred catesForCand date
         .followRankThreshold(
-          PushFeatureSwitchParams.MagicFanoutRealgraphRankThreshold
-        )(config.statsReceiver),
-      MagicFanoutTargetingPredicatesEnum.SimClusterAndERGAndTopicFollowsAndUserFollows ->
-        MagicFanoutTargetingPredicateWrappersForCandidate
-          .simClusterErgTopicFollowsUserFollowsTargetingPredicate(
-            config.statsReceiver,
-            config.interestsWithLookupContextStore
+          PushFeatureSw chParams.Mag cFanoutRealgraphRankThreshold
+        )(conf g.statsRece ver),
+      Mag cFanoutTarget ngPred catesEnum.S mClusterAndERGAndTop cFollowsAndUserFollows ->
+        Mag cFanoutTarget ngPred cateWrappersForCand date
+          .s mClusterErgTop cFollowsUserFollowsTarget ngPred cate(
+            conf g.statsRece ver,
+            conf g. nterestsW hLookupContextStore
           )
     )
   }

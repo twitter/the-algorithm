@@ -1,61 +1,61 @@
-package com.twitter.visibility.configapi
+package com.tw ter.v s b l y.conf gap 
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.decider.Decider
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.timelines.configapi.Params
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.UnitOfDiversion
-import com.twitter.visibility.models.ViewerContext
+ mport com.tw ter.abdec der.Logg ngABDec der
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.featuresw c s.v2.FeatureSw c s
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.servo.ut l. mo z ngStatsRece ver
+ mport com.tw ter.t  l nes.conf gap .Params
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.models.Un OfD vers on
+ mport com.tw ter.v s b l y.models.V e rContext
 
-object VisibilityParams {
+object V s b l yParams {
   def apply(
     log: Logger,
-    statsReceiver: StatsReceiver,
-    decider: Decider,
-    abDecider: LoggingABDecider,
-    featureSwitches: FeatureSwitches
-  ): VisibilityParams =
-    new VisibilityParams(log, statsReceiver, decider, abDecider, featureSwitches)
+    statsRece ver: StatsRece ver,
+    dec der: Dec der,
+    abDec der: Logg ngABDec der,
+    featureSw c s: FeatureSw c s
+  ): V s b l yParams =
+    new V s b l yParams(log, statsRece ver, dec der, abDec der, featureSw c s)
 }
 
-class VisibilityParams(
+class V s b l yParams(
   log: Logger,
-  statsReceiver: StatsReceiver,
-  decider: Decider,
-  abDecider: LoggingABDecider,
-  featureSwitches: FeatureSwitches) {
+  statsRece ver: StatsRece ver,
+  dec der: Dec der,
+  abDec der: Logg ngABDec der,
+  featureSw c s: FeatureSw c s) {
 
-  private[this] val contextFactory = new VisibilityRequestContextFactory(
-    abDecider,
-    featureSwitches
+  pr vate[t ] val contextFactory = new V s b l yRequestContextFactory(
+    abDec der,
+    featureSw c s
   )
 
-  private[this] val configBuilder = ConfigBuilder(statsReceiver.scope("config"), decider, log)
+  pr vate[t ] val conf gBu lder = Conf gBu lder(statsRece ver.scope("conf g"), dec der, log)
 
-  private[this] val paramStats: MemoizingStatsReceiver = new MemoizingStatsReceiver(
-    statsReceiver.scope("configapi_params"))
+  pr vate[t ] val paramStats:  mo z ngStatsRece ver = new  mo z ngStatsRece ver(
+    statsRece ver.scope("conf gap _params"))
 
   def apply(
-    viewerContext: ViewerContext,
+    v e rContext: V e rContext,
     safetyLevel: SafetyLevel,
-    unitsOfDiversion: Seq[UnitOfDiversion] = Seq.empty
+    un sOfD vers on: Seq[Un OfD vers on] = Seq.empty
   ): Params = {
-    val config = configBuilder.build(safetyLevel)
-    val requestContext = contextFactory(viewerContext, safetyLevel, unitsOfDiversion)
-    config.apply(requestContext, paramStats)
+    val conf g = conf gBu lder.bu ld(safetyLevel)
+    val requestContext = contextFactory(v e rContext, safetyLevel, un sOfD vers on)
+    conf g.apply(requestContext, paramStats)
   }
 
-  def memoized(
-    viewerContext: ViewerContext,
+  def  mo zed(
+    v e rContext: V e rContext,
     safetyLevel: SafetyLevel,
-    unitsOfDiversion: Seq[UnitOfDiversion] = Seq.empty
+    un sOfD vers on: Seq[Un OfD vers on] = Seq.empty
   ): Params = {
-    val config = configBuilder.buildMemoized(safetyLevel)
-    val requestContext = contextFactory(viewerContext, safetyLevel, unitsOfDiversion)
-    config.apply(requestContext, paramStats)
+    val conf g = conf gBu lder.bu ld mo zed(safetyLevel)
+    val requestContext = contextFactory(v e rContext, safetyLevel, un sOfD vers on)
+    conf g.apply(requestContext, paramStats)
   }
 }

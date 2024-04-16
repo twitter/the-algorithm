@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.promoted
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.MediaInfo
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.promoted. d a nfo
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class MediaInfoMarshaller @Inject() (
-  callToActionMarshaller: CallToActionMarshaller,
-  videoVariantsMarshaller: VideoVariantsMarshaller) {
-  def apply(mediaInfo: MediaInfo): urt.MediaInfo = {
-    urt.MediaInfo(
-      uuid = mediaInfo.uuid,
-      publisherId = mediaInfo.publisherId,
-      callToAction = mediaInfo.callToAction.map(callToActionMarshaller(_)),
-      durationMillis = mediaInfo.durationMillis,
-      videoVariants = mediaInfo.videoVariants.map(videoVariantsMarshaller(_)),
-      advertiserName = mediaInfo.advertiserName,
-      renderAdByAdvertiserName = mediaInfo.renderAdByAdvertiserName,
-      advertiserProfileImageUrl = mediaInfo.advertiserProfileImageUrl
+@S ngleton
+class  d a nfoMarshaller @ nject() (
+  callToAct onMarshaller: CallToAct onMarshaller,
+  v deoVar antsMarshaller: V deoVar antsMarshaller) {
+  def apply( d a nfo:  d a nfo): urt. d a nfo = {
+    urt. d a nfo(
+      uu d =  d a nfo.uu d,
+      publ s r d =  d a nfo.publ s r d,
+      callToAct on =  d a nfo.callToAct on.map(callToAct onMarshaller(_)),
+      durat onM ll s =  d a nfo.durat onM ll s,
+      v deoVar ants =  d a nfo.v deoVar ants.map(v deoVar antsMarshaller(_)),
+      advert serNa  =  d a nfo.advert serNa ,
+      renderAdByAdvert serNa  =  d a nfo.renderAdByAdvert serNa ,
+      advert serProf le mageUrl =  d a nfo.advert serProf le mageUrl
     )
   }
 }

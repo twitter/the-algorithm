@@ -1,93 +1,93 @@
-package com.twitter.search.feature_update_service;
+package com.tw ter.search.feature_update_serv ce;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Arrays;
+ mport java.ut l.Collect on;
+ mport java.ut l.L st;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.google.common.base.Preconditions;
-import com.google.inject.Module;
+ mport com.google.common.base.Precond  ons;
+ mport com.google. nject.Module;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.app.Flag;
-import com.twitter.app.Flaggable;
-import com.twitter.finagle.Filter;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.ThriftMux;
-import com.twitter.finatra.annotations.DarkTrafficFilterType;
-import com.twitter.finatra.decider.modules.DeciderModule$;
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule;
-import com.twitter.finatra.mtls.thriftmux.AbstractMtlsThriftServer;
-import com.twitter.finatra.thrift.filters.AccessLoggingFilter;
-import com.twitter.finatra.thrift.filters.LoggingMDCFilter;
-import com.twitter.finatra.thrift.filters.StatsFilter;
-import com.twitter.finatra.thrift.filters.ThriftMDCFilter;
-import com.twitter.finatra.thrift.filters.TraceIdMDCFilter;
-import com.twitter.finatra.thrift.routing.JavaThriftRouter;
-import com.twitter.inject.thrift.modules.ThriftClientIdModule$;
-import com.twitter.search.common.constants.SearchThriftWebFormsAccess;
-import com.twitter.search.common.metrics.BuildInfoStats;
-import com.twitter.search.common.util.PlatformStatsExporter;
-import com.twitter.search.feature_update_service.filters.ClientIdWhitelistFilter;
-import com.twitter.search.feature_update_service.modules.ClientIdWhitelistModule;
-import com.twitter.search.feature_update_service.modules.EarlybirdUtilModule;
-import com.twitter.search.feature_update_service.modules.FeatureUpdateServiceDiffyModule;
-import com.twitter.search.feature_update_service.modules.FinagleKafkaProducerModule;
-import com.twitter.search.feature_update_service.modules.FuturePoolModule;
-import com.twitter.search.feature_update_service.modules.TweetypieModule;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateService;
-import com.twitter.thriftwebforms.MethodOptionsAccessConfig;
-import com.twitter.util.ExecutorServiceFuturePool;
+ mport com.tw ter.app.Flag;
+ mport com.tw ter.app.Flaggable;
+ mport com.tw ter.f nagle.F lter;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.Thr ftMux;
+ mport com.tw ter.f natra.annotat ons.DarkTraff cF lterType;
+ mport com.tw ter.f natra.dec der.modules.Dec derModule$;
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsThr ft bFormsModule;
+ mport com.tw ter.f natra.mtls.thr ftmux.AbstractMtlsThr ftServer;
+ mport com.tw ter.f natra.thr ft.f lters.AccessLogg ngF lter;
+ mport com.tw ter.f natra.thr ft.f lters.Logg ngMDCF lter;
+ mport com.tw ter.f natra.thr ft.f lters.StatsF lter;
+ mport com.tw ter.f natra.thr ft.f lters.Thr ftMDCF lter;
+ mport com.tw ter.f natra.thr ft.f lters.Trace dMDCF lter;
+ mport com.tw ter.f natra.thr ft.rout ng.JavaThr ftRouter;
+ mport com.tw ter. nject.thr ft.modules.Thr ftCl ent dModule$;
+ mport com.tw ter.search.common.constants.SearchThr ft bFormsAccess;
+ mport com.tw ter.search.common. tr cs.Bu ld nfoStats;
+ mport com.tw ter.search.common.ut l.PlatformStatsExporter;
+ mport com.tw ter.search.feature_update_serv ce.f lters.Cl ent dWh el stF lter;
+ mport com.tw ter.search.feature_update_serv ce.modules.Cl ent dWh el stModule;
+ mport com.tw ter.search.feature_update_serv ce.modules.Earlyb rdUt lModule;
+ mport com.tw ter.search.feature_update_serv ce.modules.FeatureUpdateServ ceD ffyModule;
+ mport com.tw ter.search.feature_update_serv ce.modules.F nagleKafkaProducerModule;
+ mport com.tw ter.search.feature_update_serv ce.modules.FuturePoolModule;
+ mport com.tw ter.search.feature_update_serv ce.modules.T etyp eModule;
+ mport com.tw ter.search.feature_update_serv ce.thr ftjava.FeatureUpdateServ ce;
+ mport com.tw ter.thr ft bforms. thodOpt onsAccessConf g;
+ mport com.tw ter.ut l.ExecutorServ ceFuturePool;
 
-public class FeatureUpdateServiceThriftServer extends AbstractMtlsThriftServer {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(FeatureUpdateServiceThriftServer.class);
+publ c class FeatureUpdateServ ceThr ftServer extends AbstractMtlsThr ftServer {
+  pr vate stat c f nal Logger LOG =
+      LoggerFactory.getLogger(FeatureUpdateServ ceThr ftServer.class);
 
-  // Ideally we would not have to access the "environment" flag here and we could instead pass
-  // a flag to the ThriftWebFormsModule that would either enable or disable thrift web forms.
-  // However, it is not simple to create our own TwitterModule that both extends the
-  // ThriftWebFormsModule and consumes an injected flag.
-  private Flag<String> envFlag = flag().create("environment",
+  //  deally   would not have to access t  "env ron nt" flag  re and   could  nstead pass
+  // a flag to t  Thr ft bFormsModule that would e  r enable or d sable thr ft  b forms.
+  // Ho ver,    s not s mple to create   own Tw terModule that both extends t 
+  // Thr ft bFormsModule and consu s an  njected flag.
+  pr vate Flag<Str ng> envFlag = flag().create("env ron nt",
       "",
-      "Environment for service (prod, staging, staging1, devel)",
-      Flaggable.ofString());
+      "Env ron nt for serv ce (prod, stag ng, stag ng1, devel)",
+      Flaggable.ofStr ng());
 
-  FeatureUpdateServiceThriftServer(String[] args) {
-    BuildInfoStats.export();
+  FeatureUpdateServ ceThr ftServer(Str ng[] args) {
+    Bu ld nfoStats.export();
     PlatformStatsExporter.exportPlatformStats();
 
     flag().parseArgs(args, true);
   }
 
-  @Override
-  @SuppressWarnings("unchecked")
-  public Collection<Module> javaModules() {
-    List<Module> modules = new ArrayList<>();
-    modules.addAll(Arrays.asList(
-        ThriftClientIdModule$.MODULE$,
-        DeciderModule$.MODULE$,
-        new ClientIdWhitelistModule(),
-        new FinagleKafkaProducerModule(),
-        new EarlybirdUtilModule(),
+  @Overr de
+  @SuppressWarn ngs("unc cked")
+  publ c Collect on<Module> javaModules() {
+    L st<Module> modules = new ArrayL st<>();
+    modules.addAll(Arrays.asL st(
+        Thr ftCl ent dModule$.MODULE$,
+        Dec derModule$.MODULE$,
+        new Cl ent dWh el stModule(),
+        new F nagleKafkaProducerModule(),
+        new Earlyb rdUt lModule(),
         new FuturePoolModule(),
-        new FeatureUpdateServiceDiffyModule(),
-        new TweetypieModule()));
+        new FeatureUpdateServ ceD ffyModule(),
+        new T etyp eModule()));
 
-    // Only add the Thrift Web Forms module for non-prod services because we should
-    // not allow write access to production data through Thrift Web Forms.
-    String environment = envFlag.apply();
-    if ("prod".equals(environment)) {
-      LOG.info("Not including Thrift Web Forms because the environment is prod");
+    // Only add t  Thr ft  b Forms module for non-prod serv ces because   should
+    // not allow wr e access to product on data through Thr ft  b Forms.
+    Str ng env ron nt = envFlag.apply();
+     f ("prod".equals(env ron nt)) {
+      LOG. nfo("Not  nclud ng Thr ft  b Forms because t  env ron nt  s prod");
     } else {
-      LOG.info("Including Thrift Web Forms because the environment is " + environment);
+      LOG. nfo(" nclud ng Thr ft  b Forms because t  env ron nt  s " + env ron nt);
       modules.add(
-        MtlsThriftWebFormsModule.create(
-          this,
-          FeatureUpdateService.ServiceIface.class,
-          MethodOptionsAccessConfig.byLdapGroup(SearchThriftWebFormsAccess.WRITE_LDAP_GROUP)
+        MtlsThr ft bFormsModule.create(
+          t ,
+          FeatureUpdateServ ce.Serv ce face.class,
+           thodOpt onsAccessConf g.byLdapGroup(SearchThr ft bFormsAccess.WR TE_LDAP_GROUP)
         )
       );
     }
@@ -95,52 +95,52 @@ public class FeatureUpdateServiceThriftServer extends AbstractMtlsThriftServer {
     return modules;
   }
 
-  @Override
-  public void configureThrift(JavaThriftRouter router) {
+  @Overr de
+  publ c vo d conf gureThr ft(JavaThr ftRouter router) {
     router
-        // Initialize Mapped Diagnostic Context (MDC) for logging
+        //  n  al ze Mapped D agnost c Context (MDC) for logg ng
         // (see https://logback.qos.ch/manual/mdc.html)
-        .filter(LoggingMDCFilter.class)
-        // Inject trace ID in MDC for logging
-        .filter(TraceIdMDCFilter.class)
-        // Inject request method and client ID in MDC for logging
-        .filter(ThriftMDCFilter.class)
-        // Log client access
-        .filter(AccessLoggingFilter.class)
-        // Export basic service stats
-        .filter(StatsFilter.class)
-        .filter(ClientIdWhitelistFilter.class)
+        .f lter(Logg ngMDCF lter.class)
+        //  nject trace  D  n MDC for logg ng
+        .f lter(Trace dMDCF lter.class)
+        //  nject request  thod and cl ent  D  n MDC for logg ng
+        .f lter(Thr ftMDCF lter.class)
+        // Log cl ent access
+        .f lter(AccessLogg ngF lter.class)
+        // Export bas c serv ce stats
+        .f lter(StatsF lter.class)
+        .f lter(Cl ent dWh el stF lter.class)
         .add(FeatureUpdateController.class);
   }
 
-  @Override
-  public Service<byte[], byte[]> configureService(Service<byte[], byte[]> service) {
-    // Add the DarkTrafficFilter in "front" of the service being served.
-    return injector()
-        .instance(Filter.TypeAgnostic.class, DarkTrafficFilterType.class)
-        .andThen(service);
+  @Overr de
+  publ c Serv ce<byte[], byte[]> conf gureServ ce(Serv ce<byte[], byte[]> serv ce) {
+    // Add t  DarkTraff cF lter  n "front" of t  serv ce be ng served.
+    return  njector()
+        . nstance(F lter.TypeAgnost c.class, DarkTraff cF lterType.class)
+        .andT n(serv ce);
   }
 
-  @Override
-  public ThriftMux.Server configureThriftServer(ThriftMux.Server server) {
-    // This cast looks redundant, but it is required for pants to compile this file.
-    return (ThriftMux.Server) server.withResponseClassifier(new FeatureUpdateResponseClassifier());
+  @Overr de
+  publ c Thr ftMux.Server conf gureThr ftServer(Thr ftMux.Server server) {
+    // T  cast looks redundant, but    s requ red for pants to comp le t  f le.
+    return (Thr ftMux.Server) server.w hResponseClass f er(new FeatureUpdateResponseClass f er());
   }
 
-  @Override
-  public void postWarmup() {
+  @Overr de
+  publ c vo d postWarmup() {
     super.postWarmup();
 
-    ExecutorServiceFuturePool futurePool = injector().instance(ExecutorServiceFuturePool.class);
-    Preconditions.checkNotNull(futurePool);
+    ExecutorServ ceFuturePool futurePool =  njector(). nstance(ExecutorServ ceFuturePool.class);
+    Precond  ons.c ckNotNull(futurePool);
 
-    onExit(() -> {
+    onEx (() -> {
       try {
         futurePool.executor().shutdownNow();
 
-        futurePool.executor().awaitTermination(10L, TimeUnit.SECONDS);
-      } catch (InterruptedException e) {
-        LOG.error("Interrupted while awaiting future pool termination", e);
+        futurePool.executor().awa Term nat on(10L, T  Un .SECONDS);
+      } catch ( nterruptedExcept on e) {
+        LOG.error(" nterrupted wh le awa  ng future pool term nat on", e);
       }
 
       return null;

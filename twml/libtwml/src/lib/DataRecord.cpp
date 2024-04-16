@@ -1,72 +1,72 @@
-#include "internal/thrift.h"
-#include "internal/error.h"
+# nclude " nternal/thr ft.h"
+# nclude " nternal/error.h"
 
-#include <twml/utilities.h>
-#include <twml/DataRecord.h>
-#include <twml/DataRecordReader.h>
-#include <twml/Error.h>
+# nclude <twml/ut l  es.h>
+# nclude <twml/DataRecord.h>
+# nclude <twml/DataRecordReader.h>
+# nclude <twml/Error.h>
 
-#include <cstring>
-#include <cstdint>
+# nclude <cstr ng>
+# nclude <cstd nt>
 
-namespace twml {
+na space twml {
 
-void DataRecord::decode(DataRecordReader &reader) {
-  uint8_t feature_type = reader.readByte();
-  while (feature_type != TTYPE_STOP) {
-    int16_t field_id = reader.readInt16();
-    switch (field_id) {
-      case DR_BINARY:
-        reader.readBinary(feature_type, this);
+vo d DataRecord::decode(DataRecordReader &reader) {
+  u nt8_t feature_type = reader.readByte();
+  wh le (feature_type != TTYPE_STOP) {
+     nt16_t f eld_ d = reader.read nt16();
+    sw ch (f eld_ d) {
+      case DR_B NARY:
+        reader.readB nary(feature_type, t );
         break;
-      case DR_CONTINUOUS:
-        reader.readContinuous(feature_type, this);
+      case DR_CONT NUOUS:
+        reader.readCont nuous(feature_type, t );
         break;
-      case DR_DISCRETE:
-        reader.readDiscrete(feature_type, this);
+      case DR_D SCRETE:
+        reader.readD screte(feature_type, t );
         break;
-      case DR_STRING:
-        reader.readString(feature_type, this);
+      case DR_STR NG:
+        reader.readStr ng(feature_type, t );
         break;
-      case DR_SPARSE_BINARY:
-        reader.readSparseBinary(feature_type, this);
+      case DR_SPARSE_B NARY:
+        reader.readSparseB nary(feature_type, t );
         break;
-      case DR_SPARSE_CONTINUOUS:
-        reader.readSparseContinuous(feature_type, this);
+      case DR_SPARSE_CONT NUOUS:
+        reader.readSparseCont nuous(feature_type, t );
         break;
       case DR_BLOB:
-        reader.readBlob(feature_type, this);
+        reader.readBlob(feature_type, t );
         break;
       case DR_GENERAL_TENSOR:
-        reader.readTensor(feature_type, dynamic_cast<TensorRecord *>(this));
+        reader.readTensor(feature_type, dynam c_cast<TensorRecord *>(t ));
         break;
       case DR_SPARSE_TENSOR:
-        reader.readSparseTensor(feature_type, dynamic_cast<TensorRecord *>(this));
+        reader.readSparseTensor(feature_type, dynam c_cast<TensorRecord *>(t ));
         break;
       default:
-        throw ThriftInvalidField(field_id, "DataRecord::decode");
+        throw Thr ft nval dF eld(f eld_ d, "DataRecord::decode");
     }
     feature_type = reader.readByte();
   }
 }
 
-void DataRecord::addLabel(int64_t id, double label) {
-  m_labels[id] = label;
+vo d DataRecord::addLabel( nt64_t  d, double label) {
+  m_labels[ d] = label;
 }
 
-void DataRecord::addWeight(int64_t id, double val) {
-  m_weights[id] = val;
+vo d DataRecord::add  ght( nt64_t  d, double val) {
+  m_  ghts[ d] = val;
 }
 
-void DataRecord::clear() {
-  std::fill(m_labels.begin(), m_labels.end(), std::nanf(""));
-  std::fill(m_weights.begin(), m_weights.end(), 0.0);
-  m_binary.clear();
-  m_continuous.clear();
-  m_discrete.clear();
-  m_string.clear();
-  m_sparsebinary.clear();
-  m_sparsecontinuous.clear();
+vo d DataRecord::clear() {
+  std::f ll(m_labels.beg n(), m_labels.end(), std::nanf(""));
+  std::f ll(m_  ghts.beg n(), m_  ghts.end(), 0.0);
+  m_b nary.clear();
+  m_cont nuous.clear();
+  m_d screte.clear();
+  m_str ng.clear();
+  m_sparseb nary.clear();
+  m_sparsecont nuous.clear();
 }
 
-}  // namespace twml
+}  // na space twml

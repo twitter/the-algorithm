@@ -1,105 +1,105 @@
-package com.twitter.product_mixer.component_library.selector
+package com.tw ter.product_m xer.component_l brary.selector
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import scala.collection.mutable
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Spec f cP pel nes
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.SelectorResult
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport scala.collect on.mutable
 
 /**
- * Select candidates and add them according to the `pattern`.
- * The pattern is repeated until all candidates contained in the pattern are added to the `result`.
- * If the candidates for a specific [[Bucket]] in the pattern are exhausted, that [[Bucket]] will be
- * skipped on subsequent iterations.
- * If a candidate has a [[Bucket]] that isn't in the pattern it is added to the end of the `result`.
- * The end result is all candidates from all [[candidatePipelines]]s provided will end up in the result.
+ * Select cand dates and add t m accord ng to t  `pattern`.
+ * T  pattern  s repeated unt l all cand dates conta ned  n t  pattern are added to t  `result`.
+ *  f t  cand dates for a spec f c [[Bucket]]  n t  pattern are exhausted, that [[Bucket]] w ll be
+ * sk pped on subsequent  erat ons.
+ *  f a cand date has a [[Bucket]] that  sn't  n t  pattern    s added to t  end of t  `result`.
+ * T  end result  s all cand dates from all [[cand dateP pel nes]]s prov ded w ll end up  n t  result.
  *
- * @example If there are no more candidates from a given `CandidatePipeline` then it is skipped, so
- *          with the pattern `Seq(A, A, B, C)`, if there are no more candidates from `B` then it is
- *          effectively the same as `Seq(A, A, C)`. The `result` will contain all candidates from all
- *          `CandidatePipeline`s who's `Bucket` is in the `pattern`.
+ * @example  f t re are no more cand dates from a g ven `Cand dateP pel ne` t n    s sk pped, so
+ *          w h t  pattern `Seq(A, A, B, C)`,  f t re are no more cand dates from `B` t n    s
+ *          effect vely t  sa  as `Seq(A, A, C)`. T  `result` w ll conta n all cand dates from all
+ *          `Cand dateP pel ne`s who's `Bucket`  s  n t  `pattern`.
  *
- * @example If the pattern is `Seq(A, A, B, C)` and the remaining candidates
- *          from the provided `candidatePipelines` are:
+ * @example  f t  pattern  s `Seq(A, A, B, C)` and t  rema n ng cand dates
+ *          from t  prov ded `cand dateP pel nes` are:
  *          - 5 `A`s
  *          - 2 `B`s
  *          - 1 `C`
  *          - 1 `D`s
  *
- *          then the resulting output for each iteration over the pattern is
+ *          t n t  result ng output for each  erat on over t  pattern  s
  *          - `Seq(A, A, B, C)`
- *          - `Seq(A, A, B)` since there's no more `C`s
- *          - `Seq(A)` since there are no more `B`s or `C`s
- *          - `Seq(D)` since it wasn't in the pattern but is from one of the provided
- *            `candidatePipelines`, it's appended at the end
+ *          - `Seq(A, A, B)` s nce t re's no more `C`s
+ *          - `Seq(A)` s nce t re are no more `B`s or `C`s
+ *          - `Seq(D)` s nce   wasn't  n t  pattern but  s from one of t  prov ded
+ *            `cand dateP pel nes`,  's appended at t  end
  *
- *          so the `result` that's returned would be `Seq(A, A, B, C, A, A, B, A, D)`
+ *          so t  `result` that's returned would be `Seq(A, A, B, C, A, A, B, A, D)`
  */
-case class InsertAppendPatternResults[-Query <: PipelineQuery, Bucket](
-  candidatePipelines: Set[CandidatePipelineIdentifier],
+case class  nsertAppendPatternResults[-Query <: P pel neQuery, Bucket](
+  cand dateP pel nes: Set[Cand dateP pel ne dent f er],
   bucketer: Bucketer[Bucket],
   pattern: Seq[Bucket])
     extends Selector[Query] {
 
-  require(pattern.nonEmpty, "`pattern` must be non-empty")
+  requ re(pattern.nonEmpty, "`pattern` must be non-empty")
 
-  override val pipelineScope: CandidateScope = SpecificPipelines(candidatePipelines)
+  overr de val p pel neScope: Cand dateScope = Spec f cP pel nes(cand dateP pel nes)
 
-  private sealed trait PatternResult
-  private case object NotASelectedCandidatePipeline extends PatternResult
-  private case object NotABucketInThePattern extends PatternResult
-  private case class Bucketed(bucket: Bucket) extends PatternResult
+  pr vate sealed tra  PatternResult
+  pr vate case object NotASelectedCand dateP pel ne extends PatternResult
+  pr vate case object NotABucket nT Pattern extends PatternResult
+  pr vate case class Bucketed(bucket: Bucket) extends PatternResult
 
-  private val allBucketsInPattern = pattern.toSet
+  pr vate val allBuckets nPattern = pattern.toSet
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    result: Seq[Cand dateW hDeta ls]
   ): SelectorResult = {
-    val groupedCandidates: Map[PatternResult, Seq[CandidateWithDetails]] =
-      remainingCandidates.groupBy { candidateWithDetails =>
-        if (pipelineScope.contains(candidateWithDetails)) {
-          // if a candidate's Bucket doesnt appear in the pattern it's backfilled at the end
-          val bucket = bucketer(candidateWithDetails)
-          if (allBucketsInPattern.contains(bucket)) {
+    val groupedCand dates: Map[PatternResult, Seq[Cand dateW hDeta ls]] =
+      rema n ngCand dates.groupBy { cand dateW hDeta ls =>
+         f (p pel neScope.conta ns(cand dateW hDeta ls)) {
+          //  f a cand date's Bucket doesnt appear  n t  pattern  's backf lled at t  end
+          val bucket = bucketer(cand dateW hDeta ls)
+           f (allBuckets nPattern.conta ns(bucket)) {
             Bucketed(bucket)
           } else {
-            NotABucketInThePattern
+            NotABucket nT Pattern
           }
         } else {
-          NotASelectedCandidatePipeline
+          NotASelectedCand dateP pel ne
         }
       }
 
-    val otherCandidates =
-      groupedCandidates.getOrElse(NotASelectedCandidatePipeline, Seq.empty)
+    val ot rCand dates =
+      groupedCand dates.getOrElse(NotASelectedCand dateP pel ne, Seq.empty)
 
-    val notABucketInThePattern =
-      groupedCandidates.getOrElse(NotABucketInThePattern, Seq.empty)
+    val notABucket nT Pattern =
+      groupedCand dates.getOrElse(NotABucket nT Pattern, Seq.empty)
 
-    // mutable so we can remove finished iterators to optimize when looping for large patterns
-    val groupedBucketsIterators = mutable.HashMap(groupedCandidates.collect {
-      case (Bucketed(bucket), candidatesWithDetails) => (bucket, candidatesWithDetails.iterator)
+    // mutable so   can remove f n s d  erators to opt m ze w n loop ng for large patterns
+    val groupedBuckets erators = mutable.HashMap(groupedCand dates.collect {
+      case (Bucketed(bucket), cand datesW hDeta ls) => (bucket, cand datesW hDeta ls. erator)
     }.toSeq: _*)
 
-    val patternIterator = Iterator.continually(pattern).flatten
+    val pattern erator =  erator.cont nually(pattern).flatten
 
-    val newResult = new mutable.ArrayBuffer[CandidateWithDetails]()
-    while (groupedBucketsIterators.nonEmpty) {
-      val bucket = patternIterator.next()
-      groupedBucketsIterators.get(bucket) match {
-        case Some(iterator) if iterator.nonEmpty => newResult += iterator.next()
-        case Some(_) => groupedBucketsIterators.remove(bucket)
+    val newResult = new mutable.ArrayBuffer[Cand dateW hDeta ls]()
+    wh le (groupedBuckets erators.nonEmpty) {
+      val bucket = pattern erator.next()
+      groupedBuckets erators.get(bucket) match {
+        case So ( erator)  f  erator.nonEmpty => newResult +=  erator.next()
+        case So (_) => groupedBuckets erators.remove(bucket)
         case None =>
       }
     }
 
     SelectorResult(
-      remainingCandidates = otherCandidates,
-      result = result ++ newResult ++ notABucketInThePattern)
+      rema n ngCand dates = ot rCand dates,
+      result = result ++ newResult ++ notABucket nT Pattern)
   }
 }

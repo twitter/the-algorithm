@@ -1,27 +1,27 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.base
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.cl ent.Fetc r
 
-abstract class StratoFetcherSource[K, U, V](
-  fetcher: Fetcher[K, U, V],
-  view: U,
-  override val identifier: CandidateSourceIdentifier)
-    extends CandidateSource[K, CandidateUser] {
+abstract class StratoFetc rS ce[K, U, V](
+  fetc r: Fetc r[K, U, V],
+  v ew: U,
+  overr de val  dent f er: Cand dateS ce dent f er)
+    extends Cand dateS ce[K, Cand dateUser] {
 
-  def map(user: K, v: V): Seq[CandidateUser]
+  def map(user: K, v: V): Seq[Cand dateUser]
 
-  override def apply(target: K): Stitch[Seq[CandidateUser]] = {
-    fetcher
-      .fetch(target, view)
+  overr de def apply(target: K): St ch[Seq[Cand dateUser]] = {
+    fetc r
+      .fetch(target, v ew)
       .map { result =>
         result.v
-          .map { candidates => map(target, candidates) }
-          .getOrElse(Nil)
-          .map(_.withCandidateSource(identifier))
+          .map { cand dates => map(target, cand dates) }
+          .getOrElse(N l)
+          .map(_.w hCand dateS ce( dent f er))
       }
   }
 }

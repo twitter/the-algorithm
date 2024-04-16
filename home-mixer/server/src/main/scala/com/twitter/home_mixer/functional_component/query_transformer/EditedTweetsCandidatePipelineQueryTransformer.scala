@@ -1,85 +1,85 @@
-package com.twitter.home_mixer.functional_component.query_transformer
+package com.tw ter.ho _m xer.funct onal_component.query_transfor r
 
-import com.twitter.common_internal.analytics.twitter_client_user_agent_parser.UserAgent
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures.PersistenceEntriesFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelinemixer.clients.persistence.EntryWithItemIds
-import com.twitter.timelines.persistence.thriftscala.RequestType
-import com.twitter.timelines.util.client_info.ClientPlatform
-import com.twitter.timelineservice.model.rich.EntityIdType
-import com.twitter.util.Time
+ mport com.tw ter.common_ nternal.analyt cs.tw ter_cl ent_user_agent_parser.UserAgent
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.ho _m xer.model.Ho Features.Pers stenceEntr esFeature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Transfor r dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nem xer.cl ents.pers stence.EntryW h em ds
+ mport com.tw ter.t  l nes.pers stence.thr ftscala.RequestType
+ mport com.tw ter.t  l nes.ut l.cl ent_ nfo.Cl entPlatform
+ mport com.tw ter.t  l neserv ce.model.r ch.Ent y dType
+ mport com.tw ter.ut l.T  
 
-object EditedTweetsCandidatePipelineQueryTransformer
-    extends CandidatePipelineQueryTransformer[PipelineQuery, Seq[Long]] {
+object Ed edT etsCand dateP pel neQueryTransfor r
+    extends Cand dateP pel neQueryTransfor r[P pel neQuery, Seq[Long]] {
 
-  override val identifier: TransformerIdentifier = TransformerIdentifier("EditedTweets")
+  overr de val  dent f er: Transfor r dent f er = Transfor r dent f er("Ed edT ets")
 
-  // The time window for which a tweet remains editable after creation.
-  private val EditTimeWindow = 60.minutes
+  // T  t   w ndow for wh ch a t et rema ns ed able after creat on.
+  pr vate val Ed T  W ndow = 60.m nutes
 
-  override def transform(query: PipelineQuery): Seq[Long] = {
-    val applicableCandidates = getApplicableCandidates(query)
+  overr de def transform(query: P pel neQuery): Seq[Long] = {
+    val appl cableCand dates = getAppl cableCand dates(query)
 
-    if (applicableCandidates.nonEmpty) {
-      // Include the response corresponding with the Previous Timeline Load (PTL).
-      // Any tweets in it could have become stale since being served.
-      val previousTimelineLoadTime = applicableCandidates.head.servedTime
+     f (appl cableCand dates.nonEmpty) {
+      //  nclude t  response correspond ng w h t  Prev ous T  l ne Load (PTL).
+      // Any t ets  n   could have beco  stale s nce be ng served.
+      val prev ousT  l neLoadT   = appl cableCand dates. ad.servedT  
 
-      // The time window for editing a tweet is 60 minutes,
-      // so we ignore responses older than (PTL Time - 60 mins).
-      val inWindowCandidates: Seq[PersistenceStoreEntry] = applicableCandidates
-        .takeWhile(_.servedTime.until(previousTimelineLoadTime) < EditTimeWindow)
+      // T  t   w ndow for ed  ng a t et  s 60 m nutes,
+      // so    gnore responses older than (PTL T   - 60 m ns).
+      val  nW ndowCand dates: Seq[Pers stenceStoreEntry] = appl cableCand dates
+        .takeWh le(_.servedT  .unt l(prev ousT  l neLoadT  ) < Ed T  W ndow)
 
-      // Exclude the tweet IDs for which ReplaceEntry instructions have already been sent.
-      val (tweetsAlreadyReplaced, tweetsToCheck) = inWindowCandidates
-        .partition(_.entryWithItemIds.itemIds.exists(_.head.entryIdToReplace.nonEmpty))
+      // Exclude t  t et  Ds for wh ch ReplaceEntry  nstruct ons have already been sent.
+      val (t etsAlreadyReplaced, t etsToC ck) =  nW ndowCand dates
+        .part  on(_.entryW h em ds. em ds.ex sts(_. ad.entry dToReplace.nonEmpty))
 
-      val tweetIdFromEntry: PartialFunction[PersistenceStoreEntry, Long] = {
-        case entry if entry.tweetId.nonEmpty => entry.tweetId.get
+      val t et dFromEntry: Part alFunct on[Pers stenceStoreEntry, Long] = {
+        case entry  f entry.t et d.nonEmpty => entry.t et d.get
       }
 
-      val tweetIdsAlreadyReplaced: Set[Long] = tweetsAlreadyReplaced.collect(tweetIdFromEntry).toSet
-      val tweetIdsToCheck: Seq[Long] = tweetsToCheck.collect(tweetIdFromEntry)
+      val t et dsAlreadyReplaced: Set[Long] = t etsAlreadyReplaced.collect(t et dFromEntry).toSet
+      val t et dsToC ck: Seq[Long] = t etsToC ck.collect(t et dFromEntry)
 
-      tweetIdsToCheck.filterNot(tweetIdsAlreadyReplaced.contains).distinct
+      t et dsToC ck.f lterNot(t et dsAlreadyReplaced.conta ns).d st nct
     } else Seq.empty
   }
 
-  // The candidates here come from the Timelines Persistence Store, via a query feature
-  private def getApplicableCandidates(query: PipelineQuery): Seq[PersistenceStoreEntry] = {
-    val userAgent = UserAgent.fromString(query.clientContext.userAgent.getOrElse(""))
-    val clientPlatform = ClientPlatform.fromQueryOptions(query.clientContext.appId, userAgent)
+  // T  cand dates  re co  from t  T  l nes Pers stence Store, v a a query feature
+  pr vate def getAppl cableCand dates(query: P pel neQuery): Seq[Pers stenceStoreEntry] = {
+    val userAgent = UserAgent.fromStr ng(query.cl entContext.userAgent.getOrElse(""))
+    val cl entPlatform = Cl entPlatform.fromQueryOpt ons(query.cl entContext.app d, userAgent)
 
     val sortedResponses = query.features
       .getOrElse(FeatureMap.empty)
-      .getOrElse(PersistenceEntriesFeature, Seq.empty)
-      .filter(_.clientPlatform == clientPlatform)
-      .sortBy(-_.servedTime.inMilliseconds)
+      .getOrElse(Pers stenceEntr esFeature, Seq.empty)
+      .f lter(_.cl entPlatform == cl entPlatform)
+      .sortBy(-_.servedT  . nM ll seconds)
 
-    val recentResponses = sortedResponses.indexWhere(_.requestType == RequestType.Initial) match {
+    val recentResponses = sortedResponses. ndexW re(_.requestType == RequestType. n  al) match {
       case -1 => sortedResponses
-      case lastGetInitialIndex => sortedResponses.take(lastGetInitialIndex + 1)
+      case lastGet n  al ndex => sortedResponses.take(lastGet n  al ndex + 1)
     }
 
     recentResponses.flatMap { r =>
-      r.entries.collect {
-        case entry if entry.entityIdType == EntityIdType.Tweet =>
-          PersistenceStoreEntry(entry, r.servedTime, r.clientPlatform, r.requestType)
+      r.entr es.collect {
+        case entry  f entry.ent y dType == Ent y dType.T et =>
+          Pers stenceStoreEntry(entry, r.servedT  , r.cl entPlatform, r.requestType)
       }
-    }.distinct
+    }.d st nct
   }
 }
 
-case class PersistenceStoreEntry(
-  entryWithItemIds: EntryWithItemIds,
-  servedTime: Time,
-  clientPlatform: ClientPlatform,
+case class Pers stenceStoreEntry(
+  entryW h em ds: EntryW h em ds,
+  servedT  : T  ,
+  cl entPlatform: Cl entPlatform,
   requestType: RequestType) {
 
-  // Timelines Persistence Store currently includes 1 tweet ID per entryWithItemIds for tweets
-  val tweetId: Option[Long] = entryWithItemIds.itemIds.flatMap(_.head.tweetId)
+  // T  l nes Pers stence Store currently  ncludes 1 t et  D per entryW h em ds for t ets
+  val t et d: Opt on[Long] = entryW h em ds. em ds.flatMap(_. ad.t et d)
 }

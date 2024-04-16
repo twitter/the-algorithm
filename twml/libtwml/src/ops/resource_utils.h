@@ -1,126 +1,126 @@
 #pragma once
 
-#include <twml.h>
+# nclude <twml.h>
 
-#include <atomic>
-#include <string>
-#include <vector>
+# nclude <atom c>
+# nclude <str ng>
+# nclude <vector>
 
-// Add these to make gcc ignore the warnings from tensorflow.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-compare"
+// Add t se to make gcc  gnore t  warn ngs from tensorflow.
+#pragma GCC d agnost c push
+#pragma GCC d agnost c  gnored "-Ws gn-compare"
 
-#include "tensorflow/core/framework/resource_mgr.h"
-#include "tensorflow/core/framework/resource_op_kernel.h"
+# nclude "tensorflow/core/fra work/res ce_mgr.h"
+# nclude "tensorflow/core/fra work/res ce_op_kernel.h"
 
-#pragma GCC diagnostic pop
+#pragma GCC d agnost c pop
 
-#include <memory>
-#include <functional>
+# nclude < mory>
+# nclude <funct onal>
 
-template<typename T>
-void unrefHandle(T *handle) {
+template<typena  T>
+vo d unrefHandle(T *handle) {
   handle->Unref();
 }
 
-template <typename T>
-using unique_handle = std::unique_ptr<T, std::function<void(T *)> >;
+template <typena  T>
+us ng un que_handle = std::un que_ptr<T, std::funct on<vo d(T *)> >;
 
-// as std::type_index is not abi compatible, we bypass the hash_code checks.
-// https://github.com/tensorflow/tensorflow/commit/15275d3a14c77e2244ae1155f93243256f08e3ed
-#ifdef __APPLE__
-template <typename T>
-Status CreateTwmlResource(OpKernelContext* ctx, const ResourceHandle& p, T* value) {
-  return ctx->resource_manager()->Create(p.container(), p.name(), value);
+// as std::type_ ndex  s not ab  compat ble,   bypass t  hash_code c cks.
+// https://g hub.com/tensorflow/tensorflow/comm /15275d3a14c77e2244ae1155f93243256f08e3ed
+# fdef __APPLE__
+template <typena  T>
+Status CreateTwmlRes ce(OpKernelContext* ctx, const Res ceHandle& p, T* value) {
+  return ctx->res ce_manager()->Create(p.conta ner(), p.na (), value);
 }
 
-template <typename T>
-Status LookupTwmlResource(OpKernelContext* ctx, const ResourceHandle& p,
+template <typena  T>
+Status LookupTwmlRes ce(OpKernelContext* ctx, const Res ceHandle& p,
                       T** value) {
-  return ctx->resource_manager()->Lookup(p.container(), p.name(), value);
+  return ctx->res ce_manager()->Lookup(p.conta ner(), p.na (), value);
 }
-#endif  // __APPLE__
+#end f  // __APPLE__
 
-template<typename T>
-unique_handle<T> getHandle(tensorflow::OpKernelContext* context, int input_idx) {
-  using namespace tensorflow;
+template<typena  T>
+un que_handle<T> getHandle(tensorflow::OpKernelContext* context,  nt  nput_ dx) {
+  us ng na space tensorflow;
   T *ptr = nullptr;
-#ifdef __APPLE__
-  auto s = LookupTwmlResource(context, HandleFromInput(context, input_idx), &ptr);
+# fdef __APPLE__
+  auto s = LookupTwmlRes ce(context, HandleFrom nput(context,  nput_ dx), &ptr);
 #else
-  auto s = LookupResource(context, HandleFromInput(context, input_idx), &ptr);
-#endif  // __APPLE__
+  auto s = LookupRes ce(context, HandleFrom nput(context,  nput_ dx), &ptr);
+#end f  // __APPLE__
 
-  if (!s.ok()) {
-    throw std::runtime_error("Failed to get resource handle");
+   f (!s.ok()) {
+    throw std::runt  _error("Fa led to get res ce handle");
   }
-  return unique_handle<T>(ptr, unrefHandle<T>);
+  return un que_handle<T>(ptr, unrefHandle<T>);
 }
 
-template<typename InputType>
-const uint8_t *getInputBytes(const Tensor &input, int id) {
-  return reinterpret_cast<const uint8_t *>(input.flat<InputType>().data());
+template<typena   nputType>
+const u nt8_t *get nputBytes(const Tensor & nput,  nt  d) {
+  return re nterpret_cast<const u nt8_t *>( nput.flat< nputType>().data());
 }
 
 template<>
-inline const uint8_t *getInputBytes<string>(const Tensor &input, int id) {
-  return reinterpret_cast<const uint8_t *>(input.flat<string>()(id).c_str());
+ nl ne const u nt8_t *get nputBytes<str ng>(const Tensor & nput,  nt  d) {
+  return re nterpret_cast<const u nt8_t *>( nput.flat<str ng>()( d).c_str());
 }
 
-template<typename InputType>
-const int getBatchSize(const Tensor &input) {
+template<typena   nputType>
+const  nt getBatchS ze(const Tensor & nput) {
   return 1;
 }
 
 template<>
-inline const int getBatchSize<string>(const Tensor &input) {
-  return static_cast<int>(input.NumElements());
+ nl ne const  nt getBatchS ze<str ng>(const Tensor & nput) {
+  return stat c_cast< nt>( nput.NumEle nts());
 }
 
-class DataRecordResource : public ResourceBase {
- public:
-  Tensor input;
-  int64 num_labels;
-  int64 num_weights;
+class DataRecordRes ce : publ c Res ceBase {
+ publ c:
+  Tensor  nput;
+   nt64 num_labels;
+   nt64 num_  ghts;
   twml::DataRecord common;
   std::vector<twml::DataRecord> records;
-  twml::Map<int64_t, int64_t> *keep_map;
-  string DebugString() const override { return "DataRecords resource"; }
+  twml::Map< nt64_t,  nt64_t> *keep_map;
+  str ng DebugStr ng() const overr de { return "DataRecords res ce"; }
 };
 
-// A thin layer around batch of HashedDataRecords
-class HashedDataRecordResource : public ResourceBase {
- public:
-  Tensor input;
-  int64 total_size;
-  int64 num_labels;
-  int64 num_weights;
-  twml::HashedDataRecord common;
-  std::vector<twml::HashedDataRecord> records;
-  string DebugString() const override { return "HashedDataRecord Resource"; }
+// A th n layer around batch of Has dDataRecords
+class Has dDataRecordRes ce : publ c Res ceBase {
+ publ c:
+  Tensor  nput;
+   nt64 total_s ze;
+   nt64 num_labels;
+   nt64 num_  ghts;
+  twml::Has dDataRecord common;
+  std::vector<twml::Has dDataRecord> records;
+  str ng DebugStr ng() const overr de { return "Has dDataRecord Res ce"; }
 };
 
-#define TF_CHECK_STATUS(fn) do {                \
+#def ne TF_CHECK_STATUS(fn) do {                \
     Status s = fn;                              \
-    if (!s.ok()) return s;                      \
-  } while (0)
+     f (!s.ok()) return s;                      \
+  } wh le (0)
 
-template<typename ResourceType>
-Status makeResourceHandle(OpKernelContext* context, int out_idx, ResourceType **resource_) {
-  static std::atomic<int64> id;
+template<typena  Res ceType>
+Status makeRes ceHandle(OpKernelContext* context,  nt out_ dx, Res ceType **res ce_) {
+  stat c std::atom c< nt64>  d;
   Tensor* handle_tensor;
-  TF_CHECK_STATUS(context->allocate_output(out_idx, TensorShape({}), &handle_tensor));
+  TF_CHECK_STATUS(context->allocate_output(out_ dx, TensorShape({}), &handle_tensor));
 
-  ResourceType *resource = new ResourceType();
-  const auto resource_name = typeid(ResourceType).name() + std::to_string(id++);
-  ResourceHandle handle = MakePerStepResourceHandle<ResourceType>(context, resource_name);
-#ifdef __APPLE__
-  TF_CHECK_STATUS(CreateTwmlResource(context, handle, resource));
+  Res ceType *res ce = new Res ceType();
+  const auto res ce_na  = type d(Res ceType).na () + std::to_str ng( d++);
+  Res ceHandle handle = MakePerStepRes ceHandle<Res ceType>(context, res ce_na );
+# fdef __APPLE__
+  TF_CHECK_STATUS(CreateTwmlRes ce(context, handle, res ce));
 #else
-  TF_CHECK_STATUS(CreateResource(context, handle, resource));
-#endif  // __APPLE__
-  handle_tensor->scalar<ResourceHandle>()() = handle;
+  TF_CHECK_STATUS(CreateRes ce(context, handle, res ce));
+#end f  // __APPLE__
+  handle_tensor->scalar<Res ceHandle>()() = handle;
 
-  *resource_ = resource;
+  *res ce_ = res ce;
   return Status::OK();
 }

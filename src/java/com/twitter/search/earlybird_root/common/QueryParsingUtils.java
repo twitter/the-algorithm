@@ -1,86 +1,86 @@
-package com.twitter.search.earlybird_root.common;
+package com.tw ter.search.earlyb rd_root.common;
 
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.concurrent.T  Un ;
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.queryparser.parser.SerializedQueryParser;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.util.Future;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.queryparser.parser.Ser al zedQueryParser;
+ mport com.tw ter.search.queryparser.query.Query;
+ mport com.tw ter.search.queryparser.query.QueryParserExcept on;
+ mport com.tw ter.ut l.Future;
 
 /**
- * Common utils for parsing serialized queries, and handling query parser exceptions.
+ * Common ut ls for pars ng ser al zed quer es, and handl ng query parser except ons.
  */
-public final class QueryParsingUtils {
+publ c f nal class QueryPars ngUt ls {
 
-  private static final Logger LOG = LoggerFactory.getLogger(QueryParsingUtils.class);
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(QueryPars ngUt ls.class);
 
-  @VisibleForTesting
-  public static final SearchCounter QUERYPARSE_COUNT =
+  @V s bleForTest ng
+  publ c stat c f nal SearchCounter QUERYPARSE_COUNT =
       SearchCounter.export("root_queryparse_count");
-  private static final SearchTimerStats QUERYPARSE_TIMER =
-      SearchTimerStats.export("root_queryparse_time", TimeUnit.NANOSECONDS, false, true);
-  private static final SearchCounter NO_PARSED_QUERY_COUNT =
+  pr vate stat c f nal SearchT  rStats QUERYPARSE_T MER =
+      SearchT  rStats.export("root_queryparse_t  ", T  Un .NANOSECONDS, false, true);
+  pr vate stat c f nal SearchCounter NO_PARSED_QUERY_COUNT =
       SearchCounter.export("root_no_parsed_query_count");
 
-  private QueryParsingUtils() { }
+  pr vate QueryPars ngUt ls() { }
 
   /**
-   * Takes an earlybird request, and parses its serialized query (if it is set).
-   * Expects the required ThriftSearchQuery to be set on the passed in EarlybirdRequest.
+   * Takes an earlyb rd request, and parses  s ser al zed query ( f    s set).
+   * Expects t  requ red Thr ftSearchQuery to be set on t  passed  n Earlyb rdRequest.
    *
-   * @param request the earlybird request to parse.
-   * @return null if the request does not specify a serialized query.
-   * @throws QueryParserException if querry parsing fails.
+   * @param request t  earlyb rd request to parse.
+   * @return null  f t  request does not spec fy a ser al zed query.
+   * @throws QueryParserExcept on  f querry pars ng fa ls.
    */
   @Nullable
-  static Query getParsedQuery(EarlybirdRequest request) throws QueryParserException {
-    // searchQuery is required on EarlybirdRequest.
-    Preconditions.checkState(request.isSetSearchQuery());
+  stat c Query getParsedQuery(Earlyb rdRequest request) throws QueryParserExcept on {
+    // searchQuery  s requ red on Earlyb rdRequest.
+    Precond  ons.c ckState(request. sSetSearchQuery());
     Query parsedQuery;
-    if (request.getSearchQuery().isSetSerializedQuery()) {
-      long startTime = System.nanoTime();
+     f (request.getSearchQuery(). sSetSer al zedQuery()) {
+      long startT   = System.nanoT  ();
       try {
-        String serializedQuery = request.getSearchQuery().getSerializedQuery();
+        Str ng ser al zedQuery = request.getSearchQuery().getSer al zedQuery();
 
-        parsedQuery = new SerializedQueryParser().parse(serializedQuery);
-      } finally {
-        QUERYPARSE_COUNT.increment();
-        QUERYPARSE_TIMER.timerIncrement(System.nanoTime() - startTime);
+        parsedQuery = new Ser al zedQueryParser().parse(ser al zedQuery);
+      } f nally {
+        QUERYPARSE_COUNT. ncre nt();
+        QUERYPARSE_T MER.t  r ncre nt(System.nanoT  () - startT  );
       }
     } else {
-      NO_PARSED_QUERY_COUNT.increment();
+      NO_PARSED_QUERY_COUNT. ncre nt();
       parsedQuery = null;
     }
     return parsedQuery;
   }
 
   /**
-   * Creates a new EarlybirdResponse with a CLIENT_ERROR response code, to be used as a response
-   * to a request where we failed to parse a user passed in serialized query.
+   * Creates a new Earlyb rdResponse w h a CL ENT_ERROR response code, to be used as a response
+   * to a request w re   fa led to parse a user passed  n ser al zed query.
    */
-  public static Future<EarlybirdResponse> newClientErrorResponse(
-      EarlybirdRequest request,
-      QueryParserException e) {
+  publ c stat c Future<Earlyb rdResponse> newCl entErrorResponse(
+      Earlyb rdRequest request,
+      QueryParserExcept on e) {
 
-    String msg = "Failed to parse query";
+    Str ng msg = "Fa led to parse query";
     LOG.warn(msg, e);
 
-    EarlybirdResponse errorResponse =
-        new EarlybirdResponse(EarlybirdResponseCode.CLIENT_ERROR, 0);
-    errorResponse.setDebugString(msg + ": " + e.getMessage());
+    Earlyb rdResponse errorResponse =
+        new Earlyb rdResponse(Earlyb rdResponseCode.CL ENT_ERROR, 0);
+    errorResponse.setDebugStr ng(msg + ": " + e.get ssage());
     return Future.value(errorResponse);
   }
 }

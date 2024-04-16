@@ -1,403 +1,403 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.stream.Collectors;
-import javax.annotation.Nullable;
+ mport java. o. OExcept on;
+ mport java.ut l.ArrayL st;
+ mport java.ut l.Collect on;
+ mport java.ut l.Collect ons;
+ mport java.ut l.Comparator;
+ mport java.ut l.HashSet;
+ mport java.ut l. erator;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
+ mport java.ut l.concurrent.ConcurrentSk pL stMap;
+ mport java.ut l.stream.Collectors;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.base.Pred cate;
+ mport com.google.common.collect.L sts;
+ mport com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.common.partitioning.base.TimeSlice;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.common.CaughtUpMonitor;
-import com.twitter.search.earlybird.common.userupdates.UserScrubGeoMap;
-import com.twitter.search.earlybird.common.userupdates.UserUpdate;
-import com.twitter.search.earlybird.common.userupdates.UserUpdatesChecker;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
-import com.twitter.search.earlybird.search.EarlybirdLuceneSearcher;
-import com.twitter.search.earlybird.search.EarlybirdMultiSegmentSearcher;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.tweetypie.thriftjava.UserScrubGeoEvent;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
+ mport com.tw ter.search.common. tr cs.SearchStatsRece ver;
+ mport com.tw ter.search.common.part  on ng.base.Seg nt;
+ mport com.tw ter.search.common.part  on ng.base.T  Sl ce;
+ mport com.tw ter.search.common.part  on ng.snowflakeparser.Snowflake dParser;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.earlyb rd.Earlyb rd ndexConf g;
+ mport com.tw ter.search.earlyb rd.common.CaughtUpMon or;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserScrubGeoMap;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserUpdate;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserUpdatesC cker;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserTable;
+ mport com.tw ter.search.earlyb rd.except on.Cr  calExcept onHandler;
+ mport com.tw ter.search.earlyb rd. ndex.Earlyb rdSeg ntFactory;
+ mport com.tw ter.search.earlyb rd. ndex.Earlyb rdS ngleSeg ntSearc r;
+ mport com.tw ter.search.earlyb rd.search.Earlyb rdLuceneSearc r;
+ mport com.tw ter.search.earlyb rd.search.Earlyb rdMult Seg ntSearc r;
+ mport com.tw ter.search.earlyb rd.stats.Earlyb rdSearc rStats;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.t etyp e.thr ftjava.UserScrubGeoEvent;
 
-public class SegmentManager {
-  private static final Logger LOG = LoggerFactory.getLogger(SegmentManager.class);
-  private final Clock clock;
-  private static final String STATS_PREFIX = "segment_manager_";
-  private static final SearchLongGauge SEGMENT_COUNT_STATS =
-          SearchLongGauge.export(STATS_PREFIX + "total_segments");
-  private static final SearchCounter OPTIMIZED_SEGMENTS =
-          SearchCounter.export(STATS_PREFIX + "optimized_segments");
-  private static final SearchCounter UNOPTIMIZED_SEGMENTS =
-          SearchCounter.export(STATS_PREFIX + "unoptimized_segments");
+publ c class Seg ntManager {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Seg ntManager.class);
+  pr vate f nal Clock clock;
+  pr vate stat c f nal Str ng STATS_PREF X = "seg nt_manager_";
+  pr vate stat c f nal SearchLongGauge SEGMENT_COUNT_STATS =
+          SearchLongGauge.export(STATS_PREF X + "total_seg nts");
+  pr vate stat c f nal SearchCounter OPT M ZED_SEGMENTS =
+          SearchCounter.export(STATS_PREF X + "opt m zed_seg nts");
+  pr vate stat c f nal SearchCounter UNOPT M ZED_SEGMENTS =
+          SearchCounter.export(STATS_PREF X + "unopt m zed_seg nts");
 
-  public enum Filter {
-    All(info -> true),
-    Enabled(SegmentInfo::isEnabled),
-    NeedsIndexing(SegmentInfo::needsIndexing),
-    Complete(SegmentInfo::isComplete);
+  publ c enum F lter {
+    All( nfo -> true),
+    Enabled(Seg nt nfo:: sEnabled),
+    Needs ndex ng(Seg nt nfo::needs ndex ng),
+    Complete(Seg nt nfo:: sComplete);
 
-    private final Predicate<SegmentInfo> predicate;
+    pr vate f nal Pred cate<Seg nt nfo> pred cate;
 
-    Filter(Predicate<SegmentInfo> predicate) {
-      this.predicate = predicate;
+    F lter(Pred cate<Seg nt nfo> pred cate) {
+      t .pred cate = pred cate;
     }
 
-    private static final Map<String, Filter> NAME_INDEX =
-        Maps.newHashMapWithExpectedSize(Filter.values().length);
+    pr vate stat c f nal Map<Str ng, F lter> NAME_ NDEX =
+        Maps.newHashMapW hExpectedS ze(F lter.values().length);
 
-    static {
-      for (Filter filter : Filter.values()) {
-        NAME_INDEX.put(filter.name().toLowerCase(), filter);
+    stat c {
+      for (F lter f lter : F lter.values()) {
+        NAME_ NDEX.put(f lter.na ().toLo rCase(), f lter);
       }
     }
 
     /**
-     * Parses the filter from the given string, based on the filter name.
+     * Parses t  f lter from t  g ven str ng, based on t  f lter na .
      */
-    public static Filter fromStringIgnoreCase(String str) {
-      if (str == null) {
+    publ c stat c F lter fromStr ng gnoreCase(Str ng str) {
+       f (str == null) {
         return null;
       }
 
-      return NAME_INDEX.get(str.toLowerCase());
+      return NAME_ NDEX.get(str.toLo rCase());
     }
   }
 
-  public enum Order {
+  publ c enum Order {
     OLD_TO_NEW,
     NEW_TO_OLD,
   }
 
   /**
-   * A listener that gets notified when the list of segments changes.
+   * A l stener that gets not f ed w n t  l st of seg nts changes.
    */
-  public interface SegmentUpdateListener {
+  publ c  nterface Seg ntUpdateL stener {
     /**
-     * Called with the new list of segments when it changes.
+     * Called w h t  new l st of seg nts w n   changes.
      *
-     * @param segments The new list of segments.
+     * @param seg nts T  new l st of seg nts.
      */
-    void update(Collection<SegmentInfo> segments, String message);
+    vo d update(Collect on<Seg nt nfo> seg nts, Str ng  ssage);
   }
 
-  private final List<SegmentUpdateListener> updateListeners =
-          Collections.synchronizedList(Lists.newLinkedList());
+  pr vate f nal L st<Seg ntUpdateL stener> updateL steners =
+          Collect ons.synchron zedL st(L sts.newL nkedL st());
 
-  private final ConcurrentSkipListMap<Long, ISegmentWriter> segmentWriters =
-      new ConcurrentSkipListMap<>();
+  pr vate f nal ConcurrentSk pL stMap<Long,  Seg ntWr er> seg ntWr ers =
+      new ConcurrentSk pL stMap<>();
 
-  private final Set<Long> badTimesliceIds = new HashSet<>();
+  pr vate f nal Set<Long> badT  sl ce ds = new HashSet<>();
 
-  private final int maxEnabledSegments;
-  private final int maxSegmentSize;
-  private final EarlybirdSegmentFactory earlybirdSegmentFactory;
-  private final UserTable userTable;
-  private final UserScrubGeoMap userScrubGeoMap;
-  private final EarlybirdIndexConfig earlybirdIndexConfig;
-  private final DynamicPartitionConfig dynamicPartitionConfig;
-  private final UserUpdatesChecker userUpdatesChecker;
-  private final SegmentSyncConfig segmentSyncConfig;
-  private final EarlybirdSearcherStats searcherStats;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  private final CriticalExceptionHandler criticalExceptionHandler;
-  private final CaughtUpMonitor indexCaughtUpMonitor;
+  pr vate f nal  nt maxEnabledSeg nts;
+  pr vate f nal  nt maxSeg ntS ze;
+  pr vate f nal Earlyb rdSeg ntFactory earlyb rdSeg ntFactory;
+  pr vate f nal UserTable userTable;
+  pr vate f nal UserScrubGeoMap userScrubGeoMap;
+  pr vate f nal Earlyb rd ndexConf g earlyb rd ndexConf g;
+  pr vate f nal Dynam cPart  onConf g dynam cPart  onConf g;
+  pr vate f nal UserUpdatesC cker userUpdatesC cker;
+  pr vate f nal Seg ntSyncConf g seg ntSyncConf g;
+  pr vate f nal Earlyb rdSearc rStats searc rStats;
+  pr vate f nal Search ndex ng tr cSet search ndex ng tr cSet;
+  pr vate f nal Cr  calExcept onHandler cr  calExcept onHandler;
+  pr vate f nal CaughtUpMon or  ndexCaughtUpMon or;
 
-  public SegmentManager(
-      DynamicPartitionConfig dynamicPartitionConfig,
-      EarlybirdIndexConfig earlybirdIndexConfig,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      EarlybirdSearcherStats searcherStats,
-      SearchStatsReceiver earlybirdStatsReceiver,
-      UserUpdatesChecker userUpdatesChecker,
-      SegmentSyncConfig segmentSyncConfig,
+  publ c Seg ntManager(
+      Dynam cPart  onConf g dynam cPart  onConf g,
+      Earlyb rd ndexConf g earlyb rd ndexConf g,
+      Search ndex ng tr cSet search ndex ng tr cSet,
+      Earlyb rdSearc rStats searc rStats,
+      SearchStatsRece ver earlyb rdStatsRece ver,
+      UserUpdatesC cker userUpdatesC cker,
+      Seg ntSyncConf g seg ntSyncConf g,
       UserTable userTable,
       UserScrubGeoMap userScrubGeoMap,
       Clock clock,
-      int maxSegmentSize,
-      CriticalExceptionHandler criticalExceptionHandler,
-      CaughtUpMonitor indexCaughtUpMonitor) {
+       nt maxSeg ntS ze,
+      Cr  calExcept onHandler cr  calExcept onHandler,
+      CaughtUpMon or  ndexCaughtUpMon or) {
 
-    PartitionConfig curPartitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
+    Part  onConf g curPart  onConf g = dynam cPart  onConf g.getCurrentPart  onConf g();
 
-    this.userTable = userTable;
-    this.userScrubGeoMap = userScrubGeoMap;
+    t .userTable = userTable;
+    t .userScrubGeoMap = userScrubGeoMap;
 
-    this.earlybirdSegmentFactory = new EarlybirdSegmentFactory(
-        earlybirdIndexConfig,
-        searchIndexingMetricSet,
-        searcherStats,
+    t .earlyb rdSeg ntFactory = new Earlyb rdSeg ntFactory(
+        earlyb rd ndexConf g,
+        search ndex ng tr cSet,
+        searc rStats,
         clock);
-    this.earlybirdIndexConfig = earlybirdIndexConfig;
-    this.maxEnabledSegments = curPartitionConfig.getMaxEnabledLocalSegments();
-    this.dynamicPartitionConfig = dynamicPartitionConfig;
-    this.userUpdatesChecker = userUpdatesChecker;
-    this.segmentSyncConfig = segmentSyncConfig;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.searcherStats = searcherStats;
-    this.clock = clock;
-    this.maxSegmentSize = maxSegmentSize;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.indexCaughtUpMonitor = indexCaughtUpMonitor;
+    t .earlyb rd ndexConf g = earlyb rd ndexConf g;
+    t .maxEnabledSeg nts = curPart  onConf g.getMaxEnabledLocalSeg nts();
+    t .dynam cPart  onConf g = dynam cPart  onConf g;
+    t .userUpdatesC cker = userUpdatesC cker;
+    t .seg ntSyncConf g = seg ntSyncConf g;
+    t .search ndex ng tr cSet = search ndex ng tr cSet;
+    t .searc rStats = searc rStats;
+    t .clock = clock;
+    t .maxSeg ntS ze = maxSeg ntS ze;
+    t .cr  calExcept onHandler = cr  calExcept onHandler;
+    t . ndexCaughtUpMon or =  ndexCaughtUpMon or;
 
-    earlybirdStatsReceiver.getCustomGauge("total_loaded_segments",
-        segmentWriters::size);
-    earlybirdStatsReceiver.getCustomGauge("total_indexed_documents",
-        this::getNumIndexedDocuments);
-    earlybirdStatsReceiver.getCustomGauge("total_segment_size_bytes",
-        this::getTotalSegmentSizeOnDisk);
-    earlybirdStatsReceiver.getCustomGauge("earlybird_index_depth_millis",
-        this::getIndexDepthMillis);
+    earlyb rdStatsRece ver.getCustomGauge("total_loaded_seg nts",
+        seg ntWr ers::s ze);
+    earlyb rdStatsRece ver.getCustomGauge("total_ ndexed_docu nts",
+        t ::getNum ndexedDocu nts);
+    earlyb rdStatsRece ver.getCustomGauge("total_seg nt_s ze_bytes",
+        t ::getTotalSeg ntS zeOnD sk);
+    earlyb rdStatsRece ver.getCustomGauge("earlyb rd_ ndex_depth_m ll s",
+        t ::get ndexDepthM ll s);
   }
 
   /**
-   * Logs the current state of this segment manager.
+   * Logs t  current state of t  seg nt manager.
    *
-   * @param label A label that should identify the segment manager.
+   * @param label A label that should  dent fy t  seg nt manager.
    */
-  public void logState(String label) {
-    StringBuilder sb = new StringBuilder();
-    sb.append("State of SegmentManager (" + label + "):\n");
-    sb.append("Number of segments: " + segmentWriters.size());
-    boolean hasSegments = false;
-    for (Map.Entry<Long, ISegmentWriter> entry : this.segmentWriters.entrySet()) {
-      SegmentInfo segmentInfo = entry.getValue().getSegmentInfo();
-      hasSegments = true;
+  publ c vo d logState(Str ng label) {
+    Str ngBu lder sb = new Str ngBu lder();
+    sb.append("State of Seg ntManager (" + label + "):\n");
+    sb.append("Number of seg nts: " + seg ntWr ers.s ze());
+    boolean hasSeg nts = false;
+    for (Map.Entry<Long,  Seg ntWr er> entry : t .seg ntWr ers.entrySet()) {
+      Seg nt nfo seg nt nfo = entry.getValue().getSeg nt nfo();
+      hasSeg nts = true;
 
-      sb.append(String.format("\nSegment (%s): isClosed: %5s, isComplete: %5s, "
-              + "isEnabled: %5s, isIndexing: %5s, isOptimized: %5s, wasIndexed: %5s",
-          segmentInfo.getSegmentName(),
-          segmentInfo.isClosed(),
-          segmentInfo.isComplete(),
-          segmentInfo.isEnabled(),
-          segmentInfo.isIndexing(),
-          segmentInfo.isOptimized(),
-          segmentInfo.wasIndexed()
+      sb.append(Str ng.format("\nSeg nt (%s):  sClosed: %5s,  sComplete: %5s, "
+              + " sEnabled: %5s,  s ndex ng: %5s,  sOpt m zed: %5s, was ndexed: %5s",
+          seg nt nfo.getSeg ntNa (),
+          seg nt nfo. sClosed(),
+          seg nt nfo. sComplete(),
+          seg nt nfo. sEnabled(),
+          seg nt nfo. s ndex ng(),
+          seg nt nfo. sOpt m zed(),
+          seg nt nfo.was ndexed()
       ));
 
-      sb.append(String.format(" | Index stats: %s", segmentInfo.getIndexStats().toString()));
+      sb.append(Str ng.format(" |  ndex stats: %s", seg nt nfo.get ndexStats().toStr ng()));
     }
-    if (!hasSegments) {
-      sb.append(" No segments.");
+     f (!hasSeg nts) {
+      sb.append(" No seg nts.");
     }
-    LOG.info(sb.toString());
+    LOG. nfo(sb.toStr ng());
   }
 
 
-  public PartitionConfig getPartitionConfig() {
-    return dynamicPartitionConfig.getCurrentPartitionConfig();
+  publ c Part  onConf g getPart  onConf g() {
+    return dynam cPart  onConf g.getCurrentPart  onConf g();
   }
 
-  public int getMaxEnabledSegments() {
-    return maxEnabledSegments;
+  publ c  nt getMaxEnabledSeg nts() {
+    return maxEnabledSeg nts;
   }
 
-  public EarlybirdSegmentFactory getEarlybirdSegmentFactory() {
-    return earlybirdSegmentFactory;
+  publ c Earlyb rdSeg ntFactory getEarlyb rdSeg ntFactory() {
+    return earlyb rdSeg ntFactory;
   }
 
-  public EarlybirdIndexConfig getEarlybirdIndexConfig() {
-    return earlybirdIndexConfig;
+  publ c Earlyb rd ndexConf g getEarlyb rd ndexConf g() {
+    return earlyb rd ndexConf g;
   }
 
-  public UserTable getUserTable() {
+  publ c UserTable getUserTable() {
     return userTable;
   }
 
-  public UserScrubGeoMap getUserScrubGeoMap() {
+  publ c UserScrubGeoMap getUserScrubGeoMap() {
     return userScrubGeoMap;
   }
 
-  @VisibleForTesting
-  public void reset() {
-    segmentWriters.clear();
+  @V s bleForTest ng
+  publ c vo d reset() {
+    seg ntWr ers.clear();
   }
 
   /**
-   * Returns the list of all segments that match the given filter, in the given order.
+   * Returns t  l st of all seg nts that match t  g ven f lter,  n t  g ven order.
    */
-  public Iterable<SegmentInfo> getSegmentInfos(Filter filter, Order order) {
-    Comparator<SegmentInfo> comparator;
+  publ c  erable<Seg nt nfo> getSeg nt nfos(F lter f lter, Order order) {
+    Comparator<Seg nt nfo> comparator;
 
-    if (order == Order.OLD_TO_NEW) {
+     f (order == Order.OLD_TO_NEW) {
       comparator = Comparator.naturalOrder();
     } else {
       comparator = Comparator.reverseOrder();
     }
 
-    return () -> segmentWriters.values().stream()
-        .map(ISegmentWriter::getSegmentInfo)
-        .filter(filter.predicate::apply)
+    return () -> seg ntWr ers.values().stream()
+        .map( Seg ntWr er::getSeg nt nfo)
+        .f lter(f lter.pred cate::apply)
         .sorted(comparator)
-        .iterator();
+        . erator();
   }
 
-  private void createAndPutSegmentInfo(Segment segment) throws IOException {
-    LOG.info("Creating new SegmentInfo for segment " + segment.getSegmentName());
-    putSegmentInfo(new SegmentInfo(segment, earlybirdSegmentFactory, segmentSyncConfig));
+  pr vate vo d createAndPutSeg nt nfo(Seg nt seg nt) throws  OExcept on {
+    LOG. nfo("Creat ng new Seg nt nfo for seg nt " + seg nt.getSeg ntNa ());
+    putSeg nt nfo(new Seg nt nfo(seg nt, earlyb rdSeg ntFactory, seg ntSyncConf g));
   }
 
   /**
-   * Updates the list of segments managed by this manager, based on the given list.
+   * Updates t  l st of seg nts managed by t  manager, based on t  g ven l st.
    */
-  public void updateSegments(List<Segment> segmentsList) throws IOException {
-    // Truncate to the amount of segments we want to keep enabled.
-    List<Segment> truncatedSegmentList =
-        SegmentManager.truncateSegmentList(segmentsList, maxEnabledSegments);
+  publ c vo d updateSeg nts(L st<Seg nt> seg ntsL st) throws  OExcept on {
+    // Truncate to t  amount of seg nts   want to keep enabled.
+    L st<Seg nt> truncatedSeg ntL st =
+        Seg ntManager.truncateSeg ntL st(seg ntsL st, maxEnabledSeg nts);
 
-    final long newestTimeSliceID = getNewestTimeSliceID();
-    final Set<Long> segmentsToDisable = new HashSet<>(segmentWriters.keySet());
+    f nal long ne stT  Sl ce D = getNe stT  Sl ce D();
+    f nal Set<Long> seg ntsToD sable = new HashSet<>(seg ntWr ers.keySet());
 
-    for (Segment segment : truncatedSegmentList) {
-      final long timeSliceID = segment.getTimeSliceID();
-      segmentsToDisable.remove(timeSliceID);
+    for (Seg nt seg nt : truncatedSeg ntL st) {
+      f nal long t  Sl ce D = seg nt.getT  Sl ce D();
+      seg ntsToD sable.remove(t  Sl ce D);
 
-      // On the first loop iteration of the first call to updateSegments(), newestTimeSliceID should
-      // be set to -1, so the condition should be false. After that, all segments should either be
-      // newer than the latest process segment, or if we're replacing an old segment, it should have
-      // a SegmentInfo instance associated with it.
-      if (timeSliceID <= newestTimeSliceID) {
-        ISegmentWriter segmentWriter = segmentWriters.get(timeSliceID);
-        // Old time slice ID. It should have a SegmentInfo instance associated with it.
-        if (segmentWriter == null) {
-          if (!badTimesliceIds.contains(timeSliceID)) {
-            // We're dealing with a bad timeslice. Log an error, but do it only once per timeslice.
-            LOG.error("The SegmentInfo instance associated with an old timeSliceID should never be "
-                      + "null. TimeSliceID: {}", timeSliceID);
-            badTimesliceIds.add(timeSliceID);
+      // On t  f rst loop  erat on of t  f rst call to updateSeg nts(), ne stT  Sl ce D should
+      // be set to -1, so t  cond  on should be false. After that, all seg nts should e  r be
+      // ne r than t  latest process seg nt, or  f  're replac ng an old seg nt,   should have
+      // a Seg nt nfo  nstance assoc ated w h  .
+       f (t  Sl ce D <= ne stT  Sl ce D) {
+         Seg ntWr er seg ntWr er = seg ntWr ers.get(t  Sl ce D);
+        // Old t   sl ce  D.   should have a Seg nt nfo  nstance assoc ated w h  .
+         f (seg ntWr er == null) {
+           f (!badT  sl ce ds.conta ns(t  Sl ce D)) {
+            //  're deal ng w h a bad t  sl ce. Log an error, but do   only once per t  sl ce.
+            LOG.error("T  Seg nt nfo  nstance assoc ated w h an old t  Sl ce D should never be "
+                      + "null. T  Sl ce D: {}", t  Sl ce D);
+            badT  sl ce ds.add(t  Sl ce D);
           }
-        } else if (segmentWriter.getSegmentInfo().isClosed()) {
-          // If the SegmentInfo was closed, create a new one.
-          LOG.info("SegmentInfo for segment {} is closed.", segment.getSegmentName());
-          createAndPutSegmentInfo(segment);
+        } else  f (seg ntWr er.getSeg nt nfo(). sClosed()) {
+          //  f t  Seg nt nfo was closed, create a new one.
+          LOG. nfo("Seg nt nfo for seg nt {}  s closed.", seg nt.getSeg ntNa ());
+          createAndPutSeg nt nfo(seg nt);
         }
       } else {
-        // New time slice ID: create a SegmentInfo instance for it.
-        createAndPutSegmentInfo(segment);
+        // New t   sl ce  D: create a Seg nt nfo  nstance for  .
+        createAndPutSeg nt nfo(seg nt);
       }
     }
 
-    // Anything we didn't see locally can be disabled.
-    for (Long segmentID : segmentsToDisable) {
-      disableSegment(segmentID);
+    // Anyth ng   d dn't see locally can be d sabled.
+    for (Long seg nt D : seg ntsToD sable) {
+      d sableSeg nt(seg nt D);
     }
 
-    // Update segment stats and other exported variables.
+    // Update seg nt stats and ot r exported var ables.
     updateStats();
   }
 
   /**
-   * Re-export stats after a segment has changed, or the set of segments has changed.
+   * Re-export stats after a seg nt has changed, or t  set of seg nts has changed.
    */
-  public void updateStats() {
-    // Update the partition count stats.
-    SEGMENT_COUNT_STATS.set(segmentWriters.size());
+  publ c vo d updateStats() {
+    // Update t  part  on count stats.
+    SEGMENT_COUNT_STATS.set(seg ntWr ers.s ze());
 
-    OPTIMIZED_SEGMENTS.reset();
-    UNOPTIMIZED_SEGMENTS.reset();
-    for (ISegmentWriter writer : segmentWriters.values()) {
-      if (writer.getSegmentInfo().isOptimized()) {
-        OPTIMIZED_SEGMENTS.increment();
+    OPT M ZED_SEGMENTS.reset();
+    UNOPT M ZED_SEGMENTS.reset();
+    for ( Seg ntWr er wr er : seg ntWr ers.values()) {
+       f (wr er.getSeg nt nfo(). sOpt m zed()) {
+        OPT M ZED_SEGMENTS. ncre nt();
       } else {
-        UNOPTIMIZED_SEGMENTS.increment();
+        UNOPT M ZED_SEGMENTS. ncre nt();
       }
     }
   }
 
-  private long getIndexDepthMillis() {
-    long oldestTimeSliceID = getOldestEnabledTimeSliceID();
-    if (oldestTimeSliceID == SegmentInfo.INVALID_ID) {
+  pr vate long get ndexDepthM ll s() {
+    long oldestT  Sl ce D = getOldestEnabledT  Sl ce D();
+     f (oldestT  Sl ce D == Seg nt nfo. NVAL D_ D) {
       return 0;
     } else {
-      // Compute timestamp from timesliceId, which is also a snowflake tweetId
-      long timestamp = SnowflakeIdParser.getTimestampFromTweetId(oldestTimeSliceID);
-      // Set current index depth in milliseconds
-      long indexDepthInMillis = System.currentTimeMillis() - timestamp;
-      // Index depth should never be negative.
-      if (indexDepthInMillis < 0) {
-        LOG.warn("Negative index depth. Large time skew on this Earlybird?");
+      // Compute t  stamp from t  sl ce d, wh ch  s also a snowflake t et d
+      long t  stamp = Snowflake dParser.getT  stampFromT et d(oldestT  Sl ce D);
+      // Set current  ndex depth  n m ll seconds
+      long  ndexDepth nM ll s = System.currentT  M ll s() - t  stamp;
+      //  ndex depth should never be negat ve.
+       f ( ndexDepth nM ll s < 0) {
+        LOG.warn("Negat ve  ndex depth. Large t   skew on t  Earlyb rd?");
         return 0;
       } else {
-        return indexDepthInMillis;
+        return  ndexDepth nM ll s;
       }
     }
   }
 
-  private void updateExportedSegmentStats() {
-    int index = 0;
-    for (SegmentInfo segmentInfo : getSegmentInfos(Filter.Enabled, Order.NEW_TO_OLD)) {
-      SegmentIndexStatsExporter.export(segmentInfo, index++);
+  pr vate vo d updateExportedSeg ntStats() {
+     nt  ndex = 0;
+    for (Seg nt nfo seg nt nfo : getSeg nt nfos(F lter.Enabled, Order.NEW_TO_OLD)) {
+      Seg nt ndexStatsExporter.export(seg nt nfo,  ndex++);
     }
   }
 
-  // Marks the SegmentInfo object matching this time slice as disabled.
-  private void disableSegment(long timeSliceID) {
-    SegmentInfo info = getSegmentInfo(timeSliceID);
-    if (info == null) {
-      LOG.warn("Tried to disable missing segment " + timeSliceID);
+  // Marks t  Seg nt nfo object match ng t  t   sl ce as d sabled.
+  pr vate vo d d sableSeg nt(long t  Sl ce D) {
+    Seg nt nfo  nfo = getSeg nt nfo(t  Sl ce D);
+     f ( nfo == null) {
+      LOG.warn("Tr ed to d sable m ss ng seg nt " + t  Sl ce D);
       return;
     }
-    info.setIsEnabled(false);
-    LOG.info("Disabled segment " + info);
+     nfo.set sEnabled(false);
+    LOG. nfo("D sabled seg nt " +  nfo);
   }
 
-  public long getNewestTimeSliceID() {
-    final Iterator<SegmentInfo> segments = getSegmentInfos(Filter.All, Order.NEW_TO_OLD).iterator();
-    return segments.hasNext() ? segments.next().getTimeSliceID() : SegmentInfo.INVALID_ID;
+  publ c long getNe stT  Sl ce D() {
+    f nal  erator<Seg nt nfo> seg nts = getSeg nt nfos(F lter.All, Order.NEW_TO_OLD). erator();
+    return seg nts.hasNext() ? seg nts.next().getT  Sl ce D() : Seg nt nfo. NVAL D_ D;
   }
 
   /**
-   * Returns the timeslice ID of the oldest enabled segment.
+   * Returns t  t  sl ce  D of t  oldest enabled seg nt.
    */
-  public long getOldestEnabledTimeSliceID() {
-    if (segmentWriters.size() == 0) {
-      return SegmentInfo.INVALID_ID;
+  publ c long getOldestEnabledT  Sl ce D() {
+     f (seg ntWr ers.s ze() == 0) {
+      return Seg nt nfo. NVAL D_ D;
     }
-    ISegmentWriter segmentWriter = segmentWriters.firstEntry().getValue();
-    return segmentWriter.getSegmentInfo().getTimeSliceID();
+     Seg ntWr er seg ntWr er = seg ntWr ers.f rstEntry().getValue();
+    return seg ntWr er.getSeg nt nfo().getT  Sl ce D();
   }
 
   /**
-   * Returns the SegmentInfo for the given timeSliceID.
+   * Returns t  Seg nt nfo for t  g ven t  Sl ce D.
    */
-  public final SegmentInfo getSegmentInfo(long timeSliceID) {
-    ISegmentWriter segmentWriter = segmentWriters.get(timeSliceID);
-    return segmentWriter == null ? null : segmentWriter.getSegmentInfo();
+  publ c f nal Seg nt nfo getSeg nt nfo(long t  Sl ce D) {
+     Seg ntWr er seg ntWr er = seg ntWr ers.get(t  Sl ce D);
+    return seg ntWr er == null ? null : seg ntWr er.getSeg nt nfo();
   }
 
   /**
-   * Returns the segment info for the segment that should contain the given tweet ID.
+   * Returns t  seg nt  nfo for t  seg nt that should conta n t  g ven t et  D.
    */
-  public final SegmentInfo getSegmentInfoFromStatusID(long tweetID) {
-    for (SegmentInfo segmentInfo : getSegmentInfos(Filter.All, Order.NEW_TO_OLD)) {
-      if (tweetID >= segmentInfo.getTimeSliceID()) {
-        return segmentInfo;
+  publ c f nal Seg nt nfo getSeg nt nfoFromStatus D(long t et D) {
+    for (Seg nt nfo seg nt nfo : getSeg nt nfos(F lter.All, Order.NEW_TO_OLD)) {
+       f (t et D >= seg nt nfo.getT  Sl ce D()) {
+        return seg nt nfo;
       }
     }
 
@@ -405,232 +405,232 @@ public class SegmentManager {
   }
 
   /**
-   * Removes the segment associated with the given timeslice ID from the segment manager. This will
-   * also take care of all required clean up related to the segment being removed, such as closing
-   * its writer.
+   * Removes t  seg nt assoc ated w h t  g ven t  sl ce  D from t  seg nt manager. T  w ll
+   * also take care of all requ red clean up related to t  seg nt be ng removed, such as clos ng
+   *  s wr er.
    */
-  public boolean removeSegmentInfo(long timeSliceID) {
-    if (timeSliceID == getNewestTimeSliceID()) {
-      throw new RuntimeException("Cannot drop segment of current time-slice " + timeSliceID);
+  publ c boolean removeSeg nt nfo(long t  Sl ce D) {
+     f (t  Sl ce D == getNe stT  Sl ce D()) {
+      throw new Runt  Except on("Cannot drop seg nt of current t  -sl ce " + t  Sl ce D);
     }
 
-    ISegmentWriter removed = segmentWriters.get(timeSliceID);
-    if (removed == null) {
+     Seg ntWr er removed = seg ntWr ers.get(t  Sl ce D);
+     f (removed == null) {
       return false;
     }
 
-    LOG.info("Removing segment {}", removed.getSegmentInfo());
-    Preconditions.checkState(!removed.getSegmentInfo().isEnabled());
-    removed.getSegmentInfo().getIndexSegment().close();
-    segmentWriters.remove(timeSliceID);
+    LOG. nfo("Remov ng seg nt {}", removed.getSeg nt nfo());
+    Precond  ons.c ckState(!removed.getSeg nt nfo(). sEnabled());
+    removed.getSeg nt nfo().get ndexSeg nt().close();
+    seg ntWr ers.remove(t  Sl ce D);
 
-    String segmentName = removed.getSegmentInfo().getSegmentName();
-    updateAllListeners("Removed segment " + segmentName);
-    LOG.info("Removed segment " + segmentName);
-    updateExportedSegmentStats();
+    Str ng seg ntNa  = removed.getSeg nt nfo().getSeg ntNa ();
+    updateAllL steners("Removed seg nt " + seg ntNa );
+    LOG. nfo("Removed seg nt " + seg ntNa );
+    updateExportedSeg ntStats();
     updateStats();
     return true;
   }
 
   /**
-   * Add the given SegmentWriter into the segmentWriters map.
-   * If a segment with the same timesliceID already exists in the map, the old one is replaced
-   * with the new one; this should only happen in the archive.
+   * Add t  g ven Seg ntWr er  nto t  seg ntWr ers map.
+   *  f a seg nt w h t  sa  t  sl ce D already ex sts  n t  map, t  old one  s replaced
+   * w h t  new one; t  should only happen  n t  arch ve.
    *
-   * The replaced segment is destroyed after a delay to allow in-flight requests to finish.
+   * T  replaced seg nt  s destroyed after a delay to allow  n-fl ght requests to f n sh.
    */
-  public ISegmentWriter putSegmentInfo(SegmentInfo info) {
-    ISegmentWriter usedSegmentWriter;
+  publ c  Seg ntWr er putSeg nt nfo(Seg nt nfo  nfo) {
+     Seg ntWr er usedSeg ntWr er;
 
-    SegmentWriter segmentWriter
-        = new SegmentWriter(info, searchIndexingMetricSet.updateFreshness);
+    Seg ntWr er seg ntWr er
+        = new Seg ntWr er( nfo, search ndex ng tr cSet.updateFreshness);
 
-    if (!info.isOptimized()) {
-      LOG.info("Inserting an optimizing segment writer for segment: {}",
-          info.getSegmentName());
+     f (! nfo. sOpt m zed()) {
+      LOG. nfo(" nsert ng an opt m z ng seg nt wr er for seg nt: {}",
+           nfo.getSeg ntNa ());
 
-      usedSegmentWriter = new OptimizingSegmentWriter(
-          segmentWriter,
-          criticalExceptionHandler,
-          searchIndexingMetricSet,
-          indexCaughtUpMonitor);
+      usedSeg ntWr er = new Opt m z ngSeg ntWr er(
+          seg ntWr er,
+          cr  calExcept onHandler,
+          search ndex ng tr cSet,
+           ndexCaughtUpMon or);
     } else {
-      usedSegmentWriter = segmentWriter;
+      usedSeg ntWr er = seg ntWr er;
     }
 
-    putSegmentWriter(usedSegmentWriter);
-    return usedSegmentWriter;
+    putSeg ntWr er(usedSeg ntWr er);
+    return usedSeg ntWr er;
   }
 
-  private void putSegmentWriter(ISegmentWriter segmentWriter) {
-    SegmentInfo newSegmentInfo = segmentWriter.getSegmentInfo();
-    SegmentInfo oldSegmentInfo = getSegmentInfo(newSegmentInfo.getTimeSliceID());
+  pr vate vo d putSeg ntWr er( Seg ntWr er seg ntWr er) {
+    Seg nt nfo newSeg nt nfo = seg ntWr er.getSeg nt nfo();
+    Seg nt nfo oldSeg nt nfo = getSeg nt nfo(newSeg nt nfo.getT  Sl ce D());
 
-    // Some sanity checks.
-    if (oldSegmentInfo != null) {
-      // This map is thread safe, so this put can be considered atomic.
-      segmentWriters.put(newSegmentInfo.getTimeSliceID(), segmentWriter);
-      LOG.info("Replaced SegmentInfo with a new one in segmentWriters map. "
-          + "Old SegmentInfo: {} New SegmentInfo: {}", oldSegmentInfo, newSegmentInfo);
+    // So  san y c cks.
+     f (oldSeg nt nfo != null) {
+      // T  map  s thread safe, so t  put can be cons dered atom c.
+      seg ntWr ers.put(newSeg nt nfo.getT  Sl ce D(), seg ntWr er);
+      LOG. nfo("Replaced Seg nt nfo w h a new one  n seg ntWr ers map. "
+          + "Old Seg nt nfo: {} New Seg nt nfo: {}", oldSeg nt nfo, newSeg nt nfo);
 
-      if (!oldSegmentInfo.isClosed()) {
-        oldSegmentInfo.deleteIndexSegmentDirectoryAfterDelay();
+       f (!oldSeg nt nfo. sClosed()) {
+        oldSeg nt nfo.delete ndexSeg ntD rectoryAfterDelay();
       }
     } else {
-      long newestTimeSliceID = getNewestTimeSliceID();
-      if (newestTimeSliceID != SegmentInfo.INVALID_ID
-          && newestTimeSliceID > newSegmentInfo.getTimeSliceID()) {
-        LOG.error("Not adding out-of-order segment " + newSegmentInfo);
+      long ne stT  Sl ce D = getNe stT  Sl ce D();
+       f (ne stT  Sl ce D != Seg nt nfo. NVAL D_ D
+          && ne stT  Sl ce D > newSeg nt nfo.getT  Sl ce D()) {
+        LOG.error("Not add ng out-of-order seg nt " + newSeg nt nfo);
         return;
       }
 
-      segmentWriters.put(newSegmentInfo.getTimeSliceID(), segmentWriter);
-      LOG.info("Added segment " + newSegmentInfo);
+      seg ntWr ers.put(newSeg nt nfo.getT  Sl ce D(), seg ntWr er);
+      LOG. nfo("Added seg nt " + newSeg nt nfo);
     }
 
-    updateAllListeners("Added segment " + newSegmentInfo.getTimeSliceID());
-    updateExportedSegmentStats();
+    updateAllL steners("Added seg nt " + newSeg nt nfo.getT  Sl ce D());
+    updateExportedSeg ntStats();
     updateStats();
   }
 
-  private SegmentInfo createSegmentInfo(long timesliceID) throws IOException {
-    PartitionConfig partitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
+  pr vate Seg nt nfo createSeg nt nfo(long t  sl ce D) throws  OExcept on {
+    Part  onConf g part  onConf g = dynam cPart  onConf g.getCurrentPart  onConf g();
 
-    TimeSlice timeSlice = new TimeSlice(
-        timesliceID,
-        maxSegmentSize,
-        partitionConfig.getIndexingHashPartitionID(),
-        partitionConfig.getNumPartitions());
+    T  Sl ce t  Sl ce = new T  Sl ce(
+        t  sl ce D,
+        maxSeg ntS ze,
+        part  onConf g.get ndex ngHashPart  on D(),
+        part  onConf g.getNumPart  ons());
 
-    SegmentInfo segmentInfo =
-        new SegmentInfo(timeSlice.getSegment(), earlybirdSegmentFactory, segmentSyncConfig);
+    Seg nt nfo seg nt nfo =
+        new Seg nt nfo(t  Sl ce.getSeg nt(), earlyb rdSeg ntFactory, seg ntSyncConf g);
 
-    return segmentInfo;
+    return seg nt nfo;
   }
 
   /**
-   * Create a new optimizing segment writer and add it to the map.
+   * Create a new opt m z ng seg nt wr er and add   to t  map.
    */
-  public OptimizingSegmentWriter createAndPutOptimizingSegmentWriter(
-      long timesliceID) throws IOException {
-    SegmentInfo segmentInfo = createSegmentInfo(timesliceID);
+  publ c Opt m z ngSeg ntWr er createAndPutOpt m z ngSeg ntWr er(
+      long t  sl ce D) throws  OExcept on {
+    Seg nt nfo seg nt nfo = createSeg nt nfo(t  sl ce D);
 
-    OptimizingSegmentWriter writer = new OptimizingSegmentWriter(
-        new SegmentWriter(segmentInfo, searchIndexingMetricSet.updateFreshness),
-        criticalExceptionHandler,
-        searchIndexingMetricSet,
-        indexCaughtUpMonitor);
+    Opt m z ngSeg ntWr er wr er = new Opt m z ngSeg ntWr er(
+        new Seg ntWr er(seg nt nfo, search ndex ng tr cSet.updateFreshness),
+        cr  calExcept onHandler,
+        search ndex ng tr cSet,
+         ndexCaughtUpMon or);
 
-    putSegmentWriter(writer);
-    return writer;
+    putSeg ntWr er(wr er);
+    return wr er;
   }
 
   /**
-   * Create a new segment writer.
+   * Create a new seg nt wr er.
    */
-  public SegmentWriter createSegmentWriter(long timesliceID) throws IOException {
-    SegmentInfo segmentInfo = createSegmentInfo(timesliceID);
+  publ c Seg ntWr er createSeg ntWr er(long t  sl ce D) throws  OExcept on {
+    Seg nt nfo seg nt nfo = createSeg nt nfo(t  sl ce D);
 
-    SegmentWriter writer = new SegmentWriter(
-        segmentInfo, searchIndexingMetricSet.updateFreshness);
+    Seg ntWr er wr er = new Seg ntWr er(
+        seg nt nfo, search ndex ng tr cSet.updateFreshness);
 
-    return writer;
+    return wr er;
   }
 
-  private void updateAllListeners(String message) {
-    List<SegmentInfo> segmentInfos = segmentWriters.values().stream()
-        .map(ISegmentWriter::getSegmentInfo)
-        .collect(Collectors.toList());
-    for (SegmentUpdateListener listener : updateListeners) {
+  pr vate vo d updateAllL steners(Str ng  ssage) {
+    L st<Seg nt nfo> seg nt nfos = seg ntWr ers.values().stream()
+        .map( Seg ntWr er::getSeg nt nfo)
+        .collect(Collectors.toL st());
+    for (Seg ntUpdateL stener l stener : updateL steners) {
       try {
-        listener.update(segmentInfos, message);
-      } catch (Exception e) {
-        LOG.warn("SegmentManager: Unable to call update() on listener.", e);
+        l stener.update(seg nt nfos,  ssage);
+      } catch (Except on e) {
+        LOG.warn("Seg ntManager: Unable to call update() on l stener.", e);
       }
     }
   }
 
-  // Returns true if the map contains a SegmentInfo matching the given time slice.
-  public final boolean hasSegmentInfo(long timeSliceID) {
-    return segmentWriters.containsKey(timeSliceID);
+  // Returns true  f t  map conta ns a Seg nt nfo match ng t  g ven t   sl ce.
+  publ c f nal boolean hasSeg nt nfo(long t  Sl ce D) {
+    return seg ntWr ers.conta nsKey(t  Sl ce D);
   }
 
-  public void addUpdateListener(SegmentUpdateListener listener) {
-    updateListeners.add(listener);
+  publ c vo d addUpdateL stener(Seg ntUpdateL stener l stener) {
+    updateL steners.add(l stener);
   }
 
   /**
-   * Look up the segment containing the given status id.
-   * If found, its timeslice id is returned.
-   * If none found, -1 is returned.
+   * Look up t  seg nt conta n ng t  g ven status  d.
+   *  f found,  s t  sl ce  d  s returned.
+   *  f none found, -1  s returned.
    */
-  public long lookupTimeSliceID(long statusID) throws IOException {
-    SegmentInfo segmentInfo = getSegmentInfoForID(statusID);
-    if (segmentInfo == null) {
+  publ c long lookupT  Sl ce D(long status D) throws  OExcept on {
+    Seg nt nfo seg nt nfo = getSeg nt nfoFor D(status D);
+     f (seg nt nfo == null) {
       return -1;
     }
-    if (!segmentInfo.getIndexSegment().hasDocument(statusID)) {
+     f (!seg nt nfo.get ndexSeg nt().hasDocu nt(status D)) {
         return -1;
     }
 
-    return segmentInfo.getTimeSliceID();
+    return seg nt nfo.getT  Sl ce D();
   }
 
   /**
-   * Truncates the given segment list to the specified number of segments, by keeping the newest
-   * segments.
+   * Truncates t  g ven seg nt l st to t  spec f ed number of seg nts, by keep ng t  ne st
+   * seg nts.
    */
-  @VisibleForTesting
-  public static List<Segment> truncateSegmentList(List<Segment> segmentList, int maxNumSegments) {
-    // Maybe cut-off the beginning of the sorted list of IDs.
-    if (maxNumSegments > 0 && maxNumSegments < segmentList.size()) {
-      return segmentList.subList(segmentList.size() - maxNumSegments, segmentList.size());
+  @V s bleForTest ng
+  publ c stat c L st<Seg nt> truncateSeg ntL st(L st<Seg nt> seg ntL st,  nt maxNumSeg nts) {
+    // Maybe cut-off t  beg nn ng of t  sorted l st of  Ds.
+     f (maxNumSeg nts > 0 && maxNumSeg nts < seg ntL st.s ze()) {
+      return seg ntL st.subL st(seg ntL st.s ze() - maxNumSeg nts, seg ntL st.s ze());
     } else {
-      return segmentList;
+      return seg ntL st;
     }
   }
 
-  @VisibleForTesting
-  public void setOffensive(long userID, boolean offensive) {
-    userTable.setOffensive(userID, offensive);
+  @V s bleForTest ng
+  publ c vo d setOffens ve(long user D, boolean offens ve) {
+    userTable.setOffens ve(user D, offens ve);
   }
 
-  @VisibleForTesting
-  public void setAntisocial(long userID, boolean antisocial) {
-    userTable.setAntisocial(userID, antisocial);
+  @V s bleForTest ng
+  publ c vo d setAnt soc al(long user D, boolean ant soc al) {
+    userTable.setAnt soc al(user D, ant soc al);
   }
 
   /**
-   * Returns a searcher for all segments.
+   * Returns a searc r for all seg nts.
    */
-  public EarlybirdMultiSegmentSearcher getMultiSearcher(ImmutableSchemaInterface schemaSnapshot)
-      throws IOException {
-    return new EarlybirdMultiSegmentSearcher(
-        schemaSnapshot,
-        getSearchers(schemaSnapshot, Filter.All, Order.NEW_TO_OLD),
-        searcherStats,
+  publ c Earlyb rdMult Seg ntSearc r getMult Searc r( mmutableSc ma nterface sc maSnapshot)
+      throws  OExcept on {
+    return new Earlyb rdMult Seg ntSearc r(
+        sc maSnapshot,
+        getSearc rs(sc maSnapshot, F lter.All, Order.NEW_TO_OLD),
+        searc rStats,
         clock);
   }
 
   /**
-   * Returns a new searcher for the given segment.
+   * Returns a new searc r for t  g ven seg nt.
    */
   @Nullable
-  public EarlybirdLuceneSearcher getSearcher(
-      Segment segment,
-      ImmutableSchemaInterface schemaSnapshot) throws IOException {
-    return getSearcher(segment.getTimeSliceID(), schemaSnapshot);
+  publ c Earlyb rdLuceneSearc r getSearc r(
+      Seg nt seg nt,
+       mmutableSc ma nterface sc maSnapshot) throws  OExcept on {
+    return getSearc r(seg nt.getT  Sl ce D(), sc maSnapshot);
   }
 
   /**
-   * Get max tweet id across all enabled segments.
-   * @return max tweet id or -1 if none found
+   * Get max t et  d across all enabled seg nts.
+   * @return max t et  d or -1  f none found
    */
-  public long getMaxTweetIdFromEnabledSegments() {
-    for (SegmentInfo segmentInfo : getSegmentInfos(Filter.Enabled, Order.NEW_TO_OLD)) {
-      long maxTweetId = segmentInfo.getIndexSegment().getMaxTweetId();
-      if (maxTweetId != -1) {
-        return maxTweetId;
+  publ c long getMaxT et dFromEnabledSeg nts() {
+    for (Seg nt nfo seg nt nfo : getSeg nt nfos(F lter.Enabled, Order.NEW_TO_OLD)) {
+      long maxT et d = seg nt nfo.get ndexSeg nt().getMaxT et d();
+       f (maxT et d != -1) {
+        return maxT et d;
       }
     }
 
@@ -638,185 +638,185 @@ public class SegmentManager {
   }
 
   /**
-   * Create a tweet index searcher on the segment represented by the timeslice id.  For production
-   * search session, the schema snapshot should be always passed in to make sure that the schema
-   * usage inside scoring is consistent.
+   * Create a t et  ndex searc r on t  seg nt represented by t  t  sl ce  d.  For product on
+   * search sess on, t  sc ma snapshot should be always passed  n to make sure that t  sc ma
+   * usage  ns de scor ng  s cons stent.
    *
-   * For non-production usage, like one-off debugging search, you can use the function call without
-   * the schema snapshot.
+   * For non-product on usage, l ke one-off debugg ng search,   can use t  funct on call w hout
+   * t  sc ma snapshot.
    *
-   * @param timeSliceID the timeslice id, which represents the index segment
-   * @param schemaSnapshot the schema snapshot
-   * @return the tweet index searcher
+   * @param t  Sl ce D t  t  sl ce  d, wh ch represents t   ndex seg nt
+   * @param sc maSnapshot t  sc ma snapshot
+   * @return t  t et  ndex searc r
    */
   @Nullable
-  public EarlybirdSingleSegmentSearcher getSearcher(
-      long timeSliceID,
-      ImmutableSchemaInterface schemaSnapshot) throws IOException {
-    SegmentInfo segmentInfo = getSegmentInfo(timeSliceID);
-    if (segmentInfo == null) {
+  publ c Earlyb rdS ngleSeg ntSearc r getSearc r(
+      long t  Sl ce D,
+       mmutableSc ma nterface sc maSnapshot) throws  OExcept on {
+    Seg nt nfo seg nt nfo = getSeg nt nfo(t  Sl ce D);
+     f (seg nt nfo == null) {
       return null;
     }
-    return segmentInfo.getIndexSegment().getSearcher(userTable, schemaSnapshot);
+    return seg nt nfo.get ndexSeg nt().getSearc r(userTable, sc maSnapshot);
   }
 
   /**
-   * Returns a new searcher for the segment with the given timeslice ID. If the given timeslice ID
-   * does not correspond to any active segment, {@code null} is returned.
+   * Returns a new searc r for t  seg nt w h t  g ven t  sl ce  D.  f t  g ven t  sl ce  D
+   * does not correspond to any act ve seg nt, {@code null}  s returned.
    *
-   * @param timeSliceID The segment's timeslice ID.
-   * @return A new searcher for the segment with the given timeslice ID.
+   * @param t  Sl ce D T  seg nt's t  sl ce  D.
+   * @return A new searc r for t  seg nt w h t  g ven t  sl ce  D.
    */
   @Nullable
-  public EarlybirdSingleSegmentSearcher getSearcher(long timeSliceID) throws IOException {
-    SegmentInfo segmentInfo = getSegmentInfo(timeSliceID);
-    if (segmentInfo == null) {
+  publ c Earlyb rdS ngleSeg ntSearc r getSearc r(long t  Sl ce D) throws  OExcept on {
+    Seg nt nfo seg nt nfo = getSeg nt nfo(t  Sl ce D);
+     f (seg nt nfo == null) {
       return null;
     }
-    return segmentInfo.getIndexSegment().getSearcher(userTable);
+    return seg nt nfo.get ndexSeg nt().getSearc r(userTable);
   }
 
   @Nullable
-  public EarlybirdResponseCode checkSegment(Segment segment) {
-    return checkSegmentInternal(getSegmentInfo(segment.getTimeSliceID()));
+  publ c Earlyb rdResponseCode c ckSeg nt(Seg nt seg nt) {
+    return c ckSeg nt nternal(getSeg nt nfo(seg nt.getT  Sl ce D()));
   }
 
-  private static EarlybirdResponseCode checkSegmentInternal(SegmentInfo info) {
-    if (info == null) {
-      return EarlybirdResponseCode.PARTITION_NOT_FOUND;
-    } else if (info.isEnabled()) {
-      return EarlybirdResponseCode.SUCCESS;
+  pr vate stat c Earlyb rdResponseCode c ckSeg nt nternal(Seg nt nfo  nfo) {
+     f ( nfo == null) {
+      return Earlyb rdResponseCode.PART T ON_NOT_FOUND;
+    } else  f ( nfo. sEnabled()) {
+      return Earlyb rdResponseCode.SUCCESS;
     } else {
-      return EarlybirdResponseCode.PARTITION_DISABLED;
+      return Earlyb rdResponseCode.PART T ON_D SABLED;
     }
   }
 
-  private List<EarlybirdSingleSegmentSearcher> getSearchers(
-      ImmutableSchemaInterface schemaSnapshot,
-      Filter filter,
-      Order order) throws IOException {
-    List<EarlybirdSingleSegmentSearcher> searchers = Lists.newArrayList();
-    for (SegmentInfo segmentInfo : getSegmentInfos(filter, order)) {
-      EarlybirdSingleSegmentSearcher searcher =
-          segmentInfo.getIndexSegment().getSearcher(userTable, schemaSnapshot);
-      if (searcher != null) {
-        searchers.add(searcher);
+  pr vate L st<Earlyb rdS ngleSeg ntSearc r> getSearc rs(
+       mmutableSc ma nterface sc maSnapshot,
+      F lter f lter,
+      Order order) throws  OExcept on {
+    L st<Earlyb rdS ngleSeg ntSearc r> searc rs = L sts.newArrayL st();
+    for (Seg nt nfo seg nt nfo : getSeg nt nfos(f lter, order)) {
+      Earlyb rdS ngleSeg ntSearc r searc r =
+          seg nt nfo.get ndexSeg nt().getSearc r(userTable, sc maSnapshot);
+       f (searc r != null) {
+        searc rs.add(searc r);
       }
     }
-    return searchers;
+    return searc rs;
   }
 
   /**
-   * Gets metadata for segments for debugging purposes.
+   * Gets  tadata for seg nts for debugg ng purposes.
    */
-  public List<String> getSegmentMetadata() {
-    List<String> segmentMetadata = new ArrayList<>();
-    for (SegmentInfo segment : getSegmentInfos(Filter.All, Order.OLD_TO_NEW)) {
-      segmentMetadata.add(segment.getSegmentMetadata());
+  publ c L st<Str ng> getSeg nt tadata() {
+    L st<Str ng> seg nt tadata = new ArrayL st<>();
+    for (Seg nt nfo seg nt : getSeg nt nfos(F lter.All, Order.OLD_TO_NEW)) {
+      seg nt tadata.add(seg nt.getSeg nt tadata());
     }
-    return segmentMetadata;
+    return seg nt tadata;
   }
 
   /**
-   * Gets info for query caches to be displayed in an admin page.
+   * Gets  nfo for query cac s to be d splayed  n an adm n page.
    */
-  public String getQueryCachesData() {
-    StringBuilder output = new StringBuilder();
-    for (SegmentInfo segment : getSegmentInfos(Filter.All, Order.OLD_TO_NEW)) {
-      output.append(segment.getQueryCachesData() + "\n");
+  publ c Str ng getQueryCac sData() {
+    Str ngBu lder output = new Str ngBu lder();
+    for (Seg nt nfo seg nt : getSeg nt nfos(F lter.All, Order.OLD_TO_NEW)) {
+      output.append(seg nt.getQueryCac sData() + "\n");
     }
-    return output.toString();
+    return output.toStr ng();
   }
 
   /**
-   * Index the given user update. Returns false if the given update is skipped.
+   *  ndex t  g ven user update. Returns false  f t  g ven update  s sk pped.
    */
-  public boolean indexUserUpdate(UserUpdate userUpdate) {
-    return userTable.indexUserUpdate(userUpdatesChecker, userUpdate);
+  publ c boolean  ndexUserUpdate(UserUpdate userUpdate) {
+    return userTable. ndexUserUpdate(userUpdatesC cker, userUpdate);
   }
 
   /**
-   * Index the given UserScrubGeoEvent.
+   *  ndex t  g ven UserScrubGeoEvent.
    * @param userScrubGeoEvent
    */
-  public void indexUserScrubGeoEvent(UserScrubGeoEvent userScrubGeoEvent) {
-    userScrubGeoMap.indexUserScrubGeoEvent(userScrubGeoEvent);
+  publ c vo d  ndexUserScrubGeoEvent(UserScrubGeoEvent userScrubGeoEvent) {
+    userScrubGeoMap. ndexUserScrubGeoEvent(userScrubGeoEvent);
   }
 
   /**
-   * Return how many documents this segment manager has indexed in all of its enabled segments.
+   * Return how many docu nts t  seg nt manager has  ndexed  n all of  s enabled seg nts.
    */
-  public long getNumIndexedDocuments() {
-    // Order here doesn't matter, we just want all enabled segments, and allocate
-    // as little as needed.
-    long indexedDocs = 0;
-    for (SegmentInfo segmentInfo : getSegmentInfos(Filter.Enabled, Order.OLD_TO_NEW)) {
-      indexedDocs += segmentInfo.getIndexSegment().getIndexStats().getStatusCount();
+  publ c long getNum ndexedDocu nts() {
+    // Order  re doesn't matter,   just want all enabled seg nts, and allocate
+    // as l tle as needed.
+    long  ndexedDocs = 0;
+    for (Seg nt nfo seg nt nfo : getSeg nt nfos(F lter.Enabled, Order.OLD_TO_NEW)) {
+       ndexedDocs += seg nt nfo.get ndexSeg nt().get ndexStats().getStatusCount();
     }
-    return indexedDocs;
+    return  ndexedDocs;
   }
 
   /**
-   * Return how many partial updates this segment manager has applied
-   * in all of its enabled segments.
+   * Return how many part al updates t  seg nt manager has appl ed
+   *  n all of  s enabled seg nts.
    */
-  public long getNumPartialUpdates() {
-    long partialUpdates = 0;
-    for (SegmentInfo segmentInfo : getSegmentInfos(Filter.Enabled, Order.OLD_TO_NEW)) {
-      partialUpdates += segmentInfo.getIndexSegment().getIndexStats().getPartialUpdateCount();
+  publ c long getNumPart alUpdates() {
+    long part alUpdates = 0;
+    for (Seg nt nfo seg nt nfo : getSeg nt nfos(F lter.Enabled, Order.OLD_TO_NEW)) {
+      part alUpdates += seg nt nfo.get ndexSeg nt().get ndexStats().getPart alUpdateCount();
     }
-    return partialUpdates;
+    return part alUpdates;
   }
 
   /**
-   * Returns the segment info for the segment containing the given tweet ID.
+   * Returns t  seg nt  nfo for t  seg nt conta n ng t  g ven t et  D.
    */
-  public SegmentInfo getSegmentInfoForID(long tweetID) {
-    ISegmentWriter segmentWriter = getSegmentWriterForID(tweetID);
-    return segmentWriter == null ? null : segmentWriter.getSegmentInfo();
+  publ c Seg nt nfo getSeg nt nfoFor D(long t et D) {
+     Seg ntWr er seg ntWr er = getSeg ntWr erFor D(t et D);
+    return seg ntWr er == null ? null : seg ntWr er.getSeg nt nfo();
   }
 
   /**
-   * Returns the segment writer for the segment containing the given tweet ID.
+   * Returns t  seg nt wr er for t  seg nt conta n ng t  g ven t et  D.
    */
   @Nullable
-  public ISegmentWriter getSegmentWriterForID(long tweetID) {
-    Map.Entry<Long, ISegmentWriter> entry = segmentWriters.floorEntry(tweetID);
+  publ c  Seg ntWr er getSeg ntWr erFor D(long t et D) {
+    Map.Entry<Long,  Seg ntWr er> entry = seg ntWr ers.floorEntry(t et D);
     return entry == null ? null : entry.getValue();
   }
 
   /**
-   * Remove old segments until we have less than or equal to the number of max enabled segments.
+   * Remove old seg nts unt l   have less than or equal to t  number of max enabled seg nts.
    */
-  public void removeExcessSegments() {
-    int removedSegmentCount = 0;
-    while (segmentWriters.size() > getMaxEnabledSegments()) {
-      long timesliceID = getOldestEnabledTimeSliceID();
-      disableSegment(timesliceID);
-      removeSegmentInfo(timesliceID);
-      removedSegmentCount += 1;
+  publ c vo d removeExcessSeg nts() {
+     nt removedSeg ntCount = 0;
+    wh le (seg ntWr ers.s ze() > getMaxEnabledSeg nts()) {
+      long t  sl ce D = getOldestEnabledT  Sl ce D();
+      d sableSeg nt(t  sl ce D);
+      removeSeg nt nfo(t  sl ce D);
+      removedSeg ntCount += 1;
     }
-    LOG.info("Segment manager removed {} excess segments", removedSegmentCount);
+    LOG. nfo("Seg nt manager removed {} excess seg nts", removedSeg ntCount);
   }
 
   /**
-   * Returns total index size on disk across all enabled segments in this segment manager.
+   * Returns total  ndex s ze on d sk across all enabled seg nts  n t  seg nt manager.
    */
-  private long getTotalSegmentSizeOnDisk() {
-    long totalIndexSize = 0;
-    for (SegmentInfo segmentInfo : getSegmentInfos(Filter.Enabled, Order.OLD_TO_NEW)) {
-      totalIndexSize += segmentInfo.getIndexSegment().getIndexStats().getIndexSizeOnDiskInBytes();
+  pr vate long getTotalSeg ntS zeOnD sk() {
+    long total ndexS ze = 0;
+    for (Seg nt nfo seg nt nfo : getSeg nt nfos(F lter.Enabled, Order.OLD_TO_NEW)) {
+      total ndexS ze += seg nt nfo.get ndexSeg nt().get ndexStats().get ndexS zeOnD sk nBytes();
     }
-    return totalIndexSize;
+    return total ndexS ze;
   }
 
-  @VisibleForTesting
-  ISegmentWriter getSegmentWriterWithoutCreationForTests(long timesliceID) {
-    return segmentWriters.get(timesliceID);
+  @V s bleForTest ng
+   Seg ntWr er getSeg ntWr erW houtCreat onForTests(long t  sl ce D) {
+    return seg ntWr ers.get(t  sl ce D);
   }
 
-  @VisibleForTesting
-  ArrayList<Long> getTimeSliceIdsForTests() {
-    return new ArrayList<Long>(segmentWriters.keySet());
+  @V s bleForTest ng
+  ArrayL st<Long> getT  Sl ce dsForTests() {
+    return new ArrayL st<Long>(seg ntWr ers.keySet());
   }
 }

@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.AddEntr esT  l ne nstruct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * Build the AddEntries instruction with special handling for replaceable entries.
+ * Bu ld t  AddEntr es  nstruct on w h spec al handl ng for replaceable entr es.
  *
- * Entries (though almost always a single entry) with a non-empty entryIdToReplace field should be
- * collected and transformed into ReplaceEntry instructions. These should be filtered out of the
- * AddEntries instruction. We avoid doing this as part of the regular AddEntriesInstructionBuilder
- * because replacement is rare and detecting replaceable entries takes linear time.
+ * Entr es (though almost always a s ngle entry) w h a non-empty entry dToReplace f eld should be
+ * collected and transfor d  nto ReplaceEntry  nstruct ons. T se should be f ltered out of t 
+ * AddEntr es  nstruct on.   avo d do ng t  as part of t  regular AddEntr es nstruct onBu lder
+ * because replace nt  s rare and detect ng replaceable entr es takes l near t  .
  */
-case class AddEntriesWithReplaceInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends UrtInstructionBuilder[Query, AddEntriesTimelineInstruction] {
+case class AddEntr esW hReplace nstruct onBu lder[Query <: P pel neQuery](
+  overr de val  nclude nstruct on:  nclude nstruct on[Query] = Always nclude)
+    extends Urt nstruct onBu lder[Query, AddEntr esT  l ne nstruct on] {
 
-  override def build(
+  overr de def bu ld(
     query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[AddEntriesTimelineInstruction] = {
-    if (includeInstruction(query, entries)) {
-      val entriesToAdd = entries.filter(_.entryIdToReplace.isEmpty)
-      if (entriesToAdd.nonEmpty) Seq(AddEntriesTimelineInstruction(entriesToAdd))
+    entr es: Seq[T  l neEntry]
+  ): Seq[AddEntr esT  l ne nstruct on] = {
+     f ( nclude nstruct on(query, entr es)) {
+      val entr esToAdd = entr es.f lter(_.entry dToReplace. sEmpty)
+       f (entr esToAdd.nonEmpty) Seq(AddEntr esT  l ne nstruct on(entr esToAdd))
       else Seq.empty
     } else {
       Seq.empty

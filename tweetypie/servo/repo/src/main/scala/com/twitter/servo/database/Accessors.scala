@@ -1,151 +1,151 @@
-package com.twitter.servo.database
+package com.tw ter.servo.database
 
-import com.twitter.util.Time
-import java.sql.{ResultSet, Timestamp}
+ mport com.tw ter.ut l.T  
+ mport java.sql.{ResultSet, T  stamp}
 
 /**
- * A base trait for transforming JDBC ResultSets.
- * Designed to be used with the Accessors trait.
+ * A base tra  for transform ng JDBC ResultSets.
+ * Des gned to be used w h t  Accessors tra .
  */
-trait ImplicitBuilder[T] extends Accessors {
-  def apply(implicit row: ResultSet): T
+tra   mpl c Bu lder[T] extends Accessors {
+  def apply( mpl c  row: ResultSet): T
 }
 
 object Accessors {
 
   /**
-   * helper to make it compile time error when trying to call getOption on types not supported
-   * instead of a runtime exception
+   *  lper to make   comp le t   error w n try ng to call getOpt on on types not supported
+   *  nstead of a runt   except on
    */
-  object SafeManifest {
-    implicit val booleanSafeManifest = new SafeManifest(implicitly[Manifest[Boolean]])
-    implicit val doubleSafeManifest = new SafeManifest(implicitly[Manifest[Double]])
-    implicit val intSafeManifest = new SafeManifest[Int](implicitly[Manifest[Int]])
-    implicit val longSafeManifest = new SafeManifest[Long](implicitly[Manifest[Long]])
-    implicit val stringSafeManifest = new SafeManifest[String](implicitly[Manifest[String]])
-    implicit val timestampSafeManifest =
-      new SafeManifest[Timestamp](implicitly[Manifest[Timestamp]])
+  object SafeMan fest {
+     mpl c  val booleanSafeMan fest = new SafeMan fest( mpl c ly[Man fest[Boolean]])
+     mpl c  val doubleSafeMan fest = new SafeMan fest( mpl c ly[Man fest[Double]])
+     mpl c  val  ntSafeMan fest = new SafeMan fest[ nt]( mpl c ly[Man fest[ nt]])
+     mpl c  val longSafeMan fest = new SafeMan fest[Long]( mpl c ly[Man fest[Long]])
+     mpl c  val str ngSafeMan fest = new SafeMan fest[Str ng]( mpl c ly[Man fest[Str ng]])
+     mpl c  val t  stampSafeMan fest =
+      new SafeMan fest[T  stamp]( mpl c ly[Man fest[T  stamp]])
   }
 
-  @deprecated("safe manifests no longer supported, use type-specific accessors instead", "1.1.1")
-  case class SafeManifest[T](mf: Manifest[T])
+  @deprecated("safe man fests no longer supported, use type-spec f c accessors  nstead", "1.1.1")
+  case class SafeMan fest[T](mf: Man fest[T])
 }
 
 /**
- * mixin to get ResultSet accessors for standard types
+ * m x n to get ResultSet accessors for standard types
  */
-trait Accessors {
-  import Accessors._
+tra  Accessors {
+   mport Accessors._
 
   /**
-   * @return None when the column is null for the current row of the result set passed in
-   *         Some[T] otherwise
-   * @throws UnsupportedOperationException if the return type expected is not supported, currently
-   *        only Boolean, Int, Long, String and Timestamp are supported
+   * @return None w n t  column  s null for t  current row of t  result set passed  n
+   *         So [T] ot rw se
+   * @throws UnsupportedOperat onExcept on  f t  return type expected  s not supported, currently
+   *        only Boolean,  nt, Long, Str ng and T  stamp are supported
    */
-  @deprecated("use type-specific accessors instead", "1.1.1")
-  def getOption[T](column: String)(implicit row: ResultSet, sf: SafeManifest[T]): Option[T] = {
+  @deprecated("use type-spec f c accessors  nstead", "1.1.1")
+  def getOpt on[T](column: Str ng)( mpl c  row: ResultSet, sf: SafeMan fest[T]): Opt on[T] = {
     val res = {
-      if (classOf[Boolean] == sf.mf.erasure) {
+       f (classOf[Boolean] == sf.mf.erasure) {
         row.getBoolean(column)
-      } else if (classOf[Double] == sf.mf.erasure) {
+      } else  f (classOf[Double] == sf.mf.erasure) {
         row.getDouble(column)
-      } else if (classOf[Int] == sf.mf.erasure) {
-        row.getInt(column)
-      } else if (classOf[Long] == sf.mf.erasure) {
+      } else  f (classOf[ nt] == sf.mf.erasure) {
+        row.get nt(column)
+      } else  f (classOf[Long] == sf.mf.erasure) {
         row.getLong(column)
-      } else if (classOf[String] == sf.mf.erasure) {
-        row.getString(column)
-      } else if (classOf[Timestamp] == sf.mf.erasure) {
-        row.getTimestamp(column)
+      } else  f (classOf[Str ng] == sf.mf.erasure) {
+        row.getStr ng(column)
+      } else  f (classOf[T  stamp] == sf.mf.erasure) {
+        row.getT  stamp(column)
       } else {
-        throw new UnsupportedOperationException("type not supported: " + sf.mf.erasure)
+        throw new UnsupportedOperat onExcept on("type not supported: " + sf.mf.erasure)
       }
     }
-    if (row.wasNull()) {
+     f (row.wasNull()) {
       None
     } else {
-      Some(res.asInstanceOf[T])
+      So (res.as nstanceOf[T])
     }
   }
 
   /**
-   * @param get the method to apply to the ResultSet
-   * @param row the implicit ResultSet on which to apply get
-   * @return None when the column is null for the current row of the result set passed in
-   *         Some[T] otherwise
+   * @param get t   thod to apply to t  ResultSet
+   * @param row t   mpl c  ResultSet on wh ch to apply get
+   * @return None w n t  column  s null for t  current row of t  result set passed  n
+   *         So [T] ot rw se
    */
-  def getOption[T](get: ResultSet => T)(implicit row: ResultSet): Option[T] = {
+  def getOpt on[T](get: ResultSet => T)( mpl c  row: ResultSet): Opt on[T] = {
     val result = get(row)
-    if (row.wasNull()) {
+     f (row.wasNull()) {
       None
     } else {
-      Some(result)
+      So (result)
     }
   }
 
-  def booleanOption(column: String)(implicit row: ResultSet): Option[Boolean] =
-    getOption((_: ResultSet).getBoolean(column))
+  def booleanOpt on(column: Str ng)( mpl c  row: ResultSet): Opt on[Boolean] =
+    getOpt on((_: ResultSet).getBoolean(column))
 
-  def boolean(column: String, default: Boolean = false)(implicit row: ResultSet): Boolean =
-    booleanOption(column).getOrElse(default)
+  def boolean(column: Str ng, default: Boolean = false)( mpl c  row: ResultSet): Boolean =
+    booleanOpt on(column).getOrElse(default)
 
-  def doubleOption(column: String)(implicit row: ResultSet): Option[Double] =
-    getOption((_: ResultSet).getDouble(column))
+  def doubleOpt on(column: Str ng)( mpl c  row: ResultSet): Opt on[Double] =
+    getOpt on((_: ResultSet).getDouble(column))
 
-  def double(column: String, default: Double = 0.0)(implicit row: ResultSet): Double =
-    doubleOption(column).getOrElse(default)
+  def double(column: Str ng, default: Double = 0.0)( mpl c  row: ResultSet): Double =
+    doubleOpt on(column).getOrElse(default)
 
-  def intOption(column: String)(implicit row: ResultSet): Option[Int] =
-    getOption((_: ResultSet).getInt(column))
+  def  ntOpt on(column: Str ng)( mpl c  row: ResultSet): Opt on[ nt] =
+    getOpt on((_: ResultSet).get nt(column))
 
-  def int(column: String, default: Int = 0)(implicit row: ResultSet): Int =
-    intOption(column).getOrElse(default)
+  def  nt(column: Str ng, default:  nt = 0)( mpl c  row: ResultSet):  nt =
+     ntOpt on(column).getOrElse(default)
 
-  def longOption(column: String)(implicit row: ResultSet): Option[Long] =
-    getOption((_: ResultSet).getLong(column))
+  def longOpt on(column: Str ng)( mpl c  row: ResultSet): Opt on[Long] =
+    getOpt on((_: ResultSet).getLong(column))
 
-  def long(column: String, default: Long = 0)(implicit row: ResultSet): Long =
-    longOption(column).getOrElse(default)
+  def long(column: Str ng, default: Long = 0)( mpl c  row: ResultSet): Long =
+    longOpt on(column).getOrElse(default)
 
-  def stringOption(column: String)(implicit row: ResultSet): Option[String] =
-    getOption((_: ResultSet).getString(column))
+  def str ngOpt on(column: Str ng)( mpl c  row: ResultSet): Opt on[Str ng] =
+    getOpt on((_: ResultSet).getStr ng(column))
 
-  def string(column: String, default: String = "")(implicit row: ResultSet): String =
-    stringOption(column).getOrElse(default)
+  def str ng(column: Str ng, default: Str ng = "")( mpl c  row: ResultSet): Str ng =
+    str ngOpt on(column).getOrElse(default)
 
-  def timestampOption(column: String)(implicit row: ResultSet): Option[Timestamp] =
-    getOption((_: ResultSet).getTimestamp(column))
+  def t  stampOpt on(column: Str ng)( mpl c  row: ResultSet): Opt on[T  stamp] =
+    getOpt on((_: ResultSet).getT  stamp(column))
 
-  def timestamp(
-    column: String,
-    default: Timestamp = new Timestamp(0)
+  def t  stamp(
+    column: Str ng,
+    default: T  stamp = new T  stamp(0)
   )(
-    implicit row: ResultSet
-  ): Timestamp =
-    timestampOption(column).getOrElse(default)
+     mpl c  row: ResultSet
+  ): T  stamp =
+    t  stampOpt on(column).getOrElse(default)
 
-  def datetimeOption(column: String)(implicit row: ResultSet): Option[Long] =
-    timestampOption(column) map { _.getTime }
+  def datet  Opt on(column: Str ng)( mpl c  row: ResultSet): Opt on[Long] =
+    t  stampOpt on(column) map { _.getT   }
 
-  def datetime(column: String, default: Long = 0L)(implicit row: ResultSet): Long =
-    datetimeOption(column).getOrElse(default)
+  def datet  (column: Str ng, default: Long = 0L)( mpl c  row: ResultSet): Long =
+    datet  Opt on(column).getOrElse(default)
 
-  def timeOption(column: String)(implicit row: ResultSet): Option[Time] =
-    datetimeOption(column) map { Time.fromMilliseconds(_) }
+  def t  Opt on(column: Str ng)( mpl c  row: ResultSet): Opt on[T  ] =
+    datet  Opt on(column) map { T  .fromM ll seconds(_) }
 
-  def time(column: String, default: Time = Time.epoch)(implicit row: ResultSet): Time =
-    timeOption(column).getOrElse(default)
+  def t  (column: Str ng, default: T   = T  .epoch)( mpl c  row: ResultSet): T   =
+    t  Opt on(column).getOrElse(default)
 
-  def bytesOption(column: String)(implicit row: ResultSet): Option[Array[Byte]] =
-    getOption((_: ResultSet).getBytes(column))
+  def bytesOpt on(column: Str ng)( mpl c  row: ResultSet): Opt on[Array[Byte]] =
+    getOpt on((_: ResultSet).getBytes(column))
 
   def bytes(
-    column: String,
+    column: Str ng,
     default: Array[Byte] = Array.empty[Byte]
   )(
-    implicit row: ResultSet
+     mpl c  row: ResultSet
   ): Array[Byte] =
-    bytesOption(column).getOrElse(default)
+    bytesOpt on(column).getOrElse(default)
 
 }

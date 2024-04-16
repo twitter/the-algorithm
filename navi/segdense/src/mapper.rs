@@ -1,22 +1,22 @@
-use std::collections::HashMap;
+use std::collect ons::HashMap;
 
-#[derive(Debug)]
-pub struct FeatureInfo {
-    pub tensor_index: i8,
-    pub index_within_tensor: i64,
+#[der ve(Debug)]
+pub struct Feature nfo {
+    pub tensor_ ndex:  8,
+    pub  ndex_w h n_tensor:  64,
 }
 
-pub static NULL_INFO: FeatureInfo = FeatureInfo {
-    tensor_index: -1,
-    index_within_tensor: -1,
+pub stat c NULL_ NFO: Feature nfo = Feature nfo {
+    tensor_ ndex: -1,
+     ndex_w h n_tensor: -1,
 };
 
-#[derive(Debug, Default)]
+#[der ve(Debug, Default)]
 pub struct FeatureMapper {
-    map: HashMap<i64, FeatureInfo>,
+    map: HashMap< 64, Feature nfo>,
 }
 
-impl FeatureMapper {
+ mpl FeatureMapper {
     pub fn new() -> FeatureMapper {
         FeatureMapper {
             map: HashMap::new(),
@@ -24,22 +24,22 @@ impl FeatureMapper {
     }
 }
 
-pub trait MapWriter {
-    fn set(&mut self, feature_id: i64, info: FeatureInfo);
+pub tra  MapWr er {
+    fn set(&mut self, feature_ d:  64,  nfo: Feature nfo);
 }
 
-pub trait MapReader {
-    fn get(&self, feature_id: &i64) -> Option<&FeatureInfo>;
+pub tra  MapReader {
+    fn get(&self, feature_ d: & 64) -> Opt on<&Feature nfo>;
 }
 
-impl MapWriter for FeatureMapper {
-    fn set(&mut self, feature_id: i64, info: FeatureInfo) {
-        self.map.insert(feature_id, info);
+ mpl MapWr er for FeatureMapper {
+    fn set(&mut self, feature_ d:  64,  nfo: Feature nfo) {
+        self.map. nsert(feature_ d,  nfo);
     }
 }
 
-impl MapReader for FeatureMapper {
-    fn get(&self, feature_id: &i64) -> Option<&FeatureInfo> {
-        self.map.get(feature_id)
+ mpl MapReader for FeatureMapper {
+    fn get(&self, feature_ d: & 64) -> Opt on<&Feature nfo> {
+        self.map.get(feature_ d)
     }
 }

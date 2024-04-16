@@ -1,84 +1,84 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.tw ter.s mclusters_v2.summ ngb rd.common
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.simclusters_v2.common.ModelVersions._
-import com.twitter.simclusters_v2.summingbird.common.ClientConfigs._
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.AltSetting.AltSetting
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.Environment.Environment
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.JobType.JobType
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.AltSetting
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.JobType
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons._
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.Cl entConf gs._
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.S mClustersProf le.AltSett ng.AltSett ng
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.S mClustersProf le.Env ron nt.Env ron nt
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.S mClustersProf le.JobType.JobType
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.S mClustersProf le.AltSett ng
+ mport com.tw ter.s mclusters_v2.summ ngb rd.common.S mClustersProf le.JobType
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
 
-sealed trait SimClustersProfile {
-  val env: Environment
-  val alt: AltSetting
-  val modelVersionStr: String
+sealed tra  S mClustersProf le {
+  val env: Env ron nt
+  val alt: AltSett ng
+  val modelVers onStr: Str ng
 
-  lazy val modelVersion: ModelVersion = modelVersionStr
+  lazy val modelVers on: ModelVers on = modelVers onStr
 }
 
-sealed trait SimClustersJobProfile extends SimClustersProfile {
+sealed tra  S mClustersJobProf le extends S mClustersProf le {
 
   val jobType: JobType
 
-  final lazy val jobName: String = {
+  f nal lazy val jobNa : Str ng = {
     alt match {
-      case AltSetting.Alt =>
-        s"simclusters_v2_${jobType}_alt_job_$env"
-      case AltSetting.Esc =>
-        s"simclusters_v2_${jobType}_esc_job_$env"
+      case AltSett ng.Alt =>
+        s"s mclusters_v2_${jobType}_alt_job_$env"
+      case AltSett ng.Esc =>
+        s"s mclusters_v2_${jobType}_esc_job_$env"
       case _ =>
-        s"simclusters_v2_${jobType}_job_$env"
+        s"s mclusters_v2_${jobType}_job_$env"
     }
   }
 
-  // Build the serviceIdentifier by jobType, env and zone(dc)
-  final lazy val serviceIdentifier: String => ServiceIdentifier = { zone =>
-    ServiceIdentifier(Configs.role, s"summingbird_$jobName", env.toString, zone)
+  // Bu ld t  serv ce dent f er by jobType, env and zone(dc)
+  f nal lazy val serv ce dent f er: Str ng => Serv ce dent f er = { zone =>
+    Serv ce dent f er(Conf gs.role, s"summ ngb rd_$jobNa ", env.toStr ng, zone)
   }
 
-  final lazy val favScoreThresholdForUserInterest: Double =
-    Configs.favScoreThresholdForUserInterest(modelVersionStr)
+  f nal lazy val favScoreThresholdForUser nterest: Double =
+    Conf gs.favScoreThresholdForUser nterest(modelVers onStr)
 
-  lazy val timelineEventSourceSubscriberId: String = {
+  lazy val t  l neEventS ceSubscr ber d: Str ng = {
     val jobTypeStr = jobType match {
-      case JobType.MultiModelTweet => "multi_model_tweet_"
-      case JobType.PersistentTweet => "persistent_tweet_"
-      case JobType.Tweet => ""
+      case JobType.Mult ModelT et => "mult _model_t et_"
+      case JobType.Pers stentT et => "pers stent_t et_"
+      case JobType.T et => ""
     }
 
-    val prefix = alt match {
-      case AltSetting.Alt =>
+    val pref x = alt match {
+      case AltSett ng.Alt =>
         "alt_"
-      case AltSetting.Esc =>
+      case AltSett ng.Esc =>
         "esc_"
       case _ =>
         ""
     }
 
-    s"simclusters_v2_${jobTypeStr}summingbird_$prefix$env"
+    s"s mclusters_v2_${jobTypeStr}summ ngb rd_$pref x$env"
   }
 
 }
 
-object SimClustersProfile {
+object S mClustersProf le {
 
-  object JobType extends Enumeration {
+  object JobType extends Enu rat on {
     type JobType = Value
-    val Tweet: JobType = Value("tweet")
-    val PersistentTweet: JobType = Value("persistent_tweet")
-    val MultiModelTweet: JobType = Value("multimodel_tweet")
+    val T et: JobType = Value("t et")
+    val Pers stentT et: JobType = Value("pers stent_t et")
+    val Mult ModelT et: JobType = Value("mult model_t et")
   }
 
-  object Environment extends Enumeration {
-    type Environment = Value
-    val Prod: Environment = Value("prod")
-    val Devel: Environment = Value("devel")
+  object Env ron nt extends Enu rat on {
+    type Env ron nt = Value
+    val Prod: Env ron nt = Value("prod")
+    val Devel: Env ron nt = Value("devel")
 
-    def apply(setting: String): Environment = {
-      if (setting == Prod.toString) {
+    def apply(sett ng: Str ng): Env ron nt = {
+       f (sett ng == Prod.toStr ng) {
         Prod
       } else {
         Devel
@@ -86,15 +86,15 @@ object SimClustersProfile {
     }
   }
 
-  object AltSetting extends Enumeration {
-    type AltSetting = Value
-    val Normal: AltSetting = Value("normal")
-    val Alt: AltSetting = Value("alt")
-    val Esc: AltSetting = Value("esc")
+  object AltSett ng extends Enu rat on {
+    type AltSett ng = Value
+    val Normal: AltSett ng = Value("normal")
+    val Alt: AltSett ng = Value("alt")
+    val Esc: AltSett ng = Value("esc")
 
-    def apply(setting: String): AltSetting = {
+    def apply(sett ng: Str ng): AltSett ng = {
 
-      setting match {
+      sett ng match {
         case "alt" => Alt
         case "esc" => Esc
         case _ => Normal
@@ -102,110 +102,110 @@ object SimClustersProfile {
     }
   }
 
-  case class SimClustersTweetProfile(
-    env: Environment,
-    alt: AltSetting,
-    modelVersionStr: String,
-    entityClusterScorePath: String,
-    tweetTopKClustersPath: String,
-    clusterTopKTweetsPath: String,
-    coreEmbeddingType: EmbeddingType,
-    clusterTopKTweetsLightPath: Option[String] = None)
-      extends SimClustersJobProfile {
+  case class S mClustersT etProf le(
+    env: Env ron nt,
+    alt: AltSett ng,
+    modelVers onStr: Str ng,
+    ent yClusterScorePath: Str ng,
+    t etTopKClustersPath: Str ng,
+    clusterTopKT etsPath: Str ng,
+    coreEmbedd ngType: Embedd ngType,
+    clusterTopKT etsL ghtPath: Opt on[Str ng] = None)
+      extends S mClustersJobProf le {
 
-    final val jobType: JobType = JobType.Tweet
+    f nal val jobType: JobType = JobType.T et
   }
 
-  case class PersistentTweetProfile(
-    env: Environment,
-    alt: AltSetting,
-    modelVersionStr: String,
-    persistentTweetStratoPath: String,
-    coreEmbeddingType: EmbeddingType)
-      extends SimClustersJobProfile {
-    final val jobType: JobType = JobType.PersistentTweet
+  case class Pers stentT etProf le(
+    env: Env ron nt,
+    alt: AltSett ng,
+    modelVers onStr: Str ng,
+    pers stentT etStratoPath: Str ng,
+    coreEmbedd ngType: Embedd ngType)
+      extends S mClustersJobProf le {
+    f nal val jobType: JobType = JobType.Pers stentT et
   }
 
-  final val AltProdTweetJobProfile = SimClustersTweetProfile(
-    env = Environment.Prod,
-    alt = AltSetting.Alt,
-    modelVersionStr = Model20M145K2020,
-    entityClusterScorePath = simClustersCoreAltCachePath,
-    tweetTopKClustersPath = simClustersCoreAltCachePath,
-    clusterTopKTweetsPath = simClustersCoreAltCachePath,
-    clusterTopKTweetsLightPath = Some(simClustersCoreAltLightCachePath),
-    coreEmbeddingType = EmbeddingType.LogFavBasedTweet
+  f nal val AltProdT etJobProf le = S mClustersT etProf le(
+    env = Env ron nt.Prod,
+    alt = AltSett ng.Alt,
+    modelVers onStr = Model20M145K2020,
+    ent yClusterScorePath = s mClustersCoreAltCac Path,
+    t etTopKClustersPath = s mClustersCoreAltCac Path,
+    clusterTopKT etsPath = s mClustersCoreAltCac Path,
+    clusterTopKT etsL ghtPath = So (s mClustersCoreAltL ghtCac Path),
+    coreEmbedd ngType = Embedd ngType.LogFavBasedT et
   )
 
-  final val AltDevelTweetJobProfile = SimClustersTweetProfile(
-    env = Environment.Devel,
-    alt = AltSetting.Alt,
-    modelVersionStr = Model20M145K2020,
-    // using the same devel cache with job
-    entityClusterScorePath = develSimClustersCoreCachePath,
-    tweetTopKClustersPath = develSimClustersCoreCachePath,
-    clusterTopKTweetsPath = develSimClustersCoreCachePath,
-    clusterTopKTweetsLightPath = Some(develSimClustersCoreLightCachePath),
-    coreEmbeddingType = EmbeddingType.LogFavBasedTweet,
+  f nal val AltDevelT etJobProf le = S mClustersT etProf le(
+    env = Env ron nt.Devel,
+    alt = AltSett ng.Alt,
+    modelVers onStr = Model20M145K2020,
+    // us ng t  sa  devel cac  w h job
+    ent yClusterScorePath = develS mClustersCoreCac Path,
+    t etTopKClustersPath = develS mClustersCoreCac Path,
+    clusterTopKT etsPath = develS mClustersCoreCac Path,
+    clusterTopKT etsL ghtPath = So (develS mClustersCoreL ghtCac Path),
+    coreEmbedd ngType = Embedd ngType.LogFavBasedT et,
   )
 
-  final val ProdPersistentTweetProfile = PersistentTweetProfile(
-    env = Environment.Prod,
-    alt = AltSetting.Normal,
-    modelVersionStr = Model20M145K2020,
-    // This profile is used by the persistent tweet embedding job to update the embedding. We
-    // use the uncached column to avoid reading stale data
-    persistentTweetStratoPath = logFavBasedTweet20M145K2020UncachedStratoPath,
-    coreEmbeddingType = EmbeddingType.LogFavBasedTweet
+  f nal val ProdPers stentT etProf le = Pers stentT etProf le(
+    env = Env ron nt.Prod,
+    alt = AltSett ng.Normal,
+    modelVers onStr = Model20M145K2020,
+    // T  prof le  s used by t  pers stent t et embedd ng job to update t  embedd ng.  
+    // use t  uncac d column to avo d read ng stale data
+    pers stentT etStratoPath = logFavBasedT et20M145K2020Uncac dStratoPath,
+    coreEmbedd ngType = Embedd ngType.LogFavBasedT et
   )
 
-  final val DevelPersistentTweetProfile = PersistentTweetProfile(
-    env = Environment.Devel,
-    alt = AltSetting.Normal,
-    modelVersionStr = Model20M145K2020,
-    persistentTweetStratoPath = develLogFavBasedTweet20M145K2020StratoPath,
-    coreEmbeddingType = EmbeddingType.LogFavBasedTweet
+  f nal val DevelPers stentT etProf le = Pers stentT etProf le(
+    env = Env ron nt.Devel,
+    alt = AltSett ng.Normal,
+    modelVers onStr = Model20M145K2020,
+    pers stentT etStratoPath = develLogFavBasedT et20M145K2020StratoPath,
+    coreEmbedd ngType = Embedd ngType.LogFavBasedT et
   )
 
-  def fetchTweetJobProfile(
-    env: Environment,
-    alt: AltSetting = AltSetting.Normal
-  ): SimClustersTweetProfile = {
+  def fetchT etJobProf le(
+    env: Env ron nt,
+    alt: AltSett ng = AltSett ng.Normal
+  ): S mClustersT etProf le = {
     (env, alt) match {
-      case (Environment.Prod, AltSetting.Alt) => AltProdTweetJobProfile
-      case (Environment.Devel, AltSetting.Alt) => AltDevelTweetJobProfile
-      case _ => throw new IllegalArgumentException("Invalid env or alt setting")
+      case (Env ron nt.Prod, AltSett ng.Alt) => AltProdT etJobProf le
+      case (Env ron nt.Devel, AltSett ng.Alt) => AltDevelT etJobProf le
+      case _ => throw new  llegalArgu ntExcept on(" nval d env or alt sett ng")
     }
   }
 
-  def fetchPersistentJobProfile(
-    env: Environment,
-    alt: AltSetting = AltSetting.Normal
-  ): PersistentTweetProfile = {
+  def fetchPers stentJobProf le(
+    env: Env ron nt,
+    alt: AltSett ng = AltSett ng.Normal
+  ): Pers stentT etProf le = {
     (env, alt) match {
-      case (Environment.Prod, AltSetting.Normal) => ProdPersistentTweetProfile
-      case (Environment.Devel, AltSetting.Normal) => DevelPersistentTweetProfile
-      case _ => throw new IllegalArgumentException("Invalid env or alt setting")
+      case (Env ron nt.Prod, AltSett ng.Normal) => ProdPers stentT etProf le
+      case (Env ron nt.Devel, AltSett ng.Normal) => DevelPers stentT etProf le
+      case _ => throw new  llegalArgu ntExcept on(" nval d env or alt sett ng")
     }
   }
 
   /**
-   * For short term, fav based tweet embedding and log fav based tweets embedding exists at the
-   * same time. We want to move to log fav based tweet embedding eventually.
-   * Follow based tweet embeddings exists in both environment.
-   * A uniform tweet embedding API is the future to replace the existing use case.
+   * For short term, fav based t et embedd ng and log fav based t ets embedd ng ex sts at t 
+   * sa  t  .   want to move to log fav based t et embedd ng eventually.
+   * Follow based t et embedd ngs ex sts  n both env ron nt.
+   * A un form t et embedd ng AP   s t  future to replace t  ex st ng use case.
    */
-  final lazy val tweetJobProfileMap: Environment => Map[
-    (EmbeddingType, String),
-    SimClustersTweetProfile
+  f nal lazy val t etJobProf leMap: Env ron nt => Map[
+    (Embedd ngType, Str ng),
+    S mClustersT etProf le
   ] = {
-    case Environment.Prod =>
+    case Env ron nt.Prod =>
       Map(
-        (EmbeddingType.LogFavBasedTweet, Model20M145K2020) -> AltProdTweetJobProfile
+        (Embedd ngType.LogFavBasedT et, Model20M145K2020) -> AltProdT etJobProf le
       )
-    case Environment.Devel =>
+    case Env ron nt.Devel =>
       Map(
-        (EmbeddingType.LogFavBasedTweet, Model20M145K2020) -> AltDevelTweetJobProfile
+        (Embedd ngType.LogFavBasedT et, Model20M145K2020) -> AltDevelT etJobProf le
       )
   }
 

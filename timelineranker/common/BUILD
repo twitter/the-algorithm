@@ -1,16 +1,16 @@
 target(
-    name = "adapter",
-    dependencies = ["timelineranker/common/src/main/scala/com/twitter/timelineranker/adapter"],
+    na  = "adapter",
+    dependenc es = ["t  l neranker/common/src/ma n/scala/com/tw ter/t  l neranker/adapter"],
 )
 
 target(
-    name = "model",
-    dependencies = ["timelineranker/common/src/main/scala/com/twitter/timelineranker/model"],
+    na  = "model",
+    dependenc es = ["t  l neranker/common/src/ma n/scala/com/tw ter/t  l neranker/model"],
 )
 
 target(
-    tags = ["bazel-compatible"],
-    dependencies = [
+    tags = ["bazel-compat ble"],
+    dependenc es = [
         ":adapter",
         ":model",
     ],

@@ -1,73 +1,73 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.tw ter.search. ngester.p pel ne.tw ter;
 
-import java.util.concurrent.CompletableFuture;
-import javax.naming.NamingException;
+ mport java.ut l.concurrent.CompletableFuture;
+ mport javax.nam ng.Nam ngExcept on;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
+ mport org.apac .commons.p pel ne.StageExcept on;
+ mport org.apac .commons.p pel ne.val dat on.Consu dTypes;
+ mport org.apac .commons.p pel ne.val dat on.ProducesConsu d;
 
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.util.Function;
+ mport com.tw ter.search. ngester.model. ngesterTw ter ssage;
+ mport com.tw ter.ut l.Funct on;
 
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducesConsumed
-public class RetrieveNamedEntitiesSingleTweetStage extends TwitterBaseStage
-    <IngesterTwitterMessage, CompletableFuture<IngesterTwitterMessage>> {
+@Consu dTypes( ngesterTw ter ssage.class)
+@ProducesConsu d
+publ c class Retr eveNa dEnt  esS ngleT etStage extends Tw terBaseStage
+    < ngesterTw ter ssage, CompletableFuture< ngesterTw ter ssage>> {
 
-  private NamedEntityHandler namedEntityHandler;
+  pr vate Na dEnt yHandler na dEnt yHandler;
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    innerSetup();
+  @Overr de
+  protected vo d do nnerPreprocess() throws StageExcept on, Nam ngExcept on {
+     nnerSetup();
   }
 
-  @Override
-  protected void innerSetup() {
-    namedEntityHandler = new NamedEntityHandler(
-        wireModule.getNamedEntityFetcher(), decider, getStageNamePrefix(),
-        "single_tweet");
+  @Overr de
+  protected vo d  nnerSetup() {
+    na dEnt yHandler = new Na dEnt yHandler(
+        w reModule.getNa dEnt yFetc r(), dec der, getStageNa Pref x(),
+        "s ngle_t et");
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not a IngesterTwitterMessage object: " + obj);
+  @Overr de
+  publ c vo d  nnerProcess(Object obj) throws StageExcept on {
+     f (!(obj  nstanceof  ngesterTw ter ssage)) {
+      throw new StageExcept on(t , "Object  s not a  ngesterTw ter ssage object: " + obj);
     }
-    IngesterTwitterMessage twitterMessage = (IngesterTwitterMessage) obj;
+     ngesterTw ter ssage tw ter ssage = ( ngesterTw ter ssage) obj;
 
-    if (namedEntityHandler.shouldRetrieve(twitterMessage)) {
-      namedEntityHandler.retrieve(twitterMessage)
-          .onSuccess(Function.cons(result -> {
-            namedEntityHandler.addEntitiesToMessage(twitterMessage, result);
-            emitAndCount(twitterMessage);
+     f (na dEnt yHandler.shouldRetr eve(tw ter ssage)) {
+      na dEnt yHandler.retr eve(tw ter ssage)
+          .onSuccess(Funct on.cons(result -> {
+            na dEnt yHandler.addEnt  esTo ssage(tw ter ssage, result);
+            em AndCount(tw ter ssage);
           }))
-          .onFailure(Function.cons(throwable -> {
-            namedEntityHandler.incrementErrorCount();
-            emitAndCount(twitterMessage);
+          .onFa lure(Funct on.cons(throwable -> {
+            na dEnt yHandler. ncre ntErrorCount();
+            em AndCount(tw ter ssage);
           }));
     } else {
-      emitAndCount(twitterMessage);
+      em AndCount(tw ter ssage);
     }
   }
 
-  @Override
-  protected CompletableFuture<IngesterTwitterMessage> innerRunStageV2(IngesterTwitterMessage
-                                                                      message) {
-    CompletableFuture<IngesterTwitterMessage> cf = new CompletableFuture<>();
+  @Overr de
+  protected CompletableFuture< ngesterTw ter ssage>  nnerRunStageV2( ngesterTw ter ssage
+                                                                       ssage) {
+    CompletableFuture< ngesterTw ter ssage> cf = new CompletableFuture<>();
 
-    if (namedEntityHandler.shouldRetrieve(message)) {
-      namedEntityHandler.retrieve(message)
-          .onSuccess(Function.cons(result -> {
-            namedEntityHandler.addEntitiesToMessage(message, result);
-            cf.complete(message);
+     f (na dEnt yHandler.shouldRetr eve( ssage)) {
+      na dEnt yHandler.retr eve( ssage)
+          .onSuccess(Funct on.cons(result -> {
+            na dEnt yHandler.addEnt  esTo ssage( ssage, result);
+            cf.complete( ssage);
           }))
-          .onFailure(Function.cons(throwable -> {
-            namedEntityHandler.incrementErrorCount();
-            cf.complete(message);
+          .onFa lure(Funct on.cons(throwable -> {
+            na dEnt yHandler. ncre ntErrorCount();
+            cf.complete( ssage);
           }));
     } else {
-      cf.complete(message);
+      cf.complete( ssage);
     }
 
     return cf;

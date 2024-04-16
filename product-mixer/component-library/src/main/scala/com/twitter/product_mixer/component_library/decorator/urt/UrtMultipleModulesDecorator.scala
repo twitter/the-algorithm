@@ -1,108 +1,108 @@
-package com.twitter.product_mixer.component_library.decorator.urt
+package com.tw ter.product_m xer.component_l brary.decorator.urt
 
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtModulePresentation
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.DecoratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.decorator.Decoration
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.stitch.Stitch
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.ModuleIdGeneration
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.AutomaticUniqueModuleId
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseTimelineModuleBuilder
+ mport com.tw ter.product_m xer.component_l brary.model.presentat on.urt.Urt emPresentat on
+ mport com.tw ter.product_m xer.component_l brary.model.presentat on.urt.UrtModulePresentat on
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Decorator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Cand dateDecorator
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.Decorat on
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.t  l ne_module.Module dGenerat on
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.t  l ne_module.Automat cUn queModule d
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.t  l ne_module.BaseT  l neModuleBu lder
 
 /**
- * Given a [[CandidateWithFeatures]] return the corresponding group with which it should be
- * associated. Returning none will result in the candidate not being assigned to any module.
+ * G ven a [[Cand dateW hFeatures]] return t  correspond ng group w h wh ch   should be
+ * assoc ated. Return ng none w ll result  n t  cand date not be ng ass gned to any module.
  */
-trait GroupByKey[-Query <: PipelineQuery, -BuilderInput <: UniversalNoun[Any], Key] {
-  def apply(query: Query, candidate: BuilderInput, candidateFeatures: FeatureMap): Option[Key]
+tra  GroupByKey[-Query <: P pel neQuery, -Bu lder nput <: Un versalNoun[Any], Key] {
+  def apply(query: Query, cand date: Bu lder nput, cand dateFeatures: FeatureMap): Opt on[Key]
 }
 
 /**
- * Similar to [[UrtItemInModuleDecorator]] except that this decorator can assign items to different
- * modules based on the provided [[GroupByKey]].
+ * S m lar to [[Urt em nModuleDecorator]] except that t  decorator can ass gn  ems to d fferent
+ * modules based on t  prov ded [[GroupByKey]].
  *
- * @param urtItemCandidateDecorator decorates individual item candidates
- * @param moduleBuilder builds a module from a particular candidate group
- * @param groupByKey assigns each candidate a module group. Returning [[None]] will result in the
- *                   candidate not being assigned to a module
+ * @param urt emCand dateDecorator decorates  nd v dual  em cand dates
+ * @param moduleBu lder bu lds a module from a part cular cand date group
+ * @param groupByKey ass gns each cand date a module group. Return ng [[None]] w ll result  n t 
+ *                   cand date not be ng ass gned to a module
  */
-case class UrtMultipleModulesDecorator[
-  -Query <: PipelineQuery,
-  -BuilderInput <: UniversalNoun[Any],
+case class UrtMult pleModulesDecorator[
+  -Query <: P pel neQuery,
+  -Bu lder nput <: Un versalNoun[Any],
   GroupKey
 ](
-  urtItemCandidateDecorator: CandidateDecorator[Query, BuilderInput],
-  moduleBuilder: BaseTimelineModuleBuilder[Query, BuilderInput],
-  groupByKey: GroupByKey[Query, BuilderInput, GroupKey],
-  override val identifier: DecoratorIdentifier = DecoratorIdentifier("UrtMultipleModules"))
-    extends CandidateDecorator[Query, BuilderInput] {
+  urt emCand dateDecorator: Cand dateDecorator[Query, Bu lder nput],
+  moduleBu lder: BaseT  l neModuleBu lder[Query, Bu lder nput],
+  groupByKey: GroupByKey[Query, Bu lder nput, GroupKey],
+  overr de val  dent f er: Decorator dent f er = Decorator dent f er("UrtMult pleModules"))
+    extends Cand dateDecorator[Query, Bu lder nput] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[BuilderInput]]
-  ): Stitch[Seq[Decoration]] = {
-    if (candidates.nonEmpty) {
+    cand dates: Seq[Cand dateW hFeatures[Bu lder nput]]
+  ): St ch[Seq[Decorat on]] = {
+     f (cand dates.nonEmpty) {
 
-      /** Individual candidates with [[UrtItemPresentation]]s */
-      val decoratedCandidatesStitch: Stitch[
-        Seq[(CandidateWithFeatures[BuilderInput], Decoration)]
-      ] = urtItemCandidateDecorator(query, candidates).map(candidates.zip(_))
+      /**  nd v dual cand dates w h [[Urt emPresentat on]]s */
+      val decoratedCand datesSt ch: St ch[
+        Seq[(Cand dateW hFeatures[Bu lder nput], Decorat on)]
+      ] = urt emCand dateDecorator(query, cand dates).map(cand dates.z p(_))
 
-      decoratedCandidatesStitch.map { decoratedCandidates =>
-        // Group candidates into modules
-        val candidatesByModule: Map[Option[GroupKey], Seq[
-          (CandidateWithFeatures[BuilderInput], Decoration)
+      decoratedCand datesSt ch.map { decoratedCand dates =>
+        // Group cand dates  nto modules
+        val cand datesByModule: Map[Opt on[GroupKey], Seq[
+          (Cand dateW hFeatures[Bu lder nput], Decorat on)
         ]] =
-          decoratedCandidates.groupBy {
-            case (CandidateWithFeatures(candidate, features), _) =>
-              groupByKey(query, candidate, features)
+          decoratedCand dates.groupBy {
+            case (Cand dateW hFeatures(cand date, features), _) =>
+              groupByKey(query, cand date, features)
           }
 
-        candidatesByModule.iterator.zipWithIndex.flatMap {
+        cand datesByModule. erator.z pW h ndex.flatMap {
 
-          // A None group key indicates these candidates should not be put into a module. Return
-          // the decorated candidates.
-          case ((None, candidateGroup), _) =>
-            candidateGroup.map {
-              case (_, decoration) => decoration
+          // A None group key  nd cates t se cand dates should not be put  nto a module. Return
+          // t  decorated cand dates.
+          case ((None, cand dateGroup), _) =>
+            cand dateGroup.map {
+              case (_, decorat on) => decorat on
             }
 
-          // Build a UrtModulePresentation and add it to each candidate's decoration.
-          case ((_, candidateGroup), index) =>
-            val (candidatesWithFeatures, decorations) = candidateGroup.unzip
+          // Bu ld a UrtModulePresentat on and add   to each cand date's decorat on.
+          case ((_, cand dateGroup),  ndex) =>
+            val (cand datesW hFeatures, decorat ons) = cand dateGroup.unz p
 
             /**
-             * Build the module and update its ID if [[AutomaticUniqueModuleId]]s are being used.
-             * Forcing IDs to be different ensures that modules are never accidentally grouped
-             * together, since all other fields might otherwise be equal (candidates aren't added
-             * to modules until the domain marshalling phase).
+             * Bu ld t  module and update  s  D  f [[Automat cUn queModule d]]s are be ng used.
+             * Forc ng  Ds to be d fferent ensures that modules are never acc dentally grouped
+             * toget r, s nce all ot r f elds m ght ot rw se be equal (cand dates aren't added
+             * to modules unt l t  doma n marshall ng phase).
              */
-            val timelineModule = {
-              val module = moduleBuilder(query, candidatesWithFeatures)
+            val t  l neModule = {
+              val module = moduleBu lder(query, cand datesW hFeatures)
 
-              ModuleIdGeneration(module.id) match {
-                case id: AutomaticUniqueModuleId => module.copy(id = id.withOffset(index).moduleId)
+              Module dGenerat on(module. d) match {
+                case  d: Automat cUn queModule d => module.copy( d =  d.w hOffset( ndex).module d)
                 case _ => module
               }
             }
 
-            val modulePresentation = UrtModulePresentation(timelineModule)
+            val modulePresentat on = UrtModulePresentat on(t  l neModule)
 
-            decorations.collect {
-              case Decoration(candidate, urtItemPresentation: UrtItemPresentation) =>
-                Decoration(
-                  candidate,
-                  urtItemPresentation.copy(modulePresentation = Some(modulePresentation)))
+            decorat ons.collect {
+              case Decorat on(cand date, urt emPresentat on: Urt emPresentat on) =>
+                Decorat on(
+                  cand date,
+                  urt emPresentat on.copy(modulePresentat on = So (modulePresentat on)))
             }
         }.toSeq
       }
     } else {
-      Stitch.Nil
+      St ch.N l
     }
   }
 }

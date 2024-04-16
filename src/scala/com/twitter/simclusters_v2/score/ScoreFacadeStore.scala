@@ -1,52 +1,52 @@
-package com.twitter.simclusters_v2.score
+package com.tw ter.s mclusters_v2.score
 
-import com.twitter.finagle.stats.BroadcastStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.simclusters_v2.thriftscala.ScoringAlgorithm
-import com.twitter.simclusters_v2.thriftscala.{ScoreId => ThriftScoreId}
-import com.twitter.simclusters_v2.thriftscala.{Score => ThriftScore}
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.BroadcastStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. rm .store.common.ObservedReadableStore
+ mport com.tw ter.s mclusters_v2.thr ftscala.Scor ngAlgor hm
+ mport com.tw ter.s mclusters_v2.thr ftscala.{Score d => Thr ftScore d}
+ mport com.tw ter.s mclusters_v2.thr ftscala.{Score => Thr ftScore}
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
 /**
- * Provide a uniform access layer for all kind of Score.
- * @param readableStores readable stores indexed by the ScoringAlgorithm they implement
+ * Prov de a un form access layer for all k nd of Score.
+ * @param readableStores readable stores  ndexed by t  Scor ngAlgor hm t y  mple nt
  */
-class ScoreFacadeStore private (
-  stores: Map[ScoringAlgorithm, ReadableStore[ThriftScoreId, ThriftScore]])
-    extends ReadableStore[ThriftScoreId, ThriftScore] {
+class ScoreFacadeStore pr vate (
+  stores: Map[Scor ngAlgor hm, ReadableStore[Thr ftScore d, Thr ftScore]])
+    extends ReadableStore[Thr ftScore d, Thr ftScore] {
 
-  override def get(k: ThriftScoreId): Future[Option[ThriftScore]] = {
-    findStore(k).get(k)
+  overr de def get(k: Thr ftScore d): Future[Opt on[Thr ftScore]] = {
+    f ndStore(k).get(k)
   }
 
-  // Override the multiGet for better batch performance.
-  override def multiGet[K1 <: ThriftScoreId](ks: Set[K1]): Map[K1, Future[Option[ThriftScore]]] = {
-    if (ks.isEmpty) {
+  // Overr de t  mult Get for better batch performance.
+  overr de def mult Get[K1 <: Thr ftScore d](ks: Set[K1]): Map[K1, Future[Opt on[Thr ftScore]]] = {
+     f (ks. sEmpty) {
       Map.empty
     } else {
-      val head = ks.head
-      val notSameType = ks.exists(k => k.algorithm != head.algorithm)
-      if (!notSameType) {
-        findStore(head).multiGet(ks)
+      val  ad = ks. ad
+      val notSa Type = ks.ex sts(k => k.algor hm !=  ad.algor hm)
+       f (!notSa Type) {
+        f ndStore( ad).mult Get(ks)
       } else {
         // Generate a large amount temp objects.
-        // For better performance, avoid querying the multiGet with more than one kind of embedding
-        ks.groupBy(id => id.algorithm).flatMap {
+        // For better performance, avo d query ng t  mult Get w h more than one k nd of embedd ng
+        ks.groupBy( d =>  d.algor hm).flatMap {
           case (_, ks) =>
-            findStore(ks.head).multiGet(ks)
+            f ndStore(ks. ad).mult Get(ks)
         }
       }
     }
   }
 
-  // If not store mapping, fast return a IllegalArgumentException.
-  private def findStore(id: ThriftScoreId): ReadableStore[ThriftScoreId, ThriftScore] = {
-    stores.get(id.algorithm) match {
-      case Some(store) => store
+  //  f not store mapp ng, fast return a  llegalArgu ntExcept on.
+  pr vate def f ndStore( d: Thr ftScore d): ReadableStore[Thr ftScore d, Thr ftScore] = {
+    stores.get( d.algor hm) match {
+      case So (store) => store
       case None =>
-        throw new IllegalArgumentException(s"The Scoring Algorithm ${id.algorithm} doesn't exist.")
+        throw new  llegalArgu ntExcept on(s"T  Scor ng Algor hm ${ d.algor hm} doesn't ex st.")
     }
   }
 
@@ -54,29 +54,29 @@ class ScoreFacadeStore private (
 
 object ScoreFacadeStore {
   /*
-  Build a ScoreFacadeStore which exposes stats for all requests (under "all") and per scoring algorithm:
+  Bu ld a ScoreFacadeStore wh ch exposes stats for all requests (under "all") and per scor ng algor hm:
 
-    score_facade_store/all/<observed readable store metrics for all requests>
-    score_facade_store/<scoring algorithm>/<observed readable store metrics for this algorithm's requests>
+    score_facade_store/all/<observed readable store  tr cs for all requests>
+    score_facade_store/<scor ng algor hm>/<observed readable store  tr cs for t  algor hm's requests>
 
-  Stores in aggregatedStores may reference stores in readableStores. An instance of ScoreFacadeStore
-  is passed to them after instantiation.
+  Stores  n aggregatedStores may reference stores  n readableStores. An  nstance of ScoreFacadeStore
+   s passed to t m after  nstant at on.
    */
-  def buildWithMetrics(
-    readableStores: Map[ScoringAlgorithm, ReadableStore[ThriftScoreId, ThriftScore]],
-    aggregatedStores: Map[ScoringAlgorithm, AggregatedScoreStore],
-    statsReceiver: StatsReceiver
+  def bu ldW h tr cs(
+    readableStores: Map[Scor ngAlgor hm, ReadableStore[Thr ftScore d, Thr ftScore]],
+    aggregatedStores: Map[Scor ngAlgor hm, AggregatedScoreStore],
+    statsRece ver: StatsRece ver
   ) = {
-    val scopedStatsReceiver = statsReceiver.scope("score_facade_store")
+    val scopedStatsRece ver = statsRece ver.scope("score_facade_store")
 
     def wrapStore(
-      scoringAlgorithm: ScoringAlgorithm,
-      store: ReadableStore[ThriftScoreId, ThriftScore]
-    ): ReadableStore[ThriftScoreId, ThriftScore] = {
-      val sr = BroadcastStatsReceiver(
+      scor ngAlgor hm: Scor ngAlgor hm,
+      store: ReadableStore[Thr ftScore d, Thr ftScore]
+    ): ReadableStore[Thr ftScore d, Thr ftScore] = {
+      val sr = BroadcastStatsRece ver(
         Seq(
-          scopedStatsReceiver.scope("all"),
-          scopedStatsReceiver.scope(scoringAlgorithm.name)
+          scopedStatsRece ver.scope("all"),
+          scopedStatsRece ver.scope(scor ngAlgor hm.na )
         ))
       ObservedReadableStore(store)(sr)
     }
@@ -87,13 +87,13 @@ object ScoreFacadeStore {
     val store = new ScoreFacadeStore(stores = stores)
 
     /*
-    AggregatedScores aggregate scores from multiple non-aggregated stores. They access these via the
-    ScoreFacadeStore itself, and therefore must be passed an instance of it after it has been
+    AggregatedScores aggregate scores from mult ple non-aggregated stores. T y access t se v a t 
+    ScoreFacadeStore  self, and t refore must be passed an  nstance of   after   has been
     constructed.
      */
     assert(
-      readableStores.keySet.forall(algorithm => !aggregatedStores.keySet.contains(algorithm)),
-      "Keys for stores are disjoint")
+      readableStores.keySet.forall(algor hm => !aggregatedStores.keySet.conta ns(algor hm)),
+      "Keys for stores are d sjo nt")
 
     aggregatedStores.values.foreach(_.set(store))
 

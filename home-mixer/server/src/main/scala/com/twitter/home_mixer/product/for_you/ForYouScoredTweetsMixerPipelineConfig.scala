@@ -1,376 +1,376 @@
-package com.twitter.home_mixer.product.for_you
+package com.tw ter.ho _m xer.product.for_ 
 
-import com.twitter.clientapp.{thriftscala => ca}
-import com.twitter.goldfinch.api.AdsInjectionSurfaceAreas
-import com.twitter.home_mixer.candidate_pipeline.EditedTweetsCandidatePipelineConfig
-import com.twitter.home_mixer.candidate_pipeline.NewTweetsPillCandidatePipelineConfig
-import com.twitter.home_mixer.functional_component.decorator.urt.builder.AddEntriesWithReplaceAndShowAlertAndCoverInstructionBuilder
-import com.twitter.home_mixer.functional_component.feature_hydrator._
-import com.twitter.home_mixer.functional_component.selector.DebunchCandidates
-import com.twitter.home_mixer.functional_component.selector.UpdateConversationModuleId
-import com.twitter.home_mixer.functional_component.selector.UpdateHomeClientEventDetails
-import com.twitter.home_mixer.functional_component.selector.UpdateNewTweetsPillDecoration
-import com.twitter.home_mixer.functional_component.side_effect._
-import com.twitter.home_mixer.model.ClearCacheIncludeInstruction
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.param.HomeGlobalParams.MaxNumberReplaceInstructionsParam
-import com.twitter.home_mixer.param.HomeMixerFlagName.ScribeClientEventsFlag
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.home_mixer.product.for_you.feature_hydrator.TimelineServiceTweetsQueryFeatureHydrator
-import com.twitter.home_mixer.product.for_you.model.ForYouQuery
-import com.twitter.home_mixer.product.for_you.param.ForYouParam.ClearCacheOnPtr
-import com.twitter.home_mixer.product.for_you.param.ForYouParam.EnableFlipInjectionModuleCandidatePipelineParam
-import com.twitter.home_mixer.product.for_you.param.ForYouParam.FlipInlineInjectionModulePosition
-import com.twitter.home_mixer.product.for_you.param.ForYouParam.ServerMaxResultsParam
-import com.twitter.home_mixer.product.for_you.param.ForYouParam.TweetPreviewsPositionParam
-import com.twitter.home_mixer.product.for_you.param.ForYouParam.WhoToFollowPositionParam
-import com.twitter.home_mixer.product.for_you.param.ForYouParam.WhoToSubscribePositionParam
-import com.twitter.home_mixer.product.for_you.side_effect.ServedCandidateFeatureKeysKafkaSideEffectBuilder
-import com.twitter.home_mixer.product.for_you.side_effect.ServedCandidateKeysKafkaSideEffectBuilder
-import com.twitter.home_mixer.product.for_you.side_effect.ServedStatsSideEffect
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.inject.annotations.Flag
-import com.twitter.logpipeline.client.common.EventPublisher
-import com.twitter.product_mixer.component_library.feature_hydrator.query.async.AsyncQueryFeatureHydrator
-import com.twitter.product_mixer.component_library.feature_hydrator.query.social_graph.PreviewCreatorsQueryFeatureHydrator
-import com.twitter.product_mixer.component_library.feature_hydrator.query.social_graph.SGSFollowedUsersQueryFeatureHydrator
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.FlipPromptCandidatePipelineConfigBuilder
-import com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module.WhoToFollowCandidatePipelineConfig
-import com.twitter.product_mixer.component_library.pipeline.candidate.who_to_subscribe_module.WhoToSubscribeCandidatePipelineConfig
-import com.twitter.product_mixer.component_library.premarshaller.urt.UrtDomainMarshaller
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.ClearCacheInstructionBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.OrderedBottomCursorBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.OrderedTopCursorBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.ReplaceAllEntries
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.ReplaceEntryInstructionBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.ShowAlertInstructionBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.ShowCoverInstructionBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.StaticTimelineScribeConfigBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtMetadataBuilder
-import com.twitter.product_mixer.component_library.selector.DropMaxCandidates
-import com.twitter.product_mixer.component_library.selector.DropMaxModuleItemCandidates
-import com.twitter.product_mixer.component_library.selector.DropModuleTooFewModuleItemResults
-import com.twitter.product_mixer.component_library.selector.InsertAppendResults
-import com.twitter.product_mixer.component_library.selector.InsertFixedPositionResults
-import com.twitter.product_mixer.component_library.selector.SelectConditionally
-import com.twitter.product_mixer.component_library.selector.UpdateSortCandidates
-import com.twitter.product_mixer.component_library.selector.UpdateSortModuleItemCandidates
-import com.twitter.product_mixer.component_library.selector.ads.AdsInjector
-import com.twitter.product_mixer.component_library.selector.ads.InsertAdResults
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.configapi.StaticParam
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.UrtTransportMarshaller
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.MixerPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.pipeline.FailOpenPolicy
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.product_mixer.core.pipeline.candidate.DependentCandidatePipelineConfig
-import com.twitter.product_mixer.core.pipeline.mixer.MixerPipelineConfig
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
+ mport com.tw ter.cl entapp.{thr ftscala => ca}
+ mport com.tw ter.goldf nch.ap .Ads nject onSurfaceAreas
+ mport com.tw ter.ho _m xer.cand date_p pel ne.Ed edT etsCand dateP pel neConf g
+ mport com.tw ter.ho _m xer.cand date_p pel ne.NewT etsP llCand dateP pel neConf g
+ mport com.tw ter.ho _m xer.funct onal_component.decorator.urt.bu lder.AddEntr esW hReplaceAndShowAlertAndCover nstruct onBu lder
+ mport com.tw ter.ho _m xer.funct onal_component.feature_hydrator._
+ mport com.tw ter.ho _m xer.funct onal_component.selector.DebunchCand dates
+ mport com.tw ter.ho _m xer.funct onal_component.selector.UpdateConversat onModule d
+ mport com.tw ter.ho _m xer.funct onal_component.selector.UpdateHo Cl entEventDeta ls
+ mport com.tw ter.ho _m xer.funct onal_component.selector.UpdateNewT etsP llDecorat on
+ mport com.tw ter.ho _m xer.funct onal_component.s de_effect._
+ mport com.tw ter.ho _m xer.model.ClearCac  nclude nstruct on
+ mport com.tw ter.ho _m xer.model.Ho Features. nNetworkFeature
+ mport com.tw ter.ho _m xer.param.Ho GlobalParams.MaxNumberReplace nstruct onsParam
+ mport com.tw ter.ho _m xer.param.Ho M xerFlagNa .Scr beCl entEventsFlag
+ mport com.tw ter.ho _m xer.product.follow ng.model.Ho M xerExternalStr ngs
+ mport com.tw ter.ho _m xer.product.for_ .feature_hydrator.T  l neServ ceT etsQueryFeatureHydrator
+ mport com.tw ter.ho _m xer.product.for_ .model.For Query
+ mport com.tw ter.ho _m xer.product.for_ .param.For Param.ClearCac OnPtr
+ mport com.tw ter.ho _m xer.product.for_ .param.For Param.EnableFl p nject onModuleCand dateP pel neParam
+ mport com.tw ter.ho _m xer.product.for_ .param.For Param.Fl p nl ne nject onModulePos  on
+ mport com.tw ter.ho _m xer.product.for_ .param.For Param.ServerMaxResultsParam
+ mport com.tw ter.ho _m xer.product.for_ .param.For Param.T etPrev ewsPos  onParam
+ mport com.tw ter.ho _m xer.product.for_ .param.For Param.WhoToFollowPos  onParam
+ mport com.tw ter.ho _m xer.product.for_ .param.For Param.WhoToSubscr bePos  onParam
+ mport com.tw ter.ho _m xer.product.for_ .s de_effect.ServedCand dateFeatureKeysKafkaS deEffectBu lder
+ mport com.tw ter.ho _m xer.product.for_ .s de_effect.ServedCand dateKeysKafkaS deEffectBu lder
+ mport com.tw ter.ho _m xer.product.for_ .s de_effect.ServedStatsS deEffect
+ mport com.tw ter.ho _m xer.ut l.Cand datesUt l
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.logp pel ne.cl ent.common.EventPubl s r
+ mport com.tw ter.product_m xer.component_l brary.feature_hydrator.query.async.AsyncQueryFeatureHydrator
+ mport com.tw ter.product_m xer.component_l brary.feature_hydrator.query.soc al_graph.Prev ewCreatorsQueryFeatureHydrator
+ mport com.tw ter.product_m xer.component_l brary.feature_hydrator.query.soc al_graph.SGSFollo dUsersQueryFeatureHydrator
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.component_l brary.p pel ne.cand date.flex ble_ nject on_p pel ne.Fl pPromptCand dateP pel neConf gBu lder
+ mport com.tw ter.product_m xer.component_l brary.p pel ne.cand date.who_to_follow_module.WhoToFollowCand dateP pel neConf g
+ mport com.tw ter.product_m xer.component_l brary.p pel ne.cand date.who_to_subscr be_module.WhoToSubscr beCand dateP pel neConf g
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.UrtDoma nMarshaller
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.ClearCac  nstruct onBu lder
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.OrderedBottomCursorBu lder
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.OrderedTopCursorBu lder
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.ReplaceAllEntr es
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.ReplaceEntry nstruct onBu lder
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.ShowAlert nstruct onBu lder
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.ShowCover nstruct onBu lder
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.Stat cT  l neScr beConf gBu lder
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder.Urt tadataBu lder
+ mport com.tw ter.product_m xer.component_l brary.selector.DropMaxCand dates
+ mport com.tw ter.product_m xer.component_l brary.selector.DropMaxModule emCand dates
+ mport com.tw ter.product_m xer.component_l brary.selector.DropModuleTooFewModule emResults
+ mport com.tw ter.product_m xer.component_l brary.selector. nsertAppendResults
+ mport com.tw ter.product_m xer.component_l brary.selector. nsertF xedPos  onResults
+ mport com.tw ter.product_m xer.component_l brary.selector.SelectCond  onally
+ mport com.tw ter.product_m xer.component_l brary.selector.UpdateSortCand dates
+ mport com.tw ter.product_m xer.component_l brary.selector.UpdateSortModule emCand dates
+ mport com.tw ter.product_m xer.component_l brary.selector.ads.Ads njector
+ mport com.tw ter.product_m xer.component_l brary.selector.ads. nsertAdResults
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Spec f cP pel ne
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Spec f cP pel nes
+ mport com.tw ter.product_m xer.core.funct onal_component.conf gap .Stat cParam
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.TransportMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.UrtTransportMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.premarshaller.Doma nMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.selector.Selector
+ mport com.tw ter.product_m xer.core.funct onal_component.s de_effect.P pel neResultS deEffect
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.M xerP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on. emCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on.ModuleCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l ne
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neModule
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neScr beConf g
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.t et.T et em
+ mport com.tw ter.product_m xer.core.p pel ne.Fa lOpenPol cy
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neConf g
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.DependentCand dateP pel neConf g
+ mport com.tw ter.product_m xer.core.p pel ne.m xer.M xerP pel neConf g
+ mport com.tw ter.product_m xer.core.product.gu ce.scope.ProductScoped
+ mport com.tw ter.str ngcenter.cl ent.Str ngCenter
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.Prov der
+ mport javax. nject.S ngleton
 
-@Singleton
-class ForYouScoredTweetsMixerPipelineConfig @Inject() (
-  forYouAdsDependentCandidatePipelineBuilder: ForYouAdsDependentCandidatePipelineBuilder,
-  forYouConversationServiceCandidatePipelineConfig: ForYouConversationServiceCandidatePipelineConfig,
-  forYouPushToHomeTweetCandidatePipelineConfig: ForYouPushToHomeTweetCandidatePipelineConfig,
-  forYouScoredTweetsCandidatePipelineConfig: ForYouScoredTweetsCandidatePipelineConfig,
-  forYouWhoToFollowCandidatePipelineConfigBuilder: ForYouWhoToFollowCandidatePipelineConfigBuilder,
-  forYouWhoToSubscribeCandidatePipelineConfigBuilder: ForYouWhoToSubscribeCandidatePipelineConfigBuilder,
-  flipPromptCandidatePipelineConfigBuilder: FlipPromptCandidatePipelineConfigBuilder,
-  editedTweetsCandidatePipelineConfig: EditedTweetsCandidatePipelineConfig,
-  newTweetsPillCandidatePipelineConfig: NewTweetsPillCandidatePipelineConfig[ForYouQuery],
-  forYouTweetPreviewsCandidatePipelineConfig: ForYouTweetPreviewsCandidatePipelineConfig,
-  dismissInfoQueryFeatureHydrator: DismissInfoQueryFeatureHydrator,
-  gizmoduckUserQueryFeatureHydrator: GizmoduckUserQueryFeatureHydrator,
-  persistenceStoreQueryFeatureHydrator: PersistenceStoreQueryFeatureHydrator,
-  requestQueryFeatureHydrator: RequestQueryFeatureHydrator[ForYouQuery],
-  timelineServiceTweetsQueryFeatureHydrator: TimelineServiceTweetsQueryFeatureHydrator,
-  previewCreatorsQueryFeatureHydrator: PreviewCreatorsQueryFeatureHydrator,
-  sgsFollowedUsersQueryFeatureHydrator: SGSFollowedUsersQueryFeatureHydrator,
-  adsInjector: AdsInjector,
-  servedCandidateKeysKafkaSideEffectBuilder: ServedCandidateKeysKafkaSideEffectBuilder,
-  servedCandidateFeatureKeysKafkaSideEffectBuilder: ServedCandidateFeatureKeysKafkaSideEffectBuilder,
-  updateTimelinesPersistenceStoreSideEffect: UpdateTimelinesPersistenceStoreSideEffect,
-  truncateTimelinesPersistenceStoreSideEffect: TruncateTimelinesPersistenceStoreSideEffect,
-  homeScribeServedCandidatesSideEffect: HomeScribeServedCandidatesSideEffect,
-  servedStatsSideEffect: ServedStatsSideEffect,
-  clientEventsScribeEventPublisher: EventPublisher[ca.LogEvent],
-  externalStrings: HomeMixerExternalStrings,
-  @ProductScoped stringCenterProvider: Provider[StringCenter],
+@S ngleton
+class For ScoredT etsM xerP pel neConf g @ nject() (
+  for AdsDependentCand dateP pel neBu lder: For AdsDependentCand dateP pel neBu lder,
+  for Conversat onServ ceCand dateP pel neConf g: For Conversat onServ ceCand dateP pel neConf g,
+  for PushToHo T etCand dateP pel neConf g: For PushToHo T etCand dateP pel neConf g,
+  for ScoredT etsCand dateP pel neConf g: For ScoredT etsCand dateP pel neConf g,
+  for WhoToFollowCand dateP pel neConf gBu lder: For WhoToFollowCand dateP pel neConf gBu lder,
+  for WhoToSubscr beCand dateP pel neConf gBu lder: For WhoToSubscr beCand dateP pel neConf gBu lder,
+  fl pPromptCand dateP pel neConf gBu lder: Fl pPromptCand dateP pel neConf gBu lder,
+  ed edT etsCand dateP pel neConf g: Ed edT etsCand dateP pel neConf g,
+  newT etsP llCand dateP pel neConf g: NewT etsP llCand dateP pel neConf g[For Query],
+  for T etPrev ewsCand dateP pel neConf g: For T etPrev ewsCand dateP pel neConf g,
+  d sm ss nfoQueryFeatureHydrator: D sm ss nfoQueryFeatureHydrator,
+  g zmoduckUserQueryFeatureHydrator: G zmoduckUserQueryFeatureHydrator,
+  pers stenceStoreQueryFeatureHydrator: Pers stenceStoreQueryFeatureHydrator,
+  requestQueryFeatureHydrator: RequestQueryFeatureHydrator[For Query],
+  t  l neServ ceT etsQueryFeatureHydrator: T  l neServ ceT etsQueryFeatureHydrator,
+  prev ewCreatorsQueryFeatureHydrator: Prev ewCreatorsQueryFeatureHydrator,
+  sgsFollo dUsersQueryFeatureHydrator: SGSFollo dUsersQueryFeatureHydrator,
+  ads njector: Ads njector,
+  servedCand dateKeysKafkaS deEffectBu lder: ServedCand dateKeysKafkaS deEffectBu lder,
+  servedCand dateFeatureKeysKafkaS deEffectBu lder: ServedCand dateFeatureKeysKafkaS deEffectBu lder,
+  updateT  l nesPers stenceStoreS deEffect: UpdateT  l nesPers stenceStoreS deEffect,
+  truncateT  l nesPers stenceStoreS deEffect: TruncateT  l nesPers stenceStoreS deEffect,
+  ho Scr beServedCand datesS deEffect: Ho Scr beServedCand datesS deEffect,
+  servedStatsS deEffect: ServedStatsS deEffect,
+  cl entEventsScr beEventPubl s r: EventPubl s r[ca.LogEvent],
+  externalStr ngs: Ho M xerExternalStr ngs,
+  @ProductScoped str ngCenterProv der: Prov der[Str ngCenter],
   urtTransportMarshaller: UrtTransportMarshaller,
-  @Flag(ScribeClientEventsFlag) enableScribeClientEvents: Boolean)
-    extends MixerPipelineConfig[ForYouQuery, Timeline, urt.TimelineResponse] {
+  @Flag(Scr beCl entEventsFlag) enableScr beCl entEvents: Boolean)
+    extends M xerP pel neConf g[For Query, T  l ne, urt.T  l neResponse] {
 
-  override val identifier: MixerPipelineIdentifier = MixerPipelineIdentifier("ForYouScoredTweets")
+  overr de val  dent f er: M xerP pel ne dent f er = M xerP pel ne dent f er("For ScoredT ets")
 
-  private val MaxConsecutiveOutOfNetworkCandidates = 2
+  pr vate val MaxConsecut veOutOfNetworkCand dates = 2
 
-  private val PushToHomeTweetPosition = 0
+  pr vate val PushToHo T etPos  on = 0
 
-  private val dependentCandidatesStep = MixerPipelineConfig.dependentCandidatePipelinesStep
+  pr vate val dependentCand datesStep = M xerP pel neConf g.dependentCand dateP pel nesStep
 
-  override val fetchQueryFeatures: Seq[QueryFeatureHydrator[ForYouQuery]] = Seq(
+  overr de val fetchQueryFeatures: Seq[QueryFeatureHydrator[For Query]] = Seq(
     requestQueryFeatureHydrator,
-    persistenceStoreQueryFeatureHydrator,
-    timelineServiceTweetsQueryFeatureHydrator,
-    previewCreatorsQueryFeatureHydrator,
-    sgsFollowedUsersQueryFeatureHydrator,
-    AsyncQueryFeatureHydrator(dependentCandidatesStep, dismissInfoQueryFeatureHydrator),
-    AsyncQueryFeatureHydrator(dependentCandidatesStep, gizmoduckUserQueryFeatureHydrator),
+    pers stenceStoreQueryFeatureHydrator,
+    t  l neServ ceT etsQueryFeatureHydrator,
+    prev ewCreatorsQueryFeatureHydrator,
+    sgsFollo dUsersQueryFeatureHydrator,
+    AsyncQueryFeatureHydrator(dependentCand datesStep, d sm ss nfoQueryFeatureHydrator),
+    AsyncQueryFeatureHydrator(dependentCand datesStep, g zmoduckUserQueryFeatureHydrator),
   )
 
-  private val scoredTweetsCandidatePipelineScope =
-    SpecificPipeline(forYouScoredTweetsCandidatePipelineConfig.identifier)
+  pr vate val scoredT etsCand dateP pel neScope =
+    Spec f cP pel ne(for ScoredT etsCand dateP pel neConf g. dent f er)
 
-  private val forYouAdsCandidatePipelineConfig = forYouAdsDependentCandidatePipelineBuilder
-    .build(scoredTweetsCandidatePipelineScope)
+  pr vate val for AdsCand dateP pel neConf g = for AdsDependentCand dateP pel neBu lder
+    .bu ld(scoredT etsCand dateP pel neScope)
 
-  private val forYouWhoToFollowCandidatePipelineConfig =
-    forYouWhoToFollowCandidatePipelineConfigBuilder.build()
+  pr vate val for WhoToFollowCand dateP pel neConf g =
+    for WhoToFollowCand dateP pel neConf gBu lder.bu ld()
 
-  private val forYouWhoToSubscribeCandidatePipelineConfig =
-    forYouWhoToSubscribeCandidatePipelineConfigBuilder.build()
+  pr vate val for WhoToSubscr beCand dateP pel neConf g =
+    for WhoToSubscr beCand dateP pel neConf gBu lder.bu ld()
 
-  private val flipPromptCandidatePipelineConfig =
-    flipPromptCandidatePipelineConfigBuilder.build[ForYouQuery](
-      supportedClientParam = Some(EnableFlipInjectionModuleCandidatePipelineParam)
+  pr vate val fl pPromptCand dateP pel neConf g =
+    fl pPromptCand dateP pel neConf gBu lder.bu ld[For Query](
+      supportedCl entParam = So (EnableFl p nject onModuleCand dateP pel neParam)
     )
 
-  override val candidatePipelines: Seq[CandidatePipelineConfig[ForYouQuery, _, _, _]] = Seq(
-    forYouScoredTweetsCandidatePipelineConfig,
-    forYouPushToHomeTweetCandidatePipelineConfig,
-    forYouWhoToFollowCandidatePipelineConfig,
-    forYouWhoToSubscribeCandidatePipelineConfig,
-    forYouTweetPreviewsCandidatePipelineConfig,
-    flipPromptCandidatePipelineConfig
+  overr de val cand dateP pel nes: Seq[Cand dateP pel neConf g[For Query, _, _, _]] = Seq(
+    for ScoredT etsCand dateP pel neConf g,
+    for PushToHo T etCand dateP pel neConf g,
+    for WhoToFollowCand dateP pel neConf g,
+    for WhoToSubscr beCand dateP pel neConf g,
+    for T etPrev ewsCand dateP pel neConf g,
+    fl pPromptCand dateP pel neConf g
   )
 
-  override val dependentCandidatePipelines: Seq[
-    DependentCandidatePipelineConfig[ForYouQuery, _, _, _]
+  overr de val dependentCand dateP pel nes: Seq[
+    DependentCand dateP pel neConf g[For Query, _, _, _]
   ] = Seq(
-    forYouAdsCandidatePipelineConfig,
-    forYouConversationServiceCandidatePipelineConfig,
-    editedTweetsCandidatePipelineConfig,
-    newTweetsPillCandidatePipelineConfig
+    for AdsCand dateP pel neConf g,
+    for Conversat onServ ceCand dateP pel neConf g,
+    ed edT etsCand dateP pel neConf g,
+    newT etsP llCand dateP pel neConf g
   )
 
-  override val failOpenPolicies: Map[CandidatePipelineIdentifier, FailOpenPolicy] = Map(
-    forYouScoredTweetsCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
-    forYouAdsCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
-    forYouWhoToFollowCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
-    forYouWhoToSubscribeCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
-    forYouTweetPreviewsCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
-    flipPromptCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
-    editedTweetsCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
-    newTweetsPillCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
+  overr de val fa lOpenPol c es: Map[Cand dateP pel ne dent f er, Fa lOpenPol cy] = Map(
+    for ScoredT etsCand dateP pel neConf g. dent f er -> Fa lOpenPol cy.Always,
+    for AdsCand dateP pel neConf g. dent f er -> Fa lOpenPol cy.Always,
+    for WhoToFollowCand dateP pel neConf g. dent f er -> Fa lOpenPol cy.Always,
+    for WhoToSubscr beCand dateP pel neConf g. dent f er -> Fa lOpenPol cy.Always,
+    for T etPrev ewsCand dateP pel neConf g. dent f er -> Fa lOpenPol cy.Always,
+    fl pPromptCand dateP pel neConf g. dent f er -> Fa lOpenPol cy.Always,
+    ed edT etsCand dateP pel neConf g. dent f er -> Fa lOpenPol cy.Always,
+    newT etsP llCand dateP pel neConf g. dent f er -> Fa lOpenPol cy.Always,
   )
 
-  override val resultSelectors: Seq[Selector[ForYouQuery]] = Seq(
-    UpdateSortCandidates(
-      ordering = CandidatesUtil.reverseChronTweetsOrdering,
-      candidatePipeline = forYouConversationServiceCandidatePipelineConfig.identifier
+  overr de val resultSelectors: Seq[Selector[For Query]] = Seq(
+    UpdateSortCand dates(
+      order ng = Cand datesUt l.reverseChronT etsOrder ng,
+      cand dateP pel ne = for Conversat onServ ceCand dateP pel neConf g. dent f er
     ),
-    UpdateSortCandidates(
-      ordering = CandidatesUtil.scoreOrdering,
-      candidatePipeline = forYouScoredTweetsCandidatePipelineConfig.identifier
+    UpdateSortCand dates(
+      order ng = Cand datesUt l.scoreOrder ng,
+      cand dateP pel ne = for ScoredT etsCand dateP pel neConf g. dent f er
     ),
-    UpdateSortModuleItemCandidates(
-      candidatePipeline = forYouScoredTweetsCandidatePipelineConfig.identifier,
-      ordering = CandidatesUtil.conversationModuleTweetsOrdering
+    UpdateSortModule emCand dates(
+      cand dateP pel ne = for ScoredT etsCand dateP pel neConf g. dent f er,
+      order ng = Cand datesUt l.conversat onModuleT etsOrder ng
     ),
-    DebunchCandidates(
-      pipelineScope = SpecificPipeline(forYouScoredTweetsCandidatePipelineConfig.identifier),
+    DebunchCand dates(
+      p pel neScope = Spec f cP pel ne(for ScoredT etsCand dateP pel neConf g. dent f er),
       mustDebunch = {
-        case item: ItemCandidateWithDetails =>
-          !item.features.getOrElse(InNetworkFeature, false)
-        case module: ModuleCandidateWithDetails =>
-          !module.candidates.last.features.getOrElse(InNetworkFeature, false)
+        case  em:  emCand dateW hDeta ls =>
+          ! em.features.getOrElse( nNetworkFeature, false)
+        case module: ModuleCand dateW hDeta ls =>
+          !module.cand dates.last.features.getOrElse( nNetworkFeature, false)
       },
-      maxBunchSize = MaxConsecutiveOutOfNetworkCandidates
+      maxBunchS ze = MaxConsecut veOutOfNetworkCand dates
     ),
-    UpdateConversationModuleId(
-      pipelineScope = SpecificPipeline(forYouScoredTweetsCandidatePipelineConfig.identifier)
+    UpdateConversat onModule d(
+      p pel neScope = Spec f cP pel ne(for ScoredT etsCand dateP pel neConf g. dent f er)
     ),
-    DropMaxCandidates(
-      candidatePipeline = forYouConversationServiceCandidatePipelineConfig.identifier,
-      maxSelectionsParam = ServerMaxResultsParam
+    DropMaxCand dates(
+      cand dateP pel ne = for Conversat onServ ceCand dateP pel neConf g. dent f er,
+      maxSelect onsParam = ServerMaxResultsParam
     ),
-    DropMaxCandidates(
-      candidatePipeline = forYouScoredTweetsCandidatePipelineConfig.identifier,
-      maxSelectionsParam = ServerMaxResultsParam
+    DropMaxCand dates(
+      cand dateP pel ne = for ScoredT etsCand dateP pel neConf g. dent f er,
+      maxSelect onsParam = ServerMaxResultsParam
     ),
-    DropMaxCandidates(
-      candidatePipeline = editedTweetsCandidatePipelineConfig.identifier,
-      maxSelectionsParam = MaxNumberReplaceInstructionsParam
+    DropMaxCand dates(
+      cand dateP pel ne = ed edT etsCand dateP pel neConf g. dent f er,
+      maxSelect onsParam = MaxNumberReplace nstruct onsParam
     ),
-    DropMaxModuleItemCandidates(
-      candidatePipeline = forYouWhoToFollowCandidatePipelineConfig.identifier,
-      maxModuleItemsParam = StaticParam(WhoToFollowCandidatePipelineConfig.MaxCandidatesSize)
+    DropMaxModule emCand dates(
+      cand dateP pel ne = for WhoToFollowCand dateP pel neConf g. dent f er,
+      maxModule emsParam = Stat cParam(WhoToFollowCand dateP pel neConf g.MaxCand datesS ze)
     ),
-    DropMaxModuleItemCandidates(
-      candidatePipeline = forYouWhoToSubscribeCandidatePipelineConfig.identifier,
-      maxModuleItemsParam = StaticParam(WhoToSubscribeCandidatePipelineConfig.MaxCandidatesSize)
+    DropMaxModule emCand dates(
+      cand dateP pel ne = for WhoToSubscr beCand dateP pel neConf g. dent f er,
+      maxModule emsParam = Stat cParam(WhoToSubscr beCand dateP pel neConf g.MaxCand datesS ze)
     ),
-    // The Conversation Service pipeline will only run if the Scored Tweets pipeline returned nothing
-    InsertAppendResults(
-      candidatePipeline = forYouConversationServiceCandidatePipelineConfig.identifier
+    // T  Conversat on Serv ce p pel ne w ll only run  f t  Scored T ets p pel ne returned noth ng
+     nsertAppendResults(
+      cand dateP pel ne = for Conversat onServ ceCand dateP pel neConf g. dent f er
     ),
-    InsertAppendResults(
-      candidatePipeline = forYouScoredTweetsCandidatePipelineConfig.identifier
+     nsertAppendResults(
+      cand dateP pel ne = for ScoredT etsCand dateP pel neConf g. dent f er
     ),
-    InsertFixedPositionResults(
-      candidatePipeline = forYouTweetPreviewsCandidatePipelineConfig.identifier,
-      positionParam = TweetPreviewsPositionParam
+     nsertF xedPos  onResults(
+      cand dateP pel ne = for T etPrev ewsCand dateP pel neConf g. dent f er,
+      pos  onParam = T etPrev ewsPos  onParam
     ),
-    InsertFixedPositionResults(
-      candidatePipeline = forYouWhoToFollowCandidatePipelineConfig.identifier,
-      positionParam = WhoToFollowPositionParam
+     nsertF xedPos  onResults(
+      cand dateP pel ne = for WhoToFollowCand dateP pel neConf g. dent f er,
+      pos  onParam = WhoToFollowPos  onParam
     ),
-    InsertFixedPositionResults(
-      candidatePipeline = forYouWhoToSubscribeCandidatePipelineConfig.identifier,
-      positionParam = WhoToSubscribePositionParam
+     nsertF xedPos  onResults(
+      cand dateP pel ne = for WhoToSubscr beCand dateP pel neConf g. dent f er,
+      pos  onParam = WhoToSubscr bePos  onParam
     ),
-    InsertFixedPositionResults(
-      candidatePipeline = flipPromptCandidatePipelineConfig.identifier,
-      positionParam = FlipInlineInjectionModulePosition
+     nsertF xedPos  onResults(
+      cand dateP pel ne = fl pPromptCand dateP pel neConf g. dent f er,
+      pos  onParam = Fl p nl ne nject onModulePos  on
     ),
-    // Insert Push To Home Tweet at top of Timeline
-    InsertFixedPositionResults(
-      candidatePipeline = forYouPushToHomeTweetCandidatePipelineConfig.identifier,
-      positionParam = StaticParam(PushToHomeTweetPosition)
+    //  nsert Push To Ho  T et at top of T  l ne
+     nsertF xedPos  onResults(
+      cand dateP pel ne = for PushToHo T etCand dateP pel neConf g. dent f er,
+      pos  onParam = Stat cParam(PushToHo T etPos  on)
     ),
-    InsertAdResults(
-      surfaceAreaName = AdsInjectionSurfaceAreas.HomeTimeline,
-      adsInjector = adsInjector.forSurfaceArea(AdsInjectionSurfaceAreas.HomeTimeline),
-      adsCandidatePipeline = forYouAdsCandidatePipelineConfig.identifier
+     nsertAdResults(
+      surfaceAreaNa  = Ads nject onSurfaceAreas.Ho T  l ne,
+      ads njector = ads njector.forSurfaceArea(Ads nject onSurfaceAreas.Ho T  l ne),
+      adsCand dateP pel ne = for AdsCand dateP pel neConf g. dent f er
     ),
-    // This selector must come after the tweets are inserted into the results
-    DropModuleTooFewModuleItemResults(
-      candidatePipeline = forYouWhoToFollowCandidatePipelineConfig.identifier,
-      minModuleItemsParam = StaticParam(WhoToFollowCandidatePipelineConfig.MinCandidatesSize)
+    // T  selector must co  after t  t ets are  nserted  nto t  results
+    DropModuleTooFewModule emResults(
+      cand dateP pel ne = for WhoToFollowCand dateP pel neConf g. dent f er,
+      m nModule emsParam = Stat cParam(WhoToFollowCand dateP pel neConf g.M nCand datesS ze)
     ),
-    DropModuleTooFewModuleItemResults(
-      candidatePipeline = forYouWhoToSubscribeCandidatePipelineConfig.identifier,
-      minModuleItemsParam = StaticParam(WhoToSubscribeCandidatePipelineConfig.MinCandidatesSize)
+    DropModuleTooFewModule emResults(
+      cand dateP pel ne = for WhoToSubscr beCand dateP pel neConf g. dent f er,
+      m nModule emsParam = Stat cParam(WhoToSubscr beCand dateP pel neConf g.M nCand datesS ze)
     ),
-    UpdateNewTweetsPillDecoration(
-      pipelineScope = SpecificPipelines(
-        forYouConversationServiceCandidatePipelineConfig.identifier,
-        forYouScoredTweetsCandidatePipelineConfig.identifier,
-        newTweetsPillCandidatePipelineConfig.identifier
+    UpdateNewT etsP llDecorat on(
+      p pel neScope = Spec f cP pel nes(
+        for Conversat onServ ceCand dateP pel neConf g. dent f er,
+        for ScoredT etsCand dateP pel neConf g. dent f er,
+        newT etsP llCand dateP pel neConf g. dent f er
       ),
-      stringCenter = stringCenterProvider.get(),
-      seeNewTweetsString = externalStrings.seeNewTweetsString,
-      tweetedString = externalStrings.tweetedString
+      str ngCenter = str ngCenterProv der.get(),
+      seeNewT etsStr ng = externalStr ngs.seeNewT etsStr ng,
+      t etedStr ng = externalStr ngs.t etedStr ng
     ),
-    InsertAppendResults(candidatePipeline = editedTweetsCandidatePipelineConfig.identifier),
-    SelectConditionally(
+     nsertAppendResults(cand dateP pel ne = ed edT etsCand dateP pel neConf g. dent f er),
+    SelectCond  onally(
       selector =
-        InsertAppendResults(candidatePipeline = newTweetsPillCandidatePipelineConfig.identifier),
-      includeSelector = (_, _, results) => CandidatesUtil.containsType[TweetCandidate](results)
+         nsertAppendResults(cand dateP pel ne = newT etsP llCand dateP pel neConf g. dent f er),
+       ncludeSelector = (_, _, results) => Cand datesUt l.conta nsType[T etCand date](results)
     ),
-    UpdateHomeClientEventDetails(
-      candidatePipelines = Set(
-        forYouConversationServiceCandidatePipelineConfig.identifier,
-        forYouScoredTweetsCandidatePipelineConfig.identifier
+    UpdateHo Cl entEventDeta ls(
+      cand dateP pel nes = Set(
+        for Conversat onServ ceCand dateP pel neConf g. dent f er,
+        for ScoredT etsCand dateP pel neConf g. dent f er
       )
     ),
   )
 
-  private val servedCandidateKeysKafkaSideEffect =
-    servedCandidateKeysKafkaSideEffectBuilder.build(
-      Set(forYouScoredTweetsCandidatePipelineConfig.identifier))
+  pr vate val servedCand dateKeysKafkaS deEffect =
+    servedCand dateKeysKafkaS deEffectBu lder.bu ld(
+      Set(for ScoredT etsCand dateP pel neConf g. dent f er))
 
-  private val servedCandidateFeatureKeysKafkaSideEffect =
-    servedCandidateFeatureKeysKafkaSideEffectBuilder.build(
-      Set(forYouScoredTweetsCandidatePipelineConfig.identifier))
+  pr vate val servedCand dateFeatureKeysKafkaS deEffect =
+    servedCand dateFeatureKeysKafkaS deEffectBu lder.bu ld(
+      Set(for ScoredT etsCand dateP pel neConf g. dent f er))
 
-  private val homeScribeClientEventSideEffect = HomeScribeClientEventSideEffect(
-    enableScribeClientEvents = enableScribeClientEvents,
-    logPipelinePublisher = clientEventsScribeEventPublisher,
-    injectedTweetsCandidatePipelineIdentifiers = Seq(
-      forYouScoredTweetsCandidatePipelineConfig.identifier,
-      forYouConversationServiceCandidatePipelineConfig.identifier
+  pr vate val ho Scr beCl entEventS deEffect = Ho Scr beCl entEventS deEffect(
+    enableScr beCl entEvents = enableScr beCl entEvents,
+    logP pel nePubl s r = cl entEventsScr beEventPubl s r,
+     njectedT etsCand dateP pel ne dent f ers = Seq(
+      for ScoredT etsCand dateP pel neConf g. dent f er,
+      for Conversat onServ ceCand dateP pel neConf g. dent f er
     ),
-    adsCandidatePipelineIdentifier = Some(forYouAdsCandidatePipelineConfig.identifier),
-    whoToFollowCandidatePipelineIdentifier = Some(
-      forYouWhoToFollowCandidatePipelineConfig.identifier
+    adsCand dateP pel ne dent f er = So (for AdsCand dateP pel neConf g. dent f er),
+    whoToFollowCand dateP pel ne dent f er = So (
+      for WhoToFollowCand dateP pel neConf g. dent f er
     ),
-    whoToSubscribeCandidatePipelineIdentifier =
-      Some(forYouWhoToSubscribeCandidatePipelineConfig.identifier)
+    whoToSubscr beCand dateP pel ne dent f er =
+      So (for WhoToSubscr beCand dateP pel neConf g. dent f er)
   )
 
-  override val resultSideEffects: Seq[PipelineResultSideEffect[ForYouQuery, Timeline]] = Seq(
-    servedCandidateKeysKafkaSideEffect,
-    servedCandidateFeatureKeysKafkaSideEffect,
-    updateTimelinesPersistenceStoreSideEffect,
-    truncateTimelinesPersistenceStoreSideEffect,
-    homeScribeClientEventSideEffect,
-    homeScribeServedCandidatesSideEffect,
-    servedStatsSideEffect
+  overr de val resultS deEffects: Seq[P pel neResultS deEffect[For Query, T  l ne]] = Seq(
+    servedCand dateKeysKafkaS deEffect,
+    servedCand dateFeatureKeysKafkaS deEffect,
+    updateT  l nesPers stenceStoreS deEffect,
+    truncateT  l nesPers stenceStoreS deEffect,
+    ho Scr beCl entEventS deEffect,
+    ho Scr beServedCand datesS deEffect,
+    servedStatsS deEffect
   )
 
-  override val domainMarshaller: DomainMarshaller[ForYouQuery, Timeline] = {
-    val instructionBuilders = Seq(
-      ClearCacheInstructionBuilder(
-        ClearCacheIncludeInstruction(
-          ClearCacheOnPtr.EnableParam,
-          ClearCacheOnPtr.MinEntriesParam,
+  overr de val doma nMarshaller: Doma nMarshaller[For Query, T  l ne] = {
+    val  nstruct onBu lders = Seq(
+      ClearCac  nstruct onBu lder(
+        ClearCac  nclude nstruct on(
+          ClearCac OnPtr.EnableParam,
+          ClearCac OnPtr.M nEntr esParam,
         )
       ),
-      ReplaceEntryInstructionBuilder(ReplaceAllEntries),
-      // excludes alert, cover, and replace candidates
-      AddEntriesWithReplaceAndShowAlertAndCoverInstructionBuilder(),
-      ShowAlertInstructionBuilder(),
-      ShowCoverInstructionBuilder(),
+      ReplaceEntry nstruct onBu lder(ReplaceAllEntr es),
+      // excludes alert, cover, and replace cand dates
+      AddEntr esW hReplaceAndShowAlertAndCover nstruct onBu lder(),
+      ShowAlert nstruct onBu lder(),
+      ShowCover nstruct onBu lder(),
     )
 
-    val idSelector: PartialFunction[UniversalNoun[_], Long] = {
-      // exclude ads while determining tweet cursor values
-      case item: TweetItem if item.promotedMetadata.isEmpty => item.id
-      case module: TimelineModule
-          if module.items.headOption.exists(_.item.isInstanceOf[TweetItem]) =>
-        module.items.last.item match { case item: TweetItem => item.id }
+    val  dSelector: Part alFunct on[Un versalNoun[_], Long] = {
+      // exclude ads wh le determ n ng t et cursor values
+      case  em: T et em  f  em.promoted tadata. sEmpty =>  em. d
+      case module: T  l neModule
+           f module. ems. adOpt on.ex sts(_. em. s nstanceOf[T et em]) =>
+        module. ems.last. em match { case  em: T et em =>  em. d }
     }
-    val topCursorBuilder = OrderedTopCursorBuilder(idSelector)
-    val bottomCursorBuilder = OrderedBottomCursorBuilder(idSelector)
+    val topCursorBu lder = OrderedTopCursorBu lder( dSelector)
+    val bottomCursorBu lder = OrderedBottomCursorBu lder( dSelector)
 
-    val metadataBuilder = UrtMetadataBuilder(
-      title = None,
-      scribeConfigBuilder = Some(
-        StaticTimelineScribeConfigBuilder(
-          TimelineScribeConfig(
-            page = Some("for_you_scored_tweets"),
-            section = None,
-            entityToken = None)))
+    val  tadataBu lder = Urt tadataBu lder(
+      t le = None,
+      scr beConf gBu lder = So (
+        Stat cT  l neScr beConf gBu lder(
+          T  l neScr beConf g(
+            page = So ("for_ _scored_t ets"),
+            sect on = None,
+            ent yToken = None)))
     )
 
-    UrtDomainMarshaller(
-      instructionBuilders = instructionBuilders,
-      metadataBuilder = Some(metadataBuilder),
-      cursorBuilders = Seq(topCursorBuilder, bottomCursorBuilder)
+    UrtDoma nMarshaller(
+       nstruct onBu lders =  nstruct onBu lders,
+       tadataBu lder = So ( tadataBu lder),
+      cursorBu lders = Seq(topCursorBu lder, bottomCursorBu lder)
     )
   }
 
-  override val transportMarshaller: TransportMarshaller[Timeline, urt.TimelineResponse] =
+  overr de val transportMarshaller: TransportMarshaller[T  l ne, urt.T  l neResponse] =
     urtTransportMarshaller
 }

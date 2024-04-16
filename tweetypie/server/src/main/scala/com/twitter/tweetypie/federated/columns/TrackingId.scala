@@ -1,27 +1,27 @@
-package com.twitter.tweetypie.federated
+package com.tw ter.t etyp e.federated
 package columns
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.tweetypie.StatsReceiver
-import com.twitter.util.logging.Logger
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.t etyp e.StatsRece ver
+ mport com.tw ter.ut l.logg ng.Logger
 
-object TrackingId {
-  private[this] val log = Logger(getClass)
+object Track ng d {
+  pr vate[t ] val log = Logger(getClass)
 
-  def parse(s: String, statsReceiver: StatsReceiver = NullStatsReceiver): Option[Long] = {
-    val trackingStats = statsReceiver.scope("tracking_id_parser")
+  def parse(s: Str ng, statsRece ver: StatsRece ver = NullStatsRece ver): Opt on[Long] = {
+    val track ngStats = statsRece ver.scope("track ng_ d_parser")
 
-    val parsedCountCounter = trackingStats.scope("parsed").counter("count")
-    val parseFailedCounter = trackingStats.scope("parse_failed").counter("count")
-    Option(s).map(_.trim).filter(_.nonEmpty).flatMap { idStr =>
+    val parsedCountCounter = track ngStats.scope("parsed").counter("count")
+    val parseFa ledCounter = track ngStats.scope("parse_fa led").counter("count")
+    Opt on(s).map(_.tr m).f lter(_.nonEmpty).flatMap {  dStr =>
       try {
-        val id = java.lang.Long.parseLong(idStr, 16)
-        parsedCountCounter.incr()
-        Some(id)
+        val  d = java.lang.Long.parseLong( dStr, 16)
+        parsedCountCounter. ncr()
+        So ( d)
       } catch {
-        case _: NumberFormatException =>
-          parseFailedCounter.incr()
-          log.warn(s"invalid tracking ID: '$s'")
+        case _: NumberFormatExcept on =>
+          parseFa ledCounter. ncr()
+          log.warn(s" nval d track ng  D: '$s'")
           None
       }
     }

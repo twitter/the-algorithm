@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.controllers
+package com.tw ter.product_m xer.core.controllers
 
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.Predicate
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.pred cate.Pred cate
 
-/** Simple representation for a [[Predicate]] used for dashboard generation */
-private[core] case class PredicateConfig(
-  operator: String,
+/** S mple representat on for a [[Pred cate]] used for dashboard generat on */
+pr vate[core] case class Pred cateConf g(
+  operator: Str ng,
   threshold: Double,
-  datapointsPastThreshold: Int,
-  duration: Int,
-  metricGranularity: String)
+  datapo ntsPastThreshold:  nt,
+  durat on:  nt,
+   tr cGranular y: Str ng)
 
-private[core] object PredicateConfig {
+pr vate[core] object Pred cateConf g {
 
-  /** Convert this [[Predicate]] into a [[PredicateConfig]] */
-  def apply(predicate: Predicate): PredicateConfig = PredicateConfig(
-    predicate.operator.toString,
-    predicate.threshold,
-    predicate.datapointsPastThreshold,
-    predicate.duration,
-    predicate.metricGranularity.unit)
+  /** Convert t  [[Pred cate]]  nto a [[Pred cateConf g]] */
+  def apply(pred cate: Pred cate): Pred cateConf g = Pred cateConf g(
+    pred cate.operator.toStr ng,
+    pred cate.threshold,
+    pred cate.datapo ntsPastThreshold,
+    pred cate.durat on,
+    pred cate. tr cGranular y.un )
 }

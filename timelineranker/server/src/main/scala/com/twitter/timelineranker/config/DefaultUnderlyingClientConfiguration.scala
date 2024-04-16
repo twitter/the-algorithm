@@ -1,158 +1,158 @@
-package com.twitter.timelineranker.config
+package com.tw ter.t  l neranker.conf g
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.cortex_tweet_annotate.thriftscala.CortexTweetQueryService
-import com.twitter.finagle.ssl.OpportunisticTls
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.gizmoduck.thriftscala.{UserService => Gizmoduck}
-import com.twitter.manhattan.v1.thriftscala.{ManhattanCoordinator => ManhattanV1}
-import com.twitter.merlin.thriftscala.UserRolesService
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.UserTweetEntityGraph
-import com.twitter.socialgraph.thriftscala.SocialGraphService
-import com.twitter.storehaus.Store
-import com.twitter.strato.client.Strato
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.timelineranker.clients.content_features_cache.ContentFeaturesMemcacheBuilder
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelineranker.thriftscala.TimelineRanker
-import com.twitter.timelines.clients.memcache_common.StorehausMemcacheConfig
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelineservice.thriftscala.TimelineService
-import com.twitter.tweetypie.thriftscala.{TweetService => TweetyPie}
-import com.twitter.util.Timer
-import org.apache.thrift.protocol.TCompactProtocol
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.convers ons.PercentOps._
+ mport com.tw ter.cortex_t et_annotate.thr ftscala.CortexT etQueryServ ce
+ mport com.tw ter.f nagle.ssl.Opportun st cTls
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.f nagle.ut l.DefaultT  r
+ mport com.tw ter.g zmoduck.thr ftscala.{UserServ ce => G zmoduck}
+ mport com.tw ter.manhattan.v1.thr ftscala.{ManhattanCoord nator => ManhattanV1}
+ mport com.tw ter. rl n.thr ftscala.UserRolesServ ce
+ mport com.tw ter.recos.user_t et_ent y_graph.thr ftscala.UserT etEnt yGraph
+ mport com.tw ter.soc algraph.thr ftscala.Soc alGraphServ ce
+ mport com.tw ter.storehaus.Store
+ mport com.tw ter.strato.cl ent.Strato
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.t  l neranker.cl ents.content_features_cac .ContentFeatures mcac Bu lder
+ mport com.tw ter.t  l neranker.recap.model.ContentFeatures
+ mport com.tw ter.t  l neranker.thr ftscala.T  l neRanker
+ mport com.tw ter.t  l nes.cl ents. mcac _common.Storehaus mcac Conf g
+ mport com.tw ter.t  l nes.model.T et d
+ mport com.tw ter.t  l neserv ce.thr ftscala.T  l neServ ce
+ mport com.tw ter.t etyp e.thr ftscala.{T etServ ce => T etyP e}
+ mport com.tw ter.ut l.T  r
+ mport org.apac .thr ft.protocol.TCompactProtocol
 
-class DefaultUnderlyingClientConfiguration(flags: TimelineRankerFlags, statsReceiver: StatsReceiver)
-    extends UnderlyingClientConfiguration(flags, statsReceiver) { top =>
+class DefaultUnderly ngCl entConf gurat on(flags: T  l neRankerFlags, statsRece ver: StatsRece ver)
+    extends Underly ngCl entConf gurat on(flags, statsRece ver) { top =>
 
-  val timer: Timer = DefaultTimer
-  val twCachePrefix = "/srv#/prod/local/cache"
+  val t  r: T  r = DefaultT  r
+  val twCac Pref x = "/srv#/prod/local/cac "
 
-  override val cortexTweetQueryServiceClient: CortexTweetQueryService.MethodPerEndpoint = {
-    methodPerEndpointClient[
-      CortexTweetQueryService.ServicePerEndpoint,
-      CortexTweetQueryService.MethodPerEndpoint](
-      thriftMuxClientBuilder("cortex-tweet-query", requireMutualTls = true)
-        .dest("/s/cortex-tweet-annotate/cortex-tweet-query")
-        .requestTimeout(200.milliseconds)
-        .timeout(500.milliseconds)
+  overr de val cortexT etQueryServ ceCl ent: CortexT etQueryServ ce. thodPerEndpo nt = {
+     thodPerEndpo ntCl ent[
+      CortexT etQueryServ ce.Serv cePerEndpo nt,
+      CortexT etQueryServ ce. thodPerEndpo nt](
+      thr ftMuxCl entBu lder("cortex-t et-query", requ reMutualTls = true)
+        .dest("/s/cortex-t et-annotate/cortex-t et-query")
+        .requestT  out(200.m ll seconds)
+        .t  out(500.m ll seconds)
     )
   }
 
-  override val gizmoduckClient: Gizmoduck.MethodPerEndpoint = {
-    methodPerEndpointClient[Gizmoduck.ServicePerEndpoint, Gizmoduck.MethodPerEndpoint](
-      thriftMuxClientBuilder("gizmoduck", requireMutualTls = true)
-        .dest("/s/gizmoduck/gizmoduck")
-        .requestTimeout(400.milliseconds)
-        .timeout(900.milliseconds)
+  overr de val g zmoduckCl ent: G zmoduck. thodPerEndpo nt = {
+     thodPerEndpo ntCl ent[G zmoduck.Serv cePerEndpo nt, G zmoduck. thodPerEndpo nt](
+      thr ftMuxCl entBu lder("g zmoduck", requ reMutualTls = true)
+        .dest("/s/g zmoduck/g zmoduck")
+        .requestT  out(400.m ll seconds)
+        .t  out(900.m ll seconds)
     )
   }
 
-  override lazy val manhattanStarbuckClient: ManhattanV1.MethodPerEndpoint = {
-    methodPerEndpointClient[ManhattanV1.ServicePerEndpoint, ManhattanV1.MethodPerEndpoint](
-      thriftMuxClientBuilder("manhattan.starbuck", requireMutualTls = true)
-        .dest("/s/manhattan/starbuck.native-thrift")
-        .requestTimeout(600.millis)
+  overr de lazy val manhattanStarbuckCl ent: ManhattanV1. thodPerEndpo nt = {
+     thodPerEndpo ntCl ent[ManhattanV1.Serv cePerEndpo nt, ManhattanV1. thodPerEndpo nt](
+      thr ftMuxCl entBu lder("manhattan.starbuck", requ reMutualTls = true)
+        .dest("/s/manhattan/starbuck.nat ve-thr ft")
+        .requestT  out(600.m ll s)
     )
   }
 
-  override val sgsClient: SocialGraphService.MethodPerEndpoint = {
-    methodPerEndpointClient[
-      SocialGraphService.ServicePerEndpoint,
-      SocialGraphService.MethodPerEndpoint](
-      thriftMuxClientBuilder("socialgraph", requireMutualTls = true)
-        .dest("/s/socialgraph/socialgraph")
-        .requestTimeout(350.milliseconds)
-        .timeout(700.milliseconds)
+  overr de val sgsCl ent: Soc alGraphServ ce. thodPerEndpo nt = {
+     thodPerEndpo ntCl ent[
+      Soc alGraphServ ce.Serv cePerEndpo nt,
+      Soc alGraphServ ce. thodPerEndpo nt](
+      thr ftMuxCl entBu lder("soc algraph", requ reMutualTls = true)
+        .dest("/s/soc algraph/soc algraph")
+        .requestT  out(350.m ll seconds)
+        .t  out(700.m ll seconds)
     )
   }
 
-  override lazy val timelineRankerForwardingClient: TimelineRanker.FinagledClient =
-    new TimelineRanker.FinagledClient(
-      thriftMuxClientBuilder(
-        TimelineRankerConstants.ForwardedClientName,
-        ClientId(TimelineRankerConstants.ForwardedClientName),
-        protocolFactoryOption = Some(new TCompactProtocol.Factory()),
-        requireMutualTls = true
-      ).dest("/s/timelineranker/timelineranker:compactthrift").build(),
+  overr de lazy val t  l neRankerForward ngCl ent: T  l neRanker.F nagledCl ent =
+    new T  l neRanker.F nagledCl ent(
+      thr ftMuxCl entBu lder(
+        T  l neRankerConstants.ForwardedCl entNa ,
+        Cl ent d(T  l neRankerConstants.ForwardedCl entNa ),
+        protocolFactoryOpt on = So (new TCompactProtocol.Factory()),
+        requ reMutualTls = true
+      ).dest("/s/t  l neranker/t  l neranker:compactthr ft").bu ld(),
       protocolFactory = new TCompactProtocol.Factory()
     )
 
-  override val timelineServiceClient: TimelineService.MethodPerEndpoint = {
-    methodPerEndpointClient[TimelineService.ServicePerEndpoint, TimelineService.MethodPerEndpoint](
-      thriftMuxClientBuilder("timelineservice", requireMutualTls = true)
-        .dest("/s/timelineservice/timelineservice")
-        .requestTimeout(600.milliseconds)
-        .timeout(800.milliseconds)
+  overr de val t  l neServ ceCl ent: T  l neServ ce. thodPerEndpo nt = {
+     thodPerEndpo ntCl ent[T  l neServ ce.Serv cePerEndpo nt, T  l neServ ce. thodPerEndpo nt](
+      thr ftMuxCl entBu lder("t  l neserv ce", requ reMutualTls = true)
+        .dest("/s/t  l neserv ce/t  l neserv ce")
+        .requestT  out(600.m ll seconds)
+        .t  out(800.m ll seconds)
     )
   }
 
-  override val tweetyPieHighQoSClient: TweetyPie.MethodPerEndpoint = {
-    methodPerEndpointClient[TweetyPie.ServicePerEndpoint, TweetyPie.MethodPerEndpoint](
-      thriftMuxClientBuilder("tweetypieHighQoS", requireMutualTls = true)
-        .dest("/s/tweetypie/tweetypie")
-        .requestTimeout(450.milliseconds)
-        .timeout(800.milliseconds),
-      maxExtraLoadPercent = Some(1.percent)
+  overr de val t etyP eH ghQoSCl ent: T etyP e. thodPerEndpo nt = {
+     thodPerEndpo ntCl ent[T etyP e.Serv cePerEndpo nt, T etyP e. thodPerEndpo nt](
+      thr ftMuxCl entBu lder("t etyp eH ghQoS", requ reMutualTls = true)
+        .dest("/s/t etyp e/t etyp e")
+        .requestT  out(450.m ll seconds)
+        .t  out(800.m ll seconds),
+      maxExtraLoadPercent = So (1.percent)
     )
   }
 
   /**
-   * Provide less costly TweetPie client with the trade-off of reduced quality. Intended for use cases
-   * which are not essential for successful completion of timeline requests. Currently this client differs
-   * from the highQoS endpoint by having retries count set to 1 instead of 2.
+   * Prov de less costly T etP e cl ent w h t  trade-off of reduced qual y.  ntended for use cases
+   * wh ch are not essent al for successful complet on of t  l ne requests. Currently t  cl ent d ffers
+   * from t  h ghQoS endpo nt by hav ng retr es count set to 1  nstead of 2.
    */
-  override val tweetyPieLowQoSClient: TweetyPie.MethodPerEndpoint = {
-    methodPerEndpointClient[TweetyPie.ServicePerEndpoint, TweetyPie.MethodPerEndpoint](
-      thriftMuxClientBuilder("tweetypieLowQoS", requireMutualTls = true)
-        .dest("/s/tweetypie/tweetypie")
-        .retryPolicy(mkRetryPolicy(1)) // override default value
-        .requestTimeout(450.milliseconds)
-        .timeout(800.milliseconds),
-      maxExtraLoadPercent = Some(1.percent)
+  overr de val t etyP eLowQoSCl ent: T etyP e. thodPerEndpo nt = {
+     thodPerEndpo ntCl ent[T etyP e.Serv cePerEndpo nt, T etyP e. thodPerEndpo nt](
+      thr ftMuxCl entBu lder("t etyp eLowQoS", requ reMutualTls = true)
+        .dest("/s/t etyp e/t etyp e")
+        .retryPol cy(mkRetryPol cy(1)) // overr de default value
+        .requestT  out(450.m ll seconds)
+        .t  out(800.m ll seconds),
+      maxExtraLoadPercent = So (1.percent)
     )
   }
 
-  override val userRolesServiceClient: UserRolesService.MethodPerEndpoint = {
-    methodPerEndpointClient[
-      UserRolesService.ServicePerEndpoint,
-      UserRolesService.MethodPerEndpoint](
-      thriftMuxClientBuilder("merlin", requireMutualTls = true)
-        .dest("/s/merlin/merlin")
-        .requestTimeout(1.second)
+  overr de val userRolesServ ceCl ent: UserRolesServ ce. thodPerEndpo nt = {
+     thodPerEndpo ntCl ent[
+      UserRolesServ ce.Serv cePerEndpo nt,
+      UserRolesServ ce. thodPerEndpo nt](
+      thr ftMuxCl entBu lder(" rl n", requ reMutualTls = true)
+        .dest("/s/ rl n/ rl n")
+        .requestT  out(1.second)
     )
   }
 
-  lazy val contentFeaturesCache: Store[TweetId, ContentFeatures] =
-    new ContentFeaturesMemcacheBuilder(
-      config = new StorehausMemcacheConfig(
-        destName = s"$twCachePrefix/timelines_content_features:twemcaches",
-        keyPrefix = "",
-        requestTimeout = 50.milliseconds,
-        numTries = 1,
-        globalTimeout = 60.milliseconds,
-        tcpConnectTimeout = 50.milliseconds,
-        connectionAcquisitionTimeout = 25.milliseconds,
-        numPendingRequests = 100,
-        isReadOnly = false,
-        serviceIdentifier = serviceIdentifier
+  lazy val contentFeaturesCac : Store[T et d, ContentFeatures] =
+    new ContentFeatures mcac Bu lder(
+      conf g = new Storehaus mcac Conf g(
+        destNa  = s"$twCac Pref x/t  l nes_content_features:t mcac s",
+        keyPref x = "",
+        requestT  out = 50.m ll seconds,
+        numTr es = 1,
+        globalT  out = 60.m ll seconds,
+        tcpConnectT  out = 50.m ll seconds,
+        connect onAcqu s  onT  out = 25.m ll seconds,
+        numPend ngRequests = 100,
+         sReadOnly = false,
+        serv ce dent f er = serv ce dent f er
       ),
-      ttl = 48.hours,
-      statsReceiver
-    ).build
+      ttl = 48.h s,
+      statsRece ver
+    ).bu ld
 
-  override val userTweetEntityGraphClient: UserTweetEntityGraph.FinagledClient =
-    new UserTweetEntityGraph.FinagledClient(
-      thriftMuxClientBuilder("user_tweet_entity_graph", requireMutualTls = true)
-        .dest("/s/cassowary/user_tweet_entity_graph")
-        .retryPolicy(mkRetryPolicy(2))
-        .requestTimeout(300.milliseconds)
-        .build()
+  overr de val userT etEnt yGraphCl ent: UserT etEnt yGraph.F nagledCl ent =
+    new UserT etEnt yGraph.F nagledCl ent(
+      thr ftMuxCl entBu lder("user_t et_ent y_graph", requ reMutualTls = true)
+        .dest("/s/cassowary/user_t et_ent y_graph")
+        .retryPol cy(mkRetryPol cy(2))
+        .requestT  out(300.m ll seconds)
+        .bu ld()
     )
 
-  override val stratoClient: StratoClient =
-    Strato.client.withMutualTls(serviceIdentifier, OpportunisticTls.Required).build()
+  overr de val stratoCl ent: StratoCl ent =
+    Strato.cl ent.w hMutualTls(serv ce dent f er, Opportun st cTls.Requ red).bu ld()
 }

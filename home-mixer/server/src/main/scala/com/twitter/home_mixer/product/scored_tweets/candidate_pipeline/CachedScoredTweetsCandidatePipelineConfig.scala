@@ -1,53 +1,53 @@
-package com.twitter.home_mixer.product.scored_tweets.candidate_pipeline
+package com.tw ter.ho _m xer.product.scored_t ets.cand date_p pel ne
 
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.CachedScoredTweetsCandidatePipelineConfig._
-import com.twitter.home_mixer.product.scored_tweets.candidate_source.CachedScoredTweetsCandidateSource
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.response_transformer.CachedScoredTweetsResponseFeatureTransformer
-import com.twitter.home_mixer.{thriftscala => hmt}
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.product.scored_t ets.cand date_p pel ne.Cac dScoredT etsCand dateP pel neConf g._
+ mport com.tw ter.ho _m xer.product.scored_t ets.cand date_s ce.Cac dScoredT etsCand dateS ce
+ mport com.tw ter.ho _m xer.product.scored_t ets.model.ScoredT etsQuery
+ mport com.tw ter.ho _m xer.product.scored_t ets.response_transfor r.Cac dScoredT etsResponseFeatureTransfor r
+ mport com.tw ter.ho _m xer.{thr ftscala => hmt}
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.BaseCand dateS ce
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateFeatureTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neResultsTransfor r
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.cand date.Cand dateP pel neConf g
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * Candidate Pipeline Config that fetches tweets from Scored Tweets Cache.
+ * Cand date P pel ne Conf g that fetc s t ets from Scored T ets Cac .
  */
-@Singleton
-class CachedScoredTweetsCandidatePipelineConfig @Inject() (
-  cachedScoredTweetsCandidateSource: CachedScoredTweetsCandidateSource)
-    extends CandidatePipelineConfig[
-      ScoredTweetsQuery,
-      ScoredTweetsQuery,
-      hmt.ScoredTweet,
-      TweetCandidate
+@S ngleton
+class Cac dScoredT etsCand dateP pel neConf g @ nject() (
+  cac dScoredT etsCand dateS ce: Cac dScoredT etsCand dateS ce)
+    extends Cand dateP pel neConf g[
+      ScoredT etsQuery,
+      ScoredT etsQuery,
+      hmt.ScoredT et,
+      T etCand date
     ] {
 
-  override val identifier: CandidatePipelineIdentifier = Identifier
+  overr de val  dent f er: Cand dateP pel ne dent f er =  dent f er
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    ScoredTweetsQuery,
-    ScoredTweetsQuery
-  ] = identity
+  overr de val queryTransfor r: Cand dateP pel neQueryTransfor r[
+    ScoredT etsQuery,
+    ScoredT etsQuery
+  ] =  dent y
 
-  override val candidateSource: BaseCandidateSource[ScoredTweetsQuery, hmt.ScoredTweet] =
-    cachedScoredTweetsCandidateSource
+  overr de val cand dateS ce: BaseCand dateS ce[ScoredT etsQuery, hmt.ScoredT et] =
+    cac dScoredT etsCand dateS ce
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[hmt.ScoredTweet]
-  ] = Seq(CachedScoredTweetsResponseFeatureTransformer)
+  overr de val featuresFromCand dateS ceTransfor rs: Seq[
+    Cand dateFeatureTransfor r[hmt.ScoredT et]
+  ] = Seq(Cac dScoredT etsResponseFeatureTransfor r)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    hmt.ScoredTweet,
-    TweetCandidate
-  ] = { sourceResult => TweetCandidate(id = sourceResult.tweetId) }
+  overr de val resultTransfor r: Cand dateP pel neResultsTransfor r[
+    hmt.ScoredT et,
+    T etCand date
+  ] = { s ceResult => T etCand date( d = s ceResult.t et d) }
 }
 
-object CachedScoredTweetsCandidatePipelineConfig {
-  val Identifier: CandidatePipelineIdentifier = CandidatePipelineIdentifier("CachedScoredTweets")
+object Cac dScoredT etsCand dateP pel neConf g {
+  val  dent f er: Cand dateP pel ne dent f er = Cand dateP pel ne dent f er("Cac dScoredT ets")
 }

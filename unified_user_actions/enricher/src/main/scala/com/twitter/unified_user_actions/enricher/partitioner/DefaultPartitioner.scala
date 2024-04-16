@@ -1,34 +1,34 @@
-package com.twitter.unified_user_actions.enricher.partitioner
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentEnvelop
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentIdType
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction.NotificationTweetEnrichment
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction.TweetEnrichment
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentKey
-import com.twitter.unified_user_actions.enricher.partitioner.DefaultPartitioner.NullKey
-import com.twitter.unified_user_actions.thriftscala.Item
-import com.twitter.unified_user_actions.thriftscala.NotificationContent
+package com.tw ter.un f ed_user_act ons.enr c r.part  oner
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntEnvelop
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch nt dType
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch nt nstruct on
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch nt nstruct on.Not f cat onT etEnr ch nt
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch nt nstruct on.T etEnr ch nt
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntKey
+ mport com.tw ter.un f ed_user_act ons.enr c r.part  oner.DefaultPart  oner.NullKey
+ mport com.tw ter.un f ed_user_act ons.thr ftscala. em
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Not f cat onContent
 
-object DefaultPartitioner {
-  val NullKey: Option[EnrichmentKey] = None
+object DefaultPart  oner {
+  val NullKey: Opt on[Enr ch ntKey] = None
 }
 
-class DefaultPartitioner extends Partitioner {
-  override def repartition(
-    instruction: EnrichmentInstruction,
-    envelop: EnrichmentEnvelop
-  ): Option[EnrichmentKey] = {
-    (instruction, envelop.uua.item) match {
-      case (TweetEnrichment, Item.TweetInfo(info)) =>
-        Some(EnrichmentKey(EnrichmentIdType.TweetId, info.actionTweetId))
-      case (NotificationTweetEnrichment, Item.NotificationInfo(info)) =>
-        info.content match {
-          case NotificationContent.TweetNotification(content) =>
-            Some(EnrichmentKey(EnrichmentIdType.TweetId, content.tweetId))
-          case NotificationContent.MultiTweetNotification(content) =>
-            // we scarify on cache performance in this case since only a small % of
-            // notification content will be multi-tweet types.
-            Some(EnrichmentKey(EnrichmentIdType.TweetId, content.tweetIds.head))
+class DefaultPart  oner extends Part  oner {
+  overr de def repart  on(
+     nstruct on: Enr ch nt nstruct on,
+    envelop: Enr ch ntEnvelop
+  ): Opt on[Enr ch ntKey] = {
+    ( nstruct on, envelop.uua. em) match {
+      case (T etEnr ch nt,  em.T et nfo( nfo)) =>
+        So (Enr ch ntKey(Enr ch nt dType.T et d,  nfo.act onT et d))
+      case (Not f cat onT etEnr ch nt,  em.Not f cat on nfo( nfo)) =>
+         nfo.content match {
+          case Not f cat onContent.T etNot f cat on(content) =>
+            So (Enr ch ntKey(Enr ch nt dType.T et d, content.t et d))
+          case Not f cat onContent.Mult T etNot f cat on(content) =>
+            //   scar fy on cac  performance  n t  case s nce only a small % of
+            // not f cat on content w ll be mult -t et types.
+            So (Enr ch ntKey(Enr ch nt dType.T et d, content.t et ds. ad))
           case _ => NullKey
         }
       case _ => NullKey

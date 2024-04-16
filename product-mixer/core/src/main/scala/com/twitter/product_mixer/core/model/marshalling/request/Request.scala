@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.model.marshalling.request
+package com.tw ter.product_m xer.core.model.marshall ng.request
 
-trait Request
-    extends HasClientContext
-    with HasProduct
-    with HasProductContext
-    with HasSerializedRequestCursor {
-  def maxResults: Option[Int]
-  def debugParams: Option[DebugParams]
+tra  Request
+    extends HasCl entContext
+    w h HasProduct
+    w h HasProductContext
+    w h HasSer al zedRequestCursor {
+  def maxResults: Opt on[ nt]
+  def debugParams: Opt on[DebugParams]
 }

@@ -1,56 +1,56 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work
 
-import com.twitter.algebird.Monoid
-import com.twitter.ml.api._
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.util.SRichDataRecord
-import scala.collection.mutable
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetricCommon._
+ mport com.tw ter.algeb rd.Mono d
+ mport com.tw ter.ml.ap ._
+ mport com.tw ter.ml.ap .constant.SharedFeatures
+ mport com.tw ter.ml.ap .ut l.SR chDataRecord
+ mport scala.collect on.mutable
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. tr cs.Aggregat on tr cCommon._
 
 /**
- * Monoid to aggregate over DataRecord objects.
+ * Mono d to aggregate over DataRecord objects.
  *
  * @param aggregates Set of ''TypedAggregateGroup'' case classes*
- *                   to compute using this monoid (see TypedAggregateGroup.scala)
+ *                   to compute us ng t  mono d (see TypedAggregateGroup.scala)
  */
-trait DataRecordMonoid extends Monoid[DataRecord] {
+tra  DataRecordMono d extends Mono d[DataRecord] {
 
   val aggregates: Set[TypedAggregateGroup[_]]
 
   def zero(): DataRecord = new DataRecord
 
   /*
-   * Add two datarecords using this monoid.
+   * Add two datarecords us ng t  mono d.
    *
    * @param left Left datarecord to add
-   * @param right Right datarecord to add
-   * @return Sum of the two datarecords as a DataRecord
+   * @param r ght R ght datarecord to add
+   * @return Sum of t  two datarecords as a DataRecord
    */
-  def plus(left: DataRecord, right: DataRecord): DataRecord = {
+  def plus(left: DataRecord, r ght: DataRecord): DataRecord = {
     val result = zero()
-    aggregates.foreach(_.mutatePlus(result, left, right))
-    val leftTimestamp = getTimestamp(left)
-    val rightTimestamp = getTimestamp(right)
-    SRichDataRecord(result).setFeatureValue(
-      SharedFeatures.TIMESTAMP,
-      leftTimestamp.max(rightTimestamp)
+    aggregates.foreach(_.mutatePlus(result, left, r ght))
+    val leftT  stamp = getT  stamp(left)
+    val r ghtT  stamp = getT  stamp(r ght)
+    SR chDataRecord(result).setFeatureValue(
+      SharedFeatures.T MESTAMP,
+      leftT  stamp.max(r ghtT  stamp)
     )
     result
   }
 }
 
-case class DataRecordAggregationMonoid(aggregates: Set[TypedAggregateGroup[_]])
-    extends DataRecordMonoid {
+case class DataRecordAggregat onMono d(aggregates: Set[TypedAggregateGroup[_]])
+    extends DataRecordMono d {
 
-  private def sumBuffer(buffer: mutable.ArrayBuffer[DataRecord]): Unit = {
+  pr vate def sumBuffer(buffer: mutable.ArrayBuffer[DataRecord]): Un  = {
     val bufferSum = zero()
-    buffer.toIterator.foreach { value =>
-      val leftTimestamp = getTimestamp(bufferSum)
-      val rightTimestamp = getTimestamp(value)
+    buffer.to erator.foreach { value =>
+      val leftT  stamp = getT  stamp(bufferSum)
+      val r ghtT  stamp = getT  stamp(value)
       aggregates.foreach(_.mutatePlus(bufferSum, bufferSum, value))
-      SRichDataRecord(bufferSum).setFeatureValue(
-        SharedFeatures.TIMESTAMP,
-        leftTimestamp.max(rightTimestamp)
+      SR chDataRecord(bufferSum).setFeatureValue(
+        SharedFeatures.T MESTAMP,
+        leftT  stamp.max(r ghtT  stamp)
       )
     }
 
@@ -59,34 +59,34 @@ case class DataRecordAggregationMonoid(aggregates: Set[TypedAggregateGroup[_]])
   }
 
   /*
-   * Efficient batched aggregation of datarecords using
-   * this monoid + a buffer, for performance.
+   * Eff c ent batc d aggregat on of datarecords us ng
+   * t  mono d + a buffer, for performance.
    *
-   * @param dataRecordIter An iterator of datarecords to sum
-   * @return A datarecord option containing the sum
+   * @param dataRecord er An  erator of datarecords to sum
+   * @return A datarecord opt on conta n ng t  sum
    */
-  override def sumOption(dataRecordIter: TraversableOnce[DataRecord]): Option[DataRecord] = {
-    if (dataRecordIter.isEmpty) {
+  overr de def sumOpt on(dataRecord er: TraversableOnce[DataRecord]): Opt on[DataRecord] = {
+     f (dataRecord er. sEmpty) {
       None
     } else {
       var buffer = mutable.ArrayBuffer[DataRecord]()
-      val BatchSize = 1000
+      val BatchS ze = 1000
 
-      dataRecordIter.foreach { u =>
-        if (buffer.size > BatchSize) sumBuffer(buffer)
+      dataRecord er.foreach { u =>
+         f (buffer.s ze > BatchS ze) sumBuffer(buffer)
         buffer += u
       }
 
-      if (buffer.size > 1) sumBuffer(buffer)
-      Some(buffer(0))
+       f (buffer.s ze > 1) sumBuffer(buffer)
+      So (buffer(0))
     }
   }
 }
 
 /*
- * This class is used when there is no need to use sumBuffer functionality, as in the case of
- * online aggregation of datarecords where using a buffer on a small number of datarecords
- * would add some performance overhead.
+ * T  class  s used w n t re  s no need to use sumBuffer funct onal y, as  n t  case of
+ * onl ne aggregat on of datarecords w re us ng a buffer on a small number of datarecords
+ * would add so  performance over ad.
  */
-case class DataRecordAggregationMonoidNoBuffer(aggregates: Set[TypedAggregateGroup[_]])
-    extends DataRecordMonoid {}
+case class DataRecordAggregat onMono dNoBuffer(aggregates: Set[TypedAggregateGroup[_]])
+    extends DataRecordMono d {}

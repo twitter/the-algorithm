@@ -1,45 +1,45 @@
-package com.twitter.tweetypie.caching
+package com.tw ter.t etyp e.cach ng
 
 /**
- * Encodes the possible states of a value loaded from memcached.
+ * Encodes t  poss ble states of a value loaded from  mcac d.
  *
- * @see [[ValueSerializer]] and [[CacheOperations]]
+ * @see [[ValueSer al zer]] and [[Cac Operat ons]]
  */
-sealed trait CacheResult[+V]
+sealed tra  Cac Result[+V]
 
-object CacheResult {
+object Cac Result {
 
   /**
-   * Signals that the value could not be successfully loaded from
-   * cache. `Failure` values should not be written back to cache.
+   * S gnals that t  value could not be successfully loaded from
+   * cac . `Fa lure` values should not be wr ten back to cac .
    *
-   * This value may result from an error talking to the memcached
-   * instance or it may be returned from the Serializer when the value
-   * should not be reused, but should also not be overwritten.
+   * T  value may result from an error talk ng to t   mcac d
+   *  nstance or   may be returned from t  Ser al zer w n t  value
+   * should not be reused, but should also not be overwr ten.
    */
-  final case class Failure(e: Throwable) extends CacheResult[Nothing]
+  f nal case class Fa lure(e: Throwable) extends Cac Result[Noth ng]
 
   /**
-   * Signals that the cache load attempt was successful, but there was
+   * S gnals that t  cac  load attempt was successful, but t re was
    * not a usable value.
    *
-   * When processing a `Miss`, the value should be written back to
-   * cache if it loads successfully.
+   * W n process ng a `M ss`, t  value should be wr ten back to
+   * cac   f   loads successfully.
    */
-  case object Miss extends CacheResult[Nothing]
+  case object M ss extends Cac Result[Noth ng]
 
   /**
-   * Signals that the value was found in cache.
+   * S gnals that t  value was found  n cac .
    *
-   * It is not necessary to load the value from the original source.
+   *    s not necessary to load t  value from t  or g nal s ce.
    */
-  case class Fresh[V](value: V) extends CacheResult[V]
+  case class Fresh[V](value: V) extends Cac Result[V]
 
   /**
-   * Signals that the value was found in cache.
+   * S gnals that t  value was found  n cac .
    *
-   * This value should be used, but it should be refreshed
+   * T  value should be used, but   should be refres d
    * out-of-band.
    */
-  case class Stale[V](value: V) extends CacheResult[V]
+  case class Stale[V](value: V) extends Cac Result[V]
 }

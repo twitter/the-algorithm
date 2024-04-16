@@ -1,56 +1,56 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.t  l ne_module
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleDisplayTypeBuilder
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleFooterBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleHeaderBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleMetadataBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleShowMoreBehaviorBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseTimelineModuleBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.EntryNa space
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neModule
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.t  l ne_module.BaseModuleD splayTypeBu lder
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseCl entEvent nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseFeedbackAct on nfoBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.t  l ne_module.BaseModuleFooterBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.t  l ne_module.BaseModule aderBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.t  l ne_module.BaseModule tadataBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.t  l ne_module.BaseModuleShowMoreBehav orBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.t  l ne_module.BaseT  l neModuleBu lder
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
 
-case class TimelineModuleBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  entryNamespace: EntryNamespace,
-  displayTypeBuilder: BaseModuleDisplayTypeBuilder[Query, Candidate],
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, Candidate],
-  moduleIdGeneration: ModuleIdGeneration = AutomaticUniqueModuleId(),
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, Candidate]
+case class T  l neModuleBu lder[-Query <: P pel neQuery, -Cand date <: Un versalNoun[Any]](
+  entryNa space: EntryNa space,
+  d splayTypeBu lder: BaseModuleD splayTypeBu lder[Query, Cand date],
+  cl entEvent nfoBu lder: BaseCl entEvent nfoBu lder[Query, Cand date],
+  module dGenerat on: Module dGenerat on = Automat cUn queModule d(),
+  feedbackAct on nfoBu lder: Opt on[
+    BaseFeedbackAct on nfoBu lder[Query, Cand date]
   ] = None,
-  headerBuilder: Option[BaseModuleHeaderBuilder[Query, Candidate]] = None,
-  footerBuilder: Option[BaseModuleFooterBuilder[Query, Candidate]] = None,
-  metadataBuilder: Option[BaseModuleMetadataBuilder[Query, Candidate]] = None,
-  showMoreBehaviorBuilder: Option[BaseModuleShowMoreBehaviorBuilder[Query, Candidate]] = None)
-    extends BaseTimelineModuleBuilder[Query, Candidate] {
+   aderBu lder: Opt on[BaseModule aderBu lder[Query, Cand date]] = None,
+  footerBu lder: Opt on[BaseModuleFooterBu lder[Query, Cand date]] = None,
+   tadataBu lder: Opt on[BaseModule tadataBu lder[Query, Cand date]] = None,
+  showMoreBehav orBu lder: Opt on[BaseModuleShowMoreBehav orBu lder[Query, Cand date]] = None)
+    extends BaseT  l neModuleBu lder[Query, Cand date] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): TimelineModule = {
-    val firstCandidate = candidates.head
-    TimelineModule(
-      id = moduleIdGeneration.moduleId,
-      // Sort indexes are automatically set in the domain marshaller phase
-      sortIndex = None,
-      entryNamespace = entryNamespace,
-      // Modules should not need an element by default; only items should
-      clientEventInfo =
-        clientEventInfoBuilder(query, firstCandidate.candidate, firstCandidate.features, None),
-      feedbackActionInfo = feedbackActionInfoBuilder.flatMap(
-        _.apply(query, firstCandidate.candidate, firstCandidate.features)),
-      isPinned = None,
-      // Items are automatically set in the domain marshaller phase
-      items = Seq.empty,
-      displayType = displayTypeBuilder(query, candidates),
-      header = headerBuilder.flatMap(_.apply(query, candidates)),
-      footer = footerBuilder.flatMap(_.apply(query, candidates)),
-      metadata = metadataBuilder.map(_.apply(query, candidates)),
-      showMoreBehavior = showMoreBehaviorBuilder.map(_.apply(query, candidates))
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): T  l neModule = {
+    val f rstCand date = cand dates. ad
+    T  l neModule(
+       d = module dGenerat on.module d,
+      // Sort  ndexes are automat cally set  n t  doma n marshaller phase
+      sort ndex = None,
+      entryNa space = entryNa space,
+      // Modules should not need an ele nt by default; only  ems should
+      cl entEvent nfo =
+        cl entEvent nfoBu lder(query, f rstCand date.cand date, f rstCand date.features, None),
+      feedbackAct on nfo = feedbackAct on nfoBu lder.flatMap(
+        _.apply(query, f rstCand date.cand date, f rstCand date.features)),
+       sP nned = None,
+      //  ems are automat cally set  n t  doma n marshaller phase
+       ems = Seq.empty,
+      d splayType = d splayTypeBu lder(query, cand dates),
+       ader =  aderBu lder.flatMap(_.apply(query, cand dates)),
+      footer = footerBu lder.flatMap(_.apply(query, cand dates)),
+       tadata =  tadataBu lder.map(_.apply(query, cand dates)),
+      showMoreBehav or = showMoreBehav orBu lder.map(_.apply(query, cand dates))
     )
   }
 }

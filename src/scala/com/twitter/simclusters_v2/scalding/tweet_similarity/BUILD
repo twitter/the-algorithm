@@ -1,234 +1,234 @@
-scala_library(
+scala_l brary(
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":tweet_similarity_test_datarecords_120min-java",
-        ":tweet_similarity_test_datarecords_30min-java",
-        ":tweet_similarity_train_datarecords_120min-java",
-        ":tweet_similarity_train_datarecords_30min-java",
-        ":tweet_similarity_unhydrated_pairs_120min-scala",
-        ":tweet_similarity_unhydrated_pairs_30min-scala",
-        "3rdparty/jvm/com/twitter/storehaus:algebra",
-        "3rdparty/jvm/com/twitter/storehaus:core",
-        "dataproducts/insights/common/common",
-        "snowflake:id",
-        "src/java/com/twitter/ml/api/constant",
-        "src/scala/com/twitter/ads/dataservice_account/snapshot/jobs:db_snapshots_promoted_tweets-scala",
-        "src/scala/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/ml/featurestore/catalog/features/recommendations:aggregate",
-        "src/scala/com/twitter/ml/featurestore/lib/embedding",
-        "src/scala/com/twitter/scalding_internal/dalv2",
-        "src/scala/com/twitter/scalding_internal/dalv2/dataset",
-        "src/scala/com/twitter/scalding_internal/job",
-        "src/scala/com/twitter/scalding_internal/job/analytics_batch",
-        "src/scala/com/twitter/scalding_internal/source",
-        "src/scala/com/twitter/scalding_internal/source/lzo_scrooge",
-        "src/scala/com/twitter/simclusters_v2/common",
-        "src/scala/com/twitter/simclusters_v2/scalding",
-        "src/scala/com/twitter/simclusters_v2/tweet_similarity",
-        "src/scala/com/twitter/wtf/scalding/jobs/client_event_processing:user_interaction-scala",
-        "twadoop_config/configuration/log_categories/group/timeline:timeline_service_favorites-scala",
-        "tweetsource/common:unhydrated_flat-scala",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        ":t et_s m lar y_test_datarecords_120m n-java",
+        ":t et_s m lar y_test_datarecords_30m n-java",
+        ":t et_s m lar y_tra n_datarecords_120m n-java",
+        ":t et_s m lar y_tra n_datarecords_30m n-java",
+        ":t et_s m lar y_unhydrated_pa rs_120m n-scala",
+        ":t et_s m lar y_unhydrated_pa rs_30m n-scala",
+        "3rdparty/jvm/com/tw ter/storehaus:algebra",
+        "3rdparty/jvm/com/tw ter/storehaus:core",
+        "dataproducts/ ns ghts/common/common",
+        "snowflake: d",
+        "src/java/com/tw ter/ml/ap /constant",
+        "src/scala/com/tw ter/ads/dataserv ce_account/snapshot/jobs:db_snapshots_promoted_t ets-scala",
+        "src/scala/com/tw ter/ml/ap :ap -base",
+        "src/scala/com/tw ter/ml/featurestore/catalog/features/recom ndat ons:aggregate",
+        "src/scala/com/tw ter/ml/featurestore/l b/embedd ng",
+        "src/scala/com/tw ter/scald ng_ nternal/dalv2",
+        "src/scala/com/tw ter/scald ng_ nternal/dalv2/dataset",
+        "src/scala/com/tw ter/scald ng_ nternal/job",
+        "src/scala/com/tw ter/scald ng_ nternal/job/analyt cs_batch",
+        "src/scala/com/tw ter/scald ng_ nternal/s ce",
+        "src/scala/com/tw ter/scald ng_ nternal/s ce/lzo_scrooge",
+        "src/scala/com/tw ter/s mclusters_v2/common",
+        "src/scala/com/tw ter/s mclusters_v2/scald ng",
+        "src/scala/com/tw ter/s mclusters_v2/t et_s m lar y",
+        "src/scala/com/tw ter/wtf/scald ng/jobs/cl ent_event_process ng:user_ nteract on-scala",
+        "twadoop_conf g/conf gurat on/log_categor es/group/t  l ne:t  l ne_serv ce_favor es-scala",
+        "t ets ce/common:unhydrated_flat-scala",
     ],
 )
 
-hadoop_binary(
-    name = "training_data_collection-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.tweet_similarity.TrainingDataCollectionAdhocApp",
+hadoop_b nary(
+    na  = "tra n ng_data_collect on-adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.t et_s m lar y.Tra n ngDataCollect onAdhocApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":tweet_similarity",
+    dependenc es = [
+        ":t et_s m lar y",
     ],
 )
 
-hadoop_binary(
-    name = "training_data_collection_30min",
-    main = "com.twitter.simclusters_v2.scalding.tweet_similarity.TrainingDataCollection30MinScheduledApp",
+hadoop_b nary(
+    na  = "tra n ng_data_collect on_30m n",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.t et_s m lar y.Tra n ngDataCollect on30M nSc duledApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":tweet_similarity",
+    dependenc es = [
+        ":t et_s m lar y",
     ],
 )
 
-hadoop_binary(
-    name = "training_data_collection_120min",
-    main = "com.twitter.simclusters_v2.scalding.tweet_similarity.TrainingDataCollection120MinScheduledApp",
+hadoop_b nary(
+    na  = "tra n ng_data_collect on_120m n",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.t et_s m lar y.Tra n ngDataCollect on120M nSc duledApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":tweet_similarity",
+    dependenc es = [
+        ":t et_s m lar y",
     ],
 )
 
-hadoop_binary(
-    name = "unhydrated_pair_collection-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.tweet_similarity.UnhydratedPairsCollectionAdhocApp",
+hadoop_b nary(
+    na  = "unhydrated_pa r_collect on-adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.t et_s m lar y.UnhydratedPa rsCollect onAdhocApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":tweet_similarity",
+    dependenc es = [
+        ":t et_s m lar y",
     ],
 )
 
-hadoop_binary(
-    name = "unhydrated_pair_collection_30min",
-    main = "com.twitter.simclusters_v2.scalding.tweet_similarity.UnhydratedPairsCollection30MinScheduledApp",
+hadoop_b nary(
+    na  = "unhydrated_pa r_collect on_30m n",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.t et_s m lar y.UnhydratedPa rsCollect on30M nSc duledApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":tweet_similarity",
+    dependenc es = [
+        ":t et_s m lar y",
     ],
 )
 
-hadoop_binary(
-    name = "unhydrated_pair_collection_120min",
-    main = "com.twitter.simclusters_v2.scalding.tweet_similarity.UnhydratedPairsCollection120MinScheduledApp",
+hadoop_b nary(
+    na  = "unhydrated_pa r_collect on_120m n",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.t et_s m lar y.UnhydratedPa rsCollect on120M nSc duledApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":tweet_similarity",
+    dependenc es = [
+        ":t et_s m lar y",
     ],
 )
 
-hadoop_binary(
-    name = "model_eval-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.tweet_similarity.ModelEvalAdhocApp",
+hadoop_b nary(
+    na  = "model_eval-adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.t et_s m lar y.ModelEvalAdhocApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":tweet_similarity",
+    dependenc es = [
+        ":t et_s m lar y",
     ],
 )
 
-hadoop_binary(
-    name = "dataset_topk_analysis-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.tweet_similarity.DatasetTopKAnalysisAdhocApp",
+hadoop_b nary(
+    na  = "dataset_topk_analys s-adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.t et_s m lar y.DatasetTopKAnalys sAdhocApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":tweet_similarity",
+    dependenc es = [
+        ":t et_s m lar y",
     ],
 )
 
-hadoop_binary(
-    name = "dataset_topk_analysis_dump-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.tweet_similarity.DatasetTopKAnalysisDumpApp",
+hadoop_b nary(
+    na  = "dataset_topk_analys s_dump-adhoc",
+    ma n = "com.tw ter.s mclusters_v2.scald ng.t et_s m lar y.DatasetTopKAnalys sDumpApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
+        "bazel-compat ble",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [
-        ":tweet_similarity",
+    dependenc es = [
+        ":t et_s m lar y",
     ],
 )
 
 create_datarecord_datasets(
-    base_name = "tweet_similarity_train_datarecords_30min",
+    base_na  = "t et_s m lar y_tra n_datarecords_30m n",
     platform = "java8",
     role = "cassowary",
-    segment_type = "partitioned",
-    tags = ["bazel-compatible"],
+    seg nt_type = "part  oned",
+    tags = ["bazel-compat ble"],
 )
 
 create_datarecord_datasets(
-    base_name = "tweet_similarity_test_datarecords_30min",
+    base_na  = "t et_s m lar y_test_datarecords_30m n",
     platform = "java8",
     role = "cassowary",
-    segment_type = "partitioned",
-    tags = ["bazel-compatible"],
+    seg nt_type = "part  oned",
+    tags = ["bazel-compat ble"],
 )
 
 create_datarecord_datasets(
-    base_name = "tweet_similarity_train_datarecords_120min",
+    base_na  = "t et_s m lar y_tra n_datarecords_120m n",
     platform = "java8",
     role = "cassowary",
-    segment_type = "partitioned",
-    tags = ["bazel-compatible"],
+    seg nt_type = "part  oned",
+    tags = ["bazel-compat ble"],
 )
 
 create_datarecord_datasets(
-    base_name = "tweet_similarity_test_datarecords_120min",
+    base_na  = "t et_s m lar y_test_datarecords_120m n",
     platform = "java8",
     role = "cassowary",
-    segment_type = "partitioned",
-    tags = ["bazel-compatible"],
+    seg nt_type = "part  oned",
+    tags = ["bazel-compat ble"],
 )
 
 create_datasets(
-    base_name = "tweet_similarity_unhydrated_pairs_30min",
-    description = "30min coocurrence training pairs before feature hydration",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.LabelledTweetPairs",
+    base_na  = "t et_s m lar y_unhydrated_pa rs_30m n",
+    descr pt on = "30m n coocurrence tra n ng pa rs before feature hydrat on",
+    java_sc ma = "com.tw ter.s mclusters_v2.thr ftjava.LabelledT etPa rs",
     platform = "java8",
     role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.LabelledTweetPairs",
-    segment_type = "partitioned",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    scala_sc ma = "com.tw ter.s mclusters_v2.thr ftscala.LabelledT etPa rs",
+    seg nt_type = "part  oned",
+    tags = ["bazel-compat ble"],
+    java_dependenc es = [
+        "src/thr ft/com/tw ter/s mclusters_v2:s mclusters_v2-thr ft-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_dependenc es = [
+        "src/thr ft/com/tw ter/s mclusters_v2:s mclusters_v2-thr ft-scala",
     ],
 )
 
 create_datasets(
-    base_name = "tweet_similarity_unhydrated_pairs_120min",
-    description = "120min coocurrence training pairs before feature hydration",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.LabelledTweetPairs",
+    base_na  = "t et_s m lar y_unhydrated_pa rs_120m n",
+    descr pt on = "120m n coocurrence tra n ng pa rs before feature hydrat on",
+    java_sc ma = "com.tw ter.s mclusters_v2.thr ftjava.LabelledT etPa rs",
     platform = "java8",
     role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.LabelledTweetPairs",
-    segment_type = "partitioned",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    scala_sc ma = "com.tw ter.s mclusters_v2.thr ftscala.LabelledT etPa rs",
+    seg nt_type = "part  oned",
+    tags = ["bazel-compat ble"],
+    java_dependenc es = [
+        "src/thr ft/com/tw ter/s mclusters_v2:s mclusters_v2-thr ft-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_dependenc es = [
+        "src/thr ft/com/tw ter/s mclusters_v2:s mclusters_v2-thr ft-scala",
     ],
 )

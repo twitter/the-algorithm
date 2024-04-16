@@ -1,63 +1,63 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.Date;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.util.date.DateUtil;
-import com.twitter.search.earlybird.config.ServingRange;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.common.part  on ng.snowflakeparser.Snowflake dParser;
+ mport com.tw ter.search.common.ut l.date.DateUt l;
+ mport com.tw ter.search.earlyb rd.conf g.Serv ngRange;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
 
-public class FullArchiveServingRangeProvider implements ServingRangeProvider {
+publ c class FullArch veServ ngRangeProv der  mple nts Serv ngRangeProv der {
 
-  public static final Date FULL_ARCHIVE_START_DATE = DateUtil.toDate(2006, 3, 21);
-  private static final int DEFAULT_SERVING_RANGE_BOUNDARY_HOURS_AGO = 48;
+  publ c stat c f nal Date FULL_ARCH VE_START_DATE = DateUt l.toDate(2006, 3, 21);
+  pr vate stat c f nal  nt DEFAULT_SERV NG_RANGE_BOUNDARY_HOURS_AGO = 48;
 
-  private final SearchDecider decider;
-  private final String deciderKey;
+  pr vate f nal SearchDec der dec der;
+  pr vate f nal Str ng dec derKey;
 
-  public FullArchiveServingRangeProvider(
-      SearchDecider decider, String deciderKey) {
-    this.decider = decider;
-    this.deciderKey = deciderKey;
+  publ c FullArch veServ ngRangeProv der(
+      SearchDec der dec der, Str ng dec derKey) {
+    t .dec der = dec der;
+    t .dec derKey = dec derKey;
   }
 
-  @Override
-  public ServingRange getServingRange(
-      final EarlybirdRequestContext requestContext, boolean useBoundaryOverride) {
-    return new ServingRange() {
-      @Override
-      public long getServingRangeSinceId() {
-        // we use 1 instead of 0, because the since_id operator is inclusive in earlybirds.
+  @Overr de
+  publ c Serv ngRange getServ ngRange(
+      f nal Earlyb rdRequestContext requestContext, boolean useBoundaryOverr de) {
+    return new Serv ngRange() {
+      @Overr de
+      publ c long getServ ngRangeS nce d() {
+        //   use 1  nstead of 0, because t  s nce_ d operator  s  nclus ve  n earlyb rds.
         return 1L;
       }
 
-      @Override
-      public long getServingRangeMaxId() {
-        long servingRangeEndMillis = TimeUnit.HOURS.toMillis(
-            (decider.featureExists(deciderKey))
-                ? decider.getAvailability(deciderKey)
-                : DEFAULT_SERVING_RANGE_BOUNDARY_HOURS_AGO);
+      @Overr de
+      publ c long getServ ngRangeMax d() {
+        long serv ngRangeEndM ll s = T  Un .HOURS.toM ll s(
+            (dec der.featureEx sts(dec derKey))
+                ? dec der.getAva lab l y(dec derKey)
+                : DEFAULT_SERV NG_RANGE_BOUNDARY_HOURS_AGO);
 
-        long boundaryTime = requestContext.getCreatedTimeMillis() - servingRangeEndMillis;
-        return SnowflakeIdParser.generateValidStatusId(boundaryTime, 0);
+        long boundaryT   = requestContext.getCreatedT  M ll s() - serv ngRangeEndM ll s;
+        return Snowflake dParser.generateVal dStatus d(boundaryT  , 0);
       }
 
-      @Override
-      public long getServingRangeSinceTimeSecondsFromEpoch() {
-        return FULL_ARCHIVE_START_DATE.getTime() / 1000;
+      @Overr de
+      publ c long getServ ngRangeS nceT  SecondsFromEpoch() {
+        return FULL_ARCH VE_START_DATE.getT  () / 1000;
       }
 
-      @Override
-      public long getServingRangeUntilTimeSecondsFromEpoch() {
-        long servingRangeEndMillis = TimeUnit.HOURS.toMillis(
-            (decider.featureExists(deciderKey))
-                ? decider.getAvailability(deciderKey)
-                : DEFAULT_SERVING_RANGE_BOUNDARY_HOURS_AGO);
+      @Overr de
+      publ c long getServ ngRangeUnt lT  SecondsFromEpoch() {
+        long serv ngRangeEndM ll s = T  Un .HOURS.toM ll s(
+            (dec der.featureEx sts(dec derKey))
+                ? dec der.getAva lab l y(dec derKey)
+                : DEFAULT_SERV NG_RANGE_BOUNDARY_HOURS_AGO);
 
-        long boundaryTime = requestContext.getCreatedTimeMillis() - servingRangeEndMillis;
-        return boundaryTime / 1000;
+        long boundaryT   = requestContext.getCreatedT  M ll s() - serv ngRangeEndM ll s;
+        return boundaryT   / 1000;
       }
     };
   }

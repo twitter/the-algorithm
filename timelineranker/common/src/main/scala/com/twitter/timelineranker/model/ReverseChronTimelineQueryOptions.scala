@@ -1,31 +1,31 @@
-package com.twitter.timelineranker.model
+package com.tw ter.t  l neranker.model
 
-import com.twitter.timelineranker.{thriftscala => thrift}
+ mport com.tw ter.t  l neranker.{thr ftscala => thr ft}
 
-object ReverseChronTimelineQueryOptions {
-  val Default: ReverseChronTimelineQueryOptions = ReverseChronTimelineQueryOptions()
+object ReverseChronT  l neQueryOpt ons {
+  val Default: ReverseChronT  l neQueryOpt ons = ReverseChronT  l neQueryOpt ons()
 
-  def fromThrift(
-    options: thrift.ReverseChronTimelineQueryOptions
-  ): ReverseChronTimelineQueryOptions = {
-    ReverseChronTimelineQueryOptions(
-      getTweetsFromArchiveIndex = options.getTweetsFromArchiveIndex
+  def fromThr ft(
+    opt ons: thr ft.ReverseChronT  l neQueryOpt ons
+  ): ReverseChronT  l neQueryOpt ons = {
+    ReverseChronT  l neQueryOpt ons(
+      getT etsFromArch ve ndex = opt ons.getT etsFromArch ve ndex
     )
   }
 }
 
-case class ReverseChronTimelineQueryOptions(getTweetsFromArchiveIndex: Boolean = true)
-    extends TimelineQueryOptions {
+case class ReverseChronT  l neQueryOpt ons(getT etsFromArch ve ndex: Boolean = true)
+    extends T  l neQueryOpt ons {
 
-  throwIfInvalid()
+  throw f nval d()
 
-  def toThrift: thrift.ReverseChronTimelineQueryOptions = {
-    thrift.ReverseChronTimelineQueryOptions(getTweetsFromArchiveIndex = getTweetsFromArchiveIndex)
+  def toThr ft: thr ft.ReverseChronT  l neQueryOpt ons = {
+    thr ft.ReverseChronT  l neQueryOpt ons(getT etsFromArch ve ndex = getT etsFromArch ve ndex)
   }
 
-  def toTimelineQueryOptionsThrift: thrift.TimelineQueryOptions = {
-    thrift.TimelineQueryOptions.ReverseChronTimelineQueryOptions(toThrift)
+  def toT  l neQueryOpt onsThr ft: thr ft.T  l neQueryOpt ons = {
+    thr ft.T  l neQueryOpt ons.ReverseChronT  l neQueryOpt ons(toThr ft)
   }
 
-  def throwIfInvalid(): Unit = {}
+  def throw f nval d(): Un  = {}
 }

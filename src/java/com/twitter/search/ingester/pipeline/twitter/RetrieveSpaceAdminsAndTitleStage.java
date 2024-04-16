@@ -1,246 +1,246 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.tw ter.search. ngester.p pel ne.tw ter;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
+ mport java.ut l.L st;
+ mport java.ut l.Opt onal;
+ mport java.ut l.Set;
+ mport java.ut l.concurrent.CompletableFuture;
 
-import scala.Option;
-import scala.Tuple2;
+ mport scala.Opt on;
+ mport scala.Tuple2;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.collect.L sts;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
+ mport org.apac .commons.lang.Str ngUt ls;
+ mport org.apac .commons.p pel ne.StageExcept on;
+ mport org.apac .commons.p pel ne.val dat on.Consu dTypes;
+ mport org.apac .commons.p pel ne.val dat on.ProducesConsu d;
 
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.relevance.entities.TwitterMessageUser;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.strato_fetchers.AudioSpaceCoreFetcher;
-import com.twitter.search.ingester.pipeline.strato_fetchers.AudioSpaceParticipantsFetcher;
-import com.twitter.strato.catalog.Fetch;
-import com.twitter.ubs.thriftjava.AudioSpace;
-import com.twitter.ubs.thriftjava.ParticipantUser;
-import com.twitter.ubs.thriftjava.Participants;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
-import com.twitter.util.Futures;
-import com.twitter.util.Try;
+ mport com.tw ter.search.common.dec der.Dec derUt l;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common.relevance.ent  es.Tw ter ssageUser;
+ mport com.tw ter.search. ngester.model. ngesterTw ter ssage;
+ mport com.tw ter.search. ngester.p pel ne.strato_fetc rs.Aud oSpaceCoreFetc r;
+ mport com.tw ter.search. ngester.p pel ne.strato_fetc rs.Aud oSpacePart c pantsFetc r;
+ mport com.tw ter.strato.catalog.Fetch;
+ mport com.tw ter.ubs.thr ftjava.Aud oSpace;
+ mport com.tw ter.ubs.thr ftjava.Part c pantUser;
+ mport com.tw ter.ubs.thr ftjava.Part c pants;
+ mport com.tw ter.ut l.Funct on;
+ mport com.tw ter.ut l.Future;
+ mport com.tw ter.ut l.Futures;
+ mport com.tw ter.ut l.Try;
 
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducesConsumed
-public class RetrieveSpaceAdminsAndTitleStage extends TwitterBaseStage
-    <IngesterTwitterMessage, CompletableFuture<IngesterTwitterMessage>> {
+@Consu dTypes( ngesterTw ter ssage.class)
+@ProducesConsu d
+publ c class Retr eveSpaceAdm nsAndT leStage extends Tw terBaseStage
+    < ngesterTw ter ssage, CompletableFuture< ngesterTw ter ssage>> {
 
-  @VisibleForTesting
-  protected static final String RETRIEVE_SPACE_ADMINS_AND_TITLE_DECIDER_KEY =
-      "ingester_all_retrieve_space_admins_and_title";
+  @V s bleForTest ng
+  protected stat c f nal Str ng RETR EVE_SPACE_ADM NS_AND_T TLE_DEC DER_KEY =
+      " ngester_all_retr eve_space_adm ns_and_t le";
 
-  private AudioSpaceCoreFetcher coreFetcher;
-  private AudioSpaceParticipantsFetcher participantsFetcher;
+  pr vate Aud oSpaceCoreFetc r coreFetc r;
+  pr vate Aud oSpacePart c pantsFetc r part c pantsFetc r;
 
-  private SearchRateCounter tweetsWithSpaceAdmins;
-  private SearchRateCounter tweetsWithSpaceTitle;
-  private SearchRateCounter coreFetchSuccess;
-  private SearchRateCounter coreFetchFailure;
-  private SearchRateCounter participantsFetchSuccess;
-  private SearchRateCounter participantsFetchFailure;
-  private SearchRateCounter emptyCore;
-  private SearchRateCounter emptyParticipants;
-  private SearchRateCounter emptySpaceTitle;
-  private SearchRateCounter emptySpaceAdmins;
-  private SearchRateCounter parallelFetchAttempts;
-  private SearchRateCounter parallelFetchFailure;
+  pr vate SearchRateCounter t etsW hSpaceAdm ns;
+  pr vate SearchRateCounter t etsW hSpaceT le;
+  pr vate SearchRateCounter coreFetchSuccess;
+  pr vate SearchRateCounter coreFetchFa lure;
+  pr vate SearchRateCounter part c pantsFetchSuccess;
+  pr vate SearchRateCounter part c pantsFetchFa lure;
+  pr vate SearchRateCounter emptyCore;
+  pr vate SearchRateCounter emptyPart c pants;
+  pr vate SearchRateCounter emptySpaceT le;
+  pr vate SearchRateCounter emptySpaceAdm ns;
+  pr vate SearchRateCounter parallelFetchAttempts;
+  pr vate SearchRateCounter parallelFetchFa lure;
 
 
-  @Override
-  protected void doInnerPreprocess() {
-    innerSetup();
+  @Overr de
+  protected vo d do nnerPreprocess() {
+     nnerSetup();
   }
 
-  @Override
-  protected void innerSetup() {
-    coreFetcher = wireModule.getAudioSpaceCoreFetcher();
-    participantsFetcher = wireModule.getAudioSpaceParticipantsFetcher();
+  @Overr de
+  protected vo d  nnerSetup() {
+    coreFetc r = w reModule.getAud oSpaceCoreFetc r();
+    part c pantsFetc r = w reModule.getAud oSpacePart c pantsFetc r();
 
-    tweetsWithSpaceAdmins = getStageStat("tweets_with_audio_space_admins");
-    tweetsWithSpaceTitle = getStageStat("tweets_with_audio_space_title");
+    t etsW hSpaceAdm ns = getStageStat("t ets_w h_aud o_space_adm ns");
+    t etsW hSpaceT le = getStageStat("t ets_w h_aud o_space_t le");
     coreFetchSuccess = getStageStat("core_fetch_success");
-    coreFetchFailure = getStageStat("core_fetch_failure");
-    participantsFetchSuccess = getStageStat("participants_fetch_success");
-    participantsFetchFailure = getStageStat("participants_fetch_failure");
+    coreFetchFa lure = getStageStat("core_fetch_fa lure");
+    part c pantsFetchSuccess = getStageStat("part c pants_fetch_success");
+    part c pantsFetchFa lure = getStageStat("part c pants_fetch_fa lure");
     emptyCore = getStageStat("empty_core");
-    emptyParticipants = getStageStat("empty_participants");
-    emptySpaceTitle = getStageStat("empty_space_title");
-    emptySpaceAdmins = getStageStat("empty_space_admins");
+    emptyPart c pants = getStageStat("empty_part c pants");
+    emptySpaceT le = getStageStat("empty_space_t le");
+    emptySpaceAdm ns = getStageStat("empty_space_adm ns");
     parallelFetchAttempts = getStageStat("parallel_fetch_attempts");
-    parallelFetchFailure = getStageStat("parallel_fetch_failure");
+    parallelFetchFa lure = getStageStat("parallel_fetch_fa lure");
   }
 
-  private SearchRateCounter getStageStat(String statSuffix) {
-    return SearchRateCounter.export(getStageNamePrefix() + "_" + statSuffix);
+  pr vate SearchRateCounter getStageStat(Str ng statSuff x) {
+    return SearchRateCounter.export(getStageNa Pref x() + "_" + statSuff x);
   }
 
-  private Future<Tuple2<Try<Fetch.Result<AudioSpace>>, Try<Fetch.Result<Participants>>>>
-  tryRetrieveSpaceAdminAndTitle(IngesterTwitterMessage twitterMessage) {
-    Set<String> spaceIds = twitterMessage.getSpaceIds();
+  pr vate Future<Tuple2<Try<Fetch.Result<Aud oSpace>>, Try<Fetch.Result<Part c pants>>>>
+  tryRetr eveSpaceAdm nAndT le( ngesterTw ter ssage tw ter ssage) {
+    Set<Str ng> space ds = tw ter ssage.getSpace ds();
 
-    if (spaceIds.isEmpty()) {
+     f (space ds. sEmpty()) {
       return null;
     }
 
-    if (!(DeciderUtil.isAvailableForRandomRecipient(decider,
-        RETRIEVE_SPACE_ADMINS_AND_TITLE_DECIDER_KEY))) {
+     f (!(Dec derUt l. sAva lableForRandomRec p ent(dec der,
+        RETR EVE_SPACE_ADM NS_AND_T TLE_DEC DER_KEY))) {
       return null;
     }
 
-    String spaceId = spaceIds.iterator().next();
+    Str ng space d = space ds. erator().next();
 
-    // Query both columns in parallel.
-    parallelFetchAttempts.increment();
-    Future<Fetch.Result<AudioSpace>> core = coreFetcher.fetch(spaceId);
-    Future<Fetch.Result<Participants>> participants = participantsFetcher.fetch(spaceId);
+    // Query both columns  n parallel.
+    parallelFetchAttempts. ncre nt();
+    Future<Fetch.Result<Aud oSpace>> core = coreFetc r.fetch(space d);
+    Future<Fetch.Result<Part c pants>> part c pants = part c pantsFetc r.fetch(space d);
 
-    return Futures.join(core.liftToTry(), participants.liftToTry());
+    return Futures.jo n(core.l ftToTry(), part c pants.l ftToTry());
   }
 
-  @Override
-  protected CompletableFuture<IngesterTwitterMessage> innerRunStageV2(IngesterTwitterMessage
-                                                                            twitterMessage) {
-    Future<Tuple2<Try<Fetch.Result<AudioSpace>>, Try<Fetch.Result<Participants>>>>
-        tryRetrieveSpaceAdminAndTitle = tryRetrieveSpaceAdminAndTitle(twitterMessage);
+  @Overr de
+  protected CompletableFuture< ngesterTw ter ssage>  nnerRunStageV2( ngesterTw ter ssage
+                                                                            tw ter ssage) {
+    Future<Tuple2<Try<Fetch.Result<Aud oSpace>>, Try<Fetch.Result<Part c pants>>>>
+        tryRetr eveSpaceAdm nAndT le = tryRetr eveSpaceAdm nAndT le(tw ter ssage);
 
-    CompletableFuture<IngesterTwitterMessage> cf = new CompletableFuture<>();
+    CompletableFuture< ngesterTw ter ssage> cf = new CompletableFuture<>();
 
-    if (tryRetrieveSpaceAdminAndTitle == null) {
-      cf.complete(twitterMessage);
+     f (tryRetr eveSpaceAdm nAndT le == null) {
+      cf.complete(tw ter ssage);
     } else {
-      tryRetrieveSpaceAdminAndTitle.onSuccess(Function.cons(tries -> {
-        handleFutureOnSuccess(tries, twitterMessage);
-        cf.complete(twitterMessage);
-      })).onFailure(Function.cons(throwable -> {
-        handleFutureOnFailure();
-        cf.complete(twitterMessage);
+      tryRetr eveSpaceAdm nAndT le.onSuccess(Funct on.cons(tr es -> {
+        handleFutureOnSuccess(tr es, tw ter ssage);
+        cf.complete(tw ter ssage);
+      })).onFa lure(Funct on.cons(throwable -> {
+        handleFutureOnFa lure();
+        cf.complete(tw ter ssage);
       }));
     }
 
     return cf;
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not a IngesterTwitterMessage object: " + obj);
+  @Overr de
+  publ c vo d  nnerProcess(Object obj) throws StageExcept on {
+     f (!(obj  nstanceof  ngesterTw ter ssage)) {
+      throw new StageExcept on(t , "Object  s not a  ngesterTw ter ssage object: " + obj);
     }
-    IngesterTwitterMessage twitterMessage = (IngesterTwitterMessage) obj;
-    Future<Tuple2<Try<Fetch.Result<AudioSpace>>, Try<Fetch.Result<Participants>>>>
-        tryRetrieveSpaceAdminAndTitle = tryRetrieveSpaceAdminAndTitle(twitterMessage);
+     ngesterTw ter ssage tw ter ssage = ( ngesterTw ter ssage) obj;
+    Future<Tuple2<Try<Fetch.Result<Aud oSpace>>, Try<Fetch.Result<Part c pants>>>>
+        tryRetr eveSpaceAdm nAndT le = tryRetr eveSpaceAdm nAndT le(tw ter ssage);
 
-    if (tryRetrieveSpaceAdminAndTitle == null) {
-      emitAndCount(twitterMessage);
+     f (tryRetr eveSpaceAdm nAndT le == null) {
+      em AndCount(tw ter ssage);
       return;
     }
 
-    tryRetrieveSpaceAdminAndTitle.onSuccess(Function.cons(tries -> {
-            handleFutureOnSuccess(tries, twitterMessage);
-            emitAndCount(twitterMessage);
-          })).onFailure(Function.cons(throwable -> {
-            handleFutureOnFailure();
-            emitAndCount(twitterMessage);
+    tryRetr eveSpaceAdm nAndT le.onSuccess(Funct on.cons(tr es -> {
+            handleFutureOnSuccess(tr es, tw ter ssage);
+            em AndCount(tw ter ssage);
+          })).onFa lure(Funct on.cons(throwable -> {
+            handleFutureOnFa lure();
+            em AndCount(tw ter ssage);
           }));
   }
 
-  private void handleFutureOnSuccess(Tuple2<Try<Fetch.Result<AudioSpace>>,
-      Try<Fetch.Result<Participants>>> tries, IngesterTwitterMessage twitterMessage) {
-    handleCoreFetchTry(tries._1(), twitterMessage);
-    handleParticipantsFetchTry(tries._2(), twitterMessage);
+  pr vate vo d handleFutureOnSuccess(Tuple2<Try<Fetch.Result<Aud oSpace>>,
+      Try<Fetch.Result<Part c pants>>> tr es,  ngesterTw ter ssage tw ter ssage) {
+    handleCoreFetchTry(tr es._1(), tw ter ssage);
+    handlePart c pantsFetchTry(tr es._2(), tw ter ssage);
   }
 
-  private void handleFutureOnFailure() {
-    parallelFetchFailure.increment();
+  pr vate vo d handleFutureOnFa lure() {
+    parallelFetchFa lure. ncre nt();
   }
 
-  private void handleCoreFetchTry(
-      Try<Fetch.Result<AudioSpace>> fetchTry,
-      IngesterTwitterMessage twitterMessage) {
+  pr vate vo d handleCoreFetchTry(
+      Try<Fetch.Result<Aud oSpace>> fetchTry,
+       ngesterTw ter ssage tw ter ssage) {
 
-    if (fetchTry.isReturn()) {
-      coreFetchSuccess.increment();
-      addSpaceTitleToMessage(twitterMessage, fetchTry.get().v());
+     f (fetchTry. sReturn()) {
+      coreFetchSuccess. ncre nt();
+      addSpaceT leTo ssage(tw ter ssage, fetchTry.get().v());
     } else {
-      coreFetchFailure.increment();
+      coreFetchFa lure. ncre nt();
     }
   }
 
-  private void handleParticipantsFetchTry(
-      Try<Fetch.Result<Participants>> fetchTry,
-      IngesterTwitterMessage twitterMessage) {
+  pr vate vo d handlePart c pantsFetchTry(
+      Try<Fetch.Result<Part c pants>> fetchTry,
+       ngesterTw ter ssage tw ter ssage) {
 
-    if (fetchTry.isReturn()) {
-      participantsFetchSuccess.increment();
-      addSpaceAdminsToMessage(twitterMessage, fetchTry.get().v());
+     f (fetchTry. sReturn()) {
+      part c pantsFetchSuccess. ncre nt();
+      addSpaceAdm nsTo ssage(tw ter ssage, fetchTry.get().v());
     } else {
-      participantsFetchFailure.increment();
+      part c pantsFetchFa lure. ncre nt();
     }
   }
 
-  private void addSpaceTitleToMessage(
-      IngesterTwitterMessage twitterMessage,
-      Option<AudioSpace> audioSpace) {
+  pr vate vo d addSpaceT leTo ssage(
+       ngesterTw ter ssage tw ter ssage,
+      Opt on<Aud oSpace> aud oSpace) {
 
-    if (audioSpace.isDefined()) {
-      String audioSpaceTitle = audioSpace.get().getTitle();
-      if (StringUtils.isNotEmpty(audioSpaceTitle)) {
-        twitterMessage.setSpaceTitle(audioSpaceTitle);
-        tweetsWithSpaceTitle.increment();
+     f (aud oSpace. sDef ned()) {
+      Str ng aud oSpaceT le = aud oSpace.get().getT le();
+       f (Str ngUt ls. sNotEmpty(aud oSpaceT le)) {
+        tw ter ssage.setSpaceT le(aud oSpaceT le);
+        t etsW hSpaceT le. ncre nt();
       } else {
-        emptySpaceTitle.increment();
+        emptySpaceT le. ncre nt();
       }
     } else {
-      emptyCore.increment();
+      emptyCore. ncre nt();
     }
   }
 
-  private void addSpaceAdminsToMessage(
-      IngesterTwitterMessage twitterMessage,
-      Option<Participants> participants) {
+  pr vate vo d addSpaceAdm nsTo ssage(
+       ngesterTw ter ssage tw ter ssage,
+      Opt on<Part c pants> part c pants) {
 
-    if (participants.isDefined()) {
-      List<ParticipantUser> admins = getAdminsFromParticipants(participants.get());
-      if (!admins.isEmpty()) {
-        for (ParticipantUser admin : admins) {
-          addSpaceAdminToMessage(twitterMessage, admin);
+     f (part c pants. sDef ned()) {
+      L st<Part c pantUser> adm ns = getAdm nsFromPart c pants(part c pants.get());
+       f (!adm ns. sEmpty()) {
+        for (Part c pantUser adm n : adm ns) {
+          addSpaceAdm nTo ssage(tw ter ssage, adm n);
         }
-        tweetsWithSpaceAdmins.increment();
+        t etsW hSpaceAdm ns. ncre nt();
       } else {
-        emptySpaceAdmins.increment();
+        emptySpaceAdm ns. ncre nt();
       }
     } else {
-      emptyParticipants.increment();
+      emptyPart c pants. ncre nt();
     }
   }
 
-  private List<ParticipantUser> getAdminsFromParticipants(Participants participants) {
-    if (!participants.isSetAdmins()) {
-      return Lists.newArrayList();
+  pr vate L st<Part c pantUser> getAdm nsFromPart c pants(Part c pants part c pants) {
+     f (!part c pants. sSetAdm ns()) {
+      return L sts.newArrayL st();
     }
-    return participants.getAdmins();
+    return part c pants.getAdm ns();
   }
 
-  private void addSpaceAdminToMessage(IngesterTwitterMessage twitterMessage,
-                                      ParticipantUser admin) {
-    TwitterMessageUser.Builder userBuilder = new TwitterMessageUser.Builder();
-    if (admin.isSetTwitter_screen_name()
-        && StringUtils.isNotEmpty(admin.getTwitter_screen_name())) {
-      userBuilder.withScreenName(Optional.of(admin.getTwitter_screen_name()));
+  pr vate vo d addSpaceAdm nTo ssage( ngesterTw ter ssage tw ter ssage,
+                                      Part c pantUser adm n) {
+    Tw ter ssageUser.Bu lder userBu lder = new Tw ter ssageUser.Bu lder();
+     f (adm n. sSetTw ter_screen_na ()
+        && Str ngUt ls. sNotEmpty(adm n.getTw ter_screen_na ())) {
+      userBu lder.w hScreenNa (Opt onal.of(adm n.getTw ter_screen_na ()));
     }
-    if (admin.isSetDisplay_name() && StringUtils.isNotEmpty(admin.getDisplay_name())) {
-      userBuilder.withDisplayName(Optional.of(admin.getDisplay_name()));
+     f (adm n. sSetD splay_na () && Str ngUt ls. sNotEmpty(adm n.getD splay_na ())) {
+      userBu lder.w hD splayNa (Opt onal.of(adm n.getD splay_na ()));
     }
-    twitterMessage.addSpaceAdmin(userBuilder.build());
+    tw ter ssage.addSpaceAdm n(userBu lder.bu ld());
   }
 }

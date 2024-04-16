@@ -1,33 +1,33 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.stitch.NotFound
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.serverutil.DeviceSourceParser
-import com.twitter.tweetypie.thriftscala.DeviceSource
-import com.twitter.tweetypie.thriftscala.FieldByPath
+ mport com.tw ter.st ch.NotFound
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.repos ory._
+ mport com.tw ter.t etyp e.serverut l.Dev ceS ceParser
+ mport com.tw ter.t etyp e.thr ftscala.Dev ceS ce
+ mport com.tw ter.t etyp e.thr ftscala.F eldByPath
 
-object DeviceSourceHydrator {
-  type Type = ValueHydrator[Option[DeviceSource], TweetCtx]
+object Dev ceS ceHydrator {
+  type Type = ValueHydrator[Opt on[Dev ceS ce], T etCtx]
 
-  // WebOauthId is the created_via value for Macaw-Swift through Woodstar.
-  // We need to special-case it to return the same device_source as "web",
-  // since we can't map multiple created_via strings to one device_source.
-  val WebOauthId: String = s"oauth:${DeviceSourceParser.Web}"
+  //  bOauth d  s t  created_v a value for Macaw-Sw ft through Woodstar.
+  //   need to spec al-case   to return t  sa  dev ce_s ce as " b",
+  // s nce   can't map mult ple created_v a str ngs to one dev ce_s ce.
+  val  bOauth d: Str ng = s"oauth:${Dev ceS ceParser. b}"
 
-  val hydratedField: FieldByPath = fieldByPath(Tweet.DeviceSourceField)
+  val hydratedF eld: F eldByPath = f eldByPath(T et.Dev ceS ceF eld)
 
-  private def convertForWeb(createdVia: String) =
-    if (createdVia == DeviceSourceHydrator.WebOauthId) "web" else createdVia
+  pr vate def convertFor b(createdV a: Str ng) =
+     f (createdV a == Dev ceS ceHydrator. bOauth d) " b" else createdV a
 
-  def apply(repo: DeviceSourceRepository.Type): Type =
-    ValueHydrator[Option[DeviceSource], TweetCtx] { (_, ctx) =>
-      val req = convertForWeb(ctx.createdVia)
-      repo(req).liftToTry.map {
-        case Return(deviceSource) => ValueState.modified(Some(deviceSource))
-        case Throw(NotFound) => ValueState.UnmodifiedNone
-        case Throw(_) => ValueState.partial(None, hydratedField)
+  def apply(repo: Dev ceS ceRepos ory.Type): Type =
+    ValueHydrator[Opt on[Dev ceS ce], T etCtx] { (_, ctx) =>
+      val req = convertFor b(ctx.createdV a)
+      repo(req).l ftToTry.map {
+        case Return(dev ceS ce) => ValueState.mod f ed(So (dev ceS ce))
+        case Throw(NotFound) => ValueState.Unmod f edNone
+        case Throw(_) => ValueState.part al(None, hydratedF eld)
       }
-    }.onlyIf((curr, ctx) => curr.isEmpty && ctx.tweetFieldRequested(Tweet.DeviceSourceField))
+    }.only f((curr, ctx) => curr. sEmpty && ctx.t etF eldRequested(T et.Dev ceS ceF eld))
 }

@@ -2,135 +2,135 @@ syntax = "proto3";
 
 package tensorflow;
 
-import "tensorflow/core/framework/attr_value.proto";
-import "tensorflow/core/framework/node_def.proto";
-import "tensorflow/core/framework/op_def.proto";
+ mport "tensorflow/core/fra work/attr_value.proto";
+ mport "tensorflow/core/fra work/node_def.proto";
+ mport "tensorflow/core/fra work/op_def.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "FunctionProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/function_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "Funct onProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.fra work";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/fra work/funct on_go_proto";
 
-// A library is a set of named functions.
-message FunctionDefLibrary {
-  repeated FunctionDef function = 1;
-  repeated GradientDef gradient = 2;
-  repeated RegisteredGradient registered_gradients = 3;
+// A l brary  s a set of na d funct ons.
+ ssage Funct onDefL brary {
+  repeated Funct onDef funct on = 1;
+  repeated Grad entDef grad ent = 2;
+  repeated Reg steredGrad ent reg stered_grad ents = 3;
 }
 
-// A function can be instantiated when the runtime can bind every attr
-// with a value. When a GraphDef has a call to a function, it must
-// have binding for every attr defined in the signature.
+// A funct on can be  nstant ated w n t  runt   can b nd every attr
+// w h a value. W n a GraphDef has a call to a funct on,   must
+// have b nd ng for every attr def ned  n t  s gnature.
 //
-// TODO(zhifengc):
-//   * device spec, etc.
-message FunctionDef {
-  // The definition of the function's name, arguments, return values,
+// TODO(zh fengc):
+//   * dev ce spec, etc.
+ ssage Funct onDef {
+  // T  def n  on of t  funct on's na , argu nts, return values,
   // attrs etc.
-  OpDef signature = 1;
+  OpDef s gnature = 1;
 
-  // Attributes specific to this function definition.
-  map<string, AttrValue> attr = 5;
+  // Attr butes spec f c to t  funct on def n  on.
+  map<str ng, AttrValue> attr = 5;
 
-  // Attributes for function arguments. These attributes are the same set of
-  // valid attributes as to _Arg nodes.
-  message ArgAttrs {
-    map<string, AttrValue> attr = 1;
+  // Attr butes for funct on argu nts. T se attr butes are t  sa  set of
+  // val d attr butes as to _Arg nodes.
+   ssage ArgAttrs {
+    map<str ng, AttrValue> attr = 1;
   }
-  map<uint32, ArgAttrs> arg_attr = 7;
+  map<u nt32, ArgAttrs> arg_attr = 7;
 
-  // Unique IDs for each resource argument, used to track aliasing resources. If
-  // Argument A and Argument B alias each other, then
-  // resource_arg_unique_ids[A.index] == resource_arg_unique_ids[B.index].
+  // Un que  Ds for each res ce argu nt, used to track al as ng res ces.  f
+  // Argu nt A and Argu nt B al as each ot r, t n
+  // res ce_arg_un que_ ds[A. ndex] == res ce_arg_un que_ ds[B. ndex].
   //
-  // If this field is empty, none of the arguments could alias; otherwise, every
-  // resource argument should have an entry in this field.
+  //  f t  f eld  s empty, none of t  argu nts could al as; ot rw se, every
+  // res ce argu nt should have an entry  n t  f eld.
   //
-  // When instantiated, the unique IDs will be attached to the _Arg nodes'
-  // "_resource_arg_unique_id" attribute.
-  map<uint32, uint32> resource_arg_unique_id = 8;
+  // W n  nstant ated, t  un que  Ds w ll be attac d to t  _Arg nodes'
+  // "_res ce_arg_un que_ d" attr bute.
+  map<u nt32, u nt32> res ce_arg_un que_ d = 8;
 
-  // NOTE: field id 2 deleted on Jan 11, 2017, GraphDef version 21.
+  // NOTE: f eld  d 2 deleted on Jan 11, 2017, GraphDef vers on 21.
   reserved 2;
 
-  // In both of the following fields, there is the need to specify an
-  // output that is used as either the input to another node (in
-  // `node_def`) or as a return value of the function (in `ret`).
-  // Unlike the NodeDefs in GraphDef, we need to be able to specify a
-  // list in some cases (instead of just single outputs).  Also, we
-  // need to be able to deal with lists of unknown length (so the
-  // output index may not be known at function definition time).  So
-  // we use the following format instead:
-  // * "fun_in" where "fun_in" is the name of a function input arg in
-  //   the `signature` field above.  This represents that input, whether
-  //   it is a single tensor or a list.
-  // * "fun_in:0" gives the first element of a function input arg (a
-  //   non-list input is considered a list of length 1 for these
+  //  n both of t  follow ng f elds, t re  s t  need to spec fy an
+  // output that  s used as e  r t   nput to anot r node ( n
+  // `node_def`) or as a return value of t  funct on ( n `ret`).
+  // Unl ke t  NodeDefs  n GraphDef,   need to be able to spec fy a
+  // l st  n so  cases ( nstead of just s ngle outputs).  Also,  
+  // need to be able to deal w h l sts of unknown length (so t 
+  // output  ndex may not be known at funct on def n  on t  ).  So
+  //   use t  follow ng format  nstead:
+  // * "fun_ n" w re "fun_ n"  s t  na  of a funct on  nput arg  n
+  //   t  `s gnature` f eld above.  T  represents that  nput, w t r
+  //      s a s ngle tensor or a l st.
+  // * "fun_ n:0" g ves t  f rst ele nt of a funct on  nput arg (a
+  //   non-l st  nput  s cons dered a l st of length 1 for t se
   //   purposes).
-  // * "node:out" where "node" is the name of a node in `node_def` and
-  //   "out" is the name one of its op's output arguments (the name
-  //   comes from the OpDef of the node's op). This represents that
-  //   node's output, whether it is a single tensor or a list.
-  //   Note: We enforce that an op's output arguments are never
-  //   renamed in the backwards-compatibility test.
-  // * "node:out:0" gives the first element of a node output arg (a
-  //   non-list output is considered a list of length 1 for these
+  // * "node:out" w re "node"  s t  na  of a node  n `node_def` and
+  //   "out"  s t  na  one of  s op's output argu nts (t  na 
+  //   co s from t  OpDef of t  node's op). T  represents that
+  //   node's output, w t r    s a s ngle tensor or a l st.
+  //   Note:   enforce that an op's output argu nts are never
+  //   rena d  n t  backwards-compat b l y test.
+  // * "node:out:0" g ves t  f rst ele nt of a node output arg (a
+  //   non-l st output  s cons dered a l st of length 1 for t se
   //   purposes).
   //
-  // NOT CURRENTLY SUPPORTED (but may be in the future):
-  // * "node:out:-1" gives last element in a node output list
-  // * "node:out:1:" gives a list with all but the first element in a
-  //   node output list
-  // * "node:out::-1" gives a list with all but the last element in a
-  //   node output list
+  // NOT CURRENTLY SUPPORTED (but may be  n t  future):
+  // * "node:out:-1" g ves last ele nt  n a node output l st
+  // * "node:out:1:" g ves a l st w h all but t  f rst ele nt  n a
+  //   node output l st
+  // * "node:out::-1" g ves a l st w h all but t  last ele nt  n a
+  //   node output l st
 
-  // The body of the function.  Unlike the NodeDefs in a GraphDef, attrs
-  // may have values of type `placeholder` and the `input` field uses
-  // the "output" format above.
+  // T  body of t  funct on.  Unl ke t  NodeDefs  n a GraphDef, attrs
+  // may have values of type `placeholder` and t  ` nput` f eld uses
+  // t  "output" format above.
 
-  // By convention, "op" in node_def is resolved by consulting with a
-  // user-defined library first. If not resolved, "func" is assumed to
-  // be a builtin op.
+  // By convent on, "op"  n node_def  s resolved by consult ng w h a
+  // user-def ned l brary f rst.  f not resolved, "func"  s assu d to
+  // be a bu lt n op.
   repeated NodeDef node_def = 3;
 
-  // A mapping from the output arg names from `signature` to the
-  // outputs from `node_def` that should be returned by the function.
-  map<string, string> ret = 4;
+  // A mapp ng from t  output arg na s from `s gnature` to t 
+  // outputs from `node_def` that should be returned by t  funct on.
+  map<str ng, str ng> ret = 4;
 
-  // A mapping from control output names from `signature` to node names in
-  // `node_def` which should be control outputs of this function.
-  map<string, string> control_ret = 6;
+  // A mapp ng from control output na s from `s gnature` to node na s  n
+  // `node_def` wh ch should be control outputs of t  funct on.
+  map<str ng, str ng> control_ret = 6;
 }
 
-// GradientDef defines the gradient function of a function defined in
-// a function library.
+// Grad entDef def nes t  grad ent funct on of a funct on def ned  n
+// a funct on l brary.
 //
-// A gradient function g (specified by gradient_func) for a function f
-// (specified by function_name) must follow the following:
+// A grad ent funct on g (spec f ed by grad ent_func) for a funct on f
+// (spec f ed by funct on_na ) must follow t  follow ng:
 //
-// The function 'f' must be a numerical function which takes N inputs
-// and produces M outputs. Its gradient function 'g', which is a
-// function taking N + M inputs and produces N outputs.
+// T  funct on 'f' must be a nu r cal funct on wh ch takes N  nputs
+// and produces M outputs.  s grad ent funct on 'g', wh ch  s a
+// funct on tak ng N + M  nputs and produces N outputs.
 //
-// I.e. if we have
+//  .e.  f   have
 //    (y1, y2, ..., y_M) = f(x1, x2, ..., x_N),
-// then, g is
+// t n, g  s
 //    (dL/dx1, dL/dx2, ..., dL/dx_N) = g(x1, x2, ..., x_N,
 //                                      dL/dy1, dL/dy2, ..., dL/dy_M),
-// where L is a scalar-value function of (x1, x2, ..., xN) (e.g., the
-// loss function). dL/dx_i is the partial derivative of L with respect
-// to x_i.
-message GradientDef {
-  string function_name = 1;  // The function name.
-  string gradient_func = 2;  // The gradient function's name.
+// w re L  s a scalar-value funct on of (x1, x2, ..., xN) (e.g., t 
+// loss funct on). dL/dx_   s t  part al der vat ve of L w h respect
+// to x_ .
+ ssage Grad entDef {
+  str ng funct on_na  = 1;  // T  funct on na .
+  str ng grad ent_func = 2;  // T  grad ent funct on's na .
 }
 
-// RegisteredGradient stores a gradient function that is registered in the
-// gradients library and used in the ops of a function in the function library.
-// Unlike GradientDef, these gradients are identified by op type, and not
-// directly linked to any function.
-message RegisteredGradient {
-  string gradient_func = 1;       // The gradient function's name.
-  string registered_op_type = 2;  // The gradient function's registered op type.
+// Reg steredGrad ent stores a grad ent funct on that  s reg stered  n t 
+// grad ents l brary and used  n t  ops of a funct on  n t  funct on l brary.
+// Unl ke Grad entDef, t se grad ents are  dent f ed by op type, and not
+// d rectly l nked to any funct on.
+ ssage Reg steredGrad ent {
+  str ng grad ent_func = 1;       // T  grad ent funct on's na .
+  str ng reg stered_op_type = 2;  // T  grad ent funct on's reg stered op type.
 }

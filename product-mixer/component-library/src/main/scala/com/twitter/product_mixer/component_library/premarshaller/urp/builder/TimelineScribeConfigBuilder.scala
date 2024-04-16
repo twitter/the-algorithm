@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.component_library.premarshaller.urp.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.urp.bu lder
 
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PageBody
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PageHeader
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PageNavBar
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urp.PageBody
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urp.Page ader
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urp.PageNavBar
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neScr beConf g
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * Trait for our builder which given a query and page info will return an `Option[TimelineScribeConfig]`
+ * Tra  for   bu lder wh ch g ven a query and page  nfo w ll return an `Opt on[T  l neScr beConf g]`
  *
  * @tparam Query
  */
-trait TimelineScribeConfigBuilder[-Query <: PipelineQuery] {
+tra  T  l neScr beConf gBu lder[-Query <: P pel neQuery] {
 
-  def build(
+  def bu ld(
     query: Query,
     pageBody: PageBody,
-    pageHeader: Option[PageHeader],
-    pageNavBar: Option[PageNavBar]
-  ): Option[TimelineScribeConfig]
+    page ader: Opt on[Page ader],
+    pageNavBar: Opt on[PageNavBar]
+  ): Opt on[T  l neScr beConf g]
 }

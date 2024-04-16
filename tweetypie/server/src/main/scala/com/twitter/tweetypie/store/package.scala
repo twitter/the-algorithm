@@ -1,16 +1,16 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.twitter.tweetypie.thriftscala.CachedTweet
-import com.twitter.context.TwitterContext
+ mport com.fasterxml.jackson.core.JsonGenerator
+ mport com.tw ter.t etyp e.thr ftscala.Cac dT et
+ mport com.tw ter.context.Tw terContext
 
 package object store {
-  type JsonGen = JsonGenerator => Unit
+  type JsonGen = JsonGenerator => Un 
 
-  // Bring Tweetypie permitted TwitterContext into scope
-  val TwitterContext: TwitterContext =
-    com.twitter.context.TwitterContext(com.twitter.tweetypie.TwitterContextPermit)
+  // Br ng T etyp e perm ted Tw terContext  nto scope
+  val Tw terContext: Tw terContext =
+    com.tw ter.context.Tw terContext(com.tw ter.t etyp e.Tw terContextPerm )
 
-  def cachedTweetFromUnhydratedTweet(tweet: Tweet): CachedTweet =
-    CachedTweet(tweet = tweet)
+  def cac dT etFromUnhydratedT et(t et: T et): Cac dT et =
+    Cac dT et(t et = t et)
 }

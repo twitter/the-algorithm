@@ -1,18 +1,18 @@
-package com.twitter.follow_recommendations.common.base
+package com.tw ter.follow_recom ndat ons.common.base
 
-import com.twitter.follow_recommendations.common.models.FilterReason
+ mport com.tw ter.follow_recom ndat ons.common.models.F lterReason
 
-sealed trait PredicateResult {
+sealed tra  Pred cateResult {
   def value: Boolean
 }
 
-object PredicateResult {
+object Pred cateResult {
 
-  case object Valid extends PredicateResult {
-    override val value = true
+  case object Val d extends Pred cateResult {
+    overr de val value = true
   }
 
-  case class Invalid(reasons: Set[FilterReason] = Set.empty[FilterReason]) extends PredicateResult {
-    override val value = false
+  case class  nval d(reasons: Set[F lterReason] = Set.empty[F lterReason]) extends Pred cateResult {
+    overr de val value = false
   }
 }

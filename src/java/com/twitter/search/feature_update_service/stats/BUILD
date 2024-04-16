@@ -1,11 +1,11 @@
-java_library(
-    sources = ["*.java"],
+java_l brary(
+    s ces = ["*.java"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/inject:guice",
-        "src/java/com/twitter/common/base",
-        "src/java/com/twitter/search/common/metrics",
-        "src/thrift/com/twitter/search/feature_update_service/thrift:thrift-java",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/com/google/ nject:gu ce",
+        "src/java/com/tw ter/common/base",
+        "src/java/com/tw ter/search/common/ tr cs",
+        "src/thr ft/com/tw ter/search/feature_update_serv ce/thr ft:thr ft-java",
     ],
 )

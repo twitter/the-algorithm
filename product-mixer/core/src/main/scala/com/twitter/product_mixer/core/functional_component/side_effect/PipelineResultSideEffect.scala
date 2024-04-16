@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.core.functional_component.side_effect
+package com.tw ter.product_m xer.core.funct onal_component.s de_effect
 
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect.Inputs
-import com.twitter.product_mixer.core.model.common
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.funct onal_component.s de_effect.P pel neResultS deEffect. nputs
+ mport com.tw ter.product_m xer.core.model.common
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.marshall ng.HasMarshall ng
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * A side-effect that can be run with a pipeline result before transport marshalling
+ * A s de-effect that can be run w h a p pel ne result before transport marshall ng
  *
- * @see SideEffect
+ * @see S deEffect
  *
- * @tparam Query pipeline query
- * @tparam ResultType response after domain marshalling
+ * @tparam Query p pel ne query
+ * @tparam ResultType response after doma n marshall ng
  */
-trait PipelineResultSideEffect[-Query <: PipelineQuery, -ResultType <: HasMarshalling]
-    extends SideEffect[Inputs[Query, ResultType]]
-    with PipelineResultSideEffect.SupportsConditionally[Query, ResultType]
+tra  P pel neResultS deEffect[-Query <: P pel neQuery, -ResultType <: HasMarshall ng]
+    extends S deEffect[ nputs[Query, ResultType]]
+    w h P pel neResultS deEffect.SupportsCond  onally[Query, ResultType]
 
-object PipelineResultSideEffect {
+object P pel neResultS deEffect {
 
   /**
-   * Mixin for when you want to conditionally run a [[PipelineResultSideEffect]]
+   * M x n for w n   want to cond  onally run a [[P pel neResultS deEffect]]
    *
-   * This is a thin wrapper around [[common.Conditionally]] exposing a nicer API for the [[PipelineResultSideEffect]] specific use-case.
+   * T   s a th n wrapper around [[common.Cond  onally]] expos ng a n cer AP  for t  [[P pel neResultS deEffect]] spec f c use-case.
    */
-  trait Conditionally[-Query <: PipelineQuery, -ResultType <: HasMarshalling]
-      extends common.Conditionally[Inputs[Query, ResultType]] {
-    _: PipelineResultSideEffect[Query, ResultType] =>
+  tra  Cond  onally[-Query <: P pel neQuery, -ResultType <: HasMarshall ng]
+      extends common.Cond  onally[ nputs[Query, ResultType]] {
+    _: P pel neResultS deEffect[Query, ResultType] =>
 
-    /** @see [[common.Conditionally.onlyIf]] */
-    def onlyIf(
+    /** @see [[common.Cond  onally.only f]] */
+    def only f(
       query: Query,
-      selectedCandidates: Seq[CandidateWithDetails],
-      remainingCandidates: Seq[CandidateWithDetails],
-      droppedCandidates: Seq[CandidateWithDetails],
+      selectedCand dates: Seq[Cand dateW hDeta ls],
+      rema n ngCand dates: Seq[Cand dateW hDeta ls],
+      droppedCand dates: Seq[Cand dateW hDeta ls],
       response: ResultType
     ): Boolean
 
-    override final def onlyIf(input: Inputs[Query, ResultType]): Boolean =
-      onlyIf(
-        input.query,
-        input.selectedCandidates,
-        input.remainingCandidates,
-        input.droppedCandidates,
-        input.response)
+    overr de f nal def only f( nput:  nputs[Query, ResultType]): Boolean =
+      only f(
+         nput.query,
+         nput.selectedCand dates,
+         nput.rema n ngCand dates,
+         nput.droppedCand dates,
+         nput.response)
 
   }
 
-  type SupportsConditionally[-Query <: PipelineQuery, -ResultType <: HasMarshalling] =
-    common.SupportsConditionally[Inputs[Query, ResultType]]
+  type SupportsCond  onally[-Query <: P pel neQuery, -ResultType <: HasMarshall ng] =
+    common.SupportsCond  onally[ nputs[Query, ResultType]]
 
-  case class Inputs[+Query <: PipelineQuery, +ResultType <: HasMarshalling](
+  case class  nputs[+Query <: P pel neQuery, +ResultType <: HasMarshall ng](
     query: Query,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
+    selectedCand dates: Seq[Cand dateW hDeta ls],
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    droppedCand dates: Seq[Cand dateW hDeta ls],
     response: ResultType)
 }

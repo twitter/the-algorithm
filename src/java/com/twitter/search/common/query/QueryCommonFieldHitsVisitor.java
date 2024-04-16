@@ -1,160 +1,160 @@
-package com.twitter.search.common.query;
+package com.tw ter.search.common.query;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+ mport java.ut l.Collect ons;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
+ mport java.ut l.logg ng.Level;
+ mport java.ut l.logg ng.Logger;
 
-import com.google.common.collect.Sets;
+ mport com.google.common.collect.Sets;
 
-import com.twitter.search.queryparser.query.Conjunction;
-import com.twitter.search.queryparser.query.Disjunction;
-import com.twitter.search.queryparser.query.Phrase;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.SpecialTerm;
-import com.twitter.search.queryparser.query.Term;
-import com.twitter.search.queryparser.query.search.Link;
-import com.twitter.search.queryparser.query.search.SearchOperator;
-import com.twitter.search.queryparser.query.search.SearchQueryVisitor;
+ mport com.tw ter.search.queryparser.query.Conjunct on;
+ mport com.tw ter.search.queryparser.query.D sjunct on;
+ mport com.tw ter.search.queryparser.query.Phrase;
+ mport com.tw ter.search.queryparser.query.Query;
+ mport com.tw ter.search.queryparser.query.QueryParserExcept on;
+ mport com.tw ter.search.queryparser.query.Spec alTerm;
+ mport com.tw ter.search.queryparser.query.Term;
+ mport com.tw ter.search.queryparser.query.search.L nk;
+ mport com.tw ter.search.queryparser.query.search.SearchOperator;
+ mport com.tw ter.search.queryparser.query.search.SearchQueryV s or;
 
 /**
- * Visitor to track the fields hits of each node
- * Returns the common fields among conjunctions and the union of the fields amongst disjunctions
+ * V s or to track t  f elds h s of each node
+ * Returns t  common f elds among conjunct ons and t  un on of t  f elds amongst d sjunct ons
  */
-public final class QueryCommonFieldHitsVisitor extends SearchQueryVisitor<Set<String>> {
+publ c f nal class QueryCommonF eldH sV s or extends SearchQueryV s or<Set<Str ng>> {
 
-  private static final Logger LOG = Logger.getLogger(QueryCommonFieldHitsVisitor.class.getName());
+  pr vate stat c f nal Logger LOG = Logger.getLogger(QueryCommonF eldH sV s or.class.getNa ());
 
-  private Map<Query, Integer> nodeToRankMap;
-  private Map<Integer, List<String>> hitFieldsByRank;
+  pr vate Map<Query,  nteger> nodeToRankMap;
+  pr vate Map< nteger, L st<Str ng>> h F eldsByRank;
 
   /**
-   * Find query term hit intersections based on hitmap given by HitAttributeHelper
+   * F nd query term h   ntersect ons based on h map g ven by H Attr bute lper
    *
-   * @param hitAttributeHelper the HitAttributeHelper
-   * @param docID documentID
-   * @param query the query searched
-   * @return a set of hit fields in String representation
+   * @param h Attr bute lper t  H Attr bute lper
+   * @param doc D docu nt D
+   * @param query t  query searc d
+   * @return a set of h  f elds  n Str ng representat on
    */
-  public static Set<String> findIntersection(
-      HitAttributeHelper hitAttributeHelper,
-      int docID,
+  publ c stat c Set<Str ng> f nd ntersect on(
+      H Attr bute lper h Attr bute lper,
+       nt doc D,
       Query query) {
-    return findIntersection(hitAttributeHelper.getNodeToRankMap(),
-                            hitAttributeHelper.getHitAttribution(docID),
+    return f nd ntersect on(h Attr bute lper.getNodeToRankMap(),
+                            h Attr bute lper.getH Attr but on(doc D),
                             query);
   }
 
   /**
-   * Find query term hit intersections based on hitmap given by HitAttributeHelper
+   * F nd query term h   ntersect ons based on h map g ven by H Attr bute lper
    *
-   * @param nodeToRankMap the map of query node to its integer rank value
-   * @param hitFieldsByRank map of rank to list of hit fields in String representation
-   * @param query the query searched
-   * @return a set of hit fields in String representation
+   * @param nodeToRankMap t  map of query node to  s  nteger rank value
+   * @param h F eldsByRank map of rank to l st of h  f elds  n Str ng representat on
+   * @param query t  query searc d
+   * @return a set of h  f elds  n Str ng representat on
    */
-  public static Set<String> findIntersection(
-      Map<Query, Integer> nodeToRankMap,
-      Map<Integer, List<String>> hitFieldsByRank,
+  publ c stat c Set<Str ng> f nd ntersect on(
+      Map<Query,  nteger> nodeToRankMap,
+      Map< nteger, L st<Str ng>> h F eldsByRank,
       Query query) {
-    QueryCommonFieldHitsVisitor visitor =
-        new QueryCommonFieldHitsVisitor(nodeToRankMap, hitFieldsByRank);
+    QueryCommonF eldH sV s or v s or =
+        new QueryCommonF eldH sV s or(nodeToRankMap, h F eldsByRank);
     try {
-      Set<String> returnSet = query.accept(visitor);
+      Set<Str ng> returnSet = query.accept(v s or);
       return returnSet;
-    } catch (QueryParserException e) {
-      LOG.log(Level.SEVERE, "Could not find intersection for query [" + query + "]: ", e);
-      return Collections.emptySet();
+    } catch (QueryParserExcept on e) {
+      LOG.log(Level.SEVERE, "Could not f nd  ntersect on for query [" + query + "]: ", e);
+      return Collect ons.emptySet();
     }
   }
 
-  private QueryCommonFieldHitsVisitor(Map<Query, Integer> nodeToRankMap,
-                                      Map<Integer, List<String>> hitFieldsByRank) {
-    this.nodeToRankMap = nodeToRankMap;
-    this.hitFieldsByRank = hitFieldsByRank;
+  pr vate QueryCommonF eldH sV s or(Map<Query,  nteger> nodeToRankMap,
+                                      Map< nteger, L st<Str ng>> h F eldsByRank) {
+    t .nodeToRankMap = nodeToRankMap;
+    t .h F eldsByRank = h F eldsByRank;
   }
 
-  @Override
-  public Set<String> visit(Disjunction disjunction) throws QueryParserException {
-    Set<String> fieldHitIntersections = Sets.newHashSet();
-    for (Query child : disjunction.getChildren()) {
-      fieldHitIntersections.addAll(child.accept(this));
+  @Overr de
+  publ c Set<Str ng> v s (D sjunct on d sjunct on) throws QueryParserExcept on {
+    Set<Str ng> f eldH  ntersect ons = Sets.newHashSet();
+    for (Query ch ld : d sjunct on.getCh ldren()) {
+      f eldH  ntersect ons.addAll(ch ld.accept(t ));
     }
-    return fieldHitIntersections;
+    return f eldH  ntersect ons;
   }
 
-  @Override
-  public Set<String> visit(Conjunction conjunction) throws QueryParserException {
-    List<Query> children = conjunction.getChildren();
-    if (!children.isEmpty()) {
-      boolean initializedIntersections = false;
-      Set<String> fieldHitIntersections = Sets.newHashSet();
-      for (Query child : children) {
-        Set<String> hits = child.accept(this);
-        if (hits.isEmpty()) {
-          // if it is empty, it means this query node is not of term type
-          // and we do not include these in the field intersection
-          // eg. cache filters, proximity groups
-          continue;
+  @Overr de
+  publ c Set<Str ng> v s (Conjunct on conjunct on) throws QueryParserExcept on {
+    L st<Query> ch ldren = conjunct on.getCh ldren();
+     f (!ch ldren. sEmpty()) {
+      boolean  n  al zed ntersect ons = false;
+      Set<Str ng> f eldH  ntersect ons = Sets.newHashSet();
+      for (Query ch ld : ch ldren) {
+        Set<Str ng> h s = ch ld.accept(t );
+         f (h s. sEmpty()) {
+          //  f    s empty,    ans t  query node  s not of term type
+          // and   do not  nclude t se  n t  f eld  ntersect on
+          // eg. cac  f lters, prox m y groups
+          cont nue;
         }
-        if (!initializedIntersections) {
-          fieldHitIntersections.addAll(hits);
-          initializedIntersections = true;
+         f (! n  al zed ntersect ons) {
+          f eldH  ntersect ons.addAll(h s);
+           n  al zed ntersect ons = true;
         } else {
-          fieldHitIntersections.retainAll(hits);
+          f eldH  ntersect ons.reta nAll(h s);
         }
       }
-      return fieldHitIntersections;
+      return f eldH  ntersect ons;
     }
-    return Collections.emptySet();
+    return Collect ons.emptySet();
   }
 
-  @Override
-  public Set<String> visit(Term term) throws QueryParserException {
-    Set<String> fieldHitIntersections = Sets.newHashSet();
-    Integer rank = nodeToRankMap.get(term);
-    if (rank != null) {
-      List<String> fields = hitFieldsByRank.get(rank);
-      // for disjunction cases where a term may not have any hits
-      if (fields != null) {
-        fieldHitIntersections.addAll(fields);
+  @Overr de
+  publ c Set<Str ng> v s (Term term) throws QueryParserExcept on {
+    Set<Str ng> f eldH  ntersect ons = Sets.newHashSet();
+     nteger rank = nodeToRankMap.get(term);
+     f (rank != null) {
+      L st<Str ng> f elds = h F eldsByRank.get(rank);
+      // for d sjunct on cases w re a term may not have any h s
+       f (f elds != null) {
+        f eldH  ntersect ons.addAll(f elds);
       }
     }
-    return fieldHitIntersections;
+    return f eldH  ntersect ons;
   }
 
-  @Override
-  public Set<String> visit(SpecialTerm specialTerm) throws QueryParserException {
-    // This is way of splitting @mentions ensures consistency with way the lucene query is built in
+  @Overr de
+  publ c Set<Str ng> v s (Spec alTerm spec alTerm) throws QueryParserExcept on {
+    // T   s way of spl t ng @ nt ons ensures cons stency w h way t  lucene query  s bu lt  n
     // expertsearch
-    if (specialTerm.getType() == SpecialTerm.Type.MENTION && specialTerm.getValue().contains("_")) {
-      Phrase phrase = new Phrase(specialTerm.getValue().split("_"));
-      return phrase.accept(this);
+     f (spec alTerm.getType() == Spec alTerm.Type.MENT ON && spec alTerm.getValue().conta ns("_")) {
+      Phrase phrase = new Phrase(spec alTerm.getValue().spl ("_"));
+      return phrase.accept(t );
     }
-    return specialTerm.toTermOrPhrase().accept(this);
+    return spec alTerm.toTermOrPhrase().accept(t );
   }
 
-  @Override
-  public Set<String> visit(SearchOperator operator) throws QueryParserException {
-    return Collections.emptySet();
+  @Overr de
+  publ c Set<Str ng> v s (SearchOperator operator) throws QueryParserExcept on {
+    return Collect ons.emptySet();
   }
 
-  @Override
-  public Set<String> visit(Link link) throws QueryParserException {
-    return link.toPhrase().accept(this);
+  @Overr de
+  publ c Set<Str ng> v s (L nk l nk) throws QueryParserExcept on {
+    return l nk.toPhrase().accept(t );
   }
 
-  @Override
-  public Set<String> visit(Phrase phrase) throws QueryParserException {
-    // All terms in the phrase should return the same hits fields, just check the first one
-    List<String> terms = phrase.getTerms();
-    if (!terms.isEmpty()) {
+  @Overr de
+  publ c Set<Str ng> v s (Phrase phrase) throws QueryParserExcept on {
+    // All terms  n t  phrase should return t  sa  h s f elds, just c ck t  f rst one
+    L st<Str ng> terms = phrase.getTerms();
+     f (!terms. sEmpty()) {
       Term term = new Term(phrase.getTerms().get(0));
-      return term.accept(this);
+      return term.accept(t );
     }
-    return Collections.emptySet();
+    return Collect ons.emptySet();
   }
 }

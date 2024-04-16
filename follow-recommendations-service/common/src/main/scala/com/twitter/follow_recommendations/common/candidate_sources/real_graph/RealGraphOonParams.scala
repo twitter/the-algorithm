@@ -1,25 +1,25 @@
-package com.twitter.follow_recommendations.common.candidate_sources.real_graph
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.real_graph
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
 object RealGraphOonParams {
-  case object IncludeRealGraphOonCandidates
+  case object  ncludeRealGraphOonCand dates
       extends FSParam[Boolean](
-        "real_graph_oon_include_candidates",
+        "real_graph_oon_ nclude_cand dates",
         false
       )
-  case object TryToReadRealGraphOonCandidates
+  case object TryToReadRealGraphOonCand dates
       extends FSParam[Boolean](
-        "real_graph_oon_try_to_read_candidates",
+        "real_graph_oon_try_to_read_cand dates",
         false
       )
   case object RealGraphOonResultCountThreshold
-      extends FSBoundedParam[Int](
+      extends FSBoundedParam[ nt](
         "real_graph_oon_result_count_threshold",
         default = 1,
-        min = 0,
-        max = Integer.MAX_VALUE
+        m n = 0,
+        max =  nteger.MAX_VALUE
       )
 
   case object UseV2
@@ -32,15 +32,15 @@ object RealGraphOonParams {
       extends FSBoundedParam[Double](
         "real_graph_oon_score_threshold",
         default = 0.26,
-        min = 0,
+        m n = 0,
         max = 1.0
       )
 
   case object MaxResults
-      extends FSBoundedParam[Int](
+      extends FSBoundedParam[ nt](
         "real_graph_oon_max_results",
         default = 200,
-        min = 0,
+        m n = 0,
         max = 1000
       )
 

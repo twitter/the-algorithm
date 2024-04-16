@@ -1,325 +1,325 @@
-package com.twitter.home_mixer.model
+package com.tw ter.ho _m xer.model
 
-import com.twitter.core_workflows.user_model.{thriftscala => um}
-import com.twitter.dal.personal_data.{thriftjava => pd}
-import com.twitter.gizmoduck.{thriftscala => gt}
-import com.twitter.home_mixer.{thriftscala => hmt}
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.BoolDataRecordCompatible
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordFeature
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordOptionalFeature
-import com.twitter.product_mixer.core.feature.datarecord.DoubleDataRecordCompatible
-import com.twitter.product_mixer.core.feature.datarecord.LongDiscreteDataRecordCompatible
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TopicContextFunctionalityType
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.search.common.features.{thriftscala => sc}
-import com.twitter.search.earlybird.{thriftscala => eb}
-import com.twitter.timelinemixer.clients.manhattan.DismissInfo
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseV3
-import com.twitter.timelinemixer.injection.model.candidate.AudioSpaceMetaData
-import com.twitter.timelines.conversation_features.v1.thriftscala.ConversationFeatures
-import com.twitter.timelines.impression.{thriftscala => imp}
-import com.twitter.timelines.impressionbloomfilter.{thriftscala => blm}
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import com.twitter.timelines.prediction.features.engagement_features.EngagementDataRecordFeatures
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
-import com.twitter.timelines.prediction.features.request_context.RequestContextFeatures
-import com.twitter.timelines.service.{thriftscala => tst}
-import com.twitter.timelineservice.model.FeedbackEntry
-import com.twitter.timelineservice.suggests.logging.candidate_tweet_source_id.{thriftscala => cts}
-import com.twitter.timelineservice.suggests.{thriftscala => st}
-import com.twitter.tsp.{thriftscala => tsp}
-import com.twitter.tweetconvosvc.tweet_ancestor.{thriftscala => ta}
-import com.twitter.util.Time
+ mport com.tw ter.core_workflows.user_model.{thr ftscala => um}
+ mport com.tw ter.dal.personal_data.{thr ftjava => pd}
+ mport com.tw ter.g zmoduck.{thr ftscala => gt}
+ mport com.tw ter.ho _m xer.{thr ftscala => hmt}
+ mport com.tw ter.ml.ap .constant.SharedFeatures
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.FeatureW hDefaultOnFa lure
+ mport com.tw ter.product_m xer.core.feature.datarecord.BoolDataRecordCompat ble
+ mport com.tw ter.product_m xer.core.feature.datarecord.DataRecordFeature
+ mport com.tw ter.product_m xer.core.feature.datarecord.DataRecordOpt onalFeature
+ mport com.tw ter.product_m xer.core.feature.datarecord.DoubleDataRecordCompat ble
+ mport com.tw ter.product_m xer.core.feature.datarecord.LongD screteDataRecordCompat ble
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Top cContextFunct onal yType
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.search.common.features.{thr ftscala => sc}
+ mport com.tw ter.search.earlyb rd.{thr ftscala => eb}
+ mport com.tw ter.t  l nem xer.cl ents.manhattan.D sm ss nfo
+ mport com.tw ter.t  l nem xer.cl ents.pers stence.T  l neResponseV3
+ mport com.tw ter.t  l nem xer. nject on.model.cand date.Aud oSpace taData
+ mport com.tw ter.t  l nes.conversat on_features.v1.thr ftscala.Conversat onFeatures
+ mport com.tw ter.t  l nes. mpress on.{thr ftscala =>  mp}
+ mport com.tw ter.t  l nes. mpress onbloomf lter.{thr ftscala => blm}
+ mport com.tw ter.t  l nes.model.User d
+ mport com.tw ter.t  l nes.pred ct on.features.common.T  l nesSharedFeatures
+ mport com.tw ter.t  l nes.pred ct on.features.engage nt_features.Engage ntDataRecordFeatures
+ mport com.tw ter.t  l nes.pred ct on.features.recap.RecapFeatures
+ mport com.tw ter.t  l nes.pred ct on.features.request_context.RequestContextFeatures
+ mport com.tw ter.t  l nes.serv ce.{thr ftscala => tst}
+ mport com.tw ter.t  l neserv ce.model.FeedbackEntry
+ mport com.tw ter.t  l neserv ce.suggests.logg ng.cand date_t et_s ce_ d.{thr ftscala => cts}
+ mport com.tw ter.t  l neserv ce.suggests.{thr ftscala => st}
+ mport com.tw ter.tsp.{thr ftscala => tsp}
+ mport com.tw ter.t etconvosvc.t et_ancestor.{thr ftscala => ta}
+ mport com.tw ter.ut l.T  
 
-object HomeFeatures {
-  // Candidate Features
-  object AncestorsFeature extends Feature[TweetCandidate, Seq[ta.TweetAncestor]]
-  object AudioSpaceMetaDataFeature extends Feature[TweetCandidate, Option[AudioSpaceMetaData]]
-  object TwitterListIdFeature extends Feature[TweetCandidate, Option[Long]]
-
-  /**
-   * For Retweets, this should refer to the retweeting user. Use [[SourceUserIdFeature]] if you want to know
-   * who created the Tweet that was retweeted.
-   */
-  object AuthorIdFeature
-      extends DataRecordOptionalFeature[TweetCandidate, Long]
-      with LongDiscreteDataRecordCompatible {
-    override val featureName: String = SharedFeatures.AUTHOR_ID.getFeatureName
-    override val personalDataTypes: Set[pd.PersonalDataType] = Set(pd.PersonalDataType.UserId)
-  }
-
-  object AuthorIsBlueVerifiedFeature extends Feature[TweetCandidate, Boolean]
-  object AuthorIsGoldVerifiedFeature extends Feature[TweetCandidate, Boolean]
-  object AuthorIsGrayVerifiedFeature extends Feature[TweetCandidate, Boolean]
-  object AuthorIsLegacyVerifiedFeature extends Feature[TweetCandidate, Boolean]
-  object AuthorIsCreatorFeature extends Feature[TweetCandidate, Boolean]
-  object AuthorIsProtectedFeature extends Feature[TweetCandidate, Boolean]
-
-  object AuthoredByContextualUserFeature extends Feature[TweetCandidate, Boolean]
-  object CachedCandidatePipelineIdentifierFeature extends Feature[TweetCandidate, Option[String]]
-  object CandidateSourceIdFeature
-      extends Feature[TweetCandidate, Option[cts.CandidateTweetSourceId]]
-  object ConversationFeature extends Feature[TweetCandidate, Option[ConversationFeatures]]
+object Ho Features {
+  // Cand date Features
+  object AncestorsFeature extends Feature[T etCand date, Seq[ta.T etAncestor]]
+  object Aud oSpace taDataFeature extends Feature[T etCand date, Opt on[Aud oSpace taData]]
+  object Tw terL st dFeature extends Feature[T etCand date, Opt on[Long]]
 
   /**
-   * This field should be set to the focal Tweet's tweetId for all tweets which are expected to
-   * be rendered in the same convo module. For non-convo module Tweets, this will be
-   * set to None. Note this is different from how TweetyPie defines ConversationId which is defined
-   * on all Tweets and points to the root tweet. This feature is used for grouping convo modules together.
+   * For Ret ets, t  should refer to t  ret et ng user. Use [[S ceUser dFeature]]  f   want to know
+   * who created t  T et that was ret eted.
    */
-  object ConversationModuleFocalTweetIdFeature extends Feature[TweetCandidate, Option[Long]]
+  object Author dFeature
+      extends DataRecordOpt onalFeature[T etCand date, Long]
+      w h LongD screteDataRecordCompat ble {
+    overr de val featureNa : Str ng = SharedFeatures.AUTHOR_ D.getFeatureNa 
+    overr de val personalDataTypes: Set[pd.PersonalDataType] = Set(pd.PersonalDataType.User d)
+  }
+
+  object Author sBlueVer f edFeature extends Feature[T etCand date, Boolean]
+  object Author sGoldVer f edFeature extends Feature[T etCand date, Boolean]
+  object Author sGrayVer f edFeature extends Feature[T etCand date, Boolean]
+  object Author sLegacyVer f edFeature extends Feature[T etCand date, Boolean]
+  object Author sCreatorFeature extends Feature[T etCand date, Boolean]
+  object Author sProtectedFeature extends Feature[T etCand date, Boolean]
+
+  object AuthoredByContextualUserFeature extends Feature[T etCand date, Boolean]
+  object Cac dCand dateP pel ne dent f erFeature extends Feature[T etCand date, Opt on[Str ng]]
+  object Cand dateS ce dFeature
+      extends Feature[T etCand date, Opt on[cts.Cand dateT etS ce d]]
+  object Conversat onFeature extends Feature[T etCand date, Opt on[Conversat onFeatures]]
 
   /**
-   * This field should always be set to the root Tweet in a conversation for all Tweets. For replies, this will
-   * point back to the root Tweet. For non-replies, this will be the candidate's Tweet id. This is consistent with
-   * the TweetyPie definition of ConversationModuleId.
+   * T  f eld should be set to t  focal T et's t et d for all t ets wh ch are expected to
+   * be rendered  n t  sa  convo module. For non-convo module T ets, t  w ll be
+   * set to None. Note t   s d fferent from how T etyP e def nes Conversat on d wh ch  s def ned
+   * on all T ets and po nts to t  root t et. T  feature  s used for group ng convo modules toget r.
    */
-  object ConversationModuleIdFeature extends Feature[TweetCandidate, Option[Long]]
-  object DirectedAtUserIdFeature extends Feature[TweetCandidate, Option[Long]]
-  object EarlybirdFeature extends Feature[TweetCandidate, Option[sc.ThriftTweetFeatures]]
-  object EarlybirdScoreFeature extends Feature[TweetCandidate, Option[Double]]
-  object EarlybirdSearchResultFeature extends Feature[TweetCandidate, Option[eb.ThriftSearchResult]]
-  object EntityTokenFeature extends Feature[TweetCandidate, Option[String]]
-  object ExclusiveConversationAuthorIdFeature extends Feature[TweetCandidate, Option[Long]]
-  object FavoritedByCountFeature
-      extends DataRecordFeature[TweetCandidate, Double]
-      with DoubleDataRecordCompatible {
-    override val featureName: String =
-      EngagementDataRecordFeatures.InNetworkFavoritesCount.getFeatureName
-    override val personalDataTypes: Set[pd.PersonalDataType] =
-      Set(pd.PersonalDataType.CountOfPrivateLikes, pd.PersonalDataType.CountOfPublicLikes)
-  }
-  object FavoritedByUserIdsFeature extends Feature[TweetCandidate, Seq[Long]]
-  object FeedbackHistoryFeature extends Feature[TweetCandidate, Seq[FeedbackEntry]]
-  object RetweetedByCountFeature
-      extends DataRecordFeature[TweetCandidate, Double]
-      with DoubleDataRecordCompatible {
-    override val featureName: String =
-      EngagementDataRecordFeatures.InNetworkRetweetsCount.getFeatureName
-    override val personalDataTypes: Set[pd.PersonalDataType] =
-      Set(pd.PersonalDataType.CountOfPrivateRetweets, pd.PersonalDataType.CountOfPublicRetweets)
-  }
-  object RetweetedByEngagerIdsFeature extends Feature[TweetCandidate, Seq[Long]]
-  object RepliedByCountFeature
-      extends DataRecordFeature[TweetCandidate, Double]
-      with DoubleDataRecordCompatible {
-    override val featureName: String =
-      EngagementDataRecordFeatures.InNetworkRepliesCount.getFeatureName
-    override val personalDataTypes: Set[pd.PersonalDataType] =
-      Set(pd.PersonalDataType.CountOfPrivateReplies, pd.PersonalDataType.CountOfPublicReplies)
-  }
-  object RepliedByEngagerIdsFeature extends Feature[TweetCandidate, Seq[Long]]
-  object FollowedByUserIdsFeature extends Feature[TweetCandidate, Seq[Long]]
+  object Conversat onModuleFocalT et dFeature extends Feature[T etCand date, Opt on[Long]]
 
-  object TopicIdSocialContextFeature extends Feature[TweetCandidate, Option[Long]]
-  object TopicContextFunctionalityTypeFeature
-      extends Feature[TweetCandidate, Option[TopicContextFunctionalityType]]
-  object FromInNetworkSourceFeature extends Feature[TweetCandidate, Boolean]
+  /**
+   * T  f eld should always be set to t  root T et  n a conversat on for all T ets. For repl es, t  w ll
+   * po nt back to t  root T et. For non-repl es, t  w ll be t  cand date's T et  d. T   s cons stent w h
+   * t  T etyP e def n  on of Conversat onModule d.
+   */
+  object Conversat onModule dFeature extends Feature[T etCand date, Opt on[Long]]
+  object D rectedAtUser dFeature extends Feature[T etCand date, Opt on[Long]]
+  object Earlyb rdFeature extends Feature[T etCand date, Opt on[sc.Thr ftT etFeatures]]
+  object Earlyb rdScoreFeature extends Feature[T etCand date, Opt on[Double]]
+  object Earlyb rdSearchResultFeature extends Feature[T etCand date, Opt on[eb.Thr ftSearchResult]]
+  object Ent yTokenFeature extends Feature[T etCand date, Opt on[Str ng]]
+  object Exclus veConversat onAuthor dFeature extends Feature[T etCand date, Opt on[Long]]
+  object Favor edByCountFeature
+      extends DataRecordFeature[T etCand date, Double]
+      w h DoubleDataRecordCompat ble {
+    overr de val featureNa : Str ng =
+      Engage ntDataRecordFeatures. nNetworkFavor esCount.getFeatureNa 
+    overr de val personalDataTypes: Set[pd.PersonalDataType] =
+      Set(pd.PersonalDataType.CountOfPr vateL kes, pd.PersonalDataType.CountOfPubl cL kes)
+  }
+  object Favor edByUser dsFeature extends Feature[T etCand date, Seq[Long]]
+  object Feedback toryFeature extends Feature[T etCand date, Seq[FeedbackEntry]]
+  object Ret etedByCountFeature
+      extends DataRecordFeature[T etCand date, Double]
+      w h DoubleDataRecordCompat ble {
+    overr de val featureNa : Str ng =
+      Engage ntDataRecordFeatures. nNetworkRet etsCount.getFeatureNa 
+    overr de val personalDataTypes: Set[pd.PersonalDataType] =
+      Set(pd.PersonalDataType.CountOfPr vateRet ets, pd.PersonalDataType.CountOfPubl cRet ets)
+  }
+  object Ret etedByEngager dsFeature extends Feature[T etCand date, Seq[Long]]
+  object Repl edByCountFeature
+      extends DataRecordFeature[T etCand date, Double]
+      w h DoubleDataRecordCompat ble {
+    overr de val featureNa : Str ng =
+      Engage ntDataRecordFeatures. nNetworkRepl esCount.getFeatureNa 
+    overr de val personalDataTypes: Set[pd.PersonalDataType] =
+      Set(pd.PersonalDataType.CountOfPr vateRepl es, pd.PersonalDataType.CountOfPubl cRepl es)
+  }
+  object Repl edByEngager dsFeature extends Feature[T etCand date, Seq[Long]]
+  object Follo dByUser dsFeature extends Feature[T etCand date, Seq[Long]]
 
-  object FullScoringSucceededFeature extends Feature[TweetCandidate, Boolean]
-  object HasDisplayedTextFeature extends Feature[TweetCandidate, Boolean]
-  object InReplyToTweetIdFeature extends Feature[TweetCandidate, Option[Long]]
-  object InReplyToUserIdFeature extends Feature[TweetCandidate, Option[Long]]
-  object IsAncestorCandidateFeature extends Feature[TweetCandidate, Boolean]
-  object IsExtendedReplyFeature
-      extends DataRecordFeature[TweetCandidate, Boolean]
-      with BoolDataRecordCompatible {
-    override val featureName: String = RecapFeatures.IS_EXTENDED_REPLY.getFeatureName
-    override val personalDataTypes: Set[pd.PersonalDataType] = Set.empty
-  }
-  object IsRandomTweetFeature
-      extends DataRecordFeature[TweetCandidate, Boolean]
-      with BoolDataRecordCompatible {
-    override val featureName: String = TimelinesSharedFeatures.IS_RANDOM_TWEET.getFeatureName
-    override val personalDataTypes: Set[pd.PersonalDataType] = Set.empty
-  }
-  object IsReadFromCacheFeature extends Feature[TweetCandidate, Boolean]
-  object IsRetweetFeature extends Feature[TweetCandidate, Boolean]
-  object IsRetweetedReplyFeature extends Feature[TweetCandidate, Boolean]
-  object IsSupportAccountReplyFeature extends Feature[TweetCandidate, Boolean]
-  object LastScoredTimestampMsFeature extends Feature[TweetCandidate, Option[Long]]
-  object NonSelfFavoritedByUserIdsFeature extends Feature[TweetCandidate, Seq[Long]]
-  object NumImagesFeature extends Feature[TweetCandidate, Option[Int]]
-  object OriginalTweetCreationTimeFromSnowflakeFeature extends Feature[TweetCandidate, Option[Time]]
-  object PositionFeature extends Feature[TweetCandidate, Option[Int]]
-  // Internal id generated per prediction service request
-  object PredictionRequestIdFeature extends Feature[TweetCandidate, Option[Long]]
-  object QuotedTweetIdFeature extends Feature[TweetCandidate, Option[Long]]
-  object QuotedUserIdFeature extends Feature[TweetCandidate, Option[Long]]
-  object ScoreFeature extends Feature[TweetCandidate, Option[Double]]
-  object SemanticCoreIdFeature extends Feature[TweetCandidate, Option[Long]]
-  // Key for kafka logging
-  object ServedIdFeature extends Feature[TweetCandidate, Option[Long]]
-  object SimclustersTweetTopKClustersWithScoresFeature
-      extends Feature[TweetCandidate, Map[String, Double]]
-  object SocialContextFeature extends Feature[TweetCandidate, Option[tst.SocialContext]]
-  object SourceTweetIdFeature
-      extends DataRecordOptionalFeature[TweetCandidate, Long]
-      with LongDiscreteDataRecordCompatible {
-    override val featureName: String = TimelinesSharedFeatures.SOURCE_TWEET_ID.getFeatureName
-    override val personalDataTypes: Set[pd.PersonalDataType] = Set(pd.PersonalDataType.TweetId)
-  }
-  object SourceUserIdFeature extends Feature[TweetCandidate, Option[Long]]
-  object StreamToKafkaFeature extends Feature[TweetCandidate, Boolean]
-  object SuggestTypeFeature extends Feature[TweetCandidate, Option[st.SuggestType]]
-  object TSPMetricTagFeature extends Feature[TweetCandidate, Set[tsp.MetricTag]]
-  object TweetLanguageFeature extends Feature[TweetCandidate, Option[String]]
-  object TweetUrlsFeature extends Feature[TweetCandidate, Seq[String]]
-  object VideoDurationMsFeature extends Feature[TweetCandidate, Option[Int]]
-  object ViewerIdFeature
-      extends DataRecordFeature[TweetCandidate, Long]
-      with LongDiscreteDataRecordCompatible {
-    override def featureName: String = SharedFeatures.USER_ID.getFeatureName
-    override def personalDataTypes: Set[pd.PersonalDataType] = Set(pd.PersonalDataType.UserId)
-  }
-  object WeightedModelScoreFeature extends Feature[TweetCandidate, Option[Double]]
-  object MentionUserIdFeature extends Feature[TweetCandidate, Seq[Long]]
-  object MentionScreenNameFeature extends Feature[TweetCandidate, Seq[String]]
-  object HasImageFeature extends Feature[TweetCandidate, Boolean]
-  object HasVideoFeature extends Feature[TweetCandidate, Boolean]
+  object Top c dSoc alContextFeature extends Feature[T etCand date, Opt on[Long]]
+  object Top cContextFunct onal yTypeFeature
+      extends Feature[T etCand date, Opt on[Top cContextFunct onal yType]]
+  object From nNetworkS ceFeature extends Feature[T etCand date, Boolean]
 
-  // Tweetypie VF Features
-  object IsHydratedFeature extends Feature[TweetCandidate, Boolean]
-  object IsNsfwFeature extends Feature[TweetCandidate, Boolean]
-  object QuotedTweetDroppedFeature extends Feature[TweetCandidate, Boolean]
-  // Raw Tweet Text from Tweetypie
-  object TweetTextFeature extends Feature[TweetCandidate, Option[String]]
+  object FullScor ngSucceededFeature extends Feature[T etCand date, Boolean]
+  object HasD splayedTextFeature extends Feature[T etCand date, Boolean]
+  object  nReplyToT et dFeature extends Feature[T etCand date, Opt on[Long]]
+  object  nReplyToUser dFeature extends Feature[T etCand date, Opt on[Long]]
+  object  sAncestorCand dateFeature extends Feature[T etCand date, Boolean]
+  object  sExtendedReplyFeature
+      extends DataRecordFeature[T etCand date, Boolean]
+      w h BoolDataRecordCompat ble {
+    overr de val featureNa : Str ng = RecapFeatures. S_EXTENDED_REPLY.getFeatureNa 
+    overr de val personalDataTypes: Set[pd.PersonalDataType] = Set.empty
+  }
+  object  sRandomT etFeature
+      extends DataRecordFeature[T etCand date, Boolean]
+      w h BoolDataRecordCompat ble {
+    overr de val featureNa : Str ng = T  l nesSharedFeatures. S_RANDOM_TWEET.getFeatureNa 
+    overr de val personalDataTypes: Set[pd.PersonalDataType] = Set.empty
+  }
+  object  sReadFromCac Feature extends Feature[T etCand date, Boolean]
+  object  sRet etFeature extends Feature[T etCand date, Boolean]
+  object  sRet etedReplyFeature extends Feature[T etCand date, Boolean]
+  object  sSupportAccountReplyFeature extends Feature[T etCand date, Boolean]
+  object LastScoredT  stampMsFeature extends Feature[T etCand date, Opt on[Long]]
+  object NonSelfFavor edByUser dsFeature extends Feature[T etCand date, Seq[Long]]
+  object Num magesFeature extends Feature[T etCand date, Opt on[ nt]]
+  object Or g nalT etCreat onT  FromSnowflakeFeature extends Feature[T etCand date, Opt on[T  ]]
+  object Pos  onFeature extends Feature[T etCand date, Opt on[ nt]]
+  //  nternal  d generated per pred ct on serv ce request
+  object Pred ct onRequest dFeature extends Feature[T etCand date, Opt on[Long]]
+  object QuotedT et dFeature extends Feature[T etCand date, Opt on[Long]]
+  object QuotedUser dFeature extends Feature[T etCand date, Opt on[Long]]
+  object ScoreFeature extends Feature[T etCand date, Opt on[Double]]
+  object Semant cCore dFeature extends Feature[T etCand date, Opt on[Long]]
+  // Key for kafka logg ng
+  object Served dFeature extends Feature[T etCand date, Opt on[Long]]
+  object S mclustersT etTopKClustersW hScoresFeature
+      extends Feature[T etCand date, Map[Str ng, Double]]
+  object Soc alContextFeature extends Feature[T etCand date, Opt on[tst.Soc alContext]]
+  object S ceT et dFeature
+      extends DataRecordOpt onalFeature[T etCand date, Long]
+      w h LongD screteDataRecordCompat ble {
+    overr de val featureNa : Str ng = T  l nesSharedFeatures.SOURCE_TWEET_ D.getFeatureNa 
+    overr de val personalDataTypes: Set[pd.PersonalDataType] = Set(pd.PersonalDataType.T et d)
+  }
+  object S ceUser dFeature extends Feature[T etCand date, Opt on[Long]]
+  object StreamToKafkaFeature extends Feature[T etCand date, Boolean]
+  object SuggestTypeFeature extends Feature[T etCand date, Opt on[st.SuggestType]]
+  object TSP tr cTagFeature extends Feature[T etCand date, Set[tsp. tr cTag]]
+  object T etLanguageFeature extends Feature[T etCand date, Opt on[Str ng]]
+  object T etUrlsFeature extends Feature[T etCand date, Seq[Str ng]]
+  object V deoDurat onMsFeature extends Feature[T etCand date, Opt on[ nt]]
+  object V e r dFeature
+      extends DataRecordFeature[T etCand date, Long]
+      w h LongD screteDataRecordCompat ble {
+    overr de def featureNa : Str ng = SharedFeatures.USER_ D.getFeatureNa 
+    overr de def personalDataTypes: Set[pd.PersonalDataType] = Set(pd.PersonalDataType.User d)
+  }
+  object   ghtedModelScoreFeature extends Feature[T etCand date, Opt on[Double]]
+  object  nt onUser dFeature extends Feature[T etCand date, Seq[Long]]
+  object  nt onScreenNa Feature extends Feature[T etCand date, Seq[Str ng]]
+  object Has mageFeature extends Feature[T etCand date, Boolean]
+  object HasV deoFeature extends Feature[T etCand date, Boolean]
 
-  object AuthorEnabledPreviewsFeature extends Feature[TweetCandidate, Boolean]
-  object IsTweetPreviewFeature extends Feature[TweetCandidate, Boolean]
+  // T etyp e VF Features
+  object  sHydratedFeature extends Feature[T etCand date, Boolean]
+  object  sNsfwFeature extends Feature[T etCand date, Boolean]
+  object QuotedT etDroppedFeature extends Feature[T etCand date, Boolean]
+  // Raw T et Text from T etyp e
+  object T etTextFeature extends Feature[T etCand date, Opt on[Str ng]]
+
+  object AuthorEnabledPrev ewsFeature extends Feature[T etCand date, Boolean]
+  object  sT etPrev ewFeature extends Feature[T etCand date, Boolean]
 
   // SGS Features
   /**
-   * By convention, this is set to true for retweets of non-followed authors
-   * E.g. where somebody the viewer follows retweets a Tweet from somebody the viewer doesn't follow
+   * By convent on, t   s set to true for ret ets of non-follo d authors
+   * E.g. w re so body t  v e r follows ret ets a T et from so body t  v e r doesn't follow
    */
-  object InNetworkFeature extends FeatureWithDefaultOnFailure[TweetCandidate, Boolean] {
-    override val defaultValue: Boolean = true
+  object  nNetworkFeature extends FeatureW hDefaultOnFa lure[T etCand date, Boolean] {
+    overr de val defaultValue: Boolean = true
   }
 
   // Query Features
-  object AccountAgeFeature extends Feature[PipelineQuery, Option[Time]]
-  object ClientIdFeature
-      extends DataRecordOptionalFeature[PipelineQuery, Long]
-      with LongDiscreteDataRecordCompatible {
-    override def featureName: String = SharedFeatures.CLIENT_ID.getFeatureName
-    override def personalDataTypes: Set[pd.PersonalDataType] = Set(pd.PersonalDataType.ClientType)
+  object AccountAgeFeature extends Feature[P pel neQuery, Opt on[T  ]]
+  object Cl ent dFeature
+      extends DataRecordOpt onalFeature[P pel neQuery, Long]
+      w h LongD screteDataRecordCompat ble {
+    overr de def featureNa : Str ng = SharedFeatures.CL ENT_ D.getFeatureNa 
+    overr de def personalDataTypes: Set[pd.PersonalDataType] = Set(pd.PersonalDataType.Cl entType)
   }
-  object CachedScoredTweetsFeature extends Feature[PipelineQuery, Seq[hmt.ScoredTweet]]
-  object DeviceLanguageFeature extends Feature[PipelineQuery, Option[String]]
-  object DismissInfoFeature
-      extends FeatureWithDefaultOnFailure[PipelineQuery, Map[st.SuggestType, Option[DismissInfo]]] {
-    override def defaultValue: Map[st.SuggestType, Option[DismissInfo]] = Map.empty
+  object Cac dScoredT etsFeature extends Feature[P pel neQuery, Seq[hmt.ScoredT et]]
+  object Dev ceLanguageFeature extends Feature[P pel neQuery, Opt on[Str ng]]
+  object D sm ss nfoFeature
+      extends FeatureW hDefaultOnFa lure[P pel neQuery, Map[st.SuggestType, Opt on[D sm ss nfo]]] {
+    overr de def defaultValue: Map[st.SuggestType, Opt on[D sm ss nfo]] = Map.empty
   }
-  object FollowingLastNonPollingTimeFeature extends Feature[PipelineQuery, Option[Time]]
-  object GetInitialFeature
-      extends DataRecordFeature[PipelineQuery, Boolean]
-      with BoolDataRecordCompatible {
-    override def featureName: String = RequestContextFeatures.IS_GET_INITIAL.getFeatureName
-    override def personalDataTypes: Set[pd.PersonalDataType] = Set.empty
+  object Follow ngLastNonPoll ngT  Feature extends Feature[P pel neQuery, Opt on[T  ]]
+  object Get n  alFeature
+      extends DataRecordFeature[P pel neQuery, Boolean]
+      w h BoolDataRecordCompat ble {
+    overr de def featureNa : Str ng = RequestContextFeatures. S_GET_ N T AL.getFeatureNa 
+    overr de def personalDataTypes: Set[pd.PersonalDataType] = Set.empty
   }
-  object GetMiddleFeature
-      extends DataRecordFeature[PipelineQuery, Boolean]
-      with BoolDataRecordCompatible {
-    override def featureName: String = RequestContextFeatures.IS_GET_MIDDLE.getFeatureName
-    override def personalDataTypes: Set[pd.PersonalDataType] = Set.empty
+  object GetM ddleFeature
+      extends DataRecordFeature[P pel neQuery, Boolean]
+      w h BoolDataRecordCompat ble {
+    overr de def featureNa : Str ng = RequestContextFeatures. S_GET_M DDLE.getFeatureNa 
+    overr de def personalDataTypes: Set[pd.PersonalDataType] = Set.empty
   }
-  object GetNewerFeature
-      extends DataRecordFeature[PipelineQuery, Boolean]
-      with BoolDataRecordCompatible {
-    override def featureName: String = RequestContextFeatures.IS_GET_NEWER.getFeatureName
-    override def personalDataTypes: Set[pd.PersonalDataType] = Set.empty
+  object GetNe rFeature
+      extends DataRecordFeature[P pel neQuery, Boolean]
+      w h BoolDataRecordCompat ble {
+    overr de def featureNa : Str ng = RequestContextFeatures. S_GET_NEWER.getFeatureNa 
+    overr de def personalDataTypes: Set[pd.PersonalDataType] = Set.empty
   }
   object GetOlderFeature
-      extends DataRecordFeature[PipelineQuery, Boolean]
-      with BoolDataRecordCompatible {
-    override def featureName: String = RequestContextFeatures.IS_GET_OLDER.getFeatureName
-    override def personalDataTypes: Set[pd.PersonalDataType] = Set.empty
+      extends DataRecordFeature[P pel neQuery, Boolean]
+      w h BoolDataRecordCompat ble {
+    overr de def featureNa : Str ng = RequestContextFeatures. S_GET_OLDER.getFeatureNa 
+    overr de def personalDataTypes: Set[pd.PersonalDataType] = Set.empty
   }
-  object GuestIdFeature
-      extends DataRecordOptionalFeature[PipelineQuery, Long]
-      with LongDiscreteDataRecordCompatible {
-    override def featureName: String = SharedFeatures.GUEST_ID.getFeatureName
-    override def personalDataTypes: Set[pd.PersonalDataType] = Set(pd.PersonalDataType.GuestId)
+  object Guest dFeature
+      extends DataRecordOpt onalFeature[P pel neQuery, Long]
+      w h LongD screteDataRecordCompat ble {
+    overr de def featureNa : Str ng = SharedFeatures.GUEST_ D.getFeatureNa 
+    overr de def personalDataTypes: Set[pd.PersonalDataType] = Set(pd.PersonalDataType.Guest d)
   }
-  object HasDarkRequestFeature extends Feature[PipelineQuery, Option[Boolean]]
-  object ImpressionBloomFilterFeature
-      extends FeatureWithDefaultOnFailure[PipelineQuery, blm.ImpressionBloomFilterSeq] {
-    override def defaultValue: blm.ImpressionBloomFilterSeq =
-      blm.ImpressionBloomFilterSeq(Seq.empty)
+  object HasDarkRequestFeature extends Feature[P pel neQuery, Opt on[Boolean]]
+  object  mpress onBloomF lterFeature
+      extends FeatureW hDefaultOnFa lure[P pel neQuery, blm. mpress onBloomF lterSeq] {
+    overr de def defaultValue: blm. mpress onBloomF lterSeq =
+      blm. mpress onBloomF lterSeq(Seq.empty)
   }
-  object IsForegroundRequestFeature extends Feature[PipelineQuery, Boolean]
-  object IsLaunchRequestFeature extends Feature[PipelineQuery, Boolean]
-  object LastNonPollingTimeFeature extends Feature[PipelineQuery, Option[Time]]
-  object NonPollingTimesFeature extends Feature[PipelineQuery, Seq[Long]]
-  object PersistenceEntriesFeature extends Feature[PipelineQuery, Seq[TimelineResponseV3]]
-  object PollingFeature extends Feature[PipelineQuery, Boolean]
-  object PullToRefreshFeature extends Feature[PipelineQuery, Boolean]
-  // Scores from Real Graph representing the relationship between the viewer and another user
-  object RealGraphInNetworkScoresFeature extends Feature[PipelineQuery, Map[UserId, Double]]
-  object RequestJoinIdFeature extends Feature[TweetCandidate, Option[Long]]
-  // Internal id generated per request, mainly to deduplicate re-served cached tweets in logging
-  object ServedRequestIdFeature extends Feature[PipelineQuery, Option[Long]]
-  object ServedTweetIdsFeature extends Feature[PipelineQuery, Seq[Long]]
-  object ServedTweetPreviewIdsFeature extends Feature[PipelineQuery, Seq[Long]]
-  object TimelineServiceTweetsFeature extends Feature[PipelineQuery, Seq[Long]]
-  object TimestampFeature
-      extends DataRecordFeature[PipelineQuery, Long]
-      with LongDiscreteDataRecordCompatible {
-    override def featureName: String = SharedFeatures.TIMESTAMP.getFeatureName
-    override def personalDataTypes: Set[pd.PersonalDataType] = Set.empty
+  object  sForegroundRequestFeature extends Feature[P pel neQuery, Boolean]
+  object  sLaunchRequestFeature extends Feature[P pel neQuery, Boolean]
+  object LastNonPoll ngT  Feature extends Feature[P pel neQuery, Opt on[T  ]]
+  object NonPoll ngT  sFeature extends Feature[P pel neQuery, Seq[Long]]
+  object Pers stenceEntr esFeature extends Feature[P pel neQuery, Seq[T  l neResponseV3]]
+  object Poll ngFeature extends Feature[P pel neQuery, Boolean]
+  object PullToRefreshFeature extends Feature[P pel neQuery, Boolean]
+  // Scores from Real Graph represent ng t  relat onsh p bet en t  v e r and anot r user
+  object RealGraph nNetworkScoresFeature extends Feature[P pel neQuery, Map[User d, Double]]
+  object RequestJo n dFeature extends Feature[T etCand date, Opt on[Long]]
+  //  nternal  d generated per request, ma nly to dedupl cate re-served cac d t ets  n logg ng
+  object ServedRequest dFeature extends Feature[P pel neQuery, Opt on[Long]]
+  object ServedT et dsFeature extends Feature[P pel neQuery, Seq[Long]]
+  object ServedT etPrev ew dsFeature extends Feature[P pel neQuery, Seq[Long]]
+  object T  l neServ ceT etsFeature extends Feature[P pel neQuery, Seq[Long]]
+  object T  stampFeature
+      extends DataRecordFeature[P pel neQuery, Long]
+      w h LongD screteDataRecordCompat ble {
+    overr de def featureNa : Str ng = SharedFeatures.T MESTAMP.getFeatureNa 
+    overr de def personalDataTypes: Set[pd.PersonalDataType] = Set.empty
   }
-  object TimestampGMTDowFeature
-      extends DataRecordFeature[PipelineQuery, Long]
-      with LongDiscreteDataRecordCompatible {
-    override def featureName: String = RequestContextFeatures.TIMESTAMP_GMT_DOW.getFeatureName
-    override def personalDataTypes: Set[pd.PersonalDataType] = Set.empty
+  object T  stampGMTDowFeature
+      extends DataRecordFeature[P pel neQuery, Long]
+      w h LongD screteDataRecordCompat ble {
+    overr de def featureNa : Str ng = RequestContextFeatures.T MESTAMP_GMT_DOW.getFeatureNa 
+    overr de def personalDataTypes: Set[pd.PersonalDataType] = Set.empty
   }
-  object TimestampGMTHourFeature
-      extends DataRecordFeature[PipelineQuery, Long]
-      with LongDiscreteDataRecordCompatible {
-    override def featureName: String = RequestContextFeatures.TIMESTAMP_GMT_HOUR.getFeatureName
-    override def personalDataTypes: Set[pd.PersonalDataType] = Set.empty
+  object T  stampGMTH Feature
+      extends DataRecordFeature[P pel neQuery, Long]
+      w h LongD screteDataRecordCompat ble {
+    overr de def featureNa : Str ng = RequestContextFeatures.T MESTAMP_GMT_HOUR.getFeatureNa 
+    overr de def personalDataTypes: Set[pd.PersonalDataType] = Set.empty
   }
-  object TweetImpressionsFeature extends Feature[PipelineQuery, Seq[imp.TweetImpressionsEntry]]
-  object UserFollowedTopicsCountFeature extends Feature[PipelineQuery, Option[Int]]
-  object UserFollowingCountFeature extends Feature[PipelineQuery, Option[Int]]
-  object UserScreenNameFeature extends Feature[PipelineQuery, Option[String]]
-  object UserStateFeature extends Feature[PipelineQuery, Option[um.UserState]]
-  object UserTypeFeature extends Feature[PipelineQuery, Option[gt.UserType]]
-  object WhoToFollowExcludedUserIdsFeature
-      extends FeatureWithDefaultOnFailure[PipelineQuery, Seq[Long]] {
-    override def defaultValue = Seq.empty
+  object T et mpress onsFeature extends Feature[P pel neQuery, Seq[ mp.T et mpress onsEntry]]
+  object UserFollo dTop csCountFeature extends Feature[P pel neQuery, Opt on[ nt]]
+  object UserFollow ngCountFeature extends Feature[P pel neQuery, Opt on[ nt]]
+  object UserScreenNa Feature extends Feature[P pel neQuery, Opt on[Str ng]]
+  object UserStateFeature extends Feature[P pel neQuery, Opt on[um.UserState]]
+  object UserTypeFeature extends Feature[P pel neQuery, Opt on[gt.UserType]]
+  object WhoToFollowExcludedUser dsFeature
+      extends FeatureW hDefaultOnFa lure[P pel neQuery, Seq[Long]] {
+    overr de def defaultValue = Seq.empty
   }
 
   // Result Features
-  object ServedSizeFeature extends Feature[PipelineQuery, Option[Int]]
-  object HasRandomTweetFeature extends Feature[PipelineQuery, Boolean]
-  object IsRandomTweetAboveFeature extends Feature[TweetCandidate, Boolean]
-  object ServedInConversationModuleFeature extends Feature[TweetCandidate, Boolean]
-  object ConversationModule2DisplayedTweetsFeature extends Feature[TweetCandidate, Boolean]
-  object ConversationModuleHasGapFeature extends Feature[TweetCandidate, Boolean]
-  object SGSValidLikedByUserIdsFeature extends Feature[TweetCandidate, Seq[Long]]
-  object SGSValidFollowedByUserIdsFeature extends Feature[TweetCandidate, Seq[Long]]
-  object PerspectiveFilteredLikedByUserIdsFeature extends Feature[TweetCandidate, Seq[Long]]
-  object ScreenNamesFeature extends Feature[TweetCandidate, Map[Long, String]]
-  object RealNamesFeature extends Feature[TweetCandidate, Map[Long, String]]
+  object ServedS zeFeature extends Feature[P pel neQuery, Opt on[ nt]]
+  object HasRandomT etFeature extends Feature[P pel neQuery, Boolean]
+  object  sRandomT etAboveFeature extends Feature[T etCand date, Boolean]
+  object Served nConversat onModuleFeature extends Feature[T etCand date, Boolean]
+  object Conversat onModule2D splayedT etsFeature extends Feature[T etCand date, Boolean]
+  object Conversat onModuleHasGapFeature extends Feature[T etCand date, Boolean]
+  object SGSVal dL kedByUser dsFeature extends Feature[T etCand date, Seq[Long]]
+  object SGSVal dFollo dByUser dsFeature extends Feature[T etCand date, Seq[Long]]
+  object Perspect veF lteredL kedByUser dsFeature extends Feature[T etCand date, Seq[Long]]
+  object ScreenNa sFeature extends Feature[T etCand date, Map[Long, Str ng]]
+  object RealNa sFeature extends Feature[T etCand date, Map[Long, Str ng]]
 
   /**
-   * Features around the focal Tweet for Tweets which should be rendered in convo modules.
-   * These are needed in order to render social context above the root tweet in a convo modules.
-   * For example if we have a convo module A-B-C (A Tweets, B replies to A, C replies to B), the descendant features are
-   * for the Tweet C. These features are None except for the root Tweet for Tweets which should render into
+   * Features around t  focal T et for T ets wh ch should be rendered  n convo modules.
+   * T se are needed  n order to render soc al context above t  root t et  n a convo modules.
+   * For example  f   have a convo module A-B-C (A T ets, B repl es to A, C repl es to B), t  descendant features are
+   * for t  T et C. T se features are None except for t  root T et for T ets wh ch should render  nto
    * convo modules.
    */
-  object FocalTweetAuthorIdFeature extends Feature[TweetCandidate, Option[Long]]
-  object FocalTweetInNetworkFeature extends Feature[TweetCandidate, Option[Boolean]]
-  object FocalTweetRealNamesFeature extends Feature[TweetCandidate, Option[Map[Long, String]]]
-  object FocalTweetScreenNamesFeature extends Feature[TweetCandidate, Option[Map[Long, String]]]
-  object MediaUnderstandingAnnotationIdsFeature extends Feature[TweetCandidate, Seq[Long]]
+  object FocalT etAuthor dFeature extends Feature[T etCand date, Opt on[Long]]
+  object FocalT et nNetworkFeature extends Feature[T etCand date, Opt on[Boolean]]
+  object FocalT etRealNa sFeature extends Feature[T etCand date, Opt on[Map[Long, Str ng]]]
+  object FocalT etScreenNa sFeature extends Feature[T etCand date, Opt on[Map[Long, Str ng]]]
+  object  d aUnderstand ngAnnotat on dsFeature extends Feature[T etCand date, Seq[Long]]
 }

@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.top c
 
-sealed trait TopicFunctionalityType
+sealed tra  Top cFunct onal yType
 
-case object BasicTopicFunctionalityType extends TopicFunctionalityType
-case object PivotTopicFunctionalityType extends TopicFunctionalityType
-case object RecommendationTopicFunctionalityType extends TopicFunctionalityType
+case object Bas cTop cFunct onal yType extends Top cFunct onal yType
+case object P votTop cFunct onal yType extends Top cFunct onal yType
+case object Recom ndat onTop cFunct onal yType extends Top cFunct onal yType

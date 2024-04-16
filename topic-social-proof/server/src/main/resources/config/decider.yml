@@ -1,61 +1,61 @@
-# Keys are sorted in an alphabetical order
+# Keys are sorted  n an alphabet cal order
 
-enable_topic_social_proof_score:
-  comment : "Enable the calculation of <topic, tweet> cosine similarity score in TopicSocialProofStore. 0 means do not calculate the score and use a random rank to generate topic social proof"
-  default_availability: 0
+enable_top c_soc al_proof_score:
+  com nt : "Enable t  calculat on of <top c, t et> cos ne s m lar y score  n Top cSoc alProofStore. 0  ans do not calculate t  score and use a random rank to generate top c soc al proof"
+  default_ava lab l y: 0
 
-enable_tweet_health_score:
-  comment: "Enable the calculation for health scores in tweetInfo. By enabling this decider, we will compute TweetHealthModelScore"
-  default_availability: 0
+enable_t et_ alth_score:
+  com nt: "Enable t  calculat on for  alth scores  n t et nfo. By enabl ng t  dec der,   w ll compute T et althModelScore"
+  default_ava lab l y: 0
 
 enable_user_agatha_score:
-  comment: "Enable the calculation for health scores in tweetInfo. By enabling this decider, we will compute UserHealthModelScore"
-  default_availability: 0
+  com nt: "Enable t  calculat on for  alth scores  n t et nfo. By enabl ng t  dec der,   w ll compute User althModelScore"
+  default_ava lab l y: 0
 
-enable_loadshedding_HomeTimeline:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enable_loads dd ng_Ho T  l ne:
+  com nt: "Enable loads dd ng (from 0% to 100%). Requests that have been s d w ll return an empty response"
+  default_ava lab l y: 0
 
-enable_loadshedding_HomeTimelineTopicTweets:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enable_loads dd ng_Ho T  l neTop cT ets:
+  com nt: "Enable loads dd ng (from 0% to 100%). Requests that have been s d w ll return an empty response"
+  default_ava lab l y: 0
 
-enable_loadshedding_HomeTimelineRecommendTopicTweets:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enable_loads dd ng_Ho T  l neRecom ndTop cT ets:
+  com nt: "Enable loads dd ng (from 0% to 100%). Requests that have been s d w ll return an empty response"
+  default_ava lab l y: 0
 
-enable_loadshedding_MagicRecsRecommendTopicTweets:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enable_loads dd ng_Mag cRecsRecom ndTop cT ets:
+  com nt: "Enable loads dd ng (from 0% to 100%). Requests that have been s d w ll return an empty response"
+  default_ava lab l y: 0
 
-enable_loadshedding_TopicLandingPage:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enable_loads dd ng_Top cLand ngPage:
+  com nt: "Enable loads dd ng (from 0% to 100%). Requests that have been s d w ll return an empty response"
+  default_ava lab l y: 0
 
-enable_loadshedding_HomeTimelineFeatures:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enable_loads dd ng_Ho T  l neFeatures:
+  com nt: "Enable loads dd ng (from 0% to 100%). Requests that have been s d w ll return an empty response"
+  default_ava lab l y: 0
 
-enable_loadshedding_HomeTimelineTopicTweetsMetrics:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enable_loads dd ng_Ho T  l neTop cT ets tr cs:
+  com nt: "Enable loads dd ng (from 0% to 100%). Requests that have been s d w ll return an empty response"
+  default_ava lab l y: 0
 
-enable_loadshedding_HomeTimelineUTEGTopicTweets:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enable_loads dd ng_Ho T  l neUTEGTop cT ets:
+  com nt: "Enable loads dd ng (from 0% to 100%). Requests that have been s d w ll return an empty response"
+  default_ava lab l y: 0
 
-enable_loadshedding_HomeTimelineSimClusters:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enable_loads dd ng_Ho T  l neS mClusters:
+  com nt: "Enable loads dd ng (from 0% to 100%). Requests that have been s d w ll return an empty response"
+  default_ava lab l y: 0
 
-enable_loadshedding_ExploreTopicTweets:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enable_loads dd ng_ExploreTop cT ets:
+  com nt: "Enable loads dd ng (from 0% to 100%). Requests that have been s d w ll return an empty response"
+  default_ava lab l y: 0
 
-enable_loadshedding_MagicRecsTopicTweets:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enable_loads dd ng_Mag cRecsTop cT ets:
+  com nt: "Enable loads dd ng (from 0% to 100%). Requests that have been s d w ll return an empty response"
+  default_ava lab l y: 0
 
-enable_loadshedding_Search:
-  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
-  default_availability: 0
+enable_loads dd ng_Search:
+  com nt: "Enable loads dd ng (from 0% to 100%). Requests that have been s d w ll return an empty response"
+  default_ava lab l y: 0

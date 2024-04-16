@@ -1,147 +1,147 @@
-package com.twitter.search.earlybird.search.relevance.collectors;
+package com.tw ter.search.earlyb rd.search.relevance.collectors;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.facets.LanguageHistogram;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.search.AbstractResultsCollector;
-import com.twitter.search.earlybird.search.relevance.RelevanceSearchRequestInfo;
-import com.twitter.search.earlybird.search.relevance.RelevanceSearchResults;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunction;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadataOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.core.earlyb rd.facets.Language togram;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserTable;
+ mport com.tw ter.search.earlyb rd.search.AbstractResultsCollector;
+ mport com.tw ter.search.earlyb rd.search.relevance.RelevanceSearchRequest nfo;
+ mport com.tw ter.search.earlyb rd.search.relevance.RelevanceSearchResults;
+ mport com.tw ter.search.earlyb rd.search.relevance.scor ng.Scor ngFunct on;
+ mport com.tw ter.search.earlyb rd.stats.Earlyb rdSearc rStats;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult tadata;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult tadataOpt ons;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResultsRelevanceStats;
 
 /**
- * AbstractRelevanceCollector is a results collector that collects RelevanceHit results
- * which include more detailed information than a normal Hit.
+ * AbstractRelevanceCollector  s a results collector that collects RelevanceH  results
+ * wh ch  nclude more deta led  nformat on than a normal H .
  */
-public abstract class AbstractRelevanceCollector
-    extends AbstractResultsCollector<RelevanceSearchRequestInfo, RelevanceSearchResults> {
-  protected final ScoringFunction scoringFunction;
-  private final ThriftSearchResultsRelevanceStats relevanceStats;
-  private final EarlybirdCluster cluster;
-  private final UserTable userTable;
+publ c abstract class AbstractRelevanceCollector
+    extends AbstractResultsCollector<RelevanceSearchRequest nfo, RelevanceSearchResults> {
+  protected f nal Scor ngFunct on scor ngFunct on;
+  pr vate f nal Thr ftSearchResultsRelevanceStats relevanceStats;
+  pr vate f nal Earlyb rdCluster cluster;
+  pr vate f nal UserTable userTable;
 
   // Per-language result counts.
-  private final LanguageHistogram languageHistogram = new LanguageHistogram();
+  pr vate f nal Language togram language togram = new Language togram();
 
-  // Accumulated time spend on relevance scoring across all collected hits, including batch scoring.
-  private long scoringTimeNanos = 0;
+  // Accumulated t   spend on relevance scor ng across all collected h s,  nclud ng batch scor ng.
+  pr vate long scor ngT  Nanos = 0;
 
-  public AbstractRelevanceCollector(
-      ImmutableSchemaInterface schema,
-      RelevanceSearchRequestInfo searchRequestInfo,
-      ScoringFunction scoringFunction,
-      EarlybirdSearcherStats searcherStats,
-      EarlybirdCluster cluster,
+  publ c AbstractRelevanceCollector(
+       mmutableSc ma nterface sc ma,
+      RelevanceSearchRequest nfo searchRequest nfo,
+      Scor ngFunct on scor ngFunct on,
+      Earlyb rdSearc rStats searc rStats,
+      Earlyb rdCluster cluster,
       UserTable userTable,
       Clock clock,
-      int requestDebugMode) {
-    super(schema, searchRequestInfo, clock, searcherStats, requestDebugMode);
-    this.scoringFunction = scoringFunction;
-    this.relevanceStats = new ThriftSearchResultsRelevanceStats();
-    this.cluster = cluster;
-    this.userTable = userTable;
+       nt requestDebugMode) {
+    super(sc ma, searchRequest nfo, clock, searc rStats, requestDebugMode);
+    t .scor ngFunct on = scor ngFunct on;
+    t .relevanceStats = new Thr ftSearchResultsRelevanceStats();
+    t .cluster = cluster;
+    t .userTable = userTable;
   }
 
   /**
-   * Subclasses must implement this method to actually collect a scored relevance hit.
+   * Subclasses must  mple nt t   thod to actually collect a scored relevance h .
    */
-  protected abstract void doCollectWithScore(long tweetID, float score) throws IOException;
+  protected abstract vo d doCollectW hScore(long t et D, float score) throws  OExcept on;
 
-  @Override
-  public final void startSegment() throws IOException {
-    scoringFunction.setNextReader(currTwitterReader);
+  @Overr de
+  publ c f nal vo d startSeg nt() throws  OExcept on {
+    scor ngFunct on.setNextReader(currTw terReader);
 
-    ThriftSearchResultMetadataOptions options =
-        searchRequestInfo.getSearchQuery().getResultMetadataOptions();
-    featuresRequested = options != null && options.isReturnSearchResultFeatures();
+    Thr ftSearchResult tadataOpt ons opt ons =
+        searchRequest nfo.getSearchQuery().getResult tadataOpt ons();
+    featuresRequested = opt ons != null && opt ons. sReturnSearchResultFeatures();
   }
 
-  @Override
-  protected final void doCollect(long tweetID) throws IOException {
-    final long scoringStartNanos = getClock().nowNanos();
+  @Overr de
+  protected f nal vo d doCollect(long t et D) throws  OExcept on {
+    f nal long scor ngStartNanos = getClock().nowNanos();
     float luceneSore = scorer.score();
-    final float score = scoringFunction.score(curDocId, luceneSore);
-    final long scoringEndNanos = getClock().nowNanos();
-    addToOverallScoringTimeNanos(scoringStartNanos, scoringEndNanos);
+    f nal float score = scor ngFunct on.score(curDoc d, luceneSore);
+    f nal long scor ngEndNanos = getClock().nowNanos();
+    addToOverallScor ngT  Nanos(scor ngStartNanos, scor ngEndNanos);
 
-    scoringFunction.updateRelevanceStats(relevanceStats);
+    scor ngFunct on.updateRelevanceStats(relevanceStats);
 
-    updateHitCounts(tweetID);
+    updateH Counts(t et D);
 
-    doCollectWithScore(tweetID, score);
+    doCollectW hScore(t et D, score);
   }
 
-  protected final void addToOverallScoringTimeNanos(long scoringStartNanos, long scoringEndNanos) {
-    scoringTimeNanos += scoringEndNanos - scoringStartNanos;
+  protected f nal vo d addToOverallScor ngT  Nanos(long scor ngStartNanos, long scor ngEndNanos) {
+    scor ngT  Nanos += scor ngEndNanos - scor ngStartNanos;
   }
 
-  protected final ThriftSearchResultMetadata collectMetadata() throws IOException {
-    ThriftSearchResultMetadataOptions options =
-        searchRequestInfo.getSearchQuery().getResultMetadataOptions();
-    Preconditions.checkNotNull(options);
-    ThriftSearchResultMetadata metadata =
-        Preconditions.checkNotNull(scoringFunction.getResultMetadata(options));
-    if (metadata.isSetLanguage()) {
-      languageHistogram.increment(metadata.getLanguage().getValue());
+  protected f nal Thr ftSearchResult tadata collect tadata() throws  OExcept on {
+    Thr ftSearchResult tadataOpt ons opt ons =
+        searchRequest nfo.getSearchQuery().getResult tadataOpt ons();
+    Precond  ons.c ckNotNull(opt ons);
+    Thr ftSearchResult tadata  tadata =
+        Precond  ons.c ckNotNull(scor ngFunct on.getResult tadata(opt ons));
+     f ( tadata. sSetLanguage()) {
+      language togram. ncre nt( tadata.getLanguage().getValue());
     }
 
-    // Some additional metadata which is not provided by the scoring function, but
-    // by accessing the reader directly.
-    if (currTwitterReader != null) {
-      fillResultGeoLocation(metadata);
-      if (searchRequestInfo.isCollectConversationId()) {
-        long conversationId =
-            documentFeatures.getFeatureValue(EarlybirdFieldConstant.CONVERSATION_ID_CSF);
-        if (conversationId != 0) {
-          ensureExtraMetadataIsSet(metadata);
-          metadata.getExtraMetadata().setConversationId(conversationId);
+    // So  add  onal  tadata wh ch  s not prov ded by t  scor ng funct on, but
+    // by access ng t  reader d rectly.
+     f (currTw terReader != null) {
+      f llResultGeoLocat on( tadata);
+       f (searchRequest nfo. sCollectConversat on d()) {
+        long conversat on d =
+            docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.CONVERSAT ON_ D_CSF);
+         f (conversat on d != 0) {
+          ensureExtra tadata sSet( tadata);
+           tadata.getExtra tadata().setConversat on d(conversat on d);
         }
       }
     }
 
-    // Check and collect hit attribution data, if it's available.
-    fillHitAttributionMetadata(metadata);
+    // C ck and collect h  attr but on data,  f  's ava lable.
+    f llH Attr but on tadata( tadata);
 
-    long fromUserId = documentFeatures.getFeatureValue(EarlybirdFieldConstant.FROM_USER_ID_CSF);
-    if (searchRequestInfo.isGetFromUserId()) {
-      metadata.setFromUserId(fromUserId);
+    long fromUser d = docu ntFeatures.getFeatureValue(Earlyb rdF eldConstant.FROM_USER_ D_CSF);
+     f (searchRequest nfo. sGetFromUser d()) {
+       tadata.setFromUser d(fromUser d);
     }
 
-    collectExclusiveConversationAuthorId(metadata);
-    collectFacets(metadata);
-    collectFeatures(metadata);
-    collectIsProtected(metadata, cluster, userTable);
+    collectExclus veConversat onAuthor d( tadata);
+    collectFacets( tadata);
+    collectFeatures( tadata);
+    collect sProtected( tadata, cluster, userTable);
 
-    return metadata;
+    return  tadata;
   }
 
-  protected final ThriftSearchResultsRelevanceStats getRelevanceStats() {
+  protected f nal Thr ftSearchResultsRelevanceStats getRelevanceStats() {
     return relevanceStats;
   }
 
-  public final LanguageHistogram getLanguageHistogram() {
-    return languageHistogram;
+  publ c f nal Language togram getLanguage togram() {
+    return language togram;
   }
 
-  @Override
-  protected final RelevanceSearchResults doGetResults() throws IOException {
-    final RelevanceSearchResults results = doGetRelevanceResults();
-    results.setScoringTimeNanos(scoringTimeNanos);
+  @Overr de
+  protected f nal RelevanceSearchResults doGetResults() throws  OExcept on {
+    f nal RelevanceSearchResults results = doGetRelevanceResults();
+    results.setScor ngT  Nanos(scor ngT  Nanos);
     return results;
   }
 
   /**
-   * For subclasses to process and aggregate collected hits.
+   * For subclasses to process and aggregate collected h s.
    */
-  protected abstract RelevanceSearchResults doGetRelevanceResults() throws IOException;
+  protected abstract RelevanceSearchResults doGetRelevanceResults() throws  OExcept on;
 }

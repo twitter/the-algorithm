@@ -1,190 +1,190 @@
-package com.twitter.product_mixer.core.pipeline.pipeline_failure
+package com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure
 
 /**
- * Failures are grouped into categories based on which party is 'responsible' for the issue. This
- * is important for generating accurate SLOs and ensuring that the correct team is alerted.
+ * Fa lures are grouped  nto categor es based on wh ch party  s 'respons ble' for t   ssue. T 
+ *  s  mportant for generat ng accurate SLOs and ensur ng that t  correct team  s alerted.
  */
-sealed trait PipelineFailureCategory {
-  val categoryName: String
-  val failureName: String
+sealed tra  P pel neFa lureCategory {
+  val categoryNa : Str ng
+  val fa lureNa : Str ng
 }
 
 /**
- * Client Failures are failures where the client is deemed responsible for the issue. Such as by
- * issuing an invalid request or not having the right permissions.
+ * Cl ent Fa lures are fa lures w re t  cl ent  s dee d respons ble for t   ssue. Such as by
+ *  ssu ng an  nval d request or not hav ng t  r ght perm ss ons.
  *
- * A failure might belong in this category if it relates to behaviour on the client and is not
- * actionable by the team which owns the product.
+ * A fa lure m ght belong  n t  category  f   relates to behav   on t  cl ent and  s not
+ * act onable by t  team wh ch owns t  product.
  */
-trait ClientFailure extends PipelineFailureCategory {
-  override val categoryName: String = "ClientFailure"
+tra  Cl entFa lure extends P pel neFa lureCategory {
+  overr de val categoryNa : Str ng = "Cl entFa lure"
 }
 
 /**
- * The requested product is disabled so the request cannot be served.
+ * T  requested product  s d sabled so t  request cannot be served.
  */
-case object ProductDisabled extends ClientFailure {
-  override val failureName: String = "ProductDisabled"
+case object ProductD sabled extends Cl entFa lure {
+  overr de val fa lureNa : Str ng = "ProductD sabled"
 }
 
 /**
- * The request was deemed invalid by this or a backing service.
+ * T  request was dee d  nval d by t  or a back ng serv ce.
  */
-case object BadRequest extends ClientFailure {
-  override val failureName: String = "BadRequest"
+case object BadRequest extends Cl entFa lure {
+  overr de val fa lureNa : Str ng = "BadRequest"
 }
 
 /**
- * Credentials proving the identity of the caller were missing, not trusted, or expired.
- * For example, an auth cookie might be expired and in need of refreshing.
+ * Credent als prov ng t   dent y of t  caller  re m ss ng, not trusted, or exp red.
+ * For example, an auth cook e m ght be exp red and  n need of refresh ng.
  *
- * Do not confuse this with Authorization, where the credentials are believed but not allowed to perform the operation.
+ * Do not confuse t  w h Author zat on, w re t  credent als are bel eved but not allo d to perform t  operat on.
  */
-case object Authentication extends ClientFailure {
-  override val failureName: String = "Authentication"
+case object Aut nt cat on extends Cl entFa lure {
+  overr de val fa lureNa : Str ng = "Aut nt cat on"
 }
 
 /**
- * The operation was forbidden (often, but not always, by a Strato access control policy).
+ * T  operat on was forb dden (often, but not always, by a Strato access control pol cy).
  *
- * Do not confuse this with Authentication, where the given credentials were missing, not trusted, or expired.
+ * Do not confuse t  w h Aut nt cat on, w re t  g ven credent als  re m ss ng, not trusted, or exp red.
  */
-case object Unauthorized extends ClientFailure {
-  override val failureName: String = "Unauthorized"
+case object Unauthor zed extends Cl entFa lure {
+  overr de val fa lureNa : Str ng = "Unauthor zed"
 }
 
 /**
- * The operation returned a Not Found response.
+ * T  operat on returned a Not Found response.
  */
-case object NotFound extends ClientFailure {
-  override val failureName: String = "NotFound"
+case object NotFound extends Cl entFa lure {
+  overr de val fa lureNa : Str ng = "NotFound"
 }
 
 /**
- * An invalid input is included in a cursor field.
+ * An  nval d  nput  s  ncluded  n a cursor f eld.
  */
-case object MalformedCursor extends ClientFailure {
-  override val failureName: String = "MalformedCursor"
+case object Malfor dCursor extends Cl entFa lure {
+  overr de val fa lureNa : Str ng = "Malfor dCursor"
 }
 
 /**
- * The operation did not succeed due to a closed gate
+ * T  operat on d d not succeed due to a closed gate
  */
-case object ClosedGate extends ClientFailure {
-  override val failureName: String = "ClosedGate"
+case object ClosedGate extends Cl entFa lure {
+  overr de val fa lureNa : Str ng = "ClosedGate"
 }
 
 /**
- * Server Failures are failures for which the owner of the product is responsible. Typically this
- * means the request was valid but an issue within Product Mixer or a dependent service prevented
- * it from succeeding.
+ * Server Fa lures are fa lures for wh ch t  owner of t  product  s respons ble. Typ cally t 
+ *  ans t  request was val d but an  ssue w h n Product M xer or a dependent serv ce prevented
+ *   from succeed ng.
  *
- * Server Failures contribute to the success rate SLO for the product.
+ * Server Fa lures contr bute to t  success rate SLO for t  product.
  */
-trait ServerFailure extends PipelineFailureCategory {
-  override val categoryName: String = "ServerFailure"
+tra  ServerFa lure extends P pel neFa lureCategory {
+  overr de val categoryNa : Str ng = "ServerFa lure"
 }
 
 /**
- * Unclassified failures occur when product code throws an exception that Product Mixer does not
- * know how to classify.
+ * Unclass f ed fa lures occur w n product code throws an except on that Product M xer does not
+ * know how to class fy.
  *
- * They can be used in failOpen policies, etc - but it's always preferred to instead add additional
- * classification logic and to keep Unclassified failures at 0.
+ * T y can be used  n fa lOpen pol c es, etc - but  's always preferred to  nstead add add  onal
+ * class f cat on log c and to keep Unclass f ed fa lures at 0.
  */
-case object UncategorizedServerFailure extends ServerFailure {
-  override val failureName: String = "UncategorizedServerFailure"
+case object Uncategor zedServerFa lure extends ServerFa lure {
+  overr de val fa lureNa : Str ng = "Uncategor zedServerFa lure"
 }
 
 /**
- * A hydrator or transformer returned a misconfigured feature map, this indicates a customer
- * configuration error. The owner of the component should make sure the hydrator always returns a
- * [[FeatureMap]] with the all features defined in the hydrator also set in the map, it should not have
- * any unregistered features nor should registered features be absent.
+ * A hydrator or transfor r returned a m sconf gured feature map, t   nd cates a custo r
+ * conf gurat on error. T  owner of t  component should make sure t  hydrator always returns a
+ * [[FeatureMap]] w h t  all features def ned  n t  hydrator also set  n t  map,   should not have
+ * any unreg stered features nor should reg stered features be absent.
  */
-case object MisconfiguredFeatureMapFailure extends ServerFailure {
-  override val failureName: String = "MisconfiguredFeatureMapFailure"
+case object M sconf guredFeatureMapFa lure extends ServerFa lure {
+  overr de val fa lureNa : Str ng = "M sconf guredFeatureMapFa lure"
 }
 
 /**
- * A PipelineSelector returned an invalid ComponentIdentifier.
+ * A P pel neSelector returned an  nval d Component dent f er.
  *
- * A pipeline selector should choose the identifier of a pipeline that is contained by the 'pipelines'
- * sequence of the ProductPipelineConfig.
+ * A p pel ne selector should choose t   dent f er of a p pel ne that  s conta ned by t  'p pel nes'
+ * sequence of t  ProductP pel neConf g.
  */
-case object InvalidPipelineSelected extends ServerFailure {
-  override val failureName: String = "InvalidPipelineSelected"
+case object  nval dP pel neSelected extends ServerFa lure {
+  overr de val fa lureNa : Str ng = " nval dP pel neSelected"
 }
 
 /**
- * Failures that occur when product code reaches an unexpected or otherwise illegal state.
+ * Fa lures that occur w n product code reac s an unexpected or ot rw se  llegal state.
  */
-case object IllegalStateFailure extends ServerFailure {
-  override val failureName: String = "IllegalStateFailure"
+case object  llegalStateFa lure extends ServerFa lure {
+  overr de val fa lureNa : Str ng = " llegalStateFa lure"
 }
 
 /**
- * An unexpected candidate was returned in a candidate source that was unable to be transformed.
+ * An unexpected cand date was returned  n a cand date s ce that was unable to be transfor d.
  */
-case object UnexpectedCandidateResult extends ServerFailure {
-  override val failureName: String = "UnexpectedCandidateResult"
+case object UnexpectedCand dateResult extends ServerFa lure {
+  overr de val fa lureNa : Str ng = "UnexpectedCand dateResult"
 }
 
 /**
- * An unexpected Candidate was returned in a marshaller
+ * An unexpected Cand date was returned  n a marshaller
  */
-case object UnexpectedCandidateInMarshaller extends ServerFailure {
-  override val failureName: String = "UnexpectedCandidateInMarshaller"
+case object UnexpectedCand date nMarshaller extends ServerFa lure {
+  overr de val fa lureNa : Str ng = "UnexpectedCand date nMarshaller"
 }
 
 /**
- * Pipeline execution failed due to an incorrectly configured quality factor (e.g, accessing
- * quality factor state for a pipeline that does not have quality factor configured)
+ * P pel ne execut on fa led due to an  ncorrectly conf gured qual y factor (e.g, access ng
+ * qual y factor state for a p pel ne that does not have qual y factor conf gured)
  */
-case object MisconfiguredQualityFactor extends ServerFailure {
-  override val failureName: String = "MisconfiguredQualityFactor"
+case object M sconf guredQual yFactor extends ServerFa lure {
+  overr de val fa lureNa : Str ng = "M sconf guredQual yFactor"
 }
 
 /**
- * Pipeline execution failed due to an incorrectly configured decorator (e.g, decorator
- * returned the wrong type or tried to decorate an already decorated candidate)
+ * P pel ne execut on fa led due to an  ncorrectly conf gured decorator (e.g, decorator
+ * returned t  wrong type or tr ed to decorate an already decorated cand date)
  */
-case object MisconfiguredDecorator extends ServerFailure {
-  override val failureName: String = "MisconfiguredDecorator"
+case object M sconf guredDecorator extends ServerFa lure {
+  overr de val fa lureNa : Str ng = "M sconf guredDecorator"
 }
 
 /**
- * Candidate Source Pipeline execution failed due to a timeout.
+ * Cand date S ce P pel ne execut on fa led due to a t  out.
  */
-case object CandidateSourceTimeout extends ServerFailure {
-  override val failureName: String = "CandidateSourceTimeout"
+case object Cand dateS ceT  out extends ServerFa lure {
+  overr de val fa lureNa : Str ng = "Cand dateS ceT  out"
 }
 
 /**
- * Platform Failures are issues in the core Product Mixer logic itself which prevent a pipeline from
- * properly executing. These failures are the responsibility of the Product Mixer team.
+ * Platform Fa lures are  ssues  n t  core Product M xer log c  self wh ch prevent a p pel ne from
+ * properly execut ng. T se fa lures are t  respons b l y of t  Product M xer team.
  */
-trait PlatformFailure extends PipelineFailureCategory {
-  override val categoryName: String = "PlatformFailure"
+tra  PlatformFa lure extends P pel neFa lureCategory {
+  overr de val categoryNa : Str ng = "PlatformFa lure"
 }
 
 /**
- * Pipeline execution failed due to an unexpected error in Product Mixer.
+ * P pel ne execut on fa led due to an unexpected error  n Product M xer.
  *
- * ExecutionFailed indicates a bug with the core Product Mixer execution logic rather than with a
- * specific product. For example, a bug in PipelineBuilder leading to us returning a
- * ProductPipelineResult that neither succeeded nor failed.
+ * Execut onFa led  nd cates a bug w h t  core Product M xer execut on log c rat r than w h a
+ * spec f c product. For example, a bug  n P pel neBu lder lead ng to us return ng a
+ * ProductP pel neResult that ne  r succeeded nor fa led.
  */
-case object ExecutionFailed extends PlatformFailure {
-  override val failureName: String = "ExecutionFailed"
+case object Execut onFa led extends PlatformFa lure {
+  overr de val fa lureNa : Str ng = "Execut onFa led"
 }
 
 /**
- * Pipeline execution failed due to a feature hydration failure.
+ * P pel ne execut on fa led due to a feature hydrat on fa lure.
  *
- * FeatureHydrationFailed indicates that the underlying hydration for a feature defined in a hydrator
- * failed (e.g, typically from a RPC call failing).
+ * FeatureHydrat onFa led  nd cates that t  underly ng hydrat on for a feature def ned  n a hydrator
+ * fa led (e.g, typ cally from a RPC call fa l ng).
  */
-case object FeatureHydrationFailed extends PlatformFailure {
-  override val failureName: String = "FeatureHydrationFailed"
+case object FeatureHydrat onFa led extends PlatformFa lure {
+  overr de val fa lureNa : Str ng = "FeatureHydrat onFa led"
 }

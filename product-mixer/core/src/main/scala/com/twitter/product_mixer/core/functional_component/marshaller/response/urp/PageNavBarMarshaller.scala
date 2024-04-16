@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urp
 
-import com.twitter.pages.render.{thriftscala => urp}
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PageNavBar
-import com.twitter.product_mixer.core.model.marshalling.response.urp.TopicPageNavBar
-import com.twitter.product_mixer.core.model.marshalling.response.urp.TitleNavBar
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.pages.render.{thr ftscala => urp}
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urp.PageNavBar
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urp.Top cPageNavBar
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urp.T leNavBar
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class PageNavBarMarshaller @Inject() (
-  topicPageNavBarMarshaller: TopicPageNavBarMarshaller,
-  titleNavBarMarshaller: TitleNavBarMarshaller) {
+@S ngleton
+class PageNavBarMarshaller @ nject() (
+  top cPageNavBarMarshaller: Top cPageNavBarMarshaller,
+  t leNavBarMarshaller: T leNavBarMarshaller) {
 
   def apply(pageNavBar: PageNavBar): urp.PageNavBar = pageNavBar match {
-    case pageNavBar: TopicPageNavBar =>
-      urp.PageNavBar.TopicPageNavBar(topicPageNavBarMarshaller(pageNavBar))
-    case pageNavBar: TitleNavBar =>
-      urp.PageNavBar.TitleNavBar(titleNavBarMarshaller(pageNavBar))
+    case pageNavBar: Top cPageNavBar =>
+      urp.PageNavBar.Top cPageNavBar(top cPageNavBarMarshaller(pageNavBar))
+    case pageNavBar: T leNavBar =>
+      urp.PageNavBar.T leNavBar(t leNavBarMarshaller(pageNavBar))
   }
 }

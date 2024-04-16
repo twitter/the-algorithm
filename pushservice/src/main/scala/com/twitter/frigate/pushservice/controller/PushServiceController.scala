@@ -1,114 +1,114 @@
-package com.twitter.frigate.pushservice.controller
+package com.tw ter.fr gate.pushserv ce.controller
 
-import com.google.inject.Inject
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finatra.thrift.Controller
-import com.twitter.frigate.pushservice.exception.DisplayLocationNotSupportedException
-import com.twitter.frigate.pushservice.refresh_handler.RefreshForPushHandler
-import com.twitter.frigate.pushservice.send_handler.SendHandler
-import com.twitter.frigate.pushservice.refresh_handler.LoggedOutRefreshForPushHandler
-import com.twitter.frigate.pushservice.thriftscala.PushService.Loggedout
-import com.twitter.frigate.pushservice.thriftscala.PushService.Refresh
-import com.twitter.frigate.pushservice.thriftscala.PushService.Send
-import com.twitter.frigate.pushservice.{thriftscala => t}
-import com.twitter.frigate.thriftscala.NotificationDisplayLocation
-import com.twitter.util.logging.Logging
-import com.twitter.util.Future
+ mport com.google. nject. nject
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.f natra.thr ft.Controller
+ mport com.tw ter.fr gate.pushserv ce.except on.D splayLocat onNotSupportedExcept on
+ mport com.tw ter.fr gate.pushserv ce.refresh_handler.RefreshForPushHandler
+ mport com.tw ter.fr gate.pushserv ce.send_handler.SendHandler
+ mport com.tw ter.fr gate.pushserv ce.refresh_handler.LoggedOutRefreshForPushHandler
+ mport com.tw ter.fr gate.pushserv ce.thr ftscala.PushServ ce.Loggedout
+ mport com.tw ter.fr gate.pushserv ce.thr ftscala.PushServ ce.Refresh
+ mport com.tw ter.fr gate.pushserv ce.thr ftscala.PushServ ce.Send
+ mport com.tw ter.fr gate.pushserv ce.{thr ftscala => t}
+ mport com.tw ter.fr gate.thr ftscala.Not f cat onD splayLocat on
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport com.tw ter.ut l.Future
 
-class PushServiceController @Inject() (
+class PushServ ceController @ nject() (
   sendHandler: SendHandler,
   refreshForPushHandler: RefreshForPushHandler,
   loggedOutRefreshForPushHandler: LoggedOutRefreshForPushHandler,
-  statsReceiver: StatsReceiver)
-    extends Controller(t.PushService)
-    with Logging {
+  statsRece ver: StatsRece ver)
+    extends Controller(t.PushServ ce)
+    w h Logg ng {
 
-  private val stats: StatsReceiver = statsReceiver.scope(s"${this.getClass.getSimpleName}")
-  private val failureCount = stats.counter("failures")
-  private val failureStatsScope = stats.scope("failures")
-  private val uncaughtErrorCount = failureStatsScope.counter("uncaught")
-  private val uncaughtErrorScope = failureStatsScope.scope("uncaught")
-  private val clientIdScope = stats.scope("client_id")
+  pr vate val stats: StatsRece ver = statsRece ver.scope(s"${t .getClass.getS mpleNa }")
+  pr vate val fa lureCount = stats.counter("fa lures")
+  pr vate val fa lureStatsScope = stats.scope("fa lures")
+  pr vate val uncaughtErrorCount = fa lureStatsScope.counter("uncaught")
+  pr vate val uncaughtErrorScope = fa lureStatsScope.scope("uncaught")
+  pr vate val cl ent dScope = stats.scope("cl ent_ d")
 
-  handle(t.PushService.Send) { request: Send.Args =>
+  handle(t.PushServ ce.Send) { request: Send.Args =>
     send(request)
   }
 
-  handle(t.PushService.Refresh) { args: Refresh.Args =>
+  handle(t.PushServ ce.Refresh) { args: Refresh.Args =>
     refresh(args)
   }
 
-  handle(t.PushService.Loggedout) { request: Loggedout.Args =>
+  handle(t.PushServ ce.Loggedout) { request: Loggedout.Args =>
     loggedOutRefresh(request)
   }
 
-  private def loggedOutRefresh(
-    request: t.PushService.Loggedout.Args
-  ): Future[t.PushService.Loggedout.SuccessType] = {
-    val fut = request.request.notificationDisplayLocation match {
-      case NotificationDisplayLocation.PushToMobileDevice =>
+  pr vate def loggedOutRefresh(
+    request: t.PushServ ce.Loggedout.Args
+  ): Future[t.PushServ ce.Loggedout.SuccessType] = {
+    val fut = request.request.not f cat onD splayLocat on match {
+      case Not f cat onD splayLocat on.PushToMob leDev ce =>
         loggedOutRefreshForPushHandler.refreshAndSend(request.request)
       case _ =>
-        Future.exception(
-          new DisplayLocationNotSupportedException(
-            "Specified notification display location is not supported"))
+        Future.except on(
+          new D splayLocat onNotSupportedExcept on(
+            "Spec f ed not f cat on d splay locat on  s not supported"))
     }
-    fut.onFailure { ex =>
+    fut.onFa lure { ex =>
       logger.error(
-        s"Failure in push service for logged out refresh request: $request - ${ex.getMessage} - ${ex.getStackTrace
-          .mkString(", \n\t")}",
+        s"Fa lure  n push serv ce for logged out refresh request: $request - ${ex.get ssage} - ${ex.getStackTrace
+          .mkStr ng(", \n\t")}",
         ex)
-      failureCount.incr()
-      uncaughtErrorCount.incr()
-      uncaughtErrorScope.counter(ex.getClass.getCanonicalName).incr()
+      fa lureCount. ncr()
+      uncaughtErrorCount. ncr()
+      uncaughtErrorScope.counter(ex.getClass.getCanon calNa ). ncr()
     }
   }
 
-  private def refresh(
-    request: t.PushService.Refresh.Args
-  ): Future[t.PushService.Refresh.SuccessType] = {
+  pr vate def refresh(
+    request: t.PushServ ce.Refresh.Args
+  ): Future[t.PushServ ce.Refresh.SuccessType] = {
 
-    val fut = request.request.notificationDisplayLocation match {
-      case NotificationDisplayLocation.PushToMobileDevice =>
-        val clientId: String =
-          ClientId.current
-            .flatMap { cid => Option(cid.name) }
+    val fut = request.request.not f cat onD splayLocat on match {
+      case Not f cat onD splayLocat on.PushToMob leDev ce =>
+        val cl ent d: Str ng =
+          Cl ent d.current
+            .flatMap { c d => Opt on(c d.na ) }
             .getOrElse("none")
-        clientIdScope.counter(clientId).incr()
+        cl ent dScope.counter(cl ent d). ncr()
         refreshForPushHandler.refreshAndSend(request.request)
       case _ =>
-        Future.exception(
-          new DisplayLocationNotSupportedException(
-            "Specified notification display location is not supported"))
+        Future.except on(
+          new D splayLocat onNotSupportedExcept on(
+            "Spec f ed not f cat on d splay locat on  s not supported"))
     }
-    fut.onFailure { ex =>
+    fut.onFa lure { ex =>
       logger.error(
-        s"Failure in push service for refresh request: $request - ${ex.getMessage} - ${ex.getStackTrace
-          .mkString(", \n\t")}",
+        s"Fa lure  n push serv ce for refresh request: $request - ${ex.get ssage} - ${ex.getStackTrace
+          .mkStr ng(", \n\t")}",
         ex
       )
 
-      failureCount.incr()
-      uncaughtErrorCount.incr()
-      uncaughtErrorScope.counter(ex.getClass.getCanonicalName).incr()
+      fa lureCount. ncr()
+      uncaughtErrorCount. ncr()
+      uncaughtErrorScope.counter(ex.getClass.getCanon calNa ). ncr()
     }
 
   }
 
-  private def send(
-    request: t.PushService.Send.Args
-  ): Future[t.PushService.Send.SuccessType] = {
-    sendHandler(request.request).onFailure { ex =>
+  pr vate def send(
+    request: t.PushServ ce.Send.Args
+  ): Future[t.PushServ ce.Send.SuccessType] = {
+    sendHandler(request.request).onFa lure { ex =>
       logger.error(
-        s"Failure in push service for send request: $request - ${ex.getMessage} - ${ex.getStackTrace
-          .mkString(", \n\t")}",
+        s"Fa lure  n push serv ce for send request: $request - ${ex.get ssage} - ${ex.getStackTrace
+          .mkStr ng(", \n\t")}",
         ex
       )
 
-      failureCount.incr()
-      uncaughtErrorCount.incr()
-      uncaughtErrorScope.counter(ex.getClass.getCanonicalName).incr()
+      fa lureCount. ncr()
+      uncaughtErrorCount. ncr()
+      uncaughtErrorScope.counter(ex.getClass.getCanon calNa ). ncr()
     }
   }
 }

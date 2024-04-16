@@ -1,79 +1,79 @@
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
-cmake_policy(VERSION 2.8)
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_D R})
+cmake_m n mum_requ red(VERS ON 2.8 FATAL_ERROR)
+cmake_pol cy(VERS ON 2.8)
 set(CMAKE_MACOSX_RPATH 1)
 
-file(GLOB_RECURSE sources *.cpp)
+f le(GLOB_RECURSE s ces *.cpp)
 
 set (CMAKE_CXX_FLAGS "-Wall -std=c++11 -fno-stack-protector ${CMAKE_CXX_FLAGS}")
 
 execute_process(
   COMMAND
-  $ENV{LIBTWML_HOME}/src/ops/scripts/get_inc.sh
-  RESULT_VARIABLE
+  $ENV{L BTWML_HOME}/src/ops/scr pts/get_ nc.sh
+  RESULT_VAR ABLE
   TF_RES
-  OUTPUT_VARIABLE
-  TF_INC)
+  OUTPUT_VAR ABLE
+  TF_ NC)
 
-if (NOT (${TF_RES} EQUAL "0"))
-  message(${TF_RES})
-  message(FATAL_ERROR "Failed to get include path for tensorflow")
-endif()
+ f (NOT (${TF_RES} EQUAL "0"))
+   ssage(${TF_RES})
+   ssage(FATAL_ERROR "Fa led to get  nclude path for tensorflow")
+end f()
 
 execute_process(
   COMMAND
-  $ENV{LIBTWML_HOME}/src/ops/scripts/get_lib.sh
-  RESULT_VARIABLE
+  $ENV{L BTWML_HOME}/src/ops/scr pts/get_l b.sh
+  RESULT_VAR ABLE
   TF_RES
-  OUTPUT_VARIABLE
-  TF_LIB)
+  OUTPUT_VAR ABLE
+  TF_L B)
 
-if (NOT (${TF_RES} EQUAL "0"))
-  message(${TF_RES})
-  message(FATAL_ERROR "Failed to get lib path for tensorflow")
-endif()
+ f (NOT (${TF_RES} EQUAL "0"))
+   ssage(${TF_RES})
+   ssage(FATAL_ERROR "Fa led to get l b path for tensorflow")
+end f()
 
-find_path(
-  TWML_INC
+f nd_path(
+  TWML_ NC
   NAMES "twml.h"
-  PATHS $ENV{LIBTWML_HOME}/include)
+  PATHS $ENV{L BTWML_HOME}/ nclude)
 
-add_library(twml_tf MODULE ${sources})
+add_l brary(twml_tf MODULE ${s ces})
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{LIBTWML_HOME}/cmake")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{L BTWML_HOME}/cmake")
 
-if (UNIX)
-  if (APPLE)
-    set (CMAKE_CXX_FLAGS "-undefined dynamic_lookup -stdlib=libc++  ${CMAKE_CXX_FLAGS}")
-    # -Wl,-all_load ensures symbols not used by twml_tf are also included.
-    # -Wl,-noall_load limits the scope of the previous flag.
-    set (LINK_ALL_OPTION  "-Wl,-all_load")
-    set (NO_LINK_ALL_OPTION  "-Wl,-noall_load")
-    set(TF_FRAMEWORK_LIB ${TF_LIB}/libtensorflow_framework.1.dylib)
+ f (UN X)
+   f (APPLE)
+    set (CMAKE_CXX_FLAGS "-undef ned dynam c_lookup -stdl b=l bc++  ${CMAKE_CXX_FLAGS}")
+    # -Wl,-all_load ensures symbols not used by twml_tf are also  ncluded.
+    # -Wl,-noall_load l m s t  scope of t  prev ous flag.
+    set (L NK_ALL_OPT ON  "-Wl,-all_load")
+    set (NO_L NK_ALL_OPT ON  "-Wl,-noall_load")
+    set(TF_FRAMEWORK_L B ${TF_L B}/l btensorflow_fra work.1.dyl b)
   else()
-    # -Wl,--whole-archive ensures symbols not used by twml_tf are also included.
-    # -Wl,--no-whole-archive limits the scope of the previous flag.
-    set (LINK_ALL_OPTION  "-Wl,--whole-archive")
-    set (NO_LINK_ALL_OPTION  "-Wl,--no-whole-archive")
-    set(TF_FRAMEWORK_LIB ${TF_LIB}/libtensorflow_framework.so.1)
-  endif()
-endif()
+    # -Wl,--whole-arch ve ensures symbols not used by twml_tf are also  ncluded.
+    # -Wl,--no-whole-arch ve l m s t  scope of t  prev ous flag.
+    set (L NK_ALL_OPT ON  "-Wl,--whole-arch ve")
+    set (NO_L NK_ALL_OPT ON  "-Wl,--no-whole-arch ve")
+    set(TF_FRAMEWORK_L B ${TF_L B}/l btensorflow_fra work.so.1)
+  end f()
+end f()
 
 
-target_include_directories(
+target_ nclude_d rector es(
   twml_tf
-  PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${TWML_INC}
-  # TF_INC needs to be the last to avoid some weird white-spacing issues with generated Makefile.
-  ${TF_INC} # Needed because of some header files auto-generated during build time.
-  ${TF_INC}/external/nsync/public/
+  PR VATE
+  ${CMAKE_CURRENT_SOURCE_D R}
+  ${TWML_ NC}
+  # TF_ NC needs to be t  last to avo d so    rd wh e-spac ng  ssues w h generated Makef le.
+  ${TF_ NC} # Needed because of so   ader f les auto-generated dur ng bu ld t  .
+  ${TF_ NC}/external/nsync/publ c/
   )
 
-target_link_libraries(twml_tf
-  PUBLIC
-  # Since we are using twml_tf as the "one" dynamic library,
-  # we want it to have the C function symbols needed for other functions as well.
-  ${LINK_ALL_OPTION} twml ${NO_LINK_ALL_OPTION}
-  ${TF_FRAMEWORK_LIB}
+target_l nk_l brar es(twml_tf
+  PUBL C
+  # S nce   are us ng twml_tf as t  "one" dynam c l brary,
+  #   want   to have t  C funct on symbols needed for ot r funct ons as  ll.
+  ${L NK_ALL_OPT ON} twml ${NO_L NK_ALL_OPT ON}
+  ${TF_FRAMEWORK_L B}
   )

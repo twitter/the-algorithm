@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-trait HasIsSoftUser {
-  def isSoftUser: Boolean
+tra  Has sSoftUser {
+  def  sSoftUser: Boolean
 }

@@ -1,451 +1,451 @@
-package com.twitter.tweetypie.storage
+package com.tw ter.t etyp e.storage
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.EmptyServiceIdentifier
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.ssl.OpportunisticTls
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.BareFormatter
-import com.twitter.logging.Level
-import com.twitter.logging.ScribeHandler
-import com.twitter.logging._
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.bijections.Bijections._
-import com.twitter.storage.client.manhattan.kv._
-import com.twitter.storage.client.manhattan.kv.impl.ValueDescriptor
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.storage.Scribe.ScribeHandlerFactory
-import com.twitter.tweetypie.storage.TweetStorageClient.BounceDelete
-import com.twitter.tweetypie.storage.TweetStorageClient.GetTweet
-import com.twitter.tweetypie.storage.TweetStorageClient.HardDeleteTweet
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.tweetypie.util.StitchUtils
-import com.twitter.util.Duration
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import scala.util.Random
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.mtls.aut nt cat on.EmptyServ ce dent f er
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.ssl.Opportun st cTls
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.logg ng.BareFormatter
+ mport com.tw ter.logg ng.Level
+ mport com.tw ter.logg ng.Scr beHandler
+ mport com.tw ter.logg ng._
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.storage.cl ent.manhattan.b ject ons.B ject ons._
+ mport com.tw ter.storage.cl ent.manhattan.kv._
+ mport com.tw ter.storage.cl ent.manhattan.kv. mpl.ValueDescr ptor
+ mport com.tw ter.t etyp e.cl ent_ d.Cl ent d lper
+ mport com.tw ter.t etyp e.storage.Scr be.Scr beHandlerFactory
+ mport com.tw ter.t etyp e.storage.T etStorageCl ent.BounceDelete
+ mport com.tw ter.t etyp e.storage.T etStorageCl ent.GetT et
+ mport com.tw ter.t etyp e.storage.T etStorageCl ent.HardDeleteT et
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.t etyp e.ut l.St chUt ls
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport scala.ut l.Random
 
-object ManhattanTweetStorageClient {
-  object Config {
+object ManhattanT etStorageCl ent {
+  object Conf g {
 
     /**
-     * The Manhattan dataset where tweets are stored is not externally
-     * configurable because writing tweets to a non-production dataset
-     * requires great care. Staging instances using a different dataset will
-     * write tweets to a non-production store, but will publish events, log to
-     * HDFS, and cache data referencing tweets in that store which are not
-     * accessible by the rest of the production cluster.
+     * T  Manhattan dataset w re t ets are stored  s not externally
+     * conf gurable because wr  ng t ets to a non-product on dataset
+     * requ res great care. Stag ng  nstances us ng a d fferent dataset w ll
+     * wr e t ets to a non-product on store, but w ll publ sh events, log to
+     * HDFS, and cac  data referenc ng t ets  n that store wh ch are not
+     * access ble by t  rest of t  product on cluster.
      *
-     * In a completely isolated environment it should be safe to write to
-     * other datasets for testing purposes.
+     *  n a completely  solated env ron nt   should be safe to wr e to
+     * ot r datasets for test ng purposes.
      */
-    val Dataset = "tbird_mh"
+    val Dataset = "tb rd_mh"
 
     /**
-     * Once a tweet has been deleted it can only be undeleted within this time
-     * window, after which [[UndeleteHandler]] will return an error on
+     * Once a t et has been deleted   can only be undeleted w h n t  t  
+     * w ndow, after wh ch [[UndeleteHandler]] w ll return an error on
      * undelete attempts.
      */
-    val UndeleteWindowHours = 240
+    val UndeleteW ndowH s = 240
 
     /**
-     * Default label used for underlying Manhattan Thrift client metrics
+     * Default label used for underly ng Manhattan Thr ft cl ent  tr cs
      *
-     * The finagle client metrics will be exported at clnt/:label.
+     * T  f nagle cl ent  tr cs w ll be exported at clnt/:label.
      */
-    val ThriftClientLabel = "mh_cylon"
+    val Thr ftCl entLabel = "mh_cylon"
 
     /**
-     * Return the corresponding Wily path for the Cylon cluster in the "other" DC
+     * Return t  correspond ng W ly path for t  Cylon cluster  n t  "ot r" DC
      */
-    def remoteDestination(zone: String): String =
-      s"/srv#/prod/${remoteZone(zone)}/manhattan/cylon.native-thrift"
+    def remoteDest nat on(zone: Str ng): Str ng =
+      s"/srv#/prod/${remoteZone(zone)}/manhattan/cylon.nat ve-thr ft"
 
-    private def remoteZone(zone: String) = zone match {
+    pr vate def remoteZone(zone: Str ng) = zone match {
       case "pdxa" => "atla"
       case "atla" | "localhost" => "pdxa"
       case _ =>
-        throw new IllegalArgumentException(s"Cannot configure remote DC for unknown zone '$zone'")
+        throw new  llegalArgu ntExcept on(s"Cannot conf gure remote DC for unknown zone '$zone'")
     }
   }
 
   /**
-   * @param applicationId Manhattan application id used for quota accounting
-   * @param localDestination Wily path to local Manhattan cluster
-   * @param localTimeout Overall timeout (including retries) for all reads/writes to local cluster
-   * @param remoteDestination Wily path to remote Manhattan cluster, used for undelete and force add
-   * @param remoteTimeout Overall timeout (including retries) for all reads/writes to remote cluster
-   * @param undeleteWindowHours Amount of time during which a deleted tweet can be undeleted
-   * @param thriftClientLabel Label used to scope stats for Manhattan Thrift client
-   * @param maxRequestsPerBatch Configure the Stitch RequestGroup.Generator batch size
-   * @param serviceIdentifier The ServiceIdentifier to use when making connections to a Manhattan cluster
-   * @param opportunisticTlsLevel The level to use for opportunistic TLS for connections to the Manhattan cluster
+   * @param appl cat on d Manhattan appl cat on  d used for quota account ng
+   * @param localDest nat on W ly path to local Manhattan cluster
+   * @param localT  out Overall t  out ( nclud ng retr es) for all reads/wr es to local cluster
+   * @param remoteDest nat on W ly path to remote Manhattan cluster, used for undelete and force add
+   * @param remoteT  out Overall t  out ( nclud ng retr es) for all reads/wr es to remote cluster
+   * @param undeleteW ndowH s Amount of t   dur ng wh ch a deleted t et can be undeleted
+   * @param thr ftCl entLabel Label used to scope stats for Manhattan Thr ft cl ent
+   * @param maxRequestsPerBatch Conf gure t  St ch RequestGroup.Generator batch s ze
+   * @param serv ce dent f er T  Serv ce dent f er to use w n mak ng connect ons to a Manhattan cluster
+   * @param opportun st cTlsLevel T  level to use for opportun st c TLS for connect ons to t  Manhattan cluster
    */
-  case class Config(
-    applicationId: String,
-    localDestination: String,
-    localTimeout: Duration,
-    remoteDestination: String,
-    remoteTimeout: Duration,
-    undeleteWindowHours: Int = Config.UndeleteWindowHours,
-    thriftClientLabel: String = Config.ThriftClientLabel,
-    maxRequestsPerBatch: Int = Int.MaxValue,
-    serviceIdentifier: ServiceIdentifier,
-    opportunisticTlsLevel: OpportunisticTls.Level)
+  case class Conf g(
+    appl cat on d: Str ng,
+    localDest nat on: Str ng,
+    localT  out: Durat on,
+    remoteDest nat on: Str ng,
+    remoteT  out: Durat on,
+    undeleteW ndowH s:  nt = Conf g.UndeleteW ndowH s,
+    thr ftCl entLabel: Str ng = Conf g.Thr ftCl entLabel,
+    maxRequestsPerBatch:  nt =  nt.MaxValue,
+    serv ce dent f er: Serv ce dent f er,
+    opportun st cTlsLevel: Opportun st cTls.Level)
 
   /**
-   * Sanitizes the input for APIs which take in a (Tweet, Seq[Field]) as input.
+   * San  zes t   nput for AP s wh ch take  n a (T et, Seq[F eld]) as  nput.
    *
-   * NOTE: This function only applies sanity checks which are common to
-   * all APIs which take in a (Tweet, Seq[Field]) as input. API specific
-   * checks are not covered here.
+   * NOTE: T  funct on only appl es san y c cks wh ch are common to
+   * all AP s wh ch take  n a (T et, Seq[F eld]) as  nput. AP  spec f c
+   * c cks are not covered  re.
    *
-   * @param apiStitch the backing API call
-   * @tparam T the output type of the backing API call
-   * @return a stitch function which does some basic input sanity checking
+   * @param ap St ch t  back ng AP  call
+   * @tparam T t  output type of t  back ng AP  call
+   * @return a st ch funct on wh ch does so  bas c  nput san y c ck ng
    */
-  private[storage] def sanitizeTweetFields[T](
-    apiStitch: (Tweet, Seq[Field]) => Stitch[T]
-  ): (Tweet, Seq[Field]) => Stitch[T] =
-    (tweet, fields) => {
-      require(fields.forall(_.id > 0), s"Field ids ${fields} are not positive numbers")
-      apiStitch(tweet, fields)
+  pr vate[storage] def san  zeT etF elds[T](
+    ap St ch: (T et, Seq[F eld]) => St ch[T]
+  ): (T et, Seq[F eld]) => St ch[T] =
+    (t et, f elds) => {
+      requ re(f elds.forall(_. d > 0), s"F eld  ds ${f elds} are not pos  ve numbers")
+      ap St ch(t et, f elds)
     }
 
-  // Returns a handler that asynchronously logs messages to Scribe using the BareFormatter which
-  // logs just the message without any additional metadata
-  def scribeHandler(categoryName: String): HandlerFactory =
-    ScribeHandler(
+  // Returns a handler that asynchronously logs  ssages to Scr be us ng t  BareFormatter wh ch
+  // logs just t   ssage w hout any add  onal  tadata
+  def scr beHandler(categoryNa : Str ng): HandlerFactory =
+    Scr beHandler(
       formatter = BareFormatter,
-      maxMessagesPerTransaction = 100,
-      category = categoryName,
-      level = Some(Level.TRACE)
+      max ssagesPerTransact on = 100,
+      category = categoryNa ,
+      level = So (Level.TRACE)
     )
 
   /**
-   * A Config appropriate for interactive sessions and scripts.
+   * A Conf g appropr ate for  nteract ve sess ons and scr pts.
    */
-  def develConfig(): Config =
-    Config(
-      applicationId = Option(System.getenv("USER")).getOrElse("<unknown>") + ".devel",
-      localDestination = "/s/manhattan/cylon.native-thrift",
-      localTimeout = 10.seconds,
-      remoteDestination = "/s/manhattan/cylon.native-thrift",
-      remoteTimeout = 10.seconds,
-      undeleteWindowHours = Config.UndeleteWindowHours,
-      thriftClientLabel = Config.ThriftClientLabel,
-      maxRequestsPerBatch = Int.MaxValue,
-      serviceIdentifier = ServiceIdentifier(System.getenv("USER"), "tweetypie", "devel", "local"),
-      opportunisticTlsLevel = OpportunisticTls.Required
+  def develConf g(): Conf g =
+    Conf g(
+      appl cat on d = Opt on(System.getenv("USER")).getOrElse("<unknown>") + ".devel",
+      localDest nat on = "/s/manhattan/cylon.nat ve-thr ft",
+      localT  out = 10.seconds,
+      remoteDest nat on = "/s/manhattan/cylon.nat ve-thr ft",
+      remoteT  out = 10.seconds,
+      undeleteW ndowH s = Conf g.UndeleteW ndowH s,
+      thr ftCl entLabel = Conf g.Thr ftCl entLabel,
+      maxRequestsPerBatch =  nt.MaxValue,
+      serv ce dent f er = Serv ce dent f er(System.getenv("USER"), "t etyp e", "devel", "local"),
+      opportun st cTlsLevel = Opportun st cTls.Requ red
     )
 
   /**
-   * Build a Manhattan tweet storage client for use in interactive
-   * sessions and scripts.
+   * Bu ld a Manhattan t et storage cl ent for use  n  nteract ve
+   * sess ons and scr pts.
    */
-  def devel(): TweetStorageClient =
-    new ManhattanTweetStorageClient(
-      develConfig(),
-      NullStatsReceiver,
-      ClientIdHelper.default,
+  def devel(): T etStorageCl ent =
+    new ManhattanT etStorageCl ent(
+      develConf g(),
+      NullStatsRece ver,
+      Cl ent d lper.default,
     )
 }
 
-class ManhattanTweetStorageClient(
-  config: ManhattanTweetStorageClient.Config,
-  statsReceiver: StatsReceiver,
-  private val clientIdHelper: ClientIdHelper)
-    extends TweetStorageClient {
-  import ManhattanTweetStorageClient._
+class ManhattanT etStorageCl ent(
+  conf g: ManhattanT etStorageCl ent.Conf g,
+  statsRece ver: StatsRece ver,
+  pr vate val cl ent d lper: Cl ent d lper)
+    extends T etStorageCl ent {
+   mport ManhattanT etStorageCl ent._
 
-  lazy val scribeHandlerFactory: ScribeHandlerFactory = scribeHandler _
-  val scribe: Scribe = new Scribe(scribeHandlerFactory, statsReceiver)
+  lazy val scr beHandlerFactory: Scr beHandlerFactory = scr beHandler _
+  val scr be: Scr be = new Scr be(scr beHandlerFactory, statsRece ver)
 
-  def mkClient(
-    dest: String,
-    label: String
-  ): ManhattanKVClient = {
+  def mkCl ent(
+    dest: Str ng,
+    label: Str ng
+  ): ManhattanKVCl ent = {
     val mhMtlsParams =
-      if (config.serviceIdentifier == EmptyServiceIdentifier) NoMtlsParams
+       f (conf g.serv ce dent f er == EmptyServ ce dent f er) NoMtlsParams
       else
-        ManhattanKVClientMtlsParams(
-          serviceIdentifier = config.serviceIdentifier,
-          opportunisticTls = config.opportunisticTlsLevel
+        ManhattanKVCl entMtlsParams(
+          serv ce dent f er = conf g.serv ce dent f er,
+          opportun st cTls = conf g.opportun st cTlsLevel
         )
 
-    new ManhattanKVClient(
-      config.applicationId,
+    new ManhattanKVCl ent(
+      conf g.appl cat on d,
       dest,
       mhMtlsParams,
       label,
-      Seq(Experiments.ApertureLoadBalancer))
+      Seq(Exper  nts.ApertureLoadBalancer))
   }
 
-  val localClient: ManhattanKVClient = mkClient(config.localDestination, config.thriftClientLabel)
+  val localCl ent: ManhattanKVCl ent = mkCl ent(conf g.localDest nat on, conf g.thr ftCl entLabel)
 
-  val localMhEndpoint: ManhattanKVEndpoint = ManhattanKVEndpointBuilder(localClient)
-    .defaultGuarantee(Guarantee.SoftDcReadMyWrites)
-    .defaultMaxTimeout(config.localTimeout)
-    .maxRequestsPerBatch(config.maxRequestsPerBatch)
-    .build()
+  val localMhEndpo nt: ManhattanKVEndpo nt = ManhattanKVEndpo ntBu lder(localCl ent)
+    .defaultGuarantee(Guarantee.SoftDcRead Wr es)
+    .defaultMaxT  out(conf g.localT  out)
+    .maxRequestsPerBatch(conf g.maxRequestsPerBatch)
+    .bu ld()
 
-  val localManhattanOperations = new ManhattanOperations(Config.Dataset, localMhEndpoint)
+  val localManhattanOperat ons = new ManhattanOperat ons(Conf g.Dataset, localMhEndpo nt)
 
-  val remoteClient: ManhattanKVClient =
-    mkClient(config.remoteDestination, s"${config.thriftClientLabel}_remote")
+  val remoteCl ent: ManhattanKVCl ent =
+    mkCl ent(conf g.remoteDest nat on, s"${conf g.thr ftCl entLabel}_remote")
 
-  val remoteMhEndpoint: ManhattanKVEndpoint = ManhattanKVEndpointBuilder(remoteClient)
-    .defaultGuarantee(Guarantee.SoftDcReadMyWrites)
-    .defaultMaxTimeout(config.remoteTimeout)
-    .build()
+  val remoteMhEndpo nt: ManhattanKVEndpo nt = ManhattanKVEndpo ntBu lder(remoteCl ent)
+    .defaultGuarantee(Guarantee.SoftDcRead Wr es)
+    .defaultMaxT  out(conf g.remoteT  out)
+    .bu ld()
 
-  val remoteManhattanOperations = new ManhattanOperations(Config.Dataset, remoteMhEndpoint)
+  val remoteManhattanOperat ons = new ManhattanOperat ons(Conf g.Dataset, remoteMhEndpo nt)
 
   /**
-   * Note: This translation is only useful for non-batch endpoints. Batch endpoints currently
-   * represent failure without propagating an exception
-   * (e.g. [[com.twitter.tweetypie.storage.Response.TweetResponseCode.Failure]]).
+   * Note: T  translat on  s only useful for non-batch endpo nts. Batch endpo nts currently
+   * represent fa lure w hout propagat ng an except on
+   * (e.g. [[com.tw ter.t etyp e.storage.Response.T etResponseCode.Fa lure]]).
    */
-  private[this] def translateExceptions(
-    apiName: String,
-    statsReceiver: StatsReceiver
-  ): PartialFunction[Throwable, Throwable] = {
-    case e: IllegalArgumentException => ClientError(e.getMessage, e)
-    case e: DeniedManhattanException => RateLimited(e.getMessage, e)
-    case e: VersionMismatchError =>
-      statsReceiver.scope(apiName).counter("mh_version_mismatches").incr()
+  pr vate[t ] def translateExcept ons(
+    ap Na : Str ng,
+    statsRece ver: StatsRece ver
+  ): Part alFunct on[Throwable, Throwable] = {
+    case e:  llegalArgu ntExcept on => Cl entError(e.get ssage, e)
+    case e: Den edManhattanExcept on => RateL m ed(e.get ssage, e)
+    case e: Vers onM smatchError =>
+      statsRece ver.scope(ap Na ).counter("mh_vers on_m smatc s"). ncr()
       e
-    case e: InternalError =>
-      TweetUtils.log.error(e, s"Error processing $apiName request: ${e.getMessage}")
+    case e:  nternalError =>
+      T etUt ls.log.error(e, s"Error process ng $ap Na  request: ${e.get ssage}")
       e
   }
 
   /**
-   * Count requests per client id producing metrics of the form
-   * .../clients/:root_client_id/requests
+   * Count requests per cl ent  d produc ng  tr cs of t  form
+   * .../cl ents/:root_cl ent_ d/requests
    */
-  def observeClientId[A, B](
-    apiStitch: A => Stitch[B],
-    statsReceiver: StatsReceiver,
-    clientIdHelper: ClientIdHelper,
-  ): A => Stitch[B] = {
-    val clients = statsReceiver.scope("clients")
+  def observeCl ent d[A, B](
+    ap St ch: A => St ch[B],
+    statsRece ver: StatsRece ver,
+    cl ent d lper: Cl ent d lper,
+  ): A => St ch[B] = {
+    val cl ents = statsRece ver.scope("cl ents")
 
-    val incrementClientRequests = { args: A =>
-      val clientId = clientIdHelper.effectiveClientIdRoot.getOrElse(ClientIdHelper.UnknownClientId)
-      clients.counter(clientId, "requests").incr
+    val  ncre ntCl entRequests = { args: A =>
+      val cl ent d = cl ent d lper.effect veCl ent dRoot.getOrElse(Cl ent d lper.UnknownCl ent d)
+      cl ents.counter(cl ent d, "requests"). ncr
     }
 
     a => {
-      incrementClientRequests(a)
-      apiStitch(a)
+       ncre ntCl entRequests(a)
+      ap St ch(a)
     }
   }
 
   /**
-   * Increment counters based on the overall response status of the returned [[GetTweet.Response]].
+   *  ncre nt counters based on t  overall response status of t  returned [[GetT et.Response]].
    */
-  def observeGetTweetResponseCode[A](
-    apiStitch: A => Stitch[GetTweet.Response],
-    statsReceiver: StatsReceiver
-  ): A => Stitch[GetTweet.Response] = {
-    val scope = statsReceiver.scope("response_code")
+  def observeGetT etResponseCode[A](
+    ap St ch: A => St ch[GetT et.Response],
+    statsRece ver: StatsRece ver
+  ): A => St ch[GetT et.Response] = {
+    val scope = statsRece ver.scope("response_code")
 
     val success = scope.counter("success")
     val notFound = scope.counter("not_found")
-    val failure = scope.counter("failure")
-    val overCapacity = scope.counter("over_capacity")
+    val fa lure = scope.counter("fa lure")
+    val overCapac y = scope.counter("over_capac y")
     val deleted = scope.counter("deleted")
     val bounceDeleted = scope.counter("bounce_deleted")
 
     a =>
-      apiStitch(a).respond {
-        case Return(_: GetTweet.Response.Found) => success.incr()
-        case Return(GetTweet.Response.NotFound) => notFound.incr()
-        case Return(_: GetTweet.Response.BounceDeleted) => bounceDeleted.incr()
-        case Return(GetTweet.Response.Deleted) => deleted.incr()
-        case Throw(_: RateLimited) => overCapacity.incr()
-        case Throw(_) => failure.incr()
+      ap St ch(a).respond {
+        case Return(_: GetT et.Response.Found) => success. ncr()
+        case Return(GetT et.Response.NotFound) => notFound. ncr()
+        case Return(_: GetT et.Response.BounceDeleted) => bounceDeleted. ncr()
+        case Return(GetT et.Response.Deleted) => deleted. ncr()
+        case Throw(_: RateL m ed) => overCapac y. ncr()
+        case Throw(_) => fa lure. ncr()
       }
   }
 
   /**
-   * We do 3 things here:
+   *   do 3 th ngs  re:
    *
-   * - Bookkeeping for overall requests
-   * - Bookkeeping for per api requests
-   * - Translate exceptions
+   * - Bookkeep ng for overall requests
+   * - Bookkeep ng for per ap  requests
+   * - Translate except ons
    *
-   * @param apiName the API being called
-   * @param apiStitch the implementation of the API
-   * @tparam A template for input type of API
-   * @tparam B template for output type of API
-   * @return Function which executes the given API call
+   * @param ap Na  t  AP  be ng called
+   * @param ap St ch t   mple ntat on of t  AP 
+   * @tparam A template for  nput type of AP 
+   * @tparam B template for output type of AP 
+   * @return Funct on wh ch executes t  g ven AP  call
    */
-  private[storage] def endpoint[A, B](
-    apiName: String,
-    apiStitch: A => Stitch[B]
-  ): A => Stitch[B] = {
-    val translateException = translateExceptions(apiName, statsReceiver)
-    val observe = StitchUtils.observe[B](statsReceiver, apiName)
+  pr vate[storage] def endpo nt[A, B](
+    ap Na : Str ng,
+    ap St ch: A => St ch[B]
+  ): A => St ch[B] = {
+    val translateExcept on = translateExcept ons(ap Na , statsRece ver)
+    val observe = St chUt ls.observe[B](statsRece ver, ap Na )
 
     a =>
-      StitchUtils.translateExceptions(
-        observe(apiStitch(a)),
-        translateException
+      St chUt ls.translateExcept ons(
+        observe(ap St ch(a)),
+        translateExcept on
       )
   }
 
-  private[storage] def endpoint2[A, B, C](
-    apiName: String,
-    apiStitch: (A, B) => Stitch[C],
-    clientIdHelper: ClientIdHelper,
-  ): (A, B) => Stitch[C] =
-    Function.untupled(endpoint(apiName, apiStitch.tupled))
+  pr vate[storage] def endpo nt2[A, B, C](
+    ap Na : Str ng,
+    ap St ch: (A, B) => St ch[C],
+    cl ent d lper: Cl ent d lper,
+  ): (A, B) => St ch[C] =
+    Funct on.untupled(endpo nt(ap Na , ap St ch.tupled))
 
-  val getTweet: TweetStorageClient.GetTweet = {
-    val stats = statsReceiver.scope("getTweet")
+  val getT et: T etStorageCl ent.GetT et = {
+    val stats = statsRece ver.scope("getT et")
 
-    observeClientId(
-      observeGetTweetResponseCode(
-        endpoint(
-          "getTweet",
-          GetTweetHandler(
-            read = localManhattanOperations.read,
-            statsReceiver = stats,
+    observeCl ent d(
+      observeGetT etResponseCode(
+        endpo nt(
+          "getT et",
+          GetT etHandler(
+            read = localManhattanOperat ons.read,
+            statsRece ver = stats,
           )
         ),
         stats,
       ),
       stats,
-      clientIdHelper,
+      cl ent d lper,
     )
   }
 
-  val getStoredTweet: TweetStorageClient.GetStoredTweet = {
-    val stats = statsReceiver.scope("getStoredTweet")
+  val getStoredT et: T etStorageCl ent.GetStoredT et = {
+    val stats = statsRece ver.scope("getStoredT et")
 
-    observeClientId(
-      endpoint(
-        "getStoredTweet",
-        GetStoredTweetHandler(
-          read = localManhattanOperations.read,
-          statsReceiver = stats,
+    observeCl ent d(
+      endpo nt(
+        "getStoredT et",
+        GetStoredT etHandler(
+          read = localManhattanOperat ons.read,
+          statsRece ver = stats,
         )
       ),
       stats,
-      clientIdHelper,
+      cl ent d lper,
     )
   }
 
-  val addTweet: TweetStorageClient.AddTweet =
-    endpoint(
-      "addTweet",
-      AddTweetHandler(
-        insert = localManhattanOperations.insert,
-        scribe = scribe,
-        stats = statsReceiver
+  val addT et: T etStorageCl ent.AddT et =
+    endpo nt(
+      "addT et",
+      AddT etHandler(
+         nsert = localManhattanOperat ons. nsert,
+        scr be = scr be,
+        stats = statsRece ver
       )
     )
 
-  val updateTweet: TweetStorageClient.UpdateTweet =
-    endpoint2(
-      "updateTweet",
-      ManhattanTweetStorageClient.sanitizeTweetFields(
-        UpdateTweetHandler(
-          insert = localManhattanOperations.insert,
-          stats = statsReceiver,
+  val updateT et: T etStorageCl ent.UpdateT et =
+    endpo nt2(
+      "updateT et",
+      ManhattanT etStorageCl ent.san  zeT etF elds(
+        UpdateT etHandler(
+           nsert = localManhattanOperat ons. nsert,
+          stats = statsRece ver,
         )
       ),
-      clientIdHelper,
+      cl ent d lper,
     )
 
-  val softDelete: TweetStorageClient.SoftDelete =
-    endpoint(
+  val softDelete: T etStorageCl ent.SoftDelete =
+    endpo nt(
       "softDelete",
       SoftDeleteHandler(
-        insert = localManhattanOperations.insert,
-        scribe = scribe
+         nsert = localManhattanOperat ons. nsert,
+        scr be = scr be
       )
     )
 
   val bounceDelete: BounceDelete =
-    endpoint(
+    endpo nt(
       "bounceDelete",
       BounceDeleteHandler(
-        insert = localManhattanOperations.insert,
-        scribe = scribe
+         nsert = localManhattanOperat ons. nsert,
+        scr be = scr be
       )
     )
 
-  val undelete: TweetStorageClient.Undelete =
-    endpoint(
+  val undelete: T etStorageCl ent.Undelete =
+    endpo nt(
       "undelete",
       UndeleteHandler(
-        read = localManhattanOperations.read,
-        localInsert = localManhattanOperations.insert,
-        remoteInsert = remoteManhattanOperations.insert,
-        delete = localManhattanOperations.delete,
-        undeleteWindowHours = config.undeleteWindowHours,
-        stats = statsReceiver
+        read = localManhattanOperat ons.read,
+        local nsert = localManhattanOperat ons. nsert,
+        remote nsert = remoteManhattanOperat ons. nsert,
+        delete = localManhattanOperat ons.delete,
+        undeleteW ndowH s = conf g.undeleteW ndowH s,
+        stats = statsRece ver
       )
     )
 
-  val getDeletedTweets: TweetStorageClient.GetDeletedTweets =
-    endpoint(
-      "getDeletedTweets",
-      GetDeletedTweetsHandler(
-        read = localManhattanOperations.read,
-        stats = statsReceiver
+  val getDeletedT ets: T etStorageCl ent.GetDeletedT ets =
+    endpo nt(
+      "getDeletedT ets",
+      GetDeletedT etsHandler(
+        read = localManhattanOperat ons.read,
+        stats = statsRece ver
       )
     )
 
-  val deleteAdditionalFields: TweetStorageClient.DeleteAdditionalFields =
-    endpoint2(
-      "deleteAdditionalFields",
-      DeleteAdditionalFieldsHandler(
-        delete = localManhattanOperations.delete,
-        stats = statsReceiver,
+  val deleteAdd  onalF elds: T etStorageCl ent.DeleteAdd  onalF elds =
+    endpo nt2(
+      "deleteAdd  onalF elds",
+      DeleteAdd  onalF eldsHandler(
+        delete = localManhattanOperat ons.delete,
+        stats = statsRece ver,
       ),
-      clientIdHelper,
+      cl ent d lper,
     )
 
-  val scrub: TweetStorageClient.Scrub =
-    endpoint2(
+  val scrub: T etStorageCl ent.Scrub =
+    endpo nt2(
       "scrub",
       ScrubHandler(
-        insert = localManhattanOperations.insert,
-        delete = localManhattanOperations.delete,
-        scribe = scribe,
-        stats = statsReceiver,
+         nsert = localManhattanOperat ons. nsert,
+        delete = localManhattanOperat ons.delete,
+        scr be = scr be,
+        stats = statsRece ver,
       ),
-      clientIdHelper,
+      cl ent d lper,
     )
 
-  val hardDeleteTweet: HardDeleteTweet =
-    endpoint(
-      "hardDeleteTweet",
-      HardDeleteTweetHandler(
-        read = localManhattanOperations.read,
-        insert = localManhattanOperations.insert,
-        delete = localManhattanOperations.delete,
-        scribe = scribe,
-        stats = statsReceiver
+  val hardDeleteT et: HardDeleteT et =
+    endpo nt(
+      "hardDeleteT et",
+      HardDeleteT etHandler(
+        read = localManhattanOperat ons.read,
+         nsert = localManhattanOperat ons. nsert,
+        delete = localManhattanOperat ons.delete,
+        scr be = scr be,
+        stats = statsRece ver
       )
     )
 
-  val ping: TweetStorageClient.Ping =
+  val p ng: T etStorageCl ent.P ng =
     () =>
-      Stitch
+      St ch
         .run(
-          localMhEndpoint
+          localMhEndpo nt
             .get(
-              ManhattanOperations.KeyDescriptor
-                .withDataset(Config.Dataset)
-                .withPkey(Random.nextLong().abs)
-                .withLkey(TweetKey.LKey.CoreFieldsKey), // could be any lkey
-              ValueDescriptor(BufInjection)
-            ).unit
+              ManhattanOperat ons.KeyDescr ptor
+                .w hDataset(Conf g.Dataset)
+                .w hPkey(Random.nextLong().abs)
+                .w hLkey(T etKey.LKey.CoreF eldsKey), // could be any lkey
+              ValueDescr ptor(Buf nject on)
+            ).un 
         )
 }

@@ -1,12 +1,12 @@
-scala_library(
-    sources = ["*.scala"],
+scala_l brary(
+    s ces = ["*.scala"],
     platform = "java8",
-    strict_deps = False,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/graphjet",
-        "finagle/finagle-stats/src/main/scala",
-        "src/scala/com/twitter/recos/util:recos-util",
-        "src/thrift/com/twitter/recos:recos-common-scala",
+    str ct_deps = False,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/com/tw ter/graphjet",
+        "f nagle/f nagle-stats/src/ma n/scala",
+        "src/scala/com/tw ter/recos/ut l:recos-ut l",
+        "src/thr ft/com/tw ter/recos:recos-common-scala",
     ],
 )

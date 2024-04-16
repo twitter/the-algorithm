@@ -1,93 +1,93 @@
-package com.twitter.home_mixer.product.list_tweets
+package com.tw ter.ho _m xer.product.l st_t ets
 
-import com.twitter.adserver.{thriftscala => ads}
-import com.twitter.home_mixer.functional_component.decorator.builder.HomeAdsClientEventDetailsBuilder
-import com.twitter.home_mixer.functional_component.gate.ExcludeSoftUserGate
-import com.twitter.home_mixer.param.HomeGlobalParams
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableAdvertiserBrandSafetySettingsFeatureHydratorParam
-import com.twitter.home_mixer.product.list_tweets.model.ListTweetsQuery
-import com.twitter.home_mixer.product.list_tweets.param.ListTweetsParam.EnableAdsCandidatePipelineParam
-import com.twitter.product_mixer.component_library.candidate_source.ads.AdsProdThriftCandidateSource
-import com.twitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.builder.contextual_ref.ContextualTweetRefBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.ad.AdsCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.metadata.ClientEventInfoBuilder
-import com.twitter.product_mixer.component_library.feature_hydrator.candidate.ads.AdvertiserBrandSafetySettingsFeatureHydrator
-import com.twitter.product_mixer.component_library.feature_hydrator.candidate.param_gated.ParamGatedCandidateFeatureHydrator
-import com.twitter.product_mixer.component_library.gate.NonEmptyCandidatesGate
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
-import com.twitter.product_mixer.component_library.pipeline.candidate.ads.AdsDependentCandidatePipelineConfig
-import com.twitter.product_mixer.component_library.pipeline.candidate.ads.AdsDependentCandidatePipelineConfigBuilder
-import com.twitter.product_mixer.component_library.pipeline.candidate.ads.CountCandidatesFromPipelines
-import com.twitter.product_mixer.component_library.pipeline.candidate.ads.StaticAdsDisplayLocationBuilder
-import com.twitter.product_mixer.component_library.pipeline.candidate.ads.ValidAdImpressionIdFilter
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.gate.ParamNotGate
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.TimelineHomePromotedHydrationSafetyLevel
-import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.TweetHydrationContext
-import com.twitter.timelines.injection.scribe.InjectionScribeUtil
-import com.twitter.timelineservice.suggests.{thriftscala => st}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.adserver.{thr ftscala => ads}
+ mport com.tw ter.ho _m xer.funct onal_component.decorator.bu lder.Ho AdsCl entEventDeta lsBu lder
+ mport com.tw ter.ho _m xer.funct onal_component.gate.ExcludeSoftUserGate
+ mport com.tw ter.ho _m xer.param.Ho GlobalParams
+ mport com.tw ter.ho _m xer.param.Ho GlobalParams.EnableAdvert serBrandSafetySett ngsFeatureHydratorParam
+ mport com.tw ter.ho _m xer.product.l st_t ets.model.L stT etsQuery
+ mport com.tw ter.ho _m xer.product.l st_t ets.param.L stT etsParam.EnableAdsCand dateP pel neParam
+ mport com.tw ter.product_m xer.component_l brary.cand date_s ce.ads.AdsProdThr ftCand dateS ce
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.Urt emCand dateDecorator
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.contextual_ref.ContextualT etRefBu lder
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. em.ad.AdsCand dateUrt emBu lder
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder. tadata.Cl entEvent nfoBu lder
+ mport com.tw ter.product_m xer.component_l brary.feature_hydrator.cand date.ads.Advert serBrandSafetySett ngsFeatureHydrator
+ mport com.tw ter.product_m xer.component_l brary.feature_hydrator.cand date.param_gated.ParamGatedCand dateFeatureHydrator
+ mport com.tw ter.product_m xer.component_l brary.gate.NonEmptyCand datesGate
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.ads.AdsCand date
+ mport com.tw ter.product_m xer.component_l brary.p pel ne.cand date.ads.AdsDependentCand dateP pel neConf g
+ mport com.tw ter.product_m xer.component_l brary.p pel ne.cand date.ads.AdsDependentCand dateP pel neConf gBu lder
+ mport com.tw ter.product_m xer.component_l brary.p pel ne.cand date.ads.CountCand datesFromP pel nes
+ mport com.tw ter.product_m xer.component_l brary.p pel ne.cand date.ads.Stat cAdsD splayLocat onBu lder
+ mport com.tw ter.product_m xer.component_l brary.p pel ne.cand date.ads.Val dAd mpress on dF lter
+ mport com.tw ter.product_m xer.core.funct onal_component.common.Cand dateScope
+ mport com.tw ter.product_m xer.core.gate.ParamNotGate
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.rtf.safety_level.T  l neHo PromotedHydrat onSafetyLevel
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.contextual_ref.T etHydrat onContext
+ mport com.tw ter.t  l nes. nject on.scr be. nject onScr beUt l
+ mport com.tw ter.t  l neserv ce.suggests.{thr ftscala => st}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ListTweetsAdsCandidatePipelineBuilder @Inject() (
-  adsCandidatePipelineConfigBuilder: AdsDependentCandidatePipelineConfigBuilder,
-  adsCandidateSource: AdsProdThriftCandidateSource,
-  advertiserBrandSafetySettingsFeatureHydrator: AdvertiserBrandSafetySettingsFeatureHydrator[
-    ListTweetsQuery,
-    AdsCandidate
+@S ngleton
+class L stT etsAdsCand dateP pel neBu lder @ nject() (
+  adsCand dateP pel neConf gBu lder: AdsDependentCand dateP pel neConf gBu lder,
+  adsCand dateS ce: AdsProdThr ftCand dateS ce,
+  advert serBrandSafetySett ngsFeatureHydrator: Advert serBrandSafetySett ngsFeatureHydrator[
+    L stT etsQuery,
+    AdsCand date
   ]) {
 
-  private val identifier: CandidatePipelineIdentifier = CandidatePipelineIdentifier("ListTweetsAds")
+  pr vate val  dent f er: Cand dateP pel ne dent f er = Cand dateP pel ne dent f er("L stT etsAds")
 
-  private val suggestType = st.SuggestType.Promoted
+  pr vate val suggestType = st.SuggestType.Promoted
 
-  private val clientEventInfoBuilder = ClientEventInfoBuilder(
-    component = InjectionScribeUtil.scribeComponent(suggestType).get,
-    detailsBuilder = Some(HomeAdsClientEventDetailsBuilder(Some(suggestType.name)))
+  pr vate val cl entEvent nfoBu lder = Cl entEvent nfoBu lder(
+    component =  nject onScr beUt l.scr beComponent(suggestType).get,
+    deta lsBu lder = So (Ho AdsCl entEventDeta lsBu lder(So (suggestType.na )))
   )
 
-  private val contextualTweetRefBuilder = ContextualTweetRefBuilder(
-    TweetHydrationContext(
-      safetyLevelOverride = Some(TimelineHomePromotedHydrationSafetyLevel),
-      outerTweetContext = None
+  pr vate val contextualT etRefBu lder = ContextualT etRefBu lder(
+    T etHydrat onContext(
+      safetyLevelOverr de = So (T  l neHo PromotedHydrat onSafetyLevel),
+      outerT etContext = None
     ))
 
-  private val decorator = UrtItemCandidateDecorator(
-    AdsCandidateUrtItemBuilder(
-      tweetClientEventInfoBuilder = Some(clientEventInfoBuilder),
-      contextualTweetRefBuilder = Some(contextualTweetRefBuilder)
+  pr vate val decorator = Urt emCand dateDecorator(
+    AdsCand dateUrt emBu lder(
+      t etCl entEvent nfoBu lder = So (cl entEvent nfoBu lder),
+      contextualT etRefBu lder = So (contextualT etRefBu lder)
     )
   )
 
-  def build(
-    organicCandidatePipelines: CandidateScope
-  ): AdsDependentCandidatePipelineConfig[ListTweetsQuery] =
-    adsCandidatePipelineConfigBuilder.build[ListTweetsQuery](
-      adsCandidateSource = adsCandidateSource,
-      identifier = identifier,
-      adsDisplayLocationBuilder =
-        StaticAdsDisplayLocationBuilder(ads.DisplayLocation.TimelineHomeReverseChron),
-      countNumOrganicItems = CountCandidatesFromPipelines(organicCandidatePipelines),
-      supportedClientParam = Some(EnableAdsCandidatePipelineParam),
+  def bu ld(
+    organ cCand dateP pel nes: Cand dateScope
+  ): AdsDependentCand dateP pel neConf g[L stT etsQuery] =
+    adsCand dateP pel neConf gBu lder.bu ld[L stT etsQuery](
+      adsCand dateS ce = adsCand dateS ce,
+       dent f er =  dent f er,
+      adsD splayLocat onBu lder =
+        Stat cAdsD splayLocat onBu lder(ads.D splayLocat on.T  l neHo ReverseChron),
+      countNumOrgan c ems = CountCand datesFromP pel nes(organ cCand dateP pel nes),
+      supportedCl entParam = So (EnableAdsCand dateP pel neParam),
       gates = Seq(
         ParamNotGate(
-          name = "AdsDisableInjectionBasedOnUserRole",
-          param = HomeGlobalParams.AdsDisableInjectionBasedOnUserRoleParam
+          na  = "AdsD sable nject onBasedOnUserRole",
+          param = Ho GlobalParams.AdsD sable nject onBasedOnUserRoleParam
         ),
         ExcludeSoftUserGate,
-        NonEmptyCandidatesGate(organicCandidatePipelines)
+        NonEmptyCand datesGate(organ cCand dateP pel nes)
       ),
-      filters = Seq(ValidAdImpressionIdFilter),
-      postFilterFeatureHydration = Seq(
-        ParamGatedCandidateFeatureHydrator(
-          EnableAdvertiserBrandSafetySettingsFeatureHydratorParam,
-          advertiserBrandSafetySettingsFeatureHydrator
+      f lters = Seq(Val dAd mpress on dF lter),
+      postF lterFeatureHydrat on = Seq(
+        ParamGatedCand dateFeatureHydrator(
+          EnableAdvert serBrandSafetySett ngsFeatureHydratorParam,
+          advert serBrandSafetySett ngsFeatureHydrator
         )
       ),
-      decorator = Some(decorator),
-      urtRequest = Some(true),
+      decorator = So (decorator),
+      urtRequest = So (true),
     )
 }

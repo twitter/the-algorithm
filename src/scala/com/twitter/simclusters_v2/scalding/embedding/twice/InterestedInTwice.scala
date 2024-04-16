@@ -1,454 +1,454 @@
-package com.twitter.simclusters_v2.scalding.embedding.twice
+package com.tw ter.s mclusters_v2.scald ng.embedd ng.tw ce
 
-import com.twitter.scalding.Args
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.Duration
-import com.twitter.scalding.Execution
-import com.twitter.scalding.RichDate
-import com.twitter.scalding.UniqueID
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.clustering.ConnectedComponentsClusteringMethod
-import com.twitter.simclusters_v2.common.clustering.LargestDimensionClusteringMethod
-import com.twitter.simclusters_v2.common.clustering.LouvainClusteringMethod
-import com.twitter.simclusters_v2.common.clustering.MedoidRepresentativeSelectionMethod
-import com.twitter.simclusters_v2.common.clustering.MaxFavScoreRepresentativeSelectionMethod
-import com.twitter.simclusters_v2.common.clustering.SimilarityFunctions
-import com.twitter.simclusters_v2.hdfs_sources.ClustersMembersConnectedComponentsApeSimilarityScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.ClustersMembersLargestDimApeSimilarity2DayUpdateScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.ClustersMembersLargestDimApeSimilarityScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.ClustersMembersLouvainApeSimilarityScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.InterestedInTwiceByLargestDim2DayUpdateScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.InterestedInTwiceByLargestDimScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.InterestedInTwiceByLargestDimFavScoreScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.InterestedInTwiceConnectedComponentsScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.InterestedInTwiceLouvainScalaDataset
-import com.twitter.simclusters_v2.scalding.embedding.twice.InterestedInTwiceBaseApp.ProducerEmbeddingSource
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+ mport com.tw ter.scald ng.Args
+ mport com.tw ter.scald ng.DateRange
+ mport com.tw ter.scald ng.Days
+ mport com.tw ter.scald ng.Durat on
+ mport com.tw ter.scald ng.Execut on
+ mport com.tw ter.scald ng.R chDate
+ mport com.tw ter.scald ng.Un que D
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.common.cluster ng.ConnectedComponentsCluster ng thod
+ mport com.tw ter.s mclusters_v2.common.cluster ng.LargestD  ns onCluster ng thod
+ mport com.tw ter.s mclusters_v2.common.cluster ng.Louva nCluster ng thod
+ mport com.tw ter.s mclusters_v2.common.cluster ng. do dRepresentat veSelect on thod
+ mport com.tw ter.s mclusters_v2.common.cluster ng.MaxFavScoreRepresentat veSelect on thod
+ mport com.tw ter.s mclusters_v2.common.cluster ng.S m lar yFunct ons
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.Clusters mbersConnectedComponentsApeS m lar yScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.Clusters mbersLargestD mApeS m lar y2DayUpdateScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.Clusters mbersLargestD mApeS m lar yScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.Clusters mbersLouva nApeS m lar yScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces. nterested nTw ceByLargestD m2DayUpdateScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces. nterested nTw ceByLargestD mScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces. nterested nTw ceByLargestD mFavScoreScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces. nterested nTw ceConnectedComponentsScalaDataset
+ mport com.tw ter.s mclusters_v2.hdfs_s ces. nterested nTw ceLouva nScalaDataset
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.tw ce. nterested nTw ceBaseApp.ProducerEmbedd ngS ce
+ mport com.tw ter.wtf.scald ng.jobs.common.AdhocExecut onApp
+ mport com.tw ter.wtf.scald ng.jobs.common.Sc duledExecut onApp
+ mport java.ut l.T  Zone
 
 /**
- To build & deploy the TWICE scheduled jobs via workflows:
+ To bu ld & deploy t  TW CE sc duled jobs v a workflows:
 
- scalding workflow upload \
-  --workflow interested_in_twice-batch \
-  --jobs src/scala/com/twitter/simclusters_v2/scalding/embedding/twice:interested_in_twice_largest_dim-batch,src/scala/com/twitter/simclusters_v2/scalding/embedding/twice:interested_in_twice_louvain-batch,src/scala/com/twitter/simclusters_v2/scalding/embedding/twice:interested_in_twice_connected_components-batch \
-  --scm-paths "src/scala/com/twitter/simclusters_v2/scalding/embedding/twice/*" \
+ scald ng workflow upload \
+  --workflow  nterested_ n_tw ce-batch \
+  --jobs src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng/tw ce: nterested_ n_tw ce_largest_d m-batch,src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng/tw ce: nterested_ n_tw ce_louva n-batch,src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng/tw ce: nterested_ n_tw ce_connected_components-batch \
+  --scm-paths "src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng/tw ce/*" \
   --autoplay \
 
- -> See workflow here: https://workflows.twitter.biz/workflow/cassowary/interested_in_twice-batch
+ -> See workflow  re: https://workflows.tw ter.b z/workflow/cassowary/ nterested_ n_tw ce-batch
 
- (Use `scalding workflow upload --help` for a breakdown of the different flags)
+ (Use `scald ng workflow upload -- lp` for a breakdown of t  d fferent flags)
  */*/
 
-object InterestedInTwiceLargestDimScheduledApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with ScheduledExecutionApp {
+object  nterested nTw ceLargestD mSc duledApp
+    extends  nterested nTw ceBaseApp[S mClustersEmbedd ng]
+    w h Sc duledExecut onApp {
 
-  override def firstTime: RichDate = RichDate("2021-09-02")
-  override def batchIncrement: Duration = Days(7)
+  overr de def f rstT  : R chDate = R chDate("2021-09-02")
+  overr de def batch ncre nt: Durat on = Days(7)
 
-  override def producerProducerSimilarityFnForClustering: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  overr de def producerProducerS m lar yFnForCluster ng: (
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ) => Double =
-    SimilarityFunctions.simClustersMatchingLargestDimension
-  override def producerProducerSimilarityFnForClusterRepresentative: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
+    S m lar yFunct ons.s mClustersMatch ngLargestD  ns on
+  overr de def producerProducerS m lar yFnForClusterRepresentat ve: (
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ) => Double =
-    SimilarityFunctions.simClustersCosineSimilarity
+    S m lar yFunct ons.s mClustersCos neS m lar y
 
   /**
-   * Top-level method of this application.
+   * Top-level  thod of t  appl cat on.
    */
   def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que d: Un que D
+  ): Execut on[Un ] = {
 
-    runScheduledApp(
-      new LargestDimensionClusteringMethod(),
-      new MedoidRepresentativeSelectionMethod[SimClustersEmbedding](
-        producerProducerSimilarityFnForClusterRepresentative),
-      ProducerEmbeddingSource.getAggregatableProducerEmbeddings,
-      "interested_in_twice_by_largest_dim",
-      "clusters_members_largest_dim_ape_similarity",
-      InterestedInTwiceByLargestDimScalaDataset,
-      ClustersMembersLargestDimApeSimilarityScalaDataset,
-      args.getOrElse("num-reducers", "4000").toInt
+    runSc duledApp(
+      new LargestD  ns onCluster ng thod(),
+      new  do dRepresentat veSelect on thod[S mClustersEmbedd ng](
+        producerProducerS m lar yFnForClusterRepresentat ve),
+      ProducerEmbedd ngS ce.getAggregatableProducerEmbedd ngs,
+      " nterested_ n_tw ce_by_largest_d m",
+      "clusters_ mbers_largest_d m_ape_s m lar y",
+       nterested nTw ceByLargestD mScalaDataset,
+      Clusters mbersLargestD mApeS m lar yScalaDataset,
+      args.getOrElse("num-reducers", "4000").to nt
     )
 
   }
 
 }
 
-object InterestedInTwiceLargestDimMaxFavScoreScheduledApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with ScheduledExecutionApp {
+object  nterested nTw ceLargestD mMaxFavScoreSc duledApp
+    extends  nterested nTw ceBaseApp[S mClustersEmbedd ng]
+    w h Sc duledExecut onApp {
 
-  override def firstTime: RichDate = RichDate("2022-06-30")
-  override def batchIncrement: Duration = Days(7)
+  overr de def f rstT  : R chDate = R chDate("2022-06-30")
+  overr de def batch ncre nt: Durat on = Days(7)
 
-  override def producerProducerSimilarityFnForClustering: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  overr de def producerProducerS m lar yFnForCluster ng: (
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ) => Double =
-    SimilarityFunctions.simClustersMatchingLargestDimension
-  override def producerProducerSimilarityFnForClusterRepresentative: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
+    S m lar yFunct ons.s mClustersMatch ngLargestD  ns on
+  overr de def producerProducerS m lar yFnForClusterRepresentat ve: (
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ) => Double =
-    SimilarityFunctions.simClustersCosineSimilarity
+    S m lar yFunct ons.s mClustersCos neS m lar y
 
   /**
-   * Top-level method of this application.
+   * Top-level  thod of t  appl cat on.
    */
   def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que d: Un que D
+  ): Execut on[Un ] = {
 
-    runScheduledApp(
-      new LargestDimensionClusteringMethod(),
-      new MaxFavScoreRepresentativeSelectionMethod[SimClustersEmbedding](),
-      ProducerEmbeddingSource.getAggregatableProducerEmbeddings,
-      "interested_in_twice_by_largest_dim_fav_score",
-      "clusters_members_largest_dim_ape_similarity",
-      InterestedInTwiceByLargestDimFavScoreScalaDataset,
-      ClustersMembersLargestDimApeSimilarityScalaDataset,
-      args.getOrElse("num-reducers", "4000").toInt
+    runSc duledApp(
+      new LargestD  ns onCluster ng thod(),
+      new MaxFavScoreRepresentat veSelect on thod[S mClustersEmbedd ng](),
+      ProducerEmbedd ngS ce.getAggregatableProducerEmbedd ngs,
+      " nterested_ n_tw ce_by_largest_d m_fav_score",
+      "clusters_ mbers_largest_d m_ape_s m lar y",
+       nterested nTw ceByLargestD mFavScoreScalaDataset,
+      Clusters mbersLargestD mApeS m lar yScalaDataset,
+      args.getOrElse("num-reducers", "4000").to nt
     )
 
   }
 
 }
 
-object InterestedInTwiceLouvainScheduledApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with ScheduledExecutionApp {
+object  nterested nTw ceLouva nSc duledApp
+    extends  nterested nTw ceBaseApp[S mClustersEmbedd ng]
+    w h Sc duledExecut onApp {
 
-  override def firstTime: RichDate = RichDate("2021-09-02")
-  override def batchIncrement: Duration = Days(7)
+  overr de def f rstT  : R chDate = R chDate("2021-09-02")
+  overr de def batch ncre nt: Durat on = Days(7)
 
-  override def producerProducerSimilarityFnForClustering: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  overr de def producerProducerS m lar yFnForCluster ng: (
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ) => Double =
-    SimilarityFunctions.simClustersCosineSimilarity
-  override def producerProducerSimilarityFnForClusterRepresentative: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
+    S m lar yFunct ons.s mClustersCos neS m lar y
+  overr de def producerProducerS m lar yFnForClusterRepresentat ve: (
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ) => Double =
-    SimilarityFunctions.simClustersCosineSimilarity
+    S m lar yFunct ons.s mClustersCos neS m lar y
 
   /**
-   * Top-level method of this application.
+   * Top-level  thod of t  appl cat on.
    */
   def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que d: Un que D
+  ): Execut on[Un ] = {
 
-    runScheduledApp(
-      new LouvainClusteringMethod(
-        args.required("cosine_similarity_threshold").toDouble,
-        args.optional("resolution_factor").map(_.toDouble)),
-      new MedoidRepresentativeSelectionMethod[SimClustersEmbedding](
-        producerProducerSimilarityFnForClusterRepresentative),
-      ProducerEmbeddingSource.getAggregatableProducerEmbeddings,
-      "interested_in_twice_louvain",
-      "clusters_members_louvain_ape_similarity",
-      InterestedInTwiceLouvainScalaDataset,
-      ClustersMembersLouvainApeSimilarityScalaDataset,
-      args.getOrElse("num-reducers", "4000").toInt
+    runSc duledApp(
+      new Louva nCluster ng thod(
+        args.requ red("cos ne_s m lar y_threshold").toDouble,
+        args.opt onal("resolut on_factor").map(_.toDouble)),
+      new  do dRepresentat veSelect on thod[S mClustersEmbedd ng](
+        producerProducerS m lar yFnForClusterRepresentat ve),
+      ProducerEmbedd ngS ce.getAggregatableProducerEmbedd ngs,
+      " nterested_ n_tw ce_louva n",
+      "clusters_ mbers_louva n_ape_s m lar y",
+       nterested nTw ceLouva nScalaDataset,
+      Clusters mbersLouva nApeS m lar yScalaDataset,
+      args.getOrElse("num-reducers", "4000").to nt
     )
 
   }
 
 }
 
-object InterestedInTwiceConnectedComponentsScheduledApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with ScheduledExecutionApp {
+object  nterested nTw ceConnectedComponentsSc duledApp
+    extends  nterested nTw ceBaseApp[S mClustersEmbedd ng]
+    w h Sc duledExecut onApp {
 
-  override def firstTime: RichDate = RichDate("2021-09-02")
-  override def batchIncrement: Duration = Days(7)
-  override def producerProducerSimilarityFnForClustering: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  overr de def f rstT  : R chDate = R chDate("2021-09-02")
+  overr de def batch ncre nt: Durat on = Days(7)
+  overr de def producerProducerS m lar yFnForCluster ng: (
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ) => Double =
-    SimilarityFunctions.simClustersCosineSimilarity
-  override def producerProducerSimilarityFnForClusterRepresentative: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
+    S m lar yFunct ons.s mClustersCos neS m lar y
+  overr de def producerProducerS m lar yFnForClusterRepresentat ve: (
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ) => Double =
-    SimilarityFunctions.simClustersCosineSimilarity
+    S m lar yFunct ons.s mClustersCos neS m lar y
 
   /**
-   * Top-level method of this application.
+   * Top-level  thod of t  appl cat on.
    */
   def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que d: Un que D
+  ): Execut on[Un ] = {
 
-    runScheduledApp(
-      new ConnectedComponentsClusteringMethod(
-        args.required("cosine_similarity_threshold").toDouble),
-      new MedoidRepresentativeSelectionMethod[SimClustersEmbedding](
-        producerProducerSimilarityFnForClusterRepresentative),
-      ProducerEmbeddingSource.getAggregatableProducerEmbeddings,
-      "interested_in_twice_connected_components",
-      "clusters_members_connected_components_ape_similarity",
-      InterestedInTwiceConnectedComponentsScalaDataset,
-      ClustersMembersConnectedComponentsApeSimilarityScalaDataset,
-      args.getOrElse("num-reducers", "4000").toInt
+    runSc duledApp(
+      new ConnectedComponentsCluster ng thod(
+        args.requ red("cos ne_s m lar y_threshold").toDouble),
+      new  do dRepresentat veSelect on thod[S mClustersEmbedd ng](
+        producerProducerS m lar yFnForClusterRepresentat ve),
+      ProducerEmbedd ngS ce.getAggregatableProducerEmbedd ngs,
+      " nterested_ n_tw ce_connected_components",
+      "clusters_ mbers_connected_components_ape_s m lar y",
+       nterested nTw ceConnectedComponentsScalaDataset,
+      Clusters mbersConnectedComponentsApeS m lar yScalaDataset,
+      args.getOrElse("num-reducers", "4000").to nt
     )
 
   }
 
 }
 
-/** Production Scalding job that calculates TWICE embeddings in a shorter period (every two days).
+/** Product on Scald ng job that calculates TW CE embedd ngs  n a shorter per od (every two days).
  *
- * Given that the input sources of TWICE are updated more frequently (e.g., user_user_graph is
- * updated every 2 day), updating TWICE embedding every 2 day will better capture interests of new
- * users and the interest shift of existing users.
+ * G ven that t   nput s ces of TW CE are updated more frequently (e.g., user_user_graph  s
+ * updated every 2 day), updat ng TW CE embedd ng every 2 day w ll better capture  nterests of new
+ * users and t   nterest sh ft of ex st ng users.
  *
- * To build & deploy the scheduled job via workflows:
+ * To bu ld & deploy t  sc duled job v a workflows:
  * {{{
- * scalding workflow upload \
- * --workflow interested_in_twice_2_day_update-batch \
- * --jobs src/scala/com/twitter/simclusters_v2/scalding/embedding/twice:interested_in_twice_largest_dim_2_day_update-batch \
- * --scm-paths "src/scala/com/twitter/simclusters_v2/scalding/embedding/twice/*" \
+ * scald ng workflow upload \
+ * --workflow  nterested_ n_tw ce_2_day_update-batch \
+ * --jobs src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng/tw ce: nterested_ n_tw ce_largest_d m_2_day_update-batch \
+ * --scm-paths "src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng/tw ce/*" \
  * --autoplay
  * }}}
  *
  */*/
-object InterestedInTwiceLargestDim2DayUpdateScheduledApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with ScheduledExecutionApp {
+object  nterested nTw ceLargestD m2DayUpdateSc duledApp
+    extends  nterested nTw ceBaseApp[S mClustersEmbedd ng]
+    w h Sc duledExecut onApp {
 
-  override def firstTime: RichDate = RichDate("2022-04-06")
-  override def batchIncrement: Duration = Days(2)
+  overr de def f rstT  : R chDate = R chDate("2022-04-06")
+  overr de def batch ncre nt: Durat on = Days(2)
 
-  override def producerProducerSimilarityFnForClustering: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  overr de def producerProducerS m lar yFnForCluster ng: (
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ) => Double =
-    SimilarityFunctions.simClustersMatchingLargestDimension
-  override def producerProducerSimilarityFnForClusterRepresentative: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
+    S m lar yFunct ons.s mClustersMatch ngLargestD  ns on
+  overr de def producerProducerS m lar yFnForClusterRepresentat ve: (
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ) => Double =
-    SimilarityFunctions.simClustersCosineSimilarity
+    S m lar yFunct ons.s mClustersCos neS m lar y
 
   /**
-   * Top-level method of this application.
+   * Top-level  thod of t  appl cat on.
    */
   def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que d: Un que D
+  ): Execut on[Un ] = {
 
-    runScheduledApp(
-      new LargestDimensionClusteringMethod(),
-      new MedoidRepresentativeSelectionMethod[SimClustersEmbedding](
-        producerProducerSimilarityFnForClusterRepresentative),
-      ProducerEmbeddingSource.getAggregatableProducerEmbeddings,
-      "interested_in_twice_by_largest_dim_2_day_update",
-      "clusters_members_largest_dim_ape_similarity_2_day_update",
-      InterestedInTwiceByLargestDim2DayUpdateScalaDataset,
-      ClustersMembersLargestDimApeSimilarity2DayUpdateScalaDataset,
-      args.getOrElse("num-reducers", "4000").toInt
+    runSc duledApp(
+      new LargestD  ns onCluster ng thod(),
+      new  do dRepresentat veSelect on thod[S mClustersEmbedd ng](
+        producerProducerS m lar yFnForClusterRepresentat ve),
+      ProducerEmbedd ngS ce.getAggregatableProducerEmbedd ngs,
+      " nterested_ n_tw ce_by_largest_d m_2_day_update",
+      "clusters_ mbers_largest_d m_ape_s m lar y_2_day_update",
+       nterested nTw ceByLargestD m2DayUpdateScalaDataset,
+      Clusters mbersLargestD mApeS m lar y2DayUpdateScalaDataset,
+      args.getOrElse("num-reducers", "4000").to nt
     )
   }
 }
 
 /**
 
-[Preferred way] To run a locally built adhoc job:
- ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding/twice:interested_in_twice_<CLUSTERING_METHOD>-adhoc
- scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/embedding/twice:interested_in_twice_<CLUSTERING_METHOD>-adhoc
+[Preferred way] To run a locally bu lt adhoc job:
+ ./bazel bundle src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng/tw ce: nterested_ n_tw ce_<CLUSTER NG_METHOD>-adhoc
+ scald ng remote run --target src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng/tw ce: nterested_ n_tw ce_<CLUSTER NG_METHOD>-adhoc
 
-To build and run a adhoc job with workflows:
- scalding workflow upload \
-  --workflow interested_in_twice-adhoc \
-  --jobs src/scala/com/twitter/simclusters_v2/scalding/embedding/twice:interested_in_twice_largest_dim-adhoc,src/scala/com/twitter/simclusters_v2/scalding/embedding/twice:interested_in_twice_louvain-adhoc,src/scala/com/twitter/simclusters_v2/scalding/embedding/twice:interested_in_twice_connected_components-adhoc \
-  --scm-paths "src/scala/com/twitter/simclusters_v2/scalding/embedding/twice/*" \
+To bu ld and run a adhoc job w h workflows:
+ scald ng workflow upload \
+  --workflow  nterested_ n_tw ce-adhoc \
+  --jobs src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng/tw ce: nterested_ n_tw ce_largest_d m-adhoc,src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng/tw ce: nterested_ n_tw ce_louva n-adhoc,src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng/tw ce: nterested_ n_tw ce_connected_components-adhoc \
+  --scm-paths "src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng/tw ce/*" \
   --autoplay \
 
  */*/
-object InterestedInTwiceLargestDimAdhocApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with AdhocExecutionApp {
+object  nterested nTw ceLargestD mAdhocApp
+    extends  nterested nTw ceBaseApp[S mClustersEmbedd ng]
+    w h AdhocExecut onApp {
 
-  override def producerProducerSimilarityFnForClustering: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  overr de def producerProducerS m lar yFnForCluster ng: (
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ) => Double =
-    SimilarityFunctions.simClustersMatchingLargestDimension
-  override def producerProducerSimilarityFnForClusterRepresentative: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
+    S m lar yFunct ons.s mClustersMatch ngLargestD  ns on
+  overr de def producerProducerS m lar yFnForClusterRepresentat ve: (
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ) => Double =
-    SimilarityFunctions.simClustersCosineSimilarity
+    S m lar yFunct ons.s mClustersCos neS m lar y
 
   /**
-   * Top-level method of this application.
+   * Top-level  thod of t  appl cat on.
    */
   def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que d: Un que D
+  ): Execut on[Un ] = {
 
     runAdhocApp(
-      new LargestDimensionClusteringMethod(),
-      new MedoidRepresentativeSelectionMethod[SimClustersEmbedding](
-        producerProducerSimilarityFnForClusterRepresentative),
-      ProducerEmbeddingSource.getAggregatableProducerEmbeddings,
-      "interested_in_twice_by_largest_dim",
-      "clusters_members_largest_dim_ape_similarity",
-      args.getOrElse("num-reducers", "4000").toInt
+      new LargestD  ns onCluster ng thod(),
+      new  do dRepresentat veSelect on thod[S mClustersEmbedd ng](
+        producerProducerS m lar yFnForClusterRepresentat ve),
+      ProducerEmbedd ngS ce.getAggregatableProducerEmbedd ngs,
+      " nterested_ n_tw ce_by_largest_d m",
+      "clusters_ mbers_largest_d m_ape_s m lar y",
+      args.getOrElse("num-reducers", "4000").to nt
     )
 
   }
 }
 
-object InterestedInTwiceLargestDimMaxFavScoreAdhocApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with AdhocExecutionApp {
+object  nterested nTw ceLargestD mMaxFavScoreAdhocApp
+    extends  nterested nTw ceBaseApp[S mClustersEmbedd ng]
+    w h AdhocExecut onApp {
 
-  override def producerProducerSimilarityFnForClustering: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  overr de def producerProducerS m lar yFnForCluster ng: (
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ) => Double =
-    SimilarityFunctions.simClustersMatchingLargestDimension
-  override def producerProducerSimilarityFnForClusterRepresentative: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
+    S m lar yFunct ons.s mClustersMatch ngLargestD  ns on
+  overr de def producerProducerS m lar yFnForClusterRepresentat ve: (
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ) => Double =
-    SimilarityFunctions.simClustersCosineSimilarity
+    S m lar yFunct ons.s mClustersCos neS m lar y
 
   /**
-   * Top-level method of this application.
+   * Top-level  thod of t  appl cat on.
    */
   def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que d: Un que D
+  ): Execut on[Un ] = {
 
     runAdhocApp(
-      new LargestDimensionClusteringMethod(),
-      new MaxFavScoreRepresentativeSelectionMethod[SimClustersEmbedding](),
-      ProducerEmbeddingSource.getAggregatableProducerEmbeddings,
-      "interested_in_twice_by_largest_dim_fav_score",
-      "clusters_members_largest_dim_ape_similarity",
-      args.getOrElse("num-reducers", "4000").toInt
+      new LargestD  ns onCluster ng thod(),
+      new MaxFavScoreRepresentat veSelect on thod[S mClustersEmbedd ng](),
+      ProducerEmbedd ngS ce.getAggregatableProducerEmbedd ngs,
+      " nterested_ n_tw ce_by_largest_d m_fav_score",
+      "clusters_ mbers_largest_d m_ape_s m lar y",
+      args.getOrElse("num-reducers", "4000").to nt
     )
 
   }
 }
 
-object InterestedInTwiceLouvainAdhocApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with AdhocExecutionApp {
+object  nterested nTw ceLouva nAdhocApp
+    extends  nterested nTw ceBaseApp[S mClustersEmbedd ng]
+    w h AdhocExecut onApp {
 
-  override def producerProducerSimilarityFnForClustering: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  overr de def producerProducerS m lar yFnForCluster ng: (
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ) => Double =
-    SimilarityFunctions.simClustersCosineSimilarity
-  override def producerProducerSimilarityFnForClusterRepresentative: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
+    S m lar yFunct ons.s mClustersCos neS m lar y
+  overr de def producerProducerS m lar yFnForClusterRepresentat ve: (
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ) => Double =
-    SimilarityFunctions.simClustersCosineSimilarity
+    S m lar yFunct ons.s mClustersCos neS m lar y
 
   /**
-   * Top-level method of this application.
+   * Top-level  thod of t  appl cat on.
    */
   def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que d: Un que D
+  ): Execut on[Un ] = {
 
     runAdhocApp(
-      new LouvainClusteringMethod(
-        args.required("cosine_similarity_threshold").toDouble,
-        args.optional("resolution_factor").map(_.toDouble)),
-      new MedoidRepresentativeSelectionMethod[SimClustersEmbedding](
-        producerProducerSimilarityFnForClusterRepresentative),
-      ProducerEmbeddingSource.getAggregatableProducerEmbeddings,
-      "interested_in_twice_louvain",
-      "clusters_members_louvain_ape_similarity",
-      args.getOrElse("num-reducers", "4000").toInt
+      new Louva nCluster ng thod(
+        args.requ red("cos ne_s m lar y_threshold").toDouble,
+        args.opt onal("resolut on_factor").map(_.toDouble)),
+      new  do dRepresentat veSelect on thod[S mClustersEmbedd ng](
+        producerProducerS m lar yFnForClusterRepresentat ve),
+      ProducerEmbedd ngS ce.getAggregatableProducerEmbedd ngs,
+      " nterested_ n_tw ce_louva n",
+      "clusters_ mbers_louva n_ape_s m lar y",
+      args.getOrElse("num-reducers", "4000").to nt
     )
 
   }
 }
 
-object InterestedInTwiceConnectedComponentsAdhocApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with AdhocExecutionApp {
+object  nterested nTw ceConnectedComponentsAdhocApp
+    extends  nterested nTw ceBaseApp[S mClustersEmbedd ng]
+    w h AdhocExecut onApp {
 
-  override def producerProducerSimilarityFnForClustering: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  overr de def producerProducerS m lar yFnForCluster ng: (
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ) => Double =
-    SimilarityFunctions.simClustersCosineSimilarity
-  override def producerProducerSimilarityFnForClusterRepresentative: (
-    SimClustersEmbedding,
-    SimClustersEmbedding
+    S m lar yFunct ons.s mClustersCos neS m lar y
+  overr de def producerProducerS m lar yFnForClusterRepresentat ve: (
+    S mClustersEmbedd ng,
+    S mClustersEmbedd ng
   ) => Double =
-    SimilarityFunctions.simClustersCosineSimilarity
+    S m lar yFunct ons.s mClustersCos neS m lar y
 
   /**
-   * Top-level method of this application.
+   * Top-level  thod of t  appl cat on.
    */
   def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que d: Un que D
+  ): Execut on[Un ] = {
 
     runAdhocApp(
-      new ConnectedComponentsClusteringMethod(
-        args.required("cosine_similarity_threshold").toDouble),
-      new MedoidRepresentativeSelectionMethod[SimClustersEmbedding](
-        producerProducerSimilarityFnForClusterRepresentative),
-      ProducerEmbeddingSource.getAggregatableProducerEmbeddings,
-      "interested_in_twice_connected_components",
-      "clusters_members_connected_components_ape_similarity",
-      args.getOrElse("num-reducers", "4000").toInt
+      new ConnectedComponentsCluster ng thod(
+        args.requ red("cos ne_s m lar y_threshold").toDouble),
+      new  do dRepresentat veSelect on thod[S mClustersEmbedd ng](
+        producerProducerS m lar yFnForClusterRepresentat ve),
+      ProducerEmbedd ngS ce.getAggregatableProducerEmbedd ngs,
+      " nterested_ n_tw ce_connected_components",
+      "clusters_ mbers_connected_components_ape_s m lar y",
+      args.getOrElse("num-reducers", "4000").to nt
     )
   }
 }

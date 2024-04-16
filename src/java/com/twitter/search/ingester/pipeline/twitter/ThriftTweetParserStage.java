@@ -1,178 +1,178 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.tw ter.search. ngester.p pel ne.tw ter;
 
-import java.util.List;
-import java.util.Map;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.naming.NamingException;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport javax.annotat on.Nonnull;
+ mport javax.annotat on.Nullable;
+ mport javax.nam ng.Nam ngExcept on;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.L sts;
+ mport com.google.common.collect.Maps;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducedTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons.p pel ne.StageExcept on;
+ mport org.apac .commons.p pel ne.val dat on.Consu dTypes;
+ mport org.apac .commons.p pel ne.val dat on.ProducedTypes;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.debug.thriftjava.DebugEvents;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.ingester.model.IngesterTweetEvent;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.twitter.thriftparse.ThriftTweetParsingException;
-import com.twitter.search.ingester.pipeline.twitter.thriftparse.TweetEventParseHelper;
-import com.twitter.tweetypie.thriftjava.TweetCreateEvent;
-import com.twitter.tweetypie.thriftjava.TweetDeleteEvent;
-import com.twitter.tweetypie.thriftjava.TweetEventData;
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers on;
+ mport com.tw ter.search.common.debug.thr ftjava.DebugEvents;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.relevance.ent  es.Tw ter ssage;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search. ngester.model. ngesterT etEvent;
+ mport com.tw ter.search. ngester.model. ngesterTw ter ssage;
+ mport com.tw ter.search. ngester.p pel ne.tw ter.thr ftparse.Thr ftT etPars ngExcept on;
+ mport com.tw ter.search. ngester.p pel ne.tw ter.thr ftparse.T etEventParse lper;
+ mport com.tw ter.t etyp e.thr ftjava.T etCreateEvent;
+ mport com.tw ter.t etyp e.thr ftjava.T etDeleteEvent;
+ mport com.tw ter.t etyp e.thr ftjava.T etEventData;
 
-@ConsumedTypes(IngesterTweetEvent.class)
-@ProducedTypes(IngesterTwitterMessage.class)
-public class ThriftTweetParserStage extends TwitterBaseStage<IngesterTweetEvent, TwitterMessage> {
-  private static final Logger LOG = LoggerFactory.getLogger(ThriftTweetParserStage.class);
+@Consu dTypes( ngesterT etEvent.class)
+@ProducedTypes( ngesterTw ter ssage.class)
+publ c class Thr ftT etParserStage extends Tw terBaseStage< ngesterT etEvent, Tw ter ssage> {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Thr ftT etParserStage.class);
 
-  // TweetEventData is a union of all possible tweet event types. TweetEventData._Fields is an enum
-  // that corresponds to the fields in that union. So essentially, TweetEventData._Fields tells us
-  // which tweet event we're getting inside TweetEventData. We want to keep track of how many tweet
-  // events of each type we're getting.
-  private final Map<TweetEventData._Fields, SearchCounter> tweetEventCounters =
-      Maps.newEnumMap(TweetEventData._Fields.class);
+  // T etEventData  s a un on of all poss ble t et event types. T etEventData._F elds  s an enum
+  // that corresponds to t  f elds  n that un on. So essent ally, T etEventData._F elds tells us
+  // wh ch t et event  're gett ng  ns de T etEventData.   want to keep track of how many t et
+  // events of each type  're gett ng.
+  pr vate f nal Map<T etEventData._F elds, SearchCounter> t etEventCounters =
+      Maps.newEnumMap(T etEventData._F elds.class);
 
-  private final List<String> tweetCreateEventBranches = Lists.newArrayList();
-  private final List<String> tweetDeleteEventBranches = Lists.newArrayList();
+  pr vate f nal L st<Str ng> t etCreateEventBranc s = L sts.newArrayL st();
+  pr vate f nal L st<Str ng> t etDeleteEventBranc s = L sts.newArrayL st();
 
-  private boolean shouldIndexProtectedTweets;
-  private SearchCounter totalEventsCount;
-  private SearchCounter thriftParsingErrorsCount;
+  pr vate boolean should ndexProtectedT ets;
+  pr vate SearchCounter totalEventsCount;
+  pr vate SearchCounter thr ftPars ngErrorsCount;
 
-  private List<PenguinVersion> supportedPenguinVersions;
+  pr vate L st<Pengu nVers on> supportedPengu nVers ons;
 
-  @Override
-  protected void initStats() {
-    super.initStats();
+  @Overr de
+  protected vo d  n Stats() {
+    super. n Stats();
 
-    for (TweetEventData._Fields field : TweetEventData._Fields.values()) {
-      tweetEventCounters.put(
-          field,
-          this.makeStageCounter(field.name().toLowerCase() + "_count"));
+    for (T etEventData._F elds f eld : T etEventData._F elds.values()) {
+      t etEventCounters.put(
+          f eld,
+          t .makeStageCounter(f eld.na ().toLo rCase() + "_count"));
     }
-    totalEventsCount = this.makeStageCounter("total_events_count");
-    thriftParsingErrorsCount = this.makeStageCounter("thrift_parsing_errors_count");
+    totalEventsCount = t .makeStageCounter("total_events_count");
+    thr ftPars ngErrorsCount = t .makeStageCounter("thr ft_pars ng_errors_count");
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    supportedPenguinVersions = wireModule.getPenguinVersions();
-    LOG.info("Supported penguin versions: {}", supportedPenguinVersions);
+  @Overr de
+  protected vo d do nnerPreprocess() throws StageExcept on, Nam ngExcept on {
+    supportedPengu nVers ons = w reModule.getPengu nVers ons();
+    LOG. nfo("Supported pengu n vers ons: {}", supportedPengu nVers ons);
 
-    shouldIndexProtectedTweets = earlybirdCluster == EarlybirdCluster.PROTECTED
-        || earlybirdCluster == EarlybirdCluster.REALTIME_CG;
+    should ndexProtectedT ets = earlyb rdCluster == Earlyb rdCluster.PROTECTED
+        || earlyb rdCluster == Earlyb rdCluster.REALT ME_CG;
 
-    Preconditions.checkState(!tweetDeleteEventBranches.isEmpty(),
-                             "At least one delete branch must be specified.");
+    Precond  ons.c ckState(!t etDeleteEventBranc s. sEmpty(),
+                             "At least one delete branch must be spec f ed.");
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof TweetEventData || obj instanceof IngesterTweetEvent)) {
-      LOG.error("Object is not a TweetEventData or IngesterTweetEvent: {}", obj);
-      throw new StageException(this, "Object is not a TweetEventData or IngesterTweetEvent");
+  @Overr de
+  publ c vo d  nnerProcess(Object obj) throws StageExcept on {
+     f (!(obj  nstanceof T etEventData || obj  nstanceof  ngesterT etEvent)) {
+      LOG.error("Object  s not a T etEventData or  ngesterT etEvent: {}", obj);
+      throw new StageExcept on(t , "Object  s not a T etEventData or  ngesterT etEvent");
     }
 
-    supportedPenguinVersions = wireModule.getCurrentlyEnabledPenguinVersions();
+    supportedPengu nVers ons = w reModule.getCurrentlyEnabledPengu nVers ons();
 
     try {
-      IngesterTweetEvent ingesterTweetEvent = (IngesterTweetEvent) obj;
-      TweetEventData tweetEventData = ingesterTweetEvent.getData();
-      DebugEvents debugEvents = ingesterTweetEvent.getDebugEvents();
+       ngesterT etEvent  ngesterT etEvent = ( ngesterT etEvent) obj;
+      T etEventData t etEventData =  ngesterT etEvent.getData();
+      DebugEvents debugEvents =  ngesterT etEvent.getDebugEvents();
 
-      // Determine if the message is a tweet delete event before the next stages mutate it.
-      IngesterTwitterMessage message = getTwitterMessage(tweetEventData, debugEvents);
-      boolean shouldEmitMessage = message != null
-          && message.isIndexable(shouldIndexProtectedTweets);
+      // Determ ne  f t   ssage  s a t et delete event before t  next stages mutate  .
+       ngesterTw ter ssage  ssage = getTw ter ssage(t etEventData, debugEvents);
+      boolean shouldEm  ssage =  ssage != null
+          &&  ssage. s ndexable(should ndexProtectedT ets);
 
-      if (shouldEmitMessage) {
-        if (!message.isDeleted()) {
-          emitAndCount(message);
+       f (shouldEm  ssage) {
+         f (! ssage. sDeleted()) {
+          em AndCount( ssage);
 
-          for (String tweetCreateEventBranch : tweetCreateEventBranches) {
-            // If we need to send the message to another branch, we need to make a copy.
-            // Otherwise, we'll have multiple stages mutating the same object in parallel.
-            IngesterTwitterMessage tweetCreateEventBranchMessage =
-                getTwitterMessage(tweetEventData, debugEvents);
-            emitToBranchAndCount(tweetCreateEventBranch, tweetCreateEventBranchMessage);
+          for (Str ng t etCreateEventBranch : t etCreateEventBranc s) {
+            //  f   need to send t   ssage to anot r branch,   need to make a copy.
+            // Ot rw se,  'll have mult ple stages mutat ng t  sa  object  n parallel.
+             ngesterTw ter ssage t etCreateEventBranch ssage =
+                getTw ter ssage(t etEventData, debugEvents);
+            em ToBranchAndCount(t etCreateEventBranch, t etCreateEventBranch ssage);
           }
         } else {
-          for (String tweetDeleteEventBranch : tweetDeleteEventBranches) {
-            // If we need to send the message to another branch, we need to make a copy.
-            // Otherwise, we'll have multiple stages mutating the same object in parallel.
-            IngesterTwitterMessage tweetDeleteEventBranchMessage =
-                getTwitterMessage(tweetEventData, debugEvents);
-            emitToBranchAndCount(tweetDeleteEventBranch, tweetDeleteEventBranchMessage);
+          for (Str ng t etDeleteEventBranch : t etDeleteEventBranc s) {
+            //  f   need to send t   ssage to anot r branch,   need to make a copy.
+            // Ot rw se,  'll have mult ple stages mutat ng t  sa  object  n parallel.
+             ngesterTw ter ssage t etDeleteEventBranch ssage =
+                getTw ter ssage(t etEventData, debugEvents);
+            em ToBranchAndCount(t etDeleteEventBranch, t etDeleteEventBranch ssage);
           }
         }
       }
-    } catch (ThriftTweetParsingException e) {
-      thriftParsingErrorsCount.increment();
-      LOG.error("Failed to parse Thrift tweet event: " + obj, e);
-      throw new StageException(this, e);
+    } catch (Thr ftT etPars ngExcept on e) {
+      thr ftPars ngErrorsCount. ncre nt();
+      LOG.error("Fa led to parse Thr ft t et event: " + obj, e);
+      throw new StageExcept on(t , e);
     }
   }
 
   @Nullable
-  private IngesterTwitterMessage getTwitterMessage(
-      @Nonnull TweetEventData tweetEventData,
+  pr vate  ngesterTw ter ssage getTw ter ssage(
+      @Nonnull T etEventData t etEventData,
       @Nullable DebugEvents debugEvents)
-      throws ThriftTweetParsingException {
-    totalEventsCount.increment();
+      throws Thr ftT etPars ngExcept on {
+    totalEventsCount. ncre nt();
 
-    // TweetEventData is a union of all possible tweet event types. TweetEventData._Fields is an
-    // enum that corresponds to all TweetEventData fields. By calling TweetEventData.getSetField(),
-    // we can determine which field is set.
-    TweetEventData._Fields tweetEventDataField = tweetEventData.getSetField();
-    Preconditions.checkNotNull(tweetEventDataField);
-    tweetEventCounters.get(tweetEventDataField).increment();
+    // T etEventData  s a un on of all poss ble t et event types. T etEventData._F elds  s an
+    // enum that corresponds to all T etEventData f elds. By call ng T etEventData.getSetF eld(),
+    //   can determ ne wh ch f eld  s set.
+    T etEventData._F elds t etEventDataF eld = t etEventData.getSetF eld();
+    Precond  ons.c ckNotNull(t etEventDataF eld);
+    t etEventCounters.get(t etEventDataF eld). ncre nt();
 
-    if (tweetEventDataField == TweetEventData._Fields.TWEET_CREATE_EVENT) {
-      TweetCreateEvent tweetCreateEvent = tweetEventData.getTweet_create_event();
-      return TweetEventParseHelper.getTwitterMessageFromCreationEvent(
-          tweetCreateEvent, supportedPenguinVersions, debugEvents);
+     f (t etEventDataF eld == T etEventData._F elds.TWEET_CREATE_EVENT) {
+      T etCreateEvent t etCreateEvent = t etEventData.getT et_create_event();
+      return T etEventParse lper.getTw ter ssageFromCreat onEvent(
+          t etCreateEvent, supportedPengu nVers ons, debugEvents);
     }
-    if (tweetEventDataField == TweetEventData._Fields.TWEET_DELETE_EVENT) {
-      TweetDeleteEvent tweetDeleteEvent = tweetEventData.getTweet_delete_event();
-      return TweetEventParseHelper.getTwitterMessageFromDeletionEvent(
-          tweetDeleteEvent, supportedPenguinVersions, debugEvents);
+     f (t etEventDataF eld == T etEventData._F elds.TWEET_DELETE_EVENT) {
+      T etDeleteEvent t etDeleteEvent = t etEventData.getT et_delete_event();
+      return T etEventParse lper.getTw ter ssageFromDelet onEvent(
+          t etDeleteEvent, supportedPengu nVers ons, debugEvents);
     }
     return null;
   }
 
   /**
-   * Sets the branches to which all TweetDeleteEvents should be emitted.
+   * Sets t  branc s to wh ch all T etDeleteEvents should be em ted.
    *
-   * @param tweetDeleteEventBranchNames A comma-separated list of branches.
+   * @param t etDeleteEventBranchNa s A comma-separated l st of branc s.
    */
-  public void setTweetDeleteEventBranchNames(String tweetDeleteEventBranchNames) {
-    parseBranches(tweetDeleteEventBranchNames, tweetDeleteEventBranches);
+  publ c vo d setT etDeleteEventBranchNa s(Str ng t etDeleteEventBranchNa s) {
+    parseBranc s(t etDeleteEventBranchNa s, t etDeleteEventBranc s);
   }
 
   /**
-   * Sets the additional branches to which all TweetCreateEvents should be emitted.
+   * Sets t  add  onal branc s to wh ch all T etCreateEvents should be em ted.
    *
-   * @param tweetCreateEventBranchNames A comma-separated list of branches.
+   * @param t etCreateEventBranchNa s A comma-separated l st of branc s.
    */
-  public void setTweetCreateEventBranchNames(String tweetCreateEventBranchNames) {
-    parseBranches(tweetCreateEventBranchNames, tweetCreateEventBranches);
+  publ c vo d setT etCreateEventBranchNa s(Str ng t etCreateEventBranchNa s) {
+    parseBranc s(t etCreateEventBranchNa s, t etCreateEventBranc s);
   }
 
-  private void parseBranches(String branchNames, List<String> branches) {
-    branches.clear();
-    for (String branch : branchNames.split(",")) {
-      String trimmedBranch = branch.trim();
-      Preconditions.checkState(!trimmedBranch.isEmpty(), "Branches cannot be empty strings.");
-      branches.add(trimmedBranch);
+  pr vate vo d parseBranc s(Str ng branchNa s, L st<Str ng> branc s) {
+    branc s.clear();
+    for (Str ng branch : branchNa s.spl (",")) {
+      Str ng tr m dBranch = branch.tr m();
+      Precond  ons.c ckState(!tr m dBranch. sEmpty(), "Branc s cannot be empty str ngs.");
+      branc s.add(tr m dBranch);
     }
   }
 }

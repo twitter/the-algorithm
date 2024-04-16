@@ -1,22 +1,22 @@
-jvm_binary(
-    name = "bin",
-    basename = "representation-scorer",
-    main = "com.twitter.representationscorer.RepresentationScorerFedServerMain",
+jvm_b nary(
+    na  = "b n",
+    basena  = "representat on-scorer",
+    ma n = "com.tw ter.representat onscorer.Representat onScorerFedServerMa n",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finatra/inject/inject-logback/src/main/scala",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "representation-scorer/server/src/main/resources",
-        "representation-scorer/server/src/main/scala/com/twitter/representationscorer",
-        "twitter-server/logback-classic/src/main/scala",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "f natra/ nject/ nject-logback/src/ma n/scala",
+        "loglens/loglens-logback/src/ma n/scala/com/tw ter/loglens/logback",
+        "representat on-scorer/server/src/ma n/res ces",
+        "representat on-scorer/server/src/ma n/scala/com/tw ter/representat onscorer",
+        "tw ter-server/logback-class c/src/ma n/scala",
     ],
 )
 
-#  Aurora Workflows build phase convention requires a jvm_app named with ${project-name}-app
+#  Aurora Workflows bu ld phase convent on requ res a jvm_app na d w h ${project-na }-app
 jvm_app(
-    name = "representation-scorer-app",
-    archive = "zip",
-    binary = ":bin",
-    tags = ["bazel-compatible"],
+    na  = "representat on-scorer-app",
+    arch ve = "z p",
+    b nary = ":b n",
+    tags = ["bazel-compat ble"],
 )

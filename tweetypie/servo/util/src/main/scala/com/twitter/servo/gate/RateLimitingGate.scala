@@ -1,64 +1,64 @@
-package com.twitter.servo.gate
+package com.tw ter.servo.gate
 
-import com.google.common.annotations.VisibleForTesting
-import com.google.common.util.concurrent.RateLimiter
-import com.twitter.servo.util
-import java.util.concurrent.TimeUnit
+ mport com.google.common.annotat ons.V s bleForTest ng
+ mport com.google.common.ut l.concurrent.RateL m er
+ mport com.tw ter.servo.ut l
+ mport java.ut l.concurrent.T  Un 
 
 /**
- * A Rate Limiting Gate backed by com.google.common.util.concurrent.RateLimiter
- * http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/util/concurrent/RateLimiter.html
+ * A Rate L m  ng Gate backed by com.google.common.ut l.concurrent.RateL m er
+ * http://docs.guava-l brar es.googlecode.com/g /javadoc/com/google/common/ut l/concurrent/RateL m er.html
  */
-object RateLimitingGate {
+object RateL m  ngGate {
 
   /**
-   * Creates a Gate[Int] that returns true if acquiring <gate_input> number of permits
-   * from the ratelimiter succeeds.
+   * Creates a Gate[ nt] that returns true  f acqu r ng <gate_ nput> number of perm s
+   * from t  ratel m er succeeds.
    */
-  def weighted(permitsPerSecond: Double): util.Gate[Int] = {
-    val rateLimiter: RateLimiter = RateLimiter.create(permitsPerSecond)
-    util.Gate { rateLimiter.tryAcquire(_, 0, TimeUnit.SECONDS) }
+  def   ghted(perm sPerSecond: Double): ut l.Gate[ nt] = {
+    val rateL m er: RateL m er = RateL m er.create(perm sPerSecond)
+    ut l.Gate { rateL m er.tryAcqu re(_, 0, T  Un .SECONDS) }
   }
 
   /**
-   * Creates a Gate[Unit] that returns true if acquiring a permit from the ratelimiter succeeds.
+   * Creates a Gate[Un ] that returns true  f acqu r ng a perm  from t  ratel m er succeeds.
    */
-  def uniform(permitsPerSecond: Double): util.Gate[Unit] = {
-    weighted(permitsPerSecond) contramap { _ =>
+  def un form(perm sPerSecond: Double): ut l.Gate[Un ] = {
+      ghted(perm sPerSecond) contramap { _ =>
       1
     }
   }
 
   /**
-   *  Creates a Gate[Unit] with floating limit. Could be used with deciders.
+   *  Creates a Gate[Un ] w h float ng l m . Could be used w h dec ders.
    */
-  def dynamic(permitsPerSecond: => Double): util.Gate[Unit] =
-    dynamic(RateLimiter.create, permitsPerSecond)
+  def dynam c(perm sPerSecond: => Double): ut l.Gate[Un ] =
+    dynam c(RateL m er.create, perm sPerSecond)
 
-  @VisibleForTesting
-  def dynamic(
-    rateLimiterFactory: Double => RateLimiter,
-    permitsPerSecond: => Double
-  ): util.Gate[Unit] = {
-    val rateLimiter: RateLimiter = rateLimiterFactory(permitsPerSecond)
-    util.Gate { _ =>
-      val currentRate = permitsPerSecond
-      if (rateLimiter.getRate != currentRate) {
-        rateLimiter.setRate(currentRate)
+  @V s bleForTest ng
+  def dynam c(
+    rateL m erFactory: Double => RateL m er,
+    perm sPerSecond: => Double
+  ): ut l.Gate[Un ] = {
+    val rateL m er: RateL m er = rateL m erFactory(perm sPerSecond)
+    ut l.Gate { _ =>
+      val currentRate = perm sPerSecond
+       f (rateL m er.getRate != currentRate) {
+        rateL m er.setRate(currentRate)
       }
-      rateLimiter.tryAcquire(0L, TimeUnit.SECONDS)
+      rateL m er.tryAcqu re(0L, T  Un .SECONDS)
     }
   }
 }
 
-@deprecated("Use RateLimitingGate.uniform", "2.8.2")
-class RateLimitingGate[T](permitsPerSecond: Double) extends util.Gate[T] {
-  private[this] val rateLimiter: RateLimiter = RateLimiter.create(permitsPerSecond)
+@deprecated("Use RateL m  ngGate.un form", "2.8.2")
+class RateL m  ngGate[T](perm sPerSecond: Double) extends ut l.Gate[T] {
+  pr vate[t ] val rateL m er: RateL m er = RateL m er.create(perm sPerSecond)
 
   /**
-   * If a "permit" is available, this method acquires it and returns true
-   * Else returns false immediately without waiting
+   *  f a "perm "  s ava lable, t   thod acqu res   and returns true
+   * Else returns false  m d ately w hout wa  ng
    */
-  override def apply[U](u: U)(implicit asT: <:<[U, T]): Boolean =
-    rateLimiter.tryAcquire(1, 0, TimeUnit.SECONDS)
+  overr de def apply[U](u: U)( mpl c  asT: <:<[U, T]): Boolean =
+    rateL m er.tryAcqu re(1, 0, T  Un .SECONDS)
 }

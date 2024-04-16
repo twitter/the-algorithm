@@ -1,117 +1,117 @@
-package com.twitter.product_mixer.shared_library.memcached_client
+package com.tw ter.product_m xer.shared_l brary. mcac d_cl ent
 
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.memcached.protocol.Command
-import com.twitter.finagle.memcached.protocol.Response
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.service.RetryExceptionsFilter
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.service.TimeoutFilter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.finagle.GlobalRequestTimeoutException
-import com.twitter.finagle.Memcached
-import com.twitter.finagle.liveness.FailureAccrualFactory
-import com.twitter.finagle.liveness.FailureAccrualPolicy
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.hashing.KeyHasher
-import com.twitter.util.Duration
+ mport com.tw ter.f nagle. mcac d.Cl ent
+ mport com.tw ter.f nagle. mcac d.protocol.Command
+ mport com.tw ter.f nagle. mcac d.protocol.Response
+ mport com.tw ter.f nagle.mtls.cl ent.MtlsStackCl ent._
+ mport com.tw ter.f nagle.serv ce.RetryExcept onsF lter
+ mport com.tw ter.f nagle.serv ce.RetryPol cy
+ mport com.tw ter.f nagle.serv ce.T  outF lter
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.f nagle.ut l.DefaultT  r
+ mport com.tw ter.f nagle.GlobalRequestT  outExcept on
+ mport com.tw ter.f nagle. mcac d
+ mport com.tw ter.f nagle.l veness.Fa lureAccrualFactory
+ mport com.tw ter.f nagle.l veness.Fa lureAccrualPol cy
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.hash ng.KeyHas r
+ mport com.tw ter.ut l.Durat on
 
-object MemcachedClientBuilder {
+object  mcac dCl entBu lder {
 
   /**
-   * Build a Finagle Memcached [[Client]].
+   * Bu ld a F nagle  mcac d [[Cl ent]].
    *
-   * @param destName             Destination as a Wily path e.g. "/s/sample/sample".
-   * @param numTries             Maximum number of times to try.
-   * @param requestTimeout       Thrift client timeout per request. The Finagle default
-   *                             is unbounded which is almost never optimal.
-   * @param globalTimeout        Thrift client total timeout. The Finagle default is
-   *                             unbounded which is almost never optimal.
-   * @param connectTimeout       Thrift client transport connect timeout. The Finagle
-   *                             default of one second is reasonable but we lower this
-   *                             to match acquisitionTimeout for consistency.
-   * @param acquisitionTimeout   Thrift client session acquisition timeout. The Finagle
-   *                             default is unbounded which is almost never optimal.
-   * @param serviceIdentifier    Service ID used to S2S Auth.
-   * @param statsReceiver        Stats.
-   * @param failureAccrualPolicy Policy to determine when to mark a cache server as dead.
-   *                             Memcached client will use default failure accrual policy
-   *                             if it is not set.
-   * @param keyHasher            Hash algorithm that hashes a key into a 32-bit or 64-bit
-   *                             number. Memcached client will use default hash algorithm
-   *                             if it is not set.
+   * @param destNa              Dest nat on as a W ly path e.g. "/s/sample/sample".
+   * @param numTr es             Max mum number of t  s to try.
+   * @param requestT  out       Thr ft cl ent t  out per request. T  F nagle default
+   *                              s unbounded wh ch  s almost never opt mal.
+   * @param globalT  out        Thr ft cl ent total t  out. T  F nagle default  s
+   *                             unbounded wh ch  s almost never opt mal.
+   * @param connectT  out       Thr ft cl ent transport connect t  out. T  F nagle
+   *                             default of one second  s reasonable but   lo r t 
+   *                             to match acqu s  onT  out for cons stency.
+   * @param acqu s  onT  out   Thr ft cl ent sess on acqu s  on t  out. T  F nagle
+   *                             default  s unbounded wh ch  s almost never opt mal.
+   * @param serv ce dent f er    Serv ce  D used to S2S Auth.
+   * @param statsRece ver        Stats.
+   * @param fa lureAccrualPol cy Pol cy to determ ne w n to mark a cac  server as dead.
+   *                              mcac d cl ent w ll use default fa lure accrual pol cy
+   *                              f    s not set.
+   * @param keyHas r            Hash algor hm that has s a key  nto a 32-b  or 64-b 
+   *                             number.  mcac d cl ent w ll use default hash algor hm
+   *                              f    s not set.
    *
-   * @see [[https://confluence.twitter.biz/display/CACHE/Finagle-memcached+User+Guide user guide]]
-   * @return Finagle Memcached [[Client]]
+   * @see [[https://confluence.tw ter.b z/d splay/CACHE/F nagle- mcac d+User+Gu de user gu de]]
+   * @return F nagle  mcac d [[Cl ent]]
    */
-  def buildMemcachedClient(
-    destName: String,
-    numTries: Int,
-    requestTimeout: Duration,
-    globalTimeout: Duration,
-    connectTimeout: Duration,
-    acquisitionTimeout: Duration,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver,
-    failureAccrualPolicy: Option[FailureAccrualPolicy] = None,
-    keyHasher: Option[KeyHasher] = None
-  ): Client = {
-    buildRawMemcachedClient(
-      numTries,
-      requestTimeout,
-      globalTimeout,
-      connectTimeout,
-      acquisitionTimeout,
-      serviceIdentifier,
-      statsReceiver,
-      failureAccrualPolicy,
-      keyHasher
-    ).newRichClient(destName)
+  def bu ld mcac dCl ent(
+    destNa : Str ng,
+    numTr es:  nt,
+    requestT  out: Durat on,
+    globalT  out: Durat on,
+    connectT  out: Durat on,
+    acqu s  onT  out: Durat on,
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver,
+    fa lureAccrualPol cy: Opt on[Fa lureAccrualPol cy] = None,
+    keyHas r: Opt on[KeyHas r] = None
+  ): Cl ent = {
+    bu ldRaw mcac dCl ent(
+      numTr es,
+      requestT  out,
+      globalT  out,
+      connectT  out,
+      acqu s  onT  out,
+      serv ce dent f er,
+      statsRece ver,
+      fa lureAccrualPol cy,
+      keyHas r
+    ).newR chCl ent(destNa )
   }
 
-  def buildRawMemcachedClient(
-    numTries: Int,
-    requestTimeout: Duration,
-    globalTimeout: Duration,
-    connectTimeout: Duration,
-    acquisitionTimeout: Duration,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver,
-    failureAccrualPolicy: Option[FailureAccrualPolicy] = None,
-    keyHasher: Option[KeyHasher] = None
-  ): Memcached.Client = {
-    val globalTimeoutFilter = new TimeoutFilter[Command, Response](
-      timeout = globalTimeout,
-      exception = new GlobalRequestTimeoutException(globalTimeout),
-      timer = DefaultTimer)
-    val retryFilter = new RetryExceptionsFilter[Command, Response](
-      RetryPolicy.tries(numTries),
-      DefaultTimer,
-      statsReceiver)
+  def bu ldRaw mcac dCl ent(
+    numTr es:  nt,
+    requestT  out: Durat on,
+    globalT  out: Durat on,
+    connectT  out: Durat on,
+    acqu s  onT  out: Durat on,
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver,
+    fa lureAccrualPol cy: Opt on[Fa lureAccrualPol cy] = None,
+    keyHas r: Opt on[KeyHas r] = None
+  ):  mcac d.Cl ent = {
+    val globalT  outF lter = new T  outF lter[Command, Response](
+      t  out = globalT  out,
+      except on = new GlobalRequestT  outExcept on(globalT  out),
+      t  r = DefaultT  r)
+    val retryF lter = new RetryExcept onsF lter[Command, Response](
+      RetryPol cy.tr es(numTr es),
+      DefaultT  r,
+      statsRece ver)
 
-    val client = Memcached.client.withTransport
-      .connectTimeout(connectTimeout)
-      .withMutualTls(serviceIdentifier)
-      .withSession
-      .acquisitionTimeout(acquisitionTimeout)
-      .withRequestTimeout(requestTimeout)
-      .withStatsReceiver(statsReceiver)
-      .filtered(globalTimeoutFilter.andThen(retryFilter))
+    val cl ent =  mcac d.cl ent.w hTransport
+      .connectT  out(connectT  out)
+      .w hMutualTls(serv ce dent f er)
+      .w hSess on
+      .acqu s  onT  out(acqu s  onT  out)
+      .w hRequestT  out(requestT  out)
+      .w hStatsRece ver(statsRece ver)
+      .f ltered(globalT  outF lter.andT n(retryF lter))
 
-    (keyHasher, failureAccrualPolicy) match {
-      case (Some(hasher), Some(policy)) =>
-        client
-          .withKeyHasher(hasher)
-          .configured(FailureAccrualFactory.Param(() => policy))
-      case (Some(hasher), None) =>
-        client
-          .withKeyHasher(hasher)
-      case (None, Some(policy)) =>
-        client
-          .configured(FailureAccrualFactory.Param(() => policy))
+    (keyHas r, fa lureAccrualPol cy) match {
+      case (So (has r), So (pol cy)) =>
+        cl ent
+          .w hKeyHas r(has r)
+          .conf gured(Fa lureAccrualFactory.Param(() => pol cy))
+      case (So (has r), None) =>
+        cl ent
+          .w hKeyHas r(has r)
+      case (None, So (pol cy)) =>
+        cl ent
+          .conf gured(Fa lureAccrualFactory.Param(() => pol cy))
       case _ =>
-        client
+        cl ent
     }
   }
 }

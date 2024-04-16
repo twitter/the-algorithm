@@ -1,44 +1,44 @@
-package com.twitter.home_mixer.util.tweetypie.content
+package com.tw ter.ho _m xer.ut l.t etyp e.content
 
-import com.twitter.home_mixer.model.ContentFeatures
-import com.twitter.tweetypie.{thriftscala => tp}
+ mport com.tw ter.ho _m xer.model.ContentFeatures
+ mport com.tw ter.t etyp e.{thr ftscala => tp}
 
-object TweetTextFeaturesExtractor {
+object T etTextFeaturesExtractor {
 
-  private val QUESTION_MARK_CHARS = Set(
+  pr vate val QUEST ON_MARK_CHARS = Set(
     '\u003F', '\u00BF', '\u037E', '\u055E', '\u061F', '\u1367', '\u1945', '\u2047', '\u2048',
     '\u2049', '\u2753', '\u2754', '\u2CFA', '\u2CFB', '\u2E2E', '\uA60F', '\uA6F7', '\uFE16',
     '\uFE56', '\uFF1F', '\u1114', '\u1E95'
   )
-  private val NEW_LINE_REGEX = "\r\n|\r|\n".r
+  pr vate val NEW_L NE_REGEX = "\r\n|\r|\n".r
 
-  def addTextFeaturesFromTweet(
-    inputFeatures: ContentFeatures,
-    tweet: tp.Tweet
+  def addTextFeaturesFromT et(
+     nputFeatures: ContentFeatures,
+    t et: tp.T et
   ): ContentFeatures = {
-    tweet.coreData
+    t et.coreData
       .map { coreData =>
-        val tweetText = coreData.text
+        val t etText = coreData.text
 
-        inputFeatures.copy(
-          hasQuestion = hasQuestionCharacter(tweetText),
-          length = getLength(tweetText).toShort,
-          numCaps = getCaps(tweetText).toShort,
-          numWhiteSpaces = getSpaces(tweetText).toShort,
-          numNewlines = Some(getNumNewlines(tweetText)),
+         nputFeatures.copy(
+          hasQuest on = hasQuest onCharacter(t etText),
+          length = getLength(t etText).toShort,
+          numCaps = getCaps(t etText).toShort,
+          numWh eSpaces = getSpaces(t etText).toShort,
+          numNewl nes = So (getNumNewl nes(t etText)),
         )
       }
-      .getOrElse(inputFeatures)
+      .getOrElse( nputFeatures)
   }
 
-  def getLength(text: String): Int =
-    text.codePointCount(0, text.length())
+  def getLength(text: Str ng):  nt =
+    text.codePo ntCount(0, text.length())
 
-  def getCaps(text: String): Int = text.count(Character.isUpperCase)
+  def getCaps(text: Str ng):  nt = text.count(Character. sUpperCase)
 
-  def getSpaces(text: String): Int = text.count(Character.isWhitespace)
+  def getSpaces(text: Str ng):  nt = text.count(Character. sWh espace)
 
-  def hasQuestionCharacter(text: String): Boolean = text.exists(QUESTION_MARK_CHARS.contains)
+  def hasQuest onCharacter(text: Str ng): Boolean = text.ex sts(QUEST ON_MARK_CHARS.conta ns)
 
-  def getNumNewlines(text: String): Short = NEW_LINE_REGEX.findAllIn(text).length.toShort
+  def getNumNewl nes(text: Str ng): Short = NEW_L NE_REGEX.f ndAll n(text).length.toShort
 }

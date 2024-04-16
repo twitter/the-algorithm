@@ -1,267 +1,267 @@
-package com.twitter.search.earlybird_root.mergers;
+package com.tw ter.search.earlyb rd_root. rgers;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+ mport java.ut l.Collect ons;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
+ mport java.ut l.TreeMap;
+ mport java.ut l.concurrent.T  Un ;
+ mport java.ut l.stream.Collectors;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Funct on;
+ mport com.google.common.base.Precond  ons;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.util.earlybird.EarlybirdResponseUtil;
-import com.twitter.search.common.util.earlybird.ResultsUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.collectors.RelevanceMergeCollector;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+ mport com.tw ter.search.common.constants.thr ftjava.Thr ftLanguage;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
+ mport com.tw ter.search.common.ut l.earlyb rd.Earlyb rdResponseUt l;
+ mport com.tw ter.search.common.ut l.earlyb rd.ResultsUt l;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchQuery;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchRank ngMode;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResults;
+ mport com.tw ter.search.earlyb rd_root.collectors.Relevance rgeCollector;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdFeatureSc ma rger;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.ut l.Future;
 
 /**
- * Merger class to merge relevance search EarlybirdResponse objects
+ *  rger class to  rge relevance search Earlyb rdResponse objects
  */
-public class RelevanceResponseMerger extends EarlybirdResponseMerger {
-  private static final Logger LOG = LoggerFactory.getLogger(RelevanceResponseMerger.class);
+publ c class RelevanceResponse rger extends Earlyb rdResponse rger {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(RelevanceResponse rger.class);
 
-  private static final SearchTimerStats TIMER =
-      SearchTimerStats.export("merge_relevance", TimeUnit.NANOSECONDS, false, true);
+  pr vate stat c f nal SearchT  rStats T MER =
+      SearchT  rStats.export(" rge_relevance", T  Un .NANOSECONDS, false, true);
 
-  private static final SearchCounter RELVEANCE_TIER_MERGE_EARLY_TERMINATED_WITH_NOT_ENOUGH_RESULTS =
-      SearchCounter.export("merger_relevance_tier_merge_early_terminated_with_not_enough_results");
+  pr vate stat c f nal SearchCounter RELVEANCE_T ER_MERGE_EARLY_TERM NATED_W TH_NOT_ENOUGH_RESULTS =
+      SearchCounter.export(" rger_relevance_t er_ rge_early_term nated_w h_not_enough_results");
 
-  private static final String PARTITION_NUM_RESULTS_COUNTER_SKIP_STATS =
-      "merger_relevance_post_trimmed_results_skip_stat_tier_%s_partition_%d";
+  pr vate stat c f nal Str ng PART T ON_NUM_RESULTS_COUNTER_SK P_STATS =
+      " rger_relevance_post_tr m d_results_sk p_stat_t er_%s_part  on_%d";
 
-  @VisibleForTesting
-  public static final String PARTITION_NUM_RESULTS_COUNTER_NAME_FORMAT =
-      "merger_relevance_post_trimmed_results_from_tier_%s_partition_%d";
+  @V s bleForTest ng
+  publ c stat c f nal Str ng PART T ON_NUM_RESULTS_COUNTER_NAME_FORMAT =
+      " rger_relevance_post_tr m d_results_from_t er_%s_part  on_%d";
 
-  protected static final Function<EarlybirdResponse, Map<ThriftLanguage, Integer>> LANG_MAP_GETTER =
+  protected stat c f nal Funct on<Earlyb rdResponse, Map<Thr ftLanguage,  nteger>> LANG_MAP_GETTER =
       response -> response.getSearchResults() == null
           ? null
-          : response.getSearchResults().getLanguageHistogram();
+          : response.getSearchResults().getLanguage togram();
 
-  private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 0.8;
+  pr vate stat c f nal double SUCCESSFUL_RESPONSE_THRESHOLD = 0.8;
 
-  private final EarlybirdFeatureSchemaMerger featureSchemaMerger;
+  pr vate f nal Earlyb rdFeatureSc ma rger featureSc ma rger;
 
-  // The number of partitions are not meaningful when it is invoked through multi-tier merging.
-  private final int numPartitions;
+  // T  number of part  ons are not  an ngful w n    s  nvoked through mult -t er  rg ng.
+  pr vate f nal  nt numPart  ons;
 
-  public RelevanceResponseMerger(EarlybirdRequestContext requestContext,
-                                 List<Future<EarlybirdResponse>> responses,
+  publ c RelevanceResponse rger(Earlyb rdRequestContext requestContext,
+                                 L st<Future<Earlyb rdResponse>> responses,
                                  ResponseAccumulator mode,
-                                 EarlybirdFeatureSchemaMerger featureSchemaMerger,
-                                 int numPartitions) {
+                                 Earlyb rdFeatureSc ma rger featureSc ma rger,
+                                  nt numPart  ons) {
     super(requestContext, responses, mode);
-    this.featureSchemaMerger = Preconditions.checkNotNull(featureSchemaMerger);
-    this.numPartitions = numPartitions;
+    t .featureSc ma rger = Precond  ons.c ckNotNull(featureSc ma rger);
+    t .numPart  ons = numPart  ons;
   }
 
-  @Override
+  @Overr de
   protected double getDefaultSuccessResponseThreshold() {
     return SUCCESSFUL_RESPONSE_THRESHOLD;
   }
 
-  @Override
-  protected SearchTimerStats getMergedResponseTimer() {
-    return TIMER;
+  @Overr de
+  protected SearchT  rStats get rgedResponseT  r() {
+    return T MER;
   }
 
-  @Override
-  protected EarlybirdResponse internalMerge(EarlybirdResponse mergedResponse) {
-    final ThriftSearchQuery searchQuery = requestContext.getRequest().getSearchQuery();
-    long maxId = findMaxFullySearchedStatusID();
-    long minId = findMinFullySearchedStatusID();
+  @Overr de
+  protected Earlyb rdResponse  nternal rge(Earlyb rdResponse  rgedResponse) {
+    f nal Thr ftSearchQuery searchQuery = requestContext.getRequest().getSearchQuery();
+    long max d = f ndMaxFullySearc dStatus D();
+    long m n d = f ndM nFullySearc dStatus D();
 
-    Preconditions.checkNotNull(searchQuery);
-    Preconditions.checkState(searchQuery.isSetRankingMode());
-    Preconditions.checkState(searchQuery.getRankingMode() == ThriftSearchRankingMode.RELEVANCE);
+    Precond  ons.c ckNotNull(searchQuery);
+    Precond  ons.c ckState(searchQuery. sSetRank ngMode());
+    Precond  ons.c ckState(searchQuery.getRank ngMode() == Thr ftSearchRank ngMode.RELEVANCE);
 
-    // First get the results in score order (the default comparator for this merge collector).
-    RelevanceMergeCollector collector = new RelevanceMergeCollector(responses.size());
-    int totalResultSize = addResponsesToCollector(collector);
-    ThriftSearchResults searchResults = collector.getAllSearchResults();
+    // F rst get t  results  n score order (t  default comparator for t   rge collector).
+    Relevance rgeCollector collector = new Relevance rgeCollector(responses.s ze());
+     nt totalResultS ze = addResponsesToCollector(collector);
+    Thr ftSearchResults searchResults = collector.getAllSearchResults();
 
-    TrimStats trimStats = trimResults(searchResults);
-    featureSchemaMerger.collectAndSetFeatureSchemaInResponse(
+    Tr mStats tr mStats = tr mResults(searchResults);
+    featureSc ma rger.collectAndSetFeatureSc ma nResponse(
         searchResults,
         requestContext,
-        "merger_relevance_tier",
+        " rger_relevance_t er",
         accumulatedResponses.getSuccessResponses());
 
-    mergedResponse.setSearchResults(searchResults);
+     rgedResponse.setSearchResults(searchResults);
 
-    searchResults = mergedResponse.getSearchResults();
+    searchResults =  rgedResponse.getSearchResults();
     searchResults
-        .setHitCounts(aggregateHitCountMap())
-        .setLanguageHistogram(aggregateLanguageHistograms());
+        .setH Counts(aggregateH CountMap())
+        .setLanguage togram(aggregateLanguage tograms());
 
-    if (!accumulatedResponses.getMaxIds().isEmpty()) {
-      searchResults.setMaxSearchedStatusID(maxId);
+     f (!accumulatedResponses.getMax ds(). sEmpty()) {
+      searchResults.setMaxSearc dStatus D(max d);
     }
 
-    if (!accumulatedResponses.getMinIds().isEmpty()) {
-      searchResults.setMinSearchedStatusID(minId);
+     f (!accumulatedResponses.getM n ds(). sEmpty()) {
+      searchResults.setM nSearc dStatus D(m n d);
     }
 
-    LOG.debug("Hits: {} Removed duplicates: {}", totalResultSize, trimStats.getRemovedDupsCount());
-    LOG.debug("Hash Partition'ed Earlybird call completed successfully: {}", mergedResponse);
+    LOG.debug("H s: {} Removed dupl cates: {}", totalResultS ze, tr mStats.getRemovedDupsCount());
+    LOG.debug("Hash Part  on'ed Earlyb rd call completed successfully: {}",  rgedResponse);
 
-    publishNumResultsFromPartitionStatistics(mergedResponse);
+    publ shNumResultsFromPart  onStat st cs( rgedResponse);
 
-    return mergedResponse;
+    return  rgedResponse;
   }
 
   /**
-   * If any of the partitions has an early termination, the tier merge must also early terminate.
+   *  f any of t  part  ons has an early term nat on, t  t er  rge must also early term nate.
    *
-   * If a partition early terminated (we haven't fully searched that partition), and we instead
-   * moved onto the next tier, there will be a gap of unsearched results.
+   *  f a part  on early term nated (  haven't fully searc d that part  on), and    nstead
+   * moved onto t  next t er, t re w ll be a gap of unsearc d results.
    *
-   * If our early termination condition was only if we had enough results, we could get bad quality
-   * results by only looking at 20 hits when asking for 20 results.
+   *  f   early term nat on cond  on was only  f   had enough results,   could get bad qual y
+   * results by only look ng at 20 h s w n ask ng for 20 results.
    */
-  @Override
-  public boolean shouldEarlyTerminateTierMerge(int totalResultsFromSuccessfulShards,
-                                               boolean foundEarlyTermination) {
+  @Overr de
+  publ c boolean shouldEarlyTerm nateT er rge( nt totalResultsFromSuccessfulShards,
+                                               boolean foundEarlyTerm nat on) {
 
-    // Don't use computeNumResultsToKeep because if returnAllResults is true, it will be
-    // Integer.MAX_VALUE and we will always log a stat that we didn't get enough results
-    int resultsRequested;
-    EarlybirdRequest request = requestContext.getRequest();
-    if (request.isSetNumResultsToReturnAtRoot()) {
+    // Don't use computeNumResultsToKeep because  f returnAllResults  s true,   w ll be
+    //  nteger.MAX_VALUE and   w ll always log a stat that   d dn't get enough results
+     nt resultsRequested;
+    Earlyb rdRequest request = requestContext.getRequest();
+     f (request. sSetNumResultsToReturnAtRoot()) {
       resultsRequested = request.getNumResultsToReturnAtRoot();
     } else {
       resultsRequested = request.getSearchQuery().getCollectorParams().getNumResultsToReturn();
     }
-    if (foundEarlyTermination && totalResultsFromSuccessfulShards < resultsRequested) {
-      RELVEANCE_TIER_MERGE_EARLY_TERMINATED_WITH_NOT_ENOUGH_RESULTS.increment();
+     f (foundEarlyTerm nat on && totalResultsFromSuccessfulShards < resultsRequested) {
+      RELVEANCE_T ER_MERGE_EARLY_TERM NATED_W TH_NOT_ENOUGH_RESULTS. ncre nt();
     }
 
-    return foundEarlyTermination;
+    return foundEarlyTerm nat on;
   }
 
   /**
-   * Merge language histograms from all queries.
+   *  rge language  tograms from all quer es.
    *
-   * @return Merge per-language count map.
+   * @return  rge per-language count map.
    */
-  private Map<ThriftLanguage, Integer> aggregateLanguageHistograms() {
-    Map<ThriftLanguage, Integer> totalLangCounts = new TreeMap<>(
-        ResultsUtil.aggregateCountMap(
+  pr vate Map<Thr ftLanguage,  nteger> aggregateLanguage tograms() {
+    Map<Thr ftLanguage,  nteger> totalLangCounts = new TreeMap<>(
+        ResultsUt l.aggregateCountMap(
             accumulatedResponses.getSuccessResponses(), LANG_MAP_GETTER));
-    if (totalLangCounts.size() > 0) {
-      if (responseMessageBuilder.isDebugMode()) {
-        responseMessageBuilder.append("Language Distrbution:\n");
-        int count = 0;
-        for (Map.Entry<ThriftLanguage, Integer> entry : totalLangCounts.entrySet()) {
-          responseMessageBuilder.append(
-              String.format(" %10s:%6d", entry.getKey(), entry.getValue()));
-          if (++count % 5 == 0) {
-            responseMessageBuilder.append("\n");
+     f (totalLangCounts.s ze() > 0) {
+       f (response ssageBu lder. sDebugMode()) {
+        response ssageBu lder.append("Language D strbut on:\n");
+         nt count = 0;
+        for (Map.Entry<Thr ftLanguage,  nteger> entry : totalLangCounts.entrySet()) {
+          response ssageBu lder.append(
+              Str ng.format(" %10s:%6d", entry.getKey(), entry.getValue()));
+           f (++count % 5 == 0) {
+            response ssageBu lder.append("\n");
           }
         }
-        responseMessageBuilder.append("\n");
+        response ssageBu lder.append("\n");
       }
     }
     return totalLangCounts;
   }
 
   /**
-   * Find the min status id that has been searched. Since no results are trimmed for Relevance mode,
-   * it should be the smallest among the min IDs.
+   * F nd t  m n status  d that has been searc d. S nce no results are tr m d for Relevance mode,
+   *   should be t  smallest among t  m n  Ds.
    */
-  private long findMinFullySearchedStatusID() {
-    // The min ID should be the smallest among the min IDs
-    return accumulatedResponses.getMinIds().isEmpty() ? 0
-        : Collections.min(accumulatedResponses.getMinIds());
+  pr vate long f ndM nFullySearc dStatus D() {
+    // T  m n  D should be t  smallest among t  m n  Ds
+    return accumulatedResponses.getM n ds(). sEmpty() ? 0
+        : Collect ons.m n(accumulatedResponses.getM n ds());
   }
 
   /**
-   * Find the max status id that has been searched. Since no results are trimmed for Relevance mode,
-   * it should be the largest among the max IDs.
+   * F nd t  max status  d that has been searc d. S nce no results are tr m d for Relevance mode,
+   *   should be t  largest among t  max  Ds.
    */
-  private long findMaxFullySearchedStatusID() {
-    // The max ID should be the largest among the max IDs
-    return accumulatedResponses.getMaxIds().isEmpty() ? 0
-        : Collections.max(accumulatedResponses.getMaxIds());
+  pr vate long f ndMaxFullySearc dStatus D() {
+    // T  max  D should be t  largest among t  max  Ds
+    return accumulatedResponses.getMax ds(). sEmpty() ? 0
+        : Collect ons.max(accumulatedResponses.getMax ds());
   }
 
   /**
-   * Return all the searchResults except duplicates.
+   * Return all t  searchResults except dupl cates.
    *
-   * @param searchResults ThriftSearchResults that hold the to be trimmed List<ThriftSearchResult>
-   * @return TrimStats containing statistics about how many results being removed
+   * @param searchResults Thr ftSearchResults that hold t  to be tr m d L st<Thr ftSearchResult>
+   * @return Tr mStats conta n ng stat st cs about how many results be ng removed
    */
-  private TrimStats trimResults(ThriftSearchResults searchResults) {
-    if (!searchResults.isSetResults() || searchResults.getResultsSize() == 0) {
-      // no results, no trimming needed
-      return TrimStats.EMPTY_STATS;
+  pr vate Tr mStats tr mResults(Thr ftSearchResults searchResults) {
+     f (!searchResults. sSetResults() || searchResults.getResultsS ze() == 0) {
+      // no results, no tr mm ng needed
+      return Tr mStats.EMPTY_STATS;
     }
 
-    if (requestContext.getRequest().getSearchQuery().isSetSearchStatusIds()) {
-      // Not a normal search, no trimming needed
-      return TrimStats.EMPTY_STATS;
+     f (requestContext.getRequest().getSearchQuery(). sSetSearchStatus ds()) {
+      // Not a normal search, no tr mm ng needed
+      return Tr mStats.EMPTY_STATS;
     }
 
-    TrimStats trimStats = new TrimStats();
-    trimExactDups(searchResults, trimStats);
+    Tr mStats tr mStats = new Tr mStats();
+    tr mExactDups(searchResults, tr mStats);
 
-    truncateResults(searchResults, trimStats);
+    truncateResults(searchResults, tr mStats);
 
-    return trimStats;
+    return tr mStats;
   }
 
-  private void publishNumResultsFromPartitionStatistics(EarlybirdResponse mergedResponse) {
+  pr vate vo d publ shNumResultsFromPart  onStat st cs(Earlyb rdResponse  rgedResponse) {
 
-    // Keep track of all of the results that were kept after merging
-    Set<Long> mergedResults =
-        EarlybirdResponseUtil.getResults(mergedResponse).getResults()
+    // Keep track of all of t  results that  re kept after  rg ng
+    Set<Long>  rgedResults =
+        Earlyb rdResponseUt l.getResults( rgedResponse).getResults()
             .stream()
-            .map(result -> result.getId())
+            .map(result -> result.get d())
             .collect(Collectors.toSet());
 
-    // For each successful response (pre merge), count how many of its results were kept post merge.
-    // Increment the appropriate stat.
-    for (EarlybirdResponse response : accumulatedResponses.getSuccessResponses()) {
-      if (!response.isSetEarlybirdServerStats()) {
-        continue;
+    // For each successful response (pre  rge), count how many of  s results  re kept post  rge.
+    //  ncre nt t  appropr ate stat.
+    for (Earlyb rdResponse response : accumulatedResponses.getSuccessResponses()) {
+       f (!response. sSetEarlyb rdServerStats()) {
+        cont nue;
       }
-      int numResultsKept = 0;
-      for (ThriftSearchResult result
-          : EarlybirdResponseUtil.getResults(response).getResults()) {
-        if (mergedResults.contains(result.getId())) {
+       nt numResultsKept = 0;
+      for (Thr ftSearchResult result
+          : Earlyb rdResponseUt l.getResults(response).getResults()) {
+         f ( rgedResults.conta ns(result.get d())) {
           ++numResultsKept;
         }
       }
 
-      // We only update partition stats when the partition ID looks sane.
-      String tierName = response.getEarlybirdServerStats().getTierName();
-      int partition = response.getEarlybirdServerStats().getPartition();
-      if (partition >= 0 && partition < numPartitions) {
-        SearchCounter.export(String.format(PARTITION_NUM_RESULTS_COUNTER_NAME_FORMAT,
-            tierName,
-            partition))
+      //   only update part  on stats w n t  part  on  D looks sane.
+      Str ng t erNa  = response.getEarlyb rdServerStats().getT erNa ();
+       nt part  on = response.getEarlyb rdServerStats().getPart  on();
+       f (part  on >= 0 && part  on < numPart  ons) {
+        SearchCounter.export(Str ng.format(PART T ON_NUM_RESULTS_COUNTER_NAME_FORMAT,
+            t erNa ,
+            part  on))
             .add(numResultsKept);
       } else {
-        SearchCounter.export(String.format(PARTITION_NUM_RESULTS_COUNTER_SKIP_STATS,
-            tierName,
-            partition)).increment();
+        SearchCounter.export(Str ng.format(PART T ON_NUM_RESULTS_COUNTER_SK P_STATS,
+            t erNa ,
+            part  on)). ncre nt();
       }
     }
   }

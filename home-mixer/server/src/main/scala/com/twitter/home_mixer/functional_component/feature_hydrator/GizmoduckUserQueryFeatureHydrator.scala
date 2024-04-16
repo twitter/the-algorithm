@@ -1,50 +1,50 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.tw ter.ho _m xer.funct onal_component.feature_hydrator
 
-import com.twitter.gizmoduck.{thriftscala => gt}
-import com.twitter.home_mixer.model.HomeFeatures.UserFollowingCountFeature
-import com.twitter.home_mixer.model.HomeFeatures.UserScreenNameFeature
-import com.twitter.home_mixer.model.HomeFeatures.UserTypeFeature
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.gizmoduck.Gizmoduck
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.g zmoduck.{thr ftscala => gt}
+ mport com.tw ter.ho _m xer.model.Ho Features.UserFollow ngCountFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.UserScreenNa Feature
+ mport com.tw ter.ho _m xer.model.Ho Features.UserTypeFeature
+ mport com.tw ter.ho _m xer.serv ce.Ho M xerAlertConf g
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.g zmoduck.G zmoduck
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-case class GizmoduckUserQueryFeatureHydrator @Inject() (gizmoduck: Gizmoduck)
-    extends QueryFeatureHydrator[PipelineQuery] {
+@S ngleton
+case class G zmoduckUserQueryFeatureHydrator @ nject() (g zmoduck: G zmoduck)
+    extends QueryFeatureHydrator[P pel neQuery] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("GizmoduckUser")
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er("G zmoduckUser")
 
-  override val features: Set[Feature[_, _]] =
-    Set(UserFollowingCountFeature, UserTypeFeature, UserScreenNameFeature)
+  overr de val features: Set[Feature[_, _]] =
+    Set(UserFollow ngCountFeature, UserTypeFeature, UserScreenNa Feature)
 
-  private val queryFields: Set[gt.QueryFields] =
-    Set(gt.QueryFields.Counts, gt.QueryFields.Safety, gt.QueryFields.Profile)
+  pr vate val queryF elds: Set[gt.QueryF elds] =
+    Set(gt.QueryF elds.Counts, gt.QueryF elds.Safety, gt.QueryF elds.Prof le)
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    val userId = query.getRequiredUserId
-    gizmoduck
-      .getUserById(
-        userId = userId,
-        queryFields = queryFields,
-        context = gt.LookupContext(forUserId = Some(userId), includeSoftUsers = true))
+  overr de def hydrate(query: P pel neQuery): St ch[FeatureMap] = {
+    val user d = query.getRequ redUser d
+    g zmoduck
+      .getUserBy d(
+        user d = user d,
+        queryF elds = queryF elds,
+        context = gt.LookupContext(forUser d = So (user d),  ncludeSoftUsers = true))
       .map { user =>
-        FeatureMapBuilder()
-          .add(UserFollowingCountFeature, user.counts.map(_.following.toInt))
-          .add(UserTypeFeature, Some(user.userType))
-          .add(UserScreenNameFeature, user.profile.map(_.screenName))
-          .build()
+        FeatureMapBu lder()
+          .add(UserFollow ngCountFeature, user.counts.map(_.follow ng.to nt))
+          .add(UserTypeFeature, So (user.userType))
+          .add(UserScreenNa Feature, user.prof le.map(_.screenNa ))
+          .bu ld()
       }
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.7)
+  overr de val alerts = Seq(
+    Ho M xerAlertConf g.Bus nessH s.defaultSuccessRateAlert(99.7)
   )
 }

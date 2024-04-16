@@ -1,179 +1,179 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.tw ter.ho _m xer.funct onal_component.feature_hydrator
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ExclusiveConversationAuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsHydratedFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsNsfwFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedTweetDroppedFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.TweetLanguageFeature
-import com.twitter.home_mixer.model.HomeFeatures.TweetTextFeature
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.model.request.ListTweetsProduct
-import com.twitter.home_mixer.model.request.ScoredTweetsProduct
-import com.twitter.home_mixer.model.request.SubscribedProduct
-import com.twitter.home_mixer.util.tweetypie.RequestFields
-import com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_is_nsfw.IsNsfw
-import com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_visibility_reason.VisibilityReason
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.spam.rtf.{thriftscala => rtf}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.tweetypie.{TweetyPie => TweetypieStitchClient}
-import com.twitter.tweetypie.{thriftscala => tp}
-import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ho _m xer.model.Ho Features.Author dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Exclus veConversat onAuthor dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nNetworkFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. nReplyToT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. sHydratedFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. sNsfwFeature
+ mport com.tw ter.ho _m xer.model.Ho Features. sRet etFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.QuotedT etDroppedFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.QuotedT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.QuotedUser dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.S ceT et dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.S ceUser dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.T etLanguageFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.T etTextFeature
+ mport com.tw ter.ho _m xer.model.request.Follow ngProduct
+ mport com.tw ter.ho _m xer.model.request.For Product
+ mport com.tw ter.ho _m xer.model.request.L stT etsProduct
+ mport com.tw ter.ho _m xer.model.request.ScoredT etsProduct
+ mport com.tw ter.ho _m xer.model.request.Subscr bedProduct
+ mport com.tw ter.ho _m xer.ut l.t etyp e.RequestF elds
+ mport com.tw ter.product_m xer.component_l brary.feature_hydrator.cand date.t et_ s_nsfw. sNsfw
+ mport com.tw ter.product_m xer.component_l brary.feature_hydrator.cand date.t et_v s b l y_reason.V s b l yReason
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.T etCand date
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.Cand dateFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.spam.rtf.{thr ftscala => rtf}
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.t etyp e.{T etyP e => T etyp eSt chCl ent}
+ mport com.tw ter.t etyp e.{thr ftscala => tp}
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TweetypieFeatureHydrator @Inject() (
-  tweetypieStitchClient: TweetypieStitchClient,
-  statsReceiver: StatsReceiver)
-    extends CandidateFeatureHydrator[PipelineQuery, TweetCandidate]
-    with Logging {
+@S ngleton
+class T etyp eFeatureHydrator @ nject() (
+  t etyp eSt chCl ent: T etyp eSt chCl ent,
+  statsRece ver: StatsRece ver)
+    extends Cand dateFeatureHydrator[P pel neQuery, T etCand date]
+    w h Logg ng {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("Tweetypie")
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er("T etyp e")
 
-  override val features: Set[Feature[_, _]] = Set(
-    AuthorIdFeature,
-    ExclusiveConversationAuthorIdFeature,
-    InReplyToTweetIdFeature,
-    IsHydratedFeature,
-    IsNsfw,
-    IsNsfwFeature,
-    IsRetweetFeature,
-    QuotedTweetDroppedFeature,
-    QuotedTweetIdFeature,
-    QuotedUserIdFeature,
-    SourceTweetIdFeature,
-    SourceUserIdFeature,
-    TweetTextFeature,
-    TweetLanguageFeature,
-    VisibilityReason
+  overr de val features: Set[Feature[_, _]] = Set(
+    Author dFeature,
+    Exclus veConversat onAuthor dFeature,
+     nReplyToT et dFeature,
+     sHydratedFeature,
+     sNsfw,
+     sNsfwFeature,
+     sRet etFeature,
+    QuotedT etDroppedFeature,
+    QuotedT et dFeature,
+    QuotedUser dFeature,
+    S ceT et dFeature,
+    S ceUser dFeature,
+    T etTextFeature,
+    T etLanguageFeature,
+    V s b l yReason
   )
 
-  private val DefaultFeatureMap = FeatureMapBuilder()
-    .add(IsHydratedFeature, false)
-    .add(IsNsfw, None)
-    .add(IsNsfwFeature, false)
-    .add(QuotedTweetDroppedFeature, false)
-    .add(TweetTextFeature, None)
-    .add(VisibilityReason, None)
-    .build()
+  pr vate val DefaultFeatureMap = FeatureMapBu lder()
+    .add( sHydratedFeature, false)
+    .add( sNsfw, None)
+    .add( sNsfwFeature, false)
+    .add(QuotedT etDroppedFeature, false)
+    .add(T etTextFeature, None)
+    .add(V s b l yReason, None)
+    .bu ld()
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = {
+  overr de def apply(
+    query: P pel neQuery,
+    cand date: T etCand date,
+    ex st ngFeatures: FeatureMap
+  ): St ch[FeatureMap] = {
     val safetyLevel = query.product match {
-      case FollowingProduct => rtf.SafetyLevel.TimelineHomeLatest
-      case ForYouProduct =>
-        val inNetwork = existingFeatures.getOrElse(InNetworkFeature, true)
-        if (inNetwork) rtf.SafetyLevel.TimelineHome else rtf.SafetyLevel.TimelineHomeRecommendations
-      case ScoredTweetsProduct => rtf.SafetyLevel.TimelineHome
-      case ListTweetsProduct => rtf.SafetyLevel.TimelineLists
-      case SubscribedProduct => rtf.SafetyLevel.TimelineHomeSubscribed
-      case unknown => throw new UnsupportedOperationException(s"Unknown product: $unknown")
+      case Follow ngProduct => rtf.SafetyLevel.T  l neHo Latest
+      case For Product =>
+        val  nNetwork = ex st ngFeatures.getOrElse( nNetworkFeature, true)
+         f ( nNetwork) rtf.SafetyLevel.T  l neHo  else rtf.SafetyLevel.T  l neHo Recom ndat ons
+      case ScoredT etsProduct => rtf.SafetyLevel.T  l neHo 
+      case L stT etsProduct => rtf.SafetyLevel.T  l neL sts
+      case Subscr bedProduct => rtf.SafetyLevel.T  l neHo Subscr bed
+      case unknown => throw new UnsupportedOperat onExcept on(s"Unknown product: $unknown")
     }
 
-    val tweetFieldsOptions = tp.GetTweetFieldsOptions(
-      tweetIncludes = RequestFields.TweetTPHydrationFields,
-      includeRetweetedTweet = true,
-      includeQuotedTweet = true,
-      visibilityPolicy = tp.TweetVisibilityPolicy.UserVisible,
-      safetyLevel = Some(safetyLevel),
-      forUserId = query.getOptionalUserId
+    val t etF eldsOpt ons = tp.GetT etF eldsOpt ons(
+      t et ncludes = RequestF elds.T etTPHydrat onF elds,
+       ncludeRet etedT et = true,
+       ncludeQuotedT et = true,
+      v s b l yPol cy = tp.T etV s b l yPol cy.UserV s ble,
+      safetyLevel = So (safetyLevel),
+      forUser d = query.getOpt onalUser d
     )
 
-    val exclusiveAuthorIdOpt =
-      existingFeatures.getOrElse(ExclusiveConversationAuthorIdFeature, None)
+    val exclus veAuthor dOpt =
+      ex st ngFeatures.getOrElse(Exclus veConversat onAuthor dFeature, None)
 
-    tweetypieStitchClient.getTweetFields(tweetId = candidate.id, options = tweetFieldsOptions).map {
-      case tp.GetTweetFieldsResult(_, tp.TweetFieldsResultState.Found(found), quoteOpt, _) =>
-        val coreData = found.tweet.coreData
-        val isNsfwAdmin = coreData.exists(_.nsfwAdmin)
-        val isNsfwUser = coreData.exists(_.nsfwUser)
+    t etyp eSt chCl ent.getT etF elds(t et d = cand date. d, opt ons = t etF eldsOpt ons).map {
+      case tp.GetT etF eldsResult(_, tp.T etF eldsResultState.Found(found), quoteOpt, _) =>
+        val coreData = found.t et.coreData
+        val  sNsfwAdm n = coreData.ex sts(_.nsfwAdm n)
+        val  sNsfwUser = coreData.ex sts(_.nsfwUser)
 
-        val quotedTweetDropped = quoteOpt.exists {
-          case _: tp.TweetFieldsResultState.Filtered => true
-          case _: tp.TweetFieldsResultState.NotFound => true
+        val quotedT etDropped = quoteOpt.ex sts {
+          case _: tp.T etF eldsResultState.F ltered => true
+          case _: tp.T etF eldsResultState.NotFound => true
           case _ => false
         }
-        val quotedTweetIsNsfw = quoteOpt.exists {
-          case quoteTweet: tp.TweetFieldsResultState.Found =>
-            quoteTweet.found.tweet.coreData.exists(data => data.nsfwAdmin || data.nsfwUser)
+        val quotedT et sNsfw = quoteOpt.ex sts {
+          case quoteT et: tp.T etF eldsResultState.Found =>
+            quoteT et.found.t et.coreData.ex sts(data => data.nsfwAdm n || data.nsfwUser)
           case _ => false
         }
 
-        val sourceTweetIsNsfw =
-          found.retweetedTweet.exists(_.coreData.exists(data => data.nsfwAdmin || data.nsfwUser))
+        val s ceT et sNsfw =
+          found.ret etedT et.ex sts(_.coreData.ex sts(data => data.nsfwAdm n || data.nsfwUser))
 
-        val tweetText = coreData.map(_.text)
-        val tweetLanguage = found.tweet.language.map(_.language)
+        val t etText = coreData.map(_.text)
+        val t etLanguage = found.t et.language.map(_.language)
 
-        val tweetAuthorId = coreData.map(_.userId)
-        val inReplyToTweetId = coreData.flatMap(_.reply.flatMap(_.inReplyToStatusId))
-        val retweetedTweetId = found.retweetedTweet.map(_.id)
-        val quotedTweetId = quoteOpt.flatMap {
-          case quoteTweet: tp.TweetFieldsResultState.Found =>
-            Some(quoteTweet.found.tweet.id)
+        val t etAuthor d = coreData.map(_.user d)
+        val  nReplyToT et d = coreData.flatMap(_.reply.flatMap(_. nReplyToStatus d))
+        val ret etedT et d = found.ret etedT et.map(_. d)
+        val quotedT et d = quoteOpt.flatMap {
+          case quoteT et: tp.T etF eldsResultState.Found =>
+            So (quoteT et.found.t et. d)
           case _ => None
         }
 
-        val retweetedTweetUserId = found.retweetedTweet.flatMap(_.coreData).map(_.userId)
-        val quotedTweetUserId = quoteOpt.flatMap {
-          case quoteTweet: tp.TweetFieldsResultState.Found =>
-            quoteTweet.found.tweet.coreData.map(_.userId)
+        val ret etedT etUser d = found.ret etedT et.flatMap(_.coreData).map(_.user d)
+        val quotedT etUser d = quoteOpt.flatMap {
+          case quoteT et: tp.T etF eldsResultState.Found =>
+            quoteT et.found.t et.coreData.map(_.user d)
           case _ => None
         }
 
-        val isNsfw = isNsfwAdmin || isNsfwUser || sourceTweetIsNsfw || quotedTweetIsNsfw
+        val  sNsfw =  sNsfwAdm n ||  sNsfwUser || s ceT et sNsfw || quotedT et sNsfw
 
-        FeatureMapBuilder()
-          .add(AuthorIdFeature, tweetAuthorId)
-          .add(ExclusiveConversationAuthorIdFeature, exclusiveAuthorIdOpt)
-          .add(InReplyToTweetIdFeature, inReplyToTweetId)
-          .add(IsHydratedFeature, true)
-          .add(IsNsfw, Some(isNsfw))
-          .add(IsNsfwFeature, isNsfw)
-          .add(IsRetweetFeature, retweetedTweetId.isDefined)
-          .add(QuotedTweetDroppedFeature, quotedTweetDropped)
-          .add(QuotedTweetIdFeature, quotedTweetId)
-          .add(QuotedUserIdFeature, quotedTweetUserId)
-          .add(SourceTweetIdFeature, retweetedTweetId)
-          .add(SourceUserIdFeature, retweetedTweetUserId)
-          .add(TweetLanguageFeature, tweetLanguage)
-          .add(TweetTextFeature, tweetText)
-          .add(VisibilityReason, found.suppressReason)
-          .build()
+        FeatureMapBu lder()
+          .add(Author dFeature, t etAuthor d)
+          .add(Exclus veConversat onAuthor dFeature, exclus veAuthor dOpt)
+          .add( nReplyToT et dFeature,  nReplyToT et d)
+          .add( sHydratedFeature, true)
+          .add( sNsfw, So ( sNsfw))
+          .add( sNsfwFeature,  sNsfw)
+          .add( sRet etFeature, ret etedT et d. sDef ned)
+          .add(QuotedT etDroppedFeature, quotedT etDropped)
+          .add(QuotedT et dFeature, quotedT et d)
+          .add(QuotedUser dFeature, quotedT etUser d)
+          .add(S ceT et dFeature, ret etedT et d)
+          .add(S ceUser dFeature, ret etedT etUser d)
+          .add(T etLanguageFeature, t etLanguage)
+          .add(T etTextFeature, t etText)
+          .add(V s b l yReason, found.suppressReason)
+          .bu ld()
 
-      // If no tweet result found, return default and pre-existing features
+      //  f no t et result found, return default and pre-ex st ng features
       case _ =>
-        DefaultFeatureMap ++ FeatureMapBuilder()
-          .add(AuthorIdFeature, existingFeatures.getOrElse(AuthorIdFeature, None))
-          .add(ExclusiveConversationAuthorIdFeature, exclusiveAuthorIdOpt)
-          .add(InReplyToTweetIdFeature, existingFeatures.getOrElse(InReplyToTweetIdFeature, None))
-          .add(IsRetweetFeature, existingFeatures.getOrElse(IsRetweetFeature, false))
-          .add(QuotedTweetIdFeature, existingFeatures.getOrElse(QuotedTweetIdFeature, None))
-          .add(QuotedUserIdFeature, existingFeatures.getOrElse(QuotedUserIdFeature, None))
-          .add(SourceTweetIdFeature, existingFeatures.getOrElse(SourceTweetIdFeature, None))
-          .add(SourceUserIdFeature, existingFeatures.getOrElse(SourceUserIdFeature, None))
-          .add(TweetLanguageFeature, existingFeatures.getOrElse(TweetLanguageFeature, None))
-          .build()
+        DefaultFeatureMap ++ FeatureMapBu lder()
+          .add(Author dFeature, ex st ngFeatures.getOrElse(Author dFeature, None))
+          .add(Exclus veConversat onAuthor dFeature, exclus veAuthor dOpt)
+          .add( nReplyToT et dFeature, ex st ngFeatures.getOrElse( nReplyToT et dFeature, None))
+          .add( sRet etFeature, ex st ngFeatures.getOrElse( sRet etFeature, false))
+          .add(QuotedT et dFeature, ex st ngFeatures.getOrElse(QuotedT et dFeature, None))
+          .add(QuotedUser dFeature, ex st ngFeatures.getOrElse(QuotedUser dFeature, None))
+          .add(S ceT et dFeature, ex st ngFeatures.getOrElse(S ceT et dFeature, None))
+          .add(S ceUser dFeature, ex st ngFeatures.getOrElse(S ceUser dFeature, None))
+          .add(T etLanguageFeature, ex st ngFeatures.getOrElse(T etLanguageFeature, None))
+          .bu ld()
     }
   }
 }

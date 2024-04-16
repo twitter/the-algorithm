@@ -1,179 +1,179 @@
-package com.twitter.simclusters_v2.scalding.embedding
+package com.tw ter.s mclusters_v2.scald ng.embedd ng
 
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.hermit.candidate.thriftscala.Candidate
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.scalding._
-import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2._
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.CosineSimilarityUtil
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.b ject on.scrooge.CompactScalaCodec
+ mport com.tw ter. rm .cand date.thr ftscala.Cand date
+ mport com.tw ter. rm .cand date.thr ftscala.Cand dates
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng.commons.s ce.Vers onedKeyValS ce
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e._
+ mport com.tw ter.scald ng_ nternal.dalv2._
+ mport com.tw ter.scald ng_ nternal.dalv2.remote_access.AllowCrossClusterSa DC
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.common.Cos neS m lar yUt l
+ mport com.tw ter.s mclusters_v2.hdfs_s ces._
+ mport com.tw ter.s mclusters_v2.thr ftscala._
+ mport com.tw ter.wtf.scald ng.jobs.common.AdhocExecut onApp
+ mport com.tw ter.wtf.scald ng.jobs.common.Sc duledExecut onApp
+ mport java.ut l.T  Zone
 
 /**
-capesospy-v2 update --build_locally --start_cron \
-  --start_cron similar_users_by_simclusters_embeddings_job \
-  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capesospy-v2 update --bu ld_locally --start_cron \
+  --start_cron s m lar_users_by_s mclusters_embedd ngs_job \
+  src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc3.yaml
  */
-object SimilarUsersBySimClustersEmbeddingBatchApp extends ScheduledExecutionApp {
+object S m larUsersByS mClustersEmbedd ngBatchApp extends Sc duledExecut onApp {
 
-  override val firstTime: RichDate = RichDate("2019-07-10")
+  overr de val f rstT  : R chDate = R chDate("2019-07-10")
 
-  override val batchIncrement: Duration = Days(7)
+  overr de val batch ncre nt: Durat on = Days(7)
 
-  private val outputByFav =
-    "/user/cassowary/manhattan_sequence_files/similar_users_by_simclusters_embeddings/by_fav"
-  private val outputByFollow =
-    "/user/cassowary/manhattan_sequence_files/similar_users_by_simclusters_embeddings/by_follow"
+  pr vate val outputByFav =
+    "/user/cassowary/manhattan_sequence_f les/s m lar_users_by_s mclusters_embedd ngs/by_fav"
+  pr vate val outputByFollow =
+    "/user/cassowary/manhattan_sequence_f les/s m lar_users_by_s mclusters_embedd ngs/by_follow"
 
-  private implicit val valueInj: CompactScalaCodec[Candidates] = CompactScalaCodec(Candidates)
+  pr vate  mpl c  val value nj: CompactScalaCodec[Cand dates] = CompactScalaCodec(Cand dates)
 
-  private val topClusterEmbeddingsByFavScore = DAL
+  pr vate val topClusterEmbedd ngsByFavScore = DAL
     .readMostRecentSnapshotNoOlderThan(
-      ProducerTopKSimclusterEmbeddingsByFavScoreUpdatedScalaDataset,
+      ProducerTopKS mclusterEmbedd ngsByFavScoreUpdatedScalaDataset,
       Days(14)
     )
-    .withRemoteReadPolicy(AllowCrossClusterSameDC)
-    .toTypedPipe
-    .map { clusterScorePair => clusterScorePair.key -> clusterScorePair.value }
+    .w hRemoteReadPol cy(AllowCrossClusterSa DC)
+    .toTypedP pe
+    .map { clusterScorePa r => clusterScorePa r.key -> clusterScorePa r.value }
 
-  private val topProducersForClusterEmbeddingByFavScore = DAL
+  pr vate val topProducersForClusterEmbedd ngByFavScore = DAL
     .readMostRecentSnapshotNoOlderThan(
-      SimclusterEmbeddingTopKProducersByFavScoreUpdatedScalaDataset,
+      S mclusterEmbedd ngTopKProducersByFavScoreUpdatedScalaDataset,
       Days(14)
     )
-    .withRemoteReadPolicy(AllowCrossClusterSameDC)
-    .toTypedPipe
-    .map { producerScoresPair => producerScoresPair.key -> producerScoresPair.value }
+    .w hRemoteReadPol cy(AllowCrossClusterSa DC)
+    .toTypedP pe
+    .map { producerScoresPa r => producerScoresPa r.key -> producerScoresPa r.value }
 
-  private val topClusterEmbeddingsByFollowScore = DAL
+  pr vate val topClusterEmbedd ngsByFollowScore = DAL
     .readMostRecentSnapshotNoOlderThan(
-      ProducerTopKSimclusterEmbeddingsByFollowScoreUpdatedScalaDataset,
+      ProducerTopKS mclusterEmbedd ngsByFollowScoreUpdatedScalaDataset,
       Days(14)
     )
-    .withRemoteReadPolicy(AllowCrossClusterSameDC)
-    .toTypedPipe
-    .map { clusterScorePair => clusterScorePair.key -> clusterScorePair.value }
+    .w hRemoteReadPol cy(AllowCrossClusterSa DC)
+    .toTypedP pe
+    .map { clusterScorePa r => clusterScorePa r.key -> clusterScorePa r.value }
 
-  private val topProducersForClusterEmbeddingByFollowScore = DAL
+  pr vate val topProducersForClusterEmbedd ngByFollowScore = DAL
     .readMostRecentSnapshotNoOlderThan(
-      SimclusterEmbeddingTopKProducersByFollowScoreUpdatedScalaDataset,
+      S mclusterEmbedd ngTopKProducersByFollowScoreUpdatedScalaDataset,
       Days(14)
     )
-    .withRemoteReadPolicy(AllowCrossClusterSameDC)
-    .toTypedPipe
-    .map { producerScoresPair => producerScoresPair.key -> producerScoresPair.value }
+    .w hRemoteReadPol cy(AllowCrossClusterSa DC)
+    .toTypedP pe
+    .map { producerScoresPa r => producerScoresPa r.key -> producerScoresPa r.value }
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
 
-    Execution
-      .zip(
-        SimilarUsersBySimClustersEmbedding
+    Execut on
+      .z p(
+        S m larUsersByS mClustersEmbedd ng
           .getTopUsersRelatedToUser(
-            topClusterEmbeddingsByFavScore,
-            topProducersForClusterEmbeddingByFavScore
+            topClusterEmbedd ngsByFavScore,
+            topProducersForClusterEmbedd ngByFavScore
           )
           .map { case (key, value) => KeyVal(key, value) }
-          .writeDALVersionedKeyValExecution(
-            SimilarUsersByFavBasedProducerEmbeddingScalaDataset,
-            D.Suffix(outputByFav)
+          .wr eDALVers onedKeyValExecut on(
+            S m larUsersByFavBasedProducerEmbedd ngScalaDataset,
+            D.Suff x(outputByFav)
           ),
-        SimilarUsersBySimClustersEmbedding
+        S m larUsersByS mClustersEmbedd ng
           .getTopUsersRelatedToUser(
-            topClusterEmbeddingsByFollowScore,
-            topProducersForClusterEmbeddingByFollowScore
+            topClusterEmbedd ngsByFollowScore,
+            topProducersForClusterEmbedd ngByFollowScore
           )
           .map { case (key, value) => KeyVal(key, value) }
-          .writeDALVersionedKeyValExecution(
-            SimilarUsersByFollowBasedProducerEmbeddingScalaDataset,
-            D.Suffix(outputByFollow)
+          .wr eDALVers onedKeyValExecut on(
+            S m larUsersByFollowBasedProducerEmbedd ngScalaDataset,
+            D.Suff x(outputByFollow)
           )
-      ).unit
+      ).un 
   }
 }
 
 /**
- * Adhoc job to calculate producer's simcluster embeddings, which essentially assigns interestedIn
- * SimClusters to each producer, regardless of whether the producer has a knownFor assignment.
+ * Adhoc job to calculate producer's s mcluster embedd ngs, wh ch essent ally ass gns  nterested n
+ * S mClusters to each producer, regardless of w t r t  producer has a knownFor ass gn nt.
  *
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:similar_users_by_simclusters_embeddings-adhoc && \
-  oscar hdfs --user recos-platform --screen --tee similar_users_by_simclusters_embeddings --bundle similar_users_by_simclusters_embeddings-adhoc \
-  --tool com.twitter.simclusters_v2.scalding.embedding.SimilarUsersBySimClustersEmbeddingAdhocApp \
+./bazel bundle src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng:s m lar_users_by_s mclusters_embedd ngs-adhoc && \
+  oscar hdfs --user recos-platform --screen --tee s m lar_users_by_s mclusters_embedd ngs --bundle s m lar_users_by_s mclusters_embedd ngs-adhoc \
+  --tool com.tw ter.s mclusters_v2.scald ng.embedd ng.S m larUsersByS mClustersEmbedd ngAdhocApp \
   -- --date 2019-07-10T00 2019-07-10T23
  */
-object SimilarUsersBySimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
+object S m larUsersByS mClustersEmbedd ngAdhocApp extends AdhocExecut onApp {
 
-  private val outputByFav =
-    "/user/recos-platform/adhoc/similar_users_by_simclusters_embeddings/by_fav"
-  private val outputByFollow =
-    "/user/recos-platform/adhoc/similar_users_by_simclusters_embeddings/by_follow"
+  pr vate val outputByFav =
+    "/user/recos-platform/adhoc/s m lar_users_by_s mclusters_embedd ngs/by_fav"
+  pr vate val outputByFollow =
+    "/user/recos-platform/adhoc/s m lar_users_by_s mclusters_embedd ngs/by_follow"
 
-  private val topClusterEmbeddingsByFavScore = DAL
+  pr vate val topClusterEmbedd ngsByFavScore = DAL
     .readMostRecentSnapshotNoOlderThan(
-      ProducerTopKSimclusterEmbeddingsByFavScoreUpdatedScalaDataset,
+      ProducerTopKS mclusterEmbedd ngsByFavScoreUpdatedScalaDataset,
       Days(14)
     )
-    .withRemoteReadPolicy(AllowCrossClusterSameDC)
-    .toTypedPipe
-    .map { clusterScorePair => clusterScorePair.key -> clusterScorePair.value }
+    .w hRemoteReadPol cy(AllowCrossClusterSa DC)
+    .toTypedP pe
+    .map { clusterScorePa r => clusterScorePa r.key -> clusterScorePa r.value }
 
-  private val topProducersForClusterEmbeddingByFavScore = DAL
+  pr vate val topProducersForClusterEmbedd ngByFavScore = DAL
     .readMostRecentSnapshotNoOlderThan(
-      SimclusterEmbeddingTopKProducersByFavScoreUpdatedScalaDataset,
+      S mclusterEmbedd ngTopKProducersByFavScoreUpdatedScalaDataset,
       Days(14)
     )
-    .withRemoteReadPolicy(AllowCrossClusterSameDC)
-    .toTypedPipe
-    .map { producerScoresPair => producerScoresPair.key -> producerScoresPair.value }
+    .w hRemoteReadPol cy(AllowCrossClusterSa DC)
+    .toTypedP pe
+    .map { producerScoresPa r => producerScoresPa r.key -> producerScoresPa r.value }
 
-  private val topClusterEmbeddingsByFollowScore = DAL
+  pr vate val topClusterEmbedd ngsByFollowScore = DAL
     .readMostRecentSnapshotNoOlderThan(
-      ProducerTopKSimclusterEmbeddingsByFollowScoreUpdatedScalaDataset,
+      ProducerTopKS mclusterEmbedd ngsByFollowScoreUpdatedScalaDataset,
       Days(14)
     )
-    .withRemoteReadPolicy(AllowCrossClusterSameDC)
-    .toTypedPipe
-    .map { clusterScorePair => clusterScorePair.key -> clusterScorePair.value }
+    .w hRemoteReadPol cy(AllowCrossClusterSa DC)
+    .toTypedP pe
+    .map { clusterScorePa r => clusterScorePa r.key -> clusterScorePa r.value }
 
-  private val topProducersForClusterEmbeddingByFollowScore = DAL
+  pr vate val topProducersForClusterEmbedd ngByFollowScore = DAL
     .readMostRecentSnapshotNoOlderThan(
-      SimclusterEmbeddingTopKProducersByFollowScoreUpdatedScalaDataset,
+      S mclusterEmbedd ngTopKProducersByFollowScoreUpdatedScalaDataset,
       Days(14)
     )
-    .withRemoteReadPolicy(AllowCrossClusterSameDC)
-    .toTypedPipe
-    .map { producerScoresPair => producerScoresPair.key -> producerScoresPair.value }
+    .w hRemoteReadPol cy(AllowCrossClusterSa DC)
+    .toTypedP pe
+    .map { producerScoresPa r => producerScoresPa r.key -> producerScoresPa r.value }
 
-  implicit val candidatesInj: CompactScalaCodec[Candidates] = CompactScalaCodec(Candidates)
+   mpl c  val cand dates nj: CompactScalaCodec[Cand dates] = CompactScalaCodec(Cand dates)
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
 
-    Execution
-      .zip(
-        SimilarUsersBySimClustersEmbedding
+    Execut on
+      .z p(
+        S m larUsersByS mClustersEmbedd ng
           .getTopUsersRelatedToUser(
-            topClusterEmbeddingsByFavScore,
-            topProducersForClusterEmbeddingByFavScore).writeExecution(
-            VersionedKeyValSource[Long, Candidates](outputByFav))
+            topClusterEmbedd ngsByFavScore,
+            topProducersForClusterEmbedd ngByFavScore).wr eExecut on(
+            Vers onedKeyValS ce[Long, Cand dates](outputByFav))
           .getCounters
           .flatMap {
             case (_, counters) =>
@@ -181,15 +181,15 @@ object SimilarUsersBySimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
                 .sortBy(e => (e._1.group, e._1.counter))
                 .foreach {
                   case (statKey, value) =>
-                    println(s"${statKey.group}\t${statKey.counter}\t$value")
+                    pr ntln(s"${statKey.group}\t${statKey.counter}\t$value")
                 }
-              Execution.unit
+              Execut on.un 
           },
-        SimilarUsersBySimClustersEmbedding
+        S m larUsersByS mClustersEmbedd ng
           .getTopUsersRelatedToUser(
-            topClusterEmbeddingsByFollowScore,
-            topProducersForClusterEmbeddingByFollowScore).writeExecution(
-            VersionedKeyValSource[Long, Candidates](outputByFollow))
+            topClusterEmbedd ngsByFollowScore,
+            topProducersForClusterEmbedd ngByFollowScore).wr eExecut on(
+            Vers onedKeyValS ce[Long, Cand dates](outputByFollow))
           .getCounters
           .flatMap {
             case (_, counters) =>
@@ -197,103 +197,103 @@ object SimilarUsersBySimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
                 .sortBy(e => (e._1.group, e._1.counter))
                 .foreach {
                   case (statKey, value) =>
-                    println(s"${statKey.group}\t${statKey.counter}\t$value")
+                    pr ntln(s"${statKey.group}\t${statKey.counter}\t$value")
                 }
-              Execution.unit
+              Execut on.un 
           }
-      ).unit
+      ).un 
   }
 }
 
-object SimilarUsersBySimClustersEmbedding {
-  private val maxUsersPerCluster = 300
-  private val maxClustersPerUser = 50
-  private val topK = 100
+object S m larUsersByS mClustersEmbedd ng {
+  pr vate val maxUsersPerCluster = 300
+  pr vate val maxClustersPerUser = 50
+  pr vate val topK = 100
 
   def getTopUsersRelatedToUser(
-    clusterScores: TypedPipe[(Long, TopSimClustersWithScore)],
-    producerScores: TypedPipe[(PersistedFullClusterId, TopProducersWithScore)]
+    clusterScores: TypedP pe[(Long, TopS mClustersW hScore)],
+    producerScores: TypedP pe[(Pers stedFullCluster d, TopProducersW hScore)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(Long, Candidates)] = {
+     mpl c  un que D: Un que D
+  ): TypedP pe[(Long, Cand dates)] = {
 
-    val numUserUserPair = Stat("num_user_producer_pairs")
-    val numUserClusterPair = Stat("num_user_cluster_pairs")
-    val numClusterProducerPair = Stat("num_cluster_producer_pairs")
+    val numUserUserPa r = Stat("num_user_producer_pa rs")
+    val numUserClusterPa r = Stat("num_user_cluster_pa rs")
+    val numClusterProducerPa r = Stat("num_cluster_producer_pa rs")
 
     val clusterToUserMap =
       clusterScores.flatMap {
-        case (userId, topSimClustersWithScore) =>
+        case (user d, topS mClustersW hScore) =>
           val targetUserClusters =
-            topSimClustersWithScore.topClusters.sortBy(-_.score).take(maxClustersPerUser)
+            topS mClustersW hScore.topClusters.sortBy(-_.score).take(maxClustersPerUser)
 
-          targetUserClusters.map { simClusterWithScore =>
-            numUserClusterPair.inc()
-            simClusterWithScore.clusterId -> userId
+          targetUserClusters.map { s mClusterW hScore =>
+            numUserClusterPa r. nc()
+            s mClusterW hScore.cluster d -> user d
           }
       }
 
     val clusterToProducerMap = producerScores.flatMap {
-      case (persistedFullClusterId, topProducersWithScore) =>
-        numClusterProducerPair.inc()
-        val targetProducers = topProducersWithScore.topProducers
+      case (pers stedFullCluster d, topProducersW hScore) =>
+        numClusterProducerPa r. nc()
+        val targetProducers = topProducersW hScore.topProducers
           .sortBy(-_.score)
           .take(maxUsersPerCluster)
-        targetProducers.map { topProducerWithScore =>
-          persistedFullClusterId.clusterId -> topProducerWithScore.userId
+        targetProducers.map { topProducerW hScore =>
+          pers stedFullCluster d.cluster d -> topProducerW hScore.user d
         }
     }
 
-    implicit val intInject: Int => Array[Byte] = Injection.int2BigEndian.toFunction
+     mpl c  val  nt nject:  nt => Array[Byte] =  nject on. nt2B gEnd an.toFunct on
 
     val userToProducerMap =
       clusterToUserMap.group
         .sketch(2000)
-        .join(clusterToProducerMap.group)
+        .jo n(clusterToProducerMap.group)
         .values
-        .distinct
+        .d st nct
         .collect({
-          //filter self-pair
-          case userPair if userPair._1 != userPair._2 =>
-            numUserUserPair.inc()
-            userPair
+          //f lter self-pa r
+          case userPa r  f userPa r._1 != userPa r._2 =>
+            numUserUserPa r. nc()
+            userPa r
         })
 
-    val userEmbeddingsAllGrouped = clusterScores.map {
-      case (userId, topSimClustersWithScore) =>
+    val userEmbedd ngsAllGrouped = clusterScores.map {
+      case (user d, topS mClustersW hScore) =>
         val targetUserClusters =
-          topSimClustersWithScore.topClusters.sortBy(-_.score).take(maxClustersPerUser)
-        val embedding = targetUserClusters.map { simClustersWithScore =>
-          simClustersWithScore.clusterId -> simClustersWithScore.score
+          topS mClustersW hScore.topClusters.sortBy(-_.score).take(maxClustersPerUser)
+        val embedd ng = targetUserClusters.map { s mClustersW hScore =>
+          s mClustersW hScore.cluster d -> s mClustersW hScore.score
         }.toMap
-        val embeddingNormalized = CosineSimilarityUtil.normalize(embedding)
-        userId -> embeddingNormalized
-    }.forceToDisk
+        val embedd ngNormal zed = Cos neS m lar yUt l.normal ze(embedd ng)
+        user d -> embedd ngNormal zed
+    }.forceToD sk
 
-    val userToProducerMapJoinWithEmbedding =
+    val userToProducerMapJo nW hEmbedd ng =
       userToProducerMap
-        .join(userEmbeddingsAllGrouped)
+        .jo n(userEmbedd ngsAllGrouped)
         .map {
-          case (user, (producer, userEmbedding)) =>
-            producer -> (user, userEmbedding)
+          case (user, (producer, userEmbedd ng)) =>
+            producer -> (user, userEmbedd ng)
         }
-        .join(userEmbeddingsAllGrouped)
+        .jo n(userEmbedd ngsAllGrouped)
         .map {
-          case (producer, ((user, userEmbedding), producerEmbedding)) =>
-            user -> (producer, CosineSimilarityUtil.dotProduct(userEmbedding, producerEmbedding))
+          case (producer, ((user, userEmbedd ng), producerEmbedd ng)) =>
+            user -> (producer, Cos neS m lar yUt l.dotProduct(userEmbedd ng, producerEmbedd ng))
         }
         .group
-        .sortWithTake(topK)((a, b) => a._2 > b._2)
+        .sortW hTake(topK)((a, b) => a._2 > b._2)
         .map {
-          case (userId, candidatesList) =>
-            val candidatesSeq = candidatesList
+          case (user d, cand datesL st) =>
+            val cand datesSeq = cand datesL st
               .map {
-                case (candidateId, score) => Candidate(candidateId, score)
+                case (cand date d, score) => Cand date(cand date d, score)
               }
-            userId -> Candidates(userId, candidatesSeq)
+            user d -> Cand dates(user d, cand datesSeq)
         }
 
-    userToProducerMapJoinWithEmbedding
+    userToProducerMapJo nW hEmbedd ng
   }
 
 }

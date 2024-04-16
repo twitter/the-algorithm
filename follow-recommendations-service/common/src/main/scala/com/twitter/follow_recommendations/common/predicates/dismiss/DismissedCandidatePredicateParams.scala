@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.predicates.dismiss
+package com.tw ter.follow_recom ndat ons.common.pred cates.d sm ss
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.ut l.Durat on
 
-object DismissedCandidatePredicateParams {
-  case object LookBackDuration extends Param[Duration](180.days)
+object D sm ssedCand datePred cateParams {
+  case object LookBackDurat on extends Param[Durat on](180.days)
 }

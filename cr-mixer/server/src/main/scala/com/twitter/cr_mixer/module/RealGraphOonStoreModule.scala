@@ -1,39 +1,39 @@
-package com.twitter.cr_mixer.module
+package com.tw ter.cr_m xer.module
 
-import com.google.inject.Provides
-import com.twitter.app.Flag
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import javax.inject.Named
-import javax.inject.Singleton
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
+ mport com.google. nject.Prov des
+ mport com.tw ter.app.Flag
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.store.strato.StratoFetchableStore
+ mport com.tw ter. rm .store.common.ObservedReadableStore
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.storehaus.ReadableStore
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.wtf.cand date.thr ftscala.Cand dateSeq
 
-object RealGraphOonStoreModule extends TwitterModule {
+object RealGraphOonStoreModule extends Tw terModule {
 
-  private val userRealGraphOonColumnPath: Flag[String] = flag[String](
-    name = "crMixer.userRealGraphOonColumnPath",
-    default = "recommendations/twistly/userRealgraphOon",
-    help = "Strato column path for user real graph OON Store"
+  pr vate val userRealGraphOonColumnPath: Flag[Str ng] = flag[Str ng](
+    na  = "crM xer.userRealGraphOonColumnPath",
+    default = "recom ndat ons/tw stly/userRealgraphOon",
+     lp = "Strato column path for user real graph OON Store"
   )
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.RealGraphOonStore)
-  def providesRealGraphOonStore(
-    stratoClient: StratoClient,
-    statsReceiver: StatsReceiver
-  ): ReadableStore[UserId, CandidateSeq] = {
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.RealGraphOonStore)
+  def prov desRealGraphOonStore(
+    stratoCl ent: StratoCl ent,
+    statsRece ver: StatsRece ver
+  ): ReadableStore[User d, Cand dateSeq] = {
     val realGraphOonStratoFetchableStore = StratoFetchableStore
-      .withUnitView[UserId, CandidateSeq](stratoClient, userRealGraphOonColumnPath())
+      .w hUn V ew[User d, Cand dateSeq](stratoCl ent, userRealGraphOonColumnPath())
 
     ObservedReadableStore(
       realGraphOonStratoFetchableStore
-    )(statsReceiver.scope("user_real_graph_oon_store"))
+    )(statsRece ver.scope("user_real_graph_oon_store"))
   }
 }

@@ -1,45 +1,45 @@
-package com.twitter.frigate.pushservice.store
+package com.tw ter.fr gate.pushserv ce.store
 
-import com.twitter.hermit.store.common.ReadableWritableStore
-import com.twitter.notificationservice.thriftscala.GenericNotificationOverrideKey
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.bijections.Bijections.BinaryCompactScalaInjection
-import com.twitter.storage.client.manhattan.bijections.Bijections.LongInjection
-import com.twitter.storage.client.manhattan.bijections.Bijections.StringInjection
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpoint
-import com.twitter.storage.client.manhattan.kv.impl.Component
-import com.twitter.storage.client.manhattan.kv.impl.DescriptorP1L1
-import com.twitter.storage.client.manhattan.kv.impl.KeyDescriptor
-import com.twitter.storage.client.manhattan.kv.impl.ValueDescriptor
-import com.twitter.util.Future
+ mport com.tw ter. rm .store.common.ReadableWr ableStore
+ mport com.tw ter.not f cat onserv ce.thr ftscala.Gener cNot f cat onOverr deKey
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.storage.cl ent.manhattan.b ject ons.B ject ons.B naryCompactScala nject on
+ mport com.tw ter.storage.cl ent.manhattan.b ject ons.B ject ons.Long nject on
+ mport com.tw ter.storage.cl ent.manhattan.b ject ons.B ject ons.Str ng nject on
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVEndpo nt
+ mport com.tw ter.storage.cl ent.manhattan.kv. mpl.Component
+ mport com.tw ter.storage.cl ent.manhattan.kv. mpl.Descr ptorP1L1
+ mport com.tw ter.storage.cl ent.manhattan.kv. mpl.KeyDescr ptor
+ mport com.tw ter.storage.cl ent.manhattan.kv. mpl.ValueDescr ptor
+ mport com.tw ter.ut l.Future
 
-case class NTabHistoryStore(mhEndpoint: ManhattanKVEndpoint, dataset: String)
-    extends ReadableWritableStore[(Long, String), GenericNotificationOverrideKey] {
+case class NTab toryStore(mhEndpo nt: ManhattanKVEndpo nt, dataset: Str ng)
+    extends ReadableWr ableStore[(Long, Str ng), Gener cNot f cat onOverr deKey] {
 
-  private val keyDesc: DescriptorP1L1.EmptyKey[Long, String] =
-    KeyDescriptor(Component(LongInjection), Component(StringInjection))
+  pr vate val keyDesc: Descr ptorP1L1.EmptyKey[Long, Str ng] =
+    KeyDescr ptor(Component(Long nject on), Component(Str ng nject on))
 
-  private val genericNotifKeyValDesc: ValueDescriptor.EmptyValue[GenericNotificationOverrideKey] =
-    ValueDescriptor[GenericNotificationOverrideKey](
-      BinaryCompactScalaInjection(GenericNotificationOverrideKey)
+  pr vate val gener cNot fKeyValDesc: ValueDescr ptor.EmptyValue[Gener cNot f cat onOverr deKey] =
+    ValueDescr ptor[Gener cNot f cat onOverr deKey](
+      B naryCompactScala nject on(Gener cNot f cat onOverr deKey)
     )
 
-  override def get(key: (Long, String)): Future[Option[GenericNotificationOverrideKey]] = {
-    val (userId, impressionId) = key
-    val mhKey = keyDesc.withDataset(dataset).withPkey(userId).withLkey(impressionId)
+  overr de def get(key: (Long, Str ng)): Future[Opt on[Gener cNot f cat onOverr deKey]] = {
+    val (user d,  mpress on d) = key
+    val mhKey = keyDesc.w hDataset(dataset).w hPkey(user d).w hLkey( mpress on d)
 
-    Stitch
-      .run(mhEndpoint.get(mhKey, genericNotifKeyValDesc))
-      .map { optionMhValue =>
-        optionMhValue.map(_.contents)
+    St ch
+      .run(mhEndpo nt.get(mhKey, gener cNot fKeyValDesc))
+      .map { opt onMhValue =>
+        opt onMhValue.map(_.contents)
       }
   }
 
-  override def put(keyValue: ((Long, String), GenericNotificationOverrideKey)): Future[Unit] = {
-    val ((userId, impressionId), genericNotifOverrideKey) = keyValue
-    val mhKey = keyDesc.withDataset(dataset).withPkey(userId).withLkey(impressionId)
-    val mhVal = genericNotifKeyValDesc.withValue(genericNotifOverrideKey)
-    Stitch.run(mhEndpoint.insert(mhKey, mhVal))
+  overr de def put(keyValue: ((Long, Str ng), Gener cNot f cat onOverr deKey)): Future[Un ] = {
+    val ((user d,  mpress on d), gener cNot fOverr deKey) = keyValue
+    val mhKey = keyDesc.w hDataset(dataset).w hPkey(user d).w hLkey( mpress on d)
+    val mhVal = gener cNot fKeyValDesc.w hValue(gener cNot fOverr deKey)
+    St ch.run(mhEndpo nt. nsert(mhKey, mhVal))
   }
 
 }

@@ -1,123 +1,123 @@
-package com.twitter.interaction_graph.scio.ml.labels
+package com.tw ter. nteract on_graph.sc o.ml.labels
 
-import com.google.api.services.bigquery.model.TimePartitioning
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.fs.multiformat.DiskFormat
-import com.twitter.beam.io.fs.multiformat.PathLayout
-import com.twitter.beam.io.fs.multiformat.WriteOptions
-import com.twitter.beam.job.ServiceIdentifierOptions
-import com.twitter.cde.scio.dal_read.SourceUtil
-import com.twitter.conversions.DurationOps._
-import com.twitter.dal.client.dataset.TimePartitionedDALDataset
-import com.twitter.interaction_graph.scio.agg_client_event_logs.InteractionGraphAggClientEventLogsEdgeDailyScalaDataset
-import com.twitter.interaction_graph.scio.agg_direct_interactions.InteractionGraphAggDirectInteractionsEdgeDailyScalaDataset
-import com.twitter.interaction_graph.scio.agg_notifications.InteractionGraphAggNotificationsEdgeDailyScalaDataset
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.EdgeLabel
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.socialgraph.event.thriftscala.FollowEvent
-import com.twitter.socialgraph.hadoop.SocialgraphFollowEventsScalaDataset
-import com.twitter.statebird.v2.thriftscala.Environment
-import com.twitter.tcdc.bqblaster.beam.syntax._
-import com.twitter.tcdc.bqblaster.core.avro.TypedProjection
-import com.twitter.tcdc.bqblaster.core.transform.RootTransform
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
-import org.joda.time.Interval
+ mport com.google.ap .serv ces.b gquery.model.T  Part  on ng
+ mport com.spot fy.sc o.Sc oContext
+ mport com.spot fy.sc o.values.SCollect on
+ mport com.tw ter.beam. o.dal.DAL
+ mport com.tw ter.beam. o.fs.mult format.D skFormat
+ mport com.tw ter.beam. o.fs.mult format.PathLa t
+ mport com.tw ter.beam. o.fs.mult format.Wr eOpt ons
+ mport com.tw ter.beam.job.Serv ce dent f erOpt ons
+ mport com.tw ter.cde.sc o.dal_read.S ceUt l
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.dal.cl ent.dataset.T  Part  onedDALDataset
+ mport com.tw ter. nteract on_graph.sc o.agg_cl ent_event_logs. nteract onGraphAggCl entEventLogsEdgeDa lyScalaDataset
+ mport com.tw ter. nteract on_graph.sc o.agg_d rect_ nteract ons. nteract onGraphAggD rect nteract onsEdgeDa lyScalaDataset
+ mport com.tw ter. nteract on_graph.sc o.agg_not f cat ons. nteract onGraphAggNot f cat onsEdgeDa lyScalaDataset
+ mport com.tw ter. nteract on_graph.thr ftscala.Edge
+ mport com.tw ter. nteract on_graph.thr ftscala.EdgeLabel
+ mport com.tw ter.sc o_ nternal.job.Sc oBeamJob
+ mport com.tw ter.soc algraph.event.thr ftscala.FollowEvent
+ mport com.tw ter.soc algraph.hadoop.Soc algraphFollowEventsScalaDataset
+ mport com.tw ter.stateb rd.v2.thr ftscala.Env ron nt
+ mport com.tw ter.tcdc.bqblaster.beam.syntax._
+ mport com.tw ter.tcdc.bqblaster.core.avro.TypedProject on
+ mport com.tw ter.tcdc.bqblaster.core.transform.RootTransform
+ mport org.apac .beam.sdk. o.gcp.b gquery.B gQuery O
+ mport org.joda.t  . nterval
 
-object InteractionGraphLabelsJob extends ScioBeamJob[InteractionGraphLabelsOption] {
+object  nteract onGraphLabelsJob extends Sc oBeamJob[ nteract onGraphLabelsOpt on] {
 
-  override protected def configurePipeline(
-    scioContext: ScioContext,
-    pipelineOptions: InteractionGraphLabelsOption
-  ): Unit = {
-    @transient
-    implicit lazy val sc: ScioContext = scioContext
-    implicit lazy val dateInterval: Interval = pipelineOptions.interval
+  overr de protected def conf gureP pel ne(
+    sc oContext: Sc oContext,
+    p pel neOpt ons:  nteract onGraphLabelsOpt on
+  ): Un  = {
+    @trans ent
+     mpl c  lazy val sc: Sc oContext = sc oContext
+     mpl c  lazy val date nterval:  nterval = p pel neOpt ons. nterval
 
-    val bqTableName: String = pipelineOptions.getBqTableName
-    val dalEnvironment: String = pipelineOptions
-      .as(classOf[ServiceIdentifierOptions])
-      .getEnvironment()
-    val dalWriteEnvironment = if (pipelineOptions.getDALWriteEnvironment != null) {
-      pipelineOptions.getDALWriteEnvironment
+    val bqTableNa : Str ng = p pel neOpt ons.getBqTableNa 
+    val dalEnv ron nt: Str ng = p pel neOpt ons
+      .as(classOf[Serv ce dent f erOpt ons])
+      .getEnv ron nt()
+    val dalWr eEnv ron nt =  f (p pel neOpt ons.getDALWr eEnv ron nt != null) {
+      p pel neOpt ons.getDALWr eEnv ron nt
     } else {
-      dalEnvironment
+      dalEnv ron nt
     }
 
-    def readPartition[T: Manifest](dataset: TimePartitionedDALDataset[T]): SCollection[T] = {
-      SourceUtil.readDALDataset[T](
+    def readPart  on[T: Man fest](dataset: T  Part  onedDALDataset[T]): SCollect on[T] = {
+      S ceUt l.readDALDataset[T](
         dataset = dataset,
-        interval = dateInterval,
-        dalEnvironment = dalEnvironment
+         nterval = date nterval,
+        dalEnv ron nt = dalEnv ron nt
       )
     }
 
-    val follows = readPartition[FollowEvent](SocialgraphFollowEventsScalaDataset)
-      .flatMap(LabelUtil.fromFollowEvent)
+    val follows = readPart  on[FollowEvent](Soc algraphFollowEventsScalaDataset)
+      .flatMap(LabelUt l.fromFollowEvent)
 
-    val directInteractions =
-      readPartition[Edge](InteractionGraphAggDirectInteractionsEdgeDailyScalaDataset)
-        .flatMap(LabelUtil.fromInteractionGraphEdge)
+    val d rect nteract ons =
+      readPart  on[Edge]( nteract onGraphAggD rect nteract onsEdgeDa lyScalaDataset)
+        .flatMap(LabelUt l.from nteract onGraphEdge)
 
-    val clientEvents =
-      readPartition[Edge](InteractionGraphAggClientEventLogsEdgeDailyScalaDataset)
-        .flatMap(LabelUtil.fromInteractionGraphEdge)
+    val cl entEvents =
+      readPart  on[Edge]( nteract onGraphAggCl entEventLogsEdgeDa lyScalaDataset)
+        .flatMap(LabelUt l.from nteract onGraphEdge)
 
     val pushEvents =
-      readPartition[Edge](InteractionGraphAggNotificationsEdgeDailyScalaDataset)
-        .flatMap(LabelUtil.fromInteractionGraphEdge)
+      readPart  on[Edge]( nteract onGraphAggNot f cat onsEdgeDa lyScalaDataset)
+        .flatMap(LabelUt l.from nteract onGraphEdge)
 
 
     val labels = groupLabels(
       follows ++
-        directInteractions ++
-        clientEvents ++
+        d rect nteract ons ++
+        cl entEvents ++
         pushEvents)
 
     labels.saveAsCustomOutput(
-      "Write Edge Labels",
-      DAL.write[EdgeLabel](
-        InteractionGraphLabelsDailyScalaDataset,
-        PathLayout.DailyPath(pipelineOptions.getOutputPath),
-        dateInterval,
-        DiskFormat.Parquet,
-        Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards))
+      "Wr e Edge Labels",
+      DAL.wr e[EdgeLabel](
+         nteract onGraphLabelsDa lyScalaDataset,
+        PathLa t.Da lyPath(p pel neOpt ons.getOutputPath),
+        date nterval,
+        D skFormat.Parquet,
+        Env ron nt.valueOf(dalWr eEnv ron nt),
+        wr eOpt on = Wr eOpt ons(numOfShards = So (p pel neOpt ons.getNumberOfShards))
       )
     )
 
     // save to BQ
-    if (pipelineOptions.getBqTableName != null) {
-      val ingestionTime = pipelineOptions.getDate().value.getStart.toDate
-      val bqFieldsTransform = RootTransform
-        .Builder()
-        .withPrependedFields("dateHour" -> TypedProjection.fromConstant(ingestionTime))
-      val timePartitioning = new TimePartitioning()
-        .setType("DAY").setField("dateHour").setExpirationMs(90.days.inMilliseconds)
-      val bqWriter = BigQueryIO
-        .write[EdgeLabel]
-        .to(bqTableName)
-        .withExtendedErrorInfo()
-        .withTimePartitioning(timePartitioning)
-        .withLoadJobProjectId("twttr-recos-ml-prod")
-        .withThriftSupport(bqFieldsTransform.build(), AvroConverter.Legacy)
-        .withCreateDisposition(BigQueryIO.Write.CreateDisposition.CREATE_IF_NEEDED)
-        .withWriteDisposition(BigQueryIO.Write.WriteDisposition.WRITE_APPEND)
+     f (p pel neOpt ons.getBqTableNa  != null) {
+      val  ngest onT   = p pel neOpt ons.getDate().value.getStart.toDate
+      val bqF eldsTransform = RootTransform
+        .Bu lder()
+        .w hPrependedF elds("dateH " -> TypedProject on.fromConstant( ngest onT  ))
+      val t  Part  on ng = new T  Part  on ng()
+        .setType("DAY").setF eld("dateH ").setExp rat onMs(90.days. nM ll seconds)
+      val bqWr er = B gQuery O
+        .wr e[EdgeLabel]
+        .to(bqTableNa )
+        .w hExtendedError nfo()
+        .w hT  Part  on ng(t  Part  on ng)
+        .w hLoadJobProject d("twttr-recos-ml-prod")
+        .w hThr ftSupport(bqF eldsTransform.bu ld(), AvroConverter.Legacy)
+        .w hCreateD spos  on(B gQuery O.Wr e.CreateD spos  on.CREATE_ F_NEEDED)
+        .w hWr eD spos  on(B gQuery O.Wr e.Wr eD spos  on.WR TE_APPEND)
       labels
         .saveAsCustomOutput(
-          s"Save Recommendations to BQ $bqTableName",
-          bqWriter
+          s"Save Recom ndat ons to BQ $bqTableNa ",
+          bqWr er
         )
     }
 
   }
 
-  def groupLabels(labels: SCollection[EdgeLabel]): SCollection[EdgeLabel] = {
+  def groupLabels(labels: SCollect on[EdgeLabel]): SCollect on[EdgeLabel] = {
     labels
-      .map { e: EdgeLabel => ((e.sourceId, e.destinationId), e.labels.toSet) }
+      .map { e: EdgeLabel => ((e.s ce d, e.dest nat on d), e.labels.toSet) }
       .sumByKey
-      .map { case ((srcId, destId), labels) => EdgeLabel(srcId, destId, labels) }
+      .map { case ((src d, dest d), labels) => EdgeLabel(src d, dest d, labels) }
   }
 }

@@ -1,266 +1,266 @@
-package com.twitter.timelineranker.visibility
+package com.tw ter.t  l neranker.v s b l y
 
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.timelineranker.core.FollowGraphData
-import com.twitter.timelineranker.core.FollowGraphDataFuture
-import com.twitter.timelines.clients.socialgraph.ScopedSocialGraphClientFactory
-import com.twitter.timelines.model._
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.timelines.util.stats._
-import com.twitter.timelines.visibility._
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.Stat
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.t  l neranker.core.FollowGraphData
+ mport com.tw ter.t  l neranker.core.FollowGraphDataFuture
+ mport com.tw ter.t  l nes.cl ents.soc algraph.ScopedSoc alGraphCl entFactory
+ mport com.tw ter.t  l nes.model._
+ mport com.tw ter.t  l nes.ut l.Fa lOpenHandler
+ mport com.tw ter.t  l nes.ut l.stats._
+ mport com.tw ter.t  l nes.v s b l y._
+ mport com.tw ter.ut l.Future
 
-object SgsFollowGraphDataProvider {
-  val EmptyUserIdsSet: Set[UserId] = Set.empty[UserId]
-  val EmptyUserIdsSetFuture: Future[Set[UserId]] = Future.value(EmptyUserIdsSet)
-  val EmptyUserIdsSeq: Seq[UserId] = Seq.empty[UserId]
-  val EmptyUserIdsSeqFuture: Future[Seq[UserId]] = Future.value(EmptyUserIdsSeq)
-  val EmptyVisibilityProfiles: Map[UserId, VisibilityProfile] = Map.empty[UserId, VisibilityProfile]
-  val EmptyVisibilityProfilesFuture: Future[Map[UserId, VisibilityProfile]] =
-    Future.value(EmptyVisibilityProfiles)
+object SgsFollowGraphDataProv der {
+  val EmptyUser dsSet: Set[User d] = Set.empty[User d]
+  val EmptyUser dsSetFuture: Future[Set[User d]] = Future.value(EmptyUser dsSet)
+  val EmptyUser dsSeq: Seq[User d] = Seq.empty[User d]
+  val EmptyUser dsSeqFuture: Future[Seq[User d]] = Future.value(EmptyUser dsSeq)
+  val EmptyV s b l yProf les: Map[User d, V s b l yProf le] = Map.empty[User d, V s b l yProf le]
+  val EmptyV s b l yProf lesFuture: Future[Map[User d, V s b l yProf le]] =
+    Future.value(EmptyV s b l yProf les)
 }
 
-object SgsFollowGraphDataFields extends Enumeration {
-  val FollowedUserIds: Value = Value
-  val MutuallyFollowingUserIds: Value = Value
-  val MutedUserIds: Value = Value
-  val RetweetsMutedUserIds: Value = Value
+object SgsFollowGraphDataF elds extends Enu rat on {
+  val Follo dUser ds: Value = Value
+  val MutuallyFollow ngUser ds: Value = Value
+  val MutedUser ds: Value = Value
+  val Ret etsMutedUser ds: Value = Value
 
-  val None: ValueSet = SgsFollowGraphDataFields.ValueSet()
+  val None: ValueSet = SgsFollowGraphDataF elds.ValueSet()
 
-  def throwIfInvalid(fields: SgsFollowGraphDataFields.ValueSet): Unit = {
-    if (fields.contains(MutuallyFollowingUserIds) && !fields.contains(FollowedUserIds)) {
-      throw new IllegalArgumentException(
-        "MutuallyFollowingUserIds field requires FollowedUserIds field to be defined."
+  def throw f nval d(f elds: SgsFollowGraphDataF elds.ValueSet): Un  = {
+     f (f elds.conta ns(MutuallyFollow ngUser ds) && !f elds.conta ns(Follo dUser ds)) {
+      throw new  llegalArgu ntExcept on(
+        "MutuallyFollow ngUser ds f eld requ res Follo dUser ds f eld to be def ned."
       )
     }
   }
 }
 
 /**
- * Provides information on the follow graph of a given user.
+ * Prov des  nformat on on t  follow graph of a g ven user.
  */
-class SgsFollowGraphDataProvider(
-  socialGraphClientFactory: ScopedSocialGraphClientFactory,
-  visibilityProfileHydratorFactory: VisibilityProfileHydratorFactory,
-  fieldsToFetch: SgsFollowGraphDataFields.ValueSet,
+class SgsFollowGraphDataProv der(
+  soc alGraphCl entFactory: ScopedSoc alGraphCl entFactory,
+  v s b l yProf leHydratorFactory: V s b l yProf leHydratorFactory,
+  f eldsToFetch: SgsFollowGraphDataF elds.ValueSet,
   scope: RequestScope,
-  statsReceiver: StatsReceiver)
-    extends FollowGraphDataProvider
-    with RequestStats {
+  statsRece ver: StatsRece ver)
+    extends FollowGraphDataProv der
+    w h RequestStats {
 
-  SgsFollowGraphDataFields.throwIfInvalid(fieldsToFetch)
+  SgsFollowGraphDataF elds.throw f nval d(f eldsToFetch)
 
-  private[this] val stats = scope.stats("followGraphDataProvider", statsReceiver)
-  private[this] val scopedStatsReceiver = stats.scopedStatsReceiver
+  pr vate[t ] val stats = scope.stats("followGraphDataProv der", statsRece ver)
+  pr vate[t ] val scopedStatsRece ver = stats.scopedStatsRece ver
 
-  private[this] val followingScope = scopedStatsReceiver.scope("following")
-  private[this] val followingLatencyStat = followingScope.stat(LatencyMs)
-  private[this] val followingSizeStat = followingScope.stat(Size)
-  private[this] val followingTruncatedCounter = followingScope.counter("numTruncated")
+  pr vate[t ] val follow ngScope = scopedStatsRece ver.scope("follow ng")
+  pr vate[t ] val follow ngLatencyStat = follow ngScope.stat(LatencyMs)
+  pr vate[t ] val follow ngS zeStat = follow ngScope.stat(S ze)
+  pr vate[t ] val follow ngTruncatedCounter = follow ngScope.counter("numTruncated")
 
-  private[this] val mutuallyFollowingScope = scopedStatsReceiver.scope("mutuallyFollowing")
-  private[this] val mutuallyFollowingLatencyStat = mutuallyFollowingScope.stat(LatencyMs)
-  private[this] val mutuallyFollowingSizeStat = mutuallyFollowingScope.stat(Size)
+  pr vate[t ] val mutuallyFollow ngScope = scopedStatsRece ver.scope("mutuallyFollow ng")
+  pr vate[t ] val mutuallyFollow ngLatencyStat = mutuallyFollow ngScope.stat(LatencyMs)
+  pr vate[t ] val mutuallyFollow ngS zeStat = mutuallyFollow ngScope.stat(S ze)
 
-  private[this] val visibilityScope = scopedStatsReceiver.scope("visibility")
-  private[this] val visibilityLatencyStat = visibilityScope.stat(LatencyMs)
-  private[this] val mutedStat = visibilityScope.stat("muted")
-  private[this] val retweetsMutedStat = visibilityScope.stat("retweetsMuted")
+  pr vate[t ] val v s b l yScope = scopedStatsRece ver.scope("v s b l y")
+  pr vate[t ] val v s b l yLatencyStat = v s b l yScope.stat(LatencyMs)
+  pr vate[t ] val mutedStat = v s b l yScope.stat("muted")
+  pr vate[t ] val ret etsMutedStat = v s b l yScope.stat("ret etsMuted")
 
-  private[this] val socialGraphClient = socialGraphClientFactory.scope(scope)
-  private[this] val visibilityProfileHydrator =
-    createVisibilityProfileHydrator(visibilityProfileHydratorFactory, scope, fieldsToFetch)
+  pr vate[t ] val soc alGraphCl ent = soc alGraphCl entFactory.scope(scope)
+  pr vate[t ] val v s b l yProf leHydrator =
+    createV s b l yProf leHydrator(v s b l yProf leHydratorFactory, scope, f eldsToFetch)
 
-  private[this] val failOpenScope = scopedStatsReceiver.scope("failOpen")
-  private[this] val mutuallyFollowingHandler =
-    new FailOpenHandler(failOpenScope, "mutuallyFollowing")
+  pr vate[t ] val fa lOpenScope = scopedStatsRece ver.scope("fa lOpen")
+  pr vate[t ] val mutuallyFollow ngHandler =
+    new Fa lOpenHandler(fa lOpenScope, "mutuallyFollow ng")
 
-  private[this] val obtainVisibilityProfiles = fieldsToFetch.contains(
-    SgsFollowGraphDataFields.MutedUserIds
-  ) || fieldsToFetch.contains(SgsFollowGraphDataFields.RetweetsMutedUserIds)
+  pr vate[t ] val obta nV s b l yProf les = f eldsToFetch.conta ns(
+    SgsFollowGraphDataF elds.MutedUser ds
+  ) || f eldsToFetch.conta ns(SgsFollowGraphDataF elds.Ret etsMutedUser ds)
 
   /**
-   * Gets follow graph data for the given user.
+   * Gets follow graph data for t  g ven user.
    *
-   * @param userId user whose follow graph details are to be obtained.
-   * @param maxFollowingCount Maximum number of followed user IDs to fetch.
-   *          If the given user follows more than these many users,
-   *          then the most recent maxFollowingCount users are returned.
+   * @param user d user whose follow graph deta ls are to be obta ned.
+   * @param maxFollow ngCount Max mum number of follo d user  Ds to fetch.
+   *           f t  g ven user follows more than t se many users,
+   *          t n t  most recent maxFollow ngCount users are returned.
    */
   def get(
-    userId: UserId,
-    maxFollowingCount: Int
+    user d: User d,
+    maxFollow ngCount:  nt
   ): Future[FollowGraphData] = {
     getAsync(
-      userId,
-      maxFollowingCount
+      user d,
+      maxFollow ngCount
     ).get()
   }
 
   def getAsync(
-    userId: UserId,
-    maxFollowingCount: Int
+    user d: User d,
+    maxFollow ngCount:  nt
   ): FollowGraphDataFuture = {
 
     stats.statRequest()
-    val followedUserIdsFuture =
-      if (fieldsToFetch.contains(SgsFollowGraphDataFields.FollowedUserIds)) {
-        getFollowing(userId, maxFollowingCount)
+    val follo dUser dsFuture =
+       f (f eldsToFetch.conta ns(SgsFollowGraphDataF elds.Follo dUser ds)) {
+        getFollow ng(user d, maxFollow ngCount)
       } else {
-        SgsFollowGraphDataProvider.EmptyUserIdsSeqFuture
+        SgsFollowGraphDataProv der.EmptyUser dsSeqFuture
       }
 
-    val mutuallyFollowingUserIdsFuture =
-      if (fieldsToFetch.contains(SgsFollowGraphDataFields.MutuallyFollowingUserIds)) {
-        followedUserIdsFuture.flatMap { followedUserIds =>
-          getMutuallyFollowingUserIds(userId, followedUserIds)
+    val mutuallyFollow ngUser dsFuture =
+       f (f eldsToFetch.conta ns(SgsFollowGraphDataF elds.MutuallyFollow ngUser ds)) {
+        follo dUser dsFuture.flatMap { follo dUser ds =>
+          getMutuallyFollow ngUser ds(user d, follo dUser ds)
         }
       } else {
-        SgsFollowGraphDataProvider.EmptyUserIdsSetFuture
+        SgsFollowGraphDataProv der.EmptyUser dsSetFuture
       }
 
-    val visibilityProfilesFuture = if (obtainVisibilityProfiles) {
-      followedUserIdsFuture.flatMap { followedUserIds =>
-        getVisibilityProfiles(userId, followedUserIds)
-      }
-    } else {
-      SgsFollowGraphDataProvider.EmptyVisibilityProfilesFuture
-    }
-
-    val mutedUserIdsFuture = if (fieldsToFetch.contains(SgsFollowGraphDataFields.MutedUserIds)) {
-      getMutedUsers(visibilityProfilesFuture).map { mutedUserIds =>
-        mutedStat.add(mutedUserIds.size)
-        mutedUserIds
+    val v s b l yProf lesFuture =  f (obta nV s b l yProf les) {
+      follo dUser dsFuture.flatMap { follo dUser ds =>
+        getV s b l yProf les(user d, follo dUser ds)
       }
     } else {
-      SgsFollowGraphDataProvider.EmptyUserIdsSetFuture
+      SgsFollowGraphDataProv der.EmptyV s b l yProf lesFuture
     }
 
-    val retweetsMutedUserIdsFuture =
-      if (fieldsToFetch.contains(SgsFollowGraphDataFields.RetweetsMutedUserIds)) {
-        getRetweetsMutedUsers(visibilityProfilesFuture).map { retweetsMutedUserIds =>
-          retweetsMutedStat.add(retweetsMutedUserIds.size)
-          retweetsMutedUserIds
+    val mutedUser dsFuture =  f (f eldsToFetch.conta ns(SgsFollowGraphDataF elds.MutedUser ds)) {
+      getMutedUsers(v s b l yProf lesFuture).map { mutedUser ds =>
+        mutedStat.add(mutedUser ds.s ze)
+        mutedUser ds
+      }
+    } else {
+      SgsFollowGraphDataProv der.EmptyUser dsSetFuture
+    }
+
+    val ret etsMutedUser dsFuture =
+       f (f eldsToFetch.conta ns(SgsFollowGraphDataF elds.Ret etsMutedUser ds)) {
+        getRet etsMutedUsers(v s b l yProf lesFuture).map { ret etsMutedUser ds =>
+          ret etsMutedStat.add(ret etsMutedUser ds.s ze)
+          ret etsMutedUser ds
         }
       } else {
-        SgsFollowGraphDataProvider.EmptyUserIdsSetFuture
+        SgsFollowGraphDataProv der.EmptyUser dsSetFuture
       }
 
     FollowGraphDataFuture(
-      userId,
-      followedUserIdsFuture,
-      mutuallyFollowingUserIdsFuture,
-      mutedUserIdsFuture,
-      retweetsMutedUserIdsFuture
+      user d,
+      follo dUser dsFuture,
+      mutuallyFollow ngUser dsFuture,
+      mutedUser dsFuture,
+      ret etsMutedUser dsFuture
     )
   }
 
-  private[this] def getVisibilityProfiles(
-    userId: UserId,
-    followingIds: Seq[UserId]
-  ): Future[Map[UserId, VisibilityProfile]] = {
-    Stat.timeFuture(visibilityLatencyStat) {
-      visibilityProfileHydrator(Some(userId), Future.value(followingIds.toSeq))
+  pr vate[t ] def getV s b l yProf les(
+    user d: User d,
+    follow ng ds: Seq[User d]
+  ): Future[Map[User d, V s b l yProf le]] = {
+    Stat.t  Future(v s b l yLatencyStat) {
+      v s b l yProf leHydrator(So (user d), Future.value(follow ng ds.toSeq))
     }
   }
 
-  def getFollowing(userId: UserId, maxFollowingCount: Int): Future[Seq[UserId]] = {
-    Stat.timeFuture(followingLatencyStat) {
-      // We fetch 1 more than the limit so that we can decide if we ended up
-      // truncating the followings.
-      val followingIdsFuture = socialGraphClient.getFollowing(userId, Some(maxFollowingCount + 1))
-      followingIdsFuture.map { followingIds =>
-        followingSizeStat.add(followingIds.length)
-        if (followingIds.length > maxFollowingCount) {
-          followingTruncatedCounter.incr()
-          followingIds.take(maxFollowingCount)
+  def getFollow ng(user d: User d, maxFollow ngCount:  nt): Future[Seq[User d]] = {
+    Stat.t  Future(follow ngLatencyStat) {
+      //   fetch 1 more than t  l m  so that   can dec de  f   ended up
+      // truncat ng t  follow ngs.
+      val follow ng dsFuture = soc alGraphCl ent.getFollow ng(user d, So (maxFollow ngCount + 1))
+      follow ng dsFuture.map { follow ng ds =>
+        follow ngS zeStat.add(follow ng ds.length)
+         f (follow ng ds.length > maxFollow ngCount) {
+          follow ngTruncatedCounter. ncr()
+          follow ng ds.take(maxFollow ngCount)
         } else {
-          followingIds
+          follow ng ds
         }
       }
     }
   }
 
-  def getMutuallyFollowingUserIds(
-    userId: UserId,
-    followingIds: Seq[UserId]
-  ): Future[Set[UserId]] = {
-    Stat.timeFuture(mutuallyFollowingLatencyStat) {
-      mutuallyFollowingHandler {
-        val mutuallyFollowingIdsFuture =
-          socialGraphClient.getFollowOverlap(followingIds.toSeq, userId)
-        mutuallyFollowingIdsFuture.map { mutuallyFollowingIds =>
-          mutuallyFollowingSizeStat.add(mutuallyFollowingIds.size)
+  def getMutuallyFollow ngUser ds(
+    user d: User d,
+    follow ng ds: Seq[User d]
+  ): Future[Set[User d]] = {
+    Stat.t  Future(mutuallyFollow ngLatencyStat) {
+      mutuallyFollow ngHandler {
+        val mutuallyFollow ng dsFuture =
+          soc alGraphCl ent.getFollowOverlap(follow ng ds.toSeq, user d)
+        mutuallyFollow ng dsFuture.map { mutuallyFollow ng ds =>
+          mutuallyFollow ngS zeStat.add(mutuallyFollow ng ds.s ze)
         }
-        mutuallyFollowingIdsFuture
-      } { e: Throwable => SgsFollowGraphDataProvider.EmptyUserIdsSetFuture }
+        mutuallyFollow ng dsFuture
+      } { e: Throwable => SgsFollowGraphDataProv der.EmptyUser dsSetFuture }
     }
   }
 
-  private[this] def getRetweetsMutedUsers(
-    visibilityProfilesFuture: Future[Map[UserId, VisibilityProfile]]
-  ): Future[Set[UserId]] = {
-    // If the hydrator is not able to fetch retweets-muted status, we default to true.
-    getUsersMatchingVisibilityPredicate(
-      visibilityProfilesFuture,
-      (visibilityProfile: VisibilityProfile) => visibilityProfile.areRetweetsMuted.getOrElse(true)
+  pr vate[t ] def getRet etsMutedUsers(
+    v s b l yProf lesFuture: Future[Map[User d, V s b l yProf le]]
+  ): Future[Set[User d]] = {
+    //  f t  hydrator  s not able to fetch ret ets-muted status,   default to true.
+    getUsersMatch ngV s b l yPred cate(
+      v s b l yProf lesFuture,
+      (v s b l yProf le: V s b l yProf le) => v s b l yProf le.areRet etsMuted.getOrElse(true)
     )
   }
 
-  private[this] def getMutedUsers(
-    visibilityProfilesFuture: Future[Map[UserId, VisibilityProfile]]
-  ): Future[Set[UserId]] = {
-    // If the hydrator is not able to fetch muted status, we default to true.
-    getUsersMatchingVisibilityPredicate(
-      visibilityProfilesFuture,
-      (visibilityProfile: VisibilityProfile) => visibilityProfile.isMuted.getOrElse(true)
+  pr vate[t ] def getMutedUsers(
+    v s b l yProf lesFuture: Future[Map[User d, V s b l yProf le]]
+  ): Future[Set[User d]] = {
+    //  f t  hydrator  s not able to fetch muted status,   default to true.
+    getUsersMatch ngV s b l yPred cate(
+      v s b l yProf lesFuture,
+      (v s b l yProf le: V s b l yProf le) => v s b l yProf le. sMuted.getOrElse(true)
     )
   }
 
-  private[this] def getUsersMatchingVisibilityPredicate(
-    visibilityProfilesFuture: Future[Map[UserId, VisibilityProfile]],
-    predicate: (VisibilityProfile => Boolean)
-  ): Future[Set[UserId]] = {
-    visibilityProfilesFuture.map { visibilityProfiles =>
-      visibilityProfiles
-        .filter {
-          case (_, visibilityProfile) =>
-            predicate(visibilityProfile)
+  pr vate[t ] def getUsersMatch ngV s b l yPred cate(
+    v s b l yProf lesFuture: Future[Map[User d, V s b l yProf le]],
+    pred cate: (V s b l yProf le => Boolean)
+  ): Future[Set[User d]] = {
+    v s b l yProf lesFuture.map { v s b l yProf les =>
+      v s b l yProf les
+        .f lter {
+          case (_, v s b l yProf le) =>
+            pred cate(v s b l yProf le)
         }
-        .collect { case (userId, _) => userId }
+        .collect { case (user d, _) => user d }
         .toSet
     }
   }
 
-  private[this] def createVisibilityProfileHydrator(
-    factory: VisibilityProfileHydratorFactory,
+  pr vate[t ] def createV s b l yProf leHydrator(
+    factory: V s b l yProf leHydratorFactory,
     scope: RequestScope,
-    fieldsToFetch: SgsFollowGraphDataFields.ValueSet
-  ): VisibilityProfileHydrator = {
-    val hydrationProfileRequest = HydrationProfileRequest(
-      getMuted = fieldsToFetch.contains(SgsFollowGraphDataFields.MutedUserIds),
-      getRetweetsMuted = fieldsToFetch.contains(SgsFollowGraphDataFields.RetweetsMutedUserIds)
+    f eldsToFetch: SgsFollowGraphDataF elds.ValueSet
+  ): V s b l yProf leHydrator = {
+    val hydrat onProf leRequest = Hydrat onProf leRequest(
+      getMuted = f eldsToFetch.conta ns(SgsFollowGraphDataF elds.MutedUser ds),
+      getRet etsMuted = f eldsToFetch.conta ns(SgsFollowGraphDataF elds.Ret etsMutedUser ds)
     )
-    factory(hydrationProfileRequest, scope)
+    factory(hydrat onProf leRequest, scope)
   }
 }
 
-class ScopedSgsFollowGraphDataProviderFactory(
-  socialGraphClientFactory: ScopedSocialGraphClientFactory,
-  visibilityProfileHydratorFactory: VisibilityProfileHydratorFactory,
-  fieldsToFetch: SgsFollowGraphDataFields.ValueSet,
-  statsReceiver: StatsReceiver)
-    extends ScopedFactory[SgsFollowGraphDataProvider] {
+class ScopedSgsFollowGraphDataProv derFactory(
+  soc alGraphCl entFactory: ScopedSoc alGraphCl entFactory,
+  v s b l yProf leHydratorFactory: V s b l yProf leHydratorFactory,
+  f eldsToFetch: SgsFollowGraphDataF elds.ValueSet,
+  statsRece ver: StatsRece ver)
+    extends ScopedFactory[SgsFollowGraphDataProv der] {
 
-  override def scope(scope: RequestScope): SgsFollowGraphDataProvider = {
-    new SgsFollowGraphDataProvider(
-      socialGraphClientFactory,
-      visibilityProfileHydratorFactory,
-      fieldsToFetch,
+  overr de def scope(scope: RequestScope): SgsFollowGraphDataProv der = {
+    new SgsFollowGraphDataProv der(
+      soc alGraphCl entFactory,
+      v s b l yProf leHydratorFactory,
+      f eldsToFetch,
       scope,
-      statsReceiver
+      statsRece ver
     )
   }
 }

@@ -1,75 +1,75 @@
-package com.twitter.simclusters_v2.summingbird.stores
+package com.tw ter.s mclusters_v2.summ ngb rd.stores
 
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.simclusters_v2.thriftscala.{ClustersUserIsKnownFor, ModelVersion}
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.{Athena, ManhattanRO, ManhattanROConfig}
-import com.twitter.storehaus_internal.util.{ApplicationID, DatasetName, HDFSPath}
-import com.twitter.util.Future
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.b ject on.scrooge.CompactScalaCodec
+ mport com.tw ter.s mclusters_v2.thr ftscala.{ClustersUser sKnownFor, ModelVers on}
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl entMtlsParams
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.storehaus_ nternal.manhattan.{At na, ManhattanRO, ManhattanROConf g}
+ mport com.tw ter.storehaus_ nternal.ut l.{Appl cat on D, DatasetNa , HDFSPath}
+ mport com.tw ter.ut l.Future
 
 object UserKnownForReadableStore {
 
-  private val dataSetNameDec11 = "simclusters_v2_known_for_20m_145k_dec11"
-  private val dataSetNameUpdated = "simclusters_v2_known_for_20m_145k_updated"
-  private val dataSetName2020 = "simclusters_v2_known_for_20m_145k_2020"
+  pr vate val dataSetNa Dec11 = "s mclusters_v2_known_for_20m_145k_dec11"
+  pr vate val dataSetNa Updated = "s mclusters_v2_known_for_20m_145k_updated"
+  pr vate val dataSetNa 2020 = "s mclusters_v2_known_for_20m_145k_2020"
 
-  private def buildForModelVersion(
-    appId: String,
-    storeName: String,
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[Long, ClustersUserIsKnownFor] = {
-    implicit val keyInjection: Injection[Long, Array[Byte]] = Injection.long2BigEndian
-    implicit val knownForCodec: Injection[ClustersUserIsKnownFor, Array[Byte]] =
-      CompactScalaCodec(ClustersUserIsKnownFor)
+  pr vate def bu ldForModelVers on(
+    app d: Str ng,
+    storeNa : Str ng,
+    mhMtlsParams: ManhattanKVCl entMtlsParams
+  ): ReadableStore[Long, ClustersUser sKnownFor] = {
+     mpl c  val key nject on:  nject on[Long, Array[Byte]] =  nject on.long2B gEnd an
+     mpl c  val knownForCodec:  nject on[ClustersUser sKnownFor, Array[Byte]] =
+      CompactScalaCodec(ClustersUser sKnownFor)
 
-    ManhattanRO.getReadableStoreWithMtls[Long, ClustersUserIsKnownFor](
-      ManhattanROConfig(
+    ManhattanRO.getReadableStoreW hMtls[Long, ClustersUser sKnownFor](
+      ManhattanROConf g(
         HDFSPath(""), // not needed
-        ApplicationID(appId),
-        DatasetName(storeName),
-        Athena
+        Appl cat on D(app d),
+        DatasetNa (storeNa ),
+        At na
       ),
       mhMtlsParams
     )
   }
 
-  def get(appId: String, mhMtlsParams: ManhattanKVClientMtlsParams): UserKnownForReadableStore = {
-    val dec11Store = buildForModelVersion(appId, dataSetNameDec11, mhMtlsParams)
-    val updatedStore = buildForModelVersion(appId, dataSetNameUpdated, mhMtlsParams)
-    val version2020Store = buildForModelVersion(appId, dataSetName2020, mhMtlsParams)
+  def get(app d: Str ng, mhMtlsParams: ManhattanKVCl entMtlsParams): UserKnownForReadableStore = {
+    val dec11Store = bu ldForModelVers on(app d, dataSetNa Dec11, mhMtlsParams)
+    val updatedStore = bu ldForModelVers on(app d, dataSetNa Updated, mhMtlsParams)
+    val vers on2020Store = bu ldForModelVers on(app d, dataSetNa 2020, mhMtlsParams)
 
-    UserKnownForReadableStore(dec11Store, updatedStore, version2020Store)
+    UserKnownForReadableStore(dec11Store, updatedStore, vers on2020Store)
   }
 
-  def getDefaultStore(mhMtlsParams: ManhattanKVClientMtlsParams): UserKnownForReadableStore =
-    get("simclusters_v2", mhMtlsParams)
+  def getDefaultStore(mhMtlsParams: ManhattanKVCl entMtlsParams): UserKnownForReadableStore =
+    get("s mclusters_v2", mhMtlsParams)
 
 }
 
-case class Query(userId: Long, modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated)
+case class Query(user d: Long, modelVers on: ModelVers on = ModelVers on.Model20m145kUpdated)
 
 /**
- * Mainly used in debuggers to fetch the top knownFor clusters across different model versions
+ * Ma nly used  n debuggers to fetch t  top knownFor clusters across d fferent model vers ons
  */
 case class UserKnownForReadableStore(
-  knownForStoreDec11: ReadableStore[Long, ClustersUserIsKnownFor],
-  knownForStoreUpdated: ReadableStore[Long, ClustersUserIsKnownFor],
-  knownForStore2020: ReadableStore[Long, ClustersUserIsKnownFor])
-    extends ReadableStore[Query, ClustersUserIsKnownFor] {
+  knownForStoreDec11: ReadableStore[Long, ClustersUser sKnownFor],
+  knownForStoreUpdated: ReadableStore[Long, ClustersUser sKnownFor],
+  knownForStore2020: ReadableStore[Long, ClustersUser sKnownFor])
+    extends ReadableStore[Query, ClustersUser sKnownFor] {
 
-  override def get(query: Query): Future[Option[ClustersUserIsKnownFor]] = {
-    query.modelVersion match {
-      case ModelVersion.Model20m145kDec11 =>
-        knownForStoreDec11.get(query.userId)
-      case ModelVersion.Model20m145kUpdated =>
-        knownForStoreUpdated.get(query.userId)
-      case ModelVersion.Model20m145k2020 =>
-        knownForStore2020.get(query.userId)
+  overr de def get(query: Query): Future[Opt on[ClustersUser sKnownFor]] = {
+    query.modelVers on match {
+      case ModelVers on.Model20m145kDec11 =>
+        knownForStoreDec11.get(query.user d)
+      case ModelVers on.Model20m145kUpdated =>
+        knownForStoreUpdated.get(query.user d)
+      case ModelVers on.Model20m145k2020 =>
+        knownForStore2020.get(query.user d)
       case c =>
-        throw new IllegalArgumentException(
-          s"Never heard of $c before! Is this a new model version?")
+        throw new  llegalArgu ntExcept on(
+          s"Never  ard of $c before!  s t  a new model vers on?")
     }
   }
 }

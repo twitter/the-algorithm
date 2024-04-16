@@ -1,113 +1,113 @@
-package com.twitter.frigate.pushservice.util
+package com.tw ter.fr gate.pushserv ce.ut l
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.Invalid
-import com.twitter.frigate.common.base.OK
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.refresh_handler.ResultWithDebugInfo
-import com.twitter.frigate.pushservice.predicate.BigFilteringEpsilonGreedyExplorationPredicate
-import com.twitter.frigate.pushservice.predicate.MlModelsHoldbackExperimentPredicate
-import com.twitter.frigate.pushservice.take.candidate_validator.RFPHCandidateValidator
-import com.twitter.frigate.pushservice.thriftscala.PushStatus
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.Counter
+ mport com.tw ter.f nagle.stats.Stat
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base. nval d
+ mport com.tw ter.fr gate.common.base.OK
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.refresh_handler.ResultW hDebug nfo
+ mport com.tw ter.fr gate.pushserv ce.pred cate.B gF lter ngEps lonGreedyExplorat onPred cate
+ mport com.tw ter.fr gate.pushserv ce.pred cate.MlModelsHoldbackExper  ntPred cate
+ mport com.tw ter.fr gate.pushserv ce.take.cand date_val dator.RFPHCand dateVal dator
+ mport com.tw ter.fr gate.pushserv ce.thr ftscala.PushStatus
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter.ut l.Future
 
-class RFPHTakeStepUtil()(globalStats: StatsReceiver) {
+class RFPHTakeStepUt l()(globalStats: StatsRece ver) {
 
-  implicit val statsReceiver: StatsReceiver =
+   mpl c  val statsRece ver: StatsRece ver =
     globalStats.scope("RefreshForPushHandler")
-  private val takeStats: StatsReceiver = statsReceiver.scope("take")
-  private val notifierStats = takeStats.scope("notifier")
-  private val validatorStats = takeStats.scope("validator")
-  private val validatorLatency: Stat = validatorStats.stat("latency")
+  pr vate val takeStats: StatsRece ver = statsRece ver.scope("take")
+  pr vate val not f erStats = takeStats.scope("not f er")
+  pr vate val val datorStats = takeStats.scope("val dator")
+  pr vate val val datorLatency: Stat = val datorStats.stat("latency")
 
-  private val executedPredicatesInTandem: Counter =
-    takeStats.counter("predicates_executed_in_tandem")
+  pr vate val executedPred cates nTandem: Counter =
+    takeStats.counter("pred cates_executed_ n_tandem")
 
-  private val bigFilteringEpsGreedyPredicate: NamedPredicate[PushCandidate] =
-    BigFilteringEpsilonGreedyExplorationPredicate()(takeStats)
-  private val bigFilteringEpsGreedyStats: StatsReceiver =
-    takeStats.scope("big_filtering_eps_greedy_predicate")
+  pr vate val b gF lter ngEpsGreedyPred cate: Na dPred cate[PushCand date] =
+    B gF lter ngEps lonGreedyExplorat onPred cate()(takeStats)
+  pr vate val b gF lter ngEpsGreedyStats: StatsRece ver =
+    takeStats.scope("b g_f lter ng_eps_greedy_pred cate")
 
-  private val modelPredicate: NamedPredicate[PushCandidate] =
-    MlModelsHoldbackExperimentPredicate()(takeStats)
-  private val mlPredicateStats: StatsReceiver = takeStats.scope("ml_predicate")
+  pr vate val modelPred cate: Na dPred cate[PushCand date] =
+    MlModelsHoldbackExper  ntPred cate()(takeStats)
+  pr vate val mlPred cateStats: StatsRece ver = takeStats.scope("ml_pred cate")
 
-  private def updateFilteredStatusExptStats(candidate: PushCandidate, predName: String): Unit = {
+  pr vate def updateF lteredStatusExptStats(cand date: PushCand date, predNa : Str ng): Un  = {
 
     val recTypeStat = globalStats.scope(
-      candidate.commonRecType.toString
+      cand date.commonRecType.toStr ng
     )
 
-    recTypeStat.counter(PushStatus.Filtered.toString).incr()
+    recTypeStat.counter(PushStatus.F ltered.toStr ng). ncr()
     recTypeStat
-      .scope(PushStatus.Filtered.toString)
-      .counter(predName)
-      .incr()
+      .scope(PushStatus.F ltered.toStr ng)
+      .counter(predNa )
+      . ncr()
   }
 
-  def isCandidateValid(
-    candidate: PushCandidate,
-    candidateValidator: RFPHCandidateValidator
-  ): Future[ResultWithDebugInfo] = {
-    val predResultFuture = Stat.timeFuture(validatorLatency) {
+  def  sCand dateVal d(
+    cand date: PushCand date,
+    cand dateVal dator: RFPHCand dateVal dator
+  ): Future[ResultW hDebug nfo] = {
+    val predResultFuture = Stat.t  Future(val datorLatency) {
       Future
-        .join(
-          bigFilteringEpsGreedyPredicate.apply(Seq(candidate)),
-          modelPredicate.apply(Seq(candidate))
+        .jo n(
+          b gF lter ngEpsGreedyPred cate.apply(Seq(cand date)),
+          modelPred cate.apply(Seq(cand date))
         ).flatMap {
           case (Seq(true), Seq(true)) =>
-            executedPredicatesInTandem.incr()
+            executedPred cates nTandem. ncr()
 
-            bigFilteringEpsGreedyStats
-              .scope(candidate.commonRecType.toString)
+            b gF lter ngEpsGreedyStats
+              .scope(cand date.commonRecType.toStr ng)
               .counter("passed")
-              .incr()
+              . ncr()
 
-            mlPredicateStats
-              .scope(candidate.commonRecType.toString)
+            mlPred cateStats
+              .scope(cand date.commonRecType.toStr ng)
               .counter("passed")
-              .incr()
-            candidateValidator.validateCandidate(candidate).map((_, Nil))
+              . ncr()
+            cand dateVal dator.val dateCand date(cand date).map((_, N l))
           case (Seq(false), _) =>
-            bigFilteringEpsGreedyStats
-              .scope(candidate.commonRecType.toString)
-              .counter("filtered")
-              .incr()
-            Future.value((Some(bigFilteringEpsGreedyPredicate), Nil))
+            b gF lter ngEpsGreedyStats
+              .scope(cand date.commonRecType.toStr ng)
+              .counter("f ltered")
+              . ncr()
+            Future.value((So (b gF lter ngEpsGreedyPred cate), N l))
           case (_, _) =>
-            mlPredicateStats
-              .scope(candidate.commonRecType.toString)
-              .counter("filtered")
-              .incr()
-            Future.value((Some(modelPredicate), Nil))
+            mlPred cateStats
+              .scope(cand date.commonRecType.toStr ng)
+              .counter("f ltered")
+              . ncr()
+            Future.value((So (modelPred cate), N l))
         }
     }
 
     predResultFuture.map {
-      case (Some(pred: NamedPredicate[_]), candPredicateResults) =>
-        takeStats.counter("filtered_by_named_general_predicate").incr()
-        updateFilteredStatusExptStats(candidate, pred.name)
-        ResultWithDebugInfo(
-          Invalid(Some(pred.name)),
-          candPredicateResults
+      case (So (pred: Na dPred cate[_]), candPred cateResults) =>
+        takeStats.counter("f ltered_by_na d_general_pred cate"). ncr()
+        updateF lteredStatusExptStats(cand date, pred.na )
+        ResultW hDebug nfo(
+           nval d(So (pred.na )),
+          candPred cateResults
         )
 
-      case (Some(_), candPredicateResults) =>
-        takeStats.counter("filtered_by_unnamed_general_predicate").incr()
-        updateFilteredStatusExptStats(candidate, predName = "unk")
-        ResultWithDebugInfo(
-          Invalid(Some("unnamed_candidate_predicate")),
-          candPredicateResults
+      case (So (_), candPred cateResults) =>
+        takeStats.counter("f ltered_by_unna d_general_pred cate"). ncr()
+        updateF lteredStatusExptStats(cand date, predNa  = "unk")
+        ResultW hDebug nfo(
+           nval d(So ("unna d_cand date_pred cate")),
+          candPred cateResults
         )
 
-      case (None, candPredicateResults) =>
-        takeStats.counter("accepted_push_ok").incr()
-        ResultWithDebugInfo(
+      case (None, candPred cateResults) =>
+        takeStats.counter("accepted_push_ok"). ncr()
+        ResultW hDebug nfo(
           OK,
-          candPredicateResults
+          candPred cateResults
         )
     }
   }

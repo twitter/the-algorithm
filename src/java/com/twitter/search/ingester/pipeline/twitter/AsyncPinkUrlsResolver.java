@@ -1,63 +1,63 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.tw ter.search. ngester.p pel ne.tw ter;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+ mport java.ut l.Collect on;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
+ mport com.google.common.collect. mmutableL st;
+ mport com.google.common.collect.Maps;
 
-import com.twitter.pink_floyd.thrift.ClientIdentifier;
-import com.twitter.pink_floyd.thrift.Mask;
-import com.twitter.pink_floyd.thrift.Storer;
-import com.twitter.pink_floyd.thrift.UrlData;
-import com.twitter.pink_floyd.thrift.UrlReadRequest;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+ mport com.tw ter.p nk_floyd.thr ft.Cl ent dent f er;
+ mport com.tw ter.p nk_floyd.thr ft.Mask;
+ mport com.tw ter.p nk_floyd.thr ft.Storer;
+ mport com.tw ter.p nk_floyd.thr ft.UrlData;
+ mport com.tw ter.p nk_floyd.thr ft.UrlReadRequest;
+ mport com.tw ter.ut l.Funct on;
+ mport com.tw ter.ut l.Future;
 
 /**
- * Resolve compressed URL via Pink
+ * Resolve compressed URL v a P nk
  */
-public class AsyncPinkUrlsResolver {
-  private final Storer.ServiceIface storerClient;
-  private final ClientIdentifier pinkClientId;
-  private final Mask requestMask;
+publ c class AsyncP nkUrlsResolver {
+  pr vate f nal Storer.Serv ce face storerCl ent;
+  pr vate f nal Cl ent dent f er p nkCl ent d;
+  pr vate f nal Mask requestMask;
 
-  // Use ServerSet to construct a metadata store client
-  public AsyncPinkUrlsResolver(Storer.ServiceIface storerClient, String pinkClientId) {
-    this.storerClient = storerClient;
-    this.pinkClientId = ClientIdentifier.valueOf(pinkClientId);
+  // Use ServerSet to construct a  tadata store cl ent
+  publ c AsyncP nkUrlsResolver(Storer.Serv ce face storerCl ent, Str ng p nkCl ent d) {
+    t .storerCl ent = storerCl ent;
+    t .p nkCl ent d = Cl ent dent f er.valueOf(p nkCl ent d);
 
     requestMask = new Mask();
-    requestMask.setResolution(true);
-    requestMask.setHtmlBasics(true);
-    requestMask.setUrlDirectInfo(true);
+    requestMask.setResolut on(true);
+    requestMask.setHtmlBas cs(true);
+    requestMask.setUrlD rect nfo(true);
   }
 
   /**
-   * resolve urls calling pink asynchronously
+   * resolve urls call ng p nk asynchronously
    * @param urls urls to resolve
    * @return Future map of resolved urls
    */
-  public Future<Map<String, ResolveCompressedUrlsUtils.UrlInfo>> resolveUrls(
-      Collection<String> urls) {
-    if (urls == null || urls.size() == 0) {
+  publ c Future<Map<Str ng, ResolveCompressedUrlsUt ls.Url nfo>> resolveUrls(
+      Collect on<Str ng> urls) {
+     f (urls == null || urls.s ze() == 0) {
       Future.value(Maps.newHashMap());
     }
 
-    List<String> urlsList = ImmutableList.copyOf(urls);
+    L st<Str ng> urlsL st =  mmutableL st.copyOf(urls);
 
     UrlReadRequest request = new UrlReadRequest();
-    request.setUrls(urlsList);
-    request.setClientId(pinkClientId);
+    request.setUrls(urlsL st);
+    request.setCl ent d(p nkCl ent d);
     request.setMask(requestMask);
 
-    return storerClient.read(request).map(Function.func(
+    return storerCl ent.read(request).map(Funct on.func(
         response -> {
-          Map<String, ResolveCompressedUrlsUtils.UrlInfo> resultMap = Maps.newHashMap();
+          Map<Str ng, ResolveCompressedUrlsUt ls.Url nfo> resultMap = Maps.newHashMap();
           for (UrlData urlData : response.getData()) {
-            if (ResolveCompressedUrlsUtils.isResolved(urlData)) {
-              resultMap.put(urlData.url, ResolveCompressedUrlsUtils.getUrlInfo(urlData));
+             f (ResolveCompressedUrlsUt ls. sResolved(urlData)) {
+              resultMap.put(urlData.url, ResolveCompressedUrlsUt ls.getUrl nfo(urlData));
             }
           }
           return resultMap;

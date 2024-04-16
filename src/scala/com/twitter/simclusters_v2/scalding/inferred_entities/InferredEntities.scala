@@ -1,73 +1,73 @@
-package com.twitter.simclusters_v2.scalding.inferred_entities
+package com.tw ter.s mclusters_v2.scald ng. nferred_ent  es
 
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources.EntityEmbeddingsSources
-import com.twitter.simclusters_v2.thriftscala.ClusterType
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InferredEntity
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SemanticCoreEntityWithScore
-import com.twitter.simclusters_v2.thriftscala.SimClustersInferredEntities
-import com.twitter.simclusters_v2.thriftscala.SimClustersSource
-import java.util.TimeZone
+ mport com.tw ter.scald ng.DateRange
+ mport com.tw ter.scald ng.Days
+ mport com.tw ter.scald ng.typed.TypedP pe
+ mport com.tw ter.s mclusters_v2.common.Cluster d
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.Ent yEmbedd ngsS ces
+ mport com.tw ter.s mclusters_v2.thr ftscala.ClusterType
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclusters_v2.thr ftscala. nferredEnt y
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.tw ter.s mclusters_v2.thr ftscala.Semant cCoreEnt yW hScore
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClusters nferredEnt  es
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersS ce
+ mport java.ut l.T  Zone
 
 /**
- * Opt-out compliance for SimClusters means offering users an option to opt out of clusters that
- * have inferred legible meanings. This file sets some of the data sources & thresholds from which
- * the inferred entities are considered legible. One should always refer to the sources & constants
- * here for SimClusters' inferred entity compliance work
+ * Opt-out compl ance for S mClusters  ans offer ng users an opt on to opt out of clusters that
+ * have  nferred leg ble  an ngs. T  f le sets so  of t  data s ces & thresholds from wh ch
+ * t   nferred ent  es are cons dered leg ble. One should always refer to t  s ces & constants
+ *  re for S mClusters'  nferred ent y compl ance work
  */
-object InferredEntities {
-  val MHRootPath: String =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_inferred_entities"
+object  nferredEnt  es {
+  val MHRootPath: Str ng =
+    "/user/cassowary/manhattan_sequence_f les/s mclusters_v2_ nferred_ent  es"
 
-  // Convenience objects for defining cluster sources
-  val InterestedIn2020 =
-    SimClustersSource(ClusterType.InterestedIn, ModelVersion.Model20m145k2020)
+  // Conven ence objects for def n ng cluster s ces
+  val  nterested n2020 =
+    S mClustersS ce(ClusterType. nterested n, ModelVers on.Model20m145k2020)
 
-  val Dec11KnownFor = SimClustersSource(ClusterType.KnownFor, ModelVersion.Model20m145kDec11)
+  val Dec11KnownFor = S mClustersS ce(ClusterType.KnownFor, ModelVers on.Model20m145kDec11)
 
-  val UpdatedKnownFor = SimClustersSource(ClusterType.KnownFor, ModelVersion.Model20m145kUpdated)
+  val UpdatedKnownFor = S mClustersS ce(ClusterType.KnownFor, ModelVers on.Model20m145kUpdated)
 
-  val KnownFor2020 = SimClustersSource(ClusterType.KnownFor, ModelVersion.Model20m145k2020)
-
-  /**
-   * This is the threshold at which we consider a simcluster "legible" through an entity
-   */
-  val MinLegibleEntityScore = 0.6
+  val KnownFor2020 = S mClustersS ce(ClusterType.KnownFor, ModelVers on.Model20m145k2020)
 
   /**
-   * Query for the entity embeddings that are used for SimClusters compliance. We will use these
-   * entity embeddings for a cluster to allow a user to opt out of a cluster
+   * T   s t  threshold at wh ch   cons der a s mcluster "leg ble" through an ent y
    */
-  def getLegibleEntityEmbeddings(
+  val M nLeg bleEnt yScore = 0.6
+
+  /**
+   * Query for t  ent y embedd ngs that are used for S mClusters compl ance.   w ll use t se
+   * ent y embedd ngs for a cluster to allow a user to opt out of a cluster
+   */
+  def getLeg bleEnt yEmbedd ngs(
     dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])] = {
-    val entityEmbeddings = EntityEmbeddingsSources
-      .getReverseIndexedSemanticCoreEntityEmbeddingsSource(
-        EmbeddingType.FavBasedSematicCoreEntity,
-        ModelVersions.Model20M145K2020, // only support the latest 2020 model
-        dateRange.embiggen(Days(7)(timeZone)) // read 7 days before & after to give buffer
+    t  Zone: T  Zone
+  ): TypedP pe[(Cluster d, Seq[Semant cCoreEnt yW hScore])] = {
+    val ent yEmbedd ngs = Ent yEmbedd ngsS ces
+      .getReverse ndexedSemant cCoreEnt yEmbedd ngsS ce(
+        Embedd ngType.FavBasedSemat cCoreEnt y,
+        ModelVers ons.Model20M145K2020, // only support t  latest 2020 model
+        dateRange.emb ggen(Days(7)(t  Zone)) // read 7 days before & after to g ve buffer
       )
-    filterEntityEmbeddingsByScore(entityEmbeddings, MinLegibleEntityScore)
+    f lterEnt yEmbedd ngsByScore(ent yEmbedd ngs, M nLeg bleEnt yScore)
   }
 
-  // Return entities whose score are above threshold
-  def filterEntityEmbeddingsByScore(
-    entityEmbeddings: TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])],
-    minEntityScore: Double
-  ): TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])] = {
-    entityEmbeddings.flatMap {
-      case (clusterId, entities) =>
-        val validEntities = entities.filter { entity => entity.score >= minEntityScore }
-        if (validEntities.nonEmpty) {
-          Some((clusterId, validEntities))
+  // Return ent  es whose score are above threshold
+  def f lterEnt yEmbedd ngsByScore(
+    ent yEmbedd ngs: TypedP pe[(Cluster d, Seq[Semant cCoreEnt yW hScore])],
+    m nEnt yScore: Double
+  ): TypedP pe[(Cluster d, Seq[Semant cCoreEnt yW hScore])] = {
+    ent yEmbedd ngs.flatMap {
+      case (cluster d, ent  es) =>
+        val val dEnt  es = ent  es.f lter { ent y => ent y.score >= m nEnt yScore }
+         f (val dEnt  es.nonEmpty) {
+          So ((cluster d, val dEnt  es))
         } else {
           None
         }
@@ -76,17 +76,17 @@ object InferredEntities {
   }
 
   /**
-   * Given inferred entities from different sources, combine the results into job's output format
+   * G ven  nferred ent  es from d fferent s ces, comb ne t  results  nto job's output format
    */
-  def combineResults(
-    results: TypedPipe[(UserId, Seq[InferredEntity])]*
-  ): TypedPipe[(UserId, SimClustersInferredEntities)] = {
+  def comb neResults(
+    results: TypedP pe[(User d, Seq[ nferredEnt y])]*
+  ): TypedP pe[(User d, S mClusters nferredEnt  es)] = {
     results
       .reduceLeft(_ ++ _)
       .sumByKey
       .map {
-        case (userId, inferredEntities) =>
-          (userId, SimClustersInferredEntities(inferredEntities))
+        case (user d,  nferredEnt  es) =>
+          (user d, S mClusters nferredEnt  es( nferredEnt  es))
       }
   }
 }

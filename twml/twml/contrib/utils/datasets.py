@@ -1,93 +1,93 @@
-import random
+ mport random
 
-import twml
+ mport twml
 
-get_time_based_dataset_files = twml.util.list_files_by_datetime
+get_t  _based_dataset_f les = twml.ut l.l st_f les_by_datet  
 
 
-def resolve_train_and_eval_files_overlap(
-  train_files, eval_files, fraction_kept_for_eval, seed=None
+def resolve_tra n_and_eval_f les_overlap(
+  tra n_f les, eval_f les, fract on_kept_for_eval, seed=None
 ):
-  """Resolve any overlap between train and eval files.
+  """Resolve any overlap bet en tra n and eval f les.
 
-  Specifically, if there's an overlap between `train_files` and `eval_files`, then a fraction of
-  the overlap (i.e. `fraction_kept_for_eval`) will be randomly assigned (exclusively) to the
-  `eval_files`.
+  Spec f cally,  f t re's an overlap bet en `tra n_f les` and `eval_f les`, t n a fract on of
+  t  overlap ( .e. `fract on_kept_for_eval`) w ll be randomly ass gned (exclus vely) to t 
+  `eval_f les`.
 
-  The following example demonstrates its usage:
+  T  follow ng example demonstrates  s usage:
 
-  >>> orig_train_files = ['f1', 'f2', 'f3', 'f4']
-  >>> orig_eval_files = ['f1', 'f2', 'f3']
-  >>> resolved_train_files, resolved_eval_files = resolve_train_and_eval_files_overlap(
-  ...     orig_train_files, orig_eval_files, 0.5
+  >>> or g_tra n_f les = ['f1', 'f2', 'f3', 'f4']
+  >>> or g_eval_f les = ['f1', 'f2', 'f3']
+  >>> resolved_tra n_f les, resolved_eval_f les = resolve_tra n_and_eval_f les_overlap(
+  ...     or g_tra n_f les, or g_eval_f les, 0.5
   ... )
-  >>> set(resolved_train_files) & set(resolved_eval_files) == set()
+  >>> set(resolved_tra n_f les) & set(resolved_eval_f les) == set()
   True
-  >>> len(resolved_train_files) == 3
+  >>> len(resolved_tra n_f les) == 3
   True
-  >>> len(resolved_eval_files) == 2
+  >>> len(resolved_eval_f les) == 2
   True
 
   Args:
-    train_files: A list of the files used for training.
-    eval_files: A list of the files used for validation.
-    fraction_kept_for_eval: A fraction of files in the intersection between `train_files` and
-      `eval_files` exclusively kept for evaluation.
-    seed: A seed for generating random numbers.
+    tra n_f les: A l st of t  f les used for tra n ng.
+    eval_f les: A l st of t  f les used for val dat on.
+    fract on_kept_for_eval: A fract on of f les  n t   ntersect on bet en `tra n_f les` and
+      `eval_f les` exclus vely kept for evaluat on.
+    seed: A seed for generat ng random numbers.
 
   Returns:
-    A tuple `(new_train_files, new_eval_files)` with the overlapping resolved.
+    A tuple `(new_tra n_f les, new_eval_f les)` w h t  overlapp ng resolved.
   """
 
   rng = random.Random(seed)
 
-  train_files = set(train_files)
-  eval_files = set(eval_files)
-  overlapping_files = train_files & eval_files
-  train_files_selected_for_eval = set(rng.sample(
-    overlapping_files,
-    int(len(overlapping_files) * fraction_kept_for_eval)
+  tra n_f les = set(tra n_f les)
+  eval_f les = set(eval_f les)
+  overlapp ng_f les = tra n_f les & eval_f les
+  tra n_f les_selected_for_eval = set(rng.sample(
+    overlapp ng_f les,
+     nt(len(overlapp ng_f les) * fract on_kept_for_eval)
   ))
-  train_files = train_files - train_files_selected_for_eval
-  eval_files = (eval_files - overlapping_files) | train_files_selected_for_eval
-  return list(train_files), list(eval_files)
+  tra n_f les = tra n_f les - tra n_f les_selected_for_eval
+  eval_f les = (eval_f les - overlapp ng_f les) | tra n_f les_selected_for_eval
+  return l st(tra n_f les), l st(eval_f les)
 
 
-def get_time_based_dataset_files_for_train_and_eval(
+def get_t  _based_dataset_f les_for_tra n_and_eval(
   base_path,
-  train_start_datetime,
-  train_end_datetime,
-  eval_start_datetime,
-  eval_end_datetime,
-  fraction_kept_for_eval,
-  datetime_prefix_format='%Y/%m/%d/%H',
-  extension='lzo',
-  parallelism=1
+  tra n_start_datet  ,
+  tra n_end_datet  ,
+  eval_start_datet  ,
+  eval_end_datet  ,
+  fract on_kept_for_eval,
+  datet  _pref x_format='%Y/%m/%d/%H',
+  extens on='lzo',
+  parallel sm=1
 ):
-  """Get train/eval dataset files organized with a time-based prefix.
+  """Get tra n/eval dataset f les organ zed w h a t  -based pref x.
 
-  This is just a convenience built around `get_dataset_files_prefixed_by_time` and
-  `resolve_train_and_eval_files_overlap`. Please refer to these functions for documentation.
+  T   s just a conven ence bu lt around `get_dataset_f les_pref xed_by_t  ` and
+  `resolve_tra n_and_eval_f les_overlap`. Please refer to t se funct ons for docu ntat on.
   """
 
-  train_files = get_time_based_dataset_files(
+  tra n_f les = get_t  _based_dataset_f les(
     base_path=base_path,
-    start_datetime=train_start_datetime,
-    end_datetime=train_end_datetime,
-    datetime_prefix_format=datetime_prefix_format,
-    extension=extension,
-    parallelism=parallelism
+    start_datet  =tra n_start_datet  ,
+    end_datet  =tra n_end_datet  ,
+    datet  _pref x_format=datet  _pref x_format,
+    extens on=extens on,
+    parallel sm=parallel sm
   )
-  eval_files = get_time_based_dataset_files(
+  eval_f les = get_t  _based_dataset_f les(
     base_path=base_path,
-    start_datetime=eval_start_datetime,
-    end_datetime=eval_end_datetime,
-    datetime_prefix_format=datetime_prefix_format,
-    extension=extension,
-    parallelism=parallelism
+    start_datet  =eval_start_datet  ,
+    end_datet  =eval_end_datet  ,
+    datet  _pref x_format=datet  _pref x_format,
+    extens on=extens on,
+    parallel sm=parallel sm
   )
-  return resolve_train_and_eval_files_overlap(
-    train_files=train_files,
-    eval_files=eval_files,
-    fraction_kept_for_eval=fraction_kept_for_eval
+  return resolve_tra n_and_eval_f les_overlap(
+    tra n_f les=tra n_f les,
+    eval_f les=eval_f les,
+    fract on_kept_for_eval=fract on_kept_for_eval
   )

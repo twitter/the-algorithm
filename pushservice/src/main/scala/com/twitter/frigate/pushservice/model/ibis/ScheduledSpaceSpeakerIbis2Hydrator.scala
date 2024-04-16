@@ -1,34 +1,34 @@
-package com.twitter.frigate.pushservice.model.ibis
+package com.tw ter.fr gate.pushserv ce.model. b s
 
-import com.twitter.frigate.pushservice.model.ScheduledSpaceSpeakerPushCandidate
-import com.twitter.frigate.pushservice.util.PushIbisUtil._
-import com.twitter.frigate.thriftscala.SpaceNotificationType
-import com.twitter.util.Future
+ mport com.tw ter.fr gate.pushserv ce.model.Sc duledSpaceSpeakerPushCand date
+ mport com.tw ter.fr gate.pushserv ce.ut l.Push b sUt l._
+ mport com.tw ter.fr gate.thr ftscala.SpaceNot f cat onType
+ mport com.tw ter.ut l.Future
 
-trait ScheduledSpaceSpeakerIbis2Hydrator extends Ibis2HydratorForCandidate {
-  self: ScheduledSpaceSpeakerPushCandidate =>
+tra  Sc duledSpaceSpeaker b s2Hydrator extends  b s2HydratorForCand date {
+  self: Sc duledSpaceSpeakerPushCand date =>
 
-  override lazy val senderId: Option[Long] = None
+  overr de lazy val sender d: Opt on[Long] = None
 
-  private lazy val targetModelValues: Future[Map[String, String]] = {
-    hostId match {
-      case Some(spaceHostId) =>
-        audioSpaceFut.map { audioSpace =>
-          val isStartNow = frigateNotification.spaceNotification.exists(
-            _.spaceNotificationType.contains(SpaceNotificationType.AtSpaceBroadcast))
+  pr vate lazy val targetModelValues: Future[Map[Str ng, Str ng]] = {
+    host d match {
+      case So (spaceHost d) =>
+        aud oSpaceFut.map { aud oSpace =>
+          val  sStartNow = fr gateNot f cat on.spaceNot f cat on.ex sts(
+            _.spaceNot f cat onType.conta ns(SpaceNot f cat onType.AtSpaceBroadcast))
 
           Map(
-            "host_id" -> s"$spaceHostId",
-            "space_id" -> spaceId,
-            "is_start_now" -> s"$isStartNow"
-          ) ++ audioSpace.flatMap(_.title.map("space_title" -> _))
+            "host_ d" -> s"$spaceHost d",
+            "space_ d" -> space d,
+            " s_start_now" -> s"$ sStartNow"
+          ) ++ aud oSpace.flatMap(_.t le.map("space_t le" -> _))
         }
       case _ =>
-        Future.exception(
-          new IllegalStateException("Unable to get host id for ScheduledSpaceSpeakerIbis2Hydrator"))
+        Future.except on(
+          new  llegalStateExcept on("Unable to get host  d for Sc duledSpaceSpeaker b s2Hydrator"))
     }
   }
 
-  override lazy val modelValues: Future[Map[String, String]] =
-    mergeFutModelValues(super.modelValues, targetModelValues)
+  overr de lazy val modelValues: Future[Map[Str ng, Str ng]] =
+     rgeFutModelValues(super.modelValues, targetModelValues)
 }

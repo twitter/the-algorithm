@@ -1,13 +1,13 @@
-package com.twitter.visibility.interfaces.cards
+package com.tw ter.v s b l y. nterfaces.cards
 
-import com.twitter.tweetypie.{thriftscala => tweetypiethrift}
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+ mport com.tw ter.t etyp e.{thr ftscala => t etyp ethr ft}
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.models.V e rContext
 
-case class CardVisibilityRequest(
-  cardUri: String,
-  authorId: Option[Long],
-  tweetOpt: Option[tweetypiethrift.Tweet],
-  isPollCardType: Boolean,
+case class CardV s b l yRequest(
+  cardUr : Str ng,
+  author d: Opt on[Long],
+  t etOpt: Opt on[t etyp ethr ft.T et],
+   sPollCardType: Boolean,
   safetyLevel: SafetyLevel,
-  viewerContext: ViewerContext)
+  v e rContext: V e rContext)

@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.core.module
+package com.tw ter.product_m xer.core.module
 
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.core.service.pipeline_execution_logger.AllowListedPipelineExecutionLogger
-import com.twitter.product_mixer.core.service.pipeline_execution_logger.PipelineExecutionLogger
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.product_m xer.core.serv ce.p pel ne_execut on_logger.AllowL stedP pel neExecut onLogger
+ mport com.tw ter.product_m xer.core.serv ce.p pel ne_execut on_logger.P pel neExecut onLogger
 
-object PipelineExecutionLoggerModule extends TwitterModule {
+object P pel neExecut onLoggerModule extends Tw terModule {
 
-  override protected def configure(): Unit = {
-    bind[PipelineExecutionLogger].to[AllowListedPipelineExecutionLogger]
+  overr de protected def conf gure(): Un  = {
+    b nd[P pel neExecut onLogger].to[AllowL stedP pel neExecut onLogger]
   }
 }

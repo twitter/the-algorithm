@@ -2,15 +2,15 @@ syntax = "proto3";
 
 package tensorflow;
 
-import "tensorflow/core/protobuf/struct.proto";
+ mport "tensorflow/core/protobuf/struct.proto";
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
-// Metadata for CompositeTensorVariant, used when serializing as Variant.
+//  tadata for Compos eTensorVar ant, used w n ser al z ng as Var ant.
 //
-// We define a new message here (rather than directly using TypeSpecProto for
-// the metadata string) to retain flexibility to change the metadata encoding
-// to support additional features.
-message CompositeTensorVariantMetadata {
+//   def ne a new  ssage  re (rat r than d rectly us ng TypeSpecProto for
+// t   tadata str ng) to reta n flex b l y to change t   tadata encod ng
+// to support add  onal features.
+ ssage Compos eTensorVar ant tadata {
   TypeSpecProto type_spec_proto = 1;
 }

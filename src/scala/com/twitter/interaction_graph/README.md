@@ -1,19 +1,19 @@
 ## Real Graph (bqe)
 
-This project builds a machine learning model using a gradient boosting tree classifier to predict the likelihood of a Twitter user interacting with another user.
+T  project bu lds a mach ne learn ng model us ng a grad ent boost ng tree class f er to pred ct t  l kel hood of a Tw ter user  nteract ng w h anot r user.
 
-The algorithm works by first creating a labeled dataset of user interactions from a graph of Twitter users. This graph is represented in a BigQuery table where each row represents a directed edge between two users, along with various features such as the number of tweets, follows, favorites, and other metrics related to user behavior.
+T  algor hm works by f rst creat ng a labeled dataset of user  nteract ons from a graph of Tw ter users. T  graph  s represented  n a B gQuery table w re each row represents a d rected edge bet en two users, along w h var ous features such as t  number of t ets, follows, favor es, and ot r  tr cs related to user behav or.
 
-To create the labeled dataset, the algorithm first selects a set of candidate interactions by identifying all edges that were active during a certain time period. It then joins this candidate set with a set of labeled interactions that occurred one day after the candidate period. Positive interactions are labeled as "1" and negative interactions are labeled as "0". The resulting labeled dataset is then used to train a boosted tree classifier model.
+To create t  labeled dataset, t  algor hm f rst selects a set of cand date  nteract ons by  dent fy ng all edges that  re act ve dur ng a certa n t   per od.   t n jo ns t  cand date set w h a set of labeled  nteract ons that occurred one day after t  cand date per od. Pos  ve  nteract ons are labeled as "1" and negat ve  nteract ons are labeled as "0". T  result ng labeled dataset  s t n used to tra n a boosted tree class f er model.
 
-The model is trained using the labeled dataset and various hyperparameters, including the maximum number of iterations and the subsample rate. The algorithm splits the labeled dataset into training and testing sets based on the source user's ID, using a custom data split method.
+T  model  s tra ned us ng t  labeled dataset and var ous hyperpara ters,  nclud ng t  max mum number of  erat ons and t  subsample rate. T  algor hm spl s t  labeled dataset  nto tra n ng and test ng sets based on t  s ce user's  D, us ng a custom data spl   thod.
 
-Once the model is trained, it can be used to generate a score estimating the probability of a user interacting with another user.
+Once t  model  s tra ned,   can be used to generate a score est mat ng t  probab l y of a user  nteract ng w h anot r user.
 
-## Real Graph (scio)
+## Real Graph (sc o)
 
-This project aggregates the number of interactions between pairs of users on Twitter. On a daily basis, there are multiple dataflow jobs that perform this aggregation, which includes public engagements like favorites, retweets, follows, etc. as well as private engagements like profile views, tweet clicks, and whether or not a user has another user in their address book (given a user opt-in to share address book).
+T  project aggregates t  number of  nteract ons bet en pa rs of users on Tw ter. On a da ly bas s, t re are mult ple dataflow jobs that perform t  aggregat on, wh ch  ncludes publ c engage nts l ke favor es, ret ets, follows, etc. as  ll as pr vate engage nts l ke prof le v ews, t et cl cks, and w t r or not a user has anot r user  n t  r address book (g ven a user opt- n to share address book).
 
-After the daily aggregation of interactions, there is a rollup job that aggregates yesterday's aggregation with today's interactions. The rollup job outputs several results, including the daily count of interactions per interaction types between a pair of users, the daily incoming interactions made on a user per interaction type, the rollup aggregation of interactions as a decayed sum between a pair of users, and the rollup aggregation of incoming interactions made on a user.
+After t  da ly aggregat on of  nteract ons, t re  s a rollup job that aggregates yesterday's aggregat on w h today's  nteract ons. T  rollup job outputs several results,  nclud ng t  da ly count of  nteract ons per  nteract on types bet en a pa r of users, t  da ly  ncom ng  nteract ons made on a user per  nteract on type, t  rollup aggregat on of  nteract ons as a decayed sum bet en a pa r of users, and t  rollup aggregat on of  ncom ng  nteract ons made on a user.
 
-Finally, the rollup job outputs the ML predicted interaction score between the pair of users alongside the rollup aggregation of interactions as a decayed sum between them.
+F nally, t  rollup job outputs t  ML pred cted  nteract on score bet en t  pa r of users alongs de t  rollup aggregat on of  nteract ons as a decayed sum bet en t m.

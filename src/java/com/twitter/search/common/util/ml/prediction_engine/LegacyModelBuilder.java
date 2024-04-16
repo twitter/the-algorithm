@@ -1,86 +1,86 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+package com.tw ter.search.common.ut l.ml.pred ct on_eng ne;
 
-import java.util.Map;
+ mport java.ut l.Map;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
+ mport com.google.common.collect.HashMult map;
+ mport com.google.common.collect.Maps;
+ mport com.google.common.collect.Mult map;
 
-import com.twitter.ml.api.Feature;
-import com.twitter.ml.api.FeatureContext;
-import com.twitter.ml.api.FeatureParser;
-import com.twitter.ml.api.transform.DiscretizerTransform;
+ mport com.tw ter.ml.ap .Feature;
+ mport com.tw ter.ml.ap .FeatureContext;
+ mport com.tw ter.ml.ap .FeatureParser;
+ mport com.tw ter.ml.ap .transform.D scret zerTransform;
 
 /**
- * The builder for a model based on the legacy (non-schema-based) features.
- * See also SchemaBasedModelBuilder.
+ * T  bu lder for a model based on t  legacy (non-sc ma-based) features.
+ * See also Sc maBasedModelBu lder.
  */
-public final class LegacyModelBuilder extends BaseModelBuilder {
+publ c f nal class LegacyModelBu lder extends BaseModelBu lder {
 
-  private final Map<String, Feature> featuresByName;
+  pr vate f nal Map<Str ng, Feature> featuresByNa ;
   // for legacy features
-  private final Map<Feature<Boolean>, Double> binaryFeatures;
-  private final Map<Feature<Double>, Double> continuousFeatures;
-  private final Multimap<Feature<Double>, DiscretizedFeatureRange> discretizedFeatureRanges;
+  pr vate f nal Map<Feature<Boolean>, Double> b naryFeatures;
+  pr vate f nal Map<Feature<Double>, Double> cont nuousFeatures;
+  pr vate f nal Mult map<Feature<Double>, D scret zedFeatureRange> d scret zedFeatureRanges;
 
-  LegacyModelBuilder(String modelName, FeatureContext context) {
-    super(modelName);
-    featuresByName = getFeaturesByName(context);
-    binaryFeatures = Maps.newHashMap();
-    continuousFeatures = Maps.newHashMap();
-    discretizedFeatureRanges = HashMultimap.create();
+  LegacyModelBu lder(Str ng modelNa , FeatureContext context) {
+    super(modelNa );
+    featuresByNa  = getFeaturesByNa (context);
+    b naryFeatures = Maps.newHashMap();
+    cont nuousFeatures = Maps.newHashMap();
+    d scret zedFeatureRanges = HashMult map.create();
   }
 
-  private static Map<String, Feature> getFeaturesByName(FeatureContext featureContext) {
-    Map<String, Feature> featuresByName = Maps.newHashMap();
+  pr vate stat c Map<Str ng, Feature> getFeaturesByNa (FeatureContext featureContext) {
+    Map<Str ng, Feature> featuresByNa  = Maps.newHashMap();
     for (Feature<?> feature : featureContext.getAllFeatures()) {
-      featuresByName.put(feature.getFeatureName(), feature);
+      featuresByNa .put(feature.getFeatureNa (), feature);
     }
-    return featuresByName;
+    return featuresByNa ;
   }
 
-  @Override
-  protected void addFeature(String baseName, double weight, FeatureParser parser) {
-    Feature feature = featuresByName.get(baseName);
-    if (feature != null) {
-      switch (feature.getFeatureType()) {
-        case BINARY:
-          binaryFeatures.put(feature, weight);
+  @Overr de
+  protected vo d addFeature(Str ng baseNa , double   ght, FeatureParser parser) {
+    Feature feature = featuresByNa .get(baseNa );
+     f (feature != null) {
+      sw ch (feature.getFeatureType()) {
+        case B NARY:
+          b naryFeatures.put(feature,   ght);
           break;
-        case CONTINUOUS:
-          continuousFeatures.put(feature, weight);
+        case CONT NUOUS:
+          cont nuousFeatures.put(feature,   ght);
           break;
         default:
-          throw new IllegalArgumentException(
-              String.format("Unsupported feature type: %s", feature));
+          throw new  llegalArgu ntExcept on(
+              Str ng.format("Unsupported feature type: %s", feature));
       }
-    } else if (baseName.endsWith(DISCRETIZER_NAME_SUFFIX)
-        && parser.getExtension().containsKey(DiscretizerTransform.DEFAULT_RANGE_EXT)) {
+    } else  f (baseNa .endsW h(D SCRET ZER_NAME_SUFF X)
+        && parser.getExtens on().conta nsKey(D scret zerTransform.DEFAULT_RANGE_EXT)) {
 
-      String featureName =
-          baseName.substring(0, baseName.length() - DISCRETIZER_NAME_SUFFIX.length());
+      Str ng featureNa  =
+          baseNa .substr ng(0, baseNa .length() - D SCRET ZER_NAME_SUFF X.length());
 
-      feature = featuresByName.get(featureName);
-      if (feature == null) {
+      feature = featuresByNa .get(featureNa );
+       f (feature == null) {
         return;
       }
 
-      String rangeSpec = parser.getExtension().get(DiscretizerTransform.DEFAULT_RANGE_EXT);
-      discretizedFeatureRanges.put(feature, new DiscretizedFeatureRange(weight, rangeSpec));
+      Str ng rangeSpec = parser.getExtens on().get(D scret zerTransform.DEFAULT_RANGE_EXT);
+      d scret zedFeatureRanges.put(feature, new D scret zedFeatureRange(  ght, rangeSpec));
     }
   }
 
-  @Override
-  public LightweightLinearModel build() {
-    Map<Feature<Double>, DiscretizedFeature> discretizedFeatures = Maps.newHashMap();
-    for (Feature<Double> feature : discretizedFeatureRanges.keySet()) {
-      DiscretizedFeature discretizedFeature =
-          BaseModelBuilder.buildFeature(discretizedFeatureRanges.get(feature));
-      if (!discretizedFeature.allValuesBelowThreshold(MIN_WEIGHT)) {
-        discretizedFeatures.put(feature, discretizedFeature);
+  @Overr de
+  publ c L ght  ghtL nearModel bu ld() {
+    Map<Feature<Double>, D scret zedFeature> d scret zedFeatures = Maps.newHashMap();
+    for (Feature<Double> feature : d scret zedFeatureRanges.keySet()) {
+      D scret zedFeature d scret zedFeature =
+          BaseModelBu lder.bu ldFeature(d scret zedFeatureRanges.get(feature));
+       f (!d scret zedFeature.allValuesBelowThreshold(M N_WE GHT)) {
+        d scret zedFeatures.put(feature, d scret zedFeature);
       }
     }
-    return LightweightLinearModel.createForLegacy(
-        modelName, bias, binaryFeatures, continuousFeatures, discretizedFeatures);
+    return L ght  ghtL nearModel.createForLegacy(
+        modelNa , b as, b naryFeatures, cont nuousFeatures, d scret zedFeatures);
   }
 }

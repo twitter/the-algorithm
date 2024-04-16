@@ -1,98 +1,98 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+package com.tw ter.search.earlyb rd.search.relevance.scor ng;
 
-import com.twitter.search.common.util.ml.prediction_engine.BaseLegacyScoreAccumulator;
-import com.twitter.search.common.util.ml.prediction_engine.LightweightLinearModel;
-import com.twitter.search.earlybird.search.relevance.LinearScoringData;
-import com.twitter.search.modeling.tweet_ranking.TweetScoringFeatures;
+ mport com.tw ter.search.common.ut l.ml.pred ct on_eng ne.BaseLegacyScoreAccumulator;
+ mport com.tw ter.search.common.ut l.ml.pred ct on_eng ne.L ght  ghtL nearModel;
+ mport com.tw ter.search.earlyb rd.search.relevance.L nearScor ngData;
+ mport com.tw ter.search.model ng.t et_rank ng.T etScor ngFeatures;
 
 /**
- * Legacy score accumulator in Earlybird with specific features added.
- * This class is created to avoid adding LinearScoringData as a dependency to search's common ML
- * library.
+ * Legacy score accumulator  n Earlyb rd w h spec f c features added.
+ * T  class  s created to avo d add ng L nearScor ngData as a dependency to search's common ML
+ * l brary.
  *
- * @deprecated This class is retired and we suggest to switch to SchemaBasedScoreAccumulator.
+ * @deprecated T  class  s ret red and   suggest to sw ch to Sc maBasedScoreAccumulator.
  */
 @Deprecated
-public class LegacyScoreAccumulator extends BaseLegacyScoreAccumulator<LinearScoringData> {
+publ c class LegacyScoreAccumulator extends BaseLegacyScoreAccumulator<L nearScor ngData> {
   /**
-   * Constructs with a model and LinearScoringData
+   * Constructs w h a model and L nearScor ngData
    */
-  LegacyScoreAccumulator(LightweightLinearModel model) {
+  LegacyScoreAccumulator(L ght  ghtL nearModel model) {
     super(model);
   }
 
   /**
-   * Update the accumulator score with features, after this function the score should already
+   * Update t  accumulator score w h features, after t  funct on t  score should already
    * be computed.
    *
-   * @deprecated This function is retired and we suggest to switch to updateScoresWithFeatures in
-   * SchemaBasedScoreAccumulator.
+   * @deprecated T  funct on  s ret red and   suggest to sw ch to updateScoresW hFeatures  n
+   * Sc maBasedScoreAccumulator.
    */
-  @Override
+  @Overr de
   @Deprecated
-  protected void updateScoreWithFeatures(LinearScoringData data) {
-    addContinuousFeature(TweetScoringFeatures.LUCENE_SCORE, data.luceneScore);
-    addContinuousFeature(TweetScoringFeatures.TEXT_SCORE, data.textScore);
-    addContinuousFeature(TweetScoringFeatures.TWEET_AGE_IN_SECONDS, data.tweetAgeInSeconds);
-    addContinuousFeature(TweetScoringFeatures.REPLY_COUNT, data.replyCountPostLog2);
-    addContinuousFeature(TweetScoringFeatures.RETWEET_COUNT, data.retweetCountPostLog2);
-    addContinuousFeature(TweetScoringFeatures.FAV_COUNT, data.favCountPostLog2);
-    addContinuousFeature(TweetScoringFeatures.REPLY_COUNT_V2, data.replyCountV2);
-    addContinuousFeature(TweetScoringFeatures.RETWEET_COUNT_V2, data.retweetCountV2);
-    addContinuousFeature(TweetScoringFeatures.FAV_COUNT_V2, data.favCountV2);
-    addContinuousFeature(TweetScoringFeatures.EMBEDS_IMPRESSION_COUNT,
-        data.getEmbedsImpressionCount(false));
-    addContinuousFeature(TweetScoringFeatures.EMBEDS_URL_COUNT, data.getEmbedsUrlCount(false));
-    addContinuousFeature(TweetScoringFeatures.VIDEO_VIEW_COUNT, data.getVideoViewCount(false));
-    addContinuousFeature(TweetScoringFeatures.QUOTED_COUNT, data.quotedCount);
-    addContinuousFeature(TweetScoringFeatures.WEIGHTED_RETWEET_COUNT, data.weightedRetweetCount);
-    addContinuousFeature(TweetScoringFeatures.WEIGHTED_REPLY_COUNT, data.weightedReplyCount);
-    addContinuousFeature(TweetScoringFeatures.WEIGHTED_FAV_COUNT, data.weightedFavCount);
-    addContinuousFeature(TweetScoringFeatures.WEIGHTED_QUOTE_COUNT, data.weightedQuoteCount);
-    addBinaryFeature(TweetScoringFeatures.HAS_URL, data.hasUrl);
-    addBinaryFeature(TweetScoringFeatures.HAS_CARD, data.hasCard);
-    addBinaryFeature(TweetScoringFeatures.HAS_VINE, data.hasVine);
-    addBinaryFeature(TweetScoringFeatures.HAS_PERISCOPE, data.hasPeriscope);
-    addBinaryFeature(TweetScoringFeatures.HAS_NATIVE_IMAGE, data.hasNativeImage);
-    addBinaryFeature(TweetScoringFeatures.HAS_IMAGE_URL, data.hasImageUrl);
-    addBinaryFeature(TweetScoringFeatures.HAS_NEWS_URL, data.hasNewsUrl);
-    addBinaryFeature(TweetScoringFeatures.HAS_VIDEO_URL, data.hasVideoUrl);
-    addBinaryFeature(TweetScoringFeatures.HAS_CONSUMER_VIDEO, data.hasConsumerVideo);
-    addBinaryFeature(TweetScoringFeatures.HAS_PRO_VIDEO, data.hasProVideo);
-    addBinaryFeature(TweetScoringFeatures.HAS_QUOTE, data.hasQuote);
-    addBinaryFeature(TweetScoringFeatures.HAS_TREND, data.hasTrend);
-    addBinaryFeature(TweetScoringFeatures.HAS_MULTIPLE_HASHTAGS_OR_TRENDS,
-        data.hasMultipleHashtagsOrTrends);
-    addBinaryFeature(TweetScoringFeatures.IS_OFFENSIVE, data.isOffensive);
-    addBinaryFeature(TweetScoringFeatures.IS_REPLY, data.isReply);
-    addBinaryFeature(TweetScoringFeatures.IS_RETWEET, data.isRetweet);
-    addBinaryFeature(TweetScoringFeatures.IS_SELF_TWEET, data.isSelfTweet);
-    addBinaryFeature(TweetScoringFeatures.IS_FOLLOW_RETWEET, data.isRetweet & data.isFollow);
-    addBinaryFeature(TweetScoringFeatures.IS_TRUSTED_RETWEET, data.isRetweet & data.isTrusted);
-    addContinuousFeature(TweetScoringFeatures.QUERY_SPECIFIC_SCORE, data.querySpecificScore);
-    addContinuousFeature(TweetScoringFeatures.AUTHOR_SPECIFIC_SCORE, data.authorSpecificScore);
-    addBinaryFeature(TweetScoringFeatures.AUTHOR_IS_FOLLOW, data.isFollow);
-    addBinaryFeature(TweetScoringFeatures.AUTHOR_IS_TRUSTED, data.isTrusted);
-    addBinaryFeature(TweetScoringFeatures.AUTHOR_IS_VERIFIED, data.isFromVerifiedAccount);
-    addBinaryFeature(TweetScoringFeatures.AUTHOR_IS_NSFW, data.isUserNSFW);
-    addBinaryFeature(TweetScoringFeatures.AUTHOR_IS_SPAM, data.isUserSpam);
-    addBinaryFeature(TweetScoringFeatures.AUTHOR_IS_BOT, data.isUserBot);
-    addBinaryFeature(TweetScoringFeatures.AUTHOR_IS_ANTISOCIAL, data.isUserAntiSocial);
-    addContinuousFeature(TweetScoringFeatures.AUTHOR_REPUTATION, data.userRep);
-    addContinuousFeature(TweetScoringFeatures.SEARCHER_LANG_SCORE, data.userLangMult);
-    addBinaryFeature(TweetScoringFeatures.HAS_DIFFERENT_LANG, data.hasDifferentLang);
-    addBinaryFeature(TweetScoringFeatures.HAS_ENGLISH_TWEET_AND_DIFFERENT_UI_LANG,
-        data.hasEnglishTweetAndDifferentUILang);
-    addBinaryFeature(TweetScoringFeatures.HAS_ENGLISH_UI_AND_DIFFERENT_TWEET_LANG,
-        data.hasEnglishUIAndDifferentTweetLang);
-    addBinaryFeature(TweetScoringFeatures.IS_SENSITIVE_CONTENT, data.isSensitiveContent);
-    addBinaryFeature(TweetScoringFeatures.HAS_MULTIPLE_MEDIA, data.hasMultipleMediaFlag);
-    addBinaryFeature(TweetScoringFeatures.AUTHOR_IS_PROFILE_EGG, data.profileIsEggFlag);
-    addBinaryFeature(TweetScoringFeatures.AUTHOR_IS_NEW, data.isUserNewFlag);
-    addContinuousFeature(TweetScoringFeatures.MENTIONS_COUNT, data.numMentions);
-    addContinuousFeature(TweetScoringFeatures.HASHTAGS_COUNT, data.numHashtags);
-    addContinuousFeature(TweetScoringFeatures.LINK_LANGUAGE_ID, data.linkLanguage);
-    addContinuousFeature(TweetScoringFeatures.LANGUAGE_ID, data.tweetLangId);
-    addBinaryFeature(TweetScoringFeatures.HAS_VISIBLE_LINK, data.hasVisibleLink);
+  protected vo d updateScoreW hFeatures(L nearScor ngData data) {
+    addCont nuousFeature(T etScor ngFeatures.LUCENE_SCORE, data.luceneScore);
+    addCont nuousFeature(T etScor ngFeatures.TEXT_SCORE, data.textScore);
+    addCont nuousFeature(T etScor ngFeatures.TWEET_AGE_ N_SECONDS, data.t etAge nSeconds);
+    addCont nuousFeature(T etScor ngFeatures.REPLY_COUNT, data.replyCountPostLog2);
+    addCont nuousFeature(T etScor ngFeatures.RETWEET_COUNT, data.ret etCountPostLog2);
+    addCont nuousFeature(T etScor ngFeatures.FAV_COUNT, data.favCountPostLog2);
+    addCont nuousFeature(T etScor ngFeatures.REPLY_COUNT_V2, data.replyCountV2);
+    addCont nuousFeature(T etScor ngFeatures.RETWEET_COUNT_V2, data.ret etCountV2);
+    addCont nuousFeature(T etScor ngFeatures.FAV_COUNT_V2, data.favCountV2);
+    addCont nuousFeature(T etScor ngFeatures.EMBEDS_ MPRESS ON_COUNT,
+        data.getEmbeds mpress onCount(false));
+    addCont nuousFeature(T etScor ngFeatures.EMBEDS_URL_COUNT, data.getEmbedsUrlCount(false));
+    addCont nuousFeature(T etScor ngFeatures.V DEO_V EW_COUNT, data.getV deoV ewCount(false));
+    addCont nuousFeature(T etScor ngFeatures.QUOTED_COUNT, data.quotedCount);
+    addCont nuousFeature(T etScor ngFeatures.WE GHTED_RETWEET_COUNT, data.  ghtedRet etCount);
+    addCont nuousFeature(T etScor ngFeatures.WE GHTED_REPLY_COUNT, data.  ghtedReplyCount);
+    addCont nuousFeature(T etScor ngFeatures.WE GHTED_FAV_COUNT, data.  ghtedFavCount);
+    addCont nuousFeature(T etScor ngFeatures.WE GHTED_QUOTE_COUNT, data.  ghtedQuoteCount);
+    addB naryFeature(T etScor ngFeatures.HAS_URL, data.hasUrl);
+    addB naryFeature(T etScor ngFeatures.HAS_CARD, data.hasCard);
+    addB naryFeature(T etScor ngFeatures.HAS_V NE, data.hasV ne);
+    addB naryFeature(T etScor ngFeatures.HAS_PER SCOPE, data.hasPer scope);
+    addB naryFeature(T etScor ngFeatures.HAS_NAT VE_ MAGE, data.hasNat ve mage);
+    addB naryFeature(T etScor ngFeatures.HAS_ MAGE_URL, data.has mageUrl);
+    addB naryFeature(T etScor ngFeatures.HAS_NEWS_URL, data.hasNewsUrl);
+    addB naryFeature(T etScor ngFeatures.HAS_V DEO_URL, data.hasV deoUrl);
+    addB naryFeature(T etScor ngFeatures.HAS_CONSUMER_V DEO, data.hasConsu rV deo);
+    addB naryFeature(T etScor ngFeatures.HAS_PRO_V DEO, data.hasProV deo);
+    addB naryFeature(T etScor ngFeatures.HAS_QUOTE, data.hasQuote);
+    addB naryFeature(T etScor ngFeatures.HAS_TREND, data.hasTrend);
+    addB naryFeature(T etScor ngFeatures.HAS_MULT PLE_HASHTAGS_OR_TRENDS,
+        data.hasMult pleHashtagsOrTrends);
+    addB naryFeature(T etScor ngFeatures. S_OFFENS VE, data. sOffens ve);
+    addB naryFeature(T etScor ngFeatures. S_REPLY, data. sReply);
+    addB naryFeature(T etScor ngFeatures. S_RETWEET, data. sRet et);
+    addB naryFeature(T etScor ngFeatures. S_SELF_TWEET, data. sSelfT et);
+    addB naryFeature(T etScor ngFeatures. S_FOLLOW_RETWEET, data. sRet et & data. sFollow);
+    addB naryFeature(T etScor ngFeatures. S_TRUSTED_RETWEET, data. sRet et & data. sTrusted);
+    addCont nuousFeature(T etScor ngFeatures.QUERY_SPEC F C_SCORE, data.querySpec f cScore);
+    addCont nuousFeature(T etScor ngFeatures.AUTHOR_SPEC F C_SCORE, data.authorSpec f cScore);
+    addB naryFeature(T etScor ngFeatures.AUTHOR_ S_FOLLOW, data. sFollow);
+    addB naryFeature(T etScor ngFeatures.AUTHOR_ S_TRUSTED, data. sTrusted);
+    addB naryFeature(T etScor ngFeatures.AUTHOR_ S_VER F ED, data. sFromVer f edAccount);
+    addB naryFeature(T etScor ngFeatures.AUTHOR_ S_NSFW, data. sUserNSFW);
+    addB naryFeature(T etScor ngFeatures.AUTHOR_ S_SPAM, data. sUserSpam);
+    addB naryFeature(T etScor ngFeatures.AUTHOR_ S_BOT, data. sUserBot);
+    addB naryFeature(T etScor ngFeatures.AUTHOR_ S_ANT SOC AL, data. sUserAnt Soc al);
+    addCont nuousFeature(T etScor ngFeatures.AUTHOR_REPUTAT ON, data.userRep);
+    addCont nuousFeature(T etScor ngFeatures.SEARCHER_LANG_SCORE, data.userLangMult);
+    addB naryFeature(T etScor ngFeatures.HAS_D FFERENT_LANG, data.hasD fferentLang);
+    addB naryFeature(T etScor ngFeatures.HAS_ENGL SH_TWEET_AND_D FFERENT_U _LANG,
+        data.hasEngl shT etAndD fferentU Lang);
+    addB naryFeature(T etScor ngFeatures.HAS_ENGL SH_U _AND_D FFERENT_TWEET_LANG,
+        data.hasEngl shU AndD fferentT etLang);
+    addB naryFeature(T etScor ngFeatures. S_SENS T VE_CONTENT, data. sSens  veContent);
+    addB naryFeature(T etScor ngFeatures.HAS_MULT PLE_MED A, data.hasMult ple d aFlag);
+    addB naryFeature(T etScor ngFeatures.AUTHOR_ S_PROF LE_EGG, data.prof le sEggFlag);
+    addB naryFeature(T etScor ngFeatures.AUTHOR_ S_NEW, data. sUserNewFlag);
+    addCont nuousFeature(T etScor ngFeatures.MENT ONS_COUNT, data.num nt ons);
+    addCont nuousFeature(T etScor ngFeatures.HASHTAGS_COUNT, data.numHashtags);
+    addCont nuousFeature(T etScor ngFeatures.L NK_LANGUAGE_ D, data.l nkLanguage);
+    addCont nuousFeature(T etScor ngFeatures.LANGUAGE_ D, data.t etLang d);
+    addB naryFeature(T etScor ngFeatures.HAS_V S BLE_L NK, data.hasV s bleL nk);
   }
 }

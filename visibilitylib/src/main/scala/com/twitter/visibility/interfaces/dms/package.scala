@@ -1,12 +1,12 @@
-package com.twitter.visibility.interfaces
+package com.tw ter.v s b l y. nterfaces
 
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.common.DmId
-import com.twitter.visibility.safety_label_store.thriftscala.DmSafetyLabelMap
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.v s b l y.common.Dm d
+ mport com.tw ter.v s b l y.safety_label_store.thr ftscala.DmSafetyLabelMap
 
 package object dms {
-  type DmSafetyLabelMapFetcherType = DmId => Stitch[Option[DmSafetyLabelMap]]
+  type DmSafetyLabelMapFetc rType = Dm d => St ch[Opt on[DmSafetyLabelMap]]
 
-  val DmSafetyLabelMapFetcherStratoColumn =
-    "visibility/safety-label-store/vflib/dm/safetyLabelMap.Dm"
+  val DmSafetyLabelMapFetc rStratoColumn =
+    "v s b l y/safety-label-store/vfl b/dm/safetyLabelMap.Dm"
 }

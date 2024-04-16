@@ -1,106 +1,106 @@
-package com.twitter.tweetypie.storage
+package com.tw ter.t etyp e.storage
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.storage.TweetStorageClient.Undelete
-import com.twitter.tweetypie.storage.TweetUtils._
-import com.twitter.util.Time
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.storage.T etStorageCl ent.Undelete
+ mport com.tw ter.t etyp e.storage.T etUt ls._
+ mport com.tw ter.ut l.T  
 
 object UndeleteHandler {
   def apply(
-    read: ManhattanOperations.Read,
-    localInsert: ManhattanOperations.Insert,
-    remoteInsert: ManhattanOperations.Insert,
-    delete: ManhattanOperations.Delete,
-    undeleteWindowHours: Int,
-    stats: StatsReceiver
+    read: ManhattanOperat ons.Read,
+    local nsert: ManhattanOperat ons. nsert,
+    remote nsert: ManhattanOperat ons. nsert,
+    delete: ManhattanOperat ons.Delete,
+    undeleteW ndowH s:  nt,
+    stats: StatsRece ver
   ): Undelete = {
-    def withinUndeleteWindow(timestampMs: Long) =
-      (Time.now - Time.fromMilliseconds(timestampMs)).inHours < undeleteWindowHours
+    def w h nUndeleteW ndow(t  stampMs: Long) =
+      (T  .now - T  .fromM ll seconds(t  stampMs)). nH s < undeleteW ndowH s
 
     def prepareUndelete(
-      tweetId: TweetId,
-      records: Seq[TweetManhattanRecord]
-    ): (Undelete.Response, Option[TweetManhattanRecord]) = {
+      t et d: T et d,
+      records: Seq[T etManhattanRecord]
+    ): (Undelete.Response, Opt on[T etManhattanRecord]) = {
       val undeleteRecord =
-        Some(TweetStateRecord.Undeleted(tweetId, Time.now.inMillis).toTweetMhRecord)
+        So (T etStateRecord.Undeleted(t et d, T  .now. nM ll s).toT etMhRecord)
 
-      TweetStateRecord.mostRecent(records) match {
-        // check if we need to undo a soft deletion
-        case Some(TweetStateRecord.SoftDeleted(_, createdAt)) =>
-          if (createdAt > 0) {
-            if (withinUndeleteWindow(createdAt)) {
+      T etStateRecord.mostRecent(records) match {
+        // c ck  f   need to undo a soft delet on
+        case So (T etStateRecord.SoftDeleted(_, createdAt)) =>
+           f (createdAt > 0) {
+             f (w h nUndeleteW ndow(createdAt)) {
               (
-                mkSuccessfulUndeleteResponse(tweetId, records, Some(createdAt)),
+                mkSuccessfulUndeleteResponse(t et d, records, So (createdAt)),
                 undeleteRecord
               )
             } else {
               (Undelete.Response(Undelete.UndeleteResponseCode.BackupNotFound), None)
             }
           } else {
-            throw InternalError(s"Timestamp unavailable for $tweetId")
+            throw  nternalError(s"T  stamp unava lable for $t et d")
           }
 
-        // BounceDeleted tweets may not be undeleted. see go/bouncedtweet
-        case Some(_: TweetStateRecord.HardDeleted | _: TweetStateRecord.BounceDeleted) =>
+        // BounceDeleted t ets may not be undeleted. see go/bouncedt et
+        case So (_: T etStateRecord.HardDeleted | _: T etStateRecord.BounceDeleted) =>
           (Undelete.Response(Undelete.UndeleteResponseCode.BackupNotFound), None)
 
-        case Some(_: TweetStateRecord.Undeleted) =>
-          // We still want to write the undelete record, because at this point, we only know that the local DC's
-          // winning record is not a soft/hard deletion record, while its possible that the remote DC's winning
-          // record might still be a soft deletion record. Having said that, we don't want to set it to true
-          // if the winning record is forceAdd, as the forceAdd call should have ensured that both DCs had the
+        case So (_: T etStateRecord.Undeleted) =>
+          //   st ll want to wr e t  undelete record, because at t  po nt,   only know that t  local DC's
+          // w nn ng record  s not a soft/hard delet on record, wh le  s poss ble that t  remote DC's w nn ng
+          // record m ght st ll be a soft delet on record. Hav ng sa d that,   don't want to set   to true
+          //  f t  w nn ng record  s forceAdd, as t  forceAdd call should have ensured that both DCs had t 
           // forceAdd record.
-          (mkSuccessfulUndeleteResponse(tweetId, records), undeleteRecord)
+          (mkSuccessfulUndeleteResponse(t et d, records), undeleteRecord)
 
-        case Some(_: TweetStateRecord.ForceAdded) =>
-          (mkSuccessfulUndeleteResponse(tweetId, records), None)
+        case So (_: T etStateRecord.ForceAdded) =>
+          (mkSuccessfulUndeleteResponse(t et d, records), None)
 
-        // lets write the undeletion record just in case there is a softdeletion record in flight
-        case None => (mkSuccessfulUndeleteResponse(tweetId, records), undeleteRecord)
+        // lets wr e t  undelet on record just  n case t re  s a softdelet on record  n fl ght
+        case None => (mkSuccessfulUndeleteResponse(t et d, records), undeleteRecord)
       }
     }
 
-    // Write the undelete record both locally and remotely to protect
-    // against races with hard delete replication. We only need this
-    // protection for the insertion of the undelete record.
-    def multiInsert(record: TweetManhattanRecord): Stitch[Unit] =
-      Stitch
+    // Wr e t  undelete record both locally and remotely to protect
+    // aga nst races w h hard delete repl cat on.   only need t 
+    // protect on for t   nsert on of t  undelete record.
+    def mult  nsert(record: T etManhattanRecord): St ch[Un ] =
+      St ch
         .collect(
           Seq(
-            localInsert(record).liftToTry,
-            remoteInsert(record).liftToTry
+            local nsert(record).l ftToTry,
+            remote nsert(record).l ftToTry
           )
         )
-        .map(collectWithRateLimitCheck)
-        .lowerFromTry
+        .map(collectW hRateL m C ck)
+        .lo rFromTry
 
-    def deleteSoftDeleteRecord(tweetId: TweetId): Stitch[Unit] = {
-      val mhKey = TweetKey.softDeletionStateKey(tweetId)
+    def deleteSoftDeleteRecord(t et d: T et d): St ch[Un ] = {
+      val mhKey = T etKey.softDelet onStateKey(t et d)
       delete(mhKey, None)
     }
 
-    tweetId =>
+    t et d =>
       for {
-        records <- read(tweetId)
-        (response, undeleteRecord) = prepareUndelete(tweetId, records)
-        _ <- Stitch.collect(undeleteRecord.map(multiInsert)).unit
-        _ <- deleteSoftDeleteRecord(tweetId)
-      } yield {
+        records <- read(t et d)
+        (response, undeleteRecord) = prepareUndelete(t et d, records)
+        _ <- St ch.collect(undeleteRecord.map(mult  nsert)).un 
+        _ <- deleteSoftDeleteRecord(t et d)
+      } y eld {
         response
       }
   }
 
-  private[storage] def mkSuccessfulUndeleteResponse(
-    tweetId: TweetId,
-    records: Seq[TweetManhattanRecord],
-    timestampOpt: Option[Long] = None
+  pr vate[storage] def mkSuccessfulUndeleteResponse(
+    t et d: T et d,
+    records: Seq[T etManhattanRecord],
+    t  stampOpt: Opt on[Long] = None
   ) =
     Undelete.Response(
       Undelete.UndeleteResponseCode.Success,
-      Some(
-        StorageConversions.fromStoredTweet(buildStoredTweet(tweetId, records))
+      So (
+        StorageConvers ons.fromStoredT et(bu ldStoredT et(t et d, records))
       ),
-      archivedAtMillis = timestampOpt
+      arch vedAtM ll s = t  stampOpt
     )
 }

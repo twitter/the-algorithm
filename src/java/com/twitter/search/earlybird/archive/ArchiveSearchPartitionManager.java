@@ -1,485 +1,485 @@
-package com.twitter.search.earlybird.archive;
+package com.tw ter.search.earlyb rd.arch ve;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import javax.annotation.Nullable;
+ mport java. o. OExcept on;
+ mport java.ut l.Date;
+ mport java.ut l.L st;
+ mport java.ut l.concurrent.T  Un ;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Lists;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.base.Pred cate;
+ mport com.google.common.collect.L sts;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.util.GCUtil;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.EarlybirdStatus;
-import com.twitter.search.earlybird.ServerSetMember;
-import com.twitter.search.earlybird.archive.ArchiveTimeSlicer.ArchiveTimeSlice;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.util.ScrubGenUtil;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.partition.CompleteSegmentManager;
-import com.twitter.search.earlybird.partition.DynamicPartitionConfig;
-import com.twitter.search.earlybird.partition.MultiSegmentTermDictionaryManager;
-import com.twitter.search.earlybird.partition.PartitionConfig;
-import com.twitter.search.earlybird.partition.PartitionManager;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
-import com.twitter.search.earlybird.partition.SegmentHdfsFlusher;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentLoader;
-import com.twitter.search.earlybird.partition.SegmentManager;
-import com.twitter.search.earlybird.partition.SegmentManager.Filter;
-import com.twitter.search.earlybird.partition.SegmentManager.Order;
-import com.twitter.search.earlybird.partition.SegmentOptimizer;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
-import com.twitter.search.earlybird.partition.SegmentWarmer;
-import com.twitter.search.earlybird.partition.SimpleSegmentIndexer;
-import com.twitter.search.earlybird.partition.UserScrubGeoEventStreamIndexer;
-import com.twitter.search.earlybird.partition.UserUpdatesStreamIndexer;
-import com.twitter.search.earlybird.querycache.QueryCacheManager;
-import com.twitter.search.earlybird.segment.SegmentDataProvider;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
-import com.twitter.search.earlybird.util.CoordinatedEarlybirdAction;
-import com.twitter.search.earlybird.util.CoordinatedEarlybirdActionInterface;
-import com.twitter.search.earlybird.util.CoordinatedEarlybirdActionLockFailed;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common.concurrent.Sc duledExecutorServ ceFactory;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchStatsRece ver;
+ mport com.tw ter.search.common.ut l.GCUt l;
+ mport com.tw ter.search.common.ut l. o.recordreader.RecordReader;
+ mport com.tw ter.search.common.ut l.zktrylock.ZooKeeperTryLockFactory;
+ mport com.tw ter.search.earlyb rd.Earlyb rd ndexConf g;
+ mport com.tw ter.search.earlyb rd.Earlyb rdStatus;
+ mport com.tw ter.search.earlyb rd.ServerSet mber;
+ mport com.tw ter.search.earlyb rd.arch ve.Arch veT  Sl cer.Arch veT  Sl ce;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.ut l.ScrubGenUt l;
+ mport com.tw ter.search.earlyb rd.docu nt.T etDocu nt;
+ mport com.tw ter.search.earlyb rd.except on.Cr  calExcept onHandler;
+ mport com.tw ter.search.earlyb rd.part  on.CompleteSeg ntManager;
+ mport com.tw ter.search.earlyb rd.part  on.Dynam cPart  onConf g;
+ mport com.tw ter.search.earlyb rd.part  on.Mult Seg ntTermD ct onaryManager;
+ mport com.tw ter.search.earlyb rd.part  on.Part  onConf g;
+ mport com.tw ter.search.earlyb rd.part  on.Part  onManager;
+ mport com.tw ter.search.earlyb rd.part  on.Search ndex ng tr cSet;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntHdfsFlus r;
+ mport com.tw ter.search.earlyb rd.part  on.Seg nt nfo;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntLoader;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntManager;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntManager.F lter;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntManager.Order;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntOpt m zer;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntSyncConf g;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntWar r;
+ mport com.tw ter.search.earlyb rd.part  on.S mpleSeg nt ndexer;
+ mport com.tw ter.search.earlyb rd.part  on.UserScrubGeoEventStream ndexer;
+ mport com.tw ter.search.earlyb rd.part  on.UserUpdatesStream ndexer;
+ mport com.tw ter.search.earlyb rd.querycac .QueryCac Manager;
+ mport com.tw ter.search.earlyb rd.seg nt.Seg ntDataProv der;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdStatusCode;
+ mport com.tw ter.search.earlyb rd.ut l.Coord natedEarlyb rdAct on;
+ mport com.tw ter.search.earlyb rd.ut l.Coord natedEarlyb rdAct on nterface;
+ mport com.tw ter.search.earlyb rd.ut l.Coord natedEarlyb rdAct onLockFa led;
 
-public class ArchiveSearchPartitionManager extends PartitionManager {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(ArchiveSearchPartitionManager.class);
+publ c class Arch veSearchPart  onManager extends Part  onManager {
+  pr vate stat c f nal Logger LOG =
+      LoggerFactory.getLogger(Arch veSearchPart  onManager.class);
 
-  public static final String CONFIG_NAME = "archive";
+  publ c stat c f nal Str ng CONF G_NAME = "arch ve";
 
-  private static final long ONE_DAY_MILLIS = TimeUnit.DAYS.toMillis(1);
+  pr vate stat c f nal long ONE_DAY_M LL S = T  Un .DAYS.toM ll s(1);
 
-  private final ArchiveTimeSlicer timeSlicer;
-  private final ArchiveSegmentDataProvider segmentDataProvider;
+  pr vate f nal Arch veT  Sl cer t  Sl cer;
+  pr vate f nal Arch veSeg ntDataProv der seg ntDataProv der;
 
-  private final UserUpdatesStreamIndexer userUpdatesStreamIndexer;
-  private final UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer;
+  pr vate f nal UserUpdatesStream ndexer userUpdatesStream ndexer;
+  pr vate f nal UserScrubGeoEventStream ndexer userScrubGeoEventStream ndexer;
 
-  private final SegmentWarmer segmentWarmer;
-  private final EarlybirdIndexConfig earlybirdIndexConfig;
-  private final ZooKeeperTryLockFactory zkTryLockFactory;
-  private final Clock clock;
-  private final SegmentSyncConfig segmentSyncConfig;
-  protected final SearchCounter gcAfterIndexing;
+  pr vate f nal Seg ntWar r seg ntWar r;
+  pr vate f nal Earlyb rd ndexConf g earlyb rd ndexConf g;
+  pr vate f nal ZooKeeperTryLockFactory zkTryLockFactory;
+  pr vate f nal Clock clock;
+  pr vate f nal Seg ntSyncConf g seg ntSyncConf g;
+  protected f nal SearchCounter gcAfter ndex ng;
 
-  // Used for coordinating daily updated across different replicas on the same hash partition,
-  // to run them one at a time, and minimize the impact on query latencies.
-  private final CoordinatedEarlybirdActionInterface coordinatedDailyUpdate;
+  // Used for coord nat ng da ly updated across d fferent repl cas on t  sa  hash part  on,
+  // to run t m one at a t  , and m n m ze t   mpact on query latenc es.
+  pr vate f nal Coord natedEarlyb rdAct on nterface coord natedDa lyUpdate;
 
-  private final SearchIndexingMetricSet indexingMetricSet;
+  pr vate f nal Search ndex ng tr cSet  ndex ng tr cSet;
 
-  // This is only used in tests where no coordination is needed.
-  @VisibleForTesting
-  public ArchiveSearchPartitionManager(
+  // T   s only used  n tests w re no coord nat on  s needed.
+  @V s bleForTest ng
+  publ c Arch veSearchPart  onManager(
       ZooKeeperTryLockFactory zooKeeperTryLockFactory,
-      QueryCacheManager queryCacheManager,
-      SegmentManager segmentManager,
-      DynamicPartitionConfig dynamicPartitionConfig,
-      UserUpdatesStreamIndexer userUpdatesStreamIndexer,
-      UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer,
-      SearchStatsReceiver searchStatsReceiver,
-      ArchiveEarlybirdIndexConfig earlybirdIndexConfig,
-      ScheduledExecutorServiceFactory executorServiceFactory,
-      ScheduledExecutorServiceFactory userUpdateIndexerScheduledExecutorFactory,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      SegmentSyncConfig syncConfig,
+      QueryCac Manager queryCac Manager,
+      Seg ntManager seg ntManager,
+      Dynam cPart  onConf g dynam cPart  onConf g,
+      UserUpdatesStream ndexer userUpdatesStream ndexer,
+      UserScrubGeoEventStream ndexer userScrubGeoEventStream ndexer,
+      SearchStatsRece ver searchStatsRece ver,
+      Arch veEarlyb rd ndexConf g earlyb rd ndexConf g,
+      Sc duledExecutorServ ceFactory executorServ ceFactory,
+      Sc duledExecutorServ ceFactory userUpdate ndexerSc duledExecutorFactory,
+      Search ndex ng tr cSet search ndex ng tr cSet,
+      Seg ntSyncConf g syncConf g,
       Clock clock,
-      CriticalExceptionHandler criticalExceptionHandler)
-      throws IOException {
-    this(
+      Cr  calExcept onHandler cr  calExcept onHandler)
+      throws  OExcept on {
+    t (
         zooKeeperTryLockFactory,
-        queryCacheManager,
-        segmentManager,
-        dynamicPartitionConfig,
-        userUpdatesStreamIndexer,
-        userScrubGeoEventStreamIndexer,
-        searchStatsReceiver,
-        earlybirdIndexConfig,
+        queryCac Manager,
+        seg ntManager,
+        dynam cPart  onConf g,
+        userUpdatesStream ndexer,
+        userScrubGeoEventStream ndexer,
+        searchStatsRece ver,
+        earlyb rd ndexConf g,
         null,
-        executorServiceFactory,
-        userUpdateIndexerScheduledExecutorFactory,
-        searchIndexingMetricSet,
-        syncConfig,
+        executorServ ceFactory,
+        userUpdate ndexerSc duledExecutorFactory,
+        search ndex ng tr cSet,
+        syncConf g,
         clock,
-        criticalExceptionHandler);
+        cr  calExcept onHandler);
   }
 
-  public ArchiveSearchPartitionManager(
+  publ c Arch veSearchPart  onManager(
       ZooKeeperTryLockFactory zooKeeperTryLockFactory,
-      QueryCacheManager queryCacheManager,
-      SegmentManager segmentManager,
-      DynamicPartitionConfig dynamicPartitionConfig,
-      UserUpdatesStreamIndexer userUpdatesStreamIndexer,
-      UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer,
-      SearchStatsReceiver searchStatsReceiver,
-      ArchiveEarlybirdIndexConfig earlybirdIndexConfig,
-      ServerSetMember serverSetMember,
-      ScheduledExecutorServiceFactory executorServiceFactory,
-      ScheduledExecutorServiceFactory userUpdateIndexerExecutorFactory,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      SegmentSyncConfig syncConfig,
+      QueryCac Manager queryCac Manager,
+      Seg ntManager seg ntManager,
+      Dynam cPart  onConf g dynam cPart  onConf g,
+      UserUpdatesStream ndexer userUpdatesStream ndexer,
+      UserScrubGeoEventStream ndexer userScrubGeoEventStream ndexer,
+      SearchStatsRece ver searchStatsRece ver,
+      Arch veEarlyb rd ndexConf g earlyb rd ndexConf g,
+      ServerSet mber serverSet mber,
+      Sc duledExecutorServ ceFactory executorServ ceFactory,
+      Sc duledExecutorServ ceFactory userUpdate ndexerExecutorFactory,
+      Search ndex ng tr cSet search ndex ng tr cSet,
+      Seg ntSyncConf g syncConf g,
       Clock clock,
-      CriticalExceptionHandler criticalExceptionHandler) throws IOException {
-    super(queryCacheManager, segmentManager, dynamicPartitionConfig, executorServiceFactory,
-        searchIndexingMetricSet, searchStatsReceiver, criticalExceptionHandler);
+      Cr  calExcept onHandler cr  calExcept onHandler) throws  OExcept on {
+    super(queryCac Manager, seg ntManager, dynam cPart  onConf g, executorServ ceFactory,
+        search ndex ng tr cSet, searchStatsRece ver, cr  calExcept onHandler);
 
-    Preconditions.checkState(syncConfig.getScrubGen().isPresent());
-    Date scrubGen = ScrubGenUtil.parseScrubGenToDate(syncConfig.getScrubGen().get());
+    Precond  ons.c ckState(syncConf g.getScrubGen(). sPresent());
+    Date scrubGen = ScrubGenUt l.parseScrubGenToDate(syncConf g.getScrubGen().get());
 
-    this.zkTryLockFactory = zooKeeperTryLockFactory;
-    final DailyStatusBatches dailyStatusBatches = new DailyStatusBatches(
+    t .zkTryLockFactory = zooKeeperTryLockFactory;
+    f nal Da lyStatusBatc s da lyStatusBatc s = new Da lyStatusBatc s(
         zkTryLockFactory,
         scrubGen);
-    this.earlybirdIndexConfig = earlybirdIndexConfig;
-    PartitionConfig curPartitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
+    t .earlyb rd ndexConf g = earlyb rd ndexConf g;
+    Part  onConf g curPart  onConf g = dynam cPart  onConf g.getCurrentPart  onConf g();
 
-    this.indexingMetricSet = searchIndexingMetricSet;
+    t . ndex ng tr cSet = search ndex ng tr cSet;
 
-    this.timeSlicer = new ArchiveTimeSlicer(
-        EarlybirdConfig.getMaxSegmentSize(), dailyStatusBatches,
-        curPartitionConfig.getTierStartDate(), curPartitionConfig.getTierEndDate(),
-        earlybirdIndexConfig);
-    this.segmentDataProvider =
-        new ArchiveSegmentDataProvider(
-            dynamicPartitionConfig,
-            timeSlicer,
-            this.earlybirdIndexConfig);
+    t .t  Sl cer = new Arch veT  Sl cer(
+        Earlyb rdConf g.getMaxSeg ntS ze(), da lyStatusBatc s,
+        curPart  onConf g.getT erStartDate(), curPart  onConf g.getT erEndDate(),
+        earlyb rd ndexConf g);
+    t .seg ntDataProv der =
+        new Arch veSeg ntDataProv der(
+            dynam cPart  onConf g,
+            t  Sl cer,
+            t .earlyb rd ndexConf g);
 
-    this.userUpdatesStreamIndexer = userUpdatesStreamIndexer;
-    this.userScrubGeoEventStreamIndexer = userScrubGeoEventStreamIndexer;
+    t .userUpdatesStream ndexer = userUpdatesStream ndexer;
+    t .userScrubGeoEventStream ndexer = userScrubGeoEventStream ndexer;
 
-    this.coordinatedDailyUpdate = new CoordinatedEarlybirdAction(
+    t .coord natedDa lyUpdate = new Coord natedEarlyb rdAct on(
         zkTryLockFactory,
-        "archive_daily_update",
-        dynamicPartitionConfig,
-        serverSetMember,
-        criticalExceptionHandler,
-        syncConfig);
+        "arch ve_da ly_update",
+        dynam cPart  onConf g,
+        serverSet mber,
+        cr  calExcept onHandler,
+        syncConf g);
 
-    this.segmentWarmer = new SegmentWarmer(criticalExceptionHandler);
-    this.clock = clock;
-    this.segmentSyncConfig = syncConfig;
-    this.gcAfterIndexing = SearchCounter.export("gc_after_indexing");
+    t .seg ntWar r = new Seg ntWar r(cr  calExcept onHandler);
+    t .clock = clock;
+    t .seg ntSyncConf g = syncConf g;
+    t .gcAfter ndex ng = SearchCounter.export("gc_after_ ndex ng");
   }
 
-  @Override
-  public SegmentDataProvider getSegmentDataProvider() {
-    return segmentDataProvider;
+  @Overr de
+  publ c Seg ntDataProv der getSeg ntDataProv der() {
+    return seg ntDataProv der;
   }
 
-  @Override
-  protected void startUp() throws Exception {
-    LOG.info("Using CompleteSegmentManager to index complete segments.");
+  @Overr de
+  protected vo d startUp() throws Except on {
+    LOG. nfo("Us ng CompleteSeg ntManager to  ndex complete seg nts.");
 
-    // deferring handling of multi-segment term dictionary for the archive.
+    // deferr ng handl ng of mult -seg nt term d ct onary for t  arch ve.
     // SEARCH-11952
-    CompleteSegmentManager completeSegmentManager = new CompleteSegmentManager(
+    CompleteSeg ntManager completeSeg ntManager = new CompleteSeg ntManager(
         zkTryLockFactory,
-        segmentDataProvider,
-        userUpdatesStreamIndexer,
-        userScrubGeoEventStreamIndexer,
-        segmentManager,
+        seg ntDataProv der,
+        userUpdatesStream ndexer,
+        userScrubGeoEventStream ndexer,
+        seg ntManager,
         null,
-        indexingMetricSet,
+         ndex ng tr cSet,
         clock,
-        MultiSegmentTermDictionaryManager.NOOP_INSTANCE,
-        segmentSyncConfig,
-        criticalExceptionHandler);
+        Mult Seg ntTermD ct onaryManager.NOOP_ NSTANCE,
+        seg ntSyncConf g,
+        cr  calExcept onHandler);
 
-    completeSegmentManager.indexUserEvents();
-    completeSegmentManager.indexCompleteSegments(
-        () -> segmentManager.getSegmentInfos(Filter.NeedsIndexing, Order.OLD_TO_NEW));
+    completeSeg ntManager. ndexUserEvents();
+    completeSeg ntManager. ndexCompleteSeg nts(
+        () -> seg ntManager.getSeg nt nfos(F lter.Needs ndex ng, Order.OLD_TO_NEW));
 
-    // In the archive cluster, the current segment needs to be loaded too.
-    List<SegmentInfo> allSegments =
-        Lists.newArrayList(segmentManager.getSegmentInfos(Filter.All, Order.OLD_TO_NEW));
-    completeSegmentManager.loadCompleteSegments(allSegments);
+    //  n t  arch ve cluster, t  current seg nt needs to be loaded too.
+    L st<Seg nt nfo> allSeg nts =
+        L sts.newArrayL st(seg ntManager.getSeg nt nfos(F lter.All, Order.OLD_TO_NEW));
+    completeSeg ntManager.loadCompleteSeg nts(allSeg nts);
 
-    completeSegmentManager.buildMultiSegmentTermDictionary();
+    completeSeg ntManager.bu ldMult Seg ntTermD ct onary();
 
-    completeSegmentManager.warmSegments(allSegments);
+    completeSeg ntManager.warmSeg nts(allSeg nts);
 
-    LOG.info("Starting to run UserUpdatesKafkaConsumer");
-    new Thread(userUpdatesStreamIndexer::run, "userupdates-stream-indexer").start();
+    LOG. nfo("Start ng to run UserUpdatesKafkaConsu r");
+    new Thread(userUpdatesStream ndexer::run, "userupdates-stream- ndexer").start();
 
-    if (EarlybirdConfig.consumeUserScrubGeoEvents()) {
-      LOG.info("Starting to run UserScrubGeoEventKafkaConsumer");
-      new Thread(userScrubGeoEventStreamIndexer::run,
-          "userScrubGeoEvent-stream-indexer").start();
+     f (Earlyb rdConf g.consu UserScrubGeoEvents()) {
+      LOG. nfo("Start ng to run UserScrubGeoEventKafkaConsu r");
+      new Thread(userScrubGeoEventStream ndexer::run,
+          "userScrubGeoEvent-stream- ndexer").start();
     }
   }
 
-  private static List<ArchiveTimeSlice> truncateSegmentList(List<ArchiveTimeSlice> segmentList,
-                                                            int maxNumSegments) {
-    // Maybe cut-off the beginning of the sorted list of IDs.
-    if (maxNumSegments > 0 && maxNumSegments < segmentList.size()) {
-      return segmentList.subList(segmentList.size() - maxNumSegments, segmentList.size());
+  pr vate stat c L st<Arch veT  Sl ce> truncateSeg ntL st(L st<Arch veT  Sl ce> seg ntL st,
+                                                             nt maxNumSeg nts) {
+    // Maybe cut-off t  beg nn ng of t  sorted l st of  Ds.
+     f (maxNumSeg nts > 0 && maxNumSeg nts < seg ntL st.s ze()) {
+      return seg ntL st.subL st(seg ntL st.s ze() - maxNumSeg nts, seg ntL st.s ze());
     } else {
-      return segmentList;
+      return seg ntL st;
     }
   }
 
 
-  @Override
-  protected void indexingLoop(boolean firstLoop) throws Exception {
-    if (firstLoop) {
-      EarlybirdStatus.beginEvent(
-          INDEX_CURRENT_SEGMENT, getSearchIndexingMetricSet().startupInCurrentSegment);
+  @Overr de
+  protected vo d  ndex ngLoop(boolean f rstLoop) throws Except on {
+     f (f rstLoop) {
+      Earlyb rdStatus.beg nEvent(
+           NDEX_CURRENT_SEGMENT, getSearch ndex ng tr cSet().startup nCurrentSeg nt);
     }
 
-    List<ArchiveTimeSlice> timeSlices = timeSlicer.getTimeSlicesInTierRange();
-    PartitionConfig curPartitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
-    timeSlices = truncateSegmentList(timeSlices, curPartitionConfig.getMaxEnabledLocalSegments());
+    L st<Arch veT  Sl ce> t  Sl ces = t  Sl cer.getT  Sl ces nT erRange();
+    Part  onConf g curPart  onConf g = dynam cPart  onConf g.getCurrentPart  onConf g();
+    t  Sl ces = truncateSeg ntL st(t  Sl ces, curPart  onConf g.getMaxEnabledLocalSeg nts());
 
-    for (final ArchiveTimeSlice timeSlice : timeSlices) {
-      // If any timeslice build failed, do not try to build timeslice after that to prevent
-      // possible holes between timeslices.
+    for (f nal Arch veT  Sl ce t  Sl ce : t  Sl ces) {
+      //  f any t  sl ce bu ld fa led, do not try to bu ld t  sl ce after that to prevent
+      // poss ble holes bet en t  sl ces.
       try {
-        if (!processArchiveTimeSlice(timeSlice)) {
-          LOG.warn("Building timeslice {} has failed, stopping future builds.",
-              timeSlice.getDescription());
-          indexingMetricSet.archiveTimeSliceBuildFailedCounter.increment();
+         f (!processArch veT  Sl ce(t  Sl ce)) {
+          LOG.warn("Bu ld ng t  sl ce {} has fa led, stopp ng future bu lds.",
+              t  Sl ce.getDescr pt on());
+           ndex ng tr cSet.arch veT  Sl ceBu ldFa ledCounter. ncre nt();
           return;
         }
-      } catch (CoordinatedEarlybirdActionLockFailed e) {
-        // If the timeslice build failed because of lock coordination, we can wait for the next
-        // iteration to build again.
+      } catch (Coord natedEarlyb rdAct onLockFa led e) {
+        //  f t  t  sl ce bu ld fa led because of lock coord nat on,   can wa  for t  next
+        //  erat on to bu ld aga n.
         return;
       }
     }
 
-    if (firstLoop) {
-      EarlybirdStatus.endEvent(
-          INDEX_CURRENT_SEGMENT, getSearchIndexingMetricSet().startupInCurrentSegment);
-      LOG.info("First indexing loop complete. Setting up query cache...");
-      EarlybirdStatus.beginEvent(
-          SETUP_QUERY_CACHE, getSearchIndexingMetricSet().startupInQueryCacheUpdates);
+     f (f rstLoop) {
+      Earlyb rdStatus.endEvent(
+           NDEX_CURRENT_SEGMENT, getSearch ndex ng tr cSet().startup nCurrentSeg nt);
+      LOG. nfo("F rst  ndex ng loop complete. Sett ng up query cac ...");
+      Earlyb rdStatus.beg nEvent(
+          SETUP_QUERY_CACHE, getSearch ndex ng tr cSet().startup nQueryCac Updates);
     }
-    setupQueryCacheIfNeeded();
+    setupQueryCac  fNeeded();
 
-    if (EarlybirdStatus.isStarting() && queryCacheManager.allTasksRan()) {
-      LOG.info("Query cache setup complete. Becoming current now...");
-      EarlybirdStatus.endEvent(
-          SETUP_QUERY_CACHE, getSearchIndexingMetricSet().startupInQueryCacheUpdates);
+     f (Earlyb rdStatus. sStart ng() && queryCac Manager.allTasksRan()) {
+      LOG. nfo("Query cac  setup complete. Becom ng current now...");
+      Earlyb rdStatus.endEvent(
+          SETUP_QUERY_CACHE, getSearch ndex ng tr cSet().startup nQueryCac Updates);
 
-      becomeCurrent();
-      EarlybirdStatus.recordEarlybirdEvent("Archive Earlybird is current");
+      beco Current();
+      Earlyb rdStatus.recordEarlyb rdEvent("Arch ve Earlyb rd  s current");
     }
 
-    updateIndexFreshnessStats(timeSlices);
+    update ndexFreshnessStats(t  Sl ces);
   }
 
-  @VisibleForTesting
-  protected boolean processArchiveTimeSlice(final ArchiveTimeSlice timeSlice)
-      throws CoordinatedEarlybirdActionLockFailed, IOException {
-    PartitionConfig curPartitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
-    long minStatusID = timeSlice.getMinStatusID(curPartitionConfig.getIndexingHashPartitionID());
-    SegmentInfo segmentInfo = segmentManager.getSegmentInfo(minStatusID);
-    if (segmentInfo == null) {
-      return indexSegmentFromScratch(timeSlice);
-    } else if (existingSegmentNeedsUpdating(timeSlice, segmentInfo)) {
-      return indexNewDayAndAppendExistingSegment(timeSlice, segmentInfo);
+  @V s bleForTest ng
+  protected boolean processArch veT  Sl ce(f nal Arch veT  Sl ce t  Sl ce)
+      throws Coord natedEarlyb rdAct onLockFa led,  OExcept on {
+    Part  onConf g curPart  onConf g = dynam cPart  onConf g.getCurrentPart  onConf g();
+    long m nStatus D = t  Sl ce.getM nStatus D(curPart  onConf g.get ndex ngHashPart  on D());
+    Seg nt nfo seg nt nfo = seg ntManager.getSeg nt nfo(m nStatus D);
+     f (seg nt nfo == null) {
+      return  ndexSeg ntFromScratch(t  Sl ce);
+    } else  f (ex st ngSeg ntNeedsUpdat ng(t  Sl ce, seg nt nfo)) {
+      return  ndexNewDayAndAppendEx st ngSeg nt(t  Sl ce, seg nt nfo);
     }
     return true;
   }
 
 
-  @VisibleForTesting
-  SegmentInfo newSegmentInfo(ArchiveTimeSlice timeSlice) throws IOException {
-    return new SegmentInfo(segmentDataProvider.newArchiveSegment(timeSlice),
-        segmentManager.getEarlybirdSegmentFactory(), segmentSyncConfig);
+  @V s bleForTest ng
+  Seg nt nfo newSeg nt nfo(Arch veT  Sl ce t  Sl ce) throws  OExcept on {
+    return new Seg nt nfo(seg ntDataProv der.newArch veSeg nt(t  Sl ce),
+        seg ntManager.getEarlyb rdSeg ntFactory(), seg ntSyncConf g);
   }
 
-  private boolean indexNewDayAndAppendExistingSegment(final ArchiveTimeSlice timeSlice,
-                                                      SegmentInfo segmentInfo)
-      throws CoordinatedEarlybirdActionLockFailed, IOException {
+  pr vate boolean  ndexNewDayAndAppendEx st ngSeg nt(f nal Arch veT  Sl ce t  Sl ce,
+                                                      Seg nt nfo seg nt nfo)
+      throws Coord natedEarlyb rdAct onLockFa led,  OExcept on {
 
-    LOG.info("Updating segment: {}; new endDate will be {} segmentInfo: {}",
-        segmentInfo.getSegment().getTimeSliceID(), timeSlice.getEndDate(), segmentInfo);
+    LOG. nfo("Updat ng seg nt: {}; new endDate w ll be {} seg nt nfo: {}",
+        seg nt nfo.getSeg nt().getT  Sl ce D(), t  Sl ce.getEndDate(), seg nt nfo);
 
-    // Create another new SegmentInfo for indexing
-    final SegmentInfo newSegmentInfoForIndexing = newSegmentInfo(timeSlice);
-    // make a final reference of the old segment info to be passed into closure.
-    final SegmentInfo oldSegmentInfo = segmentInfo;
+    // Create anot r new Seg nt nfo for  ndex ng
+    f nal Seg nt nfo newSeg nt nfoFor ndex ng = newSeg nt nfo(t  Sl ce);
+    // make a f nal reference of t  old seg nt  nfo to be passed  nto closure.
+    f nal Seg nt nfo oldSeg nt nfo = seg nt nfo;
 
-    // Sanity check: the old and new segment should not share the same lucene directory.
-    Preconditions.checkState(
-        !newSegmentInfoForIndexing.getSyncInfo().getLocalLuceneSyncDir().equals(
-            oldSegmentInfo.getSyncInfo().getLocalLuceneSyncDir()));
+    // San y c ck: t  old and new seg nt should not share t  sa  lucene d rectory.
+    Precond  ons.c ckState(
+        !newSeg nt nfoFor ndex ng.getSync nfo().getLocalLuceneSyncD r().equals(
+            oldSeg nt nfo.getSync nfo().getLocalLuceneSyncD r()));
 
-    Preconditions.checkState(
-        !newSegmentInfoForIndexing.getSyncInfo().getLocalSyncDir().equals(
-            oldSegmentInfo.getSyncInfo().getLocalSyncDir()));
+    Precond  ons.c ckState(
+        !newSeg nt nfoFor ndex ng.getSync nfo().getLocalSyncD r().equals(
+            oldSeg nt nfo.getSync nfo().getLocalSyncD r()));
 
-    final ArchiveSegment oldSegment = (ArchiveSegment) segmentInfo.getSegment();
+    f nal Arch veSeg nt oldSeg nt = (Arch veSeg nt) seg nt nfo.getSeg nt();
 
-    return indexSegment(newSegmentInfoForIndexing, oldSegmentInfo, input -> {
-      // we're updating the segment - only index days after the old end date, but only if
-      // we're in the on-disk archive, and we're sure that the previous days have already
-      // been indexed.
-      return !earlybirdIndexConfig.isIndexStoredOnDisk()
-          // First time around, and the segment has not been indexed and optimized yet,
-          // we will want to add all the days
-          || !oldSegmentInfo.isOptimized()
-          || oldSegmentInfo.getIndexSegment().getIndexStats().getStatusCount() == 0
-          || !oldSegment.getDataEndDate().before(timeSlice.getEndDate())
-          // Index any new days
-          || input.after(oldSegment.getDataEndDate());
+    return  ndexSeg nt(newSeg nt nfoFor ndex ng, oldSeg nt nfo,  nput -> {
+      //  're updat ng t  seg nt - only  ndex days after t  old end date, but only  f
+      //  're  n t  on-d sk arch ve, and  're sure that t  prev ous days have already
+      // been  ndexed.
+      return !earlyb rd ndexConf g. s ndexStoredOnD sk()
+          // F rst t   around, and t  seg nt has not been  ndexed and opt m zed yet,
+          //   w ll want to add all t  days
+          || !oldSeg nt nfo. sOpt m zed()
+          || oldSeg nt nfo.get ndexSeg nt().get ndexStats().getStatusCount() == 0
+          || !oldSeg nt.getDataEndDate().before(t  Sl ce.getEndDate())
+          //  ndex any new days
+          ||  nput.after(oldSeg nt.getDataEndDate());
     });
   }
 
-  private boolean existingSegmentNeedsUpdating(ArchiveTimeSlice timeSlice,
-                                               SegmentInfo segmentInfo) {
-    return ((ArchiveSegment) segmentInfo.getSegment())
-        .getDataEndDate().before(timeSlice.getEndDate())
-        // First time around, the end date is the same as the timeSlice end date, but
-        // the segment has not been indexed and optimized yet
-        || (!segmentInfo.isOptimized() && !segmentInfo.wasIndexed())
-        // If indexing failed, this index will not be marked as complete, and we will want
-        // to reindex
-        || !segmentInfo.isComplete();
+  pr vate boolean ex st ngSeg ntNeedsUpdat ng(Arch veT  Sl ce t  Sl ce,
+                                               Seg nt nfo seg nt nfo) {
+    return ((Arch veSeg nt) seg nt nfo.getSeg nt())
+        .getDataEndDate().before(t  Sl ce.getEndDate())
+        // F rst t   around, t  end date  s t  sa  as t  t  Sl ce end date, but
+        // t  seg nt has not been  ndexed and opt m zed yet
+        || (!seg nt nfo. sOpt m zed() && !seg nt nfo.was ndexed())
+        //  f  ndex ng fa led, t   ndex w ll not be marked as complete, and   w ll want
+        // to re ndex
+        || !seg nt nfo. sComplete();
   }
 
-  private boolean indexSegmentFromScratch(ArchiveTimeSlice timeSlice) throws
-      CoordinatedEarlybirdActionLockFailed, IOException {
+  pr vate boolean  ndexSeg ntFromScratch(Arch veT  Sl ce t  Sl ce) throws
+      Coord natedEarlyb rdAct onLockFa led,  OExcept on {
 
-    SegmentInfo segmentInfo = newSegmentInfo(timeSlice);
-    LOG.info("Creating segment: " + segmentInfo.getSegment().getTimeSliceID()
-        + "; new endDate will be " + timeSlice.getEndDate() + " segmentInfo: " + segmentInfo);
+    Seg nt nfo seg nt nfo = newSeg nt nfo(t  Sl ce);
+    LOG. nfo("Creat ng seg nt: " + seg nt nfo.getSeg nt().getT  Sl ce D()
+        + "; new endDate w ll be " + t  Sl ce.getEndDate() + " seg nt nfo: " + seg nt nfo);
 
-    return indexSegment(segmentInfo, null, ArchiveSegment.MATCH_ALL_DATE_PREDICATE);
+    return  ndexSeg nt(seg nt nfo, null, Arch veSeg nt.MATCH_ALL_DATE_PRED CATE);
   }
 
-  private void updateIndexFreshnessStats(List<ArchiveTimeSlice> timeSlices) {
-    if (!timeSlices.isEmpty()) {
-      ArchiveTimeSlice lastTimeslice = timeSlices.get(timeSlices.size() - 1);
+  pr vate vo d update ndexFreshnessStats(L st<Arch veT  Sl ce> t  Sl ces) {
+     f (!t  Sl ces. sEmpty()) {
+      Arch veT  Sl ce lastT  sl ce = t  Sl ces.get(t  Sl ces.s ze() - 1);
 
-      // Add ~24 hours to start of end date to estimate freshest tweet time.
-      indexingMetricSet.freshestTweetTimeMillis.set(
-          lastTimeslice.getEndDate().getTime() + ONE_DAY_MILLIS);
+      // Add ~24 h s to start of end date to est mate fres st t et t  .
+       ndex ng tr cSet.fres stT etT  M ll s.set(
+          lastT  sl ce.getEndDate().getT  () + ONE_DAY_M LL S);
 
-      PartitionConfig curPartitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
-      long maxStatusId = lastTimeslice.getMaxStatusID(
-          curPartitionConfig.getIndexingHashPartitionID());
-      if (maxStatusId > indexingMetricSet.highestStatusId.get()) {
-        indexingMetricSet.highestStatusId.set(maxStatusId);
+      Part  onConf g curPart  onConf g = dynam cPart  onConf g.getCurrentPart  onConf g();
+      long maxStatus d = lastT  sl ce.getMaxStatus D(
+          curPart  onConf g.get ndex ngHashPart  on D());
+       f (maxStatus d >  ndex ng tr cSet.h g stStatus d.get()) {
+         ndex ng tr cSet.h g stStatus d.set(maxStatus d);
       }
     }
   }
 
-  @Override
-  public void shutDownIndexing() {
-    LOG.info("Shutting down.");
-    userUpdatesStreamIndexer.close();
-    userScrubGeoEventStreamIndexer.close();
-    LOG.info("Closed User Event Kafka Consumers. Now Shutting down reader set.");
-    getSegmentDataProvider().getSegmentDataReaderSet().stopAll();
+  @Overr de
+  publ c vo d shutDown ndex ng() {
+    LOG. nfo("Shutt ng down.");
+    userUpdatesStream ndexer.close();
+    userScrubGeoEventStream ndexer.close();
+    LOG. nfo("Closed User Event Kafka Consu rs. Now Shutt ng down reader set.");
+    getSeg ntDataProv der().getSeg ntDataReaderSet().stopAll();
   }
 
   /**
-   * Attempts to index new days of data into the provided segment, indexing only the days that
-   * match the "dateFilter" predicate.
-   * @return true iff indexing succeeded, false otherwise.
+   * Attempts to  ndex new days of data  nto t  prov ded seg nt,  ndex ng only t  days that
+   * match t  "dateF lter" pred cate.
+   * @return true  ff  ndex ng succeeded, false ot rw se.
    */
-  @VisibleForTesting
-  protected boolean indexSegment(final SegmentInfo segmentInfo,
-                                 @Nullable final SegmentInfo segmentToAppend,
-                                 final Predicate<Date> dateFilter)
-      throws CoordinatedEarlybirdActionLockFailed, IOException {
-    // Don't coordinate while we're starting up
-    if (!EarlybirdStatus.isStarting()) {
-      return coordinatedDailyUpdate.execute(segmentInfo.getSegmentName(),
-          isCoordinated -> innerIndexSegment(segmentInfo, segmentToAppend, dateFilter));
+  @V s bleForTest ng
+  protected boolean  ndexSeg nt(f nal Seg nt nfo seg nt nfo,
+                                 @Nullable f nal Seg nt nfo seg ntToAppend,
+                                 f nal Pred cate<Date> dateF lter)
+      throws Coord natedEarlyb rdAct onLockFa led,  OExcept on {
+    // Don't coord nate wh le  're start ng up
+     f (!Earlyb rdStatus. sStart ng()) {
+      return coord natedDa lyUpdate.execute(seg nt nfo.getSeg ntNa (),
+           sCoord nated ->  nner ndexSeg nt(seg nt nfo, seg ntToAppend, dateF lter));
     } else {
-      return innerIndexSegment(segmentInfo, segmentToAppend, dateFilter);
+      return  nner ndexSeg nt(seg nt nfo, seg ntToAppend, dateF lter);
     }
   }
 
-  private boolean innerIndexSegment(SegmentInfo segmentInfo,
-                                    @Nullable SegmentInfo segmentToAppend,
-                                    Predicate<Date> dateFilter)
-      throws IOException {
+  pr vate boolean  nner ndexSeg nt(Seg nt nfo seg nt nfo,
+                                    @Nullable Seg nt nfo seg ntToAppend,
+                                    Pred cate<Date> dateF lter)
+      throws  OExcept on {
 
-    // First try to load the new day from HDFS / Local disk
-    if (new SegmentLoader(segmentSyncConfig, criticalExceptionHandler).load(segmentInfo)) {
-      LOG.info("Successful loaded segment for new day: " + segmentInfo);
-      segmentManager.putSegmentInfo(segmentInfo);
-      gcAfterIndexing.increment();
-      GCUtil.runGC();
+    // F rst try to load t  new day from HDFS / Local d sk
+     f (new Seg ntLoader(seg ntSyncConf g, cr  calExcept onHandler).load(seg nt nfo)) {
+      LOG. nfo("Successful loaded seg nt for new day: " + seg nt nfo);
+      seg ntManager.putSeg nt nfo(seg nt nfo);
+      gcAfter ndex ng. ncre nt();
+      GCUt l.runGC();
       return true;
     }
 
-    LOG.info("Failed to load segment for new day. Will index segment: " + segmentInfo);
-    RecordReader<TweetDocument> tweetReader = ((ArchiveSegment) segmentInfo.getSegment())
-        .getStatusRecordReader(earlybirdIndexConfig.createDocumentFactory(), dateFilter);
+    LOG. nfo("Fa led to load seg nt for new day. W ll  ndex seg nt: " + seg nt nfo);
+    RecordReader<T etDocu nt> t etReader = ((Arch veSeg nt) seg nt nfo.getSeg nt())
+        .getStatusRecordReader(earlyb rd ndexConf g.createDocu ntFactory(), dateF lter);
     try {
-      // Read and index the statuses
-      boolean success = newSimpleSegmentIndexer(tweetReader, segmentToAppend)
-          .indexSegment(segmentInfo);
-      if (!success) {
+      // Read and  ndex t  statuses
+      boolean success = newS mpleSeg nt ndexer(t etReader, seg ntToAppend)
+          . ndexSeg nt(seg nt nfo);
+       f (!success) {
         return false;
       }
-    } finally {
-      tweetReader.stop();
+    } f nally {
+      t etReader.stop();
     }
 
-    if (!SegmentOptimizer.optimize(segmentInfo)) {
-      // We consider the whole indexing event as failed if we fail to optimize.
-      LOG.error("Failed to optimize segment: " + segmentInfo);
-      segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
+     f (!Seg ntOpt m zer.opt m ze(seg nt nfo)) {
+      //   cons der t  whole  ndex ng event as fa led  f   fa l to opt m ze.
+      LOG.error("Fa led to opt m ze seg nt: " + seg nt nfo);
+      seg nt nfo.deleteLocal ndexedSeg ntD rectory m d ately();
       return false;
     }
 
-    if (!segmentWarmer.warmSegmentIfNecessary(segmentInfo)) {
-      // We consider the whole indexing event as failed if we failed to warm (because we open
-      // index readers in the warmer).
-      LOG.error("Failed to warm segment: " + segmentInfo);
-      segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
+     f (!seg ntWar r.warmSeg nt fNecessary(seg nt nfo)) {
+      //   cons der t  whole  ndex ng event as fa led  f   fa led to warm (because   open
+      //  ndex readers  n t  war r).
+      LOG.error("Fa led to warm seg nt: " + seg nt nfo);
+      seg nt nfo.deleteLocal ndexedSeg ntD rectory m d ately();
       return false;
     }
 
-    // Flush and upload segment to HDFS. If this fails, we just log a warning and return true.
-    boolean success = new SegmentHdfsFlusher(zkTryLockFactory, segmentSyncConfig)
-        .flushSegmentToDiskAndHDFS(segmentInfo);
-    if (!success) {
-      LOG.warn("Failed to flush segment to HDFS: " + segmentInfo);
+    // Flush and upload seg nt to HDFS.  f t  fa ls,   just log a warn ng and return true.
+    boolean success = new Seg ntHdfsFlus r(zkTryLockFactory, seg ntSyncConf g)
+        .flushSeg ntToD skAndHDFS(seg nt nfo);
+     f (!success) {
+      LOG.warn("Fa led to flush seg nt to HDFS: " + seg nt nfo);
     }
 
-    segmentManager.putSegmentInfo(segmentInfo);
-    gcAfterIndexing.increment();
-    GCUtil.runGC();
+    seg ntManager.putSeg nt nfo(seg nt nfo);
+    gcAfter ndex ng. ncre nt();
+    GCUt l.runGC();
     return true;
   }
 
-  @VisibleForTesting
-  protected SimpleSegmentIndexer newSimpleSegmentIndexer(
-      RecordReader<TweetDocument> tweetReader, SegmentInfo segmentToAppend) {
-    return new SimpleSegmentIndexer(tweetReader, indexingMetricSet, segmentToAppend);
+  @V s bleForTest ng
+  protected S mpleSeg nt ndexer newS mpleSeg nt ndexer(
+      RecordReader<T etDocu nt> t etReader, Seg nt nfo seg ntToAppend) {
+    return new S mpleSeg nt ndexer(t etReader,  ndex ng tr cSet, seg ntToAppend);
   }
 
-  @Override
-  public boolean isCaughtUpForTests() {
-    return EarlybirdStatus.getStatusCode() == EarlybirdStatusCode.CURRENT;
+  @Overr de
+  publ c boolean  sCaughtUpForTests() {
+    return Earlyb rdStatus.getStatusCode() == Earlyb rdStatusCode.CURRENT;
   }
 
-  public CoordinatedEarlybirdActionInterface getCoordinatedOptimizer() {
-    return this.coordinatedDailyUpdate;
+  publ c Coord natedEarlyb rdAct on nterface getCoord natedOpt m zer() {
+    return t .coord natedDa lyUpdate;
   }
 
-  public ArchiveTimeSlicer getTimeSlicer() {
-    return timeSlicer;
+  publ c Arch veT  Sl cer getT  Sl cer() {
+    return t  Sl cer;
   }
 }

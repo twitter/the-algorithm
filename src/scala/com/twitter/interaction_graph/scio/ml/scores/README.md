@@ -1,34 +1,34 @@
-## InteractionGraphLabels Dataflow Job
+##  nteract onGraphLabels Dataflow Job
 
-#### IntelliJ
+####  ntell J
 ```
-fastpass create --name rg_scores --intellij src/scala/com/twitter/interaction_graph/scio/ml/scores
-```
-
-#### Compile
-```
-bazel build src/scala/com/twitter/interaction_graph/scio/ml/scores
+fastpass create --na  rg_scores -- ntell j src/scala/com/tw ter/ nteract on_graph/sc o/ml/scores
 ```
 
-#### Build Jar
+#### Comp le
 ```
-bazel bundle src/scala/com/twitter/interaction_graph/scio/ml/scores
+bazel bu ld src/scala/com/tw ter/ nteract on_graph/sc o/ml/scores
 ```
 
-#### Run Scheduled Job
+#### Bu ld Jar
 ```
-export PROJECTID=twttr-recos-ml-prod
-export REGION=us-central1
-export JOB_NAME=interaction-graph-scores-dataflow
+bazel bundle src/scala/com/tw ter/ nteract on_graph/sc o/ml/scores
+```
 
-bin/d6w schedule \
-  ${PROJECTID}/${REGION}/${JOB_NAME} \
-  src/scala/com/twitter/interaction_graph/scio/ml/scores/config.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.project=${PROJECTID} \
-  --bind=profile.region=${REGION} \
-  --bind=profile.job_name=${JOB_NAME} \
-  --bind=profile.environment=prod \
-  --bind=profile.date=2022-06-23 \
-  --bind=profile.output_path=manhattan_sequence_files/real_graph_scores_v2
+#### Run Sc duled Job
+```
+export PROJECT D=twttr-recos-ml-prod
+export REG ON=us-central1
+export JOB_NAME= nteract on-graph-scores-dataflow
+
+b n/d6w sc dule \
+  ${PROJECT D}/${REG ON}/${JOB_NAME} \
+  src/scala/com/tw ter/ nteract on_graph/sc o/ml/scores/conf g.d6w \
+  --b nd=prof le.user_na =cassowary \
+  --b nd=prof le.project=${PROJECT D} \
+  --b nd=prof le.reg on=${REG ON} \
+  --b nd=prof le.job_na =${JOB_NAME} \
+  --b nd=prof le.env ron nt=prod \
+  --b nd=prof le.date=2022-06-23 \
+  --b nd=prof le.output_path=manhattan_sequence_f les/real_graph_scores_v2
 ```

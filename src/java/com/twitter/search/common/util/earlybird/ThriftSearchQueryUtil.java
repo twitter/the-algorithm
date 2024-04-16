@@ -1,29 +1,29 @@
-package com.twitter.search.common.util.earlybird;
+package com.tw ter.search.common.ut l.earlyb rd;
 
-import com.twitter.search.common.query.thriftjava.CollectorParams;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
+ mport com.tw ter.search.common.query.thr ftjava.CollectorParams;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchQuery;
 
 /**
- * Utility class from constructing ThriftSearchQuery.
+ * Ut l y class from construct ng Thr ftSearchQuery.
  */
-public final class ThriftSearchQueryUtil {
-  private ThriftSearchQueryUtil() { }
+publ c f nal class Thr ftSearchQueryUt l {
+  pr vate Thr ftSearchQueryUt l() { }
 
   /**
-   * Convenience methods for constructing a ThriftSearchQuery.
+   * Conven ence  thods for construct ng a Thr ftSearchQuery.
    */
-  public static ThriftSearchQuery newSearchQuery(String serializedQuery, int numResults) {
-    ThriftSearchQuery searchQuery = new ThriftSearchQuery();
-    searchQuery.setSerializedQuery(serializedQuery);
+  publ c stat c Thr ftSearchQuery newSearchQuery(Str ng ser al zedQuery,  nt numResults) {
+    Thr ftSearchQuery searchQuery = new Thr ftSearchQuery();
+    searchQuery.setSer al zedQuery(ser al zedQuery);
     searchQuery.setCollectorParams(new CollectorParams().setNumResultsToReturn(numResults));
     return searchQuery;
   }
 
-  /** Determines if the given request was initiated by a logged in user. */
-  public static boolean requestInitiatedByLoggedInUser(EarlybirdRequest request) {
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
-    return (searchQuery != null) && searchQuery.isSetSearcherId()
-      && (searchQuery.getSearcherId() > 0);
+  /** Determ nes  f t  g ven request was  n  ated by a logged  n user. */
+  publ c stat c boolean request n  atedByLogged nUser(Earlyb rdRequest request) {
+    Thr ftSearchQuery searchQuery = request.getSearchQuery();
+    return (searchQuery != null) && searchQuery. sSetSearc r d()
+      && (searchQuery.getSearc r d() > 0);
   }
 }

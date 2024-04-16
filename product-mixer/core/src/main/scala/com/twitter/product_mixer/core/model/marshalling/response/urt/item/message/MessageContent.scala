@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.message
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. em. ssage
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Soc alContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.r chtext.R chText
 
-sealed trait MessageContent
+sealed tra   ssageContent
 
-case class InlinePromptMessageContent(
-  headerText: String,
-  bodyText: Option[String],
-  primaryButtonAction: Option[MessageTextAction],
-  secondaryButtonAction: Option[MessageTextAction],
-  headerRichText: Option[RichText],
-  bodyRichText: Option[RichText],
-  socialContext: Option[SocialContext],
-  userFacepile: Option[UserFacepile])
-    extends MessageContent
+case class  nl nePrompt ssageContent(
+   aderText: Str ng,
+  bodyText: Opt on[Str ng],
+  pr maryButtonAct on: Opt on[ ssageTextAct on],
+  secondaryButtonAct on: Opt on[ ssageTextAct on],
+   aderR chText: Opt on[R chText],
+  bodyR chText: Opt on[R chText],
+  soc alContext: Opt on[Soc alContext],
+  userFacep le: Opt on[UserFacep le])
+    extends  ssageContent
 
-case class HeaderImagePromptMessageContent(
-  headerImage: MessageImage,
-  headerText: Option[String],
-  bodyText: Option[String],
-  primaryButtonAction: Option[MessageTextAction],
-  secondaryButtonAction: Option[MessageTextAction],
-  action: Option[MessageAction],
-  headerRichText: Option[RichText],
-  bodyRichText: Option[RichText])
-    extends MessageContent
+case class  ader magePrompt ssageContent(
+   ader mage:  ssage mage,
+   aderText: Opt on[Str ng],
+  bodyText: Opt on[Str ng],
+  pr maryButtonAct on: Opt on[ ssageTextAct on],
+  secondaryButtonAct on: Opt on[ ssageTextAct on],
+  act on: Opt on[ ssageAct on],
+   aderR chText: Opt on[R chText],
+  bodyR chText: Opt on[R chText])
+    extends  ssageContent
 
-case class CompactPromptMessageContent(
-  headerText: String,
-  bodyText: Option[String],
-  primaryButtonAction: Option[MessageTextAction],
-  secondaryButtonAction: Option[MessageTextAction],
-  action: Option[MessageAction],
-  headerRichText: Option[RichText],
-  bodyRichText: Option[RichText])
-    extends MessageContent
+case class CompactPrompt ssageContent(
+   aderText: Str ng,
+  bodyText: Opt on[Str ng],
+  pr maryButtonAct on: Opt on[ ssageTextAct on],
+  secondaryButtonAct on: Opt on[ ssageTextAct on],
+  act on: Opt on[ ssageAct on],
+   aderR chText: Opt on[R chText],
+  bodyR chText: Opt on[R chText])
+    extends  ssageContent

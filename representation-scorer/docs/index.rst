@@ -1,39 +1,39 @@
-Representation Scorer (RSX)
+Representat on Scorer (RSX)
 ###########################
 
-Overview
+Overv ew
 ========
 
-Representation Scorer (RSX) is a StratoFed service which serves scores for pairs of entities (User, Tweet, Topic...) based on some representation of those entities. For example, it serves User-Tweet scores based on the cosine similarity of SimClusters embeddings for each of these.  It aims to provide these with low latency and at high scale, to support applications such as scoring for ANN candidate generation and feature hydration via feature store.
+Representat on Scorer (RSX)  s a StratoFed serv ce wh ch serves scores for pa rs of ent  es (User, T et, Top c...) based on so  representat on of those ent  es. For example,   serves User-T et scores based on t  cos ne s m lar y of S mClusters embedd ngs for each of t se.    a ms to prov de t se w h low latency and at h gh scale, to support appl cat ons such as scor ng for ANN cand date generat on and feature hydrat on v a feature store.
 
 
 Current use cases
 -----------------
 
-RSX currently serves traffic for the following use cases:
+RSX currently serves traff c for t  follow ng use cases:
 
-- User-Tweet similarity scores for Home ranking, using SimClusters embedding dot product
-- Topic-Tweet similarity scores for topical tweet candidate generation and topic social proof, using SimClusters embedding cosine similarity and CERTO scores
-- Tweet-Tweet and User-Tweet similarity scores for ANN candidate generation, using SimClusters embedding cosine similarity 
-- (in development) User-Tweet similarity scores for Home ranking, based on various aggregations of similarities with recent faves, retweets and follows performed by the user
+- User-T et s m lar y scores for Ho  rank ng, us ng S mClusters embedd ng dot product
+- Top c-T et s m lar y scores for top cal t et cand date generat on and top c soc al proof, us ng S mClusters embedd ng cos ne s m lar y and CERTO scores
+- T et-T et and User-T et s m lar y scores for ANN cand date generat on, us ng S mClusters embedd ng cos ne s m lar y 
+- ( n develop nt) User-T et s m lar y scores for Ho  rank ng, based on var ous aggregat ons of s m lar  es w h recent faves, ret ets and follows perfor d by t  user
 
-Getting Started
+Gett ng Started
 ===============
 
-Fetching scores
+Fetch ng scores
 ---------------
 
-Scores are served from the recommendations/representation_scorer/score column.
+Scores are served from t  recom ndat ons/representat on_scorer/score column.
 
-Using RSX for your application
+Us ng RSX for y  appl cat on
 ------------------------------
 
-RSX may be a good fit for your application if you need scores based on combinations of SimCluster embeddings for core nouns. We also plan to support other embeddings and scoring approaches in the future.
+RSX may be a good f  for y  appl cat on  f   need scores based on comb nat ons of S mCluster embedd ngs for core nouns.   also plan to support ot r embedd ngs and scor ng approac s  n t  future.
 
 .. toctree::
    :maxdepth: 2
-   :hidden:
+   :h dden:
 
-   index
+    ndex
    
 

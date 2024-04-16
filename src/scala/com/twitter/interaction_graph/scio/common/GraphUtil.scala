@@ -1,93 +1,93 @@
-package com.twitter.interaction_graph.scio.common
+package com.tw ter. nteract on_graph.sc o.common
 
-import com.spotify.scio.ScioMetrics
-import com.spotify.scio.values.SCollection
-import com.twitter.socialgraph.presto.thriftscala.{Edge => SocialGraphEdge}
-import com.twitter.flockdb.tools.datasets.flock.thriftscala.FlockEdge
-import com.twitter.interaction_graph.scio.common.FeatureGroups.HEALTH_FEATURE_LIST
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.FeatureName
+ mport com.spot fy.sc o.Sc o tr cs
+ mport com.spot fy.sc o.values.SCollect on
+ mport com.tw ter.soc algraph.presto.thr ftscala.{Edge => Soc alGraphEdge}
+ mport com.tw ter.flockdb.tools.datasets.flock.thr ftscala.FlockEdge
+ mport com.tw ter. nteract on_graph.sc o.common.FeatureGroups.HEALTH_FEATURE_L ST
+ mport com.tw ter. nteract on_graph.thr ftscala.Edge
+ mport com.tw ter. nteract on_graph.thr ftscala.FeatureNa 
 
-import java.time.Instant
-import java.time.temporal.ChronoUnit
+ mport java.t  . nstant
+ mport java.t  .temporal.ChronoUn 
 
-object GraphUtil {
+object GraphUt l {
 
   /**
-   * Convert FlockEdge into common InteractionGraphRawInput class.
-   * updatedAt field in socialgraph.unfollows is in seconds.
+   * Convert FlockEdge  nto common  nteract onGraphRaw nput class.
+   * updatedAt f eld  n soc algraph.unfollows  s  n seconds.
    */
   def getFlockFeatures(
-    edges: SCollection[FlockEdge],
-    featureName: FeatureName,
-    currentTimeMillis: Long
-  ): SCollection[InteractionGraphRawInput] = {
+    edges: SCollect on[FlockEdge],
+    featureNa : FeatureNa ,
+    currentT  M ll s: Long
+  ): SCollect on[ nteract onGraphRaw nput] = {
     edges
-      .withName(s"${featureName.toString} - Converting flock edge to interaction graph input")
+      .w hNa (s"${featureNa .toStr ng} - Convert ng flock edge to  nteract on graph  nput")
       .map { edge =>
-        val age = ChronoUnit.DAYS.between(
-          Instant.ofEpochMilli(edge.updatedAt * 1000L), // updatedAt is in seconds
-          Instant.ofEpochMilli(currentTimeMillis)
+        val age = ChronoUn .DAYS.bet en(
+           nstant.ofEpochM ll (edge.updatedAt * 1000L), // updatedAt  s  n seconds
+           nstant.ofEpochM ll (currentT  M ll s)
         )
-        InteractionGraphRawInput(
-          edge.sourceId,
-          edge.destinationId,
-          featureName,
-          age.max(0).toInt,
+         nteract onGraphRaw nput(
+          edge.s ce d,
+          edge.dest nat on d,
+          featureNa ,
+          age.max(0).to nt,
           1.0)
       }
   }
 
   /**
-   * Convert com.twitter.socialgraph.presto.thriftscala.Edge (from unfollows) into common InteractionGraphRawInput class.
-   * updatedAt field in socialgraph.unfollows is in seconds.
+   * Convert com.tw ter.soc algraph.presto.thr ftscala.Edge (from unfollows)  nto common  nteract onGraphRaw nput class.
+   * updatedAt f eld  n soc algraph.unfollows  s  n seconds.
    */
-  def getSocialGraphFeatures(
-    edges: SCollection[SocialGraphEdge],
-    featureName: FeatureName,
-    currentTimeMillis: Long
-  ): SCollection[InteractionGraphRawInput] = {
+  def getSoc alGraphFeatures(
+    edges: SCollect on[Soc alGraphEdge],
+    featureNa : FeatureNa ,
+    currentT  M ll s: Long
+  ): SCollect on[ nteract onGraphRaw nput] = {
     edges
-      .withName(s"${featureName.toString} - Converting flock edge to interaction graph input")
+      .w hNa (s"${featureNa .toStr ng} - Convert ng flock edge to  nteract on graph  nput")
       .map { edge =>
-        val age = ChronoUnit.DAYS.between(
-          Instant.ofEpochMilli(edge.updatedAt * 1000L), // updatedAt is in seconds
-          Instant.ofEpochMilli(currentTimeMillis)
+        val age = ChronoUn .DAYS.bet en(
+           nstant.ofEpochM ll (edge.updatedAt * 1000L), // updatedAt  s  n seconds
+           nstant.ofEpochM ll (currentT  M ll s)
         )
-        InteractionGraphRawInput(
-          edge.sourceId,
-          edge.destinationId,
-          featureName,
-          age.max(0).toInt,
+         nteract onGraphRaw nput(
+          edge.s ce d,
+          edge.dest nat on d,
+          featureNa ,
+          age.max(0).to nt,
           1.0)
       }
   }
-  def isFollow(edge: Edge): Boolean = {
+  def  sFollow(edge: Edge): Boolean = {
     val result = edge.features
-      .find(_.name == FeatureName.NumFollows)
-      .exists(_.tss.mean == 1.0)
+      .f nd(_.na  == FeatureNa .NumFollows)
+      .ex sts(_.tss. an == 1.0)
     result
   }
 
-  def filterExtremes(edge: Edge): Boolean = {
-    if (edge.weight.exists(_.isNaN)) {
-      ScioMetrics.counter("filter extremes", "nan").inc()
+  def f lterExtre s(edge: Edge): Boolean = {
+     f (edge.  ght.ex sts(_. sNaN)) {
+      Sc o tr cs.counter("f lter extre s", "nan"). nc()
       false
-    } else if (edge.weight.contains(Double.MaxValue)) {
-      ScioMetrics.counter("filter extremes", "max value").inc()
+    } else  f (edge.  ght.conta ns(Double.MaxValue)) {
+      Sc o tr cs.counter("f lter extre s", "max value"). nc()
       false
-    } else if (edge.weight.contains(Double.PositiveInfinity)) {
-      ScioMetrics.counter("filter extremes", "+ve inf").inc()
+    } else  f (edge.  ght.conta ns(Double.Pos  ve nf n y)) {
+      Sc o tr cs.counter("f lter extre s", "+ve  nf"). nc()
       false
-    } else if (edge.weight.exists(_ < 0.0)) {
-      ScioMetrics.counter("filter extremes", "negative").inc()
+    } else  f (edge.  ght.ex sts(_ < 0.0)) {
+      Sc o tr cs.counter("f lter extre s", "negat ve"). nc()
       false
     } else {
       true
     }
   }
 
-  def filterNegative(edge: Edge): Boolean = {
-    !edge.features.find(ef => HEALTH_FEATURE_LIST.contains(ef.name)).exists(_.tss.mean > 0.0)
+  def f lterNegat ve(edge: Edge): Boolean = {
+    !edge.features.f nd(ef => HEALTH_FEATURE_L ST.conta ns(ef.na )).ex sts(_.tss. an > 0.0)
   }
 }

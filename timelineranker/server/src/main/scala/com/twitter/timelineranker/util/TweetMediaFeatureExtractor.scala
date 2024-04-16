@@ -1,135 +1,135 @@
-package com.twitter.timelineranker.util
+package com.tw ter.t  l neranker.ut l
 
-import com.twitter.mediaservices.commons.tweetmedia.thriftscala.MediaInfo
-import com.twitter.tweetypie.thriftscala.MediaEntity
-import com.twitter.tweetypie.thriftscala.MediaTag
-import com.twitter.tweetypie.{thriftscala => tweetypie}
-import scala.collection.Map
-import com.twitter.mediaservices.commons.mediainformation.thriftscala.ColorPaletteItem
-import com.twitter.mediaservices.commons.mediainformation.thriftscala.Face
-import com.twitter.timelineranker.recap.model.ContentFeatures
+ mport com.tw ter. d aserv ces.commons.t et d a.thr ftscala. d a nfo
+ mport com.tw ter.t etyp e.thr ftscala. d aEnt y
+ mport com.tw ter.t etyp e.thr ftscala. d aTag
+ mport com.tw ter.t etyp e.{thr ftscala => t etyp e}
+ mport scala.collect on.Map
+ mport com.tw ter. d aserv ces.commons. d a nformat on.thr ftscala.ColorPalette em
+ mport com.tw ter. d aserv ces.commons. d a nformat on.thr ftscala.Face
+ mport com.tw ter.t  l neranker.recap.model.ContentFeatures
 
-object TweetMediaFeaturesExtractor {
+object T et d aFeaturesExtractor {
 
-  // Method to overload for content features.
-  def addMediaFeaturesFromTweet(
-    inputFeatures: ContentFeatures,
-    tweet: tweetypie.Tweet,
-    enableTweetMediaHydration: Boolean
+  //  thod to overload for content features.
+  def add d aFeaturesFromT et(
+     nputFeatures: ContentFeatures,
+    t et: t etyp e.T et,
+    enableT et d aHydrat on: Boolean
   ): ContentFeatures = {
-    val featuresWithMediaEntity = tweet.media
-      .map { mediaEntities =>
-        val sizeFeatures = getSizeFeatures(mediaEntities)
-        val playbackFeatures = getPlaybackFeatures(mediaEntities)
-        val mediaWidths = sizeFeatures.map(_.width.toShort)
-        val mediaHeights = sizeFeatures.map(_.height.toShort)
-        val resizeMethods = sizeFeatures.map(_.resizeMethod.toShort)
-        val faceMapAreas = getFaceMapAreas(mediaEntities)
-        val sortedColorPalette = getSortedColorPalette(mediaEntities)
-        val stickerFeatures = getStickerFeatures(mediaEntities)
-        val mediaOriginProviders = getMediaOriginProviders(mediaEntities)
-        val isManaged = getIsManaged(mediaEntities)
-        val is360 = getIs360(mediaEntities)
-        val viewCount = getViewCount(mediaEntities)
-        val userDefinedProductMetadataFeatures =
-          getUserDefinedProductMetadataFeatures(mediaEntities)
-        val isMonetizable =
-          getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.isMonetizable))
-        val isEmbeddable =
-          getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.isEmbeddable))
-        val hasSelectedPreviewImage =
-          getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.hasSelectedPreviewImage))
-        val hasTitle = getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.hasTitle))
-        val hasDescription =
-          getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.hasDescription))
-        val hasVisitSiteCallToAction = getOptBooleanFromSeqOpt(
-          userDefinedProductMetadataFeatures.map(_.hasVisitSiteCallToAction))
-        val hasAppInstallCallToAction = getOptBooleanFromSeqOpt(
-          userDefinedProductMetadataFeatures.map(_.hasAppInstallCallToAction))
-        val hasWatchNowCallToAction =
-          getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.hasWatchNowCallToAction))
+    val featuresW h d aEnt y = t et. d a
+      .map {  d aEnt  es =>
+        val s zeFeatures = getS zeFeatures( d aEnt  es)
+        val playbackFeatures = getPlaybackFeatures( d aEnt  es)
+        val  d aW dths = s zeFeatures.map(_.w dth.toShort)
+        val  d a  ghts = s zeFeatures.map(_.  ght.toShort)
+        val res ze thods = s zeFeatures.map(_.res ze thod.toShort)
+        val faceMapAreas = getFaceMapAreas( d aEnt  es)
+        val sortedColorPalette = getSortedColorPalette( d aEnt  es)
+        val st ckerFeatures = getSt ckerFeatures( d aEnt  es)
+        val  d aOr g nProv ders = get d aOr g nProv ders( d aEnt  es)
+        val  sManaged = get sManaged( d aEnt  es)
+        val  s360 = get s360( d aEnt  es)
+        val v ewCount = getV ewCount( d aEnt  es)
+        val userDef nedProduct tadataFeatures =
+          getUserDef nedProduct tadataFeatures( d aEnt  es)
+        val  sMonet zable =
+          getOptBooleanFromSeqOpt(userDef nedProduct tadataFeatures.map(_. sMonet zable))
+        val  sEmbeddable =
+          getOptBooleanFromSeqOpt(userDef nedProduct tadataFeatures.map(_. sEmbeddable))
+        val hasSelectedPrev ew mage =
+          getOptBooleanFromSeqOpt(userDef nedProduct tadataFeatures.map(_.hasSelectedPrev ew mage))
+        val hasT le = getOptBooleanFromSeqOpt(userDef nedProduct tadataFeatures.map(_.hasT le))
+        val hasDescr pt on =
+          getOptBooleanFromSeqOpt(userDef nedProduct tadataFeatures.map(_.hasDescr pt on))
+        val hasV s S eCallToAct on = getOptBooleanFromSeqOpt(
+          userDef nedProduct tadataFeatures.map(_.hasV s S eCallToAct on))
+        val hasApp nstallCallToAct on = getOptBooleanFromSeqOpt(
+          userDef nedProduct tadataFeatures.map(_.hasApp nstallCallToAct on))
+        val hasWatchNowCallToAct on =
+          getOptBooleanFromSeqOpt(userDef nedProduct tadataFeatures.map(_.hasWatchNowCallToAct on))
 
-        inputFeatures.copy(
-          videoDurationMs = playbackFeatures.durationMs,
-          bitRate = playbackFeatures.bitRate,
-          aspectRatioNum = playbackFeatures.aspectRatioNum,
-          aspectRatioDen = playbackFeatures.aspectRatioDen,
-          widths = Some(mediaWidths),
-          heights = Some(mediaHeights),
-          resizeMethods = Some(resizeMethods),
-          faceAreas = Some(faceMapAreas),
-          dominantColorRed = sortedColorPalette.headOption.map(_.rgb.red),
-          dominantColorBlue = sortedColorPalette.headOption.map(_.rgb.blue),
-          dominantColorGreen = sortedColorPalette.headOption.map(_.rgb.green),
-          dominantColorPercentage = sortedColorPalette.headOption.map(_.percentage),
-          numColors = Some(sortedColorPalette.size.toShort),
-          stickerIds = Some(stickerFeatures),
-          mediaOriginProviders = Some(mediaOriginProviders),
-          isManaged = Some(isManaged),
-          is360 = Some(is360),
-          viewCount = viewCount,
-          isMonetizable = isMonetizable,
-          isEmbeddable = isEmbeddable,
-          hasSelectedPreviewImage = hasSelectedPreviewImage,
-          hasTitle = hasTitle,
-          hasDescription = hasDescription,
-          hasVisitSiteCallToAction = hasVisitSiteCallToAction,
-          hasAppInstallCallToAction = hasAppInstallCallToAction,
-          hasWatchNowCallToAction = hasWatchNowCallToAction
+         nputFeatures.copy(
+          v deoDurat onMs = playbackFeatures.durat onMs,
+          b Rate = playbackFeatures.b Rate,
+          aspectRat oNum = playbackFeatures.aspectRat oNum,
+          aspectRat oDen = playbackFeatures.aspectRat oDen,
+          w dths = So ( d aW dths),
+            ghts = So ( d a  ghts),
+          res ze thods = So (res ze thods),
+          faceAreas = So (faceMapAreas),
+          dom nantColorRed = sortedColorPalette. adOpt on.map(_.rgb.red),
+          dom nantColorBlue = sortedColorPalette. adOpt on.map(_.rgb.blue),
+          dom nantColorGreen = sortedColorPalette. adOpt on.map(_.rgb.green),
+          dom nantColorPercentage = sortedColorPalette. adOpt on.map(_.percentage),
+          numColors = So (sortedColorPalette.s ze.toShort),
+          st cker ds = So (st ckerFeatures),
+           d aOr g nProv ders = So ( d aOr g nProv ders),
+           sManaged = So ( sManaged),
+           s360 = So ( s360),
+          v ewCount = v ewCount,
+           sMonet zable =  sMonet zable,
+           sEmbeddable =  sEmbeddable,
+          hasSelectedPrev ew mage = hasSelectedPrev ew mage,
+          hasT le = hasT le,
+          hasDescr pt on = hasDescr pt on,
+          hasV s S eCallToAct on = hasV s S eCallToAct on,
+          hasApp nstallCallToAct on = hasApp nstallCallToAct on,
+          hasWatchNowCallToAct on = hasWatchNowCallToAct on
         )
       }
-      .getOrElse(inputFeatures)
+      .getOrElse( nputFeatures)
 
-    val featuresWithMediaTags = tweet.mediaTags
-      .map { mediaTags =>
-        val mediaTagScreenNames = getMediaTagScreenNames(mediaTags.tagMap)
-        val numMediaTags = mediaTagScreenNames.size
+    val featuresW h d aTags = t et. d aTags
+      .map {  d aTags =>
+        val  d aTagScreenNa s = get d aTagScreenNa s( d aTags.tagMap)
+        val num d aTags =  d aTagScreenNa s.s ze
 
-        featuresWithMediaEntity.copy(
-          mediaTagScreenNames = Some(mediaTagScreenNames),
-          numMediaTags = Some(numMediaTags.toShort)
+        featuresW h d aEnt y.copy(
+           d aTagScreenNa s = So ( d aTagScreenNa s),
+          num d aTags = So (num d aTags.toShort)
         )
       }
-      .getOrElse(featuresWithMediaEntity)
+      .getOrElse(featuresW h d aEnt y)
 
-    if (enableTweetMediaHydration) {
-      featuresWithMediaTags
-        .copy(media = tweet.media)
+     f (enableT et d aHydrat on) {
+      featuresW h d aTags
+        .copy( d a = t et. d a)
     } else {
-      featuresWithMediaTags
+      featuresW h d aTags
     }
   }
 
-  // Extracts height, width and resize method of photo/video.
-  private def getSizeFeatures(mediaEntities: Seq[MediaEntity]): Seq[MediaSizeFeatures] = {
-    mediaEntities.map { mediaEntity =>
-      mediaEntity.sizes.foldLeft(MediaSizeFeatures(0, 0, 0))((accDimensions, dimensions) =>
-        MediaSizeFeatures(
-          width = math.max(dimensions.width, accDimensions.width),
-          height = math.max(dimensions.height, accDimensions.height),
-          resizeMethod = math.max(dimensions.resizeMethod.getValue, accDimensions.resizeMethod)
+  // Extracts   ght, w dth and res ze  thod of photo/v deo.
+  pr vate def getS zeFeatures( d aEnt  es: Seq[ d aEnt y]): Seq[ d aS zeFeatures] = {
+     d aEnt  es.map {  d aEnt y =>
+       d aEnt y.s zes.foldLeft( d aS zeFeatures(0, 0, 0))((accD  ns ons, d  ns ons) =>
+         d aS zeFeatures(
+          w dth = math.max(d  ns ons.w dth, accD  ns ons.w dth),
+            ght = math.max(d  ns ons.  ght, accD  ns ons.  ght),
+          res ze thod = math.max(d  ns ons.res ze thod.getValue, accD  ns ons.res ze thod)
         ))
     }
   }
 
-  // Extracts media playback features
-  private def getPlaybackFeatures(mediaEntities: Seq[MediaEntity]): PlaybackFeatures = {
-    val allPlaybackFeatures = mediaEntities
-      .flatMap { mediaEntity =>
-        mediaEntity.mediaInfo map {
-          case videoEntity: MediaInfo.VideoInfo =>
+  // Extracts  d a playback features
+  pr vate def getPlaybackFeatures( d aEnt  es: Seq[ d aEnt y]): PlaybackFeatures = {
+    val allPlaybackFeatures =  d aEnt  es
+      .flatMap {  d aEnt y =>
+         d aEnt y. d a nfo map {
+          case v deoEnt y:  d a nfo.V deo nfo =>
             PlaybackFeatures(
-              durationMs = Some(videoEntity.videoInfo.durationMillis),
-              bitRate = videoEntity.videoInfo.variants.maxBy(_.bitRate).bitRate,
-              aspectRatioNum = Some(videoEntity.videoInfo.aspectRatio.numerator),
-              aspectRatioDen = Some(videoEntity.videoInfo.aspectRatio.denominator)
+              durat onMs = So (v deoEnt y.v deo nfo.durat onM ll s),
+              b Rate = v deoEnt y.v deo nfo.var ants.maxBy(_.b Rate).b Rate,
+              aspectRat oNum = So (v deoEnt y.v deo nfo.aspectRat o.nu rator),
+              aspectRat oDen = So (v deoEnt y.v deo nfo.aspectRat o.denom nator)
             )
-          case gifEntity: MediaInfo.AnimatedGifInfo =>
+          case g fEnt y:  d a nfo.An matedG f nfo =>
             PlaybackFeatures(
-              durationMs = None,
-              bitRate = gifEntity.animatedGifInfo.variants.maxBy(_.bitRate).bitRate,
-              aspectRatioNum = Some(gifEntity.animatedGifInfo.aspectRatio.numerator),
-              aspectRatioDen = Some(gifEntity.animatedGifInfo.aspectRatio.denominator)
+              durat onMs = None,
+              b Rate = g fEnt y.an matedG f nfo.var ants.maxBy(_.b Rate).b Rate,
+              aspectRat oNum = So (g fEnt y.an matedG f nfo.aspectRat o.nu rator),
+              aspectRat oDen = So (g fEnt y.an matedG f nfo.aspectRat o.denom nator)
             )
           case _ => PlaybackFeatures(None, None, None, None)
         }
@@ -138,135 +138,135 @@ object TweetMediaFeaturesExtractor {
         case playbackFeatures: PlaybackFeatures => playbackFeatures
       }
 
-    if (allPlaybackFeatures.nonEmpty) allPlaybackFeatures.maxBy(_.durationMs)
+     f (allPlaybackFeatures.nonEmpty) allPlaybackFeatures.maxBy(_.durat onMs)
     else PlaybackFeatures(None, None, None, None)
   }
 
-  private def getMediaTagScreenNames(tagMap: Map[Long, Seq[MediaTag]]): Seq[String] =
+  pr vate def get d aTagScreenNa s(tagMap: Map[Long, Seq[ d aTag]]): Seq[Str ng] =
     tagMap.values
-      .flatMap(seqMediaTag => seqMediaTag.flatMap(_.screenName))
+      .flatMap(seq d aTag => seq d aTag.flatMap(_.screenNa ))
       .toSeq
 
-  // Areas of the faces identified in the media entities
-  private def getFaceMapAreas(mediaEntities: Seq[MediaEntity]): Seq[Int] = {
+  // Areas of t  faces  dent f ed  n t   d a ent  es
+  pr vate def getFaceMapAreas( d aEnt  es: Seq[ d aEnt y]): Seq[ nt] = {
     for {
-      mediaEntity <- mediaEntities
-      metadata <- mediaEntity.additionalMetadata.toSeq
-      faceData <- metadata.faceData
+       d aEnt y <-  d aEnt  es
+       tadata <-  d aEnt y.add  onal tadata.toSeq
+      faceData <-  tadata.faceData
       faces <- faceData.faces
-    } yield {
+    } y eld {
       faces
-        .getOrElse("orig", Seq.empty[Face])
-        .flatMap(f => f.boundingBox.map(bb => bb.width * bb.height))
+        .getOrElse("or g", Seq.empty[Face])
+        .flatMap(f => f.bound ngBox.map(bb => bb.w dth * bb.  ght))
     }
   }.flatten
 
-  // All ColorPalettes in the media sorted by the percentage in descending order
-  private def getSortedColorPalette(mediaEntities: Seq[MediaEntity]): Seq[ColorPaletteItem] = {
+  // All ColorPalettes  n t   d a sorted by t  percentage  n descend ng order
+  pr vate def getSortedColorPalette( d aEnt  es: Seq[ d aEnt y]): Seq[ColorPalette em] = {
     for {
-      mediaEntity <- mediaEntities
-      metadata <- mediaEntity.additionalMetadata.toSeq
-      colorInfo <- metadata.colorInfo
-    } yield {
-      colorInfo.palette
+       d aEnt y <-  d aEnt  es
+       tadata <-  d aEnt y.add  onal tadata.toSeq
+      color nfo <-  tadata.color nfo
+    } y eld {
+      color nfo.palette
     }
   }.flatten.sortBy(_.percentage).reverse
 
-  // Id's of stickers applied by the user
-  private def getStickerFeatures(mediaEntities: Seq[MediaEntity]): Seq[Long] = {
+  //  d's of st ckers appl ed by t  user
+  pr vate def getSt ckerFeatures( d aEnt  es: Seq[ d aEnt y]): Seq[Long] = {
     for {
-      mediaEntity <- mediaEntities
-      metadata <- mediaEntity.additionalMetadata.toSeq
-      stickerInfo <- metadata.stickerInfo
-    } yield {
-      stickerInfo.stickers.map(_.id)
+       d aEnt y <-  d aEnt  es
+       tadata <-  d aEnt y.add  onal tadata.toSeq
+      st cker nfo <-  tadata.st cker nfo
+    } y eld {
+      st cker nfo.st ckers.map(_. d)
     }
   }.flatten
 
-  // 3rd party media providers. eg. giphy for gifs
-  private def getMediaOriginProviders(mediaEntities: Seq[MediaEntity]): Seq[String] =
+  // 3rd party  d a prov ders. eg. g phy for g fs
+  pr vate def get d aOr g nProv ders( d aEnt  es: Seq[ d aEnt y]): Seq[Str ng] =
     for {
-      mediaEntity <- mediaEntities
-      metadata <- mediaEntity.additionalMetadata.toSeq
-      mediaOrigin <- metadata.foundMediaOrigin
-    } yield {
-      mediaOrigin.provider
+       d aEnt y <-  d aEnt  es
+       tadata <-  d aEnt y.add  onal tadata.toSeq
+       d aOr g n <-  tadata.found d aOr g n
+    } y eld {
+       d aOr g n.prov der
     }
 
-  private def getIsManaged(mediaEntities: Seq[MediaEntity]): Boolean = {
+  pr vate def get sManaged( d aEnt  es: Seq[ d aEnt y]): Boolean = {
     for {
-      mediaEntity <- mediaEntities
-      metadata <- mediaEntity.additionalMetadata.toSeq
-      managementInfo <- metadata.managementInfo
-    } yield {
-      managementInfo.managed
+       d aEnt y <-  d aEnt  es
+       tadata <-  d aEnt y.add  onal tadata.toSeq
+      manage nt nfo <-  tadata.manage nt nfo
+    } y eld {
+      manage nt nfo.managed
     }
-  }.contains(true)
+  }.conta ns(true)
 
-  private def getIs360(mediaEntities: Seq[MediaEntity]): Boolean = {
+  pr vate def get s360( d aEnt  es: Seq[ d aEnt y]): Boolean = {
     for {
-      mediaEntity <- mediaEntities
-      metadata <- mediaEntity.additionalMetadata.toSeq
-      info360 <- metadata.info360
-    } yield {
-      info360.is360
+       d aEnt y <-  d aEnt  es
+       tadata <-  d aEnt y.add  onal tadata.toSeq
+       nfo360 <-  tadata. nfo360
+    } y eld {
+       nfo360. s360
     }
-  }.contains(Some(true))
+  }.conta ns(So (true))
 
-  private def getViewCount(mediaEntities: Seq[MediaEntity]): Option[Long] = {
+  pr vate def getV ewCount( d aEnt  es: Seq[ d aEnt y]): Opt on[Long] = {
     for {
-      mediaEntity <- mediaEntities
-      metadata <- mediaEntity.additionalMetadata.toSeq
-      engagementInfo <- metadata.engagementInfo
-      viewCounts <- engagementInfo.viewCount
-    } yield {
-      viewCounts
+       d aEnt y <-  d aEnt  es
+       tadata <-  d aEnt y.add  onal tadata.toSeq
+      engage nt nfo <-  tadata.engage nt nfo
+      v ewCounts <- engage nt nfo.v ewCount
+    } y eld {
+      v ewCounts
     }
-  }.reduceOption(_ max _)
+  }.reduceOpt on(_ max _)
 
-  // metadata defined by the user when uploading the image
-  private def getUserDefinedProductMetadataFeatures(
-    mediaEntities: Seq[MediaEntity]
-  ): Seq[UserDefinedProductMetadataFeatures] =
+  //  tadata def ned by t  user w n upload ng t   mage
+  pr vate def getUserDef nedProduct tadataFeatures(
+     d aEnt  es: Seq[ d aEnt y]
+  ): Seq[UserDef nedProduct tadataFeatures] =
     for {
-      mediaEntity <- mediaEntities
-      userDefinedMetadata <- mediaEntity.metadata
-    } yield {
-      UserDefinedProductMetadataFeatures(
-        isMonetizable = userDefinedMetadata.monetizable,
-        isEmbeddable = userDefinedMetadata.embeddable,
-        hasSelectedPreviewImage = Some(userDefinedMetadata.previewImage.nonEmpty),
-        hasTitle = userDefinedMetadata.title.map(_.nonEmpty),
-        hasDescription = userDefinedMetadata.description.map(_.nonEmpty),
-        hasVisitSiteCallToAction = userDefinedMetadata.callToActions.map(_.visitSite.nonEmpty),
-        hasAppInstallCallToAction = userDefinedMetadata.callToActions.map(_.appInstall.nonEmpty),
-        hasWatchNowCallToAction = userDefinedMetadata.callToActions.map(_.watchNow.nonEmpty)
+       d aEnt y <-  d aEnt  es
+      userDef ned tadata <-  d aEnt y. tadata
+    } y eld {
+      UserDef nedProduct tadataFeatures(
+         sMonet zable = userDef ned tadata.monet zable,
+         sEmbeddable = userDef ned tadata.embeddable,
+        hasSelectedPrev ew mage = So (userDef ned tadata.prev ew mage.nonEmpty),
+        hasT le = userDef ned tadata.t le.map(_.nonEmpty),
+        hasDescr pt on = userDef ned tadata.descr pt on.map(_.nonEmpty),
+        hasV s S eCallToAct on = userDef ned tadata.callToAct ons.map(_.v s S e.nonEmpty),
+        hasApp nstallCallToAct on = userDef ned tadata.callToAct ons.map(_.app nstall.nonEmpty),
+        hasWatchNowCallToAct on = userDef ned tadata.callToAct ons.map(_.watchNow.nonEmpty)
       )
     }
 
-  private def getOptBooleanFromSeqOpt(
-    seqOpt: Seq[Option[Boolean]],
+  pr vate def getOptBooleanFromSeqOpt(
+    seqOpt: Seq[Opt on[Boolean]],
     default: Boolean = false
-  ): Option[Boolean] = Some(
-    seqOpt.exists(boolOpt => boolOpt.contains(true))
+  ): Opt on[Boolean] = So (
+    seqOpt.ex sts(boolOpt => boolOpt.conta ns(true))
   )
 
 }
 
-case class MediaSizeFeatures(width: Int, height: Int, resizeMethod: Int)
+case class  d aS zeFeatures(w dth:  nt,   ght:  nt, res ze thod:  nt)
 
 case class PlaybackFeatures(
-  durationMs: Option[Int],
-  bitRate: Option[Int],
-  aspectRatioNum: Option[Short],
-  aspectRatioDen: Option[Short])
+  durat onMs: Opt on[ nt],
+  b Rate: Opt on[ nt],
+  aspectRat oNum: Opt on[Short],
+  aspectRat oDen: Opt on[Short])
 
-case class UserDefinedProductMetadataFeatures(
-  isMonetizable: Option[Boolean],
-  isEmbeddable: Option[Boolean],
-  hasSelectedPreviewImage: Option[Boolean],
-  hasTitle: Option[Boolean],
-  hasDescription: Option[Boolean],
-  hasVisitSiteCallToAction: Option[Boolean],
-  hasAppInstallCallToAction: Option[Boolean],
-  hasWatchNowCallToAction: Option[Boolean])
+case class UserDef nedProduct tadataFeatures(
+   sMonet zable: Opt on[Boolean],
+   sEmbeddable: Opt on[Boolean],
+  hasSelectedPrev ew mage: Opt on[Boolean],
+  hasT le: Opt on[Boolean],
+  hasDescr pt on: Opt on[Boolean],
+  hasV s S eCallToAct on: Opt on[Boolean],
+  hasApp nstallCallToAct on: Opt on[Boolean],
+  hasWatchNowCallToAct on: Opt on[Boolean])

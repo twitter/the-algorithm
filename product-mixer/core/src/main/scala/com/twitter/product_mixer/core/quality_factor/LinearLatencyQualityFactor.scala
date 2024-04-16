@@ -1,34 +1,34 @@
-package com.twitter.product_mixer.core.quality_factor
+package com.tw ter.product_m xer.core.qual y_factor
 
-import com.twitter.util.Duration
-import com.twitter.util.Stopwatch
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Stopwatch
 
-case class LinearLatencyQualityFactor(
-  override val config: LinearLatencyQualityFactorConfig)
-    extends QualityFactor[Duration] {
+case class L nearLatencyQual yFactor(
+  overr de val conf g: L nearLatencyQual yFactorConf g)
+    extends Qual yFactor[Durat on] {
 
-  private val delayedUntilInMillis = Stopwatch.timeMillis() + config.initialDelay.inMillis
+  pr vate val delayedUnt l nM ll s = Stopwatch.t  M ll s() + conf g. n  alDelay. nM ll s
 
-  private var state: Double = config.qualityFactorBounds.default
+  pr vate var state: Double = conf g.qual yFactorBounds.default
 
-  override def currentValue: Double = state
+  overr de def currentValue: Double = state
 
-  override def update(latency: Duration): Unit = {
-    if (Stopwatch.timeMillis() >= delayedUntilInMillis) {
-      if (latency > config.targetLatency) {
-        adjustState(getNegativeDelta)
+  overr de def update(latency: Durat on): Un  = {
+     f (Stopwatch.t  M ll s() >= delayedUnt l nM ll s) {
+       f (latency > conf g.targetLatency) {
+        adjustState(getNegat veDelta)
       } else {
-        adjustState(config.delta)
+        adjustState(conf g.delta)
       }
     }
   }
 
-  override def buildObserver(): QualityFactorObserver = LinearLatencyQualityFactorObserver(this)
+  overr de def bu ldObserver(): Qual yFactorObserver = L nearLatencyQual yFactorObserver(t )
 
-  private def getNegativeDelta: Double =
-    -config.delta * config.targetLatencyPercentile / (100.0 - config.targetLatencyPercentile)
+  pr vate def getNegat veDelta: Double =
+    -conf g.delta * conf g.targetLatencyPercent le / (100.0 - conf g.targetLatencyPercent le)
 
-  private def adjustState(delta: Double): Unit = {
-    state = config.qualityFactorBounds.bounds(state + delta)
+  pr vate def adjustState(delta: Double): Un  = {
+    state = conf g.qual yFactorBounds.bounds(state + delta)
   }
 }

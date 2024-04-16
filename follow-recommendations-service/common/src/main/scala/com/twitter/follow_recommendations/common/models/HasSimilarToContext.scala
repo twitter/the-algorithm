@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-trait HasSimilarToContext {
+tra  HasS m larToContext {
 
-  // user ids that are used to generate similar to recommendations
-  def similarToUserIds: Seq[Long]
+  // user  ds that are used to generate s m lar to recom ndat ons
+  def s m larToUser ds: Seq[Long]
 }

@@ -1,31 +1,31 @@
-package com.twitter.search.earlybird_root.caching;
+package com.tw ter.search.earlyb rd_root.cach ng;
 
-import com.twitter.search.common.caching.filter.QueryCachePredicate;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.earlybird.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
+ mport com.tw ter.search.common.cach ng.f lter.QueryCac Pred cate;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.earlyb rd.common.Earlyb rdRequestUt l;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestType;
 
-public class RelevanceZeroResultsQueryCachePredicate
-    extends QueryCachePredicate<EarlybirdRequestContext> {
-  private final SearchDecider decider;
-  private final String relevanceCacheEnabledDeciderKey;
-  private final String relevanceZeroResultsCacheEnabledDeciderKey;
+publ c class RelevanceZeroResultsQueryCac Pred cate
+    extends QueryCac Pred cate<Earlyb rdRequestContext> {
+  pr vate f nal SearchDec der dec der;
+  pr vate f nal Str ng relevanceCac EnabledDec derKey;
+  pr vate f nal Str ng relevanceZeroResultsCac EnabledDec derKey;
 
-  public RelevanceZeroResultsQueryCachePredicate(
-      SearchDecider decider, String normalizedSearchRootName) {
-    this.decider = decider;
-    this.relevanceCacheEnabledDeciderKey =
-        "relevance_cache_enabled_" + normalizedSearchRootName;
-    this.relevanceZeroResultsCacheEnabledDeciderKey =
-        "relevance_zero_results_cache_enabled_" + normalizedSearchRootName;
+  publ c RelevanceZeroResultsQueryCac Pred cate(
+      SearchDec der dec der, Str ng normal zedSearchRootNa ) {
+    t .dec der = dec der;
+    t .relevanceCac EnabledDec derKey =
+        "relevance_cac _enabled_" + normal zedSearchRootNa ;
+    t .relevanceZeroResultsCac EnabledDec derKey =
+        "relevance_zero_results_cac _enabled_" + normal zedSearchRootNa ;
   }
 
-  @Override
-  public Boolean shouldQueryCache(EarlybirdRequestContext requestContext) {
-    return EarlybirdRequestType.RELEVANCE == requestContext.getEarlybirdRequestType()
-        && EarlybirdRequestUtil.isCachingAllowed(requestContext.getRequest())
-        && decider.isAvailable(relevanceCacheEnabledDeciderKey)
-        && decider.isAvailable(relevanceZeroResultsCacheEnabledDeciderKey);
+  @Overr de
+  publ c Boolean shouldQueryCac (Earlyb rdRequestContext requestContext) {
+    return Earlyb rdRequestType.RELEVANCE == requestContext.getEarlyb rdRequestType()
+        && Earlyb rdRequestUt l. sCach ngAllo d(requestContext.getRequest())
+        && dec der. sAva lable(relevanceCac EnabledDec derKey)
+        && dec der. sAva lable(relevanceZeroResultsCac EnabledDec derKey);
   }
 }

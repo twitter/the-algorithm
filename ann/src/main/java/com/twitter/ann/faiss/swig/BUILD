@@ -1,26 +1,26 @@
-java_library(
-    name = "swig-local",
-    sources = ["*.java"],
-    compiler_option_sets = ["fatal_warnings"],
+java_l brary(
+    na  = "sw g-local",
+    s ces = ["*.java"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
     tags = [
-        "bazel-compatible",
+        "bazel-compat ble",
         "bazel-only",
     ],
-    dependencies = [
-        "ann/src/main/java/com/twitter/ann/faiss:swig-native-utils",
-        "ann/src/main/java/com/twitter/ann/faiss/swig/resources",
+    dependenc es = [
+        "ann/src/ma n/java/com/tw ter/ann/fa ss:sw g-nat ve-ut ls",
+        "ann/src/ma n/java/com/tw ter/ann/fa ss/sw g/res ces",
     ],
 )
 
-java_library(
-    name = "swig-artifactory",
-    sources = ["*.java"],
-    compiler_option_sets = ["fatal_warnings"],
+java_l brary(
+    na  = "sw g-art factory",
+    s ces = ["*.java"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/ann/faiss/swig:resources",
-        "ann/src/main/java/com/twitter/ann/faiss:swig-native-utils",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/com/tw ter/ann/fa ss/sw g:res ces",
+        "ann/src/ma n/java/com/tw ter/ann/fa ss:sw g-nat ve-ut ls",
     ],
 )

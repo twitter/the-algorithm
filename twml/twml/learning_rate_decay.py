@@ -1,168 +1,168 @@
-# pylint: disable=too-many-branches
-""" This module includes functions for managing learning rate decay """
-import tensorflow.compat.v1 as tf
+# pyl nt: d sable=too-many-branc s
+""" T  module  ncludes funct ons for manag ng learn ng rate decay """
+ mport tensorflow.compat.v1 as tf
 
 
-def get_learning_rate_decay_fn(params):
+def get_learn ng_rate_decay_fn(params):
   """
-  Returns a learning rate decay function that takes the initial
-  learning_rate and global_step
-  as arguments and returns the current learning rate.
+  Returns a learn ng rate decay funct on that takes t   n  al
+  learn ng_rate and global_step
+  as argu nts and returns t  current learn ng rate.
 
-  Currently supports params.learning_rate_decay values of:
-  exponential | polynomial | piecewise_constant | cosine | cosine restarts.
-  See `Decaying the Leanring Rate
-  <https://www.tensorflow.org/api_guides/python/train#Decaying_the_learning_rate>`_ for details.
+  Currently supports params.learn ng_rate_decay values of:
+  exponent al | polynom al | p ecew se_constant | cos ne | cos ne restarts.
+  See `Decay ng t  Leanr ng Rate
+  <https://www.tensorflow.org/ap _gu des/python/tra n#Decay ng_t _learn ng_rate>`_ for deta ls.
 
-  Arguments:
+  Argu nts:
     params:
-      a tensorflow.contrib.train.HParams object containing the relevant hyperparameters.
+      a tensorflow.contr b.tra n.HParams object conta n ng t  relevant hyperpara ters.
   """
   paramsv = params.values()
-  if 'learning_rate_decay' not in paramsv or params.learning_rate_decay == 'no_learning_rate_decay':
+   f 'learn ng_rate_decay' not  n paramsv or params.learn ng_rate_decay == 'no_learn ng_rate_decay':
     return None
-  elif params.learning_rate_decay == 'exponential_learning_rate_decay':
-    if 'decay_steps' not in paramsv:
-      raise ValueError("Expecting params.decay_steps for "
-                       "params.learning_rate_decay == 'exponential'")
-    if 'exponential_decay_rate' not in paramsv:
-      raise ValueError("Expecting params.exponential_decay_rate for "
-                       "params.learning_rate_decay == 'exponential'")
+  el f params.learn ng_rate_decay == 'exponent al_learn ng_rate_decay':
+     f 'decay_steps' not  n paramsv:
+      ra se ValueError("Expect ng params.decay_steps for "
+                       "params.learn ng_rate_decay == 'exponent al'")
+     f 'exponent al_decay_rate' not  n paramsv:
+      ra se ValueError("Expect ng params.exponent al_decay_rate for "
+                       "params.learn ng_rate_decay == 'exponent al'")
 
-    def exponential_decay_fn(learning_rate, global_step):
-      """ exponential decay function to be passed to optimize_loss """
-      return tf.train.exponential_decay(
-        learning_rate=learning_rate,
+    def exponent al_decay_fn(learn ng_rate, global_step):
+      """ exponent al decay funct on to be passed to opt m ze_loss """
+      return tf.tra n.exponent al_decay(
+        learn ng_rate=learn ng_rate,
         global_step=global_step,
         decay_steps=params.decay_steps,
-        decay_rate=params.exponential_decay_rate
+        decay_rate=params.exponent al_decay_rate
       )
-    return exponential_decay_fn
-  elif params.learning_rate_decay == 'piecewise_constant_learning_rate_decay':
-    if 'piecewise_constant_boundaries' not in paramsv:
-      raise ValueError("Expecting params.piecewise_constant_boundaries for "
-                       "params.learning_rate_decay == 'piecewise_constant'")
-    if 'piecewise_constant_values' not in paramsv:
-      raise ValueError("Expecting params.piecewise_constant_values for "
-                       "params.learning_rate_decay == 'piecewise_constant'")
-    # pylint: disable=unused-argument
+    return exponent al_decay_fn
+  el f params.learn ng_rate_decay == 'p ecew se_constant_learn ng_rate_decay':
+     f 'p ecew se_constant_boundar es' not  n paramsv:
+      ra se ValueError("Expect ng params.p ecew se_constant_boundar es for "
+                       "params.learn ng_rate_decay == 'p ecew se_constant'")
+     f 'p ecew se_constant_values' not  n paramsv:
+      ra se ValueError("Expect ng params.p ecew se_constant_values for "
+                       "params.learn ng_rate_decay == 'p ecew se_constant'")
+    # pyl nt: d sable=unused-argu nt
 
-    def piecewise_constant_fn(learning_rate, global_step):
-      """ piecewise_constant decay function to be passed to optimize_loss """
-      return tf.train.piecewise_constant(
+    def p ecew se_constant_fn(learn ng_rate, global_step):
+      """ p ecew se_constant decay funct on to be passed to opt m ze_loss """
+      return tf.tra n.p ecew se_constant(
         x=global_step,
-        boundaries=params.piecewise_constant_boundaries,
-        values=params.piecewise_constant_values
+        boundar es=params.p ecew se_constant_boundar es,
+        values=params.p ecew se_constant_values
       )
-    return piecewise_constant_fn
-  elif params.learning_rate_decay == 'polynomial_learning_rate_decay':
-    if 'decay_steps' not in paramsv:
-      raise ValueError("Expecting params.decay_steps for "
-                       "params.learning_rate_decay == 'polynomial'")
-    if 'end_learning_rate' not in paramsv:
-      raise ValueError("Expecting params.end_learning_rate for "
-                       "params.learning_rate_decay == 'polynomial'")
+    return p ecew se_constant_fn
+  el f params.learn ng_rate_decay == 'polynom al_learn ng_rate_decay':
+     f 'decay_steps' not  n paramsv:
+      ra se ValueError("Expect ng params.decay_steps for "
+                       "params.learn ng_rate_decay == 'polynom al'")
+     f 'end_learn ng_rate' not  n paramsv:
+      ra se ValueError("Expect ng params.end_learn ng_rate for "
+                       "params.learn ng_rate_decay == 'polynom al'")
 
-    def polynomial_decay_fn(learning_rate, global_step):
-      """ polynomial decay function to be passed to optimize_loss """
-      return tf.train.polynomial_decay(
-        learning_rate=learning_rate,
+    def polynom al_decay_fn(learn ng_rate, global_step):
+      """ polynom al decay funct on to be passed to opt m ze_loss """
+      return tf.tra n.polynom al_decay(
+        learn ng_rate=learn ng_rate,
         global_step=global_step,
         decay_steps=params.decay_steps,
-        end_learning_rate=params.end_learning_rate,
-        power=params.polynomial_power if 'polynomial_power' in paramsv else 1.0,
+        end_learn ng_rate=params.end_learn ng_rate,
+        po r=params.polynom al_po r  f 'polynom al_po r'  n paramsv else 1.0,
       )
-    return polynomial_decay_fn
+    return polynom al_decay_fn
 
-  elif params.learning_rate_decay == 'inverse_learning_rate_decay':
-    if 'min_learning_rate' not in paramsv:
-      raise ValueError("Expecting params.min_learning_rate for "
-                       "params.learning_rate_decay == 'inverse'")
-    if 'decay_rate' not in paramsv:
-      raise ValueError("Expecting params.decay_rate for "
-                       "params.learning_rate_decay == 'inverse'")
-    if 'decay_steps' not in paramsv:
-      raise ValueError("Expecting params.decay_steps for "
-                       "params.learning_rate_decay == 'inverse'")
+  el f params.learn ng_rate_decay == ' nverse_learn ng_rate_decay':
+     f 'm n_learn ng_rate' not  n paramsv:
+      ra se ValueError("Expect ng params.m n_learn ng_rate for "
+                       "params.learn ng_rate_decay == ' nverse'")
+     f 'decay_rate' not  n paramsv:
+      ra se ValueError("Expect ng params.decay_rate for "
+                       "params.learn ng_rate_decay == ' nverse'")
+     f 'decay_steps' not  n paramsv:
+      ra se ValueError("Expect ng params.decay_steps for "
+                       "params.learn ng_rate_decay == ' nverse'")
 
-    def bounded_inverse_time_decay_fn(learning_rate, global_step):
+    def bounded_ nverse_t  _decay_fn(learn ng_rate, global_step):
       '''
-      Returns the decayed learning_rate by applying the function:
+      Returns t  decayed learn ng_rate by apply ng t  funct on:
       decayed_lr = max(lr /(1 + decay_rate * floor(global_step /decay_step)),
-                       min_learning_rate)
-      Arguments:
-        learning_rate:
+                       m n_learn ng_rate)
+      Argu nts:
+        learn ng_rate:
           A scalar `float32` or `float64` `Tensor` or a Python number.
-          The initial learning rate.
+          T   n  al learn ng rate.
         global_step:
-          A scalar `int32` or `int64` `Tensor` or a Python number.
-          Global step to use for the decay computation.  Must not be negative.
-        min_learning_rate:
-          A scalar `int32` or `int64` `Tensor` or a Python number.
-          Minimum possible learning_rate. The decayed learning_rate will not be
-          smaller than the min_learning_rate
+          A scalar ` nt32` or ` nt64` `Tensor` or a Python number.
+          Global step to use for t  decay computat on.  Must not be negat ve.
+        m n_learn ng_rate:
+          A scalar ` nt32` or ` nt64` `Tensor` or a Python number.
+          M n mum poss ble learn ng_rate. T  decayed learn ng_rate w ll not be
+          smaller than t  m n_learn ng_rate
         decay_steps:
-          How often to apply decay. In dbv1, this should be 1.
+          How often to apply decay.  n dbv1, t  should be 1.
         decay_rate:
-          A scalar `int32` or `int64` `Tensor` or a Python number.
-          Rate in which we decay the learning rate.
+          A scalar ` nt32` or ` nt64` `Tensor` or a Python number.
+          Rate  n wh ch   decay t  learn ng rate.
         Returns:
-        A scalar `Tensor` of the same type as `learning_rate`.  The decayed
-        learning rate.
+        A scalar `Tensor` of t  sa  type as `learn ng_rate`.  T  decayed
+        learn ng rate.
       '''
-      decayed_rate = tf.train.inverse_time_decay(
-        learning_rate=learning_rate,
+      decayed_rate = tf.tra n. nverse_t  _decay(
+        learn ng_rate=learn ng_rate,
         global_step=global_step,
         decay_steps=params.decay_steps,
         decay_rate=params.decay_rate)
-      # Getting dtype of returned Tensor
+      # Gett ng dtype of returned Tensor
       dtype = decayed_rate.dtype
-      # Casting the min_learning rate the same dtype as decayes rate
-      min_learning_rate = tf.cast(params.min_learning_rate, dtype)
-      # Returning the maximum between the two
-      return tf.maximum(decayed_rate, min_learning_rate)
+      # Cast ng t  m n_learn ng rate t  sa  dtype as decayes rate
+      m n_learn ng_rate = tf.cast(params.m n_learn ng_rate, dtype)
+      # Return ng t  max mum bet en t  two
+      return tf.max mum(decayed_rate, m n_learn ng_rate)
 
-    return bounded_inverse_time_decay_fn
+    return bounded_ nverse_t  _decay_fn
 
-  elif params.learning_rate_decay == 'cosine_learning_rate_decay':
-    if 'decay_steps' not in paramsv:
-      raise ValueError("Expecting params.decay_steps for "
-                       "params.learning_rate_decay == 'cosine_decay'")
-    if "alpha" not in paramsv:
-      raise ValueError("Expecting params.alpha for "
-                       "params.learning_rate_decay == 'cosine_decay'")
-    def cosine_decay_fn(learning_rate, global_step):
-      """ cosine decay function to be passed to optimize_loss """
-      return tf.train.cosine_decay(
-        learning_rate=learning_rate,
+  el f params.learn ng_rate_decay == 'cos ne_learn ng_rate_decay':
+     f 'decay_steps' not  n paramsv:
+      ra se ValueError("Expect ng params.decay_steps for "
+                       "params.learn ng_rate_decay == 'cos ne_decay'")
+     f "alpha" not  n paramsv:
+      ra se ValueError("Expect ng params.alpha for "
+                       "params.learn ng_rate_decay == 'cos ne_decay'")
+    def cos ne_decay_fn(learn ng_rate, global_step):
+      """ cos ne decay funct on to be passed to opt m ze_loss """
+      return tf.tra n.cos ne_decay(
+        learn ng_rate=learn ng_rate,
         global_step=global_step,
         decay_steps=params.decay_steps,
         alpha=params.alpha
       )
-    return cosine_decay_fn
-  elif params.learning_rate_decay == 'cosine_restarts_learning_rate_decay':
-    if 'first_decay_steps' not in paramsv:
-      raise ValueError("Expecting params.first_decay_steps for "
-                       "params.learning_rate_decay == 'cosine_restarts_decay'")
-    if 't_mul' not in paramsv:
-      raise ValueError("Expecting params.t_mul for "
-                       "params.learning_rate_decay == 'cosine_restarts_decay'")
-    if 'm_mul' not in paramsv:
-      raise ValueError("Expecting params.m_mul for "
-                       "params.learning_rate_decay == 'cosine_restarts_decay'")
-    if "alpha" not in paramsv:
-      raise ValueError("Expecting params.alpha for "
-                       "params.learning_rate_decay == 'cosine_restarts_decay'")
-    def cosine_restart_decay_fn(learning_rate, global_step):
-      """ cosine decay function to be passed to optimize_loss """
-      return tf.train.cosine_decay_restarts(
-        learning_rate=learning_rate,
+    return cos ne_decay_fn
+  el f params.learn ng_rate_decay == 'cos ne_restarts_learn ng_rate_decay':
+     f 'f rst_decay_steps' not  n paramsv:
+      ra se ValueError("Expect ng params.f rst_decay_steps for "
+                       "params.learn ng_rate_decay == 'cos ne_restarts_decay'")
+     f 't_mul' not  n paramsv:
+      ra se ValueError("Expect ng params.t_mul for "
+                       "params.learn ng_rate_decay == 'cos ne_restarts_decay'")
+     f 'm_mul' not  n paramsv:
+      ra se ValueError("Expect ng params.m_mul for "
+                       "params.learn ng_rate_decay == 'cos ne_restarts_decay'")
+     f "alpha" not  n paramsv:
+      ra se ValueError("Expect ng params.alpha for "
+                       "params.learn ng_rate_decay == 'cos ne_restarts_decay'")
+    def cos ne_restart_decay_fn(learn ng_rate, global_step):
+      """ cos ne decay funct on to be passed to opt m ze_loss """
+      return tf.tra n.cos ne_decay_restarts(
+        learn ng_rate=learn ng_rate,
         global_step=global_step,
-        first_decay_steps=params.first_decay_steps,
+        f rst_decay_steps=params.f rst_decay_steps,
         t_mul=params.t_mul,
         m_mul=params.m_mul,
         alpha=params.alpha
       )
-    return cosine_restart_decay_fn
+    return cos ne_restart_decay_fn
 
-  raise ValueError("Unsupported params.learning_rate_decay: %s" % params.learning_rate_decay)
+  ra se ValueError("Unsupported params.learn ng_rate_decay: %s" % params.learn ng_rate_decay)

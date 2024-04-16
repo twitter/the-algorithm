@@ -1,96 +1,96 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.query.async
+package com.tw ter.product_m xer.component_l brary.feature_hydrator.query.async
 
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featurestorev1.BaseFeatureStoreV1QueryFeature
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.AsyncHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1.FeatureStoreV1DynamicClientBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1.FeatureStoreV1QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+ mport com.tw ter.ml.featurestore.l b.Ent y d
+ mport com.tw ter.product_m xer.core.feature.Feature
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.feature.featurestorev1.BaseFeatureStoreV1QueryFeature
+ mport com.tw ter.product_m xer.core.funct onal_component.common.alert.Alert
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.AsyncHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.featurestorev1.FeatureStoreV1Dynam cCl entBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.feature_hydrator.featurestorev1.FeatureStoreV1QueryFeatureHydrator
+ mport com.tw ter.product_m xer.core.model.common. dent f er.FeatureHydrator dent f er
+ mport com.tw ter.product_m xer.core.model.common. dent f er.P pel neStep dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
 
 /**
- * A [[QueryFeatureHydrator]] with [[AsyncQueryFeatureHydrator]] that hydrated asynchronously for features
- * to be before the step identified in [[hydrateBefore]]
+ * A [[QueryFeatureHydrator]] w h [[AsyncQueryFeatureHydrator]] that hydrated asynchronously for features
+ * to be before t  step  dent f ed  n [[hydrateBefore]]
  *
- * @param hydrateBefore        the [[PipelineStepIdentifier]] step to make sure this feature is hydrated before.
- * @param queryFeatureHydrator the underlying [[QueryFeatureHydrator]] to run asynchronously
- * @tparam Query The domain model for the query or request
+ * @param hydrateBefore        t  [[P pel neStep dent f er]] step to make sure t  feature  s hydrated before.
+ * @param queryFeatureHydrator t  underly ng [[QueryFeatureHydrator]] to run asynchronously
+ * @tparam Query T  doma n model for t  query or request
  */
-case class AsyncQueryFeatureHydrator[-Query <: PipelineQuery] private[async] (
-  override val hydrateBefore: PipelineStepIdentifier,
+case class AsyncQueryFeatureHydrator[-Query <: P pel neQuery] pr vate[async] (
+  overr de val hydrateBefore: P pel neStep dent f er,
   queryFeatureHydrator: QueryFeatureHydrator[Query])
     extends QueryFeatureHydrator[Query]
-    with AsyncHydrator {
+    w h AsyncHydrator {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    "Async" + queryFeatureHydrator.identifier.name)
-  override val alerts: Seq[Alert] = queryFeatureHydrator.alerts
-  override val features: Set[Feature[_, _]] = queryFeatureHydrator.features
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er(
+    "Async" + queryFeatureHydrator. dent f er.na )
+  overr de val alerts: Seq[Alert] = queryFeatureHydrator.alerts
+  overr de val features: Set[Feature[_, _]] = queryFeatureHydrator.features
 
-  override def hydrate(query: Query): Stitch[FeatureMap] = queryFeatureHydrator.hydrate(query)
+  overr de def hydrate(query: Query): St ch[FeatureMap] = queryFeatureHydrator.hydrate(query)
 }
 
 /**
- * A [[FeatureStoreV1QueryFeatureHydrator]] with [[AsyncHydrator]] that hydrated asynchronously for features
- * to be before the step identified in [[hydrateBefore]]. We need a standalone class for feature store,
- * different from the above as FStore hydrators are exempt from validations at run time.
+ * A [[FeatureStoreV1QueryFeatureHydrator]] w h [[AsyncHydrator]] that hydrated asynchronously for features
+ * to be before t  step  dent f ed  n [[hydrateBefore]].   need a standalone class for feature store,
+ * d fferent from t  above as FStore hydrators are exempt from val dat ons at run t  .
  *
- * @param hydrateBefore        the [[PipelineStepIdentifier]] step to make sure this feature is hydrated before.
- * @param queryFeatureHydrator the underlying [[QueryFeatureHydrator]] to run asynchronously
- * @tparam Query The domain model for the query or request
+ * @param hydrateBefore        t  [[P pel neStep dent f er]] step to make sure t  feature  s hydrated before.
+ * @param queryFeatureHydrator t  underly ng [[QueryFeatureHydrator]] to run asynchronously
+ * @tparam Query T  doma n model for t  query or request
  */
-case class AsyncFeatureStoreV1QueryFeatureHydrator[Query <: PipelineQuery] private[async] (
-  override val hydrateBefore: PipelineStepIdentifier,
+case class AsyncFeatureStoreV1QueryFeatureHydrator[Query <: P pel neQuery] pr vate[async] (
+  overr de val hydrateBefore: P pel neStep dent f er,
   featureStoreV1QueryFeatureHydrator: FeatureStoreV1QueryFeatureHydrator[Query])
     extends FeatureStoreV1QueryFeatureHydrator[
       Query
     ]
-    with AsyncHydrator {
+    w h AsyncHydrator {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    "Async" + featureStoreV1QueryFeatureHydrator.identifier.name)
-  override val alerts: Seq[Alert] = featureStoreV1QueryFeatureHydrator.alerts
+  overr de val  dent f er: FeatureHydrator dent f er = FeatureHydrator dent f er(
+    "Async" + featureStoreV1QueryFeatureHydrator. dent f er.na )
+  overr de val alerts: Seq[Alert] = featureStoreV1QueryFeatureHydrator.alerts
 
-  override val features: Set[BaseFeatureStoreV1QueryFeature[Query, _ <: EntityId, _]] =
+  overr de val features: Set[BaseFeatureStoreV1QueryFeature[Query, _ <: Ent y d, _]] =
     featureStoreV1QueryFeatureHydrator.features
 
-  override val clientBuilder: FeatureStoreV1DynamicClientBuilder =
-    featureStoreV1QueryFeatureHydrator.clientBuilder
+  overr de val cl entBu lder: FeatureStoreV1Dynam cCl entBu lder =
+    featureStoreV1QueryFeatureHydrator.cl entBu lder
 }
 
 object AsyncQueryFeatureHydrator {
 
   /**
-   * A [[QueryFeatureHydrator]] with [[AsyncQueryFeatureHydrator]] that hydrated asynchronously for features
-   * to be before the step identified in [[hydrateBefore]]
+   * A [[QueryFeatureHydrator]] w h [[AsyncQueryFeatureHydrator]] that hydrated asynchronously for features
+   * to be before t  step  dent f ed  n [[hydrateBefore]]
    *
-   * @param hydrateBefore        the [[PipelineStepIdentifier]] step to make sure this feature is hydrated before.
-   * @param queryFeatureHydrator the underlying [[QueryFeatureHydrator]] to run asynchronously
-   * @tparam Query The domain model for the query or request
+   * @param hydrateBefore        t  [[P pel neStep dent f er]] step to make sure t  feature  s hydrated before.
+   * @param queryFeatureHydrator t  underly ng [[QueryFeatureHydrator]] to run asynchronously
+   * @tparam Query T  doma n model for t  query or request
    */
-  def apply[Query <: PipelineQuery](
-    hydrateBefore: PipelineStepIdentifier,
+  def apply[Query <: P pel neQuery](
+    hydrateBefore: P pel neStep dent f er,
     queryFeatureHydrator: QueryFeatureHydrator[Query]
   ): AsyncQueryFeatureHydrator[Query] =
     new AsyncQueryFeatureHydrator(hydrateBefore, queryFeatureHydrator)
 
   /**
-   * A [[FeatureStoreV1QueryFeatureHydrator]] with [[AsyncHydrator]] that hydrated asynchronously for features
-   * to be before the step identified in [[hydrateBefore]]. We need a standalone class for feature store,
-   * different from the above as FStore hydrators are exempt from validations at run time.
+   * A [[FeatureStoreV1QueryFeatureHydrator]] w h [[AsyncHydrator]] that hydrated asynchronously for features
+   * to be before t  step  dent f ed  n [[hydrateBefore]].   need a standalone class for feature store,
+   * d fferent from t  above as FStore hydrators are exempt from val dat ons at run t  .
    *
-   * @param hydrateBefore        the [[PipelineStepIdentifier]] step to make sure this feature is hydrated before.
-   * @param queryFeatureHydrator the underlying [[QueryFeatureHydrator]] to run asynchronously
-   * @tparam Query The domain model for the query or request
+   * @param hydrateBefore        t  [[P pel neStep dent f er]] step to make sure t  feature  s hydrated before.
+   * @param queryFeatureHydrator t  underly ng [[QueryFeatureHydrator]] to run asynchronously
+   * @tparam Query T  doma n model for t  query or request
    */
-  def apply[Query <: PipelineQuery](
-    hydrateBefore: PipelineStepIdentifier,
+  def apply[Query <: P pel neQuery](
+    hydrateBefore: P pel neStep dent f er,
     featureStoreV1QueryFeatureHydrator: FeatureStoreV1QueryFeatureHydrator[Query]
   ): AsyncFeatureStoreV1QueryFeatureHydrator[Query] =
     new AsyncFeatureStoreV1QueryFeatureHydrator(hydrateBefore, featureStoreV1QueryFeatureHydrator)

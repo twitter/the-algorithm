@@ -1,41 +1,41 @@
-package com.twitter.visibility.rules
+package com.tw ter.v s b l y.rules
 
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.rules.State.FeatureFailed
-import com.twitter.visibility.rules.State.MissingFeature
-import com.twitter.visibility.rules.State.RuleFailed
+ mport com.tw ter.v s b l y.features.Feature
+ mport com.tw ter.v s b l y.rules.State.FeatureFa led
+ mport com.tw ter.v s b l y.rules.State.M ss ngFeature
+ mport com.tw ter.v s b l y.rules.State.RuleFa led
 
-abstract class FailClosedException(message: String, state: State, ruleName: String)
-    extends Exception(message) {
+abstract class Fa lClosedExcept on( ssage: Str ng, state: State, ruleNa : Str ng)
+    extends Except on( ssage) {
   def getState: State = {
     state
   }
 
-  def getRuleName: String = {
-    ruleName
+  def getRuleNa : Str ng = {
+    ruleNa 
   }
 }
 
-case class MissingFeaturesException(
-  ruleName: String,
-  missingFeatures: Set[Feature[_]])
-    extends FailClosedException(
-      s"A $ruleName rule evaluation has ${missingFeatures.size} missing features: ${missingFeatures
-        .map(_.name)}",
-      MissingFeature(missingFeatures),
-      ruleName) {}
+case class M ss ngFeaturesExcept on(
+  ruleNa : Str ng,
+  m ss ngFeatures: Set[Feature[_]])
+    extends Fa lClosedExcept on(
+      s"A $ruleNa  rule evaluat on has ${m ss ngFeatures.s ze} m ss ng features: ${m ss ngFeatures
+        .map(_.na )}",
+      M ss ngFeature(m ss ngFeatures),
+      ruleNa ) {}
 
-case class FeaturesFailedException(
-  ruleName: String,
-  featureFailures: Map[Feature[_], Throwable])
-    extends FailClosedException(
-      s"A $ruleName rule evaluation has ${featureFailures.size} failed features: ${featureFailures.keys
-        .map(_.name)}, ${featureFailures.values}",
-      FeatureFailed(featureFailures),
-      ruleName) {}
+case class FeaturesFa ledExcept on(
+  ruleNa : Str ng,
+  featureFa lures: Map[Feature[_], Throwable])
+    extends Fa lClosedExcept on(
+      s"A $ruleNa  rule evaluat on has ${featureFa lures.s ze} fa led features: ${featureFa lures.keys
+        .map(_.na )}, ${featureFa lures.values}",
+      FeatureFa led(featureFa lures),
+      ruleNa ) {}
 
-case class RuleFailedException(ruleName: String, exception: Throwable)
-    extends FailClosedException(
-      s"A $ruleName rule evaluation failed to execute",
-      RuleFailed(exception),
-      ruleName) {}
+case class RuleFa ledExcept on(ruleNa : Str ng, except on: Throwable)
+    extends Fa lClosedExcept on(
+      s"A $ruleNa  rule evaluat on fa led to execute",
+      RuleFa led(except on),
+      ruleNa ) {}

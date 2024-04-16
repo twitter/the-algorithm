@@ -1,212 +1,212 @@
-package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.model_evaluation
+package com.tw ter.t  l nes.data_process ng.ad_hoc.earlyb rd_rank ng.model_evaluat on
 
-import com.twitter.algebird.Aggregator
-import com.twitter.algebird.AveragedValue
-import com.twitter.ml.api.prediction_engine.PredictionEnginePlugin
-import com.twitter.ml.api.util.FDsl
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.IRecordOneToManyAdapter
-import com.twitter.scalding.Args
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Execution
-import com.twitter.scalding.TypedJson
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common.EarlybirdTrainingRecapConfiguration
-import com.twitter.timelines.data_processing.util.RequestImplicits.RichRequest
-import com.twitter.timelines.data_processing.util.example.RecapTweetExample
-import com.twitter.timelines.data_processing.util.execution.UTCDateRangeFromArgs
-import com.twitter.timelines.prediction.adapters.recap.RecapSuggestionRecordAdapter
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
-import com.twitter.timelines.suggests.common.record.thriftscala.SuggestionRecord
-import com.twitter.timelineservice.suggests.logging.recap.thriftscala.HighlightTweet
-import com.twitter.timelineservice.suggests.logging.thriftscala.SuggestsRequestLog
-import scala.collection.JavaConverters._
-import scala.language.reflectiveCalls
-import scala.util.Random
-import twadoop_config.configuration.log_categories.group.timelines.TimelineserviceInjectionRequestLogScalaDataset
+ mport com.tw ter.algeb rd.Aggregator
+ mport com.tw ter.algeb rd.AveragedValue
+ mport com.tw ter.ml.ap .pred ct on_eng ne.Pred ct onEng nePlug n
+ mport com.tw ter.ml.ap .ut l.FDsl
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.ml.ap . RecordOneToManyAdapter
+ mport com.tw ter.scald ng.Args
+ mport com.tw ter.scald ng.DateRange
+ mport com.tw ter.scald ng.Execut on
+ mport com.tw ter.scald ng.TypedJson
+ mport com.tw ter.scald ng.TypedP pe
+ mport com.tw ter.scald ng_ nternal.dalv2.DAL
+ mport com.tw ter.scald ng_ nternal.job.Tw terExecut onApp
+ mport com.tw ter.t  l nes.data_process ng.ad_hoc.earlyb rd_rank ng.common.Earlyb rdTra n ngRecapConf gurat on
+ mport com.tw ter.t  l nes.data_process ng.ut l.Request mpl c s.R chRequest
+ mport com.tw ter.t  l nes.data_process ng.ut l.example.RecapT etExample
+ mport com.tw ter.t  l nes.data_process ng.ut l.execut on.UTCDateRangeFromArgs
+ mport com.tw ter.t  l nes.pred ct on.adapters.recap.RecapSuggest onRecordAdapter
+ mport com.tw ter.t  l nes.pred ct on.features.recap.RecapFeatures
+ mport com.tw ter.t  l nes.suggests.common.record.thr ftscala.Suggest onRecord
+ mport com.tw ter.t  l neserv ce.suggests.logg ng.recap.thr ftscala.H ghl ghtT et
+ mport com.tw ter.t  l neserv ce.suggests.logg ng.thr ftscala.SuggestsRequestLog
+ mport scala.collect on.JavaConverters._
+ mport scala.language.reflect veCalls
+ mport scala.ut l.Random
+ mport twadoop_conf g.conf gurat on.log_categor es.group.t  l nes.T  l neserv ce nject onRequestLogScalaDataset
 
 /**
- * Evaluates an Earlybird model using 1% injection request logs.
+ * Evaluates an Earlyb rd model us ng 1%  nject on request logs.
  *
- * Arguments:
- * --model_base_path  path to Earlybird model snapshots
- * --models           list of model names to evaluate
+ * Argu nts:
+ * --model_base_path  path to Earlyb rd model snapshots
+ * --models           l st of model na s to evaluate
  * --output           path to output stats
- * --parallelism      (default: 3) number of tasks to run in parallel
- * --topks            (optional) list of values of `k` (integers) for top-K metrics
- * --topn_fractions   (optional) list of values of `n` (doubles) for top-N-fraction metrics
- * --seed             (optional) seed for random number generator
+ * --parallel sm      (default: 3) number of tasks to run  n parallel
+ * --topks            (opt onal) l st of values of `k` ( ntegers) for top-K  tr cs
+ * --topn_fract ons   (opt onal) l st of values of `n` (doubles) for top-N-fract on  tr cs
+ * --seed             (opt onal) seed for random number generator
  */
-object EarlybirdModelEvaluationJob extends TwitterExecutionApp with UTCDateRangeFromArgs {
+object Earlyb rdModelEvaluat onJob extends Tw terExecut onApp w h UTCDateRangeFromArgs {
 
-  import FDsl._
-  import PredictionEnginePlugin._
+   mport FDsl._
+   mport Pred ct onEng nePlug n._
 
-  private[this] val averager: Aggregator[Double, AveragedValue, Double] =
+  pr vate[t ] val averager: Aggregator[Double, AveragedValue, Double] =
     AveragedValue.aggregator
-  private[this] val recapAdapter: IRecordOneToManyAdapter[SuggestionRecord] =
-    new RecapSuggestionRecordAdapter(checkDwellTime = false)
+  pr vate[t ] val recapAdapter:  RecordOneToManyAdapter[Suggest onRecord] =
+    new RecapSuggest onRecordAdapter(c ckD llT   = false)
 
-  override def job: Execution[Unit] = {
+  overr de def job: Execut on[Un ] = {
     for {
-      args <- Execution.getArgs
+      args <- Execut on.getArgs
       dateRange <- dateRangeEx
-      metrics = getMetrics(args)
-      random = buildRandom(args)
+       tr cs = get tr cs(args)
+      random = bu ldRandom(args)
       modelBasePath = args("model_base_path")
-      models = args.list("models")
-      parallelism = args.int("parallelism", 3)
-      logs = logsHavingCandidates(dateRange)
-      modelScoredCandidates = models.map { model =>
-        (model, scoreCandidatesUsingModel(logs, s"$modelBasePath/$model"))
+      models = args.l st("models")
+      parallel sm = args. nt("parallel sm", 3)
+      logs = logsHav ngCand dates(dateRange)
+      modelScoredCand dates = models.map { model =>
+        (model, scoreCand datesUs ngModel(logs, s"$modelBasePath/$model"))
       }
-      functionScoredCandidates = List(
-        ("random", scoreCandidatesUsingFunction(logs, _ => Some(random.nextDouble()))),
-        ("original_earlybird", scoreCandidatesUsingFunction(logs, extractOriginalEarlybirdScore)),
-        ("blender", scoreCandidatesUsingFunction(logs, extractBlenderScore))
+      funct onScoredCand dates = L st(
+        ("random", scoreCand datesUs ngFunct on(logs, _ => So (random.nextDouble()))),
+        ("or g nal_earlyb rd", scoreCand datesUs ngFunct on(logs, extractOr g nalEarlyb rdScore)),
+        ("blender", scoreCand datesUs ngFunct on(logs, extractBlenderScore))
       )
-      allCandidates = modelScoredCandidates ++ functionScoredCandidates
-      statsExecutions = allCandidates.map {
-        case (name, pipe) =>
+      allCand dates = modelScoredCand dates ++ funct onScoredCand dates
+      statsExecut ons = allCand dates.map {
+        case (na , p pe) =>
           for {
-            saved <- pipe.forceToDiskExecution
-            stats <- computeMetrics(saved, metrics, parallelism)
-          } yield (name, stats)
+            saved <- p pe.forceToD skExecut on
+            stats <- compute tr cs(saved,  tr cs, parallel sm)
+          } y eld (na , stats)
       }
-      stats <- Execution.withParallelism(statsExecutions, parallelism)
-      _ <- TypedPipe.from(stats).writeExecution(TypedJson(args("output")))
-    } yield ()
+      stats <- Execut on.w hParallel sm(statsExecut ons, parallel sm)
+      _ <- TypedP pe.from(stats).wr eExecut on(TypedJson(args("output")))
+    } y eld ()
   }
 
-  private[this] def computeMetrics(
-    requests: TypedPipe[Seq[CandidateRecord]],
-    metricsToCompute: Seq[EarlybirdEvaluationMetric],
-    parallelism: Int
-  ): Execution[Map[String, Double]] = {
-    val metricExecutions = metricsToCompute.map { metric =>
-      val metricEx = requests.flatMap(metric(_)).aggregate(averager).toOptionExecution
-      metricEx.map { value => value.map((metric.name, _)) }
+  pr vate[t ] def compute tr cs(
+    requests: TypedP pe[Seq[Cand dateRecord]],
+     tr csToCompute: Seq[Earlyb rdEvaluat on tr c],
+    parallel sm:  nt
+  ): Execut on[Map[Str ng, Double]] = {
+    val  tr cExecut ons =  tr csToCompute.map {  tr c =>
+      val  tr cEx = requests.flatMap( tr c(_)).aggregate(averager).toOpt onExecut on
+       tr cEx.map { value => value.map(( tr c.na , _)) }
     }
-    Execution.withParallelism(metricExecutions, parallelism).map(_.flatten.toMap)
+    Execut on.w hParallel sm( tr cExecut ons, parallel sm).map(_.flatten.toMap)
   }
 
-  private[this] def getMetrics(args: Args): Seq[EarlybirdEvaluationMetric] = {
-    val topKs = args.list("topks").map(_.toInt)
-    val topNFractions = args.list("topn_fractions").map(_.toDouble)
-    val topKMetrics = topKs.flatMap { topK =>
+  pr vate[t ] def get tr cs(args: Args): Seq[Earlyb rdEvaluat on tr c] = {
+    val topKs = args.l st("topks").map(_.to nt)
+    val topNFract ons = args.l st("topn_fract ons").map(_.toDouble)
+    val topK tr cs = topKs.flatMap { topK =>
       Seq(
-        TopKRecall(topK, filterFewerThanK = false),
-        TopKRecall(topK, filterFewerThanK = true),
-        ShownTweetRecall(topK),
-        AverageFullScoreForTopLight(topK),
-        SumScoreRecallForTopLight(topK),
-        HasFewerThanKCandidates(topK),
-        ShownTweetRecallWithFullScores(topK),
-        ProbabilityOfCorrectOrdering
+        TopKRecall(topK, f lterFe rThanK = false),
+        TopKRecall(topK, f lterFe rThanK = true),
+        ShownT etRecall(topK),
+        AverageFullScoreForTopL ght(topK),
+        SumScoreRecallForTopL ght(topK),
+        HasFe rThanKCand dates(topK),
+        ShownT etRecallW hFullScores(topK),
+        Probab l yOfCorrectOrder ng
       )
     }
-    val topNPercentMetrics = topNFractions.flatMap { topNPercent =>
+    val topNPercent tr cs = topNFract ons.flatMap { topNPercent =>
       Seq(
         TopNPercentRecall(topNPercent),
-        ShownTweetPercentRecall(topNPercent)
+        ShownT etPercentRecall(topNPercent)
       )
     }
-    topKMetrics ++ topNPercentMetrics ++ Seq(NumberOfCandidates)
+    topK tr cs ++ topNPercent tr cs ++ Seq(NumberOfCand dates)
   }
 
-  private[this] def buildRandom(args: Args): Random = {
-    val seedOpt = args.optional("seed").map(_.toLong)
+  pr vate[t ] def bu ldRandom(args: Args): Random = {
+    val seedOpt = args.opt onal("seed").map(_.toLong)
     seedOpt.map(new Random(_)).getOrElse(new Random())
   }
 
-  private[this] def logsHavingCandidates(dateRange: DateRange): TypedPipe[SuggestsRequestLog] =
+  pr vate[t ] def logsHav ngCand dates(dateRange: DateRange): TypedP pe[SuggestsRequestLog] =
     DAL
-      .read(TimelineserviceInjectionRequestLogScalaDataset, dateRange)
-      .toTypedPipe
-      .filter(_.recapCandidates.exists(_.nonEmpty))
+      .read(T  l neserv ce nject onRequestLogScalaDataset, dateRange)
+      .toTypedP pe
+      .f lter(_.recapCand dates.ex sts(_.nonEmpty))
 
   /**
-   * Uses a model defined at `earlybirdModelPath` to score candidates and
-   * returns a Seq[CandidateRecord] for each request.
+   * Uses a model def ned at `earlyb rdModelPath` to score cand dates and
+   * returns a Seq[Cand dateRecord] for each request.
    */
-  private[this] def scoreCandidatesUsingModel(
-    logs: TypedPipe[SuggestsRequestLog],
-    earlybirdModelPath: String
-  ): TypedPipe[Seq[CandidateRecord]] = {
+  pr vate[t ] def scoreCand datesUs ngModel(
+    logs: TypedP pe[SuggestsRequestLog],
+    earlyb rdModelPath: Str ng
+  ): TypedP pe[Seq[Cand dateRecord]] = {
     logs
-      .usingScorer(earlybirdModelPath)
+      .us ngScorer(earlyb rdModelPath)
       .map {
-        case (scorer: PredictionEngineScorer, log: SuggestsRequestLog) =>
-          val suggestionRecords =
-            RecapTweetExample
-              .extractCandidateTweetExamples(log)
-              .map(_.asSuggestionRecord)
-          val servedTweetIds = log.servedHighlightTweets.flatMap(_.tweetId).toSet
-          val renamer = (new EarlybirdTrainingRecapConfiguration).EarlybirdFeatureRenamer
-          suggestionRecords.flatMap { suggestionRecord =>
-            val dataRecordOpt = recapAdapter.adaptToDataRecords(suggestionRecord).asScala.headOption
-            dataRecordOpt.foreach(renamer.transform)
+        case (scorer: Pred ct onEng neScorer, log: SuggestsRequestLog) =>
+          val suggest onRecords =
+            RecapT etExample
+              .extractCand dateT etExamples(log)
+              .map(_.asSuggest onRecord)
+          val servedT et ds = log.servedH ghl ghtT ets.flatMap(_.t et d).toSet
+          val rena r = (new Earlyb rdTra n ngRecapConf gurat on).Earlyb rdFeatureRena r
+          suggest onRecords.flatMap { suggest onRecord =>
+            val dataRecordOpt = recapAdapter.adaptToDataRecords(suggest onRecord).asScala. adOpt on
+            dataRecordOpt.foreach(rena r.transform)
             for {
-              tweetId <- suggestionRecord.itemId
-              fullScore <- suggestionRecord.recapFeatures.flatMap(_.combinedModelScore)
-              earlybirdScore <- dataRecordOpt.flatMap(calculateLightScore(_, scorer))
-            } yield CandidateRecord(
-              tweetId = tweetId,
+              t et d <- suggest onRecord. em d
+              fullScore <- suggest onRecord.recapFeatures.flatMap(_.comb nedModelScore)
+              earlyb rdScore <- dataRecordOpt.flatMap(calculateL ghtScore(_, scorer))
+            } y eld Cand dateRecord(
+              t et d = t et d,
               fullScore = fullScore,
-              earlyScore = earlybirdScore,
-              served = servedTweetIds.contains(tweetId)
+              earlyScore = earlyb rdScore,
+              served = servedT et ds.conta ns(t et d)
             )
           }
       }
   }
 
   /**
-   * Uses a simple function to score candidates and returns a Seq[CandidateRecord] for each
+   * Uses a s mple funct on to score cand dates and returns a Seq[Cand dateRecord] for each
    * request.
    */
-  private[this] def scoreCandidatesUsingFunction(
-    logs: TypedPipe[SuggestsRequestLog],
-    earlyScoreExtractor: HighlightTweet => Option[Double]
-  ): TypedPipe[Seq[CandidateRecord]] = {
+  pr vate[t ] def scoreCand datesUs ngFunct on(
+    logs: TypedP pe[SuggestsRequestLog],
+    earlyScoreExtractor: H ghl ghtT et => Opt on[Double]
+  ): TypedP pe[Seq[Cand dateRecord]] = {
     logs
       .map { log =>
-        val tweetCandidates = log.recapTweetCandidates.getOrElse(Nil)
-        val servedTweetIds = log.servedHighlightTweets.flatMap(_.tweetId).toSet
+        val t etCand dates = log.recapT etCand dates.getOrElse(N l)
+        val servedT et ds = log.servedH ghl ghtT ets.flatMap(_.t et d).toSet
         for {
-          candidate <- tweetCandidates
-          tweetId <- candidate.tweetId
-          fullScore <- candidate.recapFeatures.flatMap(_.combinedModelScore)
-          earlyScore <- earlyScoreExtractor(candidate)
-        } yield CandidateRecord(
-          tweetId = tweetId,
+          cand date <- t etCand dates
+          t et d <- cand date.t et d
+          fullScore <- cand date.recapFeatures.flatMap(_.comb nedModelScore)
+          earlyScore <- earlyScoreExtractor(cand date)
+        } y eld Cand dateRecord(
+          t et d = t et d,
           fullScore = fullScore,
           earlyScore = earlyScore,
-          served = servedTweetIds.contains(tweetId)
+          served = servedT et ds.conta ns(t et d)
         )
       }
   }
 
-  private[this] def extractOriginalEarlybirdScore(candidate: HighlightTweet): Option[Double] =
+  pr vate[t ] def extractOr g nalEarlyb rdScore(cand date: H ghl ghtT et): Opt on[Double] =
     for {
-      recapFeatures <- candidate.recapFeatures
-      tweetFeatures <- recapFeatures.tweetFeatures
-    } yield tweetFeatures.earlybirdScore
+      recapFeatures <- cand date.recapFeatures
+      t etFeatures <- recapFeatures.t etFeatures
+    } y eld t etFeatures.earlyb rdScore
 
-  private[this] def extractBlenderScore(candidate: HighlightTweet): Option[Double] =
+  pr vate[t ] def extractBlenderScore(cand date: H ghl ghtT et): Opt on[Double] =
     for {
-      recapFeatures <- candidate.recapFeatures
-      tweetFeatures <- recapFeatures.tweetFeatures
-    } yield tweetFeatures.blenderScore
+      recapFeatures <- cand date.recapFeatures
+      t etFeatures <- recapFeatures.t etFeatures
+    } y eld t etFeatures.blenderScore
 
-  private[this] def calculateLightScore(
+  pr vate[t ] def calculateL ghtScore(
     dataRecord: DataRecord,
-    scorer: PredictionEngineScorer
-  ): Option[Double] = {
+    scorer: Pred ct onEng neScorer
+  ): Opt on[Double] = {
     val scoredRecord = scorer(dataRecord)
-    if (scoredRecord.hasFeature(RecapFeatures.PREDICTED_IS_UNIFIED_ENGAGEMENT)) {
-      Some(scoredRecord.getFeatureValue(RecapFeatures.PREDICTED_IS_UNIFIED_ENGAGEMENT).toDouble)
+     f (scoredRecord.hasFeature(RecapFeatures.PRED CTED_ S_UN F ED_ENGAGEMENT)) {
+      So (scoredRecord.getFeatureValue(RecapFeatures.PRED CTED_ S_UN F ED_ENGAGEMENT).toDouble)
     } else {
       None
     }

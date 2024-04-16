@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.stp
 
-import com.twitter.cortex.deepbird.runtime.prediction_engine.TensorflowPredictionEngine
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.ml.prediction_service.PredictionRequest
-import com.twitter.stitch.Stitch
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.STPRecord
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.STPRecordAdapter
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.tw ter.cortex.deepb rd.runt  .pred ct on_eng ne.TensorflowPred ct onEng ne
+ mport com.tw ter.follow_recom ndat ons.common.constants.Gu ceNa dConstants
+ mport com.tw ter.ml.ap .Feature.Cont nuous
+ mport com.tw ter.ml.ap .ut l.SR chDataRecord
+ mport com.tw ter.ml.pred ct on_serv ce.Pred ct onRequest
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.wtf.scald ng.jobs.strong_t e_pred ct on.STPRecord
+ mport com.tw ter.wtf.scald ng.jobs.strong_t e_pred ct on.STPRecordAdapter
+ mport javax. nject. nject
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
 /**
- * STP ML ranker trained using DeepBirdV2
+ * STP ML ranker tra ned us ng DeepB rdV2
  */
-@Singleton
-class Dbv2StpScorer @Inject() (
-  @Named(GuiceNamedConstants.STP_DBV2_SCORER) tfPredictionEngine: TensorflowPredictionEngine) {
-  def getScoredResponse(record: STPRecord): Stitch[Option[Double]] = {
-    val request: PredictionRequest = new PredictionRequest(
+@S ngleton
+class Dbv2StpScorer @ nject() (
+  @Na d(Gu ceNa dConstants.STP_DBV2_SCORER) tfPred ct onEng ne: TensorflowPred ct onEng ne) {
+  def getScoredResponse(record: STPRecord): St ch[Opt on[Double]] = {
+    val request: Pred ct onRequest = new Pred ct onRequest(
       STPRecordAdapter.adaptToDataRecord(record))
-    val responseStitch = Stitch.callFuture(tfPredictionEngine.getPrediction(request))
-    responseStitch.map { response =>
-      val richDr = SRichDataRecord(response.getPrediction)
-      richDr.getFeatureValueOpt(new Continuous("output"))
+    val responseSt ch = St ch.callFuture(tfPred ct onEng ne.getPred ct on(request))
+    responseSt ch.map { response =>
+      val r chDr = SR chDataRecord(response.getPred ct on)
+      r chDr.getFeatureValueOpt(new Cont nuous("output"))
     }
   }
 }

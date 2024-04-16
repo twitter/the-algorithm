@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.operation
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation.CursorEntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineOperation
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.CursorOperat on.CursorEntryNa space
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.EntryNa space
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neOperat on
 
-object CursorOperation {
-  val CursorEntryNamespace = EntryNamespace("cursor")
+object CursorOperat on {
+  val CursorEntryNa space = EntryNa space("cursor")
 
-  private def entryIdentifier(cursorType: CursorType, identifier: Long): String =
-    s"$CursorEntryNamespace-${cursorType.entryNamespace.toString}-$identifier"
+  pr vate def entry dent f er(cursorType: CursorType,  dent f er: Long): Str ng =
+    s"$CursorEntryNa space-${cursorType.entryNa space.toStr ng}-$ dent f er"
 }
 
-case class CursorOperation(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  value: String,
+case class CursorOperat on(
+  overr de val  d: Long,
+  overr de val sort ndex: Opt on[Long],
+  value: Str ng,
   cursorType: CursorType,
-  displayTreatment: Option[CursorDisplayTreatment],
-  idToReplace: Option[Long])
-    extends TimelineOperation {
-  override val entryNamespace: EntryNamespace = CursorEntryNamespace
+  d splayTreat nt: Opt on[CursorD splayTreat nt],
+   dToReplace: Opt on[Long])
+    extends T  l neOperat on {
+  overr de val entryNa space: EntryNa space = CursorEntryNa space
 
-  override lazy val entryIdentifier: String = CursorOperation.entryIdentifier(cursorType, id)
+  overr de lazy val entry dent f er: Str ng = CursorOperat on.entry dent f er(cursorType,  d)
 
-  override def entryIdToReplace: Option[String] =
-    idToReplace.map(CursorOperation.entryIdentifier(cursorType, _))
+  overr de def entry dToReplace: Opt on[Str ng] =
+     dToReplace.map(CursorOperat on.entry dent f er(cursorType, _))
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  overr de def w hSort ndex(sort ndex: Long): T  l neEntry = copy(sort ndex = So (sort ndex))
 }

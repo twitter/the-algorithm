@@ -1,174 +1,174 @@
-package com.twitter.home_mixer.product.for_you.candidate_source
+package com.tw ter.ho _m xer.product.for_ .cand date_s ce
 
-import com.google.inject.Provider
-import com.twitter.home_mixer.model.HomeFeatures.ServedTweetIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.TimelineServiceTweetsFeature
-import com.twitter.home_mixer.model.request.HomeMixerRequest
-import com.twitter.home_mixer.model.request.ScoredTweetsProduct
-import com.twitter.home_mixer.model.request.ScoredTweetsProductContext
-import com.twitter.home_mixer.product.for_you.model.ForYouQuery
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.core.functional_component.candidate_source.product_pipeline.ProductPipelineCandidateSource
-import com.twitter.product_mixer.core.functional_component.configapi.ParamsBuilder
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistry
-import com.twitter.timelines.render.{thriftscala => tl}
-import com.twitter.timelineservice.suggests.{thriftscala => st}
-import com.twitter.tweetconvosvc.tweet_ancestor.{thriftscala => ta}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.google. nject.Prov der
+ mport com.tw ter.ho _m xer.model.Ho Features.ServedT et dsFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.T  l neServ ceT etsFeature
+ mport com.tw ter.ho _m xer.model.request.Ho M xerRequest
+ mport com.tw ter.ho _m xer.model.request.ScoredT etsProduct
+ mport com.tw ter.ho _m xer.model.request.ScoredT etsProductContext
+ mport com.tw ter.ho _m xer.product.for_ .model.For Query
+ mport com.tw ter.ho _m xer.{thr ftscala => t}
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.cursor.UrtCursorSer al zer
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.product_p pel ne.ProductP pel neCand dateS ce
+ mport com.tw ter.product_m xer.core.funct onal_component.conf gap .ParamsBu lder
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.product_m xer.core.product.reg stry.ProductP pel neReg stry
+ mport com.tw ter.t  l nes.render.{thr ftscala => tl}
+ mport com.tw ter.t  l neserv ce.suggests.{thr ftscala => st}
+ mport com.tw ter.t etconvosvc.t et_ancestor.{thr ftscala => ta}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * [[ScoredTweetWithConversationMetadata]]
+ * [[ScoredT etW hConversat on tadata]]
  **/
-case class ScoredTweetWithConversationMetadata(
-  tweetId: Long,
-  authorId: Long,
-  score: Option[Double] = None,
-  suggestType: Option[st.SuggestType] = None,
-  sourceTweetId: Option[Long] = None,
-  sourceUserId: Option[Long] = None,
-  quotedTweetId: Option[Long] = None,
-  quotedUserId: Option[Long] = None,
-  inReplyToTweetId: Option[Long] = None,
-  inReplyToUserId: Option[Long] = None,
-  directedAtUserId: Option[Long] = None,
-  inNetwork: Option[Boolean] = None,
-  sgsValidLikedByUserIds: Option[Seq[Long]] = None,
-  sgsValidFollowedByUserIds: Option[Seq[Long]] = None,
-  ancestors: Option[Seq[ta.TweetAncestor]] = None,
-  topicId: Option[Long] = None,
-  topicFunctionalityType: Option[tl.TopicContextFunctionalityType] = None,
-  conversationId: Option[Long] = None,
-  conversationFocalTweetId: Option[Long] = None,
-  isReadFromCache: Option[Boolean] = None,
-  streamToKafka: Option[Boolean] = None,
-  exclusiveConversationAuthorId: Option[Long] = None,
-  authorIsBlueVerified: Option[Boolean] = None,
-  authorIsGoldVerified: Option[Boolean] = None,
-  authorIsGrayVerified: Option[Boolean] = None,
-  authorIsLegacyVerified: Option[Boolean] = None,
-  authorIsCreator: Option[Boolean] = None,
-  perspectiveFilteredLikedByUserIds: Option[Seq[Long]] = None)
+case class ScoredT etW hConversat on tadata(
+  t et d: Long,
+  author d: Long,
+  score: Opt on[Double] = None,
+  suggestType: Opt on[st.SuggestType] = None,
+  s ceT et d: Opt on[Long] = None,
+  s ceUser d: Opt on[Long] = None,
+  quotedT et d: Opt on[Long] = None,
+  quotedUser d: Opt on[Long] = None,
+   nReplyToT et d: Opt on[Long] = None,
+   nReplyToUser d: Opt on[Long] = None,
+  d rectedAtUser d: Opt on[Long] = None,
+   nNetwork: Opt on[Boolean] = None,
+  sgsVal dL kedByUser ds: Opt on[Seq[Long]] = None,
+  sgsVal dFollo dByUser ds: Opt on[Seq[Long]] = None,
+  ancestors: Opt on[Seq[ta.T etAncestor]] = None,
+  top c d: Opt on[Long] = None,
+  top cFunct onal yType: Opt on[tl.Top cContextFunct onal yType] = None,
+  conversat on d: Opt on[Long] = None,
+  conversat onFocalT et d: Opt on[Long] = None,
+   sReadFromCac : Opt on[Boolean] = None,
+  streamToKafka: Opt on[Boolean] = None,
+  exclus veConversat onAuthor d: Opt on[Long] = None,
+  author sBlueVer f ed: Opt on[Boolean] = None,
+  author sGoldVer f ed: Opt on[Boolean] = None,
+  author sGrayVer f ed: Opt on[Boolean] = None,
+  author sLegacyVer f ed: Opt on[Boolean] = None,
+  author sCreator: Opt on[Boolean] = None,
+  perspect veF lteredL kedByUser ds: Opt on[Seq[Long]] = None)
 
-@Singleton
-class ScoredTweetsProductCandidateSource @Inject() (
-  override val productPipelineRegistry: Provider[ProductPipelineRegistry],
-  override val paramsBuilder: Provider[ParamsBuilder])
-    extends ProductPipelineCandidateSource[
-      ForYouQuery,
-      HomeMixerRequest,
-      t.ScoredTweetsResponse,
-      ScoredTweetWithConversationMetadata
+@S ngleton
+class ScoredT etsProductCand dateS ce @ nject() (
+  overr de val productP pel neReg stry: Prov der[ProductP pel neReg stry],
+  overr de val paramsBu lder: Prov der[ParamsBu lder])
+    extends ProductP pel neCand dateS ce[
+      For Query,
+      Ho M xerRequest,
+      t.ScoredT etsResponse,
+      ScoredT etW hConversat on tadata
     ] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier("ScoredTweetsProduct")
+  overr de val  dent f er: Cand dateS ce dent f er =
+    Cand dateS ce dent f er("ScoredT etsProduct")
 
-  private val MaxModuleSize = 3
-  private val MaxAncestorsInConversation = 2
+  pr vate val MaxModuleS ze = 3
+  pr vate val MaxAncestors nConversat on = 2
 
-  override def pipelineRequestTransformer(productPipelineQuery: ForYouQuery): HomeMixerRequest = {
-    HomeMixerRequest(
-      clientContext = productPipelineQuery.clientContext,
-      product = ScoredTweetsProduct,
-      productContext = Some(
-        ScoredTweetsProductContext(
-          productPipelineQuery.deviceContext,
-          productPipelineQuery.seenTweetIds,
-          productPipelineQuery.features.map(_.getOrElse(ServedTweetIdsFeature, Seq.empty)),
-          productPipelineQuery.features.map(_.getOrElse(TimelineServiceTweetsFeature, Seq.empty))
+  overr de def p pel neRequestTransfor r(productP pel neQuery: For Query): Ho M xerRequest = {
+    Ho M xerRequest(
+      cl entContext = productP pel neQuery.cl entContext,
+      product = ScoredT etsProduct,
+      productContext = So (
+        ScoredT etsProductContext(
+          productP pel neQuery.dev ceContext,
+          productP pel neQuery.seenT et ds,
+          productP pel neQuery.features.map(_.getOrElse(ServedT et dsFeature, Seq.empty)),
+          productP pel neQuery.features.map(_.getOrElse(T  l neServ ceT etsFeature, Seq.empty))
         )),
-      serializedRequestCursor =
-        productPipelineQuery.pipelineCursor.map(UrtCursorSerializer.serializeCursor),
-      maxResults = productPipelineQuery.requestedMaxResults,
+      ser al zedRequestCursor =
+        productP pel neQuery.p pel neCursor.map(UrtCursorSer al zer.ser al zeCursor),
+      maxResults = productP pel neQuery.requestedMaxResults,
       debugParams = None,
-      homeRequestParam = false
+      ho RequestParam = false
     )
   }
 
-  override def productPipelineResultTransformer(
-    productPipelineResult: t.ScoredTweetsResponse
-  ): Seq[ScoredTweetWithConversationMetadata] = {
-    val scoredTweets = productPipelineResult.scoredTweets.flatMap { focalTweet =>
-      val parentTweets = focalTweet.ancestors.getOrElse(Seq.empty).sortBy(-_.tweetId)
-      val (intermediates, root) = parentTweets.splitAt(parentTweets.size - 1)
-      val truncatedIntermediates =
-        intermediates.take(MaxModuleSize - MaxAncestorsInConversation).reverse
-      val rootScoredTweet: Seq[ScoredTweetWithConversationMetadata] = root.map { ancestor =>
-        ScoredTweetWithConversationMetadata(
-          tweetId = ancestor.tweetId,
-          authorId = ancestor.userId,
-          suggestType = focalTweet.suggestType,
-          conversationId = Some(ancestor.tweetId),
-          conversationFocalTweetId = Some(focalTweet.tweetId),
-          exclusiveConversationAuthorId = focalTweet.exclusiveConversationAuthorId
+  overr de def productP pel neResultTransfor r(
+    productP pel neResult: t.ScoredT etsResponse
+  ): Seq[ScoredT etW hConversat on tadata] = {
+    val scoredT ets = productP pel neResult.scoredT ets.flatMap { focalT et =>
+      val parentT ets = focalT et.ancestors.getOrElse(Seq.empty).sortBy(-_.t et d)
+      val ( nter d ates, root) = parentT ets.spl At(parentT ets.s ze - 1)
+      val truncated nter d ates =
+         nter d ates.take(MaxModuleS ze - MaxAncestors nConversat on).reverse
+      val rootScoredT et: Seq[ScoredT etW hConversat on tadata] = root.map { ancestor =>
+        ScoredT etW hConversat on tadata(
+          t et d = ancestor.t et d,
+          author d = ancestor.user d,
+          suggestType = focalT et.suggestType,
+          conversat on d = So (ancestor.t et d),
+          conversat onFocalT et d = So (focalT et.t et d),
+          exclus veConversat onAuthor d = focalT et.exclus veConversat onAuthor d
         )
       }
-      val conversationId = rootScoredTweet.headOption.map(_.tweetId)
+      val conversat on d = rootScoredT et. adOpt on.map(_.t et d)
 
-      val tweetsToParents =
-        if (parentTweets.nonEmpty) parentTweets.zip(parentTweets.tail).toMap
-        else Map.empty[ta.TweetAncestor, ta.TweetAncestor]
+      val t etsToParents =
+         f (parentT ets.nonEmpty) parentT ets.z p(parentT ets.ta l).toMap
+        else Map.empty[ta.T etAncestor, ta.T etAncestor]
 
-      val intermediateScoredTweets = truncatedIntermediates.map { ancestor =>
-        ScoredTweetWithConversationMetadata(
-          tweetId = ancestor.tweetId,
-          authorId = ancestor.userId,
-          suggestType = focalTweet.suggestType,
-          inReplyToTweetId = tweetsToParents.get(ancestor).map(_.tweetId),
-          conversationId = conversationId,
-          conversationFocalTweetId = Some(focalTweet.tweetId),
-          exclusiveConversationAuthorId = focalTweet.exclusiveConversationAuthorId
+      val  nter d ateScoredT ets = truncated nter d ates.map { ancestor =>
+        ScoredT etW hConversat on tadata(
+          t et d = ancestor.t et d,
+          author d = ancestor.user d,
+          suggestType = focalT et.suggestType,
+           nReplyToT et d = t etsToParents.get(ancestor).map(_.t et d),
+          conversat on d = conversat on d,
+          conversat onFocalT et d = So (focalT et.t et d),
+          exclus veConversat onAuthor d = focalT et.exclus veConversat onAuthor d
         )
       }
-      val parentScoredTweets = rootScoredTweet ++ intermediateScoredTweets
+      val parentScoredT ets = rootScoredT et ++  nter d ateScoredT ets
 
-      val conversationFocalTweetId =
-        if (parentScoredTweets.nonEmpty) Some(focalTweet.tweetId) else None
+      val conversat onFocalT et d =
+         f (parentScoredT ets.nonEmpty) So (focalT et.t et d) else None
 
-      val focalScoredTweet = ScoredTweetWithConversationMetadata(
-        tweetId = focalTweet.tweetId,
-        authorId = focalTweet.authorId,
-        score = focalTweet.score,
-        suggestType = focalTweet.suggestType,
-        sourceTweetId = focalTweet.sourceTweetId,
-        sourceUserId = focalTweet.sourceUserId,
-        quotedTweetId = focalTweet.quotedTweetId,
-        quotedUserId = focalTweet.quotedUserId,
-        inReplyToTweetId = parentScoredTweets.lastOption.map(_.tweetId),
-        inReplyToUserId = focalTweet.inReplyToUserId,
-        directedAtUserId = focalTweet.directedAtUserId,
-        inNetwork = focalTweet.inNetwork,
-        sgsValidLikedByUserIds = focalTweet.sgsValidLikedByUserIds,
-        sgsValidFollowedByUserIds = focalTweet.sgsValidFollowedByUserIds,
-        topicId = focalTweet.topicId,
-        topicFunctionalityType = focalTweet.topicFunctionalityType,
-        ancestors = focalTweet.ancestors,
-        conversationId = conversationId,
-        conversationFocalTweetId = conversationFocalTweetId,
-        isReadFromCache = focalTweet.isReadFromCache,
-        streamToKafka = focalTweet.streamToKafka,
-        exclusiveConversationAuthorId = focalTweet.exclusiveConversationAuthorId,
-        authorIsBlueVerified = focalTweet.authorMetadata.map(_.blueVerified),
-        authorIsGoldVerified = focalTweet.authorMetadata.map(_.goldVerified),
-        authorIsGrayVerified = focalTweet.authorMetadata.map(_.grayVerified),
-        authorIsLegacyVerified = focalTweet.authorMetadata.map(_.legacyVerified),
-        authorIsCreator = focalTweet.authorMetadata.map(_.creator),
-        perspectiveFilteredLikedByUserIds = focalTweet.perspectiveFilteredLikedByUserIds
+      val focalScoredT et = ScoredT etW hConversat on tadata(
+        t et d = focalT et.t et d,
+        author d = focalT et.author d,
+        score = focalT et.score,
+        suggestType = focalT et.suggestType,
+        s ceT et d = focalT et.s ceT et d,
+        s ceUser d = focalT et.s ceUser d,
+        quotedT et d = focalT et.quotedT et d,
+        quotedUser d = focalT et.quotedUser d,
+         nReplyToT et d = parentScoredT ets.lastOpt on.map(_.t et d),
+         nReplyToUser d = focalT et. nReplyToUser d,
+        d rectedAtUser d = focalT et.d rectedAtUser d,
+         nNetwork = focalT et. nNetwork,
+        sgsVal dL kedByUser ds = focalT et.sgsVal dL kedByUser ds,
+        sgsVal dFollo dByUser ds = focalT et.sgsVal dFollo dByUser ds,
+        top c d = focalT et.top c d,
+        top cFunct onal yType = focalT et.top cFunct onal yType,
+        ancestors = focalT et.ancestors,
+        conversat on d = conversat on d,
+        conversat onFocalT et d = conversat onFocalT et d,
+         sReadFromCac  = focalT et. sReadFromCac ,
+        streamToKafka = focalT et.streamToKafka,
+        exclus veConversat onAuthor d = focalT et.exclus veConversat onAuthor d,
+        author sBlueVer f ed = focalT et.author tadata.map(_.blueVer f ed),
+        author sGoldVer f ed = focalT et.author tadata.map(_.goldVer f ed),
+        author sGrayVer f ed = focalT et.author tadata.map(_.grayVer f ed),
+        author sLegacyVer f ed = focalT et.author tadata.map(_.legacyVer f ed),
+        author sCreator = focalT et.author tadata.map(_.creator),
+        perspect veF lteredL kedByUser ds = focalT et.perspect veF lteredL kedByUser ds
       )
 
-      parentScoredTweets :+ focalScoredTweet
+      parentScoredT ets :+ focalScoredT et
     }
 
-    val dedupedTweets = scoredTweets.groupBy(_.tweetId).map {
-      case (_, duplicateAncestors) => duplicateAncestors.maxBy(_.score.getOrElse(0.0))
+    val dedupedT ets = scoredT ets.groupBy(_.t et d).map {
+      case (_, dupl cateAncestors) => dupl cateAncestors.maxBy(_.score.getOrElse(0.0))
     }
 
-    // Sort by tweet id to prevent issues with future assumptions of the root being the first
-    // tweet and the focal being the last tweet in a module. The tweets as a whole do not need
-    // to be sorted overall, only the relative order within modules must be kept.
-    dedupedTweets.toSeq.sortBy(_.tweetId)
+    // Sort by t et  d to prevent  ssues w h future assumpt ons of t  root be ng t  f rst
+    // t et and t  focal be ng t  last t et  n a module. T  t ets as a whole do not need
+    // to be sorted overall, only t  relat ve order w h n modules must be kept.
+    dedupedT ets.toSeq.sortBy(_.t et d)
   }
 }

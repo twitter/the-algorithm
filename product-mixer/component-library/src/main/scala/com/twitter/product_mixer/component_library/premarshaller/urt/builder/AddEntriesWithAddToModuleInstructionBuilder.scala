@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.AddEntr esT  l ne nstruct on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neModule
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * Build the AddEntries instruction with special handling for AddToModule entries.
+ * Bu ld t  AddEntr es  nstruct on w h spec al handl ng for AddToModule entr es.
  *
- * Entries which are going to be added to a module are going to be added via
- * AddToModuleInstructionBuilder, for other entries in the same response (like cursor entries) we
- * still need an AddEntriesTimelineInstruction which is going to be created by this builder.
+ * Entr es wh ch are go ng to be added to a module are go ng to be added v a
+ * AddToModule nstruct onBu lder, for ot r entr es  n t  sa  response (l ke cursor entr es)  
+ * st ll need an AddEntr esT  l ne nstruct on wh ch  s go ng to be created by t  bu lder.
  */
-case class AddEntriesWithAddToModuleInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends UrtInstructionBuilder[Query, AddEntriesTimelineInstruction] {
+case class AddEntr esW hAddToModule nstruct onBu lder[Query <: P pel neQuery](
+  overr de val  nclude nstruct on:  nclude nstruct on[Query] = Always nclude)
+    extends Urt nstruct onBu lder[Query, AddEntr esT  l ne nstruct on] {
 
-  override def build(
+  overr de def bu ld(
     query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[AddEntriesTimelineInstruction] = {
-    if (includeInstruction(query, entries)) {
-      val entriesToAdd = entries.filter {
-        case _: TimelineModule => false
+    entr es: Seq[T  l neEntry]
+  ): Seq[AddEntr esT  l ne nstruct on] = {
+     f ( nclude nstruct on(query, entr es)) {
+      val entr esToAdd = entr es.f lter {
+        case _: T  l neModule => false
         case _ => true
       }
-      if (entriesToAdd.nonEmpty) Seq(AddEntriesTimelineInstruction(entriesToAdd))
+       f (entr esToAdd.nonEmpty) Seq(AddEntr esT  l ne nstruct on(entr esToAdd))
       else Seq.empty
     } else
       Seq.empty

@@ -1,14 +1,14 @@
-resources(
-    sources = ["**/*.yml"],
+res ces(
+    s ces = ["**/*.yml"],
 )
 
-# Created for Bazel compatibility.
-# In Bazel, loose files must be part of a target to be included into a bundle.
-# See also http://go/bazel-compatibility/bundle_does_not_match_any_files
-files(
-    name = "files",
-    sources = [
-        "!BUILD",
+# Created for Bazel compat b l y.
+#  n Bazel, loose f les must be part of a target to be  ncluded  nto a bundle.
+# See also http://go/bazel-compat b l y/bundle_does_not_match_any_f les
+f les(
+    na  = "f les",
+    s ces = [
+        "!BU LD",
         "**/*",
     ],
 )

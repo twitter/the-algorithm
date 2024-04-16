@@ -1,177 +1,177 @@
-package com.twitter.simclusters_v2.scalding.embedding.abuse
+package com.tw ter.s mclusters_v2.scald ng.embedd ng.abuse
 
-import com.twitter.scalding._
-import com.twitter.scalding.source.TypedText
-import com.twitter.scalding_internal.dalv2.DALWrite.{D, _}
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.hdfs_sources.SearchAbuseSimclusterFeaturesManhattanScalaDataset
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.abuse.AbuseSimclusterFeaturesScaldingJob.buildKeyValDataSet
-import com.twitter.simclusters_v2.scalding.embedding.abuse.AdhocAbuseSimClusterFeaturesScaldingJob.{
-  abuseInteractionSearchGraph,
-  buildSearchAbuseScores,
-  impressionInteractionSearchGraph
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng.s ce.TypedText
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e.{D, _}
+ mport com.tw ter.scald ng_ nternal.mult format.format.keyval.KeyVal
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.SearchAbuseS mclusterFeaturesManhattanScalaDataset
+ mport com.tw ter.s mclusters_v2.scald ng.common.matr x.SparseMatr x
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.abuse.AbuseS mclusterFeaturesScald ngJob.bu ldKeyValDataSet
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.abuse.AdhocAbuseS mClusterFeaturesScald ngJob.{
+  abuse nteract onSearchGraph,
+  bu ldSearchAbuseScores,
+   mpress on nteract onSearchGraph
 }
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.getUserInterestedInSparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.{ClusterId, UserId}
-import com.twitter.simclusters_v2.thriftscala.{
-  ModelVersion,
-  SimClustersEmbedding,
-  SingleSideUserScores
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.abuse.DataS ces.getUser nterested nSparseMatr x
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.Embedd ngUt l
+ mport com.tw ter.s mclusters_v2.scald ng.embedd ng.common.Embedd ngUt l.{Cluster d, User d}
+ mport com.tw ter.s mclusters_v2.thr ftscala.{
+  ModelVers on,
+  S mClustersEmbedd ng,
+  S ngleS deUserScores
 }
-import com.twitter.wtf.scalding.jobs.common.{AdhocExecutionApp, ScheduledExecutionApp}
-import java.util.TimeZone
+ mport com.tw ter.wtf.scald ng.jobs.common.{AdhocExecut onApp, Sc duledExecut onApp}
+ mport java.ut l.T  Zone
 
-object AbuseSimclusterFeaturesScaldingJob {
+object AbuseS mclusterFeaturesScald ngJob {
 
-  val HealthyConsumerKey = "healthyConsumer"
-  val UnhealthyConsumerKey = "unhealthyConsumer"
-  val HealthyAuthorKey = "healthyAuthor"
-  val UnhealthyAuthorKey = "unhealthyAuthor"
+  val  althyConsu rKey = " althyConsu r"
+  val Un althyConsu rKey = "un althyConsu r"
+  val  althyAuthorKey = " althyAuthor"
+  val Un althyAuthorKey = "un althyAuthor"
 
-  private[this] val EmptySimCluster = SimClustersEmbedding(List())
+  pr vate[t ] val EmptyS mCluster = S mClustersEmbedd ng(L st())
 
-  def buildKeyValDataSet(
-    normalizedSimClusterMatrix: SparseMatrix[UserId, ClusterId, Double],
-    unhealthyGraph: SparseMatrix[UserId, UserId, Double],
-    healthyGraph: SparseMatrix[UserId, UserId, Double]
-  ): TypedPipe[KeyVal[Long, SingleSideUserScores]] = {
+  def bu ldKeyValDataSet(
+    normal zedS mClusterMatr x: SparseMatr x[User d, Cluster d, Double],
+    un althyGraph: SparseMatr x[User d, User d, Double],
+     althyGraph: SparseMatr x[User d, User d, Double]
+  ): TypedP pe[KeyVal[Long, S ngleS deUserScores]] = {
 
     val searchAbuseScores =
-      buildSearchAbuseScores(
-        normalizedSimClusterMatrix,
-        unhealthyGraph = unhealthyGraph,
-        healthyGraph = healthyGraph
+      bu ldSearchAbuseScores(
+        normal zedS mClusterMatr x,
+        un althyGraph = un althyGraph,
+         althyGraph =  althyGraph
       )
 
-    val pairedScores = SingleSideInteractionTransformation.pairScores(
+    val pa redScores = S ngleS de nteract onTransformat on.pa rScores(
       Map(
-        HealthyConsumerKey -> searchAbuseScores.healthyConsumerClusterScores,
-        UnhealthyConsumerKey -> searchAbuseScores.unhealthyConsumerClusterScores,
-        HealthyAuthorKey -> searchAbuseScores.healthyAuthorClusterScores,
-        UnhealthyAuthorKey -> searchAbuseScores.unhealthyAuthorClusterScores
+         althyConsu rKey -> searchAbuseScores. althyConsu rClusterScores,
+        Un althyConsu rKey -> searchAbuseScores.un althyConsu rClusterScores,
+         althyAuthorKey -> searchAbuseScores. althyAuthorClusterScores,
+        Un althyAuthorKey -> searchAbuseScores.un althyAuthorClusterScores
       )
     )
 
-    pairedScores
-      .map { pairedScore =>
-        val userPairInteractionFeatures = PairedInteractionFeatures(
-          healthyInteractionSimClusterEmbedding =
-            pairedScore.interactionScores.getOrElse(HealthyConsumerKey, EmptySimCluster),
-          unhealthyInteractionSimClusterEmbedding =
-            pairedScore.interactionScores.getOrElse(UnhealthyConsumerKey, EmptySimCluster)
+    pa redScores
+      .map { pa redScore =>
+        val userPa r nteract onFeatures = Pa red nteract onFeatures(
+           althy nteract onS mClusterEmbedd ng =
+            pa redScore. nteract onScores.getOrElse( althyConsu rKey, EmptyS mCluster),
+          un althy nteract onS mClusterEmbedd ng =
+            pa redScore. nteract onScores.getOrElse(Un althyConsu rKey, EmptyS mCluster)
         )
 
-        val authorPairInteractionFeatures = PairedInteractionFeatures(
-          healthyInteractionSimClusterEmbedding =
-            pairedScore.interactionScores.getOrElse(HealthyAuthorKey, EmptySimCluster),
-          unhealthyInteractionSimClusterEmbedding =
-            pairedScore.interactionScores.getOrElse(UnhealthyAuthorKey, EmptySimCluster)
+        val authorPa r nteract onFeatures = Pa red nteract onFeatures(
+           althy nteract onS mClusterEmbedd ng =
+            pa redScore. nteract onScores.getOrElse( althyAuthorKey, EmptyS mCluster),
+          un althy nteract onS mClusterEmbedd ng =
+            pa redScore. nteract onScores.getOrElse(Un althyAuthorKey, EmptyS mCluster)
         )
 
-        val value = SingleSideUserScores(
-          pairedScore.userId,
-          consumerHealthyScore = userPairInteractionFeatures.healthySum,
-          consumerUnhealthyScore = userPairInteractionFeatures.unhealthySum,
-          authorUnhealthyScore = authorPairInteractionFeatures.unhealthySum,
-          authorHealthyScore = authorPairInteractionFeatures.healthySum
+        val value = S ngleS deUserScores(
+          pa redScore.user d,
+          consu r althyScore = userPa r nteract onFeatures. althySum,
+          consu rUn althyScore = userPa r nteract onFeatures.un althySum,
+          authorUn althyScore = authorPa r nteract onFeatures.un althySum,
+          author althyScore = authorPa r nteract onFeatures. althySum
         )
 
-        KeyVal(pairedScore.userId, value)
+        KeyVal(pa redScore.user d, value)
       }
   }
 }
 
 /**
- * This job creates single-side features used to predict the abuse reports in search. The features
- * are put into manhattan and availabe in feature store. We expect that search will be able to use
- * these features directly. They may be useful for other models as well.
+ * T  job creates s ngle-s de features used to pred ct t  abuse reports  n search. T  features
+ * are put  nto manhattan and ava labe  n feature store.   expect that search w ll be able to use
+ * t se features d rectly. T y may be useful for ot r models as  ll.
  */
-object SearchAbuseSimclusterFeaturesScaldingJob extends ScheduledExecutionApp {
-  override def firstTime: RichDate = RichDate("2021-02-01")
+object SearchAbuseS mclusterFeaturesScald ngJob extends Sc duledExecut onApp {
+  overr de def f rstT  : R chDate = R chDate("2021-02-01")
 
-  override def batchIncrement: Duration =
+  overr de def batch ncre nt: Durat on =
     Days(7)
 
-  private val OutputPath: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = true,
-    modelVersion = ModelVersion.Model20m145kUpdated,
-    pathSuffix = "search_abuse_simcluster_features"
+  pr vate val OutputPath: Str ng = Embedd ngUt l.getHdfsPath(
+     sAdhoc = false,
+     sManhattanKeyVal = true,
+    modelVers on = ModelVers on.Model20m145kUpdated,
+    pathSuff x = "search_abuse_s mcluster_features"
   )
 
-  def buildDataset(
+  def bu ldDataset(
   )(
-    implicit dateRange: DateRange,
-  ): Execution[TypedPipe[KeyVal[Long, SingleSideUserScores]]] = {
-    Execution.getMode.map { implicit mode =>
-      val normalizedSimClusterMatrix = getUserInterestedInSparseMatrix.rowL2Normalize
-      val abuseSearchGraph = abuseInteractionSearchGraph()(dateRange, mode)
-      val impressionSearchGraph = impressionInteractionSearchGraph()(dateRange, mode)
+     mpl c  dateRange: DateRange,
+  ): Execut on[TypedP pe[KeyVal[Long, S ngleS deUserScores]]] = {
+    Execut on.getMode.map {  mpl c  mode =>
+      val normal zedS mClusterMatr x = getUser nterested nSparseMatr x.rowL2Normal ze
+      val abuseSearchGraph = abuse nteract onSearchGraph()(dateRange, mode)
+      val  mpress onSearchGraph =  mpress on nteract onSearchGraph()(dateRange, mode)
 
-      buildKeyValDataSet(normalizedSimClusterMatrix, abuseSearchGraph, impressionSearchGraph)
+      bu ldKeyValDataSet(normal zedS mClusterMatr x, abuseSearchGraph,  mpress onSearchGraph)
     }
   }
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    // Extend the date range to a total of 19 days. Search keeps 21 days of data.
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
+    // Extend t  date range to a total of 19 days. Search keeps 21 days of data.
     val dateRangeSearchData = dateRange.prepend(Days(12))
-    buildDataset()(dateRangeSearchData).flatMap { dataset =>
-      dataset.writeDALVersionedKeyValExecution(
-        dataset = SearchAbuseSimclusterFeaturesManhattanScalaDataset,
-        pathLayout = D.Suffix(OutputPath)
+    bu ldDataset()(dateRangeSearchData).flatMap { dataset =>
+      dataset.wr eDALVers onedKeyValExecut on(
+        dataset = SearchAbuseS mclusterFeaturesManhattanScalaDataset,
+        pathLa t = D.Suff x(OutputPath)
       )
     }
   }
 }
 
 /**
- * You can check the logic of this job by running this query.
+ *   can c ck t  log c of t  job by runn ng t  query.
  *
- * scalding remote run \
- * --target src/scala/com/twitter/simclusters_v2/scalding/embedding/abuse:abuse-prod \
- * --main-class com.twitter.simclusters_v2.scalding.embedding.abuse.AdhocSearchAbuseSimclusterFeaturesScaldingJob \
- * --hadoop-properties "mapreduce.job.split.metainfo.maxsize=-1" \
- * --cluster bluebird-qus1 --submitter hadoopnest-bluebird-1.qus1.twitter.com \
+ * scald ng remote run \
+ * --target src/scala/com/tw ter/s mclusters_v2/scald ng/embedd ng/abuse:abuse-prod \
+ * --ma n-class com.tw ter.s mclusters_v2.scald ng.embedd ng.abuse.AdhocSearchAbuseS mclusterFeaturesScald ngJob \
+ * --hadoop-propert es "mapreduce.job.spl . ta nfo.maxs ze=-1" \
+ * --cluster blueb rd-qus1 --subm ter hadoopnest-blueb rd-1.qus1.tw ter.com \
  * -- --date 2021-02-01 2021-02-02 \
- * --outputPath AdhocSearchAbuseSimclusterFeaturesScaldingJob-test1
+ * --outputPath AdhocSearchAbuseS mclusterFeaturesScald ngJob-test1
  */
-object AdhocSearchAbuseSimclusterFeaturesScaldingJob extends AdhocExecutionApp {
+object AdhocSearchAbuseS mclusterFeaturesScald ngJob extends AdhocExecut onApp {
   def toTsv(
-    datasetExecution: Execution[TypedPipe[KeyVal[Long, SingleSideUserScores]]],
-    outputPath: String
-  ): Execution[Unit] = {
-    datasetExecution.flatMap { dataset =>
+    datasetExecut on: Execut on[TypedP pe[KeyVal[Long, S ngleS deUserScores]]],
+    outputPath: Str ng
+  ): Execut on[Un ] = {
+    datasetExecut on.flatMap { dataset =>
       dataset
         .map { keyVal =>
           (
             keyVal.key,
-            keyVal.value.consumerHealthyScore,
-            keyVal.value.consumerUnhealthyScore,
-            keyVal.value.authorHealthyScore,
-            keyVal.value.authorUnhealthyScore
+            keyVal.value.consu r althyScore,
+            keyVal.value.consu rUn althyScore,
+            keyVal.value.author althyScore,
+            keyVal.value.authorUn althyScore
           )
         }
-        .writeExecution(TypedText.tsv(outputPath))
+        .wr eExecut on(TypedText.tsv(outputPath))
     }
   }
 
-  override def runOnDateRange(
+  overr de def runOnDateRange(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+     mpl c  dateRange: DateRange,
+    t  Zone: T  Zone,
+    un que D: Un que D
+  ): Execut on[Un ] = {
     toTsv(
-      SearchAbuseSimclusterFeaturesScaldingJob.buildDataset()(dateRange),
+      SearchAbuseS mclusterFeaturesScald ngJob.bu ldDataset()(dateRange),
       args("outputPath")
     )
   }

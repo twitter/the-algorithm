@@ -1,30 +1,30 @@
-#include "internal/thrift.h"
-#include "internal/error.h"
+# nclude " nternal/thr ft.h"
+# nclude " nternal/error.h"
 
-#include <twml/DataRecordReader.h>
-#include <twml/HashedDataRecordReader.h>
-#include <twml/BatchPredictionRequest.h>
-#include <twml/Error.h>
+# nclude <twml/DataRecordReader.h>
+# nclude <twml/Has dDataRecordReader.h>
+# nclude <twml/BatchPred ct onRequest.h>
+# nclude <twml/Error.h>
 
-#include <algorithm>
-#include <cstring>
-#include <cstdint>
+# nclude <algor hm>
+# nclude <cstr ng>
+# nclude <cstd nt>
 
-namespace twml {
+na space twml {
 
-template<typename RecordType>
-void GenericBatchPredictionRequest<RecordType>::decode(Reader &reader) {
-  uint8_t feature_type = reader.readByte();
-  while (feature_type != TTYPE_STOP) {
-    int16_t field_id = reader.readInt16();
+template<typena  RecordType>
+vo d Gener cBatchPred ct onRequest<RecordType>::decode(Reader &reader) {
+  u nt8_t feature_type = reader.readByte();
+  wh le (feature_type != TTYPE_STOP) {
+     nt16_t f eld_ d = reader.read nt16();
 
-    switch (field_id) {
+    sw ch (f eld_ d) {
       case 1: {
-        CHECK_THRIFT_TYPE(feature_type, TTYPE_LIST, "list");
-        CHECK_THRIFT_TYPE(reader.readByte(), TTYPE_STRUCT, "list_element");
+        CHECK_THR FT_TYPE(feature_type, TTYPE_L ST, "l st");
+        CHECK_THR FT_TYPE(reader.readByte(), TTYPE_STRUCT, "l st_ele nt");
 
-        int32_t length = reader.readInt32();
-        m_requests.resize(length, RecordType(this->num_labels, this->num_weights));
+         nt32_t length = reader.read nt32();
+        m_requests.res ze(length, RecordType(t ->num_labels, t ->num_  ghts));
         for (auto &request : m_requests) {
           request.decode(reader);
         }
@@ -32,11 +32,11 @@ void GenericBatchPredictionRequest<RecordType>::decode(Reader &reader) {
         break;
       }
       case 2: {
-        CHECK_THRIFT_TYPE(feature_type, TTYPE_STRUCT, "commonFeatures");
+        CHECK_THR FT_TYPE(feature_type, TTYPE_STRUCT, "commonFeatures");
         m_common_features.decode(reader);
         break;
       }
-      default: throw ThriftInvalidField(field_id, __func__);
+      default: throw Thr ft nval dF eld(f eld_ d, __func__);
     }
 
     feature_type = reader.readByte();
@@ -45,8 +45,8 @@ void GenericBatchPredictionRequest<RecordType>::decode(Reader &reader) {
 }
 
 
-// Instantiate decoders.
-template void GenericBatchPredictionRequest<HashedDataRecord>::decode(HashedDataRecordReader &reader);
-template void GenericBatchPredictionRequest<DataRecord>::decode(DataRecordReader &reader);
+//  nstant ate decoders.
+template vo d Gener cBatchPred ct onRequest<Has dDataRecord>::decode(Has dDataRecordReader &reader);
+template vo d Gener cBatchPred ct onRequest<DataRecord>::decode(DataRecordReader &reader);
 
-}  // namespace twml
+}  // na space twml

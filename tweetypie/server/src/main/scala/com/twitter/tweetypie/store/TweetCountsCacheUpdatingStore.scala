@@ -1,358 +1,358 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package store
 
-import com.twitter.concurrent.Serialized
-import com.twitter.servo.cache.LockingCache.Handler
-import com.twitter.servo.cache._
-import com.twitter.tweetypie.repository.BookmarksKey
-import com.twitter.tweetypie.repository.FavsKey
-import com.twitter.tweetypie.repository.QuotesKey
-import com.twitter.tweetypie.repository.RepliesKey
-import com.twitter.tweetypie.repository.RetweetsKey
-import com.twitter.tweetypie.repository.TweetCountKey
-import com.twitter.util.Duration
-import com.twitter.util.Timer
-import scala.collection.mutable
+ mport com.tw ter.concurrent.Ser al zed
+ mport com.tw ter.servo.cac .Lock ngCac .Handler
+ mport com.tw ter.servo.cac ._
+ mport com.tw ter.t etyp e.repos ory.BookmarksKey
+ mport com.tw ter.t etyp e.repos ory.FavsKey
+ mport com.tw ter.t etyp e.repos ory.QuotesKey
+ mport com.tw ter.t etyp e.repos ory.Repl esKey
+ mport com.tw ter.t etyp e.repos ory.Ret etsKey
+ mport com.tw ter.t etyp e.repos ory.T etCountKey
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.T  r
+ mport scala.collect on.mutable
 
-trait TweetCountsCacheUpdatingStore
-    extends TweetStoreBase[TweetCountsCacheUpdatingStore]
-    with InsertTweet.Store
-    with AsyncInsertTweet.Store
-    with ReplicatedInsertTweet.Store
-    with DeleteTweet.Store
-    with AsyncDeleteTweet.Store
-    with ReplicatedDeleteTweet.Store
-    with UndeleteTweet.Store
-    with ReplicatedUndeleteTweet.Store
-    with AsyncIncrFavCount.Store
-    with ReplicatedIncrFavCount.Store
-    with AsyncIncrBookmarkCount.Store
-    with ReplicatedIncrBookmarkCount.Store
-    with AsyncSetRetweetVisibility.Store
-    with ReplicatedSetRetweetVisibility.Store
-    with Flush.Store {
-  def wrap(w: TweetStore.Wrap): TweetCountsCacheUpdatingStore = {
-    new TweetStoreWrapper(w, this)
-      with TweetCountsCacheUpdatingStore
-      with InsertTweet.StoreWrapper
-      with AsyncInsertTweet.StoreWrapper
-      with ReplicatedInsertTweet.StoreWrapper
-      with DeleteTweet.StoreWrapper
-      with AsyncDeleteTweet.StoreWrapper
-      with ReplicatedDeleteTweet.StoreWrapper
-      with UndeleteTweet.StoreWrapper
-      with ReplicatedUndeleteTweet.StoreWrapper
-      with AsyncIncrFavCount.StoreWrapper
-      with ReplicatedIncrFavCount.StoreWrapper
-      with AsyncIncrBookmarkCount.StoreWrapper
-      with ReplicatedIncrBookmarkCount.StoreWrapper
-      with AsyncSetRetweetVisibility.StoreWrapper
-      with ReplicatedSetRetweetVisibility.StoreWrapper
-      with Flush.StoreWrapper
+tra  T etCountsCac Updat ngStore
+    extends T etStoreBase[T etCountsCac Updat ngStore]
+    w h  nsertT et.Store
+    w h Async nsertT et.Store
+    w h Repl cated nsertT et.Store
+    w h DeleteT et.Store
+    w h AsyncDeleteT et.Store
+    w h Repl catedDeleteT et.Store
+    w h UndeleteT et.Store
+    w h Repl catedUndeleteT et.Store
+    w h Async ncrFavCount.Store
+    w h Repl cated ncrFavCount.Store
+    w h Async ncrBookmarkCount.Store
+    w h Repl cated ncrBookmarkCount.Store
+    w h AsyncSetRet etV s b l y.Store
+    w h Repl catedSetRet etV s b l y.Store
+    w h Flush.Store {
+  def wrap(w: T etStore.Wrap): T etCountsCac Updat ngStore = {
+    new T etStoreWrapper(w, t )
+      w h T etCountsCac Updat ngStore
+      w h  nsertT et.StoreWrapper
+      w h Async nsertT et.StoreWrapper
+      w h Repl cated nsertT et.StoreWrapper
+      w h DeleteT et.StoreWrapper
+      w h AsyncDeleteT et.StoreWrapper
+      w h Repl catedDeleteT et.StoreWrapper
+      w h UndeleteT et.StoreWrapper
+      w h Repl catedUndeleteT et.StoreWrapper
+      w h Async ncrFavCount.StoreWrapper
+      w h Repl cated ncrFavCount.StoreWrapper
+      w h Async ncrBookmarkCount.StoreWrapper
+      w h Repl cated ncrBookmarkCount.StoreWrapper
+      w h AsyncSetRet etV s b l y.StoreWrapper
+      w h Repl catedSetRet etV s b l y.StoreWrapper
+      w h Flush.StoreWrapper
   }
 }
 
 /**
- * An implementation of TweetStore that updates tweet-specific counts in
- * the CountsCache.
+ * An  mple ntat on of T etStore that updates t et-spec f c counts  n
+ * t  CountsCac .
  */
-object TweetCountsCacheUpdatingStore {
-  private type Action = TweetCountKey => Future[Unit]
+object T etCountsCac Updat ngStore {
+  pr vate type Act on = T etCountKey => Future[Un ]
 
-  def keys(tweetId: TweetId): Seq[TweetCountKey] =
+  def keys(t et d: T et d): Seq[T etCountKey] =
     Seq(
-      RetweetsKey(tweetId),
-      RepliesKey(tweetId),
-      FavsKey(tweetId),
-      QuotesKey(tweetId),
-      BookmarksKey(tweetId))
+      Ret etsKey(t et d),
+      Repl esKey(t et d),
+      FavsKey(t et d),
+      QuotesKey(t et d),
+      BookmarksKey(t et d))
 
-  def relatedKeys(tweet: Tweet): Seq[TweetCountKey] =
+  def relatedKeys(t et: T et): Seq[T etCountKey] =
     Seq(
-      getReply(tweet).flatMap(_.inReplyToStatusId).map(RepliesKey(_)),
-      getQuotedTweet(tweet).map(quotedTweet => QuotesKey(quotedTweet.tweetId)),
-      getShare(tweet).map(share => RetweetsKey(share.sourceStatusId))
+      getReply(t et).flatMap(_. nReplyToStatus d).map(Repl esKey(_)),
+      getQuotedT et(t et).map(quotedT et => QuotesKey(quotedT et.t et d)),
+      getShare(t et).map(share => Ret etsKey(share.s ceStatus d))
     ).flatten
 
-  // pick all keys except quotes key
-  def relatedKeysWithoutQuotesKey(tweet: Tweet): Seq[TweetCountKey] =
-    relatedKeys(tweet).filterNot(_.isInstanceOf[QuotesKey])
+  // p ck all keys except quotes key
+  def relatedKeysW houtQuotesKey(t et: T et): Seq[T etCountKey] =
+    relatedKeys(t et).f lterNot(_. s nstanceOf[QuotesKey])
 
-  def apply(countsStore: CachedCountsStore): TweetCountsCacheUpdatingStore = {
-    val incr: Action = key => countsStore.incr(key, 1)
-    val decr: Action = key => countsStore.incr(key, -1)
-    val init: Action = key => countsStore.add(key, 0)
-    val delete: Action = key => countsStore.delete(key)
+  def apply(countsStore: Cac dCountsStore): T etCountsCac Updat ngStore = {
+    val  ncr: Act on = key => countsStore. ncr(key, 1)
+    val decr: Act on = key => countsStore. ncr(key, -1)
+    val  n : Act on = key => countsStore.add(key, 0)
+    val delete: Act on = key => countsStore.delete(key)
 
-    def initCounts(tweetId: TweetId) = Future.join(keys(tweetId).map(init))
-    def incrRelatedCounts(tweet: Tweet, excludeQuotesKey: Boolean = false) = {
-      Future.join {
-        if (excludeQuotesKey) {
-          relatedKeysWithoutQuotesKey(tweet).map(incr)
+    def  n Counts(t et d: T et d) = Future.jo n(keys(t et d).map( n ))
+    def  ncrRelatedCounts(t et: T et, excludeQuotesKey: Boolean = false) = {
+      Future.jo n {
+         f (excludeQuotesKey) {
+          relatedKeysW houtQuotesKey(t et).map( ncr)
         } else {
-          relatedKeys(tweet).map(incr)
+          relatedKeys(t et).map( ncr)
         }
       }
     }
-    def deleteCounts(tweetId: TweetId) = Future.join(keys(tweetId).map(delete))
+    def deleteCounts(t et d: T et d) = Future.jo n(keys(t et d).map(delete))
 
-    // Decrement all the counters if is the last quote, otherwise avoid decrementing quote counters
-    def decrRelatedCounts(tweet: Tweet, isLastQuoteOfQuoter: Boolean = false) = {
-      Future.join {
-        if (isLastQuoteOfQuoter) {
-          relatedKeys(tweet).map(decr)
+    // Decre nt all t  counters  f  s t  last quote, ot rw se avo d decre nt ng quote counters
+    def decrRelatedCounts(t et: T et,  sLastQuoteOfQuoter: Boolean = false) = {
+      Future.jo n {
+         f ( sLastQuoteOfQuoter) {
+          relatedKeys(t et).map(decr)
         } else {
-          relatedKeysWithoutQuotesKey(tweet).map(decr)
+          relatedKeysW houtQuotesKey(t et).map(decr)
         }
       }
     }
 
-    def updateFavCount(tweetId: TweetId, delta: Int) =
-      countsStore.incr(FavsKey(tweetId), delta).unit
+    def updateFavCount(t et d: T et d, delta:  nt) =
+      countsStore. ncr(FavsKey(t et d), delta).un 
 
-    def updateBookmarkCount(tweetId: TweetId, delta: Int) =
-      countsStore.incr(BookmarksKey(tweetId), delta).unit
+    def updateBookmarkCount(t et d: T et d, delta:  nt) =
+      countsStore. ncr(BookmarksKey(t et d), delta).un 
 
-    // these are use specifically for setRetweetVisibility
-    def incrRetweetCount(tweetId: TweetId) = incr(RetweetsKey(tweetId))
-    def decrRetweetCount(tweetId: TweetId) = decr(RetweetsKey(tweetId))
+    // t se are use spec f cally for setRet etV s b l y
+    def  ncrRet etCount(t et d: T et d) =  ncr(Ret etsKey(t et d))
+    def decrRet etCount(t et d: T et d) = decr(Ret etsKey(t et d))
 
-    new TweetCountsCacheUpdatingStore {
-      override val insertTweet: FutureEffect[InsertTweet.Event] =
-        FutureEffect[InsertTweet.Event](e => initCounts(e.tweet.id))
+    new T etCountsCac Updat ngStore {
+      overr de val  nsertT et: FutureEffect[ nsertT et.Event] =
+        FutureEffect[ nsertT et.Event](e =>  n Counts(e.t et. d))
 
-      override val asyncInsertTweet: FutureEffect[AsyncInsertTweet.Event] =
-        FutureEffect[AsyncInsertTweet.Event] { e =>
-          incrRelatedCounts(e.cachedTweet.tweet, e.quoterHasAlreadyQuotedTweet)
+      overr de val async nsertT et: FutureEffect[Async nsertT et.Event] =
+        FutureEffect[Async nsertT et.Event] { e =>
+           ncrRelatedCounts(e.cac dT et.t et, e.quoterHasAlreadyQuotedT et)
         }
 
-      override val retryAsyncInsertTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncInsertTweet.Event]
+      overr de val retryAsync nsertT et: FutureEffect[
+        T etStoreRetryEvent[Async nsertT et.Event]
       ] =
-        FutureEffect.unit[TweetStoreRetryEvent[AsyncInsertTweet.Event]]
+        FutureEffect.un [T etStoreRetryEvent[Async nsertT et.Event]]
 
-      override val replicatedInsertTweet: FutureEffect[ReplicatedInsertTweet.Event] =
-        FutureEffect[ReplicatedInsertTweet.Event] { e =>
+      overr de val repl cated nsertT et: FutureEffect[Repl cated nsertT et.Event] =
+        FutureEffect[Repl cated nsertT et.Event] { e =>
           Future
-            .join(
-              initCounts(e.tweet.id),
-              incrRelatedCounts(e.tweet, e.quoterHasAlreadyQuotedTweet)).unit
+            .jo n(
+               n Counts(e.t et. d),
+               ncrRelatedCounts(e.t et, e.quoterHasAlreadyQuotedT et)).un 
         }
 
-      override val deleteTweet: FutureEffect[DeleteTweet.Event] =
-        FutureEffect[DeleteTweet.Event](e => deleteCounts(e.tweet.id))
+      overr de val deleteT et: FutureEffect[DeleteT et.Event] =
+        FutureEffect[DeleteT et.Event](e => deleteCounts(e.t et. d))
 
-      override val asyncDeleteTweet: FutureEffect[AsyncDeleteTweet.Event] =
-        FutureEffect[AsyncDeleteTweet.Event](e => decrRelatedCounts(e.tweet, e.isLastQuoteOfQuoter))
+      overr de val asyncDeleteT et: FutureEffect[AsyncDeleteT et.Event] =
+        FutureEffect[AsyncDeleteT et.Event](e => decrRelatedCounts(e.t et, e. sLastQuoteOfQuoter))
 
-      override val retryAsyncDeleteTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncDeleteTweet.Event]
+      overr de val retryAsyncDeleteT et: FutureEffect[
+        T etStoreRetryEvent[AsyncDeleteT et.Event]
       ] =
-        FutureEffect.unit[TweetStoreRetryEvent[AsyncDeleteTweet.Event]]
+        FutureEffect.un [T etStoreRetryEvent[AsyncDeleteT et.Event]]
 
-      override val replicatedDeleteTweet: FutureEffect[ReplicatedDeleteTweet.Event] =
-        FutureEffect[ReplicatedDeleteTweet.Event] { e =>
+      overr de val repl catedDeleteT et: FutureEffect[Repl catedDeleteT et.Event] =
+        FutureEffect[Repl catedDeleteT et.Event] { e =>
           Future
-            .join(deleteCounts(e.tweet.id), decrRelatedCounts(e.tweet, e.isLastQuoteOfQuoter)).unit
+            .jo n(deleteCounts(e.t et. d), decrRelatedCounts(e.t et, e. sLastQuoteOfQuoter)).un 
         }
 
-      override val undeleteTweet: FutureEffect[UndeleteTweet.Event] =
-        FutureEffect[UndeleteTweet.Event] { e =>
-          incrRelatedCounts(e.tweet, e.quoterHasAlreadyQuotedTweet)
+      overr de val undeleteT et: FutureEffect[UndeleteT et.Event] =
+        FutureEffect[UndeleteT et.Event] { e =>
+           ncrRelatedCounts(e.t et, e.quoterHasAlreadyQuotedT et)
         }
 
-      override val replicatedUndeleteTweet: FutureEffect[ReplicatedUndeleteTweet.Event] =
-        FutureEffect[ReplicatedUndeleteTweet.Event] { e =>
-          incrRelatedCounts(e.tweet, e.quoterHasAlreadyQuotedTweet)
+      overr de val repl catedUndeleteT et: FutureEffect[Repl catedUndeleteT et.Event] =
+        FutureEffect[Repl catedUndeleteT et.Event] { e =>
+           ncrRelatedCounts(e.t et, e.quoterHasAlreadyQuotedT et)
         }
 
-      override val asyncIncrFavCount: FutureEffect[AsyncIncrFavCount.Event] =
-        FutureEffect[AsyncIncrFavCount.Event](e => updateFavCount(e.tweetId, e.delta))
+      overr de val async ncrFavCount: FutureEffect[Async ncrFavCount.Event] =
+        FutureEffect[Async ncrFavCount.Event](e => updateFavCount(e.t et d, e.delta))
 
-      override val replicatedIncrFavCount: FutureEffect[ReplicatedIncrFavCount.Event] =
-        FutureEffect[ReplicatedIncrFavCount.Event](e => updateFavCount(e.tweetId, e.delta))
+      overr de val repl cated ncrFavCount: FutureEffect[Repl cated ncrFavCount.Event] =
+        FutureEffect[Repl cated ncrFavCount.Event](e => updateFavCount(e.t et d, e.delta))
 
-      override val asyncIncrBookmarkCount: FutureEffect[AsyncIncrBookmarkCount.Event] =
-        FutureEffect[AsyncIncrBookmarkCount.Event](e => updateBookmarkCount(e.tweetId, e.delta))
+      overr de val async ncrBookmarkCount: FutureEffect[Async ncrBookmarkCount.Event] =
+        FutureEffect[Async ncrBookmarkCount.Event](e => updateBookmarkCount(e.t et d, e.delta))
 
-      override val replicatedIncrBookmarkCount: FutureEffect[ReplicatedIncrBookmarkCount.Event] =
-        FutureEffect[ReplicatedIncrBookmarkCount.Event] { e =>
-          updateBookmarkCount(e.tweetId, e.delta)
+      overr de val repl cated ncrBookmarkCount: FutureEffect[Repl cated ncrBookmarkCount.Event] =
+        FutureEffect[Repl cated ncrBookmarkCount.Event] { e =>
+          updateBookmarkCount(e.t et d, e.delta)
         }
 
-      override val asyncSetRetweetVisibility: FutureEffect[AsyncSetRetweetVisibility.Event] =
-        FutureEffect[AsyncSetRetweetVisibility.Event] { e =>
-          if (e.visible) incrRetweetCount(e.srcId) else decrRetweetCount(e.srcId)
+      overr de val asyncSetRet etV s b l y: FutureEffect[AsyncSetRet etV s b l y.Event] =
+        FutureEffect[AsyncSetRet etV s b l y.Event] { e =>
+           f (e.v s ble)  ncrRet etCount(e.src d) else decrRet etCount(e.src d)
         }
 
-      override val retryAsyncSetRetweetVisibility: FutureEffect[
-        TweetStoreRetryEvent[AsyncSetRetweetVisibility.Event]
+      overr de val retryAsyncSetRet etV s b l y: FutureEffect[
+        T etStoreRetryEvent[AsyncSetRet etV s b l y.Event]
       ] =
-        FutureEffect.unit[TweetStoreRetryEvent[AsyncSetRetweetVisibility.Event]]
+        FutureEffect.un [T etStoreRetryEvent[AsyncSetRet etV s b l y.Event]]
 
-      override val replicatedSetRetweetVisibility: FutureEffect[
-        ReplicatedSetRetweetVisibility.Event
+      overr de val repl catedSetRet etV s b l y: FutureEffect[
+        Repl catedSetRet etV s b l y.Event
       ] =
-        FutureEffect[ReplicatedSetRetweetVisibility.Event] { e =>
-          if (e.visible) incrRetweetCount(e.srcId) else decrRetweetCount(e.srcId)
+        FutureEffect[Repl catedSetRet etV s b l y.Event] { e =>
+           f (e.v s ble)  ncrRet etCount(e.src d) else decrRet etCount(e.src d)
         }
 
-      override val flush: FutureEffect[Flush.Event] =
-        FutureEffect[Flush.Event] { e => Future.collect(e.tweetIds.map(deleteCounts)).unit }
-          .onlyIf(_.flushCounts)
+      overr de val flush: FutureEffect[Flush.Event] =
+        FutureEffect[Flush.Event] { e => Future.collect(e.t et ds.map(deleteCounts)).un  }
+          .only f(_.flushCounts)
     }
   }
 }
 
 /**
- * A simple trait around the cache operations needed by TweetCountsCacheUpdatingStore.
+ * A s mple tra  around t  cac  operat ons needed by T etCountsCac Updat ngStore.
  */
-trait CachedCountsStore {
-  def add(key: TweetCountKey, count: Count): Future[Unit]
-  def delete(key: TweetCountKey): Future[Unit]
-  def incr(key: TweetCountKey, delta: Count): Future[Unit]
+tra  Cac dCountsStore {
+  def add(key: T etCountKey, count: Count): Future[Un ]
+  def delete(key: T etCountKey): Future[Un ]
+  def  ncr(key: T etCountKey, delta: Count): Future[Un ]
 }
 
-object CachedCountsStore {
-  def fromLockingCache(cache: LockingCache[TweetCountKey, Cached[Count]]): CachedCountsStore =
-    new CachedCountsStore {
-      def add(key: TweetCountKey, count: Count): Future[Unit] =
-        cache.add(key, toCached(count)).unit
+object Cac dCountsStore {
+  def fromLock ngCac (cac : Lock ngCac [T etCountKey, Cac d[Count]]): Cac dCountsStore =
+    new Cac dCountsStore {
+      def add(key: T etCountKey, count: Count): Future[Un ] =
+        cac .add(key, toCac d(count)).un 
 
-      def delete(key: TweetCountKey): Future[Unit] =
-        cache.delete(key).unit
+      def delete(key: T etCountKey): Future[Un ] =
+        cac .delete(key).un 
 
-      def incr(key: TweetCountKey, delta: Count): Future[Unit] =
-        cache.lockAndSet(key, IncrDecrHandler(delta)).unit
+      def  ncr(key: T etCountKey, delta: Count): Future[Un ] =
+        cac .lockAndSet(key,  ncrDecrHandler(delta)).un 
     }
 
-  def toCached(count: Count): Cached[Count] = {
-    val now = Time.now
-    Cached(Some(count), CachedValueStatus.Found, now, Some(now))
+  def toCac d(count: Count): Cac d[Count] = {
+    val now = T  .now
+    Cac d(So (count), Cac dValueStatus.Found, now, So (now))
   }
 
-  case class IncrDecrHandler(delta: Long) extends Handler[Cached[Count]] {
-    override def apply(inCache: Option[Cached[Count]]): Option[Cached[Count]] =
-      inCache.flatMap(incrCount)
+  case class  ncrDecrHandler(delta: Long) extends Handler[Cac d[Count]] {
+    overr de def apply( nCac : Opt on[Cac d[Count]]): Opt on[Cac d[Count]] =
+       nCac .flatMap( ncrCount)
 
-    private[this] def incrCount(oldCached: Cached[Count]): Option[Cached[Count]] = {
-      oldCached.value.map { oldCount => oldCached.copy(value = Some(saferIncr(oldCount))) }
+    pr vate[t ] def  ncrCount(oldCac d: Cac d[Count]): Opt on[Cac d[Count]] = {
+      oldCac d.value.map { oldCount => oldCac d.copy(value = So (safer ncr(oldCount))) }
     }
 
-    private[this] def saferIncr(value: Long) = math.max(0, value + delta)
+    pr vate[t ] def safer ncr(value: Long) = math.max(0, value + delta)
 
-    override lazy val toString: String = "IncrDecrHandler(%s)".format(delta)
+    overr de lazy val toStr ng: Str ng = " ncrDecrHandler(%s)".format(delta)
   }
 
-  object QueueIsFullException extends Exception
+  object Queue sFullExcept on extends Except on
 }
 
 /**
- * An implementation of CachedCountsStore that can queue and aggregate multiple incr
- * updates to the same key together.  Currently, updates for a key only start to aggregate
- * after there is a failure to incr on the underlying store, which often indicates contention
- * due to a high level of updates.  After a failure, a key is promoted into a "tracked" state,
- * and subsequent updates are aggregated together.  Periodically, the aggregated updates will
- * be flushed. If the flush for a key succeeds and no more updates have come in during the flush,
- * then the key is demoted out of the tracked state.  Otherwise, updates continue to aggregate
- * until the next flush attempt.
+ * An  mple ntat on of Cac dCountsStore that can queue and aggregate mult ple  ncr
+ * updates to t  sa  key toget r.  Currently, updates for a key only start to aggregate
+ * after t re  s a fa lure to  ncr on t  underly ng store, wh ch often  nd cates content on
+ * due to a h gh level of updates.  After a fa lure, a key  s promoted  nto a "tracked" state,
+ * and subsequent updates are aggregated toget r.  Per od cally, t  aggregated updates w ll
+ * be flus d.  f t  flush for a key succeeds and no more updates have co   n dur ng t  flush,
+ * t n t  key  s demoted out of t  tracked state.  Ot rw se, updates cont nue to aggregate
+ * unt l t  next flush attempt.
  */
-class AggregatingCachedCountsStore(
-  underlying: CachedCountsStore,
-  timer: Timer,
-  flushInterval: Duration,
-  maxSize: Int,
-  stats: StatsReceiver)
-    extends CachedCountsStore
-    with Serialized {
-  private[this] val pendingUpdates: mutable.Map[TweetCountKey, Count] =
-    new mutable.HashMap[TweetCountKey, Count]
+class Aggregat ngCac dCountsStore(
+  underly ng: Cac dCountsStore,
+  t  r: T  r,
+  flush nterval: Durat on,
+  maxS ze:  nt,
+  stats: StatsRece ver)
+    extends Cac dCountsStore
+    w h Ser al zed {
+  pr vate[t ] val pend ngUpdates: mutable.Map[T etCountKey, Count] =
+    new mutable.HashMap[T etCountKey, Count]
 
-  private[this] var trackingCount: Int = 0
+  pr vate[t ] var track ngCount:  nt = 0
 
-  private[this] val promotionCounter = stats.counter("promotions")
-  private[this] val demotionCounter = stats.counter("demotions")
-  private[this] val updateCounter = stats.counter("aggregated_updates")
-  private[this] val overflowCounter = stats.counter("overflows")
-  private[this] val flushFailureCounter = stats.counter("flush_failures")
-  private[this] val trackingCountGauge = stats.addGauge("tracking")(trackingCount.toFloat)
+  pr vate[t ] val promot onCounter = stats.counter("promot ons")
+  pr vate[t ] val demot onCounter = stats.counter("demot ons")
+  pr vate[t ] val updateCounter = stats.counter("aggregated_updates")
+  pr vate[t ] val overflowCounter = stats.counter("overflows")
+  pr vate[t ] val flushFa lureCounter = stats.counter("flush_fa lures")
+  pr vate[t ] val track ngCountGauge = stats.addGauge("track ng")(track ngCount.toFloat)
 
-  timer.schedule(flushInterval) { flush() }
+  t  r.sc dule(flush nterval) { flush() }
 
-  def add(key: TweetCountKey, count: Count): Future[Unit] =
-    underlying.add(key, count)
+  def add(key: T etCountKey, count: Count): Future[Un ] =
+    underly ng.add(key, count)
 
-  def delete(key: TweetCountKey): Future[Unit] =
-    underlying.delete(key)
+  def delete(key: T etCountKey): Future[Un ] =
+    underly ng.delete(key)
 
-  def incr(key: TweetCountKey, delta: Count): Future[Unit] =
-    aggregateIfTracked(key, delta).flatMap {
-      case true => Future.Unit
+  def  ncr(key: T etCountKey, delta: Count): Future[Un ] =
+    aggregate fTracked(key, delta).flatMap {
+      case true => Future.Un 
       case false =>
-        underlying
-          .incr(key, delta)
+        underly ng
+          . ncr(key, delta)
           .rescue { case _ => aggregate(key, delta) }
     }
 
   /**
-   * Queues an update to be aggregated and applied to a key at a later time, but only if we are
-   * already aggregating updates for the key.
+   * Queues an update to be aggregated and appl ed to a key at a later t  , but only  f   are
+   * already aggregat ng updates for t  key.
    *
-   * @return true the delta was aggregated, false if the key is not being tracked
-   * and the incr should be attempted directly.
+   * @return true t  delta was aggregated, false  f t  key  s not be ng tracked
+   * and t   ncr should be attempted d rectly.
    */
-  private[this] def aggregateIfTracked(key: TweetCountKey, delta: Count): Future[Boolean] =
-    serialized {
-      pendingUpdates.get(key) match {
+  pr vate[t ] def aggregate fTracked(key: T etCountKey, delta: Count): Future[Boolean] =
+    ser al zed {
+      pend ngUpdates.get(key) match {
         case None => false
-        case Some(current) =>
-          updateCounter.incr()
-          pendingUpdates(key) = current + delta
+        case So (current) =>
+          updateCounter. ncr()
+          pend ngUpdates(key) = current + delta
           true
       }
     }
 
   /**
-   * Queues an update to be aggregated and applied to a key at a later time.
+   * Queues an update to be aggregated and appl ed to a key at a later t  .
    */
-  private[this] def aggregate(key: TweetCountKey, delta: Count): Future[Unit] =
-    serialized {
-      val alreadyTracked = pendingUpdates.contains(key)
+  pr vate[t ] def aggregate(key: T etCountKey, delta: Count): Future[Un ] =
+    ser al zed {
+      val alreadyTracked = pend ngUpdates.conta ns(key)
 
-      if (!alreadyTracked) {
-        if (pendingUpdates.size < maxSize)
-          promotionCounter.incr()
+       f (!alreadyTracked) {
+         f (pend ngUpdates.s ze < maxS ze)
+          promot onCounter. ncr()
         else {
-          overflowCounter.incr()
-          throw CachedCountsStore.QueueIsFullException
+          overflowCounter. ncr()
+          throw Cac dCountsStore.Queue sFullExcept on
         }
       }
 
-      (pendingUpdates.get(key).getOrElse(0L) + delta) match {
+      (pend ngUpdates.get(key).getOrElse(0L) + delta) match {
         case 0 =>
-          pendingUpdates.remove(key)
-          demotionCounter.incr()
+          pend ngUpdates.remove(key)
+          demot onCounter. ncr()
 
         case aggregatedDelta =>
-          pendingUpdates(key) = aggregatedDelta
+          pend ngUpdates(key) = aggregatedDelta
       }
 
-      trackingCount = pendingUpdates.size
+      track ngCount = pend ngUpdates.s ze
     }
 
-  private[this] def flush(): Future[Unit] = {
+  pr vate[t ] def flush(): Future[Un ] = {
     for {
-      // make a copy of the updates to flush, so that updates can continue to be queued
-      // while the flush is in progress.  if an individual flush succeeds, then we
-      // go back and update pendingUpdates.
-      updates <- serialized { pendingUpdates.toSeq.toList }
-      () <- Future.join(for ((key, delta) <- updates) yield flush(key, delta))
-    } yield ()
+      // make a copy of t  updates to flush, so that updates can cont nue to be queued
+      // wh le t  flush  s  n progress.   f an  nd v dual flush succeeds, t n  
+      // go back and update pend ngUpdates.
+      updates <- ser al zed { pend ngUpdates.toSeq.toL st }
+      () <- Future.jo n(for ((key, delta) <- updates) y eld flush(key, delta))
+    } y eld ()
   }
 
-  private[this] def flush(key: TweetCountKey, delta: Count): Future[Unit] =
-    underlying
-      .incr(key, delta)
+  pr vate[t ] def flush(key: T etCountKey, delta: Count): Future[Un ] =
+    underly ng
+      . ncr(key, delta)
       .flatMap(_ => aggregate(key, -delta))
-      .handle { case ex => flushFailureCounter.incr() }
+      .handle { case ex => flushFa lureCounter. ncr() }
 }

@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. tadata
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color.RosettaColorMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Badge
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.color.RosettaColorMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Badge
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class BadgeMarshaller @Inject() (
+@S ngleton
+class BadgeMarshaller @ nject() (
   rosettaColorMarshaller: RosettaColorMarshaller) {
 
   def apply(badge: Badge): urt.Badge = urt.Badge(
     text = badge.text,
-    textColorName = badge.textColorName.map(rosettaColorMarshaller(_)),
-    backgroundColorName = badge.backgroundColorName.map(rosettaColorMarshaller(_))
+    textColorNa  = badge.textColorNa .map(rosettaColorMarshaller(_)),
+    backgroundColorNa  = badge.backgroundColorNa .map(rosettaColorMarshaller(_))
   )
 }

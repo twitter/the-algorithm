@@ -1,22 +1,22 @@
-package com.twitter.visibility.models
+package com.tw ter.v s b l y.models
 
-import com.twitter.visibility.thriftscala.UserVisibilityResult
-import com.twitter.visibility.util.NamingUtils
+ mport com.tw ter.v s b l y.thr ftscala.UserV s b l yResult
+ mport com.tw ter.v s b l y.ut l.Nam ngUt ls
 
-sealed trait UserUnavailableStateEnum {
-  lazy val name: String = NamingUtils.getFriendlyName(this)
+sealed tra  UserUnava lableStateEnum {
+  lazy val na : Str ng = Nam ngUt ls.getFr endlyNa (t )
 }
-object UserUnavailableStateEnum {
-  case object Deleted extends UserUnavailableStateEnum
-  case object BounceDeleted extends UserUnavailableStateEnum
-  case object Deactivated extends UserUnavailableStateEnum
-  case object Offboarded extends UserUnavailableStateEnum
-  case object Erased extends UserUnavailableStateEnum
-  case object Suspended extends UserUnavailableStateEnum
-  case object Protected extends UserUnavailableStateEnum
-  case object AuthorBlocksViewer extends UserUnavailableStateEnum
-  case object ViewerBlocksAuthor extends UserUnavailableStateEnum
-  case object ViewerMutesAuthor extends UserUnavailableStateEnum
-  case class Filtered(result: UserVisibilityResult) extends UserUnavailableStateEnum
-  case object Unavailable extends UserUnavailableStateEnum
+object UserUnava lableStateEnum {
+  case object Deleted extends UserUnava lableStateEnum
+  case object BounceDeleted extends UserUnava lableStateEnum
+  case object Deact vated extends UserUnava lableStateEnum
+  case object Offboarded extends UserUnava lableStateEnum
+  case object Erased extends UserUnava lableStateEnum
+  case object Suspended extends UserUnava lableStateEnum
+  case object Protected extends UserUnava lableStateEnum
+  case object AuthorBlocksV e r extends UserUnava lableStateEnum
+  case object V e rBlocksAuthor extends UserUnava lableStateEnum
+  case object V e rMutesAuthor extends UserUnava lableStateEnum
+  case class F ltered(result: UserV s b l yResult) extends UserUnava lableStateEnum
+  case object Unava lable extends UserUnava lableStateEnum
 }

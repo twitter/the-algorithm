@@ -1,51 +1,51 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
 /**
- * Helper class used to store counts to be logged.
+ *  lper class used to store counts to be logged.
  */
-public class IndexingResultCounts {
-  private int indexingCalls;
-  private int failureRetriable;
-  private int failureNotRetriable;
-  private int indexingSuccess;
+publ c class  ndex ngResultCounts {
+  pr vate  nt  ndex ngCalls;
+  pr vate  nt fa lureRetr able;
+  pr vate  nt fa lureNotRetr able;
+  pr vate  nt  ndex ngSuccess;
 
-  public IndexingResultCounts() {
+  publ c  ndex ngResultCounts() {
   }
 
   /**
-   * Updates the internal counts with a single result.
+   * Updates t   nternal counts w h a s ngle result.
    */
-  public void countResult(ISegmentWriter.Result result) {
-    indexingCalls++;
-    if (result == ISegmentWriter.Result.FAILURE_NOT_RETRYABLE) {
-      failureNotRetriable++;
-    } else if (result == ISegmentWriter.Result.FAILURE_RETRYABLE) {
-      failureRetriable++;
-    } else if (result == ISegmentWriter.Result.SUCCESS) {
-      indexingSuccess++;
+  publ c vo d countResult( Seg ntWr er.Result result) {
+     ndex ngCalls++;
+     f (result ==  Seg ntWr er.Result.FA LURE_NOT_RETRYABLE) {
+      fa lureNotRetr able++;
+    } else  f (result ==  Seg ntWr er.Result.FA LURE_RETRYABLE) {
+      fa lureRetr able++;
+    } else  f (result ==  Seg ntWr er.Result.SUCCESS) {
+       ndex ngSuccess++;
     }
   }
 
-  int getIndexingCalls() {
-    return indexingCalls;
+   nt get ndex ngCalls() {
+    return  ndex ngCalls;
   }
 
-  int getFailureRetriable() {
-    return failureRetriable;
+   nt getFa lureRetr able() {
+    return fa lureRetr able;
   }
 
-  int getFailureNotRetriable() {
-    return failureNotRetriable;
+   nt getFa lureNotRetr able() {
+    return fa lureNotRetr able;
   }
 
-  int getIndexingSuccess() {
-    return indexingSuccess;
+   nt get ndex ngSuccess() {
+    return  ndex ngSuccess;
   }
 
-  @Override
-  public String toString() {
-    return String.format("[calls: %,d, success: %,d, fail not-retryable: %,d, fail retryable: %,d]",
-        indexingCalls, indexingSuccess, failureNotRetriable, failureRetriable);
+  @Overr de
+  publ c Str ng toStr ng() {
+    return Str ng.format("[calls: %,d, success: %,d, fa l not-retryable: %,d, fa l retryable: %,d]",
+         ndex ngCalls,  ndex ngSuccess, fa lureNotRetr able, fa lureRetr able);
   }
 }
 

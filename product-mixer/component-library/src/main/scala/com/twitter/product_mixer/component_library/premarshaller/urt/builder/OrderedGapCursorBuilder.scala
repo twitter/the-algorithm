@@ -1,54 +1,54 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+package com.tw ter.product_m xer.component_l brary.premarshaller.urt.bu lder
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineCursorSerializer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.model.cursor.UrtOrderedCursor
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.cursor.UrtCursorSer al zer
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.T  l neEntry
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.CursorType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.GapCursor
+ mport com.tw ter.product_m xer.core.p pel ne.HasP pel neCursor
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neCursorSer al zer
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * Builds [[UrtOrderedCursor]] in the Bottom position as a Gap cursor.
+ * Bu lds [[UrtOrderedCursor]]  n t  Bottom pos  on as a Gap cursor.
  *
- * @param idSelector Specifies the entry from which to derive the `id` field
- * @param includeOperation Logic to determine whether or not to build the gap cursor, which should
- *                         always be the inverse of the logic used to decide whether or not to build
- *                         the bottom cursor via [[OrderedBottomCursorBuilder]], since either the
- *                         gap or the bottom cursor must always be returned.
- * @param serializer Converts the cursor to an encoded string
+ * @param  dSelector Spec f es t  entry from wh ch to der ve t  ` d` f eld
+ * @param  ncludeOperat on Log c to determ ne w t r or not to bu ld t  gap cursor, wh ch should
+ *                         always be t   nverse of t  log c used to dec de w t r or not to bu ld
+ *                         t  bottom cursor v a [[OrderedBottomCursorBu lder]], s nce e  r t 
+ *                         gap or t  bottom cursor must always be returned.
+ * @param ser al zer Converts t  cursor to an encoded str ng
  */
-case class OrderedGapCursorBuilder[
-  -Query <: PipelineQuery with HasPipelineCursor[UrtOrderedCursor]
+case class OrderedGapCursorBu lder[
+  -Query <: P pel neQuery w h HasP pel neCursor[UrtOrderedCursor]
 ](
-  idSelector: PartialFunction[TimelineEntry, Long],
-  override val includeOperation: IncludeInstruction[Query],
-  serializer: PipelineCursorSerializer[UrtOrderedCursor] = UrtCursorSerializer)
-    extends UrtCursorBuilder[Query] {
-  override val cursorType: CursorType = GapCursor
+   dSelector: Part alFunct on[T  l neEntry, Long],
+  overr de val  ncludeOperat on:  nclude nstruct on[Query],
+  ser al zer: P pel neCursorSer al zer[UrtOrderedCursor] = UrtCursorSer al zer)
+    extends UrtCursorBu lder[Query] {
+  overr de val cursorType: CursorType = GapCursor
 
-  override def cursorValue(
+  overr de def cursorValue(
     query: Query,
-    timelineEntries: Seq[TimelineEntry]
-  ): String = {
-    // To determine the gap boundary, use any existing cursor gap boundary id (i.e. if submitted
-    // from a previous gap cursor, else use the existing cursor id (i.e. from a previous top cursor)
-    val gapBoundaryId = query.pipelineCursor.flatMap(_.gapBoundaryId).orElse {
-      query.pipelineCursor.flatMap(_.id)
+    t  l neEntr es: Seq[T  l neEntry]
+  ): Str ng = {
+    // To determ ne t  gap boundary, use any ex st ng cursor gap boundary  d ( .e.  f subm ted
+    // from a prev ous gap cursor, else use t  ex st ng cursor  d ( .e. from a prev ous top cursor)
+    val gapBoundary d = query.p pel neCursor.flatMap(_.gapBoundary d).orElse {
+      query.p pel neCursor.flatMap(_. d)
     }
 
-    val bottomId = timelineEntries.reverseIterator.collectFirst(idSelector)
+    val bottom d = t  l neEntr es.reverse erator.collectF rst( dSelector)
 
-    val id = bottomId.orElse(gapBoundaryId)
+    val  d = bottom d.orElse(gapBoundary d)
 
     val cursor = UrtOrderedCursor(
-      initialSortIndex = nextBottomInitialSortIndex(query, timelineEntries),
-      id = id,
-      cursorType = Some(cursorType),
-      gapBoundaryId = gapBoundaryId
+       n  alSort ndex = nextBottom n  alSort ndex(query, t  l neEntr es),
+       d =  d,
+      cursorType = So (cursorType),
+      gapBoundary d = gapBoundary d
     )
 
-    serializer.serializeCursor(cursor)
+    ser al zer.ser al zeCursor(cursor)
   }
 }

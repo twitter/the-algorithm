@@ -1,219 +1,219 @@
-package com.twitter.visibility.rules
+package com.tw ter.v s b l y.rules
 
-import com.twitter.visibility.configapi.params.FSRuleParams.HighToxicityModelScoreSpaceThresholdParam
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableMutedKeywordFilteringSpaceTitleNotificationsRuleParam
-import com.twitter.visibility.models.SpaceSafetyLabelType.CoordinatedHarmfulActivityHighRecall
-import com.twitter.visibility.models.SpaceSafetyLabelType.DoNotAmplify
-import com.twitter.visibility.models.SpaceSafetyLabelType.MisleadingHighRecall
-import com.twitter.visibility.models.SpaceSafetyLabelType.NsfwHighPrecision
-import com.twitter.visibility.models.SpaceSafetyLabelType.NsfwHighRecall
-import com.twitter.visibility.models.SpaceSafetyLabelType.UntrustedUrl
-import com.twitter.visibility.models.UserLabelValue.Abusive
-import com.twitter.visibility.models.UserLabelValue.BlinkWorst
-import com.twitter.visibility.models.UserLabelValue.DelayedRemediation
-import com.twitter.visibility.models.UserLabelValue.NsfwAvatarImage
-import com.twitter.visibility.models.UserLabelValue.NsfwBannerImage
-import com.twitter.visibility.models.UserLabelValue.NsfwNearPerfect
-import com.twitter.visibility.models.SpaceSafetyLabelType
-import com.twitter.visibility.models.SpaceSafetyLabelType.HatefulHighRecall
-import com.twitter.visibility.models.SpaceSafetyLabelType.HighToxicityModelScore
-import com.twitter.visibility.models.SpaceSafetyLabelType.ViolenceHighRecall
-import com.twitter.visibility.models.UserLabelValue
-import com.twitter.visibility.rules.Condition._
-import com.twitter.visibility.rules.Reason.Nsfw
-import com.twitter.visibility.rules.Reason.Unspecified
+ mport com.tw ter.v s b l y.conf gap .params.FSRuleParams.H ghTox c yModelScoreSpaceThresholdParam
+ mport com.tw ter.v s b l y.conf gap .params.RuleParam
+ mport com.tw ter.v s b l y.conf gap .params.RuleParams.EnableMutedKeywordF lter ngSpaceT leNot f cat onsRuleParam
+ mport com.tw ter.v s b l y.models.SpaceSafetyLabelType.Coord natedHarmfulAct v yH ghRecall
+ mport com.tw ter.v s b l y.models.SpaceSafetyLabelType.DoNotAmpl fy
+ mport com.tw ter.v s b l y.models.SpaceSafetyLabelType.M slead ngH ghRecall
+ mport com.tw ter.v s b l y.models.SpaceSafetyLabelType.NsfwH ghPrec s on
+ mport com.tw ter.v s b l y.models.SpaceSafetyLabelType.NsfwH ghRecall
+ mport com.tw ter.v s b l y.models.SpaceSafetyLabelType.UntrustedUrl
+ mport com.tw ter.v s b l y.models.UserLabelValue.Abus ve
+ mport com.tw ter.v s b l y.models.UserLabelValue.Bl nkWorst
+ mport com.tw ter.v s b l y.models.UserLabelValue.DelayedRe d at on
+ mport com.tw ter.v s b l y.models.UserLabelValue.NsfwAvatar mage
+ mport com.tw ter.v s b l y.models.UserLabelValue.NsfwBanner mage
+ mport com.tw ter.v s b l y.models.UserLabelValue.NsfwNearPerfect
+ mport com.tw ter.v s b l y.models.SpaceSafetyLabelType
+ mport com.tw ter.v s b l y.models.SpaceSafetyLabelType.HatefulH ghRecall
+ mport com.tw ter.v s b l y.models.SpaceSafetyLabelType.H ghTox c yModelScore
+ mport com.tw ter.v s b l y.models.SpaceSafetyLabelType.V olenceH ghRecall
+ mport com.tw ter.v s b l y.models.UserLabelValue
+ mport com.tw ter.v s b l y.rules.Cond  on._
+ mport com.tw ter.v s b l y.rules.Reason.Nsfw
+ mport com.tw ter.v s b l y.rules.Reason.Unspec f ed
 
 object SpaceRules {
 
   abstract class SpaceHasLabelRule(
-    action: Action,
+    act on: Act on,
     safetyLabelType: SpaceSafetyLabelType)
-      extends RuleWithConstantAction(action, And(SpaceHasLabel(safetyLabelType), NonAuthorViewer))
+      extends RuleW hConstantAct on(act on, And(SpaceHasLabel(safetyLabelType), NonAuthorV e r))
 
-  abstract class SpaceHasLabelAndNonFollowerRule(
-    action: Action,
+  abstract class SpaceHasLabelAndNonFollo rRule(
+    act on: Act on,
     safetyLabelType: SpaceSafetyLabelType)
-      extends RuleWithConstantAction(
-        action,
-        And(SpaceHasLabel(safetyLabelType), LoggedOutOrViewerNotFollowingAuthor))
+      extends RuleW hConstantAct on(
+        act on,
+        And(SpaceHasLabel(safetyLabelType), LoggedOutOrV e rNotFollow ngAuthor))
 
-  abstract class AnySpaceHostOrAdminHasLabelRule(
-    action: Action,
+  abstract class AnySpaceHostOrAdm nHasLabelRule(
+    act on: Act on,
     userLabel: UserLabelValue)
-      extends WhenAuthorUserLabelPresentRule(action, userLabel)
+      extends W nAuthorUserLabelPresentRule(act on, userLabel)
 
-  abstract class AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
-    action: Action,
+  abstract class AnySpaceHostOrAdm nHasLabelAndNonFollo rRule(
+    act on: Act on,
     userLabel: UserLabelValue)
-      extends ConditionWithUserLabelRule(action, LoggedOutOrViewerNotFollowingAuthor, userLabel)
+      extends Cond  onW hUserLabelRule(act on, LoggedOutOrV e rNotFollow ngAuthor, userLabel)
 
 
-  object SpaceDoNotAmplifyAllUsersDropRule
+  object SpaceDoNotAmpl fyAllUsersDropRule
       extends SpaceHasLabelRule(
-        Drop(Unspecified),
-        DoNotAmplify,
+        Drop(Unspec f ed),
+        DoNotAmpl fy,
       )
 
-  object SpaceDoNotAmplifyNonFollowerDropRule
-      extends SpaceHasLabelAndNonFollowerRule(
-        Drop(Unspecified),
-        DoNotAmplify,
+  object SpaceDoNotAmpl fyNonFollo rDropRule
+      extends SpaceHasLabelAndNonFollo rRule(
+        Drop(Unspec f ed),
+        DoNotAmpl fy,
       )
 
-  object SpaceCoordHarmfulActivityHighRecallAllUsersDropRule
+  object SpaceCoordHarmfulAct v yH ghRecallAllUsersDropRule
       extends SpaceHasLabelRule(
-        Drop(Unspecified),
-        CoordinatedHarmfulActivityHighRecall,
+        Drop(Unspec f ed),
+        Coord natedHarmfulAct v yH ghRecall,
       )
 
-  object SpaceCoordHarmfulActivityHighRecallNonFollowerDropRule
-      extends SpaceHasLabelAndNonFollowerRule(
-        Drop(Unspecified),
-        CoordinatedHarmfulActivityHighRecall,
+  object SpaceCoordHarmfulAct v yH ghRecallNonFollo rDropRule
+      extends SpaceHasLabelAndNonFollo rRule(
+        Drop(Unspec f ed),
+        Coord natedHarmfulAct v yH ghRecall,
       )
 
   object SpaceUntrustedUrlAllUsersDropRule
       extends SpaceHasLabelRule(
-        Drop(Unspecified),
+        Drop(Unspec f ed),
         UntrustedUrl,
       )
 
-  object SpaceUntrustedUrlNonFollowerDropRule
-      extends SpaceHasLabelAndNonFollowerRule(
-        Drop(Unspecified),
+  object SpaceUntrustedUrlNonFollo rDropRule
+      extends SpaceHasLabelAndNonFollo rRule(
+        Drop(Unspec f ed),
         UntrustedUrl,
       )
 
-  object SpaceMisleadingHighRecallNonFollowerDropRule
-      extends SpaceHasLabelAndNonFollowerRule(
-        Drop(Unspecified),
-        MisleadingHighRecall,
+  object SpaceM slead ngH ghRecallNonFollo rDropRule
+      extends SpaceHasLabelAndNonFollo rRule(
+        Drop(Unspec f ed),
+        M slead ngH ghRecall,
       )
 
-  object SpaceNsfwHighPrecisionAllUsersInterstitialRule
+  object SpaceNsfwH ghPrec s onAllUsers nterst  alRule
       extends SpaceHasLabelRule(
-        Interstitial(Nsfw),
-        NsfwHighPrecision,
+         nterst  al(Nsfw),
+        NsfwH ghPrec s on,
       )
 
-  object SpaceNsfwHighPrecisionAllUsersDropRule
+  object SpaceNsfwH ghPrec s onAllUsersDropRule
       extends SpaceHasLabelRule(
         Drop(Nsfw),
-        NsfwHighPrecision,
+        NsfwH ghPrec s on,
       )
 
-  object SpaceNsfwHighPrecisionNonFollowerDropRule
-      extends SpaceHasLabelAndNonFollowerRule(
+  object SpaceNsfwH ghPrec s onNonFollo rDropRule
+      extends SpaceHasLabelAndNonFollo rRule(
         Drop(Nsfw),
-        NsfwHighPrecision,
+        NsfwH ghPrec s on,
       )
 
-  object SpaceNsfwHighPrecisionSafeSearchNonFollowerDropRule
-      extends RuleWithConstantAction(
+  object SpaceNsfwH ghPrec s onSafeSearchNonFollo rDropRule
+      extends RuleW hConstantAct on(
         Drop(Nsfw),
         And(
-          SpaceHasLabel(NsfwHighPrecision),
-          NonAuthorViewer,
-          LoggedOutOrViewerOptInFiltering,
-          Not(ViewerDoesFollowAuthor),
+          SpaceHasLabel(NsfwH ghPrec s on),
+          NonAuthorV e r,
+          LoggedOutOrV e rOpt nF lter ng,
+          Not(V e rDoesFollowAuthor),
         ),
       )
 
-  object SpaceNsfwHighRecallAllUsersDropRule
+  object SpaceNsfwH ghRecallAllUsersDropRule
       extends SpaceHasLabelRule(
         Drop(Nsfw),
-        NsfwHighRecall,
+        NsfwH ghRecall,
       )
 
-  object SpaceNsfwHighRecallNonFollowerDropRule
-      extends SpaceHasLabelAndNonFollowerRule(
+  object SpaceNsfwH ghRecallNonFollo rDropRule
+      extends SpaceHasLabelAndNonFollo rRule(
         Drop(Nsfw),
-        NsfwHighRecall,
+        NsfwH ghRecall,
       )
 
-  object SpaceNsfwHighRecallSafeSearchNonFollowerDropRule
-      extends RuleWithConstantAction(
+  object SpaceNsfwH ghRecallSafeSearchNonFollo rDropRule
+      extends RuleW hConstantAct on(
         Drop(Nsfw),
         And(
-          SpaceHasLabel(NsfwHighRecall),
-          NonAuthorViewer,
-          LoggedOutOrViewerOptInFiltering,
-          Not(ViewerDoesFollowAuthor),
+          SpaceHasLabel(NsfwH ghRecall),
+          NonAuthorV e r,
+          LoggedOutOrV e rOpt nF lter ng,
+          Not(V e rDoesFollowAuthor),
         ),
       )
 
-  object SpaceHatefulHighRecallAllUsersDropRule
+  object SpaceHatefulH ghRecallAllUsersDropRule
       extends SpaceHasLabelRule(
-        Drop(Unspecified),
-        HatefulHighRecall,
+        Drop(Unspec f ed),
+        HatefulH ghRecall,
       )
 
-  object SpaceViolenceHighRecallAllUsersDropRule
+  object SpaceV olenceH ghRecallAllUsersDropRule
       extends SpaceHasLabelRule(
-        Drop(Unspecified),
-        ViolenceHighRecall,
+        Drop(Unspec f ed),
+        V olenceH ghRecall,
       )
 
-  object SpaceHighToxicityScoreNonFollowerDropRule
-      extends RuleWithConstantAction(
-        Drop(Unspecified),
+  object SpaceH ghTox c yScoreNonFollo rDropRule
+      extends RuleW hConstantAct on(
+        Drop(Unspec f ed),
         And(
-          SpaceHasLabelWithScoreAboveThresholdWithParam(
-            HighToxicityModelScore,
-            HighToxicityModelScoreSpaceThresholdParam
+          SpaceHasLabelW hScoreAboveThresholdW hParam(
+            H ghTox c yModelScore,
+            H ghTox c yModelScoreSpaceThresholdParam
           ),
-          NonAuthorViewer,
-          LoggedOutOrViewerNotFollowingAuthor,
+          NonAuthorV e r,
+          LoggedOutOrV e rNotFollow ngAuthor,
         )
       )
-      with ExperimentalRule
+      w h Exper  ntalRule
 
 
-  object ViewerHasMatchingMutedKeywordInSpaceTitleForNotificationsRule
-      extends OnlyWhenNotAuthorViewerRule(
+  object V e rHasMatch ngMutedKeyword nSpaceT leForNot f cat onsRule
+      extends OnlyW nNotAuthorV e rRule(
         Drop(Reason.MutedKeyword),
-        Condition.ViewerHasMatchingKeywordInSpaceTitleForNotifications
+        Cond  on.V e rHasMatch ngKeyword nSpaceT leForNot f cat ons
       ) {
-    override def enabled: Seq[RuleParam[Boolean]] = Seq(
-      EnableMutedKeywordFilteringSpaceTitleNotificationsRuleParam)
+    overr de def enabled: Seq[RuleParam[Boolean]] = Seq(
+      EnableMutedKeywordF lter ngSpaceT leNot f cat onsRuleParam)
 
   }
 
 
-  object UserAbusiveNonFollowerDropRule
-      extends AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
-        Drop(Unspecified),
-        Abusive
+  object UserAbus veNonFollo rDropRule
+      extends AnySpaceHostOrAdm nHasLabelAndNonFollo rRule(
+        Drop(Unspec f ed),
+        Abus ve
       )
 
-  object UserBlinkWorstAllUsersDropRule
-      extends AnySpaceHostOrAdminHasLabelRule(
-        Drop(Unspecified),
-        BlinkWorst
+  object UserBl nkWorstAllUsersDropRule
+      extends AnySpaceHostOrAdm nHasLabelRule(
+        Drop(Unspec f ed),
+        Bl nkWorst
       )
 
-  object UserNsfwNearPerfectNonFollowerDropRule
-      extends AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
+  object UserNsfwNearPerfectNonFollo rDropRule
+      extends AnySpaceHostOrAdm nHasLabelAndNonFollo rRule(
         Drop(Nsfw),
         NsfwNearPerfect
       )
 
-  object UserNsfwHighPrecisionNonFollowerDropRule
-      extends AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
+  object UserNsfwH ghPrec s onNonFollo rDropRule
+      extends AnySpaceHostOrAdm nHasLabelAndNonFollo rRule(
         Drop(Nsfw),
-        UserLabelValue.NsfwHighPrecision
+        UserLabelValue.NsfwH ghPrec s on
       )
 
-  object UserNsfwAvatarImageNonFollowerDropRule
-      extends AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
+  object UserNsfwAvatar mageNonFollo rDropRule
+      extends AnySpaceHostOrAdm nHasLabelAndNonFollo rRule(
         Drop(Nsfw),
-        NsfwAvatarImage
+        NsfwAvatar mage
       )
 
-  object UserNsfwBannerImageNonFollowerDropRule
-      extends AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
+  object UserNsfwBanner mageNonFollo rDropRule
+      extends AnySpaceHostOrAdm nHasLabelAndNonFollo rRule(
         Drop(Nsfw),
-        NsfwBannerImage
+        NsfwBanner mage
       )
 }

@@ -1,41 +1,41 @@
-package com.twitter.cr_mixer.logging
+package com.tw ter.cr_m xer.logg ng
 
-import com.twitter.cr_mixer.featureswitch.CrMixerImpressedBuckets
-import com.twitter.cr_mixer.thriftscala.ImpressesedBucketInfo
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.logging.Logger
-import com.twitter.scrooge.BinaryThriftStructSerializer
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.scrooge.ThriftStructCodec
+ mport com.tw ter.cr_m xer.featuresw ch.CrM xer mpressedBuckets
+ mport com.tw ter.cr_m xer.thr ftscala. mpressesedBucket nfo
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.ut l.StatsUt l
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.scrooge.B naryThr ftStructSer al zer
+ mport com.tw ter.scrooge.Thr ftStruct
+ mport com.tw ter.scrooge.Thr ftStructCodec
 
-object ScribeLoggerUtils {
+object Scr beLoggerUt ls {
 
   /**
-   * Handles base64-encoding, serialization, and publish.
+   * Handles base64-encod ng, ser al zat on, and publ sh.
    */
-  private[logging] def publish[T <: ThriftStruct](
+  pr vate[logg ng] def publ sh[T <: Thr ftStruct](
     logger: Logger,
-    codec: ThriftStructCodec[T],
-    message: T
-  ): Unit = {
-    logger.info(BinaryThriftStructSerializer(codec).toString(message))
+    codec: Thr ftStructCodec[T],
+     ssage: T
+  ): Un  = {
+    logger. nfo(B naryThr ftStructSer al zer(codec).toStr ng( ssage))
   }
 
-  private[logging] def getImpressedBuckets(
-    scopedStats: StatsReceiver
-  ): Option[List[ImpressesedBucketInfo]] = {
-    StatsUtil.trackNonFutureBlockStats(scopedStats.scope("getImpressedBuckets")) {
-      CrMixerImpressedBuckets.getAllImpressedBuckets.map { listBuckets =>
-        val listBucketsSet = listBuckets.toSet
-        scopedStats.stat("impressed_buckets").add(listBucketsSet.size)
-        listBucketsSet.map { bucket =>
-          ImpressesedBucketInfo(
-            experimentId = bucket.experiment.settings.experimentId.getOrElse(-1L),
-            bucketName = bucket.name,
-            version = bucket.experiment.settings.version,
+  pr vate[logg ng] def get mpressedBuckets(
+    scopedStats: StatsRece ver
+  ): Opt on[L st[ mpressesedBucket nfo]] = {
+    StatsUt l.trackNonFutureBlockStats(scopedStats.scope("get mpressedBuckets")) {
+      CrM xer mpressedBuckets.getAll mpressedBuckets.map { l stBuckets =>
+        val l stBucketsSet = l stBuckets.toSet
+        scopedStats.stat(" mpressed_buckets").add(l stBucketsSet.s ze)
+        l stBucketsSet.map { bucket =>
+           mpressesedBucket nfo(
+            exper  nt d = bucket.exper  nt.sett ngs.exper  nt d.getOrElse(-1L),
+            bucketNa  = bucket.na ,
+            vers on = bucket.exper  nt.sett ngs.vers on,
           )
-        }.toList
+        }.toL st
       }
     }
   }

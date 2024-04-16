@@ -1,76 +1,76 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .Param
 
-object SimClustersANNParams {
+object S mClustersANNParams {
 
-  // Different SimClusters ANN cluster has its own config id (model slot)
-  object SimClustersANNConfigId
-      extends FSParam[String](
-        name = "similarity_simclusters_ann_simclusters_ann_config_id",
+  // D fferent S mClusters ANN cluster has  s own conf g  d (model slot)
+  object S mClustersANNConf g d
+      extends FSParam[Str ng](
+        na  = "s m lar y_s mclusters_ann_s mclusters_ann_conf g_ d",
         default = "Default"
       )
 
-  object SimClustersANN1ConfigId
-      extends FSParam[String](
-        name = "similarity_simclusters_ann_simclusters_ann_1_config_id",
+  object S mClustersANN1Conf g d
+      extends FSParam[Str ng](
+        na  = "s m lar y_s mclusters_ann_s mclusters_ann_1_conf g_ d",
         default = "20220810"
       )
 
-  object SimClustersANN2ConfigId
-      extends FSParam[String](
-        name = "similarity_simclusters_ann_simclusters_ann_2_config_id",
+  object S mClustersANN2Conf g d
+      extends FSParam[Str ng](
+        na  = "s m lar y_s mclusters_ann_s mclusters_ann_2_conf g_ d",
         default = "20220818"
       )
 
-  object SimClustersANN3ConfigId
-      extends FSParam[String](
-        name = "similarity_simclusters_ann_simclusters_ann_3_config_id",
+  object S mClustersANN3Conf g d
+      extends FSParam[Str ng](
+        na  = "s m lar y_s mclusters_ann_s mclusters_ann_3_conf g_ d",
         default = "20220819"
       )
 
-  object SimClustersANN5ConfigId
-      extends FSParam[String](
-        name = "similarity_simclusters_ann_simclusters_ann_5_config_id",
+  object S mClustersANN5Conf g d
+      extends FSParam[Str ng](
+        na  = "s m lar y_s mclusters_ann_s mclusters_ann_5_conf g_ d",
         default = "20221221"
       )
-  object SimClustersANN4ConfigId
-      extends FSParam[String](
-        name = "similarity_simclusters_ann_simclusters_ann_4_config_id",
+  object S mClustersANN4Conf g d
+      extends FSParam[Str ng](
+        na  = "s m lar y_s mclusters_ann_s mclusters_ann_4_conf g_ d",
         default = "20221220"
       )
-  object ExperimentalSimClustersANNConfigId
-      extends FSParam[String](
-        name = "similarity_simclusters_ann_experimental_simclusters_ann_config_id",
+  object Exper  ntalS mClustersANNConf g d
+      extends FSParam[Str ng](
+        na  = "s m lar y_s mclusters_ann_exper  ntal_s mclusters_ann_conf g_ d",
         default = "20220801"
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    SimClustersANNConfigId,
-    SimClustersANN1ConfigId,
-    SimClustersANN2ConfigId,
-    SimClustersANN3ConfigId,
-    SimClustersANN5ConfigId,
-    ExperimentalSimClustersANNConfigId
+  val AllParams: Seq[Param[_] w h FSNa ] = Seq(
+    S mClustersANNConf g d,
+    S mClustersANN1Conf g d,
+    S mClustersANN2Conf g d,
+    S mClustersANN3Conf g d,
+    S mClustersANN5Conf g d,
+    Exper  ntalS mClustersANNConf g d
   )
 
-  lazy val config: BaseConfig = {
-    val stringOverrides = FeatureSwitchOverrideUtil.getStringFSOverrides(
-      SimClustersANNConfigId,
-      SimClustersANN1ConfigId,
-      SimClustersANN2ConfigId,
-      SimClustersANN3ConfigId,
-      SimClustersANN5ConfigId,
-      ExperimentalSimClustersANNConfigId
+  lazy val conf g: BaseConf g = {
+    val str ngOverr des = FeatureSw chOverr deUt l.getStr ngFSOverr des(
+      S mClustersANNConf g d,
+      S mClustersANN1Conf g d,
+      S mClustersANN2Conf g d,
+      S mClustersANN3Conf g d,
+      S mClustersANN5Conf g d,
+      Exper  ntalS mClustersANNConf g d
     )
 
-    BaseConfigBuilder()
-      .set(stringOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set(str ngOverr des: _*)
+      .bu ld()
   }
 }

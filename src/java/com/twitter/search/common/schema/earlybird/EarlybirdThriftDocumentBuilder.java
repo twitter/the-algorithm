@@ -1,897 +1,897 @@
-package com.twitter.search.common.schema.earlybird;
+package com.tw ter.search.common.sc ma.earlyb rd;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+ mport java. o. OExcept on;
+ mport java.ut l.HashSet;
+ mport java.ut l.L st;
+ mport java.ut l.Set;
+ mport javax.annotat on.Nonnull;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect. mmutableL st;
+ mport com.google.common.collect. mmutableSet;
+ mport com.google.common.collect.Sets;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.lucene.analysis.TokenStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons.lang.Str ngUt ls;
+ mport org.apac .lucene.analys s.TokenStream;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.cuad.ner.plain.thriftjava.NamedEntity;
-import com.twitter.cuad.ner.plain.thriftjava.NamedEntityContext;
-import com.twitter.cuad.ner.plain.thriftjava.NamedEntityInputSourceType;
-import com.twitter.cuad.ner.thriftjava.WholeEntityType;
-import com.twitter.search.common.constants.SearchCardType;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
-import com.twitter.search.common.indexing.thriftjava.ThriftGeoLocationSource;
-import com.twitter.search.common.indexing.thriftjava.TwitterPhotoUrl;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.schema.ThriftDocumentBuilder;
-import com.twitter.search.common.schema.base.FieldNameToIdMapping;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.util.analysis.CharTermAttributeSerializer;
-import com.twitter.search.common.util.analysis.IntTermAttributeSerializer;
-import com.twitter.search.common.util.analysis.TermPayloadAttributeSerializer;
-import com.twitter.search.common.util.analysis.TwitterPhotoTokenStream;
-import com.twitter.search.common.util.spatial.GeoUtil;
-import com.twitter.search.common.util.text.TokenizerHelper;
-import com.twitter.search.common.util.text.TweetTokenStreamSerializer;
-import com.twitter.search.common.util.text.regex.Regex;
-import com.twitter.search.common.util.url.LinkVisibilityUtils;
-import com.twitter.search.common.util.url.URLUtils;
+ mport com.tw ter.common.collect ons.Pa r;
+ mport com.tw ter.common.text.ut l.TokenStreamSer al zer;
+ mport com.tw ter.cuad.ner.pla n.thr ftjava.Na dEnt y;
+ mport com.tw ter.cuad.ner.pla n.thr ftjava.Na dEnt yContext;
+ mport com.tw ter.cuad.ner.pla n.thr ftjava.Na dEnt y nputS ceType;
+ mport com.tw ter.cuad.ner.thr ftjava.WholeEnt yType;
+ mport com.tw ter.search.common.constants.SearchCardType;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftExpandedUrl;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftGeoLocat onS ce;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Tw terPhotoUrl;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.sc ma.Thr ftDocu ntBu lder;
+ mport com.tw ter.search.common.sc ma.base.F eldNa To dMapp ng;
+ mport com.tw ter.search.common.sc ma.base.Sc ma;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.common.ut l.analys s.CharTermAttr buteSer al zer;
+ mport com.tw ter.search.common.ut l.analys s. ntTermAttr buteSer al zer;
+ mport com.tw ter.search.common.ut l.analys s.TermPayloadAttr buteSer al zer;
+ mport com.tw ter.search.common.ut l.analys s.Tw terPhotoTokenStream;
+ mport com.tw ter.search.common.ut l.spat al.GeoUt l;
+ mport com.tw ter.search.common.ut l.text.Token zer lper;
+ mport com.tw ter.search.common.ut l.text.T etTokenStreamSer al zer;
+ mport com.tw ter.search.common.ut l.text.regex.Regex;
+ mport com.tw ter.search.common.ut l.url.L nkV s b l yUt ls;
+ mport com.tw ter.search.common.ut l.url.URLUt ls;
 
-import geo.google.datamodel.GeoAddressAccuracy;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
+ mport geo.google.datamodel.GeoAddressAccuracy;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftDocu nt;
 
 /**
- * Builder class for building a {@link ThriftDocument}.
+ * Bu lder class for bu ld ng a {@l nk Thr ftDocu nt}.
  */
-public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdThriftDocumentBuilder.class);
+publ c f nal class Earlyb rdThr ftDocu ntBu lder extends Thr ftDocu ntBu lder {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rdThr ftDocu ntBu lder.class);
 
-  private static final SearchCounter SERIALIZE_FAILURE_COUNT_NONPENGUIN_DEPENDENT =
-      SearchCounter.export("tokenstream_serialization_failure_non_penguin_dependent");
+  pr vate stat c f nal SearchCounter SER AL ZE_FA LURE_COUNT_NONPENGU N_DEPENDENT =
+      SearchCounter.export("tokenstream_ser al zat on_fa lure_non_pengu n_dependent");
 
-  private static final String HASHTAG_SYMBOL = "#";
-  private static final String CASHTAG_SYMBOL = "$";
-  private static final String MENTION_SYMBOL = "@";
+  pr vate stat c f nal Str ng HASHTAG_SYMBOL = "#";
+  pr vate stat c f nal Str ng CASHTAG_SYMBOL = "$";
+  pr vate stat c f nal Str ng MENT ON_SYMBOL = "@";
 
-  private static final SearchCounter BCP47_LANGUAGE_TAG_COUNTER =
+  pr vate stat c f nal SearchCounter BCP47_LANGUAGE_TAG_COUNTER =
       SearchCounter.export("bcp47_language_tag");
 
   /**
-   * Used to check if a card is video card.
+   * Used to c ck  f a card  s v deo card.
    *
-   * @see #withSearchCard
+   * @see #w hSearchCard
    */
-  private static final String AMPLIFY_CARD_NAME = "amplify";
-  private static final String PLAYER_CARD_NAME = "player";
+  pr vate stat c f nal Str ng AMPL FY_CARD_NAME = "ampl fy";
+  pr vate stat c f nal Str ng PLAYER_CARD_NAME = "player";
 
-  // Extra term indexed for native retweets, to ensure that the "-rt" query excludes them.
-  public static final String RETWEET_TERM = "rt";
-  public static final String QUESTION_MARK = "?";
+  // Extra term  ndexed for nat ve ret ets, to ensure that t  "-rt" query excludes t m.
+  publ c stat c f nal Str ng RETWEET_TERM = "rt";
+  publ c stat c f nal Str ng QUEST ON_MARK = "?";
 
-  private static final Set<NamedEntityInputSourceType> NAMED_ENTITY_URL_SOURCE_TYPES =
-      ImmutableSet.of(
-          NamedEntityInputSourceType.URL_TITLE, NamedEntityInputSourceType.URL_DESCRIPTION);
+  pr vate stat c f nal Set<Na dEnt y nputS ceType> NAMED_ENT TY_URL_SOURCE_TYPES =
+       mmutableSet.of(
+          Na dEnt y nputS ceType.URL_T TLE, Na dEnt y nputS ceType.URL_DESCR PT ON);
 
-  private final TokenStreamSerializer intTermAttributeSerializer =
-      new TokenStreamSerializer(ImmutableList.of(
-          new IntTermAttributeSerializer()));
-  private final TokenStreamSerializer photoUrlSerializer =
-      new TokenStreamSerializer(ImmutableList
-          .<TokenStreamSerializer.AttributeSerializer>of(
-              new CharTermAttributeSerializer(), new TermPayloadAttributeSerializer()));
-  private final Schema schema;
+  pr vate f nal TokenStreamSer al zer  ntTermAttr buteSer al zer =
+      new TokenStreamSer al zer( mmutableL st.of(
+          new  ntTermAttr buteSer al zer()));
+  pr vate f nal TokenStreamSer al zer photoUrlSer al zer =
+      new TokenStreamSer al zer( mmutableL st
+          .<TokenStreamSer al zer.Attr buteSer al zer>of(
+              new CharTermAttr buteSer al zer(), new TermPayloadAttr buteSer al zer()));
+  pr vate f nal Sc ma sc ma;
 
-  private boolean isSetLatLonCSF = false;
-  private boolean addLatLonCSF = true;
-  private boolean addEncodedTweetFeatures = true;
+  pr vate boolean  sSetLatLonCSF = false;
+  pr vate boolean addLatLonCSF = true;
+  pr vate boolean addEncodedT etFeatures = true;
 
   @Nonnull
-  private final EarlybirdEncodedFeatures encodedTweetFeatures;
+  pr vate f nal Earlyb rdEncodedFeatures encodedT etFeatures;
   @Nullable
-  private final EarlybirdEncodedFeatures extendedEncodedTweetFeatures;
+  pr vate f nal Earlyb rdEncodedFeatures extendedEncodedT etFeatures;
 
   /**
    * Default constructor
    */
-  public EarlybirdThriftDocumentBuilder(
-      @Nonnull EarlybirdEncodedFeatures encodedTweetFeatures,
-      @Nullable EarlybirdEncodedFeatures extendedEncodedTweetFeatures,
-      FieldNameToIdMapping idMapping,
-      Schema schema) {
-    super(idMapping);
-    this.schema = schema;
-    this.encodedTweetFeatures = Preconditions.checkNotNull(encodedTweetFeatures);
+  publ c Earlyb rdThr ftDocu ntBu lder(
+      @Nonnull Earlyb rdEncodedFeatures encodedT etFeatures,
+      @Nullable Earlyb rdEncodedFeatures extendedEncodedT etFeatures,
+      F eldNa To dMapp ng  dMapp ng,
+      Sc ma sc ma) {
+    super( dMapp ng);
+    t .sc ma = sc ma;
+    t .encodedT etFeatures = Precond  ons.c ckNotNull(encodedT etFeatures);
 
-    this.extendedEncodedTweetFeatures = extendedEncodedTweetFeatures;
+    t .extendedEncodedT etFeatures = extendedEncodedT etFeatures;
   }
 
   /**
-   * Get internal {@link EarlybirdEncodedFeatures}
+   * Get  nternal {@l nk Earlyb rdEncodedFeatures}
    */
-  public EarlybirdEncodedFeatures getEncodedTweetFeatures() {
-    return encodedTweetFeatures;
+  publ c Earlyb rdEncodedFeatures getEncodedT etFeatures() {
+    return encodedT etFeatures;
   }
 
   /**
-   * Add skip list entry for the given field.
-   * This adds a term __has_fieldName in the INTERNAL field.
+   * Add sk p l st entry for t  g ven f eld.
+   * T  adds a term __has_f eldNa   n t   NTERNAL f eld.
    */
-  public EarlybirdThriftDocumentBuilder addFacetSkipList(String fieldName) {
-    withStringField(EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-        EarlybirdFieldConstant.getFacetSkipFieldName(fieldName));
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder addFacetSk pL st(Str ng f eldNa ) {
+    w hStr ngF eld(Earlyb rdF eldConstant. NTERNAL_F ELD.getF eldNa (),
+        Earlyb rdF eldConstant.getFacetSk pF eldNa (f eldNa ));
+    return t ;
   }
 
   /**
-   * Add a filter term in the INTERNAL field.
+   * Add a f lter term  n t   NTERNAL f eld.
    */
-  public EarlybirdThriftDocumentBuilder addFilterInternalFieldTerm(String filterName) {
-    withStringField(EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-        EarlybirdThriftDocumentUtil.formatFilter(filterName));
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder addF lter nternalF eldTerm(Str ng f lterNa ) {
+    w hStr ngF eld(Earlyb rdF eldConstant. NTERNAL_F ELD.getF eldNa (),
+        Earlyb rdThr ftDocu ntUt l.formatF lter(f lterNa ));
+    return t ;
   }
 
   /**
-   * Add id field and id csf field.
+   * Add  d f eld and  d csf f eld.
    */
-  public EarlybirdThriftDocumentBuilder withID(long id) {
-    withLongField(EarlybirdFieldConstant.ID_FIELD.getFieldName(), id);
-    withLongField(EarlybirdFieldConstant.ID_CSF_FIELD.getFieldName(), id);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w h D(long  d) {
+    w hLongF eld(Earlyb rdF eldConstant. D_F ELD.getF eldNa (),  d);
+    w hLongF eld(Earlyb rdF eldConstant. D_CSF_F ELD.getF eldNa (),  d);
+    return t ;
   }
 
   /**
-   * Add created at field and created at csf field.
+   * Add created at f eld and created at csf f eld.
    */
-  public EarlybirdThriftDocumentBuilder withCreatedAt(int createdAt) {
-    withIntField(EarlybirdFieldConstant.CREATED_AT_FIELD.getFieldName(), createdAt);
-    withIntField(EarlybirdFieldConstant.CREATED_AT_CSF_FIELD.getFieldName(), createdAt);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hCreatedAt( nt createdAt) {
+    w h ntF eld(Earlyb rdF eldConstant.CREATED_AT_F ELD.getF eldNa (), createdAt);
+    w h ntF eld(Earlyb rdF eldConstant.CREATED_AT_CSF_F ELD.getF eldNa (), createdAt);
+    return t ;
   }
 
   /**
-   * Add tweet text field.
+   * Add t et text f eld.
    */
-  public EarlybirdThriftDocumentBuilder withTweetText(
-      String text, byte[] textTokenStream) throws IOException {
-    withTokenStreamField(EarlybirdFieldConstants.EarlybirdFieldConstant.TEXT_FIELD.getFieldName(),
+  publ c Earlyb rdThr ftDocu ntBu lder w hT etText(
+      Str ng text, byte[] textTokenStream) throws  OExcept on {
+    w hTokenStreamF eld(Earlyb rdF eldConstants.Earlyb rdF eldConstant.TEXT_F ELD.getF eldNa (),
         text, textTokenStream);
-    return this;
+    return t ;
   }
 
-  public EarlybirdThriftDocumentBuilder withTweetText(String text) throws IOException {
-    withTweetText(text, null);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hT etText(Str ng text) throws  OExcept on {
+    w hT etText(text, null);
+    return t ;
   }
 
   /**
-   * Add a list of cashTags. Like $TWTR.
+   * Add a l st of cashTags. L ke $TWTR.
    */
-  public EarlybirdThriftDocumentBuilder withStocksFields(List<String> cashTags) {
-    if (isNotEmpty(cashTags)) {
-      addFacetSkipList(EarlybirdFieldConstant.STOCKS_FIELD.getFieldName());
-      for (String cashTag : cashTags) {
-        withStringField(
-            EarlybirdFieldConstant.STOCKS_FIELD.getFieldName(), CASHTAG_SYMBOL + cashTag);
+  publ c Earlyb rdThr ftDocu ntBu lder w hStocksF elds(L st<Str ng> cashTags) {
+     f ( sNotEmpty(cashTags)) {
+      addFacetSk pL st(Earlyb rdF eldConstant.STOCKS_F ELD.getF eldNa ());
+      for (Str ng cashTag : cashTags) {
+        w hStr ngF eld(
+            Earlyb rdF eldConstant.STOCKS_F ELD.getF eldNa (), CASHTAG_SYMBOL + cashTag);
       }
     }
-    return this;
+    return t ;
   }
 
   /**
-   * Add a list of hashtags.
+   * Add a l st of hashtags.
    */
-  public EarlybirdThriftDocumentBuilder withHashtagsField(List<String> hashtags) {
-    if (isNotEmpty(hashtags)) {
-      int numHashtags = Math.min(
-          hashtags.size(),
-          schema.getFeatureConfigurationById(
-              EarlybirdFieldConstant.NUM_HASHTAGS.getFieldId()).getMaxValue());
-      encodedTweetFeatures.setFeatureValue(EarlybirdFieldConstant.NUM_HASHTAGS, numHashtags);
-      addFacetSkipList(EarlybirdFieldConstant.HASHTAGS_FIELD.getFieldName());
-      for (String hashtag : hashtags) {
-        withStringField(
-            EarlybirdFieldConstant.HASHTAGS_FIELD.getFieldName(), HASHTAG_SYMBOL + hashtag);
+  publ c Earlyb rdThr ftDocu ntBu lder w hHashtagsF eld(L st<Str ng> hashtags) {
+     f ( sNotEmpty(hashtags)) {
+       nt numHashtags = Math.m n(
+          hashtags.s ze(),
+          sc ma.getFeatureConf gurat onBy d(
+              Earlyb rdF eldConstant.NUM_HASHTAGS.getF eld d()).getMaxValue());
+      encodedT etFeatures.setFeatureValue(Earlyb rdF eldConstant.NUM_HASHTAGS, numHashtags);
+      addFacetSk pL st(Earlyb rdF eldConstant.HASHTAGS_F ELD.getF eldNa ());
+      for (Str ng hashtag : hashtags) {
+        w hStr ngF eld(
+            Earlyb rdF eldConstant.HASHTAGS_F ELD.getF eldNa (), HASHTAG_SYMBOL + hashtag);
       }
     }
-    return this;
+    return t ;
   }
 
   /**
-   * Added a list of mentions.
+   * Added a l st of  nt ons.
    */
-  public EarlybirdThriftDocumentBuilder withMentionsField(List<String> mentions) {
-    if (isNotEmpty(mentions)) {
-      int numMentions = Math.min(
-          mentions.size(),
-          schema.getFeatureConfigurationById(
-              EarlybirdFieldConstant.NUM_HASHTAGS.getFieldId()).getMaxValue());
-      encodedTweetFeatures.setFeatureValue(EarlybirdFieldConstant.NUM_MENTIONS, numMentions);
-      addFacetSkipList(EarlybirdFieldConstant.MENTIONS_FIELD.getFieldName());
-      for (String mention : mentions) {
-        withStringField(
-            EarlybirdFieldConstant.MENTIONS_FIELD.getFieldName(), MENTION_SYMBOL + mention);
+  publ c Earlyb rdThr ftDocu ntBu lder w h nt onsF eld(L st<Str ng>  nt ons) {
+     f ( sNotEmpty( nt ons)) {
+       nt num nt ons = Math.m n(
+           nt ons.s ze(),
+          sc ma.getFeatureConf gurat onBy d(
+              Earlyb rdF eldConstant.NUM_HASHTAGS.getF eld d()).getMaxValue());
+      encodedT etFeatures.setFeatureValue(Earlyb rdF eldConstant.NUM_MENT ONS, num nt ons);
+      addFacetSk pL st(Earlyb rdF eldConstant.MENT ONS_F ELD.getF eldNa ());
+      for (Str ng  nt on :  nt ons) {
+        w hStr ngF eld(
+            Earlyb rdF eldConstant.MENT ONS_F ELD.getF eldNa (), MENT ON_SYMBOL +  nt on);
       }
     }
-    return this;
+    return t ;
   }
 
   /**
-   * Add a list of Twitter Photo URLs (twimg URLs). These are different from regular URLs, because
-   * we use the TwitterPhotoTokenStream to index them, and we also include the status ID as payload.
+   * Add a l st of Tw ter Photo URLs (tw mg URLs). T se are d fferent from regular URLs, because
+   *   use t  Tw terPhotoTokenStream to  ndex t m, and   also  nclude t  status  D as payload.
    */
-  public EarlybirdThriftDocumentBuilder withTwimgURLs(
-      List<TwitterPhotoUrl> urls) throws IOException {
-    if (isNotEmpty(urls)) {
-      for (TwitterPhotoUrl photoUrl : urls) {
-        TokenStream ts = new TwitterPhotoTokenStream(photoUrl.getPhotoStatusId(),
-            photoUrl.getMediaUrl());
-        byte[] serializedTs = photoUrlSerializer.serialize(ts);
-        withTokenStreamField(EarlybirdFieldConstant.TWIMG_LINKS_FIELD.getFieldName(),
-            Long.toString(photoUrl.getPhotoStatusId()), serializedTs);
-        addFacetSkipList(EarlybirdFieldConstant.TWIMG_LINKS_FIELD.getFieldName());
+  publ c Earlyb rdThr ftDocu ntBu lder w hTw mgURLs(
+      L st<Tw terPhotoUrl> urls) throws  OExcept on {
+     f ( sNotEmpty(urls)) {
+      for (Tw terPhotoUrl photoUrl : urls) {
+        TokenStream ts = new Tw terPhotoTokenStream(photoUrl.getPhotoStatus d(),
+            photoUrl.get d aUrl());
+        byte[] ser al zedTs = photoUrlSer al zer.ser al ze(ts);
+        w hTokenStreamF eld(Earlyb rdF eldConstant.TW MG_L NKS_F ELD.getF eldNa (),
+            Long.toStr ng(photoUrl.getPhotoStatus d()), ser al zedTs);
+        addFacetSk pL st(Earlyb rdF eldConstant.TW MG_L NKS_F ELD.getF eldNa ());
       }
-      encodedTweetFeatures.setFlag(EarlybirdFieldConstant.HAS_IMAGE_URL_FLAG);
-      encodedTweetFeatures.setFlag(EarlybirdFieldConstant.HAS_NATIVE_IMAGE_FLAG);
+      encodedT etFeatures.setFlag(Earlyb rdF eldConstant.HAS_ MAGE_URL_FLAG);
+      encodedT etFeatures.setFlag(Earlyb rdF eldConstant.HAS_NAT VE_ MAGE_FLAG);
     }
-    return this;
+    return t ;
   }
 
   /**
-   * Add a list of URLs. This also add facet skip list terms for news / images / videos if needed.
+   * Add a l st of URLs. T  also add facet sk p l st terms for news /  mages / v deos  f needed.
    */
-  public EarlybirdThriftDocumentBuilder withURLs(List<ThriftExpandedUrl> urls) {
-    if (isNotEmpty(urls)) {
-      Set<String> dedupedLinks = Sets.newHashSet();
+  publ c Earlyb rdThr ftDocu ntBu lder w hURLs(L st<Thr ftExpandedUrl> urls) {
+     f ( sNotEmpty(urls)) {
+      Set<Str ng> dedupedL nks = Sets.newHashSet();
 
-      for (ThriftExpandedUrl expandedUrl : urls) {
-        if (expandedUrl.isSetOriginalUrl()) {
-          String normalizedOriginalUrl = URLUtils.normalizePath(expandedUrl.getOriginalUrl());
-          dedupedLinks.add(normalizedOriginalUrl);
+      for (Thr ftExpandedUrl expandedUrl : urls) {
+         f (expandedUrl. sSetOr g nalUrl()) {
+          Str ng normal zedOr g nalUrl = URLUt ls.normal zePath(expandedUrl.getOr g nalUrl());
+          dedupedL nks.add(normal zedOr g nalUrl);
         }
-        if (expandedUrl.isSetExpandedUrl()) {
-          dedupedLinks.add(URLUtils.normalizePath(expandedUrl.getExpandedUrl()));
+         f (expandedUrl. sSetExpandedUrl()) {
+          dedupedL nks.add(URLUt ls.normal zePath(expandedUrl.getExpandedUrl()));
         }
 
-        if (expandedUrl.isSetCanonicalLastHopUrl()) {
-          String url = URLUtils.normalizePath(expandedUrl.getCanonicalLastHopUrl());
-          dedupedLinks.add(url);
+         f (expandedUrl. sSetCanon calLastHopUrl()) {
+          Str ng url = URLUt ls.normal zePath(expandedUrl.getCanon calLastHopUrl());
+          dedupedL nks.add(url);
 
-          String facetUrl = URLUtils.normalizeFacetURL(url);
+          Str ng facetUrl = URLUt ls.normal zeFacetURL(url);
 
-          if (expandedUrl.isSetMediaType()) {
-            switch (expandedUrl.getMediaType()) {
+           f (expandedUrl. sSet d aType()) {
+            sw ch (expandedUrl.get d aType()) {
               case NEWS:
-                withStringField(EarlybirdFieldConstant.NEWS_LINKS_FIELD.getFieldName(), url);
-                addFacetSkipList(EarlybirdFieldConstant.NEWS_LINKS_FIELD.getFieldName());
-                encodedTweetFeatures.setFlag(EarlybirdFieldConstant.HAS_NEWS_URL_FLAG);
+                w hStr ngF eld(Earlyb rdF eldConstant.NEWS_L NKS_F ELD.getF eldNa (), url);
+                addFacetSk pL st(Earlyb rdF eldConstant.NEWS_L NKS_F ELD.getF eldNa ());
+                encodedT etFeatures.setFlag(Earlyb rdF eldConstant.HAS_NEWS_URL_FLAG);
                 break;
-              case VIDEO:
-                withStringField(EarlybirdFieldConstant.VIDEO_LINKS_FIELD.getFieldName(), facetUrl);
-                addFacetSkipList(EarlybirdFieldConstant.VIDEO_LINKS_FIELD.getFieldName());
-                encodedTweetFeatures.setFlag(EarlybirdFieldConstant.HAS_VIDEO_URL_FLAG);
+              case V DEO:
+                w hStr ngF eld(Earlyb rdF eldConstant.V DEO_L NKS_F ELD.getF eldNa (), facetUrl);
+                addFacetSk pL st(Earlyb rdF eldConstant.V DEO_L NKS_F ELD.getF eldNa ());
+                encodedT etFeatures.setFlag(Earlyb rdF eldConstant.HAS_V DEO_URL_FLAG);
                 break;
-              case IMAGE:
-                withStringField(EarlybirdFieldConstant.IMAGE_LINKS_FIELD.getFieldName(), facetUrl);
-                addFacetSkipList(EarlybirdFieldConstant.IMAGE_LINKS_FIELD.getFieldName());
-                encodedTweetFeatures.setFlag(EarlybirdFieldConstant.HAS_IMAGE_URL_FLAG);
+              case  MAGE:
+                w hStr ngF eld(Earlyb rdF eldConstant. MAGE_L NKS_F ELD.getF eldNa (), facetUrl);
+                addFacetSk pL st(Earlyb rdF eldConstant. MAGE_L NKS_F ELD.getF eldNa ());
+                encodedT etFeatures.setFlag(Earlyb rdF eldConstant.HAS_ MAGE_URL_FLAG);
                 break;
-              case NATIVE_IMAGE:
-                // Nothing done here. Native images are handled separately.
-                // They are in PhotoUrls instead of expandedUrls.
+              case NAT VE_ MAGE:
+                // Noth ng done  re. Nat ve  mages are handled separately.
+                // T y are  n PhotoUrls  nstead of expandedUrls.
                 break;
               case UNKNOWN:
                 break;
               default:
-                throw new RuntimeException("Unknown Media Type: " + expandedUrl.getMediaType());
+                throw new Runt  Except on("Unknown  d a Type: " + expandedUrl.get d aType());
             }
           }
 
-          if (expandedUrl.isSetLinkCategory()) {
-            withIntField(EarlybirdFieldConstant.LINK_CATEGORY_FIELD.getFieldName(),
-                expandedUrl.getLinkCategory().getValue());
+           f (expandedUrl. sSetL nkCategory()) {
+            w h ntF eld(Earlyb rdF eldConstant.L NK_CATEGORY_F ELD.getF eldNa (),
+                expandedUrl.getL nkCategory().getValue());
           }
         }
       }
 
-      if (!dedupedLinks.isEmpty()) {
-        encodedTweetFeatures.setFlag(EarlybirdFieldConstant.HAS_LINK_FLAG);
+       f (!dedupedL nks. sEmpty()) {
+        encodedT etFeatures.setFlag(Earlyb rdF eldConstant.HAS_L NK_FLAG);
 
-        addFacetSkipList(EarlybirdFieldConstant.LINKS_FIELD.getFieldName());
+        addFacetSk pL st(Earlyb rdF eldConstant.L NKS_F ELD.getF eldNa ());
 
-        for (String linkUrl : dedupedLinks) {
-          withStringField(EarlybirdFieldConstant.LINKS_FIELD.getFieldName(), linkUrl);
+        for (Str ng l nkUrl : dedupedL nks) {
+          w hStr ngF eld(Earlyb rdF eldConstant.L NKS_F ELD.getF eldNa (), l nkUrl);
         }
       }
 
-      encodedTweetFeatures.setFlagValue(
-          EarlybirdFieldConstant.HAS_VISIBLE_LINK_FLAG,
-          LinkVisibilityUtils.hasVisibleLink(urls));
+      encodedT etFeatures.setFlagValue(
+          Earlyb rdF eldConstant.HAS_V S BLE_L NK_FLAG,
+          L nkV s b l yUt ls.hasV s bleL nk(urls));
     }
 
-    return this;
+    return t ;
   }
 
   /**
-   * Add a list of places. The place are U64 encoded place IDs.
+   * Add a l st of places. T  place are U64 encoded place  Ds.
    */
-  public EarlybirdThriftDocumentBuilder withPlacesField(List<String> places) {
-    if (isNotEmpty(places)) {
-      for (String place : places) {
-        withStringField(EarlybirdFieldConstant.PLACE_FIELD.getFieldName(), place);
+  publ c Earlyb rdThr ftDocu ntBu lder w hPlacesF eld(L st<Str ng> places) {
+     f ( sNotEmpty(places)) {
+      for (Str ng place : places) {
+        w hStr ngF eld(Earlyb rdF eldConstant.PLACE_F ELD.getF eldNa (), place);
       }
     }
-    return this;
+    return t ;
   }
 
   /**
-   * Add tweet text signature field.
+   * Add t et text s gnature f eld.
    */
-  public EarlybirdThriftDocumentBuilder withTweetSignature(int signature) {
-    encodedTweetFeatures.setFeatureValue(EarlybirdFieldConstant.TWEET_SIGNATURE, signature);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hT etS gnature( nt s gnature) {
+    encodedT etFeatures.setFeatureValue(Earlyb rdF eldConstant.TWEET_S GNATURE, s gnature);
+    return t ;
   }
 
   /**
-   * Add geo hash field and internal filter field.
+   * Add geo hash f eld and  nternal f lter f eld.
    */
-  public EarlybirdThriftDocumentBuilder withGeoHash(double lat, double lon, int accuracy) {
-    if (GeoUtil.validateGeoCoordinates(lat, lon)) {
-      withGeoField(
-          EarlybirdFieldConstant.GEO_HASH_FIELD.getFieldName(),
+  publ c Earlyb rdThr ftDocu ntBu lder w hGeoHash(double lat, double lon,  nt accuracy) {
+     f (GeoUt l.val dateGeoCoord nates(lat, lon)) {
+      w hGeoF eld(
+          Earlyb rdF eldConstant.GEO_HASH_F ELD.getF eldNa (),
           lat, lon, accuracy);
-      withLatLonCSF(lat, lon);
+      w hLatLonCSF(lat, lon);
     }
-    return this;
+    return t ;
   }
 
-  public EarlybirdThriftDocumentBuilder withGeoHash(double lat, double lon) {
-    withGeoHash(lat, lon, GeoAddressAccuracy.UNKNOWN_LOCATION.getCode());
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hGeoHash(double lat, double lon) {
+    w hGeoHash(lat, lon, GeoAddressAccuracy.UNKNOWN_LOCAT ON.getCode());
+    return t ;
   }
 
   /**
-   * Add geo location source to the internal field with ThriftGeoLocationSource object.
+   * Add geo locat on s ce to t   nternal f eld w h Thr ftGeoLocat onS ce object.
    */
-  public EarlybirdThriftDocumentBuilder withGeoLocationSource(
-      ThriftGeoLocationSource geoLocationSource) {
-    if (geoLocationSource != null) {
-      withGeoLocationSource(EarlybirdFieldConstants.formatGeoType(geoLocationSource));
+  publ c Earlyb rdThr ftDocu ntBu lder w hGeoLocat onS ce(
+      Thr ftGeoLocat onS ce geoLocat onS ce) {
+     f (geoLocat onS ce != null) {
+      w hGeoLocat onS ce(Earlyb rdF eldConstants.formatGeoType(geoLocat onS ce));
     }
-    return this;
+    return t ;
   }
 
   /**
-   * Add geo location source to the internal field.
+   * Add geo locat on s ce to t   nternal f eld.
    */
-  public EarlybirdThriftDocumentBuilder withGeoLocationSource(String geoLocationSource) {
-    withStringField(EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(), geoLocationSource);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hGeoLocat onS ce(Str ng geoLocat onS ce) {
+    w hStr ngF eld(Earlyb rdF eldConstant. NTERNAL_F ELD.getF eldNa (), geoLocat onS ce);
+    return t ;
   }
 
   /**
-   * Add encoded lat and lon to LatLonCSF field.
+   * Add encoded lat and lon to LatLonCSF f eld.
    */
-  public EarlybirdThriftDocumentBuilder withLatLonCSF(double lat, double lon) {
-    isSetLatLonCSF = true;
-    long encodedLatLon = GeoUtil.encodeLatLonIntoInt64((float) lat, (float) lon);
-    withLongField(EarlybirdFieldConstant.LAT_LON_CSF_FIELD.getFieldName(), encodedLatLon);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hLatLonCSF(double lat, double lon) {
+     sSetLatLonCSF = true;
+    long encodedLatLon = GeoUt l.encodeLatLon nto nt64((float) lat, (float) lon);
+    w hLongF eld(Earlyb rdF eldConstant.LAT_LON_CSF_F ELD.getF eldNa (), encodedLatLon);
+    return t ;
   }
 
   /**
-   * Add from verified account flag to internal field.
+   * Add from ver f ed account flag to  nternal f eld.
    */
-  public EarlybirdThriftDocumentBuilder withFromVerifiedAccountFlag() {
-    encodedTweetFeatures.setFlag(EarlybirdFieldConstant.FROM_VERIFIED_ACCOUNT_FLAG);
-    addFilterInternalFieldTerm(EarlybirdFieldConstant.VERIFIED_FILTER_TERM);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hFromVer f edAccountFlag() {
+    encodedT etFeatures.setFlag(Earlyb rdF eldConstant.FROM_VER F ED_ACCOUNT_FLAG);
+    addF lter nternalF eldTerm(Earlyb rdF eldConstant.VER F ED_F LTER_TERM);
+    return t ;
   }
 
   /**
-   * Add from blue-verified account flag to internal field.
+   * Add from blue-ver f ed account flag to  nternal f eld.
    */
-  public EarlybirdThriftDocumentBuilder withFromBlueVerifiedAccountFlag() {
-    encodedTweetFeatures.setFlag(EarlybirdFieldConstant.FROM_BLUE_VERIFIED_ACCOUNT_FLAG);
-    addFilterInternalFieldTerm(EarlybirdFieldConstant.BLUE_VERIFIED_FILTER_TERM);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hFromBlueVer f edAccountFlag() {
+    encodedT etFeatures.setFlag(Earlyb rdF eldConstant.FROM_BLUE_VER F ED_ACCOUNT_FLAG);
+    addF lter nternalF eldTerm(Earlyb rdF eldConstant.BLUE_VER F ED_F LTER_TERM);
+    return t ;
   }
 
   /**
-   * Add offensive flag to internal field.
+   * Add offens ve flag to  nternal f eld.
    */
-  public EarlybirdThriftDocumentBuilder withOffensiveFlag() {
-    encodedTweetFeatures.setFlag(EarlybirdFieldConstant.IS_OFFENSIVE_FLAG);
-    withStringField(
-        EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-        EarlybirdFieldConstant.IS_OFFENSIVE);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hOffens veFlag() {
+    encodedT etFeatures.setFlag(Earlyb rdF eldConstant. S_OFFENS VE_FLAG);
+    w hStr ngF eld(
+        Earlyb rdF eldConstant. NTERNAL_F ELD.getF eldNa (),
+        Earlyb rdF eldConstant. S_OFFENS VE);
+    return t ;
   }
 
   /**
-   * Add user reputation value to encoded feature.
+   * Add user reputat on value to encoded feature.
    */
-  public EarlybirdThriftDocumentBuilder withUserReputation(byte score) {
-    encodedTweetFeatures.setFeatureValue(EarlybirdFieldConstant.USER_REPUTATION, score);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hUserReputat on(byte score) {
+    encodedT etFeatures.setFeatureValue(Earlyb rdF eldConstant.USER_REPUTAT ON, score);
+    return t ;
   }
 
   /**
-   * This method creates the fields related to document language.
-   * For most languages, their isoLanguageCode and bcp47LanguageTag are the same.
-   * For some languages with variants, these two fields are different.
-   * E.g. for simplified Chinese, their isoLanguageCode is zh, but their bcp47LanguageTag is zh-cn.
+   * T   thod creates t  f elds related to docu nt language.
+   * For most languages, t  r  soLanguageCode and bcp47LanguageTag are t  sa .
+   * For so  languages w h var ants, t se two f elds are d fferent.
+   * E.g. for s mpl f ed Ch nese, t  r  soLanguageCode  s zh, but t  r bcp47LanguageTag  s zh-cn.
    * <p>
-   * This method adds fields for both the isoLanguageCode and bcp47LanguageTag.
+   * T   thod adds f elds for both t   soLanguageCode and bcp47LanguageTag.
    */
-  public EarlybirdThriftDocumentBuilder withLanguageCodes(
-      String isoLanguageCode, String bcp47LanguageTag) {
-    if (isoLanguageCode != null) {
-      withISOLanguage(isoLanguageCode);
+  publ c Earlyb rdThr ftDocu ntBu lder w hLanguageCodes(
+      Str ng  soLanguageCode, Str ng bcp47LanguageTag) {
+     f ( soLanguageCode != null) {
+      w h SOLanguage( soLanguageCode);
     }
-    if (bcp47LanguageTag != null && !bcp47LanguageTag.equals(isoLanguageCode)) {
-      BCP47_LANGUAGE_TAG_COUNTER.increment();
-      withISOLanguage(bcp47LanguageTag);
+     f (bcp47LanguageTag != null && !bcp47LanguageTag.equals( soLanguageCode)) {
+      BCP47_LANGUAGE_TAG_COUNTER. ncre nt();
+      w h SOLanguage(bcp47LanguageTag);
     }
-    return this;
+    return t ;
   }
 
   /**
-   * Adds a String field into the ISO_LANGUAGE_FIELD.
+   * Adds a Str ng f eld  nto t   SO_LANGUAGE_F ELD.
    */
-  public EarlybirdThriftDocumentBuilder withISOLanguage(String languageString) {
-    withStringField(
-        EarlybirdFieldConstant.ISO_LANGUAGE_FIELD.getFieldName(), languageString.toLowerCase());
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w h SOLanguage(Str ng languageStr ng) {
+    w hStr ngF eld(
+        Earlyb rdF eldConstant. SO_LANGUAGE_F ELD.getF eldNa (), languageStr ng.toLo rCase());
+    return t ;
   }
 
   /**
-   * Add from user ID fields.
+   * Add from user  D f elds.
    */
-  public EarlybirdThriftDocumentBuilder withFromUserID(long fromUserId) {
-    withLongField(EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName(), fromUserId);
-    withLongField(EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName(), fromUserId);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hFromUser D(long fromUser d) {
+    w hLongF eld(Earlyb rdF eldConstant.FROM_USER_ D_F ELD.getF eldNa (), fromUser d);
+    w hLongF eld(Earlyb rdF eldConstant.FROM_USER_ D_CSF.getF eldNa (), fromUser d);
+    return t ;
   }
 
   /**
-   * Add from user information fields.
+   * Add from user  nformat on f elds.
    */
-  public EarlybirdThriftDocumentBuilder withFromUser(
-      long fromUserId, String fromUser) {
-    withFromUser(fromUserId, fromUser, null);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hFromUser(
+      long fromUser d, Str ng fromUser) {
+    w hFromUser(fromUser d, fromUser, null);
+    return t ;
   }
 
   /**
-   * Add from user information fields.
+   * Add from user  nformat on f elds.
    */
-  public EarlybirdThriftDocumentBuilder withFromUser(String fromUser) {
-    withFromUser(fromUser, null);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hFromUser(Str ng fromUser) {
+    w hFromUser(fromUser, null);
+    return t ;
   }
 
   /**
-   * Add from user information fields.
+   * Add from user  nformat on f elds.
    */
-  public EarlybirdThriftDocumentBuilder withFromUser(
-      String fromUser, String tokenizedFromUser) {
-    withStringField(EarlybirdFieldConstant.FROM_USER_FIELD.getFieldName(), fromUser);
-    withStringField(EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName(),
-        isNotBlank(tokenizedFromUser) ? tokenizedFromUser : fromUser);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hFromUser(
+      Str ng fromUser, Str ng token zedFromUser) {
+    w hStr ngF eld(Earlyb rdF eldConstant.FROM_USER_F ELD.getF eldNa (), fromUser);
+    w hStr ngF eld(Earlyb rdF eldConstant.TOKEN ZED_FROM_USER_F ELD.getF eldNa (),
+         sNotBlank(token zedFromUser) ? token zedFromUser : fromUser);
+    return t ;
   }
 
   /**
-   * Add from user information fields.
+   * Add from user  nformat on f elds.
    */
-  public EarlybirdThriftDocumentBuilder withFromUser(
-      long fromUserId, String fromUser, String tokenizedFromUser) {
-    withFromUserID(fromUserId);
-    withFromUser(fromUser, tokenizedFromUser);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hFromUser(
+      long fromUser d, Str ng fromUser, Str ng token zedFromUser) {
+    w hFromUser D(fromUser d);
+    w hFromUser(fromUser, token zedFromUser);
+    return t ;
   }
 
   /**
-   * Add to user field.
+   * Add to user f eld.
    */
-  public EarlybirdThriftDocumentBuilder withToUser(
-      String toUser) {
-    withStringField(EarlybirdFieldConstant.TO_USER_FIELD.getFieldName(), toUser);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hToUser(
+      Str ng toUser) {
+    w hStr ngF eld(Earlyb rdF eldConstant.TO_USER_F ELD.getF eldNa (), toUser);
+    return t ;
   }
 
   /**
-   * Add escherbird annotation fields.
+   * Add esc rb rd annotat on f elds.
    */
-  public EarlybirdThriftDocumentBuilder withAnnotationEntities(List<String> entities) {
-    if (isNotEmpty(entities)) {
-      for (String entity : entities) {
-        withStringField(EarlybirdFieldConstant.ENTITY_ID_FIELD.getFieldName(), entity);
+  publ c Earlyb rdThr ftDocu ntBu lder w hAnnotat onEnt  es(L st<Str ng> ent  es) {
+     f ( sNotEmpty(ent  es)) {
+      for (Str ng ent y : ent  es) {
+        w hStr ngF eld(Earlyb rdF eldConstant.ENT TY_ D_F ELD.getF eldNa (), ent y);
       }
     }
-    return this;
+    return t ;
   }
 
   /**
-   * Add replies to internal field and set is reply flag.
+   * Add repl es to  nternal f eld and set  s reply flag.
    */
-  public EarlybirdThriftDocumentBuilder withReplyFlag() {
-    encodedTweetFeatures.setFlag(EarlybirdFieldConstant.IS_REPLY_FLAG);
-    addFilterInternalFieldTerm(EarlybirdFieldConstant.REPLIES_FILTER_TERM);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hReplyFlag() {
+    encodedT etFeatures.setFlag(Earlyb rdF eldConstant. S_REPLY_FLAG);
+    addF lter nternalF eldTerm(Earlyb rdF eldConstant.REPL ES_F LTER_TERM);
+    return t ;
   }
 
-  public EarlybirdThriftDocumentBuilder withCameraComposerSourceFlag() {
-    encodedTweetFeatures.setFlag(EarlybirdFieldConstant.COMPOSER_SOURCE_IS_CAMERA_FLAG);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hCa raComposerS ceFlag() {
+    encodedT etFeatures.setFlag(Earlyb rdF eldConstant.COMPOSER_SOURCE_ S_CAMERA_FLAG);
+    return t ;
   }
 
     /**
-     * Add in reply to user id.
+     * Add  n reply to user  d.
      * <p>
-     * Notice {@link #withReplyFlag} is not automatically called since retweet a tweet that is
-     * a reply to some other tweet is not considered a reply.
-     * The caller should call {@link #withReplyFlag} separately if this tweet is really a reply tweet.
+     * Not ce {@l nk #w hReplyFlag}  s not automat cally called s nce ret et a t et that  s
+     * a reply to so  ot r t et  s not cons dered a reply.
+     * T  caller should call {@l nk #w hReplyFlag} separately  f t  t et  s really a reply t et.
      */
-  public EarlybirdThriftDocumentBuilder withInReplyToUserID(long inReplyToUserID) {
-    withLongField(EarlybirdFieldConstant.IN_REPLY_TO_USER_ID_FIELD.getFieldName(), inReplyToUserID);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w h nReplyToUser D(long  nReplyToUser D) {
+    w hLongF eld(Earlyb rdF eldConstant. N_REPLY_TO_USER_ D_F ELD.getF eldNa (),  nReplyToUser D);
+    return t ;
   }
 
   /**
-   * Add reference tweet author id.
+   * Add reference t et author  d.
    */
-  public EarlybirdThriftDocumentBuilder withReferenceAuthorID(long referenceAuthorID) {
-    withLongField(EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_CSF.getFieldName(), referenceAuthorID);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hReferenceAuthor D(long referenceAuthor D) {
+    w hLongF eld(Earlyb rdF eldConstant.REFERENCE_AUTHOR_ D_CSF.getF eldNa (), referenceAuthor D);
+    return t ;
   }
 
   /**
-   * Add all native retweet related fields/label
+   * Add all nat ve ret et related f elds/label
    */
-  @VisibleForTesting
-  public EarlybirdThriftDocumentBuilder withNativeRetweet(final long retweetUserID,
-                                                          final long sharedStatusID) {
-    withLongField(EarlybirdFieldConstant.SHARED_STATUS_ID_CSF.getFieldName(), sharedStatusID);
+  @V s bleForTest ng
+  publ c Earlyb rdThr ftDocu ntBu lder w hNat veRet et(f nal long ret etUser D,
+                                                          f nal long sharedStatus D) {
+    w hLongF eld(Earlyb rdF eldConstant.SHARED_STATUS_ D_CSF.getF eldNa (), sharedStatus D);
 
-    withLongField(EarlybirdFieldConstant.RETWEET_SOURCE_TWEET_ID_FIELD.getFieldName(),
-                  sharedStatusID);
-    withLongField(EarlybirdFieldConstant.RETWEET_SOURCE_USER_ID_FIELD.getFieldName(),
-                  retweetUserID);
-    withLongField(EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_CSF.getFieldName(), retweetUserID);
+    w hLongF eld(Earlyb rdF eldConstant.RETWEET_SOURCE_TWEET_ D_F ELD.getF eldNa (),
+                  sharedStatus D);
+    w hLongF eld(Earlyb rdF eldConstant.RETWEET_SOURCE_USER_ D_F ELD.getF eldNa (),
+                  ret etUser D);
+    w hLongF eld(Earlyb rdF eldConstant.REFERENCE_AUTHOR_ D_CSF.getF eldNa (), ret etUser D);
 
-    encodedTweetFeatures.setFlag(EarlybirdFieldConstant.IS_RETWEET_FLAG);
+    encodedT etFeatures.setFlag(Earlyb rdF eldConstant. S_RETWEET_FLAG);
 
-    // Add native retweet label to the internal field.
-    addFilterInternalFieldTerm(EarlybirdFieldConstant.NATIVE_RETWEETS_FILTER_TERM);
-    withStringField(EarlybirdFieldConstant.TEXT_FIELD.getFieldName(), RETWEET_TERM);
-    return this;
+    // Add nat ve ret et label to t   nternal f eld.
+    addF lter nternalF eldTerm(Earlyb rdF eldConstant.NAT VE_RETWEETS_F LTER_TERM);
+    w hStr ngF eld(Earlyb rdF eldConstant.TEXT_F ELD.getF eldNa (), RETWEET_TERM);
+    return t ;
   }
 
   /**
-   * Add quoted tweet id and user id.
+   * Add quoted t et  d and user  d.
    */
-  @VisibleForTesting
-  public EarlybirdThriftDocumentBuilder withQuote(
-      final long quotedStatusId, final long quotedUserId) {
-    withLongField(EarlybirdFieldConstant.QUOTED_TWEET_ID_FIELD.getFieldName(), quotedStatusId);
-    withLongField(EarlybirdFieldConstant.QUOTED_USER_ID_FIELD.getFieldName(), quotedUserId);
+  @V s bleForTest ng
+  publ c Earlyb rdThr ftDocu ntBu lder w hQuote(
+      f nal long quotedStatus d, f nal long quotedUser d) {
+    w hLongF eld(Earlyb rdF eldConstant.QUOTED_TWEET_ D_F ELD.getF eldNa (), quotedStatus d);
+    w hLongF eld(Earlyb rdF eldConstant.QUOTED_USER_ D_F ELD.getF eldNa (), quotedUser d);
 
-    withLongField(EarlybirdFieldConstant.QUOTED_TWEET_ID_CSF.getFieldName(), quotedStatusId);
-    withLongField(EarlybirdFieldConstant.QUOTED_USER_ID_CSF.getFieldName(), quotedUserId);
+    w hLongF eld(Earlyb rdF eldConstant.QUOTED_TWEET_ D_CSF.getF eldNa (), quotedStatus d);
+    w hLongF eld(Earlyb rdF eldConstant.QUOTED_USER_ D_CSF.getF eldNa (), quotedUser d);
 
-    encodedTweetFeatures.setFlag(EarlybirdFieldConstant.HAS_QUOTE_FLAG);
+    encodedT etFeatures.setFlag(Earlyb rdF eldConstant.HAS_QUOTE_FLAG);
 
-    // Add quote label to the internal field.
-    addFilterInternalFieldTerm(EarlybirdFieldConstant.QUOTE_FILTER_TERM);
-    return this;
+    // Add quote label to t   nternal f eld.
+    addF lter nternalF eldTerm(Earlyb rdF eldConstant.QUOTE_F LTER_TERM);
+    return t ;
   }
 
   /**
-   * Add resolved links text field.
+   * Add resolved l nks text f eld.
    */
-  public EarlybirdThriftDocumentBuilder withResolvedLinksText(String linksText) {
-    withStringField(EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName(), linksText);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hResolvedL nksText(Str ng l nksText) {
+    w hStr ngF eld(Earlyb rdF eldConstant.RESOLVED_L NKS_TEXT_F ELD.getF eldNa (), l nksText);
+    return t ;
   }
 
   /**
-   * Add source field.
+   * Add s ce f eld.
    */
-  public EarlybirdThriftDocumentBuilder withSource(String source) {
-    withStringField(EarlybirdFieldConstant.SOURCE_FIELD.getFieldName(), source);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hS ce(Str ng s ce) {
+    w hStr ngF eld(Earlyb rdF eldConstant.SOURCE_F ELD.getF eldNa (), s ce);
+    return t ;
   }
 
   /**
-   * Add normalized source field.
+   * Add normal zed s ce f eld.
    */
-  public EarlybirdThriftDocumentBuilder withNormalizedSource(String normalizedSource) {
-    withStringField(
-        EarlybirdFieldConstant.NORMALIZED_SOURCE_FIELD.getFieldName(), normalizedSource);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hNormal zedS ce(Str ng normal zedS ce) {
+    w hStr ngF eld(
+        Earlyb rdF eldConstant.NORMAL ZED_SOURCE_F ELD.getF eldNa (), normal zedS ce);
+    return t ;
   }
 
   /**
-   * Add positive smiley to internal field.
+   * Add pos  ve sm ley to  nternal f eld.
    */
-  public EarlybirdThriftDocumentBuilder withPositiveSmiley() {
-    withStringField(
-        EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-        EarlybirdFieldConstant.HAS_POSITIVE_SMILEY);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hPos  veSm ley() {
+    w hStr ngF eld(
+        Earlyb rdF eldConstant. NTERNAL_F ELD.getF eldNa (),
+        Earlyb rdF eldConstant.HAS_POS T VE_SM LEY);
+    return t ;
   }
 
   /**
-   * Add negative smiley to internal field.
+   * Add negat ve sm ley to  nternal f eld.
    */
-  public EarlybirdThriftDocumentBuilder withNegativeSmiley() {
-    withStringField(
-        EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-        EarlybirdFieldConstant.HAS_NEGATIVE_SMILEY);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hNegat veSm ley() {
+    w hStr ngF eld(
+        Earlyb rdF eldConstant. NTERNAL_F ELD.getF eldNa (),
+        Earlyb rdF eldConstant.HAS_NEGAT VE_SM LEY);
+    return t ;
   }
 
   /**
-   * Add question mark label to a text field.
+   * Add quest on mark label to a text f eld.
    */
-  public EarlybirdThriftDocumentBuilder withQuestionMark() {
-    withStringField(EarlybirdFieldConstant.TEXT_FIELD.getFieldName(), QUESTION_MARK);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hQuest onMark() {
+    w hStr ngF eld(Earlyb rdF eldConstant.TEXT_F ELD.getF eldNa (), QUEST ON_MARK);
+    return t ;
   }
 
   /**
-   * Add card related fields.
+   * Add card related f elds.
    */
-  public EarlybirdThriftDocumentBuilder withSearchCard(
-      String name,
-      String domain,
-      String title, byte[] serializedTitleStream,
-      String description, byte[] serializedDescriptionStream,
-      String lang) {
-    if (isNotBlank(title)) {
-      withTokenStreamField(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_TITLE_FIELD.getFieldName(),
-          title, serializedTitleStream);
+  publ c Earlyb rdThr ftDocu ntBu lder w hSearchCard(
+      Str ng na ,
+      Str ng doma n,
+      Str ng t le, byte[] ser al zedT leStream,
+      Str ng descr pt on, byte[] ser al zedDescr pt onStream,
+      Str ng lang) {
+     f ( sNotBlank(t le)) {
+      w hTokenStreamF eld(
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.CARD_T TLE_F ELD.getF eldNa (),
+          t le, ser al zedT leStream);
     }
 
-    if (isNotBlank(description)) {
-      withTokenStreamField(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_DESCRIPTION_FIELD.getFieldName(),
-          description, serializedDescriptionStream);
+     f ( sNotBlank(descr pt on)) {
+      w hTokenStreamF eld(
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.CARD_DESCR PT ON_F ELD.getF eldNa (),
+          descr pt on, ser al zedDescr pt onStream);
     }
 
-    if (isNotBlank(lang)) {
-      withStringField(EarlybirdFieldConstant.CARD_LANG.getFieldName(), lang);
+     f ( sNotBlank(lang)) {
+      w hStr ngF eld(Earlyb rdF eldConstant.CARD_LANG.getF eldNa (), lang);
     }
 
-    if (isNotBlank(domain)) {
-      withStringField(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_DOMAIN_FIELD.getFieldName(), domain);
+     f ( sNotBlank(doma n)) {
+      w hStr ngF eld(
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.CARD_DOMA N_F ELD.getF eldNa (), doma n);
     }
 
-    if (isNotBlank(name)) {
-      withStringField(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_NAME_FIELD.getFieldName(), name);
-      withIntField(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_TYPE_CSF_FIELD.getFieldName(),
-          SearchCardType.cardTypeFromStringName(name).getByteValue());
+     f ( sNotBlank(na )) {
+      w hStr ngF eld(
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.CARD_NAME_F ELD.getF eldNa (), na );
+      w h ntF eld(
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.CARD_TYPE_CSF_F ELD.getF eldNa (),
+          SearchCardType.cardTypeFromStr ngNa (na ).getByteValue());
     }
 
-    if (AMPLIFY_CARD_NAME.equalsIgnoreCase(name)
-        || PLAYER_CARD_NAME.equalsIgnoreCase(name)) {
-      // Add into "internal" field so that this tweet is returned by filter:videos.
-      addFacetSkipList(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.VIDEO_LINKS_FIELD.getFieldName());
+     f (AMPL FY_CARD_NAME.equals gnoreCase(na )
+        || PLAYER_CARD_NAME.equals gnoreCase(na )) {
+      // Add  nto " nternal" f eld so that t  t et  s returned by f lter:v deos.
+      addFacetSk pL st(
+          Earlyb rdF eldConstants.Earlyb rdF eldConstant.V DEO_L NKS_F ELD.getF eldNa ());
     }
 
-    return this;
+    return t ;
   }
 
-  public EarlybirdThriftDocumentBuilder withNormalizedMinEngagementField(
-      String fieldName, int normalizedNumEngagements) throws IOException {
-    EarlybirdThriftDocumentUtil.addNormalizedMinEngagementField(doc, fieldName,
-        normalizedNumEngagements);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hNormal zedM nEngage ntF eld(
+      Str ng f eldNa ,  nt normal zedNumEngage nts) throws  OExcept on {
+    Earlyb rdThr ftDocu ntUt l.addNormal zedM nEngage ntF eld(doc, f eldNa ,
+        normal zedNumEngage nts);
+    return t ;
   }
 
   /**
-   * Add named entity with given canonical name and type to document.
+   * Add na d ent y w h g ven canon cal na  and type to docu nt.
    */
-  public EarlybirdThriftDocumentBuilder withNamedEntity(NamedEntity namedEntity) {
-    if (namedEntity.getContexts() == null) {
-      // In this unlikely case, we don't have any context for named entity type or source,
-      // so we can't properly index it in any of our fields. We'll just skip it in this case.
-      return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hNa dEnt y(Na dEnt y na dEnt y) {
+     f (na dEnt y.getContexts() == null) {
+      //  n t  unl kely case,   don't have any context for na d ent y type or s ce,
+      // so   can't properly  ndex    n any of   f elds.  'll just sk p    n t  case.
+      return t ;
     }
 
-    // Keep track of the fields we've applied in the builder already, to ensure we only index
-    // each term (field/value pair) once
-    Set<Pair<EarlybirdFieldConstant, String>> fieldsApplied = new HashSet<>();
-    for (NamedEntityContext context : namedEntity.getContexts()) {
-      if (context.isSetInput_source()
-          && NAMED_ENTITY_URL_SOURCE_TYPES.contains(context.getInput_source().getSource_type())) {
-        // If the source is one of the URL* types, add the named entity to the "from_url" fields,
-        // ensuring we add it only once
-        addNamedEntityFields(
-            fieldsApplied,
-            EarlybirdFieldConstant.NAMED_ENTITY_FROM_URL_FIELD,
-            EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_URL_FIELD,
-            namedEntity.getCanonical_name(),
+    // Keep track of t  f elds  've appl ed  n t  bu lder already, to ensure   only  ndex
+    // each term (f eld/value pa r) once
+    Set<Pa r<Earlyb rdF eldConstant, Str ng>> f eldsAppl ed = new HashSet<>();
+    for (Na dEnt yContext context : na dEnt y.getContexts()) {
+       f (context. sSet nput_s ce()
+          && NAMED_ENT TY_URL_SOURCE_TYPES.conta ns(context.get nput_s ce().getS ce_type())) {
+        //  f t  s ce  s one of t  URL* types, add t  na d ent y to t  "from_url" f elds,
+        // ensur ng   add   only once
+        addNa dEnt yF elds(
+            f eldsAppl ed,
+            Earlyb rdF eldConstant.NAMED_ENT TY_FROM_URL_F ELD,
+            Earlyb rdF eldConstant.NAMED_ENT TY_W TH_TYPE_FROM_URL_F ELD,
+            na dEnt y.getCanon cal_na (),
             context);
       } else {
-        addNamedEntityFields(
-            fieldsApplied,
-            EarlybirdFieldConstant.NAMED_ENTITY_FROM_TEXT_FIELD,
-            EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_TEXT_FIELD,
-            namedEntity.getCanonical_name(),
+        addNa dEnt yF elds(
+            f eldsAppl ed,
+            Earlyb rdF eldConstant.NAMED_ENT TY_FROM_TEXT_F ELD,
+            Earlyb rdF eldConstant.NAMED_ENT TY_W TH_TYPE_FROM_TEXT_F ELD,
+            na dEnt y.getCanon cal_na (),
             context);
       }
     }
 
-    return this;
+    return t ;
   }
 
   /**
-   * Add space id fields.
+   * Add space  d f elds.
    */
-  public EarlybirdThriftDocumentBuilder withSpaceIdFields(Set<String> spaceIds) {
-    if (!spaceIds.isEmpty()) {
-      addFacetSkipList(EarlybirdFieldConstant.SPACE_ID_FIELD.getFieldName());
-      for (String spaceId : spaceIds) {
-        withStringField(EarlybirdFieldConstant.SPACE_ID_FIELD.getFieldName(), spaceId);
+  publ c Earlyb rdThr ftDocu ntBu lder w hSpace dF elds(Set<Str ng> space ds) {
+     f (!space ds. sEmpty()) {
+      addFacetSk pL st(Earlyb rdF eldConstant.SPACE_ D_F ELD.getF eldNa ());
+      for (Str ng space d : space ds) {
+        w hStr ngF eld(Earlyb rdF eldConstant.SPACE_ D_F ELD.getF eldNa (), space d);
       }
     }
-    return this;
+    return t ;
   }
 
   /**
-   * Add directed at user.
+   * Add d rected at user.
    */
-  @VisibleForTesting
-  public EarlybirdThriftDocumentBuilder withDirectedAtUser(final long directedAtUserId) {
-    withLongField(EarlybirdFieldConstant.DIRECTED_AT_USER_ID_FIELD.getFieldName(),
-        directedAtUserId);
+  @V s bleForTest ng
+  publ c Earlyb rdThr ftDocu ntBu lder w hD rectedAtUser(f nal long d rectedAtUser d) {
+    w hLongF eld(Earlyb rdF eldConstant.D RECTED_AT_USER_ D_F ELD.getF eldNa (),
+        d rectedAtUser d);
 
-    withLongField(EarlybirdFieldConstant.DIRECTED_AT_USER_ID_CSF.getFieldName(), directedAtUserId);
+    w hLongF eld(Earlyb rdF eldConstant.D RECTED_AT_USER_ D_CSF.getF eldNa (), d rectedAtUser d);
 
-    return this;
+    return t ;
   }
 
   /**
-   * Add a white space tokenized screen name field.
+   * Add a wh e space token zed screen na  f eld.
    *
    * Example:
-   *  screenName - "super_hero"
-   *  tokenized version - "super hero"
+   *  screenNa  - "super_ ro"
+   *  token zed vers on - "super  ro"
    */
-  public EarlybirdThriftDocumentBuilder withWhiteSpaceTokenizedScreenNameField(
-      String fieldName,
-      String normalizedScreenName) {
-    String whiteSpaceTokenizableScreenName = StringUtils.join(
-        normalizedScreenName.split(Regex.HASHTAG_USERNAME_PUNCTUATION_REGEX), " ");
-    withStringField(fieldName, whiteSpaceTokenizableScreenName);
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder w hWh eSpaceToken zedScreenNa F eld(
+      Str ng f eldNa ,
+      Str ng normal zedScreenNa ) {
+    Str ng wh eSpaceToken zableScreenNa  = Str ngUt ls.jo n(
+        normal zedScreenNa .spl (Regex.HASHTAG_USERNAME_PUNCTUAT ON_REGEX), " ");
+    w hStr ngF eld(f eldNa , wh eSpaceToken zableScreenNa );
+    return t ;
   }
 
   /**
-   * Add a camel case tokenized screen name field.
+   * Add a ca l case token zed screen na  f eld.
    */
-  public EarlybirdThriftDocumentBuilder withCamelCaseTokenizedScreenNameField(
-      String fieldName,
-      String screenName,
-      String normalizedScreenName,
-      TokenStream screenNameTokenStream) {
+  publ c Earlyb rdThr ftDocu ntBu lder w hCa lCaseToken zedScreenNa F eld(
+      Str ng f eldNa ,
+      Str ng screenNa ,
+      Str ng normal zedScreenNa ,
+      TokenStream screenNa TokenStream) {
 
-    // this normalized text is consistent to how the tokenized stream is created from
-    // TokenizerHelper.getNormalizedCamelcaseTokenStream - ie. just lowercasing.
-    String camelCaseTokenizedScreenNameText =
-        TokenizerHelper.getNormalizedCamelcaseTokenStreamText(screenName);
+    // t  normal zed text  s cons stent to how t  token zed stream  s created from
+    // Token zer lper.getNormal zedCa lcaseTokenStream -  e. just lo rcas ng.
+    Str ng ca lCaseToken zedScreenNa Text =
+        Token zer lper.getNormal zedCa lcaseTokenStreamText(screenNa );
     try {
-      // Reset the token stream in case it has been read before.
-      screenNameTokenStream.reset();
-      byte[] camelCaseTokenizedScreenName =
-          TweetTokenStreamSerializer.getTweetTokenStreamSerializer()
-              .serialize(screenNameTokenStream);
+      // Reset t  token stream  n case   has been read before.
+      screenNa TokenStream.reset();
+      byte[] ca lCaseToken zedScreenNa  =
+          T etTokenStreamSer al zer.getT etTokenStreamSer al zer()
+              .ser al ze(screenNa TokenStream);
 
-      withTokenStreamField(
-          fieldName,
-          camelCaseTokenizedScreenNameText.isEmpty()
-              ? normalizedScreenName : camelCaseTokenizedScreenNameText,
-          camelCaseTokenizedScreenName);
-    } catch (IOException e) {
-      LOG.error("TwitterTokenStream serialization error! Could not serialize: " + screenName);
-      SERIALIZE_FAILURE_COUNT_NONPENGUIN_DEPENDENT.increment();
+      w hTokenStreamF eld(
+          f eldNa ,
+          ca lCaseToken zedScreenNa Text. sEmpty()
+              ? normal zedScreenNa  : ca lCaseToken zedScreenNa Text,
+          ca lCaseToken zedScreenNa );
+    } catch ( OExcept on e) {
+      LOG.error("Tw terTokenStream ser al zat on error! Could not ser al ze: " + screenNa );
+      SER AL ZE_FA LURE_COUNT_NONPENGU N_DEPENDENT. ncre nt();
     }
-    return this;
+    return t ;
   }
 
-  private void addNamedEntityFields(
-      Set<Pair<EarlybirdFieldConstant, String>> fieldsApplied,
-      EarlybirdFieldConstant nameOnlyField,
-      EarlybirdFieldConstant nameWithTypeField,
-      String name,
-      NamedEntityContext context) {
-    withOneTimeStringField(fieldsApplied, nameOnlyField, name, false);
-    if (context.isSetEntity_type()) {
-      withOneTimeStringField(fieldsApplied, nameWithTypeField,
-          formatNamedEntityString(name, context.getEntity_type()), true);
+  pr vate vo d addNa dEnt yF elds(
+      Set<Pa r<Earlyb rdF eldConstant, Str ng>> f eldsAppl ed,
+      Earlyb rdF eldConstant na OnlyF eld,
+      Earlyb rdF eldConstant na W hTypeF eld,
+      Str ng na ,
+      Na dEnt yContext context) {
+    w hOneT  Str ngF eld(f eldsAppl ed, na OnlyF eld, na , false);
+     f (context. sSetEnt y_type()) {
+      w hOneT  Str ngF eld(f eldsAppl ed, na W hTypeF eld,
+          formatNa dEnt yStr ng(na , context.getEnt y_type()), true);
     }
   }
 
-  private void withOneTimeStringField(
-      Set<Pair<EarlybirdFieldConstant, String>> fieldsApplied, EarlybirdFieldConstant field,
-      String value, boolean addToFacets) {
-    Pair<EarlybirdFieldConstant, String> fieldValuePair = new Pair<>(field, value);
-    if (!fieldsApplied.contains(fieldValuePair)) {
-      if (addToFacets) {
-        addFacetSkipList(field.getFieldName());
+  pr vate vo d w hOneT  Str ngF eld(
+      Set<Pa r<Earlyb rdF eldConstant, Str ng>> f eldsAppl ed, Earlyb rdF eldConstant f eld,
+      Str ng value, boolean addToFacets) {
+    Pa r<Earlyb rdF eldConstant, Str ng> f eldValuePa r = new Pa r<>(f eld, value);
+     f (!f eldsAppl ed.conta ns(f eldValuePa r)) {
+       f (addToFacets) {
+        addFacetSk pL st(f eld.getF eldNa ());
       }
-      withStringField(field.getFieldName(), value);
-      fieldsApplied.add(fieldValuePair);
+      w hStr ngF eld(f eld.getF eldNa (), value);
+      f eldsAppl ed.add(f eldValuePa r);
     }
   }
 
-  private String formatNamedEntityString(String name, WholeEntityType type) {
-    return String.format("%s:%s", name, type).toLowerCase();
+  pr vate Str ng formatNa dEnt yStr ng(Str ng na , WholeEnt yType type) {
+    return Str ng.format("%s:%s", na , type).toLo rCase();
   }
 
   /**
-   * Set whether set LAT_LON_CSF_FIELD or not before build
-   * if LAT_LON_CSF_FIELD is not set deliberately.
+   * Set w t r set LAT_LON_CSF_F ELD or not before bu ld
+   *  f LAT_LON_CSF_F ELD  s not set del berately.
    *
-   * @see #prepareToBuild()
+   * @see #prepareToBu ld()
    */
-  public EarlybirdThriftDocumentBuilder setAddLatLonCSF(boolean isSet) {
-    addLatLonCSF = isSet;
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder setAddLatLonCSF(boolean  sSet) {
+    addLatLonCSF =  sSet;
+    return t ;
   }
 
   /**
-   * Set if add encoded tweet feature field in the end.
+   * Set  f add encoded t et feature f eld  n t  end.
    *
-   * @see #prepareToBuild()
+   * @see #prepareToBu ld()
    */
-  public EarlybirdThriftDocumentBuilder setAddEncodedTweetFeatures(boolean isSet) {
-    addEncodedTweetFeatures = isSet;
-    return this;
+  publ c Earlyb rdThr ftDocu ntBu lder setAddEncodedT etFeatures(boolean  sSet) {
+    addEncodedT etFeatures =  sSet;
+    return t ;
   }
 
-  @Override
-  protected void prepareToBuild() {
-    if (!isSetLatLonCSF && addLatLonCSF) {
-      // In lucene archives, this CSF is needed regardless of whether geoLocation is set.
-      withLatLonCSF(GeoUtil.ILLEGAL_LATLON, GeoUtil.ILLEGAL_LATLON);
+  @Overr de
+  protected vo d prepareToBu ld() {
+     f (! sSetLatLonCSF && addLatLonCSF) {
+      //  n lucene arch ves, t  CSF  s needed regardless of w t r geoLocat on  s set.
+      w hLatLonCSF(GeoUt l. LLEGAL_LATLON, GeoUt l. LLEGAL_LATLON);
     }
 
-    if (addEncodedTweetFeatures) {
-      // Add encoded_tweet_features before building the document.
-      withBytesField(
-          EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD.getFieldName(),
-          EarlybirdEncodedFeaturesUtil.toBytesForThriftDocument(encodedTweetFeatures));
+     f (addEncodedT etFeatures) {
+      // Add encoded_t et_features before bu ld ng t  docu nt.
+      w hBytesF eld(
+          Earlyb rdF eldConstant.ENCODED_TWEET_FEATURES_F ELD.getF eldNa (),
+          Earlyb rdEncodedFeaturesUt l.toBytesForThr ftDocu nt(encodedT etFeatures));
     }
 
-    if (extendedEncodedTweetFeatures != null) {
-      // Add extended_encoded_tweet_features before building the document.
-      withBytesField(
-          EarlybirdFieldConstant.EXTENDED_ENCODED_TWEET_FEATURES_FIELD.getFieldName(),
-          EarlybirdEncodedFeaturesUtil.toBytesForThriftDocument(extendedEncodedTweetFeatures));
+     f (extendedEncodedT etFeatures != null) {
+      // Add extended_encoded_t et_features before bu ld ng t  docu nt.
+      w hBytesF eld(
+          Earlyb rdF eldConstant.EXTENDED_ENCODED_TWEET_FEATURES_F ELD.getF eldNa (),
+          Earlyb rdEncodedFeaturesUt l.toBytesForThr ftDocu nt(extendedEncodedT etFeatures));
     }
   }
 
-  private static boolean isNotBlank(String value) {
-    return value != null && !value.isEmpty();
+  pr vate stat c boolean  sNotBlank(Str ng value) {
+    return value != null && !value. sEmpty();
   }
 
-  private static boolean isNotEmpty(List<?> value) {
-    return value != null && !value.isEmpty();
+  pr vate stat c boolean  sNotEmpty(L st<?> value) {
+    return value != null && !value. sEmpty();
   }
 }

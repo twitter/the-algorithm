@@ -1,11 +1,11 @@
-package com.twitter.follow_recommendations.assembler.models
+package com.tw ter.follow_recom ndat ons.assembler.models
 
-sealed trait RecommendationOptions
+sealed tra  Recom ndat onOpt ons
 
-case class UserListOptions(
-  userBioEnabled: Boolean,
-  userBioTruncated: Boolean,
-  userBioMaxLines: Option[Long],
-) extends RecommendationOptions
+case class UserL stOpt ons(
+  userB oEnabled: Boolean,
+  userB oTruncated: Boolean,
+  userB oMaxL nes: Opt on[Long],
+) extends Recom ndat onOpt ons
 
-case class CarouselOptions() extends RecommendationOptions
+case class CarouselOpt ons() extends Recom ndat onOpt ons

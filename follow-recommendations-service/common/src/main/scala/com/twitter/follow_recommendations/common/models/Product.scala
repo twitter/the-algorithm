@@ -1,15 +1,15 @@
-package com.twitter.follow_recommendations.common.models
+package com.tw ter.follow_recom ndat ons.common.models
 
-import com.twitter.product_mixer.core.model.common.identifier.ProductIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.{Product => ProductMixerProduct}
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Product dent f er
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.{Product => ProductM xerProduct}
 
 object Product {
-  case object MagicRecs extends ProductMixerProduct {
-    override val identifier: ProductIdentifier = ProductIdentifier("MagicRecs")
-    override val stringCenterProject: Option[String] = Some("people-discovery")
+  case object Mag cRecs extends ProductM xerProduct {
+    overr de val  dent f er: Product dent f er = Product dent f er("Mag cRecs")
+    overr de val str ngCenterProject: Opt on[Str ng] = So ("people-d scovery")
   }
 
-  case object PlaceholderProductMixerProduct extends ProductMixerProduct {
-    override val identifier: ProductIdentifier = ProductIdentifier("PlaceholderProductMixerProduct")
+  case object PlaceholderProductM xerProduct extends ProductM xerProduct {
+    overr de val  dent f er: Product dent f er = Product dent f er("PlaceholderProductM xerProduct")
   }
 }

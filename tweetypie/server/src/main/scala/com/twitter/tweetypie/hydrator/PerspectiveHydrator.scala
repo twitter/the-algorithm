@@ -1,112 +1,112 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.featureswitches.v2.FeatureSwitchResults
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.timelineservice.TimelineService.GetPerspectives.Query
-import com.twitter.timelineservice.{thriftscala => tls}
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.repository.PerspectiveRepository
-import com.twitter.tweetypie.thriftscala.FieldByPath
-import com.twitter.tweetypie.thriftscala.StatusPerspective
+ mport com.tw ter.featuresw c s.v2.FeatureSw chResults
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLevel
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.t  l neserv ce.T  l neServ ce.GetPerspect ves.Query
+ mport com.tw ter.t  l neserv ce.{thr ftscala => tls}
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.repos ory.Perspect veRepos ory
+ mport com.tw ter.t etyp e.thr ftscala.F eldByPath
+ mport com.tw ter.t etyp e.thr ftscala.StatusPerspect ve
 
-object PerspectiveHydrator {
-  type Type = ValueHydrator[Option[StatusPerspective], Ctx]
-  val hydratedField: FieldByPath = fieldByPath(Tweet.PerspectiveField)
+object Perspect veHydrator {
+  type Type = ValueHydrator[Opt on[StatusPerspect ve], Ctx]
+  val hydratedF eld: F eldByPath = f eldByPath(T et.Perspect veF eld)
 
-  case class Ctx(featureSwitchResults: Option[FeatureSwitchResults], underlyingTweetCtx: TweetCtx)
-      extends TweetCtx.Proxy
+  case class Ctx(featureSw chResults: Opt on[FeatureSw chResults], underly ngT etCtx: T etCtx)
+      extends T etCtx.Proxy
 
-  val Types: Set[tls.PerspectiveType] =
+  val Types: Set[tls.Perspect veType] =
     Set(
-      tls.PerspectiveType.Reported,
-      tls.PerspectiveType.Favorited,
-      tls.PerspectiveType.Retweeted,
-      tls.PerspectiveType.Bookmarked
+      tls.Perspect veType.Reported,
+      tls.Perspect veType.Favor ed,
+      tls.Perspect veType.Ret eted,
+      tls.Perspect veType.Bookmarked
     )
 
-  val TypesWithoutBookmarked: Set[tls.PerspectiveType] =
+  val TypesW houtBookmarked: Set[tls.Perspect veType] =
     Set(
-      tls.PerspectiveType.Reported,
-      tls.PerspectiveType.Favorited,
-      tls.PerspectiveType.Retweeted
+      tls.Perspect veType.Reported,
+      tls.Perspect veType.Favor ed,
+      tls.Perspect veType.Ret eted
     )
 
-  private[this] val partialResult = ValueState.partial(None, hydratedField)
+  pr vate[t ] val part alResult = ValueState.part al(None, hydratedF eld)
 
-  val bookmarksPerspectiveHydrationEnabledKey = "bookmarks_perspective_hydration_enabled"
+  val bookmarksPerspect veHydrat onEnabledKey = "bookmarks_perspect ve_hydrat on_enabled"
 
-  def evaluatePerspectiveTypes(
-    userId: Long,
-    bookmarksPerspectiveDecider: Gate[Long],
-    featureSwitchResults: Option[FeatureSwitchResults]
-  ): Set[tls.PerspectiveType] = {
-    if (bookmarksPerspectiveDecider(userId) ||
-      featureSwitchResults
-        .flatMap(_.getBoolean(bookmarksPerspectiveHydrationEnabledKey, false))
+  def evaluatePerspect veTypes(
+    user d: Long,
+    bookmarksPerspect veDec der: Gate[Long],
+    featureSw chResults: Opt on[FeatureSw chResults]
+  ): Set[tls.Perspect veType] = {
+     f (bookmarksPerspect veDec der(user d) ||
+      featureSw chResults
+        .flatMap(_.getBoolean(bookmarksPerspect veHydrat onEnabledKey, false))
         .getOrElse(false))
       Types
     else
-      TypesWithoutBookmarked
+      TypesW houtBookmarked
   }
 
   def apply(
-    repo: PerspectiveRepository.Type,
-    shouldHydrateBookmarksPerspective: Gate[Long],
-    stats: StatsReceiver
+    repo: Perspect veRepos ory.Type,
+    shouldHydrateBookmarksPerspect ve: Gate[Long],
+    stats: StatsRece ver
   ): Type = {
     val statsByLevel =
-      SafetyLevel.list.map(level => (level, stats.counter(level.name, "calls"))).toMap
+      SafetyLevel.l st.map(level => (level, stats.counter(level.na , "calls"))).toMap
 
-    ValueHydrator[Option[StatusPerspective], Ctx] { (_, ctx) =>
-      val res: Stitch[tls.TimelineEntryPerspective] = if (ctx.isRetweet) {
-        Stitch.value(
-          tls.TimelineEntryPerspective(
-            favorited = false,
-            retweetId = None,
-            retweeted = false,
+    ValueHydrator[Opt on[StatusPerspect ve], Ctx] { (_, ctx) =>
+      val res: St ch[tls.T  l neEntryPerspect ve] =  f (ctx. sRet et) {
+        St ch.value(
+          tls.T  l neEntryPerspect ve(
+            favor ed = false,
+            ret et d = None,
+            ret eted = false,
             reported = false,
             bookmarked = None
           )
         )
       } else {
         statsByLevel
-          .getOrElse(ctx.opts.safetyLevel, stats.counter(ctx.opts.safetyLevel.name, "calls"))
-          .incr()
+          .getOrElse(ctx.opts.safetyLevel, stats.counter(ctx.opts.safetyLevel.na , "calls"))
+          . ncr()
 
         repo(
           Query(
-            userId = ctx.opts.forUserId.get,
-            tweetId = ctx.tweetId,
-            types = evaluatePerspectiveTypes(
-              ctx.opts.forUserId.get,
-              shouldHydrateBookmarksPerspective,
-              ctx.featureSwitchResults)
+            user d = ctx.opts.forUser d.get,
+            t et d = ctx.t et d,
+            types = evaluatePerspect veTypes(
+              ctx.opts.forUser d.get,
+              shouldHydrateBookmarksPerspect ve,
+              ctx.featureSw chResults)
           ))
       }
 
-      res.liftToTry.map {
-        case Return(perspective) =>
-          ValueState.modified(
-            Some(
-              StatusPerspective(
-                userId = ctx.opts.forUserId.get,
-                favorited = perspective.favorited,
-                retweeted = perspective.retweeted,
-                retweetId = perspective.retweetId,
-                reported = perspective.reported,
-                bookmarked = perspective.bookmarked
+      res.l ftToTry.map {
+        case Return(perspect ve) =>
+          ValueState.mod f ed(
+            So (
+              StatusPerspect ve(
+                user d = ctx.opts.forUser d.get,
+                favor ed = perspect ve.favor ed,
+                ret eted = perspect ve.ret eted,
+                ret et d = perspect ve.ret et d,
+                reported = perspect ve.reported,
+                bookmarked = perspect ve.bookmarked
               )
             )
           )
-        case _ => partialResult
+        case _ => part alResult
       }
 
-    }.onlyIf { (curr, ctx) =>
-      curr.isEmpty &&
-      ctx.opts.forUserId.nonEmpty &&
-      (ctx.tweetFieldRequested(Tweet.PerspectiveField) || ctx.opts.excludeReported)
+    }.only f { (curr, ctx) =>
+      curr. sEmpty &&
+      ctx.opts.forUser d.nonEmpty &&
+      (ctx.t etF eldRequested(T et.Perspect veF eld) || ctx.opts.excludeReported)
     }
   }
 }

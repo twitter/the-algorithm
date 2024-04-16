@@ -1,27 +1,27 @@
-package com.twitter.simclustersann.exceptions
+package com.tw ter.s mclustersann.except ons
 
-import com.twitter.finatra.thrift.exceptions.ExceptionMapper
-import com.twitter.finatra.thrift.thriftscala.ClientError
-import com.twitter.finatra.thrift.thriftscala.ClientErrorCause
-import com.twitter.util.Future
-import com.twitter.util.logging.Logging
-import javax.inject.Singleton
+ mport com.tw ter.f natra.thr ft.except ons.Except onMapper
+ mport com.tw ter.f natra.thr ft.thr ftscala.Cl entError
+ mport com.tw ter.f natra.thr ft.thr ftscala.Cl entErrorCause
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport javax. nject.S ngleton
 
 /**
- * An exception mapper designed to handle
- * [[com.twitter.simclustersann.exceptions.InvalidRequestForSimClustersAnnVariantException]]
- * by returning a Thrift IDL defined Client Error.
+ * An except on mapper des gned to handle
+ * [[com.tw ter.s mclustersann.except ons. nval dRequestForS mClustersAnnVar antExcept on]]
+ * by return ng a Thr ft  DL def ned Cl ent Error.
  */
-@Singleton
-class InvalidRequestForSimClustersAnnVariantExceptionMapper
-    extends ExceptionMapper[InvalidRequestForSimClustersAnnVariantException, Nothing]
-    with Logging {
+@S ngleton
+class  nval dRequestForS mClustersAnnVar antExcept onMapper
+    extends Except onMapper[ nval dRequestForS mClustersAnnVar antExcept on, Noth ng]
+    w h Logg ng {
 
-  override def handleException(
-    throwable: InvalidRequestForSimClustersAnnVariantException
-  ): Future[Nothing] = {
-    error("Invalid Request For SimClusters Ann Variant Exception", throwable)
+  overr de def handleExcept on(
+    throwable:  nval dRequestForS mClustersAnnVar antExcept on
+  ): Future[Noth ng] = {
+    error(" nval d Request For S mClusters Ann Var ant Except on", throwable)
 
-    Future.exception(ClientError(ClientErrorCause.BadRequest, throwable.getMessage()))
+    Future.except on(Cl entError(Cl entErrorCause.BadRequest, throwable.get ssage()))
   }
 }

@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.t  l ne_module
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Classic
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ClassicNoDivider
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ContextEmphasis
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleHeaderDisplayType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Class c
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Class cNoD v der
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.ContextEmphas s
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Module aderD splayType
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ModuleHeaderDisplayTypeMarshaller @Inject() () {
+@S ngleton
+class Module aderD splayTypeMarshaller @ nject() () {
 
-  def apply(displayType: ModuleHeaderDisplayType): urt.ModuleHeaderDisplayType =
-    displayType match {
-      case Classic => urt.ModuleHeaderDisplayType.Classic
-      case ContextEmphasis => urt.ModuleHeaderDisplayType.ContextEmphasis
-      case ClassicNoDivider => urt.ModuleHeaderDisplayType.ClassicNoDivider
+  def apply(d splayType: Module aderD splayType): urt.Module aderD splayType =
+    d splayType match {
+      case Class c => urt.Module aderD splayType.Class c
+      case ContextEmphas s => urt.Module aderD splayType.ContextEmphas s
+      case Class cNoD v der => urt.Module aderD splayType.Class cNoD v der
     }
 
 }

@@ -1,22 +1,22 @@
-package com.twitter.unified_user_actions.adapter.social_graph_event
+package com.tw ter.un f ed_user_act ons.adapter.soc al_graph_event
 
-import com.twitter.socialgraph.thriftscala.Action
-import com.twitter.socialgraph.thriftscala.SrcTargetRequest
-import com.twitter.unified_user_actions.thriftscala.Item
-import com.twitter.unified_user_actions.thriftscala.ProfileActionInfo
-import com.twitter.unified_user_actions.thriftscala.ProfileInfo
-import com.twitter.unified_user_actions.thriftscala.ServerProfileReport
+ mport com.tw ter.soc algraph.thr ftscala.Act on
+ mport com.tw ter.soc algraph.thr ftscala.SrcTargetRequest
+ mport com.tw ter.un f ed_user_act ons.thr ftscala. em
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Prof leAct on nfo
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Prof le nfo
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.ServerProf leReport
 
-abstract class BaseReportSocialGraphWriteEvent[T] extends BaseSocialGraphWriteEvent[T] {
-  def socialGraphAction: Action
+abstract class BaseReportSoc alGraphWr eEvent[T] extends BaseSoc alGraphWr eEvent[T] {
+  def soc alGraphAct on: Act on
 
-  override def getSocialGraphItem(socialGraphSrcTargetRequest: SrcTargetRequest): Item = {
-    Item.ProfileInfo(
-      ProfileInfo(
-        actionProfileId = socialGraphSrcTargetRequest.target,
-        profileActionInfo = Some(
-          ProfileActionInfo.ServerProfileReport(
-            ServerProfileReport(reportType = socialGraphAction)
+  overr de def getSoc alGraph em(soc alGraphSrcTargetRequest: SrcTargetRequest):  em = {
+     em.Prof le nfo(
+      Prof le nfo(
+        act onProf le d = soc alGraphSrcTargetRequest.target,
+        prof leAct on nfo = So (
+          Prof leAct on nfo.ServerProf leReport(
+            ServerProf leReport(reportType = soc alGraphAct on)
           ))
       )
     )

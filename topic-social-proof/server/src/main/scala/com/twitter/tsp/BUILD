@@ -1,12 +1,12 @@
-scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+scala_l brary(
+    comp ler_opt on_sets = ["fatal_warn ngs"],
     tags = [
-        "bazel-compatible",
+        "bazel-compat ble",
     ],
-    dependencies = [
-        "finatra/inject/inject-thrift-client",
-        "strato/src/main/scala/com/twitter/strato/fed",
-        "strato/src/main/scala/com/twitter/strato/fed/server",
-        "topic-social-proof/server/src/main/scala/com/twitter/tsp/columns",
+    dependenc es = [
+        "f natra/ nject/ nject-thr ft-cl ent",
+        "strato/src/ma n/scala/com/tw ter/strato/fed",
+        "strato/src/ma n/scala/com/tw ter/strato/fed/server",
+        "top c-soc al-proof/server/src/ma n/scala/com/tw ter/tsp/columns",
     ],
 )

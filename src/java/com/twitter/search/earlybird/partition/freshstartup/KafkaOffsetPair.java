@@ -1,23 +1,23 @@
-package com.twitter.search.earlybird.partition.freshstartup;
+package com.tw ter.search.earlyb rd.part  on.freshstartup;
 
-class KafkaOffsetPair {
-  private final long beginOffset;
-  private final long endOffset;
+class KafkaOffsetPa r {
+  pr vate f nal long beg nOffset;
+  pr vate f nal long endOffset;
 
-  public KafkaOffsetPair(long beginOffset, long endOffset) {
-    this.beginOffset = beginOffset;
-    this.endOffset = endOffset;
+  publ c KafkaOffsetPa r(long beg nOffset, long endOffset) {
+    t .beg nOffset = beg nOffset;
+    t .endOffset = endOffset;
   }
 
-  public boolean includes(long offset) {
-    return beginOffset <= offset && offset <= endOffset;
+  publ c boolean  ncludes(long offset) {
+    return beg nOffset <= offset && offset <= endOffset;
   }
 
-  public long getBeginOffset() {
-    return beginOffset;
+  publ c long getBeg nOffset() {
+    return beg nOffset;
   }
 
-  public long getEndOffset() {
+  publ c long getEndOffset() {
     return endOffset;
   }
 }

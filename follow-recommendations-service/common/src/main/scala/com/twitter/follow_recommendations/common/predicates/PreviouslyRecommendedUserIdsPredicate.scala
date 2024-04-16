@@ -1,34 +1,34 @@
-package com.twitter.follow_recommendations.common.predicates
+package com.tw ter.follow_recom ndat ons.common.pred cates
 
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.follow_recommendations.common.models.HasPreviousRecommendationsContext
-import com.twitter.stitch.Stitch
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.common.base.Pred cate
+ mport com.tw ter.follow_recom ndat ons.common.base.Pred cateResult
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.F lterReason
+ mport com.tw ter.follow_recom ndat ons.common.models.HasPrev ousRecom ndat onsContext
+ mport com.tw ter.st ch.St ch
+ mport javax. nject.S ngleton
 
-@Singleton
-class PreviouslyRecommendedUserIdsPredicate
-    extends Predicate[(HasPreviousRecommendationsContext, CandidateUser)] {
-  override def apply(
-    pair: (HasPreviousRecommendationsContext, CandidateUser)
-  ): Stitch[PredicateResult] = {
+@S ngleton
+class Prev ouslyRecom ndedUser dsPred cate
+    extends Pred cate[(HasPrev ousRecom ndat onsContext, Cand dateUser)] {
+  overr de def apply(
+    pa r: (HasPrev ousRecom ndat onsContext, Cand dateUser)
+  ): St ch[Pred cateResult] = {
 
-    val (targetUser, candidate) = pair
+    val (targetUser, cand date) = pa r
 
-    val previouslyRecommendedUserIDs = targetUser.previouslyRecommendedUserIDs
+    val prev ouslyRecom ndedUser Ds = targetUser.prev ouslyRecom ndedUser Ds
 
-    if (!previouslyRecommendedUserIDs.contains(candidate.id)) {
-      PreviouslyRecommendedUserIdsPredicate.ValidStitch
+     f (!prev ouslyRecom ndedUser Ds.conta ns(cand date. d)) {
+      Prev ouslyRecom ndedUser dsPred cate.Val dSt ch
     } else {
-      PreviouslyRecommendedUserIdsPredicate.AlreadyRecommendedStitch
+      Prev ouslyRecom ndedUser dsPred cate.AlreadyRecom ndedSt ch
     }
   }
 }
 
-object PreviouslyRecommendedUserIdsPredicate {
-  val ValidStitch: Stitch[PredicateResult.Valid.type] = Stitch.value(PredicateResult.Valid)
-  val AlreadyRecommendedStitch: Stitch[PredicateResult.Invalid] =
-    Stitch.value(PredicateResult.Invalid(Set(FilterReason.AlreadyRecommended)))
+object Prev ouslyRecom ndedUser dsPred cate {
+  val Val dSt ch: St ch[Pred cateResult.Val d.type] = St ch.value(Pred cateResult.Val d)
+  val AlreadyRecom ndedSt ch: St ch[Pred cateResult. nval d] =
+    St ch.value(Pred cateResult. nval d(Set(F lterReason.AlreadyRecom nded)))
 }

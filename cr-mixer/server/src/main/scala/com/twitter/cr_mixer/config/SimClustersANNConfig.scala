@@ -1,406 +1,406 @@
-package com.twitter.cr_mixer.config
+package com.tw ter.cr_m xer.conf g
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.exception.InvalidSANNConfigException
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclustersann.thriftscala.ScoringAlgorithm
-import com.twitter.simclustersann.thriftscala.{SimClustersANNConfig => ThriftSimClustersANNConfig}
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.cr_m xer.except on. nval dSANNConf gExcept on
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclustersann.thr ftscala.Scor ngAlgor hm
+ mport com.tw ter.s mclustersann.thr ftscala.{S mClustersANNConf g => Thr ftS mClustersANNConf g}
+ mport com.tw ter.ut l.Durat on
 
-case class SimClustersANNConfig(
-  maxNumResults: Int,
-  minScore: Double,
-  candidateEmbeddingType: EmbeddingType,
-  maxTopTweetsPerCluster: Int,
-  maxScanClusters: Int,
-  maxTweetCandidateAge: Duration,
-  minTweetCandidateAge: Duration,
-  annAlgorithm: ScoringAlgorithm) {
-  val toSANNConfigThrift: ThriftSimClustersANNConfig = ThriftSimClustersANNConfig(
+case class S mClustersANNConf g(
+  maxNumResults:  nt,
+  m nScore: Double,
+  cand dateEmbedd ngType: Embedd ngType,
+  maxTopT etsPerCluster:  nt,
+  maxScanClusters:  nt,
+  maxT etCand dateAge: Durat on,
+  m nT etCand dateAge: Durat on,
+  annAlgor hm: Scor ngAlgor hm) {
+  val toSANNConf gThr ft: Thr ftS mClustersANNConf g = Thr ftS mClustersANNConf g(
     maxNumResults = maxNumResults,
-    minScore = minScore,
-    candidateEmbeddingType = candidateEmbeddingType,
-    maxTopTweetsPerCluster = maxTopTweetsPerCluster,
+    m nScore = m nScore,
+    cand dateEmbedd ngType = cand dateEmbedd ngType,
+    maxTopT etsPerCluster = maxTopT etsPerCluster,
     maxScanClusters = maxScanClusters,
-    maxTweetCandidateAgeHours = maxTweetCandidateAge.inHours,
-    minTweetCandidateAgeHours = minTweetCandidateAge.inHours,
-    annAlgorithm = annAlgorithm,
+    maxT etCand dateAgeH s = maxT etCand dateAge. nH s,
+    m nT etCand dateAgeH s = m nT etCand dateAge. nH s,
+    annAlgor hm = annAlgor hm,
   )
 }
 
-object SimClustersANNConfig {
+object S mClustersANNConf g {
 
-  final val DefaultConfig = SimClustersANNConfig(
+  f nal val DefaultConf g = S mClustersANNConf g(
     maxNumResults = 200,
-    minScore = 0.0,
-    candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-    maxTopTweetsPerCluster = 800,
+    m nScore = 0.0,
+    cand dateEmbedd ngType = Embedd ngType.LogFavBasedT et,
+    maxTopT etsPerCluster = 800,
     maxScanClusters = 50,
-    maxTweetCandidateAge = 24.hours,
-    minTweetCandidateAge = 0.hours,
-    annAlgorithm = ScoringAlgorithm.CosineSimilarity,
+    maxT etCand dateAge = 24.h s,
+    m nT etCand dateAge = 0.h s,
+    annAlgor hm = Scor ngAlgor hm.Cos neS m lar y,
   )
 
   /*
-  SimClustersANNConfigId: String
-  Format: Prod - “EmbeddingType_ModelVersion_Default”
-  Format: Experiment - “EmbeddingType_ModelVersion_Date_Two-Digit-Serial-Number”. Date : YYYYMMDD
+  S mClustersANNConf g d: Str ng
+  Format: Prod - “Embedd ngType_ModelVers on_Default”
+  Format: Exper  nt - “Embedd ngType_ModelVers on_Date_Two-D g -Ser al-Number”. Date : YYYYMMDD
    */
 
-  private val FavBasedProducer_Model20m145k2020_Default = DefaultConfig.copy()
+  pr vate val FavBasedProducer_Model20m145k2020_Default = DefaultConf g.copy()
 
-  // Chunnan's exp on maxTweetCandidateAgeDays 2
-  private val FavBasedProducer_Model20m145k2020_20220617_06 =
+  // Chunnan's exp on maxT etCand dateAgeDays 2
+  pr vate val FavBasedProducer_Model20m145k2020_20220617_06 =
     FavBasedProducer_Model20m145k2020_Default.copy(
-      maxTweetCandidateAge = 48.hours,
+      maxT etCand dateAge = 48.h s,
     )
 
-  // Experimental SANN config
-  private val FavBasedProducer_Model20m145k2020_20220801 =
+  // Exper  ntal SANN conf g
+  pr vate val FavBasedProducer_Model20m145k2020_20220801 =
     FavBasedProducer_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.VideoPlayBack50LogFavBasedTweet,
+      cand dateEmbedd ngType = Embedd ngType.V deoPlayBack50LogFavBasedT et,
     )
 
-  // SANN-1 config
-  private val FavBasedProducer_Model20m145k2020_20220810 =
-    FavBasedProducer_Model20m145k2020_Default.copy(
-      maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
-    )
-
-  // SANN-2 config
-  private val FavBasedProducer_Model20m145k2020_20220818 =
+  // SANN-1 conf g
+  pr vate val FavBasedProducer_Model20m145k2020_20220810 =
     FavBasedProducer_Model20m145k2020_Default.copy(
       maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavClickBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedAdsT et,
+      maxT etCand dateAge = 175200.h s,
+      maxTopT etsPerCluster = 1600
     )
 
-  // SANN-3 config
-  private val FavBasedProducer_Model20m145k2020_20220819 =
+  // SANN-2 conf g
+  pr vate val FavBasedProducer_Model20m145k2020_20220818 =
     FavBasedProducer_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.PushOpenLogFavBasedTweet,
+      maxNumResults = 100,
+      cand dateEmbedd ngType = Embedd ngType.LogFavCl ckBasedAdsT et,
+      maxT etCand dateAge = 175200.h s,
+      maxTopT etsPerCluster = 1600
     )
 
-  // SANN-5 config
-  private val FavBasedProducer_Model20m145k2020_20221221 =
+  // SANN-3 conf g
+  pr vate val FavBasedProducer_Model20m145k2020_20220819 =
     FavBasedProducer_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedRealTimeTweet,
-      maxTweetCandidateAge = 1.hours
+      cand dateEmbedd ngType = Embedd ngType.PushOpenLogFavBasedT et,
     )
 
-  // SANN-4 config
-  private val FavBasedProducer_Model20m145k2020_20221220 =
+  // SANN-5 conf g
+  pr vate val FavBasedProducer_Model20m145k2020_20221221 =
     FavBasedProducer_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedEvergreenTweet,
-      maxTweetCandidateAge = 48.hours
-    )
-  private val LogFavLongestL2EmbeddingTweet_Model20m145k2020_Default = DefaultConfig.copy()
-
-  // Chunnan's exp on maxTweetCandidateAgeDays 2
-  private val LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220617_06 =
-    LogFavLongestL2EmbeddingTweet_Model20m145k2020_Default.copy(
-      maxTweetCandidateAge = 48.hours,
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedRealT  T et,
+      maxT etCand dateAge = 1.h s
     )
 
-  // Experimental SANN config
-  private val LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220801 =
-    LogFavLongestL2EmbeddingTweet_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.VideoPlayBack50LogFavBasedTweet,
+  // SANN-4 conf g
+  pr vate val FavBasedProducer_Model20m145k2020_20221220 =
+    FavBasedProducer_Model20m145k2020_Default.copy(
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedEvergreenT et,
+      maxT etCand dateAge = 48.h s
+    )
+  pr vate val LogFavLongestL2Embedd ngT et_Model20m145k2020_Default = DefaultConf g.copy()
+
+  // Chunnan's exp on maxT etCand dateAgeDays 2
+  pr vate val LogFavLongestL2Embedd ngT et_Model20m145k2020_20220617_06 =
+    LogFavLongestL2Embedd ngT et_Model20m145k2020_Default.copy(
+      maxT etCand dateAge = 48.h s,
     )
 
-  // SANN-1 config
-  private val LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220810 =
-    LogFavLongestL2EmbeddingTweet_Model20m145k2020_Default.copy(
+  // Exper  ntal SANN conf g
+  pr vate val LogFavLongestL2Embedd ngT et_Model20m145k2020_20220801 =
+    LogFavLongestL2Embedd ngT et_Model20m145k2020_Default.copy(
+      cand dateEmbedd ngType = Embedd ngType.V deoPlayBack50LogFavBasedT et,
+    )
+
+  // SANN-1 conf g
+  pr vate val LogFavLongestL2Embedd ngT et_Model20m145k2020_20220810 =
+    LogFavLongestL2Embedd ngT et_Model20m145k2020_Default.copy(
       maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedAdsT et,
+      maxT etCand dateAge = 175200.h s,
+      maxTopT etsPerCluster = 1600
     )
 
-  // SANN-2 config
-  private val LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220818 =
-    LogFavLongestL2EmbeddingTweet_Model20m145k2020_Default.copy(
+  // SANN-2 conf g
+  pr vate val LogFavLongestL2Embedd ngT et_Model20m145k2020_20220818 =
+    LogFavLongestL2Embedd ngT et_Model20m145k2020_Default.copy(
       maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavClickBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
+      cand dateEmbedd ngType = Embedd ngType.LogFavCl ckBasedAdsT et,
+      maxT etCand dateAge = 175200.h s,
+      maxTopT etsPerCluster = 1600
     )
 
-  // SANN-3 config
-  private val LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220819 =
-    LogFavLongestL2EmbeddingTweet_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.PushOpenLogFavBasedTweet,
+  // SANN-3 conf g
+  pr vate val LogFavLongestL2Embedd ngT et_Model20m145k2020_20220819 =
+    LogFavLongestL2Embedd ngT et_Model20m145k2020_Default.copy(
+      cand dateEmbedd ngType = Embedd ngType.PushOpenLogFavBasedT et,
     )
 
-  // SANN-5 config
-  private val LogFavLongestL2EmbeddingTweet_Model20m145k2020_20221221 =
-    LogFavLongestL2EmbeddingTweet_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedRealTimeTweet,
-      maxTweetCandidateAge = 1.hours
+  // SANN-5 conf g
+  pr vate val LogFavLongestL2Embedd ngT et_Model20m145k2020_20221221 =
+    LogFavLongestL2Embedd ngT et_Model20m145k2020_Default.copy(
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedRealT  T et,
+      maxT etCand dateAge = 1.h s
     )
-  // SANN-4 config
-  private val LogFavLongestL2EmbeddingTweet_Model20m145k2020_20221220 =
-    LogFavLongestL2EmbeddingTweet_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedEvergreenTweet,
-      maxTweetCandidateAge = 48.hours
+  // SANN-4 conf g
+  pr vate val LogFavLongestL2Embedd ngT et_Model20m145k2020_20221220 =
+    LogFavLongestL2Embedd ngT et_Model20m145k2020_Default.copy(
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedEvergreenT et,
+      maxT etCand dateAge = 48.h s
     )
-  private val UnfilteredUserInterestedIn_Model20m145k2020_Default = DefaultConfig.copy()
+  pr vate val Unf lteredUser nterested n_Model20m145k2020_Default = DefaultConf g.copy()
 
-  // Chunnan's exp on maxTweetCandidateAgeDays 2
-  private val UnfilteredUserInterestedIn_Model20m145k2020_20220617_06 =
-    UnfilteredUserInterestedIn_Model20m145k2020_Default.copy(
-      maxTweetCandidateAge = 48.hours,
-    )
-
-  // Experimental SANN config
-  private val UnfilteredUserInterestedIn_Model20m145k2020_20220801 =
-    UnfilteredUserInterestedIn_Model20m145k2020_20220617_06.copy(
-      candidateEmbeddingType = EmbeddingType.VideoPlayBack50LogFavBasedTweet,
+  // Chunnan's exp on maxT etCand dateAgeDays 2
+  pr vate val Unf lteredUser nterested n_Model20m145k2020_20220617_06 =
+    Unf lteredUser nterested n_Model20m145k2020_Default.copy(
+      maxT etCand dateAge = 48.h s,
     )
 
-  // SANN-1 config
-  private val UnfilteredUserInterestedIn_Model20m145k2020_20220810 =
-    UnfilteredUserInterestedIn_Model20m145k2020_Default.copy(
+  // Exper  ntal SANN conf g
+  pr vate val Unf lteredUser nterested n_Model20m145k2020_20220801 =
+    Unf lteredUser nterested n_Model20m145k2020_20220617_06.copy(
+      cand dateEmbedd ngType = Embedd ngType.V deoPlayBack50LogFavBasedT et,
+    )
+
+  // SANN-1 conf g
+  pr vate val Unf lteredUser nterested n_Model20m145k2020_20220810 =
+    Unf lteredUser nterested n_Model20m145k2020_Default.copy(
       maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedAdsT et,
+      maxT etCand dateAge = 175200.h s,
+      maxTopT etsPerCluster = 1600
     )
 
-  // SANN-2 config
-  private val UnfilteredUserInterestedIn_Model20m145k2020_20220818 =
-    UnfilteredUserInterestedIn_Model20m145k2020_Default.copy(
+  // SANN-2 conf g
+  pr vate val Unf lteredUser nterested n_Model20m145k2020_20220818 =
+    Unf lteredUser nterested n_Model20m145k2020_Default.copy(
       maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavClickBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
+      cand dateEmbedd ngType = Embedd ngType.LogFavCl ckBasedAdsT et,
+      maxT etCand dateAge = 175200.h s,
+      maxTopT etsPerCluster = 1600
     )
 
-  // SANN-3 config
-  private val UnfilteredUserInterestedIn_Model20m145k2020_20220819 =
-    UnfilteredUserInterestedIn_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.PushOpenLogFavBasedTweet,
+  // SANN-3 conf g
+  pr vate val Unf lteredUser nterested n_Model20m145k2020_20220819 =
+    Unf lteredUser nterested n_Model20m145k2020_Default.copy(
+      cand dateEmbedd ngType = Embedd ngType.PushOpenLogFavBasedT et,
     )
 
-  // SANN-5 config
-  private val UnfilteredUserInterestedIn_Model20m145k2020_20221221 =
-    UnfilteredUserInterestedIn_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedRealTimeTweet,
-      maxTweetCandidateAge = 1.hours
+  // SANN-5 conf g
+  pr vate val Unf lteredUser nterested n_Model20m145k2020_20221221 =
+    Unf lteredUser nterested n_Model20m145k2020_Default.copy(
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedRealT  T et,
+      maxT etCand dateAge = 1.h s
     )
 
-  // SANN-4 config
-  private val UnfilteredUserInterestedIn_Model20m145k2020_20221220 =
-    UnfilteredUserInterestedIn_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedEvergreenTweet,
-      maxTweetCandidateAge = 48.hours
+  // SANN-4 conf g
+  pr vate val Unf lteredUser nterested n_Model20m145k2020_20221220 =
+    Unf lteredUser nterested n_Model20m145k2020_Default.copy(
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedEvergreenT et,
+      maxT etCand dateAge = 48.h s
     )
-  private val LogFavBasedUserInterestedInFromAPE_Model20m145k2020_Default = DefaultConfig.copy()
+  pr vate val LogFavBasedUser nterested nFromAPE_Model20m145k2020_Default = DefaultConf g.copy()
 
-  // Chunnan's exp on maxTweetCandidateAgeDays 2
-  private val LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220617_06 =
-    LogFavBasedUserInterestedInFromAPE_Model20m145k2020_Default.copy(
-      maxTweetCandidateAge = 48.hours,
-    )
-
-  // Experimental SANN config
-  private val LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220801 =
-    LogFavBasedUserInterestedInFromAPE_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.VideoPlayBack50LogFavBasedTweet,
+  // Chunnan's exp on maxT etCand dateAgeDays 2
+  pr vate val LogFavBasedUser nterested nFromAPE_Model20m145k2020_20220617_06 =
+    LogFavBasedUser nterested nFromAPE_Model20m145k2020_Default.copy(
+      maxT etCand dateAge = 48.h s,
     )
 
-  // SANN-1 config
-  private val LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220810 =
-    LogFavBasedUserInterestedInFromAPE_Model20m145k2020_Default.copy(
+  // Exper  ntal SANN conf g
+  pr vate val LogFavBasedUser nterested nFromAPE_Model20m145k2020_20220801 =
+    LogFavBasedUser nterested nFromAPE_Model20m145k2020_Default.copy(
+      cand dateEmbedd ngType = Embedd ngType.V deoPlayBack50LogFavBasedT et,
+    )
+
+  // SANN-1 conf g
+  pr vate val LogFavBasedUser nterested nFromAPE_Model20m145k2020_20220810 =
+    LogFavBasedUser nterested nFromAPE_Model20m145k2020_Default.copy(
       maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedAdsT et,
+      maxT etCand dateAge = 175200.h s,
+      maxTopT etsPerCluster = 1600
     )
 
-  // SANN-2 config
-  private val LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220818 =
-    LogFavBasedUserInterestedInFromAPE_Model20m145k2020_Default.copy(
+  // SANN-2 conf g
+  pr vate val LogFavBasedUser nterested nFromAPE_Model20m145k2020_20220818 =
+    LogFavBasedUser nterested nFromAPE_Model20m145k2020_Default.copy(
       maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavClickBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
+      cand dateEmbedd ngType = Embedd ngType.LogFavCl ckBasedAdsT et,
+      maxT etCand dateAge = 175200.h s,
+      maxTopT etsPerCluster = 1600
     )
 
-  // SANN-3 config
-  private val LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220819 =
-    LogFavBasedUserInterestedInFromAPE_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.PushOpenLogFavBasedTweet,
+  // SANN-3 conf g
+  pr vate val LogFavBasedUser nterested nFromAPE_Model20m145k2020_20220819 =
+    LogFavBasedUser nterested nFromAPE_Model20m145k2020_Default.copy(
+      cand dateEmbedd ngType = Embedd ngType.PushOpenLogFavBasedT et,
     )
 
-  // SANN-5 config
-  private val LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20221221 =
-    LogFavBasedUserInterestedInFromAPE_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedRealTimeTweet,
-      maxTweetCandidateAge = 1.hours
+  // SANN-5 conf g
+  pr vate val LogFavBasedUser nterested nFromAPE_Model20m145k2020_20221221 =
+    LogFavBasedUser nterested nFromAPE_Model20m145k2020_Default.copy(
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedRealT  T et,
+      maxT etCand dateAge = 1.h s
     )
 
-  // SANN-4 config
-  private val LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20221220 =
-    LogFavBasedUserInterestedInFromAPE_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedEvergreenTweet,
-      maxTweetCandidateAge = 48.hours
+  // SANN-4 conf g
+  pr vate val LogFavBasedUser nterested nFromAPE_Model20m145k2020_20221220 =
+    LogFavBasedUser nterested nFromAPE_Model20m145k2020_Default.copy(
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedEvergreenT et,
+      maxT etCand dateAge = 48.h s
     )
-  private val LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_Default =
-    DefaultConfig.copy()
+  pr vate val LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_Default =
+    DefaultConf g.copy()
 
-  // Chunnan's exp on maxTweetCandidateAgeDays 2
-  private val LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220617_06 =
-    LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_Default.copy(
-      maxTweetCandidateAge = 48.hours,
-    )
-
-  // Experimental SANN config
-  private val LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220801 =
-    LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.VideoPlayBack50LogFavBasedTweet,
+  // Chunnan's exp on maxT etCand dateAgeDays 2
+  pr vate val LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_20220617_06 =
+    LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_Default.copy(
+      maxT etCand dateAge = 48.h s,
     )
 
-  // SANN-1 config
-  private val LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220810 =
-    LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_Default.copy(
+  // Exper  ntal SANN conf g
+  pr vate val LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_20220801 =
+    LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_Default.copy(
+      cand dateEmbedd ngType = Embedd ngType.V deoPlayBack50LogFavBasedT et,
+    )
+
+  // SANN-1 conf g
+  pr vate val LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_20220810 =
+    LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_Default.copy(
       maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedAdsT et,
+      maxT etCand dateAge = 175200.h s,
+      maxTopT etsPerCluster = 1600
     )
 
-  // SANN-2 config
-  private val LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220818 =
-    LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_Default.copy(
+  // SANN-2 conf g
+  pr vate val LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_20220818 =
+    LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_Default.copy(
       maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavClickBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
+      cand dateEmbedd ngType = Embedd ngType.LogFavCl ckBasedAdsT et,
+      maxT etCand dateAge = 175200.h s,
+      maxTopT etsPerCluster = 1600
     )
 
-  // SANN-3 config
-  private val LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220819 =
-    LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.PushOpenLogFavBasedTweet,
+  // SANN-3 conf g
+  pr vate val LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_20220819 =
+    LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_Default.copy(
+      cand dateEmbedd ngType = Embedd ngType.PushOpenLogFavBasedT et,
     )
 
-  // SANN-5 config
-  private val LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20221221 =
-    LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedRealTimeTweet,
-      maxTweetCandidateAge = 1.hours
+  // SANN-5 conf g
+  pr vate val LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_20221221 =
+    LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_Default.copy(
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedRealT  T et,
+      maxT etCand dateAge = 1.h s
     )
 
-  // SANN-4 config
-  private val LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20221220 =
-    LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedEvergreenTweet,
-      maxTweetCandidateAge = 48.hours
+  // SANN-4 conf g
+  pr vate val LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_20221220 =
+    LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_Default.copy(
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedEvergreenT et,
+      maxT etCand dateAge = 48.h s
     )
-  private val UserNextInterestedIn_Model20m145k2020_Default = DefaultConfig.copy()
+  pr vate val UserNext nterested n_Model20m145k2020_Default = DefaultConf g.copy()
 
-  // Chunnan's exp on maxTweetCandidateAgeDays 2
-  private val UserNextInterestedIn_Model20m145k2020_20220617_06 =
-    UserNextInterestedIn_Model20m145k2020_Default.copy(
-      maxTweetCandidateAge = 48.hours,
-    )
-
-  // Experimental SANN config
-  private val UserNextInterestedIn_Model20m145k2020_20220801 =
-    UserNextInterestedIn_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.VideoPlayBack50LogFavBasedTweet,
+  // Chunnan's exp on maxT etCand dateAgeDays 2
+  pr vate val UserNext nterested n_Model20m145k2020_20220617_06 =
+    UserNext nterested n_Model20m145k2020_Default.copy(
+      maxT etCand dateAge = 48.h s,
     )
 
-  // SANN-1 config
-  private val UserNextInterestedIn_Model20m145k2020_20220810 =
-    UserNextInterestedIn_Model20m145k2020_Default.copy(
+  // Exper  ntal SANN conf g
+  pr vate val UserNext nterested n_Model20m145k2020_20220801 =
+    UserNext nterested n_Model20m145k2020_Default.copy(
+      cand dateEmbedd ngType = Embedd ngType.V deoPlayBack50LogFavBasedT et,
+    )
+
+  // SANN-1 conf g
+  pr vate val UserNext nterested n_Model20m145k2020_20220810 =
+    UserNext nterested n_Model20m145k2020_Default.copy(
       maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedAdsT et,
+      maxT etCand dateAge = 175200.h s,
+      maxTopT etsPerCluster = 1600
     )
 
-  // SANN-2 config
-  private val UserNextInterestedIn_Model20m145k2020_20220818 =
-    UserNextInterestedIn_Model20m145k2020_Default.copy(
+  // SANN-2 conf g
+  pr vate val UserNext nterested n_Model20m145k2020_20220818 =
+    UserNext nterested n_Model20m145k2020_Default.copy(
       maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavClickBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
+      cand dateEmbedd ngType = Embedd ngType.LogFavCl ckBasedAdsT et,
+      maxT etCand dateAge = 175200.h s,
+      maxTopT etsPerCluster = 1600
     )
 
-  // SANN-3 config
-  private val UserNextInterestedIn_Model20m145k2020_20220819 =
-    UserNextInterestedIn_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.PushOpenLogFavBasedTweet,
+  // SANN-3 conf g
+  pr vate val UserNext nterested n_Model20m145k2020_20220819 =
+    UserNext nterested n_Model20m145k2020_Default.copy(
+      cand dateEmbedd ngType = Embedd ngType.PushOpenLogFavBasedT et,
     )
 
-  // SANN-5 config
-  private val UserNextInterestedIn_Model20m145k2020_20221221 =
-    UserNextInterestedIn_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedRealTimeTweet,
-      maxTweetCandidateAge = 1.hours
+  // SANN-5 conf g
+  pr vate val UserNext nterested n_Model20m145k2020_20221221 =
+    UserNext nterested n_Model20m145k2020_Default.copy(
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedRealT  T et,
+      maxT etCand dateAge = 1.h s
     )
 
-  // SANN-4 config
-  private val UserNextInterestedIn_Model20m145k2020_20221220 =
-    UserNextInterestedIn_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedEvergreenTweet,
-      maxTweetCandidateAge = 48.hours
+  // SANN-4 conf g
+  pr vate val UserNext nterested n_Model20m145k2020_20221220 =
+    UserNext nterested n_Model20m145k2020_Default.copy(
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedEvergreenT et,
+      maxT etCand dateAge = 48.h s
     )
-  // Vincent's experiment on using FollowBasedProducer as query embedding type for UserFollow
-  private val FollowBasedProducer_Model20m145k2020_Default =
+  // V ncent's exper  nt on us ng FollowBasedProducer as query embedd ng type for UserFollow
+  pr vate val FollowBasedProducer_Model20m145k2020_Default =
     FavBasedProducer_Model20m145k2020_Default.copy()
 
-  // Experimental SANN config
-  private val FollowBasedProducer_Model20m145k2020_20220801 =
+  // Exper  ntal SANN conf g
+  pr vate val FollowBasedProducer_Model20m145k2020_20220801 =
     FavBasedProducer_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.VideoPlayBack50LogFavBasedTweet,
+      cand dateEmbedd ngType = Embedd ngType.V deoPlayBack50LogFavBasedT et,
     )
 
-  // SANN-1 config
-  private val FollowBasedProducer_Model20m145k2020_20220810 =
+  // SANN-1 conf g
+  pr vate val FollowBasedProducer_Model20m145k2020_20220810 =
     FavBasedProducer_Model20m145k2020_Default.copy(
       maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedAdsT et,
+      maxT etCand dateAge = 175200.h s,
+      maxTopT etsPerCluster = 1600
     )
 
-  // SANN-2 config
-  private val FollowBasedProducer_Model20m145k2020_20220818 =
+  // SANN-2 conf g
+  pr vate val FollowBasedProducer_Model20m145k2020_20220818 =
     FavBasedProducer_Model20m145k2020_Default.copy(
       maxNumResults = 100,
-      candidateEmbeddingType = EmbeddingType.LogFavClickBasedAdsTweet,
-      maxTweetCandidateAge = 175200.hours,
-      maxTopTweetsPerCluster = 1600
+      cand dateEmbedd ngType = Embedd ngType.LogFavCl ckBasedAdsT et,
+      maxT etCand dateAge = 175200.h s,
+      maxTopT etsPerCluster = 1600
     )
 
-  // SANN-3 config
-  private val FollowBasedProducer_Model20m145k2020_20220819 =
+  // SANN-3 conf g
+  pr vate val FollowBasedProducer_Model20m145k2020_20220819 =
     FavBasedProducer_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.PushOpenLogFavBasedTweet,
+      cand dateEmbedd ngType = Embedd ngType.PushOpenLogFavBasedT et,
     )
 
-  // SANN-5 config
-  private val FollowBasedProducer_Model20m145k2020_20221221 =
+  // SANN-5 conf g
+  pr vate val FollowBasedProducer_Model20m145k2020_20221221 =
     FavBasedProducer_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedRealTimeTweet,
-      maxTweetCandidateAge = 1.hours
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedRealT  T et,
+      maxT etCand dateAge = 1.h s
     )
 
-  // SANN-4 config
-  private val FollowBasedProducer_Model20m145k2020_20221220 =
+  // SANN-4 conf g
+  pr vate val FollowBasedProducer_Model20m145k2020_20221220 =
     FavBasedProducer_Model20m145k2020_Default.copy(
-      candidateEmbeddingType = EmbeddingType.LogFavBasedEvergreenTweet,
-      maxTweetCandidateAge = 48.hours
+      cand dateEmbedd ngType = Embedd ngType.LogFavBasedEvergreenT et,
+      maxT etCand dateAge = 48.h s
     )
-  val DefaultConfigMappings: Map[String, SimClustersANNConfig] = Map(
+  val DefaultConf gMapp ngs: Map[Str ng, S mClustersANNConf g] = Map(
     "FavBasedProducer_Model20m145k2020_Default" -> FavBasedProducer_Model20m145k2020_Default,
     "FavBasedProducer_Model20m145k2020_20220617_06" -> FavBasedProducer_Model20m145k2020_20220617_06,
     "FavBasedProducer_Model20m145k2020_20220801" -> FavBasedProducer_Model20m145k2020_20220801,
@@ -416,58 +416,58 @@ object SimClustersANNConfig {
     "FollowBasedProducer_Model20m145k2020_20220819" -> FollowBasedProducer_Model20m145k2020_20220819,
     "FollowBasedProducer_Model20m145k2020_20221221" -> FollowBasedProducer_Model20m145k2020_20221221,
     "FollowBasedProducer_Model20m145k2020_20221220" -> FollowBasedProducer_Model20m145k2020_20221220,
-    "LogFavLongestL2EmbeddingTweet_Model20m145k2020_Default" -> LogFavLongestL2EmbeddingTweet_Model20m145k2020_Default,
-    "LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220617_06" -> LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220617_06,
-    "LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220801" -> LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220801,
-    "LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220810" -> LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220810,
-    "LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220818" -> LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220818,
-    "LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220819" -> LogFavLongestL2EmbeddingTweet_Model20m145k2020_20220819,
-    "LogFavLongestL2EmbeddingTweet_Model20m145k2020_20221221" -> LogFavLongestL2EmbeddingTweet_Model20m145k2020_20221221,
-    "LogFavLongestL2EmbeddingTweet_Model20m145k2020_20221220" -> LogFavLongestL2EmbeddingTweet_Model20m145k2020_20221220,
-    "UnfilteredUserInterestedIn_Model20m145k2020_Default" -> UnfilteredUserInterestedIn_Model20m145k2020_Default,
-    "UnfilteredUserInterestedIn_Model20m145k2020_20220617_06" -> UnfilteredUserInterestedIn_Model20m145k2020_20220617_06,
-    "UnfilteredUserInterestedIn_Model20m145k2020_20220801" -> UnfilteredUserInterestedIn_Model20m145k2020_20220801,
-    "UnfilteredUserInterestedIn_Model20m145k2020_20220810" -> UnfilteredUserInterestedIn_Model20m145k2020_20220810,
-    "UnfilteredUserInterestedIn_Model20m145k2020_20220818" -> UnfilteredUserInterestedIn_Model20m145k2020_20220818,
-    "UnfilteredUserInterestedIn_Model20m145k2020_20220819" -> UnfilteredUserInterestedIn_Model20m145k2020_20220819,
-    "UnfilteredUserInterestedIn_Model20m145k2020_20221221" -> UnfilteredUserInterestedIn_Model20m145k2020_20221221,
-    "UnfilteredUserInterestedIn_Model20m145k2020_20221220" -> UnfilteredUserInterestedIn_Model20m145k2020_20221220,
-    "LogFavBasedUserInterestedInFromAPE_Model20m145k2020_Default" -> LogFavBasedUserInterestedInFromAPE_Model20m145k2020_Default,
-    "LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220617_06" -> LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220617_06,
-    "LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220801" -> LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220801,
-    "LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220810" -> LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220810,
-    "LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220818" -> LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220818,
-    "LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220819" -> LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20220819,
-    "LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20221221" -> LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20221221,
-    "LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20221220" -> LogFavBasedUserInterestedInFromAPE_Model20m145k2020_20221220,
-    "LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_Default" -> LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_Default,
-    "LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220617_06" -> LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220617_06,
-    "LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220801" -> LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220801,
-    "LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220810" -> LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220810,
-    "LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220818" -> LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220818,
-    "LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220819" -> LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20220819,
-    "LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20221221" -> LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20221221,
-    "LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20221220" -> LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020_20221220,
-    "UserNextInterestedIn_Model20m145k2020_Default" -> UserNextInterestedIn_Model20m145k2020_Default,
-    "UserNextInterestedIn_Model20m145k2020_20220617_06" -> UserNextInterestedIn_Model20m145k2020_20220617_06,
-    "UserNextInterestedIn_Model20m145k2020_20220801" -> UserNextInterestedIn_Model20m145k2020_20220801,
-    "UserNextInterestedIn_Model20m145k2020_20220810" -> UserNextInterestedIn_Model20m145k2020_20220810,
-    "UserNextInterestedIn_Model20m145k2020_20220818" -> UserNextInterestedIn_Model20m145k2020_20220818,
-    "UserNextInterestedIn_Model20m145k2020_20220819" -> UserNextInterestedIn_Model20m145k2020_20220819,
-    "UserNextInterestedIn_Model20m145k2020_20221221" -> UserNextInterestedIn_Model20m145k2020_20221221,
-    "UserNextInterestedIn_Model20m145k2020_20221220" -> UserNextInterestedIn_Model20m145k2020_20221220,
+    "LogFavLongestL2Embedd ngT et_Model20m145k2020_Default" -> LogFavLongestL2Embedd ngT et_Model20m145k2020_Default,
+    "LogFavLongestL2Embedd ngT et_Model20m145k2020_20220617_06" -> LogFavLongestL2Embedd ngT et_Model20m145k2020_20220617_06,
+    "LogFavLongestL2Embedd ngT et_Model20m145k2020_20220801" -> LogFavLongestL2Embedd ngT et_Model20m145k2020_20220801,
+    "LogFavLongestL2Embedd ngT et_Model20m145k2020_20220810" -> LogFavLongestL2Embedd ngT et_Model20m145k2020_20220810,
+    "LogFavLongestL2Embedd ngT et_Model20m145k2020_20220818" -> LogFavLongestL2Embedd ngT et_Model20m145k2020_20220818,
+    "LogFavLongestL2Embedd ngT et_Model20m145k2020_20220819" -> LogFavLongestL2Embedd ngT et_Model20m145k2020_20220819,
+    "LogFavLongestL2Embedd ngT et_Model20m145k2020_20221221" -> LogFavLongestL2Embedd ngT et_Model20m145k2020_20221221,
+    "LogFavLongestL2Embedd ngT et_Model20m145k2020_20221220" -> LogFavLongestL2Embedd ngT et_Model20m145k2020_20221220,
+    "Unf lteredUser nterested n_Model20m145k2020_Default" -> Unf lteredUser nterested n_Model20m145k2020_Default,
+    "Unf lteredUser nterested n_Model20m145k2020_20220617_06" -> Unf lteredUser nterested n_Model20m145k2020_20220617_06,
+    "Unf lteredUser nterested n_Model20m145k2020_20220801" -> Unf lteredUser nterested n_Model20m145k2020_20220801,
+    "Unf lteredUser nterested n_Model20m145k2020_20220810" -> Unf lteredUser nterested n_Model20m145k2020_20220810,
+    "Unf lteredUser nterested n_Model20m145k2020_20220818" -> Unf lteredUser nterested n_Model20m145k2020_20220818,
+    "Unf lteredUser nterested n_Model20m145k2020_20220819" -> Unf lteredUser nterested n_Model20m145k2020_20220819,
+    "Unf lteredUser nterested n_Model20m145k2020_20221221" -> Unf lteredUser nterested n_Model20m145k2020_20221221,
+    "Unf lteredUser nterested n_Model20m145k2020_20221220" -> Unf lteredUser nterested n_Model20m145k2020_20221220,
+    "LogFavBasedUser nterested nFromAPE_Model20m145k2020_Default" -> LogFavBasedUser nterested nFromAPE_Model20m145k2020_Default,
+    "LogFavBasedUser nterested nFromAPE_Model20m145k2020_20220617_06" -> LogFavBasedUser nterested nFromAPE_Model20m145k2020_20220617_06,
+    "LogFavBasedUser nterested nFromAPE_Model20m145k2020_20220801" -> LogFavBasedUser nterested nFromAPE_Model20m145k2020_20220801,
+    "LogFavBasedUser nterested nFromAPE_Model20m145k2020_20220810" -> LogFavBasedUser nterested nFromAPE_Model20m145k2020_20220810,
+    "LogFavBasedUser nterested nFromAPE_Model20m145k2020_20220818" -> LogFavBasedUser nterested nFromAPE_Model20m145k2020_20220818,
+    "LogFavBasedUser nterested nFromAPE_Model20m145k2020_20220819" -> LogFavBasedUser nterested nFromAPE_Model20m145k2020_20220819,
+    "LogFavBasedUser nterested nFromAPE_Model20m145k2020_20221221" -> LogFavBasedUser nterested nFromAPE_Model20m145k2020_20221221,
+    "LogFavBasedUser nterested nFromAPE_Model20m145k2020_20221220" -> LogFavBasedUser nterested nFromAPE_Model20m145k2020_20221220,
+    "LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_Default" -> LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_Default,
+    "LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_20220617_06" -> LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_20220617_06,
+    "LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_20220801" -> LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_20220801,
+    "LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_20220810" -> LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_20220810,
+    "LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_20220818" -> LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_20220818,
+    "LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_20220819" -> LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_20220819,
+    "LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_20221221" -> LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_20221221,
+    "LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_20221220" -> LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE_Model20m145k2020_20221220,
+    "UserNext nterested n_Model20m145k2020_Default" -> UserNext nterested n_Model20m145k2020_Default,
+    "UserNext nterested n_Model20m145k2020_20220617_06" -> UserNext nterested n_Model20m145k2020_20220617_06,
+    "UserNext nterested n_Model20m145k2020_20220801" -> UserNext nterested n_Model20m145k2020_20220801,
+    "UserNext nterested n_Model20m145k2020_20220810" -> UserNext nterested n_Model20m145k2020_20220810,
+    "UserNext nterested n_Model20m145k2020_20220818" -> UserNext nterested n_Model20m145k2020_20220818,
+    "UserNext nterested n_Model20m145k2020_20220819" -> UserNext nterested n_Model20m145k2020_20220819,
+    "UserNext nterested n_Model20m145k2020_20221221" -> UserNext nterested n_Model20m145k2020_20221221,
+    "UserNext nterested n_Model20m145k2020_20221220" -> UserNext nterested n_Model20m145k2020_20221220,
   )
 
-  def getConfig(
-    embeddingType: String,
-    modelVersion: String,
-    id: String
-  ): SimClustersANNConfig = {
-    val configName = embeddingType + "_" + modelVersion + "_" + id
-    DefaultConfigMappings.get(configName) match {
-      case Some(config) => config
+  def getConf g(
+    embedd ngType: Str ng,
+    modelVers on: Str ng,
+     d: Str ng
+  ): S mClustersANNConf g = {
+    val conf gNa  = embedd ngType + "_" + modelVers on + "_" +  d
+    DefaultConf gMapp ngs.get(conf gNa ) match {
+      case So (conf g) => conf g
       case None =>
-        throw InvalidSANNConfigException(s"Incorrect config id passed in for SANN $configName")
+        throw  nval dSANNConf gExcept on(s" ncorrect conf g  d passed  n for SANN $conf gNa ")
     }
   }
 }

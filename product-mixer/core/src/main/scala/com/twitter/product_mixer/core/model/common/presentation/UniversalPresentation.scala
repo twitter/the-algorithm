@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.model.common.presentation
+package com.tw ter.product_m xer.core.model.common.presentat on
 
 /**
- * Encapsulates information about how to present a Candidate
+ * Encapsulates  nformat on about how to present a Cand date
  *
- * Implementations of a [[UniversalPresentation]] contain information about how to present the Candidate.
- * This extra information can be in fields in the implementations or in their types.
+ *  mple ntat ons of a [[Un versalPresentat on]] conta n  nformat on about how to present t  Cand date.
+ * T  extra  nformat on can be  n f elds  n t   mple ntat ons or  n t  r types.
  *
- * For instance, a Tweet candidate that will be displayed as a URT Tweet Item will be decorated with a
- * [[UniversalPresentation]] implementation that reflects the presentation such as
- * [[com.twitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation]]
+ * For  nstance, a T et cand date that w ll be d splayed as a URT T et  em w ll be decorated w h a
+ * [[Un versalPresentat on]]  mple ntat on that reflects t  presentat on such as
+ * [[com.tw ter.product_m xer.component_l brary.model.presentat on.urt.Urt emPresentat on]]
  *
- * @see [[com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator]] for associating a
- *      [[UniversalPresentation]] with a Candidate.
+ * @see [[com.tw ter.product_m xer.core.funct onal_component.decorator.Cand dateDecorator]] for assoc at ng a
+ *      [[Un versalPresentat on]] w h a Cand date.
  */
-trait UniversalPresentation
+tra  Un versalPresentat on

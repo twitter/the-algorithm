@@ -1,169 +1,169 @@
-python37_binary(
-    name = "update_warm_start_checkpoint",
-    source = "update_warm_start_checkpoint.py",
-    tags = ["no-mypy"],
-    dependencies = [
-        ":deep_norm_lib",
-        "3rdparty/python/_closures/frigate/frigate-pushservice-opensource/src/main/python/models/heavy_ranking:update_warm_start_checkpoint",
+python37_b nary(
+    na  = "update_warm_start_c ckpo nt",
+    s ce = "update_warm_start_c ckpo nt.py",
+    tags = ["no- py"],
+    dependenc es = [
+        ":deep_norm_l b",
+        "3rdparty/python/_closures/fr gate/fr gate-pushserv ce-opens ce/src/ma n/python/models/ avy_rank ng:update_warm_start_c ckpo nt",
     ],
 )
 
-python3_library(
-    name = "params_lib",
-    sources = ["params.py"],
-    tags = ["no-mypy"],
-    dependencies = [
-        "3rdparty/python/pydantic:default",
-        "src/python/twitter/deepbird/projects/magic_recs/v11/lib:params_lib",
+python3_l brary(
+    na  = "params_l b",
+    s ces = ["params.py"],
+    tags = ["no- py"],
+    dependenc es = [
+        "3rdparty/python/pydant c:default",
+        "src/python/tw ter/deepb rd/projects/mag c_recs/v11/l b:params_l b",
     ],
 )
 
-python3_library(
-    name = "features_lib",
-    sources = ["features.py"],
-    tags = ["no-mypy"],
-    dependencies = [
-        ":params_lib",
-        "src/python/twitter/deepbird/projects/magic_recs/libs",
+python3_l brary(
+    na  = "features_l b",
+    s ces = ["features.py"],
+    tags = ["no- py"],
+    dependenc es = [
+        ":params_l b",
+        "src/python/tw ter/deepb rd/projects/mag c_recs/l bs",
         "twml:twml-nodeps",
     ],
 )
 
-python3_library(
-    name = "model_pools_lib",
-    sources = ["model_pools.py"],
-    tags = ["no-mypy"],
-    dependencies = [
-        ":features_lib",
-        ":params_lib",
-        "src/python/twitter/deepbird/projects/magic_recs/v11/lib:model_lib",
+python3_l brary(
+    na  = "model_pools_l b",
+    s ces = ["model_pools.py"],
+    tags = ["no- py"],
+    dependenc es = [
+        ":features_l b",
+        ":params_l b",
+        "src/python/tw ter/deepb rd/projects/mag c_recs/v11/l b:model_l b",
     ],
 )
 
-python3_library(
-    name = "graph_lib",
-    sources = ["graph.py"],
-    tags = ["no-mypy"],
-    dependencies = [
-        ":params_lib",
-        "src/python/twitter/deepbird/projects/magic_recs/libs",
+python3_l brary(
+    na  = "graph_l b",
+    s ces = ["graph.py"],
+    tags = ["no- py"],
+    dependenc es = [
+        ":params_l b",
+        "src/python/tw ter/deepb rd/projects/mag c_recs/l bs",
     ],
 )
 
-python3_library(
-    name = "run_args_lib",
-    sources = ["run_args.py"],
-    tags = ["no-mypy"],
-    dependencies = [
-        ":features_lib",
-        ":params_lib",
+python3_l brary(
+    na  = "run_args_l b",
+    s ces = ["run_args.py"],
+    tags = ["no- py"],
+    dependenc es = [
+        ":features_l b",
+        ":params_l b",
         "twml:twml-nodeps",
     ],
 )
 
-python3_library(
-    name = "deep_norm_lib",
-    sources = ["deep_norm.py"],
-    tags = ["no-mypy"],
-    dependencies = [
-        ":features_lib",
-        ":graph_lib",
-        ":model_pools_lib",
-        ":params_lib",
-        ":run_args_lib",
-        "src/python/twitter/deepbird/projects/magic_recs/libs",
-        "src/python/twitter/deepbird/util/data",
+python3_l brary(
+    na  = "deep_norm_l b",
+    s ces = ["deep_norm.py"],
+    tags = ["no- py"],
+    dependenc es = [
+        ":features_l b",
+        ":graph_l b",
+        ":model_pools_l b",
+        ":params_l b",
+        ":run_args_l b",
+        "src/python/tw ter/deepb rd/projects/mag c_recs/l bs",
+        "src/python/tw ter/deepb rd/ut l/data",
         "twml:twml-nodeps",
     ],
 )
 
-python3_library(
-    name = "eval_lib",
-    sources = ["eval.py"],
-    tags = ["no-mypy"],
-    dependencies = [
-        ":features_lib",
-        ":graph_lib",
-        ":model_pools_lib",
-        ":params_lib",
-        ":run_args_lib",
-        "src/python/twitter/deepbird/projects/magic_recs/libs",
+python3_l brary(
+    na  = "eval_l b",
+    s ces = ["eval.py"],
+    tags = ["no- py"],
+    dependenc es = [
+        ":features_l b",
+        ":graph_l b",
+        ":model_pools_l b",
+        ":params_l b",
+        ":run_args_l b",
+        "src/python/tw ter/deepb rd/projects/mag c_recs/l bs",
         "twml:twml-nodeps",
     ],
 )
 
-python37_binary(
-    name = "deep_norm",
-    source = "deep_norm.py",
-    dependencies = [
-        ":deep_norm_lib",
-        "3rdparty/python/_closures/frigate/frigate-pushservice-opensource/src/main/python/models/heavy_ranking:deep_norm",
+python37_b nary(
+    na  = "deep_norm",
+    s ce = "deep_norm.py",
+    dependenc es = [
+        ":deep_norm_l b",
+        "3rdparty/python/_closures/fr gate/fr gate-pushserv ce-opens ce/src/ma n/python/models/ avy_rank ng:deep_norm",
         "twml",
     ],
 )
 
-python37_binary(
-    name = "eval",
-    source = "eval.py",
-    dependencies = [
-        ":eval_lib",
-        "3rdparty/python/_closures/frigate/frigate-pushservice-opensource/src/main/python/models/heavy_ranking:eval",
+python37_b nary(
+    na  = "eval",
+    s ce = "eval.py",
+    dependenc es = [
+        ":eval_l b",
+        "3rdparty/python/_closures/fr gate/fr gate-pushserv ce-opens ce/src/ma n/python/models/ avy_rank ng:eval",
         "twml",
     ],
 )
 
-python3_library(
-    name = "mlwf_libs",
-    tags = ["no-mypy"],
-    dependencies = [
-        ":deep_norm_lib",
+python3_l brary(
+    na  = "mlwf_l bs",
+    tags = ["no- py"],
+    dependenc es = [
+        ":deep_norm_l b",
         "twml",
     ],
 )
 
-python37_binary(
-    name = "train_model",
-    source = "deep_norm.py",
-    dependencies = [
-        ":deep_norm_lib",
-        "3rdparty/python/_closures/frigate/frigate-pushservice-opensource/src/main/python/models/heavy_ranking:train_model",
+python37_b nary(
+    na  = "tra n_model",
+    s ce = "deep_norm.py",
+    dependenc es = [
+        ":deep_norm_l b",
+        "3rdparty/python/_closures/fr gate/fr gate-pushserv ce-opens ce/src/ma n/python/models/ avy_rank ng:tra n_model",
     ],
 )
 
-python37_binary(
-    name = "train_model_local",
-    source = "deep_norm.py",
-    dependencies = [
-        ":deep_norm_lib",
-        "3rdparty/python/_closures/frigate/frigate-pushservice-opensource/src/main/python/models/heavy_ranking:train_model_local",
+python37_b nary(
+    na  = "tra n_model_local",
+    s ce = "deep_norm.py",
+    dependenc es = [
+        ":deep_norm_l b",
+        "3rdparty/python/_closures/fr gate/fr gate-pushserv ce-opens ce/src/ma n/python/models/ avy_rank ng:tra n_model_local",
         "twml",
     ],
 )
 
-python37_binary(
-    name = "eval_model_local",
-    source = "eval.py",
-    dependencies = [
-        ":eval_lib",
-        "3rdparty/python/_closures/frigate/frigate-pushservice-opensource/src/main/python/models/heavy_ranking:eval_model_local",
+python37_b nary(
+    na  = "eval_model_local",
+    s ce = "eval.py",
+    dependenc es = [
+        ":eval_l b",
+        "3rdparty/python/_closures/fr gate/fr gate-pushserv ce-opens ce/src/ma n/python/models/ avy_rank ng:eval_model_local",
         "twml",
     ],
 )
 
-python37_binary(
-    name = "eval_model",
-    source = "eval.py",
-    dependencies = [
-        ":eval_lib",
-        "3rdparty/python/_closures/frigate/frigate-pushservice-opensource/src/main/python/models/heavy_ranking:eval_model",
+python37_b nary(
+    na  = "eval_model",
+    s ce = "eval.py",
+    dependenc es = [
+        ":eval_l b",
+        "3rdparty/python/_closures/fr gate/fr gate-pushserv ce-opens ce/src/ma n/python/models/ avy_rank ng:eval_model",
     ],
 )
 
-python37_binary(
-    name = "mlwf_model",
-    source = "deep_norm.py",
-    dependencies = [
-        ":mlwf_libs",
-        "3rdparty/python/_closures/frigate/frigate-pushservice-opensource/src/main/python/models/heavy_ranking:mlwf_model",
+python37_b nary(
+    na  = "mlwf_model",
+    s ce = "deep_norm.py",
+    dependenc es = [
+        ":mlwf_l bs",
+        "3rdparty/python/_closures/fr gate/fr gate-pushserv ce-opens ce/src/ma n/python/models/ avy_rank ng:mlwf_model",
     ],
 )

@@ -1,6 +1,6 @@
-# Social Graph Candidate Source
-Provides candidate expansion based on the Twitter social graph.
+# Soc al Graph Cand date S ce
+Prov des cand date expans on based on t  Tw ter soc al graph.
 
-Currently, the expansion is mainly based on the "follow" social graph edge, which allows the service to identify recent following accounts for a given set of accounts. The input accounts could be a user's recent following, engaged, or other related accounts.
+Currently, t  expans on  s ma nly based on t  "follow" soc al graph edge, wh ch allows t  serv ce to  dent fy recent follow ng accounts for a g ven set of accounts. T   nput accounts could be a user's recent follow ng, engaged, or ot r related accounts.
 
-In summary, the Social Graph Candidate Source utilizes the Twitter social graph to provide candidate expansion, primarily focusing on recent following accounts.
+ n summary, t  Soc al Graph Cand date S ce ut l zes t  Tw ter soc al graph to prov de cand date expans on, pr mar ly focus ng on recent follow ng accounts.

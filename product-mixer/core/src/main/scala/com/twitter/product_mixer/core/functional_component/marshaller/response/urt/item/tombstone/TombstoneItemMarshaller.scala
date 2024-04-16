@@ -1,23 +1,23 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tombstone
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.tombstone
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet.TweetItemMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.TombstoneItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.t et.T et emMarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.tombstone.Tombstone em
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class TombstoneItemMarshaller @Inject() (
-  displayTypeMarshaller: TombstoneDisplayTypeMarshaller,
-  tombstoneInfoMarshaller: TombstoneInfoMarshaller,
-  tweetItemMarshaller: TweetItemMarshaller) {
+@S ngleton
+class Tombstone emMarshaller @ nject() (
+  d splayTypeMarshaller: TombstoneD splayTypeMarshaller,
+  tombstone nfoMarshaller: Tombstone nfoMarshaller,
+  t et emMarshaller: T et emMarshaller) {
 
-  def apply(tombstoneItem: TombstoneItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.Tombstone(
+  def apply(tombstone em: Tombstone em): urt.T  l ne emContent =
+    urt.T  l ne emContent.Tombstone(
       urt.Tombstone(
-        displayType = displayTypeMarshaller(tombstoneItem.tombstoneDisplayType),
-        tombstoneInfo = tombstoneItem.tombstoneInfo.map(tombstoneInfoMarshaller(_)),
-        tweet = tombstoneItem.tweet.map(tweetItemMarshaller(_).tweet)
+        d splayType = d splayTypeMarshaller(tombstone em.tombstoneD splayType),
+        tombstone nfo = tombstone em.tombstone nfo.map(tombstone nfoMarshaller(_)),
+        t et = tombstone em.t et.map(t et emMarshaller(_).t et)
       )
     )
 }

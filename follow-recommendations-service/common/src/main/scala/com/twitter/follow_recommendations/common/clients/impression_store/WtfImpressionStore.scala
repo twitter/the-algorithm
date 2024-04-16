@@ -1,42 +1,42 @@
-package com.twitter.follow_recommendations.common.clients.impression_store
+package com.tw ter.follow_recom ndat ons.common.cl ents. mpress on_store
 
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.common.models.WtfImpression
-import com.twitter.follow_recommendations.thriftscala.{DisplayLocation => TDisplayLocation}
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.Scan.Slice
-import com.twitter.strato.client.Scanner
-import com.twitter.util.Time
-import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.follow_recom ndat ons.common.models.D splayLocat on
+ mport com.tw ter.follow_recom ndat ons.common.models.Wtf mpress on
+ mport com.tw ter.follow_recom ndat ons.thr ftscala.{D splayLocat on => TD splayLocat on}
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.catalog.Scan.Sl ce
+ mport com.tw ter.strato.cl ent.Scanner
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class WtfImpressionStore @Inject() (
+@S ngleton
+class Wtf mpress onStore @ nject() (
   scanner: Scanner[
-    ((Long, TDisplayLocation), Slice[Long]),
-    Unit,
-    ((Long, TDisplayLocation), Long),
-    (Long, Int)
-  ]) extends Logging {
-  def get(userId: Long, dl: DisplayLocation): Stitch[Seq[WtfImpression]] = {
-    val thriftDl = dl.toThrift
-    scanner.scan(((userId, thriftDl), Slice.all[Long])).map { impressionsPerDl =>
-      val wtfImpressions =
+    ((Long, TD splayLocat on), Sl ce[Long]),
+    Un ,
+    ((Long, TD splayLocat on), Long),
+    (Long,  nt)
+  ]) extends Logg ng {
+  def get(user d: Long, dl: D splayLocat on): St ch[Seq[Wtf mpress on]] = {
+    val thr ftDl = dl.toThr ft
+    scanner.scan(((user d, thr ftDl), Sl ce.all[Long])).map {  mpress onsPerDl =>
+      val wtf mpress ons =
         for {
-          (((_, _), candidateId), (latestTs, counts)) <- impressionsPerDl
-        } yield WtfImpression(
-          candidateId = candidateId,
-          displayLocation = dl,
-          latestTime = Time.fromMilliseconds(latestTs),
+          (((_, _), cand date d), (latestTs, counts)) <-  mpress onsPerDl
+        } y eld Wtf mpress on(
+          cand date d = cand date d,
+          d splayLocat on = dl,
+          latestT   = T  .fromM ll seconds(latestTs),
           counts = counts
         )
-      wtfImpressions
+      wtf mpress ons
     } rescue {
-      // fail open so that the request can still go through
+      // fa l open so that t  request can st ll go through
       case ex: Throwable =>
-        logger.warn(s"$dl WtfImpressionsStore warn: " + ex.getMessage)
-        Stitch.Nil
+        logger.warn(s"$dl Wtf mpress onsStore warn: " + ex.get ssage)
+        St ch.N l
     }
   }
 }

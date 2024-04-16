@@ -1,36 +1,36 @@
-package com.twitter.search.earlybird_root.caching;
+package com.tw ter.search.earlyb rd_root.cach ng;
 
-import com.twitter.search.common.caching.Cache;
-import com.twitter.search.common.caching.CacheUtil;
-import com.twitter.search.common.caching.filter.ServicePostProcessor;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+ mport com.tw ter.search.common.cach ng.Cac ;
+ mport com.tw ter.search.common.cach ng.Cac Ut l;
+ mport com.tw ter.search.common.cach ng.f lter.Serv cePostProcessor;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
 
-public class RelevanceZeroResultsServicePostProcessor
-    extends ServicePostProcessor<EarlybirdRequestContext, EarlybirdResponse> {
+publ c class RelevanceZeroResultsServ cePostProcessor
+    extends Serv cePostProcessor<Earlyb rdRequestContext, Earlyb rdResponse> {
 
-  private static final SearchCounter RELEVANCE_RESPONSES_WITH_ZERO_RESULTS_COUNTER =
-    SearchCounter.export("relevance_responses_with_zero_results");
+  pr vate stat c f nal SearchCounter RELEVANCE_RESPONSES_W TH_ZERO_RESULTS_COUNTER =
+    SearchCounter.export("relevance_responses_w h_zero_results");
 
-  private final Cache<EarlybirdRequest, EarlybirdResponse> cache;
+  pr vate f nal Cac <Earlyb rdRequest, Earlyb rdResponse> cac ;
 
-  public RelevanceZeroResultsServicePostProcessor(
-      Cache<EarlybirdRequest, EarlybirdResponse> cache) {
-    this.cache = cache;
+  publ c RelevanceZeroResultsServ cePostProcessor(
+      Cac <Earlyb rdRequest, Earlyb rdResponse> cac ) {
+    t .cac  = cac ;
   }
 
-  @Override
-  public void processServiceResponse(EarlybirdRequestContext requestContext,
-                                     EarlybirdResponse serviceResponse) {
-    // serviceResponse is the response to a personalized query. If it has zero results, then we can
-    // cache it and reuse it for other requests with the same query. Otherwise, it makes no sense to
-    // cache this response.
-    if (!CacheCommonUtil.hasResults(serviceResponse)) {
-      RELEVANCE_RESPONSES_WITH_ZERO_RESULTS_COUNTER.increment();
-      CacheUtil.cacheResults(
-          cache, requestContext.getRequest(), serviceResponse, Integer.MAX_VALUE);
+  @Overr de
+  publ c vo d processServ ceResponse(Earlyb rdRequestContext requestContext,
+                                     Earlyb rdResponse serv ceResponse) {
+    // serv ceResponse  s t  response to a personal zed query.  f   has zero results, t n   can
+    // cac    and reuse   for ot r requests w h t  sa  query. Ot rw se,   makes no sense to
+    // cac  t  response.
+     f (!Cac CommonUt l.hasResults(serv ceResponse)) {
+      RELEVANCE_RESPONSES_W TH_ZERO_RESULTS_COUNTER. ncre nt();
+      Cac Ut l.cac Results(
+          cac , requestContext.getRequest(), serv ceResponse,  nteger.MAX_VALUE);
     }
   }
 }

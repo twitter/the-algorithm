@@ -1,16 +1,16 @@
-package com.twitter.recos.graph_common
+package com.tw ter.recos.graph_common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphjet.stats.{StatsReceiver => GraphStatsReceiver}
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.graphjet.stats.{StatsRece ver => GraphStatsRece ver}
 
 /**
- * FinagleStatsReceiverWrapper wraps Twitter's Finagle StatsReceiver.
+ * F nagleStatsRece verWrapper wraps Tw ter's F nagle StatsRece ver.
  *
- * This is because GraphJet is an openly available library which does not
- * depend on Finagle, but tracks stats using a similar interface.
+ * T   s because GraphJet  s an openly ava lable l brary wh ch does not
+ * depend on F nagle, but tracks stats us ng a s m lar  nterface.
  */
-case class FinagleStatsReceiverWrapper(statsReceiver: StatsReceiver) extends GraphStatsReceiver {
+case class F nagleStatsRece verWrapper(statsRece ver: StatsRece ver) extends GraphStatsRece ver {
 
-  def scope(namespace: String) = new FinagleStatsReceiverWrapper(statsReceiver.scope(namespace))
-  def counter(name: String) = new FinagleCounterWrapper(statsReceiver.counter(name))
+  def scope(na space: Str ng) = new F nagleStatsRece verWrapper(statsRece ver.scope(na space))
+  def counter(na : Str ng) = new F nagleCounterWrapper(statsRece ver.counter(na ))
 }

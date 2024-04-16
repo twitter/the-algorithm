@@ -1,173 +1,173 @@
-package com.twitter.search.earlybird.archive;
+package com.tw ter.search.earlyb rd.arch ve;
 
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+ mport java. o. OExcept on;
+ mport java.ut l.Calendar;
+ mport java.ut l.Date;
+ mport java.ut l.regex.Matc r;
+ mport java.ut l.regex.Pattern;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
+ mport org.apac .commons. o. OUt ls;
+ mport org.apac .hadoop.fs.F leStatus;
+ mport org.apac .hadoop.fs.F leSystem;
+ mport org.apac .hadoop.fs.Path;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.earlybird.partition.HdfsUtil;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
+ mport com.tw ter.search.common.part  on ng.base.Seg nt;
+ mport com.tw ter.search.earlyb rd.part  on.HdfsUt l;
+ mport com.tw ter.search.earlyb rd.part  on.Seg nt nfo;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntSyncConf g;
 
 
-public final class ArchiveHDFSUtils {
-  private static final Logger LOG = LoggerFactory.getLogger(ArchiveHDFSUtils.class);
+publ c f nal class Arch veHDFSUt ls {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Arch veHDFSUt ls.class);
 
-  private static final Pattern SEGMENT_NAME_PATTERN =
-      Pattern.compile("_start_([0-9]+)_p_([0-9]+)_of_([0-9]+)_([0-9]{14}+)_");
-  private static final int MATCHER_GROUP_END_DATE = 4;
+  pr vate stat c f nal Pattern SEGMENT_NAME_PATTERN =
+      Pattern.comp le("_start_([0-9]+)_p_([0-9]+)_of_([0-9]+)_([0-9]{14}+)_");
+  pr vate stat c f nal  nt MATCHER_GROUP_END_DATE = 4;
 
-  private ArchiveHDFSUtils() {
+  pr vate Arch veHDFSUt ls() {
   }
 
   /**
-   * Check if a given segment already has its indices built on hdfs.
-   * @return true if the indices exist on hdfs; otherwise, false.
+   * C ck  f a g ven seg nt already has  s  nd ces bu lt on hdfs.
+   * @return true  f t   nd ces ex st on hdfs; ot rw se, false.
    */
-  public static boolean hasSegmentIndicesOnHDFS(SegmentSyncConfig sync, SegmentInfo segment) {
-    LOG.info("checking segment on hdfs: " + segment
-        + " enabled: " + sync.isSegmentLoadFromHdfsEnabled());
-    FileSystem fs = null;
+  publ c stat c boolean hasSeg nt nd cesOnHDFS(Seg ntSyncConf g sync, Seg nt nfo seg nt) {
+    LOG. nfo("c ck ng seg nt on hdfs: " + seg nt
+        + " enabled: " + sync. sSeg ntLoadFromHdfsEnabled());
+    F leSystem fs = null;
     try {
-      fs = HdfsUtil.getHdfsFileSystem();
-      String hdfsBaseDirPrefix = segment.getSyncInfo()
-          .getHdfsSyncDirPrefix();
-      FileStatus[] statuses = fs.globStatus(new Path(hdfsBaseDirPrefix));
+      fs = HdfsUt l.getHdfsF leSystem();
+      Str ng hdfsBaseD rPref x = seg nt.getSync nfo()
+          .getHdfsSyncD rPref x();
+      F leStatus[] statuses = fs.globStatus(new Path(hdfsBaseD rPref x));
       return statuses != null && statuses.length > 0;
-    } catch (IOException ex) {
-      LOG.error("Failed checking segment on hdfs: " + segment, ex);
+    } catch ( OExcept on ex) {
+      LOG.error("Fa led c ck ng seg nt on hdfs: " + seg nt, ex);
       return false;
-    } finally {
-      IOUtils.closeQuietly(fs);
+    } f nally {
+       OUt ls.closeQu etly(fs);
     }
   }
 
   /**
-   * Delete the segment index directories on the HDFS. If 'deleteCurrentDir' is true, the
-   * index directory with the end date matching 'segment' will be deleted. If 'deleteOlderDirs',
-   * the index directories with the end date earlier than the the segment enddate will be deleted.
+   * Delete t  seg nt  ndex d rector es on t  HDFS.  f 'deleteCurrentD r'  s true, t 
+   *  ndex d rectory w h t  end date match ng 'seg nt' w ll be deleted.  f 'deleteOlderD rs',
+   * t   ndex d rector es w h t  end date earl er than t  t  seg nt enddate w ll be deleted.
    *
    */
-  public static void deleteHdfsSegmentDir(SegmentSyncConfig sync, SegmentInfo segment,
-                                          boolean deleteCurrentDir, boolean deleteOlderDirs) {
-    FileSystem fs = null;
+  publ c stat c vo d deleteHdfsSeg ntD r(Seg ntSyncConf g sync, Seg nt nfo seg nt,
+                                          boolean deleteCurrentD r, boolean deleteOlderD rs) {
+    F leSystem fs = null;
     try {
-      fs = HdfsUtil.getHdfsFileSystem();
-      String hdfsFlushDir = segment.getSyncInfo().getHdfsFlushDir();
-      String hdfsBaseDirPrefix = segment.getSyncInfo()
-          .getHdfsSyncDirPrefix();
-      String endDateStr = extractEndDate(hdfsBaseDirPrefix);
-      if (endDateStr != null) {
-        hdfsBaseDirPrefix = hdfsBaseDirPrefix.replace(endDateStr, "*");
+      fs = HdfsUt l.getHdfsF leSystem();
+      Str ng hdfsFlushD r = seg nt.getSync nfo().getHdfsFlushD r();
+      Str ng hdfsBaseD rPref x = seg nt.getSync nfo()
+          .getHdfsSyncD rPref x();
+      Str ng endDateStr = extractEndDate(hdfsBaseD rPref x);
+       f (endDateStr != null) {
+        hdfsBaseD rPref x = hdfsBaseD rPref x.replace(endDateStr, "*");
       }
-      String[] hdfsDirs = {segment.getSyncInfo().getHdfsTempFlushDir(),
-          hdfsBaseDirPrefix};
-      for (String hdfsDir : hdfsDirs) {
-        FileStatus[] statuses = fs.globStatus(new Path(hdfsDir));
-        if (statuses != null && statuses.length > 0) {
-          for (FileStatus status : statuses) {
-            if (status.getPath().toString().endsWith(hdfsFlushDir)) {
-              if (deleteCurrentDir) {
+      Str ng[] hdfsD rs = {seg nt.getSync nfo().getHdfsTempFlushD r(),
+          hdfsBaseD rPref x};
+      for (Str ng hdfsD r : hdfsD rs) {
+        F leStatus[] statuses = fs.globStatus(new Path(hdfsD r));
+         f (statuses != null && statuses.length > 0) {
+          for (F leStatus status : statuses) {
+             f (status.getPath().toStr ng().endsW h(hdfsFlushD r)) {
+               f (deleteCurrentD r) {
                 fs.delete(status.getPath(), true);
-                LOG.info("Deleted segment: " + status.getPath());
+                LOG. nfo("Deleted seg nt: " + status.getPath());
               }
             } else {
-              if (deleteOlderDirs) {
+               f (deleteOlderD rs) {
                 fs.delete(status.getPath(), true);
-                LOG.info("Deleted segment: " + status.getPath());
+                LOG. nfo("Deleted seg nt: " + status.getPath());
               }
             }
           }
         }
       }
-    } catch (IOException e) {
-      LOG.error("Error delete Segment Dir :" + segment, e);
-    } finally {
-      IOUtils.closeQuietly(fs);
+    } catch ( OExcept on e) {
+      LOG.error("Error delete Seg nt D r :" + seg nt, e);
+    } f nally {
+       OUt ls.closeQu etly(fs);
     }
   }
 
   /**
-   * Given a segment, check if there is any indices built on HDFS; if yes, return the end date
-   * of the index built on HDFS; otherwise, return null.
+   * G ven a seg nt, c ck  f t re  s any  nd ces bu lt on HDFS;  f yes, return t  end date
+   * of t   ndex bu lt on HDFS; ot rw se, return null.
    */
-  public static Date getSegmentEndDateOnHdfs(SegmentSyncConfig sync, SegmentInfo segment) {
-    if (sync.isSegmentLoadFromHdfsEnabled()) {
-      LOG.info("About to check segment on hdfs: " + segment
-          + " enabled: " + sync.isSegmentLoadFromHdfsEnabled());
+  publ c stat c Date getSeg ntEndDateOnHdfs(Seg ntSyncConf g sync, Seg nt nfo seg nt) {
+     f (sync. sSeg ntLoadFromHdfsEnabled()) {
+      LOG. nfo("About to c ck seg nt on hdfs: " + seg nt
+          + " enabled: " + sync. sSeg ntLoadFromHdfsEnabled());
 
-      FileSystem fs = null;
+      F leSystem fs = null;
       try {
-        String hdfsBaseDirPrefix = segment.getSyncInfo()
-            .getHdfsSyncDirPrefix();
-        String endDateStr = extractEndDate(hdfsBaseDirPrefix);
-        if (endDateStr == null) {
+        Str ng hdfsBaseD rPref x = seg nt.getSync nfo()
+            .getHdfsSyncD rPref x();
+        Str ng endDateStr = extractEndDate(hdfsBaseD rPref x);
+         f (endDateStr == null) {
           return null;
         }
-        hdfsBaseDirPrefix = hdfsBaseDirPrefix.replace(endDateStr, "*");
+        hdfsBaseD rPref x = hdfsBaseD rPref x.replace(endDateStr, "*");
 
-        fs = HdfsUtil.getHdfsFileSystem();
-        FileStatus[] statuses = fs.globStatus(new Path(hdfsBaseDirPrefix));
-        if (statuses != null && statuses.length > 0) {
+        fs = HdfsUt l.getHdfsF leSystem();
+        F leStatus[] statuses = fs.globStatus(new Path(hdfsBaseD rPref x));
+         f (statuses != null && statuses.length > 0) {
           Path hdfsSyncPath = statuses[statuses.length - 1].getPath();
-          String hdfsSyncPathName = hdfsSyncPath.getName();
-          endDateStr = extractEndDate(hdfsSyncPathName);
-          return Segment.getSegmentEndDate(endDateStr);
+          Str ng hdfsSyncPathNa  = hdfsSyncPath.getNa ();
+          endDateStr = extractEndDate(hdfsSyncPathNa );
+          return Seg nt.getSeg ntEndDate(endDateStr);
         }
-      } catch (Exception ex) {
-        LOG.error("Failed getting segment from hdfs: " + segment, ex);
+      } catch (Except on ex) {
+        LOG.error("Fa led gett ng seg nt from hdfs: " + seg nt, ex);
         return null;
-      } finally {
-        IOUtils.closeQuietly(fs);
+      } f nally {
+         OUt ls.closeQu etly(fs);
       }
     }
     return null;
   }
 
-  private static String extractEndDate(String segmentDirPattern) {
-    Matcher matcher = SEGMENT_NAME_PATTERN.matcher(segmentDirPattern);
-    if (!matcher.find()) {
+  pr vate stat c Str ng extractEndDate(Str ng seg ntD rPattern) {
+    Matc r matc r = SEGMENT_NAME_PATTERN.matc r(seg ntD rPattern);
+     f (!matc r.f nd()) {
       return null;
     }
 
     try {
-      return matcher.group(MATCHER_GROUP_END_DATE);
-    } catch (IllegalStateException e) {
-      LOG.error("Match operation failed: " + segmentDirPattern, e);
+      return matc r.group(MATCHER_GROUP_END_DATE);
+    } catch ( llegalStateExcept on e) {
+      LOG.error("Match operat on fa led: " + seg ntD rPattern, e);
       return null;
-    } catch (IndexOutOfBoundsException e) {
-      LOG.error(" No group in the pattern with the given index : " + segmentDirPattern, e);
+    } catch ( ndexOutOfBoundsExcept on e) {
+      LOG.error(" No group  n t  pattern w h t  g ven  ndex : " + seg ntD rPattern, e);
       return null;
     }
   }
 
   /**
-   * Converts the given date to a path, using the given separator. For example, if the sate is
-   * January 5, 2019, and the separator is "/", this method will return "2019/01/05".
+   * Converts t  g ven date to a path, us ng t  g ven separator. For example,  f t  sate  s
+   * January 5, 2019, and t  separator  s "/", t   thod w ll return "2019/01/05".
    */
-  public static String dateToPath(Date date, String separator) {
-    StringBuilder builder = new StringBuilder();
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(date);
-    builder.append(cal.get(Calendar.YEAR))
+  publ c stat c Str ng dateToPath(Date date, Str ng separator) {
+    Str ngBu lder bu lder = new Str ngBu lder();
+    Calendar cal = Calendar.get nstance();
+    cal.setT  (date);
+    bu lder.append(cal.get(Calendar.YEAR))
            .append(separator)
-           .append(padding(cal.get(Calendar.MONTH) + 1, 2))
+           .append(padd ng(cal.get(Calendar.MONTH) + 1, 2))
            .append(separator)
-           .append(padding(cal.get(Calendar.DAY_OF_MONTH), 2));
-    return builder.toString();
+           .append(padd ng(cal.get(Calendar.DAY_OF_MONTH), 2));
+    return bu lder.toStr ng();
   }
 
-  private static String padding(int value, int len) {
-    return String.format("%0" + len + "d", value);
+  pr vate stat c Str ng padd ng( nt value,  nt len) {
+    return Str ng.format("%0" + len + "d", value);
   }
 }

@@ -1,13 +1,13 @@
-package com.twitter.timelineranker.config
+package com.tw ter.t  l neranker.conf g
 
-import com.twitter.timelines.util.stats.RequestScope
+ mport com.tw ter.t  l nes.ut l.stats.RequestScope
 
 object RequestScopes {
-  val HomeTimelineMaterialization: RequestScope = RequestScope("homeMaterialization")
-  val InNetworkTweetSource: RequestScope = RequestScope("inNetworkTweet")
-  val RecapHydrationSource: RequestScope = RequestScope("recapHydration")
-  val RecapAuthorSource: RequestScope = RequestScope("recapAuthor")
-  val ReverseChronHomeTimelineSource: RequestScope = RequestScope("reverseChronHomeTimelineSource")
-  val EntityTweetsSource: RequestScope = RequestScope("entityTweets")
-  val UtegLikedByTweetsSource: RequestScope = RequestScope("utegLikedByTweets")
+  val Ho T  l neMater al zat on: RequestScope = RequestScope("ho Mater al zat on")
+  val  nNetworkT etS ce: RequestScope = RequestScope(" nNetworkT et")
+  val RecapHydrat onS ce: RequestScope = RequestScope("recapHydrat on")
+  val RecapAuthorS ce: RequestScope = RequestScope("recapAuthor")
+  val ReverseChronHo T  l neS ce: RequestScope = RequestScope("reverseChronHo T  l neS ce")
+  val Ent yT etsS ce: RequestScope = RequestScope("ent yT ets")
+  val UtegL kedByT etsS ce: RequestScope = RequestScope("utegL kedByT ets")
 }

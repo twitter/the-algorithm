@@ -1,10 +1,10 @@
-package com.twitter.servo.cache
+package com.tw ter.servo.cac 
 
 /**
- * A Serializer of `Seq[T]`s.
+ * A Ser al zer of `Seq[T]`s.
  *
- * @param itemSerializer a Serializer for the individual elements.
- * @param itemSizeEstimate estimated size in bytes of individual elements
+ * @param  emSer al zer a Ser al zer for t   nd v dual ele nts.
+ * @param  emS zeEst mate est mated s ze  n bytes of  nd v dual ele nts
  */
-class SeqSerializer[T](itemSerializer: Serializer[T], itemSizeEstimate: Int = 8)
-    extends IterableSerializer[T, Seq[T]](() => Seq.newBuilder[T], itemSerializer, itemSizeEstimate)
+class SeqSer al zer[T]( emSer al zer: Ser al zer[T],  emS zeEst mate:  nt = 8)
+    extends  erableSer al zer[T, Seq[T]](() => Seq.newBu lder[T],  emSer al zer,  emS zeEst mate)

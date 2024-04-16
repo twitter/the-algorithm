@@ -1,100 +1,100 @@
-package com.twitter.unified_user_actions.enricher
+package com.tw ter.un f ed_user_act ons.enr c r
 
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentPlan
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentStage
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentStageStatus
-import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentStageType
-import com.twitter.unified_user_actions.thriftscala.ActionType
-import com.twitter.unified_user_actions.thriftscala.AuthorInfo
-import com.twitter.unified_user_actions.thriftscala.EventMetadata
-import com.twitter.unified_user_actions.thriftscala.Item
-import com.twitter.unified_user_actions.thriftscala.MultiTweetNotification
-import com.twitter.unified_user_actions.thriftscala.NotificationContent
-import com.twitter.unified_user_actions.thriftscala.NotificationInfo
-import com.twitter.unified_user_actions.thriftscala.ProfileInfo
-import com.twitter.unified_user_actions.thriftscala.SourceLineage
-import com.twitter.unified_user_actions.thriftscala.TweetInfo
-import com.twitter.unified_user_actions.thriftscala.TweetNotification
-import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
-import com.twitter.unified_user_actions.thriftscala.UnknownNotification
-import com.twitter.unified_user_actions.thriftscala.UserIdentifier
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch nt nstruct on
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntPlan
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntStage
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntStageStatus
+ mport com.tw ter.un f ed_user_act ons.enr c r. nternal.thr ftscala.Enr ch ntStageType
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Act onType
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Author nfo
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Event tadata
+ mport com.tw ter.un f ed_user_act ons.thr ftscala. em
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Mult T etNot f cat on
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Not f cat onContent
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Not f cat on nfo
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Prof le nfo
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.S ceL neage
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.T et nfo
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.T etNot f cat on
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.Un f edUserAct on
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.UnknownNot f cat on
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.User dent f er
 
-trait EnricherFixture {
-  val partitionedTopic = "unified_user_actions_keyed_dev"
-  val tweetInfoEnrichmentPlan = EnrichmentPlan(
+tra  Enr c rF xture {
+  val part  onedTop c = "un f ed_user_act ons_keyed_dev"
+  val t et nfoEnr ch ntPlan = Enr ch ntPlan(
     Seq(
-      // first stage: to repartition on tweet id -> done
-      EnrichmentStage(
-        EnrichmentStageStatus.Completion,
-        EnrichmentStageType.Repartition,
-        Seq(EnrichmentInstruction.TweetEnrichment),
-        Some(partitionedTopic)
+      // f rst stage: to repart  on on t et  d -> done
+      Enr ch ntStage(
+        Enr ch ntStageStatus.Complet on,
+        Enr ch ntStageType.Repart  on,
+        Seq(Enr ch nt nstruct on.T etEnr ch nt),
+        So (part  onedTop c)
       ),
-      // next stage: to hydrate more metadata based on tweet id -> initialized
-      EnrichmentStage(
-        EnrichmentStageStatus.Initialized,
-        EnrichmentStageType.Hydration,
-        Seq(EnrichmentInstruction.TweetEnrichment)
+      // next stage: to hydrate more  tadata based on t et  d ->  n  al zed
+      Enr ch ntStage(
+        Enr ch ntStageStatus. n  al zed,
+        Enr ch ntStageType.Hydrat on,
+        Seq(Enr ch nt nstruct on.T etEnr ch nt)
       )
     ))
 
-  val tweetNotificationEnrichmentPlan = EnrichmentPlan(
+  val t etNot f cat onEnr ch ntPlan = Enr ch ntPlan(
     Seq(
-      // first stage: to repartition on tweet id -> done
-      EnrichmentStage(
-        EnrichmentStageStatus.Completion,
-        EnrichmentStageType.Repartition,
-        Seq(EnrichmentInstruction.NotificationTweetEnrichment),
-        Some(partitionedTopic)
+      // f rst stage: to repart  on on t et  d -> done
+      Enr ch ntStage(
+        Enr ch ntStageStatus.Complet on,
+        Enr ch ntStageType.Repart  on,
+        Seq(Enr ch nt nstruct on.Not f cat onT etEnr ch nt),
+        So (part  onedTop c)
       ),
-      // next stage: to hydrate more metadata based on tweet id -> initialized
-      EnrichmentStage(
-        EnrichmentStageStatus.Initialized,
-        EnrichmentStageType.Hydration,
-        Seq(EnrichmentInstruction.NotificationTweetEnrichment),
+      // next stage: to hydrate more  tadata based on t et  d ->  n  al zed
+      Enr ch ntStage(
+        Enr ch ntStageStatus. n  al zed,
+        Enr ch ntStageType.Hydrat on,
+        Seq(Enr ch nt nstruct on.Not f cat onT etEnr ch nt),
       )
     ))
 
-  def mkUUATweetEvent(tweetId: Long, author: Option[AuthorInfo] = None): UnifiedUserAction = {
-    UnifiedUserAction(
-      UserIdentifier(userId = Some(1L)),
-      item = Item.TweetInfo(TweetInfo(actionTweetId = tweetId, actionTweetAuthorInfo = author)),
-      actionType = ActionType.ClientTweetReport,
-      eventMetadata = EventMetadata(1234L, 2345L, SourceLineage.ServerTweetypieEvents)
+  def mkUUAT etEvent(t et d: Long, author: Opt on[Author nfo] = None): Un f edUserAct on = {
+    Un f edUserAct on(
+      User dent f er(user d = So (1L)),
+       em =  em.T et nfo(T et nfo(act onT et d = t et d, act onT etAuthor nfo = author)),
+      act onType = Act onType.Cl entT etReport,
+      event tadata = Event tadata(1234L, 2345L, S ceL neage.ServerT etyp eEvents)
     )
   }
 
-  def mkUUATweetNotificationEvent(tweetId: Long): UnifiedUserAction = {
-    mkUUATweetEvent(-1L).copy(
-      item = Item.NotificationInfo(
-        NotificationInfo(
-          actionNotificationId = "123456",
-          content = NotificationContent.TweetNotification(TweetNotification(tweetId = tweetId))))
+  def mkUUAT etNot f cat onEvent(t et d: Long): Un f edUserAct on = {
+    mkUUAT etEvent(-1L).copy(
+       em =  em.Not f cat on nfo(
+        Not f cat on nfo(
+          act onNot f cat on d = "123456",
+          content = Not f cat onContent.T etNot f cat on(T etNot f cat on(t et d = t et d))))
     )
   }
 
-  def mkUUAMultiTweetNotificationEvent(tweetIds: Long*): UnifiedUserAction = {
-    mkUUATweetEvent(-1L).copy(
-      item = Item.NotificationInfo(
-        NotificationInfo(
-          actionNotificationId = "123456",
-          content = NotificationContent.MultiTweetNotification(
-            MultiTweetNotification(tweetIds = tweetIds))))
+  def mkUUAMult T etNot f cat onEvent(t et ds: Long*): Un f edUserAct on = {
+    mkUUAT etEvent(-1L).copy(
+       em =  em.Not f cat on nfo(
+        Not f cat on nfo(
+          act onNot f cat on d = "123456",
+          content = Not f cat onContent.Mult T etNot f cat on(
+            Mult T etNot f cat on(t et ds = t et ds))))
     )
   }
 
-  def mkUUATweetNotificationUnknownEvent(): UnifiedUserAction = {
-    mkUUATweetEvent(-1L).copy(
-      item = Item.NotificationInfo(
-        NotificationInfo(
-          actionNotificationId = "123456",
-          content = NotificationContent.UnknownNotification(UnknownNotification())))
+  def mkUUAT etNot f cat onUnknownEvent(): Un f edUserAct on = {
+    mkUUAT etEvent(-1L).copy(
+       em =  em.Not f cat on nfo(
+        Not f cat on nfo(
+          act onNot f cat on d = "123456",
+          content = Not f cat onContent.UnknownNot f cat on(UnknownNot f cat on())))
     )
   }
 
-  def mkUUAProfileEvent(userId: Long): UnifiedUserAction = {
-    val event = mkUUATweetEvent(1L)
-    event.copy(item = Item.ProfileInfo(ProfileInfo(userId)))
+  def mkUUAProf leEvent(user d: Long): Un f edUserAct on = {
+    val event = mkUUAT etEvent(1L)
+    event.copy( em =  em.Prof le nfo(Prof le nfo(user d)))
   }
 }

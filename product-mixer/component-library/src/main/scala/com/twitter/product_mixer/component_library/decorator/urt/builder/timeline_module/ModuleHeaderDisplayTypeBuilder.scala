@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
+package com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.t  l ne_module
 
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleHeaderDisplayTypeBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Classic
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleHeaderDisplayType
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder.t  l ne_module.BaseModule aderD splayTypeBu lder
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Class c
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.t  l ne_module.Module aderD splayType
+ mport com.tw ter.product_m xer.core.model.common.Cand dateW hFeatures
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
-case class ModuleHeaderDisplayTypeBuilder[
-  -Query <: PipelineQuery,
-  -Candidate <: UniversalNoun[Any]
+case class Module aderD splayTypeBu lder[
+  -Query <: P pel neQuery,
+  -Cand date <: Un versalNoun[Any]
 ](
-  moduleHeaderDisplayType: ModuleHeaderDisplayType = Classic)
-    extends BaseModuleHeaderDisplayTypeBuilder[Query, Candidate] {
+  module aderD splayType: Module aderD splayType = Class c)
+    extends BaseModule aderD splayTypeBu lder[Query, Cand date] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): ModuleHeaderDisplayType = moduleHeaderDisplayType
+    cand dates: Seq[Cand dateW hFeatures[Cand date]]
+  ): Module aderD splayType = module aderD splayType
 
 }

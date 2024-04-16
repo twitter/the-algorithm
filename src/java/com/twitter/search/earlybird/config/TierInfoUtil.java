@@ -1,78 +1,78 @@
-package com.twitter.search.earlybird.config;
+package com.tw ter.search.earlyb rd.conf g;
 
-import java.util.Comparator;
-import java.util.SortedSet;
+ mport java.ut l.Comparator;
+ mport java.ut l.SortedSet;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-public final class TierInfoUtil {
-  public static final Comparator<TierInfo> TIER_COMPARATOR = (t1, t2) -> {
+publ c f nal class T er nfoUt l {
+  publ c stat c f nal Comparator<T er nfo> T ER_COMPARATOR = (t1, t2) -> {
     // Reverse sort order based on date.
     return t2.getDataStartDate().compareTo(t1.getDataStartDate());
   };
 
-  private TierInfoUtil() {
+  pr vate T er nfoUt l() {
   }
 
   /**
-   * Checks that the serving ranges and the override serving ranges of the given tiers do not
-   * overlap, and do not have gaps. Dark reads tiers are ignored.
+   * C cks that t  serv ng ranges and t  overr de serv ng ranges of t  g ven t ers do not
+   * overlap, and do not have gaps. Dark reads t ers are  gnored.
    */
-  public static void checkTierServingRanges(SortedSet<TierInfo> tierInfos) {
-    boolean tierServingRangesOverlap = false;
-    boolean tierOverrideServingRangesOverlap = false;
-    boolean tierServingRangesHaveGaps = false;
-    boolean tierOverrideServingRangesHaveGaps = false;
+  publ c stat c vo d c ckT erServ ngRanges(SortedSet<T er nfo> t er nfos) {
+    boolean t erServ ngRangesOverlap = false;
+    boolean t erOverr deServ ngRangesOverlap = false;
+    boolean t erServ ngRangesHaveGaps = false;
+    boolean t erOverr deServ ngRangesHaveGaps = false;
 
-    TierInfoWrapper previousTierInfoWrapper = null;
-    TierInfoWrapper previousOverrideTierInfoWrapper = null;
-    for (TierInfo tierInfo : tierInfos) {
-      TierInfoWrapper tierInfoWrapper = new TierInfoWrapper(tierInfo, false);
-      TierInfoWrapper overrideTierInfoWrapper = new TierInfoWrapper(tierInfo, true);
+    T er nfoWrapper prev ousT er nfoWrapper = null;
+    T er nfoWrapper prev ousOverr deT er nfoWrapper = null;
+    for (T er nfo t er nfo : t er nfos) {
+      T er nfoWrapper t er nfoWrapper = new T er nfoWrapper(t er nfo, false);
+      T er nfoWrapper overr deT er nfoWrapper = new T er nfoWrapper(t er nfo, true);
 
-      // Check only the tiers to which we send light reads.
-      if (!tierInfoWrapper.isDarkRead()) {
-        if (previousTierInfoWrapper != null) {
-          if (TierInfoWrapper.servingRangesOverlap(previousTierInfoWrapper, tierInfoWrapper)) {
-            // In case of rebalancing, we may have an overlap data range while
-            // overriding with a good serving range.
-            if (previousOverrideTierInfoWrapper == null
-                || TierInfoWrapper.servingRangesOverlap(
-                       previousOverrideTierInfoWrapper, overrideTierInfoWrapper)) {
-              tierServingRangesOverlap = true;
+      // C ck only t  t ers to wh ch   send l ght reads.
+       f (!t er nfoWrapper. sDarkRead()) {
+         f (prev ousT er nfoWrapper != null) {
+           f (T er nfoWrapper.serv ngRangesOverlap(prev ousT er nfoWrapper, t er nfoWrapper)) {
+            //  n case of rebalanc ng,   may have an overlap data range wh le
+            // overr d ng w h a good serv ng range.
+             f (prev ousOverr deT er nfoWrapper == null
+                || T er nfoWrapper.serv ngRangesOverlap(
+                       prev ousOverr deT er nfoWrapper, overr deT er nfoWrapper)) {
+              t erServ ngRangesOverlap = true;
             }
           }
-          if (TierInfoWrapper.servingRangesHaveGap(previousTierInfoWrapper, tierInfoWrapper)) {
-            tierServingRangesHaveGaps = true;
+           f (T er nfoWrapper.serv ngRangesHaveGap(prev ousT er nfoWrapper, t er nfoWrapper)) {
+            t erServ ngRangesHaveGaps = true;
           }
         }
 
-        previousTierInfoWrapper = tierInfoWrapper;
+        prev ousT er nfoWrapper = t er nfoWrapper;
       }
 
-      if (!overrideTierInfoWrapper.isDarkRead()) {
-        if (previousOverrideTierInfoWrapper != null) {
-          if (TierInfoWrapper.servingRangesOverlap(previousOverrideTierInfoWrapper,
-                                                   overrideTierInfoWrapper)) {
-            tierOverrideServingRangesOverlap = true;
+       f (!overr deT er nfoWrapper. sDarkRead()) {
+         f (prev ousOverr deT er nfoWrapper != null) {
+           f (T er nfoWrapper.serv ngRangesOverlap(prev ousOverr deT er nfoWrapper,
+                                                   overr deT er nfoWrapper)) {
+            t erOverr deServ ngRangesOverlap = true;
           }
-          if (TierInfoWrapper.servingRangesHaveGap(previousOverrideTierInfoWrapper,
-                                                   overrideTierInfoWrapper)) {
-            tierOverrideServingRangesHaveGaps = true;
+           f (T er nfoWrapper.serv ngRangesHaveGap(prev ousOverr deT er nfoWrapper,
+                                                   overr deT er nfoWrapper)) {
+            t erOverr deServ ngRangesHaveGaps = true;
           }
         }
 
-        previousOverrideTierInfoWrapper = overrideTierInfoWrapper;
+        prev ousOverr deT er nfoWrapper = overr deT er nfoWrapper;
       }
     }
 
-    Preconditions.checkState(!tierServingRangesOverlap,
-                             "Serving ranges of light reads tiers must not overlap.");
-    Preconditions.checkState(!tierServingRangesHaveGaps,
-                             "Serving ranges of light reads tiers must not have gaps.");
-    Preconditions.checkState(!tierOverrideServingRangesOverlap,
-                             "Override serving ranges of light reads tiers must not overlap.");
-    Preconditions.checkState(!tierOverrideServingRangesHaveGaps,
-                             "Override serving ranges of light reads tiers must not have gaps.");
+    Precond  ons.c ckState(!t erServ ngRangesOverlap,
+                             "Serv ng ranges of l ght reads t ers must not overlap.");
+    Precond  ons.c ckState(!t erServ ngRangesHaveGaps,
+                             "Serv ng ranges of l ght reads t ers must not have gaps.");
+    Precond  ons.c ckState(!t erOverr deServ ngRangesOverlap,
+                             "Overr de serv ng ranges of l ght reads t ers must not overlap.");
+    Precond  ons.c ckState(!t erOverr deServ ngRangesHaveGaps,
+                             "Overr de serv ng ranges of l ght reads t ers must not have gaps.");
   }
 }

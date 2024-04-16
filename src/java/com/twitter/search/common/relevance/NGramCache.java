@@ -1,152 +1,152 @@
-package com.twitter.search.common.relevance;
+package com.tw ter.search.common.relevance;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+ mport java.ut l.Collect ons;
+ mport java.ut l.L st;
+ mport java.ut l.Locale;
+ mport java.ut l.Map;
+ mport java.ut l.Set;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.ImmutableList;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.cac .Cac Bu lder;
+ mport com.google.common.collect. mmutableL st;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.penguin.search.filter.StringMatchFilter;
-import com.twitter.util.Duration;
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers on;
+ mport com.tw ter.pengu n.search.f lter.Str ngMatchF lter;
+ mport com.tw ter.ut l.Durat on;
 
 /**
- * the Cache for Trends
+ * t  Cac  for Trends
  */
-public class NGramCache {
-  private static final int DEFAULT_MAX_CACHE_SIZE = 5000;
-  private static final long DEFAULT_CACHE_ITEM_TTL_SEC = 24 * 3600; // 1 day
+publ c class NGramCac  {
+  pr vate stat c f nal  nt DEFAULT_MAX_CACHE_S ZE = 5000;
+  pr vate stat c f nal long DEFAULT_CACHE_ TEM_TTL_SEC = 24 * 3600; // 1 day
 
-  private final PenguinVersion penguinVersion;
+  pr vate f nal Pengu nVers on pengu nVers on;
 
-  // Keys are trends. Values are empty strings.
-  private final Map<String, String> trendsCache;
+  // Keys are trends. Values are empty str ngs.
+  pr vate f nal Map<Str ng, Str ng> trendsCac ;
 
-  private volatile StringMatchFilter trendsMatcher = null;
+  pr vate volat le Str ngMatchF lter trendsMatc r = null;
 
   /**
-   * Extract Trends from a list of normalized tokens
+   * Extract Trends from a l st of normal zed tokens
    */
-  public List<String> extractTrendsFromNormalized(List<String> tokens) {
-    if (trendsMatcher == null) {
-      return Collections.emptyList();
+  publ c L st<Str ng> extractTrendsFromNormal zed(L st<Str ng> tokens) {
+     f (trendsMatc r == null) {
+      return Collect ons.emptyL st();
     }
 
-    ImmutableList.Builder<String> trends = ImmutableList.builder();
-    for (String trend : trendsMatcher.extractNormalized(tokens)) {
-      if (trendsCache.containsKey(trend)) {
+     mmutableL st.Bu lder<Str ng> trends =  mmutableL st.bu lder();
+    for (Str ng trend : trendsMatc r.extractNormal zed(tokens)) {
+       f (trendsCac .conta nsKey(trend)) {
         trends.add(trend);
       }
     }
 
-    return trends.build();
+    return trends.bu ld();
   }
 
   /**
-   * Extract Trends from a list of tokens
+   * Extract Trends from a l st of tokens
    */
-  public List<String> extractTrendsFrom(List<String> tokens, Locale language) {
-    if (trendsMatcher == null) {
-      return Collections.emptyList();
+  publ c L st<Str ng> extractTrendsFrom(L st<Str ng> tokens, Locale language) {
+     f (trendsMatc r == null) {
+      return Collect ons.emptyL st();
     }
-    return trendsMatcher.extract(language, tokens);
+    return trendsMatc r.extract(language, tokens);
   }
 
   /**
-   * Extract Trends from a given CharSequence
+   * Extract Trends from a g ven CharSequence
    */
-  public List<String> extractTrendsFrom(CharSequence text, Locale language) {
-    if (trendsMatcher == null) {
-      return Collections.emptyList();
+  publ c L st<Str ng> extractTrendsFrom(CharSequence text, Locale language) {
+     f (trendsMatc r == null) {
+      return Collect ons.emptyL st();
     }
 
-    ImmutableList.Builder<String> trends = ImmutableList.builder();
-    for (String trend : trendsMatcher.extract(language, text)) {
-      if (trendsCache.containsKey(trend)) {
+     mmutableL st.Bu lder<Str ng> trends =  mmutableL st.bu lder();
+    for (Str ng trend : trendsMatc r.extract(language, text)) {
+       f (trendsCac .conta nsKey(trend)) {
         trends.add(trend);
       }
     }
 
-    return trends.build();
+    return trends.bu ld();
   }
 
-  public long numTrendingTerms() {
-    return trendsCache.size();
+  publ c long numTrend ngTerms() {
+    return trendsCac .s ze();
   }
 
-  public Set<String> getTrends() {
-    return trendsCache.keySet();
+  publ c Set<Str ng> getTrends() {
+    return trendsCac .keySet();
   }
 
-  public void clear() {
-    trendsCache.clear();
-    trendsMatcher = null;
+  publ c vo d clear() {
+    trendsCac .clear();
+    trendsMatc r = null;
   }
 
-  /** Adds all trends to this NGramCache. */
-  public void addAll(Iterable<String> trends) {
-    for (String trend : trends) {
-      trendsCache.put(trend, "");
+  /** Adds all trends to t  NGramCac . */
+  publ c vo d addAll( erable<Str ng> trends) {
+    for (Str ng trend : trends) {
+      trendsCac .put(trend, "");
     }
 
-    trendsMatcher = new StringMatchFilter(trendsCache.keySet(), penguinVersion);
+    trendsMatc r = new Str ngMatchF lter(trendsCac .keySet(), pengu nVers on);
   }
 
-  public static Builder builder() {
-    return new Builder();
+  publ c stat c Bu lder bu lder() {
+    return new Bu lder();
   }
 
-  public static class Builder {
-    private int maxCacheSize = DEFAULT_MAX_CACHE_SIZE;
-    private long cacheItemTTLSecs = DEFAULT_CACHE_ITEM_TTL_SEC; // 1 day
-    private PenguinVersion penguinVersion = PenguinVersion.PENGUIN_4;
+  publ c stat c class Bu lder {
+    pr vate  nt maxCac S ze = DEFAULT_MAX_CACHE_S ZE;
+    pr vate long cac  emTTLSecs = DEFAULT_CACHE_ TEM_TTL_SEC; // 1 day
+    pr vate Pengu nVers on pengu nVers on = Pengu nVers on.PENGU N_4;
 
-    public Builder maxCacheSize(int cacheSize) {
-      this.maxCacheSize = cacheSize;
-      return this;
+    publ c Bu lder maxCac S ze( nt cac S ze) {
+      t .maxCac S ze = cac S ze;
+      return t ;
     }
 
-    public Builder cacheItemTTL(long cacheItemTTL) {
-      this.cacheItemTTLSecs = cacheItemTTL;
-      return this;
+    publ c Bu lder cac  emTTL(long cac  emTTL) {
+      t .cac  emTTLSecs = cac  emTTL;
+      return t ;
     }
 
-    public Builder penguinVersion(PenguinVersion newPenguinVersion) {
-      this.penguinVersion = Preconditions.checkNotNull(newPenguinVersion);
-      return this;
+    publ c Bu lder pengu nVers on(Pengu nVers on newPengu nVers on) {
+      t .pengu nVers on = Precond  ons.c ckNotNull(newPengu nVers on);
+      return t ;
     }
 
-    /** Builds an NGramCache instance. */
-    public NGramCache build() {
-      return new NGramCache(
-          maxCacheSize,
-          Duration.apply(cacheItemTTLSecs, TimeUnit.SECONDS),
-          penguinVersion);
+    /** Bu lds an NGramCac   nstance. */
+    publ c NGramCac  bu ld() {
+      return new NGramCac (
+          maxCac S ze,
+          Durat on.apply(cac  emTTLSecs, T  Un .SECONDS),
+          pengu nVers on);
     }
   }
 
-  // Should be used only in tests that want to mock out this class.
-  @VisibleForTesting
-  public NGramCache() {
-    this(DEFAULT_MAX_CACHE_SIZE,
-         Duration.apply(DEFAULT_CACHE_ITEM_TTL_SEC, TimeUnit.SECONDS),
-         PenguinVersion.PENGUIN_4);
+  // Should be used only  n tests that want to mock out t  class.
+  @V s bleForTest ng
+  publ c NGramCac () {
+    t (DEFAULT_MAX_CACHE_S ZE,
+         Durat on.apply(DEFAULT_CACHE_ TEM_TTL_SEC, T  Un .SECONDS),
+         Pengu nVers on.PENGU N_4);
   }
 
-  private NGramCache(int maxCacheSize, Duration cacheItemTTL, PenguinVersion penguinVersion) {
-    // we only have 1 refresher thread that writes to the cache
-    this.trendsCache = CacheBuilder.newBuilder()
+  pr vate NGramCac ( nt maxCac S ze, Durat on cac  emTTL, Pengu nVers on pengu nVers on) {
+    //   only have 1 refres r thread that wr es to t  cac 
+    t .trendsCac  = Cac Bu lder.newBu lder()
         .concurrencyLevel(1)
-        .expireAfterWrite(cacheItemTTL.inSeconds(), TimeUnit.SECONDS)
-        .maximumSize(maxCacheSize)
-        .<String, String>build()
+        .exp reAfterWr e(cac  emTTL. nSeconds(), T  Un .SECONDS)
+        .max mumS ze(maxCac S ze)
+        .<Str ng, Str ng>bu ld()
         .asMap();
-    this.penguinVersion = penguinVersion;
+    t .pengu nVers on = pengu nVers on;
   }
 }

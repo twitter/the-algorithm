@@ -1,13 +1,13 @@
-create_thrift_libraries(
-    base_name = "media-entity",
-    sources = ["media_entity.thrift"],
+create_thr ft_l brar es(
+    base_na  = " d a-ent y",
+    s ces = [" d a_ent y.thr ft"],
     platform = "java8",
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
     dependency_roots = [
-        "mediaservices/commons/src/main/thrift",
+        " d aserv ces/commons/src/ma n/thr ft",
     ],
     export_roots = [
-        "mediaservices/commons/src/main/thrift:thrift",
+        " d aserv ces/commons/src/ma n/thr ft:thr ft",
     ],
     generate_languages = [
         "go",
@@ -18,15 +18,15 @@ create_thrift_libraries(
         "scala",
         "strato",
     ],
-    provides_java_name = "tweetypie-media-entity-thrift-java",
-    provides_scala_name = "tweetypie-media-entity-thrift-scala",
+    prov des_java_na  = "t etyp e- d a-ent y-thr ft-java",
+    prov des_scala_na  = "t etyp e- d a-ent y-thr ft-scala",
 )
 
-create_thrift_libraries(
-    base_name = "edit-control",
-    sources = ["edit_control.thrift"],
+create_thr ft_l brar es(
+    base_na  = "ed -control",
+    s ces = ["ed _control.thr ft"],
     platform = "java8",
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
     generate_languages = [
         "go",
         "java",
@@ -36,15 +36,15 @@ create_thrift_libraries(
         "scala",
         "strato",
     ],
-    provides_java_name = "tweetypie-edit-control-thrift-java",
-    provides_scala_name = "tweetypie-edit-control-thrift-scala",
+    prov des_java_na  = "t etyp e-ed -control-thr ft-java",
+    prov des_scala_na  = "t etyp e-ed -control-thr ft-scala",
 )
 
-create_thrift_libraries(
-    base_name = "api-fields",
-    sources = ["api_fields.thrift"],
+create_thr ft_l brar es(
+    base_na  = "ap -f elds",
+    s ces = ["ap _f elds.thr ft"],
     platform = "java8",
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
     generate_languages = [
         "go",
         "java",
@@ -54,15 +54,15 @@ create_thrift_libraries(
         "scala",
         "strato",
     ],
-    provides_java_name = "tweetypie-api-fields-thrift-java",
-    provides_scala_name = "tweetypie-api-fields-thrift-scala",
+    prov des_java_na  = "t etyp e-ap -f elds-thr ft-java",
+    prov des_scala_na  = "t etyp e-ap -f elds-thr ft-scala",
 )
 
-create_thrift_libraries(
-    base_name = "note-tweet",
-    sources = ["note_tweet.thrift"],
+create_thr ft_l brar es(
+    base_na  = "note-t et",
+    s ces = ["note_t et.thr ft"],
     platform = "java8",
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
     generate_languages = [
         "go",
         "java",
@@ -72,57 +72,57 @@ create_thrift_libraries(
         "scala",
         "strato",
     ],
-    provides_java_name = "tweetypie-note-tweet-thrift-java",
-    provides_scala_name = "tweetypie-note-tweet-thrift-scala",
+    prov des_java_na  = "t etyp e-note-t et-thr ft-java",
+    prov des_scala_na  = "t etyp e-note-t et-thr ft-scala",
 )
 
-create_thrift_libraries(
-    base_name = "tweet",
-    sources = [
-        "creative-entity-enrichments/creative_entity_enrichments.thrift",
-        "geo/tweet_location_info.thrift",
-        "media/media_ref.thrift",
-        "tweet.thrift",
-        "unmentions/unmentions.thrift",
+create_thr ft_l brar es(
+    base_na  = "t et",
+    s ces = [
+        "creat ve-ent y-enr ch nts/creat ve_ent y_enr ch nts.thr ft",
+        "geo/t et_locat on_ nfo.thr ft",
+        " d a/ d a_ref.thr ft",
+        "t et.thr ft",
+        "un nt ons/un nt ons.thr ft",
     ],
     platform = "java8",
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
     dependency_roots = [
-        ":api-fields",
-        ":edit-control",
-        ":media-entity",
-        ":note-tweet",
-        "mediaservices/commons/src/main/thrift",
-        "src/thrift/com/twitter/content-health/toxicreplyfilter",
-        "src/thrift/com/twitter/dataproducts:enrichments_profilegeo",
-        "src/thrift/com/twitter/escherbird:tweet-annotation",
-        "src/thrift/com/twitter/expandodo:cards",
-        "src/thrift/com/twitter/geoduck",
-        "src/thrift/com/twitter/service/scarecrow/gen:tiered-actions",
-        "src/thrift/com/twitter/spam/rtf:safety-label",
-        "src/thrift/com/twitter/timelines/self_thread:thrift",
-        "src/thrift/com/twitter/tseng/withholding:thrift",
-        "src/thrift/com/twitter/tweet_pivots:tweet-pivots",
-        "strato/config/src/thrift/com/twitter/strato/columns/creative_entity_enrichments",
-        "unified-cards/thrift/src/main/thrift:thrift-contract",
+        ":ap -f elds",
+        ":ed -control",
+        ": d a-ent y",
+        ":note-t et",
+        " d aserv ces/commons/src/ma n/thr ft",
+        "src/thr ft/com/tw ter/content- alth/tox creplyf lter",
+        "src/thr ft/com/tw ter/dataproducts:enr ch nts_prof legeo",
+        "src/thr ft/com/tw ter/esc rb rd:t et-annotat on",
+        "src/thr ft/com/tw ter/expandodo:cards",
+        "src/thr ft/com/tw ter/geoduck",
+        "src/thr ft/com/tw ter/serv ce/scarecrow/gen:t ered-act ons",
+        "src/thr ft/com/tw ter/spam/rtf:safety-label",
+        "src/thr ft/com/tw ter/t  l nes/self_thread:thr ft",
+        "src/thr ft/com/tw ter/tseng/w hhold ng:thr ft",
+        "src/thr ft/com/tw ter/t et_p vots:t et-p vots",
+        "strato/conf g/src/thr ft/com/tw ter/strato/columns/creat ve_ent y_enr ch nts",
+        "un f ed-cards/thr ft/src/ma n/thr ft:thr ft-contract",
     ],
     export_roots = [
-        ":api-fields",
-        ":edit-control",
-        ":media-entity",
-        ":note-tweet",
-        "mediaservices/commons/src/main/thrift:thrift",
-        "src/thrift/com/twitter/content-health/toxicreplyfilter",
-        "src/thrift/com/twitter/dataproducts:enrichments_profilegeo",
-        "src/thrift/com/twitter/escherbird:tweet-annotation",
-        "src/thrift/com/twitter/expandodo:cards",
-        "src/thrift/com/twitter/geoduck:geoduck",
-        "src/thrift/com/twitter/service/scarecrow/gen:tiered-actions",
-        "src/thrift/com/twitter/spam/rtf:safety-label",
-        "src/thrift/com/twitter/timelines/self_thread:thrift",
-        "src/thrift/com/twitter/tseng/withholding:thrift",
-        "src/thrift/com/twitter/tweet_pivots:tweet-pivots",
-        "strato/config/src/thrift/com/twitter/strato/columns/creative_entity_enrichments",
+        ":ap -f elds",
+        ":ed -control",
+        ": d a-ent y",
+        ":note-t et",
+        " d aserv ces/commons/src/ma n/thr ft:thr ft",
+        "src/thr ft/com/tw ter/content- alth/tox creplyf lter",
+        "src/thr ft/com/tw ter/dataproducts:enr ch nts_prof legeo",
+        "src/thr ft/com/tw ter/esc rb rd:t et-annotat on",
+        "src/thr ft/com/tw ter/expandodo:cards",
+        "src/thr ft/com/tw ter/geoduck:geoduck",
+        "src/thr ft/com/tw ter/serv ce/scarecrow/gen:t ered-act ons",
+        "src/thr ft/com/tw ter/spam/rtf:safety-label",
+        "src/thr ft/com/tw ter/t  l nes/self_thread:thr ft",
+        "src/thr ft/com/tw ter/tseng/w hhold ng:thr ft",
+        "src/thr ft/com/tw ter/t et_p vots:t et-p vots",
+        "strato/conf g/src/thr ft/com/tw ter/strato/columns/creat ve_ent y_enr ch nts",
     ],
     generate_languages = [
         "go",
@@ -132,45 +132,45 @@ create_thrift_libraries(
         "scala",
         "strato",
     ],
-    provides_java_name = "tweetypie-tweet-thrift-java",
-    provides_python_name = "tweetypie-tweet-thrift-python",
-    provides_scala_name = "tweetypie-tweet-thrift-scala",
+    prov des_java_na  = "t etyp e-t et-thr ft-java",
+    prov des_python_na  = "t etyp e-t et-thr ft-python",
+    prov des_scala_na  = "t etyp e-t et-thr ft-scala",
 )
 
-create_thrift_libraries(
-    base_name = "service",
-    sources = [
-        "deleted_tweet.thrift",
-        "tweet_service.thrift",
+create_thr ft_l brar es(
+    base_na  = "serv ce",
+    s ces = [
+        "deleted_t et.thr ft",
+        "t et_serv ce.thr ft",
     ],
     platform = "java8",
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
     dependency_roots = [
-        ":audit",
-        ":transient_context",
-        ":tweet",
-        "carousel/service/thrift:service",
-        "incentives/jiminy/src/main/thrift/com/twitter/incentives/jiminy:thrift",
-        "mediaservices/commons/src/main/thrift",
-        "src/thrift/com/twitter/bouncer:bounce-action-thrift",
-        "src/thrift/com/twitter/context:feature-context",
-        "src/thrift/com/twitter/servo:servo-exception",
-        "src/thrift/com/twitter/spam/features:safety-meta-data",
-        "src/thrift/com/twitter/spam/rtf:safety-label",
-        "src/thrift/com/twitter/spam/rtf:safety-level",
-        "src/thrift/com/twitter/spam/rtf:safety-result",
-        "src/thrift/com/twitter/tseng/withholding:thrift",
+        ":aud ",
+        ":trans ent_context",
+        ":t et",
+        "carousel/serv ce/thr ft:serv ce",
+        " ncent ves/j m ny/src/ma n/thr ft/com/tw ter/ ncent ves/j m ny:thr ft",
+        " d aserv ces/commons/src/ma n/thr ft",
+        "src/thr ft/com/tw ter/bouncer:bounce-act on-thr ft",
+        "src/thr ft/com/tw ter/context:feature-context",
+        "src/thr ft/com/tw ter/servo:servo-except on",
+        "src/thr ft/com/tw ter/spam/features:safety- ta-data",
+        "src/thr ft/com/tw ter/spam/rtf:safety-label",
+        "src/thr ft/com/tw ter/spam/rtf:safety-level",
+        "src/thr ft/com/tw ter/spam/rtf:safety-result",
+        "src/thr ft/com/tw ter/tseng/w hhold ng:thr ft",
     ],
     export_roots = [
-        ":transient_context",
-        ":tweet",
-        "carousel/service/thrift:service",
-        "incentives/jiminy/src/main/thrift/com/twitter/incentives/jiminy:thrift",
-        "src/thrift/com/twitter/bouncer:bounce-action-thrift",
-        "src/thrift/com/twitter/context:feature-context",
-        "src/thrift/com/twitter/spam/features:safety-meta-data",
-        "src/thrift/com/twitter/spam/rtf:safety-level",
-        "src/thrift/com/twitter/spam/rtf:safety-result",
+        ":trans ent_context",
+        ":t et",
+        "carousel/serv ce/thr ft:serv ce",
+        " ncent ves/j m ny/src/ma n/thr ft/com/tw ter/ ncent ves/j m ny:thr ft",
+        "src/thr ft/com/tw ter/bouncer:bounce-act on-thr ft",
+        "src/thr ft/com/tw ter/context:feature-context",
+        "src/thr ft/com/tw ter/spam/features:safety- ta-data",
+        "src/thr ft/com/tw ter/spam/rtf:safety-level",
+        "src/thr ft/com/tw ter/spam/rtf:safety-result",
     ],
     generate_languages = [
         "go",
@@ -179,30 +179,30 @@ create_thrift_libraries(
         "scala",
         "strato",
     ],
-    provides_java_name = "tweetypie-service-thrift-java",
-    provides_python_name = "tweetypie-service-thrift-python",
-    provides_scala_name = "tweetypie-service-thrift-scala",
+    prov des_java_na  = "t etyp e-serv ce-thr ft-java",
+    prov des_python_na  = "t etyp e-serv ce-thr ft-python",
+    prov des_scala_na  = "t etyp e-serv ce-thr ft-scala",
 )
 
-create_thrift_libraries(
-    base_name = "events",
-    sources = [
-        "retweet_archival_event.thrift",
-        "tweet_events.thrift",
+create_thr ft_l brar es(
+    base_na  = "events",
+    s ces = [
+        "ret et_arch val_event.thr ft",
+        "t et_events.thr ft",
     ],
     platform = "java8",
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
     dependency_roots = [
-        ":audit",
-        ":transient_context",
-        ":tweet",
-        "src/thrift/com/twitter/gizmoduck:user-thrift",
+        ":aud ",
+        ":trans ent_context",
+        ":t et",
+        "src/thr ft/com/tw ter/g zmoduck:user-thr ft",
     ],
     export_roots = [
-        ":audit",
-        ":transient_context",
-        ":tweet",
-        "src/thrift/com/twitter/gizmoduck:user-thrift",
+        ":aud ",
+        ":trans ent_context",
+        ":t et",
+        "src/thr ft/com/tw ter/g zmoduck:user-thr ft",
     ],
     generate_languages = [
         "java",
@@ -210,15 +210,15 @@ create_thrift_libraries(
         "scala",
         "strato",
     ],
-    provides_java_name = "tweetypie-events-thrift-java",
-    provides_scala_name = "tweetypie-events-thrift-scala",
+    prov des_java_na  = "t etyp e-events-thr ft-java",
+    prov des_scala_na  = "t etyp e-events-thr ft-scala",
 )
 
-create_thrift_libraries(
-    base_name = "audit",
-    sources = ["tweet_audit.thrift"],
+create_thr ft_l brar es(
+    base_na  = "aud ",
+    s ces = ["t et_aud .thr ft"],
     platform = "java8",
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
     generate_languages = [
         "go",
         "java",
@@ -227,22 +227,22 @@ create_thrift_libraries(
         "scala",
         "strato",
     ],
-    provides_java_name = "tweetypie-audit-thrift-java",
-    provides_scala_name = "tweetypie-audit-thrift-scala",
+    prov des_java_na  = "t etyp e-aud -thr ft-java",
+    prov des_scala_na  = "t etyp e-aud -thr ft-scala",
 )
 
-create_thrift_libraries(
-    base_name = "deprecated",
-    sources = ["deprecated.thrift"],
+create_thr ft_l brar es(
+    base_na  = "deprecated",
+    s ces = ["deprecated.thr ft"],
     platform = "java8",
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
     dependency_roots = [
-        ":service",
-        ":tweet",
-        "mediaservices/commons/src/main/thrift",
-        "src/thrift/com/twitter/expandodo:cards",
-        "src/thrift/com/twitter/gizmoduck:user-thrift",
-        "tweetypie/common/src/thrift/com/twitter/tweetypie:media-entity",
+        ":serv ce",
+        ":t et",
+        " d aserv ces/commons/src/ma n/thr ft",
+        "src/thr ft/com/tw ter/expandodo:cards",
+        "src/thr ft/com/tw ter/g zmoduck:user-thr ft",
+        "t etyp e/common/src/thr ft/com/tw ter/t etyp e: d a-ent y",
     ],
     generate_languages = [
         "java",
@@ -250,25 +250,25 @@ create_thrift_libraries(
         "scala",
         "strato",
     ],
-    provides_java_name = "tweetypie-deprecated-thrift-java",
-    provides_scala_name = "tweetypie-deprecated-thrift-scala",
+    prov des_java_na  = "t etyp e-deprecated-thr ft-java",
+    prov des_scala_na  = "t etyp e-deprecated-thr ft-scala",
 )
 
-create_thrift_libraries(
-    base_name = "delete_location_data",
-    sources = ["delete_location_data.thrift"],
-    tags = ["bazel-compatible"],
-    provides_java_name = "delete-location-data-java",
-    provides_scala_name = "delete-location-data-scala",
+create_thr ft_l brar es(
+    base_na  = "delete_locat on_data",
+    s ces = ["delete_locat on_data.thr ft"],
+    tags = ["bazel-compat ble"],
+    prov des_java_na  = "delete-locat on-data-java",
+    prov des_scala_na  = "delete-locat on-data-scala",
 )
 
-create_thrift_libraries(
-    base_name = "transient_context",
-    sources = ["transient_context.thrift"],
+create_thr ft_l brar es(
+    base_na  = "trans ent_context",
+    s ces = ["trans ent_context.thr ft"],
     platform = "java8",
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
     dependency_roots = [
-        ":tweet",
+        ":t et",
     ],
     generate_languages = [
         "go",
@@ -278,76 +278,76 @@ create_thrift_libraries(
         "scala",
         "strato",
     ],
-    provides_java_name = "transient-context-java",
-    provides_scala_name = "transient-context-scala",
+    prov des_java_na  = "trans ent-context-java",
+    prov des_scala_na  = "trans ent-context-scala",
 )
 
-create_thrift_libraries(
-    base_name = "tweet_comparison_service",
-    sources = ["tweet_comparison_service.thrift"],
-    tags = ["bazel-compatible"],
+create_thr ft_l brar es(
+    base_na  = "t et_compar son_serv ce",
+    s ces = ["t et_compar son_serv ce.thr ft"],
+    tags = ["bazel-compat ble"],
     dependency_roots = [
-        ":service",
-        "src/thrift/com/twitter/context:twitter-context",
+        ":serv ce",
+        "src/thr ft/com/tw ter/context:tw ter-context",
     ],
     generate_languages = [
         "java",
         "scala",
     ],
-    provides_java_name = "tweet-comparison-service-thrift-java",
-    provides_scala_name = "tweet-comparison-service-thrift-scala",
+    prov des_java_na  = "t et-compar son-serv ce-thr ft-java",
+    prov des_scala_na  = "t et-compar son-serv ce-thr ft-scala",
 )
 
-create_thrift_libraries(
-    base_name = "tweet_service_graphql",
-    sources = ["tweet_service_graphql.thrift"],
+create_thr ft_l brar es(
+    base_na  = "t et_serv ce_graphql",
+    s ces = ["t et_serv ce_graphql.thr ft"],
     platform = "java8",
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
     dependency_roots = [
-        "src/thrift/com/twitter/ads/callback:engagement_request",
-        "strato/config/src/thrift/com/twitter/strato/graphql",
+        "src/thr ft/com/tw ter/ads/callback:engage nt_request",
+        "strato/conf g/src/thr ft/com/tw ter/strato/graphql",
     ],
     generate_languages = [
         "scala",
         "strato",
     ],
-    provides_scala_name = "tweet-service-graphql-scala",
+    prov des_scala_na  = "t et-serv ce-graphql-scala",
 )
 
-create_thrift_libraries(
-    base_name = "stored-tweet-info",
-    sources = [
-        "stored_tweet_info.thrift",
+create_thr ft_l brar es(
+    base_na  = "stored-t et- nfo",
+    s ces = [
+        "stored_t et_ nfo.thr ft",
     ],
     platform = "java8",
-    tags = ["bazel-compatible"],
+    tags = ["bazel-compat ble"],
     dependency_roots = [
-        ":tweet",
-    ],
-    generate_languages = [
-        "java",
-        "scala",
-        "strato",
-    ],
-    provides_java_name = "tweetypie-stored-tweet-info-thrift-java",
-    provides_scala_name = "tweetypie-stored-tweet-info-thrift-scala",
-)
-
-create_thrift_libraries(
-    base_name = "tweet-service-federated",
-    sources = [
-        "tweet_service_federated.thrift",
-    ],
-    platform = "java8",
-    tags = ["bazel-compatible"],
-    dependency_roots = [
-        ":stored-tweet-info",
+        ":t et",
     ],
     generate_languages = [
         "java",
         "scala",
         "strato",
     ],
-    provides_java_name = "tweetypie-service-federated-thrift-java",
-    provides_scala_name = "tweetypie-service-federated-thrift-scala",
+    prov des_java_na  = "t etyp e-stored-t et- nfo-thr ft-java",
+    prov des_scala_na  = "t etyp e-stored-t et- nfo-thr ft-scala",
+)
+
+create_thr ft_l brar es(
+    base_na  = "t et-serv ce-federated",
+    s ces = [
+        "t et_serv ce_federated.thr ft",
+    ],
+    platform = "java8",
+    tags = ["bazel-compat ble"],
+    dependency_roots = [
+        ":stored-t et- nfo",
+    ],
+    generate_languages = [
+        "java",
+        "scala",
+        "strato",
+    ],
+    prov des_java_na  = "t etyp e-serv ce-federated-thr ft-java",
+    prov des_scala_na  = "t etyp e-serv ce-federated-thr ft-scala",
 )

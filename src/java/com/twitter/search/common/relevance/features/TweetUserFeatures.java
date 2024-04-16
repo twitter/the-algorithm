@@ -1,114 +1,114 @@
-package com.twitter.search.common.relevance.features;
+package com.tw ter.search.common.relevance.features;
 
-import java.util.Map;
+ mport java.ut l.Map;
 
-public class TweetUserFeatures {
-  private String lang;
-  private double langConfidence;
-  private int followers;
-  private int following;
-  private int reputation;
-  private int tweets;
-  private int retweets;
-  private int retweeted;
-  private Map<String, Double> knownForTopics;
-  private boolean isSpam;
-  private boolean isNsfw;
-  private boolean isBot;
+publ c class T etUserFeatures {
+  pr vate Str ng lang;
+  pr vate double langConf dence;
+  pr vate  nt follo rs;
+  pr vate  nt follow ng;
+  pr vate  nt reputat on;
+  pr vate  nt t ets;
+  pr vate  nt ret ets;
+  pr vate  nt ret eted;
+  pr vate Map<Str ng, Double> knownForTop cs;
+  pr vate boolean  sSpam;
+  pr vate boolean  sNsfw;
+  pr vate boolean  sBot;
 
-  public String getLang() {
+  publ c Str ng getLang() {
     return lang;
   }
 
-  public void setLang(String lang) {
-    this.lang = lang;
+  publ c vo d setLang(Str ng lang) {
+    t .lang = lang;
   }
 
-  public double getLangConfidence() {
-    return langConfidence;
+  publ c double getLangConf dence() {
+    return langConf dence;
   }
 
-  public void setLangConfidence(double langConfidence) {
-    this.langConfidence = langConfidence;
+  publ c vo d setLangConf dence(double langConf dence) {
+    t .langConf dence = langConf dence;
   }
 
-  public int getFollowers() {
-    return followers;
+  publ c  nt getFollo rs() {
+    return follo rs;
   }
 
-  public void setFollowers(int followers) {
-    this.followers = followers;
+  publ c vo d setFollo rs( nt follo rs) {
+    t .follo rs = follo rs;
   }
 
-  public int getFollowing() {
-    return following;
+  publ c  nt getFollow ng() {
+    return follow ng;
   }
 
-  public void setFollowing(int following) {
-    this.following = following;
+  publ c vo d setFollow ng( nt follow ng) {
+    t .follow ng = follow ng;
   }
 
-  public int getReputation() {
-    return reputation;
+  publ c  nt getReputat on() {
+    return reputat on;
   }
 
-  public void setReputation(int reputation) {
-    this.reputation = reputation;
+  publ c vo d setReputat on( nt reputat on) {
+    t .reputat on = reputat on;
   }
 
-  public int getTweets() {
-    return tweets;
+  publ c  nt getT ets() {
+    return t ets;
   }
 
-  public void setTweets(int tweets) {
-    this.tweets = tweets;
+  publ c vo d setT ets( nt t ets) {
+    t .t ets = t ets;
   }
 
-  public int getRetweets() {
-    return retweets;
+  publ c  nt getRet ets() {
+    return ret ets;
   }
 
-  public void setRetweets(int retweets) {
-    this.retweets = retweets;
+  publ c vo d setRet ets( nt ret ets) {
+    t .ret ets = ret ets;
   }
 
-  public int getRetweeted() {
-    return retweeted;
+  publ c  nt getRet eted() {
+    return ret eted;
   }
 
-  public void setRetweeted(int retweeted) {
-    this.retweeted = retweeted;
+  publ c vo d setRet eted( nt ret eted) {
+    t .ret eted = ret eted;
   }
 
-  public Map<String, Double> getKnownForTopics() {
-    return knownForTopics;
+  publ c Map<Str ng, Double> getKnownForTop cs() {
+    return knownForTop cs;
   }
 
-  public void setKnownForTopics(Map<String, Double> knownForTopics) {
-    this.knownForTopics = knownForTopics;
+  publ c vo d setKnownForTop cs(Map<Str ng, Double> knownForTop cs) {
+    t .knownForTop cs = knownForTop cs;
   }
 
-  public boolean isSpam() {
-    return isSpam;
+  publ c boolean  sSpam() {
+    return  sSpam;
   }
 
-  public void setSpam(boolean spam) {
-    isSpam = spam;
+  publ c vo d setSpam(boolean spam) {
+     sSpam = spam;
   }
 
-  public boolean isNsfw() {
-    return isNsfw;
+  publ c boolean  sNsfw() {
+    return  sNsfw;
   }
 
-  public void setNsfw(boolean nsfw) {
-    isNsfw = nsfw;
+  publ c vo d setNsfw(boolean nsfw) {
+     sNsfw = nsfw;
   }
 
-  public boolean isBot() {
-    return isBot;
+  publ c boolean  sBot() {
+    return  sBot;
   }
 
-  public void setBot(boolean bot) {
-    isBot = bot;
+  publ c vo d setBot(boolean bot) {
+     sBot = bot;
   }
 }

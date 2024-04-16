@@ -1,72 +1,72 @@
-package com.twitter.simclusters_v2.score
+package com.tw ter.s mclusters_v2.score
 
-import com.twitter.simclusters_v2.thriftscala.{Score => ThriftScore, ScoreId => ThriftScoreId}
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+ mport com.tw ter.s mclusters_v2.thr ftscala.{Score => Thr ftScore, Score d => Thr ftScore d}
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.ut l.Future
 
 /**
- * A Score Store is a readableStore with ScoreId as Key and Score as the Value.
- * It also needs to include the algorithm type.
- * A algorithm type should only be used by one Score Store in the application.
+ * A Score Store  s a readableStore w h Score d as Key and Score as t  Value.
+ *   also needs to  nclude t  algor hm type.
+ * A algor hm type should only be used by one Score Store  n t  appl cat on.
  */
-trait ScoreStore[K <: ScoreId] extends ReadableStore[K, Score] {
+tra  ScoreStore[K <: Score d] extends ReadableStore[K, Score] {
 
-  def fromThriftScoreId: ThriftScoreId => K
+  def fromThr ftScore d: Thr ftScore d => K
 
-  // Convert to a Thrift version.
-  def toThriftStore: ReadableStore[ThriftScoreId, ThriftScore] = {
-    this
-      .composeKeyMapping[ThriftScoreId](fromThriftScoreId)
-      .mapValues(_.toThrift)
+  // Convert to a Thr ft vers on.
+  def toThr ftStore: ReadableStore[Thr ftScore d, Thr ftScore] = {
+    t 
+      .composeKeyMapp ng[Thr ftScore d](fromThr ftScore d)
+      .mapValues(_.toThr ft)
   }
 }
 
 /**
- * A generic Pairwise Score store.
- * Requires provide both left and right side feature hydration.
+ * A gener c Pa rw se Score store.
+ * Requ res prov de both left and r ght s de feature hydrat on.
  */
-trait PairScoreStore[K <: PairScoreId, K1, K2, V1, V2] extends ScoreStore[K] {
+tra  Pa rScoreStore[K <: Pa rScore d, K1, K2, V1, V2] extends ScoreStore[K] {
 
-  def compositeKey1: K => K1
-  def compositeKey2: K => K2
+  def compos eKey1: K => K1
+  def compos eKey2: K => K2
 
-  // Left side feature hydration
-  def underlyingStore1: ReadableStore[K1, V1]
+  // Left s de feature hydrat on
+  def underly ngStore1: ReadableStore[K1, V1]
 
-  // Right side feature hydration
-  def underlyingStore2: ReadableStore[K2, V2]
+  // R ght s de feature hydrat on
+  def underly ngStore2: ReadableStore[K2, V2]
 
-  def score: (V1, V2) => Future[Option[Double]]
+  def score: (V1, V2) => Future[Opt on[Double]]
 
-  override def get(k: K): Future[Option[Score]] = {
+  overr de def get(k: K): Future[Opt on[Score]] = {
     for {
       vs <-
-        Future.join(underlyingStore1.get(compositeKey1(k)), underlyingStore2.get(compositeKey2(k)))
+        Future.jo n(underly ngStore1.get(compos eKey1(k)), underly ngStore2.get(compos eKey2(k)))
       v <- vs match {
-        case (Some(v1), Some(v2)) =>
+        case (So (v1), So (v2)) =>
           score(v1, v2)
         case _ =>
           Future.None
       }
-    } yield {
-      v.map(buildScore)
+    } y eld {
+      v.map(bu ldScore)
     }
   }
 
-  override def multiGet[KK <: K](ks: Set[KK]): Map[KK, Future[Option[Score]]] = {
+  overr de def mult Get[KK <: K](ks: Set[KK]): Map[KK, Future[Opt on[Score]]] = {
 
-    val v1Map = underlyingStore1.multiGet(ks.map { k => compositeKey1(k) })
-    val v2Map = underlyingStore2.multiGet(ks.map { k => compositeKey2(k) })
+    val v1Map = underly ngStore1.mult Get(ks.map { k => compos eKey1(k) })
+    val v2Map = underly ngStore2.mult Get(ks.map { k => compos eKey2(k) })
 
     ks.map { k =>
-      k -> Future.join(v1Map(compositeKey1(k)), v2Map(compositeKey2(k))).flatMap {
-        case (Some(v1), Some(v2)) =>
-          score(v1, v2).map(_.map(buildScore))
+      k -> Future.jo n(v1Map(compos eKey1(k)), v2Map(compos eKey2(k))).flatMap {
+        case (So (v1), So (v2)) =>
+          score(v1, v2).map(_.map(bu ldScore))
         case _ =>
           Future.value(None)
       }
     }.toMap
   }
 
-  private def buildScore(v: Double): Score = Score(v)
+  pr vate def bu ldScore(v: Double): Score = Score(v)
 }

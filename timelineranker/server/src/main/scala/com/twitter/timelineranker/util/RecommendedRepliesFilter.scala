@@ -1,28 +1,28 @@
-package com.twitter.timelineranker.util
+package com.tw ter.t  l neranker.ut l
 
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.model.tweet.HydratedTweet
+ mport com.tw ter.t  l nes.model.User d
+ mport com.tw ter.t  l nes.model.t et.HydratedT et
 
-object RecommendedRepliesFilter {
-  private[util] def isRecommendedReply(
-    tweet: HydratedTweet,
-    followedUserIds: Seq[UserId]
+object Recom ndedRepl esF lter {
+  pr vate[ut l] def  sRecom ndedReply(
+    t et: HydratedT et,
+    follo dUser ds: Seq[User d]
   ): Boolean = {
-    tweet.hasReply && tweet.inReplyToTweetId.nonEmpty &&
-    (!followedUserIds.contains(tweet.userId))
+    t et.hasReply && t et. nReplyToT et d.nonEmpty &&
+    (!follo dUser ds.conta ns(t et.user d))
   }
 
-  private[util] def isRecommendedReplyToNotFollowedUser(
-    tweet: HydratedTweet,
-    viewingUserId: UserId,
-    followedUserIds: Seq[UserId],
-    mutedUserIds: Set[UserId]
+  pr vate[ut l] def  sRecom ndedReplyToNotFollo dUser(
+    t et: HydratedT et,
+    v ew ngUser d: User d,
+    follo dUser ds: Seq[User d],
+    mutedUser ds: Set[User d]
   ): Boolean = {
-    val isValidRecommendedReply =
-      !tweet.isRetweet &&
-        tweet.inReplyToUserId.exists(followedUserIds.contains(_)) &&
-        !mutedUserIds.contains(tweet.userId)
+    val  sVal dRecom ndedReply =
+      !t et. sRet et &&
+        t et. nReplyToUser d.ex sts(follo dUser ds.conta ns(_)) &&
+        !mutedUser ds.conta ns(t et.user d)
 
-    isRecommendedReply(tweet, followedUserIds) && !isValidRecommendedReply
+     sRecom ndedReply(t et, follo dUser ds) && ! sVal dRecom ndedReply
   }
 }

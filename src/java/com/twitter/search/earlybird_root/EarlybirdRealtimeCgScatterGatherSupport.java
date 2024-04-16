@@ -1,21 +1,21 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import javax.inject.Inject;
+ mport javax. nject. nject;
 
-import com.twitter.search.common.partitioning.base.PartitionMappingManager;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
+ mport com.tw ter.search.common.part  on ng.base.Part  onMapp ngManager;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdFeatureSc ma rger;
 
 /**
- * The EarlybirdServiceScatterGatherSupport implementation used to fan out requests to the earlybird
- * partitions in the realtime_cg cluster.
+ * T  Earlyb rdServ ceScatterGat rSupport  mple ntat on used to fan out requests to t  earlyb rd
+ * part  ons  n t  realt  _cg cluster.
  */
-public class EarlybirdRealtimeCgScatterGatherSupport extends EarlybirdServiceScatterGatherSupport {
-  /** Creates a new EarlybirdRealtimeCgScatterGatherSupport instance. */
-  @Inject
-  EarlybirdRealtimeCgScatterGatherSupport(
-      PartitionMappingManager partitionMappingManager,
-      EarlybirdFeatureSchemaMerger featureSchemaMerger) {
-    super(partitionMappingManager, EarlybirdCluster.REALTIME_CG, featureSchemaMerger);
+publ c class Earlyb rdRealt  CgScatterGat rSupport extends Earlyb rdServ ceScatterGat rSupport {
+  /** Creates a new Earlyb rdRealt  CgScatterGat rSupport  nstance. */
+  @ nject
+  Earlyb rdRealt  CgScatterGat rSupport(
+      Part  onMapp ngManager part  onMapp ngManager,
+      Earlyb rdFeatureSc ma rger featureSc ma rger) {
+    super(part  onMapp ngManager, Earlyb rdCluster.REALT ME_CG, featureSc ma rger);
   }
 }

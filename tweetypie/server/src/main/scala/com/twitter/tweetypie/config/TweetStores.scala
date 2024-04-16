@@ -1,577 +1,577 @@
-package com.twitter.tweetypie
-package config
+package com.tw ter.t etyp e
+package conf g
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.servo.util.RetryHandler
-import com.twitter.servo.util.Scribe
-import com.twitter.tweetypie.backends.LimiterService.Feature.MediaTagCreate
-import com.twitter.tweetypie.backends.LimiterService.Feature.Updates
-import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.handler.TweetBuilder
-import com.twitter.tweetypie.repository.TweetKeyFactory
-import com.twitter.tweetypie.store._
-import com.twitter.tweetypie.tflock.TFlockIndexer
-import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.util.RetryPolicyBuilder
-import com.twitter.util.Timer
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.servo.ut l.RetryHandler
+ mport com.tw ter.servo.ut l.Scr be
+ mport com.tw ter.t etyp e.backends.L m erServ ce.Feature. d aTagCreate
+ mport com.tw ter.t etyp e.backends.L m erServ ce.Feature.Updates
+ mport com.tw ter.t etyp e.cl ent_ d.Cl ent d lper
+ mport com.tw ter.t etyp e.handler.T etBu lder
+ mport com.tw ter.t etyp e.repos ory.T etKeyFactory
+ mport com.tw ter.t etyp e.store._
+ mport com.tw ter.t etyp e.tflock.TFlock ndexer
+ mport com.tw ter.t etyp e.thr ftscala._
+ mport com.tw ter.t etyp e.ut l.RetryPol cyBu lder
+ mport com.tw ter.ut l.T  r
 
-object TweetStores {
+object T etStores {
   def apply(
-    settings: TweetServiceSettings,
-    statsReceiver: StatsReceiver,
-    timer: Timer,
-    deciderGates: TweetypieDeciderGates,
-    tweetKeyFactory: TweetKeyFactory,
-    clients: BackendClients,
-    caches: Caches,
-    asyncBuilder: ServiceInvocationBuilder,
-    hasMedia: Tweet => Boolean,
-    clientIdHelper: ClientIdHelper,
-  ): TotalTweetStore = {
+    sett ngs: T etServ ceSett ngs,
+    statsRece ver: StatsRece ver,
+    t  r: T  r,
+    dec derGates: T etyp eDec derGates,
+    t etKeyFactory: T etKeyFactory,
+    cl ents: BackendCl ents,
+    cac s: Cac s,
+    asyncBu lder: Serv ce nvocat onBu lder,
+    has d a: T et => Boolean,
+    cl ent d lper: Cl ent d lper,
+  ): TotalT etStore = {
 
-    val deferredrpcRetryPolicy =
-      // retry all application exceptions for now.  however, in the future, deferredrpc
-      // may throw a backpressure exception that should not be retried.
-      RetryPolicyBuilder.anyFailure(settings.deferredrpcBackoffs)
+    val deferredrpcRetryPol cy =
+      // retry all appl cat on except ons for now.  ho ver,  n t  future, deferredrpc
+      // may throw a backpressure except on that should not be retr ed.
+      RetryPol cyBu lder.anyFa lure(sett ngs.deferredrpcBackoffs)
 
-    val asyncWriteRetryPolicy =
-      // currently retries all failures with the same back-off times.  might need
-      // to update to handle backpressure exceptions differently.
-      RetryPolicyBuilder.anyFailure(settings.asyncWriteRetryBackoffs)
+    val asyncWr eRetryPol cy =
+      // currently retr es all fa lures w h t  sa  back-off t  s.  m ght need
+      // to update to handle backpressure except ons d fferently.
+      RetryPol cyBu lder.anyFa lure(sett ngs.asyncWr eRetryBackoffs)
 
-    val replicatedEventRetryPolicy =
-      RetryPolicyBuilder.anyFailure(settings.replicatedEventCacheBackoffs)
+    val repl catedEventRetryPol cy =
+      RetryPol cyBu lder.anyFa lure(sett ngs.repl catedEventCac Backoffs)
 
     val logLensStore =
       LogLensStore(
-        tweetCreationsLogger = Logger("com.twitter.tweetypie.store.TweetCreations"),
-        tweetDeletionsLogger = Logger("com.twitter.tweetypie.store.TweetDeletions"),
-        tweetUndeletionsLogger = Logger("com.twitter.tweetypie.store.TweetUndeletions"),
-        tweetUpdatesLogger = Logger("com.twitter.tweetypie.store.TweetUpdates"),
-        clientIdHelper = clientIdHelper,
+        t etCreat onsLogger = Logger("com.tw ter.t etyp e.store.T etCreat ons"),
+        t etDelet onsLogger = Logger("com.tw ter.t etyp e.store.T etDelet ons"),
+        t etUndelet onsLogger = Logger("com.tw ter.t etyp e.store.T etUndelet ons"),
+        t etUpdatesLogger = Logger("com.tw ter.t etyp e.store.T etUpdates"),
+        cl ent d lper = cl ent d lper,
       )
 
-    val tweetStoreStats = statsReceiver.scope("tweet_store")
+    val t etStoreStats = statsRece ver.scope("t et_store")
 
-    val tweetStatsStore = TweetStatsStore(tweetStoreStats.scope("stats"))
+    val t etStatsStore = T etStatsStore(t etStoreStats.scope("stats"))
 
-    val asyncRetryConfig =
-      new TweetStore.AsyncRetry(
-        asyncWriteRetryPolicy,
-        deferredrpcRetryPolicy,
-        timer,
-        clients.asyncRetryTweetService,
-        Scribe(FailedAsyncWrite, "tweetypie_failed_async_writes")
+    val asyncRetryConf g =
+      new T etStore.AsyncRetry(
+        asyncWr eRetryPol cy,
+        deferredrpcRetryPol cy,
+        t  r,
+        cl ents.asyncRetryT etServ ce,
+        Scr be(Fa ledAsyncWr e, "t etyp e_fa led_async_wr es")
       )(_, _)
 
     val manhattanStore = {
-      val scopedStats = tweetStoreStats.scope("base")
-      ManhattanTweetStore(clients.tweetStorageClient)
+      val scopedStats = t etStoreStats.scope("base")
+      ManhattanT etStore(cl ents.t etStorageCl ent)
         .tracked(scopedStats)
-        .asyncRetry(asyncRetryConfig(scopedStats, ManhattanTweetStore.Action))
+        .asyncRetry(asyncRetryConf g(scopedStats, ManhattanT etStore.Act on))
     }
 
-    val cachingTweetStore = {
-      val cacheStats = tweetStoreStats.scope("caching")
-      CachingTweetStore(
-        tweetKeyFactory = tweetKeyFactory,
-        tweetCache = caches.tweetCache,
-        stats = cacheStats
-      ).tracked(cacheStats)
-        .asyncRetry(asyncRetryConfig(cacheStats, CachingTweetStore.Action))
-        .replicatedRetry(RetryHandler.failuresOnly(replicatedEventRetryPolicy, timer, cacheStats))
+    val cach ngT etStore = {
+      val cac Stats = t etStoreStats.scope("cach ng")
+      Cach ngT etStore(
+        t etKeyFactory = t etKeyFactory,
+        t etCac  = cac s.t etCac ,
+        stats = cac Stats
+      ).tracked(cac Stats)
+        .asyncRetry(asyncRetryConf g(cac Stats, Cach ngT etStore.Act on))
+        .repl catedRetry(RetryHandler.fa luresOnly(repl catedEventRetryPol cy, t  r, cac Stats))
     }
 
-    val indexingStore = {
-      val indexingStats = tweetStoreStats.scope("indexing")
-      TweetIndexingStore(
-        new TFlockIndexer(
-          tflock = clients.tflockWriteClient,
-          hasMedia = hasMedia,
-          backgroundIndexingPriority = settings.backgroundIndexingPriority,
-          stats = indexingStats
+    val  ndex ngStore = {
+      val  ndex ngStats = t etStoreStats.scope(" ndex ng")
+      T et ndex ngStore(
+        new TFlock ndexer(
+          tflock = cl ents.tflockWr eCl ent,
+          has d a = has d a,
+          background ndex ngPr or y = sett ngs.background ndex ngPr or y,
+          stats =  ndex ngStats
         )
-      ).tracked(indexingStats)
-        .asyncRetry(asyncRetryConfig(indexingStats, TweetIndexingStore.Action))
+      ).tracked( ndex ngStats)
+        .asyncRetry(asyncRetryConf g( ndex ngStats, T et ndex ngStore.Act on))
     }
 
-    val timelineUpdatingStore = {
-      val tlsScope = tweetStoreStats.scope("timeline_updating")
-      TlsTimelineUpdatingStore(
-        processEvent2 = clients.timelineService.processEvent2,
-        hasMedia = hasMedia,
+    val t  l neUpdat ngStore = {
+      val tlsScope = t etStoreStats.scope("t  l ne_updat ng")
+      TlsT  l neUpdat ngStore(
+        processEvent2 = cl ents.t  l neServ ce.processEvent2,
+        has d a = has d a,
         stats = tlsScope
       ).tracked(tlsScope)
-        .asyncRetry(asyncRetryConfig(tlsScope, TlsTimelineUpdatingStore.Action))
+        .asyncRetry(asyncRetryConf g(tlsScope, TlsT  l neUpdat ngStore.Act on))
     }
 
-    val guanoServiceStore = {
-      val guanoStats = tweetStoreStats.scope("guano")
-      GuanoServiceStore(clients.guano, guanoStats)
+    val guanoServ ceStore = {
+      val guanoStats = t etStoreStats.scope("guano")
+      GuanoServ ceStore(cl ents.guano, guanoStats)
         .tracked(guanoStats)
-        .asyncRetry(asyncRetryConfig(guanoStats, GuanoServiceStore.Action))
+        .asyncRetry(asyncRetryConf g(guanoStats, GuanoServ ceStore.Act on))
     }
 
-    val mediaServiceStore = {
-      val mediaStats = tweetStoreStats.scope("media")
-      MediaServiceStore(clients.mediaClient.deleteMedia, clients.mediaClient.undeleteMedia)
-        .tracked(mediaStats)
-        .asyncRetry(asyncRetryConfig(mediaStats, MediaServiceStore.Action))
+    val  d aServ ceStore = {
+      val  d aStats = t etStoreStats.scope(" d a")
+       d aServ ceStore(cl ents. d aCl ent.delete d a, cl ents. d aCl ent.undelete d a)
+        .tracked( d aStats)
+        .asyncRetry(asyncRetryConf g( d aStats,  d aServ ceStore.Act on))
     }
 
-    val userCountsUpdatingStore = {
-      val userCountsStats = tweetStoreStats.scope("user_counts")
-      GizmoduckUserCountsUpdatingStore(clients.gizmoduck.incrCount, hasMedia)
+    val userCountsUpdat ngStore = {
+      val userCountsStats = t etStoreStats.scope("user_counts")
+      G zmoduckUserCountsUpdat ngStore(cl ents.g zmoduck. ncrCount, has d a)
         .tracked(userCountsStats)
-        .ignoreFailures
+        . gnoreFa lures
     }
 
-    val tweetCountsUpdatingStore = {
-      val cacheScope = statsReceiver.scope("tweet_counts_cache")
-      val tweetCountsStats = tweetStoreStats.scope("tweet_counts")
+    val t etCountsUpdat ngStore = {
+      val cac Scope = statsRece ver.scope("t et_counts_cac ")
+      val t etCountsStats = t etStoreStats.scope("t et_counts")
 
-      val memcacheCountsStore = {
-        val lockingCacheCountsStore =
-          CachedCountsStore.fromLockingCache(caches.tweetCountsCache)
+      val  mcac CountsStore = {
+        val lock ngCac CountsStore =
+          Cac dCountsStore.fromLock ngCac (cac s.t etCountsCac )
 
-        new AggregatingCachedCountsStore(
-          lockingCacheCountsStore,
-          timer,
-          settings.aggregatedTweetCountsFlushInterval,
-          settings.maxAggregatedCountsSize,
-          cacheScope
+        new Aggregat ngCac dCountsStore(
+          lock ngCac CountsStore,
+          t  r,
+          sett ngs.aggregatedT etCountsFlush nterval,
+          sett ngs.maxAggregatedCountsS ze,
+          cac Scope
         )
       }
 
-      TweetCountsCacheUpdatingStore(memcacheCountsStore)
-        .tracked(tweetCountsStats)
-        .ignoreFailures
+      T etCountsCac Updat ngStore( mcac CountsStore)
+        .tracked(t etCountsStats)
+        . gnoreFa lures
     }
 
-    val replicatingStore = {
-      val replicateStats = tweetStoreStats.scope("replicate_out")
-      ReplicatingTweetStore(
-        clients.replicationClient
-      ).tracked(replicateStats)
-        .retry(RetryHandler.failuresOnly(deferredrpcRetryPolicy, timer, replicateStats))
-        .asyncRetry(asyncRetryConfig(replicateStats, ReplicatingTweetStore.Action))
-        .enabledBy(Gate.const(settings.enableReplication))
+    val repl cat ngStore = {
+      val repl cateStats = t etStoreStats.scope("repl cate_out")
+      Repl cat ngT etStore(
+        cl ents.repl cat onCl ent
+      ).tracked(repl cateStats)
+        .retry(RetryHandler.fa luresOnly(deferredrpcRetryPol cy, t  r, repl cateStats))
+        .asyncRetry(asyncRetryConf g(repl cateStats, Repl cat ngT etStore.Act on))
+        .enabledBy(Gate.const(sett ngs.enableRepl cat on))
     }
 
-    val scribeMediaTagStore =
-      ScribeMediaTagStore()
-        .tracked(tweetStoreStats.scope("scribe_media_tag_store"))
+    val scr be d aTagStore =
+      Scr be d aTagStore()
+        .tracked(t etStoreStats.scope("scr be_ d a_tag_store"))
 
-    val limiterStore =
-      LimiterStore(
-        clients.limiterService.incrementByOne(Updates),
-        clients.limiterService.increment(MediaTagCreate)
-      ).tracked(tweetStoreStats.scope("limiter_store"))
+    val l m erStore =
+      L m erStore(
+        cl ents.l m erServ ce. ncre ntByOne(Updates),
+        cl ents.l m erServ ce. ncre nt( d aTagCreate)
+      ).tracked(t etStoreStats.scope("l m er_store"))
 
-    val geoSearchRequestIDStore = {
-      val statsScope = tweetStoreStats.scope("geo_search_request_id")
-      GeoSearchRequestIDStore(FutureArrow(clients.geoRelevance.reportConversion _))
+    val geoSearchRequest DStore = {
+      val statsScope = t etStoreStats.scope("geo_search_request_ d")
+      GeoSearchRequest DStore(FutureArrow(cl ents.geoRelevance.reportConvers on _))
         .tracked(statsScope)
-        .asyncRetry(asyncRetryConfig(statsScope, GeoSearchRequestIDStore.Action))
+        .asyncRetry(asyncRetryConf g(statsScope, GeoSearchRequest DStore.Act on))
     }
 
     val userGeotagUpdateStore = {
-      val geotagScope = tweetStoreStats.scope("gizmoduck_user_geotag_updating")
-      GizmoduckUserGeotagUpdateStore(
-        clients.gizmoduck.modifyAndGet,
+      val geotagScope = t etStoreStats.scope("g zmoduck_user_geotag_updat ng")
+      G zmoduckUserGeotagUpdateStore(
+        cl ents.g zmoduck.mod fyAndGet,
         geotagScope
       ).tracked(geotagScope)
-        .asyncRetry(asyncRetryConfig(geotagScope, GizmoduckUserGeotagUpdateStore.Action))
+        .asyncRetry(asyncRetryConf g(geotagScope, G zmoduckUserGeotagUpdateStore.Act on))
     }
 
-    val fanoutServiceStore = {
-      val fanoutStats = tweetStoreStats.scope("fanout_service_delivery")
-      FanoutServiceStore(clients.fanoutServiceClient, fanoutStats)
+    val fanoutServ ceStore = {
+      val fanoutStats = t etStoreStats.scope("fanout_serv ce_del very")
+      FanoutServ ceStore(cl ents.fanoutServ ceCl ent, fanoutStats)
         .tracked(fanoutStats)
-        .asyncRetry(asyncRetryConfig(fanoutStats, FanoutServiceStore.Action))
+        .asyncRetry(asyncRetryConf g(fanoutStats, FanoutServ ceStore.Act on))
     }
 
     /**
-     * A store that converts Tweetypie TweetEvents to EventBus TweetEvents and sends each event to
-     * the underlying FutureEffect[eventbus.TweetEvent]
+     * A store that converts T etyp e T etEvents to EventBus T etEvents and sends each event to
+     * t  underly ng FutureEffect[eventbus.T etEvent]
      */
     val eventBusEnqueueStore = {
-      val enqueueStats = tweetStoreStats.scope("event_bus_enqueueing")
-      val enqueueEffect = FutureEffect[TweetEvent](clients.tweetEventsPublisher.publish)
+      val enqueueStats = t etStoreStats.scope("event_bus_enqueue ng")
+      val enqueueEffect = FutureEffect[T etEvent](cl ents.t etEventsPubl s r.publ sh)
 
-      TweetEventBusStore(
+      T etEventBusStore(
         enqueueEffect
       ).tracked(enqueueStats)
-        .asyncRetry(asyncRetryConfig(enqueueStats, AsyncWriteAction.EventBusEnqueue))
+        .asyncRetry(asyncRetryConf g(enqueueStats, AsyncWr eAct on.EventBusEnqueue))
     }
 
-    val retweetArchivalEnqueueStore = {
-      val enqueueStats = tweetStoreStats.scope("retweet_archival_enqueueing")
-      val enqueueEffect = FutureEffect(clients.retweetArchivalEventPublisher.publish)
+    val ret etArch valEnqueueStore = {
+      val enqueueStats = t etStoreStats.scope("ret et_arch val_enqueue ng")
+      val enqueueEffect = FutureEffect(cl ents.ret etArch valEventPubl s r.publ sh)
 
-      RetweetArchivalEnqueueStore(enqueueEffect)
+      Ret etArch valEnqueueStore(enqueueEffect)
         .tracked(enqueueStats)
-        .asyncRetry(asyncRetryConfig(enqueueStats, AsyncWriteAction.RetweetArchivalEnqueue))
+        .asyncRetry(asyncRetryConf g(enqueueStats, AsyncWr eAct on.Ret etArch valEnqueue))
     }
 
     val asyncEnqueueStore = {
-      val asyncEnqueueStats = tweetStoreStats.scope("async_enqueueing")
+      val asyncEnqueueStats = t etStoreStats.scope("async_enqueue ng")
       AsyncEnqueueStore(
-        asyncBuilder.asyncVia(clients.asyncTweetService).service,
-        TweetBuilder.scrubUserInAsyncInserts,
-        TweetBuilder.scrubSourceTweetInAsyncInserts,
-        TweetBuilder.scrubSourceUserInAsyncInserts
+        asyncBu lder.asyncV a(cl ents.asyncT etServ ce).serv ce,
+        T etBu lder.scrubUser nAsync nserts,
+        T etBu lder.scrubS ceT et nAsync nserts,
+        T etBu lder.scrubS ceUser nAsync nserts
       ).tracked(asyncEnqueueStats)
-        .retry(RetryHandler.failuresOnly(deferredrpcRetryPolicy, timer, asyncEnqueueStats))
+        .retry(RetryHandler.fa luresOnly(deferredrpcRetryPol cy, t  r, asyncEnqueueStats))
     }
 
-    val insertTweetStore =
-      InsertTweet.Store(
+    val  nsertT etStore =
+       nsertT et.Store(
         logLensStore = logLensStore,
         manhattanStore = manhattanStore,
-        tweetStatsStore = tweetStatsStore,
-        cachingTweetStore = cachingTweetStore,
-        limiterStore = limiterStore,
+        t etStatsStore = t etStatsStore,
+        cach ngT etStore = cach ngT etStore,
+        l m erStore = l m erStore,
         asyncEnqueueStore = asyncEnqueueStore,
-        userCountsUpdatingStore = userCountsUpdatingStore,
-        tweetCountsUpdatingStore = tweetCountsUpdatingStore
+        userCountsUpdat ngStore = userCountsUpdat ngStore,
+        t etCountsUpdat ngStore = t etCountsUpdat ngStore
       )
 
-    val asyncInsertStore =
-      AsyncInsertTweet.Store(
-        replicatingStore = replicatingStore,
-        indexingStore = indexingStore,
-        tweetCountsUpdatingStore = tweetCountsUpdatingStore,
-        timelineUpdatingStore = timelineUpdatingStore,
+    val async nsertStore =
+      Async nsertT et.Store(
+        repl cat ngStore = repl cat ngStore,
+         ndex ngStore =  ndex ngStore,
+        t etCountsUpdat ngStore = t etCountsUpdat ngStore,
+        t  l neUpdat ngStore = t  l neUpdat ngStore,
         eventBusEnqueueStore = eventBusEnqueueStore,
-        fanoutServiceStore = fanoutServiceStore,
-        scribeMediaTagStore = scribeMediaTagStore,
+        fanoutServ ceStore = fanoutServ ceStore,
+        scr be d aTagStore = scr be d aTagStore,
         userGeotagUpdateStore = userGeotagUpdateStore,
-        geoSearchRequestIDStore = geoSearchRequestIDStore
+        geoSearchRequest DStore = geoSearchRequest DStore
       )
 
-    val replicatedInsertTweetStore =
-      ReplicatedInsertTweet.Store(
-        cachingTweetStore = cachingTweetStore,
-        tweetCountsUpdatingStore = tweetCountsUpdatingStore
+    val repl cated nsertT etStore =
+      Repl cated nsertT et.Store(
+        cach ngT etStore = cach ngT etStore,
+        t etCountsUpdat ngStore = t etCountsUpdat ngStore
       )
 
-    val deleteTweetStore =
-      DeleteTweet.Store(
-        cachingTweetStore = cachingTweetStore,
+    val deleteT etStore =
+      DeleteT et.Store(
+        cach ngT etStore = cach ngT etStore,
         asyncEnqueueStore = asyncEnqueueStore,
-        userCountsUpdatingStore = userCountsUpdatingStore,
-        tweetCountsUpdatingStore = tweetCountsUpdatingStore,
+        userCountsUpdat ngStore = userCountsUpdat ngStore,
+        t etCountsUpdat ngStore = t etCountsUpdat ngStore,
         logLensStore = logLensStore
       )
 
-    val asyncDeleteTweetStore =
-      AsyncDeleteTweet.Store(
+    val asyncDeleteT etStore =
+      AsyncDeleteT et.Store(
         manhattanStore = manhattanStore,
-        cachingTweetStore = cachingTweetStore,
-        replicatingStore = replicatingStore,
-        indexingStore = indexingStore,
+        cach ngT etStore = cach ngT etStore,
+        repl cat ngStore = repl cat ngStore,
+         ndex ngStore =  ndex ngStore,
         eventBusEnqueueStore = eventBusEnqueueStore,
-        timelineUpdatingStore = timelineUpdatingStore,
-        tweetCountsUpdatingStore = tweetCountsUpdatingStore,
-        guanoServiceStore = guanoServiceStore,
-        mediaServiceStore = mediaServiceStore
+        t  l neUpdat ngStore = t  l neUpdat ngStore,
+        t etCountsUpdat ngStore = t etCountsUpdat ngStore,
+        guanoServ ceStore = guanoServ ceStore,
+         d aServ ceStore =  d aServ ceStore
       )
 
-    val replicatedDeleteTweetStore =
-      ReplicatedDeleteTweet.Store(
-        cachingTweetStore = cachingTweetStore,
-        tweetCountsUpdatingStore = tweetCountsUpdatingStore
+    val repl catedDeleteT etStore =
+      Repl catedDeleteT et.Store(
+        cach ngT etStore = cach ngT etStore,
+        t etCountsUpdat ngStore = t etCountsUpdat ngStore
       )
 
-    val incrBookmarkCountStore =
-      IncrBookmarkCount.Store(
+    val  ncrBookmarkCountStore =
+       ncrBookmarkCount.Store(
         asyncEnqueueStore = asyncEnqueueStore,
-        replicatingStore = replicatingStore
+        repl cat ngStore = repl cat ngStore
       )
 
-    val asyncIncrBookmarkCountStore =
-      AsyncIncrBookmarkCount.Store(
-        tweetCountsUpdatingStore = tweetCountsUpdatingStore
+    val async ncrBookmarkCountStore =
+      Async ncrBookmarkCount.Store(
+        t etCountsUpdat ngStore = t etCountsUpdat ngStore
       )
 
-    val replicatedIncrBookmarkCountStore =
-      ReplicatedIncrBookmarkCount.Store(
-        tweetCountsUpdatingStore = tweetCountsUpdatingStore
+    val repl cated ncrBookmarkCountStore =
+      Repl cated ncrBookmarkCount.Store(
+        t etCountsUpdat ngStore = t etCountsUpdat ngStore
       )
 
-    val incrFavCountStore =
-      IncrFavCount.Store(
+    val  ncrFavCountStore =
+       ncrFavCount.Store(
         asyncEnqueueStore = asyncEnqueueStore,
-        replicatingStore = replicatingStore
+        repl cat ngStore = repl cat ngStore
       )
 
-    val asyncIncrFavCountStore =
-      AsyncIncrFavCount.Store(
-        tweetCountsUpdatingStore = tweetCountsUpdatingStore
+    val async ncrFavCountStore =
+      Async ncrFavCount.Store(
+        t etCountsUpdat ngStore = t etCountsUpdat ngStore
       )
 
-    val replicatedIncrFavCountStore =
-      ReplicatedIncrFavCount.Store(
-        tweetCountsUpdatingStore = tweetCountsUpdatingStore
+    val repl cated ncrFavCountStore =
+      Repl cated ncrFavCount.Store(
+        t etCountsUpdat ngStore = t etCountsUpdat ngStore
       )
 
     val scrubGeoStore =
       ScrubGeo.Store(
         logLensStore = logLensStore,
         manhattanStore = manhattanStore,
-        cachingTweetStore = cachingTweetStore,
+        cach ngT etStore = cach ngT etStore,
         eventBusEnqueueStore = eventBusEnqueueStore,
-        replicatingStore = replicatingStore
+        repl cat ngStore = repl cat ngStore
       )
 
-    val replicatedScrubGeoStore =
-      ReplicatedScrubGeo.Store(
-        cachingTweetStore = cachingTweetStore
+    val repl catedScrubGeoStore =
+      Repl catedScrubGeo.Store(
+        cach ngT etStore = cach ngT etStore
       )
 
     val takedownStore =
       Takedown.Store(
         logLensStore = logLensStore,
         manhattanStore = manhattanStore,
-        cachingTweetStore = cachingTweetStore,
+        cach ngT etStore = cach ngT etStore,
         asyncEnqueueStore = asyncEnqueueStore
       )
 
     val asyncTakedownStore =
       AsyncTakedown.Store(
-        replicatingStore = replicatingStore,
-        guanoStore = guanoServiceStore,
+        repl cat ngStore = repl cat ngStore,
+        guanoStore = guanoServ ceStore,
         eventBusEnqueueStore = eventBusEnqueueStore
       )
 
-    val replicatedTakedownStore =
-      ReplicatedTakedown.Store(
-        cachingTweetStore = cachingTweetStore
+    val repl catedTakedownStore =
+      Repl catedTakedown.Store(
+        cach ngT etStore = cach ngT etStore
       )
 
-    val updatePossiblySensitiveTweetStore =
-      UpdatePossiblySensitiveTweet.Store(
+    val updatePoss blySens  veT etStore =
+      UpdatePoss blySens  veT et.Store(
         manhattanStore = manhattanStore,
-        cachingTweetStore = cachingTweetStore,
+        cach ngT etStore = cach ngT etStore,
         logLensStore = logLensStore,
         asyncEnqueueStore = asyncEnqueueStore
       )
 
-    val asyncUpdatePossiblySensitiveTweetStore =
-      AsyncUpdatePossiblySensitiveTweet.Store(
+    val asyncUpdatePoss blySens  veT etStore =
+      AsyncUpdatePoss blySens  veT et.Store(
         manhattanStore = manhattanStore,
-        cachingTweetStore = cachingTweetStore,
-        replicatingStore = replicatingStore,
-        guanoStore = guanoServiceStore,
+        cach ngT etStore = cach ngT etStore,
+        repl cat ngStore = repl cat ngStore,
+        guanoStore = guanoServ ceStore,
         eventBusStore = eventBusEnqueueStore
       )
 
-    val replicatedUpdatePossiblySensitiveTweetStore =
-      ReplicatedUpdatePossiblySensitiveTweet.Store(
-        cachingTweetStore = cachingTweetStore
+    val repl catedUpdatePoss blySens  veT etStore =
+      Repl catedUpdatePoss blySens  veT et.Store(
+        cach ngT etStore = cach ngT etStore
       )
 
-    val setAdditionalFieldsStore =
-      SetAdditionalFields.Store(
+    val setAdd  onalF eldsStore =
+      SetAdd  onalF elds.Store(
         manhattanStore = manhattanStore,
-        cachingTweetStore = cachingTweetStore,
+        cach ngT etStore = cach ngT etStore,
         asyncEnqueueStore = asyncEnqueueStore,
         logLensStore = logLensStore
       )
 
-    val asyncSetAdditionalFieldsStore =
-      AsyncSetAdditionalFields.Store(
-        replicatingStore = replicatingStore,
+    val asyncSetAdd  onalF eldsStore =
+      AsyncSetAdd  onalF elds.Store(
+        repl cat ngStore = repl cat ngStore,
         eventBusEnqueueStore = eventBusEnqueueStore
       )
 
-    val replicatedSetAdditionalFieldsStore =
-      ReplicatedSetAdditionalFields.Store(
-        cachingTweetStore = cachingTweetStore
+    val repl catedSetAdd  onalF eldsStore =
+      Repl catedSetAdd  onalF elds.Store(
+        cach ngT etStore = cach ngT etStore
       )
 
-    val setRetweetVisibilityStore =
-      SetRetweetVisibility.Store(asyncEnqueueStore = asyncEnqueueStore)
+    val setRet etV s b l yStore =
+      SetRet etV s b l y.Store(asyncEnqueueStore = asyncEnqueueStore)
 
-    val asyncSetRetweetVisibilityStore =
-      AsyncSetRetweetVisibility.Store(
-        tweetIndexingStore = indexingStore,
-        tweetCountsCacheUpdatingStore = tweetCountsUpdatingStore,
-        replicatingTweetStore = replicatingStore,
-        retweetArchivalEnqueueStore = retweetArchivalEnqueueStore
+    val asyncSetRet etV s b l yStore =
+      AsyncSetRet etV s b l y.Store(
+        t et ndex ngStore =  ndex ngStore,
+        t etCountsCac Updat ngStore = t etCountsUpdat ngStore,
+        repl cat ngT etStore = repl cat ngStore,
+        ret etArch valEnqueueStore = ret etArch valEnqueueStore
       )
 
-    val replicatedSetRetweetVisibilityStore =
-      ReplicatedSetRetweetVisibility.Store(
-        tweetCountsCacheUpdatingStore = tweetCountsUpdatingStore
+    val repl catedSetRet etV s b l yStore =
+      Repl catedSetRet etV s b l y.Store(
+        t etCountsCac Updat ngStore = t etCountsUpdat ngStore
       )
 
-    val deleteAdditionalFieldsStore =
-      DeleteAdditionalFields.Store(
-        cachingTweetStore = cachingTweetStore,
+    val deleteAdd  onalF eldsStore =
+      DeleteAdd  onalF elds.Store(
+        cach ngT etStore = cach ngT etStore,
         asyncEnqueueStore = asyncEnqueueStore,
         logLensStore = logLensStore
       )
 
-    val asyncDeleteAdditionalFieldsStore =
-      AsyncDeleteAdditionalFields.Store(
+    val asyncDeleteAdd  onalF eldsStore =
+      AsyncDeleteAdd  onalF elds.Store(
         manhattanStore = manhattanStore,
-        cachingTweetStore = cachingTweetStore,
-        replicatingStore = replicatingStore,
+        cach ngT etStore = cach ngT etStore,
+        repl cat ngStore = repl cat ngStore,
         eventBusEnqueueStore = eventBusEnqueueStore
       )
 
-    val replicatedDeleteAdditionalFieldsStore =
-      ReplicatedDeleteAdditionalFields.Store(
-        cachingTweetStore = cachingTweetStore
+    val repl catedDeleteAdd  onalF eldsStore =
+      Repl catedDeleteAdd  onalF elds.Store(
+        cach ngT etStore = cach ngT etStore
       )
 
     /*
-     * This composed store handles all synchronous side effects of an undelete
-     * but does not execute the undeletion.
+     * T  composed store handles all synchronous s de effects of an undelete
+     * but does not execute t  undelet on.
      *
-     * This store is executed after the actual undelete request succeeds.
-     * The undeletion request is initiated by Undelete.apply()
+     * T  store  s executed after t  actual undelete request succeeds.
+     * T  undelet on request  s  n  ated by Undelete.apply()
      */
-    val undeleteTweetStore =
-      UndeleteTweet.Store(
+    val undeleteT etStore =
+      UndeleteT et.Store(
         logLensStore = logLensStore,
-        cachingTweetStore = cachingTweetStore,
-        tweetCountsUpdatingStore = tweetCountsUpdatingStore,
+        cach ngT etStore = cach ngT etStore,
+        t etCountsUpdat ngStore = t etCountsUpdat ngStore,
         asyncEnqueueStore = asyncEnqueueStore
       )
 
-    val asyncUndeleteTweetStore =
-      AsyncUndeleteTweet.Store(
-        cachingTweetStore = cachingTweetStore,
+    val asyncUndeleteT etStore =
+      AsyncUndeleteT et.Store(
+        cach ngT etStore = cach ngT etStore,
         eventBusEnqueueStore = eventBusEnqueueStore,
-        indexingStore = indexingStore,
-        replicatingStore = replicatingStore,
-        mediaServiceStore = mediaServiceStore,
-        timelineUpdatingStore = timelineUpdatingStore
+         ndex ngStore =  ndex ngStore,
+        repl cat ngStore = repl cat ngStore,
+         d aServ ceStore =  d aServ ceStore,
+        t  l neUpdat ngStore = t  l neUpdat ngStore
       )
 
-    val replicatedUndeleteTweetStore =
-      ReplicatedUndeleteTweet.Store(
-        cachingTweetStore = cachingTweetStore,
-        tweetCountsUpdatingStore = tweetCountsUpdatingStore
+    val repl catedUndeleteT etStore =
+      Repl catedUndeleteT et.Store(
+        cach ngT etStore = cach ngT etStore,
+        t etCountsUpdat ngStore = t etCountsUpdat ngStore
       )
 
     val flushStore =
       Flush.Store(
-        cachingTweetStore = cachingTweetStore,
-        tweetCountsUpdatingStore = tweetCountsUpdatingStore
+        cach ngT etStore = cach ngT etStore,
+        t etCountsUpdat ngStore = t etCountsUpdat ngStore
       )
 
-    val scrubGeoUpdateUserTimestampStore =
-      ScrubGeoUpdateUserTimestamp.Store(
-        cache = caches.geoScrubCache,
-        setInManhattan = clients.geoScrubEventStore.setGeoScrubTimestamp,
+    val scrubGeoUpdateUserT  stampStore =
+      ScrubGeoUpdateUserT  stamp.Store(
+        cac  = cac s.geoScrubCac ,
+        set nManhattan = cl ents.geoScrubEventStore.setGeoScrubT  stamp,
         geotagUpdateStore = userGeotagUpdateStore,
-        tweetEventBusStore = eventBusEnqueueStore
+        t etEventBusStore = eventBusEnqueueStore
       )
 
-    val quotedTweetDeleteStore =
-      QuotedTweetDelete.Store(
+    val quotedT etDeleteStore =
+      QuotedT etDelete.Store(
         eventBusEnqueueStore = eventBusEnqueueStore
       )
 
-    val quotedTweetTakedownStore =
-      QuotedTweetTakedown.Store(
+    val quotedT etTakedownStore =
+      QuotedT etTakedown.Store(
         eventBusEnqueueStore = eventBusEnqueueStore
       )
 
-    new TotalTweetStore {
-      val asyncDeleteAdditionalFields: FutureEffect[AsyncDeleteAdditionalFields.Event] =
-        asyncDeleteAdditionalFieldsStore.asyncDeleteAdditionalFields
-      val asyncDeleteTweet: FutureEffect[AsyncDeleteTweet.Event] =
-        asyncDeleteTweetStore.asyncDeleteTweet
-      val asyncIncrBookmarkCount: FutureEffect[AsyncIncrBookmarkCount.Event] =
-        asyncIncrBookmarkCountStore.asyncIncrBookmarkCount
-      val asyncIncrFavCount: FutureEffect[AsyncIncrFavCount.Event] =
-        asyncIncrFavCountStore.asyncIncrFavCount
-      val asyncInsertTweet: FutureEffect[AsyncInsertTweet.Event] = asyncInsertStore.asyncInsertTweet
-      val asyncSetAdditionalFields: FutureEffect[AsyncSetAdditionalFields.Event] =
-        asyncSetAdditionalFieldsStore.asyncSetAdditionalFields
-      val asyncSetRetweetVisibility: FutureEffect[AsyncSetRetweetVisibility.Event] =
-        asyncSetRetweetVisibilityStore.asyncSetRetweetVisibility
+    new TotalT etStore {
+      val asyncDeleteAdd  onalF elds: FutureEffect[AsyncDeleteAdd  onalF elds.Event] =
+        asyncDeleteAdd  onalF eldsStore.asyncDeleteAdd  onalF elds
+      val asyncDeleteT et: FutureEffect[AsyncDeleteT et.Event] =
+        asyncDeleteT etStore.asyncDeleteT et
+      val async ncrBookmarkCount: FutureEffect[Async ncrBookmarkCount.Event] =
+        async ncrBookmarkCountStore.async ncrBookmarkCount
+      val async ncrFavCount: FutureEffect[Async ncrFavCount.Event] =
+        async ncrFavCountStore.async ncrFavCount
+      val async nsertT et: FutureEffect[Async nsertT et.Event] = async nsertStore.async nsertT et
+      val asyncSetAdd  onalF elds: FutureEffect[AsyncSetAdd  onalF elds.Event] =
+        asyncSetAdd  onalF eldsStore.asyncSetAdd  onalF elds
+      val asyncSetRet etV s b l y: FutureEffect[AsyncSetRet etV s b l y.Event] =
+        asyncSetRet etV s b l yStore.asyncSetRet etV s b l y
       val asyncTakedown: FutureEffect[AsyncTakedown.Event] = asyncTakedownStore.asyncTakedown
-      val asyncUndeleteTweet: FutureEffect[AsyncUndeleteTweet.Event] =
-        asyncUndeleteTweetStore.asyncUndeleteTweet
-      val asyncUpdatePossiblySensitiveTweet: FutureEffect[AsyncUpdatePossiblySensitiveTweet.Event] =
-        asyncUpdatePossiblySensitiveTweetStore.asyncUpdatePossiblySensitiveTweet
-      val deleteAdditionalFields: FutureEffect[DeleteAdditionalFields.Event] =
-        deleteAdditionalFieldsStore.deleteAdditionalFields
-      val deleteTweet: FutureEffect[DeleteTweet.Event] = deleteTweetStore.deleteTweet
+      val asyncUndeleteT et: FutureEffect[AsyncUndeleteT et.Event] =
+        asyncUndeleteT etStore.asyncUndeleteT et
+      val asyncUpdatePoss blySens  veT et: FutureEffect[AsyncUpdatePoss blySens  veT et.Event] =
+        asyncUpdatePoss blySens  veT etStore.asyncUpdatePoss blySens  veT et
+      val deleteAdd  onalF elds: FutureEffect[DeleteAdd  onalF elds.Event] =
+        deleteAdd  onalF eldsStore.deleteAdd  onalF elds
+      val deleteT et: FutureEffect[DeleteT et.Event] = deleteT etStore.deleteT et
       val flush: FutureEffect[Flush.Event] = flushStore.flush
-      val incrBookmarkCount: FutureEffect[IncrBookmarkCount.Event] =
-        incrBookmarkCountStore.incrBookmarkCount
-      val incrFavCount: FutureEffect[IncrFavCount.Event] = incrFavCountStore.incrFavCount
-      val insertTweet: FutureEffect[InsertTweet.Event] = insertTweetStore.insertTweet
-      val quotedTweetDelete: FutureEffect[QuotedTweetDelete.Event] =
-        quotedTweetDeleteStore.quotedTweetDelete
-      val quotedTweetTakedown: FutureEffect[QuotedTweetTakedown.Event] =
-        quotedTweetTakedownStore.quotedTweetTakedown
-      val replicatedDeleteAdditionalFields: FutureEffect[ReplicatedDeleteAdditionalFields.Event] =
-        replicatedDeleteAdditionalFieldsStore.replicatedDeleteAdditionalFields
-      val replicatedDeleteTweet: FutureEffect[ReplicatedDeleteTweet.Event] =
-        replicatedDeleteTweetStore.replicatedDeleteTweet
-      val replicatedIncrBookmarkCount: FutureEffect[ReplicatedIncrBookmarkCount.Event] =
-        replicatedIncrBookmarkCountStore.replicatedIncrBookmarkCount
-      val replicatedIncrFavCount: FutureEffect[ReplicatedIncrFavCount.Event] =
-        replicatedIncrFavCountStore.replicatedIncrFavCount
-      val replicatedInsertTweet: FutureEffect[ReplicatedInsertTweet.Event] =
-        replicatedInsertTweetStore.replicatedInsertTweet
-      val replicatedScrubGeo: FutureEffect[ReplicatedScrubGeo.Event] =
-        replicatedScrubGeoStore.replicatedScrubGeo
-      val replicatedSetAdditionalFields: FutureEffect[ReplicatedSetAdditionalFields.Event] =
-        replicatedSetAdditionalFieldsStore.replicatedSetAdditionalFields
-      val replicatedSetRetweetVisibility: FutureEffect[ReplicatedSetRetweetVisibility.Event] =
-        replicatedSetRetweetVisibilityStore.replicatedSetRetweetVisibility
-      val replicatedTakedown: FutureEffect[ReplicatedTakedown.Event] =
-        replicatedTakedownStore.replicatedTakedown
-      val replicatedUndeleteTweet: FutureEffect[ReplicatedUndeleteTweet.Event] =
-        replicatedUndeleteTweetStore.replicatedUndeleteTweet
-      val replicatedUpdatePossiblySensitiveTweet: FutureEffect[
-        ReplicatedUpdatePossiblySensitiveTweet.Event
+      val  ncrBookmarkCount: FutureEffect[ ncrBookmarkCount.Event] =
+         ncrBookmarkCountStore. ncrBookmarkCount
+      val  ncrFavCount: FutureEffect[ ncrFavCount.Event] =  ncrFavCountStore. ncrFavCount
+      val  nsertT et: FutureEffect[ nsertT et.Event] =  nsertT etStore. nsertT et
+      val quotedT etDelete: FutureEffect[QuotedT etDelete.Event] =
+        quotedT etDeleteStore.quotedT etDelete
+      val quotedT etTakedown: FutureEffect[QuotedT etTakedown.Event] =
+        quotedT etTakedownStore.quotedT etTakedown
+      val repl catedDeleteAdd  onalF elds: FutureEffect[Repl catedDeleteAdd  onalF elds.Event] =
+        repl catedDeleteAdd  onalF eldsStore.repl catedDeleteAdd  onalF elds
+      val repl catedDeleteT et: FutureEffect[Repl catedDeleteT et.Event] =
+        repl catedDeleteT etStore.repl catedDeleteT et
+      val repl cated ncrBookmarkCount: FutureEffect[Repl cated ncrBookmarkCount.Event] =
+        repl cated ncrBookmarkCountStore.repl cated ncrBookmarkCount
+      val repl cated ncrFavCount: FutureEffect[Repl cated ncrFavCount.Event] =
+        repl cated ncrFavCountStore.repl cated ncrFavCount
+      val repl cated nsertT et: FutureEffect[Repl cated nsertT et.Event] =
+        repl cated nsertT etStore.repl cated nsertT et
+      val repl catedScrubGeo: FutureEffect[Repl catedScrubGeo.Event] =
+        repl catedScrubGeoStore.repl catedScrubGeo
+      val repl catedSetAdd  onalF elds: FutureEffect[Repl catedSetAdd  onalF elds.Event] =
+        repl catedSetAdd  onalF eldsStore.repl catedSetAdd  onalF elds
+      val repl catedSetRet etV s b l y: FutureEffect[Repl catedSetRet etV s b l y.Event] =
+        repl catedSetRet etV s b l yStore.repl catedSetRet etV s b l y
+      val repl catedTakedown: FutureEffect[Repl catedTakedown.Event] =
+        repl catedTakedownStore.repl catedTakedown
+      val repl catedUndeleteT et: FutureEffect[Repl catedUndeleteT et.Event] =
+        repl catedUndeleteT etStore.repl catedUndeleteT et
+      val repl catedUpdatePoss blySens  veT et: FutureEffect[
+        Repl catedUpdatePoss blySens  veT et.Event
       ] =
-        replicatedUpdatePossiblySensitiveTweetStore.replicatedUpdatePossiblySensitiveTweet
-      val retryAsyncDeleteAdditionalFields: FutureEffect[
-        TweetStoreRetryEvent[AsyncDeleteAdditionalFields.Event]
+        repl catedUpdatePoss blySens  veT etStore.repl catedUpdatePoss blySens  veT et
+      val retryAsyncDeleteAdd  onalF elds: FutureEffect[
+        T etStoreRetryEvent[AsyncDeleteAdd  onalF elds.Event]
       ] =
-        asyncDeleteAdditionalFieldsStore.retryAsyncDeleteAdditionalFields
-      val retryAsyncDeleteTweet: FutureEffect[TweetStoreRetryEvent[AsyncDeleteTweet.Event]] =
-        asyncDeleteTweetStore.retryAsyncDeleteTweet
-      val retryAsyncInsertTweet: FutureEffect[TweetStoreRetryEvent[AsyncInsertTweet.Event]] =
-        asyncInsertStore.retryAsyncInsertTweet
-      val retryAsyncSetAdditionalFields: FutureEffect[
-        TweetStoreRetryEvent[AsyncSetAdditionalFields.Event]
+        asyncDeleteAdd  onalF eldsStore.retryAsyncDeleteAdd  onalF elds
+      val retryAsyncDeleteT et: FutureEffect[T etStoreRetryEvent[AsyncDeleteT et.Event]] =
+        asyncDeleteT etStore.retryAsyncDeleteT et
+      val retryAsync nsertT et: FutureEffect[T etStoreRetryEvent[Async nsertT et.Event]] =
+        async nsertStore.retryAsync nsertT et
+      val retryAsyncSetAdd  onalF elds: FutureEffect[
+        T etStoreRetryEvent[AsyncSetAdd  onalF elds.Event]
       ] =
-        asyncSetAdditionalFieldsStore.retryAsyncSetAdditionalFields
-      val retryAsyncSetRetweetVisibility: FutureEffect[
-        TweetStoreRetryEvent[AsyncSetRetweetVisibility.Event]
+        asyncSetAdd  onalF eldsStore.retryAsyncSetAdd  onalF elds
+      val retryAsyncSetRet etV s b l y: FutureEffect[
+        T etStoreRetryEvent[AsyncSetRet etV s b l y.Event]
       ] =
-        asyncSetRetweetVisibilityStore.retryAsyncSetRetweetVisibility
-      val retryAsyncTakedown: FutureEffect[TweetStoreRetryEvent[AsyncTakedown.Event]] =
+        asyncSetRet etV s b l yStore.retryAsyncSetRet etV s b l y
+      val retryAsyncTakedown: FutureEffect[T etStoreRetryEvent[AsyncTakedown.Event]] =
         asyncTakedownStore.retryAsyncTakedown
-      val retryAsyncUndeleteTweet: FutureEffect[TweetStoreRetryEvent[AsyncUndeleteTweet.Event]] =
-        asyncUndeleteTweetStore.retryAsyncUndeleteTweet
-      val retryAsyncUpdatePossiblySensitiveTweet: FutureEffect[
-        TweetStoreRetryEvent[AsyncUpdatePossiblySensitiveTweet.Event]
+      val retryAsyncUndeleteT et: FutureEffect[T etStoreRetryEvent[AsyncUndeleteT et.Event]] =
+        asyncUndeleteT etStore.retryAsyncUndeleteT et
+      val retryAsyncUpdatePoss blySens  veT et: FutureEffect[
+        T etStoreRetryEvent[AsyncUpdatePoss blySens  veT et.Event]
       ] =
-        asyncUpdatePossiblySensitiveTweetStore.retryAsyncUpdatePossiblySensitiveTweet
+        asyncUpdatePoss blySens  veT etStore.retryAsyncUpdatePoss blySens  veT et
       val scrubGeo: FutureEffect[ScrubGeo.Event] = scrubGeoStore.scrubGeo
-      val setAdditionalFields: FutureEffect[SetAdditionalFields.Event] =
-        setAdditionalFieldsStore.setAdditionalFields
-      val setRetweetVisibility: FutureEffect[SetRetweetVisibility.Event] =
-        setRetweetVisibilityStore.setRetweetVisibility
+      val setAdd  onalF elds: FutureEffect[SetAdd  onalF elds.Event] =
+        setAdd  onalF eldsStore.setAdd  onalF elds
+      val setRet etV s b l y: FutureEffect[SetRet etV s b l y.Event] =
+        setRet etV s b l yStore.setRet etV s b l y
       val takedown: FutureEffect[Takedown.Event] = takedownStore.takedown
-      val undeleteTweet: FutureEffect[UndeleteTweet.Event] = undeleteTweetStore.undeleteTweet
-      val updatePossiblySensitiveTweet: FutureEffect[UpdatePossiblySensitiveTweet.Event] =
-        updatePossiblySensitiveTweetStore.updatePossiblySensitiveTweet
-      val scrubGeoUpdateUserTimestamp: FutureEffect[ScrubGeoUpdateUserTimestamp.Event] =
-        scrubGeoUpdateUserTimestampStore.scrubGeoUpdateUserTimestamp
+      val undeleteT et: FutureEffect[UndeleteT et.Event] = undeleteT etStore.undeleteT et
+      val updatePoss blySens  veT et: FutureEffect[UpdatePoss blySens  veT et.Event] =
+        updatePoss blySens  veT etStore.updatePoss blySens  veT et
+      val scrubGeoUpdateUserT  stamp: FutureEffect[ScrubGeoUpdateUserT  stamp.Event] =
+        scrubGeoUpdateUserT  stampStore.scrubGeoUpdateUserT  stamp
     }
   }
 }

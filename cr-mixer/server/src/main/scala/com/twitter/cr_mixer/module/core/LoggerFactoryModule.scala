@@ -1,152 +1,152 @@
-package com.twitter.cr_mixer.module.core
+package com.tw ter.cr_m xer.module.core
 
-import com.google.inject.Provides
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.scribe.ScribeCategories
-import com.twitter.cr_mixer.scribe.ScribeCategory
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.logging.BareFormatter
-import com.twitter.logging.Level
-import com.twitter.logging.Logger
-import com.twitter.logging.NullHandler
-import com.twitter.logging.QueueingHandler
-import com.twitter.logging.ScribeHandler
-import com.twitter.logging.{LoggerFactory => TwitterLoggerFactory}
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.cr_m xer.model.ModuleNa s
+ mport com.tw ter.cr_m xer.scr be.Scr beCategor es
+ mport com.tw ter.cr_m xer.scr be.Scr beCategory
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.logg ng.BareFormatter
+ mport com.tw ter.logg ng.Level
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.logg ng.NullHandler
+ mport com.tw ter.logg ng.Queue ngHandler
+ mport com.tw ter.logg ng.Scr beHandler
+ mport com.tw ter.logg ng.{LoggerFactory => Tw terLoggerFactory}
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-object LoggerFactoryModule extends TwitterModule {
+object LoggerFactoryModule extends Tw terModule {
 
-  private val DefaultQueueSize = 10000
+  pr vate val DefaultQueueS ze = 10000
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.AbDeciderLogger)
-  def provideAbDeciderLogger(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.AbDec derLogger)
+  def prov deAbDec derLogger(
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver
   ): Logger = {
-    buildLoggerFactory(
-      ScribeCategories.AbDecider,
-      serviceIdentifier.environment,
-      statsReceiver.scope("ScribeLogger"))
+    bu ldLoggerFactory(
+      Scr beCategor es.AbDec der,
+      serv ce dent f er.env ron nt,
+      statsRece ver.scope("Scr beLogger"))
       .apply()
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.TopLevelApiDdgMetricsLogger)
-  def provideTopLevelApiDdgMetricsLogger(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.TopLevelAp Ddg tr csLogger)
+  def prov deTopLevelAp Ddg tr csLogger(
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver
   ): Logger = {
-    buildLoggerFactory(
-      ScribeCategories.TopLevelApiDdgMetrics,
-      serviceIdentifier.environment,
-      statsReceiver.scope("ScribeLogger"))
+    bu ldLoggerFactory(
+      Scr beCategor es.TopLevelAp Ddg tr cs,
+      serv ce dent f er.env ron nt,
+      statsRece ver.scope("Scr beLogger"))
       .apply()
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.TweetRecsLogger)
-  def provideTweetRecsLogger(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.T etRecsLogger)
+  def prov deT etRecsLogger(
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver
   ): Logger = {
-    buildLoggerFactory(
-      ScribeCategories.TweetsRecs,
-      serviceIdentifier.environment,
-      statsReceiver.scope("ScribeLogger"))
+    bu ldLoggerFactory(
+      Scr beCategor es.T etsRecs,
+      serv ce dent f er.env ron nt,
+      statsRece ver.scope("Scr beLogger"))
       .apply()
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.BlueVerifiedTweetRecsLogger)
-  def provideVITTweetRecsLogger(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.BlueVer f edT etRecsLogger)
+  def prov deV TT etRecsLogger(
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver
   ): Logger = {
-    buildLoggerFactory(
-      ScribeCategories.VITTweetsRecs,
-      serviceIdentifier.environment,
-      statsReceiver.scope("ScribeLogger"))
+    bu ldLoggerFactory(
+      Scr beCategor es.V TT etsRecs,
+      serv ce dent f er.env ron nt,
+      statsRece ver.scope("Scr beLogger"))
       .apply()
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.RelatedTweetsLogger)
-  def provideRelatedTweetsLogger(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.RelatedT etsLogger)
+  def prov deRelatedT etsLogger(
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver
   ): Logger = {
-    buildLoggerFactory(
-      ScribeCategories.RelatedTweets,
-      serviceIdentifier.environment,
-      statsReceiver.scope("ScribeLogger"))
+    bu ldLoggerFactory(
+      Scr beCategor es.RelatedT ets,
+      serv ce dent f er.env ron nt,
+      statsRece ver.scope("Scr beLogger"))
       .apply()
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.UtegTweetsLogger)
-  def provideUtegTweetsLogger(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.UtegT etsLogger)
+  def prov deUtegT etsLogger(
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver
   ): Logger = {
-    buildLoggerFactory(
-      ScribeCategories.UtegTweets,
-      serviceIdentifier.environment,
-      statsReceiver.scope("ScribeLogger"))
+    bu ldLoggerFactory(
+      Scr beCategor es.UtegT ets,
+      serv ce dent f er.env ron nt,
+      statsRece ver.scope("Scr beLogger"))
       .apply()
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.AdsRecommendationsLogger)
-  def provideAdsRecommendationsLogger(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
+  @Prov des
+  @S ngleton
+  @Na d(ModuleNa s.AdsRecom ndat onsLogger)
+  def prov deAdsRecom ndat onsLogger(
+    serv ce dent f er: Serv ce dent f er,
+    statsRece ver: StatsRece ver
   ): Logger = {
-    buildLoggerFactory(
-      ScribeCategories.AdsRecommendations,
-      serviceIdentifier.environment,
-      statsReceiver.scope("ScribeLogger"))
+    bu ldLoggerFactory(
+      Scr beCategor es.AdsRecom ndat ons,
+      serv ce dent f er.env ron nt,
+      statsRece ver.scope("Scr beLogger"))
       .apply()
   }
 
-  private def buildLoggerFactory(
-    category: ScribeCategory,
-    environment: String,
-    statsReceiver: StatsReceiver
-  ): TwitterLoggerFactory = {
-    environment match {
+  pr vate def bu ldLoggerFactory(
+    category: Scr beCategory,
+    env ron nt: Str ng,
+    statsRece ver: StatsRece ver
+  ): Tw terLoggerFactory = {
+    env ron nt match {
       case "prod" =>
-        TwitterLoggerFactory(
+        Tw terLoggerFactory(
           node = category.getProdLoggerFactoryNode,
-          level = Some(Level.INFO),
+          level = So (Level. NFO),
           useParents = false,
-          handlers = List(
-            QueueingHandler(
-              maxQueueSize = DefaultQueueSize,
-              handler = ScribeHandler(
-                category = category.scribeCategory,
+          handlers = L st(
+            Queue ngHandler(
+              maxQueueS ze = DefaultQueueS ze,
+              handler = Scr beHandler(
+                category = category.scr beCategory,
                 formatter = BareFormatter,
-                statsReceiver = statsReceiver.scope(category.getProdLoggerFactoryNode)
+                statsRece ver = statsRece ver.scope(category.getProdLoggerFactoryNode)
               )
             )
           )
         )
       case _ =>
-        TwitterLoggerFactory(
-          node = category.getStagingLoggerFactoryNode,
-          level = Some(Level.DEBUG),
+        Tw terLoggerFactory(
+          node = category.getStag ngLoggerFactoryNode,
+          level = So (Level.DEBUG),
           useParents = false,
-          handlers = List(
+          handlers = L st(
             { () => NullHandler }
           )
         )

@@ -1,310 +1,310 @@
-package com.twitter.search.earlybird.querycache;
+package com.tw ter.search.earlyb rd.querycac ;
 
-import java.io.IOException;
-import java.util.Objects;
-import java.util.Set;
+ mport java. o. OExcept on;
+ mport java.ut l.Objects;
+ mport java.ut l.Set;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.ConstantScoreScorer;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+ mport org.apac .lucene. ndex. ndexReader;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene. ndex.Term;
+ mport org.apac .lucene.search.BooleanClause;
+ mport org.apac .lucene.search.BooleanQuery;
+ mport org.apac .lucene.search.ConstantScoreScorer;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.search.Explanat on;
+ mport org.apac .lucene.search. ndexSearc r;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .lucene.search.Scorer;
+ mport org.apac .lucene.search.ScoreMode;
+ mport org.apac .lucene.search.  ght;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.QueryCacheResultForSegment;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.query.DefaultF lter  ght;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
+ mport com.tw ter.search.core.earlyb rd. ndex.QueryCac ResultForSeg nt;
 
 /**
- * Query to iterate QueryCache result (the cache)
+ * Query to  erate QueryCac  result (t  cac )
  */
-public final class CachedFilterQuery extends Query {
-  private static final String STAT_PREFIX = "querycache_serving_";
-  private static final SearchCounter REWRITE_CALLS = SearchCounter.export(
-      STAT_PREFIX + "rewrite_calls");
-  private static final SearchCounter NO_CACHE_FOUND = SearchCounter.export(
-      STAT_PREFIX + "no_cache_found");
-  private static final SearchCounter USED_CACHE_AND_FRESH_DOCS = SearchCounter.export(
-      STAT_PREFIX + "used_cache_and_fresh_docs");
-  private static final SearchCounter USED_CACHE_ONLY = SearchCounter.export(
-      STAT_PREFIX + "used_cache_only");
+publ c f nal class Cac dF lterQuery extends Query {
+  pr vate stat c f nal Str ng STAT_PREF X = "querycac _serv ng_";
+  pr vate stat c f nal SearchCounter REWR TE_CALLS = SearchCounter.export(
+      STAT_PREF X + "rewr e_calls");
+  pr vate stat c f nal SearchCounter NO_CACHE_FOUND = SearchCounter.export(
+      STAT_PREF X + "no_cac _found");
+  pr vate stat c f nal SearchCounter USED_CACHE_AND_FRESH_DOCS = SearchCounter.export(
+      STAT_PREF X + "used_cac _and_fresh_docs");
+  pr vate stat c f nal SearchCounter USED_CACHE_ONLY = SearchCounter.export(
+      STAT_PREF X + "used_cac _only");
 
 
-  public static class NoSuchFilterException extends Exception {
-    NoSuchFilterException(String filterName) {
-      super("Filter [" + filterName + "] does not exists");
+  publ c stat c class NoSuchF lterExcept on extends Except on {
+    NoSuchF lterExcept on(Str ng f lterNa ) {
+      super("F lter [" + f lterNa  + "] does not ex sts");
     }
   }
 
-  private static class CachedResultQuery extends Query {
-    private final QueryCacheResultForSegment cachedResult;
+  pr vate stat c class Cac dResultQuery extends Query {
+    pr vate f nal QueryCac ResultForSeg nt cac dResult;
 
-    public CachedResultQuery(QueryCacheResultForSegment cachedResult) {
-      this.cachedResult = cachedResult;
+    publ c Cac dResultQuery(QueryCac ResultForSeg nt cac dResult) {
+      t .cac dResult = cac dResult;
     }
 
-    @Override
-    public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-      return new DefaultFilterWeight(this) {
-        @Override
-        protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context)
-            throws IOException {
-          return cachedResult.getDocIdSet().iterator();
+    @Overr de
+    publ c   ght create  ght( ndexSearc r searc r, ScoreMode scoreMode, float boost) {
+      return new DefaultF lter  ght(t ) {
+        @Overr de
+        protected Doc dSet erator getDoc dSet erator(LeafReaderContext context)
+            throws  OExcept on {
+          return cac dResult.getDoc dSet(). erator();
         }
       };
     }
 
-    @Override
-    public int hashCode() {
-      return cachedResult == null ? 0 : cachedResult.hashCode();
+    @Overr de
+    publ c  nt hashCode() {
+      return cac dResult == null ? 0 : cac dResult.hashCode();
     }
 
-    @Override
-    public boolean equals(Object obj) {
-      if (!(obj instanceof CachedResultQuery)) {
+    @Overr de
+    publ c boolean equals(Object obj) {
+       f (!(obj  nstanceof Cac dResultQuery)) {
         return false;
       }
 
-      CachedResultQuery query = (CachedResultQuery) obj;
-      return Objects.equals(cachedResult, query.cachedResult);
+      Cac dResultQuery query = (Cac dResultQuery) obj;
+      return Objects.equals(cac dResult, query.cac dResult);
     }
 
-    @Override
-    public String toString(String field) {
+    @Overr de
+    publ c Str ng toStr ng(Str ng f eld) {
       return "CACHED_RESULT";
     }
   }
 
-  private static class CachedResultAndFreshDocsQuery extends Query {
-    private final Query cacheLuceneQuery;
-    private final QueryCacheResultForSegment cachedResult;
+  pr vate stat c class Cac dResultAndFreshDocsQuery extends Query {
+    pr vate f nal Query cac LuceneQuery;
+    pr vate f nal QueryCac ResultForSeg nt cac dResult;
 
-    public CachedResultAndFreshDocsQuery(
-        Query cacheLuceneQuery, QueryCacheResultForSegment cachedResult) {
-      this.cacheLuceneQuery = cacheLuceneQuery;
-      this.cachedResult = cachedResult;
+    publ c Cac dResultAndFreshDocsQuery(
+        Query cac LuceneQuery, QueryCac ResultForSeg nt cac dResult) {
+      t .cac LuceneQuery = cac LuceneQuery;
+      t .cac dResult = cac dResult;
     }
 
-    @Override
-    public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-      return new Weight(this) {
-        @Override
-        public void extractTerms(Set<Term> terms) {
+    @Overr de
+    publ c   ght create  ght( ndexSearc r searc r, ScoreMode scoreMode, float boost) {
+      return new   ght(t ) {
+        @Overr de
+        publ c vo d extractTerms(Set<Term> terms) {
         }
 
-        @Override
-        public Explanation explain(LeafReaderContext context, int doc) throws IOException {
+        @Overr de
+        publ c Explanat on expla n(LeafReaderContext context,  nt doc) throws  OExcept on {
           Scorer scorer = scorer(context);
-          if ((scorer != null) && (scorer.iterator().advance(doc) == doc)) {
-            return Explanation.match(0f, "Match on id " + doc);
+           f ((scorer != null) && (scorer. erator().advance(doc) == doc)) {
+            return Explanat on.match(0f, "Match on  d " + doc);
           }
-          return Explanation.match(0f, "No match on id " + doc);
+          return Explanat on.match(0f, "No match on  d " + doc);
         }
 
-        @Override
-        public Scorer scorer(LeafReaderContext context) throws IOException {
-          Weight luceneWeight;
+        @Overr de
+        publ c Scorer scorer(LeafReaderContext context) throws  OExcept on {
+            ght lucene  ght;
           try  {
-            luceneWeight = cacheLuceneQuery.createWeight(searcher, scoreMode, boost);
-          } catch (UnsupportedOperationException e) {
-            // Some queries do not support weights. This is fine, it simply means the query has
-            // no docs, and means the same thing as a null scorer.
+            lucene  ght = cac LuceneQuery.create  ght(searc r, scoreMode, boost);
+          } catch (UnsupportedOperat onExcept on e) {
+            // So  quer es do not support   ghts. T   s f ne,   s mply  ans t  query has
+            // no docs, and  ans t  sa  th ng as a null scorer.
             return null;
           }
 
-          Scorer luceneScorer = luceneWeight.scorer(context);
-          if (luceneScorer == null) {
+          Scorer luceneScorer = lucene  ght.scorer(context);
+           f (luceneScorer == null) {
             return null;
           }
 
-          DocIdSetIterator iterator = new CachedResultDocIdSetIterator(
-              cachedResult.getSmallestDocID(),
-              luceneScorer.iterator(),
-              cachedResult.getDocIdSet().iterator());
-          return new ConstantScoreScorer(luceneWeight, 0.0f, scoreMode, iterator);
+          Doc dSet erator  erator = new Cac dResultDoc dSet erator(
+              cac dResult.getSmallestDoc D(),
+              luceneScorer. erator(),
+              cac dResult.getDoc dSet(). erator());
+          return new ConstantScoreScorer(lucene  ght, 0.0f, scoreMode,  erator);
         }
 
-        @Override
-        public boolean isCacheable(LeafReaderContext ctx) {
+        @Overr de
+        publ c boolean  sCac able(LeafReaderContext ctx) {
           return true;
         }
       };
     }
 
-    @Override
-    public int hashCode() {
-      return (cacheLuceneQuery == null ? 0 : cacheLuceneQuery.hashCode()) * 13
-          + (cachedResult == null ? 0 : cachedResult.hashCode());
+    @Overr de
+    publ c  nt hashCode() {
+      return (cac LuceneQuery == null ? 0 : cac LuceneQuery.hashCode()) * 13
+          + (cac dResult == null ? 0 : cac dResult.hashCode());
     }
 
-    @Override
-    public boolean equals(Object obj) {
-      if (!(obj instanceof CachedResultAndFreshDocsQuery)) {
+    @Overr de
+    publ c boolean equals(Object obj) {
+       f (!(obj  nstanceof Cac dResultAndFreshDocsQuery)) {
         return false;
       }
 
-      CachedResultAndFreshDocsQuery query = (CachedResultAndFreshDocsQuery) obj;
-      return Objects.equals(cacheLuceneQuery, query.cacheLuceneQuery)
-          && Objects.equals(cachedResult, query.cachedResult);
+      Cac dResultAndFreshDocsQuery query = (Cac dResultAndFreshDocsQuery) obj;
+      return Objects.equals(cac LuceneQuery, query.cac LuceneQuery)
+          && Objects.equals(cac dResult, query.cac dResult);
     }
 
-    @Override
-    public String toString(String field) {
+    @Overr de
+    publ c Str ng toStr ng(Str ng f eld) {
       return "CACHED_RESULT_AND_FRESH_DOCS";
     }
   }
 
-  private static final Query DUMMY_FILTER = wrapFilter(new Query() {
-    @Override
-    public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-      return new DefaultFilterWeight(this) {
-        @Override
-        protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) {
+  pr vate stat c f nal Query DUMMY_F LTER = wrapF lter(new Query() {
+    @Overr de
+    publ c   ght create  ght( ndexSearc r searc r, ScoreMode scoreMode, float boost) {
+      return new DefaultF lter  ght(t ) {
+        @Overr de
+        protected Doc dSet erator getDoc dSet erator(LeafReaderContext context) {
           return null;
         }
       };
     }
 
-    @Override
-    public int hashCode() {
-      return System.identityHashCode(this);
+    @Overr de
+    publ c  nt hashCode() {
+      return System. dent yHashCode(t );
     }
 
-    @Override
-    public boolean equals(Object obj) {
-      return this == obj;
+    @Overr de
+    publ c boolean equals(Object obj) {
+      return t  == obj;
     }
 
-    @Override
-    public String toString(String field) {
-      return "DUMMY_FILTER";
+    @Overr de
+    publ c Str ng toStr ng(Str ng f eld) {
+      return "DUMMY_F LTER";
     }
   });
 
-  private final QueryCacheFilter queryCacheFilter;
+  pr vate f nal QueryCac F lter queryCac F lter;
 
-  // Lucene Query used to fill the cache
-  private final Query cacheLuceneQuery;
+  // Lucene Query used to f ll t  cac 
+  pr vate f nal Query cac LuceneQuery;
 
-  public static Query getCachedFilterQuery(String filterName, QueryCacheManager queryCacheManager)
-      throws NoSuchFilterException {
-    return wrapFilter(new CachedFilterQuery(filterName, queryCacheManager));
+  publ c stat c Query getCac dF lterQuery(Str ng f lterNa , QueryCac Manager queryCac Manager)
+      throws NoSuchF lterExcept on {
+    return wrapF lter(new Cac dF lterQuery(f lterNa , queryCac Manager));
   }
 
-  private static Query wrapFilter(Query filter) {
-    return new BooleanQuery.Builder()
-        .add(filter, BooleanClause.Occur.FILTER)
-        .build();
+  pr vate stat c Query wrapF lter(Query f lter) {
+    return new BooleanQuery.Bu lder()
+        .add(f lter, BooleanClause.Occur.F LTER)
+        .bu ld();
   }
 
-  private CachedFilterQuery(String filterName, QueryCacheManager queryCacheManager)
-      throws NoSuchFilterException {
-    queryCacheFilter = queryCacheManager.getFilter(filterName);
-    if (queryCacheFilter == null) {
-      throw new NoSuchFilterException(filterName);
+  pr vate Cac dF lterQuery(Str ng f lterNa , QueryCac Manager queryCac Manager)
+      throws NoSuchF lterExcept on {
+    queryCac F lter = queryCac Manager.getF lter(f lterNa );
+     f (queryCac F lter == null) {
+      throw new NoSuchF lterExcept on(f lterNa );
     }
-    queryCacheFilter.incrementUsageStat();
+    queryCac F lter. ncre ntUsageStat();
 
-    // retrieve the query that was used to populate the cache
-    cacheLuceneQuery = queryCacheFilter.getLuceneQuery();
+    // retr eve t  query that was used to populate t  cac 
+    cac LuceneQuery = queryCac F lter.getLuceneQuery();
   }
 
   /**
-   * Creates a query base on the cache situation
+   * Creates a query base on t  cac  s uat on
    */
-  @Override
-  public Query rewrite(IndexReader reader) {
-    EarlybirdIndexSegmentAtomicReader twitterReader = (EarlybirdIndexSegmentAtomicReader) reader;
-    QueryCacheResultForSegment cachedResult =
-        twitterReader.getSegmentData().getQueryCacheResult(queryCacheFilter.getFilterName());
-    REWRITE_CALLS.increment();
+  @Overr de
+  publ c Query rewr e( ndexReader reader) {
+    Earlyb rd ndexSeg ntAtom cReader tw terReader = (Earlyb rd ndexSeg ntAtom cReader) reader;
+    QueryCac ResultForSeg nt cac dResult =
+        tw terReader.getSeg ntData().getQueryCac Result(queryCac F lter.getF lterNa ());
+    REWR TE_CALLS. ncre nt();
 
-    if (cachedResult == null || cachedResult.getSmallestDocID() == -1) {
-      // No cached result, or cache has never been updated
-      // This happens to the newly created segment, between the segment creation and first
-      // query cache update
-      NO_CACHE_FOUND.increment();
+     f (cac dResult == null || cac dResult.getSmallestDoc D() == -1) {
+      // No cac d result, or cac  has never been updated
+      // T  happens to t  newly created seg nt, bet en t  seg nt creat on and f rst
+      // query cac  update
+      NO_CACHE_FOUND. ncre nt();
 
-      if (queryCacheFilter.getCacheModeOnly()) {
-        // since this query cache filter allows cache mode only, we return a query that
-        // matches no doc
-        return DUMMY_FILTER;
+       f (queryCac F lter.getCac ModeOnly()) {
+        // s nce t  query cac  f lter allows cac  mode only,   return a query that
+        // matc s no doc
+        return DUMMY_F LTER;
       }
 
-      return wrapFilter(cacheLuceneQuery);
+      return wrapF lter(cac LuceneQuery);
     }
 
-    if (!queryCacheFilter.getCacheModeOnly() && // is this a cache mode only filter?
-        // the following check is only necessary for the realtime segment, which
-        // grows. Since we decrement docIds in the realtime segment, a reader
-        // having a smallestDocID less than the one in the cachedResult indicates
-        // that the segment/reader has new documents.
-        cachedResult.getSmallestDocID() > twitterReader.getSmallestDocID()) {
-      // The segment has more documents than the cached result. IOW, there are new
-      // documents that are not cached. This happens to latest segment that we're indexing to.
-      USED_CACHE_AND_FRESH_DOCS.increment();
-      return wrapFilter(new CachedResultAndFreshDocsQuery(cacheLuceneQuery, cachedResult));
+     f (!queryCac F lter.getCac ModeOnly() && //  s t  a cac  mode only f lter?
+        // t  follow ng c ck  s only necessary for t  realt   seg nt, wh ch
+        // grows. S nce   decre nt doc ds  n t  realt   seg nt, a reader
+        // hav ng a smallestDoc D less than t  one  n t  cac dResult  nd cates
+        // that t  seg nt/reader has new docu nts.
+        cac dResult.getSmallestDoc D() > tw terReader.getSmallestDoc D()) {
+      // T  seg nt has more docu nts than t  cac d result.  OW, t re are new
+      // docu nts that are not cac d. T  happens to latest seg nt that  're  ndex ng to.
+      USED_CACHE_AND_FRESH_DOCS. ncre nt();
+      return wrapF lter(new Cac dResultAndFreshDocsQuery(cac LuceneQuery, cac dResult));
     }
 
-    // The segment has not grown since the cache was last updated.
-    // This happens mostly to old segments that we're no longer indexing to.
-    USED_CACHE_ONLY.increment();
-    return wrapFilter(new CachedResultQuery(cachedResult));
+    // T  seg nt has not grown s nce t  cac  was last updated.
+    // T  happens mostly to old seg nts that  're no longer  ndex ng to.
+    USED_CACHE_ONLY. ncre nt();
+    return wrapF lter(new Cac dResultQuery(cac dResult));
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
-    final Weight luceneWeight = cacheLuceneQuery.createWeight(searcher, scoreMode, boost);
+  @Overr de
+  publ c   ght create  ght( ndexSearc r searc r, ScoreMode scoreMode, float boost)
+      throws  OExcept on {
+    f nal   ght lucene  ght = cac LuceneQuery.create  ght(searc r, scoreMode, boost);
 
-    return new Weight(this) {
-      @Override
-      public Scorer scorer(LeafReaderContext context) throws IOException {
-        return luceneWeight.scorer(context);
+    return new   ght(t ) {
+      @Overr de
+      publ c Scorer scorer(LeafReaderContext context) throws  OExcept on {
+        return lucene  ght.scorer(context);
       }
 
-      @Override
-      public void extractTerms(Set<Term> terms) {
-        luceneWeight.extractTerms(terms);
+      @Overr de
+      publ c vo d extractTerms(Set<Term> terms) {
+        lucene  ght.extractTerms(terms);
       }
 
-      @Override
-      public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-        return luceneWeight.explain(context, doc);
+      @Overr de
+      publ c Explanat on expla n(LeafReaderContext context,  nt doc) throws  OExcept on {
+        return lucene  ght.expla n(context, doc);
       }
 
-      @Override
-      public boolean isCacheable(LeafReaderContext ctx) {
-        return luceneWeight.isCacheable(ctx);
+      @Overr de
+      publ c boolean  sCac able(LeafReaderContext ctx) {
+        return lucene  ght. sCac able(ctx);
       }
     };
   }
 
-  @Override
-  public int hashCode() {
-    return cacheLuceneQuery == null ? 0 : cacheLuceneQuery.hashCode();
+  @Overr de
+  publ c  nt hashCode() {
+    return cac LuceneQuery == null ? 0 : cac LuceneQuery.hashCode();
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof CachedFilterQuery)) {
+  @Overr de
+  publ c boolean equals(Object obj) {
+     f (!(obj  nstanceof Cac dF lterQuery)) {
       return false;
     }
 
-    CachedFilterQuery filter = (CachedFilterQuery) obj;
-    return Objects.equals(cacheLuceneQuery, filter.cacheLuceneQuery);
+    Cac dF lterQuery f lter = (Cac dF lterQuery) obj;
+    return Objects.equals(cac LuceneQuery, f lter.cac LuceneQuery);
   }
 
-  @Override
-  public String toString(String s) {
-    return "CachedFilterQuery[" + queryCacheFilter.getFilterName() + "]";
+  @Overr de
+  publ c Str ng toStr ng(Str ng s) {
+    return "Cac dF lterQuery[" + queryCac F lter.getF lterNa () + "]";
   }
 }

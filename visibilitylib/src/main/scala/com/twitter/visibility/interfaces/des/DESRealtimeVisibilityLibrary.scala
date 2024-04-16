@@ -1,99 +1,99 @@
-package com.twitter.visibility.interfaces.des
+package com.tw ter.v s b l y. nterfaces.des
 
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.tweets.CommunityTweetFeaturesV2
-import com.twitter.visibility.builder.tweets.EditTweetFeatures
-import com.twitter.visibility.builder.tweets.ExclusiveTweetFeatures
-import com.twitter.visibility.builder.tweets.NilTweetLabelMaps
-import com.twitter.visibility.builder.tweets.TrustedFriendsFeatures
-import com.twitter.visibility.builder.tweets.TweetFeatures
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.common.CommunitiesSource
-import com.twitter.visibility.common.TrustedFriendsSource
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.rules.Allow
-import com.twitter.visibility.{thriftscala => vfthrift}
+ mport com.tw ter.g zmoduck.thr ftscala.User
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.v s b l y.V s b l yL brary
+ mport com.tw ter.v s b l y.bu lder.V s b l yResult
+ mport com.tw ter.v s b l y.bu lder.t ets.Commun yT etFeaturesV2
+ mport com.tw ter.v s b l y.bu lder.t ets.Ed T etFeatures
+ mport com.tw ter.v s b l y.bu lder.t ets.Exclus veT etFeatures
+ mport com.tw ter.v s b l y.bu lder.t ets.N lT etLabelMaps
+ mport com.tw ter.v s b l y.bu lder.t ets.TrustedFr endsFeatures
+ mport com.tw ter.v s b l y.bu lder.t ets.T etFeatures
+ mport com.tw ter.v s b l y.bu lder.users.AuthorFeatures
+ mport com.tw ter.v s b l y.bu lder.users.V e rFeatures
+ mport com.tw ter.v s b l y.common.Commun  esS ce
+ mport com.tw ter.v s b l y.common.TrustedFr endsS ce
+ mport com.tw ter.v s b l y.common.UserRelat onsh pS ce
+ mport com.tw ter.v s b l y.common.UserS ce
+ mport com.tw ter.v s b l y.models.Content d
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.models.V e rContext
+ mport com.tw ter.v s b l y.rules.Allow
+ mport com.tw ter.v s b l y.{thr ftscala => vfthr ft}
 
-case class DESRealtimeVisibilityRequest(tweet: Tweet, author: User, viewer: Option[User])
+case class DESRealt  V s b l yRequest(t et: T et, author: User, v e r: Opt on[User])
 
-object DESRealtimeVisibilityLibrary {
-  type Type = DESRealtimeVisibilityRequest => Stitch[vfthrift.Action]
+object DESRealt  V s b l yL brary {
+  type Type = DESRealt  V s b l yRequest => St ch[vfthr ft.Act on]
 
-  private[this] val safetyLevel = SafetyLevel.DesRealtime
+  pr vate[t ] val safetyLevel = SafetyLevel.DesRealt  
 
-  def apply(visibilityLibrary: VisibilityLibrary): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
+  def apply(v s b l yL brary: V s b l yL brary): Type = {
+    val l braryStatsRece ver = v s b l yL brary.statsRece ver
+    val vfEng neCounter = l braryStatsRece ver.counter("vf_eng ne_requests")
 
-    val tweetFeatures = new TweetFeatures(NilTweetLabelMaps, libraryStatsReceiver)
+    val t etFeatures = new T etFeatures(N lT etLabelMaps, l braryStatsRece ver)
 
-    val authorFeatures = new AuthorFeatures(UserSource.empty, libraryStatsReceiver)
-    val viewerFeatures = new ViewerFeatures(UserSource.empty, libraryStatsReceiver)
-    val communityTweetFeatures = new CommunityTweetFeaturesV2(CommunitiesSource.empty)
-    val exclusiveTweetFeatures =
-      new ExclusiveTweetFeatures(UserRelationshipSource.empty, libraryStatsReceiver)
-    val trustedFriendsTweetFeatures = new TrustedFriendsFeatures(TrustedFriendsSource.empty)
-    val editTweetFeatures = new EditTweetFeatures(libraryStatsReceiver)
+    val authorFeatures = new AuthorFeatures(UserS ce.empty, l braryStatsRece ver)
+    val v e rFeatures = new V e rFeatures(UserS ce.empty, l braryStatsRece ver)
+    val commun yT etFeatures = new Commun yT etFeaturesV2(Commun  esS ce.empty)
+    val exclus veT etFeatures =
+      new Exclus veT etFeatures(UserRelat onsh pS ce.empty, l braryStatsRece ver)
+    val trustedFr endsT etFeatures = new TrustedFr endsFeatures(TrustedFr endsS ce.empty)
+    val ed T etFeatures = new Ed T etFeatures(l braryStatsRece ver)
 
-    { request: DESRealtimeVisibilityRequest =>
-      vfEngineCounter.incr()
+    { request: DESRealt  V s b l yRequest =>
+      vfEng neCounter. ncr()
 
-      val tweet = request.tweet
+      val t et = request.t et
       val author = request.author
-      val viewer = request.viewer
-      val viewerContext = ViewerContext.fromContext
+      val v e r = request.v e r
+      val v e rContext = V e rContext.fromContext
 
       val featureMap =
-        visibilityLibrary.featureMapBuilder(
+        v s b l yL brary.featureMapBu lder(
           Seq(
-            tweetFeatures.forTweetWithoutSafetyLabels(tweet),
+            t etFeatures.forT etW houtSafetyLabels(t et),
             authorFeatures.forAuthorNoDefaults(author),
-            viewerFeatures.forViewerNoDefaults(viewer),
-            communityTweetFeatures.forTweetOnly(tweet),
-            exclusiveTweetFeatures.forTweetOnly(tweet),
-            trustedFriendsTweetFeatures.forTweetOnly(tweet),
-            editTweetFeatures.forTweet(tweet),
+            v e rFeatures.forV e rNoDefaults(v e r),
+            commun yT etFeatures.forT etOnly(t et),
+            exclus veT etFeatures.forT etOnly(t et),
+            trustedFr endsT etFeatures.forT etOnly(t et),
+            ed T etFeatures.forT et(t et),
           )
         )
 
-      val tweetResult = visibilityLibrary.runRuleEngine(
-        ContentId.TweetId(tweet.id),
+      val t etResult = v s b l yL brary.runRuleEng ne(
+        Content d.T et d(t et. d),
         featureMap,
-        viewerContext,
+        v e rContext,
         safetyLevel
       )
-      val authorResult = visibilityLibrary.runRuleEngine(
-        ContentId.UserId(author.id),
+      val authorResult = v s b l yL brary.runRuleEng ne(
+        Content d.User d(author. d),
         featureMap,
-        viewerContext,
+        v e rContext,
         safetyLevel
       )
 
-      Stitch.join(tweetResult, authorResult).map {
-        case (tweetResult, authorResult) => mergeResults(tweetResult, authorResult)
+      St ch.jo n(t etResult, authorResult).map {
+        case (t etResult, authorResult) =>  rgeResults(t etResult, authorResult)
       }
     }
   }
 
-  def mergeResults(
-    tweetResult: VisibilityResult,
-    authorResult: VisibilityResult,
-  ): vfthrift.Action = {
-    Set(tweetResult.verdict, authorResult.verdict)
-      .find {
+  def  rgeResults(
+    t etResult: V s b l yResult,
+    authorResult: V s b l yResult,
+  ): vfthr ft.Act on = {
+    Set(t etResult.verd ct, authorResult.verd ct)
+      .f nd {
         case Allow => false
         case _ => true
       }
-      .map(_.toActionThrift())
-      .getOrElse(Allow.toActionThrift())
+      .map(_.toAct onThr ft())
+      .getOrElse(Allow.toAct onThr ft())
   }
 }

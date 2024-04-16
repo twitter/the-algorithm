@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.topic
+package com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. em.top c
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicDisplayType
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.top c.Top cD splayType
 
-trait BaseTopicDisplayTypeBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]] {
+tra  BaseTop cD splayTypeBu lder[-Query <: P pel neQuery, -Cand date <: Un versalNoun[Any]] {
 
   def apply(
-    query: PipelineQuery,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): Option[TopicDisplayType]
+    query: P pel neQuery,
+    cand date: Cand date,
+    cand dateFeatures: FeatureMap
+  ): Opt on[Top cD splayType]
 }

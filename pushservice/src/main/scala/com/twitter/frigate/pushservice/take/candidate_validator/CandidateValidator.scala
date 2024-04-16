@@ -1,83 +1,83 @@
-package com.twitter.frigate.pushservice.take.candidate_validator
+package com.tw ter.fr gate.pushserv ce.take.cand date_val dator
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.logger.MRLogger
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.take.predicates.TakeCommonPredicates
-import com.twitter.frigate.thriftscala.CommonRecommendationType
-import com.twitter.hermit.predicate.ConcurrentPredicate
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.hermit.predicate.SequentialPredicate
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.logger.MRLogger
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter.fr gate.pushserv ce.take.pred cates.TakeCommonPred cates
+ mport com.tw ter.fr gate.thr ftscala.CommonRecom ndat onType
+ mport com.tw ter. rm .pred cate.ConcurrentPred cate
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter. rm .pred cate.Sequent alPred cate
+ mport com.tw ter.ut l.Future
 
-trait CandidateValidator extends TakeCommonPredicates {
+tra  Cand dateVal dator extends TakeCommonPred cates {
 
-  override implicit val statsReceiver: StatsReceiver = config.statsReceiver
+  overr de  mpl c  val statsRece ver: StatsRece ver = conf g.statsRece ver
 
-  protected val log = MRLogger("CandidateValidator")
+  protected val log = MRLogger("Cand dateVal dator")
 
-  private lazy val skipFiltersCounter = statsReceiver.counter("enable_skip_filters")
-  private lazy val emailUserSkipFiltersCounter =
-    statsReceiver.counter("email_user_enable_skip_filters")
-  private lazy val enablePredicatesCounter = statsReceiver.counter("enable_predicates")
+  pr vate lazy val sk pF ltersCounter = statsRece ver.counter("enable_sk p_f lters")
+  pr vate lazy val ema lUserSk pF ltersCounter =
+    statsRece ver.counter("ema l_user_enable_sk p_f lters")
+  pr vate lazy val enablePred catesCounter = statsRece ver.counter("enable_pred cates")
 
-  protected def enabledPredicates[C <: PushCandidate](
-    candidate: C,
-    predicates: List[NamedPredicate[C]]
-  ): List[NamedPredicate[C]] = {
-    val target = candidate.target
-    val skipFilters: Boolean =
-      target.pushContext.flatMap(_.skipFilters).getOrElse(false) || target.params(
-        PushFeatureSwitchParams.SkipPostRankingFilters)
+  protected def enabledPred cates[C <: PushCand date](
+    cand date: C,
+    pred cates: L st[Na dPred cate[C]]
+  ): L st[Na dPred cate[C]] = {
+    val target = cand date.target
+    val sk pF lters: Boolean =
+      target.pushContext.flatMap(_.sk pF lters).getOrElse(false) || target.params(
+        PushFeatureSw chParams.Sk pPostRank ngF lters)
 
-    if (skipFilters) {
-      skipFiltersCounter.incr()
-      if (target.isEmailUser) emailUserSkipFiltersCounter.incr()
+     f (sk pF lters) {
+      sk pF ltersCounter. ncr()
+       f (target. sEma lUser) ema lUserSk pF ltersCounter. ncr()
 
-      val predicatesToEnable = target.pushContext.flatMap(_.predicatesToEnable).getOrElse(Nil)
-      if (predicatesToEnable.nonEmpty) enablePredicatesCounter.incr()
+      val pred catesToEnable = target.pushContext.flatMap(_.pred catesToEnable).getOrElse(N l)
+       f (pred catesToEnable.nonEmpty) enablePred catesCounter. ncr()
 
-      // if we skip predicates on pushContext, only enable the explicitly specified predicates
-      predicates.filter(predicatesToEnable.contains)
-    } else predicates
+      //  f   sk p pred cates on pushContext, only enable t  expl c ly spec f ed pred cates
+      pred cates.f lter(pred catesToEnable.conta ns)
+    } else pred cates
   }
 
-  protected def executeSequentialPredicates[C <: PushCandidate](
-    candidate: C,
-    predicates: List[NamedPredicate[C]]
-  ): Future[Option[Predicate[C]]] = {
-    val predicatesEnabled = enabledPredicates(candidate, predicates)
-    val sequentialPredicate = new SequentialPredicate(predicatesEnabled)
+  protected def executeSequent alPred cates[C <: PushCand date](
+    cand date: C,
+    pred cates: L st[Na dPred cate[C]]
+  ): Future[Opt on[Pred cate[C]]] = {
+    val pred catesEnabled = enabledPred cates(cand date, pred cates)
+    val sequent alPred cate = new Sequent alPred cate(pred catesEnabled)
 
-    sequentialPredicate.track(Seq(candidate)).map(_.head)
+    sequent alPred cate.track(Seq(cand date)).map(_. ad)
   }
 
-  protected def executeConcurrentPredicates[C <: PushCandidate](
-    candidate: C,
-    predicates: List[NamedPredicate[C]]
-  ): Future[List[Predicate[C]]] = {
-    val predicatesEnabled = enabledPredicates(candidate, predicates)
-    val concurrentPredicate: ConcurrentPredicate[C] = new ConcurrentPredicate[C](predicatesEnabled)
-    concurrentPredicate.track(Seq(candidate)).map(_.head)
+  protected def executeConcurrentPred cates[C <: PushCand date](
+    cand date: C,
+    pred cates: L st[Na dPred cate[C]]
+  ): Future[L st[Pred cate[C]]] = {
+    val pred catesEnabled = enabledPred cates(cand date, pred cates)
+    val concurrentPred cate: ConcurrentPred cate[C] = new ConcurrentPred cate[C](pred catesEnabled)
+    concurrentPred cate.track(Seq(cand date)).map(_. ad)
   }
 
-  protected val candidatePredicatesMap: Map[CommonRecommendationType, List[
-    NamedPredicate[_ <: PushCandidate]
+  protected val cand datePred catesMap: Map[CommonRecom ndat onType, L st[
+    Na dPred cate[_ <: PushCand date]
   ]]
 
-  protected def getCRTPredicates[C <: PushCandidate](
-    CRT: CommonRecommendationType
-  ): List[NamedPredicate[C]] = {
-    candidatePredicatesMap.get(CRT) match {
-      case Some(predicates) =>
-        predicates.asInstanceOf[List[NamedPredicate[C]]]
+  protected def getCRTPred cates[C <: PushCand date](
+    CRT: CommonRecom ndat onType
+  ): L st[Na dPred cate[C]] = {
+    cand datePred catesMap.get(CRT) match {
+      case So (pred cates) =>
+        pred cates.as nstanceOf[L st[Na dPred cate[C]]]
       case _ =>
-        throw new IllegalStateException(
-          s"Unknown CommonRecommendationType for Predicates: ${CRT.name}")
+        throw new  llegalStateExcept on(
+          s"Unknown CommonRecom ndat onType for Pred cates: ${CRT.na }")
     }
   }
 
-  def validateCandidate[C <: PushCandidate](candidate: C): Future[Option[Predicate[C]]]
+  def val dateCand date[C <: PushCand date](cand date: C): Future[Opt on[Pred cate[C]]]
 }

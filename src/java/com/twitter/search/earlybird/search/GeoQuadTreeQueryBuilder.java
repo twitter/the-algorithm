@@ -1,164 +1,164 @@
-package com.twitter.search.earlybird.search;
+package com.tw ter.search.earlyb rd.search;
 
-import java.io.IOException;
-import java.util.LinkedHashSet;
-import java.util.Set;
+ mport java. o. OExcept on;
+ mport java.ut l.L nkedHashSet;
+ mport java.ut l.Set;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.spatial.prefix.tree.Cell;
-import org.apache.lucene.spatial.prefix.tree.CellIterator;
-import org.apache.lucene.util.BytesRef;
-import org.locationtech.spatial4j.shape.Rectangle;
+ mport org.apac .lucene. ndex.LeafReaderContext;
+ mport org.apac .lucene. ndex.Nu r cDocValues;
+ mport org.apac .lucene.search.Query;
+ mport org.apac .lucene.spat al.pref x.tree.Cell;
+ mport org.apac .lucene.spat al.pref x.tree.Cell erator;
+ mport org.apac .lucene.ut l.BytesRef;
+ mport org.locat ontech.spat al4j.shape.Rectangle;
 
-import com.twitter.search.common.query.MultiTermDisjunctionQuery;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.search.GeoQuadTreeQueryBuilderUtil;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.common.util.spatial.BoundingBox;
-import com.twitter.search.common.util.spatial.GeoUtil;
-import com.twitter.search.common.util.spatial.GeohashChunkImpl;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.search.queries.GeoTwoPhaseQuery;
-import com.twitter.search.earlybird.search.queries.GeoTwoPhaseQuery.SecondPhaseDocAccepter;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.util.GeoCode;
+ mport com.tw ter.search.common.query.Mult TermD sjunct onQuery;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.common.search.GeoQuadTreeQueryBu lderUt l;
+ mport com.tw ter.search.common.search.Term nat onTracker;
+ mport com.tw ter.search.common.ut l.spat al.Bound ngBox;
+ mport com.tw ter.search.common.ut l.spat al.GeoUt l;
+ mport com.tw ter.search.common.ut l.spat al.GeohashChunk mpl;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
+ mport com.tw ter.search.earlyb rd.search.quer es.GeoTwoPhaseQuery;
+ mport com.tw ter.search.earlyb rd.search.quer es.GeoTwoPhaseQuery.SecondPhaseDocAccepter;
+ mport com.tw ter.search.queryparser.query.QueryParserExcept on;
+ mport com.tw ter.search.queryparser.ut l.GeoCode;
 
-import geo.google.datamodel.GeoCoordinate;
+ mport geo.google.datamodel.GeoCoord nate;
 
 /**
- * A class that builds queries to query the quadtree.
+ * A class that bu lds quer es to query t  quadtree.
  */
-public final class GeoQuadTreeQueryBuilder {
-  private GeoQuadTreeQueryBuilder() {
+publ c f nal class GeoQuadTreeQueryBu lder {
+  pr vate GeoQuadTreeQueryBu lder() {
   }
 
   /**
-   * Returns a GeoTwoPhaseQuery for the given geocode.
+   * Returns a GeoTwoPhaseQuery for t  g ven geocode.
    */
-  public static Query buildGeoQuadTreeQuery(final GeoCode geocode) {
-    return buildGeoQuadTreeQuery(geocode, null);
+  publ c stat c Query bu ldGeoQuadTreeQuery(f nal GeoCode geocode) {
+    return bu ldGeoQuadTreeQuery(geocode, null);
   }
 
   /**
-   * Returns a GeoTwoPhaseQuery for the given geocode.
+   * Returns a GeoTwoPhaseQuery for t  g ven geocode.
    *
-   * @param geocode The geocode.
-   * @param terminationTracker The tracker that determines when the query needs to terminate.
+   * @param geocode T  geocode.
+   * @param term nat onTracker T  tracker that determ nes w n t  query needs to term nate.
    */
-  public static Query buildGeoQuadTreeQuery(GeoCode geocode,
-                                            TerminationTracker terminationTracker) {
-    Query geoHashDisjuntiveQuery = GeoQuadTreeQueryBuilderUtil.buildGeoQuadTreeQuery(
-        geocode, EarlybirdFieldConstant.GEO_HASH_FIELD.getFieldName());
+  publ c stat c Query bu ldGeoQuadTreeQuery(GeoCode geocode,
+                                            Term nat onTracker term nat onTracker) {
+    Query geoHashD sjunt veQuery = GeoQuadTreeQueryBu lderUt l.bu ldGeoQuadTreeQuery(
+        geocode, Earlyb rdF eldConstant.GEO_HASH_F ELD.getF eldNa ());
 
-    // 5. Create post filtering accepter
-    final SecondPhaseDocAccepter accepter = (geocode.distanceKm != GeoCode.DOUBLE_DISTANCE_NOT_SET)
-            ? new CenterRadiusAccepter(geocode.latitude, geocode.longitude, geocode.distanceKm)
+    // 5. Create post f lter ng accepter
+    f nal SecondPhaseDocAccepter accepter = (geocode.d stanceKm != GeoCode.DOUBLE_D STANCE_NOT_SET)
+            ? new CenterRad usAccepter(geocode.lat ude, geocode.long ude, geocode.d stanceKm)
             : GeoTwoPhaseQuery.ALL_DOCS_ACCEPTER;
 
-    return new GeoTwoPhaseQuery(geoHashDisjuntiveQuery, accepter, terminationTracker);
+    return new GeoTwoPhaseQuery(geoHashD sjunt veQuery, accepter, term nat onTracker);
   }
 
   /**
    * Construct a query as below:
-   *   1. Compute all quadtree cells that intersects the bounding box.
-   *   2. Create a disjunction of the geohashes of all the intersecting cells.
-   *   3. Add a filter to only keep points inside the giving bounding box.
+   *   1. Compute all quadtree cells that  ntersects t  bound ng box.
+   *   2. Create a d sjunct on of t  geohas s of all t   ntersect ng cells.
+   *   3. Add a f lter to only keep po nts  ns de t  g v ng bound ng box.
    */
-  public static Query buildGeoQuadTreeQuery(final Rectangle boundingBox,
-                                            final TerminationTracker terminationTracker)
-      throws QueryParserException {
-    // 1. Locate the main quadtree cell---the cell containing the bounding box's center point whose
-    // diagonal is just longer than the bounding box's diagonal.
-    final Cell centerCell = GeohashChunkImpl.getGeoNodeByBoundingBox(boundingBox);
+  publ c stat c Query bu ldGeoQuadTreeQuery(f nal Rectangle bound ngBox,
+                                            f nal Term nat onTracker term nat onTracker)
+      throws QueryParserExcept on {
+    // 1. Locate t  ma n quadtree cell---t  cell conta n ng t  bound ng box's center po nt whose
+    // d agonal  s just longer than t  bound ng box's d agonal.
+    f nal Cell centerCell = GeohashChunk mpl.getGeoNodeByBound ngBox(bound ngBox);
 
-    // 2. Determine quadtree level to search.
-    int treeLevel = -1;
-    if (centerCell != null) {
+    // 2. Determ ne quadtree level to search.
+     nt treeLevel = -1;
+     f (centerCell != null) {
       treeLevel = centerCell.getLevel();
     } else {
-      // This should not happen.
-      throw new QueryParserException(
-          "Unable to locate quadtree cell containing the given bounding box."
-          + "Bounding box is: " + boundingBox);
+      // T  should not happen.
+      throw new QueryParserExcept on(
+          "Unable to locate quadtree cell conta n ng t  g ven bound ng box."
+          + "Bound ng box  s: " + bound ngBox);
     }
 
-    // 3. get all quadtree cells at treeLevel that intersects the given bounding box.
-    CellIterator intersectingCells =
-        GeohashChunkImpl.getNodesIntersectingBoundingBox(boundingBox, treeLevel);
+    // 3. get all quadtree cells at treeLevel that  ntersects t  g ven bound ng box.
+    Cell erator  ntersect ngCells =
+        GeohashChunk mpl.getNodes ntersect ngBound ngBox(bound ngBox, treeLevel);
 
-    // 4. Construct disjunction query
-    final Set<BytesRef> geoHashSet = new LinkedHashSet<>();
+    // 4. Construct d sjunct on query
+    f nal Set<BytesRef> geoHashSet = new L nkedHashSet<>();
 
     // Add center node
     geoHashSet.add(centerCell.getTokenBytesNoLeaf(new BytesRef()));
-    // If there are other nodes intersecting query circle, also add them in.
-    if (intersectingCells != null) {
-      while (intersectingCells.hasNext()) {
-        geoHashSet.add(intersectingCells.next().getTokenBytesNoLeaf(new BytesRef()));
+    //  f t re are ot r nodes  ntersect ng query c rcle, also add t m  n.
+     f ( ntersect ngCells != null) {
+      wh le ( ntersect ngCells.hasNext()) {
+        geoHashSet.add( ntersect ngCells.next().getTokenBytesNoLeaf(new BytesRef()));
       }
     }
-    MultiTermDisjunctionQuery geoHashDisjuntiveQuery = new MultiTermDisjunctionQuery(
-        EarlybirdFieldConstant.GEO_HASH_FIELD.getFieldName(), geoHashSet);
+    Mult TermD sjunct onQuery geoHashD sjunt veQuery = new Mult TermD sjunct onQuery(
+        Earlyb rdF eldConstant.GEO_HASH_F ELD.getF eldNa (), geoHashSet);
 
-    // 5. Create post filtering accepter
-    final GeoDocAccepter accepter = new BoundingBoxAccepter(boundingBox);
+    // 5. Create post f lter ng accepter
+    f nal GeoDocAccepter accepter = new Bound ngBoxAccepter(bound ngBox);
 
-    return new GeoTwoPhaseQuery(geoHashDisjuntiveQuery, accepter, terminationTracker);
+    return new GeoTwoPhaseQuery(geoHashD sjunt veQuery, accepter, term nat onTracker);
   }
 
-  private abstract static class GeoDocAccepter extends SecondPhaseDocAccepter {
-    private NumericDocValues latLonDocValues;
-    private final GeoCoordinate geoCoordReuse = new GeoCoordinate();
+  pr vate abstract stat c class GeoDocAccepter extends SecondPhaseDocAccepter {
+    pr vate Nu r cDocValues latLonDocValues;
+    pr vate f nal GeoCoord nate geoCoordReuse = new GeoCoord nate();
 
-    @Override
-    public void initialize(LeafReaderContext context) throws IOException {
-      final EarlybirdIndexSegmentAtomicReader reader =
-          (EarlybirdIndexSegmentAtomicReader) context.reader();
+    @Overr de
+    publ c vo d  n  al ze(LeafReaderContext context) throws  OExcept on {
+      f nal Earlyb rd ndexSeg ntAtom cReader reader =
+          (Earlyb rd ndexSeg ntAtom cReader) context.reader();
       latLonDocValues =
-          reader.getNumericDocValues(EarlybirdFieldConstant.LAT_LON_CSF_FIELD.getFieldName());
+          reader.getNu r cDocValues(Earlyb rdF eldConstant.LAT_LON_CSF_F ELD.getF eldNa ());
     }
 
-    // Decides whether a point should be accepted.
-    protected abstract boolean acceptPoint(double lat, double lon);
+    // Dec des w t r a po nt should be accepted.
+    protected abstract boolean acceptPo nt(double lat, double lon);
 
-    // Decides whether a document should be accepted based on its geo coordinates.
-    @Override
-    public final boolean accept(int internalDocId) throws IOException {
-      // Cannot obtain valid geo coordinates for the document. Not acceptable.
-      if (latLonDocValues == null
-          || !latLonDocValues.advanceExact(internalDocId)
-          || !GeoUtil.decodeLatLonFromInt64(latLonDocValues.longValue(), geoCoordReuse)) {
+    // Dec des w t r a docu nt should be accepted based on  s geo coord nates.
+    @Overr de
+    publ c f nal boolean accept( nt  nternalDoc d) throws  OExcept on {
+      // Cannot obta n val d geo coord nates for t  docu nt. Not acceptable.
+       f (latLonDocValues == null
+          || !latLonDocValues.advanceExact( nternalDoc d)
+          || !GeoUt l.decodeLatLonFrom nt64(latLonDocValues.longValue(), geoCoordReuse)) {
         return false;
       }
 
-      return acceptPoint(geoCoordReuse.getLatitude(), geoCoordReuse.getLongitude());
+      return acceptPo nt(geoCoordReuse.getLat ude(), geoCoordReuse.getLong ude());
     }
   }
 
-  // Accepts points within a circle defined by a center point and a radius.
-  private static final class CenterRadiusAccepter extends GeoDocAccepter {
-    private final double centerLat;
-    private final double centerLon;
-    private final double radiusKm;
+  // Accepts po nts w h n a c rcle def ned by a center po nt and a rad us.
+  pr vate stat c f nal class CenterRad usAccepter extends GeoDocAccepter {
+    pr vate f nal double centerLat;
+    pr vate f nal double centerLon;
+    pr vate f nal double rad usKm;
 
-    public CenterRadiusAccepter(double centerLat, double centerLon, double radiusKm) {
-      this.centerLat = centerLat;
-      this.centerLon = centerLon;
-      this.radiusKm = radiusKm;
+    publ c CenterRad usAccepter(double centerLat, double centerLon, double rad usKm) {
+      t .centerLat = centerLat;
+      t .centerLon = centerLon;
+      t .rad usKm = rad usKm;
     }
 
-    @Override
-    protected boolean acceptPoint(double lat, double lon) {
-      double actualDistance =
-          BoundingBox.approxDistanceC(centerLat, centerLon, lat, lon);
-      if (actualDistance < radiusKm) {
+    @Overr de
+    protected boolean acceptPo nt(double lat, double lon) {
+      double actualD stance =
+          Bound ngBox.approxD stanceC(centerLat, centerLon, lat, lon);
+       f (actualD stance < rad usKm) {
         return true;
-      } else if (Double.isNaN(actualDistance)) {
-        // There seems to be a rare bug in GeoUtils that computes NaN
-        // for two identical lat/lon pairs on occasion. Check for that here.
-        if (lat == centerLat && lon == centerLon) {
+      } else  f (Double. sNaN(actualD stance)) {
+        // T re seems to be a rare bug  n GeoUt ls that computes NaN
+        // for two  dent cal lat/lon pa rs on occas on. C ck for that  re.
+         f (lat == centerLat && lon == centerLon) {
           return true;
         }
       }
@@ -166,34 +166,34 @@ public final class GeoQuadTreeQueryBuilder {
       return false;
     }
 
-    @Override
-    public String toString() {
-      return String.format("CenterRadiusAccepter(Center: %.4f, %.4f Radius (km): %.4f)",
-              centerLat, centerLon, radiusKm);
+    @Overr de
+    publ c Str ng toStr ng() {
+      return Str ng.format("CenterRad usAccepter(Center: %.4f, %.4f Rad us (km): %.4f)",
+              centerLat, centerLon, rad usKm);
     }
   }
 
-  // Accepts points within a BoundingBox
-  private static final class BoundingBoxAccepter extends GeoDocAccepter {
-    private final Rectangle boundingBox;
+  // Accepts po nts w h n a Bound ngBox
+  pr vate stat c f nal class Bound ngBoxAccepter extends GeoDocAccepter {
+    pr vate f nal Rectangle bound ngBox;
 
-    public BoundingBoxAccepter(Rectangle boundingBox)  {
-      this.boundingBox = boundingBox;
+    publ c Bound ngBoxAccepter(Rectangle bound ngBox)  {
+      t .bound ngBox = bound ngBox;
     }
 
-    @Override
-    protected boolean acceptPoint(double lat, double lon) {
-      return GeohashChunkImpl.isPointInBoundingBox(lat, lon, boundingBox);
+    @Overr de
+    protected boolean acceptPo nt(double lat, double lon) {
+      return GeohashChunk mpl. sPo nt nBound ngBox(lat, lon, bound ngBox);
 
     }
 
-    @Override
-    public String toString() {
-      return String.format("PointInBoundingBoxAccepter((%.4f, %.4f), (%.4f, %.4f), "
-              + "crossesDateLine=%b)",
-              boundingBox.getMinY(), boundingBox.getMinX(),
-              boundingBox.getMaxY(), boundingBox.getMaxX(),
-              boundingBox.getCrossesDateLine());
+    @Overr de
+    publ c Str ng toStr ng() {
+      return Str ng.format("Po nt nBound ngBoxAccepter((%.4f, %.4f), (%.4f, %.4f), "
+              + "crossesDateL ne=%b)",
+              bound ngBox.getM nY(), bound ngBox.getM nX(),
+              bound ngBox.getMaxY(), bound ngBox.getMaxX(),
+              bound ngBox.getCrossesDateL ne());
     }
   }
 }

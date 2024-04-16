@@ -1,43 +1,43 @@
-package com.twitter.tweetypie.serverutil
+package com.tw ter.t etyp e.serverut l
 
-import com.twitter.finagle.ChannelException
-import com.twitter.finagle.TimeoutException
-import com.twitter.scrooge.ThriftException
-import java.net.SocketException
-import java.nio.channels.CancelledKeyException
-import java.nio.channels.ClosedChannelException
-import java.util.concurrent.CancellationException
-import java.util.concurrent.{TimeoutException => JTimeoutException}
-import org.apache.thrift.TApplicationException
-import scala.util.control.NoStackTrace
+ mport com.tw ter.f nagle.ChannelExcept on
+ mport com.tw ter.f nagle.T  outExcept on
+ mport com.tw ter.scrooge.Thr ftExcept on
+ mport java.net.SocketExcept on
+ mport java.n o.channels.CancelledKeyExcept on
+ mport java.n o.channels.ClosedChannelExcept on
+ mport java.ut l.concurrent.Cancellat onExcept on
+ mport java.ut l.concurrent.{T  outExcept on => JT  outExcept on}
+ mport org.apac .thr ft.TAppl cat onExcept on
+ mport scala.ut l.control.NoStackTrace
 
-object BoringStackTrace {
+object Bor ngStackTrace {
 
   /**
-   * These exceptions are boring because they are expected to
-   * occasionally (or even regularly) happen during normal operation
-   * of the service. The intention is to make it easier to debug
-   * problems by making interesting exceptions easier to see.
+   * T se except ons are bor ng because t y are expected to
+   * occas onally (or even regularly) happen dur ng normal operat on
+   * of t  serv ce. T   ntent on  s to make   eas er to debug
+   * problems by mak ng  nterest ng except ons eas er to see.
    *
-   * The best way to mark an exception as boring is to extend from
-   * NoStackTrace, since that is a good indication that we don't care
-   * about the details.
+   * T  best way to mark an except on as bor ng  s to extend from
+   * NoStackTrace, s nce that  s a good  nd cat on that   don't care
+   * about t  deta ls.
    */
-  def isBoring(t: Throwable): Boolean =
+  def  sBor ng(t: Throwable): Boolean =
     t match {
       case _: NoStackTrace => true
-      case _: TimeoutException => true
-      case _: CancellationException => true
-      case _: JTimeoutException => true
-      case _: ChannelException => true
-      case _: SocketException => true
-      case _: ClosedChannelException => true
-      case _: CancelledKeyException => true
-      case _: ThriftException => true
-      // DeadlineExceededExceptions are propagated as:
-      // org.apache.thrift.TApplicationException: Internal error processing issue3: 'com.twitter.finagle.service.DeadlineFilter$DeadlineExceededException: exceeded request deadline of 100.milliseconds by 4.milliseconds. Deadline expired at 2020-08-27 17:07:46 +0000 and now it is 2020-08-27 17:07:46 +0000.'
-      case e: TApplicationException =>
-        e.getMessage != null && e.getMessage.contains("DeadlineExceededException")
+      case _: T  outExcept on => true
+      case _: Cancellat onExcept on => true
+      case _: JT  outExcept on => true
+      case _: ChannelExcept on => true
+      case _: SocketExcept on => true
+      case _: ClosedChannelExcept on => true
+      case _: CancelledKeyExcept on => true
+      case _: Thr ftExcept on => true
+      // Deadl neExceededExcept ons are propagated as:
+      // org.apac .thr ft.TAppl cat onExcept on:  nternal error process ng  ssue3: 'com.tw ter.f nagle.serv ce.Deadl neF lter$Deadl neExceededExcept on: exceeded request deadl ne of 100.m ll seconds by 4.m ll seconds. Deadl ne exp red at 2020-08-27 17:07:46 +0000 and now    s 2020-08-27 17:07:46 +0000.'
+      case e: TAppl cat onExcept on =>
+        e.get ssage != null && e.get ssage.conta ns("Deadl neExceededExcept on")
       case _ => false
     }
 }

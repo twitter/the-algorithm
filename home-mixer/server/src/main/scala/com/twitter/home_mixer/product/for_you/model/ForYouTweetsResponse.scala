@@ -1,5 +1,5 @@
-package com.twitter.home_mixer.product.for_you.model
+package com.tw ter.ho _m xer.product.for_ .model
 
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
+ mport com.tw ter.product_m xer.core.model.marshall ng.HasMarshall ng
 
-case class ForYouTweetsResponse(tweetCandidates: Seq[Long]) extends HasMarshalling
+case class For T etsResponse(t etCand dates: Seq[Long]) extends HasMarshall ng

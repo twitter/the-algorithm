@@ -1,66 +1,66 @@
-scala_library(
+scala_l brary(
     platform = "java8",
     tags = [
-        "bazel-compatible",
+        "bazel-compat ble",
         "bazel-only",
     ],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/bijection:core",
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/constdb_util",
-        "graph-feature-service/src/main/scala/com/twitter/graph_feature_service/common",
-        "src/scala/com/twitter/interaction_graph/scio/agg_all:interaction_graph_history_aggregated_edge_snapshot-scala",
-        "src/scala/com/twitter/interaction_graph/scio/ml/scores:real_graph_in_scores-scala",
-        "src/scala/com/twitter/pluck/source/user_audits:user_audit_final-scala",
-        "src/scala/com/twitter/scalding_internal/dalv2",
-        "src/scala/com/twitter/scalding_internal/job",
-        "src/scala/com/twitter/scalding_internal/job/analytics_batch",
+    dependenc es = [
+        "3rdparty/jvm/com/tw ter/b ject on:core",
+        "fr gate/fr gate-common/src/ma n/scala/com/tw ter/fr gate/common/constdb_ut l",
+        "graph-feature-serv ce/src/ma n/scala/com/tw ter/graph_feature_serv ce/common",
+        "src/scala/com/tw ter/ nteract on_graph/sc o/agg_all: nteract on_graph_ tory_aggregated_edge_snapshot-scala",
+        "src/scala/com/tw ter/ nteract on_graph/sc o/ml/scores:real_graph_ n_scores-scala",
+        "src/scala/com/tw ter/pluck/s ce/user_aud s:user_aud _f nal-scala",
+        "src/scala/com/tw ter/scald ng_ nternal/dalv2",
+        "src/scala/com/tw ter/scald ng_ nternal/job",
+        "src/scala/com/tw ter/scald ng_ nternal/job/analyt cs_batch",
     ],
 )
 
-scalding_job(
-    name = "graph_feature_service_adhoc_job",
-    main = "com.twitter.graph_feature_service.scalding.GraphFeatureServiceAdhocApp",
+scald ng_job(
+    na  = "graph_feature_serv ce_adhoc_job",
+    ma n = "com.tw ter.graph_feature_serv ce.scald ng.GraphFeatureServ ceAdhocApp",
     args = [
         "--date 2022-10-24",
     ],
-    config = [
-        ("hadoop.map.jvm.total-memory", "3072m"),
-        ("hadoop.reduce.jvm.total-memory", "3072m"),
-        ("hadoop.submitter.jvm.total-memory", "5120m"),
-        ("submitter.tier", "preemptible"),
+    conf g = [
+        ("hadoop.map.jvm.total- mory", "3072m"),
+        ("hadoop.reduce.jvm.total- mory", "3072m"),
+        ("hadoop.subm ter.jvm.total- mory", "5120m"),
+        ("subm ter.t er", "preempt ble"),
     ],
-    contact = "recos-platform-alerts@twitter.com",
+    contact = "recos-platform-alerts@tw ter.com",
     hadoop_cluster = "atla-proc",
-    hadoop_properties = [("mapreduce.job.hdfs-servers", "/atla/proc/user/cassowary")],
+    hadoop_propert es = [("mapreduce.job.hdfs-servers", "/atla/proc/user/cassowary")],
     platform = "java8",
     role = "cassowary",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible:migrated",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [":scalding"],
+    dependenc es = [":scald ng"],
 )
 
-scalding_job(
-    name = "graph_feature_service_daily_job",
-    main = "com.twitter.graph_feature_service.scalding.GraphFeatureServiceScheduledApp",
-    config = [
-        ("hadoop.map.jvm.total-memory", "3072m"),
-        ("hadoop.reduce.jvm.total-memory", "3072m"),
-        ("hadoop.submitter.jvm.total-memory", "5120m"),
-        ("submitter.tier", "preemptible"),
+scald ng_job(
+    na  = "graph_feature_serv ce_da ly_job",
+    ma n = "com.tw ter.graph_feature_serv ce.scald ng.GraphFeatureServ ceSc duledApp",
+    conf g = [
+        ("hadoop.map.jvm.total- mory", "3072m"),
+        ("hadoop.reduce.jvm.total- mory", "3072m"),
+        ("hadoop.subm ter.jvm.total- mory", "5120m"),
+        ("subm ter.t er", "preempt ble"),
     ],
-    contact = "recos-platform-alerts@twitter.com",
+    contact = "recos-platform-alerts@tw ter.com",
     cron = "01,31 * * * *",
     hadoop_cluster = "atla-proc",
-    hadoop_properties = [("mapreduce.job.hdfs-servers", "/atla/proc/user/cassowary")],
+    hadoop_propert es = [("mapreduce.job.hdfs-servers", "/atla/proc/user/cassowary")],
     platform = "java8",
     role = "cassowary",
-    runtime_platform = "java8",
+    runt  _platform = "java8",
     tags = [
-        "bazel-compatible:migrated",
+        "bazel-compat ble:m grated",
         "bazel-only",
     ],
-    dependencies = [":scalding"],
+    dependenc es = [":scald ng"],
 )

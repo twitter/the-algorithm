@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.module
+package com.tw ter.product_m xer.core.module
 
-import com.twitter.finatra.thrift.exceptions.ExceptionMapper
-import com.twitter.inject.Logging
-import com.twitter.util.Future
-import javax.inject.Singleton
-import scala.util.control.NonFatal
+ mport com.tw ter.f natra.thr ft.except ons.Except onMapper
+ mport com.tw ter. nject.Logg ng
+ mport com.tw ter.ut l.Future
+ mport javax. nject.S ngleton
+ mport scala.ut l.control.NonFatal
 
 /**
- * Similar to [[com.twitter.finatra.thrift.internal.exceptions.ThrowableExceptionMapper]]
+ * S m lar to [[com.tw ter.f natra.thr ft. nternal.except ons.ThrowableExcept onMapper]]
  *
- * But this one also logs the exceptions.
+ * But t  one also logs t  except ons.
  */
-@Singleton
-class LoggingThrowableExceptionMapper extends ExceptionMapper[Throwable, Nothing] with Logging {
+@S ngleton
+class Logg ngThrowableExcept onMapper extends Except onMapper[Throwable, Noth ng] w h Logg ng {
 
-  override def handleException(throwable: Throwable): Future[Nothing] = {
-    error("Unhandled Exception", throwable)
+  overr de def handleExcept on(throwable: Throwable): Future[Noth ng] = {
+    error("Unhandled Except on", throwable)
 
     throwable match {
-      case NonFatal(e) => Future.exception(e)
+      case NonFatal(e) => Future.except on(e)
     }
   }
 }

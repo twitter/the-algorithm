@@ -1,128 +1,128 @@
 """
-Different type of convolution layers to be used in the ClemNet.
+D fferent type of convolut on layers to be used  n t  ClemNet.
 """
-from typing import Any
+from typ ng  mport Any
 
-import tensorflow as tf
+ mport tensorflow as tf
 
 
 class KerasConv1D(tf.keras.layers.Layer):
   """
-  Basic Conv1D layer in a wrapper to be compatible with ClemNet.
+  Bas c Conv1D layer  n a wrapper to be compat ble w h ClemNet.
   """
 
-  def __init__(
+  def __ n __(
     self,
-    kernel_size: int,
-    filters: int,
-    strides: int,
-    padding: str,
-    use_bias: bool = True,
-    kernel_initializer: str = "glorot_uniform",
-    bias_initializer: str = "zeros",
+    kernel_s ze:  nt,
+    f lters:  nt,
+    str des:  nt,
+    padd ng: str,
+    use_b as: bool = True,
+    kernel_ n  al zer: str = "glorot_un form",
+    b as_ n  al zer: str = "zeros",
     **kwargs: Any,
   ):
-    super(KerasConv1D, self).__init__(**kwargs)
-    self.kernel_size = kernel_size
-    self.filters = filters
-    self.use_bias = use_bias
-    self.kernel_initializer = kernel_initializer
-    self.bias_initializer = bias_initializer
-    self.strides = strides
-    self.padding = padding
+    super(KerasConv1D, self).__ n __(**kwargs)
+    self.kernel_s ze = kernel_s ze
+    self.f lters = f lters
+    self.use_b as = use_b as
+    self.kernel_ n  al zer = kernel_ n  al zer
+    self.b as_ n  al zer = b as_ n  al zer
+    self.str des = str des
+    self.padd ng = padd ng
 
-  def build(self, input_shape: tf.TensorShape) -> None:
+  def bu ld(self,  nput_shape: tf.TensorShape) -> None:
     assert (
-      len(input_shape) == 3
-    ), f"Tensor shape must be of length 3. Passed tensor of shape {input_shape}."
+      len( nput_shape) == 3
+    ), f"Tensor shape must be of length 3. Passed tensor of shape { nput_shape}."
 
-    self.features = input_shape[1]
+    self.features =  nput_shape[1]
 
     self.w = tf.keras.layers.Conv1D(
-      kernel_size=self.kernel_size,
-      filters=self.filters,
-      strides=self.strides,
-      padding=self.padding,
-      use_bias=self.use_bias,
-      kernel_initializer=self.kernel_initializer,
-      bias_initializer=self.bias_initializer,
-      name=self.name,
+      kernel_s ze=self.kernel_s ze,
+      f lters=self.f lters,
+      str des=self.str des,
+      padd ng=self.padd ng,
+      use_b as=self.use_b as,
+      kernel_ n  al zer=self.kernel_ n  al zer,
+      b as_ n  al zer=self.b as_ n  al zer,
+      na =self.na ,
     )
 
-  def call(self, inputs: tf.Tensor, **kwargs: Any) -> tf.Tensor:
-    return self.w(inputs)
+  def call(self,  nputs: tf.Tensor, **kwargs: Any) -> tf.Tensor:
+    return self.w( nputs)
 
 
-class ChannelWiseDense(tf.keras.layers.Layer):
+class ChannelW seDense(tf.keras.layers.Layer):
   """
-  Dense layer is applied to each channel separately. This is more memory and computationally
-  efficient than flattening the channels and performing single dense layers over it which is the
-  default behavior in tf1.
+  Dense layer  s appl ed to each channel separately. T   s more  mory and computat onally
+  eff c ent than flatten ng t  channels and perform ng s ngle dense layers over   wh ch  s t 
+  default behav or  n tf1.
   """
 
-  def __init__(
+  def __ n __(
     self,
-    output_size: int,
-    use_bias: bool,
-    kernel_initializer: str = "uniform_glorot",
-    bias_initializer: str = "zeros",
+    output_s ze:  nt,
+    use_b as: bool,
+    kernel_ n  al zer: str = "un form_glorot",
+    b as_ n  al zer: str = "zeros",
     **kwargs: Any,
   ):
-    super(ChannelWiseDense, self).__init__(**kwargs)
-    self.output_size = output_size
-    self.use_bias = use_bias
-    self.kernel_initializer = kernel_initializer
-    self.bias_initializer = bias_initializer
+    super(ChannelW seDense, self).__ n __(**kwargs)
+    self.output_s ze = output_s ze
+    self.use_b as = use_b as
+    self.kernel_ n  al zer = kernel_ n  al zer
+    self.b as_ n  al zer = b as_ n  al zer
 
-  def build(self, input_shape: tf.TensorShape) -> None:
+  def bu ld(self,  nput_shape: tf.TensorShape) -> None:
     assert (
-      len(input_shape) == 3
-    ), f"Tensor shape must be of length 3. Passed tensor of shape {input_shape}."
+      len( nput_shape) == 3
+    ), f"Tensor shape must be of length 3. Passed tensor of shape { nput_shape}."
 
-    input_size = input_shape[1]
-    channels = input_shape[2]
+     nput_s ze =  nput_shape[1]
+    channels =  nput_shape[2]
 
-    self.kernel = self.add_weight(
-      name="kernel",
-      shape=(channels, input_size, self.output_size),
-      initializer=self.kernel_initializer,
-      trainable=True,
+    self.kernel = self.add_  ght(
+      na ="kernel",
+      shape=(channels,  nput_s ze, self.output_s ze),
+       n  al zer=self.kernel_ n  al zer,
+      tra nable=True,
     )
 
-    self.bias = self.add_weight(
-      name="bias",
-      shape=(channels, self.output_size),
-      initializer=self.bias_initializer,
-      trainable=self.use_bias,
+    self.b as = self.add_  ght(
+      na ="b as",
+      shape=(channels, self.output_s ze),
+       n  al zer=self.b as_ n  al zer,
+      tra nable=self.use_b as,
     )
 
-  def call(self, inputs: tf.Tensor, **kwargs: Any) -> tf.Tensor:
-    x = inputs
+  def call(self,  nputs: tf.Tensor, **kwargs: Any) -> tf.Tensor:
+    x =  nputs
 
     transposed_x = tf.transpose(x, perm=[2, 0, 1])
-    transposed_residual = (
-      tf.transpose(tf.matmul(transposed_x, self.kernel), perm=[1, 0, 2]) + self.bias
+    transposed_res dual = (
+      tf.transpose(tf.matmul(transposed_x, self.kernel), perm=[1, 0, 2]) + self.b as
     )
-    output = tf.transpose(transposed_residual, perm=[0, 2, 1])
+    output = tf.transpose(transposed_res dual, perm=[0, 2, 1])
 
     return output
 
 
-class ResidualLayer(tf.keras.layers.Layer):
+class Res dualLayer(tf.keras.layers.Layer):
   """
-  Layer implementing a 3D-residual connection.
+  Layer  mple nt ng a 3D-res dual connect on.
   """
 
-  def build(self, input_shape: tf.TensorShape) -> None:
+  def bu ld(self,  nput_shape: tf.TensorShape) -> None:
     assert (
-      len(input_shape) == 3
-    ), f"Tensor shape must be of length 3. Passed tensor of shape {input_shape}."
+      len( nput_shape) == 3
+    ), f"Tensor shape must be of length 3. Passed tensor of shape { nput_shape}."
 
-  def call(self, inputs: tf.Tensor, residual: tf.Tensor, **kwargs: Any) -> tf.Tensor:
+  def call(self,  nputs: tf.Tensor, res dual: tf.Tensor, **kwargs: Any) -> tf.Tensor:
     shortcut = tf.keras.layers.Conv1D(
-      filters=int(residual.shape[2]), strides=1, kernel_size=1, padding="SAME", use_bias=False
-    )(inputs)
+      f lters= nt(res dual.shape[2]), str des=1, kernel_s ze=1, padd ng="SAME", use_b as=False
+    )( nputs)
 
-    output = tf.add(shortcut, residual)
+    output = tf.add(shortcut, res dual)
 
     return output

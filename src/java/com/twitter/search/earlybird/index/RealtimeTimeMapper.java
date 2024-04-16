@@ -1,149 +1,149 @@
-package com.twitter.search.earlybird.index;
+package com.tw ter.search.earlyb rd. ndex;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.core.earlybird.index.inverted.IntBlockPool;
+ mport com.tw ter.search.common.ut l. o.flushable.DataDeser al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.DataSer al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.common.ut l. o.flushable.Flushable;
+ mport com.tw ter.search.core.earlyb rd. ndex.Doc DToT et DMapper;
+ mport com.tw ter.search.core.earlyb rd. ndex.T  Mapper;
+ mport com.tw ter.search.core.earlyb rd. ndex. nverted. ntBlockPool;
 
-import it.unimi.dsi.fastutil.ints.Int2IntMap;
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+ mport  .un m .ds .fastut l. nts. nt2 ntMap;
+ mport  .un m .ds .fastut l. nts. nt2 ntOpenHashMap;
 
 /**
- * Maps 32-bit document IDs to seconds-since-epoch timestamps.
+ * Maps 32-b  docu nt  Ds to seconds-s nce-epoch t  stamps.
  */
-public class RealtimeTimeMapper extends AbstractInMemoryTimeMapper {
-  // Doc id to timestamp map. Timestamps that are negative are out-of-order.
-  protected final Int2IntOpenHashMap timeMap;
-  private final int capacity;
+publ c class Realt  T  Mapper extends Abstract n moryT  Mapper {
+  // Doc  d to t  stamp map. T  stamps that are negat ve are out-of-order.
+  protected f nal  nt2 ntOpenHashMap t  Map;
+  pr vate f nal  nt capac y;
 
-  public RealtimeTimeMapper(int capacity) {
+  publ c Realt  T  Mapper( nt capac y) {
     super();
-    this.capacity = capacity;
+    t .capac y = capac y;
 
-    timeMap = new Int2IntOpenHashMap(capacity);
-    timeMap.defaultReturnValue(ILLEGAL_TIME);
+    t  Map = new  nt2 ntOpenHashMap(capac y);
+    t  Map.defaultReturnValue( LLEGAL_T ME);
   }
 
-  @Override
-  public int getTime(int docID) {
-    return timeMap.get(docID);
+  @Overr de
+  publ c  nt getT  ( nt doc D) {
+    return t  Map.get(doc D);
   }
 
-  @Override
-  protected void setTime(int docID, int timeSeconds) {
-    timeMap.put(docID, timeSeconds);
+  @Overr de
+  protected vo d setT  ( nt doc D,  nt t  Seconds) {
+    t  Map.put(doc D, t  Seconds);
   }
 
-  public final void addMapping(int docID, int timeSeconds) {
-    doAddMapping(docID, timeSeconds);
+  publ c f nal vo d addMapp ng( nt doc D,  nt t  Seconds) {
+    doAddMapp ng(doc D, t  Seconds);
   }
 
-  @Override
-  public TimeMapper optimize(DocIDToTweetIDMapper originalTweetIdMapper,
-                             DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
-    return new OptimizedTimeMapper(this, originalTweetIdMapper, optimizedTweetIdMapper);
+  @Overr de
+  publ c T  Mapper opt m ze(Doc DToT et DMapper or g nalT et dMapper,
+                             Doc DToT et DMapper opt m zedT et dMapper) throws  OExcept on {
+    return new Opt m zedT  Mapper(t , or g nalT et dMapper, opt m zedT et dMapper);
   }
 
   /**
-   * Evaluates whether two instances of RealtimeTimeMapper are equal by value. It is
-   * slow because it has to check every tweet ID/timestamp in the map.
+   * Evaluates w t r two  nstances of Realt  T  Mapper are equal by value.    s
+   * slow because   has to c ck every t et  D/t  stamp  n t  map.
    */
-  @VisibleForTesting
-  boolean verySlowEqualsForTests(RealtimeTimeMapper that) {
-    return reverseMapLastIndex == that.reverseMapLastIndex
-        && reverseMapIds.verySlowEqualsForTests(that.reverseMapIds)
-        && reverseMapTimes.verySlowEqualsForTests(that.reverseMapTimes)
-        && capacity == that.capacity
-        && timeMap.equals(that.timeMap);
+  @V s bleForTest ng
+  boolean verySlowEqualsForTests(Realt  T  Mapper that) {
+    return reverseMapLast ndex == that.reverseMapLast ndex
+        && reverseMap ds.verySlowEqualsForTests(that.reverseMap ds)
+        && reverseMapT  s.verySlowEqualsForTests(that.reverseMapT  s)
+        && capac y == that.capac y
+        && t  Map.equals(that.t  Map);
   }
 
-  private RealtimeTimeMapper(
-      int capacity,
-      int reverseMapLastIndex,
-      int[] docIds,
-      int[] timestamps,
-      IntBlockPool reverseMapTimes,
-      IntBlockPool reverseMapIds
+  pr vate Realt  T  Mapper(
+       nt capac y,
+       nt reverseMapLast ndex,
+       nt[] doc ds,
+       nt[] t  stamps,
+       ntBlockPool reverseMapT  s,
+       ntBlockPool reverseMap ds
   ) {
-    super(reverseMapLastIndex, reverseMapTimes, reverseMapIds);
+    super(reverseMapLast ndex, reverseMapT  s, reverseMap ds);
 
-    this.capacity = capacity;
+    t .capac y = capac y;
 
-    timeMap = new Int2IntOpenHashMap(capacity);
-    timeMap.defaultReturnValue(ILLEGAL_TIME);
+    t  Map = new  nt2 ntOpenHashMap(capac y);
+    t  Map.defaultReturnValue( LLEGAL_T ME);
 
-    Preconditions.checkState(docIds.length == timestamps.length);
+    Precond  ons.c ckState(doc ds.length == t  stamps.length);
 
-    for (int i = 0; i < docIds.length; i++) {
-      timeMap.put(docIds[i], timestamps[i]);
+    for ( nt   = 0;   < doc ds.length;  ++) {
+      t  Map.put(doc ds[ ], t  stamps[ ]);
     }
   }
 
-  @Override
-  public RealtimeTimeMapper.FlushHandler getFlushHandler() {
-    return new RealtimeTimeMapper.FlushHandler(this);
+  @Overr de
+  publ c Realt  T  Mapper.FlushHandler getFlushHandler() {
+    return new Realt  T  Mapper.FlushHandler(t );
   }
 
-  public static class FlushHandler extends Flushable.Handler<RealtimeTimeMapper> {
-    private static final String REVERSE_MAP_LAST_INDEX_PROP = "reverseMapLastIndex";
-    private static final String TIMES_SUB_PROP = "times";
-    private static final String IDS_SUB_PROP = "ids";
-    private static final String CAPACITY_PROP = "capacity";
+  publ c stat c class FlushHandler extends Flushable.Handler<Realt  T  Mapper> {
+    pr vate stat c f nal Str ng REVERSE_MAP_LAST_ NDEX_PROP = "reverseMapLast ndex";
+    pr vate stat c f nal Str ng T MES_SUB_PROP = "t  s";
+    pr vate stat c f nal Str ng  DS_SUB_PROP = " ds";
+    pr vate stat c f nal Str ng CAPAC TY_PROP = "capac y";
 
-    public FlushHandler() {
+    publ c FlushHandler() {
       super();
     }
 
-    public FlushHandler(RealtimeTimeMapper objectToFlush) {
+    publ c FlushHandler(Realt  T  Mapper objectToFlush) {
       super(objectToFlush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer serializer) throws IOException {
-      RealtimeTimeMapper mapper = getObjectToFlush();
+    @Overr de
+    protected vo d doFlush(Flush nfo flush nfo, DataSer al zer ser al zer) throws  OExcept on {
+      Realt  T  Mapper mapper = getObjectToFlush();
 
-      flushInfo.addIntProperty(CAPACITY_PROP, mapper.capacity);
-      flushInfo.addIntProperty(REVERSE_MAP_LAST_INDEX_PROP, mapper.reverseMapLastIndex);
+      flush nfo.add ntProperty(CAPAC TY_PROP, mapper.capac y);
+      flush nfo.add ntProperty(REVERSE_MAP_LAST_ NDEX_PROP, mapper.reverseMapLast ndex);
 
-      serializer.writeInt(mapper.timeMap.size());
-      for (Int2IntMap.Entry entry : mapper.timeMap.int2IntEntrySet()) {
-        serializer.writeInt(entry.getIntKey());
-        serializer.writeInt(entry.getIntValue());
+      ser al zer.wr e nt(mapper.t  Map.s ze());
+      for ( nt2 ntMap.Entry entry : mapper.t  Map. nt2 ntEntrySet()) {
+        ser al zer.wr e nt(entry.get ntKey());
+        ser al zer.wr e nt(entry.get ntValue());
       }
 
-      mapper.reverseMapTimes.getFlushHandler().flush(
-          flushInfo.newSubProperties(TIMES_SUB_PROP), serializer);
-      mapper.reverseMapIds.getFlushHandler().flush(
-          flushInfo.newSubProperties(IDS_SUB_PROP), serializer);
+      mapper.reverseMapT  s.getFlushHandler().flush(
+          flush nfo.newSubPropert es(T MES_SUB_PROP), ser al zer);
+      mapper.reverseMap ds.getFlushHandler().flush(
+          flush nfo.newSubPropert es( DS_SUB_PROP), ser al zer);
     }
 
-    @Override
-    protected RealtimeTimeMapper doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
+    @Overr de
+    protected Realt  T  Mapper doLoad(Flush nfo flush nfo, DataDeser al zer  n)
+        throws  OExcept on {
 
-      int size = in.readInt();
-      int[] docIds = new int[size];
-      int[] timestamps = new int[size];
-      for (int i = 0; i < size; i++) {
-        docIds[i] = in.readInt();
-        timestamps[i] = in.readInt();
+       nt s ze =  n.read nt();
+       nt[] doc ds = new  nt[s ze];
+       nt[] t  stamps = new  nt[s ze];
+      for ( nt   = 0;   < s ze;  ++) {
+        doc ds[ ] =  n.read nt();
+        t  stamps[ ] =  n.read nt();
       }
 
-      return new RealtimeTimeMapper(
-          flushInfo.getIntProperty(CAPACITY_PROP),
-          flushInfo.getIntProperty(REVERSE_MAP_LAST_INDEX_PROP),
-          docIds,
-          timestamps,
-          new IntBlockPool.FlushHandler().load(flushInfo.getSubProperties(TIMES_SUB_PROP), in),
-          new IntBlockPool.FlushHandler().load(flushInfo.getSubProperties(IDS_SUB_PROP), in));
+      return new Realt  T  Mapper(
+          flush nfo.get ntProperty(CAPAC TY_PROP),
+          flush nfo.get ntProperty(REVERSE_MAP_LAST_ NDEX_PROP),
+          doc ds,
+          t  stamps,
+          new  ntBlockPool.FlushHandler().load(flush nfo.getSubPropert es(T MES_SUB_PROP),  n),
+          new  ntBlockPool.FlushHandler().load(flush nfo.getSubPropert es( DS_SUB_PROP),  n));
     }
   }
 }

@@ -1,58 +1,58 @@
-package com.twitter.timelineranker.util
+package com.tw ter.t  l neranker.ut l
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.HydratedCandidatesAndFeaturesEnvelope
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelines.model.tweet.HydratedTweet
-import com.twitter.util.Future
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.t  l neranker.core.HydratedCand datesAndFeaturesEnvelope
+ mport com.tw ter.t  l neranker.recap.model.ContentFeatures
+ mport com.tw ter.t  l nes.model.t et.HydratedT et
+ mport com.tw ter.ut l.Future
 
-object CopyContentFeaturesIntoHydratedTweetsTransform
+object CopyContentFeatures ntoHydratedT etsTransform
     extends FutureArrow[
-      HydratedCandidatesAndFeaturesEnvelope,
-      HydratedCandidatesAndFeaturesEnvelope
+      HydratedCand datesAndFeaturesEnvelope,
+      HydratedCand datesAndFeaturesEnvelope
     ] {
 
-  override def apply(
-    request: HydratedCandidatesAndFeaturesEnvelope
-  ): Future[HydratedCandidatesAndFeaturesEnvelope] = {
+  overr de def apply(
+    request: HydratedCand datesAndFeaturesEnvelope
+  ): Future[HydratedCand datesAndFeaturesEnvelope] = {
 
-    request.contentFeaturesFuture.map { sourceTweetContentFeaturesMap =>
-      val updatedHyratedTweets = request.candidateEnvelope.hydratedTweets.outerTweets.map {
-        hydratedTweet =>
-          val contentFeaturesOpt = request.tweetSourceTweetMap
-            .get(hydratedTweet.tweetId)
-            .flatMap(sourceTweetContentFeaturesMap.get)
+    request.contentFeaturesFuture.map { s ceT etContentFeaturesMap =>
+      val updatedHyratedT ets = request.cand dateEnvelope.hydratedT ets.outerT ets.map {
+        hydratedT et =>
+          val contentFeaturesOpt = request.t etS ceT etMap
+            .get(hydratedT et.t et d)
+            .flatMap(s ceT etContentFeaturesMap.get)
 
-          val updatedHyratedTweet = contentFeaturesOpt match {
-            case Some(contentFeatures: ContentFeatures) =>
-              copyContentFeaturesIntoHydratedTweets(
+          val updatedHyratedT et = contentFeaturesOpt match {
+            case So (contentFeatures: ContentFeatures) =>
+              copyContentFeatures ntoHydratedT ets(
                 contentFeatures,
-                hydratedTweet
+                hydratedT et
               )
-            case _ => hydratedTweet
+            case _ => hydratedT et
           }
 
-          updatedHyratedTweet
+          updatedHyratedT et
       }
 
       request.copy(
-        candidateEnvelope = request.candidateEnvelope.copy(
-          hydratedTweets = request.candidateEnvelope.hydratedTweets.copy(
-            outerTweets = updatedHyratedTweets
+        cand dateEnvelope = request.cand dateEnvelope.copy(
+          hydratedT ets = request.cand dateEnvelope.hydratedT ets.copy(
+            outerT ets = updatedHyratedT ets
           )
         )
       )
     }
   }
 
-  def copyContentFeaturesIntoHydratedTweets(
+  def copyContentFeatures ntoHydratedT ets(
     contentFeatures: ContentFeatures,
-    hydratedTweet: HydratedTweet
-  ): HydratedTweet = {
-    HydratedTweet(
-      hydratedTweet.tweet.copy(
-        selfThreadMetadata = contentFeatures.selfThreadMetadata,
-        media = contentFeatures.media
+    hydratedT et: HydratedT et
+  ): HydratedT et = {
+    HydratedT et(
+      hydratedT et.t et.copy(
+        selfThread tadata = contentFeatures.selfThread tadata,
+         d a = contentFeatures. d a
       )
     )
   }

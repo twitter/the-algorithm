@@ -1,64 +1,64 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import java.util.Optional;
+ mport java.ut l.Opt onal;
 
-import javax.inject.Inject;
+ mport javax. nject. nject;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.L sts;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.quota.ClientIdQuotaManager;
-import com.twitter.search.earlybird_root.quota.QuotaInfo;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.earlyb rd.common.Cl ent dUt l;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponseCode;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResults;
+ mport com.tw ter.search.earlyb rd_root.quota.Cl ent dQuotaManager;
+ mport com.tw ter.search.earlyb rd_root.quota.Quota nfo;
+ mport com.tw ter.ut l.Future;
 
-public class DisableClientByTierFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  private static final String CLIENT_BLOCKED_RESPONSE_PATTERN =
-      "Requests of client %s are blocked due to %s disable";
+publ c class D sableCl entByT erF lter extends S mpleF lter<Earlyb rdRequest, Earlyb rdResponse> {
+  pr vate stat c f nal Str ng CL ENT_BLOCKED_RESPONSE_PATTERN =
+      "Requests of cl ent %s are blocked due to %s d sable";
 
-  private final SearchDecider decider;
-  private final ClientIdQuotaManager quotaManager;
+  pr vate f nal SearchDec der dec der;
+  pr vate f nal Cl ent dQuotaManager quotaManager;
 
   /**
-   * Construct the filter by using ClientIdQuotaManager
+   * Construct t  f lter by us ng Cl ent dQuotaManager
    */
-  @Inject
-  public DisableClientByTierFilter(ClientIdQuotaManager quotaManager, SearchDecider decider) {
-    this.quotaManager = Preconditions.checkNotNull(quotaManager);
-    this.decider = decider;
+  @ nject
+  publ c D sableCl entByT erF lter(Cl ent dQuotaManager quotaManager, SearchDec der dec der) {
+    t .quotaManager = Precond  ons.c ckNotNull(quotaManager);
+    t .dec der = dec der;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
-    String clientId = ClientIdUtil.getClientIdFromRequest(request);
-    Optional<QuotaInfo> quotaInfoOptional = quotaManager.getQuotaForClient(clientId);
-    QuotaInfo quotaInfo = quotaInfoOptional.orElseGet(quotaManager::getCommonPoolQuota);
-    // Tier value should exist: if client's tier value not in config file, it will be
-    // set to "no_tier" by default in ConfigBasedQuotaConfig
-    String tier = quotaInfo.getClientTier();
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(Earlyb rdRequest request,
+                                         Serv ce<Earlyb rdRequest, Earlyb rdResponse> serv ce) {
+    Str ng cl ent d = Cl ent dUt l.getCl ent dFromRequest(request);
+    Opt onal<Quota nfo> quota nfoOpt onal = quotaManager.getQuotaForCl ent(cl ent d);
+    Quota nfo quota nfo = quota nfoOpt onal.orElseGet(quotaManager::getCommonPoolQuota);
+    // T er value should ex st:  f cl ent's t er value not  n conf g f le,   w ll be
+    // set to "no_t er" by default  n Conf gBasedQuotaConf g
+    Str ng t er = quota nfo.getCl entT er();
 
-    Preconditions.checkNotNull(tier);
+    Precond  ons.c ckNotNull(t er);
 
-    if (decider.isAvailable("superroot_unavailable_for_" + tier + "_clients")) {
-      return Future.value(getClientBlockedResponse(clientId, tier));
+     f (dec der. sAva lable("superroot_unava lable_for_" + t er + "_cl ents")) {
+      return Future.value(getCl entBlockedResponse(cl ent d, t er));
     } else {
-      return service.apply(request);
+      return serv ce.apply(request);
     }
   }
 
-  private static EarlybirdResponse getClientBlockedResponse(String clientId, String tier) {
-    return new EarlybirdResponse(EarlybirdResponseCode.CLIENT_BLOCKED_BY_TIER_ERROR, 0)
-        .setSearchResults(new ThriftSearchResults()
-            .setResults(Lists.<ThriftSearchResult>newArrayList()))
-        .setDebugString(String.format(CLIENT_BLOCKED_RESPONSE_PATTERN, clientId, tier));
+  pr vate stat c Earlyb rdResponse getCl entBlockedResponse(Str ng cl ent d, Str ng t er) {
+    return new Earlyb rdResponse(Earlyb rdResponseCode.CL ENT_BLOCKED_BY_T ER_ERROR, 0)
+        .setSearchResults(new Thr ftSearchResults()
+            .setResults(L sts.<Thr ftSearchResult>newArrayL st()))
+        .setDebugStr ng(Str ng.format(CL ENT_BLOCKED_RESPONSE_PATTERN, cl ent d, t er));
   }
 }

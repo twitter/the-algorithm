@@ -1,19 +1,19 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.tweetypie.thriftscala.Share
+ mport com.tw ter.t etyp e.thr ftscala.Share
 
 /**
- * When creating a retweet, we set parent_status_id to the tweet id that the user sent (the tweet they're retweeting).
- * Old tweets have parent_status_id set to zero.
- * When loading the old tweets, we should set parent_status_id to source_status_id if it's zero.
+ * W n creat ng a ret et,   set parent_status_ d to t  t et  d that t  user sent (t  t et t y're ret et ng).
+ * Old t ets have parent_status_ d set to zero.
+ * W n load ng t  old t ets,   should set parent_status_ d to s ce_status_ d  f  's zero.
  */
-object RetweetParentStatusIdRepairer {
-  private val shareMutation =
-    Mutation.fromPartial[Option[Share]] {
-      case Some(share) if share.parentStatusId == 0L =>
-        Some(share.copy(parentStatusId = share.sourceStatusId))
+object Ret etParentStatus dRepa rer {
+  pr vate val shareMutat on =
+    Mutat on.fromPart al[Opt on[Share]] {
+      case So (share)  f share.parentStatus d == 0L =>
+        So (share.copy(parentStatus d = share.s ceStatus d))
     }
 
-  private[tweetypie] val tweetMutation = TweetLenses.share.mutation(shareMutation)
+  pr vate[t etyp e] val t etMutat on = T etLenses.share.mutat on(shareMutat on)
 }

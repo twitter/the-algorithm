@@ -1,13 +1,13 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "cr-ml-ranker/thrift/src/main/thrift:thrift-scala",
-        "finatra/inject/inject-core/src/main/scala",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/scorer/cr_ml_ranker",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/module",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    str ct_deps = True,
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "cr-ml-ranker/thr ft/src/ma n/thr ft:thr ft-scala",
+        "f natra/ nject/ nject-core/src/ma n/scala",
+        "product-m xer/component-l brary/src/ma n/scala/com/tw ter/product_m xer/component_l brary/scorer/cr_ml_ranker",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/module",
+        "product-m xer/core/src/ma n/scala/com/tw ter/product_m xer/core/p pel ne",
     ],
 )

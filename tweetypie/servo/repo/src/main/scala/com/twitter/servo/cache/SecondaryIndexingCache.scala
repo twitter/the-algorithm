@@ -1,85 +1,85 @@
-package com.twitter.servo.cache
+package com.tw ter.servo.cac 
 
-import com.twitter.logging.Logger
-import com.twitter.util.{Future, Return, Throw, Try}
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.ut l.{Future, Return, Throw, Try}
 
-object SecondaryIndexingCache {
-  type IndexMapping[S, V] = V => Try[Option[S]]
+object Secondary ndex ngCac  {
+  type  ndexMapp ng[S, V] = V => Try[Opt on[S]]
 }
 
 /**
- * Stores a secondary index whenever set is called,
- * using a mapping from value to secondary index
+ * Stores a secondary  ndex w never set  s called,
+ * us ng a mapp ng from value to secondary  ndex
  */
-class SecondaryIndexingCache[K, S, V](
-  override val underlyingCache: Cache[K, Cached[V]],
-  secondaryIndexCache: Cache[S, Cached[K]],
-  secondaryIndex: SecondaryIndexingCache.IndexMapping[S, V])
-    extends CacheWrapper[K, Cached[V]] {
-  protected[this] val log = Logger.get(getClass.getSimpleName)
+class Secondary ndex ngCac [K, S, V](
+  overr de val underly ngCac : Cac [K, Cac d[V]],
+  secondary ndexCac : Cac [S, Cac d[K]],
+  secondary ndex: Secondary ndex ngCac . ndexMapp ng[S, V])
+    extends Cac Wrapper[K, Cac d[V]] {
+  protected[t ] val log = Logger.get(getClass.getS mpleNa )
 
-  protected[this] def setSecondaryIndex(key: K, cachedValue: Cached[V]): Future[Unit] =
-    cachedValue.value match {
-      case Some(value) =>
-        secondaryIndex(value) match {
-          case Return(Some(index)) =>
-            val cachedKey = cachedValue.copy(value = Some(key))
-            secondaryIndexCache.set(index, cachedKey)
+  protected[t ] def setSecondary ndex(key: K, cac dValue: Cac d[V]): Future[Un ] =
+    cac dValue.value match {
+      case So (value) =>
+        secondary ndex(value) match {
+          case Return(So ( ndex)) =>
+            val cac dKey = cac dValue.copy(value = So (key))
+            secondary ndexCac .set( ndex, cac dKey)
           case Return.None =>
             Future.Done
           case Throw(t) =>
-            log.error(t, "failed to determine secondary index for: %s", cachedValue)
+            log.error(t, "fa led to determ ne secondary  ndex for: %s", cac dValue)
             Future.Done
         }
-      // if we're storing a tombstone, no secondary index can be made
+      //  f  're stor ng a tombstone, no secondary  ndex can be made
       case None => Future.Done
     }
 
-  override def set(key: K, cachedValue: Cached[V]): Future[Unit] =
-    super.set(key, cachedValue) flatMap { _ =>
-      setSecondaryIndex(key, cachedValue)
+  overr de def set(key: K, cac dValue: Cac d[V]): Future[Un ] =
+    super.set(key, cac dValue) flatMap { _ =>
+      setSecondary ndex(key, cac dValue)
     }
 
-  override def checkAndSet(key: K, cachedValue: Cached[V], checksum: Checksum): Future[Boolean] =
-    super.checkAndSet(key, cachedValue, checksum) flatMap { wasStored =>
-      if (wasStored)
-        // do a straight set of the secondary index, but only if the CAS succeeded
-        setSecondaryIndex(key, cachedValue) map { _ =>
+  overr de def c ckAndSet(key: K, cac dValue: Cac d[V], c cksum: C cksum): Future[Boolean] =
+    super.c ckAndSet(key, cac dValue, c cksum) flatMap { wasStored =>
+       f (wasStored)
+        // do a stra ght set of t  secondary  ndex, but only  f t  CAS succeeded
+        setSecondary ndex(key, cac dValue) map { _ =>
           true
         }
       else
         Future.value(false)
     }
 
-  override def add(key: K, cachedValue: Cached[V]): Future[Boolean] =
-    super.add(key, cachedValue) flatMap { wasAdded =>
-      if (wasAdded)
-        // do a straight set of the secondary index, but only if the add succeeded
-        setSecondaryIndex(key, cachedValue) map { _ =>
+  overr de def add(key: K, cac dValue: Cac d[V]): Future[Boolean] =
+    super.add(key, cac dValue) flatMap { wasAdded =>
+       f (wasAdded)
+        // do a stra ght set of t  secondary  ndex, but only  f t  add succeeded
+        setSecondary ndex(key, cac dValue) map { _ =>
           true
         }
       else
         Future.value(false)
     }
 
-  override def replace(key: K, cachedValue: Cached[V]): Future[Boolean] =
-    super.replace(key, cachedValue) flatMap { wasReplaced =>
-      if (wasReplaced)
-        setSecondaryIndex(key, cachedValue) map { _ =>
+  overr de def replace(key: K, cac dValue: Cac d[V]): Future[Boolean] =
+    super.replace(key, cac dValue) flatMap { wasReplaced =>
+       f (wasReplaced)
+        setSecondary ndex(key, cac dValue) map { _ =>
           true
         }
       else
         Future.value(false)
     }
 
-  override def release(): Unit = {
-    underlyingCache.release()
-    secondaryIndexCache.release()
+  overr de def release(): Un  = {
+    underly ngCac .release()
+    secondary ndexCac .release()
   }
 
-  def withSecondaryIndex[T](
-    secondaryIndexingCache: Cache[T, Cached[K]],
-    secondaryIndex: SecondaryIndexingCache.IndexMapping[T, V]
-  ): SecondaryIndexingCache[K, T, V] =
-    new SecondaryIndexingCache[K, T, V](this, secondaryIndexingCache, secondaryIndex)
+  def w hSecondary ndex[T](
+    secondary ndex ngCac : Cac [T, Cac d[K]],
+    secondary ndex: Secondary ndex ngCac . ndexMapp ng[T, V]
+  ): Secondary ndex ngCac [K, T, V] =
+    new Secondary ndex ngCac [K, T, V](t , secondary ndex ngCac , secondary ndex)
 }

@@ -1,42 +1,42 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package hydrator
 
-import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.thriftscala._
+ mport com.tw ter.t etyp e.core._
+ mport com.tw ter.t etyp e.thr ftscala._
 
 /**
- * Remove contributor data from tweet if it should not be available to the
- * caller. The contributor field is populated in the cached
- * [[ContributorHydrator]].
+ * Remove contr butor data from t et  f   should not be ava lable to t 
+ * caller. T  contr butor f eld  s populated  n t  cac d
+ * [[Contr butorHydrator]].
  *
- * Contributor data is always available on the write path. It is available on
- * the read path for the tweet author (or user authenticated as the tweet
- * author in the case of contributors/teams), or if the caller has disabled
- * visibility filtering.
+ * Contr butor data  s always ava lable on t  wr e path.    s ava lable on
+ * t  read path for t  t et author (or user aut nt cated as t  t et
+ * author  n t  case of contr butors/teams), or  f t  caller has d sabled
+ * v s b l y f lter ng.
  *
- * The condition for running this filtering hydrator (onlyIf) has been a
- * source of confusion. Keep in mind that the condition expresses when to
- * *remove* data, not when to return it.
+ * T  cond  on for runn ng t  f lter ng hydrator (only f) has been a
+ * s ce of confus on. Keep  n m nd that t  cond  on expresses w n to
+ * *remove* data, not w n to return  .
  *
- * In short, keep data when:
- *   !reading || requested by author || !(enforce visibility filtering)
+ *  n short, keep data w n:
+ *   !read ng || requested by author || !(enforce v s b l y f lter ng)
  *
- * Remove data when none of these conditions apply:
- *   reading && !(requested by author) && enforce visibility filtering
+ * Remove data w n none of t se cond  ons apply:
+ *   read ng && !(requested by author) && enforce v s b l y f lter ng
  *
  */
-object ContributorVisibilityFilter {
-  type Type = ValueHydrator[Option[Contributor], TweetCtx]
+object Contr butorV s b l yF lter {
+  type Type = ValueHydrator[Opt on[Contr butor], T etCtx]
 
   def apply(): Type =
     ValueHydrator
-      .map[Option[Contributor], TweetCtx] {
-        case (Some(_), _) => ValueState.modified(None)
-        case (None, _) => ValueState.unmodified(None)
+      .map[Opt on[Contr butor], T etCtx] {
+        case (So (_), _) => ValueState.mod f ed(None)
+        case (None, _) => ValueState.unmod f ed(None)
       }
-      .onlyIf { (_, ctx) =>
-        ctx.opts.cause.reading(ctx.tweetId) &&
-        !ctx.opts.forUserId.contains(ctx.userId) &&
-        ctx.opts.enforceVisibilityFiltering
+      .only f { (_, ctx) =>
+        ctx.opts.cause.read ng(ctx.t et d) &&
+        !ctx.opts.forUser d.conta ns(ctx.user d) &&
+        ctx.opts.enforceV s b l yF lter ng
       }
 }

@@ -1,123 +1,123 @@
-package com.twitter.timelineranker.recap_hydration
+package com.tw ter.t  l neranker.recap_hydrat on
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.storehaus.Store
-import com.twitter.timelineranker.common._
-import com.twitter.timelineranker.core.HydratedCandidatesAndFeaturesEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.model._
-import com.twitter.timelineranker.parameters.recap.RecapParams
-import com.twitter.timelineranker.parameters.recap_hydration.RecapHydrationParams
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelineranker.util.CopyContentFeaturesIntoHydratedTweetsTransform
-import com.twitter.timelineranker.util.CopyContentFeaturesIntoThriftTweetFeaturesTransform
-import com.twitter.timelineranker.visibility.FollowGraphDataProvider
-import com.twitter.timelines.clients.gizmoduck.GizmoduckClient
-import com.twitter.timelines.clients.manhattan.UserMetadataClient
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.clients.tweetypie.TweetyPieClient
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.timelines.util.stats.RequestStatsReceiver
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.servo.ut l.FutureArrow
+ mport com.tw ter.storehaus.Store
+ mport com.tw ter.t  l neranker.common._
+ mport com.tw ter.t  l neranker.core.HydratedCand datesAndFeaturesEnvelope
+ mport com.tw ter.t  l neranker.model.RecapQuery.DependencyProv der
+ mport com.tw ter.t  l neranker.model._
+ mport com.tw ter.t  l neranker.para ters.recap.RecapParams
+ mport com.tw ter.t  l neranker.para ters.recap_hydrat on.RecapHydrat onParams
+ mport com.tw ter.t  l neranker.recap.model.ContentFeatures
+ mport com.tw ter.t  l neranker.ut l.CopyContentFeatures ntoHydratedT etsTransform
+ mport com.tw ter.t  l neranker.ut l.CopyContentFeatures ntoThr ftT etFeaturesTransform
+ mport com.tw ter.t  l neranker.v s b l y.FollowGraphDataProv der
+ mport com.tw ter.t  l nes.cl ents.g zmoduck.G zmoduckCl ent
+ mport com.tw ter.t  l nes.cl ents.manhattan.User tadataCl ent
+ mport com.tw ter.t  l nes.cl ents.relevance_search.SearchCl ent
+ mport com.tw ter.t  l nes.cl ents.t etyp e.T etyP eCl ent
+ mport com.tw ter.t  l nes.model.T et d
+ mport com.tw ter.t  l nes.ut l.Fa lOpenHandler
+ mport com.tw ter.t  l nes.ut l.stats.RequestStatsRece ver
+ mport com.tw ter.ut l.Future
 
-class RecapHydrationSource(
-  gizmoduckClient: GizmoduckClient,
-  searchClient: SearchClient,
-  tweetyPieClient: TweetyPieClient,
-  userMetadataClient: UserMetadataClient,
-  followGraphDataProvider: FollowGraphDataProvider,
-  contentFeaturesCache: Store[TweetId, ContentFeatures],
-  statsReceiver: StatsReceiver) {
+class RecapHydrat onS ce(
+  g zmoduckCl ent: G zmoduckCl ent,
+  searchCl ent: SearchCl ent,
+  t etyP eCl ent: T etyP eCl ent,
+  user tadataCl ent: User tadataCl ent,
+  followGraphDataProv der: FollowGraphDataProv der,
+  contentFeaturesCac : Store[T et d, ContentFeatures],
+  statsRece ver: StatsRece ver) {
 
-  private[this] val baseScope = statsReceiver.scope("recapHydration")
-  private[this] val requestStats = RequestStatsReceiver(baseScope)
-  private[this] val numInputTweetsStat = baseScope.stat("numInputTweets")
+  pr vate[t ] val baseScope = statsRece ver.scope("recapHydrat on")
+  pr vate[t ] val requestStats = RequestStatsRece ver(baseScope)
+  pr vate[t ] val num nputT etsStat = baseScope.stat("num nputT ets")
 
-  private[this] val failOpenScope = baseScope.scope("failOpen")
-  private[this] val userProfileHandler = new FailOpenHandler(failOpenScope, "userProfileInfo")
-  private[this] val userLanguagesHandler = new FailOpenHandler(failOpenScope, "userLanguages")
+  pr vate[t ] val fa lOpenScope = baseScope.scope("fa lOpen")
+  pr vate[t ] val userProf leHandler = new Fa lOpenHandler(fa lOpenScope, "userProf le nfo")
+  pr vate[t ] val userLanguagesHandler = new Fa lOpenHandler(fa lOpenScope, "userLanguages")
 
-  private[this] val maxFollowedUsersProvider =
-    DependencyProvider.value(RecapParams.MaxFollowedUsers.default)
-  private[this] val followGraphDataTransform =
-    new FollowGraphDataTransform(followGraphDataProvider, maxFollowedUsersProvider)
+  pr vate[t ] val maxFollo dUsersProv der =
+    DependencyProv der.value(RecapParams.MaxFollo dUsers.default)
+  pr vate[t ] val followGraphDataTransform =
+    new FollowGraphDataTransform(followGraphDataProv der, maxFollo dUsersProv der)
 
-  private[this] val searchResultsTransform =
-    new RecapHydrationSearchResultsTransform(searchClient, baseScope)
+  pr vate[t ] val searchResultsTransform =
+    new RecapHydrat onSearchResultsTransform(searchCl ent, baseScope)
 
-  private[this] val userProfileInfoTransform =
-    new UserProfileInfoTransform(userProfileHandler, gizmoduckClient)
-  private[this] val languagesTransform =
-    new UserLanguagesTransform(userLanguagesHandler, userMetadataClient)
+  pr vate[t ] val userProf le nfoTransform =
+    new UserProf le nfoTransform(userProf leHandler, g zmoduckCl ent)
+  pr vate[t ] val languagesTransform =
+    new UserLanguagesTransform(userLanguagesHandler, user tadataCl ent)
 
-  private[this] val candidateGenerationTransform = new CandidateGenerationTransform(baseScope)
+  pr vate[t ] val cand dateGenerat onTransform = new Cand dateGenerat onTransform(baseScope)
 
-  private[this] val hydrationAndFilteringPipeline =
-    CreateCandidateEnvelopeTransform
-      .andThen(followGraphDataTransform)
-      .andThen(searchResultsTransform)
-      .andThen(CandidateTweetHydrationTransform)
+  pr vate[t ] val hydrat onAndF lter ngP pel ne =
+    CreateCand dateEnvelopeTransform
+      .andT n(followGraphDataTransform)
+      .andT n(searchResultsTransform)
+      .andT n(Cand dateT etHydrat onTransform)
 
-  // runs the main pipeline in parallel with fetching user profile info and user languages
-  private[this] val featureHydrationDataTransform = new FeatureHydrationDataTransform(
-    hydrationAndFilteringPipeline,
+  // runs t  ma n p pel ne  n parallel w h fetch ng user prof le  nfo and user languages
+  pr vate[t ] val featureHydrat onDataTransform = new FeatureHydrat onDataTransform(
+    hydrat onAndF lter ngP pel ne,
     languagesTransform,
-    userProfileInfoTransform
+    userProf le nfoTransform
   )
 
-  private[this] val contentFeaturesHydrationTransform =
-    new ContentFeaturesHydrationTransformBuilder(
-      tweetyPieClient = tweetyPieClient,
-      contentFeaturesCache = contentFeaturesCache,
+  pr vate[t ] val contentFeaturesHydrat onTransform =
+    new ContentFeaturesHydrat onTransformBu lder(
+      t etyP eCl ent = t etyP eCl ent,
+      contentFeaturesCac  = contentFeaturesCac ,
       enableContentFeaturesGate =
-        RecapQuery.paramGate(RecapHydrationParams.EnableContentFeaturesHydrationParam),
-      enableTokensInContentFeaturesGate =
-        RecapQuery.paramGate(RecapHydrationParams.EnableTokensInContentFeaturesHydrationParam),
-      enableTweetTextInContentFeaturesGate =
-        RecapQuery.paramGate(RecapHydrationParams.EnableTweetTextInContentFeaturesHydrationParam),
-      enableConversationControlContentFeaturesGate = RecapQuery.paramGate(
-        RecapHydrationParams.EnableConversationControlInContentFeaturesHydrationParam),
-      enableTweetMediaHydrationGate = RecapQuery.paramGate(
-        RecapHydrationParams.EnableTweetMediaHydrationParam
+        RecapQuery.paramGate(RecapHydrat onParams.EnableContentFeaturesHydrat onParam),
+      enableTokens nContentFeaturesGate =
+        RecapQuery.paramGate(RecapHydrat onParams.EnableTokens nContentFeaturesHydrat onParam),
+      enableT etText nContentFeaturesGate =
+        RecapQuery.paramGate(RecapHydrat onParams.EnableT etText nContentFeaturesHydrat onParam),
+      enableConversat onControlContentFeaturesGate = RecapQuery.paramGate(
+        RecapHydrat onParams.EnableConversat onControl nContentFeaturesHydrat onParam),
+      enableT et d aHydrat onGate = RecapQuery.paramGate(
+        RecapHydrat onParams.EnableT et d aHydrat onParam
       ),
-      hydrateInReplyToTweets = true,
-      statsReceiver = baseScope
-    ).build()
+      hydrate nReplyToT ets = true,
+      statsRece ver = baseScope
+    ).bu ld()
 
-  private[this] def hydratesContentFeatures(
-    hydratedEnvelope: HydratedCandidatesAndFeaturesEnvelope
+  pr vate[t ] def hydratesContentFeatures(
+    hydratedEnvelope: HydratedCand datesAndFeaturesEnvelope
   ): Boolean =
-    hydratedEnvelope.candidateEnvelope.query.hydratesContentFeatures.getOrElse(true)
+    hydratedEnvelope.cand dateEnvelope.query.hydratesContentFeatures.getOrElse(true)
 
-  private[this] val contentFeaturesTransformer = FutureArrow.choose(
-    predicate = hydratesContentFeatures,
-    ifTrue = contentFeaturesHydrationTransform
-      .andThen(CopyContentFeaturesIntoThriftTweetFeaturesTransform)
-      .andThen(CopyContentFeaturesIntoHydratedTweetsTransform),
-    ifFalse = FutureArrow[
-      HydratedCandidatesAndFeaturesEnvelope,
-      HydratedCandidatesAndFeaturesEnvelope
-    ](Future.value) // empty transformer
+  pr vate[t ] val contentFeaturesTransfor r = FutureArrow.choose(
+    pred cate = hydratesContentFeatures,
+     fTrue = contentFeaturesHydrat onTransform
+      .andT n(CopyContentFeatures ntoThr ftT etFeaturesTransform)
+      .andT n(CopyContentFeatures ntoHydratedT etsTransform),
+     fFalse = FutureArrow[
+      HydratedCand datesAndFeaturesEnvelope,
+      HydratedCand datesAndFeaturesEnvelope
+    ](Future.value) // empty transfor r
   )
 
-  private[this] val featureHydrationPipeline =
-    featureHydrationDataTransform
-      .andThen(InNetworkTweetsSearchFeaturesHydrationTransform)
-      .andThen(contentFeaturesTransformer)
-      .andThen(candidateGenerationTransform)
+  pr vate[t ] val featureHydrat onP pel ne =
+    featureHydrat onDataTransform
+      .andT n( nNetworkT etsSearchFeaturesHydrat onTransform)
+      .andT n(contentFeaturesTransfor r)
+      .andT n(cand dateGenerat onTransform)
 
-  def hydrate(queries: Seq[RecapQuery]): Future[Seq[CandidateTweetsResult]] = {
-    Future.collect(queries.map(hydrate))
+  def hydrate(quer es: Seq[RecapQuery]): Future[Seq[Cand dateT etsResult]] = {
+    Future.collect(quer es.map(hydrate))
   }
 
-  def hydrate(query: RecapQuery): Future[CandidateTweetsResult] = {
-    require(query.tweetIds.isDefined && query.tweetIds.get.nonEmpty, "tweetIds must be present")
-    query.tweetIds.foreach(ids => numInputTweetsStat.add(ids.size))
+  def hydrate(query: RecapQuery): Future[Cand dateT etsResult] = {
+    requ re(query.t et ds. sDef ned && query.t et ds.get.nonEmpty, "t et ds must be present")
+    query.t et ds.foreach( ds => num nputT etsStat.add( ds.s ze))
 
     requestStats.addEventStats {
-      featureHydrationPipeline(query)
+      featureHydrat onP pel ne(query)
     }
   }
 }

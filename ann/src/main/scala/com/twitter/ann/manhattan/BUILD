@@ -1,12 +1,12 @@
-scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/bijection:core",
-        "3rdparty/jvm/com/twitter/bijection:scrooge",
-        "ann/src/main/scala/com/twitter/ann/common",
-        "src/scala/com/twitter/ml/api/embedding",
-        "storage/clients/manhattan",
+scala_l brary(
+    s ces = ["*.scala"],
+    comp ler_opt on_sets = ["fatal_warn ngs"],
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "3rdparty/jvm/com/tw ter/b ject on:core",
+        "3rdparty/jvm/com/tw ter/b ject on:scrooge",
+        "ann/src/ma n/scala/com/tw ter/ann/common",
+        "src/scala/com/tw ter/ml/ap /embedd ng",
+        "storage/cl ents/manhattan",
     ],
 )

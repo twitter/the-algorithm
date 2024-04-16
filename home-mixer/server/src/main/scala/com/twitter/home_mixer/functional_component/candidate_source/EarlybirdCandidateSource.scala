@@ -1,44 +1,44 @@
-package com.twitter.home_mixer.functional_component.candidate_source
+package com.tw ter.ho _m xer.funct onal_component.cand date_s ce
 
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.search.earlybird.{thriftscala => t}
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.feature.FeatureW hDefaultOnFa lure
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMapBu lder
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ceW hExtractedFeatures
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand datesW hS ceFeatures
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.search.earlyb rd.{thr ftscala => t}
+ mport com.tw ter.st ch.St ch
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-case object EarlybirdResponseTruncatedFeature
-    extends FeatureWithDefaultOnFailure[t.EarlybirdRequest, Boolean] {
-  override val defaultValue: Boolean = false
+case object Earlyb rdResponseTruncatedFeature
+    extends FeatureW hDefaultOnFa lure[t.Earlyb rdRequest, Boolean] {
+  overr de val defaultValue: Boolean = false
 }
 
-case object EarlybirdBottomTweetFeature
-    extends FeatureWithDefaultOnFailure[t.EarlybirdRequest, Option[Long]] {
-  override val defaultValue: Option[Long] = None
+case object Earlyb rdBottomT etFeature
+    extends FeatureW hDefaultOnFa lure[t.Earlyb rdRequest, Opt on[Long]] {
+  overr de val defaultValue: Opt on[Long] = None
 }
 
-@Singleton
-case class EarlybirdCandidateSource @Inject() (
-  earlybird: t.EarlybirdService.MethodPerEndpoint)
-    extends CandidateSourceWithExtractedFeatures[t.EarlybirdRequest, t.ThriftSearchResult] {
+@S ngleton
+case class Earlyb rdCand dateS ce @ nject() (
+  earlyb rd: t.Earlyb rdServ ce. thodPerEndpo nt)
+    extends Cand dateS ceW hExtractedFeatures[t.Earlyb rdRequest, t.Thr ftSearchResult] {
 
-  override val identifier = CandidateSourceIdentifier("Earlybird")
+  overr de val  dent f er = Cand dateS ce dent f er("Earlyb rd")
 
-  override def apply(
-    request: t.EarlybirdRequest
-  ): Stitch[CandidatesWithSourceFeatures[t.ThriftSearchResult]] = {
-    Stitch.callFuture(earlybird.search(request)).map { response =>
-      val candidates = response.searchResults.map(_.results).getOrElse(Seq.empty)
+  overr de def apply(
+    request: t.Earlyb rdRequest
+  ): St ch[Cand datesW hS ceFeatures[t.Thr ftSearchResult]] = {
+    St ch.callFuture(earlyb rd.search(request)).map { response =>
+      val cand dates = response.searchResults.map(_.results).getOrElse(Seq.empty)
 
-      val features = FeatureMapBuilder()
-        .add(EarlybirdResponseTruncatedFeature, candidates.size == request.searchQuery.numResults)
-        .add(EarlybirdBottomTweetFeature, candidates.lastOption.map(_.id))
-        .build()
+      val features = FeatureMapBu lder()
+        .add(Earlyb rdResponseTruncatedFeature, cand dates.s ze == request.searchQuery.numResults)
+        .add(Earlyb rdBottomT etFeature, cand dates.lastOpt on.map(_. d))
+        .bu ld()
 
-      CandidatesWithSourceFeatures(candidates, features)
+      Cand datesW hS ceFeatures(cand dates, features)
     }
   }
 }

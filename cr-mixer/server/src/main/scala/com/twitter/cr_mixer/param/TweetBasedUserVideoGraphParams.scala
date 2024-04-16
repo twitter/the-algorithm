@@ -1,81 +1,81 @@
-package com.twitter.cr_mixer.param
+package com.tw ter.cr_m xer.param
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+ mport com.tw ter.t  l nes.conf gap .BaseConf g
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l
+ mport com.tw ter.t  l nes.conf gap .Param
 
-object TweetBasedUserVideoGraphParams {
+object T etBasedUserV deoGraphParams {
 
-  object MinCoOccurrenceParam
-      extends FSBoundedParam[Int](
-        name = "tweet_based_user_video_graph_min_co_occurrence",
+  object M nCoOccurrenceParam
+      extends FSBoundedParam[ nt](
+        na  = "t et_based_user_v deo_graph_m n_co_occurrence",
         default = 5,
-        min = 0,
+        m n = 0,
         max = 500
       )
 
-  object TweetBasedMinScoreParam
+  object T etBasedM nScoreParam
       extends FSBoundedParam[Double](
-        name = "tweet_based_user_video_graph_tweet_based_min_score",
+        na  = "t et_based_user_v deo_graph_t et_based_m n_score",
         default = 0.0,
-        min = 0.0,
+        m n = 0.0,
         max = 100.0
       )
 
-  object ConsumersBasedMinScoreParam
+  object Consu rsBasedM nScoreParam
       extends FSBoundedParam[Double](
-        name = "tweet_based_user_video_graph_consumers_based_min_score",
+        na  = "t et_based_user_v deo_graph_consu rs_based_m n_score",
         default = 4.0,
-        min = 0.0,
+        m n = 0.0,
         max = 10.0
       )
 
-  object MaxConsumerSeedsNumParam
-      extends FSBoundedParam[Int](
-        name = "tweet_based_user_video_graph_max_user_seeds_num",
+  object MaxConsu rSeedsNumParam
+      extends FSBoundedParam[ nt](
+        na  = "t et_based_user_v deo_graph_max_user_seeds_num",
         default = 200,
-        min = 0,
+        m n = 0,
         max = 500
       )
 
-  object EnableCoverageExpansionOldTweetParam
+  object EnableCoverageExpans onOldT etParam
       extends FSParam[Boolean](
-        name = "tweet_based_user_video_graph_enable_coverage_expansion_old_tweet",
+        na  = "t et_based_user_v deo_graph_enable_coverage_expans on_old_t et",
         default = false
       )
 
-  object EnableCoverageExpansionAllTweetParam
+  object EnableCoverageExpans onAllT etParam
       extends FSParam[Boolean](
-        name = "tweet_based_user_video_graph_enable_coverage_expansion_all_tweet",
+        na  = "t et_based_user_v deo_graph_enable_coverage_expans on_all_t et",
         default = false
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    MinCoOccurrenceParam,
-    MaxConsumerSeedsNumParam,
-    TweetBasedMinScoreParam,
-    EnableCoverageExpansionOldTweetParam,
-    EnableCoverageExpansionAllTweetParam
+  val AllParams: Seq[Param[_] w h FSNa ] = Seq(
+    M nCoOccurrenceParam,
+    MaxConsu rSeedsNumParam,
+    T etBasedM nScoreParam,
+    EnableCoverageExpans onOldT etParam,
+    EnableCoverageExpans onAllT etParam
   )
 
-  lazy val config: BaseConfig = {
+  lazy val conf g: BaseConf g = {
 
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-      MinCoOccurrenceParam,
-      MaxConsumerSeedsNumParam
+    val  ntOverr des = FeatureSw chOverr deUt l.getBounded ntFSOverr des(
+      M nCoOccurrenceParam,
+      MaxConsu rSeedsNumParam
     )
 
-    val doubleOverrides =
-      FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(TweetBasedMinScoreParam)
+    val doubleOverr des =
+      FeatureSw chOverr deUt l.getBoundedDoubleFSOverr des(T etBasedM nScoreParam)
 
-    BaseConfigBuilder()
-      .set(intOverrides: _*)
-      .set(doubleOverrides: _*)
-      .build()
+    BaseConf gBu lder()
+      .set( ntOverr des: _*)
+      .set(doubleOverr des: _*)
+      .bu ld()
   }
 
 }

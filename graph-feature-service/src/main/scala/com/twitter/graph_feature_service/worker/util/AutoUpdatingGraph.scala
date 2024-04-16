@@ -1,69 +1,69 @@
-package com.twitter.graph_feature_service.worker.util
+package com.tw ter.graph_feature_serv ce.worker.ut l
 
-import com.twitter.bijection.Injection
-import com.twitter.concurrent.AsyncSemaphore
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.constdb_util.{
-  AutoUpdatingReadOnlyGraph,
-  ConstDBImporter,
-  Injections
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.concurrent.AsyncSemaphore
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.constdb_ut l.{
+  AutoUpdat ngReadOnlyGraph,
+  ConstDB mporter,
+   nject ons
 }
-import com.twitter.graph_feature_service.common.Configs
-import com.twitter.util.{Duration, Future, Timer}
-import java.nio.ByteBuffer
+ mport com.tw ter.graph_feature_serv ce.common.Conf gs
+ mport com.tw ter.ut l.{Durat on, Future, T  r}
+ mport java.n o.ByteBuffer
 
 /**
- * @param dataPath                    the path to the data on HDFS
- * @param hdfsCluster                 cluster where we check for updates and download graph files from
+ * @param dataPath                    t  path to t  data on HDFS
+ * @param hdfsCluster                 cluster w re   c ck for updates and download graph f les from
  * @param hdfsClusterUrl              url to HDFS cluster
- * @param shard                       The shard of the graph to download
- * @param minimumSizeForCompleteGraph minimumSize for complete graph - otherwise we don't load it
- * @param updateIntervalMin           The interval after which the first update is tried and the interval between such updates
- * @param updateIntervalMax           the maximum time before an update is triggered
- * @param deleteInterval              The interval after which older data is deleted from disk
- * @param sharedSemaphore             The semaphore controls the number of graph loads at same time on the instance.
+ * @param shard                       T  shard of t  graph to download
+ * @param m n mumS zeForCompleteGraph m n mumS ze for complete graph - ot rw se   don't load  
+ * @param update ntervalM n           T   nterval after wh ch t  f rst update  s tr ed and t   nterval bet en such updates
+ * @param update ntervalMax           t  max mum t   before an update  s tr ggered
+ * @param delete nterval              T   nterval after wh ch older data  s deleted from d sk
+ * @param sharedSemaphore             T  semaphore controls t  number of graph loads at sa  t   on t   nstance.
  */
-case class AutoUpdatingGraph(
-  dataPath: String,
-  hdfsCluster: String,
-  hdfsClusterUrl: String,
-  shard: Int,
-  minimumSizeForCompleteGraph: Long,
-  updateIntervalMin: Duration = 1.hour,
-  updateIntervalMax: Duration = 12.hours,
-  deleteInterval: Duration = 2.seconds,
-  sharedSemaphore: Option[AsyncSemaphore] = None
+case class AutoUpdat ngGraph(
+  dataPath: Str ng,
+  hdfsCluster: Str ng,
+  hdfsClusterUrl: Str ng,
+  shard:  nt,
+  m n mumS zeForCompleteGraph: Long,
+  update ntervalM n: Durat on = 1.h ,
+  update ntervalMax: Durat on = 12.h s,
+  delete nterval: Durat on = 2.seconds,
+  sharedSemaphore: Opt on[AsyncSemaphore] = None
 )(
-  implicit statsReceiver: StatsReceiver,
-  timer: Timer)
-    extends AutoUpdatingReadOnlyGraph[Long, ByteBuffer](
+   mpl c  statsRece ver: StatsRece ver,
+  t  r: T  r)
+    extends AutoUpdat ngReadOnlyGraph[Long, ByteBuffer](
       hdfsCluster,
       hdfsClusterUrl,
       shard,
-      minimumSizeForCompleteGraph,
-      updateIntervalMin,
-      updateIntervalMax,
-      deleteInterval,
+      m n mumS zeForCompleteGraph,
+      update ntervalM n,
+      update ntervalMax,
+      delete nterval,
       sharedSemaphore
     )
-    with ConstDBImporter[Long, ByteBuffer] {
+    w h ConstDB mporter[Long, ByteBuffer] {
 
-  override def numGraphShards: Int = Configs.NumGraphShards
+  overr de def numGraphShards:  nt = Conf gs.NumGraphShards
 
-  override def basePath: String = dataPath
+  overr de def basePath: Str ng = dataPath
 
-  override val keyInj: Injection[Long, ByteBuffer] = Injections.long2Varint
+  overr de val key nj:  nject on[Long, ByteBuffer] =  nject ons.long2Var nt
 
-  override val valueInj: Injection[ByteBuffer, ByteBuffer] = Injection.identity
+  overr de val value nj:  nject on[ByteBuffer, ByteBuffer] =  nject on. dent y
 
-  override def get(targetId: Long): Future[Option[ByteBuffer]] =
+  overr de def get(target d: Long): Future[Opt on[ByteBuffer]] =
     super
-      .get(targetId)
+      .get(target d)
       .map { res =>
-        res.foreach(r => arraySizeStat.add(r.remaining()))
+        res.foreach(r => arrayS zeStat.add(r.rema n ng()))
         res
       }
 
-  private val arraySizeStat = stats.scope("get").stat("size")
+  pr vate val arrayS zeStat = stats.scope("get").stat("s ze")
 }

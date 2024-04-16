@@ -1,11 +1,11 @@
-package com.twitter.follow_recommendations.common.candidate_sources.triangular_loops
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.tr angular_loops
 
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
-object TriangularLoopsParams {
+object Tr angularLoopsParams {
 
-  object KeepOnlyCandidatesWhoFollowTargetUser
+  object KeepOnlyCand datesWhoFollowTargetUser
       extends FSParam[Boolean](
-        "triangular_loops_keep_only_candidates_who_follow_target_user",
+        "tr angular_loops_keep_only_cand dates_who_follow_target_user",
         false)
 }

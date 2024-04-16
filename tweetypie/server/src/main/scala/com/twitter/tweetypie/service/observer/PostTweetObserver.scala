@@ -1,82 +1,82 @@
-package com.twitter.tweetypie
-package service
+package com.tw ter.t etyp e
+package serv ce
 package observer
 
-import com.twitter.escherbird.thriftscala.TweetEntityAnnotation
-import com.twitter.tweetypie.thriftscala.BatchComposeMode
-import com.twitter.tweetypie.thriftscala.PostTweetRequest
-import com.twitter.tweetypie.thriftscala.PostTweetResult
-import com.twitter.tweetypie.thriftscala.TweetCreateState
-import com.twitter.util.Memoize
+ mport com.tw ter.esc rb rd.thr ftscala.T etEnt yAnnotat on
+ mport com.tw ter.t etyp e.thr ftscala.BatchComposeMode
+ mport com.tw ter.t etyp e.thr ftscala.PostT etRequest
+ mport com.tw ter.t etyp e.thr ftscala.PostT etResult
+ mport com.tw ter.t etyp e.thr ftscala.T etCreateState
+ mport com.tw ter.ut l. mo ze
 
-private[service] object PostTweetObserver {
-  def observeResults(stats: StatsReceiver, byClient: Boolean): Effect[PostTweetResult] = {
+pr vate[serv ce] object PostT etObserver {
+  def observeResults(stats: StatsRece ver, byCl ent: Boolean): Effect[PostT etResult] = {
     val stateScope = stats.scope("state")
-    val tweetObserver = Observer.countTweetAttributes(stats, byClient)
+    val t etObserver = Observer.countT etAttr butes(stats, byCl ent)
 
     val stateCounters =
-      Memoize { st: TweetCreateState => stateScope.counter(Observer.camelToUnderscore(st.name)) }
+       mo ze { st: T etCreateState => stateScope.counter(Observer.ca lToUnderscore(st.na )) }
 
     Effect { result =>
-      stateCounters(result.state).incr()
-      if (result.state == TweetCreateState.Ok) result.tweet.foreach(tweetObserver)
+      stateCounters(result.state). ncr()
+       f (result.state == T etCreateState.Ok) result.t et.foreach(t etObserver)
     }
   }
 
-  private def isCommunity(req: PostTweetRequest): Boolean = {
-    val CommunityGroupId = 8L
-    val CommunityDomainId = 31L
-    req.additionalFields
-      .flatMap(_.escherbirdEntityAnnotations).exists { e =>
-        e.entityAnnotations.collect {
-          case TweetEntityAnnotation(CommunityGroupId, CommunityDomainId, _) => true
+  pr vate def  sCommun y(req: PostT etRequest): Boolean = {
+    val Commun yGroup d = 8L
+    val Commun yDoma n d = 31L
+    req.add  onalF elds
+      .flatMap(_.esc rb rdEnt yAnnotat ons).ex sts { e =>
+        e.ent yAnnotat ons.collect {
+          case T etEnt yAnnotat on(Commun yGroup d, Commun yDoma n d, _) => true
         }.nonEmpty
       }
   }
 
-  def observerRequest(stats: StatsReceiver): Effect[PostTweetRequest] = {
-    val optionsScope = stats.scope("options")
-    val narrowcastCounter = optionsScope.counter("narrowcast")
-    val nullcastCounter = optionsScope.counter("nullcast")
-    val inReplyToStatusIdCounter = optionsScope.counter("in_reply_to_status_id")
-    val placeIdCounter = optionsScope.counter("place_id")
-    val geoCoordinatesCounter = optionsScope.counter("geo_coordinates")
-    val placeMetadataCounter = optionsScope.counter("place_metadata")
-    val mediaUploadIdCounter = optionsScope.counter("media_upload_id")
-    val darkCounter = optionsScope.counter("dark")
-    val tweetToNarrowcastingCounter = optionsScope.counter("tweet_to_narrowcasting")
-    val autoPopulateReplyMetadataCounter = optionsScope.counter("auto_populate_reply_metadata")
-    val attachmentUrlCounter = optionsScope.counter("attachment_url")
-    val excludeReplyUserIdsCounter = optionsScope.counter("exclude_reply_user_ids")
-    val excludeReplyUserIdsStat = optionsScope.stat("exclude_reply_user_ids")
-    val uniquenessIdCounter = optionsScope.counter("uniqueness_id")
-    val batchModeScope = optionsScope.scope("batch_mode")
-    val batchModeFirstCounter = batchModeScope.counter("first")
+  def observerRequest(stats: StatsRece ver): Effect[PostT etRequest] = {
+    val opt onsScope = stats.scope("opt ons")
+    val narrowcastCounter = opt onsScope.counter("narrowcast")
+    val nullcastCounter = opt onsScope.counter("nullcast")
+    val  nReplyToStatus dCounter = opt onsScope.counter(" n_reply_to_status_ d")
+    val place dCounter = opt onsScope.counter("place_ d")
+    val geoCoord natesCounter = opt onsScope.counter("geo_coord nates")
+    val place tadataCounter = opt onsScope.counter("place_ tadata")
+    val  d aUpload dCounter = opt onsScope.counter(" d a_upload_ d")
+    val darkCounter = opt onsScope.counter("dark")
+    val t etToNarrowcast ngCounter = opt onsScope.counter("t et_to_narrowcast ng")
+    val autoPopulateReply tadataCounter = opt onsScope.counter("auto_populate_reply_ tadata")
+    val attach ntUrlCounter = opt onsScope.counter("attach nt_url")
+    val excludeReplyUser dsCounter = opt onsScope.counter("exclude_reply_user_ ds")
+    val excludeReplyUser dsStat = opt onsScope.stat("exclude_reply_user_ ds")
+    val un queness dCounter = opt onsScope.counter("un queness_ d")
+    val batchModeScope = opt onsScope.scope("batch_mode")
+    val batchModeF rstCounter = batchModeScope.counter("f rst")
     val batchModeSubsequentCounter = batchModeScope.counter("subsequent")
-    val communitiesCounter = optionsScope.counter("communities")
+    val commun  esCounter = opt onsScope.counter("commun  es")
 
     Effect { request =>
-      if (request.narrowcast.nonEmpty) narrowcastCounter.incr()
-      if (request.nullcast) nullcastCounter.incr()
-      if (request.inReplyToTweetId.nonEmpty) inReplyToStatusIdCounter.incr()
-      if (request.geo.flatMap(_.placeId).nonEmpty) placeIdCounter.incr()
-      if (request.geo.flatMap(_.coordinates).nonEmpty) geoCoordinatesCounter.incr()
-      if (request.geo.flatMap(_.placeMetadata).nonEmpty) placeMetadataCounter.incr()
-      if (request.mediaUploadIds.nonEmpty) mediaUploadIdCounter.incr()
-      if (request.dark) darkCounter.incr()
-      if (request.enableTweetToNarrowcasting) tweetToNarrowcastingCounter.incr()
-      if (request.autoPopulateReplyMetadata) autoPopulateReplyMetadataCounter.incr()
-      if (request.attachmentUrl.nonEmpty) attachmentUrlCounter.incr()
-      if (request.excludeReplyUserIds.exists(_.nonEmpty)) excludeReplyUserIdsCounter.incr()
-      if (isCommunity(request)) communitiesCounter.incr()
-      if (request.uniquenessId.nonEmpty) uniquenessIdCounter.incr()
-      request.transientContext.flatMap(_.batchCompose).foreach {
-        case BatchComposeMode.BatchFirst => batchModeFirstCounter.incr()
-        case BatchComposeMode.BatchSubsequent => batchModeSubsequentCounter.incr()
+       f (request.narrowcast.nonEmpty) narrowcastCounter. ncr()
+       f (request.nullcast) nullcastCounter. ncr()
+       f (request. nReplyToT et d.nonEmpty)  nReplyToStatus dCounter. ncr()
+       f (request.geo.flatMap(_.place d).nonEmpty) place dCounter. ncr()
+       f (request.geo.flatMap(_.coord nates).nonEmpty) geoCoord natesCounter. ncr()
+       f (request.geo.flatMap(_.place tadata).nonEmpty) place tadataCounter. ncr()
+       f (request. d aUpload ds.nonEmpty)  d aUpload dCounter. ncr()
+       f (request.dark) darkCounter. ncr()
+       f (request.enableT etToNarrowcast ng) t etToNarrowcast ngCounter. ncr()
+       f (request.autoPopulateReply tadata) autoPopulateReply tadataCounter. ncr()
+       f (request.attach ntUrl.nonEmpty) attach ntUrlCounter. ncr()
+       f (request.excludeReplyUser ds.ex sts(_.nonEmpty)) excludeReplyUser dsCounter. ncr()
+       f ( sCommun y(request)) commun  esCounter. ncr()
+       f (request.un queness d.nonEmpty) un queness dCounter. ncr()
+      request.trans entContext.flatMap(_.batchCompose).foreach {
+        case BatchComposeMode.BatchF rst => batchModeF rstCounter. ncr()
+        case BatchComposeMode.BatchSubsequent => batchModeSubsequentCounter. ncr()
         case _ =>
       }
 
-      excludeReplyUserIdsStat.add(request.excludeReplyUserIds.size)
+      excludeReplyUser dsStat.add(request.excludeReplyUser ds.s ze)
     }
   }
 }

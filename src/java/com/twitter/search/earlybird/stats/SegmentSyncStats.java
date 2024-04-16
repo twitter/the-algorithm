@@ -1,59 +1,59 @@
-package com.twitter.search.earlybird.stats;
+package com.tw ter.search.earlyb rd.stats;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.Timer;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.T  r;
 
-public class SegmentSyncStats {
-  private static final String CPU_TOTAL = "_cpu_total_";
-  private static final String CPU_USER  = "_cpu_user_mode_";
-  private static final String CPU_SYS   = "_cpu_system_mode_";
+publ c class Seg ntSyncStats {
+  pr vate stat c f nal Str ng CPU_TOTAL = "_cpu_total_";
+  pr vate stat c f nal Str ng CPU_USER  = "_cpu_user_mode_";
+  pr vate stat c f nal Str ng CPU_SYS   = "_cpu_system_mode_";
 
-  private final SearchCounter segmentSyncLatency;
-  private final SearchCounter segmentSyncLatencyCpuTotal;
-  private final SearchCounter segmentSyncLatencyCpuUserMode;
-  private final SearchCounter segmentSyncLatencyCpuSystemMode;
-  private final SearchCounter segmentSyncCount;
-  private final SearchCounter segmentErrorCount;
+  pr vate f nal SearchCounter seg ntSyncLatency;
+  pr vate f nal SearchCounter seg ntSyncLatencyCpuTotal;
+  pr vate f nal SearchCounter seg ntSyncLatencyCpuUserMode;
+  pr vate f nal SearchCounter seg ntSyncLatencyCpuSystemMode;
+  pr vate f nal SearchCounter seg ntSyncCount;
+  pr vate f nal SearchCounter seg ntErrorCount;
 
-  private SegmentSyncStats(SearchCounter segmentSyncLatency,
-                           SearchCounter segmentSyncLatencyCpuTotal,
-                           SearchCounter segmentSyncLatencyCpuUserMode,
-                           SearchCounter segmentSyncLatencyCpuSystemMode,
-                           SearchCounter segmentSyncCount,
-                           SearchCounter segmentErrorCount) {
-    this.segmentSyncLatency = segmentSyncLatency;
-    this.segmentSyncLatencyCpuTotal = segmentSyncLatencyCpuTotal;
-    this.segmentSyncLatencyCpuUserMode = segmentSyncLatencyCpuUserMode;
-    this.segmentSyncLatencyCpuSystemMode = segmentSyncLatencyCpuSystemMode;
-    this.segmentSyncCount = segmentSyncCount;
-    this.segmentErrorCount = segmentErrorCount;
+  pr vate Seg ntSyncStats(SearchCounter seg ntSyncLatency,
+                           SearchCounter seg ntSyncLatencyCpuTotal,
+                           SearchCounter seg ntSyncLatencyCpuUserMode,
+                           SearchCounter seg ntSyncLatencyCpuSystemMode,
+                           SearchCounter seg ntSyncCount,
+                           SearchCounter seg ntErrorCount) {
+    t .seg ntSyncLatency = seg ntSyncLatency;
+    t .seg ntSyncLatencyCpuTotal = seg ntSyncLatencyCpuTotal;
+    t .seg ntSyncLatencyCpuUserMode = seg ntSyncLatencyCpuUserMode;
+    t .seg ntSyncLatencyCpuSystemMode = seg ntSyncLatencyCpuSystemMode;
+    t .seg ntSyncCount = seg ntSyncCount;
+    t .seg ntErrorCount = seg ntErrorCount;
   }
 
   /**
-   * Creates a new set of stats for the given segment sync action.
-   * @param action the name to be used for the sync stats.
+   * Creates a new set of stats for t  g ven seg nt sync act on.
+   * @param act on t  na  to be used for t  sync stats.
    */
-  public SegmentSyncStats(String action) {
-    this(SearchCounter.export("segment_" + action + "_latency_ms"),
-         SearchCounter.export("segment_" + action + "_latency" + CPU_TOTAL + "ms"),
-         SearchCounter.export("segment_" + action + "_latency" + CPU_USER + "ms"),
-         SearchCounter.export("segment_" + action + "_latency" + CPU_SYS + "ms"),
-         SearchCounter.export("segment_" + action + "_count"),
-         SearchCounter.export("segment_" + action + "_error_count"));
+  publ c Seg ntSyncStats(Str ng act on) {
+    t (SearchCounter.export("seg nt_" + act on + "_latency_ms"),
+         SearchCounter.export("seg nt_" + act on + "_latency" + CPU_TOTAL + "ms"),
+         SearchCounter.export("seg nt_" + act on + "_latency" + CPU_USER + "ms"),
+         SearchCounter.export("seg nt_" + act on + "_latency" + CPU_SYS + "ms"),
+         SearchCounter.export("seg nt_" + act on + "_count"),
+         SearchCounter.export("seg nt_" + act on + "_error_count"));
   }
 
   /**
-   * Records a completed action using the specified timer.
+   * Records a completed act on us ng t  spec f ed t  r.
    */
-  public void actionComplete(Timer timer) {
-    segmentSyncCount.increment();
-    segmentSyncLatency.add(timer.getElapsed());
-    segmentSyncLatencyCpuTotal.add(timer.getElapsedCpuTotal());
-    segmentSyncLatencyCpuUserMode.add(timer.getElapsedCpuUserMode());
-    segmentSyncLatencyCpuSystemMode.add(timer.getElapsedCpuSystemMode());
+  publ c vo d act onComplete(T  r t  r) {
+    seg ntSyncCount. ncre nt();
+    seg ntSyncLatency.add(t  r.getElapsed());
+    seg ntSyncLatencyCpuTotal.add(t  r.getElapsedCpuTotal());
+    seg ntSyncLatencyCpuUserMode.add(t  r.getElapsedCpuUserMode());
+    seg ntSyncLatencyCpuSystemMode.add(t  r.getElapsedCpuSystemMode());
   }
 
-  public void recordError() {
-    segmentErrorCount.increment();
+  publ c vo d recordError() {
+    seg ntErrorCount. ncre nt();
   }
 }

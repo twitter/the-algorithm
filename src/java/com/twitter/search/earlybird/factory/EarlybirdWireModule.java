@@ -1,901 +1,901 @@
-package com.twitter.search.earlybird.factory;
+package com.tw ter.search.earlyb rd.factory;
 
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.util.Optional;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+ mport java. o. OExcept on;
+ mport java.lang.manage nt.Manage ntFactory;
+ mport java.ut l.Opt onal;
+ mport java.ut l.concurrent.Sc duledThreadPoolExecutor;
+ mport java.ut l.concurrent.T  Un ;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.sun.management.OperatingSystemMXBean;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.L sts;
+ mport com.sun.manage nt.Operat ngSystemMXBean;
 
-import org.apache.directory.api.util.Strings;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.TopicPartition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .d rectory.ap .ut l.Str ngs;
+ mport org.apac .hadoop.fs.F leSystem;
+ mport org.apac .kafka.cl ents.consu r.KafkaConsu r;
+ mport org.apac .kafka.common.Top cPart  on;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.decider.Decider;
-import com.twitter.finagle.stats.MetricsStatsReceiver;
-import com.twitter.finagle.stats.StatsReceiver;
-import com.twitter.search.common.aurora.AuroraSchedulerClient;
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.file.FileUtils;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.metrics.SearchStatsReceiverImpl;
-import com.twitter.search.common.partitioning.zookeeper.SearchZkClient;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.search.termination.QueryTimeoutFactory;
-import com.twitter.search.common.util.io.kafka.FinagleKafkaClientUtils;
-import com.twitter.search.common.util.io.kafka.ThriftDeserializer;
-import com.twitter.search.common.util.ml.tensorflow_engine.TensorflowModelsManager;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.common.util.zookeeper.ZooKeeperProxy;
-import com.twitter.search.earlybird.EarlybirdCPUQualityFactor;
-import com.twitter.search.earlybird.EarlybirdDarkProxy;
-import com.twitter.search.earlybird.EarlybirdFinagleServerManager;
-import com.twitter.search.earlybird.EarlybirdFuturePoolManager;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.EarlybirdProductionFinagleServerManager;
-import com.twitter.search.earlybird.EarlybirdServerSetManager;
-import com.twitter.search.earlybird.EarlybirdWarmUpManager;
-import com.twitter.search.earlybird.QualityFactor;
-import com.twitter.search.earlybird.ServerSetMember;
-import com.twitter.search.earlybird.UpdateableEarlybirdStateManager;
-import com.twitter.search.earlybird.archive.ArchiveEarlybirdIndexConfig;
-import com.twitter.search.earlybird.archive.ArchiveSearchPartitionManager;
-import com.twitter.search.earlybird.common.CaughtUpMonitor;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.common.userupdates.UserScrubGeoMap;
-import com.twitter.search.earlybird.common.userupdates.UserUpdatesChecker;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.MissingKafkaTopicException;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
-import com.twitter.search.earlybird.ml.ScoringModelsManager;
-import com.twitter.search.earlybird.partition.AudioSpaceEventsStreamIndexer;
-import com.twitter.search.earlybird.partition.AudioSpaceTable;
-import com.twitter.search.earlybird.partition.DynamicPartitionConfig;
-import com.twitter.search.earlybird.partition.EarlybirdIndexFlusher;
-import com.twitter.search.earlybird.partition.EarlybirdIndexLoader;
-import com.twitter.search.earlybird.partition.EarlybirdKafkaConsumer;
-import com.twitter.search.earlybird.partition.EarlybirdStartup;
-import com.twitter.search.earlybird.partition.OptimizationAndFlushingCoordinationLock;
-import com.twitter.search.earlybird.partition.TimeLimitedHadoopExistsCall;
-import com.twitter.search.earlybird.partition.UserScrubGeoEventStreamIndexer;
-import com.twitter.search.earlybird.partition.freshstartup.FreshStartupHandler;
-import com.twitter.search.earlybird.partition.HdfsUtil;
-import com.twitter.search.earlybird.partition.KafkaStartup;
-import com.twitter.search.earlybird.partition.MultiSegmentTermDictionaryManager;
-import com.twitter.search.earlybird.partition.PartitionManager;
-import com.twitter.search.earlybird.partition.PartitionManagerStartup;
-import com.twitter.search.earlybird.partition.PartitionWriter;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
-import com.twitter.search.earlybird.partition.SegmentManager;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
-import com.twitter.search.earlybird.partition.StartupUserEventIndexer;
-import com.twitter.search.earlybird.partition.TweetCreateHandler;
-import com.twitter.search.earlybird.partition.TweetUpdateHandler;
-import com.twitter.search.earlybird.partition.UserUpdatesStreamIndexer;
-import com.twitter.search.earlybird.querycache.QueryCacheConfig;
-import com.twitter.search.earlybird.querycache.QueryCacheManager;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.util.CoordinatedEarlybirdAction;
-import com.twitter.search.earlybird.util.EarlybirdDecider;
-import com.twitter.search.earlybird.util.TermCountMonitor;
-import com.twitter.search.earlybird.util.TweetCountMonitor;
-import com.twitter.ubs.thriftjava.AudioSpaceBaseEvent;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers on;
+ mport com.tw ter.dec der.Dec der;
+ mport com.tw ter.f nagle.stats. tr csStatsRece ver;
+ mport com.tw ter.f nagle.stats.StatsRece ver;
+ mport com.tw ter.search.common.aurora.AuroraSc dulerCl ent;
+ mport com.tw ter.search.common.concurrent.Sc duledExecutorServ ceFactory;
+ mport com.tw ter.search.common.dec der.Dec derUt l;
+ mport com.tw ter.search.common.dec der.SearchDec der;
+ mport com.tw ter.search.common.f le.F leUt ls;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Thr ftVers onedEvents;
+ mport com.tw ter.search.common. tr cs.SearchStatsRece ver;
+ mport com.tw ter.search.common. tr cs.SearchStatsRece ver mpl;
+ mport com.tw ter.search.common.part  on ng.zookeeper.SearchZkCl ent;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.common.search.term nat on.QueryT  outFactory;
+ mport com.tw ter.search.common.ut l. o.kafka.F nagleKafkaCl entUt ls;
+ mport com.tw ter.search.common.ut l. o.kafka.Thr ftDeser al zer;
+ mport com.tw ter.search.common.ut l.ml.tensorflow_eng ne.TensorflowModelsManager;
+ mport com.tw ter.search.common.ut l.zktrylock.ZooKeeperTryLockFactory;
+ mport com.tw ter.search.common.ut l.zookeeper.ZooKeeperProxy;
+ mport com.tw ter.search.earlyb rd.Earlyb rdCPUQual yFactor;
+ mport com.tw ter.search.earlyb rd.Earlyb rdDarkProxy;
+ mport com.tw ter.search.earlyb rd.Earlyb rdF nagleServerManager;
+ mport com.tw ter.search.earlyb rd.Earlyb rdFuturePoolManager;
+ mport com.tw ter.search.earlyb rd.Earlyb rd ndexConf g;
+ mport com.tw ter.search.earlyb rd.Earlyb rdProduct onF nagleServerManager;
+ mport com.tw ter.search.earlyb rd.Earlyb rdServerSetManager;
+ mport com.tw ter.search.earlyb rd.Earlyb rdWarmUpManager;
+ mport com.tw ter.search.earlyb rd.Qual yFactor;
+ mport com.tw ter.search.earlyb rd.ServerSet mber;
+ mport com.tw ter.search.earlyb rd.UpdateableEarlyb rdStateManager;
+ mport com.tw ter.search.earlyb rd.arch ve.Arch veEarlyb rd ndexConf g;
+ mport com.tw ter.search.earlyb rd.arch ve.Arch veSearchPart  onManager;
+ mport com.tw ter.search.earlyb rd.common.CaughtUpMon or;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdConf g;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdProperty;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserScrubGeoMap;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserUpdatesC cker;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserTable;
+ mport com.tw ter.search.earlyb rd.except on.M ss ngKafkaTop cExcept on;
+ mport com.tw ter.search.earlyb rd.except on.Cr  calExcept onHandler;
+ mport com.tw ter.search.earlyb rd. ndex.Earlyb rdSeg ntFactory;
+ mport com.tw ter.search.earlyb rd.ml.Scor ngModelsManager;
+ mport com.tw ter.search.earlyb rd.part  on.Aud oSpaceEventsStream ndexer;
+ mport com.tw ter.search.earlyb rd.part  on.Aud oSpaceTable;
+ mport com.tw ter.search.earlyb rd.part  on.Dynam cPart  onConf g;
+ mport com.tw ter.search.earlyb rd.part  on.Earlyb rd ndexFlus r;
+ mport com.tw ter.search.earlyb rd.part  on.Earlyb rd ndexLoader;
+ mport com.tw ter.search.earlyb rd.part  on.Earlyb rdKafkaConsu r;
+ mport com.tw ter.search.earlyb rd.part  on.Earlyb rdStartup;
+ mport com.tw ter.search.earlyb rd.part  on.Opt m zat onAndFlush ngCoord nat onLock;
+ mport com.tw ter.search.earlyb rd.part  on.T  L m edHadoopEx stsCall;
+ mport com.tw ter.search.earlyb rd.part  on.UserScrubGeoEventStream ndexer;
+ mport com.tw ter.search.earlyb rd.part  on.freshstartup.FreshStartupHandler;
+ mport com.tw ter.search.earlyb rd.part  on.HdfsUt l;
+ mport com.tw ter.search.earlyb rd.part  on.KafkaStartup;
+ mport com.tw ter.search.earlyb rd.part  on.Mult Seg ntTermD ct onaryManager;
+ mport com.tw ter.search.earlyb rd.part  on.Part  onManager;
+ mport com.tw ter.search.earlyb rd.part  on.Part  onManagerStartup;
+ mport com.tw ter.search.earlyb rd.part  on.Part  onWr er;
+ mport com.tw ter.search.earlyb rd.part  on.Search ndex ng tr cSet;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntManager;
+ mport com.tw ter.search.earlyb rd.part  on.Seg ntSyncConf g;
+ mport com.tw ter.search.earlyb rd.part  on.StartupUserEvent ndexer;
+ mport com.tw ter.search.earlyb rd.part  on.T etCreateHandler;
+ mport com.tw ter.search.earlyb rd.part  on.T etUpdateHandler;
+ mport com.tw ter.search.earlyb rd.part  on.UserUpdatesStream ndexer;
+ mport com.tw ter.search.earlyb rd.querycac .QueryCac Conf g;
+ mport com.tw ter.search.earlyb rd.querycac .QueryCac Manager;
+ mport com.tw ter.search.earlyb rd.stats.Earlyb rdSearc rStats;
+ mport com.tw ter.search.earlyb rd.ut l.Coord natedEarlyb rdAct on;
+ mport com.tw ter.search.earlyb rd.ut l.Earlyb rdDec der;
+ mport com.tw ter.search.earlyb rd.ut l.TermCountMon or;
+ mport com.tw ter.search.earlyb rd.ut l.T etCountMon or;
+ mport com.tw ter.ubs.thr ftjava.Aud oSpaceBaseEvent;
 
 /**
- * Production module that provides Earlybird components.
+ * Product on module that prov des Earlyb rd components.
  */
-public class EarlybirdWireModule {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdWireModule.class);
-  private static final int MAX_POLL_RECORDS = 1000;
+publ c class Earlyb rdW reModule {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rdW reModule.class);
+  pr vate stat c f nal  nt MAX_POLL_RECORDS = 1000;
 
   /**
-   * How many threads we will use for building up the query cache during startup.
-   * The number of threads will be set to 1 after this earlybird is current.
+   * How many threads   w ll use for bu ld ng up t  query cac  dur ng startup.
+   * T  number of threads w ll be set to 1 after t  earlyb rd  s current.
    */
-  private static final int QUERY_CACHE_NUM_WORKER_THREADS_AT_STARTUP =
-      EarlybirdConfig.getInt("query_cache_updater_startup_threads", 1);
+  pr vate stat c f nal  nt QUERY_CACHE_NUM_WORKER_THREADS_AT_STARTUP =
+      Earlyb rdConf g.get nt("query_cac _updater_startup_threads", 1);
 
   /**
-   * Scheduled executor service factory can be re-used in production.
-   * All the managers can share the same executor service factory.
+   * Sc duled executor serv ce factory can be re-used  n product on.
+   * All t  managers can share t  sa  executor serv ce factory.
    */
-  private final ScheduledExecutorServiceFactory sharedExecutorServiceFactory =
-      new ScheduledExecutorServiceFactory();
+  pr vate f nal Sc duledExecutorServ ceFactory sharedExecutorServ ceFactory =
+      new Sc duledExecutorServ ceFactory();
 
-  private final SearchStatsReceiver sharedSearchStatsReceiver = new SearchStatsReceiverImpl();
-  private final StatsReceiver sharedFinagleStatsReceiver = new MetricsStatsReceiver();
+  pr vate f nal SearchStatsRece ver sharedSearchStatsRece ver = new SearchStatsRece ver mpl();
+  pr vate f nal StatsRece ver sharedF nagleStatsRece ver = new  tr csStatsRece ver();
 
-  private final SearchIndexingMetricSet searchIndexingMetricSet =
-      new SearchIndexingMetricSet(sharedSearchStatsReceiver);
+  pr vate f nal Search ndex ng tr cSet search ndex ng tr cSet =
+      new Search ndex ng tr cSet(sharedSearchStatsRece ver);
 
-  private final EarlybirdSearcherStats tweetsSearcherStats =
-      new EarlybirdSearcherStats(sharedSearchStatsReceiver);
+  pr vate f nal Earlyb rdSearc rStats t etsSearc rStats =
+      new Earlyb rdSearc rStats(sharedSearchStatsRece ver);
 
-  private final CaughtUpMonitor indexCaughtUpMonitor = new CaughtUpMonitor("dl_index");
+  pr vate f nal CaughtUpMon or  ndexCaughtUpMon or = new CaughtUpMon or("dl_ ndex");
 
-  public CaughtUpMonitor provideIndexCaughtUpMonitor() {
-    return indexCaughtUpMonitor;
+  publ c CaughtUpMon or prov de ndexCaughtUpMon or() {
+    return  ndexCaughtUpMon or;
   }
 
-  private final CaughtUpMonitor kafkaIndexCaughtUpMonitor = new CaughtUpMonitor("kafka_index");
+  pr vate f nal CaughtUpMon or kafka ndexCaughtUpMon or = new CaughtUpMon or("kafka_ ndex");
 
-  public CaughtUpMonitor provideKafkaIndexCaughtUpMonitor() {
-    return kafkaIndexCaughtUpMonitor;
+  publ c CaughtUpMon or prov deKafka ndexCaughtUpMon or() {
+    return kafka ndexCaughtUpMon or;
   }
 
-  private final OptimizationAndFlushingCoordinationLock optimizationAndFlushingCoordinationLock =
-      new OptimizationAndFlushingCoordinationLock();
+  pr vate f nal Opt m zat onAndFlush ngCoord nat onLock opt m zat onAndFlush ngCoord nat onLock =
+      new Opt m zat onAndFlush ngCoord nat onLock();
 
-  public OptimizationAndFlushingCoordinationLock provideOptimizationAndFlushingCoordinationLock() {
-    return optimizationAndFlushingCoordinationLock;
+  publ c Opt m zat onAndFlush ngCoord nat onLock prov deOpt m zat onAndFlush ngCoord nat onLock() {
+    return opt m zat onAndFlush ngCoord nat onLock;
   }
 
-  public QueryTimeoutFactory provideQueryTimeoutFactory() {
-    return new QueryTimeoutFactory();
+  publ c QueryT  outFactory prov deQueryT  outFactory() {
+    return new QueryT  outFactory();
   }
 
-  public static class ZooKeeperClients {
-    public ZooKeeperProxy discoveryClient;
-    public ZooKeeperProxy stateClient;
+  publ c stat c class ZooKeeperCl ents {
+    publ c ZooKeeperProxy d scoveryCl ent;
+    publ c ZooKeeperProxy stateCl ent;
 
-    public ZooKeeperClients() {
-      this(
-          SearchZkClient.getServiceDiscoveryZooKeeperClient(),
-          SearchZkClient.getSZooKeeperClient());
+    publ c ZooKeeperCl ents() {
+      t (
+          SearchZkCl ent.getServ ceD scoveryZooKeeperCl ent(),
+          SearchZkCl ent.getSZooKeeperCl ent());
     }
 
-    public ZooKeeperClients(ZooKeeperProxy discoveryClient, ZooKeeperProxy stateClient) {
-      this.discoveryClient = discoveryClient;
-      this.stateClient = stateClient;
+    publ c ZooKeeperCl ents(ZooKeeperProxy d scoveryCl ent, ZooKeeperProxy stateCl ent) {
+      t .d scoveryCl ent = d scoveryCl ent;
+      t .stateCl ent = stateCl ent;
     }
   }
 
   /**
-   * Provides the earlybird decider.
+   * Prov des t  earlyb rd dec der.
    */
-  public Decider provideDecider() {
-    return EarlybirdDecider.initialize();
+  publ c Dec der prov deDec der() {
+    return Earlyb rdDec der. n  al ze();
   }
 
   /**
-   * Provides the set of ZooKeeper clients to be used by earlybird.
+   * Prov des t  set of ZooKeeper cl ents to be used by earlyb rd.
    */
-  public ZooKeeperClients provideZooKeeperClients() {
-    return new ZooKeeperClients();
+  publ c ZooKeeperCl ents prov deZooKeeperCl ents() {
+    return new ZooKeeperCl ents();
   }
 
   /**
-   * Provides the query cache config.
+   * Prov des t  query cac  conf g.
    */
-  public QueryCacheConfig provideQueryCacheConfig(SearchStatsReceiver searchStatsReceiver) {
-    return new QueryCacheConfig(searchStatsReceiver);
+  publ c QueryCac Conf g prov deQueryCac Conf g(SearchStatsRece ver searchStatsRece ver) {
+    return new QueryCac Conf g(searchStatsRece ver);
   }
 
   /**
-   * Provides the earlybird index config.
+   * Prov des t  earlyb rd  ndex conf g.
    */
-  public EarlybirdIndexConfig provideEarlybirdIndexConfig(
-      Decider decider, SearchIndexingMetricSet indexingMetricSet,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    return EarlybirdIndexConfigUtil.createEarlybirdIndexConfig(decider, indexingMetricSet,
-        criticalExceptionHandler);
+  publ c Earlyb rd ndexConf g prov deEarlyb rd ndexConf g(
+      Dec der dec der, Search ndex ng tr cSet  ndex ng tr cSet,
+      Cr  calExcept onHandler cr  calExcept onHandler) {
+    return Earlyb rd ndexConf gUt l.createEarlyb rd ndexConf g(dec der,  ndex ng tr cSet,
+        cr  calExcept onHandler);
   }
 
-  public DynamicPartitionConfig provideDynamicPartitionConfig() {
-    return new DynamicPartitionConfig(PartitionConfigUtil.initPartitionConfig());
+  publ c Dynam cPart  onConf g prov deDynam cPart  onConf g() {
+    return new Dynam cPart  onConf g(Part  onConf gUt l. n Part  onConf g());
   }
 
   /**
-   * Provides the segment manager to be used by this earlybird.
+   * Prov des t  seg nt manager to be used by t  earlyb rd.
    */
-  public SegmentManager provideSegmentManager(
-      DynamicPartitionConfig dynamicPartitionConfig,
-      EarlybirdIndexConfig earlybirdIndexConfig,
-      SearchIndexingMetricSet partitionIndexingMetricSet,
-      EarlybirdSearcherStats searcherStats,
-      SearchStatsReceiver earlybirdServerStats,
-      UserUpdatesChecker userUpdatesChecker,
-      SegmentSyncConfig segmentSyncConfig,
+  publ c Seg ntManager prov deSeg ntManager(
+      Dynam cPart  onConf g dynam cPart  onConf g,
+      Earlyb rd ndexConf g earlyb rd ndexConf g,
+      Search ndex ng tr cSet part  on ndex ng tr cSet,
+      Earlyb rdSearc rStats searc rStats,
+      SearchStatsRece ver earlyb rdServerStats,
+      UserUpdatesC cker userUpdatesC cker,
+      Seg ntSyncConf g seg ntSyncConf g,
       UserTable userTable,
       UserScrubGeoMap userScrubGeoMap,
       Clock clock,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    return new SegmentManager(
-        dynamicPartitionConfig,
-        earlybirdIndexConfig,
-        partitionIndexingMetricSet,
-        searcherStats,
-        earlybirdServerStats,
-        userUpdatesChecker,
-        segmentSyncConfig,
+      Cr  calExcept onHandler cr  calExcept onHandler) {
+    return new Seg ntManager(
+        dynam cPart  onConf g,
+        earlyb rd ndexConf g,
+        part  on ndex ng tr cSet,
+        searc rStats,
+        earlyb rdServerStats,
+        userUpdatesC cker,
+        seg ntSyncConf g,
         userTable,
         userScrubGeoMap,
         clock,
-        EarlybirdConfig.getMaxSegmentSize(),
-        criticalExceptionHandler,
-        provideKafkaIndexCaughtUpMonitor());
+        Earlyb rdConf g.getMaxSeg ntS ze(),
+        cr  calExcept onHandler,
+        prov deKafka ndexCaughtUpMon or());
   }
 
-  public QueryCacheManager provideQueryCacheManager(
-      QueryCacheConfig config,
-      EarlybirdIndexConfig indexConfig,
-      int maxEnabledSegments,
+  publ c QueryCac Manager prov deQueryCac Manager(
+      QueryCac Conf g conf g,
+      Earlyb rd ndexConf g  ndexConf g,
+       nt maxEnabledSeg nts,
       UserTable userTable,
       UserScrubGeoMap userScrubGeoMap,
-      ScheduledExecutorServiceFactory queryCacheUpdaterScheduledExecutorFactory,
-      SearchStatsReceiver searchStatsReceiver,
-      EarlybirdSearcherStats searcherStats,
-      Decider decider,
-      CriticalExceptionHandler criticalExceptionHandler,
+      Sc duledExecutorServ ceFactory queryCac UpdaterSc duledExecutorFactory,
+      SearchStatsRece ver searchStatsRece ver,
+      Earlyb rdSearc rStats searc rStats,
+      Dec der dec der,
+      Cr  calExcept onHandler cr  calExcept onHandler,
       Clock clock) {
-    return new QueryCacheManager(config, indexConfig, maxEnabledSegments, userTable,
-        userScrubGeoMap, queryCacheUpdaterScheduledExecutorFactory, searchStatsReceiver,
-        searcherStats, decider, criticalExceptionHandler, clock);
+    return new QueryCac Manager(conf g,  ndexConf g, maxEnabledSeg nts, userTable,
+        userScrubGeoMap, queryCac UpdaterSc duledExecutorFactory, searchStatsRece ver,
+        searc rStats, dec der, cr  calExcept onHandler, clock);
   }
 
-  public TermCountMonitor provideTermCountMonitor(
-      SegmentManager segmentManager, ScheduledExecutorServiceFactory executorServiceFactory,
-      SearchStatsReceiver searchStatsReceiver,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    return new TermCountMonitor(segmentManager, executorServiceFactory, 500, TimeUnit.MILLISECONDS,
-        searchStatsReceiver, criticalExceptionHandler);
+  publ c TermCountMon or prov deTermCountMon or(
+      Seg ntManager seg ntManager, Sc duledExecutorServ ceFactory executorServ ceFactory,
+      SearchStatsRece ver searchStatsRece ver,
+      Cr  calExcept onHandler cr  calExcept onHandler) {
+    return new TermCountMon or(seg ntManager, executorServ ceFactory, 500, T  Un .M LL SECONDS,
+        searchStatsRece ver, cr  calExcept onHandler);
   }
 
-  public TweetCountMonitor provideTweetCountMonitor(
-      SegmentManager segmentManager,
-      ScheduledExecutorServiceFactory executorServiceFactory,
-      SearchStatsReceiver searchStatsReceiver,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    return new TweetCountMonitor(segmentManager, executorServiceFactory, 500,
-        TimeUnit.MILLISECONDS, searchStatsReceiver, criticalExceptionHandler);
+  publ c T etCountMon or prov deT etCountMon or(
+      Seg ntManager seg ntManager,
+      Sc duledExecutorServ ceFactory executorServ ceFactory,
+      SearchStatsRece ver searchStatsRece ver,
+      Cr  calExcept onHandler cr  calExcept onHandler) {
+    return new T etCountMon or(seg ntManager, executorServ ceFactory, 500,
+        T  Un .M LL SECONDS, searchStatsRece ver, cr  calExcept onHandler);
   }
 
   /**
-   * Returns a manager that keeps track of earlybird's global state while it runs.
+   * Returns a manager that keeps track of earlyb rd's global state wh le   runs.
    */
-  public UpdateableEarlybirdStateManager provideUpdateableEarlybirdStateManager(
-      EarlybirdIndexConfig earlybirdIndexConfig,
-      DynamicPartitionConfig dynamicPartitionConfig,
-      ZooKeeperProxy zooKeeperClient,
-      AuroraSchedulerClient schedulerClient,
-      ScheduledExecutorServiceFactory executorServiceFactory,
-      ScoringModelsManager scoringModelsManager,
+  publ c UpdateableEarlyb rdStateManager prov deUpdateableEarlyb rdStateManager(
+      Earlyb rd ndexConf g earlyb rd ndexConf g,
+      Dynam cPart  onConf g dynam cPart  onConf g,
+      ZooKeeperProxy zooKeeperCl ent,
+      AuroraSc dulerCl ent sc dulerCl ent,
+      Sc duledExecutorServ ceFactory executorServ ceFactory,
+      Scor ngModelsManager scor ngModelsManager,
       TensorflowModelsManager tensorflowModelsManager,
-      SearchStatsReceiver searchStatsReceiver,
-      SearchDecider searchDecider,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    Clock clock = provideClockForStateManager();
+      SearchStatsRece ver searchStatsRece ver,
+      SearchDec der searchDec der,
+      Cr  calExcept onHandler cr  calExcept onHandler) {
+    Clock clock = prov deClockForStateManager();
 
-    return new UpdateableEarlybirdStateManager(
-        earlybirdIndexConfig, dynamicPartitionConfig, zooKeeperClient, schedulerClient,
-        executorServiceFactory, scoringModelsManager, tensorflowModelsManager, searchStatsReceiver,
-        searchDecider, criticalExceptionHandler,
+    return new UpdateableEarlyb rdStateManager(
+        earlyb rd ndexConf g, dynam cPart  onConf g, zooKeeperCl ent, sc dulerCl ent,
+        executorServ ceFactory, scor ngModelsManager, tensorflowModelsManager, searchStatsRece ver,
+        searchDec der, cr  calExcept onHandler,
         clock);
   }
 
-  public Clock provideClockForStateManager() {
-    return this.provideClock();
+  publ c Clock prov deClockForStateManager() {
+    return t .prov deClock();
   }
 
-  public ScheduledExecutorServiceFactory providePartitionManagerExecutorFactory() {
-    return sharedExecutorServiceFactory;
+  publ c Sc duledExecutorServ ceFactory prov dePart  onManagerExecutorFactory() {
+    return sharedExecutorServ ceFactory;
   }
 
-  public ScheduledExecutorServiceFactory provideStateUpdateManagerExecutorFactory() {
-    return sharedExecutorServiceFactory;
+  publ c Sc duledExecutorServ ceFactory prov deStateUpdateManagerExecutorFactory() {
+    return sharedExecutorServ ceFactory;
   }
 
-  public ScheduledExecutorServiceFactory provideTermCountMonitorScheduledExecutorFactory() {
-    return sharedExecutorServiceFactory;
+  publ c Sc duledExecutorServ ceFactory prov deTermCountMon orSc duledExecutorFactory() {
+    return sharedExecutorServ ceFactory;
   }
 
-  public ScheduledExecutorServiceFactory provideTweetCountMonitorScheduledExecutorFactory() {
-    return sharedExecutorServiceFactory;
+  publ c Sc duledExecutorServ ceFactory prov deT etCountMon orSc duledExecutorFactory() {
+    return sharedExecutorServ ceFactory;
   }
 
   /**
-   * Provides the ScheduledExecutorServiceFactory that will be used to schedule all query cache
+   * Prov des t  Sc duledExecutorServ ceFactory that w ll be used to sc dule all query cac 
    * update tasks.
    */
-  public ScheduledExecutorServiceFactory provideQueryCacheUpdateTaskScheduledExecutorFactory() {
-    return new ScheduledExecutorServiceFactory() {
-      @Override
-      public QueryCacheUpdaterScheduledExecutorService<ScheduledThreadPoolExecutor> build(
-          String threadNameFormat, boolean isDaemon) {
-        ScheduledThreadPoolExecutor threadpoolExecutor =
-            new ScheduledThreadPoolExecutor(QUERY_CACHE_NUM_WORKER_THREADS_AT_STARTUP,
-                buildThreadFactory(threadNameFormat, isDaemon));
-        threadpoolExecutor.setMaximumPoolSize(QUERY_CACHE_NUM_WORKER_THREADS_AT_STARTUP);
-        threadpoolExecutor.setCorePoolSize(QUERY_CACHE_NUM_WORKER_THREADS_AT_STARTUP);
-        threadpoolExecutor.setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
-        threadpoolExecutor.setContinueExistingPeriodicTasksAfterShutdownPolicy(false);
-        threadpoolExecutor.setRemoveOnCancelPolicy(true);
-        LOG.info("Starting query cache executor with {} thread.",
+  publ c Sc duledExecutorServ ceFactory prov deQueryCac UpdateTaskSc duledExecutorFactory() {
+    return new Sc duledExecutorServ ceFactory() {
+      @Overr de
+      publ c QueryCac UpdaterSc duledExecutorServ ce<Sc duledThreadPoolExecutor> bu ld(
+          Str ng threadNa Format, boolean  sDaemon) {
+        Sc duledThreadPoolExecutor threadpoolExecutor =
+            new Sc duledThreadPoolExecutor(QUERY_CACHE_NUM_WORKER_THREADS_AT_STARTUP,
+                bu ldThreadFactory(threadNa Format,  sDaemon));
+        threadpoolExecutor.setMax mumPoolS ze(QUERY_CACHE_NUM_WORKER_THREADS_AT_STARTUP);
+        threadpoolExecutor.setCorePoolS ze(QUERY_CACHE_NUM_WORKER_THREADS_AT_STARTUP);
+        threadpoolExecutor.setExecuteEx st ngDelayedTasksAfterShutdownPol cy(false);
+        threadpoolExecutor.setCont nueEx st ngPer od cTasksAfterShutdownPol cy(false);
+        threadpoolExecutor.setRemoveOnCancelPol cy(true);
+        LOG. nfo("Start ng query cac  executor w h {} thread.",
             QUERY_CACHE_NUM_WORKER_THREADS_AT_STARTUP);
 
-        return new QueryCacheUpdaterScheduledExecutorService<ScheduledThreadPoolExecutor>(
+        return new QueryCac UpdaterSc duledExecutorServ ce<Sc duledThreadPoolExecutor>(
             threadpoolExecutor) {
-          @Override public void setWorkerPoolSizeAfterStartup() {
-            delegate.setCorePoolSize(1);
-            delegate.setMaximumPoolSize(1);
-            LOG.info("Reset query cache executor to be single threaded.");
+          @Overr de publ c vo d setWorkerPoolS zeAfterStartup() {
+            delegate.setCorePoolS ze(1);
+            delegate.setMax mumPoolS ze(1);
+            LOG. nfo("Reset query cac  executor to be s ngle threaded.");
           }
         };
       }
     };
   }
 
-  public ScheduledExecutorServiceFactory provideSimpleUserUpdateIndexerScheduledExecutorFactory() {
-    return sharedExecutorServiceFactory;
+  publ c Sc duledExecutorServ ceFactory prov deS mpleUserUpdate ndexerSc duledExecutorFactory() {
+    return sharedExecutorServ ceFactory;
   }
 
   /**
-   * Returns the manager that manages the pool of searcher threads.
+   * Returns t  manager that manages t  pool of searc r threads.
    */
-  public EarlybirdFuturePoolManager provideFuturePoolManager() {
-    return new EarlybirdFuturePoolManager("SearcherWorker");
+  publ c Earlyb rdFuturePoolManager prov deFuturePoolManager() {
+    return new Earlyb rdFuturePoolManager("Searc rWorker");
   }
 
   /**
-   * Returns the manager that manages all earlybird finagle servers (warm up and production).
+   * Returns t  manager that manages all earlyb rd f nagle servers (warm up and product on).
    */
-  public EarlybirdFinagleServerManager provideFinagleServerManager(
-      CriticalExceptionHandler criticalExceptionHandler) {
-    return new EarlybirdProductionFinagleServerManager(criticalExceptionHandler);
+  publ c Earlyb rdF nagleServerManager prov deF nagleServerManager(
+      Cr  calExcept onHandler cr  calExcept onHandler) {
+    return new Earlyb rdProduct onF nagleServerManager(cr  calExcept onHandler);
   }
 
   /**
-   * Creates the production serverset manager.
+   * Creates t  product on serverset manager.
    */
-  public EarlybirdServerSetManager provideServerSetManager(
-      ZooKeeperProxy discoveryClient,
-      DynamicPartitionConfig dynamicPartitionConfig,
-      SearchStatsReceiver searchStatsReceiver,
-      int port,
-      String serverSetNamePrefix) {
-    return new EarlybirdServerSetManager(
-        searchStatsReceiver,
-        discoveryClient,
-        dynamicPartitionConfig.getCurrentPartitionConfig(),
+  publ c Earlyb rdServerSetManager prov deServerSetManager(
+      ZooKeeperProxy d scoveryCl ent,
+      Dynam cPart  onConf g dynam cPart  onConf g,
+      SearchStatsRece ver searchStatsRece ver,
+       nt port,
+      Str ng serverSetNa Pref x) {
+    return new Earlyb rdServerSetManager(
+        searchStatsRece ver,
+        d scoveryCl ent,
+        dynam cPart  onConf g.getCurrentPart  onConf g(),
         port,
-        serverSetNamePrefix);
+        serverSetNa Pref x);
   }
 
   /**
-   * Creates the warm up serverset manager.
+   * Creates t  warm up serverset manager.
    */
-  public EarlybirdWarmUpManager provideWarmUpManager(
-      ZooKeeperProxy discoveryClient,
-      DynamicPartitionConfig dynamicPartitionConfig,
-      SearchStatsReceiver searchStatsReceiver,
-      Decider decider,
+  publ c Earlyb rdWarmUpManager prov deWarmUpManager(
+      ZooKeeperProxy d scoveryCl ent,
+      Dynam cPart  onConf g dynam cPart  onConf g,
+      SearchStatsRece ver searchStatsRece ver,
+      Dec der dec der,
       Clock clock,
-      int port,
-      String serverSetNamePrefix) {
-    return new EarlybirdWarmUpManager(
-        new EarlybirdServerSetManager(
-            searchStatsReceiver,
-            discoveryClient,
-            dynamicPartitionConfig.getCurrentPartitionConfig(),
+       nt port,
+      Str ng serverSetNa Pref x) {
+    return new Earlyb rdWarmUpManager(
+        new Earlyb rdServerSetManager(
+            searchStatsRece ver,
+            d scoveryCl ent,
+            dynam cPart  onConf g.getCurrentPart  onConf g(),
             port,
-            serverSetNamePrefix),
-        dynamicPartitionConfig.getCurrentPartitionConfig(),
-        searchIndexingMetricSet,
-        decider,
+            serverSetNa Pref x),
+        dynam cPart  onConf g.getCurrentPart  onConf g(),
+        search ndex ng tr cSet,
+        dec der,
         clock);
   }
 
   /**
-   * Returns a dark proxy that knows how to send dark traffic to the warm up earlybird serverset.
+   * Returns a dark proxy that knows how to send dark traff c to t  warm up earlyb rd serverset.
    */
-  public EarlybirdDarkProxy provideEarlybirdDarkProxy(
-      SearchDecider searchDecider,
-      StatsReceiver finagleStatsReceiver,
-      EarlybirdServerSetManager earlybirdServerSetManager,
-      EarlybirdWarmUpManager earlybirdWarmUpManager,
-      String clusterName) {
-    return new EarlybirdDarkProxy(searchDecider,
-                                  finagleStatsReceiver.scope("dark_proxy"),
-                                  earlybirdServerSetManager,
-                                  earlybirdWarmUpManager,
-                                  clusterName);
+  publ c Earlyb rdDarkProxy prov deEarlyb rdDarkProxy(
+      SearchDec der searchDec der,
+      StatsRece ver f nagleStatsRece ver,
+      Earlyb rdServerSetManager earlyb rdServerSetManager,
+      Earlyb rdWarmUpManager earlyb rdWarmUpManager,
+      Str ng clusterNa ) {
+    return new Earlyb rdDarkProxy(searchDec der,
+                                  f nagleStatsRece ver.scope("dark_proxy"),
+                                  earlyb rdServerSetManager,
+                                  earlyb rdWarmUpManager,
+                                  clusterNa );
   }
 
 
   /**
-   * Returns the manager for all (non-Tensorflow) scoring models.
+   * Returns t  manager for all (non-Tensorflow) scor ng models.
    */
-  public ScoringModelsManager provideScoringModelsManager(
-      SearchStatsReceiver serverStats,
-      EarlybirdIndexConfig earlybirdIndexConfig) {
-    boolean modelsEnabled = EarlybirdConfig.getBool("scoring_models_enabled", false);
-    if (!modelsEnabled) {
-      LOG.info("Scoring Models - Disabled in the config. Not loading any models.");
-      serverStats.getCounter("scoring_models_disabled_in_config").increment();
-      return ScoringModelsManager.NO_OP_MANAGER;
+  publ c Scor ngModelsManager prov deScor ngModelsManager(
+      SearchStatsRece ver serverStats,
+      Earlyb rd ndexConf g earlyb rd ndexConf g) {
+    boolean modelsEnabled = Earlyb rdConf g.getBool("scor ng_models_enabled", false);
+     f (!modelsEnabled) {
+      LOG. nfo("Scor ng Models - D sabled  n t  conf g. Not load ng any models.");
+      serverStats.getCounter("scor ng_models_d sabled_ n_conf g"). ncre nt();
+      return Scor ngModelsManager.NO_OP_MANAGER;
     }
 
-    String hdfsNameNode = EarlybirdConfig.getString("scoring_models_namenode");
-    String hdfsModelsPath = EarlybirdConfig.getString("scoring_models_basedir");
+    Str ng hdfsNa Node = Earlyb rdConf g.getStr ng("scor ng_models_na node");
+    Str ng hdfsModelsPath = Earlyb rdConf g.getStr ng("scor ng_models_based r");
     try {
-      return ScoringModelsManager.create(
-          serverStats, hdfsNameNode, hdfsModelsPath, earlybirdIndexConfig.getSchema());
-    } catch (IOException e) {
-      LOG.error("Scoring Models - Error creating ScoringModelsManager", e);
-      serverStats.getCounter("scoring_models_initialization_errors").increment();
-      return ScoringModelsManager.NO_OP_MANAGER;
+      return Scor ngModelsManager.create(
+          serverStats, hdfsNa Node, hdfsModelsPath, earlyb rd ndexConf g.getSc ma());
+    } catch ( OExcept on e) {
+      LOG.error("Scor ng Models - Error creat ng Scor ngModelsManager", e);
+      serverStats.getCounter("scor ng_models_ n  al zat on_errors"). ncre nt();
+      return Scor ngModelsManager.NO_OP_MANAGER;
     }
   }
 
   /**
-   * Provides the manager for all Tensorflow models.
+   * Prov des t  manager for all Tensorflow models.
    */
-  public TensorflowModelsManager provideTensorflowModelsManager(
-      SearchStatsReceiver serverStats,
-      String statsPrefix,
-      Decider decider,
-      EarlybirdIndexConfig earlybirdIndexConfig) {
+  publ c TensorflowModelsManager prov deTensorflowModelsManager(
+      SearchStatsRece ver serverStats,
+      Str ng statsPref x,
+      Dec der dec der,
+      Earlyb rd ndexConf g earlyb rd ndexConf g) {
 
-    boolean modelsEnabled = EarlybirdProperty.TF_MODELS_ENABLED.get(false);
+    boolean modelsEnabled = Earlyb rdProperty.TF_MODELS_ENABLED.get(false);
 
-    if (!modelsEnabled) {
-      LOG.info("Tensorflow Models - Disabled in the config. Not loading any models.");
-      serverStats.getCounter("tf_models_disabled_in_config").increment();
-      return TensorflowModelsManager.createNoOp(statsPrefix);
+     f (!modelsEnabled) {
+      LOG. nfo("Tensorflow Models - D sabled  n t  conf g. Not load ng any models.");
+      serverStats.getCounter("tf_models_d sabled_ n_conf g"). ncre nt();
+      return TensorflowModelsManager.createNoOp(statsPref x);
     }
 
-    String modelsConfigPath =
-        Preconditions.checkNotNull(EarlybirdProperty.TF_MODELS_CONFIG_PATH.get());
+    Str ng modelsConf gPath =
+        Precond  ons.c ckNotNull(Earlyb rdProperty.TF_MODELS_CONF G_PATH.get());
 
 
-    int intraOpThreads = Preconditions.checkNotNull(EarlybirdProperty.TF_INTRA_OP_THREADS.get(0));
-    int interOpThreads = Preconditions.checkNotNull(EarlybirdProperty.TF_INTER_OP_THREADS.get(0));
+     nt  ntraOpThreads = Precond  ons.c ckNotNull(Earlyb rdProperty.TF_ NTRA_OP_THREADS.get(0));
+     nt  nterOpThreads = Precond  ons.c ckNotNull(Earlyb rdProperty.TF_ NTER_OP_THREADS.get(0));
 
-    TensorflowModelsManager.initTensorflowThreadPools(intraOpThreads, interOpThreads);
+    TensorflowModelsManager. n TensorflowThreadPools( ntraOpThreads,  nterOpThreads);
 
-    return TensorflowModelsManager.createUsingConfigFile(
-        FileUtils.getFileHandle(modelsConfigPath),
+    return TensorflowModelsManager.createUs ngConf gF le(
+        F leUt ls.getF leHandle(modelsConf gPath),
         true,
-        statsPrefix,
-        () -> DeciderUtil.isAvailableForRandomRecipient(
-          decider, "enable_tf_serve_models"),
-        () -> decider.isAvailable("enable_tf_load_models"),
-        earlybirdIndexConfig.getSchema());
+        statsPref x,
+        () -> Dec derUt l. sAva lableForRandomRec p ent(
+          dec der, "enable_tf_serve_models"),
+        () -> dec der. sAva lable("enable_tf_load_models"),
+        earlyb rd ndexConf g.getSc ma());
   }
 
-  public SearchStatsReceiver provideEarlybirdServerStatsReceiver() {
-    return sharedSearchStatsReceiver;
+  publ c SearchStatsRece ver prov deEarlyb rdServerStatsRece ver() {
+    return sharedSearchStatsRece ver;
   }
 
-  public StatsReceiver provideFinagleStatsReceiver() {
-    return sharedFinagleStatsReceiver;
+  publ c StatsRece ver prov deF nagleStatsRece ver() {
+    return sharedF nagleStatsRece ver;
   }
 
-  public SearchIndexingMetricSet provideSearchIndexingMetricSet() {
-    return searchIndexingMetricSet;
+  publ c Search ndex ng tr cSet prov deSearch ndex ng tr cSet() {
+    return search ndex ng tr cSet;
   }
 
-  public EarlybirdSearcherStats provideTweetsSearcherStats() {
-    return tweetsSearcherStats;
+  publ c Earlyb rdSearc rStats prov deT etsSearc rStats() {
+    return t etsSearc rStats;
   }
 
   /**
-   * Provides the clock to be used by this earlybird.
+   * Prov des t  clock to be used by t  earlyb rd.
    */
-  public Clock provideClock() {
+  publ c Clock prov deClock() {
     return Clock.SYSTEM_CLOCK;
   }
 
   /**
-   * Provides the config for the multi-segment term dictionary manager.
+   * Prov des t  conf g for t  mult -seg nt term d ct onary manager.
    */
-  public MultiSegmentTermDictionaryManager.Config provideMultiSegmentTermDictionaryManagerConfig() {
-    return new MultiSegmentTermDictionaryManager.Config(
-        Lists.newArrayList(
-            EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName()));
+  publ c Mult Seg ntTermD ct onaryManager.Conf g prov deMult Seg ntTermD ct onaryManagerConf g() {
+    return new Mult Seg ntTermD ct onaryManager.Conf g(
+        L sts.newArrayL st(
+            Earlyb rdF eldConstant.FROM_USER_ D_F ELD.getF eldNa ()));
   }
 
   /**
-   * Provides the manager for the term dictionary that spans all segments.
+   * Prov des t  manager for t  term d ct onary that spans all seg nts.
    */
-  public MultiSegmentTermDictionaryManager provideMultiSegmentTermDictionaryManager(
-      MultiSegmentTermDictionaryManager.Config termDictionaryConfig,
-      SegmentManager segmentManager,
-      SearchStatsReceiver statsReceiver,
-      Decider decider,
-      EarlybirdCluster earlybirdCluster) {
-    return new MultiSegmentTermDictionaryManager(
-        termDictionaryConfig, segmentManager, statsReceiver, decider, earlybirdCluster);
+  publ c Mult Seg ntTermD ct onaryManager prov deMult Seg ntTermD ct onaryManager(
+      Mult Seg ntTermD ct onaryManager.Conf g termD ct onaryConf g,
+      Seg ntManager seg ntManager,
+      SearchStatsRece ver statsRece ver,
+      Dec der dec der,
+      Earlyb rdCluster earlyb rdCluster) {
+    return new Mult Seg ntTermD ct onaryManager(
+        termD ct onaryConf g, seg ntManager, statsRece ver, dec der, earlyb rdCluster);
   }
 
   /**
-   * Returns the partition manager to be used by the archive earlybirds.
+   * Returns t  part  on manager to be used by t  arch ve earlyb rds.
    */
-  public PartitionManager provideFullArchivePartitionManager(
+  publ c Part  onManager prov deFullArch vePart  onManager(
       ZooKeeperTryLockFactory zooKeeperTryLockFactory,
-      QueryCacheManager queryCacheManager,
-      SegmentManager segmentManager,
-      DynamicPartitionConfig dynamicPartitionConfig,
-      UserUpdatesStreamIndexer userUpdatesStreamIndexer,
-      UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer,
-      SearchStatsReceiver searchStatsReceiver,
-      ArchiveEarlybirdIndexConfig earlybirdIndexConfig,
-      ServerSetMember serverSetMember,
-      ScheduledExecutorServiceFactory executorServiceFactory,
-      ScheduledExecutorServiceFactory userUpdateIndexerExecutorFactory,
-      SearchIndexingMetricSet earlybirdSearchIndexingMetricSet,
+      QueryCac Manager queryCac Manager,
+      Seg ntManager seg ntManager,
+      Dynam cPart  onConf g dynam cPart  onConf g,
+      UserUpdatesStream ndexer userUpdatesStream ndexer,
+      UserScrubGeoEventStream ndexer userScrubGeoEventStream ndexer,
+      SearchStatsRece ver searchStatsRece ver,
+      Arch veEarlyb rd ndexConf g earlyb rd ndexConf g,
+      ServerSet mber serverSet mber,
+      Sc duledExecutorServ ceFactory executorServ ceFactory,
+      Sc duledExecutorServ ceFactory userUpdate ndexerExecutorFactory,
+      Search ndex ng tr cSet earlyb rdSearch ndex ng tr cSet,
       Clock clock,
-      SegmentSyncConfig segmentSyncConfig,
-      CriticalExceptionHandler criticalExceptionHandler) throws IOException {
+      Seg ntSyncConf g seg ntSyncConf g,
+      Cr  calExcept onHandler cr  calExcept onHandler) throws  OExcept on {
 
-    return new ArchiveSearchPartitionManager(
+    return new Arch veSearchPart  onManager(
         zooKeeperTryLockFactory,
-        queryCacheManager,
-        segmentManager,
-        dynamicPartitionConfig,
-        userUpdatesStreamIndexer,
-        userScrubGeoEventStreamIndexer,
-        searchStatsReceiver,
-        earlybirdIndexConfig,
-        serverSetMember,
-        executorServiceFactory,
-        userUpdateIndexerExecutorFactory,
-        earlybirdSearchIndexingMetricSet,
-        segmentSyncConfig,
+        queryCac Manager,
+        seg ntManager,
+        dynam cPart  onConf g,
+        userUpdatesStream ndexer,
+        userScrubGeoEventStream ndexer,
+        searchStatsRece ver,
+        earlyb rd ndexConf g,
+        serverSet mber,
+        executorServ ceFactory,
+        userUpdate ndexerExecutorFactory,
+        earlyb rdSearch ndex ng tr cSet,
+        seg ntSyncConf g,
         clock,
-        criticalExceptionHandler);
+        cr  calExcept onHandler);
   }
 
   /**
-   * Provides the SegmentSyncConfig instance to be used by earlybird.
+   * Prov des t  Seg ntSyncConf g  nstance to be used by earlyb rd.
    */
-  public SegmentSyncConfig provideSegmentSyncConfig(EarlybirdCluster cluster) {
-    String scrubGen = null;
-    if (cluster == EarlybirdCluster.FULL_ARCHIVE) {
-      scrubGen = EarlybirdProperty.EARLYBIRD_SCRUB_GEN.get();
-      LOG.info("The scrubGen provided from Aurora is: {}", scrubGen);
-      Preconditions.checkState(Strings.isNotEmpty(scrubGen));
+  publ c Seg ntSyncConf g prov deSeg ntSyncConf g(Earlyb rdCluster cluster) {
+    Str ng scrubGen = null;
+     f (cluster == Earlyb rdCluster.FULL_ARCH VE) {
+      scrubGen = Earlyb rdProperty.EARLYB RD_SCRUB_GEN.get();
+      LOG. nfo("T  scrubGen prov ded from Aurora  s: {}", scrubGen);
+      Precond  ons.c ckState(Str ngs. sNotEmpty(scrubGen));
     }
-    return new SegmentSyncConfig(Optional.ofNullable(scrubGen));
+    return new Seg ntSyncConf g(Opt onal.ofNullable(scrubGen));
   }
 
-  protected void storeEarlybirdStartupProducts(
-      TweetCreateHandler tweetCreateHandler,
-      PartitionWriter partitionWriter,
-      EarlybirdIndexFlusher earlybirdIndexFlusher
+  protected vo d storeEarlyb rdStartupProducts(
+      T etCreateHandler t etCreateHandler,
+      Part  onWr er part  onWr er,
+      Earlyb rd ndexFlus r earlyb rd ndexFlus r
   ) {
-    // TestWireModule wants to store these for further use.
+    // TestW reModule wants to store t se for furt r use.
   }
 
   /**
-   * What directory are we going to load segments from on startup.
+   * What d rectory are   go ng to load seg nts from on startup.
    *
-   * When you're running loadtests or stagingN instances and they don't have a recent index
-   * flushed, it can take hours to generate a new index with a fresh startup. This slows
-   * down development. If the read_index_from_prod_location flag is set to true, we will read
-   * the index from the location where prod instances are flushing their index to.
-   * Unset it if you want to generate your own index.
+   * W n   runn ng loadtests or stag ngN  nstances and t y don't have a recent  ndex
+   * flus d,   can take h s to generate a new  ndex w h a fresh startup. T  slows
+   * down develop nt.  f t  read_ ndex_from_prod_locat on flag  s set to true,   w ll read
+   * t   ndex from t  locat on w re prod  nstances are flush ng t  r  ndex to.
+   * Unset    f   want to generate y  own  ndex.
    *
-   * @return a string with the directory.
+   * @return a str ng w h t  d rectory.
    */
-  public String getIndexLoadingDirectory() {
-    boolean readIndexFromProdLocation = EarlybirdProperty.READ_INDEX_FROM_PROD_LOCATION.get(false);
-    String environment = EarlybirdProperty.ENV.get("no_env_specified"); // default value for tests.
-    String readIndexDir = EarlybirdProperty.HDFS_INDEX_SYNC_DIR.get();
+  publ c Str ng get ndexLoad ngD rectory() {
+    boolean read ndexFromProdLocat on = Earlyb rdProperty.READ_ NDEX_FROM_PROD_LOCAT ON.get(false);
+    Str ng env ron nt = Earlyb rdProperty.ENV.get("no_env_spec f ed"); // default value for tests.
+    Str ng read ndexD r = Earlyb rdProperty.HDFS_ NDEX_SYNC_D R.get();
 
-    if (readIndexFromProdLocation) {
-      LOG.info("Will attempt to read index from prod locations");
-      LOG.info("Index directory provided: {}", readIndexDir);
-      // Replacing the path is a bit hacky, but it works ok.
-      readIndexDir = readIndexDir.replace("/" + environment + "/", "/prod/");
-      LOG.info("Will instead use index directory: {}", readIndexDir);
+     f (read ndexFromProdLocat on) {
+      LOG. nfo("W ll attempt to read  ndex from prod locat ons");
+      LOG. nfo(" ndex d rectory prov ded: {}", read ndexD r);
+      // Replac ng t  path  s a b  hacky, but   works ok.
+      read ndexD r = read ndexD r.replace("/" + env ron nt + "/", "/prod/");
+      LOG. nfo("W ll  nstead use  ndex d rectory: {}", read ndexD r);
     }
 
-    return readIndexDir;
+    return read ndexD r;
   }
 
   /**
-   * Indexer for audio space events.
+   *  ndexer for aud o space events.
    */
-  public AudioSpaceEventsStreamIndexer provideAudioSpaceEventsStreamIndexer(
-      AudioSpaceTable audioSpaceTable,
+  publ c Aud oSpaceEventsStream ndexer prov deAud oSpaceEventsStream ndexer(
+      Aud oSpaceTable aud oSpaceTable,
       Clock clock) {
     try {
-      return new AudioSpaceEventsStreamIndexer(
-          FinagleKafkaClientUtils.newKafkaConsumerForAssigning(
+      return new Aud oSpaceEventsStream ndexer(
+          F nagleKafkaCl entUt ls.newKafkaConsu rForAss gn ng(
               "",
-              new ThriftDeserializer<>(AudioSpaceBaseEvent.class),
+              new Thr ftDeser al zer<>(Aud oSpaceBaseEvent.class),
               "",
               20
-          ), audioSpaceTable, clock);
-    } catch (MissingKafkaTopicException ex) {
-      LOG.error("Missing kafka stream", ex);
+          ), aud oSpaceTable, clock);
+    } catch (M ss ngKafkaTop cExcept on ex) {
+      LOG.error("M ss ng kafka stream", ex);
       return null;
     }
   }
 
   /**
-   * Returns a class to start the Earlybird. See {@link EarlybirdStartup}.
+   * Returns a class to start t  Earlyb rd. See {@l nk Earlyb rdStartup}.
    */
-  public EarlybirdStartup provideEarlybirdStartup(
-      PartitionManager partitionManager,
-      UserUpdatesStreamIndexer userUpdatesStreamIndexer,
-      UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer,
-      AudioSpaceEventsStreamIndexer audioSpaceEventsStreamIndexer,
-      DynamicPartitionConfig dynamicPartitionConfig,
-      CriticalExceptionHandler criticalExceptionHandler,
-      SegmentManager segmentManager,
-      MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager,
-      QueryCacheManager queryCacheManager,
+  publ c Earlyb rdStartup prov deEarlyb rdStartup(
+      Part  onManager part  onManager,
+      UserUpdatesStream ndexer userUpdatesStream ndexer,
+      UserScrubGeoEventStream ndexer userScrubGeoEventStream ndexer,
+      Aud oSpaceEventsStream ndexer aud oSpaceEventsStream ndexer,
+      Dynam cPart  onConf g dynam cPart  onConf g,
+      Cr  calExcept onHandler cr  calExcept onHandler,
+      Seg ntManager seg ntManager,
+      Mult Seg ntTermD ct onaryManager mult Seg ntTermD ct onaryManager,
+      QueryCac Manager queryCac Manager,
       ZooKeeperTryLockFactory zooKeeperTryLockFactory,
-      ServerSetMember serverSetMember,
+      ServerSet mber serverSet mber,
       Clock clock,
-      SegmentSyncConfig segmentSyncConfig,
-      EarlybirdSegmentFactory earlybirdSegmentFactory,
-      EarlybirdCluster cluster,
-      SearchDecider decider) throws IOException {
-    if (cluster == EarlybirdCluster.FULL_ARCHIVE) {
-      return new PartitionManagerStartup(clock, partitionManager);
+      Seg ntSyncConf g seg ntSyncConf g,
+      Earlyb rdSeg ntFactory earlyb rdSeg ntFactory,
+      Earlyb rdCluster cluster,
+      SearchDec der dec der) throws  OExcept on {
+     f (cluster == Earlyb rdCluster.FULL_ARCH VE) {
+      return new Part  onManagerStartup(clock, part  onManager);
     }
 
-    // Check that the earlybird name is what we're expecting so we can build the kafka topics.
-    String earlybirdName = EarlybirdProperty.EARLYBIRD_NAME.get();
-    Preconditions.checkArgument("earlybird-realtime".equals(earlybirdName)
-        || "earlybird-protected".equals(earlybirdName)
-        || "earlybird-realtime-exp0".equals(earlybirdName)
-        || "earlybird-realtime_cg".equals(earlybirdName));
+    // C ck that t  earlyb rd na   s what  're expect ng so   can bu ld t  kafka top cs.
+    Str ng earlyb rdNa  = Earlyb rdProperty.EARLYB RD_NAME.get();
+    Precond  ons.c ckArgu nt("earlyb rd-realt  ".equals(earlyb rdNa )
+        || "earlyb rd-protected".equals(earlyb rdNa )
+        || "earlyb rd-realt  -exp0".equals(earlyb rdNa )
+        || "earlyb rd-realt  _cg".equals(earlyb rdNa ));
 
-    StartupUserEventIndexer startupUserEventIndexer = new StartupUserEventIndexer(
-        provideSearchIndexingMetricSet(),
-        userUpdatesStreamIndexer,
-        userScrubGeoEventStreamIndexer,
-        segmentManager,
+    StartupUserEvent ndexer startupUserEvent ndexer = new StartupUserEvent ndexer(
+        prov deSearch ndex ng tr cSet(),
+        userUpdatesStream ndexer,
+        userScrubGeoEventStream ndexer,
+        seg ntManager,
         clock);
 
-    // Coordinate leaving the serverset to flush segments to HDFS.
-    CoordinatedEarlybirdAction actionCoordinator = new CoordinatedEarlybirdAction(
+    // Coord nate leav ng t  serverset to flush seg nts to HDFS.
+    Coord natedEarlyb rdAct on act onCoord nator = new Coord natedEarlyb rdAct on(
         zooKeeperTryLockFactory,
-        "segment_flusher",
-        dynamicPartitionConfig,
-        serverSetMember,
-        criticalExceptionHandler,
-        segmentSyncConfig);
-    actionCoordinator.setShouldSynchronize(true);
+        "seg nt_flus r",
+        dynam cPart  onConf g,
+        serverSet mber,
+        cr  calExcept onHandler,
+        seg ntSyncConf g);
+    act onCoord nator.setShouldSynchron ze(true);
 
-    FileSystem hdfsFileSystem = HdfsUtil.getHdfsFileSystem();
-    EarlybirdIndexFlusher earlybirdIndexFlusher = new EarlybirdIndexFlusher(
-        actionCoordinator,
-        hdfsFileSystem,
-        EarlybirdProperty.HDFS_INDEX_SYNC_DIR.get(),
-        segmentManager,
-        dynamicPartitionConfig.getCurrentPartitionConfig(),
+    F leSystem hdfsF leSystem = HdfsUt l.getHdfsF leSystem();
+    Earlyb rd ndexFlus r earlyb rd ndexFlus r = new Earlyb rd ndexFlus r(
+        act onCoord nator,
+        hdfsF leSystem,
+        Earlyb rdProperty.HDFS_ NDEX_SYNC_D R.get(),
+        seg ntManager,
+        dynam cPart  onConf g.getCurrentPart  onConf g(),
         clock,
-        new TimeLimitedHadoopExistsCall(hdfsFileSystem),
-        provideOptimizationAndFlushingCoordinationLock());
+        new T  L m edHadoopEx stsCall(hdfsF leSystem),
+        prov deOpt m zat onAndFlush ngCoord nat onLock());
 
-    String baseTopicName = "search_ingester_%s_events_%s_%s";
+    Str ng baseTop cNa  = "search_ ngester_%s_events_%s_%s";
 
-    String earlybirdType;
+    Str ng earlyb rdType;
 
-    if ("earlybird-protected".equals(earlybirdName)) {
-      earlybirdType = "protected";
-    } else if ("earlybird-realtime_cg".equals(earlybirdName)) {
-      earlybirdType = "realtime_cg";
+     f ("earlyb rd-protected".equals(earlyb rdNa )) {
+      earlyb rdType = "protected";
+    } else  f ("earlyb rd-realt  _cg".equals(earlyb rdNa )) {
+      earlyb rdType = "realt  _cg";
     } else {
-      earlybirdType = "realtime";
+      earlyb rdType = "realt  ";
     }
 
-    String tweetTopicName = String.format(
-        baseTopicName,
-        "indexing",
-        earlybirdType,
-        EarlybirdProperty.KAFKA_ENV.get());
+    Str ng t etTop cNa  = Str ng.format(
+        baseTop cNa ,
+        " ndex ng",
+        earlyb rdType,
+        Earlyb rdProperty.KAFKA_ENV.get());
 
-    String updateTopicName = String.format(
-        baseTopicName,
+    Str ng updateTop cNa  = Str ng.format(
+        baseTop cNa ,
         "update",
-        earlybirdType,
-        EarlybirdProperty.KAFKA_ENV.get());
+        earlyb rdType,
+        Earlyb rdProperty.KAFKA_ENV.get());
 
-    LOG.info("Tweet topic: {}", tweetTopicName);
-    LOG.info("Update topic: {}", updateTopicName);
+    LOG. nfo("T et top c: {}", t etTop cNa );
+    LOG. nfo("Update top c: {}", updateTop cNa );
 
-    TopicPartition tweetTopic = new TopicPartition(
-        tweetTopicName,
-        dynamicPartitionConfig.getCurrentPartitionConfig().getIndexingHashPartitionID());
-    TopicPartition updateTopic = new TopicPartition(
-        updateTopicName,
-        dynamicPartitionConfig.getCurrentPartitionConfig().getIndexingHashPartitionID());
+    Top cPart  on t etTop c = new Top cPart  on(
+        t etTop cNa ,
+        dynam cPart  onConf g.getCurrentPart  onConf g().get ndex ngHashPart  on D());
+    Top cPart  on updateTop c = new Top cPart  on(
+        updateTop cNa ,
+        dynam cPart  onConf g.getCurrentPart  onConf g().get ndex ngHashPart  on D());
 
-    EarlybirdKafkaConsumersFactory earlybirdKafkaConsumersFactory =
-        provideEarlybirdKafkaConsumersFactory();
+    Earlyb rdKafkaConsu rsFactory earlyb rdKafkaConsu rsFactory =
+        prov deEarlyb rdKafkaConsu rsFactory();
     FreshStartupHandler freshStartupHandler = new FreshStartupHandler(
         clock,
-        earlybirdKafkaConsumersFactory,
-        tweetTopic,
-        updateTopic,
-        segmentManager,
-        EarlybirdConfig.getMaxSegmentSize(),
-        EarlybirdConfig.getLateTweetBuffer(),
-        criticalExceptionHandler
+        earlyb rdKafkaConsu rsFactory,
+        t etTop c,
+        updateTop c,
+        seg ntManager,
+        Earlyb rdConf g.getMaxSeg ntS ze(),
+        Earlyb rdConf g.getLateT etBuffer(),
+        cr  calExcept onHandler
     );
 
-    TweetUpdateHandler updateHandler = new TweetUpdateHandler(segmentManager);
+    T etUpdateHandler updateHandler = new T etUpdateHandler(seg ntManager);
 
-    CoordinatedEarlybirdAction postOptimizationRebuilds = new CoordinatedEarlybirdAction(
+    Coord natedEarlyb rdAct on postOpt m zat onRebu lds = new Coord natedEarlyb rdAct on(
             zooKeeperTryLockFactory,
-            "post_optimization_rebuilds",
-            dynamicPartitionConfig,
-            serverSetMember,
-            criticalExceptionHandler,
-            segmentSyncConfig
+            "post_opt m zat on_rebu lds",
+            dynam cPart  onConf g,
+            serverSet mber,
+            cr  calExcept onHandler,
+            seg ntSyncConf g
     );
-    postOptimizationRebuilds.setShouldSynchronize(true);
-    CoordinatedEarlybirdAction gcAction = new CoordinatedEarlybirdAction(
+    postOpt m zat onRebu lds.setShouldSynchron ze(true);
+    Coord natedEarlyb rdAct on gcAct on = new Coord natedEarlyb rdAct on(
             zooKeeperTryLockFactory,
-            "gc_before_optimization",
-            dynamicPartitionConfig,
-            serverSetMember,
-            criticalExceptionHandler,
-            segmentSyncConfig
+            "gc_before_opt m zat on",
+            dynam cPart  onConf g,
+            serverSet mber,
+            cr  calExcept onHandler,
+            seg ntSyncConf g
     );
-    gcAction.setShouldSynchronize(true);
+    gcAct on.setShouldSynchron ze(true);
 
-    TweetCreateHandler createHandler = new TweetCreateHandler(
-        segmentManager,
-        provideSearchIndexingMetricSet(),
-        criticalExceptionHandler,
-        multiSegmentTermDictionaryManager,
-        queryCacheManager,
-        postOptimizationRebuilds,
-        gcAction,
-        EarlybirdConfig.getLateTweetBuffer(),
-        EarlybirdConfig.getMaxSegmentSize(),
-        provideKafkaIndexCaughtUpMonitor(),
-        provideOptimizationAndFlushingCoordinationLock());
+    T etCreateHandler createHandler = new T etCreateHandler(
+        seg ntManager,
+        prov deSearch ndex ng tr cSet(),
+        cr  calExcept onHandler,
+        mult Seg ntTermD ct onaryManager,
+        queryCac Manager,
+        postOpt m zat onRebu lds,
+        gcAct on,
+        Earlyb rdConf g.getLateT etBuffer(),
+        Earlyb rdConf g.getMaxSeg ntS ze(),
+        prov deKafka ndexCaughtUpMon or(),
+        prov deOpt m zat onAndFlush ngCoord nat onLock());
 
-    PartitionWriter partitionWriter = new PartitionWriter(
+    Part  onWr er part  onWr er = new Part  onWr er(
         createHandler,
         updateHandler,
-        criticalExceptionHandler,
-        PenguinVersion.versionFromByteValue(EarlybirdConfig.getPenguinVersionByte()),
+        cr  calExcept onHandler,
+        Pengu nVers on.vers onFromByteValue(Earlyb rdConf g.getPengu nVers onByte()),
         clock);
 
-    KafkaConsumer<Long, ThriftVersionedEvents> rawKafkaConsumer =
-        earlybirdKafkaConsumersFactory.createKafkaConsumer(
-            "earlybird_tweet_kafka_consumer");
+    KafkaConsu r<Long, Thr ftVers onedEvents> rawKafkaConsu r =
+        earlyb rdKafkaConsu rsFactory.createKafkaConsu r(
+            "earlyb rd_t et_kafka_consu r");
 
-    EarlybirdKafkaConsumer earlybirdKafkaConsumer = provideKafkaConsumer(
-        criticalExceptionHandler,
-        rawKafkaConsumer,
-        tweetTopic,
-        updateTopic,
-        partitionWriter,
-        earlybirdIndexFlusher);
+    Earlyb rdKafkaConsu r earlyb rdKafkaConsu r = prov deKafkaConsu r(
+        cr  calExcept onHandler,
+        rawKafkaConsu r,
+        t etTop c,
+        updateTop c,
+        part  onWr er,
+        earlyb rd ndexFlus r);
 
-    EarlybirdIndexLoader earlybirdIndexLoader = new EarlybirdIndexLoader(
-        hdfsFileSystem,
-        getIndexLoadingDirectory(), // See SEARCH-32839
-        EarlybirdProperty.ENV.get("default_env_value"),
-        dynamicPartitionConfig.getCurrentPartitionConfig(),
-        earlybirdSegmentFactory,
-        segmentSyncConfig,
+    Earlyb rd ndexLoader earlyb rd ndexLoader = new Earlyb rd ndexLoader(
+        hdfsF leSystem,
+        get ndexLoad ngD rectory(), // See SEARCH-32839
+        Earlyb rdProperty.ENV.get("default_env_value"),
+        dynam cPart  onConf g.getCurrentPart  onConf g(),
+        earlyb rdSeg ntFactory,
+        seg ntSyncConf g,
         clock);
 
-    this.storeEarlybirdStartupProducts(
+    t .storeEarlyb rdStartupProducts(
         createHandler,
-        partitionWriter,
-        earlybirdIndexFlusher
+        part  onWr er,
+        earlyb rd ndexFlus r
     );
 
     return new KafkaStartup(
-        segmentManager,
-        earlybirdKafkaConsumer,
-        startupUserEventIndexer,
-        userUpdatesStreamIndexer,
-        userScrubGeoEventStreamIndexer,
-        audioSpaceEventsStreamIndexer,
-        queryCacheManager,
-        earlybirdIndexLoader,
+        seg ntManager,
+        earlyb rdKafkaConsu r,
+        startupUserEvent ndexer,
+        userUpdatesStream ndexer,
+        userScrubGeoEventStream ndexer,
+        aud oSpaceEventsStream ndexer,
+        queryCac Manager,
+        earlyb rd ndexLoader,
         freshStartupHandler,
-        provideSearchIndexingMetricSet(),
-        multiSegmentTermDictionaryManager,
-        criticalExceptionHandler,
-        decider
+        prov deSearch ndex ng tr cSet(),
+        mult Seg ntTermD ct onaryManager,
+        cr  calExcept onHandler,
+        dec der
     );
   }
 
-  public QualityFactor provideQualityFactor(
-      Decider decider,
-      SearchStatsReceiver searchStatsReceiver
+  publ c Qual yFactor prov deQual yFactor(
+      Dec der dec der,
+      SearchStatsRece ver searchStatsRece ver
   ) {
-    return new EarlybirdCPUQualityFactor(decider,
-        ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class),
-        searchStatsReceiver);
+    return new Earlyb rdCPUQual yFactor(dec der,
+        Manage ntFactory.getPlatformMXBean(Operat ngSystemMXBean.class),
+        searchStatsRece ver);
   }
 
   /**
-   * Returns a new UserUpdatesKafkaConsumer to read user updates.
+   * Returns a new UserUpdatesKafkaConsu r to read user updates.
    */
-  public UserUpdatesStreamIndexer provideUserUpdatesKafkaConsumer(
-      SegmentManager segmentManager) {
+  publ c UserUpdatesStream ndexer prov deUserUpdatesKafkaConsu r(
+      Seg ntManager seg ntManager) {
     try {
-      return new UserUpdatesStreamIndexer(
-          UserUpdatesStreamIndexer.provideKafkaConsumer(),
-          EarlybirdProperty.USER_UPDATES_KAFKA_TOPIC.get(),
-          provideSearchIndexingMetricSet(),
-          segmentManager);
-    } catch (MissingKafkaTopicException ex) {
-      // Yes, it will crash the server. We've never seen this topic missing, but
-      // we've seen some others, so we had to build this functionality in the
-      // constructor. If one day this one goes missing, we'll have to figure out
-      // how to handle it. For now, we crash.
-      throw new RuntimeException(ex);
+      return new UserUpdatesStream ndexer(
+          UserUpdatesStream ndexer.prov deKafkaConsu r(),
+          Earlyb rdProperty.USER_UPDATES_KAFKA_TOP C.get(),
+          prov deSearch ndex ng tr cSet(),
+          seg ntManager);
+    } catch (M ss ngKafkaTop cExcept on ex) {
+      // Yes,   w ll crash t  server.  've never seen t  top c m ss ng, but
+      //  've seen so  ot rs, so   had to bu ld t  funct onal y  n t 
+      // constructor.  f one day t  one goes m ss ng,  'll have to f gure out
+      // how to handle  . For now,   crash.
+      throw new Runt  Except on(ex);
     }
   }
 
   /**
-   * Returns a new UserScrubGeosKafkaConsumer to read geo scrubbing events.
+   * Returns a new UserScrubGeosKafkaConsu r to read geo scrubb ng events.
    */
-  public UserScrubGeoEventStreamIndexer provideUserScrubGeoEventKafkaConsumer(
-      SegmentManager segmentManager) {
+  publ c UserScrubGeoEventStream ndexer prov deUserScrubGeoEventKafkaConsu r(
+      Seg ntManager seg ntManager) {
     try {
-      return new UserScrubGeoEventStreamIndexer(
-          UserScrubGeoEventStreamIndexer.provideKafkaConsumer(),
-          EarlybirdProperty.USER_SCRUB_GEO_KAFKA_TOPIC.get(),
-          provideSearchIndexingMetricSet(),
-          segmentManager);
-    } catch (MissingKafkaTopicException ex) {
+      return new UserScrubGeoEventStream ndexer(
+          UserScrubGeoEventStream ndexer.prov deKafkaConsu r(),
+          Earlyb rdProperty.USER_SCRUB_GEO_KAFKA_TOP C.get(),
+          prov deSearch ndex ng tr cSet(),
+          seg ntManager);
+    } catch (M ss ngKafkaTop cExcept on ex) {
       /**
-       * See {@link #provideUserUpdatesKafkaConsumer}
+       * See {@l nk #prov deUserUpdatesKafkaConsu r}
        */
-      throw new RuntimeException(ex);
+      throw new Runt  Except on(ex);
     }
   }
 
   /**
-   * Returns a new ProductionEarlybirdKafkaConsumer to read ThriftVersionedEvents.
+   * Returns a new Product onEarlyb rdKafkaConsu r to read Thr ftVers onedEvents.
    */
-  public EarlybirdKafkaConsumersFactory provideEarlybirdKafkaConsumersFactory() {
-    return new ProductionEarlybirdKafkaConsumersFactory(
-        EarlybirdProperty.KAFKA_PATH.get(),
+  publ c Earlyb rdKafkaConsu rsFactory prov deEarlyb rdKafkaConsu rsFactory() {
+    return new Product onEarlyb rdKafkaConsu rsFactory(
+        Earlyb rdProperty.KAFKA_PATH.get(),
         MAX_POLL_RECORDS
     );
   }
 
   /**
-   * Returns a class to read Tweets in the Earlybird. See {@link EarlybirdKafkaConsumer}.
+   * Returns a class to read T ets  n t  Earlyb rd. See {@l nk Earlyb rdKafkaConsu r}.
    */
-  public EarlybirdKafkaConsumer provideKafkaConsumer(
-      CriticalExceptionHandler criticalExceptionHandler,
-      KafkaConsumer<Long, ThriftVersionedEvents> rawKafkaConsumer,
-      TopicPartition tweetTopic,
-      TopicPartition updateTopic,
-      PartitionWriter partitionWriter,
-      EarlybirdIndexFlusher earlybirdIndexFlusher
+  publ c Earlyb rdKafkaConsu r prov deKafkaConsu r(
+      Cr  calExcept onHandler cr  calExcept onHandler,
+      KafkaConsu r<Long, Thr ftVers onedEvents> rawKafkaConsu r,
+      Top cPart  on t etTop c,
+      Top cPart  on updateTop c,
+      Part  onWr er part  onWr er,
+      Earlyb rd ndexFlus r earlyb rd ndexFlus r
   ) {
-    return new EarlybirdKafkaConsumer(
-        rawKafkaConsumer,
-        provideSearchIndexingMetricSet(),
-        criticalExceptionHandler,
-        partitionWriter,
-        tweetTopic,
-        updateTopic,
-        earlybirdIndexFlusher,
-        provideKafkaIndexCaughtUpMonitor());
+    return new Earlyb rdKafkaConsu r(
+        rawKafkaConsu r,
+        prov deSearch ndex ng tr cSet(),
+        cr  calExcept onHandler,
+        part  onWr er,
+        t etTop c,
+        updateTop c,
+        earlyb rd ndexFlus r,
+        prov deKafka ndexCaughtUpMon or());
   }
 }

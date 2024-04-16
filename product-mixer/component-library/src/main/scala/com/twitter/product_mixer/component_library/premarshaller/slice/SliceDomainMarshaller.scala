@@ -1,96 +1,96 @@
-package com.twitter.product_mixer.component_library.premarshaller.slice
+package com.tw ter.product_m xer.component_l brary.premarshaller.sl ce
 
-import com.twitter.product_mixer.component_library.model.candidate._
-import com.twitter.product_mixer.component_library.model.candidate.hubble.AdCreativeCandidate
-import com.twitter.product_mixer.component_library.model.candidate.hubble.AdGroupCandidate
-import com.twitter.product_mixer.component_library.model.candidate.hubble.AdUnitCandidate
-import com.twitter.product_mixer.component_library.model.candidate.hubble.CampaignCandidate
-import com.twitter.product_mixer.component_library.model.candidate.hubble.FundingSourceCandidate
-import com.twitter.product_mixer.component_library.model.candidate.suggestion.QuerySuggestionCandidate
-import com.twitter.product_mixer.component_library.model.candidate.suggestion.TypeaheadEventCandidate
-import com.twitter.product_mixer.component_library.premarshaller.slice.builder.SliceBuilder
-import com.twitter.product_mixer.component_library.premarshaller.slice.builder.SliceCursorBuilder
-import com.twitter.product_mixer.component_library.premarshaller.slice.builder.SliceCursorUpdater
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.functional_component.premarshaller.UndecoratedCandidateDomainMarshallerException
-import com.twitter.product_mixer.core.functional_component.premarshaller.UnsupportedCandidateDomainMarshallerException
-import com.twitter.product_mixer.core.functional_component.premarshaller.UnsupportedModuleDomainMarshallerException
-import com.twitter.product_mixer.core.functional_component.premarshaller.UnsupportedPresentationDomainMarshallerException
-import com.twitter.product_mixer.core.model.common.identifier.DomainMarshallerIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.slice.BaseSliceItemPresentation
-import com.twitter.product_mixer.core.model.marshalling.response.slice._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+ mport com.tw ter.product_m xer.component_l brary.model.cand date._
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.hubble.AdCreat veCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.hubble.AdGroupCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.hubble.AdUn Cand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.hubble.Campa gnCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.hubble.Fund ngS ceCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.suggest on.QuerySuggest onCand date
+ mport com.tw ter.product_m xer.component_l brary.model.cand date.suggest on.Typea adEventCand date
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.sl ce.bu lder.Sl ceBu lder
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.sl ce.bu lder.Sl ceCursorBu lder
+ mport com.tw ter.product_m xer.component_l brary.premarshaller.sl ce.bu lder.Sl ceCursorUpdater
+ mport com.tw ter.product_m xer.core.funct onal_component.premarshaller.Doma nMarshaller
+ mport com.tw ter.product_m xer.core.funct onal_component.premarshaller.UndecoratedCand dateDoma nMarshallerExcept on
+ mport com.tw ter.product_m xer.core.funct onal_component.premarshaller.UnsupportedCand dateDoma nMarshallerExcept on
+ mport com.tw ter.product_m xer.core.funct onal_component.premarshaller.UnsupportedModuleDoma nMarshallerExcept on
+ mport com.tw ter.product_m xer.core.funct onal_component.premarshaller.UnsupportedPresentat onDoma nMarshallerExcept on
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Doma nMarshaller dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on. emCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on.ModuleCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on.sl ce.BaseSl ce emPresentat on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.sl ce._
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
 
 /**
- * Domain marshaller that generates Slices automatically for most candidates but a different
- * presentation can be provided by decorators that implement [[BaseSliceItemPresentation]]. This will
- * only be necessary in the rare case that a candidate contains more than an id. For example,
- * cursors require a value/type rather than an id.
+ * Doma n marshaller that generates Sl ces automat cally for most cand dates but a d fferent
+ * presentat on can be prov ded by decorators that  mple nt [[BaseSl ce emPresentat on]]. T  w ll
+ * only be necessary  n t  rare case that a cand date conta ns more than an  d. For example,
+ * cursors requ re a value/type rat r than an  d.
  */
-case class SliceDomainMarshaller[-Query <: PipelineQuery](
-  override val cursorBuilders: Seq[SliceCursorBuilder[Query]] = Seq.empty,
-  override val cursorUpdaters: Seq[SliceCursorUpdater[Query]] = Seq.empty,
-  override val identifier: DomainMarshallerIdentifier = DomainMarshallerIdentifier("Slice"))
-    extends DomainMarshaller[Query, Slice]
-    with SliceBuilder[Query] {
+case class Sl ceDoma nMarshaller[-Query <: P pel neQuery](
+  overr de val cursorBu lders: Seq[Sl ceCursorBu lder[Query]] = Seq.empty,
+  overr de val cursorUpdaters: Seq[Sl ceCursorUpdater[Query]] = Seq.empty,
+  overr de val  dent f er: Doma nMarshaller dent f er = Doma nMarshaller dent f er("Sl ce"))
+    extends Doma nMarshaller[Query, Sl ce]
+    w h Sl ceBu lder[Query] {
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    selections: Seq[CandidateWithDetails]
-  ): Slice = {
-    val entries = selections.map {
-      case ItemCandidateWithDetails(_, Some(presentation: BaseSliceItemPresentation), _) =>
-        presentation.sliceItem
-      case candidateWithDetails @ ItemCandidateWithDetails(candidate, None, _) =>
-        val source = candidateWithDetails.source
-        candidate match {
-          case candidate: BaseTopicCandidate => TopicItem(candidate.id)
-          case candidate: BaseTweetCandidate => TweetItem(candidate.id)
-          case candidate: BaseUserCandidate => UserItem(candidate.id)
-          case candidate: TwitterListCandidate => TwitterListItem(candidate.id)
-          case candidate: DMConvoSearchCandidate =>
-            DMConvoSearchItem(candidate.id, candidate.lastReadableEventId)
-          case candidate: DMEventCandidate =>
-            DMEventItem(candidate.id)
-          case candidate: DMConvoCandidate =>
-            DMConvoItem(candidate.id, candidate.lastReadableEventId)
-          case candidate: DMMessageSearchCandidate => DMMessageSearchItem(candidate.id)
-          case candidate: QuerySuggestionCandidate =>
-            TypeaheadQuerySuggestionItem(candidate.id, candidate.metadata)
-          case candidate: TypeaheadEventCandidate =>
-            TypeaheadEventItem(candidate.id, candidate.metadata)
-          case candidate: AdUnitCandidate =>
-            AdItem(candidate.id, candidate.adAccountId)
-          case candidate: AdCreativeCandidate =>
-            AdCreativeItem(candidate.id, candidate.adType, candidate.adAccountId)
-          case candidate: AdGroupCandidate =>
-            AdGroupItem(candidate.id, candidate.adAccountId)
-          case candidate: CampaignCandidate =>
-            CampaignItem(candidate.id, candidate.adAccountId)
-          case candidate: FundingSourceCandidate =>
-            FundingSourceItem(candidate.id, candidate.adAccountId)
-          case candidate: CursorCandidate =>
-            // Cursors must contain a cursor type which is defined by the presentation. As a result,
-            // cursors are expected to be handled by the Some(presentation) case above, and must not
-            // fall into this case.
-            throw new UndecoratedCandidateDomainMarshallerException(candidate, source)
-          case candidate =>
-            throw new UnsupportedCandidateDomainMarshallerException(candidate, source)
+    select ons: Seq[Cand dateW hDeta ls]
+  ): Sl ce = {
+    val entr es = select ons.map {
+      case  emCand dateW hDeta ls(_, So (presentat on: BaseSl ce emPresentat on), _) =>
+        presentat on.sl ce em
+      case cand dateW hDeta ls @  emCand dateW hDeta ls(cand date, None, _) =>
+        val s ce = cand dateW hDeta ls.s ce
+        cand date match {
+          case cand date: BaseTop cCand date => Top c em(cand date. d)
+          case cand date: BaseT etCand date => T et em(cand date. d)
+          case cand date: BaseUserCand date => User em(cand date. d)
+          case cand date: Tw terL stCand date => Tw terL st em(cand date. d)
+          case cand date: DMConvoSearchCand date =>
+            DMConvoSearch em(cand date. d, cand date.lastReadableEvent d)
+          case cand date: DMEventCand date =>
+            DMEvent em(cand date. d)
+          case cand date: DMConvoCand date =>
+            DMConvo em(cand date. d, cand date.lastReadableEvent d)
+          case cand date: DM ssageSearchCand date => DM ssageSearch em(cand date. d)
+          case cand date: QuerySuggest onCand date =>
+            Typea adQuerySuggest on em(cand date. d, cand date. tadata)
+          case cand date: Typea adEventCand date =>
+            Typea adEvent em(cand date. d, cand date. tadata)
+          case cand date: AdUn Cand date =>
+            Ad em(cand date. d, cand date.adAccount d)
+          case cand date: AdCreat veCand date =>
+            AdCreat ve em(cand date. d, cand date.adType, cand date.adAccount d)
+          case cand date: AdGroupCand date =>
+            AdGroup em(cand date. d, cand date.adAccount d)
+          case cand date: Campa gnCand date =>
+            Campa gn em(cand date. d, cand date.adAccount d)
+          case cand date: Fund ngS ceCand date =>
+            Fund ngS ce em(cand date. d, cand date.adAccount d)
+          case cand date: CursorCand date =>
+            // Cursors must conta n a cursor type wh ch  s def ned by t  presentat on. As a result,
+            // cursors are expected to be handled by t  So (presentat on) case above, and must not
+            // fall  nto t  case.
+            throw new UndecoratedCand dateDoma nMarshallerExcept on(cand date, s ce)
+          case cand date =>
+            throw new UnsupportedCand dateDoma nMarshallerExcept on(cand date, s ce)
         }
-      case itemCandidateWithDetails @ ItemCandidateWithDetails(candidate, Some(presentation), _) =>
-        throw new UnsupportedPresentationDomainMarshallerException(
-          candidate,
-          presentation,
-          itemCandidateWithDetails.source)
-      case moduleCandidateWithDetails @ ModuleCandidateWithDetails(_, presentation, _) =>
-        throw new UnsupportedModuleDomainMarshallerException(
-          presentation,
-          moduleCandidateWithDetails.source)
+      case  emCand dateW hDeta ls @  emCand dateW hDeta ls(cand date, So (presentat on), _) =>
+        throw new UnsupportedPresentat onDoma nMarshallerExcept on(
+          cand date,
+          presentat on,
+           emCand dateW hDeta ls.s ce)
+      case moduleCand dateW hDeta ls @ ModuleCand dateW hDeta ls(_, presentat on, _) =>
+        throw new UnsupportedModuleDoma nMarshallerExcept on(
+          presentat on,
+          moduleCand dateW hDeta ls.s ce)
     }
 
-    buildSlice(query, entries)
+    bu ldSl ce(query, entr es)
   }
 }

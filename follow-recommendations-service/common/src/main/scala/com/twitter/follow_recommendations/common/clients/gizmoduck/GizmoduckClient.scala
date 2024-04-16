@@ -1,81 +1,81 @@
-package com.twitter.follow_recommendations.common.clients.gizmoduck
+package com.tw ter.follow_recom ndat ons.common.cl ents.g zmoduck
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.gizmoduck.thriftscala.LookupContext
-import com.twitter.gizmoduck.thriftscala.PerspectiveEdge
-import com.twitter.gizmoduck.thriftscala.QueryFields
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.gizmoduck.Gizmoduck
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.base.StatsUt l
+ mport com.tw ter.g zmoduck.thr ftscala.LookupContext
+ mport com.tw ter.g zmoduck.thr ftscala.Perspect veEdge
+ mport com.tw ter.g zmoduck.thr ftscala.QueryF elds
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.st ch.g zmoduck.G zmoduck
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class GizmoduckClient @Inject() (gizmoduckStitchClient: Gizmoduck, statsReceiver: StatsReceiver) {
-  val stats = statsReceiver.scope("gizmoduck_client")
-  val getByIdStats = stats.scope("get_by_id")
-  val getUserById = stats.scope("get_user_by_id")
+@S ngleton
+class G zmoduckCl ent @ nject() (g zmoduckSt chCl ent: G zmoduck, statsRece ver: StatsRece ver) {
+  val stats = statsRece ver.scope("g zmoduck_cl ent")
+  val getBy dStats = stats.scope("get_by_ d")
+  val getUserBy d = stats.scope("get_user_by_ d")
 
-  def isProtected(userId: Long): Stitch[Boolean] = {
-    // get latency metrics with StatsUtil.profileStitch when calling .getById
-    val response = StatsUtil.profileStitch(
-      gizmoduckStitchClient.getById(userId, Set(QueryFields.Safety)),
-      getByIdStats
+  def  sProtected(user d: Long): St ch[Boolean] = {
+    // get latency  tr cs w h StatsUt l.prof leSt ch w n call ng .getBy d
+    val response = StatsUt l.prof leSt ch(
+      g zmoduckSt chCl ent.getBy d(user d, Set(QueryF elds.Safety)),
+      getBy dStats
     )
     response.map { result =>
-      result.user.flatMap(_.safety).map(_.isProtected).getOrElse(true)
+      result.user.flatMap(_.safety).map(_. sProtected).getOrElse(true)
     }
   }
 
-  def getUserName(userId: Long, forUserId: Long): Stitch[Option[String]] = {
-    val queryFields = GizmoduckClient.GetUserByIdUserNameQueryFields
+  def getUserNa (user d: Long, forUser d: Long): St ch[Opt on[Str ng]] = {
+    val queryF elds = G zmoduckCl ent.GetUserBy dUserNa QueryF elds
     val lookupContext = LookupContext(
-      forUserId = Some(forUserId),
-      perspectiveEdges = Some(GizmoduckClient.DefaultPerspectiveEdges)
+      forUser d = So (forUser d),
+      perspect veEdges = So (G zmoduckCl ent.DefaultPerspect veEdges)
     )
-    // get latency metrics with StatsUtil.profileStitch when calling .getUserById
-    val response = StatsUtil.profileStitch(
-      gizmoduckStitchClient.getUserById(userId, queryFields, lookupContext),
-      getUserById
+    // get latency  tr cs w h StatsUt l.prof leSt ch w n call ng .getUserBy d
+    val response = StatsUt l.prof leSt ch(
+      g zmoduckSt chCl ent.getUserBy d(user d, queryF elds, lookupContext),
+      getUserBy d
     )
-    response.map(_.profile.map(_.name))
+    response.map(_.prof le.map(_.na ))
   }
 }
 
-object GizmoduckClient {
-  // Similar to GizmoduckUserRepository.DefaultPerspectiveEdges
-  val DefaultPerspectiveEdges: Set[PerspectiveEdge] =
+object G zmoduckCl ent {
+  // S m lar to G zmoduckUserRepos ory.DefaultPerspect veEdges
+  val DefaultPerspect veEdges: Set[Perspect veEdge] =
     Set(
-      PerspectiveEdge.Blocking,
-      PerspectiveEdge.BlockedBy,
-      PerspectiveEdge.DeviceFollowing,
-      PerspectiveEdge.FollowRequestSent,
-      PerspectiveEdge.Following,
-      PerspectiveEdge.FollowedBy,
-      PerspectiveEdge.LifelineFollowing,
-      PerspectiveEdge.LifelineFollowedBy,
-      PerspectiveEdge.Muting,
-      PerspectiveEdge.NoRetweetsFrom
+      Perspect veEdge.Block ng,
+      Perspect veEdge.BlockedBy,
+      Perspect veEdge.Dev ceFollow ng,
+      Perspect veEdge.FollowRequestSent,
+      Perspect veEdge.Follow ng,
+      Perspect veEdge.Follo dBy,
+      Perspect veEdge.L fel neFollow ng,
+      Perspect veEdge.L fel neFollo dBy,
+      Perspect veEdge.Mut ng,
+      Perspect veEdge.NoRet etsFrom
     )
 
-  // From GizmoduckUserRepository.DefaultQueryFields
-  val GetUserByIdQueryFields: Set[QueryFields] = Set(
-    QueryFields.Account,
-    QueryFields.Counts,
-    QueryFields.ExtendedProfile,
-    QueryFields.Perspective,
-    QueryFields.Profile,
-    QueryFields.ProfileDesign,
-    QueryFields.ProfileLocation,
-    QueryFields.Safety,
-    QueryFields.Roles,
-    QueryFields.Takedowns,
-    QueryFields.UrlEntities,
-    QueryFields.DirectMessageView,
-    QueryFields.MediaView
+  // From G zmoduckUserRepos ory.DefaultQueryF elds
+  val GetUserBy dQueryF elds: Set[QueryF elds] = Set(
+    QueryF elds.Account,
+    QueryF elds.Counts,
+    QueryF elds.ExtendedProf le,
+    QueryF elds.Perspect ve,
+    QueryF elds.Prof le,
+    QueryF elds.Prof leDes gn,
+    QueryF elds.Prof leLocat on,
+    QueryF elds.Safety,
+    QueryF elds.Roles,
+    QueryF elds.Takedowns,
+    QueryF elds.UrlEnt  es,
+    QueryF elds.D rect ssageV ew,
+    QueryF elds. d aV ew
   )
 
-  val GetUserByIdUserNameQueryFields: Set[QueryFields] = Set(
-    QueryFields.Profile
+  val GetUserBy dUserNa QueryF elds: Set[QueryF elds] = Set(
+    QueryF elds.Prof le
   )
 }

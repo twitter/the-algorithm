@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.pipeline
+package com.tw ter.product_m xer.core.p pel ne
 
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
+ mport com.tw ter.product_m xer.core.model.common. dent f er.P pel neStep dent f er
 
-case class InvalidStepStateException(step: PipelineStepIdentifier, missingData: String)
-    extends Exception(
-      s"Invalid Step State: Step $step requires $missingData"
+case class  nval dStepStateExcept on(step: P pel neStep dent f er, m ss ngData: Str ng)
+    extends Except on(
+      s" nval d Step State: Step $step requ res $m ss ngData"
     )

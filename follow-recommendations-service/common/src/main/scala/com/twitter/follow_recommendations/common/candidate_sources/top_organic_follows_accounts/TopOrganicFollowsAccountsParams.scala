@@ -1,31 +1,31 @@
-package com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.top_organ c_follows_accounts
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSEnumSeqParam
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSEnumSeqParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
-object TopOrganicFollowsAccountsParams {
-  // whether or not to fetch TopOrganicFollowsAccounts candidate sources
-  case object CandidateSourceEnabled
-      extends FSParam[Boolean]("top_organic_follows_accounts_candidate_source_enabled", false)
+object TopOrgan cFollowsAccountsParams {
+  // w t r or not to fetch TopOrgan cFollowsAccounts cand date s ces
+  case object Cand dateS ceEnabled
+      extends FSParam[Boolean]("top_organ c_follows_accounts_cand date_s ce_enabled", false)
 
   /**
-   *   Contains the logic key for account filtering and ranking. Currently we have 3 main logic keys
-   *    - new_organic_follows: filtering top organically followed accounts followed by new users
-   *    - non_new_organic_follows: filtering top organically followed accounts followed by non new users
-   *    - organic_follows: filtering top organically followed accounts followed by all users
-   *    Mapping of the Logic Id to Logic key is done via @enum AccountsFilteringAndRankingLogic
+   *   Conta ns t  log c key for account f lter ng and rank ng. Currently   have 3 ma n log c keys
+   *    - new_organ c_follows: f lter ng top organ cally follo d accounts follo d by new users
+   *    - non_new_organ c_follows: f lter ng top organ cally follo d accounts follo d by non new users
+   *    - organ c_follows: f lter ng top organ cally follo d accounts follo d by all users
+   *    Mapp ng of t  Log c  d to Log c key  s done v a @enum AccountsF lter ngAndRank ngLog c
    */
-  case object AccountsFilteringAndRankingLogics
-      extends FSEnumSeqParam[AccountsFilteringAndRankingLogicId.type](
-        name = "top_organic_follows_accounts_filtering_and_ranking_logic_ids",
-        default = Seq(AccountsFilteringAndRankingLogicId.OrganicFollows),
-        enum = AccountsFilteringAndRankingLogicId)
+  case object AccountsF lter ngAndRank ngLog cs
+      extends FSEnumSeqParam[AccountsF lter ngAndRank ngLog c d.type](
+        na  = "top_organ c_follows_accounts_f lter ng_and_rank ng_log c_ ds",
+        default = Seq(AccountsF lter ngAndRank ngLog c d.Organ cFollows),
+        enum = AccountsF lter ngAndRank ngLog c d)
 
-  case object CandidateSourceWeight
+  case object Cand dateS ce  ght
       extends FSBoundedParam[Double](
-        "top_organic_follows_accounts_candidate_source_weight",
+        "top_organ c_follows_accounts_cand date_s ce_  ght",
         default = 1200,
-        min = 0.001,
+        m n = 0.001,
         max = 2000)
 }

@@ -1,22 +1,22 @@
-package com.twitter.servo.util
+package com.tw ter.servo.ut l
 
-import com.twitter.finagle.thrift.ClientId
+ mport com.tw ter.f nagle.thr ft.Cl ent d
 
 /**
- * A trait defining contextual information necessary to authorize
+ * A tra  def n ng contextual  nformat on necessary to author ze
  * and observe a request.
  */
-trait Observable {
-  val requestName: String
-  val clientId: Option[ClientId]
+tra  Observable {
+  val requestNa : Str ng
+  val cl ent d: Opt on[Cl ent d]
 
   /**
-   * An Option[String] representation of the request-issuer's ClientId.
+   * An Opt on[Str ng] representat on of t  request- ssuer's Cl ent d.
    */
-  lazy val clientIdString: Option[String] =
-    // It's possible for `ClientId.name` to be `null`, so we wrap it in
-    // `Option()` to force such cases to be None.
-    clientId flatMap { cid =>
-      Option(cid.name)
+  lazy val cl ent dStr ng: Opt on[Str ng] =
+    //  's poss ble for `Cl ent d.na ` to be `null`, so   wrap    n
+    // `Opt on()` to force such cases to be None.
+    cl ent d flatMap { c d =>
+      Opt on(c d.na )
     }
 }

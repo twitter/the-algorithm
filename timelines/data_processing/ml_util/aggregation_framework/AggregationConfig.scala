@@ -1,5 +1,5 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work
 
-trait AggregationConfig {
+tra  Aggregat onConf g {
   def aggregatesToCompute: Set[TypedAggregateGroup[_]]
 }

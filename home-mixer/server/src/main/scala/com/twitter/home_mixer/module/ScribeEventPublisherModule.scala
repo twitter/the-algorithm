@@ -1,77 +1,77 @@
-package com.twitter.home_mixer.module
+package com.tw ter.ho _m xer.module
 
-import com.google.inject.Provides
-import com.twitter.clientapp.{thriftscala => ca}
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.CandidateFeaturesScribeEventPublisher
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.CommonFeaturesScribeEventPublisher
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.MinimumFeaturesScribeEventPublisher
-import com.twitter.inject.TwitterModule
-import com.twitter.logpipeline.client.EventPublisherManager
-import com.twitter.logpipeline.client.common.EventPublisher
-import com.twitter.logpipeline.client.serializers.EventLogMsgTBinarySerializer
-import com.twitter.logpipeline.client.serializers.EventLogMsgThriftStructSerializer
-import com.twitter.timelines.suggests.common.poly_data_record.{thriftjava => pldr}
-import com.twitter.timelines.timeline_logging.{thriftscala => tl}
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.cl entapp.{thr ftscala => ca}
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.Cand dateFeaturesScr beEventPubl s r
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.CommonFeaturesScr beEventPubl s r
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.M n mumFeaturesScr beEventPubl s r
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter.logp pel ne.cl ent.EventPubl s rManager
+ mport com.tw ter.logp pel ne.cl ent.common.EventPubl s r
+ mport com.tw ter.logp pel ne.cl ent.ser al zers.EventLogMsgTB narySer al zer
+ mport com.tw ter.logp pel ne.cl ent.ser al zers.EventLogMsgThr ftStructSer al zer
+ mport com.tw ter.t  l nes.suggests.common.poly_data_record.{thr ftjava => pldr}
+ mport com.tw ter.t  l nes.t  l ne_logg ng.{thr ftscala => tl}
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-object ScribeEventPublisherModule extends TwitterModule {
+object Scr beEventPubl s rModule extends Tw terModule {
 
-  val ClientEventLogCategory = "client_event"
-  val ServedCandidatesLogCategory = "home_timeline_served_candidates_flattened"
-  val ScoredCandidatesLogCategory = "home_timeline_scored_candidates"
-  val ServedCommonFeaturesLogCategory = "tq_served_common_features_offline"
-  val ServedCandidateFeaturesLogCategory = "tq_served_candidate_features_offline"
-  val ServedMinimumFeaturesLogCategory = "tq_served_minimum_features_offline"
+  val Cl entEventLogCategory = "cl ent_event"
+  val ServedCand datesLogCategory = "ho _t  l ne_served_cand dates_flattened"
+  val ScoredCand datesLogCategory = "ho _t  l ne_scored_cand dates"
+  val ServedCommonFeaturesLogCategory = "tq_served_common_features_offl ne"
+  val ServedCand dateFeaturesLogCategory = "tq_served_cand date_features_offl ne"
+  val ServedM n mumFeaturesLogCategory = "tq_served_m n mum_features_offl ne"
 
-  @Provides
-  @Singleton
-  def providesClientEventsScribeEventPublisher: EventPublisher[ca.LogEvent] = {
-    val serializer = EventLogMsgThriftStructSerializer.getNewSerializer[ca.LogEvent]()
-    EventPublisherManager.buildScribeLogPipelinePublisher(ClientEventLogCategory, serializer)
+  @Prov des
+  @S ngleton
+  def prov desCl entEventsScr beEventPubl s r: EventPubl s r[ca.LogEvent] = {
+    val ser al zer = EventLogMsgThr ftStructSer al zer.getNewSer al zer[ca.LogEvent]()
+    EventPubl s rManager.bu ldScr beLogP pel nePubl s r(Cl entEventLogCategory, ser al zer)
   }
 
-  @Provides
-  @Singleton
-  @Named(CommonFeaturesScribeEventPublisher)
-  def providesCommonFeaturesScribeEventPublisher: EventPublisher[pldr.PolyDataRecord] = {
-    val serializer = EventLogMsgTBinarySerializer.getNewSerializer
-    EventPublisherManager.buildScribeLogPipelinePublisher(
+  @Prov des
+  @S ngleton
+  @Na d(CommonFeaturesScr beEventPubl s r)
+  def prov desCommonFeaturesScr beEventPubl s r: EventPubl s r[pldr.PolyDataRecord] = {
+    val ser al zer = EventLogMsgTB narySer al zer.getNewSer al zer
+    EventPubl s rManager.bu ldScr beLogP pel nePubl s r(
       ServedCommonFeaturesLogCategory,
-      serializer)
+      ser al zer)
   }
 
-  @Provides
-  @Singleton
-  @Named(CandidateFeaturesScribeEventPublisher)
-  def providesCandidateFeaturesScribeEventPublisher: EventPublisher[pldr.PolyDataRecord] = {
-    val serializer = EventLogMsgTBinarySerializer.getNewSerializer
-    EventPublisherManager.buildScribeLogPipelinePublisher(
-      ServedCandidateFeaturesLogCategory,
-      serializer)
+  @Prov des
+  @S ngleton
+  @Na d(Cand dateFeaturesScr beEventPubl s r)
+  def prov desCand dateFeaturesScr beEventPubl s r: EventPubl s r[pldr.PolyDataRecord] = {
+    val ser al zer = EventLogMsgTB narySer al zer.getNewSer al zer
+    EventPubl s rManager.bu ldScr beLogP pel nePubl s r(
+      ServedCand dateFeaturesLogCategory,
+      ser al zer)
   }
 
-  @Provides
-  @Singleton
-  @Named(MinimumFeaturesScribeEventPublisher)
-  def providesMinimumFeaturesScribeEventPublisher: EventPublisher[pldr.PolyDataRecord] = {
-    val serializer = EventLogMsgTBinarySerializer.getNewSerializer
-    EventPublisherManager.buildScribeLogPipelinePublisher(
-      ServedMinimumFeaturesLogCategory,
-      serializer)
+  @Prov des
+  @S ngleton
+  @Na d(M n mumFeaturesScr beEventPubl s r)
+  def prov desM n mumFeaturesScr beEventPubl s r: EventPubl s r[pldr.PolyDataRecord] = {
+    val ser al zer = EventLogMsgTB narySer al zer.getNewSer al zer
+    EventPubl s rManager.bu ldScr beLogP pel nePubl s r(
+      ServedM n mumFeaturesLogCategory,
+      ser al zer)
   }
 
-  @Provides
-  @Singleton
-  def providesServedCandidatesScribeEventPublisher: EventPublisher[tl.ServedEntry] = {
-    val serializer = EventLogMsgThriftStructSerializer.getNewSerializer[tl.ServedEntry]()
-    EventPublisherManager.buildScribeLogPipelinePublisher(ServedCandidatesLogCategory, serializer)
+  @Prov des
+  @S ngleton
+  def prov desServedCand datesScr beEventPubl s r: EventPubl s r[tl.ServedEntry] = {
+    val ser al zer = EventLogMsgThr ftStructSer al zer.getNewSer al zer[tl.ServedEntry]()
+    EventPubl s rManager.bu ldScr beLogP pel nePubl s r(ServedCand datesLogCategory, ser al zer)
   }
 
-  @Provides
-  @Singleton
-  def provideScoredCandidatesScribeEventPublisher: EventPublisher[tl.ScoredCandidate] = {
-    val serializer = EventLogMsgThriftStructSerializer.getNewSerializer[tl.ScoredCandidate]()
-    EventPublisherManager.buildScribeLogPipelinePublisher(ScoredCandidatesLogCategory, serializer)
+  @Prov des
+  @S ngleton
+  def prov deScoredCand datesScr beEventPubl s r: EventPubl s r[tl.ScoredCand date] = {
+    val ser al zer = EventLogMsgThr ftStructSer al zer.getNewSer al zer[tl.ScoredCand date]()
+    EventPubl s rManager.bu ldScr beLogP pel nePubl s r(ScoredCand datesLogCategory, ser al zer)
   }
 }

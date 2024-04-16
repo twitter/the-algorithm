@@ -1,41 +1,41 @@
-package com.twitter.home_mixer.module
+package com.tw ter.ho _m xer.module
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealGraphManhattanEndpoint
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.storage.client.manhattan.kv._
-import com.twitter.timelines.config.ConfigUtils
-import com.twitter.util.Duration
-import javax.inject.Named
-import javax.inject.Singleton
+ mport com.google. nject.Prov des
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.ho _m xer.param.Ho M xer nject onNa s.RealGraphManhattanEndpo nt
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.storage.cl ent.manhattan.kv._
+ mport com.tw ter.t  l nes.conf g.Conf gUt ls
+ mport com.tw ter.ut l.Durat on
+ mport javax. nject.Na d
+ mport javax. nject.S ngleton
 
-object ManhattanClientsModule extends TwitterModule with ConfigUtils {
+object ManhattanCl entsModule extends Tw terModule w h Conf gUt ls {
 
-  private val ApolloDest = "/s/manhattan/apollo.native-thrift"
-  private final val Timeout = "mh_real_graph.timeout"
+  pr vate val ApolloDest = "/s/manhattan/apollo.nat ve-thr ft"
+  pr vate f nal val T  out = "mh_real_graph.t  out"
 
-  flag[Duration](Timeout, 150.millis, "Timeout total")
+  flag[Durat on](T  out, 150.m ll s, "T  out total")
 
-  @Provides
-  @Singleton
-  @Named(RealGraphManhattanEndpoint)
-  def providesRealGraphManhattanEndpoint(
-    @Flag(Timeout) timeout: Duration,
-    serviceIdentifier: ServiceIdentifier
-  ): ManhattanKVEndpoint = {
-    lazy val client = ManhattanKVClient(
-      appId = "real_graph",
+  @Prov des
+  @S ngleton
+  @Na d(RealGraphManhattanEndpo nt)
+  def prov desRealGraphManhattanEndpo nt(
+    @Flag(T  out) t  out: Durat on,
+    serv ce dent f er: Serv ce dent f er
+  ): ManhattanKVEndpo nt = {
+    lazy val cl ent = ManhattanKVCl ent(
+      app d = "real_graph",
       dest = ApolloDest,
-      mtlsParams = ManhattanKVClientMtlsParams(serviceIdentifier = serviceIdentifier),
+      mtlsParams = ManhattanKVCl entMtlsParams(serv ce dent f er = serv ce dent f er),
       label = "real-graph-data"
     )
 
-    ManhattanKVEndpointBuilder(client)
+    ManhattanKVEndpo ntBu lder(cl ent)
       .maxRetryCount(2)
-      .defaultMaxTimeout(timeout)
-      .build()
+      .defaultMaxT  out(t  out)
+      .bu ld()
   }
 }

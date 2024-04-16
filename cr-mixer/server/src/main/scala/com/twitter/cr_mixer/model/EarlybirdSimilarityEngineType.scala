@@ -1,6 +1,6 @@
-package com.twitter.cr_mixer.model
+package com.tw ter.cr_m xer.model
 
-sealed trait EarlybirdSimilarityEngineType
-object EarlybirdSimilarityEngineType_RecencyBased extends EarlybirdSimilarityEngineType
-object EarlybirdSimilarityEngineType_ModelBased extends EarlybirdSimilarityEngineType
-object EarlybirdSimilarityEngineType_TensorflowBased extends EarlybirdSimilarityEngineType
+sealed tra  Earlyb rdS m lar yEng neType
+object Earlyb rdS m lar yEng neType_RecencyBased extends Earlyb rdS m lar yEng neType
+object Earlyb rdS m lar yEng neType_ModelBased extends Earlyb rdS m lar yEng neType
+object Earlyb rdS m lar yEng neType_TensorflowBased extends Earlyb rdS m lar yEng neType

@@ -1,46 +1,46 @@
-package com.twitter.product_mixer.core.pipeline
+package com.tw ter.product_m xer.core.p pel ne
 
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.core.model.common.Component
+ mport com.tw ter.st ch.Arrow
+ mport com.tw ter.st ch.St ch
 
-/** Base trait for all `pipeline` implementations */
-trait Pipeline[-Query, Result] extends Component {
+/** Base tra  for all `p pel ne`  mple ntat ons */
+tra  P pel ne[-Query, Result] extends Component {
 
-  /** The [[PipelineConfig]] that was used to create this [[Pipeline]] */
-  private[core] val config: PipelineConfig
+  /** T  [[P pel neConf g]] that was used to create t  [[P pel ne]] */
+  pr vate[core] val conf g: P pel neConf g
 
-  /** Returns the underlying arrow that represents the pipeline. This is a val because we want to ensure
-   * that the arrow is long-lived and consistent, not generated per-request.
+  /** Returns t  underly ng arrow that represents t  p pel ne. T   s a val because   want to ensure
+   * that t  arrow  s long-l ved and cons stent, not generated per-request.
    *
-   * Directly using this arrow allows you to combine it with other arrows efficiently.
+   * D rectly us ng t  arrow allows   to comb ne   w h ot r arrows eff c ently.
    */
-  val arrow: Arrow[Query, PipelineResult[Result]]
+  val arrow: Arrow[Query, P pel neResult[Result]]
 
-  /** all child [[Component]]s that this [[Pipeline]] contains which will be registered and monitored */
-  val children: Seq[Component]
+  /** all ch ld [[Component]]s that t  [[P pel ne]] conta ns wh ch w ll be reg stered and mon ored */
+  val ch ldren: Seq[Component]
 
   /**
-   * A helper for executing a single query.
+   * A  lper for execut ng a s ngle query.
    *
-   * toResultTry and lowerFromTry has the end result of adapting PipelineResult into either a
-   * successful result or a Stitch exception, which is a common use-case for callers,
-   * particularly in the case of [[com.twitter.product_mixer.core.pipeline.product.ProductPipeline]].
+   * toResultTry and lo rFromTry has t  end result of adapt ng P pel neResult  nto e  r a
+   * successful result or a St ch except on, wh ch  s a common use-case for callers,
+   * part cularly  n t  case of [[com.tw ter.product_m xer.core.p pel ne.product.ProductP pel ne]].
    */
-  def process(query: Query): Stitch[Result] = arrow(query).map(_.toResultTry).lowerFromTry
+  def process(query: Query): St ch[Result] = arrow(query).map(_.toResultTry).lo rFromTry
 
-  final override def toString = s"Pipeline(identifier=$identifier)"
+  f nal overr de def toStr ng = s"P pel ne( dent f er=$ dent f er)"
 
   /**
-   * [[Pipeline]]s are equal to one another if they were generated from the same [[PipelineConfig]],
-   * we check this by doing a reference checks first then comparing the [[PipelineConfig]] instances.
+   * [[P pel ne]]s are equal to one anot r  f t y  re generated from t  sa  [[P pel neConf g]],
+   *   c ck t  by do ng a reference c cks f rst t n compar ng t  [[P pel neConf g]]  nstances.
    *
-   * We can skip additional checks because the other fields (e.g. [[identifier]] and [[children]])
-   * are derived from the [[PipelineConfig]].
+   *   can sk p add  onal c cks because t  ot r f elds (e.g. [[ dent f er]] and [[ch ldren]])
+   * are der ved from t  [[P pel neConf g]].
    */
-  final override def equals(obj: Any): Boolean = obj match {
-    case pipeline: Pipeline[_, _] =>
-      pipeline.eq(this) || pipeline.config.eq(config) || pipeline.config == config
+  f nal overr de def equals(obj: Any): Boolean = obj match {
+    case p pel ne: P pel ne[_, _] =>
+      p pel ne.eq(t ) || p pel ne.conf g.eq(conf g) || p pel ne.conf g == conf g
     case _ => false
   }
 }

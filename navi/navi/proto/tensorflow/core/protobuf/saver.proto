@@ -2,47 +2,47 @@ syntax = "proto3";
 
 package tensorflow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "SaverProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.util";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "SaverProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.ut l";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
-// Protocol buffer representing the configuration of a Saver.
-message SaverDef {
-  // The name of the tensor in which to specify the filename when saving or
-  // restoring a model checkpoint.
-  string filename_tensor_name = 1;
+// Protocol buffer represent ng t  conf gurat on of a Saver.
+ ssage SaverDef {
+  // T  na  of t  tensor  n wh ch to spec fy t  f lena  w n sav ng or
+  // restor ng a model c ckpo nt.
+  str ng f lena _tensor_na  = 1;
 
-  // The operation to run when saving a model checkpoint.
-  string save_tensor_name = 2;
+  // T  operat on to run w n sav ng a model c ckpo nt.
+  str ng save_tensor_na  = 2;
 
-  // The operation to run when restoring a model checkpoint.
-  string restore_op_name = 3;
+  // T  operat on to run w n restor ng a model c ckpo nt.
+  str ng restore_op_na  = 3;
 
-  // Maximum number of checkpoints to keep.  If 0, no checkpoints are deleted.
-  int32 max_to_keep = 4;
+  // Max mum number of c ckpo nts to keep.   f 0, no c ckpo nts are deleted.
+   nt32 max_to_keep = 4;
 
-  // Shard the save files, one per device that has Variable nodes.
+  // Shard t  save f les, one per dev ce that has Var able nodes.
   bool sharded = 5;
 
-  // How often to keep an additional checkpoint. If not specified, only the last
-  // "max_to_keep" checkpoints are kept; if specified, in addition to keeping
-  // the last "max_to_keep" checkpoints, an additional checkpoint will be kept
-  // for every n hours of training.
-  float keep_checkpoint_every_n_hours = 6;
+  // How often to keep an add  onal c ckpo nt.  f not spec f ed, only t  last
+  // "max_to_keep" c ckpo nts are kept;  f spec f ed,  n add  on to keep ng
+  // t  last "max_to_keep" c ckpo nts, an add  onal c ckpo nt w ll be kept
+  // for every n h s of tra n ng.
+  float keep_c ckpo nt_every_n_h s = 6;
 
-  // A version number that identifies a different on-disk checkpoint format.
-  // Usually, each subclass of BaseSaverBuilder works with a particular
-  // version/format.  However, it is possible that the same builder may be
-  // upgraded to support a newer checkpoint format in the future.
-  enum CheckpointFormatVersion {
-    // Internal legacy format.
+  // A vers on number that  dent f es a d fferent on-d sk c ckpo nt format.
+  // Usually, each subclass of BaseSaverBu lder works w h a part cular
+  // vers on/format.  Ho ver,    s poss ble that t  sa  bu lder may be
+  // upgraded to support a ne r c ckpo nt format  n t  future.
+  enum C ckpo ntFormatVers on {
+    //  nternal legacy format.
     LEGACY = 0;
-    // Deprecated format: tf.Saver() which works with tensorflow::table::Table.
+    // Deprecated format: tf.Saver() wh ch works w h tensorflow::table::Table.
     V1 = 1;
-    // Current format: more efficient.
+    // Current format: more eff c ent.
     V2 = 2;
   }
-  CheckpointFormatVersion version = 7;
+  C ckpo ntFormatVers on vers on = 7;
 }

@@ -1,466 +1,466 @@
-package com.twitter.visibility.interfaces.search
+package com.tw ter.v s b l y. nterfaces.search
 
-import com.twitter.decider.Decider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.mediaservices.media_util.GenericMediaKey
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.util.Return
-import com.twitter.util.Stopwatch
-import com.twitter.util.Try
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VerdictLogger
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.media.MediaFeatures
-import com.twitter.visibility.builder.media.StratoMediaLabelMaps
-import com.twitter.visibility.builder.tweets._
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.common.MediaSafetyLabelMapSource
-import com.twitter.visibility.common.MisinformationPolicySource
-import com.twitter.visibility.common.SafetyLabelMapSource
-import com.twitter.visibility.common.TrustedFriendsSource
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.rules.ComposableActions._
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.features.TweetIsInnerQuotedTweet
-import com.twitter.visibility.features.TweetIsRetweet
-import com.twitter.visibility.features.TweetIsSourceTweet
-import com.twitter.visibility.interfaces.common.search.SearchVFRequestContext
-import com.twitter.visibility.interfaces.search.SearchVisibilityLibrary.EvaluateTweet
-import com.twitter.visibility.interfaces.search.SearchVisibilityLibrary.RequestTweetId
-import com.twitter.visibility.interfaces.search.TweetType.EvaluateTweetType
-import com.twitter.visibility.logging.thriftscala.VFLibType
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.models.ContentId.BlenderTweetId
-import com.twitter.visibility.models.ContentId.TweetId
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.SafetyLevel.toThrift
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.rules.Action
-import com.twitter.visibility.rules.Allow
-import com.twitter.visibility.rules.Drop
-import com.twitter.visibility.rules.Interstitial
-import com.twitter.visibility.rules.TweetInterstitial
+ mport com.tw ter.dec der.Dec der
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. d aserv ces. d a_ut l.Gener c d aKey
+ mport com.tw ter.servo.ut l.Gate
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.cl ent.{Cl ent => StratoCl ent}
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Stopwatch
+ mport com.tw ter.ut l.Try
+ mport com.tw ter.v s b l y.V s b l yL brary
+ mport com.tw ter.v s b l y.bu lder.Verd ctLogger
+ mport com.tw ter.v s b l y.bu lder.V s b l yResult
+ mport com.tw ter.v s b l y.bu lder. d a. d aFeatures
+ mport com.tw ter.v s b l y.bu lder. d a.Strato d aLabelMaps
+ mport com.tw ter.v s b l y.bu lder.t ets._
+ mport com.tw ter.v s b l y.bu lder.users.AuthorFeatures
+ mport com.tw ter.v s b l y.bu lder.users.Relat onsh pFeatures
+ mport com.tw ter.v s b l y.bu lder.users.V e rFeatures
+ mport com.tw ter.v s b l y.common. d aSafetyLabelMapS ce
+ mport com.tw ter.v s b l y.common.M s nformat onPol cyS ce
+ mport com.tw ter.v s b l y.common.SafetyLabelMapS ce
+ mport com.tw ter.v s b l y.common.TrustedFr endsS ce
+ mport com.tw ter.v s b l y.common.UserRelat onsh pS ce
+ mport com.tw ter.v s b l y.common.UserS ce
+ mport com.tw ter.v s b l y.rules.ComposableAct ons._
+ mport com.tw ter.v s b l y.conf gap .conf gs.V s b l yDec derGates
+ mport com.tw ter.v s b l y.features.FeatureMap
+ mport com.tw ter.v s b l y.features.T et s nnerQuotedT et
+ mport com.tw ter.v s b l y.features.T et sRet et
+ mport com.tw ter.v s b l y.features.T et sS ceT et
+ mport com.tw ter.v s b l y. nterfaces.common.search.SearchVFRequestContext
+ mport com.tw ter.v s b l y. nterfaces.search.SearchV s b l yL brary.EvaluateT et
+ mport com.tw ter.v s b l y. nterfaces.search.SearchV s b l yL brary.RequestT et d
+ mport com.tw ter.v s b l y. nterfaces.search.T etType.EvaluateT etType
+ mport com.tw ter.v s b l y.logg ng.thr ftscala.VFL bType
+ mport com.tw ter.v s b l y.models.Content d
+ mport com.tw ter.v s b l y.models.Content d.BlenderT et d
+ mport com.tw ter.v s b l y.models.Content d.T et d
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.models.SafetyLevel.toThr ft
+ mport com.tw ter.v s b l y.models.V e rContext
+ mport com.tw ter.v s b l y.rules.Act on
+ mport com.tw ter.v s b l y.rules.Allow
+ mport com.tw ter.v s b l y.rules.Drop
+ mport com.tw ter.v s b l y.rules. nterst  al
+ mport com.tw ter.v s b l y.rules.T et nterst  al
 
-object TweetType extends Enumeration {
-  type EvaluateTweetType = Value
-  val REQUEST: TweetType.Value = Value(1)
-  val QUOTED: TweetType.Value = Value(2)
-  val SOURCE: TweetType.Value = Value(3)
+object T etType extends Enu rat on {
+  type EvaluateT etType = Value
+  val REQUEST: T etType.Value = Value(1)
+  val QUOTED: T etType.Value = Value(2)
+  val SOURCE: T etType.Value = Value(3)
 }
 
-import com.twitter.visibility.interfaces.search.TweetType._
+ mport com.tw ter.v s b l y. nterfaces.search.T etType._
 
-object SearchVisibilityLibrary {
-  type RequestTweetId = Long
-  type EvaluateTweetId = Long
-  type EvaluateTweet = Tweet
+object SearchV s b l yL brary {
+  type RequestT et d = Long
+  type EvaluateT et d = Long
+  type EvaluateT et = T et
 
-  def buildWithStratoClient(
-    visibilityLibrary: VisibilityLibrary,
-    decider: Decider,
-    stratoClient: StratoClient,
-    userSource: UserSource,
-    userRelationshipSource: UserRelationshipSource
-  ): SearchVisibilityLibrary = new SearchVisibilityLibrary(
-    visibilityLibrary,
-    decider,
-    stratoClient,
-    userSource,
-    userRelationshipSource,
+  def bu ldW hStratoCl ent(
+    v s b l yL brary: V s b l yL brary,
+    dec der: Dec der,
+    stratoCl ent: StratoCl ent,
+    userS ce: UserS ce,
+    userRelat onsh pS ce: UserRelat onsh pS ce
+  ): SearchV s b l yL brary = new SearchV s b l yL brary(
+    v s b l yL brary,
+    dec der,
+    stratoCl ent,
+    userS ce,
+    userRelat onsh pS ce,
     None
   )
 
-  def buildWithSafetyLabelMapSource(
-    visibilityLibrary: VisibilityLibrary,
-    decider: Decider,
-    stratoClient: StratoClient,
-    userSource: UserSource,
-    userRelationshipSource: UserRelationshipSource,
-    safetyLabelMapSource: SafetyLabelMapSource
-  ): SearchVisibilityLibrary = new SearchVisibilityLibrary(
-    visibilityLibrary,
-    decider,
-    stratoClient,
-    userSource,
-    userRelationshipSource,
-    Some(safetyLabelMapSource)
+  def bu ldW hSafetyLabelMapS ce(
+    v s b l yL brary: V s b l yL brary,
+    dec der: Dec der,
+    stratoCl ent: StratoCl ent,
+    userS ce: UserS ce,
+    userRelat onsh pS ce: UserRelat onsh pS ce,
+    safetyLabelMapS ce: SafetyLabelMapS ce
+  ): SearchV s b l yL brary = new SearchV s b l yL brary(
+    v s b l yL brary,
+    dec der,
+    stratoCl ent,
+    userS ce,
+    userRelat onsh pS ce,
+    So (safetyLabelMapS ce)
   )
 
-  def createVerdictLogger(
-    enableVerdictLogger: Gate[Unit],
-    decider: Decider,
-    statsReceiver: StatsReceiver
-  ): VerdictLogger = {
-    if (enableVerdictLogger()) {
-      VerdictLogger(statsReceiver, decider)
+  def createVerd ctLogger(
+    enableVerd ctLogger: Gate[Un ],
+    dec der: Dec der,
+    statsRece ver: StatsRece ver
+  ): Verd ctLogger = {
+     f (enableVerd ctLogger()) {
+      Verd ctLogger(statsRece ver, dec der)
     } else {
-      VerdictLogger.Empty
+      Verd ctLogger.Empty
     }
   }
 
-  def scribeVisibilityVerdict(
-    result: CombinedVisibilityResult,
-    enableVerdictScribing: Gate[Unit],
-    verdictLogger: VerdictLogger,
-    viewerId: Option[Long],
+  def scr beV s b l yVerd ct(
+    result: Comb nedV s b l yResult,
+    enableVerd ctScr b ng: Gate[Un ],
+    verd ctLogger: Verd ctLogger,
+    v e r d: Opt on[Long],
     safetyLevel: SafetyLevel
-  ): Unit = if (enableVerdictScribing()) {
-    verdictLogger.scribeVerdict(
-      visibilityResult = result.tweetVisibilityResult,
-      viewerId = viewerId,
-      safetyLevel = toThrift(safetyLevel),
-      vfLibType = VFLibType.SearchVisibilityLibrary)
+  ): Un  =  f (enableVerd ctScr b ng()) {
+    verd ctLogger.scr beVerd ct(
+      v s b l yResult = result.t etV s b l yResult,
+      v e r d = v e r d,
+      safetyLevel = toThr ft(safetyLevel),
+      vfL bType = VFL bType.SearchV s b l yL brary)
 
-    result.quotedTweetVisibilityResult.map(quotedTweetVisibilityResult =>
-      verdictLogger.scribeVerdict(
-        visibilityResult = quotedTweetVisibilityResult,
-        viewerId = viewerId,
-        safetyLevel = toThrift(safetyLevel),
-        vfLibType = VFLibType.SearchVisibilityLibrary))
+    result.quotedT etV s b l yResult.map(quotedT etV s b l yResult =>
+      verd ctLogger.scr beVerd ct(
+        v s b l yResult = quotedT etV s b l yResult,
+        v e r d = v e r d,
+        safetyLevel = toThr ft(safetyLevel),
+        vfL bType = VFL bType.SearchV s b l yL brary))
   }
 }
 
-class SearchVisibilityLibrary(
-  visibilityLibrary: VisibilityLibrary,
-  decider: Decider,
-  stratoClient: StratoClient,
-  userSource: UserSource,
-  userRelationshipSource: UserRelationshipSource,
-  safetyLabelMapSourceOption: Option[SafetyLabelMapSource]) {
+class SearchV s b l yL brary(
+  v s b l yL brary: V s b l yL brary,
+  dec der: Dec der,
+  stratoCl ent: StratoCl ent,
+  userS ce: UserS ce,
+  userRelat onsh pS ce: UserRelat onsh pS ce,
+  safetyLabelMapS ceOpt on: Opt on[SafetyLabelMapS ce]) {
 
-  val libraryStatsReceiver = visibilityLibrary.statsReceiver
-  val stratoClientStatsReceiver = visibilityLibrary.statsReceiver.scope("strato")
-  val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
-  val svlRequestCounter = libraryStatsReceiver.counter("svl_requests")
-  val vfLatencyOverallStat = libraryStatsReceiver.stat("vf_latency_overall")
-  val vfLatencyStitchBuildStat = libraryStatsReceiver.stat("vf_latency_stitch_build")
-  val vfLatencyStitchRunStat = libraryStatsReceiver.stat("vf_latency_stitch_run")
-  val visibilityDeciderGates = VisibilityDeciderGates(decider)
-  val verdictLogger = SearchVisibilityLibrary.createVerdictLogger(
-    visibilityDeciderGates.enableVerdictLoggerSVL,
-    decider,
-    libraryStatsReceiver)
+  val l braryStatsRece ver = v s b l yL brary.statsRece ver
+  val stratoCl entStatsRece ver = v s b l yL brary.statsRece ver.scope("strato")
+  val vfEng neCounter = l braryStatsRece ver.counter("vf_eng ne_requests")
+  val svlRequestCounter = l braryStatsRece ver.counter("svl_requests")
+  val vfLatencyOverallStat = l braryStatsRece ver.stat("vf_latency_overall")
+  val vfLatencySt chBu ldStat = l braryStatsRece ver.stat("vf_latency_st ch_bu ld")
+  val vfLatencySt chRunStat = l braryStatsRece ver.stat("vf_latency_st ch_run")
+  val v s b l yDec derGates = V s b l yDec derGates(dec der)
+  val verd ctLogger = SearchV s b l yL brary.createVerd ctLogger(
+    v s b l yDec derGates.enableVerd ctLoggerSVL,
+    dec der,
+    l braryStatsRece ver)
 
-  val tweetLabels = safetyLabelMapSourceOption match {
-    case Some(safetyLabelMapSource) =>
-      new StratoTweetLabelMaps(safetyLabelMapSource)
+  val t etLabels = safetyLabelMapS ceOpt on match {
+    case So (safetyLabelMapS ce) =>
+      new StratoT etLabelMaps(safetyLabelMapS ce)
     case None =>
-      new StratoTweetLabelMaps(
-        SafetyLabelMapSource.fromStrato(stratoClient, stratoClientStatsReceiver))
+      new StratoT etLabelMaps(
+        SafetyLabelMapS ce.fromStrato(stratoCl ent, stratoCl entStatsRece ver))
   }
 
-  val mediaLabelMaps = new StratoMediaLabelMaps(
-    MediaSafetyLabelMapSource.fromStrato(stratoClient, stratoClientStatsReceiver))
+  val  d aLabelMaps = new Strato d aLabelMaps(
+     d aSafetyLabelMapS ce.fromStrato(stratoCl ent, stratoCl entStatsRece ver))
 
-  val tweetFeatures = new TweetFeatures(tweetLabels, libraryStatsReceiver)
-  val searchContextFeatures = new SearchContextFeatures(libraryStatsReceiver)
-  val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
-  val viewerFeatures = new ViewerFeatures(userSource, libraryStatsReceiver)
-  val relationshipFeatures =
-    new RelationshipFeatures(userRelationshipSource, libraryStatsReceiver)
-  val misinfoPolicySource =
-    MisinformationPolicySource.fromStrato(stratoClient, stratoClientStatsReceiver)
-  val misinfoPolicyFeatures =
-    new MisinformationPolicyFeatures(misinfoPolicySource, stratoClientStatsReceiver)
-  val exclusiveTweetFeatures =
-    new ExclusiveTweetFeatures(userRelationshipSource, libraryStatsReceiver)
-  val mediaFeatures = new MediaFeatures(mediaLabelMaps, libraryStatsReceiver)
-  val trustedFriendsTweetFeatures = new TrustedFriendsFeatures(
-    trustedFriendsSource = TrustedFriendsSource.fromStrato(stratoClient, stratoClientStatsReceiver))
-  val editTweetFeatures = new EditTweetFeatures(libraryStatsReceiver)
+  val t etFeatures = new T etFeatures(t etLabels, l braryStatsRece ver)
+  val searchContextFeatures = new SearchContextFeatures(l braryStatsRece ver)
+  val authorFeatures = new AuthorFeatures(userS ce, l braryStatsRece ver)
+  val v e rFeatures = new V e rFeatures(userS ce, l braryStatsRece ver)
+  val relat onsh pFeatures =
+    new Relat onsh pFeatures(userRelat onsh pS ce, l braryStatsRece ver)
+  val m s nfoPol cyS ce =
+    M s nformat onPol cyS ce.fromStrato(stratoCl ent, stratoCl entStatsRece ver)
+  val m s nfoPol cyFeatures =
+    new M s nformat onPol cyFeatures(m s nfoPol cyS ce, stratoCl entStatsRece ver)
+  val exclus veT etFeatures =
+    new Exclus veT etFeatures(userRelat onsh pS ce, l braryStatsRece ver)
+  val  d aFeatures = new  d aFeatures( d aLabelMaps, l braryStatsRece ver)
+  val trustedFr endsT etFeatures = new TrustedFr endsFeatures(
+    trustedFr endsS ce = TrustedFr endsS ce.fromStrato(stratoCl ent, stratoCl entStatsRece ver))
+  val ed T etFeatures = new Ed T etFeatures(l braryStatsRece ver)
 
-  def batchProcessSearchVisibilityRequest(
-    batchSvRequest: BatchSearchVisibilityRequest
-  ): Stitch[BatchSearchVisibilityResponse] = {
+  def batchProcessSearchV s b l yRequest(
+    batchSvRequest: BatchSearchV s b l yRequest
+  ): St ch[BatchSearchV s b l yResponse] = {
     val elapsed = Stopwatch.start()
-    svlRequestCounter.incr()
+    svlRequestCounter. ncr()
 
-    val response: Stitch[BatchSearchVisibilityResponse] =
-      batchSvRequest.tweetContexts.groupBy(tweetContext => tweetContext.safetyLevel) map {
-        case (safetyLevel: SafetyLevel, tweetContexts: Seq[TweetContext]) =>
-          val (contentsToBeEvaluated, contentVisResultTypes) =
-            extractContentsToBeEvaluated(tweetContexts, batchSvRequest.viewerContext)
+    val response: St ch[BatchSearchV s b l yResponse] =
+      batchSvRequest.t etContexts.groupBy(t etContext => t etContext.safetyLevel) map {
+        case (safetyLevel: SafetyLevel, t etContexts: Seq[T etContext]) =>
+          val (contentsToBeEvaluated, contentV sResultTypes) =
+            extractContentsToBeEvaluated(t etContexts, batchSvRequest.v e rContext)
 
-          getVisibilityResult(
+          getV s b l yResult(
             contentsToBeEvaluated,
             safetyLevel,
-            batchSvRequest.viewerContext,
+            batchSvRequest.v e rContext,
             batchSvRequest.searchVFRequestContext)
-            .map { contentVisResults: Seq[Try[VisibilityResult]] =>
-              (contentVisResultTypes zip contentVisResults)
-                .map(handleVisibilityResultByTweetType)
+            .map { contentV sResults: Seq[Try[V s b l yResult]] =>
+              (contentV sResultTypes z p contentV sResults)
+                .map(handleV s b l yResultByT etType)
                 .groupBy {
-                  case (requestTweetId: RequestTweetId, (_, _)) => requestTweetId
-                }.mapValues(combineVisibilityResult)
+                  case (requestT et d: RequestT et d, (_, _)) => requestT et d
+                }.mapValues(comb neV s b l yResult)
             }.onSuccess(res =>
               res.values.flatten.foreach(_ =>
-                SearchVisibilityLibrary.scribeVisibilityVerdict(
+                SearchV s b l yL brary.scr beV s b l yVerd ct(
                   _,
-                  visibilityDeciderGates.enableVerdictScribingSVL,
-                  verdictLogger,
-                  batchSvRequest.viewerContext.userId,
+                  v s b l yDec derGates.enableVerd ctScr b ngSVL,
+                  verd ctLogger,
+                  batchSvRequest.v e rContext.user d,
                   safetyLevel)))
-      } reduceLeft { (left, right) =>
-        Stitch.joinMap(left, right)((visResultsA, visResultsB) => visResultsA ++ visResultsB)
-      } map { visResults =>
-        val (succeed, failed) = visResults.partition { case (_, visResult) => visResult.nonEmpty }
-        val failedTweetIds: Seq[Long] = failed.keys.toSeq
-        BatchSearchVisibilityResponse(
-          visibilityResults = succeed.mapValues(visResult => visResult.get),
-          failedTweetIds = failedTweetIds
+      } reduceLeft { (left, r ght) =>
+        St ch.jo nMap(left, r ght)((v sResultsA, v sResultsB) => v sResultsA ++ v sResultsB)
+      } map { v sResults =>
+        val (succeed, fa led) = v sResults.part  on { case (_, v sResult) => v sResult.nonEmpty }
+        val fa ledT et ds: Seq[Long] = fa led.keys.toSeq
+        BatchSearchV s b l yResponse(
+          v s b l yResults = succeed.mapValues(v sResult => v sResult.get),
+          fa ledT et ds = fa ledT et ds
         )
       }
 
-    val runStitchStartMs = elapsed().inMilliseconds
-    val buildStitchStatMs = elapsed().inMilliseconds
-    vfLatencyStitchBuildStat.add(buildStitchStatMs)
+    val runSt chStartMs = elapsed(). nM ll seconds
+    val bu ldSt chStatMs = elapsed(). nM ll seconds
+    vfLatencySt chBu ldStat.add(bu ldSt chStatMs)
 
     response
       .onSuccess(_ => {
-        val overallMs = elapsed().inMilliseconds
+        val overallMs = elapsed(). nM ll seconds
         vfLatencyOverallStat.add(overallMs)
-        val stitchRunMs = elapsed().inMilliseconds - runStitchStartMs
-        vfLatencyStitchRunStat.add(stitchRunMs)
+        val st chRunMs = elapsed(). nM ll seconds - runSt chStartMs
+        vfLatencySt chRunStat.add(st chRunMs)
       })
   }
 
-  private def extractContentsToBeEvaluated(
-    tweetContexts: Seq[TweetContext],
-    viewerContext: ViewerContext
+  pr vate def extractContentsToBeEvaluated(
+    t etContexts: Seq[T etContext],
+    v e rContext: V e rContext
   ): (
-    Seq[(TweetContext, EvaluateTweetType, EvaluateTweet, ContentId)],
+    Seq[(T etContext, EvaluateT etType, EvaluateT et, Content d)],
     Seq[
-      (RequestTweetId, EvaluateTweetType)
+      (RequestT et d, EvaluateT etType)
     ]
   ) = {
     val contentsToBeEvaluated: Seq[
-      (TweetContext, EvaluateTweetType, EvaluateTweet, ContentId)
-    ] = tweetContexts.map(tc =>
+      (T etContext, EvaluateT etType, EvaluateT et, Content d)
+    ] = t etContexts.map(tc =>
       (
         tc,
         REQUEST,
-        tc.tweet,
-        getContentId(
-          viewerId = viewerContext.userId,
-          authorId = tc.tweet.coreData.get.userId,
-          tweet = tc.tweet))) ++
-      tweetContexts
-        .filter(tc => tc.quotedTweet.nonEmpty).map(tc =>
+        tc.t et,
+        getContent d(
+          v e r d = v e rContext.user d,
+          author d = tc.t et.coreData.get.user d,
+          t et = tc.t et))) ++
+      t etContexts
+        .f lter(tc => tc.quotedT et.nonEmpty).map(tc =>
           (
             tc,
             QUOTED,
-            tc.quotedTweet.get,
-            getContentId(
-              viewerId = viewerContext.userId,
-              authorId = tc.quotedTweet.get.coreData.get.userId,
-              tweet = tc.quotedTweet.get))) ++
-      tweetContexts
-        .filter(tc => tc.retweetSourceTweet.nonEmpty).map(tc =>
+            tc.quotedT et.get,
+            getContent d(
+              v e r d = v e rContext.user d,
+              author d = tc.quotedT et.get.coreData.get.user d,
+              t et = tc.quotedT et.get))) ++
+      t etContexts
+        .f lter(tc => tc.ret etS ceT et.nonEmpty).map(tc =>
           (
             tc,
             SOURCE,
-            tc.retweetSourceTweet.get,
-            getContentId(
-              viewerId = viewerContext.userId,
-              authorId = tc.retweetSourceTweet.get.coreData.get.userId,
-              tweet = tc.retweetSourceTweet.get)))
+            tc.ret etS ceT et.get,
+            getContent d(
+              v e r d = v e rContext.user d,
+              author d = tc.ret etS ceT et.get.coreData.get.user d,
+              t et = tc.ret etS ceT et.get)))
 
-    val contentVisResultTypes: Seq[(RequestTweetId, EvaluateTweetType)] = {
+    val contentV sResultTypes: Seq[(RequestT et d, EvaluateT etType)] = {
       contentsToBeEvaluated.map {
-        case (tc: TweetContext, tweetType: EvaluateTweetType, _, _) =>
-          (tc.tweet.id, tweetType)
+        case (tc: T etContext, t etType: EvaluateT etType, _, _) =>
+          (tc.t et. d, t etType)
       }
     }
 
-    (contentsToBeEvaluated, contentVisResultTypes)
+    (contentsToBeEvaluated, contentV sResultTypes)
   }
 
-  private def combineVisibilityResult(
-    visResults: Seq[(RequestTweetId, (EvaluateTweetType, Try[VisibilityResult]))]
-  ): Option[CombinedVisibilityResult] = {
-    visResults.sortBy(_._2._1)(ValueOrdering) match {
+  pr vate def comb neV s b l yResult(
+    v sResults: Seq[(RequestT et d, (EvaluateT etType, Try[V s b l yResult]))]
+  ): Opt on[Comb nedV s b l yResult] = {
+    v sResults.sortBy(_._2._1)(ValueOrder ng) match {
       case Seq(
-            (_, (REQUEST, Return(requestTweetVisResult))),
-            (_, (QUOTED, Return(quotedTweetVisResult))),
-            (_, (SOURCE, Return(sourceTweetVisResult)))) =>
-        requestTweetVisResult.verdict match {
+            (_, (REQUEST, Return(requestT etV sResult))),
+            (_, (QUOTED, Return(quotedT etV sResult))),
+            (_, (SOURCE, Return(s ceT etV sResult)))) =>
+        requestT etV sResult.verd ct match {
           case Allow =>
-            Some(CombinedVisibilityResult(sourceTweetVisResult, Some(quotedTweetVisResult)))
+            So (Comb nedV s b l yResult(s ceT etV sResult, So (quotedT etV sResult)))
           case _ =>
-            Some(CombinedVisibilityResult(requestTweetVisResult, Some(quotedTweetVisResult)))
+            So (Comb nedV s b l yResult(requestT etV sResult, So (quotedT etV sResult)))
         }
       case Seq(
-            (_, (REQUEST, Return(requestTweetVisResult))),
-            (_, (QUOTED, Return(quotedTweetVisResult)))) =>
-        Some(CombinedVisibilityResult(requestTweetVisResult, Some(quotedTweetVisResult)))
+            (_, (REQUEST, Return(requestT etV sResult))),
+            (_, (QUOTED, Return(quotedT etV sResult)))) =>
+        So (Comb nedV s b l yResult(requestT etV sResult, So (quotedT etV sResult)))
       case Seq(
-            (_, (REQUEST, Return(requestTweetVisResult))),
-            (_, (SOURCE, Return(sourceTweetVisResult)))) =>
-        requestTweetVisResult.verdict match {
+            (_, (REQUEST, Return(requestT etV sResult))),
+            (_, (SOURCE, Return(s ceT etV sResult)))) =>
+        requestT etV sResult.verd ct match {
           case Allow =>
-            Some(CombinedVisibilityResult(sourceTweetVisResult, None))
+            So (Comb nedV s b l yResult(s ceT etV sResult, None))
           case _ =>
-            Some(CombinedVisibilityResult(requestTweetVisResult, None))
+            So (Comb nedV s b l yResult(requestT etV sResult, None))
         }
 
-      case Seq((_, (REQUEST, Return(requestTweetVisResult)))) =>
-        Some(CombinedVisibilityResult(requestTweetVisResult, None))
+      case Seq((_, (REQUEST, Return(requestT etV sResult)))) =>
+        So (Comb nedV s b l yResult(requestT etV sResult, None))
       case _ => None
     }
   }
 
-  private def getVisibilityResult(
-    contents: Seq[(TweetContext, EvaluateTweetType, EvaluateTweet, ContentId)],
+  pr vate def getV s b l yResult(
+    contents: Seq[(T etContext, EvaluateT etType, EvaluateT et, Content d)],
     safetyLevel: SafetyLevel,
-    viewerContext: ViewerContext,
+    v e rContext: V e rContext,
     svRequestContext: SearchVFRequestContext
-  ): Stitch[Seq[Try[VisibilityResult]]] = {
+  ): St ch[Seq[Try[V s b l yResult]]] = {
 
-    val contentContext: Map[ContentId, (TweetContext, EvaluateTweetType, EvaluateTweet)] =
+    val contentContext: Map[Content d, (T etContext, EvaluateT etType, EvaluateT et)] =
       contents.map {
         case (
-              tweetContext: TweetContext,
-              tweetType: EvaluateTweetType,
-              tweet: EvaluateTweet,
-              contentId: ContentId) =>
-          contentId -> ((tweetContext, tweetType, tweet))
+              t etContext: T etContext,
+              t etType: EvaluateT etType,
+              t et: EvaluateT et,
+              content d: Content d) =>
+          content d -> ((t etContext, t etType, t et))
       }.toMap
 
-    val featureMapProvider: (ContentId, SafetyLevel) => FeatureMap = {
-      case (contentId: ContentId, _) =>
-        val (tweetContext, tweetType, tweet) = contentContext(contentId)
-        buildFeatureMap(
-          evaluatedTweet = tweet,
-          tweetType = tweetType,
-          tweetContext = tweetContext,
-          viewerContext = viewerContext,
+    val featureMapProv der: (Content d, SafetyLevel) => FeatureMap = {
+      case (content d: Content d, _) =>
+        val (t etContext, t etType, t et) = contentContext(content d)
+        bu ldFeatureMap(
+          evaluatedT et = t et,
+          t etType = t etType,
+          t etContext = t etContext,
+          v e rContext = v e rContext,
           svRequestContext = svRequestContext
         )
     }
 
-    visibilityLibrary.runRuleEngineBatch(
-      contentIds = contents.map { case (_, _, _, id: ContentId) => id },
-      featureMapProvider = featureMapProvider,
-      viewerContext = viewerContext,
+    v s b l yL brary.runRuleEng neBatch(
+      content ds = contents.map { case (_, _, _,  d: Content d) =>  d },
+      featureMapProv der = featureMapProv der,
+      v e rContext = v e rContext,
       safetyLevel = safetyLevel
     )
   }
 
-  private def getContentId(viewerId: Option[Long], authorId: Long, tweet: Tweet): ContentId = {
-    if (viewerId.contains(authorId))
-      TweetId(tweet.id)
-    else BlenderTweetId(tweet.id)
+  pr vate def getContent d(v e r d: Opt on[Long], author d: Long, t et: T et): Content d = {
+     f (v e r d.conta ns(author d))
+      T et d(t et. d)
+    else BlenderT et d(t et. d)
   }
 
-  private def buildFeatureMap(
-    evaluatedTweet: Tweet,
-    tweetType: EvaluateTweetType,
-    tweetContext: TweetContext,
-    viewerContext: ViewerContext,
+  pr vate def bu ldFeatureMap(
+    evaluatedT et: T et,
+    t etType: EvaluateT etType,
+    t etContext: T etContext,
+    v e rContext: V e rContext,
     svRequestContext: SearchVFRequestContext
   ): FeatureMap = {
-    val authorId = evaluatedTweet.coreData.get.userId
-    val viewerId = viewerContext.userId
-    val isRetweet =
-      if (tweetType.equals(REQUEST)) tweetContext.retweetSourceTweet.nonEmpty else false
-    val isSourceTweet = tweetType.equals(SOURCE)
-    val isQuotedTweet = tweetType.equals(QUOTED)
-    val tweetMediaKeys: Seq[GenericMediaKey] = evaluatedTweet.media
+    val author d = evaluatedT et.coreData.get.user d
+    val v e r d = v e rContext.user d
+    val  sRet et =
+       f (t etType.equals(REQUEST)) t etContext.ret etS ceT et.nonEmpty else false
+    val  sS ceT et = t etType.equals(SOURCE)
+    val  sQuotedT et = t etType.equals(QUOTED)
+    val t et d aKeys: Seq[Gener c d aKey] = evaluatedT et. d a
       .getOrElse(Seq.empty)
-      .flatMap(_.mediaKey.map(GenericMediaKey.apply))
+      .flatMap(_. d aKey.map(Gener c d aKey.apply))
 
-    visibilityLibrary.featureMapBuilder(
+    v s b l yL brary.featureMapBu lder(
       Seq(
-        viewerFeatures
-          .forViewerSearchContext(svRequestContext, viewerContext),
-        relationshipFeatures.forAuthorId(authorId, viewerId),
-        tweetFeatures.forTweet(evaluatedTweet),
-        mediaFeatures.forMediaKeys(tweetMediaKeys),
-        authorFeatures.forAuthorId(authorId),
+        v e rFeatures
+          .forV e rSearchContext(svRequestContext, v e rContext),
+        relat onsh pFeatures.forAuthor d(author d, v e r d),
+        t etFeatures.forT et(evaluatedT et),
+         d aFeatures.for d aKeys(t et d aKeys),
+        authorFeatures.forAuthor d(author d),
         searchContextFeatures.forSearchContext(svRequestContext),
-        _.withConstantFeature(TweetIsRetweet, isRetweet),
-        misinfoPolicyFeatures.forTweet(evaluatedTweet, viewerContext),
-        exclusiveTweetFeatures.forTweet(evaluatedTweet, viewerContext),
-        trustedFriendsTweetFeatures.forTweet(evaluatedTweet, viewerId),
-        editTweetFeatures.forTweet(evaluatedTweet),
-        _.withConstantFeature(TweetIsInnerQuotedTweet, isQuotedTweet),
-        _.withConstantFeature(TweetIsSourceTweet, isSourceTweet),
+        _.w hConstantFeature(T et sRet et,  sRet et),
+        m s nfoPol cyFeatures.forT et(evaluatedT et, v e rContext),
+        exclus veT etFeatures.forT et(evaluatedT et, v e rContext),
+        trustedFr endsT etFeatures.forT et(evaluatedT et, v e r d),
+        ed T etFeatures.forT et(evaluatedT et),
+        _.w hConstantFeature(T et s nnerQuotedT et,  sQuotedT et),
+        _.w hConstantFeature(T et sS ceT et,  sS ceT et),
       )
     )
   }
 
-  private def handleVisibilityResultByTweetType(
-    zipVisResult: ((RequestTweetId, EvaluateTweetType), Try[VisibilityResult])
-  ): (RequestTweetId, (EvaluateTweetType, Try[VisibilityResult])) = {
-    zipVisResult match {
-      case ((id: RequestTweetId, REQUEST), Return(visResult)) =>
-        (id, (REQUEST, Return(handleComposableVisibilityResult(visResult))))
-      case ((id: RequestTweetId, QUOTED), Return(visResult)) =>
+  pr vate def handleV s b l yResultByT etType(
+    z pV sResult: ((RequestT et d, EvaluateT etType), Try[V s b l yResult])
+  ): (RequestT et d, (EvaluateT etType, Try[V s b l yResult])) = {
+    z pV sResult match {
+      case (( d: RequestT et d, REQUEST), Return(v sResult)) =>
+        ( d, (REQUEST, Return(handleComposableV s b l yResult(v sResult))))
+      case (( d: RequestT et d, QUOTED), Return(v sResult)) =>
         (
-          id,
+           d,
           (
             QUOTED,
             Return(
-              handleInnerQuotedTweetVisibilityResult(handleComposableVisibilityResult(visResult)))))
-      case ((id: RequestTweetId, SOURCE), Return(visResult)) =>
-        (id, (SOURCE, Return(handleComposableVisibilityResult(visResult))))
-      case ((id: RequestTweetId, tweetType: EvaluateTweetType), result: Try[VisibilityResult]) =>
-        (id, (tweetType, result))
+              handle nnerQuotedT etV s b l yResult(handleComposableV s b l yResult(v sResult)))))
+      case (( d: RequestT et d, SOURCE), Return(v sResult)) =>
+        ( d, (SOURCE, Return(handleComposableV s b l yResult(v sResult))))
+      case (( d: RequestT et d, t etType: EvaluateT etType), result: Try[V s b l yResult]) =>
+        ( d, (t etType, result))
     }
   }
 
-  private def handleComposableVisibilityResult(result: VisibilityResult): VisibilityResult = {
-    if (result.secondaryVerdicts.nonEmpty) {
-      result.copy(verdict = composeActions(result.verdict, result.secondaryVerdicts))
+  pr vate def handleComposableV s b l yResult(result: V s b l yResult): V s b l yResult = {
+     f (result.secondaryVerd cts.nonEmpty) {
+      result.copy(verd ct = composeAct ons(result.verd ct, result.secondaryVerd cts))
     } else {
       result
     }
   }
 
-  private def composeActions(primary: Action, secondary: Seq[Action]): Action = {
-    if (primary.isComposable && secondary.nonEmpty) {
-      val actions = Seq[Action] { primary } ++ secondary
-      val interstitialOpt = Action.getFirstInterstitial(actions: _*)
-      val softInterventionOpt = Action.getFirstSoftIntervention(actions: _*)
-      val limitedEngagementsOpt = Action.getFirstLimitedEngagements(actions: _*)
-      val avoidOpt = Action.getFirstAvoid(actions: _*)
+  pr vate def composeAct ons(pr mary: Act on, secondary: Seq[Act on]): Act on = {
+     f (pr mary. sComposable && secondary.nonEmpty) {
+      val act ons = Seq[Act on] { pr mary } ++ secondary
+      val  nterst  alOpt = Act on.getF rst nterst  al(act ons: _*)
+      val soft ntervent onOpt = Act on.getF rstSoft ntervent on(act ons: _*)
+      val l m edEngage ntsOpt = Act on.getF rstL m edEngage nts(act ons: _*)
+      val avo dOpt = Act on.getF rstAvo d(act ons: _*)
 
-      val numActions =
-        Seq[Option[_]](interstitialOpt, softInterventionOpt, limitedEngagementsOpt, avoidOpt)
-          .count(_.isDefined)
-      if (numActions > 1) {
-        TweetInterstitial(
-          interstitialOpt,
-          softInterventionOpt,
-          limitedEngagementsOpt,
+      val numAct ons =
+        Seq[Opt on[_]]( nterst  alOpt, soft ntervent onOpt, l m edEngage ntsOpt, avo dOpt)
+          .count(_. sDef ned)
+       f (numAct ons > 1) {
+        T et nterst  al(
+           nterst  alOpt,
+          soft ntervent onOpt,
+          l m edEngage ntsOpt,
           None,
-          avoidOpt
+          avo dOpt
         )
       } else {
-        primary
+        pr mary
       }
     } else {
-      primary
+      pr mary
     }
   }
 
-  private def handleInnerQuotedTweetVisibilityResult(
-    result: VisibilityResult
-  ): VisibilityResult = {
-    val newVerdict: Action =
-      result.verdict match {
-        case interstitial: Interstitial => Drop(interstitial.reason)
-        case ComposableActionsWithInterstitial(tweetInterstitial) => Drop(tweetInterstitial.reason)
-        case verdict => verdict
+  pr vate def handle nnerQuotedT etV s b l yResult(
+    result: V s b l yResult
+  ): V s b l yResult = {
+    val newVerd ct: Act on =
+      result.verd ct match {
+        case  nterst  al:  nterst  al => Drop( nterst  al.reason)
+        case ComposableAct onsW h nterst  al(t et nterst  al) => Drop(t et nterst  al.reason)
+        case verd ct => verd ct
       }
 
-    result.copy(verdict = newVerdict)
+    result.copy(verd ct = newVerd ct)
   }
 }

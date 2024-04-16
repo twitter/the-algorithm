@@ -1,15 +1,15 @@
-namespace java com.twitter.ann.knn.thriftjava
-#@namespace scala com.twitter.ann.knn.thriftscala
-namespace py gen.twitter.ann.knn
+na space java com.tw ter.ann.knn.thr ftjava
+#@na space scala com.tw ter.ann.knn.thr ftscala
+na space py gen.tw ter.ann.knn
 
-include "com/twitter/ml/featurestore/entity.thrift"
+ nclude "com/tw ter/ml/featurestore/ent y.thr ft"
 
-struct Neighbor {
-  1: required double distance
-  2: required entity.EntityId id
-} (persisted = "true")
+struct Ne ghbor {
+  1: requ red double d stance
+  2: requ red ent y.Ent y d  d
+} (pers sted = "true")
 
 struct Knn {
-  1: required entity.EntityId queryId
-  2: required list<Neighbor> neighbors
-}(persisted='true')
+  1: requ red ent y.Ent y d query d
+  2: requ red l st<Ne ghbor> ne ghbors
+}(pers sted='true')

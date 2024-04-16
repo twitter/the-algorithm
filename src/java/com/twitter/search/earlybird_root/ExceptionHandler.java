@@ -1,17 +1,17 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
 
-public final class ExceptionHandler {
-  private static final Logger LOG = LoggerFactory.getLogger(ExceptionHandler.class);
+publ c f nal class Except onHandler {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Except onHandler.class);
 
-  private ExceptionHandler() {
+  pr vate Except onHandler() {
   }
 
-  public static void logException(EarlybirdRequest request, Throwable e) {
-    LOG.error("Exception while handling request: {}", request, e);
+  publ c stat c vo d logExcept on(Earlyb rdRequest request, Throwable e) {
+    LOG.error("Except on wh le handl ng request: {}", request, e);
   }
 }

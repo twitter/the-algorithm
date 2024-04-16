@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.configapi.registry
+package com.tw ter.product_m xer.core.funct onal_component.conf gap .reg stry
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.Config
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.servo.dec der.Dec derGateBu lder
+ mport com.tw ter.t  l nes.conf gap .BaseConf gBu lder
+ mport com.tw ter.t  l nes.conf gap .Conf g
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class GlobalParamRegistry @Inject() (
-  globalParamConfig: GlobalParamConfig,
-  deciderGateBuilder: DeciderGateBuilder,
-  statsReceiver: StatsReceiver) {
+@S ngleton
+class GlobalParamReg stry @ nject() (
+  globalParamConf g: GlobalParamConf g,
+  dec derGateBu lder: Dec derGateBu lder,
+  statsRece ver: StatsRece ver) {
 
-  def build(): Config = {
-    val globalConfigs = globalParamConfig.build(deciderGateBuilder, statsReceiver)
+  def bu ld(): Conf g = {
+    val globalConf gs = globalParamConf g.bu ld(dec derGateBu lder, statsRece ver)
 
-    BaseConfigBuilder(globalConfigs).build("GlobalParamRegistry")
+    BaseConf gBu lder(globalConf gs).bu ld("GlobalParamReg stry")
   }
 }

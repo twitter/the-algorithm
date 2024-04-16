@@ -1,64 +1,64 @@
-package com.twitter.timelineranker.parameters.entity_tweets
+package com.tw ter.t  l neranker.para ters.ent y_t ets
 
-import com.twitter.timelineranker.decider.DeciderKey
-import com.twitter.timelines.configapi.decider.DeciderParam
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+ mport com.tw ter.t  l neranker.dec der.Dec derKey
+ mport com.tw ter.t  l nes.conf gap .dec der.Dec derParam
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
 
-object EntityTweetsParams {
+object Ent yT etsParams {
 
   /**
-   * Controls limit on the number of followed users fetched from SGS.
+   * Controls l m  on t  number of follo d users fetc d from SGS.
    */
-  object MaxFollowedUsersParam
-      extends FSBoundedParam[Int](
-        name = "entity_tweets_max_followed_users",
+  object MaxFollo dUsersParam
+      extends FSBoundedParam[ nt](
+        na  = "ent y_t ets_max_follo d_users",
         default = 1000,
-        min = 0,
+        m n = 0,
         max = 5000
       )
 
   /**
-   * Enables semantic core, penguin, and tweetypie content features in entity tweets source.
+   * Enables semant c core, pengu n, and t etyp e content features  n ent y t ets s ce.
    */
-  object EnableContentFeaturesHydrationParam
-      extends DeciderParam[Boolean](
-        decider = DeciderKey.EntityTweetsEnableContentFeaturesHydration,
+  object EnableContentFeaturesHydrat onParam
+      extends Dec derParam[Boolean](
+        dec der = Dec derKey.Ent yT etsEnableContentFeaturesHydrat on,
         default = false
       )
 
   /**
-   * additionally enables tokens when hydrating content features.
+   * add  onally enables tokens w n hydrat ng content features.
    */
-  object EnableTokensInContentFeaturesHydrationParam
+  object EnableTokens nContentFeaturesHydrat onParam
       extends FSParam(
-        name = "entity_tweets_enable_tokens_in_content_features_hydration",
+        na  = "ent y_t ets_enable_tokens_ n_content_features_hydrat on",
         default = false
       )
 
   /**
-   * additionally enables tweet text when hydrating content features.
-   * This only works if EnableContentFeaturesHydrationParam is set to true
+   * add  onally enables t et text w n hydrat ng content features.
+   * T  only works  f EnableContentFeaturesHydrat onParam  s set to true
    */
-  object EnableTweetTextInContentFeaturesHydrationParam
+  object EnableT etText nContentFeaturesHydrat onParam
       extends FSParam(
-        name = "entity_tweets_enable_tweet_text_in_content_features_hydration",
+        na  = "ent y_t ets_enable_t et_text_ n_content_features_hydrat on",
         default = false
       )
 
   /**
-   * additionally enables conversationControl when hydrating content features.
-   * This only works if EnableContentFeaturesHydrationParam is set to true
+   * add  onally enables conversat onControl w n hydrat ng content features.
+   * T  only works  f EnableContentFeaturesHydrat onParam  s set to true
    */
-  object EnableConversationControlInContentFeaturesHydrationParam
+  object EnableConversat onControl nContentFeaturesHydrat onParam
       extends FSParam(
-        name = "conversation_control_in_content_features_hydration_entity_enable",
+        na  = "conversat on_control_ n_content_features_hydrat on_ent y_enable",
         default = false
       )
 
-  object EnableTweetMediaHydrationParam
+  object EnableT et d aHydrat onParam
       extends FSParam(
-        name = "tweet_media_hydration_entity_tweets_enable",
+        na  = "t et_ d a_hydrat on_ent y_t ets_enable",
         default = false
       )
 

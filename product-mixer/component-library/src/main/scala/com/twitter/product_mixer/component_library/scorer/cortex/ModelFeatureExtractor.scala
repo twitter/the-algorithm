@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.component_library.scorer.cortex
+package com.tw ter.product_m xer.component_l brary.scorer.cortex
 
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import inference.GrpcService.ModelInferResponse.InferOutputTensor
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport  nference.GrpcServ ce.Model nferResponse. nferOutputTensor
 
 /**
- * Extractor defining how a Scorer should go from outputted tensors to the individual results
- * for each candidate being scored.
+ * Extractor def n ng how a Scorer should go from outputted tensors to t   nd v dual results
+ * for each cand date be ng scored.
  *
- * @tparam Result the type of the Value being returned.
- * Users can pass in an anonymous function
+ * @tparam Result t  type of t  Value be ng returned.
+ * Users can pass  n an anonymous funct on
  */
-trait ModelFeatureExtractor[-Query <: PipelineQuery, Result] {
-  def apply(query: Query, tensorOutput: Seq[InferOutputTensor]): Seq[Result]
+tra  ModelFeatureExtractor[-Query <: P pel neQuery, Result] {
+  def apply(query: Query, tensorOutput: Seq[ nferOutputTensor]): Seq[Result]
 }

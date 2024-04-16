@@ -1,108 +1,108 @@
-package com.twitter.home_mixer.product.scored_tweets.query_transformer
+package com.tw ter.ho _m xer.product.scored_t ets.query_transfor r
 
-import com.twitter.home_mixer.model.HomeFeatures.RealGraphInNetworkScoresFeature
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.product.scored_tweets.query_transformer.TimelineRankerQueryTransformer._
-import com.twitter.home_mixer.util.CachedScoredTweetsHelper
-import com.twitter.home_mixer.util.earlybird.EarlybirdRequestUtil
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.timelineranker.{model => tlr}
-import com.twitter.timelines.common.model.TweetKindOption
-import com.twitter.timelines.earlybird.common.options.EarlybirdOptions
-import com.twitter.timelines.earlybird.common.options.EarlybirdScoringModelConfig
-import com.twitter.timelines.earlybird.common.utils.SearchOperator
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.model.candidate.CandidateTweetSourceId
-import com.twitter.timelines.util.SnowflakeSortIndexHelper
-import com.twitter.util.Duration
-import com.twitter.util.Time
+ mport com.tw ter.ho _m xer.model.Ho Features.RealGraph nNetworkScoresFeature
+ mport com.tw ter.ho _m xer.model.request.HasDev ceContext
+ mport com.tw ter.ho _m xer.product.scored_t ets.query_transfor r.T  l neRankerQueryTransfor r._
+ mport com.tw ter.ho _m xer.ut l.Cac dScoredT ets lper
+ mport com.tw ter.ho _m xer.ut l.earlyb rd.Earlyb rdRequestUt l
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateP pel ne dent f er
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.qual y_factor.HasQual yFactorStatus
+ mport com.tw ter.t  l neranker.{model => tlr}
+ mport com.tw ter.t  l nes.common.model.T etK ndOpt on
+ mport com.tw ter.t  l nes.earlyb rd.common.opt ons.Earlyb rdOpt ons
+ mport com.tw ter.t  l nes.earlyb rd.common.opt ons.Earlyb rdScor ngModelConf g
+ mport com.tw ter.t  l nes.earlyb rd.common.ut ls.SearchOperator
+ mport com.tw ter.t  l nes.model.User d
+ mport com.tw ter.t  l nes.model.cand date.Cand dateT etS ce d
+ mport com.tw ter.t  l nes.ut l.SnowflakeSort ndex lper
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.T  
 
-object TimelineRankerQueryTransformer {
-
-  /**
-   * Specifies the maximum number of excluded tweet ids to include in the search index query.
-   * Earlybird's named multi term disjunction map feature supports up to 1500 tweet ids.
-   */
-  private val EarlybirdMaxExcludedTweets = 1500
+object T  l neRankerQueryTransfor r {
 
   /**
-   * Maximum number of query hits each earlybird shard is allowed to accumulate before
-   * early-terminating the query and reducing the hits to MaxNumEarlybirdResults.
+   * Spec f es t  max mum number of excluded t et  ds to  nclude  n t  search  ndex query.
+   * Earlyb rd's na d mult  term d sjunct on map feature supports up to 1500 t et  ds.
    */
-  private val EarlybirdMaxHits = 1000
+  pr vate val Earlyb rdMaxExcludedT ets = 1500
 
   /**
-   * Maximum number of results TLR should retrieve from each earlybird shard.
+   * Max mum number of query h s each earlyb rd shard  s allo d to accumulate before
+   * early-term nat ng t  query and reduc ng t  h s to MaxNumEarlyb rdResults.
    */
-  private val EarlybirdMaxResults = 300
+  pr vate val Earlyb rdMaxH s = 1000
+
+  /**
+   * Max mum number of results TLR should retr eve from each earlyb rd shard.
+   */
+  pr vate val Earlyb rdMaxResults = 300
 }
 
-trait TimelineRankerQueryTransformer[
-  Query <: PipelineQuery with HasQualityFactorStatus with HasDeviceContext] {
-  def maxTweetsToFetch: Int
-  def options: TweetKindOption.ValueSet = TweetKindOption.Default
-  def candidateTweetSourceId: CandidateTweetSourceId.Value
-  def utegLikedByTweetsOptions(query: Query): Option[tlr.UtegLikedByTweetsOptions] = None
-  def seedAuthorIds(query: Query): Option[Seq[Long]] = None
-  def candidatePipelineIdentifier: CandidatePipelineIdentifier
-  def earlybirdModels: Seq[EarlybirdScoringModelConfig] =
-    EarlybirdRequestUtil.EarlybirdScoringModels.UnifiedEngagementProd
-  def getTensorflowModel(query: Query): Option[String] = None
+tra  T  l neRankerQueryTransfor r[
+  Query <: P pel neQuery w h HasQual yFactorStatus w h HasDev ceContext] {
+  def maxT etsToFetch:  nt
+  def opt ons: T etK ndOpt on.ValueSet = T etK ndOpt on.Default
+  def cand dateT etS ce d: Cand dateT etS ce d.Value
+  def utegL kedByT etsOpt ons(query: Query): Opt on[tlr.UtegL kedByT etsOpt ons] = None
+  def seedAuthor ds(query: Query): Opt on[Seq[Long]] = None
+  def cand dateP pel ne dent f er: Cand dateP pel ne dent f er
+  def earlyb rdModels: Seq[Earlyb rdScor ngModelConf g] =
+    Earlyb rdRequestUt l.Earlyb rdScor ngModels.Un f edEngage ntProd
+  def getTensorflowModel(query: Query): Opt on[Str ng] = None
 
-  def buildTimelineRankerQuery(query: Query, sinceDuration: Duration): tlr.RecapQuery = {
-    val sinceTime: Time = sinceDuration.ago
-    val untilTime: Time = Time.now
+  def bu ldT  l neRankerQuery(query: Query, s nceDurat on: Durat on): tlr.RecapQuery = {
+    val s nceT  : T   = s nceDurat on.ago
+    val unt lT  : T   = T  .now
 
-    val fromTweetIdExclusive = SnowflakeSortIndexHelper.timestampToFakeId(sinceTime)
-    val toTweetIdExclusive = SnowflakeSortIndexHelper.timestampToFakeId(untilTime)
-    val range = tlr.TweetIdRange(Some(fromTweetIdExclusive), Some(toTweetIdExclusive))
+    val fromT et dExclus ve = SnowflakeSort ndex lper.t  stampToFake d(s nceT  )
+    val toT et dExclus ve = SnowflakeSort ndex lper.t  stampToFake d(unt lT  )
+    val range = tlr.T et dRange(So (fromT et dExclus ve), So (toT et dExclus ve))
 
-    val excludedTweetIds = query.features.map { featureMap =>
-      CachedScoredTweetsHelper.tweetImpressionsAndCachedScoredTweetsInRange(
+    val excludedT et ds = query.features.map { featureMap =>
+      Cac dScoredT ets lper.t et mpress onsAndCac dScoredT ets nRange(
         featureMap,
-        candidatePipelineIdentifier,
-        EarlybirdMaxExcludedTweets,
-        sinceTime,
-        untilTime)
+        cand dateP pel ne dent f er,
+        Earlyb rdMaxExcludedT ets,
+        s nceT  ,
+        unt lT  )
     }
 
     val maxCount =
-      (query.getQualityFactorCurrentValue(candidatePipelineIdentifier) * maxTweetsToFetch).toInt
+      (query.getQual yFactorCurrentValue(cand dateP pel ne dent f er) * maxT etsToFetch).to nt
 
     val authorScoreMap = query.features
-      .map(_.getOrElse(RealGraphInNetworkScoresFeature, Map.empty[UserId, Double]))
+      .map(_.getOrElse(RealGraph nNetworkScoresFeature, Map.empty[User d, Double]))
       .getOrElse(Map.empty)
 
-    val deviceContext =
-      query.deviceContext.map(_.toTimelineServiceDeviceContext(query.clientContext))
+    val dev ceContext =
+      query.dev ceContext.map(_.toT  l neServ ceDev ceContext(query.cl entContext))
 
     val tensorflowModel = getTensorflowModel(query)
 
-    val earlyBirdOptions = EarlybirdOptions(
-      maxNumHitsPerShard = EarlybirdMaxHits,
-      maxNumResultsPerShard = EarlybirdMaxResults,
-      models = earlybirdModels,
+    val earlyB rdOpt ons = Earlyb rdOpt ons(
+      maxNumH sPerShard = Earlyb rdMaxH s,
+      maxNumResultsPerShard = Earlyb rdMaxResults,
+      models = earlyb rdModels,
       authorScoreMap = authorScoreMap,
-      skipVeryRecentTweets = true,
+      sk pVeryRecentT ets = true,
       tensorflowModel = tensorflowModel
     )
 
     tlr.RecapQuery(
-      userId = query.getRequiredUserId,
-      maxCount = Some(maxCount),
-      range = Some(range),
-      options = options,
+      user d = query.getRequ redUser d,
+      maxCount = So (maxCount),
+      range = So (range),
+      opt ons = opt ons,
       searchOperator = SearchOperator.Exclude,
-      earlybirdOptions = Some(earlyBirdOptions),
-      deviceContext = deviceContext,
-      authorIds = seedAuthorIds(query),
-      excludedTweetIds = excludedTweetIds,
-      utegLikedByTweetsOptions = utegLikedByTweetsOptions(query),
-      searchClientSubId = None,
-      candidateTweetSourceId = Some(candidateTweetSourceId),
-      hydratesContentFeatures = Some(false)
+      earlyb rdOpt ons = So (earlyB rdOpt ons),
+      dev ceContext = dev ceContext,
+      author ds = seedAuthor ds(query),
+      excludedT et ds = excludedT et ds,
+      utegL kedByT etsOpt ons = utegL kedByT etsOpt ons(query),
+      searchCl entSub d = None,
+      cand dateT etS ce d = So (cand dateT etS ce d),
+      hydratesContentFeatures = So (false)
     )
   }
 }

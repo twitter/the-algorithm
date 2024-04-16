@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.rtf.safety_level
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.rtf.safety_level
 
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.ConversationFocalTweetSafetyLevel
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.ConversationInjectedTweetSafetyLevel
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.ConversationReplySafetyLevel
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.SafetyLevel
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.TimelineFocalTweetSafetyLevel
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.TimelineHomePromotedHydrationSafetyLevel
-import com.twitter.spam.rtf.{thriftscala => thrift}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.rtf.safety_level.Conversat onFocalT etSafetyLevel
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.rtf.safety_level.Conversat on njectedT etSafetyLevel
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.rtf.safety_level.Conversat onReplySafetyLevel
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.rtf.safety_level.SafetyLevel
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.rtf.safety_level.T  l neFocalT etSafetyLevel
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.rtf.safety_level.T  l neHo PromotedHydrat onSafetyLevel
+ mport com.tw ter.spam.rtf.{thr ftscala => thr ft}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class SafetyLevelMarshaller @Inject() () {
+@S ngleton
+class SafetyLevelMarshaller @ nject() () {
 
-  def apply(safetyLevel: SafetyLevel): thrift.SafetyLevel = safetyLevel match {
-    case ConversationFocalTweetSafetyLevel => thrift.SafetyLevel.ConversationFocalTweet
-    case ConversationReplySafetyLevel => thrift.SafetyLevel.ConversationReply
-    case ConversationInjectedTweetSafetyLevel => thrift.SafetyLevel.ConversationInjectedTweet
-    case TimelineFocalTweetSafetyLevel => thrift.SafetyLevel.TimelineFocalTweet
-    case TimelineHomePromotedHydrationSafetyLevel =>
-      thrift.SafetyLevel.TimelineHomePromotedHydration
+  def apply(safetyLevel: SafetyLevel): thr ft.SafetyLevel = safetyLevel match {
+    case Conversat onFocalT etSafetyLevel => thr ft.SafetyLevel.Conversat onFocalT et
+    case Conversat onReplySafetyLevel => thr ft.SafetyLevel.Conversat onReply
+    case Conversat on njectedT etSafetyLevel => thr ft.SafetyLevel.Conversat on njectedT et
+    case T  l neFocalT etSafetyLevel => thr ft.SafetyLevel.T  l neFocalT et
+    case T  l neHo PromotedHydrat onSafetyLevel =>
+      thr ft.SafetyLevel.T  l neHo PromotedHydrat on
   }
 }

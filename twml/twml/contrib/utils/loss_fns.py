@@ -1,302 +1,302 @@
-import tensorflow.compat.v1 as tf
-from twml.contrib.utils import masks, math_fns
+ mport tensorflow.compat.v1 as tf
+from twml.contr b.ut ls  mport masks, math_fns
 
 
-def get_pair_loss(pairwise_label_scores, pairwise_predicted_scores,
+def get_pa r_loss(pa rw se_label_scores, pa rw se_pred cted_scores,
                   params):
   """
-  Paiwise learning-to-rank ranknet loss
-  Check paper https://www.microsoft.com/en-us/research/publication/
-  learning-to-rank-using-gradient-descent/
-  for more information
+  Pa w se learn ng-to-rank ranknet loss
+  C ck paper https://www.m crosoft.com/en-us/research/publ cat on/
+  learn ng-to-rank-us ng-grad ent-descent/
+  for more  nformat on
   Args:
-    pairwise_label_scores: a dense tensor of shape [n_data, n_data]
-    pairwise_predicted_scores: a dense tensor of shape [n_data, n_data]
-    n_data is the number of tweet candidates in a BatchPredictionRequest
-    params: network parameters
-  mask options: full_mask and diag_mask
+    pa rw se_label_scores: a dense tensor of shape [n_data, n_data]
+    pa rw se_pred cted_scores: a dense tensor of shape [n_data, n_data]
+    n_data  s t  number of t et cand dates  n a BatchPred ct onRequest
+    params: network para ters
+  mask opt ons: full_mask and d ag_mask
   Returns:
-    average loss over pairs defined by the masks
+    average loss over pa rs def ned by t  masks
   """
-  n_data = tf.shape(pairwise_label_scores)[0]
-  if params.mask == "full_mask":
-    # full_mask that only covers pairs that have different labels
-    # (all pairwise_label_scores = 0.5: selfs and same labels are 0s)
-    mask, pair_count = masks.full_mask(n_data, pairwise_label_scores)
+  n_data = tf.shape(pa rw se_label_scores)[0]
+   f params.mask == "full_mask":
+    # full_mask that only covers pa rs that have d fferent labels
+    # (all pa rw se_label_scores = 0.5: selfs and sa  labels are 0s)
+    mask, pa r_count = masks.full_mask(n_data, pa rw se_label_scores)
   else:
-    # diag_mask that covers all pairs
-    # (only selfs/diags are 0s)
-    mask, pair_count = masks.diag_mask(n_data, pairwise_label_scores)
+    # d ag_mask that covers all pa rs
+    # (only selfs/d ags are 0s)
+    mask, pa r_count = masks.d ag_mask(n_data, pa rw se_label_scores)
 
-  # pairwise sigmoid_cross_entropy_with_logits loss
-  loss = tf.cond(tf.equal(pair_count, 0), lambda: 0.,
-    lambda: _get_average_cross_entropy_loss(pairwise_label_scores,
-      pairwise_predicted_scores, mask, pair_count))
+  # pa rw se s gmo d_cross_entropy_w h_log s loss
+  loss = tf.cond(tf.equal(pa r_count, 0), lambda: 0.,
+    lambda: _get_average_cross_entropy_loss(pa rw se_label_scores,
+      pa rw se_pred cted_scores, mask, pa r_count))
   return loss
 
 
-def get_lambda_pair_loss(pairwise_label_scores, pairwise_predicted_scores,
+def get_lambda_pa r_loss(pa rw se_label_scores, pa rw se_pred cted_scores,
                   params, swapped_ndcg):
   """
-  Paiwise learning-to-rank lambdarank loss
-  faster than the previous gradient method
-  Note: this loss depends on ranknet cross-entropy
-  delta NDCG is applied to ranknet cross-entropy
-  Hence, it is still a gradient descent method
-  Check paper http://citeseerx.ist.psu.edu/viewdoc/
-  download?doi=10.1.1.180.634&rep=rep1&type=pdf for more information
-  for more information
+  Pa w se learn ng-to-rank lambdarank loss
+  faster than t  prev ous grad ent  thod
+  Note: t  loss depends on ranknet cross-entropy
+  delta NDCG  s appl ed to ranknet cross-entropy
+   nce,    s st ll a grad ent descent  thod
+  C ck paper http://c eseerx. st.psu.edu/v ewdoc/
+  download?do =10.1.1.180.634&rep=rep1&type=pdf for more  nformat on
+  for more  nformat on
   Args:
-    pairwise_label_scores: a dense tensor of shape [n_data, n_data]
-    pairwise_predicted_scores: a dense tensor of shape [n_data, n_data]
-    n_data is the number of tweet candidates in a BatchPredictionRequest
-    params: network parameters
+    pa rw se_label_scores: a dense tensor of shape [n_data, n_data]
+    pa rw se_pred cted_scores: a dense tensor of shape [n_data, n_data]
+    n_data  s t  number of t et cand dates  n a BatchPred ct onRequest
+    params: network para ters
     swapped_ndcg: swapped ndcg of shape [n_data, n_data]
-    ndcg values when swapping each pair in the prediction ranking order
-  mask options: full_mask and diag_mask
+    ndcg values w n swapp ng each pa r  n t  pred ct on rank ng order
+  mask opt ons: full_mask and d ag_mask
   Returns:
-    average loss over pairs defined by the masks
+    average loss over pa rs def ned by t  masks
   """
-  n_data = tf.shape(pairwise_label_scores)[0]
-  if params.mask == "full_mask":
-    # full_mask that only covers pairs that have different labels
-    # (all pairwise_label_scores = 0.5: selfs and same labels are 0s)
-    mask, pair_count = masks.full_mask(n_data, pairwise_label_scores)
+  n_data = tf.shape(pa rw se_label_scores)[0]
+   f params.mask == "full_mask":
+    # full_mask that only covers pa rs that have d fferent labels
+    # (all pa rw se_label_scores = 0.5: selfs and sa  labels are 0s)
+    mask, pa r_count = masks.full_mask(n_data, pa rw se_label_scores)
   else:
-    # diag_mask that covers all pairs
-    # (only selfs/diags are 0s)
-    mask, pair_count = masks.diag_mask(n_data, pairwise_label_scores)
+    # d ag_mask that covers all pa rs
+    # (only selfs/d ags are 0s)
+    mask, pa r_count = masks.d ag_mask(n_data, pa rw se_label_scores)
 
-  # pairwise sigmoid_cross_entropy_with_logits loss
-  loss = tf.cond(tf.equal(pair_count, 0), lambda: 0.,
-    lambda: _get_average_cross_entropy_loss(pairwise_label_scores,
-      pairwise_predicted_scores, mask, pair_count, swapped_ndcg))
+  # pa rw se s gmo d_cross_entropy_w h_log s loss
+  loss = tf.cond(tf.equal(pa r_count, 0), lambda: 0.,
+    lambda: _get_average_cross_entropy_loss(pa rw se_label_scores,
+      pa rw se_pred cted_scores, mask, pa r_count, swapped_ndcg))
   return loss
 
 
-def _get_average_cross_entropy_loss(pairwise_label_scores, pairwise_predicted_scores,
-                                    mask, pair_count, swapped_ndcg=None):
+def _get_average_cross_entropy_loss(pa rw se_label_scores, pa rw se_pred cted_scores,
+                                    mask, pa r_count, swapped_ndcg=None):
   """
-  Average the loss for a batchPredictionRequest based on a desired number of pairs
+  Average t  loss for a batchPred ct onRequest based on a des red number of pa rs
   """
-  loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=pairwise_label_scores,
-    logits=pairwise_predicted_scores)
+  loss = tf.nn.s gmo d_cross_entropy_w h_log s(labels=pa rw se_label_scores,
+    log s=pa rw se_pred cted_scores)
   loss = mask * loss
-  if swapped_ndcg is not None:
+   f swapped_ndcg  s not None:
     loss = loss * swapped_ndcg
-  loss = tf.reduce_sum(loss) / pair_count
+  loss = tf.reduce_sum(loss) / pa r_count
   return loss
 
 
-def get_listmle_loss(labels, predicted_scores):
+def get_l stmle_loss(labels, pred cted_scores):
   r"""
-  listwise learning-to-rank listMLE loss
-  Note: Simplified MLE formula is used in here (omit the proof in here)
-  \sum_{s=1}^{n-1} (-predicted_scores + ln(\sum_{i=s}^n exp(predicted_scores)))
-  n is tf.shape(predicted_scores)[0]
-  Check paper http://icml2008.cs.helsinki.fi/papers/167.pdf for more information
+  l stw se learn ng-to-rank l stMLE loss
+  Note: S mpl f ed MLE formula  s used  n  re (om  t  proof  n  re)
+  \sum_{s=1}^{n-1} (-pred cted_scores + ln(\sum_{ =s}^n exp(pred cted_scores)))
+  n  s tf.shape(pred cted_scores)[0]
+  C ck paper http:// cml2008.cs. ls nk .f /papers/167.pdf for more  nformat on
   Args:
     labels: a dense tensor of shape [n_data, 1]
-    n_data is the number of tweet candidates in a BatchPredictionRequest
-    predicted_scores: a dense tensor of same shape and type as labels
+    n_data  s t  number of t et cand dates  n a BatchPred ct onRequest
+    pred cted_scores: a dense tensor of sa  shape and type as labels
   Returns:
     average loss
   """
   labels = tf.reshape(labels, [-1, 1])
   n_data = tf.shape(labels)[0]
-  predicted_scores = tf.reshape(predicted_scores, [-1, 1])
+  pred cted_scores = tf.reshape(pred cted_scores, [-1, 1])
 
-  predicted_scores_ordered_by_labels = _get_ordered_predicted_scores(labels,
-    predicted_scores, n_data)
+  pred cted_scores_ordered_by_labels = _get_ordered_pred cted_scores(labels,
+    pred cted_scores, n_data)
 
-  loss = (-1) * tf.reduce_sum(predicted_scores)
+  loss = (-1) * tf.reduce_sum(pred cted_scores)
   # sum over 1 to n_data - 1
-  temp = tf.gather(predicted_scores_ordered_by_labels, [n_data - 1])
+  temp = tf.gat r(pred cted_scores_ordered_by_labels, [n_data - 1])
   temp = tf.reshape(temp, [])
   loss = tf.add(loss, temp)
 
-  exps = tf.exp(predicted_scores_ordered_by_labels)
+  exps = tf.exp(pred cted_scores_ordered_by_labels)
   exp_sum = tf.reduce_sum(exps)
-  # clip exp_sum for safer log
+  # cl p exp_sum for safer log
   loss = tf.add(loss, math_fns.safe_log(exp_sum))
 
-  iteration = tf.constant(0)
+   erat on = tf.constant(0)
 
-  def _cond(iteration, loss, exp_sum, exp):
-    return tf.less(iteration, n_data - 2)
+  def _cond( erat on, loss, exp_sum, exp):
+    return tf.less( erat on, n_data - 2)
 
   def _gen_loop_body():
-    def loop_body(iteration, loss, exp_sum, exps):
-      temp = tf.gather(exps, [iteration])
+    def loop_body( erat on, loss, exp_sum, exps):
+      temp = tf.gat r(exps, [ erat on])
       temp = tf.reshape(temp, [])
       exp_sum = tf.subtract(exp_sum, temp)
-      # clip exp_sum for safer log
+      # cl p exp_sum for safer log
       loss = tf.add(loss, math_fns.safe_log(exp_sum))
-      return tf.add(iteration, 1), loss, exp_sum, exps
+      return tf.add( erat on, 1), loss, exp_sum, exps
     return loop_body
 
-  iteration, loss, exp_sum, exps = tf.while_loop(_cond, _gen_loop_body(),
-    (iteration, loss, exp_sum, exps))
+   erat on, loss, exp_sum, exps = tf.wh le_loop(_cond, _gen_loop_body(),
+    ( erat on, loss, exp_sum, exps))
   loss = loss / tf.cast(n_data, dtype=tf.float32)
   return loss
 
 
-def _get_ordered_predicted_scores(labels, predicted_scores, n_data):
+def _get_ordered_pred cted_scores(labels, pred cted_scores, n_data):
   """
-  Order predicted_scores based on sorted labels
+  Order pred cted_scores based on sorted labels
   """
-  sorted_labels, ordered_labels_indices = tf.nn.top_k(
+  sorted_labels, ordered_labels_ nd ces = tf.nn.top_k(
     tf.transpose(labels), k=n_data)
-  ordered_labels_indices = tf.transpose(ordered_labels_indices)
-  predicted_scores_ordered_by_labels = tf.gather_nd(predicted_scores,
-    ordered_labels_indices)
-  return predicted_scores_ordered_by_labels
+  ordered_labels_ nd ces = tf.transpose(ordered_labels_ nd ces)
+  pred cted_scores_ordered_by_labels = tf.gat r_nd(pred cted_scores,
+    ordered_labels_ nd ces)
+  return pred cted_scores_ordered_by_labels
 
 
-def get_attrank_loss(labels, predicted_scores, weights=None):
+def get_attrank_loss(labels, pred cted_scores,   ghts=None):
   """
-  Modified listwise learning-to-rank AttRank loss
-  Check paper https://arxiv.org/abs/1804.05936 for more information
-  Note: there is an inconsistency between the paper statement and
-  their public code
+  Mod f ed l stw se learn ng-to-rank AttRank loss
+  C ck paper https://arx v.org/abs/1804.05936 for more  nformat on
+  Note: t re  s an  ncons stency bet en t  paper state nt and
+  t  r publ c code
   Args:
     labels: a dense tensor of shape [n_data, 1]
-    n_data is the number of tweet candidates in a BatchPredictionRequest
-    predicted_scores: a dense tensor of same shape and type as labels
-    weights: a dense tensor of the same shape as labels
+    n_data  s t  number of t et cand dates  n a BatchPred ct onRequest
+    pred cted_scores: a dense tensor of sa  shape and type as labels
+      ghts: a dense tensor of t  sa  shape as labels
   Returns:
     average loss
   """
-  # The authors immeplemented the following, which is basically listnet
-  # attention_labels = _get_attentions(labels)
-  # attention_labels = tf.reshape(attention_labels, [1, -1])
-  # predicted_scores = tf.reshape(predicted_scores, [1, -1])
-  # loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=attention_labels,
-  #   logits=predicted_scores))
+  # T  authors  m ple nted t  follow ng, wh ch  s bas cally l stnet
+  # attent on_labels = _get_attent ons(labels)
+  # attent on_labels = tf.reshape(attent on_labels, [1, -1])
+  # pred cted_scores = tf.reshape(pred cted_scores, [1, -1])
+  # loss = tf.reduce_ an(tf.nn.softmax_cross_entropy_w h_log s(labels=attent on_labels,
+  #   log s=pred cted_scores))
 
-  # The paper proposed the following
-  # attention_labels = _get_attentions(labels)
-  # # However the following line is wrong based on their statement
-  # # as _get_attentions can give 0 results when input < 0
-  # # and the result cannot be used in _get_attrank_cross_entropy
-  # # log(a_i^S)
-  # # attention_predicted_scores = _get_attentions(predicted_scores)
-  # loss = _get_attrank_cross_entropy(attention_labels, attention_predicted_scores)
-  # # the range of attention_predicted_scores is [0, 1)
-  # # this gives sigmoid [0.5, 0.732)
-  # # hence, it is not good to use in sigmoid_cross_entropy_with_logits either
+  # T  paper proposed t  follow ng
+  # attent on_labels = _get_attent ons(labels)
+  # # Ho ver t  follow ng l ne  s wrong based on t  r state nt
+  # # as _get_attent ons can g ve 0 results w n  nput < 0
+  # # and t  result cannot be used  n _get_attrank_cross_entropy
+  # # log(a_ ^S)
+  # # attent on_pred cted_scores = _get_attent ons(pred cted_scores)
+  # loss = _get_attrank_cross_entropy(attent on_labels, attent on_pred cted_scores)
+  # # t  range of attent on_pred cted_scores  s [0, 1)
+  # # t  g ves s gmo d [0.5, 0.732)
+  # #  nce,    s not good to use  n s gmo d_cross_entropy_w h_log s e  r
 
-  # Implemented the following instead
-  # _get_attentions is applied to labels
-  # softmax is applied to predicted_scores
+  #  mple nted t  follow ng  nstead
+  # _get_attent ons  s appl ed to labels
+  # softmax  s appl ed to pred cted_scores
   reshaped_labels = tf.reshape(labels, [1, -1])
-  attention_labels = _get_attentions(reshaped_labels)
-  reshaped_predicted_scores = tf.reshape(predicted_scores, [1, -1])
-  attention_predicted_scores = tf.nn.softmax(reshaped_predicted_scores)
-  loss = _get_attrank_cross_entropy(attention_labels, attention_predicted_scores)
+  attent on_labels = _get_attent ons(reshaped_labels)
+  reshaped_pred cted_scores = tf.reshape(pred cted_scores, [1, -1])
+  attent on_pred cted_scores = tf.nn.softmax(reshaped_pred cted_scores)
+  loss = _get_attrank_cross_entropy(attent on_labels, attent on_pred cted_scores)
   return loss
 
 
-def _get_attentions(raw_scores):
+def _get_attent ons(raw_scores):
   """
-  Used in attention weights in AttRank loss
-  for a query/batch/batchPreidictionRequest
-  (a rectified softmax function)
+  Used  n attent on   ghts  n AttRank loss
+  for a query/batch/batchPre d ct onRequest
+  (a rect f ed softmax funct on)
   """
-  not_consider = tf.less_equal(raw_scores, 0)
-  mask = tf.ones(tf.shape(raw_scores)) - tf.cast(not_consider, dtype=tf.float32)
+  not_cons der = tf.less_equal(raw_scores, 0)
+  mask = tf.ones(tf.shape(raw_scores)) - tf.cast(not_cons der, dtype=tf.float32)
   mask = tf.cast(mask, dtype=tf.float32)
   expon_labels = mask * tf.exp(raw_scores)
 
   expon_label_sum = tf.reduce_sum(expon_labels)
-  # expon_label_sum is safe as a denominator
-  attentions = math_fns.safe_div(expon_labels, expon_label_sum)
-  return attentions
+  # expon_label_sum  s safe as a denom nator
+  attent ons = math_fns.safe_d v(expon_labels, expon_label_sum)
+  return attent ons
 
 
-def _get_attrank_cross_entropy(labels, logits):
-  # logits is not safe based on their satement
-  # do not use this function directly elsewhere
-  results = labels * math_fns.safe_log(logits) + (1 - labels) * math_fns.safe_log(1 - logits)
+def _get_attrank_cross_entropy(labels, log s):
+  # log s  s not safe based on t  r sate nt
+  # do not use t  funct on d rectly elsew re
+  results = labels * math_fns.safe_log(log s) + (1 - labels) * math_fns.safe_log(1 - log s)
   results = (-1) * results
-  results = tf.reduce_mean(results)
+  results = tf.reduce_ an(results)
   return results
 
 
-def get_listnet_loss(labels, predicted_scores, weights=None):
+def get_l stnet_loss(labels, pred cted_scores,   ghts=None):
   """
-  Listwise learning-to-rank listet loss
-  Check paper https://www.microsoft.com/en-us/research/
+  L stw se learn ng-to-rank l stet loss
+  C ck paper https://www.m crosoft.com/en-us/research/
   wp-content/uploads/2016/02/tr-2007-40.pdf
-  for more information
+  for more  nformat on
   Args:
     labels: a dense tensor of shape [n_data, 1]
-    n_data is the number of tweet candidates in a BatchPredictionRequest
-    predicted_scores: a dense tensor of same shape and type as labels
-    weights: a dense tensor of the same shape as labels
+    n_data  s t  number of t et cand dates  n a BatchPred ct onRequest
+    pred cted_scores: a dense tensor of sa  shape and type as labels
+      ghts: a dense tensor of t  sa  shape as labels
   Returns:
     average loss
   """
-  # top one probability is the same as softmax
+  # top one probab l y  s t  sa  as softmax
   labels_top_one_probs = _get_top_one_probs(labels)
-  predicted_scores_top_one_probs = _get_top_one_probs(predicted_scores)
+  pred cted_scores_top_one_probs = _get_top_one_probs(pred cted_scores)
 
-  if weights is None:
-    loss = tf.reduce_mean(
-      _get_listnet_cross_entropy(labels=labels_top_one_probs,
-      logits=predicted_scores_top_one_probs))
+   f   ghts  s None:
+    loss = tf.reduce_ an(
+      _get_l stnet_cross_entropy(labels=labels_top_one_probs,
+      log s=pred cted_scores_top_one_probs))
     return loss
 
-  loss = tf.reduce_mean(
-    _get_listnet_cross_entropy(labels=labels_top_one_probs,
-    logits=predicted_scores_top_one_probs) * weights) / tf.reduce_mean(weights)
+  loss = tf.reduce_ an(
+    _get_l stnet_cross_entropy(labels=labels_top_one_probs,
+    log s=pred cted_scores_top_one_probs) *   ghts) / tf.reduce_ an(  ghts)
   return loss
 
 
 def _get_top_one_probs(labels):
   """
-  Used in listnet top-one probabilities
-  for a query/batch/batchPreidictionRequest
-  (essentially a softmax function)
+  Used  n l stnet top-one probab l  es
+  for a query/batch/batchPre d ct onRequest
+  (essent ally a softmax funct on)
   """
   expon_labels = tf.exp(labels)
   expon_label_sum = tf.reduce_sum(expon_labels)
-  # expon_label_sum is safe as a denominator
-  attentions = expon_labels / expon_label_sum
-  return attentions
+  # expon_label_sum  s safe as a denom nator
+  attent ons = expon_labels / expon_label_sum
+  return attent ons
 
 
-def _get_listnet_cross_entropy(labels, logits):
+def _get_l stnet_cross_entropy(labels, log s):
   """
-  Used in listnet
-  cross entropy on top-one probabilities
-  between ideal/label top-one probabilities
-  and predicted/logits top-one probabilities
-  for a query/batch/batchPreidictionRequest
+  Used  n l stnet
+  cross entropy on top-one probab l  es
+  bet en  deal/label top-one probab l  es
+  and pred cted/log s top-one probab l  es
+  for a query/batch/batchPre d ct onRequest
   """
-  # it is safe to use log on logits
-  # that come from _get_top_one_probs
-  # do not use this function directly elsewhere
-  results = (-1) * labels * math_fns.safe_log(logits)
+  #    s safe to use log on log s
+  # that co  from _get_top_one_probs
+  # do not use t  funct on d rectly elsew re
+  results = (-1) * labels * math_fns.safe_log(log s)
   return results
 
 
-def get_pointwise_loss(labels, predicted_scores, weights=None):
+def get_po ntw se_loss(labels, pred cted_scores,   ghts=None):
   """
-  Pointwise learning-to-rank pointwise loss
+  Po ntw se learn ng-to-rank po ntw se loss
   Args:
     labels: a dense tensor of shape [n_data, 1]
-    n_data is the number of tweet candidates in a BatchPredictionRequest
-    predicted_scores: a dense tensor of same shape and type as labels
-    weights: a dense tensor of the same shape as labels
+    n_data  s t  number of t et cand dates  n a BatchPred ct onRequest
+    pred cted_scores: a dense tensor of sa  shape and type as labels
+      ghts: a dense tensor of t  sa  shape as labels
   Returns:
     average loss
   """
-  if weights is None:
-    loss = tf.reduce_mean(
-      tf.nn.sigmoid_cross_entropy_with_logits(labels=labels,
-      logits=predicted_scores))
+   f   ghts  s None:
+    loss = tf.reduce_ an(
+      tf.nn.s gmo d_cross_entropy_w h_log s(labels=labels,
+      log s=pred cted_scores))
     return loss
-  loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=labels,
-        logits=predicted_scores) * weights) / tf.reduce_mean(weights)
+  loss = tf.reduce_ an(tf.nn.s gmo d_cross_entropy_w h_log s(labels=labels,
+        log s=pred cted_scores) *   ghts) / tf.reduce_ an(  ghts)
   return loss

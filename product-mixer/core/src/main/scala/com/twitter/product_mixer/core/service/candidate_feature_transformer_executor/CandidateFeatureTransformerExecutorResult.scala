@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.service.candidate_feature_transformer_executor
+package com.tw ter.product_m xer.core.serv ce.cand date_feature_transfor r_executor
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Transfor r dent f er
 
-case class CandidateFeatureTransformerExecutorResult(
+case class Cand dateFeatureTransfor rExecutorResult(
   featureMaps: Seq[FeatureMap],
-  individualFeatureMaps: Seq[Map[TransformerIdentifier, FeatureMap]])
+   nd v dualFeatureMaps: Seq[Map[Transfor r dent f er, FeatureMap]])

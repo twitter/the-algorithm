@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.article
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt. em.art cle
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleSeedType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.FollowingListSeed
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.FriendsOfFriendsSeed
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ListIdSeed
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.art cle.Art cleSeedType
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.art cle.Follow ngL stSeed
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.art cle.Fr endsOfFr endsSeed
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. em.art cle.L st dSeed
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ArticleSeedTypeMarshaller @Inject() () {
+@S ngleton
+class Art cleSeedTypeMarshaller @ nject() () {
 
-  def apply(articleSeedType: ArticleSeedType): urt.ArticleSeedType =
-    articleSeedType match {
-      case FollowingListSeed => urt.ArticleSeedType.FollowingList
-      case FriendsOfFriendsSeed => urt.ArticleSeedType.FriendsOfFriends
-      case ListIdSeed => urt.ArticleSeedType.ListId
+  def apply(art cleSeedType: Art cleSeedType): urt.Art cleSeedType =
+    art cleSeedType match {
+      case Follow ngL stSeed => urt.Art cleSeedType.Follow ngL st
+      case Fr endsOfFr endsSeed => urt.Art cleSeedType.Fr endsOfFr ends
+      case L st dSeed => urt.Art cleSeedType.L st d
     }
 }

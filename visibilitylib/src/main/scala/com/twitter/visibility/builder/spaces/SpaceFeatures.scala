@@ -1,131 +1,131 @@
-package com.twitter.visibility.builder.spaces
+package com.tw ter.v s b l y.bu lder.spaces
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.Label
-import com.twitter.gizmoduck.thriftscala.MuteSurface
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.builder.common.MutedKeywordFeatures
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.common.AudioSpaceSource
-import com.twitter.visibility.common.SpaceId
-import com.twitter.visibility.common.SpaceSafetyLabelMapSource
-import com.twitter.visibility.common.UserId
-import com.twitter.visibility.features._
-import com.twitter.visibility.models.{MutedKeyword => VfMutedKeyword}
-import com.twitter.visibility.models.SafetyLabel
-import com.twitter.visibility.models.SpaceSafetyLabel
-import com.twitter.visibility.models.SpaceSafetyLabelType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.g zmoduck.thr ftscala.Label
+ mport com.tw ter.g zmoduck.thr ftscala.MuteSurface
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.bu lder.common.MutedKeywordFeatures
+ mport com.tw ter.v s b l y.bu lder.users.AuthorFeatures
+ mport com.tw ter.v s b l y.bu lder.users.Relat onsh pFeatures
+ mport com.tw ter.v s b l y.common.Aud oSpaceS ce
+ mport com.tw ter.v s b l y.common.Space d
+ mport com.tw ter.v s b l y.common.SpaceSafetyLabelMapS ce
+ mport com.tw ter.v s b l y.common.User d
+ mport com.tw ter.v s b l y.features._
+ mport com.tw ter.v s b l y.models.{MutedKeyword => VfMutedKeyword}
+ mport com.tw ter.v s b l y.models.SafetyLabel
+ mport com.tw ter.v s b l y.models.SpaceSafetyLabel
+ mport com.tw ter.v s b l y.models.SpaceSafetyLabelType
 
 class SpaceFeatures(
   spaceSafetyLabelMap: StratoSpaceLabelMaps,
   authorFeatures: AuthorFeatures,
-  relationshipFeatures: RelationshipFeatures,
+  relat onsh pFeatures: Relat onsh pFeatures,
   mutedKeywordFeatures: MutedKeywordFeatures,
-  audioSpaceSource: AudioSpaceSource) {
+  aud oSpaceS ce: Aud oSpaceS ce) {
 
-  def forSpaceAndAuthorIds(
-    spaceId: SpaceId,
-    viewerId: Option[UserId],
-    authorIds: Option[Seq[UserId]]
-  ): FeatureMapBuilder => FeatureMapBuilder = {
+  def forSpaceAndAuthor ds(
+    space d: Space d,
+    v e r d: Opt on[User d],
+    author ds: Opt on[Seq[User d]]
+  ): FeatureMapBu lder => FeatureMapBu lder = {
 
-    _.withFeature(SpaceSafetyLabels, spaceSafetyLabelMap.forSpaceId(spaceId))
-      .withFeature(AuthorId, getSpaceAuthors(spaceId, authorIds).map(_.toSet))
-      .withFeature(AuthorUserLabels, allSpaceAuthorLabels(spaceId, authorIds))
-      .withFeature(ViewerFollowsAuthor, viewerFollowsAnySpaceAuthor(spaceId, authorIds, viewerId))
-      .withFeature(ViewerMutesAuthor, viewerMutesAnySpaceAuthor(spaceId, authorIds, viewerId))
-      .withFeature(ViewerBlocksAuthor, viewerBlocksAnySpaceAuthor(spaceId, authorIds, viewerId))
-      .withFeature(AuthorBlocksViewer, anySpaceAuthorBlocksViewer(spaceId, authorIds, viewerId))
-      .withFeature(
-        ViewerMutesKeywordInSpaceTitleForNotifications,
-        titleContainsMutedKeyword(
-          audioSpaceSource.getSpaceTitle(spaceId),
-          audioSpaceSource.getSpaceLanguage(spaceId),
-          viewerId)
+    _.w hFeature(SpaceSafetyLabels, spaceSafetyLabelMap.forSpace d(space d))
+      .w hFeature(Author d, getSpaceAuthors(space d, author ds).map(_.toSet))
+      .w hFeature(AuthorUserLabels, allSpaceAuthorLabels(space d, author ds))
+      .w hFeature(V e rFollowsAuthor, v e rFollowsAnySpaceAuthor(space d, author ds, v e r d))
+      .w hFeature(V e rMutesAuthor, v e rMutesAnySpaceAuthor(space d, author ds, v e r d))
+      .w hFeature(V e rBlocksAuthor, v e rBlocksAnySpaceAuthor(space d, author ds, v e r d))
+      .w hFeature(AuthorBlocksV e r, anySpaceAuthorBlocksV e r(space d, author ds, v e r d))
+      .w hFeature(
+        V e rMutesKeyword nSpaceT leForNot f cat ons,
+        t leConta nsMutedKeyword(
+          aud oSpaceS ce.getSpaceT le(space d),
+          aud oSpaceS ce.getSpaceLanguage(space d),
+          v e r d)
       )
   }
 
-  def titleContainsMutedKeyword(
-    titleOptStitch: Stitch[Option[String]],
-    languageOptStitch: Stitch[Option[String]],
-    viewerId: Option[UserId],
-  ): Stitch[VfMutedKeyword] = {
-    titleOptStitch.flatMap {
-      case None => Stitch.value(VfMutedKeyword(None))
-      case Some(spaceTitle) =>
-        languageOptStitch.flatMap { languageOpt =>
-          mutedKeywordFeatures.spaceTitleContainsMutedKeyword(
-            spaceTitle,
+  def t leConta nsMutedKeyword(
+    t leOptSt ch: St ch[Opt on[Str ng]],
+    languageOptSt ch: St ch[Opt on[Str ng]],
+    v e r d: Opt on[User d],
+  ): St ch[VfMutedKeyword] = {
+    t leOptSt ch.flatMap {
+      case None => St ch.value(VfMutedKeyword(None))
+      case So (spaceT le) =>
+        languageOptSt ch.flatMap { languageOpt =>
+          mutedKeywordFeatures.spaceT leConta nsMutedKeyword(
+            spaceT le,
             languageOpt,
-            mutedKeywordFeatures.allMutedKeywords(viewerId),
-            MuteSurface.Notifications)
+            mutedKeywordFeatures.allMutedKeywords(v e r d),
+            MuteSurface.Not f cat ons)
         }
     }
   }
 
   def getSpaceAuthors(
-    spaceId: SpaceId,
-    authorIdsFromRequest: Option[Seq[UserId]]
-  ): Stitch[Seq[UserId]] = {
-    authorIdsFromRequest match {
-      case Some(authorIds) => Stitch.apply(authorIds)
-      case _ => audioSpaceSource.getAdminIds(spaceId)
+    space d: Space d,
+    author dsFromRequest: Opt on[Seq[User d]]
+  ): St ch[Seq[User d]] = {
+    author dsFromRequest match {
+      case So (author ds) => St ch.apply(author ds)
+      case _ => aud oSpaceS ce.getAdm n ds(space d)
     }
   }
 
   def allSpaceAuthorLabels(
-    spaceId: SpaceId,
-    authorIdsFromRequest: Option[Seq[UserId]]
-  ): Stitch[Seq[Label]] = {
-    getSpaceAuthors(spaceId, authorIdsFromRequest)
-      .flatMap(authorIds =>
-        Stitch.collect(authorIds.map(authorId => authorFeatures.authorUserLabels(authorId)))).map(
+    space d: Space d,
+    author dsFromRequest: Opt on[Seq[User d]]
+  ): St ch[Seq[Label]] = {
+    getSpaceAuthors(space d, author dsFromRequest)
+      .flatMap(author ds =>
+        St ch.collect(author ds.map(author d => authorFeatures.authorUserLabels(author d)))).map(
         _.flatten)
   }
 
-  def viewerMutesAnySpaceAuthor(
-    spaceId: SpaceId,
-    authorIdsFromRequest: Option[Seq[UserId]],
-    viewerId: Option[UserId]
-  ): Stitch[Boolean] = {
-    getSpaceAuthors(spaceId, authorIdsFromRequest)
-      .flatMap(authorIds =>
-        Stitch.collect(authorIds.map(authorId =>
-          relationshipFeatures.viewerMutesAuthor(authorId, viewerId)))).map(_.contains(true))
+  def v e rMutesAnySpaceAuthor(
+    space d: Space d,
+    author dsFromRequest: Opt on[Seq[User d]],
+    v e r d: Opt on[User d]
+  ): St ch[Boolean] = {
+    getSpaceAuthors(space d, author dsFromRequest)
+      .flatMap(author ds =>
+        St ch.collect(author ds.map(author d =>
+          relat onsh pFeatures.v e rMutesAuthor(author d, v e r d)))).map(_.conta ns(true))
   }
 
-  def anySpaceAuthorBlocksViewer(
-    spaceId: SpaceId,
-    authorIdsFromRequest: Option[Seq[UserId]],
-    viewerId: Option[UserId]
-  ): Stitch[Boolean] = {
-    getSpaceAuthors(spaceId, authorIdsFromRequest)
-      .flatMap(authorIds =>
-        Stitch.collect(authorIds.map(authorId =>
-          relationshipFeatures.authorBlocksViewer(authorId, viewerId)))).map(_.contains(true))
+  def anySpaceAuthorBlocksV e r(
+    space d: Space d,
+    author dsFromRequest: Opt on[Seq[User d]],
+    v e r d: Opt on[User d]
+  ): St ch[Boolean] = {
+    getSpaceAuthors(space d, author dsFromRequest)
+      .flatMap(author ds =>
+        St ch.collect(author ds.map(author d =>
+          relat onsh pFeatures.authorBlocksV e r(author d, v e r d)))).map(_.conta ns(true))
   }
 }
 
 class StratoSpaceLabelMaps(
-  spaceSafetyLabelSource: SpaceSafetyLabelMapSource,
-  statsReceiver: StatsReceiver) {
+  spaceSafetyLabelS ce: SpaceSafetyLabelMapS ce,
+  statsRece ver: StatsRece ver) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("space_features")
-  private[this] val spaceSafetyLabelsStats =
-    scopedStatsReceiver.scope(SpaceSafetyLabels.name).counter("requests")
+  pr vate[t ] val scopedStatsRece ver = statsRece ver.scope("space_features")
+  pr vate[t ] val spaceSafetyLabelsStats =
+    scopedStatsRece ver.scope(SpaceSafetyLabels.na ).counter("requests")
 
-  def forSpaceId(
-    spaceId: SpaceId,
-  ): Stitch[Seq[SpaceSafetyLabel]] = {
-    spaceSafetyLabelSource
-      .fetch(spaceId).map(_.flatMap(_.labels.map { stratoSafetyLabelMap =>
+  def forSpace d(
+    space d: Space d,
+  ): St ch[Seq[SpaceSafetyLabel]] = {
+    spaceSafetyLabelS ce
+      .fetch(space d).map(_.flatMap(_.labels.map { stratoSafetyLabelMap =>
         stratoSafetyLabelMap
           .map(label =>
             SpaceSafetyLabel(
-              SpaceSafetyLabelType.fromThrift(label._1),
-              SafetyLabel.fromThrift(label._2)))
-      }).toSeq.flatten).ensure(spaceSafetyLabelsStats.incr)
+              SpaceSafetyLabelType.fromThr ft(label._1),
+              SafetyLabel.fromThr ft(label._2)))
+      }).toSeq.flatten).ensure(spaceSafetyLabelsStats. ncr)
   }
 }

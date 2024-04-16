@@ -1,143 +1,143 @@
-package com.twitter.simclusters_v2.scalding.offline_job
+package com.tw ter.s mclusters_v2.scald ng.offl ne_job
 
-import com.twitter.scalding._
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
-import com.twitter.simclusters_v2.hdfs_sources.ClusterTopKTweetsHourlySuffixSource
-import com.twitter.simclusters_v2.hdfs_sources.TweetClusterScoresHourlySuffixSource
-import com.twitter.simclusters_v2.hdfs_sources.TweetTopKClustersHourlySuffixSource
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJob._
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import java.util.TimeZone
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.job.Tw terExecut onApp
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.AdhocKeyValS ces
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.ClusterTopKT etsH lySuff xS ce
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.T etClusterScoresH lySuff xS ce
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.T etTopKClustersH lySuff xS ce
+ mport com.tw ter.s mclusters_v2.scald ng.common.Ut l
+ mport com.tw ter.s mclusters_v2.scald ng.offl ne_job.S mClustersOffl neJob._
+ mport com.tw ter.s mclusters_v2.thr ftscala.ClustersUser s nterested n
+ mport java.ut l.T  Zone
 
 /**
-scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/offline_job:simclusters_offline_job-adhoc \
+scald ng remote run --target src/scala/com/tw ter/s mclusters_v2/scald ng/offl ne_job:s mclusters_offl ne_job-adhoc \
 --user cassowary \
---submitter hadoopnest2.atla.twitter.com \
---main-class com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJobAdhocApp -- \
---date 2019-08-10 --batch_hours 24 \
---output_dir /user/cassowary/your_ldap/offline_simcluster_20190810
---model_version 20M_145K_updated
+--subm ter hadoopnest2.atla.tw ter.com \
+--ma n-class com.tw ter.s mclusters_v2.scald ng.offl ne_job.S mClustersOffl neJobAdhocApp -- \
+--date 2019-08-10 --batch_h s 24 \
+--output_d r /user/cassowary/y _ldap/offl ne_s mcluster_20190810
+--model_vers on 20M_145K_updated
  */
-object SimClustersOfflineJobAdhocApp extends TwitterExecutionApp {
+object S mClustersOffl neJobAdhocApp extends Tw terExecut onApp {
 
-  import SimClustersOfflineJobUtil._
-  import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
+   mport S mClustersOffl neJobUt l._
+   mport com.tw ter.s mclusters_v2.scald ng.common.TypedR chP pe._
 
-  override def job: Execution[Unit] =
-    Execution.withId { implicit uniqueId =>
-      Execution.withArgs { args: Args =>
-        // required
-        val wholeDateRange: DateRange = DateRange.parse(args.list("date"))
-        val batchSize: Duration = Hours(args.int("batch_hours"))
+  overr de def job: Execut on[Un ] =
+    Execut on.w h d {  mpl c  un que d =>
+      Execut on.w hArgs { args: Args =>
+        // requ red
+        val wholeDateRange: DateRange = DateRange.parse(args.l st("date"))
+        val batchS ze: Durat on = H s(args. nt("batch_h s"))
 
-        val outputDir = args("output_dir")
+        val outputD r = args("output_d r")
 
-        val modelVersion = args.getOrElse("model_version", ModelVersions.Model20M145KUpdated)
+        val modelVers on = args.getOrElse("model_vers on", ModelVers ons.Model20M145KUpdated)
 
-        val scoringMethod = args.getOrElse("score", "logFav")
+        val scor ng thod = args.getOrElse("score", "logFav")
 
-        val tweetClusterScoreOutputPath: String = outputDir + "/tweet_cluster_scores"
+        val t etClusterScoreOutputPath: Str ng = outputD r + "/t et_cluster_scores"
 
-        val tweetTopKClustersOutputPath: String = outputDir + "/tweet_top_k_clusters"
+        val t etTopKClustersOutputPath: Str ng = outputD r + "/t et_top_k_clusters"
 
-        val clusterTopKTweetsOutputPath: String = outputDir + "/cluster_top_k_tweets"
+        val clusterTopKT etsOutputPath: Str ng = outputD r + "/cluster_top_k_t ets"
 
-        val fullInterestedInData: TypedPipe[(Long, ClustersUserIsInterestedIn)] =
-          args.optional("interested_in_path") match {
-            case Some(dir) =>
-              println("Loading InterestedIn from supplied path " + dir)
-              TypedPipe.from(AdhocKeyValSources.interestedInSource(dir))
+        val full nterested nData: TypedP pe[(Long, ClustersUser s nterested n)] =
+          args.opt onal(" nterested_ n_path") match {
+            case So (d r) =>
+              pr ntln("Load ng  nterested n from suppl ed path " + d r)
+              TypedP pe.from(AdhocKeyValS ces. nterested nS ce(d r))
             case None =>
-              println("Loading production InterestedIn data")
-              readInterestedInScalaDataset(wholeDateRange)
+              pr ntln("Load ng product on  nterested n data")
+              read nterested nScalaDataset(wholeDateRange)
           }
 
-        val interestedInData: TypedPipe[(Long, ClustersUserIsInterestedIn)] =
-          fullInterestedInData.filter(_._2.knownForModelVersion == modelVersion)
+        val  nterested nData: TypedP pe[(Long, ClustersUser s nterested n)] =
+          full nterested nData.f lter(_._2.knownForModelVers on == modelVers on)
 
-        val debugExec = Execution.zip(
-          fullInterestedInData.printSummary("fullInterestedIn", numRecords = 20),
-          interestedInData.printSummary("interestedIn", numRecords = 20)
+        val debugExec = Execut on.z p(
+          full nterested nData.pr ntSummary("full nterested n", numRecords = 20),
+           nterested nData.pr ntSummary(" nterested n", numRecords = 20)
         )
 
-        // recursive function to calculate batches one by one
-        def runBatch(batchDateRange: DateRange): Execution[Unit] = {
-          if (batchDateRange.start.timestamp > wholeDateRange.end.timestamp) {
-            Execution.unit // stops here
+        // recurs ve funct on to calculate batc s one by one
+        def runBatch(batchDateRange: DateRange): Execut on[Un ] = {
+           f (batchDateRange.start.t  stamp > wholeDateRange.end.t  stamp) {
+            Execut on.un  // stops  re
           } else {
 
-            val previousScores = if (batchDateRange.start == wholeDateRange.start) {
-              TypedPipe.from(Nil)
+            val prev ousScores =  f (batchDateRange.start == wholeDateRange.start) {
+              TypedP pe.from(N l)
             } else {
-              TypedPipe.from(
-                TweetClusterScoresHourlySuffixSource(
-                  tweetClusterScoreOutputPath,
-                  batchDateRange - batchSize
+              TypedP pe.from(
+                T etClusterScoresH lySuff xS ce(
+                  t etClusterScoreOutputPath,
+                  batchDateRange - batchS ze
                 )
               )
             }
 
-            val latestScores = computeAggregatedTweetClusterScores(
+            val latestScores = computeAggregatedT etClusterScores(
               batchDateRange,
-              interestedInData,
-              readTimelineFavoriteData(batchDateRange),
-              previousScores
+               nterested nData,
+              readT  l neFavor eData(batchDateRange),
+              prev ousScores
             )
 
-            val writeLatestScoresExecution = {
-              Execution.zip(
-                latestScores.printSummary(name = "TweetEntityScores"),
+            val wr eLatestScoresExecut on = {
+              Execut on.z p(
+                latestScores.pr ntSummary(na  = "T etEnt yScores"),
                 latestScores
-                  .writeExecution(
-                    TweetClusterScoresHourlySuffixSource(
-                      tweetClusterScoreOutputPath,
+                  .wr eExecut on(
+                    T etClusterScoresH lySuff xS ce(
+                      t etClusterScoreOutputPath,
                       batchDateRange
                     )
                   )
               )
             }
 
-            val computeTweetTopKExecution = {
-              val tweetTopK = computeTweetTopKClusters(latestScores)
-              Execution.zip(
-                tweetTopK.printSummary(name = "TweetTopK"),
-                tweetTopK.writeExecution(
-                  TweetTopKClustersHourlySuffixSource(tweetTopKClustersOutputPath, batchDateRange)
+            val computeT etTopKExecut on = {
+              val t etTopK = computeT etTopKClusters(latestScores)
+              Execut on.z p(
+                t etTopK.pr ntSummary(na  = "T etTopK"),
+                t etTopK.wr eExecut on(
+                  T etTopKClustersH lySuff xS ce(t etTopKClustersOutputPath, batchDateRange)
                 )
               )
             }
 
-            val computeClusterTopKExecution = {
-              val clusterTopK = computeClusterTopKTweets(latestScores)
-              Execution.zip(
-                clusterTopK.printSummary(name = "ClusterTopK"),
-                clusterTopK.writeExecution(
-                  ClusterTopKTweetsHourlySuffixSource(clusterTopKTweetsOutputPath, batchDateRange)
+            val computeClusterTopKExecut on = {
+              val clusterTopK = computeClusterTopKT ets(latestScores)
+              Execut on.z p(
+                clusterTopK.pr ntSummary(na  = "ClusterTopK"),
+                clusterTopK.wr eExecut on(
+                  ClusterTopKT etsH lySuff xS ce(clusterTopKT etsOutputPath, batchDateRange)
                 )
               )
             }
 
-            Execution
-              .zip(
-                writeLatestScoresExecution,
-                computeTweetTopKExecution,
-                computeClusterTopKExecution
+            Execut on
+              .z p(
+                wr eLatestScoresExecut on,
+                computeT etTopKExecut on,
+                computeClusterTopKExecut on
               ).flatMap { _ =>
                 // run next batch
-                runBatch(batchDateRange + batchSize)
+                runBatch(batchDateRange + batchS ze)
               }
           }
         }
 
-        // start from the first batch
-        Util.printCounters(
-          Execution.zip(
+        // start from t  f rst batch
+        Ut l.pr ntCounters(
+          Execut on.z p(
             debugExec,
             runBatch(
-              DateRange(wholeDateRange.start, wholeDateRange.start + batchSize - Millisecs(1)))
+              DateRange(wholeDateRange.start, wholeDateRange.start + batchS ze - M ll secs(1)))
           )
         )
       }
@@ -146,51 +146,51 @@ object SimClustersOfflineJobAdhocApp extends TwitterExecutionApp {
 
 /**
 For example:
-scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/offline_job:dump_cluster_topk_job-adhoc \
+scald ng remote run --target src/scala/com/tw ter/s mclusters_v2/scald ng/offl ne_job:dump_cluster_topk_job-adhoc \
 --user cassowary
---main-class com.twitter.simclusters_v2.scalding.offline_job.DumpClusterTopKTweetsAdhoc \
---submitter hadoopnest2.atla.twitter.com -- \
+--ma n-class com.tw ter.s mclusters_v2.scald ng.offl ne_job.DumpClusterTopKT etsAdhoc \
+--subm ter hadoopnest2.atla.tw ter.com -- \
 --date 2019-08-03 \
---clusterTopKTweetsPath /atla/proc3/user/cassowary/processed/simclusters/cluster_top_k_tweets/ \
+--clusterTopKT etsPath /atla/proc3/user/cassowary/processed/s mclusters/cluster_top_k_t ets/ \
 --clusters 4446
 
  */
-object DumpClusterTopKTweetsAdhoc extends TwitterExecutionApp {
+object DumpClusterTopKT etsAdhoc extends Tw terExecut onApp {
 
-  implicit val timeZone: TimeZone = DateOps.UTC
-  implicit val dateParser: DateParser = DateParser.default
+   mpl c  val t  Zone: T  Zone = DateOps.UTC
+   mpl c  val dateParser: DateParser = DateParser.default
 
-  import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-  import com.twitter.simclusters_v2.summingbird.common.ThriftDecayedValueMonoid._
+   mport com.tw ter.s mclusters_v2.scald ng.common.TypedR chP pe._
+   mport com.tw ter.s mclusters_v2.summ ngb rd.common.Thr ftDecayedValueMono d._
 
-  override def job: Execution[Unit] =
-    Execution.withId { implicit uniqueId =>
-      Execution.withArgs { args: Args =>
-        val date = DateRange.parse(args.list("date"))
-        val path = args("clusterTopKTweetsPath")
-        val input = TypedPipe.from(ClusterTopKTweetsHourlySuffixSource(path, date))
-        val clusters = args.list("clusters").map(_.toInt).toSet
+  overr de def job: Execut on[Un ] =
+    Execut on.w h d {  mpl c  un que d =>
+      Execut on.w hArgs { args: Args =>
+        val date = DateRange.parse(args.l st("date"))
+        val path = args("clusterTopKT etsPath")
+        val  nput = TypedP pe.from(ClusterTopKT etsH lySuff xS ce(path, date))
+        val clusters = args.l st("clusters").map(_.to nt).toSet
 
-        val dvm = SimClustersOfflineJobUtil.thriftDecayedValueMonoid
-        if (clusters.isEmpty) {
-          input.printSummary("Cluster top k tweets")
+        val dvm = S mClustersOffl neJobUt l.thr ftDecayedValueMono d
+         f (clusters. sEmpty) {
+           nput.pr ntSummary("Cluster top k t ets")
         } else {
-          input
+           nput
             .collect {
-              case rec if clusters.contains(rec.clusterId) =>
-                val res = rec.topKTweets
+              case rec  f clusters.conta ns(rec.cluster d) =>
+                val res = rec.topKT ets
                   .mapValues { x =>
                     x.score
                       .map { y =>
-                        val enriched = new EnrichedThriftDecayedValue(y)(dvm)
-                        enriched.decayToTimestamp(date.end.timestamp).value
+                        val enr c d = new Enr c dThr ftDecayedValue(y)(dvm)
+                        enr c d.decayToT  stamp(date.end.t  stamp).value
                       }.getOrElse(0.0)
-                  }.toList.sortBy(-_._2)
-                rec.clusterId + "\t" + Util.prettyJsonMapper
-                  .writeValueAsString(res).replaceAll("\n", " ")
+                  }.toL st.sortBy(-_._2)
+                rec.cluster d + "\t" + Ut l.prettyJsonMapper
+                  .wr eValueAsStr ng(res).replaceAll("\n", " ")
             }
-            .toIterableExecution
-            .map { strings => println(strings.mkString("\n")) }
+            .to erableExecut on
+            .map { str ngs => pr ntln(str ngs.mkStr ng("\n")) }
         }
       }
     }

@@ -1,125 +1,125 @@
-package com.twitter.search.common.util.ml;
+package com.tw ter.search.common.ut l.ml;
 
-import java.util.Map;
+ mport java.ut l.Map;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.base.Function;
-import com.twitter.search.common.file.AbstractFile;
-import com.twitter.search.common.util.io.TextFileLoadingUtils;
+ mport com.tw ter.common.base.Funct on;
+ mport com.tw ter.search.common.f le.AbstractF le;
+ mport com.tw ter.search.common.ut l. o.TextF leLoad ngUt ls;
 
-import it.unimi.dsi.fastutil.objects.Object2FloatMap;
-import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
+ mport  .un m .ds .fastut l.objects.Object2FloatMap;
+ mport  .un m .ds .fastut l.objects.Object2FloatOpenHashMap;
 
 /**
- * Represents a linear model for scoring and classification.
+ * Represents a l near model for scor ng and class f cat on.
  *
- * Features are represented as arbitrary strings, making this a fairly flexible implementation
- * (at the cost of some performance, since all operations require hash lookups). Instances
- * and weights are both encoded sparsely (as maps) so this implementation is well suited to
- * models with large feature sets where most features are inactive at a given time. Weights
- * for unknown features are assumed to be 0.
+ * Features are represented as arb rary str ngs, mak ng t  a fa rly flex ble  mple ntat on
+ * (at t  cost of so  performance, s nce all operat ons requ re hash lookups).  nstances
+ * and   ghts are both encoded sparsely (as maps) so t   mple ntat on  s  ll su ed to
+ * models w h large feature sets w re most features are  nact ve at a g ven t  .   ghts
+ * for unknown features are assu d to be 0.
  *
  */
-public class StringMapBasedLinearModel implements MapBasedLinearModel<String> {
-  private static final Logger LOG = LoggerFactory.getLogger(StringMapBasedLinearModel.class);
+publ c class Str ngMapBasedL nearModel  mple nts MapBasedL nearModel<Str ng> {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Str ngMapBasedL nearModel.class);
 
-  protected final Object2FloatMap<String> model = new Object2FloatOpenHashMap<>();
+  protected f nal Object2FloatMap<Str ng> model = new Object2FloatOpenHashMap<>();
 
   /**
-   * Creates a model from a map of weights.
+   * Creates a model from a map of   ghts.
    *
-   * @param weights Feature weights.
+   * @param   ghts Feature   ghts.
    */
-  public StringMapBasedLinearModel(Map<String, Float> weights) {
-    model.putAll(weights);
+  publ c Str ngMapBasedL nearModel(Map<Str ng, Float>   ghts) {
+    model.putAll(  ghts);
     model.defaultReturnValue(0.0f);
   }
 
   /**
-   * Get the weight of a feature
-   * @param featureName
+   * Get t    ght of a feature
+   * @param featureNa 
    * @return
    */
-  public float getWeight(String featureName) {
-    return model.getFloat(featureName);
+  publ c float get  ght(Str ng featureNa ) {
+    return model.getFloat(featureNa );
   }
 
   /**
-   * Get the full weight map
+   * Get t  full   ght map
    */
-  @VisibleForTesting
-  protected Map<String, Float> getWeights() {
+  @V s bleForTest ng
+  protected Map<Str ng, Float> get  ghts() {
     return model;
   }
 
   /**
-   * Evaluate using this model given a feature vector.
-   * @param values The feature vector in format of a hashmap.
+   * Evaluate us ng t  model g ven a feature vector.
+   * @param values T  feature vector  n format of a hashmap.
    * @return
    */
-  @Override
-  public float score(Map<String, Float> values) {
+  @Overr de
+  publ c float score(Map<Str ng, Float> values) {
     float score = 0.0f;
-    for (Map.Entry<String, Float> value : values.entrySet()) {
-      String featureName = value.getKey();
-      float weight = getWeight(featureName);
-      if (weight != 0.0f) {
-        score += weight * value.getValue();
-        if (LOG.isDebugEnabled()) {
-          LOG.debug(String.format("%s = %.3f * %.3f = %.3f, ",
-              featureName, weight, value.getValue(),
-              weight * value.getValue()));
+    for (Map.Entry<Str ng, Float> value : values.entrySet()) {
+      Str ng featureNa  = value.getKey();
+      float   ght = get  ght(featureNa );
+       f (  ght != 0.0f) {
+        score +=   ght * value.getValue();
+         f (LOG. sDebugEnabled()) {
+          LOG.debug(Str ng.format("%s = %.3f * %.3f = %.3f, ",
+              featureNa ,   ght, value.getValue(),
+                ght * value.getValue()));
         }
       }
     }
-    if (LOG.isDebugEnabled()) {
-      LOG.debug(String.format("Score = %.3f", score));
+     f (LOG. sDebugEnabled()) {
+      LOG.debug(Str ng.format("Score = %.3f", score));
     }
     return score;
   }
 
   /**
-   * Determines whether an instance is positive.
+   * Determ nes w t r an  nstance  s pos  ve.
    */
-  @Override
-  public boolean classify(Map<String, Float> values) {
-    return classify(0.0f, values);
+  @Overr de
+  publ c boolean class fy(Map<Str ng, Float> values) {
+    return class fy(0.0f, values);
   }
 
-  @Override
-  public boolean classify(float threshold, Map<String, Float> values) {
+  @Overr de
+  publ c boolean class fy(float threshold, Map<Str ng, Float> values) {
     return score(values) > threshold;
   }
 
-  public int size() {
-    return model.size();
+  publ c  nt s ze() {
+    return model.s ze();
   }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("StringMapBasedLinearModel[");
-    for (Map.Entry<String, Float> entry : model.entrySet()) {
-      sb.append(String.format("(%s = %.3f), ", entry.getKey(), entry.getValue()));
+  @Overr de
+  publ c Str ng toStr ng() {
+    Str ngBu lder sb = new Str ngBu lder();
+    sb.append("Str ngMapBasedL nearModel[");
+    for (Map.Entry<Str ng, Float> entry : model.entrySet()) {
+      sb.append(Str ng.format("(%s = %.3f), ", entry.getKey(), entry.getValue()));
     }
     sb.append("]");
-    return sb.toString();
+    return sb.toStr ng();
   }
 
   /**
-   * Loads the model from a TSV file with the following format:
+   * Loads t  model from a TSV f le w h t  follow ng format:
    *
-   *    feature_name  \t  weight
+   *    feature_na   \t    ght
    */
-  public static StringMapBasedLinearModel loadFromFile(AbstractFile fileHandle) {
-    Map<String, Float> weights =
-        TextFileLoadingUtils.loadMapFromFile(
-            fileHandle,
-            (Function<String, Float>) item -> Float.parseFloat(item));
-    return new StringMapBasedLinearModel(weights);
+  publ c stat c Str ngMapBasedL nearModel loadFromF le(AbstractF le f leHandle) {
+    Map<Str ng, Float>   ghts =
+        TextF leLoad ngUt ls.loadMapFromF le(
+            f leHandle,
+            (Funct on<Str ng, Float>)  em -> Float.parseFloat( em));
+    return new Str ngMapBasedL nearModel(  ghts);
   }
 }

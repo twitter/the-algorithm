@@ -2,87 +2,87 @@ syntax = "proto3";
 
 package tensorflow.data;
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
 // Next tag: 2
-message ProcessingModeDef {
-  // Specifies how data is sharded among tf.data service workers.
-  enum ShardingPolicy {
-    // No sharding will be performed. Each worker produces the entire dataset
-    // without any sharding. With this mode, the best practice is to shuffle the
-    // dataset nondeterministically so that workers process the dataset in
-    // different orders.
+ ssage Process ngModeDef {
+  // Spec f es how data  s sharded among tf.data serv ce workers.
+  enum Shard ngPol cy {
+    // No shard ng w ll be perfor d. Each worker produces t  ent re dataset
+    // w hout any shard ng. W h t  mode, t  best pract ce  s to shuffle t 
+    // dataset nondeterm n st cally so that workers process t  dataset  n
+    // d fferent orders.
     OFF = 0;
 
-    // The input dataset is dynamically split among workers at runtime. Each
-    // worker gets the next split when it reads data from the dispatcher. There
-    // is no fixed sharding with this mode.
-    DYNAMIC = 1;
+    // T   nput dataset  s dynam cally spl  among workers at runt  . Each
+    // worker gets t  next spl  w n   reads data from t  d spatc r. T re
+    //  s no f xed shard ng w h t  mode.
+    DYNAM C = 1;
 
-    // The following are static sharding policies. The semantics are similar to
-    // `tf.data.experimental.AutoShardPolicy`. These policies require:
-    // * The tf.data service cluster has a fixed size, and you need to specify
-    //   the workers in DispatcherConfig.
-    // * Each client only reads from the local tf.data service worker.
+    // T  follow ng are stat c shard ng pol c es. T  semant cs are s m lar to
+    // `tf.data.exper  ntal.AutoShardPol cy`. T se pol c es requ re:
+    // * T  tf.data serv ce cluster has a f xed s ze, and   need to spec fy
+    //   t  workers  n D spatc rConf g.
+    // * Each cl ent only reads from t  local tf.data serv ce worker.
     //
-    // Shards by input files (each worker will get a set of files to process).
-    // When this option is selected, make sure that there is at least as many
-    // files as workers. If there are fewer input files than workers, a runtime
-    // error will be raised.
-    FILE = 2;
+    // Shards by  nput f les (each worker w ll get a set of f les to process).
+    // W n t  opt on  s selected, make sure that t re  s at least as many
+    // f les as workers.  f t re are fe r  nput f les than workers, a runt  
+    // error w ll be ra sed.
+    F LE = 2;
 
-    // Shards by elements produced by the dataset. Each worker will process the
-    // whole dataset and discard the portion that is not for itself. Note that
-    // for this mode to correctly partitions the dataset elements, the dataset
-    // needs to produce elements in a deterministic order.
+    // Shards by ele nts produced by t  dataset. Each worker w ll process t 
+    // whole dataset and d scard t  port on that  s not for  self. Note that
+    // for t  mode to correctly part  ons t  dataset ele nts, t  dataset
+    // needs to produce ele nts  n a determ n st c order.
     DATA = 3;
 
-    // Attempts FILE-based sharding, falling back to DATA-based sharding on
-    // failures.
-    FILE_OR_DATA = 4;
+    // Attempts F LE-based shard ng, fall ng back to DATA-based shard ng on
+    // fa lures.
+    F LE_OR_DATA = 4;
 
-    // Looks for the presence of `shard(SHARD_HINT, ...)` which is treated as a
-    // placeholder to replace with `shard(num_workers, worker_index)`.
-    HINT = 5;
+    // Looks for t  presence of `shard(SHARD_H NT, ...)` wh ch  s treated as a
+    // placeholder to replace w h `shard(num_workers, worker_ ndex)`.
+    H NT = 5;
   }
-  ShardingPolicy sharding_policy = 1;
+  Shard ngPol cy shard ng_pol cy = 1;
 }
 
-// tf.data service deployment mode.
-enum DeploymentMode {
-  DEPLOYMENT_MODE_UNSPECIFIED = 0;
-  // tf.data service workers colocate with TF workers.
+// tf.data serv ce deploy nt mode.
+enum Deploy ntMode {
+  DEPLOYMENT_MODE_UNSPEC F ED = 0;
+  // tf.data serv ce workers colocate w h TF workers.
   DEPLOYMENT_MODE_COLOCATED = 1;
-  // tf.data service workers run in dedicated tf.data hosts.
+  // tf.data serv ce workers run  n ded cated tf.data hosts.
   DEPLOYMENT_MODE_REMOTE = 2;
-  // tf.data service workers run in colocated TF hosts and dedicated tf.data
+  // tf.data serv ce workers run  n colocated TF hosts and ded cated tf.data
   // hosts.
-  DEPLOYMENT_MODE_HYBRID = 3;
+  DEPLOYMENT_MODE_HYBR D = 3;
 }
 
-// Metadata related to tf.data service datasets.
+//  tadata related to tf.data serv ce datasets.
 // Next tag: 4
-message DataServiceMetadata {
-  oneof optional_element_spec {
-    // Serialized element spec.
-    bytes element_spec = 1;
+ ssage DataServ ce tadata {
+  oneof opt onal_ele nt_spec {
+    // Ser al zed ele nt spec.
+    bytes ele nt_spec = 1;
   }
 
-  enum Compression {
-    COMPRESSION_UNSPECIFIED = 0;
-    // No compression.
-    COMPRESSION_OFF = 1;
-    // Snappy compression as defined in tensorflow/core/platform/snappy.h.
-    COMPRESSION_SNAPPY = 2;
+  enum Compress on {
+    COMPRESS ON_UNSPEC F ED = 0;
+    // No compress on.
+    COMPRESS ON_OFF = 1;
+    // Snappy compress on as def ned  n tensorflow/core/platform/snappy.h.
+    COMPRESS ON_SNAPPY = 2;
   }
-  Compression compression = 2;
+  Compress on compress on = 2;
 
-  // Cardinality of the dataset.
-  int64 cardinality = 3;
+  // Card nal y of t  dataset.
+   nt64 card nal y = 3;
 }
 
-// Data service config available to the client through GetDataServiceConfig RPC.
+// Data serv ce conf g ava lable to t  cl ent through GetDataServ ceConf g RPC.
 // Next tag: 2
-message DataServiceConfig {
-  DeploymentMode deployment_mode = 1;
+ ssage DataServ ceConf g {
+  Deploy ntMode deploy nt_mode = 1;
 }

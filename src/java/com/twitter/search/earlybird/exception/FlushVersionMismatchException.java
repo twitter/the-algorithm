@@ -1,17 +1,17 @@
-package com.twitter.search.earlybird.exception;
+package com.tw ter.search.earlyb rd.except on;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-public class FlushVersionMismatchException extends IOException {
-  public FlushVersionMismatchException(Throwable cause) {
+publ c class FlushVers onM smatchExcept on extends  OExcept on {
+  publ c FlushVers onM smatchExcept on(Throwable cause) {
     super(cause);
   }
 
-  public FlushVersionMismatchException(String message) {
-    super(message);
+  publ c FlushVers onM smatchExcept on(Str ng  ssage) {
+    super( ssage);
   }
 
-  public FlushVersionMismatchException(String message, Throwable cause) {
-    super(message, cause);
+  publ c FlushVers onM smatchExcept on(Str ng  ssage, Throwable cause) {
+    super( ssage, cause);
   }
 }

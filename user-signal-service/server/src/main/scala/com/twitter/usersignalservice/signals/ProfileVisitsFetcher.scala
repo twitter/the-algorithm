@@ -1,143 +1,143 @@
-package com.twitter.usersignalservice.signals
+package com.tw ter.users gnalserv ce.s gnals
 
-import com.twitter.bijection.Codec
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.dds.jobs.repeated_profile_visits.thriftscala.ProfileVisitSet
-import com.twitter.dds.jobs.repeated_profile_visits.thriftscala.ProfileVisitorInfo
-import com.twitter.experiments.general_metrics.thriftscala.IdType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus_internal.manhattan.Apollo
-import com.twitter.storehaus_internal.manhattan.ManhattanCluster
-import com.twitter.twistly.common.UserId
-import com.twitter.usersignalservice.base.ManhattanSignalFetcher
-import com.twitter.usersignalservice.base.Query
-import com.twitter.usersignalservice.thriftscala.Signal
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.util.Future
-import com.twitter.util.Timer
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.b ject on.Codec
+ mport com.tw ter.b ject on.scrooge.B naryScalaCodec
+ mport com.tw ter.dds.jobs.repeated_prof le_v s s.thr ftscala.Prof leV s Set
+ mport com.tw ter.dds.jobs.repeated_prof le_v s s.thr ftscala.Prof leV s or nfo
+ mport com.tw ter.exper  nts.general_ tr cs.thr ftscala. dType
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl entMtlsParams
+ mport com.tw ter.storehaus_ nternal.manhattan.Apollo
+ mport com.tw ter.storehaus_ nternal.manhattan.ManhattanCluster
+ mport com.tw ter.tw stly.common.User d
+ mport com.tw ter.users gnalserv ce.base.ManhattanS gnalFetc r
+ mport com.tw ter.users gnalserv ce.base.Query
+ mport com.tw ter.users gnalserv ce.thr ftscala.S gnal
+ mport com.tw ter.users gnalserv ce.thr ftscala.S gnalType
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.T  r
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-case class ProfileVisitMetadata(
-  targetId: Option[Long],
-  totalTargetVisitsInLast14Days: Option[Int],
-  totalTargetVisitsInLast90Days: Option[Int],
-  totalTargetVisitsInLast180Days: Option[Int],
-  latestTargetVisitTimestampInLast90Days: Option[Long])
+case class Prof leV s  tadata(
+  target d: Opt on[Long],
+  totalTargetV s s nLast14Days: Opt on[ nt],
+  totalTargetV s s nLast90Days: Opt on[ nt],
+  totalTargetV s s nLast180Days: Opt on[ nt],
+  latestTargetV s T  stamp nLast90Days: Opt on[Long])
 
-@Singleton
-case class ProfileVisitsFetcher @Inject() (
-  manhattanKVClientMtlsParams: ManhattanKVClientMtlsParams,
-  timer: Timer,
-  stats: StatsReceiver)
-    extends ManhattanSignalFetcher[ProfileVisitorInfo, ProfileVisitSet] {
-  import ProfileVisitsFetcher._
+@S ngleton
+case class Prof leV s sFetc r @ nject() (
+  manhattanKVCl entMtlsParams: ManhattanKVCl entMtlsParams,
+  t  r: T  r,
+  stats: StatsRece ver)
+    extends ManhattanS gnalFetc r[Prof leV s or nfo, Prof leV s Set] {
+   mport Prof leV s sFetc r._
 
-  override type RawSignalType = ProfileVisitMetadata
+  overr de type RawS gnalType = Prof leV s  tadata
 
-  override val manhattanAppId: String = MHAppId
-  override val manhattanDatasetName: String = MHDatasetName
-  override val manhattanClusterId: ManhattanCluster = Apollo
-  override val manhattanKeyCodec: Codec[ProfileVisitorInfo] = BinaryScalaCodec(ProfileVisitorInfo)
-  override val manhattanRawSignalCodec: Codec[ProfileVisitSet] = BinaryScalaCodec(ProfileVisitSet)
+  overr de val manhattanApp d: Str ng = MHApp d
+  overr de val manhattanDatasetNa : Str ng = MHDatasetNa 
+  overr de val manhattanCluster d: ManhattanCluster = Apollo
+  overr de val manhattanKeyCodec: Codec[Prof leV s or nfo] = B naryScalaCodec(Prof leV s or nfo)
+  overr de val manhattanRawS gnalCodec: Codec[Prof leV s Set] = B naryScalaCodec(Prof leV s Set)
 
-  override protected def toManhattanKey(userId: UserId): ProfileVisitorInfo =
-    ProfileVisitorInfo(userId, IdType.User)
+  overr de protected def toManhattanKey(user d: User d): Prof leV s or nfo =
+    Prof leV s or nfo(user d,  dType.User)
 
-  override protected def toRawSignals(manhattanValue: ProfileVisitSet): Seq[ProfileVisitMetadata] =
-    manhattanValue.profileVisitSet
+  overr de protected def toRawS gnals(manhattanValue: Prof leV s Set): Seq[Prof leV s  tadata] =
+    manhattanValue.prof leV s Set
       .map {
         _.collect {
-          // only keep the Non-NSFW and not-following profile visits
-          case profileVisit
-              if profileVisit.targetId.nonEmpty
-              // The below check covers 180 days, not only 90 days as the name implies.
-              // See comment on [[ProfileVisit.latestTargetVisitTimestampInLast90Days]] thrift.
-                && profileVisit.latestTargetVisitTimestampInLast90Days.nonEmpty
-                && !profileVisit.isTargetNSFW.getOrElse(false)
-                && !profileVisit.doesSourceIdFollowTargetId.getOrElse(false) =>
-            ProfileVisitMetadata(
-              targetId = profileVisit.targetId,
-              totalTargetVisitsInLast14Days = profileVisit.totalTargetVisitsInLast14Days,
-              totalTargetVisitsInLast90Days = profileVisit.totalTargetVisitsInLast90Days,
-              totalTargetVisitsInLast180Days = profileVisit.totalTargetVisitsInLast180Days,
-              latestTargetVisitTimestampInLast90Days =
-                profileVisit.latestTargetVisitTimestampInLast90Days
+          // only keep t  Non-NSFW and not-follow ng prof le v s s
+          case prof leV s 
+               f prof leV s .target d.nonEmpty
+              // T  below c ck covers 180 days, not only 90 days as t  na   mpl es.
+              // See com nt on [[Prof leV s .latestTargetV s T  stamp nLast90Days]] thr ft.
+                && prof leV s .latestTargetV s T  stamp nLast90Days.nonEmpty
+                && !prof leV s . sTargetNSFW.getOrElse(false)
+                && !prof leV s .doesS ce dFollowTarget d.getOrElse(false) =>
+            Prof leV s  tadata(
+              target d = prof leV s .target d,
+              totalTargetV s s nLast14Days = prof leV s .totalTargetV s s nLast14Days,
+              totalTargetV s s nLast90Days = prof leV s .totalTargetV s s nLast90Days,
+              totalTargetV s s nLast180Days = prof leV s .totalTargetV s s nLast180Days,
+              latestTargetV s T  stamp nLast90Days =
+                prof leV s .latestTargetV s T  stamp nLast90Days
             )
         }.toSeq
       }.getOrElse(Seq.empty)
 
-  override val name: String = this.getClass.getCanonicalName
+  overr de val na : Str ng = t .getClass.getCanon calNa 
 
-  override val statsReceiver: StatsReceiver = stats.scope(name)
+  overr de val statsRece ver: StatsRece ver = stats.scope(na )
 
-  override def process(
+  overr de def process(
     query: Query,
-    rawSignals: Future[Option[Seq[ProfileVisitMetadata]]]
-  ): Future[Option[Seq[Signal]]] = rawSignals.map { profiles =>
-    profiles
+    rawS gnals: Future[Opt on[Seq[Prof leV s  tadata]]]
+  ): Future[Opt on[Seq[S gnal]]] = rawS gnals.map { prof les =>
+    prof les
       .map {
-        _.filter(profileVisitMetadata => visitCountFilter(profileVisitMetadata, query.signalType))
-          .sortBy(profileVisitMetadata =>
-            -visitCountMap(query.signalType)(profileVisitMetadata).getOrElse(0))
-          .map(profileVisitMetadata =>
-            signalFromProfileVisit(profileVisitMetadata, query.signalType))
-          .take(query.maxResults.getOrElse(Int.MaxValue))
+        _.f lter(prof leV s  tadata => v s CountF lter(prof leV s  tadata, query.s gnalType))
+          .sortBy(prof leV s  tadata =>
+            -v s CountMap(query.s gnalType)(prof leV s  tadata).getOrElse(0))
+          .map(prof leV s  tadata =>
+            s gnalFromProf leV s (prof leV s  tadata, query.s gnalType))
+          .take(query.maxResults.getOrElse( nt.MaxValue))
       }
   }
 }
 
-object ProfileVisitsFetcher {
-  private val MHAppId = "repeated_profile_visits_aggregated"
-  private val MHDatasetName = "repeated_profile_visits_aggregated"
+object Prof leV s sFetc r {
+  pr vate val MHApp d = "repeated_prof le_v s s_aggregated"
+  pr vate val MHDatasetNa  = "repeated_prof le_v s s_aggregated"
 
-  private val minVisitCountMap: Map[SignalType, Int] = Map(
-    SignalType.RepeatedProfileVisit14dMinVisit2V1 -> 2,
-    SignalType.RepeatedProfileVisit14dMinVisit2V1NoNegative -> 2,
-    SignalType.RepeatedProfileVisit90dMinVisit6V1 -> 6,
-    SignalType.RepeatedProfileVisit90dMinVisit6V1NoNegative -> 6,
-    SignalType.RepeatedProfileVisit180dMinVisit6V1 -> 6,
-    SignalType.RepeatedProfileVisit180dMinVisit6V1NoNegative -> 6
+  pr vate val m nV s CountMap: Map[S gnalType,  nt] = Map(
+    S gnalType.RepeatedProf leV s 14dM nV s 2V1 -> 2,
+    S gnalType.RepeatedProf leV s 14dM nV s 2V1NoNegat ve -> 2,
+    S gnalType.RepeatedProf leV s 90dM nV s 6V1 -> 6,
+    S gnalType.RepeatedProf leV s 90dM nV s 6V1NoNegat ve -> 6,
+    S gnalType.RepeatedProf leV s 180dM nV s 6V1 -> 6,
+    S gnalType.RepeatedProf leV s 180dM nV s 6V1NoNegat ve -> 6
   )
 
-  private val visitCountMap: Map[SignalType, ProfileVisitMetadata => Option[Int]] = Map(
-    SignalType.RepeatedProfileVisit14dMinVisit2V1 ->
-      ((profileVisitMetadata: ProfileVisitMetadata) =>
-        profileVisitMetadata.totalTargetVisitsInLast14Days),
-    SignalType.RepeatedProfileVisit14dMinVisit2V1NoNegative ->
-      ((profileVisitMetadata: ProfileVisitMetadata) =>
-        profileVisitMetadata.totalTargetVisitsInLast14Days),
-    SignalType.RepeatedProfileVisit90dMinVisit6V1 ->
-      ((profileVisitMetadata: ProfileVisitMetadata) =>
-        profileVisitMetadata.totalTargetVisitsInLast90Days),
-    SignalType.RepeatedProfileVisit90dMinVisit6V1NoNegative ->
-      ((profileVisitMetadata: ProfileVisitMetadata) =>
-        profileVisitMetadata.totalTargetVisitsInLast90Days),
-    SignalType.RepeatedProfileVisit180dMinVisit6V1 ->
-      ((profileVisitMetadata: ProfileVisitMetadata) =>
-        profileVisitMetadata.totalTargetVisitsInLast180Days),
-    SignalType.RepeatedProfileVisit180dMinVisit6V1NoNegative ->
-      ((profileVisitMetadata: ProfileVisitMetadata) =>
-        profileVisitMetadata.totalTargetVisitsInLast180Days)
+  pr vate val v s CountMap: Map[S gnalType, Prof leV s  tadata => Opt on[ nt]] = Map(
+    S gnalType.RepeatedProf leV s 14dM nV s 2V1 ->
+      ((prof leV s  tadata: Prof leV s  tadata) =>
+        prof leV s  tadata.totalTargetV s s nLast14Days),
+    S gnalType.RepeatedProf leV s 14dM nV s 2V1NoNegat ve ->
+      ((prof leV s  tadata: Prof leV s  tadata) =>
+        prof leV s  tadata.totalTargetV s s nLast14Days),
+    S gnalType.RepeatedProf leV s 90dM nV s 6V1 ->
+      ((prof leV s  tadata: Prof leV s  tadata) =>
+        prof leV s  tadata.totalTargetV s s nLast90Days),
+    S gnalType.RepeatedProf leV s 90dM nV s 6V1NoNegat ve ->
+      ((prof leV s  tadata: Prof leV s  tadata) =>
+        prof leV s  tadata.totalTargetV s s nLast90Days),
+    S gnalType.RepeatedProf leV s 180dM nV s 6V1 ->
+      ((prof leV s  tadata: Prof leV s  tadata) =>
+        prof leV s  tadata.totalTargetV s s nLast180Days),
+    S gnalType.RepeatedProf leV s 180dM nV s 6V1NoNegat ve ->
+      ((prof leV s  tadata: Prof leV s  tadata) =>
+        prof leV s  tadata.totalTargetV s s nLast180Days)
   )
 
-  def signalFromProfileVisit(
-    profileVisitMetadata: ProfileVisitMetadata,
-    signalType: SignalType
-  ): Signal = {
-    Signal(
-      signalType,
-      profileVisitMetadata.latestTargetVisitTimestampInLast90Days.get,
-      profileVisitMetadata.targetId.map(targetId => InternalId.UserId(targetId))
+  def s gnalFromProf leV s (
+    prof leV s  tadata: Prof leV s  tadata,
+    s gnalType: S gnalType
+  ): S gnal = {
+    S gnal(
+      s gnalType,
+      prof leV s  tadata.latestTargetV s T  stamp nLast90Days.get,
+      prof leV s  tadata.target d.map(target d =>  nternal d.User d(target d))
     )
   }
 
-  def visitCountFilter(
-    profileVisitMetadata: ProfileVisitMetadata,
-    signalType: SignalType
+  def v s CountF lter(
+    prof leV s  tadata: Prof leV s  tadata,
+    s gnalType: S gnalType
   ): Boolean = {
-    visitCountMap(signalType)(profileVisitMetadata).exists(_ >= minVisitCountMap(signalType))
+    v s CountMap(s gnalType)(prof leV s  tadata).ex sts(_ >= m nV s CountMap(s gnalType))
   }
 }

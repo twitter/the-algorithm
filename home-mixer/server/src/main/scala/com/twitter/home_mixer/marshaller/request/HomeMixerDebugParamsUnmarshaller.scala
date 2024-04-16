@@ -1,25 +1,25 @@
-package com.twitter.home_mixer.marshaller.request
+package com.tw ter.ho _m xer.marshaller.request
 
-import com.twitter.home_mixer.model.request.HomeMixerDebugOptions
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.functional_component.marshaller.request.FeatureValueUnmarshaller
-import com.twitter.product_mixer.core.model.marshalling.request.DebugParams
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.model.request.Ho M xerDebugOpt ons
+ mport com.tw ter.ho _m xer.{thr ftscala => t}
+ mport com.tw ter.product_m xer.core.funct onal_component.marshaller.request.FeatureValueUnmarshaller
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.DebugParams
+ mport com.tw ter.ut l.T  
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class HomeMixerDebugParamsUnmarshaller @Inject() (
+@S ngleton
+class Ho M xerDebugParamsUnmarshaller @ nject() (
   featureValueUnmarshaller: FeatureValueUnmarshaller) {
 
   def apply(debugParams: t.DebugParams): DebugParams = {
     DebugParams(
-      featureOverrides = debugParams.featureOverrides.map { map =>
+      featureOverr des = debugParams.featureOverr des.map { map =>
         map.mapValues(featureValueUnmarshaller(_)).toMap
       },
-      debugOptions = debugParams.debugOptions.map { options =>
-        HomeMixerDebugOptions(
-          requestTimeOverride = options.requestTimeOverrideMillis.map(Time.fromMilliseconds)
+      debugOpt ons = debugParams.debugOpt ons.map { opt ons =>
+        Ho M xerDebugOpt ons(
+          requestT  Overr de = opt ons.requestT  Overr deM ll s.map(T  .fromM ll seconds)
         )
       }
     )

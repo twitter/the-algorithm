@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+package com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata
 
-sealed trait ConfirmationDisplayType
+sealed tra  Conf rmat onD splayType
 
-case object Inline extends ConfirmationDisplayType
-case object BottomSheet extends ConfirmationDisplayType
+case object  nl ne extends Conf rmat onD splayType
+case object BottomS et extends Conf rmat onD splayType

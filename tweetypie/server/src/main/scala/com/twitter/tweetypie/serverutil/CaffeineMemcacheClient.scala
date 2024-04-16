@@ -1,51 +1,51 @@
-package com.twitter.tweetypie.serverutil
+package com.tw ter.t etyp e.serverut l
 
-import com.github.benmanes.caffeine.cache.stats.CacheStats
-import com.github.benmanes.caffeine.cache.stats.StatsCounter
-import com.github.benmanes.caffeine.cache.AsyncCacheLoader
-import com.github.benmanes.caffeine.cache.AsyncLoadingCache
-import com.github.benmanes.caffeine.cache.Caffeine
-import com.twitter.finagle.memcached.protocol.Value
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.memcached.GetResult
-import com.twitter.finagle.memcached.ProxyClient
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.{Promise => TwitterPromise}
-import com.twitter.util.logging.Logger
-import java.util.concurrent.TimeUnit.NANOSECONDS
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.Executor
-import java.util.concurrent.TimeUnit
-import java.util.function.BiConsumer
-import java.util.function.Supplier
-import java.lang
-import java.util
-import scala.collection.JavaConverters._
+ mport com.g hub.benmanes.caffe ne.cac .stats.Cac Stats
+ mport com.g hub.benmanes.caffe ne.cac .stats.StatsCounter
+ mport com.g hub.benmanes.caffe ne.cac .AsyncCac Loader
+ mport com.g hub.benmanes.caffe ne.cac .AsyncLoad ngCac 
+ mport com.g hub.benmanes.caffe ne.cac .Caffe ne
+ mport com.tw ter.f nagle. mcac d.protocol.Value
+ mport com.tw ter.f nagle. mcac d.Cl ent
+ mport com.tw ter.f nagle. mcac d.GetResult
+ mport com.tw ter.f nagle. mcac d.ProxyCl ent
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.ut l.Return
+ mport com.tw ter.ut l.Throw
+ mport com.tw ter.ut l.{Prom se => Tw terProm se}
+ mport com.tw ter.ut l.logg ng.Logger
+ mport java.ut l.concurrent.T  Un .NANOSECONDS
+ mport java.ut l.concurrent.CompletableFuture
+ mport java.ut l.concurrent.Executor
+ mport java.ut l.concurrent.T  Un 
+ mport java.ut l.funct on.B Consu r
+ mport java.ut l.funct on.Suppl er
+ mport java.lang
+ mport java.ut l
+ mport scala.collect on.JavaConverters._
 
-object CaffeineMemcacheClient {
+object Caffe ne mcac Cl ent {
   val logger: Logger = Logger(getClass)
 
   /**
-   * Helper method to convert between Java 8's CompletableFuture and Twitter's Future.
+   *  lper  thod to convert bet en Java 8's CompletableFuture and Tw ter's Future.
    */
-  private def toTwitterFuture[T](cf: CompletableFuture[T]): Future[T] = {
-    if (cf.isDone && !cf.isCompletedExceptionally && !cf.isCancelled) {
+  pr vate def toTw terFuture[T](cf: CompletableFuture[T]): Future[T] = {
+     f (cf. sDone && !cf. sCompletedExcept onally && !cf. sCancelled) {
       Future.const(Return(cf.get()))
     } else {
-      val p = new TwitterPromise[T] with TwitterPromise.InterruptHandler {
-        override protected def onInterrupt(t: Throwable): Unit = cf.cancel(true)
+      val p = new Tw terProm se[T] w h Tw terProm se. nterruptHandler {
+        overr de protected def on nterrupt(t: Throwable): Un  = cf.cancel(true)
       }
-      cf.whenComplete(new BiConsumer[T, Throwable] {
-        override def accept(result: T, exception: Throwable): Unit = {
-          if (exception != null) {
-            p.updateIfEmpty(Throw(exception))
+      cf.w nComplete(new B Consu r[T, Throwable] {
+        overr de def accept(result: T, except on: Throwable): Un  = {
+           f (except on != null) {
+            p.update fEmpty(Throw(except on))
           } else {
-            p.updateIfEmpty(Return(result))
+            p.update fEmpty(Return(result))
           }
         }
       })
@@ -54,118 +54,118 @@ object CaffeineMemcacheClient {
   }
 }
 
-class CaffeineMemcacheClient(
-  override val proxyClient: Client,
-  val maximumSize: Int = 1000,
-  val ttl: Duration = Duration.fromSeconds(10),
-  stats: StatsReceiver = NullStatsReceiver)
-    extends ProxyClient {
-  import CaffeineMemcacheClient._
+class Caffe ne mcac Cl ent(
+  overr de val proxyCl ent: Cl ent,
+  val max mumS ze:  nt = 1000,
+  val ttl: Durat on = Durat on.fromSeconds(10),
+  stats: StatsRece ver = NullStatsRece ver)
+    extends ProxyCl ent {
+   mport Caffe ne mcac Cl ent._
 
-  private[this] object Stats extends StatsCounter {
-    private val hits = stats.counter("hits")
-    private val miss = stats.counter("misses")
-    private val totalLoadTime = stats.stat("loads")
-    private val loadSuccess = stats.counter("loads-success")
-    private val loadFailure = stats.counter("loads-failure")
-    private val eviction = stats.counter("evictions")
-    private val evictionWeight = stats.counter("evictions-weight")
+  pr vate[t ] object Stats extends StatsCounter {
+    pr vate val h s = stats.counter("h s")
+    pr vate val m ss = stats.counter("m sses")
+    pr vate val totalLoadT   = stats.stat("loads")
+    pr vate val loadSuccess = stats.counter("loads-success")
+    pr vate val loadFa lure = stats.counter("loads-fa lure")
+    pr vate val ev ct on = stats.counter("ev ct ons")
+    pr vate val ev ct on  ght = stats.counter("ev ct ons-  ght")
 
-    override def recordHits(i: Int): Unit = hits.incr(i)
-    override def recordMisses(i: Int): Unit = miss.incr(i)
-    override def recordLoadSuccess(l: Long): Unit = {
-      loadSuccess.incr()
-      totalLoadTime.add(NANOSECONDS.toMillis(l))
+    overr de def recordH s( :  nt): Un  = h s. ncr( )
+    overr de def recordM sses( :  nt): Un  = m ss. ncr( )
+    overr de def recordLoadSuccess(l: Long): Un  = {
+      loadSuccess. ncr()
+      totalLoadT  .add(NANOSECONDS.toM ll s(l))
     }
 
-    override def recordLoadFailure(l: Long): Unit = {
-      loadFailure.incr()
-      totalLoadTime.add(NANOSECONDS.toMillis(l))
+    overr de def recordLoadFa lure(l: Long): Un  = {
+      loadFa lure. ncr()
+      totalLoadT  .add(NANOSECONDS.toM ll s(l))
     }
 
-    override def recordEviction(): Unit = recordEviction(1)
-    override def recordEviction(weight: Int): Unit = {
-      eviction.incr()
-      evictionWeight.incr(weight)
+    overr de def recordEv ct on(): Un  = recordEv ct on(1)
+    overr de def recordEv ct on(  ght:  nt): Un  = {
+      ev ct on. ncr()
+      ev ct on  ght. ncr(  ght)
     }
 
     /**
-     * We are currently not using this method.
+     *   are currently not us ng t   thod.
      */
-    override def snapshot(): CacheStats = {
-      new CacheStats(0, 0, 0, 0, 0, 0, 0)
+    overr de def snapshot(): Cac Stats = {
+      new Cac Stats(0, 0, 0, 0, 0, 0, 0)
     }
   }
 
-  private[this] object MemcachedAsyncCacheLoader extends AsyncCacheLoader[String, GetResult] {
-    private[this] val EmptyMisses: Set[String] = Set.empty
-    private[this] val EmptyFailures: Map[String, Throwable] = Map.empty
-    private[this] val EmptyHits: Map[String, Value] = Map.empty
+  pr vate[t ] object  mcac dAsyncCac Loader extends AsyncCac Loader[Str ng, GetResult] {
+    pr vate[t ] val EmptyM sses: Set[Str ng] = Set.empty
+    pr vate[t ] val EmptyFa lures: Map[Str ng, Throwable] = Map.empty
+    pr vate[t ] val EmptyH s: Map[Str ng, Value] = Map.empty
 
-    override def asyncLoad(key: String, executor: Executor): CompletableFuture[GetResult] = {
-      val f = new util.function.Function[util.Map[String, GetResult], GetResult] {
-        override def apply(r: util.Map[String, GetResult]): GetResult = r.get(key)
+    overr de def asyncLoad(key: Str ng, executor: Executor): CompletableFuture[GetResult] = {
+      val f = new ut l.funct on.Funct on[ut l.Map[Str ng, GetResult], GetResult] {
+        overr de def apply(r: ut l.Map[Str ng, GetResult]): GetResult = r.get(key)
       }
-      asyncLoadAll(Seq(key).asJava, executor).thenApply(f)
+      asyncLoadAll(Seq(key).asJava, executor).t nApply(f)
     }
 
     /**
-     * Converts response from multi-key to single key. Memcache returns the result
-     * in one struct that contains all the hits, misses and exceptions. Caffeine
-     * requires a map from a key to the result, so we do that conversion here.
+     * Converts response from mult -key to s ngle key.  mcac  returns t  result
+     *  n one struct that conta ns all t  h s, m sses and except ons. Caffe ne
+     * requ res a map from a key to t  result, so   do that convers on  re.
      */
-    override def asyncLoadAll(
-      keys: lang.Iterable[_ <: String],
+    overr de def asyncLoadAll(
+      keys: lang. erable[_ <: Str ng],
       executor: Executor
-    ): CompletableFuture[util.Map[String, GetResult]] = {
-      val result = new CompletableFuture[util.Map[String, GetResult]]()
-      proxyClient.getResult(keys.asScala).respond {
+    ): CompletableFuture[ut l.Map[Str ng, GetResult]] = {
+      val result = new CompletableFuture[ut l.Map[Str ng, GetResult]]()
+      proxyCl ent.getResult(keys.asScala).respond {
         case Return(r) =>
-          val map = new util.HashMap[String, GetResult]()
-          r.hits.foreach {
+          val map = new ut l.HashMap[Str ng, GetResult]()
+          r.h s.foreach {
             case (key, value) =>
               map.put(
                 key,
-                r.copy(hits = Map(key -> value), misses = EmptyMisses, failures = EmptyFailures)
+                r.copy(h s = Map(key -> value), m sses = EmptyM sses, fa lures = EmptyFa lures)
               )
           }
-          r.misses.foreach { key =>
-            map.put(key, r.copy(hits = EmptyHits, misses = Set(key), failures = EmptyFailures))
+          r.m sses.foreach { key =>
+            map.put(key, r.copy(h s = EmptyH s, m sses = Set(key), fa lures = EmptyFa lures))
           }
-          // We are passing through failures so that we maintain the contract expected by clients.
-          // Without passing through the failures, several metrics get lost. Some of these failures
-          // might get cached. The cache is short-lived, so we are not worried when it does
-          // get cached.
-          r.failures.foreach {
+          //   are pass ng through fa lures so that   ma nta n t  contract expected by cl ents.
+          // W hout pass ng through t  fa lures, several  tr cs get lost. So  of t se fa lures
+          // m ght get cac d. T  cac   s short-l ved, so   are not worr ed w n   does
+          // get cac d.
+          r.fa lures.foreach {
             case (key, value) =>
               map.put(
                 key,
-                r.copy(hits = EmptyHits, misses = EmptyMisses, failures = Map(key -> value))
+                r.copy(h s = EmptyH s, m sses = EmptyM sses, fa lures = Map(key -> value))
               )
           }
           result.complete(map)
         case Throw(ex) =>
-          logger.warn("Error loading keys from memcached", ex)
-          result.completeExceptionally(ex)
+          logger.warn("Error load ng keys from  mcac d", ex)
+          result.completeExcept onally(ex)
       }
       result
     }
   }
 
-  private[this] val cache: AsyncLoadingCache[String, GetResult] =
-    Caffeine
-      .newBuilder()
-      .maximumSize(maximumSize)
-      .refreshAfterWrite(ttl.inMilliseconds * 3 / 4, TimeUnit.MILLISECONDS)
-      .expireAfterWrite(ttl.inMilliseconds, TimeUnit.MILLISECONDS)
-      .recordStats(new Supplier[StatsCounter] {
-        override def get(): StatsCounter = Stats
+  pr vate[t ] val cac : AsyncLoad ngCac [Str ng, GetResult] =
+    Caffe ne
+      .newBu lder()
+      .max mumS ze(max mumS ze)
+      .refreshAfterWr e(ttl. nM ll seconds * 3 / 4, T  Un .M LL SECONDS)
+      .exp reAfterWr e(ttl. nM ll seconds, T  Un .M LL SECONDS)
+      .recordStats(new Suppl er[StatsCounter] {
+        overr de def get(): StatsCounter = Stats
       })
-      .buildAsync(MemcachedAsyncCacheLoader)
+      .bu ldAsync( mcac dAsyncCac Loader)
 
-  override def getResult(keys: Iterable[String]): Future[GetResult] = {
-    val twitterFuture = toTwitterFuture(cache.getAll(keys.asJava))
-    twitterFuture
+  overr de def getResult(keys:  erable[Str ng]): Future[GetResult] = {
+    val tw terFuture = toTw terFuture(cac .getAll(keys.asJava))
+    tw terFuture
       .map { result =>
         val values = result.values().asScala
         values.reduce(_ ++ _)

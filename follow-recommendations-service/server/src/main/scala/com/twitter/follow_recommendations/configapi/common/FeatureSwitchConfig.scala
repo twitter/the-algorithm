@@ -1,60 +1,60 @@
-package com.twitter.follow_recommendations.configapi.common
+package com.tw ter.follow_recom ndat ons.conf gap .common
 
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil.DefinedFeatureName
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil.ValueFeatureName
-import com.twitter.timelines.configapi.BoundedParam
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.OptionalOverride
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l.Def nedFeatureNa 
+ mport com.tw ter.t  l nes.conf gap .FeatureSw chOverr deUt l.ValueFeatureNa 
+ mport com.tw ter.t  l nes.conf gap .BoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSNa 
+ mport com.tw ter.t  l nes.conf gap .HasDurat onConvers on
+ mport com.tw ter.t  l nes.conf gap .Opt onalOverr de
+ mport com.tw ter.t  l nes.conf gap .Param
+ mport com.tw ter.ut l.Durat on
 
-trait FeatureSwitchConfig {
-  def booleanFSParams: Seq[Param[Boolean] with FSName] = Nil
+tra  FeatureSw chConf g {
+  def booleanFSParams: Seq[Param[Boolean] w h FSNa ] = N l
 
-  def intFSParams: Seq[FSBoundedParam[Int]] = Nil
+  def  ntFSParams: Seq[FSBoundedParam[ nt]] = N l
 
-  def longFSParams: Seq[FSBoundedParam[Long]] = Nil
+  def longFSParams: Seq[FSBoundedParam[Long]] = N l
 
-  def doubleFSParams: Seq[FSBoundedParam[Double]] = Nil
+  def doubleFSParams: Seq[FSBoundedParam[Double]] = N l
 
-  def durationFSParams: Seq[FSBoundedParam[Duration] with HasDurationConversion] = Nil
+  def durat onFSParams: Seq[FSBoundedParam[Durat on] w h HasDurat onConvers on] = N l
 
-  def optionalDoubleFSParams: Seq[
-    (BoundedParam[Option[Double]], DefinedFeatureName, ValueFeatureName)
-  ] = Nil
+  def opt onalDoubleFSParams: Seq[
+    (BoundedParam[Opt on[Double]], Def nedFeatureNa , ValueFeatureNa )
+  ] = N l
 
-  def stringSeqFSParams: Seq[Param[Seq[String]] with FSName] = Nil
+  def str ngSeqFSParams: Seq[Param[Seq[Str ng]] w h FSNa ] = N l
 
   /**
-   * Apply overrides in list when the given FS Key is enabled.
-   * This override type does NOT work with experiments. Params here will be evaluated for every
-   * request IMMEDIATELY, not upon param.apply. If you would like to use an experiment pls use
-   * the primitive type or ENUM overrides.
+   * Apply overr des  n l st w n t  g ven FS Key  s enabled.
+   * T  overr de type does NOT work w h exper  nts. Params  re w ll be evaluated for every
+   * request  MMED ATELY, not upon param.apply.  f   would l ke to use an exper  nt pls use
+   * t  pr m  ve type or ENUM overr des.
    */
-  def gatedOverridesMap: Map[String, Seq[OptionalOverride[_]]] = Map.empty
+  def gatedOverr desMap: Map[Str ng, Seq[Opt onalOverr de[_]]] = Map.empty
 }
 
-object FeatureSwitchConfig {
-  def merge(configs: Seq[FeatureSwitchConfig]): FeatureSwitchConfig = new FeatureSwitchConfig {
-    override def booleanFSParams: Seq[Param[Boolean] with FSName] =
-      configs.flatMap(_.booleanFSParams)
-    override def intFSParams: Seq[FSBoundedParam[Int]] =
-      configs.flatMap(_.intFSParams)
-    override def longFSParams: Seq[FSBoundedParam[Long]] =
-      configs.flatMap(_.longFSParams)
-    override def durationFSParams: Seq[FSBoundedParam[Duration] with HasDurationConversion] =
-      configs.flatMap(_.durationFSParams)
-    override def gatedOverridesMap: Map[String, Seq[OptionalOverride[_]]] =
-      configs.flatMap(_.gatedOverridesMap).toMap
-    override def doubleFSParams: Seq[FSBoundedParam[Double]] =
-      configs.flatMap(_.doubleFSParams)
-    override def optionalDoubleFSParams: Seq[
-      (BoundedParam[Option[Double]], DefinedFeatureName, ValueFeatureName)
+object FeatureSw chConf g {
+  def  rge(conf gs: Seq[FeatureSw chConf g]): FeatureSw chConf g = new FeatureSw chConf g {
+    overr de def booleanFSParams: Seq[Param[Boolean] w h FSNa ] =
+      conf gs.flatMap(_.booleanFSParams)
+    overr de def  ntFSParams: Seq[FSBoundedParam[ nt]] =
+      conf gs.flatMap(_. ntFSParams)
+    overr de def longFSParams: Seq[FSBoundedParam[Long]] =
+      conf gs.flatMap(_.longFSParams)
+    overr de def durat onFSParams: Seq[FSBoundedParam[Durat on] w h HasDurat onConvers on] =
+      conf gs.flatMap(_.durat onFSParams)
+    overr de def gatedOverr desMap: Map[Str ng, Seq[Opt onalOverr de[_]]] =
+      conf gs.flatMap(_.gatedOverr desMap).toMap
+    overr de def doubleFSParams: Seq[FSBoundedParam[Double]] =
+      conf gs.flatMap(_.doubleFSParams)
+    overr de def opt onalDoubleFSParams: Seq[
+      (BoundedParam[Opt on[Double]], Def nedFeatureNa , ValueFeatureNa )
     ] =
-      configs.flatMap(_.optionalDoubleFSParams)
-    override def stringSeqFSParams: Seq[Param[Seq[String]] with FSName] =
-      configs.flatMap(_.stringSeqFSParams)
+      conf gs.flatMap(_.opt onalDoubleFSParams)
+    overr de def str ngSeqFSParams: Seq[Param[Seq[Str ng]] w h FSNa ] =
+      conf gs.flatMap(_.str ngSeqFSParams)
   }
 }

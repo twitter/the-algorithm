@@ -1,185 +1,185 @@
-package com.twitter.home_mixer.functional_component.side_effect
+package com.tw ter.ho _m xer.funct onal_component.s de_effect
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.functional_component.decorator.HomeQueryTypePredicates
-import com.twitter.home_mixer.functional_component.decorator.builder.HomeTweetTypePredicates
-import com.twitter.home_mixer.model.HomeFeatures.AccountAgeFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.model.HomeFeatures.VideoDurationMsFeature
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.model.request.ListTweetsProduct
-import com.twitter.home_mixer.model.request.SubscribedProduct
-import com.twitter.product_mixer.component_library.side_effect.ScribeClientEventSideEffect.ClientEvent
-import com.twitter.product_mixer.component_library.side_effect.ScribeClientEventSideEffect.EventNamespace
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.injection.scribe.InjectionScribeUtil
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.ho _m xer.funct onal_component.decorator.Ho QueryTypePred cates
+ mport com.tw ter.ho _m xer.funct onal_component.decorator.bu lder.Ho T etTypePred cates
+ mport com.tw ter.ho _m xer.model.Ho Features.AccountAgeFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.SuggestTypeFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.V deoDurat onMsFeature
+ mport com.tw ter.ho _m xer.model.request.Follow ngProduct
+ mport com.tw ter.ho _m xer.model.request.For Product
+ mport com.tw ter.ho _m xer.model.request.L stT etsProduct
+ mport com.tw ter.ho _m xer.model.request.Subscr bedProduct
+ mport com.tw ter.product_m xer.component_l brary.s de_effect.Scr beCl entEventS deEffect.Cl entEvent
+ mport com.tw ter.product_m xer.component_l brary.s de_effect.Scr beCl entEventS deEffect.EventNa space
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.common.presentat on. emCand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.t  l nes. nject on.scr be. nject onScr beUt l
 
-private[side_effect] sealed trait ClientEventsBuilder {
-  private val FollowingSection = Some("latest")
-  private val ForYouSection = Some("home")
-  private val ListTweetsSection = Some("list")
-  private val SubscribedSection = Some("subscribed")
+pr vate[s de_effect] sealed tra  Cl entEventsBu lder {
+  pr vate val Follow ngSect on = So ("latest")
+  pr vate val For Sect on = So ("ho ")
+  pr vate val L stT etsSect on = So ("l st")
+  pr vate val Subscr bedSect on = So ("subscr bed")
 
-  protected def section(query: PipelineQuery): Option[String] = {
+  protected def sect on(query: P pel neQuery): Opt on[Str ng] = {
     query.product match {
-      case FollowingProduct => FollowingSection
-      case ForYouProduct => ForYouSection
-      case ListTweetsProduct => ListTweetsSection
-      case SubscribedProduct => SubscribedSection
-      case other => throw new UnsupportedOperationException(s"Unknown product: $other")
+      case Follow ngProduct => Follow ngSect on
+      case For Product => For Sect on
+      case L stT etsProduct => L stT etsSect on
+      case Subscr bedProduct => Subscr bedSect on
+      case ot r => throw new UnsupportedOperat onExcept on(s"Unknown product: $ot r")
     }
   }
 
   protected def count(
-    candidates: Seq[CandidateWithDetails],
-    predicate: FeatureMap => Boolean = _ => true,
+    cand dates: Seq[Cand dateW hDeta ls],
+    pred cate: FeatureMap => Boolean = _ => true,
     queryFeatures: FeatureMap = FeatureMap.empty
-  ): Option[Long] = Some(candidates.view.count(item => predicate(item.features ++ queryFeatures)))
+  ): Opt on[Long] = So (cand dates.v ew.count( em => pred cate( em.features ++ queryFeatures)))
 
   protected def sum(
-    candidates: Seq[CandidateWithDetails],
-    predicate: FeatureMap => Option[Int],
+    cand dates: Seq[Cand dateW hDeta ls],
+    pred cate: FeatureMap => Opt on[ nt],
     queryFeatures: FeatureMap = FeatureMap.empty
-  ): Option[Long] =
-    Some(candidates.view.flatMap(item => predicate(item.features ++ queryFeatures)).sum)
+  ): Opt on[Long] =
+    So (cand dates.v ew.flatMap( em => pred cate( em.features ++ queryFeatures)).sum)
 }
 
-private[side_effect] object ServedEventsBuilder extends ClientEventsBuilder {
+pr vate[s de_effect] object ServedEventsBu lder extends Cl entEventsBu lder {
 
-  private val ServedTweetsAction = Some("served_tweets")
-  private val ServedUsersAction = Some("served_users")
-  private val InjectedComponent = Some("injected")
-  private val PromotedComponent = Some("promoted")
-  private val WhoToFollowComponent = Some("who_to_follow")
-  private val WhoToSubscribeComponent = Some("who_to_subscribe")
-  private val WithVideoDurationComponent = Some("with_video_duration")
-  private val VideoDurationSumElement = Some("video_duration_sum")
-  private val NumVideosElement = Some("num_videos")
+  pr vate val ServedT etsAct on = So ("served_t ets")
+  pr vate val ServedUsersAct on = So ("served_users")
+  pr vate val  njectedComponent = So (" njected")
+  pr vate val PromotedComponent = So ("promoted")
+  pr vate val WhoToFollowComponent = So ("who_to_follow")
+  pr vate val WhoToSubscr beComponent = So ("who_to_subscr be")
+  pr vate val W hV deoDurat onComponent = So ("w h_v deo_durat on")
+  pr vate val V deoDurat onSumEle nt = So ("v deo_durat on_sum")
+  pr vate val NumV deosEle nt = So ("num_v deos")
 
-  def build(
-    query: PipelineQuery,
-    injectedTweets: Seq[ItemCandidateWithDetails],
-    promotedTweets: Seq[ItemCandidateWithDetails],
-    whoToFollowUsers: Seq[ItemCandidateWithDetails],
-    whoToSubscribeUsers: Seq[ItemCandidateWithDetails]
-  ): Seq[ClientEvent] = {
-    val baseEventNamespace = EventNamespace(
-      section = section(query),
-      action = ServedTweetsAction
+  def bu ld(
+    query: P pel neQuery,
+     njectedT ets: Seq[ emCand dateW hDeta ls],
+    promotedT ets: Seq[ emCand dateW hDeta ls],
+    whoToFollowUsers: Seq[ emCand dateW hDeta ls],
+    whoToSubscr beUsers: Seq[ emCand dateW hDeta ls]
+  ): Seq[Cl entEvent] = {
+    val baseEventNa space = EventNa space(
+      sect on = sect on(query),
+      act on = ServedT etsAct on
     )
     val overallServedEvents = Seq(
-      ClientEvent(baseEventNamespace, eventValue = count(injectedTweets ++ promotedTweets)),
-      ClientEvent(
-        baseEventNamespace.copy(component = InjectedComponent),
-        eventValue = count(injectedTweets)),
-      ClientEvent(
-        baseEventNamespace.copy(component = PromotedComponent),
-        eventValue = count(promotedTweets)),
-      ClientEvent(
-        baseEventNamespace.copy(component = WhoToFollowComponent, action = ServedUsersAction),
+      Cl entEvent(baseEventNa space, eventValue = count( njectedT ets ++ promotedT ets)),
+      Cl entEvent(
+        baseEventNa space.copy(component =  njectedComponent),
+        eventValue = count( njectedT ets)),
+      Cl entEvent(
+        baseEventNa space.copy(component = PromotedComponent),
+        eventValue = count(promotedT ets)),
+      Cl entEvent(
+        baseEventNa space.copy(component = WhoToFollowComponent, act on = ServedUsersAct on),
         eventValue = count(whoToFollowUsers)),
-      ClientEvent(
-        baseEventNamespace.copy(component = WhoToSubscribeComponent, action = ServedUsersAction),
-        eventValue = count(whoToSubscribeUsers)),
+      Cl entEvent(
+        baseEventNa space.copy(component = WhoToSubscr beComponent, act on = ServedUsersAct on),
+        eventValue = count(whoToSubscr beUsers)),
     )
 
-    val tweetTypeServedEvents = HomeTweetTypePredicates.PredicateMap.map {
-      case (tweetType, predicate) =>
-        ClientEvent(
-          baseEventNamespace.copy(component = InjectedComponent, element = Some(tweetType)),
-          eventValue = count(injectedTweets, predicate, query.features.getOrElse(FeatureMap.empty))
+    val t etTypeServedEvents = Ho T etTypePred cates.Pred cateMap.map {
+      case (t etType, pred cate) =>
+        Cl entEvent(
+          baseEventNa space.copy(component =  njectedComponent, ele nt = So (t etType)),
+          eventValue = count( njectedT ets, pred cate, query.features.getOrElse(FeatureMap.empty))
         )
     }.toSeq
 
-    val suggestTypeServedEvents = injectedTweets
+    val suggestTypeServedEvents =  njectedT ets
       .flatMap(_.features.getOrElse(SuggestTypeFeature, None))
       .map {
-        InjectionScribeUtil.scribeComponent
+         nject onScr beUt l.scr beComponent
       }
-      .groupBy(identity).map {
+      .groupBy( dent y).map {
         case (suggestType, group) =>
-          ClientEvent(
-            baseEventNamespace.copy(component = suggestType),
-            eventValue = Some(group.size.toLong))
+          Cl entEvent(
+            baseEventNa space.copy(component = suggestType),
+            eventValue = So (group.s ze.toLong))
       }.toSeq
 
-    // Video duration events
-    val numVideosEvent = ClientEvent(
-      baseEventNamespace.copy(component = WithVideoDurationComponent, element = NumVideosElement),
-      eventValue = count(injectedTweets, _.getOrElse(VideoDurationMsFeature, None).nonEmpty)
+    // V deo durat on events
+    val numV deosEvent = Cl entEvent(
+      baseEventNa space.copy(component = W hV deoDurat onComponent, ele nt = NumV deosEle nt),
+      eventValue = count( njectedT ets, _.getOrElse(V deoDurat onMsFeature, None).nonEmpty)
     )
-    val videoDurationSumEvent = ClientEvent(
-      baseEventNamespace
-        .copy(component = WithVideoDurationComponent, element = VideoDurationSumElement),
-      eventValue = sum(injectedTweets, _.getOrElse(VideoDurationMsFeature, None))
+    val v deoDurat onSumEvent = Cl entEvent(
+      baseEventNa space
+        .copy(component = W hV deoDurat onComponent, ele nt = V deoDurat onSumEle nt),
+      eventValue = sum( njectedT ets, _.getOrElse(V deoDurat onMsFeature, None))
     )
-    val videoEvents = Seq(numVideosEvent, videoDurationSumEvent)
+    val v deoEvents = Seq(numV deosEvent, v deoDurat onSumEvent)
 
-    overallServedEvents ++ tweetTypeServedEvents ++ suggestTypeServedEvents ++ videoEvents
+    overallServedEvents ++ t etTypeServedEvents ++ suggestTypeServedEvents ++ v deoEvents
   }
 }
 
-private[side_effect] object EmptyTimelineEventsBuilder extends ClientEventsBuilder {
-  private val EmptyAction = Some("empty")
-  private val AccountAgeLessThan30MinutesComponent = Some("account_age_less_than_30_minutes")
-  private val ServedNonPromotedTweetElement = Some("served_non_promoted_tweet")
+pr vate[s de_effect] object EmptyT  l neEventsBu lder extends Cl entEventsBu lder {
+  pr vate val EmptyAct on = So ("empty")
+  pr vate val AccountAgeLessThan30M nutesComponent = So ("account_age_less_than_30_m nutes")
+  pr vate val ServedNonPromotedT etEle nt = So ("served_non_promoted_t et")
 
-  def build(
-    query: PipelineQuery,
-    injectedTweets: Seq[ItemCandidateWithDetails]
-  ): Seq[ClientEvent] = {
-    val baseEventNamespace = EventNamespace(
-      section = section(query),
-      action = EmptyAction
+  def bu ld(
+    query: P pel neQuery,
+     njectedT ets: Seq[ emCand dateW hDeta ls]
+  ): Seq[Cl entEvent] = {
+    val baseEventNa space = EventNa space(
+      sect on = sect on(query),
+      act on = EmptyAct on
     )
 
-    // Empty timeline events
-    val accountAgeLessThan30Minutes = query.features
+    // Empty t  l ne events
+    val accountAgeLessThan30M nutes = query.features
       .flatMap(_.getOrElse(AccountAgeFeature, None))
-      .exists(_.untilNow < 30.minutes)
-    val isEmptyTimeline = count(injectedTweets).contains(0L)
-    val predicates = Seq(
-      None -> isEmptyTimeline,
-      AccountAgeLessThan30MinutesComponent -> (isEmptyTimeline && accountAgeLessThan30Minutes)
+      .ex sts(_.unt lNow < 30.m nutes)
+    val  sEmptyT  l ne = count( njectedT ets).conta ns(0L)
+    val pred cates = Seq(
+      None ->  sEmptyT  l ne,
+      AccountAgeLessThan30M nutesComponent -> ( sEmptyT  l ne && accountAgeLessThan30M nutes)
     )
     for {
-      (component, predicate) <- predicates
-      if predicate
-    } yield ClientEvent(
-      baseEventNamespace.copy(component = component, element = ServedNonPromotedTweetElement))
+      (component, pred cate) <- pred cates
+       f pred cate
+    } y eld Cl entEvent(
+      baseEventNa space.copy(component = component, ele nt = ServedNonPromotedT etEle nt))
   }
 }
 
-private[side_effect] object QueryEventsBuilder extends ClientEventsBuilder {
+pr vate[s de_effect] object QueryEventsBu lder extends Cl entEventsBu lder {
 
-  private val ServedSizePredicateMap: Map[String, Int => Boolean] = Map(
-    ("size_is_empty", _ <= 0),
-    ("size_at_most_5", _ <= 5),
-    ("size_at_most_10", _ <= 10),
-    ("size_at_most_35", _ <= 35)
+  pr vate val ServedS zePred cateMap: Map[Str ng,  nt => Boolean] = Map(
+    ("s ze_ s_empty", _ <= 0),
+    ("s ze_at_most_5", _ <= 5),
+    ("s ze_at_most_10", _ <= 10),
+    ("s ze_at_most_35", _ <= 35)
   )
 
-  def build(
-    query: PipelineQuery,
-    injectedTweets: Seq[ItemCandidateWithDetails]
-  ): Seq[ClientEvent] = {
-    val baseEventNamespace = EventNamespace(
-      section = section(query)
+  def bu ld(
+    query: P pel neQuery,
+     njectedT ets: Seq[ emCand dateW hDeta ls]
+  ): Seq[Cl entEvent] = {
+    val baseEventNa space = EventNa space(
+      sect on = sect on(query)
     )
     val queryFeatureMap = query.features.getOrElse(FeatureMap.empty)
-    val servedSizeQueryEvents =
+    val servedS zeQueryEvents =
       for {
-        (queryPredicateName, queryPredicate) <- HomeQueryTypePredicates.PredicateMap
-        if queryPredicate(queryFeatureMap)
-        (servedSizePredicateName, servedSizePredicate) <- ServedSizePredicateMap
-        if servedSizePredicate(injectedTweets.size)
-      } yield ClientEvent(
-        baseEventNamespace
-          .copy(component = Some(servedSizePredicateName), action = Some(queryPredicateName)))
-    servedSizeQueryEvents.toSeq
+        (queryPred cateNa , queryPred cate) <- Ho QueryTypePred cates.Pred cateMap
+         f queryPred cate(queryFeatureMap)
+        (servedS zePred cateNa , servedS zePred cate) <- ServedS zePred cateMap
+         f servedS zePred cate( njectedT ets.s ze)
+      } y eld Cl entEvent(
+        baseEventNa space
+          .copy(component = So (servedS zePred cateNa ), act on = So (queryPred cateNa )))
+    servedS zeQueryEvents.toSeq
   }
 }

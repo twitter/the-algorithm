@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+package com.tw ter.product_m xer.core.funct onal_component.common.alert
 
 /**
- * [[AlertType]] is used to indicate which metric an alert is for
+ * [[AlertType]]  s used to  nd cate wh ch  tr c an alert  s for
  *
- * @note adding new [[AlertType]]s requires updating the dashboard generation code
+ * @note add ng new [[AlertType]]s requ res updat ng t  dashboard generat on code
  */
-sealed trait AlertType { val metricType: String }
+sealed tra  AlertType { val  tr cType: Str ng }
 
-/** Monitors the latency */
-case object Latency extends AlertType { override val metricType: String = "Latency" }
+/** Mon ors t  latency */
+case object Latency extends AlertType { overr de val  tr cType: Str ng = "Latency" }
 
-/** Monitors the success rate __excluding__ client failures */
-case object SuccessRate extends AlertType { override val metricType: String = "SuccessRate" }
+/** Mon ors t  success rate __exclud ng__ cl ent fa lures */
+case object SuccessRate extends AlertType { overr de val  tr cType: Str ng = "SuccessRate" }
 
-/** Monitors the throughput */
-case object Throughput extends AlertType { override val metricType: String = "Throughput" }
+/** Mon ors t  throughput */
+case object Throughput extends AlertType { overr de val  tr cType: Str ng = "Throughput" }
 
-/** Monitors the empty response rate */
+/** Mon ors t  empty response rate */
 case object EmptyResponseRate extends AlertType {
-  override val metricType: String = "EmptyResponseRate"
+  overr de val  tr cType: Str ng = "EmptyResponseRate"
 }
 
-/** Monitors the empty response size */
-case object ResponseSize extends AlertType { override val metricType: String = "ResponseSize" }
+/** Mon ors t  empty response s ze */
+case object ResponseS ze extends AlertType { overr de val  tr cType: Str ng = "ResponseS ze" }

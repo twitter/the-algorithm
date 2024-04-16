@@ -1,81 +1,81 @@
-package com.twitter.servo.cache
+package com.tw ter.servo.cac 
 
-import com.twitter.util.{Throw, Return, Try}
-import java.io.{DataOutputStream, ByteArrayOutputStream}
-import java.nio.ByteBuffer
-import scala.collection.mutable
-import scala.util.control.NonFatal
+ mport com.tw ter.ut l.{Throw, Return, Try}
+ mport java. o.{DataOutputStream, ByteArrayOutputStream}
+ mport java.n o.ByteBuffer
+ mport scala.collect on.mutable
+ mport scala.ut l.control.NonFatal
 
-object IterableSerializer {
-  // Serialized format for version 0:
-  // Header:
-  //   1 byte  - Version
-  //   4 byte  - number of items
-  // Data, 1 per item:
-  //   4 bytes - item length in bytes (n)
-  //   n bytes - item data
-  val FormatVersion = 0
+object  erableSer al zer {
+  // Ser al zed format for vers on 0:
+  //  ader:
+  //   1 byte  - Vers on
+  //   4 byte  - number of  ems
+  // Data, 1 per  em:
+  //   4 bytes -  em length  n bytes (n)
+  //   n bytes -  em data
+  val FormatVers on = 0
 }
 
 /**
- * A `Serializer` for `Iterable[T]`s.
+ * A `Ser al zer` for ` erable[T]`s.
  *
- * @param itemSerializer a Serializer for the individual elements.
- * @param itemSizeEstimate estimated size in bytes of individual elements
+ * @param  emSer al zer a Ser al zer for t   nd v dual ele nts.
+ * @param  emS zeEst mate est mated s ze  n bytes of  nd v dual ele nts
  */
-class IterableSerializer[T, C <: Iterable[T]](
-  newBuilder: () => mutable.Builder[T, C],
-  itemSerializer: Serializer[T],
-  itemSizeEstimate: Int = 8)
-    extends Serializer[C] {
-  import IterableSerializer.FormatVersion
+class  erableSer al zer[T, C <:  erable[T]](
+  newBu lder: () => mutable.Bu lder[T, C],
+   emSer al zer: Ser al zer[T],
+   emS zeEst mate:  nt = 8)
+    extends Ser al zer[C] {
+   mport  erableSer al zer.FormatVers on
 
-  if (itemSizeEstimate <= 0) {
-    throw new IllegalArgumentException(
-      "Item size estimate must be positive. Invalid estimate provided: " + itemSizeEstimate
+   f ( emS zeEst mate <= 0) {
+    throw new  llegalArgu ntExcept on(
+      " em s ze est mate must be pos  ve.  nval d est mate prov ded: " +  emS zeEst mate
     )
   }
 
-  override def to(iterable: C): Try[Array[Byte]] = Try {
-    assert(iterable.hasDefiniteSize, "Must have a definite size: %s".format(iterable))
+  overr de def to( erable: C): Try[Array[Byte]] = Try {
+    assert( erable.hasDef n eS ze, "Must have a def n e s ze: %s".format( erable))
 
-    val numItems = iterable.size
-    val baos = new ByteArrayOutputStream(1 + 4 + (numItems * (4 + itemSizeEstimate)))
+    val num ems =  erable.s ze
+    val baos = new ByteArrayOutputStream(1 + 4 + (num ems * (4 +  emS zeEst mate)))
     val output = new DataOutputStream(baos)
 
-    // Write serialization version format and set length.
-    output.writeByte(FormatVersion)
-    output.writeInt(numItems)
+    // Wr e ser al zat on vers on format and set length.
+    output.wr eByte(FormatVers on)
+    output.wr e nt(num ems)
 
-    iterable.foreach { item =>
-      val itemBytes = itemSerializer.to(item).get()
-      output.writeInt(itemBytes.length)
-      output.write(itemBytes)
+     erable.foreach {  em =>
+      val  emBytes =  emSer al zer.to( em).get()
+      output.wr e nt( emBytes.length)
+      output.wr e( emBytes)
     }
     output.flush()
     baos.toByteArray()
   }
 
-  override def from(bytes: Array[Byte]): Try[C] = {
+  overr de def from(bytes: Array[Byte]): Try[C] = {
     try {
       val buf = ByteBuffer.wrap(bytes)
-      val formatVersion = buf.get()
-      if (formatVersion < 0 || formatVersion > FormatVersion) {
-        Throw(new IllegalArgumentException("Invalid serialization format: " + formatVersion))
+      val formatVers on = buf.get()
+       f (formatVers on < 0 || formatVers on > FormatVers on) {
+        Throw(new  llegalArgu ntExcept on(" nval d ser al zat on format: " + formatVers on))
       } else {
-        val numItems = buf.getInt()
-        val builder = newBuilder()
-        builder.sizeHint(numItems)
+        val num ems = buf.get nt()
+        val bu lder = newBu lder()
+        bu lder.s zeH nt(num ems)
 
-        var i = 0
-        while (i < numItems) {
-          val itemBytes = new Array[Byte](buf.getInt())
-          buf.get(itemBytes)
-          val item = itemSerializer.from(itemBytes).get()
-          builder += item
-          i += 1
+        var   = 0
+        wh le (  < num ems) {
+          val  emBytes = new Array[Byte](buf.get nt())
+          buf.get( emBytes)
+          val  em =  emSer al zer.from( emBytes).get()
+          bu lder +=  em
+            += 1
         }
-        Return(builder.result())
+        Return(bu lder.result())
       }
     } catch {
       case NonFatal(e) => Throw(e)

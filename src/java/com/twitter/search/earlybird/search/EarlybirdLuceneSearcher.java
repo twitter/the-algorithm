@@ -1,98 +1,98 @@
-package com.twitter.search.earlybird.search;
+package com.tw ter.search.earlyb rd.search;
 
-import java.io.IOException;
-import java.util.Map;
+ mport java. o. OExcept on;
+ mport java.ut l.Map;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.IndexSearcher;
+ mport org.apac .lucene. ndex. ndexReader;
+ mport org.apac .lucene. ndex.Term;
+ mport org.apac .lucene.search. ndexSearc r;
 
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.earlybird.EarlybirdSearcher;
-import com.twitter.search.earlybird.search.facets.AbstractFacetTermCollector;
-import com.twitter.search.earlybird.search.facets.FacetResultsCollector;
-import com.twitter.search.earlybird.search.facets.TermStatisticsCollector.TermStatisticsSearchResults;
-import com.twitter.search.earlybird.search.facets.TermStatisticsRequestInfo;
-import com.twitter.search.earlybird.thrift.ThriftFacetCount;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsResults;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.earlyb rd.Earlyb rdSearc r;
+ mport com.tw ter.search.earlyb rd.search.facets.AbstractFacetTermCollector;
+ mport com.tw ter.search.earlyb rd.search.facets.FacetResultsCollector;
+ mport com.tw ter.search.earlyb rd.search.facets.TermStat st csCollector.TermStat st csSearchResults;
+ mport com.tw ter.search.earlyb rd.search.facets.TermStat st csRequest nfo;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetCount;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftFacetF eldResults;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResults;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftTermStat st csResults;
 
-public abstract class EarlybirdLuceneSearcher extends IndexSearcher {
-  public EarlybirdLuceneSearcher(IndexReader r) {
+publ c abstract class Earlyb rdLuceneSearc r extends  ndexSearc r {
+  publ c Earlyb rdLuceneSearc r( ndexReader r) {
     super(r);
   }
 
   /**
-   * Fills facet information for all given search results.
+   * F lls facet  nformat on for all g ven search results.
    *
-   * @param collector A collector that knows how collect facet information.
-   * @param searchResults The search results.
+   * @param collector A collector that knows how collect facet  nformat on.
+   * @param searchResults T  search results.
    */
-  public abstract void fillFacetResults(
-      AbstractFacetTermCollector collector, ThriftSearchResults searchResults)
-      throws IOException;
+  publ c abstract vo d f llFacetResults(
+      AbstractFacetTermCollector collector, Thr ftSearchResults searchResults)
+      throws  OExcept on;
 
   /**
-   * Fills metadata for all given facet results.
+   * F lls  tadata for all g ven facet results.
    *
-   * @param facetResults The facet results.
-   * @param schema The earlybird schema.
-   * @param debugMode The debug mode for the request that yielded these results.
+   * @param facetResults T  facet results.
+   * @param sc ma T  earlyb rd sc ma.
+   * @param debugMode T  debug mode for t  request that y elded t se results.
    */
-  public abstract void fillFacetResultMetadata(
-      Map<Term, ThriftFacetCount> facetResults,
-      ImmutableSchemaInterface schema,
-      byte debugMode) throws IOException;
+  publ c abstract vo d f llFacetResult tadata(
+      Map<Term, Thr ftFacetCount> facetResults,
+       mmutableSc ma nterface sc ma,
+      byte debugMode) throws  OExcept on;
 
   /**
-   * Fills metadata for all given term stats results.
+   * F lls  tadata for all g ven term stats results.
    *
-   * @param termStatsResults The term stats results.
-   * @param schema The earlybird schema.
-   * @param debugMode The debug mode for the request that yielded these results.
+   * @param termStatsResults T  term stats results.
+   * @param sc ma T  earlyb rd sc ma.
+   * @param debugMode T  debug mode for t  request that y elded t se results.
    */
-  public abstract void fillTermStatsMetadata(
-      ThriftTermStatisticsResults termStatsResults,
-      ImmutableSchemaInterface schema,
-      byte debugMode) throws IOException;
+  publ c abstract vo d f llTermStats tadata(
+      Thr ftTermStat st csResults termStatsResults,
+       mmutableSc ma nterface sc ma,
+      byte debugMode) throws  OExcept on;
 
   /**
-   * Returns the results for the given term stats request.
+   * Returns t  results for t  g ven term stats request.
    *
-   * @param searchRequestInfo Stores the original term stats request and some other useful request
-   *                          information.
-   * @param searcher The searcher that should be used to execute the request.
-   * @param requestDebugMode The debug mode for this request.
-   * @return The term stats results for the given request.
+   * @param searchRequest nfo Stores t  or g nal term stats request and so  ot r useful request
+   *                           nformat on.
+   * @param searc r T  searc r that should be used to execute t  request.
+   * @param requestDebugMode T  debug mode for t  request.
+   * @return T  term stats results for t  g ven request.
    */
-  public abstract TermStatisticsSearchResults collectTermStatistics(
-      TermStatisticsRequestInfo searchRequestInfo,
-      EarlybirdSearcher searcher,
-      int requestDebugMode) throws IOException;
+  publ c abstract TermStat st csSearchResults collectTermStat st cs(
+      TermStat st csRequest nfo searchRequest nfo,
+      Earlyb rdSearc r searc r,
+       nt requestDebugMode) throws  OExcept on;
 
   /**
-   * Writes an explanation for the given hits into the given ThriftSearchResults instance.
+   * Wr es an explanat on for t  g ven h s  nto t  g ven Thr ftSearchResults  nstance.
    *
-   * @param searchRequestInfo Stores the original request and some other useful request context.
-   * @param hits The hits.
-   * @param searchResults The ThriftSearchResults where the explanation for the given hits will be
+   * @param searchRequest nfo Stores t  or g nal request and so  ot r useful request context.
+   * @param h s T  h s.
+   * @param searchResults T  Thr ftSearchResults w re t  explanat on for t  g ven h s w ll be
    *                      stored.
    */
-  // Writes explanations into the searchResults thrift.
-  public abstract void explainSearchResults(SearchRequestInfo searchRequestInfo,
-                                            SimpleSearchResults hits,
-                                            ThriftSearchResults searchResults) throws IOException;
+  // Wr es explanat ons  nto t  searchResults thr ft.
+  publ c abstract vo d expla nSearchResults(SearchRequest nfo searchRequest nfo,
+                                            S mpleSearchResults h s,
+                                            Thr ftSearchResults searchResults) throws  OExcept on;
 
-  public static class FacetSearchResults extends SearchResultsInfo {
-    private FacetResultsCollector collector;
+  publ c stat c class FacetSearchResults extends SearchResults nfo {
+    pr vate FacetResultsCollector collector;
 
-    public FacetSearchResults(FacetResultsCollector collector) {
-      this.collector = collector;
+    publ c FacetSearchResults(FacetResultsCollector collector) {
+      t .collector = collector;
     }
 
-    public ThriftFacetFieldResults getFacetResults(String facetName, int topK) {
-      return collector.getFacetResults(facetName, topK);
+    publ c Thr ftFacetF eldResults getFacetResults(Str ng facetNa ,  nt topK) {
+      return collector.getFacetResults(facetNa , topK);
     }
   }
 }

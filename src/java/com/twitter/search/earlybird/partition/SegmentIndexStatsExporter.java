@@ -1,85 +1,85 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import com.twitter.common.base.Supplier;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchMetric;
-import com.twitter.search.common.metrics.SearchMetricsRegistry;
+ mport com.tw ter.common.base.Suppl er;
+ mport com.tw ter.search.common. tr cs.SearchLongGauge;
+ mport com.tw ter.search.common. tr cs.Search tr c;
+ mport com.tw ter.search.common. tr cs.Search tr csReg stry;
 
 /**
- * Exporting per-segment stats collected in {@link SegmentIndexStats}.
+ * Export ng per-seg nt stats collected  n {@l nk Seg nt ndexStats}.
  *
- * This class tries to reuse stat prefixes of "segment_stats_[0-N]_*" where N is the number
- * of segments managed by this earlybird.
- * For example, stats prefixed with "segment_stats_0_*" always represent the most recent segment.
- * As we add more segments (and drop older ones), the same "segment_stats_*" stats end up exporting
- * data for different underlying segments.
+ * T  class tr es to reuse stat pref xes of "seg nt_stats_[0-N]_*" w re N  s t  number
+ * of seg nts managed by t  earlyb rd.
+ * For example, stats pref xed w h "seg nt_stats_0_*" always represent t  most recent seg nt.
+ * As   add more seg nts (and drop older ones), t  sa  "seg nt_stats_*" stats end up export ng
+ * data for d fferent underly ng seg nts.
  *
- * This is done as an alternative to exporting stats that have the timesliceId in them, which
- * would avoid the need for reusing the same stat names, but would create an ever-increasing set
- * of unique stats exported by earlybirds.
+ * T   s done as an alternat ve to export ng stats that have t  t  sl ce d  n t m, wh ch
+ * would avo d t  need for reus ng t  sa  stat na s, but would create an ever- ncreas ng set
+ * of un que stats exported by earlyb rds.
  */
-public final class SegmentIndexStatsExporter {
-  private static final class StatReader extends SearchMetric<Long> {
-    private volatile Supplier<Number> counter = () -> 0;
+publ c f nal class Seg nt ndexStatsExporter {
+  pr vate stat c f nal class StatReader extends Search tr c<Long> {
+    pr vate volat le Suppl er<Number> counter = () -> 0;
 
-    private StatReader(String name) {
-      super(name);
+    pr vate StatReader(Str ng na ) {
+      super(na );
     }
 
-    @Override
-    public Long read() {
+    @Overr de
+    publ c Long read() {
       return counter.get().longValue();
     }
 
-    @Override
-    public void reset() {
+    @Overr de
+    publ c vo d reset() {
       counter = () -> 0;
     }
   }
 
-  private SegmentIndexStatsExporter() {
+  pr vate Seg nt ndexStatsExporter() {
   }
 
-  private static final String NAME_PREFIX = "segment_stats_";
+  pr vate stat c f nal Str ng NAME_PREF X = "seg nt_stats_";
 
   /**
-   * Exports stats for some counts for the given segment:
-   *  - status_count: number of tweets indexed
-   *  - delete_count: number of deletes indexed
-   *  - partial_update_count: number of partial updates indexed
-   *  - out_of_order_update_count: number of out of order updates indexed
-   *  - segment_size_bytes: the segment size in bytes
+   * Exports stats for so  counts for t  g ven seg nt:
+   *  - status_count: number of t ets  ndexed
+   *  - delete_count: number of deletes  ndexed
+   *  - part al_update_count: number of part al updates  ndexed
+   *  - out_of_order_update_count: number of out of order updates  ndexed
+   *  - seg nt_s ze_bytes: t  seg nt s ze  n bytes
    *
-   * @param segmentInfo The segment for which these stats should be exported.
-   * @param segmentIndex The index of this segment in the list of all segments.
+   * @param seg nt nfo T  seg nt for wh ch t se stats should be exported.
+   * @param seg nt ndex T   ndex of t  seg nt  n t  l st of all seg nts.
    */
-  public static void export(SegmentInfo segmentInfo, int segmentIndex) {
-    exportStat(segmentIndex, "status_count",
-        () -> segmentInfo.getIndexStats().getStatusCount());
-    exportStat(segmentIndex, "delete_count",
-        () -> segmentInfo.getIndexStats().getDeleteCount());
-    exportStat(segmentIndex, "partial_update_count",
-        () -> segmentInfo.getIndexStats().getPartialUpdateCount());
-    exportStat(segmentIndex, "out_of_order_update_count",
-        () -> segmentInfo.getIndexStats().getOutOfOrderUpdateCount());
-    exportStat(segmentIndex, "segment_size_bytes",
-        () -> segmentInfo.getIndexStats().getIndexSizeOnDiskInBytes());
+  publ c stat c vo d export(Seg nt nfo seg nt nfo,  nt seg nt ndex) {
+    exportStat(seg nt ndex, "status_count",
+        () -> seg nt nfo.get ndexStats().getStatusCount());
+    exportStat(seg nt ndex, "delete_count",
+        () -> seg nt nfo.get ndexStats().getDeleteCount());
+    exportStat(seg nt ndex, "part al_update_count",
+        () -> seg nt nfo.get ndexStats().getPart alUpdateCount());
+    exportStat(seg nt ndex, "out_of_order_update_count",
+        () -> seg nt nfo.get ndexStats().getOutOfOrderUpdateCount());
+    exportStat(seg nt ndex, "seg nt_s ze_bytes",
+        () -> seg nt nfo.get ndexStats().get ndexS zeOnD sk nBytes());
 
-    SearchLongGauge timeSliceIdStat =
-        SearchLongGauge.export(NAME_PREFIX + segmentIndex + "_timeslice_id");
-    timeSliceIdStat.set(segmentInfo.getTimeSliceID());
+    SearchLongGauge t  Sl ce dStat =
+        SearchLongGauge.export(NAME_PREF X + seg nt ndex + "_t  sl ce_ d");
+    t  Sl ce dStat.set(seg nt nfo.getT  Sl ce D());
   }
 
-  private static void exportStat(final int segmentIndex,
-                                 final String nameSuffix,
-                                 Supplier<Number> counter) {
-    final String name = getName(segmentIndex, nameSuffix);
-    StatReader statReader = SearchMetricsRegistry.registerOrGet(
-        () -> new StatReader(name), name, StatReader.class);
+  pr vate stat c vo d exportStat(f nal  nt seg nt ndex,
+                                 f nal Str ng na Suff x,
+                                 Suppl er<Number> counter) {
+    f nal Str ng na  = getNa (seg nt ndex, na Suff x);
+    StatReader statReader = Search tr csReg stry.reg sterOrGet(
+        () -> new StatReader(na ), na , StatReader.class);
     statReader.counter = counter;
   }
 
-  private static String getName(final int segmentIndex, final String nameSuffix) {
-    return NAME_PREFIX + segmentIndex + "_" + nameSuffix;
+  pr vate stat c Str ng getNa (f nal  nt seg nt ndex, f nal Str ng na Suff x) {
+    return NAME_PREF X + seg nt ndex + "_" + na Suff x;
   }
 }

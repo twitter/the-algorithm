@@ -1,128 +1,128 @@
-package com.twitter.follow_recommendations.common.clients.real_time_real_graph
+package com.tw ter.follow_recom ndat ons.common.cl ents.real_t  _real_graph
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.conversions.DurationOps._
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.ml.featureStore.TimelinesUserVertexOnUserClientColumn
-import com.twitter.strato.generated.client.onboarding.userrecs.RealGraphScoresMhOnUserClientColumn
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import com.twitter.wtf.real_time_interaction_graph.thriftscala._
+ mport com.google. nject. nject
+ mport com.google. nject.S ngleton
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.snowflake. d.Snowflake d
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.generated.cl ent.ml.featureStore.T  l nesUserVertexOnUserCl entColumn
+ mport com.tw ter.strato.generated.cl ent.onboard ng.userrecs.RealGraphScoresMhOnUserCl entColumn
+ mport com.tw ter.ut l.Durat on
+ mport com.tw ter.ut l.T  
+ mport com.tw ter.wtf.real_t  _ nteract on_graph.thr ftscala._
 
-@Singleton
-class RealTimeRealGraphClient @Inject() (
-  timelinesUserVertexOnUserClientColumn: TimelinesUserVertexOnUserClientColumn,
-  realGraphScoresMhOnUserClientColumn: RealGraphScoresMhOnUserClientColumn) {
+@S ngleton
+class RealT  RealGraphCl ent @ nject() (
+  t  l nesUserVertexOnUserCl entColumn: T  l nesUserVertexOnUserCl entColumn,
+  realGraphScoresMhOnUserCl entColumn: RealGraphScoresMhOnUserCl entColumn) {
 
-  def mapUserVertexToEngagementAndFilter(userVertex: UserVertex): Map[Long, Seq[Engagement]] = {
-    val minTimestamp = (Time.now - RealTimeRealGraphClient.MaxEngagementAge).inMillis
-    userVertex.outgoingInteractionMap.mapValues { interactions =>
-      interactions
-        .flatMap { interaction => RealTimeRealGraphClient.toEngagement(interaction) }.filter(
-          _.timestamp >= minTimestamp)
+  def mapUserVertexToEngage ntAndF lter(userVertex: UserVertex): Map[Long, Seq[Engage nt]] = {
+    val m nT  stamp = (T  .now - RealT  RealGraphCl ent.MaxEngage ntAge). nM ll s
+    userVertex.outgo ng nteract onMap.mapValues {  nteract ons =>
+       nteract ons
+        .flatMap {  nteract on => RealT  RealGraphCl ent.toEngage nt( nteract on) }.f lter(
+          _.t  stamp >= m nT  stamp)
     }.toMap
   }
 
-  def getRecentProfileViewEngagements(userId: Long): Stitch[Map[Long, Seq[Engagement]]] = {
-    timelinesUserVertexOnUserClientColumn.fetcher
-      .fetch(userId).map(_.v).map { input =>
-        input
+  def getRecentProf leV ewEngage nts(user d: Long): St ch[Map[Long, Seq[Engage nt]]] = {
+    t  l nesUserVertexOnUserCl entColumn.fetc r
+      .fetch(user d).map(_.v).map {  nput =>
+         nput
           .map { userVertex =>
-            val targetToEngagements = mapUserVertexToEngagementAndFilter(userVertex)
-            targetToEngagements.mapValues { engagements =>
-              engagements.filter(engagement =>
-                engagement.engagementType == EngagementType.ProfileView)
+            val targetToEngage nts = mapUserVertexToEngage ntAndF lter(userVertex)
+            targetToEngage nts.mapValues { engage nts =>
+              engage nts.f lter(engage nt =>
+                engage nt.engage ntType == Engage ntType.Prof leV ew)
             }
           }.getOrElse(Map.empty)
       }
   }
 
-  def getUsersRecentlyEngagedWith(
-    userId: Long,
-    engagementScoreMap: Map[EngagementType, Double],
-    includeDirectFollowCandidates: Boolean,
-    includeNonDirectFollowCandidates: Boolean
-  ): Stitch[Seq[CandidateUser]] = {
-    val isNewUser =
-      SnowflakeId.timeFromIdOpt(userId).exists { signupTime =>
-        (Time.now - signupTime) < RealTimeRealGraphClient.MaxNewUserAge
+  def getUsersRecentlyEngagedW h(
+    user d: Long,
+    engage ntScoreMap: Map[Engage ntType, Double],
+     ncludeD rectFollowCand dates: Boolean,
+     ncludeNonD rectFollowCand dates: Boolean
+  ): St ch[Seq[Cand dateUser]] = {
+    val  sNewUser =
+      Snowflake d.t  From dOpt(user d).ex sts { s gnupT   =>
+        (T  .now - s gnupT  ) < RealT  RealGraphCl ent.MaxNewUserAge
       }
-    val updatedEngagementScoreMap =
-      if (isNewUser)
-        engagementScoreMap + (EngagementType.ProfileView -> RealTimeRealGraphClient.ProfileViewScore)
-      else engagementScoreMap
+    val updatedEngage ntScoreMap =
+       f ( sNewUser)
+        engage ntScoreMap + (Engage ntType.Prof leV ew -> RealT  RealGraphCl ent.Prof leV ewScore)
+      else engage ntScoreMap
 
-    Stitch
-      .join(
-        timelinesUserVertexOnUserClientColumn.fetcher.fetch(userId).map(_.v),
-        realGraphScoresMhOnUserClientColumn.fetcher.fetch(userId).map(_.v)).map {
-        case (Some(userVertex), Some(neighbors)) =>
-          val engagements = mapUserVertexToEngagementAndFilter(userVertex)
+    St ch
+      .jo n(
+        t  l nesUserVertexOnUserCl entColumn.fetc r.fetch(user d).map(_.v),
+        realGraphScoresMhOnUserCl entColumn.fetc r.fetch(user d).map(_.v)).map {
+        case (So (userVertex), So (ne ghbors)) =>
+          val engage nts = mapUserVertexToEngage ntAndF lter(userVertex)
 
-          val candidatesAndScores: Seq[(Long, Double, Seq[EngagementType])] =
-            EngagementScorer.apply(engagements, engagementScoreMap = updatedEngagementScoreMap)
+          val cand datesAndScores: Seq[(Long, Double, Seq[Engage ntType])] =
+            Engage ntScorer.apply(engage nts, engage ntScoreMap = updatedEngage ntScoreMap)
 
-          val directNeighbors = neighbors.candidates.map(_._1).toSet
-          val (directFollows, nonDirectFollows) = candidatesAndScores
-            .partition {
-              case (id, _, _) => directNeighbors.contains(id)
+          val d rectNe ghbors = ne ghbors.cand dates.map(_._1).toSet
+          val (d rectFollows, nonD rectFollows) = cand datesAndScores
+            .part  on {
+              case ( d, _, _) => d rectNe ghbors.conta ns( d)
             }
 
-          val candidates =
-            (if (includeNonDirectFollowCandidates) nonDirectFollows else Seq.empty) ++
-              (if (includeDirectFollowCandidates)
-                 directFollows.take(RealTimeRealGraphClient.MaxNumDirectFollow)
+          val cand dates =
+            ( f ( ncludeNonD rectFollowCand dates) nonD rectFollows else Seq.empty) ++
+              ( f ( ncludeD rectFollowCand dates)
+                 d rectFollows.take(RealT  RealGraphCl ent.MaxNumD rectFollow)
                else Seq.empty)
 
-          candidates.map {
-            case (id, score, proof) =>
-              CandidateUser(id, Some(score))
+          cand dates.map {
+            case ( d, score, proof) =>
+              Cand dateUser( d, So (score))
           }
 
-        case _ => Nil
+        case _ => N l
       }
   }
 
-  def getRealGraphWeights(userId: Long): Stitch[Map[Long, Double]] =
-    realGraphScoresMhOnUserClientColumn.fetcher
-      .fetch(userId)
+  def getRealGraph  ghts(user d: Long): St ch[Map[Long, Double]] =
+    realGraphScoresMhOnUserCl entColumn.fetc r
+      .fetch(user d)
       .map(
         _.v
-          .map(_.candidates.map(candidate => (candidate.userId, candidate.score)).toMap)
+          .map(_.cand dates.map(cand date => (cand date.user d, cand date.score)).toMap)
           .getOrElse(Map.empty[Long, Double]))
 }
 
-object RealTimeRealGraphClient {
-  private def toEngagement(interaction: Interaction): Option[Engagement] = {
-    // We do not include SoftFollow since it's deprecated
-    interaction match {
-      case Interaction.Retweet(Retweet(timestamp)) =>
-        Some(Engagement(EngagementType.Retweet, timestamp))
-      case Interaction.Favorite(Favorite(timestamp)) =>
-        Some(Engagement(EngagementType.Like, timestamp))
-      case Interaction.Click(Click(timestamp)) => Some(Engagement(EngagementType.Click, timestamp))
-      case Interaction.Mention(Mention(timestamp)) =>
-        Some(Engagement(EngagementType.Mention, timestamp))
-      case Interaction.ProfileView(ProfileView(timestamp)) =>
-        Some(Engagement(EngagementType.ProfileView, timestamp))
+object RealT  RealGraphCl ent {
+  pr vate def toEngage nt( nteract on:  nteract on): Opt on[Engage nt] = {
+    //   do not  nclude SoftFollow s nce  's deprecated
+     nteract on match {
+      case  nteract on.Ret et(Ret et(t  stamp)) =>
+        So (Engage nt(Engage ntType.Ret et, t  stamp))
+      case  nteract on.Favor e(Favor e(t  stamp)) =>
+        So (Engage nt(Engage ntType.L ke, t  stamp))
+      case  nteract on.Cl ck(Cl ck(t  stamp)) => So (Engage nt(Engage ntType.Cl ck, t  stamp))
+      case  nteract on. nt on( nt on(t  stamp)) =>
+        So (Engage nt(Engage ntType. nt on, t  stamp))
+      case  nteract on.Prof leV ew(Prof leV ew(t  stamp)) =>
+        So (Engage nt(Engage ntType.Prof leV ew, t  stamp))
       case _ => None
     }
   }
 
-  val MaxNumDirectFollow = 50
-  val MaxEngagementAge: Duration = 14.days
-  val MaxNewUserAge: Duration = 30.days
-  val ProfileViewScore = 0.4
-  val EngagementScoreMap = Map(
-    EngagementType.Like -> 1.0,
-    EngagementType.Retweet -> 1.0,
-    EngagementType.Mention -> 1.0
+  val MaxNumD rectFollow = 50
+  val MaxEngage ntAge: Durat on = 14.days
+  val MaxNewUserAge: Durat on = 30.days
+  val Prof leV ewScore = 0.4
+  val Engage ntScoreMap = Map(
+    Engage ntType.L ke -> 1.0,
+    Engage ntType.Ret et -> 1.0,
+    Engage ntType. nt on -> 1.0
   )
-  val StrongEngagementScoreMap = Map(
-    EngagementType.Like -> 1.0,
-    EngagementType.Retweet -> 1.0,
+  val StrongEngage ntScoreMap = Map(
+    Engage ntType.L ke -> 1.0,
+    Engage ntType.Ret et -> 1.0,
   )
 }

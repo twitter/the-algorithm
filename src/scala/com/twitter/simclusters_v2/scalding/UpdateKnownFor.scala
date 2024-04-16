@@ -1,140 +1,140 @@
-package com.twitter.simclusters_v2.scalding
+package com.tw ter.s mclusters_v2.scald ng
 
-import com.twitter.algebird.{Monoid, Semigroup}
-import com.twitter.scalding._
+ mport com.tw ter.algeb rd.{Mono d, Sem group}
+ mport com.tw ter.scald ng._
 
 object UpdateKnownFor {
 
   /**
-   * Convenience datastructure that can summarize key stats about a node's set of
-   * immediate neighbors.
+   * Conven ence datastructure that can summar ze key stats about a node's set of
+   *  m d ate ne ghbors.
    *
    * @param nodeCount                          number of nodes
-   * @param sumOfEdgeWeights                   sum of weights on edges in the neighborhood.
-   * @param sumOfMembershipWeightedEdgeWeights sum of { edge weight * membership weight } for each node
-   *                                           in the neighborhood. Membership weight to what is not
-   *                                           specified in this case class and is instead part of the
+   * @param sumOfEdge  ghts                   sum of   ghts on edges  n t  ne ghborhood.
+   * @param sumOf mbersh p  ghtedEdge  ghts sum of { edge   ght *  mbersh p   ght } for each node
+   *                                            n t  ne ghborhood.  mbersh p   ght to what  s not
+   *                                           spec f ed  n t  case class and  s  nstead part of t 
    *                                           context.
-   * @param sumOfMembershipWeights             sum of membership weight for each node in the
-   *                                           neighborhood. Membership weight to what is not
-   *                                           specified in this case class and is instead part of
-   *                                           the context.
+   * @param sumOf mbersh p  ghts             sum of  mbersh p   ght for each node  n t 
+   *                                           ne ghborhood.  mbersh p   ght to what  s not
+   *                                           spec f ed  n t  case class and  s  nstead part of
+   *                                           t  context.
    */
-  case class NeighborhoodInformation(
-    nodeCount: Int,
-    sumOfEdgeWeights: Float,
-    sumOfMembershipWeightedEdgeWeights: Float,
-    sumOfMembershipWeights: Float)
+  case class Ne ghborhood nformat on(
+    nodeCount:  nt,
+    sumOfEdge  ghts: Float,
+    sumOf mbersh p  ghtedEdge  ghts: Float,
+    sumOf mbersh p  ghts: Float)
 
-  object NeighborhoodInformationMonoid extends Monoid[NeighborhoodInformation] {
-    override val zero: NeighborhoodInformation = NeighborhoodInformation(0, 0f, 0f, 0f)
-    override def plus(l: NeighborhoodInformation, r: NeighborhoodInformation) =
-      NeighborhoodInformation(
+  object Ne ghborhood nformat onMono d extends Mono d[Ne ghborhood nformat on] {
+    overr de val zero: Ne ghborhood nformat on = Ne ghborhood nformat on(0, 0f, 0f, 0f)
+    overr de def plus(l: Ne ghborhood nformat on, r: Ne ghborhood nformat on) =
+      Ne ghborhood nformat on(
         l.nodeCount + r.nodeCount,
-        l.sumOfEdgeWeights + r.sumOfEdgeWeights,
-        l.sumOfMembershipWeightedEdgeWeights + r.sumOfMembershipWeightedEdgeWeights,
-        l.sumOfMembershipWeights + r.sumOfMembershipWeights
+        l.sumOfEdge  ghts + r.sumOfEdge  ghts,
+        l.sumOf mbersh p  ghtedEdge  ghts + r.sumOf mbersh p  ghtedEdge  ghts,
+        l.sumOf mbersh p  ghts + r.sumOf mbersh p  ghts
       )
   }
 
-  case class NodeInformation(
-    originalClusters: List[Int],
-    overallStats: NeighborhoodInformation,
-    statsOfClustersInNeighborhood: Map[Int, NeighborhoodInformation])
+  case class Node nformat on(
+    or g nalClusters: L st[ nt],
+    overallStats: Ne ghborhood nformat on,
+    statsOfClusters nNe ghborhood: Map[ nt, Ne ghborhood nformat on])
 
-  object NodeInformationSemigroup extends Semigroup[NodeInformation] {
-    implicit val ctsMonoid: Monoid[NeighborhoodInformation] = NeighborhoodInformationMonoid
+  object Node nformat onSem group extends Sem group[Node nformat on] {
+     mpl c  val ctsMono d: Mono d[Ne ghborhood nformat on] = Ne ghborhood nformat onMono d
 
-    override def plus(l: NodeInformation, r: NodeInformation) =
-      NodeInformation(
-        l.originalClusters ++ r.originalClusters,
-        ctsMonoid.plus(l.overallStats, r.overallStats),
-        Monoid
-          .mapMonoid[Int, NeighborhoodInformation].plus(
-            l.statsOfClustersInNeighborhood,
-            r.statsOfClustersInNeighborhood)
+    overr de def plus(l: Node nformat on, r: Node nformat on) =
+      Node nformat on(
+        l.or g nalClusters ++ r.or g nalClusters,
+        ctsMono d.plus(l.overallStats, r.overallStats),
+        Mono d
+          .mapMono d[ nt, Ne ghborhood nformat on].plus(
+            l.statsOfClusters nNe ghborhood,
+            r.statsOfClusters nNe ghborhood)
       )
   }
 
   case class ClusterScoresForNode(
-    sumScoreIgnoringMembershipScores: Double,
-    ratioScoreIgnoringMembershipScores: Double,
-    ratioScoreUsingMembershipScores: Double)
+    sumScore gnor ng mbersh pScores: Double,
+    rat oScore gnor ng mbersh pScores: Double,
+    rat oScoreUs ng mbersh pScores: Double)
 
   /**
-   * Given a user and a cluster:
-   * True positive weight = sum of edge weights to neighbors who belong to that cluster.
-   * False negative weight = sum of edge weights to neighbors who don’t belong to that cluster.
-   * False positive weight = (number of users in the cluster who are not neighbors of the node) * globalAvgEdgeWeight
-   * Membership-weighted true positive weight = for neighbors who are also in the cluster, sum of edge weight times user membership score in the cluster.
-   * Membership-weighted false negative weight = for neighbors who are not in the cluster, sum of edge weight times avg membership score across the whole knownFor input.
-   * Membership-weighted false positive weight = for users in the cluster who are not neighbors of the node, avg global edge weight times user membership score for the cluster.
+   * G ven a user and a cluster:
+   * True pos  ve   ght = sum of edge   ghts to ne ghbors who belong to that cluster.
+   * False negat ve   ght = sum of edge   ghts to ne ghbors who don’t belong to that cluster.
+   * False pos  ve   ght = (number of users  n t  cluster who are not ne ghbors of t  node) * globalAvgEdge  ght
+   *  mbersh p-  ghted true pos  ve   ght = for ne ghbors who are also  n t  cluster, sum of edge   ght t  s user  mbersh p score  n t  cluster.
+   *  mbersh p-  ghted false negat ve   ght = for ne ghbors who are not  n t  cluster, sum of edge   ght t  s avg  mbersh p score across t  whole knownFor  nput.
+   *  mbersh p-  ghted false pos  ve   ght = for users  n t  cluster who are not ne ghbors of t  node, avg global edge   ght t  s user  mbersh p score for t  cluster.
    *
-   * Ignoring membership scores, sum formula:
-   * truePositiveWtFactor*(True positive weight) - false negative weight - false positive weight
-   * Ignoring membership scores, ratio formula:
-   * True positive weight / (true positive weight + false negative weight + false positive weight)
-   * Using membership scores
-   * Membership-weighted true positive weight / (Membership-weighted true positive weight + Membership-weighted false negative weight + Membership-weighted false positive weight)
+   *  gnor ng  mbersh p scores, sum formula:
+   * truePos  veWtFactor*(True pos  ve   ght) - false negat ve   ght - false pos  ve   ght
+   *  gnor ng  mbersh p scores, rat o formula:
+   * True pos  ve   ght / (true pos  ve   ght + false negat ve   ght + false pos  ve   ght)
+   * Us ng  mbersh p scores
+   *  mbersh p-  ghted true pos  ve   ght / ( mbersh p-  ghted true pos  ve   ght +  mbersh p-  ghted false negat ve   ght +  mbersh p-  ghted false pos  ve   ght)
    *
-   * @param overallNeighborhoodStats
+   * @param overallNe ghborhoodStats
    * @param statsForCluster
-   * @param clusterSize
-   * @param sumOfClusterMembershipScores
-   * @param globalAvgEdgeWeight
-   * @param truePositiveWtFactor
+   * @param clusterS ze
+   * @param sumOfCluster mbersh pScores
+   * @param globalAvgEdge  ght
+   * @param truePos  veWtFactor
    *
    * @return
    */
   def getScoresForCluster(
-    overallNeighborhoodStats: NeighborhoodInformation,
-    statsForCluster: NeighborhoodInformation,
-    clusterSize: Int,
-    sumOfClusterMembershipScores: Double,
-    globalAvgEdgeWeight: Double,
-    truePositiveWtFactor: Double
+    overallNe ghborhoodStats: Ne ghborhood nformat on,
+    statsForCluster: Ne ghborhood nformat on,
+    clusterS ze:  nt,
+    sumOfCluster mbersh pScores: Double,
+    globalAvgEdge  ght: Double,
+    truePos  veWtFactor: Double
   ): ClusterScoresForNode = {
-    val truePositiveWt = statsForCluster.sumOfEdgeWeights
-    val falseNegativeWt = overallNeighborhoodStats.sumOfEdgeWeights - truePositiveWt
-    val falsePositiveWt = (clusterSize - statsForCluster.nodeCount) * globalAvgEdgeWeight
-    val membershipWeightedTruePositiveWt = statsForCluster.sumOfMembershipWeightedEdgeWeights
-    val membershipWeightedFalseNegativeWt =
-      overallNeighborhoodStats.sumOfMembershipWeightedEdgeWeights - membershipWeightedTruePositiveWt
-    val membershipWeightedFalsePositiveWt =
-      (sumOfClusterMembershipScores - statsForCluster.sumOfMembershipWeights) * globalAvgEdgeWeight
+    val truePos  veWt = statsForCluster.sumOfEdge  ghts
+    val falseNegat veWt = overallNe ghborhoodStats.sumOfEdge  ghts - truePos  veWt
+    val falsePos  veWt = (clusterS ze - statsForCluster.nodeCount) * globalAvgEdge  ght
+    val  mbersh p  ghtedTruePos  veWt = statsForCluster.sumOf mbersh p  ghtedEdge  ghts
+    val  mbersh p  ghtedFalseNegat veWt =
+      overallNe ghborhoodStats.sumOf mbersh p  ghtedEdge  ghts -  mbersh p  ghtedTruePos  veWt
+    val  mbersh p  ghtedFalsePos  veWt =
+      (sumOfCluster mbersh pScores - statsForCluster.sumOf mbersh p  ghts) * globalAvgEdge  ght
     val sumScore =
-      truePositiveWtFactor * statsForCluster.sumOfEdgeWeights - falseNegativeWt - falsePositiveWt
-    val ratioScore = truePositiveWt / (truePositiveWt + falseNegativeWt + falsePositiveWt)
-    val ratioUsingMemberships =
-      membershipWeightedTruePositiveWt / (membershipWeightedTruePositiveWt +
-        membershipWeightedFalsePositiveWt + membershipWeightedFalseNegativeWt)
-    ClusterScoresForNode(sumScore, ratioScore, ratioUsingMemberships)
+      truePos  veWtFactor * statsForCluster.sumOfEdge  ghts - falseNegat veWt - falsePos  veWt
+    val rat oScore = truePos  veWt / (truePos  veWt + falseNegat veWt + falsePos  veWt)
+    val rat oUs ng mbersh ps =
+       mbersh p  ghtedTruePos  veWt / ( mbersh p  ghtedTruePos  veWt +
+         mbersh p  ghtedFalsePos  veWt +  mbersh p  ghtedFalseNegat veWt)
+    ClusterScoresForNode(sumScore, rat oScore, rat oUs ng mbersh ps)
   }
 
-  def pickBestCluster(
-    overallNeighborhoodStats: NeighborhoodInformation,
-    statsOfClustersInNeighborhood: Map[Int, NeighborhoodInformation],
-    clusterOverallStatsMap: Map[Int, NeighborhoodInformation],
-    globalAvgEdgeWeight: Double,
-    truePositiveWtFactor: Double,
-    clusterScoresToFinalScore: ClusterScoresForNode => Double,
-    minNeighborsInCluster: Int
-  ): Option[(Int, Double)] = {
-    val clusterToScores = statsOfClustersInNeighborhood.toList.flatMap {
-      case (clusterId, statsInNeighborhood) =>
-        val clusterOverallStats = clusterOverallStatsMap(clusterId)
-        if (statsInNeighborhood.nodeCount >= minNeighborsInCluster) {
-          Some(
+  def p ckBestCluster(
+    overallNe ghborhoodStats: Ne ghborhood nformat on,
+    statsOfClusters nNe ghborhood: Map[ nt, Ne ghborhood nformat on],
+    clusterOverallStatsMap: Map[ nt, Ne ghborhood nformat on],
+    globalAvgEdge  ght: Double,
+    truePos  veWtFactor: Double,
+    clusterScoresToF nalScore: ClusterScoresForNode => Double,
+    m nNe ghbors nCluster:  nt
+  ): Opt on[( nt, Double)] = {
+    val clusterToScores = statsOfClusters nNe ghborhood.toL st.flatMap {
+      case (cluster d, stats nNe ghborhood) =>
+        val clusterOverallStats = clusterOverallStatsMap(cluster d)
+         f (stats nNe ghborhood.nodeCount >= m nNe ghbors nCluster) {
+          So (
             (
-              clusterId,
-              clusterScoresToFinalScore(
+              cluster d,
+              clusterScoresToF nalScore(
                 getScoresForCluster(
-                  overallNeighborhoodStats,
-                  statsInNeighborhood,
+                  overallNe ghborhoodStats,
+                  stats nNe ghborhood,
                   clusterOverallStats.nodeCount,
-                  clusterOverallStats.sumOfMembershipWeights,
-                  globalAvgEdgeWeight,
-                  truePositiveWtFactor
+                  clusterOverallStats.sumOf mbersh p  ghts,
+                  globalAvgEdge  ght,
+                  truePos  veWtFactor
                 )
               )
             )
@@ -143,168 +143,168 @@ object UpdateKnownFor {
           None
         }
     }
-    if (clusterToScores.nonEmpty) {
-      Some(clusterToScores.maxBy(_._2))
+     f (clusterToScores.nonEmpty) {
+      So (clusterToScores.maxBy(_._2))
     } else None
   }
 
-  def updateGeneric(
-    graph: TypedPipe[(Long, Map[Long, Float])],
-    inputUserToClusters: TypedPipe[(Long, Array[(Int, Float)])],
-    clusterOverallStatsMap: Map[Int, NeighborhoodInformation],
-    minNeighborsInCluster: Int,
-    globalAvgWeight: Double,
-    avgMembershipScore: Double,
-    truePositiveWtFactor: Double,
-    clusterScoresToFinalScore: ClusterScoresForNode => Double
+  def updateGener c(
+    graph: TypedP pe[(Long, Map[Long, Float])],
+     nputUserToClusters: TypedP pe[(Long, Array[( nt, Float)])],
+    clusterOverallStatsMap: Map[ nt, Ne ghborhood nformat on],
+    m nNe ghbors nCluster:  nt,
+    globalAvg  ght: Double,
+    avg mbersh pScore: Double,
+    truePos  veWtFactor: Double,
+    clusterScoresToF nalScore: ClusterScoresForNode => Double
   )(
-    implicit uniqId: UniqueID
-  ): TypedPipe[(Long, Array[(Int, Float)])] = {
-    val emptyToSomething = Stat("no_assignment_to_some")
-    val somethingToEmpty = Stat("some_assignment_to_none")
+     mpl c  un q d: Un que D
+  ): TypedP pe[(Long, Array[( nt, Float)])] = {
+    val emptyToSo th ng = Stat("no_ass gn nt_to_so ")
+    val so th ngToEmpty = Stat("so _ass gn nt_to_none")
     val emptyToEmpty = Stat("empty_to_empty")
-    val sameCluster = Stat("same_cluster")
-    val diffCluster = Stat("diff_cluster")
-    val nodesWithSmallDegree = Stat("nodes_with_degree_lt_" + minNeighborsInCluster)
+    val sa Cluster = Stat("sa _cluster")
+    val d ffCluster = Stat("d ff_cluster")
+    val nodesW hSmallDegree = Stat("nodes_w h_degree_lt_" + m nNe ghbors nCluster)
 
-    collectInformationPerNode(graph, inputUserToClusters, avgMembershipScore)
+    collect nformat onPerNode(graph,  nputUserToClusters, avg mbersh pScore)
       .mapValues {
-        case NodeInformation(originalClusters, overallStats, statsOfClustersInNeighborhood) =>
-          val newClusterWithScoreOpt = if (overallStats.nodeCount < minNeighborsInCluster) {
-            nodesWithSmallDegree.inc()
+        case Node nformat on(or g nalClusters, overallStats, statsOfClusters nNe ghborhood) =>
+          val newClusterW hScoreOpt =  f (overallStats.nodeCount < m nNe ghbors nCluster) {
+            nodesW hSmallDegree. nc()
             None
           } else {
-            pickBestCluster(
+            p ckBestCluster(
               overallStats,
-              statsOfClustersInNeighborhood,
+              statsOfClusters nNe ghborhood,
               clusterOverallStatsMap,
-              globalAvgWeight,
-              truePositiveWtFactor,
-              clusterScoresToFinalScore,
-              minNeighborsInCluster
+              globalAvg  ght,
+              truePos  veWtFactor,
+              clusterScoresToF nalScore,
+              m nNe ghbors nCluster
             )
           }
-          newClusterWithScoreOpt match {
-            case Some((newClusterId, score)) =>
-              if (originalClusters.isEmpty) {
-                emptyToSomething.inc()
-              } else if (originalClusters.contains(newClusterId)) {
-                sameCluster.inc()
+          newClusterW hScoreOpt match {
+            case So ((newCluster d, score)) =>
+               f (or g nalClusters. sEmpty) {
+                emptyToSo th ng. nc()
+              } else  f (or g nalClusters.conta ns(newCluster d)) {
+                sa Cluster. nc()
               } else {
-                diffCluster.inc()
+                d ffCluster. nc()
               }
-              Array((newClusterId, score.toFloat))
+              Array((newCluster d, score.toFloat))
             case None =>
-              if (originalClusters.isEmpty) {
-                emptyToEmpty.inc()
+               f (or g nalClusters. sEmpty) {
+                emptyToEmpty. nc()
               } else {
-                somethingToEmpty.inc()
+                so th ngToEmpty. nc()
               }
-              Array.empty[(Int, Float)]
+              Array.empty[( nt, Float)]
           }
       }
   }
 
   /**
-   * Assembles the information we need at a node in order to decide what the new cluster should be.
-   * So this is where we assemble what the overall
+   * Assembles t   nformat on   need at a node  n order to dec de what t  new cluster should be.
+   * So t   s w re   assemble what t  overall
    *
-   * This function is where all the crucial steps take place. First get the cluster that each
-   * node belongs to, and then broadcast information about this node and cluster membership to each
-   * of it's neighbors. Now bring together all records with the same nodeId as the key and create
-   * the NodeInformation dataset.
-   * @param graph symmetric graph i.e. if u is in v's adj list, then v is in u's adj list.
+   * T  funct on  s w re all t  cruc al steps take place. F rst get t  cluster that each
+   * node belongs to, and t n broadcast  nformat on about t  node and cluster  mbersh p to each
+   * of  's ne ghbors. Now br ng toget r all records w h t  sa  node d as t  key and create
+   * t  Node nformat on dataset.
+   * @param graph sym tr c graph  .e.  f u  s  n v's adj l st, t n v  s  n u's adj l st.
    * @param userToClusters current knownFor.
-   * @param avgMembershipScore avg. membership score of a node in the knownFor we're updating.
-   *                           Useful to deal with nodes which don't belong to any knownFor.
-   * @return pipe with node information for each node
+   * @param avg mbersh pScore avg.  mbersh p score of a node  n t  knownFor  're updat ng.
+   *                           Useful to deal w h nodes wh ch don't belong to any knownFor.
+   * @return p pe w h node  nformat on for each node
    */
-  def collectInformationPerNode(
-    graph: TypedPipe[(Long, Map[Long, Float])],
-    userToClusters: TypedPipe[(Long, Array[(Int, Float)])],
-    avgMembershipScore: Double
-  ): TypedPipe[(Long, NodeInformation)] = {
-    implicit val nisg: Semigroup[NodeInformation] = NodeInformationSemigroup
+  def collect nformat onPerNode(
+    graph: TypedP pe[(Long, Map[Long, Float])],
+    userToClusters: TypedP pe[(Long, Array[( nt, Float)])],
+    avg mbersh pScore: Double
+  ): TypedP pe[(Long, Node nformat on)] = {
+     mpl c  val n sg: Sem group[Node nformat on] = Node nformat onSem group
     graph
-      .leftJoin(userToClusters)
-      // uncomment for adhoc job
-      //.withReducers(200)
+      .leftJo n(userToClusters)
+      // uncom nt for adhoc job
+      //.w hReducers(200)
       .flatMap {
-        case (nodeId, (adjList, assignedClustersOpt)) =>
-          val assignedClusters =
-            assignedClustersOpt.map(_.toList).getOrElse(Nil)
-          val res = adjList.toList.flatMap {
-            case (neighborId, neighborWeight) =>
-              if (assignedClusters.nonEmpty) {
-                assignedClusters.map {
-                  case (clusterId, membershipScore) =>
-                    val neighborhoodInformationForCluster = NeighborhoodInformation(
+        case (node d, (adjL st, ass gnedClustersOpt)) =>
+          val ass gnedClusters =
+            ass gnedClustersOpt.map(_.toL st).getOrElse(N l)
+          val res = adjL st.toL st.flatMap {
+            case (ne ghbor d, ne ghbor  ght) =>
+               f (ass gnedClusters.nonEmpty) {
+                ass gnedClusters.map {
+                  case (cluster d,  mbersh pScore) =>
+                    val ne ghborhood nformat onForCluster = Ne ghborhood nformat on(
                       1,
-                      neighborWeight,
-                      membershipScore * neighborWeight,
-                      membershipScore)
-                    val originalClusters =
-                      if (neighborId == nodeId) List(clusterId)
-                      else List.empty[Int]
+                      ne ghbor  ght,
+                       mbersh pScore * ne ghbor  ght,
+                       mbersh pScore)
+                    val or g nalClusters =
+                       f (ne ghbor d == node d) L st(cluster d)
+                      else L st.empty[ nt]
                     (
-                      neighborId,
-                      NodeInformation(
-                        originalClusters,
-                        neighborhoodInformationForCluster,
-                        Map(clusterId -> neighborhoodInformationForCluster)))
+                      ne ghbor d,
+                      Node nformat on(
+                        or g nalClusters,
+                        ne ghborhood nformat onForCluster,
+                        Map(cluster d -> ne ghborhood nformat onForCluster)))
                 }
               } else {
-                List(
+                L st(
                   (
-                    neighborId,
-                    NodeInformation(
-                      Nil,
-                      NeighborhoodInformation(
+                    ne ghbor d,
+                    Node nformat on(
+                      N l,
+                      Ne ghborhood nformat on(
                         1,
-                        neighborWeight,
-                        (avgMembershipScore * neighborWeight).toFloat,
-                        avgMembershipScore.toFloat),
-                      Map.empty[Int, NeighborhoodInformation]
+                        ne ghbor  ght,
+                        (avg mbersh pScore * ne ghbor  ght).toFloat,
+                        avg mbersh pScore.toFloat),
+                      Map.empty[ nt, Ne ghborhood nformat on]
                     )))
               }
           }
           res
       }
       .sumByKey
-    // uncomment for adhoc job
-    //.withReducers(100)
+    // uncom nt for adhoc job
+    //.w hReducers(100)
   }
 
   /**
-   * Replace incoming knownFor scores with ratioScoreIgnoringMembershipScores
+   * Replace  ncom ng knownFor scores w h rat oScore gnor ng mbersh pScores
    * @param knownFor
-   * @param simsGraphWithoutSelfLoops
-   * @param globalAvgWeight
+   * @param s msGraphW houtSelfLoops
+   * @param globalAvg  ght
    * @param clusterStats
-   * @param avgMembershipScore
+   * @param avg mbersh pScore
    * @return
    */
   def newKnownForScores(
-    knownFor: TypedPipe[(Long, Array[(Int, Float)])],
-    simsGraphWithoutSelfLoops: TypedPipe[(Long, Map[Long, Float])],
-    globalAvgWeight: Double,
-    clusterStats: Map[Int, NeighborhoodInformation],
-    avgMembershipScore: Double
-  ): TypedPipe[(Long, Array[(Int, Float)])] = {
-    collectInformationPerNode(simsGraphWithoutSelfLoops, knownFor, avgMembershipScore)
+    knownFor: TypedP pe[(Long, Array[( nt, Float)])],
+    s msGraphW houtSelfLoops: TypedP pe[(Long, Map[Long, Float])],
+    globalAvg  ght: Double,
+    clusterStats: Map[ nt, Ne ghborhood nformat on],
+    avg mbersh pScore: Double
+  ): TypedP pe[(Long, Array[( nt, Float)])] = {
+    collect nformat onPerNode(s msGraphW houtSelfLoops, knownFor, avg mbersh pScore)
       .mapValues {
-        case NodeInformation(originalClusters, overallStats, statsOfClustersInNeighborhood) =>
-          originalClusters.map { clusterId =>
+        case Node nformat on(or g nalClusters, overallStats, statsOfClusters nNe ghborhood) =>
+          or g nalClusters.map { cluster d =>
             (
-              clusterId,
+              cluster d,
               getScoresForCluster(
                 overallStats,
-                statsOfClustersInNeighborhood(clusterId),
-                clusterStats(clusterId).nodeCount,
-                clusterStats(clusterId).sumOfMembershipWeights,
-                globalAvgWeight,
+                statsOfClusters nNe ghborhood(cluster d),
+                clusterStats(cluster d).nodeCount,
+                clusterStats(cluster d).sumOf mbersh p  ghts,
+                globalAvg  ght,
                 0
-              ).ratioScoreIgnoringMembershipScores.toFloat)
+              ).rat oScore gnor ng mbersh pScores.toFloat)
           }.toArray
       }
   }

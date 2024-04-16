@@ -1,141 +1,141 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 package federated.columns
 
-import com.twitter.io.Buf
-import com.twitter.scrooge.TFieldBlob
-import com.twitter.stitch.Stitch
-import com.twitter.strato.access.Access
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.config.AllowAll
-import com.twitter.strato.config.ContactInfo
-import com.twitter.strato.config.Policy
-import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
-import com.twitter.strato.data.Lifecycle.Production
-import com.twitter.strato.data.Type
-import com.twitter.strato.data.Val
-import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.opcontext.OpContext
-import com.twitter.strato.serialization.MVal
-import com.twitter.strato.serialization.Thrift
-import com.twitter.strato.util.Strings
-import com.twitter.tweetypie.thriftscala.GetTweetFieldsResult
-import com.twitter.tweetypie.thriftscala.SetAdditionalFieldsRequest
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.tweetypie.thriftscala.TweetFieldsResultState.Found
-import com.twitter.util.Future
-import org.apache.thrift.protocol.TField
+ mport com.tw ter. o.Buf
+ mport com.tw ter.scrooge.TF eldBlob
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.access.Access
+ mport com.tw ter.strato.catalog.Op tadata
+ mport com.tw ter.strato.conf g.AllowAll
+ mport com.tw ter.strato.conf g.Contact nfo
+ mport com.tw ter.strato.conf g.Pol cy
+ mport com.tw ter.strato.data.Conv
+ mport com.tw ter.strato.data.Descr pt on.Pla nText
+ mport com.tw ter.strato.data.L fecycle.Product on
+ mport com.tw ter.strato.data.Type
+ mport com.tw ter.strato.data.Val
+ mport com.tw ter.strato.fed.StratoFed
+ mport com.tw ter.strato.opcontext.OpContext
+ mport com.tw ter.strato.ser al zat on.MVal
+ mport com.tw ter.strato.ser al zat on.Thr ft
+ mport com.tw ter.strato.ut l.Str ngs
+ mport com.tw ter.t etyp e.thr ftscala.GetT etF eldsResult
+ mport com.tw ter.t etyp e.thr ftscala.SetAdd  onalF eldsRequest
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.t etyp e.thr ftscala.T etF eldsResultState.Found
+ mport com.tw ter.ut l.Future
+ mport org.apac .thr ft.protocol.TF eld
 
 /**
- * Federated strato column to return tweet fields
- * @param federatedFieldsGroup Group to be used for Stitch batching.
- *         This is a function that takes a GroupOptions and returns a FederatedFieldGroup.
- *         Using a function that accepts a GroupOptions allows for Stitch to handle a new group for distinct GroupOptions.
- * @param setAdditionalFields Handler to set additional fields on tweets.
- * @param stratoValueType Type to be returned by the strato column.
- * @param tfield Tweet thrift field to be stored
- * @param pathName Path to be used in the strato catalog
+ * Federated strato column to return t et f elds
+ * @param federatedF eldsGroup Group to be used for St ch batch ng.
+ *         T   s a funct on that takes a GroupOpt ons and returns a FederatedF eldGroup.
+ *         Us ng a funct on that accepts a GroupOpt ons allows for St ch to handle a new group for d st nct GroupOpt ons.
+ * @param setAdd  onalF elds Handler to set add  onal f elds on t ets.
+ * @param stratoValueType Type to be returned by t  strato column.
+ * @param tf eld T et thr ft f eld to be stored
+ * @param pathNa  Path to be used  n t  strato catalog
  */
-class FederatedFieldColumn(
-  federatedFieldsGroup: FederatedFieldGroupBuilder.Type,
-  setAdditionalFields: SetAdditionalFieldsRequest => Future[Unit],
+class FederatedF eldColumn(
+  federatedF eldsGroup: FederatedF eldGroupBu lder.Type,
+  setAdd  onalF elds: SetAdd  onalF eldsRequest => Future[Un ],
   stratoValueType: Type,
-  tfield: TField,
-  pathOverride: Option[String] = None)
-    extends StratoFed.Column(pathOverride.getOrElse(FederatedFieldColumn.makeColumnPath(tfield)))
-    with StratoFed.Fetch.StitchWithContext
-    with StratoFed.Put.Stitch {
+  tf eld: TF eld,
+  pathOverr de: Opt on[Str ng] = None)
+    extends StratoFed.Column(pathOverr de.getOrElse(FederatedF eldColumn.makeColumnPath(tf eld)))
+    w h StratoFed.Fetch.St chW hContext
+    w h StratoFed.Put.St ch {
 
   type Key = Long
-  type View = Unit
+  type V ew = Un 
   type Value = Val.T
 
-  override val keyConv: Conv[Key] = Conv.ofType
-  override val viewConv: Conv[View] = Conv.ofType
-  override val valueConv: Conv[Value] = Conv(stratoValueType, identity, identity)
+  overr de val keyConv: Conv[Key] = Conv.ofType
+  overr de val v ewConv: Conv[V ew] = Conv.ofType
+  overr de val valueConv: Conv[Value] = Conv(stratoValueType,  dent y,  dent y)
 
-  override val policy: Policy = AllowAll
+  overr de val pol cy: Pol cy = AllowAll
 
   /*
-   * A fetch that proxies GetTweetFieldsColumn.fetch but only requests and
-   * returns one specific field.
+   * A fetch that prox es GetT etF eldsColumn.fetch but only requests and
+   * returns one spec f c f eld.
    */
-  override def fetch(tweetId: Key, view: View, opContext: OpContext): Stitch[Result[Value]] = {
+  overr de def fetch(t et d: Key, v ew: V ew, opContext: OpContext): St ch[Result[Value]] = {
 
-    val twitterUserId: Option[UserId] = Access.getTwitterUserId match {
-      // Access.getTwitterUserId should return a value when request is made on behalf of a user
-      // and will not return a value otherwise
-      case Some(twitterUser) => Some(twitterUser.id)
+    val tw terUser d: Opt on[User d] = Access.getTw terUser d match {
+      // Access.getTw terUser d should return a value w n request  s made on behalf of a user
+      // and w ll not return a value ot rw se
+      case So (tw terUser) => So (tw terUser. d)
       case None => None
     }
 
-    val stitchGroup = federatedFieldsGroup(GroupOptions(twitterUserId))
+    val st chGroup = federatedF eldsGroup(GroupOpt ons(tw terUser d))
 
-    Stitch
-      .call(FederatedFieldReq(tweetId, tfield.id), stitchGroup).map {
-        result: GetTweetFieldsResult =>
-          result.tweetResult match {
+    St ch
+      .call(FederatedF eldReq(t et d, tf eld. d), st chGroup).map {
+        result: GetT etF eldsResult =>
+          result.t etResult match {
             case Found(f) =>
-              f.tweet.getFieldBlob(tfield.id) match {
-                case Some(v: TFieldBlob) =>
+              f.t et.getF eldBlob(tf eld. d) match {
+                case So (v: TF eldBlob) =>
                   found(blobToVal(v))
-                case None => missing
+                case None => m ss ng
               }
-            case _ => missing
+            case _ => m ss ng
           }
       }
 
   }
 
   /*
-   * A strato put interface for writing a single additional field to a tweet
+   * A strato put  nterface for wr  ng a s ngle add  onal f eld to a t et
    */
-  override def put(tweetId: Key, value: Val.T): Stitch[Unit] = {
-    val tweet: Tweet = Tweet(id = tweetId).setField(valToBlob(value))
-    val request: SetAdditionalFieldsRequest = SetAdditionalFieldsRequest(tweet)
-    Stitch.callFuture(setAdditionalFields(request))
+  overr de def put(t et d: Key, value: Val.T): St ch[Un ] = {
+    val t et: T et = T et( d = t et d).setF eld(valToBlob(value))
+    val request: SetAdd  onalF eldsRequest = SetAdd  onalF eldsRequest(t et)
+    St ch.callFuture(setAdd  onalF elds(request))
   }
 
-  val mval: Thrift.Codec = MVal.codec(stratoValueType).thrift(4)
+  val mval: Thr ft.Codec = MVal.codec(stratoValueType).thr ft(4)
 
-  def valToBlob(value: Val.T): TFieldBlob =
-    TFieldBlob(tfield, mval.write[Buf](value, Thrift.compactProto))
+  def valToBlob(value: Val.T): TF eldBlob =
+    TF eldBlob(tf eld, mval.wr e[Buf](value, Thr ft.compactProto))
 
-  def blobToVal(thriftFieldBlob: TFieldBlob): Val.T =
-    mval.read(thriftFieldBlob.content, Thrift.compactProto)
+  def blobToVal(thr ftF eldBlob: TF eldBlob): Val.T =
+    mval.read(thr ftF eldBlob.content, Thr ft.compactProto)
 
-  override val contactInfo: ContactInfo = TweetypieContactInfo
-  override val metadata: OpMetadata = OpMetadata(
-    lifecycle = Some(Production),
-    description = Some(PlainText(s"A federated column for the field tweet.$stratoValueType"))
+  overr de val contact nfo: Contact nfo = T etyp eContact nfo
+  overr de val  tadata: Op tadata = Op tadata(
+    l fecycle = So (Product on),
+    descr pt on = So (Pla nText(s"A federated column for t  f eld t et.$stratoValueType"))
   )
 }
 
-object FederatedFieldColumn {
-  val idAllowlist: Seq[Short] = Seq(
-    Tweet.CoreDataField.id,
-    Tweet.LanguageField.id,
-    Tweet.ConversationMutedField.id
+object FederatedF eldColumn {
+  val  dAllowl st: Seq[Short] = Seq(
+    T et.CoreDataF eld. d,
+    T et.LanguageF eld. d,
+    T et.Conversat onMutedF eld. d
   )
-  val ID_START = 157
-  val ID_END = 32000
+  val  D_START = 157
+  val  D_END = 32000
 
-  private val MigrationFields: Seq[Short] = Seq(157)
+  pr vate val M grat onF elds: Seq[Short] = Seq(157)
 
-  def isFederatedField(id: Short) = id >= ID_START && id < ID_END || idAllowlist.contains(id)
+  def  sFederatedF eld( d: Short) =  d >=  D_START &&  d <  D_END ||  dAllowl st.conta ns( d)
 
-  def isMigrationFederatedField(tField: TField): Boolean = MigrationFields.contains(tField.id)
+  def  sM grat onFederatedF eld(tF eld: TF eld): Boolean = M grat onF elds.conta ns(tF eld. d)
 
-  /* federated field column strato configs must conform to this
-   * path name scheme for tweetypie to pick them up
+  /* federated f eld column strato conf gs must conform to t 
+   * path na  sc   for t etyp e to p ck t m up
    */
-  def makeColumnPath(tField: TField) = {
-    val columnName = Strings.toCamelCase(tField.name.stripSuffix("id"))
-    s"tweetypie/fields/${columnName}.Tweet"
+  def makeColumnPath(tF eld: TF eld) = {
+    val columnNa  = Str ngs.toCa lCase(tF eld.na .str pSuff x(" d"))
+    s"t etyp e/f elds/${columnNa }.T et"
   }
 
-  def makeV1ColumnPath(tField: TField): String = {
-    val columnName = Strings.toCamelCase(tField.name.stripSuffix("id"))
-    s"tweetypie/fields/$columnName-V1.Tweet"
+  def makeV1ColumnPath(tF eld: TF eld): Str ng = {
+    val columnNa  = Str ngs.toCa lCase(tF eld.na .str pSuff x(" d"))
+    s"t etyp e/f elds/$columnNa -V1.T et"
   }
 }

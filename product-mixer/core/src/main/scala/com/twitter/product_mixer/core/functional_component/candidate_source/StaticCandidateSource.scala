@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.candidate_source
+package com.tw ter.product_m xer.core.funct onal_component.cand date_s ce
 
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Cand dateS ce dent f er
+ mport com.tw ter.st ch.St ch
 
 /**
- * A [[CandidateSource]] that always returns [[result]] regardless of the input
+ * A [[Cand dateS ce]] that always returns [[result]] regardless of t   nput
  */
-case class StaticCandidateSource[Candidate](
-  override val identifier: CandidateSourceIdentifier,
-  result: Seq[Candidate])
-    extends CandidateSource[Any, Candidate] {
+case class Stat cCand dateS ce[Cand date](
+  overr de val  dent f er: Cand dateS ce dent f er,
+  result: Seq[Cand date])
+    extends Cand dateS ce[Any, Cand date] {
 
-  def apply(request: Any): Stitch[Seq[Candidate]] = Stitch.value(result)
+  def apply(request: Any): St ch[Seq[Cand date]] = St ch.value(result)
 }

@@ -1,45 +1,45 @@
-package com.twitter.search.earlybird_root;
+package com.tw ter.search.earlyb rd_root;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchQuery;
 
-public class EarlybirdProtectedValidationBehavior extends EarlybirdServiceValidationBehavior {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(EarlybirdProtectedValidationBehavior.class);
+publ c class Earlyb rdProtectedVal dat onBehav or extends Earlyb rdServ ceVal dat onBehav or {
+  pr vate stat c f nal Logger LOG =
+      LoggerFactory.getLogger(Earlyb rdProtectedVal dat onBehav or.class);
 
-  @Override
-  public EarlybirdResponse getResponseIfInvalidRequest(EarlybirdRequest request) {
-    if (!request.isSetSearchQuery() || request.getSearchQuery() == null) {
-      String errorMsg = "Invalid EarlybirdRequest, no ThriftSearchQuery specified. " + request;
+  @Overr de
+  publ c Earlyb rdResponse getResponse f nval dRequest(Earlyb rdRequest request) {
+     f (!request. sSetSearchQuery() || request.getSearchQuery() == null) {
+      Str ng errorMsg = " nval d Earlyb rdRequest, no Thr ftSearchQuery spec f ed. " + request;
       LOG.warn(errorMsg);
       return createErrorResponse(errorMsg);
     }
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
+    Thr ftSearchQuery searchQuery = request.getSearchQuery();
 
-    // Make sure this request is valid for the protected tweets cluster.
-    if (!searchQuery.isSetFromUserIDFilter64() || searchQuery.getFromUserIDFilter64().isEmpty()) {
-      String errorMsg = "ThriftSearchQuery.fromUserIDFilter64 not set. " + request;
-      LOG.warn(errorMsg);
-      return createErrorResponse(errorMsg);
-    }
-
-    if (!searchQuery.isSetSearcherId()) {
-      String errorMsg = "ThriftSearchQuery.searcherId not set. " + request;
+    // Make sure t  request  s val d for t  protected t ets cluster.
+     f (!searchQuery. sSetFromUser DF lter64() || searchQuery.getFromUser DF lter64(). sEmpty()) {
+      Str ng errorMsg = "Thr ftSearchQuery.fromUser DF lter64 not set. " + request;
       LOG.warn(errorMsg);
       return createErrorResponse(errorMsg);
     }
 
-    if (searchQuery.getSearcherId() < 0) {
-      String errorMsg = "Invalid ThriftSearchQuery.searcherId: " + searchQuery.getSearcherId()
+     f (!searchQuery. sSetSearc r d()) {
+      Str ng errorMsg = "Thr ftSearchQuery.searc r d not set. " + request;
+      LOG.warn(errorMsg);
+      return createErrorResponse(errorMsg);
+    }
+
+     f (searchQuery.getSearc r d() < 0) {
+      Str ng errorMsg = " nval d Thr ftSearchQuery.searc r d: " + searchQuery.getSearc r d()
           + ". " + request;
       LOG.warn(errorMsg);
       return createErrorResponse(errorMsg);
     }
 
-    return super.getResponseIfInvalidRequest(request);
+    return super.getResponse f nval dRequest(request);
   }
 }

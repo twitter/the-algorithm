@@ -1,89 +1,89 @@
-package com.twitter.search.earlybird.partition;
+package com.tw ter.search.earlyb rd.part  on;
 
-import java.util.Date;
+ mport java.ut l.Date;
 
-import com.google.common.annotations.VisibleForTesting;
+ mport com.google.common.annotat ons.V s bleForTest ng;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .kafka.cl ents.consu r.Consu rRecord;
+ mport org.apac .kafka.cl ents.consu r.KafkaConsu r;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.indexing.thriftjava.AntisocialUserUpdate;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.util.io.kafka.CompactThriftDeserializer;
-import com.twitter.search.common.util.io.kafka.FinagleKafkaClientUtils;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.common.userupdates.UserUpdate;
-import com.twitter.search.earlybird.exception.MissingKafkaTopicException;
+ mport com.tw ter.search.common. ndex ng.thr ftjava.Ant soc alUserUpdate;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common. tr cs.SearchT  r;
+ mport com.tw ter.search.common.ut l. o.kafka.CompactThr ftDeser al zer;
+ mport com.tw ter.search.common.ut l. o.kafka.F nagleKafkaCl entUt ls;
+ mport com.tw ter.search.earlyb rd.common.conf g.Earlyb rdProperty;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserUpdate;
+ mport com.tw ter.search.earlyb rd.except on.M ss ngKafkaTop cExcept on;
 
-public class UserUpdatesStreamIndexer extends SimpleStreamIndexer<Long, AntisocialUserUpdate> {
-  private static final Logger LOG = LoggerFactory.getLogger(UserUpdatesStreamIndexer.class);
+publ c class UserUpdatesStream ndexer extends S mpleStream ndexer<Long, Ant soc alUserUpdate> {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(UserUpdatesStream ndexer.class);
 
-  private static final SearchCounter NUM_CORRUPT_DATA_ERRORS =
-      SearchCounter.export("num_user_updates_kafka_consumer_corrupt_data_errors");
-  protected static String kafkaClientId = "";
+  pr vate stat c f nal SearchCounter NUM_CORRUPT_DATA_ERRORS =
+      SearchCounter.export("num_user_updates_kafka_consu r_corrupt_data_errors");
+  protected stat c Str ng kafkaCl ent d = "";
 
-  private final SegmentManager segmentManager;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
+  pr vate f nal Seg ntManager seg ntManager;
+  pr vate f nal Search ndex ng tr cSet search ndex ng tr cSet;
 
-  public UserUpdatesStreamIndexer(KafkaConsumer<Long, AntisocialUserUpdate> kafkaConsumer,
-                                  String topic,
-                                  SearchIndexingMetricSet searchIndexingMetricSet,
-                                  SegmentManager segmentManager)
-      throws MissingKafkaTopicException {
-    super(kafkaConsumer, topic);
-    this.segmentManager = segmentManager;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
+  publ c UserUpdatesStream ndexer(KafkaConsu r<Long, Ant soc alUserUpdate> kafkaConsu r,
+                                  Str ng top c,
+                                  Search ndex ng tr cSet search ndex ng tr cSet,
+                                  Seg ntManager seg ntManager)
+      throws M ss ngKafkaTop cExcept on {
+    super(kafkaConsu r, top c);
+    t .seg ntManager = seg ntManager;
+    t .search ndex ng tr cSet = search ndex ng tr cSet;
 
-    indexingSuccesses = SearchRateCounter.export("user_update_indexing_successes");
-    indexingFailures = SearchRateCounter.export("user_update_indexing_failures");
+     ndex ngSuccesses = SearchRateCounter.export("user_update_ ndex ng_successes");
+     ndex ngFa lures = SearchRateCounter.export("user_update_ ndex ng_fa lures");
   }
 
   /**
-   * Provides user updates kafka consumer to EarlybirdWireModule.
+   * Prov des user updates kafka consu r to Earlyb rdW reModule.
    * @return
    */
-  public static KafkaConsumer<Long, AntisocialUserUpdate> provideKafkaConsumer() {
-    return FinagleKafkaClientUtils.newKafkaConsumerForAssigning(
-        EarlybirdProperty.KAFKA_PATH.get(),
-        new CompactThriftDeserializer<>(AntisocialUserUpdate.class),
-        kafkaClientId,
+  publ c stat c KafkaConsu r<Long, Ant soc alUserUpdate> prov deKafkaConsu r() {
+    return F nagleKafkaCl entUt ls.newKafkaConsu rForAss gn ng(
+        Earlyb rdProperty.KAFKA_PATH.get(),
+        new CompactThr ftDeser al zer<>(Ant soc alUserUpdate.class),
+        kafkaCl ent d,
         MAX_POLL_RECORDS);
   }
 
-  UserUpdate convertToUserInfoUpdate(AntisocialUserUpdate update) {
+  UserUpdate convertToUser nfoUpdate(Ant soc alUserUpdate update) {
     return new UserUpdate(
-        update.getUserID(),
+        update.getUser D(),
         update.getType(),
-        update.isValue() ? 1 : 0,
+        update. sValue() ? 1 : 0,
         new Date(update.getUpdatedAt()));
   }
 
-  @VisibleForTesting
-  protected void validateAndIndexRecord(ConsumerRecord<Long, AntisocialUserUpdate> record) {
-    AntisocialUserUpdate update = record.value();
-    if (update == null) {
+  @V s bleForTest ng
+  protected vo d val dateAnd ndexRecord(Consu rRecord<Long, Ant soc alUserUpdate> record) {
+    Ant soc alUserUpdate update = record.value();
+     f (update == null) {
       LOG.warn("null value returned from poll");
       return;
     }
-    if (update.getType() == null) {
+     f (update.getType() == null) {
       LOG.error("User update does not have type set: " + update);
-      NUM_CORRUPT_DATA_ERRORS.increment();
+      NUM_CORRUPT_DATA_ERRORS. ncre nt();
       return;
     }
 
-    SearchTimer timer = searchIndexingMetricSet.userUpdateIndexingStats.startNewTimer();
-    boolean isUpdateIndexed = segmentManager.indexUserUpdate(
-        convertToUserInfoUpdate(update));
-    searchIndexingMetricSet.userUpdateIndexingStats.stopTimerAndIncrement(timer);
+    SearchT  r t  r = search ndex ng tr cSet.userUpdate ndex ngStats.startNewT  r();
+    boolean  sUpdate ndexed = seg ntManager. ndexUserUpdate(
+        convertToUser nfoUpdate(update));
+    search ndex ng tr cSet.userUpdate ndex ngStats.stopT  rAnd ncre nt(t  r);
 
-    if (isUpdateIndexed) {
-      indexingSuccesses.increment();
+     f ( sUpdate ndexed) {
+       ndex ngSuccesses. ncre nt();
     } else {
-      indexingFailures.increment();
+       ndex ngFa lures. ncre nt();
     }
   }
 }

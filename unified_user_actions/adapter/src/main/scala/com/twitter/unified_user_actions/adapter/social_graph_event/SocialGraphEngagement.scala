@@ -1,157 +1,157 @@
-package com.twitter.unified_user_actions.adapter.social_graph_event
+package com.tw ter.un f ed_user_act ons.adapter.soc al_graph_event
 
-import com.twitter.socialgraph.thriftscala.Action
-import com.twitter.socialgraph.thriftscala.BlockGraphEvent
-import com.twitter.socialgraph.thriftscala.FollowGraphEvent
-import com.twitter.socialgraph.thriftscala.MuteGraphEvent
-import com.twitter.socialgraph.thriftscala.ReportAsAbuseGraphEvent
-import com.twitter.socialgraph.thriftscala.ReportAsSpamGraphEvent
-import com.twitter.socialgraph.thriftscala.WriteEvent
-import com.twitter.socialgraph.thriftscala.WriteRequestResult
-import com.twitter.unified_user_actions.thriftscala.{ActionType => UuaActionType}
+ mport com.tw ter.soc algraph.thr ftscala.Act on
+ mport com.tw ter.soc algraph.thr ftscala.BlockGraphEvent
+ mport com.tw ter.soc algraph.thr ftscala.FollowGraphEvent
+ mport com.tw ter.soc algraph.thr ftscala.MuteGraphEvent
+ mport com.tw ter.soc algraph.thr ftscala.ReportAsAbuseGraphEvent
+ mport com.tw ter.soc algraph.thr ftscala.ReportAsSpamGraphEvent
+ mport com.tw ter.soc algraph.thr ftscala.Wr eEvent
+ mport com.tw ter.soc algraph.thr ftscala.Wr eRequestResult
+ mport com.tw ter.un f ed_user_act ons.thr ftscala.{Act onType => UuaAct onType}
 
-object SocialGraphEngagement {
+object Soc alGraphEngage nt {
 
   /**
-   * This is "Follow" event to indicate user1 follows user2 captured in ServerProfileFollow
+   * T   s "Follow" event to  nd cate user1 follows user2 captured  n ServerProf leFollow
    */
-  object ProfileFollow extends BaseSocialGraphWriteEvent[FollowGraphEvent] {
-    override def uuaActionType: UuaActionType = UuaActionType.ServerProfileFollow
+  object Prof leFollow extends BaseSoc alGraphWr eEvent[FollowGraphEvent] {
+    overr de def uuaAct onType: UuaAct onType = UuaAct onType.ServerProf leFollow
 
-    override def getSubType(
-      e: WriteEvent
-    ): Option[Seq[FollowGraphEvent]] =
+    overr de def getSubType(
+      e: Wr eEvent
+    ): Opt on[Seq[FollowGraphEvent]] =
       e.follow
 
-    override def getWriteRequestResultFromSubType(
+    overr de def getWr eRequestResultFromSubType(
       e: Seq[FollowGraphEvent]
-    ): Seq[WriteRequestResult] = {
-      // Remove all redundant operations (FollowGraphEvent.redundantOperation == Some(true))
+    ): Seq[Wr eRequestResult] = {
+      // Remove all redundant operat ons (FollowGraphEvent.redundantOperat on == So (true))
       e.collect {
-        case fe if !fe.redundantOperation.getOrElse(false) => fe.result
+        case fe  f !fe.redundantOperat on.getOrElse(false) => fe.result
       }
     }
   }
 
   /**
-   * This is "Unfollow" event to indicate user1 unfollows user2 captured in ServerProfileUnfollow
+   * T   s "Unfollow" event to  nd cate user1 unfollows user2 captured  n ServerProf leUnfollow
    *
-   * Both Unfollow and Follow use the struct FollowGraphEvent, but are treated in its individual case
+   * Both Unfollow and Follow use t  struct FollowGraphEvent, but are treated  n  s  nd v dual case
    * class.
    */
-  object ProfileUnfollow extends BaseSocialGraphWriteEvent[FollowGraphEvent] {
-    override def uuaActionType: UuaActionType = UuaActionType.ServerProfileUnfollow
+  object Prof leUnfollow extends BaseSoc alGraphWr eEvent[FollowGraphEvent] {
+    overr de def uuaAct onType: UuaAct onType = UuaAct onType.ServerProf leUnfollow
 
-    override def getSubType(
-      e: WriteEvent
-    ): Option[Seq[FollowGraphEvent]] =
+    overr de def getSubType(
+      e: Wr eEvent
+    ): Opt on[Seq[FollowGraphEvent]] =
       e.follow
 
-    override def getWriteRequestResultFromSubType(
+    overr de def getWr eRequestResultFromSubType(
       e: Seq[FollowGraphEvent]
-    ): Seq[WriteRequestResult] =
+    ): Seq[Wr eRequestResult] =
       e.collect {
-        case fe if !fe.redundantOperation.getOrElse(false) => fe.result
+        case fe  f !fe.redundantOperat on.getOrElse(false) => fe.result
       }
   }
 
   /**
-   * This is "Block" event to indicate user1 blocks user2 captured in ServerProfileBlock
+   * T   s "Block" event to  nd cate user1 blocks user2 captured  n ServerProf leBlock
    */
-  object ProfileBlock extends BaseSocialGraphWriteEvent[BlockGraphEvent] {
-    override def uuaActionType: UuaActionType = UuaActionType.ServerProfileBlock
+  object Prof leBlock extends BaseSoc alGraphWr eEvent[BlockGraphEvent] {
+    overr de def uuaAct onType: UuaAct onType = UuaAct onType.ServerProf leBlock
 
-    override def getSubType(
-      e: WriteEvent
-    ): Option[Seq[BlockGraphEvent]] =
+    overr de def getSubType(
+      e: Wr eEvent
+    ): Opt on[Seq[BlockGraphEvent]] =
       e.block
 
-    override def getWriteRequestResultFromSubType(
+    overr de def getWr eRequestResultFromSubType(
       e: Seq[BlockGraphEvent]
-    ): Seq[WriteRequestResult] =
+    ): Seq[Wr eRequestResult] =
       e.map(_.result)
   }
 
   /**
-   * This is "Unblock" event to indicate user1 unblocks user2 captured in ServerProfileUnblock
+   * T   s "Unblock" event to  nd cate user1 unblocks user2 captured  n ServerProf leUnblock
    *
-   * Both Unblock and Block use struct BlockGraphEvent, but are treated in its individual case
+   * Both Unblock and Block use struct BlockGraphEvent, but are treated  n  s  nd v dual case
    * class.
    */
-  object ProfileUnblock extends BaseSocialGraphWriteEvent[BlockGraphEvent] {
-    override def uuaActionType: UuaActionType = UuaActionType.ServerProfileUnblock
+  object Prof leUnblock extends BaseSoc alGraphWr eEvent[BlockGraphEvent] {
+    overr de def uuaAct onType: UuaAct onType = UuaAct onType.ServerProf leUnblock
 
-    override def getSubType(
-      e: WriteEvent
-    ): Option[Seq[BlockGraphEvent]] =
+    overr de def getSubType(
+      e: Wr eEvent
+    ): Opt on[Seq[BlockGraphEvent]] =
       e.block
 
-    override def getWriteRequestResultFromSubType(
+    overr de def getWr eRequestResultFromSubType(
       e: Seq[BlockGraphEvent]
-    ): Seq[WriteRequestResult] =
+    ): Seq[Wr eRequestResult] =
       e.map(_.result)
   }
 
   /**
-   * This is "Mute" event to indicate user1 mutes user2 captured in ServerProfileMute
+   * T   s "Mute" event to  nd cate user1 mutes user2 captured  n ServerProf leMute
    */
-  object ProfileMute extends BaseSocialGraphWriteEvent[MuteGraphEvent] {
-    override def uuaActionType: UuaActionType = UuaActionType.ServerProfileMute
+  object Prof leMute extends BaseSoc alGraphWr eEvent[MuteGraphEvent] {
+    overr de def uuaAct onType: UuaAct onType = UuaAct onType.ServerProf leMute
 
-    override def getSubType(
-      e: WriteEvent
-    ): Option[Seq[MuteGraphEvent]] =
+    overr de def getSubType(
+      e: Wr eEvent
+    ): Opt on[Seq[MuteGraphEvent]] =
       e.mute
 
-    override def getWriteRequestResultFromSubType(e: Seq[MuteGraphEvent]): Seq[WriteRequestResult] =
+    overr de def getWr eRequestResultFromSubType(e: Seq[MuteGraphEvent]): Seq[Wr eRequestResult] =
       e.map(_.result)
   }
 
   /**
-   * This is "Unmute" event to indicate user1 unmutes user2 captured in ServerProfileUnmute
+   * T   s "Unmute" event to  nd cate user1 unmutes user2 captured  n ServerProf leUnmute
    *
-   * Both Unmute and Mute use the struct MuteGraphEvent, but are treated in its individual case
+   * Both Unmute and Mute use t  struct MuteGraphEvent, but are treated  n  s  nd v dual case
    * class.
    */
-  object ProfileUnmute extends BaseSocialGraphWriteEvent[MuteGraphEvent] {
-    override def uuaActionType: UuaActionType = UuaActionType.ServerProfileUnmute
+  object Prof leUnmute extends BaseSoc alGraphWr eEvent[MuteGraphEvent] {
+    overr de def uuaAct onType: UuaAct onType = UuaAct onType.ServerProf leUnmute
 
-    override def getSubType(
-      e: WriteEvent
-    ): Option[Seq[MuteGraphEvent]] =
+    overr de def getSubType(
+      e: Wr eEvent
+    ): Opt on[Seq[MuteGraphEvent]] =
       e.mute
 
-    override def getWriteRequestResultFromSubType(e: Seq[MuteGraphEvent]): Seq[WriteRequestResult] =
+    overr de def getWr eRequestResultFromSubType(e: Seq[MuteGraphEvent]): Seq[Wr eRequestResult] =
       e.map(_.result)
   }
 
-  object ProfileReportAsSpam extends BaseReportSocialGraphWriteEvent[ReportAsSpamGraphEvent] {
-    override def uuaActionType: UuaActionType = UuaActionType.ServerProfileReport
-    override def socialGraphAction: Action = Action.ReportAsSpam
+  object Prof leReportAsSpam extends BaseReportSoc alGraphWr eEvent[ReportAsSpamGraphEvent] {
+    overr de def uuaAct onType: UuaAct onType = UuaAct onType.ServerProf leReport
+    overr de def soc alGraphAct on: Act on = Act on.ReportAsSpam
 
-    override def getSubType(
-      e: WriteEvent
-    ): Option[Seq[ReportAsSpamGraphEvent]] =
+    overr de def getSubType(
+      e: Wr eEvent
+    ): Opt on[Seq[ReportAsSpamGraphEvent]] =
       e.reportAsSpam
 
-    override def getWriteRequestResultFromSubType(
+    overr de def getWr eRequestResultFromSubType(
       e: Seq[ReportAsSpamGraphEvent]
-    ): Seq[WriteRequestResult] =
+    ): Seq[Wr eRequestResult] =
       e.map(_.result)
   }
 
-  object ProfileReportAsAbuse extends BaseReportSocialGraphWriteEvent[ReportAsAbuseGraphEvent] {
-    override def uuaActionType: UuaActionType = UuaActionType.ServerProfileReport
-    override def socialGraphAction: Action = Action.ReportAsAbuse
+  object Prof leReportAsAbuse extends BaseReportSoc alGraphWr eEvent[ReportAsAbuseGraphEvent] {
+    overr de def uuaAct onType: UuaAct onType = UuaAct onType.ServerProf leReport
+    overr de def soc alGraphAct on: Act on = Act on.ReportAsAbuse
 
-    override def getSubType(
-      e: WriteEvent
-    ): Option[Seq[ReportAsAbuseGraphEvent]] =
+    overr de def getSubType(
+      e: Wr eEvent
+    ): Opt on[Seq[ReportAsAbuseGraphEvent]] =
       e.reportAsAbuse
 
-    override def getWriteRequestResultFromSubType(
+    overr de def getWr eRequestResultFromSubType(
       e: Seq[ReportAsAbuseGraphEvent]
-    ): Seq[WriteRequestResult] =
+    ): Seq[Wr eRequestResult] =
       e.map(_.result)
   }
 }

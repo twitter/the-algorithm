@@ -1,71 +1,71 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+package com.tw ter.follow_recom ndat ons.common.cand date_s ces.base
 
-import com.twitter.follow_recommendations.common.models.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
+ mport com.tw ter.follow_recom ndat ons.common.models.T etCand date
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.st ch.St ch
 
 /**
- * base trait for tweet authors based algorithms, e.g. topical tweet authors, twistly, ...
+ * base tra  for t et authors based algor hms, e.g. top cal t et authors, tw stly, ...
  *
  * @tparam Target target type
- * @tparam Candidate output candidate types
+ * @tparam Cand date output cand date types
  */
-trait TweetAuthorsCandidateSource[-Target, +Candidate] extends CandidateSource[Target, Candidate] {
+tra  T etAuthorsCand dateS ce[-Target, +Cand date] extends Cand dateS ce[Target, Cand date] {
 
   /**
-   * fetch Tweet candidates
+   * fetch T et cand dates
    */
-  def getTweetCandidates(target: Target): Stitch[Seq[TweetCandidate]]
+  def getT etCand dates(target: Target): St ch[Seq[T etCand date]]
 
   /**
-   * fetch authorId
+   * fetch author d
    */
-  def getTweetAuthorId(tweetCandidate: TweetCandidate): Stitch[Option[Long]]
+  def getT etAuthor d(t etCand date: T etCand date): St ch[Opt on[Long]]
 
   /**
-   * wrap candidate ID and TweetAuthorProof in Candidate
+   * wrap cand date  D and T etAuthorProof  n Cand date
    */
-  def toCandidate(authorId: Long, tweetIds: Seq[Long], score: Option[Double]): Candidate
+  def toCand date(author d: Long, t et ds: Seq[Long], score: Opt on[Double]): Cand date
 
   /**
-   * aggregate scores, default to the first score
+   * aggregate scores, default to t  f rst score
    */
   def aggregator(scores: Seq[Double]): Double =
-    scores.headOption.getOrElse(TweetAuthorsCandidateSource.DefaultScore)
+    scores. adOpt on.getOrElse(T etAuthorsCand dateS ce.DefaultScore)
 
   /**
-   * aggregation method for a group of tweet candidates
+   * aggregat on  thod for a group of t et cand dates
    */
   def aggregateAndScore(
     target: Target,
-    tweetCandidates: Seq[TweetCandidate]
-  ): Seq[Candidate]
+    t etCand dates: Seq[T etCand date]
+  ): Seq[Cand date]
 
   /**
-   * generate a list of candidates for the target
+   * generate a l st of cand dates for t  target
    */
-  def build(
+  def bu ld(
     target: Target
-  ): Stitch[Seq[Candidate]] = {
-    // Fetch Tweet candidates and hydrate author IDs
-    val tweetCandidatesStitch = for {
-      tweetCandidates <- getTweetCandidates(target)
-      authorIds <- Stitch.collect(tweetCandidates.map(getTweetAuthorId(_)))
-    } yield {
+  ): St ch[Seq[Cand date]] = {
+    // Fetch T et cand dates and hydrate author  Ds
+    val t etCand datesSt ch = for {
+      t etCand dates <- getT etCand dates(target)
+      author ds <- St ch.collect(t etCand dates.map(getT etAuthor d(_)))
+    } y eld {
       for {
-        (authorIdOpt, tweetCandidate) <- authorIds.zip(tweetCandidates)
-        authorId <- authorIdOpt
-      } yield tweetCandidate.copy(authorId = authorId)
+        (author dOpt, t etCand date) <- author ds.z p(t etCand dates)
+        author d <- author dOpt
+      } y eld t etCand date.copy(author d = author d)
     }
 
-    // Aggregate and score, convert to candidate
-    tweetCandidatesStitch.map(aggregateAndScore(target, _))
+    // Aggregate and score, convert to cand date
+    t etCand datesSt ch.map(aggregateAndScore(target, _))
   }
 
-  def apply(target: Target): Stitch[Seq[Candidate]] =
-    build(target)
+  def apply(target: Target): St ch[Seq[Cand date]] =
+    bu ld(target)
 }
 
-object TweetAuthorsCandidateSource {
-  final val DefaultScore: Double = 0.0
+object T etAuthorsCand dateS ce {
+  f nal val DefaultScore: Double = 0.0
 }

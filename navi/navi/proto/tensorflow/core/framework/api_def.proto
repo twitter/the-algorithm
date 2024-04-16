@@ -1,138 +1,138 @@
-// Defines the text format for including per-op API definition and
-// overrides for client language op code generators.
+// Def nes t  text format for  nclud ng per-op AP  def n  on and
+// overr des for cl ent language op code generators.
 
 syntax = "proto3";
 
 package tensorflow;
 
-import "tensorflow/core/framework/attr_value.proto";
+ mport "tensorflow/core/fra work/attr_value.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "ApiDefProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/api_def_go_proto";
+opt on cc_enable_arenas = true;
+opt on java_outer_classna  = "Ap DefProtos";
+opt on java_mult ple_f les = true;
+opt on java_package = "org.tensorflow.fra work";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/fra work/ap _def_go_proto";
 
-// Used to specify and override the default API & behavior in the
-// generated code for client languages, from what you would get from
-// the OpDef alone. There will be a set of ApiDefs that are common
-// to all client languages, and another set per client language.
-// The per-client-language ApiDefs will inherit values from the
-// common ApiDefs which it can either replace or modify.
+// Used to spec fy and overr de t  default AP  & behav or  n t 
+// generated code for cl ent languages, from what   would get from
+// t  OpDef alone. T re w ll be a set of Ap Defs that are common
+// to all cl ent languages, and anot r set per cl ent language.
+// T  per-cl ent-language Ap Defs w ll  n r  values from t 
+// common Ap Defs wh ch   can e  r replace or mod fy.
 //
-// We separate the API definition from the OpDef so we can evolve the
-// API while remaining backwards compatible when interpreting old
-// graphs.  Overrides go in an "api_def.pbtxt" file with a text-format
-// ApiDefs message.
+//   separate t  AP  def n  on from t  OpDef so   can evolve t 
+// AP  wh le rema n ng backwards compat ble w n  nterpret ng old
+// graphs.  Overr des go  n an "ap _def.pbtxt" f le w h a text-format
+// Ap Defs  ssage.
 //
-// WARNING: Be *very* careful changing the API for any existing op --
-// you can change the semantics of existing code.  These changes may
-// need to wait until a major release of TensorFlow to avoid breaking
-// our compatibility promises.
-message ApiDef {
-  // Name of the op (in the OpDef) to specify the API for.
-  string graph_op_name = 1;
-  // If this op is deprecated, set deprecation message to the message
-  // that should be logged when this op is used.
-  // The message should indicate alternative op to use, if any.
-  string deprecation_message = 12;
-  // Major version when the op will be deleted. For e.g. set this
-  // value to 2 if op API should be removed in TensorFlow 2.0 and
-  // deprecated in versions before that.
-  int32 deprecation_version = 13;
+// WARN NG: Be *very* careful chang ng t  AP  for any ex st ng op --
+//   can change t  semant cs of ex st ng code.  T se changes may
+// need to wa  unt l a major release of TensorFlow to avo d break ng
+//   compat b l y prom ses.
+ ssage Ap Def {
+  // Na  of t  op ( n t  OpDef) to spec fy t  AP  for.
+  str ng graph_op_na  = 1;
+  //  f t  op  s deprecated, set deprecat on  ssage to t   ssage
+  // that should be logged w n t  op  s used.
+  // T   ssage should  nd cate alternat ve op to use,  f any.
+  str ng deprecat on_ ssage = 12;
+  // Major vers on w n t  op w ll be deleted. For e.g. set t 
+  // value to 2  f op AP  should be removed  n TensorFlow 2.0 and
+  // deprecated  n vers ons before that.
+   nt32 deprecat on_vers on = 13;
 
-  enum Visibility {
-    // Normally this is "VISIBLE" unless you are inheriting a
-    // different value from another ApiDef.
-    DEFAULT_VISIBILITY = 0;
-    // Publicly visible in the API.
-    VISIBLE = 1;
-    // Do not include this op in the generated API. If visibility is
-    // set to 'SKIP', other fields are ignored for this op.
-    SKIP = 2;
-    // Hide this op by putting it into an internal namespace (or whatever
-    // is appropriate in the target language).
-    HIDDEN = 3;
+  enum V s b l y {
+    // Normally t   s "V S BLE" unless   are  n r  ng a
+    // d fferent value from anot r Ap Def.
+    DEFAULT_V S B L TY = 0;
+    // Publ cly v s ble  n t  AP .
+    V S BLE = 1;
+    // Do not  nclude t  op  n t  generated AP .  f v s b l y  s
+    // set to 'SK P', ot r f elds are  gnored for t  op.
+    SK P = 2;
+    // H de t  op by putt ng    nto an  nternal na space (or whatever
+    //  s appropr ate  n t  target language).
+    H DDEN = 3;
   }
-  Visibility visibility = 2;
+  V s b l y v s b l y = 2;
 
-  // If you specify any endpoint, this will replace all of the
-  // inherited endpoints.  The first endpoint should be the
-  // "canonical" endpoint, and should not be deprecated (unless all
-  // endpoints are deprecated).
-  message Endpoint {
-    // Name should be either like "CamelCaseName" or
-    // "Package.CamelCaseName". Client-language-specific ApiDefs may
-    // use a snake_case convention instead of CamelCase.
-    string name = 1;
+  //  f   spec fy any endpo nt, t  w ll replace all of t 
+  //  n r ed endpo nts.  T  f rst endpo nt should be t 
+  // "canon cal" endpo nt, and should not be deprecated (unless all
+  // endpo nts are deprecated).
+   ssage Endpo nt {
+    // Na  should be e  r l ke "Ca lCaseNa " or
+    // "Package.Ca lCaseNa ". Cl ent-language-spec f c Ap Defs may
+    // use a snake_case convent on  nstead of Ca lCase.
+    str ng na  = 1;
 
-    // Set if this endpoint is deprecated. If set to true, a message suggesting
-    // to use a non-deprecated endpoint instead will be printed. If all
-    // endpoints are deprecated, set deprecation_message in ApiDef instead.
+    // Set  f t  endpo nt  s deprecated.  f set to true, a  ssage suggest ng
+    // to use a non-deprecated endpo nt  nstead w ll be pr nted.  f all
+    // endpo nts are deprecated, set deprecat on_ ssage  n Ap Def  nstead.
     bool deprecated = 3;
 
-    // Major version when an endpoint will be deleted. For e.g. set this
-    // value to 2 if endpoint should be removed in TensorFlow 2.0 and
-    // deprecated in versions before that.
-    int32 deprecation_version = 4;
+    // Major vers on w n an endpo nt w ll be deleted. For e.g. set t 
+    // value to 2  f endpo nt should be removed  n TensorFlow 2.0 and
+    // deprecated  n vers ons before that.
+     nt32 deprecat on_vers on = 4;
   }
-  repeated Endpoint endpoint = 3;
+  repeated Endpo nt endpo nt = 3;
 
-  message Arg {
-    string name = 1;
+   ssage Arg {
+    str ng na  = 1;
 
-    // Change the name used to access this arg in the API from what
-    // is used in the GraphDef.  Note that these names in `backticks`
-    // will also be replaced in the summary & description fields.
-    string rename_to = 2;
+    // Change t  na  used to access t  arg  n t  AP  from what
+    //  s used  n t  GraphDef.  Note that t se na s  n `backt cks`
+    // w ll also be replaced  n t  summary & descr pt on f elds.
+    str ng rena _to = 2;
 
-    // Note: this will replace any inherited arg doc. There is no
-    // current way of modifying arg descriptions (other than replacing
-    // them entirely) as can be done with op descriptions.
-    string description = 3;
+    // Note: t  w ll replace any  n r ed arg doc. T re  s no
+    // current way of mod fy ng arg descr pt ons (ot r than replac ng
+    // t m ent rely) as can be done w h op descr pt ons.
+    str ng descr pt on = 3;
   }
-  repeated Arg in_arg = 4;
+  repeated Arg  n_arg = 4;
   repeated Arg out_arg = 5;
-  // List of original in_arg names to specify new argument order.
-  // Length of arg_order should be either empty to keep current order
-  // or match size of in_arg.
-  repeated string arg_order = 11;
+  // L st of or g nal  n_arg na s to spec fy new argu nt order.
+  // Length of arg_order should be e  r empty to keep current order
+  // or match s ze of  n_arg.
+  repeated str ng arg_order = 11;
 
-  // Description of the graph-construction-time configuration of this
-  // Op.  That is to say, this describes the attr fields that will
-  // be specified in the NodeDef.
-  message Attr {
-    string name = 1;
+  // Descr pt on of t  graph-construct on-t   conf gurat on of t 
+  // Op.  That  s to say, t  descr bes t  attr f elds that w ll
+  // be spec f ed  n t  NodeDef.
+   ssage Attr {
+    str ng na  = 1;
 
-    // Change the name used to access this attr in the API from what
-    // is used in the GraphDef.  Note that these names in `backticks`
-    // will also be replaced in the summary & description fields.
-    string rename_to = 2;
+    // Change t  na  used to access t  attr  n t  AP  from what
+    //  s used  n t  GraphDef.  Note that t se na s  n `backt cks`
+    // w ll also be replaced  n t  summary & descr pt on f elds.
+    str ng rena _to = 2;
 
-    // Specify a new default value to use for this attr.  This default
-    // will be used when creating new graphs, as opposed to the
-    // default in the OpDef, which will be used when interpreting old
+    // Spec fy a new default value to use for t  attr.  T  default
+    // w ll be used w n creat ng new graphs, as opposed to t 
+    // default  n t  OpDef, wh ch w ll be used w n  nterpret ng old
     // GraphDefs.
     AttrValue default_value = 3;
 
-    // Note: this will replace any inherited attr doc, there is no current
-    // way of modifying attr descriptions as can be done with op descriptions.
-    string description = 4;
+    // Note: t  w ll replace any  n r ed attr doc, t re  s no current
+    // way of mod fy ng attr descr pt ons as can be done w h op descr pt ons.
+    str ng descr pt on = 4;
   }
   repeated Attr attr = 6;
 
-  // One-line human-readable description of what the Op does.
-  string summary = 7;
+  // One-l ne human-readable descr pt on of what t  Op does.
+  str ng summary = 7;
 
-  // Additional, longer human-readable description of what the Op does.
-  string description = 8;
+  // Add  onal, longer human-readable descr pt on of what t  Op does.
+  str ng descr pt on = 8;
 
-  // Modify an existing/inherited description by adding text to the beginning
+  // Mod fy an ex st ng/ n r ed descr pt on by add ng text to t  beg nn ng
   // or end.
-  string description_prefix = 9;
-  string description_suffix = 10;
+  str ng descr pt on_pref x = 9;
+  str ng descr pt on_suff x = 10;
 }
 
-message ApiDefs {
-  repeated ApiDef op = 1;
+ ssage Ap Defs {
+  repeated Ap Def op = 1;
 }

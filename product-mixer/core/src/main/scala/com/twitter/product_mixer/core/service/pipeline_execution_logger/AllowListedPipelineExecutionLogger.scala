@@ -1,180 +1,180 @@
-package com.twitter.product_mixer.core.service.pipeline_execution_logger
+package com.tw ter.product_m xer.core.serv ce.p pel ne_execut on_logger
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.PipelineExecutionLoggerAllowList
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ServiceLocal
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.FuturePools
-import com.twitter.product_mixer.shared_library.observer.Observer.FutureObserver
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
-import pprint.PPrinter
-import pprint.Tree
-import pprint.Util
-import pprint.tuplePrefix
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.product_m xer.core.module.product_m xer_flags.ProductM xerFlagModule.P pel neExecut onLoggerAllowL st
+ mport com.tw ter.product_m xer.core.module.product_m xer_flags.ProductM xerFlagModule.Serv ceLocal
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.ut l.FuturePools
+ mport com.tw ter.product_m xer.shared_l brary.observer.Observer.FutureObserver
+ mport com.tw ter.ut l.Try
+ mport com.tw ter.ut l.logg ng.Logg ng
+ mport ppr nt.PPr nter
+ mport ppr nt.Tree
+ mport ppr nt.Ut l
+ mport ppr nt.tuplePref x
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
 /**
- * Initial implementation from:
- * https://stackoverflow.com/questions/15718506/scala-how-to-print-case-classes-like-pretty-printed-tree/57080463#57080463
+ *  n  al  mple ntat on from:
+ * https://stackoverflow.com/quest ons/15718506/scala-how-to-pr nt-case-classes-l ke-pretty-pr nted-tree/57080463#57080463
  */
-object AllowListedPipelineExecutionLogger {
+object AllowL stedP pel neExecut onLogger {
 
   /**
-   * Given a case class who's arguments are all declared fields on the class,
-   * returns an iterator of the field name and values
+   * G ven a case class who's argu nts are all declared f elds on t  class,
+   * returns an  erator of t  f eld na  and values
    */
-  private[pipeline_execution_logger] def caseClassFields(
+  pr vate[p pel ne_execut on_logger] def caseClassF elds(
     caseClass: Product
-  ): Iterator[(String, Any)] = {
-    val fieldValues = caseClass.productIterator.toSet
-    val fields = caseClass.getClass.getDeclaredFields.toSeq
-      .filterNot(f => f.isSynthetic || java.lang.reflect.Modifier.isStatic(f.getModifiers))
-    fields.iterator
+  ):  erator[(Str ng, Any)] = {
+    val f eldValues = caseClass.product erator.toSet
+    val f elds = caseClass.getClass.getDeclaredF elds.toSeq
+      .f lterNot(f => f. sSynt t c || java.lang.reflect.Mod f er. sStat c(f.getMod f ers))
+    f elds. erator
       .map { f =>
-        f.setAccessible(true)
-        f.getName -> f.get(caseClass)
-      }.filter { case (_, v) => fieldValues.contains(v) }
+        f.setAccess ble(true)
+        f.getNa  -> f.get(caseClass)
+      }.f lter { case (_, v) => f eldValues.conta ns(v) }
   }
 
   /**
-   * Returns whether a given [[Product]] is a case class which we can render nicely which:
-   * - has a [[Product.productArity]] <= the number of declared fields
-   * - isn't a built in binary operator
-   * - isn't a tuple
-   * - who's arguments are fields (not methods)
-   * - every [[Product.productElement]] has a corresponding field
+   * Returns w t r a g ven [[Product]]  s a case class wh ch   can render n cely wh ch:
+   * - has a [[Product.productAr y]] <= t  number of declared f elds
+   * -  sn't a bu lt  n b nary operator
+   * -  sn't a tuple
+   * - who's argu nts are f elds (not  thods)
+   * - every [[Product.productEle nt]] has a correspond ng f eld
    *
-   * This will return false for some case classes where we can not reliably determine which field names correspond to
-   * each value in the case class (this can happen if a case class implements an abstract class resulting in val fields
-   * becoming methods.
+   * T  w ll return false for so  case classes w re   can not rel ably determ ne wh ch f eld na s correspond to
+   * each value  n t  case class (t  can happen  f a case class  mple nts an abstract class result ng  n val f elds
+   * becom ng  thods.
    */
-  private[pipeline_execution_logger] def isRenderableCaseClass(caseClass: Product): Boolean = {
-    val possibleToBeRenderableCaseClass =
-      caseClass.getClass.getDeclaredFields.length >= caseClass.productArity
-    val isntBuiltInOperator =
-      !(caseClass.productArity == 2 && Util.isOperator(caseClass.productPrefix))
-    val isntTuple = !caseClass.getClass.getName.startsWith(tuplePrefix)
-    val declaredFieldsMatchesCaseClassFields = {
-      val caseClassFields = caseClass.productIterator.toSet
-      caseClass.getClass.getDeclaredFields.iterator
-        .filterNot(f => f.isSynthetic || java.lang.reflect.Modifier.isStatic(f.getModifiers))
+  pr vate[p pel ne_execut on_logger] def  sRenderableCaseClass(caseClass: Product): Boolean = {
+    val poss bleToBeRenderableCaseClass =
+      caseClass.getClass.getDeclaredF elds.length >= caseClass.productAr y
+    val  sntBu lt nOperator =
+      !(caseClass.productAr y == 2 && Ut l. sOperator(caseClass.productPref x))
+    val  sntTuple = !caseClass.getClass.getNa .startsW h(tuplePref x)
+    val declaredF eldsMatc sCaseClassF elds = {
+      val caseClassF elds = caseClass.product erator.toSet
+      caseClass.getClass.getDeclaredF elds. erator
+        .f lterNot(f => f. sSynt t c || java.lang.reflect.Mod f er. sStat c(f.getMod f ers))
         .count { f =>
-          f.setAccessible(true)
-          caseClassFields.contains(f.get(caseClass))
-        } >= caseClass.productArity
+          f.setAccess ble(true)
+          caseClassF elds.conta ns(f.get(caseClass))
+        } >= caseClass.productAr y
     }
 
-    possibleToBeRenderableCaseClass && isntBuiltInOperator && isntTuple && declaredFieldsMatchesCaseClassFields
+    poss bleToBeRenderableCaseClass &&  sntBu lt nOperator &&  sntTuple && declaredF eldsMatc sCaseClassF elds
   }
 
-  /** Makes a [[Tree]] which will render as `key = value` */
-  private def keyValuePair(key: String, value: Tree): Tree = {
-    Tree.Infix(Tree.Literal(key), "=", value)
+  /** Makes a [[Tree]] wh ch w ll render as `key = value` */
+  pr vate def keyValuePa r(key: Str ng, value: Tree): Tree = {
+    Tree. nf x(Tree.L eral(key), "=", value)
   }
 
   /**
-   * Special handling for case classes who's field names can be easily paired with their values.
-   * This will make the [[PPrinter]] render them as
+   * Spec al handl ng for case classes who's f eld na s can be eas ly pa red w h t  r values.
+   * T  w ll make t  [[PPr nter]] render t m as
    * {{{
-   *   CaseClassName(
-   *     field1 = value1,
-   *     field2 = value2
+   *   CaseClassNa (
+   *     f eld1 = value1,
+   *     f eld2 = value2
    *   )
    * }}}
-   * instead of
+   *  nstead of
    * {{{
-   *   CaseClassName(
+   *   CaseClassNa (
    *     value1,
    *     value2
    *   )
    * }}}
    *
-   * For case classes who's fields end up being compiled as methods, this will fall back
-   * to the built in handling of case classes without their field names.
+   * For case classes who's f elds end up be ng comp led as  thods, t  w ll fall back
+   * to t  bu lt  n handl ng of case classes w hout t  r f eld na s.
    */
-  private[pipeline_execution_logger] def additionalHandlers: PartialFunction[Any, Tree] = {
-    case caseClass: Product if isRenderableCaseClass(caseClass) =>
+  pr vate[p pel ne_execut on_logger] def add  onalHandlers: Part alFunct on[Any, Tree] = {
+    case caseClass: Product  f  sRenderableCaseClass(caseClass) =>
       Tree.Apply(
-        caseClass.productPrefix,
-        caseClassFields(caseClass).flatMap {
+        caseClass.productPref x,
+        caseClassF elds(caseClass).flatMap {
           case (key, value) =>
-            val valueTree = printer.treeify(value, false, true)
-            Seq(keyValuePair(key, valueTree))
+            val valueTree = pr nter.tree fy(value, false, true)
+            Seq(keyValuePa r(key, valueTree))
         }
       )
   }
 
   /**
-   * [[PPrinter]] instance to use when rendering scala objects
-   * uses BlackAndWhite because colors mangle the output when looking at the logs in plain text
+   * [[PPr nter]]  nstance to use w n render ng scala objects
+   * uses BlackAndWh e because colors mangle t  output w n look ng at t  logs  n pla n text
    */
-  private val printer: PPrinter = PPrinter.BlackWhite.copy(
-    // arbitrary high value to turn off truncation
-    defaultHeight = Int.MaxValue,
-    // the relatively high width will cause some wrapping but many of the pretty printed objects
-    // will be sparse (e.g. None,\n None,\n, None,\n)
-    defaultWidth = 300,
-    // use reflection to print field names (can be deleted in Scala 2.13)
-    additionalHandlers = additionalHandlers
+  pr vate val pr nter: PPr nter = PPr nter.BlackWh e.copy(
+    // arb rary h gh value to turn off truncat on
+    default  ght =  nt.MaxValue,
+    // t  relat vely h gh w dth w ll cause so  wrapp ng but many of t  pretty pr nted objects
+    // w ll be sparse (e.g. None,\n None,\n, None,\n)
+    defaultW dth = 300,
+    // use reflect on to pr nt f eld na s (can be deleted  n Scala 2.13)
+    add  onalHandlers = add  onalHandlers
   )
 
-  /** Given any scala object, return a String representation of it */
-  private[pipeline_execution_logger] def objectAsString(o: Any): String =
-    printer.tokenize(o).mkString
+  /** G ven any scala object, return a Str ng representat on of   */
+  pr vate[p pel ne_execut on_logger] def objectAsStr ng(o: Any): Str ng =
+    pr nter.token ze(o).mkStr ng
 }
 
-@Singleton
-class AllowListedPipelineExecutionLogger @Inject() (
-  @Flag(ServiceLocal) isServiceLocal: Boolean,
-  @Flag(PipelineExecutionLoggerAllowList) allowList: Seq[String],
-  statsReceiver: StatsReceiver)
-    extends PipelineExecutionLogger
-    with Logging {
+@S ngleton
+class AllowL stedP pel neExecut onLogger @ nject() (
+  @Flag(Serv ceLocal)  sServ ceLocal: Boolean,
+  @Flag(P pel neExecut onLoggerAllowL st) allowL st: Seq[Str ng],
+  statsRece ver: StatsRece ver)
+    extends P pel neExecut onLogger
+    w h Logg ng {
 
-  private val scopedStats = statsReceiver.scope("AllowListedPipelineExecutionLogger")
+  pr vate val scopedStats = statsRece ver.scope("AllowL stedP pel neExecut onLogger")
 
-  val allowListRoles: Set[String] = allowList.toSet
+  val allowL stRoles: Set[Str ng] = allowL st.toSet
 
-  private val futurePool =
-    FuturePools.boundedFixedThreadPool(
-      "AllowListedPipelineExecutionLogger",
-      // single thread, may need to be adjusted higher if it cant keep up with the work queue
-      fixedThreadCount = 1,
-      // arbitrarily large enough to handle spikes without causing large allocations or retaining past multiple GC cycles
-      workQueueSize = 100,
+  pr vate val futurePool =
+    FuturePools.boundedF xedThreadPool(
+      "AllowL stedP pel neExecut onLogger",
+      // s ngle thread, may need to be adjusted h g r  f   cant keep up w h t  work queue
+      f xedThreadCount = 1,
+      // arb rar ly large enough to handle sp kes w hout caus ng large allocat ons or reta n ng past mult ple GC cycles
+      workQueueS ze = 100,
       scopedStats
     )
 
-  private val futureObserver = new FutureObserver[Unit](scopedStats, Seq.empty)
+  pr vate val futureObserver = new FutureObserver[Un ](scopedStats, Seq.empty)
 
-  private val loggerOutputPath = Try(System.getProperty("log.allow_listed_execution_logger.output"))
+  pr vate val loggerOutputPath = Try(System.getProperty("log.allow_l sted_execut on_logger.output"))
 
-  override def apply(pipelineQuery: PipelineQuery, message: Any): Unit = {
+  overr de def apply(p pel neQuery: P pel neQuery,  ssage: Any): Un  = {
 
-    val userRoles: Set[String] = pipelineQuery.clientContext.userRoles.getOrElse(Set.empty)
+    val userRoles: Set[Str ng] = p pel neQuery.cl entContext.userRoles.getOrElse(Set.empty)
 
-    // Check if this request is in the allowlist via a cleverly optimized set intersection
-    val allowListed =
-      if (allowListRoles.size > userRoles.size)
-        userRoles.exists(allowListRoles.contains)
+    // C ck  f t  request  s  n t  allowl st v a a cleverly opt m zed set  ntersect on
+    val allowL sted =
+       f (allowL stRoles.s ze > userRoles.s ze)
+        userRoles.ex sts(allowL stRoles.conta ns)
       else
-        allowListRoles.exists(userRoles.contains)
+        allowL stRoles.ex sts(userRoles.conta ns)
 
-    if (isServiceLocal || allowListed) {
+     f ( sServ ceLocal || allowL sted) {
       futureObserver(
         /**
-         * failure to enqueue the work will result with a failed [[com.twitter.util.Future]]
-         * containing a [[java.util.concurrent.RejectedExecutionException]] which the wrapping [[futureObserver]]
-         * will record metrics for.
+         * fa lure to enqueue t  work w ll result w h a fa led [[com.tw ter.ut l.Future]]
+         * conta n ng a [[java.ut l.concurrent.RejectedExecut onExcept on]] wh ch t  wrapp ng [[futureObserver]]
+         * w ll record  tr cs for.
          */
         futurePool {
-          logger.info(AllowListedPipelineExecutionLogger.objectAsString(message))
+          logger. nfo(AllowL stedP pel neExecut onLogger.objectAsStr ng( ssage))
 
-          if (isServiceLocal && loggerOutputPath.isReturn) {
-            println(s"Logged request to: ${loggerOutputPath.get()}")
+           f ( sServ ceLocal && loggerOutputPath. sReturn) {
+            pr ntln(s"Logged request to: ${loggerOutputPath.get()}")
           }
         }
       )

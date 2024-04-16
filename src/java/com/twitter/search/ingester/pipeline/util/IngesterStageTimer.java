@@ -1,35 +1,35 @@
-package com.twitter.search.ingester.pipeline.util;
-import java.util.concurrent.TimeUnit;
-import com.twitter.common.base.MorePreconditions;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import org.apache.commons.pipeline.stage.StageTimer;
+package com.tw ter.search. ngester.p pel ne.ut l;
+ mport java.ut l.concurrent.T  Un ;
+ mport com.tw ter.common.base.MorePrecond  ons;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
+ mport org.apac .commons.p pel ne.stage.StageT  r;
 /**
- * Adds science stats export to StageTimer
+ * Adds sc ence stats export to StageT  r
  */
-public class IngesterStageTimer extends StageTimer {
-  private final String name;
-  private final SearchTimerStats timer;
+publ c class  ngesterStageT  r extends StageT  r {
+  pr vate f nal Str ng na ;
+  pr vate f nal SearchT  rStats t  r;
 
-  public IngesterStageTimer(String statName) {
-    name = MorePreconditions.checkNotBlank(statName);
-    timer = SearchTimerStats.export(name, TimeUnit.NANOSECONDS, true);
+  publ c  ngesterStageT  r(Str ng statNa ) {
+    na  = MorePrecond  ons.c ckNotBlank(statNa );
+    t  r = SearchT  rStats.export(na , T  Un .NANOSECONDS, true);
   }
 
-  public String getName() {
-    return name;
+  publ c Str ng getNa () {
+    return na ;
   }
 
-  @Override
-  public void start() {
-    // This override is not necessary; it is added for code readability.
-    // super.start puts the current time in startTime
+  @Overr de
+  publ c vo d start() {
+    // T  overr de  s not necessary;    s added for code readab l y.
+    // super.start puts t  current t    n startT  
     super.start();
   }
 
-  @Override
-  public void stop() {
+  @Overr de
+  publ c vo d stop() {
     super.stop();
-    long runTime = System.nanoTime() - startTime.get();
-    timer.timerIncrement(runTime);
+    long runT   = System.nanoT  () - startT  .get();
+    t  r.t  r ncre nt(runT  );
   }
 }

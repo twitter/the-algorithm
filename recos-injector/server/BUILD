@@ -1,43 +1,43 @@
 target(
-    name = "server",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "recos-injector/server/src/main/scala/com/twitter/recosinjector",
+    na  = "server",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "recos- njector/server/src/ma n/scala/com/tw ter/recos njector",
     ],
 )
 
-test_suite(
-    name = "tests",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "recos-injector/server/src/test/scala/com/twitter/recosinjector",
+test_su e(
+    na  = "tests",
+    tags = ["bazel-compat ble"],
+    dependenc es = [
+        "recos- njector/server/src/test/scala/com/tw ter/recos njector",
     ],
 )
 
-jvm_binary(
-    name = "bin",
-    basename = "recos-injector-server",
-    main = "com.twitter.recosinjector.Main",
+jvm_b nary(
+    na  = "b n",
+    basena  = "recos- njector-server",
+    ma n = "com.tw ter.recos njector.Ma n",
     platform = "java11",
-    runtime_platform = "java11",
+    runt  _platform = "java11",
     tags = [
-        "bazel-compatible:migrated",
+        "bazel-compat ble:m grated",
     ],
-    dependencies = [
+    dependenc es = [
         ":server",
         "3rdparty/jvm/org/slf4j:slf4j-jdk14",
     ],
 )
 
 jvm_app(
-    name = "bundle",
-    basename = "recos-injector",
-    binary = ":bin",
+    na  = "bundle",
+    basena  = "recos- njector",
+    b nary = ":b n",
     bundles = [bundle(
-        fileset = ["config/*"],
-        owning_target = "recos-injector/server/config:files",
+        f leset = ["conf g/*"],
+        own ng_target = "recos- njector/server/conf g:f les",
     )],
     tags = [
-        "bazel-compatible:migrated",
+        "bazel-compat ble:m grated",
     ],
 )

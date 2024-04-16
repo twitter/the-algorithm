@@ -1,141 +1,141 @@
-package com.twitter.frigate.pushservice.predicate
+package com.tw ter.fr gate.pushserv ce.pred cate
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.hermit.predicate.Predicate
-import com.twitter.frigate.pushservice.ml.PushMLModelScorer
-import com.twitter.frigate.pushservice.params.PushConstants.TweetMediaEmbeddingBQKeyIds
-import com.twitter.frigate.pushservice.params.PushMLModel
-import com.twitter.frigate.pushservice.params.PushParams
-import com.twitter.frigate.pushservice.util.CandidateUtil
-import com.twitter.util.Future
-import com.twitter.frigate.pushservice.util.CandidateUtil._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.base._
+ mport com.tw ter.fr gate.common.rec_types.RecTypes
+ mport com.tw ter.fr gate.pushserv ce.model.PushTypes.PushCand date
+ mport com.tw ter.fr gate.pushserv ce.params.PushFeatureSw chParams
+ mport com.tw ter. rm .pred cate.Na dPred cate
+ mport com.tw ter. rm .pred cate.Pred cate
+ mport com.tw ter.fr gate.pushserv ce.ml.PushMLModelScorer
+ mport com.tw ter.fr gate.pushserv ce.params.PushConstants.T et d aEmbedd ngBQKey ds
+ mport com.tw ter.fr gate.pushserv ce.params.PushMLModel
+ mport com.tw ter.fr gate.pushserv ce.params.PushParams
+ mport com.tw ter.fr gate.pushserv ce.ut l.Cand dateUt l
+ mport com.tw ter.ut l.Future
+ mport com.tw ter.fr gate.pushserv ce.ut l.Cand dateUt l._
 
-object BqmlQualityModelPredicates {
+object BqmlQual yModelPred cates {
 
-  def ingestExtraFeatures(cand: PushCandidate): Unit = {
+  def  ngestExtraFeatures(cand: PushCand date): Un  = {
     val tagsCRCountFeature = "tagsCR_count"
-    val hasPushOpenOrNtabClickFeature = "has_PushOpenOrNtabClick"
-    val onlyPushOpenOrNtabClickFeature = "only_PushOpenOrNtabClick"
-    val firstTweetMediaEmbeddingFeature = "media_embedding_0"
-    val tweetMediaEmbeddingFeature =
-      "media.mediaunderstanding.media_embeddings.twitter_clip_as_sparse_continuous_feature"
+    val hasPushOpenOrNtabCl ckFeature = "has_PushOpenOrNtabCl ck"
+    val onlyPushOpenOrNtabCl ckFeature = "only_PushOpenOrNtabCl ck"
+    val f rstT et d aEmbedd ngFeature = " d a_embedd ng_0"
+    val t et d aEmbedd ngFeature =
+      " d a. d aunderstand ng. d a_embedd ngs.tw ter_cl p_as_sparse_cont nuous_feature"
 
-    if (!cand.numericFeatures.contains(tagsCRCountFeature)) {
-      cand.numericFeatures(tagsCRCountFeature) = getTagsCRCount(cand)
+     f (!cand.nu r cFeatures.conta ns(tagsCRCountFeature)) {
+      cand.nu r cFeatures(tagsCRCountFeature) = getTagsCRCount(cand)
     }
-    if (!cand.booleanFeatures.contains(hasPushOpenOrNtabClickFeature)) {
-      cand.booleanFeatures(hasPushOpenOrNtabClickFeature) = isRelatedToMrTwistlyCandidate(cand)
+     f (!cand.booleanFeatures.conta ns(hasPushOpenOrNtabCl ckFeature)) {
+      cand.booleanFeatures(hasPushOpenOrNtabCl ckFeature) =  sRelatedToMrTw stlyCand date(cand)
     }
-    if (!cand.booleanFeatures.contains(onlyPushOpenOrNtabClickFeature)) {
-      cand.booleanFeatures(onlyPushOpenOrNtabClickFeature) = isMrTwistlyCandidate(cand)
+     f (!cand.booleanFeatures.conta ns(onlyPushOpenOrNtabCl ckFeature)) {
+      cand.booleanFeatures(onlyPushOpenOrNtabCl ckFeature) =  sMrTw stlyCand date(cand)
     }
-    if (!cand.numericFeatures.contains(firstTweetMediaEmbeddingFeature)) {
-      val tweetMediaEmbedding = cand.sparseContinuousFeatures
-        .getOrElse(tweetMediaEmbeddingFeature, Map.empty[String, Double])
-      Seq.range(0, TweetMediaEmbeddingBQKeyIds.size).foreach { i =>
-        cand.numericFeatures(s"media_embedding_$i") =
-          tweetMediaEmbedding.getOrElse(TweetMediaEmbeddingBQKeyIds(i).toString, 0.0)
+     f (!cand.nu r cFeatures.conta ns(f rstT et d aEmbedd ngFeature)) {
+      val t et d aEmbedd ng = cand.sparseCont nuousFeatures
+        .getOrElse(t et d aEmbedd ngFeature, Map.empty[Str ng, Double])
+      Seq.range(0, T et d aEmbedd ngBQKey ds.s ze).foreach {   =>
+        cand.nu r cFeatures(s" d a_embedd ng_$ ") =
+          t et d aEmbedd ng.getOrElse(T et d aEmbedd ngBQKey ds( ).toStr ng, 0.0)
       }
     }
   }
 
-  def BqmlQualityModelOonPredicate(
-    bqmlQualityModelScorer: PushMLModelScorer
+  def BqmlQual yModelOonPred cate(
+    bqmlQual yModelScorer: PushMLModelScorer
   )(
-    implicit stats: StatsReceiver
-  ): NamedPredicate[
-    PushCandidate with TweetCandidate with RecommendationType
+     mpl c  stats: StatsRece ver
+  ): Na dPred cate[
+    PushCand date w h T etCand date w h Recom ndat onType
   ] = {
 
-    val name = "bqml_quality_model_based_predicate"
-    val scopedStatsReceiver = stats.scope(name)
-    val oonCandidatesCounter = scopedStatsReceiver.counter("oon_candidates")
-    val inCandidatesCounter = scopedStatsReceiver.counter("in_candidates")
-    val filteredOonCandidatesCounter =
-      scopedStatsReceiver.counter("filtered_oon_candidates")
-    val bucketedCandidatesCounter = scopedStatsReceiver.counter("bucketed_oon_candidates")
-    val emptyScoreCandidatesCounter = scopedStatsReceiver.counter("empty_score_candidates")
-    val histogramBinSize = 0.05
+    val na  = "bqml_qual y_model_based_pred cate"
+    val scopedStatsRece ver = stats.scope(na )
+    val oonCand datesCounter = scopedStatsRece ver.counter("oon_cand dates")
+    val  nCand datesCounter = scopedStatsRece ver.counter(" n_cand dates")
+    val f lteredOonCand datesCounter =
+      scopedStatsRece ver.counter("f ltered_oon_cand dates")
+    val bucketedCand datesCounter = scopedStatsRece ver.counter("bucketed_oon_cand dates")
+    val emptyScoreCand datesCounter = scopedStatsRece ver.counter("empty_score_cand dates")
+    val  togramB nS ze = 0.05
 
-    Predicate
-      .fromAsync { candidate: PushCandidate with TweetCandidate with RecommendationType =>
-        val target = candidate.target
-        val crt = candidate.commonRecType
-        val isOonCandidate = RecTypes.isOutOfNetworkTweetRecType(crt) ||
-          RecTypes.outOfNetworkTopicTweetTypes.contains(crt)
+    Pred cate
+      .fromAsync { cand date: PushCand date w h T etCand date w h Recom ndat onType =>
+        val target = cand date.target
+        val crt = cand date.commonRecType
+        val  sOonCand date = RecTypes. sOutOfNetworkT etRecType(crt) ||
+          RecTypes.outOfNetworkTop cT etTypes.conta ns(crt)
 
-        lazy val enableBqmlQualityModelScoreHistogramParam =
-          target.params(PushFeatureSwitchParams.EnableBqmlQualityModelScoreHistogramParam)
+        lazy val enableBqmlQual yModelScore togramParam =
+          target.params(PushFeatureSw chParams.EnableBqmlQual yModelScore togramParam)
 
-        lazy val qualityCandidateScoreHistogramCounters =
-          bqmlQualityModelScorer.getScoreHistogramCounters(
-            scopedStatsReceiver,
-            "quality_score_histogram",
-            histogramBinSize)
+        lazy val qual yCand dateScore togramCounters =
+          bqmlQual yModelScorer.getScore togramCounters(
+            scopedStatsRece ver,
+            "qual y_score_ togram",
+             togramB nS ze)
 
-        if (CandidateUtil.shouldApplyHealthQualityFilters(candidate) && (isOonCandidate || target
-            .params(PushParams.EnableBqmlReportModelPredictionForF1Tweets))
-          && target.params(PushFeatureSwitchParams.EnableBqmlQualityModelPredicateParam)) {
-          ingestExtraFeatures(candidate)
+         f (Cand dateUt l.shouldApply althQual yF lters(cand date) && ( sOonCand date || target
+            .params(PushParams.EnableBqmlReportModelPred ct onForF1T ets))
+          && target.params(PushFeatureSw chParams.EnableBqmlQual yModelPred cateParam)) {
+           ngestExtraFeatures(cand date)
 
-          lazy val shouldFilterFutSeq =
+          lazy val shouldF lterFutSeq =
             target
-              .params(PushFeatureSwitchParams.BqmlQualityModelBucketModelIdListParam)
-              .zip(target.params(PushFeatureSwitchParams.BqmlQualityModelBucketThresholdListParam))
+              .params(PushFeatureSw chParams.BqmlQual yModelBucketModel dL stParam)
+              .z p(target.params(PushFeatureSw chParams.BqmlQual yModelBucketThresholdL stParam))
               .map {
-                case (modelId, bucketThreshold) =>
+                case (model d, bucketThreshold) =>
                   val scoreFutOpt =
-                    bqmlQualityModelScorer.singlePredicationForModelVersion(modelId, candidate)
+                    bqmlQual yModelScorer.s nglePred cat onForModelVers on(model d, cand date)
 
-                  candidate.populateQualityModelScore(
-                    PushMLModel.FilteringProbability,
-                    modelId,
+                  cand date.populateQual yModelScore(
+                    PushMLModel.F lter ngProbab l y,
+                    model d,
                     scoreFutOpt
                   )
 
-                  if (isOonCandidate) {
-                    oonCandidatesCounter.incr()
+                   f ( sOonCand date) {
+                    oonCand datesCounter. ncr()
                     scoreFutOpt.map {
-                      case Some(score) =>
-                        if (score >= bucketThreshold) {
-                          bucketedCandidatesCounter.incr()
-                          if (modelId == target.params(
-                              PushFeatureSwitchParams.BqmlQualityModelTypeParam)) {
-                            if (enableBqmlQualityModelScoreHistogramParam) {
-                              val scoreHistogramBinId =
-                                math.ceil(score / histogramBinSize).toInt
-                              qualityCandidateScoreHistogramCounters(scoreHistogramBinId).incr()
+                      case So (score) =>
+                         f (score >= bucketThreshold) {
+                          bucketedCand datesCounter. ncr()
+                           f (model d == target.params(
+                              PushFeatureSw chParams.BqmlQual yModelTypeParam)) {
+                             f (enableBqmlQual yModelScore togramParam) {
+                              val score togramB n d =
+                                math.ce l(score /  togramB nS ze).to nt
+                              qual yCand dateScore togramCounters(score togramB n d). ncr()
                             }
-                            if (score >= target.params(
-                                PushFeatureSwitchParams.BqmlQualityModelPredicateThresholdParam)) {
-                              filteredOonCandidatesCounter.incr()
+                             f (score >= target.params(
+                                PushFeatureSw chParams.BqmlQual yModelPred cateThresholdParam)) {
+                              f lteredOonCand datesCounter. ncr()
                               true
                             } else false
                           } else false
                         } else false
                       case _ =>
-                        emptyScoreCandidatesCounter.incr()
+                        emptyScoreCand datesCounter. ncr()
                         false
                     }
                   } else {
-                    inCandidatesCounter.incr()
+                     nCand datesCounter. ncr()
                     Future.False
                   }
               }
 
-          Future.collect(shouldFilterFutSeq).flatMap { shouldFilterSeq =>
-            if (shouldFilterSeq.contains(true)) {
+          Future.collect(shouldF lterFutSeq).flatMap { shouldF lterSeq =>
+             f (shouldF lterSeq.conta ns(true)) {
               Future.False
             } else Future.True
           }
         } else Future.True
       }
-      .withStats(stats.scope(name))
-      .withName(name)
+      .w hStats(stats.scope(na ))
+      .w hNa (na )
   }
 }

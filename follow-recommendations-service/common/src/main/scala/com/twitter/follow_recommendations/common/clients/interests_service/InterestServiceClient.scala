@@ -1,115 +1,115 @@
-package com.twitter.follow_recommendations.common.clients.interests_service
+package com.tw ter.follow_recom ndat ons.common.cl ents. nterests_serv ce
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.InterestedInInterestsFetchKey
-import com.twitter.inject.Logging
-import com.twitter.interests.thriftscala.InterestId
-import com.twitter.interests.thriftscala.InterestRelationship
-import com.twitter.interests.thriftscala.InterestedInInterestModel
-import com.twitter.interests.thriftscala.UserInterest
-import com.twitter.interests.thriftscala.UserInterestData
-import com.twitter.interests.thriftscala.UserInterestsResponse
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Client
-import com.twitter.strato.thrift.ScroogeConvImplicits._
+ mport com.google. nject. nject
+ mport com.google. nject.S ngleton
+ mport com.tw ter.f nagle.stats.NullStatsRece ver
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.store. nterested n nterestsFetchKey
+ mport com.tw ter. nject.Logg ng
+ mport com.tw ter. nterests.thr ftscala. nterest d
+ mport com.tw ter. nterests.thr ftscala. nterestRelat onsh p
+ mport com.tw ter. nterests.thr ftscala. nterested n nterestModel
+ mport com.tw ter. nterests.thr ftscala.User nterest
+ mport com.tw ter. nterests.thr ftscala.User nterestData
+ mport com.tw ter. nterests.thr ftscala.User nterestsResponse
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.strato.cl ent.Cl ent
+ mport com.tw ter.strato.thr ft.ScroogeConv mpl c s._
 
-@Singleton
-class InterestServiceClient @Inject() (
-  stratoClient: Client,
-  statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends Logging {
+@S ngleton
+class  nterestServ ceCl ent @ nject() (
+  stratoCl ent: Cl ent,
+  statsRece ver: StatsRece ver = NullStatsRece ver)
+    extends Logg ng {
 
-  val interestsServiceStratoColumnPath = "interests/interestedInInterests"
-  val stats = statsReceiver.scope("interest_service_client")
+  val  nterestsServ ceStratoColumnPath = " nterests/ nterested n nterests"
+  val stats = statsRece ver.scope(" nterest_serv ce_cl ent")
   val errorCounter = stats.counter("error")
 
-  private val interestsFetcher =
-    stratoClient.fetcher[InterestedInInterestsFetchKey, UserInterestsResponse](
-      interestsServiceStratoColumnPath,
-      checkTypes = true
+  pr vate val  nterestsFetc r =
+    stratoCl ent.fetc r[ nterested n nterestsFetchKey, User nterestsResponse](
+       nterestsServ ceStratoColumnPath,
+      c ckTypes = true
     )
 
-  def fetchUttInterestIds(
-    userId: Long
-  ): Stitch[Seq[Long]] = {
-    fetchInterestRelationships(userId)
-      .map(_.toSeq.flatten.flatMap(extractUttInterest))
+  def fetchUtt nterest ds(
+    user d: Long
+  ): St ch[Seq[Long]] = {
+    fetch nterestRelat onsh ps(user d)
+      .map(_.toSeq.flatten.flatMap(extractUtt nterest))
   }
 
-  def extractUttInterest(
-    interestRelationShip: InterestRelationship
-  ): Option[Long] = {
-    interestRelationShip match {
-      case InterestRelationship.V1(relationshipV1) =>
-        relationshipV1.interestId match {
-          case InterestId.SemanticCore(semanticCoreInterest) => Some(semanticCoreInterest.id)
+  def extractUtt nterest(
+     nterestRelat onSh p:  nterestRelat onsh p
+  ): Opt on[Long] = {
+     nterestRelat onSh p match {
+      case  nterestRelat onsh p.V1(relat onsh pV1) =>
+        relat onsh pV1. nterest d match {
+          case  nterest d.Semant cCore(semant cCore nterest) => So (semant cCore nterest. d)
           case _ => None
         }
       case _ => None
     }
   }
 
-  def fetchCustomInterests(
-    userId: Long
-  ): Stitch[Seq[String]] = {
-    fetchInterestRelationships(userId)
-      .map(_.toSeq.flatten.flatMap(extractCustomInterest))
+  def fetchCustom nterests(
+    user d: Long
+  ): St ch[Seq[Str ng]] = {
+    fetch nterestRelat onsh ps(user d)
+      .map(_.toSeq.flatten.flatMap(extractCustom nterest))
   }
 
-  def extractCustomInterest(
-    interestRelationShip: InterestRelationship
-  ): Option[String] = {
-    interestRelationShip match {
-      case InterestRelationship.V1(relationshipV1) =>
-        relationshipV1.interestId match {
-          case InterestId.FreeForm(freeFormInterest) => Some(freeFormInterest.interest)
+  def extractCustom nterest(
+     nterestRelat onSh p:  nterestRelat onsh p
+  ): Opt on[Str ng] = {
+     nterestRelat onSh p match {
+      case  nterestRelat onsh p.V1(relat onsh pV1) =>
+        relat onsh pV1. nterest d match {
+          case  nterest d.FreeForm(freeForm nterest) => So (freeForm nterest. nterest)
           case _ => None
         }
       case _ => None
     }
   }
 
-  def fetchInterestRelationships(
-    userId: Long
-  ): Stitch[Option[Seq[InterestRelationship]]] = {
-    interestsFetcher
+  def fetch nterestRelat onsh ps(
+    user d: Long
+  ): St ch[Opt on[Seq[ nterestRelat onsh p]]] = {
+     nterestsFetc r
       .fetch(
-        InterestedInInterestsFetchKey(
-          userId = userId,
+         nterested n nterestsFetchKey(
+          user d = user d,
           labels = None,
           None
         ))
       .map(_.v)
       .map {
-        case Some(response) =>
-          response.interests.interests.map { interests =>
-            interests.collect {
-              case UserInterest(_, Some(interestData)) =>
-                getInterestRelationship(interestData)
+        case So (response) =>
+          response. nterests. nterests.map {  nterests =>
+             nterests.collect {
+              case User nterest(_, So ( nterestData)) =>
+                get nterestRelat onsh p( nterestData)
             }.flatten
           }
         case _ => None
       }
       .rescue {
-        case e: Throwable => // we are swallowing all errors
-          logger.warn(s"interests could not be retrieved for user $userId due to ${e.getCause}")
-          errorCounter.incr
-          Stitch.None
+        case e: Throwable => //   are swallow ng all errors
+          logger.warn(s" nterests could not be retr eved for user $user d due to ${e.getCause}")
+          errorCounter. ncr
+          St ch.None
       }
   }
 
-  private def getInterestRelationship(
-    interestData: UserInterestData
-  ): Seq[InterestRelationship] = {
-    interestData match {
-      case UserInterestData.InterestedIn(interestModels) =>
-        interestModels.collect {
-          case InterestedInInterestModel.ExplicitModel(model) => model
+  pr vate def get nterestRelat onsh p(
+     nterestData: User nterestData
+  ): Seq[ nterestRelat onsh p] = {
+     nterestData match {
+      case User nterestData. nterested n( nterestModels) =>
+         nterestModels.collect {
+          case  nterested n nterestModel.Expl c Model(model) => model
         }
-      case _ => Nil
+      case _ => N l
     }
   }
 }

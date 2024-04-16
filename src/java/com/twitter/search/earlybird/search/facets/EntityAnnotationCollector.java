@@ -1,48 +1,48 @@
-package com.twitter.search.earlybird.search.facets;
+package com.tw ter.search.earlyb rd.search.facets;
 
-import java.util.List;
+ mport java.ut l.L st;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+ mport com.google.common.collect. mmutableL st;
+ mport com.google.common.collect.L sts;
+ mport com.google.common.collect.Sets;
 
-import org.apache.commons.lang.StringUtils;
+ mport org.apac .commons.lang.Str ngUt ls;
 
-import com.twitter.escherbird.thriftjava.TweetEntityAnnotation;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
+ mport com.tw ter.esc rb rd.thr ftjava.T etEnt yAnnotat on;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.earlyb rd.thr ft.Thr ftSearchResult;
 
-public class EntityAnnotationCollector extends AbstractFacetTermCollector {
-  private List<TweetEntityAnnotation> annotations = Lists.newArrayList();
+publ c class Ent yAnnotat onCollector extends AbstractFacetTermCollector {
+  pr vate L st<T etEnt yAnnotat on> annotat ons = L sts.newArrayL st();
 
-  @Override
-  public boolean collect(int docID, long termID, int fieldID) {
+  @Overr de
+  publ c boolean collect( nt doc D, long term D,  nt f eld D) {
 
-    String term = getTermFromFacet(termID, fieldID,
-        Sets.newHashSet(EarlybirdFieldConstant.ENTITY_ID_FIELD.getFieldName()));
-    if (StringUtils.isEmpty(term)) {
+    Str ng term = getTermFromFacet(term D, f eld D,
+        Sets.newHashSet(Earlyb rdF eldConstant.ENT TY_ D_F ELD.getF eldNa ()));
+     f (Str ngUt ls. sEmpty(term)) {
       return false;
     }
 
-    String[] idParts = term.split("\\.");
+    Str ng[]  dParts = term.spl ("\\.");
 
-    // Only include the full three-part form of the entity ID: "groupId.domainId.entityId"
-    // Exclude the less-specific forms we index: "domainId.entityId" and "entityId"
-    if (idParts.length < 3) {
+    // Only  nclude t  full three-part form of t  ent y  D: "group d.doma n d.ent y d"
+    // Exclude t  less-spec f c forms    ndex: "doma n d.ent y d" and "ent y d"
+     f ( dParts.length < 3) {
       return false;
     }
 
-    annotations.add(new TweetEntityAnnotation(
-        Long.valueOf(idParts[0]),
-        Long.valueOf(idParts[1]),
-        Long.valueOf(idParts[2])));
+    annotat ons.add(new T etEnt yAnnotat on(
+        Long.valueOf( dParts[0]),
+        Long.valueOf( dParts[1]),
+        Long.valueOf( dParts[2])));
 
     return true;
   }
 
-  @Override
-  public void fillResultAndClear(ThriftSearchResult result) {
-    getExtraMetadata(result).setEntityAnnotations(ImmutableList.copyOf(annotations));
-    annotations.clear();
+  @Overr de
+  publ c vo d f llResultAndClear(Thr ftSearchResult result) {
+    getExtra tadata(result).setEnt yAnnotat ons( mmutableL st.copyOf(annotat ons));
+    annotat ons.clear();
   }
 }

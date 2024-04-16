@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer
+package com.tw ter.product_m xer.component_l brary.p pel ne.cand date.flex ble_ nject on_p pel ne.transfor r
 
-import com.twitter.onboarding.task.service.{thriftscala => flip}
+ mport com.tw ter.onboard ng.task.serv ce.{thr ftscala => fl p}
 
-trait HasFlipInjectionParams {
-  def displayLocation: flip.DisplayLocation
-  def rankingDisablerWithLatestControlsAvailable: Option[Boolean]
-  def isEmptyState: Option[Boolean]
-  def isFirstRequestAfterSignup: Option[Boolean]
-  def isEndOfTimeline: Option[Boolean]
+tra  HasFl p nject onParams {
+  def d splayLocat on: fl p.D splayLocat on
+  def rank ngD sablerW hLatestControlsAva lable: Opt on[Boolean]
+  def  sEmptyState: Opt on[Boolean]
+  def  sF rstRequestAfterS gnup: Opt on[Boolean]
+  def  sEndOfT  l ne: Opt on[Boolean]
 }

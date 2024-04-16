@@ -1,79 +1,79 @@
-package com.twitter.search.ingester.pipeline.twitter;
+package com.tw ter.search. ngester.p pel ne.tw ter;
 
-import java.util.Collection;
-import javax.naming.NamingException;
+ mport java.ut l.Collect on;
+ mport javax.nam ng.Nam ngExcept on;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
+ mport org.apac .commons.p pel ne.StageExcept on;
+ mport org.apac .commons.p pel ne.val dat on.Consu dTypes;
+ mport org.apac .commons.p pel ne.val dat on.ProducesConsu d;
 
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.util.BatchedElement;
-import com.twitter.search.ingester.pipeline.util.ManhattanCodedLocationProvider;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
-import com.twitter.util.Future;
+ mport com.tw ter.search. ngester.model. ngesterTw ter ssage;
+ mport com.tw ter.search. ngester.p pel ne.ut l.Batc dEle nt;
+ mport com.tw ter.search. ngester.p pel ne.ut l.ManhattanCodedLocat onProv der;
+ mport com.tw ter.search. ngester.p pel ne.ut l.P pel neStageExcept on;
+ mport com.tw ter.ut l.Future;
 
 /**
- * Read-only stage for looking up location info and populating it onto messages.
+ * Read-only stage for look ng up locat on  nfo and populat ng   onto  ssages.
  */
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducesConsumed
-public final class PopulateCodedLocationsBatchedStage
-    extends TwitterBatchedBaseStage<IngesterTwitterMessage, IngesterTwitterMessage> {
-  private static final String GEOCODE_DATASET_NAME = "ingester_geocode_profile_location";
+@Consu dTypes( ngesterTw ter ssage.class)
+@ProducesConsu d
+publ c f nal class PopulateCodedLocat onsBatc dStage
+    extends Tw terBatc dBaseStage< ngesterTw ter ssage,  ngesterTw ter ssage> {
+  pr vate stat c f nal Str ng GEOCODE_DATASET_NAME = " ngester_geocode_prof le_locat on";
 
-  private ManhattanCodedLocationProvider manhattanCodedLocationProvider = null;
+  pr vate ManhattanCodedLocat onProv der manhattanCodedLocat onProv der = null;
 
   /**
-   * Require lat/lon from TwitterMessage instead of lookup from coded_locations,
-   * do not batch sql, and simply emit messages passed in with regions populated on them
-   * rather than emitting to indexing queues.
+   * Requ re lat/lon from Tw ter ssage  nstead of lookup from coded_locat ons,
+   * do not batch sql, and s mply em   ssages passed  n w h reg ons populated on t m
+   * rat r than em t ng to  ndex ng queues.
    */
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    super.doInnerPreprocess();
-    commonInnerSetup();
+  @Overr de
+  protected vo d do nnerPreprocess() throws StageExcept on, Nam ngExcept on {
+    super.do nnerPreprocess();
+    common nnerSetup();
   }
 
-  @Override
-  protected void innerSetup() throws PipelineStageException, NamingException {
-    super.innerSetup();
-    commonInnerSetup();
+  @Overr de
+  protected vo d  nnerSetup() throws P pel neStageExcept on, Nam ngExcept on {
+    super. nnerSetup();
+    common nnerSetup();
   }
 
-  private void commonInnerSetup() throws NamingException {
-    this.manhattanCodedLocationProvider = ManhattanCodedLocationProvider.createWithEndpoint(
-        wireModule.getJavaManhattanKVEndpoint(),
-        getStageNamePrefix(),
+  pr vate vo d common nnerSetup() throws Nam ngExcept on {
+    t .manhattanCodedLocat onProv der = ManhattanCodedLocat onProv der.createW hEndpo nt(
+        w reModule.getJavaManhattanKVEndpo nt(),
+        getStageNa Pref x(),
         GEOCODE_DATASET_NAME);
   }
 
-  @Override
-  public void initStats() {
-    super.initStats();
+  @Overr de
+  publ c vo d  n Stats() {
+    super. n Stats();
   }
 
-  @Override
-  protected Class<IngesterTwitterMessage> getQueueObjectType() {
-    return IngesterTwitterMessage.class;
+  @Overr de
+  protected Class< ngesterTw ter ssage> getQueueObjectType() {
+    return  ngesterTw ter ssage.class;
   }
 
-  @Override
-  protected Future<Collection<IngesterTwitterMessage>> innerProcessBatch(Collection<BatchedElement
-      <IngesterTwitterMessage, IngesterTwitterMessage>> batch) {
+  @Overr de
+  protected Future<Collect on< ngesterTw ter ssage>>  nnerProcessBatch(Collect on<Batc dEle nt
+      < ngesterTw ter ssage,  ngesterTw ter ssage>> batch) {
 
-    Collection<IngesterTwitterMessage> batchedElements = extractOnlyElementsFromBatch(batch);
-    return manhattanCodedLocationProvider.populateCodedLatLon(batchedElements);
+    Collect on< ngesterTw ter ssage> batc dEle nts = extractOnlyEle ntsFromBatch(batch);
+    return manhattanCodedLocat onProv der.populateCodedLatLon(batc dEle nts);
   }
 
-  @Override
-  protected boolean needsToBeBatched(IngesterTwitterMessage message) {
-    return !message.hasGeoLocation() && (message.getLocation() != null)
-        && !message.getLocation().isEmpty();
+  @Overr de
+  protected boolean needsToBeBatc d( ngesterTw ter ssage  ssage) {
+    return ! ssage.hasGeoLocat on() && ( ssage.getLocat on() != null)
+        && ! ssage.getLocat on(). sEmpty();
   }
 
-  @Override
-  protected IngesterTwitterMessage transform(IngesterTwitterMessage element) {
-    return element;
+  @Overr de
+  protected  ngesterTw ter ssage transform( ngesterTw ter ssage ele nt) {
+    return ele nt;
   }
 }

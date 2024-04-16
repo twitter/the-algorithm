@@ -1,31 +1,31 @@
-package com.twitter.simclustersann.common
+package com.tw ter.s mclustersann.common
 
-object FlagNames {
-
-  /**
-   * Global Settings
-   */
-  final val ServiceTimeout = "service.timeout"
-  final val DarkTrafficFilterDeciderKey = "thrift.dark.traffic.filter.decider_key"
+object FlagNa s {
 
   /**
-   * Cache Setting
+   * Global Sett ngs
    */
-  final val CacheDest = "cache_module.dest"
-  final val CacheTimeout = "cache_module.timeout"
-  // Only turn on the async update when the SANN Cluster has the production taffic.
-  final val CacheAsyncUpdate = "cache_module.async_update"
+  f nal val Serv ceT  out = "serv ce.t  out"
+  f nal val DarkTraff cF lterDec derKey = "thr ft.dark.traff c.f lter.dec der_key"
 
   /**
-   * Warmup Settings
+   * Cac  Sett ng
    */
-  final val DisableWarmup = "warmup.disable"
-  final val NumberOfThreads = "warmup.thread_number"
-  final val RateLimiterQPS = "warmup.rate_limiter_qps"
+  f nal val Cac Dest = "cac _module.dest"
+  f nal val Cac T  out = "cac _module.t  out"
+  // Only turn on t  async update w n t  SANN Cluster has t  product on taff c.
+  f nal val Cac AsyncUpdate = "cac _module.async_update"
 
   /**
-   * Algorithm Parameters
+   * Warmup Sett ngs
    */
-  final val MaxTopTweetPerCluster = "sim_clusters.ann.max_top_tweets_per_cluster"
+  f nal val D sableWarmup = "warmup.d sable"
+  f nal val NumberOfThreads = "warmup.thread_number"
+  f nal val RateL m erQPS = "warmup.rate_l m er_qps"
+
+  /**
+   * Algor hm Para ters
+   */
+  f nal val MaxTopT etPerCluster = "s m_clusters.ann.max_top_t ets_per_cluster"
 
 }

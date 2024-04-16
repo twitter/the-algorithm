@@ -1,135 +1,135 @@
-package com.twitter.product_mixer.core.module.stringcenter
+package com.tw ter.product_m xer.core.module.str ngcenter
 
-import com.google.inject.Provides
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.jackson.ScalaObjectMapper
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import com.twitter.stringcenter.client.ExternalStringRegistry
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.stringcenter.client.StringCenterClientConfig
-import com.twitter.stringcenter.client.sources.RefreshingStringSource
-import com.twitter.stringcenter.client.sources.RefreshingStringSourceConfig
-import com.twitter.stringcenter.client.sources.StringSource
-import com.twitter.translation.Languages
-import javax.inject.Singleton
-import scala.collection.concurrent
+ mport com.google. nject.Prov des
+ mport com.tw ter.abdec der.Logg ngABDec der
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.ut l.jackson.ScalaObjectMapper
+ mport com.tw ter. nject.Tw terModule
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.product_m xer.core.product.gu ce.scope.ProductScoped
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Product
+ mport com.tw ter.str ngcenter.cl ent.ExternalStr ngReg stry
+ mport com.tw ter.str ngcenter.cl ent.Str ngCenter
+ mport com.tw ter.str ngcenter.cl ent.Str ngCenterCl entConf g
+ mport com.tw ter.str ngcenter.cl ent.s ces.Refresh ngStr ngS ce
+ mport com.tw ter.str ngcenter.cl ent.s ces.Refresh ngStr ngS ceConf g
+ mport com.tw ter.str ngcenter.cl ent.s ces.Str ngS ce
+ mport com.tw ter.translat on.Languages
+ mport javax. nject.S ngleton
+ mport scala.collect on.concurrent
 
 /*
- * Fun trivia - this has to be a Class not an Object, otherwise when you ./bazel test blah/...
- * and glob multiple feature tests together it'll reuse the concurrentMaps below across
- * executions / different server objects.
+ * Fun tr v a - t  has to be a Class not an Object, ot rw se w n   ./bazel test blah/...
+ * and glob mult ple feature tests toget r  'll reuse t  concurrentMaps below across
+ * execut ons / d fferent server objects.
  */
-class ProductScopeStringCenterModule extends TwitterModule {
+class ProductScopeStr ngCenterModule extends Tw terModule {
 
-  private val loadNothing =
-    flag[Boolean](name = "stringcenter.dontload", default = false, help = "Avoid loading any files")
+  pr vate val loadNoth ng =
+    flag[Boolean](na  = "str ngcenter.dontload", default = false,  lp = "Avo d load ng any f les")
 
   flag[Boolean](
-    name = "stringcenter.handle.language.fallback",
+    na  = "str ngcenter.handle.language.fallback",
     default = true,
-    help = "Handle language fallback for services that don't already handle it")
+     lp = "Handle language fallback for serv ces that don't already handle  ")
 
-  flag[String](
-    name = "stringcenter.default_bundle_path",
-    default = "stringcenter",
-    help = "The path on disk to the default bundle available at startup time")
+  flag[Str ng](
+    na  = "str ngcenter.default_bundle_path",
+    default = "str ngcenter",
+     lp = "T  path on d sk to t  default bundle ava lable at startup t  ")
 
-  private val refreshingInterval = flag[Int](
-    name = "stringcenter.refresh_interval_minutes",
+  pr vate val refresh ng nterval = flag[ nt](
+    na  = "str ngcenter.refresh_ nterval_m nutes",
     default = 3,
-    help = "How often to poll the refreshing bundle path to check for new bundles")
+     lp = "How often to poll t  refresh ng bundle path to c ck for new bundles")
 
-  /* The Guice injector is single threaded, but out of a preponderance of caution we use a concurrent Map.
+  /* T  Gu ce  njector  s s ngle threaded, but out of a preponderance of caut on   use a concurrent Map.
    *
-   * We need to ensure that we only build one StringSource, StringCenter client, and External String
-   * Registry for each String Center Project. @ProductScoped doesn't ensure this on it's own as
-   * two products can have the same String Center Project set.
+   *   need to ensure that   only bu ld one Str ngS ce, Str ngCenter cl ent, and External Str ng
+   * Reg stry for each Str ng Center Project. @ProductScoped doesn't ensure t  on  's own as
+   * two products can have t  sa  Str ng Center Project set.
    */
-  val stringSources: concurrent.Map[String, StringSource] = concurrent.TrieMap.empty
-  val stringCenterClients: concurrent.Map[String, StringCenter] = concurrent.TrieMap.empty
-  val externalStringRegistries: concurrent.Map[String, ExternalStringRegistry] =
-    concurrent.TrieMap.empty
+  val str ngS ces: concurrent.Map[Str ng, Str ngS ce] = concurrent.Tr eMap.empty
+  val str ngCenterCl ents: concurrent.Map[Str ng, Str ngCenter] = concurrent.Tr eMap.empty
+  val externalStr ngReg str es: concurrent.Map[Str ng, ExternalStr ngReg stry] =
+    concurrent.Tr eMap.empty
 
   @ProductScoped
-  @Provides
-  def providesStringCenterClients(
-    abDecider: LoggingABDecider,
-    stringSource: StringSource,
+  @Prov des
+  def prov desStr ngCenterCl ents(
+    abDec der: Logg ngABDec der,
+    str ngS ce: Str ngS ce,
     languages: Languages,
-    statsReceiver: StatsReceiver,
-    clientConfig: StringCenterClientConfig,
+    statsRece ver: StatsRece ver,
+    cl entConf g: Str ngCenterCl entConf g,
     product: Product
-  ): StringCenter = {
-    stringCenterClients.getOrElseUpdate(
-      stringCenterForProduct(product), {
-        new StringCenter(
-          abDecider,
-          stringSource,
+  ): Str ngCenter = {
+    str ngCenterCl ents.getOrElseUpdate(
+      str ngCenterForProduct(product), {
+        new Str ngCenter(
+          abDec der,
+          str ngS ce,
           languages,
-          statsReceiver,
-          clientConfig
+          statsRece ver,
+          cl entConf g
         )
       })
   }
 
   @ProductScoped
-  @Provides
-  def providesExternalStringRegistries(
+  @Prov des
+  def prov desExternalStr ngReg str es(
     product: Product
-  ): ExternalStringRegistry = {
-    externalStringRegistries.getOrElseUpdate(
-      stringCenterForProduct(product), {
-        new ExternalStringRegistry()
+  ): ExternalStr ngReg stry = {
+    externalStr ngReg str es.getOrElseUpdate(
+      str ngCenterForProduct(product), {
+        new ExternalStr ngReg stry()
       })
   }
 
   @ProductScoped
-  @Provides
-  def providesStringCenterSources(
+  @Prov des
+  def prov desStr ngCenterS ces(
     mapper: ScalaObjectMapper,
-    statsReceiver: StatsReceiver,
+    statsRece ver: StatsRece ver,
     product: Product,
-    @Flag("stringcenter.default_bundle_path") defaultBundlePath: String
-  ): StringSource = {
-    if (loadNothing()) {
-      StringSource.Empty
+    @Flag("str ngcenter.default_bundle_path") defaultBundlePath: Str ng
+  ): Str ngS ce = {
+     f (loadNoth ng()) {
+      Str ngS ce.Empty
     } else {
-      val stringCenterProduct = stringCenterForProduct(product)
+      val str ngCenterProduct = str ngCenterForProduct(product)
 
-      stringSources.getOrElseUpdate(
-        stringCenterProduct, {
-          val config = RefreshingStringSourceConfig(
-            stringCenterProduct,
+      str ngS ces.getOrElseUpdate(
+        str ngCenterProduct, {
+          val conf g = Refresh ngStr ngS ceConf g(
+            str ngCenterProduct,
             defaultBundlePath,
-            "stringcenter/downloaded/current/stringcenter",
-            refreshingInterval().minutes
+            "str ngcenter/downloaded/current/str ngcenter",
+            refresh ng nterval().m nutes
           )
-          new RefreshingStringSource(
-            config,
+          new Refresh ngStr ngS ce(
+            conf g,
             mapper,
-            statsReceiver
-              .scope("StringCenter", "refreshing", "project", stringCenterProduct))
+            statsRece ver
+              .scope("Str ngCenter", "refresh ng", "project", str ngCenterProduct))
         }
       )
     }
   }
 
-  private def stringCenterForProduct(product: Product): String =
-    product.stringCenterProject.getOrElse {
-      throw new UnsupportedOperationException(
-        s"No StringCenter project defined for Product ${product.identifier}")
+  pr vate def str ngCenterForProduct(product: Product): Str ng =
+    product.str ngCenterProject.getOrElse {
+      throw new UnsupportedOperat onExcept on(
+        s"No Str ngCenter project def ned for Product ${product. dent f er}")
     }
 
-  @Singleton
-  @Provides
-  def providesStringCenterClientConfig(
-    @Flag("stringcenter.handle.language.fallback") handleLanguageFallback: Boolean
-  ): StringCenterClientConfig = {
-    StringCenterClientConfig(handleLanguageFallback = handleLanguageFallback)
+  @S ngleton
+  @Prov des
+  def prov desStr ngCenterCl entConf g(
+    @Flag("str ngcenter.handle.language.fallback") handleLanguageFallback: Boolean
+  ): Str ngCenterCl entConf g = {
+    Str ngCenterCl entConf g(handleLanguageFallback = handleLanguageFallback)
   }
 }

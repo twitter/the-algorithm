@@ -1,11 +1,11 @@
-package com.twitter.timelineranker.config
+package com.tw ter.t  l neranker.conf g
 
-import com.twitter.storehaus.Store
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelines.model.TweetId
-class ClientWrappers(config: RuntimeConfiguration) {
-  private[this] val backendClientConfiguration = config.underlyingClients
+ mport com.tw ter.storehaus.Store
+ mport com.tw ter.t  l neranker.recap.model.ContentFeatures
+ mport com.tw ter.t  l nes.model.T et d
+class Cl entWrappers(conf g: Runt  Conf gurat on) {
+  pr vate[t ] val backendCl entConf gurat on = conf g.underly ngCl ents
 
-  val contentFeaturesCache: Store[TweetId, ContentFeatures] =
-    backendClientConfiguration.contentFeaturesCache
+  val contentFeaturesCac : Store[T et d, ContentFeatures] =
+    backendCl entConf gurat on.contentFeaturesCac 
 }

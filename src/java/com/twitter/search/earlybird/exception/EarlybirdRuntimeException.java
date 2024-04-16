@@ -1,7 +1,7 @@
-package com.twitter.search.earlybird.exception;
+package com.tw ter.search.earlyb rd.except on;
 
-public class EarlybirdRuntimeException extends RuntimeException {
-  public EarlybirdRuntimeException(Throwable cause) {
+publ c class Earlyb rdRunt  Except on extends Runt  Except on {
+  publ c Earlyb rdRunt  Except on(Throwable cause) {
     super(cause);
   }
 }

@@ -1,41 +1,41 @@
-package com.twitter.simclustersann.filters
+package com.tw ter.s mclustersann.f lters
 
-import com.twitter.finagle.Service
-import com.twitter.finagle.SimpleFilter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.scrooge.Request
-import com.twitter.scrooge.Response
-import com.twitter.simclustersann.thriftscala.SimClustersANNService
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.Serv ce
+ mport com.tw ter.f nagle.S mpleF lter
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.scrooge.Request
+ mport com.tw ter.scrooge.Response
+ mport com.tw ter.s mclustersann.thr ftscala.S mClustersANNServ ce
+ mport com.tw ter.ut l.Future
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class GetTweetCandidatesResponseStatsFilter @Inject() (
-  statsReceiver: StatsReceiver)
-    extends SimpleFilter[Request[SimClustersANNService.GetTweetCandidates.Args], Response[
-      SimClustersANNService.GetTweetCandidates.SuccessType
+@S ngleton
+class GetT etCand datesResponseStatsF lter @ nject() (
+  statsRece ver: StatsRece ver)
+    extends S mpleF lter[Request[S mClustersANNServ ce.GetT etCand dates.Args], Response[
+      S mClustersANNServ ce.GetT etCand dates.SuccessType
     ]] {
 
-  private[this] val stats = statsReceiver.scope("method_response_stats").scope("getTweetCandidates")
-  private[this] val candidateScoreStats = stats.stat("candidate_score_x1000")
-  private[this] val emptyResponseCounter = stats.counter("empty")
-  private[this] val nonEmptyResponseCounter = stats.counter("non_empty")
-  override def apply(
-    request: Request[SimClustersANNService.GetTweetCandidates.Args],
-    service: Service[Request[SimClustersANNService.GetTweetCandidates.Args], Response[
-      SimClustersANNService.GetTweetCandidates.SuccessType
+  pr vate[t ] val stats = statsRece ver.scope(" thod_response_stats").scope("getT etCand dates")
+  pr vate[t ] val cand dateScoreStats = stats.stat("cand date_score_x1000")
+  pr vate[t ] val emptyResponseCounter = stats.counter("empty")
+  pr vate[t ] val nonEmptyResponseCounter = stats.counter("non_empty")
+  overr de def apply(
+    request: Request[S mClustersANNServ ce.GetT etCand dates.Args],
+    serv ce: Serv ce[Request[S mClustersANNServ ce.GetT etCand dates.Args], Response[
+      S mClustersANNServ ce.GetT etCand dates.SuccessType
     ]]
-  ): Future[Response[SimClustersANNService.GetTweetCandidates.SuccessType]] = {
-    val response = service(request)
+  ): Future[Response[S mClustersANNServ ce.GetT etCand dates.SuccessType]] = {
+    val response = serv ce(request)
 
     response.onSuccess { successResponse =>
-      if (successResponse.value.size == 0)
-        emptyResponseCounter.incr()
+       f (successResponse.value.s ze == 0)
+        emptyResponseCounter. ncr()
       else
-        nonEmptyResponseCounter.incr()
-      successResponse.value.foreach { candidate =>
-        candidateScoreStats.add(candidate.score.toFloat * 1000)
+        nonEmptyResponseCounter. ncr()
+      successResponse.value.foreach { cand date =>
+        cand dateScoreStats.add(cand date.score.toFloat * 1000)
       }
     }
     response

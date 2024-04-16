@@ -1,53 +1,53 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. tr cs
 
-import com.twitter.ml.api._
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.util.Time
-import java.lang.{Double => JDouble}
-import java.lang.{Long => JLong}
+ mport com.tw ter.ml.ap ._
+ mport com.tw ter.ml.ap .ut l.SR chDataRecord
+ mport com.tw ter.ut l.T  
+ mport java.lang.{Double => JDouble}
+ mport java.lang.{Long => JLong}
 
-case class TypedSumSqMetric() extends TypedSumLikeMetric[JDouble] {
-  import AggregationMetricCommon._
+case class TypedSumSq tr c() extends TypedSumL ke tr c[JDouble] {
+   mport Aggregat on tr cCommon._
 
-  override val operatorName = "sumsq"
+  overr de val operatorNa  = "sumsq"
 
   /*
-   * Transform feature -> its squared value in the given record
-   * or 0 when feature = None (sumsq has no meaning in this case)
+   * Transform feature ->  s squared value  n t  g ven record
+   * or 0 w n feature = None (sumsq has no  an ng  n t  case)
    */
-  override def getIncrementValue(
+  overr de def get ncre ntValue(
     record: DataRecord,
-    feature: Option[Feature[JDouble]],
-    timestampFeature: Feature[JLong]
-  ): TimedValue[Double] = feature match {
-    case Some(f) => {
+    feature: Opt on[Feature[JDouble]],
+    t  stampFeature: Feature[JLong]
+  ): T  dValue[Double] = feature match {
+    case So (f) => {
       val featureVal =
-        Option(SRichDataRecord(record).getFeatureValue(f)).map(_.toDouble).getOrElse(0.0)
-      TimedValue[Double](
+        Opt on(SR chDataRecord(record).getFeatureValue(f)).map(_.toDouble).getOrElse(0.0)
+      T  dValue[Double](
         value = featureVal * featureVal,
-        timestamp = Time.fromMilliseconds(getTimestamp(record, timestampFeature))
+        t  stamp = T  .fromM ll seconds(getT  stamp(record, t  stampFeature))
       )
     }
 
     case None =>
-      TimedValue[Double](
+      T  dValue[Double](
         value = 0.0,
-        timestamp = Time.fromMilliseconds(getTimestamp(record, timestampFeature))
+        t  stamp = T  .fromM ll seconds(getT  stamp(record, t  stampFeature))
       )
   }
 }
 
 /**
- * Syntactic sugar for the sum of squares metric that works with continuous features.
- * See EasyMetric.scala for more details on why this is useful.
+ * Syntact c sugar for t  sum of squares  tr c that works w h cont nuous features.
+ * See Easy tr c.scala for more deta ls on why t   s useful.
  */
-object SumSqMetric extends EasyMetric {
-  override def forFeatureType[T](
+object SumSq tr c extends Easy tr c {
+  overr de def forFeatureType[T](
     featureType: FeatureType
-  ): Option[AggregationMetric[T, _]] =
+  ): Opt on[Aggregat on tr c[T, _]] =
     featureType match {
-      case FeatureType.CONTINUOUS =>
-        Some(TypedSumSqMetric().asInstanceOf[AggregationMetric[T, Double]])
+      case FeatureType.CONT NUOUS =>
+        So (TypedSumSq tr c().as nstanceOf[Aggregat on tr c[T, Double]])
       case _ => None
     }
 }

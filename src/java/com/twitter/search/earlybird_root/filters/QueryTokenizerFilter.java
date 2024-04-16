@@ -1,92 +1,92 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import java.util.concurrent.TimeUnit;
-import javax.inject.Inject;
+ mport java.ut l.concurrent.T  Un ;
+ mport javax. nject. nject;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.common_internal.text.version.PenguinVersionConfig;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.finagle.tracing.Trace;
-import com.twitter.finagle.tracing.Tracing;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.QueryParsingUtils;
-import com.twitter.search.queryparser.parser.SerializedQueryParser;
-import com.twitter.search.queryparser.parser.SerializedQueryParser.TokenizationOption;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.util.Duration;
-import com.twitter.util.Future;
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers on;
+ mport com.tw ter.common_ nternal.text.vers on.Pengu nVers onConf g;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.f nagle.trac ng.Trace;
+ mport com.tw ter.f nagle.trac ng.Trac ng;
+ mport com.tw ter.search.common. tr cs.SearchRateCounter;
+ mport com.tw ter.search.common. tr cs.SearchT  r;
+ mport com.tw ter.search.common. tr cs.SearchT  rStats;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.search.earlyb rd_root.common.Earlyb rdRequestContext;
+ mport com.tw ter.search.earlyb rd_root.common.QueryPars ngUt ls;
+ mport com.tw ter.search.queryparser.parser.Ser al zedQueryParser;
+ mport com.tw ter.search.queryparser.parser.Ser al zedQueryParser.Token zat onOpt on;
+ mport com.tw ter.search.queryparser.query.Query;
+ mport com.tw ter.search.queryparser.query.QueryParserExcept on;
+ mport com.tw ter.ut l.Durat on;
+ mport com.tw ter.ut l.Future;
 
-public class QueryTokenizerFilter extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
-  private static final String PREFIX = "query_tokenizer_";
-  private static final SearchRateCounter SUCCESS_COUNTER =
-      SearchRateCounter.export(PREFIX + "success");
-  private static final SearchRateCounter FAILURE_COUNTER =
-      SearchRateCounter.export(PREFIX + "error");
-  private static final SearchRateCounter SKIPPED_COUNTER =
-      SearchRateCounter.export(PREFIX + "skipped");
-  private static final SearchTimerStats QUERY_TOKENIZER_TIME =
-      SearchTimerStats.export(PREFIX + "time", TimeUnit.MILLISECONDS, false);
+publ c class QueryToken zerF lter extends S mpleF lter<Earlyb rdRequestContext, Earlyb rdResponse> {
+  pr vate stat c f nal Str ng PREF X = "query_token zer_";
+  pr vate stat c f nal SearchRateCounter SUCCESS_COUNTER =
+      SearchRateCounter.export(PREF X + "success");
+  pr vate stat c f nal SearchRateCounter FA LURE_COUNTER =
+      SearchRateCounter.export(PREF X + "error");
+  pr vate stat c f nal SearchRateCounter SK PPED_COUNTER =
+      SearchRateCounter.export(PREF X + "sk pped");
+  pr vate stat c f nal SearchT  rStats QUERY_TOKEN ZER_T ME =
+      SearchT  rStats.export(PREF X + "t  ", T  Un .M LL SECONDS, false);
 
-  private final TokenizationOption tokenizationOption;
+  pr vate f nal Token zat onOpt on token zat onOpt on;
 
-  @Inject
-  public QueryTokenizerFilter(PenguinVersionConfig penguinversions) {
-    PenguinVersion[] supportedVersions = penguinversions
-        .getSupportedVersions().toArray(new PenguinVersion[0]);
-    tokenizationOption = new TokenizationOption(true, supportedVersions);
+  @ nject
+  publ c QueryToken zerF lter(Pengu nVers onConf g pengu nvers ons) {
+    Pengu nVers on[] supportedVers ons = pengu nvers ons
+        .getSupportedVers ons().toArray(new Pengu nVers on[0]);
+    token zat onOpt on = new Token zat onOpt on(true, supportedVers ons);
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(
+      Earlyb rdRequestContext requestContext,
+      Serv ce<Earlyb rdRequestContext, Earlyb rdResponse> serv ce) {
 
-    if (!requestContext.getRequest().isRetokenizeSerializedQuery()
-        || !requestContext.getRequest().isSetSearchQuery()
-        || !requestContext.getRequest().getSearchQuery().isSetSerializedQuery()) {
-      SKIPPED_COUNTER.increment();
-      return service.apply(requestContext);
+     f (!requestContext.getRequest(). sRetoken zeSer al zedQuery()
+        || !requestContext.getRequest(). sSetSearchQuery()
+        || !requestContext.getRequest().getSearchQuery(). sSetSer al zedQuery()) {
+      SK PPED_COUNTER. ncre nt();
+      return serv ce.apply(requestContext);
     }
 
-    SearchTimer timer = QUERY_TOKENIZER_TIME.startNewTimer();
+    SearchT  r t  r = QUERY_TOKEN ZER_T ME.startNewT  r();
     try {
-      String serializedQuery = requestContext.getRequest().getSearchQuery().getSerializedQuery();
-      Query parsedQuery = reparseQuery(serializedQuery);
-      SUCCESS_COUNTER.increment();
-      return service.apply(EarlybirdRequestContext.copyRequestContext(requestContext, parsedQuery));
-    } catch (QueryParserException e) {
-      FAILURE_COUNTER.increment();
-      return QueryParsingUtils.newClientErrorResponse(requestContext.getRequest(), e);
-    } finally {
-      long elapsed = timer.stop();
-      QUERY_TOKENIZER_TIME.timerIncrement(elapsed);
-      Tracing trace = Trace.apply();
-      if (trace.isActivelyTracing()) {
-        trace.record(PREFIX + "time", Duration.fromMilliseconds(elapsed));
+      Str ng ser al zedQuery = requestContext.getRequest().getSearchQuery().getSer al zedQuery();
+      Query parsedQuery = reparseQuery(ser al zedQuery);
+      SUCCESS_COUNTER. ncre nt();
+      return serv ce.apply(Earlyb rdRequestContext.copyRequestContext(requestContext, parsedQuery));
+    } catch (QueryParserExcept on e) {
+      FA LURE_COUNTER. ncre nt();
+      return QueryPars ngUt ls.newCl entErrorResponse(requestContext.getRequest(), e);
+    } f nally {
+      long elapsed = t  r.stop();
+      QUERY_TOKEN ZER_T ME.t  r ncre nt(elapsed);
+      Trac ng trace = Trace.apply();
+       f (trace. sAct velyTrac ng()) {
+        trace.record(PREF X + "t  ", Durat on.fromM ll seconds(elapsed));
       }
     }
   }
 
-  public Query reparseQuery(String serializedQuery) throws QueryParserException {
-    SerializedQueryParser parser = new SerializedQueryParser(tokenizationOption);
-    return parser.parse(serializedQuery);
+  publ c Query reparseQuery(Str ng ser al zedQuery) throws QueryParserExcept on {
+    Ser al zedQueryParser parser = new Ser al zedQueryParser(token zat onOpt on);
+    return parser.parse(ser al zedQuery);
   }
 
   /**
-   * Initializing the query parser can take many seconds. We initialize it at warmup so that
-   * requests don't time out after we join the serverset. SEARCH-28801
+   *  n  al z ng t  query parser can take many seconds.    n  al ze   at warmup so that
+   * requests don't t   out after   jo n t  serverset. SEARCH-28801
    */
-  public void performExpensiveInitialization() throws QueryParserException {
-    SerializedQueryParser queryParser = new SerializedQueryParser(tokenizationOption);
+  publ c vo d performExpens ve n  al zat on() throws QueryParserExcept on {
+    Ser al zedQueryParser queryParser = new Ser al zedQueryParser(token zat onOpt on);
 
-    // The Korean query parser takes a few seconds on it's own to initialize.
-    String koreanQuery = "스포츠";
+    // T  Korean query parser takes a few seconds on  's own to  n  al ze.
+    Str ng koreanQuery = "스포츠";
     queryParser.parse(koreanQuery);
   }
 }

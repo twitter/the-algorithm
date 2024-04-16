@@ -1,66 +1,66 @@
-package com.twitter.visibility.generators
+package com.tw ter.v s b l y.generators
 
-import com.twitter.visibility.common.actions.LocalizedMessage
-import com.twitter.visibility.common.actions.MessageLink
-import com.twitter.visibility.results.translation.Translator
-import com.twitter.visibility.results.richtext.EpitaphToRichText
-import com.twitter.visibility.results.translation.Resource
-import com.twitter.visibility.results.translation.LearnMoreLink
-import com.twitter.visibility.rules.Epitaph
-import com.twitter.visibility.results.richtext.EpitaphToRichText.Copy
+ mport com.tw ter.v s b l y.common.act ons.Local zed ssage
+ mport com.tw ter.v s b l y.common.act ons. ssageL nk
+ mport com.tw ter.v s b l y.results.translat on.Translator
+ mport com.tw ter.v s b l y.results.r chtext.Ep aphToR chText
+ mport com.tw ter.v s b l y.results.translat on.Res ce
+ mport com.tw ter.v s b l y.results.translat on.LearnMoreL nk
+ mport com.tw ter.v s b l y.rules.Ep aph
+ mport com.tw ter.v s b l y.results.r chtext.Ep aphToR chText.Copy
 
-object EpitaphToLocalizedMessage {
+object Ep aphToLocal zed ssage {
   def apply(
-    epitaph: Epitaph,
-    languageTag: String,
-  ): LocalizedMessage = {
+    ep aph: Ep aph,
+    languageTag: Str ng,
+  ): Local zed ssage = {
     val copy =
-      EpitaphToRichText.EpitaphToPolicyMap.getOrElse(epitaph, EpitaphToRichText.FallbackPolicy)
+      Ep aphToR chText.Ep aphToPol cyMap.getOrElse(ep aph, Ep aphToR chText.FallbackPol cy)
     val text = Translator.translate(
-      copy.resource,
+      copy.res ce,
       languageTag
     )
-    localizeWithCopyAndText(copy, languageTag, text)
+    local zeW hCopyAndText(copy, languageTag, text)
   }
 
   def apply(
-    epitaph: Epitaph,
-    languageTag: String,
-    applicableCountries: Seq[String],
-  ): LocalizedMessage = {
+    ep aph: Ep aph,
+    languageTag: Str ng,
+    appl cableCountr es: Seq[Str ng],
+  ): Local zed ssage = {
     val copy =
-      EpitaphToRichText.EpitaphToPolicyMap.getOrElse(epitaph, EpitaphToRichText.FallbackPolicy)
-    val text = Translator.translateWithSimplePlaceholderReplacement(
-      copy.resource,
+      Ep aphToR chText.Ep aphToPol cyMap.getOrElse(ep aph, Ep aphToR chText.FallbackPol cy)
+    val text = Translator.translateW hS mplePlaceholderReplace nt(
+      copy.res ce,
       languageTag,
-      Map((Resource.ApplicableCountriesPlaceholder -> applicableCountries.mkString(", ")))
+      Map((Res ce.Appl cableCountr esPlaceholder -> appl cableCountr es.mkStr ng(", ")))
     )
-    localizeWithCopyAndText(copy, languageTag, text)
+    local zeW hCopyAndText(copy, languageTag, text)
   }
 
-  private def localizeWithCopyAndText(
+  pr vate def local zeW hCopyAndText(
     copy: Copy,
-    languageTag: String,
-    text: String
-  ): LocalizedMessage = {
-    val learnMore = Translator.translate(LearnMoreLink, languageTag)
+    languageTag: Str ng,
+    text: Str ng
+  ): Local zed ssage = {
+    val learnMore = Translator.translate(LearnMoreL nk, languageTag)
 
-    val links = copy.additionalLinks match {
-      case links if links.nonEmpty =>
-        MessageLink(Resource.LearnMorePlaceholder, learnMore, copy.link) +:
-          links.map {
-            case EpitaphToRichText.Link(placeholder, copyResource, link) =>
-              val copyText = Translator.translate(copyResource, languageTag)
-              MessageLink(placeholder, copyText, link)
+    val l nks = copy.add  onalL nks match {
+      case l nks  f l nks.nonEmpty =>
+         ssageL nk(Res ce.LearnMorePlaceholder, learnMore, copy.l nk) +:
+          l nks.map {
+            case Ep aphToR chText.L nk(placeholder, copyRes ce, l nk) =>
+              val copyText = Translator.translate(copyRes ce, languageTag)
+               ssageL nk(placeholder, copyText, l nk)
           }
       case _ =>
         Seq(
-          MessageLink(
-            key = Resource.LearnMorePlaceholder,
-            displayText = learnMore,
-            uri = copy.link))
+           ssageL nk(
+            key = Res ce.LearnMorePlaceholder,
+            d splayText = learnMore,
+            ur  = copy.l nk))
     }
 
-    LocalizedMessage(message = text, language = languageTag, links = links)
+    Local zed ssage( ssage = text, language = languageTag, l nks = l nks)
   }
 }

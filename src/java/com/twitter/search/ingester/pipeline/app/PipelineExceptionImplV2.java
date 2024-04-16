@@ -1,29 +1,29 @@
-package com.twitter.search.ingester.pipeline.app;
+package com.tw ter.search. ngester.p pel ne.app;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.ingester.pipeline.util.PipelineExceptionHandler;
-import com.twitter.util.Duration;
+ mport com.tw ter.search. ngester.p pel ne.ut l.P pel neExcept onHandler;
+ mport com.tw ter.ut l.Durat on;
 
-public class PipelineExceptionImplV2 implements PipelineExceptionHandler  {
-  private static final Logger LOG = LoggerFactory.getLogger(PipelineExceptionImplV2.class);
-  private RealtimeIngesterPipelineV2 pipeline;
+publ c class P pel neExcept on mplV2  mple nts P pel neExcept onHandler  {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(P pel neExcept on mplV2.class);
+  pr vate Realt   ngesterP pel neV2 p pel ne;
 
-  public PipelineExceptionImplV2(RealtimeIngesterPipelineV2 pipeline) {
-    this.pipeline = pipeline;
+  publ c P pel neExcept on mplV2(Realt   ngesterP pel neV2 p pel ne) {
+    t .p pel ne = p pel ne;
   }
 
-  @Override
-  public void logAndWait(String msg, Duration waitTime) throws InterruptedException {
-    LOG.info(msg);
-    long waitTimeInMilliSecond = waitTime.inMilliseconds();
-    Thread.sleep(waitTimeInMilliSecond);
+  @Overr de
+  publ c vo d logAndWa (Str ng msg, Durat on wa T  ) throws  nterruptedExcept on {
+    LOG. nfo(msg);
+    long wa T   nM ll Second = wa T  . nM ll seconds();
+    Thread.sleep(wa T   nM ll Second);
   }
 
-  @Override
-  public void logAndShutdown(String msg) {
-    LOG.info(msg);
-    pipeline.shutdown();
+  @Overr de
+  publ c vo d logAndShutdown(Str ng msg) {
+    LOG. nfo(msg);
+    p pel ne.shutdown();
   }
 }

@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.clients.phone_storage_service
+package com.tw ter.follow_recom ndat ons.common.cl ents.phone_storage_serv ce
 
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.follow_recommendations.common.clients.common.BaseClientModule
-import com.twitter.phonestorage.api.thriftscala.PhoneStorageService
+ mport com.tw ter.f natra.mtls.thr ftmux.modules.MtlsCl ent
+ mport com.tw ter.follow_recom ndat ons.common.cl ents.common.BaseCl entModule
+ mport com.tw ter.phonestorage.ap .thr ftscala.PhoneStorageServ ce
 
-object PhoneStorageServiceModule
-    extends BaseClientModule[PhoneStorageService.MethodPerEndpoint]
-    with MtlsClient {
-  override val label = "phone-storage-service"
-  override val dest = "/s/ibis-ds-api/ibis-ds-api:thrift2"
+object PhoneStorageServ ceModule
+    extends BaseCl entModule[PhoneStorageServ ce. thodPerEndpo nt]
+    w h MtlsCl ent {
+  overr de val label = "phone-storage-serv ce"
+  overr de val dest = "/s/ b s-ds-ap / b s-ds-ap :thr ft2"
 }

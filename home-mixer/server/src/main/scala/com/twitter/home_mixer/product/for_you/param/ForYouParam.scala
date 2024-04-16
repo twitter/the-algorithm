@@ -1,215 +1,215 @@
-package com.twitter.home_mixer.product.for_you.param
+package com.tw ter.ho _m xer.product.for_ .param
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.param.decider.DeciderKey
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.WhoToFollowModuleDisplayType
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.decider.BooleanDeciderParam
-import com.twitter.util.Duration
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.ho _m xer.param.dec der.Dec derKey
+ mport com.tw ter.product_m xer.component_l brary.decorator.urt.bu lder.t  l ne_module.WhoToFollowModuleD splayType
+ mport com.tw ter.t  l nes.conf gap .Durat onConvers on
+ mport com.tw ter.t  l nes.conf gap .FSBoundedParam
+ mport com.tw ter.t  l nes.conf gap .FSEnumParam
+ mport com.tw ter.t  l nes.conf gap .FSParam
+ mport com.tw ter.t  l nes.conf gap .HasDurat onConvers on
+ mport com.tw ter.t  l nes.conf gap .dec der.BooleanDec derParam
+ mport com.tw ter.ut l.Durat on
 
-object ForYouParam {
-  val SupportedClientFSName = "for_you_supported_client"
+object For Param {
+  val SupportedCl entFSNa  = "for_ _supported_cl ent"
 
-  object EnableTopicSocialContextFilterParam
+  object EnableTop cSoc alContextF lterParam
       extends FSParam[Boolean](
-        name = "for_you_enable_topic_social_context_filter",
+        na  = "for_ _enable_top c_soc al_context_f lter",
         default = true
       )
 
-  object EnableVerifiedAuthorSocialContextBypassParam
+  object EnableVer f edAuthorSoc alContextBypassParam
       extends FSParam[Boolean](
-        name = "for_you_enable_verified_author_social_context_bypass",
+        na  = "for_ _enable_ver f ed_author_soc al_context_bypass",
         default = true
       )
 
-  object EnableTimelineScorerCandidatePipelineParam
+  object EnableT  l neScorerCand dateP pel neParam
       extends FSParam[Boolean](
-        name = "for_you_enable_timeline_scorer_candidate_pipeline",
+        na  = "for_ _enable_t  l ne_scorer_cand date_p pel ne",
         default = false
       )
 
-  object EnableScoredTweetsCandidatePipelineParam
-      extends BooleanDeciderParam(DeciderKey.EnableForYouScoredTweetsCandidatePipeline)
+  object EnableScoredT etsCand dateP pel neParam
+      extends BooleanDec derParam(Dec derKey.EnableFor ScoredT etsCand dateP pel ne)
 
-  object EnableWhoToFollowCandidatePipelineParam
+  object EnableWhoToFollowCand dateP pel neParam
       extends FSParam[Boolean](
-        name = "for_you_enable_who_to_follow",
+        na  = "for_ _enable_who_to_follow",
         default = true
       )
 
-  object EnableWhoToSubscribeCandidatePipelineParam
+  object EnableWhoToSubscr beCand dateP pel neParam
       extends FSParam[Boolean](
-        name = "for_you_enable_who_to_subscribe",
+        na  = "for_ _enable_who_to_subscr be",
         default = true
       )
 
-  object EnableTweetPreviewsCandidatePipelineParam
+  object EnableT etPrev ewsCand dateP pel neParam
       extends FSParam[Boolean](
-        name = "for_you_enable_tweet_previews_candidate_pipeline",
+        na  = "for_ _enable_t et_prev ews_cand date_p pel ne",
         default = true
       )
 
-  object EnablePushToHomeMixerPipelineParam
+  object EnablePushToHo M xerP pel neParam
       extends FSParam[Boolean](
-        name = "for_you_enable_push_to_home_mixer_pipeline",
+        na  = "for_ _enable_push_to_ho _m xer_p pel ne",
         default = false
       )
 
-  object EnableScoredTweetsMixerPipelineParam
+  object EnableScoredT etsM xerP pel neParam
       extends FSParam[Boolean](
-        name = "for_you_enable_scored_tweets_mixer_pipeline",
+        na  = "for_ _enable_scored_t ets_m xer_p pel ne",
         default = true
       )
 
   object ServerMaxResultsParam
-      extends FSBoundedParam[Int](
-        name = "for_you_server_max_results",
+      extends FSBoundedParam[ nt](
+        na  = "for_ _server_max_results",
         default = 35,
-        min = 1,
+        m n = 1,
         max = 500
       )
 
-  object AdsNumOrganicItemsParam
-      extends FSBoundedParam[Int](
-        name = "for_you_ads_num_organic_items",
+  object AdsNumOrgan c emsParam
+      extends FSBoundedParam[ nt](
+        na  = "for_ _ads_num_organ c_ ems",
         default = 35,
-        min = 1,
+        m n = 1,
         max = 100
       )
 
-  object WhoToFollowPositionParam
-      extends FSBoundedParam[Int](
-        name = "for_you_who_to_follow_position",
+  object WhoToFollowPos  onParam
+      extends FSBoundedParam[ nt](
+        na  = "for_ _who_to_follow_pos  on",
         default = 5,
-        min = 0,
+        m n = 0,
         max = 99
       )
 
-  object WhoToFollowMinInjectionIntervalParam
-      extends FSBoundedParam[Duration](
-        "for_you_who_to_follow_min_injection_interval_in_minutes",
-        default = 1800.minutes,
-        min = 0.minutes,
-        max = 6000.minutes)
-      with HasDurationConversion {
-    override val durationConversion: DurationConversion = DurationConversion.FromMinutes
+  object WhoToFollowM n nject on ntervalParam
+      extends FSBoundedParam[Durat on](
+        "for_ _who_to_follow_m n_ nject on_ nterval_ n_m nutes",
+        default = 1800.m nutes,
+        m n = 0.m nutes,
+        max = 6000.m nutes)
+      w h HasDurat onConvers on {
+    overr de val durat onConvers on: Durat onConvers on = Durat onConvers on.FromM nutes
   }
 
-  object WhoToFollowDisplayTypeIdParam
-      extends FSEnumParam[WhoToFollowModuleDisplayType.type](
-        name = "for_you_enable_who_to_follow_display_type_id",
-        default = WhoToFollowModuleDisplayType.Vertical,
-        enum = WhoToFollowModuleDisplayType
+  object WhoToFollowD splayType dParam
+      extends FSEnumParam[WhoToFollowModuleD splayType.type](
+        na  = "for_ _enable_who_to_follow_d splay_type_ d",
+        default = WhoToFollowModuleD splayType.Vert cal,
+        enum = WhoToFollowModuleD splayType
       )
 
-  object WhoToFollowDisplayLocationParam
-      extends FSParam[String](
-        name = "for_you_who_to_follow_display_location",
-        default = "timeline"
+  object WhoToFollowD splayLocat onParam
+      extends FSParam[Str ng](
+        na  = "for_ _who_to_follow_d splay_locat on",
+        default = "t  l ne"
       )
 
-  object WhoToSubscribePositionParam
-      extends FSBoundedParam[Int](
-        name = "for_you_who_to_subscribe_position",
+  object WhoToSubscr bePos  onParam
+      extends FSBoundedParam[ nt](
+        na  = "for_ _who_to_subscr be_pos  on",
         default = 7,
-        min = 0,
+        m n = 0,
         max = 99
       )
 
-  object WhoToSubscribeMinInjectionIntervalParam
-      extends FSBoundedParam[Duration](
-        "for_you_who_to_subscribe_min_injection_interval_in_minutes",
-        default = 1800.minutes,
-        min = 0.minutes,
-        max = 6000.minutes)
-      with HasDurationConversion {
-    override val durationConversion: DurationConversion = DurationConversion.FromMinutes
+  object WhoToSubscr beM n nject on ntervalParam
+      extends FSBoundedParam[Durat on](
+        "for_ _who_to_subscr be_m n_ nject on_ nterval_ n_m nutes",
+        default = 1800.m nutes,
+        m n = 0.m nutes,
+        max = 6000.m nutes)
+      w h HasDurat onConvers on {
+    overr de val durat onConvers on: Durat onConvers on = Durat onConvers on.FromM nutes
   }
 
-  object WhoToSubscribeDisplayTypeIdParam
-      extends FSEnumParam[WhoToFollowModuleDisplayType.type](
-        name = "for_you_enable_who_to_subscribe_display_type_id",
-        default = WhoToFollowModuleDisplayType.Vertical,
-        enum = WhoToFollowModuleDisplayType
+  object WhoToSubscr beD splayType dParam
+      extends FSEnumParam[WhoToFollowModuleD splayType.type](
+        na  = "for_ _enable_who_to_subscr be_d splay_type_ d",
+        default = WhoToFollowModuleD splayType.Vert cal,
+        enum = WhoToFollowModuleD splayType
       )
 
-  object TweetPreviewsPositionParam
-      extends FSBoundedParam[Int](
-        name = "for_you_tweet_previews_position",
+  object T etPrev ewsPos  onParam
+      extends FSBoundedParam[ nt](
+        na  = "for_ _t et_prev ews_pos  on",
         default = 3,
-        min = 0,
+        m n = 0,
         max = 99
       )
 
-  object TweetPreviewsMinInjectionIntervalParam
-      extends FSBoundedParam[Duration](
-        "for_you_tweet_previews_min_injection_interval_in_minutes",
-        default = 2.hours,
-        min = 0.minutes,
-        max = 600.minutes)
-      with HasDurationConversion {
-    override val durationConversion: DurationConversion = DurationConversion.FromMinutes
+  object T etPrev ewsM n nject on ntervalParam
+      extends FSBoundedParam[Durat on](
+        "for_ _t et_prev ews_m n_ nject on_ nterval_ n_m nutes",
+        default = 2.h s,
+        m n = 0.m nutes,
+        max = 600.m nutes)
+      w h HasDurat onConvers on {
+    overr de val durat onConvers on: Durat onConvers on = Durat onConvers on.FromM nutes
   }
 
-  object TweetPreviewsMaxCandidatesParam
-      extends FSBoundedParam[Int](
-        name = "for_you_tweet_previews_max_candidates",
+  object T etPrev ewsMaxCand datesParam
+      extends FSBoundedParam[ nt](
+        na  = "for_ _t et_prev ews_max_cand dates",
         default = 1,
-        min = 0,
-        // NOTE: previews are injected at a fixed position, so max candidates = 1
-        // to avoid bunching of previews.
+        m n = 0,
+        // NOTE: prev ews are  njected at a f xed pos  on, so max cand dates = 1
+        // to avo d bunch ng of prev ews.
         max = 1
       )
 
-  object EnableFlipInjectionModuleCandidatePipelineParam
+  object EnableFl p nject onModuleCand dateP pel neParam
       extends FSParam[Boolean](
-        name = "for_you_enable_flip_inline_injection_module",
+        na  = "for_ _enable_fl p_ nl ne_ nject on_module",
         default = true
       )
 
-  object FlipInlineInjectionModulePosition
-      extends FSBoundedParam[Int](
-        name = "for_you_flip_inline_injection_module_position",
+  object Fl p nl ne nject onModulePos  on
+      extends FSBoundedParam[ nt](
+        na  = "for_ _fl p_ nl ne_ nject on_module_pos  on",
         default = 0,
-        min = 0,
+        m n = 0,
         max = 1000
       )
 
-  object ClearCacheOnPtr {
+  object ClearCac OnPtr {
     object EnableParam
         extends FSParam[Boolean](
-          name = "for_you_clear_cache_ptr_enable",
+          na  = "for_ _clear_cac _ptr_enable",
           default = false
         )
 
-    case object MinEntriesParam
-        extends FSBoundedParam[Int](
-          name = "for_you_clear_cache_ptr_min_entries",
+    case object M nEntr esParam
+        extends FSBoundedParam[ nt](
+          na  = "for_ _clear_cac _ptr_m n_entr es",
           default = 10,
-          min = 0,
+          m n = 0,
           max = 35
         )
   }
 
-  object EnableClearCacheOnPushToHome
+  object EnableClearCac OnPushToHo 
       extends FSParam[Boolean](
-        name = "for_you_enable_clear_cache_push_to_home",
+        na  = "for_ _enable_clear_cac _push_to_ho ",
         default = false
       )
 
-  object EnableServedCandidateKafkaPublishingParam
+  object EnableServedCand dateKafkaPubl sh ngParam
       extends FSParam[Boolean](
-        name = "for_you_enable_served_candidate_kafka_publishing",
+        na  = "for_ _enable_served_cand date_kafka_publ sh ng",
         default = true
       )
 
-  object ExperimentStatsParam
-      extends FSParam[String](
-        name = "for_you_experiment_stats",
+  object Exper  ntStatsParam
+      extends FSParam[Str ng](
+        na  = "for_ _exper  nt_stats",
         default = ""
       )
 }

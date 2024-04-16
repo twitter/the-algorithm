@@ -1,104 +1,104 @@
-package com.twitter.frigate.pushservice.take.predicates
+package com.tw ter.fr gate.pushserv ce.take.pred cates
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.predicate.BqmlHealthModelPredicates
-import com.twitter.frigate.pushservice.predicate.BqmlQualityModelPredicates
-import com.twitter.frigate.pushservice.predicate.HealthPredicates
-import com.twitter.frigate.pushservice.predicate.OONSpreadControlPredicate
-import com.twitter.frigate.pushservice.predicate.OONTweetNegativeFeedbackBasedPredicate
-import com.twitter.frigate.pushservice.predicate.OutOfNetworkCandidatesQualityPredicates
-import com.twitter.frigate.pushservice.predicate.PredicatesForCandidate
-import com.twitter.frigate.pushservice.predicate.PNegMultimodalPredicates
-import com.twitter.frigate.pushservice.predicate.TargetEngagementPredicate
-import com.twitter.frigate.pushservice.predicate.TweetEngagementRatioPredicate
-import com.twitter.frigate.pushservice.predicate.TweetLanguagePredicate
-import com.twitter.frigate.pushservice.predicate.TweetWithheldContentPredicate
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.pushserv ce.conf g.Conf g
+ mport com.tw ter.fr gate.pushserv ce.pred cate.Bqml althModelPred cates
+ mport com.tw ter.fr gate.pushserv ce.pred cate.BqmlQual yModelPred cates
+ mport com.tw ter.fr gate.pushserv ce.pred cate. althPred cates
+ mport com.tw ter.fr gate.pushserv ce.pred cate.OONSpreadControlPred cate
+ mport com.tw ter.fr gate.pushserv ce.pred cate.OONT etNegat veFeedbackBasedPred cate
+ mport com.tw ter.fr gate.pushserv ce.pred cate.OutOfNetworkCand datesQual yPred cates
+ mport com.tw ter.fr gate.pushserv ce.pred cate.Pred catesForCand date
+ mport com.tw ter.fr gate.pushserv ce.pred cate.PNegMult modalPred cates
+ mport com.tw ter.fr gate.pushserv ce.pred cate.TargetEngage ntPred cate
+ mport com.tw ter.fr gate.pushserv ce.pred cate.T etEngage ntRat oPred cate
+ mport com.tw ter.fr gate.pushserv ce.pred cate.T etLanguagePred cate
+ mport com.tw ter.fr gate.pushserv ce.pred cate.T etW h ldContentPred cate
 
-trait BasicTweetPredicates {
+tra  Bas cT etPred cates {
 
-  def config: Config
+  def conf g: Conf g
 
-  implicit def statsReceiver: StatsReceiver
+   mpl c  def statsRece ver: StatsRece ver
 
-  final lazy val basicTweetPredicates =
-    List(
-      HealthPredicates.sensitiveMediaCategoryPredicate(),
-      HealthPredicates.profanityPredicate(),
-      PredicatesForCandidate.disableOutNetworkTweetPredicate(config.edgeStore),
-      TweetEngagementRatioPredicate.QTtoNtabClickBasedPredicate(),
-      TweetLanguagePredicate.oonTweeetLanguageMatch(),
-      HealthPredicates.userHealthSignalsPredicate(config.userHealthSignalStore),
-      HealthPredicates.authorSensitiveMediaPredicate(config.producerMediaRepresentationStore),
-      HealthPredicates.authorProfileBasedPredicate(),
-      PNegMultimodalPredicates.healthSignalScorePNegMultimodalPredicate(
-        config.tweetHealthScoreStore),
-      BqmlHealthModelPredicates.healthModelOonPredicate(
-        config.filteringModelScorer,
-        config.producerMediaRepresentationStore,
-        config.userHealthSignalStore,
-        config.tweetHealthScoreStore),
-      BqmlQualityModelPredicates.BqmlQualityModelOonPredicate(config.filteringModelScorer),
-      HealthPredicates.tweetHealthSignalScorePredicate(config.tweetHealthScoreStore),
-      HealthPredicates
-        .tweetHealthSignalScorePredicate(config.tweetHealthScoreStore, applyToQuoteTweet = true),
-      PredicatesForCandidate.nullCastF1ProtectedExperientPredicate(
-        config.cachedTweetyPieStoreV2
+  f nal lazy val bas cT etPred cates =
+    L st(
+       althPred cates.sens  ve d aCategoryPred cate(),
+       althPred cates.profan yPred cate(),
+      Pred catesForCand date.d sableOutNetworkT etPred cate(conf g.edgeStore),
+      T etEngage ntRat oPred cate.QTtoNtabCl ckBasedPred cate(),
+      T etLanguagePred cate.oonT eetLanguageMatch(),
+       althPred cates.user althS gnalsPred cate(conf g.user althS gnalStore),
+       althPred cates.authorSens  ve d aPred cate(conf g.producer d aRepresentat onStore),
+       althPred cates.authorProf leBasedPred cate(),
+      PNegMult modalPred cates. althS gnalScorePNegMult modalPred cate(
+        conf g.t et althScoreStore),
+      Bqml althModelPred cates. althModelOonPred cate(
+        conf g.f lter ngModelScorer,
+        conf g.producer d aRepresentat onStore,
+        conf g.user althS gnalStore,
+        conf g.t et althScoreStore),
+      BqmlQual yModelPred cates.BqmlQual yModelOonPred cate(conf g.f lter ngModelScorer),
+       althPred cates.t et althS gnalScorePred cate(conf g.t et althScoreStore),
+       althPred cates
+        .t et althS gnalScorePred cate(conf g.t et althScoreStore, applyToQuoteT et = true),
+      Pred catesForCand date.nullCastF1ProtectedExper entPred cate(
+        conf g.cac dT etyP eStoreV2
       ),
-      OONTweetNegativeFeedbackBasedPredicate.ntabDislikeBasedPredicate(),
-      OONSpreadControlPredicate.oonTweetSpreadControlPredicate(),
-      OONSpreadControlPredicate.oonAuthorSpreadControlPredicate(),
-      HealthPredicates.healthSignalScoreMultilingualPnsfwTweetTextPredicate(
-        config.tweetHealthScoreStore),
-      PredicatesForCandidate
-        .recommendedTweetAuthorAcceptableToTargetUser(config.edgeStore),
-      HealthPredicates.healthSignalScorePnsfwTweetTextPredicate(config.tweetHealthScoreStore),
-      HealthPredicates.healthSignalScoreSpammyTweetPredicate(config.tweetHealthScoreStore),
-      OutOfNetworkCandidatesQualityPredicates.NegativeKeywordsPredicate(
-        config.postRankingFeatureStoreClient),
-      PredicatesForCandidate.authorNotBeingDeviceFollowed(config.edgeStore),
-      TweetWithheldContentPredicate(),
-      PredicatesForCandidate.noOptoutFreeFormInterestPredicate,
-      PredicatesForCandidate.disableInNetworkTweetPredicate(config.edgeStore),
-      TweetEngagementRatioPredicate.TweetReplyLikeRatioPredicate(),
-      TargetEngagementPredicate(
-        config.userTweetPerspectiveStore,
-        defaultForMissing = true
+      OONT etNegat veFeedbackBasedPred cate.ntabD sl keBasedPred cate(),
+      OONSpreadControlPred cate.oonT etSpreadControlPred cate(),
+      OONSpreadControlPred cate.oonAuthorSpreadControlPred cate(),
+       althPred cates. althS gnalScoreMult l ngualPnsfwT etTextPred cate(
+        conf g.t et althScoreStore),
+      Pred catesForCand date
+        .recom ndedT etAuthorAcceptableToTargetUser(conf g.edgeStore),
+       althPred cates. althS gnalScorePnsfwT etTextPred cate(conf g.t et althScoreStore),
+       althPred cates. althS gnalScoreSpam T etPred cate(conf g.t et althScoreStore),
+      OutOfNetworkCand datesQual yPred cates.Negat veKeywordsPred cate(
+        conf g.postRank ngFeatureStoreCl ent),
+      Pred catesForCand date.authorNotBe ngDev ceFollo d(conf g.edgeStore),
+      T etW h ldContentPred cate(),
+      Pred catesForCand date.noOptoutFreeForm nterestPred cate,
+      Pred catesForCand date.d sable nNetworkT etPred cate(conf g.edgeStore),
+      T etEngage ntRat oPred cate.T etReplyL keRat oPred cate(),
+      TargetEngage ntPred cate(
+        conf g.userT etPerspect veStore,
+        defaultForM ss ng = true
       ),
     )
 }
 
 /**
- * This trait is a new version of BasicTweetPredicates
- * Difference from old version is that basicTweetPredicates are different
- * basicTweetPredicates here don't include Social Graph Service related predicates
+ * T  tra   s a new vers on of Bas cT etPred cates
+ * D fference from old vers on  s that bas cT etPred cates are d fferent
+ * bas cT etPred cates  re don't  nclude Soc al Graph Serv ce related pred cates
  */
-trait BasicTweetPredicatesWithoutSGSPredicates {
+tra  Bas cT etPred catesW houtSGSPred cates {
 
-  def config: Config
+  def conf g: Conf g
 
-  implicit def statsReceiver: StatsReceiver
+   mpl c  def statsRece ver: StatsRece ver
 
-  final lazy val basicTweetPredicates = {
-    List(
-      HealthPredicates.healthSignalScoreSpammyTweetPredicate(config.tweetHealthScoreStore),
-      PredicatesForCandidate.nullCastF1ProtectedExperientPredicate(
-        config.cachedTweetyPieStoreV2
+  f nal lazy val bas cT etPred cates = {
+    L st(
+       althPred cates. althS gnalScoreSpam T etPred cate(conf g.t et althScoreStore),
+      Pred catesForCand date.nullCastF1ProtectedExper entPred cate(
+        conf g.cac dT etyP eStoreV2
       ),
-      TweetWithheldContentPredicate(),
-      TargetEngagementPredicate(
-        config.userTweetPerspectiveStore,
-        defaultForMissing = true
+      T etW h ldContentPred cate(),
+      TargetEngage ntPred cate(
+        conf g.userT etPerspect veStore,
+        defaultForM ss ng = true
       ),
-      PredicatesForCandidate.noOptoutFreeFormInterestPredicate,
-      HealthPredicates.userHealthSignalsPredicate(config.userHealthSignalStore),
-      HealthPredicates.tweetHealthSignalScorePredicate(config.tweetHealthScoreStore),
-      BqmlQualityModelPredicates.BqmlQualityModelOonPredicate(config.filteringModelScorer),
-      BqmlHealthModelPredicates.healthModelOonPredicate(
-        config.filteringModelScorer,
-        config.producerMediaRepresentationStore,
-        config.userHealthSignalStore,
-        config.tweetHealthScoreStore),
+      Pred catesForCand date.noOptoutFreeForm nterestPred cate,
+       althPred cates.user althS gnalsPred cate(conf g.user althS gnalStore),
+       althPred cates.t et althS gnalScorePred cate(conf g.t et althScoreStore),
+      BqmlQual yModelPred cates.BqmlQual yModelOonPred cate(conf g.f lter ngModelScorer),
+      Bqml althModelPred cates. althModelOonPred cate(
+        conf g.f lter ngModelScorer,
+        conf g.producer d aRepresentat onStore,
+        conf g.user althS gnalStore,
+        conf g.t et althScoreStore),
     )
   }
 }

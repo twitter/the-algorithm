@@ -1,76 +1,76 @@
-package com.twitter.simclusters_v2.scalding.evaluation
+package com.tw ter.s mclusters_v2.scald ng.evaluat on
 
-import com.twitter.ml.api.constant.SharedFeatures.AUTHOR_ID
-import com.twitter.ml.api.constant.SharedFeatures.TIMESTAMP
-import com.twitter.ml.api.constant.SharedFeatures.TWEET_ID
-import com.twitter.ml.api.constant.SharedFeatures.USER_ID
-import com.twitter.ml.api.DailySuffixFeatureSource
-import com.twitter.ml.api.DataSetPipe
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecution
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecutionArgs
-import com.twitter.scalding_internal.job.analytics_batch.BatchDescription
-import com.twitter.scalding_internal.job.analytics_batch.BatchFirstTime
-import com.twitter.scalding_internal.job.analytics_batch.BatchIncrement
-import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledExecutionApp
-import com.twitter.simclusters_v2.hdfs_sources.TimelineDataExtractorFixedPathSource
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.thriftscala.DisplayLocation
-import com.twitter.simclusters_v2.thriftscala.ReferenceTweet
-import com.twitter.simclusters_v2.thriftscala.ReferenceTweets
-import com.twitter.simclusters_v2.thriftscala.TweetLabels
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures.IS_LINGER_IMPRESSION
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures.SOURCE_AUTHOR_ID
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures.SOURCE_TWEET_ID
-import com.twitter.timelines.prediction.features.itl.ITLFeatures
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
-import java.util.TimeZone
+ mport com.tw ter.ml.ap .constant.SharedFeatures.AUTHOR_ D
+ mport com.tw ter.ml.ap .constant.SharedFeatures.T MESTAMP
+ mport com.tw ter.ml.ap .constant.SharedFeatures.TWEET_ D
+ mport com.tw ter.ml.ap .constant.SharedFeatures.USER_ D
+ mport com.tw ter.ml.ap .Da lySuff xFeatureS ce
+ mport com.tw ter.ml.ap .DataSetP pe
+ mport com.tw ter.ml.ap .R chDataRecord
+ mport com.tw ter.scald ng._
+ mport com.tw ter.scald ng_ nternal.dalv2.DALWr e._
+ mport com.tw ter.scald ng_ nternal.job.Tw terExecut onApp
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.Analyt csBatchExecut on
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.Analyt csBatchExecut onArgs
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.BatchDescr pt on
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.BatchF rstT  
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.Batch ncre nt
+ mport com.tw ter.scald ng_ nternal.job.analyt cs_batch.Tw terSc duledExecut onApp
+ mport com.tw ter.s mclusters_v2.hdfs_s ces.T  l neDataExtractorF xedPathS ce
+ mport com.tw ter.s mclusters_v2.hdfs_s ces._
+ mport com.tw ter.s mclusters_v2.thr ftscala.D splayLocat on
+ mport com.tw ter.s mclusters_v2.thr ftscala.ReferenceT et
+ mport com.tw ter.s mclusters_v2.thr ftscala.ReferenceT ets
+ mport com.tw ter.s mclusters_v2.thr ftscala.T etLabels
+ mport com.tw ter.t  l nes.pred ct on.features.common.T  l nesSharedFeatures. S_L NGER_ MPRESS ON
+ mport com.tw ter.t  l nes.pred ct on.features.common.T  l nesSharedFeatures.SOURCE_AUTHOR_ D
+ mport com.tw ter.t  l nes.pred ct on.features.common.T  l nesSharedFeatures.SOURCE_TWEET_ D
+ mport com.tw ter.t  l nes.pred ct on.features. l. TLFeatures
+ mport com.tw ter.t  l nes.pred ct on.features.recap.RecapFeatures
+ mport java.ut l.T  Zone
 
 /**
- * A scheduled version of the job to parse Timelines data for impressed and engaged tweets.
- capesospy-v2 update|create --start_cron tweet_evaluation_timelines_reference_batch src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+ * A sc duled vers on of t  job to parse T  l nes data for  mpressed and engaged t ets.
+ capesospy-v2 update|create --start_cron t et_evaluat on_t  l nes_reference_batch src/scala/com/tw ter/s mclusters_v2/capesos_conf g/atla_proc.yaml
  */
-object ScheduledTimelinesDataExtractionBatch extends TwitterScheduledExecutionApp {
+object Sc duledT  l nesDataExtract onBatch extends Tw terSc duledExecut onApp {
 
-  val outputPath = "/user/cassowary/processed/tweet_evaluation_reference_set/timelines"
+  val outputPath = "/user/cassowary/processed/t et_evaluat on_reference_set/t  l nes"
 
-  private val firstTime: String = "2019-03-31"
-  private implicit val tz: TimeZone = DateOps.UTC
-  private implicit val parser: DateParser = DateParser.default
-  private val batchIncrement: Duration = Days(1)
+  pr vate val f rstT  : Str ng = "2019-03-31"
+  pr vate  mpl c  val tz: T  Zone = DateOps.UTC
+  pr vate  mpl c  val parser: DateParser = DateParser.default
+  pr vate val batch ncre nt: Durat on = Days(1)
 
-  private val execArgs = AnalyticsBatchExecutionArgs(
-    batchDesc = BatchDescription(this.getClass.getName.replace("$", "")),
-    firstTime = BatchFirstTime(RichDate(firstTime)),
-    lastTime = None,
-    batchIncrement = BatchIncrement(batchIncrement)
+  pr vate val execArgs = Analyt csBatchExecut onArgs(
+    batchDesc = BatchDescr pt on(t .getClass.getNa .replace("$", "")),
+    f rstT   = BatchF rstT  (R chDate(f rstT  )),
+    lastT   = None,
+    batch ncre nt = Batch ncre nt(batch ncre nt)
   )
 
-  override def scheduledJob: Execution[Unit] = AnalyticsBatchExecution(execArgs) {
-    implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        Execution.withArgs { args =>
+  overr de def sc duledJob: Execut on[Un ] = Analyt csBatchExecut on(execArgs) {
+     mpl c  dateRange =>
+      Execut on.w h d {  mpl c  un que d =>
+        Execut on.w hArgs { args =>
           val defaultSampleRate = 1.0
           val recaps =
-            TimelinesEngagementDataExtractor.readTimelinesRecapTweets(
-              recapTweets =
-                DailySuffixFeatureSource(TimelinesEngagementDataExtractor.RecapTweetHdfsPath).read,
+            T  l nesEngage ntDataExtractor.readT  l nesRecapT ets(
+              recapT ets =
+                Da lySuff xFeatureS ce(T  l nesEngage ntDataExtractor.RecapT etHdfsPath).read,
               sampleRate = defaultSampleRate
             )(dateRange)
-          val recTweets =
-            TimelinesEngagementDataExtractor.readTimelinesRecTweets(
-              recTweets =
-                DailySuffixFeatureSource(TimelinesEngagementDataExtractor.RecTweetHdfsPath).read,
+          val recT ets =
+            T  l nesEngage ntDataExtractor.readT  l nesRecT ets(
+              recT ets =
+                Da lySuff xFeatureS ce(T  l nesEngage ntDataExtractor.RecT etHdfsPath).read,
               sampleRate = defaultSampleRate
             )(dateRange)
 
-          (recaps ++ recTweets).writeDALSnapshotExecution(
-            TweetEvaluationTimelinesReferenceSetScalaDataset,
-            D.Daily,
-            D.Suffix(outputPath),
+          (recaps ++ recT ets).wr eDALSnapshotExecut on(
+            T etEvaluat onT  l nesReferenceSetScalaDataset,
+            D.Da ly,
+            D.Suff x(outputPath),
             D.EBLzo(),
             dateRange.end
           )
@@ -80,191 +80,191 @@ object ScheduledTimelinesDataExtractionBatch extends TwitterScheduledExecutionAp
 }
 
 /**
- * Ad-hoc version of the job to process a subset of the Timeline data, either to catch up with data
- * on a particular day, or to generate human readable data for debugging.
- ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/evaluation:tweet_evaluation_timelines_reference_adhoc
+ * Ad-hoc vers on of t  job to process a subset of t  T  l ne data, e  r to catch up w h data
+ * on a part cular day, or to generate human readable data for debugg ng.
+ ./bazel bundle src/scala/com/tw ter/s mclusters_v2/scald ng/evaluat on:t et_evaluat on_t  l nes_reference_adhoc
 
- oscar hdfs --screen --user cassowary --bundle tweet_evaluation_timelines_reference_adhoc \
- --tool com.twitter.simclusters_v2.scalding.evaluation.AdhocTimelinesDataExtraction \
- -- --date 2018-11-15 --output_dir /user/cassowary/your_ldap/test_htl_data/recap --sample_rate 0.01 \
- --recap --rectweet --output_tsv
+ oscar hdfs --screen --user cassowary --bundle t et_evaluat on_t  l nes_reference_adhoc \
+ --tool com.tw ter.s mclusters_v2.scald ng.evaluat on.AdhocT  l nesDataExtract on \
+ -- --date 2018-11-15 --output_d r /user/cassowary/y _ldap/test_htl_data/recap --sample_rate 0.01 \
+ --recap --rect et --output_tsv
  */
-object AdhocTimelinesDataExtraction extends TwitterExecutionApp {
+object AdhocT  l nesDataExtract on extends Tw terExecut onApp {
 
-  @Override
-  def job: Execution[Unit] = {
-    Execution.withArgs { args =>
-      implicit val dateRange: DateRange =
-        DateRange.parse(args.list("date"))(DateOps.UTC, DateParser.default)
+  @Overr de
+  def job: Execut on[Un ] = {
+    Execut on.w hArgs { args =>
+       mpl c  val dateRange: DateRange =
+        DateRange.parse(args.l st("date"))(DateOps.UTC, DateParser.default)
 
-      val outputDir = args("output_dir")
-      val readRecTweet = args.boolean("rectweet")
+      val outputD r = args("output_d r")
+      val readRecT et = args.boolean("rect et")
       val readRecap = args.boolean("recap")
       val sampleRate = args.double("sample_rate")
       val useTsv = args.boolean("output_tsv")
 
-      if (!readRecTweet && !readRecap) {
-        throw new IllegalArgumentException("Must read at least some data!")
+       f (!readRecT et && !readRecap) {
+        throw new  llegalArgu ntExcept on("Must read at least so  data!")
       }
-      val recTweets = if (readRecTweet) {
-        println("RecTweets are included in the dataset")
-        TimelinesEngagementDataExtractor.readTimelinesRecTweets(
-          recTweets =
-            DailySuffixFeatureSource(TimelinesEngagementDataExtractor.RecTweetHdfsPath).read,
+      val recT ets =  f (readRecT et) {
+        pr ntln("RecT ets are  ncluded  n t  dataset")
+        T  l nesEngage ntDataExtractor.readT  l nesRecT ets(
+          recT ets =
+            Da lySuff xFeatureS ce(T  l nesEngage ntDataExtractor.RecT etHdfsPath).read,
           sampleRate = sampleRate)(dateRange)
       } else {
-        TypedPipe.empty
+        TypedP pe.empty
       }
 
-      val recaps = if (readRecap) {
-        println("Recaps are included in the dataset")
-        TimelinesEngagementDataExtractor.readTimelinesRecapTweets(
-          recapTweets =
-            DailySuffixFeatureSource(TimelinesEngagementDataExtractor.RecapTweetHdfsPath).read,
+      val recaps =  f (readRecap) {
+        pr ntln("Recaps are  ncluded  n t  dataset")
+        T  l nesEngage ntDataExtractor.readT  l nesRecapT ets(
+          recapT ets =
+            Da lySuff xFeatureS ce(T  l nesEngage ntDataExtractor.RecapT etHdfsPath).read,
           sampleRate = sampleRate
         )(dateRange)
       } else {
-        TypedPipe.empty
+        TypedP pe.empty
       }
 
-      val referenceTweets = recaps ++ recTweets
+      val referenceT ets = recaps ++ recT ets
 
-      if (useTsv) {
-        // Write in plain text in tsv format for human readability
-        referenceTweets
-          .map(t => (t.targetUserId, t.impressedTweets))
-          .writeExecution(TypedTsv[(Long, Seq[ReferenceTweet])](outputDir))
+       f (useTsv) {
+        // Wr e  n pla n text  n tsv format for human readab l y
+        referenceT ets
+          .map(t => (t.targetUser d, t. mpressedT ets))
+          .wr eExecut on(TypedTsv[(Long, Seq[ReferenceT et])](outputD r))
       } else {
-        // Write in compact thrift lzo format
-        referenceTweets
-          .writeExecution(TimelineDataExtractorFixedPathSource(outputDir))
+        // Wr e  n compact thr ft lzo format
+        referenceT ets
+          .wr eExecut on(T  l neDataExtractorF xedPathS ce(outputD r))
       }
     }
   }
 }
 
 /**
- * Base class to provide functions to parse tweet engagement data from Home Timeline's data.
- * We are mainly interested in 2 tweet data sets from Home Timeline:
- * 1. Recap tweet: Tweets + RTs from user's follow graph. We are interested in out of network RTs.
- * 2. RecTweet: Out of network tweets not from user's follow graph.
+ * Base class to prov de funct ons to parse t et engage nt data from Ho  T  l ne's data.
+ *   are ma nly  nterested  n 2 t et data sets from Ho  T  l ne:
+ * 1. Recap t et: T ets + RTs from user's follow graph.   are  nterested  n out of network RTs.
+ * 2. RecT et: Out of network t ets not from user's follow graph.
  */
-object TimelinesEngagementDataExtractor {
+object T  l nesEngage ntDataExtractor {
 
-  val RecapTweetHdfsPath = "/atla/proc2/user/timelines/processed/suggests/recap/data_records"
-  val RecTweetHdfsPath = "/atla/proc2/user/timelines/processed/injections/rectweet/data_records"
+  val RecapT etHdfsPath = "/atla/proc2/user/t  l nes/processed/suggests/recap/data_records"
+  val RecT etHdfsPath = "/atla/proc2/user/t  l nes/processed/ nject ons/rect et/data_records"
 
-  // Timelines name the same feature differently depending on the surface area (ex. recap vs rectweet).
-  // For each data source we extract the features with different feature names. Detail:
-  def toRecapTweetLabels(record: RichDataRecord): TweetLabels = {
-    val isClicked = record.getFeatureValue(RecapFeatures.IS_CLICKED)
-    val isFav = record.getFeatureValue(RecapFeatures.IS_FAVORITED)
-    val isRT = record.getFeatureValue(RecapFeatures.IS_RETWEETED)
-    val isQuoted = record.getFeatureValue(RecapFeatures.IS_QUOTED)
-    val isReplied = record.getFeatureValue(RecapFeatures.IS_REPLIED)
-    TweetLabels(isClicked, isFav, isRT, isQuoted, isReplied)
+  // T  l nes na  t  sa  feature d fferently depend ng on t  surface area (ex. recap vs rect et).
+  // For each data s ce   extract t  features w h d fferent feature na s. Deta l:
+  def toRecapT etLabels(record: R chDataRecord): T etLabels = {
+    val  sCl cked = record.getFeatureValue(RecapFeatures. S_CL CKED)
+    val  sFav = record.getFeatureValue(RecapFeatures. S_FAVOR TED)
+    val  sRT = record.getFeatureValue(RecapFeatures. S_RETWEETED)
+    val  sQuoted = record.getFeatureValue(RecapFeatures. S_QUOTED)
+    val  sRepl ed = record.getFeatureValue(RecapFeatures. S_REPL ED)
+    T etLabels( sCl cked,  sFav,  sRT,  sQuoted,  sRepl ed)
   }
 
-  def toRecTweetLabels(record: RichDataRecord): TweetLabels = {
-    // Refer to ITLFeatures for more labels
-    val isClicked = record.getFeatureValue(ITLFeatures.IS_CLICKED)
-    val isFav = record.getFeatureValue(ITLFeatures.IS_FAVORITED)
-    val isRT = record.getFeatureValue(ITLFeatures.IS_RETWEETED)
-    val isQuoted = record.getFeatureValue(ITLFeatures.IS_QUOTED)
-    val isReplied = record.getFeatureValue(ITLFeatures.IS_REPLIED)
-    TweetLabels(isClicked, isFav, isRT, isQuoted, isReplied)
+  def toRecT etLabels(record: R chDataRecord): T etLabels = {
+    // Refer to  TLFeatures for more labels
+    val  sCl cked = record.getFeatureValue( TLFeatures. S_CL CKED)
+    val  sFav = record.getFeatureValue( TLFeatures. S_FAVOR TED)
+    val  sRT = record.getFeatureValue( TLFeatures. S_RETWEETED)
+    val  sQuoted = record.getFeatureValue( TLFeatures. S_QUOTED)
+    val  sRepl ed = record.getFeatureValue( TLFeatures. S_REPL ED)
+    T etLabels( sCl cked,  sFav,  sRT,  sQuoted,  sRepl ed)
   }
 
   /**
-   * Return Recap tweets, which are in-network tweets. Here we only filter for Retweets of tweets
-   * that are outside the user's follow graph.
+   * Return Recap t ets, wh ch are  n-network t ets.  re   only f lter for Ret ets of t ets
+   * that are outs de t  user's follow graph.
    */
-  def readTimelinesRecapTweets(
-    recapTweets: DataSetPipe,
+  def readT  l nesRecapT ets(
+    recapT ets: DataSetP pe,
     sampleRate: Double
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[ReferenceTweets] = {
-    // recapTweets are in network tweets. We want to discover RTs of OON tweets.
-    // For Retweets, we check IS_RETWEET and use SOURCE_TWEET_ID, and then check
-    // PROBABLY_FROM_FOLLOWED_AUTHOR, which filters in network tweet from user's top 1000 follow graph.
+     mpl c  dateRange: DateRange
+  ): TypedP pe[ReferenceT ets] = {
+    // recapT ets are  n network t ets.   want to d scover RTs of OON t ets.
+    // For Ret ets,   c ck  S_RETWEET and use SOURCE_TWEET_ D, and t n c ck
+    // PROBABLY_FROM_FOLLOWED_AUTHOR, wh ch f lters  n network t et from user's top 1000 follow graph.
 
-    recapTweets.richRecords
+    recapT ets.r chRecords
       .sample(sampleRate)
-      .filter { record =>
-        val isInDateRange = dateRange.contains(RichDate(record.getFeatureValue(TIMESTAMP).toLong))
-        val isLingeredImpression = record.getFeatureValue(IS_LINGER_IMPRESSION)
-        val isInNetwork =
-          record.getFeatureValue(RecapFeatures.PROBABLY_FROM_FOLLOWED_AUTHOR) // approximate
-        val isRetweet = record.getFeatureValue(RecapFeatures.IS_RETWEET)
-        isRetweet && (!isInNetwork) && isInDateRange && isLingeredImpression
+      .f lter { record =>
+        val  s nDateRange = dateRange.conta ns(R chDate(record.getFeatureValue(T MESTAMP).toLong))
+        val  sL ngered mpress on = record.getFeatureValue( S_L NGER_ MPRESS ON)
+        val  s nNetwork =
+          record.getFeatureValue(RecapFeatures.PROBABLY_FROM_FOLLOWED_AUTHOR) // approx mate
+        val  sRet et = record.getFeatureValue(RecapFeatures. S_RETWEET)
+         sRet et && (! s nNetwork) &&  s nDateRange &&  sL ngered mpress on
       }
       .flatMap { record =>
         for {
-          userId <- Option(record.getFeatureValue(USER_ID)).map(_.toLong)
-          sourceTweetId <- Option(record.getFeatureValue(SOURCE_TWEET_ID)).map(
+          user d <- Opt on(record.getFeatureValue(USER_ D)).map(_.toLong)
+          s ceT et d <- Opt on(record.getFeatureValue(SOURCE_TWEET_ D)).map(
             _.toLong
-          ) // source tweetId is the RT id
-          sourceAuthorId <- Option(record.getFeatureValue(SOURCE_AUTHOR_ID)).map(_.toLong)
-          timestamp <- Option(record.getFeatureValue(TIMESTAMP)).map(_.toLong)
-          labels = toRecapTweetLabels(record)
-        } yield {
+          ) // s ce t et d  s t  RT  d
+          s ceAuthor d <- Opt on(record.getFeatureValue(SOURCE_AUTHOR_ D)).map(_.toLong)
+          t  stamp <- Opt on(record.getFeatureValue(T MESTAMP)).map(_.toLong)
+          labels = toRecapT etLabels(record)
+        } y eld {
           (
-            userId,
+            user d,
             Seq(
-              ReferenceTweet(
-                sourceTweetId,
-                sourceAuthorId,
-                timestamp,
-                DisplayLocation.TimelinesRecap,
+              ReferenceT et(
+                s ceT et d,
+                s ceAuthor d,
+                t  stamp,
+                D splayLocat on.T  l nesRecap,
                 labels))
           )
         }
       }
       .sumByKey
-      .map { case (uid, tweetSeq) => ReferenceTweets(uid, tweetSeq) }
+      .map { case (u d, t etSeq) => ReferenceT ets(u d, t etSeq) }
   }
 
   /**
-   * Return RecTweets, which are out of network tweets served in the Timeline.
+   * Return RecT ets, wh ch are out of network t ets served  n t  T  l ne.
    */
-  def readTimelinesRecTweets(
-    recTweets: DataSetPipe,
+  def readT  l nesRecT ets(
+    recT ets: DataSetP pe,
     sampleRate: Double
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[ReferenceTweets] = {
-    // recTweets contain strictly out of network injection tweets
+     mpl c  dateRange: DateRange
+  ): TypedP pe[ReferenceT ets] = {
+    // recT ets conta n str ctly out of network  nject on t ets
 
-    recTweets.richRecords
+    recT ets.r chRecords
       .sample(sampleRate)
-      .filter { record =>
-        val isInDateRange = dateRange.contains(RichDate(record.getFeatureValue(TIMESTAMP).toLong))
-        val isLingeredImpression = record.getFeatureValue(IS_LINGER_IMPRESSION)
+      .f lter { record =>
+        val  s nDateRange = dateRange.conta ns(R chDate(record.getFeatureValue(T MESTAMP).toLong))
+        val  sL ngered mpress on = record.getFeatureValue( S_L NGER_ MPRESS ON)
 
-        isInDateRange && isLingeredImpression
+         s nDateRange &&  sL ngered mpress on
       }
       .flatMap { record =>
         for {
-          userId <- Option(record.getFeatureValue(USER_ID)).map(_.toLong)
-          tweetId <- Option(record.getFeatureValue(TWEET_ID)).map(_.toLong)
-          authorId <- Option(record.getFeatureValue(AUTHOR_ID)).map(_.toLong)
-          timestamp <- Option(record.getFeatureValue(TIMESTAMP)).map(_.toLong)
-          labels = toRecTweetLabels(record)
-        } yield {
+          user d <- Opt on(record.getFeatureValue(USER_ D)).map(_.toLong)
+          t et d <- Opt on(record.getFeatureValue(TWEET_ D)).map(_.toLong)
+          author d <- Opt on(record.getFeatureValue(AUTHOR_ D)).map(_.toLong)
+          t  stamp <- Opt on(record.getFeatureValue(T MESTAMP)).map(_.toLong)
+          labels = toRecT etLabels(record)
+        } y eld {
           (
-            userId,
+            user d,
             Seq(
-              ReferenceTweet(
-                tweetId,
-                authorId,
-                timestamp,
-                DisplayLocation.TimelinesRectweet,
+              ReferenceT et(
+                t et d,
+                author d,
+                t  stamp,
+                D splayLocat on.T  l nesRect et,
                 labels))
           )
         }
       }
       .sumByKey
-      .map { case (uid, tweetSeq) => ReferenceTweets(uid, tweetSeq) }
+      .map { case (u d, t etSeq) => ReferenceT ets(u d, t etSeq) }
   }
 }

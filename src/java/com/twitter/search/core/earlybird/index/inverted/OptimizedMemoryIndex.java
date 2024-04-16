@@ -1,275 +1,275 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import java.io.IOException;
-import java.util.Comparator;
-import java.util.Map;
+ mport java. o. OExcept on;
+ mport java.ut l.Comparator;
+ mport java.ut l.Map;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.packed.PackedInts;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .lucene. ndex.Post ngsEnum;
+ mport org.apac .lucene. ndex.Terms;
+ mport org.apac .lucene. ndex.TermsEnum;
+ mport org.apac .lucene.search.Doc dSet erator;
+ mport org.apac .lucene.ut l.BytesRef;
+ mport org.apac .lucene.ut l.packed.Packed nts;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.util.hash.BDZAlgorithm;
-import com.twitter.search.common.util.hash.BDZAlgorithm.MPHFNotFoundException;
-import com.twitter.search.common.util.hash.KeysSource;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.facets.FacetIDMap.FacetField;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.sc ma.base.Earlyb rdF eldType;
+ mport com.tw ter.search.common.ut l.hash.BDZAlgor hm;
+ mport com.tw ter.search.common.ut l.hash.BDZAlgor hm.MPHFNotFoundExcept on;
+ mport com.tw ter.search.common.ut l.hash.KeysS ce;
+ mport com.tw ter.search.common.ut l. o.flushable.DataDeser al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.DataSer al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.common.ut l. o.flushable.Flushable;
+ mport com.tw ter.search.core.earlyb rd.facets.Facet DMap.FacetF eld;
+ mport com.tw ter.search.core.earlyb rd. ndex.Doc DToT et DMapper;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
 
-public class OptimizedMemoryIndex extends InvertedIndex implements Flushable {
-  private static final Logger LOG = LoggerFactory.getLogger(OptimizedMemoryIndex.class);
-  private static final Comparator<BytesRef> BYTES_REF_COMPARATOR = Comparator.naturalOrder();
+publ c class Opt m zed mory ndex extends  nverted ndex  mple nts Flushable {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Opt m zed mory ndex.class);
+  pr vate stat c f nal Comparator<BytesRef> BYTES_REF_COMPARATOR = Comparator.naturalOrder();
 
-  private static final SearchCounter MPH_NOT_FOUND_COUNT =
-      SearchCounter.export("twitter_optimized_index_mph_not_found_count");
+  pr vate stat c f nal SearchCounter MPH_NOT_FOUND_COUNT =
+      SearchCounter.export("tw ter_opt m zed_ ndex_mph_not_found_count");
 
-  private final PackedInts.Reader numPostings;
-  private final PackedInts.Reader postingListPointers;
-  private final PackedInts.Reader offensiveCounters;
-  private final MultiPostingLists postingLists;
+  pr vate f nal Packed nts.Reader numPost ngs;
+  pr vate f nal Packed nts.Reader post ngL stPo nters;
+  pr vate f nal Packed nts.Reader offens veCounters;
+  pr vate f nal Mult Post ngL sts post ngL sts;
 
-  private final TermDictionary dictionary;
+  pr vate f nal TermD ct onary d ct onary;
 
-  private final int numDocs;
-  private final int sumTotalTermFreq;
-  private final int sumTermDocFreq;
+  pr vate f nal  nt numDocs;
+  pr vate f nal  nt sumTotalTermFreq;
+  pr vate f nal  nt sumTermDocFreq;
 
-  private OptimizedMemoryIndex(EarlybirdFieldType fieldType,
-                               int numDocs,
-                               int sumTermDocFreq,
-                               int sumTotalTermFreq,
-                               PackedInts.Reader numPostings,
-                               PackedInts.Reader postingListPointers,
-                               PackedInts.Reader offensiveCounters,
-                               MultiPostingLists postingLists,
-                               TermDictionary dictionary) {
-    super(fieldType);
-    this.numDocs = numDocs;
-    this.sumTermDocFreq = sumTermDocFreq;
-    this.sumTotalTermFreq = sumTotalTermFreq;
-    this.numPostings = numPostings;
-    this.postingListPointers = postingListPointers;
-    this.offensiveCounters = offensiveCounters;
-    this.postingLists = postingLists;
-    this.dictionary = dictionary;
+  pr vate Opt m zed mory ndex(Earlyb rdF eldType f eldType,
+                                nt numDocs,
+                                nt sumTermDocFreq,
+                                nt sumTotalTermFreq,
+                               Packed nts.Reader numPost ngs,
+                               Packed nts.Reader post ngL stPo nters,
+                               Packed nts.Reader offens veCounters,
+                               Mult Post ngL sts post ngL sts,
+                               TermD ct onary d ct onary) {
+    super(f eldType);
+    t .numDocs = numDocs;
+    t .sumTermDocFreq = sumTermDocFreq;
+    t .sumTotalTermFreq = sumTotalTermFreq;
+    t .numPost ngs = numPost ngs;
+    t .post ngL stPo nters = post ngL stPo nters;
+    t .offens veCounters = offens veCounters;
+    t .post ngL sts = post ngL sts;
+    t .d ct onary = d ct onary;
   }
 
-  public OptimizedMemoryIndex(
-      EarlybirdFieldType fieldType,
-      String field,
-      InvertedRealtimeIndex source,
-      Map<Integer, int[]> termIDMapper,
-      FacetField facetField,
-      DocIDToTweetIDMapper originalTweetIdMapper,
-      DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
-    super(fieldType);
+  publ c Opt m zed mory ndex(
+      Earlyb rdF eldType f eldType,
+      Str ng f eld,
+       nvertedRealt   ndex s ce,
+      Map< nteger,  nt[]> term DMapper,
+      FacetF eld facetF eld,
+      Doc DToT et DMapper or g nalT et dMapper,
+      Doc DToT et DMapper opt m zedT et dMapper) throws  OExcept on {
+    super(f eldType);
 
-    numDocs = source.getNumDocs();
-    sumTermDocFreq = source.getSumTermDocFreq();
-    sumTotalTermFreq = source.getSumTotalTermFreq();
+    numDocs = s ce.getNumDocs();
+    sumTermDocFreq = s ce.getSumTermDocFreq();
+    sumTotalTermFreq = s ce.getSumTotalTermFreq();
 
-    Preconditions.checkNotNull(originalTweetIdMapper, "The segment must have a tweet ID mapper.");
-    Preconditions.checkNotNull(optimizedTweetIdMapper,
-                               "The optimized tweet ID mapper cannot be null.");
+    Precond  ons.c ckNotNull(or g nalT et dMapper, "T  seg nt must have a t et  D mapper.");
+    Precond  ons.c ckNotNull(opt m zedT et dMapper,
+                               "T  opt m zed t et  D mapper cannot be null.");
 
-    // We rely on the fact that new terms always have a greater term ID. We ignore all terms that
-    // are equal to or greater than numTerms, as they may be incompletely applied. If new terms are
-    // added while optimizing, they will be re-added when we re-apply updates.
-    final KeysSource termsIterator = source.getKeysSource();
-    int numTerms = termsIterator.getNumberOfKeys();
-    int maxPublishedPointer = source.getMaxPublishedPointer();
+    //   rely on t  fact that new terms always have a greater term  D.    gnore all terms that
+    // are equal to or greater than numTerms, as t y may be  ncompletely appl ed.  f new terms are
+    // added wh le opt m z ng, t y w ll be re-added w n   re-apply updates.
+    f nal KeysS ce terms erator = s ce.getKeysS ce();
+     nt numTerms = terms erator.getNumberOfKeys();
+     nt maxPubl s dPo nter = s ce.getMaxPubl s dPo nter();
 
-    int[] tempPostingListPointers = new int[numTerms];
+     nt[] tempPost ngL stPo nters = new  nt[numTerms];
 
-    BDZAlgorithm termsHashFunction = null;
+    BDZAlgor hm termsHashFunct on = null;
 
-    final boolean supportTermTextLookup = facetField != null || fieldType.isSupportTermTextLookup();
-    if (supportTermTextLookup) {
+    f nal boolean supportTermTextLookup = facetF eld != null || f eldType. sSupportTermTextLookup();
+     f (supportTermTextLookup) {
       try {
-        termsHashFunction = new BDZAlgorithm(termsIterator);
-      } catch (MPHFNotFoundException e) {
-        // we couldn't find a mphf for this field
-        // no problem, this can happen for very small fields
-        // - just use the fst in that case
-        LOG.warn("Unable to build MPH for field: {}", field);
-        MPH_NOT_FOUND_COUNT.increment();
+        termsHashFunct on = new BDZAlgor hm(terms erator);
+      } catch (MPHFNotFoundExcept on e) {
+        //   couldn't f nd a mphf for t  f eld
+        // no problem, t  can happen for very small f elds
+        // - just use t  fst  n that case
+        LOG.warn("Unable to bu ld MPH for f eld: {}", f eld);
+        MPH_NOT_FOUND_COUNT. ncre nt();
       }
     }
 
-    // Make sure to only call the expensive computeNumPostings() once.
-    int[] numPostingsSource = computeNumPostings(source, numTerms, maxPublishedPointer);
+    // Make sure to only call t  expens ve computeNumPost ngs() once.
+     nt[] numPost ngsS ce = computeNumPost ngs(s ce, numTerms, maxPubl s dPo nter);
 
-    // The BDZ Algorithm returns a function from bytesref to term ID. However, these term IDs are
-    // different than the original term IDs (it's a hash function, not a hash _table_), so we have
-    // to remap the term IDs to match the ones generated by BDZ. We track that using the termIDMap.
-    int[] termIDMap = null;
+    // T  BDZ Algor hm returns a funct on from bytesref to term  D. Ho ver, t se term  Ds are
+    // d fferent than t  or g nal term  Ds ( 's a hash funct on, not a hash _table_), so   have
+    // to remap t  term  Ds to match t  ones generated by BDZ.   track that us ng t  term DMap.
+     nt[] term DMap = null;
 
-    if (termsHashFunction != null) {
-      termsIterator.rewind();
-      termIDMap = BDZAlgorithm.createIdMap(termsHashFunction, termsIterator);
-      if (facetField != null) {
-        termIDMapper.put(facetField.getFacetId(), termIDMap);
+     f (termsHashFunct on != null) {
+      terms erator.rew nd();
+      term DMap = BDZAlgor hm.create dMap(termsHashFunct on, terms erator);
+       f (facetF eld != null) {
+        term DMapper.put(facetF eld.getFacet d(), term DMap);
       }
 
-      PackedInts.Reader termPointers = getPackedInts(source.getTermPointers(), termIDMap);
-      this.numPostings = getPackedInts(numPostingsSource, termIDMap);
-      this.offensiveCounters = source.getOffensiveCounters() == null ? null
-              : getPackedInts(source.getOffensiveCounters(), termIDMap);
+      Packed nts.Reader termPo nters = getPacked nts(s ce.getTermPo nters(), term DMap);
+      t .numPost ngs = getPacked nts(numPost ngsS ce, term DMap);
+      t .offens veCounters = s ce.getOffens veCounters() == null ? null
+              : getPacked nts(s ce.getOffens veCounters(), term DMap);
 
-      this.dictionary = new MPHTermDictionary(
+      t .d ct onary = new MPHTermD ct onary(
           numTerms,
-          termsHashFunction,
-          termPointers,
-          source.getTermPool(),
-          TermPointerEncoding.DEFAULT_ENCODING);
+          termsHashFunct on,
+          termPo nters,
+          s ce.getTermPool(),
+          TermPo nterEncod ng.DEFAULT_ENCOD NG);
     } else {
-      this.dictionary = FSTTermDictionary.buildFST(
-          source.getTermPool(),
-          source.getTermPointers(),
+      t .d ct onary = FSTTermD ct onary.bu ldFST(
+          s ce.getTermPool(),
+          s ce.getTermPo nters(),
           numTerms,
           BYTES_REF_COMPARATOR,
           supportTermTextLookup,
-          TermPointerEncoding.DEFAULT_ENCODING);
+          TermPo nterEncod ng.DEFAULT_ENCOD NG);
 
-      this.numPostings = getPackedInts(numPostingsSource);
-      this.offensiveCounters = source.getOffensiveCounters() == null ? null
-              : getPackedInts(source.getOffensiveCounters());
+      t .numPost ngs = getPacked nts(numPost ngsS ce);
+      t .offens veCounters = s ce.getOffens veCounters() == null ? null
+              : getPacked nts(s ce.getOffens veCounters());
     }
 
-    TermsEnum allTerms = source.createTermsEnum(maxPublishedPointer);
+    TermsEnum allTerms = s ce.createTermsEnum(maxPubl s dPo nter);
 
-    this.postingLists = new MultiPostingLists(
-        !fieldType.hasPositions(),
-        numPostingsSource,
-        source.getMaxPosition());
+    t .post ngL sts = new Mult Post ngL sts(
+        !f eldType.hasPos  ons(),
+        numPost ngsS ce,
+        s ce.getMaxPos  on());
 
-    for (int termID = 0; termID < numTerms; termID++) {
-      allTerms.seekExact(termID);
-      PostingsEnum postingsEnum = new OptimizingPostingsEnumWrapper(
-          allTerms.postings(null), originalTweetIdMapper, optimizedTweetIdMapper);
-      int mappedTermID = termIDMap != null ? termIDMap[termID] : termID;
-      tempPostingListPointers[mappedTermID] =
-          postingLists.copyPostingList(postingsEnum, numPostingsSource[termID]);
+    for ( nt term D = 0; term D < numTerms; term D++) {
+      allTerms.seekExact(term D);
+      Post ngsEnum post ngsEnum = new Opt m z ngPost ngsEnumWrapper(
+          allTerms.post ngs(null), or g nalT et dMapper, opt m zedT et dMapper);
+       nt mappedTerm D = term DMap != null ? term DMap[term D] : term D;
+      tempPost ngL stPo nters[mappedTerm D] =
+          post ngL sts.copyPost ngL st(post ngsEnum, numPost ngsS ce[term D]);
     }
 
-    this.postingListPointers = getPackedInts(tempPostingListPointers);
+    t .post ngL stPo nters = getPacked nts(tempPost ngL stPo nters);
   }
 
-  private static int[] map(int[] source, int[] map) {
-    int[] target = new int[map.length];
-    for (int i = 0; i < map.length; i++) {
-      target[map[i]] = source[i];
+  pr vate stat c  nt[] map( nt[] s ce,  nt[] map) {
+     nt[] target = new  nt[map.length];
+    for ( nt   = 0;   < map.length;  ++) {
+      target[map[ ]] = s ce[ ];
     }
     return target;
   }
 
-  static PackedInts.Reader getPackedInts(int[] values) {
-    return getPackedInts(values, null);
+  stat c Packed nts.Reader getPacked nts( nt[] values) {
+    return getPacked nts(values, null);
   }
 
-  private static PackedInts.Reader getPackedInts(int[] values, int[] map) {
-    int[] mappedValues = values;
-    if (map != null) {
+  pr vate stat c Packed nts.Reader getPacked nts( nt[] values,  nt[] map) {
+     nt[] mappedValues = values;
+     f (map != null) {
       mappedValues = map(mappedValues, map);
     }
 
-    // first determine max value
-    long maxValue = Long.MIN_VALUE;
-    for (int value : mappedValues) {
-      if (value > maxValue) {
+    // f rst determ ne max value
+    long maxValue = Long.M N_VALUE;
+    for ( nt value : mappedValues) {
+       f (value > maxValue) {
         maxValue = value;
       }
     }
 
-    PackedInts.Mutable packed =
-            PackedInts.getMutable(mappedValues.length, PackedInts.bitsRequired(maxValue),
-                    PackedInts.DEFAULT);
-    for (int i = 0; i < mappedValues.length; i++) {
-      packed.set(i, mappedValues[i]);
+    Packed nts.Mutable packed =
+            Packed nts.getMutable(mappedValues.length, Packed nts.b sRequ red(maxValue),
+                    Packed nts.DEFAULT);
+    for ( nt   = 0;   < mappedValues.length;  ++) {
+      packed.set( , mappedValues[ ]);
     }
 
     return packed;
   }
 
   /**
-   * Returns per-term array containing the number of posting in this index for each term.
-   * This call is extremely slow.
+   * Returns per-term array conta n ng t  number of post ng  n t   ndex for each term.
+   * T  call  s extre ly slow.
    */
-  private static int[] computeNumPostings(
-      InvertedRealtimeIndex source,
-      int numTerms,
-      int maxPublishedPointer
-  ) throws IOException {
-    int[] numPostings = new int[numTerms];
-    TermsEnum allTerms = source.createTermsEnum(maxPublishedPointer);
+  pr vate stat c  nt[] computeNumPost ngs(
+       nvertedRealt   ndex s ce,
+       nt numTerms,
+       nt maxPubl s dPo nter
+  ) throws  OExcept on {
+     nt[] numPost ngs = new  nt[numTerms];
+    TermsEnum allTerms = s ce.createTermsEnum(maxPubl s dPo nter);
 
-    for (int termID = 0; termID < numTerms; termID++) {
-      allTerms.seekExact(termID);
-      PostingsEnum docsEnum = allTerms.postings(null);
-      while (docsEnum.nextDoc() != DocIdSetIterator.NO_MORE_DOCS) {
-        numPostings[termID] += docsEnum.freq();
+    for ( nt term D = 0; term D < numTerms; term D++) {
+      allTerms.seekExact(term D);
+      Post ngsEnum docsEnum = allTerms.post ngs(null);
+      wh le (docsEnum.nextDoc() != Doc dSet erator.NO_MORE_DOCS) {
+        numPost ngs[term D] += docsEnum.freq();
       }
     }
 
-    return numPostings;
+    return numPost ngs;
   }
 
-  @Override
-  public int getNumDocs() {
+  @Overr de
+  publ c  nt getNumDocs() {
     return numDocs;
   }
 
-  @Override
-  public int getSumTotalTermFreq() {
+  @Overr de
+  publ c  nt getSumTotalTermFreq() {
     return sumTotalTermFreq;
   }
 
-  @Override
-  public int getSumTermDocFreq() {
+  @Overr de
+  publ c  nt getSumTermDocFreq() {
     return sumTermDocFreq;
   }
 
-  public OptimizedPostingLists getPostingLists() {
-    Preconditions.checkState(hasPostingLists());
-    return postingLists;
+  publ c Opt m zedPost ngL sts getPost ngL sts() {
+    Precond  ons.c ckState(hasPost ngL sts());
+    return post ngL sts;
   }
 
-  int getPostingListPointer(int termID) {
-    Preconditions.checkState(hasPostingLists());
-    return (int) postingListPointers.get(termID);
+   nt getPost ngL stPo nter( nt term D) {
+    Precond  ons.c ckState(hasPost ngL sts());
+    return ( nt) post ngL stPo nters.get(term D);
   }
 
-  int getNumPostings(int termID) {
-    Preconditions.checkState(hasPostingLists());
-    return (int) numPostings.get(termID);
+   nt getNumPost ngs( nt term D) {
+    Precond  ons.c ckState(hasPost ngL sts());
+    return ( nt) numPost ngs.get(term D);
   }
 
-  public boolean getTerm(int termID, BytesRef text, BytesRef termPayload) {
-    return dictionary.getTerm(termID, text, termPayload);
+  publ c boolean getTerm( nt term D, BytesRef text, BytesRef termPayload) {
+    return d ct onary.getTerm(term D, text, termPayload);
   }
 
-  @Override
-  public FacetLabelAccessor getLabelAccessor() {
+  @Overr de
+  publ c FacetLabelAccessor getLabelAccessor() {
     return new FacetLabelAccessor() {
-      @Override
-      protected boolean seek(long termID) {
-        if (termID != EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
-          hasTermPayload = getTerm((int) termID, termRef, termPayload);
-          offensiveCount = offensiveCounters != null
-                  ? (int) offensiveCounters.get((int) termID) : 0;
+      @Overr de
+      protected boolean seek(long term D) {
+         f (term D != Earlyb rd ndexSeg ntAtom cReader.TERM_NOT_FOUND) {
+          hasTermPayload = getTerm(( nt) term D, termRef, termPayload);
+          offens veCount = offens veCounters != null
+                  ? ( nt) offens veCounters.get(( nt) term D) : 0;
           return true;
         } else {
           return false;
@@ -278,157 +278,157 @@ public class OptimizedMemoryIndex extends InvertedIndex implements Flushable {
     };
   }
 
-  @Override
-  public Terms createTerms(int maxPublishedPointer) {
-    return new OptimizedIndexTerms(this);
+  @Overr de
+  publ c Terms createTerms( nt maxPubl s dPo nter) {
+    return new Opt m zed ndexTerms(t );
   }
 
-  @Override
-  public TermsEnum createTermsEnum(int maxPublishedPointer) {
-    return dictionary.createTermsEnum(this);
+  @Overr de
+  publ c TermsEnum createTermsEnum( nt maxPubl s dPo nter) {
+    return d ct onary.createTermsEnum(t );
   }
 
-  @Override
-  public int lookupTerm(BytesRef term) throws IOException {
-    return dictionary.lookupTerm(term);
+  @Overr de
+  publ c  nt lookupTerm(BytesRef term) throws  OExcept on {
+    return d ct onary.lookupTerm(term);
   }
 
-  @Override
-  public int getLargestDocIDForTerm(int termID) throws IOException {
-    Preconditions.checkState(hasPostingLists());
-    if (termID == EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
-      return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+  @Overr de
+  publ c  nt getLargestDoc DForTerm( nt term D) throws  OExcept on {
+    Precond  ons.c ckState(hasPost ngL sts());
+     f (term D == Earlyb rd ndexSeg ntAtom cReader.TERM_NOT_FOUND) {
+      return Earlyb rd ndexSeg ntAtom cReader.TERM_NOT_FOUND;
     } else {
-      return postingLists.getLargestDocID((int) postingListPointers.get(termID),
-              (int) numPostings.get(termID));
+      return post ngL sts.getLargestDoc D(( nt) post ngL stPo nters.get(term D),
+              ( nt) numPost ngs.get(term D));
     }
   }
 
-  @Override
-  public int getDF(int termID) {
-    return (int) numPostings.get(termID);
+  @Overr de
+  publ c  nt getDF( nt term D) {
+    return ( nt) numPost ngs.get(term D);
   }
 
-  @Override
-  public int getNumTerms() {
-    return dictionary.getNumTerms();
+  @Overr de
+  publ c  nt getNumTerms() {
+    return d ct onary.getNumTerms();
   }
 
-  @Override
-  public void getTerm(int termID, BytesRef text) {
-    dictionary.getTerm(termID, text, null);
+  @Overr de
+  publ c vo d getTerm( nt term D, BytesRef text) {
+    d ct onary.getTerm(term D, text, null);
   }
 
-  @VisibleForTesting TermDictionary getTermDictionary() {
-    return dictionary;
+  @V s bleForTest ng TermD ct onary getTermD ct onary() {
+    return d ct onary;
   }
 
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @Overr de
+  publ c FlushHandler getFlushHandler() {
+    return new FlushHandler(t );
   }
 
-  public boolean hasPostingLists() {
-    return postingListPointers != null
-        && postingLists != null
-        && numPostings != null;
+  publ c boolean hasPost ngL sts() {
+    return post ngL stPo nters != null
+        && post ngL sts != null
+        && numPost ngs != null;
   }
 
-  @VisibleForTesting
-  OptimizedPostingLists getOptimizedPostingLists() {
-    return postingLists;
+  @V s bleForTest ng
+  Opt m zedPost ngL sts getOpt m zedPost ngL sts() {
+    return post ngL sts;
   }
 
-  public static class FlushHandler extends Flushable.Handler<OptimizedMemoryIndex> {
-    private static final String NUM_DOCS_PROP_NAME = "numDocs";
-    private static final String SUM_TOTAL_TERM_FREQ_PROP_NAME = "sumTotalTermFreq";
-    private static final String SUM_TERM_DOC_FREQ_PROP_NAME = "sumTermDocFreq";
-    private static final String USE_MIN_PERFECT_HASH_PROP_NAME = "useMinimumPerfectHashFunction";
-    private static final String SKIP_POSTING_LIST_PROP_NAME = "skipPostingLists";
-    private static final String HAS_OFFENSIVE_COUNTERS_PROP_NAME = "hasOffensiveCounters";
-    public static final String IS_OPTIMIZED_PROP_NAME = "isOptimized";
+  publ c stat c class FlushHandler extends Flushable.Handler<Opt m zed mory ndex> {
+    pr vate stat c f nal Str ng NUM_DOCS_PROP_NAME = "numDocs";
+    pr vate stat c f nal Str ng SUM_TOTAL_TERM_FREQ_PROP_NAME = "sumTotalTermFreq";
+    pr vate stat c f nal Str ng SUM_TERM_DOC_FREQ_PROP_NAME = "sumTermDocFreq";
+    pr vate stat c f nal Str ng USE_M N_PERFECT_HASH_PROP_NAME = "useM n mumPerfectHashFunct on";
+    pr vate stat c f nal Str ng SK P_POST NG_L ST_PROP_NAME = "sk pPost ngL sts";
+    pr vate stat c f nal Str ng HAS_OFFENS VE_COUNTERS_PROP_NAME = "hasOffens veCounters";
+    publ c stat c f nal Str ng  S_OPT M ZED_PROP_NAME = " sOpt m zed";
 
-    private final EarlybirdFieldType fieldType;
+    pr vate f nal Earlyb rdF eldType f eldType;
 
-    public FlushHandler(EarlybirdFieldType fieldType) {
+    publ c FlushHandler(Earlyb rdF eldType f eldType) {
       super();
-      this.fieldType = fieldType;
+      t .f eldType = f eldType;
     }
 
-    public FlushHandler(OptimizedMemoryIndex objectToFlush) {
+    publ c FlushHandler(Opt m zed mory ndex objectToFlush) {
       super(objectToFlush);
-      fieldType = objectToFlush.fieldType;
+      f eldType = objectToFlush.f eldType;
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      long startTime = getClock().nowMillis();
-      OptimizedMemoryIndex objectToFlush = getObjectToFlush();
-      boolean useHashFunction = objectToFlush.dictionary instanceof MPHTermDictionary;
-      boolean skipPostingLists = !objectToFlush.hasPostingLists();
+    @Overr de
+    protected vo d doFlush(Flush nfo flush nfo, DataSer al zer out) throws  OExcept on {
+      long startT   = getClock().nowM ll s();
+      Opt m zed mory ndex objectToFlush = getObjectToFlush();
+      boolean useHashFunct on = objectToFlush.d ct onary  nstanceof MPHTermD ct onary;
+      boolean sk pPost ngL sts = !objectToFlush.hasPost ngL sts();
 
-      flushInfo.addIntProperty(NUM_DOCS_PROP_NAME, objectToFlush.numDocs);
-      flushInfo.addIntProperty(SUM_TERM_DOC_FREQ_PROP_NAME, objectToFlush.sumTermDocFreq);
-      flushInfo.addIntProperty(SUM_TOTAL_TERM_FREQ_PROP_NAME, objectToFlush.sumTotalTermFreq);
-      flushInfo.addBooleanProperty(USE_MIN_PERFECT_HASH_PROP_NAME, useHashFunction);
-      flushInfo.addBooleanProperty(SKIP_POSTING_LIST_PROP_NAME, skipPostingLists);
-      flushInfo.addBooleanProperty(HAS_OFFENSIVE_COUNTERS_PROP_NAME,
-          objectToFlush.offensiveCounters != null);
-      flushInfo.addBooleanProperty(IS_OPTIMIZED_PROP_NAME, true);
+      flush nfo.add ntProperty(NUM_DOCS_PROP_NAME, objectToFlush.numDocs);
+      flush nfo.add ntProperty(SUM_TERM_DOC_FREQ_PROP_NAME, objectToFlush.sumTermDocFreq);
+      flush nfo.add ntProperty(SUM_TOTAL_TERM_FREQ_PROP_NAME, objectToFlush.sumTotalTermFreq);
+      flush nfo.addBooleanProperty(USE_M N_PERFECT_HASH_PROP_NAME, useHashFunct on);
+      flush nfo.addBooleanProperty(SK P_POST NG_L ST_PROP_NAME, sk pPost ngL sts);
+      flush nfo.addBooleanProperty(HAS_OFFENS VE_COUNTERS_PROP_NAME,
+          objectToFlush.offens veCounters != null);
+      flush nfo.addBooleanProperty( S_OPT M ZED_PROP_NAME, true);
 
-      if (!skipPostingLists) {
-        out.writePackedInts(objectToFlush.postingListPointers);
-        out.writePackedInts(objectToFlush.numPostings);
+       f (!sk pPost ngL sts) {
+        out.wr ePacked nts(objectToFlush.post ngL stPo nters);
+        out.wr ePacked nts(objectToFlush.numPost ngs);
       }
-      if (objectToFlush.offensiveCounters != null) {
-        out.writePackedInts(objectToFlush.offensiveCounters);
+       f (objectToFlush.offens veCounters != null) {
+        out.wr ePacked nts(objectToFlush.offens veCounters);
       }
 
-      if (!skipPostingLists) {
-        objectToFlush.postingLists.getFlushHandler().flush(
-            flushInfo.newSubProperties("postingLists"), out);
+       f (!sk pPost ngL sts) {
+        objectToFlush.post ngL sts.getFlushHandler().flush(
+            flush nfo.newSubPropert es("post ngL sts"), out);
       }
-      objectToFlush.dictionary.getFlushHandler().flush(flushInfo.newSubProperties("dictionary"),
+      objectToFlush.d ct onary.getFlushHandler().flush(flush nfo.newSubPropert es("d ct onary"),
               out);
-      getFlushTimerStats().timerIncrement(getClock().nowMillis() - startTime);
+      getFlushT  rStats().t  r ncre nt(getClock().nowM ll s() - startT  );
     }
 
-    @Override
-    protected OptimizedMemoryIndex doLoad(
-        FlushInfo flushInfo, DataDeserializer in) throws IOException {
-      long startTime = getClock().nowMillis();
-      boolean useHashFunction = flushInfo.getBooleanProperty(USE_MIN_PERFECT_HASH_PROP_NAME);
-      boolean skipPostingLists = flushInfo.getBooleanProperty(SKIP_POSTING_LIST_PROP_NAME);
+    @Overr de
+    protected Opt m zed mory ndex doLoad(
+        Flush nfo flush nfo, DataDeser al zer  n) throws  OExcept on {
+      long startT   = getClock().nowM ll s();
+      boolean useHashFunct on = flush nfo.getBooleanProperty(USE_M N_PERFECT_HASH_PROP_NAME);
+      boolean sk pPost ngL sts = flush nfo.getBooleanProperty(SK P_POST NG_L ST_PROP_NAME);
 
-      PackedInts.Reader postingListPointers = skipPostingLists ? null : in.readPackedInts();
-      PackedInts.Reader numPostings = skipPostingLists ? null : in.readPackedInts();
-      PackedInts.Reader offensiveCounters =
-              flushInfo.getBooleanProperty(HAS_OFFENSIVE_COUNTERS_PROP_NAME)
-                  ? in.readPackedInts() : null;
+      Packed nts.Reader post ngL stPo nters = sk pPost ngL sts ? null :  n.readPacked nts();
+      Packed nts.Reader numPost ngs = sk pPost ngL sts ? null :  n.readPacked nts();
+      Packed nts.Reader offens veCounters =
+              flush nfo.getBooleanProperty(HAS_OFFENS VE_COUNTERS_PROP_NAME)
+                  ?  n.readPacked nts() : null;
 
-      MultiPostingLists postingLists =  skipPostingLists ? null
-              : (new MultiPostingLists.FlushHandler())
-                      .load(flushInfo.getSubProperties("postingLists"), in);
+      Mult Post ngL sts post ngL sts =  sk pPost ngL sts ? null
+              : (new Mult Post ngL sts.FlushHandler())
+                      .load(flush nfo.getSubPropert es("post ngL sts"),  n);
 
-      TermDictionary dictionary;
-      if (useHashFunction) {
-        dictionary = (new MPHTermDictionary.FlushHandler(TermPointerEncoding.DEFAULT_ENCODING))
-            .load(flushInfo.getSubProperties("dictionary"), in);
+      TermD ct onary d ct onary;
+       f (useHashFunct on) {
+        d ct onary = (new MPHTermD ct onary.FlushHandler(TermPo nterEncod ng.DEFAULT_ENCOD NG))
+            .load(flush nfo.getSubPropert es("d ct onary"),  n);
       } else {
-        dictionary = (new FSTTermDictionary.FlushHandler(TermPointerEncoding.DEFAULT_ENCODING))
-            .load(flushInfo.getSubProperties("dictionary"), in);
+        d ct onary = (new FSTTermD ct onary.FlushHandler(TermPo nterEncod ng.DEFAULT_ENCOD NG))
+            .load(flush nfo.getSubPropert es("d ct onary"),  n);
       }
-      getLoadTimerStats().timerIncrement(getClock().nowMillis() - startTime);
+      getLoadT  rStats().t  r ncre nt(getClock().nowM ll s() - startT  );
 
-      return new OptimizedMemoryIndex(fieldType,
-                                      flushInfo.getIntProperty(NUM_DOCS_PROP_NAME),
-                                      flushInfo.getIntProperty(SUM_TERM_DOC_FREQ_PROP_NAME),
-                                      flushInfo.getIntProperty(SUM_TOTAL_TERM_FREQ_PROP_NAME),
-                                      numPostings,
-                                      postingListPointers,
-                                      offensiveCounters,
-                                      postingLists,
-                                      dictionary);
+      return new Opt m zed mory ndex(f eldType,
+                                      flush nfo.get ntProperty(NUM_DOCS_PROP_NAME),
+                                      flush nfo.get ntProperty(SUM_TERM_DOC_FREQ_PROP_NAME),
+                                      flush nfo.get ntProperty(SUM_TOTAL_TERM_FREQ_PROP_NAME),
+                                      numPost ngs,
+                                      post ngL stPo nters,
+                                      offens veCounters,
+                                      post ngL sts,
+                                      d ct onary);
     }
   }
 }

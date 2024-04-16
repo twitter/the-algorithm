@@ -1,108 +1,108 @@
 #pragma once
-#ifdef __cplusplus
+# fdef __cplusplus
 
-#include <twml/common.h>
-#include <twml/defines.h>
-#include <twml/TensorRecord.h>
+# nclude <twml/common.h>
+# nclude <twml/def nes.h>
+# nclude <twml/TensorRecord.h>
 
-#include <cstdint>
-#include <cmath>
-#include <string>
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
+# nclude <cstd nt>
+# nclude <cmath>
+# nclude <str ng>
+# nclude <unordered_map>
+# nclude <unordered_set>
+# nclude <vector>
 
-namespace twml {
+na space twml {
 
 class DataRecordReader;
 
-class TWMLAPI DataRecord : public TensorRecord {
-public:
-  typedef std::vector<std::pair<std::string, double>> SparseContinuousValueType;
-  typedef std::vector<std::string> SparseBinaryValueType;
-  typedef Set<int64_t> BinaryFeatures;
-  typedef Map<int64_t, double> ContinuousFeatures;
-  typedef Map<int64_t, int64_t> DiscreteFeatures;
-  typedef Map<int64_t, std::string> StringFeatures;
-  typedef Map<int64_t, SparseBinaryValueType> SparseBinaryFeatures;
-  typedef Map<int64_t, SparseContinuousValueType> SparseContinuousFeatures;
-  typedef Map<int64_t, std::vector<uint8_t>> BlobFeatures;
+class TWMLAP  DataRecord : publ c TensorRecord {
+publ c:
+  typedef std::vector<std::pa r<std::str ng, double>> SparseCont nuousValueType;
+  typedef std::vector<std::str ng> SparseB naryValueType;
+  typedef Set< nt64_t> B naryFeatures;
+  typedef Map< nt64_t, double> Cont nuousFeatures;
+  typedef Map< nt64_t,  nt64_t> D screteFeatures;
+  typedef Map< nt64_t, std::str ng> Str ngFeatures;
+  typedef Map< nt64_t, SparseB naryValueType> SparseB naryFeatures;
+  typedef Map< nt64_t, SparseCont nuousValueType> SparseCont nuousFeatures;
+  typedef Map< nt64_t, std::vector<u nt8_t>> BlobFeatures;
 
-private:
-  BinaryFeatures m_binary;
-  ContinuousFeatures m_continuous;
-  DiscreteFeatures m_discrete;
-  StringFeatures m_string;
-  SparseBinaryFeatures m_sparsebinary;
-  SparseContinuousFeatures m_sparsecontinuous;
+pr vate:
+  B naryFeatures m_b nary;
+  Cont nuousFeatures m_cont nuous;
+  D screteFeatures m_d screte;
+  Str ngFeatures m_str ng;
+  SparseB naryFeatures m_sparseb nary;
+  SparseCont nuousFeatures m_sparsecont nuous;
   BlobFeatures m_blob;
 
 
   std::vector<float> m_labels;
-  std::vector<float> m_weights;
+  std::vector<float> m_  ghts;
 
-  void addLabel(int64_t id, double label = 1);
-  void addWeight(int64_t id, double value);
+  vo d addLabel( nt64_t  d, double label = 1);
+  vo d add  ght( nt64_t  d, double value);
 
-public:
+publ c:
   typedef DataRecordReader Reader;
 
-  DataRecord(int num_labels=0, int num_weights=0):
-      m_binary(),
-      m_continuous(),
-      m_discrete(),
-      m_string(),
-      m_sparsebinary(),
-      m_sparsecontinuous(),
+  DataRecord( nt num_labels=0,  nt num_  ghts=0):
+      m_b nary(),
+      m_cont nuous(),
+      m_d screte(),
+      m_str ng(),
+      m_sparseb nary(),
+      m_sparsecont nuous(),
       m_blob(),
       m_labels(num_labels, std::nanf("")),
-      m_weights(num_weights) {
-#ifdef USE_DENSE_HASH
-        m_binary.set_empty_key(0);
-        m_continuous.set_empty_key(0);
-        m_discrete.set_empty_key(0);
-        m_string.set_empty_key(0);
-        m_sparsebinary.set_empty_key(0);
-        m_sparsecontinuous.set_empty_key(0);
-#endif
-        m_binary.max_load_factor(0.5);
-        m_continuous.max_load_factor(0.5);
-        m_discrete.max_load_factor(0.5);
-        m_string.max_load_factor(0.5);
-        m_sparsebinary.max_load_factor(0.5);
-        m_sparsecontinuous.max_load_factor(0.5);
+      m_  ghts(num_  ghts) {
+# fdef USE_DENSE_HASH
+        m_b nary.set_empty_key(0);
+        m_cont nuous.set_empty_key(0);
+        m_d screte.set_empty_key(0);
+        m_str ng.set_empty_key(0);
+        m_sparseb nary.set_empty_key(0);
+        m_sparsecont nuous.set_empty_key(0);
+#end f
+        m_b nary.max_load_factor(0.5);
+        m_cont nuous.max_load_factor(0.5);
+        m_d screte.max_load_factor(0.5);
+        m_str ng.max_load_factor(0.5);
+        m_sparseb nary.max_load_factor(0.5);
+        m_sparsecont nuous.max_load_factor(0.5);
       }
 
-  const BinaryFeatures &getBinary() const { return m_binary; }
-  const ContinuousFeatures &getContinuous() const { return m_continuous; }
-  const DiscreteFeatures &getDiscrete() const { return m_discrete; }
-  const StringFeatures &getString() const { return m_string; }
-  const SparseBinaryFeatures &getSparseBinary() const { return m_sparsebinary; }
-  const SparseContinuousFeatures &getSparseContinuous() const { return m_sparsecontinuous; }
+  const B naryFeatures &getB nary() const { return m_b nary; }
+  const Cont nuousFeatures &getCont nuous() const { return m_cont nuous; }
+  const D screteFeatures &getD screte() const { return m_d screte; }
+  const Str ngFeatures &getStr ng() const { return m_str ng; }
+  const SparseB naryFeatures &getSparseB nary() const { return m_sparseb nary; }
+  const SparseCont nuousFeatures &getSparseCont nuous() const { return m_sparsecont nuous; }
   const BlobFeatures &getBlob() const { return m_blob; }
 
   const std::vector<float> &labels() const { return m_labels; }
-  const std::vector<float> &weights() const { return m_weights; }
+  const std::vector<float> &  ghts() const { return m_  ghts; }
 
-  // used by DataRecordWriter
-  template <typename T>
-  void addContinuous(std::vector<int64_t> feature_ids, std::vector<T> values) {
-    for (size_t i = 0; i < feature_ids.size(); ++i){
-      m_continuous[feature_ids[i]] = values[i];
+  // used by DataRecordWr er
+  template <typena  T>
+  vo d addCont nuous(std::vector< nt64_t> feature_ ds, std::vector<T> values) {
+    for (s ze_t   = 0;   < feature_ ds.s ze(); ++ ){
+      m_cont nuous[feature_ ds[ ]] = values[ ];
     }
   }
 
-  template <typename T>
-  void addContinuous(const int64_t *keys, uint64_t num_keys, T *values) {
-    for (size_t i = 0; i < num_keys; ++i){
-       m_continuous[keys[i]] = values[i];
+  template <typena  T>
+  vo d addCont nuous(const  nt64_t *keys, u nt64_t num_keys, T *values) {
+    for (s ze_t   = 0;   < num_keys; ++ ){
+       m_cont nuous[keys[ ]] = values[ ];
      }
   }
 
-  void decode(DataRecordReader &reader);
-  void clear();
-  friend class DataRecordReader;
+  vo d decode(DataRecordReader &reader);
+  vo d clear();
+  fr end class DataRecordReader;
 };
 
 }
-#endif
+#end f

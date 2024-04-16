@@ -1,49 +1,49 @@
-package com.twitter.product_mixer.core.pipeline.pipeline_failure
+package com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import scala.util.control.NoStackTrace
+ mport com.fasterxml.jackson.datab nd.annotat on.JsonSer al ze
+ mport com.tw ter.product_m xer.core.model.common. dent f er.Component dent f erStack
+ mport scala.ut l.control.NoStackTrace
 
 /**
- * Pipeline Failures represent pipeline requests that were not able to complete.
+ * P pel ne Fa lures represent p pel ne requests that  re not able to complete.
  *
- * A pipeline result will always define either a result or a failure.
+ * A p pel ne result w ll always def ne e  r a result or a fa lure.
  *
- * The reason field should not be displayed to end-users, and is free to change over time.
- * It should always be free of private user data such that we can log it.
+ * T  reason f eld should not be d splayed to end-users, and  s free to change over t  .
+ *   should always be free of pr vate user data such that   can log  .
  *
- * The pipeline can classify it's own failures into categories (timeouts, invalid arguments,
- * rate limited, etc) such that the caller can choose how to handle it.
+ * T  p pel ne can class fy  's own fa lures  nto categor es (t  outs,  nval d argu nts,
+ * rate l m ed, etc) such that t  caller can choose how to handle  .
  *
- * @note [[componentStack]] should only be set by the product mixer framework,
- *       it should **NOT** be set when making a [[PipelineFailure]]
+ * @note [[componentStack]] should only be set by t  product m xer fra work,
+ *         should **NOT** be set w n mak ng a [[P pel neFa lure]]
  */
-@JsonSerialize(using = classOf[PipelineFailureSerializer])
-case class PipelineFailure(
-  category: PipelineFailureCategory,
-  reason: String,
-  underlying: Option[Throwable] = None,
-  componentStack: Option[ComponentIdentifierStack] = None)
-    extends Exception(
-      "PipelineFailure(" +
+@JsonSer al ze(us ng = classOf[P pel neFa lureSer al zer])
+case class P pel neFa lure(
+  category: P pel neFa lureCategory,
+  reason: Str ng,
+  underly ng: Opt on[Throwable] = None,
+  componentStack: Opt on[Component dent f erStack] = None)
+    extends Except on(
+      "P pel neFa lure(" +
         s"category = $category, " +
         s"reason = $reason, " +
-        s"underlying = $underlying, " +
+        s"underly ng = $underly ng, " +
         s"componentStack = $componentStack)",
-      underlying.orNull
+      underly ng.orNull
     ) {
-  override def toString: String = getMessage
+  overr de def toStr ng: Str ng = get ssage
 
-  /** Returns an updated copy of this [[PipelineFailure]] with the same exception stacktrace */
+  /** Returns an updated copy of t  [[P pel neFa lure]] w h t  sa  except on stacktrace */
   def copy(
-    category: PipelineFailureCategory = this.category,
-    reason: String = this.reason,
-    underlying: Option[Throwable] = this.underlying,
-    componentStack: Option[ComponentIdentifierStack] = this.componentStack
-  ): PipelineFailure = {
-    val newPipelineFailure =
-      new PipelineFailure(category, reason, underlying, componentStack) with NoStackTrace
-    newPipelineFailure.setStackTrace(this.getStackTrace)
-    newPipelineFailure
+    category: P pel neFa lureCategory = t .category,
+    reason: Str ng = t .reason,
+    underly ng: Opt on[Throwable] = t .underly ng,
+    componentStack: Opt on[Component dent f erStack] = t .componentStack
+  ): P pel neFa lure = {
+    val newP pel neFa lure =
+      new P pel neFa lure(category, reason, underly ng, componentStack) w h NoStackTrace
+    newP pel neFa lure.setStackTrace(t .getStackTrace)
+    newP pel neFa lure
   }
 }

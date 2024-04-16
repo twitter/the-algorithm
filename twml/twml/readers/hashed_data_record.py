@@ -1,12 +1,12 @@
-# checkstyle: noqa
-# pylint: disable=invalid-name
+# c ckstyle: noqa
+# pyl nt: d sable= nval d-na 
 """
-This module includes facilities for manipulating hashed data records.
+T  module  ncludes fac l  es for man pulat ng has d data records.
 """
 
-from twitter.deepbird.io.legacy.readers.hashed_data_record import (
-  _HASHED_FIELDS,
+from tw ter.deepb rd. o.legacy.readers.has d_data_record  mport (
+  _HASHED_F ELDS,
   _FEATURE_NAMES,
   _FEATURE_TYPES,
-  HashedDataRecord,
+  Has dDataRecord,
 )

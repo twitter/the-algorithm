@@ -1,400 +1,400 @@
-package com.twitter.search.core.earlybird.index.inverted;
+package com.tw ter.search.core.earlyb rd. ndex. nverted;
 
-import java.io.IOException;
+ mport java. o. OExcept on;
 
-import javax.annotation.Nullable;
+ mport javax.annotat on.Nullable;
 
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
+ mport org.apac .lucene. ndex.Post ngsEnum;
+ mport org.apac .lucene.search.Doc dSet erator;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.ut l. o.flushable.DataDeser al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.DataSer al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.common.ut l. o.flushable.Flushable;
 
 /**
- * An optimized posting lists implementation storing doc deltas, doc freqs, and positions as packed
- * ints in a 64 ints slice backed by {@link IntBlockPool}.
+ * An opt m zed post ng l sts  mple ntat on stor ng doc deltas, doc freqs, and pos  ons as packed
+ *  nts  n a 64  nts sl ce backed by {@l nk  ntBlockPool}.
  *
- * There are three inner data structures used to store values used by a posting lists instance:
+ * T re are three  nner data structures used to store values used by a post ng l sts  nstance:
  *
- * - Skip lists, used for fast {@link PostingsEnum#advance(int)}, are stored in {@link #skipLists}
- *   int block pool.
- * - Doc deltas and freqs are stored in {@link #deltaFreqLists} int block pool.
- * - Positions are stored in {@link #positionLists} int block pool.
+ * - Sk p l sts, used for fast {@l nk Post ngsEnum#advance( nt)}, are stored  n {@l nk #sk pL sts}
+ *    nt block pool.
+ * - Doc deltas and freqs are stored  n {@l nk #deltaFreqL sts}  nt block pool.
+ * - Pos  ons are stored  n {@l nk #pos  onL sts}  nt block pool.
  *
- * For detail layout and configuration, please refer to the Javadoc of {@link #skipLists},
- * {@link #deltaFreqLists} and {@link #positionLists}.
+ * For deta l la t and conf gurat on, please refer to t  Javadoc of {@l nk #sk pL sts},
+ * {@l nk #deltaFreqL sts} and {@l nk #pos  onL sts}.
  *
- * <b>This implementation designed for posting lists with a LARGE number of postings.</b>
+ * <b>T   mple ntat on des gned for post ng l sts w h a LARGE number of post ngs.</b>
  *
- * <i>Acknowledgement</i>: the concepts of slice based packed ints encoding/decoding is borrowed
- *                         from {@code HighDFCompressedPostinglists}, which will be deprecated due
- *                         to not supporting positions that are greater than 255.
+ * < >Acknowledge nt</ >: t  concepts of sl ce based packed  nts encod ng/decod ng  s borro d
+ *                         from {@code H ghDFCompressedPost ngl sts}, wh ch w ll be deprecated due
+ *                         to not support ng pos  ons that are greater than 255.
  */
-public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
+publ c class H ghDFPacked ntsPost ngL sts extends Opt m zedPost ngL sts {
   /**
-   * A counter used to track when positions enum is required and a posting lists instance is set
-   * to omit positions.
+   * A counter used to track w n pos  ons enum  s requ red and a post ng l sts  nstance  s set
+   * to om  pos  ons.
    *
-   * @see #postings(int, int, int)
+   * @see #post ngs( nt,  nt,  nt)
    */
-  private static final SearchCounter GETTING_POSITIONS_WITH_OMIT_POSITIONS =
+  pr vate stat c f nal SearchCounter GETT NG_POS T ONS_W TH_OM T_POS T ONS =
       SearchCounter.export(
-          "high_df_packed_ints_posting_list_getting_positions_with_omit_positions");
+          "h gh_df_packed_ nts_post ng_l st_gett ng_pos  ons_w h_om _pos  ons");
 
   /**
-   * Information related to size of a slice.
+   *  nformat on related to s ze of a sl ce.
    */
-  static final int SLICE_SIZE_BIT = 6;
-  static final int SLICE_SIZE = 1 << SLICE_SIZE_BIT;                 //   64 ints per block
-  static final int NUM_BITS_PER_SLICE = SLICE_SIZE * Integer.SIZE;   // 2048 bits per block
+  stat c f nal  nt SL CE_S ZE_B T = 6;
+  stat c f nal  nt SL CE_S ZE = 1 << SL CE_S ZE_B T;                 //   64  nts per block
+  stat c f nal  nt NUM_B TS_PER_SL CE = SL CE_S ZE *  nteger.S ZE;   // 2048 b s per block
 
   /**
-   * A skip list has ONE skip list header that contains 5 ints (4 ints if positions are omitted):
-   * - 1st int: number of skip entries in this skip list.
-   * - 2nd int: largest doc ID in this posting list.
-   * - 3rd int: number of docs in this posting list.
-   * - 4th int: pointer to the start of the delta-freq list of this posting list.
-   * - 5th int: (OPTIONAL) pointer to the start of the position list of this posting list.
+   * A sk p l st has ONE sk p l st  ader that conta ns 5  nts (4  nts  f pos  ons are om ted):
+   * - 1st  nt: number of sk p entr es  n t  sk p l st.
+   * - 2nd  nt: largest doc  D  n t  post ng l st.
+   * - 3rd  nt: number of docs  n t  post ng l st.
+   * - 4th  nt: po nter to t  start of t  delta-freq l st of t  post ng l st.
+   * - 5th  nt: (OPT ONAL) po nter to t  start of t  pos  on l st of t  post ng l st.
    */
-  static final int SKIPLIST_HEADER_SIZE = 5;
-  static final int SKIPLIST_HEADER_SIZE_WITHOUT_POSITIONS = SKIPLIST_HEADER_SIZE - 1;
+  stat c f nal  nt SK PL ST_HEADER_S ZE = 5;
+  stat c f nal  nt SK PL ST_HEADER_S ZE_W THOUT_POS T ONS = SK PL ST_HEADER_S ZE - 1;
 
   /**
-   * A skip list has MANY skip entries. Each skip entry is for one slice in delta-freq list.
-   * There are 3 ints in every skip entry (2 ints if positions are omitted):
-   * - 1st int: last doc ID in previous slice (0 for the first slice), this is mainly used during
-   *            skipping because deltas, not absolute doc IDs, are stored in a slice.
-   * - 2nd int: encoded metadata of the corresponding delta-freq slice. There are 4 piece of
-   *            information from the LOWEST bits to HIGHEST bits of this int:
-   *            11 bits: number of docs (delta-freq pairs) in this slice.
-   *             5 bits: number of bits used to encode each freq.
-   *             5 bits: number of bits used to encode each delta.
-   *            11 bits: POSITION SLICE OFFSET: an index of number of positions; this is where the
-   *                     first position of the first doc (in this delta-freq slice) is in the
-   *                     position slice. The position slice is identified by the 3rd int below.
-   *                     These two piece information uniquely identified the location of the start
-   *                     position of this delta-freq slice. This value is always 0 if position is
-   *                     omitted.
-   * - 3rd int: (OPTIONAL) POSITION SLICE INDEX: an index of of number of slices; this value
-   *            identifies the slice in which the first position of the first doc (in this
-   *            delta-freq slice) exists. The exact location inside the position slice is identified
-   *            by POSITION SLICE OFFSET that is stored in the 2nd int above.
-   *            Notice: this is not the absolute address in the block pool, but instead a relative
-   *            offset (in number of slices) on top of this term's first position slice.
-   *            This value DOES NOT EXIST if position is omitted.
+   * A sk p l st has MANY sk p entr es. Each sk p entry  s for one sl ce  n delta-freq l st.
+   * T re are 3  nts  n every sk p entry (2  nts  f pos  ons are om ted):
+   * - 1st  nt: last doc  D  n prev ous sl ce (0 for t  f rst sl ce), t   s ma nly used dur ng
+   *            sk pp ng because deltas, not absolute doc  Ds, are stored  n a sl ce.
+   * - 2nd  nt: encoded  tadata of t  correspond ng delta-freq sl ce. T re are 4 p ece of
+   *             nformat on from t  LOWEST b s to H GHEST b s of t   nt:
+   *            11 b s: number of docs (delta-freq pa rs)  n t  sl ce.
+   *             5 b s: number of b s used to encode each freq.
+   *             5 b s: number of b s used to encode each delta.
+   *            11 b s: POS T ON SL CE OFFSET: an  ndex of number of pos  ons; t   s w re t 
+   *                     f rst pos  on of t  f rst doc ( n t  delta-freq sl ce)  s  n t 
+   *                     pos  on sl ce. T  pos  on sl ce  s  dent f ed by t  3rd  nt below.
+   *                     T se two p ece  nformat on un quely  dent f ed t  locat on of t  start
+   *                     pos  on of t  delta-freq sl ce. T  value  s always 0  f pos  on  s
+   *                     om ted.
+   * - 3rd  nt: (OPT ONAL) POS T ON SL CE  NDEX: an  ndex of of number of sl ces; t  value
+   *             dent f es t  sl ce  n wh ch t  f rst pos  on of t  f rst doc ( n t 
+   *            delta-freq sl ce) ex sts. T  exact locat on  ns de t  pos  on sl ce  s  dent f ed
+   *            by POS T ON SL CE OFFSET that  s stored  n t  2nd  nt above.
+   *            Not ce: t   s not t  absolute address  n t  block pool, but  nstead a relat ve
+   *            offset ( n number of sl ces) on top of t  term's f rst pos  on sl ce.
+   *            T  value DOES NOT EX ST  f pos  on  s om ted.
    */
-  static final int SKIPLIST_ENTRY_SIZE = 3;
-  static final int SKIPLIST_ENTRY_SIZE_WITHOUT_POSITIONS = SKIPLIST_ENTRY_SIZE - 1;
+  stat c f nal  nt SK PL ST_ENTRY_S ZE = 3;
+  stat c f nal  nt SK PL ST_ENTRY_S ZE_W THOUT_POS T ONS = SK PL ST_ENTRY_S ZE - 1;
 
   /**
-   * Shifts and masks used to encode/decode metadata from the 2nd int of a skip list entry.
-   * @see #SKIPLIST_ENTRY_SIZE
-   * @see #encodeSkipListEntryMetadata(int, int, int, int)
-   * @see #getNumBitsForDelta(int)
-   * @see #getNumBitsForFreq(int)
-   * @see #getNumDocsInSlice(int)
-   * @see #getPositionOffsetInSlice(int)
+   * Sh fts and masks used to encode/decode  tadata from t  2nd  nt of a sk p l st entry.
+   * @see #SK PL ST_ENTRY_S ZE
+   * @see #encodeSk pL stEntry tadata( nt,  nt,  nt,  nt)
+   * @see #getNumB sForDelta( nt)
+   * @see #getNumB sForFreq( nt)
+   * @see #getNumDocs nSl ce( nt)
+   * @see #getPos  onOffset nSl ce( nt)
    */
-  static final int SKIPLIST_ENTRY_POSITION_OFFSET_SHIFT = 21;
-  static final int SKIPLIST_ENTRY_NUM_BITS_DELTA_SHIFT = 16;
-  static final int SKIPLIST_ENTRY_NUM_BITS_FREQ_SHIFT = 11;
-  static final int SKIPLIST_ENTRY_POSITION_OFFSET_MASK = (1 << 11) - 1;
-  static final int SKIPLIST_ENTRY_NUM_BITS_DELTA_MASK = (1 << 5) - 1;
-  static final int SKIPLIST_ENTRY_NUM_BITS_FREQ_MASK = (1 << 5) - 1;
-  static final int SKIPLIST_ENTRY_NUM_DOCS_MASK = (1 << 11) - 1;
+  stat c f nal  nt SK PL ST_ENTRY_POS T ON_OFFSET_SH FT = 21;
+  stat c f nal  nt SK PL ST_ENTRY_NUM_B TS_DELTA_SH FT = 16;
+  stat c f nal  nt SK PL ST_ENTRY_NUM_B TS_FREQ_SH FT = 11;
+  stat c f nal  nt SK PL ST_ENTRY_POS T ON_OFFSET_MASK = (1 << 11) - 1;
+  stat c f nal  nt SK PL ST_ENTRY_NUM_B TS_DELTA_MASK = (1 << 5) - 1;
+  stat c f nal  nt SK PL ST_ENTRY_NUM_B TS_FREQ_MASK = (1 << 5) - 1;
+  stat c f nal  nt SK PL ST_ENTRY_NUM_DOCS_MASK = (1 << 11) - 1;
 
   /**
-   * Each position slice has a header that is the 1st int in this position slice. From LOWEST bits
-   * to HIGHEST bits, there are 2 pieces of information encoded in this single int:
-   * 11 bits: number of positions in this slice.
-   *  5 bits: number of bits used to encode each position.
+   * Each pos  on sl ce has a  ader that  s t  1st  nt  n t  pos  on sl ce. From LOWEST b s
+   * to H GHEST b s, t re are 2 p eces of  nformat on encoded  n t  s ngle  nt:
+   * 11 b s: number of pos  ons  n t  sl ce.
+   *  5 b s: number of b s used to encode each pos  on.
    */
-  static final int POSITION_SLICE_HEADER_SIZE = 1;
+  stat c f nal  nt POS T ON_SL CE_HEADER_S ZE = 1;
 
   /**
-   * Information related to size of a position slice. The actual size is the same as
-   * {@link #SLICE_SIZE}, but there is 1 int used for position slice header.
+   *  nformat on related to s ze of a pos  on sl ce. T  actual s ze  s t  sa  as
+   * {@l nk #SL CE_S ZE}, but t re  s 1  nt used for pos  on sl ce  ader.
    */
-  static final int POSITION_SLICE_SIZE_WITHOUT_HEADER = SLICE_SIZE - POSITION_SLICE_HEADER_SIZE;
-  static final int POSITION_SLICE_NUM_BITS_WITHOUT_HEADER =
-      POSITION_SLICE_SIZE_WITHOUT_HEADER * Integer.SIZE;
+  stat c f nal  nt POS T ON_SL CE_S ZE_W THOUT_HEADER = SL CE_S ZE - POS T ON_SL CE_HEADER_S ZE;
+  stat c f nal  nt POS T ON_SL CE_NUM_B TS_W THOUT_HEADER =
+      POS T ON_SL CE_S ZE_W THOUT_HEADER *  nteger.S ZE;
 
   /**
-   * Shifts and masks used to encode/decode metadata from the position slice header.
-   * @see #POSITION_SLICE_HEADER_SIZE
-   * @see #encodePositionEntryHeader(int, int)
-   * @see #getNumPositionsInSlice(int)
-   * @see #getNumBitsForPosition(int)
+   * Sh fts and masks used to encode/decode  tadata from t  pos  on sl ce  ader.
+   * @see #POS T ON_SL CE_HEADER_S ZE
+   * @see #encodePos  onEntry ader( nt,  nt)
+   * @see #getNumPos  ons nSl ce( nt)
+   * @see #getNumB sForPos  on( nt)
    */
-  static final int POSITION_SLICE_HEADER_BITS_POSITION_SHIFT = 11;
-  static final int POSITION_SLICE_HEADER_BITS_POSITION_MASK = (1 << 5) - 1;
-  static final int POSITION_SLICE_HEADER_NUM_POSITIONS_MASK = (1 << 11) - 1;
+  stat c f nal  nt POS T ON_SL CE_HEADER_B TS_POS T ON_SH FT = 11;
+  stat c f nal  nt POS T ON_SL CE_HEADER_B TS_POS T ON_MASK = (1 << 5) - 1;
+  stat c f nal  nt POS T ON_SL CE_HEADER_NUM_POS T ONS_MASK = (1 << 11) - 1;
 
   /**
-   * Stores skip list for each posting list.
+   * Stores sk p l st for each post ng l st.
    *
-   * A skip list consists of ONE skip list header and MANY skip list entries, and each skip entry
-   * corresponds to one delta-freq slice. Also, unlike {@link #deltaFreqLists} and
-   * {@link #positionLists}, values in skip lists int pool are NOT stored in unit of slices.
+   * A sk p l st cons sts of ONE sk p l st  ader and MANY sk p l st entr es, and each sk p entry
+   * corresponds to one delta-freq sl ce. Also, unl ke {@l nk #deltaFreqL sts} and
+   * {@l nk #pos  onL sts}, values  n sk p l sts  nt pool are NOT stored  n un  of sl ces.
    *
    * Example:
-   * H: skip list header int
-   * E: skip list entry int
-   * ': int boundary
-   * |: header/entry boundary (also a boundary of int)
+   * H: sk p l st  ader  nt
+   * E: sk p l st entry  nt
+   * ':  nt boundary
+   * |:  ader/entry boundary (also a boundary of  nt)
    *
-   *  <----- skip list A -----> <- skip list B ->
+   *  <----- sk p l st A -----> <- sk p l st B ->
    * |H'H'H'H'H|E'E|E'E|E'E|E'E|H'H'H'H'H|E'E|E'E|
    */
-  private final IntBlockPool skipLists;
+  pr vate f nal  ntBlockPool sk pL sts;
 
   /**
-   * Stores delta-freq list for each posting list.
+   * Stores delta-freq l st for each post ng l st.
    *
-   * A delta-freq list consists of MANY 64-int slices, and delta-freq pairs are stored compactly
-   * with a fixed number of bits within a single slice. Each slice has a corresponding skip list
-   * entry in {@link #skipLists} storing metadata about this slice.
+   * A delta-freq l st cons sts of MANY 64- nt sl ces, and delta-freq pa rs are stored compactly
+   * w h a f xed number of b s w h n a s ngle sl ce. Each sl ce has a correspond ng sk p l st
+   * entry  n {@l nk #sk pL sts} stor ng  tadata about t  sl ce.
    *
    * Example:
-   * |: slice boundary
+   * |: sl ce boundary
    *
-   *  <----------------- delta-freq list A -----------------> <--- delta-freq list B --->
-   * |64 ints slice|64 ints slice|64 ints slice|64 ints slice|64 ints slice|64 ints slice|
+   *  <----------------- delta-freq l st A -----------------> <--- delta-freq l st B --->
+   * |64  nts sl ce|64  nts sl ce|64  nts sl ce|64  nts sl ce|64  nts sl ce|64  nts sl ce|
    */
-  private final IntBlockPool deltaFreqLists;
+  pr vate f nal  ntBlockPool deltaFreqL sts;
 
   /**
-   * Stores position list for each posting list.
+   * Stores pos  on l st for each post ng l st.
    *
-   * A position list consists of MANY 64 ints slices, and positions are stored compactly with a
-   * fixed number of bits within a single slice. The first int in each slice is used as a header to
-   * store the metadata about this position slice.
+   * A pos  on l st cons sts of MANY 64  nts sl ces, and pos  ons are stored compactly w h a
+   * f xed number of b s w h n a s ngle sl ce. T  f rst  nt  n each sl ce  s used as a  ader to
+   * store t   tadata about t  pos  on sl ce.
    *
    * Example:
-   * H: position header int
-   * ': int boundary
-   * |: slice boundary
+   * H: pos  on  ader  nt
+   * ':  nt boundary
+   * |: sl ce boundary
    *
-   *  <--------------- position list A ---------------> <---------- position list B ---------->
-   * |H'63 ints|H'63 ints|H'63 ints|H'63 ints|H'63 ints|H'63 ints|H'63 ints|H'63 ints|H'63 ints|
+   *  <--------------- pos  on l st A ---------------> <---------- pos  on l st B ---------->
+   * |H'63  nts|H'63  nts|H'63  nts|H'63  nts|H'63  nts|H'63  nts|H'63  nts|H'63  nts|H'63  nts|
    */
-  private final IntBlockPool positionLists;
+  pr vate f nal  ntBlockPool pos  onL sts;
 
   /**
-   * Whether positions are omitted in this optimized posting lists.
+   * W t r pos  ons are om ted  n t  opt m zed post ng l sts.
    */
-  private final boolean omitPositions;
+  pr vate f nal boolean om Pos  ons;
 
   /**
-   * Skip list header and entry size for this posting lists, could be different depends on whether
-   * position is omitted or not.
+   * Sk p l st  ader and entry s ze for t  post ng l sts, could be d fferent depends on w t r
+   * pos  on  s om ted or not.
    *
-   * @see #SKIPLIST_HEADER_SIZE
-   * @see #SKIPLIST_HEADER_SIZE_WITHOUT_POSITIONS
-   * @see #SKIPLIST_ENTRY_SIZE
-   * @see #SKIPLIST_ENTRY_SIZE_WITHOUT_POSITIONS
+   * @see #SK PL ST_HEADER_S ZE
+   * @see #SK PL ST_HEADER_S ZE_W THOUT_POS T ONS
+   * @see #SK PL ST_ENTRY_S ZE
+   * @see #SK PL ST_ENTRY_S ZE_W THOUT_POS T ONS
    */
-  private final int skipListHeaderSize;
-  private final int skiplistEntrySize;
+  pr vate f nal  nt sk pL st aderS ze;
+  pr vate f nal  nt sk pl stEntryS ze;
 
   /**
-   * Buffer used in {@link #copyPostingList(PostingsEnum, int)}
-   * to queue up values needed for a slice.
-   * Loaded posting lists have them set as null.
+   * Buffer used  n {@l nk #copyPost ngL st(Post ngsEnum,  nt)}
+   * to queue up values needed for a sl ce.
+   * Loaded post ng l sts have t m set as null.
    */
-  private final PostingsBufferQueue docFreqQueue;
-  private final PostingsBufferQueue positionQueue;
+  pr vate f nal Post ngsBufferQueue docFreqQueue;
+  pr vate f nal Post ngsBufferQueue pos  onQueue;
 
   /**
-   * Packed ints writer used to write into delta-freq int pool and position int pool.
-   * Loaded posting lists have them set as null.
+   * Packed  nts wr er used to wr e  nto delta-freq  nt pool and pos  on  nt pool.
+   * Loaded post ng l sts have t m set as null.
    */
-  private final IntBlockPoolPackedLongsWriter deltaFreqListsWriter;
-  private final IntBlockPoolPackedLongsWriter positionListsWriter;
+  pr vate f nal  ntBlockPoolPackedLongsWr er deltaFreqL stsWr er;
+  pr vate f nal  ntBlockPoolPackedLongsWr er pos  onL stsWr er;
 
   /**
    * Default constructor.
    *
-   * @param omitPositions whether positions will be omitted in these posting lists.
+   * @param om Pos  ons w t r pos  ons w ll be om ted  n t se post ng l sts.
    */
-  public HighDFPackedIntsPostingLists(boolean omitPositions) {
-    this(
-        new IntBlockPool("high_df_packed_ints_skip_lists"),
-        new IntBlockPool("high_df_packed_ints_delta_freq_lists"),
-        new IntBlockPool("high_df_packed_ints_position_lists"),
-        omitPositions,
-        new PostingsBufferQueue(NUM_BITS_PER_SLICE),
-        new PostingsBufferQueue(POSITION_SLICE_NUM_BITS_WITHOUT_HEADER));
+  publ c H ghDFPacked ntsPost ngL sts(boolean om Pos  ons) {
+    t (
+        new  ntBlockPool("h gh_df_packed_ nts_sk p_l sts"),
+        new  ntBlockPool("h gh_df_packed_ nts_delta_freq_l sts"),
+        new  ntBlockPool("h gh_df_packed_ nts_pos  on_l sts"),
+        om Pos  ons,
+        new Post ngsBufferQueue(NUM_B TS_PER_SL CE),
+        new Post ngsBufferQueue(POS T ON_SL CE_NUM_B TS_W THOUT_HEADER));
   }
 
   /**
    * Constructors used by loader.
    *
-   * @param skipLists loaded int block pool represents skip lists
-   * @param deltaFreqLists loaded int block pool represents delta-freq lists
-   * @param positionLists loaded int block pool represents position lists
-   * @param omitPositions whether positions will be omitted in these posting lists
-   * @param docFreqQueue buffer used to queue up values used for a doc freq slice, null if loaded
-   * @param positionQueue buffer used to queue up values used for a position slice, null if loaded
-   * @see FlushHandler#doLoad(FlushInfo, DataDeserializer)
+   * @param sk pL sts loaded  nt block pool represents sk p l sts
+   * @param deltaFreqL sts loaded  nt block pool represents delta-freq l sts
+   * @param pos  onL sts loaded  nt block pool represents pos  on l sts
+   * @param om Pos  ons w t r pos  ons w ll be om ted  n t se post ng l sts
+   * @param docFreqQueue buffer used to queue up values used for a doc freq sl ce, null  f loaded
+   * @param pos  onQueue buffer used to queue up values used for a pos  on sl ce, null  f loaded
+   * @see FlushHandler#doLoad(Flush nfo, DataDeser al zer)
    */
-  private HighDFPackedIntsPostingLists(
-      IntBlockPool skipLists,
-      IntBlockPool deltaFreqLists,
-      IntBlockPool positionLists,
-      boolean omitPositions,
-      @Nullable PostingsBufferQueue docFreqQueue,
-      @Nullable PostingsBufferQueue positionQueue) {
-    this.skipLists = skipLists;
-    this.deltaFreqLists = deltaFreqLists;
-    this.positionLists = positionLists;
-    this.omitPositions = omitPositions;
+  pr vate H ghDFPacked ntsPost ngL sts(
+       ntBlockPool sk pL sts,
+       ntBlockPool deltaFreqL sts,
+       ntBlockPool pos  onL sts,
+      boolean om Pos  ons,
+      @Nullable Post ngsBufferQueue docFreqQueue,
+      @Nullable Post ngsBufferQueue pos  onQueue) {
+    t .sk pL sts = sk pL sts;
+    t .deltaFreqL sts = deltaFreqL sts;
+    t .pos  onL sts = pos  onL sts;
+    t .om Pos  ons = om Pos  ons;
 
-    this.docFreqQueue = docFreqQueue;
-    this.positionQueue = positionQueue;
+    t .docFreqQueue = docFreqQueue;
+    t .pos  onQueue = pos  onQueue;
 
-    // docFreqQueue is null if this postingLists is loaded,
-    // we don't need to create writer at that case.
-    if (docFreqQueue == null) {
-      assert positionQueue == null;
-      this.deltaFreqListsWriter = null;
-      this.positionListsWriter = null;
+    // docFreqQueue  s null  f t  post ngL sts  s loaded,
+    //   don't need to create wr er at that case.
+     f (docFreqQueue == null) {
+      assert pos  onQueue == null;
+      t .deltaFreqL stsWr er = null;
+      t .pos  onL stsWr er = null;
     } else {
-      this.deltaFreqListsWriter = new IntBlockPoolPackedLongsWriter(deltaFreqLists);
-      this.positionListsWriter = new IntBlockPoolPackedLongsWriter(positionLists);
+      t .deltaFreqL stsWr er = new  ntBlockPoolPackedLongsWr er(deltaFreqL sts);
+      t .pos  onL stsWr er = new  ntBlockPoolPackedLongsWr er(pos  onL sts);
     }
 
-    if (omitPositions) {
-      skipListHeaderSize = SKIPLIST_HEADER_SIZE_WITHOUT_POSITIONS;
-      skiplistEntrySize = SKIPLIST_ENTRY_SIZE_WITHOUT_POSITIONS;
+     f (om Pos  ons) {
+      sk pL st aderS ze = SK PL ST_HEADER_S ZE_W THOUT_POS T ONS;
+      sk pl stEntryS ze = SK PL ST_ENTRY_S ZE_W THOUT_POS T ONS;
     } else {
-      skipListHeaderSize = SKIPLIST_HEADER_SIZE;
-      skiplistEntrySize = SKIPLIST_ENTRY_SIZE;
+      sk pL st aderS ze = SK PL ST_HEADER_S ZE;
+      sk pl stEntryS ze = SK PL ST_ENTRY_S ZE;
     }
   }
 
   /**
-   * A simple wrapper around assorted states used when coping positions in a posting enum.
-   * @see #copyPostingList(PostingsEnum, int)
+   * A s mple wrapper around assorted states used w n cop ng pos  ons  n a post ng enum.
+   * @see #copyPost ngL st(Post ngsEnum,  nt)
    */
-  private static class PositionsState {
-    /** Max position has been seen for the current position slice. */
-    private int maxPosition = 0;
+  pr vate stat c class Pos  onsState {
+    /** Max pos  on has been seen for t  current pos  on sl ce. */
+    pr vate  nt maxPos  on = 0;
 
-    /** Bits needed to encode/decode positions in the current position slice. */
-    private int bitsNeededForPosition = 0;
+    /** B s needed to encode/decode pos  ons  n t  current pos  on sl ce. */
+    pr vate  nt b sNeededForPos  on = 0;
 
-    /** Total number of position slices created for current posting list. */
-    private int numPositionsSlices = 0;
-
-    /**
-     * Whenever a slice of doc/freq pairs is written, this will point to the first position
-     * associated with the first doc in the doc/freq slice.
-     */
-    private int currentPositionsSliceIndex = 0;
-    private int currentPositionsSliceOffset = 0;
+    /** Total number of pos  on sl ces created for current post ng l st. */
+    pr vate  nt numPos  onsSl ces = 0;
 
     /**
-     * Whenever a new document is processed, this points to the first position for this doc.
-     * This is used if this doc ends up being chosen as the first doc in a doc/freq slice.
+     * W never a sl ce of doc/freq pa rs  s wr ten, t  w ll po nt to t  f rst pos  on
+     * assoc ated w h t  f rst doc  n t  doc/freq sl ce.
      */
-    private int nextPositionsSliceIndex = 0;
-    private int nextPositionsSliceOffset = 0;
+    pr vate  nt currentPos  onsSl ce ndex = 0;
+    pr vate  nt currentPos  onsSl ceOffset = 0;
+
+    /**
+     * W never a new docu nt  s processed, t  po nts to t  f rst pos  on for t  doc.
+     * T   s used  f t  doc ends up be ng chosen as t  f rst doc  n a doc/freq sl ce.
+     */
+    pr vate  nt nextPos  onsSl ce ndex = 0;
+    pr vate  nt nextPos  onsSl ceOffset = 0;
   }
 
   /**
-   * Copies postings in the given postings enum into this posting lists instance.
+   * Cop es post ngs  n t  g ven post ngs enum  nto t  post ng l sts  nstance.
    *
-   * @param postingsEnum enumerator of the posting list that needs to be copied
-   * @param numPostings number of postings in the posting list that needs to be copied
-   * @return pointer to the copied posting list in this posting lists instance
+   * @param post ngsEnum enu rator of t  post ng l st that needs to be cop ed
+   * @param numPost ngs number of post ngs  n t  post ng l st that needs to be cop ed
+   * @return po nter to t  cop ed post ng l st  n t  post ng l sts  nstance
    */
-  @Override
-  public int copyPostingList(PostingsEnum postingsEnum, int numPostings) throws IOException {
-    assert docFreqQueue.isEmpty() : "each new posting list should start with an empty queue";
-    assert positionQueue.isEmpty() : "each new posting list should start with an empty queue";
+  @Overr de
+  publ c  nt copyPost ngL st(Post ngsEnum post ngsEnum,  nt numPost ngs) throws  OExcept on {
+    assert docFreqQueue. sEmpty() : "each new post ng l st should start w h an empty queue";
+    assert pos  onQueue. sEmpty() : "each new post ng l st should start w h an empty queue";
 
-    final int skipListPointer = skipLists.length();
-    final int deltaFreqListPointer = deltaFreqLists.length();
-    final int positionListPointer = positionLists.length();
-    assert isSliceStart(deltaFreqListPointer) : "each new posting list should start at a new slice";
-    assert isSliceStart(positionListPointer) : "each new posting list should start at a new slice";
+    f nal  nt sk pL stPo nter = sk pL sts.length();
+    f nal  nt deltaFreqL stPo nter = deltaFreqL sts.length();
+    f nal  nt pos  onL stPo nter = pos  onL sts.length();
+    assert  sSl ceStart(deltaFreqL stPo nter) : "each new post ng l st should start at a new sl ce";
+    assert  sSl ceStart(pos  onL stPo nter) : "each new post ng l st should start at a new sl ce";
 
-    // Make room for skip list HEADER.
-    for (int i = 0; i < skipListHeaderSize; i++) {
-      skipLists.add(-1);
+    // Make room for sk p l st HEADER.
+    for ( nt   = 0;   < sk pL st aderS ze;  ++) {
+      sk pL sts.add(-1);
     }
 
-    int doc;
-    int prevDoc = 0;
-    int prevWrittenDoc = 0;
+     nt doc;
+     nt prevDoc = 0;
+     nt prevWr tenDoc = 0;
 
-    int maxDelta = 0;
-    int maxFreq = 0;
+     nt maxDelta = 0;
+     nt maxFreq = 0;
 
-    int bitsNeededForDelta = 0;
-    int bitsNeededForFreq = 0;
+     nt b sNeededForDelta = 0;
+     nt b sNeededForFreq = 0;
 
-    // Keep tracking positions related info for this posting list.
-    PositionsState positionsState = new PositionsState();
+    // Keep track ng pos  ons related  nfo for t  post ng l st.
+    Pos  onsState pos  onsState = new Pos  onsState();
 
-    int numDocs = 0;
-    int numDeltaFreqSlices = 0;
-    while ((doc = postingsEnum.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS) {
+     nt numDocs = 0;
+     nt numDeltaFreqSl ces = 0;
+    wh le ((doc = post ngsEnum.nextDoc()) != Doc dSet erator.NO_MORE_DOCS) {
       numDocs++;
 
-      int delta = doc - prevDoc;
-      assert delta <= MAX_DOC_ID;
+       nt delta = doc - prevDoc;
+      assert delta <= MAX_DOC_ D;
 
-      int newBitsForDelta = bitsNeededForDelta;
-      if (delta > maxDelta) {
+       nt newB sForDelta = b sNeededForDelta;
+       f (delta > maxDelta) {
         maxDelta = delta;
-        newBitsForDelta = log(maxDelta, 2);
-        assert newBitsForDelta <= MAX_DOC_ID_BIT;
+        newB sForDelta = log(maxDelta, 2);
+        assert newB sForDelta <= MAX_DOC_ D_B T;
       }
 
       /**
-       * Optimization: store freq - 1 since a freq must be positive. Save bits and improve decoding
-       * speed. At read side, the read frequency will plus 1.
-       * @see HighDFPackedIntsDocsEnum#loadNextPosting()
+       * Opt m zat on: store freq - 1 s nce a freq must be pos  ve. Save b s and  mprove decod ng
+       * speed. At read s de, t  read frequency w ll plus 1.
+       * @see H ghDFPacked ntsDocsEnum#loadNextPost ng()
        */
-      int freq = postingsEnum.freq() - 1;
+       nt freq = post ngsEnum.freq() - 1;
       assert freq >= 0;
 
-      int newBitsForFreq = bitsNeededForFreq;
-      if (freq > maxFreq) {
+       nt newB sForFreq = b sNeededForFreq;
+       f (freq > maxFreq) {
         maxFreq = freq;
-        newBitsForFreq = log(maxFreq, 2);
-        assert newBitsForFreq <= MAX_FREQ_BIT;
+        newB sForFreq = log(maxFreq, 2);
+        assert newB sForFreq <= MAX_FREQ_B T;
       }
 
-      // Write positions for this doc if not omit positions.
-      if (!omitPositions) {
-        writePositionsForDoc(postingsEnum, positionsState);
+      // Wr e pos  ons for t  doc  f not om  pos  ons.
+       f (!om Pos  ons) {
+        wr ePos  onsForDoc(post ngsEnum, pos  onsState);
       }
 
-      if ((newBitsForDelta + newBitsForFreq) * (docFreqQueue.size() + 1) > NUM_BITS_PER_SLICE) {
-        //The latest doc does not fit into this slice.
-        assert (bitsNeededForDelta + bitsNeededForFreq) * docFreqQueue.size()
-            <= NUM_BITS_PER_SLICE;
+       f ((newB sForDelta + newB sForFreq) * (docFreqQueue.s ze() + 1) > NUM_B TS_PER_SL CE) {
+        //T  latest doc does not f   nto t  sl ce.
+        assert (b sNeededForDelta + b sNeededForFreq) * docFreqQueue.s ze()
+            <= NUM_B TS_PER_SL CE;
 
-        prevWrittenDoc = writeDeltaFreqSlice(
-            bitsNeededForDelta,
-            bitsNeededForFreq,
-            positionsState,
-            prevWrittenDoc);
-        numDeltaFreqSlices++;
+        prevWr tenDoc = wr eDeltaFreqSl ce(
+            b sNeededForDelta,
+            b sNeededForFreq,
+            pos  onsState,
+            prevWr tenDoc);
+        numDeltaFreqSl ces++;
 
         maxDelta = delta;
         maxFreq = freq;
-        bitsNeededForDelta = log(maxDelta, 2);
-        bitsNeededForFreq = log(maxFreq, 2);
+        b sNeededForDelta = log(maxDelta, 2);
+        b sNeededForFreq = log(maxFreq, 2);
       } else {
-        bitsNeededForDelta = newBitsForDelta;
-        bitsNeededForFreq = newBitsForFreq;
+        b sNeededForDelta = newB sForDelta;
+        b sNeededForFreq = newB sForFreq;
       }
 
       docFreqQueue.offer(doc, freq);
@@ -402,369 +402,369 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
       prevDoc = doc;
     }
 
-    // Some positions may be left in the buffer queue.
-    if (!positionQueue.isEmpty()) {
-      writePositionSlice(positionsState.bitsNeededForPosition);
+    // So  pos  ons may be left  n t  buffer queue.
+     f (!pos  onQueue. sEmpty()) {
+      wr ePos  onSl ce(pos  onsState.b sNeededForPos  on);
     }
 
-    // Some docs may be left in the buffer queue.
-    if (!docFreqQueue.isEmpty()) {
-      writeDeltaFreqSlice(
-          bitsNeededForDelta,
-          bitsNeededForFreq,
-          positionsState,
-          prevWrittenDoc);
-      numDeltaFreqSlices++;
+    // So  docs may be left  n t  buffer queue.
+     f (!docFreqQueue. sEmpty()) {
+      wr eDeltaFreqSl ce(
+          b sNeededForDelta,
+          b sNeededForFreq,
+          pos  onsState,
+          prevWr tenDoc);
+      numDeltaFreqSl ces++;
     }
 
-    // Write skip list header.
-    int skipListHeaderPointer = skipListPointer;
-    final int numSkipListEntries =
-        (skipLists.length() - (skipListPointer + skipListHeaderSize)) / skiplistEntrySize;
-    assert numSkipListEntries == numDeltaFreqSlices
-        : "number of delta freq slices should be the same as number of skip list entries";
-    skipLists.set(skipListHeaderPointer++, numSkipListEntries);
-    skipLists.set(skipListHeaderPointer++, prevDoc);
-    skipLists.set(skipListHeaderPointer++, numDocs);
-    skipLists.set(skipListHeaderPointer++, deltaFreqListPointer);
-    if (!omitPositions) {
-      skipLists.set(skipListHeaderPointer, positionListPointer);
+    // Wr e sk p l st  ader.
+     nt sk pL st aderPo nter = sk pL stPo nter;
+    f nal  nt numSk pL stEntr es =
+        (sk pL sts.length() - (sk pL stPo nter + sk pL st aderS ze)) / sk pl stEntryS ze;
+    assert numSk pL stEntr es == numDeltaFreqSl ces
+        : "number of delta freq sl ces should be t  sa  as number of sk p l st entr es";
+    sk pL sts.set(sk pL st aderPo nter++, numSk pL stEntr es);
+    sk pL sts.set(sk pL st aderPo nter++, prevDoc);
+    sk pL sts.set(sk pL st aderPo nter++, numDocs);
+    sk pL sts.set(sk pL st aderPo nter++, deltaFreqL stPo nter);
+     f (!om Pos  ons) {
+      sk pL sts.set(sk pL st aderPo nter, pos  onL stPo nter);
     }
 
-    return skipListPointer;
+    return sk pL stPo nter;
   }
 
   /**
-   * Write positions for current doc into {@link #positionLists}.
+   * Wr e pos  ons for current doc  nto {@l nk #pos  onL sts}.
    *
-   * @param postingsEnum postings enumerator containing the positions need to be written
-   * @param positionsState some states about {@link #positionLists} and {@link #positionQueue}
-   * @see #copyPostingList(PostingsEnum, int)
+   * @param post ngsEnum post ngs enu rator conta n ng t  pos  ons need to be wr ten
+   * @param pos  onsState so  states about {@l nk #pos  onL sts} and {@l nk #pos  onQueue}
+   * @see #copyPost ngL st(Post ngsEnum,  nt)
    */
-  private void writePositionsForDoc(
-      PostingsEnum postingsEnum,
-      PositionsState positionsState) throws IOException {
-    assert !omitPositions : "this method should not be called if positions are omitted";
+  pr vate vo d wr ePos  onsForDoc(
+      Post ngsEnum post ngsEnum,
+      Pos  onsState pos  onsState) throws  OExcept on {
+    assert !om Pos  ons : "t   thod should not be called  f pos  ons are om ted";
 
-    for (int i = 0; i < postingsEnum.freq(); i++) {
-      int pos = postingsEnum.nextPosition();
+    for ( nt   = 0;   < post ngsEnum.freq();  ++) {
+       nt pos = post ngsEnum.nextPos  on();
 
-      int newBitsForPosition = positionsState.bitsNeededForPosition;
-      if (pos > positionsState.maxPosition) {
-        positionsState.maxPosition = pos;
-        newBitsForPosition = log(positionsState.maxPosition, 2);
-        assert newBitsForPosition <= MAX_POSITION_BIT;
+       nt newB sForPos  on = pos  onsState.b sNeededForPos  on;
+       f (pos > pos  onsState.maxPos  on) {
+        pos  onsState.maxPos  on = pos;
+        newB sForPos  on = log(pos  onsState.maxPos  on, 2);
+        assert newB sForPos  on <= MAX_POS T ON_B T;
       }
 
-      if (newBitsForPosition * (positionQueue.size() + 1)
-          > POSITION_SLICE_NUM_BITS_WITHOUT_HEADER
-          || positionQueue.isFull()) {
-        assert positionsState.bitsNeededForPosition * positionQueue.size()
-            <= POSITION_SLICE_NUM_BITS_WITHOUT_HEADER;
+       f (newB sForPos  on * (pos  onQueue.s ze() + 1)
+          > POS T ON_SL CE_NUM_B TS_W THOUT_HEADER
+          || pos  onQueue. sFull()) {
+        assert pos  onsState.b sNeededForPos  on * pos  onQueue.s ze()
+            <= POS T ON_SL CE_NUM_B TS_W THOUT_HEADER;
 
-        writePositionSlice(positionsState.bitsNeededForPosition);
-        positionsState.numPositionsSlices++;
+        wr ePos  onSl ce(pos  onsState.b sNeededForPos  on);
+        pos  onsState.numPos  onsSl ces++;
 
-        positionsState.maxPosition = pos;
-        positionsState.bitsNeededForPosition = log(positionsState.maxPosition, 2);
+        pos  onsState.maxPos  on = pos;
+        pos  onsState.b sNeededForPos  on = log(pos  onsState.maxPos  on, 2);
       } else {
-        positionsState.bitsNeededForPosition = newBitsForPosition;
+        pos  onsState.b sNeededForPos  on = newB sForPos  on;
       }
 
-      // Update first position pointer if this position is the first position of a doc
-      if (i == 0) {
-        positionsState.nextPositionsSliceIndex = positionsState.numPositionsSlices;
-        positionsState.nextPositionsSliceOffset = positionQueue.size();
+      // Update f rst pos  on po nter  f t  pos  on  s t  f rst pos  on of a doc
+       f (  == 0) {
+        pos  onsState.nextPos  onsSl ce ndex = pos  onsState.numPos  onsSl ces;
+        pos  onsState.nextPos  onsSl ceOffset = pos  onQueue.s ze();
       }
 
-      // Stores a dummy doc -1 since doc is unused in position list.
-      positionQueue.offer(-1, pos);
+      // Stores a dum  doc -1 s nce doc  s unused  n pos  on l st.
+      pos  onQueue.offer(-1, pos);
     }
   }
 
   /**
-   * Write out all the buffered positions in {@link #positionQueue} into a position slice.
+   * Wr e out all t  buffered pos  ons  n {@l nk #pos  onQueue}  nto a pos  on sl ce.
    *
-   * @param bitsNeededForPosition number of bits used for each position in this position slice
+   * @param b sNeededForPos  on number of b s used for each pos  on  n t  pos  on sl ce
    */
-  private void writePositionSlice(final int bitsNeededForPosition) {
-    assert !omitPositions;
-    assert 0 <= bitsNeededForPosition && bitsNeededForPosition <= MAX_POSITION_BIT;
+  pr vate vo d wr ePos  onSl ce(f nal  nt b sNeededForPos  on) {
+    assert !om Pos  ons;
+    assert 0 <= b sNeededForPos  on && b sNeededForPos  on <= MAX_POS T ON_B T;
 
-    final int lengthBefore = positionLists.length();
-    assert isSliceStart(lengthBefore);
+    f nal  nt lengthBefore = pos  onL sts.length();
+    assert  sSl ceStart(lengthBefore);
 
-    // First int in this slice stores number of bits needed for position
-    // and number of positions in this slice..
-    positionLists.add(encodePositionEntryHeader(bitsNeededForPosition, positionQueue.size()));
+    // F rst  nt  n t  sl ce stores number of b s needed for pos  on
+    // and number of pos  ons  n t  sl ce..
+    pos  onL sts.add(encodePos  onEntry ader(b sNeededForPos  on, pos  onQueue.s ze()));
 
-    positionListsWriter.jumpToInt(positionLists.length(), bitsNeededForPosition);
-    while (!positionQueue.isEmpty()) {
-      int pos = PostingsBufferQueue.getSecondValue(positionQueue.poll());
-      assert log(pos, 2) <= bitsNeededForPosition;
+    pos  onL stsWr er.jumpTo nt(pos  onL sts.length(), b sNeededForPos  on);
+    wh le (!pos  onQueue. sEmpty()) {
+       nt pos = Post ngsBufferQueue.getSecondValue(pos  onQueue.poll());
+      assert log(pos, 2) <= b sNeededForPos  on;
 
-      positionListsWriter.writePackedInt(pos);
+      pos  onL stsWr er.wr ePacked nt(pos);
     }
 
-    // Fill up this slice in case it is only partially filled.
-    while (positionLists.length() < lengthBefore + SLICE_SIZE) {
-      positionLists.add(0);
+    // F ll up t  sl ce  n case    s only part ally f lled.
+    wh le (pos  onL sts.length() < lengthBefore + SL CE_S ZE) {
+      pos  onL sts.add(0);
     }
 
-    assert positionLists.length() - lengthBefore == SLICE_SIZE;
+    assert pos  onL sts.length() - lengthBefore == SL CE_S ZE;
   }
 
   /**
-   * Write out all the buffered docs and frequencies in {@link #docFreqQueue} into a delta-freq
-   * slice and update the skip list entry of this slice.
+   * Wr e out all t  buffered docs and frequenc es  n {@l nk #docFreqQueue}  nto a delta-freq
+   * sl ce and update t  sk p l st entry of t  sl ce.
    *
-   * @param bitsNeededForDelta number of bits used for each delta in this delta-freq slice
-   * @param bitsNeededForFreq number of bits used for each freq in this delta-freq slice
-   * @param positionsState some states about {@link #positionLists} and {@link #positionQueue}
-   * @param prevWrittenDoc last doc written in previous slice
-   * @return last doc written in this slice
+   * @param b sNeededForDelta number of b s used for each delta  n t  delta-freq sl ce
+   * @param b sNeededForFreq number of b s used for each freq  n t  delta-freq sl ce
+   * @param pos  onsState so  states about {@l nk #pos  onL sts} and {@l nk #pos  onQueue}
+   * @param prevWr tenDoc last doc wr ten  n prev ous sl ce
+   * @return last doc wr ten  n t  sl ce
    */
-  private int writeDeltaFreqSlice(
-      final int bitsNeededForDelta,
-      final int bitsNeededForFreq,
-      final PositionsState positionsState,
-      final int prevWrittenDoc) {
-    assert 0 <= bitsNeededForDelta && bitsNeededForDelta <= MAX_DOC_ID_BIT;
-    assert 0 <= bitsNeededForFreq && bitsNeededForFreq <= MAX_FREQ_BIT;
+  pr vate  nt wr eDeltaFreqSl ce(
+      f nal  nt b sNeededForDelta,
+      f nal  nt b sNeededForFreq,
+      f nal Pos  onsState pos  onsState,
+      f nal  nt prevWr tenDoc) {
+    assert 0 <= b sNeededForDelta && b sNeededForDelta <= MAX_DOC_ D_B T;
+    assert 0 <= b sNeededForFreq && b sNeededForFreq <= MAX_FREQ_B T;
 
-    final int lengthBefore = deltaFreqLists.length();
-    assert isSliceStart(lengthBefore);
+    f nal  nt lengthBefore = deltaFreqL sts.length();
+    assert  sSl ceStart(lengthBefore);
 
-    writeSkipListEntry(prevWrittenDoc, bitsNeededForDelta, bitsNeededForFreq, positionsState);
+    wr eSk pL stEntry(prevWr tenDoc, b sNeededForDelta, b sNeededForFreq, pos  onsState);
 
-    // Keep track of previous docID so that we compute the docID deltas.
-    int prevDoc = prevWrittenDoc;
+    // Keep track of prev ous doc D so that   compute t  doc D deltas.
+     nt prevDoc = prevWr tenDoc;
 
-    // A <delta|freq> pair is stored as a packed value.
-    final int bitsPerPackedValue = bitsNeededForDelta + bitsNeededForFreq;
-    deltaFreqListsWriter.jumpToInt(deltaFreqLists.length(), bitsPerPackedValue);
-    while (!docFreqQueue.isEmpty()) {
+    // A <delta|freq> pa r  s stored as a packed value.
+    f nal  nt b sPerPackedValue = b sNeededForDelta + b sNeededForFreq;
+    deltaFreqL stsWr er.jumpTo nt(deltaFreqL sts.length(), b sPerPackedValue);
+    wh le (!docFreqQueue. sEmpty()) {
       long value = docFreqQueue.poll();
-      int doc = PostingsBufferQueue.getDocID(value);
-      int delta = doc - prevDoc;
-      assert log(delta, 2) <= bitsNeededForDelta;
+       nt doc = Post ngsBufferQueue.getDoc D(value);
+       nt delta = doc - prevDoc;
+      assert log(delta, 2) <= b sNeededForDelta;
 
-      int freq = PostingsBufferQueue.getSecondValue(value);
-      assert log(freq, 2) <= bitsNeededForFreq;
+       nt freq = Post ngsBufferQueue.getSecondValue(value);
+      assert log(freq, 2) <= b sNeededForFreq;
 
-      // Cast the delta to long before left shift to avoid overflow.
-      final long deltaFreqPair = (((long) delta) << bitsNeededForFreq) + freq;
-      deltaFreqListsWriter.writePackedLong(deltaFreqPair);
+      // Cast t  delta to long before left sh ft to avo d overflow.
+      f nal long deltaFreqPa r = (((long) delta) << b sNeededForFreq) + freq;
+      deltaFreqL stsWr er.wr ePackedLong(deltaFreqPa r);
       prevDoc = doc;
     }
 
-    // Fill up this slice in case it is only partially filled.
-    while (deltaFreqLists.length() <  lengthBefore + SLICE_SIZE) {
-      deltaFreqLists.add(0);
+    // F ll up t  sl ce  n case    s only part ally f lled.
+    wh le (deltaFreqL sts.length() <  lengthBefore + SL CE_S ZE) {
+      deltaFreqL sts.add(0);
     }
 
-    positionsState.currentPositionsSliceIndex = positionsState.nextPositionsSliceIndex;
-    positionsState.currentPositionsSliceOffset = positionsState.nextPositionsSliceOffset;
+    pos  onsState.currentPos  onsSl ce ndex = pos  onsState.nextPos  onsSl ce ndex;
+    pos  onsState.currentPos  onsSl ceOffset = pos  onsState.nextPos  onsSl ceOffset;
 
-    assert deltaFreqLists.length() - lengthBefore == SLICE_SIZE;
+    assert deltaFreqL sts.length() - lengthBefore == SL CE_S ZE;
     return prevDoc;
   }
 
   /**
-   * Write the skip list entry for a delta-freq slice.
+   * Wr e t  sk p l st entry for a delta-freq sl ce.
    *
-   * @param prevWrittenDoc last doc written in previous slice
-   * @param bitsNeededForDelta number of bits used for each delta in this delta-freq slice
-   * @param bitsNeededForFreq number of bits used for each freq in this delta-freq slice
-   * @param positionsState some states about {@link #positionLists} and {@link #positionQueue}
-   * @see #writeDeltaFreqSlice(int, int, PositionsState, int)
-   * @see #SKIPLIST_ENTRY_SIZE
+   * @param prevWr tenDoc last doc wr ten  n prev ous sl ce
+   * @param b sNeededForDelta number of b s used for each delta  n t  delta-freq sl ce
+   * @param b sNeededForFreq number of b s used for each freq  n t  delta-freq sl ce
+   * @param pos  onsState so  states about {@l nk #pos  onL sts} and {@l nk #pos  onQueue}
+   * @see #wr eDeltaFreqSl ce( nt,  nt, Pos  onsState,  nt)
+   * @see #SK PL ST_ENTRY_S ZE
    */
-  private void writeSkipListEntry(
-      int prevWrittenDoc,
-      int bitsNeededForDelta,
-      int bitsNeededForFreq,
-      PositionsState positionsState) {
-    // 1st int: last written doc ID in previous slice
-    skipLists.add(prevWrittenDoc);
+  pr vate vo d wr eSk pL stEntry(
+       nt prevWr tenDoc,
+       nt b sNeededForDelta,
+       nt b sNeededForFreq,
+      Pos  onsState pos  onsState) {
+    // 1st  nt: last wr ten doc  D  n prev ous sl ce
+    sk pL sts.add(prevWr tenDoc);
 
-    // 2nd int: encoded metadata
-    skipLists.add(
-        encodeSkipListEntryMetadata(
-            positionsState.currentPositionsSliceOffset,
-            bitsNeededForDelta,
-            bitsNeededForFreq,
-            docFreqQueue.size()));
+    // 2nd  nt: encoded  tadata
+    sk pL sts.add(
+        encodeSk pL stEntry tadata(
+            pos  onsState.currentPos  onsSl ceOffset,
+            b sNeededForDelta,
+            b sNeededForFreq,
+            docFreqQueue.s ze()));
 
-    // 3rd int: optional, position slice index
-    if (!omitPositions) {
-      skipLists.add(positionsState.currentPositionsSliceIndex);
+    // 3rd  nt: opt onal, pos  on sl ce  ndex
+     f (!om Pos  ons) {
+      sk pL sts.add(pos  onsState.currentPos  onsSl ce ndex);
     }
   }
 
   /**
-   * Create and return a docs enumerator or docs-positions enumerator based on input flag.
+   * Create and return a docs enu rator or docs-pos  ons enu rator based on  nput flag.
    *
-   * @see org.apache.lucene.index.PostingsEnum
+   * @see org.apac .lucene. ndex.Post ngsEnum
    */
-  @Override
-  public EarlybirdPostingsEnum postings(
-      int postingListPointer, int numPostings, int flags) throws IOException {
-    // Positions are omitted but position enumerator are requried.
-    if (omitPositions && PostingsEnum.featureRequested(flags, PostingsEnum.POSITIONS)) {
-      GETTING_POSITIONS_WITH_OMIT_POSITIONS.increment();
+  @Overr de
+  publ c Earlyb rdPost ngsEnum post ngs(
+       nt post ngL stPo nter,  nt numPost ngs,  nt flags) throws  OExcept on {
+    // Pos  ons are om ted but pos  on enu rator are requr ed.
+     f (om Pos  ons && Post ngsEnum.featureRequested(flags, Post ngsEnum.POS T ONS)) {
+      GETT NG_POS T ONS_W TH_OM T_POS T ONS. ncre nt();
     }
 
-    if (!omitPositions && PostingsEnum.featureRequested(flags, PostingsEnum.POSITIONS)) {
-      return new HighDFPackedIntsDocsAndPositionsEnum(
-          skipLists,
-          deltaFreqLists,
-          positionLists,
-          postingListPointer,
-          numPostings,
+     f (!om Pos  ons && Post ngsEnum.featureRequested(flags, Post ngsEnum.POS T ONS)) {
+      return new H ghDFPacked ntsDocsAndPos  onsEnum(
+          sk pL sts,
+          deltaFreqL sts,
+          pos  onL sts,
+          post ngL stPo nter,
+          numPost ngs,
           false);
     } else {
-      return new HighDFPackedIntsDocsEnum(
-          skipLists,
-          deltaFreqLists,
-          postingListPointer,
-          numPostings,
-          omitPositions);
+      return new H ghDFPacked ntsDocsEnum(
+          sk pL sts,
+          deltaFreqL sts,
+          post ngL stPo nter,
+          numPost ngs,
+          om Pos  ons);
     }
   }
 
   /******************************************************
-   * Skip list entry encoded data encoding and decoding *
+   * Sk p l st entry encoded data encod ng and decod ng *
    ******************************************************/
 
   /**
-   * Encode a skip list entry metadata, which is stored in the 2nd int of the skip list entry.
+   * Encode a sk p l st entry  tadata, wh ch  s stored  n t  2nd  nt of t  sk p l st entry.
    *
-   * @see #SKIPLIST_ENTRY_SIZE
+   * @see #SK PL ST_ENTRY_S ZE
    */
-  private static int encodeSkipListEntryMetadata(
-      int positionOffsetInSlice, int numBitsForDelta, int numBitsForFreq, int numDocsInSlice) {
-    assert 0 <= positionOffsetInSlice
-        && positionOffsetInSlice < POSITION_SLICE_NUM_BITS_WITHOUT_HEADER;
-    assert 0 <= numBitsForDelta && numBitsForDelta <= MAX_DOC_ID_BIT;
-    assert 0 <= numBitsForFreq && numBitsForFreq <= MAX_FREQ_BIT;
-    assert 0 < numDocsInSlice && numDocsInSlice <= NUM_BITS_PER_SLICE;
-    return (positionOffsetInSlice << SKIPLIST_ENTRY_POSITION_OFFSET_SHIFT)
-        + (numBitsForDelta << SKIPLIST_ENTRY_NUM_BITS_DELTA_SHIFT)
-        + (numBitsForFreq << SKIPLIST_ENTRY_NUM_BITS_FREQ_SHIFT)
-        // stores numDocsInSlice - 1 to avoid over flow since numDocsInSlice ranges in [1, 2048]
-        // and 11 bits are used to store number docs in slice
-        + (numDocsInSlice - 1);
+  pr vate stat c  nt encodeSk pL stEntry tadata(
+       nt pos  onOffset nSl ce,  nt numB sForDelta,  nt numB sForFreq,  nt numDocs nSl ce) {
+    assert 0 <= pos  onOffset nSl ce
+        && pos  onOffset nSl ce < POS T ON_SL CE_NUM_B TS_W THOUT_HEADER;
+    assert 0 <= numB sForDelta && numB sForDelta <= MAX_DOC_ D_B T;
+    assert 0 <= numB sForFreq && numB sForFreq <= MAX_FREQ_B T;
+    assert 0 < numDocs nSl ce && numDocs nSl ce <= NUM_B TS_PER_SL CE;
+    return (pos  onOffset nSl ce << SK PL ST_ENTRY_POS T ON_OFFSET_SH FT)
+        + (numB sForDelta << SK PL ST_ENTRY_NUM_B TS_DELTA_SH FT)
+        + (numB sForFreq << SK PL ST_ENTRY_NUM_B TS_FREQ_SH FT)
+        // stores numDocs nSl ce - 1 to avo d over flow s nce numDocs nSl ce ranges  n [1, 2048]
+        // and 11 b s are used to store number docs  n sl ce
+        + (numDocs nSl ce - 1);
   }
 
   /**
-   * Decode POSITION_SLICE_OFFSET of the delta-freq slice having the given skip entry encoded data.
+   * Decode POS T ON_SL CE_OFFSET of t  delta-freq sl ce hav ng t  g ven sk p entry encoded data.
    *
-   * @see #SKIPLIST_ENTRY_SIZE
+   * @see #SK PL ST_ENTRY_S ZE
    */
-  static int getPositionOffsetInSlice(int skipListEntryEncodedMetadata) {
-    return (skipListEntryEncodedMetadata >>> SKIPLIST_ENTRY_POSITION_OFFSET_SHIFT)
-        & SKIPLIST_ENTRY_POSITION_OFFSET_MASK;
+  stat c  nt getPos  onOffset nSl ce( nt sk pL stEntryEncoded tadata) {
+    return (sk pL stEntryEncoded tadata >>> SK PL ST_ENTRY_POS T ON_OFFSET_SH FT)
+        & SK PL ST_ENTRY_POS T ON_OFFSET_MASK;
   }
 
   /**
-   * Decode number of bits used for delta in the slice having the given skip entry encoded data.
+   * Decode number of b s used for delta  n t  sl ce hav ng t  g ven sk p entry encoded data.
    *
-   * @see #SKIPLIST_ENTRY_SIZE
+   * @see #SK PL ST_ENTRY_S ZE
    */
-  static int getNumBitsForDelta(int skipListEntryEncodedMetadata) {
-    return (skipListEntryEncodedMetadata >>> SKIPLIST_ENTRY_NUM_BITS_DELTA_SHIFT)
-        & SKIPLIST_ENTRY_NUM_BITS_DELTA_MASK;
+  stat c  nt getNumB sForDelta( nt sk pL stEntryEncoded tadata) {
+    return (sk pL stEntryEncoded tadata >>> SK PL ST_ENTRY_NUM_B TS_DELTA_SH FT)
+        & SK PL ST_ENTRY_NUM_B TS_DELTA_MASK;
   }
 
   /**
-   * Decode number of bits used for freqs in the slice having the given skip entry encoded data.
+   * Decode number of b s used for freqs  n t  sl ce hav ng t  g ven sk p entry encoded data.
    *
-   * @see #SKIPLIST_ENTRY_SIZE
+   * @see #SK PL ST_ENTRY_S ZE
    */
-  static int getNumBitsForFreq(int skipListEntryEncodedMetadata) {
-    return (skipListEntryEncodedMetadata >>> SKIPLIST_ENTRY_NUM_BITS_FREQ_SHIFT)
-        & SKIPLIST_ENTRY_NUM_BITS_FREQ_MASK;
+  stat c  nt getNumB sForFreq( nt sk pL stEntryEncoded tadata) {
+    return (sk pL stEntryEncoded tadata >>> SK PL ST_ENTRY_NUM_B TS_FREQ_SH FT)
+        & SK PL ST_ENTRY_NUM_B TS_FREQ_MASK;
   }
 
   /**
-   * Decode number of delta-freq pairs stored in the slice having the given skip entry encoded data.
+   * Decode number of delta-freq pa rs stored  n t  sl ce hav ng t  g ven sk p entry encoded data.
    *
-   * @see #SKIPLIST_ENTRY_SIZE
+   * @see #SK PL ST_ENTRY_S ZE
    */
-  static int getNumDocsInSlice(int skipListEntryEncodedMetadata) {
+  stat c  nt getNumDocs nSl ce( nt sk pL stEntryEncoded tadata) {
     /**
-     * Add 1 to the decode value since the stored value is subtracted by 1.
-     * @see #encodeSkipListEntryMetadata(int, int, int, int)
+     * Add 1 to t  decode value s nce t  stored value  s subtracted by 1.
+     * @see #encodeSk pL stEntry tadata( nt,  nt,  nt,  nt)
      */
-    return (skipListEntryEncodedMetadata & SKIPLIST_ENTRY_NUM_DOCS_MASK) + 1;
+    return (sk pL stEntryEncoded tadata & SK PL ST_ENTRY_NUM_DOCS_MASK) + 1;
   }
 
   /*****************************************************
-   * Position slice entry header encoding and decoding *
+   * Pos  on sl ce entry  ader encod ng and decod ng *
    *****************************************************/
 
   /**
-   * Encode a position slice entry header.
+   * Encode a pos  on sl ce entry  ader.
    *
-   * @param numBitsForPosition number of bits used to encode positions in this slice.
-   * @param numPositionsInSlice number of positions in this slice.
-   * @return an int as the encoded header.
-   * @see #POSITION_SLICE_HEADER_SIZE
+   * @param numB sForPos  on number of b s used to encode pos  ons  n t  sl ce.
+   * @param numPos  ons nSl ce number of pos  ons  n t  sl ce.
+   * @return an  nt as t  encoded  ader.
+   * @see #POS T ON_SL CE_HEADER_S ZE
    */
-  private static int encodePositionEntryHeader(int numBitsForPosition, int numPositionsInSlice) {
-    assert 0 <= numBitsForPosition && numBitsForPosition <= MAX_POSITION_BIT;
-    assert 0 < numPositionsInSlice && numPositionsInSlice <= POSITION_SLICE_NUM_BITS_WITHOUT_HEADER;
-    return (numBitsForPosition << POSITION_SLICE_HEADER_BITS_POSITION_SHIFT) + numPositionsInSlice;
+  pr vate stat c  nt encodePos  onEntry ader( nt numB sForPos  on,  nt numPos  ons nSl ce) {
+    assert 0 <= numB sForPos  on && numB sForPos  on <= MAX_POS T ON_B T;
+    assert 0 < numPos  ons nSl ce && numPos  ons nSl ce <= POS T ON_SL CE_NUM_B TS_W THOUT_HEADER;
+    return (numB sForPos  on << POS T ON_SL CE_HEADER_B TS_POS T ON_SH FT) + numPos  ons nSl ce;
   }
 
   /**
-   * Decode number of bits used for position in the slice having the given header.
+   * Decode number of b s used for pos  on  n t  sl ce hav ng t  g ven  ader.
    *
-   * @param positionEntryHeader entry header will be decoded.
-   * @see #POSITION_SLICE_HEADER_SIZE
+   * @param pos  onEntry ader entry  ader w ll be decoded.
+   * @see #POS T ON_SL CE_HEADER_S ZE
    */
-  static int getNumBitsForPosition(int positionEntryHeader) {
-    return (positionEntryHeader >>> POSITION_SLICE_HEADER_BITS_POSITION_SHIFT)
-        & POSITION_SLICE_HEADER_BITS_POSITION_MASK;
+  stat c  nt getNumB sForPos  on( nt pos  onEntry ader) {
+    return (pos  onEntry ader >>> POS T ON_SL CE_HEADER_B TS_POS T ON_SH FT)
+        & POS T ON_SL CE_HEADER_B TS_POS T ON_MASK;
   }
 
   /**
-   * Decode number of positions stored in the slice having the given header.
+   * Decode number of pos  ons stored  n t  sl ce hav ng t  g ven  ader.
    *
-   * @param positionEntryHeader entry header will be decoded.
-   * @see #POSITION_SLICE_HEADER_SIZE
+   * @param pos  onEntry ader entry  ader w ll be decoded.
+   * @see #POS T ON_SL CE_HEADER_S ZE
    */
-  static int getNumPositionsInSlice(int positionEntryHeader) {
-    return positionEntryHeader & POSITION_SLICE_HEADER_NUM_POSITIONS_MASK;
+  stat c  nt getNumPos  ons nSl ce( nt pos  onEntry ader) {
+    return pos  onEntry ader & POS T ON_SL CE_HEADER_NUM_POS T ONS_MASK;
   }
 
   /******************
-   * Helper methods *
+   *  lper  thods *
    ******************/
 
   /**
-   * Check if given pointer is pointing to the slice start.
+   * C ck  f g ven po nter  s po nt ng to t  sl ce start.
    *
-   * @param pointer the index will be checked.
+   * @param po nter t   ndex w ll be c cked.
    */
-  static boolean isSliceStart(int pointer) {
-    return pointer % HighDFPackedIntsPostingLists.SLICE_SIZE == 0;
+  stat c boolean  sSl ceStart( nt po nter) {
+    return po nter % H ghDFPacked ntsPost ngL sts.SL CE_S ZE == 0;
   }
 
   /**
-   * Ceil of log of x in the given base.
+   * Ce l of log of x  n t  g ven base.
    *
-   * @return x == 0 ? 0 : Math.ceil(Math.log(x) / Math.log(base))
+   * @return x == 0 ? 0 : Math.ce l(Math.log(x) / Math.log(base))
    */
-  private static int log(int x, int base) {
+  pr vate stat c  nt log( nt x,  nt base) {
     assert base >= 2;
-    if (x == 0) {
+     f (x == 0) {
       return 0;
     }
-    int ret = 1;
-    long n = base; // needs to be a long to avoid overflow
-    while (x >= n) {
+     nt ret = 1;
+    long n = base; // needs to be a long to avo d overflow
+    wh le (x >= n) {
       n *= base;
       ret++;
     }
@@ -775,53 +775,53 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
    * For flush and load *
    **********************/
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @SuppressWarn ngs("unc cked")
+  @Overr de
+  publ c FlushHandler getFlushHandler() {
+    return new FlushHandler(t );
   }
 
-  public static class FlushHandler extends Flushable.Handler<HighDFPackedIntsPostingLists> {
-    private static final String OMIT_POSITIONS_PROP_NAME = "omitPositions";
-    private static final String SKIP_LISTS_PROP_NAME = "skipLists";
-    private static final String DELTA_FREQ_LISTS_PROP_NAME = "deltaFreqLists";
-    private static final String POSITION_LISTS_PROP_NAME = "positionLists";
+  publ c stat c class FlushHandler extends Flushable.Handler<H ghDFPacked ntsPost ngL sts> {
+    pr vate stat c f nal Str ng OM T_POS T ONS_PROP_NAME = "om Pos  ons";
+    pr vate stat c f nal Str ng SK P_L STS_PROP_NAME = "sk pL sts";
+    pr vate stat c f nal Str ng DELTA_FREQ_L STS_PROP_NAME = "deltaFreqL sts";
+    pr vate stat c f nal Str ng POS T ON_L STS_PROP_NAME = "pos  onL sts";
 
-    public FlushHandler() {
+    publ c FlushHandler() {
       super();
     }
 
-    public FlushHandler(HighDFPackedIntsPostingLists objectToFlush) {
+    publ c FlushHandler(H ghDFPacked ntsPost ngL sts objectToFlush) {
       super(objectToFlush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out)
-        throws IOException {
-      HighDFPackedIntsPostingLists objectToFlush = getObjectToFlush();
-      flushInfo.addBooleanProperty(OMIT_POSITIONS_PROP_NAME, objectToFlush.omitPositions);
-      objectToFlush.skipLists.getFlushHandler()
-          .flush(flushInfo.newSubProperties(SKIP_LISTS_PROP_NAME), out);
-      objectToFlush.deltaFreqLists.getFlushHandler()
-          .flush(flushInfo.newSubProperties(DELTA_FREQ_LISTS_PROP_NAME), out);
-      objectToFlush.positionLists.getFlushHandler()
-          .flush(flushInfo.newSubProperties(POSITION_LISTS_PROP_NAME), out);
+    @Overr de
+    protected vo d doFlush(Flush nfo flush nfo, DataSer al zer out)
+        throws  OExcept on {
+      H ghDFPacked ntsPost ngL sts objectToFlush = getObjectToFlush();
+      flush nfo.addBooleanProperty(OM T_POS T ONS_PROP_NAME, objectToFlush.om Pos  ons);
+      objectToFlush.sk pL sts.getFlushHandler()
+          .flush(flush nfo.newSubPropert es(SK P_L STS_PROP_NAME), out);
+      objectToFlush.deltaFreqL sts.getFlushHandler()
+          .flush(flush nfo.newSubPropert es(DELTA_FREQ_L STS_PROP_NAME), out);
+      objectToFlush.pos  onL sts.getFlushHandler()
+          .flush(flush nfo.newSubPropert es(POS T ON_L STS_PROP_NAME), out);
     }
 
-    @Override
-    protected HighDFPackedIntsPostingLists doLoad(
-        FlushInfo flushInfo, DataDeserializer in) throws IOException {
-      IntBlockPool skipLists = (new IntBlockPool.FlushHandler())
-          .load(flushInfo.getSubProperties(SKIP_LISTS_PROP_NAME), in);
-      IntBlockPool deltaFreqLists = (new IntBlockPool.FlushHandler())
-          .load(flushInfo.getSubProperties(DELTA_FREQ_LISTS_PROP_NAME), in);
-      IntBlockPool positionLists = (new IntBlockPool.FlushHandler())
-          .load(flushInfo.getSubProperties(POSITION_LISTS_PROP_NAME), in);
-      return new HighDFPackedIntsPostingLists(
-          skipLists,
-          deltaFreqLists,
-          positionLists,
-          flushInfo.getBooleanProperty(OMIT_POSITIONS_PROP_NAME),
+    @Overr de
+    protected H ghDFPacked ntsPost ngL sts doLoad(
+        Flush nfo flush nfo, DataDeser al zer  n) throws  OExcept on {
+       ntBlockPool sk pL sts = (new  ntBlockPool.FlushHandler())
+          .load(flush nfo.getSubPropert es(SK P_L STS_PROP_NAME),  n);
+       ntBlockPool deltaFreqL sts = (new  ntBlockPool.FlushHandler())
+          .load(flush nfo.getSubPropert es(DELTA_FREQ_L STS_PROP_NAME),  n);
+       ntBlockPool pos  onL sts = (new  ntBlockPool.FlushHandler())
+          .load(flush nfo.getSubPropert es(POS T ON_L STS_PROP_NAME),  n);
+      return new H ghDFPacked ntsPost ngL sts(
+          sk pL sts,
+          deltaFreqL sts,
+          pos  onL sts,
+          flush nfo.getBooleanProperty(OM T_POS T ONS_PROP_NAME),
           null,
           null);
     }

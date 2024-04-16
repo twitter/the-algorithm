@@ -1,299 +1,299 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.heron
+package com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work. ron
 
-import com.twitter.algebird.Monoid
-import com.twitter.bijection.Injection
-import com.twitter.bijection.thrift.CompactThriftCodec
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.EmptyServiceIdentifier
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.heron.util.CommonMetric
-import com.twitter.ml.api.DataRecord
-import com.twitter.scalding.Args
-import com.twitter.storehaus.algebra.MergeableStore
-import com.twitter.storehaus.algebra.StoreAlgebra._
-import com.twitter.storehaus_internal.memcache.Memcache
-import com.twitter.storehaus_internal.store.CombinedStore
-import com.twitter.storehaus_internal.store.ReplicatingWritableStore
-import com.twitter.summingbird.batch.BatchID
-import com.twitter.summingbird.batch.Batcher
-import com.twitter.summingbird.online.MergeableStoreFactory
-import com.twitter.summingbird.online.option._
-import com.twitter.summingbird.option.CacheSize
-import com.twitter.summingbird.option.JobId
-import com.twitter.summingbird.storm.option.FlatMapStormMetrics
-import com.twitter.summingbird.storm.option.SummerStormMetrics
-import com.twitter.summingbird.storm.Storm
-import com.twitter.summingbird.storm.StormMetric
-import com.twitter.summingbird.Options
-import com.twitter.summingbird._
-import com.twitter.summingbird_internal.runner.common.CapTicket
-import com.twitter.summingbird_internal.runner.common.JobName
-import com.twitter.summingbird_internal.runner.common.TeamEmail
-import com.twitter.summingbird_internal.runner.common.TeamName
-import com.twitter.summingbird_internal.runner.storm.ProductionStormConfig
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework._
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.job.AggregatesV2Job
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.job.AggregatesV2Job
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.job.DataRecordFeatureCounter
-import org.apache.heron.api.{Config => HeronConfig}
-import org.apache.heron.common.basics.ByteAmount
-import org.apache.storm.Config
-import scala.collection.JavaConverters._
+ mport com.tw ter.algeb rd.Mono d
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.b ject on.thr ft.CompactThr ftCodec
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.mtls.aut nt cat on.EmptyServ ce dent f er
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter. ron.ut l.Common tr c
+ mport com.tw ter.ml.ap .DataRecord
+ mport com.tw ter.scald ng.Args
+ mport com.tw ter.storehaus.algebra. rgeableStore
+ mport com.tw ter.storehaus.algebra.StoreAlgebra._
+ mport com.tw ter.storehaus_ nternal. mcac . mcac 
+ mport com.tw ter.storehaus_ nternal.store.Comb nedStore
+ mport com.tw ter.storehaus_ nternal.store.Repl cat ngWr ableStore
+ mport com.tw ter.summ ngb rd.batch.Batch D
+ mport com.tw ter.summ ngb rd.batch.Batc r
+ mport com.tw ter.summ ngb rd.onl ne. rgeableStoreFactory
+ mport com.tw ter.summ ngb rd.onl ne.opt on._
+ mport com.tw ter.summ ngb rd.opt on.Cac S ze
+ mport com.tw ter.summ ngb rd.opt on.Job d
+ mport com.tw ter.summ ngb rd.storm.opt on.FlatMapStorm tr cs
+ mport com.tw ter.summ ngb rd.storm.opt on.Sum rStorm tr cs
+ mport com.tw ter.summ ngb rd.storm.Storm
+ mport com.tw ter.summ ngb rd.storm.Storm tr c
+ mport com.tw ter.summ ngb rd.Opt ons
+ mport com.tw ter.summ ngb rd._
+ mport com.tw ter.summ ngb rd_ nternal.runner.common.CapT cket
+ mport com.tw ter.summ ngb rd_ nternal.runner.common.JobNa 
+ mport com.tw ter.summ ngb rd_ nternal.runner.common.TeamEma l
+ mport com.tw ter.summ ngb rd_ nternal.runner.common.TeamNa 
+ mport com.tw ter.summ ngb rd_ nternal.runner.storm.Product onStormConf g
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work._
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.job.AggregatesV2Job
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.job.AggregatesV2Job
+ mport com.tw ter.t  l nes.data_process ng.ml_ut l.aggregat on_fra work.job.DataRecordFeatureCounter
+ mport org.apac . ron.ap .{Conf g =>  ronConf g}
+ mport org.apac . ron.common.bas cs.ByteAmount
+ mport org.apac .storm.Conf g
+ mport scala.collect on.JavaConverters._
 
-object RealTimeAggregatesJobBase {
-  lazy val commonMetric: StormMetric[CommonMetric] =
-    StormMetric(new CommonMetric(), CommonMetric.NAME, CommonMetric.POLL_INTERVAL)
-  lazy val flatMapMetrics: FlatMapStormMetrics = FlatMapStormMetrics(Iterable(commonMetric))
-  lazy val summerMetrics: SummerStormMetrics = SummerStormMetrics(Iterable(commonMetric))
+object RealT  AggregatesJobBase {
+  lazy val common tr c: Storm tr c[Common tr c] =
+    Storm tr c(new Common tr c(), Common tr c.NAME, Common tr c.POLL_ NTERVAL)
+  lazy val flatMap tr cs: FlatMapStorm tr cs = FlatMapStorm tr cs( erable(common tr c))
+  lazy val sum r tr cs: Sum rStorm tr cs = Sum rStorm tr cs( erable(common tr c))
 }
 
-trait RealTimeAggregatesJobBase extends Serializable {
-  import RealTimeAggregatesJobBase._
-  import com.twitter.summingbird_internal.bijection.BatchPairImplicits._
+tra  RealT  AggregatesJobBase extends Ser al zable {
+   mport RealT  AggregatesJobBase._
+   mport com.tw ter.summ ngb rd_ nternal.b ject on.BatchPa r mpl c s._
 
-  def statsReceiver: StatsReceiver
+  def statsRece ver: StatsRece ver
 
   def aggregatesToCompute: Set[TypedAggregateGroup[_]]
 
-  def jobConfigs: RealTimeAggregatesJobConfigs
+  def jobConf gs: RealT  AggregatesJobConf gs
 
-  implicit lazy val dataRecordCodec: Injection[DataRecord, Array[Byte]] =
-    CompactThriftCodec[DataRecord]
-  implicit lazy val monoid: Monoid[DataRecord] = DataRecordAggregationMonoid(aggregatesToCompute)
-  implicit lazy val aggregationKeyInjection: Injection[AggregationKey, Array[Byte]] =
-    AggregationKeyInjection
+   mpl c  lazy val dataRecordCodec:  nject on[DataRecord, Array[Byte]] =
+    CompactThr ftCodec[DataRecord]
+   mpl c  lazy val mono d: Mono d[DataRecord] = DataRecordAggregat onMono d(aggregatesToCompute)
+   mpl c  lazy val aggregat onKey nject on:  nject on[Aggregat onKey, Array[Byte]] =
+    Aggregat onKey nject on
 
-  val clusters: Set[String] = Set("atla", "pdxa")
+  val clusters: Set[Str ng] = Set("atla", "pdxa")
 
-  def buildAggregateStoreToStorm(
-    isProd: Boolean,
-    serviceIdentifier: ServiceIdentifier,
-    jobConfig: RealTimeAggregatesJobConfig
-  ): (AggregateStore => Option[Storm#Store[AggregationKey, DataRecord]]) = {
+  def bu ldAggregateStoreToStorm(
+     sProd: Boolean,
+    serv ce dent f er: Serv ce dent f er,
+    jobConf g: RealT  AggregatesJobConf g
+  ): (AggregateStore => Opt on[Storm#Store[Aggregat onKey, DataRecord]]) = {
     (store: AggregateStore) =>
       store match {
-        case rtaStore: RealTimeAggregateStore if rtaStore.isProd == isProd => {
-          lazy val primaryStore: MergeableStore[(AggregationKey, BatchID), DataRecord] =
-            Memcache.getMemcacheStore[(AggregationKey, BatchID), DataRecord](
-              rtaStore.online(serviceIdentifier))
+        case rtaStore: RealT  AggregateStore  f rtaStore. sProd ==  sProd => {
+          lazy val pr maryStore:  rgeableStore[(Aggregat onKey, Batch D), DataRecord] =
+             mcac .get mcac Store[(Aggregat onKey, Batch D), DataRecord](
+              rtaStore.onl ne(serv ce dent f er))
 
-          lazy val mergeableStore: MergeableStore[(AggregationKey, BatchID), DataRecord] =
-            if (jobConfig.enableUserReindexingNighthawkBtreeStore
-              || jobConfig.enableUserReindexingNighthawkHashStore) {
-              val reindexingNighthawkBtreeWritableDataRecordStoreList =
-                if (jobConfig.enableUserReindexingNighthawkBtreeStore) {
-                  lazy val cacheClientNighthawkConfig =
-                    jobConfig.userReindexingNighthawkBtreeStoreConfig.online(serviceIdentifier)
-                  List(
-                    UserReindexingNighthawkWritableDataRecordStore.getBtreeStore(
-                      nighthawkCacheConfig = cacheClientNighthawkConfig,
-                      // Choose a reasonably large target size as this will be equivalent to the number of unique (user, timestamp)
-                      // keys that are returned on read on the pKey, and we may have duplicate authors and associated records.
-                      targetSize = 512,
-                      statsReceiver = statsReceiver,
-                      // Assuming trims are relatively expensive, choose a trimRate that's not as aggressive. In this case we trim on
-                      // 10% of all writes.
-                      trimRate = 0.1
+          lazy val  rgeableStore:  rgeableStore[(Aggregat onKey, Batch D), DataRecord] =
+             f (jobConf g.enableUserRe ndex ngN ghthawkBtreeStore
+              || jobConf g.enableUserRe ndex ngN ghthawkHashStore) {
+              val re ndex ngN ghthawkBtreeWr ableDataRecordStoreL st =
+                 f (jobConf g.enableUserRe ndex ngN ghthawkBtreeStore) {
+                  lazy val cac Cl entN ghthawkConf g =
+                    jobConf g.userRe ndex ngN ghthawkBtreeStoreConf g.onl ne(serv ce dent f er)
+                  L st(
+                    UserRe ndex ngN ghthawkWr ableDataRecordStore.getBtreeStore(
+                      n ghthawkCac Conf g = cac Cl entN ghthawkConf g,
+                      // Choose a reasonably large target s ze as t  w ll be equ valent to t  number of un que (user, t  stamp)
+                      // keys that are returned on read on t  pKey, and   may have dupl cate authors and assoc ated records.
+                      targetS ze = 512,
+                      statsRece ver = statsRece ver,
+                      // Assum ng tr ms are relat vely expens ve, choose a tr mRate that's not as aggress ve.  n t  case   tr m on
+                      // 10% of all wr es.
+                      tr mRate = 0.1
                     ))
-                } else { Nil }
-              val reindexingNighthawkHashWritableDataRecordStoreList =
-                if (jobConfig.enableUserReindexingNighthawkHashStore) {
-                  lazy val cacheClientNighthawkConfig =
-                    jobConfig.userReindexingNighthawkHashStoreConfig.online(serviceIdentifier)
-                  List(
-                    UserReindexingNighthawkWritableDataRecordStore.getHashStore(
-                      nighthawkCacheConfig = cacheClientNighthawkConfig,
-                      // Choose a reasonably large target size as this will be equivalent to the number of unique (user, timestamp)
-                      // keys that are returned on read on the pKey, and we may have duplicate authors and associated records.
-                      targetSize = 512,
-                      statsReceiver = statsReceiver,
-                      // Assuming trims are relatively expensive, choose a trimRate that's not as aggressive. In this case we trim on
-                      // 10% of all writes.
-                      trimRate = 0.1
+                } else { N l }
+              val re ndex ngN ghthawkHashWr ableDataRecordStoreL st =
+                 f (jobConf g.enableUserRe ndex ngN ghthawkHashStore) {
+                  lazy val cac Cl entN ghthawkConf g =
+                    jobConf g.userRe ndex ngN ghthawkHashStoreConf g.onl ne(serv ce dent f er)
+                  L st(
+                    UserRe ndex ngN ghthawkWr ableDataRecordStore.getHashStore(
+                      n ghthawkCac Conf g = cac Cl entN ghthawkConf g,
+                      // Choose a reasonably large target s ze as t  w ll be equ valent to t  number of un que (user, t  stamp)
+                      // keys that are returned on read on t  pKey, and   may have dupl cate authors and assoc ated records.
+                      targetS ze = 512,
+                      statsRece ver = statsRece ver,
+                      // Assum ng tr ms are relat vely expens ve, choose a tr mRate that's not as aggress ve.  n t  case   tr m on
+                      // 10% of all wr es.
+                      tr mRate = 0.1
                     ))
-                } else { Nil }
+                } else { N l }
 
-              lazy val replicatingWritableStore = new ReplicatingWritableStore(
-                stores = List(primaryStore) ++ reindexingNighthawkBtreeWritableDataRecordStoreList
-                  ++ reindexingNighthawkHashWritableDataRecordStoreList
+              lazy val repl cat ngWr ableStore = new Repl cat ngWr ableStore(
+                stores = L st(pr maryStore) ++ re ndex ngN ghthawkBtreeWr ableDataRecordStoreL st
+                  ++ re ndex ngN ghthawkHashWr ableDataRecordStoreL st
               )
 
-              lazy val combinedStoreWithReindexing = new CombinedStore(
-                read = primaryStore,
-                write = replicatingWritableStore
+              lazy val comb nedStoreW hRe ndex ng = new Comb nedStore(
+                read = pr maryStore,
+                wr e = repl cat ngWr ableStore
               )
 
-              combinedStoreWithReindexing.toMergeable
+              comb nedStoreW hRe ndex ng.to rgeable
             } else {
-              primaryStore
+              pr maryStore
             }
 
-          lazy val storeFactory: MergeableStoreFactory[(AggregationKey, BatchID), DataRecord] =
-            Storm.store(mergeableStore)(Batcher.unit)
-          Some(storeFactory)
+          lazy val storeFactory:  rgeableStoreFactory[(Aggregat onKey, Batch D), DataRecord] =
+            Storm.store( rgeableStore)(Batc r.un )
+          So (storeFactory)
         }
         case _ => None
       }
   }
 
-  def buildDataRecordSourceToStorm(
-    jobConfig: RealTimeAggregatesJobConfig
-  ): (AggregateSource => Option[Producer[Storm, DataRecord]]) = { (source: AggregateSource) =>
+  def bu ldDataRecordS ceToStorm(
+    jobConf g: RealT  AggregatesJobConf g
+  ): (AggregateS ce => Opt on[Producer[Storm, DataRecord]]) = { (s ce: AggregateS ce) =>
     {
-      source match {
-        case stormAggregateSource: StormAggregateSource =>
-          Some(stormAggregateSource.build(statsReceiver, jobConfig))
+      s ce match {
+        case stormAggregateS ce: StormAggregateS ce =>
+          So (stormAggregateS ce.bu ld(statsRece ver, jobConf g))
         case _ => None
       }
     }
   }
 
-  def apply(args: Args): ProductionStormConfig = {
-    lazy val isProd = args.boolean("production")
+  def apply(args: Args): Product onStormConf g = {
+    lazy val  sProd = args.boolean("product on")
     lazy val cluster = args.getOrElse("cluster", "")
-    lazy val isDebug = args.boolean("debug")
+    lazy val  sDebug = args.boolean("debug")
     lazy val role = args.getOrElse("role", "")
-    lazy val service =
+    lazy val serv ce =
       args.getOrElse(
-        "service_name",
+        "serv ce_na ",
         ""
-      ) // don't use the argument service, which is a reserved heron argument
-    lazy val environment = if (isProd) "prod" else "devel"
+      ) // don't use t  argu nt serv ce, wh ch  s a reserved  ron argu nt
+    lazy val env ron nt =  f ( sProd) "prod" else "devel"
     lazy val s2sEnabled = args.boolean("s2s")
     lazy val keyedByUserEnabled = args.boolean("keyed_by_user")
     lazy val keyedByAuthorEnabled = args.boolean("keyed_by_author")
 
-    require(clusters.contains(cluster))
-    if (s2sEnabled) {
-      require(role.length() > 0)
-      require(service.length() > 0)
+    requ re(clusters.conta ns(cluster))
+     f (s2sEnabled) {
+      requ re(role.length() > 0)
+      requ re(serv ce.length() > 0)
     }
 
-    lazy val serviceIdentifier = if (s2sEnabled) {
-      ServiceIdentifier(
+    lazy val serv ce dent f er =  f (s2sEnabled) {
+      Serv ce dent f er(
         role = role,
-        service = service,
-        environment = environment,
+        serv ce = serv ce,
+        env ron nt = env ron nt,
         zone = cluster
       )
-    } else EmptyServiceIdentifier
+    } else EmptyServ ce dent f er
 
-    lazy val jobConfig = {
-      val jobConfig = if (isProd) jobConfigs.Prod else jobConfigs.Devel
-      jobConfig.copy(
-        serviceIdentifier = serviceIdentifier,
+    lazy val jobConf g = {
+      val jobConf g =  f ( sProd) jobConf gs.Prod else jobConf gs.Devel
+      jobConf g.copy(
+        serv ce dent f er = serv ce dent f er,
         keyedByUserEnabled = keyedByUserEnabled,
         keyedByAuthorEnabled = keyedByAuthorEnabled)
     }
 
-    lazy val dataRecordSourceToStorm = buildDataRecordSourceToStorm(jobConfig)
+    lazy val dataRecordS ceToStorm = bu ldDataRecordS ceToStorm(jobConf g)
     lazy val aggregateStoreToStorm =
-      buildAggregateStoreToStorm(isProd, serviceIdentifier, jobConfig)
+      bu ldAggregateStoreToStorm( sProd, serv ce dent f er, jobConf g)
 
-    lazy val JaasConfigFlag = "-Djava.security.auth.login.config=resources/jaas.conf"
-    lazy val JaasDebugFlag = "-Dsun.security.krb5.debug=true"
-    lazy val JaasConfigString =
-      if (isDebug) { "%s %s".format(JaasConfigFlag, JaasDebugFlag) }
-      else JaasConfigFlag
+    lazy val JaasConf gFlag = "-Djava.secur y.auth.log n.conf g=res ces/jaas.conf"
+    lazy val JaasDebugFlag = "-Dsun.secur y.krb5.debug=true"
+    lazy val JaasConf gStr ng =
+       f ( sDebug) { "%s %s".format(JaasConf gFlag, JaasDebugFlag) }
+      else JaasConf gFlag
 
-    new ProductionStormConfig {
-      implicit val jobId: JobId = JobId(jobConfig.name)
-      override val jobName = JobName(jobConfig.name)
-      override val teamName = TeamName(jobConfig.teamName)
-      override val teamEmail = TeamEmail(jobConfig.teamEmail)
-      override val capTicket = CapTicket("n/a")
+    new Product onStormConf g {
+       mpl c  val job d: Job d = Job d(jobConf g.na )
+      overr de val jobNa  = JobNa (jobConf g.na )
+      overr de val teamNa  = TeamNa (jobConf g.teamNa )
+      overr de val teamEma l = TeamEma l(jobConf g.teamEma l)
+      overr de val capT cket = CapT cket("n/a")
 
-      val configureHeronJvmSettings = {
-        val heronJvmOptions = new java.util.HashMap[String, AnyRef]()
-        jobConfig.componentToRamGigaBytesMap.foreach {
-          case (component, gigabytes) =>
-            HeronConfig.setComponentRam(
-              heronJvmOptions,
+      val conf gure ronJvmSett ngs = {
+        val  ronJvmOpt ons = new java.ut l.HashMap[Str ng, AnyRef]()
+        jobConf g.componentToRamG gaBytesMap.foreach {
+          case (component, g gabytes) =>
+             ronConf g.setComponentRam(
+               ronJvmOpt ons,
               component,
-              ByteAmount.fromGigabytes(gigabytes))
+              ByteAmount.fromG gabytes(g gabytes))
         }
 
-        HeronConfig.setContainerRamRequested(
-          heronJvmOptions,
-          ByteAmount.fromGigabytes(jobConfig.containerRamGigaBytes)
+         ronConf g.setConta nerRamRequested(
+           ronJvmOpt ons,
+          ByteAmount.fromG gabytes(jobConf g.conta nerRamG gaBytes)
         )
 
-        jobConfig.componentsToKerberize.foreach { component =>
-          HeronConfig.setComponentJvmOptions(
-            heronJvmOptions,
+        jobConf g.componentsToKerber ze.foreach { component =>
+           ronConf g.setComponentJvmOpt ons(
+             ronJvmOpt ons,
             component,
-            JaasConfigString
+            JaasConf gStr ng
           )
         }
 
-        jobConfig.componentToMetaSpaceSizeMap.foreach {
-          case (component, metaspaceSize) =>
-            HeronConfig.setComponentJvmOptions(
-              heronJvmOptions,
+        jobConf g.componentTo taSpaceS zeMap.foreach {
+          case (component,  taspaceS ze) =>
+             ronConf g.setComponentJvmOpt ons(
+               ronJvmOpt ons,
               component,
-              metaspaceSize
+               taspaceS ze
             )
         }
 
-        heronJvmOptions.asScala.toMap ++ AggregatesV2Job
-          .aggregateNames(aggregatesToCompute).map {
-            case (prefix, aggNames) => (s"extras.aggregateNames.${prefix}", aggNames)
+         ronJvmOpt ons.asScala.toMap ++ AggregatesV2Job
+          .aggregateNa s(aggregatesToCompute).map {
+            case (pref x, aggNa s) => (s"extras.aggregateNa s.${pref x}", aggNa s)
           }
       }
 
-      override def transformConfig(m: Map[String, AnyRef]): Map[String, AnyRef] = {
-        super.transformConfig(m) ++ List(
+      overr de def transformConf g(m: Map[Str ng, AnyRef]): Map[Str ng, AnyRef] = {
+        super.transformConf g(m) ++ L st(
           /**
-           * Disable acking by setting acker executors to 0. Tuples that come off the
-           * spout will be immediately acked which effectively disables retries on tuple
-           * failures. This should help topology throughput/availability by relaxing consistency.
+           * D sable ack ng by sett ng acker executors to 0. Tuples that co  off t 
+           * spout w ll be  m d ately acked wh ch effect vely d sables retr es on tuple
+           * fa lures. T  should  lp topology throughput/ava lab l y by relax ng cons stency.
            */
-          Config.TOPOLOGY_ACKER_EXECUTORS -> int2Integer(0),
-          Config.TOPOLOGY_WORKERS -> int2Integer(jobConfig.topologyWorkers),
-          HeronConfig.TOPOLOGY_CONTAINER_CPU_REQUESTED -> int2Integer(8),
-          HeronConfig.TOPOLOGY_DROPTUPLES_UPON_BACKPRESSURE -> java.lang.Boolean.valueOf(true),
-          HeronConfig.TOPOLOGY_WORKER_CHILDOPTS -> List(
-            JaasConfigString,
-            s"-Dcom.twitter.eventbus.client.zoneName=${cluster}",
-            "-Dcom.twitter.eventbus.client.EnableKafkaSaslTls=true"
-          ).mkString(" "),
-          "storm.job.uniqueId" -> jobId.get
-        ) ++ configureHeronJvmSettings
+          Conf g.TOPOLOGY_ACKER_EXECUTORS ->  nt2 nteger(0),
+          Conf g.TOPOLOGY_WORKERS ->  nt2 nteger(jobConf g.topologyWorkers),
+           ronConf g.TOPOLOGY_CONTA NER_CPU_REQUESTED ->  nt2 nteger(8),
+           ronConf g.TOPOLOGY_DROPTUPLES_UPON_BACKPRESSURE -> java.lang.Boolean.valueOf(true),
+           ronConf g.TOPOLOGY_WORKER_CH LDOPTS -> L st(
+            JaasConf gStr ng,
+            s"-Dcom.tw ter.eventbus.cl ent.zoneNa =${cluster}",
+            "-Dcom.tw ter.eventbus.cl ent.EnableKafkaSaslTls=true"
+          ).mkStr ng(" "),
+          "storm.job.un que d" -> job d.get
+        ) ++ conf gure ronJvmSett ngs
 
       }
 
-      override lazy val getNamedOptions: Map[String, Options] = jobConfig.topologyNamedOptions ++
+      overr de lazy val getNa dOpt ons: Map[Str ng, Opt ons] = jobConf g.topologyNa dOpt ons ++
         Map(
-          "DEFAULT" -> Options()
-            .set(flatMapMetrics)
-            .set(summerMetrics)
-            .set(MaxWaitingFutures(1000))
+          "DEFAULT" -> Opt ons()
+            .set(flatMap tr cs)
+            .set(sum r tr cs)
+            .set(MaxWa  ngFutures(1000))
             .set(FlushFrequency(30.seconds))
-            .set(UseAsyncCache(true))
-            .set(AsyncPoolSize(4))
-            .set(SourceParallelism(jobConfig.sourceCount))
-            .set(SummerBatchMultiplier(1000)),
-          "FLATMAP" -> Options()
-            .set(FlatMapParallelism(jobConfig.flatMapCount))
-            .set(CacheSize(0)),
-          "SUMMER" -> Options()
-            .set(SummerParallelism(jobConfig.summerCount))
+            .set(UseAsyncCac (true))
+            .set(AsyncPoolS ze(4))
+            .set(S ceParallel sm(jobConf g.s ceCount))
+            .set(Sum rBatchMult pl er(1000)),
+          "FLATMAP" -> Opt ons()
+            .set(FlatMapParallel sm(jobConf g.flatMapCount))
+            .set(Cac S ze(0)),
+          "SUMMER" -> Opt ons()
+            .set(Sum rParallel sm(jobConf g.sum rCount))
             /**
-             * Sets number of tuples a Summer awaits before aggregation. Set higher
-             * if you need to lower qps to memcache at the expense of introducing
-             * some (stable) latency.
+             * Sets number of tuples a Sum r awa s before aggregat on. Set h g r
+             *  f   need to lo r qps to  mcac  at t  expense of  ntroduc ng
+             * so  (stable) latency.
              */
-            .set(CacheSize(jobConfig.cacheSize))
+            .set(Cac S ze(jobConf g.cac S ze))
         )
 
       val featureCounters: Seq[DataRecordFeatureCounter] =
-        Seq(DataRecordFeatureCounter.any(Counter(Group("feature_counter"), Name("num_records"))))
+        Seq(DataRecordFeatureCounter.any(Counter(Group("feature_counter"), Na ("num_records"))))
 
-      override def graph: TailProducer[Storm, Any] = AggregatesV2Job.generateJobGraph[Storm](
+      overr de def graph: Ta lProducer[Storm, Any] = AggregatesV2Job.generateJobGraph[Storm](
         aggregateSet = aggregatesToCompute,
-        aggregateSourceToSummingbird = dataRecordSourceToStorm,
-        aggregateStoreToSummingbird = aggregateStoreToStorm,
+        aggregateS ceToSumm ngb rd = dataRecordS ceToStorm,
+        aggregateStoreToSumm ngb rd = aggregateStoreToStorm,
         featureCounters = featureCounters
       )
     }

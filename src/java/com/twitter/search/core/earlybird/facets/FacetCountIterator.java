@@ -1,57 +1,57 @@
-package com.twitter.search.core.earlybird.facets;
+package com.tw ter.search.core.earlyb rd.facets;
 
-import java.io.IOException;
-import java.util.List;
+ mport java. o. OExcept on;
+ mport java.ut l.L st;
 
-import com.twitter.common.collections.Pair;
+ mport com.tw ter.common.collect ons.Pa r;
 
 /**
- * The collect() method is called for every document for which facets shall be counted.
- * This iterator then calls the FacetAccumulators for all facets that belong to the
- * current document.
+ * T  collect()  thod  s called for every docu nt for wh ch facets shall be counted.
+ * T   erator t n calls t  FacetAccumulators for all facets that belong to t 
+ * current docu nt.
  */
-public abstract class FacetCountIterator implements FacetTermCollector {
+publ c abstract class FacetCount erator  mple nts FacetTermCollector {
 
-  public static class IncrementData {
-    public FacetAccumulator[] accumulators;
-    public int weightedCountIncrement;
-    public int penaltyIncrement;
-    public int tweepCred;
-    public int languageId;
+  publ c stat c class  ncre ntData {
+    publ c FacetAccumulator[] accumulators;
+    publ c  nt   ghtedCount ncre nt;
+    publ c  nt penalty ncre nt;
+    publ c  nt t epCred;
+    publ c  nt language d;
   }
 
-  public IncrementData incrementData = new IncrementData();
+  publ c  ncre ntData  ncre ntData = new  ncre ntData();
 
-  private List<Pair<Integer, Long>> proofs = null;
+  pr vate L st<Pa r< nteger, Long>> proofs = null;
 
-  void setIncrementData(IncrementData incrementData) {
-    this.incrementData = incrementData;
+  vo d set ncre ntData( ncre ntData  ncre ntData) {
+    t . ncre ntData =  ncre ntData;
   }
 
-  public void setProofs(List<Pair<Integer, Long>> proofs) {
-    this.proofs = proofs;
+  publ c vo d setProofs(L st<Pa r< nteger, Long>> proofs) {
+    t .proofs = proofs;
   }
 
-  // interface method that collects a specific term in a specific field for this document.
-  @Override
-  public boolean collect(int docID, long termID, int fieldID) {
-    FacetAccumulator accumulator = incrementData.accumulators[fieldID];
-    accumulator.add(termID, incrementData.weightedCountIncrement, incrementData.penaltyIncrement,
-                    incrementData.tweepCred);
-    accumulator.recordLanguage(incrementData.languageId);
+  //  nterface  thod that collects a spec f c term  n a spec f c f eld for t  docu nt.
+  @Overr de
+  publ c boolean collect( nt doc D, long term D,  nt f eld D) {
+    FacetAccumulator accumulator =  ncre ntData.accumulators[f eld D];
+    accumulator.add(term D,  ncre ntData.  ghtedCount ncre nt,  ncre ntData.penalty ncre nt,
+                     ncre ntData.t epCred);
+    accumulator.recordLanguage( ncre ntData.language d);
 
-    if (proofs != null) {
-      addProof(docID, termID, fieldID);
+     f (proofs != null) {
+      addProof(doc D, term D, f eld D);
     }
     return true;
   }
 
-  protected void addProof(int docID, long termID, int fieldID) {
-    proofs.add(new Pair<>(fieldID, termID));
+  protected vo d addProof( nt doc D, long term D,  nt f eld D) {
+    proofs.add(new Pa r<>(f eld D, term D));
   }
 
   /**
-   * Collected facets for the given document.
+   * Collected facets for t  g ven docu nt.
    */
-  public abstract void collect(int docID) throws IOException;
+  publ c abstract vo d collect( nt doc D) throws  OExcept on;
 }

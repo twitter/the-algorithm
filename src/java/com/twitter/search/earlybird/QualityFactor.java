@@ -1,17 +1,17 @@
-package com.twitter.search.earlybird;
+package com.tw ter.search.earlyb rd;
 
 /**
- * Interface defining a quality factor.
+ *  nterface def n ng a qual y factor.
  */
-public interface QualityFactor {
+publ c  nterface Qual yFactor {
   /**
-   * Returns the current quality factor.
-   * @return The quality factor; a number between 0.0 and 1.0.
+   * Returns t  current qual y factor.
+   * @return T  qual y factor; a number bet en 0.0 and 1.0.
    */
   double get();
 
   /**
-   * Starts a thread to update the quality factor periodically.
+   * Starts a thread to update t  qual y factor per od cally.
    */
-  void startUpdates();
+  vo d startUpdates();
 }

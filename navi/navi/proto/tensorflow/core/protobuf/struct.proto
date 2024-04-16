@@ -2,54 +2,54 @@ syntax = "proto3";
 
 package tensorflow;
 
-import "tensorflow/core/framework/tensor.proto";
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/types.proto";
+ mport "tensorflow/core/fra work/tensor.proto";
+ mport "tensorflow/core/fra work/tensor_shape.proto";
+ mport "tensorflow/core/fra work/types.proto";
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+opt on go_package = "g hub.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
-// `StructuredValue` represents a dynamically typed value representing various
-// data structures that are inspired by Python data structures typically used in
-// TensorFlow functions as inputs and outputs.
+// `StructuredValue` represents a dynam cally typed value represent ng var ous
+// data structures that are  nsp red by Python data structures typ cally used  n
+// TensorFlow funct ons as  nputs and outputs.
 //
-// For example when saving a Layer there may be a `training` argument. If the
-// user passes a boolean True/False, that switches between two concrete
-// TensorFlow functions. In order to switch between them in the same way after
-// loading the SavedModel, we need to represent "True" and "False".
+// For example w n sav ng a Layer t re may be a `tra n ng` argu nt.  f t 
+// user passes a boolean True/False, that sw c s bet en two concrete
+// TensorFlow funct ons.  n order to sw ch bet en t m  n t  sa  way after
+// load ng t  SavedModel,   need to represent "True" and "False".
 //
-// A more advanced example might be a function which takes a list of
-// dictionaries mapping from strings to Tensors. In order to map from
-// user-specified arguments `[{"a": tf.constant(1.)}, {"q": tf.constant(3.)}]`
-// after load to the right saved TensorFlow function, we need to represent the
-// nested structure and the strings, recording that we have a trace for anything
-// matching `[{"a": tf.TensorSpec(None, tf.float32)}, {"q": tf.TensorSpec([],
+// A more advanced example m ght be a funct on wh ch takes a l st of
+// d ct onar es mapp ng from str ngs to Tensors.  n order to map from
+// user-spec f ed argu nts `[{"a": tf.constant(1.)}, {"q": tf.constant(3.)}]`
+// after load to t  r ght saved TensorFlow funct on,   need to represent t 
+// nested structure and t  str ngs, record ng that   have a trace for anyth ng
+// match ng `[{"a": tf.TensorSpec(None, tf.float32)}, {"q": tf.TensorSpec([],
 // tf.float64)}]` as an example.
 //
-// Likewise functions may return nested structures of Tensors, for example
-// returning a dictionary mapping from strings to Tensors. In order for the
-// loaded function to return the same structure we need to serialize it.
+// L kew se funct ons may return nested structures of Tensors, for example
+// return ng a d ct onary mapp ng from str ngs to Tensors.  n order for t 
+// loaded funct on to return t  sa  structure   need to ser al ze  .
 //
-// This is an ergonomic aid for working with loaded SavedModels, not a promise
-// to serialize all possible function signatures. For example we do not expect
-// to pickle generic Python objects, and ideally we'd stay language-agnostic.
-message StructuredValue {
-  // The kind of value.
-  oneof kind {
+// T   s an ergonom c a d for work ng w h loaded SavedModels, not a prom se
+// to ser al ze all poss ble funct on s gnatures. For example   do not expect
+// to p ckle gener c Python objects, and  deally  'd stay language-agnost c.
+ ssage StructuredValue {
+  // T  k nd of value.
+  oneof k nd {
     // Represents None.
     NoneValue none_value = 1;
 
-    // Represents a double-precision floating-point value (a Python `float`).
+    // Represents a double-prec s on float ng-po nt value (a Python `float`).
     double float64_value = 11;
-    // Represents a signed integer value, limited to 64 bits.
-    // Larger values from Python's arbitrary-precision integers are unsupported.
-    sint64 int64_value = 12;
-    // Represents a string of Unicode characters stored in a Python `str`.
-    // In Python 3, this is exactly what type `str` is.
-    // In Python 2, this is the UTF-8 encoding of the characters.
-    // For strings with ASCII characters only (as often used in TensorFlow code)
-    // there is effectively no difference between the language versions.
-    // The obsolescent `unicode` type of Python 2 is not supported here.
-    string string_value = 13;
+    // Represents a s gned  nteger value, l m ed to 64 b s.
+    // Larger values from Python's arb rary-prec s on  ntegers are unsupported.
+    s nt64  nt64_value = 12;
+    // Represents a str ng of Un code characters stored  n a Python `str`.
+    //  n Python 3, t   s exactly what type `str`  s.
+    //  n Python 2, t   s t  UTF-8 encod ng of t  characters.
+    // For str ngs w h ASC   characters only (as often used  n TensorFlow code)
+    // t re  s effect vely no d fference bet en t  language vers ons.
+    // T  obsolescent `un code` type of Python 2  s not supported  re.
+    str ng str ng_value = 13;
     // Represents a boolean value.
     bool bool_value = 14;
 
@@ -64,97 +64,97 @@ message StructuredValue {
     // Represents a value for tf.BoundedTensorSpec.
     BoundedTensorSpecProto bounded_tensor_spec_value = 35;
 
-    // Represents a list of `Value`.
-    ListValue list_value = 51;
+    // Represents a l st of `Value`.
+    L stValue l st_value = 51;
     // Represents a tuple of `Value`.
     TupleValue tuple_value = 52;
-    // Represents a dict `Value`.
-    DictValue dict_value = 53;
-    // Represents Python's namedtuple.
-    NamedTupleValue named_tuple_value = 54;
+    // Represents a d ct `Value`.
+    D ctValue d ct_value = 53;
+    // Represents Python's na dtuple.
+    Na dTupleValue na d_tuple_value = 54;
   }
 }
 
 // Represents None.
-message NoneValue {}
+ ssage NoneValue {}
 
-// Represents a Python list.
-message ListValue {
+// Represents a Python l st.
+ ssage L stValue {
   repeated StructuredValue values = 1;
 }
 
 // Represents a Python tuple.
-message TupleValue {
+ ssage TupleValue {
   repeated StructuredValue values = 1;
 }
 
-// Represents a Python dict keyed by `str`.
-// The comment on Unicode from Value.string_value applies analogously.
-message DictValue {
-  map<string, StructuredValue> fields = 1;
+// Represents a Python d ct keyed by `str`.
+// T  com nt on Un code from Value.str ng_value appl es analogously.
+ ssage D ctValue {
+  map<str ng, StructuredValue> f elds = 1;
 }
 
-// Represents a (key, value) pair.
-message PairValue {
-  string key = 1;
+// Represents a (key, value) pa r.
+ ssage Pa rValue {
+  str ng key = 1;
   StructuredValue value = 2;
 }
 
-// Represents Python's namedtuple.
-message NamedTupleValue {
-  string name = 1;
-  repeated PairValue values = 2;
+// Represents Python's na dtuple.
+ ssage Na dTupleValue {
+  str ng na  = 1;
+  repeated Pa rValue values = 2;
 }
 
 // A protobuf to represent tf.TensorSpec.
-message TensorSpecProto {
-  string name = 1;
+ ssage TensorSpecProto {
+  str ng na  = 1;
   tensorflow.TensorShapeProto shape = 2;
   tensorflow.DataType dtype = 3;
 }
 
 // A protobuf to represent tf.BoundedTensorSpec.
-message BoundedTensorSpecProto {
-  string name = 1;
+ ssage BoundedTensorSpecProto {
+  str ng na  = 1;
   tensorflow.TensorShapeProto shape = 2;
   tensorflow.DataType dtype = 3;
-  tensorflow.TensorProto minimum = 4;
-  tensorflow.TensorProto maximum = 5;
+  tensorflow.TensorProto m n mum = 4;
+  tensorflow.TensorProto max mum = 5;
 }
 
 // Represents a tf.TypeSpec
-message TypeSpecProto {
+ ssage TypeSpecProto {
   enum TypeSpecClass {
     UNKNOWN = 0;
     SPARSE_TENSOR_SPEC = 1;   // tf.SparseTensorSpec
-    INDEXED_SLICES_SPEC = 2;  // tf.IndexedSlicesSpec
+     NDEXED_SL CES_SPEC = 2;  // tf. ndexedSl cesSpec
     RAGGED_TENSOR_SPEC = 3;   // tf.RaggedTensorSpec
     TENSOR_ARRAY_SPEC = 4;    // tf.TensorArraySpec
     DATA_DATASET_SPEC = 5;    // tf.data.DatasetSpec
-    DATA_ITERATOR_SPEC = 6;   // IteratorSpec from data/ops/iterator_ops.py
-    OPTIONAL_SPEC = 7;        // tf.OptionalSpec
-    PER_REPLICA_SPEC = 8;     // PerReplicaSpec from distribute/values.py
-    VARIABLE_SPEC = 9;        // tf.VariableSpec
-    ROW_PARTITION_SPEC = 10;  // RowPartitionSpec from ragged/row_partition.py
+    DATA_ TERATOR_SPEC = 6;   //  eratorSpec from data/ops/ erator_ops.py
+    OPT ONAL_SPEC = 7;        // tf.Opt onalSpec
+    PER_REPL CA_SPEC = 8;     // PerRepl caSpec from d str bute/values.py
+    VAR ABLE_SPEC = 9;        // tf.Var ableSpec
+    ROW_PART T ON_SPEC = 10;  // RowPart  onSpec from ragged/row_part  on.py
     reserved 11;
-    REGISTERED_TYPE_SPEC = 12;  // The type registered as type_spec_class_name.
-    EXTENSION_TYPE_SPEC = 13;   // Subclasses of tf.ExtensionType
+    REG STERED_TYPE_SPEC = 12;  // T  type reg stered as type_spec_class_na .
+    EXTENS ON_TYPE_SPEC = 13;   // Subclasses of tf.Extens onType
   }
   TypeSpecClass type_spec_class = 1;
 
-  // The value returned by TypeSpec._serialize().
+  // T  value returned by TypeSpec._ser al ze().
   StructuredValue type_state = 2;
 
-  // The name of the TypeSpec class.
-  //  * If type_spec_class == REGISTERED_TYPE_SPEC, the TypeSpec class is
-  //    the one registered under this name. For types registered outside
-  //    core TensorFlow by an add-on library, that library must be loaded
-  //    before this value can be deserialized by nested_structure_coder.
-  //  * If type_spec_class specifies a particular TypeSpec class, this field is
-  //    redundant with the type_spec_class enum, and is only used for error
-  //    reporting in older binaries that do not know the tupe_spec_class enum.
-  string type_spec_class_name = 3;
+  // T  na  of t  TypeSpec class.
+  //  *  f type_spec_class == REG STERED_TYPE_SPEC, t  TypeSpec class  s
+  //    t  one reg stered under t  na . For types reg stered outs de
+  //    core TensorFlow by an add-on l brary, that l brary must be loaded
+  //    before t  value can be deser al zed by nested_structure_coder.
+  //  *  f type_spec_class spec f es a part cular TypeSpec class, t  f eld  s
+  //    redundant w h t  type_spec_class enum, and  s only used for error
+  //    report ng  n older b nar es that do not know t  tupe_spec_class enum.
+  str ng type_spec_class_na  = 3;
 
-  // The number of flat tensor components required by this TypeSpec.
-  int32 num_flat_components = 4;
+  // T  number of flat tensor components requ red by t  TypeSpec.
+   nt32 num_flat_components = 4;
 }

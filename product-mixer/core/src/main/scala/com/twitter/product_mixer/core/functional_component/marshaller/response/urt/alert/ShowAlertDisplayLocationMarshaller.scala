@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.urt.alert
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertDisplayLocation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.Top
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.Bottom
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.timelines.render.{thriftscala => urt}
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.alert.ShowAlertD splayLocat on
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.alert.Top
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.alert.Bottom
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport com.tw ter.t  l nes.render.{thr ftscala => urt}
 
-@Singleton
-class ShowAlertDisplayLocationMarshaller @Inject() () {
+@S ngleton
+class ShowAlertD splayLocat onMarshaller @ nject() () {
 
-  def apply(alertDisplayLocation: ShowAlertDisplayLocation): urt.ShowAlertDisplayLocation =
-    alertDisplayLocation match {
-      case Top => urt.ShowAlertDisplayLocation.Top
-      case Bottom => urt.ShowAlertDisplayLocation.Bottom
+  def apply(alertD splayLocat on: ShowAlertD splayLocat on): urt.ShowAlertD splayLocat on =
+    alertD splayLocat on match {
+      case Top => urt.ShowAlertD splayLocat on.Top
+      case Bottom => urt.ShowAlertD splayLocat on.Bottom
     }
 
 }

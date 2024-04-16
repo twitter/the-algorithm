@@ -1,12 +1,12 @@
-package com.twitter.tweetypie
+package com.tw ter.t etyp e
 
-import com.twitter.servo.request
-import com.twitter.servo.request.ClientRequestAuthorizer
+ mport com.tw ter.servo.request
+ mport com.tw ter.servo.request.Cl entRequestAuthor zer
 
-package object service {
-  type ClientRequestAuthorizer = request.ClientRequestAuthorizer
+package object serv ce {
+  type Cl entRequestAuthor zer = request.Cl entRequestAuthor zer
 
-  type UnauthorizedException = request.ClientRequestAuthorizer.UnauthorizedException
-  val UnauthorizedException: ClientRequestAuthorizer.UnauthorizedException.type =
-    request.ClientRequestAuthorizer.UnauthorizedException
+  type Unauthor zedExcept on = request.Cl entRequestAuthor zer.Unauthor zedExcept on
+  val Unauthor zedExcept on: Cl entRequestAuthor zer.Unauthor zedExcept on.type =
+    request.Cl entRequestAuthor zer.Unauthor zedExcept on
 }

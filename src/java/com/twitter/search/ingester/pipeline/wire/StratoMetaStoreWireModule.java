@@ -1,119 +1,119 @@
-package com.twitter.search.ingester.pipeline.wire;
+package com.tw ter.search. ngester.p pel ne.w re;
 
-import java.util.concurrent.TimeUnit;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+ mport java.ut l.concurrent.T  Un ;
+ mport javax.nam ng.Context;
+ mport javax.nam ng. n  alContext;
+ mport javax.nam ng.Nam ngExcept on;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .thr ft.protocol.TB naryProtocol;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.common_internal.manhattan.ManhattanClient;
-import com.twitter.common_internal.manhattan.ManhattanClientImpl;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.ThriftMux;
-import com.twitter.finagle.builder.ClientBuilder;
-import com.twitter.finagle.builder.ClientConfig.Yes;
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
-import com.twitter.finagle.mtls.client.MtlsThriftMuxClient;
-import com.twitter.finagle.mux.transport.OpportunisticTls;
-import com.twitter.finagle.stats.DefaultStatsReceiver;
-import com.twitter.finagle.thrift.ClientId;
-import com.twitter.finagle.thrift.ThriftClientRequest;
-import com.twitter.manhattan.thriftv1.ConsistencyLevel;
-import com.twitter.manhattan.thriftv1.ManhattanCoordinator;
-import com.twitter.metastore.client_v2.MetastoreClient;
-import com.twitter.metastore.client_v2.MetastoreClientImpl;
-import com.twitter.util.Duration;
+ mport com.tw ter.common.quant y.Amount;
+ mport com.tw ter.common.quant y.T  ;
+ mport com.tw ter.common_ nternal.manhattan.ManhattanCl ent;
+ mport com.tw ter.common_ nternal.manhattan.ManhattanCl ent mpl;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.Thr ftMux;
+ mport com.tw ter.f nagle.bu lder.Cl entBu lder;
+ mport com.tw ter.f nagle.bu lder.Cl entConf g.Yes;
+ mport com.tw ter.f nagle.mtls.aut nt cat on.Serv ce dent f er;
+ mport com.tw ter.f nagle.mtls.cl ent.MtlsThr ftMuxCl ent;
+ mport com.tw ter.f nagle.mux.transport.Opportun st cTls;
+ mport com.tw ter.f nagle.stats.DefaultStatsRece ver;
+ mport com.tw ter.f nagle.thr ft.Cl ent d;
+ mport com.tw ter.f nagle.thr ft.Thr ftCl entRequest;
+ mport com.tw ter.manhattan.thr ftv1.Cons stencyLevel;
+ mport com.tw ter.manhattan.thr ftv1.ManhattanCoord nator;
+ mport com.tw ter. tastore.cl ent_v2. tastoreCl ent;
+ mport com.tw ter. tastore.cl ent_v2. tastoreCl ent mpl;
+ mport com.tw ter.ut l.Durat on;
 
-public class StratoMetaStoreWireModule {
-  private WireModule wireModule;
-  private static final Logger LOG = LoggerFactory.getLogger(StratoMetaStoreWireModule.class);
+publ c class Strato taStoreW reModule {
+  pr vate W reModule w reModule;
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Strato taStoreW reModule.class);
 
-  public StratoMetaStoreWireModule(WireModule wireModule) {
-    this.wireModule = wireModule;
+  publ c Strato taStoreW reModule(W reModule w reModule) {
+    t .w reModule = w reModule;
   }
 
-  private static final String MANHATTAN_SD_ZK_ROLE =
-      WireModule.JNDI_PIPELINE_ROOT + "manhattanSDZKRole";
-  private static final String MANHATTAN_SD_ZK_ENV =
-      WireModule.JNDI_PIPELINE_ROOT + "manhattanSDZKEnv";
-  private static final String MANHATTAN_SD_ZK_NAME =
-      WireModule.JNDI_PIPELINE_ROOT + "manhattanSDZKName";
-  private static final String MANHATTAN_APPLICATION_ID = "ingester_starbuck";
+  pr vate stat c f nal Str ng MANHATTAN_SD_ZK_ROLE =
+      W reModule.JND _P PEL NE_ROOT + "manhattanSDZKRole";
+  pr vate stat c f nal Str ng MANHATTAN_SD_ZK_ENV =
+      W reModule.JND _P PEL NE_ROOT + "manhattanSDZKEnv";
+  pr vate stat c f nal Str ng MANHATTAN_SD_ZK_NAME =
+      W reModule.JND _P PEL NE_ROOT + "manhattanSDZKNa ";
+  pr vate stat c f nal Str ng MANHATTAN_APPL CAT ON_ D = " ngester_starbuck";
 
-  private static class Options {
-    // The client id as a string
-    private final String clientId = "ingester";
+  pr vate stat c class Opt ons {
+    // T  cl ent  d as a str ng
+    pr vate f nal Str ng cl ent d = " ngester";
 
-    // The connection timeout in millis
-    private final long connectTimeout = 50;
+    // T  connect on t  out  n m ll s
+    pr vate f nal long connectT  out = 50;
 
-    // The request timeout im millis
-    private final long requestTimeout = 300;
+    // T  request t  out  m m ll s
+    pr vate f nal long requestT  out = 300;
 
-    // Total timeout per call (including retries)
-    private final long totalTimeout = 500;
+    // Total t  out per call ( nclud ng retr es)
+    pr vate f nal long totalT  out = 500;
 
-    // The maximum number of retries per call
-    private final int retries = 2;
+    // T  max mum number of retr es per call
+    pr vate f nal  nt retr es = 2;
   }
 
-  private final Options options = new Options();
+  pr vate f nal Opt ons opt ons = new Opt ons();
 
-  private ClientBuilder<ThriftClientRequest, byte[], ?, Yes, Yes> getClientBuilder(
-      String name,
-      ServiceIdentifier serviceIdentifier) {
-    return getClientBuilder(name, new ClientId(options.clientId), serviceIdentifier);
+  pr vate Cl entBu lder<Thr ftCl entRequest, byte[], ?, Yes, Yes> getCl entBu lder(
+      Str ng na ,
+      Serv ce dent f er serv ce dent f er) {
+    return getCl entBu lder(na , new Cl ent d(opt ons.cl ent d), serv ce dent f er);
   }
 
-  private ClientBuilder<ThriftClientRequest, byte[], ?, Yes, Yes> getClientBuilder(
-          String name,
-          ClientId clientId,
-          ServiceIdentifier serviceIdentifier) {
-    Preconditions.checkNotNull(serviceIdentifier,
-        "Can't create Metastore Manhattan client with S2S auth because Service Identifier is null");
-    LOG.info(String.format("Service identifier for Metastore Manhattan client: %s",
-        ServiceIdentifier.asString(serviceIdentifier)));
-    return ClientBuilder.get()
-        .name(name)
-        .tcpConnectTimeout(new Duration(TimeUnit.MILLISECONDS.toNanos(options.connectTimeout)))
-        .requestTimeout(new Duration(TimeUnit.MILLISECONDS.toNanos(options.requestTimeout)))
-        .timeout(new Duration(TimeUnit.MILLISECONDS.toNanos(options.totalTimeout)))
-        .retries(options.retries)
-        .reportTo(DefaultStatsReceiver.get())
-        .stack(new MtlsThriftMuxClient(ThriftMux.client())
-            .withMutualTls(serviceIdentifier)
-            .withClientId(clientId)
-            .withOpportunisticTls(OpportunisticTls.Required()));
+  pr vate Cl entBu lder<Thr ftCl entRequest, byte[], ?, Yes, Yes> getCl entBu lder(
+          Str ng na ,
+          Cl ent d cl ent d,
+          Serv ce dent f er serv ce dent f er) {
+    Precond  ons.c ckNotNull(serv ce dent f er,
+        "Can't create  tastore Manhattan cl ent w h S2S auth because Serv ce  dent f er  s null");
+    LOG. nfo(Str ng.format("Serv ce  dent f er for  tastore Manhattan cl ent: %s",
+        Serv ce dent f er.asStr ng(serv ce dent f er)));
+    return Cl entBu lder.get()
+        .na (na )
+        .tcpConnectT  out(new Durat on(T  Un .M LL SECONDS.toNanos(opt ons.connectT  out)))
+        .requestT  out(new Durat on(T  Un .M LL SECONDS.toNanos(opt ons.requestT  out)))
+        .t  out(new Durat on(T  Un .M LL SECONDS.toNanos(opt ons.totalT  out)))
+        .retr es(opt ons.retr es)
+        .reportTo(DefaultStatsRece ver.get())
+        .stack(new MtlsThr ftMuxCl ent(Thr ftMux.cl ent())
+            .w hMutualTls(serv ce dent f er)
+            .w hCl ent d(cl ent d)
+            .w hOpportun st cTls(Opportun st cTls.Requ red()));
   }
 
   /**
-   * Returns the Metastore client.
+   * Returns t   tastore cl ent.
    */
-  public MetastoreClient getMetastoreClient(ServiceIdentifier serviceIdentifier)
-      throws NamingException {
-    Context jndiContext = new InitialContext();
-    String destString = String.format("/cluster/local/%s/%s/%s",
-        jndiContext.lookup(MANHATTAN_SD_ZK_ROLE),
-        jndiContext.lookup(MANHATTAN_SD_ZK_ENV),
-        jndiContext.lookup(MANHATTAN_SD_ZK_NAME));
-    LOG.info("Manhattan serverset Name: {}", destString);
+  publ c  tastoreCl ent get tastoreCl ent(Serv ce dent f er serv ce dent f er)
+      throws Nam ngExcept on {
+    Context jnd Context = new  n  alContext();
+    Str ng destStr ng = Str ng.format("/cluster/local/%s/%s/%s",
+        jnd Context.lookup(MANHATTAN_SD_ZK_ROLE),
+        jnd Context.lookup(MANHATTAN_SD_ZK_ENV),
+        jnd Context.lookup(MANHATTAN_SD_ZK_NAME));
+    LOG. nfo("Manhattan serverset Na : {}", destStr ng);
 
-    Service<ThriftClientRequest, byte[]> service =
-        ClientBuilder.safeBuild(getClientBuilder("metastore", serviceIdentifier).dest(destString));
+    Serv ce<Thr ftCl entRequest, byte[]> serv ce =
+        Cl entBu lder.safeBu ld(getCl entBu lder(" tastore", serv ce dent f er).dest(destStr ng));
 
-    ManhattanClient manhattanClient = new ManhattanClientImpl(
-        new ManhattanCoordinator.ServiceToClient(service, new TBinaryProtocol.Factory()),
-        MANHATTAN_APPLICATION_ID,
-        Amount.of((int) options.requestTimeout, Time.MILLISECONDS),
-        ConsistencyLevel.ONE);
+    ManhattanCl ent manhattanCl ent = new ManhattanCl ent mpl(
+        new ManhattanCoord nator.Serv ceToCl ent(serv ce, new TB naryProtocol.Factory()),
+        MANHATTAN_APPL CAT ON_ D,
+        Amount.of(( nt) opt ons.requestT  out, T  .M LL SECONDS),
+        Cons stencyLevel.ONE);
 
-    return new MetastoreClientImpl(manhattanClient);
+    return new  tastoreCl ent mpl(manhattanCl ent);
   }
 }

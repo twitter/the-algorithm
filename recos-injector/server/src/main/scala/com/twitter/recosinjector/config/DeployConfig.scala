@@ -1,215 +1,215 @@
-package com.twitter.recosinjector.config
+package com.tw ter.recos njector.conf g
 
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.client.ClientRegistry
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.TweetCreationTimeMHStore
-import com.twitter.frigate.common.util.Finagle._
-import com.twitter.frigate.common.util.{UrlInfo, UrlInfoInjection, UrlResolver}
-import com.twitter.gizmoduck.thriftscala.{LookupContext, QueryFields, User, UserService}
-import com.twitter.hermit.store.common.{ObservedCachedReadableStore, ObservedMemcachedReadableStore}
-import com.twitter.hermit.store.gizmoduck.GizmoduckUserStore
-import com.twitter.hermit.store.tweetypie.TweetyPieStore
-import com.twitter.logging.Logger
-import com.twitter.pink_floyd.thriftscala.{ClientIdentifier, Storer}
-import com.twitter.socialgraph.thriftscala.{IdsRequest, SocialGraphService}
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.socialgraph.SocialGraph
-import com.twitter.stitch.storehaus.ReadableStoreOfStitch
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storage.client.manhattan.kv.{
-  ManhattanKVClient,
-  ManhattanKVClientMtlsParams,
-  ManhattanKVEndpointBuilder
+ mport com.tw ter.b ject on.scrooge.B naryScalaCodec
+ mport com.tw ter.convers ons.Durat onOps._
+ mport com.tw ter.f nagle.cl ent.Cl entReg stry
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.fr gate.common.store.T etCreat onT  MHStore
+ mport com.tw ter.fr gate.common.ut l.F nagle._
+ mport com.tw ter.fr gate.common.ut l.{Url nfo, Url nfo nject on, UrlResolver}
+ mport com.tw ter.g zmoduck.thr ftscala.{LookupContext, QueryF elds, User, UserServ ce}
+ mport com.tw ter. rm .store.common.{ObservedCac dReadableStore, Observed mcac dReadableStore}
+ mport com.tw ter. rm .store.g zmoduck.G zmoduckUserStore
+ mport com.tw ter. rm .store.t etyp e.T etyP eStore
+ mport com.tw ter.logg ng.Logger
+ mport com.tw ter.p nk_floyd.thr ftscala.{Cl ent dent f er, Storer}
+ mport com.tw ter.soc algraph.thr ftscala.{ dsRequest, Soc alGraphServ ce}
+ mport com.tw ter.spam.rtf.thr ftscala.SafetyLevel
+ mport com.tw ter.st ch.soc algraph.Soc alGraph
+ mport com.tw ter.st ch.storehaus.ReadableStoreOfSt ch
+ mport com.tw ter.st ch.t etyp e.T etyP e.T etyP eResult
+ mport com.tw ter.storage.cl ent.manhattan.kv.{
+  ManhattanKVCl ent,
+  ManhattanKVCl entMtlsParams,
+  ManhattanKVEndpo ntBu lder
 }
-import com.twitter.storehaus.ReadableStore
-import com.twitter.tweetypie.thriftscala.{GetTweetOptions, TweetService}
-import com.twitter.util.Future
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t etyp e.thr ftscala.{GetT etOpt ons, T etServ ce}
+ mport com.tw ter.ut l.Future
 
 /*
- * Any finagle clients should not be defined as lazy. If defined lazy,
- * ClientRegistry.expAllRegisteredClientsResolved() call in init will not ensure that the clients
- * are active before thrift endpoint is active. We want the clients to be active, because zookeeper
- * resolution triggered by first request(s) might result in the request(s) failing.
+ * Any f nagle cl ents should not be def ned as lazy.  f def ned lazy,
+ * Cl entReg stry.expAllReg steredCl entsResolved() call  n  n  w ll not ensure that t  cl ents
+ * are act ve before thr ft endpo nt  s act ve.   want t  cl ents to be act ve, because zookeeper
+ * resolut on tr ggered by f rst request(s) m ght result  n t  request(s) fa l ng.
  */
-trait DeployConfig extends Config with CacheConfig {
-  implicit def statsReceiver: StatsReceiver
+tra  DeployConf g extends Conf g w h Cac Conf g {
+   mpl c  def statsRece ver: StatsRece ver
 
   def log: Logger
 
-  // Clients
-  val gizmoduckClient = new UserService.FinagledClient(
-    readOnlyThriftService(
-      "gizmoduck",
-      "/s/gizmoduck/gizmoduck",
-      statsReceiver,
-      recosInjectorThriftClientId,
-      requestTimeout = 450.milliseconds,
-      mTLSServiceIdentifier = Some(serviceIdentifier)
+  // Cl ents
+  val g zmoduckCl ent = new UserServ ce.F nagledCl ent(
+    readOnlyThr ftServ ce(
+      "g zmoduck",
+      "/s/g zmoduck/g zmoduck",
+      statsRece ver,
+      recos njectorThr ftCl ent d,
+      requestT  out = 450.m ll seconds,
+      mTLSServ ce dent f er = So (serv ce dent f er)
     )
   )
-  val tweetyPieClient = new TweetService.FinagledClient(
-    readOnlyThriftService(
-      "tweetypie",
-      "/s/tweetypie/tweetypie",
-      statsReceiver,
-      recosInjectorThriftClientId,
-      requestTimeout = 450.milliseconds,
-      mTLSServiceIdentifier = Some(serviceIdentifier)
-    )
-  )
-
-  val sgsClient = new SocialGraphService.FinagledClient(
-    readOnlyThriftService(
-      "socialgraph",
-      "/s/socialgraph/socialgraph",
-      statsReceiver,
-      recosInjectorThriftClientId,
-      requestTimeout = 450.milliseconds,
-      mTLSServiceIdentifier = Some(serviceIdentifier)
+  val t etyP eCl ent = new T etServ ce.F nagledCl ent(
+    readOnlyThr ftServ ce(
+      "t etyp e",
+      "/s/t etyp e/t etyp e",
+      statsRece ver,
+      recos njectorThr ftCl ent d,
+      requestT  out = 450.m ll seconds,
+      mTLSServ ce dent f er = So (serv ce dent f er)
     )
   )
 
-  val pinkStoreClient = new Storer.FinagledClient(
-    readOnlyThriftService(
-      "pink_store",
-      "/s/spiderduck/pink-store",
-      statsReceiver,
-      recosInjectorThriftClientId,
-      requestTimeout = 450.milliseconds,
-      mTLSServiceIdentifier = Some(serviceIdentifier)
+  val sgsCl ent = new Soc alGraphServ ce.F nagledCl ent(
+    readOnlyThr ftServ ce(
+      "soc algraph",
+      "/s/soc algraph/soc algraph",
+      statsRece ver,
+      recos njectorThr ftCl ent d,
+      requestT  out = 450.m ll seconds,
+      mTLSServ ce dent f er = So (serv ce dent f er)
+    )
+  )
+
+  val p nkStoreCl ent = new Storer.F nagledCl ent(
+    readOnlyThr ftServ ce(
+      "p nk_store",
+      "/s/sp derduck/p nk-store",
+      statsRece ver,
+      recos njectorThr ftCl ent d,
+      requestT  out = 450.m ll seconds,
+      mTLSServ ce dent f er = So (serv ce dent f er)
     )
   )
 
   // Stores
-  private val _gizmoduckStore = {
-    val queryFields: Set[QueryFields] = Set(
-      QueryFields.Discoverability,
-      QueryFields.Labels,
-      QueryFields.Safety
+  pr vate val _g zmoduckStore = {
+    val queryF elds: Set[QueryF elds] = Set(
+      QueryF elds.D scoverab l y,
+      QueryF elds.Labels,
+      QueryF elds.Safety
     )
     val context: LookupContext = LookupContext(
-      includeDeactivated = true,
-      safetyLevel = Some(SafetyLevel.Recommendations)
+       ncludeDeact vated = true,
+      safetyLevel = So (SafetyLevel.Recom ndat ons)
     )
 
-    GizmoduckUserStore(
-      client = gizmoduckClient,
-      queryFields = queryFields,
+    G zmoduckUserStore(
+      cl ent = g zmoduckCl ent,
+      queryF elds = queryF elds,
       context = context,
-      statsReceiver = statsReceiver
+      statsRece ver = statsRece ver
     )
   }
 
-  override val userStore: ReadableStore[Long, User] = {
-    // memcache based cache
-    ObservedMemcachedReadableStore.fromCacheClient(
-      backingStore = _gizmoduckStore,
-      cacheClient = recosInjectorCoreSvcsCacheClient,
-      ttl = 2.hours
+  overr de val userStore: ReadableStore[Long, User] = {
+    //  mcac  based cac 
+    Observed mcac dReadableStore.fromCac Cl ent(
+      back ngStore = _g zmoduckStore,
+      cac Cl ent = recos njectorCoreSvcsCac Cl ent,
+      ttl = 2.h s
     )(
-      valueInjection = BinaryScalaCodec(User),
-      statsReceiver = statsReceiver.scope("UserStore"),
-      keyToString = { k: Long =>
-        s"usri/$k"
+      value nject on = B naryScalaCodec(User),
+      statsRece ver = statsRece ver.scope("UserStore"),
+      keyToStr ng = { k: Long =>
+        s"usr /$k"
       }
     )
   }
 
   /**
-   * TweetyPie store, used to fetch tweet objects when unavailable, and also as a source of
-   * tweet SafetyLevel filtering.
-   * Note: we do NOT cache TweetyPie calls, as it makes tweet SafetyLevel filtering less accurate.
-   * TweetyPie QPS is < 20K/cluster.
-   * More info is here:
-   * https://cgit.twitter.biz/source/tree/src/thrift/com/twitter/spam/rtf/safety_level.thrift
+   * T etyP e store, used to fetch t et objects w n unava lable, and also as a s ce of
+   * t et SafetyLevel f lter ng.
+   * Note:   do NOT cac  T etyP e calls, as   makes t et SafetyLevel f lter ng less accurate.
+   * T etyP e QPS  s < 20K/cluster.
+   * More  nfo  s  re:
+   * https://cg .tw ter.b z/s ce/tree/src/thr ft/com/tw ter/spam/rtf/safety_level.thr ft
    */
-  override val tweetyPieStore: ReadableStore[Long, TweetyPieResult] = {
-    val getTweetOptions = Some(
-      GetTweetOptions(
-        includeCards = true,
-        safetyLevel = Some(SafetyLevel.RecosWritePath)
+  overr de val t etyP eStore: ReadableStore[Long, T etyP eResult] = {
+    val getT etOpt ons = So (
+      GetT etOpt ons(
+         ncludeCards = true,
+        safetyLevel = So (SafetyLevel.RecosWr ePath)
       )
     )
-    TweetyPieStore(
-      tweetyPieClient,
-      getTweetOptions,
-      convertExceptionsToNotFound = false // Do not suppress TweetyPie errors. Leave it to caller
+    T etyP eStore(
+      t etyP eCl ent,
+      getT etOpt ons,
+      convertExcept onsToNotFound = false // Do not suppress T etyP e errors. Leave   to caller
     )
   }
 
-  private val _urlInfoStore = {
-    //Initialize pink store client, for parsing url
+  pr vate val _url nfoStore = {
+    // n  al ze p nk store cl ent, for pars ng url
     UrlResolver(
-      pinkStoreClient,
-      statsReceiver.scope("urlFetcher"),
-      clientId = ClientIdentifier.Recoshose
+      p nkStoreCl ent,
+      statsRece ver.scope("urlFetc r"),
+      cl ent d = Cl ent dent f er.Recoshose
     )
   }
 
-  override val urlInfoStore: ReadableStore[String, UrlInfo] = {
-    // memcache based cache
-    val memcachedStore = ObservedMemcachedReadableStore.fromCacheClient(
-      backingStore = _urlInfoStore,
-      cacheClient = recosInjectorCoreSvcsCacheClient,
-      ttl = 2.hours
+  overr de val url nfoStore: ReadableStore[Str ng, Url nfo] = {
+    //  mcac  based cac 
+    val  mcac dStore = Observed mcac dReadableStore.fromCac Cl ent(
+      back ngStore = _url nfoStore,
+      cac Cl ent = recos njectorCoreSvcsCac Cl ent,
+      ttl = 2.h s
     )(
-      valueInjection = UrlInfoInjection,
-      statsReceiver = statsReceiver.scope("UrlInfoStore"),
-      keyToString = { k: String =>
-        s"uisri/$k"
+      value nject on = Url nfo nject on,
+      statsRece ver = statsRece ver.scope("Url nfoStore"),
+      keyToStr ng = { k: Str ng =>
+        s"u sr /$k"
       }
     )
 
-    ObservedCachedReadableStore.from(
-      memcachedStore,
-      ttl = 1.minutes,
-      maxKeys = 1e5.toInt,
-      windowSize = 10000L,
-      cacheName = "url_store_in_proc_cache"
-    )(statsReceiver.scope("url_store_in_proc_cache"))
+    ObservedCac dReadableStore.from(
+       mcac dStore,
+      ttl = 1.m nutes,
+      maxKeys = 1e5.to nt,
+      w ndowS ze = 10000L,
+      cac Na  = "url_store_ n_proc_cac "
+    )(statsRece ver.scope("url_store_ n_proc_cac "))
   }
 
-  override val socialGraphIdStore = ReadableStoreOfStitch { idsRequest: IdsRequest =>
-    SocialGraph(sgsClient).ids(idsRequest)
+  overr de val soc alGraph dStore = ReadableStoreOfSt ch {  dsRequest:  dsRequest =>
+    Soc alGraph(sgsCl ent). ds( dsRequest)
   }
 
   /**
-   * MH Store for updating the last time user created a tweet
+   * MH Store for updat ng t  last t   user created a t et
    */
-  val tweetCreationStore: TweetCreationTimeMHStore = {
-    val client = ManhattanKVClient(
-      appId = "recos_tweet_creation_info",
-      dest = "/s/manhattan/omega.native-thrift",
-      mtlsParams = ManhattanKVClientMtlsParams(serviceIdentifier)
+  val t etCreat onStore: T etCreat onT  MHStore = {
+    val cl ent = ManhattanKVCl ent(
+      app d = "recos_t et_creat on_ nfo",
+      dest = "/s/manhattan/o ga.nat ve-thr ft",
+      mtlsParams = ManhattanKVCl entMtlsParams(serv ce dent f er)
     )
 
-    val endpoint = ManhattanKVEndpointBuilder(client)
-      .defaultMaxTimeout(700.milliseconds)
-      .statsReceiver(
-        statsReceiver
-          .scope(serviceIdentifier.zone)
-          .scope(serviceIdentifier.environment)
-          .scope("recos_injector_tweet_creation_info_store")
+    val endpo nt = ManhattanKVEndpo ntBu lder(cl ent)
+      .defaultMaxT  out(700.m ll seconds)
+      .statsRece ver(
+        statsRece ver
+          .scope(serv ce dent f er.zone)
+          .scope(serv ce dent f er.env ron nt)
+          .scope("recos_ njector_t et_creat on_ nfo_store")
       )
-      .build()
+      .bu ld()
 
-    val dataset = if (serviceIdentifier.environment == "prod") {
-      "recos_injector_tweet_creation_info"
+    val dataset =  f (serv ce dent f er.env ron nt == "prod") {
+      "recos_ njector_t et_creat on_ nfo"
     } else {
-      "recos_injector_tweet_creation_info_staging"
+      "recos_ njector_t et_creat on_ nfo_stag ng"
     }
 
-    new TweetCreationTimeMHStore(
-      cluster = serviceIdentifier.zone,
-      endpoint = endpoint,
+    new T etCreat onT  MHStore(
+      cluster = serv ce dent f er.zone,
+      endpo nt = endpo nt,
       dataset = dataset,
-      writeTtl = Some(14.days),
-      statsReceiver.scope("recos_injector_tweet_creation_info_store")
+      wr eTtl = So (14.days),
+      statsRece ver.scope("recos_ njector_t et_creat on_ nfo_store")
     )
   }
 
-  // wait for all serversets to populate
-  override def init(): Future[Unit] = ClientRegistry.expAllRegisteredClientsResolved().unit
+  // wa  for all serversets to populate
+  overr de def  n (): Future[Un ] = Cl entReg stry.expAllReg steredCl entsResolved().un 
 }

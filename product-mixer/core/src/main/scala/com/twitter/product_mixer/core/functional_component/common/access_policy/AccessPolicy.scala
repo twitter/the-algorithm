@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.core.functional_component.common.access_policy
+package com.tw ter.product_m xer.core.funct onal_component.common.access_pol cy
 
-import com.fasterxml.jackson.annotation.JsonSubTypes
-import com.fasterxml.jackson.annotation.JsonTypeInfo
+ mport com.fasterxml.jackson.annotat on.JsonSubTypes
+ mport com.fasterxml.jackson.annotat on.JsonType nfo
 
 /**
- * The Access Policy to set for gating querying in the turntable tool.
+ * T  Access Pol cy to set for gat ng query ng  n t  turntable tool.
  *
- * @note implementations must be simple case classes with unique structures for serialization
+ * @note  mple ntat ons must be s mple case classes w h un que structures for ser al zat on
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
+@JsonType nfo(use = JsonType nfo. d.NAME,  nclude = JsonType nfo.As.PROPERTY)
 @JsonSubTypes(
   Array(
-    new JsonSubTypes.Type(value = classOf[AllowedLdapGroups], name = "AllowedLdapGroups"),
-    new JsonSubTypes.Type(value = classOf[BlockEverything], name = "BlockEverything")
+    new JsonSubTypes.Type(value = classOf[Allo dLdapGroups], na  = "Allo dLdapGroups"),
+    new JsonSubTypes.Type(value = classOf[BlockEveryth ng], na  = "BlockEveryth ng")
   )
 )
-sealed trait AccessPolicy
+sealed tra  AccessPol cy
 
 /**
- * Users must be in *at least* one of the provided LDAP groups in order to make a query.
+ * Users must be  n *at least* one of t  prov ded LDAP groups  n order to make a query.
  *
- * @param groups LDAP groups allowed to access this product
+ * @param groups LDAP groups allo d to access t  product
  */
-case class AllowedLdapGroups(groups: Set[String]) extends AccessPolicy
+case class Allo dLdapGroups(groups: Set[Str ng]) extends AccessPol cy
 
-object AllowedLdapGroups {
-  def apply(group: String): AllowedLdapGroups = AllowedLdapGroups(Set(group))
+object Allo dLdapGroups {
+  def apply(group: Str ng): Allo dLdapGroups = Allo dLdapGroups(Set(group))
 }
 
 /**
  * Block all requests to a product.
  *
- * @note this needs to be a case class rather than an object because classOf doesn't work on objects
- *       and JsonSubTypes requires the annotation argument to be a constant (ruling out .getClass).
- *       This issue may be resolved in Scala 2.13: https://github.com/scala/scala/pull/9279
+ * @note t  needs to be a case class rat r than an object because classOf doesn't work on objects
+ *       and JsonSubTypes requ res t  annotat on argu nt to be a constant (rul ng out .getClass).
+ *       T   ssue may be resolved  n Scala 2.13: https://g hub.com/scala/scala/pull/9279
  */
-case class BlockEverything() extends AccessPolicy
+case class BlockEveryth ng() extends AccessPol cy

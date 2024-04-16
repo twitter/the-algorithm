@@ -1,45 +1,45 @@
-/* The MIT License
+/* T  M T L cense
 
-   Copyright (c) 2008, 2009, 2011 by Attractive Chaos <attractor@live.co.uk>
+   Copyr ght (c) 2008, 2009, 2011 by Attract ve Chaos <attractor@l ve.co.uk>
 
-   Permission is hereby granted, free of charge, to any person obtaining
-   a copy of this software and associated documentation files (the
-   "Software"), to deal in the Software without restriction, including
-   without limitation the rights to use, copy, modify, merge, publish,
-   distribute, sublicense, and/or sell copies of the Software, and to
-   permit persons to whom the Software is furnished to do so, subject to
-   the following conditions:
+   Perm ss on  s  reby granted, free of charge, to any person obta n ng
+   a copy of t  software and assoc ated docu ntat on f les (t 
+   "Software"), to deal  n t  Software w hout restr ct on,  nclud ng
+   w hout l m at on t  r ghts to use, copy, mod fy,  rge, publ sh,
+   d str bute, subl cense, and/or sell cop es of t  Software, and to
+   perm  persons to whom t  Software  s furn s d to do so, subject to
+   t  follow ng cond  ons:
 
-   The above copyright notice and this permission notice shall be
-   included in all copies or substantial portions of the Software.
+   T  above copyr ght not ce and t  perm ss on not ce shall be
+    ncluded  n all cop es or substant al port ons of t  Software.
 
-   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-   NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-   BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-   ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   THE SOFTWARE  S PROV DED "AS  S", W THOUT WARRANTY OF ANY K ND,
+   EXPRESS OR  MPL ED,  NCLUD NG BUT NOT L M TED TO THE WARRANT ES OF
+   MERCHANTAB L TY, F TNESS FOR A PART CULAR PURPOSE AND
+   NON NFR NGEMENT.  N NO EVENT SHALL THE AUTHORS OR COPYR GHT HOLDERS
+   BE L ABLE FOR ANY CLA M, DAMAGES OR OTHER L AB L TY, WHETHER  N AN
+   ACT ON OF CONTRACT, TORT OR OTHERW SE, AR S NG FROM, OUT OF OR  N
+   CONNECT ON W TH THE SOFTWARE OR THE USE OR OTHER DEAL NGS  N THE
    SOFTWARE.
 */
 
 /*
   An example:
 
-#include "khash.h"
-KHASH_MAP_INIT_INT(32, char)
-int main() {
-   int ret, is_missing;
-   khiter_t k;
-   khash_t(32) *h = kh_init(32);
+# nclude "khash.h"
+KHASH_MAP_ N T_ NT(32, char)
+ nt ma n() {
+    nt ret,  s_m ss ng;
+   kh er_t k;
+   khash_t(32) *h = kh_ n (32);
    k = kh_put(32, h, 5, &ret);
    kh_value(h, k) = 10;
    k = kh_get(32, h, 10);
-   is_missing = (k == kh_end(h));
+    s_m ss ng = (k == kh_end(h));
    k = kh_get(32, h, 5);
    kh_del(32, h, k);
-   for (k = kh_begin(h); k != kh_end(h); ++k)
-      if (kh_exist(h, k)) kh_value(h, k) = 1;
+   for (k = kh_beg n(h); k != kh_end(h); ++k)
+       f (kh_ex st(h, k)) kh_value(h, k) = 1;
    kh_destroy(32, h);
    return 0;
 }
@@ -48,65 +48,65 @@ int main() {
 /*
   2013-05-02 (0.2.8):
 
-   * Use quadratic probing. When the capacity is power of 2, stepping function
-     i*(i+1)/2 guarantees to traverse each bucket. It is better than double
-     hashing on cache performance and is more robust than linear probing.
+   * Use quadrat c prob ng. W n t  capac y  s po r of 2, stepp ng funct on
+      *( +1)/2 guarantees to traverse each bucket.    s better than double
+     hash ng on cac  performance and  s more robust than l near prob ng.
 
-     In theory, double hashing should be more robust than quadratic probing.
-     However, my implementation is probably not for large hash tables, because
-     the second hash function is closely tied to the first hash function,
-     which reduce the effectiveness of double hashing.
+      n t ory, double hash ng should be more robust than quadrat c prob ng.
+     Ho ver,    mple ntat on  s probably not for large hash tables, because
+     t  second hash funct on  s closely t ed to t  f rst hash funct on,
+     wh ch reduce t  effect veness of double hash ng.
 
-   Reference: http://research.cs.vt.edu/AVresearch/hashing/quadratic.php
+   Reference: http://research.cs.vt.edu/AVresearch/hash ng/quadrat c.php
 
   2011-12-29 (0.2.7):
 
-    * Minor code clean up; no actual effect.
+    * M nor code clean up; no actual effect.
 
   2011-09-16 (0.2.6):
 
-   * The capacity is a power of 2. This seems to dramatically improve the
-     speed for simple keys. Thank Zilong Tan for the suggestion. Reference:
+   * T  capac y  s a po r of 2. T  seems to dramat cally  mprove t 
+     speed for s mple keys. Thank Z long Tan for t  suggest on. Reference:
 
-      - http://code.google.com/p/ulib/
-      - http://nothings.org/computer/judy/
+      - http://code.google.com/p/ul b/
+      - http://noth ngs.org/computer/judy/
 
-   * Allow to optionally use linear probing which usually has better
-     performance for random input. Double hashing is still the default as it
-     is more robust to certain non-random input.
+   * Allow to opt onally use l near prob ng wh ch usually has better
+     performance for random  nput. Double hash ng  s st ll t  default as  
+      s more robust to certa n non-random  nput.
 
-   * Added Wang's integer hash function (not used by default). This hash
-     function is more robust to certain non-random input.
+   * Added Wang's  nteger hash funct on (not used by default). T  hash
+     funct on  s more robust to certa n non-random  nput.
 
   2011-02-14 (0.2.5):
 
-    * Allow to declare global functions.
+    * Allow to declare global funct ons.
 
   2009-09-26 (0.2.4):
 
-    * Improve portability
+    *  mprove portab l y
 
   2008-09-19 (0.2.3):
 
-   * Corrected the example
-   * Improved interfaces
+   * Corrected t  example
+   *  mproved  nterfaces
 
   2008-09-11 (0.2.2):
 
-   * Improved speed a little in kh_put()
+   *  mproved speed a l tle  n kh_put()
 
   2008-09-10 (0.2.1):
 
    * Added kh_clear()
-   * Fixed a compiling error
+   * F xed a comp l ng error
 
   2008-09-02 (0.2.0):
 
-   * Changed to token concatenation which increases flexibility.
+   * Changed to token concatenat on wh ch  ncreases flex b l y.
 
   2008-08-31 (0.1.2):
 
-   * Fixed a bug in kh_get(), which has not been tested previously.
+   * F xed a bug  n kh_get(), wh ch has not been tested prev ously.
 
   2008-08-31 (0.1.1):
 
@@ -114,302 +114,302 @@ int main() {
 */
 
 
-#ifndef __AC_KHASH_H
-#define __AC_KHASH_H
+# fndef __AC_KHASH_H
+#def ne __AC_KHASH_H
 
 /*!
-  @header
+  @ ader
 
-  Generic hash table library.
+  Gener c hash table l brary.
  */
 
-#define AC_VERSION_KHASH_H "0.2.8"
+#def ne AC_VERS ON_KHASH_H "0.2.8"
 
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
+# nclude <stdl b.h>
+# nclude <str ng.h>
+# nclude <l m s.h>
 
-/* compiler specific configuration */
+/* comp ler spec f c conf gurat on */
 
-#if UINT_MAX == 0xffffffffu
-typedef unsigned int khint32_t;
-#elif ULONG_MAX == 0xffffffffu
-typedef unsigned long khint32_t;
-#endif
+# f U NT_MAX == 0xffffffffu
+typedef uns gned  nt kh nt32_t;
+#el f ULONG_MAX == 0xffffffffu
+typedef uns gned long kh nt32_t;
+#end f
 
-#if ULONG_MAX == ULLONG_MAX
-typedef unsigned long khint64_t;
+# f ULONG_MAX == ULLONG_MAX
+typedef uns gned long kh nt64_t;
 #else
-typedef uint64_t khint64_t;
-#endif
+typedef u nt64_t kh nt64_t;
+#end f
 
-#ifndef kh_inline
-#ifdef _MSC_VER
-#define kh_inline __inline
+# fndef kh_ nl ne
+# fdef _MSC_VER
+#def ne kh_ nl ne __ nl ne
 #else
-#define kh_inline inline
-#endif
-#endif /* kh_inline */
+#def ne kh_ nl ne  nl ne
+#end f
+#end f /* kh_ nl ne */
 
-#ifndef klib_unused
-#if (defined __clang__ && __clang_major__ >= 3) || (defined __GNUC__ && __GNUC__ >= 3)
-#define klib_unused __attribute__ ((__unused__))
+# fndef kl b_unused
+# f (def ned __clang__ && __clang_major__ >= 3) || (def ned __GNUC__ && __GNUC__ >= 3)
+#def ne kl b_unused __attr bute__ ((__unused__))
 #else
-#define klib_unused
-#endif
-#endif /* klib_unused */
+#def ne kl b_unused
+#end f
+#end f /* kl b_unused */
 
-typedef khint32_t khint_t;
-typedef khint_t khiter_t;
+typedef kh nt32_t kh nt_t;
+typedef kh nt_t kh er_t;
 
-#define __ac_isempty(flag, i) ((flag[i>>4]>>((i&0xfU)<<1))&2)
-#define __ac_isdel(flag, i) ((flag[i>>4]>>((i&0xfU)<<1))&1)
-#define __ac_iseither(flag, i) ((flag[i>>4]>>((i&0xfU)<<1))&3)
-#define __ac_set_isdel_false(flag, i) (flag[i>>4]&=~(1ul<<((i&0xfU)<<1)))
-#define __ac_set_isempty_false(flag, i) (flag[i>>4]&=~(2ul<<((i&0xfU)<<1)))
-#define __ac_set_isboth_false(flag, i) (flag[i>>4]&=~(3ul<<((i&0xfU)<<1)))
-#define __ac_set_isdel_true(flag, i) (flag[i>>4]|=1ul<<((i&0xfU)<<1))
+#def ne __ac_ sempty(flag,  ) ((flag[ >>4]>>(( &0xfU)<<1))&2)
+#def ne __ac_ sdel(flag,  ) ((flag[ >>4]>>(( &0xfU)<<1))&1)
+#def ne __ac_ se  r(flag,  ) ((flag[ >>4]>>(( &0xfU)<<1))&3)
+#def ne __ac_set_ sdel_false(flag,  ) (flag[ >>4]&=~(1ul<<(( &0xfU)<<1)))
+#def ne __ac_set_ sempty_false(flag,  ) (flag[ >>4]&=~(2ul<<(( &0xfU)<<1)))
+#def ne __ac_set_ sboth_false(flag,  ) (flag[ >>4]&=~(3ul<<(( &0xfU)<<1)))
+#def ne __ac_set_ sdel_true(flag,  ) (flag[ >>4]|=1ul<<(( &0xfU)<<1))
 
-#define __ac_fsize(m) ((m) < 16? 1 : (m)>>4)
+#def ne __ac_fs ze(m) ((m) < 16? 1 : (m)>>4)
 
-#ifndef kroundup32
-#define kroundup32(x) (--(x), (x)|=(x)>>1, (x)|=(x)>>2, (x)|=(x)>>4, (x)|=(x)>>8, (x)|=(x)>>16, ++(x))
-#endif
+# fndef kroundup32
+#def ne kroundup32(x) (--(x), (x)|=(x)>>1, (x)|=(x)>>2, (x)|=(x)>>4, (x)|=(x)>>8, (x)|=(x)>>16, ++(x))
+#end f
 
-#ifndef kcalloc
-#define kcalloc(N,Z) calloc(N,Z)
-#endif
-#ifndef kmalloc
-#define kmalloc(Z) malloc(Z)
-#endif
-#ifndef krealloc
-#define krealloc(P,Z) realloc(P,Z)
-#endif
-#ifndef kfree
-#define kfree(P) free(P)
-#endif
+# fndef kcalloc
+#def ne kcalloc(N,Z) calloc(N,Z)
+#end f
+# fndef kmalloc
+#def ne kmalloc(Z) malloc(Z)
+#end f
+# fndef krealloc
+#def ne krealloc(P,Z) realloc(P,Z)
+#end f
+# fndef kfree
+#def ne kfree(P) free(P)
+#end f
 
-static const double __ac_HASH_UPPER = 0.77;
+stat c const double __ac_HASH_UPPER = 0.77;
 
-#define __KHASH_TYPE(name, khkey_t, khval_t) \
-   typedef struct kh_##name##_s { \
-      khint_t n_buckets, size, n_occupied, upper_bound; \
-      khint32_t *flags; \
+#def ne __KHASH_TYPE(na , khkey_t, khval_t) \
+   typedef struct kh_##na ##_s { \
+      kh nt_t n_buckets, s ze, n_occup ed, upper_bound; \
+      kh nt32_t *flags; \
       khkey_t *keys; \
       khval_t *vals; \
-   } kh_##name##_t;
+   } kh_##na ##_t;
 
-#define __KHASH_PROTOTYPES(name, khkey_t, khval_t)                \
-   extern kh_##name##_t *kh_init_##name(void);                    \
-   extern void kh_destroy_##name(kh_##name##_t *h);               \
-   extern void kh_clear_##name(kh_##name##_t *h);                 \
-   extern khint_t kh_get_##name(const kh_##name##_t *h, khkey_t key);   \
-   extern int kh_resize_##name(kh_##name##_t *h, khint_t new_n_buckets); \
-   extern khint_t kh_put_##name(kh_##name##_t *h, khkey_t key, int *ret); \
-   extern void kh_del_##name(kh_##name##_t *h, khint_t x);
+#def ne __KHASH_PROTOTYPES(na , khkey_t, khval_t)                \
+   extern kh_##na ##_t *kh_ n _##na (vo d);                    \
+   extern vo d kh_destroy_##na (kh_##na ##_t *h);               \
+   extern vo d kh_clear_##na (kh_##na ##_t *h);                 \
+   extern kh nt_t kh_get_##na (const kh_##na ##_t *h, khkey_t key);   \
+   extern  nt kh_res ze_##na (kh_##na ##_t *h, kh nt_t new_n_buckets); \
+   extern kh nt_t kh_put_##na (kh_##na ##_t *h, khkey_t key,  nt *ret); \
+   extern vo d kh_del_##na (kh_##na ##_t *h, kh nt_t x);
 
-#define __KHASH_IMPL(name, SCOPE, khkey_t, khval_t, kh_is_map, __hash_func, __hash_equal) \
-   SCOPE kh_##name##_t *kh_init_##name(void) {                    \
-      return (kh_##name##_t*)kcalloc(1, sizeof(kh_##name##_t));      \
+#def ne __KHASH_ MPL(na , SCOPE, khkey_t, khval_t, kh_ s_map, __hash_func, __hash_equal) \
+   SCOPE kh_##na ##_t *kh_ n _##na (vo d) {                    \
+      return (kh_##na ##_t*)kcalloc(1, s zeof(kh_##na ##_t));      \
    }                                                  \
-   SCOPE void kh_destroy_##name(kh_##name##_t *h)                 \
+   SCOPE vo d kh_destroy_##na (kh_##na ##_t *h)                 \
    {                                                  \
-      if (h) {                                        \
-         kfree((void *)h->keys); kfree(h->flags);              \
-         kfree((void *)h->vals);                            \
+       f (h) {                                        \
+         kfree((vo d *)h->keys); kfree(h->flags);              \
+         kfree((vo d *)h->vals);                            \
          kfree(h);                                       \
       }                                               \
    }                                                  \
-   SCOPE void kh_clear_##name(kh_##name##_t *h)                \
+   SCOPE vo d kh_clear_##na (kh_##na ##_t *h)                \
    {                                                  \
-      if (h && h->flags) {                               \
-         memset(h->flags, 0xaa, __ac_fsize(h->n_buckets) * sizeof(khint32_t)); \
-         h->size = h->n_occupied = 0;                       \
+       f (h && h->flags) {                               \
+          mset(h->flags, 0xaa, __ac_fs ze(h->n_buckets) * s zeof(kh nt32_t)); \
+         h->s ze = h->n_occup ed = 0;                       \
       }                                               \
    }                                                  \
-   SCOPE khint_t kh_get_##name(const kh_##name##_t *h, khkey_t key)  \
+   SCOPE kh nt_t kh_get_##na (const kh_##na ##_t *h, khkey_t key)  \
    {                                                  \
-      if (h->n_buckets) {                                   \
-         khint_t k, i, last, mask, step = 0; \
+       f (h->n_buckets) {                                   \
+         kh nt_t k,  , last, mask, step = 0; \
          mask = h->n_buckets - 1;                           \
-         k = __hash_func(key); i = k & mask;                   \
-         last = i; \
-         while (!__ac_isempty(h->flags, i) && (__ac_isdel(h->flags, i) || !__hash_equal(h->keys[i], key))) { \
-            i = (i + (++step)) & mask; \
-            if (i == last) return h->n_buckets;                \
+         k = __hash_func(key);   = k & mask;                   \
+         last =  ; \
+         wh le (!__ac_ sempty(h->flags,  ) && (__ac_ sdel(h->flags,  ) || !__hash_equal(h->keys[ ], key))) { \
+              = (  + (++step)) & mask; \
+             f (  == last) return h->n_buckets;                \
          }                                            \
-         return __ac_iseither(h->flags, i)? h->n_buckets : i;     \
+         return __ac_ se  r(h->flags,  )? h->n_buckets :  ;     \
       } else return 0;                                   \
    }                                                  \
-   SCOPE int kh_resize_##name(kh_##name##_t *h, khint_t new_n_buckets) \
-   { /* This function uses 0.25*n_buckets bytes of working space instead of [sizeof(key_t+val_t)+.25]*n_buckets. */ \
-      khint32_t *new_flags = 0;                             \
-      khint_t j = 1;                                     \
+   SCOPE  nt kh_res ze_##na (kh_##na ##_t *h, kh nt_t new_n_buckets) \
+   { /* T  funct on uses 0.25*n_buckets bytes of work ng space  nstead of [s zeof(key_t+val_t)+.25]*n_buckets. */ \
+      kh nt32_t *new_flags = 0;                             \
+      kh nt_t j = 1;                                     \
       {                                               \
          kroundup32(new_n_buckets);                            \
-         if (new_n_buckets < 4) new_n_buckets = 4;             \
-         if (h->size >= (khint_t)(new_n_buckets * __ac_HASH_UPPER + 0.5)) j = 0; /* requested size is too small */ \
-         else { /* hash table size to be changed (shrink or expand); rehash */ \
-            new_flags = (khint32_t*)kmalloc(__ac_fsize(new_n_buckets) * sizeof(khint32_t));  \
-            if (!new_flags) return -1;                      \
-            memset(new_flags, 0xaa, __ac_fsize(new_n_buckets) * sizeof(khint32_t)); \
-            if (h->n_buckets < new_n_buckets) { /* expand */      \
-               khkey_t *new_keys = (khkey_t*)krealloc((void *)h->keys, new_n_buckets * sizeof(khkey_t)); \
-               if (!new_keys) { kfree(new_flags); return -1; }    \
+          f (new_n_buckets < 4) new_n_buckets = 4;             \
+          f (h->s ze >= (kh nt_t)(new_n_buckets * __ac_HASH_UPPER + 0.5)) j = 0; /* requested s ze  s too small */ \
+         else { /* hash table s ze to be changed (shr nk or expand); rehash */ \
+            new_flags = (kh nt32_t*)kmalloc(__ac_fs ze(new_n_buckets) * s zeof(kh nt32_t));  \
+             f (!new_flags) return -1;                      \
+             mset(new_flags, 0xaa, __ac_fs ze(new_n_buckets) * s zeof(kh nt32_t)); \
+             f (h->n_buckets < new_n_buckets) { /* expand */      \
+               khkey_t *new_keys = (khkey_t*)krealloc((vo d *)h->keys, new_n_buckets * s zeof(khkey_t)); \
+                f (!new_keys) { kfree(new_flags); return -1; }    \
                h->keys = new_keys;                          \
-               if (kh_is_map) {                          \
-                  khval_t *new_vals = (khval_t*)krealloc((void *)h->vals, new_n_buckets * sizeof(khval_t)); \
-                  if (!new_vals) { kfree(new_flags); return -1; } \
+                f (kh_ s_map) {                          \
+                  khval_t *new_vals = (khval_t*)krealloc((vo d *)h->vals, new_n_buckets * s zeof(khval_t)); \
+                   f (!new_vals) { kfree(new_flags); return -1; } \
                   h->vals = new_vals;                       \
                }                                      \
-            } /* otherwise shrink */                        \
+            } /* ot rw se shr nk */                        \
          }                                            \
       }                                               \
-      if (j) { /* rehashing is needed */                       \
+       f (j) { /* rehash ng  s needed */                       \
          for (j = 0; j != h->n_buckets; ++j) {                 \
-            if (__ac_iseither(h->flags, j) == 0) {             \
+             f (__ac_ se  r(h->flags, j) == 0) {             \
                khkey_t key = h->keys[j];                    \
                khval_t val;                              \
-               khint_t new_mask;                         \
+               kh nt_t new_mask;                         \
                new_mask = new_n_buckets - 1;                   \
-               if (kh_is_map) val = h->vals[j];             \
-               __ac_set_isdel_true(h->flags, j);               \
-               while (1) { /* kick-out process; sort of like in Cuckoo hashing */ \
-                  khint_t k, i, step = 0; \
+                f (kh_ s_map) val = h->vals[j];             \
+               __ac_set_ sdel_true(h->flags, j);               \
+               wh le (1) { /* k ck-out process; sort of l ke  n Cuckoo hash ng */ \
+                  kh nt_t k,  , step = 0; \
                   k = __hash_func(key);                     \
-                  i = k & new_mask;                      \
-                  while (!__ac_isempty(new_flags, i)) i = (i + (++step)) & new_mask; \
-                  __ac_set_isempty_false(new_flags, i);        \
-                  if (i < h->n_buckets && __ac_iseither(h->flags, i) == 0) { /* kick out the existing element */ \
-                     { khkey_t tmp = h->keys[i]; h->keys[i] = key; key = tmp; } \
-                     if (kh_is_map) { khval_t tmp = h->vals[i]; h->vals[i] = val; val = tmp; } \
-                     __ac_set_isdel_true(h->flags, i); /* mark it as deleted in the old hash table */ \
-                  } else { /* write the element and jump out of the loop */ \
-                     h->keys[i] = key;                   \
-                     if (kh_is_map) h->vals[i] = val;       \
+                    = k & new_mask;                      \
+                  wh le (!__ac_ sempty(new_flags,  ))   = (  + (++step)) & new_mask; \
+                  __ac_set_ sempty_false(new_flags,  );        \
+                   f (  < h->n_buckets && __ac_ se  r(h->flags,  ) == 0) { /* k ck out t  ex st ng ele nt */ \
+                     { khkey_t tmp = h->keys[ ]; h->keys[ ] = key; key = tmp; } \
+                      f (kh_ s_map) { khval_t tmp = h->vals[ ]; h->vals[ ] = val; val = tmp; } \
+                     __ac_set_ sdel_true(h->flags,  ); /* mark   as deleted  n t  old hash table */ \
+                  } else { /* wr e t  ele nt and jump out of t  loop */ \
+                     h->keys[ ] = key;                   \
+                      f (kh_ s_map) h->vals[ ] = val;       \
                      break;                              \
                   }                                   \
                }                                      \
             }                                         \
          }                                            \
-         if (h->n_buckets > new_n_buckets) { /* shrink the hash table */ \
-            h->keys = (khkey_t*)krealloc((void *)h->keys, new_n_buckets * sizeof(khkey_t)); \
-            if (kh_is_map) h->vals = (khval_t*)krealloc((void *)h->vals, new_n_buckets * sizeof(khval_t)); \
+          f (h->n_buckets > new_n_buckets) { /* shr nk t  hash table */ \
+            h->keys = (khkey_t*)krealloc((vo d *)h->keys, new_n_buckets * s zeof(khkey_t)); \
+             f (kh_ s_map) h->vals = (khval_t*)krealloc((vo d *)h->vals, new_n_buckets * s zeof(khval_t)); \
          }                                            \
-         kfree(h->flags); /* free the working space */            \
+         kfree(h->flags); /* free t  work ng space */            \
          h->flags = new_flags;                              \
          h->n_buckets = new_n_buckets;                      \
-         h->n_occupied = h->size;                           \
-         h->upper_bound = (khint_t)(h->n_buckets * __ac_HASH_UPPER + 0.5); \
+         h->n_occup ed = h->s ze;                           \
+         h->upper_bound = (kh nt_t)(h->n_buckets * __ac_HASH_UPPER + 0.5); \
       }                                               \
       return 0;                                          \
    }                                                  \
-   SCOPE khint_t kh_put_##name(kh_##name##_t *h, khkey_t key, int *ret) \
+   SCOPE kh nt_t kh_put_##na (kh_##na ##_t *h, khkey_t key,  nt *ret) \
    {                                                  \
-      khint_t x;                                         \
-      if (h->n_occupied >= h->upper_bound) { /* update the hash table */ \
-         if (h->n_buckets > (h->size<<1)) {                    \
-            if (kh_resize_##name(h, h->n_buckets - 1) < 0) { /* clear "deleted" elements */ \
+      kh nt_t x;                                         \
+       f (h->n_occup ed >= h->upper_bound) { /* update t  hash table */ \
+          f (h->n_buckets > (h->s ze<<1)) {                    \
+             f (kh_res ze_##na (h, h->n_buckets - 1) < 0) { /* clear "deleted" ele nts */ \
                *ret = -1; return h->n_buckets;                 \
             }                                         \
-         } else if (kh_resize_##name(h, h->n_buckets + 1) < 0) { /* expand the hash table */ \
+         } else  f (kh_res ze_##na (h, h->n_buckets + 1) < 0) { /* expand t  hash table */ \
             *ret = -1; return h->n_buckets;                    \
          }                                            \
-      } /* TODO: to implement automatically shrinking; resize() already support shrinking */ \
+      } /* TODO: to  mple nt automat cally shr nk ng; res ze() already support shr nk ng */ \
       {                                               \
-         khint_t k, i, site, last, mask = h->n_buckets - 1, step = 0; \
-         x = site = h->n_buckets; k = __hash_func(key); i = k & mask; \
-         if (__ac_isempty(h->flags, i)) x = i; /* for speed up */ \
+         kh nt_t k,  , s e, last, mask = h->n_buckets - 1, step = 0; \
+         x = s e = h->n_buckets; k = __hash_func(key);   = k & mask; \
+          f (__ac_ sempty(h->flags,  )) x =  ; /* for speed up */ \
          else {                                          \
-            last = i; \
-            while (!__ac_isempty(h->flags, i) && (__ac_isdel(h->flags, i) || !__hash_equal(h->keys[i], key))) { \
-               if (__ac_isdel(h->flags, i)) site = i;          \
-               i = (i + (++step)) & mask; \
-               if (i == last) { x = site; break; }             \
+            last =  ; \
+            wh le (!__ac_ sempty(h->flags,  ) && (__ac_ sdel(h->flags,  ) || !__hash_equal(h->keys[ ], key))) { \
+                f (__ac_ sdel(h->flags,  )) s e =  ;          \
+                 = (  + (++step)) & mask; \
+                f (  == last) { x = s e; break; }             \
             }                                         \
-            if (x == h->n_buckets) {                        \
-               if (__ac_isempty(h->flags, i) && site != h->n_buckets) x = site; \
-               else x = i;                               \
+             f (x == h->n_buckets) {                        \
+                f (__ac_ sempty(h->flags,  ) && s e != h->n_buckets) x = s e; \
+               else x =  ;                               \
             }                                         \
          }                                            \
       }                                               \
-      if (__ac_isempty(h->flags, x)) { /* not present at all */      \
+       f (__ac_ sempty(h->flags, x)) { /* not present at all */      \
          h->keys[x] = key;                               \
-         __ac_set_isboth_false(h->flags, x);                   \
-         ++h->size; ++h->n_occupied;                           \
+         __ac_set_ sboth_false(h->flags, x);                   \
+         ++h->s ze; ++h->n_occup ed;                           \
          *ret = 1;                                       \
-      } else if (__ac_isdel(h->flags, x)) { /* deleted */            \
+      } else  f (__ac_ sdel(h->flags, x)) { /* deleted */            \
          h->keys[x] = key;                               \
-         __ac_set_isboth_false(h->flags, x);                   \
-         ++h->size;                                      \
+         __ac_set_ sboth_false(h->flags, x);                   \
+         ++h->s ze;                                      \
          *ret = 2;                                       \
-      } else *ret = 0; /* Don't touch h->keys[x] if present and not deleted */ \
+      } else *ret = 0; /* Don't touch h->keys[x]  f present and not deleted */ \
       return x;                                          \
    }                                                  \
-   SCOPE void kh_del_##name(kh_##name##_t *h, khint_t x)          \
+   SCOPE vo d kh_del_##na (kh_##na ##_t *h, kh nt_t x)          \
    {                                                  \
-      if (x != h->n_buckets && !__ac_iseither(h->flags, x)) {        \
-         __ac_set_isdel_true(h->flags, x);                     \
-         --h->size;                                      \
+       f (x != h->n_buckets && !__ac_ se  r(h->flags, x)) {        \
+         __ac_set_ sdel_true(h->flags, x);                     \
+         --h->s ze;                                      \
       }                                               \
    }
 
-#define KHASH_DECLARE(name, khkey_t, khval_t)                     \
-   __KHASH_TYPE(name, khkey_t, khval_t)                        \
-   __KHASH_PROTOTYPES(name, khkey_t, khval_t)
+#def ne KHASH_DECLARE(na , khkey_t, khval_t)                     \
+   __KHASH_TYPE(na , khkey_t, khval_t)                        \
+   __KHASH_PROTOTYPES(na , khkey_t, khval_t)
 
-#define KHASH_INIT2(name, SCOPE, khkey_t, khval_t, kh_is_map, __hash_func, __hash_equal) \
-   __KHASH_TYPE(name, khkey_t, khval_t)                        \
-   __KHASH_IMPL(name, SCOPE, khkey_t, khval_t, kh_is_map, __hash_func, __hash_equal)
+#def ne KHASH_ N T2(na , SCOPE, khkey_t, khval_t, kh_ s_map, __hash_func, __hash_equal) \
+   __KHASH_TYPE(na , khkey_t, khval_t)                        \
+   __KHASH_ MPL(na , SCOPE, khkey_t, khval_t, kh_ s_map, __hash_func, __hash_equal)
 
-#define KHASH_INIT(name, khkey_t, khval_t, kh_is_map, __hash_func, __hash_equal) \
-   KHASH_INIT2(name, static kh_inline klib_unused, khkey_t, khval_t, kh_is_map, __hash_func, __hash_equal)
+#def ne KHASH_ N T(na , khkey_t, khval_t, kh_ s_map, __hash_func, __hash_equal) \
+   KHASH_ N T2(na , stat c kh_ nl ne kl b_unused, khkey_t, khval_t, kh_ s_map, __hash_func, __hash_equal)
 
-/* --- BEGIN OF HASH FUNCTIONS --- */
+/* --- BEG N OF HASH FUNCT ONS --- */
 
-/*! @function
-  @abstract     Integer hash function
-  @param  key   The integer [khint32_t]
-  @return       The hash value [khint_t]
+/*! @funct on
+  @abstract      nteger hash funct on
+  @param  key   T   nteger [kh nt32_t]
+  @return       T  hash value [kh nt_t]
  */
-#define kh_int_hash_func(key) (khint32_t)(key)
-/*! @function
-  @abstract     Integer comparison function
+#def ne kh_ nt_hash_func(key) (kh nt32_t)(key)
+/*! @funct on
+  @abstract      nteger compar son funct on
  */
-#define kh_int_hash_equal(a, b) ((a) == (b))
-/*! @function
-  @abstract     64-bit integer hash function
-  @param  key   The integer [khint64_t]
-  @return       The hash value [khint_t]
+#def ne kh_ nt_hash_equal(a, b) ((a) == (b))
+/*! @funct on
+  @abstract     64-b   nteger hash funct on
+  @param  key   T   nteger [kh nt64_t]
+  @return       T  hash value [kh nt_t]
  */
-#define kh_int64_hash_func(key) (khint32_t)((key)>>33^(key)^(key)<<11)
-/*! @function
-  @abstract     64-bit integer comparison function
+#def ne kh_ nt64_hash_func(key) (kh nt32_t)((key)>>33^(key)^(key)<<11)
+/*! @funct on
+  @abstract     64-b   nteger compar son funct on
  */
-#define kh_int64_hash_equal(a, b) ((a) == (b))
-/*! @function
-  @abstract     const char* hash function
-  @param  s     Pointer to a null terminated string
-  @return       The hash value
+#def ne kh_ nt64_hash_equal(a, b) ((a) == (b))
+/*! @funct on
+  @abstract     const char* hash funct on
+  @param  s     Po nter to a null term nated str ng
+  @return       T  hash value
  */
-static kh_inline khint_t __ac_X31_hash_string(const char *s)
+stat c kh_ nl ne kh nt_t __ac_X31_hash_str ng(const char *s)
 {
-   khint_t h = (khint_t)*s;
-   if (h) for (++s ; *s; ++s) h = (h << 5) - h + (khint_t)*s;
+   kh nt_t h = (kh nt_t)*s;
+    f (h) for (++s ; *s; ++s) h = (h << 5) - h + (kh nt_t)*s;
    return h;
 }
-/*! @function
-  @abstract     Another interface to const char* hash function
-  @param  key   Pointer to a null terminated string [const char*]
-  @return       The hash value [khint_t]
+/*! @funct on
+  @abstract     Anot r  nterface to const char* hash funct on
+  @param  key   Po nter to a null term nated str ng [const char*]
+  @return       T  hash value [kh nt_t]
  */
-#define kh_str_hash_func(key) __ac_X31_hash_string(key)
-/*! @function
-  @abstract     Const char* comparison function
+#def ne kh_str_hash_func(key) __ac_X31_hash_str ng(key)
+/*! @funct on
+  @abstract     Const char* compar son funct on
  */
-#define kh_str_hash_equal(a, b) (strcmp(a, b) == 0)
+#def ne kh_str_hash_equal(a, b) (strcmp(a, b) == 0)
 
-static kh_inline khint_t __ac_Wang_hash(khint_t key)
+stat c kh_ nl ne kh nt_t __ac_Wang_hash(kh nt_t key)
 {
     key += ~(key << 15);
     key ^=  (key >> 10);
@@ -419,209 +419,209 @@ static kh_inline khint_t __ac_Wang_hash(khint_t key)
     key ^=  (key >> 16);
     return key;
 }
-#define kh_int_hash_func2(key) __ac_Wang_hash((khint_t)key)
+#def ne kh_ nt_hash_func2(key) __ac_Wang_hash((kh nt_t)key)
 
-/* --- END OF HASH FUNCTIONS --- */
+/* --- END OF HASH FUNCT ONS --- */
 
-/* Other convenient macros... */
+/* Ot r conven ent macros... */
 
 /*!
-  @abstract Type of the hash table.
-  @param  name  Name of the hash table [symbol]
+  @abstract Type of t  hash table.
+  @param  na   Na  of t  hash table [symbol]
  */
-#define khash_t(name) kh_##name##_t
+#def ne khash_t(na ) kh_##na ##_t
 
-/*! @function
-  @abstract     Initiate a hash table.
-  @param  name  Name of the hash table [symbol]
-  @return       Pointer to the hash table [khash_t(name)*]
+/*! @funct on
+  @abstract      n  ate a hash table.
+  @param  na   Na  of t  hash table [symbol]
+  @return       Po nter to t  hash table [khash_t(na )*]
  */
-#define kh_init(name) kh_init_##name()
+#def ne kh_ n (na ) kh_ n _##na ()
 
-/*! @function
+/*! @funct on
   @abstract     Destroy a hash table.
-  @param  name  Name of the hash table [symbol]
-  @param  h     Pointer to the hash table [khash_t(name)*]
+  @param  na   Na  of t  hash table [symbol]
+  @param  h     Po nter to t  hash table [khash_t(na )*]
  */
-#define kh_destroy(name, h) kh_destroy_##name(h)
+#def ne kh_destroy(na , h) kh_destroy_##na (h)
 
-/*! @function
-  @abstract     Reset a hash table without deallocating memory.
-  @param  name  Name of the hash table [symbol]
-  @param  h     Pointer to the hash table [khash_t(name)*]
+/*! @funct on
+  @abstract     Reset a hash table w hout deallocat ng  mory.
+  @param  na   Na  of t  hash table [symbol]
+  @param  h     Po nter to t  hash table [khash_t(na )*]
  */
-#define kh_clear(name, h) kh_clear_##name(h)
+#def ne kh_clear(na , h) kh_clear_##na (h)
 
-/*! @function
-  @abstract     Resize a hash table.
-  @param  name  Name of the hash table [symbol]
-  @param  h     Pointer to the hash table [khash_t(name)*]
-  @param  s     New size [khint_t]
+/*! @funct on
+  @abstract     Res ze a hash table.
+  @param  na   Na  of t  hash table [symbol]
+  @param  h     Po nter to t  hash table [khash_t(na )*]
+  @param  s     New s ze [kh nt_t]
  */
-#define kh_resize(name, h, s) kh_resize_##name(h, s)
+#def ne kh_res ze(na , h, s) kh_res ze_##na (h, s)
 
-/*! @function
-  @abstract     Insert a key to the hash table.
-  @param  name  Name of the hash table [symbol]
-  @param  h     Pointer to the hash table [khash_t(name)*]
+/*! @funct on
+  @abstract      nsert a key to t  hash table.
+  @param  na   Na  of t  hash table [symbol]
+  @param  h     Po nter to t  hash table [khash_t(na )*]
   @param  k     Key [type of keys]
-  @param  r     Extra return code: -1 if the operation failed;
-                0 if the key is present in the hash table;
-                1 if the bucket is empty (never used); 2 if the element in
-            the bucket has been deleted [int*]
-  @return       Iterator to the inserted element [khint_t]
+  @param  r     Extra return code: -1  f t  operat on fa led;
+                0  f t  key  s present  n t  hash table;
+                1  f t  bucket  s empty (never used); 2  f t  ele nt  n
+            t  bucket has been deleted [ nt*]
+  @return        erator to t   nserted ele nt [kh nt_t]
  */
-#define kh_put(name, h, k, r) kh_put_##name(h, k, r)
+#def ne kh_put(na , h, k, r) kh_put_##na (h, k, r)
 
-/*! @function
-  @abstract     Retrieve a key from the hash table.
-  @param  name  Name of the hash table [symbol]
-  @param  h     Pointer to the hash table [khash_t(name)*]
+/*! @funct on
+  @abstract     Retr eve a key from t  hash table.
+  @param  na   Na  of t  hash table [symbol]
+  @param  h     Po nter to t  hash table [khash_t(na )*]
   @param  k     Key [type of keys]
-  @return       Iterator to the found element, or kh_end(h) if the element is absent [khint_t]
+  @return        erator to t  found ele nt, or kh_end(h)  f t  ele nt  s absent [kh nt_t]
  */
-#define kh_get(name, h, k) kh_get_##name(h, k)
+#def ne kh_get(na , h, k) kh_get_##na (h, k)
 
-/*! @function
-  @abstract     Remove a key from the hash table.
-  @param  name  Name of the hash table [symbol]
-  @param  h     Pointer to the hash table [khash_t(name)*]
-  @param  k     Iterator to the element to be deleted [khint_t]
+/*! @funct on
+  @abstract     Remove a key from t  hash table.
+  @param  na   Na  of t  hash table [symbol]
+  @param  h     Po nter to t  hash table [khash_t(na )*]
+  @param  k      erator to t  ele nt to be deleted [kh nt_t]
  */
-#define kh_del(name, h, k) kh_del_##name(h, k)
+#def ne kh_del(na , h, k) kh_del_##na (h, k)
 
-/*! @function
-  @abstract     Test whether a bucket contains data.
-  @param  h     Pointer to the hash table [khash_t(name)*]
-  @param  x     Iterator to the bucket [khint_t]
-  @return       1 if containing data; 0 otherwise [int]
+/*! @funct on
+  @abstract     Test w t r a bucket conta ns data.
+  @param  h     Po nter to t  hash table [khash_t(na )*]
+  @param  x      erator to t  bucket [kh nt_t]
+  @return       1  f conta n ng data; 0 ot rw se [ nt]
  */
-#define kh_exist(h, x) (!__ac_iseither((h)->flags, (x)))
+#def ne kh_ex st(h, x) (!__ac_ se  r((h)->flags, (x)))
 
-/*! @function
-  @abstract     Get key given an iterator
-  @param  h     Pointer to the hash table [khash_t(name)*]
-  @param  x     Iterator to the bucket [khint_t]
+/*! @funct on
+  @abstract     Get key g ven an  erator
+  @param  h     Po nter to t  hash table [khash_t(na )*]
+  @param  x      erator to t  bucket [kh nt_t]
   @return       Key [type of keys]
  */
-#define kh_key(h, x) ((h)->keys[x])
+#def ne kh_key(h, x) ((h)->keys[x])
 
-/*! @function
-  @abstract     Get value given an iterator
-  @param  h     Pointer to the hash table [khash_t(name)*]
-  @param  x     Iterator to the bucket [khint_t]
+/*! @funct on
+  @abstract     Get value g ven an  erator
+  @param  h     Po nter to t  hash table [khash_t(na )*]
+  @param  x      erator to t  bucket [kh nt_t]
   @return       Value [type of values]
-  @discussion   For hash sets, calling this results in segfault.
+  @d scuss on   For hash sets, call ng t  results  n segfault.
  */
-#define kh_val(h, x) ((h)->vals[x])
+#def ne kh_val(h, x) ((h)->vals[x])
 
-/*! @function
-  @abstract     Alias of kh_val()
+/*! @funct on
+  @abstract     Al as of kh_val()
  */
-#define kh_value(h, x) ((h)->vals[x])
+#def ne kh_value(h, x) ((h)->vals[x])
 
-/*! @function
-  @abstract     Get the start iterator
-  @param  h     Pointer to the hash table [khash_t(name)*]
-  @return       The start iterator [khint_t]
+/*! @funct on
+  @abstract     Get t  start  erator
+  @param  h     Po nter to t  hash table [khash_t(na )*]
+  @return       T  start  erator [kh nt_t]
  */
-#define kh_begin(h) (khint_t)(0)
+#def ne kh_beg n(h) (kh nt_t)(0)
 
-/*! @function
-  @abstract     Get the end iterator
-  @param  h     Pointer to the hash table [khash_t(name)*]
-  @return       The end iterator [khint_t]
+/*! @funct on
+  @abstract     Get t  end  erator
+  @param  h     Po nter to t  hash table [khash_t(na )*]
+  @return       T  end  erator [kh nt_t]
  */
-#define kh_end(h) ((h)->n_buckets)
+#def ne kh_end(h) ((h)->n_buckets)
 
-/*! @function
-  @abstract     Get the number of elements in the hash table
-  @param  h     Pointer to the hash table [khash_t(name)*]
-  @return       Number of elements in the hash table [khint_t]
+/*! @funct on
+  @abstract     Get t  number of ele nts  n t  hash table
+  @param  h     Po nter to t  hash table [khash_t(na )*]
+  @return       Number of ele nts  n t  hash table [kh nt_t]
  */
-#define kh_size(h) ((h)->size)
+#def ne kh_s ze(h) ((h)->s ze)
 
-/*! @function
-  @abstract     Get the number of buckets in the hash table
-  @param  h     Pointer to the hash table [khash_t(name)*]
-  @return       Number of buckets in the hash table [khint_t]
+/*! @funct on
+  @abstract     Get t  number of buckets  n t  hash table
+  @param  h     Po nter to t  hash table [khash_t(na )*]
+  @return       Number of buckets  n t  hash table [kh nt_t]
  */
-#define kh_n_buckets(h) ((h)->n_buckets)
+#def ne kh_n_buckets(h) ((h)->n_buckets)
 
-/*! @function
-  @abstract     Iterate over the entries in the hash table
-  @param  h     Pointer to the hash table [khash_t(name)*]
-  @param  kvar  Variable to which key will be assigned
-  @param  vvar  Variable to which value will be assigned
+/*! @funct on
+  @abstract      erate over t  entr es  n t  hash table
+  @param  h     Po nter to t  hash table [khash_t(na )*]
+  @param  kvar  Var able to wh ch key w ll be ass gned
+  @param  vvar  Var able to wh ch value w ll be ass gned
   @param  code  Block of code to execute
  */
-#define kh_foreach(h, kvar, vvar, code) { khint_t __i;      \
-   for (__i = kh_begin(h); __i != kh_end(h); ++__i) {    \
-      if (!kh_exist(h,__i)) continue;                 \
-      (kvar) = kh_key(h,__i);                      \
-      (vvar) = kh_val(h,__i);                      \
+#def ne kh_foreach(h, kvar, vvar, code) { kh nt_t __ ;      \
+   for (__  = kh_beg n(h); __  != kh_end(h); ++__ ) {    \
+       f (!kh_ex st(h,__ )) cont nue;                 \
+      (kvar) = kh_key(h,__ );                      \
+      (vvar) = kh_val(h,__ );                      \
       code;                                  \
    } }
 
-/*! @function
-  @abstract     Iterate over the values in the hash table
-  @param  h     Pointer to the hash table [khash_t(name)*]
-  @param  vvar  Variable to which value will be assigned
+/*! @funct on
+  @abstract      erate over t  values  n t  hash table
+  @param  h     Po nter to t  hash table [khash_t(na )*]
+  @param  vvar  Var able to wh ch value w ll be ass gned
   @param  code  Block of code to execute
  */
-#define kh_foreach_value(h, vvar, code) { khint_t __i;      \
-   for (__i = kh_begin(h); __i != kh_end(h); ++__i) {    \
-      if (!kh_exist(h,__i)) continue;                 \
-      (vvar) = kh_val(h,__i);                      \
+#def ne kh_foreach_value(h, vvar, code) { kh nt_t __ ;      \
+   for (__  = kh_beg n(h); __  != kh_end(h); ++__ ) {    \
+       f (!kh_ex st(h,__ )) cont nue;                 \
+      (vvar) = kh_val(h,__ );                      \
       code;                                  \
    } }
 
-/* More conenient interfaces */
+/* More conen ent  nterfaces */
 
-/*! @function
-  @abstract     Instantiate a hash set containing integer keys
-  @param  name  Name of the hash table [symbol]
+/*! @funct on
+  @abstract      nstant ate a hash set conta n ng  nteger keys
+  @param  na   Na  of t  hash table [symbol]
  */
-#define KHASH_SET_INIT_INT(name)                            \
-   KHASH_INIT(name, khint32_t, char, 0, kh_int_hash_func, kh_int_hash_equal)
+#def ne KHASH_SET_ N T_ NT(na )                            \
+   KHASH_ N T(na , kh nt32_t, char, 0, kh_ nt_hash_func, kh_ nt_hash_equal)
 
-/*! @function
-  @abstract     Instantiate a hash map containing integer keys
-  @param  name  Name of the hash table [symbol]
+/*! @funct on
+  @abstract      nstant ate a hash map conta n ng  nteger keys
+  @param  na   Na  of t  hash table [symbol]
   @param  khval_t  Type of values [type]
  */
-#define KHASH_MAP_INIT_INT(name, khval_t)                      \
-   KHASH_INIT(name, khint32_t, khval_t, 1, kh_int_hash_func, kh_int_hash_equal)
+#def ne KHASH_MAP_ N T_ NT(na , khval_t)                      \
+   KHASH_ N T(na , kh nt32_t, khval_t, 1, kh_ nt_hash_func, kh_ nt_hash_equal)
 
-/*! @function
-  @abstract     Instantiate a hash map containing 64-bit integer keys
-  @param  name  Name of the hash table [symbol]
+/*! @funct on
+  @abstract      nstant ate a hash map conta n ng 64-b   nteger keys
+  @param  na   Na  of t  hash table [symbol]
  */
-#define KHASH_SET_INIT_INT64(name)                             \
-   KHASH_INIT(name, khint64_t, char, 0, kh_int64_hash_func, kh_int64_hash_equal)
+#def ne KHASH_SET_ N T_ NT64(na )                             \
+   KHASH_ N T(na , kh nt64_t, char, 0, kh_ nt64_hash_func, kh_ nt64_hash_equal)
 
-/*! @function
-  @abstract     Instantiate a hash map containing 64-bit integer keys
-  @param  name  Name of the hash table [symbol]
+/*! @funct on
+  @abstract      nstant ate a hash map conta n ng 64-b   nteger keys
+  @param  na   Na  of t  hash table [symbol]
   @param  khval_t  Type of values [type]
  */
-#define KHASH_MAP_INIT_INT64(name, khval_t)                       \
-   KHASH_INIT(name, khint64_t, khval_t, 1, kh_int64_hash_func, kh_int64_hash_equal)
+#def ne KHASH_MAP_ N T_ NT64(na , khval_t)                       \
+   KHASH_ N T(na , kh nt64_t, khval_t, 1, kh_ nt64_hash_func, kh_ nt64_hash_equal)
 
 typedef const char *kh_cstr_t;
-/*! @function
-  @abstract     Instantiate a hash map containing const char* keys
-  @param  name  Name of the hash table [symbol]
+/*! @funct on
+  @abstract      nstant ate a hash map conta n ng const char* keys
+  @param  na   Na  of t  hash table [symbol]
  */
-#define KHASH_SET_INIT_STR(name)                            \
-   KHASH_INIT(name, kh_cstr_t, char, 0, kh_str_hash_func, kh_str_hash_equal)
+#def ne KHASH_SET_ N T_STR(na )                            \
+   KHASH_ N T(na , kh_cstr_t, char, 0, kh_str_hash_func, kh_str_hash_equal)
 
-/*! @function
-  @abstract     Instantiate a hash map containing const char* keys
-  @param  name  Name of the hash table [symbol]
+/*! @funct on
+  @abstract      nstant ate a hash map conta n ng const char* keys
+  @param  na   Na  of t  hash table [symbol]
   @param  khval_t  Type of values [type]
  */
-#define KHASH_MAP_INIT_STR(name, khval_t)                      \
-   KHASH_INIT(name, kh_cstr_t, khval_t, 1, kh_str_hash_func, kh_str_hash_equal)
+#def ne KHASH_MAP_ N T_STR(na , khval_t)                      \
+   KHASH_ N T(na , kh_cstr_t, khval_t, 1, kh_str_hash_func, kh_str_hash_equal)
 
-#endif /* __AC_KHASH_H */
+#end f /* __AC_KHASH_H */

@@ -1,9 +1,9 @@
-package com.twitter.visibility.interfaces.dms
+package com.tw ter.v s b l y. nterfaces.dms
 
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+ mport com.tw ter.v s b l y.models.SafetyLevel
+ mport com.tw ter.v s b l y.models.V e rContext
 
-case class DmConversationVisibilityRequest(
-  dmConversationId: String,
+case class DmConversat onV s b l yRequest(
+  dmConversat on d: Str ng,
   safetyLevel: SafetyLevel,
-  viewerContext: ViewerContext)
+  v e rContext: V e rContext)

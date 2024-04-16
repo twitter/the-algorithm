@@ -1,29 +1,29 @@
-package com.twitter.recosinjector.clients
+package com.tw ter.recos njector.cl ents
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.tweetypie.TweetyPie.{TweetyPieException, TweetyPieResult}
-import com.twitter.storehaus.ReadableStore
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.util.Future
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.st ch.t etyp e.T etyP e.{T etyP eExcept on, T etyP eResult}
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.ut l.Future
 
-class Tweetypie(
-  tweetyPieStore: ReadableStore[Long, TweetyPieResult]
+class T etyp e(
+  t etyP eStore: ReadableStore[Long, T etyP eResult]
 )(
-  implicit statsReceiver: StatsReceiver) {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val failureStats = stats.scope("getTweetFailure")
+   mpl c  statsRece ver: StatsRece ver) {
+  pr vate val stats = statsRece ver.scope(t .getClass.getS mpleNa )
+  pr vate val fa lureStats = stats.scope("getT etFa lure")
 
-  def getTweet(tweetId: Long): Future[Option[Tweet]] = {
-    tweetyPieStore
-      .get(tweetId)
-      .map { _.map(_.tweet) }
+  def getT et(t et d: Long): Future[Opt on[T et]] = {
+    t etyP eStore
+      .get(t et d)
+      .map { _.map(_.t et) }
       .rescue {
-        case e: TweetyPieException =>
-          // Usually results from trying to query a protected or unsafe tweet
-          failureStats.scope("TweetyPieException").counter(e.result.tweetState.toString).incr()
+        case e: T etyP eExcept on =>
+          // Usually results from try ng to query a protected or unsafe t et
+          fa lureStats.scope("T etyP eExcept on").counter(e.result.t etState.toStr ng). ncr()
           Future.None
         case e =>
-          failureStats.counter(e.getClass.getSimpleName).incr()
+          fa lureStats.counter(e.getClass.getS mpleNa ). ncr()
           Future.None
       }
   }

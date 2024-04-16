@@ -1,43 +1,43 @@
-package com.twitter.search.earlybird_root.filters;
+package com.tw ter.search.earlyb rd_root.f lters;
 
-import java.util.concurrent.atomic.AtomicReference;
+ mport java.ut l.concurrent.atom c.Atom cReference;
 
-import scala.Option;
+ mport scala.Opt on;
 
-import com.google.common.base.Preconditions;
+ mport com.google.common.base.Precond  ons;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.finagle.context.Contexts;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.root.SearchPayloadSizeFilter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+ mport com.tw ter.f nagle.Serv ce;
+ mport com.tw ter.f nagle.S mpleF lter;
+ mport com.tw ter.f nagle.context.Contexts;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.root.SearchPayloadS zeF lter;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdRequest;
+ mport com.tw ter.search.earlyb rd.thr ft.Earlyb rdResponse;
+ mport com.tw ter.ut l.Future;
 
 /**
- * A filter that sets the clientId in the local context, to be usd later by SearchPayloadSizeFilter.
+ * A f lter that sets t  cl ent d  n t  local context, to be usd later by SearchPayloadS zeF lter.
  */
-public class SearchPayloadSizeLocalContextFilter
-    extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  private static final SearchCounter CLIENT_ID_CONTEXT_KEY_NOT_SET_COUNTER = SearchCounter.export(
-      "search_payload_size_local_context_filter_client_id_context_key_not_set");
+publ c class SearchPayloadS zeLocalContextF lter
+    extends S mpleF lter<Earlyb rdRequest, Earlyb rdResponse> {
+  pr vate stat c f nal SearchCounter CL ENT_ D_CONTEXT_KEY_NOT_SET_COUNTER = SearchCounter.export(
+      "search_payload_s ze_local_context_f lter_cl ent_ d_context_key_not_set");
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
-    // In production, the SearchPayloadSizeFilter.CLIENT_ID_CONTEXT_KEY should always be set
-    // (by ThriftServer). However, it's not set in tests, because tests do not start a ThriftServer.
-    Option<AtomicReference<String>> clientIdOption =
-        Contexts.local().get(SearchPayloadSizeFilter.CLIENT_ID_CONTEXT_KEY);
-    if (clientIdOption.isDefined()) {
-      AtomicReference<String> clientIdReference = clientIdOption.get();
-      Preconditions.checkArgument(clientIdReference.get() == null);
-      clientIdReference.set(request.getClientId());
+  @Overr de
+  publ c Future<Earlyb rdResponse> apply(Earlyb rdRequest request,
+                                         Serv ce<Earlyb rdRequest, Earlyb rdResponse> serv ce) {
+    //  n product on, t  SearchPayloadS zeF lter.CL ENT_ D_CONTEXT_KEY should always be set
+    // (by Thr ftServer). Ho ver,  's not set  n tests, because tests do not start a Thr ftServer.
+    Opt on<Atom cReference<Str ng>> cl ent dOpt on =
+        Contexts.local().get(SearchPayloadS zeF lter.CL ENT_ D_CONTEXT_KEY);
+     f (cl ent dOpt on. sDef ned()) {
+      Atom cReference<Str ng> cl ent dReference = cl ent dOpt on.get();
+      Precond  ons.c ckArgu nt(cl ent dReference.get() == null);
+      cl ent dReference.set(request.getCl ent d());
     } else {
-      CLIENT_ID_CONTEXT_KEY_NOT_SET_COUNTER.increment();
+      CL ENT_ D_CONTEXT_KEY_NOT_SET_COUNTER. ncre nt();
     }
 
-    return service.apply(request);
+    return serv ce.apply(request);
   }
 }

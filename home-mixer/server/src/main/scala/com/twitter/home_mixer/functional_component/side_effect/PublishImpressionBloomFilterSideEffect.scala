@@ -1,65 +1,65 @@
-package com.twitter.home_mixer.functional_component.side_effect
+package com.tw ter.ho _m xer.funct onal_component.s de_effect
 
-import com.twitter.home_mixer.model.HomeFeatures.ImpressionBloomFilterFeature
-import com.twitter.home_mixer.model.request.HasSeenTweetIds
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableImpressionBloomFilter
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.clients.manhattan.store.ManhattanStoreClient
-import com.twitter.timelines.impressionbloomfilter.{thriftscala => blm}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.ho _m xer.model.Ho Features. mpress onBloomF lterFeature
+ mport com.tw ter.ho _m xer.model.request.HasSeenT et ds
+ mport com.tw ter.ho _m xer.param.Ho GlobalParams.Enable mpress onBloomF lter
+ mport com.tw ter.ho _m xer.serv ce.Ho M xerAlertConf g
+ mport com.tw ter.product_m xer.core.funct onal_component.s de_effect.P pel neResultS deEffect
+ mport com.tw ter.product_m xer.core.model.common. dent f er.S deEffect dent f er
+ mport com.tw ter.product_m xer.core.model.common.presentat on.Cand dateW hDeta ls
+ mport com.tw ter.product_m xer.core.model.marshall ng.HasMarshall ng
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.cl ents.manhattan.store.ManhattanStoreCl ent
+ mport com.tw ter.t  l nes. mpress onbloomf lter.{thr ftscala => blm}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class PublishImpressionBloomFilterSideEffect @Inject() (
-  bloomFilterClient: ManhattanStoreClient[
-    blm.ImpressionBloomFilterKey,
-    blm.ImpressionBloomFilterSeq
-  ]) extends PipelineResultSideEffect[PipelineQuery with HasSeenTweetIds, HasMarshalling]
-    with PipelineResultSideEffect.Conditionally[
-      PipelineQuery with HasSeenTweetIds,
-      HasMarshalling
+@S ngleton
+class Publ sh mpress onBloomF lterS deEffect @ nject() (
+  bloomF lterCl ent: ManhattanStoreCl ent[
+    blm. mpress onBloomF lterKey,
+    blm. mpress onBloomF lterSeq
+  ]) extends P pel neResultS deEffect[P pel neQuery w h HasSeenT et ds, HasMarshall ng]
+    w h P pel neResultS deEffect.Cond  onally[
+      P pel neQuery w h HasSeenT et ds,
+      HasMarshall ng
     ] {
 
-  override val identifier: SideEffectIdentifier =
-    SideEffectIdentifier("PublishImpressionBloomFilter")
+  overr de val  dent f er: S deEffect dent f er =
+    S deEffect dent f er("Publ sh mpress onBloomF lter")
 
-  private val SurfaceArea = blm.SurfaceArea.HomeTimeline
+  pr vate val SurfaceArea = blm.SurfaceArea.Ho T  l ne
 
-  override def onlyIf(
-    query: PipelineQuery with HasSeenTweetIds,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: HasMarshalling
+  overr de def only f(
+    query: P pel neQuery w h HasSeenT et ds,
+    selectedCand dates: Seq[Cand dateW hDeta ls],
+    rema n ngCand dates: Seq[Cand dateW hDeta ls],
+    droppedCand dates: Seq[Cand dateW hDeta ls],
+    response: HasMarshall ng
   ): Boolean =
-    query.params.getBoolean(EnableImpressionBloomFilter) && query.seenTweetIds.exists(_.nonEmpty)
+    query.params.getBoolean(Enable mpress onBloomF lter) && query.seenT et ds.ex sts(_.nonEmpty)
 
-  def buildEvents(query: PipelineQuery): Option[blm.ImpressionBloomFilterSeq] = {
+  def bu ldEvents(query: P pel neQuery): Opt on[blm. mpress onBloomF lterSeq] = {
     query.features.flatMap { featureMap =>
-      val impressionBloomFilterSeq = featureMap.get(ImpressionBloomFilterFeature)
-      if (impressionBloomFilterSeq.entries.nonEmpty) Some(impressionBloomFilterSeq)
+      val  mpress onBloomF lterSeq = featureMap.get( mpress onBloomF lterFeature)
+       f ( mpress onBloomF lterSeq.entr es.nonEmpty) So ( mpress onBloomF lterSeq)
       else None
     }
   }
 
-  override def apply(
-    inputs: PipelineResultSideEffect.Inputs[PipelineQuery with HasSeenTweetIds, HasMarshalling]
-  ): Stitch[Unit] = {
-    buildEvents(inputs.query)
-      .map { updatedBloomFilterSeq =>
-        bloomFilterClient.write(
-          blm.ImpressionBloomFilterKey(inputs.query.getRequiredUserId, SurfaceArea),
-          updatedBloomFilterSeq)
-      }.getOrElse(Stitch.Unit)
+  overr de def apply(
+     nputs: P pel neResultS deEffect. nputs[P pel neQuery w h HasSeenT et ds, HasMarshall ng]
+  ): St ch[Un ] = {
+    bu ldEvents( nputs.query)
+      .map { updatedBloomF lterSeq =>
+        bloomF lterCl ent.wr e(
+          blm. mpress onBloomF lterKey( nputs.query.getRequ redUser d, SurfaceArea),
+          updatedBloomF lterSeq)
+      }.getOrElse(St ch.Un )
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.8)
+  overr de val alerts = Seq(
+    Ho M xerAlertConf g.Bus nessH s.defaultSuccessRateAlert(99.8)
   )
 }

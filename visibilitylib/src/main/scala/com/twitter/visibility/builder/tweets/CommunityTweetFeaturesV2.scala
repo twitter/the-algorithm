@@ -1,129 +1,129 @@
-package com.twitter.visibility.builder.tweets
+package com.tw ter.v s b l y.bu lder.t ets
 
-import com.twitter.communities.moderation.thriftscala.CommunityTweetModerationState
-import com.twitter.communities.moderation.thriftscala.CommunityUserModerationState
-import com.twitter.communities.visibility.thriftscala.CommunityVisibilityFeatures
-import com.twitter.communities.visibility.thriftscala.CommunityVisibilityFeaturesV1
-import com.twitter.communities.visibility.thriftscala.CommunityVisibilityResult
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.CommunitiesSource
-import com.twitter.visibility.features.CommunityTweetAuthorIsRemoved
-import com.twitter.visibility.features.CommunityTweetCommunityNotFound
-import com.twitter.visibility.features.CommunityTweetCommunityDeleted
-import com.twitter.visibility.features.CommunityTweetCommunitySuspended
-import com.twitter.visibility.features.CommunityTweetCommunityVisible
-import com.twitter.visibility.features.CommunityTweetIsHidden
-import com.twitter.visibility.features.TweetIsCommunityTweet
-import com.twitter.visibility.features.ViewerIsCommunityAdmin
-import com.twitter.visibility.features.ViewerIsCommunityMember
-import com.twitter.visibility.features.ViewerIsCommunityModerator
-import com.twitter.visibility.features.ViewerIsInternalCommunitiesAdmin
-import com.twitter.visibility.models.CommunityTweet
-import com.twitter.visibility.models.ViewerContext
+ mport com.tw ter.commun  es.moderat on.thr ftscala.Commun yT etModerat onState
+ mport com.tw ter.commun  es.moderat on.thr ftscala.Commun yUserModerat onState
+ mport com.tw ter.commun  es.v s b l y.thr ftscala.Commun yV s b l yFeatures
+ mport com.tw ter.commun  es.v s b l y.thr ftscala.Commun yV s b l yFeaturesV1
+ mport com.tw ter.commun  es.v s b l y.thr ftscala.Commun yV s b l yResult
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t etyp e.thr ftscala.T et
+ mport com.tw ter.v s b l y.bu lder.FeatureMapBu lder
+ mport com.tw ter.v s b l y.common.Commun  esS ce
+ mport com.tw ter.v s b l y.features.Commun yT etAuthor sRemoved
+ mport com.tw ter.v s b l y.features.Commun yT etCommun yNotFound
+ mport com.tw ter.v s b l y.features.Commun yT etCommun yDeleted
+ mport com.tw ter.v s b l y.features.Commun yT etCommun ySuspended
+ mport com.tw ter.v s b l y.features.Commun yT etCommun yV s ble
+ mport com.tw ter.v s b l y.features.Commun yT et sH dden
+ mport com.tw ter.v s b l y.features.T et sCommun yT et
+ mport com.tw ter.v s b l y.features.V e r sCommun yAdm n
+ mport com.tw ter.v s b l y.features.V e r sCommun y mber
+ mport com.tw ter.v s b l y.features.V e r sCommun yModerator
+ mport com.tw ter.v s b l y.features.V e r s nternalCommun  esAdm n
+ mport com.tw ter.v s b l y.models.Commun yT et
+ mport com.tw ter.v s b l y.models.V e rContext
 
-class CommunityTweetFeaturesV2(communitiesSource: CommunitiesSource)
-    extends CommunityTweetFeatures {
-  private[this] def forCommunityTweet(
-    communityTweet: CommunityTweet
-  ): FeatureMapBuilder => FeatureMapBuilder = { builder: FeatureMapBuilder =>
+class Commun yT etFeaturesV2(commun  esS ce: Commun  esS ce)
+    extends Commun yT etFeatures {
+  pr vate[t ] def forCommun yT et(
+    commun yT et: Commun yT et
+  ): FeatureMapBu lder => FeatureMapBu lder = { bu lder: FeatureMapBu lder =>
     {
-      val communityVisibilityFeaturesStitch =
-        communitiesSource.getCommunityVisibilityFeatures(communityTweet.communityId)
-      val communityTweetModerationStateStitch =
-        communitiesSource.getTweetModerationState(communityTweet.tweet.id)
-      val communityTweetAuthorModerationStateStitch =
-        communitiesSource.getUserModerationState(
-          communityTweet.authorId,
-          communityTweet.communityId
+      val commun yV s b l yFeaturesSt ch =
+        commun  esS ce.getCommun yV s b l yFeatures(commun yT et.commun y d)
+      val commun yT etModerat onStateSt ch =
+        commun  esS ce.getT etModerat onState(commun yT et.t et. d)
+      val commun yT etAuthorModerat onStateSt ch =
+        commun  esS ce.getUserModerat onState(
+          commun yT et.author d,
+          commun yT et.commun y d
         )
 
-      def getFlagFromFeatures(f: CommunityVisibilityFeaturesV1 => Boolean): Stitch[Boolean] =
-        communityVisibilityFeaturesStitch.map {
-          case Some(CommunityVisibilityFeatures.V1(v1)) => f(v1)
+      def getFlagFromFeatures(f: Commun yV s b l yFeaturesV1 => Boolean): St ch[Boolean] =
+        commun yV s b l yFeaturesSt ch.map {
+          case So (Commun yV s b l yFeatures.V1(v1)) => f(v1)
           case _ => false
         }
 
-      def getFlagFromCommunityVisibilityResult(
-        f: CommunityVisibilityResult => Boolean
-      ): Stitch[Boolean] = getFlagFromFeatures { v =>
-        f(v.communityVisibilityResult)
+      def getFlagFromCommun yV s b l yResult(
+        f: Commun yV s b l yResult => Boolean
+      ): St ch[Boolean] = getFlagFromFeatures { v =>
+        f(v.commun yV s b l yResult)
       }
 
-      builder
-        .withConstantFeature(
-          TweetIsCommunityTweet,
+      bu lder
+        .w hConstantFeature(
+          T et sCommun yT et,
           true
         )
-        .withFeature(
-          CommunityTweetCommunityNotFound,
-          getFlagFromCommunityVisibilityResult {
-            case CommunityVisibilityResult.NotFound => true
+        .w hFeature(
+          Commun yT etCommun yNotFound,
+          getFlagFromCommun yV s b l yResult {
+            case Commun yV s b l yResult.NotFound => true
             case _ => false
           }
         )
-        .withFeature(
-          CommunityTweetCommunitySuspended,
-          getFlagFromCommunityVisibilityResult {
-            case CommunityVisibilityResult.Suspended => true
+        .w hFeature(
+          Commun yT etCommun ySuspended,
+          getFlagFromCommun yV s b l yResult {
+            case Commun yV s b l yResult.Suspended => true
             case _ => false
           }
         )
-        .withFeature(
-          CommunityTweetCommunityDeleted,
-          getFlagFromCommunityVisibilityResult {
-            case CommunityVisibilityResult.Deleted => true
+        .w hFeature(
+          Commun yT etCommun yDeleted,
+          getFlagFromCommun yV s b l yResult {
+            case Commun yV s b l yResult.Deleted => true
             case _ => false
           }
         )
-        .withFeature(
-          CommunityTweetCommunityVisible,
-          getFlagFromCommunityVisibilityResult {
-            case CommunityVisibilityResult.Visible => true
+        .w hFeature(
+          Commun yT etCommun yV s ble,
+          getFlagFromCommun yV s b l yResult {
+            case Commun yV s b l yResult.V s ble => true
             case _ => false
           }
         )
-        .withFeature(
-          ViewerIsInternalCommunitiesAdmin,
-          getFlagFromFeatures { _.viewerIsInternalAdmin }
+        .w hFeature(
+          V e r s nternalCommun  esAdm n,
+          getFlagFromFeatures { _.v e r s nternalAdm n }
         )
-        .withFeature(
-          ViewerIsCommunityAdmin,
-          getFlagFromFeatures { _.viewerIsCommunityAdmin }
+        .w hFeature(
+          V e r sCommun yAdm n,
+          getFlagFromFeatures { _.v e r sCommun yAdm n }
         )
-        .withFeature(
-          ViewerIsCommunityModerator,
-          getFlagFromFeatures { _.viewerIsCommunityModerator }
+        .w hFeature(
+          V e r sCommun yModerator,
+          getFlagFromFeatures { _.v e r sCommun yModerator }
         )
-        .withFeature(
-          ViewerIsCommunityMember,
-          getFlagFromFeatures { _.viewerIsCommunityMember }
+        .w hFeature(
+          V e r sCommun y mber,
+          getFlagFromFeatures { _.v e r sCommun y mber }
         )
-        .withFeature(
-          CommunityTweetIsHidden,
-          communityTweetModerationStateStitch.map {
-            case Some(CommunityTweetModerationState.Hidden(_)) => true
+        .w hFeature(
+          Commun yT et sH dden,
+          commun yT etModerat onStateSt ch.map {
+            case So (Commun yT etModerat onState.H dden(_)) => true
             case _ => false
           }
         )
-        .withFeature(
-          CommunityTweetAuthorIsRemoved,
-          communityTweetAuthorModerationStateStitch.map {
-            case Some(CommunityUserModerationState.Removed(_)) => true
+        .w hFeature(
+          Commun yT etAuthor sRemoved,
+          commun yT etAuthorModerat onStateSt ch.map {
+            case So (Commun yUserModerat onState.Removed(_)) => true
             case _ => false
           }
         )
     }
   }
 
-  def forTweet(
-    tweet: Tweet,
-    viewerContext: ViewerContext
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    CommunityTweet(tweet) match {
-      case None => forNonCommunityTweet()
-      case Some(communityTweet) => forCommunityTweet(communityTweet)
+  def forT et(
+    t et: T et,
+    v e rContext: V e rContext
+  ): FeatureMapBu lder => FeatureMapBu lder = {
+    Commun yT et(t et) match {
+      case None => forNonCommun yT et()
+      case So (commun yT et) => forCommun yT et(commun yT et)
     }
   }
 }

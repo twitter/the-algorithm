@@ -1,141 +1,141 @@
-package com.twitter.follow_recommendations.common.rankers.fatigue_ranker
+package com.tw ter.follow_recom ndat ons.common.rankers.fat gue_ranker
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Ranker
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasWtfImpressions
-import com.twitter.follow_recommendations.common.models.WtfImpression
-import com.twitter.follow_recommendations.common.rankers.common.RankerId.RankerId
-import com.twitter.follow_recommendations.common.rankers.utils.Utils
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Time
+ mport com.tw ter.f nagle.stats.Counter
+ mport com.tw ter.f nagle.stats.Stat
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.base.Ranker
+ mport com.tw ter.follow_recom ndat ons.common.base.StatsUt l
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.models.HasD splayLocat on
+ mport com.tw ter.follow_recom ndat ons.common.models.HasWtf mpress ons
+ mport com.tw ter.follow_recom ndat ons.common.models.Wtf mpress on
+ mport com.tw ter.follow_recom ndat ons.common.rankers.common.Ranker d.Ranker d
+ mport com.tw ter.follow_recom ndat ons.common.rankers.ut ls.Ut ls
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.HasCl entContext
+ mport com.tw ter.servo.ut l. mo z ngStatsRece ver
+ mport com.tw ter.st ch.St ch
+ mport com.tw ter.t  l nes.conf gap .HasParams
+ mport com.tw ter.ut l.T  
 
 /**
- * Ranks candidates based on the given weights for each algorithm while preserving the ranks inside each algorithm.
- * Reorders the ranked list based on recent impressions from recentImpressionRepo
+ * Ranks cand dates based on t  g ven   ghts for each algor hm wh le preserv ng t  ranks  ns de each algor hm.
+ * Reorders t  ranked l st based on recent  mpress ons from recent mpress onRepo
  *
- * Note that the penalty is added to the rank of each candidate. To make producer-side experiments
- * with multiple rankers possible, we modify the scores for each candidate and ranker as:
- *     NewScore(C, R) = -(Rank(C, R) + Impression(C, U) x FatigueFactor),
- * where C is a candidate, R a ranker and U the target user.
- * Note also that fatigue penalty is independent of any of the rankers.
+ * Note that t  penalty  s added to t  rank of each cand date. To make producer-s de exper  nts
+ * w h mult ple rankers poss ble,   mod fy t  scores for each cand date and ranker as:
+ *     NewScore(C, R) = -(Rank(C, R) +  mpress on(C, U) x Fat gueFactor),
+ * w re C  s a cand date, R a ranker and U t  target user.
+ * Note also that fat gue penalty  s  ndependent of any of t  rankers.
  */
-class ImpressionBasedFatigueRanker[
-  Target <: HasClientContext with HasDisplayLocation with HasParams with HasWtfImpressions
+class  mpress onBasedFat gueRanker[
+  Target <: HasCl entContext w h HasD splayLocat on w h HasParams w h HasWtf mpress ons
 ](
-  fatigueFactor: Int,
-  statsReceiver: StatsReceiver)
-    extends Ranker[Target, CandidateUser] {
+  fat gueFactor:  nt,
+  statsRece ver: StatsRece ver)
+    extends Ranker[Target, Cand dateUser] {
 
-  val name: String = this.getClass.getSimpleName
-  val stats = statsReceiver.scope("impression_based_fatigue_ranker")
-  val droppedStats: MemoizingStatsReceiver = new MemoizingStatsReceiver(stats.scope("hard_drops"))
-  val impressionStats: StatsReceiver = stats.scope("wtf_impressions")
-  val noImpressionCounter: Counter = impressionStats.counter("no_impressions")
-  val oldestImpressionStat: Stat = impressionStats.stat("oldest_sec")
+  val na : Str ng = t .getClass.getS mpleNa 
+  val stats = statsRece ver.scope(" mpress on_based_fat gue_ranker")
+  val droppedStats:  mo z ngStatsRece ver = new  mo z ngStatsRece ver(stats.scope("hard_drops"))
+  val  mpress onStats: StatsRece ver = stats.scope("wtf_ mpress ons")
+  val no mpress onCounter: Counter =  mpress onStats.counter("no_ mpress ons")
+  val oldest mpress onStat: Stat =  mpress onStats.stat("oldest_sec")
 
-  override def rank(target: Target, candidates: Seq[CandidateUser]): Stitch[Seq[CandidateUser]] = {
-    StatsUtil.profileStitch(
-      Stitch.value(rankCandidates(target, candidates)),
+  overr de def rank(target: Target, cand dates: Seq[Cand dateUser]): St ch[Seq[Cand dateUser]] = {
+    StatsUt l.prof leSt ch(
+      St ch.value(rankCand dates(target, cand dates)),
       stats.scope("rank")
     )
   }
 
-  private def trackTimeSinceOldestImpression(impressions: Seq[WtfImpression]): Unit = {
-    val timeSinceOldest = Time.now - impressions.map(_.latestTime).min
-    oldestImpressionStat.add(timeSinceOldest.inSeconds)
+  pr vate def trackT  S nceOldest mpress on( mpress ons: Seq[Wtf mpress on]): Un  = {
+    val t  S nceOldest = T  .now -  mpress ons.map(_.latestT  ).m n
+    oldest mpress onStat.add(t  S nceOldest. nSeconds)
   }
 
-  private def rankCandidates(
+  pr vate def rankCand dates(
     target: Target,
-    candidates: Seq[CandidateUser]
-  ): Seq[CandidateUser] = {
-    target.wtfImpressions
-      .map { wtfImpressions =>
-        if (wtfImpressions.isEmpty) {
-          noImpressionCounter.incr()
-          candidates
+    cand dates: Seq[Cand dateUser]
+  ): Seq[Cand dateUser] = {
+    target.wtf mpress ons
+      .map { wtf mpress ons =>
+         f (wtf mpress ons. sEmpty) {
+          no mpress onCounter. ncr()
+          cand dates
         } else {
-          val rankerIds =
-            candidates.flatMap(_.scores.map(_.scores.flatMap(_.rankerId))).flatten.sorted.distinct
+          val ranker ds =
+            cand dates.flatMap(_.scores.map(_.scores.flatMap(_.ranker d))).flatten.sorted.d st nct
 
           /**
-           * In below we create a Map from each CandidateUser's ID to a Map from each Ranker that
-           * the user has a score for, and candidate's corresponding rank when candidates are sorted
-           * by that Ranker (Only candidates who have this Ranker are considered for ranking).
+           *  n below   create a Map from each Cand dateUser's  D to a Map from each Ranker that
+           * t  user has a score for, and cand date's correspond ng rank w n cand dates are sorted
+           * by that Ranker (Only cand dates who have t  Ranker are cons dered for rank ng).
            */
-          val candidateRanks: Map[Long, Map[RankerId, Int]] = rankerIds
-            .flatMap { rankerId =>
-              // Candidates with no scores from this Ranker is first removed to calculate ranks.
-              val relatedCandidates =
-                candidates.filter(_.scores.exists(_.scores.exists(_.rankerId.contains(rankerId))))
-              relatedCandidates
+          val cand dateRanks: Map[Long, Map[Ranker d,  nt]] = ranker ds
+            .flatMap { ranker d =>
+              // Cand dates w h no scores from t  Ranker  s f rst removed to calculate ranks.
+              val relatedCand dates =
+                cand dates.f lter(_.scores.ex sts(_.scores.ex sts(_.ranker d.conta ns(ranker d))))
+              relatedCand dates
                 .sortBy(-_.scores
-                  .flatMap(_.scores.find(_.rankerId.contains(rankerId)).map(_.value)).getOrElse(
-                    0.0)).zipWithIndex.map {
-                  case (candidate, rank) => (candidate.id, rankerId, rank)
+                  .flatMap(_.scores.f nd(_.ranker d.conta ns(ranker d)).map(_.value)).getOrElse(
+                    0.0)).z pW h ndex.map {
+                  case (cand date, rank) => (cand date. d, ranker d, rank)
                 }
             }.groupBy(_._1).map {
-              case (candidate, ranksForAllRankers) =>
+              case (cand date, ranksForAllRankers) =>
                 (
-                  candidate,
-                  ranksForAllRankers.map { case (_, rankerId, rank) => (rankerId, rank) }.toMap)
+                  cand date,
+                  ranksForAllRankers.map { case (_, ranker d, rank) => (ranker d, rank) }.toMap)
             }
 
-          val idFatigueCountMap =
-            wtfImpressions.groupBy(_.candidateId).mapValues(_.map(_.counts).sum)
-          trackTimeSinceOldestImpression(wtfImpressions)
-          val rankedCandidates: Seq[CandidateUser] = candidates
-            .map { candidate =>
-              val candidateImpressions = idFatigueCountMap.getOrElse(candidate.id, 0)
-              val fatiguedScores = candidate.scores.map { ss =>
+          val  dFat gueCountMap =
+            wtf mpress ons.groupBy(_.cand date d).mapValues(_.map(_.counts).sum)
+          trackT  S nceOldest mpress on(wtf mpress ons)
+          val rankedCand dates: Seq[Cand dateUser] = cand dates
+            .map { cand date =>
+              val cand date mpress ons =  dFat gueCountMap.getOrElse(cand date. d, 0)
+              val fat guedScores = cand date.scores.map { ss =>
                 ss.copy(scores = ss.scores.map { s =>
-                  s.rankerId match {
-                    // We set the new score as -rank after fatigue penalty is applied.
-                    case Some(rankerId) =>
-                      // If the candidate's ID is not in the candidate->ranks map, or there is no
-                      // rank for this specific ranker and this candidate, we use maximum possible
-                      // rank instead. Note that this indicates that there is a problem.
-                      s.copy(value = -(candidateRanks
-                        .getOrElse(candidate.id, Map()).getOrElse(rankerId, candidates.length) +
-                        candidateImpressions * fatigueFactor))
-                    // In case a score exists without a RankerId, we pass on the score as is.
+                  s.ranker d match {
+                    //   set t  new score as -rank after fat gue penalty  s appl ed.
+                    case So (ranker d) =>
+                      //  f t  cand date's  D  s not  n t  cand date->ranks map, or t re  s no
+                      // rank for t  spec f c ranker and t  cand date,   use max mum poss ble
+                      // rank  nstead. Note that t   nd cates that t re  s a problem.
+                      s.copy(value = -(cand dateRanks
+                        .getOrElse(cand date. d, Map()).getOrElse(ranker d, cand dates.length) +
+                        cand date mpress ons * fat gueFactor))
+                    //  n case a score ex sts w hout a Ranker d,   pass on t  score as  s.
                     case None => s
                   }
                 })
               }
-              candidate.copy(scores = fatiguedScores)
-            }.zipWithIndex.map {
-              // We re-rank candidates with their input ordering (which is done by the request-level
-              // ranker) and fatigue penalty.
-              case (candidate, inputRank) =>
-                val candidateImpressions = idFatigueCountMap.getOrElse(candidate.id, 0)
-                (candidate, inputRank + candidateImpressions * fatigueFactor)
+              cand date.copy(scores = fat guedScores)
+            }.z pW h ndex.map {
+              //   re-rank cand dates w h t  r  nput order ng (wh ch  s done by t  request-level
+              // ranker) and fat gue penalty.
+              case (cand date,  nputRank) =>
+                val cand date mpress ons =  dFat gueCountMap.getOrElse(cand date. d, 0)
+                (cand date,  nputRank + cand date mpress ons * fat gueFactor)
             }.sortBy(_._2).map(_._1)
-          // Only populate ranking info when WTF impression info present
-          val scribeRankingInfo: Boolean =
-            target.params(ImpressionBasedFatigueRankerParams.ScribeRankingInfoInFatigueRanker)
-          if (scribeRankingInfo) Utils.addRankingInfo(rankedCandidates, name) else rankedCandidates
+          // Only populate rank ng  nfo w n WTF  mpress on  nfo present
+          val scr beRank ng nfo: Boolean =
+            target.params( mpress onBasedFat gueRankerParams.Scr beRank ng nfo nFat gueRanker)
+           f (scr beRank ng nfo) Ut ls.addRank ng nfo(rankedCand dates, na ) else rankedCand dates
         }
-      }.getOrElse(candidates) // no reranking/filtering when wtf impressions not present
+      }.getOrElse(cand dates) // no rerank ng/f lter ng w n wtf  mpress ons not present
   }
 }
 
-object ImpressionBasedFatigueRanker {
-  val DefaultFatigueFactor = 5
+object  mpress onBasedFat gueRanker {
+  val DefaultFat gueFactor = 5
 
-  def build[
-    Target <: HasClientContext with HasDisplayLocation with HasParams with HasWtfImpressions
+  def bu ld[
+    Target <: HasCl entContext w h HasD splayLocat on w h HasParams w h HasWtf mpress ons
   ](
-    baseStatsReceiver: StatsReceiver,
-    fatigueFactor: Int = DefaultFatigueFactor
-  ): ImpressionBasedFatigueRanker[Target] =
-    new ImpressionBasedFatigueRanker(fatigueFactor, baseStatsReceiver)
+    baseStatsRece ver: StatsRece ver,
+    fat gueFactor:  nt = DefaultFat gueFactor
+  ):  mpress onBasedFat gueRanker[Target] =
+    new  mpress onBasedFat gueRanker(fat gueFactor, baseStatsRece ver)
 }

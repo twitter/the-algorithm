@@ -1,201 +1,201 @@
-package com.twitter.simclusters_v2.summingbird.stores
+package com.tw ter.s mclusters_v2.summ ngb rd.stores
 
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.ManhattanCluster
-import com.twitter.storehaus_internal.manhattan.Athena
-import com.twitter.storehaus_internal.manhattan.ManhattanRO
-import com.twitter.storehaus_internal.manhattan.ManhattanROConfig
-import com.twitter.storehaus_internal.manhattan.Nash
-import com.twitter.storehaus_internal.util.ApplicationID
-import com.twitter.storehaus_internal.util.DatasetName
-import com.twitter.storehaus_internal.util.HDFSPath
+ mport com.tw ter.b ject on. nject on
+ mport com.tw ter.b ject on.scrooge.CompactScalaCodec
+ mport com.tw ter.s mclusters_v2.common.ModelVers ons
+ mport com.tw ter.s mclusters_v2.common.S mClustersEmbedd ng
+ mport com.tw ter.s mclusters_v2.common.User d
+ mport com.tw ter.s mclusters_v2.thr ftscala.ClustersUser s nterested n
+ mport com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+ mport com.tw ter.s mclusters_v2.thr ftscala. nternal d
+ mport com.tw ter.s mclusters_v2.thr ftscala.ModelVers on
+ mport com.tw ter.s mclusters_v2.thr ftscala.S mClustersEmbedd ng d
+ mport com.tw ter.storage.cl ent.manhattan.kv.ManhattanKVCl entMtlsParams
+ mport com.tw ter.storehaus.ReadableStore
+ mport com.tw ter.storehaus_ nternal.manhattan.ManhattanCluster
+ mport com.tw ter.storehaus_ nternal.manhattan.At na
+ mport com.tw ter.storehaus_ nternal.manhattan.ManhattanRO
+ mport com.tw ter.storehaus_ nternal.manhattan.ManhattanROConf g
+ mport com.tw ter.storehaus_ nternal.manhattan.Nash
+ mport com.tw ter.storehaus_ nternal.ut l.Appl cat on D
+ mport com.tw ter.storehaus_ nternal.ut l.DatasetNa 
+ mport com.tw ter.storehaus_ nternal.ut l.HDFSPath
 
-object UserInterestedInReadableStore {
+object User nterested nReadableStore {
 
-  // Clusters whose size is greater than this will not be considered. This is how the using UTEG
-  // experiment was run (because it could not process such clusters), and we don't have such a
-  // restriction for the Summingbird/Memcache implementation, but noticing that we aren't scoring
-  // tweets correctly in the big clusters. The fix for this seems a little involved, so for now
+  // Clusters whose s ze  s greater than t  w ll not be cons dered. T   s how t  us ng UTEG
+  // exper  nt was run (because   could not process such clusters), and   don't have such a
+  // restr ct on for t  Summ ngb rd/ mcac   mple ntat on, but not c ng that   aren't scor ng
+  // t ets correctly  n t  b g clusters. T  f x for t  seems a l tle  nvolved, so for now
   // let's just exclude such clusters.
-  val MaxClusterSizeForUserInterestedInDataset: Int = 5e6.toInt
+  val MaxClusterS zeForUser nterested nDataset:  nt = 5e6.to nt
 
-  val modelVersionToDatasetMap: Map[String, String] = Map(
-    ModelVersions.Model20M145KDec11 -> "simclusters_v2_interested_in",
-    ModelVersions.Model20M145KUpdated -> "simclusters_v2_interested_in_20m_145k_updated",
-    ModelVersions.Model20M145K2020 -> "simclusters_v2_interested_in_20m_145k_2020"
+  val modelVers onToDatasetMap: Map[Str ng, Str ng] = Map(
+    ModelVers ons.Model20M145KDec11 -> "s mclusters_v2_ nterested_ n",
+    ModelVers ons.Model20M145KUpdated -> "s mclusters_v2_ nterested_ n_20m_145k_updated",
+    ModelVers ons.Model20M145K2020 -> "s mclusters_v2_ nterested_ n_20m_145k_2020"
   )
 
-  // Producer embedding based User InterestedIn.
-  val modelVersionToDenserDatasetMap: Map[String, String] = Map(
-    ModelVersions.Model20M145KUpdated -> "simclusters_v2_interested_in_from_producer_embeddings_model20m145kupdated"
+  // Producer embedd ng based User  nterested n.
+  val modelVers onToDenserDatasetMap: Map[Str ng, Str ng] = Map(
+    ModelVers ons.Model20M145KUpdated -> "s mclusters_v2_ nterested_ n_from_producer_embedd ngs_model20m145kupdated"
   )
 
-  val modelVersionToIIAPEDatasetMap: Map[String, String] = Map(
-    ModelVersions.Model20M145K2020 -> "simclusters_v2_interested_in_from_ape_20m145k2020"
+  val modelVers onTo  APEDatasetMap: Map[Str ng, Str ng] = Map(
+    ModelVers ons.Model20M145K2020 -> "s mclusters_v2_ nterested_ n_from_ape_20m145k2020"
   )
 
-  val modelVersionToIIKFLiteDatasetMap: Map[String, String] = Map(
-    ModelVersions.Model20M145K2020 -> "simclusters_v2_interested_in_lite_20m_145k_2020"
+  val modelVers onTo  KFL eDatasetMap: Map[Str ng, Str ng] = Map(
+    ModelVers ons.Model20M145K2020 -> "s mclusters_v2_ nterested_ n_l e_20m_145k_2020"
   )
 
-  val modelVersionToNextInterestedInDatasetMap: Map[String, String] = Map(
-    ModelVersions.Model20M145K2020 -> "bet_consumer_embedding_v2"
+  val modelVers onToNext nterested nDatasetMap: Map[Str ng, Str ng] = Map(
+    ModelVers ons.Model20M145K2020 -> "bet_consu r_embedd ng_v2"
   )
 
-  val defaultModelVersion: String = ModelVersions.Model20M145KUpdated
-  val knownModelVersions: String = modelVersionToDatasetMap.keys.mkString(",")
+  val defaultModelVers on: Str ng = ModelVers ons.Model20M145KUpdated
+  val knownModelVers ons: Str ng = modelVers onToDatasetMap.keys.mkStr ng(",")
 
-  def defaultStoreWithMtls(
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    modelVersion: String = defaultModelVersion
-  ): ReadableStore[UserId, ClustersUserIsInterestedIn] = {
-    if (!modelVersionToDatasetMap.contains(modelVersion)) {
-      throw new IllegalArgumentException(
-        "Unknown model version: " + modelVersion + ". Known model versions: " + knownModelVersions)
+  def defaultStoreW hMtls(
+    mhMtlsParams: ManhattanKVCl entMtlsParams,
+    modelVers on: Str ng = defaultModelVers on
+  ): ReadableStore[User d, ClustersUser s nterested n] = {
+     f (!modelVers onToDatasetMap.conta ns(modelVers on)) {
+      throw new  llegalArgu ntExcept on(
+        "Unknown model vers on: " + modelVers on + ". Known model vers ons: " + knownModelVers ons)
     }
-    this.getStore("simclusters_v2", mhMtlsParams, modelVersionToDatasetMap(modelVersion))
+    t .getStore("s mclusters_v2", mhMtlsParams, modelVers onToDatasetMap(modelVers on))
   }
 
-  def defaultSimClustersEmbeddingStoreWithMtls(
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion
-  ): ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] = {
-    defaultStoreWithMtls(mhMtlsParams, ModelVersions.toKnownForModelVersion(modelVersion))
-      .composeKeyMapping[SimClustersEmbeddingId] {
-        case SimClustersEmbeddingId(theEmbeddingType, theModelVersion, InternalId.UserId(userId))
-            if theEmbeddingType == embeddingType && theModelVersion == modelVersion =>
-          userId
+  def defaultS mClustersEmbedd ngStoreW hMtls(
+    mhMtlsParams: ManhattanKVCl entMtlsParams,
+    embedd ngType: Embedd ngType,
+    modelVers on: ModelVers on
+  ): ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng] = {
+    defaultStoreW hMtls(mhMtlsParams, ModelVers ons.toKnownForModelVers on(modelVers on))
+      .composeKeyMapp ng[S mClustersEmbedd ng d] {
+        case S mClustersEmbedd ng d(t Embedd ngType, t ModelVers on,  nternal d.User d(user d))
+             f t Embedd ngType == embedd ngType && t ModelVers on == modelVers on =>
+          user d
       }.mapValues(
-        toSimClustersEmbedding(_, embeddingType, Some(MaxClusterSizeForUserInterestedInDataset)))
+        toS mClustersEmbedd ng(_, embedd ngType, So (MaxClusterS zeForUser nterested nDataset)))
   }
 
-  def defaultIIKFLiteStoreWithMtls(
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    modelVersion: String = defaultModelVersion
-  ): ReadableStore[Long, ClustersUserIsInterestedIn] = {
-    if (!modelVersionToIIKFLiteDatasetMap.contains(modelVersion)) {
-      throw new IllegalArgumentException(
-        "Unknown model version: " + modelVersion + ". Known model versions: " + knownModelVersions)
+  def default  KFL eStoreW hMtls(
+    mhMtlsParams: ManhattanKVCl entMtlsParams,
+    modelVers on: Str ng = defaultModelVers on
+  ): ReadableStore[Long, ClustersUser s nterested n] = {
+     f (!modelVers onTo  KFL eDatasetMap.conta ns(modelVers on)) {
+      throw new  llegalArgu ntExcept on(
+        "Unknown model vers on: " + modelVers on + ". Known model vers ons: " + knownModelVers ons)
     }
-    getStore("simclusters_v2", mhMtlsParams, modelVersionToIIKFLiteDatasetMap(modelVersion))
+    getStore("s mclusters_v2", mhMtlsParams, modelVers onTo  KFL eDatasetMap(modelVers on))
   }
 
-  def defaultIIPEStoreWithMtls(
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    modelVersion: String = defaultModelVersion
-  ): ReadableStore[Long, ClustersUserIsInterestedIn] = {
-    if (!modelVersionToDatasetMap.contains(modelVersion)) {
-      throw new IllegalArgumentException(
-        "Unknown model version: " + modelVersion + ". Known model versions: " + knownModelVersions)
+  def default  PEStoreW hMtls(
+    mhMtlsParams: ManhattanKVCl entMtlsParams,
+    modelVers on: Str ng = defaultModelVers on
+  ): ReadableStore[Long, ClustersUser s nterested n] = {
+     f (!modelVers onToDatasetMap.conta ns(modelVers on)) {
+      throw new  llegalArgu ntExcept on(
+        "Unknown model vers on: " + modelVers on + ". Known model vers ons: " + knownModelVers ons)
     }
-    getStore("simclusters_v2", mhMtlsParams, modelVersionToDenserDatasetMap(modelVersion))
+    getStore("s mclusters_v2", mhMtlsParams, modelVers onToDenserDatasetMap(modelVers on))
   }
 
-  def defaultIIAPEStoreWithMtls(
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    modelVersion: String = defaultModelVersion
-  ): ReadableStore[Long, ClustersUserIsInterestedIn] = {
-    if (!modelVersionToDatasetMap.contains(modelVersion)) {
-      throw new IllegalArgumentException(
-        "Unknown model version: " + modelVersion + ". Known model versions: " + knownModelVersions)
+  def default  APEStoreW hMtls(
+    mhMtlsParams: ManhattanKVCl entMtlsParams,
+    modelVers on: Str ng = defaultModelVers on
+  ): ReadableStore[Long, ClustersUser s nterested n] = {
+     f (!modelVers onToDatasetMap.conta ns(modelVers on)) {
+      throw new  llegalArgu ntExcept on(
+        "Unknown model vers on: " + modelVers on + ". Known model vers ons: " + knownModelVers ons)
     }
-    getStore("simclusters_v2", mhMtlsParams, modelVersionToIIAPEDatasetMap(modelVersion))
+    getStore("s mclusters_v2", mhMtlsParams, modelVers onTo  APEDatasetMap(modelVers on))
   }
 
-  def defaultIIPESimClustersEmbeddingStoreWithMtls(
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion
-  ): ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] = {
-    defaultIIPEStoreWithMtls(mhMtlsParams, ModelVersions.toKnownForModelVersion(modelVersion))
-      .composeKeyMapping[SimClustersEmbeddingId] {
-        case SimClustersEmbeddingId(theEmbeddingType, theModelVersion, InternalId.UserId(userId))
-            if theEmbeddingType == embeddingType && theModelVersion == modelVersion =>
-          userId
+  def default  PES mClustersEmbedd ngStoreW hMtls(
+    mhMtlsParams: ManhattanKVCl entMtlsParams,
+    embedd ngType: Embedd ngType,
+    modelVers on: ModelVers on
+  ): ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng] = {
+    default  PEStoreW hMtls(mhMtlsParams, ModelVers ons.toKnownForModelVers on(modelVers on))
+      .composeKeyMapp ng[S mClustersEmbedd ng d] {
+        case S mClustersEmbedd ng d(t Embedd ngType, t ModelVers on,  nternal d.User d(user d))
+             f t Embedd ngType == embedd ngType && t ModelVers on == modelVers on =>
+          user d
 
-      }.mapValues(toSimClustersEmbedding(_, embeddingType))
+      }.mapValues(toS mClustersEmbedd ng(_, embedd ngType))
   }
 
-  def defaultIIAPESimClustersEmbeddingStoreWithMtls(
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion
-  ): ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] = {
-    defaultIIAPEStoreWithMtls(mhMtlsParams, ModelVersions.toKnownForModelVersion(modelVersion))
-      .composeKeyMapping[SimClustersEmbeddingId] {
-        case SimClustersEmbeddingId(theEmbeddingType, theModelVersion, InternalId.UserId(userId))
-            if theEmbeddingType == embeddingType && theModelVersion == modelVersion =>
-          userId
-      }.mapValues(toSimClustersEmbedding(_, embeddingType))
+  def default  APES mClustersEmbedd ngStoreW hMtls(
+    mhMtlsParams: ManhattanKVCl entMtlsParams,
+    embedd ngType: Embedd ngType,
+    modelVers on: ModelVers on
+  ): ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng] = {
+    default  APEStoreW hMtls(mhMtlsParams, ModelVers ons.toKnownForModelVers on(modelVers on))
+      .composeKeyMapp ng[S mClustersEmbedd ng d] {
+        case S mClustersEmbedd ng d(t Embedd ngType, t ModelVers on,  nternal d.User d(user d))
+             f t Embedd ngType == embedd ngType && t ModelVers on == modelVers on =>
+          user d
+      }.mapValues(toS mClustersEmbedd ng(_, embedd ngType))
   }
 
-  def defaultNextInterestedInStoreWithMtls(
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion
-  ): ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] = {
-    if (!modelVersionToNextInterestedInDatasetMap.contains(
-        ModelVersions.toKnownForModelVersion(modelVersion))) {
-      throw new IllegalArgumentException(
-        "Unknown model version: " + modelVersion + ". Known model versions: " + knownModelVersions)
+  def defaultNext nterested nStoreW hMtls(
+    mhMtlsParams: ManhattanKVCl entMtlsParams,
+    embedd ngType: Embedd ngType,
+    modelVers on: ModelVers on
+  ): ReadableStore[S mClustersEmbedd ng d, S mClustersEmbedd ng] = {
+     f (!modelVers onToNext nterested nDatasetMap.conta ns(
+        ModelVers ons.toKnownForModelVers on(modelVers on))) {
+      throw new  llegalArgu ntExcept on(
+        "Unknown model vers on: " + modelVers on + ". Known model vers ons: " + knownModelVers ons)
     }
-    val datasetName = modelVersionToNextInterestedInDatasetMap(
-      ModelVersions.toKnownForModelVersion(modelVersion))
-    new SimClustersManhattanReadableStoreForReadWriteDataset(
-      appId = "kafka_beam_sink_bet_consumer_embedding_prod",
-      datasetName = datasetName,
-      label = datasetName,
+    val datasetNa  = modelVers onToNext nterested nDatasetMap(
+      ModelVers ons.toKnownForModelVers on(modelVers on))
+    new S mClustersManhattanReadableStoreForReadWr eDataset(
+      app d = "kafka_beam_s nk_bet_consu r_embedd ng_prod",
+      datasetNa  = datasetNa ,
+      label = datasetNa ,
       mtlsParams = mhMtlsParams,
       manhattanCluster = Nash
-    ).mapValues(toSimClustersEmbedding(_, embeddingType))
+    ).mapValues(toS mClustersEmbedd ng(_, embedd ngType))
   }
 
-  def getWithMtls(
-    appId: String,
-    mtlsParams: ManhattanKVClientMtlsParams,
-    modelVersion: String = defaultModelVersion
-  ): ReadableStore[Long, ClustersUserIsInterestedIn] = {
-    if (!modelVersionToDatasetMap.contains(modelVersion)) {
-      throw new IllegalArgumentException(
-        "Unknown model version: " + modelVersion + ". Known model versions: " + knownModelVersions)
+  def getW hMtls(
+    app d: Str ng,
+    mtlsParams: ManhattanKVCl entMtlsParams,
+    modelVers on: Str ng = defaultModelVers on
+  ): ReadableStore[Long, ClustersUser s nterested n] = {
+     f (!modelVers onToDatasetMap.conta ns(modelVers on)) {
+      throw new  llegalArgu ntExcept on(
+        "Unknown model vers on: " + modelVers on + ". Known model vers ons: " + knownModelVers ons)
     }
-    this.getStore(appId, mtlsParams, modelVersionToDatasetMap(modelVersion))
+    t .getStore(app d, mtlsParams, modelVers onToDatasetMap(modelVers on))
   }
 
   /**
-   * @param appId      Manhattan AppId
-   * @param mtlsParams MltsParams for s2s Authentication
+   * @param app d      Manhattan App d
+   * @param mtlsParams MltsParams for s2s Aut nt cat on
    *
-   * @return ReadableStore of user to cluster interestedIn data set
+   * @return ReadableStore of user to cluster  nterested n data set
    */
   def getStore(
-    appId: String,
-    mtlsParams: ManhattanKVClientMtlsParams,
-    datasetName: String,
-    manhattanCluster: ManhattanCluster = Athena
-  ): ReadableStore[Long, ClustersUserIsInterestedIn] = {
+    app d: Str ng,
+    mtlsParams: ManhattanKVCl entMtlsParams,
+    datasetNa : Str ng,
+    manhattanCluster: ManhattanCluster = At na
+  ): ReadableStore[Long, ClustersUser s nterested n] = {
 
-    implicit val keyInjection: Injection[Long, Array[Byte]] = Injection.long2BigEndian
-    implicit val userInterestsCodec: Injection[ClustersUserIsInterestedIn, Array[Byte]] =
-      CompactScalaCodec(ClustersUserIsInterestedIn)
+     mpl c  val key nject on:  nject on[Long, Array[Byte]] =  nject on.long2B gEnd an
+     mpl c  val user nterestsCodec:  nject on[ClustersUser s nterested n, Array[Byte]] =
+      CompactScalaCodec(ClustersUser s nterested n)
 
-    ManhattanRO.getReadableStoreWithMtls[Long, ClustersUserIsInterestedIn](
-      ManhattanROConfig(
+    ManhattanRO.getReadableStoreW hMtls[Long, ClustersUser s nterested n](
+      ManhattanROConf g(
         HDFSPath(""), // not needed
-        ApplicationID(appId),
-        DatasetName(datasetName),
+        Appl cat on D(app d),
+        DatasetNa (datasetNa ),
         manhattanCluster
       ),
       mtlsParams
@@ -204,60 +204,60 @@ object UserInterestedInReadableStore {
 
   /**
    *
-   * @param record ClustersUserIsInterestedIn thrift struct from the MH data set
-   * @param embeddingType Embedding Type as defined in com.twitter.simclusters_v2.thriftscala.EmbeddingType
-   * @param maxClusterSizeOpt Option param to set max cluster size.
-   *                          We will not filter out clusters based on cluster size if it is None
+   * @param record ClustersUser s nterested n thr ft struct from t  MH data set
+   * @param embedd ngType Embedd ng Type as def ned  n com.tw ter.s mclusters_v2.thr ftscala.Embedd ngType
+   * @param maxClusterS zeOpt Opt on param to set max cluster s ze.
+   *                            w ll not f lter out clusters based on cluster s ze  f    s None
    * @return
    */
-  def toSimClustersEmbedding(
-    record: ClustersUserIsInterestedIn,
-    embeddingType: EmbeddingType,
-    maxClusterSizeOpt: Option[Int] = None
-  ): SimClustersEmbedding = {
-    val embedding = record.clusterIdToScores
+  def toS mClustersEmbedd ng(
+    record: ClustersUser s nterested n,
+    embedd ngType: Embedd ngType,
+    maxClusterS zeOpt: Opt on[ nt] = None
+  ): S mClustersEmbedd ng = {
+    val embedd ng = record.cluster dToScores
       .collect {
-        case (clusterId, clusterScores) if maxClusterSizeOpt.forall { maxClusterSize =>
-              clusterScores.numUsersInterestedInThisClusterUpperBound.exists(_ < maxClusterSize)
+        case (cluster d, clusterScores)  f maxClusterS zeOpt.forall { maxClusterS ze =>
+              clusterScores.numUsers nterested nT ClusterUpperBound.ex sts(_ < maxClusterS ze)
             } =>
-          val score = embeddingType match {
-            case EmbeddingType.FavBasedUserInterestedIn =>
+          val score = embedd ngType match {
+            case Embedd ngType.FavBasedUser nterested n =>
               clusterScores.favScore
-            case EmbeddingType.FollowBasedUserInterestedIn =>
+            case Embedd ngType.FollowBasedUser nterested n =>
               clusterScores.followScore
-            case EmbeddingType.LogFavBasedUserInterestedIn =>
+            case Embedd ngType.LogFavBasedUser nterested n =>
               clusterScores.logFavScore
-            case EmbeddingType.FavBasedUserInterestedInFromPE =>
+            case Embedd ngType.FavBasedUser nterested nFromPE =>
               clusterScores.favScore
-            case EmbeddingType.FollowBasedUserInterestedInFromPE =>
+            case Embedd ngType.FollowBasedUser nterested nFromPE =>
               clusterScores.followScore
-            case EmbeddingType.LogFavBasedUserInterestedInFromPE =>
+            case Embedd ngType.LogFavBasedUser nterested nFromPE =>
               clusterScores.logFavScore
-            case EmbeddingType.LogFavBasedUserInterestedInFromAPE =>
+            case Embedd ngType.LogFavBasedUser nterested nFromAPE =>
               clusterScores.logFavScore
-            case EmbeddingType.FollowBasedUserInterestedInFromAPE =>
+            case Embedd ngType.FollowBasedUser nterested nFromAPE =>
               clusterScores.followScore
-            case EmbeddingType.UserNextInterestedIn =>
+            case Embedd ngType.UserNext nterested n =>
               clusterScores.logFavScore
-            case EmbeddingType.LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE =>
+            case Embedd ngType.LogFavBasedUser nterestedMaxpool ngAddressBookFrom  APE =>
               clusterScores.logFavScore
-            case EmbeddingType.LogFavBasedUserInterestedAverageAddressBookFromIIAPE =>
+            case Embedd ngType.LogFavBasedUser nterestedAverageAddressBookFrom  APE =>
               clusterScores.logFavScore
-            case EmbeddingType.LogFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE =>
+            case Embedd ngType.LogFavBasedUser nterestedBooktypeMaxpool ngAddressBookFrom  APE =>
               clusterScores.logFavScore
-            case EmbeddingType.LogFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE =>
+            case Embedd ngType.LogFavBasedUser nterestedLargestD mMaxpool ngAddressBookFrom  APE =>
               clusterScores.logFavScore
-            case EmbeddingType.LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE =>
+            case Embedd ngType.LogFavBasedUser nterestedLouva nMaxpool ngAddressBookFrom  APE =>
               clusterScores.logFavScore
-            case EmbeddingType.LogFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE =>
+            case Embedd ngType.LogFavBasedUser nterestedConnectedMaxpool ngAddressBookFrom  APE =>
               clusterScores.logFavScore
 
             case _ =>
-              throw new IllegalArgumentException(s"unknown EmbeddingType: $embeddingType")
+              throw new  llegalArgu ntExcept on(s"unknown Embedd ngType: $embedd ngType")
           }
-          score.map(clusterId -> _)
+          score.map(cluster d -> _)
       }.flatten.toMap
 
-    SimClustersEmbedding(embedding)
+    S mClustersEmbedd ng(embedd ng)
   }
 }

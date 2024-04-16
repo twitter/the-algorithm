@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.core.pipeline.scoring
+package com.tw ter.product_m xer.core.p pel ne.scor ng
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutor
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutor
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutor
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.product_m xer.core.serv ce.cand date_feature_hydrator_executor.Cand dateFeatureHydratorExecutor
+ mport com.tw ter.product_m xer.core.serv ce.gate_executor.GateExecutor
+ mport com.tw ter.product_m xer.core.serv ce.selector_executor.SelectorExecutor
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class ScoringPipelineBuilderFactory @Inject() (
+@S ngleton
+class Scor ngP pel neBu lderFactory @ nject() (
   gateExecutor: GateExecutor,
   selectorExecutor: SelectorExecutor,
-  candidateFeatureHydratorExecutor: CandidateFeatureHydratorExecutor,
-  statsReceiver: StatsReceiver) {
+  cand dateFeatureHydratorExecutor: Cand dateFeatureHydratorExecutor,
+  statsRece ver: StatsRece ver) {
 
   def get[
-    Query <: PipelineQuery,
-    Candidate <: UniversalNoun[Any]
-  ]: ScoringPipelineBuilder[Query, Candidate] = {
-    new ScoringPipelineBuilder[Query, Candidate](
+    Query <: P pel neQuery,
+    Cand date <: Un versalNoun[Any]
+  ]: Scor ngP pel neBu lder[Query, Cand date] = {
+    new Scor ngP pel neBu lder[Query, Cand date](
       gateExecutor,
       selectorExecutor,
-      candidateFeatureHydratorExecutor,
-      statsReceiver
+      cand dateFeatureHydratorExecutor,
+      statsRece ver
     )
   }
 }

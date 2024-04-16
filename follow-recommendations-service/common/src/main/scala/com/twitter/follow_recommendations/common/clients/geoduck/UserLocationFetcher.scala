@@ -1,57 +1,57 @@
-package com.twitter.follow_recommendations.common.clients.geoduck
+package com.tw ter.follow_recom ndat ons.common.cl ents.geoduck
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.GeohashAndCountryCode
-import com.twitter.stitch.Stitch
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.models.GeohashAndCountryCode
+ mport com.tw ter.st ch.St ch
 
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class UserLocationFetcher @Inject() (
-  locationServiceClient: LocationServiceClient,
-  reverseGeocodeClient: ReverseGeocodeClient,
-  statsReceiver: StatsReceiver) {
+@S ngleton
+class UserLocat onFetc r @ nject() (
+  locat onServ ceCl ent: Locat onServ ceCl ent,
+  reverseGeocodeCl ent: ReverseGeocodeCl ent,
+  statsRece ver: StatsRece ver) {
 
-  private val stats: StatsReceiver = statsReceiver.scope("user_location_fetcher")
-  private val totalRequestsCounter = stats.counter("requests")
-  private val emptyResponsesCounter = stats.counter("empty")
-  private val locationServiceExceptionCounter = stats.counter("location_service_exception")
-  private val reverseGeocodeExceptionCounter = stats.counter("reverse_geocode_exception")
+  pr vate val stats: StatsRece ver = statsRece ver.scope("user_locat on_fetc r")
+  pr vate val totalRequestsCounter = stats.counter("requests")
+  pr vate val emptyResponsesCounter = stats.counter("empty")
+  pr vate val locat onServ ceExcept onCounter = stats.counter("locat on_serv ce_except on")
+  pr vate val reverseGeocodeExcept onCounter = stats.counter("reverse_geocode_except on")
 
   def getGeohashAndCountryCode(
-    userId: Option[Long],
-    ipAddress: Option[String]
-  ): Stitch[Option[GeohashAndCountryCode]] = {
-    totalRequestsCounter.incr()
-    val lscLocationStitch = Stitch
+    user d: Opt on[Long],
+     pAddress: Opt on[Str ng]
+  ): St ch[Opt on[GeohashAndCountryCode]] = {
+    totalRequestsCounter. ncr()
+    val lscLocat onSt ch = St ch
       .collect {
-        userId.map(locationServiceClient.getGeohashAndCountryCode)
+        user d.map(locat onServ ceCl ent.getGeohashAndCountryCode)
       }.rescue {
-        case _: Exception =>
-          locationServiceExceptionCounter.incr()
-          Stitch.None
+        case _: Except on =>
+          locat onServ ceExcept onCounter. ncr()
+          St ch.None
       }
 
-    val ipLocationStitch = Stitch
+    val  pLocat onSt ch = St ch
       .collect {
-        ipAddress.map(reverseGeocodeClient.getGeohashAndCountryCode)
+         pAddress.map(reverseGeocodeCl ent.getGeohashAndCountryCode)
       }.rescue {
-        case _: Exception =>
-          reverseGeocodeExceptionCounter.incr()
-          Stitch.None
+        case _: Except on =>
+          reverseGeocodeExcept onCounter. ncr()
+          St ch.None
       }
 
-    Stitch.join(lscLocationStitch, ipLocationStitch).map {
-      case (lscLocation, ipLocation) => {
-        val geohash = lscLocation.flatMap(_.geohash).orElse(ipLocation.flatMap(_.geohash))
+    St ch.jo n(lscLocat onSt ch,  pLocat onSt ch).map {
+      case (lscLocat on,  pLocat on) => {
+        val geohash = lscLocat on.flatMap(_.geohash).orElse( pLocat on.flatMap(_.geohash))
         val countryCode =
-          lscLocation.flatMap(_.countryCode).orElse(ipLocation.flatMap(_.countryCode))
+          lscLocat on.flatMap(_.countryCode).orElse( pLocat on.flatMap(_.countryCode))
         (geohash, countryCode) match {
           case (None, None) =>
-            emptyResponsesCounter.incr()
+            emptyResponsesCounter. ncr()
             None
-          case _ => Some(GeohashAndCountryCode(geohash, countryCode))
+          case _ => So (GeohashAndCountryCode(geohash, countryCode))
         }
       }
     }

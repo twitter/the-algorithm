@@ -1,92 +1,92 @@
-package com.twitter.home_mixer.functional_component.decorator.builder
+package com.tw ter.ho _m xer.funct onal_component.decorator.bu lder
 
-import com.twitter.bijection.Base64String
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.{Injection => Serializer}
-import com.twitter.finagle.tracing.Trace
-import com.twitter.home_mixer.model.HomeFeatures.CandidateSourceIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.PositionFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.joinkey.context.RequestJoinKeyContext
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventDetailsBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.suggests.controller_data.Home
-import com.twitter.suggests.controller_data.TweetTypeGenerator
-import com.twitter.suggests.controller_data.home_tweets.v1.{thriftscala => v1ht}
-import com.twitter.suggests.controller_data.home_tweets.{thriftscala => ht}
-import com.twitter.suggests.controller_data.thriftscala.ControllerData
-import com.twitter.suggests.controller_data.v2.thriftscala.{ControllerData => ControllerDataV2}
+ mport com.tw ter.b ject on.Base64Str ng
+ mport com.tw ter.b ject on.scrooge.B naryScalaCodec
+ mport com.tw ter.b ject on.{ nject on => Ser al zer}
+ mport com.tw ter.f nagle.trac ng.Trace
+ mport com.tw ter.ho _m xer.model.Ho Features.Cand dateS ce dFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.Pos  onFeature
+ mport com.tw ter.ho _m xer.model.Ho Features.SuggestTypeFeature
+ mport com.tw ter.jo nkey.context.RequestJo nKeyContext
+ mport com.tw ter.product_m xer.core.feature.featuremap.FeatureMap
+ mport com.tw ter.product_m xer.core.funct onal_component.decorator.urt.bu lder. tadata.BaseCl entEventDeta lsBu lder
+ mport com.tw ter.product_m xer.core.model.common.Un versalNoun
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.Cl entEventDeta ls
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt. tadata.T  l nesDeta ls
+ mport com.tw ter.product_m xer.core.p pel ne.P pel neQuery
+ mport com.tw ter.suggests.controller_data.Ho 
+ mport com.tw ter.suggests.controller_data.T etTypeGenerator
+ mport com.tw ter.suggests.controller_data.ho _t ets.v1.{thr ftscala => v1ht}
+ mport com.tw ter.suggests.controller_data.ho _t ets.{thr ftscala => ht}
+ mport com.tw ter.suggests.controller_data.thr ftscala.ControllerData
+ mport com.tw ter.suggests.controller_data.v2.thr ftscala.{ControllerData => ControllerDataV2}
 
-object HomeClientEventDetailsBuilder {
-  implicit val ByteSerializer: Serializer[ControllerData, Array[Byte]] =
-    BinaryScalaCodec(ControllerData)
+object Ho Cl entEventDeta lsBu lder {
+   mpl c  val ByteSer al zer: Ser al zer[ControllerData, Array[Byte]] =
+    B naryScalaCodec(ControllerData)
 
-  val ControllerDataSerializer: Serializer[ControllerData, String] =
-    Serializer.connect[ControllerData, Array[Byte], Base64String, String]
+  val ControllerDataSer al zer: Ser al zer[ControllerData, Str ng] =
+    Ser al zer.connect[ControllerData, Array[Byte], Base64Str ng, Str ng]
 
   /**
-   * define getRequestJoinId as a method(def) rather than a val because each new request
-   * needs to call the context to update the id.
+   * def ne getRequestJo n d as a  thod(def) rat r than a val because each new request
+   * needs to call t  context to update t   d.
    */
-  private def getRequestJoinId(): Option[Long] =
-    RequestJoinKeyContext.current.flatMap(_.requestJoinId)
+  pr vate def getRequestJo n d(): Opt on[Long] =
+    RequestJo nKeyContext.current.flatMap(_.requestJo n d)
 }
 
-case class HomeClientEventDetailsBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-) extends BaseClientEventDetailsBuilder[Query, Candidate]
-    with TweetTypeGenerator[FeatureMap] {
+case class Ho Cl entEventDeta lsBu lder[-Query <: P pel neQuery, -Cand date <: Un versalNoun[Any]](
+) extends BaseCl entEventDeta lsBu lder[Query, Cand date]
+    w h T etTypeGenerator[FeatureMap] {
 
-  import HomeClientEventDetailsBuilder._
+   mport Ho Cl entEventDeta lsBu lder._
 
-  override def apply(
+  overr de def apply(
     query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): Option[ClientEventDetails] = {
+    cand date: Cand date,
+    cand dateFeatures: FeatureMap
+  ): Opt on[Cl entEventDeta ls] = {
 
-    val tweetTypesBitmaps = mkTweetTypesBitmaps(
-      Home.TweetTypeIdxMap,
-      HomeTweetTypePredicates.PredicateMap,
-      candidateFeatures)
+    val t etTypesB maps = mkT etTypesB maps(
+      Ho .T etType dxMap,
+      Ho T etTypePred cates.Pred cateMap,
+      cand dateFeatures)
 
-    val tweetTypesListBytes = mkItemTypesBitmapsV2(
-      Home.TweetTypeIdxMap,
-      HomeTweetTypePredicates.PredicateMap,
-      candidateFeatures)
+    val t etTypesL stBytes = mk emTypesB mapsV2(
+      Ho .T etType dxMap,
+      Ho T etTypePred cates.Pred cateMap,
+      cand dateFeatures)
 
-    val candidateSourceId =
-      candidateFeatures.getOrElse(CandidateSourceIdFeature, None).map(_.value.toByte)
+    val cand dateS ce d =
+      cand dateFeatures.getOrElse(Cand dateS ce dFeature, None).map(_.value.toByte)
 
-    val homeTweetsControllerDataV1 = v1ht.HomeTweetsControllerData(
-      tweetTypesBitmap = tweetTypesBitmaps.getOrElse(0, 0L),
-      tweetTypesBitmapContinued1 = tweetTypesBitmaps.get(1),
-      candidateTweetSourceId = candidateSourceId,
-      traceId = Some(Trace.id.traceId.toLong),
-      injectedPosition = candidateFeatures.getOrElse(PositionFeature, None),
-      tweetTypesListBytes = Some(tweetTypesListBytes),
-      requestJoinId = getRequestJoinId(),
+    val ho T etsControllerDataV1 = v1ht.Ho T etsControllerData(
+      t etTypesB map = t etTypesB maps.getOrElse(0, 0L),
+      t etTypesB mapCont nued1 = t etTypesB maps.get(1),
+      cand dateT etS ce d = cand dateS ce d,
+      trace d = So (Trace. d.trace d.toLong),
+       njectedPos  on = cand dateFeatures.getOrElse(Pos  onFeature, None),
+      t etTypesL stBytes = So (t etTypesL stBytes),
+      requestJo n d = getRequestJo n d(),
     )
 
-    val serializedControllerData = ControllerDataSerializer(
+    val ser al zedControllerData = ControllerDataSer al zer(
       ControllerData.V2(
-        ControllerDataV2.HomeTweets(ht.HomeTweetsControllerData.V1(homeTweetsControllerDataV1))))
+        ControllerDataV2.Ho T ets(ht.Ho T etsControllerData.V1(ho T etsControllerDataV1))))
 
-    val clientEventDetails = ClientEventDetails(
-      conversationDetails = None,
-      timelinesDetails = Some(
-        TimelinesDetails(
-          injectionType = candidateFeatures.getOrElse(SuggestTypeFeature, None).map(_.name),
-          controllerData = Some(serializedControllerData),
-          sourceData = None)),
-      articleDetails = None,
-      liveEventDetails = None,
-      commerceDetails = None
+    val cl entEventDeta ls = Cl entEventDeta ls(
+      conversat onDeta ls = None,
+      t  l nesDeta ls = So (
+        T  l nesDeta ls(
+           nject onType = cand dateFeatures.getOrElse(SuggestTypeFeature, None).map(_.na ),
+          controllerData = So (ser al zedControllerData),
+          s ceData = None)),
+      art cleDeta ls = None,
+      l veEventDeta ls = None,
+      com rceDeta ls = None
     )
 
-    Some(clientEventDetails)
+    So (cl entEventDeta ls)
   }
 }

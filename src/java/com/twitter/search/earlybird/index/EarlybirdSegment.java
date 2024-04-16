@@ -1,783 +1,783 @@
-package com.twitter.search.earlybird.index;
+package com.tw ter.search.earlyb rd. ndex;
 
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
-import javax.annotation.Nullable;
+ mport java. o.Closeable;
+ mport java. o.F le;
+ mport java. o. OExcept on;
+ mport java.t  . nstant;
+ mport java.t  .ZoneOffset;
+ mport java.t  .ZonedDateT  ;
+ mport java.t  .format.DateT  Formatter;
+ mport java.ut l.L st;
+ mport java.ut l.Map;
+ mport java.ut l.Objects;
+ mport java.ut l.concurrent.atom c.Atom cReference;
+ mport javax.annotat on.Nullable;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+ mport com.google.common.annotat ons.V s bleForTest ng;
+ mport com.google.common.base.Precond  ons;
+ mport com.google.common.collect.HashBasedTable;
+ mport com.google.common.collect.Table;
+ mport com.google.common.collect.L sts;
+ mport com.google.common.collect.Maps;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.IndexableField;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.store.IOContext;
-import org.apache.lucene.store.IndexOutput;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.apac .commons. o.F leUt ls;
+ mport org.apac .lucene.docu nt.Docu nt;
+ mport org.apac .lucene. ndex.D rectoryReader;
+ mport org.apac .lucene. ndex. ndexWr erConf g;
+ mport org.apac .lucene. ndex. ndexableF eld;
+ mport org.apac .lucene.store.D rectory;
+ mport org.apac .lucene.store.FSD rectory;
+ mport org.apac .lucene.store. OContext;
+ mport org.apac .lucene.store. ndexOutput;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.ThriftDocumentUtil;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdEncodedFeatures;
-import com.twitter.search.common.schema.earlybird.EarlybirdEncodedFeaturesUtil;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftField;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEventType;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentWriter;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideFieldIndex;
-import com.twitter.search.core.earlybird.index.column.DocValuesUpdate;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsFactory;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.exception.FlushVersionMismatchException;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
-import com.twitter.search.earlybird.partition.SegmentIndexStats;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.snowflake.id.SnowflakeId;
+ mport com.tw ter.common.collect ons.Pa r;
+ mport com.tw ter.common.ut l.Clock;
+ mport com.tw ter.search.common. tr cs.SearchCounter;
+ mport com.tw ter.search.common.sc ma.base.FeatureConf gurat on;
+ mport com.tw ter.search.common.sc ma.base. mmutableSc ma nterface;
+ mport com.tw ter.search.common.sc ma.base.Thr ftDocu ntUt l;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdCluster;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdEncodedFeatures;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdEncodedFeaturesUt l;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants;
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftDocu nt;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ftF eld;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ft ndex ngEvent;
+ mport com.tw ter.search.common.sc ma.thr ftjava.Thr ft ndex ngEventType;
+ mport com.tw ter.search.common.ut l. o.flushable.DataDeser al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.DataSer al zer;
+ mport com.tw ter.search.common.ut l. o.flushable.Flush nfo;
+ mport com.tw ter.search.core.earlyb rd. ndex.Doc DToT et DMapper;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntAtom cReader;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntData;
+ mport com.tw ter.search.core.earlyb rd. ndex.Earlyb rd ndexSeg ntWr er;
+ mport com.tw ter.search.core.earlyb rd. ndex.column.ColumnStr deF eld ndex;
+ mport com.tw ter.search.core.earlyb rd. ndex.column.DocValuesUpdate;
+ mport com.tw ter.search.core.earlyb rd. ndex.extens ons.Earlyb rd ndexExtens onsFactory;
+ mport com.tw ter.search.earlyb rd.Earlyb rd ndexConf g;
+ mport com.tw ter.search.earlyb rd.common.userupdates.UserTable;
+ mport com.tw ter.search.earlyb rd.docu nt.T etDocu nt;
+ mport com.tw ter.search.earlyb rd.except on.FlushVers onM smatchExcept on;
+ mport com.tw ter.search.earlyb rd.part  on.Search ndex ng tr cSet;
+ mport com.tw ter.search.earlyb rd.part  on.Seg nt ndexStats;
+ mport com.tw ter.search.earlyb rd.stats.Earlyb rdSearc rStats;
+ mport com.tw ter.snowflake. d.Snowflake d;
 
-public class EarlybirdSegment {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdSegment.class);
-  private static final Logger UPDATES_ERRORS_LOG =
-      LoggerFactory.getLogger(EarlybirdSegment.class.getName() + ".UpdatesErrors");
-  private static final String SUCCESS_FILE = "EARLYBIRD_SUCCESS";
-  private static final DateTimeFormatter HOURLY_COUNT_DATE_TIME_FORMATTER =
-      DateTimeFormatter.ofPattern("yyyy_MM_dd_HH");
+publ c class Earlyb rdSeg nt {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Earlyb rdSeg nt.class);
+  pr vate stat c f nal Logger UPDATES_ERRORS_LOG =
+      LoggerFactory.getLogger(Earlyb rdSeg nt.class.getNa () + ".UpdatesErrors");
+  pr vate stat c f nal Str ng SUCCESS_F LE = "EARLYB RD_SUCCESS";
+  pr vate stat c f nal DateT  Formatter HOURLY_COUNT_DATE_T ME_FORMATTER =
+      DateT  Formatter.ofPattern("yyyy_MM_dd_HH");
 
-  @VisibleForTesting
-  public static final String NUM_TWEETS_CREATED_AT_PATTERN = "num_tweets_%s_%s_created_at_%s";
+  @V s bleForTest ng
+  publ c stat c f nal Str ng NUM_TWEETS_CREATED_AT_PATTERN = "num_t ets_%s_%s_created_at_%s";
 
-  private static final String INVALID_FEATURE_UPDATES_DROPPED_PREFIX =
-      "invalid_index_feature_update_dropped_";
+  pr vate stat c f nal Str ng  NVAL D_FEATURE_UPDATES_DROPPED_PREF X =
+      " nval d_ ndex_feature_update_dropped_";
 
-  // The number of tweets not indexed because they have been previously indexed.
-  private static final SearchCounter DUPLICATE_TWEET_SKIPPED_COUNTER =
-      SearchCounter.export("duplicate_tweet_skipped");
+  // T  number of t ets not  ndexed because t y have been prev ously  ndexed.
+  pr vate stat c f nal SearchCounter DUPL CATE_TWEET_SK PPED_COUNTER =
+      SearchCounter.export("dupl cate_t et_sk pped");
 
-  // The number of tweets that came out of order.
-  private static final SearchCounter OUT_OF_ORDER_TWEET_COUNTER =
-      SearchCounter.export("out_of_order_tweet");
+  // T  number of t ets that ca  out of order.
+  pr vate stat c f nal SearchCounter OUT_OF_ORDER_TWEET_COUNTER =
+      SearchCounter.export("out_of_order_t et");
 
-  // The number partial updates dropped because the field could not be found in the schema.
-  // This counter is incremented once per field rather than once per partial update event.
-  // Note: caller may retry update, this counter will be incremented multiple times for same update.
-  private static final SearchCounter INVALID_FIELDS_IN_PARTIAL_UPDATES =
-      SearchCounter.export("invalid_fields_in_partial_updates");
+  // T  number part al updates dropped because t  f eld could not be found  n t  sc ma.
+  // T  counter  s  ncre nted once per f eld rat r than once per part al update event.
+  // Note: caller may retry update, t  counter w ll be  ncre nted mult ple t  s for sa  update.
+  pr vate stat c f nal SearchCounter  NVAL D_F ELDS_ N_PART AL_UPDATES =
+      SearchCounter.export(" nval d_f elds_ n_part al_updates");
 
-  // The number partial updates dropped because the tweet id could not be found in the segment.
-  // Note: caller may retry update, this counter will be incremented multiple times for same update.
-  private static final SearchCounter PARTIAL_UPDATE_FOR_TWEET_NOT_IN_INDEX =
-      SearchCounter.export("partial_update_for_tweet_id_not_in_index");
+  // T  number part al updates dropped because t  t et  d could not be found  n t  seg nt.
+  // Note: caller may retry update, t  counter w ll be  ncre nted mult ple t  s for sa  update.
+  pr vate stat c f nal SearchCounter PART AL_UPDATE_FOR_TWEET_NOT_ N_ NDEX =
+      SearchCounter.export("part al_update_for_t et_ d_not_ n_ ndex");
 
-  // The number of partial updates that were applied only partially, because the update could not
-  // be applied for at least one of the fields.
-  private static final SearchCounter PARTIAL_UPDATE_PARTIAL_FAILURE =
-      SearchCounter.export("partial_update_partial_failure");
+  // T  number of part al updates that  re appl ed only part ally, because t  update could not
+  // be appl ed for at least one of t  f elds.
+  pr vate stat c f nal SearchCounter PART AL_UPDATE_PART AL_FA LURE =
+      SearchCounter.export("part al_update_part al_fa lure");
 
-  // Both the indexing chain and the index writer are lazily initialized when adding docs for
-  // the first time.
-  private final AtomicReference<EarlybirdIndexSegmentWriter> segmentWriterReference =
-      new AtomicReference<>();
+  // Both t   ndex ng cha n and t   ndex wr er are laz ly  n  al zed w n add ng docs for
+  // t  f rst t  .
+  pr vate f nal Atom cReference<Earlyb rd ndexSeg ntWr er> seg ntWr erReference =
+      new Atom cReference<>();
 
-  // Stats from the PartitionIndexer / SimpleSegmentIndexer.
-  private final SegmentIndexStats indexStats;
-  private final String segmentName;
-  private final int maxSegmentSize;
-  private final long timeSliceID;
-  private final AtomicReference<EarlybirdIndexSegmentAtomicReader> luceneIndexReader =
-      new AtomicReference<>();
-  private final Directory luceneDir;
-  private final File luceneDirFile;
-  private final EarlybirdIndexConfig indexConfig;
-  private final List<Closeable> closableResources = Lists.newArrayList();
-  private long lastInOrderTweetId = 0;
+  // Stats from t  Part  on ndexer / S mpleSeg nt ndexer.
+  pr vate f nal Seg nt ndexStats  ndexStats;
+  pr vate f nal Str ng seg ntNa ;
+  pr vate f nal  nt maxSeg ntS ze;
+  pr vate f nal long t  Sl ce D;
+  pr vate f nal Atom cReference<Earlyb rd ndexSeg ntAtom cReader> lucene ndexReader =
+      new Atom cReference<>();
+  pr vate f nal D rectory luceneD r;
+  pr vate f nal F le luceneD rF le;
+  pr vate f nal Earlyb rd ndexConf g  ndexConf g;
+  pr vate f nal L st<Closeable> closableRes ces = L sts.newArrayL st();
+  pr vate long last nOrderT et d = 0;
 
-  private final EarlybirdIndexExtensionsFactory extensionsFactory;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  private final EarlybirdSearcherStats searcherStats;
+  pr vate f nal Earlyb rd ndexExtens onsFactory extens onsFactory;
+  pr vate f nal Search ndex ng tr cSet search ndex ng tr cSet;
+  pr vate f nal Earlyb rdSearc rStats searc rStats;
 
-  private final Map<String, SearchCounter> indexedTweetsCounters = Maps.newHashMap();
-  private final PerFieldCounters perFieldCounters;
-  private final Clock clock;
+  pr vate f nal Map<Str ng, SearchCounter>  ndexedT etsCounters = Maps.newHashMap();
+  pr vate f nal PerF eldCounters perF eldCounters;
+  pr vate f nal Clock clock;
 
-  @VisibleForTesting
-  public volatile boolean appendedLuceneIndex = false;
+  @V s bleForTest ng
+  publ c volat le boolean appendedLucene ndex = false;
 
-  public EarlybirdSegment(
-      String segmentName,
-      long timeSliceID,
-      int maxSegmentSize,
-      Directory luceneDir,
-      EarlybirdIndexConfig indexConfig,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      EarlybirdSearcherStats searcherStats,
+  publ c Earlyb rdSeg nt(
+      Str ng seg ntNa ,
+      long t  Sl ce D,
+       nt maxSeg ntS ze,
+      D rectory luceneD r,
+      Earlyb rd ndexConf g  ndexConf g,
+      Search ndex ng tr cSet search ndex ng tr cSet,
+      Earlyb rdSearc rStats searc rStats,
       Clock clock) {
-    this.segmentName = segmentName;
-    this.maxSegmentSize = maxSegmentSize;
-    this.timeSliceID = timeSliceID;
-    this.luceneDir = luceneDir;
-    this.indexConfig = indexConfig;
-    this.indexStats = new SegmentIndexStats();
-    this.perFieldCounters = new PerFieldCounters();
-    this.extensionsFactory = new TweetSearchIndexExtensionsFactory();
+    t .seg ntNa  = seg ntNa ;
+    t .maxSeg ntS ze = maxSeg ntS ze;
+    t .t  Sl ce D = t  Sl ce D;
+    t .luceneD r = luceneD r;
+    t . ndexConf g =  ndexConf g;
+    t . ndexStats = new Seg nt ndexStats();
+    t .perF eldCounters = new PerF eldCounters();
+    t .extens onsFactory = new T etSearch ndexExtens onsFactory();
 
-    if (luceneDir != null && luceneDir instanceof FSDirectory) {
-      // getDirectory() throws if the luceneDir is already closed.
-      // To delete a directory, we need to close it first.
-      // Obtain a reference to the File now, so we can delete it later.
+     f (luceneD r != null && luceneD r  nstanceof FSD rectory) {
+      // getD rectory() throws  f t  luceneD r  s already closed.
+      // To delete a d rectory,   need to close   f rst.
+      // Obta n a reference to t  F le now, so   can delete   later.
       // See SEARCH-5281
-      this.luceneDirFile = ((FSDirectory) luceneDir).getDirectory().toFile();
+      t .luceneD rF le = ((FSD rectory) luceneD r).getD rectory().toF le();
     } else {
-      this.luceneDirFile = null;
+      t .luceneD rF le = null;
     }
-    this.searchIndexingMetricSet = Preconditions.checkNotNull(searchIndexingMetricSet);
-    this.searcherStats = searcherStats;
-    this.clock = clock;
+    t .search ndex ng tr cSet = Precond  ons.c ckNotNull(search ndex ng tr cSet);
+    t .searc rStats = searc rStats;
+    t .clock = clock;
   }
 
-  @VisibleForTesting
-  public Directory getLuceneDirectory() {
-    return luceneDir;
+  @V s bleForTest ng
+  publ c D rectory getLuceneD rectory() {
+    return luceneD r;
   }
 
-  public SegmentIndexStats getIndexStats() {
-    return indexStats;
+  publ c Seg nt ndexStats get ndexStats() {
+    return  ndexStats;
   }
 
   /**
-   * Returns the smallest tweet ID in this segment. If the segment is not loaded yet, or is empty,
-   * DocIDToTweetIDMapper.ID_NOT_FOUND is returned (-1).
+   * Returns t  smallest t et  D  n t  seg nt.  f t  seg nt  s not loaded yet, or  s empty,
+   * Doc DToT et DMapper. D_NOT_FOUND  s returned (-1).
    *
-   * @return The smallest tweet ID in this segment.
+   * @return T  smallest t et  D  n t  seg nt.
    */
-  public long getLowestTweetId() {
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    if (segmentWriter == null) {
-      return DocIDToTweetIDMapper.ID_NOT_FOUND;
+  publ c long getLo stT et d() {
+    Earlyb rd ndexSeg ntWr er seg ntWr er = seg ntWr erReference.get();
+     f (seg ntWr er == null) {
+      return Doc DToT et DMapper. D_NOT_FOUND;
     }
 
-    DocIDToTweetIDMapper mapper = segmentWriter.getSegmentData().getDocIDToTweetIDMapper();
-    int highestDocID = mapper.getPreviousDocID(Integer.MAX_VALUE);
-    return mapper.getTweetID(highestDocID);
+    Doc DToT et DMapper mapper = seg ntWr er.getSeg ntData().getDoc DToT et DMapper();
+     nt h g stDoc D = mapper.getPrev ousDoc D( nteger.MAX_VALUE);
+    return mapper.getT et D(h g stDoc D);
   }
 
   /**
-   * Returns the cardinality (size) sum of the cardinality of each
-   * query cache set.
+   * Returns t  card nal y (s ze) sum of t  card nal y of each
+   * query cac  set.
    */
-  public long getQueryCachesCardinality() {
-    EarlybirdIndexSegmentWriter writer = getIndexSegmentWriter();
-    if (writer == null) {
-      // The segment is not loaded yet, or the query caches for this segment are not built yet.
+  publ c long getQueryCac sCard nal y() {
+    Earlyb rd ndexSeg ntWr er wr er = get ndexSeg ntWr er();
+     f (wr er == null) {
+      // T  seg nt  s not loaded yet, or t  query cac s for t  seg nt are not bu lt yet.
       return -1;
     }
 
-    EarlybirdIndexSegmentData earlybirdIndexSegmentData = writer.getSegmentData();
-    return earlybirdIndexSegmentData.getQueryCachesCardinality();
+    Earlyb rd ndexSeg ntData earlyb rd ndexSeg ntData = wr er.getSeg ntData();
+    return earlyb rd ndexSeg ntData.getQueryCac sCard nal y();
   }
 
-  public List<Pair<String, Long>> getQueryCachesData() {
-    return getIndexSegmentWriter().getSegmentData().getPerQueryCacheCardinality();
+  publ c L st<Pa r<Str ng, Long>> getQueryCac sData() {
+    return get ndexSeg ntWr er().getSeg ntData().getPerQueryCac Card nal y();
   }
 
 
   /**
-   * Returns the highest tweet ID in this segment. If the segment is not loaded yet, or is empty,
-   * DocIDToTweetIDMapper.ID_NOT_FOUND is returned (-1).
+   * Returns t  h g st t et  D  n t  seg nt.  f t  seg nt  s not loaded yet, or  s empty,
+   * Doc DToT et DMapper. D_NOT_FOUND  s returned (-1).
    *
-   * @return The highest tweet ID in this segment.
+   * @return T  h g st t et  D  n t  seg nt.
    */
-  public long getHighestTweetId() {
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    if (segmentWriter == null) {
-      return DocIDToTweetIDMapper.ID_NOT_FOUND;
+  publ c long getH g stT et d() {
+    Earlyb rd ndexSeg ntWr er seg ntWr er = seg ntWr erReference.get();
+     f (seg ntWr er == null) {
+      return Doc DToT et DMapper. D_NOT_FOUND;
     }
 
-    DocIDToTweetIDMapper mapper = segmentWriter.getSegmentData().getDocIDToTweetIDMapper();
-    int lowestDocID = mapper.getNextDocID(-1);
-    return mapper.getTweetID(lowestDocID);
+    Doc DToT et DMapper mapper = seg ntWr er.getSeg ntData().getDoc DToT et DMapper();
+     nt lo stDoc D = mapper.getNextDoc D(-1);
+    return mapper.getT et D(lo stDoc D);
   }
 
   /**
-   * Optimizes the underlying segment data.
+   * Opt m zes t  underly ng seg nt data.
    */
-  public void optimizeIndexes() throws IOException {
-    EarlybirdIndexSegmentWriter unoptimizedWriter = segmentWriterReference.get();
-    Preconditions.checkNotNull(unoptimizedWriter);
+  publ c vo d opt m ze ndexes() throws  OExcept on {
+    Earlyb rd ndexSeg ntWr er unopt m zedWr er = seg ntWr erReference.get();
+    Precond  ons.c ckNotNull(unopt m zedWr er);
 
-    unoptimizedWriter.forceMerge();
-    unoptimizedWriter.close();
+    unopt m zedWr er.force rge();
+    unopt m zedWr er.close();
 
-    // Optimize our own data structures in the indexing chain
-    // In the archive this is pretty much a no-op.
-    // The indexWriter in writeableSegment should no longer be used and referenced, and
-    // writeableSegment.writer can be garbage collected at this point.
-    EarlybirdIndexSegmentData optimized = indexConfig.optimize(unoptimizedWriter.getSegmentData());
-    resetSegmentWriterReference(newWriteableSegment(optimized), true);
+    // Opt m ze   own data structures  n t   ndex ng cha n
+    //  n t  arch ve t   s pretty much a no-op.
+    // T   ndexWr er  n wr eableSeg nt should no longer be used and referenced, and
+    // wr eableSeg nt.wr er can be garbage collected at t  po nt.
+    Earlyb rd ndexSeg ntData opt m zed =  ndexConf g.opt m ze(unopt m zedWr er.getSeg ntData());
+    resetSeg ntWr erReference(newWr eableSeg nt(opt m zed), true);
 
-    addSuccessFile();
+    addSuccessF le();
   }
 
   /**
-   * Returns a new, optimized, realtime segment, by copying the data in this segment.
+   * Returns a new, opt m zed, realt   seg nt, by copy ng t  data  n t  seg nt.
    */
-  public EarlybirdSegment makeOptimizedSegment() throws IOException {
-    EarlybirdIndexSegmentWriter unoptimizedWriter = segmentWriterReference.get();
-    Preconditions.checkNotNull(unoptimizedWriter);
-    EarlybirdSegment optimizedSegment = new EarlybirdSegment(
-        segmentName,
-        timeSliceID,
-        maxSegmentSize,
-        luceneDir,
-        indexConfig,
-        searchIndexingMetricSet,
-        searcherStats,
+  publ c Earlyb rdSeg nt makeOpt m zedSeg nt() throws  OExcept on {
+    Earlyb rd ndexSeg ntWr er unopt m zedWr er = seg ntWr erReference.get();
+    Precond  ons.c ckNotNull(unopt m zedWr er);
+    Earlyb rdSeg nt opt m zedSeg nt = new Earlyb rdSeg nt(
+        seg ntNa ,
+        t  Sl ce D,
+        maxSeg ntS ze,
+        luceneD r,
+         ndexConf g,
+        search ndex ng tr cSet,
+        searc rStats,
         clock);
 
-    EarlybirdIndexSegmentData optimizedSegmentData =
-        indexConfig.optimize(unoptimizedWriter.getSegmentData());
-    LOG.info("Done optimizing, setting segment data");
+    Earlyb rd ndexSeg ntData opt m zedSeg ntData =
+         ndexConf g.opt m ze(unopt m zedWr er.getSeg ntData());
+    LOG. nfo("Done opt m z ng, sett ng seg nt data");
 
-    optimizedSegment.setSegmentData(
-        optimizedSegmentData,
-        indexStats.getPartialUpdateCount(),
-        indexStats.getOutOfOrderUpdateCount());
-    return optimizedSegment;
+    opt m zedSeg nt.setSeg ntData(
+        opt m zedSeg ntData,
+         ndexStats.getPart alUpdateCount(),
+         ndexStats.getOutOfOrderUpdateCount());
+    return opt m zedSeg nt;
   }
 
-  public String getSegmentName() {
-    return segmentName;
+  publ c Str ng getSeg ntNa () {
+    return seg ntNa ;
   }
 
-  public boolean isOptimized() {
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    return segmentWriter != null && segmentWriter.getSegmentData().isOptimized();
+  publ c boolean  sOpt m zed() {
+    Earlyb rd ndexSeg ntWr er seg ntWr er = seg ntWr erReference.get();
+    return seg ntWr er != null && seg ntWr er.getSeg ntData(). sOpt m zed();
   }
 
   /**
-   * Removes the document for the given tweet ID from this segment, if this segment contains a
-   * document for this tweet ID.
+   * Removes t  docu nt for t  g ven t et  D from t  seg nt,  f t  seg nt conta ns a
+   * docu nt for t  t et  D.
    */
-  public boolean delete(long tweetID) throws IOException {
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    if (!hasDocument(tweetID)) {
+  publ c boolean delete(long t et D) throws  OExcept on {
+    Earlyb rd ndexSeg ntWr er seg ntWr er = seg ntWr erReference.get();
+     f (!hasDocu nt(t et D)) {
       return false;
     }
 
-    segmentWriter.deleteDocuments(new TweetIDQuery(tweetID));
+    seg ntWr er.deleteDocu nts(new T et DQuery(t et D));
     return true;
   }
 
-  protected void updateDocValues(long tweetID, String field, DocValuesUpdate update)
-      throws IOException {
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    segmentWriter.updateDocValues(new TweetIDQuery(tweetID), field, update);
+  protected vo d updateDocValues(long t et D, Str ng f eld, DocValuesUpdate update)
+      throws  OExcept on {
+    Earlyb rd ndexSeg ntWr er seg ntWr er = seg ntWr erReference.get();
+    seg ntWr er.updateDocValues(new T et DQuery(t et D), f eld, update);
   }
 
   /**
-   * Appends the Lucene index from another segment to this segment.
+   * Appends t  Lucene  ndex from anot r seg nt to t  seg nt.
    */
-  public void append(EarlybirdSegment otherSegment) throws IOException {
-    if (indexConfig.isIndexStoredOnDisk()) {
-      EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-      Preconditions.checkNotNull(segmentWriter);
-      EarlybirdIndexSegmentWriter otherSegmentWriter = otherSegment.segmentWriterReference.get();
-      if (otherSegmentWriter != null) {
-        otherSegmentWriter.close();
+  publ c vo d append(Earlyb rdSeg nt ot rSeg nt) throws  OExcept on {
+     f ( ndexConf g. s ndexStoredOnD sk()) {
+      Earlyb rd ndexSeg ntWr er seg ntWr er = seg ntWr erReference.get();
+      Precond  ons.c ckNotNull(seg ntWr er);
+      Earlyb rd ndexSeg ntWr er ot rSeg ntWr er = ot rSeg nt.seg ntWr erReference.get();
+       f (ot rSeg ntWr er != null) {
+        ot rSeg ntWr er.close();
       }
-      segmentWriter.addIndexes(otherSegment.luceneDir);
-      LOG.info("Calling forceMerge now after appending segment.");
-      segmentWriter.forceMerge();
-      appendedLuceneIndex = true;
-      LOG.info("Appended {} docs to segment {}. New doc count = {}",
-               otherSegment.indexStats.getStatusCount(), luceneDir.toString(),
-               indexStats.getStatusCount());
+      seg ntWr er.add ndexes(ot rSeg nt.luceneD r);
+      LOG. nfo("Call ng force rge now after append ng seg nt.");
+      seg ntWr er.force rge();
+      appendedLucene ndex = true;
+      LOG. nfo("Appended {} docs to seg nt {}. New doc count = {}",
+               ot rSeg nt. ndexStats.getStatusCount(), luceneD r.toStr ng(),
+                ndexStats.getStatusCount());
 
-      indexStats.setIndexSizeOnDiskInBytes(getSegmentSizeOnDisk());
+       ndexStats.set ndexS zeOnD sk nBytes(getSeg ntS zeOnD sk());
     }
   }
 
   /**
-   * Only needed for the on disk archive.
-   * Creates TwitterIndexReader used for searching. This is shared by all Searchers.
-   * This method also initializes the Lucene based mappers and CSF for the on disk archive.
+   * Only needed for t  on d sk arch ve.
+   * Creates Tw ter ndexReader used for search ng. T   s shared by all Searc rs.
+   * T   thod also  n  al zes t  Lucene based mappers and CSF for t  on d sk arch ve.
    *
-   * This method should be called after optimizing/loading a segment, but before the segment starts
-   * to serve search queries.
+   * T   thod should be called after opt m z ng/load ng a seg nt, but before t  seg nt starts
+   * to serve search quer es.
    */
-  public void warmSegment() throws IOException {
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    Preconditions.checkNotNull(segmentWriter);
+  publ c vo d warmSeg nt() throws  OExcept on {
+    Earlyb rd ndexSeg ntWr er seg ntWr er = seg ntWr erReference.get();
+    Precond  ons.c ckNotNull(seg ntWr er);
 
-    // only need to pre-create reader and initialize mappers and CSF in the on disk archive cluster
-    if (indexConfig.isIndexStoredOnDisk() && luceneIndexReader.get() == null) {
-      EarlybirdIndexSegmentAtomicReader luceneAtomicReader =
-          segmentWriter.getSegmentData().createAtomicReader();
+    // only need to pre-create reader and  n  al ze mappers and CSF  n t  on d sk arch ve cluster
+     f ( ndexConf g. s ndexStoredOnD sk() && lucene ndexReader.get() == null) {
+      Earlyb rd ndexSeg ntAtom cReader luceneAtom cReader =
+          seg ntWr er.getSeg ntData().createAtom cReader();
 
-      luceneIndexReader.set(luceneAtomicReader);
-      closableResources.add(luceneAtomicReader);
-      closableResources.add(luceneDir);
+      lucene ndexReader.set(luceneAtom cReader);
+      closableRes ces.add(luceneAtom cReader);
+      closableRes ces.add(luceneD r);
     }
   }
 
   /**
-   * Create a tweet index searcher on the segment.
+   * Create a t et  ndex searc r on t  seg nt.
    *
-   * For production search session, the schema snapshot should be always passed in to make sure
-   * that the schema usage inside scoring is consistent.
+   * For product on search sess on, t  sc ma snapshot should be always passed  n to make sure
+   * that t  sc ma usage  ns de scor ng  s cons stent.
    *
-   * For non-production usage, like one-off debugging search, you can use the function call without
-   * the schema snapshot.
+   * For non-product on usage, l ke one-off debugg ng search,   can use t  funct on call w hout
+   * t  sc ma snapshot.
    */
   @Nullable
-  public EarlybirdSingleSegmentSearcher getSearcher(
+  publ c Earlyb rdS ngleSeg ntSearc r getSearc r(
       UserTable userTable,
-      ImmutableSchemaInterface schemaSnapshot) throws IOException {
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    if (segmentWriter == null) {
+       mmutableSc ma nterface sc maSnapshot) throws  OExcept on {
+    Earlyb rd ndexSeg ntWr er seg ntWr er = seg ntWr erReference.get();
+     f (seg ntWr er == null) {
       return null;
     }
-    return new EarlybirdSingleSegmentSearcher(
-        schemaSnapshot, getIndexReader(segmentWriter), userTable, searcherStats, clock);
+    return new Earlyb rdS ngleSeg ntSearc r(
+        sc maSnapshot, get ndexReader(seg ntWr er), userTable, searc rStats, clock);
   }
 
   /**
-   * Returns a new searcher for this segment.
+   * Returns a new searc r for t  seg nt.
    */
   @Nullable
-  public EarlybirdSingleSegmentSearcher getSearcher(
-      UserTable userTable) throws IOException {
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    if (segmentWriter == null) {
+  publ c Earlyb rdS ngleSeg ntSearc r getSearc r(
+      UserTable userTable) throws  OExcept on {
+    Earlyb rd ndexSeg ntWr er seg ntWr er = seg ntWr erReference.get();
+     f (seg ntWr er == null) {
       return null;
     }
-    return new EarlybirdSingleSegmentSearcher(
-        segmentWriter.getSegmentData().getSchema().getSchemaSnapshot(),
-        getIndexReader(segmentWriter),
+    return new Earlyb rdS ngleSeg ntSearc r(
+        seg ntWr er.getSeg ntData().getSc ma().getSc maSnapshot(),
+        get ndexReader(seg ntWr er),
         userTable,
-        searcherStats,
+        searc rStats,
         clock);
   }
 
   /**
-   * Returns a new reader for this segment.
+   * Returns a new reader for t  seg nt.
    */
   @Nullable
-  public EarlybirdIndexSegmentAtomicReader getIndexReader() throws IOException {
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    if (segmentWriter == null) {
+  publ c Earlyb rd ndexSeg ntAtom cReader get ndexReader() throws  OExcept on {
+    Earlyb rd ndexSeg ntWr er seg ntWr er = seg ntWr erReference.get();
+     f (seg ntWr er == null) {
       return null;
     }
-    return getIndexReader(segmentWriter);
+    return get ndexReader(seg ntWr er);
   }
 
-  private EarlybirdIndexSegmentAtomicReader getIndexReader(
-      EarlybirdIndexSegmentWriter segmentWriter
-  ) throws IOException {
-    EarlybirdIndexSegmentAtomicReader reader = luceneIndexReader.get();
-    if (reader != null) {
+  pr vate Earlyb rd ndexSeg ntAtom cReader get ndexReader(
+      Earlyb rd ndexSeg ntWr er seg ntWr er
+  ) throws  OExcept on {
+    Earlyb rd ndexSeg ntAtom cReader reader = lucene ndexReader.get();
+     f (reader != null) {
       return reader;
     }
-    Preconditions.checkState(!indexConfig.isIndexStoredOnDisk());
+    Precond  ons.c ckState(! ndexConf g. s ndexStoredOnD sk());
 
-    // Realtime EB mode.
-    return segmentWriter.getSegmentData().createAtomicReader();
+    // Realt   EB mode.
+    return seg ntWr er.getSeg ntData().createAtom cReader();
   }
 
   /**
-   * Gets max tweet id in this segment.
+   * Gets max t et  d  n t  seg nt.
    *
-   * @return the tweet id or -1 if not found.
+   * @return t  t et  d or -1  f not found.
    */
-  public long getMaxTweetId() {
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    if (segmentWriter == null) {
+  publ c long getMaxT et d() {
+    Earlyb rd ndexSeg ntWr er seg ntWr er = seg ntWr erReference.get();
+     f (seg ntWr er == null) {
       return -1;
     } else {
-      TweetIDMapper tweetIDMapper =
-          (TweetIDMapper) segmentWriter.getSegmentData().getDocIDToTweetIDMapper();
-      return tweetIDMapper.getMaxTweetID();
+      T et DMapper t et DMapper =
+          (T et DMapper) seg ntWr er.getSeg ntData().getDoc DToT et DMapper();
+      return t et DMapper.getMaxT et D();
     }
   }
 
-  private EarlybirdIndexSegmentWriter newWriteableSegment(EarlybirdIndexSegmentData segmentData)
-      throws IOException {
-    EarlybirdIndexSegmentWriter old = segmentWriterReference.get();
-    if (old != null) {
+  pr vate Earlyb rd ndexSeg ntWr er newWr eableSeg nt(Earlyb rd ndexSeg ntData seg ntData)
+      throws  OExcept on {
+    Earlyb rd ndexSeg ntWr er old = seg ntWr erReference.get();
+     f (old != null) {
       old.close();
     }
 
-    LOG.info("Creating new segment writer for {} on {}", segmentName, luceneDir);
-    IndexWriterConfig indexWriterConfig = indexConfig.newIndexWriterConfig();
-    return segmentData.createEarlybirdIndexSegmentWriter(indexWriterConfig);
+    LOG. nfo("Creat ng new seg nt wr er for {} on {}", seg ntNa , luceneD r);
+     ndexWr erConf g  ndexWr erConf g =  ndexConf g.new ndexWr erConf g();
+    return seg ntData.createEarlyb rd ndexSeg ntWr er( ndexWr erConf g);
   }
 
-  private void resetSegmentWriterReference(
-      EarlybirdIndexSegmentWriter segmentWriter, boolean previousSegmentWriterAllowed) {
-    EarlybirdIndexSegmentWriter previousSegmentWriter =
-        segmentWriterReference.getAndSet(segmentWriter);
-    if (!previousSegmentWriterAllowed) {
-      Preconditions.checkState(
-          previousSegmentWriter == null,
-          "A previous segment writer must have been set for segment " + segmentName);
+  pr vate vo d resetSeg ntWr erReference(
+      Earlyb rd ndexSeg ntWr er seg ntWr er, boolean prev ousSeg ntWr erAllo d) {
+    Earlyb rd ndexSeg ntWr er prev ousSeg ntWr er =
+        seg ntWr erReference.getAndSet(seg ntWr er);
+     f (!prev ousSeg ntWr erAllo d) {
+      Precond  ons.c ckState(
+          prev ousSeg ntWr er == null,
+          "A prev ous seg nt wr er must have been set for seg nt " + seg ntNa );
     }
 
-    // Reset the stats for the number of indexed tweets per hour and recompute them.
+    // Reset t  stats for t  number of  ndexed t ets per h  and recompute t m.
     // See SEARCH-23619
-    for (SearchCounter indexedTweetsCounter : indexedTweetsCounters.values()) {
-      indexedTweetsCounter.reset();
+    for (SearchCounter  ndexedT etsCounter :  ndexedT etsCounters.values()) {
+       ndexedT etsCounter.reset();
     }
 
-    if (segmentWriter != null) {
-      indexStats.setSegmentData(segmentWriter.getSegmentData());
+     f (seg ntWr er != null) {
+       ndexStats.setSeg ntData(seg ntWr er.getSeg ntData());
 
-      if (indexConfig.getCluster() != EarlybirdCluster.FULL_ARCHIVE) {
-        initHourlyTweetCounts(segmentWriterReference.get());
+       f ( ndexConf g.getCluster() != Earlyb rdCluster.FULL_ARCH VE) {
+         n H lyT etCounts(seg ntWr erReference.get());
       }
     } else {
-      // It's important to unset segment data so that there are no references to it
-      // and it can be GC-ed.
-      indexStats.unsetSegmentDataAndSaveCounts();
+      //  's  mportant to unset seg nt data so that t re are no references to  
+      // and   can be GC-ed.
+       ndexStats.unsetSeg ntDataAndSaveCounts();
     }
   }
 
   /**
-   * Add a document if it is not already in segment.
+   * Add a docu nt  f    s not already  n seg nt.
    */
-  public void addDocument(TweetDocument doc) throws IOException {
-    if (indexConfig.isIndexStoredOnDisk()) {
-      addDocumentToArchiveSegment(doc);
+  publ c vo d addDocu nt(T etDocu nt doc) throws  OExcept on {
+     f ( ndexConf g. s ndexStoredOnD sk()) {
+      addDocu ntToArch veSeg nt(doc);
     } else {
-      addDocumentToRealtimeSegment(doc);
+      addDocu ntToRealt  Seg nt(doc);
     }
   }
 
-  private void addDocumentToArchiveSegment(TweetDocument doc) throws IOException {
-    // For archive, the document id should come in order, to drop duplicates, only need to
-    // compare current id with last one.
-    long tweetId = doc.getTweetID();
-    if (tweetId == lastInOrderTweetId) {
-      LOG.warn("Dropped duplicate tweet for archive: {}", tweetId);
-      DUPLICATE_TWEET_SKIPPED_COUNTER.increment();
+  pr vate vo d addDocu ntToArch veSeg nt(T etDocu nt doc) throws  OExcept on {
+    // For arch ve, t  docu nt  d should co   n order, to drop dupl cates, only need to
+    // compare current  d w h last one.
+    long t et d = doc.getT et D();
+     f (t et d == last nOrderT et d) {
+      LOG.warn("Dropped dupl cate t et for arch ve: {}", t et d);
+      DUPL CATE_TWEET_SK PPED_COUNTER. ncre nt();
       return;
     }
 
-    if (tweetId > lastInOrderTweetId && lastInOrderTweetId != 0) {
-      // Archive orders document from newest to oldest, so this shouldn't happen
-      LOG.warn("Encountered out-of-order tweet for archive: {}", tweetId);
-      OUT_OF_ORDER_TWEET_COUNTER.increment();
+     f (t et d > last nOrderT et d && last nOrderT et d != 0) {
+      // Arch ve orders docu nt from ne st to oldest, so t  shouldn't happen
+      LOG.warn("Encountered out-of-order t et for arch ve: {}", t et d);
+      OUT_OF_ORDER_TWEET_COUNTER. ncre nt();
     } else {
-      lastInOrderTweetId = tweetId;
+      last nOrderT et d = t et d;
     }
 
-    addDocumentInternal(doc);
+    addDocu nt nternal(doc);
   }
 
-  private void addDocumentToRealtimeSegment(TweetDocument doc) throws IOException {
-    long tweetId = doc.getTweetID();
-    boolean outOfOrder = tweetId <= lastInOrderTweetId;
-    if (outOfOrder) {
-      OUT_OF_ORDER_TWEET_COUNTER.increment();
+  pr vate vo d addDocu ntToRealt  Seg nt(T etDocu nt doc) throws  OExcept on {
+    long t et d = doc.getT et D();
+    boolean outOfOrder = t et d <= last nOrderT et d;
+     f (outOfOrder) {
+      OUT_OF_ORDER_TWEET_COUNTER. ncre nt();
     } else {
-      lastInOrderTweetId = tweetId;
+      last nOrderT et d = t et d;
     }
 
-    // We only need to call hasDocument() for out-of-order tweets.
-    if (outOfOrder && hasDocument(tweetId)) {
-      // We do get duplicates sometimes so you'll see some amount of these.
-      DUPLICATE_TWEET_SKIPPED_COUNTER.increment();
+    //   only need to call hasDocu nt() for out-of-order t ets.
+     f (outOfOrder && hasDocu nt(t et d)) {
+      //   do get dupl cates so t  s so  'll see so  amount of t se.
+      DUPL CATE_TWEET_SK PPED_COUNTER. ncre nt();
     } else {
-      addDocumentInternal(doc);
-      incrementHourlyTweetCount(doc.getTweetID());
+      addDocu nt nternal(doc);
+       ncre ntH lyT etCount(doc.getT et D());
     }
   }
 
-  private void addDocumentInternal(TweetDocument tweetDocument) throws IOException {
-    Document doc = tweetDocument.getDocument();
+  pr vate vo d addDocu nt nternal(T etDocu nt t etDocu nt) throws  OExcept on {
+    Docu nt doc = t etDocu nt.getDocu nt();
 
-    // Never write blank documents into the index.
-    if (doc == null || doc.getFields() == null || doc.getFields().size() == 0) {
+    // Never wr e blank docu nts  nto t   ndex.
+     f (doc == null || doc.getF elds() == null || doc.getF elds().s ze() == 0) {
       return;
     }
 
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    if (segmentWriter == null) {
-      EarlybirdIndexSegmentData segmentData = indexConfig.newSegmentData(
-          maxSegmentSize,
-          timeSliceID,
-          luceneDir,
-          extensionsFactory);
-      segmentWriter = newWriteableSegment(segmentData);
-      resetSegmentWriterReference(segmentWriter, false);
+    Earlyb rd ndexSeg ntWr er seg ntWr er = seg ntWr erReference.get();
+     f (seg ntWr er == null) {
+      Earlyb rd ndexSeg ntData seg ntData =  ndexConf g.newSeg ntData(
+          maxSeg ntS ze,
+          t  Sl ce D,
+          luceneD r,
+          extens onsFactory);
+      seg ntWr er = newWr eableSeg nt(seg ntData);
+      resetSeg ntWr erReference(seg ntWr er, false);
     }
 
-    Preconditions.checkState(segmentWriter.numDocs() < maxSegmentSize,
-                             "Reached max segment size %s", maxSegmentSize);
+    Precond  ons.c ckState(seg ntWr er.numDocs() < maxSeg ntS ze,
+                             "Reac d max seg nt s ze %s", maxSeg ntS ze);
 
-    IndexableField[] featuresField = doc.getFields(
-        EarlybirdFieldConstants.ENCODED_TWEET_FEATURES_FIELD_NAME);
-    Preconditions.checkState(featuresField.length == 1,
-            "featuresField.length should be 1, but is %s", featuresField.length);
+     ndexableF eld[] featuresF eld = doc.getF elds(
+        Earlyb rdF eldConstants.ENCODED_TWEET_FEATURES_F ELD_NAME);
+    Precond  ons.c ckState(featuresF eld.length == 1,
+            "featuresF eld.length should be 1, but  s %s", featuresF eld.length);
 
-    // We require the createdAt field to be set so we can properly filter tweets based on time.
-    IndexableField[] createdAt =
-        doc.getFields(EarlybirdFieldConstant.CREATED_AT_FIELD.getFieldName());
-    Preconditions.checkState(createdAt.length == 1);
+    //   requ re t  createdAt f eld to be set so   can properly f lter t ets based on t  .
+     ndexableF eld[] createdAt =
+        doc.getF elds(Earlyb rdF eldConstant.CREATED_AT_F ELD.getF eldNa ());
+    Precond  ons.c ckState(createdAt.length == 1);
 
-    EarlybirdEncodedFeatures features = EarlybirdEncodedFeaturesUtil.fromBytes(
-        indexConfig.getSchema().getSchemaSnapshot(),
-        EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD,
-        featuresField[0].binaryValue().bytes,
-        featuresField[0].binaryValue().offset);
-    boolean currentDocIsOffensive = features.isFlagSet(EarlybirdFieldConstant.IS_OFFENSIVE_FLAG);
-    perFieldCounters.increment(ThriftIndexingEventType.INSERT, doc);
-    segmentWriter.addTweet(doc, tweetDocument.getTweetID(), currentDocIsOffensive);
+    Earlyb rdEncodedFeatures features = Earlyb rdEncodedFeaturesUt l.fromBytes(
+         ndexConf g.getSc ma().getSc maSnapshot(),
+        Earlyb rdF eldConstant.ENCODED_TWEET_FEATURES_F ELD,
+        featuresF eld[0].b naryValue().bytes,
+        featuresF eld[0].b naryValue().offset);
+    boolean currentDoc sOffens ve = features. sFlagSet(Earlyb rdF eldConstant. S_OFFENS VE_FLAG);
+    perF eldCounters. ncre nt(Thr ft ndex ngEventType. NSERT, doc);
+    seg ntWr er.addT et(doc, t etDocu nt.getT et D(), currentDoc sOffens ve);
   }
 
-  private void incrementHourlyTweetCount(long tweetId) {
-    // SEARCH-23619, We won't attempt to increment the count for pre-snowflake IDs, since
-    // extracting an exact create time is pretty tricky at this point, and the stat is mostly
-    // useful for checking realtime tweet indexing.
-    if (SnowflakeId.isSnowflakeId(tweetId)) {
-      long tweetCreateTime = SnowflakeId.unixTimeMillisFromId(tweetId);
-      String tweetHour = HOURLY_COUNT_DATE_TIME_FORMATTER.format(
-          ZonedDateTime.ofInstant(Instant.ofEpochMilli(tweetCreateTime), ZoneOffset.UTC));
+  pr vate vo d  ncre ntH lyT etCount(long t et d) {
+    // SEARCH-23619,   won't attempt to  ncre nt t  count for pre-snowflake  Ds, s nce
+    // extract ng an exact create t    s pretty tr cky at t  po nt, and t  stat  s mostly
+    // useful for c ck ng realt   t et  ndex ng.
+     f (Snowflake d. sSnowflake d(t et d)) {
+      long t etCreateT   = Snowflake d.un xT  M ll sFrom d(t et d);
+      Str ng t etH  = HOURLY_COUNT_DATE_T ME_FORMATTER.format(
+          ZonedDateT  .of nstant( nstant.ofEpochM ll (t etCreateT  ), ZoneOffset.UTC));
 
-      String segmentOptimizedSuffix = isOptimized() ? "optimized" : "unoptimized";
-      SearchCounter indexedTweetsCounter = indexedTweetsCounters.computeIfAbsent(
-          tweetHour + "_" + segmentOptimizedSuffix,
-          (tweetHourKey) -> SearchCounter.export(String.format(
-              NUM_TWEETS_CREATED_AT_PATTERN, segmentOptimizedSuffix, segmentName, tweetHour)));
-      indexedTweetsCounter.increment();
+      Str ng seg ntOpt m zedSuff x =  sOpt m zed() ? "opt m zed" : "unopt m zed";
+      SearchCounter  ndexedT etsCounter =  ndexedT etsCounters.compute fAbsent(
+          t etH  + "_" + seg ntOpt m zedSuff x,
+          (t etH Key) -> SearchCounter.export(Str ng.format(
+              NUM_TWEETS_CREATED_AT_PATTERN, seg ntOpt m zedSuff x, seg ntNa , t etH )));
+       ndexedT etsCounter. ncre nt();
     }
   }
 
-  private void initHourlyTweetCounts(EarlybirdIndexSegmentWriter segmentWriter) {
-    DocIDToTweetIDMapper mapper = segmentWriter.getSegmentData().getDocIDToTweetIDMapper();
-    int docId = Integer.MIN_VALUE;
-    while ((docId = mapper.getNextDocID(docId)) != DocIDToTweetIDMapper.ID_NOT_FOUND) {
-      incrementHourlyTweetCount(mapper.getTweetID(docId));
+  pr vate vo d  n H lyT etCounts(Earlyb rd ndexSeg ntWr er seg ntWr er) {
+    Doc DToT et DMapper mapper = seg ntWr er.getSeg ntData().getDoc DToT et DMapper();
+     nt doc d =  nteger.M N_VALUE;
+    wh le ((doc d = mapper.getNextDoc D(doc d)) != Doc DToT et DMapper. D_NOT_FOUND) {
+       ncre ntH lyT etCount(mapper.getT et D(doc d));
     }
   }
 
   /**
-   * Adds the given document for the given tweet ID to the segment, potentially out of order.
+   * Adds t  g ven docu nt for t  g ven t et  D to t  seg nt, potent ally out of order.
    */
-  public boolean appendOutOfOrder(Document doc, long tweetID) throws IOException {
-    // Never write blank documents into the index.
-    if (doc == null || doc.getFields() == null || doc.getFields().size() == 0) {
+  publ c boolean appendOutOfOrder(Docu nt doc, long t et D) throws  OExcept on {
+    // Never wr e blank docu nts  nto t   ndex.
+     f (doc == null || doc.getF elds() == null || doc.getF elds().s ze() == 0) {
       return false;
     }
 
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    if (segmentWriter == null) {
-      logAppendOutOfOrderFailure(tweetID, doc, "segment is null");
+    Earlyb rd ndexSeg ntWr er seg ntWr er = seg ntWr erReference.get();
+     f (seg ntWr er == null) {
+      logAppendOutOfOrderFa lure(t et D, doc, "seg nt  s null");
       return false;
     }
 
-    if (!indexConfig.supportOutOfOrderIndexing()) {
-      logAppendOutOfOrderFailure(tweetID, doc, "out of order indexing not supported");
+     f (! ndexConf g.supportOutOfOrder ndex ng()) {
+      logAppendOutOfOrderFa lure(t et D, doc, "out of order  ndex ng not supported");
       return false;
     }
 
-    if (!hasDocument(tweetID)) {
-      logAppendOutOfOrderFailure(tweetID, doc, "tweet ID index lookup failed");
-      searchIndexingMetricSet.updateOnMissingTweetCounter.increment();
-      perFieldCounters.incrementTweetNotInIndex(ThriftIndexingEventType.OUT_OF_ORDER_APPEND, doc);
+     f (!hasDocu nt(t et D)) {
+      logAppendOutOfOrderFa lure(t et D, doc, "t et  D  ndex lookup fa led");
+      search ndex ng tr cSet.updateOnM ss ngT etCounter. ncre nt();
+      perF eldCounters. ncre ntT etNot n ndex(Thr ft ndex ngEventType.OUT_OF_ORDER_APPEND, doc);
       return false;
     }
 
-    perFieldCounters.increment(ThriftIndexingEventType.OUT_OF_ORDER_APPEND, doc);
-    segmentWriter.appendOutOfOrder(new TweetIDQuery(tweetID), doc);
-    indexStats.incrementOutOfOrderUpdateCount();
+    perF eldCounters. ncre nt(Thr ft ndex ngEventType.OUT_OF_ORDER_APPEND, doc);
+    seg ntWr er.appendOutOfOrder(new T et DQuery(t et D), doc);
+     ndexStats. ncre ntOutOfOrderUpdateCount();
     return true;
   }
 
-  private void logAppendOutOfOrderFailure(long tweetID, Document doc, String reason) {
+  pr vate vo d logAppendOutOfOrderFa lure(long t et D, Docu nt doc, Str ng reason) {
     UPDATES_ERRORS_LOG.debug(
-        "appendOutOfOrder() failed to apply update document with hash {} on tweet ID {}: {}",
-        Objects.hashCode(doc), tweetID, reason);
+        "appendOutOfOrder() fa led to apply update docu nt w h hash {} on t et  D {}: {}",
+        Objects.hashCode(doc), t et D, reason);
   }
 
   /**
-   * Determines if this segment contains the given tweet ID.
+   * Determ nes  f t  seg nt conta ns t  g ven t et  D.
    */
-  public boolean hasDocument(long tweetID) throws IOException {
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    if (segmentWriter == null) {
+  publ c boolean hasDocu nt(long t et D) throws  OExcept on {
+    Earlyb rd ndexSeg ntWr er seg ntWr er = seg ntWr erReference.get();
+     f (seg ntWr er == null) {
       return false;
     }
 
-    return segmentWriter.getSegmentData().getDocIDToTweetIDMapper().getDocID(tweetID)
-        != DocIDToTweetIDMapper.ID_NOT_FOUND;
+    return seg ntWr er.getSeg ntData().getDoc DToT et DMapper().getDoc D(t et D)
+        != Doc DToT et DMapper. D_NOT_FOUND;
   }
 
-  private static final String VERSION_PROP_NAME = "version";
-  private static final String VERSION_DESC_PROP_NAME = "versionDescription";
-  private static final String PARTIAL_UPDATES_COUNT = "partialUpdatesCount";
-  private static final String OUT_OF_ORDER_UPDATES_COUNT = "outOfOrderUpdatesCount";
+  pr vate stat c f nal Str ng VERS ON_PROP_NAME = "vers on";
+  pr vate stat c f nal Str ng VERS ON_DESC_PROP_NAME = "vers onDescr pt on";
+  pr vate stat c f nal Str ng PART AL_UPDATES_COUNT = "part alUpdatesCount";
+  pr vate stat c f nal Str ng OUT_OF_ORDER_UPDATES_COUNT = "outOfOrderUpdatesCount";
 
-  private void checkIfFlushedDataVersionMatchesExpected(FlushInfo flushInfo) throws IOException {
-    int expectedVersionNumber = indexConfig.getSchema().getMajorVersionNumber();
-    String expectedVersionDesc = indexConfig.getSchema().getVersionDescription();
-    int version = flushInfo.getIntProperty(VERSION_PROP_NAME);
-    final String versionDesc = flushInfo.getStringProperty(VERSION_DESC_PROP_NAME);
+  pr vate vo d c ck fFlus dDataVers onMatc sExpected(Flush nfo flush nfo) throws  OExcept on {
+     nt expectedVers onNumber =  ndexConf g.getSc ma().getMajorVers onNumber();
+    Str ng expectedVers onDesc =  ndexConf g.getSc ma().getVers onDescr pt on();
+     nt vers on = flush nfo.get ntProperty(VERS ON_PROP_NAME);
+    f nal Str ng vers onDesc = flush nfo.getStr ngProperty(VERS ON_DESC_PROP_NAME);
 
-    if (version != expectedVersionNumber) {
-      throw new FlushVersionMismatchException("Flushed version mismatch. Expected: "
-          + expectedVersionNumber + ", but was: " + version);
+     f (vers on != expectedVers onNumber) {
+      throw new FlushVers onM smatchExcept on("Flus d vers on m smatch. Expected: "
+          + expectedVers onNumber + ", but was: " + vers on);
     }
 
-    if (!expectedVersionDesc.equals(versionDesc)) {
-      final String message = "Flush version " + expectedVersionNumber + " is ambiguous"
-          + "  Expected: " + expectedVersionDesc
-          + "  Found:  "  + versionDesc
-          + "  Please clean up segments with bad flush version from HDFS and Earlybird local disk.";
-      throw new FlushVersionMismatchException(message);
+     f (!expectedVers onDesc.equals(vers onDesc)) {
+      f nal Str ng  ssage = "Flush vers on " + expectedVers onNumber + "  s amb guous"
+          + "  Expected: " + expectedVers onDesc
+          + "  Found:  "  + vers onDesc
+          + "  Please clean up seg nts w h bad flush vers on from HDFS and Earlyb rd local d sk.";
+      throw new FlushVers onM smatchExcept on( ssage);
     }
   }
 
   /**
-   * Loads the segment data and properties from the given deserializer and flush info.
+   * Loads t  seg nt data and propert es from t  g ven deser al zer and flush  nfo.
    *
-   * @param in The deserializer from which the segment's data will be read.
-   * @param flushInfo The flush info from which the segment's properties will be read.
+   * @param  n T  deser al zer from wh ch t  seg nt's data w ll be read.
+   * @param flush nfo T  flush  nfo from wh ch t  seg nt's propert es w ll be read.
    */
-  public void load(DataDeserializer in, FlushInfo flushInfo) throws IOException {
-    checkIfFlushedDataVersionMatchesExpected(flushInfo);
+  publ c vo d load(DataDeser al zer  n, Flush nfo flush nfo) throws  OExcept on {
+    c ck fFlus dDataVers onMatc sExpected(flush nfo);
 
-    int partialUpdatesCount = flushInfo.getIntProperty(PARTIAL_UPDATES_COUNT);
-    int outOfOrderUpdatesCount = flushInfo.getIntProperty(OUT_OF_ORDER_UPDATES_COUNT);
+     nt part alUpdatesCount = flush nfo.get ntProperty(PART AL_UPDATES_COUNT);
+     nt outOfOrderUpdatesCount = flush nfo.get ntProperty(OUT_OF_ORDER_UPDATES_COUNT);
 
-    EarlybirdIndexSegmentData loadedSegmentData = indexConfig.loadSegmentData(
-        flushInfo, in, luceneDir, extensionsFactory);
+    Earlyb rd ndexSeg ntData loadedSeg ntData =  ndexConf g.loadSeg ntData(
+        flush nfo,  n, luceneD r, extens onsFactory);
 
-    setSegmentData(loadedSegmentData, partialUpdatesCount, outOfOrderUpdatesCount);
+    setSeg ntData(loadedSeg ntData, part alUpdatesCount, outOfOrderUpdatesCount);
   }
 
   /**
-   * Update the data backing this EarlyirdSegment.
+   * Update t  data back ng t  Early rdSeg nt.
    */
-  public void setSegmentData(
-      EarlybirdIndexSegmentData segmentData,
-      int partialUpdatesCount,
-      int outOfOrderUpdatesCount) throws IOException {
-    resetSegmentWriterReference(newWriteableSegment(segmentData), false);
+  publ c vo d setSeg ntData(
+      Earlyb rd ndexSeg ntData seg ntData,
+       nt part alUpdatesCount,
+       nt outOfOrderUpdatesCount) throws  OExcept on {
+    resetSeg ntWr erReference(newWr eableSeg nt(seg ntData), false);
     try {
-      warmSegment();
-    } catch (IOException e) {
-      LOG.error("Failed to create IndexReader for segment {}. Will destroy unreadable segment.",
-          segmentName, e);
-      destroyImmediately();
+      warmSeg nt();
+    } catch ( OExcept on e) {
+      LOG.error("Fa led to create  ndexReader for seg nt {}. W ll destroy unreadable seg nt.",
+          seg ntNa , e);
+      destroy m d ately();
       throw e;
     }
 
-    LOG.info("Starting segment {} with {} partial updates, {} out of order updates and {} deletes.",
-        segmentName, partialUpdatesCount, outOfOrderUpdatesCount, indexStats.getDeleteCount());
-    indexStats.setPartialUpdateCount(partialUpdatesCount);
-    indexStats.setOutOfOrderUpdateCount(outOfOrderUpdatesCount);
-    indexStats.setIndexSizeOnDiskInBytes(getSegmentSizeOnDisk());
+    LOG. nfo("Start ng seg nt {} w h {} part al updates, {} out of order updates and {} deletes.",
+        seg ntNa , part alUpdatesCount, outOfOrderUpdatesCount,  ndexStats.getDeleteCount());
+     ndexStats.setPart alUpdateCount(part alUpdatesCount);
+     ndexStats.setOutOfOrderUpdateCount(outOfOrderUpdatesCount);
+     ndexStats.set ndexS zeOnD sk nBytes(getSeg ntS zeOnD sk());
   }
 
   /**
-   * Flushes the this segment's properties to the given FlushInfo instance, and this segment's data
-   * to the given DataSerializer instance.
+   * Flus s t  t  seg nt's propert es to t  g ven Flush nfo  nstance, and t  seg nt's data
+   * to t  g ven DataSer al zer  nstance.
    *
-   * @param flushInfo The FlushInfo instance where all segment properties should be added.
-   * @param out The serializer to which all segment data should be flushed.
+   * @param flush nfo T  Flush nfo  nstance w re all seg nt propert es should be added.
+   * @param out T  ser al zer to wh ch all seg nt data should be flus d.
    */
-  public void flush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-    flushInfo.addIntProperty(VERSION_PROP_NAME, indexConfig.getSchema().getMajorVersionNumber());
-    flushInfo.addStringProperty(VERSION_DESC_PROP_NAME,
-        indexConfig.getSchema().getVersionDescription());
-    flushInfo.addIntProperty(PARTIAL_UPDATES_COUNT, indexStats.getPartialUpdateCount());
-    flushInfo.addIntProperty(OUT_OF_ORDER_UPDATES_COUNT, indexStats.getOutOfOrderUpdateCount());
-    if (segmentWriterReference.get() == null) {
-      LOG.warn("Segment writer is null. flushInfo: {}", flushInfo);
-    } else if (segmentWriterReference.get().getSegmentData() == null) {
-      LOG.warn("Segment data is null. segment writer: {}, flushInfo: {}",
-          segmentWriterReference.get(), flushInfo);
+  publ c vo d flush(Flush nfo flush nfo, DataSer al zer out) throws  OExcept on {
+    flush nfo.add ntProperty(VERS ON_PROP_NAME,  ndexConf g.getSc ma().getMajorVers onNumber());
+    flush nfo.addStr ngProperty(VERS ON_DESC_PROP_NAME,
+         ndexConf g.getSc ma().getVers onDescr pt on());
+    flush nfo.add ntProperty(PART AL_UPDATES_COUNT,  ndexStats.getPart alUpdateCount());
+    flush nfo.add ntProperty(OUT_OF_ORDER_UPDATES_COUNT,  ndexStats.getOutOfOrderUpdateCount());
+     f (seg ntWr erReference.get() == null) {
+      LOG.warn("Seg nt wr er  s null. flush nfo: {}", flush nfo);
+    } else  f (seg ntWr erReference.get().getSeg ntData() == null) {
+      LOG.warn("Seg nt data  s null. seg nt wr er: {}, flush nfo: {}",
+          seg ntWr erReference.get(), flush nfo);
     }
-    segmentWriterReference.get().getSegmentData().flushSegment(flushInfo, out);
-    indexStats.setIndexSizeOnDiskInBytes(getSegmentSizeOnDisk());
+    seg ntWr erReference.get().getSeg ntData().flushSeg nt(flush nfo, out);
+     ndexStats.set ndexS zeOnD sk nBytes(getSeg ntS zeOnD sk());
   }
 
   /**
-   * Check to see if this segment can be loaded from an on-disk index, and load it if it can be.
+   * C ck to see  f t  seg nt can be loaded from an on-d sk  ndex, and load    f   can be.
    *
-   * This should only be applicable to the current segment for the on-disk archive. It's not
-   * fully flushed until it's full, but we do have a lucene index on local disk which can be
-   * used at startup (rather than have to reindex all the current timeslice documents again).
+   * T  should only be appl cable to t  current seg nt for t  on-d sk arch ve.  's not
+   * fully flus d unt l  's full, but   do have a lucene  ndex on local d sk wh ch can be
+   * used at startup (rat r than have to re ndex all t  current t  sl ce docu nts aga n).
    *
-   * If loaded, the index reader will be pre-created, and the segment will be marked as
-   * optimized.
+   *  f loaded, t   ndex reader w ll be pre-created, and t  seg nt w ll be marked as
+   * opt m zed.
    *
-   * If the index directory exists but it cannot be loaded, the index directory will be deleted.
+   *  f t   ndex d rectory ex sts but   cannot be loaded, t   ndex d rectory w ll be deleted.
    *
-   * @return true if the index exists on disk, and was loaded.
+   * @return true  f t   ndex ex sts on d sk, and was loaded.
    */
-  public boolean tryToLoadExistingIndex() throws IOException {
-    Preconditions.checkState(segmentWriterReference.get() == null);
-    if (indexConfig.isIndexStoredOnDisk()) {
-      if (DirectoryReader.indexExists(luceneDir) && checkSuccessFile()) {
-        LOG.info("Index directory already exists for {} at {}", segmentName, luceneDir);
+  publ c boolean tryToLoadEx st ng ndex() throws  OExcept on {
+    Precond  ons.c ckState(seg ntWr erReference.get() == null);
+     f ( ndexConf g. s ndexStoredOnD sk()) {
+       f (D rectoryReader. ndexEx sts(luceneD r) && c ckSuccessF le()) {
+        LOG. nfo(" ndex d rectory already ex sts for {} at {}", seg ntNa , luceneD r);
 
-        // set the optimized flag, since we don't need to optimize any more, and pre-create
-        // the index reader (for the on-disk index optimize() is a noop that just sets the
-        // optimized flag).
-        EarlybirdIndexSegmentData earlybirdIndexSegmentData = indexConfig.newSegmentData(
-            maxSegmentSize,
-            timeSliceID,
-            luceneDir,
-            extensionsFactory);
-        EarlybirdIndexSegmentData optimizedEarlybirdIndexSegmentData =
-            indexConfig.optimize(earlybirdIndexSegmentData);
-        resetSegmentWriterReference(newWriteableSegment(optimizedEarlybirdIndexSegmentData), false);
+        // set t  opt m zed flag, s nce   don't need to opt m ze any more, and pre-create
+        // t   ndex reader (for t  on-d sk  ndex opt m ze()  s a noop that just sets t 
+        // opt m zed flag).
+        Earlyb rd ndexSeg ntData earlyb rd ndexSeg ntData =  ndexConf g.newSeg ntData(
+            maxSeg ntS ze,
+            t  Sl ce D,
+            luceneD r,
+            extens onsFactory);
+        Earlyb rd ndexSeg ntData opt m zedEarlyb rd ndexSeg ntData =
+             ndexConf g.opt m ze(earlyb rd ndexSeg ntData);
+        resetSeg ntWr erReference(newWr eableSeg nt(opt m zedEarlyb rd ndexSeg ntData), false);
 
-        warmSegment();
+        warmSeg nt();
 
-        LOG.info("Used existing lucene index for {} with {} documents",
-                 segmentName, indexStats.getStatusCount());
+        LOG. nfo("Used ex st ng lucene  ndex for {} w h {} docu nts",
+                 seg ntNa ,  ndexStats.getStatusCount());
 
-        indexStats.setIndexSizeOnDiskInBytes(getSegmentSizeOnDisk());
+         ndexStats.set ndexS zeOnD sk nBytes(getSeg ntS zeOnD sk());
 
         return true;
       } else {
-        // Check if there is an existing lucene dir without a SUCCESS file on disk.
-        // If so, we will remove it and reindex from scratch.
-        if (moveFSDirectoryIfExists(luceneDir)) {
-          // Throw here to be cleaned up and retried by SimpleSegmentIndexer.
-          throw new IOException("Found invalid existing lucene directory at: " + luceneDir);
+        // C ck  f t re  s an ex st ng lucene d r w hout a SUCCESS f le on d sk.
+        //  f so,   w ll remove   and re ndex from scratch.
+         f (moveFSD rectory fEx sts(luceneD r)) {
+          // Throw  re to be cleaned up and retr ed by S mpleSeg nt ndexer.
+          throw new  OExcept on("Found  nval d ex st ng lucene d rectory at: " + luceneD r);
         }
       }
     }
@@ -785,95 +785,95 @@ public class EarlybirdSegment {
   }
 
   /**
-   * Partially updates a document with the field value(s) specified by event.
-   * Returns true if all writes were successful and false if one or more writes fail or if
-   * tweet id isn't found in the segment.
+   * Part ally updates a docu nt w h t  f eld value(s) spec f ed by event.
+   * Returns true  f all wr es  re successful and false  f one or more wr es fa l or  f
+   * t et  d  sn't found  n t  seg nt.
    */
-  public boolean applyPartialUpdate(ThriftIndexingEvent event) throws IOException {
-    Preconditions.checkArgument(event.getEventType() == ThriftIndexingEventType.PARTIAL_UPDATE);
-    Preconditions.checkArgument(event.isSetUid());
-    Preconditions.checkArgument(!ThriftDocumentUtil.hasDuplicateFields(event.getDocument()));
-    ImmutableSchemaInterface schemaSnapshot = indexConfig.getSchema().getSchemaSnapshot();
+  publ c boolean applyPart alUpdate(Thr ft ndex ngEvent event) throws  OExcept on {
+    Precond  ons.c ckArgu nt(event.getEventType() == Thr ft ndex ngEventType.PART AL_UPDATE);
+    Precond  ons.c ckArgu nt(event. sSetU d());
+    Precond  ons.c ckArgu nt(!Thr ftDocu ntUt l.hasDupl cateF elds(event.getDocu nt()));
+     mmutableSc ma nterface sc maSnapshot =  ndexConf g.getSc ma().getSc maSnapshot();
 
-    long tweetId = event.getUid();
-    ThriftDocument doc = event.getDocument();
+    long t et d = event.getU d();
+    Thr ftDocu nt doc = event.getDocu nt();
 
-    if (!hasDocument(tweetId)) {
-      // no need to attempt field writes, fail early
-      PARTIAL_UPDATE_FOR_TWEET_NOT_IN_INDEX.increment();
-       perFieldCounters.incrementTweetNotInIndex(
-           ThriftIndexingEventType.PARTIAL_UPDATE, doc);
+     f (!hasDocu nt(t et d)) {
+      // no need to attempt f eld wr es, fa l early
+      PART AL_UPDATE_FOR_TWEET_NOT_ N_ NDEX. ncre nt();
+       perF eldCounters. ncre ntT etNot n ndex(
+           Thr ft ndex ngEventType.PART AL_UPDATE, doc);
       return false;
     }
 
-    int invalidFields = 0;
-    for (ThriftField field : doc.getFields()) {
-      String featureName = schemaSnapshot.getFieldName(field.getFieldConfigId());
-      FeatureConfiguration featureConfig =
-          schemaSnapshot.getFeatureConfigurationByName(featureName);
-      if (featureConfig == null) {
-        INVALID_FIELDS_IN_PARTIAL_UPDATES.increment();
-        invalidFields++;
-        continue;
+     nt  nval dF elds = 0;
+    for (Thr ftF eld f eld : doc.getF elds()) {
+      Str ng featureNa  = sc maSnapshot.getF eldNa (f eld.getF eldConf g d());
+      FeatureConf gurat on featureConf g =
+          sc maSnapshot.getFeatureConf gurat onByNa (featureNa );
+       f (featureConf g == null) {
+         NVAL D_F ELDS_ N_PART AL_UPDATES. ncre nt();
+         nval dF elds++;
+        cont nue;
       }
 
-      perFieldCounters.increment(ThriftIndexingEventType.PARTIAL_UPDATE, featureName);
+      perF eldCounters. ncre nt(Thr ft ndex ngEventType.PART AL_UPDATE, featureNa );
 
       updateDocValues(
-          tweetId,
-          featureName,
-          (docValues, docID) -> updateFeatureValue(docID, featureConfig, docValues, field));
+          t et d,
+          featureNa ,
+          (docValues, doc D) -> updateFeatureValue(doc D, featureConf g, docValues, f eld));
     }
 
-    if (invalidFields > 0 && invalidFields != doc.getFieldsSize()) {
-      PARTIAL_UPDATE_PARTIAL_FAILURE.increment();
+     f ( nval dF elds > 0 &&  nval dF elds != doc.getF eldsS ze()) {
+      PART AL_UPDATE_PART AL_FA LURE. ncre nt();
     }
 
-    if (invalidFields == 0) {
-      indexStats.incrementPartialUpdateCount();
+     f ( nval dF elds == 0) {
+       ndexStats. ncre ntPart alUpdateCount();
     } else {
-      UPDATES_ERRORS_LOG.warn("Failed to apply update for tweetID {}, found {} invalid fields: {}",
-          tweetId, invalidFields, event);
+      UPDATES_ERRORS_LOG.warn("Fa led to apply update for t et D {}, found {}  nval d f elds: {}",
+          t et d,  nval dF elds, event);
     }
 
-    return invalidFields == 0;
+    return  nval dF elds == 0;
   }
 
-  @VisibleForTesting
-  static void updateFeatureValue(int docID,
-                                 FeatureConfiguration featureConfig,
-                                 ColumnStrideFieldIndex docValues,
-                                 ThriftField updateField) {
-    int oldValue = Math.toIntExact(docValues.get(docID));
-    int newValue = updateField.getFieldData().getIntValue();
+  @V s bleForTest ng
+  stat c vo d updateFeatureValue( nt doc D,
+                                 FeatureConf gurat on featureConf g,
+                                 ColumnStr deF eld ndex docValues,
+                                 Thr ftF eld updateF eld) {
+     nt oldValue = Math.to ntExact(docValues.get(doc D));
+     nt newValue = updateF eld.getF eldData().get ntValue();
 
-    if (!featureConfig.validateFeatureUpdate(oldValue, newValue)) {
-      // Counter values can only increase
+     f (!featureConf g.val dateFeatureUpdate(oldValue, newValue)) {
+      // Counter values can only  ncrease
       SearchCounter.export(
-          INVALID_FEATURE_UPDATES_DROPPED_PREFIX + featureConfig.getName()).increment();
+           NVAL D_FEATURE_UPDATES_DROPPED_PREF X + featureConf g.getNa ()). ncre nt();
     } else {
-      docValues.setValue(docID, newValue);
+      docValues.setValue(doc D, newValue);
     }
   }
 
   /**
-   * Checks if the provided directory exists and is not empty,
-   * and if it does moves it out to a diff directory for later inspection.
-   * @param luceneDirectory the dir to move if it exists.
-   * @return true iff we found an existing directory.
+   * C cks  f t  prov ded d rectory ex sts and  s not empty,
+   * and  f   does moves   out to a d ff d rectory for later  nspect on.
+   * @param luceneD rectory t  d r to move  f   ex sts.
+   * @return true  ff   found an ex st ng d rectory.
    */
-  private static boolean moveFSDirectoryIfExists(Directory luceneDirectory) {
-    Preconditions.checkState(luceneDirectory instanceof FSDirectory);
-    File directory = ((FSDirectory) luceneDirectory).getDirectory().toFile();
-    if (directory != null && directory.exists() && directory.list().length > 0) {
-      // Save the bad lucene index by moving it out, for later inspection.
-      File movedDir = new File(directory.getParent(),
-          directory.getName() + ".failed." + System.currentTimeMillis());
-      LOG.warn("Moving existing non-successful index for {} from {} to {}",
-               luceneDirectory, directory, movedDir);
-      boolean success = directory.renameTo(movedDir);
-      if (!success) {
-        LOG.warn("Unable to rename non-successful index: {}", luceneDirectory);
+  pr vate stat c boolean moveFSD rectory fEx sts(D rectory luceneD rectory) {
+    Precond  ons.c ckState(luceneD rectory  nstanceof FSD rectory);
+    F le d rectory = ((FSD rectory) luceneD rectory).getD rectory().toF le();
+     f (d rectory != null && d rectory.ex sts() && d rectory.l st().length > 0) {
+      // Save t  bad lucene  ndex by mov ng   out, for later  nspect on.
+      F le movedD r = new F le(d rectory.getParent(),
+          d rectory.getNa () + ".fa led." + System.currentT  M ll s());
+      LOG.warn("Mov ng ex st ng non-successful  ndex for {} from {} to {}",
+               luceneD rectory, d rectory, movedD r);
+      boolean success = d rectory.rena To(movedD r);
+       f (!success) {
+        LOG.warn("Unable to rena  non-successful  ndex: {}", luceneD rectory);
       }
       return true;
     }
@@ -881,190 +881,190 @@ public class EarlybirdSegment {
   }
 
   /**
-   * For the on-disk archive, if we were able to successfully merge and flush the Lucene index to
-   * disk, we mark it explicitly with a SUCCESS file, so that it can be safely reused.
+   * For t  on-d sk arch ve,  f    re able to successfully  rge and flush t  Lucene  ndex to
+   * d sk,   mark   expl c ly w h a SUCCESS f le, so that   can be safely reused.
    */
-  private void addSuccessFile() throws IOException {
-    if (indexConfig.isIndexStoredOnDisk()) {
-      IndexOutput successFile = luceneDir.createOutput(SUCCESS_FILE, IOContext.DEFAULT);
-      successFile.close();
+  pr vate vo d addSuccessF le() throws  OExcept on {
+     f ( ndexConf g. s ndexStoredOnD sk()) {
+       ndexOutput successF le = luceneD r.createOutput(SUCCESS_F LE,  OContext.DEFAULT);
+      successF le.close();
     }
   }
 
   /**
-   * Returns the current number of documents in this segment.
+   * Returns t  current number of docu nts  n t  seg nt.
    */
-  public int getNumDocs() throws IOException {
-    return indexStats.getStatusCount();
+  publ c  nt getNumDocs() throws  OExcept on {
+    return  ndexStats.getStatusCount();
   }
 
   /**
-   * Reclaim resources used by this segment (E.g. closing lucene index reader).
-   * Resources will be reclaimed within the calling thread with no delay.
+   * Recla m res ces used by t  seg nt (E.g. clos ng lucene  ndex reader).
+   * Res ces w ll be recla  d w h n t  call ng thread w h no delay.
    */
-  public void destroyImmediately() {
+  publ c vo d destroy m d ately() {
     try {
-      closeSegmentWriter();
-      maybeDeleteSegmentOnDisk();
-      unloadSegmentFromMemory();
-    } finally {
-      indexConfig.getResourceCloser().closeResourcesImmediately(closableResources);
+      closeSeg ntWr er();
+      maybeDeleteSeg ntOnD sk();
+      unloadSeg ntFrom mory();
+    } f nally {
+       ndexConf g.getRes ceCloser().closeRes ces m d ately(closableRes ces);
     }
   }
 
   /**
-   * Close the in-memory resources belonging to this segment. This should allow the in-memory
-   * segment data to be garbage collected. After closing, the segment is not writable.
+   * Close t   n- mory res ces belong ng to t  seg nt. T  should allow t   n- mory
+   * seg nt data to be garbage collected. After clos ng, t  seg nt  s not wr able.
    */
-  public void close() {
-    if (segmentWriterReference.get() == null) {
-      LOG.info("Segment {} already closed.", segmentName);
+  publ c vo d close() {
+     f (seg ntWr erReference.get() == null) {
+      LOG. nfo("Seg nt {} already closed.", seg ntNa );
       return;
     }
 
-    LOG.info("Closing segment {}.", segmentName);
+    LOG. nfo("Clos ng seg nt {}.", seg ntNa );
     try {
-      closeSegmentWriter();
-      unloadSegmentFromMemory();
-    } finally {
-      indexConfig.getResourceCloser().closeResourcesImmediately(closableResources);
+      closeSeg ntWr er();
+      unloadSeg ntFrom mory();
+    } f nally {
+       ndexConf g.getRes ceCloser().closeRes ces m d ately(closableRes ces);
     }
   }
 
-  private void closeSegmentWriter() {
-    EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
-    if (segmentWriter != null) {
-      closableResources.add(() -> {
-          LOG.info("Closing writer for segment: {}", segmentName);
-          segmentWriter.close();
+  pr vate vo d closeSeg ntWr er() {
+    Earlyb rd ndexSeg ntWr er seg ntWr er = seg ntWr erReference.get();
+     f (seg ntWr er != null) {
+      closableRes ces.add(() -> {
+          LOG. nfo("Clos ng wr er for seg nt: {}", seg ntNa );
+          seg ntWr er.close();
       });
     }
   }
 
-  private void maybeDeleteSegmentOnDisk() {
-    if (indexConfig.isIndexStoredOnDisk()) {
-      Preconditions.checkState(
-          luceneDir instanceof FSDirectory,
-          "On-disk indexes should have an underlying directory that we can close and remove.");
-      closableResources.add(luceneDir);
+  pr vate vo d maybeDeleteSeg ntOnD sk() {
+     f ( ndexConf g. s ndexStoredOnD sk()) {
+      Precond  ons.c ckState(
+          luceneD r  nstanceof FSD rectory,
+          "On-d sk  ndexes should have an underly ng d rectory that   can close and remove.");
+      closableRes ces.add(luceneD r);
 
-      if (luceneDirFile != null && luceneDirFile.exists()) {
-        closableResources.add(new Closeable() {
-          @Override
-          public void close() throws IOException {
-            FileUtils.deleteDirectory(luceneDirFile);
+       f (luceneD rF le != null && luceneD rF le.ex sts()) {
+        closableRes ces.add(new Closeable() {
+          @Overr de
+          publ c vo d close() throws  OExcept on {
+            F leUt ls.deleteD rectory(luceneD rF le);
           }
 
-          @Override
-          public String toString() {
-            return "delete {" + luceneDirFile + "}";
+          @Overr de
+          publ c Str ng toStr ng() {
+            return "delete {" + luceneD rF le + "}";
           }
         });
       }
     }
   }
 
-  private void unloadSegmentFromMemory() {
-    // Make sure we don't retain a reference to the IndexWriter or SegmentData.
-    resetSegmentWriterReference(null, true);
+  pr vate vo d unloadSeg ntFrom mory() {
+    // Make sure   don't reta n a reference to t   ndexWr er or Seg ntData.
+    resetSeg ntWr erReference(null, true);
   }
 
-  private long getSegmentSizeOnDisk() throws IOException {
-    searchIndexingMetricSet.segmentSizeCheckCount.increment();
+  pr vate long getSeg ntS zeOnD sk() throws  OExcept on {
+    search ndex ng tr cSet.seg ntS zeC ckCount. ncre nt();
 
-    long totalSize = 0;
-    if (luceneDir != null) {
-      for (String file : luceneDir.listAll()) {
-        totalSize += luceneDir.fileLength(file);
+    long totalS ze = 0;
+     f (luceneD r != null) {
+      for (Str ng f le : luceneD r.l stAll()) {
+        totalS ze += luceneD r.f leLength(f le);
       }
     }
-    return totalSize;
+    return totalS ze;
   }
 
   //////////////////////////
-  // for unit tests only
+  // for un  tests only
   //////////////////////////
 
-  public EarlybirdIndexConfig getEarlybirdIndexConfig() {
-    return indexConfig;
+  publ c Earlyb rd ndexConf g getEarlyb rd ndexConf g() {
+    return  ndexConf g;
   }
 
-  @VisibleForTesting
-  public boolean checkSuccessFile() {
-    return new File(luceneDirFile, SUCCESS_FILE).exists();
+  @V s bleForTest ng
+  publ c boolean c ckSuccessF le() {
+    return new F le(luceneD rF le, SUCCESS_F LE).ex sts();
   }
 
-  @VisibleForTesting
-  EarlybirdIndexSegmentWriter getIndexSegmentWriter() {
-    return segmentWriterReference.get();
+  @V s bleForTest ng
+  Earlyb rd ndexSeg ntWr er get ndexSeg ntWr er() {
+    return seg ntWr erReference.get();
   }
 
-  // Helper class to encapsulate counter tables, patterns and various ways to increment
-  private class PerFieldCounters {
-    // The number of update/append events for each field in the schema.
-    private static final String PER_FIELD_EVENTS_COUNTER_PATTERN = "%s_for_field_%s";
-    // The number of dropped update/append events for each field due to tweetId not found
-    private static final String TWEET_NOT_IN_INDEX_PER_FIELD_EVENTS_COUNTER_PATTERN =
-        "%s_for_tweet_id_not_in_index_for_field_%s";
-    private final Table<ThriftIndexingEventType, String, SearchCounter> perFieldTable =
+  //  lper class to encapsulate counter tables, patterns and var ous ways to  ncre nt
+  pr vate class PerF eldCounters {
+    // T  number of update/append events for each f eld  n t  sc ma.
+    pr vate stat c f nal Str ng PER_F ELD_EVENTS_COUNTER_PATTERN = "%s_for_f eld_%s";
+    // T  number of dropped update/append events for each f eld due to t et d not found
+    pr vate stat c f nal Str ng TWEET_NOT_ N_ NDEX_PER_F ELD_EVENTS_COUNTER_PATTERN =
+        "%s_for_t et_ d_not_ n_ ndex_for_f eld_%s";
+    pr vate f nal Table<Thr ft ndex ngEventType, Str ng, SearchCounter> perF eldTable =
         HashBasedTable.create();
-    private final Table<ThriftIndexingEventType, String, SearchCounter> notInIndexPerFieldTable =
+    pr vate f nal Table<Thr ft ndex ngEventType, Str ng, SearchCounter> not n ndexPerF eldTable =
         HashBasedTable.create();
 
-    public void increment(
-        ThriftIndexingEventType eventType, ThriftDocument doc) {
-      ImmutableSchemaInterface schemaSnapshot = indexConfig.getSchema().getSchemaSnapshot();
-      for (ThriftField field : doc.getFields()) {
-        String fieldName = schemaSnapshot.getFieldName(field.getFieldConfigId());
-        incrementForPattern(
-            eventType, fieldName, perFieldTable, PER_FIELD_EVENTS_COUNTER_PATTERN);
+    publ c vo d  ncre nt(
+        Thr ft ndex ngEventType eventType, Thr ftDocu nt doc) {
+       mmutableSc ma nterface sc maSnapshot =  ndexConf g.getSc ma().getSc maSnapshot();
+      for (Thr ftF eld f eld : doc.getF elds()) {
+        Str ng f eldNa  = sc maSnapshot.getF eldNa (f eld.getF eldConf g d());
+         ncre ntForPattern(
+            eventType, f eldNa , perF eldTable, PER_F ELD_EVENTS_COUNTER_PATTERN);
       }
     }
 
-    public void incrementTweetNotInIndex(
-        ThriftIndexingEventType eventType, ThriftDocument doc) {
-      ImmutableSchemaInterface schemaSnapshot = indexConfig.getSchema().getSchemaSnapshot();
-      for (ThriftField field : doc.getFields()) {
-        String fieldName = schemaSnapshot.getFieldName(field.getFieldConfigId());
-        incrementForPattern(
-            eventType, fieldName, notInIndexPerFieldTable,
-            TWEET_NOT_IN_INDEX_PER_FIELD_EVENTS_COUNTER_PATTERN);
+    publ c vo d  ncre ntT etNot n ndex(
+        Thr ft ndex ngEventType eventType, Thr ftDocu nt doc) {
+       mmutableSc ma nterface sc maSnapshot =  ndexConf g.getSc ma().getSc maSnapshot();
+      for (Thr ftF eld f eld : doc.getF elds()) {
+        Str ng f eldNa  = sc maSnapshot.getF eldNa (f eld.getF eldConf g d());
+         ncre ntForPattern(
+            eventType, f eldNa , not n ndexPerF eldTable,
+            TWEET_NOT_ N_ NDEX_PER_F ELD_EVENTS_COUNTER_PATTERN);
       }
     }
 
-    public void increment(ThriftIndexingEventType eventType, Document doc) {
-      for (IndexableField field : doc.getFields()) {
-        incrementForPattern(
-            eventType, field.name(),
-            perFieldTable, PER_FIELD_EVENTS_COUNTER_PATTERN);
+    publ c vo d  ncre nt(Thr ft ndex ngEventType eventType, Docu nt doc) {
+      for ( ndexableF eld f eld : doc.getF elds()) {
+         ncre ntForPattern(
+            eventType, f eld.na (),
+            perF eldTable, PER_F ELD_EVENTS_COUNTER_PATTERN);
       }
     }
 
-    public void increment(ThriftIndexingEventType eventType, String fieldName) {
-      incrementForPattern(eventType, fieldName, perFieldTable, PER_FIELD_EVENTS_COUNTER_PATTERN);
+    publ c vo d  ncre nt(Thr ft ndex ngEventType eventType, Str ng f eldNa ) {
+       ncre ntForPattern(eventType, f eldNa , perF eldTable, PER_F ELD_EVENTS_COUNTER_PATTERN);
     }
 
-    public void incrementTweetNotInIndex(ThriftIndexingEventType eventType, Document doc) {
-      for (IndexableField field : doc.getFields()) {
-        incrementForPattern(
-            eventType, field.name(),
-            notInIndexPerFieldTable,
-            TWEET_NOT_IN_INDEX_PER_FIELD_EVENTS_COUNTER_PATTERN);
+    publ c vo d  ncre ntT etNot n ndex(Thr ft ndex ngEventType eventType, Docu nt doc) {
+      for ( ndexableF eld f eld : doc.getF elds()) {
+         ncre ntForPattern(
+            eventType, f eld.na (),
+            not n ndexPerF eldTable,
+            TWEET_NOT_ N_ NDEX_PER_F ELD_EVENTS_COUNTER_PATTERN);
       }
     }
 
-    private void incrementForPattern(
-        ThriftIndexingEventType eventType, String fieldName,
-        Table<ThriftIndexingEventType, String, SearchCounter> counterTable, String pattern) {
+    pr vate vo d  ncre ntForPattern(
+        Thr ft ndex ngEventType eventType, Str ng f eldNa ,
+        Table<Thr ft ndex ngEventType, Str ng, SearchCounter> counterTable, Str ng pattern) {
 
       SearchCounter stat;
-      if (counterTable.contains(eventType, fieldName)) {
-        stat = counterTable.get(eventType, fieldName);
+       f (counterTable.conta ns(eventType, f eldNa )) {
+        stat = counterTable.get(eventType, f eldNa );
       } else {
-        stat = SearchCounter.export(String.format(pattern, eventType, fieldName).toLowerCase());
-        counterTable.put(eventType, fieldName, stat);
+        stat = SearchCounter.export(Str ng.format(pattern, eventType, f eldNa ).toLo rCase());
+        counterTable.put(eventType, f eldNa , stat);
       }
-      stat.increment();
+      stat. ncre nt();
     }
   }
 }

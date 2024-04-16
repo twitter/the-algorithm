@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.graphql.contextual_ref
+package com.tw ter.product_m xer.core.funct onal_component.marshaller.response.graphql.contextual_ref
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.OuterTweetContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.QuoteTweetId
-import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.RetweetId
-import com.twitter.strato.graphql.contextual_refs.{thriftscala => thrift}
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.contextual_ref.OuterT etContext
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.contextual_ref.QuoteT et d
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.contextual_ref.Ret et d
+ mport com.tw ter.strato.graphql.contextual_refs.{thr ftscala => thr ft}
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class OuterTweetContextMarshaller @Inject() () {
+@S ngleton
+class OuterT etContextMarshaller @ nject() () {
 
-  def apply(outerTweetContext: OuterTweetContext): thrift.OuterTweetContext =
-    outerTweetContext match {
-      case QuoteTweetId(id) => thrift.OuterTweetContext.QuoteTweetId(id)
-      case RetweetId(id) => thrift.OuterTweetContext.RetweetId(id)
+  def apply(outerT etContext: OuterT etContext): thr ft.OuterT etContext =
+    outerT etContext match {
+      case QuoteT et d( d) => thr ft.OuterT etContext.QuoteT et d( d)
+      case Ret et d( d) => thr ft.OuterT etContext.Ret et d( d)
     }
 }

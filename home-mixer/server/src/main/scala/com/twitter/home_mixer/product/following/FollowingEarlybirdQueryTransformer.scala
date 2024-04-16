@@ -1,84 +1,84 @@
-package com.twitter.home_mixer.product.following
+package com.tw ter.ho _m xer.product.follow ng
 
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.tracing.Trace
-import com.twitter.home_mixer.model.HomeFeatures.RealGraphInNetworkScoresFeature
-import com.twitter.home_mixer.product.following.model.FollowingQuery
-import com.twitter.home_mixer.product.following.param.FollowingParam.ServerMaxResultsParam
-import com.twitter.product_mixer.component_library.feature_hydrator.query.social_graph.SGSFollowedUsersFeature
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.BottomCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.MalformedCursor
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant
-import com.twitter.search.earlybird.{thriftscala => t}
-import com.twitter.search.queryparser.query.Conjunction
-import com.twitter.search.queryparser.query.search.SearchOperator
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.jdk.CollectionConverters.asJavaIterableConverter
+ mport com.tw ter.f nagle.thr ft.Cl ent d
+ mport com.tw ter.f nagle.trac ng.Trace
+ mport com.tw ter.ho _m xer.model.Ho Features.RealGraph nNetworkScoresFeature
+ mport com.tw ter.ho _m xer.product.follow ng.model.Follow ngQuery
+ mport com.tw ter.ho _m xer.product.follow ng.param.Follow ngParam.ServerMaxResultsParam
+ mport com.tw ter.product_m xer.component_l brary.feature_hydrator.query.soc al_graph.SGSFollo dUsersFeature
+ mport com.tw ter.product_m xer.core.funct onal_component.transfor r.Cand dateP pel neQueryTransfor r
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.BottomCursor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.GapCursor
+ mport com.tw ter.product_m xer.core.model.marshall ng.response.urt.operat on.TopCursor
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.Malfor dCursor
+ mport com.tw ter.product_m xer.core.p pel ne.p pel ne_fa lure.P pel neFa lure
+ mport com.tw ter.search.common.sc ma.earlyb rd.Earlyb rdF eldConstants.Earlyb rdF eldConstant
+ mport com.tw ter.search.earlyb rd.{thr ftscala => t}
+ mport com.tw ter.search.queryparser.query.Conjunct on
+ mport com.tw ter.search.queryparser.query.search.SearchOperator
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
+ mport scala.jdk.Collect onConverters.asJava erableConverter
 
-@Singleton
-case class FollowingEarlybirdQueryTransformer @Inject() (clientId: ClientId)
-    extends CandidatePipelineQueryTransformer[FollowingQuery, t.EarlybirdRequest] {
+@S ngleton
+case class Follow ngEarlyb rdQueryTransfor r @ nject() (cl ent d: Cl ent d)
+    extends Cand dateP pel neQueryTransfor r[Follow ngQuery, t.Earlyb rdRequest] {
 
-  override def transform(query: FollowingQuery): t.EarlybirdRequest = {
-    val followedUserIds =
-      query.features.map(_.get(SGSFollowedUsersFeature)).getOrElse(Seq.empty).toSet
-    val realGraphInNetworkFollowedUserIds =
-      query.features.map(_.get(RealGraphInNetworkScoresFeature)).getOrElse(Map.empty).keySet
-    val userId = query.getRequiredUserId
-    val combinedUserIds = userId +: followedUserIds.toSeq
+  overr de def transform(query: Follow ngQuery): t.Earlyb rdRequest = {
+    val follo dUser ds =
+      query.features.map(_.get(SGSFollo dUsersFeature)).getOrElse(Seq.empty).toSet
+    val realGraph nNetworkFollo dUser ds =
+      query.features.map(_.get(RealGraph nNetworkScoresFeature)).getOrElse(Map.empty).keySet
+    val user d = query.getRequ redUser d
+    val comb nedUser ds = user d +: follo dUser ds.toSeq
 
-    val baseFollowedUsersSearchOperator = new SearchOperator.Builder()
-      .setType(SearchOperator.Type.FEATURE_VALUE_IN_ACCEPT_LIST_OR_UNSET)
-      .addOperand(EarlybirdFieldConstant.DIRECTED_AT_USER_ID_CSF.getFieldName)
+    val baseFollo dUsersSearchOperator = new SearchOperator.Bu lder()
+      .setType(SearchOperator.Type.FEATURE_VALUE_ N_ACCEPT_L ST_OR_UNSET)
+      .addOperand(Earlyb rdF eldConstant.D RECTED_AT_USER_ D_CSF.getF eldNa )
 
-    val followedUsersQuery =
-      baseFollowedUsersSearchOperator.addOperands(combinedUserIds.map(_.toString).asJava).build()
+    val follo dUsersQuery =
+      baseFollo dUsersSearchOperator.addOperands(comb nedUser ds.map(_.toStr ng).asJava).bu ld()
 
-    val searchQuery = query.pipelineCursor
+    val searchQuery = query.p pel neCursor
       .map { cursor =>
-        val sinceIdQuery =
-          (id: Long) => new SearchOperator(SearchOperator.Type.SINCE_ID, id.toString)
-        val maxIdQuery = // max ID is inclusive, so subtract 1
-          (id: Long) => new SearchOperator(SearchOperator.Type.MAX_ID, (id - 1).toString)
+        val s nce dQuery =
+          ( d: Long) => new SearchOperator(SearchOperator.Type.S NCE_ D,  d.toStr ng)
+        val max dQuery = // max  D  s  nclus ve, so subtract 1
+          ( d: Long) => new SearchOperator(SearchOperator.Type.MAX_ D, ( d - 1).toStr ng)
 
-        (cursor.cursorType, cursor.id, cursor.gapBoundaryId) match {
-          case (Some(TopCursor), Some(sinceId), _) =>
-            new Conjunction(sinceIdQuery(sinceId), followedUsersQuery)
-          case (Some(BottomCursor), Some(maxId), _) =>
-            new Conjunction(maxIdQuery(maxId), followedUsersQuery)
-          case (Some(GapCursor), Some(maxId), Some(sinceId)) =>
-            new Conjunction(sinceIdQuery(sinceId), maxIdQuery(maxId), followedUsersQuery)
-          case (Some(GapCursor), _, _) =>
-            throw PipelineFailure(MalformedCursor, "Invalid cursor " + cursor.toString)
-          case _ => followedUsersQuery
+        (cursor.cursorType, cursor. d, cursor.gapBoundary d) match {
+          case (So (TopCursor), So (s nce d), _) =>
+            new Conjunct on(s nce dQuery(s nce d), follo dUsersQuery)
+          case (So (BottomCursor), So (max d), _) =>
+            new Conjunct on(max dQuery(max d), follo dUsersQuery)
+          case (So (GapCursor), So (max d), So (s nce d)) =>
+            new Conjunct on(s nce dQuery(s nce d), max dQuery(max d), follo dUsersQuery)
+          case (So (GapCursor), _, _) =>
+            throw P pel neFa lure(Malfor dCursor, " nval d cursor " + cursor.toStr ng)
+          case _ => follo dUsersQuery
         }
-      }.getOrElse(followedUsersQuery)
+      }.getOrElse(follo dUsersQuery)
 
-    val metadataOptions = t.ThriftSearchResultMetadataOptions(
-      getInReplyToStatusId = true,
-      getReferencedTweetAuthorId = true,
-      getFromUserId = true
+    val  tadataOpt ons = t.Thr ftSearchResult tadataOpt ons(
+      get nReplyToStatus d = true,
+      getReferencedT etAuthor d = true,
+      getFromUser d = true
     )
 
-    t.EarlybirdRequest(
-      searchQuery = t.ThriftSearchQuery(
-        serializedQuery = Some(searchQuery.serialize),
-        fromUserIDFilter64 = Some(combinedUserIds),
+    t.Earlyb rdRequest(
+      searchQuery = t.Thr ftSearchQuery(
+        ser al zedQuery = So (searchQuery.ser al ze),
+        fromUser DF lter64 = So (comb nedUser ds),
         numResults = query.requestedMaxResults.getOrElse(query.params(ServerMaxResultsParam)),
-        rankingMode = t.ThriftSearchRankingMode.Recency,
-        resultMetadataOptions = Some(metadataOptions),
-        searcherId = query.getOptionalUserId,
+        rank ngMode = t.Thr ftSearchRank ngMode.Recency,
+        result tadataOpt ons = So ( tadataOpt ons),
+        searc r d = query.getOpt onalUser d,
       ),
-      getOlderResults = Some(true), // needed for archive access to older tweets
-      clientRequestID = Some(s"${Trace.id.traceId}"),
-      followedUserIds = Some(combinedUserIds),
-      numResultsToReturnAtRoot = Some(query.params(ServerMaxResultsParam)),
-      clientId = Some(clientId.name),
+      getOlderResults = So (true), // needed for arch ve access to older t ets
+      cl entRequest D = So (s"${Trace. d.trace d}"),
+      follo dUser ds = So (comb nedUser ds),
+      numResultsToReturnAtRoot = So (query.params(ServerMaxResultsParam)),
+      cl ent d = So (cl ent d.na ),
     )
   }
 }

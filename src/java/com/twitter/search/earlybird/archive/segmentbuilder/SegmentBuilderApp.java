@@ -1,109 +1,109 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+package com.tw ter.search.earlyb rd.arch ve.seg ntbu lder;
 
-import java.util.Collection;
+ mport java.ut l.Collect on;
 
-import com.google.common.collect.ImmutableList;
-import com.google.inject.Module;
+ mport com.google.common.collect. mmutableL st;
+ mport com.google. nject.Module;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+ mport org.slf4j.Logger;
+ mport org.slf4j.LoggerFactory;
 
-import com.twitter.app.Flaggable;
-import com.twitter.inject.server.AbstractTwitterServer;
-import com.twitter.util.Future;
-import com.twitter.util.Time;
+ mport com.tw ter.app.Flaggable;
+ mport com.tw ter. nject.server.AbstractTw terServer;
+ mport com.tw ter.ut l.Future;
+ mport com.tw ter.ut l.T  ;
 
-public class SegmentBuilderApp extends AbstractTwitterServer {
-  private static final Logger LOG = LoggerFactory.getLogger(SegmentBuilderApp.class);
+publ c class Seg ntBu lderApp extends AbstractTw terServer {
+  pr vate stat c f nal Logger LOG = LoggerFactory.getLogger(Seg ntBu lderApp.class);
 
-  public SegmentBuilderApp() {
+  publ c Seg ntBu lderApp() {
     createFlag("onlyRunOnce",
         true,
-        "whether to stop segment builder after one loop",
+        "w t r to stop seg nt bu lder after one loop",
         Flaggable.ofBoolean());
 
-    createFlag("waitBetweenLoopsMins",
+    createFlag("wa Bet enLoopsM ns",
         60,
-        "how many minutes to wait between building loops",
-        Flaggable.ofInt());
+        "how many m nutes to wa  bet en bu ld ng loops",
+        Flaggable.of nt());
 
-    createFlag("startup_batch_size",
+    createFlag("startup_batch_s ze",
         30,
-        "How many instances can start and read timeslice info from HDFS at the same time. "
-            + "If you don't know what this parameter is, please do not change this parameter.",
-        Flaggable.ofInt());
+        "How many  nstances can start and read t  sl ce  nfo from HDFS at t  sa  t  . "
+            + " f   don't know what t  para ter  s, please do not change t  para ter.",
+        Flaggable.of nt());
 
-    createFlag("instance",
+    createFlag(" nstance",
         20,
-        "the job instance number",
-        Flaggable.ofInt());
+        "t  job  nstance number",
+        Flaggable.of nt());
 
-    createFlag("segmentZkLockExpirationHours",
+    createFlag("seg ntZkLockExp rat onH s",
         0,
-        "max hours to hold the zookeeper lock while building segment",
-        Flaggable.ofInt());
+        "max h s to hold t  zookeeper lock wh le bu ld ng seg nt",
+        Flaggable.of nt());
 
-    createFlag("startupSleepMins",
+    createFlag("startupSleepM ns",
         2L,
-        "sleep multiplier of startupSleepMins before job runs",
+        "sleep mult pl er of startupSleepM ns before job runs",
         Flaggable.ofLong());
 
-    createFlag("maxRetriesOnFailure",
+    createFlag("maxRetr esOnFa lure",
         3,
-        "how many times we should try to rebuild a segment when failure happens",
-        Flaggable.ofInt());
+        "how many t  s   should try to rebu ld a seg nt w n fa lure happens",
+        Flaggable.of nt());
 
-    createFlag("hash_partitions",
-        ImmutableList.of(),
-        "comma separated hash partition ids, e.g., 0,1,3,4. "
-            + "If not specified, all the partitions will be built.",
-        Flaggable.ofJavaList(Flaggable.ofInt()));
+    createFlag("hash_part  ons",
+         mmutableL st.of(),
+        "comma separated hash part  on  ds, e.g., 0,1,3,4. "
+            + " f not spec f ed, all t  part  ons w ll be bu lt.",
+        Flaggable.ofJavaL st(Flaggable.of nt()));
 
-    createFlag("numSegmentBuilderPartitions",
+    createFlag("numSeg ntBu lderPart  ons",
         100,
-        "Number of partitions for dividing up all segment builder work",
-        Flaggable.ofInt());
+        "Number of part  ons for d v d ng up all seg nt bu lder work",
+        Flaggable.of nt());
 
-    createFlag("waitBetweenSegmentsSecs",
+    createFlag("wa Bet enSeg ntsSecs",
         10,
-        "Time to sleep between processing segments.",
-        Flaggable.ofInt());
+        "T   to sleep bet en process ng seg nts.",
+        Flaggable.of nt());
 
-    createFlag("waitBeforeQuitMins",
+    createFlag("wa BeforeQu M ns",
         2,
-        "How many minutes to sleep before quitting.",
-        Flaggable.ofInt());
+        "How many m nutes to sleep before qu t ng.",
+        Flaggable.of nt());
 
     createFlag("scrubGen",
         "",
-        "Scrub gen for which segment builders should be run.",
-        Flaggable.ofString());
+        "Scrub gen for wh ch seg nt bu lders should be run.",
+        Flaggable.ofStr ng());
   }
 
-  @Override
-  public void start() {
-    SegmentBuilder segmentBuilder = injector().instance(SegmentBuilder.class);
-    closeOnExit((Time time) -> {
-      segmentBuilder.doShutdown();
-      return Future.Unit();
+  @Overr de
+  publ c vo d start() {
+    Seg ntBu lder seg ntBu lder =  njector(). nstance(Seg ntBu lder.class);
+    closeOnEx ((T   t  ) -> {
+      seg ntBu lder.doShutdown();
+      return Future.Un ();
     });
 
-    LOG.info("Starting run()");
-    segmentBuilder.run();
-    LOG.info("run() complete");
+    LOG. nfo("Start ng run()");
+    seg ntBu lder.run();
+    LOG. nfo("run() complete");
 
     // Now shutdown
     shutdown();
   }
 
-  protected void shutdown() {
-    LOG.info("Calling close() to initiate shutdown");
+  protected vo d shutdown() {
+    LOG. nfo("Call ng close() to  n  ate shutdown");
     close();
   }
 
-  @Override
-  public Collection<Module> javaModules() {
-    return ImmutableList.of(new SegmentBuilderModule());
+  @Overr de
+  publ c Collect on<Module> javaModules() {
+    return  mmutableL st.of(new Seg ntBu lderModule());
   }
 }

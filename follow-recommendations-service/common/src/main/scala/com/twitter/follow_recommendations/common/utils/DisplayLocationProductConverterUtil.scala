@@ -1,27 +1,27 @@
-package com.twitter.follow_recommendations.common.utils
+package com.tw ter.follow_recom ndat ons.common.ut ls
 
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.common.models.Product
-import com.twitter.product_mixer.core.model.marshalling.request.Product
+ mport com.tw ter.follow_recom ndat ons.common.models.D splayLocat on
+ mport com.tw ter.follow_recom ndat ons.common.models.Product
+ mport com.tw ter.product_m xer.core.model.marshall ng.request.Product
 
-object DisplayLocationProductConverterUtil {
-  def productToDisplayLocation(product: Product): DisplayLocation = {
+object D splayLocat onProductConverterUt l {
+  def productToD splayLocat on(product: Product): D splayLocat on = {
     product match {
-      case Product.MagicRecs => DisplayLocation.MagicRecs
+      case Product.Mag cRecs => D splayLocat on.Mag cRecs
       case _ =>
-        throw UnconvertibleProductMixerProductException(
-          s"Cannot convert Product Mixer Product ${product.identifier.name} into a FRS DisplayLocation.")
+        throw Unconvert bleProductM xerProductExcept on(
+          s"Cannot convert Product M xer Product ${product. dent f er.na }  nto a FRS D splayLocat on.")
     }
   }
 
-  def displayLocationToProduct(displayLocation: DisplayLocation): Product = {
-    displayLocation match {
-      case DisplayLocation.MagicRecs => Product.MagicRecs
+  def d splayLocat onToProduct(d splayLocat on: D splayLocat on): Product = {
+    d splayLocat on match {
+      case D splayLocat on.Mag cRecs => Product.Mag cRecs
       case _ =>
-        throw UnconvertibleProductMixerProductException(
-          s"Cannot convert DisplayLocation ${displayLocation.toFsName} into a Product Mixer Product.")
+        throw Unconvert bleProductM xerProductExcept on(
+          s"Cannot convert D splayLocat on ${d splayLocat on.toFsNa }  nto a Product M xer Product.")
     }
   }
 }
 
-case class UnconvertibleProductMixerProductException(message: String) extends Exception(message)
+case class Unconvert bleProductM xerProductExcept on( ssage: Str ng) extends Except on( ssage)

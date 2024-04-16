@@ -1,112 +1,112 @@
-package com.twitter.follow_recommendations.flows.ads
+package com.tw ter.follow_recom ndat ons.flows.ads
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.EnrichedCandidateSource
-import com.twitter.follow_recommendations.common.base.IdentityRanker
-import com.twitter.follow_recommendations.common.base.IdentityTransform
-import com.twitter.follow_recommendations.common.base.ParamPredicate
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.Ranker
-import com.twitter.follow_recommendations.common.base.RecommendationFlow
-import com.twitter.follow_recommendations.common.base.RecommendationResultsConfig
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.common.base.TruePredicate
-import com.twitter.follow_recommendations.common.candidate_sources.promoted_accounts.PromotedAccountsCandidateSource
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.predicates.ExcludedUserIdPredicate
-import com.twitter.follow_recommendations.common.transforms.tracking_token.TrackingTokenTransform
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.util.Duration
-import javax.inject.Inject
-import javax.inject.Singleton
+ mport com.tw ter.f nagle.stats.StatsRece ver
+ mport com.tw ter.follow_recom ndat ons.common.base.Enr c dCand dateS ce
+ mport com.tw ter.follow_recom ndat ons.common.base. dent yRanker
+ mport com.tw ter.follow_recom ndat ons.common.base. dent yTransform
+ mport com.tw ter.follow_recom ndat ons.common.base.ParamPred cate
+ mport com.tw ter.follow_recom ndat ons.common.base.Pred cate
+ mport com.tw ter.follow_recom ndat ons.common.base.Ranker
+ mport com.tw ter.follow_recom ndat ons.common.base.Recom ndat onFlow
+ mport com.tw ter.follow_recom ndat ons.common.base.Recom ndat onResultsConf g
+ mport com.tw ter.follow_recom ndat ons.common.base.Transform
+ mport com.tw ter.follow_recom ndat ons.common.base.TruePred cate
+ mport com.tw ter.follow_recom ndat ons.common.cand date_s ces.promoted_accounts.PromotedAccountsCand dateS ce
+ mport com.tw ter.follow_recom ndat ons.common.models.Cand dateUser
+ mport com.tw ter.follow_recom ndat ons.common.pred cates.ExcludedUser dPred cate
+ mport com.tw ter.follow_recom ndat ons.common.transforms.track ng_token.Track ngTokenTransform
+ mport com.tw ter. nject.annotat ons.Flag
+ mport com.tw ter.product_m xer.core.funct onal_component.cand date_s ce.Cand dateS ce
+ mport com.tw ter.ut l.Durat on
+ mport javax. nject. nject
+ mport javax. nject.S ngleton
 
-@Singleton
-class PromotedAccountsFlow @Inject() (
-  promotedAccountsCandidateSource: PromotedAccountsCandidateSource,
-  trackingTokenTransform: TrackingTokenTransform,
-  baseStatsReceiver: StatsReceiver,
-  @Flag("fetch_prod_promoted_accounts") fetchProductionPromotedAccounts: Boolean)
-    extends RecommendationFlow[PromotedAccountsFlowRequest, CandidateUser] {
+@S ngleton
+class PromotedAccountsFlow @ nject() (
+  promotedAccountsCand dateS ce: PromotedAccountsCand dateS ce,
+  track ngTokenTransform: Track ngTokenTransform,
+  baseStatsRece ver: StatsRece ver,
+  @Flag("fetch_prod_promoted_accounts") fetchProduct onPromotedAccounts: Boolean)
+    extends Recom ndat onFlow[PromotedAccountsFlowRequest, Cand dateUser] {
 
-  protected override def targetEligibility: Predicate[PromotedAccountsFlowRequest] =
-    new ParamPredicate[PromotedAccountsFlowRequest](
-      PromotedAccountsFlowParams.TargetEligibility
+  protected overr de def targetEl g b l y: Pred cate[PromotedAccountsFlowRequest] =
+    new ParamPred cate[PromotedAccountsFlowRequest](
+      PromotedAccountsFlowParams.TargetEl g b l y
     )
 
-  protected override def candidateSources(
+  protected overr de def cand dateS ces(
     target: PromotedAccountsFlowRequest
-  ): Seq[CandidateSource[PromotedAccountsFlowRequest, CandidateUser]] = {
-    import EnrichedCandidateSource._
-    val candidateSourceStats = statsReceiver.scope("candidate_sources")
-    val budget: Duration = target.params(PromotedAccountsFlowParams.FetchCandidateSourceBudget)
-    val candidateSources = Seq(
-      promotedAccountsCandidateSource
+  ): Seq[Cand dateS ce[PromotedAccountsFlowRequest, Cand dateUser]] = {
+     mport Enr c dCand dateS ce._
+    val cand dateS ceStats = statsRece ver.scope("cand date_s ces")
+    val budget: Durat on = target.params(PromotedAccountsFlowParams.FetchCand dateS ceBudget)
+    val cand dateS ces = Seq(
+      promotedAccountsCand dateS ce
         .mapKeys[PromotedAccountsFlowRequest](r =>
-          Seq(r.toAdsRequest(fetchProductionPromotedAccounts)))
-        .mapValue(PromotedAccountsUtil.toCandidateUser)
-    ).map { candidateSource =>
-      candidateSource
-        .failOpenWithin(budget, candidateSourceStats).observe(candidateSourceStats)
+          Seq(r.toAdsRequest(fetchProduct onPromotedAccounts)))
+        .mapValue(PromotedAccountsUt l.toCand dateUser)
+    ).map { cand dateS ce =>
+      cand dateS ce
+        .fa lOpenW h n(budget, cand dateS ceStats).observe(cand dateS ceStats)
     }
-    candidateSources
+    cand dateS ces
   }
 
-  protected override def preRankerCandidateFilter: Predicate[
-    (PromotedAccountsFlowRequest, CandidateUser)
+  protected overr de def preRankerCand dateF lter: Pred cate[
+    (PromotedAccountsFlowRequest, Cand dateUser)
   ] = {
-    val preRankerFilterStats = statsReceiver.scope("pre_ranker")
-    ExcludedUserIdPredicate.observe(preRankerFilterStats.scope("exclude_user_id_predicate"))
+    val preRankerF lterStats = statsRece ver.scope("pre_ranker")
+    ExcludedUser dPred cate.observe(preRankerF lterStats.scope("exclude_user_ d_pred cate"))
   }
 
   /**
-   * rank the candidates
+   * rank t  cand dates
    */
-  protected override def selectRanker(
+  protected overr de def selectRanker(
     target: PromotedAccountsFlowRequest
-  ): Ranker[PromotedAccountsFlowRequest, CandidateUser] = {
-    new IdentityRanker[PromotedAccountsFlowRequest, CandidateUser]
+  ): Ranker[PromotedAccountsFlowRequest, Cand dateUser] = {
+    new  dent yRanker[PromotedAccountsFlowRequest, Cand dateUser]
   }
 
   /**
-   * transform the candidates after ranking (e.g. dedupping, grouping and etc)
+   * transform t  cand dates after rank ng (e.g. dedupp ng, group ng and etc)
    */
-  protected override def postRankerTransform: Transform[
+  protected overr de def postRankerTransform: Transform[
     PromotedAccountsFlowRequest,
-    CandidateUser
+    Cand dateUser
   ] = {
-    new IdentityTransform[PromotedAccountsFlowRequest, CandidateUser]
+    new  dent yTransform[PromotedAccountsFlowRequest, Cand dateUser]
   }
 
   /**
-   *  filter invalid candidates before returning the results.
+   *  f lter  nval d cand dates before return ng t  results.
    *
-   *  Some heavy filters e.g. SGS filter could be applied in this step
+   *  So   avy f lters e.g. SGS f lter could be appl ed  n t  step
    */
-  protected override def validateCandidates: Predicate[
-    (PromotedAccountsFlowRequest, CandidateUser)
+  protected overr de def val dateCand dates: Pred cate[
+    (PromotedAccountsFlowRequest, Cand dateUser)
   ] = {
-    new TruePredicate[(PromotedAccountsFlowRequest, CandidateUser)]
+    new TruePred cate[(PromotedAccountsFlowRequest, Cand dateUser)]
   }
 
   /**
-   * transform the candidates into results and return
+   * transform t  cand dates  nto results and return
    */
-  protected override def transformResults: Transform[PromotedAccountsFlowRequest, CandidateUser] = {
-    trackingTokenTransform
+  protected overr de def transformResults: Transform[PromotedAccountsFlowRequest, Cand dateUser] = {
+    track ngTokenTransform
   }
 
   /**
-   *  configuration for recommendation results
+   *  conf gurat on for recom ndat on results
    */
-  protected override def resultsConfig(
+  protected overr de def resultsConf g(
     target: PromotedAccountsFlowRequest
-  ): RecommendationResultsConfig = {
-    RecommendationResultsConfig(
-      target.params(PromotedAccountsFlowParams.ResultSizeParam),
-      target.params(PromotedAccountsFlowParams.BatchSizeParam)
+  ): Recom ndat onResultsConf g = {
+    Recom ndat onResultsConf g(
+      target.params(PromotedAccountsFlowParams.ResultS zeParam),
+      target.params(PromotedAccountsFlowParams.BatchS zeParam)
     )
   }
 
-  override val statsReceiver: StatsReceiver = baseStatsReceiver.scope("promoted_accounts_flow")
+  overr de val statsRece ver: StatsRece ver = baseStatsRece ver.scope("promoted_accounts_flow")
 }
